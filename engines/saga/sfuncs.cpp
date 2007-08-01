@@ -1417,13 +1417,12 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
-	int stringId;
+	int stringId, textHeight;
 	static PalEntry cur_pal[PAL_ENTRIES];
 	PalEntry *pal;
+	TextListEntry textEntry;
 	Event event;
 	Event *q_event;
-
-	// FIXME: This still needs work: the text placement is incorrect
 
 	thread->wait(kWaitTypePlacard);
 
@@ -1469,20 +1468,14 @@ void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	// Put the text in the center of the viewport, assuming it will fit on
-	// one line. If we cannot make that assumption we'll need to extend
-	// the text drawing function so that it can center text around a point.
-	// It doesn't end up in exactly the same spot as the original did it,
-	// but it's close enough for now at least.
-
-	// FIXME: This assumption is wrong for the psychic profile, the text
-	// placement is incorrect
-
-	TextListEntry textEntry;
+	textHeight = _vm->_font->getHeight(kKnownFontVerb, thread->_strings->getString(stringId), 226, kFontCentered);
 
 	textEntry.knownColor = kKnownColorBlack;
-	textEntry.point.x = _vm->getDisplayWidth() / 2;
-	textEntry.point.y = (_vm->_scene->getHeight() - _vm->_font->getHeight(kKnownFontMedium)) / 2;
+	textEntry.useRect = true;
+	textEntry.rect.left = 245;
+	textEntry.rect.setHeight(210 + 76);
+	textEntry.rect.setWidth(226);
+	textEntry.rect.top = 210 - textHeight;
 	textEntry.font = kKnownFontVerb;
 	textEntry.flags = (FontEffectFlags)(kFontCentered);
 	textEntry.text = thread->_strings->getString(stringId);
