@@ -323,8 +323,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 
 	// ITE Demos //////////////////////////////////////////////////////////////////////////////////////////////
 
-#if 0
-	// Based on a very early version of the engine. Not supported yet
+	// Note: This version is NOT supported yet
+	// Based on a very early version of the engine
 
 	// Inherit the earth - DOS Demo version
 	// sound unchecked
@@ -356,7 +356,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		NULL,
 	},
-#endif
+
 
 	// Inherit the earth - MAC Demo version
 	{
@@ -389,8 +389,9 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEMacPatch_Files,
 	},
 
-#if 0
-	// Currently broken, exiting the faire leads to a crash
+
+	// Note: This version is NOT supported yet
+	// Exiting the faire leads to a crash
 
 	// Inherit the earth - MAC Demo version 1
 	{
@@ -422,7 +423,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
-#endif
+
 
 	// Inherit the earth - Win32 Demo version 2/3, Linux Demo version
 	// Win32 Version 3 and Linux Demo version have digital music, Win32 version 2 has MIDI music
@@ -456,8 +457,9 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEPatch_Files,
 	},
 
-#if 0
-	// Currently broken, exiting the faire leads to a crash
+
+	// Note: This version is NOT supported yet
+	// Exiting the faire leads to a crash
 
 	// Inherit the earth - Win32 Demo version 1
 	{
@@ -488,7 +490,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
-#endif
+
 
 	// TODO: Add Amiga demos here (not supported yet)
 
