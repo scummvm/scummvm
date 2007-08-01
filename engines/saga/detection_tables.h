@@ -127,8 +127,6 @@ static const GameSoundInfo ITEMACDEMO_GameSound = {
 	true
 };
 
-/*
-// Not used
 static const GameSoundInfo ITEMACDEMO_GameMusic = {
 	kSoundPCM,
 	11025,
@@ -137,7 +135,6 @@ static const GameSoundInfo ITEMACDEMO_GameMusic = {
 	false,
 	true
 };
-*/
 
 // Inherit the Earth - Wyrmkeep Linux Demo version
 static const GameSoundInfo ITELINDEMO_GameMusic = {
@@ -322,7 +319,12 @@ static const GameSoundInfo IHNM_GameSound = {
 
 static const SAGAGameDescription gameDescriptions[] = {
 	// ITE Section ////////////////////////////////////////////////////////////////////////////////////////////
+
+
 	// ITE Demos //////////////////////////////////////////////////////////////////////////////////////////////
+
+#if 0
+	// Based on a very early version of the engine. Not supported yet
 
 	// Inherit the earth - DOS Demo version
 	// sound unchecked
@@ -354,16 +356,50 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		NULL,
 	},
+#endif
 
-	// Inherit the earth - MAC Demo version 1 and 2
-	// Demo 1 has normal scenes, demo 2 has scene substitutes but the files are the same (apart from musicd.rsc)
+	// Inherit the earth - MAC Demo version
 	{
 		{
 			"ite",
-			"Demo 1/2",
+			"Demo 2",
 			{
-	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08", -1},
-	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b", -1},
+	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08", 1865461},
+	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b", 70083},
+	//{"soundsd.rsc",		GAME_SOUNDFILE,		"b3a831fbed337d1f1300fee1dd474f6c", -1},
+	//{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
+	//{"musicd.rsc",		GAME_MUSICFILE,		"495bdde51fd9f4bea2b9c911091b1ab2", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			Common::ADGF_DEMO
+		},
+		GType_ITE,
+		GID_ITE_MACDEMO2,
+		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEWINDEMO_GameFonts),
+		ITEWINDEMO_GameFonts,
+		&ITEMACDEMO_GameVoice,
+		&ITEMACDEMO_GameSound,
+		&ITEMACDEMO_GameMusic,
+		ARRAYSIZE(ITEMacPatch_Files),
+		ITEMacPatch_Files,
+	},
+
+#if 0
+	// Currently broken, exiting the faire leads to a crash
+
+	// Inherit the earth - MAC Demo version 1
+	{
+		{
+			"ite",
+			"Demo 1",
+			{
+	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08", 1131098},
+	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b", 38613},
 	//{"soundsd.rsc",		GAME_SOUNDFILE,		"b3a831fbed337d1f1300fee1dd474f6c", -1},
 	//{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
 	//{"musicd.rsc",		GAME_MUSICFILE,		"1a91cd60169f367ecb6c6e058d899b2f", -1},
@@ -386,20 +422,19 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
+#endif
 
 	// Inherit the earth - Win32 Demo version 2/3, Linux Demo version
 	// Win32 Version 3 and Linux Demo version have digital music, Win32 version 2 has MIDI music
-	// These demos have scene substitutes, and can only be distinguished from Win32 demo 1 (below)
-	// from soundsd.rsc and voicesd.rsc
 	{
 		{
 			"ite",
 			"Win Demo 2/3, Linux Demo",
 			{
-	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", -1},
-	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", -1},
-	{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c", -1},
-	{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
+	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", 1951395},
+	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", 70051},
+	//{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c", -1},
+	//{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
 	//{"musicd.rsc",		GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4", -1},
 	{ NULL, 0, NULL, 0}
 			},
@@ -421,18 +456,19 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEPatch_Files,
 	},
 
+#if 0
+	// Currently broken, exiting the faire leads to a crash
+
 	// Inherit the earth - Win32 Demo version 1
-	// Demo version 1 does not have scene substitutes, and can only be distinguished from demo 2/3
-	// from soundsd.rsc and voicesd.rsc
 	{
 		{
 			"ite",
 			"Demo 1",
 			{
-	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", -1},
-	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", -1},
-	{"soundsd.rsc",		GAME_SOUNDFILE,		"a741139dd7365a13f463cd896ff9969a", -1},
-	{"voicesd.rsc",		GAME_VOICEFILE,		"0759eaf5b64ae19fd429920a70151ad3", -1},
+	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", 1327323},
+	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", 38613},
+	//{"soundsd.rsc",		GAME_SOUNDFILE,		"a741139dd7365a13f463cd896ff9969a", -1},
+	//{"voicesd.rsc",		GAME_VOICEFILE,		"0759eaf5b64ae19fd429920a70151ad3", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -452,6 +488,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
+#endif
+
+	// TODO: Add Amiga demos here (not supported yet)
+
 
 	// ITE Mac versions ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -517,7 +557,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEMacPatch_Files,
 	},
 
-	// ITE CD versions ////////////////////////////////////////////////////////////////////////////////////////
+
+	// ITE PC CD versions //////////////////////////////////////////////////////////////////////////////////////
 
 	// Inherit the earth - Wyrmkeep combined Windows/Mac/Linux CD
 
@@ -647,6 +688,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+
 	// ITE floppy versions ////////////////////////////////////////////////////////////////////////////////////
 
 	// Inherit the earth - German Floppy version
@@ -706,6 +748,12 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
+
+
+	// ITE Amiga versions /////////////////////////////////////////////////////////////////////////////////////
+
+	// TODO: Add the Amiga versions here (not supported yet)
+
 
 	// IHNM Section ///////////////////////////////////////////////////////////////////////////////////////////
 

@@ -119,7 +119,9 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 			offset = readS.readUint16();
 
 		if (offset >= spriteListLength) {
-			error("Sprite::loadList offset exceed");
+			// ITE Mac demos throw this warning
+			warning("Sprite::loadList offset exceeded");
+			return;			
 		}
 
 		spritePointer = spriteListData;
