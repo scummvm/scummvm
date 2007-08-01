@@ -750,6 +750,10 @@ void Script::whichObject(const Point& mousePoint) {
 	_leftButtonVerb = _currentVerb;
 	newRightButtonVerb = getVerbType(kVerbNone);
 
+	// _protagonist can be null while loading a game from the command line
+	if (_vm->_actor->_protagonist == NULL)
+		return;
+
 	if (_vm->_actor->_protagonist->_currentAction != kActionWalkDir) {
 		if (_vm->_scene->getHeight() >= mousePoint.y) {
 			newObjectId = _vm->_actor->hitTest(mousePoint, true);

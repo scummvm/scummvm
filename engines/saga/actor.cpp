@@ -897,7 +897,9 @@ void Actor::updateActorsScene(int actorsEntrance) {
 		}
 	}
 
-	assert(_protagonist);
+	// _protagonist can be null while loading a game from the command line
+	if (_protagonist == NULL)
+		return;
 
 	if ((actorsEntrance >= 0) && (_vm->_scene->_entryList.entryListCount > 0)) {
 		if (_vm->_scene->_entryList.entryListCount <= actorsEntrance) {
