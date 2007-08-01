@@ -364,7 +364,6 @@ int Events::handleOneShot(Event *event) {
 		const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
 
 		Surface *bgSurface = _vm->_render->getBackGroundSurface();
-		const Rect rect(width, height);
 
 		bgSurface->blit(rect, buf);
 		_vm->_frameCount++;
