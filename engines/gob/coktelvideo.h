@@ -225,7 +225,7 @@ protected:
 
 	uint16 _soundFlags;
 	int16 _soundFreq;
-	uint16 _soundSliceSize;
+	int16 _soundSliceSize;
 	int16 _soundSlicesCount;
 	uint16 _soundSliceLength;
 
@@ -285,14 +285,27 @@ protected:
 		~Frame() { delete[] parts; }
 	} PACKED_STRUCT;
 
+	static const uint16 _tableDPCM[128];
+
 	bool _hasVideo;
+
 	uint16 _partsPerFrame;
 	Frame *_frames;
+
+	byte _soundBytesPerSample;
+	byte _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
 
 	void clear(bool del = true);
 
 	State processFrame(uint16 frame);
 	uint32 renderFrame(int16 left, int16 top, int16 right, int16 bottom);
+
+	void emptySoundSlice(uint32 size);
+	void soundSlice8bit(uint32 size);
+	void soundSlice16bit(uint32 size, int16 &init);
+	void filledSoundSlice(uint32 size);
+	void filledSoundSlices(uint32 size, uint32 mask);
+	void deDPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n);
 };
 
 } // End of namespace Gob
