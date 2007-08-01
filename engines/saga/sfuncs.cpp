@@ -1418,7 +1418,6 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 
 void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
 	int stringId;
-	//Surface *backBuffer = _vm->_gfx->getBackBuffer();
 	static PalEntry cur_pal[PAL_ENTRIES];
 	PalEntry *pal;
 	Event event;
