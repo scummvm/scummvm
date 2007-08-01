@@ -30,6 +30,8 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "backends/file/base-file.h"
+//#include "backends/factories/fs-factory-maker.cpp"
 
 class FilesystemNode;
 
@@ -37,6 +39,9 @@ namespace Common {
 
 class File : public SeekableReadStream, public WriteStream {
 protected:
+	/** File handle to the actual file; 0 if no file is open. */
+	//BaseFile *_test;
+	
 	/** File handle to the actual file; 0 if no file is open. */
 	void *_handle;
 
@@ -52,7 +57,7 @@ private:
 	// code that accidentally copied File objects tended to break in strange
 	// ways.
 	File(const File &f);
-	File &operator  =(const File &f);
+	File &operator =(const File &f);
 
 public:
 	enum AccessMode {

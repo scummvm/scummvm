@@ -46,7 +46,7 @@ protected:
 	friend class FilesystemNode;
 	typedef Common::String String;
 	typedef FilesystemNode::ListMode ListMode;
-
+	
 	/**
 	 * Returns the child node with the given name. If no child with this name
 	 * exists, returns 0. When called on a non-directory node, it should
@@ -77,7 +77,7 @@ public:
 	 * Destructor.
 	 */
 	virtual ~AbstractFilesystemNode() {}
-
+	
 	/*
 	 * Indicates whether the object refered by this path exists in the filesystem or not.
 	 */

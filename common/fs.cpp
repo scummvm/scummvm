@@ -25,7 +25,7 @@
 #include "common/stdafx.h"
 #include "common/util.h"
 #include "backends/fs/abstract-fs.h"
-#include "backends/fs/fs-factory-maker.cpp"
+#include "backends/factories/fs-factory-maker.cpp"
 
 /*
  * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
