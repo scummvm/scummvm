@@ -52,9 +52,9 @@ static const PlainGameDescriptor gobGames[] = {
 	{"ween", "Ween: The Prophecy"},
 	{"bargon", "Bargon Attack"},
 	{"ajworld", "A.J's World of Discovery"},
-	{"lostintime", "Lost in Time"},
 	{"gob3", "Goblins Quest 3"},
 	{"gob3cd", "Goblins Quest 3 CD"},
+	{"lostintime", "Lost in Time"},
 	{"inca2", "Inca II: Wiracocha"},
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 //	{"dynasty", "The Last Dynasty"},
@@ -871,7 +871,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeLostInTime,
 		kFeaturesAdlib,
 		"intro"
 	},
@@ -884,7 +884,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeLostInTime,
 		kFeaturesCD,
 		"intro"
 	},
@@ -897,7 +897,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeLostInTime,
 		kFeaturesCD,
 		"intro"
 	},
@@ -910,7 +910,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeLostInTime,
 		kFeaturesCD,
 		"intro"
 	},
@@ -923,7 +923,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeLostInTime,
 		kFeaturesCD,
 		"intro"
 	},
@@ -936,7 +936,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeLostInTime,
 		kFeaturesCD,
 		"intro"
 	},
@@ -949,7 +949,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeLostInTime,
 		kFeaturesCD,
 		"intro"
 	},

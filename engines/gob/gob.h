@@ -85,7 +85,8 @@ enum GameType {
 	kGameTypeGob3,
 	kGameTypeWoodruff,
 	kGameTypeBargon,
-	kGameTypeWeen
+	kGameTypeWeen,
+	kGameTypeLostInTime
 };
 
 enum Features {

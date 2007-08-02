@@ -310,6 +310,20 @@ bool GobEngine::initGameParts() {
 			_saveLoad = new SaveLoad_v3(this, _targetName.c_str());
 			break;
 
+		case kGameTypeLostInTime:
+			_init = new Init_v3(this);
+			_video = new Video_v2(this);
+			_inter = new Inter_v3(this);
+			_parse = new Parse_v2(this);
+			_mult = new Mult_v2(this);
+			_draw = new Draw_v2(this);
+			_game = new Game_v2(this);
+			_map = new Map_v2(this);
+			_goblin = new Goblin_v3(this);
+			_scenery = new Scenery_v2(this);
+			_saveLoad = new SaveLoad_v3(this, _targetName.c_str(), 4768, 0, 50);
+			break;
+
 		case kGameTypeWoodruff:
 			_init = new Init_v3(this);
 			_video = new Video_v2(this);

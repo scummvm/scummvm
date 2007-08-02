@@ -136,13 +136,18 @@ class SaveLoad_v3 : public SaveLoad_v2 {
 public:
 	virtual SaveType getSaveType(const char *fileName);
 
-	SaveLoad_v3(GobEngine *vm, const char *targetName);
+	SaveLoad_v3(GobEngine *vm, const char *targetName, uint32 screenshotSize = 19968,
+			uint32 indexOffset = 40, uint32 screenshotOffset = 80);
 	virtual ~SaveLoad_v3() {}
 
 protected:
 	bool _useScreenshots;
 	bool _firstSizeGame;
 	int8 _saveSlot;
+
+	uint32 _screenshotSize;
+	uint32 _indexOffset;
+	uint32 _screenshotOffset;
 
 	virtual uint32 getSaveGameSize();
 
