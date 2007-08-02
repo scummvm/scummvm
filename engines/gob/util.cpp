@@ -49,6 +49,9 @@ uint32 Util::getTimeKey(void) {
 }
 
 int16 Util::getRandom(int16 max) {
+	if (max == 0)
+		return 0;
+
 	return _vm->_rnd.getRandomNumber(max - 1);
 }
 
