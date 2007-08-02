@@ -257,6 +257,7 @@ void Imd::disableSound() {
 			delete _audioStream;
 
 		_audioStream = 0;
+		_soundStage = 0;
 	}
 	_soundEnabled = false;
 	_mixer = 0;
@@ -526,8 +527,9 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 					_stream->read(soundBuf, dataLength);
 					unsignedToSigned(soundBuf, dataLength);
 
-					_soundStage = 1;
-					startSound = true;
+					if (_soundStage == 1)
+						startSound = true;
+
 					_audioStream->queueBuffer(soundBuf, dataLength);
 				} else
 					_stream->seek(dataLength, SEEK_CUR);
