@@ -49,11 +49,12 @@ static const PlainGameDescriptor gobGames[] = {
 	{"gob1cd", "Gobliiins CD"},
 	{"gob2", "Gobliins 2"},
 	{"gob2cd", "Gobliins 2 CD"},
-	{"gob3", "Goblins Quest 3"},
-	{"gob3cd", "Goblins Quest 3 CD"},
-	{"ajworld", "A.J's World of Discovery"},
 	{"bargon", "Bargon Attack"},
 	{"ween", "Ween: The Prophecy"},
+	{"ajworld", "A.J's World of Discovery"},
+	{"gob3", "Goblins Quest 3"},
+	{"gob3cd", "Goblins Quest 3 CD"},
+	{"inca2", "Inca II: Wiracocha"},
 	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 //	{"dynasty", "The Last Dynasty"},
 	{0, 0}
@@ -1122,6 +1123,71 @@ static const GOBGameDescription gameDescriptions[] = {
 		},
 		kGameTypeGob3,
 		kFeaturesAdlib,
+		"intro"
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "47c3b452767c4f49ea7b109143e77c30", 916828),
+			EN_USA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
+		kFeaturesCD,
+		"intro"
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "47c3b452767c4f49ea7b109143e77c30", 916828),
+			DE_DEU,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
+		kFeaturesCD,
+		"intro"
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "47c3b452767c4f49ea7b109143e77c30", 916828),
+			FR_FRA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
+		kFeaturesCD,
+		"intro"
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "47c3b452767c4f49ea7b109143e77c30", 916828),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
+		kFeaturesCD,
+		"intro"
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "47c3b452767c4f49ea7b109143e77c30", 916828),
+			ES_ESP,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
+		kFeaturesCD,
 		"intro"
 	},
 	{
