@@ -405,23 +405,29 @@ public:
 
 	int hay_sb;
 	int nivel_osc, musica_antes, musica_room;
-	char num_room[20], pantalla_disco[13];
-	char datos_actuales[13];
+	char num_room[20], pantalla_disco[20];
+	char datos_actuales[20];
 	int objs_room;
+	char fondo_y_menu[20];
 
-	char nombre_obj[20][13];
-	char nombre_icono[7][13];
+	char nombre_obj[30][20];
+	char nombre_icono[14][20];
 
-	int num_obj[20], visible[20], espuerta[20];
-	int sitiobj_x[20], sitiobj_y[20], sentidobj[20];
-	int objetos_que_tengo[43];
-	char alapantallakeva[20][13];
-	int x_alakeva[20], y_alakeva[20], sentido_alkeva[20], alapuertakeva[20];
-	int x1[20], y1[20], x2[20], y2[20];
+	int num_obj[40], visible[40], espuerta[40];
+	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
+	int objetos_que_tengo[50];
+	char alapantallakeva[40][20];
+	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
+	int x1[40], y1[40], x2[40], y2[40];
 	int lleva_objeto , objeto_que_lleva;
 	int con_voces;
 	int menu_bar, menu_scr, hay_nombre;
-	char texto_nombre[13];
+	char texto_nombre[20];
+	int frame_ciego;
+	int frame_ronquido;
+	int frame_murcielago;
+	int c_mirar;
+	int c_poder;
 
 	int flags[NUM_BANDERAS];
 
@@ -467,17 +473,88 @@ public:
 	int y_raton_ant;
 	int boton_izq;
 	int boton_dch;
-	int _gameMode;
 
 	bool escoba();
 	void Negro();
+	void habla_vb(char[], char[]);
+	void habla_vbpuerta(char dicho[], char filename[]);
+	void habla_ciego(char[], char[], char[]);
+	void habla_hacker(char[], char[]);
 	void agarra_objeto(int);
+	void anda_parriba();
+	void anda_pabajo();
+	void pon_vb();
+	void lleva_vb(int punto_x);
+	void hipo_sin_nadie(int contador);
+	void abre_puerta(int nflag, int n_puerta);
+	void mapa();
 	void buffer_teclado() { }
-	void animacion_1();
-	bool animacion_2();
+	void animacion_1_1();
+	bool animacion_2_1();
+	void animacion_1_2();
+	void animacion_2_2();
+	void animacion_3_1();
+	void animacion_4_1();
+	void animacion_3_2();
+	void animacion_4_2();
+	void animacion_7();
+	void animacion_8();
+	void animacion_9();
+	void animacion_10();
+	void animacion_11();
+	void animacion_12();
+	void animacion_13();
+	void animacion_14();
+	void animacion_15();
+	void animacion_16();
+	void animacion_17();
+	void animacion_18();
+	void animacion_19();
+	void animacion_20();
+	void animacion_21();
+	void animacion_22();
+	void animacion_23();
+	void animacion_23_anexo();
+	void animacion_23_anexo2();
+	void animacion_24();
+	void animacion_25();
+	void animacion_26();
+	void animacion_27();
+	void animacion_28();
+	void animacion_29();
+	void animacion_30();
+	void animacion_31();
+	void animacion_32();
+	void animacion_33();
+	void animacion_34();
+	void animacion_35();
+	void animacion_36();
+
+	void refresca_1_antes();
+	void refresca_2();
+	void refresca_3();
+	void refresca_3_antes();
+	void refresca_4();
+	void refresca_5();
+	void refresca_5_antes();
+	void refresca_6_antes();
+	void refresca_7_antes();
+	void refresca_9_antes();
+	void refresca_12_antes();
+	void refresca_14_antes();
+	void refresca_15();
+	void refresca_16_antes();
+	void refresca_17_antes();
+	void refresca_17();
+	void refresca_18_antes();
+	void refresca_18();
+	void hare_oscuro();
+
+
 	void sin_verbo();
 	void para_cargar(char[]);
-	void carga_escoba(const char *);
+	void carga_escoba_1(const char *);
+	void carga_escoba_2(const char *);
 	void borra_pantalla();
 	void lleva_al_hare(int, int);
 	void mueve_cursor();
@@ -536,7 +613,7 @@ public:
 	void paleta_hare_claro();
 	void paleta_hare_oscuro();
 	void hare_claro();
-	void actualiza_datos() {}
+	void actualiza_datos();
 	void empieza_andar();
 	void actualiza_refresco();
 	void actualiza_refresco_antes();
@@ -598,8 +675,6 @@ public:
 	void pantalla_62(int);
 	void pantalla_63(int);
 	void conversa(const char *);
-	void animacion_3();
-	void animacion_4();
 	void print_abc_opc(const char *, int, int, int);
 	void responde(int);
 	void habla_borracho(const char *dicho, const char *filename);
