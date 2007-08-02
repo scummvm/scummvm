@@ -58,6 +58,10 @@ SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName) :
 }
 
 SaveType SaveLoad_v3::getSaveType(const char *fileName) {
+	const char *backSlash;
+	if ((backSlash = strrchr(fileName, '\\')))
+		fileName = backSlash + 1;
+
 	if (!scumm_stricmp(fileName, "cat.inf"))
 		return kSaveGame;
 	if (!scumm_stricmp(fileName, "ima.inf"))
