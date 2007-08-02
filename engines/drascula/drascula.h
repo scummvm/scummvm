@@ -487,7 +487,7 @@ public:
 	void elige_en_barra();
 	bool comprueba1();
 	void comprueba2();
-	byte getscan();
+	Common::KeyCode getscan();
 	void elige_verbo(int);
 	void mesa();
 	void saves();

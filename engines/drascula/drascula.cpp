@@ -514,7 +514,7 @@ bucles:
 	else
 		menu_bar = 0;
 
-	byte key = getscan();
+	Common::KeyCode key = getscan();
 	if (key == Common::KEYCODE_F1 && menu_scr == 0) {
 		elige_verbo(1);
 		cont_sv = 0;
@@ -1533,7 +1533,7 @@ void DrasculaEngine::comprueba2() {
 	}
 }
 
-byte DrasculaEngine::getscan() {
+Common::KeyCode DrasculaEngine::getscan() {
 	update_events();
 
 	return _keyPressed.keycode;
@@ -3560,7 +3560,7 @@ void DrasculaEngine::cursor_mesa() {
 }
 
 void DrasculaEngine::introduce_nombre() {
-	byte key;
+	Common::KeyCode key;
 	int v = 0, h = 0;
 	char select2[23];
 	strcpy(select2, "                      ");
