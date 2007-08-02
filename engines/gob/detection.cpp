@@ -49,9 +49,10 @@ static const PlainGameDescriptor gobGames[] = {
 	{"gob1cd", "Gobliiins CD"},
 	{"gob2", "Gobliins 2"},
 	{"gob2cd", "Gobliins 2 CD"},
-	{"bargon", "Bargon Attack"},
 	{"ween", "Ween: The Prophecy"},
+	{"bargon", "Bargon Attack"},
 	{"ajworld", "A.J's World of Discovery"},
+	{"lost", "Lost in Time"},
 	{"gob3", "Goblins Quest 3"},
 	{"gob3cd", "Goblins Quest 3 CD"},
 	{"inca2", "Inca II: Wiracocha"},
@@ -858,6 +859,19 @@ static const GOBGameDescription gameDescriptions[] = {
 			Common::ADGF_NO_FLAGS
 		},
 		kGameTypeGob2,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{
+		{
+			"lost",
+			"",
+			AD_ENTRY1s("intro.stk", "7b7f48490dedc8a7cb999388e2fadbe3", 3930674),
+			EN_USA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
 		kFeaturesAdlib,
 		"intro"
 	},

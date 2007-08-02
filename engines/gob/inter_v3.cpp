@@ -594,7 +594,7 @@ void Inter_v3::setupOpcodes() {
 		{NULL, ""},
 		{NULL, ""},
 		{NULL, ""},
-		OPCODE(o2_handleGoblins),
+		{NULL, ""},
 		/* 28 */
 		{NULL, ""},
 		{NULL, ""},

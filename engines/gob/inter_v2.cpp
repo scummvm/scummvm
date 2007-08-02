@@ -1378,7 +1378,7 @@ void Inter_v2::o2_initScreen() {
 	_vm->_global->_fakeVideoMode = videoMode;
 
 	// Some versions require this
-	if (videoMode == 0xD)
+	if ((videoMode == 0xD) || (videoMode == 0x10))
 		videoMode = _vm->_mode;
 
 	if ((videoMode == _vm->_global->_videoMode) && (width == -1))
