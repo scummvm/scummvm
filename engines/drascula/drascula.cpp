@@ -6199,7 +6199,7 @@ void DrasculaEngine::animacion_35() {
 	salir_al_dos(3);
 }
 
-void DrasculaEngine::habla_vb(char dicho[], char filename[]) {
+void DrasculaEngine::habla_vb(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -6272,7 +6272,7 @@ bucless:
 		playmusic(musica_room);
 }
 
-void DrasculaEngine::habla_vbpuerta(char dicho[], char filename[]) {
+void DrasculaEngine::habla_vbpuerta(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -6326,7 +6326,7 @@ bucless:
 		playmusic(musica_room);
 }
 
-void DrasculaEngine::habla_ciego(char dicho[], char filename[], char sincronia[]) {
+void DrasculaEngine::habla_ciego(const char *dicho, const char *filename, const char *sincronia) {
 	byte *num_cara;
 	int p;
 	int pos_ciego[6];
@@ -6339,8 +6339,11 @@ void DrasculaEngine::habla_ciego(char dicho[], char filename[], char sincronia[]
 
 	color_abc(VON_BRAUN);
 
-    for (p = 0; sincronia[p]; p++)
+	// FIXME: We can't do this to a read-only string!
+#if 0
+	for (p = 0; sincronia[p]; p++)
 		sincronia[p] = toupper(sincronia[p]);
+#endif
 
 	p = 0;
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
@@ -6430,7 +6433,7 @@ bucless:
 	}
 }
 
-void DrasculaEngine::habla_hacker(char dicho[], char filename[]) {
+void DrasculaEngine::habla_hacker(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 

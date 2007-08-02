@@ -476,10 +476,10 @@ public:
 
 	bool escoba();
 	void Negro();
-	void habla_vb(char[], char[]);
-	void habla_vbpuerta(char dicho[], char filename[]);
-	void habla_ciego(char[], char[], char[]);
-	void habla_hacker(char[], char[]);
+	void habla_vb(const char *, const char *);
+	void habla_vbpuerta(const char *dicho, const char *filename);
+	void habla_ciego(const char *, const char *, const char *);
+	void habla_hacker(const char *, const char *);
 	void agarra_objeto(int);
 	void anda_parriba();
 	void anda_pabajo();
