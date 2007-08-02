@@ -2000,6 +2000,8 @@ void Script::sfScriptEndVideo(SCRIPTFUNC_PARAMS) {
 
 void Script::sfShowIHNMDemoHelpBg(SCRIPTFUNC_PARAMS) {
 	_ihnmDemoCurrentY = 0;
+	_vm->_scene->_textList.clear();
+	_vm->_interface->setMode(kPanelConverse);
 	_vm->_scene->showPsychicProfile(NULL);
 }
 
@@ -2022,9 +2024,6 @@ void Script::sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS) {
 	textEntry.flags = (FontEffectFlags)(kFontCentered);
 	textEntry.text = thread->_strings->getString(stringId);
 
-	if (_ihnmDemoCurrentY == 0)
-		_vm->_scene->_textList.clear();
-
 	TextListEntry *_psychicProfileTextEntry = _vm->_scene->_textList.addEntry(textEntry);
 
 	event.type = kEvTOneshot;
@@ -2040,7 +2039,6 @@ void Script::sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS) {
 void Script::sfShowIHNMDemoHelpPage(SCRIPTFUNC_PARAMS) {
 	// Note: The IHNM demo changes panel mode to 8 (kPanelProtect in ITE)
 	// when changing pages
-	_vm->_interface->setMode(kPanelConverse);
 	_vm->_interface->setMode(kPanelPlacard);
 	_ihnmDemoCurrentY = 0;
 }
