@@ -467,13 +467,14 @@ public:
 	int y_raton_ant;
 	int boton_izq;
 	int boton_dch;
+	int _gameMode;
 
-	void escoba();
+	bool escoba();
 	void Negro();
 	void agarra_objeto(int);
 	void buffer_teclado() { }
 	void animacion_1();
-	void animacion_2();
+	bool animacion_2();
 	void sin_verbo();
 	void para_cargar(char[]);
 	void carga_escoba(const char *);
@@ -484,7 +485,7 @@ public:
 	void espera_soltar();
 	void MirarRaton();
 	void elige_en_barra();
-	void comprueba1();
+	bool comprueba1();
 	void comprueba2();
 	byte getscan();
 	void elige_verbo(int);
@@ -543,7 +544,7 @@ public:
 	void menu_sin_volcar();
 	void barra_menu();
 	void saca_objeto();
-	void sal_de_la_habitacion(int);
+	bool sal_de_la_habitacion(int);
 	void coge_objeto();
 	void banderas(int);
 	void cursor_mesa();

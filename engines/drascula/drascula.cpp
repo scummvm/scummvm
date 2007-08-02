@@ -82,8 +82,6 @@ DrasculaEngine::DrasculaEngine(OSystem *syst) : Engine(syst) {
 DrasculaEngine::~DrasculaEngine() {
 	salir_al_dos(0);
 
-	free(VGA);
-
 	delete _rnd;
 }
 
@@ -130,68 +128,72 @@ int DrasculaEngine::init() {
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
-	VGA = (byte *)malloc(320 * 200);
-	memset(VGA, 0, 64000);
-
-	lleva_objeto = 0;
-	menu_bar = 0; menu_scr = 0; hay_nombre = 0;
-	frame_y = 0;
-	hare_x = -1; hare_se_mueve = 0; sentido_hare = 3; num_frame = 0; hare_se_ve = 1;
-	comprueba_flags = 1;
-	rompo = 0; rompo2 = 0;
-	anda_a_objeto = 0;
-	paso_x = PASO_HARE_X; paso_y = PASO_HARE_Y;
-	alto_hare = ALTO_PERSONAJE; ancho_hare = ANCHO_PERSONAJE; alto_pies = PIES_HARE;
-	alto_habla = ALTO_HABLA_HARE; ancho_habla = ANCHO_HABLA_HARE;
-	hay_respuesta = 0;
-	conta_ciego_vez = 0;
-	cambio_de_color = 0;
-	rompo_y_salgo = 0;
-	vb_x = 120; sentido_vb = 1; vb_se_mueve = 0; frame_vb = 1;
-	frame_piano = 0;
-	frame_borracho = 0;
-	frame_velas = 0;
-	cont_sv = 0;
-	term_int = 0;
-	num_ejec = 1;
-	cual_ejec = 0; hay_que_load = 0;
-	corta_musica = 0;
-	hay_seleccion = 0;
-	Leng = 0;
-	UsingMem = 0;
-	GlobalSpeed = 0;
-
-
-
-	asigna_memoria();
-	carga_info();
-
-
 	return 0;
 }
 
 
 int DrasculaEngine::go() {
-	lee_dibujos("95.alg");
-	descomprime_dibujo(dir_mesa, 1);
+	_gameMode = 1;
 
-	lee_dibujos("96.alg");
-	descomprime_dibujo(dir_hare_frente, COMPLETA);
-	lee_dibujos("99.alg");
-	descomprime_dibujo(dir_hare_fondo, 1);
-	lee_dibujos("97.alg");
-	descomprime_dibujo(dir_hare_dch, 1);
+	for (;;) {
+		VGA = (byte *)malloc(320 * 200);
+		memset(VGA, 0, 64000);
 
-	strcpy(nombre_icono[1], "look");
-	strcpy(nombre_icono[2], "take");
-	strcpy(nombre_icono[3], "open");
-	strcpy(nombre_icono[4], "close");
-	strcpy(nombre_icono[5], "talk");
-	strcpy(nombre_icono[6], "push");
+		lleva_objeto = 0;
+		menu_bar = 0; menu_scr = 0; hay_nombre = 0;
+		frame_y = 0;
+		hare_x = -1; hare_se_mueve = 0; sentido_hare = 3; num_frame = 0; hare_se_ve = 1;
+		comprueba_flags = 1;
+		rompo = 0; rompo2 = 0;
+		anda_a_objeto = 0;
+		paso_x = PASO_HARE_X; paso_y = PASO_HARE_Y;
+		alto_hare = ALTO_PERSONAJE; ancho_hare = ANCHO_PERSONAJE; alto_pies = PIES_HARE;
+		alto_habla = ALTO_HABLA_HARE; ancho_habla = ANCHO_HABLA_HARE;
+		hay_respuesta = 0;
+		conta_ciego_vez = 0;
+		cambio_de_color = 0;
+		rompo_y_salgo = 0;
+		vb_x = 120; sentido_vb = 1; vb_se_mueve = 0; frame_vb = 1;
+		frame_piano = 0;
+		frame_borracho = 0;
+		frame_velas = 0;
+		cont_sv = 0;
+		term_int = 0;
+		num_ejec = 1;
+		cual_ejec = 0; hay_que_load = 0;
+		corta_musica = 0;
+		hay_seleccion = 0;
+		Leng = 0;
+		UsingMem = 0;
+		GlobalSpeed = 0;
 
-	paleta_hare();
-	escoba();
+		asigna_memoria();
+		carga_info();
 
+		lee_dibujos("95.alg");
+		descomprime_dibujo(dir_mesa, 1);
+
+		lee_dibujos("96.alg");
+		descomprime_dibujo(dir_hare_frente, COMPLETA);
+		lee_dibujos("99.alg");
+		descomprime_dibujo(dir_hare_fondo, 1);
+		lee_dibujos("97.alg");
+		descomprime_dibujo(dir_hare_dch, 1);
+
+		strcpy(nombre_icono[1], "look");
+		strcpy(nombre_icono[2], "take");
+		strcpy(nombre_icono[3], "open");
+		strcpy(nombre_icono[4], "close");
+		strcpy(nombre_icono[5], "talk");
+		strcpy(nombre_icono[6], "push");
+
+		paleta_hare();
+		if (escoba()) {
+			salir_al_dos(0);
+			break;
+		}
+		salir_al_dos(0);
+	}
 	return 0;
 }
 
@@ -203,8 +205,7 @@ void DrasculaEngine::salir_al_dos(int r) {
 	MusicFadeout();
 	stopmusic();
 	libera_memoria();
-	if (r == 2)
-		error("Game reach next segment");
+	free(VGA);
 }
 
 void DrasculaEngine::asigna_memoria() {
@@ -413,7 +414,7 @@ void DrasculaEngine::VUELCA_PANTALLA(int xorg, int yorg, int xdes, int ydes, int
 	_system->updateScreen();
 }
 
-void DrasculaEngine::escoba() {
+bool DrasculaEngine::escoba() {
 	int soc, l, n;
 
 	dir_texto = dir_mesa;
@@ -500,7 +501,8 @@ bucles:
 		elige_en_barra();
 		cont_sv = 0;
 	} else if (boton_izq == 1 && lleva_objeto == 0) {
-		comprueba1();
+		if (comprueba1())
+			return true;
 		cont_sv = 0;
 	} else if (boton_izq == 1 && lleva_objeto == 1) {
 		comprueba2();
@@ -956,7 +958,7 @@ void DrasculaEngine::animacion_1() {
 	descomprime_dibujo(dir_hare_fondo, 1);
 }
 
-void DrasculaEngine::animacion_2() {
+bool DrasculaEngine::animacion_2() {
 	int l;
 
 	lleva_al_hare(231, 91);
@@ -1160,7 +1162,9 @@ void DrasculaEngine::animacion_2() {
 		FundeAlNegro(0);
 		break;
 	}
-	salir_al_dos(2);
+
+	_gameMode = 2;
+	return true;
 }
 
 void DrasculaEngine::sin_verbo() {
@@ -1455,7 +1459,7 @@ void DrasculaEngine::elige_en_barra() {
 		elige_verbo(num_verbo);
 }
 
-void DrasculaEngine::comprueba1() {
+bool DrasculaEngine::comprueba1() {
 	int l;
 
 	if (menu_scr == 1)
@@ -1464,7 +1468,8 @@ void DrasculaEngine::comprueba1() {
 		for (l = 0; l < objs_room; l++) {
 			if (x_raton >= x1[l] && y_raton >= y1[l]
 					&& x_raton <= x2[l] && y_raton <= y2[l] && rompo == 0) {
-				sal_de_la_habitacion(l);
+				if (sal_de_la_habitacion(l))
+					return true;
 				if (rompo == 1)
 					break;
 			}
@@ -1503,6 +1508,8 @@ void DrasculaEngine::comprueba1() {
 		}
 		rompo = 0;
 	}
+
+	return false;
 }
 
 void DrasculaEngine::comprueba2() {
@@ -3439,7 +3446,7 @@ void DrasculaEngine::saca_objeto() {
 		elige_objeto(h);
 }
 
-void DrasculaEngine::sal_de_la_habitacion(int l) {
+bool DrasculaEngine::sal_de_la_habitacion(int l) {
 	char salgo[13];
 
 	if (num_obj[l] == 105 && flags[0] == 0)
@@ -3459,7 +3466,8 @@ void DrasculaEngine::sal_de_la_habitacion(int l) {
 			musica_antes = musica_room;
 
 			if (num_obj[l] == 105)
-				animacion_2();
+				if (animacion_2())
+					return true;
 			borra_pantalla();
 			strcpy(salgo, alapantallakeva[l]);
 			strcat(salgo, ".ald");
@@ -3467,6 +3475,8 @@ void DrasculaEngine::sal_de_la_habitacion(int l) {
 			carga_escoba(salgo);
 		}
 	}
+
+	return false;
 }
 
 void DrasculaEngine::coge_objeto() {
