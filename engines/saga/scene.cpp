@@ -1411,6 +1411,8 @@ void Scene::showPsychicProfile(const char *text) {
 
 	q_event = _vm->_events->chain(q_event, &event);
 
+	_vm->_scene->_textList.clear();
+
 	if (text != NULL) {
 		textHeight = _vm->_font->getHeight(kKnownFontVerb, text, 226, kFontCentered);
 
@@ -1424,7 +1426,6 @@ void Scene::showPsychicProfile(const char *text) {
 		textEntry.flags = (FontEffectFlags)(kFontCentered);
 		textEntry.text = text;
 
-		_vm->_scene->_textList.clear();
 		TextListEntry *_psychicProfileTextEntry = _vm->_scene->_textList.addEntry(textEntry);
 
 		event.type = kEvTOneshot;
@@ -1455,8 +1456,9 @@ void Scene::showPsychicProfile(const char *text) {
 }
 
 void Scene::clearPsychicProfile() {
-	if (_vm->_interface->getMode() == kPanelPlacard) {
+	if (_vm->_interface->getMode() == kPanelPlacard || _vm->getGameId() == GID_IHNM_DEMO) {
 		_vm->_scene->clearPlacard();
+		_vm->_scene->_textList.clear();
 		_vm->_actor->showActors(false);
 		_vm->_gfx->restorePalette();
 		_vm->_scene->restoreScene();

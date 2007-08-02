@@ -694,14 +694,18 @@ bool Interface::processAscii(uint16 ascii) {
 		} else {
 			// In the IHNM demo, this panel mode is set by the scripts
 			// to flip through the pages of the help system
-			// Any keypress here returns the user back to the game
-			_vm->_scene->clearPsychicProfile();
 		}
 		break;
 	case kPanelPlacard:
 		if (_vm->getGameType() == GType_IHNM) {
 			// Any keypress here returns the user back to the game
-			_vm->_scene->clearPsychicProfile();
+			if (_vm->getGameId() != GID_IHNM_DEMO) {
+				_vm->_scene->clearPsychicProfile();
+			} else {
+				setMode(kPanelConverse);
+				_vm->_scene->_textList.clear();
+				_vm->_script->wakeUpThreads(kWaitTypeDelay);
+			}
 		}
 		break;
 	}
@@ -1770,8 +1774,15 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 	case kPanelPlacard:
 		if (_vm->getGameType() == GType_IHNM) {
 			// Any mouse click here returns the user back to the game
-			if (updateFlag & UPDATE_MOUSECLICK)
-				_vm->_scene->clearPsychicProfile();
+			if (updateFlag & UPDATE_MOUSECLICK) {
+				if (_vm->getGameId() != GID_IHNM_DEMO) {
+					_vm->_scene->clearPsychicProfile();
+				} else {
+					setMode(kPanelConverse);
+					_vm->_scene->_textList.clear();
+					_vm->_script->wakeUpThreads(kWaitTypeDelay);
+				}
+			}
 		}
 		break;
 

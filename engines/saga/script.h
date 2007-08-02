@@ -592,9 +592,9 @@ private:
 	void sfScriptStartVideo(SCRIPTFUNC_PARAMS);
 	void sfScriptReturnFromVideo(SCRIPTFUNC_PARAMS);
 	void sfScriptEndVideo(SCRIPTFUNC_PARAMS);
-	void sfShowIHNMDemoHelp(SCRIPTFUNC_PARAMS);
-	void sfShowIHNMDemoHelpText(SCRIPTFUNC_PARAMS);
-	void sfClearIHNMDemoHelpText(SCRIPTFUNC_PARAMS);
+	void sfShowIHNMDemoHelpBg(SCRIPTFUNC_PARAMS);
+	void sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS);
+	void sfShowIHNMDemoHelpPage(SCRIPTFUNC_PARAMS);
 	void sfGetPoints(SCRIPTFUNC_PARAMS);
 	void sfSetGlobalFlag(SCRIPTFUNC_PARAMS);
 	void sf92(SCRIPTFUNC_PARAMS);

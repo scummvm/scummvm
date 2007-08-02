@@ -225,9 +225,9 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfScriptReturnFromVideo),
 		OPCODE(sfScriptEndVideo),
 		OPCODE(sfSetActorZ),
-		OPCODE(sfShowIHNMDemoHelp),
-		OPCODE(sfShowIHNMDemoHelpText),
-		OPCODE(sfClearIHNMDemoHelpText),
+		OPCODE(sfShowIHNMDemoHelpBg),
+		OPCODE(sfAddIHNMDemoHelpTextLine),
+		OPCODE(sfShowIHNMDemoHelpPage),
 		OPCODE(sfVstopFX),
 		OPCODE(sfVstopLoopedFX),
 		OPCODE(sf92),	// only used in the demo version of IHNM
@@ -1998,14 +1998,12 @@ void Script::sfScriptEndVideo(SCRIPTFUNC_PARAMS) {
 	_vm->_anim->endVideo();
 }
 
-void Script::sfShowIHNMDemoHelp(SCRIPTFUNC_PARAMS) {
-	thread->wait(kWaitTypePlacard);
-
+void Script::sfShowIHNMDemoHelpBg(SCRIPTFUNC_PARAMS) {
 	_ihnmDemoCurrentY = 0;
 	_vm->_scene->showPsychicProfile(NULL);
 }
 
-void Script::sfShowIHNMDemoHelpText(SCRIPTFUNC_PARAMS) {
+void Script::sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS) {
 	int stringId, textHeight;
 	TextListEntry textEntry;
 	Event event;
@@ -2039,17 +2037,11 @@ void Script::sfShowIHNMDemoHelpText(SCRIPTFUNC_PARAMS) {
 	_ihnmDemoCurrentY += 10;
 }
 
-void Script::sfClearIHNMDemoHelpText(SCRIPTFUNC_PARAMS) {
-	thread->wait(kWaitTypePlacard);
-
-	warning("TODO: sfClearIHNMDemoHelpText");
-
-	// This is called a while after the psychic profile is
-	// opened in the IHNM demo, to flip through the help system pages
-	_vm->_scene->clearPlacard();
-	// FIXME: The demo uses mode 8 when changing pages
-	//_vm->_interface->setMode(8);
-	_vm->_interface->setMode(7);
+void Script::sfShowIHNMDemoHelpPage(SCRIPTFUNC_PARAMS) {
+	// Note: The IHNM demo changes panel mode to 8 (kPanelProtect in ITE)
+	// when changing pages
+	_vm->_interface->setMode(kPanelConverse);
+	_vm->_interface->setMode(kPanelPlacard);
 	_ihnmDemoCurrentY = 0;
 }
 
