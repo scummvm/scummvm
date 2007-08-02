@@ -76,9 +76,11 @@ struct SoundInstrument {
 struct IIgsSampleHeader {
 	uint16 type;
 	uint8  pitch; ///< Logarithmic, base is 2**(1/12), unknown multiplier (Possibly in range 1040-1080)
-	uint8  unknown[5];
+	uint8  unknown_Ofs3_Len1;
+	uint8  volume; ///< Current guess: Logarithmic in 6 dB steps
+	uint8  unknown_Ofs5_Len3[3];
 	uint16 size;
-	uint8  unknown2[44];
+	uint8  unknown_Ofs10_Len44[44];
 };
 
 #if 0
@@ -101,9 +103,11 @@ bool readIIgsSampleHeader(IIgsSampleHeader &header, Common::SeekableReadStream &
 		// Gold Rush's sample resource 60 (A looping sound of horse's hoof hitting
 		// pavement) is the only one that has 0x7F at header offset 3, all other
 		// samples have 0x00 there.
-		stream.read(header.unknown, 5);
+		header.unknown_Ofs3_Len1 = stream.readByte();
+		header.volume = stream.readByte();
+		stream.read(header.unknown_Ofs5_Len3, 3);
 		header.size = stream.readUint16LE();
-		stream.read(header.unknown2, 44);
+		stream.read(header.unknown_Ofs10_Len44, 44);
 		return !stream.ioFailed();
 	} else // No room in the stream for the header, so failure
 		return false;
