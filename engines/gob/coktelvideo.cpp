@@ -1279,7 +1279,7 @@ void Vmd::deDPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n) {
 		else
 			s += _tableDPCM[dataBuf[i]];
 
-		s = CLIP(s, -32768, 32767);
+		s = CLIP<int32>(s, -32768, 32767);
 		*out++ = TO_BE_16(s);
 	}
 }
