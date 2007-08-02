@@ -72,15 +72,13 @@ struct SoundInstrument {
 	struct SoundWavelist wbl[8];
 };
 
-struct SoundIIgsSample {
-	uint8 typeLo;
-	uint8 typeHi;
-	uint8 srateLo;
-	uint8 srateHi;
-	uint16 unknown[2];
-	uint8 sizeLo;
-	uint8 sizeHi;
-	uint16 unknown2[13];
+#define IIGS_SAMPLE_HEADER_SIZE 54
+struct IIgsSampleHeader {
+	uint16 type;
+	uint8  pitch; ///< Logarithmic, base is 2**(1/12), unknown multiplier (Possibly in range 1040-1080)
+	uint8  unknown[5];
+	uint16 size;
+	uint8  unknown2[44];
 };
 
 #if 0
@@ -88,6 +86,82 @@ static SoundInstrument *instruments;
 static int numInstruments;
 static uint8 *wave;
 #endif
+
+/**
+ * Read an Apple IIGS AGI sample header from the given stream.
+ * @param header The header to which to write the data.
+ * @param stream The source stream from which to read the data.
+ * @return True if successful, false otherwise.
+ */
+bool readIIgsSampleHeader(IIgsSampleHeader &header, Common::SeekableReadStream &stream) {
+	// Check there's room in the stream for the header
+	if (stream.size() - stream.pos() >= IIGS_SAMPLE_HEADER_SIZE) {
+		header.type  = stream.readUint16LE();
+		header.pitch = stream.readByte();
+		// Gold Rush's sample resource 60 (A looping sound of horse's hoof hitting
+		// pavement) is the only one that has 0x7F at header offset 3, all other
+		// samples have 0x00 there.
+		stream.read(header.unknown, 5);
+		header.size = stream.readUint16LE();
+		stream.read(header.unknown2, 44);
+		return !stream.ioFailed();
+	} else // No room in the stream for the header, so failure
+		return false;
+}
+
+/**
+ * Load an Apple IIGS AGI sample resource from the given stream and
+ * create an AudioStream out of it.
+ *
+ * @param stream The source stream.
+ * @param resnum Sound resource number. Optional. Used for error messages.
+ * @return A non-null AudioStream pointer if successful, NULL otherwise.
+ * @note In case of failure (i.e. NULL is returned), stream is reset back
+ *       to its original position and its I/O failed -status is cleared.
+ * TODO: Add better handling of invalid resource number when printing error messages.
+ * TODO: Add support for looping sounds.
+ * FIXME: Fix sample rate calculation, it's probably not accurate at the moment.
+ */
+Audio::AudioStream *makeIIgsSampleStream(Common::SeekableReadStream &stream, int resnum = -1) {
+	const uint32 startPos = stream.pos();
+	IIgsSampleHeader header;
+	Audio::AudioStream *result = NULL;
+	bool readHeaderOk = readIIgsSampleHeader(header, stream);
+
+	// Check that the header was read ok and that it's of the correct type
+	// and that there's room for the sample data in the stream.
+	if (readHeaderOk && header.type == AGI_SOUND_SAMPLE) { // An Apple IIGS AGI sample resource
+		uint32 tailLen = stream.size() - stream.pos();
+		if (tailLen < header.size) { // Check if there's no room for the sample data in the stream
+			// Apple IIGS Manhunter I: Sound resource 16 has only 16074 bytes
+			// of sample data although header says it should have 16384 bytes.
+			warning("Apple IIGS sample (%d) too short (%d bytes. Should be %d bytes). Using the part that's left", resnum, tailLen, header.size);
+			header.size = (uint16) tailLen; // Use the part that's left
+		}
+		if (header.pitch > 0x7F) { // Check if the pitch is invalid
+			warning("Apple IIGS sample (%d) has too high pitch (0x%02x)", resnum, header.pitch);
+			header.pitch &= 0x7F; // Apple IIGS AGI probably did it this way too
+		}
+		// Allocate memory for the sample data and read it in
+		byte *sampleData = (byte *) malloc(header.size);
+		uint32 readBytes = stream.read(sampleData, header.size);
+		if (readBytes == header.size) { // Check that we got all the data we requested
+			// Make an audio stream from the mono, 8 bit, unsigned input data
+			byte flags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED;
+			int rate = (int) (1076 * pow(pow(2, 1/12.0), header.pitch));
+			result = Audio::makeLinearInputStream(sampleData, header.size, rate, flags, 0, 0);
+		}
+	}
+
+	// If couldn't make a sample out of the input stream for any reason then
+	// rewind back to stream's starting position and clear I/O failed -status.
+	if (result == NULL) {
+		stream.seek(startPos);
+		stream.clearIOFailed();
+	}
+
+	return result;
+}
 
 #endif
 
@@ -169,7 +243,7 @@ void SoundMgr::unloadSound(int resnum) {
 }
 
 void SoundMgr::decodeSound(int resnum) {
-#ifdef USE_IIGS_SOUND
+#if 0
 	int type, size;
 	int16 *buf;
 	uint8 *src;
@@ -190,12 +264,12 @@ void SoundMgr::decodeSound(int resnum) {
 		_vm->_game.sounds[resnum].rdata = (uint8 *) buf;
 		free(src);
 	}
-#endif				/* USE_IIGS_SOUND */
+#endif
 }
 
 void SoundMgr::startSound(int resnum, int flag) {
 	int i, type;
-#ifdef USE_IIGS_SOUND
+#if 0
 	struct SoundIIgsSample *smp;
 #endif
 
@@ -218,7 +292,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 	song = (uint8 *)_vm->_game.sounds[resnum].rdata;
 
 	switch (type) {
-#ifdef USE_IIGS_SOUND
+#if 0
 	case AGI_SOUND_SAMPLE:
 		debugC(3, kDebugLevelSound, "IIGS sample");
 		smp = (struct SoundIIgsSample *)_vm->_game.sounds[resnum].rdata;
