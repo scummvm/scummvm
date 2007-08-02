@@ -1332,6 +1332,45 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
+	{ // Supplied by Hkz on #scummvm
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "f4c344023b073782d2fddd9d8b515318", 7069736),
+			IT_ITA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
+	{ // Supplied by Hkz on #scummvm
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "f4c344023b073782d2fddd9d8b515318", 7069736),
+			DE_DEU,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
+	{ // Supplied by Hkz on #scummvm
+		{
+			"woodruff",
+			"",
+			AD_ENTRY1s("intro.stk", "f4c344023b073782d2fddd9d8b515318", 7069736),
+			FR_FRA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeWoodruff,
+		kFeatures640,
+		"intro"
+	},
 	/*{
 		{
 			"dynasty",
