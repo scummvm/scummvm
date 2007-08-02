@@ -137,7 +137,7 @@ public:
 	virtual SaveType getSaveType(const char *fileName);
 
 	SaveLoad_v3(GobEngine *vm, const char *targetName, uint32 screenshotSize = 19968,
-			uint32 indexOffset = 40, uint32 screenshotOffset = 80);
+			int32 indexOffset = 40, int32 screenshotOffset = 80);
 	virtual ~SaveLoad_v3() {}
 
 protected:

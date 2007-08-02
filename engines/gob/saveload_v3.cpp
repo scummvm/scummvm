@@ -35,7 +35,7 @@
 namespace Gob {
 
 SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName,
-		uint32 screenshotSize, uint32 indexOffset, uint32 screenshotOffset) :
+		uint32 screenshotSize, int32 indexOffset, int32 screenshotOffset) :
 	SaveLoad_v2(vm, targetName) {
 
 	_screenshotSize = screenshotSize;
