@@ -444,6 +444,7 @@ private:
 	int _stickyVerb;
 	int _leftButtonVerb;
 	int _rightButtonVerb;
+	int _ihnmDemoCurrentY;
 
 public:
 	uint16 _pendingObject[2];

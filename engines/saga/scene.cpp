@@ -1424,6 +1424,7 @@ void Scene::showPsychicProfile(const char *text) {
 		textEntry.flags = (FontEffectFlags)(kFontCentered);
 		textEntry.text = text;
 
+		_vm->_scene->_textList.clear();
 		TextListEntry *_psychicProfileTextEntry = _vm->_scene->_textList.addEntry(textEntry);
 
 		event.type = kEvTOneshot;

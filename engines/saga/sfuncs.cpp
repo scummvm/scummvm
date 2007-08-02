@@ -2001,6 +2001,7 @@ void Script::sfScriptEndVideo(SCRIPTFUNC_PARAMS) {
 void Script::sfShowIHNMDemoHelp(SCRIPTFUNC_PARAMS) {
 	thread->wait(kWaitTypePlacard);
 
+	_ihnmDemoCurrentY = 0;
 	_vm->_scene->showPsychicProfile(NULL);
 }
 
@@ -2011,9 +2012,6 @@ void Script::sfShowIHNMDemoHelpText(SCRIPTFUNC_PARAMS) {
 
 	stringId = thread->pop();
 
-	// FIXME: This is called multiple times in a row, one for each page of the help screens. We should wait
-	// somehow before showing the next page
-
 	textHeight = _vm->_font->getHeight(kKnownFontVerb, thread->_strings->getString(stringId), 226, kFontCentered);
 
 	textEntry.knownColor = kKnownColorBlack;
@@ -2021,10 +2019,13 @@ void Script::sfShowIHNMDemoHelpText(SCRIPTFUNC_PARAMS) {
 	textEntry.rect.left = 245;
 	textEntry.rect.setHeight(210 + 76);
 	textEntry.rect.setWidth(226);
-	textEntry.rect.top = 210 - textHeight;
+	textEntry.rect.top = 76 + _ihnmDemoCurrentY;
 	textEntry.font = kKnownFontVerb;
 	textEntry.flags = (FontEffectFlags)(kFontCentered);
 	textEntry.text = thread->_strings->getString(stringId);
+
+	if (_ihnmDemoCurrentY == 0)
+		_vm->_scene->_textList.clear();
 
 	TextListEntry *_psychicProfileTextEntry = _vm->_scene->_textList.addEntry(textEntry);
 
@@ -2034,16 +2035,22 @@ void Script::sfShowIHNMDemoHelpText(SCRIPTFUNC_PARAMS) {
 	event.data = _psychicProfileTextEntry;
 
 	_vm->_events->queue(&event);
+
+	_ihnmDemoCurrentY += 10;
 }
 
 void Script::sfClearIHNMDemoHelpText(SCRIPTFUNC_PARAMS) {
 	thread->wait(kWaitTypePlacard);
 
+	warning("TODO: sfClearIHNMDemoHelpText");
+
 	// This is called a while after the psychic profile is
 	// opened in the IHNM demo, to flip through the help system pages
-	_vm->_scene->clearPsychicProfile();
+	_vm->_scene->clearPlacard();
 	// FIXME: The demo uses mode 8 when changing pages
 	//_vm->_interface->setMode(8);
+	_vm->_interface->setMode(7);
+	_ihnmDemoCurrentY = 0;
 }
 
 void Script::sfVstopFX(SCRIPTFUNC_PARAMS) {
