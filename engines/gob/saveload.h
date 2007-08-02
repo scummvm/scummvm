@@ -146,8 +146,8 @@ protected:
 	int8 _saveSlot;
 
 	uint32 _screenshotSize;
-	uint32 _indexOffset;
-	uint32 _screenshotOffset;
+	int32 _indexOffset;
+	int32 _screenshotOffset;
 
 	virtual uint32 getSaveGameSize();
 
