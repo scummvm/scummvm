@@ -225,9 +225,9 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfScriptReturnFromVideo),
 		OPCODE(sfScriptEndVideo),
 		OPCODE(sfSetActorZ),
-		OPCODE(sf87),
-		OPCODE(sf88),
-		OPCODE(sf89),
+		OPCODE(sfShowIHNMDemoHelp),
+		OPCODE(sfShowIHNMDemoHelpText),
+		OPCODE(sfClearIHNMDemoHelpText),
 		OPCODE(sfVstopFX),
 		OPCODE(sfVstopLoopedFX),
 		OPCODE(sf92),	// only used in the demo version of IHNM
@@ -1417,95 +1417,10 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
-	int stringId, textHeight;
-	static PalEntry cur_pal[PAL_ENTRIES];
-	PalEntry *pal;
-	TextListEntry textEntry;
-	Event event;
-	Event *q_event;
-
 	thread->wait(kWaitTypePlacard);
 
-	_vm->_interface->rememberMode();
-	_vm->_interface->setMode(kPanelPlacard);
-	_vm->_gfx->savePalette();
-
-	stringId = thread->pop();
-
-	event.type = kEvTOneshot;
-	event.code = kCursorEvent;
-	event.op = kEventHide;
-
-	q_event = _vm->_events->queue(&event);
-
-	_vm->_gfx->getCurrentPal(cur_pal);
-
-	event.type = kEvTImmediate;
-	event.code = kPalEvent;
-	event.op = kEventPalToBlack;
-	event.time = 0;
-	event.duration = kNormalFadeDuration;
-	event.data = cur_pal;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
-	event.code = kInterfaceEvent;
-	event.op = kEventClearStatus;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
-	event.code = kGraphicsEvent;
-	event.op = kEventSetFlag;
-	event.param = RF_PLACARD;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	// Set the background and palette for the psychic profile
-	event.type = kEvTOneshot;
-	event.code = kPsychicProfileBgEvent;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	textHeight = _vm->_font->getHeight(kKnownFontVerb, thread->_strings->getString(stringId), 226, kFontCentered);
-
-	textEntry.knownColor = kKnownColorBlack;
-	textEntry.useRect = true;
-	textEntry.rect.left = 245;
-	textEntry.rect.setHeight(210 + 76);
-	textEntry.rect.setWidth(226);
-	textEntry.rect.top = 210 - textHeight;
-	textEntry.font = kKnownFontVerb;
-	textEntry.flags = (FontEffectFlags)(kFontCentered);
-	textEntry.text = thread->_strings->getString(stringId);
-
-	_placardTextEntry = _vm->_scene->_textList.addEntry(textEntry);
-
-	event.type = kEvTOneshot;
-	event.code = kTextEvent;
-	event.op = kEventDisplay;
-	event.data = _placardTextEntry;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	_vm->_scene->getBGPal(pal);
-
-	event.type = kEvTImmediate;
-	event.code = kPalEvent;
-	event.op = kEventBlackToPal;
-	event.time = 0;
-	event.duration = kNormalFadeDuration;
-	event.data = pal;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
-	event.code = kScriptEvent;
-	event.op = kEventThreadWake;
-	event.param = kWaitTypePlacard;
-
-	q_event = _vm->_events->chain(q_event, &event);
+	int stringId = thread->pop();
+	_vm->_scene->showPsychicProfile(thread->_strings->getString(stringId));
 }
 
 void Script::sfPsychicProfileOff(SCRIPTFUNC_PARAMS) {
@@ -2083,16 +1998,52 @@ void Script::sfScriptEndVideo(SCRIPTFUNC_PARAMS) {
 	_vm->_anim->endVideo();
 }
 
-void Script::sf87(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf87", thread, nArgs);
+void Script::sfShowIHNMDemoHelp(SCRIPTFUNC_PARAMS) {
+	thread->wait(kWaitTypePlacard);
+
+	_vm->_scene->showPsychicProfile(NULL);
 }
 
-void Script::sf88(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf88", thread, nArgs);
+void Script::sfShowIHNMDemoHelpText(SCRIPTFUNC_PARAMS) {
+	int stringId, textHeight;
+	TextListEntry textEntry;
+	Event event;
+
+	stringId = thread->pop();
+
+	// FIXME: This is called multiple times in a row, one for each page of the help screens. We should wait
+	// somehow before showing the next page
+
+	textHeight = _vm->_font->getHeight(kKnownFontVerb, thread->_strings->getString(stringId), 226, kFontCentered);
+
+	textEntry.knownColor = kKnownColorBlack;
+	textEntry.useRect = true;
+	textEntry.rect.left = 245;
+	textEntry.rect.setHeight(210 + 76);
+	textEntry.rect.setWidth(226);
+	textEntry.rect.top = 210 - textHeight;
+	textEntry.font = kKnownFontVerb;
+	textEntry.flags = (FontEffectFlags)(kFontCentered);
+	textEntry.text = thread->_strings->getString(stringId);
+
+	TextListEntry *_psychicProfileTextEntry = _vm->_scene->_textList.addEntry(textEntry);
+
+	event.type = kEvTOneshot;
+	event.code = kTextEvent;
+	event.op = kEventDisplay;
+	event.data = _psychicProfileTextEntry;
+
+	_vm->_events->queue(&event);
 }
 
-void Script::sf89(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf89", thread, nArgs);
+void Script::sfClearIHNMDemoHelpText(SCRIPTFUNC_PARAMS) {
+	thread->wait(kWaitTypePlacard);
+
+	// This is called a while after the psychic profile is
+	// opened in the IHNM demo, to flip through the help system pages
+	_vm->_scene->clearPsychicProfile();
+	// FIXME: The demo uses mode 8 when changing pages
+	//_vm->_interface->setMode(8);
 }
 
 void Script::sfVstopFX(SCRIPTFUNC_PARAMS) {

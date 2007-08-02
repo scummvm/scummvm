@@ -341,6 +341,7 @@ class Scene {
 	}
 
 	void clearPlacard();
+	void showPsychicProfile(const char *text);
 	void clearPsychicProfile();
 	void showIHNMDemoSpecialScreen();
 

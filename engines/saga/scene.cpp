@@ -1360,6 +1360,99 @@ void Scene::clearPlacard() {
 	q_event = _vm->_events->chain(q_event, &event);
 }
 
+void Scene::showPsychicProfile(const char *text) {
+	int textHeight;
+	static PalEntry cur_pal[PAL_ENTRIES];
+	PalEntry *pal;
+	TextListEntry textEntry;
+	Event event;
+	Event *q_event;
+
+	if (_vm->_interface->getMode() == kPanelPlacard)
+		return;
+
+	_vm->_interface->rememberMode();
+	_vm->_interface->setMode(kPanelPlacard);
+	_vm->_gfx->savePalette();
+
+	event.type = kEvTOneshot;
+	event.code = kCursorEvent;
+	event.op = kEventHide;
+
+	q_event = _vm->_events->queue(&event);
+
+	_vm->_gfx->getCurrentPal(cur_pal);
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventPalToBlack;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = cur_pal;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kInterfaceEvent;
+	event.op = kEventClearStatus;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kGraphicsEvent;
+	event.op = kEventSetFlag;
+	event.param = RF_PLACARD;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	// Set the background and palette for the psychic profile
+	event.type = kEvTOneshot;
+	event.code = kPsychicProfileBgEvent;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	if (text != NULL) {
+		textHeight = _vm->_font->getHeight(kKnownFontVerb, text, 226, kFontCentered);
+
+		textEntry.knownColor = kKnownColorBlack;
+		textEntry.useRect = true;
+		textEntry.rect.left = 245;
+		textEntry.rect.setHeight(210 + 76);
+		textEntry.rect.setWidth(226);
+		textEntry.rect.top = 210 - textHeight;
+		textEntry.font = kKnownFontVerb;
+		textEntry.flags = (FontEffectFlags)(kFontCentered);
+		textEntry.text = text;
+
+		TextListEntry *_psychicProfileTextEntry = _vm->_scene->_textList.addEntry(textEntry);
+
+		event.type = kEvTOneshot;
+		event.code = kTextEvent;
+		event.op = kEventDisplay;
+		event.data = _psychicProfileTextEntry;
+
+		q_event = _vm->_events->chain(q_event, &event);
+	}
+
+	_vm->_scene->getBGPal(pal);
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventBlackToPal;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = pal;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kScriptEvent;
+	event.op = kEventThreadWake;
+	event.param = kWaitTypePlacard;
+
+	q_event = _vm->_events->chain(q_event, &event);
+}
+
 void Scene::clearPsychicProfile() {
 	if (_vm->_interface->getMode() == kPanelPlacard) {
 		_vm->_scene->clearPlacard();

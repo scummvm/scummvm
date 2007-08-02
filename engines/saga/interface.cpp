@@ -463,12 +463,18 @@ void Interface::setMode(int mode) {
 		_vm->_render->setFlag(RF_DEMO_SUBST);
 		break;
 	case kPanelProtect:
-		_protectPanel.currentButton = NULL;
-		_textInputMaxWidth = _protectEdit->width - 10;
-		_textInput = true;
-		_textInputString[0] = 0;
-		_textInputStringLength = 0;
-		_textInputPos = _textInputStringLength + 1;
+		if (_vm->getGameType() == GType_ITE) {
+			// This is used as the copy protection panel in ITE
+			_protectPanel.currentButton = NULL;
+			_textInputMaxWidth = _protectEdit->width - 10;
+			_textInput = true;
+			_textInputString[0] = 0;
+			_textInputStringLength = 0;
+			_textInputPos = _textInputStringLength + 1;
+		} else {
+			// In the IHNM demo, this panel mode is set by the scripts
+			// to flip through the pages of the help system
+		}
 		break;
 	}
 
@@ -671,18 +677,25 @@ bool Interface::processAscii(uint16 ascii) {
 		keyBossExit();
 		break;
 	case kPanelProtect:
-		if (_textInput && processTextInput(ascii)) {
-			return true;
-		}
+		if (_vm->getGameType() == GType_ITE) {
+			if (_textInput && processTextInput(ascii)) {
+				return true;
+			}
 
-		if (ascii == 27 || ascii == 13) { // Esc or Enter
-			_vm->_script->wakeUpThreads(kWaitTypeRequest);
-			_vm->_interface->setMode(kPanelMain);
-			
-			_protectHash = 0;
+			if (ascii == 27 || ascii == 13) { // Esc or Enter
+				_vm->_script->wakeUpThreads(kWaitTypeRequest);
+				_vm->_interface->setMode(kPanelMain);
+				
+				_protectHash = 0;
 
-			for (char *p = _textInputString; *p; p++)
-				_protectHash = (_protectHash << 1) + toupper(*p);
+				for (char *p = _textInputString; *p; p++)
+					_protectHash = (_protectHash << 1) + toupper(*p);
+			}
+		} else {
+			// In the IHNM demo, this panel mode is set by the scripts
+			// to flip through the pages of the help system
+			// Any keypress here returns the user back to the game
+			_vm->_scene->clearPsychicProfile();
 		}
 		break;
 	case kPanelPlacard:
