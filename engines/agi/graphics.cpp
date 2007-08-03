@@ -911,7 +911,27 @@ static const byte sciMouseCursor[] = {
 };
 
 /**
- * RGBA-palette for the black and white SCI-style arrow cursor.
+ * A black and white Apple IIGS style arrow cursor (9x11).
+ * 0 = Transparent.
+ * 1 = Black (#000000 in 24-bit RGB).
+ * 2 = White (#FFFFFF in 24-bit RGB).
+ */
+static const byte appleIIgsMouseCursor[] = {
+	2,2,0,0,0,0,0,0,0,
+	2,1,2,0,0,0,0,0,0,
+	2,1,1,2,0,0,0,0,0,
+	2,1,1,1,2,0,0,0,0,
+	2,1,1,1,1,2,0,0,0,
+	2,1,1,1,1,1,2,0,0,
+	2,1,1,1,1,1,1,2,0,
+	2,1,1,1,1,1,1,1,2,
+	2,1,1,2,1,1,2,2,0,
+	2,2,2,0,2,1,1,2,0,
+	0,0,0,0,0,2,2,2,0
+};
+
+/**
+ * RGBA-palette for the black and white SCI and Apple IIGS arrow cursors.
  */
 static const byte sciMouseCursorPalette[] = {
 	0x00, 0x00, 0x00,	0x00, // Black
