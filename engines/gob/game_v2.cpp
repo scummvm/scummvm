@@ -101,6 +101,7 @@ void Game_v2::playTot(int16 skipPlay) {
 			_extTable = 0;
 			_extHandle = -1;
 
+			_vm->_draw->_cursorHotspotXVar = -1;
 			_totToLoad[0] = 0;
 
 			if ((_curTotFile[0] == 0) && (_totFileData == 0))

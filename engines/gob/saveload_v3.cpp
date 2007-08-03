@@ -73,6 +73,8 @@ SaveType SaveLoad_v3::getSaveType(const char *fileName) {
 		return kSaveScreenshot;
 	if (!scumm_stricmp(fileName, "intro.$$$"))
 		return kSaveTempSprite;
+	if (!scumm_stricmp(fileName, "bloc.inf"))
+		return kSaveNotes;
 	if (!scumm_stricmp(fileName, "prot"))
 		return kSaveIgnore;
 	if (!scumm_stricmp(fileName, "config"))
@@ -89,10 +91,6 @@ uint32 SaveLoad_v3::getSaveGameSize() {
 		size += _screenshotSize;
 
 	return size;
-}
-
-int32 SaveLoad_v3::getSizeNotes() {
-	return -1;
 }
 
 int32 SaveLoad_v3::getSizeGame() {
@@ -215,10 +213,6 @@ bool SaveLoad_v3::loadGame(int16 dataVar, int32 size, int32 offset) {
 	return false;
 }
 
-bool SaveLoad_v3::loadNotes(int16 dataVar, int32 size, int32 offset) {
-	return false;
-}
-
 bool SaveLoad_v3::loadScreenshot(int16 dataVar, int32 size, int32 offset) {
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *in;
@@ -336,7 +330,7 @@ bool SaveLoad_v3::saveGame(int16 dataVar, int32 size, int32 offset) {
 }
 
 bool SaveLoad_v3::saveNotes(int16 dataVar, int32 size, int32 offset) {
-	return false;
+	return SaveLoad_v2::saveNotes(dataVar, size - 160, offset);
 }
 
 bool SaveLoad_v3::saveScreenshot(int16 dataVar, int32 size, int32 offset) {

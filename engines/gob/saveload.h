@@ -152,10 +152,8 @@ protected:
 	virtual uint32 getSaveGameSize();
 
 	virtual int32 getSizeGame();
-	virtual int32 getSizeNotes();
 	virtual int32 getSizeScreenshot();
 	virtual bool loadGame(int16 dataVar, int32 size, int32 offset);
-	virtual bool loadNotes(int16 dataVar, int32 size, int32 offset);
 	virtual bool loadScreenshot(int16 dataVar, int32 size, int32 offset);
 	virtual bool saveGame(int16 dataVar, int32 size, int32 offset);
 	virtual bool saveNotes(int16 dataVar, int32 size, int32 offset);
