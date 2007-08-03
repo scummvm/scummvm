@@ -1381,7 +1381,10 @@ void Inter_v2::o2_initScreen() {
 			width = _vm->_width = 640;
 			height = _vm->_height = 400;
 			_vm->_global->_colorCount = 16;
-			_vm->_system->initSize(_vm->_width, _vm->_height);
+			_vm->_system->beginGFXTransaction();
+				_vm->_system->initSize(_vm->_width, _vm->_height);
+				_vm->initCommonGFX(true);
+		   	_vm->_system->endGFXTransaction();
 		} else if (_vm->_global->_videoMode == 0x10) {
 			if (width == -1)
 				width = 320;
@@ -1391,7 +1394,10 @@ void Inter_v2::o2_initScreen() {
 			_vm->_width = 320;
 			_vm->_height = 200;
 			_vm->_global->_colorCount = 256;
-			_vm->_system->initSize(_vm->_width, _vm->_height);
+			_vm->_system->beginGFXTransaction();
+				_vm->_system->initSize(_vm->_width, _vm->_height);
+				_vm->initCommonGFX(false);
+			_vm->_system->endGFXTransaction();
 		}
 	}
 
