@@ -1375,12 +1375,30 @@ void Inter_v2::o2_initScreen() {
 	width = _vm->_parse->parseValExpr();
 	height = _vm->_parse->parseValExpr();
 
-	_vm->_global->_colorCount = (videoMode == 0x10) ? 16 : 256;
+	// Lost in Time switches to 640x400x16 when showing the title screen
+	if (_vm->getGameType() == kGameTypeLostInTime) {
+		if (videoMode == 0x10) {
+			width = _vm->_width = 640;
+			height = _vm->_height = 400;
+			_vm->_global->_colorCount = 16;
+			_vm->_system->initSize(_vm->_width, _vm->_height);
+		} else if (_vm->_global->_videoMode == 0x10) {
+			if (width == -1)
+				width = 320;
+			if (height == -1)
+				height = 200;
+
+			_vm->_width = 320;
+			_vm->_height = 200;
+			_vm->_global->_colorCount = 256;
+			_vm->_system->initSize(_vm->_width, _vm->_height);
+		}
+	}
 
 	_vm->_global->_fakeVideoMode = videoMode;
 
 	// Some versions require this
-	if ((videoMode == 0xD))// || (videoMode == 0x10))
+	if (videoMode == 0xD)
 		videoMode = _vm->_mode;
 
 	if ((videoMode == _vm->_global->_videoMode) && (width == -1))
