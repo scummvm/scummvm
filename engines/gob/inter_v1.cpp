@@ -1617,7 +1617,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
 
 		if (_vm->_global->_videoMode < 0x13) {
-			_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaSmallPalette;
+			_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, 0, 0);
 			return false;
 		}

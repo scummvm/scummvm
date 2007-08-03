@@ -1375,10 +1375,12 @@ void Inter_v2::o2_initScreen() {
 	width = _vm->_parse->parseValExpr();
 	height = _vm->_parse->parseValExpr();
 
+	_vm->_global->_colorCount = (videoMode == 0x10) ? 16 : 256;
+
 	_vm->_global->_fakeVideoMode = videoMode;
 
 	// Some versions require this
-	if ((videoMode == 0xD) || (videoMode == 0x10))
+	if ((videoMode == 0xD))// || (videoMode == 0x10))
 		videoMode = _vm->_mode;
 
 	if ((videoMode == _vm->_global->_videoMode) && (width == -1))

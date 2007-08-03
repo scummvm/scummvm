@@ -481,6 +481,8 @@ protected:
 	bool o3_checkData(OpFuncParams &params);
 	bool o3_readData(OpFuncParams &params);
 	bool o3_writeData(OpFuncParams &params);
+
+	void o3_wobble(OpGobParams &params);
 };
 
 class Inter_v4 : public Inter_v3 {

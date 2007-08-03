@@ -594,7 +594,7 @@ void Inter_v3::setupOpcodes() {
 		{NULL, ""},
 		{NULL, ""},
 		{NULL, ""},
-		{NULL, ""},
+		OPCODE(o3_wobble),
 		/* 28 */
 		{NULL, ""},
 		{NULL, ""},
@@ -892,6 +892,10 @@ bool Inter_v3::o3_copySprite(OpFuncParams &params) {
 	if (_vm->_draw->_destSurface == 20)
 		_vm->_video->sparseRetrace(20);
 	return false;
+}
+
+void Inter_v3::o3_wobble(OpGobParams &params) {
+	_vm->_draw->wobble(_vm->_draw->_backSurface);
 }
 
 } // End of namespace Gob

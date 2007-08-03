@@ -153,6 +153,9 @@ public:
 	int32 getSpriteRectSize(int16 index);
 	void forceBlit(bool backwards = false);
 
+	static const int16 _wobbleTable[360];
+	void wobble(SurfaceDesc *surfDesc);
+
 	virtual void initScreen() = 0;
 	virtual void closeScreen() = 0;
 	virtual void blitCursor() = 0;
