@@ -40,26 +40,27 @@ namespace Agi {
 
 #ifdef USE_IIGS_SOUND
 
-/**
- * AGI engine sound envelope structure.
- */
-struct SoundEnvelope {
+struct IIgsEnvelopeSegment {
 	uint8 bp;
-	uint8 incHi;
-	uint8 inc_lo;
+	uint16 inc; ///< 8b.8b fixed point, big endian?
 };
 
-struct SoundWavelist {
+#define ENVELOPE_SEGMENT_COUNT 8
+struct IIgsEnvelope {
+	IIgsEnvelopeSegment seg[ENVELOPE_SEGMENT_COUNT];
+};
+
+struct IIgsWaveInfo {
 	uint8 top;
 	uint8 addr;
 	uint8 size;
 	uint8 mode;
-	uint8 relHi;
-	uint8 relLo;
+	uint16 relPitch; ///< 8b.8b fixed point, big endian?
 };
 
-struct SoundInstrument {
-	struct SoundEnvelope env[8];
+#define MAX_WAVE_COUNT 8
+struct IIgsInstrumentHeader {
+	IIgsEnvelope env;
 	uint8 relseg;
 	uint8 priority;
 	uint8 bendrange;
@@ -68,19 +69,19 @@ struct SoundInstrument {
 	uint8 spare;
 	uint8 wac;
 	uint8 wbc;
-	struct SoundWavelist wal[8];
-	struct SoundWavelist wbl[8];
+	IIgsWaveInfo wal[MAX_WAVE_COUNT];
+	IIgsWaveInfo wbl[MAX_WAVE_COUNT];
 };
 
-#define IIGS_SAMPLE_HEADER_SIZE 54
 struct IIgsSampleHeader {
 	uint16 type;
 	uint8  pitch; ///< Logarithmic, base is 2**(1/12), unknown multiplier (Possibly in range 1040-1080)
-	uint8  unknown_Ofs3_Len1;
+	uint8  unknownByte_Ofs3; // 0x7F in Gold Rush's sound resource 60, 0 in all others.
 	uint8  volume; ///< Current guess: Logarithmic in 6 dB steps
-	uint8  unknown_Ofs5_Len3[3];
-	uint16 size;
-	uint8  unknown_Ofs10_Len44[44];
+	uint8  unknownByte_Ofs5; ///< 0 in all tested samples.
+	uint16 instrumentSize; ///< Little endian. 44 in all tested samples. A guess.
+	uint16 sampleSize; ///< Little endian. Accurate in all tested samples excluding Manhunter I's sound resource 16.
+	IIgsInstrumentHeader instrument;
 };
 
 #if 0
@@ -89,6 +90,46 @@ static int numInstruments;
 static uint8 *wave;
 #endif
 
+bool readIIgsEnvelope(IIgsEnvelope &envelope, Common::SeekableReadStream &stream) {
+	for (int segNum = 0; segNum < ENVELOPE_SEGMENT_COUNT; segNum++) {
+		envelope.seg[segNum].bp  = stream.readByte();
+		envelope.seg[segNum].inc = stream.readUint16BE();
+	}
+	return !stream.ioFailed();
+}
+
+bool readIIgsWaveInfo(IIgsWaveInfo &waveInfo, Common::SeekableReadStream &stream) {
+	waveInfo.top      = stream.readByte();
+	waveInfo.addr     = stream.readByte();
+	waveInfo.size     = stream.readByte();
+	waveInfo.mode     = stream.readByte();
+	waveInfo.relPitch = stream.readUint16BE();
+	return !stream.ioFailed();
+}
+
+/**
+ * Read an Apple IIGS instrument header from the given stream.
+ * @param header The header to which to write the data.
+ * @param stream The source stream from which to read the data.
+ * @return True if successful, false otherwise.
+ */
+bool readIIgsInstrumentHeader(IIgsInstrumentHeader &header, Common::SeekableReadStream &stream) {
+	readIIgsEnvelope(header.env, stream);
+	header.relseg    = stream.readByte();
+	header.priority  = stream.readByte();
+	header.bendrange = stream.readByte();
+	header.vibdepth  = stream.readByte();
+	header.vibspeed  = stream.readByte();
+	header.spare     = stream.readByte();
+	header.wac       = stream.readByte();
+	header.wbc       = stream.readByte();
+	for (int waveA = 0; waveA < header.wac; waveA++) // Read A wave lists
+		readIIgsWaveInfo(header.wal[waveA], stream);
+	for (int waveB = 0; waveB < header.wbc; waveB++) // Read B wave lists
+		readIIgsWaveInfo(header.wbl[waveB], stream);
+	return !stream.ioFailed();
+}
+
 /**
  * Read an Apple IIGS AGI sample header from the given stream.
  * @param header The header to which to write the data.
@@ -96,21 +137,14 @@ static uint8 *wave;
  * @return True if successful, false otherwise.
  */
 bool readIIgsSampleHeader(IIgsSampleHeader &header, Common::SeekableReadStream &stream) {
-	// Check there's room in the stream for the header
-	if (stream.size() - stream.pos() >= IIGS_SAMPLE_HEADER_SIZE) {
-		header.type  = stream.readUint16LE();
-		header.pitch = stream.readByte();
-		// Gold Rush's sample resource 60 (A looping sound of horse's hoof hitting
-		// pavement) is the only one that has 0x7F at header offset 3, all other
-		// samples have 0x00 there.
-		header.unknown_Ofs3_Len1 = stream.readByte();
-		header.volume = stream.readByte();
-		stream.read(header.unknown_Ofs5_Len3, 3);
-		header.size = stream.readUint16LE();
-		stream.read(header.unknown_Ofs10_Len44, 44);
-		return !stream.ioFailed();
-	} else // No room in the stream for the header, so failure
-		return false;
+	header.type             = stream.readUint16LE();
+	header.pitch            = stream.readByte();
+	header.unknownByte_Ofs3 = stream.readByte();
+	header.volume           = stream.readByte();
+	header.unknownByte_Ofs5 = stream.readByte();
+	header.instrumentSize   = stream.readUint16LE();
+	header.sampleSize       = stream.readUint16LE();
+	return readIIgsInstrumentHeader(header.instrument, stream);
 }
 
 /**
@@ -136,24 +170,24 @@ Audio::AudioStream *makeIIgsSampleStream(Common::SeekableReadStream &stream, int
 	// and that there's room for the sample data in the stream.
 	if (readHeaderOk && header.type == AGI_SOUND_SAMPLE) { // An Apple IIGS AGI sample resource
 		uint32 tailLen = stream.size() - stream.pos();
-		if (tailLen < header.size) { // Check if there's no room for the sample data in the stream
+		if (tailLen < header.sampleSize) { // Check if there's no room for the sample data in the stream
 			// Apple IIGS Manhunter I: Sound resource 16 has only 16074 bytes
 			// of sample data although header says it should have 16384 bytes.
-			warning("Apple IIGS sample (%d) too short (%d bytes. Should be %d bytes). Using the part that's left", resnum, tailLen, header.size);
-			header.size = (uint16) tailLen; // Use the part that's left
+			warning("Apple IIGS sample (%d) too short (%d bytes. Should be %d bytes). Using the part that's left", resnum, tailLen, header.sampleSize);
+			header.sampleSize = (uint16) tailLen; // Use the part that's left
 		}
 		if (header.pitch > 0x7F) { // Check if the pitch is invalid
 			warning("Apple IIGS sample (%d) has too high pitch (0x%02x)", resnum, header.pitch);
 			header.pitch &= 0x7F; // Apple IIGS AGI probably did it this way too
 		}
 		// Allocate memory for the sample data and read it in
-		byte *sampleData = (byte *) malloc(header.size);
-		uint32 readBytes = stream.read(sampleData, header.size);
-		if (readBytes == header.size) { // Check that we got all the data we requested
+		byte *sampleData = (byte *) malloc(header.sampleSize);
+		uint32 readBytes = stream.read(sampleData, header.sampleSize);
+		if (readBytes == header.sampleSize) { // Check that we got all the data we requested
 			// Make an audio stream from the mono, 8 bit, unsigned input data
 			byte flags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED;
 			int rate = (int) (1076 * pow(pow(2, 1/12.0), header.pitch));
-			result = Audio::makeLinearInputStream(sampleData, header.size, rate, flags, 0, 0);
+			result = Audio::makeLinearInputStream(sampleData, header.sampleSize, rate, flags, 0, 0);
 		}
 	}
 
