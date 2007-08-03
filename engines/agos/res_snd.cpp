@@ -139,9 +139,56 @@ void AGOSEngine::loadMusic(uint music) {
 	_nextMusicToPlay = -1;
 }
 
+struct ModuleOffs {
+	uint8 tune;
+	uint8 fileNum;
+	uint32 offs;
+};
+
+static const ModuleOffs amigaWaxworksOffs[20] = {
+	// Pyramid
+	{2,   2, 0,   },
+	{3,   2, 50980},
+	{4,   2, 56160},
+	{5,   2, 62364},
+	{6,   2, 73688},
+
+	// Zombie
+	{8,   8, 0},
+	{11,  8, 51156},
+	{12,  8, 56336},
+	{13,  8, 65612},
+	{14,  8, 68744},
+
+	// Mine
+	{9,   9, 0},
+	{15,  9, 47244},
+	{16,  9, 52424},
+	{17,  9, 59652},
+	{18,  9, 62784},
+
+	// Jack
+	{10, 10, 0},
+	{19, 10, 42054},
+	{20, 10, 47234},
+	{21, 10, 49342},
+	{22, 10, 51450},
+};
+
 void AGOSEngine::playModule(uint music) {
 	char filename[15];
 	File f;
+	uint32 offs = 0;
+
+	if (getPlatform() == Common::kPlatformAmiga && getGameType() == GType_WW) {
+		// Multiple tunes are stored in music files for main locations
+		for (uint i = 0; i < 20; i++) {
+			if (amigaWaxworksOffs[i].tune == music) {
+				music = amigaWaxworksOffs[i].fileNum;
+				offs = amigaWaxworksOffs[i].offs;
+			}
+		}
+	}
 
 	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO)
 		sprintf(filename, "elvira2");
@@ -159,12 +206,12 @@ void AGOSEngine::playModule(uint music) {
 	if (!(getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) &&
 		getFeatures() & GF_CRUNCHED) {
 
-		uint srcSize = f.size();
+		uint32 srcSize = f.size();
 		byte *srcBuf = (byte *)malloc(srcSize);
 		if (f.read(srcBuf, srcSize) != srcSize)
 			error("playModule: Read failed");
 
-		uint dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
+		uint32 dstSize = READ_BE_UINT32(srcBuf + srcSize - 4);
 		byte *dstBuf = (byte *)malloc(dstSize);
 		decrunchFile(srcBuf, dstBuf, srcSize);
 		free(srcBuf);
