@@ -274,6 +274,9 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 
 		case CMD_CLOSE: // close
 			u->_zone->_flags |= kFlagsClosed;
+			if (u->_zone->u.door->_cnv) {
+				addJob(&jobToggleDoor, (void*)u->_zone, kPriority18 );
+			}
 			break;
 
 		case CMD_ON:	// on
