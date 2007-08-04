@@ -50,6 +50,9 @@ struct IIgsEnvelope {
 	IIgsEnvelopeSegment seg[ENVELOPE_SEGMENT_COUNT];
 };
 
+// 2**(1/12) i.e. the 12th root of 2
+#define SEMITONE 1.059463094359295
+
 struct IIgsWaveInfo {
 	uint8 top;
 	uint8 addr;
@@ -199,7 +202,7 @@ Audio::AudioStream *makeIIgsSampleStream(Common::SeekableReadStream &stream, int
 		if (readBytes == header.sampleSize) { // Check that we got all the data we requested
 			// Make an audio stream from the mono, 8 bit, unsigned input data
 			byte flags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED;
-			int rate = (int) (1076 * pow(pow(2, 1/12.0), header.pitch));
+			int rate = (int) (1076 * pow(SEMITONE, header.pitch));
 			result = Audio::makeLinearInputStream(sampleData, header.sampleSize, rate, flags, 0, 0);
 		}
 	}
