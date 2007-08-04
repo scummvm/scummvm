@@ -101,8 +101,9 @@
 #include "blitters.h"
 #include "cartreset_nolibfat.h"
 #include "keys.h"
+#ifdef USE_PROFILER
 #include "profiler/cyg-profile.h"
-
+#endif
 
 namespace DS {
 
