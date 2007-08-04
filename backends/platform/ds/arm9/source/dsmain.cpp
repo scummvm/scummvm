@@ -2742,6 +2742,8 @@ int main(void)
 		formatSramOption();
 	}
 
+	IPC->adpcm.semaphore = false;
+
 //	printf("'%s'", Common::ConfigManager::kTransientDomain.c_str());
 	//printf("'%s'", Common::ConfigManager::kApplicationDomain.c_str());
 
