@@ -156,6 +156,7 @@ enum AGIErrors {
 	errNoLoopsInView,
 	errViewDataError,
 	errNoGameList,
+	errIOError,
 
 	errUnk = 127
 };
