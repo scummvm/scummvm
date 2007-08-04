@@ -831,7 +831,7 @@ void Sound::soundKludge(int *list, int num) {
 }
 
 void Sound::talkSound(uint32 a, uint32 b, int mode, int channel) {
-	if (_vm->_game.version >= 6 && ConfMan.getBool("speech_mute"))
+	if (_vm->_game.version >= 5 && ConfMan.getBool("speech_mute"))
 		return;
 
 	if (mode == 1) {
