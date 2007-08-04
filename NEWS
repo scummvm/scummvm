@@ -1,7 +1,14 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
-0.10.1 (2007-XX-XX)
+0.10.0a (2007-08-04) (DS Port only)
+ Nintendo DS Port:
+   - New engines supported: AGI, CINE, and SAGA
+   - Option to show the mouse cursor
+   - Word completion on keyboard for AGI games
+   - Plenty of optimisations
+   - Numerous bug fixes
+
  General:
    - Fix speech mute in game options
    - Fix segmentation fault in GUI themes
@@ -69,12 +76,6 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      LINC space and terminals, and the LINC font in the control panel. This
      caused many character glitches (some of which we used to work around) in
      LINC space and terminals, particularly in non-English languages.
-
- Nintendo DS Port:
-   - New engines supported: AGI, CINE, and SAGA
-   - Option to show the mouse cursor
-   - Word completion on keyboard for AGI games
-   - Plenty of optimisations
 
  Symbian Port:
    - Added support for MP3 to S60v3 and UIQ3 versions.
