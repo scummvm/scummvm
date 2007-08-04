@@ -186,13 +186,16 @@ void DXAPlayer::closeFile() {
 		return;
 
 	delete _fd;
-	_fd = 0;
 
 	free(_frameBuffer1);
 	free(_frameBuffer2);
 	free(_scaledBuffer);
 	free(_inBuffer);
 	free(_decompBuffer);
+
+	_fd = 0;
+	_inBuffer = 0;
+	_decompBuffer = 0;
 }
 
 void DXAPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
