@@ -386,7 +386,7 @@ void ScriptHelper::cmd_execOpcode(ScriptState* script) {
 	assert(script->dataPtr->opcodes);
 	assert(opcode < script->dataPtr->opcodes->size());
 
-	if ((*script->dataPtr->opcodes)[opcode] && *(*script->dataPtr->opcodes)[opcode]) {
+	if ((*script->dataPtr->opcodes)[opcode] && (bool) *(*script->dataPtr->opcodes)[opcode]) {
 		script->retValue = (*(*script->dataPtr->opcodes)[opcode])(script);
 	} else {
 		script->retValue = 0;
