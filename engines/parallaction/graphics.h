@@ -175,7 +175,8 @@ public:
 	void freeStaticCnv(StaticCnv *cnv);
 	void backupDoorBackground(DoorData *data, int16 x, int16 y);
 	void backupGetBackground(GetData *data, int16 x, int16 y);
-	void restoreZoneBackground(const Common::Rect& r, byte *data);
+	void restoreGetBackground(const Common::Rect& r, byte *data);
+	void restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* background);
 
 	// location
 	void setBackground(byte *background);

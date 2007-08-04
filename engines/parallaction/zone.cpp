@@ -424,14 +424,17 @@ void jobToggleDoor(void *parm, Job *j) {
 	StaticCnv v14;
 
 	if (z->u.door->_cnv) {
-		v14._width = z->u.door->_cnv->_width;
-		v14._height = z->u.door->_cnv->_height;
-
 		Common::Rect r(z->_left, z->_top, z->_left+z->u.door->_cnv->_width, z->_top+z->u.door->_cnv->_height);
 
-		_vm->_gfx->restoreZoneBackground(r, z->u.door->_background);
+		uint16 _ax = (z->_flags & kFlagsClosed ? 1 : 0);
 
-		uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
+		v14._width = z->u.door->_cnv->_width;
+		v14._height = z->u.door->_cnv->_height;
+		v14._data0 = z->u.door->_cnv->getFramePtr(_ax);
+
+		_vm->_gfx->restoreDoorBackground(&v14, r, z->u.door->_background);
+
+		_ax = (z->_flags & kFlagsClosed ? 0 : 1);
 
 		_vm->_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
 		_vm->_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBit2);
@@ -469,7 +472,7 @@ void jobRemovePickedItem(void *parm, Job *j) {
 	if (z->u.get->_cnv) {
 		Common::Rect r(z->_left, z->_top, z->_left + z->u.get->_cnv->_width, z->_top + z->u.get->_cnv->_height);
 
-		_vm->_gfx->restoreZoneBackground(r, z->u.get->_backup);
+		_vm->_gfx->restoreGetBackground(r, z->u.get->_backup);
 	}
 
 	count++;

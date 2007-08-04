@@ -548,9 +548,41 @@ void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 }
 
 //
+//	restores background according to specified frame
+//
+void Gfx::restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* background) {
+
+	byte *t = cnv->_data0;
+	byte *s = background;
+	byte *d0 = _buffers[kBitBack] + r.left + r.top * _vm->_screenWidth;
+	byte *d1 = _buffers[kBit2] + r.left + r.top * _vm->_screenWidth;
+
+	for (uint16 i = 0; i < r.height() ; i++) {
+		for (uint16 j = 0; j < r.width() ; j++) {
+			if (*t) {
+				*d0 = *s;
+				*d1 = *s;
+			}
+
+			d0++;
+			d1++;
+			t++;
+			s++;
+		}
+
+		d0 += (_vm->_screenWidth - r.width());
+		d1 += (_vm->_screenWidth - r.width());
+	}
+
+
+	return;
+}
+
+
+//
 //	copies a rectangular bitmap on the background
 //
-void Gfx::restoreZoneBackground(const Common::Rect& r, byte *data) {
+void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
 
 	StaticCnv cnv;
 
