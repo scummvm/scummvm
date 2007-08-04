@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 0.10.0
+Version		: 0.10.0a
 Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
