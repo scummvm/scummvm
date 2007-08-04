@@ -236,11 +236,12 @@ uint16 DialogueManager::askPassword() {
 	debugC(1, kDebugDialogue, "checkDialoguePassword()");
 
 	char password[100];
-	uint16 passwordLen = 0;
+	uint16 passwordLen;
 
 	while (true) {
 		clear();
 
+		passwordLen = 0;
 		strcpy(password, ".......");
 
 		Common::Rect r(_answerBalloonW[0], _answerBalloonH[0]);
