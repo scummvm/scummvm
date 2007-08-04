@@ -54,6 +54,19 @@ struct IIgsWaveInfo {
 	uint8 top;
 	uint8 addr;
 	uint8 size;
+// Oscillator channel (Bits 4-7 of mode-byte). Simplified to use only stereo here.
+#define MASK_OSC_CHANNEL  (1 << 4)
+#define OSC_CHANNEL_LEFT  (1 << 4)
+#define OSC_CHANNEL_RIGHT (0 << 4)
+// Oscillator halt bit (Bit 0 of mode-byte)
+#define MASK_OSC_HALT     (1 << 0)
+#define OSC_HALT          (1 << 0)
+// Oscillator mode (Bits 1 and 2 of mode-byte)
+#define MASK_OSC_MODE     (3 << 1)
+#define OSC_MODE_LOOP     (0 << 1)
+#define OSC_MODE_ONESHOT  (1 << 1)
+#define OSC_MODE_SYNC_AM  (2 << 1)
+#define OSC_MODE_SWAP     (3 << 1)
 	uint8 mode;
 	uint16 relPitch; ///< 8b.8b fixed point, big endian?
 };
