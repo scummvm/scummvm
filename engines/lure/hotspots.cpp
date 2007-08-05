@@ -2587,7 +2587,7 @@ void HotspotTickHandlers::puzzledAnimHandler(Hotspot &h) {
 
 void HotspotTickHandlers::roomExitAnimHandler(Hotspot &h) {
 	Resources &res = Resources::getReference();
-	ValueTableData &fields = res.fieldList();
+//	ValueTableData &fields = res.fieldList();
 	RoomExitJoinData *rec = res.getExitJoin(h.hotspotId());
 	if (!rec) return;
 	byte *currentFrame, *destFrame;
@@ -2628,7 +2628,6 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 	RoomPathsData &paths = Resources::getReference().getRoom(h.roomNumber())->paths;
 	PathFinder &pathFinder = h.pathFinder();
 	CurrentActionStack &actions = h.currentActions();
-	ValueTableData &fields = res.fieldList();
 	uint16 impingingList[MAX_NUM_IMPINGING];
 	int numImpinging;
 	Action hsAction;
