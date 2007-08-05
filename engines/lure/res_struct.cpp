@@ -466,7 +466,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(talkCountdown);
 	stream->writeUint16LE(pauseCtr);
 	stream->writeUint16LE(useHotspotId);
-	stream->writeUint16LE(use2HotspotId);
+	stream->writeUint16LE(scriptHotspotId);
 	stream->writeUint16LE(talkGate);
 	stream->writeUint16LE(actionHotspotId);
 	stream->writeUint16LE(talkOverride);
@@ -507,7 +507,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	talkCountdown = stream->readUint16LE();
 	pauseCtr = stream->readUint16LE();
 	useHotspotId = stream->readUint16LE();
-	use2HotspotId = stream->readUint16LE();
+	scriptHotspotId = stream->readUint16LE();
 	talkGate = stream->readUint16LE();
 	actionHotspotId = stream->readUint16LE();
 	talkOverride = stream->readUint16LE();
@@ -1119,7 +1119,7 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 			if ((charHotspot->characterMode() == CHARMODE_PAUSED) || 
 				((charHotspot->pauseCtr() == 0) && 
 				(charHotspot->characterMode() == CHARMODE_NONE))) {
-				hotspot->resource()->use2HotspotId = charId;
+				hotspot->resource()->scriptHotspotId = charId;
 			}
 
 			hotspot->setPauseCtr(IDLE_COUNTDOWN_SIZE);
@@ -1206,9 +1206,6 @@ ValueTableData::ValueTableData() {
 	_playerNewPos.roomNumber = 0;
 	_playerNewPos.position.x = 0;
 	_playerNewPos.position.y = 0;
-	_playerPendingPos.pos.x = 0;
-	_playerPendingPos.pos.y = 0;
-	_playerPendingPos.isSet = false;
 	_flags = GAMEFLAG_4 | GAMEFLAG_1;
 	_hdrFlagMask = 1;
 
@@ -1252,9 +1249,6 @@ void ValueTableData::saveToStream(Common::WriteStream *stream)
 	stream->writeSint16LE(_playerNewPos.position.x);
 	stream->writeSint16LE(_playerNewPos.position.y);
 	stream->writeUint16LE(_playerNewPos.roomNumber);
-	stream->writeByte(_playerPendingPos.isSet);
-	stream->writeSint16LE(_playerPendingPos.pos.x);
-	stream->writeSint16LE(_playerPendingPos.pos.y);
 	stream->writeByte(_flags);
 	stream->writeByte(_hdrFlagMask);
 	
@@ -1270,9 +1264,6 @@ void ValueTableData::loadFromStream(Common::ReadStream *stream)
 	_playerNewPos.position.x = stream->readSint16LE();
 	_playerNewPos.position.y = stream->readSint16LE();
 	_playerNewPos.roomNumber = stream->readUint16LE();
-	_playerPendingPos.isSet = stream->readByte() != 0;
-	_playerPendingPos.pos.x = stream->readSint16LE();
-	_playerPendingPos.pos.y = stream->readSint16LE();
 	_flags = stream->readByte();
 	_hdrFlagMask = stream->readByte();
 	

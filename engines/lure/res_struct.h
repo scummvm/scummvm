@@ -458,8 +458,7 @@ public:
 	uint16 talkGate;
 	uint16 actionHotspotId;
 	uint16 talkOverride;
-
-	uint16 use2HotspotId;
+	uint16 scriptHotspotId;
 
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
@@ -817,16 +816,10 @@ struct PlayerNewPosition {
 	uint16 roomNumber;
 };
 
-struct PlayerPendingPosition {
-	Point pos;
-	bool isSet;
-};
-
 class ValueTableData {
 private:
 	uint16 _numGroats;
 	PlayerNewPosition _playerNewPos;
-	PlayerPendingPosition _playerPendingPos;
 	uint8 _flags;
 	uint8 _hdrFlagMask;
 
@@ -845,7 +838,6 @@ public:
 	uint8 &flags() { return _flags; }
 	uint8 &hdrFlagMask() { return _hdrFlagMask; }
 	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
-	PlayerPendingPosition &playerPendingPos() { return _playerPendingPos; }
 
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);
