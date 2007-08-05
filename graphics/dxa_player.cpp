@@ -42,6 +42,12 @@ DXAPlayer::DXAPlayer() {
 	_scaledBuffer = 0;
 	_drawBuffer = 0;
 
+	_inBuffer = 0;
+	_inBufferSize = 0;
+
+	_decompBuffer = 0;
+	_decompBufferSize = 0;
+
 	_width = 0;
 	_height = 0;
 
@@ -129,6 +135,7 @@ bool DXAPlayer::loadFile(const char *filename) {
 	debug(2, "flags 0x0%x framesCount %d width %d height %d rate %d ticks %d", flags, _framesCount, _width, _height, _framesPerSec, _frameTicks);
 
 	_frameSize = _width * _height;
+	_decompBufferSize = _frameSize;
 	_frameBuffer1 = (uint8 *)malloc(_frameSize);
 	_frameBuffer2 = (uint8 *)malloc(_frameSize);
 	if (!_frameBuffer1 || !_frameBuffer2)
@@ -141,6 +148,33 @@ bool DXAPlayer::loadFile(const char *filename) {
 			error("Error allocating scale buffer (size %d)", _frameSize);
 	}
 
+#ifdef DXA_EXPERIMENT_MAXD
+	// Check for an extended header
+	if (flags & 1) {
+		uint32 size;
+
+		do {
+			tag = _fd->readUint32BE();
+			if (tag != 0) {
+				size = _fd->readUint32BE();
+			}
+			switch (tag) {
+				case 0: // No more tags
+					break;
+				case MKID_BE('MAXD'):
+					assert(size == 4);
+					_decompBufferSize = _fd->readUint32BE();
+					break;
+				default: // Unknown tag - skip it.
+					while (size > 0) {
+						byte dummy = _fd->readByte();
+						size--;
+					}
+					break;
+			}
+		} while (tag != 0);
+	}
+#endif
 	_frameNum = 0;
 	_frameSkipped = 0;
 
@@ -152,11 +186,16 @@ void DXAPlayer::closeFile() {
 		return;
 
 	delete _fd;
-	_fd = 0;
 
 	free(_frameBuffer1);
 	free(_frameBuffer2);
 	free(_scaledBuffer);
+	free(_inBuffer);
+	free(_decompBuffer);
+
+	_fd = 0;
+	_inBuffer = 0;
+	_decompBuffer = 0;
 }
 
 void DXAPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
@@ -175,44 +214,42 @@ void DXAPlayer::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 
 void DXAPlayer::decodeZlib(byte *data, int size, int totalSize) {
 #ifdef USE_ZLIB
-	byte *temp = (byte *)malloc(size);
-	if (temp) {
-		memcpy(temp, data, size);
-
-		z_stream d_stream;
-		d_stream.zalloc = (alloc_func)0;
-		d_stream.zfree = (free_func)0;
-		d_stream.opaque = (voidpf)0;
-		d_stream.next_in = temp;
-		d_stream.avail_in = size;
-		d_stream.total_in = size;
-		d_stream.next_out = data;
-		d_stream.avail_out = totalSize;
-		inflateInit(&d_stream);
-		inflate(&d_stream, Z_FINISH);
-		inflateEnd(&d_stream);
-		free(temp);
-	}
+	z_stream  _d_stream;
+	_d_stream.zalloc = (alloc_func)0;
+	_d_stream.zfree = (free_func)0;
+	_d_stream.opaque = (voidpf)0;
+	_d_stream.next_in   = _inBuffer;
+	_d_stream.avail_in  = size;
+	_d_stream.total_in  = size;
+	_d_stream.next_out  = data;
+	_d_stream.avail_out = totalSize;
+	inflateInit(&_d_stream);
+	inflate(&_d_stream, Z_FINISH);
+	inflateEnd(&_d_stream);
 #endif
 }
 
 #define BLOCKW 4
 #define BLOCKH 4
 
-void DXAPlayer::decode12(byte *data, int size, int totalSize) {
+void DXAPlayer::decode12(int size) {
 #ifdef USE_ZLIB
+	if (_decompBuffer == NULL) {
+		_decompBuffer = (byte *)malloc(_decompBufferSize);
+		if (_decompBuffer == NULL)
+			error("Error allocating decomp buffer (size %d)", _decompBufferSize);
+	}
 	/* decompress the input data */
-	decodeZlib(data, size, totalSize);
+	decodeZlib(_decompBuffer, size, _decompBufferSize);
 
-	byte *dat = data;
-	byte *frame2 = (byte *)malloc(totalSize);
+	byte *dat = _decompBuffer;
 
-	memcpy(frame2, _frameBuffer1, totalSize);
+	memcpy(_frameBuffer2, _frameBuffer1, _frameSize);
 
 	for (int by = 0; by < _height; by += BLOCKH) {
 		for (int bx = 0; bx < _width; bx += BLOCKW) {
 			byte type = *dat++;
-			byte *b2 = frame2 + bx + by * _width;
+			byte *b2 = _frameBuffer1 + bx + by * _width;
 
 			switch (type) {
 			case 0:
@@ -276,7 +313,7 @@ void DXAPlayer::decode12(byte *data, int size, int totalSize) {
 				int my = mbyte & 0x07;
 				if (mbyte & 0x08)
 					my = -my;
-				byte *b1 = _frameBuffer1 + (bx+mx) + (by+my) * _width;
+				byte *b1 = _frameBuffer2 + (bx+mx) + (by+my) * _width;
 				for (int yc = 0; yc < BLOCKH; yc++) {
 					memcpy(b2, b1, BLOCKW);
 					b1 += _width;
@@ -291,30 +328,32 @@ void DXAPlayer::decode12(byte *data, int size, int totalSize) {
 			}
 		}
 	}
-
-	memcpy(data, frame2, totalSize);
-	free(frame2);
 #endif
 }
 
-void DXAPlayer::decode13(byte *data, int size, int totalSize) {
+void DXAPlayer::decode13(int size) {
 #ifdef USE_ZLIB
 	uint8 *codeBuf, *dataBuf, *motBuf, *maskBuf;
 
-	/* decompress the input data */
-	decodeZlib(data, size, totalSize);
+	if (_decompBuffer == NULL) {
+		_decompBuffer = (byte *)malloc(_decompBufferSize);
+		if (_decompBuffer == NULL)
+			error("Error allocating decomp buffer (size %d)", _decompBufferSize);
+	}
 
-	uint8 *frame2 = (uint8*)malloc(totalSize);
-	memcpy(frame2, _frameBuffer1, totalSize);
+	/* decompress the input data */
+	decodeZlib(_decompBuffer, size, _decompBufferSize);
+
+	memcpy(_frameBuffer2, _frameBuffer1, _frameSize);
 
 	int codeSize = _width * _curHeight / 16;
 	int dataSize, motSize, maskSize;
 
-	dataSize = READ_BE_UINT32(&data[0]);
-	motSize  = READ_BE_UINT32(&data[4]);
-	maskSize = READ_BE_UINT32(&data[8]);
+	dataSize = READ_BE_UINT32(&_decompBuffer[0]);
+	motSize  = READ_BE_UINT32(&_decompBuffer[4]);
+	maskSize = READ_BE_UINT32(&_decompBuffer[8]);
 
-	codeBuf = &data[12];
+	codeBuf = &_decompBuffer[12];
 	dataBuf = &codeBuf[codeSize];
 	motBuf = &dataBuf[dataSize];
 	maskBuf = &motBuf[motSize];
@@ -322,7 +361,7 @@ void DXAPlayer::decode13(byte *data, int size, int totalSize) {
 	for (int by = 0; by < _curHeight; by += BLOCKH) {
 		for (int bx = 0; bx < _width; bx += BLOCKW) {
 			uint8 type = *codeBuf++;
-			uint8 *b2 = (uint8*)frame2 + bx + by * _width;
+			uint8 *b2 = (uint8*)_frameBuffer1 + bx + by * _width;
 
 			switch (type) {
 			case 0:
@@ -373,7 +412,7 @@ void DXAPlayer::decode13(byte *data, int size, int totalSize) {
 				if (mbyte & 0x08)
 					my = -my;
 
-				uint8 *b1 = (uint8*)_frameBuffer1 + (bx+mx) + (by+my) * _width;
+				uint8 *b1 = (uint8*)_frameBuffer2 + (bx+mx) + (by+my) * _width;
 				for (int yc = 0; yc < BLOCKH; yc++) {
 					memcpy(b2, b1, BLOCKW);
 					b1 += _width;
@@ -389,7 +428,7 @@ void DXAPlayer::decode13(byte *data, int size, int totalSize) {
 
 				for (int subBlock = 0; subBlock < 4; subBlock++) {
 					int sx = bx + subX[subBlock], sy = by + subY[subBlock];
-					b2 = (uint8*)frame2 + sx + sy * _width;
+					b2 = (uint8*)_frameBuffer1 + sx + sy * _width;
 					switch (subMask & 0xC0) {
 					// 00: skip
 					case 0x00:
@@ -417,7 +456,7 @@ void DXAPlayer::decode13(byte *data, int size, int totalSize) {
 						if (mbyte & 0x08)
 							my = -my;
 
-						uint8 *b1 = (uint8*)_frameBuffer1 + (sx+mx) + (sy+my) * _width;
+						uint8 *b1 = (uint8*)_frameBuffer2 + (sx+mx) + (sy+my) * _width;
 						for (int yc = 0; yc < BLOCKH / 2; yc++) {
 							memcpy(b2, b1, BLOCKW / 2);
 							b1 += _width;
@@ -476,9 +515,6 @@ void DXAPlayer::decode13(byte *data, int size, int totalSize) {
 			}
 		}
 	}
-
-	memcpy(data, frame2, totalSize);
-	free(frame2);
 #endif
 }
 
@@ -497,26 +533,34 @@ void DXAPlayer::decodeNextFrame() {
 	if (tag == MKID_BE('FRAM')) {
 		byte type = _fd->readByte();
 		uint32 size = _fd->readUint32BE();
+		if ((_inBuffer == NULL) || (_inBufferSize < size)) {
+			free(_inBuffer);
+			_inBuffer = (byte *)malloc(size);
+			if (_inBuffer == NULL)
+				error("Error allocating input buffer (size %d)", size);
+			_inBufferSize = size;
+		}
 
-		_fd->read(_frameBuffer2, size);
+		_fd->read(_inBuffer, size);
 
 		switch (type) {
 		case 2:
+			decodeZlib(_frameBuffer1, size, _frameSize);
+			break;
 		case 3:
 			decodeZlib(_frameBuffer2, size, _frameSize);
 			break;
 		case 12:
-			decode12(_frameBuffer2, size, _frameSize);
+			decode12(size);
 			break;
 		case 13:
-			decode13(_frameBuffer2, size, _frameSize);
+			decode13(size);
 			break;
 		default:
 			error("decodeFrame: Unknown compression type %d", type);
 		}
-		if (type == 2 || type == 4 || type == 12 || type == 13) {
-			memcpy(_frameBuffer1, _frameBuffer2, _frameSize);
-		} else {
+		
+		if (type == 3) {
 			for (int j = 0; j < _curHeight; ++j) {
 				for (int i = 0; i < _width; ++i) {
 					const int offs = j * _width + i;

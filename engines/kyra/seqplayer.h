@@ -26,11 +26,13 @@
 #ifndef KYRA_SEQPLAYER_H
 #define KYRA_SEQPLAYER_H
 
+#include "kyra/kyra_v1.h"
+
 namespace Kyra {
 
 class SeqPlayer {
 public:
-	SeqPlayer(KyraEngine* vm, OSystem* system);
+	SeqPlayer(KyraEngine_v1 *vm, OSystem *system);
 	~SeqPlayer();
 
 	void setCopyViewOffs(bool offs) {
@@ -43,9 +45,8 @@ public:
 	bool playSequence(const uint8 *seqData, bool skipSeq);
 	
 	uint8 *setPanPages(int pageNum, int shape);
-
 protected:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 	OSystem *_system;
 	Screen *_screen;
 	Sound *_sound;

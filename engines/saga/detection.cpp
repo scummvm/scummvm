@@ -69,7 +69,19 @@ int SagaEngine::getFontsCount() const { return _gameDescription->fontsCount; }
 
 int SagaEngine::getGameId() const { return _gameDescription->gameId; }
 int SagaEngine::getGameType() const { return _gameDescription->gameType; }
-uint32 SagaEngine::getFeatures() const { return _gameDescription->features; }
+
+uint32 SagaEngine::getFeatures() const {
+	uint32 result = _gameDescription->features;
+
+	if (_gf_wyrmkeep)
+		result |= GF_WYRMKEEP;
+
+	if (_gf_compressed_sounds)
+		result |= GF_COMPRESSED_SOUNDS;
+
+	return result; 
+}
+
 Common::Language SagaEngine::getLanguage() const { return _gameDescription->desc.language; }
 Common::Platform SagaEngine::getPlatform() const { return _gameDescription->desc.platform; }
 int SagaEngine::getGameNumber() const { return _gameNumber; }
@@ -132,6 +144,26 @@ bool SagaEngine::initGame() {
 
 	_displayClip.right = getDisplayInfo().logicalWidth;
 	_displayClip.bottom = getDisplayInfo().logicalHeight;
+
+	if (Common::File::exists("graphics/credit3n.dlt")) {
+		_gf_wyrmkeep = true;
+	}
+
+	// If a compressed sound file is found in the game's directory, set the compressed flag to true
+	if (_gameDescription->gameType == GType_ITE) {
+		if (Common::File::exists("sounds.cmp") || Common::File::exists("soundsd.cmp") ||
+			Common::File::exists("voices.cmp") || Common::File::exists("voicesd.cmp") ||
+			Common::File::exists("inherit the earth voices.cmp")) {
+			_gf_compressed_sounds = true;
+		}	
+	} else {
+		if (Common::File::exists("voicess.cmp") || Common::File::exists("voices1.cmp") ||
+			Common::File::exists("voices2.cmp") || Common::File::exists("voices3.cmp") ||
+			Common::File::exists("voices4.cmp") || Common::File::exists("voices5.cmp") ||
+			Common::File::exists("voices6.cmp") || Common::File::exists("voicesd.cmp")) {
+			_gf_compressed_sounds = true;
+		}	
+	}
 
 	return _resource->createContexts();
 }

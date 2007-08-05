@@ -23,6 +23,8 @@
  *
  */
 
+// List functions
+
 #ifndef SAGA_LIST_H
 #define SAGA_LIST_H
 

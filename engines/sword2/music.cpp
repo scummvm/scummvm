@@ -139,21 +139,29 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 	}
 
 	fh->file.seek(pos, SEEK_SET);
+	
+	Common::MemoryReadStream *tmp = 0;
 
 	switch (fh->fileType) {
 	case kCLUMode:
 		return makeCLUStream(&fh->file, enc_len);
 #ifdef USE_MAD
 	case kMP3Mode:
-		return Audio::makeMP3Stream(&fh->file, enc_len);
+		tmp = fh->file.readStream(enc_len);
+		assert(tmp);
+		return Audio::makeMP3Stream(tmp, true);
 #endif
 #ifdef USE_VORBIS
 	case kVorbisMode:
-		return Audio::makeVorbisStream(&fh->file, enc_len);
+		tmp = fh->file.readStream(enc_len);
+		assert(tmp);
+		return Audio::makeVorbisStream(tmp, true);
 #endif
 #ifdef USE_FLAC
 	case kFlacMode:
-		return Audio::makeFlacStream(&fh->file, enc_len);
+		tmp = fh->file.readStream(enc_len);
+		assert(tmp);
+		return Audio::makeFlacStream(tmp, true);
 #endif
 	default:
 		return NULL;
@@ -659,8 +667,10 @@ void Sound::muteSpeech(bool mute) {
  */
 
 void Sound::pauseSpeech() {
-	_speechPaused = true;
-	_vm->_mixer->pauseHandle(_soundHandleSpeech, true);
+	if (!_speechPaused) {
+		_speechPaused = true;
+		_vm->_mixer->pauseHandle(_soundHandleSpeech, true);
+	}
 }
 
 /**
@@ -668,8 +678,10 @@ void Sound::pauseSpeech() {
  */
 
 void Sound::unpauseSpeech() {
-	_speechPaused = false;
-	_vm->_mixer->pauseHandle(_soundHandleSpeech, false);
+	if (_speechPaused) {
+		_speechPaused = false;
+		_vm->_mixer->pauseHandle(_soundHandleSpeech, false);
+	}
 }
 
 /**
@@ -793,26 +805,22 @@ int32 Sound::setFxIdVolumePan(int32 id, int vol, int pan) {
 }
 
 void Sound::pauseFx() {
-	if (_fxPaused)
-		return;
-
-	for (int i = 0; i < FXQ_LENGTH; i++) {
-		if (_fxQueue[i].resource)
-			_vm->_mixer->pauseHandle(_fxQueue[i].handle, true);
+	if (!_fxPaused) {
+		for (int i = 0; i < FXQ_LENGTH; i++) {
+			if (_fxQueue[i].resource)
+				_vm->_mixer->pauseHandle(_fxQueue[i].handle, true);
+		}
+		_fxPaused = true;
 	}
-
-	_fxPaused = true;
 }
 
 void Sound::unpauseFx() {
-	if (!_fxPaused)
-		return;
-
-	for (int i = 0; i < FXQ_LENGTH; i++)
-		if (_fxQueue[i].resource)
-			_vm->_mixer->pauseHandle(_fxQueue[i].handle, false);
-
-	_fxPaused = false;
+	if (_fxPaused) {
+		for (int i = 0; i < FXQ_LENGTH; i++)
+			if (_fxQueue[i].resource)
+				_vm->_mixer->pauseHandle(_fxQueue[i].handle, false);
+		_fxPaused = false;
+	}
 }
 
 } // End of namespace Sword2

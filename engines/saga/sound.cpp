@@ -83,31 +83,40 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS)) {
 		_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
 	} else {
-		buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
 		Audio::AudioStream *stream = NULL;
+		Common::MemoryReadStream *tmp = NULL;
 
 		switch (buffer.soundType) {
 #ifdef USE_MAD
 			case kSoundMP3:
 				debug(1, "Playing MP3 compressed sound");
-				stream = Audio::makeMP3Stream(buffer.soundFile, buffer.size);
+				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
+				tmp = buffer.soundFile->readStream(buffer.size);
+				assert(tmp);
+				stream = Audio::makeMP3Stream(tmp, true);
 				break;
 #endif
 #ifdef USE_VORBIS
 			case kSoundOGG:
 				debug(1, "Playing OGG compressed sound");
-				stream = Audio::makeVorbisStream(buffer.soundFile, buffer.size);
+				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
+				tmp = buffer.soundFile->readStream(buffer.size);
+				assert(tmp);
+				stream = Audio::makeVorbisStream(tmp, true);
 				break;
 #endif
 #ifdef USE_FLAC
 			case kSoundFLAC:
 				debug(1, "Playing FLAC compressed sound");
-				stream = Audio::makeFlacStream(buffer.soundFile, buffer.size);
+				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
+				tmp = buffer.soundFile->readStream(buffer.size);
+				assert(tmp);
+				stream = Audio::makeFlacStream(tmp, true);
 				break;
 #endif
 			default:
-				// Unknown compression
-				error("Trying to play a compressed sound, but the compression is not known");
+				// No compression, play it as raw sound
+				_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
 				break;
 		}
 

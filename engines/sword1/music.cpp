@@ -203,6 +203,10 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	char fileName[30];
 	stop();
 
+	// FIXME: How about using AudioStream::openStreamFile instead of the code below?
+	// I.e.:
+	//_audioSource = Audio::AudioStream::openStreamFile(fileBase, 0, 0, loop ? 0 : 1);
+
 #ifdef USE_FLAC
 	if (!_audioSource) {
 		sprintf(fileName, "%s.flac", fileBase);

@@ -24,6 +24,7 @@
  */
 
 // Sprite management module
+
 #include "saga/saga.h"
 
 #include "saga/gfx.h"
@@ -57,8 +58,13 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 		loadList(_vm->getResourceDescription()->mainSpritesResourceId, _mainSprites);
 		_arrowSprites = _saveReminderSprites = _inventorySprites = _mainSprites;
 	} else {
-		loadList(RID_IHNM_ARROW_SPRITES, _arrowSprites);
-		loadList(RID_IHNM_SAVEREMINDER_SPRITES, _saveReminderSprites);
+		if (_vm->getGameId() == GID_IHNM_DEMO) {
+			loadList(RID_IHNMDEMO_ARROW_SPRITES, _arrowSprites);
+			loadList(RID_IHNMDEMO_SAVEREMINDER_SPRITES, _saveReminderSprites);
+		} else {
+			loadList(RID_IHNM_ARROW_SPRITES, _arrowSprites);
+			loadList(RID_IHNM_SAVEREMINDER_SPRITES, _saveReminderSprites);
+		}
 	}
 }
 
@@ -113,7 +119,9 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 			offset = readS.readUint16();
 
 		if (offset >= spriteListLength) {
-			error("Sprite::loadList offset exceed");
+			// ITE Mac demos throw this warning
+			warning("Sprite::loadList offset exceeded");
+			return;			
 		}
 
 		spritePointer = spriteListData;

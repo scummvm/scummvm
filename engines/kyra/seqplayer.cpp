@@ -28,7 +28,6 @@
 
 #include "engines/engine.h"
 
-#include "kyra/kyra.h"
 #include "kyra/resource.h"
 #include "kyra/screen.h"
 #include "kyra/sound.h"
@@ -41,7 +40,7 @@
 
 namespace Kyra {
 
-SeqPlayer::SeqPlayer(KyraEngine* vm, OSystem* system) {
+SeqPlayer::SeqPlayer(KyraEngine_v1 *vm, OSystem *system) {
 	_vm = vm;
 	_system = system;
 

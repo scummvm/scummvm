@@ -295,6 +295,13 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 void Parallaction::displayCharacterComment(ExamineData *data) {
 	if (data->_description == NULL) return;
 
+	// NOTE: saving visible screen before displaying comment allows
+	// to restore the exact situation after the comment is deleted.
+	// This means animations are restored in the exact position as
+	// they were, thus avoiding clipping effect as signalled in
+	// BUG item #1762614.
+	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+
 	_gfx->setFont(kFontDialogue);
 	_gfx->flatBlitCnv(_char._talk, 0, 190, 80, Gfx::kBitFront);
 
@@ -305,11 +312,10 @@ void Parallaction::displayCharacterComment(ExamineData *data) {
 	_gfx->drawBalloon(r, 0);
 	_gfx->displayWrappedString(data->_description, 140, 10, 0, 130);
 
-	_gfx->updateScreen();
-
 	waitUntilLeftClick();
 
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_gfx->updateScreen();
 
 	return;
 }
@@ -332,7 +338,7 @@ void Parallaction::displayItemComment(ExamineData *data) {
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
 	data->_cnv = _disk->loadStatic(v68);
-	_gfx->flatBlitCnv(data->_cnv, 140, (SCREEN_HEIGHT - data->_cnv->_height)/2, Gfx::kBitFront);
+	_gfx->flatBlitCnv(data->_cnv, 140, (_screenHeight - data->_cnv->_height)/2, Gfx::kBitFront);
 	_gfx->freeStaticCnv(data->_cnv);
 	delete data->_cnv;
 
@@ -343,7 +349,7 @@ void Parallaction::displayItemComment(ExamineData *data) {
 	Common::Rect r(v6C, v6A);
 	r.moveTo(0, 90);
 	_gfx->drawBalloon(r, 0);
-	_gfx->flatBlitCnv(_vm->_char._head, 100, 152, Gfx::kBitFront);
+	_gfx->flatBlitCnv(_char._head, 100, 152, Gfx::kBitFront);
 	_gfx->displayWrappedString(data->_description, 0, 90, 0, 130);
 
 	jobEraseAnimations((void*)1, NULL);
@@ -353,6 +359,7 @@ void Parallaction::displayItemComment(ExamineData *data) {
 
 	_gfx->setHalfbriteMode(false);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_gfx->updateScreen();
 
 	return;
 }
@@ -417,14 +424,17 @@ void jobToggleDoor(void *parm, Job *j) {
 	StaticCnv v14;
 
 	if (z->u.door->_cnv) {
-		v14._width = z->u.door->_cnv->_width;
-		v14._height = z->u.door->_cnv->_height;
-
 		Common::Rect r(z->_left, z->_top, z->_left+z->u.door->_cnv->_width, z->_top+z->u.door->_cnv->_height);
 
-		_vm->_gfx->restoreZoneBackground(r, z->u.door->_background);
+		uint16 _ax = (z->_flags & kFlagsClosed ? 1 : 0);
 
-		uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
+		v14._width = z->u.door->_cnv->_width;
+		v14._height = z->u.door->_cnv->_height;
+		v14._data0 = z->u.door->_cnv->getFramePtr(_ax);
+
+		_vm->_gfx->restoreDoorBackground(&v14, r, z->u.door->_background);
+
+		_ax = (z->_flags & kFlagsClosed ? 0 : 1);
 
 		_vm->_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
 		_vm->_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBit2);
@@ -462,7 +472,7 @@ void jobRemovePickedItem(void *parm, Job *j) {
 	if (z->u.get->_cnv) {
 		Common::Rect r(z->_left, z->_top, z->_left + z->u.get->_cnv->_width, z->_top + z->u.get->_cnv->_height);
 
-		_vm->_gfx->restoreZoneBackground(r, z->u.get->_backup);
+		_vm->_gfx->restoreGetBackground(r, z->u.get->_backup);
 	}
 
 	count++;

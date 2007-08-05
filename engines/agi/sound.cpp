@@ -40,26 +40,43 @@ namespace Agi {
 
 #ifdef USE_IIGS_SOUND
 
-/**
- * AGI engine sound envelope structure.
- */
-struct SoundEnvelope {
+struct IIgsEnvelopeSegment {
 	uint8 bp;
-	uint8 incHi;
-	uint8 inc_lo;
+	uint16 inc; ///< 8b.8b fixed point, big endian?
 };
 
-struct SoundWavelist {
+#define ENVELOPE_SEGMENT_COUNT 8
+struct IIgsEnvelope {
+	IIgsEnvelopeSegment seg[ENVELOPE_SEGMENT_COUNT];
+};
+
+// 2**(1/12) i.e. the 12th root of 2
+#define SEMITONE 1.059463094359295
+
+struct IIgsWaveInfo {
 	uint8 top;
 	uint8 addr;
 	uint8 size;
+// Oscillator channel (Bits 4-7 of mode-byte). Simplified to use only stereo here.
+#define MASK_OSC_CHANNEL  (1 << 4)
+#define OSC_CHANNEL_LEFT  (1 << 4)
+#define OSC_CHANNEL_RIGHT (0 << 4)
+// Oscillator halt bit (Bit 0 of mode-byte)
+#define MASK_OSC_HALT     (1 << 0)
+#define OSC_HALT          (1 << 0)
+// Oscillator mode (Bits 1 and 2 of mode-byte)
+#define MASK_OSC_MODE     (3 << 1)
+#define OSC_MODE_LOOP     (0 << 1)
+#define OSC_MODE_ONESHOT  (1 << 1)
+#define OSC_MODE_SYNC_AM  (2 << 1)
+#define OSC_MODE_SWAP     (3 << 1)
 	uint8 mode;
-	uint8 relHi;
-	uint8 relLo;
+	uint16 relPitch; ///< 8b.8b fixed point, big endian?
 };
 
-struct SoundInstrument {
-	struct SoundEnvelope env[8];
+#define MAX_WAVE_COUNT 8
+struct IIgsInstrumentHeader {
+	IIgsEnvelope env;
 	uint8 relseg;
 	uint8 priority;
 	uint8 bendrange;
@@ -68,19 +85,19 @@ struct SoundInstrument {
 	uint8 spare;
 	uint8 wac;
 	uint8 wbc;
-	struct SoundWavelist wal[8];
-	struct SoundWavelist wbl[8];
+	IIgsWaveInfo wal[MAX_WAVE_COUNT];
+	IIgsWaveInfo wbl[MAX_WAVE_COUNT];
 };
 
-struct SoundIIgsSample {
-	uint8 typeLo;
-	uint8 typeHi;
-	uint8 srateLo;
-	uint8 srateHi;
-	uint16 unknown[2];
-	uint8 sizeLo;
-	uint8 sizeHi;
-	uint16 unknown2[13];
+struct IIgsSampleHeader {
+	uint16 type;
+	uint8  pitch; ///< Logarithmic, base is 2**(1/12), unknown multiplier (Possibly in range 1040-1080)
+	uint8  unknownByte_Ofs3; // 0x7F in Gold Rush's sound resource 60, 0 in all others.
+	uint8  volume; ///< Current guess: Logarithmic in 6 dB steps
+	uint8  unknownByte_Ofs5; ///< 0 in all tested samples.
+	uint16 instrumentSize; ///< Little endian. 44 in all tested samples. A guess.
+	uint16 sampleSize; ///< Little endian. Accurate in all tested samples excluding Manhunter I's sound resource 16.
+	IIgsInstrumentHeader instrument;
 };
 
 #if 0
@@ -88,6 +105,117 @@ static SoundInstrument *instruments;
 static int numInstruments;
 static uint8 *wave;
 #endif
+
+bool readIIgsEnvelope(IIgsEnvelope &envelope, Common::SeekableReadStream &stream) {
+	for (int segNum = 0; segNum < ENVELOPE_SEGMENT_COUNT; segNum++) {
+		envelope.seg[segNum].bp  = stream.readByte();
+		envelope.seg[segNum].inc = stream.readUint16BE();
+	}
+	return !stream.ioFailed();
+}
+
+bool readIIgsWaveInfo(IIgsWaveInfo &waveInfo, Common::SeekableReadStream &stream) {
+	waveInfo.top      = stream.readByte();
+	waveInfo.addr     = stream.readByte();
+	waveInfo.size     = stream.readByte();
+	waveInfo.mode     = stream.readByte();
+	waveInfo.relPitch = stream.readUint16BE();
+	return !stream.ioFailed();
+}
+
+/**
+ * Read an Apple IIGS instrument header from the given stream.
+ * @param header The header to which to write the data.
+ * @param stream The source stream from which to read the data.
+ * @return True if successful, false otherwise.
+ */
+bool readIIgsInstrumentHeader(IIgsInstrumentHeader &header, Common::SeekableReadStream &stream) {
+	readIIgsEnvelope(header.env, stream);
+	header.relseg    = stream.readByte();
+	header.priority  = stream.readByte();
+	header.bendrange = stream.readByte();
+	header.vibdepth  = stream.readByte();
+	header.vibspeed  = stream.readByte();
+	header.spare     = stream.readByte();
+	header.wac       = stream.readByte();
+	header.wbc       = stream.readByte();
+	for (int waveA = 0; waveA < header.wac; waveA++) // Read A wave lists
+		readIIgsWaveInfo(header.wal[waveA], stream);
+	for (int waveB = 0; waveB < header.wbc; waveB++) // Read B wave lists
+		readIIgsWaveInfo(header.wbl[waveB], stream);
+	return !stream.ioFailed();
+}
+
+/**
+ * Read an Apple IIGS AGI sample header from the given stream.
+ * @param header The header to which to write the data.
+ * @param stream The source stream from which to read the data.
+ * @return True if successful, false otherwise.
+ */
+bool readIIgsSampleHeader(IIgsSampleHeader &header, Common::SeekableReadStream &stream) {
+	header.type             = stream.readUint16LE();
+	header.pitch            = stream.readByte();
+	header.unknownByte_Ofs3 = stream.readByte();
+	header.volume           = stream.readByte();
+	header.unknownByte_Ofs5 = stream.readByte();
+	header.instrumentSize   = stream.readUint16LE();
+	header.sampleSize       = stream.readUint16LE();
+	return readIIgsInstrumentHeader(header.instrument, stream);
+}
+
+/**
+ * Load an Apple IIGS AGI sample resource from the given stream and
+ * create an AudioStream out of it.
+ *
+ * @param stream The source stream.
+ * @param resnum Sound resource number. Optional. Used for error messages.
+ * @return A non-null AudioStream pointer if successful, NULL otherwise.
+ * @note In case of failure (i.e. NULL is returned), stream is reset back
+ *       to its original position and its I/O failed -status is cleared.
+ * TODO: Add better handling of invalid resource number when printing error messages.
+ * TODO: Add support for looping sounds.
+ * FIXME: Fix sample rate calculation, it's probably not accurate at the moment.
+ */
+Audio::AudioStream *makeIIgsSampleStream(Common::SeekableReadStream &stream, int resnum = -1) {
+	const uint32 startPos = stream.pos();
+	IIgsSampleHeader header;
+	Audio::AudioStream *result = NULL;
+	bool readHeaderOk = readIIgsSampleHeader(header, stream);
+
+	// Check that the header was read ok and that it's of the correct type
+	// and that there's room for the sample data in the stream.
+	if (readHeaderOk && header.type == AGI_SOUND_SAMPLE) { // An Apple IIGS AGI sample resource
+		uint32 tailLen = stream.size() - stream.pos();
+		if (tailLen < header.sampleSize) { // Check if there's no room for the sample data in the stream
+			// Apple IIGS Manhunter I: Sound resource 16 has only 16074 bytes
+			// of sample data although header says it should have 16384 bytes.
+			warning("Apple IIGS sample (%d) too short (%d bytes. Should be %d bytes). Using the part that's left", resnum, tailLen, header.sampleSize);
+			header.sampleSize = (uint16) tailLen; // Use the part that's left
+		}
+		if (header.pitch > 0x7F) { // Check if the pitch is invalid
+			warning("Apple IIGS sample (%d) has too high pitch (0x%02x)", resnum, header.pitch);
+			header.pitch &= 0x7F; // Apple IIGS AGI probably did it this way too
+		}
+		// Allocate memory for the sample data and read it in
+		byte *sampleData = (byte *) malloc(header.sampleSize);
+		uint32 readBytes = stream.read(sampleData, header.sampleSize);
+		if (readBytes == header.sampleSize) { // Check that we got all the data we requested
+			// Make an audio stream from the mono, 8 bit, unsigned input data
+			byte flags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED;
+			int rate = (int) (1076 * pow(SEMITONE, header.pitch));
+			result = Audio::makeLinearInputStream(sampleData, header.sampleSize, rate, flags, 0, 0);
+		}
+	}
+
+	// If couldn't make a sample out of the input stream for any reason then
+	// rewind back to stream's starting position and clear I/O failed -status.
+	if (result == NULL) {
+		stream.seek(startPos);
+		stream.clearIOFailed();
+	}
+
+	return result;
+}
 
 #endif
 
@@ -169,7 +297,7 @@ void SoundMgr::unloadSound(int resnum) {
 }
 
 void SoundMgr::decodeSound(int resnum) {
-#ifdef USE_IIGS_SOUND
+#if 0
 	int type, size;
 	int16 *buf;
 	uint8 *src;
@@ -190,12 +318,12 @@ void SoundMgr::decodeSound(int resnum) {
 		_vm->_game.sounds[resnum].rdata = (uint8 *) buf;
 		free(src);
 	}
-#endif				/* USE_IIGS_SOUND */
+#endif
 }
 
 void SoundMgr::startSound(int resnum, int flag) {
 	int i, type;
-#ifdef USE_IIGS_SOUND
+#if 0
 	struct SoundIIgsSample *smp;
 #endif
 
@@ -218,7 +346,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 	song = (uint8 *)_vm->_game.sounds[resnum].rdata;
 
 	switch (type) {
-#ifdef USE_IIGS_SOUND
+#if 0
 	case AGI_SOUND_SAMPLE:
 		debugC(3, kDebugLevelSound, "IIGS sample");
 		smp = (struct SoundIIgsSample *)_vm->_game.sounds[resnum].rdata;

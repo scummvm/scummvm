@@ -146,73 +146,40 @@ Parallaction::~Parallaction() {
 
 int Parallaction::init() {
 
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
+	_engineFlags = 0;
 	_objectsNames = NULL;
 	_globalTable = NULL;
-	_localFlagNames = NULL;
-	initResources();
-
 	_hasLocationSound = false;
-
 	_skipMenu = false;
-
 	_transCurrentHoverItem = 0;
 	_actionAfterWalk = false;  // actived when the character needs to move before taking an action
 	_activeItem._index = 0;
 	_activeItem._id = 0;
 	_procCurrentHoverItem = -1;
-
-//	_musicData1 = 0;
-	strcpy(_characterName1, "null");
-
-	_soundMan = 0;
-
 	_baseTime = 0;
-
-	if (getPlatform() == Common::kPlatformPC) {
-		_disk = new DosDisk(this);
-	} else {
-		if (getFeatures() & GF_DEMO) {
-			strcpy(_location._name, "fognedemo");
-		}
-		_disk = new AmigaDisk(this);
-		_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
-	}
-
-	_engineFlags = 0;
-
-	strcpy(_characterName, "dough");
-
-	memset(_locationNames, 0, 120*32);
 	_numLocations = 0;
-
 	_location._startPosition.x = -1000;
 	_location._startPosition.y = -1000;
 	_location._startFrame = 0;
-
 	_location._comment = NULL;
 	_location._endComment = NULL;
 
-	initWalk();
+	_screenMaskWidth = _screenWidth / 4;
+	_screenPathWidth = _screenWidth / 8;
+	_screenSize = _screenWidth * _screenHeight;
+	_screenMaskSize = _screenMaskWidth * _screenHeight;
+	_screenPathSize = _screenPathWidth * _screenHeight;
 
-	initInventory();
+	strcpy(_characterName1, "null");
+	strcpy(_characterName, "dough");
 
-	_animations.push_front(&_vm->_char._ani);
+	memset(_locationNames, 0, 120*32);
+
+	initWalk();			// needs to be pushed into subclass
+	initInventory();	// needs to be pushed into subclass
+
+	_animations.push_front(&_char._ani);
 	_gfx = new Gfx(this);
-
-	if (getPlatform() == Common::kPlatformPC) {
-		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-		_soundMan = new DosSoundMan(this, driver);
-		_soundMan->setMusicVolume(ConfMan.getInt("music_volume"));
-	} else {
-		_soundMan = new AmigaSoundMan(this);
-	}
 
 	_debugger = new Debugger(this);
 
@@ -252,9 +219,9 @@ void Parallaction::initGame() {
 	parseLocation(_location._name);
 
 	if (_location._startPosition.x != -1000) {
-		_vm->_char._ani._left = _location._startPosition.x;
-		_vm->_char._ani._top = _location._startPosition.y;
-		_vm->_char._ani._frame = _location._startFrame;
+		_char._ani._left = _location._startPosition.x;
+		_char._ani._top = _location._startPosition.y;
+		_char._ani._frame = _location._startFrame;
 		_location._startPosition.y = -1000;
 		_location._startPosition.x = -1000;
 	}
@@ -346,7 +313,8 @@ void waitUntilLeftClick() {
 			break;
 		}
 
-		g_system->delayMillis(10);
+		_vm->_gfx->updateScreen();
+		g_system->delayMillis(30);
 	}
 
 
@@ -498,9 +466,9 @@ void Parallaction::processInput(InputData *data) {
 		debugC(2, kDebugInput, "processInput: kEvWalk");
 		_hoverZone = NULL;
 		changeCursor(kCursorArrow);
-		if (_vm->_char._ani._flags & kFlagsRemove) break;
-		if ((_vm->_char._ani._flags & kFlagsActive) == 0) break;
-		WalkNodeList *v4 = _vm->_char._builder.buildPath(data->_mousePos.x, data->_mousePos.y);
+		if (_char._ani._flags & kFlagsRemove) break;
+		if ((_char._ani._flags & kFlagsActive) == 0) break;
+		WalkNodeList *v4 = _char._builder.buildPath(data->_mousePos.x, data->_mousePos.y);
 		addJob(&jobWalk, v4, kPriority19);
 		_engineFlags |= kEngineWalking; 								   // inhibits processing of input until walking is over
 		}
@@ -716,27 +684,27 @@ void Parallaction::changeCursor(int32 index) {
 void Parallaction::freeCharacter() {
 	debugC(3, kDebugLocation, "freeCharacter()");
 
-	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
+	if (!IS_DUMMY_CHARACTER(_characterName)) {
 		if (_objectsNames)
 			delete _objectsNames;
 		_objectsNames = NULL;
 
-		if (_vm->_char._ani._cnv)
-			delete _vm->_char._ani._cnv;
-		_vm->_char._ani._cnv = NULL;
+		if (_char._ani._cnv)
+			delete _char._ani._cnv;
+		_char._ani._cnv = NULL;
 
-		if (_vm->_char._talk)
-			delete _vm->_char._talk;
-		_vm->_char._talk = NULL;
+		if (_char._talk)
+			delete _char._talk;
+		_char._talk = NULL;
 
-		_vm->_gfx->freeStaticCnv(_vm->_char._head);
-		if (_vm->_char._head)
-			delete _vm->_char._head;
-		_vm->_char._head = NULL;
+		_gfx->freeStaticCnv(_char._head);
+		if (_char._head)
+			delete _char._head;
+		_char._head = NULL;
 
-		if (_vm->_char._objs)
-			delete _vm->_char._objs;
-		_vm->_char._objs = NULL;
+		if (_char._objs)
+			delete _char._objs;
+		_char._objs = NULL;
 	}
 
 	return;
@@ -763,18 +731,17 @@ void Parallaction::changeCharacter(const char *name) {
 		// character for sanity before memory is freed
 		freeCharacter();
 
-		Common::String oldArchive = _disk->selectArchive((_vm->getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
-		_vm->_char._ani._cnv = _disk->loadFrames(fullName);
+		Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
+		_char._ani._cnv = _disk->loadFrames(fullName);
 
 		if (!IS_DUMMY_CHARACTER(name)) {
-			if (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT))
+			if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT))
 				_disk->selectArchive("disk0");
 
-			_vm->_char._head = _disk->loadHead(baseName);
-			_vm->_char._talk = _disk->loadTalk(baseName);
-			_vm->_char._objs = _disk->loadObjects(baseName);
+			_char._head = _disk->loadHead(baseName);
+			_char._talk = _disk->loadTalk(baseName);
+			_char._objs = _disk->loadObjects(baseName);
 			_objectsNames = _disk->loadTable(baseName);
-			refreshInventory(baseName);
 
 			_soundMan->playCharacterMusic(name);
 

@@ -68,29 +68,30 @@ void CDROM::readLIC(const char *fname) {
 	_vm->_dataIO->getUnpackedData(tmp);
 
 	handle = _vm->_dataIO->openData(tmp);
+	DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
 
-	version = _vm->_dataIO->readUint16(handle);
-	startChunk = _vm->_dataIO->readUint16(handle);
-	_numTracks = _vm->_dataIO->readUint16(handle);
+	version = stream->readUint16LE();
+	startChunk = stream->readUint16LE();
+	_numTracks = stream->readUint16LE();
 
 	if (version != 3)
 		error("%s: Unknown version %d", fname, version);
 
-	_vm->_dataIO->seekData(handle, 50, SEEK_SET);
+	stream->seek(50);
 
 	for (int i = 0; i < startChunk; i++) {
-		pos = _vm->_dataIO->readUint16(handle);
+		pos = stream->readUint16LE();
 
 		if (!pos)
 			break;
 
-		_vm->_dataIO->seekData(handle, pos, SEEK_CUR);
+		stream->skip(pos);
 	}
 
 	_LICbuffer = new byte[_numTracks * 22];
-	_vm->_dataIO->readData(handle, _LICbuffer, _numTracks * 22);
+	stream->read(_LICbuffer, _numTracks * 22);
 
-	_vm->_dataIO->closeData(handle);
+	delete stream;
 }
 
 void CDROM::freeLICbuffer() {

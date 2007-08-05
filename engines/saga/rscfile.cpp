@@ -24,6 +24,7 @@
  */
 
 // RSC Resource file management module
+
 #include "saga/saga.h"
 
 #include "saga/actor.h"
@@ -329,6 +330,7 @@ bool Resource::loadContext(ResourceContext *context) {
 				if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
 					resourceData->offset = 0;
 					resourceData->size = resourceData->patchData->_patchFile->size();
+					resourceData->patchData->_patchFile->close();
 				} else {
 					delete resourceData->patchData;
 					resourceData->patchData = NULL;
@@ -343,18 +345,188 @@ bool Resource::loadContext(ResourceContext *context) {
 bool Resource::createContexts() {
 	int i;
 	ResourceContext *context;
+	char musicFileName[256];
+	char soundFileName[256];
+	char voicesFileName[256];
+	int soundFileIndex = 0;
+	int voicesFileIndex = 0;
+	bool digitalMusic = false;
+	bool soundFileInArray = false;
+	bool voicesFileInArray = false;
+	bool multipleVoices = false;
+	bool censoredVersion = false;
+	uint16 voiceFileType = GAME_VOICEFILE;
 
 	_contextsCount = 0;
-	for (i = 0; _vm->getFilesDescriptions()[i].fileName; i++)
+	for (i = 0; _vm->getFilesDescriptions()[i].fileName; i++) {
 		_contextsCount++;
+		if (_vm->getFilesDescriptions()[i].fileType == GAME_SOUNDFILE)
+			soundFileInArray = true;
+		if (_vm->getFilesDescriptions()[i].fileType == GAME_VOICEFILE)
+			voicesFileInArray = true;
+	}
+
+	if (!soundFileInArray) {
+		if (_vm->getGameType() == GType_ITE) {
+			// If the sound file is not specified in the detector table, add it here
+			if (Common::File::exists("sounds.rsc") || Common::File::exists("sounds.cmp")) {
+				_contextsCount++;
+				soundFileIndex = _contextsCount - 1;
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(soundFileName, "sounds.cmp");
+				else
+					sprintf(soundFileName, "sounds.rsc");
+			} else if (Common::File::exists("soundsd.rsc") || Common::File::exists("soundsd.cmp")) {
+				_contextsCount++;
+				soundFileIndex = _contextsCount - 1;
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(soundFileName, "soundsd.cmp");
+				else
+					sprintf(soundFileName, "soundsd.rsc");
+			} else {
+				// No sound file found, don't add any file to the array
+				soundFileInArray = true;
+				// ITE floppy versions have both voices and sounds in voices.rsc
+				voiceFileType = GAME_SOUNDFILE | GAME_VOICEFILE;
+			}
+		} else {
+			// If the sound file is not specified in the detector table, add it here
+			if (Common::File::exists("sfx.res") || Common::File::exists("sfx.cmp")) {
+				_contextsCount++;
+				soundFileIndex = _contextsCount - 1;
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(soundFileName, "sfx.cmp");
+				else
+					sprintf(soundFileName, "sfx.res");
+			} else {
+				// No sound file found, don't add any file to the array
+				soundFileInArray = true;
+			}
+		}
+	}
+
+	if (!voicesFileInArray) {
+		if (_vm->getGameType() == GType_ITE) {
+			// If the voices file is not specified in the detector table, add it here
+			if (Common::File::exists("voices.rsc") || Common::File::exists("voices.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(voicesFileName, "voices.cmp");
+				else
+					sprintf(voicesFileName, "voices.rsc");
+			} else if (Common::File::exists("voicesd.rsc") || Common::File::exists("voicesd.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(voicesFileName, "voicesd.cmp");
+				else
+					sprintf(voicesFileName, "voicesd.rsc");
+			} else if (Common::File::exists("inherit the earth voices") || 
+					   Common::File::exists("inherit the earth voices.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(voicesFileName, "inherit the earth voices.cmp");
+				else
+					sprintf(voicesFileName, "inherit the earth voices");
+					// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
+					// the voice file is big endian. If we got such a version with mixed files, mark this voice file
+					// as big endian
+					if (!_vm->isBigEndian())
+						voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
+			} else {
+				// No voice file found, don't add any file to the array
+				voicesFileInArray = true;
+			}
+		} else {
+			// If the voices file is not specified in the detector table, add it here
+			if (Common::File::exists("voicess.res") || Common::File::exists("voicess.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				// IHNM has multiple voice files
+				multipleVoices = true;
+				// Note: it is assumed that the voices are always last in the list
+				if (Common::File::exists("voices4.res") || Common::File::exists("voices4.cmp")) {
+					_contextsCount += 6;	// voices1-voices6
+				} else {
+					// The German and French versions of IHNM don't have Nimdok's chapter, therefore the voices file
+					// for that chapter is missing
+					_contextsCount += 5;	// voices1-voices3, voices4-voices5
+					censoredVersion = true;
+				}
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(voicesFileName, "voicess.cmp");
+				else
+					sprintf(voicesFileName, "voicess.res");
+			} else if (Common::File::exists("voicesd.res") || Common::File::exists("voicesd.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(voicesFileName, "voicesd.cmp");
+				else
+					sprintf(voicesFileName, "voicesd.res");
+			} else {
+				// No voice file found, don't add any file to the array
+				voicesFileInArray = true;
+			}
+		}
+	}
+
+	if (_vm->getGameType() == GType_ITE) {
+		// Check for digital music in ITE
+		if (Common::File::exists("music.rsc") || Common::File::exists("music.cmp")) {
+			_contextsCount++;
+			digitalMusic = true;
+			if (Common::File::exists("music.cmp"))
+				sprintf(musicFileName, "music.cmp");
+			else
+				sprintf(musicFileName, "music.rsc");
+		} else if (Common::File::exists("musicd.rsc") || Common::File::exists("musicd.cmp")) {
+			_contextsCount++;
+			digitalMusic = true;
+			if (Common::File::exists("musicd.cmp"))
+				sprintf(musicFileName, "musicd.cmp");
+			else
+				sprintf(musicFileName, "musicd.rsc");
+		} else {
+			digitalMusic = false;
+		}
+	}
 
 	_contexts = (ResourceContext*)calloc(_contextsCount, sizeof(*_contexts));
 
 	for (i = 0; i < _contextsCount; i++) {
 		context = &_contexts[i];
 		context->file = new Common::File();
-		context->fileName = _vm->getFilesDescriptions()[i].fileName;
-		context->fileType = _vm->getFilesDescriptions()[i].fileType;
+
+		// For ITE, add the digital music file and sfx file information here
+		if (_vm->getGameType() == GType_ITE && digitalMusic && i == _contextsCount - 1) {
+			context->fileName = musicFileName;
+			context->fileType = GAME_MUSICFILE;
+		} else if (!soundFileInArray && i == soundFileIndex) {
+			context->fileName = soundFileName;
+			context->fileType = GAME_SOUNDFILE;	
+		} else if (!voicesFileInArray && i == voicesFileIndex) {
+			context->fileName = voicesFileName;
+			// can be GAME_VOICEFILE or GAME_SOUNDFILE | GAME_VOICEFILE or GAME_VOICEFILE | GAME_SWAPENDIAN
+			context->fileType = voiceFileType;
+		} else {
+			if (!(!voicesFileInArray && multipleVoices && (i > voicesFileIndex))) {
+				context->fileName = _vm->getFilesDescriptions()[i].fileName;
+				context->fileType = _vm->getFilesDescriptions()[i].fileType;
+			} else {
+				int token = (censoredVersion && (i - voicesFileIndex >= 4)) ? 1 : 0;	// censored versions don't have voice4
+
+				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
+					sprintf(voicesFileName, "voices%i.cmp", i - voicesFileIndex + token);
+				else
+					sprintf(voicesFileName, "voices%i.res", i - voicesFileIndex + token);
+
+				context->fileName = voicesFileName;
+				context->fileType = GAME_VOICEFILE;
+			}
+		}
 		context->serial = 0;
 
 		// IHNM has serveral different voice files, so we need to allow
@@ -434,13 +606,20 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, byte*&r
 	if (file->read(resourceBuffer, resourceSize) != resourceSize) {
 		error("Resource::loadResource() failed to read");
 	}
+	if (resourceData->patchData != NULL)
+		file->close();
 }
 
 static int metaResourceTable[] = { 0, 326, 517, 677, 805, 968, 1165, 0, 1271 };
+static int metaResourceTableDemo[] = { 0, 0, 0, 0, 0, 0, 0, 285, 0 };
 
 void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
-	if (chapter < 0)
-		chapter = 8;
+	if (chapter < 0) {
+		if (_vm->getGameId() != GID_IHNM_DEMO)
+			chapter = 8;
+		else
+			chapter = 7;
+	}
 
 	// TODO
 	//if (module.voiceLUT)
@@ -465,8 +644,13 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	byte *resourcePointer;
 	size_t resourceLength;
 
-	_vm->_resource->loadResource(resourceContext, metaResourceTable[chapter],
-								 resourcePointer, resourceLength);
+	if (_vm->getGameId() != GID_IHNM_DEMO) {
+		_vm->_resource->loadResource(resourceContext, metaResourceTable[chapter],
+									 resourcePointer, resourceLength);
+	} else {
+		_vm->_resource->loadResource(resourceContext, metaResourceTableDemo[chapter],
+									 resourcePointer, resourceLength);
+	}
 
 	if (resourceLength == 0) {
 		error("Resource::loadGlobalResources wrong metaResource");
@@ -555,22 +739,27 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 
 	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
 
-	_vm->_resource->loadResource(resourceContext, _metaResource.songTableID, resourcePointer, resourceLength);
+	if (_metaResource.songTableID > 0) {
+		_vm->_resource->loadResource(resourceContext, _metaResource.songTableID, resourcePointer, resourceLength);
 
-	if (resourceLength == 0) {
-		error("Resource::loadGlobalResources Can't load songs list for current track");
+		if (resourceLength == 0) {
+			error("Resource::loadGlobalResources Can't load songs list for current track");
+		}
+
+		free(_vm->_music->_songTable);
+		
+		_vm->_music->_songTableLen = resourceLength / 4;
+		_vm->_music->_songTable = (int32 *)malloc(sizeof(int32) * _vm->_music->_songTableLen);
+
+		MemoryReadStream songS(resourcePointer, resourceLength);
+
+		for (i = 0; i < _vm->_music->_songTableLen; i++)
+			_vm->_music->_songTable[i] = songS.readSint32LE();
+		free(resourcePointer);
+	} else {
+		// The IHNM demo has a fixed music track and doesn't load a song table
+		_vm->_music->play(3, MUSIC_LOOP);
 	}
-
-	free(_vm->_music->_songTable);
-	
-	_vm->_music->_songTableLen = resourceLength / 4;
-	_vm->_music->_songTable = (int32 *)malloc(sizeof(int32) * _vm->_music->_songTableLen);
-
-	MemoryReadStream songS(resourcePointer, resourceLength);
-
-	for (i = 0; i < _vm->_music->_songTableLen; i++)
-		_vm->_music->_songTable[i] = songS.readSint32LE();
-	free(resourcePointer);
 
 	int voiceLUTResourceID = 0;
 
@@ -602,6 +791,9 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 		voiceLUTResourceID = 28;
 		break;
 	case 7:
+		// IHNM demo
+		_vm->_sndRes->setVoiceBank(0);
+		voiceLUTResourceID = 17;
 		break;
 	case 8:
 		_vm->_sndRes->setVoiceBank(0);

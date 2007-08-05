@@ -18,6 +18,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  SCUMM:
    - Added subtitle skipping (via '.' key) in older games which didn't have
      this feature so far (e.g. Zak, MM, Indy3, Loom).
+   - Added support for Chinese COMI
 
  SAGA:
    - Added support for compressed sound effects, voices and music

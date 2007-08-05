@@ -40,6 +40,7 @@
 #include "saga/render.h"
 #include "saga/sound.h"
 #include "saga/sndres.h"
+#include "saga/rscfile.h"
 
 #include "saga/script.h"
 #include "saga/objectmap.h"
@@ -224,12 +225,12 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfScriptReturnFromVideo),
 		OPCODE(sfScriptEndVideo),
 		OPCODE(sfSetActorZ),
-		OPCODE(sf87),
-		OPCODE(sf88),
-		OPCODE(sf89),
+		OPCODE(sfShowIHNMDemoHelpBg),
+		OPCODE(sfAddIHNMDemoHelpTextLine),
+		OPCODE(sfShowIHNMDemoHelpPage),
 		OPCODE(sfVstopFX),
 		OPCODE(sfVstopLoopedFX),
-		OPCODE(sfNull),
+		OPCODE(sf92),	// only used in the demo version of IHNM
 		OPCODE(sfDemoIsInteractive),
 		OPCODE(sfVsetTrack),
 		OPCODE(sfGetPoints),
@@ -277,7 +278,16 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 	obj = _vm->_actor->getObj(objectId);
 	if (obj->_sceneNumber != ITE_SCENE_INV) {
 		obj->_sceneNumber = ITE_SCENE_INV;
-		//4debug for (int j=0;j<17;j++)
+
+		// WORKAROUND for two incorrect object sprites in the IHNM demo
+		// (the mirror and the icon in Ted's part). Set them correctly here
+		if (_vm->getGameId() == GID_IHNM_DEMO) {
+			if (obj->_spriteListResourceId == 4 && objectId == 16408)
+				obj->_spriteListResourceId = 24;
+			if (obj->_spriteListResourceId == 3 && objectId == 16409)
+				obj->_spriteListResourceId = 25;
+		}
+
 		_vm->_interface->addToInventory(objectId);
 	}
 }
@@ -562,16 +572,19 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	}
 
 	if (_vm->getGameType() == GType_IHNM) {
+		// WORKAROUND for the briefly appearing actors at the beginning of each chapter
+		// This will stop the actors being drawn in those specific scenes until the scene background has been drawn
+		if ((_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 6) ||
+			(_vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 31) ||
+			(_vm->_scene->currentChapterNumber() == 3 && _vm->_scene->currentSceneNumber() == 58) ||
+			(_vm->_scene->currentChapterNumber() == 4 && _vm->_scene->currentSceneNumber() == 68) ||
+			(_vm->_scene->currentChapterNumber() == 5 && _vm->_scene->currentSceneNumber() == 91) ||
+			(_vm->_scene->currentChapterNumber() == 7 && _vm->_scene->currentSceneNumber() == 145))
+				_vm->_actor->showActors(false);		// Stop showing actors before the background is drawn
+
 		// Since it doesn't look like the IHNM scripts remove the
-		// cutaway after the intro, this is probably the best place to
-		// to it.
-		Event event;
-		event.type = kEvTImmediate;
-		event.code = kCutawayEvent;
-		event.op = kEventClear;
-		event.time = 0;
-		event.duration = 0;
-		_vm->_events->queue(&event);
+		// cutaway after the intro, this is probably the best place to do it
+		_vm->_anim->clearCutaway();
 	}
 
 	// It is possible to leave scene when converse panel is on,
@@ -868,10 +881,16 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 		_vm->_scene->currentSceneNumber() == 59 && obj->_id == 16385)
 			obj->_sceneNumber = -1;
 
-	if (_vm->getGameType() == GType_IHNM)
-		obj->_spriteListResourceId = spriteId;
-	else
+	if (_vm->getGameType() == GType_IHNM) {
+		if (_vm->getGameId() != GID_IHNM_DEMO) {
+			obj->_spriteListResourceId = spriteId;
+		} else {
+			// Don't update the object's _spriteListResourceId in the IHNM demo, as this function is
+			// called incorrectly there (with spriteId == 0, which resets the object sprites)
+		}
+	} else {
 		obj->_spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
+	}
 
 	obj->_location.x = x;
 	obj->_location.y = y;
@@ -1296,11 +1315,6 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	Event event;
 	Event *q_event;
 
-	if (_vm->getGameType() == GType_IHNM) {
-		warning("Psychic profile is not implemented");
-		return;
-	}
-
 	thread->wait(kWaitTypePlacard);
 
 	_vm->_interface->rememberMode();
@@ -1397,72 +1411,24 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 
 // Script function #49 (0x31)
 void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
-	static PalEntry cur_pal[PAL_ENTRIES];
-	PalEntry *pal;
-	Event event;
-	Event *q_event;
-
 	thread->wait(kWaitTypePlacard);
 
-	_vm->_interface->restoreMode();
-
-	_vm->_gfx->getCurrentPal(cur_pal);
-
-	event.type = kEvTImmediate;
-	event.code = kPalEvent;
-	event.op = kEventPalToBlack;
-	event.time = 0;
-	event.duration = kNormalFadeDuration;
-	event.data = cur_pal;
-
-	q_event = _vm->_events->queue(&event);
-
-	event.type = kEvTOneshot;
-	event.code = kGraphicsEvent;
-	event.op = kEventClearFlag;
-	event.param = RF_PLACARD;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
-	event.code = kTextEvent;
-	event.op = kEventRemove;
-	event.data = _placardTextEntry;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	_vm->_scene->getBGPal(pal);
-
-	event.type = kEvTImmediate;
-	event.code = kPalEvent;
-	event.op = kEventBlackToPal;
-	event.time = 0;
-	event.duration = kNormalFadeDuration;
-	event.data = pal;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
-	event.code = kCursorEvent;
-	event.op = kEventShow;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
-	event.code = kScriptEvent;
-	event.op = kEventThreadWake;
-	event.param = kWaitTypePlacard;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
+	_vm->_scene->clearPlacard();
 }
 
 void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfPsychicProfile", thread, nArgs);
+	thread->wait(kWaitTypePlacard);
+
+	int stringId = thread->pop();
+	_vm->_scene->showPsychicProfile(thread->_strings->getString(stringId));
 }
 
 void Script::sfPsychicProfileOff(SCRIPTFUNC_PARAMS) {
-	SF_stub("sfPsychicProfileOff", thread, nArgs);
+	thread->wait(kWaitTypePlacard);
+
+	// This is called a while after the psychic profile is
+	// opened, to close it automatically
+	_vm->_scene->clearPsychicProfile();
 }
 
 // Script function #50 (0x32)
@@ -1695,7 +1661,7 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		int16 param = thread->pop() + 9;
 
 		if (param >= 9 && param <= 34) {
-			_vm->_music->setVolume(-1, 1);
+			_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
 			_vm->_music->play(param);
 		} else {
 			_vm->_music->stop();
@@ -1712,7 +1678,7 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 		if (param1 >= _vm->_music->_songTableLen) {
 			warning("sfPlayMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
 		} else {
-			_vm->_music->setVolume(-1, 1);
+			_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
 			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP : MUSIC_NORMAL);
 			if (!_vm->_scene->haveChapterPointsChanged()) {
 				_vm->_scene->setCurrentMusicTrack(param1);
@@ -2032,16 +1998,49 @@ void Script::sfScriptEndVideo(SCRIPTFUNC_PARAMS) {
 	_vm->_anim->endVideo();
 }
 
-void Script::sf87(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf87", thread, nArgs);
+void Script::sfShowIHNMDemoHelpBg(SCRIPTFUNC_PARAMS) {
+	_ihnmDemoCurrentY = 0;
+	_vm->_scene->_textList.clear();
+	_vm->_interface->setMode(kPanelConverse);
+	_vm->_scene->showPsychicProfile(NULL);
 }
 
-void Script::sf88(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf88", thread, nArgs);
+void Script::sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS) {
+	int stringId, textHeight;
+	TextListEntry textEntry;
+	Event event;
+
+	stringId = thread->pop();
+
+	textHeight = _vm->_font->getHeight(kKnownFontVerb, thread->_strings->getString(stringId), 226, kFontCentered);
+
+	textEntry.knownColor = kKnownColorBlack;
+	textEntry.useRect = true;
+	textEntry.rect.left = 245;
+	textEntry.rect.setHeight(210 + 76);
+	textEntry.rect.setWidth(226);
+	textEntry.rect.top = 76 + _ihnmDemoCurrentY;
+	textEntry.font = kKnownFontVerb;
+	textEntry.flags = (FontEffectFlags)(kFontCentered);
+	textEntry.text = thread->_strings->getString(stringId);
+
+	TextListEntry *_psychicProfileTextEntry = _vm->_scene->_textList.addEntry(textEntry);
+
+	event.type = kEvTOneshot;
+	event.code = kTextEvent;
+	event.op = kEventDisplay;
+	event.data = _psychicProfileTextEntry;
+
+	_vm->_events->queue(&event);
+
+	_ihnmDemoCurrentY += 10;
 }
 
-void Script::sf89(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf89", thread, nArgs);
+void Script::sfShowIHNMDemoHelpPage(SCRIPTFUNC_PARAMS) {
+	// Note: The IHNM demo changes panel mode to 8 (kPanelProtect in ITE)
+	// when changing pages
+	_vm->_interface->setMode(kPanelPlacard);
+	_ihnmDemoCurrentY = 0;
 }
 
 void Script::sfVstopFX(SCRIPTFUNC_PARAMS) {
@@ -2050,6 +2049,11 @@ void Script::sfVstopFX(SCRIPTFUNC_PARAMS) {
 
 void Script::sfVstopLoopedFX(SCRIPTFUNC_PARAMS) {
 	_vm->_sound->stopSound();
+}
+
+void Script::sf92(SCRIPTFUNC_PARAMS) {
+	SF_stub("sf92", thread, nArgs);
+	// This opcode is empty in the full version of IHNM, but it's not empty in the demo
 }
 
 void Script::sfDemoIsInteractive(SCRIPTFUNC_PARAMS) {
@@ -2144,7 +2148,7 @@ void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
 	if (param1 >= _vm->_music->_songTableLen) {
 		warning("sfQueueMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
 	} else {
-		_vm->_music->setVolume(-1, 1);
+		_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
 		event.type = kEvTOneshot;
 		event.code = kMusicEvent;
 		event.param = _vm->_music->_songTable[param1];

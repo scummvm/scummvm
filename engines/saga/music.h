@@ -137,7 +137,7 @@ private:
 	int _currentVolume;
 	int _currentVolumePercent;
 
-	ResourceContext *_musicContext;
+	ResourceContext *_digitalMusicContext;
 	MidiParser *xmidiParser;
 	MidiParser *smfParser;
 

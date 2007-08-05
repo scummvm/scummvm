@@ -292,7 +292,9 @@ Audio::AudioStream *MP3Sound::makeAudioStream(uint sound) {
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	return Audio::makeMP3Stream(_file, size);
+	Common::MemoryReadStream *tmp = _file->readStream(size);
+	assert(tmp);
+	return Audio::makeMP3Stream(tmp, true);
 }
 
 void MP3Sound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
@@ -321,7 +323,9 @@ Audio::AudioStream *VorbisSound::makeAudioStream(uint sound) {
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	return Audio::makeVorbisStream(_file, size);
+	Common::MemoryReadStream *tmp = _file->readStream(size);
+	assert(tmp);
+	return Audio::makeVorbisStream(tmp, true);
 }
 
 void VorbisSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
@@ -350,7 +354,9 @@ Audio::AudioStream *FlacSound::makeAudioStream(uint sound) {
 
 	uint32 size = _offsets[sound + i] - _offsets[sound];
 
-	return Audio::makeFlacStream(_file, size);
+	Common::MemoryReadStream *tmp = _file->readStream(size);
+	assert(tmp);
+	return Audio::makeFlacStream(tmp, true);
 }
 
 void FlacSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {

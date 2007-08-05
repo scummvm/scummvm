@@ -28,13 +28,14 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "kyra/kyra.h"
-#include "kyra/animator.h"
+#include "kyra/kyra_v1.h"
+#include "kyra/animator_v1.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
+#include "kyra/timer.h"
 
-#define CURRENT_VERSION 7
+#define CURRENT_VERSION 8
 
 // TODO: our current savefiles still use the old
 // flag system to check the version, we should
@@ -44,7 +45,7 @@
 #define GF_FMTOWNS (1 <<  2)
 
 namespace Kyra {
-void KyraEngine::loadGame(const char *fileName) {
+void KyraEngine_v1::loadGame(const char *fileName) {
 	debugC(9, kDebugLevelMain, "loadGame('%s')", fileName);
 	Common::InSaveFile *in;
 
@@ -147,14 +148,7 @@ void KyraEngine::loadGame(const char *fileName) {
 	_poisonDeathCounter = in->readByte();
 	_animator->_brandonDrawFrame = in->readUint16BE();
 
-	for (int i = 0; i < 32; i++) {
-		_timers[i].active = in->readByte();
-		_timers[i].countdown = in->readSint32BE();
-		_timers[i].nextRun = in->readUint32BE();
-		if (_timers[i].nextRun != 0)
-			_timers[i].nextRun += _system->getMillis();
-	}
-	_timerNextRun = 0;
+	_timer->loadDataFromFile(in, version);
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 	uint32 flagsSize = in->readUint32BE();
@@ -206,7 +200,7 @@ void KyraEngine::loadGame(const char *fileName) {
 	if (version >= 7) {
 		_curSfxFile = in->readByte();
 
-		// In the first version there this entry was introduced,
+		// In the first version when this entry was introduced,
 		// it wasn't made sure that _curSfxFile was initialized
 		// so if it's out of bounds we just set it to 0.
 		if (_curSfxFile >= _soundFilesTownsCount || _curSfxFile < 0)
@@ -266,7 +260,7 @@ void KyraEngine::loadGame(const char *fileName) {
 	delete in;
 }
 
-void KyraEngine::saveGame(const char *fileName, const char *saveName) {
+void KyraEngine_v1::saveGame(const char *fileName, const char *saveName) {
 	debugC(9, kDebugLevelMain, "saveGame('%s', '%s')", fileName, saveName);
 	Common::OutSaveFile *out;
 	if (_quitFlag) return;
@@ -323,14 +317,7 @@ void KyraEngine::saveGame(const char *fileName, const char *saveName) {
 	out->writeByte(_poisonDeathCounter);
 	out->writeUint16BE(_animator->_brandonDrawFrame);
 
-	for (int i = 0; i < 32; i++) {
-		out->writeByte(_timers[i].active);
-		out->writeSint32BE(_timers[i].countdown);
-		if (_system->getMillis() >= _timers[i].nextRun)
-			out->writeUint32BE(0);
-		else
-			out->writeUint32BE(_timers[i].nextRun - _system->getMillis());
-	}
+	_timer->saveDataToFile(out);
 
 	out->writeUint32BE(sizeof(_flagsTable));
 	out->write(_flagsTable, sizeof(_flagsTable));

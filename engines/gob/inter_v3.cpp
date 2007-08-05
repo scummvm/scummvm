@@ -122,7 +122,7 @@ void Inter_v3::setupOpcodes() {
 		/* 00 */
 		OPCODE(o1_loadMult),
 		OPCODE(o2_playMult),
-		OPCODE(o1_freeMultKeys),
+		OPCODE(o2_freeMultKeys),
 		{NULL, ""},
 		/* 04 */
 		{NULL, ""},
@@ -473,8 +473,8 @@ void Inter_v3::setupOpcodes() {
 		OPCODE(o1_capturePop),
 		OPCODE(o2_animPalInit),
 		/* 18 */
-		{NULL, ""},
-		{NULL, ""},
+		OPCODE(o2_addCollision),
+		OPCODE(o2_freeCollision),
 		OPCODE(o3_getTotTextItemPart),
 		{NULL, ""},
 		/* 1C */
@@ -594,7 +594,7 @@ void Inter_v3::setupOpcodes() {
 		{NULL, ""},
 		{NULL, ""},
 		{NULL, ""},
-		OPCODE(o2_handleGoblins),
+		OPCODE(o3_wobble),
 		/* 28 */
 		{NULL, ""},
 		{NULL, ""},
@@ -892,6 +892,10 @@ bool Inter_v3::o3_copySprite(OpFuncParams &params) {
 	if (_vm->_draw->_destSurface == 20)
 		_vm->_video->sparseRetrace(20);
 	return false;
+}
+
+void Inter_v3::o3_wobble(OpGobParams &params) {
+	_vm->_draw->wobble(_vm->_draw->_backSurface);
 }
 
 } // End of namespace Gob

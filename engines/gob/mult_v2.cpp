@@ -34,11 +34,11 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/goblin.h"
-#include "gob/imd.h"
 #include "gob/inter.h"
 #include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/video.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
@@ -346,28 +346,42 @@ void Mult_v2::freeMultKeys() {
 	_multData = 0;
 }
 
-void Mult_v2::setMultData(uint16 multindex) {
-	if (multindex > 7)
+bool Mult_v2::hasMultData(uint16 multIndex) {
+	if (multIndex > 7)
 		error("Multindex out of range");
 
-	debugC(4, kDebugGameFlow, "Switching to mult %d", multindex);
-	_multData = _multDatas[multindex];
+	return _multDatas[multIndex] != 0;
 }
 
-void Mult_v2::multSub(uint16 multindex) {
+void Mult_v2::setMultData(uint16 multIndex) {
+	if (multIndex > 7)
+		error("Multindex out of range");
+
+	debugC(4, kDebugGameFlow, "Switching to mult %d", multIndex);
+	_multData = _multDatas[multIndex];
+}
+
+void Mult_v2::zeroMultData(uint16 multIndex) {
+	if (multIndex > 7)
+		error("Multindex out of range");
+
+	_multDatas[multIndex] = 0;
+}
+
+void Mult_v2::multSub(uint16 multIndex) {
 	uint16 flags;
 	int16 expr;
 	int16 index;
 	int16 startFrame, stopFrame, firstFrame;
 
-	flags = multindex;
-	multindex = (multindex >> 12) & 0xF;
+	flags = multIndex;
+	multIndex = (multIndex >> 12) & 0xF;
 
-	if (multindex > 7)
+	if (multIndex > 7)
 		error("Multindex out of range");
 
-	debugC(4, kDebugGameFlow, "Sub mult %d", multindex);
-	_multData = _multDatas[multindex];
+	debugC(4, kDebugGameFlow, "Sub mult %d", multIndex);
+	_multData = _multDatas[multIndex];
 
 	if (!_multData) {
 		_vm->_parse->parseValExpr();
@@ -1027,7 +1041,7 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		x = y = -1;
 
 	if (key.imdFile == -1) {
-		_vm->_imdPlayer->closeImd();
+		_vm->_vidPlayer->closeVideo();
 		_vm->_game->_preventScroll = false;
 		return;
 	}
@@ -1045,23 +1059,24 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 		if ((lastFrame - palFrame) < startFrame)
 			if (!(key.flags & 0x4000)) {
 				_vm->_game->_preventScroll = false;
-				_vm->_imdPlayer->closeImd();
+				_vm->_vidPlayer->closeVideo();
 				return;
 			}
 
-	if (!_vm->_imdPlayer->openImd(imdFile, x, y, 0, flags)) {
+	if (!_vm->_vidPlayer->openVideo(imdFile, x, y, flags)) {
 		_vm->_game->_preventScroll = false;
 		return;
 	}
 
 	if (palFrame == -1)
 		palFrame = 0;
+
 	if (lastFrame == -1)
-		lastFrame = _vm->_imdPlayer->_curImd->framesCount - 1;
+		lastFrame = _vm->_vidPlayer->getFramesCount() - 1;
 
 	baseFrame = startFrame % (lastFrame - palFrame + 1);
-	_vm->_imdPlayer->play(baseFrame + palFrame, flags & 0x7F,
-			palStart, palEnd, palFrame, lastFrame);
+	_vm->_vidPlayer->play(baseFrame + palFrame, baseFrame + palFrame, 0,
+			flags & 0x7F, palStart, palEnd, palFrame, lastFrame);
 }
 
 void Mult_v2::advanceObjects(int16 index) {
@@ -1074,13 +1089,19 @@ void Mult_v2::advanceObjects(int16 index) {
 		return;
 
 	for (int i = 0; i < 4; i++) {
+		int obj = _multData->animObjs[index][i];
+
 		if (_multData->animObjs[index][i] != -1) {
 			int keyIndex = _multData->animKeysIndices[index][i];
 			int count = _multData->animKeysCount[i];
 
 			for (int j = keyIndex; j < count; j++) {
+
+				if ((obj == -1) || (obj == 1024))
+					continue;
+
 				Mult_AnimKey &key = _multData->animKeys[i][j];
-				Mult_Object &animObj = _objects[_multData->animObjs[index][i]];
+				Mult_Object &animObj = _objects[obj];
 				Mult_AnimData &animData = *(animObj.pAnimData);
 
 				if (key.frame > frame)
@@ -1122,7 +1143,7 @@ void Mult_v2::advanceObjects(int16 index) {
 			}
 		}
 
-		if (_multData->animObjs[index][i] != -1) {
+		if (obj != -1) {
 			int keyIndex = _multData->imdKeysIndices[index][i];
 			int count = _multData->imdKeysCount[i];
 

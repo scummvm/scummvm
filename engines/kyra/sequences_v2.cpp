@@ -569,6 +569,7 @@ void KyraEngine_v2::seq_loadWSA(int wsaNum, const char *filename, int frameDelay
 	_activeWSA[wsaNum].movie = new WSAMovieV2(this);
 	assert(_activeWSA[wsaNum].movie);
 	_activeWSA[wsaNum].endFrame = _activeWSA[wsaNum].movie->open(filename, 0, _screen->_currentPalette);
+	_activeWSA[wsaNum].movie->flagOldOff(true);
 	assert(_activeWSA[wsaNum].movie->opened());
 	_activeWSA[wsaNum].currentFrame = 0;
 	_activeWSA[wsaNum].frameDelay = frameDelay;

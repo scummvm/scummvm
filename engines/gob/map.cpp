@@ -261,7 +261,7 @@ void Map::findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
 	int i;
 
 	mapWidth = _screenWidth / _tilesWidth;
-	mapHeight = 200 / _tilesHeight;
+	mapHeight = _vm->_width / _tilesHeight;
 	direction = 0;
 
 	for (i = 1; i <= gobDestX; i++)

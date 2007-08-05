@@ -911,7 +911,8 @@ void Game_v1::collisionsBlock(void) {
 								_shouldPushColls = 0;
 								_vm->_global->_inter_execPtr = savedIP;
 								deltaTime = timeVal -
-									(_vm->_util->getTimeKey() - timeKey);
+									((_vm->_util->getTimeKey() - timeKey)
+									 - _vm->_video->_lastRetraceLength);
 
 								if (deltaTime < 2)
 									deltaTime = 2;

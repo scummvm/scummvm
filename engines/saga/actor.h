@@ -41,7 +41,7 @@ namespace Saga {
 class HitZone;
 
 
-// #define ACTOR_DEBUG 1 //only for actor pathfinding debug!
+//#define ACTOR_DEBUG 1 //only for actor pathfinding debug!
 
 #define ACTOR_BARRIERS_MAX 16
 
@@ -614,11 +614,6 @@ public:
 
 	void showActors(bool flag) { _showActors = flag; }
 
-	/*
-	uint16 _currentFrameIndex;
-	void frameTest() {
-		_currentFrameIndex++; 
-	}*/
 protected:
 	friend class Script;
 	bool loadActorResources(ActorData *actor);

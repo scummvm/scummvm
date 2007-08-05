@@ -209,7 +209,7 @@ void Inter::funcBlock(int16 retFlag) {
 		// WORKAROUND:
 		// The EGA version of gob1 doesn't add a delay after showing
 		// images between levels. We manually add it here.
-		if ((_vm->_features & GF_GOB1) && (_vm->_features & GF_EGA)) {
+		if ((_vm->getGameType() == kGameTypeGob1) && _vm->isEGA()) {
 			int addr = _vm->_global->_inter_execPtr-_vm->_game->_totFileData;
 			if ((startaddr == 0x18B4 && addr == 0x1A7F && // Zombie
 				 !strncmp(_vm->_game->_curTotFile, "avt005.tot", 10)) ||

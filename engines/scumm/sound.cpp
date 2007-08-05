@@ -607,24 +607,31 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 
 	if (!_soundsPaused && _mixer->isReady()) {
 		Audio::AudioStream *input = NULL;
+		Common::MemoryReadStream *tmp = NULL;
 
 		switch (_soundMode) {
 		case kMP3Mode:
 	#ifdef USE_MAD
 			assert(size > 0);
-			input = Audio::makeMP3Stream(_sfxFile, size);
+			tmp = _sfxFile->readStream(size);
+			assert(tmp);
+			input = Audio::makeMP3Stream(tmp, true);
 	#endif
 			break;
 		case kVorbisMode:
 	#ifdef USE_VORBIS
 			assert(size > 0);
-			input = Audio::makeVorbisStream(_sfxFile, size);
+			tmp = _sfxFile->readStream(size);
+			assert(tmp);
+			input = Audio::makeVorbisStream(tmp, true);
 	#endif
 			break;
 		case kFlacMode:
 	#ifdef USE_FLAC
 			assert(size > 0);
-			input = Audio::makeFlacStream(_sfxFile, size);
+			tmp = _sfxFile->readStream(size);
+			assert(tmp);
+			input = Audio::makeFlacStream(tmp, true);
 	#endif
 			break;
 		default:
@@ -831,7 +838,7 @@ void Sound::soundKludge(int *list, int num) {
 }
 
 void Sound::talkSound(uint32 a, uint32 b, int mode, int channel) {
-	if (_vm->_game.version >= 6 && ConfMan.getBool("speech_mute"))
+	if (_vm->_game.version >= 5 && ConfMan.getBool("speech_mute"))
 		return;
 
 	if (mode == 1) {

@@ -148,10 +148,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_itemArraySize = 0;
 	_itemArrayInited = 0;
 
-	_itemHeapPtr = 0;
-	_itemHeapCurPos = 0;
-	_itemHeapSize = 0;
-
 	_iconFilePtr = 0;
 
 	_codePtr = 0;
@@ -824,7 +820,7 @@ void AGOSEngine_Waxworks::setupGame() {
 	_numTextBoxes = 10;
 	_numVars = 255;
 
-	_numMusic = 9;
+	_numMusic = 26;
 
 	AGOSEngine::setupGame();
 }
@@ -920,7 +916,11 @@ AGOSEngine::~AGOSEngine() {
 
 	_midi.close();
 
-	free(_itemHeapPtr - _itemHeapCurPos);
+	for (uint i = 0; i < _itemHeap.size(); i++) {
+		delete [] _itemHeap[i];
+	}
+	_itemHeap.clear();
+
 	free(_tablesHeapPtr - _tablesHeapCurPos);
 
 	free(_gameOffsetsPtr);
@@ -1054,7 +1054,11 @@ void AGOSEngine::shutdown() {
 
 	_midi.close();
 
-	free(_itemHeapPtr - _itemHeapCurPos);
+	for (uint i = 0; i < _itemHeap.size(); i++) {
+		delete [] _itemHeap[i];
+	}
+	_itemHeap.clear();
+
 	free(_tablesHeapPtr - _tablesHeapCurPos);
 
 	free(_gameOffsetsPtr);

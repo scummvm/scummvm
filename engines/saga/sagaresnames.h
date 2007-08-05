@@ -45,8 +45,9 @@ namespace Saga {
 
 #define RID_IHNMDEMO_SCENE_LUT  286
 #define RID_IHNMDEMO_SCRIPT_LUT 18
+#define RID_IHNMDEMO_SFX_LUT 222
 
-//obj names
+// Object names
 #define ITE_OBJ_MAP 14
 #define ITE_OBJ_MAGIC_HAT 0
 
@@ -54,10 +55,10 @@ namespace Saga {
 
 #define RID_IHNM_DEFAULT_PALETTE 1
 
-//actor names
+// Actor names
 #define ITE_ACTOR_PUZZLE 176
 
-// SCENES
+// Scenes
 #define ITE_SCENE_INV -1
 #define ITE_SCENE_PUZZLE 26
 #define ITE_SCENE_LODGE 21
@@ -67,13 +68,14 @@ namespace Saga {
 #define IHNM_DEFAULT_SCENE 151
 
 #define ITEDEMO_DEFAULT_SCENE 68
+#define IHNMDEMO_DEFAULT_SCENE 144
 
-// FONTS
+// Fonts
 #define RID_MEDIUM_FONT 0
 #define RID_BIG_FONT 1
 #define RID_SMALL_FONT 2
 
-// INTERFACE IMAGES
+// Interface images
 #define RID_ITE_MAIN_PANEL 3
 #define RID_ITE_CONVERSE_PANEL 4
 #define RID_ITE_OPTION_PANEL 5
@@ -99,7 +101,7 @@ namespace Saga {
 #define RID_IHNM_MAIN_PANEL 9
 #define RID_IHNM_CONVERSE_PANEL 10
 #define RID_IHNM_HOURGLASS_CURSOR 11
-#define RID_IHNM_MAIN_SPRITES 12       // TODO: verify this
+#define RID_IHNM_MAIN_SPRITES 12
 #define RID_IHNM_MAIN_PANEL_SPRITES 12
 #define RID_IHNM_ARROW_SPRITES 13
 #define RID_IHNM_SAVEREMINDER_SPRITES 14
@@ -109,6 +111,20 @@ namespace Saga {
 #define RID_IHNM_BOSS_SCREEN 19
 #define RID_IHNM_PROFILE_BG 20
 #define RID_IHNM_MAIN_STRINGS 21
+
+#define RID_IHNMDEMO_MAIN_PANEL 5
+#define RID_IHNMDEMO_CONVERSE_PANEL 6
+#define RID_IHNMDEMO_HOURGLASS_CURSOR 6			// Does not exist in the demo
+#define RID_IHNMDEMO_MAIN_SPRITES 7
+#define RID_IHNMDEMO_MAIN_PANEL_SPRITES 7
+#define RID_IHNMDEMO_ARROW_SPRITES 8
+#define RID_IHNMDEMO_SAVEREMINDER_SPRITES 9
+#define RID_IHNMDEMO_OPTION_PANEL 10
+#define RID_IHNMDEMO_OPTION_PANEL_SPRITES 11
+#define RID_IHNMDEMO_WARNING_PANEL 12
+#define RID_IHNMDEMO_BOSS_SCREEN 13				// Does not exist in the demo
+#define RID_IHNMDEMO_PROFILE_BG 15
+#define RID_IHNMDEMO_MAIN_STRINGS 16
 
 // Puzzle portraits
 #define RID_ITE_SAKKA_APPRAISING	6
@@ -151,7 +167,7 @@ namespace Saga {
 #define RID_ITE_INTRO_IMG_3 1561
 #define RID_ITE_INTRO_IMG_4 1565
 
-// ITE_VOICES
+// ITE voices
 #define RID_CAVE_VOICE_0 0
 #define RID_CAVE_VOICE_1 1
 #define RID_CAVE_VOICE_2 2
@@ -177,7 +193,7 @@ namespace Saga {
 #define RID_BOAR_VOICE_006 245
 #define RID_BOAR_VOICE_007 246
 
-// MUSIC
+// Music
 #define MUSIC_1 9
 #define MUSIC_2 10
 #define MUSIC_SUNSPOT 26
@@ -185,7 +201,7 @@ namespace Saga {
 // TODO: If the sound effects are numbered sequentially, we don't really need
 //       these constants. But for now they might be useful for debugging.
 
-// SOUND EFFECTS
+// Sound effects
 
 #define FX_DOOR_OPEN 14
 #define FX_DOOR_CLOSE 15

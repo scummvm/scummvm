@@ -131,6 +131,9 @@ public:
 		#ifndef DISABLE_CRUISE
 		LINK_PLUGIN(CRUISE)
 		#endif
+		#ifndef DISABLE_DRASCULA
+		LINK_PLUGIN(DRASCULA)
+		#endif
 
 		return pl;
 	}

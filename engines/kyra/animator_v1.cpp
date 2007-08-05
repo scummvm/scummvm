@@ -26,15 +26,15 @@
 #include "common/stdafx.h"
 #include "common/endian.h"
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/screen.h"
-#include "kyra/animator.h"
+#include "kyra/animator_v1.h"
 #include "kyra/sprites.h"
 
 #include "common/system.h"
 
 namespace Kyra {
-ScreenAnimator::ScreenAnimator(KyraEngine *vm, OSystem *system) {
+ScreenAnimator::ScreenAnimator(KyraEngine_v1 *vm, OSystem *system) {
 	_vm = vm;
 	_screen = vm->screen();
 	_initOk = false;

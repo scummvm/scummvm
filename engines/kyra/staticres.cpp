@@ -27,6 +27,7 @@
 #include "common/endian.h"
 #include "common/md5.h"
 #include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/kyra_v3.h"
 #include "kyra/screen.h"
@@ -617,7 +618,7 @@ uint8 *StaticResource::getFile(const char *name, int &size) {
 
 #pragma mark -
 
-void KyraEngine::initStaticResource() {
+void KyraEngine_v1::initStaticResource() {
 	int temp = 0;
 	_seq_Forest = _staticres->loadRawData(kForestSeq, temp);
 	_seq_KallakWriting = _staticres->loadRawData(kKallakWritingSeq, temp);
@@ -708,7 +709,7 @@ void KyraEngine::initStaticResource() {
 	}
 }
 
-void KyraEngine::loadMouseShapes() {
+void KyraEngine_v1::loadMouseShapes() {
 	_screen->loadBitmap("MOUSE.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
 	_shapes[0] = _screen->encodeShape(0, 0, 8, 10, 0);
@@ -724,7 +725,7 @@ void KyraEngine::loadMouseShapes() {
 	_screen->setShapePages(5, 3);
 }
 
-void KyraEngine::loadCharacterShapes() {
+void KyraEngine_v1::loadCharacterShapes() {
 	int curImage = 0xFF;
 	int videoPage = _screen->_curPage;
 	_screen->_curPage = 2;
@@ -745,7 +746,7 @@ void KyraEngine::loadCharacterShapes() {
 	_screen->_curPage = videoPage;
 }
 
-void KyraEngine::loadSpecialEffectShapes() {
+void KyraEngine_v1::loadSpecialEffectShapes() {
 	_screen->loadBitmap("EFFECTS.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
  
@@ -763,7 +764,7 @@ void KyraEngine::loadSpecialEffectShapes() {
 		_shapes[currShape] = _screen->encodeShape((currShape-201) * 16, 106, 16, 16, 1);
 }
 
-void KyraEngine::loadItems() {
+void KyraEngine_v1::loadItems() {
 	int shape;
 
 	_screen->loadBitmap("JEWELS3.CPS", 3, 3, 0);
@@ -817,7 +818,7 @@ void KyraEngine::loadItems() {
 	delete[] fileData;
 }
 
-void KyraEngine::loadButtonShapes() {
+void KyraEngine_v1::loadButtonShapes() {
 	_screen->loadBitmap("BUTTONS2.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
 	_scrollUpButton.process0PtrShape = _screen->encodeShape(0, 0, 24, 14, 1);
@@ -829,12 +830,12 @@ void KyraEngine::loadButtonShapes() {
 	_screen->_curPage = 0;
 }
 
-void KyraEngine::loadMainScreen(int page) {
+void KyraEngine_v1::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
 	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
 		_screen->loadBitmap("MAIN15.CPS", page, page, _screen->getPalette(0));
-	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN) 
+	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN || (_flags.isTalkie && _flags.lang == Common::IT_ITA)) 
 		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
 	else if (_flags.lang == Common::FR_FRA)
 		_screen->loadBitmap("MAIN_FRE.CPS", page, page, 0);
@@ -867,18 +868,43 @@ const ScreenDim Screen::_screenDimTable[] = {
 	{ 0x03, 0x28, 0x22, 0x46, 0x0F, 0x0D, 0x00, 0x00 }
 };
 
-const int Screen::_screenDimTableCount = ARRAYSIZE(_screenDimTable);
+const int Screen::_screenDimTableCount = ARRAYSIZE(Screen::_screenDimTable);
 
-const ScreenDim Screen::_screenDimTableK3[] = {
+const ScreenDim Screen_v2::_screenDimTable[] = {
+	{ 0x00, 0x00, 0x28, 0xC8, 0xC7, 0xCF, 0x00, 0x00 },
+	{ 0x08, 0x48, 0x18, 0x38, 0xC7, 0xCF, 0x00, 0x00 },
+	{ 0x00, 0x00, 0x28, 0x90, 0xC7, 0xCF, 0x00, 0x00 },
+	{ 0x00, 0xC2, 0x28, 0x06, 0xC7, 0xCF, 0x00, 0x00 },
+	{ 0x00, 0x90, 0x28, 0x38, 0x96, 0xCF, 0x00, 0x00 },
+	{ 0x01, 0x94, 0x26, 0x30, 0x96, 0x1B, 0x00, 0x00 },
+	{ 0x00, 0x90, 0x28, 0x38, 0xC7, 0xCC, 0x00, 0x00 },
+	{ 0x01, 0x96, 0x26, 0x32, 0xC7, 0xCC, 0x00, 0x00 },
+	{ 0x00, 0x00, 0x28, 0x88, 0xC7, 0xCF, 0x00, 0x00 },
+	{ 0x00, 0x08, 0x28, 0xB8, 0xC7, 0xCF, 0x00, 0x00 },
+	{ 0x01, 0x28, 0x26, 0x46, 0xC7, 0xCC, 0x00, 0x00 },
+	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }	// menu, just present for current menu code
+};
+
+const int Screen_v2::_screenDimTableCount = ARRAYSIZE(Screen_v2::_screenDimTable);
+
+const ScreenDim Screen_v2::_screenDimTableK3[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x00, 0x00, 0x28, 0xBC, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }
 };
 
-const int Screen::_screenDimTableCountK3 = ARRAYSIZE(_screenDimTableK3);
+const int Screen_v2::_screenDimTableCountK3 = ARRAYSIZE(Screen_v2::_screenDimTableK3);
 
-const char *KyraEngine::_soundFiles[] = {
+const int8 KyraEngine::_addXPosTable[] = {
+	 4,  4,  0, -4, -4, -4,  0,  4
+};
+
+const int8 KyraEngine::_addYPosTable[] = {
+	 0, -2, -2, -2,  0,  2,  2,  2
+};
+
+const char *KyraEngine_v1::_soundFiles[] = {
 	"INTRO",
 	"KYRA1A",
 	"KYRA1B",
@@ -891,9 +917,9 @@ const char *KyraEngine::_soundFiles[] = {
 	"KYRAMISC"
 };
 
-const int KyraEngine::_soundFilesCount = ARRAYSIZE(KyraEngine::_soundFiles);
+const int KyraEngine_v1::_soundFilesCount = ARRAYSIZE(KyraEngine_v1::_soundFiles);
 
-const char *KyraEngine::_soundFilesTowns[] = {
+const char *KyraEngine_v1::_soundFilesTowns[] = {
 	"TW_INTRO.SFX",
 	"TW_SCEN1.SFX",
 	"TW_SCEN2.SFX",
@@ -902,49 +928,41 @@ const char *KyraEngine::_soundFilesTowns[] = {
 	"TW_SCEN5.SFX",
 };
 
-const int KyraEngine::_soundFilesTownsCount = ARRAYSIZE(KyraEngine::_soundFilesTowns);
+const int KyraEngine_v1::_soundFilesTownsCount = ARRAYSIZE(KyraEngine_v1::_soundFilesTowns);
 
-const int8 KyraEngine::_charXPosTable[] = {
+const int8 KyraEngine_v1::_charXPosTable[] = {
 	 0,  4,  4,  4,  0, -4, -4, -4
 };
 
-const int8 KyraEngine::_addXPosTable[] = {
-	 4,  4,  0, -4, -4, -4,  0,  4
-};
-
-const int8 KyraEngine::_charYPosTable[] = {
+const int8 KyraEngine_v1::_charYPosTable[] = {
 	-2, -2,  0,  2,  2,  2,  0, -2
 };
 
-const int8 KyraEngine::_addYPosTable[] = {
-	 0, -2, -2, -2,  0,  2,  2,  2
-};
-
-const uint16 KyraEngine::_itemPosX[] = {
+const uint16 KyraEngine_v1::_itemPosX[] = {
 	95, 115, 135, 155, 175, 95, 115, 135, 155, 175
 };
 
-const uint8 KyraEngine::_itemPosY[] = {
+const uint8 KyraEngine_v1::_itemPosY[] = {
 	160, 160, 160, 160, 160, 181, 181, 181, 181, 181
 };
 
-void KyraEngine::setupButtonData() {
+void KyraEngine_v1::setupButtonData() {
 	static Button buttonData[] = {
-		{ 0, 0x02, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x05D, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x01, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x009, 0xA4, 0x36, 0x1E, /*XXX,*/ 0, &KyraEngine::buttonMenuCallback/*, XXX*/ },
-		{ 0, 0x03, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x071, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x04, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x085, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x05, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x099, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x06, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x0AD, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x07, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x05D, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x08, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x071, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x09, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x085, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x0A, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x099, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x0B, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x0AD, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x15, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0x9C, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
-		{ 0, 0x16, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0E7, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
-		{ 0, 0x17, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0xB5, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ },
-		{ 0, 0x18, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x113, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine::buttonAmuletCallback/*, XXX*/ }
+		{ 0, 0x02, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x05D, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x01, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x009, 0xA4, 0x36, 0x1E, /*XXX,*/ 0, &KyraEngine_v1::buttonMenuCallback/*, XXX*/ },
+		{ 0, 0x03, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x071, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x04, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x085, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x05, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x099, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x06, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x0AD, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x07, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x05D, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x08, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x071, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x09, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x085, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x0A, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x099, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x0B, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x0AD, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
+		{ 0, 0x15, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0x9C, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine_v1::buttonAmuletCallback/*, XXX*/ },
+		{ 0, 0x16, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0E7, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine_v1::buttonAmuletCallback/*, XXX*/ },
+		{ 0, 0x17, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0xB5, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine_v1::buttonAmuletCallback/*, XXX*/ },
+		{ 0, 0x18, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x113, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine_v1::buttonAmuletCallback/*, XXX*/ }
 	};
 
 	static Button *buttonDataListPtr[] = {
@@ -969,10 +987,10 @@ void KyraEngine::setupButtonData() {
 	_buttonDataListPtr = buttonDataListPtr;
 }
 
-Button KyraEngine::_scrollUpButton =  {0, 0x12, 1, 1, 1, 0x483, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x18, 0x0f, 0, 0};
-Button KyraEngine::_scrollDownButton = {0, 0x13, 1, 1, 1, 0x483, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x18, 0x0f, 0, 0};
+Button KyraEngine_v1::_scrollUpButton =  {0, 0x12, 1, 1, 1, 0x483, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x18, 0x0f, 0, 0};
+Button KyraEngine_v1::_scrollDownButton = {0, 0x13, 1, 1, 1, 0x483, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x18, 0x0f, 0, 0};
 
-Button KyraEngine::_menuButtonData[] = {
+Button KyraEngine_v1::_menuButtonData[] = {
 	{ 0, 0x0c, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ },
 	{ 0, 0x0d, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ },
 	{ 0, 0x0e, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ },
@@ -981,33 +999,33 @@ Button KyraEngine::_menuButtonData[] = {
 	{ 0, 0x11, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ }
 };
 
-void KyraEngine::setupMenu() {
+void KyraEngine_v1::setupMenu() {
 	static Menu menu[] = {
 		{ -1, -1, 208, 136, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1, 
 			{
 				{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
+				248, 249, 250, &KyraEngine_v1::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
 
 				{1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine::gui_saveGameMenu, -1, 0, 0, 0, 0, 0},
+				248, 249, 250, &KyraEngine_v1::gui_saveGameMenu, -1, 0, 0, 0, 0, 0},
 
 				{1, 0, 0, 0, -1, -1, 64, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine::gui_gameControlsMenu, -1, 0, 0, 0, 0, 0},
+				248, 249, 250, &KyraEngine_v1::gui_gameControlsMenu, -1, 0, 0, 0, 0, 0},
 
 				{1, 0, 0, 0, -1, -1, 81, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine::gui_quitPlaying, -1, 0, 0, 0, 0, 0},
+				248, 249, 250, &KyraEngine_v1::gui_quitPlaying, -1, 0, 0, 0, 0, 0},
 
 				{1, 0, 0, 0, 86, 0, 110, 92, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine::gui_resumeGame, -1, 0, 0, 0, 0, 0}
+				248, 249, 250, &KyraEngine_v1::gui_resumeGame, -1, 0, 0, 0, 0, 0}
 			}
 		},
 		{ -1, -1, 288, 56, 248, 249, 250, 0, 254,-1, 8, 0, 2, -1, -1, -1, -1,
 			{
 				{1, 0, 0, 0, 24, 0, 30, 72, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine::gui_quitConfirmYes, -1, 0, 0, 0, 0, 0},
+				248, 249, 250, &KyraEngine_v1::gui_quitConfirmYes, -1, 0, 0, 0, 0, 0},
 
 				{1, 0, 0, 0, 192, 0, 30, 72, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine::gui_quitConfirmNo, -1, 0, 0, 0, 0, 0}
+				248, 249, 250, &KyraEngine_v1::gui_quitConfirmNo, -1, 0, 0, 0, 0, 0}
 			}
 		},
 		{ -1, -1, 288, 160, 248, 249, 250, 0, 251, -1, 8, 0, 6, 132, 22, 132, 124,
@@ -1028,46 +1046,46 @@ void KyraEngine::setupMenu() {
 				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
 
 				{1, 0, 0, 0, 184, 0, 134, 88, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0},
+				248, 249, 250, &KyraEngine_v1::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0},
 			}
 		},
 		{ -1, -1, 288, 67, 248, 249, 250, 0, 251, -1, 8, 0, 3, -1, -1, -1, -1,
 			{
 				{1, 0, 0, 0, 24, 0, 44, 72, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine::gui_savegameConfirm, -1, 0, 0, 0, 0, 0},
+				248, 249, 250, &KyraEngine_v1::gui_savegameConfirm, -1, 0, 0, 0, 0, 0},
 
 				{1, 0, 0, 0, 192, 0, 44, 72, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0}
+				248, 249, 250, &KyraEngine_v1::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0}
 			}
 		},
 		{ -1, -1, 208, 76, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1, 
 			{
 				{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
+				248, 249, 250, &KyraEngine_v1::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
 
 				{1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine::gui_quitPlaying, -1, 0, 0, 0, 0, 0}
+				248, 249, 250, &KyraEngine_v1::gui_quitPlaying, -1, 0, 0, 0, 0, 0}
 			}
 		},
 		{ -1, -1, 208, 153, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1, 
 			{
 				{1, 0, 0, 0, 110, 0, 30, 64, 15, 252, 253, 5, 0,
-				248, 249, 250, &KyraEngine::gui_controlsChangeMusic, -1, 0, 34, 32, 0, 0},
+				248, 249, 250, &KyraEngine_v1::gui_controlsChangeMusic, -1, 0, 34, 32, 0, 0},
 
 	 			{1, 0, 0, 0, 110, 0, 47, 64, 15, 252, 253, 5, 0,
-				248, 249, 250, &KyraEngine::gui_controlsChangeSounds, -1, 0, 34, 49, 0, 0},
+				248, 249, 250, &KyraEngine_v1::gui_controlsChangeSounds, -1, 0, 34, 49, 0, 0},
 
 	 			{1, 0, 0, 0, 110, 0, 64, 64, 15, 252, 253, 5, 0,
-				248, 249, 250, &KyraEngine::gui_controlsChangeWalk, -1, 0, 34, 66, 0, 0},
+				248, 249, 250, &KyraEngine_v1::gui_controlsChangeWalk, -1, 0, 34, 66, 0, 0},
 
 				{1, 0, 0, 0, 110, 0, 81, 64, 15, 252, 253, 5, 0,
 				248, 249, 250, 0, -1, 0, 34, 83, 0, 0 },
 
 				{1, 0, 0, 0, 110, 0, 98, 64, 15, 252, 253, 5, 0,
-				248, 249, 250, &KyraEngine::gui_controlsChangeText, -1, 0, 34, 100, 0, 0 },
+				248, 249, 250, &KyraEngine_v1::gui_controlsChangeText, -1, 0, 34, 100, 0, 0 },
 
 				{1, 0, 0, 0, 64, 0, 127, 92, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine::gui_controlsApply, -1, -0, 0, 0, 0, 0}
+				248, 249, 250, &KyraEngine_v1::gui_controlsApply, -1, -0, 0, 0, 0, 0}
 			}
 		}
 	};
@@ -1075,31 +1093,31 @@ void KyraEngine::setupMenu() {
 	_menu = menu;
 }
 
-const uint8 KyraEngine::_magicMouseItemStartFrame[] = {
+const uint8 KyraEngine_v1::_magicMouseItemStartFrame[] = {
 	0xAD, 0xB7, 0xBE, 0x00
 };
 
-const uint8 KyraEngine::_magicMouseItemEndFrame[] = {
+const uint8 KyraEngine_v1::_magicMouseItemEndFrame[] = {
 	0xB1, 0xB9, 0xC2, 0x00
 };
 
-const uint8 KyraEngine::_magicMouseItemStartFrame2[] = {
+const uint8 KyraEngine_v1::_magicMouseItemStartFrame2[] = {
 	0xB2, 0xBA, 0xC3, 0x00
 };
 
-const uint8 KyraEngine::_magicMouseItemEndFrame2[] = {
+const uint8 KyraEngine_v1::_magicMouseItemEndFrame2[] = {
 	0xB6, 0xBD, 0xC8, 0x00
 };
 
-const uint16 KyraEngine::_amuletX[] = { 231, 275, 253, 253 };
-const uint16 KyraEngine::_amuletY[] = { 170, 170, 159, 181 };
+const uint16 KyraEngine_v1::_amuletX[] = { 231, 275, 253, 253 };
+const uint16 KyraEngine_v1::_amuletY[] = { 170, 170, 159, 181 };
 
-const uint16 KyraEngine::_amuletX2[] = { 0x000, 0x0FD, 0x0E7, 0x0FD, 0x113, 0x000 };
-const uint16 KyraEngine::_amuletY2[] = { 0x000, 0x09F, 0x0AA, 0x0B5, 0x0AA, 0x000 };
+const uint16 KyraEngine_v1::_amuletX2[] = { 0x000, 0x0FD, 0x0E7, 0x0FD, 0x113, 0x000 };
+const uint16 KyraEngine_v1::_amuletY2[] = { 0x000, 0x09F, 0x0AA, 0x0B5, 0x0AA, 0x000 };
 
 // Kyra 2 and 3 main menu
 
-const char *KyraEngine::_mainMenuStrings[] = {
+const char *KyraEngine_v2::_mainMenuStrings[] = {
 	"Start a new game",
 	"Introduction",
 	"Load a game",
@@ -1194,6 +1212,34 @@ const char *KyraEngine_v2::_introSoundList[] = {
 };
 
 const int KyraEngine_v2::_introSoundListSize = ARRAYSIZE(KyraEngine_v2::_introSoundList);
+
+const char *KyraEngine_v2::_languageExtension[] = {
+	"ENG",
+	"FRE",
+	"GER"/*,
+	"ITA",		Italian and Spanish was never included
+	"SPA"*/
+};
+
+const char *KyraEngine_v2::_scriptLangExt[] = {
+	"EMC",
+	"FMC",
+	"GMC"/*,
+	"IMC",		Italian and Spanish was never included
+	"SMC"*/
+};
+
+int KyraEngine_v2::_characterFrameTable[] = {
+	0x19, 0x09, 0x09, 0x12, 0x12, 0x12, 0x09, 0x09
+};
+
+int KyraEngine_v2::_inventoryX[] = {
+	0x4F, 0x63, 0x77, 0x8B, 0x9F, 0x4F, 0x63, 0x77, 0x8B, 0x9F
+};
+
+int KyraEngine_v2::_inventoryY[] = {
+	0x95, 0x95, 0x95, 0x95, 0x95, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA
+};
 
 // kyra 3 static res
 

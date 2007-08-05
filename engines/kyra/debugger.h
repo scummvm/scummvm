@@ -31,14 +31,21 @@
 namespace Kyra {
 
 class KyraEngine;
+class KyraEngine_v1;
 
 class Debugger : public GUI::Debugger {
 public:
-	Debugger(KyraEngine *vm);
+	Debugger(KyraEngine *vm) {}
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+};
+
+class Debugger_v1 : public Debugger {
+public:
+	Debugger_v1(KyraEngine_v1 *vm);
+	virtual ~Debugger_v1() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
 
 protected:
-	KyraEngine *_vm;
+	KyraEngine_v1 *_vm;
 
 	virtual void preEnter();
 	virtual void postEnter();

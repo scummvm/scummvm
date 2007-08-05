@@ -172,14 +172,6 @@ void SagaEngine::fillSaveList() {
 		}
 		i++;
 	}
-/* 4debug
-	for (i = 0; i < 14; i++) {
-		sprintf(_saveFiles[i].name,"test%i", i);
-		_saveFiles[i].slotNumber = i;
-	}
-	_saveFilesCount = 14;
-	_saveFilesMaxCount = 14;
-	*/
 }
 
 
@@ -294,7 +286,10 @@ void SagaEngine::load(const char *fileName) {
 		_scene->setCurrentMusicTrack(in->readSint32LE());
 		_scene->setCurrentMusicRepeat(in->readSint32LE());
 		_music->stop();
-		_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
+		if (getGameId() != GID_IHNM_DEMO)
+			_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
+		else
+			_music->play(3, MUSIC_LOOP);
 	}
 
 	// Inset scene

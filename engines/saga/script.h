@@ -380,6 +380,7 @@ public:
 		setPointerVerb();
 	}
 	int getVerbType(VerbTypes verbType);
+	TextListEntry *getPlacardTextEntry() { return _placardTextEntry; }
 
 private:
 	// When reading or writing data to the common buffer, we have to use a
@@ -443,6 +444,7 @@ private:
 	int _stickyVerb;
 	int _leftButtonVerb;
 	int _rightButtonVerb;
+	int _ihnmDemoCurrentY;
 
 public:
 	uint16 _pendingObject[2];
@@ -590,11 +592,12 @@ private:
 	void sfScriptStartVideo(SCRIPTFUNC_PARAMS);
 	void sfScriptReturnFromVideo(SCRIPTFUNC_PARAMS);
 	void sfScriptEndVideo(SCRIPTFUNC_PARAMS);
-	void sf87(SCRIPTFUNC_PARAMS);
-	void sf88(SCRIPTFUNC_PARAMS);
-	void sf89(SCRIPTFUNC_PARAMS);
+	void sfShowIHNMDemoHelpBg(SCRIPTFUNC_PARAMS);
+	void sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS);
+	void sfShowIHNMDemoHelpPage(SCRIPTFUNC_PARAMS);
 	void sfGetPoints(SCRIPTFUNC_PARAMS);
 	void sfSetGlobalFlag(SCRIPTFUNC_PARAMS);
+	void sf92(SCRIPTFUNC_PARAMS);
 	void sfClearGlobalFlag(SCRIPTFUNC_PARAMS);
 	void sfTestGlobalFlag(SCRIPTFUNC_PARAMS);
 	void sfSetPoints(SCRIPTFUNC_PARAMS);

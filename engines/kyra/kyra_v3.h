@@ -26,20 +26,17 @@
 #ifndef KYRA_KYRA_V3_H
 #define KYRA_KYRA_V3_H
 
-#include "kyra/kyra.h"
+#include "kyra/kyra_v2.h"
 
 namespace Kyra {
 
-// maybe subclass KyraEngine_v2 later
-class WSAMovieV2;
+class SoundDigital;
 
-class KyraEngine_v3 : public KyraEngine {
+class KyraEngine_v3 : public KyraEngine_v2 {
 public:
 	KyraEngine_v3(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v3();
-	
-	Movie *createWSAMovie();
-	
+
 	SoundDigital *soundDigital() { return _soundDigital; }
 
 	int go();

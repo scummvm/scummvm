@@ -36,14 +36,6 @@
 namespace Parallaction {
 
 
-
-#define SCREEN_WIDTH		320
-#define SCREEN_HEIGHT		200
-#define SCREEN_SIZE 		SCREEN_WIDTH*SCREEN_HEIGHT
-
-#define SCREENMASK_WIDTH	SCREEN_WIDTH/4
-#define SCREENPATH_WIDTH	SCREEN_WIDTH/8
-
 #define BASE_PALETTE_COLORS		32
 #define FIRST_BASE_COLOR		0
 #define LAST_BASE_COLOR			(FIRST_BASE_COLOR+BASE_PALETTE_COLORS-1)
@@ -56,6 +48,12 @@ namespace Parallaction {
 
 #define BASE_PALETTE_SIZE		BASE_PALETTE_COLORS*3
 #define PALETTE_SIZE			PALETTE_COLORS*3
+
+#define MOUSEARROW_WIDTH		16
+#define MOUSEARROW_HEIGHT		16
+
+#define MOUSECOMBO_WIDTH		32	// sizes for cursor + selected inventory item
+#define MOUSECOMBO_HEIGHT		32
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
@@ -162,12 +160,13 @@ public:
 	};
 
 public:
+	void screenClip(Common::Rect& r, Common::Point& p);
 
 	// dialogue and text
 	void drawBalloon(const Common::Rect& r, uint16 arg_8);
 	void displayString(uint16 x, uint16 y, const char *text, byte color);
 	void displayCenteredString(uint16 y, const char *text);
-	bool displayWrappedString(char *text, uint16 x, uint16 y, byte color, uint16 wrapwidth = SCREEN_WIDTH);
+	bool displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16 wrapwidth = -1);
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 
@@ -176,7 +175,8 @@ public:
 	void freeStaticCnv(StaticCnv *cnv);
 	void backupDoorBackground(DoorData *data, int16 x, int16 y);
 	void backupGetBackground(GetData *data, int16 x, int16 y);
-	void restoreZoneBackground(const Common::Rect& r, byte *data);
+	void restoreGetBackground(const Common::Rect& r, byte *data);
+	void restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* background);
 
 	// location
 	void setBackground(byte *background);
@@ -210,9 +210,8 @@ public:
 	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = BASE_PALETTE_COLORS);
 	void setBlackPalette();
 	void animatePalette();
-	void fadePalette(Palette palette);
-	void buildBWPalette(Palette palette);
-	void quickFadePalette(Palette palette);
+	void fadePalette(Palette palette, Palette target, uint step);			// fades palette to target palette, with specified step
+	void makeGrayscalePalette(Palette palette);		// transform palette into black and white
 
 	// amiga specific
 	void setHalfbriteMode(bool enable);

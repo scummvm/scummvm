@@ -18,7 +18,8 @@ MODULE_OBJS := \
 	goblin_v1.o \
 	goblin_v2.o \
 	goblin_v3.o \
-	imd.o \
+	coktelvideo.o \
+	videoplayer.o \
 	init.o \
 	init_v1.o \
 	init_v2.o \
@@ -26,8 +27,9 @@ MODULE_OBJS := \
 	inter.o \
 	inter_v1.o \
 	inter_v2.o \
-	inter_v3.o \
 	inter_bargon.o \
+	inter_v3.o \
+	inter_v4.o \
 	map.o \
 	map_v1.o \
 	map_v2.o \

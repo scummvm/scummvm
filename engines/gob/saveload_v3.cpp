@@ -34,8 +34,13 @@
 
 namespace Gob {
 
-SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName) :
+SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName,
+		uint32 screenshotSize, int32 indexOffset, int32 screenshotOffset) :
 	SaveLoad_v2(vm, targetName) {
+
+	_screenshotSize = screenshotSize;
+	_indexOffset = indexOffset;
+	_screenshotOffset = screenshotOffset;
 
 	_saveSlot = -1;
 	_stagesCount = 3;
@@ -58,12 +63,18 @@ SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName) :
 }
 
 SaveType SaveLoad_v3::getSaveType(const char *fileName) {
+	const char *backSlash;
+	if ((backSlash = strrchr(fileName, '\\')))
+		fileName = backSlash + 1;
+
 	if (!scumm_stricmp(fileName, "cat.inf"))
 		return kSaveGame;
 	if (!scumm_stricmp(fileName, "ima.inf"))
 		return kSaveScreenshot;
 	if (!scumm_stricmp(fileName, "intro.$$$"))
 		return kSaveTempSprite;
+	if (!scumm_stricmp(fileName, "bloc.inf"))
+		return kSaveNotes;
 	if (!scumm_stricmp(fileName, "prot"))
 		return kSaveIgnore;
 	if (!scumm_stricmp(fileName, "config"))
@@ -77,13 +88,9 @@ uint32 SaveLoad_v3::getSaveGameSize() {
 
 	size = 1040 + (READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4) * 2;
 	if (_useScreenshots)
-		size += 19968;
+		size += _screenshotSize;
 
 	return size;
-}
-
-int32 SaveLoad_v3::getSizeNotes() {
-	return -1;
 }
 
 int32 SaveLoad_v3::getSizeGame() {
@@ -122,7 +129,7 @@ int32 SaveLoad_v3::getSizeScreenshot() {
 		in = saveMan->openForLoading(setCurSlot(i));
 		if (in) {
 			delete in;
-			size = (i + 1) * 19968 + 80;
+			size = (i + 1) * _screenshotSize + _screenshotOffset;
 			break;
 		}
 	}
@@ -206,19 +213,15 @@ bool SaveLoad_v3::loadGame(int16 dataVar, int32 size, int32 offset) {
 	return false;
 }
 
-bool SaveLoad_v3::loadNotes(int16 dataVar, int32 size, int32 offset) {
-	return false;
-}
-
 bool SaveLoad_v3::loadScreenshot(int16 dataVar, int32 size, int32 offset) {
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::InSaveFile *in;
 
-	int slot = (offset - 80) / 19968;
-	int slotR = (offset - 80) % 19968;
+	int slot = (offset - _screenshotOffset) / _screenshotSize;
+	int slotR = (offset - _screenshotOffset) % _screenshotSize;
 
 	_useScreenshots = true;
-	if ((size == 40) && (offset == 40)) {
+	if ((size == 40) && (offset == _indexOffset)) {
 		char buf[40];
 
 		memset(buf, 0, 40);
@@ -327,16 +330,16 @@ bool SaveLoad_v3::saveGame(int16 dataVar, int32 size, int32 offset) {
 }
 
 bool SaveLoad_v3::saveNotes(int16 dataVar, int32 size, int32 offset) {
-	return false;
+	return SaveLoad_v2::saveNotes(dataVar, size - 160, offset);
 }
 
 bool SaveLoad_v3::saveScreenshot(int16 dataVar, int32 size, int32 offset) {
-	int slot = (offset - 80) / 19968;
-	int slotR = (offset - 80) % 19968;
+	int slot = (offset - _screenshotOffset) / _screenshotSize;
+	int slotR = (offset - _screenshotOffset) % _screenshotSize;
 
 	_useScreenshots = true;
 
-	if ((offset < 80) && (size > 0)) {
+	if ((offset < _screenshotOffset) && (size > 0)) {
 
 		return true;
 

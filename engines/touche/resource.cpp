@@ -44,7 +44,12 @@ enum {
 
 struct CompressedSpeechFile {
 	const char *filename;
-	Audio::AudioStream *(*makeStream)(Common::File *file, uint32 size);
+	Audio::AudioStream *(*makeStream)(
+			Common::SeekableReadStream *stream,
+			bool disposeAfterUse,
+			uint32 startTime,
+			uint32 duration,
+			uint numLoops);
 };
 
 static const CompressedSpeechFile compressedSpeechFilesTable[] = {
@@ -268,7 +273,7 @@ void ToucheEngine::res_decodeProgramData() {
 		ppd.x = READ_LE_UINT16(p); p += 2;
 		ppd.y = READ_LE_UINT16(p); p += 2;
 		ppd.z = READ_LE_UINT16(p); p += 2;
-		ppd.priority = READ_LE_UINT16(p); p += 2;
+		ppd.order = READ_LE_UINT16(p); p += 2;
 		_programPointsTable.push_back(ppd);
 		if (ppd.x == -1) {
 			break;
@@ -516,19 +521,20 @@ void ToucheEngine::res_loadBackdrop() {
 	debugC(9, kDebugResource, "ToucheEngine::res_loadBackdrop()");
 	_currentBitmapWidth = _fData.readUint16LE();
 	_currentBitmapHeight = _fData.readUint16LE();
-	uint8 *dst = _backdropBuffer;
 	for (int i = 0; i < _currentBitmapHeight; ++i) {
-		res_decodeScanLineImageRLE(dst + _currentBitmapWidth * i, _currentBitmapWidth);
+		res_decodeScanLineImageRLE(_backdropBuffer + _currentBitmapWidth * i, _currentBitmapWidth);
 	}
 	_roomWidth = _currentBitmapWidth;
-	dst = _backdropBuffer;
 	for (int i = 0; i < _currentBitmapWidth; ++i) {
-		if (*dst == 255) {
+		if (_backdropBuffer[i] == 255) {
 			_roomWidth = i;
-			*dst = 0;
+			_backdropBuffer[i] = 0;
 			break;
 		}
-		++dst;
+	}
+	// Workaround for bug #1751149 (original bitmap has a white pixel in its transparent area).
+	if (_currentRoomNum == 8 && _currentBitmapWidth == 860) {
+		_backdropBuffer[120 * _currentBitmapWidth + 734] = 0;
 	}
 }
 
@@ -656,7 +662,9 @@ void ToucheEngine::res_loadSpeechSegment(int num) {
 				return;
 			}
 			_fSpeech[0].seek(offs);
-			stream = (compressedSpeechFilesTable[_compressedSpeechData].makeStream)(&_fSpeech[0], size);
+			Common::MemoryReadStream *tmp = _fSpeech[0].readStream(size);
+			assert(tmp);
+			stream = (compressedSpeechFilesTable[_compressedSpeechData].makeStream)(tmp, true, 0, 0, 1);
 		}
 		if (stream) {
 			_speechPlaying = true;

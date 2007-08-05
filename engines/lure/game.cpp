@@ -52,7 +52,7 @@ Game::~Game() {
 	delete _debugger;
 }
 
-void Game::tick() {
+void Game::tick(bool fastSpeed) {
 	// Call the tick method for each hotspot - this is somewaht complicated
 	// by the fact that a tick proc can unload both itself and/or others,
 	// so we first get a list of the Ids, and call the tick proc for each 
@@ -65,7 +65,11 @@ void Game::tick() {
 	int idSize = 0;
 	for (i = res.activeHotspots().begin(); i != res.activeHotspots().end(); ++i) {
 		Hotspot *hotspot = *i;
-		idList[idSize++] = hotspot->hotspotId();
+
+		if (!fastSpeed || ((hotspot->layer() != 0xff) && 
+			(hotspot->hotspotId() < FIRST_NONCHARACTER_ID)))
+			// Add hotspot to list to execute
+			idList[idSize++] = hotspot->hotspotId();
 	}
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot ticks begin");
@@ -289,6 +293,7 @@ void Game::playerChangeRoom() {
 	uint16 roomNum = fields.playerNewPos().roomNumber;
 	fields.playerNewPos().roomNumber = 0;
 	Point &newPos = fields.playerNewPos().position;
+
 	delayList.clear();
 
 	RoomData *roomData = res.getRoom(roomNum);
@@ -302,7 +307,9 @@ void Game::playerChangeRoom() {
 		displayChuteAnimation();
 	else if (animFlag != 0)
 		displayBarrelAnimation();
+	
 	fields.setField(ROOM_EXIT_ANIMATION, 0);
+	roomData->exitTime = g_system->getMillis();
 
 	// Change to the new room
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);

@@ -44,7 +44,7 @@
 namespace Saga {
 
 SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
-	/* Load sound module resource file contexts */
+	// Load sound module resource file contexts
 	_sfxContext = _vm->_resource->getContext(GAME_SOUNDFILE);
 	if (_sfxContext == NULL) {
 		error("SndRes::SndRes resource context not found");
@@ -68,8 +68,13 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
 		byte *resourcePointer;
 		size_t resourceLength;
 
-		_vm->_resource->loadResource(resourceContext, RID_IHNM_SFX_LUT,
-								 resourcePointer, resourceLength);
+		if (_vm->getGameId() == GID_IHNM_DEMO) {
+			_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_SFX_LUT,
+									 resourcePointer, resourceLength);
+		} else {
+			_vm->_resource->loadResource(resourceContext, RID_IHNM_SFX_LUT,
+									 resourcePointer, resourceLength);
+		}
 
 		if (resourceLength == 0) {
 			error("Sndres::SndRes can't read SfxIDs table");
@@ -169,7 +174,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	MemoryReadStream readS(soundResource, soundResourceLength);
 
 	resourceType = soundInfo->resourceType;
-	buffer.isBigEndian = soundInfo->isBigEndian;
 
 	if (soundResourceLength >= 8) {
 		if (!memcmp(soundResource, "Creative", 8)) {
@@ -178,7 +182,17 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundWAV;
 		} 
 		
-		if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS) {
+		bool uncompressedSound = false;
+		// If a patch file exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
+		if (_vm->getGameType() == GType_ITE && resourceId == 4 && 
+			(Common::File::exists("sound/p2_a.iaf") || Common::File::exists("sound/p2_a.voc")))
+			uncompressedSound = true;
+
+		// FIXME: Currently, the SFX.RES file in IHNM cannot be compressed
+		if (_vm->getGameType() == GType_IHNM && (context->fileType & GAME_SOUNDFILE))
+			uncompressedSound = true;
+
+		if ((_vm->getFeatures() & GF_COMPRESSED_SOUNDS) && !uncompressedSound) {
 			if (soundResource[0] == char(0)) {
 				resourceType = kSoundMP3;
 			} else if (soundResource[0] == char(1)) {
@@ -190,6 +204,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	}
 
+	buffer.isBigEndian = soundInfo->isBigEndian;
+	buffer.soundType = resourceType;
+	buffer.originalSize = 0;
 
 	switch (resourceType) {
 	case kSoundPCM:
@@ -319,7 +336,7 @@ int SndRes::getVoiceLength(uint32 resourceId) {
 		return -1;
 	}
 
-	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS))
+	if (!(_vm->getFeatures() & GF_COMPRESSED_SOUNDS) || buffer.originalSize == 0)
 		msDouble = (double)buffer.size;
 	else
 		msDouble = (double)buffer.originalSize;

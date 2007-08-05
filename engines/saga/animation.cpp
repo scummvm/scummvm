@@ -24,6 +24,7 @@
  */
 
 // Background animation management module
+
 #include "saga/saga.h"
 #include "saga/gfx.h"
 
@@ -94,7 +95,10 @@ void Anim::playCutaway(int cut, bool fade) {
 		startImmediately = true;
 	}
 
-	_vm->_gfx->savePalette();
+	// WORKAROUND: The IHNM demo deals with chained cutaways in a different manner. Don't save
+	// the palette of cutaway 11 (the woman looking at the marble)
+	if (!(_vm->getGameId() == GID_IHNM_DEMO && cut == 11))
+		_vm->_gfx->savePalette();
 
 	if (fade) {
 		_vm->_gfx->getCurrentPal(saved_pal);
@@ -151,6 +155,12 @@ void Anim::playCutaway(int cut, bool fade) {
 	_vm->_frameCount++;
 
 	_vm->_gfx->setPalette(palette);
+
+	// WORKAROUND for a bug found in the original IHNM demo. The palette of cutaway 12 is incorrect (the incorrect
+	// palette can be seen in the original demo too, for a split second). Therefore, use the saved palette for this
+	// cutaway
+	if (_vm->getGameId() == GID_IHNM_DEMO && cut == 12)
+		_vm->_gfx->restorePalette();
 
 	free(buf);
 	free(resourceData);
@@ -307,7 +317,17 @@ void Anim::clearCutaway(void) {
 		}
 
 		_vm->_interface->restoreMode();
-		_vm->_gfx->showCursor(true);
+		
+		if (_vm->getGameId() != GID_IHNM_DEMO) {
+			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149) {
+				// Don't show the mouse cursor in the non-interactive part of the IHNM demo
+			} else {
+				_vm->_gfx->showCursor(true);
+			}
+		} else {
+			// Enable the save reminder state after each cutaway for the IHNM demo
+			_vm->_interface->setSaveReminderState(true);
+		}
 	}
 }
 
@@ -366,16 +386,6 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 	}
 
 	fillFrameOffsets(anim);
-
-	/*	char s[200];
-		sprintf(s, "d:\\anim%i",animId);
-		long flen=anim->resourceLength;
-		char *buf=(char*)anim->resourceData;
-		FILE*f;
-		f=fopen(s,"wb");
-		for (long i = 0; i < flen; i++)
-			fputc(buf[i],f);
-		fclose(f);*/
 
 	// Set animation data
 	anim->currentFrame = 0;
@@ -642,7 +652,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 				yStart = readS.readUint16BE();
 			else
 				yStart = readS.readByte();
-			readS.readByte();		/* Skip pad byte */
+			readS.readByte();		// Skip pad byte
 			/*xPos = */readS.readUint16BE();
 			/*yPos = */readS.readUint16BE();
 			/*width = */readS.readUint16BE();

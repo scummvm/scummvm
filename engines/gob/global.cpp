@@ -112,7 +112,7 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_setAllPalette = false;
 	_dontSetPalette = false;
 
-	_primarySurfDesc = new SurfaceDesc(0x13, 320, 200);
+	_primarySurfDesc = 0;
 
 	_debugFlag = 0;
 	_inVM = 0;

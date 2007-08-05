@@ -90,6 +90,11 @@ endif
 
 endif
 
+ifdef USE_ARM_GFX_ASM
+MODULE_OBJS += \
+	gfxARM.o
+endif
+
 ifndef DISABLE_HE
 MODULE_OBJS += \
 	he/animation_he.o \

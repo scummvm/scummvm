@@ -28,9 +28,10 @@
 #include "common/system.h"
 
 #include "kyra/kyra.h"
+#include "kyra/kyra_v2.h"
 #include "kyra/screen.h"
+#include "kyra/screen_v2.h"
 #include "kyra/wsamovie.h"
-
 
 namespace Kyra {
 WSAMovieV1::WSAMovieV1(KyraEngine *vm) : Movie(vm) {}
@@ -132,8 +133,8 @@ void WSAMovieV1::close() {
 	}
 }
 
-void WSAMovieV1::displayFrame(int frameNum) {
-	debugC(9, kDebugLevelMovie, "WSAMovieV1::displayFrame(%d)", frameNum);
+void WSAMovieV1::displayFrame(int frameNum, ...) {
+	debugC(9, kDebugLevelMovie, "WSAMovieV1::displayFrame(%d, ...)", frameNum);
 	if (frameNum >= _numFrames || !_opened)
 		return;
 
@@ -234,7 +235,7 @@ void WSAMovieAmiga::close() {
 	WSAMovieV1::close();
 }
 
-void WSAMovieAmiga::displayFrame(int frameNum) {
+void WSAMovieAmiga::displayFrame(int frameNum, ...) {
 	debugC(9, kDebugLevelMovie, "WSAMovieAmiga::displayFrame(%d)", frameNum);
 	if (frameNum >= _numFrames || !_opened)
 		return;
@@ -340,7 +341,7 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 
 #pragma mark -
 
-WSAMovieV2::WSAMovieV2(KyraEngine *vm) : WSAMovieV1(vm), _xAdd(0), _yAdd(0) {}
+WSAMovieV2::WSAMovieV2(KyraEngine_v2 *vm) : WSAMovieV1(vm), _vm(vm), _xAdd(0), _yAdd(0), _oldOff(false) {}
 
 int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	debugC(9, kDebugLevelMovie, "WSAMovieV2::open('%s', %d, %p)", filename, unk1, (const void *)palBuf);
@@ -417,6 +418,96 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	_opened = true;
 	
 	return _numFrames;
+}
+
+void WSAMovieV2::displayFrame(int frameNum, ...) {
+	debugC(9, kDebugLevelMovie, "WSAMovieV2::displayFrame(%d, ...)", frameNum);
+	if (frameNum >= _numFrames || !_opened)
+		return;
+
+	uint8 *dst = 0;
+	if (_flags & WF_OFFSCREEN_DECODE)
+		dst = _offscreenBuffer;
+	else
+		dst = _vm->screen()->getPageRect(_drawPage, _x, _y, _width, _height);
+		
+	if (_currentFrame == _numFrames) {
+		if (!(_flags & WF_NO_FIRST_FRAME)) {
+			if (_flags & WF_OFFSCREEN_DECODE)
+				Screen::decodeFrameDelta(dst, _deltaBuffer);
+			else
+				Screen::decodeFrameDeltaPage(dst, _deltaBuffer, _width, (_flags & WF_XOR) == 0);
+		}
+		_currentFrame = 0;
+	}
+
+	// try to reduce the number of needed frame operations
+	int diffCount = ABS(_currentFrame - frameNum);
+	int frameStep = 1;
+	int frameCount;
+	if (_currentFrame < frameNum) {
+		frameCount = _numFrames - frameNum + _currentFrame;
+		if (diffCount > frameCount)
+			frameStep = -1;
+		else
+			frameCount = diffCount;
+	} else {
+		frameCount = _numFrames - _currentFrame + frameNum;
+		if (frameCount >= diffCount) {
+			frameStep = -1;
+			frameCount = diffCount;
+		}
+	}
+	
+	// process
+	if (frameStep > 0) {
+		uint16 cf = _currentFrame;
+		while (frameCount--) {
+			cf += frameStep;
+			processFrame(cf, dst);
+			if (cf == _numFrames)
+				cf = 0;
+		}
+	} else {
+		uint16 cf = _currentFrame;
+		while (frameCount--) {
+			if (cf == 0)
+				cf = _numFrames;
+			processFrame(cf, dst);
+			cf += frameStep;
+		}
+	}
+	
+	// display
+	_currentFrame = frameNum;
+	if (_flags & WF_OFFSCREEN_DECODE) {
+		if (_oldOff) {
+			// Kyrandia 1 offscreen buffer -> screen copy method of Kyrandia 1, needs to be present
+			// for our intro code that doesn't supply all the needed parameters for the Kyrandia 2 method
+			_vm->screen()->copyBlockToPage(_drawPage, _x, _y, _width, _height, _offscreenBuffer);
+		} else {
+			// This is the offscreen buffer -> screen copy method of Kyrandia 2 as it's implemented
+			// in the original, we use this in game
+			Screen_v2 *screen = _vm->screen_v2();
+			int pageBackUp = screen->_curPage;
+			screen->_curPage = _drawPage;
+
+			va_list args;
+			va_start(args, frameNum);
+			
+			int copyParam = va_arg(args, int);
+			int plotFunc = (copyParam & 0xFF00) >> 12;
+			int unk1 = copyParam & 0xFF;
+			
+			const uint8 *unkPtr1 = va_arg(args, const uint8*);
+			const uint8 *unkPtr2 = va_arg(args, const uint8*);
+			va_end(args);
+
+			screen->copyWsaRect(_x, _y, _width, _height, 0, plotFunc, _offscreenBuffer, unk1, unkPtr1, unkPtr2);
+			
+			screen->_curPage = pageBackUp;
+		}
+	}
 }
 
 } // end of namespace Kyra

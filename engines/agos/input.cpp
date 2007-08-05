@@ -196,7 +196,7 @@ void AGOSEngine::waitForInput() {
 
 		for (;;) {
 			if ((getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) &&
-					_keyPressed.keycode == Common::KEYCODE_HASH)
+					_keyPressed.keycode == Common::KEYCODE_F10)
 				displayBoxStars();
 			if (processSpecialKeys()) {
 				if ((getGameType() == GType_PP && getGameId() != GID_DIMP) ||

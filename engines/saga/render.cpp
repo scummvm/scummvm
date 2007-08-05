@@ -24,6 +24,7 @@
  */
 
 // Main rendering loop
+
 #include "saga/saga.h"
 
 #include "saga/actor.h"

@@ -236,11 +236,12 @@ uint16 DialogueManager::askPassword() {
 	debugC(1, kDebugDialogue, "checkDialoguePassword()");
 
 	char password[100];
-	uint16 passwordLen = 0;
+	uint16 passwordLen;
 
 	while (true) {
 		clear();
 
+		passwordLen = 0;
 		strcpy(password, ".......");
 
 		Common::Rect r(_answerBalloonW[0], _answerBalloonH[0]);
@@ -491,13 +492,12 @@ void Parallaction::runDialogue(SpeakData *data) {
 
 	_gfx->setFont(kFontDialogue);
 
-	if (_vm->getPlatform() == Common::kPlatformPC)
+	if (getPlatform() == Common::kPlatformPC)
 		showCursor(false);
 
 	DialogueManager man(this, data);
 	man.run();
 
-	refreshInventory(_characterName);
 	showCursor(true);
 
 	return;

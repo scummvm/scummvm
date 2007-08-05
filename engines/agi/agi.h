@@ -81,6 +81,7 @@ typedef signed int Err;
 #define	MSG_BOX_COLOUR	0x0f	/* White */
 #define MSG_BOX_TEXT	0x00	/* Black */
 #define MSG_BOX_LINE	0x04	/* Red */
+#define BUTTON_BORDER	0x00	/* Black */
 #define STATUS_FG	0x00		/* Black */
 #define	STATUS_BG	0x0f		/* White */
 
@@ -110,7 +111,9 @@ enum AgiGameFeatures {
 	GF_AGI256_2 =    (1 << 3),
 	GF_AGIPAL =      (1 << 4),
 	GF_MACGOLDRUSH = (1 << 5),
-	GF_FANMADE =     (1 << 6)
+	GF_FANMADE =     (1 << 6),
+	GF_MENUS =		 (1 << 7),
+	GF_ESCPAUSE =	 (1 << 8)
 };
 
 enum AgiGameID {
@@ -153,6 +156,7 @@ enum AGIErrors {
 	errNoLoopsInView,
 	errViewDataError,
 	errNoGameList,
+	errIOError,
 
 	errUnk = 127
 };
@@ -315,6 +319,118 @@ struct AgiBlock {
 	int x1, y1;
 	int x2, y2;
 	uint8 *buffer;		/* used for window background */
+};
+
+/** AGI text color (Background and foreground color). */
+struct AgiTextColor {
+	/** Creates an AGI text color. Uses black text on white background by default. */
+	AgiTextColor(int fgColor = 0x00, int bgColor = 0x0F) : fg(fgColor), bg(bgColor) {}
+
+	/** Get an AGI text color with swapped foreground and background color. */
+	AgiTextColor swap() const { return AgiTextColor(bg, fg); }
+
+	int fg; ///< Foreground color (Used for text).
+	int bg; ///< Background color (Used for text's background).
+};
+
+/**
+ * AGI button style (Amiga or PC).
+ *
+ * Supports positive and negative button types (Used with Amiga-style only):
+ * Positive buttons do what the dialog was opened for.
+ * Negative buttons cancel what the dialog was opened for.
+ * Restart-dialog example: Restart-button is positive, Cancel-button negative.
+ * Paused-dialog example: Continue-button is positive.
+ */
+struct AgiButtonStyle {
+// Public constants etc
+public:
+	static const int
+		// Amiga colors (Indexes into the Amiga-ish palette)
+		amigaBlack  = 0x00, ///< Accurate,                   is          #000000 (24-bit RGB)
+		amigaWhite  = 0x0F, ///< Practically accurate,       is close to #FFFFFF (24-bit RGB)
+		amigaGreen  = 0x02, ///< Quite accurate,             should be   #008A00 (24-bit RGB)
+		amigaOrange = 0x0C, ///< Inaccurate, too much blue,  should be   #FF7500 (24-bit RGB) 
+		amigaPurple = 0x0D, ///< Inaccurate, too much green, should be   #FF00FF (24-bit RGB)
+		amigaRed    = 0x04, ///< Quite accurate,             should be   #BD0000 (24-bit RGB)
+		amigaCyan   = 0x0B, ///< Inaccurate, too much red,   should be   #00FFDE (24-bit RGB)
+		// PC colors (Indexes into the EGA-palette)
+		pcBlack     = 0x00,
+		pcWhite     = 0x0F;
+
+// Public methods
+public:
+	/**
+	 * Get the color of the button with the given state and type using current style.
+	 *
+	 * @param hasFocus True if button has focus, false otherwise.
+	 * @param pressed True if button is being pressed, false otherwise.
+	 * @param positive True if button is positive, false if button is negative. Only matters for Amiga-style buttons.
+	 */
+	AgiTextColor getColor(bool hasFocus, bool pressed, bool positive = true) const;
+
+	/**
+	 * Get the color of a button with the given base color and state ignoring current style.
+	 * Swaps foreground and background color when the button has focus or is being pressed.
+	 *
+	 * @param hasFocus True if button has focus, false otherwise.
+	 * @param pressed True if button is being pressed, false otherwise.
+	 * @param baseFgColor Foreground color of the button when it has no focus and is not being pressed.
+	 * @param baseBgColor Background color of the button when it has no focus and is not being pressed.
+	 */
+	AgiTextColor getColor(bool hasFocus, bool pressed, int baseFgColor, int baseBgColor) const;
+
+	/**
+	 * Get the color of a button with the given base color and state ignoring current style.
+	 * Swaps foreground and background color when the button has focus or is being pressed.
+	 *
+	 * @param hasFocus True if button has focus, false otherwise.
+	 * @param pressed True if button is being pressed, false otherwise.
+	 * @param baseColor Color of the button when it has no focus and is not being pressed.
+	 */
+	AgiTextColor getColor(bool hasFocus, bool pressed, const AgiTextColor &baseColor) const;
+
+	/**
+	 * How many pixels to offset the shown text diagonally down and to the right.
+	 * Currently only used for pressed PC-style buttons.
+	 */
+	int getTextOffset(bool hasFocus, bool pressed) const;
+
+	/**
+	 * Show border around the button?
+	 * Currently border is only used for in focus or pressed Amiga-style buttons
+	 * when in inauthentic Amiga-style mode.
+	 */
+	bool getBorder(bool hasFocus, bool pressed) const;
+
+	/**
+	 * Set Amiga-button style.
+	 *
+	 * @param amigaStyle Set Amiga-button style if true, otherwise set PC-button style.
+	 * @param olderAgi If true then use older AGI style in Amiga-mode, otherwise use newer.
+	 * @param authenticAmiga If true then don't use a border around buttons in Amiga-mode, otherwise use.
+	 */
+	void setAmigaStyle(bool amigaStyle = true, bool olderAgi = false, bool authenticAmiga = false);
+
+	/**
+	 * Set PC-button style.
+	 * @param pcStyle Set PC-button style if true, otherwise set default Amiga-button style.
+	 */
+	void setPcStyle(bool pcStyle = true);
+
+// Public constructors
+public:
+	/**
+	 * Create a button style based on the given rendering mode.
+	 * @param renderMode If Common::kRenderAmiga then creates default Amiga-button style, otherwise PC-style.
+	 */
+	AgiButtonStyle(Common::RenderMode renderMode = Common::kRenderDefault);
+
+// Private member variables
+private:
+	bool _amigaStyle;     ///< Use Amiga-style buttons if true, otherwise use PC-style buttons.
+	bool _olderAgi;       ///< Use older AGI style in Amiga-style mode.
+	bool _authenticAmiga; ///< Don't use border around buttons in Amiga-style mode.
 };
 
 #define EGO_VIEW_TABLE	0
@@ -594,6 +710,8 @@ public:
 	int _oldMode;
 
 	Menu* _menu;
+	AgiButtonStyle _buttonStyle;
+	AgiButtonStyle _defaultButtonStyle;
 
 	char _lastSentence[40];
 

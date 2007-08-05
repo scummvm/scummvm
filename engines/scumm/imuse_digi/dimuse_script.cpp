@@ -179,8 +179,8 @@ void IMuseDigital::flushTracks() {
 					_mixer->stopHandle(track->mixChanHandle);
 					delete track->stream;
 					track->stream = NULL;
-					_sound->closeSound(track->soundHandle);
-					track->soundHandle = NULL;
+					_sound->closeSound(track->soundDesc);
+					track->soundDesc = NULL;
 					track->used = false;
 				}
 			} else if (track->streamSou) {
@@ -245,7 +245,7 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			Track *track = _track[l];
 			if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
-				_sound->getSyncSizeAndPtrById(track->soundHandle, syncId, sync_size, &sync_ptr);
+				_sound->getSyncSizeAndPtrById(track->soundDesc, syncId, sync_size, &sync_ptr);
 				if ((sync_size != 0) && (sync_ptr != NULL)) {
 					sync_size /= 4;
 					while (sync_size--) {
@@ -396,8 +396,8 @@ void IMuseDigital::stopAllSounds() {
 				_mixer->stopHandle(track->mixChanHandle);
 				delete track->stream;
 				track->stream = NULL;
-				_sound->closeSound(track->soundHandle);
-				track->soundHandle = NULL;
+				_sound->closeSound(track->soundDesc);
+				track->soundDesc = NULL;
 			} else if (track->streamSou) {
 				_mixer->stopHandle(track->mixChanHandle);
 				delete track->streamSou;

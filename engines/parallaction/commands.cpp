@@ -274,6 +274,9 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 
 		case CMD_CLOSE: // close
 			u->_zone->_flags |= kFlagsClosed;
+			if (u->_zone->u.door->_cnv) {
+				addJob(&jobToggleDoor, (void*)u->_zone, kPriority18 );
+			}
 			break;
 
 		case CMD_ON:	// on
@@ -302,7 +305,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 			break;
 
 		case CMD_CALL:	// call
-			_callables[u->_callable](z);
+			callFunction(u->_callable, z);
 			break;
 
 		case CMD_QUIT:	// quit
@@ -314,7 +317,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 				continue;
 			}
 
-			WalkNodeList *vC = _vm->_char._builder.buildPath(u->_move._x, u->_move._y);
+			WalkNodeList *vC = _char._builder.buildPath(u->_move._x, u->_move._y);
 
 			addJob(&jobWalk, vC, kPriority19 );
 			_engineFlags |= kEngineWalking;

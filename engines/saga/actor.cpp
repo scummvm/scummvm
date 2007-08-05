@@ -897,7 +897,9 @@ void Actor::updateActorsScene(int actorsEntrance) {
 		}
 	}
 
-	assert(_protagonist);
+	// _protagonist can be null while loading a game from the command line
+	if (_protagonist == NULL)
+		return;
 
 	if ((actorsEntrance >= 0) && (_vm->_scene->_entryList.entryListCount > 0)) {
 		if (_vm->_scene->_entryList.entryListCount <= actorsEntrance) {
@@ -1605,7 +1607,9 @@ void Actor::handleActions(int msec, bool setup) {
 				if (actor->_lastZone)
 					stepZoneAction(actor, actor->_lastZone, true, false);
 				actor->_lastZone = hitZone;
-				if (hitZone)
+				// WORKAROUND for graphics glitch in the rat caves. Don't do this step zone action in the rat caves
+				// (room 51) to avoid the glitch
+				if (hitZone && !(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51))
 					stepZoneAction(actor, hitZone, false, false);
 			}
 		}
@@ -2127,7 +2131,10 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 			if ((((actor->_currentAction >= kActionWalkToPoint) &&
 				(actor->_currentAction <= kActionWalkDir)) || (actor == _protagonist)) &&
 				!_vm->_scene->canWalk(pointFrom)) {
-				for (i = 1; i < 8; i++) {
+				
+				int max = _vm->getGameType() == GType_ITE ? 8 : 4;
+
+				for (i = 1; i < max; i++) {
 					pointAdd = pointFrom;
 					pointAdd.y += i;
 					if (_vm->_scene->canWalk(pointAdd)) {
@@ -2140,17 +2147,19 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 						pointFrom = pointAdd;
 						break;
 					}
-					pointAdd = pointFrom;
-					pointAdd.x += i;
-					if (_vm->_scene->canWalk(pointAdd)) {
-						pointFrom = pointAdd;
-						break;
-					}
-					pointAdd = pointFrom;
-					pointAdd.x -= i;
-					if (_vm->_scene->canWalk(pointAdd)) {
-						pointFrom = pointAdd;
-						break;
+					if (_vm->getGameType() == GType_ITE) {
+						pointAdd = pointFrom;
+						pointAdd.x += i;
+						if (_vm->_scene->canWalk(pointAdd)) {
+							pointFrom = pointAdd;
+							break;
+						}
+						pointAdd = pointFrom;
+						pointAdd.x -= i;
+						if (_vm->_scene->canWalk(pointAdd)) {
+							pointFrom = pointAdd;
+							break;
+						}
 					}
 				}
 			}

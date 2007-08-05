@@ -107,7 +107,6 @@ SagaEngine::SagaEngine(OSystem *syst)
 	// Mac CD Wyrmkeep
 	Common::File::addDefaultDirectory(_gameDataPath + "patch/");
 
-
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
@@ -150,6 +149,8 @@ int SagaEngine::init() {
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	_readingSpeed = getTalkspeed();
 	_copyProtection = ConfMan.getBool("copy_protection");
+	_gf_wyrmkeep = false;
+	_gf_compressed_sounds = false;
 
 	if (_readingSpeed > 3)
 		_readingSpeed = 0;
@@ -454,6 +455,9 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 			colorId = kITEColorTransBlack;
 			break;
 
+		case (kKnownColorBrightWhite):
+			colorId = kITEColorBrightWhite;
+			break;
 		case (kKnownColorBlack):
 			colorId = kIHNMColorBlack;
 			break;

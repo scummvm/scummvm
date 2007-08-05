@@ -30,6 +30,10 @@
 #include "common/func.h"
 #include "common/config-manager.h"
 
+#ifdef __DS__
+#include "wordcompletion.h"
+#endif
+
 namespace Agi {
 
 #define kModePre 0
@@ -200,9 +204,9 @@ bool AgiEngine::predictiveDialog(void) {
 					color2 = 7;
 				}
 				if (i == 14) {
-					_gfx->drawButton(bx[i], by[i], modes[mode], i == active, 0, color1, color2);
+					_gfx->drawDefaultStyleButton(bx[i], by[i], modes[mode], i == active, 0, color1, color2);
 				} else {
-					_gfx->drawButton(bx[i], by[i], buttons[i], i == active, 0, color1, color2);
+					_gfx->drawDefaultStyleButton(bx[i], by[i], buttons[i], i == active, 0, color1, color2);
 				}
 			}
 
@@ -521,6 +525,10 @@ void AgiEngine::loadDict(void) {
 	while ((ptr = strchr(ptr, '\n'))) {
 		*ptr = 0;
 		ptr++;
+#ifdef __DS__
+		// Pass the line on to the DS word list
+		DS::addAutoCompleteLine(_predictiveDictLine[i - 1]);
+#endif
 		_predictiveDictLine[i++] = ptr;
 	}
 	if (_predictiveDictLine[lines - 1][0] == 0)
@@ -528,6 +536,11 @@ void AgiEngine::loadDict(void) {
 
 	_predictiveDictLineCount = lines;
 	debug("Loaded %d lines", _predictiveDictLineCount);
+
+#ifdef __DS__
+	// Sort the DS word completion list, to allow for a binary chop later (in the ds backend)
+	DS::sortAutoCompleteWordList();
+#endif
 
 	uint32 time3 = _system->getMillis();
 	printf("Time to parse pred.dic: %d, total: %d\n", time3-time2, time3-time1);

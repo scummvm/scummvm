@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 
+#include "common/array.h"
 #include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/util.h"
@@ -231,9 +232,7 @@ protected:
 	uint _itemArraySize;
 	uint _itemArrayInited;
 
-	byte *_itemHeapPtr;
-	uint _itemHeapCurPos;
-	uint _itemHeapSize;
+	Common::Array<byte *> _itemHeap;
 
 	byte *_iconFilePtr;
 

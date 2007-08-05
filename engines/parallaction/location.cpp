@@ -25,6 +25,8 @@
 
 #include "common/stdafx.h"
 
+#include "common/system.h"
+
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
@@ -249,7 +251,9 @@ void Parallaction::switchBackground(const char* background, const char* mask) {
 			_si += 3;
 		}
 
+		g_system->delayMillis(20);
 		_gfx->setPalette(pal);
+		_gfx->updateScreen();
 	}
 
 	_disk->loadScenery(background, mask);
@@ -371,6 +375,7 @@ void Parallaction::changeLocation(char *location) {
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 	_gfx->setBlackPalette();
+	_gfx->updateScreen();
 
 	if (_location._commands.size() > 0) {
 		runCommands(_location._commands);
@@ -419,7 +424,7 @@ void Parallaction::doLocationEnterTransition() {
     }
 
 	byte pal[PALETTE_SIZE];
-	_gfx->buildBWPalette(pal);
+	_gfx->makeGrayscalePalette(pal);
 	_gfx->setPalette(pal);
 
 	jobRunScripts(NULL, NULL);
@@ -447,9 +452,10 @@ void Parallaction::doLocationEnterTransition() {
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
-		_gfx->quickFadePalette(pal);
+		_gfx->fadePalette(pal, _gfx->_palette, 4);
 		_gfx->setPalette(pal);
 		waitTime( 1 );
+		_gfx->updateScreen();
 	}
 
 	debugC(1, kDebugLocation, "doLocationEnterTransition completed");

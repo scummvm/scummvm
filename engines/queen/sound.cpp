@@ -67,7 +67,9 @@ public:
 	MP3Sound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeMP3Stream(f, size));
+		Common::MemoryReadStream *tmp = f->readStream(size);
+		assert(tmp);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeMP3Stream(tmp, true));
 	}
 };
 #endif
@@ -78,7 +80,9 @@ public:
 	OGGSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeVorbisStream(f, size));
+		Common::MemoryReadStream *tmp = f->readStream(size);
+		assert(tmp);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeVorbisStream(tmp, true));
 	}
 };
 #endif
@@ -89,7 +93,9 @@ public:
 	FLACSound(Audio::Mixer *mixer, QueenEngine *vm) : PCSound(mixer, vm) {}
 protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeFlacStream(f, size));
+		Common::MemoryReadStream *tmp = f->readStream(size);
+		assert(tmp);
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, Audio::makeFlacStream(tmp, true));
 	}
 };
 #endif // #ifdef USE_FLAC

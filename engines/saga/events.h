@@ -60,7 +60,8 @@ enum EventCodes {
 	kScriptEvent,
 	kCursorEvent,
 	kGraphicsEvent,
-	kCutawayEvent
+	kCutawayEvent,
+	kPsychicProfileBgEvent
 };
 
 enum EventOps {

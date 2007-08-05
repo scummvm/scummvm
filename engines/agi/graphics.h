@@ -41,7 +41,7 @@ class GfxMgr {
 private:
 	AgiEngine *_vm;
 
-	uint8 _palette[16 * 3];
+	uint8 _palette[256 * 4];
 	uint8 *_agiScreen;
 	unsigned char *_screen;
 
@@ -49,6 +49,9 @@ private:
 
 	uint8 _agipalPalette[16 * 3];
 	int _agipalFileNum;
+
+private:
+	void rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor, bool border, int textOffset);
 
 public:
 	GfxMgr(AgiEngine *vm);
@@ -74,12 +77,13 @@ public:
 	void clearScreen(int);
 	void clearConsoleScreen(int);
 	void drawBox(int, int, int, int, int, int, int);
-	void drawButton(int, int, const char *, int, int, int fgcolor = 0, int bgcolor = 0);
+	void drawDefaultStyleButton(int, int, const char *, int, int, int fgcolor = 0, int bgcolor = 0);
+	void drawCurrentStyleButton(int x, int y, const char *label, bool hasFocus, bool pressed = false, bool positive = true);
 	int testButton(int, int, const char *);
 	void drawRectangle(int, int, int, int, int);
 	void saveBlock(int, int, int, int, uint8 *);
 	void restoreBlock(int, int, int, int, uint8 *);
-	void initPalette(uint8 *);
+	void initPalette(uint8 *p, uint colorCount = 16, uint fromBits = 6, uint toBits = 8);
 	void setAGIPal(int);
 	int getAGIPalFileNum();
 	void drawFrame(int x1, int y1, int x2, int y2, int c1, int c2);

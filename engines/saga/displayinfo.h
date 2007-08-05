@@ -23,6 +23,8 @@
  *
  */
 
+// Interface widget display information
+
 #ifndef SAGA_DISPLAYINFO_H
 #define SAGA_DISPLAYINFO_H
 

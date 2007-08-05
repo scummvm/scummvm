@@ -90,7 +90,7 @@ private:
 	} _track[4];
 
 public:
-	ProtrackerStream(Common::ReadStream *stream, int rate, bool stereo);
+	ProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo);
 
 private:
 	void interrupt();
@@ -145,9 +145,9 @@ const int16 ProtrackerStream::sinetable[64] = {
 	-180, -161, -141, -120,  -97,  -74,  -49,  -24
 };
 
-ProtrackerStream::ProtrackerStream(Common::ReadStream *stream, int rate, bool stereo) :
+ProtrackerStream::ProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo) :
 		Paula(stereo, rate, rate/50) {
-	bool result = _module.load(*stream);
+	bool result = _module.load(*stream, offs);
 	assert(result);
 
 	_tick = _row = _pos = 0;
@@ -461,8 +461,8 @@ void ProtrackerStream::interrupt(void) {
 
 namespace Audio {
 
-AudioStream *makeProtrackerStream(Common::ReadStream *stream, int rate, bool stereo) {
-	return new Modules::ProtrackerStream(stream, rate, stereo);
+AudioStream *makeProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo) {
+	return new Modules::ProtrackerStream(stream, offs, rate, stereo);
 }
 
 } // End of namespace Audio

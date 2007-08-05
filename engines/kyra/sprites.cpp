@@ -29,14 +29,14 @@
 #include "common/util.h"
 #include "common/system.h"
 #include "kyra/screen.h"
-#include "kyra/kyra.h"
+#include "kyra/kyra_v1.h"
 #include "kyra/sprites.h"
 #include "kyra/resource.h"
-#include "kyra/animator.h"
+#include "kyra/animator_v1.h"
 
 namespace Kyra {
 
-Sprites::Sprites(KyraEngine *vm, OSystem *system) {
+Sprites::Sprites(KyraEngine_v1 *vm, OSystem *system) {
 	_vm = vm;
 	_res = vm->resource();
 	_screen = vm->screen();

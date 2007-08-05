@@ -165,11 +165,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\archive.cpp"
+			RelativePath="..\..\engines\parallaction\callables_br.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\callables.cpp"
+			RelativePath="..\..\engines\parallaction\callables_ns.cpp"
 			>
 		</File>
 		<File
@@ -201,11 +201,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\disk.cpp"
+			RelativePath="..\..\engines\parallaction\disk.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\disk.h"
+			RelativePath="..\..\engines\parallaction\disk_br.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\disk_ns.cpp"
 			>
 		</File>
 		<File
@@ -218,10 +222,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\graphics.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\intro.cpp"
 			>
 		</File>
 		<File
@@ -250,6 +250,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\parallaction.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\parallaction_br.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\parallaction_ns.cpp"
 			>
 		</File>
 		<File

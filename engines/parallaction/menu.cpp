@@ -87,14 +87,15 @@ const char *loadGameMsg[] = {
 #define SLOT_Y			64
 #define SLOT_WIDTH		(BLOCK_WIDTH+2)
 
+#define PASSWORD_LEN	6
 
-static uint16 _amigaDinoKey[] = { 5, 3, 6, 2, 2, 7 };
-static uint16 _amigaDonnaKey[] = { 0, 3, 6, 2, 2, 6 };
-static uint16 _amigaDoughKey[] = { 1, 3 ,7, 2, 4, 6 };
+static uint16 _amigaDinoKey[PASSWORD_LEN] = { 5, 3, 6, 2, 2, 7 };
+static uint16 _amigaDonnaKey[PASSWORD_LEN] = { 0, 3, 6, 2, 2, 6 };
+static uint16 _amigaDoughKey[PASSWORD_LEN] = { 1, 3 ,7, 2, 4, 6 };
 
-static uint16 _pcDinoKey[] = { 5, 3, 6, 1, 4, 7 };
-static uint16 _pcDonnaKey[] = { 0, 2, 8, 5, 5, 1 };
-static uint16 _pcDoughKey[] = { 1, 7 ,7, 2, 2, 6 };
+static uint16 _pcDinoKey[PASSWORD_LEN] = { 5, 3, 6, 1, 4, 7 };
+static uint16 _pcDonnaKey[PASSWORD_LEN] = { 0, 2, 8, 5, 5, 1 };
+static uint16 _pcDoughKey[PASSWORD_LEN] = { 1, 7 ,7, 2, 2, 6 };
 
 
 Menu::Menu(Parallaction *vm) {
@@ -130,11 +131,13 @@ void Menu::splash() {
 	_vm->_disk->loadSlide("intro");
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_vm->_gfx->updateScreen();
 	g_system->delayMillis(2000);
 
 	_vm->_disk->loadSlide("minintro");
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_vm->_gfx->updateScreen();
 	g_system->delayMillis(2000);
 
 }
@@ -161,15 +164,16 @@ void Menu::newGame() {
 	_vm->_gfx->displayCenteredString(100, v14[2]);
 	_vm->_gfx->displayCenteredString(120, v14[3]);
 
+	_vm->showCursor(false);
+
 	_vm->_gfx->updateScreen();
-	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 	_mouseButtons = kMouseNone;
-
-	for (; _mouseButtons != kMouseLeftUp; ) {
+	do {
 		_vm->updateInput();
-		if (_mouseButtons == kMouseRightUp) break;
-	}
+	} while (_mouseButtons != kMouseLeftUp && _mouseButtons != kMouseRightUp);
+
+	_vm->showCursor(true);
 
 	if (_mouseButtons != kMouseRightUp) {
 		strcpy(_vm->_location._name, "fogne");
@@ -203,14 +207,10 @@ uint16 Menu::chooseLanguage() {
 
 	_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE", 1);
 
-	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-
 	_vm->changeCursor(kCursorArrow);
 
 	do {
 		_vm->updateInput();
-		_vm->_gfx->swapBuffers();
 
 		if (_mouseButtons == kMouseLeftUp) {
 			for (uint16 _si = 0; _si < 4; _si++) {
@@ -242,7 +242,8 @@ uint16 Menu::chooseLanguage() {
 			}
 		}
 
-		_vm->waitTime( 1 );
+		g_system->delayMillis(30);
+		_vm->_gfx->updateScreen();
 
 	} while (true);
 
@@ -261,41 +262,33 @@ uint16 Menu::selectGame() {
 
 	_vm->_disk->loadSlide("restore");
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-
 
 	uint16 _si = 0;
 	uint16 _di = 3;
 
-	_vm->updateInput();
+	_mouseButtons = kMouseNone;
 	while (_mouseButtons != kMouseLeftUp) {
 
 		_vm->updateInput();
-		_vm->_gfx->swapBuffers();
-		_vm->waitTime( 1 );
 
-		_si = 0;
-		if (_vm->_mousePos.x > 160)
-			_si = 1;
+		_si = (_vm->_mousePos.x > 160) ? 1 : 0;
 
-		if (_si == _di) continue;
+		if (_si != _di) {
+			_di = _si;
 
-		_di = _si;
-		_vm->_gfx->copyScreen(Gfx::kBit2, Gfx::kBitFront);
+			_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+			if (_si != 0) {
+				// load a game
+				_vm->_gfx->displayString(60, 30, loadGameMsg[_language], 1);
+			} else {
+				// new game
+				_vm->_gfx->displayString(60, 30, newGameMsg[_language], 1);
+			}
 
-		if (_si != 0) {
-			// load a game
-			_vm->_gfx->displayString(60, 30, loadGameMsg[_language], 1);
-		} else {
-			// new game
-			_vm->_gfx->displayString(60, 30, newGameMsg[_language], 1);
 		}
 
+		g_system->delayMillis(30);
 		_vm->_gfx->updateScreen();
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-
 	}
 
 	if (_si == 0) return 0; // new game
@@ -316,6 +309,30 @@ uint16 Menu::selectGame() {
 }
 
 
+int Menu::getSelectedBlock(const Common::Point &p, Common::Rect &r) {
+
+	for (uint16 _si = 0; _si < 9; _si++) {
+
+		Common::Rect q(
+			_si * BLOCK_X_OFFSET + BLOCK_SELECTION_X,
+			BLOCK_SELECTION_Y - _si * BLOCK_Y_OFFSET,
+			(_si + 1) * BLOCK_X_OFFSET + BLOCK_SELECTION_X,
+			BLOCK_SELECTION_Y + BLOCK_HEIGHT - _si * BLOCK_Y_OFFSET
+		);
+
+		if (q.contains(p)) {
+			r.setWidth(BLOCK_WIDTH);
+			r.setHeight(BLOCK_HEIGHT);
+			r.moveTo(_si * BLOCK_X_OFFSET + BLOCK_X, BLOCK_Y - _si * BLOCK_Y_OFFSET);
+			return _si;
+		}
+
+	}
+
+	return -1;
+}
+
+
 //
 //	character selection and protection
 //
@@ -323,11 +340,8 @@ void Menu::selectCharacter() {
 	debugC(1, kDebugMenu, "Menu::selectCharacter()");
 
 	uint16 _di = 0;
-	bool askPassword = true;
 
-	uint16 _donna_points = 0;
-	uint16 _dino_points = 0;
-	uint16 _dough_points = 0;
+	uint16 _donna_points, _dino_points, _dough_points;
 
 	StaticCnv v14;
 
@@ -343,51 +357,34 @@ void Menu::selectCharacter() {
 	_vm->_disk->selectArchive((_vm->getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 
 	_vm->_disk->loadSlide("password");	// loads background into kBitBack buffer
-
 	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);	//
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);		//
+
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 
-	while (askPassword == true) {
+	while (true) {
 
-		askPassword = false;
 		_di = 0;
 
 		_vm->_gfx->displayString(60, 30, introMsg1[_language], 1);			// displays message
-		_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 		_donna_points = 0;
 		_dino_points = 0;
 		_dough_points = 0;
 
-		while (_di < 6) {
+		while (_di < PASSWORD_LEN) {
 
 			_mouseButtons = kMouseNone;
 			do {
 				_vm->updateInput();
-				_vm->_gfx->swapBuffers();
-				_vm->waitTime(1);
+				g_system->delayMillis(30);
+				_vm->_gfx->updateScreen();
 			} while (_mouseButtons != kMouseLeftUp);	// waits for left click
 
-			for (uint16 _si = 0; _si < 9; _si++) {
-
-				Common::Rect r(
-					_si * BLOCK_X_OFFSET + BLOCK_SELECTION_X,
-					BLOCK_SELECTION_Y - _si * BLOCK_Y_OFFSET,
-					(_si + 1) * BLOCK_X_OFFSET + BLOCK_SELECTION_X,
-					BLOCK_SELECTION_Y + BLOCK_HEIGHT - _si * BLOCK_Y_OFFSET
-				);
-
-				if (!r.contains(_vm->_mousePos)) continue;
-
-				r.setWidth(BLOCK_WIDTH);
-				r.setHeight(BLOCK_HEIGHT);
-				r.moveTo(_si * BLOCK_X_OFFSET + BLOCK_X, BLOCK_Y - _si * BLOCK_Y_OFFSET);
+			Common::Rect r;
+			int _si = getSelectedBlock(_vm->_mousePos, r);
+			if (_si != -1) {
 				_vm->_gfx->grabRect(v14._data0, r, Gfx::kBitFront, BLOCK_WIDTH);
-
-				_vm->_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitBack);
 				_vm->_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitFront);
-
 //				beep();
 
 				if (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT)) {
@@ -408,33 +405,33 @@ void Menu::selectCharacter() {
 
 				_di++;
 			}
-
-			askPassword = (_dino_points < 6 && _donna_points < 6 && _dough_points < 6);
 		}
 
-		if (askPassword == false) break;
+		if (_dino_points == PASSWORD_LEN || _donna_points == PASSWORD_LEN || _dough_points == PASSWORD_LEN) {
+			break;
+		}
 
-		_vm->_gfx->copyScreen(Gfx::kBit2, Gfx::kBitFront);
+		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 		_vm->_gfx->displayString(60, 30, introMsg2[_language], 1);
 		_vm->_gfx->updateScreen();
 
 		g_system->delayMillis(2000);
 
-		_vm->_gfx->copyScreen(Gfx::kBit2, Gfx::kBitFront);
+		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	}
 
-
-	if (_dino_points > _donna_points && _dino_points > _dough_points) {
+	if (_dino_points == PASSWORD_LEN) {
 		sprintf(_vm->_location._name, "test.%s", _dinoName);
-	} else {
-		if (_donna_points > _dino_points && _donna_points > _dough_points) {
-			sprintf(_vm->_location._name, "test.%s", _donnaName);
-		} else {
-			sprintf(_vm->_location._name, "test.%s", _doughName);
-		}
+	} else
+	if (_donna_points == PASSWORD_LEN) {
+		sprintf(_vm->_location._name, "test.%s", _donnaName);
+	} else
+	if (_dough_points == PASSWORD_LEN) {
+		sprintf(_vm->_location._name, "test.%s", _doughName);
 	}
 
 	_vm->_gfx->setBlackPalette();
+	_vm->_gfx->updateScreen();
 
 	_engineFlags |= kEngineChangeLocation;
 

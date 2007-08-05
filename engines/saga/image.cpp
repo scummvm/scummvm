@@ -24,6 +24,7 @@
  */
 
 // SAGA Image resource management routines
+
 #include "saga/saga.h"
 
 #include "saga/stream.h"

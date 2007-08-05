@@ -301,6 +301,7 @@ struct GameResourceDescription {
 	uint32 mainPanelSpritesResourceId;
 	uint32 optionPanelSpritesResourceId;
 	uint32 defaultPortraitsResourceId;
+	uint32 psychicProfileResourceId;
 	uint32 mainStringsResourceId;
 	uint32 actorsStringsResourceId;
 };
@@ -527,6 +528,8 @@ public:
 	int _readingSpeed;
 
 	bool _copyProtection;
+	bool _gf_wyrmkeep;
+	bool _gf_compressed_sounds;
 
 	SndRes *_sndRes;
 	Sound *_sound;
@@ -548,7 +551,7 @@ public:
 	Resource *_resource;
 
 
-	/** Random number generator */
+	// Random number generator
 	Common::RandomSource _rnd;
 
 private:

@@ -43,6 +43,7 @@ namespace GUI {
 	class CommandSender;
 }
 
+extern OSystem *g_system;
 
 namespace Parallaction {
 
@@ -159,11 +160,6 @@ public:
 typedef Job* JobPointer;
 typedef ManagedList<JobPointer> JobList;
 
-struct Credit {
-	const char *_role;
-	const char *_name;
-};
-
 typedef void (*callable)(void*);
 
 extern uint16 		_mouseButtons;
@@ -181,8 +177,6 @@ extern uint16 		_introSarcData3;		 // sarcophagus stuff to be saved
 extern uint16 		_introSarcData2;		 // sarcophagus stuff to be saved
 extern char 		_saveData1[];
 extern uint32 		_commandFlags;
-extern const char 	*_instructionNamesRes[];
-extern const char 	*_commandsNamesRes[];
 extern const char 	*_dinoName;
 extern const char 	*_donnaName;
 extern const char 	*_doughName;
@@ -360,6 +354,16 @@ private:
 	const PARALLACTIONGameDescription *_gameDescription;
 
 public:
+	// info
+	int32			_screenWidth;
+	int32 			_screenHeight;
+	int32 			_screenSize;
+
+	int32 			_screenMaskWidth;
+	int32 			_screenMaskSize;
+	int32 			_screenPathWidth;
+	int32 			_screenPathSize;
+
 	SoundMan		*_soundMan;
 
 	Gfx*			_gfx;
@@ -424,7 +428,6 @@ protected:		// members
 
 	void		initGame();
 	void		initGlobals();
-	void 		initResources();
 	void		runGame();
 	uint32		getElapsedTime();
 	void		resetTimer();
@@ -467,6 +470,103 @@ protected:		// members
 	int16 		pickupItem(Zone *z);
 	int16 		isItemInInventory(int32 v);
 	int16		getHoverInventoryItem(int16 x, int16 y);
+
+public:
+	virtual	void callFunction(uint index, void* parm) { }
+
+public:
+	const char **_zoneFlagNamesRes;
+	const char **_zoneTypeNamesRes;
+	const char **_commandsNamesRes;
+	const char **_callableNamesRes;
+	const char **_instructionNamesRes;
+
+};
+
+class Parallaction_ns : public Parallaction {
+
+public:
+	Parallaction_ns(OSystem* syst) : Parallaction(syst) { }
+	~Parallaction_ns() { }
+
+	int init();
+
+public:
+	typedef void (Parallaction_ns::*Callable)(void*);
+
+	virtual	void callFunction(uint index, void* parm);
+
+private:
+	void 		initResources();
+
+	static const Callable _dosCallables[25];
+	static const Callable _amigaCallables[25];
+
+	// common callables
+	void _c_play_boogie(void*);
+	void _c_startIntro(void*);
+	void _c_endIntro(void*);
+	void _c_moveSheet(void*);
+	void _c_sketch(void*);
+	void _c_shade(void*);
+	void _c_score(void*);
+	void _c_fade(void*);
+	void _c_moveSarc(void*);
+	void _c_contaFoglie(void*);
+	void _c_zeroFoglie(void*);
+	void _c_trasformata(void*);
+	void _c_offMouse(void*);
+	void _c_onMouse(void*);
+	void _c_setMask(void*);
+	void _c_endComment(void*);
+	void _c_frankenstein(void*);
+	void _c_finito(void*);
+	void _c_ridux(void*);
+	void _c_testResult(void*);
+
+	// dos specific callables
+	void _c_null(void*);
+
+	// amiga specific callables
+	void _c_projector(void*);
+	void _c_HBOff(void*);
+	void _c_offSound(void*);
+	void _c_startMusic(void*);
+	void _c_closeMusic(void*);
+	void _c_HBOn(void*);
+
+	const Callable *_callables;
+};
+
+class Parallaction_br : public Parallaction {
+
+public:
+	Parallaction_br(OSystem* syst) : Parallaction(syst) { }
+	~Parallaction_br() { }
+
+	int init();
+
+public:
+	typedef void (Parallaction_br::*Callable)(void*);
+	virtual	void callFunction(uint index, void* parm);
+
+public:
+	Table		*_audioCommandsNames;
+	const char **_audioCommandsNamesRes;
+
+private:
+	void 		initResources();
+
+	static const Callable _dosCallables[6];
+
+	void _c_blufade(void*);
+	void _c_resetpalette(void*);
+	void _c_ferrcycle(void*);
+	void _c_lipsinc(void*);
+	void _c_albcycle(void*);
+	void _c_password(void*);
+
+	const Callable *_callables;
 };
 
 // FIXME: remove global

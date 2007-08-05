@@ -30,8 +30,6 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "backends/file/base-file.h"
-//#include "backends/factories/fs-factory-maker.cpp"
 
 class FilesystemNode;
 

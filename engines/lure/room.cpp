@@ -24,6 +24,7 @@
 #include "lure/luredefs.h"
 #include "lure/res.h"
 #include "lure/screen.h"
+#include "lure/game.h"
 #include "lure/events.h"
 #include "lure/strings.h"
 #include "lure/scripts.h"
@@ -492,18 +493,26 @@ void Room::update() {
 
 void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	Resources &r = Resources::getReference();
+	Game &game = Game::getReference();
+	Mouse &mouse = Mouse::getReference();
+
+	mouse.pushCursorNum(CURSOR_DISK);
+
 	_roomData = r.getRoom(newRoomNumber);
 	if (!_roomData)
 		error("Tried to change to non-existant room: %d", newRoomNumber);
-	bool leaveFlag = (_layers[0] && (newRoomNumber != _roomNumber));
+	bool leaveFlag = (_layers[0] && (newRoomNumber != _roomNumber) && (_roomNumber != 0));
 
 	_roomNumber = _roomData->roomNumber;
 	_descId = _roomData->descId;
 
-	_screen.empty();
-	_screen.resetPalette();
+	if (leaveFlag) {
+		_screen.paletteFadeOut();
+		leaveRoom();
+	}
 
-	if (leaveFlag) leaveRoom();
+	_screen.empty();
+
 	_numLayers = _roomData->numLayers;
 	if (showOverlay) ++_numLayers;
 
@@ -512,13 +521,9 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 		_layers[layerNum] = new RoomLayer(_roomData->layers[layerNum],
 			layerNum == 0);
 
-	// Load in the palette, add in the two replacements segments, and then
-	// set to the system palette
-	Palette p(228, NULL, RGB64);
-	Palette tempPalette(paletteId);
-	p.copyFrom(&tempPalette);
-	r.insertPaletteSubset(p);
-	_screen.setPalette(&p);
+	// Load in the game palette and set the non-room specific colours at the top end of the palette
+	Palette mainPalette(GAME_PALETTE_RESOURCE_ID);
+	_screen.setPalette(&mainPalette, MAIN_PALETTE_SIZE, GAME_COLOURS - MAIN_PALETTE_SIZE);
 
 	// Set the new room number
 	r.fieldList().setField(ROOM_NUMBER, newRoomNumber);
@@ -527,8 +532,28 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 		Script::execute(_roomData->sequenceOffset);
 
 	loadRoomHotspots();
-	checkCursor();
+
+	if (_roomData->exitTime != 0xffff)
+	{
+		// If time has passed, animation ticks needed before room is displayed
+		int numSeconds = (g_system->getMillis() - _roomData->exitTime) / 1000;
+		if (numSeconds > 300) numSeconds = 300;
+
+		while (numSeconds-- > 0)
+			game.tick(true);
+	}
+
 	update();
+	_screen.update();
+
+	// Generate the palette for the room and fade it in
+	Palette p(MAIN_PALETTE_SIZE, NULL, RGB64);
+	Palette tempPalette(paletteId);
+	p.copyFrom(&tempPalette);
+	r.insertPaletteSubset(p);
+	_screen.paletteFadeIn(&p);
+
+	mouse.popCursor();
 }
 
 // checkCursor

@@ -166,8 +166,6 @@ void Parallaction::doLoadGame(uint16 slot) {
 //	freeTable(_objectsNames);
 //	initTable(filename, _objectsNames);
 
-//	refreshInventory(_vm->_characterName);
-
 //	parseLocation("common");
 
 	// force reload of character to solve inventory
@@ -238,11 +236,7 @@ void Parallaction::doSaveGame(uint16 slot, const char* name) {
 
 	delete f;
 
-	refreshInventory(_characterName);
-
 	return;
-
-
 }
 
 enum {

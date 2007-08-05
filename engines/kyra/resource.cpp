@@ -42,11 +42,11 @@
 namespace Kyra {
 
 namespace {
-struct ResFilenameEqual : public Common::BinaryFunction<ResourceFile*, uint, bool> {
+struct ResFilenameEqual : public Common::UnaryFunction<ResourceFile*, bool> {
 	uint _filename;
 	ResFilenameEqual(uint file) : _filename(file) {}
 
-	bool operator()(ResourceFile *f) {
+	bool operator()(const ResourceFile *f) {
 		return f->filename() == _filename;
 	}
 };
@@ -220,8 +220,11 @@ uint8 *Resource::fileData(const char *file, uint32 *size) const {
 bool Resource::getFileHandle(const char *file, uint32 *size, Common::File &filehandle) {
 	filehandle.close();
 
-	if (filehandle.open(file))
+	if (filehandle.open(file)) {
+		if (size)
+			*size = filehandle.size();
 		return true;
+	}
 
 	uint fileHash = Common::hashit_lower(file);
 	for (ResIterator start = _pakfiles.begin() ;start != _pakfiles.end(); ++start) {
@@ -229,11 +232,13 @@ bool Resource::getFileHandle(const char *file, uint32 *size, Common::File &fileh
 			continue;
 
 		if ((*start)->getFileHandle(fileHash, filehandle)) {
-
-			*size = (*start)->getFileSize(fileHash);
+			uint32 tSize = (*start)->getFileSize(fileHash);
 		
-			if (!(*size))
+			if (!tSize)
 				continue;
+
+			if (size)
+				*size = tSize;
 
 			return true;
 		}
