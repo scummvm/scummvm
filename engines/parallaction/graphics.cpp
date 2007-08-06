@@ -35,7 +35,8 @@ namespace Parallaction {
 #define BALLOON_WIDTH	12
 #define BALLOON_HEIGHT	10
 
-byte _resBalloon[2][BALLOON_WIDTH*BALLOON_HEIGHT] = {
+
+byte _resBalloonTail[2][BALLOON_WIDTH*BALLOON_HEIGHT] = {
 	{
 	  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
 	  0x02, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
@@ -67,19 +68,17 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 
 	Common::Rect q = r;
 
+	// draws balloon
 	q.right += 5;
 	floodFill(kBitFront, q, 0);
-
-	q.left++;
-	q.top+=2;
-	q.right--;
-	q.bottom--;
+	q.grow(-1);
 	floodFill(kBitFront, q, 1);
 
+	// draws tail
+	// TODO: this bitmap tail should only be used for Dos games. Amiga should use a polygon fill.
 	winding = (winding == 0 ? 1 : 0);
-	byte *s = _resBalloon[winding];
+	byte *s = _resBalloonTail[winding];
 	byte *d = (byte*)_buffers[kBitFront]->getBasePtr(r.left + (r.width()+5)/2 - 5, r.bottom - 1);
-
 	for (uint16 i = 0; i < BALLOON_HEIGHT; i++) {
 		for (uint16 j = 0; j < BALLOON_WIDTH; j++) {
 			if (*s != 2) *d = *s;

@@ -344,16 +344,12 @@ void Parallaction_ns::_c_endComment(void *param) {
 	Common::Rect r(w+5, h+5);
 	r.moveTo(5, 5);
 	_gfx->floodFill(Gfx::kBitFront, r, 0);
-
-	r.setWidth(w+3);
-	r.setHeight(h+3);
-	r.moveTo(7, 7);
+	r.grow(-2);
 	_gfx->floodFill(Gfx::kBitFront, r, 1);
 
 	_gfx->setFont(kFontDialogue);
 	_gfx->displayWrappedString(_location._endComment, 3, 5, 0, 130);
 	_gfx->updateScreen();
-
 
 	Gfx::Palette pal;
 	_gfx->makeGrayscalePalette(pal);

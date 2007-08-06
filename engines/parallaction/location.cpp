@@ -441,7 +441,7 @@ void Parallaction::doLocationEnterTransition() {
 	Common::Rect r(10 + w, 5 + h);
 	r.moveTo(5, 5);
 	_gfx->floodFill(Gfx::kBitFront, r, 0);
-	r.grow(-1);
+	r.grow(-2);
 	_gfx->floodFill(Gfx::kBitFront, r, 1);
 	_gfx->displayWrappedString(_location._comment, 3, 5, 0, 130);
 
