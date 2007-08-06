@@ -589,20 +589,21 @@ void DosDisk_ns::loadBackground(const char *filename) {
 
 	parseBackground(_resArchive);
 
-	byte *bg = (byte*)calloc(1, _vm->_screenSize);
+	Graphics::Surface *bg = new Graphics::Surface;
+	bg->create(_vm->_screenWidth, _vm->_screenHeight, 1);
+
 	BitBuffer *mask = new BitBuffer;
 	mask->create(_vm->_screenWidth, _vm->_screenHeight);
 	byte *path = (byte*)calloc(1, _vm->_screenPathSize);
 
 
 	Graphics::PackBitsReadStream stream(_resArchive);
-	unpackBackground(&stream, bg, mask->data, path);
+	unpackBackground(&stream, (byte*)bg->pixels, mask->data, path);
 
 	_vm->_gfx->setBackground(bg);
 	_vm->_gfx->setMask(mask);
 	_vm->setPath(path);
 
-	free(bg);
 	free(path);
 
 	return;
@@ -1191,17 +1192,17 @@ void AmigaDisk_ns::loadBackground(const char *name) {
 
 	Common::SeekableReadStream *s = openArchivedFile(name, true);
 
-	Graphics::Surface surf;
+	Graphics::Surface *surf = new Graphics::Surface;
 	byte *pal;
-	BackgroundDecoder decoder(*s, surf, pal, _vm->_gfx->_palettefx);
+	BackgroundDecoder decoder(*s, *surf, pal, _vm->_gfx->_palettefx);
 	decoder.decode();
 
 	for (uint32 i = 0; i < BASE_PALETTE_COLORS * 3; i++)
 		_vm->_gfx->_palette[i] = pal[i] >> 2;
 	free(pal);
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
-	_vm->_gfx->setBackground(static_cast<byte*>(surf.pixels));
-	surf.free();
+	_vm->_gfx->setBackground(surf);
+
 	delete s;
 
 	return;

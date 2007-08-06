@@ -219,7 +219,7 @@ public:
 	void restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* background);
 
 	// location
-	void setBackground(byte *background);
+	void setBackground(Graphics::Surface *surf);
 	void setMask(BitBuffer *buffer);
 	int16 queryMask(int16 v);
 	void intGrottaHackMask();

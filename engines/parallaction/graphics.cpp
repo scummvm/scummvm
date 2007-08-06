@@ -752,9 +752,12 @@ void Gfx::freeStaticCnv(StaticCnv *cnv) {
 
 
 
-void Gfx::setBackground(byte *background) {
-	memcpy(_buffers[kBitBack]->pixels, background, _vm->_screenSize);
-	copyScreen(kBitBack, kBit2);
+void Gfx::setBackground(Graphics::Surface *surface) {
+	if (_buffers[kBit2])
+		delete _buffers[kBit2];
+
+	_buffers[kBit2] = surface;
+	copyScreen(kBit2, kBitBack);
 }
 
 void Gfx::setMask(BitBuffer *buffer) {
@@ -847,8 +850,8 @@ Gfx::Gfx(Parallaction* vm) :
 	_buffers[kBitFront]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
 	_buffers[kBitBack] = new Graphics::Surface;
 	_buffers[kBitBack]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
-	_buffers[kBit2] = new Graphics::Surface;
-	_buffers[kBit2]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
+
+	_buffers[kBit2] = 0;
 
 	_depthMask = 0;
 
@@ -878,8 +881,9 @@ Gfx::~Gfx() {
 	delete _buffers[kBitFront];
 	_buffers[kBitBack]->free();
 	delete _buffers[kBitBack];
-	_buffers[kBit2]->free();
-	delete _buffers[kBit2];
+
+	if (_buffers[kBit2])
+		delete _buffers[kBit2];
 
 	delete _fonts[kFontDialogue];
 	delete _fonts[kFontLabel];
