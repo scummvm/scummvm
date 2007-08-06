@@ -357,20 +357,13 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 	byte *s = data + q.left + q.top * r.width();
 	byte *d = (byte*)_buffers[buffer]->getBasePtr(dp.x, dp.y);
 
-	for (uint16 i = q.top; i < q.bottom; i++) {
+	for (uint16 i = 0; i < q.height(); i++) {
 
-		uint16 n = dp.x % 4;
-		byte *m = _depthMask + dp.x/4 + (dp.y + i - q.top)*_vm->_screenMaskWidth;
-
-		for (uint16 j = q.left; j < q.right; j++) {
+		for (uint16 j = 0; j < q.width(); j++) {
 			if (*s != 0) {
-				uint16 v = ((3 << (n << 1)) & *m) >> (n << 1);
+				byte v = _depthMask->getValue(dp.x + j, dp.y + i);
 				if (z >= v) *d = *s;
 			}
-
-			n++;
-			if (n==4) m++;
-			n &= 0x3;
 
 			s++;
 			d++;
@@ -768,7 +761,7 @@ void Gfx::setBackground(byte *background) {
 }
 
 void Gfx::setMask(byte *mask) {
-	memcpy(_depthMask, mask, _vm->_screenMaskSize);
+	memcpy(_depthMask->data, mask, _vm->_screenMaskSize);
 }
 
 
@@ -808,10 +801,10 @@ void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uin
 	so they shouldn't be modified when adding support for other games
 */
 
-void Gfx::plotMaskPixel(uint16 x, uint16 y, byte color) {
+void Gfx::zeroMaskValue(uint16 x, uint16 y, byte color) {
 
 	uint16 _ax = x + y * _vm->_screenWidth;
-	_depthMask[_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
+	_depthMask->data[_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
 
 	return;
 }
@@ -820,7 +813,7 @@ void Gfx::fillMaskRect(const Common::Rect& r, byte color) {
 	uint16 _di = r.left/4 + r.top * _vm->_screenMaskWidth;
 
 	for (uint16 _si = r.top; _si < r.bottom; _si++) {
-		memset(&_depthMask[_di], color, r.width()/4+1);
+		memset(_depthMask->data + _di, color, r.width()/4+1);
 		_di += _vm->_screenMaskWidth;
 	}
 
@@ -828,7 +821,7 @@ void Gfx::fillMaskRect(const Common::Rect& r, byte color) {
 
 }
 void Gfx::intGrottaHackMask() {
-	memset(_depthMask + 3600, 0, 3600);
+	memset(_depthMask->data + 3600, 0, 3600);
 	_bgLayers[1] = 500;
 	return;
 }
@@ -857,7 +850,8 @@ Gfx::Gfx(Parallaction* vm) :
 	_buffers[kBit2] = new Graphics::Surface;
 	_buffers[kBit2]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
 
-	_depthMask = (byte*)malloc(_vm->_screenMaskWidth * _vm->_screenHeight);
+	_depthMask = new BitBuffer;
+	_depthMask->create(_vm->_screenWidth, _vm->_screenHeight);
 
 	setBlackPalette();
 
@@ -878,7 +872,8 @@ Gfx::Gfx(Parallaction* vm) :
 
 Gfx::~Gfx() {
 
-	free(_depthMask);
+	_depthMask->free();
+	delete _depthMask;
 
 	_buffers[kBitFront]->free();
 	delete _buffers[kBitFront];

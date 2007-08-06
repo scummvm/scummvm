@@ -146,6 +146,47 @@ enum Fonts {
 	kFontMenu = 2
 };
 
+struct BitBuffer {
+	// handles a 2-bit depth buffer used for z-buffering
+
+	// TODO: generalize to handle 1-bit buffers, so that
+	// path buffers can be handled as well (use templates?)
+
+	uint16	w;
+	uint16  internalWidth;
+	uint16	h;
+	uint	size;
+	byte	*data;
+
+public:
+	BitBuffer() : w(0), internalWidth(0), h(0), data(0) {
+	}
+
+	~BitBuffer() {
+		free();
+	}
+
+	void create(uint16 width, uint16 height) {
+		w = width;
+		internalWidth = w >> 2;
+		h = height;
+		size = (internalWidth * h);
+		data = (byte*)malloc(size);
+	}
+
+	void free() {
+		if (data)
+			::free(data);
+	}
+
+	inline byte getValue(uint16 x, uint16 y) {
+		byte m = data[(x >> 2) + y * internalWidth];
+		uint n = (x & 3) << 1;
+		return ((3 << n) & m) >> n;
+	}
+
+};
+
 class Gfx {
 
 public:
@@ -184,9 +225,9 @@ public:
 	void intGrottaHackMask();
 	void restoreBackground(const Common::Rect& r);
 
-	// intro
+	// intro hacks for Nippon Safes
 	void fillMaskRect(const Common::Rect& r, byte color);
-	void plotMaskPixel(uint16 x, uint16 y, byte color);
+	void zeroMaskValue(uint16 x, uint16 y, byte color);
 
 	// low level
 	void swapBuffers();
@@ -233,7 +274,7 @@ public:
 protected:
 	Parallaction*		_vm;
 	Graphics::Surface	*_buffers[NUM_BUFFERS];
-	byte				*_depthMask;
+	BitBuffer			*_depthMask;
 	static byte			_mouseArrow[256];
 	StaticCnv			*_mouseComposedArrow;
 	Font				*_font;

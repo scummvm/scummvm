@@ -600,8 +600,8 @@ void Parallaction_ns::_c_moveSheet(void *parm) {
 	return;
 }
 
-void plotPixel(int x, int y, int color, void *data) {
-	_vm->_gfx->plotMaskPixel(x, y, color);
+void zeroMask(int x, int y, int color, void *data) {
+	_vm->_gfx->zeroMaskValue(x, y, color);
 }
 
 void Parallaction_ns::_c_sketch(void *parm) {
@@ -614,7 +614,7 @@ void Parallaction_ns::_c_sketch(void *parm) {
 	uint16 oldy = _rightHandPositions[2*(index-1)+1];
 	uint16 oldx = _rightHandPositions[2*(index-1)];
 
-	Graphics::drawLine(oldx, oldy, newx, newy, 0, plotPixel, NULL);
+	Graphics::drawLine(oldx, oldy, newx, newy, 0, zeroMask, NULL);
 
 	_rightHandAnim->_left = newx;
 	_rightHandAnim->_top = newy - 20;
