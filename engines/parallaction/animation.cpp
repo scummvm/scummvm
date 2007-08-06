@@ -55,10 +55,10 @@ namespace Parallaction {
 void	wrapLocalVar(LocalVariable *local);
 
 
-
+#define NUM_LOCALS	10
 
 uint16	_numLocals = 0;
-char	_localNames[10][10];
+char	_localNames[NUM_LOCALS][10];
 
 Animation *Parallaction::findAnimation(const char *name) {
 
@@ -257,8 +257,26 @@ void Parallaction::loadProgram(Animation *a, char *filename) {
 	return;
 }
 
+int16 findLocal(const char* name, LocalVariable *locals) {
+	for (uint16 _si = 0; _si < NUM_LOCALS; _si++) {
+		if (!scumm_stricmp(name, _localNames[_si]))
+			return _si;
+	}
 
+	return -1;
+}
 
+int16 addLocal(const char *name, LocalVariable *locals, int16 value = 0, int16 min = -10000, int16 max = 10000) {
+	assert(_numLocals < NUM_LOCALS);
+
+	strcpy(_localNames[_numLocals], name);
+	locals[_numLocals]._value = value;
+
+	locals[_numLocals]._min = min;
+	locals[_numLocals]._max = max;
+
+	return _numLocals++;
+}
 
 
 
@@ -341,6 +359,15 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 		break;
 
 	case INST_SET:	// set
+		// WORKAROUND: At least one script (balzo.script) in Amiga versions didn't declare 
+		//	local variables before using them, thus leading to crashes. The line launching the
+		// script was commented out on Dos version. This workaround enables the engine
+		// to dynamically add a local variable when it is encountered the first time in
+		// the script, so should fix any other occurrence as well.
+		if (findLocal(_tokens[1], locals) == -1) {
+			addLocal(_tokens[1], locals);
+		}
+
 		inst->_opA = getLValue(inst, _tokens[1], locals, a);
 		inst->_flags |= kInstUsesLocal;
 		inst->_opB = getLValue(inst, _tokens[2], locals, a);
@@ -381,25 +408,23 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 	case INST_WAIT: // wait
 		break;
 
-	default:	// local definition
-		strcpy(_localNames[_numLocals], _tokens[0]);
-		locals[_numLocals]._value = atoi(_tokens[2]);
+	default: {	// local definition
+		int16 val = atoi(_tokens[2]);
+		int16 index;
 
 		if (_tokens[3][0] != '\0') {
-			locals[_numLocals]._min = atoi(_tokens[3]);
-			locals[_numLocals]._max = atoi(_tokens[4]);
+			index = addLocal(_tokens[0], locals, val, atoi(_tokens[3]), atoi(_tokens[4]));
 		} else {
-			locals[_numLocals]._min = -10000;
-			locals[_numLocals]._max = 10000;
+			index = addLocal(_tokens[0], locals, val);
 		}
 
-		inst->_opA._local = &locals[_numLocals];
-		inst->_opB._value = locals[_numLocals]._value;
+		inst->_opA._local = &locals[index];
+		inst->_opB._value = locals[index]._value;
 
 		inst->_flags = kInstUsesLiteral | kInstUsesLocal;
 		inst->_index = INST_SET;
-		_numLocals++;
-		break;
+	}
+	break;
 
 	}
 
@@ -419,11 +444,10 @@ LValue Parallaction::getLValue(Instruction *inst, char *str, LocalVariable *loca
 		return v;
 	}
 
-	for (uint16 _si = 0; _si < 10; _si++) {
-		if (!scumm_stricmp(str, _localNames[_si])) {
-			v._local = &locals[_si];
-			return v;
-		}
+	int index = findLocal(str, locals);
+	if (index != -1) {
+		v._local = &locals[index];
+		return v;
 	}
 
 	if (str[1] == '.') {
