@@ -29,6 +29,7 @@
 #include "common/rect.h"
 #include "common/stream.h"
 
+#include "graphics/surface.h"
 
 #include "parallaction/defs.h"
 
@@ -154,9 +155,7 @@ public:
 		// bit buffers
 		kBitFront,
 		kBitBack,
-		kBit2,
-		// mask buffers
-		kMask0
+		kBit2
 	};
 
 public:
@@ -233,7 +232,8 @@ public:
 
 protected:
 	Parallaction*		_vm;
-	static byte *		_buffers[NUM_BUFFERS];
+	Graphics::Surface	*_buffers[NUM_BUFFERS];
+	byte				*_depthMask;
 	static byte			_mouseArrow[256];
 	StaticCnv			*_mouseComposedArrow;
 	Font				*_font;

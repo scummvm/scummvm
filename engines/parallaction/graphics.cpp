@@ -32,8 +32,6 @@
 
 namespace Parallaction {
 
-byte *		Gfx::_buffers[];
-
 #define BALLOON_WIDTH	12
 #define BALLOON_HEIGHT	10
 
@@ -80,7 +78,7 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 
 	winding = (winding == 0 ? 1 : 0);
 	byte *s = _resBalloon[winding];
-	byte *d = _buffers[kBitFront] + (r.left + (r.width()+5)/2 - 5) + (r.bottom - 1) * _vm->_screenWidth;
+	byte *d = (byte*)_buffers[kBitFront]->getBasePtr(r.left + (r.width()+5)/2 - 5, r.bottom - 1);
 
 	for (uint16 i = 0; i < BALLOON_HEIGHT; i++) {
 		for (uint16 j = 0; j < BALLOON_WIDTH; j++) {
@@ -256,14 +254,14 @@ void Gfx::setHalfbriteMode(bool enable) {
 
 void Gfx::updateScreen() {
 //	  printf("Gfx::updateScreen()\n");
-	g_system->copyRectToScreen(_buffers[kBitFront], _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
+	g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
 	g_system->updateScreen();
 	return;
 }
 
 
 void Gfx::swapBuffers() {
-	byte *temp = _buffers[kBitFront];
+	Graphics::Surface *temp = _buffers[kBitFront];
 	_buffers[kBitFront] = _buffers[kBitBack];
 	_buffers[kBitBack] = temp;
 	updateScreen();
@@ -275,7 +273,7 @@ void Gfx::swapBuffers() {
 //	graphic primitives
 //
 void Gfx::clearScreen(Gfx::Buffers buffer) {
-	memset(_buffers[buffer], 0, _vm->_screenSize);
+	memset(_buffers[buffer]->pixels, 0, _vm->_screenSize);
 
 	if (buffer == kBitFront) updateScreen();
 
@@ -284,7 +282,7 @@ void Gfx::clearScreen(Gfx::Buffers buffer) {
 
 
 void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
-	memcpy(_buffers[dstbuffer], _buffers[srcbuffer], _vm->_screenSize);
+	memcpy(_buffers[dstbuffer]->pixels, _buffers[srcbuffer]->pixels, _vm->_screenSize);
 
 //	if (dstbuffer == kBitFront) updateScreen();
 
@@ -294,7 +292,7 @@ void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
 void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 //	printf("Gfx::floodFill(%i, %i, %i, %i, %i)\n", color, left, top, right, bottom);
 
-	byte *d = _buffers[buffer] + (r.left + r.top * _vm->_screenWidth);
+	byte *d = (byte*)_buffers[buffer]->getBasePtr(r.left, r.top);
 	uint16 w = r.width() + 1;
 	uint16 h = r.height() + 1;
 
@@ -333,7 +331,7 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 	screenClip(q, dp);
 
 	byte *s = data + q.left + q.top * r.width();
-	byte *d = _buffers[buffer] + dp.x + dp.y * _vm->_screenWidth;
+	byte *d = (byte*)_buffers[buffer]->getBasePtr(dp.x, dp.y);
 
 	for (uint16 i = q.top; i < q.bottom; i++) {
 		for (uint16 j = q.left; j < q.right; j++) {
@@ -358,12 +356,12 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 	screenClip(q, dp);
 
 	byte *s = data + q.left + q.top * r.width();
-	byte *d = _buffers[buffer] + dp.x + dp.y * _vm->_screenWidth;
+	byte *d = (byte*)_buffers[buffer]->getBasePtr(dp.x, dp.y);
 
 	for (uint16 i = q.top; i < q.bottom; i++) {
 
 		uint16 n = dp.x % 4;
-		byte *m = _buffers[kMask0] + dp.x/4 + (dp.y + i - q.top)*_vm->_screenMaskWidth;
+		byte *m = _depthMask + dp.x/4 + (dp.y + i - q.top)*_vm->_screenMaskWidth;
 
 		for (uint16 j = q.left; j < q.right; j++) {
 			if (*s != 0) {
@@ -513,7 +511,7 @@ void Gfx::blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffe
 
 void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 
-	byte *s = _buffers[kBit2] + x + y * _vm->_screenWidth;
+	byte *s = (byte*)_buffers[kBit2]->getBasePtr(x, y);
 	byte *d = data->_background;
 
 	for (uint16 i = 0; i < data->_cnv->_height ; i++) {
@@ -529,7 +527,7 @@ void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 
 	byte *t = data->_cnv->_data0;
-	byte *s = _buffers[kBitBack] + x + y * _vm->_screenWidth;
+	byte *s = (byte*)_buffers[kBitBack]->getBasePtr(x, y);
 	byte *d = data->_backup;
 
 	for (uint16 i = 0; i < data->_cnv->_height ; i++) {
@@ -554,8 +552,8 @@ void Gfx::restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* bac
 
 	byte *t = cnv->_data0;
 	byte *s = background;
-	byte *d0 = _buffers[kBitBack] + r.left + r.top * _vm->_screenWidth;
-	byte *d1 = _buffers[kBit2] + r.left + r.top * _vm->_screenWidth;
+	byte *d0 = (byte*)_buffers[kBitBack]->getBasePtr(r.left, r.top);
+	byte *d1 = (byte*)_buffers[kBit2]->getBasePtr(r.left, r.top);
 
 	for (uint16 i = 0; i < r.height() ; i++) {
 		for (uint16 j = 0; j < r.width() ; j++) {
@@ -624,7 +622,7 @@ void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
 }
 
 void Gfx::displayString(uint16 x, uint16 y, const char *text, byte color) {
-	byte *dst = _buffers[kBitFront] + x + y*_vm->_screenWidth;
+	byte *dst = (byte*)_buffers[kBitFront]->getBasePtr(x, y);
 	_font->setColor(color);
 	_font->drawString(dst, _vm->_screenWidth, text);
 }
@@ -746,12 +744,7 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 	Common::Rect q(width, height);
 	q.moveTo(left, top);
 
-	copyRect(
-		kBitBack,
-		q,
-		_buffers[kBit2] + q.left + q.top * _vm->_screenWidth,
-		_vm->_screenWidth
-	);
+	copyRect(kBitBack, q, (byte*)_buffers[kBit2]->getBasePtr(q.left, q.top), _vm->_screenWidth);
 
 	return;
 }
@@ -771,19 +764,19 @@ void Gfx::freeStaticCnv(StaticCnv *cnv) {
 
 
 void Gfx::setBackground(byte *background) {
-	memcpy(_buffers[kBitBack], background, _vm->_screenSize);
+	memcpy(_buffers[kBitBack]->pixels, background, _vm->_screenSize);
 	copyScreen(kBitBack, kBit2);
 }
 
 void Gfx::setMask(byte *mask) {
-	memcpy(_buffers[kMask0], mask, _vm->_screenMaskSize);
+	memcpy(_depthMask, mask, _vm->_screenMaskSize);
 }
 
 
 
 void Gfx::copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch) {
 
-	byte *d = _buffers[dstbuffer] + r.left + _vm->_screenWidth * r.top;
+	byte *d = (byte*)_buffers[dstbuffer]->getBasePtr(r.left, r.top);
 	byte *s = src;
 
 	for (uint16 _si = 0; _si < r.height(); _si++) {
@@ -799,7 +792,7 @@ void Gfx::copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uin
 
 void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch) {
 
-	byte *s = _buffers[srcbuffer] + r.left + _vm->_screenWidth * r.top;
+	byte *s = (byte*)_buffers[srcbuffer]->getBasePtr(r.left, r.top);
 
 	for (uint16 i = 0; i < r.height(); i++) {
 		memcpy(dst, s, r.width());
@@ -819,7 +812,7 @@ void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uin
 void Gfx::plotMaskPixel(uint16 x, uint16 y, byte color) {
 
 	uint16 _ax = x + y * _vm->_screenWidth;
-	_buffers[kMask0][_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
+	_depthMask[_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
 
 	return;
 }
@@ -828,7 +821,7 @@ void Gfx::fillMaskRect(const Common::Rect& r, byte color) {
 	uint16 _di = r.left/4 + r.top * _vm->_screenMaskWidth;
 
 	for (uint16 _si = r.top; _si < r.bottom; _si++) {
-		memset(&_buffers[kMask0][_di], color, r.width()/4+1);
+		memset(&_depthMask[_di], color, r.width()/4+1);
 		_di += _vm->_screenMaskWidth;
 	}
 
@@ -836,7 +829,7 @@ void Gfx::fillMaskRect(const Common::Rect& r, byte color) {
 
 }
 void Gfx::intGrottaHackMask() {
-	memset(_buffers[kMask0] + 3600, 0, 3600);
+	memset(_depthMask + 3600, 0, 3600);
 	_bgLayers[1] = 500;
 	return;
 }
@@ -858,10 +851,14 @@ Gfx::Gfx(Parallaction* vm) :
 	g_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
 	g_system->endGFXTransaction();
 
-	_buffers[kBitFront] = (byte*)malloc(_vm->_screenSize);
-	_buffers[kBitBack]	= (byte*)malloc(_vm->_screenSize);
-	_buffers[kBit2]   = (byte*)malloc(_vm->_screenSize);
-	_buffers[kMask0] = (byte*)malloc(_vm->_screenMaskWidth * _vm->_screenHeight);
+	_buffers[kBitFront] = new Graphics::Surface;
+	_buffers[kBitFront]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
+	_buffers[kBitBack] = new Graphics::Surface;
+	_buffers[kBitBack]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
+	_buffers[kBit2] = new Graphics::Surface;
+	_buffers[kBit2]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
+
+	_depthMask = (byte*)malloc(_vm->_screenMaskWidth * _vm->_screenHeight);
 
 	setBlackPalette();
 
@@ -882,10 +879,14 @@ Gfx::Gfx(Parallaction* vm) :
 
 Gfx::~Gfx() {
 
-	free(_buffers[kMask0]);
-	free(_buffers[kBitFront]);
-	free(_buffers[kBitBack]);
-	free(_buffers[kBit2]);
+	free(_depthMask);
+
+	_buffers[kBitFront]->free();
+	delete _buffers[kBitFront];
+	_buffers[kBitBack]->free();
+	delete _buffers[kBitBack];
+	_buffers[kBit2]->free();
+	delete _buffers[kBit2];
 
 	delete _fonts[kFontDialogue];
 	delete _fonts[kFontLabel];
