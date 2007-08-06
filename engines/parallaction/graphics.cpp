@@ -32,11 +32,11 @@
 
 namespace Parallaction {
 
-#define BALLOON_WIDTH	12
-#define BALLOON_HEIGHT	10
+#define BALLOON_TAIL_WIDTH	12
+#define BALLOON_TAIL_HEIGHT	10
 
 
-byte _resBalloonTail[2][BALLOON_WIDTH*BALLOON_HEIGHT] = {
+byte _resBalloonTail[2][BALLOON_TAIL_WIDTH*BALLOON_TAIL_HEIGHT] = {
 	{
 	  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
 	  0x02, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x02, 0x02,
@@ -79,14 +79,16 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 	winding = (winding == 0 ? 1 : 0);
 	byte *s = _resBalloonTail[winding];
 	byte *d = (byte*)_buffers[kBitFront]->getBasePtr(r.left + (r.width()+5)/2 - 5, r.bottom - 1);
-	for (uint16 i = 0; i < BALLOON_HEIGHT; i++) {
-		for (uint16 j = 0; j < BALLOON_WIDTH; j++) {
-			if (*s != 2) *d = *s;
+	uint pitch = _vm->_screenWidth - BALLOON_TAIL_WIDTH;
+	for (uint16 i = 0; i < BALLOON_TAIL_HEIGHT; i++) {
+		for (uint16 j = 0; j < BALLOON_TAIL_WIDTH; j++) {
+			if (*s != 2)
+				*d = *s;
 			d++;
 			s++;
 		}
 
-		d += (_vm->_screenWidth - BALLOON_WIDTH);
+		d += pitch;
 	}
 
 //	printf("done\n");
@@ -136,8 +138,6 @@ void Gfx::setPalette(Palette pal, uint32 first, uint32 num) {
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
 		g_system->setPalette(sysExtraPal, first+FIRST_EHB_COLOR, num);
 
-//	g_system->updateScreen();
-
 	return;
 }
 
@@ -147,13 +147,8 @@ void Gfx::setBlackPalette() {
 	setPalette(pal);
 }
 
-//
-//	palette Animation
-//
-//	FIXME: the effect is different from the original
-//
+
 void Gfx::animatePalette() {
-//	printf("Gfx::animatePalette()\n");
 
 	byte tmp[3];
 
@@ -252,7 +247,6 @@ void Gfx::setHalfbriteMode(bool enable) {
 }
 
 void Gfx::updateScreen() {
-//	  printf("Gfx::updateScreen()\n");
 	g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
 	g_system->updateScreen();
 	return;
@@ -283,13 +277,10 @@ void Gfx::clearScreen(Gfx::Buffers buffer) {
 void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
 	memcpy(_buffers[dstbuffer]->pixels, _buffers[srcbuffer]->pixels, _vm->_screenSize);
 
-//	if (dstbuffer == kBitFront) updateScreen();
-
 	return;
 }
 
 void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
-//	printf("Gfx::floodFill(%i, %i, %i, %i, %i)\n", color, left, top, right, bottom);
 
 	byte *d = (byte*)_buffers[buffer]->getBasePtr(r.left, r.top);
 	uint16 w = r.width() + 1;
@@ -332,6 +323,9 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 	byte *s = data + q.left + q.top * r.width();
 	byte *d = (byte*)_buffers[buffer]->getBasePtr(dp.x, dp.y);
 
+	uint sPitch = r.width() - q.width();
+	uint dPitch = _vm->_screenWidth - q.width();
+
 	for (uint16 i = q.top; i < q.bottom; i++) {
 		for (uint16 j = q.left; j < q.right; j++) {
 			if (*s != 0) *d = *s;
@@ -339,8 +333,8 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 			d++;
 		}
 
-		s += (r.width() - q.width());
-		d += (_vm->_screenWidth - q.width());
+		s += sPitch;
+		d += dPitch;
 	}
 
 	return;
@@ -357,6 +351,9 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 	byte *s = data + q.left + q.top * r.width();
 	byte *d = (byte*)_buffers[buffer]->getBasePtr(dp.x, dp.y);
 
+	uint sPitch = r.width() - q.width();
+	uint dPitch = _vm->_screenWidth - q.width();
+
 	for (uint16 i = 0; i < q.height(); i++) {
 
 		for (uint16 j = 0; j < q.width(); j++) {
@@ -369,8 +366,8 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 			d++;
 		}
 
-		s += (r.width() - q.right + q.left);
-		d += (_vm->_screenWidth - q.right + q.left);
+		s += sPitch;
+		d += dPitch;
 	}
 
 	return;
@@ -479,7 +476,7 @@ void Gfx::flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buf
 	scnv._width = cnv->_width;
 	scnv._height = cnv->_height;
 	scnv._data0 = cnv->getFramePtr(frame);
-	scnv._data1 = NULL; // _questioner->field_8[v60->_mood & 0xF];
+	scnv._data1 = NULL; // ->field_8[v60->_mood & 0xF];
 
 	flatBlitCnv(&scnv, x, y, buffer);
 }
@@ -522,6 +519,8 @@ void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 	byte *s = (byte*)_buffers[kBitBack]->getBasePtr(x, y);
 	byte *d = data->_backup;
 
+	uint pitch = _vm->_screenWidth - data->_cnv->_width;
+
 	for (uint16 i = 0; i < data->_cnv->_height ; i++) {
 		for (uint16 j = 0; j < data->_cnv->_width ; j++) {
 			*d = (*t) ? *s : 0;
@@ -531,7 +530,7 @@ void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 			s++;
 		}
 
-		s += (_vm->_screenWidth - data->_cnv->_width);
+		s += pitch;
 	}
 
 	return;
@@ -547,6 +546,8 @@ void Gfx::restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* bac
 	byte *d0 = (byte*)_buffers[kBitBack]->getBasePtr(r.left, r.top);
 	byte *d1 = (byte*)_buffers[kBit2]->getBasePtr(r.left, r.top);
 
+	uint pitch = _vm->_screenWidth - r.width();
+
 	for (uint16 i = 0; i < r.height() ; i++) {
 		for (uint16 j = 0; j < r.width() ; j++) {
 			if (*t) {
@@ -560,8 +561,8 @@ void Gfx::restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* bac
 			s++;
 		}
 
-		d0 += (_vm->_screenWidth - r.width());
-		d1 += (_vm->_screenWidth - r.width());
+		d0 += pitch;
+		d1 += pitch;
 	}
 
 
@@ -625,7 +626,6 @@ void Gfx::displayCenteredString(uint16 y, const char *text) {
 }
 
 bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16 wrapwidth) {
-//	printf("Gfx::displayWrappedString(%s, %i, %i, %i, %i)...", text, x, y, color, wrapwidth);
 
 	uint16 lines = 0;
 	bool rv = false;
@@ -665,8 +665,6 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16
 
 		text = Common::ltrim(text);
 	}
-
-//	printf("done\n");
 
 	return rv;
 
@@ -742,7 +740,6 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 }
 
 void Gfx::freeStaticCnv(StaticCnv *cnv) {
-//	printf("free_static_cnv()\n");
 
 	if (!cnv) return;
 
