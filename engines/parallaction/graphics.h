@@ -220,7 +220,7 @@ public:
 
 	// location
 	void setBackground(byte *background);
-	void setMask(byte *mask);
+	void setMask(BitBuffer *buffer);
 	int16 queryMask(int16 v);
 	void intGrottaHackMask();
 	void restoreBackground(const Common::Rect& r);

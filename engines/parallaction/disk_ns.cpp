@@ -590,19 +590,19 @@ void DosDisk_ns::loadBackground(const char *filename) {
 	parseBackground(_resArchive);
 
 	byte *bg = (byte*)calloc(1, _vm->_screenSize);
-	byte *mask = (byte*)calloc(1, _vm->_screenMaskSize);
+	BitBuffer *mask = new BitBuffer;
+	mask->create(_vm->_screenWidth, _vm->_screenHeight);
 	byte *path = (byte*)calloc(1, _vm->_screenPathSize);
 
 
 	Graphics::PackBitsReadStream stream(_resArchive);
-	unpackBackground(&stream, bg, mask, path);
+	unpackBackground(&stream, bg, mask->data, path);
 
 	_vm->_gfx->setBackground(bg);
 	_vm->_gfx->setMask(mask);
 	_vm->setPath(path);
 
 	free(bg);
-	free(mask);
 	free(path);
 
 	return;
@@ -621,15 +621,16 @@ void DosDisk_ns::loadMaskAndPath(const char *name) {
 	if (!_resArchive.openArchivedFile(path))
 		errorFileNotFound(name);
 
-	byte *maskBuf = (byte*)calloc(1, _vm->_screenMaskSize);
+	BitBuffer *mask = new BitBuffer;
+	mask->create(_vm->_screenWidth, _vm->_screenHeight);
 	byte *pathBuf = (byte*)calloc(1, _vm->_screenPathSize);
 
 	parseDepths(_resArchive);
 
 	_resArchive.read(pathBuf, _vm->_screenPathSize);
-	_resArchive.read(maskBuf, _vm->_screenMaskSize);
+	_resArchive.read(mask->data, _vm->_screenMaskSize);
 
-	_vm->_gfx->setMask(maskBuf);
+	_vm->_gfx->setMask(mask);
 	_vm->setPath(pathBuf);
 
 	return;
@@ -1236,12 +1237,13 @@ void AmigaDisk_ns::loadMask(const char *name) {
 	s->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 	Graphics::PackBitsReadStream stream(*s);
 
-	byte *buf = (byte*)malloc(_vm->_screenMaskSize);
-	stream.read(buf, _vm->_screenMaskSize);
-	buildMask(buf);
+	BitBuffer *mask = new BitBuffer;
+	mask->create(_vm->_screenWidth, _vm->_screenHeight);
+	stream.read(mask->data, _vm->_screenMaskSize);
+	buildMask(mask->data);
 
-	_vm->_gfx->setMask(buf);
-	free(buf);
+	_vm->_gfx->setMask(mask);
+
 	delete s;
 
 	return;

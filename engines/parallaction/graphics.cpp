@@ -757,8 +757,11 @@ void Gfx::setBackground(byte *background) {
 	copyScreen(kBitBack, kBit2);
 }
 
-void Gfx::setMask(byte *mask) {
-	memcpy(_depthMask->data, mask, _vm->_screenMaskSize);
+void Gfx::setMask(BitBuffer *buffer) {
+	if (_depthMask)
+		delete _depthMask;
+
+	_depthMask = buffer;
 }
 
 
@@ -847,8 +850,7 @@ Gfx::Gfx(Parallaction* vm) :
 	_buffers[kBit2] = new Graphics::Surface;
 	_buffers[kBit2]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
 
-	_depthMask = new BitBuffer;
-	_depthMask->create(_vm->_screenWidth, _vm->_screenHeight);
+	_depthMask = 0;
 
 	setBlackPalette();
 
