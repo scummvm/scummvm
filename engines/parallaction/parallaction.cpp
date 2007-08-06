@@ -164,10 +164,8 @@ int Parallaction::init() {
 	_location._comment = NULL;
 	_location._endComment = NULL;
 
-	_screenMaskWidth = _screenWidth / 4;
 	_screenPathWidth = _screenWidth / 8;
 	_screenSize = _screenWidth * _screenHeight;
-	_screenMaskSize = _screenMaskWidth * _screenHeight;
 	_screenPathSize = _screenPathWidth * _screenHeight;
 
 	strcpy(_characterName1, "null");

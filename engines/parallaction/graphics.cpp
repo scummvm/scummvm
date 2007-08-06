@@ -810,11 +810,11 @@ void Gfx::zeroMaskValue(uint16 x, uint16 y, byte color) {
 }
 void Gfx::fillMaskRect(const Common::Rect& r, byte color) {
 
-	uint16 _di = r.left/4 + r.top * _vm->_screenMaskWidth;
+	uint16 _di = r.left/4 + r.top * _depthMask->internalWidth;
 
 	for (uint16 _si = r.top; _si < r.bottom; _si++) {
 		memset(_depthMask->data + _di, color, r.width()/4+1);
-		_di += _vm->_screenMaskWidth;
+		_di += _depthMask->internalWidth;
 	}
 
 	return;

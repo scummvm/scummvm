@@ -628,7 +628,7 @@ void DosDisk_ns::loadMaskAndPath(const char *name) {
 	parseDepths(_resArchive);
 
 	_resArchive.read(pathBuf, _vm->_screenPathSize);
-	_resArchive.read(mask->data, _vm->_screenMaskSize);
+	_resArchive.read(mask->data, mask->size);
 
 	_vm->_gfx->setMask(mask);
 	_vm->setPath(pathBuf);
@@ -1239,9 +1239,8 @@ void AmigaDisk_ns::loadMask(const char *name) {
 
 	BitBuffer *mask = new BitBuffer;
 	mask->create(_vm->_screenWidth, _vm->_screenHeight);
-	stream.read(mask->data, _vm->_screenMaskSize);
+	stream.read(mask->data, mask->size);
 	buildMask(mask->data);
-
 	_vm->_gfx->setMask(mask);
 
 	delete s;

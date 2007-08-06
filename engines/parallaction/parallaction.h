@@ -359,8 +359,6 @@ public:
 	int32 			_screenHeight;
 	int32 			_screenSize;
 
-	int32 			_screenMaskWidth;
-	int32 			_screenMaskSize;
 	int32 			_screenPathWidth;
 	int32 			_screenPathSize;
 
