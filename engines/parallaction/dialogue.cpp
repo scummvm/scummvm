@@ -383,6 +383,8 @@ void DialogueManager::run() {
 	_q = _dialogue->_questions[0];
 	int16 answer;
 
+	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+
 	while (_q) {
 
 		answer = 0;
