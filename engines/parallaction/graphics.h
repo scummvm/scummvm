@@ -171,7 +171,7 @@ public:
 		internalWidth = w >> 2;
 		h = height;
 		size = (internalWidth * h);
-		data = (byte*)malloc(size);
+		data = (byte*)calloc(size, 1);
 	}
 
 	void free() {
