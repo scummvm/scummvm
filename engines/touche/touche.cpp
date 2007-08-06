@@ -148,10 +148,7 @@ void ToucheEngine::restart() {
 	_waitingSetKeyCharNum3 = -1;
 
 	_currentEpisodeNum = 0;
-	_newEpisodeNum = ConfMan.getInt("boot_param");
-	if (_newEpisodeNum == 0) {
-		_newEpisodeNum = kStartupEpisode;
-	}
+	_newEpisodeNum = kStartupEpisode;
 
 	_newMusicNum = 0;
 	_currentMusicNum = 0;
@@ -252,14 +249,21 @@ void ToucheEngine::mainLoop() {
 
 	readConfigurationSettings();
 
-	if (ConfMan.hasKey("save_slot")) {
-		loadGameState(ConfMan.getInt("save_slot"));
-		_newEpisodeNum = _currentEpisodeNum;
-	}
-
 	_inp_leftMouseButtonPressed = false;
 	_inp_rightMouseButtonPressed = false;
-	showCursor(_newEpisodeNum != kStartupEpisode);
+
+	if (ConfMan.hasKey("save_slot")) {
+		loadGameState(ConfMan.getInt("save_slot"));
+		_newEpisodeNum = 0;
+		resetSortedKeyCharsTable();
+		showCursor(true);
+	} else {
+		_newEpisodeNum = ConfMan.getInt("boot_param");
+		if (_newEpisodeNum == 0) {
+			_newEpisodeNum = kStartupEpisode;
+		}
+		showCursor(_newEpisodeNum != kStartupEpisode);
+	}
 
 	uint32 frameTimeStamp = _system->getMillis();
 	for (uint32 cycleCounter = 0; _flagsTable[611] == 0; ++cycleCounter) {
