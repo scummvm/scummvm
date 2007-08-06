@@ -146,11 +146,8 @@ enum Fonts {
 	kFontMenu = 2
 };
 
-struct BitBuffer {
+struct MaskBuffer {
 	// handles a 2-bit depth buffer used for z-buffering
-
-	// TODO: generalize to handle 1-bit buffers, so that
-	// path buffers can be handled as well (use templates?)
 
 	uint16	w;
 	uint16  internalWidth;
@@ -159,10 +156,10 @@ struct BitBuffer {
 	byte	*data;
 
 public:
-	BitBuffer() : w(0), internalWidth(0), h(0), data(0) {
+	MaskBuffer() : w(0), internalWidth(0), h(0), data(0) {
 	}
 
-	~BitBuffer() {
+	~MaskBuffer() {
 		free();
 	}
 
@@ -220,7 +217,7 @@ public:
 
 	// location
 	void setBackground(Graphics::Surface *surf);
-	void setMask(BitBuffer *buffer);
+	void setMask(MaskBuffer *buffer);
 	int16 queryMask(int16 v);
 	void intGrottaHackMask();
 	void restoreBackground(const Common::Rect& r);
@@ -274,7 +271,7 @@ public:
 protected:
 	Parallaction*		_vm;
 	Graphics::Surface	*_buffers[NUM_BUFFERS];
-	BitBuffer			*_depthMask;
+	MaskBuffer			*_depthMask;
 	static byte			_mouseArrow[256];
 	StaticCnv			*_mouseComposedArrow;
 	Font				*_font;
@@ -294,4 +291,5 @@ protected:
 
 
 #endif
+
 

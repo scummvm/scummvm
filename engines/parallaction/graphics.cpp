@@ -760,7 +760,7 @@ void Gfx::setBackground(Graphics::Surface *surface) {
 	copyScreen(kBit2, kBitBack);
 }
 
-void Gfx::setMask(BitBuffer *buffer) {
+void Gfx::setMask(MaskBuffer *buffer) {
 	if (_depthMask)
 		delete _depthMask;
 

@@ -315,7 +315,7 @@ public:
 	void 		resumeJobs();
 	void 		runJobs();
 
-	void 		setPath(byte *path);
+	void 		setPath(PathBuffer *buffer);
 	void 		finalizeWalk(WalkNodeList *list);
 	int16 		selectWalkFrame(const Common::Point& pos, const WalkNode* from);
 	void 		clipMove(Common::Point& pos, const WalkNode* from);
@@ -361,6 +361,7 @@ public:
 
 	int32 			_screenPathWidth;
 	int32 			_screenPathSize;
+	PathBuffer		*_pathBuffer;
 
 	SoundMan		*_soundMan;
 
@@ -451,7 +452,6 @@ protected:		// members
 	void 		displayItemComment(ExamineData *data);
 
 	void 		parseWalkNodes(Script& script, WalkNodeList &list);
-	void		initWalk();
 	uint16 		checkDoor();
 
 	Animation * parseAnimation(Script &script, AnimationList &list, char *name);

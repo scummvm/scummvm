@@ -592,19 +592,18 @@ void DosDisk_ns::loadBackground(const char *filename) {
 	Graphics::Surface *bg = new Graphics::Surface;
 	bg->create(_vm->_screenWidth, _vm->_screenHeight, 1);
 
-	BitBuffer *mask = new BitBuffer;
+	MaskBuffer *mask = new MaskBuffer;
 	mask->create(_vm->_screenWidth, _vm->_screenHeight);
-	byte *path = (byte*)calloc(1, _vm->_screenPathSize);
 
+	PathBuffer *path = new PathBuffer;
+	path->create(_vm->_screenWidth, _vm->_screenHeight);
 
 	Graphics::PackBitsReadStream stream(_resArchive);
-	unpackBackground(&stream, (byte*)bg->pixels, mask->data, path);
+	unpackBackground(&stream, (byte*)bg->pixels, mask->data, path->data);
 
 	_vm->_gfx->setBackground(bg);
 	_vm->_gfx->setMask(mask);
 	_vm->setPath(path);
-
-	free(path);
 
 	return;
 }
@@ -622,13 +621,15 @@ void DosDisk_ns::loadMaskAndPath(const char *name) {
 	if (!_resArchive.openArchivedFile(path))
 		errorFileNotFound(name);
 
-	BitBuffer *mask = new BitBuffer;
+	MaskBuffer *mask = new MaskBuffer;
 	mask->create(_vm->_screenWidth, _vm->_screenHeight);
-	byte *pathBuf = (byte*)calloc(1, _vm->_screenPathSize);
+
+	PathBuffer *pathBuf = new PathBuffer;
+	pathBuf->create(_vm->_screenWidth, _vm->_screenHeight);
 
 	parseDepths(_resArchive);
 
-	_resArchive.read(pathBuf, _vm->_screenPathSize);
+	_resArchive.read(pathBuf->data, pathBuf->size);
 	_resArchive.read(mask->data, mask->size);
 
 	_vm->_gfx->setMask(mask);
@@ -1238,7 +1239,7 @@ void AmigaDisk_ns::loadMask(const char *name) {
 	s->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 	Graphics::PackBitsReadStream stream(*s);
 
-	BitBuffer *mask = new BitBuffer;
+	MaskBuffer *mask = new MaskBuffer;
 	mask->create(_vm->_screenWidth, _vm->_screenHeight);
 	stream.read(mask->data, mask->size);
 	buildMask(mask->data);
@@ -1262,10 +1263,12 @@ void AmigaDisk_ns::loadPath(const char *name) {
 	s->seek(0x120, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 
 	Graphics::PackBitsReadStream stream(*s);
-	byte *buf = (byte*)malloc(_vm->_screenPathSize);
-	stream.read(buf, _vm->_screenPathSize);
+
+	PathBuffer *buf = new PathBuffer;
+	buf->create(_vm->_screenWidth, _vm->_screenHeight);
+	stream.read(buf->data, buf->size);
 	_vm->setPath(buf);
-	free(buf);
+
 	delete s;
 
 	return;

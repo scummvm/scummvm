@@ -131,6 +131,9 @@ Parallaction::~Parallaction() {
 	delete _zoneTypeNames;
 	delete _zoneFlagNames;
 
+	if (_pathBuffer)
+		delete _pathBuffer;
+
 	_animations.remove(&_char._ani);
 
 	freeLocation();
@@ -173,7 +176,8 @@ int Parallaction::init() {
 
 	memset(_locationNames, 0, 120*32);
 
-	initWalk();			// needs to be pushed into subclass
+	_pathBuffer = 0;
+
 	initInventory();	// needs to be pushed into subclass
 
 	_animations.push_front(&_char._ani);
