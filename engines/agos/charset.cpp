@@ -551,7 +551,7 @@ void AGOSEngine::justifyOutPut(byte chr) {
 			fit = _printCharMaxPos - _printCharCurPos >= _printCharPixelCount;
 		}
 
-		if (_printCharMaxPos - _printCharCurPos > _printCharPixelCount) {
+		if (fit) {
 			_printCharCurPos += _printCharPixelCount;
 			doOutput(_lettersToPrintBuf, _numLettersToPrint);
 
