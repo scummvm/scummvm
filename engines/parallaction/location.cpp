@@ -431,21 +431,10 @@ void Parallaction::doLocationEnterTransition() {
 	jobEraseAnimations(NULL, NULL);
 	jobDisplayAnimations(NULL, NULL);
 
-	_gfx->setFont(kFontDialogue);
 	_gfx->swapBuffers();
 	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
-	int16 w, h;
-	_gfx->getStringExtent(_location._comment, 130, &w, &h);
-
-	Common::Rect r(10 + w, 5 + h);
-	r.moveTo(5, 5);
-	_gfx->floodFill(Gfx::kBitFront, r, 0);
-	r.grow(-2);
-	_gfx->floodFill(Gfx::kBitFront, r, 1);
-	_gfx->displayWrappedString(_location._comment, 3, 5, 0, 130);
-
-	_gfx->updateScreen();
+	_gfx->showLocationComment(_location._comment);
 	waitUntilLeftClick();
 
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront );

@@ -96,6 +96,25 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 	return;
 }
 
+void Gfx::showLocationComment(const char *text, bool end) {
+
+	setFont(kFontDialogue);
+
+	int16 w, h;
+	getStringExtent(const_cast<char*>(text), 130, &w, &h);
+
+	Common::Rect r(w + (end ? 5 : 10), h + 5);
+	r.moveTo(5, 5);
+
+	floodFill(kBitFront, r, 0);
+	r.grow(-2);
+	floodFill(kBitFront, r, 1);
+	displayWrappedString(const_cast<char*>(text), 3, 5, 0, 130);
+
+	updateScreen();
+
+	return;
+}
 
 void Gfx::setPalette(Palette pal, uint32 first, uint32 num) {
 //	printf("setPalette(%i, %i)\n", first, num);

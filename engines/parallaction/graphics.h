@@ -221,6 +221,7 @@ public:
 	int16 queryMask(int16 v);
 	void intGrottaHackMask();
 	void restoreBackground(const Common::Rect& r);
+	void showLocationComment(const char *text, bool end = false);
 
 	// intro hacks for Nippon Safes
 	void fillMaskRect(const Common::Rect& r, byte color);
