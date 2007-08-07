@@ -45,19 +45,6 @@ SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName,
 	_saveSlot = -1;
 	_stagesCount = 3;
 
-	_buffer = new byte*[_stagesCount];
-
-	assert(_buffer);
-
-	_buffer[0] = new byte[1000];
-	_buffer[1] = new byte[1200];
-	_buffer[2] = 0;
-
-	assert(_buffer[0] && _buffer[1]);
-
-	memset(_buffer[0], 0, 1000);
-	memset(_buffer[1], 0, 1200);
-
 	_useScreenshots = false;
 	_firstSizeGame = true;
 }
@@ -145,6 +132,8 @@ bool SaveLoad_v3::loadGame(int16 dataVar, int32 size, int32 offset) {
 
 	int slot = (offset - 1700) / varSize;
 	int slotR = (offset - 1700) % varSize;
+
+	initBuffer();
 
 	if ((size > 0) && (offset < 500) && ((size + offset) <= 500)) {
 
@@ -279,6 +268,8 @@ bool SaveLoad_v3::saveGame(int16 dataVar, int32 size, int32 offset) {
 	int slot = (offset - 1700) / varSize;
 	int slotR = (offset - 1700) % varSize;
 
+	initBuffer();
+
 	if ((size > 0) && (offset < 500) && ((size + offset) <= 500)) {
 
 		memcpy(_buffer[0] + offset,
@@ -360,6 +351,8 @@ bool SaveLoad_v3::saveGame(int32 screenshotSize) {
 
 	_saveSlot = -1;
 
+	initBuffer();
+
 	if ((slot < 0) || (slot > 29)) {
 		warning("Can't save to slot %d: Out of range", slot);
 		delete[] _buffer[2];
@@ -431,6 +424,24 @@ bool SaveLoad_v3::saveGame(int32 screenshotSize) {
 	debugC(1, kDebugFileIO, "Saved to slot %d", slot);
 	delete out;
 	return true;
+}
+
+void SaveLoad_v3::initBuffer() {
+	if (_buffer)
+		return;
+
+	_buffer = new byte*[_stagesCount];
+
+	assert(_buffer);
+
+	_buffer[0] = new byte[1000];
+	_buffer[1] = new byte[1200];
+	_buffer[2] = 0;
+
+	assert(_buffer[0] && _buffer[1]);
+
+	memset(_buffer[0], 0, 1000);
+	memset(_buffer[1], 0, 1200);
 }
 
 } // End of namespace Gob

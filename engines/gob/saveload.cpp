@@ -62,9 +62,11 @@ SaveLoad::SaveLoad(GobEngine *vm, const char *targetName) : _vm(vm) {
 }
 
 SaveLoad::~SaveLoad() {
-	for (int i = 0; i < _stagesCount; i++)
-		delete[] _buffer[i];
-	delete[] _buffer;
+	if (_buffer) {
+		for (int i = 0; i < _stagesCount; i++)
+			delete[] _buffer[i];
+		delete[] _buffer;
+	}
 
 	delete _tempSprite;
 
