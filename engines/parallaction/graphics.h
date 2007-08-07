@@ -197,52 +197,38 @@ public:
 	};
 
 public:
-	void screenClip(Common::Rect& r, Common::Point& p);
 
-	// dialogue and text
+	// balloons and text
+	void showLocationComment(const char *text, bool end = false);
 	void drawBalloon(const Common::Rect& r, uint16 arg_8);
 	void displayString(uint16 x, uint16 y, const char *text, byte color);
 	void displayCenteredString(uint16 y, const char *text);
 	bool displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16 wrapwidth = -1);
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
-
-	// cnv management
 	void makeCnvFromString(StaticCnv *cnv, char *text);
-	void freeStaticCnv(StaticCnv *cnv);
+
+	// cut/paste
+	void flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer);
+	void flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
+	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
+	void restoreBackground(const Common::Rect& r);
 	void backupDoorBackground(DoorData *data, int16 x, int16 y);
+	void restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* background);
 	void backupGetBackground(GetData *data, int16 x, int16 y);
 	void restoreGetBackground(const Common::Rect& r, byte *data);
-	void restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* background);
 
-	// location
-	void setBackground(Graphics::Surface *surf);
-	void setMask(MaskBuffer *buffer);
-	int16 queryMask(int16 v);
+	// hacks for Nippon Safes
 	void intGrottaHackMask();
-	void restoreBackground(const Common::Rect& r);
-	void showLocationComment(const char *text, bool end = false);
-
-	// intro hacks for Nippon Safes
 	void fillMaskRect(const Common::Rect& r, byte color);
 	void zeroMaskValue(uint16 x, uint16 y, byte color);
 
-	// low level
-	void swapBuffers();
-	void updateScreen();
+	// low level surfaces
 	void clearScreen(Gfx::Buffers buffer);
 	void copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer);
 	void copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch);
 	void grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch);
 	void floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color);
-
-	// NOTE: flatBlitCnv used to have an additional unused parameter,
-	// that was always the _data1 member of the StaticCnv parameter.
-	// DOS version didn't make use of it, but it is probably needed for Amiga stuff.
-	void flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer);
-	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
-	void flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
-
 
 	// palette
 	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = BASE_PALETTE_COLORS);
@@ -254,14 +240,20 @@ public:
 	// amiga specific
 	void setHalfbriteMode(bool enable);
 
+	// misc
+	void freeStaticCnv(StaticCnv *cnv);
+	int16 queryMask(int16 v);
+	void setMousePointer(int16 index);
+	void setFont(Fonts name);
+	void swapBuffers();
+	void updateScreen();
+	void setBackground(Graphics::Surface *surf);
+	void setMask(MaskBuffer *buffer);
+
 	// init
 	Gfx(Parallaction* vm);
 	virtual ~Gfx();
 
-	void setMousePointer(int16 index);
-
-	void initFonts();
-	void setFont(Fonts name);
 
 public:
 	Common::Point		_labelPosition[2];
@@ -280,11 +272,11 @@ protected:
 	bool				_halfbrite;
 
 protected:
-	byte mapChar(byte c);
 	void flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer);
 	void blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer);
-	void initBuffers();
 	void initMouse(uint16 arg_0);
+	void screenClip(Common::Rect& r, Common::Point& p);
+	void initFonts();
 };
 
 
