@@ -131,8 +131,10 @@ Parallaction::~Parallaction() {
 	delete _zoneTypeNames;
 	delete _zoneFlagNames;
 
-	if (_pathBuffer)
+	if (_pathBuffer) {
+		_pathBuffer->free();
 		delete _pathBuffer;
+	}
 
 	_animations.remove(&_char._ani);
 

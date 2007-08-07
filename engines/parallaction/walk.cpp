@@ -422,8 +422,10 @@ void jobWalk(void *parm, Job *j) {
 
 
 void Parallaction::setPath(PathBuffer *buffer) {
-	if (_pathBuffer)
+	if (_pathBuffer) {
+		_pathBuffer->free();
 		delete _pathBuffer;
+	}
 
 	_pathBuffer = buffer;
 }

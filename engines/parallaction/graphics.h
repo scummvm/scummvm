@@ -156,11 +156,7 @@ struct MaskBuffer {
 	byte	*data;
 
 public:
-	MaskBuffer() : w(0), internalWidth(0), h(0), data(0) {
-	}
-
-	~MaskBuffer() {
-		free();
+	MaskBuffer() : w(0), internalWidth(0), h(0), size(0), data(0) {
 	}
 
 	void create(uint16 width, uint16 height) {
@@ -174,6 +170,11 @@ public:
 	void free() {
 		if (data)
 			::free(data);
+		data = 0;
+		w = 0;
+		h = 0;
+		internalWidth = 0;
+		size = 0;
 	}
 
 	inline byte getValue(uint16 x, uint16 y) {
