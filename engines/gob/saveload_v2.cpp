@@ -46,6 +46,10 @@ SaveLoad_v2::SaveLoad_v2(GobEngine *vm, const char *targetName) :
 	_buffer[0] = 0;
 }
 
+SaveLoad_v2::~SaveLoad_v2() {
+	delete[] _buffer;
+}
+
 SaveType SaveLoad_v2::getSaveType(const char *fileName) {
 	const char *backSlash;
 	if ((backSlash = strrchr(fileName, '\\')))

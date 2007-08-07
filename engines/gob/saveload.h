@@ -116,7 +116,7 @@ public:
 	virtual SaveType getSaveType(const char *fileName);
 
 	SaveLoad_v2(GobEngine *vm, const char *targetName);
-	virtual ~SaveLoad_v2() {}
+	virtual ~SaveLoad_v2();
 
 protected:
 	virtual uint32 getSaveGameSize();
