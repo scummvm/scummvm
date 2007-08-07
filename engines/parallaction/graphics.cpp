@@ -399,7 +399,7 @@ void jobDisplayLabel(void *parm, Job *j) {
 	Label *label = (Label*)parm;
 	debugC(9, kDebugJobs, "jobDisplayLabel (%p)", (const void*) label);
 
-	if (label->_cnv._width == 0)
+	if (label->_cnv.w == 0)
 		return;
 	_vm->_gfx->flatBlitCnv(&label->_cnv, _vm->_gfx->_labelPosition[0].x, _vm->_gfx->_labelPosition[0].y, Gfx::kBitBack);
 
@@ -414,20 +414,20 @@ void jobEraseLabel(void *parm, Job *j) {
 	int16 _si, _di;
 
 	if (_vm->_activeItem._id != 0) {
-		_si = _vm->_mousePos.x + 16 - label->_cnv._width/2;
+		_si = _vm->_mousePos.x + 16 - label->_cnv.w/2;
 		_di = _vm->_mousePos.y + 34;
 	} else {
-		_si = _vm->_mousePos.x + 8 - label->_cnv._width/2;
+		_si = _vm->_mousePos.x + 8 - label->_cnv.w/2;
 		_di = _vm->_mousePos.y + 21;
 	}
 
 	if (_si < 0) _si = 0;
 	if (_di > 190) _di = 190;
 
-	if (label->_cnv._width + _si > _vm->_screenWidth)
-		_si = _vm->_screenWidth - label->_cnv._width;
+	if (label->_cnv.w + _si > _vm->_screenWidth)
+		_si = _vm->_screenWidth - label->_cnv.w;
 
-	Common::Rect r(label->_cnv._width, label->_cnv._height);
+	Common::Rect r(label->_cnv.w, label->_cnv.h);
 	r.moveTo(_vm->_gfx->_labelPosition[1]);
 	_vm->_gfx->restoreBackground(r);
 
@@ -463,7 +463,7 @@ void Gfx::setMousePointer(int16 index) {
 
 	} else {
 		// inventory item pointer
-		byte *v8 = _mouseComposedArrow->_data0;
+		byte *v8 = (byte*)_mouseComposedArrow->pixels;
 
 		// FIXME: destination offseting is not clear
 		byte* s = _vm->_char._objs->getFramePtr(getInventoryItemIndex(index));
@@ -490,30 +490,29 @@ void Gfx::setMousePointer(int16 index) {
 //
 void Gfx::flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer) {
 
-	StaticCnv scnv;
+	Graphics::Surface scnv;
 
-	scnv._width = cnv->_width;
-	scnv._height = cnv->_height;
-	scnv._data0 = cnv->getFramePtr(frame);
-	scnv._data1 = NULL; // ->field_8[v60->_mood & 0xF];
+	scnv.w = cnv->_width;
+	scnv.h = cnv->_height;
+	scnv.pixels = cnv->getFramePtr(frame);
 
 	flatBlitCnv(&scnv, x, y, buffer);
 }
 
-void Gfx::flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer) {
-	Common::Rect r(cnv->_width, cnv->_height);
+void Gfx::flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer) {
+	Common::Rect r(cnv->w, cnv->h);
 	r.moveTo(x, y);
 
-	flatBlit(r, cnv->_data0, buffer);
+	flatBlit(r, (byte*)cnv->pixels, buffer);
 	return;
 }
 
 
-void Gfx::blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer) {
-	Common::Rect r(cnv->_width, cnv->_height);
+void Gfx::blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer) {
+	Common::Rect r(cnv->w, cnv->h);
 	r.moveTo(x, y);
 
-	blit(r, z, cnv->_data0,  buffer);
+	blit(r, z, (byte*)cnv->pixels,  buffer);
 	return;
 }
 
@@ -534,14 +533,14 @@ void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 
 void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 
-	byte *t = data->_cnv->_data0;
+	byte *t = (byte*)data->_cnv->pixels;
 	byte *s = (byte*)_buffers[kBitBack]->getBasePtr(x, y);
 	byte *d = data->_backup;
 
-	uint pitch = _vm->_screenWidth - data->_cnv->_width;
+	uint pitch = _vm->_screenWidth - data->_cnv->w;
 
-	for (uint16 i = 0; i < data->_cnv->_height ; i++) {
-		for (uint16 j = 0; j < data->_cnv->_width ; j++) {
+	for (uint16 i = 0; i < data->_cnv->h ; i++) {
+		for (uint16 j = 0; j < data->_cnv->w ; j++) {
 			*d = (*t) ? *s : 0;
 
 			d++;
@@ -558,9 +557,9 @@ void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 //
 //	restores background according to specified frame
 //
-void Gfx::restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* background) {
+void Gfx::restoreDoorBackground(Graphics::Surface *cnv, const Common::Rect& r, byte* background) {
 
-	byte *t = cnv->_data0;
+	byte *t = (byte*)cnv->pixels;
 	byte *s = background;
 	byte *d0 = (byte*)_buffers[kBitBack]->getBasePtr(r.left, r.top);
 	byte *d1 = (byte*)_buffers[kBit2]->getBasePtr(r.left, r.top);
@@ -594,12 +593,11 @@ void Gfx::restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* bac
 //
 void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
 
-	StaticCnv cnv;
+	Graphics::Surface cnv;
 
-	cnv._data0 = data;
-	cnv._data1 = NULL;
-	cnv._width = r.width();
-	cnv._height = r.height();
+	cnv.w = r.width();
+	cnv.h = r.height();
+	cnv.pixels = data;
 
 	flatBlitCnv(&cnv, r.left, r.top, kBitBack);
 	flatBlitCnv(&cnv, r.left, r.top, kBit2);
@@ -607,28 +605,22 @@ void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
 	return;
 }
 
-void Gfx::makeCnvFromString(StaticCnv *cnv, char *text) {
+void Gfx::makeCnvFromString(Graphics::Surface *cnv, char *text) {
 	assert(_font == _fonts[kFontLabel]);
 
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
-		cnv->_width = _font->getStringWidth(text) + 16;
-		cnv->_height = 10;
-		cnv->_data0 = (byte*)malloc(cnv->_width * cnv->_height);
-		memset(cnv->_data0, 0, cnv->_width * cnv->_height);
+		cnv->create(_font->getStringWidth(text) + 16, 10, 1);
 
 		_font->setColor(7);
-		_font->drawString(cnv->_data0 + 1, cnv->_width, text);
-		_font->drawString(cnv->_data0 + 1 + cnv->_width * 2, cnv->_width, text);
-		_font->drawString(cnv->_data0 + cnv->_width, cnv->_width, text);
-		_font->drawString(cnv->_data0 + 2 + cnv->_width, cnv->_width, text);
+		_font->drawString((byte*)cnv->pixels + 1, cnv->w, text);
+		_font->drawString((byte*)cnv->pixels + 1 + cnv->w * 2, cnv->w, text);
+		_font->drawString((byte*)cnv->pixels + cnv->w, cnv->w, text);
+		_font->drawString((byte*)cnv->pixels + 2 + cnv->w, cnv->w, text);
 		_font->setColor(1);
-		_font->drawString(cnv->_data0 + 1 + cnv->_width, cnv->_width, text);
+		_font->drawString((byte*)cnv->pixels + 1 + cnv->w, cnv->w, text);
 	} else {
-		cnv->_width = _font->getStringWidth(text);
-		cnv->_height = _font->height();
-		cnv->_data0 = (byte*)malloc(cnv->_width * cnv->_height);
-		memset(cnv->_data0, 0, cnv->_width * cnv->_height);
-		_font->drawString(cnv->_data0, cnv->_width, text);
+		cnv->create(_font->getStringWidth(text), _font->height(), 1);
+		_font->drawString((byte*)cnv->pixels, cnv->w, text);
 	}
 
 }
@@ -757,18 +749,6 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 
 	return;
 }
-
-void Gfx::freeStaticCnv(StaticCnv *cnv) {
-
-	if (!cnv) return;
-
-	if (!cnv || !cnv->_data0) return;
-	free(cnv->_data0);
-	cnv->_data0 = NULL;
-
-	return;
-}
-
 
 
 void Gfx::setBackground(Graphics::Surface *surface) {
@@ -916,7 +896,6 @@ Gfx::~Gfx() {
 	delete _fonts[kFontLabel];
 	delete _fonts[kFontMenu];
 
-	freeStaticCnv(_mouseComposedArrow);
 	delete _mouseComposedArrow;
 
 	return;

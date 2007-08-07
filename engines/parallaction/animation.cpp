@@ -155,7 +155,7 @@ void Parallaction::freeAnimations() {
 void jobDisplayAnimations(void *parm, Job *j) {
 //	printf("jobDisplayAnimations()...\n");
 
-	StaticCnv v14;
+	Graphics::Surface v14;
 
 	uint16 _si = 0;
 
@@ -164,21 +164,20 @@ void jobDisplayAnimations(void *parm, Job *j) {
 		Animation *v18 = *it;
 
 		if ((v18->_flags & kFlagsActive) && ((v18->_flags & kFlagsRemove) == 0))   {
-			v14._width = v18->width();
-			v14._height = v18->height();
+			v14.w = v18->width();
+			v14.h = v18->height();
 
 			int16 frame = CLIP((int)v18->_frame, 0, v18->getFrameNum()-1);
 
-			v14._data0 = v18->getFrameData(frame);
-//			v14._data1 = v18->_cnv->field_8[frame];
+			v14.pixels = v18->getFrameData(frame);
 
 			if (v18->_flags & kFlagsNoMasked)
 				_si = 3;
 			else
 				_si = _vm->_gfx->queryMask(v18->_top + v18->height());
 
-			debugC(9, kDebugLocation, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, f:%i/%i, %p)", v18->_label._text, v18->_left, v18->_top, _si, v14._width, v14._height,
-				frame, v18->getFrameNum(), v14._data0);
+			debugC(9, kDebugLocation, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, f:%i/%i, %p)", v18->_label._text, v18->_left, v18->_top, _si, v14.w, v14.h,
+				frame, v18->getFrameNum(), v14.pixels);
 			_vm->_gfx->blitCnv(&v14, v18->_left, v18->_top, _si, Gfx::kBitBack);
 
 		}
@@ -359,7 +358,7 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 		break;
 
 	case INST_SET:	// set
-		// WORKAROUND: At least one script (balzo.script) in Amiga versions didn't declare 
+		// WORKAROUND: At least one script (balzo.script) in Amiga versions didn't declare
 		//	local variables before using them, thus leading to crashes. The line launching the
 		// script was commented out on Dos version. This workaround enables the engine
 		// to dynamically add a local variable when it is encountered the first time in
@@ -477,7 +476,7 @@ void jobRunScripts(void *parm, Job *j) {
 
 	static uint16 modCounter = 0;
 
-	StaticCnv v18;
+	Graphics::Surface v18;
 
 	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
 
@@ -565,10 +564,9 @@ void jobRunScripts(void *parm, Job *j) {
 				break;
 
 			case INST_PUT:	// put
-				v18._width = (*inst)->_opBase._a->width();
-				v18._height = (*inst)->_opBase._a->height();
-				v18._data0 = (*inst)->_opBase._a->getFrameData((*inst)->_opBase._a->_frame);
-				v18._data1 = NULL; // (*inst)->_opBase._a->_cnv.field_8[(*inst)->_opBase._a->_frame];
+				v18.w = (*inst)->_opBase._a->width();
+				v18.h = (*inst)->_opBase._a->height();
+				v18.pixels = (*inst)->_opBase._a->getFrameData((*inst)->_opBase._a->_frame);
 
 				if ((*inst)->_flags & kInstMaskedPut) {
 					uint16 _si = _vm->_gfx->queryMask((*inst)->_opB._value);

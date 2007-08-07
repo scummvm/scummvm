@@ -91,18 +91,6 @@ public:
 
 };
 
-struct StaticCnv {
-	uint16	_width; 	//
-	uint16	_height;	//
-	byte*	_data0; 	// bitmap
-	byte*	_data1; 	// unused
-
-	StaticCnv() {
-		_width = _height = 0;
-		_data0 = _data1 = NULL;
-	}
-};
-
 struct Cnv {
 	uint16	_count; 	// # of frames
 	uint16	_width; 	//
@@ -207,15 +195,15 @@ public:
 	bool displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16 wrapwidth = -1);
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
-	void makeCnvFromString(StaticCnv *cnv, char *text);
+	void makeCnvFromString(Graphics::Surface *cnv, char *text);
 
 	// cut/paste
-	void flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer);
+	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer);
 	void flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
-	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
+	void blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
 	void restoreBackground(const Common::Rect& r);
 	void backupDoorBackground(DoorData *data, int16 x, int16 y);
-	void restoreDoorBackground(StaticCnv *cnv, const Common::Rect& r, byte* background);
+	void restoreDoorBackground(Graphics::Surface *cnv, const Common::Rect& r, byte* background);
 	void backupGetBackground(GetData *data, int16 x, int16 y);
 	void restoreGetBackground(const Common::Rect& r, byte *data);
 
@@ -242,7 +230,6 @@ public:
 	void setHalfbriteMode(bool enable);
 
 	// misc
-	void freeStaticCnv(StaticCnv *cnv);
 	int16 queryMask(int16 v);
 	void setMousePointer(int16 index);
 	void setFont(Fonts name);
@@ -267,7 +254,7 @@ protected:
 	Graphics::Surface	*_buffers[NUM_BUFFERS];
 	MaskBuffer			*_depthMask;
 	static byte			_mouseArrow[256];
-	StaticCnv			*_mouseComposedArrow;
+	Graphics::Surface			*_mouseComposedArrow;
 	Font				*_font;
 	Font				*_fonts[3];
 	bool				_halfbrite;
@@ -285,5 +272,6 @@ protected:
 
 
 #endif
+
 
 

@@ -46,7 +46,7 @@ namespace Parallaction {
 #define ANSWER_CHARACTER_X			10
 #define ANSWER_CHARACTER_Y			80
 
-int16 selectAnswer(Question *q, StaticCnv*);
+int16 selectAnswer(Question *q, Graphics::Surface*);
 int16 getHoverAnswer(int16 x, int16 y, Question *q);
 
 int16 _answerBalloonX[10] = { 80, 120, 150, 150, 150, 0, 0, 0, 0, 0 };

@@ -69,13 +69,13 @@ Script* DosDisk_br::loadScript(const char* name) {
 }
 
 //	there are no Head resources in Big Red Adventure
-StaticCnv* DosDisk_br::loadHead(const char* name) {
+Graphics::Surface* DosDisk_br::loadHead(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadHead");
 	return 0;
 }
 
 
-StaticCnv* DosDisk_br::loadPointer() {
+Graphics::Surface* DosDisk_br::loadPointer() {
 	debugC(5, kDebugDisk, "DosDisk_br::loadPointer");
 	return 0;
 }
@@ -93,7 +93,7 @@ Cnv* DosDisk_br::loadObjects(const char *name) {
 }
 
 
-StaticCnv* DosDisk_br::loadStatic(const char* name) {
+Graphics::Surface* DosDisk_br::loadStatic(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadStatic");
 	return 0;
 }

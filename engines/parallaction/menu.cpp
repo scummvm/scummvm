@@ -343,11 +343,8 @@ void Menu::selectCharacter() {
 
 	uint16 _donna_points, _dino_points, _dough_points;
 
-	StaticCnv v14;
-
-	v14._data0 = (byte*)malloc(BLOCK_WIDTH*BLOCK_HEIGHT);
-	v14._width = BLOCK_WIDTH;
-	v14._height = BLOCK_HEIGHT;
+	Graphics::Surface v14;
+	v14.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
 
 	_vm->changeCursor(kCursorArrow);
 	_vm->_soundMan->stopMusic();
@@ -383,7 +380,7 @@ void Menu::selectCharacter() {
 			Common::Rect r;
 			int _si = getSelectedBlock(_vm->_mousePos, r);
 			if (_si != -1) {
-				_vm->_gfx->grabRect(v14._data0, r, Gfx::kBitFront, BLOCK_WIDTH);
+				_vm->_gfx->grabRect((byte*)v14.pixels, r, Gfx::kBitFront, BLOCK_WIDTH);
 				_vm->_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitFront);
 //				beep();
 
@@ -435,7 +432,7 @@ void Menu::selectCharacter() {
 
 	_engineFlags |= kEngineChangeLocation;
 
-	free(v14._data0);
+	v14.free();
 
 	return;
 

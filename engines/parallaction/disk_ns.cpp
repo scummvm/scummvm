@@ -345,7 +345,7 @@ Cnv* DosDisk_ns::loadExternalCnv(const char *filename) {
 	return new Cnv(numFrames, width, height, data);
 }
 
-StaticCnv *DosDisk_ns::loadExternalStaticCnv(const char *filename) {
+Graphics::Surface *DosDisk_ns::loadExternalStaticCnv(const char *filename) {
 
 	char path[PATH_LEN];
 
@@ -356,16 +356,14 @@ StaticCnv *DosDisk_ns::loadExternalStaticCnv(const char *filename) {
 	if (!stream.open(path))
 		errorFileNotFound(path);
 
-	StaticCnv *cnv = new StaticCnv;
+	Graphics::Surface *cnv = new Graphics::Surface;
 
 	stream.skip(1);
-	cnv->_width = stream.readByte();
-	cnv->_height = stream.readByte();
+	byte w = stream.readByte();
+	byte h = stream.readByte();
 
-	uint16 size = cnv->_width*cnv->_height;
-
-	cnv->_data0 = (byte*)malloc(size);
-	stream.read(cnv->_data0, size);
+	cnv->create(w, h, 1);
+	stream.read(cnv->pixels, w*h);
 
 	return cnv;
 }
@@ -462,7 +460,7 @@ Script* DosDisk_ns::loadScript(const char* name) {
 	return new Script(new DummyArchiveStream(_resArchive), true);
 }
 
-StaticCnv* DosDisk_ns::loadHead(const char* name) {
+Graphics::Surface* DosDisk_ns::loadHead(const char* name) {
 
 	char path[PATH_LEN];
 
@@ -477,7 +475,7 @@ StaticCnv* DosDisk_ns::loadHead(const char* name) {
 }
 
 
-StaticCnv* DosDisk_ns::loadPointer() {
+Graphics::Surface* DosDisk_ns::loadPointer() {
 	return loadExternalStaticCnv("pointer");
 }
 
@@ -501,7 +499,7 @@ Cnv* DosDisk_ns::loadObjects(const char *name) {
 }
 
 
-StaticCnv* DosDisk_ns::loadStatic(const char* name) {
+Graphics::Surface* DosDisk_ns::loadStatic(const char* name) {
 
 	char path[PATH_LEN];
 
@@ -512,17 +510,16 @@ StaticCnv* DosDisk_ns::loadStatic(const char* name) {
 			errorFileNotFound(path);
 	}
 
-	StaticCnv* cnv = new StaticCnv;
+	Graphics::Surface* cnv = new Graphics::Surface;
 
 	_resArchive.skip(1);
-	cnv->_width = _resArchive.readByte();
-	cnv->_height = _resArchive.readByte();
+	byte w = _resArchive.readByte();
+	byte h = _resArchive.readByte();
 
-	uint16 size = cnv->_width*cnv->_height;
-	cnv->_data0 = (byte*)malloc(size);
+	cnv->create(w, h, 1);
 
 	Graphics::PackBitsReadStream decoder(_resArchive);
-	decoder.read(cnv->_data0, size);
+	decoder.read(cnv->pixels, w*h);
 
 	return cnv;
 }
@@ -977,7 +974,7 @@ void AmigaDisk_ns::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 b
 
 }
 
-StaticCnv* AmigaDisk_ns::makeStaticCnv(Common::SeekableReadStream &stream) {
+Graphics::Surface* AmigaDisk_ns::makeStaticCnv(Common::SeekableReadStream &stream) {
 
 	stream.skip(1);
 	uint16 width = stream.readByte();
@@ -992,17 +989,13 @@ StaticCnv* AmigaDisk_ns::makeStaticCnv(Common::SeekableReadStream &stream) {
 	stream.read(buf, rawsize);
 
 	uint32 decsize = width * height;
-	byte *data = (byte*)calloc(decsize, 1);
 
-	unpackBitmap(data, buf, 1, bytesPerPlane, height);
+	Graphics::Surface *cnv = new Graphics::Surface;
+	cnv->create(width, height, 1);
+
+	unpackBitmap((byte*)cnv->pixels, buf, 1, bytesPerPlane, height);
 
 	free(buf);
-
-	StaticCnv *cnv = new StaticCnv();
-	cnv->_width = width;
-	cnv->_height = height;
-	cnv->_data0 = data;
-	cnv->_data1 = NULL;
 
 	return cnv;
 }
@@ -1066,7 +1059,7 @@ Script* AmigaDisk_ns::loadScript(const char* name) {
 	return new Script(new DummyArchiveStream(_resArchive), true);
 }
 
-StaticCnv* AmigaDisk_ns::loadPointer() {
+Graphics::Surface* AmigaDisk_ns::loadPointer() {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadPointer");
 
 	Common::File stream;
@@ -1076,11 +1069,11 @@ StaticCnv* AmigaDisk_ns::loadPointer() {
 	return makeStaticCnv(stream);
 }
 
-StaticCnv* AmigaDisk_ns::loadStatic(const char* name) {
+Graphics::Surface* AmigaDisk_ns::loadStatic(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadStatic '%s'", name);
 
 	Common::SeekableReadStream *s = openArchivedFile(name, true);
-	StaticCnv *cnv = makeStaticCnv(*s);
+	Graphics::Surface *cnv = makeStaticCnv(*s);
 
 	delete s;
 
@@ -1325,14 +1318,14 @@ Cnv* AmigaDisk_ns::loadFrames(const char* name) {
 	return cnv;
 }
 
-StaticCnv* AmigaDisk_ns::loadHead(const char* name) {
+Graphics::Surface* AmigaDisk_ns::loadHead(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadHead '%s'", name);
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.head", name);
 
 	Common::SeekableReadStream *s = openArchivedFile(path, true);
-	StaticCnv *cnv = makeStaticCnv(*s);
+	Graphics::Surface *cnv = makeStaticCnv(*s);
 
 	delete s;
 

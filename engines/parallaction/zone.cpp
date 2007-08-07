@@ -236,7 +236,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 			if (!scumm_stricmp(_tokens[0], "file")) {
 				strcpy(vC8, _tokens[1]);
 				u->get->_cnv = _disk->loadStatic(vC8);
-				u->get->_backup = (byte*)malloc(u->get->_cnv->_width*u->get->_cnv->_height);
+				u->get->_backup = (byte*)malloc(u->get->_cnv->w*u->get->_cnv->h);
 
 				if ((z->_flags & kFlagsRemove) == 0) {
 					_gfx->backupGetBackground(u->get, z->_left, z->_top);
@@ -338,8 +338,7 @@ void Parallaction::displayItemComment(ExamineData *data) {
 	char v68[PATH_LEN];
 	strcpy(v68, data->_filename);
 	data->_cnv = _disk->loadStatic(v68);
-	_gfx->flatBlitCnv(data->_cnv, 140, (_screenHeight - data->_cnv->_height)/2, Gfx::kBitFront);
-	_gfx->freeStaticCnv(data->_cnv);
+	_gfx->flatBlitCnv(data->_cnv, 140, (_screenHeight - data->_cnv->h)/2, Gfx::kBitFront);
 	delete data->_cnv;
 
 	int16 v6A = 0, v6C = 0;
@@ -421,16 +420,16 @@ void jobToggleDoor(void *parm, Job *j) {
 
 	Zone *z = (Zone*)parm;
 
-	StaticCnv v14;
+	Graphics::Surface v14;
 
 	if (z->u.door->_cnv) {
 		Common::Rect r(z->_left, z->_top, z->_left+z->u.door->_cnv->_width, z->_top+z->u.door->_cnv->_height);
 
 		uint16 _ax = (z->_flags & kFlagsClosed ? 1 : 0);
 
-		v14._width = z->u.door->_cnv->_width;
-		v14._height = z->u.door->_cnv->_height;
-		v14._data0 = z->u.door->_cnv->getFramePtr(_ax);
+		v14.w = z->u.door->_cnv->_width;
+		v14.h = z->u.door->_cnv->_height;
+		v14.pixels = z->u.door->_cnv->getFramePtr(_ax);
 
 		_vm->_gfx->restoreDoorBackground(&v14, r, z->u.door->_background);
 
@@ -470,7 +469,7 @@ void jobRemovePickedItem(void *parm, Job *j) {
 	static uint16 count = 0;
 
 	if (z->u.get->_cnv) {
-		Common::Rect r(z->_left, z->_top, z->_left + z->u.get->_cnv->_width, z->_top + z->u.get->_cnv->_height);
+		Common::Rect r(z->_left, z->_top, z->_left + z->u.get->_cnv->w, z->_top + z->u.get->_cnv->h);
 
 		_vm->_gfx->restoreGetBackground(r, z->u.get->_backup);
 	}
@@ -635,7 +634,6 @@ Zone::~Zone() {
 
 	case kZoneGet:
 		free(u.get->_backup);
-		_vm->_gfx->freeStaticCnv(u.get->_cnv);
 		if (u.get->_cnv)
 			delete u.get->_cnv;
 		delete u.get;
@@ -681,7 +679,7 @@ Label::Label() {
 }
 
 Label::~Label() {
-	_vm->_gfx->freeStaticCnv(&_cnv);
+	_cnv.free();
 	if (_text)
 		free(_text);
 }

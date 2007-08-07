@@ -701,9 +701,7 @@ void Parallaction::freeCharacter() {
 			delete _char._talk;
 		_char._talk = NULL;
 
-		_gfx->freeStaticCnv(_char._head);
-		if (_char._head)
-			delete _char._head;
+		delete _char._head;
 		_char._head = NULL;
 
 		if (_char._objs)

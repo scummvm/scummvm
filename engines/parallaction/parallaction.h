@@ -238,7 +238,7 @@ struct Location {
 
 struct Character {
 	Animation		_ani;
-	StaticCnv		*_head;
+	Graphics::Surface		*_head;
 	Cnv		    	*_talk;
 	Cnv 			*_objs;
 	PathBuilder		_builder;
@@ -256,7 +256,7 @@ struct Character {
 		_ani._frame = 0;
 		_ani._flags = kFlagsActive | kFlagsNoName;
 		_ani._type = kZoneYou;
-		_ani._label._cnv._data0 = NULL;
+		_ani._label._cnv.pixels = NULL;
 		_ani._label._text = strdup("yourself");
 	}
 
