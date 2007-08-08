@@ -78,6 +78,7 @@ public:
 		kROMsetSweden,
 		kROMsetFrance,
 		kROMsetGermany,
+		kROMsetSpain,
 		kROMsetNum
 	};
 
