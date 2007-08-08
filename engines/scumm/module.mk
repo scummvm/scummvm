@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	detection.o \
 	dialogs.o \
 	file.o \
+	file_nes.o \
 	gfx.o \
 	he/script_v60he.o \
 	he/sound_he.o \

@@ -41,6 +41,7 @@
 #include "scumm/debugger.h"
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
+#include "scumm/file_nes.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/smush/smush_mixer.h"
