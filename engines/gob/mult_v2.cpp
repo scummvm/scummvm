@@ -259,8 +259,11 @@ void Mult_v2::loadImds(Common::SeekableReadStream &data) {
 		return;
 
 	size = data.readSint16LE();
-	_multData->somepointer10 = new char[size * 20];
-	data.read(_multData->somepointer10, size * 20);
+	if (size > 0) {
+		_multData->somepointer10 = new char[size * 20];
+		data.read(_multData->somepointer10, size * 20);
+	}
+
 	size = _vm->_inter->load16();
 	if (size <= 0)
 		return;
@@ -474,12 +477,11 @@ void Mult_v2::multSub(uint16 multIndex) {
 	}
 
 	if (_multData->animDirection == -1) {
-		for (int i = 0; i < _multData->imdKeysCount[i]; i++) {
-			if (_multData->imdKeys[index][i].frame > startFrame)
-				break;
+		int i = 0;
+		while (_multData->imdKeys[index][i].frame <= startFrame)
+			i++;
 
-			_multData->imdIndices[index] = i - 1;
-		}
+		_multData->imdIndices[index] = i - 1;
 	}
 
 	firstFrame = (_multData->animDirection == 1) ? startFrame : stopFrame;
@@ -1091,15 +1093,11 @@ void Mult_v2::advanceObjects(int16 index) {
 	for (int i = 0; i < 4; i++) {
 		int obj = _multData->animObjs[index][i];
 
-		if (_multData->animObjs[index][i] != -1) {
+		if ((obj != -1) && (obj != 1024)) {
 			int keyIndex = _multData->animKeysIndices[index][i];
 			int count = _multData->animKeysCount[i];
 
 			for (int j = keyIndex; j < count; j++) {
-
-				if ((obj == -1) || (obj == 1024))
-					continue;
-
 				Mult_AnimKey &key = _multData->animKeys[i][j];
 				Mult_Object &animObj = _objects[obj];
 				Mult_AnimData &animData = *(animObj.pAnimData);
@@ -1161,7 +1159,7 @@ void Mult_v2::advanceObjects(int16 index) {
 					_multData->imdIndices[1] = -1;
 					_multData->imdIndices[2] = -1;
 					_multData->imdIndices[3] = -1;
-					if ((_multData->animDirection == 1) || (key2.imdFile == 1))
+					if ((_multData->animDirection == 1) || (key2.imdFile == -1))
 						_multData->imdIndices[i] = j;
 					else if (_multData->animKeysStopFrames[index] == frame)
 						_multData->imdIndices[i] = -1;
@@ -1187,7 +1185,8 @@ void Mult_v2::advanceObjects(int16 index) {
 			imdFile = _multData->imdFiles + fileN * 14;
 			dir = _multData->animDirection;
 			startFrame = frame - key.frame;
-			if ((dir != 1) && (--startFrame > 0))
+
+			if ((dir != 1) && (--startFrame < 0))
 				startFrame = 0;
 
 			hasImds = true;
