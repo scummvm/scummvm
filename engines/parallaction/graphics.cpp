@@ -77,21 +77,9 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 	// draws tail
 	// TODO: this bitmap tail should only be used for Dos games. Amiga should use a polygon fill.
 	winding = (winding == 0 ? 1 : 0);
-	byte *s = _resBalloonTail[winding];
-	byte *d = (byte*)_buffers[kBitFront]->getBasePtr(r.left + (r.width()+5)/2 - 5, r.bottom - 1);
-	uint pitch = _vm->_screenWidth - BALLOON_TAIL_WIDTH;
-	for (uint16 i = 0; i < BALLOON_TAIL_HEIGHT; i++) {
-		for (uint16 j = 0; j < BALLOON_TAIL_WIDTH; j++) {
-			if (*s != 2)
-				*d = *s;
-			d++;
-			s++;
-		}
-
-		d += pitch;
-	}
-
-//	printf("done\n");
+	Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
+	s.moveTo(r.left + (r.width()+5)/2 - 5, r.bottom - 1);
+	flatBlit(s, _resBalloonTail[winding], kBitFront, 2);
 
 	return;
 }
@@ -332,7 +320,7 @@ void Gfx::screenClip(Common::Rect& r, Common::Point& p) {
 
 }
 
-void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
+void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer, byte transparentColor) {
 
 	Common::Point dp;
 	Common::Rect q(r);
@@ -347,7 +335,9 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer) {
 
 	for (uint16 i = q.top; i < q.bottom; i++) {
 		for (uint16 j = q.left; j < q.right; j++) {
-			if (*s != 0) *d = *s;
+			if (*s != transparentColor)
+				*d = *s;
+
 			s++;
 			d++;
 		}
@@ -468,13 +458,7 @@ void Gfx::setMousePointer(int16 index) {
 		// FIXME: destination offseting is not clear
 		byte* s = _vm->_char._objs->getFramePtr(getInventoryItemIndex(index));
 		byte* d = v8 + 7 + MOUSECOMBO_WIDTH * 7;
-
-		for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
-			memcpy(d, s, INVENTORYITEM_WIDTH);
-
-			s += INVENTORYITEM_PITCH;
-			d += MOUSECOMBO_WIDTH;
-		}
+		copyRect(INVENTORYITEM_WIDTH, INVENTORYITEM_HEIGHT, d, MOUSECOMBO_WIDTH, s, INVENTORYITEM_PITCH);
 
 		g_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
 	}
@@ -503,7 +487,7 @@ void Gfx::flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buf
 	Common::Rect r(cnv->w, cnv->h);
 	r.moveTo(x, y);
 
-	flatBlit(r, (byte*)cnv->pixels, buffer);
+	flatBlit(r, (byte*)cnv->pixels, buffer, 0);
 	return;
 }
 
@@ -517,17 +501,8 @@ void Gfx::blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffe
 }
 
 void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
-
 	byte *s = (byte*)_buffers[kBit2]->getBasePtr(x, y);
-	byte *d = data->_background;
-
-	for (uint16 i = 0; i < data->_cnv->_height ; i++) {
-		memcpy(d, s, data->_cnv->_width);
-
-		s += _vm->_screenWidth;
-		d += data->_cnv->_width;
-	}
-
+	copyRect(data->_cnv->_width, data->_cnv->_height, data->_background, data->_cnv->_width, s, _vm->_screenWidth);
 	return;
 }
 
@@ -557,9 +532,9 @@ void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 //
 //	restores background according to specified frame
 //
-void Gfx::restoreDoorBackground(Graphics::Surface *cnv, const Common::Rect& r, byte* background) {
+void Gfx::restoreDoorBackground(const Common::Rect& r, byte *data, byte* background) {
 
-	byte *t = (byte*)cnv->pixels;
+	byte *t = data;
 	byte *s = background;
 	byte *d0 = (byte*)_buffers[kBitBack]->getBasePtr(r.left, r.top);
 	byte *d1 = (byte*)_buffers[kBit2]->getBasePtr(r.left, r.top);
@@ -593,14 +568,8 @@ void Gfx::restoreDoorBackground(Graphics::Surface *cnv, const Common::Rect& r, b
 //
 void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
 
-	Graphics::Surface cnv;
-
-	cnv.w = r.width();
-	cnv.h = r.height();
-	cnv.pixels = data;
-
-	flatBlitCnv(&cnv, r.left, r.top, kBitBack);
-	flatBlitCnv(&cnv, r.left, r.top, kBit2);
+	flatBlit(r, data, kBitBack, 0);
+	flatBlit(r, data, kBit2, 0);
 
 	return;
 }
@@ -770,35 +739,28 @@ void Gfx::setMask(MaskBuffer *buffer) {
 	_depthMask = buffer;
 }
 
+void Gfx::copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch) {
 
+	for (uint16 _si = 0; _si < height; _si++) {
+		memcpy(dst, src, width);
 
-void Gfx::copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch) {
-
-	byte *d = (byte*)_buffers[dstbuffer]->getBasePtr(r.left, r.top);
-	byte *s = src;
-
-	for (uint16 _si = 0; _si < r.height(); _si++) {
-		memcpy(d, s, r.width());
-
-		s += pitch;
-		d += _vm->_screenWidth;
+		src += srcPitch;
+		dst += dstPitch;
 	}
 
+	return;
+}
 
+void Gfx::copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch) {
+	byte *d = (byte*)_buffers[dstbuffer]->getBasePtr(r.left, r.top);
+	copyRect(r.width(), r.height(), d, _vm->_screenWidth, src, pitch);
+	return;
 }
 
 
 void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch) {
-
 	byte *s = (byte*)_buffers[srcbuffer]->getBasePtr(r.left, r.top);
-
-	for (uint16 i = 0; i < r.height(); i++) {
-		memcpy(dst, s, r.width());
-
-		s += _vm->_screenWidth;
-		dst += pitch;
-	}
-
+	copyRect(r.width(), r.height(), dst, pitch, s, _vm->_screenWidth);
 	return;
 }
 

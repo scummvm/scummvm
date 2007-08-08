@@ -203,7 +203,7 @@ public:
 	void blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
 	void restoreBackground(const Common::Rect& r);
 	void backupDoorBackground(DoorData *data, int16 x, int16 y);
-	void restoreDoorBackground(Graphics::Surface *cnv, const Common::Rect& r, byte* background);
+	void restoreDoorBackground(const Common::Rect& r, byte *data, byte* background);
 	void backupGetBackground(GetData *data, int16 x, int16 y);
 	void restoreGetBackground(const Common::Rect& r, byte *data);
 
@@ -260,7 +260,8 @@ protected:
 	bool				_halfbrite;
 
 protected:
-	void flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer);
+	void copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch);
+	void flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer, byte transparentColor);
 	void blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer);
 	void initMouse(uint16 arg_0);
 	void screenClip(Common::Rect& r, Common::Point& p);
