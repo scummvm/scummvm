@@ -1295,6 +1295,8 @@ void AmigaDisk_ns::loadSlide(const char *name) {
 	else
 		loadBackground(name);
 
+	delete s;
+
 	return;
 }
 

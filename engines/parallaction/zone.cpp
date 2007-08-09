@@ -604,6 +604,8 @@ Zone::Zone() {
 Zone::~Zone() {
 //	printf("~Zone(%s)\n", _label._text);
 
+	_label._cnv.free();
+
 	switch (_type & 0xFFFF) {
 	case kZoneExamine:
 		free(u.examine->_filename);
@@ -626,8 +628,10 @@ Zone::~Zone() {
 
 	case kZoneGet:
 		free(u.get->_backup);
-		if (u.get->_cnv)
+		if (u.get->_cnv) {
+			u.get->_cnv->free();
 			delete u.get->_cnv;
+		}
 		delete u.get;
 		break;
 
