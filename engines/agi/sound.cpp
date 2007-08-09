@@ -53,6 +53,13 @@ struct IIgsEnvelope {
 // 2**(1/12) i.e. the 12th root of 2
 #define SEMITONE 1.059463094359295
 
+// Size of the SIERRASTANDARD file (i.e. the wave file i.e. the sample data used by the instruments).
+#define SIERRASTANDARD_SIZE 65536
+
+// Maximum number of instruments in an Apple IIGS instrument set.
+// Chosen empirically based on Apple IIGS AGI game data, increase if needed.
+#define MAX_INSTRUMENTS 28
+
 struct IIgsWaveInfo {
 	uint8 top;
 	uint8 addr;
@@ -74,7 +81,10 @@ struct IIgsWaveInfo {
 	uint16 relPitch; ///< 8b.8b fixed point, big endian?
 };
 
-#define MAX_WAVE_COUNT 8
+// Maximum number of waves in an Apple IIGS instrument's wave list.
+// Chosen empirically based on Apple IIGS AGI game data, increase if needed.
+#define MAX_WAVE_COUNT 4
+
 struct IIgsInstrumentHeader {
 	IIgsEnvelope env;
 	uint8 relseg;
