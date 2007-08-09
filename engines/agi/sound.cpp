@@ -110,11 +110,9 @@ struct IIgsSampleHeader {
 	IIgsInstrumentHeader instrument;
 };
 
-#if 0
-static SoundInstrument *instruments;
-static int numInstruments;
-static uint8 *wave;
-#endif
+static IIgsInstrumentHeader g_instruments[MAX_INSTRUMENTS];
+static uint g_numInstruments = 0;
+static int16 g_wave[SIERRASTANDARD_SIZE]; // FIXME? Should this be allocated from the heap? (Size is 128KiB)
 
 bool readIIgsEnvelope(IIgsEnvelope &envelope, Common::SeekableReadStream &stream) {
 	for (int segNum = 0; segNum < ENVELOPE_SEGMENT_COUNT; segNum++) {
