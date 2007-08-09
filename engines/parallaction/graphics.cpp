@@ -51,7 +51,7 @@ Palette::Palette() {
 	_size = _colors * 3;
 
 	makeBlack();
-};
+}
 
 Palette::Palette(const Palette &pal) {
 	_colors = pal._colors;
