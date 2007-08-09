@@ -25,6 +25,10 @@
 
 #include "common/stdafx.h"
 
+#include "common/md5.h"
+#include "common/config-manager.h"
+#include "common/fs.h"
+#include "common/algorithm.h"
 #include "sound/mixer.h"
 
 #include "agi/agi.h"
@@ -460,7 +464,7 @@ int SoundMgr::initSound() {
 	}
 
 #ifdef USE_IIGS_SOUND
-	/*loadInstruments("demo.sys"); */
+	loadInstruments();
 #endif
 
 	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
@@ -728,6 +732,221 @@ void Sound::unloadInstruments() {
 	free(instruments);
 }
 #endif
+
+/** Apple IIGS AGI instrument set information. */
+struct instrumentSetInfo {
+	uint byteCount;          ///< Length of the whole instrument set in bytes
+	uint instCount;          ///< Amount of instrument in the set
+	const char *md5;         ///< MD5 hex digest of the whole instrument set
+	const char *waveFileMd5; ///< MD5 hex digest of the wave file (i.e. the sample data used by the instruments)
+};
+
+/** Older Apple IIGS AGI instrument set. Used only by Space Quest I (AGI v1.002). */
+static const instrumentSetInfo instSetV1 = {
+	1192, 26, "7ee16bbc135171ffd6b9120cc7ff1af2", "edd3bf8905d9c238e02832b732fb2e18"
+};
+
+/** Newer Apple IIGS AGI instrument set (AGI v1.003+). Used by all others than Space Quest I. */
+static const instrumentSetInfo instSetV2 = {
+	1292, 28, "b7d428955bb90721996de1cbca25e768", "c05fb0b0e11deefab58bc68fbd2a3d07"
+};
+
+/** Apple IIGS AGI executable file information. */
+struct IIgsExeInfo {
+	enum AgiGameID gameid;            ///< Game ID
+	const char *exePrefix;            ///< Prefix of the Apple IIGS AGI executable (e.g. "SQ", "PQ", "KQ4" etc)
+	uint agiVer;                      ///< Apple IIGS AGI version number, not strictly needed
+	uint exeSize;                     ///< Size of the Apple IIGS AGI executable file in bytes
+	uint instSetStart;                ///< Starting offset of the instrument set inside the executable file
+	const instrumentSetInfo &instSet; ///< Information about the used instrument set
+};
+
+/** Information about different Apple IIGS AGI executables. */
+static const IIgsExeInfo IIgsExeInfos[] = {
+	{GID_SQ1,      "SQ",   0x1002, 138496, 0x80AD, instSetV1},
+	{GID_LSL1,     "LL",   0x1003, 141003, 0x844E, instSetV2},
+	{GID_AGIDEMO,  "DEMO", 0x1005, 141884, 0x8469, instSetV2},
+	{GID_KQ1,      "KQ",   0x1006, 141894, 0x8469, instSetV2},
+	{GID_PQ1,      "PQ",   0x1007, 141882, 0x8469, instSetV2},
+	{GID_MIXEDUP,  "MG",   0x1013, 142552, 0x84B7, instSetV2},
+	{GID_KQ2,      "KQ2",  0x1013, 143775, 0x84B7, instSetV2},
+	{GID_KQ3,      "KQ3",  0x1014, 144312, 0x84B7, instSetV2},
+	{GID_SQ2,      "SQ2",  0x1014, 107882, 0x6563, instSetV2},
+	{GID_MH1,      "MH",   0x2004, 147678, 0x8979, instSetV2},
+	{GID_KQ4,      "KQ4",  0x2006, 147652, 0x8979, instSetV2},
+	{GID_BC,       "BC",   0x3001, 148192, 0x8979, instSetV2},
+	{GID_GOLDRUSH, "GR",   0x3003, 148268, 0x8979, instSetV2}
+};
+
+/**
+ * Finds information about an Apple IIGS AGI executable based on the game ID.
+ * @return A non-null IIgsExeInfo pointer if successful, otherwise NULL.
+ */
+const IIgsExeInfo *getIIgsExeInfo(enum AgiGameID gameid) {
+	for (int i = 0; i < ARRAYSIZE(IIgsExeInfos); i++)
+		if (IIgsExeInfos[i].gameid == gameid)
+			return &IIgsExeInfos[i];
+	return NULL;
+}
+
+bool loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo) {
+	bool loadedOk = false; // Was loading successful?
+	Common::File file;
+
+	// Open the executable file and check that it has correct size
+	file.open(exePath);
+	if (file.size() != exeInfo.exeSize) {
+		debugC(3, kDebugLevelSound, "Apple IIGS executable (%s) has wrong size (Is %d, should be %d)",
+			exePath.c_str(), file.size(), exeInfo.exeSize);
+	}
+
+	// Read the whole executable file into memory
+	Common::MemoryReadStream *data = file.readStream(file.size());
+	file.close();
+
+	// Check that we got enough data to be able to parse the instruments
+	if (data != NULL && data->size() >= (exeInfo.instSetStart + exeInfo.instSet.byteCount)) {
+		// Check instrument set's length (The info's saved in the executable)
+		data->seek(exeInfo.instSetStart - 4);
+		uint16 instSetByteCount = data->readUint16LE();
+		if (instSetByteCount != exeInfo.instSet.byteCount) {
+			debugC(3, kDebugLevelSound, "Wrong instrument set size (Is %d, should be %d) in Apple IIGS executable (%s)",
+				instSetByteCount, exeInfo.instSet.byteCount, exePath.c_str());
+		}
+
+		// Check instrument set's md5sum
+		data->seek(exeInfo.instSetStart);
+		char md5str[32+1];
+		Common::md5_file_string(*data, md5str, exeInfo.instSet.byteCount);
+		if (scumm_stricmp(md5str, exeInfo.instSet.md5)) {
+			warning("Unknown Apple IIGS instrument set (md5: %s) in %s, trying to use it nonetheless",
+				md5str, exePath.c_str());
+		}
+
+		// Read in the instrument set one instrument at a time
+		data->seek(exeInfo.instSetStart);
+		g_numInstruments = 0; // Zero number of successfully loaded instruments
+		for (uint i = 0; i < exeInfo.instSet.instCount; i++) {
+			if (!readIIgsInstrumentHeader(g_instruments[i], *data)) {
+				warning("Error loading Apple IIGS instrument (%d. of %d) from %s, not loading more instruments",
+					i + 1, exeInfo.instSet.instCount, exePath.c_str());
+				break;
+			}
+			g_numInstruments++; // Increase number of successfully loaded instruments
+		}
+
+		// Loading was successful only if all instruments were loaded successfully
+		loadedOk = (g_numInstruments == exeInfo.instSet.instCount);
+	} else // Couldn't read enough data from the executable file
+		warning("Error loading instruments from Apple IIGS executable (%s)", exePath.c_str());
+
+	delete data; // Free the memory buffer allocated for reading the executable file
+	return loadedOk;
+}
+
+bool loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
+	bool loadedOk = false; // Was loading successful?
+	Common::File file;
+
+	// Open the wave file and read it into memory
+	file.open(wavePath);
+	Common::MemoryReadStream *uint8Wave = file.readStream(file.size());
+	file.close();
+
+	// Check that we got the whole wave file
+	if (uint8Wave != NULL && uint8Wave->size() == SIERRASTANDARD_SIZE) {
+		// Check wave file's md5sum
+		char md5str[32+1];
+		Common::md5_file_string(*uint8Wave, md5str, SIERRASTANDARD_SIZE);
+		if (scumm_stricmp(md5str, exeInfo.instSet.waveFileMd5)) {
+			warning("Unknown Apple IIGS wave file (md5: %s, game: %s).\n" \
+				"Please report the information on the previous line to the ScummVM team.\n",
+				"Using the wave file as it is - music may sound weird", md5str, exeInfo.exePrefix);
+		}
+
+		// Convert wave file from 8 bit unsigned to 16 bit signed format
+		uint8Wave->seek(0);
+		for (int i = 0; i < SIERRASTANDARD_SIZE; i++)
+			g_wave[i] = (int16) ((uint8Wave->readByte() - 128) * 256);
+
+		loadedOk = true; // Loading was successful
+	} else // Couldn't read the wave file or it had incorrect size
+		warning("Error loading Apple IIGS wave file (%s), not loading instruments", wavePath.c_str());
+
+	delete uint8Wave; // Free the memory buffer allocated for reading the wave file
+	return loadedOk;
+}
+
+/**
+ * A function object (i.e. a functor) for testing if a FilesystemNode
+ * object's name is equal (Ignoring case) to a string or to at least
+ * one of the strings in a list of strings. Can be used e.g. with find_if().
+ */
+struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const FilesystemNode&, bool> {
+	fsnodeNameEqualsIgnoreCase(const Common::StringList &str) : _str(str) {}
+	fsnodeNameEqualsIgnoreCase(const Common::String str) { _str.push_back(str); }
+	bool operator()(const FilesystemNode &param) const {
+		for (Common::StringList::const_iterator iter = _str.begin(); iter != _str.end(); iter++)
+			if (param.name().equalsIgnoreCase(*iter))
+				return true;
+		return false;
+	}
+private:
+	Common::StringList _str;
+};
+
+bool SoundMgr::loadInstruments() {
+	// Check that the platform is Apple IIGS, as only it uses custom instruments
+	if (_vm->getPlatform() != Common::kPlatformApple2GS) {
+		debugC(3, kDebugLevelSound, "Platform isn't Apple IIGS so not loading any instruments");
+		return true;
+	}
+	
+	// Get info on the particular Apple IIGS AGI game's executable
+	const IIgsExeInfo *exeInfo = getIIgsExeInfo((enum AgiGameID) _vm->getGameID());
+	if (exeInfo == NULL) {
+		warning("Unsupported Apple IIGS game, not loading instruments");
+		return false;
+	}
+	
+	// List files in the game path
+	FSList fslist;
+	FilesystemNode dir(ConfMan.get("path"));
+	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("Invalid game path (\"%s\"), not loading Apple IIGS instruments", dir.path().c_str());
+		return false;
+	}
+
+	// Populate executable filenames list (Long filename and short filename) for searching
+	Common::StringList exeNames;
+	exeNames.push_back(Common::String(exeInfo->exePrefix) + ".SYS16");
+	exeNames.push_back(Common::String(exeInfo->exePrefix) + ".SYS");
+	
+	// Populate wave filenames list (Long filename and short filename) for searching
+	Common::StringList waveNames;
+	waveNames.push_back("SIERRASTANDARD");
+	waveNames.push_back("SIERRAST");
+
+	// Search for the executable file and the wave file (i.e. check if any of the filenames match)
+	FSList::const_iterator exeFsnode, waveFsnode;
+	exeFsnode  = Common::find_if(fslist.begin(), fslist.end(), fsnodeNameEqualsIgnoreCase(exeNames));
+	waveFsnode = Common::find_if(fslist.begin(), fslist.end(), fsnodeNameEqualsIgnoreCase(waveNames));
+
+	// Make sure that we found the executable file
+	if (exeFsnode == fslist.end()) {
+		warning("Couldn't find Apple IIGS game executable (%s), not loading instruments", exeNames.begin()->c_str());
+		return false;
+	}
+
+	// Make sure that we found the wave file
+	if (waveFsnode == fslist.end()) {
+		warning("Couldn't find Apple IIGS wave file (%s), not loading instruments", waveNames.begin()->c_str());
+		return false;
+	}
+
+	// Load the instrument headers and the wave file
+	return loadInstrumentHeaders(exeFsnode->path(), *exeInfo) && loadWaveFile(waveFsnode->path(), *exeInfo);
+}
 
 #endif /* USE_IIGS_SOUND */
 

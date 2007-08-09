@@ -148,7 +148,7 @@ public:
 	void playNote(int i, int freq, int vol);
 	void playAgiSound();
 	uint32 mixSound();
-	int loadInstruments(char *fname);
+	bool loadInstruments();
 #ifdef USE_IIGS_SOUND
 	void playMidiSound();
 	void playSampleSound();
