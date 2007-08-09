@@ -24,6 +24,8 @@
  */
 
 #include "common/stdafx.h"
+#include "common/system.h"
+
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
@@ -61,6 +63,48 @@ void Parallaction_br::callFunction(uint index, void* parm) {
 	assert(index < 6);	// magic value 6 is maximum # of callables for Big Red Adventure
 
 	(this->*_callables[index])(parm);
+}
+
+int Parallaction_br::go() {
+
+	initGame();
+
+	return 0;
+}
+
+void Parallaction_br::initGame() {
+
+	Graphics::Surface* surf = _disk->loadStatic("dyna");
+	_gfx->setPalette(_gfx->_palette);
+	_gfx->flatBlitCnv(surf, (640 - surf->w) >> 1, (400 - surf->h) >> 1, Gfx::kBitFront);
+	_gfx->updateScreen();
+	_system->delayMillis(600);
+
+	Palette pal;
+	for (uint i = 0; i < 64; i++) {
+		_gfx->_palette.fadeTo(pal, 1);
+		_gfx->setPalette(_gfx->_palette);
+		_gfx->updateScreen();
+		_system->delayMillis(30);
+	}
+	surf->free();
+	_gfx->clearScreen(Gfx::kBitFront);
+
+	surf = _disk->loadStatic("core");
+	_gfx->setPalette(_gfx->_palette);
+	_gfx->flatBlitCnv(surf, (640 - surf->w) >> 1, (400 - surf->h) >> 1, Gfx::kBitFront);
+	_gfx->updateScreen();
+	_system->delayMillis(2000);
+
+	for (uint i = 0; i < 64; i++) {
+		_gfx->_palette.fadeTo(pal, 1);
+		_gfx->setPalette(_gfx->_palette);
+		_gfx->updateScreen();
+		_system->delayMillis(30);
+	}
+	surf->free();
+	_gfx->clearScreen(Gfx::kBitFront);
+
 }
 
 } // namespace Parallaction

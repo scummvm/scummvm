@@ -543,6 +543,7 @@ public:
 	~Parallaction_br() { }
 
 	int init();
+	int go();
 
 public:
 	typedef void (Parallaction_br::*Callable)(void*);
@@ -554,6 +555,7 @@ public:
 
 private:
 	void 		initResources();
+	void 		initGame();
 
 	static const Callable _dosCallables[6];
 

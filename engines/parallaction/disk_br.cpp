@@ -92,10 +92,37 @@ Cnv* DosDisk_br::loadObjects(const char *name) {
 	return 0;
 }
 
+void genSlidePath(char *path, const char* name) {
+	sprintf(path, "%s.bmp", name);
+}
 
 Graphics::Surface* DosDisk_br::loadStatic(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadStatic");
-	return 0;
+
+	char path[PATH_LEN];
+	genSlidePath(path, name);
+
+	Common::File stream;
+	if (!stream.open(path))
+		errorFileNotFound(path);
+
+	stream.skip(4);
+	uint width = stream.readUint32BE();
+	uint height = stream.readUint32BE();
+	stream.skip(20);
+
+	byte rgb[768];
+	stream.read(rgb, 768);
+
+	for (uint i = 0; i < 256; i++) {
+		_vm->_gfx->_palette.setEntry(i, rgb[i] >> 2, rgb[i+256] >> 2, rgb[i+512] >> 2);
+	}
+
+	Graphics::Surface *surf = new Graphics::Surface;
+	surf->create(width, height, 1);
+	stream.read(surf->pixels, width*height);
+
+	return surf;
 }
 
 Cnv* DosDisk_br::loadFrames(const char* name) {
@@ -103,9 +130,12 @@ Cnv* DosDisk_br::loadFrames(const char* name) {
 	return 0;
 }
 
+
+
 //	there are no Slide resources in Big Red Adventure
-void DosDisk_br::loadSlide(const char *filename) {
+void DosDisk_br::loadSlide(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadSlide");
+
 	return;
 }
 
