@@ -988,8 +988,6 @@ Graphics::Surface* AmigaDisk_ns::makeStaticCnv(Common::SeekableReadStream &strea
 	byte *buf = (byte*)malloc(rawsize);
 	stream.read(buf, rawsize);
 
-	uint32 decsize = width * height;
-
 	Graphics::Surface *cnv = new Graphics::Surface;
 	cnv->create(width, height, 1);
 

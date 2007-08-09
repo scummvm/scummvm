@@ -270,12 +270,14 @@ static uint16 period[] = {
 	1448, 1534, 1625, 1722, 1825, 1933
 };
 
+#if 0
 static struct AgiNote playSample[] = {
 	{0xff, 0x7f, 0x18, 0x00, 0x7f},
 	{0xff, 0xff, 0x00, 0x00, 0x00},
 	{0xff, 0xff, 0x00, 0x00, 0x00},
 	{0xff, 0xff, 0x00, 0x00, 0x00}
 };
+#endif
 
 static int noteToPeriod(int note) {
 	return 10 * (period[note % 12] >> (note / 12 - 3));
@@ -285,9 +287,9 @@ static int noteToPeriod(int note) {
 
 void SoundMgr::unloadSound(int resnum) {
 	if (_vm->_game.dirSound[resnum].flags & RES_LOADED) {
-		if (_vm->_game.sounds[resnum].flags & SOUND_PLAYING)
+		if (_vm->_game.sounds[resnum].flags & SOUND_PLAYING) {
 			/* FIXME: Stop playing */
-			;
+		}	
 
 		/* Release RAW data for sound */
 		free(_vm->_game.sounds[resnum].rdata);

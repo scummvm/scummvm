@@ -1607,7 +1607,7 @@ martini:
 
 	if ((!strcmp(num_room, "9.alg")) || (strcmp(num_room, "2.alg"))
 			|| (!strcmp(num_room, "14.alg")) || (!strcmp(num_room, "18.alg")))
-		conta_ciego_vez = vez();
+		conta_ciego_vez = (int)vez();
 
 	refresca_pantalla();
 }
@@ -6670,10 +6670,10 @@ void DrasculaEngine::refresca_2(){
 	pos_murci[3] = 19;
 
 	DIBUJA_BLOQUE_CUT(pos_murci, dir_dibujo3, dir_zona_pantalla);
-	diferencia = vez() - conta_ciego_vez;
+	diferencia = (int)vez() - conta_ciego_vez;
 	if (diferencia >= 6) {
 		frame_murcielago++;
-		conta_ciego_vez = vez();
+		conta_ciego_vez = (int)vez();
 	}
 
 	DIBUJA_BLOQUE(29, 37, 58, 114, 57, 39, dir_dibujo3, dir_zona_pantalla);
@@ -6761,10 +6761,10 @@ void DrasculaEngine::refresca_9_antes() {
 
 	DIBUJA_BLOQUE(ciego_x[frame_ciego], ciego_y[frame_ciego], 122, 57, 41, 72, dir_dibujo3, dir_zona_pantalla);
 	if (flags[9] == 0) {
-		diferencia = vez() - conta_ciego_vez;
+		diferencia = (int)vez() - conta_ciego_vez;
 		if (diferencia >= 11) {
 			frame_ciego++;
-			conta_ciego_vez = vez();
+			conta_ciego_vez = (int)vez();
 		}
 		if (frame_ciego == 9)
 			frame_ciego = 0;
@@ -6800,7 +6800,7 @@ void DrasculaEngine::refresca_14_antes() {
 
 	if (flags[12] == 1)
 		DIBUJA_FONDO(borracho_x[frame_borracho], 82, 170, 50, 40, 53, dir_dibujo3, dir_zona_pantalla);
-	diferencia = vez() - conta_ciego_vez;
+	diferencia = (int)vez() - conta_ciego_vez;
 	if (diferencia > 6) {
 		if (flags[12] == 1) {
 			frame_borracho++;
@@ -6818,7 +6818,7 @@ void DrasculaEngine::refresca_14_antes() {
 		if (frame_piano == 9)
 			frame_piano = 0;
 		parpadeo = _rnd->getRandomNumber(10);
-		conta_ciego_vez=vez();
+		conta_ciego_vez = (int)vez();
 	}
 }
 
@@ -6845,12 +6845,12 @@ void DrasculaEngine::refresca_18_antes() {
 	} else
 		pon_vb();
 
-	diferencia = vez() - conta_ciego_vez;
+	diferencia = (int)vez() - conta_ciego_vez;
 	if (diferencia > 9) {
 		frame_ronquido++;
 		if (frame_ronquido == 16)
 			frame_ronquido = 0;
-		conta_ciego_vez = vez();
+		conta_ciego_vez = (int)vez();
 	}
 }
 
