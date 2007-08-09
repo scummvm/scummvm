@@ -199,13 +199,11 @@ void Parallaction_ns::_c_score(void *parm) {
 
 void Parallaction_ns::_c_fade(void *parm) {
 
-	_gfx->setBlackPalette();
-
-	Gfx::Palette pal;
-	memset(pal, 0, sizeof(Gfx::Palette));
+	Palette pal;
+	_gfx->setPalette(pal);
 
 	for (uint16 _di = 0; _di < 64; _di++) {
-		_gfx->fadePalette(pal, _gfx->_palette, 1);
+		pal.fadeTo(_gfx->_palette, 1);
 		_gfx->setPalette(pal);
 
 		_gfx->updateScreen();
@@ -340,11 +338,11 @@ void Parallaction_ns::_c_endComment(void *param) {
 
 	_gfx->showLocationComment(_location._endComment, true);
 
-	Gfx::Palette pal;
-	_gfx->makeGrayscalePalette(pal);
+	Palette pal(_gfx->_palette);
+	pal.makeGrayscale();
 
 	for (uint di = 0; di < 64; di++) {
-		_gfx->fadePalette(_gfx->_palette, pal, 1);
+		_gfx->_palette.fadeTo(pal, 1);
 		_gfx->setPalette(_gfx->_palette);
 
 		_gfx->updateScreen();
@@ -358,24 +356,19 @@ void Parallaction_ns::_c_endComment(void *param) {
 
 void Parallaction_ns::_c_frankenstein(void *parm) {
 
-	Gfx::Palette pal0;
-	Gfx::Palette pal1;
+	Palette pal0(_gfx->_palette);
+	Palette pal1;
 
-	for (uint16 i = 0; i <= BASE_PALETTE_COLORS; i++) {
-		pal0[(i+FIRST_BASE_COLOR)] = _gfx->_palette[i];
-		pal0[(i+FIRST_BASE_COLOR)*3+1] = 0;
-		pal0[(i+FIRST_BASE_COLOR)*3+2] = 0;
-
-		pal1[(i+FIRST_BASE_COLOR)*3+1] = 0;
-		pal1[(i+FIRST_BASE_COLOR)*3+2] = 0;
+	for (uint16 i = 0; i <= 32; i++) {
+		pal0.setEntry(i, -1, 0, 0);			// leaves reds unchanged while zeroing other components
 	}
 
 	for (uint16 _di = 0; _di < 30; _di++) {
 		g_system->delayMillis(20);
-		_gfx->setPalette(pal0, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
+		_gfx->setPalette(pal0);
 		_gfx->updateScreen();
 		g_system->delayMillis(20);
-		_gfx->setPalette(pal1, FIRST_BASE_COLOR, BASE_PALETTE_COLORS);
+		_gfx->setPalette(pal1);
 		_gfx->updateScreen();
 	}
 

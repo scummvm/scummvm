@@ -37,19 +37,6 @@
 namespace Parallaction {
 
 
-#define BASE_PALETTE_COLORS		32
-#define FIRST_BASE_COLOR		0
-#define LAST_BASE_COLOR			(FIRST_BASE_COLOR+BASE_PALETTE_COLORS-1)
-
-#define EHB_PALETTE_COLORS		32										// extra half-brite colors for amiga
-#define FIRST_EHB_COLOR			(LAST_BASE_COLOR+1)
-#define LAST_EHB_COLOR			(FIRST_EHB_COLOR+EHB_PALETTE_COLORS-1)
-
-#define PALETTE_COLORS			(BASE_PALETTE_COLORS+EHB_PALETTE_COLORS)
-
-#define BASE_PALETTE_SIZE		BASE_PALETTE_COLORS*3
-#define PALETTE_SIZE			PALETTE_COLORS*3
-
 #define MOUSEARROW_WIDTH		16
 #define MOUSEARROW_HEIGHT		16
 
@@ -173,11 +160,31 @@ public:
 
 };
 
+class Palette {
+
+	byte	_data[768];
+	uint	_colors;
+	uint	_size;
+	bool	_hb;
+
+public:
+	Palette();
+	Palette(const Palette &pal);
+
+	void makeBlack();
+	void setEntries(byte* data, uint first, uint num);
+	void setEntry(uint index, int red, int green, int blue);
+	void makeGrayscale();
+	void fadeTo(const Palette& target, uint step);
+	uint fillRGBA(byte *rgba);
+
+	void rotate(uint first, uint last, bool forward);
+};
+
+
 class Gfx {
 
 public:
-	typedef byte Palette[PALETTE_SIZE];
-
 	enum Buffers {
 		// bit buffers
 		kBitFront,
@@ -220,11 +227,9 @@ public:
 	void floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color);
 
 	// palette
-	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = BASE_PALETTE_COLORS);
+	void setPalette(Palette palette);
 	void setBlackPalette();
 	void animatePalette();
-	void fadePalette(Palette palette, Palette target, uint step);			// fades palette to target palette, with specified step
-	void makeGrayscalePalette(Palette palette);		// transform palette into black and white
 
 	// amiga specific
 	void setHalfbriteMode(bool enable);

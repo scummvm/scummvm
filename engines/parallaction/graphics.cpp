@@ -32,6 +32,138 @@
 
 namespace Parallaction {
 
+
+
+Palette::Palette() {
+
+	int gameType = _vm->getGameType();
+
+	if (gameType == GType_Nippon) {
+		_colors = 32;
+		_hb = (_vm->getPlatform() == Common::kPlatformAmiga);
+	} else
+	if (gameType == GType_BRA) {
+		_colors = 256;
+		_hb = false;
+	} else
+		error("can't create palette for id = '%i'", gameType);
+
+	_size = _colors * 3;
+
+	makeBlack();
+};
+
+Palette::Palette(const Palette &pal) {
+	_colors = pal._colors;
+	_hb = pal._hb;
+	_size = pal._size;
+	memcpy(_data, pal._data, _size);
+}
+
+
+void Palette::makeBlack() {
+	memset(_data, 0, _size);
+}
+
+void Palette::setEntry(uint index, int red, int green, int blue) {
+	assert(index < _colors);
+
+	if (red >= 0)
+		_data[index*3] = red & 0xFF;
+
+	if (green >= 0)
+		_data[index*3+1] = green & 0xFF;
+
+	if (blue >= 0)
+		_data[index*3+2] = blue & 0xFF;
+}
+
+void Palette::makeGrayscale() {
+	byte v;
+	for (uint16 i = 0; i < _colors; i++) {
+		v = MAX(_data[i*3+1], _data[i*3+2]);
+		v = MAX(v, _data[i*3]);
+		setEntry(i, v, v, v);
+	}
+}
+
+void Palette::fadeTo(const Palette& target, uint step) {
+
+	if (step == 0)
+		return;
+
+	for (uint16 i = 0; i < _size; i++) {
+		if (_data[i] == target._data[i]) continue;
+
+		if (_data[i] < target._data[i])
+			_data[i] = CLIP(_data[i] + step, (uint)0, (uint)target._data[i]);
+		else
+			_data[i] = CLIP(_data[i] - step, (uint)target._data[i], (uint)255);
+	}
+
+	return;
+}
+
+uint Palette::fillRGBA(byte *rgba) {
+
+	byte r, g, b;
+	byte *hbPal = rgba + _size;
+
+	for (uint32 i = 0; i < _colors; i++) {
+		r = (_data[i*3]   << 2) | (_data[i*3]   >> 4);
+		g = (_data[i*3+1] << 2) | (_data[i*3+1] >> 4);
+		b = (_data[i*3+2] << 2) | (_data[i*3+2] >> 4);
+
+		rgba[i*4]   = r;
+		rgba[i*4+1] = g;
+		rgba[i*4+2] = b;
+		rgba[i*4+3] = 0;
+
+		if (_hb) {
+			hbPal[i*4]   = r >> 1;
+			hbPal[i*4+1] = g >> 1;
+			hbPal[i*4+2] = b >> 1;
+			hbPal[i*4+3] = 0;
+		}
+
+	}
+
+	return ((_hb) ? 2 : 1) * _colors;
+}
+
+void Palette::rotate(uint first, uint last, bool forward) {
+
+	byte tmp[3];
+
+	if (forward) { 					// forward
+
+		tmp[0] = _data[first * 3];
+		tmp[1] = _data[first * 3 + 1];
+		tmp[2] = _data[first * 3 + 2];
+
+		memmove(_data+first*3, _data+(first+1)*3, (last - first)*3);
+
+		_data[last * 3]	 = tmp[0];
+		_data[last * 3 + 1] = tmp[1];
+		_data[last * 3 + 2] = tmp[2];
+
+	} else {											// backward
+
+		tmp[0] = _data[last * 3];
+		tmp[1] = _data[last * 3 + 1];
+		tmp[2] = _data[last * 3 + 2];
+
+		memmove(_data+(first+1)*3, _data+first*3, (last - first)*3);
+
+		_data[first * 3]	  = tmp[0];
+		_data[first * 3 + 1] = tmp[1];
+		_data[first * 3 + 2] = tmp[2];
+
+	}
+
+}
+
+
 #define BALLOON_TAIL_WIDTH	12
 #define BALLOON_TAIL_HEIGHT	10
 
@@ -104,55 +236,20 @@ void Gfx::showLocationComment(const char *text, bool end) {
 	return;
 }
 
-void Gfx::setPalette(Palette pal, uint32 first, uint32 num) {
-//	printf("setPalette(%i, %i)\n", first, num);
 
-	if (first + num > BASE_PALETTE_COLORS)
-		error("wrong parameters for setPalette()");
+void Gfx::setPalette(Palette pal) {
+	byte sysPal[256*4];
 
-	byte sysBasePal[EHB_PALETTE_COLORS*4];
-	byte sysExtraPal[BASE_PALETTE_COLORS*4];
-
-	byte r, g, b;
-	uint32 j = 0;
-	for (uint32 i = first; i < first+num; i++) {
-		r = (pal[i*3] << 2) | (pal[i*3] >> 4);
-		g = (pal[i*3+1] << 2) | (pal[i*3+1] >> 4);
-		b = (pal[i*3+2] << 2) | (pal[i*3+2] >> 4);
-
-		sysBasePal[j*4]   = r;
-		sysBasePal[j*4+1] = g;
-		sysBasePal[j*4+2] = b;
-		sysBasePal[j*4+3] = 0;
-
-		if (_vm->getPlatform() == Common::kPlatformAmiga) {
-			sysExtraPal[j*4]   = r >> 1;
-			sysExtraPal[j*4+1] = g >> 1;
-			sysExtraPal[j*4+2] = b >> 1;
-			sysExtraPal[j*4+3] = 0;
-		} else {
-			sysExtraPal[j*4]   = 0;
-			sysExtraPal[j*4+1] = 0;
-			sysExtraPal[j*4+2] = 0;
-			sysExtraPal[j*4+3] = 0;
-		}
-
-		j++;
-	}
-
-	g_system->setPalette(sysBasePal, first, num);
-
-	if (_vm->getPlatform() == Common::kPlatformAmiga)
-		g_system->setPalette(sysExtraPal, first+FIRST_EHB_COLOR, num);
-
-	return;
+	uint n = pal.fillRGBA(sysPal);
+	g_system->setPalette(sysPal, 0, n);
 }
 
 void Gfx::setBlackPalette() {
 	Palette pal;
-	memset(pal, 0, PALETTE_SIZE);
 	setPalette(pal);
 }
+
+
 
 
 void Gfx::animatePalette() {
@@ -169,32 +266,7 @@ void Gfx::animatePalette() {
 
 		_palettefx[i]._timer = 0;							// reset timer
 
-		if (_palettefx[i]._flags & 2) { 					// forward
-
-			tmp[0] = _palette[_palettefx[i]._first * 3];
-			tmp[1] = _palette[_palettefx[i]._first * 3 + 1];
-			tmp[2] = _palette[_palettefx[i]._first * 3 + 2];
-
-			memmove(_palette+_palettefx[i]._first*3, _palette+(_palettefx[i]._first+1)*3, (_palettefx[i]._last - _palettefx[i]._first)*3);
-
-			_palette[_palettefx[i]._last * 3]	 = tmp[0];
-			_palette[_palettefx[i]._last * 3 + 1] = tmp[1];
-			_palette[_palettefx[i]._last * 3 + 2] = tmp[2];
-
-		} else {											// backward
-
-			tmp[0] = _palette[_palettefx[i]._last * 3];
-			tmp[1] = _palette[_palettefx[i]._last * 3 + 1];
-			tmp[2] = _palette[_palettefx[i]._last * 3 + 2];
-
-			memmove(_palette+(_palettefx[i]._first+1)*3, _palette+_palettefx[i]._first*3, (_palettefx[i]._last - _palettefx[i]._first)*3);
-
-			_palette[_palettefx[i]._first * 3]	  = tmp[0];
-			_palette[_palettefx[i]._first * 3 + 1] = tmp[1];
-			_palette[_palettefx[i]._first * 3 + 2] = tmp[2];
-
-		}
-
+		_palette.rotate(_palettefx[i]._first, _palettefx[i]._last, (_palettefx[i]._flags & 2) != 0);
 	}
 
 	setPalette(_palette);
@@ -202,39 +274,9 @@ void Gfx::animatePalette() {
 	return;
 }
 
-void Gfx::makeGrayscalePalette(Palette pal) {
 
-	for (uint16 i = 0; i < BASE_PALETTE_COLORS; i++) {
-		byte max;
 
-		max = MAX(_palette[i*3+1], _palette[i*3+2]);
-		max = MAX(max, _palette[i*3]);
 
-		pal[i*3] = max;
-		pal[i*3+1] = max;
-		pal[i*3+2] = max;
-	}
-
-	return;
-}
-
-void Gfx::fadePalette(Palette pal, Palette target, uint step) {
-
-	if (step == 0)
-		return;
-
-	for (uint16 i = 0; i < BASE_PALETTE_COLORS * 3; i++) {
-		if (pal[i] == target[i]) continue;
-
-		if (pal[i] < target[i])
-			pal[i] = CLIP(pal[i] + step, (uint)0, (uint)target[i]);
-		else
-			pal[i] = CLIP(pal[i] - step, (uint)target[i], (uint)255);
-
-	}
-
-	return;
-}
 
 void Gfx::setHalfbriteMode(bool enable) {
 #ifdef HALFBRITE
@@ -820,11 +862,10 @@ Gfx::Gfx(Parallaction* vm) :
 
 	_depthMask = 0;
 
-	setBlackPalette();
+	setPalette(_palette);
 
 	_bgLayers[0] = _bgLayers[1] = _bgLayers[2] = _bgLayers[3] = 0;
 
-	memset(_palette, 0, sizeof(_palette));
 	memset(_palettefx, 0, sizeof(_palettefx));
 
 	initMouse( 0 );

@@ -238,17 +238,14 @@ void Parallaction::parseWalkNodes(Script& script, WalkNodeList &list) {
 void Parallaction::switchBackground(const char* background, const char* mask) {
 //	printf("switchBackground(%s)", name);
 
-	Gfx::Palette pal;
+	Palette pal;
 
 	uint16 v2 = 0;
 	if (!scumm_stricmp(background, "final")) {
 		_gfx->clearScreen(Gfx::kBitBack);
-		for (uint16 _si = 0; _si <= 93; ) {
-			pal[_si] = v2;
-			pal[_si+1] = v2;
-			pal[_si+2] = v2;
+		for (uint16 _si = 0; _si <= 32; _si++) {
+			pal.setEntry(_si, v2, v2, v2);
 			v2 += 4;
-			_si += 3;
 		}
 
 		g_system->delayMillis(20);
@@ -423,8 +420,8 @@ void Parallaction::doLocationEnterTransition() {
         return; // visited
     }
 
-	byte pal[PALETTE_SIZE];
-	_gfx->makeGrayscalePalette(pal);
+	Palette pal(_gfx->_palette);
+	pal.makeGrayscale();
 	_gfx->setPalette(pal);
 
 	jobRunScripts(NULL, NULL);
@@ -441,7 +438,7 @@ void Parallaction::doLocationEnterTransition() {
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {
-		_gfx->fadePalette(pal, _gfx->_palette, 4);
+		pal.fadeTo(_gfx->_palette, 4);
 		_gfx->setPalette(pal);
 		waitTime( 1 );
 		_gfx->updateScreen();

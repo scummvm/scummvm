@@ -564,7 +564,15 @@ void DosDisk_ns::parseDepths(Common::SeekableReadStream &stream) {
 
 void DosDisk_ns::parseBackground(Common::SeekableReadStream &stream) {
 
-	stream.read(_vm->_gfx->_palette, BASE_PALETTE_SIZE);
+	byte tmp[3];
+
+	for (uint i = 0; i < 32; i++) {
+		tmp[0] = stream.readByte();
+		tmp[1] = stream.readByte();
+		tmp[2] = stream.readByte();
+		_vm->_gfx->_palette.setEntry(i, tmp[0], tmp[1], tmp[2]);
+	}
+
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 
 	parseDepths(stream);
@@ -1189,8 +1197,18 @@ void AmigaDisk_ns::loadBackground(const char *name) {
 	BackgroundDecoder decoder(*s, *surf, pal, _vm->_gfx->_palettefx);
 	decoder.decode();
 
-	for (uint32 i = 0; i < BASE_PALETTE_COLORS * 3; i++)
-		_vm->_gfx->_palette[i] = pal[i] >> 2;
+	byte *p = pal;
+	for (uint i = 0; i < 32; i++) {
+		byte r = *p >> 2;
+		p++;
+		byte g = *p >> 2;
+		p++;
+		byte b = *p >> 2;
+		p++;
+		_vm->_gfx->_palette.setEntry(i, r, g, b);
+
+	}
+
 	free(pal);
 	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 	_vm->_gfx->setBackground(surf);
