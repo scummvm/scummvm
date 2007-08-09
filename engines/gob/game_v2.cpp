@@ -1259,7 +1259,7 @@ int16 Game_v2::multiEdit(int16 time, int16 index, int16 *pCurPos,
 					if ((collArea->left > _vm->_global->_inter_mouseX) ||
 					    (collArea->right < _vm->_global->_inter_mouseX) ||
 					    (collArea->top > _vm->_global->_inter_mouseY) ||
-					    (collArea->bottom < _vm->_global->_inter_mouseY));
+					    (collArea->bottom < _vm->_global->_inter_mouseY))
 						continue;
 
 					if ((collArea->id & 0xF000))
