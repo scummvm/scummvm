@@ -157,9 +157,9 @@ static int noteToPeriod(int note) {
 
 void SoundMgr::unloadSound(int resnum) {
 	if (_vm->_game.dirSound[resnum].flags & RES_LOADED) {
-		if (_vm->_game.sounds[resnum].flags & SOUND_PLAYING)
+		if (_vm->_game.sounds[resnum].flags & SOUND_PLAYING) {
 			/* FIXME: Stop playing */
-			;
+		}
 
 		/* Release RAW data for sound */
 		free(_vm->_game.sounds[resnum].rdata);

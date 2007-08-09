@@ -206,7 +206,6 @@ void ProtrackerStream::updateRow() {
 		}
 
 		int exy = note.effect & 0xff;
-		if (exy);
 		int ex = (note.effect >> 4) & 0xf;
 		int ey = note.effect & 0xf;
 
