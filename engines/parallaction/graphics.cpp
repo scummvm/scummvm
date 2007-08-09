@@ -254,8 +254,6 @@ void Gfx::setBlackPalette() {
 
 void Gfx::animatePalette() {
 
-	byte tmp[3];
-
 	for (uint16 i = 0; i < 4; i++) {
 
 		if ((_palettefx[i]._flags & 1) == 0) continue;		// animated palette
