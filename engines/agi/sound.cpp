@@ -66,22 +66,19 @@ struct IIgsEnvelope {
 
 struct IIgsWaveInfo {
 	uint8 top;
-	uint8 addr;
-	uint8 size;
-// Oscillator channel (Bits 4-7 of mode-byte). Simplified to use only stereo here.
-#define MASK_OSC_CHANNEL  (1 << 4)
-#define OSC_CHANNEL_LEFT  (1 << 4)
-#define OSC_CHANNEL_RIGHT (0 << 4)
-// Oscillator halt bit (Bit 0 of mode-byte)
-#define MASK_OSC_HALT     (1 << 0)
-#define OSC_HALT          (1 << 0)
-// Oscillator mode (Bits 1 and 2 of mode-byte)
-#define MASK_OSC_MODE     (3 << 1)
-#define OSC_MODE_LOOP     (0 << 1)
-#define OSC_MODE_ONESHOT  (1 << 1)
-#define OSC_MODE_SYNC_AM  (2 << 1)
-#define OSC_MODE_SWAP     (3 << 1)
-	uint8 mode;
+	uint addr;
+	uint size;
+// Oscillator channel
+#define OSC_CHANNEL_RIGHT 0
+#define OSC_CHANNEL_LEFT  1
+	uint channel;
+// Oscillator mode
+#define OSC_MODE_LOOP     0
+#define OSC_MODE_ONESHOT  1
+#define OSC_MODE_SYNC_AM  2
+#define OSC_MODE_SWAP     3
+	uint mode;
+	bool halt;
 	uint16 relPitch; ///< 8b.8b fixed point, big endian?
 };
 
@@ -128,9 +125,15 @@ bool readIIgsEnvelope(IIgsEnvelope &envelope, Common::SeekableReadStream &stream
 
 bool readIIgsWaveInfo(IIgsWaveInfo &waveInfo, Common::SeekableReadStream &stream) {
 	waveInfo.top      = stream.readByte();
-	waveInfo.addr     = stream.readByte();
-	waveInfo.size     = stream.readByte();
-	waveInfo.mode     = stream.readByte();
+	waveInfo.addr     = stream.readByte() * 256;
+	waveInfo.size     = (1 << (stream.readByte() & 7)) * 256;
+
+	// Read mode byte and parse it into parts
+	byte mode         = stream.readByte();
+	waveInfo.channel  = (mode >> 4) & 1; // Bit 4
+	waveInfo.mode     = (mode >> 1) & 3; // Bits 1-2
+	waveInfo.halt     = (mode & 1) != 0; // Bit 0 (Converted to boolean)
+
 	waveInfo.relPitch = stream.readUint16BE();
 	return !stream.ioFailed();
 }
