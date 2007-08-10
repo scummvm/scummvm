@@ -179,6 +179,25 @@ bool readIIgsSampleHeader(IIgsSampleHeader &header, Common::SeekableReadStream &
 }
 
 /**
+ * Calculates an Apple IIGS sample's true size.
+ * Needed because a zero byte in the sample data ends the sample prematurely.
+ */
+uint calcTrueSampleSize(byte *sample, uint size) {
+	if (sample == NULL) { // Check for an erroneous input value
+		warning("Agi::calcTrueSampleSize: A NULL-pointer parameter");
+		return size; // Might as well return 0
+	} else { // Input values are ok
+		// Search for a zero byte in the sample data,
+		// as that would end the sample prematurely.
+		for (uint i = 0; i < size; i++)
+			if (sample[i] == 0)
+				return i;
+		// If no zero was found in the sample, then return its whole size.
+		return size;
+	}
+}
+
+/**
  * Load an Apple IIGS AGI sample resource from the given stream and
  * create an AudioStream out of it.
  *
@@ -215,6 +234,13 @@ Audio::AudioStream *makeIIgsSampleStream(Common::SeekableReadStream &stream, int
 		byte *sampleData = (byte *) malloc(header.sampleSize);
 		uint32 readBytes = stream.read(sampleData, header.sampleSize);
 		if (readBytes == header.sampleSize) { // Check that we got all the data we requested
+			// Calculate true sample size (A zero byte ends the sample prematurely)
+			uint trueSampleSize = calcTrueSampleSize(sampleData, header.sampleSize);
+			if (trueSampleSize != header.sampleSize) {
+				debugC(3, kDebugLevelSound, "Apple IIGS sample (%d): Size changed from %d to %d (Zero byte encountered)",
+					resnum, header.sampleSize, trueSampleSize);
+			}
+			header.sampleSize = (uint16) trueSampleSize; // Set the true sample size
 			// Make an audio stream from the mono, 8 bit, unsigned input data
 			byte flags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED;
 			int rate = (int) (1076 * pow(SEMITONE, header.pitch));
