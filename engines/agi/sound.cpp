@@ -889,7 +889,7 @@ bool loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
 		Common::md5_file_string(*uint8Wave, md5str, SIERRASTANDARD_SIZE);
 		if (scumm_stricmp(md5str, exeInfo.instSet.waveFileMd5)) {
 			warning("Unknown Apple IIGS wave file (md5: %s, game: %s).\n" \
-				"Please report the information on the previous line to the ScummVM team.\n",
+				"Please report the information on the previous line to the ScummVM team.\n" \
 				"Using the wave file as it is - music may sound weird", md5str, exeInfo.exePrefix);
 		}
 
