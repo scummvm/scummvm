@@ -23,14 +23,14 @@
  *
  */
 
-#include "backends/platform/sdl/sdl.h"
-#include "base/main.h"
-
 #if defined(WIN32)
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
 #undef ARRAYSIZE
 #endif
+
+#include "backends/platform/sdl/sdl.h"
+#include "base/main.h"
 
 #if defined(__SYMBIAN32__)
 #include "SymbianOs.h"
