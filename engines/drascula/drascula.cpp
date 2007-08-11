@@ -4348,7 +4348,8 @@ void DrasculaEngine::MixVideo(byte *OldScreen, byte *NewScreen) {
 }
 
 void DrasculaEngine::WaitFrameSSN() {
-	while (clock() < LastFrame + GlobalSpeed) {};
+	while ((int)clock() < LastFrame + GlobalSpeed)
+		;
 	LastFrame = LastFrame + GlobalSpeed;
 }
 
