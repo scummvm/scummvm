@@ -24,7 +24,6 @@
  */
 
 #include "backends/platform/sdl/sdl.h"
-#include "backends/plugins/sdl/sdl-provider.h"
 #include "common/config-manager.h"
 #include "common/util.h"
 

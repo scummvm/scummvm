@@ -30,6 +30,7 @@
 #endif
 
 #include "backends/platform/sdl/sdl.h"
+#include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
 #if defined(__SYMBIAN32__)
