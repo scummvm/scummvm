@@ -583,6 +583,10 @@ private:
 	void 		initFonts();
 	void 		freeFonts();
 
+	int showMenu();
+	void renderMenuItem(Graphics::Surface &surf, const char *text);
+	void invertMenuItem(Graphics::Surface &surf);
+
 	void splash(const char *name);
 
 	static const Callable _dosCallables[6];

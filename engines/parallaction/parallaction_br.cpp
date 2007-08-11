@@ -74,6 +74,10 @@ int Parallaction_br::go() {
 
 	initGame();
 
+	// TODO: game loop :P
+
+	showMenu();
+
 	return 0;
 }
 
@@ -101,6 +105,95 @@ void Parallaction_br::splash(const char *name) {
 	delete info;
 
 	return;
+}
+
+#define MENUITEMS_X			250
+#define MENUITEMS_Y			200
+
+#define MENUITEM_WIDTH		190
+#define MENUITEM_HEIGHT		18
+
+void Parallaction_br::renderMenuItem(Graphics::Surface &surf, const char *text) {
+	surf.create(MENUITEM_WIDTH, MENUITEM_HEIGHT, 1);
+	_menuFont->setColor(0);
+	_menuFont->drawString((byte*)surf.getBasePtr(5, 2), MENUITEM_WIDTH, text);
+}
+
+void Parallaction_br::invertMenuItem(Graphics::Surface &surf) {
+	for (int i = 0; i < surf.w * surf.h; i++)
+		((byte*)surf.pixels)[i] ^= 0xD;
+}
+
+int Parallaction_br::showMenu() {
+	// TODO: filter menu entries according to progress in game
+
+	_gfx->clearScreen(Gfx::kBitFront);
+
+	BackgroundInfo *info;
+
+	Graphics::Surface	_menuItems[7];
+
+	char *menuStrings[7] = {
+		"SEE INTRO",
+		"NEW GAME",
+		"SAVED GAME",
+		"EXIT TO DOS",
+		"PART 2",
+		"PART 3",
+		"PART 4"
+	};
+
+	info = _disk->loadSlide("tbra");
+	_gfx->setPalette(info->palette);
+	_gfx->flatBlitCnv(&info->bg, 20, 50, Gfx::kBitFront);
+
+	for (uint i = 0; i < 7; i++)
+		renderMenuItem(_menuItems[i], menuStrings[i]);
+
+	int selectedItem = -1, oldSelectedItem = -2;
+
+	_system->showMouse(true);
+
+	while (_mouseButtons != kMouseLeftUp) {
+
+		updateInput();
+
+		if ((_mousePos.x > MENUITEMS_X) && (_mousePos.x < (MENUITEMS_X+MENUITEM_WIDTH)) && (_mousePos.y > MENUITEMS_Y)) {
+			selectedItem = (_mousePos.y - MENUITEMS_Y) / MENUITEM_HEIGHT;
+		} else
+			selectedItem = -1;
+
+		if (selectedItem != oldSelectedItem) {
+
+			if (selectedItem >= 0 && selectedItem < 7)
+				invertMenuItem(_menuItems[selectedItem]);
+
+			if (oldSelectedItem >= 0 && oldSelectedItem < 7)
+				invertMenuItem(_menuItems[oldSelectedItem]);
+
+			Common::Rect r(MENUITEM_WIDTH, MENUITEM_HEIGHT);
+
+			for (uint i = 0; i < 7; i++) {
+				r.moveTo(MENUITEMS_X, MENUITEMS_Y + i * 20);
+				_gfx->copyRect(Gfx::kBitFront, r, (byte*)_menuItems[i].pixels, _menuItems[i].pitch);
+			}
+
+			oldSelectedItem = selectedItem;
+		}
+
+		_gfx->updateScreen();
+		_system->delayMillis(20);
+	}
+
+	_system->showMouse(false);
+
+	info->bg.free();
+	delete info;
+
+	for (uint i = 0; i < 7; i++)
+		_menuItems[i].free();
+
+	return selectedItem;
 }
 
 void Parallaction_br::initGame() {
