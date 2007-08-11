@@ -28,13 +28,13 @@
 #include "backends/intern.h"
 #include "backends/events/default/default-events.h"
 
-#include "gui/message.h"
-
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/timer.h"
 #include "common/util.h"
 
+#include "graphics/colormasks.h"
+#include "gui/message.h"
 #include "sound/mixer.h"
 
 OSystem *g_system = 0;
@@ -64,6 +64,23 @@ bool OSystem::setGraphicsMode(const char *name) {
 	}
 
 	return false;
+}
+
+OverlayColor OSystem::RGBToColor(uint8 r, uint8 g, uint8 b) {
+	return ::RGBToColor<ColorMasks<565> >(r, g, b);
+}
+
+void OSystem::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
+	::colorToRGB<ColorMasks<565> >(color, r, g, b);
+}
+
+OverlayColor OSystem::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
+	return RGBToColor(r, g, b);
+}
+
+void OSystem::colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
+	colorToRGB(color, r, g, b);
+	a = 255;
 }
 
 void OSystem::displayMessageOnOSD(const char *msg) {

@@ -495,17 +495,16 @@ public:
 	virtual void updateScreen() = 0;
 
 	/**
-	 * Set current shake position, a feature needed for some SCUMM screen effects.
-	 * The effect causes the displayed graphics to be shifted upwards by the specified
-	 * (always positive) offset. The area at the bottom of the screen which is moved
-	 * into view by this is filled by black. This does not cause any graphic data to
-	 * be lost - that is, to restore the original view, the game engine only has to
-	 * call this method again with a 0 offset. No calls to copyRectToScreen are necessary.
+	 * Set current shake position, a feature needed for some SCUMM screen
+	 * effects. The effect causes the displayed graphics to be shifted upwards
+	 * by the specified (always positive) offset. The area at the bottom of the
+	 * screen which is moved into view by this is filled with black. This does
+	 * not cause any graphic data to be lost - that is, to restore the original
+	 * view, the game engine only has to call this method again with offset
+	 * equal to zero. No calls to copyRectToScreen are necessary.
 	 * @param shakeOffset	the shake offset
 	 *
-	 * @todo This is a rather special screen effect, only used by the SCUMM
-	 *       frontend - we should consider removing it from the backend API
-	 *       and instead implement the functionality in the frontend.
+	 * @note This is currently used in the SCUMM, QUEEN and KYRA engines.
 	 */
 	virtual void setShakePos(int shakeOffset) = 0;
 		
@@ -549,8 +548,10 @@ public:
 	 * 8bpp), this needs some trickery.
 	 *
 	 * Essentially, we fake (alpha) blending on these systems by copying the
-	 * game graphics into the overlay buffer, then manually compose whatever
-	 * graphics we want to show in the overlay.
+	 * current game graphics into the overlay buffer when activating the overlay,
+	 * then manually compose whatever graphics we want to show in the overlay.
+	 * This works because we assume the game to be "paused" whenever an overlay
+	 * is active.
 	 */
 	//@{
 
@@ -607,9 +608,7 @@ public:
 	 * @see colorToRGB
 	 * @see ARGBToColor
 	 */
-	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b) {
-		return ((((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F));
-	}
+	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
 
 	/**
 	 * Convert the given OverlayColor into a RGB triplet. An OverlayColor can
@@ -619,14 +618,10 @@ public:
 	 * @see RGBToColor
 	 * @see colorToARGB
 	 */
-	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-		r = (((color >> 11) & 0x1F) << 3);
-		g = (((color >> 5) & 0x3F) << 2);
-		b = ((color&0x1F) << 3);
-	}
+	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 
 	/**
-	* Convert the given ARGB quadruplet into an OverlayColor. A OverlayColor can
+	 * Convert the given ARGB quadruplet into an OverlayColor. A OverlayColor can
 	 * be 8bit, 16bit or 32bit, depending on the target system. The default
 	 * implementation generates a 16 bit color value, in the 565 format
 	 * (that is, 5 bits red, 6 bits green, 5 bits blue).
@@ -634,9 +629,7 @@ public:
 	 * @see colorToRGB
 	 * @see RGBToColor
 	 */
-	virtual OverlayColor ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
-		return RGBToColor(r, g, b);
-	}
+	virtual OverlayColor ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b);
 
 	/**
 	 * Convert the given OverlayColor into an ARGB quadruplet. An OverlayColor can
@@ -647,10 +640,7 @@ public:
 	 * @see ARGBToColor
 	 * @see colorToRGB
 	 */
-	virtual void colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
-		colorToRGB(color, r, g, b);
-		a = 255;
-	}
+	virtual void colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b);
 
 	//@}
 
