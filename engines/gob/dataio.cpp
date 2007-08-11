@@ -273,28 +273,27 @@ int32 DataIO::readChunk(int16 handle, byte *buf, uint16 size) {
 
 	file = (handle - 50) / 10;
 	slot = (handle - 50) % 10;
-	if (!_isCurrentSlot[file * MAX_SLOT_COUNT + slot]) {
+	int index = file * MAX_SLOT_COUNT + slot;
+
+	_chunkPos[index] = CLIP<int32>(_chunkPos[index], 0, _chunkSize[index]);
+
+	if (!_isCurrentSlot[index]) {
 		for (i = 0; i < MAX_SLOT_COUNT; i++)
 			_isCurrentSlot[file * MAX_SLOT_COUNT + i] = false;
 
-		offset = _chunkOffset[file * MAX_SLOT_COUNT + slot] +
-			_chunkPos[file * MAX_SLOT_COUNT + slot];
+		offset = _chunkOffset[index] + _chunkPos[index];
 
-		debugC(7, kDebugFileIO, "seek: %d, %d",
-				_chunkOffset[file * MAX_SLOT_COUNT + slot],
-				_chunkPos[file * MAX_SLOT_COUNT + slot]);
+		debugC(7, kDebugFileIO, "seek: %d, %d", _chunkOffset[index], _chunkPos[index]);
 
 		file_getHandle(_dataFileHandles[file])->seek(offset, SEEK_SET);
 	}
 
-	_isCurrentSlot[file * MAX_SLOT_COUNT + slot] = true;
-	if ((_chunkPos[file * MAX_SLOT_COUNT + slot] + size) >
-	    (_chunkSize[file * MAX_SLOT_COUNT + slot]))
-		size = _chunkSize[file * MAX_SLOT_COUNT + slot] -
-			_chunkPos[file * MAX_SLOT_COUNT + slot];
+	_isCurrentSlot[index] = true;
+	if ((_chunkPos[index] + size) > (_chunkSize[index]))
+		size = _chunkSize[index] - _chunkPos[index];
 
 	file_getHandle(_dataFileHandles[file])->read(buf, size);
-	_chunkPos[file * MAX_SLOT_COUNT + slot] += size;
+	_chunkPos[index] += size;
 	return size;
 }
 
@@ -307,13 +306,15 @@ int16 DataIO::seekChunk(int16 handle, int32 pos, int16 from) {
 
 	file = (handle - 50) / 10;
 	slot = (handle - 50) % 10;
-	_isCurrentSlot[file * MAX_SLOT_COUNT + slot] = false;
-	if (from == SEEK_SET)
-		_chunkPos[file * MAX_SLOT_COUNT + slot] = pos;
-	else
-		_chunkPos[file * MAX_SLOT_COUNT + slot] += pos;
+	int index = file * MAX_SLOT_COUNT + slot;
 
-	return _chunkPos[file * MAX_SLOT_COUNT + slot];
+	_isCurrentSlot[index] = false;
+	if (from == SEEK_SET)
+		_chunkPos[index] = pos;
+	else
+		_chunkPos[index] += pos;
+
+	return _chunkPos[index];
 }
 
 uint32 DataIO::getChunkPos(int16 handle) const {
