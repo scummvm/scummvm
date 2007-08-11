@@ -83,7 +83,15 @@ Graphics::Surface* DosDisk_br::loadPointer() {
 
 Font* DosDisk_br::loadFont(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadFont");
-	return 0;
+
+	char path[PATH_LEN];
+	sprintf(path, "%s.fnt", name);
+
+	Common::File stream;
+	if (!stream.open(path))
+		errorFileNotFound(path);
+
+	return createFont(name, stream);
 }
 
 

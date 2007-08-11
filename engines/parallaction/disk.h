@@ -203,6 +203,7 @@ protected:
 
 protected:
 	void errorFileNotFound(const char *s);
+	Font *createFont(const char *name, Common::ReadStream &stream);
 
 public:
 	DosDisk_br(Parallaction *vm);
