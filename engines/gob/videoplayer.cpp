@@ -132,6 +132,7 @@ bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Ty
 			return false;
 		}
 
+		strcpy(_curFile, fileName);
 		_video->setXY(x, y);
 
 		if (!(flags & kFlagNoVideo)) {
