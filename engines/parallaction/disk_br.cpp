@@ -133,15 +133,15 @@ Cnv* DosDisk_br::loadFrames(const char* name) {
 
 
 //	there are no Slide resources in Big Red Adventure
-void DosDisk_br::loadSlide(const char *name) {
+BackgroundInfo* DosDisk_br::loadSlide(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadSlide");
 
-	return;
+	return 0;
 }
 
-void DosDisk_br::loadScenery(const char *name, const char *mask) {
+BackgroundInfo* DosDisk_br::loadScenery(const char *name, const char *mask, const char* path) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadScenery");
-	return;
+	return 0;
 }
 
 Table* DosDisk_br::loadTable(const char* name) {

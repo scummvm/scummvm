@@ -123,6 +123,8 @@ Parallaction::Parallaction(OSystem *syst) :
 Parallaction::~Parallaction() {
 	delete _debugger;
 
+	freeBackground();
+
 	delete _globalTable;
 
 	delete _callableNames;
@@ -130,11 +132,6 @@ Parallaction::~Parallaction() {
 	delete _instructionNames;
 	delete _zoneTypeNames;
 	delete _zoneFlagNames;
-
-	if (_pathBuffer) {
-		_pathBuffer->free();
-		delete _pathBuffer;
-	}
 
 	_animations.remove(&_char._ani);
 
@@ -169,6 +166,7 @@ int Parallaction::init() {
 	_location._comment = NULL;
 	_location._endComment = NULL;
 
+	_backgroundInfo = 0;
 	_screenPathWidth = _screenWidth / 8;
 	_screenSize = _screenWidth * _screenHeight;
 	_screenPathSize = _screenPathWidth * _screenHeight;

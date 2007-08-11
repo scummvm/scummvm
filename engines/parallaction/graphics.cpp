@@ -765,21 +765,11 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 
 
 void Gfx::setBackground(Graphics::Surface *surface) {
-	if (_buffers[kBit2]) {
-		_buffers[kBit2]->free();
-		delete _buffers[kBit2];
-	}
-
 	_buffers[kBit2] = surface;
 	copyScreen(kBit2, kBitBack);
 }
 
 void Gfx::setMask(MaskBuffer *buffer) {
-	if (_depthMask) {
-		_depthMask->free();
-		delete _depthMask;
-	}
-
 	_depthMask = buffer;
 }
 
@@ -882,20 +872,10 @@ Gfx::Gfx(Parallaction* vm) :
 
 Gfx::~Gfx() {
 
-	if (_depthMask) {
-		_depthMask->free();
-		delete _depthMask;
-	}
-
 	_buffers[kBitFront]->free();
 	delete _buffers[kBitFront];
 	_buffers[kBitBack]->free();
 	delete _buffers[kBitBack];
-
-	if (_buffers[kBit2]) {
-		_buffers[kBit2]->free();
-		delete _buffers[kBit2];
-	}
 
 	delete _fonts[kFontDialogue];
 	delete _fonts[kFontLabel];

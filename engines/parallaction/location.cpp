@@ -235,6 +235,39 @@ void Parallaction::parseWalkNodes(Script& script, WalkNodeList &list) {
 
 }
 
+void Parallaction::freeBackground() {
+
+	if (!_backgroundInfo)
+		return;
+
+	_backgroundInfo->bg.free();
+	_backgroundInfo->mask.free();
+	_backgroundInfo->path.free();
+	delete _backgroundInfo;
+
+	_backgroundInfo = 0;
+
+}
+
+void Parallaction::setBackground(const char *background, const char *mask, const char *path) {
+
+	freeBackground();
+
+	_backgroundInfo = _disk->loadScenery(background, mask, path);
+
+	_gfx->setPalette(_backgroundInfo->palette);
+	_gfx->_palette.clone(_backgroundInfo->palette);
+	_gfx->setBackground(&_backgroundInfo->bg);
+
+	if (_backgroundInfo->mask.data)
+		_gfx->setMask(&_backgroundInfo->mask);
+
+	if (_backgroundInfo->path.data)
+		setPath(&_backgroundInfo->path);
+
+	return;
+}
+
 void Parallaction::switchBackground(const char* background, const char* mask) {
 //	printf("switchBackground(%s)", name);
 
@@ -253,7 +286,7 @@ void Parallaction::switchBackground(const char* background, const char* mask) {
 		_gfx->updateScreen();
 	}
 
-	_disk->loadScenery(background, mask);
+	setBackground(background, mask, mask);
 
 	return;
 }
@@ -264,20 +297,21 @@ extern Job     *_jEraseLabel;
 
 void Parallaction::showSlide(const char *name) {
 
-	_disk->loadSlide(name);
-	_gfx->setPalette(_gfx->_palette);
+	BackgroundInfo *info;
+
+	info = _disk->loadSlide(name);
+
+	// TODO: avoid using screen buffers for displaying slides. Using a generic buffer
+	// allows for positioning of graphics as needed by Big Red Adventure.
+	// The main problem lies with menu, which relies on multiple buffers, mainly because
+	// it is crappy code.
+	_gfx->setBackground(&info->bg);
+	_gfx->setPalette(info->palette);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-	debugC(1, kDebugLocation, "changeLocation: new background set");
-
-	_gfx->setFont(kFontMenu);
-
-	_gfx->displayCenteredString(14, _slideText[0]); // displays text on screen
-	_gfx->updateScreen();
-
-	waitUntilLeftClick();
-
-	debugC(2, kDebugLocation, "changeLocation: intro text shown");
+	info->bg.free();
+	info->mask.free();
+	info->path.free();
 
 	return;
 }
@@ -340,6 +374,11 @@ void Parallaction::changeLocation(char *location) {
 	if (list.size() > 1) {
 		if (list[1] == "slide") {
 			showSlide(list[0].c_str());
+			_gfx->setFont(kFontMenu);
+			_gfx->displayCenteredString(14, _slideText[0]); // displays text on screen
+			_gfx->updateScreen();
+			waitUntilLeftClick();
+
 			list.remove_at(0);		// removes slide name
 			list.remove_at(0);		// removes 'slide'
 		}

@@ -562,7 +562,7 @@ void DosDisk_ns::parseDepths(Common::SeekableReadStream &stream) {
 }
 
 
-void DosDisk_ns::parseBackground(Common::SeekableReadStream &stream) {
+void DosDisk_ns::parseBackground(Common::SeekableReadStream &stream, BackgroundInfo *info) {
 
 	byte tmp[3];
 
@@ -570,10 +570,8 @@ void DosDisk_ns::parseBackground(Common::SeekableReadStream &stream) {
 		tmp[0] = stream.readByte();
 		tmp[1] = stream.readByte();
 		tmp[2] = stream.readByte();
-		_vm->_gfx->_palette.setEntry(i, tmp[0], tmp[1], tmp[2]);
+		info->palette.setEntry(i, tmp[0], tmp[1], tmp[2]);
 	}
-
-	_vm->_gfx->setPalette(_vm->_gfx->_palette);
 
 	parseDepths(stream);
 
@@ -587,30 +585,25 @@ void DosDisk_ns::parseBackground(Common::SeekableReadStream &stream) {
 
 }
 
-void DosDisk_ns::loadBackground(const char *filename) {
+BackgroundInfo* DosDisk_ns::loadBackground(const char *filename) {
 
 	if (!_resArchive.openArchivedFile(filename))
 		errorFileNotFound(filename);
 
-	parseBackground(_resArchive);
+	BackgroundInfo *info = new BackgroundInfo;
+	info->width = _vm->_screenWidth;	// 320
+	info->height = _vm->_screenHeight;	// 200
 
-	Graphics::Surface *bg = new Graphics::Surface;
-	bg->create(_vm->_screenWidth, _vm->_screenHeight, 1);
+	parseBackground(_resArchive, info);
 
-	MaskBuffer *mask = new MaskBuffer;
-	mask->create(_vm->_screenWidth, _vm->_screenHeight);
-
-	PathBuffer *path = new PathBuffer;
-	path->create(_vm->_screenWidth, _vm->_screenHeight);
+	info->bg.create(info->width, info->height, 1);
+	info->mask.create(info->width, info->height);
+	info->path.create(info->width, info->height);
 
 	Graphics::PackBitsReadStream stream(_resArchive);
-	unpackBackground(&stream, (byte*)bg->pixels, mask->data, path->data);
+	unpackBackground(&stream, (byte*)info->bg.pixels, info->mask.data, info->path.data);
 
-	_vm->_gfx->setBackground(bg);
-	_vm->_gfx->setMask(mask);
-	_vm->setPath(path);
-
-	return;
+	return info;
 }
 
 //
@@ -619,46 +612,41 @@ void DosDisk_ns::loadBackground(const char *filename) {
 //	mask and path are normally combined (via OR) into the background picture itself
 //	read the comment on the top of this file for more
 //
-void DosDisk_ns::loadMaskAndPath(const char *name) {
+void DosDisk_ns::loadMaskAndPath(const char *name, BackgroundInfo *info) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.msk", name);
 
 	if (!_resArchive.openArchivedFile(path))
 		errorFileNotFound(name);
 
-	MaskBuffer *mask = new MaskBuffer;
-	mask->create(_vm->_screenWidth, _vm->_screenHeight);
-
-	PathBuffer *pathBuf = new PathBuffer;
-	pathBuf->create(_vm->_screenWidth, _vm->_screenHeight);
-
 	parseDepths(_resArchive);
 
-	_resArchive.read(pathBuf->data, pathBuf->size);
-	_resArchive.read(mask->data, mask->size);
+	info->path.create(info->width, info->height);
+	_resArchive.read(info->path.data, info->path.size);
 
-	_vm->_gfx->setMask(mask);
-	_vm->setPath(pathBuf);
+	info->mask.create(info->width, info->height);
+	_resArchive.read(info->mask.data, info->mask.size);
 
 	return;
 }
 
-void DosDisk_ns::loadSlide(const char *filename) {
+BackgroundInfo* DosDisk_ns::loadSlide(const char *filename) {
 	char path[PATH_LEN];
 	sprintf(path, "%s.slide", filename);
-	loadBackground(path);
+	return loadBackground(path);
 }
 
-void DosDisk_ns::loadScenery(const char *name, const char *mask) {
-	char path[PATH_LEN];
-	sprintf(path, "%s.dyn", name);
-	loadBackground(path);
+BackgroundInfo* DosDisk_ns::loadScenery(const char *name, const char *mask, const char* path) {
+	char filename[PATH_LEN];
+	sprintf(filename, "%s.dyn", name);
+	BackgroundInfo *info = loadBackground(filename);
 
 	if (mask != NULL) {
 		// load external masks and paths only for certain locations
-		loadMaskAndPath(mask);
+		loadMaskAndPath(mask, info);
 	}
 
+	return info;
 }
 
 Table* DosDisk_ns::loadTable(const char* name) {
@@ -1188,14 +1176,19 @@ public:
 };
 
 
-void AmigaDisk_ns::loadBackground(const char *name) {
+BackgroundInfo* AmigaDisk_ns::loadBackground(const char *name) {
 
 	Common::SeekableReadStream *s = openArchivedFile(name, true);
 
-	Graphics::Surface *surf = new Graphics::Surface;
 	byte *pal;
-	BackgroundDecoder decoder(*s, *surf, pal, _vm->_gfx->_palettefx);
+
+	BackgroundInfo* info = new BackgroundInfo;
+
+	BackgroundDecoder decoder(*s, info->bg, pal, _vm->_gfx->_palettefx);
 	decoder.decode();
+
+	info->width = info->bg.w;
+	info->height = info->bg.h;
 
 	byte *p = pal;
 	for (uint i = 0; i < 32; i++) {
@@ -1205,21 +1198,18 @@ void AmigaDisk_ns::loadBackground(const char *name) {
 		p++;
 		byte b = *p >> 2;
 		p++;
-		_vm->_gfx->_palette.setEntry(i, r, g, b);
-
+		info->palette.setEntry(i, r, g, b);
 	}
 
 	free(pal);
-	_vm->_gfx->setPalette(_vm->_gfx->_palette);
-	_vm->_gfx->setBackground(surf);
 
 	delete s;
 
-	return;
+	return info;
 
 }
 
-void AmigaDisk_ns::loadMask(const char *name) {
+void AmigaDisk_ns::loadMask(const char *name, BackgroundInfo* info) {
 	debugC(5, kDebugDisk, "AmigaDisk_ns::loadMask(%s)", name);
 
 	char path[PATH_LEN];
@@ -1248,18 +1238,16 @@ void AmigaDisk_ns::loadMask(const char *name) {
 	s->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 	Graphics::PackBitsReadStream stream(*s);
 
-	MaskBuffer *mask = new MaskBuffer;
-	mask->create(_vm->_screenWidth, _vm->_screenHeight);
-	stream.read(mask->data, mask->size);
-	buildMask(mask->data);
-	_vm->_gfx->setMask(mask);
+	info->mask.create(info->width, info->height);
+	stream.read(info->mask.data, info->mask.size);
+	buildMask(info->mask.data);
 
 	delete s;
 
 	return;
 }
 
-void AmigaDisk_ns::loadPath(const char *name) {
+void AmigaDisk_ns::loadPath(const char *name, BackgroundInfo* info) {
 
 	char path[PATH_LEN];
 	sprintf(path, "%s.path", name);
@@ -1273,49 +1261,49 @@ void AmigaDisk_ns::loadPath(const char *name) {
 
 	Graphics::PackBitsReadStream stream(*s);
 
-	PathBuffer *buf = new PathBuffer;
-	buf->create(_vm->_screenWidth, _vm->_screenHeight);
-	stream.read(buf->data, buf->size);
-	_vm->setPath(buf);
+	info->path.create(info->width, info->height);
+	stream.read(info->path.data, info->path.size);
 
 	delete s;
 
 	return;
 }
 
-void AmigaDisk_ns::loadScenery(const char* background, const char* mask) {
+BackgroundInfo* AmigaDisk_ns::loadScenery(const char* background, const char* mask, const char* path) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadScenery '%s', '%s'", background, mask);
 
-	char path[PATH_LEN];
-	sprintf(path, "%s.bkgnd", background);
+	char filename[PATH_LEN];
+	sprintf(filename, "%s.bkgnd", background);
 
-	loadBackground(path);
+	BackgroundInfo* info = loadBackground(filename);
 
 	if (mask == NULL) {
-		loadMask(background);
-		loadPath(background);
+		loadMask(background, info);
+		loadPath(background, info);
 	} else {
-		loadMask(mask);
-		loadPath(mask);
+		loadMask(mask, info);
+		loadPath(mask, info);
 	}
 
-	return;
+	return info;
 }
 
-void AmigaDisk_ns::loadSlide(const char *name) {
+BackgroundInfo*  AmigaDisk_ns::loadSlide(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadSlide '%s'", name);
 
 	char path[PATH_LEN];
 	sprintf(path, "slides/%s", name);
 	Common::SeekableReadStream *s = openArchivedFile(path, false);
+
+	BackgroundInfo *info;
 	if (s)
-		loadBackground(path);
+		info = loadBackground(path);
 	else
-		loadBackground(name);
+		info = loadBackground(name);
 
 	delete s;
 
-	return;
+	return info;
 }
 
 Cnv* AmigaDisk_ns::loadFrames(const char* name) {

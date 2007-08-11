@@ -221,7 +221,6 @@ class Menu;
 class SoundMan;
 
 
-
 struct Location {
 
 	Common::Point	_startPosition;
@@ -281,6 +280,17 @@ public:
 	int16 lookup(const char* s);
 };
 
+struct BackgroundInfo {
+	uint width;
+	uint height;
+
+	Graphics::Surface	bg;
+	MaskBuffer			mask;
+	PathBuffer			path;
+
+	Palette				palette;
+};
+
 
 class Parallaction : public Engine {
 	friend class Debugger;
@@ -332,6 +342,10 @@ public:
 	Animation  	*findAnimation(const char *name);
 	void		sortAnimations();
 	void 		freeAnimations();
+
+	void 		showSlide(const char *name);
+	void 		setBackground(const char *background, const char *mask, const char *path);
+	void 		freeBackground();
 
 	Table		*_globalTable;
 	Table		*_objectsNames;
@@ -421,6 +435,8 @@ protected:		// data
 	bool		_hasLocationSound;
 	char		_locationSound[50];
 
+	BackgroundInfo	*_backgroundInfo;
+
 
 protected:		// members
 	bool detectGame(void);
@@ -441,7 +457,6 @@ protected:		// members
 
 	void		doLocationEnterTransition();
 	void		changeLocation(char *location);
-	void 		showSlide(const char *name);
 	void 		resolveLocationForwards();
 	void 		switchBackground(const char* background, const char* mask);
 	void 		freeLocation();
