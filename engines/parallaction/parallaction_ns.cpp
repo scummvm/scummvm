@@ -116,7 +116,7 @@ void Parallaction_ns::renderLabel(Graphics::Surface *cnv, char *text) {
 
 void Parallaction_ns::initCursors() {
 
-	_mouseComposedArrow = _disk->loadPointer();
+	_mouseComposedArrow = _disk->loadPointer("pointer");
 
 	byte temp[MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT];
 	memcpy(temp, _mouseArrow, MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT);

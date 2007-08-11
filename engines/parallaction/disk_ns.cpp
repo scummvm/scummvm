@@ -475,8 +475,8 @@ Graphics::Surface* DosDisk_ns::loadHead(const char* name) {
 }
 
 
-Graphics::Surface* DosDisk_ns::loadPointer() {
-	return loadExternalStaticCnv("pointer");
+Graphics::Surface* DosDisk_ns::loadPointer(const char *name) {
+	return loadExternalStaticCnv(name);
 }
 
 
@@ -1053,12 +1053,12 @@ Script* AmigaDisk_ns::loadScript(const char* name) {
 	return new Script(new DummyArchiveStream(_resArchive), true);
 }
 
-Graphics::Surface* AmigaDisk_ns::loadPointer() {
+Graphics::Surface* AmigaDisk_ns::loadPointer(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadPointer");
 
 	Common::File stream;
-	if (!stream.open("pointer"))
-		errorFileNotFound("pointer");
+	if (!stream.open(name))
+		errorFileNotFound(name);
 
 	return makeStaticCnv(stream);
 }

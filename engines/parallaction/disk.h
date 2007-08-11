@@ -54,7 +54,7 @@ public:
 	virtual Script* loadScript(const char* name) = 0;
 	virtual Cnv* loadTalk(const char *name) = 0;
 	virtual Cnv* loadObjects(const char *name) = 0;
-	virtual Graphics::Surface* loadPointer() = 0;
+	virtual Graphics::Surface* loadPointer(const char *name) = 0;
 	virtual Graphics::Surface* loadHead(const char* name) = 0;
 	virtual Font* loadFont(const char* name) = 0;
 	virtual Graphics::Surface* loadStatic(const char* name) = 0;
@@ -146,7 +146,7 @@ public:
 	Script* loadScript(const char* name);
 	Cnv* loadTalk(const char *name);
 	Cnv* loadObjects(const char *name);
-	Graphics::Surface* loadPointer();
+	Graphics::Surface* loadPointer(const char *name);
 	Graphics::Surface* loadHead(const char* name);
 	Font* loadFont(const char* name);
 	Graphics::Surface* loadStatic(const char* name);
@@ -180,7 +180,7 @@ public:
 	Script* loadScript(const char* name);
 	Cnv* loadTalk(const char *name);
 	Cnv* loadObjects(const char *name);
-	Graphics::Surface* loadPointer();
+	Graphics::Surface* loadPointer(const char *name);
 	Graphics::Surface* loadHead(const char* name);
 	Font* loadFont(const char* name);
 	Graphics::Surface* loadStatic(const char* name);
@@ -215,7 +215,7 @@ public:
 	Script* loadScript(const char* name);
 	Cnv* loadTalk(const char *name);
 	Cnv* loadObjects(const char *name);
-	Graphics::Surface* loadPointer();
+	Graphics::Surface* loadPointer(const char *name);
 	Graphics::Surface* loadHead(const char* name);
 	Font* loadFont(const char* name);
 	Graphics::Surface* loadStatic(const char* name);

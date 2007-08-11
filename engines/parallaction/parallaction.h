@@ -594,6 +594,11 @@ private:
 	void setMousePointer(int16 index);
 	void initCursors();
 
+	Graphics::Surface 	*_dinoCursor;
+	Graphics::Surface 	*_dougCursor;
+	Graphics::Surface 	*_donnaCursor;
+	Graphics::Surface 	*_mouseArrow;
+
 
 	int showMenu();
 	void renderMenuItem(Graphics::Surface &surf, const char *text);

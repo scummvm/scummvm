@@ -54,6 +54,7 @@ int Parallaction_br::init() {
 
 	initResources();
 	initFonts();
+	initCursors();
 
 	Parallaction::init();
 
@@ -62,6 +63,15 @@ int Parallaction_br::init() {
 
 Parallaction_br::~Parallaction_br() {
 	freeFonts();
+
+	_dinoCursor->free();
+	_dougCursor->free();
+	_donnaCursor->free();
+
+	delete _dinoCursor;
+	delete _dougCursor;
+	delete _donnaCursor;
+
 }
 
 void Parallaction_br::callFunction(uint index, void* parm) {
@@ -152,7 +162,7 @@ int Parallaction_br::showMenu() {
 
 	int selectedItem = -1, oldSelectedItem = -2;
 
-	_system->showMouse(true);
+	setMousePointer(0);
 
 	while (_mouseButtons != kMouseLeftUp) {
 
@@ -223,9 +233,20 @@ void Parallaction_br::freeFonts() {
 	return;
 }
 
+void Parallaction_br::initCursors() {
+
+	_dinoCursor = _disk->loadPointer("pointer1");
+	_dougCursor = _disk->loadPointer("pointer2");
+	_donnaCursor = _disk->loadPointer("pointer3");
+
+	_mouseArrow = _donnaCursor;
+
+}
+
 void Parallaction_br::setMousePointer(int16 index) {
 
-
+	_system->setMouseCursor((byte*)_mouseArrow->pixels, _mouseArrow->w, _mouseArrow->h, 0, 0, 0);
+	_system->showMouse(true);
 
 }
 

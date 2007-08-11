@@ -75,9 +75,28 @@ Graphics::Surface* DosDisk_br::loadHead(const char* name) {
 }
 
 
-Graphics::Surface* DosDisk_br::loadPointer() {
+Graphics::Surface* DosDisk_br::loadPointer(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadPointer");
-	return 0;
+
+	char path[PATH_LEN];
+	sprintf(path, "%s.ras", name);
+
+	Common::File stream;
+	if (!stream.open(path))
+		errorFileNotFound(path);
+
+	stream.skip(4);
+	uint width = stream.readUint32BE();
+	uint height = stream.readUint32BE();
+	stream.skip(20);
+	stream.skip(768);
+
+	Graphics::Surface *surf = new Graphics::Surface;
+
+	surf->create(width, height, 1);
+	stream.read(surf->pixels, width * height);
+
+	return surf;
 }
 
 
