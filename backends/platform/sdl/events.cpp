@@ -23,7 +23,7 @@
  *
  */
 
-#include "backends/platform/sdl/sdl-common.h"
+#include "backends/platform/sdl/sdl.h"
 #include "common/util.h"
 #include "common/events.h"
 

@@ -3,6 +3,7 @@ MODULE := backends/platform/sdl
 MODULE_OBJS := \
 	events.o \
 	graphics.o \
+	main.o \
 	sdl.o
 
 MODULE_DIRS += \

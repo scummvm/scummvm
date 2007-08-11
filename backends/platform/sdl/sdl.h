@@ -237,8 +237,7 @@ protected:
 	uint32 _cdEndTime, _cdStopTime;
 
 	enum {
-		DF_WANT_RECT_OPTIM			= 1 << 0,
-		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 1
+		DF_WANT_RECT_OPTIM			= 1 << 0
 	};
 
 	enum {

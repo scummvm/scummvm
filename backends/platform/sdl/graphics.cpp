@@ -23,7 +23,7 @@
  *
  */
 
-#include "backends/platform/sdl/sdl-common.h"
+#include "backends/platform/sdl/sdl.h"
 #include "common/util.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
@@ -310,7 +310,6 @@ void OSystem_SDL::initSize(uint w, uint h) {
 void OSystem_SDL::loadGFXMode() {
 	assert(_inited);
 	_forceFull = true;
-	_modeFlags |= DF_UPDATE_EXPAND_1_PIXEL;
 
 	int hwW, hwH;
 
@@ -606,65 +605,55 @@ void OSystem_SDL::internUpdateScreen() {
 		uint32 srcPitch, dstPitch;
 		SDL_Rect *lastRect = _dirtyRectList + _numDirtyRects;
 
-		if (scalerProc == Normal1x && !_adjustAspectRatio && 0) {
-			for (r = _dirtyRectList; r != lastRect; ++r) {
-				dst = *r;
+		for (r = _dirtyRectList; r != lastRect; ++r) {
+			dst = *r;
+			dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
 
-				dst.y += _currentShakePos;
-				if (SDL_BlitSurface(origSurf, r, _hwscreen, &dst) != 0)
-					error("SDL_BlitSurface failed: %s", SDL_GetError());
+			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
+				error("SDL_BlitSurface failed: %s", SDL_GetError());
+		}
+
+		SDL_LockSurface(srcSurf);
+		SDL_LockSurface(_hwscreen);
+
+		srcPitch = srcSurf->pitch;
+		dstPitch = _hwscreen->pitch;
+
+		for (r = _dirtyRectList; r != lastRect; ++r) {
+			register int dst_y = r->y + _currentShakePos;
+			register int dst_h = 0;
+			register int orig_dst_y = 0;
+			register int rx1 = r->x * scale1;
+
+			if (dst_y < height) {
+				dst_h = r->h;
+				if (dst_h > height - dst_y)
+					dst_h = height - dst_y;
+
+				orig_dst_y = dst_y;
+				dst_y = dst_y * scale1;
+
+				if (_adjustAspectRatio && !_overlayVisible)
+					dst_y = real2Aspect(dst_y);
+
+				assert(scalerProc != NULL);
+				scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
+						   (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
 			}
-		} else {
-			for (r = _dirtyRectList; r != lastRect; ++r) {
-				dst = *r;
-				dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
-				dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
 
-				if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
-					error("SDL_BlitSurface failed: %s", SDL_GetError());
-			}
-
-			SDL_LockSurface(srcSurf);
-			SDL_LockSurface(_hwscreen);
-
-			srcPitch = srcSurf->pitch;
-			dstPitch = _hwscreen->pitch;
-
-			for (r = _dirtyRectList; r != lastRect; ++r) {
-				register int dst_y = r->y + _currentShakePos;
-				register int dst_h = 0;
-				register int orig_dst_y = 0;
-				register int rx1 = r->x * scale1;
-
-				if (dst_y < height) {
-					dst_h = r->h;
-					if (dst_h > height - dst_y)
-						dst_h = height - dst_y;
-
-					orig_dst_y = dst_y;
-					dst_y = dst_y * scale1;
-
-					if (_adjustAspectRatio && !_overlayVisible)
-						dst_y = real2Aspect(dst_y);
-
-					assert(scalerProc != NULL);
-					scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-							   (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
-				}
-
-				r->x = rx1;
-				r->y = dst_y;
-				r->w = r->w * scale1;
-				r->h = dst_h * scale1;
+			r->x = rx1;
+			r->y = dst_y;
+			r->w = r->w * scale1;
+			r->h = dst_h * scale1;
 
 #ifndef DISABLE_SCALERS
-				if (_adjustAspectRatio && orig_dst_y < height && !_overlayVisible)
-					r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
+			if (_adjustAspectRatio && orig_dst_y < height && !_overlayVisible)
+				r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
 #endif
-			}
-			SDL_UnlockSurface(srcSurf);
-			SDL_UnlockSurface(_hwscreen);
 		}
+		SDL_UnlockSurface(srcSurf);
+		SDL_UnlockSurface(_hwscreen);
 
 		// Readjust the dirty rect list in case we are doing a full update.
 		// This is necessary if shaking is active.
@@ -893,7 +882,7 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool realCoordinates)
 
 	// Extend the dirty region by 1 pixel for scalers
 	// that "smear" the screen, e.g. 2xSAI
-	if ((_modeFlags & DF_UPDATE_EXPAND_1_PIXEL) && !realCoordinates) {
+	if (!realCoordinates) {
 		x--;
 		y--;
 		w+=2;
