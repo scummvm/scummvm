@@ -194,9 +194,6 @@ void Parallaction::freeLocation() {
 
 	_location._walkNodes.clear();
 
-	// TODO (LIST): helperNode should be rendered useless by the use of a Common::List<>
-	// to store Zones and Animations. Right now, it holds a list of Zones to be preserved
-	// but that'll pretty meaningless with a single list approach.
 	freeZones();
 	freeAnimations();
 
@@ -449,8 +446,6 @@ void Parallaction::changeLocation(char *location) {
 //	shows location comment (if any)
 //	waits for mouse click
 //	fades towards game palette
-//
-//	THE FINAL PALETTE IS NOT THE SAME AS THE MAIN PALETTE!!!!!!
 //
 void Parallaction::doLocationEnterTransition() {
 	debugC(1, kDebugLocation, "doLocationEnterTransition");
