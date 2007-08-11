@@ -246,6 +246,7 @@ void Parallaction::freeBackground() {
 	delete _backgroundInfo;
 
 	_backgroundInfo = 0;
+	_pathBuffer = 0;
 
 }
 
@@ -263,7 +264,7 @@ void Parallaction::setBackground(const char *background, const char *mask, const
 		_gfx->setMask(&_backgroundInfo->mask);
 
 	if (_backgroundInfo->path.data)
-		setPath(&_backgroundInfo->path);
+		_pathBuffer = &_backgroundInfo->path;
 
 	return;
 }

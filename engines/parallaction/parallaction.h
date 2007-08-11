@@ -325,7 +325,6 @@ public:
 	void 		resumeJobs();
 	void 		runJobs();
 
-	void 		setPath(PathBuffer *buffer);
 	void 		finalizeWalk(WalkNodeList *list);
 	int16 		selectWalkFrame(const Common::Point& pos, const WalkNode* from);
 	void 		clipMove(Common::Point& pos, const WalkNode* from);
@@ -373,8 +372,6 @@ public:
 	int32 			_screenHeight;
 	int32 			_screenSize;
 
-	int32 			_screenPathWidth;
-	int32 			_screenPathSize;
 	PathBuffer		*_pathBuffer;
 
 	SoundMan		*_soundMan;

@@ -421,11 +421,6 @@ void jobWalk(void *parm, Job *j) {
 }
 
 
-void Parallaction::setPath(PathBuffer *buffer) {
-	_pathBuffer = buffer;
-}
-
-
 WalkNode::WalkNode() : _x(0), _y(0) {
 }
 

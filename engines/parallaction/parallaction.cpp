@@ -167,16 +167,15 @@ int Parallaction::init() {
 	_location._endComment = NULL;
 
 	_backgroundInfo = 0;
-	_screenPathWidth = _screenWidth / 8;
+	_pathBuffer = 0;
+
 	_screenSize = _screenWidth * _screenHeight;
-	_screenPathSize = _screenPathWidth * _screenHeight;
+
 
 	strcpy(_characterName1, "null");
 	strcpy(_characterName, "dough");
 
 	memset(_locationNames, 0, 120*32);
-
-	_pathBuffer = 0;
 
 	initInventory();	// needs to be pushed into subclass
 
