@@ -98,6 +98,21 @@ void genSlidePath(char *path, const char* name) {
 
 Graphics::Surface* DosDisk_br::loadStatic(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadStatic");
+	return 0;
+}
+
+Cnv* DosDisk_br::loadFrames(const char* name) {
+	debugC(5, kDebugDisk, "DosDisk_br::loadFrames");
+	return 0;
+}
+
+// Slides in Nippon Safes are basically screen-sized pictures with valid
+// palette data used for menu and for location switches. Big Red Adventure
+// doesn't need slides in that sense, but it still has some special
+// graphics resources with palette data, so those will be named slides.
+//
+BackgroundInfo* DosDisk_br::loadSlide(const char *name) {
+	debugC(5, kDebugDisk, "DosDisk_br::loadSlide");
 
 	char path[PATH_LEN];
 	genSlidePath(path, name);
@@ -106,37 +121,24 @@ Graphics::Surface* DosDisk_br::loadStatic(const char* name) {
 	if (!stream.open(path))
 		errorFileNotFound(path);
 
+	BackgroundInfo* info = new BackgroundInfo;
+
 	stream.skip(4);
-	uint width = stream.readUint32BE();
-	uint height = stream.readUint32BE();
+	info->width = stream.readUint32BE();
+	info->height = stream.readUint32BE();
 	stream.skip(20);
 
 	byte rgb[768];
 	stream.read(rgb, 768);
 
 	for (uint i = 0; i < 256; i++) {
-		_vm->_gfx->_palette.setEntry(i, rgb[i] >> 2, rgb[i+256] >> 2, rgb[i+512] >> 2);
+		info->palette.setEntry(i, rgb[i] >> 2, rgb[i+256] >> 2, rgb[i+512] >> 2);
 	}
 
-	Graphics::Surface *surf = new Graphics::Surface;
-	surf->create(width, height, 1);
-	stream.read(surf->pixels, width*height);
+	info->bg.create(info->width, info->height, 1);
+	stream.read(info->bg.pixels, info->width * info->height);
 
-	return surf;
-}
-
-Cnv* DosDisk_br::loadFrames(const char* name) {
-	debugC(5, kDebugDisk, "DosDisk_br::loadFrames");
-	return 0;
-}
-
-
-
-//	there are no Slide resources in Big Red Adventure
-BackgroundInfo* DosDisk_br::loadSlide(const char *name) {
-	debugC(5, kDebugDisk, "DosDisk_br::loadSlide");
-
-	return 0;
+	return info;
 }
 
 BackgroundInfo* DosDisk_br::loadScenery(const char *name, const char *mask, const char* path) {

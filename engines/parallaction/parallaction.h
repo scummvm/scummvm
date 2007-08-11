@@ -569,6 +569,8 @@ private:
 	void 		initResources();
 	void 		initGame();
 
+	void splash(const char *name);
+
 	static const Callable _dosCallables[6];
 
 	void _c_blufade(void*);

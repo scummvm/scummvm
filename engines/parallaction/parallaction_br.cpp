@@ -72,39 +72,38 @@ int Parallaction_br::go() {
 	return 0;
 }
 
-void Parallaction_br::initGame() {
+void Parallaction_br::splash(const char *name) {
 
-	Graphics::Surface* surf = _disk->loadStatic("dyna");
-	_gfx->setPalette(_gfx->_palette);
-	_gfx->flatBlitCnv(surf, (640 - surf->w) >> 1, (400 - surf->h) >> 1, Gfx::kBitFront);
+	BackgroundInfo *info;
+
+	_gfx->clearScreen(Gfx::kBitFront);
+
+	info = _disk->loadSlide(name);
+	_gfx->setPalette(info->palette);
+	_gfx->flatBlitCnv(&info->bg, (640 - info->width) >> 1, (400 - info->height) >> 1, Gfx::kBitFront);
 	_gfx->updateScreen();
 	_system->delayMillis(600);
 
 	Palette pal;
 	for (uint i = 0; i < 64; i++) {
-		_gfx->_palette.fadeTo(pal, 1);
-		_gfx->setPalette(_gfx->_palette);
+		info->palette.fadeTo(pal, 1);
+		_gfx->setPalette(info->palette);
 		_gfx->updateScreen();
-		_system->delayMillis(30);
+		_system->delayMillis(20);
 	}
-	surf->free();
-	_gfx->clearScreen(Gfx::kBitFront);
+	info->bg.free();
 
-	surf = _disk->loadStatic("core");
-	_gfx->setPalette(_gfx->_palette);
-	_gfx->flatBlitCnv(surf, (640 - surf->w) >> 1, (400 - surf->h) >> 1, Gfx::kBitFront);
-	_gfx->updateScreen();
-	_system->delayMillis(2000);
+	delete info;
 
-	for (uint i = 0; i < 64; i++) {
-		_gfx->_palette.fadeTo(pal, 1);
-		_gfx->setPalette(_gfx->_palette);
-		_gfx->updateScreen();
-		_system->delayMillis(30);
-	}
-	surf->free();
-	_gfx->clearScreen(Gfx::kBitFront);
+	return;
+}
 
+void Parallaction_br::initGame() {
+
+	splash("dyna");
+	splash("core");
+
+	return;
 }
 
 } // namespace Parallaction
