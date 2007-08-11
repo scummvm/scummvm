@@ -54,6 +54,10 @@ Palette::Palette() {
 }
 
 Palette::Palette(const Palette &pal) {
+	clone(pal);
+}
+
+void Palette::clone(const Palette &pal) {
 	_colors = pal._colors;
 	_hb = pal._hb;
 	_size = pal._size;

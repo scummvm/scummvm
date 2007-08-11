@@ -171,6 +171,8 @@ public:
 	Palette();
 	Palette(const Palette &pal);
 
+	void clone(const Palette &pal);
+
 	void makeBlack();
 	void setEntries(byte* data, uint first, uint num);
 	void setEntry(uint index, int red, int green, int blue);
@@ -180,7 +182,6 @@ public:
 
 	void rotate(uint first, uint last, bool forward);
 };
-
 
 class Gfx {
 
