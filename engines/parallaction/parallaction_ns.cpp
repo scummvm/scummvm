@@ -24,12 +24,20 @@
  */
 
 #include "common/stdafx.h"
+#include "common/system.h"
+
 #include "common/config-manager.h"
 
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
 namespace Parallaction {
+
+#define MOUSEARROW_WIDTH		16
+#define MOUSEARROW_HEIGHT		16
+
+#define MOUSECOMBO_WIDTH		32	// sizes for cursor + selected inventory item
+#define MOUSECOMBO_HEIGHT		32
 
 int Parallaction_ns::init() {
 
@@ -63,6 +71,7 @@ int Parallaction_ns::init() {
 
 	initResources();
 	initFonts();
+	initCursors();
 
 	Parallaction::init();
 
@@ -71,6 +80,9 @@ int Parallaction_ns::init() {
 
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
+
+	_mouseComposedArrow->free();
+	delete _mouseComposedArrow;
 }
 
 
@@ -100,6 +112,49 @@ void Parallaction_ns::renderLabel(Graphics::Surface *cnv, char *text) {
 		_labelFont->drawString((byte*)cnv->pixels, cnv->w, text);
 	}
 
+}
+
+void Parallaction_ns::initCursors() {
+
+	_mouseComposedArrow = _disk->loadPointer();
+
+	byte temp[MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT];
+	memcpy(temp, _mouseArrow, MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT);
+
+	uint16 k = 0;
+	for (uint16 i = 0; i < 4; i++) {
+		for (uint16 j = 0; j < 64; j++) _mouseArrow[k++] = temp[i + j * 4];
+	}
+
+	return;
+}
+
+void Parallaction_ns::setMousePointer(int16 index) {
+
+	if (index == kCursorArrow) {		// standard mouse pointer
+
+		_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
+		_system->showMouse(true);
+
+	} else {
+		// inventory item pointer
+		byte *v8 = (byte*)_mouseComposedArrow->pixels;
+
+		// FIXME: destination offseting is not clear
+		byte* s = _char._objs->getFramePtr(getInventoryItemIndex(index));
+		byte* d = v8 + 7 + MOUSECOMBO_WIDTH * 7;
+
+		for (uint i = 0; i < INVENTORYITEM_HEIGHT; i++) {
+			memcpy(d, s, INVENTORYITEM_WIDTH);
+
+			s += INVENTORYITEM_PITCH;
+			d += MOUSECOMBO_WIDTH;
+		}
+
+		_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
+	}
+
+	return;
 }
 
 void Parallaction_ns::callFunction(uint index, void* parm) {

@@ -675,7 +675,7 @@ void Parallaction::changeCursor(int32 index) {
 		_activeItem._id = _inventory[index]._id;
 	}
 
-	_gfx->setMousePointer(index);
+	setMousePointer(index);
 
 	return;
 }

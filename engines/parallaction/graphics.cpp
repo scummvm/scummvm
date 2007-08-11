@@ -454,43 +454,8 @@ void jobEraseLabel(void *parm, Job *j) {
 	return;
 }
 
-void Gfx::initMouse(uint16 arg_0) {
-
-	_mouseComposedArrow = _vm->_disk->loadPointer();
-
-	byte temp[MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT];
-	memcpy(temp, _mouseArrow, MOUSEARROW_WIDTH*MOUSEARROW_HEIGHT);
-
-	uint16 k = 0;
-	for (uint16 i = 0; i < 4; i++) {
-		for (uint16 j = 0; j < 64; j++) _mouseArrow[k++] = temp[i + j * 4];
-	}
-
-	return;
-}
 
 
-void Gfx::setMousePointer(int16 index) {
-
-	if (index == kCursorArrow) {		// standard mouse pointer
-
-		g_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
-		g_system->showMouse(true);
-
-	} else {
-		// inventory item pointer
-		byte *v8 = (byte*)_mouseComposedArrow->pixels;
-
-		// FIXME: destination offseting is not clear
-		byte* s = _vm->_char._objs->getFramePtr(getInventoryItemIndex(index));
-		byte* d = v8 + 7 + MOUSECOMBO_WIDTH * 7;
-		copyRect(INVENTORYITEM_WIDTH, INVENTORYITEM_HEIGHT, d, MOUSECOMBO_WIDTH, s, INVENTORYITEM_PITCH);
-
-		g_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
-	}
-
-	return;
-}
 
 
 
@@ -824,8 +789,6 @@ Gfx::Gfx(Parallaction* vm) :
 
 	memset(_palettefx, 0, sizeof(_palettefx));
 
-	initMouse( 0 );
-
 	_halfbrite = false;
 
 	_font = NULL;
@@ -839,9 +802,6 @@ Gfx::~Gfx() {
 	delete _buffers[kBitFront];
 	_buffers[kBitBack]->free();
 	delete _buffers[kBitBack];
-
-	_mouseComposedArrow->free();
-	delete _mouseComposedArrow;
 
 	return;
 }

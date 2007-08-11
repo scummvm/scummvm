@@ -490,6 +490,8 @@ protected:		// members
 public:
 	virtual	void callFunction(uint index, void* parm) { }
 	virtual void renderLabel(Graphics::Surface *cnv, char *text) { }
+	virtual void setMousePointer(int16 index) = 0;
+
 
 public:
 	const char **_zoneFlagNamesRes;
@@ -513,6 +515,8 @@ public:
 
 	virtual	void callFunction(uint index, void* parm);
 	void renderLabel(Graphics::Surface *cnv, char *text);
+	void setMousePointer(int16 index);
+
 
 private:
 	void initFonts();
@@ -520,6 +524,10 @@ private:
 
 private:
 	void 		initResources();
+	void initCursors();
+
+	static byte			_mouseArrow[256];
+	Graphics::Surface			*_mouseComposedArrow;
 
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
@@ -582,6 +590,10 @@ private:
 	void 		initGame();
 	void 		initFonts();
 	void 		freeFonts();
+
+	void setMousePointer(int16 index);
+	void initCursors();
+
 
 	int showMenu();
 	void renderMenuItem(Graphics::Surface &surf, const char *text);

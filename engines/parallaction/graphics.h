@@ -37,12 +37,6 @@
 namespace Parallaction {
 
 
-#define MOUSEARROW_WIDTH		16
-#define MOUSEARROW_HEIGHT		16
-
-#define MOUSECOMBO_WIDTH		32	// sizes for cursor + selected inventory item
-#define MOUSECOMBO_HEIGHT		32
-
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 struct PaletteFxRange {
@@ -230,7 +224,6 @@ public:
 
 	// misc
 	int16 queryMask(int16 v);
-	void setMousePointer(int16 index);
 	void setFont(Font* font);
 	void swapBuffers();
 	void updateScreen();
@@ -252,8 +245,6 @@ protected:
 	Parallaction*		_vm;
 	Graphics::Surface	*_buffers[NUM_BUFFERS];
 	MaskBuffer			*_depthMask;
-	static byte			_mouseArrow[256];
-	Graphics::Surface			*_mouseComposedArrow;
 	Font				*_font;
 	bool				_halfbrite;
 
@@ -261,7 +252,6 @@ protected:
 	void copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch);
 	void flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer, byte transparentColor);
 	void blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer);
-	void initMouse(uint16 arg_0);
 	void screenClip(Common::Rect& r, Common::Point& p);
 };
 

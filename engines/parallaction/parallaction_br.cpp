@@ -223,4 +223,10 @@ void Parallaction_br::freeFonts() {
 	return;
 }
 
+void Parallaction_br::setMousePointer(int16 index) {
+
+
+
+}
+
 } // namespace Parallaction
