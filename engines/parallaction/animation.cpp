@@ -102,7 +102,7 @@ Animation *Parallaction::parseAnimation(Script& script, AnimationList &list, cha
 			}
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
-			_gfx->makeCnvFromString(&vD0->_label._cnv, _tokens[1]);
+			renderLabel(&vD0->_label._cnv, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "flags")) {
 			uint16 _si = 1;

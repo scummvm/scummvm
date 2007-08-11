@@ -357,6 +357,7 @@ public:
 
 
 
+
 public:
 	int getGameType() const;
 	uint32 getFeatures() const;
@@ -394,6 +395,10 @@ public:
 
 	ZoneList 		_zones;
 	AnimationList 	_animations;
+
+	Font		*_labelFont;
+	Font		*_menuFont;
+	Font		*_dialogueFont;
 
 protected:		// data
 
@@ -457,6 +462,7 @@ protected:		// members
 	void 		resolveLocationForwards();
 	void 		switchBackground(const char* background, const char* mask);
 	void 		freeLocation();
+	void 		showLocationComment(const char *text, bool end);
 
 	void		parseZone(Script &script, ZoneList &list, char *name);
 	void		parseZoneTypeBlock(Script &script, Zone *z);
@@ -483,6 +489,7 @@ protected:		// members
 
 public:
 	virtual	void callFunction(uint index, void* parm) { }
+	virtual void renderLabel(Graphics::Surface *cnv, char *text) { }
 
 public:
 	const char **_zoneFlagNamesRes;
@@ -497,7 +504,7 @@ class Parallaction_ns : public Parallaction {
 
 public:
 	Parallaction_ns(OSystem* syst) : Parallaction(syst) { }
-	~Parallaction_ns() { }
+	~Parallaction_ns();
 
 	int init();
 
@@ -505,6 +512,11 @@ public:
 	typedef void (Parallaction_ns::*Callable)(void*);
 
 	virtual	void callFunction(uint index, void* parm);
+	void renderLabel(Graphics::Surface *cnv, char *text);
+
+private:
+	void initFonts();
+	void freeFonts();
 
 private:
 	void 		initResources();
@@ -552,7 +564,7 @@ class Parallaction_br : public Parallaction {
 
 public:
 	Parallaction_br(OSystem* syst) : Parallaction(syst) { }
-	~Parallaction_br() { }
+	~Parallaction_br();
 
 	int init();
 	int go();
@@ -568,6 +580,8 @@ public:
 private:
 	void 		initResources();
 	void 		initGame();
+	void 		initFonts();
+	void 		freeFonts();
 
 	void splash(const char *name);
 

@@ -220,25 +220,7 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 	return;
 }
 
-void Gfx::showLocationComment(const char *text, bool end) {
 
-	setFont(kFontDialogue);
-
-	int16 w, h;
-	getStringExtent(const_cast<char*>(text), 130, &w, &h);
-
-	Common::Rect r(w + (end ? 5 : 10), h + 5);
-	r.moveTo(5, 5);
-
-	floodFill(kBitFront, r, 0);
-	r.grow(-2);
-	floodFill(kBitFront, r, 1);
-	displayWrappedString(const_cast<char*>(text), 3, 5, 0, 130);
-
-	updateScreen();
-
-	return;
-}
 
 
 void Gfx::setPalette(Palette pal) {
@@ -618,25 +600,7 @@ void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
 	return;
 }
 
-void Gfx::makeCnvFromString(Graphics::Surface *cnv, char *text) {
-	assert(_font == _fonts[kFontLabel]);
 
-	if (_vm->getPlatform() == Common::kPlatformAmiga) {
-		cnv->create(_font->getStringWidth(text) + 16, 10, 1);
-
-		_font->setColor(7);
-		_font->drawString((byte*)cnv->pixels + 1, cnv->w, text);
-		_font->drawString((byte*)cnv->pixels + 1 + cnv->w * 2, cnv->w, text);
-		_font->drawString((byte*)cnv->pixels + cnv->w, cnv->w, text);
-		_font->drawString((byte*)cnv->pixels + 2 + cnv->w, cnv->w, text);
-		_font->setColor(1);
-		_font->drawString((byte*)cnv->pixels + 1 + cnv->w, cnv->w, text);
-	} else {
-		cnv->create(_font->getStringWidth(text), _font->height(), 1);
-		_font->drawString((byte*)cnv->pixels, cnv->w, text);
-	}
-
-}
 
 void Gfx::displayString(uint16 x, uint16 y, const char *text, byte color) {
 	byte *dst = (byte*)_buffers[kBitFront]->getBasePtr(x, y);
@@ -733,9 +697,9 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 }
 
 
-void Gfx::setFont(Fonts name) {
-	assert(name < 3);
-	_font = _fonts[name];
+void Gfx::setFont(Font *font) {
+	assert(font);
+	_font = font;
 }
 
 
@@ -861,7 +825,6 @@ Gfx::Gfx(Parallaction* vm) :
 	memset(_palettefx, 0, sizeof(_palettefx));
 
 	initMouse( 0 );
-	initFonts();
 
 	_halfbrite = false;
 
@@ -876,10 +839,6 @@ Gfx::~Gfx() {
 	delete _buffers[kBitFront];
 	_buffers[kBitBack]->free();
 	delete _buffers[kBitBack];
-
-	delete _fonts[kFontDialogue];
-	delete _fonts[kFontLabel];
-	delete _fonts[kFontMenu];
 
 	_mouseComposedArrow->free();
 	delete _mouseComposedArrow;

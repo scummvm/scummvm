@@ -493,7 +493,7 @@ int16 DialogueManager::getHoverAnswer(int16 x, int16 y) {
 void Parallaction::runDialogue(SpeakData *data) {
 	debugC(1, kDebugDialogue, "runDialogue: starting dialogue '%s'", data->_name);
 
-	_gfx->setFont(kFontDialogue);
+	_gfx->setFont(_dialogueFont);
 
 	if (getPlatform() == Common::kPlatformPC)
 		showCursor(false);

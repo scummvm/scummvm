@@ -115,11 +115,6 @@ class Parallaction;
 struct DoorData;
 struct GetData;
 
-enum Fonts {
-	kFontDialogue = 0,
-	kFontLabel = 1,
-	kFontMenu = 2
-};
 
 struct MaskBuffer {
 	// handles a 2-bit depth buffer used for z-buffering
@@ -196,14 +191,12 @@ public:
 public:
 
 	// balloons and text
-	void showLocationComment(const char *text, bool end = false);
 	void drawBalloon(const Common::Rect& r, uint16 arg_8);
 	void displayString(uint16 x, uint16 y, const char *text, byte color);
 	void displayCenteredString(uint16 y, const char *text);
 	bool displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16 wrapwidth = -1);
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
-	void makeCnvFromString(Graphics::Surface *cnv, char *text);
 
 	// cut/paste
 	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer);
@@ -238,7 +231,7 @@ public:
 	// misc
 	int16 queryMask(int16 v);
 	void setMousePointer(int16 index);
-	void setFont(Fonts name);
+	void setFont(Font* font);
 	void swapBuffers();
 	void updateScreen();
 	void setBackground(Graphics::Surface *surf);
@@ -262,7 +255,6 @@ protected:
 	static byte			_mouseArrow[256];
 	Graphics::Surface			*_mouseComposedArrow;
 	Font				*_font;
-	Font				*_fonts[3];
 	bool				_halfbrite;
 
 protected:
@@ -271,7 +263,6 @@ protected:
 	void blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer);
 	void initMouse(uint16 arg_0);
 	void screenClip(Common::Rect& r, Common::Point& p);
-	void initFonts();
 };
 
 

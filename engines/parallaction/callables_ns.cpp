@@ -336,7 +336,7 @@ void Parallaction_ns::_c_setMask(void *parm) {
 
 void Parallaction_ns::_c_endComment(void *param) {
 
-	_gfx->showLocationComment(_location._endComment, true);
+	showLocationComment(_location._endComment, true);
 
 	Palette pal(_gfx->_palette);
 	pal.makeGrayscale();
@@ -413,7 +413,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 	_gfx->setPalette(_gfx->_palette);
 
 	if (gameCompleted) {
-		_gfx->setFont(kFontMenu);
+		_gfx->setFont(_menuFont);
 		_gfx->displayCenteredString(70, v4C[_language]);
 		_gfx->displayCenteredString(100, v3C[_language]);
 		_gfx->displayCenteredString(130, v2C[_language]);
@@ -426,7 +426,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 
 		_engineFlags |= kEngineChangeLocation;
 	} else {
-		_gfx->setFont(kFontMenu);
+		_gfx->setFont(_menuFont);
 		_gfx->displayCenteredString(70, v8C[_language]);
 		_gfx->displayCenteredString(100, v7C[_language]);
 		_gfx->displayCenteredString(130, v6C[_language]);
@@ -471,7 +471,7 @@ void Parallaction_ns::_c_testResult(void *parm) {
 	_disk->selectArchive("disk1");
 	parseLocation("common");
 
-	_gfx->setFont(kFontMenu);
+	_gfx->setFont(_menuFont);
 
 	_gfx->displayCenteredString(38, _slideText[0]);
 	_gfx->displayCenteredString(58, _slideText[1]);
@@ -516,7 +516,7 @@ void Parallaction_ns::_c_startIntro(void *parm) {
 
 void Parallaction_ns::_c_endIntro(void *parm) {
 
-	_gfx->setFont(kFontMenu);
+	_gfx->setFont(_menuFont);
 
 	debugC(1, kDebugLocation, "endIntro()");
 

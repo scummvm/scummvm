@@ -53,10 +53,15 @@ int Parallaction_br::init() {
 	_soundMan = new DummySoundMan(this);
 
 	initResources();
+	initFonts();
 
 	Parallaction::init();
 
 	return 0;
+}
+
+Parallaction_br::~Parallaction_br() {
+	freeFonts();
 }
 
 void Parallaction_br::callFunction(uint index, void* parm) {
@@ -102,6 +107,25 @@ void Parallaction_br::initGame() {
 
 	splash("dyna");
 	splash("core");
+
+	return;
+}
+
+
+
+void Parallaction_br::initFonts() {
+
+	// TODO: find out which font is used for labels
+
+	_menuFont = _disk->loadFont("russia");
+	_dialogueFont = _disk->loadFont("comic");
+
+}
+
+void Parallaction_br::freeFonts() {
+
+	delete _menuFont;
+	delete _dialogueFont;
 
 	return;
 }

@@ -37,7 +37,7 @@ void Parallaction::parseLocation(const char *filename) {
     debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
 	uint16 _si = 1;
-	_gfx->setFont(kFontLabel);
+	_gfx->setFont(_labelFont);
 
 	Script *_locationScript = _disk->loadLocation(filename);
 	_hasLocationSound = false;
@@ -266,6 +266,27 @@ void Parallaction::setBackground(const char *background, const char *mask, const
 	return;
 }
 
+
+void Parallaction::showLocationComment(const char *text, bool end) {
+
+	_gfx->setFont(_dialogueFont);
+
+	int16 w, h;
+	_gfx->getStringExtent(const_cast<char*>(text), 130, &w, &h);
+
+	Common::Rect r(w + (end ? 5 : 10), h + 5);
+	r.moveTo(5, 5);
+
+	_gfx->floodFill(Gfx::kBitFront, r, 0);
+	r.grow(-2);
+	_gfx->floodFill(Gfx::kBitFront, r, 1);
+	_gfx->displayWrappedString(const_cast<char*>(text), 3, 5, 0, 130);
+
+	_gfx->updateScreen();
+
+	return;
+}
+
 void Parallaction::switchBackground(const char* background, const char* mask) {
 //	printf("switchBackground(%s)", name);
 
@@ -372,7 +393,7 @@ void Parallaction::changeLocation(char *location) {
 	if (list.size() > 1) {
 		if (list[1] == "slide") {
 			showSlide(list[0].c_str());
-			_gfx->setFont(kFontMenu);
+			_gfx->setFont(_menuFont);
 			_gfx->displayCenteredString(14, _slideText[0]); // displays text on screen
 			_gfx->updateScreen();
 			waitUntilLeftClick();
@@ -466,7 +487,7 @@ void Parallaction::doLocationEnterTransition() {
 	_gfx->swapBuffers();
 	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
-	_gfx->showLocationComment(_location._comment);
+	showLocationComment(_location._comment, false);
 	waitUntilLeftClick();
 
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront );

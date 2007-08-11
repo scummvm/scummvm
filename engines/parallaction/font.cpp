@@ -575,25 +575,17 @@ Font *DosDisk_br::createFont(const char *name, Common::ReadStream &stream) {
 	return new BraFont(stream);
 }
 
+void Parallaction_ns::initFonts() {
 
-void Gfx::initFonts() {
-
-	if (_vm->getGameType() == GType_Nippon) {
-		if (_vm->getPlatform() == Common::kPlatformPC) {
-			_fonts[kFontDialogue] = _vm->_disk->loadFont("comic");
-			_fonts[kFontLabel] = _vm->_disk->loadFont("topaz");
-			_fonts[kFontMenu] = _vm->_disk->loadFont("slide");
-		} else {
-			_fonts[kFontDialogue] = _vm->_disk->loadFont("comic");
-
-			Common::MemoryReadStream stream(_amigaTopazFont, 2600, false);
-			_fonts[kFontLabel] = new AmigaFont(stream);
-
-			_fonts[kFontMenu] = _vm->_disk->loadFont("slide");
-		}
-	} else
-	if (_vm->getGameType() == GType_BRA) {
-		_fonts[kFontMenu] = _vm->_disk->loadFont("russia");
+	if (getPlatform() == Common::kPlatformPC) {
+		_dialogueFont = _disk->loadFont("comic");
+		_labelFont = _disk->loadFont("topaz");
+		_menuFont = _disk->loadFont("slide");
+	} else {
+		_dialogueFont = _disk->loadFont("comic");
+		Common::MemoryReadStream stream(_amigaTopazFont, 2600, false);
+		_labelFont = new AmigaFont(stream);
+		_menuFont = _disk->loadFont("slide");
 	}
 
 }

@@ -114,7 +114,7 @@ void Menu::start() {
 
 	splash();
 
-	_vm->_gfx->setFont(kFontMenu);
+	_vm->_gfx->setFont(_vm->_menuFont);
 
 	_language = chooseLanguage();
 	_vm->_disk->setLanguage(_language);
@@ -340,7 +340,7 @@ void Menu::selectCharacter() {
 	_vm->changeCursor(kCursorArrow);
 	_vm->_soundMan->stopMusic();
 
-	_vm->_gfx->setFont(kFontMenu);
+	_vm->_gfx->setFont(_vm->_menuFont);
 
 	_vm->_disk->selectArchive((_vm->getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 

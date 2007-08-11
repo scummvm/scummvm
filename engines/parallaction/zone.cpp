@@ -92,7 +92,7 @@ void Parallaction::parseZone(Script &script, ZoneList &list, char *name) {
 		}
 		if (!scumm_stricmp(_tokens[0], "label")) {
 //			printf("label: %s", _tokens[1]);
-			_gfx->makeCnvFromString(&z->_label._cnv, _tokens[1]);
+			renderLabel(&z->_label._cnv, _tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "flags")) {
 			uint16 _si = 1;
@@ -302,7 +302,7 @@ void Parallaction::displayCharacterComment(ExamineData *data) {
 	// BUG item #1762614.
 	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
-	_gfx->setFont(kFontDialogue);
+	_gfx->setFont(_dialogueFont);
 	_gfx->flatBlitCnv(_char._talk, 0, 190, 80, Gfx::kBitFront);
 
 	int16 v26, v28;
@@ -343,7 +343,7 @@ void Parallaction::displayItemComment(ExamineData *data) {
 
 	int16 v6A = 0, v6C = 0;
 
-	_gfx->setFont(kFontDialogue);
+	_gfx->setFont(_dialogueFont);
 	_gfx->getStringExtent(data->_description, 130, &v6C, &v6A);
 	Common::Rect r(v6C, v6A);
 	r.moveTo(0, 90);
