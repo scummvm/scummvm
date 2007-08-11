@@ -133,7 +133,7 @@ int Parallaction_br::showMenu() {
 
 	Graphics::Surface	_menuItems[7];
 
-	char *menuStrings[7] = {
+	const char *menuStrings[7] = {
 		"SEE INTRO",
 		"NEW GAME",
 		"SAVED GAME",
