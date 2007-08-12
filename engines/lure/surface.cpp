@@ -29,6 +29,7 @@
 #include "lure/screen.h"
 #include "lure/lure.h"
 #include "lure/room.h"
+#include "lure/sound.h"
 #include "lure/strings.h"
 #include "common/endian.h"
 
@@ -776,6 +777,85 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	Memory::dealloc(saveNames);
 
 	return doneFlag;
+}
+
+/*--------------------------------------------------------------------------*/
+
+struct RestartRecordPos {
+	int16 x, y;
+};
+
+struct RestartRecord {
+	Common::Language Language;
+	int16 width, height;
+	RestartRecordPos BtnRestart;
+	RestartRecordPos BtnRestore;
+};
+
+RestartRecord buttonBounds[] = {
+	{EN_ANY, 48, 14, 118, 152, 168, 152},
+	{DE_DEU, 48, 14, 106, 152, 168, 152},
+	{UNK_LANG, 48, 14, 112, 152, 168, 152}
+};
+
+
+bool RestartRestoreDialog::show()
+{
+	Resources &res = Resources::getReference();
+	Events &events = Events::getReference();
+	Mouse &mouse = Mouse::getReference();
+	Screen &screen = Screen::getReference();
+	LureEngine &engine = LureEngine::getReference();
+
+	Sound.killSounds();
+	Sound.musicInterface_Play(60, true, 0);
+	mouse.setCursorNum(CURSOR_ARROW);
+
+	// See if there are any savegames that can be restored
+	String *firstSave = engine.detectSave(1);
+	bool restartFlag = (firstSave == NULL);
+
+	if (!restartFlag) {
+		Memory::dealloc(firstSave);
+
+		// Get the correct button bounds record to use
+		RestartRecord *btnRecord = &buttonBounds[0];
+		while ((btnRecord->Language != engine.getLanguage()) && 
+			   (btnRecord->Language != UNK_LANG))
+			++btnRecord;
+
+		// Fade in the restart/restore screen
+		Palette p(RESTART_RESOURCE_ID + 1);
+		Surface *s = Surface::getScreen(RESTART_RESOURCE_ID);
+
+		res.activeHotspots().clear();
+		Hotspot *btnHotspot = new Hotspot();
+		// Restart button
+		btnHotspot->setSize(btnRecord->width, btnRecord->height);
+		btnHotspot->setPosition(btnRecord->BtnRestart.x, btnRecord->BtnRestart.y);
+		btnHotspot->setAnimation(0x184B);
+		btnHotspot->copyTo(s);
+		// Restore button
+		btnHotspot->setFrameNumber(1);
+		btnHotspot->setPosition(btnRecord->BtnRestore.x, btnRecord->BtnRestore.y);
+		btnHotspot->copyTo(s);
+
+		// Copy the surface to the screen
+		screen.setPaletteEmpty();
+		s->copyToScreen(0, 0);
+		delete s;
+
+		screen.paletteFadeIn(&p);
+
+		events.waitForPress();
+		screen.paletteFadeOut();
+
+		//restartFlag = !SaveRestoreDialog::show(false);
+	}
+
+	Sound.killSounds();
+
+	return restartFlag;
 }
 
 } // end of namespace Lure
