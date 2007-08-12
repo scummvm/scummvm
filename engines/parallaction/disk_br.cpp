@@ -46,6 +46,28 @@ Common::String DosDisk_br::selectArchive(const Common::String& name) {
 void DosDisk_br::setLanguage(uint16 language) {
 	debugC(5, kDebugDisk, "DosDisk_br::setLanguage");
 
+	switch (language) {
+	case 0:
+		strcpy(_languageDir, "it");
+		break;
+
+	case 1:
+		strcpy(_languageDir, "fr");
+		break;
+
+	case 2:
+		strcpy(_languageDir, "en");
+		break;
+
+	case 3:
+		strcpy(_languageDir, "ge");
+		break;
+
+	default:
+		error("unknown language");
+
+	}
+
 	return;
 }
 
@@ -64,7 +86,17 @@ Cnv* DosDisk_br::loadTalk(const char *name) {
 
 Script* DosDisk_br::loadLocation(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadLocation");
-	return 0;
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/%s/%s.loc", _partPath, _languageDir, name);
+
+	debugC(3, kDebugDisk, "DosDisk_br::loadLocation(%s): trying '%s'", name, path);
+
+	Common::File stream;
+	if (!stream.open(path))
+		errorFileNotFound(path);
+
+	return new Script(&stream, false);
 }
 
 Script* DosDisk_br::loadScript(const char* name) {
