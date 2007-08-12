@@ -751,6 +751,9 @@ Gfx::Gfx(Parallaction* vm) :
 	_buffers[kBit2] = 0;
 	_depthMask = 0;
 
+	_buffers[kBitFront] = 0;
+	_buffers[kBitBack] = 0;
+
 	initBuffers(_vm->_screenWidth, _vm->_screenHeight);
 
 	setPalette(_palette);
