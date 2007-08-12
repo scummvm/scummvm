@@ -280,7 +280,7 @@ void Gfx::setHalfbriteMode(bool enable) {
 }
 
 void Gfx::updateScreen() {
-	g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _vm->_screenWidth, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
+	g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _buffers[kBitFront]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
 	g_system->updateScreen();
 	return;
 }
@@ -695,6 +695,10 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 
 void Gfx::setBackground(Graphics::Surface *surface) {
 	_buffers[kBit2] = surface;
+
+	_buffers[kBitFront]->create(surface->w, surface->h, 1);
+	_buffers[kBitBack]->create(surface->w, surface->h, 1);
+
 	copyScreen(kBit2, kBitBack);
 }
 
@@ -778,12 +782,14 @@ Gfx::Gfx(Parallaction* vm) :
 	_buffers[kBitFront]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
 	_buffers[kBitBack] = new Graphics::Surface;
 	_buffers[kBitBack]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
-
 	_buffers[kBit2] = 0;
 
 	_depthMask = 0;
 
 	setPalette(_palette);
+
+	_screenX = 0;
+	_screenY = 0;
 
 	_bgLayers[0] = _bgLayers[1] = _bgLayers[2] = _bgLayers[3] = 0;
 

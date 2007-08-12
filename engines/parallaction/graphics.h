@@ -241,6 +241,9 @@ public:
 	PaletteFxRange		_palettefx[6];
 	Palette				_palette;
 
+	uint				_screenX;		// scrolling position
+	uint				_screenY;
+
 protected:
 	Parallaction*		_vm;
 	Graphics::Surface	*_buffers[NUM_BUFFERS];
