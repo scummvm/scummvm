@@ -202,10 +202,6 @@ public:
 	void backupGetBackground(GetData *data, int16 x, int16 y);
 	void restoreGetBackground(const Common::Rect& r, byte *data);
 
-	// hacks for Nippon Safes
-	void intGrottaHackMask();
-	void fillMaskRect(const Common::Rect& r, byte color);
-	void zeroMaskValue(uint16 x, uint16 y, byte color);
 
 	// low level surfaces
 	void clearScreen(Gfx::Buffers buffer);

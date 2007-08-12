@@ -329,7 +329,8 @@ void Parallaction_ns::_c_onMouse(void *parm) {
 
 void Parallaction_ns::_c_setMask(void *parm) {
 
-	_gfx->intGrottaHackMask();
+	memset(_backgroundInfo->mask.data + 3600, 0, 3600);
+	_gfx->_bgLayers[1] = 500;
 
 	return;
 }
@@ -583,7 +584,13 @@ void Parallaction_ns::_c_moveSheet(void *parm) {
 }
 
 void zeroMask(int x, int y, int color, void *data) {
-	_vm->_gfx->zeroMaskValue(x, y, color);
+	//_vm->_gfx->zeroMaskValue(x, y, color);
+
+	BackgroundInfo* info = (BackgroundInfo*)data;
+
+	uint16 _ax = x + y * info->width;
+	info->mask.data[_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
+
 }
 
 void Parallaction_ns::_c_sketch(void *parm) {
@@ -596,7 +603,7 @@ void Parallaction_ns::_c_sketch(void *parm) {
 	uint16 oldy = _rightHandPositions[2*(index-1)+1];
 	uint16 oldx = _rightHandPositions[2*(index-1)];
 
-	Graphics::drawLine(oldx, oldy, newx, newy, 0, zeroMask, NULL);
+	Graphics::drawLine(oldx, oldy, newx, newy, 0, zeroMask, _backgroundInfo);
 
 	_rightHandAnim->_left = newx;
 	_rightHandAnim->_top = newy - 20;
@@ -618,7 +625,12 @@ void Parallaction_ns::_c_shade(void *parm) {
 		_rightHandAnim->_top
 	);
 
-	_gfx->fillMaskRect(r, 0);
+	uint16 _di = r.left/4 + r.top * _backgroundInfo->mask.internalWidth;
+
+	for (uint16 _si = r.top; _si < r.bottom; _si++) {
+		memset(_backgroundInfo->mask.data + _di, 0, r.width()/4+1);
+		_di += _backgroundInfo->mask.internalWidth;
+	}
 
 	return;
 

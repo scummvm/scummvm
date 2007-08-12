@@ -730,36 +730,6 @@ void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uin
 	return;
 }
 
-/*
-	the following 3 routines are hacks for Nippon Safes coming from the original code,
-	so they shouldn't be modified when adding support for other games
-*/
-
-void Gfx::zeroMaskValue(uint16 x, uint16 y, byte color) {
-
-	uint16 _ax = x + y * _backgroundWidth;
-	_depthMask->data[_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
-
-	return;
-}
-void Gfx::fillMaskRect(const Common::Rect& r, byte color) {
-
-	uint16 _di = r.left/4 + r.top * _depthMask->internalWidth;
-
-	for (uint16 _si = r.top; _si < r.bottom; _si++) {
-		memset(_depthMask->data + _di, color, r.width()/4+1);
-		_di += _depthMask->internalWidth;
-	}
-
-	return;
-
-}
-void Gfx::intGrottaHackMask() {
-	memset(_depthMask->data + 3600, 0, 3600);
-	_bgLayers[1] = 500;
-	return;
-}
-
 
 int16 Gfx::queryMask(int16 v) {
 
