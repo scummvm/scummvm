@@ -584,12 +584,16 @@ public:
 	Table		*_audioCommandsNames;
 	const char **_audioCommandsNamesRes;
 
+	int			_part;
 	int			_progress;
 
 private:
 	void 		initResources();
 	void 		initFonts();
 	void 		freeFonts();
+
+	void		initPart();
+	void		freePart();
 
 	void setMousePointer(int16 index);
 	void initCursors();

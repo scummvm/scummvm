@@ -66,6 +66,8 @@ int Parallaction_br::init() {
 	initFonts();
 	initCursors();
 
+	_part = -1;
+
 	Parallaction::init();
 
 	return 0;
@@ -97,10 +99,34 @@ int Parallaction_br::go() {
 	// TODO: load progress value from special save game
 	_progress = 3;
 
-	// TODO: game loop :P
+	while ((_engineFlags & kEngineQuit) == 0) {
 
-	int option = showMenu();
-	printf("option = %i\n", option);
+//		initCharacter();
+
+		int option = showMenu();
+		switch (option) {
+		case kMenuQuit:
+			_engineFlags |= kEngineQuit;
+			break;
+
+		case kMenuLoadGame:
+			warning("loadgame not yet implemented");
+			break;
+
+		default:
+			_part = option;
+			initPart();
+			break;
+		}
+
+
+		runGame();
+
+		freePart();
+//		freeLocation();
+//		freeCharacter();
+
+	}
 
 	return 0;
 }
@@ -273,5 +299,16 @@ void Parallaction_br::setMousePointer(int16 index) {
 	_system->showMouse(true);
 
 }
+
+void Parallaction_br::initPart() {
+
+
+}
+
+void Parallaction_br::freePart() {
+
+
+}
+
 
 } // namespace Parallaction
