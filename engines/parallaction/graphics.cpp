@@ -745,6 +745,7 @@ Gfx::Gfx(Parallaction* vm) :
 
 	g_system->beginGFXTransaction();
 	g_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
+	_vm->initCommonGFX(_vm->getGameType() == GType_BRA);
 	g_system->endGFXTransaction();
 
 	_buffers[kBit2] = 0;
