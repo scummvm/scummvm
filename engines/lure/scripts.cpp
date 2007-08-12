@@ -1229,7 +1229,6 @@ bool HotspotScript::execute(Hotspot *h)
 		case S2_OPCODE_PLAY_SOUND:
 			param1 = nextVal(scriptData, offset);
 			param2 = nextVal(scriptData, offset);
-error("XYZZY Params=%d,%d", param1, param2);
 
 			if ((param2 == 0) || (room.roomNumber() == param2)) {
 				debugC(ERROR_DETAILED, kLureDebugScripts, "PLAY_SOUND(%d,%d)", param1, param2);
