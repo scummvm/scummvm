@@ -345,6 +345,7 @@ private:
 public:
 	Hotspot(HotspotData *res);
 	Hotspot(Hotspot *character, uint16 objType);
+	Hotspot();
 	~Hotspot();
 
 	void setAnimation(uint16 newAnimId);

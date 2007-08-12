@@ -35,6 +35,7 @@
 #include "lure/events.h"
 #include "lure/game.h"
 #include "lure/fights.h"
+#include "lure/sound.h"
 #include "common/endian.h"
 
 namespace Lure {
@@ -163,6 +164,39 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_frameWidth = _width;
 	_frameStartsUsed = false;
 	_nameBuffer[0] = '\0';
+}
+
+Hotspot::Hotspot(): _pathFinder(NULL) {
+	_data = NULL;
+	_anim = NULL;
+	_frames = NULL;
+	_numFrames = 0;
+	_persistant = false;
+	_hotspotId = 0xffff;
+	_override = NULL;
+	_colourOffset = 0;
+	_destHotspotId = 0;
+	_blockedOffset = 0;
+	_exitCtr = 0;
+	_voiceCtr = 0;
+	_walkFlag = false;
+	_skipFlag = false;
+	_roomNumber = 0;
+	_destHotspotId = 0;
+	_startX = 0;
+	_startY = 0;
+	_destX = 0;
+	_destY = 0;
+	_layer = 0;
+	_height = 0;
+	_width = 0;
+	_heightCopy = 0;
+	_widthCopy = 0;
+	_yCorrection = 0;
+	_tickCtr = 0;
+	_tickHandler = NULL;
+	_frameWidth = _width;
+	_frameStartsUsed = false;
 }
 
 Hotspot::~Hotspot() {
@@ -869,7 +903,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 				return PC_WAIT;
 
 		} else if (hotspot->actionHotspotId != _hotspotId) {
-			if (fields.getField(82) != 2) {
+			if (fields.getField(AREA_FLAG) != 2) {
 				showMessage(5, hotspot->hotspotId);
 				setDelayCtr(4);
 			}
@@ -1294,8 +1328,8 @@ void Hotspot::doClose(HotspotData *hotspot) {
 	joinRec = res.getExitJoin(hotspot->hotspotId);
 	if (!joinRec->blocked) {
 		// Close the door
-		if (!doorCloseCheck(joinRec->hotspot1Id) ||
-			!doorCloseCheck(joinRec->hotspot2Id)) {
+		if (!doorCloseCheck(joinRec->hotspots[0].hotspotId) ||
+			!doorCloseCheck(joinRec->hotspots[1].hotspotId)) {
 			// A character is preventing the door from closing
 			showMessage(2);
 		} else {
@@ -2587,38 +2621,37 @@ void HotspotTickHandlers::puzzledAnimHandler(Hotspot &h) {
 
 void HotspotTickHandlers::roomExitAnimHandler(Hotspot &h) {
 	Resources &res = Resources::getReference();
-//	ValueTableData &fields = res.fieldList();
+	ValueTableData &fields = res.fieldList();
+	Room &room = Room::getReference();
+
 	RoomExitJoinData *rec = res.getExitJoin(h.hotspotId());
 	if (!rec) return;
-	byte *currentFrame, *destFrame;
+	RoomExitJoinStruct &rs = (rec->hotspots[0].hotspotId == h.hotspotId()) ? 
+		rec->hotspots[0] : rec->hotspots[1];
 
-	if (rec->hotspot1Id == h.hotspotId()) {
-		currentFrame = &rec->h1CurrentFrame; 
-		destFrame = &rec->h1DestFrame;
-	} else {
-		currentFrame = &rec->h2CurrentFrame;
-		destFrame = &rec->h2DestFrame;
-	}
-	
-	if ((rec->blocked != 0) && (*currentFrame != *destFrame)) {
+	if ((rec->blocked != 0) && (rs.currentFrame != rs.destFrame)) {
 		// Closing the door
 		h.setOccupied(true);
 
-		++*currentFrame;
-		if (*currentFrame == *destFrame) {
-			// TODO: play closed door sound
-		}
-	} else if ((rec->blocked == 0) && (*currentFrame != 0)) {
+		++rs.currentFrame;
+		if ((rs.currentFrame == rs.destFrame) && (h.hotspotId() == room.roomNumber()))
+			Sound.addSound(rs.closeSound);
+
+	} else if ((rec->blocked == 0) && (rs.currentFrame != 0)) {
 		// Opening the door
 		h.setOccupied(false);
 
-		--*currentFrame;
-		if (*currentFrame == *destFrame) {
-			//TODO: Check against script val 88 and play sound
+		--rs.currentFrame;
+		if ((rs.currentFrame == rs.destFrame) && (h.hotspotId() == room.roomNumber())) {
+			Sound.addSound(rs.openSound);
+			
+			// If in the outside village, trash reverb
+			if (fields.getField(AREA_FLAG) == 1)
+				Sound.musicInterface_TrashReverb();
 		}
 	}
 
-	h.setFrameNumber(*currentFrame);
+	h.setFrameNumber(rs.currentFrame);
 }
 
 void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
@@ -2931,10 +2964,11 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 void HotspotTickHandlers::jailorAnimHandler(Hotspot &h) {
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
+	Game &game = Game::getReference();
 	HotspotData *player = res.getHotspot(PLAYER_ID);
 
 	if ((fields.getField(11) != 0) || (h.hotspotId() == CASTLE_SKORL_ID)) {
-		if (!h.skipFlag() && (h.roomNumber() == player->roomNumber)) {
+		if (!h.skipFlag() && !game.preloadFlag() && (h.roomNumber() == player->roomNumber)) {
 			if (Support::charactersIntersecting(h.resource(), player)) {
 				// Skorl has caught the player
 				Game::getReference().setState(GS_RESTORE_RESTART | GS_CAUGHT);
@@ -2965,6 +2999,9 @@ void HotspotTickHandlers::droppingTorchAnimHandler(Hotspot &h) {
 			Resources &res = Resources::getReference();
 			res.deactivateHotspot(h.hotspotId());
 			res.activateHotspot(0x41C);
+
+			// Add sound
+			Sound.addSound(8);			
 
 			// Enable the fire and activate its animation
 			HotspotData *fire = res.getHotspot(0x418);
