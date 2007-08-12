@@ -301,7 +301,6 @@ public:
 	~Parallaction();
 
 	int init();
-	int go();
 
 	void loadGame();
 	void saveGame();
@@ -378,7 +377,6 @@ public:
 	SoundMan		*_soundMan;
 
 	Gfx*			_gfx;
-	Menu*			_menu;
 	Disk*			_disk;
 
 	Character		_char;
@@ -412,8 +410,6 @@ protected:		// data
 		Label*  		_label;
 	};
 
-	bool		_skipMenu;
-
 	bool 		_mouseHidden;
 
 	// input-only
@@ -443,7 +439,6 @@ protected:		// data
 protected:		// members
 	bool detectGame(void);
 
-	void		initGame();
 	void		initGlobals();
 	void		runGame();
 	uint32		getElapsedTime();
@@ -509,6 +504,7 @@ public:
 	~Parallaction_ns();
 
 	int init();
+	int go();
 
 public:
 	typedef void (Parallaction_ns::*Callable)(void*);
@@ -517,6 +513,9 @@ public:
 	void renderLabel(Graphics::Surface *cnv, char *text);
 	void setMousePointer(int16 index);
 
+
+public:
+	Menu*			_menu;
 
 private:
 	void initFonts();

@@ -30,6 +30,8 @@
 
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
+#include "parallaction/menu.h"
+
 
 namespace Parallaction {
 
@@ -162,6 +164,41 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 
 	(this->*_callables[index])(parm);
 }
+
+
+int Parallaction_ns::go() {
+
+	_menu = new Menu(this);
+	_menu->start();
+
+	char *v4 = strchr(_location._name, '.');
+	if (v4) {
+		*v4 = '\0';
+	}
+
+	_globalTable = _disk->loadTable("global");
+
+	_engineFlags &= ~kEngineChangeLocation;
+	changeCharacter(_characterName);
+
+	strcpy(_saveData1, _location._name);
+	parseLocation(_location._name);
+
+	if (_location._startPosition.x != -1000) {
+		_char._ani._left = _location._startPosition.x;
+		_char._ani._top = _location._startPosition.y;
+		_char._ani._frame = _location._startFrame;
+		_location._startPosition.y = -1000;
+		_location._startPosition.x = -1000;
+	};
+
+	runGame();
+
+	delete _menu;
+
+	return 0;
+}
+
 
 
 } // namespace Parallaction

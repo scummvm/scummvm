@@ -35,7 +35,6 @@
 
 #include "parallaction/parallaction.h"
 #include "parallaction/debug.h"
-#include "parallaction/menu.h"
 #include "parallaction/sound.h"
 
 
@@ -152,7 +151,6 @@ int Parallaction::init() {
 	_objectsNames = NULL;
 	_globalTable = NULL;
 	_hasLocationSound = false;
-	_skipMenu = false;
 	_transCurrentHoverItem = 0;
 	_actionAfterWalk = false;  // actived when the character needs to move before taking an action
 	_activeItem._index = 0;
@@ -191,48 +189,7 @@ int Parallaction::init() {
 
 
 
-int Parallaction::go() {
 
-	initGame();
-	runGame();
-
-	return 0;
-}
-
-void Parallaction::initGame() {
-
-	_menu = new Menu(this);
-
-	initGlobals();
-	if (_skipMenu == false) {
-		_menu->start();
-	}
-
-	char *v4 = strchr(_location._name, '.');
-	if (v4) {
-		*v4 = '\0';
-	}
-
-	_engineFlags &= ~kEngineChangeLocation;
-	changeCharacter(_characterName);
-
-	strcpy(_saveData1, _location._name);
-	parseLocation(_location._name);
-
-	if (_location._startPosition.x != -1000) {
-		_char._ani._left = _location._startPosition.x;
-		_char._ani._top = _location._startPosition.y;
-		_char._ani._frame = _location._startFrame;
-		_location._startPosition.y = -1000;
-		_location._startPosition.x = -1000;
-	}
-
-	return;
-}
-
-void Parallaction::initGlobals() {
-	_globalTable = _disk->loadTable("global");
-}
 
 // FIXME: the engine has 3 event loops. The following routine hosts the main one,
 // and it's called from 8 different places in the code. There exist 2 more specialised
@@ -391,8 +348,6 @@ void Parallaction::runGame() {
 		}
 
 	}
-
-	delete _menu;
 
 	return;
 }
