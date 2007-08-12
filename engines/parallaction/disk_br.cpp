@@ -36,7 +36,11 @@ void DosDisk_br::errorFileNotFound(const char *s) {
 
 Common::String DosDisk_br::selectArchive(const Common::String& name) {
 	debugC(5, kDebugDisk, "DosDisk_br::selectArchive");
-	return "";
+
+	Common::String oldPath(_partPath);
+	strcpy(_partPath, name.c_str());
+
+	return oldPath;
 }
 
 void DosDisk_br::setLanguage(uint16 language) {
@@ -175,6 +179,24 @@ BackgroundInfo* DosDisk_br::loadScenery(const char *name, const char *mask, cons
 
 Table* DosDisk_br::loadTable(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadTable");
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/%s.tab", _partPath, name);
+
+	Common::File	stream;
+	if (!stream.open(path))
+		errorFileNotFound(path);
+
+	Table *t = new Table(100);
+
+	fillBuffers(stream);
+	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
+		t->addData(_tokens[0]);
+		fillBuffers(stream);
+	}
+
+	stream.close();
+
 	return 0;
 }
 

@@ -200,6 +200,7 @@ class DosDisk_br : public Disk {
 
 protected:
 	Parallaction 	*_vm;
+	char			_partPath[PATH_LEN];
 
 protected:
 	void errorFileNotFound(const char *s);
