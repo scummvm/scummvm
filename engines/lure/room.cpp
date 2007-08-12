@@ -539,8 +539,10 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 		int numSeconds = (g_system->getMillis() - _roomData->exitTime) / 1000;
 		if (numSeconds > 300) numSeconds = 300;
 
+		game.preloadFlag() = true;
 		while (numSeconds-- > 0)
-			game.tick(true);
+			game.tick();
+		game.preloadFlag() = false;
 	}
 
 	update();
