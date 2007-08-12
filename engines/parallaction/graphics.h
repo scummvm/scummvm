@@ -241,8 +241,8 @@ public:
 	PaletteFxRange		_palettefx[6];
 	Palette				_palette;
 
-	uint 				_backgroundWidth;
-	uint 				_backgroundHeight;
+	int 				_backgroundWidth;
+	int 				_backgroundHeight;
 
 	uint				_screenX;		// scrolling position
 	uint				_screenY;
@@ -255,6 +255,9 @@ protected:
 	bool				_halfbrite;
 
 protected:
+	void initBuffers(int w, int h);
+	void freeBuffers();
+
 	void copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch);
 	void flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer, byte transparentColor);
 	void blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer);

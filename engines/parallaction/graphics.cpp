@@ -693,15 +693,11 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 }
 
 
+
 void Gfx::setBackground(Graphics::Surface *surface) {
 	_buffers[kBit2] = surface;
 
-	_backgroundWidth = surface->w;
-	_backgroundHeight = surface->h;
-
-	_buffers[kBitFront]->create(surface->w, surface->h, 1);
-	_buffers[kBitBack]->create(surface->w, surface->h, 1);
-
+	initBuffers(surface->w, surface->h);
 	copyScreen(kBit2, kBitBack);
 }
 
@@ -781,16 +777,10 @@ Gfx::Gfx(Parallaction* vm) :
 	g_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
 	g_system->endGFXTransaction();
 
-	_backgroundWidth = _vm->_screenWidth;
-	_backgroundHeight = _vm->_screenHeight;
-
-	_buffers[kBitFront] = new Graphics::Surface;
-	_buffers[kBitFront]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
-	_buffers[kBitBack] = new Graphics::Surface;
-	_buffers[kBitBack]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
 	_buffers[kBit2] = 0;
-
 	_depthMask = 0;
+
+	initBuffers(_vm->_screenWidth, _vm->_screenHeight);
 
 	setPalette(_palette);
 
@@ -810,12 +800,48 @@ Gfx::Gfx(Parallaction* vm) :
 
 Gfx::~Gfx() {
 
-	_buffers[kBitFront]->free();
-	delete _buffers[kBitFront];
-	_buffers[kBitBack]->free();
-	delete _buffers[kBitBack];
+	freeBuffers();
 
 	return;
+}
+
+void Gfx::initBuffers(int w, int h) {
+
+	_backgroundWidth = w;
+	_backgroundHeight = h;
+
+	if (!_buffers[kBitFront]) {
+		_buffers[kBitFront] = new Graphics::Surface;
+	}
+
+	if (!_buffers[kBitBack]) {
+		_buffers[kBitBack] = new Graphics::Surface;
+	}
+
+	if (_buffers[kBitFront]->w != w || _buffers[kBitFront]->h != h) {
+		_buffers[kBitFront]->create(w, h, 1);
+	}
+
+	if (_buffers[kBitBack]->w != w || _buffers[kBitBack]->h != h) {
+		_buffers[kBitBack]->create(w, h, 1);
+	}
+
+}
+
+void Gfx::freeBuffers() {
+
+	if (_buffers[kBitFront]) {
+		_buffers[kBitFront]->free();
+		delete _buffers[kBitFront];
+	}
+
+	if (_buffers[kBitBack]) {
+		_buffers[kBitBack]->free();
+		delete _buffers[kBitBack];
+	}
+
+	_buffers[kBitFront] = 0;
+	_buffers[kBitBack] = 0;
 }
 
 
