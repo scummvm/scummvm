@@ -30,7 +30,7 @@
 #include "common/endian.h"
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 20
+#define VERSION_MINOR 21
 #define ENGLISH_LURE 
 
 #define DATA_SEGMENT 0xac50
@@ -87,6 +87,9 @@
 #define WALK_AREAS_OFFSET 0x2EB1
 
 #define EXIT_HOTSPOTS_OFFSET 0x2E57
+
+#define SOUND_1_OFFSET 0x5671
+#define SOUND_1_SIZE 265
 
 #pragma pack(1)
 
