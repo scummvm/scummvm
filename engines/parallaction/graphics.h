@@ -241,6 +241,9 @@ public:
 	PaletteFxRange		_palettefx[6];
 	Palette				_palette;
 
+	uint 				_backgroundWidth;
+	uint 				_backgroundHeight;
+
 	uint				_screenX;		// scrolling position
 	uint				_screenY;
 

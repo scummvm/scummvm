@@ -322,7 +322,7 @@ void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 	for (uint16 i = 0; i < h; i++) {
 		memset(d, color, w);
 
-		d += _vm->_screenWidth;
+		d += _backgroundWidth;
 	}
 
 	return;
@@ -357,7 +357,7 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer, byte 
 	byte *d = (byte*)_buffers[buffer]->getBasePtr(dp.x, dp.y);
 
 	uint sPitch = r.width() - q.width();
-	uint dPitch = _vm->_screenWidth - q.width();
+	uint dPitch = _backgroundWidth - q.width();
 
 	for (uint16 i = q.top; i < q.bottom; i++) {
 		for (uint16 j = q.left; j < q.right; j++) {
@@ -387,7 +387,7 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 	byte *d = (byte*)_buffers[buffer]->getBasePtr(dp.x, dp.y);
 
 	uint sPitch = r.width() - q.width();
-	uint dPitch = _vm->_screenWidth - q.width();
+	uint dPitch = _backgroundWidth - q.width();
 
 	for (uint16 i = 0; i < q.height(); i++) {
 
@@ -493,7 +493,7 @@ void Gfx::blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffe
 
 void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 	byte *s = (byte*)_buffers[kBit2]->getBasePtr(x, y);
-	copyRect(data->_cnv->_width, data->_cnv->_height, data->_background, data->_cnv->_width, s, _vm->_screenWidth);
+	copyRect(data->_cnv->_width, data->_cnv->_height, data->_background, data->_cnv->_width, s,_backgroundWidth);
 	return;
 }
 
@@ -503,7 +503,7 @@ void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 	byte *s = (byte*)_buffers[kBitBack]->getBasePtr(x, y);
 	byte *d = data->_backup;
 
-	uint pitch = _vm->_screenWidth - data->_cnv->w;
+	uint pitch = _backgroundWidth - data->_cnv->w;
 
 	for (uint16 i = 0; i < data->_cnv->h ; i++) {
 		for (uint16 j = 0; j < data->_cnv->w ; j++) {
@@ -530,7 +530,7 @@ void Gfx::restoreDoorBackground(const Common::Rect& r, byte *data, byte* backgro
 	byte *d0 = (byte*)_buffers[kBitBack]->getBasePtr(r.left, r.top);
 	byte *d1 = (byte*)_buffers[kBit2]->getBasePtr(r.left, r.top);
 
-	uint pitch = _vm->_screenWidth - r.width();
+	uint pitch = _backgroundWidth - r.width();
 
 	for (uint16 i = 0; i < r.height() ; i++) {
 		for (uint16 j = 0; j < r.width() ; j++) {
@@ -678,16 +678,16 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 	if (left < 0) left = 0;
 	if (top < 0) top = 0;
 
-	if (left >= _vm->_screenWidth) return;
-	if (top >= _vm->_screenHeight) return;
+	if (left >= _backgroundWidth) return;
+	if (top >= _backgroundHeight) return;
 
-	if (left+width >= _vm->_screenWidth) width = _vm->_screenWidth - left;
-	if (top+height >= _vm->_screenHeight) height = _vm->_screenHeight - top;
+	if (left+width >= _backgroundWidth) width = _backgroundWidth - left;
+	if (top+height >= _backgroundHeight) height = _backgroundHeight - top;
 
 	Common::Rect q(width, height);
 	q.moveTo(left, top);
 
-	copyRect(kBitBack, q, (byte*)_buffers[kBit2]->getBasePtr(q.left, q.top), _vm->_screenWidth);
+	copyRect(kBitBack, q, (byte*)_buffers[kBit2]->getBasePtr(q.left, q.top), _backgroundWidth);
 
 	return;
 }
@@ -695,6 +695,9 @@ void Gfx::restoreBackground(const Common::Rect& r) {
 
 void Gfx::setBackground(Graphics::Surface *surface) {
 	_buffers[kBit2] = surface;
+
+	_backgroundWidth = surface->w;
+	_backgroundHeight = surface->h;
 
 	_buffers[kBitFront]->create(surface->w, surface->h, 1);
 	_buffers[kBitBack]->create(surface->w, surface->h, 1);
@@ -720,14 +723,14 @@ void Gfx::copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src,
 
 void Gfx::copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch) {
 	byte *d = (byte*)_buffers[dstbuffer]->getBasePtr(r.left, r.top);
-	copyRect(r.width(), r.height(), d, _vm->_screenWidth, src, pitch);
+	copyRect(r.width(), r.height(), d, _backgroundWidth, src, pitch);
 	return;
 }
 
 
 void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch) {
 	byte *s = (byte*)_buffers[srcbuffer]->getBasePtr(r.left, r.top);
-	copyRect(r.width(), r.height(), dst, pitch, s, _vm->_screenWidth);
+	copyRect(r.width(), r.height(), dst, pitch, s, _backgroundWidth);
 	return;
 }
 
@@ -738,7 +741,7 @@ void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uin
 
 void Gfx::zeroMaskValue(uint16 x, uint16 y, byte color) {
 
-	uint16 _ax = x + y * _vm->_screenWidth;
+	uint16 _ax = x + y * _backgroundWidth;
 	_depthMask->data[_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
 
 	return;
@@ -777,6 +780,9 @@ Gfx::Gfx(Parallaction* vm) :
 	g_system->beginGFXTransaction();
 	g_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
 	g_system->endGFXTransaction();
+
+	_backgroundWidth = _vm->_screenWidth;
+	_backgroundHeight = _vm->_screenHeight;
 
 	_buffers[kBitFront] = new Graphics::Surface;
 	_buffers[kBitFront]->create(_vm->_screenWidth, _vm->_screenHeight, 1);
