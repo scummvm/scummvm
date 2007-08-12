@@ -34,7 +34,7 @@ namespace Lure {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 20
+#define LURE_DAT_MINOR 21
 
 #define LURE_DEBUG 1
 
@@ -222,12 +222,12 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 #define EXIT_HOTSPOT_ID_LIST 0x3f15
 #define FIGHT_DATA_RESOURCE_ID 0x3f16
 #define STRING_LIST_RESOURCE_ID 0x3f17
+#define SOUND_DESC_RESOURCE_ID 0x3f18
 
 // Script constants
 #define STARTUP_SCRIPT 0x23FC
 
 // Miscellaneous resources
-#define CREDITS_RESOURCE_ID 0x7800
 #define NAMES_RESOURCE_ID 9
 #define NOONE_ID 0x3E7
 #define PLAYER_ID 0x3E8
@@ -249,12 +249,16 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 #define SKORL_FIGHTER_ID 0x444
 #define START_EXIT_ID 0x2710
 #define BOTTLE_HOTSPOT_ID 0x2710
+#define CELL_DOOR_HOTSPOT_ID 0x2712
 #define BRICKS_ID 0x2714
 #define BOOK_ID 0x2723
 #define START_NONVISUAL_HOTSPOT_ID 0x7530
+#define CREDITS_RESOURCE_ID 0x7800
+#define RESTART_RESOURCE_ID 0x7900
 
 // Milliseconds delay between game frames
 #define GAME_FRAME_DELAY 80
+#define GAME_TICK_DELAY 20
 
 // Tick proc constants
 #define STANDARD_CHARACTER_TICK_PROC 0x4f82 
@@ -293,6 +297,7 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 #define MAX_TELL_COMMANDS 8
 #define MAX_SAVEGAME_SLOTS 10
 
+#define ROOMNUM_VILLAGE_SHOP 35
 #define ROOMNUM_CAVE 38
 #define ROOMNUM_CELLAR 42
 #define ROOMNUM_DINING_HALL 45
