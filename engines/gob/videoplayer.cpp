@@ -329,6 +329,7 @@ void VideoPlayer::closeVideo() {
 
 	_video = 0;
 	_stream = 0;
+	*_curFile = 0;
 }
 
 } // End of namespace Gob
