@@ -87,14 +87,15 @@ Cnv* DosDisk_br::loadTalk(const char *name) {
 Script* DosDisk_br::loadLocation(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadLocation");
 
-	char path[PATH_LEN];
-	sprintf(path, "%s/%s/%s.loc", _partPath, _languageDir, name);
-
-	debugC(3, kDebugDisk, "DosDisk_br::loadLocation(%s): trying '%s'", name, path);
-
 	Common::File stream;
-	if (!stream.open(path))
-		errorFileNotFound(path);
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/%s/%s.slf", _partPath, _languageDir, name);
+	if (!stream.open(path)) {
+		sprintf(path, "%s/%s/%s.loc", _partPath, _languageDir, name);
+		if (!stream.open(path))
+			errorFileNotFound(path);
+	}
 
 	return new Script(&stream, false);
 }
