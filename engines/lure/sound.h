@@ -24,14 +24,45 @@
 #define LURE_SOUND_H
 
 #include "lure/luredefs.h"
+#include "lure/disk.h"
+#include "lure/memory.h"
 #include "common/singleton.h"
 
 namespace Lure {
 
+#define NUM_CHANNELS 8
+
 class SoundManager: public Common::Singleton<SoundManager> {
+private:
+	MemoryBlock *_descs;
+	int _numDescs;
+	SoundDescResource *soundDescs() { return (SoundDescResource *) _descs->data(); }
+	ManagedList<SoundDescResource *> _activeSounds;
+	byte _channels[NUM_CHANNELS];
+
+	void bellsBodge();
 public:
-	static void killSounds();
-	static void playSound(uint16 soundId);
+	SoundManager();
+
+	void killSounds();
+	void addSound(uint8 soundIndex, bool tidyFlag = true);
+	void addSound2(uint8 soundIndex);
+	void stopSound(uint8 soundIndex);
+	void killSound(uint8 soundNumber);
+	void setVolume(uint8 soundNumber, uint8 volume);
+	void tidySounds();
+	SoundDescResource *findSound(uint8 soundNumber);
+	void removeSounds();
+	void restoreSounds();
+
+	// The following methods implement the external sound player module
+	void musicInterface_Play(uint8 soundNumber, bool isEffect, uint8 channelNumber);
+	void musicInterface_Stop(uint8 soundNumber);
+	bool musicInterface_CheckPlaying(uint8 soundNumber);
+	void musicInterface_SetVolume(uint8 channelNum, uint8 volume);
+	void musicInterface_KillAll();
+	void musicInterface_ContinuePlaying();
+	void musicInterface_TrashReverb();
 };
 
 } // End of namespace Lure
