@@ -596,6 +596,7 @@ private:
 
 	void		initPart();
 	void		freePart();
+	void		startPart();
 
 	void setMousePointer(int16 index);
 	void initCursors();

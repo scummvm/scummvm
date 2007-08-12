@@ -49,6 +49,14 @@ const char *partNames[] = {
 	"PART4"
 };
 
+const char *partFirstLocation[] = {
+	"intro",
+	"museo",
+	"start",
+	"bolscoi",
+	"treno"
+};
+
 int Parallaction_br::init() {
 
 	// Detect game
@@ -63,6 +71,7 @@ int Parallaction_br::init() {
 	if (getGameType() == GType_BRA) {
 		if (getPlatform() == Common::kPlatformPC) {
 			_disk = new DosDisk_br(this);
+			_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
 		} else
 			error("unsupported platform for Big Red Adventure");
 	} else
@@ -124,7 +133,7 @@ int Parallaction_br::go() {
 		default:
 			_part = option;
 			_disk->selectArchive(partNames[_part]);
-			initPart();
+			startPart();
 			break;
 		}
 
@@ -277,10 +286,9 @@ int Parallaction_br::showMenu() {
 
 void Parallaction_br::initFonts() {
 
-	// TODO: find out which font is used for labels
-
 	_menuFont = _disk->loadFont("russia");
 	_dialogueFont = _disk->loadFont("comic");
+	_labelFont = _menuFont;
 
 }
 
@@ -324,6 +332,17 @@ void Parallaction_br::freePart() {
 	delete _globalTable;
 	delete _objectsNames;
 	delete _countersNames;
+
+}
+
+void Parallaction_br::startPart() {
+
+	initPart();
+
+	strcpy(_location._name, partFirstLocation[_part]);
+
+	parseLocation("common");
+	parseLocation(_location._name);
 
 }
 
