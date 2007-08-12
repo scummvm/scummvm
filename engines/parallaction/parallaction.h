@@ -581,6 +581,8 @@ public:
 	virtual	void callFunction(uint index, void* parm);
 
 public:
+	Table		*_countersNames;
+
 	Table		*_audioCommandsNames;
 	const char **_audioCommandsNamesRes;
 

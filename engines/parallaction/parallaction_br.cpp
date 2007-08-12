@@ -41,6 +41,14 @@ enum MenuOptions {
 	kMenuQuit = 6
 };
 
+const char *partNames[] = {
+	"PART0",
+	"PART1",
+	"PART2",
+	"PART3",
+	"PART4"
+};
+
 int Parallaction_br::init() {
 
 	// Detect game
@@ -115,6 +123,7 @@ int Parallaction_br::go() {
 
 		default:
 			_part = option;
+			_disk->selectArchive(partNames[_part]);
 			initPart();
 			break;
 		}
@@ -218,7 +227,7 @@ int Parallaction_br::showMenu() {
 
 	while (true) {
 
-		if ((_mouseButtons == kMouseLeftUp) && selectedItem > 0)
+		if ((_mouseButtons == kMouseLeftUp) && selectedItem >= 0)
 			break;
 
 		updateInput();
@@ -302,11 +311,19 @@ void Parallaction_br::setMousePointer(int16 index) {
 
 void Parallaction_br::initPart() {
 
+	_globalTable = _disk->loadTable("global");
+	_objectsNames = _disk->loadTable("objects");
+	_countersNames = _disk->loadTable("counters");
+
+//	_disk->loadObjects("icone.ico");
 
 }
 
 void Parallaction_br::freePart() {
 
+	delete _globalTable;
+	delete _objectsNames;
+	delete _countersNames;
 
 }
 
