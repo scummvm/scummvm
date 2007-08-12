@@ -714,17 +714,20 @@ void Script::randomToGeneral(uint16 maxVal, uint16 minVal, uint16 v3) {
 // Checks the status of the cell door, and starts music depending on it's state
 
 void Script::checkCellDoor(uint16 v1, uint16 v2, uint16 v3) {
-	// In the original game, this method checks to see if the cell door
-	// is currently open, if it is, starts a music sequence. 
-	// TODO: Implement starting music if cell door is open
+	Resources &res = Resources::getReference();
+	RoomExitJoinData *joinRec = res.getExitJoin(CELL_DOOR_HOTSPOT_ID);
+
+	if ((joinRec->blocked == 0) && (res.fieldList().getField(TORCH_HIDE) != 0))
+		Sound.addSound(0x15);
 }
 
 // Checks if a sound is running
 
-void Script::checkSound(uint16 hotspotId, uint16 actions, uint16 v3) {
+void Script::checkSound(uint16 hotspotId, uint16 v2, uint16 v3) {
 	// For now, simply set the general value field so that the Skorl schedule
 	// will work properly
 	Resources::getReference().fieldList().setField(GENERAL, 0);
+	// TODO: Check whether active sound can be found or not
 }
 
 typedef void(*SequenceMethodPtr)(uint16, uint16, uint16);
@@ -1155,6 +1158,7 @@ int16 HotspotScript::nextVal(MemoryBlock *data, uint16 &offset) {
 bool HotspotScript::execute(Hotspot *h)
 {
 	Resources &r = Resources::getReference();
+	Room &room = Room::getReference();
 	MemoryBlock *scriptData = r.hotspotScriptData();
 	uint16 offset = h->hotspotScript();
 	int16 opcode = 0;
@@ -1225,14 +1229,18 @@ bool HotspotScript::execute(Hotspot *h)
 		case S2_OPCODE_PLAY_SOUND:
 			param1 = nextVal(scriptData, offset);
 			param2 = nextVal(scriptData, offset);
-			debugC(ERROR_DETAILED, kLureDebugScripts, "PLAY_SOUND(%d,%d)", param1, param2);
-//			warning("UNKNOWN_247 stub called");
+error("XYZZY Params=%d,%d", param1, param2);
+
+			if ((param2 == 0) || (room.roomNumber() == param2)) {
+				debugC(ERROR_DETAILED, kLureDebugScripts, "PLAY_SOUND(%d,%d)", param1, param2);
+				Sound.addSound2((uint8)param1);
+			}
 			break;
 
 		case S2_OPCODE_STOP_SOUND:
 			param1 = nextVal(scriptData, offset);
 			debugC(ERROR_DETAILED, kLureDebugScripts, "STOP_SOUND()");
-//			warning("UNKNOWN_258 stub called");
+			Sound.stopSound((uint8)param1);
 			break;
 
 		case S2_OPCODE_ACTIONS:
