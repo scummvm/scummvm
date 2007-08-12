@@ -585,9 +585,10 @@ public:
 	Table		*_audioCommandsNames;
 	const char **_audioCommandsNamesRes;
 
+	int			_progress;
+
 private:
 	void 		initResources();
-	void 		initGame();
 	void 		initFonts();
 	void 		freeFonts();
 

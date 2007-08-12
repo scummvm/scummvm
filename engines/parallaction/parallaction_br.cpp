@@ -31,6 +31,16 @@
 
 namespace Parallaction {
 
+enum MenuOptions {
+	kMenuPart0 = 0,
+	kMenuPart1 = 1,
+	kMenuPart2 = 2,
+	kMenuPart3 = 3,
+	kMenuPart4 = 4,
+	kMenuLoadGame = 5,
+	kMenuQuit = 6
+};
+
 int Parallaction_br::init() {
 
 	// Detect game
@@ -81,12 +91,17 @@ void Parallaction_br::callFunction(uint index, void* parm) {
 }
 
 int Parallaction_br::go() {
-
-	initGame();
+/*
+	splash("dyna");
+	splash("core");
+*/
+	// TODO: load progress value from special save game
+	_progress = 0;
 
 	// TODO: game loop :P
 
-	showMenu();
+	int option = showMenu();
+	printf("option = %i\n", option);
 
 	return 0;
 }
@@ -153,37 +168,56 @@ int Parallaction_br::showMenu() {
 		"PART 4"
 	};
 
+	MenuOptions options[7] = {
+		kMenuPart0,
+		kMenuPart1,
+		kMenuLoadGame,
+		kMenuQuit,
+		kMenuPart2,
+		kMenuPart3,
+		kMenuPart4
+	};
+
 	info = _disk->loadSlide("tbra");
 	_gfx->setPalette(info->palette);
 	_gfx->flatBlitCnv(&info->bg, 20, 50, Gfx::kBitFront);
 
-	for (uint i = 0; i < 7; i++)
+	int availItems = 4 + _progress;
+
+	for (int i = 0; i < availItems; i++)
 		renderMenuItem(_menuItems[i], menuStrings[i]);
 
 	int selectedItem = -1, oldSelectedItem = -2;
 
 	setMousePointer(0);
 
-	while (_mouseButtons != kMouseLeftUp) {
+	while (true) {
+
+		if ((_mouseButtons == kMouseLeftUp) && selectedItem > 0)
+			break;
 
 		updateInput();
 
 		if ((_mousePos.x > MENUITEMS_X) && (_mousePos.x < (MENUITEMS_X+MENUITEM_WIDTH)) && (_mousePos.y > MENUITEMS_Y)) {
 			selectedItem = (_mousePos.y - MENUITEMS_Y) / MENUITEM_HEIGHT;
+
+			if (!(selectedItem < availItems))
+				selectedItem = -1;
 		} else
 			selectedItem = -1;
 
+
 		if (selectedItem != oldSelectedItem) {
 
-			if (selectedItem >= 0 && selectedItem < 7)
+			if (selectedItem >= 0 && selectedItem < availItems)
 				invertMenuItem(_menuItems[selectedItem]);
 
-			if (oldSelectedItem >= 0 && oldSelectedItem < 7)
+			if (oldSelectedItem >= 0 && oldSelectedItem < availItems)
 				invertMenuItem(_menuItems[oldSelectedItem]);
 
 			Common::Rect r(MENUITEM_WIDTH, MENUITEM_HEIGHT);
 
-			for (uint i = 0; i < 7; i++) {
+			for (int i = 0; i < availItems; i++) {
 				r.moveTo(MENUITEMS_X, MENUITEMS_Y + i * 20);
 				_gfx->copyRect(Gfx::kBitFront, r, (byte*)_menuItems[i].pixels, _menuItems[i].pitch);
 			}
@@ -200,20 +234,11 @@ int Parallaction_br::showMenu() {
 	info->bg.free();
 	delete info;
 
-	for (uint i = 0; i < 7; i++)
+	for (int i = 0; i < availItems; i++)
 		_menuItems[i].free();
 
-	return selectedItem;
+	return options[selectedItem];
 }
-
-void Parallaction_br::initGame() {
-
-	splash("dyna");
-	splash("core");
-
-	return;
-}
-
 
 
 void Parallaction_br::initFonts() {
