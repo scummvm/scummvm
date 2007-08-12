@@ -240,9 +240,7 @@ void Parallaction::freeBackground() {
 	_backgroundInfo->bg.free();
 	_backgroundInfo->mask.free();
 	_backgroundInfo->path.free();
-	delete _backgroundInfo;
 
-	_backgroundInfo = 0;
 	_pathBuffer = 0;
 
 }
@@ -251,7 +249,7 @@ void Parallaction::setBackground(const char *background, const char *mask, const
 
 	freeBackground();
 
-	_backgroundInfo = _disk->loadScenery(background, mask, path);
+	_disk->loadScenery(*_backgroundInfo, background, mask, path);
 
 	_gfx->setPalette(_backgroundInfo->palette);
 	_gfx->_palette.clone(_backgroundInfo->palette);
@@ -316,21 +314,21 @@ extern Job     *_jEraseLabel;
 
 void Parallaction::showSlide(const char *name) {
 
-	BackgroundInfo *info;
+	BackgroundInfo info;
 
-	info = _disk->loadSlide(name);
+	_disk->loadSlide(info, name);
 
 	// TODO: avoid using screen buffers for displaying slides. Using a generic buffer
 	// allows for positioning of graphics as needed by Big Red Adventure.
 	// The main problem lies with menu, which relies on multiple buffers, mainly because
 	// it is crappy code.
-	_gfx->setBackground(&info->bg);
-	_gfx->setPalette(info->palette);
+	_gfx->setBackground(&info.bg);
+	_gfx->setPalette(info.palette);
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 
-	info->bg.free();
-	info->mask.free();
-	info->path.free();
+	info.bg.free();
+	info.mask.free();
+	info.path.free();
 
 	return;
 }

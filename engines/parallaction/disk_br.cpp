@@ -175,7 +175,7 @@ Cnv* DosDisk_br::loadFrames(const char* name) {
 // doesn't need slides in that sense, but it still has some special
 // graphics resources with palette data, so those will be named slides.
 //
-BackgroundInfo* DosDisk_br::loadSlide(const char *name) {
+void DosDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadSlide");
 
 	char path[PATH_LEN];
@@ -185,29 +185,27 @@ BackgroundInfo* DosDisk_br::loadSlide(const char *name) {
 	if (!stream.open(path))
 		errorFileNotFound(path);
 
-	BackgroundInfo* info = new BackgroundInfo;
-
 	stream.skip(4);
-	info->width = stream.readUint32BE();
-	info->height = stream.readUint32BE();
+	info.width = stream.readUint32BE();
+	info.height = stream.readUint32BE();
 	stream.skip(20);
 
 	byte rgb[768];
 	stream.read(rgb, 768);
 
 	for (uint i = 0; i < 256; i++) {
-		info->palette.setEntry(i, rgb[i] >> 2, rgb[i+256] >> 2, rgb[i+512] >> 2);
+		info.palette.setEntry(i, rgb[i] >> 2, rgb[i+256] >> 2, rgb[i+512] >> 2);
 	}
 
-	info->bg.create(info->width, info->height, 1);
-	stream.read(info->bg.pixels, info->width * info->height);
+	info.bg.create(info.width, info.height, 1);
+	stream.read(info.bg.pixels, info.width * info.height);
 
-	return info;
+	return;
 }
 
-BackgroundInfo* DosDisk_br::loadScenery(const char *name, const char *mask, const char* path) {
+void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char *mask, const char* path) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadScenery");
-	return 0;
+	return;
 }
 
 Table* DosDisk_br::loadTable(const char* name) {

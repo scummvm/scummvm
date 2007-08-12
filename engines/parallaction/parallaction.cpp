@@ -123,6 +123,7 @@ Parallaction::~Parallaction() {
 	delete _debugger;
 
 	freeBackground();
+	delete _backgroundInfo;
 
 	delete _globalTable;
 
@@ -169,6 +170,7 @@ int Parallaction::init() {
 
 	_screenSize = _screenWidth * _screenHeight;
 
+	_backgroundInfo = new BackgroundInfo;
 
 	strcpy(_characterName1, "null");
 	strcpy(_characterName, "dough");

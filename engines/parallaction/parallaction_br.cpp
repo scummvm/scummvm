@@ -151,26 +151,24 @@ int Parallaction_br::go() {
 
 void Parallaction_br::splash(const char *name) {
 
-	BackgroundInfo *info;
+	BackgroundInfo info;
 
 	_gfx->clearScreen(Gfx::kBitFront);
 
-	info = _disk->loadSlide(name);
-	_gfx->setPalette(info->palette);
-	_gfx->flatBlitCnv(&info->bg, (640 - info->width) >> 1, (400 - info->height) >> 1, Gfx::kBitFront);
+	_disk->loadSlide(info, name);
+	_gfx->setPalette(info.palette);
+	_gfx->flatBlitCnv(&info.bg, (640 - info.width) >> 1, (400 - info.height) >> 1, Gfx::kBitFront);
 	_gfx->updateScreen();
 	_system->delayMillis(600);
 
 	Palette pal;
 	for (uint i = 0; i < 64; i++) {
-		info->palette.fadeTo(pal, 1);
-		_gfx->setPalette(info->palette);
+		info.palette.fadeTo(pal, 1);
+		_gfx->setPalette(info.palette);
 		_gfx->updateScreen();
 		_system->delayMillis(20);
 	}
-	info->bg.free();
-
-	delete info;
+	info.bg.free();
 
 	return;
 }
@@ -197,7 +195,7 @@ int Parallaction_br::showMenu() {
 
 	_gfx->clearScreen(Gfx::kBitFront);
 
-	BackgroundInfo *info;
+	BackgroundInfo info;
 
 	Graphics::Surface	_menuItems[7];
 
@@ -221,9 +219,9 @@ int Parallaction_br::showMenu() {
 		kMenuPart4
 	};
 
-	info = _disk->loadSlide("tbra");
-	_gfx->setPalette(info->palette);
-	_gfx->flatBlitCnv(&info->bg, 20, 50, Gfx::kBitFront);
+	_disk->loadSlide(info, "tbra");
+	_gfx->setPalette(info.palette);
+	_gfx->flatBlitCnv(&info.bg, 20, 50, Gfx::kBitFront);
 
 	int availItems = 4 + _progress;
 
@@ -274,8 +272,7 @@ int Parallaction_br::showMenu() {
 
 	_system->showMouse(false);
 
-	info->bg.free();
-	delete info;
+	info.bg.free();
 
 	for (int i = 0; i < availItems; i++)
 		_menuItems[i].free();

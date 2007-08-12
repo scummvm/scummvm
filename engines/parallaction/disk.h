@@ -59,8 +59,8 @@ public:
 	virtual Font* loadFont(const char* name) = 0;
 	virtual Graphics::Surface* loadStatic(const char* name) = 0;
 	virtual Cnv* loadFrames(const char* name) = 0;
-	virtual BackgroundInfo* loadSlide(const char *filename) = 0;
-	virtual BackgroundInfo* loadScenery(const char* background, const char* mask, const char* path) = 0;
+	virtual void loadSlide(BackgroundInfo& info, const char *filename) = 0;
+	virtual void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path) = 0;
 	virtual Table* loadTable(const char* name) = 0;
 	virtual Common::SeekableReadStream* loadMusic(const char* name) = 0;
 	virtual Common::ReadStream* loadSound(const char* name) = 0;
@@ -129,10 +129,10 @@ private:
 	Cnv* loadExternalCnv(const char *filename);
 	Cnv* loadCnv(const char *filename);
 	Graphics::Surface *loadExternalStaticCnv(const char *filename);
-	BackgroundInfo* loadBackground(const char *filename);
-	void loadMaskAndPath(const char *name, BackgroundInfo *info);
+	void loadBackground(BackgroundInfo& info, const char *filename);
+	void loadMaskAndPath(BackgroundInfo& info, const char *name);
 	void parseDepths(Common::SeekableReadStream &stream);
-	void parseBackground(Common::SeekableReadStream &stream, BackgroundInfo *info);
+	void parseBackground(BackgroundInfo& info, Common::SeekableReadStream &stream);
 	Font *createFont(const char *name, Cnv* cnv);
 
 protected:
@@ -151,8 +151,8 @@ public:
 	Font* loadFont(const char* name);
 	Graphics::Surface* loadStatic(const char* name);
 	Cnv* loadFrames(const char* name);
-	BackgroundInfo* loadSlide(const char *filename);
-	BackgroundInfo* loadScenery(const char* background, const char* mask, const char* path);
+	void loadSlide(BackgroundInfo& info, const char *filename);
+	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);
 	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
@@ -168,9 +168,9 @@ protected:
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
 	Common::SeekableReadStream *openArchivedFile(const char* name, bool errorOnFileNotFound = false);
 	Font *createFont(const char *name, Common::SeekableReadStream &stream);
-	void loadMask(const char *name, BackgroundInfo* info);
-	void loadPath(const char *name, BackgroundInfo* info);
-	BackgroundInfo* loadBackground(const char *name);
+	void loadMask(BackgroundInfo& info, const char *name);
+	void loadPath(BackgroundInfo& info, const char *name);
+	void loadBackground(BackgroundInfo& info, const char *name);
 
 public:
 	AmigaDisk_ns(Parallaction *vm);
@@ -185,8 +185,8 @@ public:
 	Font* loadFont(const char* name);
 	Graphics::Surface* loadStatic(const char* name);
 	Cnv* loadFrames(const char* name);
-	BackgroundInfo* loadSlide(const char *filename);
-	BackgroundInfo* loadScenery(const char* background, const char* mask, const char* path);
+	void loadSlide(BackgroundInfo& info, const char *filename);
+	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);
 	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
@@ -222,8 +222,8 @@ public:
 	Font* loadFont(const char* name);
 	Graphics::Surface* loadStatic(const char* name);
 	Cnv* loadFrames(const char* name);
-	BackgroundInfo* loadSlide(const char *filename);
-	BackgroundInfo* loadScenery(const char* background, const char* mask, const char* path);
+	void loadSlide(BackgroundInfo& info, const char *filename);
+	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);
 	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
