@@ -91,12 +91,11 @@ void Parallaction_br::callFunction(uint index, void* parm) {
 }
 
 int Parallaction_br::go() {
-/*
 	splash("dyna");
 	splash("core");
-*/
+
 	// TODO: load progress value from special save game
-	_progress = 0;
+	_progress = 3;
 
 	// TODO: game loop :P
 
