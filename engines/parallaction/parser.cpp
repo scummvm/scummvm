@@ -48,7 +48,7 @@ char *Script::readLine(char *buf, size_t bufSize) {
 
 		v2 = _input->readSByte();
 
-		if (v2 == 0xA || _input->eos()) break;
+		if (v2 == 0xA || v2 == 0xD || _input->eos()) break;
 		if (!_input->eos() && _si < bufSize) buf[_si] = v2;
 	}
 

@@ -183,7 +183,12 @@ void Parallaction::parseCommands(Script &script, CommandList& list) {
 
 		}
 
-		list.push_front(cmd);	// NOTE: command lists are written backwards in scripts
+		// FIXME: implement a proper parseCommands for BRA
+		if (getGameType() == GType_BRA)
+			delete cmd;
+		else
+			list.push_front(cmd);	// NOTE: command lists are written backwards in scripts
+
 		fillBuffers(script, true);
 
 	}

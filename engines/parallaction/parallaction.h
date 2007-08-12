@@ -310,6 +310,7 @@ public:
 	void 		waitTime(uint32 t);
 
 	void 		parseLocation(const char *filename);
+	virtual bool parseLocationLine(const char *filename, Script *script) = 0;
 	void 		changeCursor(int32 index);
 	void		showCursor(bool visible);
 	void 		changeCharacter(const char *name);
@@ -512,6 +513,7 @@ public:
 	virtual	void callFunction(uint index, void* parm);
 	void renderLabel(Graphics::Surface *cnv, char *text);
 	void setMousePointer(int16 index);
+	virtual bool parseLocationLine(const char *filename, Script *script);
 
 
 public:
@@ -579,6 +581,7 @@ public:
 public:
 	typedef void (Parallaction_br::*Callable)(void*);
 	virtual	void callFunction(uint index, void* parm);
+	virtual bool parseLocationLine(const char *filename, Script *script);
 
 public:
 	Table		*_countersNames;

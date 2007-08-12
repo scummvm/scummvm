@@ -42,116 +42,91 @@ void Parallaction::parseLocation(const char *filename) {
 	Script *_locationScript = _disk->loadLocation(filename);
 	_hasLocationSound = false;
 
+	// WORKAROUND: the original code erroneously incremented
+	// _currentLocationIndex, thus producing inconsistent
+	// savegames. This workaround modified the following loop
+	// and if-statement, so the code exactly matches the one
+	// in Big Red Adventure.
+	_currentLocationIndex = -1;
+	uint16 _di = 0;
+	while (_locationNames[_di][0] != '\0') {
+		if (!scumm_stricmp(_locationNames[_di], filename)) {
+			_currentLocationIndex = _di;
+		}
+		_di++;
+	}
+
+	if (_currentLocationIndex  == -1) {
+		strcpy(_locationNames[_numLocations], filename);
+		_currentLocationIndex = _numLocations;
+
+		_numLocations++;
+		_locationNames[_numLocations][0] = '\0';
+		_localFlags[_numLocations] = 0;
+	} else {
+		_localFlags[_currentLocationIndex] |= kFlagsVisited;	// 'visited'
+	}
+
+
 	fillBuffers(*_locationScript, true);
+
+	printf("ciao (%s)\n", filename);
+
 	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
 
-		if (!scumm_stricmp(_tokens[0], "LOCATION")) {
-			// The parameter for location is 'location.mask'.
-			// If mask is not present, then it is assumed
-			// that path & mask are encoded in the background
-			// bitmap, otherwise a separate .msk file exists.
+		printf("inst = %s\n", _tokens[0]);
 
-			char *mask = strchr(_tokens[1], '.');
-			if (mask) {
-				mask[0] = '\0';
-				mask++;
-			}
+		bool parsed = parseLocationLine(filename, _locationScript);
+		if (!parsed) {
 
-            // WORKAROUND: the original code erroneously incremented
-            // _currentLocationIndex, thus producing inconsistent
-            // savegames. This workaround modified the following loop
-            // and if-statement, so the code exactly matches the one
-            // in Big Red Adventure.
-			_currentLocationIndex = -1;
-			uint16 _di = 0;
-			while (_locationNames[_di][0] != '\0') {
-				if (!scumm_stricmp(_locationNames[_di], filename)) {
-					_currentLocationIndex = _di;
+			if (!scumm_stricmp(_tokens[0], "LOCALFLAGS")) {
+				_si = 1;	// _localFlagNames[0] = 'visited'
+				while (_tokens[_si][0] != '\0') {
+					_localFlagNames->addData(_tokens[_si]);
+					_si++;
 				}
-				_di++;
-			}
+			} else
+			if (!scumm_stricmp(_tokens[0], "COMMANDS")) {
+				parseCommands(*_locationScript, _location._commands);
+			} else
+			if (!scumm_stricmp(_tokens[0], "ACOMMANDS")) {
+				parseCommands(*_locationScript, _location._aCommands);
+			} else
+			if (!scumm_stricmp(_tokens[0], "FLAGS")) {
+				if ((_localFlags[_currentLocationIndex] & kFlagsVisited) == 0) {
+					// only for 1st visit
+					_localFlags[_currentLocationIndex] = 0;
+					_si = 1;
 
-			if (_currentLocationIndex  == -1) {
-				strcpy(_locationNames[_numLocations], filename);
-				_currentLocationIndex = _numLocations;
+					do {
+						byte _al = _localFlagNames->lookup(_tokens[_si]);
+						_localFlags[_currentLocationIndex] |= 1 << (_al - 1);
 
-				_numLocations++;
-				_locationNames[_numLocations][0] = '\0';
-				_localFlags[_numLocations] = 0;
-			} else {
-				_localFlags[_currentLocationIndex] |= kFlagsVisited;	// 'visited'
-			}
+						_si++;
+						if (scumm_stricmp(_tokens[_si], "|")) break;
+						_si++;
+					} while (true);
+				}
+			} else
+			if (!scumm_stricmp(_tokens[0], "COMMENT")) {
+				_location._comment = parseComment(*_locationScript);
+			} else
+			if (!scumm_stricmp(_tokens[0], "ENDCOMMENT")) {
+				_location._endComment = parseComment(*_locationScript);
+			} else
+			if (!scumm_stricmp(_tokens[0], "SOUND")) {
+				if (getPlatform() == Common::kPlatformAmiga) {
+					strcpy(_locationSound, _tokens[1]);
+					_hasLocationSound = true;
+				}
+			} else
+			if (!scumm_stricmp(_tokens[0], "MUSIC")) {
+				if (getPlatform() == Common::kPlatformAmiga)
+					_soundMan->setMusicFile(_tokens[1]);
+			} else
+				error("unknown keyword '%s' in location '%s'", _tokens[0], filename);
+		}
 
-			strcpy(_location._name, _tokens[1]);
-			switchBackground(_location._name, mask);
-
-			if (_tokens[2][0] != '\0') {
-				_char._ani._left = atoi(_tokens[2]);
-				_char._ani._top = atoi(_tokens[3]);
-			}
-
-			if (_tokens[4][0] != '\0') {
-				_char._ani._frame = atoi(_tokens[4]);
-			}
-		}
-		if (!scumm_stricmp(_tokens[0], "DISK")) {
-			_disk->selectArchive(_tokens[1]);
-		}
-		if (!scumm_stricmp(_tokens[0], "LOCALFLAGS")) {
-			_si = 1;	// _localFlagNames[0] = 'visited'
-			while (_tokens[_si][0] != '\0') {
-				_localFlagNames->addData(_tokens[_si]);
-				_si++;
-			}
-		}
-		if (!scumm_stricmp(_tokens[0], "COMMANDS")) {
-			parseCommands(*_locationScript, _location._commands);
-		}
-		if (!scumm_stricmp(_tokens[0], "ACOMMANDS")) {
-			parseCommands(*_locationScript, _location._aCommands);
-		}
-		if (!scumm_stricmp(_tokens[0], "FLAGS")) {
-			if ((_localFlags[_currentLocationIndex] & kFlagsVisited) == 0) {
-				// only for 1st visit
-				_localFlags[_currentLocationIndex] = 0;
-				_si = 1;
-
-				do {
-					byte _al = _localFlagNames->lookup(_tokens[_si]);
-					_localFlags[_currentLocationIndex] |= 1 << (_al - 1);
-
-					_si++;
-					if (scumm_stricmp(_tokens[_si], "|")) break;
-					_si++;
-				} while (true);
-			}
-		}
-		if (!scumm_stricmp(_tokens[0], "COMMENT")) {
-			_location._comment = parseComment(*_locationScript);
-			debugC(3, kDebugLocation, "Location comment: '%s'", _location._comment);
-		}
-		if (!scumm_stricmp(_tokens[0], "ENDCOMMENT")) {
-			_location._endComment = parseComment(*_locationScript);
-		}
-		if (!scumm_stricmp(_tokens[0], "ZONE")) {
-			parseZone(*_locationScript, _zones, _tokens[1]);
-		}
-		if (!scumm_stricmp(_tokens[0], "NODES")) {
-			parseWalkNodes(*_locationScript, _location._walkNodes);
-		}
-		if (!scumm_stricmp(_tokens[0], "ANIMATION")) {
-			parseAnimation(*_locationScript, _animations, _tokens[1]);
-		}
-		if (!scumm_stricmp(_tokens[0], "SOUND")) {
-			if (getPlatform() == Common::kPlatformAmiga) {
-				strcpy(_locationSound, _tokens[1]);
-				_hasLocationSound = true;
-			}
-		}
-		if (!scumm_stricmp(_tokens[0], "MUSIC")) {
-			if (getPlatform() == Common::kPlatformAmiga)
-				_soundMan->setMusicFile(_tokens[1]);
-		}
 		fillBuffers(*_locationScript, true);
 	}
 
@@ -245,11 +220,9 @@ void Parallaction::freeBackground() {
 
 }
 
-void Parallaction::setBackground(const char *background, const char *mask, const char *path) {
+void Parallaction::setBackground(const char* name, const char* mask, const char* path) {
 
-	freeBackground();
-
-	_disk->loadScenery(*_backgroundInfo, background, mask, path);
+	_disk->loadScenery(*_backgroundInfo, name, mask, path);
 
 	_gfx->setPalette(_backgroundInfo->palette);
 	_gfx->_palette.clone(_backgroundInfo->palette);
@@ -263,7 +236,6 @@ void Parallaction::setBackground(const char *background, const char *mask, const
 
 	return;
 }
-
 
 void Parallaction::showLocationComment(const char *text, bool end) {
 

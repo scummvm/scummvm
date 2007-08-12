@@ -25,6 +25,7 @@
 
 #include "common/stdafx.h"
 #include "parallaction/parallaction.h"
+#include "parallaction/util.h"
 
 
 namespace Parallaction {
@@ -87,17 +88,17 @@ Cnv* DosDisk_br::loadTalk(const char *name) {
 Script* DosDisk_br::loadLocation(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadLocation");
 
-	Common::File stream;
+	Common::File *stream = new Common::File;
 
 	char path[PATH_LEN];
 	sprintf(path, "%s/%s/%s.slf", _partPath, _languageDir, name);
-	if (!stream.open(path)) {
+	if (!stream->open(path)) {
 		sprintf(path, "%s/%s/%s.loc", _partPath, _languageDir, name);
-		if (!stream.open(path))
+		if (!stream->open(path))
 			errorFileNotFound(path);
 	}
 
-	return new Script(&stream, false);
+	return new Script(stream, true);
 }
 
 Script* DosDisk_br::loadScript(const char* name) {
@@ -205,6 +206,53 @@ void DosDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 
 void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char *mask, const char* path) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadScenery");
+
+	char filename[PATH_LEN];
+	Common::File stream;
+
+	if (name) {
+		sprintf(filename, "%s/bkg/%s.bkg", _partPath, name);
+		if (!stream.open(filename))
+			errorFileNotFound(filename);
+
+		stream.skip(4);
+		info.width = stream.readUint32BE();
+		info.height = stream.readUint32BE();
+		stream.skip(20);
+
+		byte rgb[768];
+		stream.read(rgb, 768);
+
+		for (uint i = 0; i < 256; i++) {
+			info.palette.setEntry(i, rgb[i] >> 2, rgb[i+256] >> 2, rgb[i+512] >> 2);
+		}
+
+		info.bg.create(info.width, info.height, 1);
+		stream.read(info.bg.pixels, info.width * info.height);
+	}
+
+	if (mask) {
+		sprintf(filename, "%s/msk/%s.msk", _partPath, mask);
+		if (!stream.open(filename))
+			errorFileNotFound(filename);
+
+		// NOTE: info.width and info.height are only valid if the background graphics
+		// have already been loaded
+		info.mask.create(info.width, info.height);
+		stream.read(info.mask.data, info.width * info.height);
+	}
+
+	if (path) {
+		sprintf(filename, "%s/pth/%s.pth", _partPath, path);
+		if (!stream.open(filename))
+			errorFileNotFound(filename);
+
+		// NOTE: info.width and info.height are only valid if the background graphics
+		// have already been loaded
+		info.path.create(info.width, info.height);
+		stream.read(info.path.data, info.width * info.height);
+	}
+
 	return;
 }
 
