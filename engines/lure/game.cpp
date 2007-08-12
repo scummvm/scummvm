@@ -24,12 +24,13 @@
  */
 
 #include "lure/game.h"
-#include "lure/strings.h"
-#include "lure/room.h"
-#include "lure/scripts.h"
-#include "lure/res_struct.h"
 #include "lure/animseq.h"
 #include "lure/fights.h"
+#include "lure/res_struct.h"
+#include "lure/room.h"
+#include "lure/scripts.h"
+#include "lure/sound.h"
+#include "lure/strings.h"
 
 #include "common/config-manager.h"
 
@@ -45,6 +46,7 @@ Game::Game() {
 	int_game = this;
 	_debugger = new Debugger();
 	_slowSpeedFlag = true;
+	_preloadFlag = true;
 	_soundFlag = true;
 }
 
@@ -52,7 +54,7 @@ Game::~Game() {
 	delete _debugger;
 }
 
-void Game::tick(bool fastSpeed) {
+void Game::tick() {
 	// Call the tick method for each hotspot - this is somewaht complicated
 	// by the fact that a tick proc can unload both itself and/or others,
 	// so we first get a list of the Ids, and call the tick proc for each 
@@ -66,7 +68,7 @@ void Game::tick(bool fastSpeed) {
 	for (i = res.activeHotspots().begin(); i != res.activeHotspots().end(); ++i) {
 		Hotspot *hotspot = *i;
 
-		if (!fastSpeed || ((hotspot->layer() != 0xff) && 
+		if (!_preloadFlag || ((hotspot->layer() != 0xff) && 
 			(hotspot->hotspotId() < FIRST_NONCHARACTER_ID)))
 			// Add hotspot to list to execute
 			idList[idSize++] = hotspot->hotspotId();
@@ -83,6 +85,21 @@ void Game::tick(bool fastSpeed) {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot ticks end");
 
 	delete[] idList;
+}
+
+void Game::tickCheck() {
+	Resources &res = Resources::getReference();
+	Room &room = Room::getReference();
+	bool remoteFlag = res.fieldList().getField(OLD_ROOM_NUMBER) != 0;
+
+	_state |= GS_TICK;
+	if ((room.roomNumber() == ROOMNUM_VILLAGE_SHOP) && !remoteFlag && ((_state & GS_TICK) != 0)) {
+		// In the village shop, 
+		bool tockFlag = (_state & GS_TOCK) != 0;
+		Sound.addSound(tockFlag ? 16 : 50);
+
+		_state = _state ^ (GS_TICK | GS_TOCK);
+	}
 }
 
 void Game::nextFrame() {
@@ -110,31 +127,41 @@ void Game::execute() {
 	ValueTableData &fields = res.fieldList();
 
 	uint32 timerVal = system.getMillis();
+	uint32 timerVal2 = system.getMillis();
 
 	screen.empty();
 	//_screen.resetPalette();
 	screen.setPaletteEmpty();
 
-	setState(0);
-
-	Script::execute(STARTUP_SCRIPT);
-
-	int bootParam = ConfMan.getInt("boot_param");
-	handleBootParam(bootParam);
-
-	// Set the player direction
-	res.getActiveHotspot(PLAYER_ID)->setDirection(UP);
-
-	room.update();
-	mouse.setCursorNum(CURSOR_ARROW);
-	mouse.cursorOn();
-	
 	while (!events.quitFlag) {
-		while (!events.quitFlag && (_state == 0)) {
+		setState(0);
+		Script::execute(STARTUP_SCRIPT);
+
+		int bootParam = ConfMan.getInt("boot_param");
+		handleBootParam(bootParam);
+
+		// Set the player direction
+		res.getActiveHotspot(PLAYER_ID)->setDirection(UP);
+
+		room.update();
+		mouse.setCursorNum(CURSOR_ARROW);
+		mouse.cursorOn();
+if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
+
+		// Main game loop
+		while (!events.quitFlag && ((_state & GS_RESTART) == 0)) {
 			// If time for next frame, allow everything to update
 			if (system.getMillis() > timerVal + GAME_FRAME_DELAY) {
 				timerVal = system.getMillis();
 				nextFrame();
+
+				Sound.musicInterface_ContinuePlaying();
+			}
+
+			// Also check if time to do another village shop tick check
+			if (system.getMillis() > timerVal2 + GAME_TICK_DELAY) {
+				timerVal2 = system.getMillis();
+				tickCheck();
 			}
 
 			res.delayList().tick();
@@ -232,24 +259,35 @@ void Game::execute() {
 				_debugger->onFrame();
 		}
 
+		room.leaveRoom();
+		screen.paletteFadeOut();
+
 		// If Skorl catches player, show the catching animation
 		if ((_state & GS_CAUGHT) != 0) {
 			Palette palette(SKORL_CATCH_PALETTE_ID);
 			AnimationSequence *anim = new AnimationSequence(screen, system, 
 				SKORL_CATCH_ANIM_ID, palette, false);
 			mouse.cursorOff();
+			Sound.addSound(0x33);
 			anim->show();
 			mouse.cursorOn();
 		}
 
 		// If the Restart/Restore dialog is needed, show it
-		if ((_state & GS_RESTORE_RESTART) != 0) {
-			// TODO: Restore/Restart dialog - for now, simply flag for exit
-			events.quitFlag = true;
-		}
-	}
+		if ((_state & GS_RESTORE) != 0) {
+			// Show the Restore/Restart dialog 
+			bool restartFlag = RestartRestoreDialog::show();
 
-	room.leaveRoom();
+			setState(0);
+				
+			if (restartFlag) {
+				res.reloadData();
+				Script::execute(STARTUP_SCRIPT);
+			}
+		} else if ((_state & GS_RESTART) == 0)
+			// Exiting game
+			events.quitFlag = true;
+	}
 }
 
 void Game::handleMenuResponse(uint8 selection) {
@@ -295,6 +333,8 @@ void Game::playerChangeRoom() {
 	Point &newPos = fields.playerNewPos().position;
 
 	delayList.clear();
+
+	Sound.removeSounds();
 
 	RoomData *roomData = res.getRoom(roomNum);
 	assert(roomData);
@@ -361,7 +401,7 @@ void Game::displayChuteAnimation()
 	delete anim;
 
 	mouse.cursorOn();
-	fields.setField(82, 1);
+	fields.setField(AREA_FLAG, 1);
 }
 
 void Game::displayBarrelAnimation()
