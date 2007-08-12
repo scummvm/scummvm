@@ -341,7 +341,7 @@ RoomExitJoinData *Resources::getExitJoin(uint16 hotspotId) {
 	
 	for (i = _exitJoins.begin(); i != _exitJoins.end(); ++i) {
 		RoomExitJoinData *rec = *i;
-		if ((rec->hotspot1Id == hotspotId) || (rec->hotspot2Id == hotspotId))
+		if ((rec->hotspots[0].hotspotId == hotspotId) || (rec->hotspots[1].hotspotId == hotspotId))
 			return rec;
 	}
 
