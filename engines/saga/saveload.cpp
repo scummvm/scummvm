@@ -305,11 +305,14 @@ void SagaEngine::load(const char *fileName) {
 	if (getGameType() != GType_ITE) {
 		if (_scene->currentProtag() != 0 && _scene->currentChapterNumber() != 6) {
 			ActorData *actor1 = _actor->getFirstActor();
-			// Original stores the current protagonist ID from sfSwapActors:
-			//ActorData *actor2 = _actor->getActor(_scene->currentProtag());
-			// However, we already store the protagonist, so merely getting the saved
-			// protagonist is easier and safer, and works without glitches
-			ActorData *actor2 = _actor->_protagonist;
+			ActorData *actor2;
+			// The original gets actor2 from the current protagonist ID, but this is sometimes wrong
+			// If the current protagonist ID is not correct, use the stored protagonist
+			if (!_actor->validActorId(_scene->currentProtag())) {
+				actor2 = _actor->_protagonist;
+			} else {
+				actor2 = _actor->getActor(_scene->currentProtag());
+			}
 
 			SWAP(actor1->_location, actor2->_location);
 
