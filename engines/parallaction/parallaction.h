@@ -292,6 +292,17 @@ struct BackgroundInfo {
 };
 
 
+#define DECLARE_COMMAND_PARSER(sig) void Parallaction::cmdParse_##sig()
+#define COMMAND_PARSER(sig) &Parallaction::cmdParse_##sig
+
+#define DECLARE_COMMAND_OPCODE(op) void Parallaction::cmdOp_##op()
+#define COMMAND_OPCODE(op) &Parallaction::cmdOp_##op
+
+
+#define DECLARE_INSTRUCTION_OPCODE(op) void Parallaction::instOp_##op()
+#define INSTRUCTION_OPCODE(op) &Parallaction::instOp_##op
+
+
 class Parallaction : public Engine {
 	friend class Debugger;
 
@@ -308,6 +319,71 @@ public:
 	uint16 		updateInput();
 
 	void 		waitTime(uint32 t);
+
+	typedef void (Parallaction::*Opcode)();
+	const Opcode	*_commandParsers;
+
+	struct {
+		Command	*cmd;
+		int		nextToken;
+	} _cmdParseCtxt;
+
+	DECLARE_COMMAND_PARSER(Flags);
+	DECLARE_COMMAND_PARSER(Animation);
+	DECLARE_COMMAND_PARSER(Zone);
+	DECLARE_COMMAND_PARSER(Location);
+	DECLARE_COMMAND_PARSER(Drop);
+	DECLARE_COMMAND_PARSER(Call);
+	DECLARE_COMMAND_PARSER(Null);
+	DECLARE_COMMAND_PARSER(Move);
+
+	const Opcode	*_commandOpcodes;
+
+	struct {
+		Command	*cmd;
+		Zone	*z;
+	} _cmdRunCtxt;
+
+	DECLARE_COMMAND_OPCODE(set);
+	DECLARE_COMMAND_OPCODE(clear);
+	DECLARE_COMMAND_OPCODE(start);
+	DECLARE_COMMAND_OPCODE(speak);
+	DECLARE_COMMAND_OPCODE(get);
+	DECLARE_COMMAND_OPCODE(location);
+	DECLARE_COMMAND_OPCODE(open);
+	DECLARE_COMMAND_OPCODE(close);
+	DECLARE_COMMAND_OPCODE(on);
+	DECLARE_COMMAND_OPCODE(off);
+	DECLARE_COMMAND_OPCODE(call);
+	DECLARE_COMMAND_OPCODE(toggle);
+	DECLARE_COMMAND_OPCODE(drop);
+	DECLARE_COMMAND_OPCODE(quit);
+	DECLARE_COMMAND_OPCODE(move);
+	DECLARE_COMMAND_OPCODE(stop);
+
+	const Opcode	*_instructionOpcodes;
+
+	struct {
+		Animation	*a;
+		InstructionList::iterator inst;
+		uint16		modCounter;
+		bool		suspend;
+	} _instRunCtxt;
+
+	DECLARE_INSTRUCTION_OPCODE(on);
+	DECLARE_INSTRUCTION_OPCODE(off);
+	DECLARE_INSTRUCTION_OPCODE(loop);
+	DECLARE_INSTRUCTION_OPCODE(endloop);
+	DECLARE_INSTRUCTION_OPCODE(null);
+	DECLARE_INSTRUCTION_OPCODE(inc);
+	DECLARE_INSTRUCTION_OPCODE(set);
+	DECLARE_INSTRUCTION_OPCODE(put);
+	DECLARE_INSTRUCTION_OPCODE(call);
+	DECLARE_INSTRUCTION_OPCODE(wait);
+	DECLARE_INSTRUCTION_OPCODE(start);
+	DECLARE_INSTRUCTION_OPCODE(sound);
+	DECLARE_INSTRUCTION_OPCODE(move);
+	DECLARE_INSTRUCTION_OPCODE(end);
 
 	void 		parseLocation(const char *filename);
 	virtual bool parseLocationLine(const char *filename, Script *script) = 0;
@@ -497,6 +573,7 @@ public:
 	const char **_instructionNamesRes;
 
 };
+
 
 class Parallaction_ns : public Parallaction {
 

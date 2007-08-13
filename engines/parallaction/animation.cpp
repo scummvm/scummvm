@@ -49,7 +49,7 @@ namespace Parallaction {
 #define INST_START						16
 #define INST_SOUND						17
 #define INST_MOVE						18
-#define INST_END						1000
+#define INST_END						19
 
 
 void	wrapLocalVar(LocalVariable *local);
@@ -470,13 +470,168 @@ LValue Parallaction::getLValue(Instruction *inst, char *str, LocalVariable *loca
 }
 
 
+DECLARE_INSTRUCTION_OPCODE(on) {
+	(*_instRunCtxt.inst)->_opBase._a->_flags |= kFlagsActive;
+	(*_instRunCtxt.inst)->_opBase._a->_flags &= ~kFlagsRemove;
+}
+
+
+DECLARE_INSTRUCTION_OPCODE(off) {
+	(*_instRunCtxt.inst)->_opBase._a->_flags |= kFlagsRemove;
+//				v1C = (*_instRunCtxt.inst)->_opBase;
+}
+
+
+DECLARE_INSTRUCTION_OPCODE(loop) {
+	if ((*_instRunCtxt.inst)->_flags & kInstUsesLiteral) {
+		_instRunCtxt.a->_program->_loopCounter = (*_instRunCtxt.inst)->_opBase._loopCounter._value;
+	} else {
+		_instRunCtxt.a->_program->_loopCounter = *(*_instRunCtxt.inst)->_opBase._loopCounter._pvalue;
+	}
+	_instRunCtxt.a->_program->_loopStart = _instRunCtxt.inst;
+}
+
+
+DECLARE_INSTRUCTION_OPCODE(endloop) {
+	if (--_instRunCtxt.a->_program->_loopCounter > 0) {
+		_instRunCtxt.inst = _instRunCtxt.a->_program->_loopStart;
+	}
+}
+
+DECLARE_INSTRUCTION_OPCODE(inc) {
+	int16 _si = 0;
+	int16 _ax = 0, _bx = 0;
+	if ((*_instRunCtxt.inst)->_flags & kInstUsesLiteral) {
+		_si = (*_instRunCtxt.inst)->_opB._value;
+	} else {
+		_si = *(*_instRunCtxt.inst)->_opB._pvalue;
+	}
+	if ((*_instRunCtxt.inst)->_flags & kInstMod) {	// mod
+		_bx = (_si > 0 ? _si : -_si);
+		if (_instRunCtxt.modCounter % _bx != 0) return;
+
+		_si = (_si > 0 ?  1 : -1);
+	}
+	if ((*_instRunCtxt.inst)->_flags & kInstUsesLocal) {	// local
+		if ((*_instRunCtxt.inst)->_index == INST_INC) _ax = _si;
+		else _ax = -_si;
+
+		(*_instRunCtxt.inst)->_opA._local->_value += _ax;
+		wrapLocalVar((*_instRunCtxt.inst)->_opA._local);
+		return;
+	}
+
+	// built-in variable (x, y, z, f)
+	if ((*_instRunCtxt.inst)->_index == INST_INC) _ax = _si;
+	else _ax = -_si;
+	*(*_instRunCtxt.inst)->_opA._pvalue += _ax;
+}
+
+
+DECLARE_INSTRUCTION_OPCODE(set) {
+	int16 _si;
+	if ((*_instRunCtxt.inst)->_flags & kInstUsesLiteral) {
+		_si = (*_instRunCtxt.inst)->_opB._value;
+	} else {
+		_si = *(*_instRunCtxt.inst)->_opB._pvalue;
+	}
+
+	if ((*_instRunCtxt.inst)->_flags & kInstUsesLocal) {
+		(*_instRunCtxt.inst)->_opA._local->_value = _si;
+	} else {
+		*(*_instRunCtxt.inst)->_opA._pvalue = _si;
+	}
+}
+
+
+DECLARE_INSTRUCTION_OPCODE(put) {
+	Graphics::Surface v18;
+	v18.w = (*_instRunCtxt.inst)->_opBase._a->width();
+	v18.h = (*_instRunCtxt.inst)->_opBase._a->height();
+	v18.pixels = (*_instRunCtxt.inst)->_opBase._a->getFrameData((*_instRunCtxt.inst)->_opBase._a->_frame);
+
+	if ((*_instRunCtxt.inst)->_flags & kInstMaskedPut) {
+		uint16 _si = _gfx->queryMask((*_instRunCtxt.inst)->_opB._value);
+		_gfx->blitCnv(&v18, (*_instRunCtxt.inst)->_opA._value, (*_instRunCtxt.inst)->_opB._value, _si, Gfx::kBitBack);
+		_gfx->blitCnv(&v18, (*_instRunCtxt.inst)->_opA._value, (*_instRunCtxt.inst)->_opB._value, _si, Gfx::kBit2);
+	} else {
+		_gfx->flatBlitCnv(&v18, (*_instRunCtxt.inst)->_opA._value, (*_instRunCtxt.inst)->_opB._value, Gfx::kBitBack);
+		_gfx->flatBlitCnv(&v18, (*_instRunCtxt.inst)->_opA._value, (*_instRunCtxt.inst)->_opB._value, Gfx::kBit2);
+	}
+}
+
+DECLARE_INSTRUCTION_OPCODE(null) {
+
+}
+
+DECLARE_INSTRUCTION_OPCODE(call) {
+	callFunction((*_instRunCtxt.inst)->_opBase._index, 0);
+}
+
+
+DECLARE_INSTRUCTION_OPCODE(wait) {
+	if (_engineFlags & kEngineWalking)
+		_instRunCtxt.suspend = true;
+}
+
+
+DECLARE_INSTRUCTION_OPCODE(start) {
+//				v1C = (*_instRunCtxt.inst)->_opBase;
+	(*_instRunCtxt.inst)->_opBase._a->_flags |= (kFlagsActing | kFlagsActive);
+}
+
+
+DECLARE_INSTRUCTION_OPCODE(sound) {
+	_activeZone = (*_instRunCtxt.inst)->_opBase._z;
+}
+
+
+DECLARE_INSTRUCTION_OPCODE(move) {
+	WalkNodeList *v4 = _char._builder.buildPath(*(*_instRunCtxt.inst)->_opA._pvalue, *(*_instRunCtxt.inst)->_opB._pvalue);
+	addJob(&jobWalk, v4, kPriority19 );
+	_engineFlags |= kEngineWalking;
+}
+
+DECLARE_INSTRUCTION_OPCODE(end) {
+	if ((_instRunCtxt.a->_flags & kFlagsLooping) == 0) {
+		_instRunCtxt.a->_flags &= ~kFlagsActing;
+		runCommands(_instRunCtxt.a->_commands, _instRunCtxt.a);
+	}
+	_instRunCtxt.a->_program->_ip = _instRunCtxt.a->_program->_instructions.begin();
+
+	_instRunCtxt.suspend = true;
+}
+
+
 
 void jobRunScripts(void *parm, Job *j) {
 	debugC(3, kDebugJobs, "jobRunScripts");
 
 	static uint16 modCounter = 0;
 
-	Graphics::Surface v18;
+	static const Parallaction::Opcode opcodes[] = {
+		INSTRUCTION_OPCODE(on),
+		INSTRUCTION_OPCODE(off),
+		INSTRUCTION_OPCODE(set),		// x
+		INSTRUCTION_OPCODE(set),		// y
+		INSTRUCTION_OPCODE(set),		// z
+		INSTRUCTION_OPCODE(set),		// f
+		INSTRUCTION_OPCODE(loop),
+		INSTRUCTION_OPCODE(endloop),
+		INSTRUCTION_OPCODE(null),
+		INSTRUCTION_OPCODE(inc),
+		INSTRUCTION_OPCODE(inc),		// dec
+		INSTRUCTION_OPCODE(set),
+		INSTRUCTION_OPCODE(put),
+		INSTRUCTION_OPCODE(call),
+		INSTRUCTION_OPCODE(wait),
+		INSTRUCTION_OPCODE(start),
+		INSTRUCTION_OPCODE(sound),
+		INSTRUCTION_OPCODE(move),
+		INSTRUCTION_OPCODE(end)
+	};
+
+	_vm->_instructionOpcodes = opcodes;
 
 	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
 
@@ -487,135 +642,21 @@ void jobRunScripts(void *parm, Job *j) {
 		if ((a->_flags & kFlagsActing) == 0) continue;
 		InstructionList::iterator inst = a->_program->_ip;
 
-//		printf("Animation: %s, flags: %x\n", a->_name, a->_flags);
-
 		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
 
 			debugC(9, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, (*inst)->_index == INST_END ? "end" : _vm->_instructionNamesRes[(*inst)->_index - 1]);
 
-			switch ((*inst)->_index) {
-			case INST_ENDLOOP:	// endloop
-				if (--a->_program->_loopCounter > 0) {
-					inst = a->_program->_loopStart;
-				}
-				break;
+			_vm->_instRunCtxt.inst = inst;
+			_vm->_instRunCtxt.a = a;
+			_vm->_instRunCtxt.modCounter = modCounter;
+			_vm->_instRunCtxt.suspend = false;
 
-			case INST_OFF:	{// off
-				(*inst)->_opBase._a->_flags |= kFlagsRemove;
-//				v1C = (*inst)->_opBase;
-				}
-				break;
+			(_vm->*(_vm->_instructionOpcodes)[(*inst)->_index - 1])();
 
-			case INST_ON:	// on
-				(*inst)->_opBase._a->_flags |= kFlagsActive;
-				(*inst)->_opBase._a->_flags &= ~kFlagsRemove;
-				break;
+			inst = _vm->_instRunCtxt.inst;		// handles endloop correctly
 
-			case INST_START:	// start
-//				v1C = (*inst)->_opBase;
-				(*inst)->_opBase._a->_flags |= (kFlagsActing | kFlagsActive);
-				break;
-
-			case INST_LOOP: // loop
-				if ((*inst)->_flags & kInstUsesLiteral) {
-					a->_program->_loopCounter = (*inst)->_opBase._loopCounter._value;
-				} else {
-					a->_program->_loopCounter = *(*inst)->_opBase._loopCounter._pvalue;
-				}
-				a->_program->_loopStart = inst;
-				break;
-
-			case INST_INC:	// inc
-			case INST_DEC: {	// dec
-				int16 _si = 0;
-				int16 _ax = 0, _bx = 0;
-				if ((*inst)->_flags & kInstUsesLiteral) {
-					_si = (*inst)->_opB._value;
-				} else {
-					_si = *(*inst)->_opB._pvalue;
-				}
-				if ((*inst)->_flags & kInstMod) {	// mod
-					_bx = (_si > 0 ? _si : -_si);
-					if (modCounter % _bx != 0) break;
-
-					_si = (_si > 0 ?  1 : -1);
-				}
-				if ((*inst)->_flags & kInstUsesLocal) {	// local
-					if ((*inst)->_index == INST_INC) _ax = _si;
-					else _ax = -_si;
-
-					(*inst)->_opA._local->_value += _ax;
-					wrapLocalVar((*inst)->_opA._local);
-					break;
-				}
-
-				// built-in variable (x, y, z, f)
-				if ((*inst)->_index == INST_INC) _ax = _si;
-				else _ax = -_si;
-				*(*inst)->_opA._pvalue += _ax;
-			}
-			break;
-
-			case INST_MOVE: { // move
-				WalkNodeList *v4 = _vm->_char._builder.buildPath(*(*inst)->_opA._pvalue, *(*inst)->_opB._pvalue);
-				_vm->addJob(&jobWalk, v4, kPriority19 );
-				_engineFlags |= kEngineWalking;
-			}
-				break;
-
-			case INST_PUT:	// put
-				v18.w = (*inst)->_opBase._a->width();
-				v18.h = (*inst)->_opBase._a->height();
-				v18.pixels = (*inst)->_opBase._a->getFrameData((*inst)->_opBase._a->_frame);
-
-				if ((*inst)->_flags & kInstMaskedPut) {
-					uint16 _si = _vm->_gfx->queryMask((*inst)->_opB._value);
-					_vm->_gfx->blitCnv(&v18, (*inst)->_opA._value, (*inst)->_opB._value, _si, Gfx::kBitBack);
-					_vm->_gfx->blitCnv(&v18, (*inst)->_opA._value, (*inst)->_opB._value, _si, Gfx::kBit2);
-				} else {
-					_vm->_gfx->flatBlitCnv(&v18, (*inst)->_opA._value, (*inst)->_opB._value, Gfx::kBitBack);
-					_vm->_gfx->flatBlitCnv(&v18, (*inst)->_opA._value, (*inst)->_opB._value, Gfx::kBit2);
-				}
-				break;
-
-			case INST_END:	// exit
-				if ((a->_flags & kFlagsLooping) == 0) {
-					a->_flags &= ~kFlagsActing;
-					_vm->runCommands(a->_commands, a);
-				}
-				a->_program->_ip = a->_program->_instructions.begin();
+			if (_vm->_instRunCtxt.suspend)
 				goto label1;
-
-
-			case INST_CALL: // call
-				_vm->callFunction((*inst)->_opBase._index, 0);
-				break;
-
-			case INST_WAIT: // wait
-				if (_engineFlags & kEngineWalking) goto label1;
-				break;
-
-			case INST_SOUND:	// sound
-				_activeZone = (*inst)->_opBase._z;
-				break;
-
-			default: {			// INST_SET, INST_X, INST_Y, INST_Z, INST_F
-				int16 _si;
-				if ((*inst)->_flags & kInstUsesLiteral) {
-					_si = (*inst)->_opB._value;
-				} else {
-					_si = *(*inst)->_opB._pvalue;
-				}
-
-				if ((*inst)->_flags & kInstUsesLocal) {
-					(*inst)->_opA._local->_value = _si;
-				} else {
-					*(*inst)->_opA._pvalue = _si;
-				}
-				}
-				break;
-
-			}
 
 			inst++;
 		}

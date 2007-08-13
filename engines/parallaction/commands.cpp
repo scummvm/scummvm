@@ -47,92 +47,114 @@ namespace Parallaction {
 #define CMD_MOVE			15
 #define CMD_STOP			16
 
+DECLARE_COMMAND_PARSER(Flags) {
+	if (_globalTable->lookup(_tokens[1]) == -1) {
+		do {
+			char _al = _localFlagNames->lookup(_tokens[_cmdParseCtxt.nextToken]);
+			_cmdParseCtxt.nextToken++;
+			_cmdParseCtxt.cmd->u._flags |= 1 << (_al - 1);
+		} while (!scumm_stricmp(_tokens[_cmdParseCtxt.nextToken++], "|"));
+		_cmdParseCtxt.nextToken--;
+	} else {
+		_cmdParseCtxt.cmd->u._flags |= kFlagsGlobal;
+		do {
+			char _al = _globalTable->lookup(_tokens[1]);
+			_cmdParseCtxt.nextToken++;
+			_cmdParseCtxt.cmd->u._flags |= 1 << (_al - 1);
+		} while (!scumm_stricmp(_tokens[_cmdParseCtxt.nextToken++], "|"));
+		_cmdParseCtxt.nextToken--;
+	}
+}
+
+
+DECLARE_COMMAND_PARSER(Animation) {
+	_cmdParseCtxt.cmd->u._animation = findAnimation(_tokens[_cmdParseCtxt.nextToken]);
+	_cmdParseCtxt.nextToken++;
+	if (_cmdParseCtxt.cmd->u._animation == NULL) {
+		strcpy(_forwardedAnimationNames[_numForwards], _tokens[_cmdParseCtxt.nextToken-1]);
+		_forwardedCommands[_numForwards] = _cmdParseCtxt.cmd;
+		_numForwards++;
+	}
+}
+
+
+DECLARE_COMMAND_PARSER(Zone) {
+	_cmdParseCtxt.cmd->u._zone = findZone(_tokens[_cmdParseCtxt.nextToken]);
+	_cmdParseCtxt.nextToken++;
+}
+
+
+DECLARE_COMMAND_PARSER(Location) {
+	_cmdParseCtxt.cmd->u._string = (char*)malloc(strlen(_tokens[_cmdParseCtxt.nextToken])+1);
+	strcpy(_cmdParseCtxt.cmd->u._string, _tokens[_cmdParseCtxt.nextToken]);
+	_cmdParseCtxt.nextToken++;
+}
+
+
+DECLARE_COMMAND_PARSER(Drop) {
+	_cmdParseCtxt.cmd->u._object = _objectsNames->lookup(_tokens[_cmdParseCtxt.nextToken]);
+	_cmdParseCtxt.nextToken++;
+}
+
+
+DECLARE_COMMAND_PARSER(Call) {
+	_cmdParseCtxt.cmd->u._callable = _callableNames->lookup(_tokens[_cmdParseCtxt.nextToken]) - 1;
+	_cmdParseCtxt.nextToken++;
+}
+
+
+DECLARE_COMMAND_PARSER(Null) {
+}
+
+
+DECLARE_COMMAND_PARSER(Move) {
+	_cmdParseCtxt.cmd->u._move._x = atoi(_tokens[_cmdParseCtxt.nextToken]);
+	_cmdParseCtxt.nextToken++;
+	_cmdParseCtxt.cmd->u._move._y = atoi(_tokens[_cmdParseCtxt.nextToken]);
+	_cmdParseCtxt.nextToken++;
+}
+
+
+
 
 void Parallaction::parseCommands(Script &script, CommandList& list) {
-//	printf("parseCommands()");
+
+	static const Opcode parsers[] = {
+		COMMAND_PARSER(Flags),			// set
+		COMMAND_PARSER(Flags),			// clear
+		COMMAND_PARSER(Animation),		// start
+		COMMAND_PARSER(Zone),			// speak
+		COMMAND_PARSER(Zone),			// get
+		COMMAND_PARSER(Location),		// location
+		COMMAND_PARSER(Zone),			// open
+		COMMAND_PARSER(Zone),			// close
+		COMMAND_PARSER(Zone),			// on
+		COMMAND_PARSER(Zone),			// off
+		COMMAND_PARSER(Call),			// call
+		COMMAND_PARSER(Flags),			// toggle
+		COMMAND_PARSER(Drop),			// drop
+		COMMAND_PARSER(Null),			// quit
+		COMMAND_PARSER(Move),			// move
+		COMMAND_PARSER(Animation)		// stop
+	};
+
+	_commandParsers = parsers;
+
 
 	fillBuffers(script, true);
 
 	while (scumm_stricmp(_tokens[0], "ENDCOMMANDS") && scumm_stricmp(_tokens[0], "ENDZONE")) {
-//		printf("token[0] = %s", _tokens[0]);
 
 		Command *cmd = new Command;
 
 		cmd->_id = _commandsNames->lookup(_tokens[0]);
-		uint16 _si = 1;
 
-//		printf("cmd id = %i", cmd->_id);
+		_cmdParseCtxt.nextToken = 1;
+		_cmdParseCtxt.cmd = cmd;
 
-		switch (cmd->_id) {
-		case CMD_SET:	// set
-		case CMD_CLEAR: // clear
-		case CMD_TOGGLE:	// toggle
-			if (_globalTable->lookup(_tokens[1]) == -1) {
-				do {
-					char _al = _localFlagNames->lookup(_tokens[_si]);
-					_si++;
-					cmd->u._flags |= 1 << (_al - 1);
-				} while (!scumm_stricmp(_tokens[_si++], "|"));
-				_si--;
-			} else {
-				cmd->u._flags |= kFlagsGlobal;
-				do {
-					char _al = _globalTable->lookup(_tokens[1]);
-					_si++;
-					cmd->u._flags |= 1 << (_al - 1);
-				} while (!scumm_stricmp(_tokens[_si++], "|"));
-				_si--;
-			}
-			break;
+		(this->*_commandParsers[cmd->_id - 1])();
 
-		case CMD_START: // start
-		case CMD_STOP:	// stop
-			cmd->u._animation = findAnimation(_tokens[_si]);
-			_si++;
-			if (cmd->u._animation == NULL) {
-				strcpy(_forwardedAnimationNames[_numForwards], _tokens[_si-1]);
-				_forwardedCommands[_numForwards] = cmd;
-				_numForwards++;
-			}
-			break;
-
-		case CMD_SPEAK: // speak
-		case CMD_GET:	// get
-		case CMD_OPEN:	// open
-		case CMD_CLOSE: // close
-		case CMD_ON:	// on
-		case CMD_OFF:	// off
-			cmd->u._zone = findZone(_tokens[_si]);
-			_si++;
-			break;
-
-		case CMD_LOCATION:	// location
-			cmd->u._string = (char*)malloc(strlen(_tokens[_si])+1);
-			strcpy(cmd->u._string, _tokens[_si]);
-			_si++;
-			break;
-
-		case CMD_CALL:	// call
-			cmd->u._callable = _callableNames->lookup(_tokens[_si]) - 1;
-			_si++;
-			break;
-
-		case CMD_DROP:	// drop
-			cmd->u._object = _objectsNames->lookup(_tokens[_si]);
-			_si++;
-			break;
-
-		case CMD_QUIT:	// quit
-			break;
-
-		case CMD_MOVE:	// move
-			cmd->u._move._x = atoi(_tokens[_si]);
-			_si++;
-			cmd->u._move._y = atoi(_tokens[_si]);
-			_si++;
-			break;
-
-		}
+		int _si = _cmdParseCtxt.nextToken;
 
 		if (!scumm_stricmp(_tokens[_si], "flags")) {
 			_si++;
@@ -192,18 +214,163 @@ void Parallaction::parseCommands(Script &script, CommandList& list) {
 		fillBuffers(script, true);
 
 	}
-
 }
+
+
+DECLARE_COMMAND_OPCODE(set) {
+	if (_cmdRunCtxt.cmd->u._flags & kFlagsGlobal) {
+		_cmdRunCtxt.cmd->u._flags &= ~kFlagsGlobal;
+		_commandFlags |= _cmdRunCtxt.cmd->u._flags;
+	} else {
+		_localFlags[_currentLocationIndex] |= _cmdRunCtxt.cmd->u._flags;
+	}
+}
+
+
+DECLARE_COMMAND_OPCODE(clear) {
+	if (_cmdRunCtxt.cmd->u._flags & kFlagsGlobal) {
+		_cmdRunCtxt.cmd->u._flags &= ~kFlagsGlobal;
+		_commandFlags &= ~_cmdRunCtxt.cmd->u._flags;
+	} else {
+		_localFlags[_currentLocationIndex] &= ~_cmdRunCtxt.cmd->u._flags;
+	}
+}
+
+
+DECLARE_COMMAND_OPCODE(start) {
+	_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsActing;
+}
+
+
+DECLARE_COMMAND_OPCODE(speak) {
+	_activeZone = _cmdRunCtxt.cmd->u._zone;
+}
+
+
+DECLARE_COMMAND_OPCODE(get) {
+	_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsFixed;
+	if (!runZone(_cmdRunCtxt.cmd->u._zone)) {
+		runCommands(_cmdRunCtxt.cmd->u._zone->_commands);
+	}
+}
+
+
+DECLARE_COMMAND_OPCODE(location) {
+	strcpy(_location._name, _cmdRunCtxt.cmd->u._string);
+	_engineFlags |= kEngineChangeLocation;
+}
+
+
+DECLARE_COMMAND_OPCODE(open) {
+	_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsClosed;
+	if (_cmdRunCtxt.cmd->u._zone->u.door->_cnv) {
+		addJob(&jobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
+	}
+}
+
+
+DECLARE_COMMAND_OPCODE(close) {
+	_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsClosed;
+	if (_cmdRunCtxt.cmd->u._zone->u.door->_cnv) {
+		addJob(&jobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
+	}
+}
+
+
+DECLARE_COMMAND_OPCODE(on) {
+	// WORKAROUND: the original DOS-based engine didn't check u->_zone before dereferencing
+	// the pointer to get structure members, thus leading to crashes in systems with memory
+	// protection.
+	// As a side note, the overwritten address is the 5th entry in the DOS interrupt table
+	// (print screen handler): this suggests that a system would hang when the print screen
+	// key is pressed after playing Nippon Safes, provided that this code path is taken.
+	if (_cmdRunCtxt.cmd->u._zone != NULL) {
+		_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsRemove;
+		_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsActive;
+		if ((_cmdRunCtxt.cmd->u._zone->_type & 0xFFFF) == kZoneGet) {
+			addJob(&jobDisplayDroppedItem, _cmdRunCtxt.cmd->u._zone, kPriority17 );
+		}
+	}
+}
+
+
+DECLARE_COMMAND_OPCODE(off) {
+	_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsRemove;
+}
+
+
+DECLARE_COMMAND_OPCODE(call) {
+	callFunction(_cmdRunCtxt.cmd->u._callable, _cmdRunCtxt.z);
+}
+
+
+DECLARE_COMMAND_OPCODE(toggle) {
+	if (_cmdRunCtxt.cmd->u._flags & kFlagsGlobal) {
+		_cmdRunCtxt.cmd->u._flags &= ~kFlagsGlobal;
+		_commandFlags ^= _cmdRunCtxt.cmd->u._flags;
+	} else {
+		_localFlags[_currentLocationIndex] ^= _cmdRunCtxt.cmd->u._flags;
+	}
+}
+
+
+DECLARE_COMMAND_OPCODE(drop){
+	dropItem( _cmdRunCtxt.cmd->u._object );
+}
+
+
+DECLARE_COMMAND_OPCODE(quit) {
+	_engineFlags |= kEngineQuit;
+}
+
+
+DECLARE_COMMAND_OPCODE(move) {
+	if ((_char._ani._flags & kFlagsRemove) || (_char._ani._flags & kFlagsActive) == 0) {
+		return;
+	}
+
+	WalkNodeList *vC = _char._builder.buildPath(_cmdRunCtxt.cmd->u._move._x, _cmdRunCtxt.cmd->u._move._y);
+
+	addJob(&jobWalk, vC, kPriority19 );
+	_engineFlags |= kEngineWalking;
+}
+
+
+DECLARE_COMMAND_OPCODE(stop) {
+	_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsActing;
+}
+
+
 
 
 void Parallaction::runCommands(CommandList& list, Zone *z) {
 	debugC(1, kDebugLocation, "runCommands");
 
+	static const Opcode opcodes[] = {
+		COMMAND_OPCODE(set),
+		COMMAND_OPCODE(clear),
+		COMMAND_OPCODE(start),
+		COMMAND_OPCODE(speak),
+		COMMAND_OPCODE(get),
+		COMMAND_OPCODE(location),
+		COMMAND_OPCODE(open),
+		COMMAND_OPCODE(close),
+		COMMAND_OPCODE(on),
+		COMMAND_OPCODE(off),
+		COMMAND_OPCODE(call),
+		COMMAND_OPCODE(toggle),
+		COMMAND_OPCODE(drop),
+		COMMAND_OPCODE(quit),
+		COMMAND_OPCODE(move),
+		COMMAND_OPCODE(stop)
+	};
+
+	_commandOpcodes = opcodes;
+
 	CommandList::iterator it = list.begin();
 	for ( ; it != list.end(); it++) {
 
 		Command *cmd = *it;
-		CommandData *u = &cmd->u;
 		uint32 v8 = _localFlags[_currentLocationIndex];
 
 		if (_engineFlags & kEngineQuit)
@@ -218,118 +385,10 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 
 		debugC(1, kDebugLocation, "runCommands: %s (on: %x, off: %x)", _commandsNamesRes[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
 
-		switch (cmd->_id) {
+		_cmdRunCtxt.z = z;
+		_cmdRunCtxt.cmd = cmd;
 
-		case CMD_SET:	// set
-			if (cmd->u._flags & kFlagsGlobal) {
-				cmd->u._flags &= ~kFlagsGlobal;
-				_commandFlags |= cmd->u._flags;
-			} else {
-				_localFlags[_currentLocationIndex] |= cmd->u._flags;
-			}
-			break;
-
-		case CMD_CLEAR: // clear
-			if (cmd->u._flags & kFlagsGlobal) {
-				cmd->u._flags &= ~kFlagsGlobal;
-				_commandFlags &= ~cmd->u._flags;
-			} else {
-				_localFlags[_currentLocationIndex] &= ~cmd->u._flags;
-			}
-			break;
-
-		case CMD_TOGGLE:	// toggle
-			if (cmd->u._flags & kFlagsGlobal) {
-				cmd->u._flags &= ~kFlagsGlobal;
-				_commandFlags ^= cmd->u._flags;
-			} else {
-				_localFlags[_currentLocationIndex] ^= cmd->u._flags;
-			}
-			break;
-
-		case CMD_START: // start
-			cmd->u._zone->_flags |= kFlagsActing;
-			break;
-
-		case CMD_STOP:	// stop
-			cmd->u._zone->_flags &= ~kFlagsActing;
-			break;
-
-		case CMD_SPEAK: // speak
-			_activeZone = u->_zone;
-			break;
-
-		case CMD_GET:	// get
-			u->_zone->_flags &= ~kFlagsFixed;
-			if (!runZone(u->_zone)) {
-				runCommands(u->_zone->_commands);
-			}
-			break;
-
-		case CMD_DROP:	// drop
-			dropItem( u->_object );
-			break;
-
-		case CMD_OPEN:	// open
-			u->_zone->_flags &= ~kFlagsClosed;
-			if (u->_zone->u.door->_cnv) {
-				addJob(&jobToggleDoor, (void*)u->_zone, kPriority18 );
-			}
-			break;
-
-		case CMD_CLOSE: // close
-			u->_zone->_flags |= kFlagsClosed;
-			if (u->_zone->u.door->_cnv) {
-				addJob(&jobToggleDoor, (void*)u->_zone, kPriority18 );
-			}
-			break;
-
-		case CMD_ON:	// on
-			// WORKAROUND: the original DOS-based engine didn't check u->_zone before dereferencing
-			// the pointer to get structure members, thus leading to crashes in systems with memory
-			// protection.
-			// As a side note, the overwritten address is the 5th entry in the DOS interrupt table
-			// (print screen handler): this suggests that a system would hang when the print screen
-			// key is pressed after playing Nippon Safes, provided that this code path is taken.
-			if (u->_zone != NULL) {
-				u->_zone->_flags &= ~kFlagsRemove;
-				u->_zone->_flags |= kFlagsActive;
-				if ((u->_zone->_type & 0xFFFF) == kZoneGet) {
-					addJob(&jobDisplayDroppedItem, u->_zone, kPriority17 );
-				}
-			}
-			break;
-
-		case CMD_OFF:	// off
-			u->_zone->_flags |= kFlagsRemove;
-			break;
-
-		case CMD_LOCATION:	// location
-			strcpy(_location._name, u->_string);
-			_engineFlags |= kEngineChangeLocation;
-			break;
-
-		case CMD_CALL:	// call
-			callFunction(u->_callable, z);
-			break;
-
-		case CMD_QUIT:	// quit
-			_engineFlags |= kEngineQuit;
-			break;
-
-		case CMD_MOVE: {	// move
-			if ((_char._ani._flags & kFlagsRemove) || (_char._ani._flags & kFlagsActive) == 0) {
-				continue;
-			}
-
-			WalkNodeList *vC = _char._builder.buildPath(u->_move._x, u->_move._y);
-
-			addJob(&jobWalk, vC, kPriority19 );
-			_engineFlags |= kEngineWalking;
-			}
-			break;
-
-		}
+		(this->*_commandOpcodes[cmd->_id - 1])();
 	}
 
 	debugC(1, kDebugLocation, "runCommands completed");
