@@ -39,7 +39,6 @@ namespace Agi {
 #define SOUND_EMU_MAC	3
 #define SOUND_EMU_AMIGA	4
 
-#define SOUND_PLAYING   0x01
 #define WAVEFORM_SIZE   64
 #define ENV_ATTACK	10000		/**< envelope attack rate */
 #define ENV_DECAY       1000		/**< envelope decay rate */
@@ -53,8 +52,22 @@ namespace Agi {
 struct AgiSound {
 	uint32 flen;		/**< size of raw data */
 	uint8 *rdata;		/**< raw sound data */
-	uint8 flags;		/**< sound flags */
 	uint16 type;		/**< sound resource type */
+
+	void play() {
+		_isPlaying = true;
+	}
+	
+	void stop() {
+		_isPlaying = false;
+	}
+	
+	bool isPlaying() {
+		return _isPlaying;
+	}
+
+private:
+	bool _isPlaying; ///< Is the sound playing?
 };
 
 #include "common/pack-start.h"

@@ -389,8 +389,8 @@ static int noteToPeriod(int note) {
 
 void SoundMgr::unloadSound(int resnum) {
 	if (_vm->_game.dirSound[resnum].flags & RES_LOADED) {
-		if (_vm->_game.sounds[resnum].flags & SOUND_PLAYING) {
-			/* FIXME: Stop playing */
+		if (_vm->_game.sounds[resnum].isPlaying()) {
+			_vm->_game.sounds[resnum].stop();
 		}	
 
 		/* Release RAW data for sound */
@@ -431,7 +431,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 	struct SoundIIgsSample *smp;
 #endif
 
-	if (_vm->_game.sounds[resnum].flags & SOUND_PLAYING)
+	if (_vm->_game.sounds[resnum].isPlaying())
 		return;
 
 	stopSound();
@@ -444,7 +444,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 	if (type != AGI_SOUND_SAMPLE && type != AGI_SOUND_MIDI && type != AGI_SOUND_4CHN)
 		return;
 
-	_vm->_game.sounds[resnum].flags |= SOUND_PLAYING;
+	_vm->_game.sounds[resnum].play();
 	_vm->_game.sounds[resnum].type = type;
 	playingSound = resnum;
 	song = (uint8 *)_vm->_game.sounds[resnum].rdata;
@@ -516,7 +516,7 @@ void SoundMgr::stopSound() {
 		stopNote(i);
 
 	if (playingSound != -1) {
-		_vm->_game.sounds[playingSound].flags &= ~SOUND_PLAYING;
+		_vm->_game.sounds[playingSound].stop();
 		playingSound = -1;
 	}
 }
@@ -734,7 +734,7 @@ void SoundMgr::playSound() {
 			_vm->setflag(endflag, true);
 
 		if (playingSound != -1)
-			_vm->_game.sounds[playingSound].flags &= ~SOUND_PLAYING;
+			_vm->_game.sounds[playingSound].stop();
 		playingSound = -1;
 		endflag = -1;
 	}
