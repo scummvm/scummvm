@@ -53,7 +53,13 @@ bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Ty
 
 	strncpy0(fileName, video, 250);
 
-	char *extStart = strchr(fileName, '.');
+	char *extStart = strrchr(fileName, '.');
+	// There's no empty extension
+	if (extStart == (fileName + strlen(fileName) - 1)) {
+		*extStart = 0;
+		extStart = 0;
+	}
+
 	if (extStart) {
 		// The requested file already has an extension. Verifying.
 

@@ -885,9 +885,9 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	_vidBufferSize = _stream->readUint32LE();
 
 	if (_hasVideo) {
-		if (_frameDataSize == 0)
+		if ((_frameDataSize == 0) || (_frameDataSize > 1048576))
 			_frameDataSize = _width * _height + 500;
-		if (_vidBufferSize == 0)
+		if ((_vidBufferSize == 0) || (_vidBufferSize > 1048576))
 			_vidBufferSize = _frameDataSize;
 
 		_frameData = new byte[_frameDataSize];

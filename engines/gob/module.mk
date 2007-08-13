@@ -33,6 +33,7 @@ MODULE_OBJS := \
 	map.o \
 	map_v1.o \
 	map_v2.o \
+	map_v4.o \
 	mult.o \
 	mult_v1.o \
 	mult_v2.o \

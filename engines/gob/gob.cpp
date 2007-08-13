@@ -333,7 +333,7 @@ bool GobEngine::initGameParts() {
 			_mult = new Mult_v2(this);
 			_draw = new Draw_v2(this);
 			_game = new Game_v2(this);
-			_map = new Map_v2(this);
+			_map = new Map_v4(this);
 			_goblin = new Goblin_v3(this);
 			_scenery = new Scenery_v2(this);
 			_saveLoad = new SaveLoad_v3(this, _targetName.c_str());
@@ -348,8 +348,6 @@ bool GobEngine::initGameParts() {
 	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
 	if (!_noMusic && hasAdlib())
 		_adlib = new Adlib(this);
-
-	_map->init();
 
 	if (is640()) {
 		_video->_surfWidth = _width = 640;

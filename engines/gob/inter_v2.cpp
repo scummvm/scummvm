@@ -1561,7 +1561,8 @@ void Inter_v2::o2_openItk() {
 
 	evalExpr(0);
 	strncpy0(fileName, _vm->_global->_inter_resStr, 27);
-	strcat(fileName, ".ITK");
+	if (!strchr(fileName, '.'))
+		strcat(fileName, ".ITK");
 
 	_vm->_dataIO->openDataFile(fileName, true);
 }

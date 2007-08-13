@@ -42,6 +42,9 @@ Map_v1::~Map_v1() {
 }
 
 void Map_v1::init(void) {
+	if (_passMap || _itemsMap)
+		return;
+
 	_mapWidth = 26;
 	_mapHeight = 28;
 
@@ -83,6 +86,8 @@ void Map_v1::loadMapObjects(const char *avjFile) {
 		dataBuf = _vm->_dataIO->getData(avjFile);
 	}
 	Common::MemoryReadStream mapData(dataBuf, 4294967295U);
+
+	init();
 
 	if (_loadFromAvo) {
 		mapData.read(_passMap, _mapHeight * _mapWidth);

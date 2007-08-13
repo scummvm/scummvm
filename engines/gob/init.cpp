@@ -60,10 +60,10 @@ void Init::initGame(const char *totName) {
 	int16 handle2;
 	int16 handle;
 	int16 imdHandle;
-	char *infBuf;
+	byte *infBuf;
 	char *infPtr;
 	char *infEnd;
-	char buffer[20];
+	char buffer[128];
 	int32 varsCount;
 
 	initVideo();
@@ -120,10 +120,10 @@ void Init::initGame(const char *totName) {
 	} else {
 		_vm->_dataIO->closeData(handle);
 
-		infPtr = (char *) _vm->_dataIO->getData("intro.inf");
-		infBuf = infPtr;
+		infBuf = _vm->_dataIO->getData("intro.inf");
+		infPtr = (char *) infBuf;
 
-		infEnd = infBuf + _vm->_dataIO->getDataSize("intro.inf");
+		infEnd = (char *) (infBuf + _vm->_dataIO->getDataSize("intro.inf"));
 
 		for (int i = 0; i < 4; i++, infPtr++) {
 			int j;
