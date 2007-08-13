@@ -333,6 +333,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\map_v4.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\mult.cpp"
 			>
 		</File>
