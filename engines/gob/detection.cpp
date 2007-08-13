@@ -953,7 +953,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesCD,
 		"intro"
 	},
-
 	{
 		{
 			"lostintime",
@@ -967,7 +966,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"demo"
 	},
-
 	{
 		{
 			"gob3",
