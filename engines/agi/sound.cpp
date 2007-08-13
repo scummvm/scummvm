@@ -140,9 +140,48 @@ struct IIgsWaveInfo {
 	}
 };
 
-// Maximum number of waves in an Apple IIGS instrument's wave list.
+// Number of waves per Apple IIGS sound oscillator
+#define WAVES_PER_OSCILLATOR 2
+
+/** An Apple IIGS sound oscillator. Consists always of two waves. */
+struct IIgsOscillator {
+	IIgsWaveInfo waves[WAVES_PER_OSCILLATOR];
+
+	bool finalize(Common::SeekableReadStream &uint8Wave) {
+		for (uint i = 0; i < WAVES_PER_OSCILLATOR; i++)
+			if (!waves[i].finalize(uint8Wave))
+				return false;
+		return true;
+	}
+};
+
+// Maximum number of oscillators in an Apple IIGS instrument.
 // Chosen empirically based on Apple IIGS AGI game data, increase if needed.
-#define MAX_WAVE_COUNT 4
+#define MAX_OSCILLATORS 4
+
+/** An Apple IIGS sound oscillator list. */
+struct IIgsOscillatorList {
+	uint count; ///< Oscillator count
+	IIgsOscillator osc[MAX_OSCILLATORS]; ///< The oscillators
+
+	bool read(Common::SeekableReadStream &stream, uint oscillatorCount, bool ignoreAddr = false) {
+		// First read the A waves and then the B waves for the oscillators
+		for (uint waveNum = 0; waveNum < WAVES_PER_OSCILLATOR; waveNum++)
+			for (uint oscNum = 0; oscNum < oscillatorCount; oscNum++)
+				if (!osc[oscNum].waves[waveNum].read(stream, ignoreAddr))
+					return false;
+
+		count = oscillatorCount; // Set the oscillator count
+		return true;
+	}
+
+	bool finalize(Common::SeekableReadStream &uint8Wave) {
+		for (uint i = 0; i < count; i++)
+			if (!osc[i].finalize(uint8Wave))
+				return false;
+		return true;
+	}
+};
 
 struct IIgsInstrumentHeader {
 	IIgsEnvelope env;
@@ -152,10 +191,7 @@ struct IIgsInstrumentHeader {
 	uint8 vibdepth;
 	uint8 vibspeed;
 	uint8 spare;
-	uint8 wac;
-	uint8 wbc;
-	IIgsWaveInfo wal[MAX_WAVE_COUNT];
-	IIgsWaveInfo wbl[MAX_WAVE_COUNT];
+	IIgsOscillatorList oscList;
 
 	/**
 	 * Read an Apple IIGS instrument header from the given stream.
@@ -171,23 +207,14 @@ struct IIgsInstrumentHeader {
 		vibdepth  = stream.readByte();
 		vibspeed  = stream.readByte();
 		spare     = stream.readByte();
-		wac       = stream.readByte();
-		wbc       = stream.readByte();
-		for (int waveA = 0; waveA < wac; waveA++) // Read A wave lists
-			wal[waveA].read(stream, ignoreAddr);
-		for (int waveB = 0; waveB < wbc; waveB++) // Read B wave lists
-			wbl[waveB].read(stream, ignoreAddr);
-		return !stream.ioFailed();
+		byte wac  = stream.readByte(); // Read A wave count
+		byte wbc  = stream.readByte(); // Read B wave count
+		oscList.read(stream, wac, ignoreAddr); // Read the oscillators
+		return (wac == wbc) && !stream.ioFailed(); // A and B wave counts must match
 	}
 
 	bool finalize(Common::SeekableReadStream &uint8Wave) {
-		for (int waveA = 0; waveA < wac; waveA++) // Finalize A-waves
-			if (!wal[waveA].finalize(uint8Wave))
-				return false;
-		for (int waveB = 0; waveB < wbc; waveB++) // Finalize B-waves
-			if (!wbl[waveB].finalize(uint8Wave))
-				return false;
-		return true;
+		return oscList.finalize(uint8Wave);
 	}
 };
 
