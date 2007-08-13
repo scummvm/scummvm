@@ -68,6 +68,15 @@ void Init::initGame(const char *totName) {
 
 	initVideo();
 
+	// The Lost In Time demo uses different file prefix
+	if (_vm->getGameType() == kGameTypeLostInTime) {
+		handle2 = _vm->_dataIO->openData("demo.stk");
+		if (handle2 >= 0) {
+			_vm->_dataIO->closeData(handle2);
+			_vm->_dataIO->openDataFile("demo.stk");
+		}
+	}
+
 	handle2 = _vm->_dataIO->openData("intro.stk");
 	if (handle2 >= 0) {
 		_vm->_dataIO->closeData(handle2);

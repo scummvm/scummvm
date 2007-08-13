@@ -953,6 +953,21 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesCD,
 		"intro"
 	},
+
+	{
+		{
+			"lostintime",
+			"Demo",
+			AD_ENTRY1("demo.stk", "c06f8cc20eb239d4c71f225ce3093edf"),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		kGameTypeLostInTime,
+		kFeaturesNone,
+		"demo"
+	},
+
 	{
 		{
 			"gob3",
