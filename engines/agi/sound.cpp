@@ -49,13 +49,18 @@ namespace Agi {
  * Needed because a zero byte in the sample data ends the sample prematurely.
  */
 uint calcTrueSampleSize(Common::SeekableReadStream &sample, uint size) {
+	uint32 startPos = sample.pos(); // Save stream's starting position
 	// Search for a zero byte in the sample data,
 	// as that would end the sample prematurely.
-	for (uint i = 0; i < size; i++)
-		if (sample.readByte() == 0)
-			return i;
-	// If no zero was found in the sample, then return its whole size.
-	return size;
+	uint result = size; // Set a default value for the result
+	for (uint i = 0; i < size; i++) {
+		if (sample.readByte() == 0) {
+			result = i;
+			break;
+		}
+	}
+	sample.seek(startPos); // Seek back to the stream's starting position
+	return result;
 }
 
 struct IIgsEnvelopeSegment {
