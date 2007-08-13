@@ -629,7 +629,10 @@ void Script::sfSetObjImage(SCRIPTFUNC_PARAMS) {
 	spriteId = thread->pop();
 
 	obj = _vm->_actor->getObj(objectId);
-	obj->_spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
+	if (_vm->getGameType() == GType_IHNM)
+		obj->_spriteListResourceId = spriteId;
+	else
+		obj->_spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
 	_vm->_interface->refreshInventory();
 }
 
