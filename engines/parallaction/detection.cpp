@@ -48,6 +48,7 @@ Common::Platform Parallaction::getPlatform() const { return _gameDescription->de
 }
 
 static const PlainGameDescriptor parallactionGames[] = {
+	{"parallaction", "Parallaction engine game"},
 	{"nippon", "Nippon Safes Inc."},
 	{"bra", "The Big Red Adventure"},
 	{0, 0}
@@ -176,7 +177,7 @@ static const Common::ADParams detectionParams = {
 	// Structure for autoupgrading obsolete targets
 	0,
 	// Name of single gameid (optional)
-	0,
+	"parallaction",
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Fallback callback
@@ -185,32 +186,26 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-GameList Engine_PARALLACTION_gameIDList() {
-	return GameList(parallactionGames);
-}
+bool engineCreate(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)(encapsulatedDesc.realDesc);
+	bool res = true;
 
-GameDescriptor Engine_PARALLACTION_findGameID(const char *gameid) {
-	return Common::AdvancedDetector::findGameID(gameid, parallactionGames);
-}
-
-GameList Engine_PARALLACTION_detectGames(const FSList &fslist) {
-	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
-}
-
-PluginError Engine_PARALLACTION_create(OSystem *syst, Engine **engine) {
-	assert(engine);
-	const char *gameid = ConfMan.get("gameid").c_str();
-
-	if (!scumm_stricmp("nippon", gameid)) {
+	switch (gd->gameType) {
+	case Parallaction::GType_Nippon:
 		*engine = new Parallaction::Parallaction_ns(syst);
-	} else
-	if (!scumm_stricmp("bra", gameid)) {
+		break;
+	case Parallaction::GType_BRA:
 		*engine = new Parallaction::Parallaction_br(syst);
-	} else
-		error("Parallaction engine created with invalid gameid ('%s')", gameid);
+		break;
+	default:
+		res = false;
+		error("Parallaction engine: unknown gameType");
+	}
 
-	return kNoError;
+	return res;
 }
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(PARALLACTION, engineCreate, detectionParams);
 
 REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dynabyte");
 
