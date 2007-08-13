@@ -81,7 +81,7 @@ void Parallaction::parseZone(Script &script, ZoneList &list, char *name) {
 				z->_type = (4 + _objectsNames->lookup(_tokens[2])) << 16;
 			}
 			int16 _si = _zoneTypeNames->lookup(_tokens[1]);
-			if (_si != -1) {
+			if (_si != Table::notFound) {
 				z->_type |= 1 << (_si - 1);
 				parseZoneTypeBlock(script, z);
 				continue;

@@ -94,7 +94,7 @@ Animation *Parallaction::parseAnimation(Script& script, AnimationList &list, cha
 				vD0->_type = ((4 + _objectsNames->lookup(_tokens[2])) << 16) & 0xFFFF0000;
 			}
 			int16 _si = _zoneTypeNames->lookup(_tokens[1]);
-			if (_si != -1) {
+			if (_si != Table::notFound) {
 				vD0->_type |= 1 << (_si-1);
 				if (((vD0->_type & 0xFFFF) != kZoneNone) && ((vD0->_type & 0xFFFF) != kZoneCommand)) {
 					parseZoneTypeBlock(script, vD0);
@@ -295,8 +295,6 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 	int16 _si = _instructionNames->lookup(_tokens[0]);
 	inst->_index = _si;
 
-//	printf("token[0] = %s (%i)\n", _tokens[0], inst->_index);
-
 	switch (inst->_index) {
 	case INST_ON:	// on
 	case INST_OFF:	// off
@@ -392,9 +390,10 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 		break;
 
 	case INST_CALL: {	// call
-		int16 _ax = _callableNames->lookup(_tokens[1]);
-		inst->_opBase._index = _ax - 1;
-		if (_ax - 1 < 0) exit(0);
+		int index = _callableNames->lookup(_tokens[1]);
+		if (index == Table::notFound)
+			error("unknown callable '%s'", _tokens[1]);
+		inst->_opBase._index = index - 1;
 	}
 	break;
 

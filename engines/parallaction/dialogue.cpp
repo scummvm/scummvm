@@ -151,7 +151,7 @@ Dialogue *Parallaction::parseDialogue(Script &script) {
 			int16 index = forwards.lookup(answer->_following._name);
 			free(answer->_following._name);
 
-			if (index == -1)
+			if (index == Table::notFound)
 				answer->_following._question = 0;
 			else
 				answer->_following._question = dialogue->_questions[index - 1];

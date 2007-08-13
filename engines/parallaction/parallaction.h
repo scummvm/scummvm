@@ -275,9 +275,13 @@ public:
 
 	~Table();
 
+	enum {
+		notFound = 0
+	};
+
 	void addData(const char* s);
 
-	int16 lookup(const char* s);
+	int lookup(const char* s);
 };
 
 struct BackgroundInfo {

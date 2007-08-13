@@ -837,13 +837,13 @@ void Table::addData(const char* s) {
 
 }
 
-int16 Table::lookup(const char* s) {
+int Table::lookup(const char* s) {
 
 	for (uint16 i = 0; i < _used; i++) {
 		if (!scumm_stricmp(_data[i], s)) return i + 1;
 	}
 
-	return -1;
+	return notFound;
 }
 
 } // namespace Parallaction

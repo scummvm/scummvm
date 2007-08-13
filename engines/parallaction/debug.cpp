@@ -116,7 +116,7 @@ bool Debugger::Cmd_Give(int argc, const char **argv) {
 		DebugPrintf("give <item name>\n");
 	} else {
 		int index = _vm->_objectsNames->lookup(argv[1]);
-		if (index != -1)
+		if (index != Table::notFound)
 			_vm->addInventoryItem(index + 4);
 		else
 			DebugPrintf("invalid item name '%s'\n", argv[1]);

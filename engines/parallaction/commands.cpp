@@ -48,7 +48,7 @@ namespace Parallaction {
 #define CMD_STOP			16
 
 DECLARE_COMMAND_PARSER(Flags) {
-	if (_globalTable->lookup(_tokens[1]) == -1) {
+	if (_globalTable->lookup(_tokens[1]) == Table::notFound) {
 		do {
 			char _al = _localFlagNames->lookup(_tokens[_cmdParseCtxt.nextToken]);
 			_cmdParseCtxt.nextToken++;
