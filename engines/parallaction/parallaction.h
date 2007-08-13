@@ -302,6 +302,8 @@ struct BackgroundInfo {
 #define DECLARE_COMMAND_OPCODE(op) void Parallaction::cmdOp_##op()
 #define COMMAND_OPCODE(op) &Parallaction::cmdOp_##op
 
+#define DECLARE_INSTRUCTION_PARSER(sig) void Parallaction::instParse_##sig()
+#define INSTRUCTION_PARSER(sig) &Parallaction::instParse_##sig
 
 #define DECLARE_INSTRUCTION_OPCODE(op) void Parallaction::instOp_##op()
 #define INSTRUCTION_OPCODE(op) &Parallaction::instOp_##op
@@ -364,6 +366,29 @@ public:
 	DECLARE_COMMAND_OPCODE(quit);
 	DECLARE_COMMAND_OPCODE(move);
 	DECLARE_COMMAND_OPCODE(stop);
+
+	const Opcode	*_instructionParsers;
+
+	struct {
+		Animation	*a;
+		Instruction *inst;
+		LocalVariable *locals;
+	} _instParseCtxt;
+
+	DECLARE_INSTRUCTION_PARSER(animation);
+	DECLARE_INSTRUCTION_PARSER(loop);
+	DECLARE_INSTRUCTION_PARSER(x);
+	DECLARE_INSTRUCTION_PARSER(y);
+	DECLARE_INSTRUCTION_PARSER(z);
+	DECLARE_INSTRUCTION_PARSER(f);
+	DECLARE_INSTRUCTION_PARSER(inc);
+	DECLARE_INSTRUCTION_PARSER(set);
+	DECLARE_INSTRUCTION_PARSER(move);
+	DECLARE_INSTRUCTION_PARSER(put);
+	DECLARE_INSTRUCTION_PARSER(call);
+	DECLARE_INSTRUCTION_PARSER(sound);
+	DECLARE_INSTRUCTION_PARSER(null);
+	DECLARE_INSTRUCTION_PARSER(defLocal);
 
 	const Opcode	*_instructionOpcodes;
 

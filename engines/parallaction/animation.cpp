@@ -278,9 +278,170 @@ int16 addLocal(const char *name, LocalVariable *locals, int16 value = 0, int16 m
 }
 
 
+DECLARE_INSTRUCTION_PARSER(animation) {
+	if (!scumm_stricmp(_tokens[1], _instParseCtxt.a->_label._text)) {
+		_instParseCtxt.inst->_opBase._a = _instParseCtxt.a;
+	} else {
+		_instParseCtxt.inst->_opBase._a = findAnimation(_tokens[1]);
+	}
+}
+
+
+DECLARE_INSTRUCTION_PARSER(loop) {
+	_instParseCtxt.inst->_opBase._loopCounter = getLValue(_instParseCtxt.inst, _tokens[1], _instParseCtxt.locals, _instParseCtxt.a);
+}
+
+
+DECLARE_INSTRUCTION_PARSER(x) {
+	_instParseCtxt.inst->_opA._pvalue = &_instParseCtxt.a->_left;
+	_instParseCtxt.inst->_opB = getLValue(_instParseCtxt.inst, _tokens[1], _instParseCtxt.locals, _instParseCtxt.a);
+}
+
+
+DECLARE_INSTRUCTION_PARSER(y) {
+	_instParseCtxt.inst->_opA._pvalue = &_instParseCtxt.a->_top;
+	_instParseCtxt.inst->_opB = getLValue(_instParseCtxt.inst, _tokens[1], _instParseCtxt.locals, _instParseCtxt.a);
+}
+
+
+DECLARE_INSTRUCTION_PARSER(z) {
+	_instParseCtxt.inst->_opA._pvalue = &_instParseCtxt.a->_z;
+	_instParseCtxt.inst->_opB = getLValue(_instParseCtxt.inst, _tokens[1], _instParseCtxt.locals, _instParseCtxt.a);
+}
+
+
+DECLARE_INSTRUCTION_PARSER(f) {
+	_instParseCtxt.inst->_opA._pvalue = &_instParseCtxt.a->_frame;
+	_instParseCtxt.inst->_opB = getLValue(_instParseCtxt.inst, _tokens[1], _instParseCtxt.locals, _instParseCtxt.a);
+}
+
+
+DECLARE_INSTRUCTION_PARSER(inc) {
+	if (!scumm_stricmp(_tokens[1], "X")) {
+		_instParseCtxt.inst->_opA._pvalue = &_instParseCtxt.a->_left;
+	} else
+	if (!scumm_stricmp(_tokens[1], "Y")) {
+		_instParseCtxt.inst->_opA._pvalue = &_instParseCtxt.a->_top;
+	} else
+	if (!scumm_stricmp(_tokens[1], "Z")) {
+		_instParseCtxt.inst->_opA._pvalue = &_instParseCtxt.a->_z;
+	} else
+	if (!scumm_stricmp(_tokens[1], "F")) {
+		_instParseCtxt.inst->_opA._pvalue = &_instParseCtxt.a->_frame;
+	} else {
+		_instParseCtxt.inst->_flags |= kInstUsesLocal;
+		_instParseCtxt.inst->_opA = getLValue(_instParseCtxt.inst, _tokens[1], _instParseCtxt.locals, _instParseCtxt.a);
+	}
+
+	_instParseCtxt.inst->_opB = getLValue(_instParseCtxt.inst, _tokens[2], _instParseCtxt.locals, _instParseCtxt.a);
+
+	if (!scumm_stricmp(_tokens[3], "mod")) {
+		_instParseCtxt.inst->_flags |= kInstMod;
+	}
+}
+
+
+DECLARE_INSTRUCTION_PARSER(set) {
+	// WORKAROUND: At least one script (balzo.script) in Amiga versions didn't declare
+	//	local variables before using them, thus leading to crashes. The line launching the
+	// script was commented out on Dos version. This workaround enables the engine
+	// to dynamically add a local variable when it is encountered the first time in
+	// the script, so should fix any other occurrence as well.
+	if (findLocal(_tokens[1], _instParseCtxt.locals) == -1) {
+		addLocal(_tokens[1], _instParseCtxt.locals);
+	}
+
+	_instParseCtxt.inst->_opA = getLValue(_instParseCtxt.inst, _tokens[1], _instParseCtxt.locals, _instParseCtxt.a);
+	_instParseCtxt.inst->_flags |= kInstUsesLocal;
+	_instParseCtxt.inst->_opB = getLValue(_instParseCtxt.inst, _tokens[2], _instParseCtxt.locals, _instParseCtxt.a);
+}
+
+
+DECLARE_INSTRUCTION_PARSER(move) {
+	_instParseCtxt.inst->_opA = getLValue(_instParseCtxt.inst, _tokens[1], _instParseCtxt.locals, _instParseCtxt.a);
+	_instParseCtxt.inst->_opB = getLValue(_instParseCtxt.inst, _tokens[2], _instParseCtxt.locals, _instParseCtxt.a);
+}
+
+
+DECLARE_INSTRUCTION_PARSER(put) {
+	if (!scumm_stricmp(_tokens[1], _instParseCtxt.a->_label._text)) {
+		_instParseCtxt.inst->_opBase._a = _instParseCtxt.a;
+	} else {
+		_instParseCtxt.inst->_opBase._a = findAnimation(_tokens[1]);
+	}
+
+	_instParseCtxt.inst->_opA = getLValue(_instParseCtxt.inst, _tokens[2], _instParseCtxt.locals, _instParseCtxt.a);
+	_instParseCtxt.inst->_opB = getLValue(_instParseCtxt.inst, _tokens[3], _instParseCtxt.locals, _instParseCtxt.a);
+	if (!scumm_stricmp(_tokens[4], "masked")) {
+		_instParseCtxt.inst->_flags |= kInstMaskedPut;
+	}
+}
+
+
+DECLARE_INSTRUCTION_PARSER(call) {
+	int index = _callableNames->lookup(_tokens[1]);
+	if (index == Table::notFound)
+		error("unknown callable '%s'", _tokens[1]);
+	_instParseCtxt.inst->_opBase._index = index - 1;
+}
+
+
+DECLARE_INSTRUCTION_PARSER(sound) {
+	_instParseCtxt.inst->_opBase._z = findZone(_tokens[1]);
+}
+
+
+DECLARE_INSTRUCTION_PARSER(null) {
+
+}
+
+
+DECLARE_INSTRUCTION_PARSER(defLocal) {
+	int16 val = atoi(_tokens[2]);
+	int16 index;
+
+	if (_tokens[3][0] != '\0') {
+		index = addLocal(_tokens[0], _instParseCtxt.locals, val, atoi(_tokens[3]), atoi(_tokens[4]));
+	} else {
+		index = addLocal(_tokens[0], _instParseCtxt.locals, val);
+	}
+
+	_instParseCtxt.inst->_opA._local = &_instParseCtxt.locals[index];
+	_instParseCtxt.inst->_opB._value = _instParseCtxt.locals[index]._value;
+
+	_instParseCtxt.inst->_flags = kInstUsesLiteral | kInstUsesLocal;
+	_instParseCtxt.inst->_index = INST_SET;
+}
+
+
+
 
 void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariable *locals) {
 //	printf("parseScriptLine()\n");
+
+	static const Opcode opcodes[] = {
+		INSTRUCTION_PARSER(defLocal),	// unknown opcode -> local definition
+		INSTRUCTION_PARSER(animation),	// on
+		INSTRUCTION_PARSER(animation),	// off
+		INSTRUCTION_PARSER(x),
+		INSTRUCTION_PARSER(y),
+		INSTRUCTION_PARSER(z),
+		INSTRUCTION_PARSER(f),
+		INSTRUCTION_PARSER(loop),
+		INSTRUCTION_PARSER(null),		// endloop
+		INSTRUCTION_PARSER(null),		// show
+		INSTRUCTION_PARSER(inc),
+		INSTRUCTION_PARSER(inc),		// dec
+		INSTRUCTION_PARSER(set),
+		INSTRUCTION_PARSER(put),
+		INSTRUCTION_PARSER(call),
+		INSTRUCTION_PARSER(null),		// wait
+		INSTRUCTION_PARSER(animation),	// start
+		INSTRUCTION_PARSER(sound),
+		INSTRUCTION_PARSER(move)
+	};
+
+	_instructionParsers = opcodes;
 
 	if (_tokens[0][1] == '.') {
 		_tokens[0][1] = '\0';
@@ -295,137 +456,11 @@ void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariabl
 	int16 _si = _instructionNames->lookup(_tokens[0]);
 	inst->_index = _si;
 
-	switch (inst->_index) {
-	case INST_ON:	// on
-	case INST_OFF:	// off
-	case INST_START:	// start
-		if (!scumm_stricmp(_tokens[1], a->_label._text)) {
-			inst->_opBase._a = a;
-		} else {
-			inst->_opBase._a = findAnimation(_tokens[1]);
-		}
-		break;
+	_instParseCtxt.a = a;
+	_instParseCtxt.inst = inst;
+	_instParseCtxt.locals = locals;
 
-	case INST_LOOP: // loop
-		inst->_opBase._loopCounter = getLValue(inst, _tokens[1], locals, a);
-		break;
-
-	case INST_X:	// x
-		inst->_opA._pvalue = &a->_left;
-		inst->_opB = getLValue(inst, _tokens[1], locals, a);
-		break;
-
-	case INST_Y:	// y
-		inst->_opA._pvalue = &a->_top;
-		inst->_opB = getLValue(inst, _tokens[1], locals, a);
-		break;
-
-	case INST_Z:	// z
-		inst->_opA._pvalue = &a->_z;
-		inst->_opB = getLValue(inst, _tokens[1], locals, a);
-		break;
-
-	case INST_F:	// f
-		inst->_opA._pvalue = &a->_frame;
-		inst->_opB = getLValue(inst, _tokens[1], locals, a);
-		break;
-
-	case INST_INC:	// inc
-	case INST_DEC:	// dec
-		if (!scumm_stricmp(_tokens[1], "X")) {
-			inst->_opA._pvalue = &a->_left;
-		} else
-		if (!scumm_stricmp(_tokens[1], "Y")) {
-			inst->_opA._pvalue = &a->_top;
-		} else
-		if (!scumm_stricmp(_tokens[1], "Z")) {
-			inst->_opA._pvalue = &a->_z;
-		} else
-		if (!scumm_stricmp(_tokens[1], "F")) {
-			inst->_opA._pvalue = &a->_frame;
-		} else {
-			inst->_flags |= kInstUsesLocal;
-			inst->_opA = getLValue(inst, _tokens[1], locals, a);
-		}
-
-		inst->_opB = getLValue(inst, _tokens[2], locals, a);
-
-		if (!scumm_stricmp(_tokens[3], "mod")) {
-			inst->_flags |= kInstMod;
-		}
-		break;
-
-	case INST_SET:	// set
-		// WORKAROUND: At least one script (balzo.script) in Amiga versions didn't declare
-		//	local variables before using them, thus leading to crashes. The line launching the
-		// script was commented out on Dos version. This workaround enables the engine
-		// to dynamically add a local variable when it is encountered the first time in
-		// the script, so should fix any other occurrence as well.
-		if (findLocal(_tokens[1], locals) == -1) {
-			addLocal(_tokens[1], locals);
-		}
-
-		inst->_opA = getLValue(inst, _tokens[1], locals, a);
-		inst->_flags |= kInstUsesLocal;
-		inst->_opB = getLValue(inst, _tokens[2], locals, a);
-		break;
-
-	case INST_MOVE: // move
-		inst->_opA = getLValue(inst, _tokens[1], locals, a);
-		inst->_opB = getLValue(inst, _tokens[2], locals, a);
-		break;
-
-	case INST_PUT:	// put
-		if (!scumm_stricmp(_tokens[1], a->_label._text)) {
-			inst->_opBase._a = a;
-		} else {
-			inst->_opBase._a = findAnimation(_tokens[1]);
-		}
-
-		inst->_opA = getLValue(inst, _tokens[2], locals, a);
-		inst->_opB = getLValue(inst, _tokens[3], locals, a);
-		if (!scumm_stricmp(_tokens[4], "masked")) {
-			inst->_flags |= kInstMaskedPut;
-		}
-		break;
-
-	case INST_CALL: {	// call
-		int index = _callableNames->lookup(_tokens[1]);
-		if (index == Table::notFound)
-			error("unknown callable '%s'", _tokens[1]);
-		inst->_opBase._index = index - 1;
-	}
-	break;
-
-	case INST_SOUND:	// sound
-		inst->_opBase._z = findZone(_tokens[1]);
-		break;
-
-	case INST_ENDLOOP:	// endloop
-	case INST_SHOW: // show
-	case INST_WAIT: // wait
-		break;
-
-	default: {	// local definition
-		int16 val = atoi(_tokens[2]);
-		int16 index;
-
-		if (_tokens[3][0] != '\0') {
-			index = addLocal(_tokens[0], locals, val, atoi(_tokens[3]), atoi(_tokens[4]));
-		} else {
-			index = addLocal(_tokens[0], locals, val);
-		}
-
-		inst->_opA._local = &locals[index];
-		inst->_opB._value = locals[index]._value;
-
-		inst->_flags = kInstUsesLiteral | kInstUsesLocal;
-		inst->_index = INST_SET;
-	}
-	break;
-
-	}
-
+	(this->*_instructionParsers[inst->_index])();
 
 	return;
 }
