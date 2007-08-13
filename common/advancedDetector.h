@@ -252,7 +252,7 @@ PluginError detectGameForEngineCreation(const Common::ADParams &params);
 } // End of namespace AdvancedDetector
 
 
-#define ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC(engine,factoryFunc,params) \
+#define _ADVANCED_DETECTOR_DEFINE_PLUGIN_HEAD(engine,params) \
 	GameList Engine_##engine##_gameIDList() { \
 		return Common::AdvancedDetector::gameIDList(params); \
 	} \
@@ -262,6 +262,10 @@ PluginError detectGameForEngineCreation(const Common::ADParams &params);
 	GameList Engine_##engine##_detectGames(const FSList &fslist) { \
 		return Common::AdvancedDetector::detectAllGames(fslist, params); \
 	} \
+	void dummyFuncToAllowTrailingSemicolon()
+
+#define _ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_PREDEFINED_FUNC(engine,factoryFunc,params) \
+	_ADVANCED_DETECTOR_DEFINE_PLUGIN_HEAD(engine,params); \
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(syst); \
 		assert(engine); \
@@ -272,11 +276,26 @@ PluginError detectGameForEngineCreation(const Common::ADParams &params);
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 
+#define ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(engine,factoryFunc,params) \
+	_ADVANCED_DETECTOR_DEFINE_PLUGIN_HEAD(engine,params); \
+	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
+		assert(engine); \
+		Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(params); \
+		if (encapsulatedDesc.realDesc == 0) { \
+			return kNoGameDataFoundError; \
+		} \
+		if (!factoryFunc(syst,engine,encapsulatedDesc)) {	\
+			return kNoGameDataFoundError; \
+		} \
+		return kNoError; \
+	} \
+	void dummyFuncToAllowTrailingSemicolon()
+
 #define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,className,params) \
 	static Engine *engine##_createInstance(OSystem *syst) { \
 		return new className(syst); \
 	} \
-	ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC(engine,engine##_createInstance,params); \
+	_ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_PREDEFINED_FUNC(engine,engine##_createInstance,params); \
 	void dummyFuncToAllowTrailingSemicolon()
 
 
