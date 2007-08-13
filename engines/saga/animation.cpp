@@ -454,6 +454,9 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	}
 
 	if (anim->completed < anim->cycles) {
+		if (anim->currentFrame < 0)
+			anim->currentFrame = 0;
+
 		frame = anim->currentFrame;
 
 		// WORKAROUND for a buggy animation in IHNM. Animation 0 in scene 67 (the mob of angry prisoners) should
