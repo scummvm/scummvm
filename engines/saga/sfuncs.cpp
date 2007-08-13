@@ -596,9 +596,7 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 
 	// changeScene calls loadScene which calls setVerb. setVerb resets all pending objects and object flags
 	if (sceneNumber == -1 && _vm->getGameType() == GType_IHNM) {
-		// TODO: This is used to return back to the character selection screen in IHNM.
-		// However, it seems more than this is needed, AM's speech is wrong and no actors
-		// are shown
+		// Return back to the character selection screen in IHNM
 		_vm->_scene->changeScene(154, entrance, kTransitionFade, 8);
 	} else {
 		_vm->_scene->changeScene(sceneNumber, entrance, (sceneNumber == ITE_SCENE_ENDCREDIT1) ? kTransitionFade : kTransitionNoFade);
