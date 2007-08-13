@@ -123,7 +123,7 @@ bool readIIgsEnvelope(IIgsEnvelope &envelope, Common::SeekableReadStream &stream
 	return !stream.ioFailed();
 }
 
-bool readIIgsWaveInfo(IIgsWaveInfo &waveInfo, Common::SeekableReadStream &stream) {
+bool readIIgsWaveInfo(IIgsWaveInfo &waveInfo, Common::SeekableReadStream &stream, bool ignoreAddr = false) {
 	waveInfo.top      = stream.readByte();
 	waveInfo.addr     = stream.readByte() * 256;
 	waveInfo.size     = (1 << (stream.readByte() & 7)) * 256;
@@ -135,6 +135,11 @@ bool readIIgsWaveInfo(IIgsWaveInfo &waveInfo, Common::SeekableReadStream &stream
 	waveInfo.halt     = (mode & 1) != 0; // Bit 0 (Converted to boolean)
 
 	waveInfo.relPitch = stream.readUint16BE();
+
+	// Zero the wave address if we want to ignore the wave address info
+	if (ignoreAddr)
+		waveInfo.addr = 0;
+
 	return !stream.ioFailed();
 }
 
@@ -142,9 +147,10 @@ bool readIIgsWaveInfo(IIgsWaveInfo &waveInfo, Common::SeekableReadStream &stream
  * Read an Apple IIGS instrument header from the given stream.
  * @param header The header to which to write the data.
  * @param stream The source stream from which to read the data.
+ * @param ignoreAddr Should we ignore wave infos' wave address variable's value?
  * @return True if successful, false otherwise.
  */
-bool readIIgsInstrumentHeader(IIgsInstrumentHeader &header, Common::SeekableReadStream &stream) {
+bool readIIgsInstrumentHeader(IIgsInstrumentHeader &header, Common::SeekableReadStream &stream, bool ignoreAddr = false) {
 	readIIgsEnvelope(header.env, stream);
 	header.relseg    = stream.readByte();
 	header.priority  = stream.readByte();
@@ -155,9 +161,9 @@ bool readIIgsInstrumentHeader(IIgsInstrumentHeader &header, Common::SeekableRead
 	header.wac       = stream.readByte();
 	header.wbc       = stream.readByte();
 	for (int waveA = 0; waveA < header.wac; waveA++) // Read A wave lists
-		readIIgsWaveInfo(header.wal[waveA], stream);
+		readIIgsWaveInfo(header.wal[waveA], stream, ignoreAddr);
 	for (int waveB = 0; waveB < header.wbc; waveB++) // Read B wave lists
-		readIIgsWaveInfo(header.wbl[waveB], stream);
+		readIIgsWaveInfo(header.wbl[waveB], stream, ignoreAddr);
 	return !stream.ioFailed();
 }
 
@@ -175,26 +181,52 @@ bool readIIgsSampleHeader(IIgsSampleHeader &header, Common::SeekableReadStream &
 	header.unknownByte_Ofs5 = stream.readByte();
 	header.instrumentSize   = stream.readUint16LE();
 	header.sampleSize       = stream.readUint16LE();
-	return readIIgsInstrumentHeader(header.instrument, stream);
+	// Read the instrument headers *ignoring* their wave address info
+	return readIIgsInstrumentHeader(header.instrument, stream, true);
 }
 
 /**
  * Calculates an Apple IIGS sample's true size.
  * Needed because a zero byte in the sample data ends the sample prematurely.
  */
-uint calcTrueSampleSize(byte *sample, uint size) {
-	if (sample == NULL) { // Check for an erroneous input value
-		warning("Agi::calcTrueSampleSize: A NULL-pointer parameter");
-		return size; // Might as well return 0
-	} else { // Input values are ok
-		// Search for a zero byte in the sample data,
-		// as that would end the sample prematurely.
-		for (uint i = 0; i < size; i++)
-			if (sample[i] == 0)
-				return i;
-		// If no zero was found in the sample, then return its whole size.
-		return size;
-	}
+uint calcTrueSampleSize(Common::SeekableReadStream &sample, uint size) {
+	// Search for a zero byte in the sample data,
+	// as that would end the sample prematurely.
+	for (uint i = 0; i < size; i++)
+		if (sample.readByte() == 0)
+			return i;
+	// If no zero was found in the sample, then return its whole size.
+	return size;
+}
+
+bool finalizeWaveInfo(IIgsWaveInfo &waveInfo, Common::SeekableReadStream &uint8Wave) {
+	uint32 startPos = uint8Wave.pos(); // Save stream's starting position
+	uint8Wave.seek(waveInfo.addr, SEEK_CUR); // Seek to wave's address
+	// Calculate the true sample size (A zero ends the sample prematurely)
+	waveInfo.size = calcTrueSampleSize(uint8Wave, waveInfo.size);
+	uint8Wave.seek(startPos); // Seek back to the stream's starting position
+	return true;
+}
+
+bool finalizeInstrument(IIgsInstrumentHeader &header, Common::SeekableReadStream &uint8Wave) {
+	for (int waveA = 0; waveA < header.wac; waveA++) // Finalize A-waves
+		if (!finalizeWaveInfo(header.wal[waveA], uint8Wave))
+			return false;
+	for (int waveB = 0; waveB < header.wbc; waveB++) // Finalize B-waves
+		if (!finalizeWaveInfo(header.wbl[waveB], uint8Wave))
+			return false;
+	return true;
+}
+
+bool finalizeInstruments(Common::SeekableReadStream &uint8Wave) {
+	for (uint i = 0; i < g_numInstruments; i++)
+		if (!finalizeInstrument(g_instruments[i], uint8Wave))
+			return false;
+	return true;
+}
+
+bool finalizeSample(IIgsSampleHeader &header, Common::SeekableReadStream &uint8Wave) {
+	return finalizeInstrument(header.instrument, uint8Wave);
 }
 
 /**
@@ -234,18 +266,15 @@ Audio::AudioStream *makeIIgsSampleStream(Common::SeekableReadStream &stream, int
 		byte *sampleData = (byte *) malloc(header.sampleSize);
 		uint32 readBytes = stream.read(sampleData, header.sampleSize);
 		if (readBytes == header.sampleSize) { // Check that we got all the data we requested
-			// Calculate true sample size (A zero byte ends the sample prematurely)
-			uint trueSampleSize = calcTrueSampleSize(sampleData, header.sampleSize);
-			if (trueSampleSize != header.sampleSize) {
-				debugC(3, kDebugLevelSound, "Apple IIGS sample (%d): Size changed from %d to %d (Zero byte encountered)",
-					resnum, header.sampleSize, trueSampleSize);
-			}
-			header.sampleSize = (uint16) trueSampleSize; // Set the true sample size
+			// Create a stream out of the read sample data (Needed by the finalizeSample-function)
+			Common::MemoryReadStream sampleStream(sampleData, readBytes);
+			finalizeSample(header, sampleStream);
 			// Make an audio stream from the mono, 8 bit, unsigned input data
 			byte flags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED;
 			int rate = (int) (1076 * pow(SEMITONE, header.pitch));
 			result = Audio::makeLinearInputStream(sampleData, header.sampleSize, rate, flags, 0, 0);
-		}
+		} else // Couldn't read enough data, so let's delete the sample data buffer
+			delete sampleData;
 	}
 
 	// If couldn't make a sample out of the input stream for any reason then
@@ -873,7 +902,20 @@ bool loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exe
 	return loadedOk;
 }
 
-bool loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
+/**
+ * Convert sample from 8-bit unsigned to 16-bit signed format.
+ * @param source  Source stream containing the 8-bit unsigned sample data.
+ * @param dest  Destination buffer for the 16-bit signed sample data.
+ * @param length  Length of the sample data to be converted.
+ */
+bool convertWave(Common::SeekableReadStream &source, int16 *dest, uint length) {
+	// Convert the wave from 8-bit unsigned to 16-bit signed format
+	for (uint i = 0; i < length; i++)
+		dest[i] = (int16) ((source.readByte() - 128) * 256);
+	return !source.ioFailed();
+}
+
+Common::MemoryReadStream *loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
 	bool loadedOk = false; // Was loading successful?
 	Common::File file;
 
@@ -892,18 +934,12 @@ bool loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
 				"Please report the information on the previous line to the ScummVM team.\n" \
 				"Using the wave file as it is - music may sound weird", md5str, exeInfo.exePrefix);
 		}
-
-		// Convert wave file from 8 bit unsigned to 16 bit signed format
-		uint8Wave->seek(0);
-		for (int i = 0; i < SIERRASTANDARD_SIZE; i++)
-			g_wave[i] = (int16) ((uint8Wave->readByte() - 128) * 256);
-
-		loadedOk = true; // Loading was successful
-	} else // Couldn't read the wave file or it had incorrect size
+		return uint8Wave;
+	} else { // Couldn't read the wave file or it had incorrect size
 		warning("Error loading Apple IIGS wave file (%s), not loading instruments", wavePath.c_str());
-
-	delete uint8Wave; // Free the memory buffer allocated for reading the wave file
-	return loadedOk;
+		delete uint8Wave; // Free the memory buffer allocated for reading the wave file
+		return NULL;
+	}
 }
 
 /**
@@ -973,8 +1009,16 @@ bool SoundMgr::loadInstruments() {
 		return false;
 	}
 
-	// Load the instrument headers and the wave file
-	return loadInstrumentHeaders(exeFsnode->path(), *exeInfo) && loadWaveFile(waveFsnode->path(), *exeInfo);
+	// First load the wave file and then load the instrument headers.
+	// Finally fix the instruments' lengths using the wave file data
+	// (A zero in the wave file data can end the sample prematurely)
+	// and convert the wave file from 8-bit unsigned to 16-bit signed format.
+	Common::MemoryReadStream *uint8Wave = loadWaveFile(waveFsnode->path(), *exeInfo);
+	bool result = uint8Wave != NULL && loadInstrumentHeaders(exeFsnode->path(), *exeInfo) &&
+		finalizeInstruments(*uint8Wave) && convertWave(*uint8Wave, g_wave, uint8Wave->size());
+
+	delete uint8Wave; // Free the 8-bit unsigned wave file buffer
+	return result;
 }
 
 #endif /* USE_IIGS_SOUND */
