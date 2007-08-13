@@ -44,6 +44,20 @@ namespace Agi {
 
 #ifdef USE_IIGS_SOUND
 
+/**
+ * Calculates an Apple IIGS sample's true size.
+ * Needed because a zero byte in the sample data ends the sample prematurely.
+ */
+uint calcTrueSampleSize(Common::SeekableReadStream &sample, uint size) {
+	// Search for a zero byte in the sample data,
+	// as that would end the sample prematurely.
+	for (uint i = 0; i < size; i++)
+		if (sample.readByte() == 0)
+			return i;
+	// If no zero was found in the sample, then return its whole size.
+	return size;
+}
+
 struct IIgsEnvelopeSegment {
 	uint8 bp;
 	uint16 inc; ///< 8b.8b fixed point, big endian?
@@ -52,6 +66,15 @@ struct IIgsEnvelopeSegment {
 #define ENVELOPE_SEGMENT_COUNT 8
 struct IIgsEnvelope {
 	IIgsEnvelopeSegment seg[ENVELOPE_SEGMENT_COUNT];
+
+	/** Reads an Apple IIGS envelope from then given stream. */
+	bool read(Common::SeekableReadStream &stream) {
+		for (int segNum = 0; segNum < ENVELOPE_SEGMENT_COUNT; segNum++) {
+			seg[segNum].bp  = stream.readByte();
+			seg[segNum].inc = stream.readUint16BE();
+		}
+		return !stream.ioFailed();
+	}
 };
 
 // 2**(1/12) i.e. the 12th root of 2
@@ -80,6 +103,36 @@ struct IIgsWaveInfo {
 	uint mode;
 	bool halt;
 	uint16 relPitch; ///< 8b.8b fixed point, big endian?
+
+	/** Reads an Apple IIGS wave information structure from the given stream. */
+	bool read(Common::SeekableReadStream &stream, bool ignoreAddr = false) {
+		top  = stream.readByte();
+		addr = stream.readByte() * 256;
+		size = (1 << (stream.readByte() & 7)) * 256;
+
+		// Read packed mode byte and parse it into parts
+		byte packedModeByte = stream.readByte();
+		channel = (packedModeByte >> 4) & 1; // Bit 4
+		mode    = (packedModeByte >> 1) & 3; // Bits 1-2
+		halt    = (packedModeByte & 1) != 0; // Bit 0 (Converted to boolean)
+
+		relPitch = stream.readUint16BE();
+
+		// Zero the wave address if we want to ignore the wave address info
+		if (ignoreAddr)
+			addr = 0;
+
+		return !stream.ioFailed();
+	}
+
+	bool finalize(Common::SeekableReadStream &uint8Wave) {
+		uint32 startPos = uint8Wave.pos(); // Save stream's starting position
+		uint8Wave.seek(addr, SEEK_CUR); // Seek to wave's address
+		// Calculate the true sample size (A zero ends the sample prematurely)
+		size = calcTrueSampleSize(uint8Wave, size);
+		uint8Wave.seek(startPos); // Seek back to the stream's starting position
+		return true;
+	}
 };
 
 // Maximum number of waves in an Apple IIGS instrument's wave list.
@@ -98,6 +151,39 @@ struct IIgsInstrumentHeader {
 	uint8 wbc;
 	IIgsWaveInfo wal[MAX_WAVE_COUNT];
 	IIgsWaveInfo wbl[MAX_WAVE_COUNT];
+
+	/**
+	 * Read an Apple IIGS instrument header from the given stream.
+	 * @param stream The source stream from which to read the data.
+	 * @param ignoreAddr Should we ignore wave infos' wave address variable's value?
+	 * @return True if successful, false otherwise.
+	 */
+	bool read(Common::SeekableReadStream &stream, bool ignoreAddr = false) {
+		env.read(stream);
+		relseg    = stream.readByte();
+		priority  = stream.readByte();
+		bendrange = stream.readByte();
+		vibdepth  = stream.readByte();
+		vibspeed  = stream.readByte();
+		spare     = stream.readByte();
+		wac       = stream.readByte();
+		wbc       = stream.readByte();
+		for (int waveA = 0; waveA < wac; waveA++) // Read A wave lists
+			wal[waveA].read(stream, ignoreAddr);
+		for (int waveB = 0; waveB < wbc; waveB++) // Read B wave lists
+			wbl[waveB].read(stream, ignoreAddr);
+		return !stream.ioFailed();
+	}
+
+	bool finalize(Common::SeekableReadStream &uint8Wave) {
+		for (int waveA = 0; waveA < wac; waveA++) // Finalize A-waves
+			if (!wal[waveA].finalize(uint8Wave))
+				return false;
+		for (int waveB = 0; waveB < wbc; waveB++) // Finalize B-waves
+			if (!wbl[waveB].finalize(uint8Wave))
+				return false;
+		return true;
+	}
 };
 
 struct IIgsSampleHeader {
@@ -109,124 +195,38 @@ struct IIgsSampleHeader {
 	uint16 instrumentSize; ///< Little endian. 44 in all tested samples. A guess.
 	uint16 sampleSize; ///< Little endian. Accurate in all tested samples excluding Manhunter I's sound resource 16.
 	IIgsInstrumentHeader instrument;
+
+	/**
+	 * Read an Apple IIGS AGI sample header from the given stream.
+	 * @param stream The source stream from which to read the data.
+	 * @return True if successful, false otherwise.
+	 */
+	bool read(Common::SeekableReadStream &stream) {
+		type             = stream.readUint16LE();
+		pitch            = stream.readByte();
+		unknownByte_Ofs3 = stream.readByte();
+		volume           = stream.readByte();
+		unknownByte_Ofs5 = stream.readByte();
+		instrumentSize   = stream.readUint16LE();
+		sampleSize       = stream.readUint16LE();
+		// Read the instrument header *ignoring* its wave address info
+		return instrument.read(stream, true);
+	}
+
+	bool finalize(Common::SeekableReadStream &uint8Wave) {
+		return instrument.finalize(uint8Wave);
+	}
 };
 
 static IIgsInstrumentHeader g_instruments[MAX_INSTRUMENTS];
 static uint g_numInstruments = 0;
 static int16 g_wave[SIERRASTANDARD_SIZE]; // FIXME? Should this be allocated from the heap? (Size is 128KiB)
 
-bool readIIgsEnvelope(IIgsEnvelope &envelope, Common::SeekableReadStream &stream) {
-	for (int segNum = 0; segNum < ENVELOPE_SEGMENT_COUNT; segNum++) {
-		envelope.seg[segNum].bp  = stream.readByte();
-		envelope.seg[segNum].inc = stream.readUint16BE();
-	}
-	return !stream.ioFailed();
-}
-
-bool readIIgsWaveInfo(IIgsWaveInfo &waveInfo, Common::SeekableReadStream &stream, bool ignoreAddr = false) {
-	waveInfo.top      = stream.readByte();
-	waveInfo.addr     = stream.readByte() * 256;
-	waveInfo.size     = (1 << (stream.readByte() & 7)) * 256;
-
-	// Read mode byte and parse it into parts
-	byte mode         = stream.readByte();
-	waveInfo.channel  = (mode >> 4) & 1; // Bit 4
-	waveInfo.mode     = (mode >> 1) & 3; // Bits 1-2
-	waveInfo.halt     = (mode & 1) != 0; // Bit 0 (Converted to boolean)
-
-	waveInfo.relPitch = stream.readUint16BE();
-
-	// Zero the wave address if we want to ignore the wave address info
-	if (ignoreAddr)
-		waveInfo.addr = 0;
-
-	return !stream.ioFailed();
-}
-
-/**
- * Read an Apple IIGS instrument header from the given stream.
- * @param header The header to which to write the data.
- * @param stream The source stream from which to read the data.
- * @param ignoreAddr Should we ignore wave infos' wave address variable's value?
- * @return True if successful, false otherwise.
- */
-bool readIIgsInstrumentHeader(IIgsInstrumentHeader &header, Common::SeekableReadStream &stream, bool ignoreAddr = false) {
-	readIIgsEnvelope(header.env, stream);
-	header.relseg    = stream.readByte();
-	header.priority  = stream.readByte();
-	header.bendrange = stream.readByte();
-	header.vibdepth  = stream.readByte();
-	header.vibspeed  = stream.readByte();
-	header.spare     = stream.readByte();
-	header.wac       = stream.readByte();
-	header.wbc       = stream.readByte();
-	for (int waveA = 0; waveA < header.wac; waveA++) // Read A wave lists
-		readIIgsWaveInfo(header.wal[waveA], stream, ignoreAddr);
-	for (int waveB = 0; waveB < header.wbc; waveB++) // Read B wave lists
-		readIIgsWaveInfo(header.wbl[waveB], stream, ignoreAddr);
-	return !stream.ioFailed();
-}
-
-/**
- * Read an Apple IIGS AGI sample header from the given stream.
- * @param header The header to which to write the data.
- * @param stream The source stream from which to read the data.
- * @return True if successful, false otherwise.
- */
-bool readIIgsSampleHeader(IIgsSampleHeader &header, Common::SeekableReadStream &stream) {
-	header.type             = stream.readUint16LE();
-	header.pitch            = stream.readByte();
-	header.unknownByte_Ofs3 = stream.readByte();
-	header.volume           = stream.readByte();
-	header.unknownByte_Ofs5 = stream.readByte();
-	header.instrumentSize   = stream.readUint16LE();
-	header.sampleSize       = stream.readUint16LE();
-	// Read the instrument headers *ignoring* their wave address info
-	return readIIgsInstrumentHeader(header.instrument, stream, true);
-}
-
-/**
- * Calculates an Apple IIGS sample's true size.
- * Needed because a zero byte in the sample data ends the sample prematurely.
- */
-uint calcTrueSampleSize(Common::SeekableReadStream &sample, uint size) {
-	// Search for a zero byte in the sample data,
-	// as that would end the sample prematurely.
-	for (uint i = 0; i < size; i++)
-		if (sample.readByte() == 0)
-			return i;
-	// If no zero was found in the sample, then return its whole size.
-	return size;
-}
-
-bool finalizeWaveInfo(IIgsWaveInfo &waveInfo, Common::SeekableReadStream &uint8Wave) {
-	uint32 startPos = uint8Wave.pos(); // Save stream's starting position
-	uint8Wave.seek(waveInfo.addr, SEEK_CUR); // Seek to wave's address
-	// Calculate the true sample size (A zero ends the sample prematurely)
-	waveInfo.size = calcTrueSampleSize(uint8Wave, waveInfo.size);
-	uint8Wave.seek(startPos); // Seek back to the stream's starting position
-	return true;
-}
-
-bool finalizeInstrument(IIgsInstrumentHeader &header, Common::SeekableReadStream &uint8Wave) {
-	for (int waveA = 0; waveA < header.wac; waveA++) // Finalize A-waves
-		if (!finalizeWaveInfo(header.wal[waveA], uint8Wave))
-			return false;
-	for (int waveB = 0; waveB < header.wbc; waveB++) // Finalize B-waves
-		if (!finalizeWaveInfo(header.wbl[waveB], uint8Wave))
-			return false;
-	return true;
-}
-
 bool finalizeInstruments(Common::SeekableReadStream &uint8Wave) {
 	for (uint i = 0; i < g_numInstruments; i++)
-		if (!finalizeInstrument(g_instruments[i], uint8Wave))
+		if (!g_instruments[i].finalize(uint8Wave))
 			return false;
 	return true;
-}
-
-bool finalizeSample(IIgsSampleHeader &header, Common::SeekableReadStream &uint8Wave) {
-	return finalizeInstrument(header.instrument, uint8Wave);
 }
 
 /**
@@ -246,7 +246,7 @@ Audio::AudioStream *makeIIgsSampleStream(Common::SeekableReadStream &stream, int
 	const uint32 startPos = stream.pos();
 	IIgsSampleHeader header;
 	Audio::AudioStream *result = NULL;
-	bool readHeaderOk = readIIgsSampleHeader(header, stream);
+	bool readHeaderOk = header.read(stream);
 
 	// Check that the header was read ok and that it's of the correct type
 	// and that there's room for the sample data in the stream.
@@ -266,9 +266,9 @@ Audio::AudioStream *makeIIgsSampleStream(Common::SeekableReadStream &stream, int
 		byte *sampleData = (byte *) malloc(header.sampleSize);
 		uint32 readBytes = stream.read(sampleData, header.sampleSize);
 		if (readBytes == header.sampleSize) { // Check that we got all the data we requested
-			// Create a stream out of the read sample data (Needed by the finalizeSample-function)
+			// Create a stream out of the read sample data (Needed by the finalize-function)
 			Common::MemoryReadStream sampleStream(sampleData, readBytes);
-			finalizeSample(header, sampleStream);
+			header.finalize(sampleStream);
 			// Make an audio stream from the mono, 8 bit, unsigned input data
 			byte flags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED;
 			int rate = (int) (1076 * pow(SEMITONE, header.pitch));
@@ -885,7 +885,7 @@ bool loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exe
 		data->seek(exeInfo.instSetStart);
 		g_numInstruments = 0; // Zero number of successfully loaded instruments
 		for (uint i = 0; i < exeInfo.instSet.instCount; i++) {
-			if (!readIIgsInstrumentHeader(g_instruments[i], *data)) {
+			if (!g_instruments[i].read(*data)) {
 				warning("Error loading Apple IIGS instrument (%d. of %d) from %s, not loading more instruments",
 					i + 1, exeInfo.instSet.instCount, exePath.c_str());
 				break;
