@@ -119,28 +119,6 @@ DECLARE_COMMAND_PARSER(Move) {
 
 void Parallaction::parseCommands(Script &script, CommandList& list) {
 
-	static const Opcode parsers[] = {
-		COMMAND_PARSER(Flags),			// set
-		COMMAND_PARSER(Flags),			// clear
-		COMMAND_PARSER(Animation),		// start
-		COMMAND_PARSER(Zone),			// speak
-		COMMAND_PARSER(Zone),			// get
-		COMMAND_PARSER(Location),		// location
-		COMMAND_PARSER(Zone),			// open
-		COMMAND_PARSER(Zone),			// close
-		COMMAND_PARSER(Zone),			// on
-		COMMAND_PARSER(Zone),			// off
-		COMMAND_PARSER(Call),			// call
-		COMMAND_PARSER(Flags),			// toggle
-		COMMAND_PARSER(Drop),			// drop
-		COMMAND_PARSER(Null),			// quit
-		COMMAND_PARSER(Move),			// move
-		COMMAND_PARSER(Animation)		// stop
-	};
-
-	_commandParsers = parsers;
-
-
 	fillBuffers(script, true);
 
 	while (scumm_stricmp(_tokens[0], "ENDCOMMANDS") && scumm_stricmp(_tokens[0], "ENDZONE")) {
@@ -345,27 +323,6 @@ DECLARE_COMMAND_OPCODE(stop) {
 
 void Parallaction::runCommands(CommandList& list, Zone *z) {
 	debugC(1, kDebugLocation, "runCommands");
-
-	static const Opcode opcodes[] = {
-		COMMAND_OPCODE(set),
-		COMMAND_OPCODE(clear),
-		COMMAND_OPCODE(start),
-		COMMAND_OPCODE(speak),
-		COMMAND_OPCODE(get),
-		COMMAND_OPCODE(location),
-		COMMAND_OPCODE(open),
-		COMMAND_OPCODE(close),
-		COMMAND_OPCODE(on),
-		COMMAND_OPCODE(off),
-		COMMAND_OPCODE(call),
-		COMMAND_OPCODE(toggle),
-		COMMAND_OPCODE(drop),
-		COMMAND_OPCODE(quit),
-		COMMAND_OPCODE(move),
-		COMMAND_OPCODE(stop)
-	};
-
-	_commandOpcodes = opcodes;
 
 	CommandList::iterator it = list.begin();
 	for ( ; it != list.end(); it++) {

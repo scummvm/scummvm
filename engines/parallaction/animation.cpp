@@ -419,30 +419,6 @@ DECLARE_INSTRUCTION_PARSER(defLocal) {
 void Parallaction::parseScriptLine(Instruction *inst, Animation *a, LocalVariable *locals) {
 //	printf("parseScriptLine()\n");
 
-	static const Opcode opcodes[] = {
-		INSTRUCTION_PARSER(defLocal),	// unknown opcode -> local definition
-		INSTRUCTION_PARSER(animation),	// on
-		INSTRUCTION_PARSER(animation),	// off
-		INSTRUCTION_PARSER(x),
-		INSTRUCTION_PARSER(y),
-		INSTRUCTION_PARSER(z),
-		INSTRUCTION_PARSER(f),
-		INSTRUCTION_PARSER(loop),
-		INSTRUCTION_PARSER(null),		// endloop
-		INSTRUCTION_PARSER(null),		// show
-		INSTRUCTION_PARSER(inc),
-		INSTRUCTION_PARSER(inc),		// dec
-		INSTRUCTION_PARSER(set),
-		INSTRUCTION_PARSER(put),
-		INSTRUCTION_PARSER(call),
-		INSTRUCTION_PARSER(null),		// wait
-		INSTRUCTION_PARSER(animation),	// start
-		INSTRUCTION_PARSER(sound),
-		INSTRUCTION_PARSER(move)
-	};
-
-	_instructionParsers = opcodes;
-
 	if (_tokens[0][1] == '.') {
 		_tokens[0][1] = '\0';
 		a = findAnimation(&_tokens[0][2]);
@@ -642,30 +618,6 @@ void jobRunScripts(void *parm, Job *j) {
 	debugC(3, kDebugJobs, "jobRunScripts");
 
 	static uint16 modCounter = 0;
-
-	static const Parallaction::Opcode opcodes[] = {
-		INSTRUCTION_OPCODE(on),
-		INSTRUCTION_OPCODE(off),
-		INSTRUCTION_OPCODE(set),		// x
-		INSTRUCTION_OPCODE(set),		// y
-		INSTRUCTION_OPCODE(set),		// z
-		INSTRUCTION_OPCODE(set),		// f
-		INSTRUCTION_OPCODE(loop),
-		INSTRUCTION_OPCODE(endloop),
-		INSTRUCTION_OPCODE(null),
-		INSTRUCTION_OPCODE(inc),
-		INSTRUCTION_OPCODE(inc),		// dec
-		INSTRUCTION_OPCODE(set),
-		INSTRUCTION_OPCODE(put),
-		INSTRUCTION_OPCODE(call),
-		INSTRUCTION_OPCODE(wait),
-		INSTRUCTION_OPCODE(start),
-		INSTRUCTION_OPCODE(sound),
-		INSTRUCTION_OPCODE(move),
-		INSTRUCTION_OPCODE(end)
-	};
-
-	_vm->_instructionOpcodes = opcodes;
 
 	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
 

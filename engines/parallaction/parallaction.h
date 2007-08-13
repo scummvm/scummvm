@@ -326,6 +326,8 @@ public:
 
 	void 		waitTime(uint32 t);
 
+	void initOpcodes();
+
 	typedef void (Parallaction::*Opcode)();
 	const Opcode	*_commandParsers;
 

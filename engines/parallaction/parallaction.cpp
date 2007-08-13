@@ -177,6 +177,8 @@ int Parallaction::init() {
 
 	memset(_locationNames, 0, 120*32);
 
+	initOpcodes();
+
 	initInventory();	// needs to be pushed into subclass
 
 	_animations.push_front(&_char._ani);
@@ -844,6 +846,101 @@ int Table::lookup(const char* s) {
 	}
 
 	return notFound;
+}
+
+void Parallaction::initOpcodes() {
+
+	static const Opcode op0[] = {
+		INSTRUCTION_PARSER(defLocal),	// unknown opcode -> local definition
+		INSTRUCTION_PARSER(animation),	// on
+		INSTRUCTION_PARSER(animation),	// off
+		INSTRUCTION_PARSER(x),
+		INSTRUCTION_PARSER(y),
+		INSTRUCTION_PARSER(z),
+		INSTRUCTION_PARSER(f),
+		INSTRUCTION_PARSER(loop),
+		INSTRUCTION_PARSER(null),		// endloop
+		INSTRUCTION_PARSER(null),		// show
+		INSTRUCTION_PARSER(inc),
+		INSTRUCTION_PARSER(inc),		// dec
+		INSTRUCTION_PARSER(set),
+		INSTRUCTION_PARSER(put),
+		INSTRUCTION_PARSER(call),
+		INSTRUCTION_PARSER(null),		// wait
+		INSTRUCTION_PARSER(animation),	// start
+		INSTRUCTION_PARSER(sound),
+		INSTRUCTION_PARSER(move)
+	};
+
+	_instructionParsers = op0;
+
+
+	static const Opcode op1[] = {
+		INSTRUCTION_OPCODE(on),
+		INSTRUCTION_OPCODE(off),
+		INSTRUCTION_OPCODE(set),		// x
+		INSTRUCTION_OPCODE(set),		// y
+		INSTRUCTION_OPCODE(set),		// z
+		INSTRUCTION_OPCODE(set),		// f
+		INSTRUCTION_OPCODE(loop),
+		INSTRUCTION_OPCODE(endloop),
+		INSTRUCTION_OPCODE(null),
+		INSTRUCTION_OPCODE(inc),
+		INSTRUCTION_OPCODE(inc),		// dec
+		INSTRUCTION_OPCODE(set),
+		INSTRUCTION_OPCODE(put),
+		INSTRUCTION_OPCODE(call),
+		INSTRUCTION_OPCODE(wait),
+		INSTRUCTION_OPCODE(start),
+		INSTRUCTION_OPCODE(sound),
+		INSTRUCTION_OPCODE(move),
+		INSTRUCTION_OPCODE(end)
+	};
+
+	_vm->_instructionOpcodes = op1;
+
+	static const Opcode op2[] = {
+		COMMAND_PARSER(Flags),			// set
+		COMMAND_PARSER(Flags),			// clear
+		COMMAND_PARSER(Animation),		// start
+		COMMAND_PARSER(Zone),			// speak
+		COMMAND_PARSER(Zone),			// get
+		COMMAND_PARSER(Location),		// location
+		COMMAND_PARSER(Zone),			// open
+		COMMAND_PARSER(Zone),			// close
+		COMMAND_PARSER(Zone),			// on
+		COMMAND_PARSER(Zone),			// off
+		COMMAND_PARSER(Call),			// call
+		COMMAND_PARSER(Flags),			// toggle
+		COMMAND_PARSER(Drop),			// drop
+		COMMAND_PARSER(Null),			// quit
+		COMMAND_PARSER(Move),			// move
+		COMMAND_PARSER(Animation)		// stop
+	};
+
+	_commandParsers = op2;
+
+	static const Opcode op3[] = {
+		COMMAND_OPCODE(set),
+		COMMAND_OPCODE(clear),
+		COMMAND_OPCODE(start),
+		COMMAND_OPCODE(speak),
+		COMMAND_OPCODE(get),
+		COMMAND_OPCODE(location),
+		COMMAND_OPCODE(open),
+		COMMAND_OPCODE(close),
+		COMMAND_OPCODE(on),
+		COMMAND_OPCODE(off),
+		COMMAND_OPCODE(call),
+		COMMAND_OPCODE(toggle),
+		COMMAND_OPCODE(drop),
+		COMMAND_OPCODE(quit),
+		COMMAND_OPCODE(move),
+		COMMAND_OPCODE(stop)
+	};
+
+	_commandOpcodes = op3;
+
 }
 
 } // namespace Parallaction
