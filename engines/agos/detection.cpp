@@ -101,7 +101,7 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-bool engineCreate(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+bool engineCreateAgos(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
 	const AGOS::AGOSGameDescription *gd = (const AGOS::AGOSGameDescription *)(encapsulatedDesc.realDesc);
 	bool res = true;
 
@@ -135,7 +135,7 @@ bool engineCreate(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc
 	return res;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(AGOS, engineCreate, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(AGOS, engineCreateAgos, detectionParams);
 
 REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 

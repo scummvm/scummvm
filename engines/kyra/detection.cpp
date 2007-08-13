@@ -119,7 +119,7 @@ const Common::ADParams detectionParams = {
 
 } // End of anonymous namespace
 
-bool engineCreate(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+bool engineCreateKyra(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
 	const KYRAGameDescription *gd = (const KYRAGameDescription *)(encapsulatedDesc.realDesc);
 	bool res = true;
 
@@ -158,7 +158,7 @@ bool engineCreate(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc
 	return res;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(KYRA, engineCreate, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(KYRA, engineCreateKyra, detectionParams);
 
 REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine", "The Legend of Kyrandia (C) Westwood Studios");
 

@@ -186,7 +186,7 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-bool engineCreate(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+bool engineCreateParallaction(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
 	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)(encapsulatedDesc.realDesc);
 	bool res = true;
 
@@ -205,7 +205,7 @@ bool engineCreate(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc
 	return res;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(PARALLACTION, engineCreate, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(PARALLACTION, engineCreateParallaction, detectionParams);
 
 REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dynabyte");
 
