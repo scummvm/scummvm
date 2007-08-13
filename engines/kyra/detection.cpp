@@ -119,29 +119,9 @@ const Common::ADParams detectionParams = {
 
 } // End of anonymous namespace
 
-GameList Engine_KYRA_gameIDList() {
-	return GameList(gameList);
-}
-
-GameDescriptor Engine_KYRA_findGameID(const char *gameid) {
-	return Common::AdvancedDetector::findGameID(gameid, gameList);
-}
-
-GameList Engine_KYRA_detectGames(const FSList &fslist) {
-	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
-}
-
-PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
-	assert(engine);
-	const char *gameid = ConfMan.get("gameid").c_str();
-	
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+bool engineCreate(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
 	const KYRAGameDescription *gd = (const KYRAGameDescription *)(encapsulatedDesc.realDesc);
-
-	if (gd == 0) {
-		// maybe add non md5 based detection again?
-		return kNoGameDataFoundError;
-	}
+	bool res = true;
 
 	Kyra::GameFlags flags = gd->flags;
 	
@@ -160,17 +140,25 @@ PluginError Engine_KYRA_create(OSystem *syst, Engine **engine) {
 			flags.lang = Common::EN_ANY;
 	}
 
-	if (!scumm_stricmp("kyra1", gameid)) {
+	switch (flags.gameID) {
+	case Kyra::GI_KYRA1:
 		*engine = new Kyra::KyraEngine_v1(syst, flags);
-	} else if (!scumm_stricmp("kyra2", gameid)) {
+		break;
+	case Kyra::GI_KYRA2:
 		*engine = new Kyra::KyraEngine_v2(syst, flags);
-	} else if (!scumm_stricmp("kyra3", gameid)) {
+		break;
+	case Kyra::GI_KYRA3:
 		*engine = new Kyra::KyraEngine_v3(syst, flags);
-	} else
-		error("Kyra engine created with invalid gameid ('%s')", gameid);
+		break;
+	default:
+		res = false;
+		error("Kyra engine: unknown gameID");
+	}
 
-	return kNoError;
+	return res;
 }
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(KYRA, engineCreate, detectionParams);
 
 REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine", "The Legend of Kyrandia (C) Westwood Studios");
 
