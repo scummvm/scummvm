@@ -336,6 +336,7 @@ public:
 		int		nextToken;
 	} _cmdParseCtxt;
 
+	DECLARE_COMMAND_PARSER(Invalid);
 	DECLARE_COMMAND_PARSER(Flags);
 	DECLARE_COMMAND_PARSER(Animation);
 	DECLARE_COMMAND_PARSER(Zone);
@@ -352,6 +353,7 @@ public:
 		Zone	*z;
 	} _cmdRunCtxt;
 
+	DECLARE_COMMAND_OPCODE(invalid);
 	DECLARE_COMMAND_OPCODE(set);
 	DECLARE_COMMAND_OPCODE(clear);
 	DECLARE_COMMAND_OPCODE(start);
@@ -377,6 +379,7 @@ public:
 		LocalVariable *locals;
 	} _instParseCtxt;
 
+	DECLARE_INSTRUCTION_PARSER(defLocal);
 	DECLARE_INSTRUCTION_PARSER(animation);
 	DECLARE_INSTRUCTION_PARSER(loop);
 	DECLARE_INSTRUCTION_PARSER(x);
@@ -390,7 +393,6 @@ public:
 	DECLARE_INSTRUCTION_PARSER(call);
 	DECLARE_INSTRUCTION_PARSER(sound);
 	DECLARE_INSTRUCTION_PARSER(null);
-	DECLARE_INSTRUCTION_PARSER(defLocal);
 
 	const Opcode	*_instructionOpcodes;
 
@@ -401,6 +403,7 @@ public:
 		bool		suspend;
 	} _instRunCtxt;
 
+	DECLARE_INSTRUCTION_OPCODE(invalid);
 	DECLARE_INSTRUCTION_OPCODE(on);
 	DECLARE_INSTRUCTION_OPCODE(off);
 	DECLARE_INSTRUCTION_OPCODE(loop);

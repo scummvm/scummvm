@@ -574,6 +574,10 @@ DECLARE_INSTRUCTION_OPCODE(null) {
 
 }
 
+DECLARE_INSTRUCTION_OPCODE(invalid) {
+	error("Can't execute invalid opcode %i", (*_instRunCtxt.inst)->_index);
+}
+
 DECLARE_INSTRUCTION_OPCODE(call) {
 	callFunction((*_instRunCtxt.inst)->_opBase._index, 0);
 }
@@ -637,7 +641,7 @@ void jobRunScripts(void *parm, Job *j) {
 			_vm->_instRunCtxt.modCounter = modCounter;
 			_vm->_instRunCtxt.suspend = false;
 
-			(_vm->*(_vm->_instructionOpcodes)[(*inst)->_index - 1])();
+			(_vm->*(_vm->_instructionOpcodes)[(*inst)->_index])();
 
 			inst = _vm->_instRunCtxt.inst;		// handles endloop correctly
 

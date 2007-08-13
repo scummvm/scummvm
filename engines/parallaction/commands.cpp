@@ -114,8 +114,9 @@ DECLARE_COMMAND_PARSER(Move) {
 	_cmdParseCtxt.nextToken++;
 }
 
-
-
+DECLARE_COMMAND_PARSER(Invalid) {
+	error("Can't parse unknown command '%s'", _tokens[0]);
+}
 
 void Parallaction::parseCommands(Script &script, CommandList& list) {
 
@@ -130,7 +131,7 @@ void Parallaction::parseCommands(Script &script, CommandList& list) {
 		_cmdParseCtxt.nextToken = 1;
 		_cmdParseCtxt.cmd = cmd;
 
-		(this->*_commandParsers[cmd->_id - 1])();
+		(this->*_commandParsers[cmd->_id])();
 
 		int _si = _cmdParseCtxt.nextToken;
 
@@ -194,6 +195,9 @@ void Parallaction::parseCommands(Script &script, CommandList& list) {
 	}
 }
 
+DECLARE_COMMAND_OPCODE(invalid) {
+	error("Can't execute invalid command '%i'", _cmdRunCtxt.cmd->_id);
+}
 
 DECLARE_COMMAND_OPCODE(set) {
 	if (_cmdRunCtxt.cmd->u._flags & kFlagsGlobal) {
@@ -345,7 +349,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 		_cmdRunCtxt.z = z;
 		_cmdRunCtxt.cmd = cmd;
 
-		(this->*_commandOpcodes[cmd->_id - 1])();
+		(this->*_commandOpcodes[cmd->_id])();
 	}
 
 	debugC(1, kDebugLocation, "runCommands completed");

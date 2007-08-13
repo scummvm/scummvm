@@ -851,7 +851,7 @@ int Table::lookup(const char* s) {
 void Parallaction::initOpcodes() {
 
 	static const Opcode op0[] = {
-		INSTRUCTION_PARSER(defLocal),	// unknown opcode -> local definition
+		INSTRUCTION_PARSER(defLocal),	// invalid opcode -> local definition
 		INSTRUCTION_PARSER(animation),	// on
 		INSTRUCTION_PARSER(animation),	// off
 		INSTRUCTION_PARSER(x),
@@ -876,6 +876,7 @@ void Parallaction::initOpcodes() {
 
 
 	static const Opcode op1[] = {
+		INSTRUCTION_OPCODE(invalid),
 		INSTRUCTION_OPCODE(on),
 		INSTRUCTION_OPCODE(off),
 		INSTRUCTION_OPCODE(set),		// x
@@ -900,6 +901,7 @@ void Parallaction::initOpcodes() {
 	_vm->_instructionOpcodes = op1;
 
 	static const Opcode op2[] = {
+		COMMAND_PARSER(Invalid),
 		COMMAND_PARSER(Flags),			// set
 		COMMAND_PARSER(Flags),			// clear
 		COMMAND_PARSER(Animation),		// start
@@ -921,6 +923,7 @@ void Parallaction::initOpcodes() {
 	_commandParsers = op2;
 
 	static const Opcode op3[] = {
+		COMMAND_OPCODE(invalid),
 		COMMAND_OPCODE(set),
 		COMMAND_OPCODE(clear),
 		COMMAND_OPCODE(start),
