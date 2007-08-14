@@ -587,7 +587,11 @@ void zeroMask(int x, int y, int color, void *data) {
 	//_vm->_gfx->zeroMaskValue(x, y, color);
 
 	BackgroundInfo* info = (BackgroundInfo*)data;
-
+/*
+	if (x < 0 || x > 319 || y < 0 || y > 199) {
+		printf("zeroMask(%i, %i)\n", x, y);
+	}
+*/
 	uint16 _ax = x + y * info->width;
 	info->mask.data[_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
 
@@ -597,11 +601,26 @@ void Parallaction_ns::_c_sketch(void *parm) {
 
 	static uint16 index = 1;
 
-	uint16 newy = _rightHandPositions[2*index+1];
-	uint16 newx = _rightHandPositions[2*index];
+	uint16 newx;
+	uint16 newy;
 
 	uint16 oldy = _rightHandPositions[2*(index-1)+1];
 	uint16 oldx = _rightHandPositions[2*(index-1)];
+
+	// WORKAROUND: original code overflowed _rightHandPositions by trying
+	// to access elements at positions 684 and 685. That used to happen
+	// when index == 342. Code now checks for this possibility and assigns
+	// the last valid value to the new coordinates for drawing without
+	// accessing the array.
+	if (index < 342) {
+		newy = oldy;
+		newx = oldx;
+	} else {
+		newy = _rightHandPositions[2*index+1];
+		newx = _rightHandPositions[2*index];
+	}
+
+	printf("sketch index = %i\n", index);
 
 	Graphics::drawLine(oldx, oldy, newx, newy, 0, zeroMask, _backgroundInfo);
 
