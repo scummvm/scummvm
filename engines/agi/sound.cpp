@@ -199,14 +199,14 @@ struct IIgsInstrumentHeader {
 	 */
 	bool read(Common::SeekableReadStream &stream, bool ignoreAddr = false) {
 		env.read(stream);
-		relseg    = stream.readByte();
+		relseg        = stream.readByte();
 		byte priority = stream.readByte(); // Not needed? 32 in all tested data.
-		bendrange = stream.readByte();
-		vibdepth  = stream.readByte();
-		vibspeed  = stream.readByte();
+		bendrange     = stream.readByte();
+		vibdepth      = stream.readByte();
+		vibspeed      = stream.readByte();
 		byte spare    = stream.readByte(); // Not needed? 0 in all tested data.
-		byte wac  = stream.readByte(); // Read A wave count
-		byte wbc  = stream.readByte(); // Read B wave count
+		byte wac      = stream.readByte(); // Read A wave count
+		byte wbc      = stream.readByte(); // Read B wave count
 		oscList.read(stream, wac, ignoreAddr); // Read the oscillators
 		return (wac == wbc) && !stream.ioFailed(); // A and B wave counts must match
 	}
