@@ -44,6 +44,113 @@ namespace Agi {
 
 #ifdef USE_IIGS_SOUND
 
+/** Reads an Apple IIGS envelope from then given stream. */
+bool IIgsEnvelope::read(Common::SeekableReadStream &stream) {
+	for (int segNum = 0; segNum < ENVELOPE_SEGMENT_COUNT; segNum++) {
+		seg[segNum].bp  = stream.readByte();
+		seg[segNum].inc = stream.readUint16BE();
+	}
+	return !stream.ioFailed();
+}
+
+/** Reads an Apple IIGS wave information structure from the given stream. */
+bool IIgsWaveInfo::read(Common::SeekableReadStream &stream, bool ignoreAddr) {
+	top  = stream.readByte();
+	addr = stream.readByte() * 256;
+	size = (1 << (stream.readByte() & 7)) * 256;
+
+	// Read packed mode byte and parse it into parts
+	byte packedModeByte = stream.readByte();
+	channel = (packedModeByte >> 4) & 1; // Bit 4
+	mode    = (packedModeByte >> 1) & 3; // Bits 1-2
+	halt    = (packedModeByte & 1) != 0; // Bit 0 (Converted to boolean)
+
+	relPitch = stream.readUint16BE();
+
+	// Zero the wave address if we want to ignore the wave address info
+	if (ignoreAddr)
+		addr = 0;
+
+	return !stream.ioFailed();
+}
+
+bool IIgsWaveInfo::finalize(Common::SeekableReadStream &uint8Wave) {
+	uint32 startPos = uint8Wave.pos(); // Save stream's starting position
+	uint8Wave.seek(addr, SEEK_CUR); // Seek to wave's address
+
+	// Calculate the true sample size (A zero ends the sample prematurely)
+	uint trueSize = size; // Set a default value for the result
+	for (uint i = 0; i < size; i++) {
+		if (uint8Wave.readByte() == 0) {
+			trueSize = i;
+			break;
+		}
+	}
+	size = trueSize; // Set the true sample size
+	
+	uint8Wave.seek(startPos); // Seek back to the stream's starting position
+	return true;
+}
+
+bool IIgsOscillator::finalize(Common::SeekableReadStream &uint8Wave) {
+	for (uint i = 0; i < WAVES_PER_OSCILLATOR; i++)
+		if (!waves[i].finalize(uint8Wave))
+			return false;
+	return true;
+}
+
+bool IIgsOscillatorList::read(Common::SeekableReadStream &stream, uint oscillatorCount, bool ignoreAddr) {
+	// First read the A waves and then the B waves for the oscillators
+	for (uint waveNum = 0; waveNum < WAVES_PER_OSCILLATOR; waveNum++)
+		for (uint oscNum = 0; oscNum < oscillatorCount; oscNum++)
+			if (!osc[oscNum].waves[waveNum].read(stream, ignoreAddr))
+				return false;
+
+	count = oscillatorCount; // Set the oscillator count
+	return true;
+}
+
+bool IIgsOscillatorList::finalize(Common::SeekableReadStream &uint8Wave) {
+	for (uint i = 0; i < count; i++)
+		if (!osc[i].finalize(uint8Wave))
+			return false;
+	return true;
+}
+
+bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreAddr) {
+	env.read(stream);
+	relseg        = stream.readByte();
+	byte priority = stream.readByte(); // Not needed? 32 in all tested data.
+	bendrange     = stream.readByte();
+	vibdepth      = stream.readByte();
+	vibspeed      = stream.readByte();
+	byte spare    = stream.readByte(); // Not needed? 0 in all tested data.
+	byte wac      = stream.readByte(); // Read A wave count
+	byte wbc      = stream.readByte(); // Read B wave count
+	oscList.read(stream, wac, ignoreAddr); // Read the oscillators
+	return (wac == wbc) && !stream.ioFailed(); // A and B wave counts must match
+}
+
+bool IIgsInstrumentHeader::finalize(Common::SeekableReadStream &uint8Wave) {
+	return oscList.finalize(uint8Wave);
+}
+
+bool IIgsSampleHeader::read(Common::SeekableReadStream &stream) {
+	type             = stream.readUint16LE();
+	pitch            = stream.readByte();
+	unknownByte_Ofs3 = stream.readByte();
+	volume           = stream.readByte();
+	unknownByte_Ofs5 = stream.readByte();
+	instrumentSize   = stream.readUint16LE();
+	sampleSize       = stream.readUint16LE();
+	// Read the instrument header *ignoring* its wave address info
+	return instrument.read(stream, true);
+}
+
+bool IIgsSampleHeader::finalize(Common::SeekableReadStream &uint8Wave) {
+	return instrument.finalize(uint8Wave);
+}
+
 /** Older Apple IIGS AGI instrument set. Used only by Space Quest I (AGI v1.002). */
 static const instrumentSetInfo instSetV1 = {
 	1192, 26, "7ee16bbc135171ffd6b9120cc7ff1af2", "edd3bf8905d9c238e02832b732fb2e18"
