@@ -31,6 +31,8 @@
 
 namespace Agi {
 
+enum AgiGameID; // Forward declaration because agi.h has this but includes sound.h first
+
 #define BUFFER_SIZE	410
 
 #define SOUND_EMU_NONE	0
