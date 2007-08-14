@@ -1094,7 +1094,7 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 			} else if (part.flags == 3) {
 
 				if (_soundEnabled) {
-					emptySoundSlice(_soundSliceSize);
+					emptySoundSlice(_soundSliceSize * _soundBytesPerSample);
 
 					if (_soundStage == 1)
 						startSound = true;
