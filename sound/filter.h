@@ -37,10 +37,11 @@ private:
 	double _stopbandEdge;
 	double _dBPassbandRipple;
 	double _dBStopbandAtten;
-	uint16 _samplingFreq;
+	uint32 _samplingFreq;
+	uint16 _upFactor;
 	
 	double _ripple;
-	uint16 _length;
+	uint32 _length;
 	double *_coeffs;
 
 public:
@@ -50,11 +51,12 @@ public:
 			double stopbandEdge,
 			double dBPassbandRipple,
 			double dBStopbandAtten,
-			uint16 samplingFreq);
+			uint32 samplingFreq,
+			uint16 upFactor);
 	
 	~FIRFilter() { free(_coeffs); }
 	
-	uint16 getLength() { return _length; }
+	uint32 getLength() { return _length; }
 	
 	double *getCoeffs() { return _coeffs; }
 
@@ -63,21 +65,22 @@ private:
 			double dBPassbandRipple,
 			double dBStopbandAtten);
 	
-	uint16 windowLength(
+	uint32 windowLength(
 			double ripple,
 			double transitionBW,
-			uint16 samplingFreq);
+			uint32 samplingFreq,
+			uint16 upFactor);
 	
-	void windowDesign(double *coeffs, uint16 length, double ripple);
+	void windowDesign(double *coeffs, uint32 length, double ripple);
 	
 	double sinc(double arg);
 	
 	void LPDesign(
 			double *coeffs,
-			uint16 length,
+			uint32 length,
 			double passbandEdge,
 			double stopbandEdge,
-			uint16 samplingFreq);
+			uint32 samplingFreq);
 
 };
 

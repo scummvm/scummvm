@@ -78,25 +78,31 @@ inline double FIRFilter::equiripple(
 
 /*
  * Estimated window length using the Kaiser design formula.
- * Assumption: window length <= 65535 taps.
  */
-inline uint16 FIRFilter::windowLength(
+inline uint32 FIRFilter::windowLength(
 					double ripple,
 					double transitionBW,
-					uint16 samplingFreq) {
-	double length = (samplingFreq * (-ripple - 7.95)) / (14.36 * transitionBW);
+					uint32 samplingFreq,
+					uint16 upFactor) {
+	double idealLength = (samplingFreq * (-ripple - 7.95)) / (14.36 * transitionBW);
 	
-	assert(length > 0);
+	assert(idealLength > 0);
 	
-	return (uint16)(length + 1);
+	/* Round length up to a multiple of the upsampling rate */
+	uint32 length = (uint32)(idealLength + 1);
+	if (length % upFactor) {
+		length += upFactor - (length % upFactor);
+	}
+	
+	return length;
 }
 
 /*
  * Derives the coefficients for a Kaiser window of the given properties, using
  * standard Kaiser design formulae.
  */
-void FIRFilter::windowDesign(double *coeffs, uint16 length, double ripple) {
-	uint16 i;
+void FIRFilter::windowDesign(double *coeffs, uint32 length, double ripple) {
+	uint32 i;
 	
 	double alpha = -ripple;
 	double beta;
@@ -110,7 +116,7 @@ void FIRFilter::windowDesign(double *coeffs, uint16 length, double ripple) {
 	}
 	
 	for (i = 0; i <= (length - 1) / 2; i++) {
-		double n = i - (length - 1) / 2 - ((length % 2) ? 0 : 0.5);
+		double n = (int32)(i - (length - 1) / 2) - ((length % 2) ? 0 : 0.5);
 		
 		/*
 		 * Both this window and the later filter are even symmetric, so we
@@ -137,14 +143,14 @@ inline double FIRFilter::sinc(double arg) {
  */
 void FIRFilter::LPDesign(
 		double *coeffs,
-		uint16 length,
+		uint32 length,
 		double passbandEdge,
 		double stopbandEdge,
-		uint16 samplingFreq) {
-	uint16 i;
+		uint32 samplingFreq) {
+	uint32 i;
 	
 	for (i = 0; i <= (length - 1) / 2; i++) {
-		double n = i - (length - 1) / 2 - ((length % 2) ? 0 : 0.5);
+		double n = (int32)(i - (length - 1) / 2) - ((length % 2) ? 0 : 0.5);
 		
 		/*
 		 * Use an ideal transition halfway between the passband and stopband
@@ -162,17 +168,19 @@ void FIRFilter::LPDesign(
 /* Generates lowpass filter coefficients using the parameters provided */
 FIRFilter::FIRFilter(double passbandEdge, double stopbandEdge,
 					double dBPassbandRipple, double dBStopbandAtten,
-					uint16 samplingFreq)
+					uint32 samplingFreq, uint16 upFactor)
 		: _passbandEdge(passbandEdge), _stopbandEdge(stopbandEdge),
 		  _dBPassbandRipple(dBPassbandRipple),
 		  _dBStopbandAtten(dBStopbandAtten),
-		  _samplingFreq(samplingFreq), _ripple(0), _length(0), _coeffs(0) {
+		  _samplingFreq(samplingFreq),
+		  _upFactor(upFactor), _ripple(0), _length(0), _coeffs(0) {
 	/* Find the amount of ripple that the filter will produce */
 	_ripple = equiripple(_dBPassbandRipple, _dBStopbandAtten);
 	
 	/* Find the number of coefficients in the window */
 	_length = 
-		windowLength(_ripple, _stopbandEdge - _passbandEdge, _samplingFreq);
+		windowLength(_ripple, _stopbandEdge - _passbandEdge, _samplingFreq,
+					 _upFactor);
 	
 	/* Calculate the window coefficients */
 	_coeffs = (double *)malloc(_length * sizeof(double));

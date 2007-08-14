@@ -51,6 +51,7 @@ namespace Audio {
  */
 #define INTERMEDIATE_BUFFER_SIZE 512
 
+static st_rate_t gcd(st_rate_t a, st_rate_t b);
 
 /**
  * Audio rate converter based on simple resampling. Used when no
@@ -277,11 +278,8 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
  * This currently allows us to upsample by an integer factor with very little
  * spectral distortion.
  *
- * TODO: Make this a rational factor rather than an integer factor
- *
- * Limited to sampling frequency <= 65535 Hz.
+ * TODO: Optimise filter creation -- too slow for large upsampling factors
  */
-
 template<bool stereo, bool reverseStereo>
 class FilteringRateConverter : public RateConverter {
 protected:
@@ -291,7 +289,13 @@ protected:
 	st_sample_t *inBuf;
 	
 	/* Offset into the circular buffer of the most recent input sample */
-	uint32 inPos;
+	uint16 inPos;
+	
+	/* 
+	 * The number of samples we need to fetch into the input buffer from the
+	 * AudioStream
+	 */
+	uint16 toFetch;
 	
 	/*
      * Fraction of the input frequency which should be used as passband for
@@ -299,8 +303,8 @@ protected:
 	 */
 	double lowpassBW;
 	
-	/* Number of filter banks to use for the multirate filter */
-	uint16 numBanks;
+	/* Upsampling and downsampling factors */
+	uint16 upFactor, downFactor;
 	
 	/* Subfilter length */
 	uint16 subLen;
@@ -339,36 +343,45 @@ public:
  */
 template<bool stereo, bool reverseStereo>
 FilteringRateConverter<stereo, reverseStereo>::FilteringRateConverter(st_rate_t inrate, st_rate_t outrate) {
-	if (inrate >= 65536 || outrate >= 65536) {
-		error("rate effect can only handle rates < 65536");
-	}
+	/*
+	 * Note: we'll first upsample the audio by upFactor and filter it, and
+	 * then downsample it by downFactor.  This means we'll use upFactor
+	 * different filter banks and only calculate one in every downFactor
+	 * outputs.
+	 */
+	upFactor = outrate / gcd(inrate, outrate);
+	downFactor = inrate / gcd(inrate, outrate);
 	
-	currBank = 0;
+	/* Initially we'll need to put some samples in the input buffer */
+	toFetch = 1 + (downFactor - 1) / upFactor;
 	
-	numBanks = outrate / inrate;
+	/* We'll be ignoring the first downFactor - 1 samples */
+	currBank = (downFactor - 1) % upFactor;
 	
 	// TODO: Make an editable way to set this value
 	/* This sets the point in the input signal where attenuation will begin */
 	lowpassBW = 0.925;
 	
+	/* We'll want to lowpass based on the most restrictive frequency */
+	st_rate_t stopband = (outrate < inrate) ? outrate : inrate;
+	
 	// TODO: Make it so that this filter data can be reused by other
 	//       converters. 
 	/* Generate the filter coefficients */
-	filt = new FIRFilter(lowpassBW * inrate / 2.0, inrate / 2.0,
-						-40, 80, (uint16)outrate);
+	filt = new FIRFilter(lowpassBW * stopband / 2.0, stopband / 2.0,
+						-40, 80, (uint32)inrate * upFactor, upFactor);
 	
-	uint16 len = filt->getLength();
+	uint32 len = filt->getLength();
 	
-	subLen = (len + (numBanks - 1)) / numBanks;
+	subLen = (len + (upFactor - 1)) / upFactor;
 	
-	/* TODO: Fix this. */
-	/* At this point I don't have any code appending 0s in this case */
+	/* Want to be able to divide the filter perfectly into subfilters */
 	assert((len % subLen) == 0);
 	
 	/* Find the DC gain of each subfilter */
-	double *gain = (double *)calloc(numBanks, sizeof(double));
+	double *gain = (double *)calloc(upFactor, sizeof(double));
 	
-	uint16 i;
+	uint32 i;
 	for (i = 0; i < len; i++) {
 		/* 
 		 * Using the commented-out line and setting kFudgeFactor to 1 will
@@ -376,14 +389,14 @@ FilteringRateConverter<stereo, reverseStereo>::FilteringRateConverter(st_rate_t 
 		 * softer than those of other resamplers using otherwise equal
 		 * options.
 		 */
-		//gain[i % numBanks] += fabs((filt->getCoeffs())[i]);
-		gain[i % numBanks] += (filt->getCoeffs())[i];
+		//gain[i % upFactor] += fabs((filt->getCoeffs())[i]);
+		gain[i % upFactor] += (filt->getCoeffs())[i];
 	}
 	
 	/* Find the maximum of these subfilter gains */
 	filtGain = 0;
 	
-	for (i = 0; i < numBanks; i++) {
+	for (i = 0; i < upFactor; i++) {
 		if (gain[i] > filtGain) {
 			filtGain = gain[i];
 		}
@@ -408,7 +421,7 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 	st_sample_t *oend = obuf + osamp * 2;
 	
 	while (obuf < oend) {
-		if (currBank == 0) {
+		while (toFetch--) {
 			/*
 			 * We need to fetch a new input sample (two if this is a stereo
 			 * stream).  We'll want to replace the oldest sample(s) in the
@@ -442,10 +455,10 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 		 */
 		for (i = 0; i < subLen; i++) {
 			accum0 += (double)inBuf[(inPos + numChan * i) % subLen]
-						* (filt->getCoeffs())[currBank + i*numBanks];
+						* (filt->getCoeffs())[currBank + i*upFactor];
 			if (stereo) {
 				accum1 += (double)inBuf[(inPos + numChan * i + 1) % subLen]
-						* (filt->getCoeffs())[currBank + i*numBanks];
+						* (filt->getCoeffs())[currBank + i*upFactor];
 			}
 		}
 		
@@ -522,8 +535,11 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 		
 		obuf += 2;
 		
-		/* Circularly increment currBank */
-		currBank = (currBank + 1) % numBanks;
+		/* Find out how many more input samples are needed next time */
+		toFetch = (currBank + downFactor) / upFactor;
+		
+		/* Circularly increment currBank by downFactor */
+		currBank = (currBank + downFactor) % upFactor;
 	}
 	
 	return ST_SUCCESS;
@@ -597,13 +613,22 @@ public:
 
 #pragma mark -
 
+static inline st_rate_t gcd(st_rate_t a, st_rate_t b) {
+	while (b) {
+		int temp = b;
+		b = a % b;
+		a = temp;
+	}
+	
+	return a;
+}
+
 // TODO: Add options checking for filtering rate converters.
 template<bool stereo, bool reverseStereo>
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate) {
 	if (ConfMan.hasKey("rate_converter")
 			&& (ConfMan.getInt("rate_converter") == kFilteringType)) {
-		/* Only handling integer upsampling rates at this point */
-		if (((outrate % inrate) == 0) && (outrate != inrate)) {
+		if (outrate != inrate) {
 			return new FilteringRateConverter<stereo, reverseStereo>(inrate, outrate);
 		}
 	}
