@@ -63,7 +63,7 @@ void ScummEngine::loadCJKFont() {
 			fp.close();
 		}
 		_textSurfaceMultiplier = 2;
-	} else if (_game.version >= 7 && _language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN) {
+	} else if (_game.version >= 7 && (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN)) {
 		int numChar = 0;
 		const char *fontFile = NULL;
 
