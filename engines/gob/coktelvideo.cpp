@@ -949,7 +949,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 			if (_frames[i].parts[j].type == kPartTypeAudio) {
 
 				_frames[i].parts[j].flags = _stream->readByte();
-				_stream->skip(9); // Unknow
+				_stream->skip(9); // Unknown
 
 			} else if (_frames[i].parts[j].type == kPartTypeVideo) {
 
@@ -1093,11 +1093,17 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 			// Empty sound slice
 			} else if (part.flags == 3) {
 
-				if (_soundEnabled && (part.size > 0))
-					emptySoundSlice(part.size);
-				else
-					_stream->skip(part.size);
+				if (_soundEnabled) {
+					emptySoundSlice(_soundSliceSize);
 
+					if (_soundStage == 1)
+						startSound = true;
+				}
+
+				_stream->skip(part.size);
+			} else {
+				warning("Unknown sound part type %d", part.flags);
+				_stream->skip(part.size);
 			}
 
 		} else if (part.type == kPartTypeVideo) {
@@ -1256,23 +1262,18 @@ void Vmd::filledSoundSlice(uint32 size) {
 }
 
 void Vmd::filledSoundSlices(uint32 size, uint32 mask) {
-	if (_soundBytesPerSample == 1) {
-		soundSlice8bit(size);
-		return;
-	}
-
-	for (int i = 0; i < (_soundSlicesCount - 1); i++) {
+	int n = MIN<int>(_soundSlicesCount - 1, 31);
+	for (int i = 0; i < n; i++) {
 
 		if (mask & 1)
-			emptySoundSlice(_soundSliceSize * 2);
-		else {
-			int16 init = _stream->readSint16LE();
-			soundSlice16bit(_soundSliceSize, init);
-		}
+			emptySoundSlice(_soundSliceSize * _soundBytesPerSample);
+		else
+			filledSoundSlice(_soundSliceSize);
 
 		mask >>= 1;
 	}
-
+	if (_soundSlicesCount > 32)
+		filledSoundSlice((_soundSlicesCount - 32) * _soundSliceSize);
 }
 
 void Vmd::deDPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n) {
