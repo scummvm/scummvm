@@ -44,215 +44,38 @@ namespace Agi {
 
 #ifdef USE_IIGS_SOUND
 
-/**
- * Calculates an Apple IIGS sample's true size.
- * Needed because a zero byte in the sample data ends the sample prematurely.
- */
-uint calcTrueSampleSize(Common::SeekableReadStream &sample, uint size) {
-	uint32 startPos = sample.pos(); // Save stream's starting position
-	// Search for a zero byte in the sample data,
-	// as that would end the sample prematurely.
-	uint result = size; // Set a default value for the result
-	for (uint i = 0; i < size; i++) {
-		if (sample.readByte() == 0) {
-			result = i;
-			break;
-		}
-	}
-	sample.seek(startPos); // Seek back to the stream's starting position
-	return result;
-}
-
-struct IIgsEnvelopeSegment {
-	uint8 bp;
-	uint16 inc; ///< 8b.8b fixed point, big endian?
+/** Older Apple IIGS AGI instrument set. Used only by Space Quest I (AGI v1.002). */
+static const instrumentSetInfo instSetV1 = {
+	1192, 26, "7ee16bbc135171ffd6b9120cc7ff1af2", "edd3bf8905d9c238e02832b732fb2e18"
 };
 
-#define ENVELOPE_SEGMENT_COUNT 8
-struct IIgsEnvelope {
-	IIgsEnvelopeSegment seg[ENVELOPE_SEGMENT_COUNT];
-
-	/** Reads an Apple IIGS envelope from then given stream. */
-	bool read(Common::SeekableReadStream &stream) {
-		for (int segNum = 0; segNum < ENVELOPE_SEGMENT_COUNT; segNum++) {
-			seg[segNum].bp  = stream.readByte();
-			seg[segNum].inc = stream.readUint16BE();
-		}
-		return !stream.ioFailed();
-	}
+/** Newer Apple IIGS AGI instrument set (AGI v1.003+). Used by all others than Space Quest I. */
+static const instrumentSetInfo instSetV2 = {
+	1292, 28, "b7d428955bb90721996de1cbca25e768", "c05fb0b0e11deefab58bc68fbd2a3d07"
 };
 
-// 2**(1/12) i.e. the 12th root of 2
-#define SEMITONE 1.059463094359295
-
-// Size of the SIERRASTANDARD file (i.e. the wave file i.e. the sample data used by the instruments).
-#define SIERRASTANDARD_SIZE 65536
-
-// Maximum number of instruments in an Apple IIGS instrument set.
-// Chosen empirically based on Apple IIGS AGI game data, increase if needed.
-#define MAX_INSTRUMENTS 28
-
-struct IIgsWaveInfo {
-	uint8 top;
-	uint addr;
-	uint size;
-// Oscillator channel
-#define OSC_CHANNEL_RIGHT 0
-#define OSC_CHANNEL_LEFT  1
-	uint channel;
-// Oscillator mode
-#define OSC_MODE_LOOP     0
-#define OSC_MODE_ONESHOT  1
-#define OSC_MODE_SYNC_AM  2
-#define OSC_MODE_SWAP     3
-	uint mode;
-	bool halt;
-	uint16 relPitch; ///< 8b.8b fixed point, big endian?
-
-	/** Reads an Apple IIGS wave information structure from the given stream. */
-	bool read(Common::SeekableReadStream &stream, bool ignoreAddr = false) {
-		top  = stream.readByte();
-		addr = stream.readByte() * 256;
-		size = (1 << (stream.readByte() & 7)) * 256;
-
-		// Read packed mode byte and parse it into parts
-		byte packedModeByte = stream.readByte();
-		channel = (packedModeByte >> 4) & 1; // Bit 4
-		mode    = (packedModeByte >> 1) & 3; // Bits 1-2
-		halt    = (packedModeByte & 1) != 0; // Bit 0 (Converted to boolean)
-
-		relPitch = stream.readUint16BE();
-
-		// Zero the wave address if we want to ignore the wave address info
-		if (ignoreAddr)
-			addr = 0;
-
-		return !stream.ioFailed();
-	}
-
-	bool finalize(Common::SeekableReadStream &uint8Wave) {
-		uint32 startPos = uint8Wave.pos(); // Save stream's starting position
-		uint8Wave.seek(addr, SEEK_CUR); // Seek to wave's address
-		// Calculate the true sample size (A zero ends the sample prematurely)
-		size = calcTrueSampleSize(uint8Wave, size);
-		uint8Wave.seek(startPos); // Seek back to the stream's starting position
-		return true;
-	}
-};
-
-// Number of waves per Apple IIGS sound oscillator
-#define WAVES_PER_OSCILLATOR 2
-
-/** An Apple IIGS sound oscillator. Consists always of two waves. */
-struct IIgsOscillator {
-	IIgsWaveInfo waves[WAVES_PER_OSCILLATOR];
-
-	bool finalize(Common::SeekableReadStream &uint8Wave) {
-		for (uint i = 0; i < WAVES_PER_OSCILLATOR; i++)
-			if (!waves[i].finalize(uint8Wave))
-				return false;
-		return true;
-	}
-};
-
-// Maximum number of oscillators in an Apple IIGS instrument.
-// Chosen empirically based on Apple IIGS AGI game data, increase if needed.
-#define MAX_OSCILLATORS 4
-
-/** An Apple IIGS sound oscillator list. */
-struct IIgsOscillatorList {
-	uint count; ///< Oscillator count
-	IIgsOscillator osc[MAX_OSCILLATORS]; ///< The oscillators
-
-	bool read(Common::SeekableReadStream &stream, uint oscillatorCount, bool ignoreAddr = false) {
-		// First read the A waves and then the B waves for the oscillators
-		for (uint waveNum = 0; waveNum < WAVES_PER_OSCILLATOR; waveNum++)
-			for (uint oscNum = 0; oscNum < oscillatorCount; oscNum++)
-				if (!osc[oscNum].waves[waveNum].read(stream, ignoreAddr))
-					return false;
-
-		count = oscillatorCount; // Set the oscillator count
-		return true;
-	}
-
-	bool finalize(Common::SeekableReadStream &uint8Wave) {
-		for (uint i = 0; i < count; i++)
-			if (!osc[i].finalize(uint8Wave))
-				return false;
-		return true;
-	}
-};
-
-struct IIgsInstrumentHeader {
-	IIgsEnvelope env;
-	uint8 relseg;
-	uint8 bendrange;
-	uint8 vibdepth;
-	uint8 vibspeed;
-	IIgsOscillatorList oscList;
-
-	/**
-	 * Read an Apple IIGS instrument header from the given stream.
-	 * @param stream The source stream from which to read the data.
-	 * @param ignoreAddr Should we ignore wave infos' wave address variable's value?
-	 * @return True if successful, false otherwise.
-	 */
-	bool read(Common::SeekableReadStream &stream, bool ignoreAddr = false) {
-		env.read(stream);
-		relseg        = stream.readByte();
-		byte priority = stream.readByte(); // Not needed? 32 in all tested data.
-		bendrange     = stream.readByte();
-		vibdepth      = stream.readByte();
-		vibspeed      = stream.readByte();
-		byte spare    = stream.readByte(); // Not needed? 0 in all tested data.
-		byte wac      = stream.readByte(); // Read A wave count
-		byte wbc      = stream.readByte(); // Read B wave count
-		oscList.read(stream, wac, ignoreAddr); // Read the oscillators
-		return (wac == wbc) && !stream.ioFailed(); // A and B wave counts must match
-	}
-
-	bool finalize(Common::SeekableReadStream &uint8Wave) {
-		return oscList.finalize(uint8Wave);
-	}
-};
-
-struct IIgsSampleHeader {
-	uint16 type;
-	uint8  pitch; ///< Logarithmic, base is 2**(1/12), unknown multiplier (Possibly in range 1040-1080)
-	uint8  unknownByte_Ofs3; // 0x7F in Gold Rush's sound resource 60, 0 in all others.
-	uint8  volume; ///< Current guess: Logarithmic in 6 dB steps
-	uint8  unknownByte_Ofs5; ///< 0 in all tested samples.
-	uint16 instrumentSize; ///< Little endian. 44 in all tested samples. A guess.
-	uint16 sampleSize; ///< Little endian. Accurate in all tested samples excluding Manhunter I's sound resource 16.
-	IIgsInstrumentHeader instrument;
-
-	/**
-	 * Read an Apple IIGS AGI sample header from the given stream.
-	 * @param stream The source stream from which to read the data.
-	 * @return True if successful, false otherwise.
-	 */
-	bool read(Common::SeekableReadStream &stream) {
-		type             = stream.readUint16LE();
-		pitch            = stream.readByte();
-		unknownByte_Ofs3 = stream.readByte();
-		volume           = stream.readByte();
-		unknownByte_Ofs5 = stream.readByte();
-		instrumentSize   = stream.readUint16LE();
-		sampleSize       = stream.readUint16LE();
-		// Read the instrument header *ignoring* its wave address info
-		return instrument.read(stream, true);
-	}
-
-	bool finalize(Common::SeekableReadStream &uint8Wave) {
-		return instrument.finalize(uint8Wave);
-	}
+/** Information about different Apple IIGS AGI executables. */
+static const IIgsExeInfo IIgsExeInfos[] = {
+	{GID_SQ1,      "SQ",   0x1002, 138496, 0x80AD, instSetV1},
+	{GID_LSL1,     "LL",   0x1003, 141003, 0x844E, instSetV2},
+	{GID_AGIDEMO,  "DEMO", 0x1005, 141884, 0x8469, instSetV2},
+	{GID_KQ1,      "KQ",   0x1006, 141894, 0x8469, instSetV2},
+	{GID_PQ1,      "PQ",   0x1007, 141882, 0x8469, instSetV2},
+	{GID_MIXEDUP,  "MG",   0x1013, 142552, 0x84B7, instSetV2},
+	{GID_KQ2,      "KQ2",  0x1013, 143775, 0x84B7, instSetV2},
+	{GID_KQ3,      "KQ3",  0x1014, 144312, 0x84B7, instSetV2},
+	{GID_SQ2,      "SQ2",  0x1014, 107882, 0x6563, instSetV2},
+	{GID_MH1,      "MH",   0x2004, 147678, 0x8979, instSetV2},
+	{GID_KQ4,      "KQ4",  0x2006, 147652, 0x8979, instSetV2},
+	{GID_BC,       "BC",   0x3001, 148192, 0x8979, instSetV2},
+	{GID_GOLDRUSH, "GR",   0x3003, 148268, 0x8979, instSetV2}
 };
 
 static IIgsInstrumentHeader g_instruments[MAX_INSTRUMENTS];
 static uint g_numInstruments = 0;
 static int16 g_wave[SIERRASTANDARD_SIZE]; // FIXME? Should this be allocated from the heap? (Size is 128KiB)
 
-bool finalizeInstruments(Common::SeekableReadStream &uint8Wave) {
+bool SoundMgr::finalizeInstruments(Common::SeekableReadStream &uint8Wave) {
 	for (uint i = 0; i < g_numInstruments; i++)
 		if (!g_instruments[i].finalize(uint8Wave))
 			return false;
@@ -272,7 +95,7 @@ bool finalizeInstruments(Common::SeekableReadStream &uint8Wave) {
  * TODO: Add support for looping sounds.
  * FIXME: Fix sample rate calculation, it's probably not accurate at the moment.
  */
-Audio::AudioStream *makeIIgsSampleStream(Common::SeekableReadStream &stream, int resnum = -1) {
+Audio::AudioStream *SoundMgr::makeIIgsSampleStream(Common::SeekableReadStream &stream, int resnum) {
 	const uint32 startPos = stream.pos();
 	IIgsSampleHeader header;
 	Audio::AudioStream *result = NULL;
@@ -821,63 +644,18 @@ void Sound::unloadInstruments() {
 }
 #endif
 
-/** Apple IIGS AGI instrument set information. */
-struct instrumentSetInfo {
-	uint byteCount;          ///< Length of the whole instrument set in bytes
-	uint instCount;          ///< Amount of instrument in the set
-	const char *md5;         ///< MD5 hex digest of the whole instrument set
-	const char *waveFileMd5; ///< MD5 hex digest of the wave file (i.e. the sample data used by the instruments)
-};
-
-/** Older Apple IIGS AGI instrument set. Used only by Space Quest I (AGI v1.002). */
-static const instrumentSetInfo instSetV1 = {
-	1192, 26, "7ee16bbc135171ffd6b9120cc7ff1af2", "edd3bf8905d9c238e02832b732fb2e18"
-};
-
-/** Newer Apple IIGS AGI instrument set (AGI v1.003+). Used by all others than Space Quest I. */
-static const instrumentSetInfo instSetV2 = {
-	1292, 28, "b7d428955bb90721996de1cbca25e768", "c05fb0b0e11deefab58bc68fbd2a3d07"
-};
-
-/** Apple IIGS AGI executable file information. */
-struct IIgsExeInfo {
-	enum AgiGameID gameid;            ///< Game ID
-	const char *exePrefix;            ///< Prefix of the Apple IIGS AGI executable (e.g. "SQ", "PQ", "KQ4" etc)
-	uint agiVer;                      ///< Apple IIGS AGI version number, not strictly needed
-	uint exeSize;                     ///< Size of the Apple IIGS AGI executable file in bytes
-	uint instSetStart;                ///< Starting offset of the instrument set inside the executable file
-	const instrumentSetInfo &instSet; ///< Information about the used instrument set
-};
-
-/** Information about different Apple IIGS AGI executables. */
-static const IIgsExeInfo IIgsExeInfos[] = {
-	{GID_SQ1,      "SQ",   0x1002, 138496, 0x80AD, instSetV1},
-	{GID_LSL1,     "LL",   0x1003, 141003, 0x844E, instSetV2},
-	{GID_AGIDEMO,  "DEMO", 0x1005, 141884, 0x8469, instSetV2},
-	{GID_KQ1,      "KQ",   0x1006, 141894, 0x8469, instSetV2},
-	{GID_PQ1,      "PQ",   0x1007, 141882, 0x8469, instSetV2},
-	{GID_MIXEDUP,  "MG",   0x1013, 142552, 0x84B7, instSetV2},
-	{GID_KQ2,      "KQ2",  0x1013, 143775, 0x84B7, instSetV2},
-	{GID_KQ3,      "KQ3",  0x1014, 144312, 0x84B7, instSetV2},
-	{GID_SQ2,      "SQ2",  0x1014, 107882, 0x6563, instSetV2},
-	{GID_MH1,      "MH",   0x2004, 147678, 0x8979, instSetV2},
-	{GID_KQ4,      "KQ4",  0x2006, 147652, 0x8979, instSetV2},
-	{GID_BC,       "BC",   0x3001, 148192, 0x8979, instSetV2},
-	{GID_GOLDRUSH, "GR",   0x3003, 148268, 0x8979, instSetV2}
-};
-
 /**
  * Finds information about an Apple IIGS AGI executable based on the game ID.
  * @return A non-null IIgsExeInfo pointer if successful, otherwise NULL.
  */
-const IIgsExeInfo *getIIgsExeInfo(enum AgiGameID gameid) {
+const IIgsExeInfo *SoundMgr::getIIgsExeInfo(enum AgiGameID gameid) const {
 	for (int i = 0; i < ARRAYSIZE(IIgsExeInfos); i++)
 		if (IIgsExeInfos[i].gameid == gameid)
 			return &IIgsExeInfos[i];
 	return NULL;
 }
 
-bool loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo) {
+bool SoundMgr::loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo) {
 	bool loadedOk = false; // Was loading successful?
 	Common::File file;
 
@@ -938,14 +716,14 @@ bool loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exe
  * @param dest  Destination buffer for the 16-bit signed sample data.
  * @param length  Length of the sample data to be converted.
  */
-bool convertWave(Common::SeekableReadStream &source, int16 *dest, uint length) {
+bool SoundMgr::convertWave(Common::SeekableReadStream &source, int16 *dest, uint length) {
 	// Convert the wave from 8-bit unsigned to 16-bit signed format
 	for (uint i = 0; i < length; i++)
 		dest[i] = (int16) ((source.readByte() - 128) * 256);
 	return !source.ioFailed();
 }
 
-Common::MemoryReadStream *loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
+Common::MemoryReadStream *SoundMgr::loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
 	bool loadedOk = false; // Was loading successful?
 	Common::File file;
 
