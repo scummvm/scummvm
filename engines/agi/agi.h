@@ -88,6 +88,26 @@ typedef signed int Err;
 #define ADD_PIC 1
 #define ADD_VIEW 2
 
+enum AgiGameID {
+	GID_AGIDEMO,
+	GID_BC,
+	GID_DDP,
+	GID_GOLDRUSH,
+	GID_KQ1,
+	GID_KQ2,
+	GID_KQ3,
+	GID_KQ4,
+	GID_LSL1,
+	GID_MH1,
+	GID_MH2,
+	GID_MIXEDUP,
+	GID_PQ1,
+	GID_SQ1,
+	GID_SQ2,
+	GID_XMASCARD,
+	GID_FANMADE		// TODO: Should this be extended to include all fanmade games?
+};
+
 } // End of namespace Agi
 
 /* AGI resources */
@@ -114,26 +134,6 @@ enum AgiGameFeatures {
 	GF_FANMADE =     (1 << 6),
 	GF_MENUS =		 (1 << 7),
 	GF_ESCPAUSE =	 (1 << 8)
-};
-
-enum AgiGameID {
-	GID_AGIDEMO,
-	GID_BC,
-	GID_DDP,
-	GID_GOLDRUSH,
-	GID_KQ1,
-	GID_KQ2,
-	GID_KQ3,
-	GID_KQ4,
-	GID_LSL1,
-	GID_MH1,
-	GID_MH2,
-	GID_MIXEDUP,
-	GID_PQ1,
-	GID_SQ1,
-	GID_SQ2,
-	GID_XMASCARD,
-	GID_FANMADE		// TODO: Should this be extended to include all fanmade games?
 };
 
 struct AGIGameDescription;

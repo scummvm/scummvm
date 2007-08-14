@@ -26,12 +26,11 @@
 #ifndef AGI_SOUND_H
 #define AGI_SOUND_H
 
+#include "agi/agi.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
 namespace Agi {
-
-enum AgiGameID; // Forward declaration because agi.h has this but includes sound.h first
 
 #define BUFFER_SIZE	410
 
