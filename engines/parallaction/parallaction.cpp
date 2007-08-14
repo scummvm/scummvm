@@ -132,6 +132,7 @@ Parallaction::~Parallaction() {
 	delete _instructionNames;
 	delete _zoneTypeNames;
 	delete _zoneFlagNames;
+	delete _locationStmt;
 
 	_animations.remove(&_char._ani);
 
@@ -943,6 +944,28 @@ void Parallaction::initOpcodes() {
 	};
 
 	_commandOpcodes = op3;
+
+
+	static const Opcode op4[] = {
+		LOCATION_PARSER(invalid),
+		LOCATION_PARSER(endlocation),
+		LOCATION_PARSER(location),
+		LOCATION_PARSER(disk),
+		LOCATION_PARSER(nodes),
+		LOCATION_PARSER(zone),
+		LOCATION_PARSER(animation),
+		LOCATION_PARSER(localflags),
+		LOCATION_PARSER(commands),
+		LOCATION_PARSER(acommands),
+		LOCATION_PARSER(flags),
+		LOCATION_PARSER(comment),
+		LOCATION_PARSER(endcomment),
+		LOCATION_PARSER(sound),
+		LOCATION_PARSER(music)
+	};
+
+	_locationParsers = op4;
+
 
 }
 

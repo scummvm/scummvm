@@ -312,6 +312,9 @@ struct BackgroundInfo {
 #define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op()
 #define INSTRUCTION_OPCODE(op) &Parallaction::instOp_##op
 
+#define DECLARE_LOCATION_PARSER(sig) void Parallaction::locParse_##sig()
+#define DECLARE_UNQUALIFIED_LOCATION_PARSER(sig) void locParse_##sig()
+#define LOCATION_PARSER(sig) &Parallaction::locParse_##sig
 
 class Parallaction : public Engine {
 	friend class Debugger;
@@ -425,6 +428,30 @@ public:
 
 	void 		parseLocation(const char *filename);
 
+	const Opcode	*_locationParsers;
+
+	struct {
+		const char	*filename;
+		bool	end;
+		Script	*script;
+	} _locParseCtxt;
+
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(invalid);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(endlocation);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(disk);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(nodes);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(zone);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(animation);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(localflags);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(commands);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(acommands);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(flags);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(comment);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(endcomment);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(sound);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(music);
+
 	void 		changeCursor(int32 index);
 	void		showCursor(bool visible);
 	void 		changeCharacter(const char *name);
@@ -468,6 +495,7 @@ public:
 	Table		*_callableNames;
 	Table		*_instructionNames;
 	Table		*_localFlagNames;
+	Table		*_locationStmt;
 
 
 

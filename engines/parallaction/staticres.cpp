@@ -330,6 +330,23 @@ const char *_callableNamesRes_ns[] = {
 	"TestResult"
 };
 
+const char *_locationStmtRes_ns[] = {
+	"endlocation",
+	"location",
+	"disk",
+	"nodes",
+	"zone",
+	"animation",
+	"localflags",
+	"commands",
+	"acommands",
+	"flags",
+	"comment",
+	"endcomment",
+	"sound",
+	"music"
+};
+
 const char *_zoneTypeNamesRes_br[] = {
 	"examine",
 	"door",
@@ -564,6 +581,7 @@ void Parallaction_ns::initResources() {
 	_zoneFlagNames = new Table(ARRAYSIZE(_zoneFlagNamesRes_ns), _zoneFlagNamesRes_ns);
 	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes_ns), _zoneTypeNamesRes_ns);
 	_commandsNames = new Table(ARRAYSIZE(_commandsNamesRes_ns), _commandsNamesRes_ns);
+	_locationStmt = new Table(ARRAYSIZE(_locationStmtRes_ns), _locationStmtRes_ns);
 
 	_localFlagNames = new Table(120);
 	_localFlagNames->addData("visited");

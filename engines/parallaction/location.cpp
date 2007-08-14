@@ -33,10 +33,127 @@
 namespace Parallaction {
 
 
+DECLARE_LOCATION_PARSER(invalid) {
+	error("unknown keyword '%s' in location '%s'", _tokens[0], _locParseCtxt.filename);
+}
+
+DECLARE_LOCATION_PARSER(endlocation) {
+	_locParseCtxt.end = true;
+}
+
+
+DECLARE_LOCATION_PARSER(location) {
+	// The parameter for location is 'location.mask'.
+	// If mask is not present, then it is assumed
+	// that path & mask are encoded in the background
+	// bitmap, otherwise a separate .msk file exists.
+
+	char *mask = strchr(_tokens[1], '.');
+	if (mask) {
+		mask[0] = '\0';
+		mask++;
+	}
+
+	strcpy(_location._name, _tokens[1]);
+	switchBackground(_location._name, mask);
+
+	if (_tokens[2][0] != '\0') {
+		_char._ani._left = atoi(_tokens[2]);
+		_char._ani._top = atoi(_tokens[3]);
+	}
+
+	if (_tokens[4][0] != '\0') {
+		_char._ani._frame = atoi(_tokens[4]);
+	}
+}
+
+
+DECLARE_LOCATION_PARSER(disk) {
+	_disk->selectArchive(_tokens[1]);
+}
+
+
+DECLARE_LOCATION_PARSER(nodes) {
+	parseWalkNodes(*_locParseCtxt.script, _location._walkNodes);
+}
+
+
+DECLARE_LOCATION_PARSER(zone) {
+	parseZone(*_locParseCtxt.script, _zones, _tokens[1]);
+}
+
+
+DECLARE_LOCATION_PARSER(animation) {
+	parseAnimation(*_locParseCtxt.script, _animations, _tokens[1]);
+}
+
+
+DECLARE_LOCATION_PARSER(localflags) {
+	int _si = 1;	// _localFlagNames[0] = 'visited'
+	while (_tokens[_si][0] != '\0') {
+		_localFlagNames->addData(_tokens[_si]);
+		_si++;
+	}
+}
+
+
+DECLARE_LOCATION_PARSER(commands) {
+	parseCommands(*_locParseCtxt.script, _location._commands);
+}
+
+
+DECLARE_LOCATION_PARSER(acommands) {
+	parseCommands(*_locParseCtxt.script, _location._aCommands);
+}
+
+
+DECLARE_LOCATION_PARSER(flags) {
+	if ((_localFlags[_currentLocationIndex] & kFlagsVisited) == 0) {
+		// only for 1st visit
+		_localFlags[_currentLocationIndex] = 0;
+		int _si = 1;
+
+		do {
+			byte _al = _localFlagNames->lookup(_tokens[_si]);
+			_localFlags[_currentLocationIndex] |= 1 << (_al - 1);
+
+			_si++;
+			if (scumm_stricmp(_tokens[_si], "|")) break;
+			_si++;
+		} while (true);
+	}
+}
+
+
+DECLARE_LOCATION_PARSER(comment) {
+	_location._comment = parseComment(*_locParseCtxt.script);
+}
+
+
+DECLARE_LOCATION_PARSER(endcomment) {
+	_location._endComment = parseComment(*_locParseCtxt.script);
+}
+
+
+DECLARE_LOCATION_PARSER(sound) {
+	if (getPlatform() == Common::kPlatformAmiga) {
+		strcpy(_locationSound, _tokens[1]);
+		_hasLocationSound = true;
+	}
+}
+
+
+DECLARE_LOCATION_PARSER(music) {
+	if (getPlatform() == Common::kPlatformAmiga)
+		_soundMan->setMusicFile(_tokens[1]);
+}
+
+
+
+
 void Parallaction::parseLocation(const char *filename) {
     debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
-	uint16 _si = 1;
 	_gfx->setFont(_labelFont);
 
 	Script *script = _disk->loadLocation(filename);
@@ -67,95 +184,21 @@ void Parallaction::parseLocation(const char *filename) {
 		_localFlags[_currentLocationIndex] |= kFlagsVisited;	// 'visited'
 	}
 
+	_locParseCtxt.end = false;;
+	_locParseCtxt.script = script;
+	_locParseCtxt.filename = filename;
 
 	fillBuffers(*script, true);
 
-	while (scumm_stricmp(_tokens[0], "ENDLOCATION")) {
+	int index;
+	while (true) {
 
-		printf("inst = %s\n", _tokens[0]);
+		index = _locationStmt->lookup(_tokens[0]);
 
-		if (!scumm_stricmp(_tokens[0], "LOCATION")) {
-			// The parameter for location is 'location.mask'.
-			// If mask is not present, then it is assumed
-			// that path & mask are encoded in the background
-			// bitmap, otherwise a separate .msk file exists.
+		(this->*_locationParsers[index])();
 
-			char *mask = strchr(_tokens[1], '.');
-			if (mask) {
-				mask[0] = '\0';
-				mask++;
-			}
-
-			strcpy(_location._name, _tokens[1]);
-			switchBackground(_location._name, mask);
-
-			if (_tokens[2][0] != '\0') {
-				_char._ani._left = atoi(_tokens[2]);
-				_char._ani._top = atoi(_tokens[3]);
-			}
-
-			if (_tokens[4][0] != '\0') {
-				_char._ani._frame = atoi(_tokens[4]);
-			}
-		} else
-		if (!scumm_stricmp(_tokens[0], "DISK")) {
-			_disk->selectArchive(_tokens[1]);
-		} else
-		if (!scumm_stricmp(_tokens[0], "NODES")) {
-			parseWalkNodes(*script, _location._walkNodes);
-		} else
-		if (!scumm_stricmp(_tokens[0], "ZONE")) {
-			parseZone(*script, _zones, _tokens[1]);
-		} else
-		if (!scumm_stricmp(_tokens[0], "ANIMATION")) {
-			parseAnimation(*script, _animations, _tokens[1]);
-		} else
-		if (!scumm_stricmp(_tokens[0], "LOCALFLAGS")) {
-			_si = 1;	// _localFlagNames[0] = 'visited'
-			while (_tokens[_si][0] != '\0') {
-				_localFlagNames->addData(_tokens[_si]);
-				_si++;
-			}
-		} else
-		if (!scumm_stricmp(_tokens[0], "COMMANDS")) {
-			parseCommands(*script, _location._commands);
-		} else
-		if (!scumm_stricmp(_tokens[0], "ACOMMANDS")) {
-			parseCommands(*script, _location._aCommands);
-		} else
-		if (!scumm_stricmp(_tokens[0], "FLAGS")) {
-			if ((_localFlags[_currentLocationIndex] & kFlagsVisited) == 0) {
-				// only for 1st visit
-				_localFlags[_currentLocationIndex] = 0;
-				_si = 1;
-
-				do {
-					byte _al = _localFlagNames->lookup(_tokens[_si]);
-					_localFlags[_currentLocationIndex] |= 1 << (_al - 1);
-
-					_si++;
-					if (scumm_stricmp(_tokens[_si], "|")) break;
-					_si++;
-				} while (true);
-			}
-		} else
-		if (!scumm_stricmp(_tokens[0], "COMMENT")) {
-			_location._comment = parseComment(*script);
-		} else
-		if (!scumm_stricmp(_tokens[0], "ENDCOMMENT")) {
-			_location._endComment = parseComment(*script);
-		} else
-		if (!scumm_stricmp(_tokens[0], "SOUND")) {
-			if (getPlatform() == Common::kPlatformAmiga) {
-				strcpy(_locationSound, _tokens[1]);
-				_hasLocationSound = true;
-			}
-		} else
-		if (!scumm_stricmp(_tokens[0], "MUSIC")) {
-			if (getPlatform() == Common::kPlatformAmiga)
-				_soundMan->setMusicFile(_tokens[1]);
-		} else
-			error("unknown keyword '%s' in location '%s'", _tokens[0], filename);
+		if (_locParseCtxt.end)
+			break;
 
 		fillBuffers(*script, true);
 	}
