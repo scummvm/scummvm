@@ -186,11 +186,9 @@ struct IIgsOscillatorList {
 struct IIgsInstrumentHeader {
 	IIgsEnvelope env;
 	uint8 relseg;
-	uint8 priority;
 	uint8 bendrange;
 	uint8 vibdepth;
 	uint8 vibspeed;
-	uint8 spare;
 	IIgsOscillatorList oscList;
 
 	/**
@@ -202,11 +200,11 @@ struct IIgsInstrumentHeader {
 	bool read(Common::SeekableReadStream &stream, bool ignoreAddr = false) {
 		env.read(stream);
 		relseg    = stream.readByte();
-		priority  = stream.readByte();
+		byte priority = stream.readByte(); // Not needed? 32 in all tested data.
 		bendrange = stream.readByte();
 		vibdepth  = stream.readByte();
 		vibspeed  = stream.readByte();
-		spare     = stream.readByte();
+		byte spare    = stream.readByte(); // Not needed? 0 in all tested data.
 		byte wac  = stream.readByte(); // Read A wave count
 		byte wbc  = stream.readByte(); // Read B wave count
 		oscList.read(stream, wac, ignoreAddr); // Read the oscillators
