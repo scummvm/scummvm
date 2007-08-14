@@ -199,49 +199,5 @@ int Parallaction_ns::go() {
 	return 0;
 }
 
-bool Parallaction_ns::parseLocationLine(const char *filename, Script *script) {
-
-	bool parsed = true;
-
-	if (!scumm_stricmp(_tokens[0], "LOCATION")) {
-		// The parameter for location is 'location.mask'.
-		// If mask is not present, then it is assumed
-		// that path & mask are encoded in the background
-		// bitmap, otherwise a separate .msk file exists.
-
-		char *mask = strchr(_tokens[1], '.');
-		if (mask) {
-			mask[0] = '\0';
-			mask++;
-		}
-
-		strcpy(_location._name, _tokens[1]);
-		switchBackground(_location._name, mask);
-
-		if (_tokens[2][0] != '\0') {
-			_char._ani._left = atoi(_tokens[2]);
-			_char._ani._top = atoi(_tokens[3]);
-		}
-
-		if (_tokens[4][0] != '\0') {
-			_char._ani._frame = atoi(_tokens[4]);
-		}
-	} else
-	if (!scumm_stricmp(_tokens[0], "DISK")) {
-		_disk->selectArchive(_tokens[1]);
-	} else
-	if (!scumm_stricmp(_tokens[0], "NODES")) {
-		parseWalkNodes(*script, _location._walkNodes);
-	} else
-	if (!scumm_stricmp(_tokens[0], "ZONE")) {
-		parseZone(*script, _zones, _tokens[1]);
-	} else
-	if (!scumm_stricmp(_tokens[0], "ANIMATION")) {
-		parseAnimation(*script, _animations, _tokens[1]);
-	} else
-		parsed = false;
-
-	return parsed;
-}
 
 } // namespace Parallaction

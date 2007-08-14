@@ -350,7 +350,7 @@ void skip(Script* script, const char* endToken) {
 	}
 
 }
-
+#if 0
 bool Parallaction_br::parseLocationLine(const char *filename, Script *script) {
 
 	bool parsed = true;
@@ -420,6 +420,6 @@ bool Parallaction_br::parseLocationLine(const char *filename, Script *script) {
 
 	return parsed;
 }
-
+#endif
 
 } // namespace Parallaction
