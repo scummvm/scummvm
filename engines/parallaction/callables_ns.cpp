@@ -587,11 +587,7 @@ void zeroMask(int x, int y, int color, void *data) {
 	//_vm->_gfx->zeroMaskValue(x, y, color);
 
 	BackgroundInfo* info = (BackgroundInfo*)data;
-/*
-	if (x < 0 || x > 319 || y < 0 || y > 199) {
-		printf("zeroMask(%i, %i)\n", x, y);
-	}
-*/
+
 	uint16 _ax = x + y * info->width;
 	info->mask.data[_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
 
@@ -619,8 +615,6 @@ void Parallaction_ns::_c_sketch(void *parm) {
 		newy = _rightHandPositions[2*index+1];
 		newx = _rightHandPositions[2*index];
 	}
-
-	printf("sketch index = %i\n", index);
 
 	Graphics::drawLine(oldx, oldy, newx, newy, 0, zeroMask, _backgroundInfo);
 
