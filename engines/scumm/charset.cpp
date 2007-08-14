@@ -50,10 +50,7 @@ void ScummEngine::loadCJKFont() {
 	_useCJKMode = false;
 	_textSurfaceMultiplier = 1;
 
-	if (_game.platform == Common::kPlatformSegaCD)
-		return;
-
-	if (_language == Common::JA_JPN && _game.version <= 5) { // FM-TOWNS v3 / v5 Kanji
+	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 		int numChar = 256 * 32;
 		_2byteWidth = 16;
 		_2byteHeight = 16;
@@ -66,7 +63,7 @@ void ScummEngine::loadCJKFont() {
 			fp.close();
 		}
 		_textSurfaceMultiplier = 2;
-	} else if (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN) {
+	} else if (_game.version >= 7 && _language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN) {
 		int numChar = 0;
 		const char *fontFile = NULL;
 
