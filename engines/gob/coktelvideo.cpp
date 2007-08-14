@@ -1068,9 +1068,13 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 			// Next sound slice data
 			if (part.flags == 1) {
 
-				if (_soundEnabled)
+				if (_soundEnabled) {
 					filledSoundSlice(part.size);
-				else
+
+					if (_soundStage == 1)
+						startSound = true;
+
+				} else
 					_stream->skip(part.size);
 
 			// Initial sound data (all slices)

@@ -177,8 +177,12 @@ void VideoPlayer::play(int16 startFrame, int16 lastFrame, int16 breakKey,
 		endFrame = lastFrame;
 	palCmd &= 0x3F;
 
-	if (_video->getCurrentFrame() != startFrame)
-		_video->seekFrame(startFrame);
+	if (_video->getCurrentFrame() != startFrame) {
+		if (_video->getFeatures() & CoktelVideo::kFeaturesSound)
+			startFrame = _video->getCurrentFrame();
+		else
+			_video->seekFrame(startFrame);
+	}
 
 	_vm->_draw->_showCursor = 0;
 	_vm->_util->setFrameRate(12);
