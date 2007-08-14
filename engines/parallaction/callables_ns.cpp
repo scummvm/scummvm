@@ -608,7 +608,7 @@ void Parallaction_ns::_c_sketch(void *parm) {
 	// when index == 342. Code now checks for this possibility and assigns
 	// the last valid value to the new coordinates for drawing without
 	// accessing the array.
-	if (index < 342) {
+	if (index == 342) {
 		newy = oldy;
 		newx = oldx;
 	} else {
