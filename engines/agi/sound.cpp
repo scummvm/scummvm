@@ -420,7 +420,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 			}
 			chn[i].ins = waveform;
 			chn[i].size = WAVEFORM_SIZE;
-			chn[i].ptr = (struct AgiNote *)(song + (song[i << 1] | (song[(i << 1) + 1] << 8)));
+			chn[i].ptr = song + READ_LE_UINT16(song + i * 2);
 			chn[i].timer = 0;
 			chn[i].vol = 0;
 			chn[i].end = 0;
@@ -586,7 +586,7 @@ void SoundMgr::playMidiSound() {
 	}
 
 	chn[0].timer = *p++;
-	chn[0].ptr = (struct AgiNote *)p;
+	chn[0].ptr = p;
 
 	if (*p >= 0xfc) {
 		debugC(3, kDebugLevelSound, "end of sequence");
@@ -603,24 +603,25 @@ void SoundMgr::playSampleSound() {
 #endif /* USE_IIGS_SOUND */
 
 void SoundMgr::playAgiSound() {
-	int i, freq;
+	int i;
+	AgiNote note;
 
 	for (playing = i = 0; i < (_vm->_soundemu == SOUND_EMU_PC ? 1 : 4); i++) {
 		playing |= !chn[i].end;
+		note.read(chn[i].ptr); // Read a single note (Doesn't advance the pointer)
 
 		if (chn[i].end)
 			continue;
 
 		if ((--chn[i].timer) <= 0) {
 			stopNote(i);
-			freq = ((chn[i].ptr->frq0 & 0x3f) << 4) | (int)(chn[i].ptr->frq1 & 0x0f);
 
-			if (freq) {
-				uint8 v = chn[i].ptr->vol & 0x0f;
-				playNote(i, freq * 10, v == 0xf ? 0 : 0xff - (v << 1));
+			if (note.freqDiv != 0) {
+				int volume = (note.attenuation == 0x0F) ? 0 : (0xFF - note.attenuation * 2);
+				playNote(i, note.freqDiv * 10, volume);
 			}
 
-			chn[i].timer = ((int)chn[i].ptr->durHi << 8) | chn[i].ptr->durLo;
+			chn[i].timer = note.duration;
 
 			if (chn[i].timer == 0xffff) {
 				chn[i].end = 1;
@@ -634,7 +635,7 @@ void SoundMgr::playAgiSound() {
 				}
 #endif
 			}
-			chn[i].ptr++;
+			chn[i].ptr += 5; // Advance the pointer to the next note data (5 bytes per note)
 		}
 	}
 }

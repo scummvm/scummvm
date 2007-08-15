@@ -177,20 +177,24 @@ struct IIgsSampleHeader {
 	bool finalize(Common::SeekableReadStream &uint8Wave);
 };
 
-#include "common/pack-start.h"
-
 /**
  * AGI sound note structure.
  */
 struct AgiNote {
-	uint8 durLo;		/**< LSB of note duration */
-	uint8 durHi;			/**< MSB of note duration */
-	uint8 frq0;			/**< LSB of note frequency */
-	uint8 frq1;			/**< MSB of note frequency */
-	uint8 vol;			/**< note volume */
-};
+	uint16 duration;    ///< Note duration
+	uint16 freqDiv;     ///< Note frequency divisor (10-bit)
+	uint8  attenuation; ///< Note volume attenuation (4-bit)
 
-#include "common/pack-end.h"
+	/** Reads an AgiNote through the given pointer. */
+	void read(uint8 *ptr) {
+		duration = READ_LE_UINT16(ptr);
+		uint16 freqByte0 = *(ptr + 2); // Bits 4-9 of the frequency divisor
+		uint16 freqByte1 = *(ptr + 3); // Bits 0-3 of the frequency divisor
+		// Merge the frequency divisor's bits together into a single variable
+		freqDiv = ((freqByte0 & 0x3F) << 4) | (freqByte1 & 0x0F);
+		attenuation = *(ptr + 4) & 0x0F;
+	}
+};
 
 /**
  * AGI engine sound channel structure.
@@ -200,7 +204,7 @@ struct ChannelInfo {
 #define AGI_SOUND_MIDI		0x0002
 #define AGI_SOUND_4CHN		0x0008
 	uint32 type;
-	struct AgiNote *ptr;
+	uint8 *ptr; // Pointer to the AgiNote data
 	int16 *ins;
 	int32 size;
 	uint32 phase;
