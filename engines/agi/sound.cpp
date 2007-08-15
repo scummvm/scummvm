@@ -294,15 +294,6 @@ static uint16 period[] = {
 	1448, 1534, 1625, 1722, 1825, 1933
 };
 
-#if 0
-static struct AgiNote playSample[] = {
-	{0xff, 0x7f, 0x18, 0x00, 0x7f},
-	{0xff, 0xff, 0x00, 0x00, 0x00},
-	{0xff, 0xff, 0x00, 0x00, 0x00},
-	{0xff, 0xff, 0x00, 0x00, 0x00}
-};
-#endif
-
 static int noteToPeriod(int note) {
 	return 10 * (period[note % 12] >> (note / 12 - 3));
 }
@@ -322,9 +313,6 @@ void SoundMgr::unloadSound(int resnum) {
 
 void SoundMgr::startSound(int resnum, int flag) {
 	int i, type;
-#if 0
-	struct SoundIIgsSample *smp;
-#endif
 
 	if (_vm->_game.sounds[resnum].isPlaying())
 		return;
@@ -703,12 +691,6 @@ uint32 SoundMgr::mixSound(void) {
 
 	return BUFFER_SIZE;
 }
-
-#if 0
-void Sound::unloadInstruments() {
-	free(instruments);
-}
-#endif
 
 /**
  * Finds information about an Apple IIGS AGI executable based on the game ID.
