@@ -37,7 +37,7 @@
 namespace Agi {
 
 #define USE_INTERPOLATION
-#define USE_CHORUS
+static bool g_useChorus = true;
 
 /* TODO: add support for variable sampling rate in the output device
  */
@@ -499,13 +499,13 @@ void SoundMgr::deinitSound() {
 void SoundMgr::stopNote(int i) {
 	chn[i].adsr = AGI_SOUND_ENV_RELEASE;
 
-#ifdef USE_CHORUS
-	/* Stop chorus ;) */
-	if (chn[i].type == AGI_SOUND_4CHN &&
-		_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
-		stopNote(i + 4);
+	if (g_useChorus) {
+		/* Stop chorus ;) */
+		if (chn[i].type == AGI_SOUND_4CHN &&
+			_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
+			stopNote(i + 4);
+		}
 	}
-#endif
 }
 
 void SoundMgr::playNote(int i, int freq, int vol) {
@@ -520,16 +520,16 @@ void SoundMgr::playNote(int i, int freq, int vol) {
 	chn[i].env = 0x10000;
 	chn[i].adsr = AGI_SOUND_ENV_ATTACK;
 
-#ifdef USE_CHORUS
-	/* Add chorus ;) */
-	if (chn[i].type == AGI_SOUND_4CHN &&
-		_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
-		int newfreq = freq * 1007 / 1000;
-		if (freq == newfreq)
-			newfreq++;
-		playNote(i + 4, newfreq, vol * 2 / 3);
+	if (g_useChorus) {
+		/* Add chorus ;) */
+		if (chn[i].type == AGI_SOUND_4CHN &&
+			_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
+			int newfreq = freq * 1007 / 1000;
+			if (freq == newfreq)
+				newfreq++;
+			playNote(i + 4, newfreq, vol * 2 / 3);
+		}
 	}
-#endif
 }
 
 #ifdef USE_IIGS_SOUND
@@ -627,13 +627,14 @@ void SoundMgr::playAgiSound() {
 				chn[i].end = 1;
 				chn[i].vol = 0;
 				chn[i].env = 0;
-#ifdef USE_CHORUS
-				/* chorus */
-				if (chn[i].type == AGI_SOUND_4CHN && _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
-					chn[i + 4].vol = 0;
-					chn[i + 4].env = 0;
+
+				if (g_useChorus) {
+					/* chorus */
+					if (chn[i].type == AGI_SOUND_4CHN && _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
+						chn[i + 4].vol = 0;
+						chn[i + 4].env = 0;
+					}
 				}
-#endif
 			}
 			chn[i].ptr += 5; // Advance the pointer to the next note data (5 bytes per note)
 		}
