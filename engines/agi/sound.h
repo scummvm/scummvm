@@ -47,30 +47,6 @@ namespace Agi {
 #define ENV_RELEASE	7500		/**< envelope release rate */
 #define NUM_CHANNELS    7		/**< number of sound channels */
 
-/**
- * AGI sound resource structure.
- */
-struct AgiSound {
-	uint32 flen;		/**< size of raw data */
-	uint8 *rdata;		/**< raw sound data */
-	uint16 type;		/**< sound resource type */
-
-	void play() {
-		_isPlaying = true;
-	}
-	
-	void stop() {
-		_isPlaying = false;
-	}
-	
-	bool isPlaying() {
-		return _isPlaying;
-	}
-
-private:
-	bool _isPlaying; ///< Is the sound playing?
-};
-
 struct IIgsEnvelopeSegment {
 	uint8 bp;
 	uint16 inc; ///< 8b.8b fixed point, big endian?
@@ -221,6 +197,22 @@ struct ChannelInfo {
 	uint32 freq;
 	uint32 vol;
 	uint32 env;
+};
+
+/**
+ * AGI sound resource structure.
+ */
+class AgiSound {
+public:
+	uint32 flen;		/**< size of raw data */
+	uint8 *rdata;		/**< raw sound data */
+	uint16 type;		/**< sound resource type */
+
+	virtual void play()      { _isPlaying = true; }
+	virtual void stop()      { _isPlaying = false; }
+	virtual bool isPlaying() { return _isPlaying; }
+protected:
+	bool _isPlaying; ///< Is the sound playing?
 };
 
 /** Apple IIGS AGI instrument set information. */

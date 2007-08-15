@@ -370,7 +370,7 @@ int AgiEngine::agiInit() {
 		memset(&_game.views[i], 0, sizeof(struct AgiView));
 		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
 		memset(&_game.logics[i], 0, sizeof(struct AgiLogic));
-		memset(&_game.sounds[i], 0, sizeof(struct AgiSound));
+		memset(&_game.sounds[i], 0, sizeof(class AgiSound));
 		memset(&_game.dirView[i], 0, sizeof(struct AgiDir));
 		memset(&_game.dirPic[i], 0, sizeof(struct AgiDir));
 		memset(&_game.dirLogic[i], 0, sizeof(struct AgiDir));
