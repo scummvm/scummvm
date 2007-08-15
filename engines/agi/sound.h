@@ -162,7 +162,7 @@ struct AgiNote {
 	uint8  attenuation; ///< Note volume attenuation (4-bit)
 
 	/** Reads an AgiNote through the given pointer. */
-	void read(uint8 *ptr) {
+	void read(const uint8 *ptr) {
 		duration = READ_LE_UINT16(ptr);
 		uint16 freqByte0 = *(ptr + 2); // Bits 4-9 of the frequency divisor
 		uint16 freqByte1 = *(ptr + 3); // Bits 0-3 of the frequency divisor
@@ -180,7 +180,7 @@ struct ChannelInfo {
 #define AGI_SOUND_MIDI		0x0002
 #define AGI_SOUND_4CHN		0x0008
 	uint32 type;
-	uint8 *ptr; // Pointer to the AgiNote data
+	const uint8 *ptr; // Pointer to the AgiNote data
 	int16 *ins;
 	int32 size;
 	uint32 phase;
@@ -199,20 +199,66 @@ struct ChannelInfo {
 	uint32 env;
 };
 
+class SoundMgr;
+
 /**
  * AGI sound resource structure.
  */
 class AgiSound {
 public:
-	uint32 flen;		/**< size of raw data */
-	uint8 *rdata;		/**< raw sound data */
-	uint16 type;		/**< sound resource type */
-
+	AgiSound(SoundMgr &manager) : _manager(manager), _isPlaying(false), _isValid(false) {}
 	virtual void play()      { _isPlaying = true; }
 	virtual void stop()      { _isPlaying = false; }
 	virtual bool isPlaying() { return _isPlaying; }
+	virtual uint16 type() = 0;
+
+	/**
+	 * A named constructor for creating different types of AgiSound objects
+	 * from a raw sound resource.
+	 *
+	 * NOTE: This function should take responsibility for freeing the raw resource
+	 * from memory using free() or delegate the responsibility onwards to some other
+	 * function!
+	 */
+	static AgiSound *createFromRawResource(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
+
 protected:
-	bool _isPlaying; ///< Is the sound playing?
+	SoundMgr &_manager; ///< AGI sound manager object
+	bool _isPlaying;    ///< Is the sound playing?
+	bool _isValid;      ///< Is this a valid sound object?
+};
+
+class PCjrSound : public AgiSound {
+public:
+	PCjrSound(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
+	~PCjrSound() { if (_data != NULL) free(_data); }
+	virtual uint16 type() { return _type; }
+	const uint8 *getVoicePointer(uint voiceNum);
+protected:
+	uint8 *_data; ///< Raw sound resource data
+	uint32 _len;  ///< Length of the raw sound resource
+	uint16 _type; ///< Sound resource type
+};
+
+class IIgsMidi : public AgiSound {
+public:
+	IIgsMidi(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
+	~IIgsMidi() { if (_data != NULL) free(_data); }
+	virtual uint16 type() { return _type; }
+protected:
+	uint8 *_data; ///< Raw sound resource data
+	uint32 _len; ///< Length of the raw sound resource
+	uint16 _type; ///< Sound resource type
+};
+
+class IIgsSample : public AgiSound {
+public:
+	IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
+	~IIgsSample() { delete[] _sample; }
+	virtual uint16 type() { return _header.type; }
+protected:
+	IIgsSampleHeader _header; ///< Apple IIGS AGI sample header
+	int16 *_sample;           ///< Sample data (16-bit signed format)
 };
 
 /** Apple IIGS AGI instrument set information. */

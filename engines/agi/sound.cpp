@@ -42,6 +42,81 @@ static bool g_useChorus = true;
 /* TODO: add support for variable sampling rate in the output device
  */
 
+AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, SoundMgr &manager) {
+	if (data == NULL || len < 2) return NULL; // Check for too small resource or no resource at all
+	uint16 type = READ_LE_UINT16(data);
+	
+	switch (type) { // Create a sound object based on the type
+	case AGI_SOUND_SAMPLE : return new IIgsSample(data, len, resnum, manager);
+	case AGI_SOUND_MIDI   : return new IIgsMidi  (data, len, resnum, manager);
+	case AGI_SOUND_4CHN   : return new PCjrSound (data, len, resnum, manager);
+	}
+	
+	warning("Sound resource (%d) has unknown type (0x%04x). Not using the sound", resnum, type);
+	return NULL;
+}
+
+IIgsMidi::IIgsMidi(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : AgiSound(manager) {
+	_data = data; // Save the resource pointer
+	_len  = len;  // Save the resource's length
+	_type = READ_LE_UINT16(data); // Read sound resource's type
+	_isValid = (_type == AGI_SOUND_MIDI) && (_data != NULL) && (_len >= 2);
+
+	if (!_isValid) // Check for errors
+		warning("Error creating Apple IIGS midi sound from resource %d (Type %d, length %d)", resnum, _type, len);
+}
+
+PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : AgiSound(manager) {
+	_data = data; // Save the resource pointer
+	_len  = len;  // Save the resource's length
+	_type = READ_LE_UINT16(data); // Read sound resource's type
+	_isValid = (_type == AGI_SOUND_4CHN) && (_data != NULL) && (_len >= 2);
+
+	if (!_isValid) // Check for errors
+		warning("Error creating PCjr 4-channel sound from resource %d (Type %d, length %d)", resnum, _type, len);
+}
+
+const uint8 *PCjrSound::getVoicePointer(uint voiceNum) {
+	assert(voiceNum >= 0 && voiceNum < 4);
+	uint16 voiceStartOffset = READ_LE_UINT16(_data + voiceNum * 2);
+	return _data + voiceStartOffset;
+}
+
+IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : AgiSound(manager) {
+	Common::MemoryReadStream stream(data, len, true);
+
+	// Check that the header was read ok and that it's of the correct type
+	if (_header.read(stream) && _header.type == AGI_SOUND_SAMPLE) { // An Apple IIGS AGI sample resource
+		uint32 sampleStartPos = stream.pos();
+		uint32 tailLen = stream.size() - sampleStartPos;
+
+		if (tailLen < _header.sampleSize) { // Check if there's no room for the sample data in the stream
+			// Apple IIGS Manhunter I: Sound resource 16 has only 16074 bytes
+			// of sample data although header says it should have 16384 bytes.
+			warning("Apple IIGS sample (%d) too short (%d bytes. Should be %d bytes). Using the part that's left",
+				resnum, tailLen, _header.sampleSize);
+			_header.sampleSize = (uint16) tailLen; // Use the part that's left
+		}
+
+		if (_header.pitch > 0x7F) { // Check if the pitch is invalid
+			warning("Apple IIGS sample (%d) has too high pitch (0x%02x)", resnum, _header.pitch);
+			_header.pitch &= 0x7F; // Apple IIGS AGI probably did it this way too
+		}
+		
+		// Finalize the header info using the 8-bit unsigned sample data
+		_header.finalize(stream);
+
+		// Convert sample data from 8-bit unsigned to 16-bit signed format
+		stream.seek(sampleStartPos);
+		_sample = new int16[_header.sampleSize];
+		if (_sample != NULL)
+			_isValid = _manager.convertWave(stream, _sample, _header.sampleSize);
+	}
+
+	if (!_isValid) // Check for errors
+		warning("Error creating Apple IIGS sample from resource %d (Type %d, length %d)", resnum, _header.type, len);
+}
+
 /** Reads an Apple IIGS envelope from then given stream. */
 bool IIgsEnvelope::read(Common::SeekableReadStream &stream) {
 	for (int segNum = 0; segNum < ENVELOPE_SEGMENT_COUNT; segNum++) {
@@ -187,69 +262,10 @@ bool SoundMgr::finalizeInstruments(Common::SeekableReadStream &uint8Wave) {
 	return true;
 }
 
-/**
- * Load an Apple IIGS AGI sample resource from the given stream and
- * create an AudioStream out of it.
- *
- * @param stream The source stream.
- * @param resnum Sound resource number. Optional. Used for error messages.
- * @return A non-null AudioStream pointer if successful, NULL otherwise.
- * @note In case of failure (i.e. NULL is returned), stream is reset back
- *       to its original position and its I/O failed -status is cleared.
- * TODO: Add better handling of invalid resource number when printing error messages.
- * TODO: Add support for looping sounds.
- * FIXME: Fix sample rate calculation, it's probably not accurate at the moment.
- */
-Audio::AudioStream *SoundMgr::makeIIgsSampleStream(Common::SeekableReadStream &stream, int resnum) {
-	const uint32 startPos = stream.pos();
-	IIgsSampleHeader header;
-	Audio::AudioStream *result = NULL;
-	bool readHeaderOk = header.read(stream);
-
-	// Check that the header was read ok and that it's of the correct type
-	// and that there's room for the sample data in the stream.
-	if (readHeaderOk && header.type == AGI_SOUND_SAMPLE) { // An Apple IIGS AGI sample resource
-		uint32 tailLen = stream.size() - stream.pos();
-		if (tailLen < header.sampleSize) { // Check if there's no room for the sample data in the stream
-			// Apple IIGS Manhunter I: Sound resource 16 has only 16074 bytes
-			// of sample data although header says it should have 16384 bytes.
-			warning("Apple IIGS sample (%d) too short (%d bytes. Should be %d bytes). Using the part that's left", resnum, tailLen, header.sampleSize);
-			header.sampleSize = (uint16) tailLen; // Use the part that's left
-		}
-		if (header.pitch > 0x7F) { // Check if the pitch is invalid
-			warning("Apple IIGS sample (%d) has too high pitch (0x%02x)", resnum, header.pitch);
-			header.pitch &= 0x7F; // Apple IIGS AGI probably did it this way too
-		}
-		// Allocate memory for the sample data and read it in
-		byte *sampleData = (byte *) malloc(header.sampleSize);
-		uint32 readBytes = stream.read(sampleData, header.sampleSize);
-		if (readBytes == header.sampleSize) { // Check that we got all the data we requested
-			// Create a stream out of the read sample data (Needed by the finalize-function)
-			Common::MemoryReadStream sampleStream(sampleData, readBytes);
-			header.finalize(sampleStream);
-			// Make an audio stream from the mono, 8 bit, unsigned input data
-			byte flags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_UNSIGNED;
-			int rate = (int) (1076 * pow(SEMITONE, header.pitch));
-			result = Audio::makeLinearInputStream(sampleData, header.sampleSize, rate, flags, 0, 0);
-		} else // Couldn't read enough data, so let's delete the sample data buffer
-			delete sampleData;
-	}
-
-	// If couldn't make a sample out of the input stream for any reason then
-	// rewind back to stream's starting position and clear I/O failed -status.
-	if (result == NULL) {
-		stream.seek(startPos);
-		stream.clearIOFailed();
-	}
-
-	return result;
-}
-
 static int playing;
 static ChannelInfo chn[NUM_CHANNELS];
 static int endflag = -1;
 static int playingSound = -1;
-static uint8 *song;
 static uint8 env;
 
 
@@ -300,13 +316,13 @@ static int noteToPeriod(int note) {
 
 void SoundMgr::unloadSound(int resnum) {
 	if (_vm->_game.dirSound[resnum].flags & RES_LOADED) {
-		if (_vm->_game.sounds[resnum].isPlaying()) {
-			_vm->_game.sounds[resnum].stop();
+		if (_vm->_game.sounds[resnum]->isPlaying()) {
+			_vm->_game.sounds[resnum]->stop();
 		}	
 
-		/* Release RAW data for sound */
-		free(_vm->_game.sounds[resnum].rdata);
-		_vm->_game.sounds[resnum].rdata = NULL;
+		// Release the sound resource's data
+		delete _vm->_game.sounds[resnum];
+		_vm->_game.sounds[resnum] = NULL;
 		_vm->_game.dirSound[resnum].flags &= ~RES_LOADED;
 	}
 }
@@ -314,23 +330,21 @@ void SoundMgr::unloadSound(int resnum) {
 void SoundMgr::startSound(int resnum, int flag) {
 	int i, type;
 
-	if (_vm->_game.sounds[resnum].isPlaying())
+	if (_vm->_game.sounds[resnum] != NULL && _vm->_game.sounds[resnum]->isPlaying())
 		return;
 
 	stopSound();
 
-	if (_vm->_game.sounds[resnum].rdata == NULL)
+	if (_vm->_game.sounds[resnum] == NULL) // Is this needed at all?
 		return;
 
-	type = READ_LE_UINT16(_vm->_game.sounds[resnum].rdata);
+	type = _vm->_game.sounds[resnum]->type();
 
 	if (type != AGI_SOUND_SAMPLE && type != AGI_SOUND_MIDI && type != AGI_SOUND_4CHN)
 		return;
 
-	_vm->_game.sounds[resnum].play();
-	_vm->_game.sounds[resnum].type = type;
+	_vm->_game.sounds[resnum]->play();
 	playingSound = resnum;
-	song = (uint8 *)_vm->_game.sounds[resnum].rdata;
 
 	switch (type) {
 #if 0
@@ -365,6 +379,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 		break;
 #endif
 	case AGI_SOUND_4CHN:
+		PCjrSound *pcjrSound = (PCjrSound *) _vm->_game.sounds[resnum];
 		/* Initialize channel info */
 		for (i = 0; i < NUM_CHANNELS; i++) {
 			chn[i].type = type;
@@ -375,7 +390,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 			}
 			chn[i].ins = waveform;
 			chn[i].size = WAVEFORM_SIZE;
-			chn[i].ptr = song + READ_LE_UINT16(song + i * 2);
+			chn[i].ptr = pcjrSound->getVoicePointer(i % 4);
 			chn[i].timer = 0;
 			chn[i].vol = 0;
 			chn[i].end = 0;
@@ -399,7 +414,7 @@ void SoundMgr::stopSound() {
 		stopNote(i);
 
 	if (playingSound != -1) {
-		_vm->_game.sounds[playingSound].stop();
+		_vm->_game.sounds[playingSound]->stop();
 		playingSound = -1;
 	}
 }
@@ -611,7 +626,7 @@ void SoundMgr::playSound() {
 			_vm->setflag(endflag, true);
 
 		if (playingSound != -1)
-			_vm->_game.sounds[playingSound].stop();
+			_vm->_game.sounds[playingSound]->stop();
 		playingSound = -1;
 		endflag = -1;
 	}

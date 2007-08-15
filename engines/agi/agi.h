@@ -525,7 +525,7 @@ struct AgiGame {
 	AgiPicture pictures[MAX_DIRS]; 	/**< AGI picture resources */
 	AgiLogic logics[MAX_DIRS];		/**< AGI logic resources */
 	AgiView views[MAX_DIRS];		/**< AGI view resources */
-	AgiSound sounds[MAX_DIRS];		/**< AGI sound resources */
+	AgiSound *sounds[MAX_DIRS];		/**< Pointers to AGI sound resources */
 
 	/* view table */
 	VtEntry viewTable[MAX_VIEWTABLE];

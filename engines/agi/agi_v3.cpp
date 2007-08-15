@@ -345,7 +345,8 @@ int AgiLoader_v3::loadResource(int t, int n) {
 
 		data = loadVolRes(&_vm->_game.dirSound[n]);
 		if (data != NULL) {
-			_vm->_game.sounds[n].rdata = data;
+			// Freeing of the raw resource from memory is delegated to the createFromRawResource-function
+			_vm->_game.sounds[n] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[n].len, n, *_vm->_sound);
 			_vm->_game.dirSound[n].flags |= RES_LOADED;
 		} else {
 			ec = errBadResource;
