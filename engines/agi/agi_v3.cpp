@@ -347,7 +347,6 @@ int AgiLoader_v3::loadResource(int t, int n) {
 		if (data != NULL) {
 			_vm->_game.sounds[n].rdata = data;
 			_vm->_game.dirSound[n].flags |= RES_LOADED;
-			_vm->_sound->decodeSound(n);
 		} else {
 			ec = errBadResource;
 		}

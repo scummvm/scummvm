@@ -278,8 +278,6 @@ private:
 	void premixerCall(int16 *buf, uint len);
 
 public:
-
-	void decodeSound(int);
 	void unloadSound(int);
 	void playSound();
 	int initSound();

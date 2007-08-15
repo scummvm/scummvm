@@ -320,31 +320,6 @@ void SoundMgr::unloadSound(int resnum) {
 	}
 }
 
-void SoundMgr::decodeSound(int resnum) {
-#if 0
-	int type, size;
-	int16 *buf;
-	uint8 *src;
-	struct SoundIIgsSample *smp;
-
-	debugC(3, kDebugLevelSound, "(%d)", resnum);
-	type = READ_LE_UINT16(_vm->_game.sounds[resnum].rdata);
-
-	if (type == AGI_SOUND_SAMPLE) {
-		/* Convert sample data to 16 bit signed format
-		 */
-		smp = (struct SoundIIgsSample *)_vm->_game.sounds[resnum].rdata;
-		size = ((int)smp->sizeHi << 8) + smp->sizeLo;
-		src = (uint8 *)_vm->_game.sounds[resnum].rdata;
-		buf = (int16 *)calloc(1, 54 + (size << 1) + 100);	/* FIXME */
-		memcpy(buf, src, 54);
-		for (; size--; buf[size + 54] = ((int16)src[size + 54] - 0x80) << 4);	/* FIXME */
-		_vm->_game.sounds[resnum].rdata = (uint8 *) buf;
-		free(src);
-	}
-#endif
-}
-
 void SoundMgr::startSound(int resnum, int flag) {
 	int i, type;
 #if 0
