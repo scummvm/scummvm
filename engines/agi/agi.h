@@ -45,8 +45,6 @@ typedef signed int Err;
  * Version and other definitions
  */
 
-#define USE_IIGS_SOUND
-
 #define	TITLE		"AGI engine"
 
 #define DIR_		"dir"

@@ -42,8 +42,6 @@ static bool g_useChorus = true;
 /* TODO: add support for variable sampling rate in the output device
  */
 
-#ifdef USE_IIGS_SOUND
-
 /** Reads an Apple IIGS envelope from then given stream. */
 bool IIgsEnvelope::read(Common::SeekableReadStream &stream) {
 	for (int segNum = 0; segNum < ENVELOPE_SEGMENT_COUNT; segNum++) {
@@ -247,8 +245,6 @@ Audio::AudioStream *SoundMgr::makeIIgsSampleStream(Common::SeekableReadStream &s
 	return result;
 }
 
-#endif
-
 static int playing;
 static ChannelInfo chn[NUM_CHANNELS];
 static int endflag = -1;
@@ -293,8 +289,6 @@ static int16 waveformMac[WAVEFORM_SIZE] = {
 	-175, -172, -165, -159, -137, -114, -67, -19
 };
 
-#ifdef USE_IIGS_SOUND
-
 static uint16 period[] = {
 	1024, 1085, 1149, 1218, 1290, 1367,
 	1448, 1534, 1625, 1722, 1825, 1933
@@ -312,8 +306,6 @@ static struct AgiNote playSample[] = {
 static int noteToPeriod(int note) {
 	return 10 * (period[note % 12] >> (note / 12 - 3));
 }
-
-#endif /* USE_IIGS_SOUND */
 
 void SoundMgr::unloadSound(int resnum) {
 	if (_vm->_game.dirSound[resnum].flags & RES_LOADED) {
@@ -481,9 +473,7 @@ int SoundMgr::initSound() {
 		report("disabled\n");
 	}
 
-#ifdef USE_IIGS_SOUND
 	loadInstruments();
-#endif
 
 	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 
@@ -531,8 +521,6 @@ void SoundMgr::playNote(int i, int freq, int vol) {
 		}
 	}
 }
-
-#ifdef USE_IIGS_SOUND
 
 void SoundMgr::playMidiSound() {
 	uint8 *p;
@@ -600,8 +588,6 @@ void SoundMgr::playSampleSound() {
 	playing = 1;
 }
 
-#endif /* USE_IIGS_SOUND */
-
 void SoundMgr::playAgiSound() {
 	int i;
 	AgiNote note;
@@ -647,14 +633,12 @@ void SoundMgr::playSound() {
 	if (endflag == -1)
 		return;
 
-#ifdef USE_IIGS_SOUND
 	if (chn[0].type == AGI_SOUND_MIDI) {
 		/* play_midi_sound (); */
 		playing = 0;
 	} else if (chn[0].type == AGI_SOUND_SAMPLE) {
 		playSampleSound();
 	} else
-#endif
 		playAgiSound();
 
 	if (!playing) {
@@ -744,8 +728,6 @@ uint32 SoundMgr::mixSound(void) {
 
 	return BUFFER_SIZE;
 }
-
-#ifdef USE_IIGS_SOUND
 
 #if 0
 void Sound::unloadInstruments() {
@@ -937,8 +919,6 @@ bool SoundMgr::loadInstruments() {
 	delete uint8Wave; // Free the 8-bit unsigned wave file buffer
 	return result;
 }
-
-#endif /* USE_IIGS_SOUND */
 
 static void fillAudio(void *udata, int16 *stream, uint len) {
 	SoundMgr *soundMgr = (SoundMgr *)udata;

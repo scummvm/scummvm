@@ -291,7 +291,6 @@ public:
 	void playAgiSound();
 	uint32 mixSound();
 	bool loadInstruments();
-#ifdef USE_IIGS_SOUND
 	void playMidiSound();
 	void playSampleSound();
 	bool finalizeInstruments(Common::SeekableReadStream &uint8Wave);
@@ -300,7 +299,6 @@ public:
 	bool loadInstrumentHeaders(const Common::String &exePath, const IIgsExeInfo &exeInfo);
 	bool convertWave(Common::SeekableReadStream &source, int16 *dest, uint length);
 	Common::MemoryReadStream *loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo);
-#endif
 };
 
 } // End of namespace Agi
