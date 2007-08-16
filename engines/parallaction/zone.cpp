@@ -48,7 +48,7 @@ DECLARE_ZONE_PARSER(invalid) {
 }
 
 DECLARE_ZONE_PARSER(endzone) {
-	_locZoneParseCtxt.end = true;
+	popParserTables();
 }
 
 DECLARE_ZONE_PARSER(limits) {
@@ -75,7 +75,7 @@ DECLARE_ZONE_PARSER(type) {
 		parseZoneTypeBlock(*_locZoneParseCtxt.script, _locZoneParseCtxt.z);
 	}
 
-	_locZoneParseCtxt.end = true;
+	popParserTables();
 }
 
 
@@ -120,14 +120,7 @@ void Parallaction::parseZone(Script &script, ZoneList &list, char *name) {
 
 	list.push_front(z);
 
-	do {
-
-		fillBuffers(script, true);
-
-		int index = _locationZoneStmt->lookup(_tokens[0]);
-		(this->*_locationZoneParsers[index])();
-
-	} while (!_locZoneParseCtxt.end);
+	pushParserTables(_locationZoneParsers, _locationZoneStmt);
 
 	return;
 }

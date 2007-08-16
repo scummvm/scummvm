@@ -27,7 +27,7 @@
 #define PARALLACTION_H
 
 #include "common/str.h"
-
+#include "common/stack.h"
 
 #include "engines/engine.h"
 
@@ -347,6 +347,16 @@ public:
 	const Opcode	*_commandParsers;
 
 	uint	_lookup;
+
+	Common::Stack<const Opcode*>	_opcodes;
+	Common::Stack<Table*> 	_statements;
+
+	const Opcode	*_currentOpcodes;
+	Table	*_currentStatements;
+
+	void	pushParserTables(const Opcode* opcodes, Table* statements);
+	void	popParserTables();
+	void	parseStatement();
 
 	struct {
 		Command	*cmd;

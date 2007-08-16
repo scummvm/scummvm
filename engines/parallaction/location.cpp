@@ -165,20 +165,21 @@ void Parallaction::parseLocation(const char *filename) {
 	_gfx->setFont(_labelFont);
 	_hasLocationSound = false;
 
-	_locParseCtxt.end = false;;
+	_locParseCtxt.end = false;
 	_locParseCtxt.script = script;
 	_locParseCtxt.filename = filename;
 
+	pushParserTables(_locationParsers, _locationStmt);
 
 	do {
 
 		fillBuffers(*script, true);
 
-		int index = _locationStmt->lookup(_tokens[0]);
-		(this->*_locationParsers[index])();
+		parseStatement();
 
 	} while (!_locParseCtxt.end);
 
+	popParserTables();
 
 	delete script;
 

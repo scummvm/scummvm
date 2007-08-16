@@ -154,7 +154,7 @@ DECLARE_COMMAND_PARSER(invalid) {
 }
 
 DECLARE_COMMAND_PARSER(endcommands) {
-	_cmdParseCtxt.end = true;
+	popParserTables();
 }
 
 void Parallaction::parseCommandFlags() {
@@ -238,13 +238,7 @@ void Parallaction::parseCommands(Script &script, CommandList& list) {
 	_cmdParseCtxt.list = &list;
 	_cmdParseCtxt.end = false;
 
-	do {
-		fillBuffers(script, true);
-
-		_lookup = _commandsNames->lookup(_tokens[0]);
-		(this->*_commandParsers[_lookup])();
-
-	} while (!_cmdParseCtxt.end);
+	pushParserTables(_commandParsers, _commandsNames);
 
 }
 

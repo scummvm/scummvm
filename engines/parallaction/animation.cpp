@@ -95,7 +95,12 @@ DECLARE_ANIM_PARSER(type) {
 		}
 	}
 
-	_locAnimParseCtxt.end = true;
+	_locAnimParseCtxt.a->_oldPos.x = -1000;
+	_locAnimParseCtxt.a->_oldPos.y = -1000;
+
+	_locAnimParseCtxt.a->_flags |= 0x1000000;
+
+	popParserTables();
 }
 
 
@@ -141,7 +146,13 @@ DECLARE_ANIM_PARSER(moveto) {
 
 
 DECLARE_ANIM_PARSER(endanimation) {
-	_locAnimParseCtxt.end = true;
+
+	_locAnimParseCtxt.a->_oldPos.x = -1000;
+	_locAnimParseCtxt.a->_oldPos.y = -1000;
+
+	_locAnimParseCtxt.a->_flags |= 0x1000000;
+
+	popParserTables();
 }
 
 Animation *Parallaction::parseAnimation(Script& script, AnimationList &list, char *name) {
@@ -157,18 +168,7 @@ Animation *Parallaction::parseAnimation(Script& script, AnimationList &list, cha
 	_locAnimParseCtxt.end = false;
 	_locAnimParseCtxt.script = &script;
 
-	do {
-		fillBuffers(script, true);
-
-		int index = _locationAnimStmt->lookup(_tokens[0]);
-		(this->*_locationAnimParsers[index])();
-
-	} while (!_locAnimParseCtxt.end);
-
-	a->_oldPos.x = -1000;
-	a->_oldPos.y = -1000;
-
-	a->_flags |= 0x1000000;
+	pushParserTables(_locationAnimParsers, _locationAnimStmt);
 
 	return a;
 }

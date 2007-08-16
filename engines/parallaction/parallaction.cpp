@@ -849,6 +849,30 @@ int Table::lookup(const char* s) {
 	return notFound;
 }
 
+void Parallaction::pushParserTables(const Opcode* opcodes, Table *statements) {
+
+	_opcodes.push(_currentOpcodes);
+	_statements.push(_currentStatements);
+
+	_currentOpcodes = opcodes;
+	_currentStatements = statements;
+
+}
+
+void Parallaction::popParserTables() {
+	assert(_opcodes.size() > 0);
+
+	_currentOpcodes = _opcodes.pop();
+	_currentStatements = _statements.pop();
+}
+
+void Parallaction::parseStatement() {
+	assert(_currentOpcodes != 0);
+
+	_lookup = _currentStatements->lookup(_tokens[0]);
+	(this->*(_currentOpcodes[_lookup]))();
+}
+
 void Parallaction::initOpcodes() {
 
 	static const Opcode op0[] = {
@@ -997,6 +1021,9 @@ void Parallaction::initOpcodes() {
 	};
 
 	_locationAnimParsers = op6;
+
+	_currentOpcodes = 0;
+	_currentStatements = 0;
 
 }
 
