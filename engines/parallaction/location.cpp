@@ -148,17 +148,46 @@ DECLARE_LOCATION_PARSER(music) {
 		_soundMan->setMusicFile(_tokens[1]);
 }
 
-
+DECLARE_LOCATION_PARSER(redundant) {
+	warning("redundant '%s' line found in script '%s'", _tokens[0], _locParseCtxt.filename);
+}
 
 
 void Parallaction::parseLocation(const char *filename) {
     debugC(1, kDebugLocation, "parseLocation('%s')", filename);
 
-	_gfx->setFont(_labelFont);
+	allocateLocationSlot(filename);
 
 	Script *script = _disk->loadLocation(filename);
+
+	// TODO: the following two lines are specific to Nippon Safes
+	// and should be moved into something like 'initializeParsing()'
+	_gfx->setFont(_labelFont);
 	_hasLocationSound = false;
 
+	_locParseCtxt.end = false;;
+	_locParseCtxt.script = script;
+	_locParseCtxt.filename = filename;
+
+
+	do {
+
+		fillBuffers(*script, true);
+
+		int index = _locationStmt->lookup(_tokens[0]);
+		(this->*_locationParsers[index])();
+
+	} while (!_locParseCtxt.end);
+
+
+	delete script;
+
+	finalizeLocationParsing();
+
+	return;
+}
+
+void Parallaction::allocateLocationSlot(const char *name) {
 	// WORKAROUND: the original code erroneously incremented
 	// _currentLocationIndex, thus producing inconsistent
 	// savegames. This workaround modified the following loop
@@ -167,14 +196,17 @@ void Parallaction::parseLocation(const char *filename) {
 	_currentLocationIndex = -1;
 	uint16 _di = 0;
 	while (_locationNames[_di][0] != '\0') {
-		if (!scumm_stricmp(_locationNames[_di], filename)) {
+		if (!scumm_stricmp(_locationNames[_di], name)) {
 			_currentLocationIndex = _di;
 		}
 		_di++;
 	}
 
+	if (_di == 120)
+		error("No more location slots available. Please report this immediately to ScummVM team.");
+
 	if (_currentLocationIndex  == -1) {
-		strcpy(_locationNames[_numLocations], filename);
+		strcpy(_locationNames[_numLocations], name);
 		_currentLocationIndex = _numLocations;
 
 		_numLocations++;
@@ -183,41 +215,24 @@ void Parallaction::parseLocation(const char *filename) {
 	} else {
 		_localFlags[_currentLocationIndex] |= kFlagsVisited;	// 'visited'
 	}
-
-	_locParseCtxt.end = false;;
-	_locParseCtxt.script = script;
-	_locParseCtxt.filename = filename;
-
-	fillBuffers(*script, true);
-
-	int index;
-	while (true) {
-
-		index = _locationStmt->lookup(_tokens[0]);
-
-		(this->*_locationParsers[index])();
-
-		if (_locParseCtxt.end)
-			break;
-
-		fillBuffers(*script, true);
-	}
-
-	resolveLocationForwards();
-
-	delete script;
-
-	return;
 }
 
-void Parallaction::resolveLocationForwards() {
+void Parallaction::finalizeLocationParsing() {
 
+	// this resolves any forward references in the script
 	for (uint16 _si = 0; _forwardedCommands[_si]; _si++) {
 		_forwardedCommands[_si]->u._animation = findAnimation(_forwardedAnimationNames[_si]);
 		_forwardedCommands[_si] = NULL;
 	}
-
 	_numForwards = 0;
+
+	// this loads animation scripts
+	AnimationList::iterator it = _animations.begin();
+	for ( ; it != _animations.end(); it++) {
+		if ((*it)->_scriptName)
+			loadProgram(*it, (*it)->_scriptName);
+	}
+
 	return;
 }
 

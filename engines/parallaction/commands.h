@@ -46,7 +46,7 @@ struct Animation;
 
 
 // TODO: turn this into a struct
-union CommandData {
+struct CommandData {
 	uint32			_flags;
 	Animation * 	_animation;
 	Zone*			_zone;
@@ -60,9 +60,18 @@ union CommandData {
 
 	CommandData() {
 		_flags = 0;
+		_animation = 0;
+		_zone = 0;
+		_string = 0;
+		_callable = 0;
+		_object = 0;
+		_move._x = 0;
+		_move._y = 0;
 	}
 
 	~CommandData() {
+		if (_string)
+			free(_string);
 	}
 };
 

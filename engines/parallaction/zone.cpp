@@ -36,17 +36,72 @@ namespace Parallaction {
 
 Zone *Parallaction::findZone(const char *name) {
 
-	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++)
+	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++) {
 		if (!scumm_stricmp((*it)->_label._text, name)) return *it;
+	}
 
 	return findAnimation(name);
 }
 
+DECLARE_ZONE_PARSER(invalid) {
+	error("unknown statement '%s' in zone %s", _tokens[0], _locZoneParseCtxt.z->_label._text);
+}
+
+DECLARE_ZONE_PARSER(endzone) {
+	_locZoneParseCtxt.end = true;
+}
+
+DECLARE_ZONE_PARSER(limits) {
+	_locZoneParseCtxt.z->_left = atoi(_tokens[1]);
+	_locZoneParseCtxt.z->_top = atoi(_tokens[2]);
+	_locZoneParseCtxt.z->_right = atoi(_tokens[3]);
+	_locZoneParseCtxt.z->_bottom = atoi(_tokens[4]);
+}
 
 
+DECLARE_ZONE_PARSER(moveto) {
+	_locZoneParseCtxt.z->_moveTo.x = atoi(_tokens[1]);
+	_locZoneParseCtxt.z->_moveTo.y = atoi(_tokens[2]);
+}
+
+
+DECLARE_ZONE_PARSER(type) {
+	if (_tokens[2][0] != '\0') {
+		_locZoneParseCtxt.z->_type = (4 + _objectsNames->lookup(_tokens[2])) << 16;
+	}
+	int16 _si = _zoneTypeNames->lookup(_tokens[1]);
+	if (_si != Table::notFound) {
+		_locZoneParseCtxt.z->_type |= 1 << (_si - 1);
+		parseZoneTypeBlock(*_locZoneParseCtxt.script, _locZoneParseCtxt.z);
+	}
+
+	_locZoneParseCtxt.end = true;
+}
+
+
+DECLARE_ZONE_PARSER(commands) {
+	 parseCommands(*_locZoneParseCtxt.script, _locZoneParseCtxt.z->_commands);
+}
+
+
+DECLARE_ZONE_PARSER(label) {
+//			printf("label: %s", _tokens[1]);
+	renderLabel(&_locZoneParseCtxt.z->_label._cnv, _tokens[1]);
+}
+
+
+DECLARE_ZONE_PARSER(flags) {
+	uint16 _si = 1;
+
+	do {
+		char _al = _zoneFlagNames->lookup(_tokens[_si]);
+		_si++;
+		_locZoneParseCtxt.z->_flags |= 1 << (_al - 1);
+	} while (!scumm_stricmp(_tokens[_si++], "|"));
+}
 
 void Parallaction::parseZone(Script &script, ZoneList &list, char *name) {
-//	printf("parseZone(%s)", name);
+	printf("parseZone(%s)\n", name);
 
 	if (findZone(name)) {
 		while (scumm_stricmp(_tokens[0], "endzone")) {
@@ -57,55 +112,22 @@ void Parallaction::parseZone(Script &script, ZoneList &list, char *name) {
 
 	Zone *z = new Zone;
 
-	z->_label._text = (char*)malloc(strlen(name)+1);
-	strcpy(z->_label._text, name);
+	z->_label._text = strdup(name);
+
+	_locZoneParseCtxt.z = z;
+	_locZoneParseCtxt.end = false;
+	_locZoneParseCtxt.script = &script;
 
 	list.push_front(z);
 
-	fillBuffers(script, true);
-	while (scumm_stricmp(_tokens[0], "endzone")) {
-//		printf("token[0] = %s", _tokens[0]);
-
-		if (!scumm_stricmp(_tokens[0], "limits")) {
-			z->_left = atoi(_tokens[1]);
-			z->_top = atoi(_tokens[2]);
-			z->_right = atoi(_tokens[3]);
-			z->_bottom = atoi(_tokens[4]);
-		}
-		if (!scumm_stricmp(_tokens[0], "moveto")) {
-			z->_moveTo.x = atoi(_tokens[1]);
-			z->_moveTo.y = atoi(_tokens[2]);
-		}
-		if (!scumm_stricmp(_tokens[0], "type")) {
-			if (_tokens[2][0] != '\0') {
-				z->_type = (4 + _objectsNames->lookup(_tokens[2])) << 16;
-			}
-			int16 _si = _zoneTypeNames->lookup(_tokens[1]);
-			if (_si != Table::notFound) {
-				z->_type |= 1 << (_si - 1);
-				parseZoneTypeBlock(script, z);
-				continue;
-			}
-		}
-		if (!scumm_stricmp(_tokens[0], "commands")) {
-			 parseCommands(script, z->_commands);
-		}
-		if (!scumm_stricmp(_tokens[0], "label")) {
-//			printf("label: %s", _tokens[1]);
-			renderLabel(&z->_label._cnv, _tokens[1]);
-		}
-		if (!scumm_stricmp(_tokens[0], "flags")) {
-			uint16 _si = 1;
-
-			do {
-				char _al = _zoneFlagNames->lookup(_tokens[_si]);
-				_si++;
-				z->_flags |= 1 << (_al - 1);
-			} while (!scumm_stricmp(_tokens[_si++], "|"));
-		}
+	do {
 
 		fillBuffers(script, true);
-	}
+
+		int index = _locationZoneStmt->lookup(_tokens[0]);
+		(this->*_locationZoneParsers[index])();
+
+	} while (!_locZoneParseCtxt.end);
 
 	return;
 }
@@ -191,8 +213,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 		switch (z->_type & 0xFFFF) {
 		case kZoneExamine: // examine Zone init
 			if (!scumm_stricmp(_tokens[0], "file")) {
-				u->examine->_filename = (char*)malloc(strlen(_tokens[1])+1);
-				strcpy(u->examine->_filename, _tokens[1]);
+				u->examine->_filename = strdup(_tokens[1]);
 			}
 			if (!scumm_stricmp(_tokens[0], "desc")) {
 				u->examine->_description = parseComment(script);
@@ -207,8 +228,7 @@ void Parallaction::parseZoneTypeBlock(Script &script, Zone *z) {
 			}
 
 			if (!scumm_stricmp(_tokens[0], "location")) {
-				u->door->_location = (char*)malloc(strlen(_tokens[1])+1);
-				strcpy(u->door->_location, _tokens[1]);
+				u->door->_location = strdup(_tokens[1]);
 			}
 
 			if (!scumm_stricmp(_tokens[0], "file")) {

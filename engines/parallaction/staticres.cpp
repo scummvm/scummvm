@@ -278,7 +278,9 @@ const char *_commandsNamesRes_ns[] = {
 	"drop",
 	"quit",
 	"move",
-	"stop"
+	"stop",
+	"endcommands",
+	"endzone"
 };
 
 const char *_instructionNamesRes_ns[] = {
@@ -344,7 +346,30 @@ const char *_locationStmtRes_ns[] = {
 	"comment",
 	"endcomment",
 	"sound",
-	"music"
+	"music",
+	"endanimation"
+};
+
+const char *_locationZoneStmtRes_ns[] = {
+	"limits",
+	"moveto",
+	"type",
+	"commands",
+	"label",
+	"flags",
+	"endzone"
+};
+
+const char *_locationAnimStmtRes_ns[] = {
+	"script",
+	"commands",
+	"type",
+	"label",
+	"flags",
+	"file",
+	"position",
+	"moveto",
+	"endanimation"
 };
 
 const char *_zoneTypeNamesRes_br[] = {
@@ -582,6 +607,8 @@ void Parallaction_ns::initResources() {
 	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes_ns), _zoneTypeNamesRes_ns);
 	_commandsNames = new Table(ARRAYSIZE(_commandsNamesRes_ns), _commandsNamesRes_ns);
 	_locationStmt = new Table(ARRAYSIZE(_locationStmtRes_ns), _locationStmtRes_ns);
+	_locationZoneStmt = new Table(ARRAYSIZE(_locationZoneStmtRes_ns), _locationZoneStmtRes_ns);
+	_locationAnimStmt = new Table(ARRAYSIZE(_locationAnimStmtRes_ns), _locationAnimStmtRes_ns);
 
 	_localFlagNames = new Table(120);
 	_localFlagNames->addData("visited");

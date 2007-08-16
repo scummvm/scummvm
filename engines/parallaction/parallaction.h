@@ -296,6 +296,14 @@ struct BackgroundInfo {
 };
 
 
+#define DECLARE_ZONE_PARSER(sig) void Parallaction::locZoneParse_##sig()
+#define DECLARE_UNQUALIFIED_ZONE_PARSER(sig) void locZoneParse_##sig()
+#define ZONE_PARSER(sig) &Parallaction::locZoneParse_##sig
+
+#define DECLARE_ANIM_PARSER(sig) void Parallaction::locAnimParse_##sig()
+#define DECLARE_UNQUALIFIED_ANIM_PARSER(sig) void locAnimParse_##sig()
+#define ANIM_PARSER(sig) &Parallaction::locAnimParse_##sig
+
 #define DECLARE_COMMAND_PARSER(sig) void Parallaction::cmdParse_##sig()
 #define DECLARE_UNQUALIFIED_COMMAND_PARSER(sig) void cmdParse_##sig()
 #define COMMAND_PARSER(sig) &Parallaction::cmdParse_##sig
@@ -338,20 +346,25 @@ public:
 	typedef void (Parallaction::*Opcode)();
 	const Opcode	*_commandParsers;
 
+	uint	_lookup;
+
 	struct {
 		Command	*cmd;
 		int		nextToken;
+		CommandList *list;
+		bool	end;
 	} _cmdParseCtxt;
 
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(Invalid);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(Flags);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(Animation);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(Zone);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(Location);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(Drop);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(Call);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(Null);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(Move);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(invalid);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(flags);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(animation);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(zone);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(location);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(drop);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(call);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(null);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(move);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(endcommands);
 
 	const Opcode	*_commandOpcodes;
 
@@ -434,6 +447,7 @@ public:
 		const char	*filename;
 		bool	end;
 		Script	*script;
+		Zone *z;
 	} _locParseCtxt;
 
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(invalid);
@@ -451,6 +465,43 @@ public:
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(endcomment);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(sound);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(music);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(redundant);
+
+	const Opcode  *_locationZoneParsers;
+
+	struct {
+		bool	end;
+		Script	*script;
+		Zone *z;
+	} _locZoneParseCtxt;
+
+	DECLARE_UNQUALIFIED_ZONE_PARSER(invalid);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(limits);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(moveto);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(type);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(commands);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(label);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(flags);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(endzone);
+
+	const Opcode  *_locationAnimParsers;
+
+	struct {
+		bool	end;
+		Script	*script;
+		Animation *a;
+	} _locAnimParseCtxt;
+
+	DECLARE_UNQUALIFIED_ANIM_PARSER(invalid);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(script);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(commands);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(type);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(label);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(flags);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(file);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(position);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
 
 	void 		changeCursor(int32 index);
 	void		showCursor(bool visible);
@@ -496,8 +547,8 @@ public:
 	Table		*_instructionNames;
 	Table		*_localFlagNames;
 	Table		*_locationStmt;
-
-
+	Table		*_locationZoneStmt;
+	Table		*_locationAnimStmt;
 
 
 public:
@@ -597,7 +648,8 @@ protected:		// members
 
 	void		doLocationEnterTransition();
 	void		changeLocation(char *location);
-	void 		resolveLocationForwards();
+	void		allocateLocationSlot(const char *name);
+	void 		finalizeLocationParsing();
 	void 		switchBackground(const char* background, const char* mask);
 	void 		freeLocation();
 	void 		showLocationComment(const char *text, bool end);
@@ -616,6 +668,9 @@ protected:		// members
 	LValue		getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation *a);
 
 	void		parseCommands(Script &script, CommandList&);
+	void		parseCommandFlags();
+	void		createCommand(uint id);
+	void		addCommand();
 
 	void 		freeCharacter();
 

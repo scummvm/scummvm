@@ -297,6 +297,7 @@ struct Animation : public Zone  {
 	Common::Point	_oldPos;
 	Program 	*_program;
 	Cnv 		*_cnv;
+	char		*_scriptName;
 	int16		_frame;
 	uint16		field_50;		// unused
 	int16		_z;

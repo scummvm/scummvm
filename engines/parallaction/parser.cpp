@@ -103,8 +103,7 @@ char *Parallaction::parseComment(Script &script) {
 		strcat(_tmp_comment, " ");
 	} while (true);
 
-	v194 = (char*)malloc(strlen(_tmp_comment)+1);
-	strcpy(v194, _tmp_comment);
+	v194 = strdup(_tmp_comment);
 	_tmp_comment[0] = '\0';
 
 	return v194;

@@ -179,11 +179,7 @@ char *Parallaction::parseDialogueString(Script &script) {
 
 	vD0[strlen(vD0)-1] = '\0';	// deletes the trailing '0xA'
 								// this is critical for Gfx::displayWrappedString to work properly
-
-	char *vCC = (char*)malloc(strlen(vD0)+1);
-	strcpy(vCC, vD0);
-
-	return vCC;
+	return strdup(vD0);
 }
 
 class DialogueManager {

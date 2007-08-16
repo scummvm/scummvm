@@ -47,7 +47,9 @@ namespace Parallaction {
 #define CMD_MOVE			15
 #define CMD_STOP			16
 
-DECLARE_COMMAND_PARSER(Flags) {
+DECLARE_COMMAND_PARSER(flags) {
+	createCommand(_lookup);
+
 	if (_globalTable->lookup(_tokens[1]) == Table::notFound) {
 		do {
 			char _al = _localFlagNames->lookup(_tokens[_cmdParseCtxt.nextToken]);
@@ -64,10 +66,15 @@ DECLARE_COMMAND_PARSER(Flags) {
 		} while (!scumm_stricmp(_tokens[_cmdParseCtxt.nextToken++], "|"));
 		_cmdParseCtxt.nextToken--;
 	}
+
+	parseCommandFlags();
+	addCommand();
 }
 
 
-DECLARE_COMMAND_PARSER(Animation) {
+DECLARE_COMMAND_PARSER(animation) {
+	createCommand(_lookup);
+
 	_cmdParseCtxt.cmd->u._animation = findAnimation(_tokens[_cmdParseCtxt.nextToken]);
 	_cmdParseCtxt.nextToken++;
 	if (_cmdParseCtxt.cmd->u._animation == NULL) {
@@ -75,124 +82,170 @@ DECLARE_COMMAND_PARSER(Animation) {
 		_forwardedCommands[_numForwards] = _cmdParseCtxt.cmd;
 		_numForwards++;
 	}
+
+	parseCommandFlags();
+	addCommand();
 }
 
 
-DECLARE_COMMAND_PARSER(Zone) {
+DECLARE_COMMAND_PARSER(zone) {
+	createCommand(_lookup);
+
 	_cmdParseCtxt.cmd->u._zone = findZone(_tokens[_cmdParseCtxt.nextToken]);
 	_cmdParseCtxt.nextToken++;
+
+	parseCommandFlags();
+	addCommand();
 }
 
 
-DECLARE_COMMAND_PARSER(Location) {
+DECLARE_COMMAND_PARSER(location) {
+	createCommand(_lookup);
+
 	_cmdParseCtxt.cmd->u._string = (char*)malloc(strlen(_tokens[_cmdParseCtxt.nextToken])+1);
 	strcpy(_cmdParseCtxt.cmd->u._string, _tokens[_cmdParseCtxt.nextToken]);
 	_cmdParseCtxt.nextToken++;
+
+	parseCommandFlags();
+	addCommand();
 }
 
 
-DECLARE_COMMAND_PARSER(Drop) {
+DECLARE_COMMAND_PARSER(drop) {
+	createCommand(_lookup);
+
 	_cmdParseCtxt.cmd->u._object = _objectsNames->lookup(_tokens[_cmdParseCtxt.nextToken]);
 	_cmdParseCtxt.nextToken++;
+
+	parseCommandFlags();
+	addCommand();
 }
 
 
-DECLARE_COMMAND_PARSER(Call) {
+DECLARE_COMMAND_PARSER(call) {
+	createCommand(_lookup);
+
 	_cmdParseCtxt.cmd->u._callable = _callableNames->lookup(_tokens[_cmdParseCtxt.nextToken]) - 1;
 	_cmdParseCtxt.nextToken++;
+
+	parseCommandFlags();
+	addCommand();
 }
 
 
-DECLARE_COMMAND_PARSER(Null) {
+DECLARE_COMMAND_PARSER(null) {
 }
 
 
-DECLARE_COMMAND_PARSER(Move) {
+DECLARE_COMMAND_PARSER(move) {
+	createCommand(_lookup);
+
 	_cmdParseCtxt.cmd->u._move._x = atoi(_tokens[_cmdParseCtxt.nextToken]);
 	_cmdParseCtxt.nextToken++;
 	_cmdParseCtxt.cmd->u._move._y = atoi(_tokens[_cmdParseCtxt.nextToken]);
 	_cmdParseCtxt.nextToken++;
+
+	parseCommandFlags();
+	addCommand();
 }
 
-DECLARE_COMMAND_PARSER(Invalid) {
+DECLARE_COMMAND_PARSER(invalid) {
 	error("Can't parse unknown command '%s'", _tokens[0]);
+}
+
+DECLARE_COMMAND_PARSER(endcommands) {
+	_cmdParseCtxt.end = true;
+}
+
+void Parallaction::parseCommandFlags() {
+
+	int _si = _cmdParseCtxt.nextToken;
+	Command *cmd = _cmdParseCtxt.cmd;
+
+	if (!scumm_stricmp(_tokens[_si], "flags")) {
+		_si++;
+
+		do {
+			if (!scumm_stricmp(_tokens[_si], "exit") || !scumm_stricmp(_tokens[_si], "exittrap")) {
+				cmd->_flagsOn |= kFlagsExit;
+			} else
+			if (!scumm_stricmp(_tokens[_si], "enter") || !scumm_stricmp(_tokens[_si], "entertrap")) {
+				cmd->_flagsOn |= kFlagsEnter;
+			} else
+			if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
+				byte _al = _localFlagNames->lookup(&_tokens[_si][2]);
+				cmd->_flagsOff |= 1 << (_al - 1);
+			} else {
+				byte _al = _localFlagNames->lookup(_tokens[_si]);
+				cmd->_flagsOn |= 1 << (_al - 1);
+			}
+
+			_si++;
+
+		} while (!scumm_stricmp(_tokens[_si++], "|"));
+
+	}
+
+	if (!scumm_stricmp(_tokens[_si], "gflags")) {
+		_si++;
+		cmd->_flagsOn |= kFlagsGlobal;
+
+		do {
+			if (!scumm_stricmp(_tokens[_si], "exit")) {
+				cmd->_flagsOn |= kFlagsExit;
+			} else
+			if (!scumm_stricmp(_tokens[_si], "enter")) {
+				cmd->_flagsOn |= kFlagsEnter;
+			} else
+			if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
+				byte _al = _globalTable->lookup(&_tokens[_si][2]);
+				cmd->_flagsOff |= 1 << (_al - 1);
+			} else {
+				byte _al = _globalTable->lookup(_tokens[_si]);
+				cmd->_flagsOn |= 1 << (_al - 1);
+			}
+
+			_si++;
+
+		} while (!scumm_stricmp(_tokens[_si++], "|"));
+
+	}
+
+	_si = _cmdParseCtxt.nextToken;
+
+}
+
+void Parallaction::addCommand() {
+
+	// FIXME: implement a proper parseCommands for BRA
+	if (getGameType() == GType_BRA)
+		delete _cmdParseCtxt.cmd;
+	else
+		_cmdParseCtxt.list->push_front(_cmdParseCtxt.cmd);	// NOTE: command lists are written backwards in scripts
+
+}
+
+void Parallaction::createCommand(uint id) {
+
+	_cmdParseCtxt.nextToken = 1;
+	_cmdParseCtxt.cmd = new Command;
+	_cmdParseCtxt.cmd->_id = id;
+
 }
 
 void Parallaction::parseCommands(Script &script, CommandList& list) {
 
-	fillBuffers(script, true);
+	_cmdParseCtxt.list = &list;
+	_cmdParseCtxt.end = false;
 
-	while (scumm_stricmp(_tokens[0], "ENDCOMMANDS") && scumm_stricmp(_tokens[0], "ENDZONE")) {
-
-		Command *cmd = new Command;
-
-		cmd->_id = _commandsNames->lookup(_tokens[0]);
-
-		_cmdParseCtxt.nextToken = 1;
-		_cmdParseCtxt.cmd = cmd;
-
-		(this->*_commandParsers[cmd->_id])();
-
-		int _si = _cmdParseCtxt.nextToken;
-
-		if (!scumm_stricmp(_tokens[_si], "flags")) {
-			_si++;
-
-			do {
-				if (!scumm_stricmp(_tokens[_si], "exit") || !scumm_stricmp(_tokens[_si], "exittrap")) {
-					cmd->_flagsOn |= kFlagsExit;
-				} else
-				if (!scumm_stricmp(_tokens[_si], "enter") || !scumm_stricmp(_tokens[_si], "entertrap")) {
-					cmd->_flagsOn |= kFlagsEnter;
-				} else
-				if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
-					byte _al = _localFlagNames->lookup(&_tokens[_si][2]);
-					cmd->_flagsOff |= 1 << (_al - 1);
-				} else {
-					byte _al = _localFlagNames->lookup(_tokens[_si]);
-					cmd->_flagsOn |= 1 << (_al - 1);
-				}
-
-				_si++;
-
-			} while (!scumm_stricmp(_tokens[_si++], "|"));
-
-		}
-
-		if (!scumm_stricmp(_tokens[_si], "gflags")) {
-			_si++;
-			cmd->_flagsOn |= kFlagsGlobal;
-
-			do {
-				if (!scumm_stricmp(_tokens[_si], "exit")) {
-					cmd->_flagsOn |= kFlagsExit;
-				} else
-				if (!scumm_stricmp(_tokens[_si], "enter")) {
-					cmd->_flagsOn |= kFlagsEnter;
-				} else
-				if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
-					byte _al = _globalTable->lookup(&_tokens[_si][2]);
-					cmd->_flagsOff |= 1 << (_al - 1);
-				} else {
-					byte _al = _globalTable->lookup(_tokens[_si]);
-					cmd->_flagsOn |= 1 << (_al - 1);
-				}
-
-				_si++;
-
-			} while (!scumm_stricmp(_tokens[_si++], "|"));
-
-		}
-
-		// FIXME: implement a proper parseCommands for BRA
-		if (getGameType() == GType_BRA)
-			delete cmd;
-		else
-			list.push_front(cmd);	// NOTE: command lists are written backwards in scripts
-
+	do {
 		fillBuffers(script, true);
 
-	}
+		_lookup = _commandsNames->lookup(_tokens[0]);
+		(this->*_commandParsers[_lookup])();
+
+	} while (!_cmdParseCtxt.end);
+
 }
 
 DECLARE_COMMAND_OPCODE(invalid) {
@@ -220,7 +273,7 @@ DECLARE_COMMAND_OPCODE(clear) {
 
 
 DECLARE_COMMAND_OPCODE(start) {
-	_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsActing;
+	_cmdRunCtxt.cmd->u._animation->_flags |= kFlagsActing;
 }
 
 
@@ -319,7 +372,7 @@ DECLARE_COMMAND_OPCODE(move) {
 
 
 DECLARE_COMMAND_OPCODE(stop) {
-	_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsActing;
+	_cmdRunCtxt.cmd->u._animation->_flags &= ~kFlagsActing;
 }
 
 
@@ -365,8 +418,6 @@ Command::Command() {
 }
 
 Command::~Command() {
-
-	if (_id == CMD_LOCATION) free(u._string);
 
 }
 

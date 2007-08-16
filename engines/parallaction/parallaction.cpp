@@ -902,23 +902,25 @@ void Parallaction::initOpcodes() {
 	_vm->_instructionOpcodes = op1;
 
 	static const Opcode op2[] = {
-		COMMAND_PARSER(Invalid),
-		COMMAND_PARSER(Flags),			// set
-		COMMAND_PARSER(Flags),			// clear
-		COMMAND_PARSER(Animation),		// start
-		COMMAND_PARSER(Zone),			// speak
-		COMMAND_PARSER(Zone),			// get
-		COMMAND_PARSER(Location),		// location
-		COMMAND_PARSER(Zone),			// open
-		COMMAND_PARSER(Zone),			// close
-		COMMAND_PARSER(Zone),			// on
-		COMMAND_PARSER(Zone),			// off
-		COMMAND_PARSER(Call),			// call
-		COMMAND_PARSER(Flags),			// toggle
-		COMMAND_PARSER(Drop),			// drop
-		COMMAND_PARSER(Null),			// quit
-		COMMAND_PARSER(Move),			// move
-		COMMAND_PARSER(Animation)		// stop
+		COMMAND_PARSER(invalid),
+		COMMAND_PARSER(flags),			// set
+		COMMAND_PARSER(flags),			// clear
+		COMMAND_PARSER(animation),		// start
+		COMMAND_PARSER(zone),			// speak
+		COMMAND_PARSER(zone),			// get
+		COMMAND_PARSER(location),		// location
+		COMMAND_PARSER(zone),			// open
+		COMMAND_PARSER(zone),			// close
+		COMMAND_PARSER(zone),			// on
+		COMMAND_PARSER(zone),			// off
+		COMMAND_PARSER(call),			// call
+		COMMAND_PARSER(flags),			// toggle
+		COMMAND_PARSER(drop),			// drop
+		COMMAND_PARSER(null),			// quit
+		COMMAND_PARSER(move),			// move
+		COMMAND_PARSER(animation),		// stop
+		COMMAND_PARSER(endcommands),	// endcommands
+		COMMAND_PARSER(endcommands)		// endzone
 	};
 
 	_commandParsers = op2;
@@ -961,11 +963,40 @@ void Parallaction::initOpcodes() {
 		LOCATION_PARSER(comment),
 		LOCATION_PARSER(endcomment),
 		LOCATION_PARSER(sound),
-		LOCATION_PARSER(music)
+		LOCATION_PARSER(music),
+		LOCATION_PARSER(redundant)	// for redundant endanimation
 	};
 
 	_locationParsers = op4;
 
+
+	static const Opcode op5[] = {
+		ZONE_PARSER(invalid),
+		ZONE_PARSER(limits),
+		ZONE_PARSER(moveto),
+		ZONE_PARSER(type),
+		ZONE_PARSER(commands),
+		ZONE_PARSER(label),
+		ZONE_PARSER(flags),
+		ZONE_PARSER(endzone)
+	};
+
+	_locationZoneParsers = op5;
+
+	static const Opcode op6[] = {
+		ANIM_PARSER(invalid),
+		ANIM_PARSER(script),
+		ANIM_PARSER(commands),
+		ANIM_PARSER(type),
+		ANIM_PARSER(label),
+		ANIM_PARSER(flags),
+		ANIM_PARSER(file),
+		ANIM_PARSER(position),
+		ANIM_PARSER(moveto),
+		ANIM_PARSER(endanimation)
+	};
+
+	_locationAnimParsers = op6;
 
 }
 

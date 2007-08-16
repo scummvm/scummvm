@@ -68,80 +68,109 @@ Animation *Parallaction::findAnimation(const char *name) {
 	return NULL;
 }
 
+DECLARE_ANIM_PARSER(invalid) {
+	error("unknown statement '%s' in animation %s", _tokens[0], _locAnimParseCtxt.a->_label._text);
+}
+
+
+DECLARE_ANIM_PARSER(script) {
+	_locAnimParseCtxt.a->_scriptName = strdup(_tokens[1]);
+}
+
+
+DECLARE_ANIM_PARSER(commands) {
+	 parseCommands(*_locAnimParseCtxt.script, _locAnimParseCtxt.a->_commands);
+}
+
+
+DECLARE_ANIM_PARSER(type) {
+	if (_tokens[2][0] != '\0') {
+		_locAnimParseCtxt.a->_type = ((4 + _objectsNames->lookup(_tokens[2])) << 16) & 0xFFFF0000;
+	}
+	int16 _si = _zoneTypeNames->lookup(_tokens[1]);
+	if (_si != Table::notFound) {
+		_locAnimParseCtxt.a->_type |= 1 << (_si-1);
+		if (((_locAnimParseCtxt.a->_type & 0xFFFF) != kZoneNone) && ((_locAnimParseCtxt.a->_type & 0xFFFF) != kZoneCommand)) {
+			parseZoneTypeBlock(*_locAnimParseCtxt.script, _locAnimParseCtxt.a);
+		}
+	}
+
+	_locAnimParseCtxt.end = true;
+}
+
+
+DECLARE_ANIM_PARSER(label) {
+	renderLabel(&_locAnimParseCtxt.a->_label._cnv, _tokens[1]);
+}
+
+
+DECLARE_ANIM_PARSER(flags) {
+	uint16 _si = 1;
+
+	do {
+		byte _al = _zoneFlagNames->lookup(_tokens[_si]);
+		_si++;
+		_locAnimParseCtxt.a->_flags |= 1 << (_al - 1);
+	} while (!scumm_stricmp(_tokens[_si++], "|"));
+}
+
+
+DECLARE_ANIM_PARSER(file) {
+	char vC8[200];
+	strcpy(vC8, _tokens[1]);
+	if (_engineFlags & kEngineTransformedDonna) {
+		if (!scumm_stricmp(_tokens[1], "donnap") || !scumm_stricmp(_tokens[1], "donnapa")) {
+			strcat(vC8, "tras");
+		}
+	}
+	_locAnimParseCtxt.a->_cnv = _disk->loadFrames(vC8);
+}
+
+
+DECLARE_ANIM_PARSER(position) {
+	_locAnimParseCtxt.a->_left = atoi(_tokens[1]);
+	_locAnimParseCtxt.a->_top = atoi(_tokens[2]);
+	_locAnimParseCtxt.a->_z = atoi(_tokens[3]);
+}
+
+
+DECLARE_ANIM_PARSER(moveto) {
+	_locAnimParseCtxt.a->_moveTo.x = atoi(_tokens[1]);
+	_locAnimParseCtxt.a->_moveTo.y = atoi(_tokens[2]);
+}
+
+
+DECLARE_ANIM_PARSER(endanimation) {
+	_locAnimParseCtxt.end = true;
+}
 
 Animation *Parallaction::parseAnimation(Script& script, AnimationList &list, char *name) {
 //	printf("parseAnimation(%s)\n", name);
 
-	Animation *vD0 = new Animation;
+	Animation *a = new Animation;
 
-	vD0->_label._text = (char*)malloc(strlen(name)+1);
-	strcpy(vD0->_label._text, name);
+	a->_label._text = strdup(name);
 
-	list.push_front(vD0);
+	list.push_front(a);
 
-	fillBuffers(script, true);
-	while (scumm_stricmp(_tokens[0], "endanimation")) {
-//		printf("token[0] = %s\n", _tokens[0]);
+	_locAnimParseCtxt.a = a;
+	_locAnimParseCtxt.end = false;
+	_locAnimParseCtxt.script = &script;
 
-		if (!scumm_stricmp(_tokens[0], "script")) {
-			loadProgram(vD0, _tokens[1]);
-		}
-		if (!scumm_stricmp(_tokens[0], "commands")) {
-			 parseCommands(script, vD0->_commands);
-		}
-		if (!scumm_stricmp(_tokens[0], "type")) {
-			if (_tokens[2][0] != '\0') {
-				vD0->_type = ((4 + _objectsNames->lookup(_tokens[2])) << 16) & 0xFFFF0000;
-			}
-			int16 _si = _zoneTypeNames->lookup(_tokens[1]);
-			if (_si != Table::notFound) {
-				vD0->_type |= 1 << (_si-1);
-				if (((vD0->_type & 0xFFFF) != kZoneNone) && ((vD0->_type & 0xFFFF) != kZoneCommand)) {
-					parseZoneTypeBlock(script, vD0);
-				}
-			}
-		}
-		if (!scumm_stricmp(_tokens[0], "label")) {
-			renderLabel(&vD0->_label._cnv, _tokens[1]);
-		}
-		if (!scumm_stricmp(_tokens[0], "flags")) {
-			uint16 _si = 1;
-
-			do {
-				byte _al = _zoneFlagNames->lookup(_tokens[_si]);
-				_si++;
-				vD0->_flags |= 1 << (_al - 1);
-			} while (!scumm_stricmp(_tokens[_si++], "|"));
-		}
-		if (!scumm_stricmp(_tokens[0], "file")) {
-			char vC8[200];
-			strcpy(vC8, _tokens[1]);
-			if (_engineFlags & kEngineTransformedDonna) {
-				if (!scumm_stricmp(_tokens[1], "donnap") || !scumm_stricmp(_tokens[1], "donnapa")) {
-					strcat(vC8, "tras");
-				}
-			}
-			vD0->_cnv = _disk->loadFrames(vC8);
-		}
-		if (!scumm_stricmp(_tokens[0], "position")) {
-			vD0->_left = atoi(_tokens[1]);
-			vD0->_top = atoi(_tokens[2]);
-			vD0->_z = atoi(_tokens[3]);
-		}
-		if (!scumm_stricmp(_tokens[0], "moveto")) {
-			vD0->_moveTo.x = atoi(_tokens[1]);
-			vD0->_moveTo.y = atoi(_tokens[2]);
-		}
-
+	do {
 		fillBuffers(script, true);
-	}
 
-	vD0->_oldPos.x = -1000;
-	vD0->_oldPos.y = -1000;
+		int index = _locationAnimStmt->lookup(_tokens[0]);
+		(this->*_locationAnimParsers[index])();
 
-	vD0->_flags |= 0x1000000;
+	} while (!_locAnimParseCtxt.end);
 
-	return vD0;
+	a->_oldPos.x = -1000;
+	a->_oldPos.y = -1000;
+
+	a->_flags |= 0x1000000;
+
+	return a;
 }
 
 
@@ -690,6 +719,7 @@ void Parallaction::sortAnimations() {
 Animation::Animation() {
 	_cnv = NULL;
 	_program = NULL;
+	_scriptName = 0;
 	_frame = 0;
 	_z = 0;
 }
@@ -697,6 +727,9 @@ Animation::Animation() {
 Animation::~Animation() {
 	if (_program)
 		delete _program;
+
+	if (_scriptName)
+		free(_scriptName);
 
 	if (_cnv)
 		delete _cnv;
