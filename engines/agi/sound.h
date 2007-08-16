@@ -207,6 +207,7 @@ class SoundMgr;
 class AgiSound {
 public:
 	AgiSound(SoundMgr &manager) : _manager(manager), _isPlaying(false), _isValid(false) {}
+	virtual ~AgiSound() {}
 	virtual void play()      { _isPlaying = true; }
 	virtual void stop()      { _isPlaying = false; }
 	virtual bool isPlaying() { return _isPlaying; }

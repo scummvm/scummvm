@@ -77,7 +77,7 @@ PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : A
 }
 
 const uint8 *PCjrSound::getVoicePointer(uint voiceNum) {
-	assert(voiceNum >= 0 && voiceNum < 4);
+	assert(voiceNum < 4);
 	uint16 voiceStartOffset = READ_LE_UINT16(_data + voiceNum * 2);
 	return _data + voiceStartOffset;
 }
@@ -193,11 +193,11 @@ bool IIgsOscillatorList::finalize(Common::SeekableReadStream &uint8Wave) {
 bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreAddr) {
 	env.read(stream);
 	relseg        = stream.readByte();
-	byte priority = stream.readByte(); // Not needed? 32 in all tested data.
+	/*byte priority =*/ stream.readByte(); // Not needed? 32 in all tested data.
 	bendrange     = stream.readByte();
 	vibdepth      = stream.readByte();
 	vibspeed      = stream.readByte();
-	byte spare    = stream.readByte(); // Not needed? 0 in all tested data.
+	/*byte spare    =*/ stream.readByte(); // Not needed? 0 in all tested data.
 	byte wac      = stream.readByte(); // Read A wave count
 	byte wbc      = stream.readByte(); // Read B wave count
 	oscList.read(stream, wac, ignoreAddr); // Read the oscillators
@@ -787,7 +787,6 @@ bool SoundMgr::convertWave(Common::SeekableReadStream &source, int16 *dest, uint
 }
 
 Common::MemoryReadStream *SoundMgr::loadWaveFile(const Common::String &wavePath, const IIgsExeInfo &exeInfo) {
-	bool loadedOk = false; // Was loading successful?
 	Common::File file;
 
 	// Open the wave file and read it into memory
