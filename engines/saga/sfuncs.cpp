@@ -230,7 +230,7 @@ static const ScriptFunctionDescription IHNMscriptFunctionsList[IHNM_SCRIPT_FUNCT
 		OPCODE(sfShowIHNMDemoHelpPage),
 		OPCODE(sfVstopFX),
 		OPCODE(sfVstopLoopedFX),
-		OPCODE(sf92),	// only used in the demo version of IHNM
+		OPCODE(sfDemoSetInteractive),	// only used in the demo version of IHNM
 		OPCODE(sfDemoIsInteractive),
 		OPCODE(sfVsetTrack),
 		OPCODE(sfGetPoints),
@@ -554,13 +554,10 @@ void Script::sfSetFollower(SCRIPTFUNC_PARAMS) {
 void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	int16 sceneNumber;
 	int16 entrance;
-	int16 transition = 0;	// IHNM
 
 	sceneNumber = thread->pop();
 	entrance = thread->pop();
 	if (_vm->getGameType() == GType_IHNM) {
-		transition = thread->pop();
-
 		_vm->_gfx->setCursor(kCursorBusy);
 	}
 
@@ -1889,6 +1886,18 @@ void Script::sfSetChapterPoints(SCRIPTFUNC_PARAMS) {
 	_vm->_ethicsPoints[chapter] = ethics;
 	_vm->_spiritualBarometer = ethics * 256 / barometer;
 	_vm->_scene->setChapterPointsChanged(true);		// don't save this music when saving in IHNM
+
+	if (_vm->_spiritualBarometer > 255)
+		_vm->_gfx->setPaletteColor(kIHNMColorPortrait, 0xff, 0xff, 0xff);
+	else
+		_vm->_gfx->setPaletteColor(kIHNMColorPortrait,
+			_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.red / 256,
+			_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.green / 256,
+			_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.blue / 256);
+
+	PalEntry *palPointer;
+	_vm->_scene->getBGPal(palPointer);
+	_vm->_gfx->setPalette(palPointer);
 }
 
 void Script::sfSetPortraitBgColor(SCRIPTFUNC_PARAMS) {
@@ -2052,9 +2061,16 @@ void Script::sfVstopLoopedFX(SCRIPTFUNC_PARAMS) {
 	_vm->_sound->stopSound();
 }
 
-void Script::sf92(SCRIPTFUNC_PARAMS) {
-	SF_stub("sf92", thread, nArgs);
-	// This opcode is empty in the full version of IHNM, but it's not empty in the demo
+void Script::sfDemoSetInteractive(SCRIPTFUNC_PARAMS) {
+	int16 interactiveFlag = thread->pop();
+
+	if (interactiveFlag == 0) {
+		_vm->_interface->deactivate();
+		_vm->_interface->setMode(kPanelNull);
+	}
+
+	// Note: the original also sets an appropriate flag here, but we don't,
+	// as we don't use it
 }
 
 void Script::sfDemoIsInteractive(SCRIPTFUNC_PARAMS) {

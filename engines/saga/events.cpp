@@ -338,6 +338,17 @@ int Events::handleOneShot(Event *event) {
 
 				if (event->param == kEvPSetPalette) {
 					PalEntry *palPointer;
+
+					if (_vm->getGameType() == GType_IHNM) {
+						if (_vm->_spiritualBarometer > 255)
+							_vm->_gfx->setPaletteColor(kIHNMColorPortrait, 0xff, 0xff, 0xff);
+						else
+							_vm->_gfx->setPaletteColor(kIHNMColorPortrait,
+								_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.red / 256,
+								_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.green / 256,
+								_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.blue / 256);
+					}
+
 					_vm->_scene->getBGPal(palPointer);
 					_vm->_gfx->setPalette(palPointer);
 				}

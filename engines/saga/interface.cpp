@@ -801,16 +801,6 @@ void Interface::draw() {
 		converseDisplayTextLines(backBuffer);
 	}
 
-	if (_vm->getGameType() == GType_IHNM) {
-		if (_vm->_spiritualBarometer > 255)
-			_vm->_gfx->setPaletteColor(kIHNMColorPortrait, 0xff, 0xff, 0xff);
-		else
-			_vm->_gfx->setPaletteColor(kIHNMColorPortrait,
-				_vm->_spiritualBarometer * _portraitBgColor.red / 256,
-				_vm->_spiritualBarometer * _portraitBgColor.green / 256,
-				_vm->_spiritualBarometer * _portraitBgColor.blue / 256);
-	}
-
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
 		_lockedMode == kPanelMain || _lockedMode == kPanelConverse ||
 		(_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO)) {
@@ -1196,7 +1186,7 @@ bool Interface::processTextInput(uint16 ascii) {
 		if (((ascii >= 'a') && (ascii <='z')) ||
 			((ascii >= '0') && (ascii <='9')) ||
 			((ascii >= 'A') && (ascii <='Z')) ||
-			(ascii == ' ')) {
+			 (ascii == ' ') || (ascii == '-') || (ascii == '_')) {
 			if (_textInputStringLength < SAVE_TITLE_SIZE - 1) {
 				ch[0] = ascii;
 				tempWidth = _vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal);
@@ -1806,6 +1796,10 @@ void Interface::drawStatusBar() {
 
 	// Disable the status text in IHNM when the chapter is 8
 	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
+		return;
+
+	// Don't draw the status bar while fading out
+	if (_fadeMode == kFadeOut)
 		return;
 
 	backBuffer = _vm->_gfx->getBackBuffer();

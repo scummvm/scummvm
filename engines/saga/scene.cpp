@@ -561,6 +561,9 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	Event *q_event;
 	static PalEntry current_pal[PAL_ENTRIES];
 
+	if (loadSceneParams->transitionType == kTransitionFade)
+		_vm->_interface->setFadeMode(kFadeOut);
+
 	// Change the cursor to an hourglass in IHNM
 	event.type = kEvTOneshot;
 	event.code = kCursorEvent;
@@ -612,6 +615,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_vm->_script->setVerb(_vm->_script->getVerbType(kVerbWalkTo));
 
 		if (loadSceneParams->sceneDescriptor == -2) {
+			_vm->_interface->setFadeMode(kNoFade);
 			return;
 		}
 	}
@@ -651,11 +655,11 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	debug(3, "Loading scene number %d:", _sceneNumber);
 
-	if (_vm->getGameId() == GID_IHNM_DEMO && _sceneNumber == 144) {
+	if (_vm->getGameId() == GID_IHNM_DEMO && (_sceneNumber >= 144 && _sceneNumber <= 149)) {
 		// WORKAROUND for the non-interactive part of the IHNM demo: When restarting the 
-		// non-interactive demo, opcode sfMainMode is incorrectly called. Therefore, if the
-		// starting scene of the non-interactive demo is loaded (scene 144), set panel to null
-		// and lock the user interface
+		// non-interactive demo, opcode sfMainMode is incorrectly called. Therefore, if any
+		// of the scenes of the non-interactive demo are loaded (scenes 144-149), set panel 
+		// to null and lock the user interface
 		_vm->_interface->deactivate();
 		_vm->_interface->setMode(kPanelNull);
 	}
