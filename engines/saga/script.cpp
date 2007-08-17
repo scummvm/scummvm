@@ -359,8 +359,6 @@ int Script::getVerbType(VerbTypes verbType) {
 		}
 	}
 	else {
-		// TODO: This is ugly and needs rewriting, but
-		// it works for now
 		switch (verbType) {
 		case kVerbNone:
 			return kVerbIHNMNone;
