@@ -497,7 +497,6 @@ public:
 	void animacion_4_1();
 	void animacion_3_2();
 	void animacion_4_2();
-	void animacion_7();
 	void animacion_8();
 	void animacion_9();
 	void animacion_10();
@@ -687,9 +686,22 @@ public:
 	void ctvd_speaker(int flag);
 	void ctvd_output(Common::File *file_handle);
 	void ctvd_init(int b);
-
-
-
+	void grr();
+	void pantalla_13(int fl);
+	void refresca_13();
+	void refresca_20();
+	void animacion_1_3();
+	void animacion_2_3();
+	void animacion_3_3();
+	void animacion_4_3();
+	void animacion_5();
+	void animacion_6();
+	void animacion_7_4();
+	void animacion_rayo();
+	void animacion_2_4();
+	void animacion_3_4();
+	void animacion_4_4();
+	void habla_igor_sentado(char[], char[]);
 
 private:
 
