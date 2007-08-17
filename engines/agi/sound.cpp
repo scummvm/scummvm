@@ -440,6 +440,9 @@ int SoundMgr::initSound() {
 	case SOUND_EMU_MAC:
 		waveform = waveformMac;
 		break;
+	case SOUND_EMU_APPLE2GS:
+		loadInstruments();
+		break;
 	}
 
 	report("Initializing sound:\n");
@@ -450,8 +453,6 @@ int SoundMgr::initSound() {
 	} else {
 		report("disabled\n");
 	}
-
-	loadInstruments();
 
 	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 

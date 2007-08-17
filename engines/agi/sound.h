@@ -39,6 +39,7 @@ namespace Agi {
 #define SOUND_EMU_TANDY	2
 #define SOUND_EMU_MAC	3
 #define SOUND_EMU_AMIGA	4
+#define SOUND_EMU_APPLE2GS 5
 
 #define WAVEFORM_SIZE   64
 #define ENV_ATTACK	10000		/**< envelope attack rate */
