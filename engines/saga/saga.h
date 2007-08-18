@@ -441,6 +441,7 @@ enum ColorId {
 enum KnownColor {
 	kKnownColorTransparent,
 	kKnownColorBrightWhite,	
+	kKnownColorWhite,	
 	kKnownColorBlack,
 
 	kKnownColorSubtitleTextColor,

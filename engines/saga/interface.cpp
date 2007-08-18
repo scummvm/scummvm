@@ -960,7 +960,10 @@ void Interface::drawOption() {
 	rect2 = rect;
 	fontHeight = _vm->_font->getHeight(kKnownFontSmall);
 	for (j = 0; j < _vm->getDisplayInfo().optionSaveFileVisible; j++) {
-		bgColor = kITEColorDarkGrey0C;
+		if (_vm->getGameType() == GType_ITE)
+			bgColor = kITEColorDarkGrey0C;
+		else
+			bgColor = kIHNMColorBlack;
 		fgColor = kITEColorBrightWhite;
 
 		idx = j + _optionSaveFileTop;
@@ -1233,10 +1236,10 @@ void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *p
 	while ((ch[0] = _textInputString[i++]) != 0) {
 		rect.setWidth(_vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal));
 		if ((i == _textInputPos) && _textInput) {
-			fgColor = kITEColorBlack;
-			ds->fillRect(rect, kITEColorWhite);
+			fgColor = _vm->KnownColor2ColorId(kKnownColorBlack);
+			ds->fillRect(rect, _vm->KnownColor2ColorId(kKnownColorWhite));
 		} else {
-			fgColor = kITEColorWhite;
+			fgColor = _vm->KnownColor2ColorId(kKnownColorWhite);
 		}
 		textPoint.x = rect.left;
 		textPoint.y = rect.top + 1;
@@ -1247,7 +1250,7 @@ void Interface::drawTextInput(Surface *ds, InterfacePanel *panel, PanelButton *p
 	if (_textInput && (_textInputPos >= i)) {
 		ch[0] = ' ';
 		rect.setWidth(_vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal));
-		ds->fillRect(rect, kITEColorWhite);
+		ds->fillRect(rect, _vm->KnownColor2ColorId(kKnownColorWhite));
 	}
 }
 
