@@ -66,6 +66,10 @@ struct IIgsEnvelope {
 // 2**(1/12) i.e. the 12th root of 2
 #define SEMITONE 1.059463094359295
 
+// C6's frequency is A4's (440 Hz) frequency but one full octave and three semitones higher
+// i.e. C6_FREQ = 440 * pow(2.0, 15/12.0)
+#define C6_FREQ 1046.502261202395
+
 // Size of the SIERRASTANDARD file (i.e. the wave file i.e. the sample data used by the instruments).
 #define SIERRASTANDARD_SIZE 65536
 

@@ -639,7 +639,7 @@ void SoundMgr::playSound() {
 		if (playingSound != -1) {
 			if (_vm->_game.sounds[playingSound]->type() == AGI_SOUND_MIDI) {
 				/* play_midi_sound (); */
-				warning("playSound: Trying to play an Apple IIGS MIDI sound. Not yet implemented!");
+				//warning("playSound: Trying to play an Apple IIGS MIDI sound. Not yet implemented!");
 				playing = 0;
 			} else if (_vm->_game.sounds[playingSound]->type() == AGI_SOUND_SAMPLE) {
 				//debugC(3, kDebugLevelSound, "playSound: Trying to play an Apple IIGS sample");
@@ -687,8 +687,11 @@ uint32 SoundMgr::mixSound(void) {
 		//double hertz = 8.175798915644 * pow(SEMITONE, fracToDouble(chn.note));
 		// double step = getRate() / hertz;
 		// chn.posAdd = doubleToFrac(step);
-
-		double hertz = 1076.0 * pow(SEMITONE, fracToDouble(chn.note));
+		
+		// Frequency multiplier was 1076.0 based on tests made with MESS 0.117.
+		// Tests made with KEGS32 averaged the multiplier to around 1045.
+		// So this is a guess but maybe it's 1046.5... i.e. C6's frequency?
+		double hertz = C6_FREQ * pow(SEMITONE, fracToDouble(chn.note));
 		chn.posAdd = doubleToFrac(hertz / getRate());
 		chn.vol = doubleToFrac(fracToDouble(chn.envVol) * fracToDouble(chn.chanVol) / 127.0);
 		double tempVol = fracToDouble(chn.vol)/127.0;
