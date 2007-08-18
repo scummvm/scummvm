@@ -64,6 +64,7 @@ public:
 	
 	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
 	virtual String getDisplayName() const { return _displayName; }
+	virtual const char *getLastPathComponent(const Common::String &str) const;
 	virtual String getName() const { return _displayName; }
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
@@ -80,27 +81,6 @@ private:
 	 */
 	virtual void setFlags();
 };
-
-/**
- * Returns the last component of a given path.
- * 
- * Examples:
- * 			/foo/bar.txt would return /bar.txt
- * 			/foo/bar/    would return /bar/
- *  
- * @param str String containing the path.
- * @return Pointer to the first char of the last component inside str.
- */
-static const char *lastPathComponent(const Common::String &str) {
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/') {
-		--cur;
-	}
-
-	return cur + 1;
-}
 
 void POSIXFilesystemNode::setFlags() {
 	struct stat st;
@@ -142,7 +122,7 @@ POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool verify) {
 	assert(p.size() > 0);
 
 	_path = p;
-	_displayName = lastPathComponent(_path);
+	_displayName = getLastPathComponent(_path);
 
 	if (verify) {
 		setFlags();
@@ -236,12 +216,23 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 	return true;
 }
 
+const char *POSIXFilesystemNode::getLastPathComponent(const Common::String &str) const {
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
+
+	while (cur >= start && *cur != '/') {
+		--cur;
+	}
+
+	return cur + 1;
+}
+
 AbstractFilesystemNode *POSIXFilesystemNode::getParent() const {
 	if (_path == "/")
 		return 0;
 
 	const char *start = _path.c_str();
-	const char *end = lastPathComponent(_path);
+	const char *end = getLastPathComponent(_path);
 
 	return new POSIXFilesystemNode(String(start, end - start), true);
 }

@@ -32,7 +32,7 @@
 #include <unistd.h>
 
 /**
- * Implementation of the ScummVM file system API based on POSIX.
+ * Implementation of the ScummVM file system API based on Ronin.
  * 
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */

@@ -37,6 +37,8 @@
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
+namespace Common {
+
 BaseFile::BaseFile() {
 	_handle = 0;
 	_ioFailed = false;
@@ -224,3 +226,5 @@ long BaseFile::_ftell(FILE *stream) const {
 int BaseFile::_fwrite(const void * ptr, size_t obj_size, size_t count, FILE * stream) {
 	return fwrite(ptr, obj_size, count, stream);
 }
+
+}	// End of namespace Common

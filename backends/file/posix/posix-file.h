@@ -27,6 +27,8 @@
 
 #include "backends/file/base-file.cpp"
 
+namespace Common {
+
 /**
  * Implements several POSIX specific file related functions used by the Common::File wrapper.
  * 
@@ -46,5 +48,7 @@ protected:
 	long _ftell(FILE *stream) const;
 	int _fwrite(const void * ptr, size_t obj_size, size_t count, FILE * stream);
 };
+
+}	// End of namespace Common
 
 #endif	//BACKENDS_POSIX_FILE_H

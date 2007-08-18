@@ -1,113 +1,51 @@
-#include "backends/factories/abstract-fs-factory.h"
-
-/*
- * All the following includes choose, at compile time, which specific backend will be used
- * during the execution of the ScummVM.
- * 
- * It has to be done this way because not all the necessary libraries will be available in
- * all build environments. Additionally, this results in smaller binaries.
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL:  $
+ * $Id:  $
  */
-#if defined(__amigaos4__)
-	#include "backends/factories/amigaos4/amigaos4-fs-factory.cpp"
-#endif
- 
-#if defined(__DC__)
-	#include "backends/factories/dc/ronincd-fs-factory.cpp"
-#endif
 
-#if defined(__DS__)
-	#include "backends/factories/ds/ds-fs-factory.cpp"
-#endif
-
-#if defined(__GP32__)
-	#include "backends/factories/gp32/gp32-fs-factory.cpp"
-#endif
-
-#if defined(__MORPHOS__)
-	#include "backends/factories/morphos/abox-fs-factory.cpp"
-#endif
-
-#if defined(PALMOS_MODE)
-	#include "backends/factories/palmos/palmos-fs-factory.cpp"
-#endif
-
-#if defined(__PLAYSTATION2__)
-	#include "backends/factories/ps2/ps2-fs-factory.cpp"
-#endif
-
-#if defined(__PSP__)
-	#include "backends/factories/psp/psp-fs-factory.cpp"
-#endif
-
-#if defined(__SYMBIAN32__)
-	#include "backends/factories/symbian/symbian-fs-factory.cpp"
-#endif
-
-#if defined(UNIX)
-	#include "backends/factories/posix/posix-fs-factory.cpp"
-#endif
-
-#if defined(WIN32)
-	#include "backends/factories/windows/windows-fs-factory.cpp"
-#endif
-
-/**
- * Creates concrete FilesystemFactory and FileFactory objects depending on the current architecture.
- */
-class FilesystemFactoryMaker {
-public:
-
-	/**
-	 * Returns the correct concrete filesystem factory depending on the current build architecture.
-	 */
-	static AbstractFilesystemFactory *makeFactory();
-	
-protected:
-	FilesystemFactoryMaker() {}; // avoid instances of this class
-};
+#include "backends/factories/fs-factory-maker.h"
 
 AbstractFilesystemFactory *FilesystemFactoryMaker::makeFactory(){
 	#if defined(__amigaos4__)
 		return &AmigaOSFilesystemFactory::instance();
-	#endif
-	
-	#if defined(__DC__)
+	#elif defined(__DC__)
 		return &RoninCDFilesystemFactory::instance();
-	#endif
-	
-	#if defined(__DS__)
+	#elif defined(__DS__)
 		return &DSFilesystemFactory::instance();
-	#endif
-	
-	#if defined(__GP32__)
+	#elif defined(__GP32__)
 		return &GP32FilesystemFactory::instance();
-	#endif
-	
-	#if defined(__MORPHOS__)
+	#elif defined(__MORPHOS__)
 		return &ABoxFilesystemFactory::instance();
-	#endif
-	
-	#if defined(PALMOS_MODE)
+	#elif defined(PALMOS_MODE)
 		return &PalmOSFilesystemFactory::instance();
-	#endif
-	
-	#if defined(__PLAYSTATION2__)
+	#elif defined(__PLAYSTATION2__)
 		return &Ps2FilesystemFactory::instance();
-	#endif
-	
-	#if defined(__PSP__)
+	#elif defined(__PSP__)
 		return &PSPFilesystemFactory::instance();
-	#endif
-	
-	#if defined(__SYMBIAN32__)
+	#elif defined(__SYMBIAN32__)
 		return &SymbianFilesystemFactory::instance();
-	#endif
-	
-	#if defined(UNIX)
+	#elif defined(UNIX)
 		return &POSIXFilesystemFactory::instance();
-	#endif
-	
-	#if defined(WIN32)
+	#elif defined(WIN32)
 		return &WindowsFilesystemFactory::instance();
 	#endif
 }

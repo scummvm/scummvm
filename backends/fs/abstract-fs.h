@@ -79,7 +79,7 @@ public:
 	virtual ~AbstractFilesystemNode() {}
 	
 	/*
-	 * Indicates whether the object refered by this path exists in the filesystem or not.
+	 * Indicates whether the object referred by this path exists in the filesystem or not.
 	 */
 	virtual bool exists() const = 0;
 
@@ -103,6 +103,18 @@ public:
 	virtual String getDisplayName() const { return getName(); }
 
 	/**
+	 * Returns the last component of a given path.
+	 * 
+	 * Examples:
+	 * 			/foo/bar.txt would return /bar.txt
+	 * 			/foo/bar/    would return /bar/
+	 *  
+	 * @param str String containing the path.
+	 * @return Pointer to the first char of the last component inside str.
+	 */
+	virtual const char *getLastPathComponent(const Common::String &str) const = 0;
+	
+	/**
 	 * Returns a string with an architecture dependent path description.
 	 */
 	virtual String getName() const = 0;
@@ -118,12 +130,28 @@ public:
 	virtual bool isDirectory() const = 0;
 	
 	/**
-	 * Indicates whether this path can be read from or not.
+	 * Indicates whether the object referred by this path can be read from or not.
+	 * 
+	 * If the path refers to a directory, readability implies being able to read 
+	 * and list the directory entries.
+	 * 
+	 * If the path refers to a file, readability implies being able to read the 
+	 * contents of the file.
+	 * 
+	 * @return bool true if the object can be read, false otherwise.
 	 */
 	virtual bool isReadable() const = 0;
 	
 	/**
-	 * Indicates whether this path can be written to or not.
+	 * Indicates whether the object referred by this path can be written to or not.
+	 * 
+	 * If the path refers to a directory, writability implies being able to modify
+	 * the directory entry (i.e. rename the directory, remove it or write files inside of it).
+	 * 
+	 * If the path refers to a file, writability implies being able to write data
+	 * to the file.
+	 * 
+	 * @return bool true if the object can be written to, false otherwise.
 	 */
 	virtual bool isWritable() const = 0;
 
@@ -132,4 +160,4 @@ public:
 	*/
 };
 
-#endif
+#endif //BACKENDS_ABSTRACT_FS_H

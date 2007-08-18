@@ -30,12 +30,14 @@
 #include "common/str.h"
 #include "common/stream.h"
 
-using namespace Common;
+//using namespace Common;
+
+namespace Common {
 
 /**
  * Implements several file related functions used by the Common::File wrapper.
  */
-class BaseFile : public Common::SeekableReadStream {
+class BaseFile : public SeekableReadStream {
 protected:
 	/** File handle to the actual file; 0 if no file is open. */
 	void *_handle;
@@ -176,5 +178,7 @@ public:
 	 */
 	//uint32 write(const void *dataPtr, uint32 dataSize);	
 };
+
+} // End of namespace Common
 
 #endif	//BACKENDS_BASE_FILE_H

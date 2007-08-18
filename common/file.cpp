@@ -24,14 +24,10 @@
  */
 
 #include "common/file.h"
-#include "common/fs.h"
 #include "common/hashmap.h"
 #include "common/util.h"
 #include "common/hash-str.h"
-
-#if defined(UNIX) || defined(__SYMBIAN32__)
 #include <errno.h>
-#endif
 
 #ifdef MACOSX
 #include "CoreFoundation/CoreFoundation.h"

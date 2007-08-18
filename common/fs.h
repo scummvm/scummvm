@@ -62,6 +62,8 @@ class FSList : public Common::Array<FilesystemNode> {};
  * paths (MacOS 9 doesn't even have the notion of a "current directory").
  * And if we ever want to support devices with no FS in the classical sense (Palm...),
  * we can build upon this.
+ * 
+ * This class acts as a wrapper around the AbstractFilesystemNode class defined in backends/fs. 
  */
 class FilesystemNode {
 private:
@@ -80,9 +82,9 @@ public:
 	};
 
 	/**
-	 * Create a new invalid FilesystemNode. In other words, isValid() for that
-	 * node returns false, and if you try to get it's path, an assert is
-	 * triggered.
+	 * Create a new pathless FilesystemNode. Since there's no path associated
+	 * with this node, path-related operations (i.e. exists(), isDirectory(), 
+	 * getPath()) will always return false or raise an assertion.
 	 */
 	FilesystemNode();
 
@@ -116,10 +118,12 @@ public:
 	 * Compare the name of this node to the name of another. Directories
 	 * go before normal files.
 	 */
-	bool operator< (const FilesystemNode& node) const;
+	bool operator<(const FilesystemNode& node) const;
 
 	/*
-	 * Indicates whether the object refered by this path exists in the filesystem or not.
+	 * Indicates whether the object referred by this path exists in the filesystem or not.
+	 * 
+	 * @return bool true if the path exists, false otherwise.
 	 */
 	virtual bool exists() const;
 
@@ -177,34 +181,53 @@ public:
 	FilesystemNode getParent() const;
 
 	/**
-	 * Indicates whether this path refers to a directory or not.
+	 * Indicates whether the path refers to a directory or not.
 	 * 
-	 * @todo Currently we assume that a valid node that is not a directory
-	 * automatically is a file (ignoring things like symlinks). That might
-	 * actually be OK... but we could still add an isFile method. Or even replace
-	 * isValid and isDirectory by a getType() method that can return values like
+	 * @todo Currently we assume that a node that is not a directory
+	 * automatically is a file (ignoring things like symlinks or pipes).
+	 * That might actually be OK... but we could still add an isFile method.
+	 * Or even replace isDirectory by a getType() method that can return values like
 	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
 	 */
 	virtual bool isDirectory() const;
 	
 	/**
-	 * Indicates whether this path can be read from or not.
+	 * Indicates whether the object referred by this path can be read from or not.
+	 * 
+	 * If the path refers to a directory, readability implies being able to read 
+	 * and list the directory entries.
+	 * 
+	 * If the path refers to a file, readability implies being able to read the 
+	 * contents of the file.
+	 * 
+	 * @return bool true if the object can be read, false otherwise.
 	 */
 	virtual bool isReadable() const;
 	
 	/**
-	 * Indicates whether this path can be written to or not.
+	 * Indicates whether the object referred by this path can be written to or not.
+	 * 
+	 * If the path refers to a directory, writability implies being able to modify
+	 * the directory entry (i.e. rename the directory, remove it or write files inside of it).
+	 * 
+	 * If the path refers to a file, writability implies being able to write data
+	 * to the file.
+	 * 
+	 * @return bool true if the object can be written to, false otherwise.
 	 */
 	virtual bool isWritable() const;
 	
 	/**
 	 * Searches recursively for a filename inside the given directories.
 	 * 
+	 * For each directory in the directory list a breadth-first search is performed,
+	 * that is, the current directory entries are scanned before going into subdirectories.
+	 * 
 	 * @param results List to put the matches in.
 	 * @param fslist List of directories to search within.
 	 * @param filename Name of the file to look for.
-	 * @param hidden Whether to search hidden files or not. Default: false
-	 * @param exhaustive Whether to continue searching after one match has been found. Default: false
+	 * @param hidden Whether to search hidden files or not.
+	 * @param exhaustive Whether to continue searching after one match has been found.
 	 * 
 	 * @return true if matches could be found, false otherwise.
 	 */
@@ -213,11 +236,14 @@ public:
 	/**
 	 * Searches recursively for a filename inside the given directory.
 	 * 
+	 * The search is performed breadth-first, that is, the current directory entries
+	 * are scanned before going into subdirectories.
+	 * 
 	 * @param results List to put the matches in.
 	 * @param FilesystemNode Directory to search within.
 	 * @param filename Name of the file to look for.
-	 * @param hidden Whether to search hidden files or not. Default: false
-	 * @param exhaustive Whether to continue searching after one match has been found. Default: false
+	 * @param hidden Whether to search hidden files or not.
+	 * @param exhaustive Whether to continue searching after one match has been found.
 	 * 
 	 * @return true if matches could be found, false otherwise.
 	 */
@@ -233,13 +259,18 @@ protected:
 	/**
 	 * Searches recursively for a filename inside the given directory.
 	 * 
+	 * The search is performed breadth-first, that is, the current directory entries
+	 * are scanned before going into subdirectories.
+	 * 
 	 * @param results List to put the matches in.
 	 * @param FilesystemNode Directory to search within.
 	 * @param filename Name of the file to look for.
 	 * @param hidden Whether to search hidden files or not.
 	 * @param exhaustive Whether to continue searching after one match has been found.
+	 * 
+	 * @return The number of matches found.
 	 */
-	void lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const;
+	int lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const;
 };
 
 //} // End of namespace Common

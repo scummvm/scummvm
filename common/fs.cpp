@@ -24,6 +24,7 @@
 
 #include "common/stdafx.h"
 #include "common/util.h"
+#include "common/fs.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/factories/fs-factory-maker.cpp"
 
@@ -107,12 +108,13 @@ FilesystemNode &FilesystemNode::operator= (const FilesystemNode &node) {
 	return *this;
 }
 
-bool FilesystemNode::operator< (const FilesystemNode& node) const
+bool FilesystemNode::operator<(const FilesystemNode& node) const
 {
 	if (isDirectory() && !node.isDirectory())
 		return true;
 	if (!isDirectory() && node.isDirectory())
 		return false;
+	
 	return scumm_stricmp(getDisplayName().c_str(), node.getDisplayName().c_str()) < 0;
 }
 
@@ -130,6 +132,7 @@ void FilesystemNode::decRefCount() {
 bool FilesystemNode::exists() const {
 	if (_realNode == 0)
 		return false;
+	
 	return _realNode->exists();
 }
 
@@ -189,62 +192,78 @@ Common::String FilesystemNode::getPath() const {
 bool FilesystemNode::isDirectory() const {
 	if (_realNode == 0)
 		return false;
+	
 	return _realNode->isDirectory();
 }
 
 bool FilesystemNode::isReadable() const {
 	if (_realNode == 0)
 		return false;
+	
 	return _realNode->isReadable();
 }
 
 bool FilesystemNode::isWritable() const {
 	if (_realNode == 0)
 		return false;
+	
 	return _realNode->isWritable();
 }
 
 bool FilesystemNode::lookupFile(FSList &results, FSList &fslist, Common::String &filename, bool hidden, bool exhaustive) const
 {
-	for(FSList::iterator entry = fslist.begin(); entry != fslist.end(); ++entry)
-	{
-		if(entry->isDirectory()) {
-			lookupFileRec(results, *entry, filename, hidden, exhaustive);
+	int matches = 0;
+	
+	for (FSList::iterator entry = fslist.begin(); entry != fslist.end(); ++entry) {
+		if (entry->isDirectory()) {
+			matches += lookupFileRec(results, *entry, filename, hidden, exhaustive);
 		}
 	}
-	
-	//TODO: we would return true even if no matches were found, if the initial results list isn't empty
-	return ((results.size() > 0) ? true : false);
+
+	return ((matches > 0) ? true : false);
 }
 
 bool FilesystemNode::lookupFile(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
 {
-	lookupFileRec(results, dir, filename, hidden, exhaustive);
+	int matches;
 	
-	//TODO: we would return true even if no matches were found, if the initial results list isn't empty
-	return ((results.size() > 0) ? true : false);
+	if (!dir.isDirectory())
+		return false;
+		
+	matches = lookupFileRec(results, dir, filename, hidden, exhaustive);
+	
+	return ((matches > 0) ? true : false);
 }
 
-void FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
+int FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
 {
 	FSList entries;
+	FSList children;
+	int matches = 0;
 	dir.getChildren(entries, FilesystemNode::kListAll, hidden);
 	
-	for(FSList::iterator entry = entries.begin(); entry != entries.end(); ++entry)
-	{
-		if(entry->isDirectory()) {
-			lookupFileRec(results, *entry, filename, hidden, exhaustive);
+	//Breadth search (entries in the same level)
+	for (FSList::iterator entry = entries.begin(); entry != entries.end(); ++entry) {
+		if (entry->isDirectory()) {
+			children.push_back(*entry);
 		} else {
 			//TODO: here we assume all backends implement the lastPathComponent method. It is currently static,
 			//		so it might be a good idea to include it inside the backend class. This would enforce its
 			//		implementation by all ports.
-			if(matchString(lastPathComponent(entry->getPath()), filename.c_str())) {
+			if(matchString(_realNode->getLastPathComponent(entry->getPath()), filename.c_str())) {
 				results.push_back(*entry);
+				matches++;
 				
-				if(!exhaustive) {
+				if (!exhaustive)
 					break;
-				}
 			}
 		}
 	}
+	
+	//Depth search (entries in lower levels)
+	for (FSList::iterator child = children.begin(); child != children.end(); ++child) {
+		matches += lookupFileRec(results, *child, filename, hidden, exhaustive);
+	}
+	
+	return matches;
 }

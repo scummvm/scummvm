@@ -16,7 +16,7 @@ public:
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const;
-	virtual BaseFile *makeBaseFile() const;
+	virtual Common::BaseFile *makeBaseFile() const;
 	
 protected:
 	POSIXFilesystemFactory() {};

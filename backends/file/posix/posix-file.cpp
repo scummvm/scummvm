@@ -1,5 +1,7 @@
 #include "backends/file/posix/posix-file.h"
 
+namespace Common {
+
 POSIXFile::POSIXFile() : BaseFile() {
 	//
 }
@@ -39,3 +41,5 @@ long POSIXFile::_ftell(FILE *stream) const {
 int POSIXFile::_fwrite(const void * ptr, size_t obj_size, size_t count, FILE * stream) {
 	return fwrite(ptr, obj_size, count, stream);
 }
+
+}	// End of namespace Common
