@@ -121,7 +121,7 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager) :
 bool IIgsEnvelope::read(Common::SeekableReadStream &stream) {
 	for (int segNum = 0; segNum < ENVELOPE_SEGMENT_COUNT; segNum++) {
 		seg[segNum].bp  = stream.readByte();
-		seg[segNum].inc = stream.readUint16BE();
+		seg[segNum].inc = stream.readUint16LE();
 	}
 	return !stream.ioFailed();
 }
@@ -138,7 +138,7 @@ bool IIgsWaveInfo::read(Common::SeekableReadStream &stream, bool ignoreAddr) {
 	mode    = (packedModeByte >> 1) & 3; // Bits 1-2
 	halt    = (packedModeByte & 1) != 0; // Bit 0 (Converted to boolean)
 
-	relPitch = stream.readUint16BE();
+	relPitch = stream.readUint16LE();
 
 	// Zero the wave address if we want to ignore the wave address info
 	if (ignoreAddr)
@@ -264,6 +264,7 @@ bool SoundMgr::finalizeInstruments(Common::SeekableReadStream &uint8Wave) {
 
 static int playing;
 static ChannelInfo chn[NUM_CHANNELS];
+static IIgsChannelInfo IIgsChannel;
 static int endflag = -1;
 static int playingSound = -1;
 static uint8 env;
@@ -346,22 +347,31 @@ void SoundMgr::startSound(int resnum, int flag) {
 	_vm->_game.sounds[resnum]->play();
 	playingSound = resnum;
 
+	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d)", resnum, flag);
+
 	switch (type) {
-#if 0
-	case AGI_SOUND_SAMPLE:
-		debugC(3, kDebugLevelSound, "IIGS sample");
-		smp = (struct SoundIIgsSample *)_vm->_game.sounds[resnum].rdata;
-		for (i = 0; i < NUM_CHANNELS; i++) {
-			chn[i].type = type;
-			chn[i].flags = 0;
-			chn[i].ins = (int16 *)&_vm->_game.sounds[resnum].rdata[54];
-			chn[i].size = ((int)smp->sizeHi << 8) + smp->sizeLo;
-			chn[i].ptr = &playSample[i];
-			chn[i].timer = 0;
-			chn[i].vol = 0;
-			chn[i].end = 0;
-		}
+	case AGI_SOUND_SAMPLE: {
+		IIgsChannelInfo &chn = IIgsChannel;
+		IIgsSample *sampleRes = (IIgsSample *) _vm->_game.sounds[playingSound];
+		const IIgsWaveInfo &waveInfo = chn.ins.oscList(0).waves[0];
+		const IIgsSampleHeader &header = sampleRes->getHeader();
+
+		chn.ins     = header.instrument;
+		chn.sample  = sampleRes->getSample() + waveInfo.addr;
+		chn.pos     = intToFrac(0);
+		chn.posAdd  = intToFrac(0);
+		chn.note    = intToFrac(header.pitch) + doubleToFrac(waveInfo.relPitch/256.0);
+		chn.startEnvVol = intToFrac(0);
+		chn.chanVol = intToFrac(header.volume);
+		chn.envVol  = chn.startEnvVol;
+		chn.vol     = doubleToFrac(fracToDouble(chn.envVol) * fracToDouble(chn.chanVol) / 127.0);
+		chn.envSeg  = intToFrac(0);
+		chn.loop    = (waveInfo.mode == OSC_MODE_LOOP);
+		chn.size    = waveInfo.size - waveInfo.addr;
+		chn.end     = false;
 		break;
+	}
+#if 0
 	case AGI_SOUND_MIDI:
 		debugC(3, kDebugLevelSound, "IIGS MIDI sequence");
 
@@ -410,11 +420,19 @@ void SoundMgr::stopSound() {
 	int i;
 
 	endflag = -1;
-	for (i = 0; i < NUM_CHANNELS; i++)
-		stopNote(i);
+	if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
+		for (i = 0; i < NUM_CHANNELS; i++)
+			stopNote(i);
+	}
 
 	if (playingSound != -1) {
 		_vm->_game.sounds[playingSound]->stop();
+		
+		if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
+			IIgsChannel.end     = true;
+			IIgsChannel.chanVol = intToFrac(0);
+		}
+
 		playingSound = -1;
 	}
 }
@@ -563,8 +581,13 @@ void SoundMgr::playMidiSound() {
 }
 
 void SoundMgr::playSampleSound() {
-	playNote(0, 11025 * 10, 200);
-	playing = 1;
+	if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
+		warning("Trying to play a sample but not using Apple IIGS sound emulation mode");
+		return;
+	}
+
+	if (playingSound != -1)
+		playing = !IIgsChannel.end;
 }
 
 void SoundMgr::playAgiSound() {
@@ -612,16 +635,26 @@ void SoundMgr::playSound() {
 	if (endflag == -1)
 		return;
 
-	if (chn[0].type == AGI_SOUND_MIDI) {
-		/* play_midi_sound (); */
-		playing = 0;
-	} else if (chn[0].type == AGI_SOUND_SAMPLE) {
-		playSampleSound();
-	} else
+	if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
+		if (playingSound != -1) {
+			if (_vm->_game.sounds[playingSound]->type() == AGI_SOUND_MIDI) {
+				/* play_midi_sound (); */
+				warning("playSound: Trying to play an Apple IIGS MIDI sound. Not yet implemented!");
+				playing = 0;
+			} else if (_vm->_game.sounds[playingSound]->type() == AGI_SOUND_SAMPLE) {
+				//debugC(3, kDebugLevelSound, "playSound: Trying to play an Apple IIGS sample");
+				playSampleSound();
+			}
+		}
+	} else {
+		//debugC(3, kDebugLevelSound, "playSound: Trying to play a PCjr 4-channel sound");
 		playAgiSound();
+	}
 
 	if (!playing) {
-		for (i = 0; i < NUM_CHANNELS; chn[i++].vol = 0);
+		if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
+			for (i = 0; i < NUM_CHANNELS; chn[i++].vol = 0);
+		}
 
 		if (endflag != -1)
 			_vm->setflag(endflag, true);
@@ -640,6 +673,71 @@ uint32 SoundMgr::mixSound(void) {
 
 	memset(sndBuffer, 0, BUFFER_SIZE << 1);
 
+	// Handle Apple IIGS sound mixing here
+	if (_vm->_soundemu == SOUND_EMU_APPLE2GS && playing && playingSound != -1) {
+		IIgsChannelInfo &chn = IIgsChannel;
+		IIgsWaveInfo &waveInfo = chn.ins.oscList(0).waves[0];
+
+		//uint period = noteToPeriod(fracToInt(chn.note + FRAC_HALF));
+		//chn.posAdd = ((frac_t) (118600 * 4 / period)) << (FRAC_BITS - 8);
+
+		// Hertz (number of vibrations a second) = 6.875 x 2 ^ ( ( 3 + MIDI_Pitch ) / 12 )
+		// From http://www.musicmasterworks.com/WhereMathMeetsMusic.html
+		//double hertz = 6.875 * pow(SEMITONE, 3 + fracToDouble(chn.note));
+		//double hertz = 8.175798915644 * pow(SEMITONE, fracToDouble(chn.note));
+		// double step = getRate() / hertz;
+		// chn.posAdd = doubleToFrac(step);
+
+		double hertz = 1076.0 * pow(SEMITONE, fracToDouble(chn.note));
+		chn.posAdd = doubleToFrac(hertz / getRate());
+		chn.vol = doubleToFrac(fracToDouble(chn.envVol) * fracToDouble(chn.chanVol) / 127.0);
+		double tempVol = fracToDouble(chn.vol)/127.0;
+
+		for (i = 0; i < IIGS_BUFFER_SIZE; i++) {
+			b = chn.sample[fracToInt(chn.pos)];
+			// DOESN'T DO MIXING YET! ONLY ONE SAMPLE PER PLAYING!
+			sndBuffer[i] = (int16) (b * tempVol);
+			chn.pos += chn.posAdd;
+
+			if (chn.pos >= intToFrac(chn.size)) {
+				if (chn.loop) {
+					chn.pos %= intToFrac(chn.size);
+					// Probably we should loop the envelope too
+					chn.envSeg = 0;
+					chn.envVol = chn.startEnvVol;
+				} else {
+					chn.pos = chn.chanVol = 0;
+					chn.end = true;
+					break;
+				}
+			}
+		}
+
+		if (chn.envSeg <= chn.ins.relseg) {
+			IIgsEnvelopeSegment &seg = chn.ins.env.seg[chn.envSeg];
+			double bufSecLen = IIGS_BUFFER_SIZE / (double) getRate();
+			double ticksPerSec = 100; // 1000 is way too much
+			double bufTickLen  = bufSecLen / (1.0/ticksPerSec);
+			frac_t envVolDelta = doubleToFrac((seg.inc/256.0)*bufTickLen);
+			if (intToFrac(seg.bp) >= chn.envVol) {
+				chn.envVol += envVolDelta;
+				if (chn.envVol >= intToFrac(seg.bp)) {
+					chn.envVol = intToFrac(seg.bp);
+					chn.envSeg += 1;
+				}
+			} else {
+				chn.envVol -= envVolDelta;
+				if (chn.envVol <= intToFrac(seg.bp)) {
+					chn.envVol = intToFrac(seg.bp);
+					chn.envSeg += 1;
+				}
+			}
+		}
+		//chn.envSeg += doubleToFrac(1/100.0);
+		return IIGS_BUFFER_SIZE;
+	} /* else ... */
+
+	// Handle PCjr 4-channel sound mixing here
 	for (c = 0; c < NUM_CHANNELS; c++) {
 		if (!chn[c].vol)
 			continue;
@@ -805,6 +903,7 @@ Common::MemoryReadStream *SoundMgr::loadWaveFile(const Common::String &wavePath,
 				"Please report the information on the previous line to the ScummVM team.\n" \
 				"Using the wave file as it is - music may sound weird", md5str, exeInfo.exePrefix);
 		}
+		uint8Wave->seek(0); // Seek wave to its start
 		return uint8Wave;
 	} else { // Couldn't read the wave file or it had incorrect size
 		warning("Error loading Apple IIGS wave file (%s), not loading instruments", wavePath.c_str());
@@ -885,6 +984,10 @@ bool SoundMgr::loadInstruments() {
 	// (A zero in the wave file data can end the sample prematurely)
 	// and convert the wave file from 8-bit unsigned to 16-bit signed format.
 	Common::MemoryReadStream *uint8Wave = loadWaveFile(waveFsnode->path(), *exeInfo);
+	// Seek the wave to its
+	if (uint8Wave != NULL)
+		uint8Wave->seek(0);
+
 	bool result = uint8Wave != NULL && loadInstrumentHeaders(exeFsnode->path(), *exeInfo) &&
 		finalizeInstruments(*uint8Wave) && convertWave(*uint8Wave, g_wave, uint8Wave->size());
 

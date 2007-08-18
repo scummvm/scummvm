@@ -29,10 +29,12 @@
 #include "agi/agi.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "common/frac.h"
 
 namespace Agi {
 
 #define BUFFER_SIZE	410
+#define IIGS_BUFFER_SIZE 200
 
 #define SOUND_EMU_NONE	0
 #define SOUND_EMU_PC	1
@@ -50,7 +52,7 @@ namespace Agi {
 
 struct IIgsEnvelopeSegment {
 	uint8 bp;
-	uint16 inc; ///< 8b.8b fixed point, big endian?
+	uint16 inc; ///< 8b.8b fixed point, very probably little endian
 };
 
 #define ENVELOPE_SEGMENT_COUNT 8
@@ -112,6 +114,10 @@ struct IIgsOscillatorList {
 	uint count; ///< Oscillator count
 	IIgsOscillator osc[MAX_OSCILLATORS]; ///< The oscillators
 
+	/** Indexing operators for easier access to the oscillators. */
+	const IIgsOscillator &operator()(uint index) const { return osc[index]; }	
+	IIgsOscillator &operator()(uint index) { return osc[index]; }
+	
 	/** Reads an Apple IIGS oscillator list from the given stream. */
 	bool read(Common::SeekableReadStream &stream, uint oscillatorCount, bool ignoreAddr = false);
 	bool finalize(Common::SeekableReadStream &uint8Wave);
@@ -171,6 +177,22 @@ struct AgiNote {
 		freqDiv = ((freqByte0 & 0x3F) << 4) | (freqByte1 & 0x0F);
 		attenuation = *(ptr + 4) & 0x0F;
 	}
+};
+
+struct IIgsChannelInfo {
+	IIgsInstrumentHeader ins; ///< Instrument info
+	const int16 *sample; ///< Source sample data (16-bit signed format)
+	frac_t pos;     ///< Current sample position
+	frac_t posAdd;  ///< Current sample position adder (Calculated using note, vibrato etc)
+	frac_t note;    ///< Note
+	frac_t vol;     ///< Current volume (Takes both channel volume and enveloping into account)
+	frac_t chanVol; ///< Channel volume
+	frac_t startEnvVol; ///< Starting envelope volume
+	frac_t envVol;  ///< Current envelope volume
+	uint   envSeg;  ///< Current envelope segment
+	uint   size;    ///< Sample size
+	bool   loop;    ///< Should we loop the sample?
+	bool   end;     ///< Has the playing ended?
 };
 
 /**
@@ -258,6 +280,8 @@ public:
 	IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
 	~IIgsSample() { delete[] _sample; }
 	virtual uint16 type() { return _header.type; }
+	const IIgsSampleHeader &getHeader() const { return _header; }
+	const int16 *getSample() const { return _sample; }
 protected:
 	IIgsSampleHeader _header; ///< Apple IIGS AGI sample header
 	int16 *_sample;           ///< Sample data (16-bit signed format)
