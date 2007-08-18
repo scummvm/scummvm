@@ -31,6 +31,7 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer.h"
+#include "graphics/surface.h"
 
 class DSAudioMixer : public Audio::Mixer {	
 };
@@ -53,8 +54,11 @@ public:
 	GBAMPSaveFileManager mpSaveManager;
 	DSAudioMixer* _mixer;
 	DSTimerManager* _timer;
+	Graphics::Surface _framebuffer;
+
 
 	static OSystem_DS* _instance;
+
 
 	
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
@@ -136,6 +140,9 @@ public:
 	virtual void clearFocusRectangle();
 	
 	virtual void initBackend();
+	
+	virtual Graphics::Surface *lockScreen();
+	virtual void unlockScreen();
 	
 	virtual Audio::Mixer* getMixer() { return _mixer; }
 	virtual Common::TimerManager* getTimerManager() { return _timer; }

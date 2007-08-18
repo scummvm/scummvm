@@ -338,7 +338,7 @@ void updateTypeEvents()
 		Common::Event event;
    		OSystem_DS* system = OSystem_DS::instance();
 	
-		event.kbd.keycode = autoCompleteBuffer[0];
+		event.kbd.keycode = (Common::KeyCode) autoCompleteBuffer[0];
 		event.kbd.ascii = autoCompleteBuffer[0];
 		event.type = Common::EVENT_KEYDOWN;
 		event.kbd.flags = 0;
@@ -402,9 +402,9 @@ void addKeyboardEvents() {
 
 					if (!DS::shiftState) {
 						event.kbd.ascii = keys[r].character;
-						event.kbd.keycode = 0;
+						event.kbd.keycode = Common::KEYCODE_INVALID;
 					} else {
-						event.kbd.keycode = SDLK_F1 - (keys[r].character - '1');
+						event.kbd.keycode = (Common::KeyCode) (Common::KEYCODE_F1 - (keys[r].character - '1'));
 						event.kbd.ascii = 0;
 					}					
 				
@@ -416,10 +416,10 @@ void addKeyboardEvents() {
 						event.kbd.ascii = keys[r].character;
 					}
 					
-					event.kbd.keycode = event.kbd.ascii;
+					event.kbd.keycode = (Common::KeyCode) event.kbd.ascii;
 				} else {
 					event.kbd.ascii = keys[r].character;
-					event.kbd.keycode = keys[r].character;
+					event.kbd.keycode = (Common::KeyCode) keys[r].character;
 				}				
 			
 				

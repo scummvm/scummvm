@@ -197,7 +197,7 @@ void togglePause() {
 		OSystem_DS* system = OSystem_DS::instance();
 
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = 'p';		
+		event.kbd.keycode = Common::KEYCODE_p;		
 		event.kbd.ascii = 'p';
 		event.kbd.flags = 0;
 		system->addEvent(event);

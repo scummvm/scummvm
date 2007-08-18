@@ -152,6 +152,24 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 	}
 }
 
+bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
+	surf->create(DS::getGameWidth(), DS::getGameHeight(), 1);
+
+	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
+	
+
+	u16* image = (u16 *) DS::get8BitBackBuffer();
+	for (int y = 0; y <  DS::getGameHeight(); y++)
+	{
+		DC_FlushRange(image + (y << 8), DS::getGameWidth());
+		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
+		{
+			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y << 8 + x];
+		}
+	}
+
+	return true;
+}
 
 void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) {
 //	consolePrintf("Grabpalette");
@@ -325,7 +343,7 @@ bool OSystem_DS::pollEvent(Common::Event &event)
 			// So we make it something harmless which won't cause any adverse effects.
 			event.type = Common::EVENT_KEYUP;
 			event.kbd.ascii = 0;
-			event.kbd.keycode = 0;
+			event.kbd.keycode = Common::KEYCODE_INVALID;
 			event.kbd.flags = 0;
 //			consolePrintf("type: %d\n", event.type);
 			return false;
@@ -478,25 +496,36 @@ Common::SaveFileManager* OSystem_DS::getSavefileManager()
 	}
 }
 
-bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
-	surf->create(DS::getGameWidth(), DS::getGameHeight(), 1);
+Graphics::Surface *OSystem_DS::lockScreen() {
+/*	// For now, we create a full temporary screen surface, to which we copy the
+	// the screen content. Later unlockScreen will copy everything back.
+	// Not very nice nor efficient, but at least works, and is not worse
+	// than in the bad old times where we used grabRawScreen + copyRectToScreen.
+	
+	_framebuffer.create(DS::getGameWidth(), DS::getGameHeight(), 1);
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 	
-    size_t imageStrideInBytes = DS::isCpuScalerEnabled()? DS::getGameWidth() : 512;
-    size_t imageStrideInWords = imageStrideInBytes / 2;
 
 	u16* image = (u16 *) DS::get8BitBackBuffer();
 	for (int y = 0; y <  DS::getGameHeight(); y++)
 	{
-		DC_FlushRange(image + (y * imageStrideInWords), DS::getGameWidth());
+		DC_FlushRange(image + (y << 8), DS::getGameWidth());
 		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
 		{
-			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y * imageStrideInWords + x];
+			*(((u16 *) (_framebuffer.pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y << 8 + x];
 		}
 	}
 
-	return true;
+	return &_framebuffer;*/
+}
+
+void OSystem_DS::unlockScreen() {
+/*	// Copy temp framebuffer back to screen
+	copyRectToScreen((byte *)_framebuffer.pixels, _framebuffer.pitch, 0, 0, _framebuffer.w, _framebuffer.h);
+
+	// Free memory
+	_framebuffer.free(); */
 }
 
 void OSystem_DS::setFocusRectangle(const Common::Rect& rect) {
@@ -523,4 +552,6 @@ void OSystem_DS::setCharactersEntered(int count) {
 OSystem *OSystem_DS_create() {
 	return new OSystem_DS();
 }
+
+
 
