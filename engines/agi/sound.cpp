@@ -663,6 +663,9 @@ uint32 SoundMgr::mixSound(void) {
 
 	memset(_sndBuffer, 0, BUFFER_SIZE << 1);
 
+	if (!_playing || _playingSound == -1)
+		return BUFFER_SIZE;
+
 	// Handle Apple IIGS sound mixing here
 	if (_vm->_soundemu == SOUND_EMU_APPLE2GS && _playing && _playingSound != -1) {
 		//IIgsWaveInfo &waveInfo = _IIgsChannel.ins.oscList(0).waves[0];
