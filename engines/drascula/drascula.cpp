@@ -7634,7 +7634,7 @@ void DrasculaEngine::animacion_4_4() {
 	habla_igor_sentado(TEXTI23, "I23.als");
 }
 
-void DrasculaEngine::habla_igor_sentado(char dicho[], char filename[]) {
+void DrasculaEngine::habla_igor_sentado(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 

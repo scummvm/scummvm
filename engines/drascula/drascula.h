@@ -701,7 +701,7 @@ public:
 	void animacion_2_4();
 	void animacion_3_4();
 	void animacion_4_4();
-	void habla_igor_sentado(char[], char[]);
+	void habla_igor_sentado(const char *, const char *);
 
 private:
 
