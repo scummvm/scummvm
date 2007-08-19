@@ -351,24 +351,23 @@ void SoundMgr::startSound(int resnum, int flag) {
 
 	switch (type) {
 	case AGI_SOUND_SAMPLE: {
-		IIgsChannelInfo &chn = IIgsChannel;
 		IIgsSample *sampleRes = (IIgsSample *) _vm->_game.sounds[playingSound];
-		const IIgsWaveInfo &waveInfo = chn.ins.oscList(0).waves[0];
+		const IIgsWaveInfo &waveInfo = IIgsChannel.ins.oscList(0).waves[0];
 		const IIgsSampleHeader &header = sampleRes->getHeader();
 
-		chn.ins     = header.instrument;
-		chn.sample  = sampleRes->getSample() + waveInfo.addr;
-		chn.pos     = intToFrac(0);
-		chn.posAdd  = intToFrac(0);
-		chn.note    = intToFrac(header.pitch) + doubleToFrac(waveInfo.relPitch/256.0);
-		chn.startEnvVol = intToFrac(0);
-		chn.chanVol = intToFrac(header.volume);
-		chn.envVol  = chn.startEnvVol;
-		chn.vol     = doubleToFrac(fracToDouble(chn.envVol) * fracToDouble(chn.chanVol) / 127.0);
-		chn.envSeg  = intToFrac(0);
-		chn.loop    = (waveInfo.mode == OSC_MODE_LOOP);
-		chn.size    = waveInfo.size - waveInfo.addr;
-		chn.end     = false;
+		IIgsChannel.ins     = header.instrument;
+		IIgsChannel.sample  = sampleRes->getSample() + waveInfo.addr;
+		IIgsChannel.pos     = intToFrac(0);
+		IIgsChannel.posAdd  = intToFrac(0);
+		IIgsChannel.note    = intToFrac(header.pitch) + doubleToFrac(waveInfo.relPitch/256.0);
+		IIgsChannel.startEnvVol = intToFrac(0);
+		IIgsChannel.chanVol = intToFrac(header.volume);
+		IIgsChannel.envVol  = IIgsChannel.startEnvVol;
+		IIgsChannel.vol     = doubleToFrac(fracToDouble(IIgsChannel.envVol) * fracToDouble(IIgsChannel.chanVol) / 127.0);
+		IIgsChannel.envSeg  = intToFrac(0);
+		IIgsChannel.loop    = (waveInfo.mode == OSC_MODE_LOOP);
+		IIgsChannel.size    = waveInfo.size - waveInfo.addr;
+		IIgsChannel.end     = false;
 		break;
 	}
 #if 0
@@ -675,68 +674,67 @@ uint32 SoundMgr::mixSound(void) {
 
 	// Handle Apple IIGS sound mixing here
 	if (_vm->_soundemu == SOUND_EMU_APPLE2GS && playing && playingSound != -1) {
-		IIgsChannelInfo &chn = IIgsChannel;
-		IIgsWaveInfo &waveInfo = chn.ins.oscList(0).waves[0];
+		//IIgsWaveInfo &waveInfo = IIgsChannel.ins.oscList(0).waves[0];
 
-		//uint period = noteToPeriod(fracToInt(chn.note + FRAC_HALF));
-		//chn.posAdd = ((frac_t) (118600 * 4 / period)) << (FRAC_BITS - 8);
+		//uint period = noteToPeriod(fracToInt(IIgsChannel.note + FRAC_HALF));
+		//IIgsChannel.posAdd = ((frac_t) (118600 * 4 / period)) << (FRAC_BITS - 8);
 
 		// Hertz (number of vibrations a second) = 6.875 x 2 ^ ( ( 3 + MIDI_Pitch ) / 12 )
 		// From http://www.musicmasterworks.com/WhereMathMeetsMusic.html
-		//double hertz = 6.875 * pow(SEMITONE, 3 + fracToDouble(chn.note));
-		//double hertz = 8.175798915644 * pow(SEMITONE, fracToDouble(chn.note));
+		//double hertz = 6.875 * pow(SEMITONE, 3 + fracToDouble(IIgsChannel.note));
+		//double hertz = 8.175798915644 * pow(SEMITONE, fracToDouble(IIgsChannel.note));
 		// double step = getRate() / hertz;
-		// chn.posAdd = doubleToFrac(step);
+		// IIgsChannel.posAdd = doubleToFrac(step);
 		
 		// Frequency multiplier was 1076.0 based on tests made with MESS 0.117.
 		// Tests made with KEGS32 averaged the multiplier to around 1045.
 		// So this is a guess but maybe it's 1046.5... i.e. C6's frequency?
-		double hertz = C6_FREQ * pow(SEMITONE, fracToDouble(chn.note));
-		chn.posAdd = doubleToFrac(hertz / getRate());
-		chn.vol = doubleToFrac(fracToDouble(chn.envVol) * fracToDouble(chn.chanVol) / 127.0);
-		double tempVol = fracToDouble(chn.vol)/127.0;
+		double hertz = C6_FREQ * pow(SEMITONE, fracToDouble(IIgsChannel.note));
+		IIgsChannel.posAdd = doubleToFrac(hertz / getRate());
+		IIgsChannel.vol = doubleToFrac(fracToDouble(IIgsChannel.envVol) * fracToDouble(IIgsChannel.chanVol) / 127.0);
+		double tempVol = fracToDouble(IIgsChannel.vol)/127.0;
 
 		for (i = 0; i < IIGS_BUFFER_SIZE; i++) {
-			b = chn.sample[fracToInt(chn.pos)];
+			b = IIgsChannel.sample[fracToInt(IIgsChannel.pos)];
 			// DOESN'T DO MIXING YET! ONLY ONE SAMPLE PER PLAYING!
 			sndBuffer[i] = (int16) (b * tempVol);
-			chn.pos += chn.posAdd;
+			IIgsChannel.pos += IIgsChannel.posAdd;
 
-			if (chn.pos >= intToFrac(chn.size)) {
-				if (chn.loop) {
-					chn.pos %= intToFrac(chn.size);
+			if (IIgsChannel.pos >= intToFrac(IIgsChannel.size)) {
+				if (IIgsChannel.loop) {
+					IIgsChannel.pos %= intToFrac(IIgsChannel.size);
 					// Probably we should loop the envelope too
-					chn.envSeg = 0;
-					chn.envVol = chn.startEnvVol;
+					IIgsChannel.envSeg = 0;
+					IIgsChannel.envVol = IIgsChannel.startEnvVol;
 				} else {
-					chn.pos = chn.chanVol = 0;
-					chn.end = true;
+					IIgsChannel.pos = IIgsChannel.chanVol = 0;
+					IIgsChannel.end = true;
 					break;
 				}
 			}
 		}
 
-		if (chn.envSeg <= chn.ins.relseg) {
-			IIgsEnvelopeSegment &seg = chn.ins.env.seg[chn.envSeg];
+		if (IIgsChannel.envSeg <= IIgsChannel.ins.relseg) {
+			IIgsEnvelopeSegment &seg = IIgsChannel.ins.env.seg[IIgsChannel.envSeg];
 			double bufSecLen = IIGS_BUFFER_SIZE / (double) getRate();
 			double ticksPerSec = 100; // 1000 is way too much
 			double bufTickLen  = bufSecLen / (1.0/ticksPerSec);
 			frac_t envVolDelta = doubleToFrac((seg.inc/256.0)*bufTickLen);
-			if (intToFrac(seg.bp) >= chn.envVol) {
-				chn.envVol += envVolDelta;
-				if (chn.envVol >= intToFrac(seg.bp)) {
-					chn.envVol = intToFrac(seg.bp);
-					chn.envSeg += 1;
+			if (intToFrac(seg.bp) >= IIgsChannel.envVol) {
+				IIgsChannel.envVol += envVolDelta;
+				if (IIgsChannel.envVol >= intToFrac(seg.bp)) {
+					IIgsChannel.envVol = intToFrac(seg.bp);
+					IIgsChannel.envSeg += 1;
 				}
 			} else {
-				chn.envVol -= envVolDelta;
-				if (chn.envVol <= intToFrac(seg.bp)) {
-					chn.envVol = intToFrac(seg.bp);
-					chn.envSeg += 1;
+				IIgsChannel.envVol -= envVolDelta;
+				if (IIgsChannel.envVol <= intToFrac(seg.bp)) {
+					IIgsChannel.envVol = intToFrac(seg.bp);
+					IIgsChannel.envSeg += 1;
 				}
 			}
 		}
-		//chn.envSeg += doubleToFrac(1/100.0);
+		//IIgsChannel.envSeg += doubleToFrac(1/100.0);
 		return IIGS_BUFFER_SIZE;
 	} /* else ... */
 
