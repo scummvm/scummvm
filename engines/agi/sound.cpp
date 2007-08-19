@@ -667,7 +667,11 @@ uint32 SoundMgr::mixSound(void) {
 		return BUFFER_SIZE;
 
 	// Handle Apple IIGS sound mixing here
-	if (_vm->_soundemu == SOUND_EMU_APPLE2GS && _playing && _playingSound != -1) {
+	if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
+		AgiSoundType type = (AgiSoundType) _vm->_game.sounds[_playingSound]->type();
+		// Currently we only support mixing a single sample in Apple IIGS mixing code.
+		if (type != AGI_SOUND_SAMPLE)
+			return IIGS_BUFFER_SIZE;
 		//IIgsWaveInfo &waveInfo = _IIgsChannel.ins.oscList(0).waves[0];
 
 		//uint period = noteToPeriod(fracToInt(_IIgsChannel.note + FRAC_HALF));
