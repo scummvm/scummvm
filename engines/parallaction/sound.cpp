@@ -265,7 +265,7 @@ void DosSoundMan::playCharacterMusic(const char *character) {
 		setMusicFile("dino");
 	} else
 	if (!scumm_stricmp(name, _donnaName)) {
-		setMusicFile("dough");
+		setMusicFile("donna");
 	} else
 	if (!scumm_stricmp(name, _doughName)) {
 		setMusicFile("nuts");
