@@ -104,7 +104,6 @@ public:
 	int16 _splitHeight1;
 	int16 _splitHeight2;
 	int16 _splitStart;
-	uint32 _lastRetraceLength;
 
 	void freeDriver();
 	void initPrimary(int16 mode);

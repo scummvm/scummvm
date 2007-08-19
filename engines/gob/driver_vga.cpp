@@ -113,18 +113,26 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 	byte *srcPos = source->getVidMem() + (top * source->getWidth()) + left;
 	byte *destPos = dest->getVidMem() + (y * dest->getWidth()) + x;
 
-	while (height--) {
-		if (transp) {
+	if (transp)
+	{
+		while (height--) {  		
 			for (int16 i = 0; i < width; ++i) {
 				if (srcPos[i])
 					destPos[i] = srcPos[i];
-			}
-		} else
-			for (int16 i = 0; i < width; ++i)
-				destPos[i] = srcPos[i];
+			} 	
 
-		srcPos += source->getWidth();
-		destPos += dest->getWidth();
+			srcPos += source->getWidth();
+			destPos += dest->getWidth();
+		}
+	}
+	else
+	{
+		while (height--) {
+			memcpy(destPos, srcPos, width);
+
+			srcPos += source->getWidth();
+			destPos += dest->getWidth();
+		}  
 	}
 }
 

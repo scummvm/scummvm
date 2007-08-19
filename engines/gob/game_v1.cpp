@@ -345,6 +345,7 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 	int16 oldIndex;
 	int16 oldId;
 	uint32 timeKey;
+	bool firstIteration = true;
 
 	if (deltaTime >= -1) {
 		_lastCollKey = 0;
@@ -356,6 +357,8 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 		*pResId = 0;
 
 	resIndex = 0;
+
+	timeKey = _vm->_util->getTimeKey();
 
 	if ((_vm->_draw->_cursorIndex == -1) && (handleMouse != 0) &&
 			(_lastCollKey == 0)) {
@@ -374,7 +377,6 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 	if (handleMouse != 0)
 		_vm->_draw->animateCursor(-1);
 
-	timeKey = _vm->_util->getTimeKey();
 	while (1) {
 		if (_vm->_inter->_terminate) {
 			if (handleMouse)
@@ -395,7 +397,7 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 		// Additionally, I added a 'deltaTime == -1' check there, since
 		// when this function is called with deltaTime == -1 in inputArea,
 		// and the return value is then discarded.
-		if (deltaTime < 0) {
+		if (deltaTime < 0 && !firstIteration) {
 			uint32 curtime = _vm->_util->getTimeKey();
 			if ((deltaTime == -1) || ((curtime + deltaTime) > timeKey)) {
 				if (pResId != 0)
@@ -538,7 +540,10 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 		if (handleMouse != 0)
 			_vm->_draw->animateCursor(-1);
 
-		_vm->_util->delay(10);
+		if (deltaTime < -10)
+      _vm->_util->delay(10);
+
+		firstIteration = false;
 	}
 }
 
@@ -617,7 +622,7 @@ void Game_v1::collisionsBlock(void) {
 	int16 var_26;
 	int16 collStackPos;
 	Collision *collPtr;
-	int16 timeKey;
+	uint32 timeKey;
 	byte *savedIP;
 
 	if (_shouldPushColls)
@@ -910,9 +915,9 @@ void Game_v1::collisionsBlock(void) {
 
 								_shouldPushColls = 0;
 								_vm->_global->_inter_execPtr = savedIP;
+
 								deltaTime = timeVal -
-									((_vm->_util->getTimeKey() - timeKey)
-									 - _vm->_video->_lastRetraceLength);
+									(_vm->_util->getTimeKey() - timeKey);
 
 								if (deltaTime < 2)
 									deltaTime = 2;

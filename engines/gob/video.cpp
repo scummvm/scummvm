@@ -94,7 +94,6 @@ Video::Video(GobEngine *vm) : _vm(vm) {
 	_splitHeight1 = 200;
 	_splitHeight2 = 0;
 	_splitStart = 0;
-	_lastRetraceLength = 0;
 
 	_curSparse = 0;
 	_lastSparse = 0xFFFFFFFF;
@@ -162,8 +161,6 @@ SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height,
 }
 
 void Video::retrace(bool mouse) {
-	uint32 time = _vm->_util->getTimeKey();
-
 	if (mouse)
 		CursorMan.showMouse((_vm->_draw->_showCursor & 2) != 0);
 	if (_vm->_global->_primarySurfDesc) {
@@ -176,13 +173,12 @@ void Video::retrace(bool mouse) {
 					_vm->_height - _splitHeight2, _vm->_width, _splitHeight2);
 		g_system->updateScreen();
 	}
-
-	_lastRetraceLength = _vm->_util->getTimeKey() - time;
 }
 
 void Video::waitRetrace(bool mouse) {
+	uint32 time = _vm->_util->getTimeKey();
 	retrace(mouse);
-	_vm->_util->delay(MAX(1, 10 - (int) _lastRetraceLength));
+	_vm->_util->delay(MAX(1, 10 - (int)(_vm->_util->getTimeKey() - time)));
 }
 
 void Video::sparseRetrace(int max) {
