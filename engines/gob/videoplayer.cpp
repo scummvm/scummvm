@@ -139,7 +139,6 @@ bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Ty
 		}
 
 		strcpy(_curFile, fileName);
-		_video->setXY(x, y);
 
 		if (!(flags & kFlagNoVideo)) {
 			_backSurf = ((flags & kFlagFrontSurface) == 0);
@@ -154,6 +153,7 @@ bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Ty
 	if (!_video)
 		return false;
 
+	_video->setXY(x, y);
 	WRITE_VAR(7, _video->getFramesCount());
 
 	return true;
