@@ -50,6 +50,16 @@ namespace Agi {
 #define ENV_RELEASE	7500		/**< envelope release rate */
 #define NUM_CHANNELS    7		/**< number of sound channels */
 
+// MIDI command values (Shifted right by 4 so they're in the lower nibble)
+#define MIDI_CMD_NOTE_OFF        0x08
+#define MIDI_CMD_NOTE_ON         0x09
+#define MIDI_CMD_CONTROLLER      0x0B
+#define MIDI_CMD_PROGRAM_CHANGE  0x0C
+#define MIDI_CMD_PITCH_WHEEL     0x0E
+// Whole MIDI byte values (Command and channel info together)
+#define MIDI_BYTE_STOP_SEQUENCE  0xFC
+#define MIDI_BYTE_TIMER_SYNC     0xF8
+
 struct IIgsEnvelopeSegment {
 	uint8 bp;
 	uint16 inc; ///< 8b.8b fixed point, very probably little endian
@@ -281,8 +291,12 @@ public:
 	IIgsMidi(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
 	~IIgsMidi() { if (_data != NULL) free(_data); }
 	virtual uint16 type() { return _type; }
+	virtual const uint8 *getPtr() { return _ptr; }
+	virtual void setPtr(const uint8 *ptr) { _ptr = ptr; }
+	virtual void rewind() { _ptr = _data + 2; }
 protected:
 	uint8 *_data; ///< Raw sound resource data
+	const uint8 *_ptr; ///< Pointer to the current position in the MIDI data
 	uint32 _len; ///< Length of the raw sound resource
 	uint16 _type; ///< Sound resource type
 };

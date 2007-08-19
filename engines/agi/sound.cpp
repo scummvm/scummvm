@@ -58,6 +58,7 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, S
 
 IIgsMidi::IIgsMidi(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : AgiSound(manager) {
 	_data = data; // Save the resource pointer
+	_ptr = _data + 2; // Set current position to just after the header
 	_len  = len;  // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type
 	_isValid = (_type == AGI_SOUND_MIDI) && (_data != NULL) && (_len >= 2);
@@ -254,6 +255,10 @@ static const IIgsExeInfo IIgsExeInfos[] = {
 static IIgsInstrumentHeader g_instruments[MAX_INSTRUMENTS];
 static uint g_numInstruments = 0;
 static int16 g_wave[SIERRASTANDARD_SIZE]; // FIXME? Should this be allocated from the heap? (Size is 128KiB)
+// Time (In milliseconds) in Apple IIGS mixing buffer time granularity
+// (i.e. in IIGS_BUFFER_SIZE / getRate() seconds granularity)
+static uint32 g_IIgsBufGranMillis = 0;
+static uint32 g_midiMillis = 0; // Time position (In milliseconds) in currently playing MIDI sound
 
 bool SoundMgr::finalizeInstruments(Common::SeekableReadStream &uint8Wave) {
 	for (uint i = 0; i < g_numInstruments; i++)
@@ -361,6 +366,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 		break;
 	}
 	case AGI_SOUND_MIDI:
+		g_IIgsBufGranMillis = g_midiMillis = 0;
 #if 0
 		debugC(3, kDebugLevelSound, "IIGS MIDI sequence");
 
@@ -509,64 +515,119 @@ void SoundMgr::playNote(int i, int freq, int vol) {
 }
 
 void SoundMgr::playMidiSound() {
-	uint8 *p;
+	const uint8 *p;
 	uint8 parm1, parm2;
 	static uint8 cmd, ch;
 
-	_playing = true;
-
-	if (_chn[0].timer > 0) {
-		_chn[0].timer -= 2;
-		return;
-	}
-
-	p = (uint8 *)_chn[0].ptr;
-
-	if (*p & 0x80) {
-		cmd = *p++;
-		ch = cmd & 0x0f;
-		cmd >>= 4;
-	}
-
-	switch (cmd) {
-	case 0x08:
-		parm1 = *p++;
-		parm2 = *p++;
-		if (ch < NUM_CHANNELS)
-			stopNote(ch);
-		break;
-	case 0x09:
-		parm1 = *p++;
-		parm2 = *p++;
-		if (ch < NUM_CHANNELS)
-			playNote(ch, noteToPeriod(parm1), 127);
-		break;
-	case 0x0b:
-		parm1 = *p++;
-		parm2 = *p++;
-		debugC(3, kDebugLevelSound, "controller %02x, ch %02x, val %02x", parm1, ch, parm2);
-		break;
-	case 0x0c:
-		parm1 = *p++;
-#if 0
-		if (ch < NUM_CHANNELS) {
-			_chn[ch].ins = (uint16 *)&wave[waveaddr[parm1]];
-			_chn[ch].size = wavesize[parm1];
-		}
-		debugC(3, kDebugLevelSound, "set patch %02x (%d,%d), ch %02x",
-				parm1, waveaddr[parm1], wavesize[parm1], ch);
-#endif
-		break;
-	}
-
-	_chn[0].timer = *p++;
-	_chn[0].ptr = p;
-
-	if (*p >= 0xfc) {
-		debugC(3, kDebugLevelSound, "end of sequence");
+	if (_playingSound == -1 || _vm->_game.sounds[_playingSound] == NULL) {
+		warning("Error playing Apple IIGS MIDI sound resource");
 		_playing = false;
 		return;
 	}
+
+	IIgsMidi *midiObj = (IIgsMidi *) _vm->_game.sounds[_playingSound];
+
+	_playing = true;
+	p = midiObj->getPtr();
+
+	g_IIgsBufGranMillis += (IIGS_BUFFER_SIZE * 1000) / getRate();
+
+	while (g_midiMillis < g_IIgsBufGranMillis) {
+		uint8 readByte = *p++;
+
+		// Check for end of MIDI sequence marker (Can also be here before delta-time)
+		if (readByte == MIDI_BYTE_STOP_SEQUENCE) {
+			debugC(3, kDebugLevelSound, "End of MIDI sequence (Before reading delta-time)");
+			g_IIgsBufGranMillis = g_midiMillis = 0;
+			_playing = false;
+			midiObj->rewind();
+			return;
+		} else if (readByte == MIDI_BYTE_TIMER_SYNC) {
+			debugC(3, kDebugLevelSound, "Timer sync");
+			continue;
+		}
+
+		uint8 deltaTime = readByte;
+		uint32 bpm = 120; // Don't know if this is correct
+		g_midiMillis += (deltaTime * 1000) / bpm;
+
+		// Check for end of MIDI sequence marker (This time it after reading delta-time)
+		if (*p == MIDI_BYTE_STOP_SEQUENCE) {
+			debugC(3, kDebugLevelSound, "End of MIDI sequence (After reading delta-time)");
+			g_IIgsBufGranMillis = g_midiMillis = 0;
+			_playing = false;
+			midiObj->rewind();
+			return;
+		}
+
+		// Separate byte into command and channel if it's a command byte.
+		// Otherwise use running status (i.e. previously set command and channel).
+		if (*p & 0x80) {
+			cmd = *p++;
+			ch = cmd & 0x0f;
+			cmd >>= 4;
+		}
+
+		switch (cmd) {
+		case MIDI_CMD_NOTE_OFF:
+			parm1 = *p++;
+			parm2 = *p++;
+#if 0
+			if (ch < NUM_CHANNELS)
+				stopNote(ch);
+#endif
+			debugC(3, kDebugLevelSound, "note off, channel %02x, note %02x, velocity %02x", ch, parm1, parm2);
+			break;
+		case MIDI_CMD_NOTE_ON:
+			parm1 = *p++;
+			parm2 = *p++;
+#if 0
+			if (ch < NUM_CHANNELS)
+				playNote(ch, noteToPeriod(parm1), 127);
+#endif
+			debugC(3, kDebugLevelSound, "note  on, channel %02x, note %02x, velocity %02x", ch, parm1, parm2);
+			break;
+		case MIDI_CMD_CONTROLLER:
+			// The tested Apple IIGS AGI MIDI resources only used
+			// controllers 0 (Bank select?), 7 (Volume) and 64 (Sustain On/Off).
+			// Controller 0's parameter was in range 94-127,
+			// controller 7's parameter was in range 0-127 and
+			// controller 64's parameter was always 0 (i.e. sustain off).
+			// TODO: Find out what controller 0 does and implement volume changes.
+			parm1 = *p++;
+			parm2 = *p++;
+			debugC(3, kDebugLevelSound, "controller %02x, ch %02x, val %02x", parm1, ch, parm2);
+			break;
+		case MIDI_CMD_PROGRAM_CHANGE:
+			// In all the tested Apple IIGS AGI MIDI resources
+			// program change's parameter was in range 0-43.
+			// This doesn't map directly to instrument numbers as all of
+			// the tested Apple IIGS AGI games only use 26 or 28 instruments.
+			// TODO: Find out the mapping to instruments and implement it.
+			parm1 = *p++;
+			debugC(3, kDebugLevelSound, "program change %02x, channel %02x", parm1, ch);
+#if 0
+			if (ch < NUM_CHANNELS) {
+				chn[ch].ins = (uint16 *)&wave[waveaddr[parm1]];
+				chn[ch].size = wavesize[parm1];
+			}
+			debugC(3, kDebugLevelSound, "set patch %02x (%d,%d), ch %02x",
+					parm1, waveaddr[parm1], wavesize[parm1], ch);
+#endif
+			break;
+		case MIDI_CMD_PITCH_WHEEL:
+			parm1 = *p++;
+			parm2 = *p++;
+			// In all the tested Apple IIGS AGI MIDI resources
+			// pitch wheel commands always had 0x2000 (Center position)
+			// as the combined 14-bit value for the position.
+			uint16 wheelPos = ((parm2 & 0x7F) << 7) | (parm1 & 0x7F); // 14-bit value
+			debugC(3, kDebugLevelSound, "Pitch wheel position %04x (Not implemented yet)", wheelPos);
+			break;
+		}
+	}
+
+	midiObj->setPtr(p);
 }
 
 void SoundMgr::playSampleSound() {
@@ -628,9 +689,8 @@ void SoundMgr::playSound() {
 	if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
 		if (_playingSound != -1) {
 			if (_vm->_game.sounds[_playingSound]->type() == AGI_SOUND_MIDI) {
-				/* play_midi_sound (); */
+				playMidiSound();
 				//warning("playSound: Trying to play an Apple IIGS MIDI sound. Not yet implemented!");
-				_playing = false;
 			} else if (_vm->_game.sounds[_playingSound]->type() == AGI_SOUND_SAMPLE) {
 				//debugC(3, kDebugLevelSound, "playSound: Trying to play an Apple IIGS sample");
 				playSampleSound();
