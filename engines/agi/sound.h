@@ -199,26 +199,34 @@ struct IIgsChannelInfo {
 	bool   end;     ///< Has the playing ended?
 };
 
+	enum AgiSoundType {
+		// FIXME: Fingolfin wonders: Why are bitmasks used here, when those
+		// types seem to be mutually exclusive?
+		AGI_SOUND_SAMPLE	= 0x0001,
+		AGI_SOUND_MIDI		= 0x0002,
+		AGI_SOUND_4CHN		= 0x0008
+	};
+	enum AgiSoundFlags {
+		AGI_SOUND_LOOP		= 0x0001,
+		AGI_SOUND_ENVELOPE	= 0x0002
+	};
+	enum AgiSoundEnv {
+		AGI_SOUND_ENV_ATTACK	= 3,
+		AGI_SOUND_ENV_DECAY		= 2,
+		AGI_SOUND_ENV_SUSTAIN	= 1,
+		AGI_SOUND_ENV_RELEASE	= 0
+	};
 /**
  * AGI engine sound channel structure.
  */
 struct ChannelInfo {
-#define AGI_SOUND_SAMPLE	0x0001
-#define AGI_SOUND_MIDI		0x0002
-#define AGI_SOUND_4CHN		0x0008
-	uint32 type;
+	AgiSoundType type;
 	const uint8 *ptr; // Pointer to the AgiNote data
-	int16 *ins;
+	const int16 *ins;
 	int32 size;
 	uint32 phase;
-#define AGI_SOUND_LOOP		0x0001
-#define AGI_SOUND_ENVELOPE	0x0002
-	uint32 flags;
-#define AGI_SOUND_ENV_ATTACK	3
-#define AGI_SOUND_ENV_DECAY	2
-#define AGI_SOUND_ENV_SUSTAIN	1
-#define AGI_SOUND_ENV_RELEASE	0
-	uint32 adsr;
+	uint32 flags;	// ORs values from AgiSoundFlags
+	AgiSoundEnv adsr;
 	int32 timer;
 	uint32 end;
 	uint32 freq;
@@ -342,6 +350,16 @@ private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
 	uint32 _sampleRate;
+
+	bool _playing;
+	ChannelInfo _chn[NUM_CHANNELS];
+	IIgsChannelInfo _IIgsChannel;
+	int _endflag;
+	int _playingSound;
+	uint8 _env;
+
+	int16 *_sndBuffer;
+	const int16 *_waveform;
 
 	void premixerCall(int16 *buf, uint len);
 

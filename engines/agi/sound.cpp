@@ -262,18 +262,7 @@ bool SoundMgr::finalizeInstruments(Common::SeekableReadStream &uint8Wave) {
 	return true;
 }
 
-static int playing;
-static ChannelInfo chn[NUM_CHANNELS];
-static IIgsChannelInfo IIgsChannel;
-static int endflag = -1;
-static int playingSound = -1;
-static uint8 env;
-
-
-static int16 *sndBuffer;
-static int16 *waveform;
-
-static int16 waveformRamp[WAVEFORM_SIZE] = {
+static const int16 waveformRamp[WAVEFORM_SIZE] = {
 	0, 8, 16, 24, 32, 40, 48, 56,
 	64, 72, 80, 88, 96, 104, 112, 120,
 	128, 136, 144, 152, 160, 168, 176, 184,
@@ -284,7 +273,7 @@ static int16 waveformRamp[WAVEFORM_SIZE] = {
 	-64, -56, -48, -40, -32, -24, -16, -8	/* Ramp up */
 };
 
-static int16 waveformSquare[WAVEFORM_SIZE] = {
+static const int16 waveformSquare[WAVEFORM_SIZE] = {
 	255, 230, 220, 220, 220, 220, 220, 220,
 	220, 220, 220, 220, 220, 220, 220, 220,
 	220, 220, 220, 220, 220, 220, 220, 220,
@@ -295,7 +284,7 @@ static int16 waveformSquare[WAVEFORM_SIZE] = {
 	-220, -220, -220, -110, 0, 0, 0, 0	/* Square */
 };
 
-static int16 waveformMac[WAVEFORM_SIZE] = {
+static const int16 waveformMac[WAVEFORM_SIZE] = {
 	45, 110, 135, 161, 167, 173, 175, 176,
 	156, 137, 123, 110, 91, 72, 35, -2,
 	-60, -118, -142, -165, -170, -176, -177, -179,
@@ -306,7 +295,7 @@ static int16 waveformMac[WAVEFORM_SIZE] = {
 	-175, -172, -165, -159, -137, -114, -67, -19
 };
 
-static uint16 period[] = {
+static const uint16 period[] = {
 	1024, 1085, 1149, 1218, 1290, 1367,
 	1448, 1534, 1625, 1722, 1825, 1933
 };
@@ -329,7 +318,8 @@ void SoundMgr::unloadSound(int resnum) {
 }
 
 void SoundMgr::startSound(int resnum, int flag) {
-	int i, type;
+	int i;
+	AgiSoundType type;
 
 	if (_vm->_game.sounds[resnum] != NULL && _vm->_game.sounds[resnum]->isPlaying())
 		return;
@@ -339,100 +329,100 @@ void SoundMgr::startSound(int resnum, int flag) {
 	if (_vm->_game.sounds[resnum] == NULL) // Is this needed at all?
 		return;
 
-	type = _vm->_game.sounds[resnum]->type();
+	type = (AgiSoundType)_vm->_game.sounds[resnum]->type();
 
 	if (type != AGI_SOUND_SAMPLE && type != AGI_SOUND_MIDI && type != AGI_SOUND_4CHN)
 		return;
 
 	_vm->_game.sounds[resnum]->play();
-	playingSound = resnum;
+	_playingSound = resnum;
 
 	debugC(3, kDebugLevelSound, "startSound(resnum = %d, flag = %d)", resnum, flag);
 
 	switch (type) {
 	case AGI_SOUND_SAMPLE: {
-		IIgsSample *sampleRes = (IIgsSample *) _vm->_game.sounds[playingSound];
-		const IIgsWaveInfo &waveInfo = IIgsChannel.ins.oscList(0).waves[0];
+		IIgsSample *sampleRes = (IIgsSample *) _vm->_game.sounds[_playingSound];
+		const IIgsWaveInfo &waveInfo = _IIgsChannel.ins.oscList(0).waves[0];
 		const IIgsSampleHeader &header = sampleRes->getHeader();
 
-		IIgsChannel.ins     = header.instrument;
-		IIgsChannel.sample  = sampleRes->getSample() + waveInfo.addr;
-		IIgsChannel.pos     = intToFrac(0);
-		IIgsChannel.posAdd  = intToFrac(0);
-		IIgsChannel.note    = intToFrac(header.pitch) + doubleToFrac(waveInfo.relPitch/256.0);
-		IIgsChannel.startEnvVol = intToFrac(0);
-		IIgsChannel.chanVol = intToFrac(header.volume);
-		IIgsChannel.envVol  = IIgsChannel.startEnvVol;
-		IIgsChannel.vol     = doubleToFrac(fracToDouble(IIgsChannel.envVol) * fracToDouble(IIgsChannel.chanVol) / 127.0);
-		IIgsChannel.envSeg  = intToFrac(0);
-		IIgsChannel.loop    = (waveInfo.mode == OSC_MODE_LOOP);
-		IIgsChannel.size    = waveInfo.size - waveInfo.addr;
-		IIgsChannel.end     = false;
+		_IIgsChannel.ins     = header.instrument;
+		_IIgsChannel.sample  = sampleRes->getSample() + waveInfo.addr;
+		_IIgsChannel.pos     = intToFrac(0);
+		_IIgsChannel.posAdd  = intToFrac(0);
+		_IIgsChannel.note    = intToFrac(header.pitch) + doubleToFrac(waveInfo.relPitch/256.0);
+		_IIgsChannel.startEnvVol = intToFrac(0);
+		_IIgsChannel.chanVol = intToFrac(header.volume);
+		_IIgsChannel.envVol  = _IIgsChannel.startEnvVol;
+		_IIgsChannel.vol     = doubleToFrac(fracToDouble(_IIgsChannel.envVol) * fracToDouble(_IIgsChannel.chanVol) / 127.0);
+		_IIgsChannel.envSeg  = intToFrac(0);
+		_IIgsChannel.loop    = (waveInfo.mode == OSC_MODE_LOOP);
+		_IIgsChannel.size    = waveInfo.size - waveInfo.addr;
+		_IIgsChannel.end     = false;
 		break;
 	}
-#if 0
 	case AGI_SOUND_MIDI:
+#if 0
 		debugC(3, kDebugLevelSound, "IIGS MIDI sequence");
 
 		for (i = 0; i < NUM_CHANNELS; i++) {
-			chn[i].type = type;
-			chn[i].flags = AGI_SOUND_LOOP | AGI_SOUND_ENVELOPE;
-			chn[i].ins = waveform;
-			chn[i].size = WAVEFORM_SIZE;
-			chn[i].vol = 0;
-			chn[i].end = 0;
+			_chn[i].type = type;
+			_chn[i].flags = AGI_SOUND_LOOP | AGI_SOUND_ENVELOPE;
+			_chn[i].ins = _waveform;
+			_chn[i].size = WAVEFORM_SIZE;
+			_chn[i].vol = 0;
+			_chn[i].end = 0;
 		}
 
-		chn[0].timer = *(song + 2);
-		chn[0].ptr = (struct AgiNote *)(song + 3);
-		break;
+		_chn[0].timer = *(song + 2);
+		_chn[0].ptr = (struct AgiNote *)(song + 3);
 #endif
+		break;
 	case AGI_SOUND_4CHN:
 		PCjrSound *pcjrSound = (PCjrSound *) _vm->_game.sounds[resnum];
 		/* Initialize channel info */
 		for (i = 0; i < NUM_CHANNELS; i++) {
-			chn[i].type = type;
-			chn[i].flags = AGI_SOUND_LOOP;
-			if (env) {
-				chn[i].flags |= AGI_SOUND_ENVELOPE;
-				chn[i].adsr = AGI_SOUND_ENV_ATTACK;
+			_chn[i].type = type;
+			_chn[i].flags = AGI_SOUND_LOOP;
+			if (_env) {
+				_chn[i].flags |= AGI_SOUND_ENVELOPE;
+				_chn[i].adsr = AGI_SOUND_ENV_ATTACK;
 			}
-			chn[i].ins = waveform;
-			chn[i].size = WAVEFORM_SIZE;
-			chn[i].ptr = pcjrSound->getVoicePointer(i % 4);
-			chn[i].timer = 0;
-			chn[i].vol = 0;
-			chn[i].end = 0;
+			_chn[i].ins = _waveform;
+			_chn[i].size = WAVEFORM_SIZE;
+			_chn[i].ptr = pcjrSound->getVoicePointer(i % 4);
+			_chn[i].timer = 0;
+			_chn[i].vol = 0;
+			_chn[i].end = 0;
 		}
 		break;
 	}
 
-	memset(sndBuffer, 0, BUFFER_SIZE << 1);
-	endflag = flag;
+	memset(_sndBuffer, 0, BUFFER_SIZE << 1);
+	_endflag = flag;
 
 	/* Nat Budin reports that the flag should be reset when sound starts
 	 */
-	_vm->setflag(endflag, false);
+	_vm->setflag(_endflag, false);
 }
 
 void SoundMgr::stopSound() {
 	int i;
 
-	endflag = -1;
+	_endflag = -1;
 	if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
 		for (i = 0; i < NUM_CHANNELS; i++)
 			stopNote(i);
 	}
 
-	if (playingSound != -1) {
-		_vm->_game.sounds[playingSound]->stop();
+	if (_playingSound != -1) {
+		_vm->_game.sounds[_playingSound]->stop();
 		
 		if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
-			IIgsChannel.end     = true;
-			IIgsChannel.chanVol = intToFrac(0);
+			_IIgsChannel.end     = true;
+			_IIgsChannel.chanVol = intToFrac(0);
 		}
 
-		playingSound = -1;
+		_playingSound = -1;
 	}
 }
 
@@ -441,21 +431,21 @@ static int16 *buffer;
 int SoundMgr::initSound() {
 	int r = -1;
 
-	buffer = sndBuffer = (int16 *)calloc(2, BUFFER_SIZE);
+	buffer = _sndBuffer = (int16 *)calloc(2, BUFFER_SIZE);
 
-	env = false;
+	_env = false;
 
 	switch (_vm->_soundemu) {
 	case SOUND_EMU_NONE:
-		waveform = waveformRamp;
-		env = true;
+		_waveform = waveformRamp;
+		_env = true;
 		break;
 	case SOUND_EMU_AMIGA:
 	case SOUND_EMU_PC:
-		waveform = waveformSquare;
+		_waveform = waveformSquare;
 		break;
 	case SOUND_EMU_MAC:
-		waveform = waveformMac;
+		_waveform = waveformMac;
 		break;
 	case SOUND_EMU_APPLE2GS:
 		loadInstruments();
@@ -465,7 +455,7 @@ int SoundMgr::initSound() {
 	report("Initializing sound:\n");
 
 	report("sound: envelopes ");
-	if (env) {
+	if (_env) {
 		report("enabled (decay=%d, sustain=%d)\n", ENV_DECAY, ENV_SUSTAIN);
 	} else {
 		report("disabled\n");
@@ -479,15 +469,15 @@ int SoundMgr::initSound() {
 void SoundMgr::deinitSound() {
 	debugC(3, kDebugLevelSound, "()");
 	_mixer->stopHandle(_soundHandle);
-	free(sndBuffer);
+	free(_sndBuffer);
 }
 
 void SoundMgr::stopNote(int i) {
-	chn[i].adsr = AGI_SOUND_ENV_RELEASE;
+	_chn[i].adsr = AGI_SOUND_ENV_RELEASE;
 
 	if (g_useChorus) {
 		/* Stop chorus ;) */
-		if (chn[i].type == AGI_SOUND_4CHN &&
+		if (_chn[i].type == AGI_SOUND_4CHN &&
 			_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 			stopNote(i + 4);
 		}
@@ -500,15 +490,15 @@ void SoundMgr::playNote(int i, int freq, int vol) {
 	else if (vol && _vm->_soundemu == SOUND_EMU_PC)
 		vol = 160;
 
-	chn[i].phase = 0;
-	chn[i].freq = freq;
-	chn[i].vol = vol;
-	chn[i].env = 0x10000;
-	chn[i].adsr = AGI_SOUND_ENV_ATTACK;
+	_chn[i].phase = 0;
+	_chn[i].freq = freq;
+	_chn[i].vol = vol;
+	_chn[i].env = 0x10000;
+	_chn[i].adsr = AGI_SOUND_ENV_ATTACK;
 
 	if (g_useChorus) {
 		/* Add chorus ;) */
-		if (chn[i].type == AGI_SOUND_4CHN &&
+		if (_chn[i].type == AGI_SOUND_4CHN &&
 			_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 			int newfreq = freq * 1007 / 1000;
 			if (freq == newfreq)
@@ -523,14 +513,14 @@ void SoundMgr::playMidiSound() {
 	uint8 parm1, parm2;
 	static uint8 cmd, ch;
 
-	playing = 1;
+	_playing = true;
 
-	if (chn[0].timer > 0) {
-		chn[0].timer -= 2;
+	if (_chn[0].timer > 0) {
+		_chn[0].timer -= 2;
 		return;
 	}
 
-	p = (uint8 *)chn[0].ptr;
+	p = (uint8 *)_chn[0].ptr;
 
 	if (*p & 0x80) {
 		cmd = *p++;
@@ -560,8 +550,8 @@ void SoundMgr::playMidiSound() {
 		parm1 = *p++;
 #if 0
 		if (ch < NUM_CHANNELS) {
-			chn[ch].ins = (uint16 *)&wave[waveaddr[parm1]];
-			chn[ch].size = wavesize[parm1];
+			_chn[ch].ins = (uint16 *)&wave[waveaddr[parm1]];
+			_chn[ch].size = wavesize[parm1];
 		}
 		debugC(3, kDebugLevelSound, "set patch %02x (%d,%d), ch %02x",
 				parm1, waveaddr[parm1], wavesize[parm1], ch);
@@ -569,12 +559,12 @@ void SoundMgr::playMidiSound() {
 		break;
 	}
 
-	chn[0].timer = *p++;
-	chn[0].ptr = p;
+	_chn[0].timer = *p++;
+	_chn[0].ptr = p;
 
 	if (*p >= 0xfc) {
 		debugC(3, kDebugLevelSound, "end of sequence");
-		playing = 0;
+		_playing = false;
 		return;
 	}
 }
@@ -585,22 +575,23 @@ void SoundMgr::playSampleSound() {
 		return;
 	}
 
-	if (playingSound != -1)
-		playing = !IIgsChannel.end;
+	if (_playingSound != -1)
+		_playing = !_IIgsChannel.end;
 }
 
 void SoundMgr::playAgiSound() {
 	int i;
 	AgiNote note;
 
-	for (playing = i = 0; i < (_vm->_soundemu == SOUND_EMU_PC ? 1 : 4); i++) {
-		playing |= !chn[i].end;
-		note.read(chn[i].ptr); // Read a single note (Doesn't advance the pointer)
+	_playing = false;
+	for (i = 0; i < (_vm->_soundemu == SOUND_EMU_PC ? 1 : 4); i++) {
+		_playing |= !_chn[i].end;
+		note.read(_chn[i].ptr); // Read a single note (Doesn't advance the pointer)
 
-		if (chn[i].end)
+		if (_chn[i].end)
 			continue;
 
-		if ((--chn[i].timer) <= 0) {
+		if ((--_chn[i].timer) <= 0) {
 			stopNote(i);
 
 			if (note.freqDiv != 0) {
@@ -608,22 +599,22 @@ void SoundMgr::playAgiSound() {
 				playNote(i, note.freqDiv * 10, volume);
 			}
 
-			chn[i].timer = note.duration;
+			_chn[i].timer = note.duration;
 
-			if (chn[i].timer == 0xffff) {
-				chn[i].end = 1;
-				chn[i].vol = 0;
-				chn[i].env = 0;
+			if (_chn[i].timer == 0xffff) {
+				_chn[i].end = 1;
+				_chn[i].vol = 0;
+				_chn[i].env = 0;
 
 				if (g_useChorus) {
 					/* chorus */
-					if (chn[i].type == AGI_SOUND_4CHN && _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
-						chn[i + 4].vol = 0;
-						chn[i + 4].env = 0;
+					if (_chn[i].type == AGI_SOUND_4CHN && _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
+						_chn[i + 4].vol = 0;
+						_chn[i + 4].env = 0;
 					}
 				}
 			}
-			chn[i].ptr += 5; // Advance the pointer to the next note data (5 bytes per note)
+			_chn[i].ptr += 5; // Advance the pointer to the next note data (5 bytes per note)
 		}
 	}
 }
@@ -631,16 +622,16 @@ void SoundMgr::playAgiSound() {
 void SoundMgr::playSound() {
 	int i;
 
-	if (endflag == -1)
+	if (_endflag == -1)
 		return;
 
 	if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
-		if (playingSound != -1) {
-			if (_vm->_game.sounds[playingSound]->type() == AGI_SOUND_MIDI) {
+		if (_playingSound != -1) {
+			if (_vm->_game.sounds[_playingSound]->type() == AGI_SOUND_MIDI) {
 				/* play_midi_sound (); */
 				//warning("playSound: Trying to play an Apple IIGS MIDI sound. Not yet implemented!");
-				playing = 0;
-			} else if (_vm->_game.sounds[playingSound]->type() == AGI_SOUND_SAMPLE) {
+				_playing = false;
+			} else if (_vm->_game.sounds[_playingSound]->type() == AGI_SOUND_SAMPLE) {
 				//debugC(3, kDebugLevelSound, "playSound: Trying to play an Apple IIGS sample");
 				playSampleSound();
 			}
@@ -650,156 +641,156 @@ void SoundMgr::playSound() {
 		playAgiSound();
 	}
 
-	if (!playing) {
+	if (!_playing) {
 		if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
-			for (i = 0; i < NUM_CHANNELS; chn[i++].vol = 0);
+			for (i = 0; i < NUM_CHANNELS; _chn[i++].vol = 0);
 		}
 
-		if (endflag != -1)
-			_vm->setflag(endflag, true);
+		if (_endflag != -1)
+			_vm->setflag(_endflag, true);
 
-		if (playingSound != -1)
-			_vm->_game.sounds[playingSound]->stop();
-		playingSound = -1;
-		endflag = -1;
+		if (_playingSound != -1)
+			_vm->_game.sounds[_playingSound]->stop();
+		_playingSound = -1;
+		_endflag = -1;
 	}
 }
 
 uint32 SoundMgr::mixSound(void) {
 	register int i, p;
-	int16 *src;
+	const int16 *src;
 	int c, b, m;
 
-	memset(sndBuffer, 0, BUFFER_SIZE << 1);
+	memset(_sndBuffer, 0, BUFFER_SIZE << 1);
 
 	// Handle Apple IIGS sound mixing here
-	if (_vm->_soundemu == SOUND_EMU_APPLE2GS && playing && playingSound != -1) {
-		//IIgsWaveInfo &waveInfo = IIgsChannel.ins.oscList(0).waves[0];
+	if (_vm->_soundemu == SOUND_EMU_APPLE2GS && _playing && _playingSound != -1) {
+		//IIgsWaveInfo &waveInfo = _IIgsChannel.ins.oscList(0).waves[0];
 
-		//uint period = noteToPeriod(fracToInt(IIgsChannel.note + FRAC_HALF));
-		//IIgsChannel.posAdd = ((frac_t) (118600 * 4 / period)) << (FRAC_BITS - 8);
+		//uint period = noteToPeriod(fracToInt(_IIgsChannel.note + FRAC_HALF));
+		//_IIgsChannel.posAdd = ((frac_t) (118600 * 4 / period)) << (FRAC_BITS - 8);
 
 		// Hertz (number of vibrations a second) = 6.875 x 2 ^ ( ( 3 + MIDI_Pitch ) / 12 )
 		// From http://www.musicmasterworks.com/WhereMathMeetsMusic.html
-		//double hertz = 6.875 * pow(SEMITONE, 3 + fracToDouble(IIgsChannel.note));
-		//double hertz = 8.175798915644 * pow(SEMITONE, fracToDouble(IIgsChannel.note));
+		//double hertz = 6.875 * pow(SEMITONE, 3 + fracToDouble(_IIgsChannel.note));
+		//double hertz = 8.175798915644 * pow(SEMITONE, fracToDouble(_IIgsChannel.note));
 		// double step = getRate() / hertz;
-		// IIgsChannel.posAdd = doubleToFrac(step);
+		// _IIgsChannel.posAdd = doubleToFrac(step);
 		
 		// Frequency multiplier was 1076.0 based on tests made with MESS 0.117.
 		// Tests made with KEGS32 averaged the multiplier to around 1045.
 		// So this is a guess but maybe it's 1046.5... i.e. C6's frequency?
-		double hertz = C6_FREQ * pow(SEMITONE, fracToDouble(IIgsChannel.note));
-		IIgsChannel.posAdd = doubleToFrac(hertz / getRate());
-		IIgsChannel.vol = doubleToFrac(fracToDouble(IIgsChannel.envVol) * fracToDouble(IIgsChannel.chanVol) / 127.0);
-		double tempVol = fracToDouble(IIgsChannel.vol)/127.0;
+		double hertz = C6_FREQ * pow(SEMITONE, fracToDouble(_IIgsChannel.note));
+		_IIgsChannel.posAdd = doubleToFrac(hertz / getRate());
+		_IIgsChannel.vol = doubleToFrac(fracToDouble(_IIgsChannel.envVol) * fracToDouble(_IIgsChannel.chanVol) / 127.0);
+		double tempVol = fracToDouble(_IIgsChannel.vol)/127.0;
 
 		for (i = 0; i < IIGS_BUFFER_SIZE; i++) {
-			b = IIgsChannel.sample[fracToInt(IIgsChannel.pos)];
+			b = _IIgsChannel.sample[fracToInt(_IIgsChannel.pos)];
 			// DOESN'T DO MIXING YET! ONLY ONE SAMPLE PER PLAYING!
-			sndBuffer[i] = (int16) (b * tempVol);
-			IIgsChannel.pos += IIgsChannel.posAdd;
+			_sndBuffer[i] = (int16) (b * tempVol);
+			_IIgsChannel.pos += _IIgsChannel.posAdd;
 
-			if (IIgsChannel.pos >= intToFrac(IIgsChannel.size)) {
-				if (IIgsChannel.loop) {
-					IIgsChannel.pos %= intToFrac(IIgsChannel.size);
+			if (_IIgsChannel.pos >= intToFrac(_IIgsChannel.size)) {
+				if (_IIgsChannel.loop) {
+					_IIgsChannel.pos %= intToFrac(_IIgsChannel.size);
 					// Probably we should loop the envelope too
-					IIgsChannel.envSeg = 0;
-					IIgsChannel.envVol = IIgsChannel.startEnvVol;
+					_IIgsChannel.envSeg = 0;
+					_IIgsChannel.envVol = _IIgsChannel.startEnvVol;
 				} else {
-					IIgsChannel.pos = IIgsChannel.chanVol = 0;
-					IIgsChannel.end = true;
+					_IIgsChannel.pos = _IIgsChannel.chanVol = 0;
+					_IIgsChannel.end = true;
 					break;
 				}
 			}
 		}
 
-		if (IIgsChannel.envSeg <= IIgsChannel.ins.relseg) {
-			IIgsEnvelopeSegment &seg = IIgsChannel.ins.env.seg[IIgsChannel.envSeg];
+		if (_IIgsChannel.envSeg <= _IIgsChannel.ins.relseg) {
+			IIgsEnvelopeSegment &seg = _IIgsChannel.ins.env.seg[_IIgsChannel.envSeg];
 			double bufSecLen = IIGS_BUFFER_SIZE / (double) getRate();
 			double ticksPerSec = 100; // 1000 is way too much
 			double bufTickLen  = bufSecLen / (1.0/ticksPerSec);
 			frac_t envVolDelta = doubleToFrac((seg.inc/256.0)*bufTickLen);
-			if (intToFrac(seg.bp) >= IIgsChannel.envVol) {
-				IIgsChannel.envVol += envVolDelta;
-				if (IIgsChannel.envVol >= intToFrac(seg.bp)) {
-					IIgsChannel.envVol = intToFrac(seg.bp);
-					IIgsChannel.envSeg += 1;
+			if (intToFrac(seg.bp) >= _IIgsChannel.envVol) {
+				_IIgsChannel.envVol += envVolDelta;
+				if (_IIgsChannel.envVol >= intToFrac(seg.bp)) {
+					_IIgsChannel.envVol = intToFrac(seg.bp);
+					_IIgsChannel.envSeg += 1;
 				}
 			} else {
-				IIgsChannel.envVol -= envVolDelta;
-				if (IIgsChannel.envVol <= intToFrac(seg.bp)) {
-					IIgsChannel.envVol = intToFrac(seg.bp);
-					IIgsChannel.envSeg += 1;
+				_IIgsChannel.envVol -= envVolDelta;
+				if (_IIgsChannel.envVol <= intToFrac(seg.bp)) {
+					_IIgsChannel.envVol = intToFrac(seg.bp);
+					_IIgsChannel.envSeg += 1;
 				}
 			}
 		}
-		//IIgsChannel.envSeg += doubleToFrac(1/100.0);
+		//_IIgsChannel.envSeg += doubleToFrac(1/100.0);
 		return IIGS_BUFFER_SIZE;
 	} /* else ... */
 
 	// Handle PCjr 4-channel sound mixing here
 	for (c = 0; c < NUM_CHANNELS; c++) {
-		if (!chn[c].vol)
+		if (!_chn[c].vol)
 			continue;
 
-		m = chn[c].flags & AGI_SOUND_ENVELOPE ?
-		    chn[c].vol * chn[c].env >> 16 : chn[c].vol;
+		m = _chn[c].flags & AGI_SOUND_ENVELOPE ?
+		    _chn[c].vol * _chn[c].env >> 16 : _chn[c].vol;
 
-		if (chn[c].type != AGI_SOUND_4CHN || c != 3) {
-			src = chn[c].ins;
+		if (_chn[c].type != AGI_SOUND_4CHN || c != 3) {
+			src = _chn[c].ins;
 
-			p = chn[c].phase;
+			p = _chn[c].phase;
 			for (i = 0; i < BUFFER_SIZE; i++) {
 				b = src[p >> 8];
 #ifdef USE_INTERPOLATION
-				b += ((src[((p >> 8) + 1) % chn[c].size] - src[p >> 8]) * (p & 0xff)) >> 8;
+				b += ((src[((p >> 8) + 1) % _chn[c].size] - src[p >> 8]) * (p & 0xff)) >> 8;
 #endif
-				sndBuffer[i] += (b * m) >> 4;
+				_sndBuffer[i] += (b * m) >> 4;
 
-				p += (uint32) 118600 *4 / chn[c].freq;
+				p += (uint32) 118600 *4 / _chn[c].freq;
 
 				/* FIXME */
-				if (chn[c].flags & AGI_SOUND_LOOP) {
-					p %= chn[c].size << 8;
+				if (_chn[c].flags & AGI_SOUND_LOOP) {
+					p %= _chn[c].size << 8;
 				} else {
-					if (p >= chn[c].size << 8) {
-						p = chn[c].vol = 0;
-						chn[c].end = 1;
+					if (p >= _chn[c].size << 8) {
+						p = _chn[c].vol = 0;
+						_chn[c].end = 1;
 						break;
 					}
 				}
 
 			}
-			chn[c].phase = p;
+			_chn[c].phase = p;
 		} else {
 			/* Add white noise */
 			for (i = 0; i < BUFFER_SIZE; i++) {
 				b = _vm->_rnd->getRandomNumber(255) - 128;
-				sndBuffer[i] += (b * m) >> 4;
+				_sndBuffer[i] += (b * m) >> 4;
 			}
 		}
 
-		switch (chn[c].adsr) {
+		switch (_chn[c].adsr) {
 		case AGI_SOUND_ENV_ATTACK:
 			/* not implemented */
-			chn[c].adsr = AGI_SOUND_ENV_DECAY;
+			_chn[c].adsr = AGI_SOUND_ENV_DECAY;
 			break;
 		case AGI_SOUND_ENV_DECAY:
-			if (chn[c].env > chn[c].vol * ENV_SUSTAIN + ENV_DECAY) {
-				chn[c].env -= ENV_DECAY;
+			if (_chn[c].env > _chn[c].vol * ENV_SUSTAIN + ENV_DECAY) {
+				_chn[c].env -= ENV_DECAY;
 			} else {
-				chn[c].env = chn[c].vol * ENV_SUSTAIN;
-				chn[c].adsr = AGI_SOUND_ENV_SUSTAIN;
+				_chn[c].env = _chn[c].vol * ENV_SUSTAIN;
+				_chn[c].adsr = AGI_SOUND_ENV_SUSTAIN;
 			}
 			break;
 		case AGI_SOUND_ENV_SUSTAIN:
 			break;
 		case AGI_SOUND_ENV_RELEASE:
-			if (chn[c].env >= ENV_RELEASE) {
-				chn[c].env -= ENV_RELEASE;
+			if (_chn[c].env >= ENV_RELEASE) {
+				_chn[c].env -= ENV_RELEASE;
 			} else {
-				chn[c].env = 0;
+				_chn[c].env = 0;
 			}
 		}
 	}
@@ -1027,6 +1018,10 @@ SoundMgr::SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer) {
 	_vm = agi;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
+	_endflag = -1;
+	_playingSound = -1;
+	_sndBuffer = 0;
+	_waveform = 0;
 }
 
 void SoundMgr::premixerCall(int16 *data, uint len) {
