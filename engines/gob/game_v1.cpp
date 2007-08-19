@@ -397,9 +397,9 @@ int16 Game_v1::checkCollisions(byte handleMouse, int16 deltaTime,
 		// Additionally, I added a 'deltaTime == -1' check there, since
 		// when this function is called with deltaTime == -1 in inputArea,
 		// and the return value is then discarded.
-		if (deltaTime < 0 && !firstIteration) {
+		if (deltaTime < 0) {
 			uint32 curtime = _vm->_util->getTimeKey();
-			if ((deltaTime == -1) || ((curtime + deltaTime) > timeKey)) {
+			if ((deltaTime == -1) || (((curtime + deltaTime) > timeKey) && !firstIteration)) {
 				if (pResId != 0)
 					*pResId = 0;
 
