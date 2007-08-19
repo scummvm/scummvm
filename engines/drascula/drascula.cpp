@@ -1456,7 +1456,7 @@ void DrasculaEngine::carga_escoba_1(const char *nom_fich) {
 
 	if (!strcmp(num_room, "24.alg")) {
 		for (l = suelo_y1 - 1; l > 74; l--) {
-			factor_red[l] = lejos - pequegnez;
+			factor_red[l] = (int)(lejos - pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}
@@ -1479,7 +1479,7 @@ void DrasculaEngine::carga_escoba_1(const char *nom_fich) {
 		espuerta[7] = 0;
 
 	if (!strcmp(num_room, "26.alg"))
-		conta_ciego_vez = vez();
+		conta_ciego_vez = (int)vez();
 
 	if (musica_antes != musica_room)
 		playmusic(musica_room);
