@@ -1608,8 +1608,11 @@ void Actor::handleActions(int msec, bool setup) {
 					stepZoneAction(actor, actor->_lastZone, true, false);
 				actor->_lastZone = hitZone;
 				// WORKAROUND for graphics glitch in the rat caves. Don't do this step zone action in the rat caves
-				// (room 51) to avoid the glitch
-				if (hitZone && !(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51))
+				// (room 51) for hitzone 24577 (the door with the copy protection) to avoid the glitch. This glitch
+				// happens because the copy protection is supposed to kick in at this point, but it's bypassed
+				// (with permission from Wyrmkeep Entertainment)
+				if (hitZone && 
+					!(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51 && hitZone->getHitZoneId() == 24577))
 					stepZoneAction(actor, hitZone, false, false);
 			}
 		}
