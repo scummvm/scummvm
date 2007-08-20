@@ -420,8 +420,8 @@ void Interface::setMode(int mode) {
 
 	switch (_panelMode) {
 	case kPanelMain:
-		if (_vm->getGameType() == GType_IHNM)
-			warning("FIXME: Implement IHNM differences from ExecuteInventoryPanel");
+		// FIXME: Implement IHNM differences from ExecuteInventoryPanel for IHNM (though I believe they're already
+		// implemented)
 
 		_mainPanel.currentButton = NULL;
 		break;

@@ -280,7 +280,7 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 };
 
 
-//TODO: ihnm
+// IHNM
 #define IHNM_CONVERSE_MAX_TEXT_WIDTH (485 - 8)
 #define IHNM_CONVERSE_TEXT_HEIGHT       10
 #define IHNM_CONVERSE_TEXT_LINES        11
@@ -354,7 +354,6 @@ static PanelButton IHNM_LoadPanelButtons[] = {
 };
 
 static PanelButton IHNM_SavePanelButtons[] = {
-	// TODO
 	{kPanelButtonSave, 25,79, 80,25, kTextSave,'s',0, 0,0,0},
 	{kPanelButtonSave, 155,79, 80,25, kTextCancel,'c',0, 0,0,0},
 	{kPanelButtonSaveEdit, 26,57, 209,17, 0,'-',0, 0,0,0},

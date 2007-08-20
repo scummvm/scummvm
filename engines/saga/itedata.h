@@ -41,9 +41,6 @@ enum ActorFlags {
 	kNoScale		= 0x80  // (1<<7) Actor is not scaled
 };
 
-// TODO: This doesn't quite correspond to the original Actor struct, so I'm not
-// sure if I got it right.
-
 struct ActorTableData {
 	byte flags;
 	byte nameIndex;
