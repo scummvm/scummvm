@@ -1105,7 +1105,7 @@ void Inter_v2::o2_getCDTrackPos() {
 	varPos = _vm->_parse->parseVarIndex();
 	varName = _vm->_parse->parseVarIndex();
 
-	WRITE_VAR_OFFSET(varPos, _vm->_cdrom->getTrackPos());
+	WRITE_VAR_OFFSET(varPos, _vm->_cdrom->getTrackPos(GET_VARO_STR(varName)));
 	WRITE_VARO_STR(varName, _vm->_cdrom->getCurTrack());
 }
 
