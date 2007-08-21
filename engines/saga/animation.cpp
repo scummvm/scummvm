@@ -218,17 +218,16 @@ void Anim::playCutaway(int cut, bool fade) {
 }
 
 void Anim::endCutaway(void) {
-	// I believe this is called by scripts after running one cutaway. At
-	// this time, nothing needs to be done here.
+	// This is called by scripts after a cutaway is finished. At this time,
+	// nothing needs to be done here.
 
 	debug(0, "endCutaway()");
 }
 
 void Anim::returnFromCutaway(void) {
-	// I believe this is called by scripts after running a cutaway to
-	// ensure that we return to the scene as if nothing had happened. It's
-	// not called by the IHNM intro, presumably because there is no old
-	// scene to return to.
+	// This is called by scripts after a cutaway is finished, to return back
+	// to the scene that the cutaway was called from. It's not called by the
+	// IHNM intro, as there is no old scene to return to.
 
 	debug(0, "returnFromCutaway()");
 
@@ -780,7 +779,7 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 
 		// For some strange reason, the animation header is in little
 		// endian format, but the actual RLE encoded frame data,
-		// including the frame header, is in big endian format. */
+		// including the frame header, is in big endian format
 		do {
 			markByte = readS.readByte();
 //			debug(7, "_pos=%x currentFrame=%i markByte=%x", readS.pos(), currentFrame, markByte);
