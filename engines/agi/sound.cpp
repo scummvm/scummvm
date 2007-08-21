@@ -157,6 +157,10 @@ bool IIgsWaveInfo::finalize(Common::SeekableReadStream &uint8Wave) {
 	for (uint i = 0; i < size; i++) {
 		if (uint8Wave.readByte() == 0) {
 			trueSize = i;
+			// A zero in the sample stream turns off looping
+			// (At least that's what MESS 0.117 and KEGS32 0.91 seem to do)
+			if (mode == OSC_MODE_LOOP)
+				mode = OSC_MODE_ONESHOT;
 			break;
 		}
 	}
