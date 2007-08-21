@@ -837,14 +837,19 @@ void Interface::calcOptionSaveSlider() {
 	int totalFiles = _vm->getSaveFilesCount();
 	int visibleFiles = _vm->getDisplayInfo().optionSaveFileVisible;
 	int height = _optionSaveFileSlider->height;
-	int sliderHeight;
+	int sliderHeight = 13;		// IHNM's save file list slider has a fixed height
 	int pos;
 
 	if (totalFiles < visibleFiles) {
 		totalFiles = visibleFiles;
 	}
 
-	sliderHeight = visibleFiles * height / totalFiles;
+	if (_vm->getGameType() == GType_ITE) {
+		// ITE's save file list slider has a dynamically computed height, depending on
+		// the number of save games
+		sliderHeight = visibleFiles * height / totalFiles;
+	}
+
 	if (sliderHeight < 7) {
 		sliderHeight = 7;
 	}
