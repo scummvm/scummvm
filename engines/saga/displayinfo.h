@@ -330,20 +330,20 @@ static PanelButton IHNM_OptionPanelButtons[] = {
 	{kPanelButtonOptionText,60,61,	0,0,	kTextMusic,'-',0, 0,0,0},			// text: music
 	{kPanelButtonOptionText,60,86,	0,0,	kTextSound,'-',0, 0,0,0},			// text: noise
 	{kPanelButtonOptionText,56,111,	0,0,	kTextVoices,'-',0, 0,0,0},			// text: voices
-	{kPanelButtonOption,	153,29, 79,23,	kTextReadingSpeed,'r',0,	0,0,0},	//read speed
-	{kPanelButtonOption,	153,54, 79,23,	kTextMusic,'m',0,	0,0,0},			//music
-	{kPanelButtonOption,	153,79, 79,23,	kTextSound,'n',0,	0,0,0},			//sound-noise
-	{kPanelButtonOption,	153,104,79,23,	kTextVoices,'v',0,	0,0,0},			//voices
-	{kPanelButtonOption,	19,149,	200,25,	kTextQuitGame,'q',0,	0,0,0},		//quit
-	{kPanelButtonOption,	19,177,	200,25,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
+	{kPanelButtonOption,	154,30, 79,23,	kTextReadingSpeed,'r',0,	0,0,0},	//read speed
+	{kPanelButtonOption,	154,55, 79,23,	kTextMusic,'m',0,	0,0,0},			//music
+	{kPanelButtonOption,	154,80, 79,23,	kTextSound,'n',0,	0,0,0},			//sound-noise
+	{kPanelButtonOption,	154,105,79,23,	kTextVoices,'v',0,	0,0,0},			//voices
+	{kPanelButtonOption,	20,150,	200,25,	kTextQuitGame,'q',0,	0,0,0},		//quit
+	{kPanelButtonOption,	20,178,	200,25,	kTextContinuePlaying,'c',0,	0,0,0}, //continue
 	{kPanelButtonOptionSaveFiles,	244,18, 170,138,	0,'-',0,	0,0,0},		//savefiles
-	{kPanelButtonOption,	242,162, 79,23,	kTextLoad,'l',0,	0,0,0},			//load
-	{kPanelButtonOption,	333,162, 79,23,	kTextSave,'s',0,	0,0,0},			//save
+	{kPanelButtonOption,	243,163, 79,23,	kTextLoad,'l',0,	0,0,0},			//load
+	{kPanelButtonOption,	334,163, 79,23,	kTextSave,'s',0,	0,0,0},			//save
 };
 
 static PanelButton IHNM_QuitPanelButtons[] = {
-	{kPanelButtonQuit,		25,79,	80,25,	kTextQuit,'q',0, 0,0,0},
-	{kPanelButtonQuit,		155,79,	80,25,	kTextCancel,'c',0, 0,0,0},
+	{kPanelButtonQuit,		26,80,	80,25,	kTextQuit,'q',0, 0,0,0},
+	{kPanelButtonQuit,		156,80,	80,25,	kTextCancel,'c',0, 0,0,0},
 	{kPanelButtonQuitText,	75,30,	0,0,	kTextQuitTheGameQuestion,'-',0, 0,0,0},
 };
 
@@ -356,8 +356,8 @@ static PanelButton IHNM_LoadPanelButtons[] = {
 static PanelButton IHNM_SavePanelButtons[] = {
 	{kPanelButtonSave, 25,79, 80,25, kTextSave,'s',0, 0,0,0},
 	{kPanelButtonSave, 155,79, 80,25, kTextCancel,'c',0, 0,0,0},
-	{kPanelButtonSaveEdit, 26,57, 209,17, 0,'-',0, 0,0,0},
-	{kPanelButtonSaveText, 75,30, 0,0, kTextEnterSaveGameName,'-',0, 0,0,0},
+	{kPanelButtonSaveEdit, 22,56, 216,17, 0,'-',0, 0,0,0},
+	{kPanelButtonSaveText, 74,30, 0,0, kTextEnterSaveGameName,'-',0, 0,0,0},
 };
 
 
