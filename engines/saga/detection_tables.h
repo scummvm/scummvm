@@ -34,6 +34,7 @@ static const GameResourceDescription ITE_Resources = {
 	RID_ITE_CONVERSE_PANEL,
 	RID_ITE_OPTION_PANEL,
 	0,					// Warning panel (IHNM only)
+	0,					// Warning panel sprites (IHNM only)
 	RID_ITE_MAIN_SPRITES,
 	RID_ITE_MAIN_PANEL_SPRITES,
 	0,					// Option panel sprites (IHNM only)
@@ -50,6 +51,7 @@ static const GameResourceDescription ITEDemo_Resources = {
 	RID_ITEDEMO_CONVERSE_PANEL,
 	RID_ITEDEMO_OPTION_PANEL,
 	0,						// Warning panel (IHNM only)
+	0,						// Warning panel sprites (IHNM only)
 	RID_ITEDEMO_MAIN_SPRITES,
 	RID_ITEDEMO_MAIN_PANEL_SPRITES,
 	0,						// Option panel sprites (IHNM only)
@@ -248,6 +250,7 @@ static const GameResourceDescription IHNM_Resources = {
 	RID_IHNM_CONVERSE_PANEL,
 	RID_IHNM_OPTION_PANEL,
 	RID_IHNM_WARNING_PANEL,
+	RID_IHNM_WARNING_PANEL_SPRITES,
 	RID_IHNM_MAIN_SPRITES,
 	RID_IHNM_MAIN_PANEL_SPRITES,
 	RID_IHNM_OPTION_PANEL_SPRITES,
@@ -264,6 +267,7 @@ static const GameResourceDescription IHNMDEMO_Resources = {
 	RID_IHNMDEMO_CONVERSE_PANEL,
 	RID_IHNMDEMO_OPTION_PANEL,
 	RID_IHNMDEMO_WARNING_PANEL,
+	RID_IHNMDEMO_WARNING_PANEL_SPRITES,
 	RID_IHNMDEMO_MAIN_SPRITES,
 	RID_IHNMDEMO_MAIN_PANEL_SPRITES,
 	RID_IHNMDEMO_OPTION_PANEL_SPRITES,

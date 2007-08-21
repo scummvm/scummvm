@@ -297,6 +297,7 @@ struct GameResourceDescription {
 	uint32 conversePanelResourceId;
 	uint32 optionPanelResourceId;
 	uint32 warningPanelResourceId;
+	uint32 warningPanelSpritesResourceId;
 	uint32 mainSpritesResourceId;
 	uint32 mainPanelSpritesResourceId;
 	uint32 optionPanelSpritesResourceId;

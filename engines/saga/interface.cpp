@@ -229,6 +229,12 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites);
 	// Option panel sprites
 	_vm->_sprite->loadList(_vm->getResourceDescription()->optionPanelSpritesResourceId, _optionPanel.sprites);
+	// Save panel sprites
+	_vm->_sprite->loadList(_vm->getResourceDescription()->warningPanelSpritesResourceId, _savePanel.sprites);
+	// Load panel sprites
+	_vm->_sprite->loadList(_vm->getResourceDescription()->warningPanelSpritesResourceId, _loadPanel.sprites);
+	// Quit panel sprites
+	_vm->_sprite->loadList(_vm->getResourceDescription()->warningPanelSpritesResourceId, _quitPanel.sprites);
 
 	if (_vm->getGameType() == GType_ITE) {
 		_vm->_sprite->loadList(_vm->getResourceDescription()->defaultPortraitsResourceId, _defPortraits);
@@ -921,6 +927,7 @@ void Interface::drawOption() {
 	PanelButton *panelButton;
 	Point textPoint;
 	Point point;
+	Point sliderPoint;
 	int spritenum = 0;
 
 	backBuffer = _vm->_gfx->getBackBuffer();
@@ -949,7 +956,15 @@ void Interface::drawOption() {
 			backBuffer->drawRect(_optionSaveRectTop, kITEColorDarkGrey);
 	}
 
-	drawButtonBox(backBuffer, _optionSaveRectSlider, kSlider, _optionSaveFileSlider->state > 0);
+	if (_vm->getGameType() == GType_ITE) {
+		drawButtonBox(backBuffer, _optionSaveRectSlider, kSlider, _optionSaveFileSlider->state > 0);
+	} else {
+		panelButton = &_optionPanel.buttons[0];
+		sliderPoint.x = _optionPanel.x + panelButton->xOffset;
+		sliderPoint.y = _optionSaveRectSlider.top;
+		_vm->_sprite->draw(backBuffer, _vm->getDisplayClip(), _optionPanel.sprites, 0 + _optionSaveFileSlider->state, sliderPoint, 256);
+
+	}
 
 	if (_optionSaveRectBottom.height() > 0) {
 		backBuffer->drawRect(_optionSaveRectBottom, kITEColorDarkGrey);
@@ -2245,21 +2260,25 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 		litButton = panelButton->state > 0;
 
 		if (panel == &_optionPanel) {
-			texturePoint.x = _optionPanel.x + panelButton->xOffset;
-			texturePoint.y = _optionPanel.y + panelButton->yOffset;
+			texturePoint.x = _optionPanel.x + panelButton->xOffset - 1;
+			texturePoint.y = _optionPanel.y + panelButton->yOffset - 1;
 			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _optionPanel.sprites, spritenum + 2 + litButton, texturePoint, 256);
 		} else if (panel == &_quitPanel) {
-			texturePoint.x = _quitPanel.x + panelButton->xOffset;
-			texturePoint.y = _quitPanel.y + panelButton->yOffset;
-			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _optionPanel.sprites, 14 + litButton, texturePoint, 256);
+			texturePoint.x = _quitPanel.x + panelButton->xOffset - 3;
+			texturePoint.y = _quitPanel.y + panelButton->yOffset - 3;
+			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _quitPanel.sprites, litButton, texturePoint, 256);
 		} else if (panel == &_savePanel) {
-			texturePoint.x = _savePanel.x + panelButton->xOffset;
-			texturePoint.y = _savePanel.y + panelButton->yOffset;
-			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _optionPanel.sprites, 14 + litButton, texturePoint, 256);
+			texturePoint.x = _savePanel.x + panelButton->xOffset - 3;
+			texturePoint.y = _savePanel.y + panelButton->yOffset - 3;
+			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _savePanel.sprites, litButton, texturePoint, 256);
+			// Input text box sprite
+			texturePoint.x = _savePanel.x + _saveEdit->xOffset - 2;
+			texturePoint.y = _savePanel.y + _saveEdit->yOffset - 2;
+			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _savePanel.sprites, 2, texturePoint, 256);
 		} else if (panel == &_loadPanel) {
-			texturePoint.x = _loadPanel.x + panelButton->xOffset;
-			texturePoint.y = _loadPanel.y + panelButton->yOffset;
-			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _optionPanel.sprites, 14 + litButton, texturePoint, 256);
+			texturePoint.x = _loadPanel.x + panelButton->xOffset - 3;
+			texturePoint.y = _loadPanel.y + panelButton->yOffset - 3;
+			_vm->_sprite->draw(ds, _vm->getDisplayClip(), _loadPanel.sprites, litButton, texturePoint, 256);
 		} else {
 			// revert to default behavior
 			drawButtonBox(ds, rect, kButton, panelButton->state > 0);
