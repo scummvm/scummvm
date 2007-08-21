@@ -356,8 +356,6 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	// Exponential fade
 	fpercent = percent * percent;
 
-	fpercent = 1.0 - fpercent;
-
 	// Use the correct percentage change per frame for each palette entry
 	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
 		if (i < from || i >= from + numcolors)
@@ -365,7 +363,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 		else
 			palE = &srcPal[i];
 
-		new_entry = (int)(palE->red - palE->red * fpercent);
+		new_entry = (int)(palE->red * fpercent);
 
 		if (new_entry < 0) {
 			ppal[0] = 0;
@@ -373,7 +371,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 			ppal[0] = (byte)new_entry;
 		}
 
-		new_entry = (int)(palE->green - palE->green * fpercent);
+		new_entry = (int)(palE->green * fpercent);
 
 		if (new_entry < 0) {
 			ppal[1] = 0;
@@ -381,7 +379,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 			ppal[1] = (byte) new_entry;
 		}
 
-		new_entry = (int)(palE->blue - palE->blue * fpercent);
+		new_entry = (int)(palE->blue * fpercent);
 
 		if (new_entry < 0) {
 			ppal[2] = 0;
