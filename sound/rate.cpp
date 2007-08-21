@@ -470,7 +470,7 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 		accum0 *= kFudgeFactor / filtGain;
 		
 		/* Scale down according to the volume settings. */
-		accum0 *= vol_l / Audio::Mixer::kMaxMixerVolume;
+		accum0 *= (double)vol_l / Audio::Mixer::kMaxMixerVolume;
 		
 		/*
 		 * The overall effect of the following code is to add dithering of up
@@ -507,7 +507,7 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 		if (stereo || vol_l != vol_r) {
 			accum1 *= kFudgeFactor / filtGain;
 			
-			accum1 *= vol_r / Audio::Mixer::kMaxMixerVolume;
+			accum1 *= (double)vol_r / Audio::Mixer::kMaxMixerVolume;
 			
 			double dither1 = ((accum1 >= 0) ? 1 : -1) * 
 					( (double)(rand->getRandomNumber(kRandMax)) + 
