@@ -209,9 +209,13 @@ struct IIgsChannelInfo {
 	bool   end;     ///< Has the playing ended?
 };
 
+	/**
+	 * AGI sound resource types.
+	 * It's probably coincidence that all the values here are powers of two
+	 * as they're simply the different used values in AGI sound resources'
+	 * starts (The first 16-bit little endian word, to be precise).
+	 */
 	enum AgiSoundType {
-		// FIXME: Fingolfin wonders: Why are bitmasks used here, when those
-		// types seem to be mutually exclusive?
 		AGI_SOUND_SAMPLE	= 0x0001,
 		AGI_SOUND_MIDI		= 0x0002,
 		AGI_SOUND_4CHN		= 0x0008
