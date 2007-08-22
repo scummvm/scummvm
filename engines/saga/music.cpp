@@ -582,7 +582,7 @@ void Music::resume(void) {
 }
 
 void Music::stop(void) {
-	//TODO: do it
+	_player->stopMusic();
 }
 
 } // End of namespace Saga
