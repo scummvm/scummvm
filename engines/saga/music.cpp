@@ -578,11 +578,13 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 }
 
 void Music::pause(void) {
-	//TODO: do it
+	_player->setVolume(-1);
+	_player->setPlaying(false);
 }
 
 void Music::resume(void) {
-	//TODO: do it}
+	_player->setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
+	_player->setPlaying(true);
 }
 
 void Music::stop(void) {

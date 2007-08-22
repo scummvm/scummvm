@@ -50,6 +50,7 @@ public:
 	~MusicPlayer();
 
 	bool isPlaying() { return _isPlaying; }
+	void setPlaying(bool playing) { _isPlaying = playing; }
 
 	void setVolume(int volume);
 	int getVolume() { return _masterVolume; }
