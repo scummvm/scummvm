@@ -320,6 +320,8 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 
 void MusicPlayer::onTimer(void *refCon) {
 	MusicPlayer *music = (MusicPlayer *)refCon;
+	Common::StackLock lock(music->_mutex);
+
 	if (music->_isPlaying)
 		music->_parser->onTimer();
 }
@@ -329,6 +331,8 @@ void MusicPlayer::playMusic() {
 }
 
 void MusicPlayer::stopMusic() {
+	Common::StackLock lock(_mutex);
+
 	_isPlaying = false;
 	if (_parser) {
 		_parser->unloadMusic();

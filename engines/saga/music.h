@@ -34,6 +34,7 @@
 #include "sound/mp3.h"
 #include "sound/vorbis.h"
 #include "sound/flac.h"
+#include "common/mutex.h"
 
 namespace Saga {
 
@@ -77,6 +78,7 @@ public:
 	MidiChannel *getPercussionChannel()	{ return 0; }
 
 	MidiParser *_parser;
+	Common::Mutex _mutex;
 
 protected:
 
