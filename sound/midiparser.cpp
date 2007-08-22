@@ -407,11 +407,6 @@ bool MidiParser::jumpToTick(uint32 tick, bool fireEvents) {
 }
 
 void MidiParser::unloadMusic() {
-	if (_driver) {
-		// Detach the player callback handler, to prevent it from
-		// being called while the music is being unloaded
-		_driver->setTimerCallback(NULL, NULL);
-	}
 	resetTracking();
 	allNotesOff();
 	_num_tracks = 0;
