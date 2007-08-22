@@ -76,6 +76,16 @@ static int commonObjectCompare(const CommonObjectDataPointer& obj1, const Common
 	return 1;
 }
 
+static int commonObjectCompareIHNM(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
+	int p1 = obj1->_location.y;
+	int p2 = obj2->_location.y;
+	if (p1 == p2)
+		return 0;
+	if (p1 < p2)
+		return -1;
+	return 1;
+}
+
 static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
 	int p1 = -obj1->_location.u() - obj1->_location.v() - obj1->_location.z;
 	int p2 = -obj2->_location.u() - obj2->_location.v() - obj2->_location.z;
@@ -1741,7 +1751,10 @@ void Actor::createDrawOrderList() {
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		compareFunction = &tileCommonObjectCompare;
 	} else {
-		compareFunction = &commonObjectCompare;
+		if (_vm->getGameType() == GType_ITE)
+			compareFunction = &commonObjectCompare;
+		else
+			compareFunction = &commonObjectCompareIHNM;
 	}
 
 	_drawOrderList.clear();
