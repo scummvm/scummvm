@@ -963,7 +963,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			Common::ADGF_DEMO
 		},
 		kGameTypeLostInTime,
-		kFeaturesNone,
+		kFeaturesAdlib,
 		"demo"
 	},
 	{
