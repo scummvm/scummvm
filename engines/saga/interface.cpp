@@ -2104,18 +2104,19 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 			solidColor = down ? kITEColorLightBlue94 : kITEColorLightBlue96;
 			break;
 		case kEdit:
-			cornerColor = kITEColorLightBlue96;
-			frameColor = kITEColorLightBlue96;
-			fillColor = kITEColorLightBlue96;
-			our = kITEColorDarkBlue8a;
-			odl = kITEColorLightBlue94;
+			if (_vm->getGameType() == GType_ITE) {
+				cornerColor = frameColor = fillColor = kITEColorLightBlue96;
+				our = kITEColorDarkBlue8a;
+				odl = kITEColorLightBlue94;
+				solidColor = down ? kITEColorBlue : kITEColorDarkGrey0C;
+			} else {
+				cornerColor = frameColor = fillColor = kIHNMColorBlack;
+				our = kIHNMColorBlack;
+				odl = kIHNMColorBlack;
+				solidColor = kIHNMColorBlack;
+			}
 			iur = 0x97;
 			idl = 0x95;
-			if (down) {
-				solidColor = kITEColorBlue;
-			} else {
-				solidColor = kITEColorDarkGrey0C;
-			}
 			break;
 		default:
 			cornerColor = 0x8b;
