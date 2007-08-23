@@ -1956,38 +1956,27 @@ void Script::sfWaitFrames(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
-	thread->pop(); // first pal entry, ignored (already handled by Gfx::palToBlack)
-	thread->pop(); //  last pal entry, ignored (already handled by Gfx::palToBlack)
+	int16 firstPalEntry = thread->pop();
+	int16 lastPalEntry = thread->pop();
 	int16 startingBrightness = thread->pop();
 	int16 endingBrightness = thread->pop();
-	// delay between pal changes is always 10 (not used)
-	static PalEntry cur_pal[PAL_ENTRIES];
 	Event event;
-	short delta = (startingBrightness < endingBrightness) ? +1 : -1;
+	static PalEntry cur_pal[PAL_ENTRIES];
 
 	_vm->_gfx->getCurrentPal(cur_pal);
 
-	// TODO: This is still wrong, probably a new event type needs to be added (kEventPalFade)
-	warning("TODO: sfScriptFade");
-	return;
-
-	if (startingBrightness > 255) 
-		startingBrightness = 255;
-	if (startingBrightness < 0 ) 
-		startingBrightness = 0;
-	if (endingBrightness > 255) 
-		endingBrightness = 255;
-	if (endingBrightness < 0) 
-		endingBrightness = 0;
-
 	event.type = kEvTImmediate;
 	event.code = kPalEvent;
-	event.op = kEventPalToBlack;
+	event.op = kEventPalFade;
 	event.time = 0;
-	event.duration = kNormalFadeDuration - ((endingBrightness - startingBrightness) * delta);
+	event.duration = kNormalFadeDuration;
 	event.data = cur_pal;
+	event.param = startingBrightness;
+	event.param2 = endingBrightness;
+	event.param3 = firstPalEntry;
+	event.param4 = lastPalEntry - firstPalEntry + 1;
 
-	_vm->_events->queue(&event);	
+	_vm->_events->queue(&event);
 }
 
 void Script::sfScriptStartVideo(SCRIPTFUNC_PARAMS) {

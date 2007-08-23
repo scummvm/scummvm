@@ -154,9 +154,11 @@ int Events::handleContinuous(Event *event) {
 		case kEventBlackToPal:
 			_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
 			break;
-
 		case kEventPalToBlack:
 			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
+			break;
+		case kEventPalFade:
+			_vm->_gfx->palFade((PalEntry *)event->data, event->param, event->param2, event->param3, event->param4, event_pc);
 			break;
 		default:
 			break;
@@ -237,9 +239,11 @@ int Events::handleImmediate(Event *event) {
 		case kEventBlackToPal:
 			_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
 			break;
-
 		case kEventPalToBlack:
 			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
+			break;
+		case kEventPalFade:
+			_vm->_gfx->palFade((PalEntry *)event->data, event->param, event->param2, event->param3, event->param4, event_pc);
 			break;
 		default:
 			break;

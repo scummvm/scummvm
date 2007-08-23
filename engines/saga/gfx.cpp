@@ -400,6 +400,87 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
 
+// Used in IHNM only
+void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 numColors, double percent) {
+	//short value, delta;
+	int i;
+	int new_entry;
+	byte *ppal;
+	PalEntry *palE;
+
+	double fpercent;
+
+	if (percent > 1.0)
+		percent = 1.0;
+
+	if (from > 256)
+		from = 256;
+	if (from < 0 ) 
+		from = 0;
+	if (to > 256) 
+		to = 256;
+	if (to < 0) 
+		to = 0;
+
+	// Exponential fade
+	fpercent = percent * percent;
+
+	fpercent = 1.0 - fpercent;
+
+	// TODO: finish this
+	//delta = (from < to) ? +1 : -1;
+	if (percent == 0.0)	// only display the warning once
+		warning("TODO: Gfx::palFade");
+
+	return;	// Don't do anything for now
+
+	/*
+	for (value = from; value != to+delta; value += delta) {
+		// adjust palette color
+		// delay here
+	}
+	*/
+	//_vm->_frameCount++; // is this needed?
+
+	// Use the correct percentage change per frame for each palette entry
+	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
+		if (i < from || i >= from + numColors)
+			palE = &_globalPalette[i];
+		else
+			palE = &srcPal[i];
+
+		new_entry = (int)(palE->red * fpercent);
+
+		if (new_entry < 0) {
+			ppal[0] = 0;
+		} else {
+			ppal[0] = (byte) new_entry;
+		}
+
+		new_entry = (int)(palE->green * fpercent);
+
+		if (new_entry < 0) {
+			ppal[1] = 0;
+		} else {
+			ppal[1] = (byte) new_entry;
+		}
+
+		new_entry = (int)(palE->blue * fpercent);
+
+		if (new_entry < 0) {
+			ppal[2] = 0;
+		} else {
+			ppal[2] = (byte) new_entry;
+		}
+		ppal[3] = 0;
+	}
+
+	// Color 0 should always be black in IHNM
+	memset(&_currentPal[0 * 4], 0, 4);
+
+	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
+}
+
 void Gfx::showCursor(bool state) {
 	CursorMan.showMouse(state);
 }

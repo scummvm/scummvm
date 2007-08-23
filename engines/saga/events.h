@@ -113,6 +113,7 @@ enum EventOps {
 	// PALETTE events
 	kEventPalToBlack = 1,
 	kEventBlackToPal = 2,
+	kEventPalFade = 3,
 	// TRANSITION events
 	kEventDissolve = 1,
 	kEventDissolveBGMask = 2,

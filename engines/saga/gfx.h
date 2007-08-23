@@ -150,6 +150,7 @@ public:
 	void restorePalette() { setPalette(_savedPalette, true); }
 	void palToBlack(PalEntry *src_pal, double percent);
 	void blackToPal(PalEntry *src_pal, double percent);
+	void palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 numColors, double percent);
 	void showCursor(bool state);
 	void setCursor(CursorType cursorType = kCursorNormal);
 
