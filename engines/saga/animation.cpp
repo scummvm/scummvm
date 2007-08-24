@@ -95,10 +95,7 @@ void Anim::playCutaway(int cut, bool fade) {
 		startImmediately = true;
 	}
 
-	// WORKAROUND: The IHNM demo deals with chained cutaways in a different manner. Don't save
-	// the palette of cutaway 11 (the woman looking at the marble)
-	if (!(_vm->getGameId() == GID_IHNM_DEMO && cut == 11))
-		_vm->_gfx->savePalette();
+	_vm->_gfx->savePalette();
 
 	if (fade) {
 		_vm->_gfx->getCurrentPal(saved_pal);
@@ -155,12 +152,6 @@ void Anim::playCutaway(int cut, bool fade) {
 	_vm->_frameCount++;
 
 	_vm->_gfx->setPalette(palette);
-
-	// WORKAROUND for a bug found in the original IHNM demo. The palette of cutaway 12 is incorrect (the incorrect
-	// palette can be seen in the original demo too, for a split second). Therefore, use the saved palette for this
-	// cutaway
-	if (_vm->getGameId() == GID_IHNM_DEMO && cut == 12)
-		_vm->_gfx->restorePalette();
 
 	free(buf);
 	free(resourceData);
@@ -306,7 +297,10 @@ void Anim::returnFromCutaway(void) {
 }
 
 void Anim::clearCutaway(void) {
+	PalEntry *pal;
+
 	debug(1, "clearCutaway()");
+
 	if (_cutawayActive) {
 		_cutawayActive = false;
 
@@ -327,6 +321,10 @@ void Anim::clearCutaway(void) {
 			// Enable the save reminder state after each cutaway for the IHNM demo
 			_vm->_interface->setSaveReminderState(true);
 		}
+
+		// Set the scene's palette
+		_vm->_scene->getBGPal(pal);
+		_vm->_gfx->setPalette(pal);
 	}
 }
 
