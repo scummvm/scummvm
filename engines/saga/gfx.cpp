@@ -402,49 +402,29 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 
 // Used in IHNM only
 void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 numColors, double percent) {
-	//short value, delta;
-	int i;
+ 	int i;
 	int new_entry;
 	byte *ppal;
 	PalEntry *palE;
-
 	double fpercent;
 
-	if (percent > 1.0)
-		percent = 1.0;
-
-	if (from > 256)
-		from = 256;
-	if (from < 0 ) 
-		from = 0;
-	if (to > 256) 
-		to = 256;
-	if (to < 0) 
-		to = 0;
+	percent = percent > 1.0 ? 1.0 : percent;
+	from = from > 256 ? 256 : from;
+	from = from < 0 ? 0 : from;
+	to = to > 256 ? 256 : to;
+	to = to < 0 ? 0 : to;
 
 	// Exponential fade
 	fpercent = percent * percent;
 
-	fpercent = 1.0 - fpercent;
+	if (from > to)
+		fpercent = 1.0 - fpercent;
 
-	// TODO: finish this
-	//delta = (from < to) ? +1 : -1;
-	if (percent == 0.0)	// only display the warning once
-		warning("TODO: Gfx::palFade");
-
-	return;	// Don't do anything for now
-
-	/*
-	for (value = from; value != to+delta; value += delta) {
-		// adjust palette color
-		// delay here
-	}
-	*/
-	//_vm->_frameCount++; // is this needed?
+	// TODO: finish this (it always fades to black!) -> use from and to
 
 	// Use the correct percentage change per frame for each palette entry
 	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
-		if (i < from || i >= from + numColors)
+		if (i < start || i >= start + numColors)
 			palE = &_globalPalette[i];
 		else
 			palE = &srcPal[i];
