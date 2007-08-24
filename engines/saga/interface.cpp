@@ -348,6 +348,7 @@ int Interface::activate() {
 		} else if (_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO) {
 			_saveReminderState = 1;
 		}
+		_vm->_gfx->showCursor(true);
 		draw();
 	}
 
