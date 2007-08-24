@@ -434,9 +434,6 @@ const char *_instructionNamesRes_br[] = {
 	"mul",
 	"div",
 	"if",
-	"ifeq",
-	"iflt",
-	"ifgt",
 	"endif",
 	"stop"
 };
@@ -446,7 +443,7 @@ const char *_commandsNamesRes_br[] = {
 	"clear",
 	"start",
 	"speak",
-	"get"
+	"get",
 	"location",
 	"open",
 	"close",
@@ -482,7 +479,10 @@ const char *_commandsNamesRes_br[] = {
 	"dummy",
 	"return",
 	"onsave",
-	"offsave"
+	"offsave",
+	"endcommands",
+	"ifchar",
+	"endif"
 };
 
 const char *_callableNamesRes_br[] = {
@@ -512,6 +512,52 @@ const char *_audioCommandsNamesRes_br[] = {
 	" ",
 	" ",
 	"loop"
+};
+
+const char *_locationStmtRes_br[] = {
+	"character",
+	"endlocation",
+	"ifchar",
+	"endif",
+	"location",
+	"mask",
+	"path",
+	"disk",
+	"localflags",
+	"commands",
+	"escape",
+	"acommands",
+	"flags",
+	"comment",
+	"endcomment",
+	"zone",
+	"animation",
+	"zeta",
+	"music",
+	"sound"
+};
+
+const char *_locationZoneStmtRes_br[] = {
+	"endzone",
+	"limits",
+	"moveto",
+	"type",
+	"commands",
+	"label",
+	"flags"
+};
+
+const char *_locationAnimStmtRes_br[] = {
+	"endanimation",
+	"endzone",
+	"script",
+	"commands",
+	"type",
+	"label",
+	"flags",
+	"file",
+	"position",
+	"moveto"
 };
 
 const char *_dinoName = "dino";
@@ -636,6 +682,9 @@ void Parallaction_br::initResources() {
 	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes_br), _zoneTypeNamesRes_br);
 	_commandsNames = new Table(ARRAYSIZE(_commandsNamesRes_br), _commandsNamesRes_br);
 	_audioCommandsNames = new Table(ARRAYSIZE(_audioCommandsNamesRes_br), _audioCommandsNamesRes_br);
+	_locationStmt = new Table(ARRAYSIZE(_locationStmtRes_br), _locationStmtRes_br);
+	_locationZoneStmt = new Table(ARRAYSIZE(_locationZoneStmtRes_br), _locationZoneStmtRes_br);
+	_locationAnimStmt = new Table(ARRAYSIZE(_locationAnimStmtRes_br), _locationAnimStmtRes_br);
 
 	// TODO: make sure there are 120 max locations in Big Red Adventure
 	_localFlagNames = new Table(120);

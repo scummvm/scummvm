@@ -102,7 +102,15 @@ Script* DosDisk_br::loadLocation(const char *name) {
 
 Script* DosDisk_br::loadScript(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadScript");
-	return 0;
+
+	Common::File *stream = new Common::File;
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/scripts/%s.scr", _partPath, name);
+	if (!stream->open(path))
+		errorFileNotFound(path);
+
+	return new Script(stream, true);
 }
 
 //	there are no Head resources in Big Red Adventure
@@ -275,7 +283,7 @@ Table* DosDisk_br::loadTable(const char* name) {
 
 	stream.close();
 
-	return 0;
+	return t;
 }
 
 Common::SeekableReadStream* DosDisk_br::loadMusic(const char* name) {

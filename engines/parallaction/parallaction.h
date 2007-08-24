@@ -28,15 +28,16 @@
 
 #include "common/str.h"
 #include "common/stack.h"
+#include "common/array.h"
 
 #include "engines/engine.h"
 
 #include "parallaction/defs.h"
 #include "parallaction/inventory.h"
 #include "parallaction/parser.h"
+#include "parallaction/objects.h"
 #include "parallaction/disk.h"
 #include "parallaction/walk.h"
-#include "parallaction/zone.h"
 
 namespace GUI {
 	class ListWidget;
@@ -165,7 +166,6 @@ typedef void (*callable)(void*);
 extern uint16 		_mouseButtons;
 extern uint16 		_score;
 extern uint16 		_language;
-extern Zone 		*_activeZone;
 extern uint32 		_engineFlags;
 extern callable 	_callables[];
 extern uint32 		_localFlags[];
@@ -225,7 +225,6 @@ struct Location {
 
 	Common::Point	_startPosition;
 	uint16			_startFrame;
-	WalkNodeList	_walkNodes;
 	char			_name[100];
 
 	CommandList		_aCommands;
@@ -233,6 +232,11 @@ struct Location {
 	char	   *_comment;
 	char	   *_endComment;
 
+	// NS specific
+	WalkNodeList	_walkNodes;
+
+	// BRA specific
+	CommandList		_escapeCommands;
 };
 
 struct Character {
@@ -281,7 +285,7 @@ public:
 
 	void addData(const char* s);
 
-	int lookup(const char* s);
+	uint16 lookup(const char* s);
 };
 
 struct BackgroundInfo {
@@ -295,34 +299,46 @@ struct BackgroundInfo {
 	Palette				palette;
 };
 
+class Opcode {
 
-#define DECLARE_ZONE_PARSER(sig) void Parallaction::locZoneParse_##sig()
+public:
+	virtual void operator()() const = 0;
+	virtual ~Opcode() { }
+};
+
+template <class T>
+class OpcodeImpl : public Opcode {
+
+	typedef void (T::*Fn)();
+
+	T*	_instance;
+	Fn	_fn;
+
+public:
+	OpcodeImpl(T* instance, const Fn &fn) : _instance(instance), _fn(fn) { }
+
+	void operator()() const {
+		(_instance->*_fn)();
+	}
+
+};
+
+
+typedef Common::Array<const Opcode*>	OpcodeSet;
+
+
+
 #define DECLARE_UNQUALIFIED_ZONE_PARSER(sig) void locZoneParse_##sig()
-#define ZONE_PARSER(sig) &Parallaction::locZoneParse_##sig
-
-#define DECLARE_ANIM_PARSER(sig) void Parallaction::locAnimParse_##sig()
 #define DECLARE_UNQUALIFIED_ANIM_PARSER(sig) void locAnimParse_##sig()
-#define ANIM_PARSER(sig) &Parallaction::locAnimParse_##sig
-
-#define DECLARE_COMMAND_PARSER(sig) void Parallaction::cmdParse_##sig()
 #define DECLARE_UNQUALIFIED_COMMAND_PARSER(sig) void cmdParse_##sig()
-#define COMMAND_PARSER(sig) &Parallaction::cmdParse_##sig
-
-#define DECLARE_COMMAND_OPCODE(op) void Parallaction::cmdOp_##op()
-#define DECLARE_UNQUALIFIED_COMMAND_OPCODE(op) void cmdOp_##op()
-#define COMMAND_OPCODE(op) &Parallaction::cmdOp_##op
-
-#define DECLARE_INSTRUCTION_PARSER(sig) void Parallaction::instParse_##sig()
-#define DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sig) void instParse_##sig()
-#define INSTRUCTION_PARSER(sig) &Parallaction::instParse_##sig
-
-#define DECLARE_INSTRUCTION_OPCODE(op) void Parallaction::instOp_##op()
-#define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op()
-#define INSTRUCTION_OPCODE(op) &Parallaction::instOp_##op
-
-#define DECLARE_LOCATION_PARSER(sig) void Parallaction::locParse_##sig()
 #define DECLARE_UNQUALIFIED_LOCATION_PARSER(sig) void locParse_##sig()
-#define LOCATION_PARSER(sig) &Parallaction::locParse_##sig
+#define DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sig) void instParse_##sig()
+
+#define DECLARE_UNQUALIFIED_COMMAND_OPCODE(op) void cmdOp_##op()
+#define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op()
+
+
+
 
 class Parallaction : public Engine {
 	friend class Debugger;
@@ -341,90 +357,23 @@ public:
 
 	void 		waitTime(uint32 t);
 
-	void initOpcodes();
-
-	typedef void (Parallaction::*Opcode)();
-	const Opcode	*_commandParsers;
-
 	uint	_lookup;
-
-	Common::Stack<const Opcode*>	_opcodes;
-	Common::Stack<Table*> 	_statements;
-
-	const Opcode	*_currentOpcodes;
-	Table	*_currentStatements;
-
-	void	pushParserTables(const Opcode* opcodes, Table* statements);
+	Common::Stack<OpcodeSet*>	_opcodes;
+	Common::Stack<Table*> 		_statements;
+	OpcodeSet	*_currentOpcodes;
+	Table		*_currentStatements;
+	void	pushParserTables(OpcodeSet *opcodes, Table* statements);
 	void	popParserTables();
 	void	parseStatement();
 
-	struct {
-		Command	*cmd;
-		int		nextToken;
-		CommandList *list;
-		bool	end;
-	} _cmdParseCtxt;
-
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(invalid);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(flags);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(animation);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(zone);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(location);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(drop);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(call);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(null);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(move);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(endcommands);
-
-	const Opcode	*_commandOpcodes;
+	OpcodeSet	_commandOpcodes;
 
 	struct {
 		Command	*cmd;
 		Zone	*z;
 	} _cmdRunCtxt;
 
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(clear);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(start);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(speak);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(get);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(close);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(on);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(off);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(call);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(toggle);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(drop);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(quit);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(move);
-	DECLARE_UNQUALIFIED_COMMAND_OPCODE(stop);
-
-	const Opcode	*_instructionParsers;
-
-	struct {
-		Animation	*a;
-		Instruction *inst;
-		LocalVariable *locals;
-	} _instParseCtxt;
-
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(defLocal);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(animation);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(loop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(x);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(y);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(z);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(f);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(inc);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(set);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(move);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(put);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(call);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sound);
-	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(null);
-
-	const Opcode	*_instructionOpcodes;
+	OpcodeSet	_instructionOpcodes;
 
 	struct {
 		Animation	*a;
@@ -433,93 +382,11 @@ public:
 		bool		suspend;
 	} _instRunCtxt;
 
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(invalid);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(on);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(loop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endloop);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(null);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(inc);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(set);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(put);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(call);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(wait);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(start);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(sound);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(move);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(end);
-
-	void 		parseLocation(const char *filename);
-
-	const Opcode	*_locationParsers;
-
-	struct {
-		const char	*filename;
-		bool	end;
-		Script	*script;
-		Zone *z;
-	} _locParseCtxt;
-
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(invalid);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(endlocation);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(disk);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(nodes);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(zone);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(animation);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(localflags);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(commands);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(acommands);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(flags);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(comment);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(endcomment);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(sound);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(music);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(redundant);
-
-	const Opcode  *_locationZoneParsers;
-
-	struct {
-		bool	end;
-		Script	*script;
-		Zone *z;
-	} _locZoneParseCtxt;
-
-	DECLARE_UNQUALIFIED_ZONE_PARSER(invalid);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(limits);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(moveto);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(type);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(commands);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(label);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(flags);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(endzone);
-
-	const Opcode  *_locationAnimParsers;
-
-	struct {
-		bool	end;
-		Script	*script;
-		Animation *a;
-	} _locAnimParseCtxt;
-
-	DECLARE_UNQUALIFIED_ANIM_PARSER(invalid);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(script);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(commands);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(type);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(label);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(flags);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(file);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(position);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
 
 	void 		changeCursor(int32 index);
 	void		showCursor(bool visible);
 	void 		changeCharacter(const char *name);
 
-	char   		*parseComment(Script &script);
-	char   		*parseDialogueString(Script &script);
-	Dialogue	*parseDialogue(Script &script);
 
 	Job 		*addJob(JobFn fn, void *parm, uint16 tag);
 	void 		removeJob(Job *j);
@@ -552,13 +419,8 @@ public:
 	Table		*_objectsNames;
 	Table		*_zoneTypeNames;
 	Table		*_zoneFlagNames;
-	Table		*_commandsNames;
 	Table		*_callableNames;
-	Table		*_instructionNames;
 	Table		*_localFlagNames;
-	Table		*_locationStmt;
-	Table		*_locationZoneStmt;
-	Table		*_locationAnimStmt;
 
 
 public:
@@ -594,6 +456,8 @@ public:
 	InventoryItem	_activeItem;
 
 	Common::Point	_mousePos;
+
+	Zone	   		*_activeZone;
 
 	ZoneList 		_zones;
 	AnimationList 	_animations;
@@ -664,23 +528,10 @@ protected:		// members
 	void 		freeLocation();
 	void 		showLocationComment(const char *text, bool end);
 
-	void		parseZone(Script &script, ZoneList &list, char *name);
-	void		parseZoneTypeBlock(Script &script, Zone *z);
 	void 		displayCharacterComment(ExamineData *data);
 	void 		displayItemComment(ExamineData *data);
 
-	void 		parseWalkNodes(Script& script, WalkNodeList &list);
 	uint16 		checkDoor();
-
-	Animation * parseAnimation(Script &script, AnimationList &list, char *name);
-	void		parseScriptLine(Instruction *inst, Animation *a, LocalVariable *locals);
-	void		loadProgram(Animation *a, char *filename);
-	LValue		getLValue(Instruction *inst, char *str, LocalVariable *locals, Animation *a);
-
-	void		parseCommands(Script &script, CommandList&);
-	void		parseCommandFlags();
-	void		createCommand(uint id);
-	void		addCommand();
 
 	void 		freeCharacter();
 
@@ -695,6 +546,8 @@ public:
 	virtual void renderLabel(Graphics::Surface *cnv, char *text) { }
 	virtual void setMousePointer(int16 index) = 0;
 
+
+	virtual void parseLocation(const char* name) = 0;
 
 public:
 	const char **_zoneFlagNamesRes;
@@ -722,15 +575,14 @@ public:
 	void renderLabel(Graphics::Surface *cnv, char *text);
 	void setMousePointer(int16 index);
 
-public:
+private:
 	Menu*			_menu;
 
-private:
 	void initFonts();
 	void freeFonts();
 
 private:
-	void 		initResources();
+	void initResources();
 	void initCursors();
 
 	static byte			_mouseArrow[256];
@@ -773,12 +625,184 @@ private:
 	void _c_HBOn(void*);
 
 	const Callable *_callables;
+
+protected:
+	// location parser
+	OpcodeSet	_locationParsers;
+	OpcodeSet	_locationZoneParsers;
+	OpcodeSet	_locationAnimParsers;
+	OpcodeSet	_commandParsers;
+	Table		*_commandsNames;
+	Table		*_locationStmt;
+	Table		*_locationZoneStmt;
+	Table		*_locationAnimStmt;
+
+	struct {
+		const char	*filename;
+		bool	end;
+		Script	*script;
+	} _locParseCtxt;
+	struct {
+		bool	end;
+		Script	*script;
+		Zone *z;
+	} _locZoneParseCtxt;
+	struct {
+		bool	end;
+		Script	*script;
+		Animation *a;
+	} _locAnimParseCtxt;
+	struct {
+		Command	*cmd;
+		int		nextToken;
+		CommandList *list;
+		bool	end;
+		Script *script;
+	} _cmdParseCtxt;
+
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(invalid);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(endlocation);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(disk);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(nodes);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(zone);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(animation);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(localflags);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(commands);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(acommands);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(flags);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(comment);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(endcomment);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(sound);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(music);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(redundant);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(invalid);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(limits);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(moveto);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(type);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(commands);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(label);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(flags);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(endzone);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(invalid);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(script);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(commands);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(type);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(label);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(flags);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(file);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(position);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(invalid);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(flags);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(animation);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(zone);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(location);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(drop);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(call);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(simple);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(move);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(endcommands);
+
+	void 		parseLocation(const char *filename);
+	char   		*parseComment(Script &script);
+	char   		*parseDialogueString(Script &script);
+	Dialogue	*parseDialogue(Script &script);
+	void		parseZone(Script &script, ZoneList &list, char *name);
+	void		parseZoneTypeBlock(Script &script, Zone *z);
+	void 		parseWalkNodes(Script& script, WalkNodeList &list);
+	Animation	*parseAnimation(Script &script, AnimationList &list, char *name);
+	void		parseCommands(Script &script, CommandList&);
+	void		parseCommandFlags();
+	void		createCommand(uint id);
+	void		addCommand();
+	void 		initOpcodes();
+	void 		initParsers();
+
+
+	// program parser
+	OpcodeSet	_instructionParsers;
+	Table		*_instructionNames;
+
+	struct {
+		Animation	*a;
+		Instruction *inst;
+		LocalVariable *locals;
+
+		// BRA specific
+		Instruction *openIf;
+	} _instParseCtxt;
+
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(defLocal);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(animation);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(loop);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(x);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(y);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(z);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(f);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(inc);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(set);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(move);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(put);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(call);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sound);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(null);
+
+	void		parseScriptLine(Instruction *inst, Animation *a, LocalVariable *locals);
+	void		loadProgram(Animation *a, const char *filename);
+	ScriptVar	parseLValue(Instruction *inst, const char *str, LocalVariable *locals, Animation *a);
+	virtual ScriptVar	parseRValue(Instruction *inst, const char *str, LocalVariable *locals, Animation *a);
+	int16 		findLocal(const char* name, LocalVariable *locals);
+	int16 		addLocal(const char *name, LocalVariable *locals, int16 value = 0, int16 min = -10000, int16 max = 10000);
+	void 		wrapLocalVar(LocalVariable *local);
+
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(clear);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(start);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(speak);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(get);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(close);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(on);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(off);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(call);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(toggle);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(drop);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(quit);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(move);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(stop);
+
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(invalid);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(on);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(loop);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endloop);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(null);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(call);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(inc);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(set);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(put);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(wait);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(start);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(sound);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(move);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(end);
+
 };
 
-class Parallaction_br : public Parallaction {
+
+
+
+
+class Parallaction_br : public Parallaction_ns {
+
+	typedef Parallaction_ns Super;
 
 public:
-	Parallaction_br(OSystem* syst) : Parallaction(syst) { }
+	Parallaction_br(OSystem* syst) : Parallaction_ns(syst) { }
 	~Parallaction_br();
 
 	int init();
@@ -797,10 +821,23 @@ public:
 	int			_part;
 	int			_progress;
 
+	int			_zeta0;
+	int			_zeta1;
+	int			_zeta2;
+
+	int16		_lipSyncVal;
+
+	Zone		*_activeZone2;
+
+	int32		_counters[32];
+
 private:
 	void 		initResources();
 	void 		initFonts();
 	void 		freeFonts();
+	void 		initOpcodes();
+	void 		initParsers();
+
 
 	void		initPart();
 	void		freePart();
@@ -831,6 +868,113 @@ private:
 	void _c_password(void*);
 
 	const Callable *_callables;
+/*
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(zone);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(animation);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(localflags);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(flags);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(comment);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(endcomment);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(sound);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(music);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(redundant);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(ifchar);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(character);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(mask);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(path);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(escape);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(zeta);
+	DECLARE_UNQUALIFIED_LOCATION_PARSER(null);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(ifchar);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(endif);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(zone);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(location);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(toggle);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(string);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(math);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(test);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(music);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(zeta);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(swap);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(give);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(text);
+	DECLARE_UNQUALIFIED_COMMAND_PARSER(unary);
+
+	void parseLocation(const char* name);
+
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(zone);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(color);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(mask);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(print);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(text);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(if_op);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endif);
+
+	virtual ScriptVar		parseRValue(Instruction *inst, const char *str, LocalVariable *locals, Animation *a);
+
+
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(close);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(on);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(off);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(call);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(drop);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(move);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(start);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(stop);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(character);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(followme);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(onmouse);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(offmouse);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(add);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(leave);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(inc);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(dec);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(ifeq);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(iflt);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(ifgt);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(let);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(music);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(fix);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(unfix);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(zeta);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(scroll);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(swap);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(give);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(text);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(part);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(testsfx);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(ret);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(onsave);
+	DECLARE_UNQUALIFIED_COMMAND_OPCODE(offsave);
+
+
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(on);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(loop);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(inc);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(dec);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(set);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(put);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(wait);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(start);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(process);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(move);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(color);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(mask);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(print);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(text);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(mul);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(div);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(ifeq);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(iflt);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(ifgt);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endif);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
+*/
 };
 
 // FIXME: remove global

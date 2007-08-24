@@ -74,6 +74,8 @@ int Parallaction_ns::init() {
 	initResources();
 	initFonts();
 	initCursors();
+	initOpcodes();
+	initParsers();
 
 	Parallaction::init();
 
@@ -85,6 +87,12 @@ Parallaction_ns::~Parallaction_ns() {
 
 	_mouseComposedArrow->free();
 	delete _mouseComposedArrow;
+
+
+	delete _commandsNames;
+	delete _instructionNames;
+	delete _locationStmt;
+
 }
 
 
@@ -198,6 +206,7 @@ int Parallaction_ns::go() {
 
 	return 0;
 }
+
 
 
 } // namespace Parallaction

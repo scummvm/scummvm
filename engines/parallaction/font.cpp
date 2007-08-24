@@ -571,7 +571,7 @@ Font *AmigaDisk_ns::createFont(const char *name, Common::SeekableReadStream &str
 }
 
 Font *DosDisk_br::createFont(const char *name, Common::ReadStream &stream) {
-	printf("DosDisk_br::createFont(%s)\n", name);
+//	printf("DosDisk_br::createFont(%s)\n", name);
 	return new BraFont(stream);
 }
 

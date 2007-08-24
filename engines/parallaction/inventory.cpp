@@ -157,7 +157,7 @@ void Parallaction::dropItem(uint16 v) {
 	bool found = false;
 	for (uint16 slot = 0; slot < INVENTORY_MAX_ITEMS - 1; slot++) {
 
-		if (v + INVENTORY_FIRST_ITEM == _inventory[slot]._index) {
+		if (v == _inventory[slot]._index) {
 			found = true;
 		}
 

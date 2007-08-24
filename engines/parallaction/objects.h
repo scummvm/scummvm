@@ -30,11 +30,18 @@
 
 #include "parallaction/defs.h"
 
-#include "parallaction/commands.h"
 #include "parallaction/graphics.h"
 
 
 namespace Parallaction {
+
+struct Zone;
+struct Animation;
+struct Command;
+struct Question;
+struct Answer;
+struct Instruction;
+struct Program;
 
 enum ZoneTypes {
 	kZoneExamine	   = 1, 				// zone displays comment if activated
@@ -68,11 +75,66 @@ enum ZoneFlags {
 };
 
 
+enum CommandFlags {
+	kFlagsVisited		= 1,
+	kFlagsExit			= 0x10000000,
+	kFlagsEnter 		= 0x20000000,
+	kFlagsGlobal		= 0x40000000,
+
+	// BRA specific
+	kFlagsTestTrue		= 2
+};
+
+struct CommandData {
+	uint32			_flags;
+	Animation * 	_animation;
+	Zone*			_zone;
+	char*			_string;
+	uint16			_callable;
+	uint16			_object;
+	Common::Point	 _move;
+
+	// BRA specific
+	Common::Point	_startPos;
+	Common::Point	_startPos2;
+	uint			_lvalue;
+	int				_rvalue;
+	int				_zeta0;
+	int				_zeta1;
+	int				_zeta2;
+	int				_characterId;
+	char*			_string2;
+	int				_musicCommand;
+	int				_musicParm;
+
+
+	CommandData() {
+		memset(this, 0, sizeof(CommandData));
+	}
+
+	~CommandData() {
+		if (_string)
+			free(_string);
+		if (_string2)
+			free(_string2);
+	}
+};
+
+struct Command {
+	uint16			_id;
+	CommandData 	u;
+	uint32			_flagsOn;
+	uint32			_flagsOff;
+
+	Command();
+	~Command();
+};
+
+typedef ManagedList<Command*> CommandList;
+
+
 #define NUM_QUESTIONS		20
 #define NUM_ANSWERS		 	5
-
-struct Command;
-struct Question;
 
 struct Answer {
 	char*		_text;
@@ -192,8 +254,8 @@ struct TypeData {
 };
 
 struct Label {
-	char*			_text;
-	Graphics::Surface		_cnv;
+	char*				_text;
+	Graphics::Surface	_cnv;
 
 	Label();
 	~Label();
@@ -237,12 +299,12 @@ struct LocalVariable {
 	}
 };
 
-union LValue {
+union ScriptVar {
 	int16			_value;
 	int16*			_pvalue;
 	LocalVariable*	_local;
 
-	LValue() {
+	ScriptVar() {
 		_local = NULL;
 	}
 };
@@ -251,10 +313,18 @@ enum InstructionFlags {
 	kInstUsesLiteral	= 1,
 	kInstUsesLocal		= 2,
 	kInstMod			= 4,
-	kInstMaskedPut		= 8
+	kInstMaskedPut		= 8,
+
+	kInstUsesField		= 0x10,				// this value wasn't originally in NS, but it has been added for completeness
+
+	// BRA specific
+	kInstUnk20			= 0x20,
+	kInstUsesLLocal		= 0x40,
+	kInstUsesLField		= 0x80,
+	kInstRandom			= 0x100
 };
 
-struct Animation;
+typedef ManagedList<Instruction*> InstructionList;
 
 struct Instruction {
 	uint32	_index;
@@ -263,20 +333,30 @@ struct Instruction {
 		Animation	*_a;
 		Zone		*_z;
 		uint32		_index;
-		LValue		_loopCounter;
+		ScriptVar		_loopCounter;
 	} _opBase;
-	LValue	_opA;
-	LValue	_opB;
+	ScriptVar	_opA;
+	ScriptVar	_opB;
+
+	// BRA specific
+	byte		_colors[3];
+	ScriptVar	_opC;
+	char		*_text;
+	char		*_text2;
+	int			_y;
+	InstructionList::iterator	_endif;
 
 	Instruction() {
-		_index = 0;
-		_flags = 0;
-		_opBase._a = NULL;
+		memset(this, 0, sizeof(Instruction));
+	}
+
+	~Instruction() {
+		if (_text)
+			free(_text);
+		if (_text2)
+			free(_text2);
 	}
 };
-
-//typedef Common::List<Instruction*> InstructionList;
-typedef ManagedList<Instruction*> InstructionList;
 
 struct Program {
 	LocalVariable	*_locals;

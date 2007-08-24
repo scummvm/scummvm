@@ -82,39 +82,20 @@ void Script::seek(int32 offset, int whence) {
 	error("seek not supported on Script streams");
 }
 
-//
-//	a comment can appear both at location and Zone levels
-//	comments are displayed into rectangles on the screen
-//
-char *Parallaction::parseComment(Script &script) {
-
-	char			_tmp_comment[1000] = "\0";
-	char *v194;
-
-	do {
-		char v190[400];
-		v194 = script.readLine(v190, 400);
-
-		v194[strlen(v194)-1] = '\0';
-		if (!scumm_stricmp(v194, "endtext"))
-			break;
-
-		strcat(_tmp_comment, v194);
-		strcat(_tmp_comment, " ");
-	} while (true);
-
-	v194 = strdup(_tmp_comment);
-	_tmp_comment[0] = '\0';
-
-	return v194;
-}
-
 void clearTokens() {
 
 	for (uint16 i = 0; i < 20; i++)
 		_tokens[i][0] = '\0';
 
 	return;
+
+}
+
+void skip(Script* script, const char* endToken) {
+
+	while (scumm_stricmp(_tokens[0], endToken)) {
+		fillBuffers(*script, true);
+	}
 
 }
 

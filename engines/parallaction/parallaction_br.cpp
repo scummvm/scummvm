@@ -79,10 +79,14 @@ int Parallaction_br::init() {
 
 	_soundMan = new DummySoundMan(this);
 
+	_activeZone2 = 0;
+
 	initResources();
 	initFonts();
 	initCursors();
-
+/*	initOpcodes();
+	initParsers();
+*/
 	_part = -1;
 
 	Parallaction::init();
@@ -316,6 +320,8 @@ void Parallaction_br::setMousePointer(int16 index) {
 
 void Parallaction_br::initPart() {
 
+	memset(_counters, 0, ARRAYSIZE(_counters));
+
 	_globalTable = _disk->loadTable("global");
 	_objectsNames = _disk->loadTable("objects");
 	_countersNames = _disk->loadTable("counters");
@@ -343,83 +349,5 @@ void Parallaction_br::startPart() {
 
 }
 
-void skip(Script* script, const char* endToken) {
-
-	while (scumm_stricmp(_tokens[0], endToken)) {
-		fillBuffers(*script, true);
-	}
-
-}
-#if 0
-bool Parallaction_br::parseLocationLine(const char *filename, Script *script) {
-
-	bool parsed = true;
-	bool flip = false;
-	int nextToken = 0;
-
-	if (!scumm_stricmp(_tokens[0], "LOCATION")) {
-
-		strcpy(_location._name, _tokens[1]);
-		_disk->loadScenery(*_backgroundInfo, _location._name, NULL, NULL);
-		_gfx->setBackground(&_backgroundInfo->bg);
-		_gfx->_palette.clone(_backgroundInfo->palette);
-		_gfx->setPalette(_backgroundInfo->palette);
-
-		if (!scumm_stricmp("flip", _tokens[2])) {
-			flip = true;
-			nextToken = 3;
-		} else {
-			nextToken = 2;
-		}
-
-		if (_tokens[nextToken][0] != '\0') {
-			_char._ani._left = atoi(_tokens[nextToken]);
-			nextToken++;
-			_char._ani._top = atoi(_tokens[nextToken]);
-			nextToken++;
-		}
-
-		if (_tokens[nextToken][0] != '\0') {
-			_char._ani._frame = atoi(_tokens[nextToken]);
-		}
-	} else
-	if (!scumm_stricmp(_tokens[0], "IFCHAR")) {
-		skip(script, "ENDIF");
-	} else
-	if (!scumm_stricmp(_tokens[0], "CHARACTER")) {
-
-	} else
-	if (!scumm_stricmp(_tokens[0], "MASK")) {
-		_disk->loadScenery(*_backgroundInfo, NULL, _tokens[1], NULL);
-		_gfx->setMask(&_backgroundInfo->mask);
-
-		_gfx->_bgLayers[0] = atoi(_tokens[2]);
-		_gfx->_bgLayers[1] = atoi(_tokens[3]);
-		_gfx->_bgLayers[2] = atoi(_tokens[4]);
-	} else
-	if (!scumm_stricmp(_tokens[0], "PATH")) {
-		_disk->loadScenery(*_backgroundInfo, NULL, NULL, _tokens[1]);
-		_pathBuffer = &_backgroundInfo->path;
-	} else
-	if (!scumm_stricmp(_tokens[0], "DISK")) {
-		//
-	} else
-	if (!scumm_stricmp(_tokens[0], "ESCAPE")) {
-		skip(script, "endcommands");
-	} else
-	if (!scumm_stricmp(_tokens[0], "ZETA")) {
-		//
-	} else
-	if (!scumm_stricmp(_tokens[0], "ZONE")) {
-		skip(script, "endzone");
-	} else
-	if (!scumm_stricmp(_tokens[0], "ANIMATION")) {
-		skip(script, "endanimation");
-	} else
-		parsed = false;
-
-	return parsed;
-}
-#endif
 
 } // namespace Parallaction
