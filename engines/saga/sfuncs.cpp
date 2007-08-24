@@ -871,10 +871,10 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 
 	obj->_sceneNumber = _vm->_scene->currentSceneNumber();
 
-	// WORKAROUND for the compact disk in Ellen's chapter
+	// HACK for the compact disk in Ellen's chapter
 	// Change the scene number of the compact disk so that it's not shown. It will be shown 
 	// once Ellen says that there's something different (i.e. after speaking with AM)
-	// See Actor::actorSpeech for the other part of this workaround
+	// See Actor::actorSpeech for the other part of this hack
 	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 3 &&
 		_vm->_scene->currentSceneNumber() == 59 && obj->_id == 16385)
 			obj->_sceneNumber = -1;

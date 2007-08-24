@@ -929,8 +929,8 @@ void Actor::updateActorsScene(int actorsEntrance) {
 		// game if you click on anything inside the building you
 		// start walking through the door, turn around and leave."
 		//
-		// After steping of action zone - Rif trying to exit.
-		// This piece of code shift Rif's entry position to non action zone area.
+		// After stepping on an action zone, Rif is trying to exit.
+		// Shift Rif's entry position to a non action zone area.
 		if (_vm->getGameType() == GType_ITE) {
 			if ((_vm->_scene->currentSceneNumber() >= 53) && (_vm->_scene->currentSceneNumber() <= 66))
 				_protagonist->_location.y += 10;
@@ -2319,11 +2319,11 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 		_activeSpeech.speechBox.right = _vm->getDisplayWidth() - 10;
 	}
 
-	// WORKAROUND for the compact disk in Ellen's chapter
+	// HACK for the compact disk in Ellen's chapter
 	// Once Ellen starts saying that "Something is different", bring the compact disk in the
 	// scene. After speaking with AM, the compact disk is visible. She always says this line 
 	// when entering room 59, after speaking with AM, if the compact disk is not picked up yet
-	// Check Script::sfDropObject for the other part of this workaround
+	// Check Script::sfDropObject for the other part of this hack
 	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 3 &&
 		_vm->_scene->currentSceneNumber() == 59 && _activeSpeech.sampleResourceId == 286) {
 		for (i = 0; i < _objsCount; i++) {
