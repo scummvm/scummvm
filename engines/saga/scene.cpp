@@ -655,7 +655,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	debug(3, "Loading scene number %d:", _sceneNumber);
 
-	if (_vm->getGameId() == GID_IHNM_DEMO && (_sceneNumber >= 144 && _sceneNumber <= 149)) {
+	if (isNonInteractiveIHNMDemoPart()) {
 		// WORKAROUND for the non-interactive part of the IHNM demo: When restarting the 
 		// non-interactive demo, opcode sfMainMode is incorrectly called. Therefore, if any
 		// of the scenes of the non-interactive demo are loaded (scenes 144-149), set panel 

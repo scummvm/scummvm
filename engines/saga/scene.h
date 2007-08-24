@@ -345,6 +345,10 @@ class Scene {
 	void clearPsychicProfile();
 	void showIHNMDemoSpecialScreen();
 
+	bool isNonInteractiveIHNMDemoPart() {
+		return _vm->getGameId() == GID_IHNM_DEMO && (_sceneNumber >= 144 && _sceneNumber <= 149);
+	}
+
  private:
 	void loadScene(LoadSceneParams *loadSceneParams);
 	void loadSceneDescriptor(uint32 resourceId);

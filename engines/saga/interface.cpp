@@ -351,15 +351,6 @@ int Interface::activate() {
 		draw();
 	}
 
-	if (_vm->getGameId() != GID_IHNM_DEMO) {
-		_vm->_gfx->showCursor(true);
-	} else {		
-		if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149) {
-			// Don't show the mouse cursor in the non-interactive part of the IHNM demo
-		} else {
-			_vm->_gfx->showCursor(true);
-		}
-	}
 	return SUCCESS;
 }
 
@@ -406,9 +397,6 @@ void Interface::setMode(int mode) {
 		if (_vm->getGameId() == GID_IHNM_DEMO) {
 			_inMainMode = true;
 			_saveReminderState = 1;
-			if ((_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149) ||
-				_vm->_scene->currentSceneNumber() == 0 || _vm->_scene->currentSceneNumber() == -1)
-				_vm->_gfx->showCursor(false);
 		}
 	} else if (mode == kPanelOption) {
 		// Show the cursor in the IHNM demo
@@ -512,10 +500,8 @@ bool Interface::processAscii(uint16 ascii) {
 			return true;
 		}
 
-		if (_vm->getGameId() == GID_IHNM_DEMO) {
-			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
-				_vm->_scene->showIHNMDemoSpecialScreen();
-		}
+		if (_vm->_scene->isNonInteractiveIHNMDemoPart())
+			_vm->_scene->showIHNMDemoSpecialScreen();
 		break;
 	case kPanelCutaway:
 		if (ascii == 27) { // Esc
@@ -525,10 +511,8 @@ bool Interface::processAscii(uint16 ascii) {
 			return true;
 		}
 
-		if (_vm->getGameId() == GID_IHNM_DEMO) {
-			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
-				_vm->_scene->showIHNMDemoSpecialScreen();
-		}
+		if (_vm->_scene->isNonInteractiveIHNMDemoPart())
+			_vm->_scene->showIHNMDemoSpecialScreen();
 		break;
 	case kPanelVideo:
 		if (ascii == 27) { // Esc
@@ -542,10 +526,8 @@ bool Interface::processAscii(uint16 ascii) {
 			return true;
 		}
 
-		if (_vm->getGameId() == GID_IHNM_DEMO) {
-			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
-				_vm->_scene->showIHNMDemoSpecialScreen();
-		}
+		if (_vm->_scene->isNonInteractiveIHNMDemoPart())
+			_vm->_scene->showIHNMDemoSpecialScreen();
 		break;
 	case kPanelOption:
 		// TODO: check input dialog keys
@@ -1553,11 +1535,8 @@ void Interface::setOption(PanelButton *panelButton) {
 		} else {
 			if (_vm->_scene->currentChapterNumber() == 8) {
 				setMode(kPanelChapterSelection);
-			} else if (_vm->getGameId() == GID_IHNM_DEMO) {
-				if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
-					setMode(kPanelNull);
-				else
-					setMode(kPanelMain);
+			} else if (_vm->_scene->isNonInteractiveIHNMDemoPart()) {
+				setMode(kPanelNull);
 			} else {
 				setMode(kPanelMain);
 			}
@@ -1577,11 +1556,9 @@ void Interface::setOption(PanelButton *panelButton) {
 		}
 		break;
 	case kTextSave:
-		// Disallow saving in the non-interactive part of the IHNM demo
-		if (_vm->getGameId() == GID_IHNM_DEMO) {
-			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
-				return;
-		}
+		// Disallow saving in the non-interactive part of the IHNM demo (original demo didn't support saving at all)
+		if (_vm->_scene->isNonInteractiveIHNMDemoPart())
+			return;
 
 		if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0)) {
 			_textInputString[0] = 0;
@@ -1800,10 +1777,8 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		break;
 
 	case kPanelNull:
-		if (_vm->getGameId() == GID_IHNM_DEMO && (updateFlag & UPDATE_MOUSECLICK)) {
-			if (_vm->_scene->currentSceneNumber() >= 144 && _vm->_scene->currentSceneNumber() <= 149)
-				_vm->_scene->showIHNMDemoSpecialScreen();
-		}
+		if (_vm->_scene->isNonInteractiveIHNMDemoPart() && (updateFlag & UPDATE_MOUSECLICK))
+			_vm->_scene->showIHNMDemoSpecialScreen();
 		break;
 	}
 

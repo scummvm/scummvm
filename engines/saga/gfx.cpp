@@ -462,6 +462,10 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 }
 
 void Gfx::showCursor(bool state) {
+	// Don't show the mouse cursor in the non-interactive part of the IHNM demo
+	if (_vm->_scene->isNonInteractiveIHNMDemoPart())
+		state = false;
+
 	CursorMan.showMouse(state);
 }
 
