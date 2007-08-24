@@ -182,17 +182,14 @@ void Anim::playCutaway(int cut, bool fade) {
 	// An example is the "nightfall" animation in Ben's chapter (fadein-fadeout), the animation
 	// for the second from the left monitor in Ellen's chapter etc
 	// Therefore, skip the animation bit if animResourceId is 0 and only show the background
-	if (_cutawayList[cut].animResourceId == 0)
-		return;
+	if (_cutawayList[cut].animResourceId != 0) {
+		_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData, resourceDataLength);
+		load(MAX_ANIMATIONS + cutawaySlot, resourceData, resourceDataLength);
+		free(resourceData);
 
-	_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData, resourceDataLength);
-
-	load(MAX_ANIMATIONS + cutawaySlot, resourceData, resourceDataLength);
-
-	free(resourceData);
-
-	setCycles(MAX_ANIMATIONS + cutawaySlot, _cutawayList[cut].cycles);
-	setFrameTime(MAX_ANIMATIONS + cutawaySlot, 1000 / _cutawayList[cut].frameRate);
+		setCycles(MAX_ANIMATIONS + cutawaySlot, _cutawayList[cut].cycles);
+		setFrameTime(MAX_ANIMATIONS + cutawaySlot, 1000 / _cutawayList[cut].frameRate);
+	}
 
 	if (_cutAwayMode != kPanelVideo || startImmediately)
 		play(MAX_ANIMATIONS + cutawaySlot, 0);
@@ -437,6 +434,24 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 	if (animId < MAX_ANIMATIONS && _cutawayActive)
 		return;
+
+	if (animId >= MAX_ANIMATIONS && _cutawayAnimations[animId - MAX_ANIMATIONS] == NULL) {
+		// In IHNM, cutaways without an animation bit are not rendered, but the framecount 
+		// needs to be updated
+		_vm->_frameCount++;
+
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventFrame;
+		event.param = animId;
+		event.time = 10;
+
+		_vm->_events->queue(&event);
+
+		// Nothing to render here (apart from the background, which is already rendered),
+		// so return
+		return;
+	}
 
 	anim = getAnimation(animId);
 

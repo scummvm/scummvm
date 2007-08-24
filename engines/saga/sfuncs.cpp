@@ -1943,14 +1943,6 @@ void Script::sfWaitFrames(SCRIPTFUNC_PARAMS) {
 	int16 frames;
 	frames = thread->pop();
 
-	// HACK for the nightfall scene in Benny's chapter
-	// sfWaitFrames is supposed to wait for fadein and fadeout during that cutaway, but we
-	// don't support it yet (function sfScriptFade). This is a temporary hack to avoid
-	// having ScummVM wait for ever in that cutaway
-	// FIXME: Remove this hack once the palette fading is properly handled
-	if (_vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 41 && _vm->_anim->hasCutaway())
-		return;
-
 	if (!_skipSpeeches)
 		thread->waitFrames(_vm->_frameCount + frames);
 }
