@@ -710,6 +710,9 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	}
 
 	_sceneLoaded = true;
+	// Scene is loaded, but don't show actors till the scene's background is drawn
+	// via kEventDisplay later on
+	_vm->_actor->showActors(false);
 
 	q_event = NULL;
 
