@@ -1676,6 +1676,7 @@ int KyraEngine_v1::processBead(int x, int y, int &x2, int &y2, BeadState *ptr) {
 
 void KyraEngine_v1::setupPanPages() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::setupPanPages()");
+	_screen->savePageToDisk("BKGD.PG", 2);
 	_screen->loadBitmap("BEAD.CPS", 3, 3, 0);
 	if (_flags.platform == Common::kPlatformMacintosh || _flags.platform == Common::kPlatformAmiga) {
 		int pageBackUp = _screen->_curPage;
@@ -1701,6 +1702,7 @@ void KyraEngine_v1::setupPanPages() {
 			assert(_panPagesTable[i]);
 		}
 	}
+	_screen->loadPageFromDisk("BKGD.PG", 2);
 }
 
 void KyraEngine_v1::freePanPages() {
