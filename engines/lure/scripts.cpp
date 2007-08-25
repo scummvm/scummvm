@@ -75,8 +75,8 @@ void Script::setHotspotScript(uint16 hotspotId, uint16 scriptIndex, uint16 v3) {
 	}
 }
 
-void Script::addSound2(uint16 soundId, uint16 v2, uint16 v3) {
-	// TODO: Not yet implemented
+void Script::addSound2(uint16 soundIndex, uint16 v2, uint16 v3) {
+	Sound.addSound2(soundIndex);
 }
 
 // Sets the bitmask indicating what group of rooms/hotspots to display when the
@@ -132,8 +132,7 @@ void Script::deactivateHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 		hs->layer = 0xff;
 }
 
-// Sets the offset for the table of action sequence offsets for the given
-// hotspot
+// Sets the offset for the table of action sequence offsets for the given hotspot
 
 void Script::setDesc(uint16 hotspotId, uint16 descId, uint16 v3) {
 	Resources &res = Resources::getReference();
@@ -151,8 +150,8 @@ void Script::addDelayedSequence(uint16 seqOffset, uint16 delay, uint16 canClear)
 
 // Stops the specified sound
 
-void Script::killSound(uint16 soundId, uint16 v2, uint16 v3) {
-	// TODO
+void Script::killSound(uint16 soundNumber, uint16 v2, uint16 v3) {
+	Sound.musicInterface_Stop(soundNumber);
 }
 
 // Checks whether the given character is in the specified room, and stores
@@ -179,8 +178,8 @@ void Script::setHotspotName(uint16 hotspotId, uint16 nameId, uint16 v3) {
 
 // Unsure about this method, but at the moment I think it plays a sound
 
-void Script::addSound(uint16 v1, uint16 v2, uint16 v3) {
-	// TODO: No implementation currently	
+void Script::addSound(uint16 soundIndex, uint16 v2, uint16 v3) {
+	Sound.addSound(soundIndex);
 }
 
 void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
@@ -251,10 +250,10 @@ void Script::startSpeakingToNoone(uint16 characterId, uint16 stringId, uint16 v3
 	charHotspot->converse(NOONE_ID, stringId, false);
 }
 
+// Stops playing the specified sound index
 
-void Script::playMusic(uint16 musicNum, uint16 v2, uint16 v3) {
-	// TODO: Play a given music
-	warning("TODO: Play music #%d", musicNum);
+void Script::stopSound(uint16 soundIndex, uint16 v2, uint16 v3) {
+	Sound.stopSound(soundIndex);
 }
 
 // Gets the current blocked state for the given door and stores it in the
@@ -724,9 +723,12 @@ void Script::checkCellDoor(uint16 v1, uint16 v2, uint16 v3) {
 // Checks if a sound is running
 
 void Script::checkSound(uint16 hotspotId, uint16 v2, uint16 v3) {
+	Sound.tidySounds();
+
 	// For now, simply set the general value field so that the Skorl schedule
 	// will work properly
 	Resources::getReference().fieldList().setField(GENERAL, 0);
+	
 	// TODO: Check whether active sound can be found or not
 }
 
@@ -759,7 +761,7 @@ SequenceMethodRecord scriptMethods[] = {
 	{18, Script::remoteRoomViewSetup},
 	{19, Script::startSpeakingToNoone},
 	{20, Script::checkCellDoor},
-	{21, Script::playMusic},
+	{21, Script::stopSound},
 	{22, Script::getDoorBlocked},
 	{23, Script::isSkorlInCell},
 	{24, Script::ratpouchPushBricks},
@@ -1231,7 +1233,7 @@ bool HotspotScript::execute(Hotspot *h)
 			param2 = nextVal(scriptData, offset);
 
 			if ((param2 == 0) || (room.roomNumber() == param2)) {
-				debugC(ERROR_DETAILED, kLureDebugScripts, "PLAY_SOUND(%d,%d)", param1, param2);
+				debugC(ERROR_DETAILED, kLureDebugScripts, "PLAY_SOUND(%d,%d)", param2, param1);
 				Sound.addSound2((uint8)param1);
 			}
 			break;
