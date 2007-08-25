@@ -500,6 +500,9 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		_vm->_frameCount += 100;	// make sure the waiting thread stops waiting
 		// Animation done playing
 		anim->state = ANIM_PAUSE;
+		anim->currentFrame = 0;
+		anim->completed = 0;
+
 		if (anim->linkId == -1) {
 			if (anim->flags & ANIM_FLAG_ENDSCENE) {
 				// This animation ends the scene
@@ -510,9 +513,6 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 				_vm->_events->queue(&event);
 			}
 			return;
-		} else {
-			anim->currentFrame = 0;
-			anim->completed = 0;
 		}
 	}
 
