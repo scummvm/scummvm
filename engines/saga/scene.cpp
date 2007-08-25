@@ -578,7 +578,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			error("loadScene wrong usage");
 		}
 
-		if (loadSceneParams->chapter == 6)
+		if (loadSceneParams->chapter == 6 || loadSceneParams->chapter == 8)
 			_vm->_interface->setLeftPortrait(0);
 
 		_vm->_anim->freeCutawayList();
