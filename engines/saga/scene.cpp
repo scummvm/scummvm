@@ -712,7 +712,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	_sceneLoaded = true;
 	// Scene is loaded, but don't show actors till the scene's background is drawn
 	// via kEventDisplay later on
-	_vm->_actor->showActors(false);
+	_vm->_render->setFlag(RF_DISABLE_ACTORS);
 
 	q_event = NULL;
 
@@ -1461,7 +1461,7 @@ void Scene::clearPsychicProfile() {
 	if (_vm->_interface->getMode() == kPanelPlacard || _vm->getGameId() == GID_IHNM_DEMO) {
 		_vm->_scene->clearPlacard();
 		_vm->_scene->_textList.clear();
-		_vm->_actor->showActors(false);
+		_vm->_render->setFlag(RF_DISABLE_ACTORS);
 		_vm->_gfx->restorePalette();
 		_vm->_scene->restoreScene();
 		_vm->_interface->activate();

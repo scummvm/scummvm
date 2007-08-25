@@ -612,8 +612,6 @@ public:
 	void freeObjList();
 	void loadObjList(int objectCount, int objectsResourceID);
 
-	void showActors(bool flag) { _showActors = flag; }
-
 protected:
 	friend class Script;
 	bool loadActorResources(ActorData *actor);
@@ -709,7 +707,6 @@ private:
 	int _xCellCount;
 	int _yCellCount;
 	Rect _pathRect;
-	bool _showActors;
 
 	PathDirectionData *_pathDirectionList;
 	int _pathDirectionListCount;

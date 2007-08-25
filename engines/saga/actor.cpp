@@ -278,8 +278,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathRect.top = _vm->getDisplayInfo().pathStartY;
 	_pathRect.bottom = _vm->_scene->getHeight();
 
-	_showActors = true;
-
 	// Get actor resource file context
 	_actorContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
 	if (_actorContext == NULL) {
@@ -1827,10 +1825,6 @@ void Actor::drawActors() {
 	}
 
 	if (_vm->_scene->_entryList.entryListCount == 0) {
-		return;
-	}
-
-	if (!_showActors) {
 		return;
 	}
 

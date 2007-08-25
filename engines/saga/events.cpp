@@ -358,7 +358,7 @@ int Events::handleOneShot(Event *event) {
 					_vm->_gfx->setPalette(palPointer);
 				}
 			}
-			_vm->_actor->showActors(true);
+			_vm->_render->clearFlag(RF_DISABLE_ACTORS);
 		}
 		break;
 	case kPsychicProfileBgEvent:
