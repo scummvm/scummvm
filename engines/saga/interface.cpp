@@ -367,7 +367,7 @@ int Interface::deactivate() {
 }
 
 void Interface::rememberMode() {
-	debug(1, "rememberMode(%d)", _savedMode);
+	debug(1, "rememberMode(%d)", _panelMode);
 
 	_savedMode = _panelMode;
 }

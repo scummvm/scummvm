@@ -323,6 +323,12 @@ void Script::sfMainMode(SCRIPTFUNC_PARAMS) {
 	showVerb();
 	_vm->_interface->activate();
 	_vm->_interface->setMode(kPanelMain);
+	// Sometimes, the active cutaway is cleared after this opcode is called,
+	// resulting in an incorrect mode being set. An example is Ellen's chapter
+	// in IHNM, when using the computer with the chaos trebler CD. Make sure
+	// that the saved mode is kPanelMain, so that it won't get overwritten
+	// by an incorrect stored mode
+	_vm->_interface->rememberMode();
 
 	if (_vm->getGameType() == GType_ITE)
 		setPointerVerb();
