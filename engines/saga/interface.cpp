@@ -1931,11 +1931,14 @@ void Interface::handleMainUpdate(const Point& mousePoint) {
 
 //inventory stuff
 void Interface::inventoryChangePos(int chg) {
-	if ((chg < 0 && _inventoryStart + chg >= 0) ||
-		(chg > 0 && _inventoryStart < _inventoryEnd)) {
-			_inventoryStart += chg;
-			draw();
+	// Arrows will scroll the inventory up or down up to 4 items
+	for (int i = 1; i <= 4; i++) {
+		if ((chg < 0 && _inventoryStart + chg >= 0) ||
+			(chg > 0 && _inventoryStart < _inventoryEnd)) {
+				_inventoryStart += chg;
 		}
+	}
+	draw();
 }
 
 void Interface::inventorySetPos(int key) {
