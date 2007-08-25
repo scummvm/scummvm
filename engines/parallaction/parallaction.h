@@ -43,7 +43,6 @@ namespace GUI {
 	class ListWidget;
 	class CommandSender;
 }
-#define BRA_TEST 0
 
 extern OSystem *g_system;
 
@@ -864,7 +863,7 @@ private:
 	void _c_password(void*);
 
 	const Callable *_callables;
-#ifdef BRA_TEST
+/*
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(zone);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(animation);
@@ -969,7 +968,7 @@ private:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endif);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
-#endif
+*/
 };
 
 // FIXME: remove global
