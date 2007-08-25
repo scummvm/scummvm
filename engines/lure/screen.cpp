@@ -55,11 +55,11 @@ Screen::~Screen() {
 // setPaletteEmpty
 // Defaults the palette to an empty set
 
-void Screen::setPaletteEmpty() {
+void Screen::setPaletteEmpty(int numEntries) {
 	delete _palette;
 	_palette = new Palette();
 
-	_system.setPalette(_palette->data(), 0, GAME_COLOURS);
+	_system.setPalette(_palette->data(), 0, numEntries);
 	_system.updateScreen();
 }
 
@@ -76,9 +76,8 @@ void Screen::setPalette(Palette *p) {
 // Variation that allows the specification of a subset of a palette passed in to be copied
 
 void Screen::setPalette(Palette *p, uint16 start, uint16 num) {
-	_palette->palette()->copyFrom(p->palette(), start * PALETTE_FADE_INC_SIZE,
-		start * PALETTE_FADE_INC_SIZE, num * PALETTE_FADE_INC_SIZE);
-	_system.setPalette(_palette->data(), 0, GAME_COLOURS);
+	_palette->palette()->copyFrom(p->palette(), start * 4, start * 4, num * 4);
+	_system.setPalette(_palette->data(), start, num);
 	_system.updateScreen();
 }
 
@@ -111,7 +110,7 @@ void Screen::paletteFadeIn(Palette *p) {
 		}
 
 		if (changed) {
-			_system.setPalette(_palette->data(), 0, GAME_COLOURS);
+			_system.setPalette(_palette->data(), 0, p->numEntries());
 			_system.updateScreen();
 			_system.delayMillis(20);
 			events.pollEvent();
@@ -143,7 +142,7 @@ void Screen::paletteFadeOut(int numEntries) {
 		}
 
 		if (changed) {
-			_system.setPalette(_palette->data(), 0, GAME_COLOURS);
+			_system.setPalette(_palette->data(), 0, numEntries);
 			_system.updateScreen();
 			_system.delayMillis(20);
 			events.pollEvent();
