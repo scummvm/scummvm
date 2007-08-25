@@ -85,16 +85,6 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	_cutAwayFade = fade;
 
-	// Chained cutaway, clean up the previous cutaway
-	if (_cutawayActive) {
-		clearCutaway();
-
-		// This is used because when AM is zapping the child's mother in Benny's chapter, 
-		// there is a cutaway followed by a video. The video needs to start immediately after
-		// the cutaway so that it looks like the original
-		startImmediately = true;
-	}
-
 	_vm->_gfx->savePalette();
 
 	if (fade) {
@@ -118,15 +108,20 @@ void Anim::playCutaway(int cut, bool fade) {
 	}
 
 	// Prepare cutaway
-	_vm->_gfx->showCursor(false);
-	_vm->_interface->setStatusText("");
-	_vm->_interface->setSaveReminderState(0);
-	_vm->_interface->rememberMode();
-	if (_cutAwayMode == kPanelVideo)
-		_vm->_interface->setMode(kPanelVideo);
-	else
-		_vm->_interface->setMode(kPanelCutaway);
-	_cutawayActive = true;
+	if (!_cutawayActive) {
+		_vm->_gfx->showCursor(false);
+		_vm->_interface->setStatusText("");
+		_vm->_interface->setSaveReminderState(0);
+		_vm->_interface->rememberMode();
+		if (_cutAwayMode == kPanelVideo)
+			_vm->_interface->setMode(kPanelVideo);
+		else
+			_vm->_interface->setMode(kPanelCutaway);
+		_cutawayActive = true;
+	} else {
+		// If another cutaway is up, start the next cutaway immediately
+		startImmediately = true;
+	}
 
 	// Set the initial background and palette for the cutaway
 	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
