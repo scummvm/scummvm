@@ -255,6 +255,7 @@ int Events::handleImmediate(Event *event) {
 	case kSceneEvent:
 	case kAnimEvent:
 	case kCutawayEvent:
+	case kActorEvent:
 		handleOneShot(event);
 		event_done = true;
 		break;
@@ -544,6 +545,14 @@ int Events::handleOneShot(Event *event) {
 		switch (event->op) {
 		case kEventClear:
 			_vm->_anim->clearCutaway();
+			break;
+		default:
+			break;
+		}
+	case kActorEvent:
+		switch (event->op) {
+		case kEventMove:
+			// TODO (check Actor::direct)
 			break;
 		default:
 			break;
