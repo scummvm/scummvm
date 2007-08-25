@@ -1871,6 +1871,7 @@ void Script::sfSetChapterPoints(SCRIPTFUNC_PARAMS) {
 	int16 ethics = thread->pop();
 	int16 barometer = thread->pop();
 	int chapter = _vm->_scene->currentChapterNumber();
+	static PalEntry cur_pal[PAL_ENTRIES];
 
 	_vm->_ethicsPoints[chapter] = ethics;
 	_vm->_spiritualBarometer = ethics * 256 / barometer;
@@ -1884,9 +1885,8 @@ void Script::sfSetChapterPoints(SCRIPTFUNC_PARAMS) {
 			_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.green / 256,
 			_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.blue / 256);
 
-	PalEntry *palPointer;
-	_vm->_scene->getBGPal(palPointer);
-	_vm->_gfx->setPalette(palPointer);
+	_vm->_gfx->getCurrentPal(cur_pal);
+	_vm->_gfx->setPalette(cur_pal);
 }
 
 void Script::sfSetPortraitBgColor(SCRIPTFUNC_PARAMS) {
