@@ -56,7 +56,6 @@ uint32		_engineFlags = 0;
 
 uint16		_score = 1;
 
-uint32		_localFlags[120] = { 0 };
 Command *	_forwardedCommands[20] = {
 	NULL,
 	NULL,
@@ -941,7 +940,7 @@ void Parallaction::freeLocation() {
 	// HACK: prevents leakage. A routine like this
 	// should allocate memory at all, though.
 	if ((_engineFlags & kEngineQuit) == 0) {
-		_localFlagNames = new Table(120);
+		_localFlagNames = new Table(NUM_LOCATIONS);
 		_localFlagNames->addData("visited");
 	}
 

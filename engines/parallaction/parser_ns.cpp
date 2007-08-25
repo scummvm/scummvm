@@ -78,43 +78,43 @@ namespace Parallaction {
 
 
 DECLARE_ANIM_PARSER(invalid) {
-	error("unknown statement '%s' in animation %s", _tokens[0], _locAnimParseCtxt.a->_label._text);
+	error("unknown statement '%s' in animation %s", _tokens[0], _locParseCtxt.a->_label._text);
 }
 
 
 DECLARE_ANIM_PARSER(script) {
-	_locAnimParseCtxt.a->_scriptName = strdup(_tokens[1]);
+	_locParseCtxt.a->_scriptName = strdup(_tokens[1]);
 }
 
 
 DECLARE_ANIM_PARSER(commands) {
-	 parseCommands(*_locAnimParseCtxt.script, _locAnimParseCtxt.a->_commands);
+	 parseCommands(*_locParseCtxt.script, _locParseCtxt.a->_commands);
 }
 
 
 DECLARE_ANIM_PARSER(type) {
 	if (_tokens[2][0] != '\0') {
-		_locAnimParseCtxt.a->_type = ((4 + _objectsNames->lookup(_tokens[2])) << 16) & 0xFFFF0000;
+		_locParseCtxt.a->_type = ((4 + _objectsNames->lookup(_tokens[2])) << 16) & 0xFFFF0000;
 	}
 	int16 _si = _zoneTypeNames->lookup(_tokens[1]);
 	if (_si != Table::notFound) {
-		_locAnimParseCtxt.a->_type |= 1 << (_si-1);
-		if (((_locAnimParseCtxt.a->_type & 0xFFFF) != kZoneNone) && ((_locAnimParseCtxt.a->_type & 0xFFFF) != kZoneCommand)) {
-			parseZoneTypeBlock(*_locAnimParseCtxt.script, _locAnimParseCtxt.a);
+		_locParseCtxt.a->_type |= 1 << (_si-1);
+		if (((_locParseCtxt.a->_type & 0xFFFF) != kZoneNone) && ((_locParseCtxt.a->_type & 0xFFFF) != kZoneCommand)) {
+			parseZoneTypeBlock(*_locParseCtxt.script, _locParseCtxt.a);
 		}
 	}
 
-	_locAnimParseCtxt.a->_oldPos.x = -1000;
-	_locAnimParseCtxt.a->_oldPos.y = -1000;
+	_locParseCtxt.a->_oldPos.x = -1000;
+	_locParseCtxt.a->_oldPos.y = -1000;
 
-	_locAnimParseCtxt.a->_flags |= 0x1000000;
+	_locParseCtxt.a->_flags |= 0x1000000;
 
 	popParserTables();
 }
 
 
 DECLARE_ANIM_PARSER(label) {
-	renderLabel(&_locAnimParseCtxt.a->_label._cnv, _tokens[1]);
+	renderLabel(&_locParseCtxt.a->_label._cnv, _tokens[1]);
 }
 
 
@@ -124,7 +124,7 @@ DECLARE_ANIM_PARSER(flags) {
 	do {
 		byte _al = _zoneFlagNames->lookup(_tokens[_si]);
 		_si++;
-		_locAnimParseCtxt.a->_flags |= 1 << (_al - 1);
+		_locParseCtxt.a->_flags |= 1 << (_al - 1);
 	} while (!scumm_stricmp(_tokens[_si++], "|"));
 }
 
@@ -137,29 +137,29 @@ DECLARE_ANIM_PARSER(file) {
 			strcat(vC8, "tras");
 		}
 	}
-	_locAnimParseCtxt.a->_cnv = _disk->loadFrames(vC8);
+	_locParseCtxt.a->_cnv = _disk->loadFrames(vC8);
 }
 
 
 DECLARE_ANIM_PARSER(position) {
-	_locAnimParseCtxt.a->_left = atoi(_tokens[1]);
-	_locAnimParseCtxt.a->_top = atoi(_tokens[2]);
-	_locAnimParseCtxt.a->_z = atoi(_tokens[3]);
+	_locParseCtxt.a->_left = atoi(_tokens[1]);
+	_locParseCtxt.a->_top = atoi(_tokens[2]);
+	_locParseCtxt.a->_z = atoi(_tokens[3]);
 }
 
 
 DECLARE_ANIM_PARSER(moveto) {
-	_locAnimParseCtxt.a->_moveTo.x = atoi(_tokens[1]);
-	_locAnimParseCtxt.a->_moveTo.y = atoi(_tokens[2]);
+	_locParseCtxt.a->_moveTo.x = atoi(_tokens[1]);
+	_locParseCtxt.a->_moveTo.y = atoi(_tokens[2]);
 }
 
 
 DECLARE_ANIM_PARSER(endanimation) {
 
-	_locAnimParseCtxt.a->_oldPos.x = -1000;
-	_locAnimParseCtxt.a->_oldPos.y = -1000;
+	_locParseCtxt.a->_oldPos.x = -1000;
+	_locParseCtxt.a->_oldPos.y = -1000;
 
-	_locAnimParseCtxt.a->_flags |= 0x1000000;
+	_locParseCtxt.a->_flags |= 0x1000000;
 
 	popParserTables();
 }
@@ -173,9 +173,9 @@ Animation *Parallaction_ns::parseAnimation(Script& script, AnimationList &list, 
 
 	list.push_front(a);
 
-	_locAnimParseCtxt.a = a;
-	_locAnimParseCtxt.end = false;
-	_locAnimParseCtxt.script = &script;
+	_locParseCtxt.a = a;
+	_locParseCtxt.end = false;
+	_locParseCtxt.script = &script;
 
 	pushParserTables(&_locationAnimParsers, _locationAnimStmt);
 
@@ -425,19 +425,19 @@ DECLARE_COMMAND_PARSER(flags) {
 
 	if (_globalTable->lookup(_tokens[1]) == Table::notFound) {
 		do {
-			char _al = _localFlagNames->lookup(_tokens[_cmdParseCtxt.nextToken]);
-			_cmdParseCtxt.nextToken++;
-			_cmdParseCtxt.cmd->u._flags |= 1 << (_al - 1);
-		} while (!scumm_stricmp(_tokens[_cmdParseCtxt.nextToken++], "|"));
-		_cmdParseCtxt.nextToken--;
+			char _al = _localFlagNames->lookup(_tokens[_locParseCtxt.nextToken]);
+			_locParseCtxt.nextToken++;
+			_locParseCtxt.cmd->u._flags |= 1 << (_al - 1);
+		} while (!scumm_stricmp(_tokens[_locParseCtxt.nextToken++], "|"));
+		_locParseCtxt.nextToken--;
 	} else {
-		_cmdParseCtxt.cmd->u._flags |= kFlagsGlobal;
+		_locParseCtxt.cmd->u._flags |= kFlagsGlobal;
 		do {
 			char _al = _globalTable->lookup(_tokens[1]);
-			_cmdParseCtxt.nextToken++;
-			_cmdParseCtxt.cmd->u._flags |= 1 << (_al - 1);
-		} while (!scumm_stricmp(_tokens[_cmdParseCtxt.nextToken++], "|"));
-		_cmdParseCtxt.nextToken--;
+			_locParseCtxt.nextToken++;
+			_locParseCtxt.cmd->u._flags |= 1 << (_al - 1);
+		} while (!scumm_stricmp(_tokens[_locParseCtxt.nextToken++], "|"));
+		_locParseCtxt.nextToken--;
 	}
 
 	parseCommandFlags();
@@ -448,11 +448,11 @@ DECLARE_COMMAND_PARSER(flags) {
 DECLARE_COMMAND_PARSER(animation) {
 	createCommand(_lookup);
 
-	_cmdParseCtxt.cmd->u._animation = findAnimation(_tokens[_cmdParseCtxt.nextToken]);
-	_cmdParseCtxt.nextToken++;
-	if (_cmdParseCtxt.cmd->u._animation == NULL) {
-		strcpy(_forwardedAnimationNames[_numForwards], _tokens[_cmdParseCtxt.nextToken-1]);
-		_forwardedCommands[_numForwards] = _cmdParseCtxt.cmd;
+	_locParseCtxt.cmd->u._animation = findAnimation(_tokens[_locParseCtxt.nextToken]);
+	_locParseCtxt.nextToken++;
+	if (_locParseCtxt.cmd->u._animation == NULL) {
+		strcpy(_forwardedAnimationNames[_numForwards], _tokens[_locParseCtxt.nextToken-1]);
+		_forwardedCommands[_numForwards] = _locParseCtxt.cmd;
 		_numForwards++;
 	}
 
@@ -464,8 +464,8 @@ DECLARE_COMMAND_PARSER(animation) {
 DECLARE_COMMAND_PARSER(zone) {
 	createCommand(_lookup);
 
-	_cmdParseCtxt.cmd->u._zone = findZone(_tokens[_cmdParseCtxt.nextToken]);
-	_cmdParseCtxt.nextToken++;
+	_locParseCtxt.cmd->u._zone = findZone(_tokens[_locParseCtxt.nextToken]);
+	_locParseCtxt.nextToken++;
 
 	parseCommandFlags();
 	addCommand();
@@ -475,9 +475,9 @@ DECLARE_COMMAND_PARSER(zone) {
 DECLARE_COMMAND_PARSER(location) {
 	createCommand(_lookup);
 
-	_cmdParseCtxt.cmd->u._string = (char*)malloc(strlen(_tokens[_cmdParseCtxt.nextToken])+1);
-	strcpy(_cmdParseCtxt.cmd->u._string, _tokens[_cmdParseCtxt.nextToken]);
-	_cmdParseCtxt.nextToken++;
+	_locParseCtxt.cmd->u._string = (char*)malloc(strlen(_tokens[_locParseCtxt.nextToken])+1);
+	strcpy(_locParseCtxt.cmd->u._string, _tokens[_locParseCtxt.nextToken]);
+	_locParseCtxt.nextToken++;
 
 	parseCommandFlags();
 	addCommand();
@@ -487,8 +487,8 @@ DECLARE_COMMAND_PARSER(location) {
 DECLARE_COMMAND_PARSER(drop) {
 	createCommand(_lookup);
 
-	_cmdParseCtxt.cmd->u._object = 4 + _objectsNames->lookup(_tokens[_cmdParseCtxt.nextToken]);
-	_cmdParseCtxt.nextToken++;
+	_locParseCtxt.cmd->u._object = 4 + _objectsNames->lookup(_tokens[_locParseCtxt.nextToken]);
+	_locParseCtxt.nextToken++;
 
 	parseCommandFlags();
 	addCommand();
@@ -498,8 +498,8 @@ DECLARE_COMMAND_PARSER(drop) {
 DECLARE_COMMAND_PARSER(call) {
 	createCommand(_lookup);
 
-	_cmdParseCtxt.cmd->u._callable = _callableNames->lookup(_tokens[_cmdParseCtxt.nextToken]) - 1;
-	_cmdParseCtxt.nextToken++;
+	_locParseCtxt.cmd->u._callable = _callableNames->lookup(_tokens[_locParseCtxt.nextToken]) - 1;
+	_locParseCtxt.nextToken++;
 
 	parseCommandFlags();
 	addCommand();
@@ -515,10 +515,10 @@ DECLARE_COMMAND_PARSER(simple) {
 DECLARE_COMMAND_PARSER(move) {
 	createCommand(_lookup);
 
-	_cmdParseCtxt.cmd->u._move.x = atoi(_tokens[_cmdParseCtxt.nextToken]);
-	_cmdParseCtxt.nextToken++;
-	_cmdParseCtxt.cmd->u._move.y = atoi(_tokens[_cmdParseCtxt.nextToken]);
-	_cmdParseCtxt.nextToken++;
+	_locParseCtxt.cmd->u._move.x = atoi(_tokens[_locParseCtxt.nextToken]);
+	_locParseCtxt.nextToken++;
+	_locParseCtxt.cmd->u._move.y = atoi(_tokens[_locParseCtxt.nextToken]);
+	_locParseCtxt.nextToken++;
 
 	parseCommandFlags();
 	addCommand();
@@ -532,13 +532,13 @@ DECLARE_COMMAND_PARSER(endcommands) {
 	popParserTables();
 
 	// temporary trick to handle dialogue commands
-	_cmdParseCtxt.end = true;
+	_locParseCtxt.endcommands = true;
 }
 
 void Parallaction_ns::parseCommandFlags() {
 
-	int _si = _cmdParseCtxt.nextToken;
-	Command *cmd = _cmdParseCtxt.cmd;
+	int _si = _locParseCtxt.nextToken;
+	Command *cmd = _locParseCtxt.cmd;
 
 	if (!scumm_stricmp(_tokens[_si], "flags")) {
 		_si++;
@@ -589,26 +589,26 @@ void Parallaction_ns::parseCommandFlags() {
 
 	}
 
-	_si = _cmdParseCtxt.nextToken;
+	_si = _locParseCtxt.nextToken;
 
 }
 
 void Parallaction_ns::addCommand() {
-	_cmdParseCtxt.list->push_front(_cmdParseCtxt.cmd);	// NOTE: command lists are written backwards in scripts
+	_locParseCtxt.list->push_front(_locParseCtxt.cmd);	// NOTE: command lists are written backwards in scripts
 }
 
 void Parallaction_ns::createCommand(uint id) {
 
-	_cmdParseCtxt.nextToken = 1;
-	_cmdParseCtxt.cmd = new Command;
-	_cmdParseCtxt.cmd->_id = id;
+	_locParseCtxt.nextToken = 1;
+	_locParseCtxt.cmd = new Command;
+	_locParseCtxt.cmd->_id = id;
 
 }
 
 void Parallaction_ns::parseCommands(Script &script, CommandList& list) {
-	_cmdParseCtxt.list = &list;
-	_cmdParseCtxt.end = false;
-	_cmdParseCtxt.script = &script;
+	_locParseCtxt.list = &list;
+	_locParseCtxt.end = false;
+	_locParseCtxt.script = &script;
 
 	pushParserTables(&_commandParsers, _commandsNames);
 
@@ -685,11 +685,11 @@ Dialogue *Parallaction_ns::parseDialogue(Script &script) {
 			if (!scumm_stricmp(_tokens[0], "commands")) {
 
 				parseCommands(script, answer->_commands);
-				_cmdParseCtxt.end = false;
+				_locParseCtxt.endcommands = false;
 				do {
 					fillBuffers(script, true);
 					parseStatement();
-				} while (!_cmdParseCtxt.end);
+				} while (!_locParseCtxt.endcommands);
 
 				fillBuffers(script, true);
 			}
@@ -1086,7 +1086,7 @@ char *Parallaction_ns::parseComment(Script &script) {
 
 
 DECLARE_ZONE_PARSER(invalid) {
-	error("unknown statement '%s' in zone %s", _tokens[0], _locZoneParseCtxt.z->_label._text);
+	error("unknown statement '%s' in zone %s", _tokens[0], _locParseCtxt.z->_label._text);
 }
 
 DECLARE_ZONE_PARSER(endzone) {
@@ -1094,27 +1094,27 @@ DECLARE_ZONE_PARSER(endzone) {
 }
 
 DECLARE_ZONE_PARSER(limits) {
-	_locZoneParseCtxt.z->_left = atoi(_tokens[1]);
-	_locZoneParseCtxt.z->_top = atoi(_tokens[2]);
-	_locZoneParseCtxt.z->_right = atoi(_tokens[3]);
-	_locZoneParseCtxt.z->_bottom = atoi(_tokens[4]);
+	_locParseCtxt.z->_left = atoi(_tokens[1]);
+	_locParseCtxt.z->_top = atoi(_tokens[2]);
+	_locParseCtxt.z->_right = atoi(_tokens[3]);
+	_locParseCtxt.z->_bottom = atoi(_tokens[4]);
 }
 
 
 DECLARE_ZONE_PARSER(moveto) {
-	_locZoneParseCtxt.z->_moveTo.x = atoi(_tokens[1]);
-	_locZoneParseCtxt.z->_moveTo.y = atoi(_tokens[2]);
+	_locParseCtxt.z->_moveTo.x = atoi(_tokens[1]);
+	_locParseCtxt.z->_moveTo.y = atoi(_tokens[2]);
 }
 
 
 DECLARE_ZONE_PARSER(type) {
 	if (_tokens[2][0] != '\0') {
-		_locZoneParseCtxt.z->_type = (4 + _objectsNames->lookup(_tokens[2])) << 16;
+		_locParseCtxt.z->_type = (4 + _objectsNames->lookup(_tokens[2])) << 16;
 	}
 	int16 _si = _zoneTypeNames->lookup(_tokens[1]);
 	if (_si != Table::notFound) {
-		_locZoneParseCtxt.z->_type |= 1 << (_si - 1);
-		parseZoneTypeBlock(*_locZoneParseCtxt.script, _locZoneParseCtxt.z);
+		_locParseCtxt.z->_type |= 1 << (_si - 1);
+		parseZoneTypeBlock(*_locParseCtxt.script, _locParseCtxt.z);
 	}
 
 	popParserTables();
@@ -1122,13 +1122,13 @@ DECLARE_ZONE_PARSER(type) {
 
 
 DECLARE_ZONE_PARSER(commands) {
-	 parseCommands(*_locZoneParseCtxt.script, _locZoneParseCtxt.z->_commands);
+	 parseCommands(*_locParseCtxt.script, _locParseCtxt.z->_commands);
 }
 
 
 DECLARE_ZONE_PARSER(label) {
 //			printf("label: %s", _tokens[1]);
-	renderLabel(&_locZoneParseCtxt.z->_label._cnv, _tokens[1]);
+	renderLabel(&_locParseCtxt.z->_label._cnv, _tokens[1]);
 }
 
 
@@ -1138,7 +1138,7 @@ DECLARE_ZONE_PARSER(flags) {
 	do {
 		char _al = _zoneFlagNames->lookup(_tokens[_si]);
 		_si++;
-		_locZoneParseCtxt.z->_flags |= 1 << (_al - 1);
+		_locParseCtxt.z->_flags |= 1 << (_al - 1);
 	} while (!scumm_stricmp(_tokens[_si++], "|"));
 }
 
@@ -1155,9 +1155,9 @@ void Parallaction_ns::parseZone(Script &script, ZoneList &list, char *name) {
 
 	z->_label._text = strdup(name);
 
-	_locZoneParseCtxt.z = z;
-	_locZoneParseCtxt.end = false;
-	_locZoneParseCtxt.script = &script;
+	_locParseCtxt.z = z;
+	_locParseCtxt.end = false;
+	_locParseCtxt.script = &script;
 
 	list.push_front(z);
 

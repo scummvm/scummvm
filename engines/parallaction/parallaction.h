@@ -43,6 +43,7 @@ namespace GUI {
 	class ListWidget;
 	class CommandSender;
 }
+#define BRA_TEST 0
 
 extern OSystem *g_system;
 
@@ -161,14 +162,10 @@ public:
 typedef Job* JobPointer;
 typedef ManagedList<JobPointer> JobList;
 
-typedef void (*callable)(void*);
-
 extern uint16 		_mouseButtons;
 extern uint16 		_score;
 extern uint16 		_language;
 extern uint32 		_engineFlags;
-extern callable 	_callables[];
-extern uint32 		_localFlags[];
 extern Command 		*_forwardedCommands[];
 extern char 		_forwardedAnimationNames[][20];
 extern uint16 		_numForwards;
@@ -338,7 +335,7 @@ typedef Common::Array<const Opcode*>	OpcodeSet;
 #define DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(op) void instOp_##op()
 
 
-
+#define NUM_LOCATIONS 120
 
 class Parallaction : public Engine {
 	friend class Debugger;
@@ -448,7 +445,8 @@ public:
 	Character		_char;
 	char			_characterName[30];
 
-	char			_locationNames[120][32];
+	uint32			_localFlags[NUM_LOCATIONS];
+	char			_locationNames[NUM_LOCATIONS][32];
 	int16			_currentLocationIndex;
 	uint16			_numLocations;
 	Location		_location;
@@ -465,6 +463,7 @@ public:
 	Font		*_labelFont;
 	Font		*_menuFont;
 	Font		*_dialogueFont;
+
 
 protected:		// data
 
@@ -637,28 +636,18 @@ protected:
 	Table		*_locationZoneStmt;
 	Table		*_locationAnimStmt;
 
-	struct {
+	struct LocationParserContext {
+		bool		end;
+
 		const char	*filename;
-		bool	end;
-		Script	*script;
-	} _locParseCtxt;
-	struct {
-		bool	end;
-		Script	*script;
-		Zone *z;
-	} _locZoneParseCtxt;
-	struct {
-		bool	end;
-		Script	*script;
-		Animation *a;
-	} _locAnimParseCtxt;
-	struct {
-		Command	*cmd;
-		int		nextToken;
+		Script		*script;
+		Zone 		*z;
+		Animation 	*a;
+		int			nextToken;
 		CommandList *list;
-		bool	end;
-		Script *script;
-	} _cmdParseCtxt;
+		bool		endcommands;
+		Command		*cmd;
+	} _locParseCtxt;
 
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(invalid);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(endlocation);
@@ -796,7 +785,7 @@ protected:
 
 
 
-
+#define NUM_ZONES	100
 
 class Parallaction_br : public Parallaction_ns {
 
@@ -831,6 +820,12 @@ public:
 	Zone		*_activeZone2;
 
 	int32		_counters[32];
+
+	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
+
+	struct LocationParserContext_br : public LocationParserContext {
+		int numZones;
+	} _locParseCtxt;
 
 private:
 	void 		initResources();

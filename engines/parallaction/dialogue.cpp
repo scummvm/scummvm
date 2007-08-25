@@ -162,7 +162,7 @@ uint16 DialogueManager::askPassword() {
 
 bool DialogueManager::displayAnswer(uint16 i) {
 
-	uint32 v28 = _localFlags[_vm->_currentLocationIndex];
+	uint32 v28 = _vm->_localFlags[_vm->_currentLocationIndex];
 	if (_q->_answers[i]->_yesFlags & kFlagsGlobal)
 		v28 = _commandFlags | kFlagsGlobal;
 

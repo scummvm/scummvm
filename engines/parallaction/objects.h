@@ -275,6 +275,8 @@ struct Zone {
 	CommandList 	_commands;
 	Common::Point	_moveTo;
 
+	uint			_index;
+
 	Zone();
 	virtual ~Zone();
 
