@@ -113,15 +113,16 @@ void Anim::playCutaway(int cut, bool fade) {
 		_vm->_interface->setStatusText("");
 		_vm->_interface->setSaveReminderState(0);
 		_vm->_interface->rememberMode();
-		if (_cutAwayMode == kPanelVideo)
-			_vm->_interface->setMode(kPanelVideo);
-		else
-			_vm->_interface->setMode(kPanelCutaway);
 		_cutawayActive = true;
 	} else {
 		// If another cutaway is up, start the next cutaway immediately
 		startImmediately = true;
 	}
+
+	if (_cutAwayMode == kPanelVideo)
+		_vm->_interface->setMode(kPanelVideo);
+	else
+		_vm->_interface->setMode(kPanelCutaway);
 
 	// Set the initial background and palette for the cutaway
 	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
