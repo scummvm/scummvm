@@ -330,7 +330,11 @@ bool Resource::loadContext(ResourceContext *context) {
 				if (resourceData->patchData->_patchFile->open(patchDescription->fileName)) {
 					resourceData->offset = 0;
 					resourceData->size = resourceData->patchData->_patchFile->size();
-					resourceData->patchData->_patchFile->close();
+					// ITE uses several patch files which are loaded and then not needed
+					// anymore (as they're in memory), so close them here. IHNM uses only
+					// 1 patch file, which is reused, so don't close it
+					if (_vm->getGameType() == GType_ITE)
+						resourceData->patchData->_patchFile->close();
 				} else {
 					delete resourceData->patchData;
 					resourceData->patchData = NULL;
