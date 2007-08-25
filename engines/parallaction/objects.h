@@ -299,29 +299,36 @@ struct LocalVariable {
 	}
 };
 
-union ScriptVar {
+enum ParaFlags {
+	kParaImmediate	= 1,				// instruction is using an immediate parameter
+	kParaLocal		= 2,				// instruction is using a local variable
+	kParaField		= 0x10,				// instruction is using an animation's field
+	kParaRandom		= 0x100
+};
+
+
+struct ScriptVar {
+	uint32 			_flags;
+
 	int16			_value;
 	int16*			_pvalue;
 	LocalVariable*	_local;
 
-	ScriptVar() {
-		_local = NULL;
-	}
+	ScriptVar();
+
+	int16	getRValue();
+	int16*	getLValue();
+
+	void	setLocal(LocalVariable *local);
+	void	setField(int16 *field);
+	void 	setImmediate(int16 value);
+	void 	setRandom(int16 seed);
 };
 
 enum InstructionFlags {
-	kInstUsesLiteral	= 1,
-	kInstUsesLocal		= 2,
 	kInstMod			= 4,
 	kInstMaskedPut		= 8,
-
-	kInstUsesField		= 0x10,				// this value wasn't originally in NS, but it has been added for completeness
-
-	// BRA specific
-	kInstUnk20			= 0x20,
-	kInstUsesLLocal		= 0x40,
-	kInstUsesLField		= 0x80,
-	kInstRandom			= 0x100
+	kInstUnk20			= 0x20
 };
 
 typedef ManagedList<Instruction*> InstructionList;
@@ -329,12 +336,11 @@ typedef ManagedList<Instruction*> InstructionList;
 struct Instruction {
 	uint32	_index;
 	uint32	_flags;
-	struct {
-		Animation	*_a;
-		Zone		*_z;
-		uint32		_index;
-		ScriptVar		_loopCounter;
-	} _opBase;
+
+	// common
+	Animation	*_a;
+	Zone		*_z;
+	int16		_immediate;
 	ScriptVar	_opA;
 	ScriptVar	_opB;
 
@@ -346,21 +352,18 @@ struct Instruction {
 	int			_y;
 	InstructionList::iterator	_endif;
 
-	Instruction() {
-		memset(this, 0, sizeof(Instruction));
-	}
+	Instruction();
+	~Instruction();
 
-	~Instruction() {
-		if (_text)
-			free(_text);
-		if (_text2)
-			free(_text2);
-	}
 };
+
 
 struct Program {
 	LocalVariable	*_locals;
+
 	uint16			_loopCounter;
+
+	uint16	_numLocals;
 
 	InstructionList::iterator	_ip;
 	InstructionList::iterator	_loopStart;
@@ -368,6 +371,9 @@ struct Program {
 
 	Program();
 	~Program();
+
+	int16 		findLocal(const char* name);
+	int16 		addLocal(const char *name, int16 value = 0, int16 min = -10000, int16 max = 10000);
 };
 
 

@@ -301,7 +301,8 @@ const char *_instructionNamesRes_ns[] = {
 	"wait",
 	"start",
 	"sound",
-	"move"
+	"move",
+	"endscript"
 };
 
 const char *_callableNamesRes_ns[] = {

@@ -81,14 +81,40 @@ byte* Animation::getFrameData(uint32 index) const {
 }
 
 
+#define NUM_LOCALS	10
+char	_localNames[NUM_LOCALS][10];
+
 Program::Program() {
 	_loopCounter = 0;
-	_locals = new LocalVariable[10];
+	_locals = new LocalVariable[NUM_LOCALS];
+	_numLocals = 0;
 }
 
 Program::~Program() {
 	delete[] _locals;
 }
+
+int16 Program::findLocal(const char* name) {
+	for (uint16 _si = 0; _si < NUM_LOCALS; _si++) {
+		if (!scumm_stricmp(name, _localNames[_si]))
+			return _si;
+	}
+
+	return -1;
+}
+
+int16 Program::addLocal(const char *name, int16 value, int16 min, int16 max) {
+	assert(_numLocals < NUM_LOCALS);
+
+	strcpy(_localNames[_numLocals], name);
+	_locals[_numLocals]._value = value;
+
+	_locals[_numLocals]._min = min;
+	_locals[_numLocals]._max = max;
+
+	return _numLocals++;
+}
+
 
 
 Zone::Zone() {
@@ -208,8 +234,81 @@ Question::~Question() {
 	free(_text);
 }
 
+Instruction::Instruction() {
+	memset(this, 0, sizeof(Instruction));
+}
+
+Instruction::~Instruction() {
+	if (_text)
+		free(_text);
+	if (_text2)
+		free(_text2);
+}
+
+int16 ScriptVar::getRValue() {
+
+	if (_flags & kParaImmediate) {
+		return _value;
+	}
+
+	if (_flags & kParaLocal) {
+		return _local->_value;
+	}
+
+	if (_flags & kParaField) {
+		return *_pvalue;
+	}
+
+	if (_flags & kParaRandom) {
+		return (rand() * _value) / 32767;
+	}
+
+	error("Parameter is not an r-value");
+
+	return 0;
+}
+
+int16* ScriptVar::getLValue() {
+
+	if (_flags & kParaLocal) {
+		return &_local->_value;
+	}
+
+	if (_flags & kParaField) {
+		return _pvalue;
+	}
+
+	error("Parameter is not an l-value");
+
+}
+
+void ScriptVar::setLocal(LocalVariable *local) {
+	_local = local;
+	_flags |= kParaLocal;
+}
+
+void ScriptVar::setField(int16 *field) {
+	_pvalue = field;
+	_flags |= kParaField;
+}
+
+void ScriptVar::setImmediate(int16 value) {
+	_value = value;
+	_flags |= kParaImmediate;
+}
+
+void ScriptVar::setRandom(int16 seed) {
+	_value = seed;
+	_flags |= kParaRandom;
+}
 
 
+ScriptVar::ScriptVar() {
+	_flags = 0;
+	_local = 0;
+	_value = 0;
+	_pvalue = 0;
+}
 
 
 } // namespace Parallaction

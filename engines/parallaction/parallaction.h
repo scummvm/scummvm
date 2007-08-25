@@ -726,9 +726,11 @@ protected:
 	Table		*_instructionNames;
 
 	struct {
+		bool		end;
 		Animation	*a;
 		Instruction *inst;
 		LocalVariable *locals;
+		Program		*program;
 
 		// BRA specific
 		Instruction *openIf;
@@ -748,13 +750,12 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(call);
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(sound);
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(null);
+	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endscript);
 
-	void		parseScriptLine(Instruction *inst, Animation *a, LocalVariable *locals);
+	void		parseInstruction(Animation *a, LocalVariable *locals);
 	void		loadProgram(Animation *a, const char *filename);
-	ScriptVar	parseLValue(Instruction *inst, const char *str, LocalVariable *locals, Animation *a);
-	virtual ScriptVar	parseRValue(Instruction *inst, const char *str, LocalVariable *locals, Animation *a);
-	int16 		findLocal(const char* name, LocalVariable *locals);
-	int16 		addLocal(const char *name, LocalVariable *locals, int16 value = 0, int16 min = -10000, int16 max = 10000);
+	void		parseLValue(ScriptVar &var, const char *str);
+	virtual void	parseRValue(ScriptVar &var, const char *str);
 	void 		wrapLocalVar(LocalVariable *local);
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
@@ -868,7 +869,7 @@ private:
 	void _c_password(void*);
 
 	const Callable *_callables;
-/*
+#ifdef BRA_TEST
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(zone);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(animation);
@@ -911,8 +912,7 @@ private:
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(if_op);
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endif);
 
-	virtual ScriptVar		parseRValue(Instruction *inst, const char *str, LocalVariable *locals, Animation *a);
-
+	virtual void parseRValue(ScriptVar &var, const char *str);
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(location);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(open);
@@ -974,7 +974,7 @@ private:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endif);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
-*/
+#endif
 };
 
 // FIXME: remove global

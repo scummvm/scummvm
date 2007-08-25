@@ -62,22 +62,22 @@ typedef OpcodeImpl<Parallaction_ns> OpcodeV1;
 
 
 DECLARE_INSTRUCTION_OPCODE(on) {
-	(*_instRunCtxt.inst)->_opBase._a->_flags |= kFlagsActive;
-	(*_instRunCtxt.inst)->_opBase._a->_flags &= ~kFlagsRemove;
+	Instruction *inst = *_instRunCtxt.inst;
+
+	inst->_a->_flags |= kFlagsActive;
+	inst->_a->_flags &= ~kFlagsRemove;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(off) {
-	(*_instRunCtxt.inst)->_opBase._a->_flags |= kFlagsRemove;
+	(*_instRunCtxt.inst)->_a->_flags |= kFlagsRemove;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(loop) {
-	if ((*_instRunCtxt.inst)->_flags & kInstUsesLiteral) {
-		_instRunCtxt.a->_program->_loopCounter = (*_instRunCtxt.inst)->_opBase._loopCounter._value;
-	} else {
-		_instRunCtxt.a->_program->_loopCounter = *(*_instRunCtxt.inst)->_opBase._loopCounter._pvalue;
-	}
+	Instruction *inst = *_instRunCtxt.inst;
+
+	_instRunCtxt.a->_program->_loopCounter = inst->_opB.getRValue();
 	_instRunCtxt.a->_program->_loopStart = _instRunCtxt.inst;
 }
 
@@ -89,64 +89,59 @@ DECLARE_INSTRUCTION_OPCODE(endloop) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(inc) {
-	int16 _si = 0;
-	int16 _ax = 0, _bx = 0;
-	if ((*_instRunCtxt.inst)->_flags & kInstUsesLiteral) {
-		_si = (*_instRunCtxt.inst)->_opB._value;
-	} else {
-		_si = *(*_instRunCtxt.inst)->_opB._pvalue;
-	}
-	if ((*_instRunCtxt.inst)->_flags & kInstMod) {	// mod
-		_bx = (_si > 0 ? _si : -_si);
+	Instruction *inst = *_instRunCtxt.inst;
+	int16 _si = inst->_opB.getRValue();
+
+	if (inst->_flags & kInstMod) {	// mod
+		int16 _bx = (_si > 0 ? _si : -_si);
 		if (_instRunCtxt.modCounter % _bx != 0) return;
 
 		_si = (_si > 0 ?  1 : -1);
 	}
-	if ((*_instRunCtxt.inst)->_flags & kInstUsesLocal) {	// local
-		if ((*_instRunCtxt.inst)->_index == INST_INC) _ax = _si;
-		else _ax = -_si;
 
-		(*_instRunCtxt.inst)->_opA._local->_value += _ax;
-		wrapLocalVar((*_instRunCtxt.inst)->_opA._local);
-		return;
+	int16* lvalue = inst->_opA.getLValue();
+
+	if (inst->_index == INST_INC) {
+		*lvalue += _si;
+	} else {
+		*lvalue -= _si;
 	}
 
-	// built-in variable (x, y, z, f)
-	if ((*_instRunCtxt.inst)->_index == INST_INC) _ax = _si;
-	else _ax = -_si;
-	*(*_instRunCtxt.inst)->_opA._pvalue += _ax;
+	if (inst->_opA._flags & kParaLocal) {
+		wrapLocalVar(inst->_opA._local);
+	}
+
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(set) {
-	int16 _si;
-	if ((*_instRunCtxt.inst)->_flags & kInstUsesLiteral) {
-		_si = (*_instRunCtxt.inst)->_opB._value;
-	} else {
-		_si = *(*_instRunCtxt.inst)->_opB._pvalue;
-	}
+	Instruction *inst = *_instRunCtxt.inst;
 
-	if ((*_instRunCtxt.inst)->_flags & kInstUsesLocal) {
-		(*_instRunCtxt.inst)->_opA._local->_value = _si;
-	} else {
-		*(*_instRunCtxt.inst)->_opA._pvalue = _si;
-	}
+	int16 _si = inst->_opB.getRValue();
+	int16 *lvalue = inst->_opA.getLValue();
+
+	*lvalue = _si;
+
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(put) {
+	Instruction *inst = *_instRunCtxt.inst;
 	Graphics::Surface v18;
-	v18.w = (*_instRunCtxt.inst)->_opBase._a->width();
-	v18.h = (*_instRunCtxt.inst)->_opBase._a->height();
-	v18.pixels = (*_instRunCtxt.inst)->_opBase._a->getFrameData((*_instRunCtxt.inst)->_opBase._a->_frame);
+	v18.w = inst->_a->width();
+	v18.h = inst->_a->height();
+	v18.pixels = inst->_a->getFrameData(inst->_a->_frame);
 
-	if ((*_instRunCtxt.inst)->_flags & kInstMaskedPut) {
-		uint16 _si = _gfx->queryMask((*_instRunCtxt.inst)->_opB._value);
-		_gfx->blitCnv(&v18, (*_instRunCtxt.inst)->_opA._value, (*_instRunCtxt.inst)->_opB._value, _si, Gfx::kBitBack);
-		_gfx->blitCnv(&v18, (*_instRunCtxt.inst)->_opA._value, (*_instRunCtxt.inst)->_opB._value, _si, Gfx::kBit2);
+	int16 x = inst->_opA.getRValue();
+	int16 y = inst->_opB.getRValue();
+
+	if (inst->_flags & kInstMaskedPut) {
+		uint16 z = _gfx->queryMask(y);
+		_gfx->blitCnv(&v18, x, y, z, Gfx::kBitBack);
+		_gfx->blitCnv(&v18, x, y, z, Gfx::kBit2);
 	} else {
-		_gfx->flatBlitCnv(&v18, (*_instRunCtxt.inst)->_opA._value, (*_instRunCtxt.inst)->_opB._value, Gfx::kBitBack);
-		_gfx->flatBlitCnv(&v18, (*_instRunCtxt.inst)->_opA._value, (*_instRunCtxt.inst)->_opB._value, Gfx::kBit2);
+		_gfx->flatBlitCnv(&v18, x, y, Gfx::kBitBack);
+		_gfx->flatBlitCnv(&v18, x, y, Gfx::kBit2);
 	}
 }
 
@@ -159,7 +154,7 @@ DECLARE_INSTRUCTION_OPCODE(invalid) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(call) {
-	callFunction((*_instRunCtxt.inst)->_opBase._index, 0);
+	callFunction((*_instRunCtxt.inst)->_immediate, 0);
 }
 
 
@@ -170,17 +165,22 @@ DECLARE_INSTRUCTION_OPCODE(wait) {
 
 
 DECLARE_INSTRUCTION_OPCODE(start) {
-	(*_instRunCtxt.inst)->_opBase._a->_flags |= (kFlagsActing | kFlagsActive);
+	(*_instRunCtxt.inst)->_a->_flags |= (kFlagsActing | kFlagsActive);
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(sound) {
-	_activeZone = (*_instRunCtxt.inst)->_opBase._z;
+	_activeZone = (*_instRunCtxt.inst)->_z;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(move) {
-	WalkNodeList *v4 = _char._builder.buildPath(*(*_instRunCtxt.inst)->_opA._pvalue, *(*_instRunCtxt.inst)->_opB._pvalue);
+	Instruction *inst = (*_instRunCtxt.inst);
+
+	int16 x = inst->_opA.getRValue();
+	int16 y = inst->_opB.getRValue();
+
+	WalkNodeList *v4 = _char._builder.buildPath(x, y);
 	addJob(&jobWalk, v4, kPriority19 );
 	_engineFlags |= kEngineWalking;
 }
@@ -374,10 +374,7 @@ void jobDisplayAnimations(void *parm, Job *j) {
 			v18->_flags &= ~kFlagsActive;
 			v18->_flags |= kFlagsRemove;
 		}
-
 	}
-
-//	  printf("done\n");
 
 	return;
 }
@@ -425,7 +422,7 @@ void jobRunScripts(void *parm, Job *j) {
 		InstructionList::iterator inst = a->_program->_ip;
 		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
 
-			debugC(9, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, (*inst)->_index == INST_END ? "end" : _vm->_instructionNamesRes[(*inst)->_index - 1]);
+			debugC(9, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, _vm->_instructionNamesRes[(*inst)->_index - 1]);
 
 			_vm->_instRunCtxt.inst = inst;
 			_vm->_instRunCtxt.a = a;
