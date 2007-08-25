@@ -771,7 +771,13 @@ void Script::whichObject(const Point& mousePoint) {
 					objectId = newObjectId;
 					if (_vm->getGameType() == GType_ITE)
 						objectFlags = kObjUseWith;
+					// Note: for IHNM, the default right button action is "Look at" for actors,
+					// but "Talk to" makes much more sense
 					newRightButtonVerb = getVerbType(kVerbTalkTo);
+					// Slight hack because of the above change: the jukebox in Gorrister's chapter 
+					// is an actor, so change the right button action to "Look at"
+					if (_vm->getGameType() == GType_IHNM && objectId == 8199)
+						newRightButtonVerb = getVerbType(kVerbLookAt);
 
 					if ((_currentVerb == getVerbType(kVerbPickUp)) ||
 						(_currentVerb == getVerbType(kVerbOpen)) ||
