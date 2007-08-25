@@ -1234,7 +1234,10 @@ void Parallaction_ns::parseZoneTypeBlock(Script &script, Zone *z) {
 				u->door->_cnv = _disk->loadFrames(vC8);
 				uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
 
-				u->door->_background = (byte*)malloc(u->door->_cnv->_width * u->door->_cnv->_height);
+				Common::Rect r;
+				u->door->_cnv->getRect(0, r);
+
+				u->door->_background = (byte*)malloc(r.width() * r.height());
 				_gfx->backupDoorBackground(u->door, z->_left, z->_top);
 
 				_gfx->flatBlitCnv(u->door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);

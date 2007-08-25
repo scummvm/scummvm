@@ -31,8 +31,6 @@
 namespace Parallaction {
 
 
-struct Cnv;
-
 struct InventoryItem {
 	uint32		_id;            // object name (lowest 16 bits are always zero)
 	uint16		_index;			// index to frame in objs file

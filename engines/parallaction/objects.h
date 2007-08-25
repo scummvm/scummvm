@@ -202,7 +202,7 @@ struct ExamineData {	// size = 28
 };
 struct DoorData {	// size = 28
 	char*	_location;
-	Cnv 	*_cnv;
+	Frames 	*_cnv;
 	byte*	_background;
 	Common::Point	_startPos;
 	uint16	_startFrame;
@@ -384,7 +384,7 @@ struct Animation : public Zone  {
 
 	Common::Point	_oldPos;
 	Program 	*_program;
-	Cnv 		*_cnv;
+	Frames 		*_cnv;
 	char		*_scriptName;
 	int16		_frame;
 	uint16		field_50;		// unused

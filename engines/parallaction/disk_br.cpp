@@ -30,6 +30,57 @@
 namespace Parallaction {
 
 
+struct Sprite {
+	uint16	size;
+	uint16	x;
+	uint16	y;
+	uint16	w;
+	uint16	h;
+
+	byte *packedData;
+
+	Sprite() : size(0), x(0), y(0), w(0), h(0), packedData(0) {
+	}
+
+	~Sprite() {
+		if (packedData)
+			free(packedData);
+	}
+};
+
+struct Sprites : public Frames {
+	uint16		_num;
+	Sprite*		_sprites;
+
+	Sprites(uint num) {
+		_num = num;
+		_sprites = new Sprite[_num];
+	}
+
+	~Sprites() {
+		delete _sprites;
+	}
+
+	uint16 getNum() {
+		return _num;
+	}
+
+	byte* getData(uint16 index) {
+		assert(index < _num);
+		return _sprites[index].packedData;
+	}
+
+	void getRect(uint16 index, Common::Rect &r) {
+		assert(index < _num);
+		r.setWidth(_sprites[index].w);
+		r.setHeight(_sprites[index].h);
+		r.moveTo(_sprites[index].x, _sprites[index].y);
+}
+
+};
+
+
+
 void DosDisk_br::errorFileNotFound(const char *s) {
 	error("File '%s' not found", s);
 }
@@ -78,10 +129,13 @@ DosDisk_br::DosDisk_br(Parallaction* vm) : _vm(vm) {
 DosDisk_br::~DosDisk_br() {
 }
 
-Cnv* DosDisk_br::loadTalk(const char *name) {
+Frames* DosDisk_br::loadTalk(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadTalk");
 
-	return 0;
+	char path[PATH_LEN];
+	sprintf(path, "%s/tal/%s.tal", _partPath, name);
+
+	return createSprites(path);
 }
 
 Script* DosDisk_br::loadLocation(const char *name) {
@@ -159,7 +213,7 @@ Font* DosDisk_br::loadFont(const char* name) {
 }
 
 
-Cnv* DosDisk_br::loadObjects(const char *name) {
+Frames* DosDisk_br::loadObjects(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadObjects");
 	return 0;
 }
@@ -173,9 +227,39 @@ Graphics::Surface* DosDisk_br::loadStatic(const char* name) {
 	return 0;
 }
 
-Cnv* DosDisk_br::loadFrames(const char* name) {
+Sprites* DosDisk_br::createSprites(const char *path) {
+
+	Common::File	stream;
+	if (!stream.open(path)) {
+		errorFileNotFound(path);
+	}
+
+	uint16 num = stream.readUint16LE();
+
+	Sprites *sprites = new Sprites(num);
+
+	for (uint i = 0; i < num; i++) {
+		Sprite *spr = &sprites->_sprites[i];
+		spr->size = stream.readUint16LE();
+		spr->x = stream.readUint16LE();
+		spr->y = stream.readUint16LE();
+		spr->w = stream.readUint16LE();
+		spr->h = stream.readUint16LE();
+
+		spr->packedData = (byte*)malloc(spr->size);
+		stream.read(spr->packedData, spr->size);
+	}
+
+	return sprites;
+}
+
+Frames* DosDisk_br::loadFrames(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadFrames");
-	return 0;
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/ani/%s.ani", _partPath, name);
+
+	return createSprites(path);
 }
 
 // Slides in Nippon Safes are basically screen-sized pictures with valid

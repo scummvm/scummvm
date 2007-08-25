@@ -38,7 +38,9 @@ class Gfx;
 class Script;
 class Font;
 
+struct Frames;
 struct Cnv;
+struct Sprites;
 struct BackgroundInfo;
 
 class Disk {
@@ -52,13 +54,13 @@ public:
 
 	virtual Script* loadLocation(const char *name) = 0;
 	virtual Script* loadScript(const char* name) = 0;
-	virtual Cnv* loadTalk(const char *name) = 0;
-	virtual Cnv* loadObjects(const char *name) = 0;
+	virtual Frames* loadTalk(const char *name) = 0;
+	virtual Frames* loadObjects(const char *name) = 0;
 	virtual Graphics::Surface* loadPointer(const char *name) = 0;
 	virtual Graphics::Surface* loadHead(const char* name) = 0;
 	virtual Font* loadFont(const char* name) = 0;
 	virtual Graphics::Surface* loadStatic(const char* name) = 0;
-	virtual Cnv* loadFrames(const char* name) = 0;
+	virtual Frames* loadFrames(const char* name) = 0;
 	virtual void loadSlide(BackgroundInfo& info, const char *filename) = 0;
 	virtual void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path) = 0;
 	virtual Table* loadTable(const char* name) = 0;
@@ -144,13 +146,13 @@ public:
 
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
-	Cnv* loadTalk(const char *name);
-	Cnv* loadObjects(const char *name);
+	Frames* loadTalk(const char *name);
+	Frames* loadObjects(const char *name);
 	Graphics::Surface* loadPointer(const char *name);
 	Graphics::Surface* loadHead(const char* name);
 	Font* loadFont(const char* name);
 	Graphics::Surface* loadStatic(const char* name);
-	Cnv* loadFrames(const char* name);
+	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);
@@ -178,13 +180,13 @@ public:
 
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
-	Cnv* loadTalk(const char *name);
-	Cnv* loadObjects(const char *name);
+	Frames* loadTalk(const char *name);
+	Frames* loadObjects(const char *name);
 	Graphics::Surface* loadPointer(const char *name);
 	Graphics::Surface* loadHead(const char* name);
 	Font* loadFont(const char* name);
 	Graphics::Surface* loadStatic(const char* name);
-	Cnv* loadFrames(const char* name);
+	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);
@@ -206,6 +208,7 @@ protected:
 protected:
 	void errorFileNotFound(const char *s);
 	Font *createFont(const char *name, Common::ReadStream &stream);
+	Sprites*	createSprites(const char *name);
 
 public:
 	DosDisk_br(Parallaction *vm);
@@ -215,13 +218,13 @@ public:
 	void setLanguage(uint16 language);
 	Script* loadLocation(const char *name);
 	Script* loadScript(const char* name);
-	Cnv* loadTalk(const char *name);
-	Cnv* loadObjects(const char *name);
+	Frames* loadTalk(const char *name);
+	Frames* loadObjects(const char *name);
 	Graphics::Surface* loadPointer(const char *name);
 	Graphics::Surface* loadHead(const char* name);
 	Font* loadFont(const char* name);
 	Graphics::Surface* loadStatic(const char* name);
-	Cnv* loadFrames(const char* name);
+	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
 	Table* loadTable(const char* name);

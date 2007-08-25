@@ -622,10 +622,12 @@ void jobToggleDoor(void *parm, Job *j) {
 	Zone *z = (Zone*)parm;
 
 	if (z->u.door->_cnv) {
-		Common::Rect r(z->_left, z->_top, z->_left+z->u.door->_cnv->_width, z->_top+z->u.door->_cnv->_height);
+		Common::Rect r;
+		z->u.door->_cnv->getRect(0, r);
+		r.moveTo(z->_left, z->_top);
 
 		uint16 _ax = (z->_flags & kFlagsClosed ? 1 : 0);
-		_vm->_gfx->restoreDoorBackground(r, z->u.door->_cnv->getFramePtr(_ax), z->u.door->_background);
+		_vm->_gfx->restoreDoorBackground(r, z->u.door->_cnv->getData(_ax), z->u.door->_background);
 
 		_ax = (z->_flags & kFlagsClosed ? 0 : 1);
 		_vm->_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);

@@ -238,8 +238,8 @@ struct Location {
 struct Character {
 	Animation		_ani;
 	Graphics::Surface		*_head;
-	Cnv		    	*_talk;
-	Cnv 			*_objs;
+	Frames		    *_talk;
+	Frames 			*_objs;
 	PathBuilder		_builder;
 
 	Character() : _builder(&_ani) {
@@ -381,7 +381,6 @@ public:
 
 	void 		changeCursor(int32 index);
 	void		showCursor(bool visible);
-	void 		changeCharacter(const char *name);
 
 
 	Job 		*addJob(JobFn fn, void *parm, uint16 tag);
@@ -501,6 +500,9 @@ protected:		// data
 
 	BackgroundInfo	*_backgroundInfo;
 
+	Job	   *_jDrawLabel;
+	Job	   *_jEraseLabel;
+	Zone    *_hoverZone;
 
 protected:		// members
 	bool detectGame(void);
@@ -519,7 +521,8 @@ protected:		// members
 	void		doSaveGame(uint16 slot, const char* name);
 
 	void		doLocationEnterTransition();
-	void		changeLocation(char *location);
+	virtual void changeLocation(char *location) = 0;
+	virtual void changeCharacter(const char *name) = 0;
 	void		allocateLocationSlot(const char *name);
 	void 		finalizeLocationParsing();
 	void 		switchBackground(const char* background, const char* mask);
@@ -580,6 +583,9 @@ private:
 	void freeFonts();
 
 private:
+	void changeLocation(char *location);
+	void changeCharacter(const char *name);
+
 	void initResources();
 	void initCursors();
 
@@ -833,6 +839,8 @@ private:
 	void 		initOpcodes();
 	void 		initParsers();
 
+	void 		changeLocation(char *location);
+	void		changeCharacter(const char *name);
 
 	void		initPart();
 	void		freePart();

@@ -62,22 +62,26 @@ Animation::~Animation() {
 
 uint16 Animation::width() const {
 	if (!_cnv) return 0;
-	return _cnv->_width;
+	Common::Rect r;
+	_cnv->getRect(0, r);
+	return r.width();
 }
 
 uint16 Animation::height() const {
 	if (!_cnv) return 0;
-	return _cnv->_height;
+	Common::Rect r;
+	_cnv->getRect(0, r);
+	return r.height();
 }
 
 uint16 Animation::getFrameNum() const {
 	if (!_cnv) return 0;
-	return _cnv->_count;
+	return _cnv->getNum();
 }
 
 byte* Animation::getFrameData(uint32 index) const {
 	if (!_cnv) return NULL;
-	return _cnv->getFramePtr(index);
+	return _cnv->getData(index);
 }
 
 

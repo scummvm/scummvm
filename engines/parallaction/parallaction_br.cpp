@@ -349,5 +349,13 @@ void Parallaction_br::startPart() {
 
 }
 
+void Parallaction_br::changeLocation(char *location) {
+
+}
+
+void Parallaction_br::changeCharacter(const char *name) {
+
+}
+
 
 } // namespace Parallaction

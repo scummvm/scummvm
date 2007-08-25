@@ -463,13 +463,16 @@ void jobEraseLabel(void *parm, Job *j) {
 //
 //	Cnv management
 //
-void Gfx::flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer) {
+void Gfx::flatBlitCnv(Frames *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer) {
 
 	Graphics::Surface scnv;
+	Common::Rect r;
 
-	scnv.w = cnv->_width;
-	scnv.h = cnv->_height;
-	scnv.pixels = cnv->getFramePtr(frame);
+	cnv->getRect(frame, r);
+
+	scnv.w = r.width();
+	scnv.h = r.height();
+	scnv.pixels = cnv->getData(frame);
 
 	flatBlitCnv(&scnv, x, y, buffer);
 }
@@ -493,7 +496,9 @@ void Gfx::blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffe
 
 void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 	byte *s = (byte*)_buffers[kBit2]->getBasePtr(x, y);
-	copyRect(data->_cnv->_width, data->_cnv->_height, data->_background, data->_cnv->_width, s,_backgroundWidth);
+	Common::Rect r;
+	data->_cnv->getRect(0, r);
+	copyRect(r.width(), r.height(), data->_background, r.width(), s,_backgroundWidth);
 	return;
 }
 

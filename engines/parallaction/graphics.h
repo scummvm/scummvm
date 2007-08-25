@@ -72,7 +72,19 @@ public:
 
 };
 
-struct Cnv {
+
+struct Frames {
+
+	virtual uint16	getNum() = 0;
+	virtual byte*	getData(uint16 index) = 0;
+	virtual void	getRect(uint16 index, Common::Rect &r) = 0;
+
+	virtual ~Frames() { }
+
+};
+
+
+struct Cnv : public Frames {
 	uint16	_count; 	// # of frames
 	uint16	_width; 	//
 	uint16	_height;	//
@@ -98,6 +110,21 @@ public:
 		if (index >= _count)
 			return NULL;
 		return &_data[index * _width * _height];
+	}
+
+	uint16	getNum() {
+		return _count;
+	}
+
+	byte	*getData(uint16 index) {
+		return getFramePtr(index);
+	}
+
+	void getRect(uint16 index, Common::Rect &r) {
+		r.left = 0;
+		r.top = 0;
+		r.setWidth(_width);
+		r.setHeight(_height);
 	}
 };
 
@@ -194,7 +221,7 @@ public:
 
 	// cut/paste
 	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer);
-	void flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
+	void flatBlitCnv(Frames *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
 	void blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
 	void restoreBackground(const Common::Rect& r);
 	void backupDoorBackground(DoorData *data, int16 x, int16 y);
@@ -265,6 +292,7 @@ protected:
 
 
 #endif
+
 
 
 

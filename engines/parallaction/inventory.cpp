@@ -117,9 +117,12 @@ void drawInventoryItem(uint16 pos, InventoryItem *item) {
 	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
+	Common::Rect r;
+	_vm->_char._objs->getRect(0, r);
+
 	// FIXME: this will end up in a general blit function
-	byte* s = _vm->_char._objs->getFramePtr(item->_index);
-	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * _vm->_char._objs->_height * INVENTORY_WIDTH;
+	byte* s = _vm->_char._objs->getData(item->_index);
+	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * r.height() * INVENTORY_WIDTH;
 	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
 		memcpy(d, s, INVENTORYITEM_WIDTH);
 
@@ -210,8 +213,10 @@ void highlightInventoryItem(int16 pos, byte color) {
 	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
-	Common::Rect r(INVENTORYITEM_WIDTH, _vm->_char._objs->_height);
-	r.moveTo(col * INVENTORYITEM_WIDTH, line * _vm->_char._objs->_height);
+	Common::Rect r;
+	_vm->_char._objs->getRect(0, r);
+	r.setWidth(INVENTORYITEM_WIDTH);
+	r.moveTo(col * INVENTORYITEM_WIDTH, line * r.height());
 
 	drawBorder(r, _buffer, color);
 

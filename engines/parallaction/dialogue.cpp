@@ -65,8 +65,8 @@ class DialogueManager {
 	bool 			_askPassword;
 
 	bool 			isNpc;
-	Cnv				*_questioner;
-	Cnv				*_answerer;
+	Frames			*_questioner;
+	Frames			*_answerer;
 
 	Question		*_q;
 

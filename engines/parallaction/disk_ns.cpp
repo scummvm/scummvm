@@ -393,7 +393,7 @@ Cnv* DosDisk_ns::loadCnv(const char *filename) {
 	return new Cnv(numFrames, width, height, data);
 }
 
-Cnv* DosDisk_ns::loadTalk(const char *name) {
+Frames* DosDisk_ns::loadTalk(const char *name) {
 
 	const char *ext = strstr(name, ".talk");
 	if (ext != NULL) {
@@ -487,7 +487,7 @@ Font* DosDisk_ns::loadFont(const char* name) {
 }
 
 
-Cnv* DosDisk_ns::loadObjects(const char *name) {
+Frames* DosDisk_ns::loadObjects(const char *name) {
 
 	if (IS_MINI_CHARACTER(name)) {
 		name += 4;
@@ -524,7 +524,7 @@ Graphics::Surface* DosDisk_ns::loadStatic(const char* name) {
 	return cnv;
 }
 
-Cnv* DosDisk_ns::loadFrames(const char* name) {
+Frames* DosDisk_ns::loadFrames(const char* name) {
 	return loadCnv(name);
 }
 
@@ -1305,7 +1305,7 @@ void AmigaDisk_ns::loadSlide(BackgroundInfo& info, const char *name) {
 	return;
 }
 
-Cnv* AmigaDisk_ns::loadFrames(const char* name) {
+Frames* AmigaDisk_ns::loadFrames(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadFrames '%s'", name);
 
 	Common::SeekableReadStream *s;
@@ -1338,7 +1338,7 @@ Graphics::Surface* AmigaDisk_ns::loadHead(const char* name) {
 }
 
 
-Cnv* AmigaDisk_ns::loadObjects(const char *name) {
+Frames* AmigaDisk_ns::loadObjects(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadObjects");
 
 	char path[PATH_LEN];
@@ -1356,7 +1356,7 @@ Cnv* AmigaDisk_ns::loadObjects(const char *name) {
 }
 
 
-Cnv* AmigaDisk_ns::loadTalk(const char *name) {
+Frames* AmigaDisk_ns::loadTalk(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadTalk '%s'", name);
 
 	Common::SeekableReadStream *s;
