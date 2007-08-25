@@ -408,16 +408,10 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 	PalEntry *palE;
 	double fpercent;
 
-	percent = percent > 1.0 ? 1.0 : percent;
 	from = from > 256 ? 256 : from;
 	from = from < 0 ? 0 : from;
 	to = to > 256 ? 256 : to;
 	to = to < 0 ? 0 : to;
-
-	// Exponential fade
-	fpercent = percent * percent;
-	fpercent = fpercent < 0.0 ? 0.0 : fpercent;
-	fpercent = fpercent > 1.0 ? 1.0 : fpercent;
 
 	// TODO: finish this (use from and to properly). The fpercent value will need to be
 	// correctly assigned, based on from and to. For now, only certain cases work correctly
@@ -425,14 +419,18 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 		// This case works like palToBlack or blackToPal, so no changes are needed
 	} else if ((from / to == 2) || (to / from == 2)) {
 		// It's easy to use the current algorithm if we're trying to fade to half the value
-		fpercent /= 2;
+		percent /= 2;
 		if (from < to)
-			fpercent += 0.5;
+			percent += 0.5;
 	} else {
 		// FIXME: In all other cases, throw a warning, as we'll fade out to/from black
 		if (percent == 0.0)
 			warning("Screen fading effect not supported yet, fading to/from black for now");
 	}
+
+	// Exponential fade
+	percent = percent > 1.0 ? 1.0 : percent;
+	fpercent = percent * percent;
 
 	if (from > to)
 		fpercent = 1.0 - fpercent;
