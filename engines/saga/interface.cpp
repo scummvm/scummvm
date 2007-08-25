@@ -1914,7 +1914,6 @@ void Interface::handleMainUpdate(const Point& mousePoint) {
 
 	if ((panelButton != NULL) && (panelButton->type == kPanelButtonArrow)) {
 		if (panelButton->state == 1) {
-			//TODO: insert timeout catchup
 			inventoryChangePos(panelButton->id);
 		}
 		changed = true;
@@ -2524,11 +2523,14 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 }
 
 void Interface::converseChangePos(int chg) {
-	if ((chg < 0 && _converseStartPos + chg >= 0) ||
-		(chg > 0 && _converseStartPos < _converseEndPos)) {
-		_converseStartPos += chg;
-		draw();
+	// Arrows will scroll the converse panel or down up to 4 conversation options
+	for (int i = 1; i <= 4; i++) {
+		if ((chg < 0 && _converseStartPos + chg >= 0) ||
+			(chg > 0 && _converseStartPos < _converseEndPos)) {
+				_converseStartPos += chg;
+		}
 	}
+	draw();
 }
 
 void Interface::converseSetPos(int key) {
@@ -2581,7 +2583,6 @@ void Interface::handleConverseUpdate(const Point& mousePoint) {
 
 	if (_conversePanel.currentButton->type == kPanelButtonArrow) {
 		if (_conversePanel.currentButton->state == 1) {
-			//TODO: insert timeout catchup
 			converseChangePos(_conversePanel.currentButton->id);
 		}
 		draw();
