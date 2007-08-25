@@ -871,7 +871,7 @@ private:
 	void _c_password(void*);
 
 	const Callable *_callables;
-/*
+
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(zone);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(animation);
@@ -976,7 +976,7 @@ private:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endif);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
-*/
+
 };
 
 // FIXME: remove global

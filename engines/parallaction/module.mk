@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	dialogue.o \
 	disk_br.o \
 	disk_ns.o \
+	exec_br.o \
 	exec_ns.o \
 	font.o \
 	graphics.o \
@@ -18,6 +19,7 @@ MODULE_OBJS := \
 	parallaction_br.o \
 	parallaction_ns.o \
 	parser.o \
+	parser_br.o \
 	parser_ns.o \
 	saveload.o \
 	sound.o \
