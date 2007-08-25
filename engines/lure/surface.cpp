@@ -632,7 +632,6 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
-	Room &room = Room::getReference();
 	Resources &res = Resources::getReference();
 	LureEngine &engine = LureEngine::getReference();
 	int selectedLine = -1;
@@ -656,7 +655,6 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 		return false;
 	}
 
-	room.update();
 	Surface *s = new Surface(INFO_DIALOG_WIDTH, SR_SAVEGAME_NAMES_Y + 
 		numSaves * FONT_HEIGHT + FONT_HEIGHT + 2);
 
@@ -799,8 +797,7 @@ RestartRecord buttonBounds[] = {
 };
 
 
-bool RestartRestoreDialog::show()
-{
+bool RestartRestoreDialog::show() {
 	Resources &res = Resources::getReference();
 	Events &events = Events::getReference();
 	Mouse &mouse = Mouse::getReference();
@@ -814,6 +811,7 @@ bool RestartRestoreDialog::show()
 	// See if there are any savegames that can be restored
 	String *firstSave = engine.detectSave(1);
 	bool restartFlag = (firstSave == NULL);
+	int highlightedButton = -1;
 
 	if (!restartFlag) {
 		Memory::dealloc(firstSave);
@@ -824,36 +822,92 @@ bool RestartRestoreDialog::show()
 			   (btnRecord->Language != UNK_LANG))
 			++btnRecord;
 
-		// Fade in the restart/restore screen
-		Palette p(RESTART_RESOURCE_ID + 1);
+		// Fade out the screen
+		screen.paletteFadeOut(RES_PALETTE_ENTRIES);
+
+		// Get the palette that will be used, and first fade out the prior screen
+		Palette p(RESTART_RESOURCE_ID - 1);
+
+		// Turn on the mouse
+		mouse.cursorOn();
+
+		// Load the restore/restart screen image
 		Surface *s = Surface::getScreen(RESTART_RESOURCE_ID);
+		s->copyTo(&screen.screen(), 0, MENUBAR_Y_SIZE);
+		delete s;
 
 		res.activeHotspots().clear();
 		Hotspot *btnHotspot = new Hotspot();
+
 		// Restart button
 		btnHotspot->setSize(btnRecord->width, btnRecord->height);
 		btnHotspot->setPosition(btnRecord->BtnRestart.x, btnRecord->BtnRestart.y);
 		btnHotspot->setAnimation(0x184B);
-		btnHotspot->copyTo(s);
+		btnHotspot->copyTo(&screen.screen());
+
 		// Restore button
 		btnHotspot->setFrameNumber(1);
 		btnHotspot->setPosition(btnRecord->BtnRestore.x, btnRecord->BtnRestore.y);
-		btnHotspot->copyTo(s);
+		btnHotspot->copyTo(&screen.screen());
 
-		// Copy the surface to the screen
-		screen.setPaletteEmpty();
-		s->copyToScreen(0, 0);
-		delete s;
-
+		screen.update();
 		screen.paletteFadeIn(&p);
 
-		events.waitForPress();
-		screen.paletteFadeOut();
+		// Event loop for making selection
+		while (!events.quitFlag) {
+			// Handle events
+			if (events.pollEvent()) {
+				if ((events.type() == Common::EVENT_LBUTTONDOWN) && (highlightedButton != -1)) {
+					mouse.waitForRelease();
+					break;
+				}
+			}
 
-		//restartFlag = !SaveRestoreDialog::show(false);
+			// Check if the pointer is over either button
+			int currentButton = -1;
+			if ((mouse.y() >= btnRecord->BtnRestart.y) &&
+				(mouse.y() < btnRecord->BtnRestart.y + btnRecord->height)) {
+				// Check whether the Restart or Restore button is highlighted
+				if ((mouse.x() >= btnRecord->BtnRestart.x) &&
+					(mouse.x() < btnRecord->BtnRestart.x + btnRecord->width))
+					currentButton = 0;
+				else if ((mouse.x() >= btnRecord->BtnRestore.x) &&
+					(mouse.x() < btnRecord->BtnRestore.x + btnRecord->width))
+					currentButton = 1;
+			}
+
+			// Take care of highlighting as the selected button changes
+			if (currentButton != highlightedButton) {
+				highlightedButton = currentButton;
+
+				// Restart button
+				btnHotspot->setFrameNumber((highlightedButton == 0) ? 2 : 0);
+				btnHotspot->setPosition(btnRecord->BtnRestart.x, btnRecord->BtnRestart.y);
+				btnHotspot->copyTo(&screen.screen());
+
+				// Restore button
+				btnHotspot->setFrameNumber((highlightedButton == 1) ? 3 : 1);
+				btnHotspot->setPosition(btnRecord->BtnRestore.x, btnRecord->BtnRestore.y);
+				btnHotspot->copyTo(&screen.screen());
+			}
+
+
+			screen.update();
+			g_system->delayMillis(10);
+		}
+
+		restartFlag = highlightedButton == 0;
+		delete btnHotspot;
 	}
 
 	Sound.killSounds();
+
+	if (!restartFlag && !events.quitFlag) {
+		// Need to show Restore game dialog
+		if (!SaveRestoreDialog::show(false))
+			// User cancelled, so fall back on Restart
+			restartFlag = true;
+	}
 
 	return restartFlag;
 }

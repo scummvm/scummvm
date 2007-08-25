@@ -46,7 +46,7 @@ Game::Game() {
 	int_game = this;
 	_debugger = new Debugger();
 	_slowSpeedFlag = true;
-	_preloadFlag = true;
+	_preloadFlag = false;
 	_soundFlag = true;
 }
 
@@ -130,23 +130,30 @@ void Game::execute() {
 	uint32 timerVal2 = system.getMillis();
 
 	screen.empty();
-	//_screen.resetPalette();
 	screen.setPaletteEmpty();
 
-	while (!events.quitFlag) {
-		setState(0);
-		Script::execute(STARTUP_SCRIPT);
+	// Flag for starting game
+	setState(GS_RESTART);       
 
-		int bootParam = ConfMan.getInt("boot_param");
-		handleBootParam(bootParam);
+	while (!events.quitFlag) {
+		
+		if ((_state & GS_RESTART) != 0) {
+			res.reset();
+
+			setState(0);
+			Script::execute(STARTUP_SCRIPT);
+
+			int bootParam = ConfMan.getInt("boot_param");
+			handleBootParam(bootParam);
+if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
+		}
 
 		// Set the player direction
-		res.getActiveHotspot(PLAYER_ID)->setDirection(UP);
+//		res.getActiveHotspot(PLAYER_ID)->setDirection(UP);
 
 		room.update();
 		mouse.setCursorNum(CURSOR_ARROW);
 		mouse.cursorOn();
-if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
 
 		// Main game loop
 		while (!events.quitFlag && ((_state & GS_RESTART) == 0)) {
@@ -188,48 +195,46 @@ if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
 							SaveRestoreDialog::show(false);
 							break;
 
+						case Common::KEYCODE_F9:
+							doRestart();
+							break;
+
+						case Common::KEYCODE_KP_PLUS:
+							while (++roomNum <= 51) 
+								if (res.getRoom(roomNum) != NULL) break; 
+							if (roomNum == 52) roomNum = 1;
+
+							room.leaveRoom();
+							room.setRoomNumber(roomNum);
+							break;
+
+						case Common::KEYCODE_KP_MINUS:
+							if (roomNum == 1) roomNum = 55;
+							while (res.getRoom(--roomNum) == NULL) ;
+
+							room.leaveRoom();
+							room.setRoomNumber(roomNum);
+							break;
+
+						case Common::KEYCODE_KP_MULTIPLY:
+							res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
+								room.roomNumber());
+							break;
+
+						case Common::KEYCODE_KP_DIVIDE:
+						case Common::KEYCODE_SLASH:
+							room.setShowInfo(!room.showInfo());
+							break;
+
+						case Common::KEYCODE_ESCAPE:
+							doQuit();
+							break;
+
 						default:
 							handled = false;
 					}
 					if (handled)
 						continue;
-
-					// Handle any remaining standard keys
-					switch (events.event().kbd.keycode) {
-					case Common::KEYCODE_ESCAPE:
-						events.quitFlag = true;
-						break;
-
-					case '+':
-						while (++roomNum <= 51) 
-							if (res.getRoom(roomNum) != NULL) break; 
-						if (roomNum == 52) roomNum = 1;
-
-						room.leaveRoom();
-						room.setRoomNumber(roomNum);
-						break;
-
-					case '-':
-						if (roomNum == 1) roomNum = 55;
-						while (res.getRoom(--roomNum) == NULL) ;
-
-						room.leaveRoom();
-						room.setRoomNumber(roomNum);
-						break;
-
-					case '*':
-						res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
-							room.roomNumber());
-						break;
-
-					case Common::KEYCODE_KP_DIVIDE:
-					case Common::KEYCODE_SLASH:
-						room.setShowInfo(!room.showInfo());
-						break;
-
-					default:
-						break;
-					}
 				}
 
 				if ((events.type() == Common::EVENT_LBUTTONDOWN) ||
@@ -260,7 +265,6 @@ if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
 		}
 
 		room.leaveRoom();
-		screen.paletteFadeOut();
 
 		// If Skorl catches player, show the catching animation
 		if ((_state & GS_CAUGHT) != 0) {
@@ -270,7 +274,7 @@ if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
 			mouse.cursorOff();
 			Sound.addSound(0x33);
 			anim->show();
-			mouse.cursorOn();
+			delete anim;
 		}
 
 		// If the Restart/Restore dialog is needed, show it
@@ -278,12 +282,9 @@ if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
 			// Show the Restore/Restart dialog 
 			bool restartFlag = RestartRestoreDialog::show();
 
-			setState(0);
-				
-			if (restartFlag) {
-				res.reloadData();
-				Script::execute(STARTUP_SCRIPT);
-			}
+			if (restartFlag)
+				setState(GS_RESTART);
+
 		} else if ((_state & GS_RESTART) == 0)
 			// Exiting game
 			events.quitFlag = true;
@@ -299,6 +300,7 @@ void Game::handleMenuResponse(uint8 selection) {
 		break;
 
 	case MENUITEM_RESTART_GAME: 
+		doQuit();
 		break;
 
 	case MENUITEM_SAVE_GAME:
@@ -863,31 +865,13 @@ void Game::doShowCredits() {
 }
 
 void Game::doQuit() {
-	Mouse &mouse = Mouse::getReference();
-	Events &events = Events::getReference();
-	Screen &screen = Screen::getReference();
+	if (getYN()) 
+		Events::getReference().quitFlag = true;
+}
 
-	mouse.cursorOff();
-	Surface *s = Surface::newDialog(190, "Are you sure (y/n)?");
-	s->centerOnScreen();
-	delete s;
-
-	Common::KeyCode key = Common::KEYCODE_INVALID;
-	do {
-		if (events.pollEvent()) {
-			if (events.event().type == Common::EVENT_KEYDOWN) {
-				key = events.event().kbd.keycode;
-			}
-		}
-	} while ((key != Common::KEYCODE_ESCAPE) &&
-	         (key != Common::KEYCODE_y) &&
-	         (key != Common::KEYCODE_n));
-
-	events.quitFlag = (key == Common::KEYCODE_n);
-	if (!events.quitFlag) {
-		screen.update();
-		mouse.cursorOn();
-	}
+void Game::doRestart() {
+	if (getYN())
+		setState(GS_RESTART);
 }
 
 void Game::doTextSpeed() {
@@ -948,7 +932,53 @@ void Game::handleBootParam(int value) {
 
 		room.setRoomNumber(2);
 		break;
+
+	default:
+		room.setRoomNumber(value);
+		break;
 	}
+}
+
+bool Game::getYN() {
+	Mouse &mouse = Mouse::getReference();
+	Events &events = Events::getReference();
+	Screen &screen = Screen::getReference();
+
+	mouse.cursorOff();
+	Surface *s = Surface::newDialog(190, "Are you sure (y/n)?");
+	s->centerOnScreen();
+	delete s;
+
+	bool breakFlag = false;
+	bool result = false; 
+
+	do {
+		if (events.pollEvent()) {
+			if (events.event().type == Common::EVENT_KEYDOWN) {
+				Common::KeyCode key = events.event().kbd.keycode;
+				if ((key == Common::KEYCODE_y) || (key == Common::KEYCODE_n) ||
+					(key == Common::KEYCODE_ESCAPE)) {
+					breakFlag = true;
+					result = key == Common::KEYCODE_y;
+				}
+			}
+			if (events.event().type == Common::EVENT_LBUTTONUP) {
+				breakFlag = true;
+				result = true;
+			}
+			if (events.event().type == Common::EVENT_RBUTTONUP) {
+				breakFlag = true;
+				result = false;
+			}
+		}
+
+		g_system->delayMillis(10);
+	} while (!events.quitFlag && !breakFlag);
+
+	screen.update();
+	mouse.cursorOn();
+
+	return result;
 }
 
 } // end of namespace Lure

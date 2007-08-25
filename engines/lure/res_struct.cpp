@@ -1206,12 +1206,16 @@ void StringList::clear() {
 // Field list and miscellaneous variables
 
 ValueTableData::ValueTableData() {
+	reset();
+}
+
+void ValueTableData::reset() {
 	_numGroats = 0;
 	_playerNewPos.roomNumber = 0;
 	_playerNewPos.position.x = 0;
 	_playerNewPos.position.y = 0;
 	_flags = GAMEFLAG_4 | GAMEFLAG_1;
-	_hdrFlagMask = 1;
+	_hdrFlagMask = 1;    
 
 	for (uint16 index = 0; index < NUM_VALUE_FIELDS; ++index)
 		_fieldList[index] = 0;

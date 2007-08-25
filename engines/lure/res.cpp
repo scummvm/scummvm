@@ -62,11 +62,16 @@ void Resources::freeData() {
 	_indexedRoomExitHospots.clear();
 	_pausedList.clear();
 	_stringList.clear();
+	_actionsList.clear();
+	_coordinateList.clear();
+	_talkHeaders.clear();
+	_talkData.clear();
 
+	free(_hotspotScriptData);
 	delete _paletteSubset;
 	delete _scriptData;
 	delete _script2Data;
-	free(_hotspotScriptData);
+	delete _talkDialogData;
 	delete _messagesData;
 	delete _cursors;
 	delete [] _charOffsets;
@@ -76,6 +81,13 @@ struct AnimRecordTemp {
 	uint16 *offset;
 	MovementDataList *list;
 };
+
+void Resources::reset() {
+	freeData();
+
+	_fieldList.reset();
+	reloadData();
+}
 
 void Resources::reloadData() {
 	Disk &d = Disk::getReference();

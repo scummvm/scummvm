@@ -63,7 +63,7 @@ private:
 	void displayChuteAnimation();
 	void displayBarrelAnimation();
 	void handleBootParam(int value);
-	int restartRestoreScreen();
+	bool getYN();
 public:
 	Game();
 	virtual ~Game();
@@ -81,6 +81,7 @@ public:
 	void doDebugMenu();
 	void doShowCredits();
 	void doQuit();
+	void doRestart();
 	void doTextSpeed();
 	void doSound();
 };

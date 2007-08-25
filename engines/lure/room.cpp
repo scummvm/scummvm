@@ -492,13 +492,13 @@ void Room::update() {
 }
 
 void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
-	Resources &r = Resources::getReference();
+	Resources &res = Resources::getReference();
 	Game &game = Game::getReference();
 	Mouse &mouse = Mouse::getReference();
 
 	mouse.pushCursorNum(CURSOR_DISK);
 
-	_roomData = r.getRoom(newRoomNumber);
+	_roomData = res.getRoom(newRoomNumber);
 	if (!_roomData)
 		error("Tried to change to non-existant room: %d", newRoomNumber);
 	bool leaveFlag = (_layers[0] && (newRoomNumber != _roomNumber) && (_roomNumber != 0));
@@ -512,6 +512,7 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	}
 
 	_screen.empty();
+	_screen.setPaletteEmpty(GAME_COLOURS);
 
 	_numLayers = _roomData->numLayers;
 	if (showOverlay) ++_numLayers;
@@ -521,20 +522,25 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 		_layers[layerNum] = new RoomLayer(_roomData->layers[layerNum],
 			layerNum == 0);
 
-	// Load in the game palette and set the non-room specific colours at the top end of the palette
+	// Load in the game palette, which contains at it's top end general GUI element colours
 	Palette mainPalette(GAME_PALETTE_RESOURCE_ID);
-	_screen.setPalette(&mainPalette, MAIN_PALETTE_SIZE, GAME_COLOURS - MAIN_PALETTE_SIZE);
+	_screen.setPalette(&mainPalette, 0, GAME_COLOURS);
+
+	// Generate the palette for the room that will be faded in
+	Palette p(MAIN_PALETTE_SIZE, NULL, RGB64);
+	Palette tempPalette(paletteId);
+	p.copyFrom(&tempPalette);
+	res.insertPaletteSubset(p);
 
 	// Set the new room number
-	r.fieldList().setField(ROOM_NUMBER, newRoomNumber);
+	res.fieldList().setField(ROOM_NUMBER, newRoomNumber);
 
 	if (_roomData->sequenceOffset != 0xffff)
 		Script::execute(_roomData->sequenceOffset);
 
 	loadRoomHotspots();
 
-	if (_roomData->exitTime != 0xffff)
-	{
+	if ((_roomData->exitTime != 0xffff) && (_roomData->exitTime != 0)) {
 		// If time has passed, animation ticks needed before room is displayed
 		int numSeconds = (g_system->getMillis() - _roomData->exitTime) / 1000;
 		if (numSeconds > 300) numSeconds = 300;
@@ -545,14 +551,9 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 		game.preloadFlag() = false;
 	}
 
+	game.tick();
 	update();
 	_screen.update();
-
-	// Generate the palette for the room and fade it in
-	Palette p(MAIN_PALETTE_SIZE, NULL, RGB64);
-	Palette tempPalette(paletteId);
-	p.copyFrom(&tempPalette);
-	r.insertPaletteSubset(p);
 	_screen.paletteFadeIn(&p);
 
 	mouse.popCursor();

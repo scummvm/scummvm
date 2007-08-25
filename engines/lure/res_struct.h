@@ -839,6 +839,7 @@ private:
 	bool isKnownField(uint16 fieldIndex);
 public:
 	ValueTableData();
+	void reset();
 	uint16 getField(uint16 fieldIndex);
 	uint16 getField(FieldName fieldName);
 
