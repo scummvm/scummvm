@@ -274,7 +274,8 @@ void SagaEngine::load(const char *fileName) {
 			// incorrect, and the game crashes here when trying to load a music track there. For now,
 			// just don't change the music track for chapter 6
 			// FIXME: Figure out what's wrong with the loaded music track and remove this hack
-			// Note that when this hack is removed, remove it from Script::sfPlayMusic as well
+			// Note that when this hack is removed, remove it from Script::sfPlayMusic and 
+			// Script::sfQueueMusic as well
 			if (getGameType() == GType_IHNM && _scene->currentChapterNumber() == 6) {
 				// do nothing
 			} else {
