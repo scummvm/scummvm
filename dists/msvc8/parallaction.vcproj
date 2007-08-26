@@ -201,6 +201,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\exec_br.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\exec_ns.cpp"
 			>
 		</File>
@@ -262,6 +266,10 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\parser.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\parser_br.cpp"
 			>
 		</File>
 		<File
