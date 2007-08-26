@@ -387,6 +387,8 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 				return;
 			}
 			moduleNumber = 0;
+			if (_vm->getGameType() == GType_IHNM)
+				moduleNumber = _vm->_scene->getScriptModuleNumber();
 			break;
 		case kGameObjectActor:
 			actor = _vm->_actor->getActor(objectId);
@@ -399,6 +401,8 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 			} else {
 				moduleNumber = _vm->_scene->getScriptModuleNumber();
 			}
+			if (_vm->getGameType() == GType_IHNM)
+				moduleNumber = _vm->_scene->getScriptModuleNumber();
 			break;
 		case kGameObjectHitZone:
 		case kGameObjectStepZone:
