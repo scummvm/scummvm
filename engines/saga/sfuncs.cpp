@@ -1680,6 +1680,7 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 			// incorrect, and the game crashes here when trying to load a music track there. For now,
 			// just don't change the music track for chapter 6
 			// FIXME: Figure out what's wrong with the loaded music track and remove this hack
+			// Note that when this hack is removed, remove it from SagaEngine::load as well
 			if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 6)
 				return;
 			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP : MUSIC_NORMAL);
