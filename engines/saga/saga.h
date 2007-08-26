@@ -69,7 +69,12 @@ struct StringList;
 
 #define MAXPATH 512 //TODO: remove
 
+// Note that IHNM has a smaller save title size than ITE
+// We allocate the ITE save title size in savegames, to
+// preserve savegame backwards compatibility. We only check
+// for IHNM's save title during text input
 #define SAVE_TITLE_SIZE 28
+#define IHNM_SAVE_TITLE_SIZE 22
 #define MAX_SAVES 96
 #define MAX_FILE_NAME 256
 

@@ -169,6 +169,9 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	_saveHeader.type = MKID_BE('SAGA');
 	_saveHeader.size = 0;
 	_saveHeader.version = CURRENT_SAGA_VER;
+	// Note that IHNM has a smaller save title size than ITE
+	// We allocate the ITE save title size here, to preserve
+	// savegame backwards compatibility
 	strncpy(_saveHeader.name, saveName, SAVE_TITLE_SIZE);
 
 	out->writeUint32BE(_saveHeader.type);

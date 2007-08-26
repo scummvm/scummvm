@@ -1154,10 +1154,9 @@ bool Interface::processTextInput(uint16 ascii) {
 	uint tempWidth;
 	memset(tempString, 0, SAVE_TITLE_SIZE);
 	ch[1] = 0;
-	// ITE has a maximum save title size of SAVE_TITLE_SIZE (28), but IHNM has a slightly smaller
-	// save title size (21). We only limit the save title size during text input, to preserve
-	// backwards compatibility with older save games
-	uint save_title_size = _vm->getGameType() == GType_ITE ? SAVE_TITLE_SIZE : SAVE_TITLE_SIZE - 6;
+	// IHNM has a smaller save title size than ITE. We only limit the save title size during text input
+	// in IHNM, to preserve backwards compatibility with older save games
+	uint save_title_size = _vm->getGameType() == GType_ITE ? SAVE_TITLE_SIZE : IHNM_SAVE_TITLE_SIZE;
 
 	switch (ascii) {
 	case 13:

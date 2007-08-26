@@ -105,12 +105,10 @@ static const GameFontDescription IHNMCD_GameFonts[]     = { {2}, {3}, {4}, {5}, 
 //                                                             frequency, sampleBits, stereo, isBigEndian, isSigned
 static const GameSoundInfo ITEPC_GameSound       = { kSoundPCM,    22050,         16,  false,       false,     true };
 static const GameSoundInfo ITEMAC_GameSound      = { kSoundPCM,    22050,         16,  false,        true,     true };
-static const GameSoundInfo ITEMACCD_G_GameSound  = { kSoundMacPCM, 22050,          8,  false,       false,    false };
 static const GameSoundInfo ITEWINDEMO1_GameSound = { kSoundPCM,    22050,          8,  false,       false,    false };
+static const GameSoundInfo ITEMACCD_G_GameSound  = { kSoundMacPCM, 22050,          8,  false,       false,    false };
 static const GameSoundInfo ITEDISK_GameSound     = { kSoundVOC,       -1,         -1,  false,       false,     true };
 static const GameSoundInfo ITEDEMO_GameVoice     = { kSoundVOX,    22050,         16,  false,       false,     true };
-static const GameSoundInfo ITEMACDEMO_GameMusic  = { kSoundPCM,    11025,         16,  false,       false,     true };
-static const GameSoundInfo ITEMACCD_GameMusic    = { kSoundPCM,    11025,         16,   true,       false,     true };
 static const GameSoundInfo IHNM_GameSound        = { kSoundWAV,       -1,         -1,  false,       false,     true };
 
 // Patch files. Files not found will be ignored
@@ -201,7 +199,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEDEMO_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
@@ -233,7 +230,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEDEMO_GameVoice,
 		&ITEMAC_GameSound,
-		&ITEMACDEMO_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
@@ -268,7 +264,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEDEMO_GameVoice,
 		&ITEMAC_GameSound,
-		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
@@ -301,7 +296,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEDEMO_GameVoice,
 		&ITEPC_GameSound,
-		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
@@ -335,7 +329,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEWINDEMO1_GameSound,
 		&ITEWINDEMO1_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
@@ -372,7 +365,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEMACCD_G_GameSound,
 		&ITEMACCD_G_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
@@ -403,7 +395,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEMAC_GameSound,
 		&ITEMAC_GameSound,
-		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
@@ -442,7 +433,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEMAC_GameSound,
 		&ITEPC_GameSound,
-		&ITEMACCD_GameMusic,
 		0,
 		NULL,
 	},
@@ -473,7 +463,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEPC_GameSound,
 		&ITEPC_GameSound,
-		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
@@ -503,7 +492,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEPC_GameSound,
 		&ITEPC_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
@@ -534,7 +522,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEPC_GameSound,
 		&ITEPC_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
@@ -566,7 +553,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
@@ -595,7 +581,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
@@ -634,7 +619,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMDEMO_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
@@ -673,7 +657,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
@@ -713,7 +696,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
@@ -752,7 +734,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
@@ -791,7 +772,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
@@ -830,11 +810,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
-	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL }
+	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, NULL, 0, NULL, NULL, NULL, 0, NULL }
 };
 
 } // End of namespace Saga
