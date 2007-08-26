@@ -92,7 +92,7 @@ DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext
 
 	_compressedStream = NULL;
 
-	if (Common::File::exists("music.cmp")) {
+	if (Common::File::exists("music.cmp") || Common::File::exists("musicd.cmp")) {
 		// Read compressed header to determine compression type
 		_file->seek((long)resourceData->offset, SEEK_SET);
 		_file->read(compressedHeader, 9);
