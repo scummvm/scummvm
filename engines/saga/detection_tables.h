@@ -61,188 +61,6 @@ static const GameResourceDescription ITEDemo_Resources = {
 	RID_ITEDEMO_ACTOR_NAMES
 };
 
-// Inherit the Earth - DOS Demo version
-static const GameFontDescription ITEDEMO_GameFonts[] = {
-	{0},
-	{1}
-};
-
-// Inherit the Earth - Wyrmkeep Win32 Demo version
-
-static const GameFontDescription ITEWINDEMO_GameFonts[] = {
-	{2},
-	{0}
-};
-
-static const GameSoundInfo ITEWINDEMO1_GameSound = {
-	kSoundPCM,
-	22050,
-	8,
-	false,
-	false,
-	false
-};
-
-static const GameSoundInfo ITEWINDEMO2_GameVoice = {
-	kSoundVOX,
-	22050,
-	16,
-	false,
-	false,
-	true
-};
-
-static const GameSoundInfo ITEWINDEMO2_GameSound = {
-	kSoundPCM,
-	22050,
-	16,
-	false,
-	false,
-	true
-};
-
-// Inherit the Earth - Wyrmkeep Mac Demo version
-static const GameSoundInfo ITEMACDEMO_GameVoice = {
-	kSoundVOX,
-	22050,
-	16,
-	false,
-	false,
-	true
-};
-
-static const GameSoundInfo ITEMACDEMO_GameSound = {
-	kSoundPCM,
-	22050,
-	16,
-	false,
-	true,
-	true
-};
-
-static const GameSoundInfo ITEMACDEMO_GameMusic = {
-	kSoundPCM,
-	11025,
-	16,
-	false,
-	false,
-	true
-};
-
-static const GameSoundInfo ITEMACCD_G_GameSound = {
-	kSoundMacPCM,
-	22050,
-	8,
-	false,
-	false,
-	false
-};
-
-// Inherit the Earth - Mac Wyrmkeep version
-static const GameSoundInfo ITEMACCD_GameSound = {
-	kSoundPCM,
-	22050,
-	16,
-	false,
-	true,
-	true
-};
-
-static const GameSoundInfo ITEMACCD_GameMusic = {
-	kSoundPCM,
-	11025,
-	16,
-	true,
-	false,
-	true
-};
-
-// Inherit the Earth - Diskette version
-static const GameFontDescription ITEDISK_GameFonts[] = {
-	{2},
-	{0},
-	{1}
-};
-
-static const GameSoundInfo ITEDISK_GameSound = {
-	kSoundVOC,
-	-1,
-	-1,
-	false,
-	false,
-	true
-};
-
-static const GameFontDescription ITECD_GameFonts[] = {
-	{2},
-	{0},
-	{1}
-};
-
-static const GameSoundInfo ITECD_GameSound = {
-	kSoundPCM,
-	22050,
-	16,
-	false,
-	false,
-	true
-};
-
-// Patch files. Files not found will be ignored
-static const GamePatchDescription ITEPatch_Files[] = {
-	{ "cave.mid", GAME_RESOURCEFILE, 9, NULL},
-	{ "intro.mid", GAME_RESOURCEFILE, 10, NULL},
-	{ "fvillage.mid", GAME_RESOURCEFILE, 11, NULL},
-	{ "elkhall.mid", GAME_RESOURCEFILE, 12, NULL},
-	{ "mouse.mid", GAME_RESOURCEFILE, 13, NULL},
-	{ "darkclaw.mid", GAME_RESOURCEFILE, 14, NULL},
-	{ "birdchrp.mid", GAME_RESOURCEFILE, 15, NULL},
-	{ "orbtempl.mid", GAME_RESOURCEFILE, 16, NULL},
-	{ "spooky.mid", GAME_RESOURCEFILE, 17, NULL},
-	{ "catfest.mid", GAME_RESOURCEFILE, 18, NULL},
-	{ "elkfanfare.mid", GAME_RESOURCEFILE, 19, NULL},
-	{ "bcexpl.mid", GAME_RESOURCEFILE, 20, NULL},
-	{ "boargtnt.mid", GAME_RESOURCEFILE, 21, NULL},
-	{ "boarking.mid", GAME_RESOURCEFILE, 22, NULL},
-	{ "explorea.mid", GAME_RESOURCEFILE, 23, NULL},
-	{ "exploreb.mid", GAME_RESOURCEFILE, 24, NULL},
-	{ "explorec.mid", GAME_RESOURCEFILE, 25, NULL},
-	{ "sunstatm.mid", GAME_RESOURCEFILE, 26, NULL},
-	{ "nitstrlm.mid", GAME_RESOURCEFILE, 27, NULL},
-	{ "humruinm.mid", GAME_RESOURCEFILE, 28, NULL},
-	{ "damexplm.mid", GAME_RESOURCEFILE, 29, NULL},
-	{ "tychom.mid", GAME_RESOURCEFILE, 30, NULL},
-	{ "kitten.mid", GAME_RESOURCEFILE, 31, NULL},
-	{ "sweet.mid", GAME_RESOURCEFILE, 32, NULL},
-	{ "brutalmt.mid", GAME_RESOURCEFILE, 33, NULL},
-	{ "shiala.mid", GAME_RESOURCEFILE, 34, NULL},
-
-	{ "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
-	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
-	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
-	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
-	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
-	{ "credit3n.dlt", GAME_RESOURCEFILE, 1796, NULL},
-	{ "credit3m.dlt", GAME_RESOURCEFILE, 1796, NULL},	// Macintosh
-	{ "credit4n.dlt", GAME_RESOURCEFILE, 1797, NULL},
-	{ "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL},	// Macintosh
-	{ "p2_a.voc", GAME_VOICEFILE, 4, NULL},
-	{ "p2_a.iaf", GAME_VOICEFILE, 4, &ITECD_GameSound}
-};
-
-static const GamePatchDescription ITEMacPatch_Files[] = {
-	{ "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
-	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
-	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
-	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
-	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
-	{ "credit3m.dlt", GAME_RESOURCEFILE, 1796, NULL},
-	{ "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL},
-	{ "p2_a.iaf", GAME_VOICEFILE, 4, &ITEMACCD_GameSound}
-};
-
-// IHNM section
-
 static const GameResourceDescription IHNM_Resources = {
 	RID_IHNM_SCENE_LUT,  // Scene lookup table RN
 	RID_IHNM_SCRIPT_LUT, // Script lookup table RN
@@ -277,29 +95,75 @@ static const GameResourceDescription IHNMDEMO_Resources = {
 	0					// Actors strings (ITE only)
 };
 
-static const GameFontDescription IHNMDEMO_GameFonts[] = {
-	{2},
-	{3},
-	{4}
+static const GameFontDescription ITEDEMO_GameFonts[]    = { {0}, {1} };
+static const GameFontDescription ITEWINDEMO_GameFonts[] = { {2}, {0} };
+static const GameFontDescription ITE_GameFonts[]        = { {2}, {0}, {1} };
+static const GameFontDescription IHNMDEMO_GameFonts[]   = { {2}, {3}, {4} };
+// Font 6 is kIHNMFont8, font 8 is kIHNMMainFont
+static const GameFontDescription IHNMCD_GameFonts[]     = { {2}, {3}, {4}, {5}, {6}, {7}, {8} };
+
+//                                                             frequency, sampleBits, stereo, isBigEndian, isSigned
+static const GameSoundInfo ITEPC_GameSound       = { kSoundPCM,    22050,         16,  false,       false,     true };
+static const GameSoundInfo ITEMAC_GameSound      = { kSoundPCM,    22050,         16,  false,        true,     true };
+static const GameSoundInfo ITEMACCD_G_GameSound  = { kSoundMacPCM, 22050,          8,  false,       false,    false };
+static const GameSoundInfo ITEWINDEMO1_GameSound = { kSoundPCM,    22050,          8,  false,       false,    false };
+static const GameSoundInfo ITEDISK_GameSound     = { kSoundVOC,       -1,         -1,  false,       false,     true };
+static const GameSoundInfo ITEDEMO_GameVoice     = { kSoundVOX,    22050,         16,  false,       false,     true };
+static const GameSoundInfo ITEMACDEMO_GameMusic  = { kSoundPCM,    11025,         16,  false,       false,     true };
+static const GameSoundInfo ITEMACCD_GameMusic    = { kSoundPCM,    11025,         16,   true,       false,     true };
+static const GameSoundInfo IHNM_GameSound        = { kSoundWAV,       -1,         -1,  false,       false,     true };
+
+// Patch files. Files not found will be ignored
+static const GamePatchDescription ITEPatch_Files[] = {
+	{       "cave.mid", GAME_RESOURCEFILE,    9, NULL},
+	{      "intro.mid", GAME_RESOURCEFILE,   10, NULL},
+	{   "fvillage.mid", GAME_RESOURCEFILE,   11, NULL},
+	{    "elkhall.mid", GAME_RESOURCEFILE,   12, NULL},
+	{      "mouse.mid", GAME_RESOURCEFILE,   13, NULL},
+	{   "darkclaw.mid", GAME_RESOURCEFILE,   14, NULL},
+	{   "birdchrp.mid", GAME_RESOURCEFILE,   15, NULL},
+	{   "orbtempl.mid", GAME_RESOURCEFILE,   16, NULL},
+	{     "spooky.mid", GAME_RESOURCEFILE,   17, NULL},
+	{    "catfest.mid", GAME_RESOURCEFILE,   18, NULL},
+	{ "elkfanfare.mid", GAME_RESOURCEFILE,   19, NULL},
+	{     "bcexpl.mid", GAME_RESOURCEFILE,   20, NULL},
+	{   "boargtnt.mid", GAME_RESOURCEFILE,   21, NULL},
+	{   "boarking.mid", GAME_RESOURCEFILE,   22, NULL},
+	{   "explorea.mid", GAME_RESOURCEFILE,   23, NULL},
+	{   "exploreb.mid", GAME_RESOURCEFILE,   24, NULL},
+	{   "explorec.mid", GAME_RESOURCEFILE,   25, NULL},
+	{   "sunstatm.mid", GAME_RESOURCEFILE,   26, NULL},
+	{   "nitstrlm.mid", GAME_RESOURCEFILE,   27, NULL},
+	{   "humruinm.mid", GAME_RESOURCEFILE,   28, NULL},
+	{   "damexplm.mid", GAME_RESOURCEFILE,   29, NULL},
+	{     "tychom.mid", GAME_RESOURCEFILE,   30, NULL},
+	{     "kitten.mid", GAME_RESOURCEFILE,   31, NULL},
+	{      "sweet.mid", GAME_RESOURCEFILE,   32, NULL},
+	{   "brutalmt.mid", GAME_RESOURCEFILE,   33, NULL},
+	{     "shiala.mid", GAME_RESOURCEFILE,   34, NULL},
+
+	{       "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
+	{      "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
+	{      "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
+	{      "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
+	{      "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
+	{   "credit3n.dlt", GAME_RESOURCEFILE, 1796, NULL}, // PC
+	{   "credit3m.dlt", GAME_RESOURCEFILE, 1796, NULL}, // Macintosh
+	{   "credit4n.dlt", GAME_RESOURCEFILE, 1797, NULL}, // PC
+	{   "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL}, // Macintosh
+	{       "p2_a.voc", GAME_VOICEFILE,       4, NULL},
+	{       "p2_a.iaf", GAME_VOICEFILE,       4, &ITEPC_GameSound}
 };
 
-static const GameFontDescription IHNMCD_GameFonts[] = {
-	{2},
-	{3},
-	{4},
-	{5},
-	{6},  // kIHNMFont8
-	{7},
-	{8}   // kIHNMMainFont
-};
-
-static const GameSoundInfo IHNM_GameSound = {
-	kSoundWAV,
-	-1,
-	-1,
-	false,
-	false,
-	true
+static const GamePatchDescription ITEMacPatch_Files[] = {
+	{       "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
+	{      "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
+	{      "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
+	{      "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
+	{      "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
+	{   "credit3m.dlt", GAME_RESOURCEFILE, 1796, NULL},
+	{   "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL},
+	{       "p2_a.iaf", GAME_VOICEFILE,       4, &ITEMAC_GameSound}
 };
 
 static const SAGAGameDescription gameDescriptions[] = {
@@ -367,8 +231,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEMACDEMO_GameVoice,
-		&ITEMACDEMO_GameSound,
+		&ITEDEMO_GameVoice,
+		&ITEMAC_GameSound,
 		&ITEMACDEMO_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
@@ -402,8 +266,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEMACDEMO_GameVoice,
-		&ITEMACDEMO_GameSound,
+		&ITEDEMO_GameVoice,
+		&ITEMAC_GameSound,
 		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
@@ -435,8 +299,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEWINDEMO2_GameVoice,
-		&ITEWINDEMO2_GameSound,
+		&ITEDEMO_GameVoice,
+		&ITEPC_GameSound,
 		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
@@ -537,8 +401,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEMACCD_GameSound,
-		&ITEMACCD_GameSound,
+		&ITEMAC_GameSound,
+		&ITEMAC_GameSound,
 		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
@@ -574,10 +438,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GF_WYRMKEEP | GF_CD_FX,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITECD_GameFonts),
-		ITECD_GameFonts,
-		&ITEMACCD_GameSound,
-		&ITECD_GameSound,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEMAC_GameSound,
+		&ITEPC_GameSound,
 		&ITEMACCD_GameMusic,
 		0,
 		NULL,
@@ -605,10 +469,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GF_CD_FX,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITECD_GameFonts),
-		ITECD_GameFonts,
-		&ITECD_GameSound,
-		&ITECD_GameSound,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEPC_GameSound,
+		&ITEPC_GameSound,
 		&ITEMACCD_GameMusic,
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
@@ -635,10 +499,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GF_CD_FX,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITECD_GameFonts),
-		ITECD_GameFonts,
-		&ITECD_GameSound,
-		&ITECD_GameSound,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEPC_GameSound,
+		&ITEPC_GameSound,
 		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
@@ -666,10 +530,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GF_CD_FX,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITECD_GameFonts),
-		ITECD_GameFonts,
-		&ITECD_GameSound,
-		&ITECD_GameSound,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEPC_GameSound,
+		&ITEPC_GameSound,
 		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
@@ -698,8 +562,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITEDISK_GameFonts),
-		ITEDISK_GameFonts,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
 		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
@@ -727,8 +591,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITEDISK_GameFonts),
-		ITEDISK_GameFonts,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
 		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
@@ -933,6 +797,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	},
 
 	// I Have No Mouth And I Must Scream - Fr CD version
+	// Censored CD version (without Nimdok)
 	{
 		{
 			"ihnm",
