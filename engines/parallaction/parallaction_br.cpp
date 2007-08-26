@@ -84,9 +84,9 @@ int Parallaction_br::init() {
 	initResources();
 	initFonts();
 	initCursors();
-/*	initOpcodes();
+	initOpcodes();
 	initParsers();
-*/
+
 	_part = -1;
 
 	Parallaction::init();

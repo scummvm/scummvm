@@ -71,7 +71,13 @@ enum ZoneFlags {
 	kFlagsLooping		= 0x100,			// Animation: script is to be executed repeatedly
 	kFlagsAdded 		= 0x200,			// NEVER USED in Nippon Safes
 	kFlagsCharacter 	= 0x400,			//
-	kFlagsNoWalk		= 0x800 			// Zone: character doesn't need to walk towards object to interact
+	kFlagsNoWalk		= 0x800, 			// Zone: character doesn't need to walk towards object to interact
+
+	// BRA specific
+	kFlagsYourself		= 0x1000,
+	kFlagsScaled		= 0x2000,
+	kFlagsSelfuse		= 0x4000,
+	kFlagsAnimLinked	= 0x2000000
 };
 
 
@@ -275,7 +281,10 @@ struct Zone {
 	CommandList 	_commands;
 	Common::Point	_moveTo;
 
+	// BRA specific
 	uint			_index;
+	char			*_linkedName;
+	Animation		*_linkedAnim;
 
 	Zone();
 	virtual ~Zone();

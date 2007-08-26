@@ -174,7 +174,6 @@ Animation *Parallaction_ns::parseAnimation(Script& script, AnimationList &list, 
 	list.push_front(a);
 
 	_locParseCtxt.a = a;
-	_locParseCtxt.end = false;
 	_locParseCtxt.script = &script;
 
 	pushParserTables(&_locationAnimParsers, _locationAnimStmt);
@@ -607,7 +606,7 @@ void Parallaction_ns::createCommand(uint id) {
 
 void Parallaction_ns::parseCommands(Script &script, CommandList& list) {
 	_locParseCtxt.list = &list;
-	_locParseCtxt.end = false;
+	_locParseCtxt.endcommands = false;
 	_locParseCtxt.script = &script;
 
 	pushParserTables(&_commandParsers, _commandsNames);
@@ -804,7 +803,7 @@ DECLARE_LOCATION_PARSER(animation) {
 
 
 DECLARE_LOCATION_PARSER(localflags) {
-	int _si = 1;	// _localFlagNames[0] = 'visited'
+	int _si = 1;
 	while (_tokens[_si][0] != '\0') {
 		_localFlagNames->addData(_tokens[_si]);
 		_si++;
@@ -869,9 +868,10 @@ DECLARE_LOCATION_PARSER(redundant) {
 
 
 void Parallaction_ns::parseLocation(const char *filename) {
-    debugC(1, kDebugLocation, "parseLocation('%s')", filename);
+    debugC(5, kDebugLocation, "parseLocation('%s')", filename);
 
 	allocateLocationSlot(filename);
+	printf("got location slot #%i for %s\n", _currentLocationIndex, filename);
 
 	Script *script = _disk->loadLocation(filename);
 
@@ -885,15 +885,10 @@ void Parallaction_ns::parseLocation(const char *filename) {
 	_locParseCtxt.filename = filename;
 
 	pushParserTables(&_locationParsers, _locationStmt);
-
 	do {
-
 		fillBuffers(*script, true);
-
 		parseStatement();
-
 	} while (!_locParseCtxt.end);
-
 	popParserTables();
 
 	delete script;
@@ -911,6 +906,8 @@ void Parallaction_ns::parseLocation(const char *filename) {
 		if ((*it)->_scriptName)
 			loadProgram(*it, (*it)->_scriptName);
 	}
+
+	debugC(5, kDebugLocation, "parseLocation('%s') done", filename);
 	return;
 }
 
@@ -1156,7 +1153,6 @@ void Parallaction_ns::parseZone(Script &script, ZoneList &list, char *name) {
 	z->_label._text = strdup(name);
 
 	_locParseCtxt.z = z;
-	_locParseCtxt.end = false;
 	_locParseCtxt.script = &script;
 
 	list.push_front(z);

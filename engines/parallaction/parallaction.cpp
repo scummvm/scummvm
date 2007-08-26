@@ -123,7 +123,7 @@ Parallaction::~Parallaction() {
 	delete _globalTable;
 
 	delete _callableNames;
-
+	delete _localFlagNames;
 	delete _zoneTypeNames;
 	delete _zoneFlagNames;
 
@@ -170,7 +170,7 @@ int Parallaction::init() {
 	strcpy(_characterName1, "null");
 	strcpy(_characterName, "dough");
 
-	memset(_locationNames, 0, 120*32);
+	memset(_locationNames, 0, NUM_LOCATIONS * 32);
 
 	initInventory();	// needs to be pushed into subclass
 
@@ -772,8 +772,7 @@ Table::~Table() {
 
 	if (!_disposeMemory) return;
 
-	for (uint32 i = 0; i < _used; i++)
-		free(_data[i]);
+	clear();
 
 	free(_data);
 
@@ -797,6 +796,28 @@ uint16 Table::lookup(const char* s) {
 	return notFound;
 }
 
+void Table::clear() {
+	for (uint32 i = 0; i < _used; i++)
+		free(_data[i]);
+
+	_used = 0;
+}
+
+FixedTable::FixedTable(uint32 size, uint32 fixed) : Table(size), _numFixed(fixed) {
+}
+
+FixedTable::~FixedTable() {
+	_numFixed = 0;
+}
+
+void FixedTable::clear() {
+	for (uint32 i = _numFixed; i < _used; i++) {
+		free(_data[i]);
+		_used--;
+	}
+}
+
+
 void Parallaction::pushParserTables(OpcodeSet *opcodes, Table *statements) {
 	_opcodes.push(_currentOpcodes);
 	_statements.push(_currentStatements);
@@ -816,6 +837,9 @@ void Parallaction::parseStatement() {
 	assert(_currentOpcodes != 0);
 
 	_lookup = _currentStatements->lookup(_tokens[0]);
+
+	debugC(9, kDebugLocation, "parseStatement: %s (lookup = %i)", _tokens[0], _lookup);
+
 	(*(*_currentOpcodes)[_lookup])();
 }
 
@@ -887,15 +911,7 @@ void Parallaction::freeLocation() {
 	_soundMan->stopSfx(2);
 	_soundMan->stopSfx(3);
 
-	if (_localFlagNames)
-		delete _localFlagNames;
-
-	// HACK: prevents leakage. A routine like this
-	// should allocate memory at all, though.
-	if ((_engineFlags & kEngineQuit) == 0) {
-		_localFlagNames = new Table(NUM_LOCATIONS);
-		_localFlagNames->addData("visited");
-	}
+	_localFlagNames->clear();
 
 	_location._walkNodes.clear();
 

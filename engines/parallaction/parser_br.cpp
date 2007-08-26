@@ -154,7 +154,7 @@ DECLARE_LOCATION_PARSER(animation) {
 
 
 DECLARE_LOCATION_PARSER(localflags) {
-	int _si = 1;	// _localFlagNames[0] = 'visited'
+	int _si = 1;
 	while (_tokens[_si][0] != '\0') {
 		_localFlagNames->addData(_tokens[_si]);
 		_si++;
@@ -451,6 +451,88 @@ DECLARE_COMMAND_PARSER(unary) {
 	parseCommandFlags();
 	addCommand();
 }
+
+
+DECLARE_ZONE_PARSER(limits) {
+	if (isalpha(_tokens[1][1])) {
+		_locParseCtxt.z->_flags |= kFlagsAnimLinked;
+		_locParseCtxt.z->_linkedAnim = findAnimation(_tokens[1]);
+		_locParseCtxt.z->_linkedName = strdup(_tokens[1]);
+	} else {
+		_locParseCtxt.z->_left = atoi(_tokens[1]);
+		_locParseCtxt.z->_top = atoi(_tokens[2]);
+		_locParseCtxt.z->_right = atoi(_tokens[3]);
+		_locParseCtxt.z->_bottom = atoi(_tokens[4]);
+	}
+}
+
+
+DECLARE_ZONE_PARSER(moveto) {
+	_locParseCtxt.z->_moveTo.x = atoi(_tokens[1]);
+	_locParseCtxt.z->_moveTo.y = atoi(_tokens[2]);
+//	_locParseCtxt.z->_moveTo.z = atoi(_tokens[3]);
+}
+
+
+DECLARE_ZONE_PARSER(type) {
+	if (_tokens[2][0] != '\0') {
+		_locParseCtxt.z->_type = (4 + _objectsNames->lookup(_tokens[2])) << 16;
+	}
+	int16 _si = _zoneTypeNames->lookup(_tokens[1]);
+	if (_si != Table::notFound) {
+		_locParseCtxt.z->_type |= 1 << (_si - 1);
+		parseZoneTypeBlock(*_locParseCtxt.script, _locParseCtxt.z);
+
+//		if (_locParseCtxt.z->_type & kZoneHear) {
+//			_soundMan->sfxCommand(START...);
+//		}
+	}
+
+	popParserTables();
+}
+
+
+DECLARE_ANIM_PARSER(file) {
+	_locParseCtxt.a->_cnv = _disk->loadFrames(_tokens[1]);
+}
+
+
+DECLARE_ANIM_PARSER(position) {
+	_locParseCtxt.a->_left = atoi(_tokens[1]);
+	_locParseCtxt.a->_top = atoi(_tokens[2]);
+	_locParseCtxt.a->_z = atoi(_tokens[3]);
+	_locParseCtxt.a->_frame = atoi(_tokens[4]);
+}
+
+
+DECLARE_ANIM_PARSER(moveto) {
+	_locParseCtxt.a->_moveTo.x = atoi(_tokens[1]);
+	_locParseCtxt.a->_moveTo.y = atoi(_tokens[2]);
+//	_locParseCtxt.a->_moveTo.z = atoi(_tokens[3]);
+}
+
+
+DECLARE_ANIM_PARSER(endanimation) {
+
+	if (_locParseCtxt.a->_cnv) {
+		_locParseCtxt.a->_right = _locParseCtxt.a->width();
+		_locParseCtxt.a->_bottom = _locParseCtxt.a->height();
+	}
+
+	_locParseCtxt.a->_oldPos.x = -1000;
+	_locParseCtxt.a->_oldPos.y = -1000;
+
+	_locParseCtxt.a->_flags |= 0x1000000;
+
+	popParserTables();
+}
+
+
+
+
+
+
+
 
 
 

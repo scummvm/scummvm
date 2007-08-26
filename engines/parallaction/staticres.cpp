@@ -657,7 +657,7 @@ void Parallaction_ns::initResources() {
 	_locationZoneStmt = new Table(ARRAYSIZE(_locationZoneStmtRes_ns), _locationZoneStmtRes_ns);
 	_locationAnimStmt = new Table(ARRAYSIZE(_locationAnimStmtRes_ns), _locationAnimStmtRes_ns);
 
-	_localFlagNames = new Table(NUM_LOCATIONS);
+	_localFlagNames = new FixedTable(NUM_LOCATIONS, 1);
 	_localFlagNames->addData("visited");
 
 	if (getPlatform() == Common::kPlatformPC) {
@@ -687,9 +687,9 @@ void Parallaction_br::initResources() {
 	_locationZoneStmt = new Table(ARRAYSIZE(_locationZoneStmtRes_br), _locationZoneStmtRes_br);
 	_locationAnimStmt = new Table(ARRAYSIZE(_locationAnimStmtRes_br), _locationAnimStmtRes_br);
 
-	// TODO: make sure there are 120 max locations in Big Red Adventure
-	_localFlagNames = new Table(NUM_LOCATIONS);
+	_localFlagNames = new FixedTable(NUM_LOCATIONS, 2);
 	_localFlagNames->addData("visited");
+	_localFlagNames->addData("testtrue");
 
 	if (getPlatform() == Common::kPlatformPC) {
 		_callables = _dosCallables;

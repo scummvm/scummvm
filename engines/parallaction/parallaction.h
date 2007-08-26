@@ -264,6 +264,7 @@ struct Character {
 
 class Table {
 
+protected:
 	char	**_data;
 	uint16	_size;
 	uint16	_used;
@@ -273,15 +274,25 @@ public:
 	Table(uint32 size);
 	Table(uint32 size, const char** data);
 
-	~Table();
+	virtual ~Table();
 
 	enum {
 		notFound = 0
 	};
 
-	void addData(const char* s);
+	virtual void addData(const char* s);
+	virtual void clear();
+	virtual uint16 lookup(const char* s);
+};
 
-	uint16 lookup(const char* s);
+class FixedTable : public Table {
+
+	uint16	_numFixed;
+
+public:
+	FixedTable(uint32 size, uint32 fixed);
+	~FixedTable();
+	void clear();
 };
 
 struct BackgroundInfo {
@@ -951,7 +962,13 @@ private:
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(ret);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(onsave);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(offsave);
-
+	DECLARE_UNQUALIFIED_ZONE_PARSER(limits);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(moveto);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(type);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(file);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(position);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
+	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
 
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(on);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(off);
