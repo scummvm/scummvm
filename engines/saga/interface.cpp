@@ -1468,10 +1468,21 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 
 void Interface::handleChapterSelectionUpdate(const Point& mousePoint) {
 	uint16 objectId;
+	int hitZoneIndex;
+	const HitZone * hitZone;
 
 	// FIXME: Original handled more object types here.
 
 	objectId = _vm->_actor->hitTest(mousePoint, true);
+
+	if (objectId == ID_NOTHING) {
+		hitZoneIndex = _vm->_scene->_objectMap->hitTest(mousePoint);
+
+		if ((hitZoneIndex != -1)) {
+			hitZone = _vm->_scene->_objectMap->getHitZone(hitZoneIndex);
+			objectId = hitZone->getHitZoneId();
+		}
+	}
 
 	if (objectId != _vm->_script->_pointerObject) {
 		_vm->_script->_pointerObject = objectId;
@@ -1492,12 +1503,12 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 
 		switch (objectTypeId(obj)) {
 		case kGameObjectHitZone:
-			hitZone = _vm->_scene->_actionMap->getHitZone(objectIdToIndex(obj));
+			hitZone = _vm->_scene->_objectMap->getHitZone(objectIdToIndex(obj));
 
 			if (hitZone == NULL)
 				return;
 
-			if (hitZone->getFlags() & kHitZoneExit)
+			if (hitZone->getFlags() & kHitZoneEnabled)
 				script = hitZone->getScriptNumber();
 			break;
 
