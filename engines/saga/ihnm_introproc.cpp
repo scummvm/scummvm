@@ -128,6 +128,11 @@ int Scene::IHNMStartProc() {
 
 	/*
 	// Test code - uses loadCutawayList to load the intro cutaways, like the original
+	// TODO: with the current mechanism, we can support up to 3 intro movies here
+	// (and each movie is still hardcoded). A solution would be to remove the hardcoded
+	// bits from each movie scene proc. Another solution would be to rewrite the intro
+	// cutaway mechanism
+
 	LoadSceneParams IHNM_IntroList[10];
 	SceneDescription IHNM_IntroScene[10];
 	SceneResourceData IHNM_IntroScene_ResourceList[10][2];
@@ -183,13 +188,16 @@ int Scene::IHNMStartProc() {
 		// Scene params
 		IHNM_IntroList[k].sceneDescriptor = 0;
 		IHNM_IntroList[k].loadFlag = kLoadByDescription;
-		IHNM_IntroList[k].sceneDescription = &IHNM_IntroScene[0];
-		if (k == 0)
+		// FIXME: when this test code is used, this bit here is not passed correctly, leading to a crash
+		IHNM_IntroList[k].sceneDescription = &IHNM_IntroScene[k];
+		// TODO: remove the hardcoded parts here and probably merge all the SC_IHNMIntroMovieProc functions in 1
+		if (k == 0) {
 			IHNM_IntroList[k].sceneProc = Scene::SC_IHNMIntroMovieProc1;
-		else if (k == 1)
+		} else if (k == 1) {
 			IHNM_IntroList[k].sceneProc = Scene::SC_IHNMIntroMovieProc2;
-		else
+		} else {
 			IHNM_IntroList[k].sceneProc = Scene::SC_IHNMIntroMovieProc3;
+		}
 		IHNM_IntroList[k].sceneSkipTarget = false;
 		IHNM_IntroList[k].transitionType = kTransitionNoFade;
 		IHNM_IntroList[k].actorsEntrance = 0;
