@@ -164,7 +164,7 @@ int Scene::IHNMStartProc() {
 		IHNM_IntroScene_ResourceList[k][0].invalid = false;
 		// Cutaway animation resource
 		IHNM_IntroScene_ResourceList[k][1].resourceId = _vm->_anim->cutawayAnimResourceID(k);
-		IHNM_IntroScene_ResourceList[k][1].resourceType = 2;
+		IHNM_IntroScene_ResourceList[k][1].resourceType = 14;
 		IHNM_IntroScene_ResourceList[k][1].buffer = 0;
 		IHNM_IntroScene_ResourceList[k][1].size = 0;
 		IHNM_IntroScene_ResourceList[k][1].invalid = false;
