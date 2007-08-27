@@ -651,11 +651,12 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 
 	MemoryReadStream readS(anim->resourceData + frameOffset, anim->resourceLength - frameOffset);
 
-
+// FIXME: This is thrown when the first video of the IHNM end sequence is shown (the "turn off screen"
+// video), however the video is played correctly and the rest of the end sequence continues normally
 #if 1
 #define VALIDATE_WRITE_POINTER \
 	if ((writePointer < buf) || (writePointer >= (buf + screenWidth * screenHeight))) { \
-		error("VALIDATE_WRITE_POINTER: writePointer=%p buf=%p", (void *)writePointer, (void *)buf); \
+		warning("VALIDATE_WRITE_POINTER: writePointer=%p buf=%p", (void *)writePointer, (void *)buf); \
 	}
 #else
 #define VALIDATE_WRITE_POINTER

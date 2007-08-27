@@ -273,18 +273,7 @@ void SagaEngine::load(const char *fileName) {
 		if (_scene->currentChapterNumber() == 8)
 			_interface->setMode(kPanelChapterSelection);
 		if (getGameId() != GID_IHNM_DEMO) {
-			// HACK for chapter 6 (last chapter) in IHNM. For some reason, the songtable loaded is
-			// incorrect, and the game crashes here when trying to load a music track there. For now,
-			// just don't change the music track for chapter 6
-			// FIXME: Figure out what's wrong with the loaded music track and remove this hack
-			// Note that when this hack is removed, remove it from Script::sfPlayMusic and 
-			// Script::sfQueueMusic as well
-			if (getGameType() == GType_IHNM && _scene->currentChapterNumber() == 6) {
-				// do nothing
-			} else {
-				_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
-			}
-			//_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
+			_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
 		} else {
 			_music->play(3, MUSIC_LOOP);
 		}

@@ -1676,14 +1676,6 @@ void Script::sfPlayMusic(SCRIPTFUNC_PARAMS) {
 			warning("sfPlayMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
 		} else {
 			_vm->_music->setVolume(_vm->_musicVolume == 10 ? -1 : _vm->_musicVolume * 25, 1);
-			// HACK for chapter 6 (last chapter) in IHNM. For some reason, the songtable loaded is
-			// incorrect, and the game crashes here when trying to load a music track there. For now,
-			// just don't change the music track for chapter 6
-			// FIXME: Figure out what's wrong with the loaded music track and remove this hack
-			// Note that when this hack is removed, remove it from SagaEngine::load and 
-			// Script::sfQueueMusic as well
-			if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 6)
-				return;
 			_vm->_music->play(_vm->_music->_songTable[param1], param2 ? MUSIC_LOOP : MUSIC_NORMAL);
 			if (!_vm->_scene->haveChapterPointsChanged()) {
 				_vm->_scene->setCurrentMusicTrack(param1);
@@ -2149,15 +2141,6 @@ void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
 		_vm->_music->stop();
 		return;
 	}
-
-	// HACK for chapter 6 (last chapter) in IHNM. For some reason, the songtable loaded is
-	// incorrect, and the game crashes here when trying to load a music track there. For now,
-	// just don't change the music track for chapter 6
-	// FIXME: Figure out what's wrong with the loaded music track and remove this hack
-	// Note that when this hack is removed, remove it from SagaEngine::load and 
-	// Script::sfPlayMusic as well
-	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 6)
-		return;
 
 	if (param1 >= _vm->_music->_songTableLen) {
 		warning("sfQueueMusic: Wrong song number (%d > %d)", param1, _vm->_music->_songTableLen - 1);
