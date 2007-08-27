@@ -83,6 +83,17 @@ SceneDescription IHNM_IntroMovie4Desc = {
 	ARRAYSIZE(IHNM_IntroMovie4RL)
 };
 
+SceneResourceData IHNM_CreditsMovieRL[] = {
+	{37, 2, 0, 0, false},
+	{38, 14, 0, 0, false}
+};
+
+SceneDescription IHNM_CredisMovieDesc = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	IHNM_CreditsMovieRL,
+	ARRAYSIZE(IHNM_CreditsMovieRL)
+};
+
 // Demo
 SceneResourceData IHNMDEMO_IntroMovie1RL[] = {
 	{19, 2, 0, 0, false}	// this scene doesn't have an animation
@@ -111,6 +122,10 @@ LoadSceneParams IHNM_IntroList[] = {
 	{0, kLoadByDescription, &IHNM_IntroMovie3Desc, Scene::SC_IHNMIntroMovieProc3, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 };
 
+LoadSceneParams IHNM_CreditsList[] = {
+	{0, kLoadByDescription, &IHNM_CredisMovieDesc, Scene::SC_IHNMCreditsMovieProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+};
+
 LoadSceneParams IHNMDEMO_IntroList[] = {
 	{0, kLoadByDescription, &IHNMDEMO_IntroMovie1Desc, Scene::SC_IHNMIntroMovieProc1, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
 	{0, kLoadByDescription, &IHNMDEMO_IntroMovie2Desc, Scene::SC_IHNMIntroMovieProc3, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
@@ -119,6 +134,21 @@ LoadSceneParams IHNMDEMO_IntroList[] = {
 // IHNM cutaway intro resource IDs
 #define RID_IHNM_INTRO_CUTAWAYS 39
 #define RID_IHNMDEMO_INTRO_CUTAWAYS 25
+
+int Scene::IHNMCreditsProc() {
+	_vm->_anim->setCutAwayMode(kPanelVideo);
+	_vm->_interface->setMode(kPanelVideo);
+
+	// Queue the credits scene
+	if (_vm->getGameId() != GID_IHNM_DEMO) {
+		_vm->_scene->queueScene(&IHNM_CreditsList[0]);
+	} else {
+		// TODO: demo credits
+		//_vm->_scene->queueScene(&IHNMDEMO_CreditsList[0]);
+	}
+
+	return SUCCESS;
+}
 
 int Scene::IHNMStartProc() {
 	size_t n_introscenes;
@@ -158,6 +188,10 @@ int Scene::IHNMStartProc() {
 
 	// Load the cutaways for the title screens
 	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
+	// Debug
+	//for (int k = 0; k < _vm->_anim->cutawayListLength(); k++) {
+	//	printf("%i %i\n", _vm->_anim->cutawayBgResourceID(k), _vm->_anim->cutawayAnimResourceID(k));
+	//}
 
 	for (int k = 0; k < _vm->_anim->cutawayListLength(); k++) {
 		// Scene resources
@@ -473,6 +507,91 @@ int Scene::IHNMIntroMovieProc3(int param) {
 			event.time = 12000;
 
 		q_event = _vm->_events->chain(q_event, &event);
+		break;
+	default:
+		break;
+	}
+
+	return 0;
+}
+
+int Scene::SC_IHNMCreditsMovieProc(int param, void *refCon) {
+	return ((Scene *)refCon)->IHNMCreditsMovieProc(param);
+}
+
+int Scene::IHNMCreditsMovieProc(int param) {
+	Event event;
+	Event *q_event;
+	PalEntry *pal;
+	static PalEntry current_pal[PAL_ENTRIES];
+
+	switch (param) {
+	case SCENE_BEGIN:
+		// Fade to black out of the end movie anim
+		_vm->_gfx->getCurrentPal(current_pal);
+
+		event.type = kEvTContinuous;
+		event.code = kPalEvent;
+		event.op = kEventPalToBlack;
+		event.time = 0;
+		event.duration = IHNM_PALFADE_TIME;
+		event.data = current_pal;
+
+		q_event = _vm->_events->queue(&event);
+
+		event.type = kEvTOneshot;
+		event.code = kMusicEvent;
+		event.param = 0;
+		event.param2 = MUSIC_NORMAL;
+		event.op = kEventPlay;
+		event.time = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);
+
+		// Background for credits scene is the first frame of the credits
+		// animation; display it but don't set palette
+		event.type = kEvTOneshot;
+		event.code = kBgEvent;
+		event.op = kEventDisplay;
+		event.param = kEvPNoSetPalette;
+		event.time = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);
+
+		// Fade in from black to the scene background palette
+		_vm->_scene->getBGPal(pal);
+
+		event.type = kEvTContinuous;
+		event.code = kPalEvent;
+		event.op = kEventBlackToPal;
+		event.time = 0;
+		event.duration = IHNM_PALFADE_TIME;
+		event.data = pal;
+
+		q_event = _vm->_events->chain(q_event, &event);
+
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventPlay;
+		event.param = 0;
+		event.time = 0;
+
+		q_event = _vm->_events->chain(q_event, &event);
+
+		// Queue end of scene after a while
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
+		// TODO
+		if (_vm->getGameId() != GID_IHNM_DEMO)
+			event.time = 12000;
+		else
+			event.time = 12000;
+
+		q_event = _vm->_events->chain(q_event, &event);
+		break;
+	case SCENE_END:
+		_vm->shutDown();
 		break;
 	default:
 		break;

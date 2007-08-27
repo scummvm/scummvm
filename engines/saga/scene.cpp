@@ -292,6 +292,51 @@ void Scene::startScene() {
 	loadScene(sceneQueue);
 }
 
+void Scene::creditsScene() {
+	// FIXME: Just shutdown for now
+	_vm->shutDown();
+	return;
+
+	/*
+	SceneQueueList::iterator queueIterator;
+	LoadSceneParams *sceneQueue;
+	Event event;
+
+	// End the last game ending scene
+	_vm->_scene->endScene();
+	// We're not in the game anymore
+	_inGame = false;
+
+	// Hide cursor during credits
+	event.type = kEvTOneshot;
+	event.code = kCursorEvent;
+	event.op = kEventHide;
+	_vm->_events->queue(&event);
+
+	switch (_vm->getGameType()) {
+	case GType_ITE:
+		// Not called by ITE
+		break;
+	case GType_IHNM:
+		IHNMCreditsProc();
+		break;
+	default:
+		error("Scene::creditsScene(): Error: Can't start credits scene... gametype not supported");
+		break;
+	}
+
+	// Load the head in scene queue
+	queueIterator = _sceneQueue.begin();
+	if (queueIterator == _sceneQueue.end()) {
+		return;
+	}
+
+	sceneQueue = queueIterator.operator->();
+
+	loadScene(sceneQueue);
+	*/
+}
+
 void Scene::nextScene() {
 	SceneQueueList::iterator queueIterator;
 	LoadSceneParams *sceneQueue;
@@ -710,9 +755,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	}
 
 	_sceneLoaded = true;
-	// Scene is loaded, but don't show actors till the scene's background is drawn
-	// via kEventDisplay later on
-	_vm->_render->setFlag(RF_DISABLE_ACTORS);
 
 	q_event = NULL;
 
@@ -1180,7 +1222,9 @@ void Scene::endScene() {
 		_sceneProc(SCENE_END, this);
 	}
 
-	//
+	// Stop showing actors till the next scene's background is drawn from loadScene
+	_vm->_render->setFlag(RF_DISABLE_ACTORS);
+
 	_vm->_script->abortAllThreads();
 	_vm->_script->_skipSpeeches = false;
 

@@ -221,6 +221,7 @@ class Scene {
 	void cmdSceneChange(int argc, const char **argv);
 
 	void startScene();
+	void creditsScene();
 	void nextScene();
 	void skipScene();
 	void endScene();
@@ -395,17 +396,20 @@ class Scene {
 
  private:
 	int IHNMStartProc();
+	int IHNMCreditsProc();
 	int ITEStartProc();
 
  public:
 	static int SC_IHNMIntroMovieProc1(int param, void *refCon);
 	static int SC_IHNMIntroMovieProc2(int param, void *refCon);
 	static int SC_IHNMIntroMovieProc3(int param, void *refCon);
+	static int SC_IHNMCreditsMovieProc(int param, void *refCon);
 
  private:
 	int IHNMIntroMovieProc1(int param);
 	int IHNMIntroMovieProc2(int param);
 	int IHNMIntroMovieProc3(int param);
+	int IHNMCreditsMovieProc(int param);
 
  public:
 	static int SC_ITEIntroAnimProc(int param, void *refCon);

@@ -571,10 +571,13 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 		_vm->_gfx->setCursor(kCursorBusy);
 	}
 
-	if ((_vm->getGameType() == GType_ITE && sceneNumber < 0) ||
-		(_vm->getGameType() == GType_IHNM && sceneNumber == 0)) {
-		// TODO: set creditsFlag to true for IHNM
+	if (_vm->getGameType() == GType_ITE && sceneNumber < 0) {
 		_vm->shutDown();
+		return;
+	}
+
+	if (_vm->getGameType() == GType_IHNM && sceneNumber == 0) {
+		_vm->_scene->creditsScene();
 		return;
 	}
 
