@@ -608,10 +608,10 @@ void Script::sfScriptGotoScene(SCRIPTFUNC_PARAMS) {
 	showVerb();	// calls setStatusText("")
 
 	if (_vm->getGameType() == GType_IHNM) {
-		// Since it doesn't look like the IHNM scripts remove the
-		// cutaway after the intro, this is probably the best place to do it
-		if (_vm->_scene->currentChapterNumber() == 8)
-			_vm->_anim->clearCutaway();
+		// There are some cutaways which are not removed by game scripts, like the cutaway
+		// after the intro of IHNM or the cutaway at the end of Ellen's part in the IHNM demo.
+		// Clear any remaining cutaways here
+		_vm->_anim->clearCutaway();
 		_vm->_gfx->setCursor(kCursorNormal);
 	}
 }
