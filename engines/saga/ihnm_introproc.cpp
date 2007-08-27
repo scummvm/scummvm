@@ -128,6 +128,9 @@ int Scene::IHNMStartProc() {
 
 	/*
 	// Test code - uses loadCutawayList to load the intro cutaways, like the original
+	LoadSceneParams IHNM_IntroList[10];
+	SceneDescription IHNM_IntroScene[10];
+	SceneResourceData IHNM_IntroScene_ResourceList[10][2];
 
 	ResourceContext *resourceContext;
 	//ResourceContext *soundContext;
@@ -150,11 +153,48 @@ int Scene::IHNMStartProc() {
 
 	// Load the cutaways for the title screens
 	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
-	
-	// Note that the resource ID needed is the returned ID minus one
-	printf("%i\n", _vm->_anim->cutawayResourceID(0));
-	printf("%i\n", _vm->_anim->cutawayResourceID(1));
-	printf("%i\n", _vm->_anim->cutawayResourceID(2));
+
+	for (int k = 0; k < _vm->_anim->cutawayListLength(); k++) {
+		// Scene resources
+		// Cutaway background resource
+		IHNM_IntroScene_ResourceList[k][0].resourceId = _vm->_anim->cutawayBgResourceID(k);
+		IHNM_IntroScene_ResourceList[k][0].resourceType = 2;
+		IHNM_IntroScene_ResourceList[k][0].buffer = 0;
+		IHNM_IntroScene_ResourceList[k][0].size = 0;
+		IHNM_IntroScene_ResourceList[k][0].invalid = false;
+		// Cutaway animation resource
+		IHNM_IntroScene_ResourceList[k][1].resourceId = _vm->_anim->cutawayAnimResourceID(k);
+		IHNM_IntroScene_ResourceList[k][1].resourceType = 2;
+		IHNM_IntroScene_ResourceList[k][1].buffer = 0;
+		IHNM_IntroScene_ResourceList[k][1].size = 0;
+		IHNM_IntroScene_ResourceList[k][1].invalid = false;
+
+		// Scene resource list
+		IHNM_IntroScene[k].resourceListResourceId = 0;
+		IHNM_IntroScene[k].endSlope = 0;
+		IHNM_IntroScene[k].beginSlope = 0;
+		IHNM_IntroScene[k].scriptModuleNumber = 0;
+		IHNM_IntroScene[k].sceneScriptEntrypointNumber = 0;
+		IHNM_IntroScene[k].startScriptEntrypointNumber = 0;
+		IHNM_IntroScene[k].musicResourceId = 0;
+		IHNM_IntroScene[k].resourceList = IHNM_IntroScene_ResourceList[k];
+		IHNM_IntroScene[k].resourceListCount = _vm->_anim->cutawayAnimResourceID(k) > 0 ? 2 : 1;
+
+		// Scene params
+		IHNM_IntroList[k].sceneDescriptor = 0;
+		IHNM_IntroList[k].loadFlag = kLoadByDescription;
+		IHNM_IntroList[k].sceneDescription = &IHNM_IntroScene[0];
+		if (k == 0)
+			IHNM_IntroList[k].sceneProc = Scene::SC_IHNMIntroMovieProc1;
+		else if (k == 1)
+			IHNM_IntroList[k].sceneProc = Scene::SC_IHNMIntroMovieProc2;
+		else
+			IHNM_IntroList[k].sceneProc = Scene::SC_IHNMIntroMovieProc3;
+		IHNM_IntroList[k].sceneSkipTarget = false;
+		IHNM_IntroList[k].transitionType = kTransitionNoFade;
+		IHNM_IntroList[k].actorsEntrance = 0;
+		IHNM_IntroList[k].chapter = NO_CHAPTER_CHANGE; 
+	}
 	*/
 
 	// The original used the "play video" mechanism for the first part of
@@ -167,6 +207,9 @@ int Scene::IHNMStartProc() {
 		n_introscenes = ARRAYSIZE(IHNM_IntroList);
 	else
 		n_introscenes = ARRAYSIZE(IHNMDEMO_IntroList);
+
+	// Use this instead when the scenes are loaded dynamically
+	// n_introscenes = _vm->_anim->cutawayListLength();
 
 	// Queue the company and title videos
 	if (_vm->getGameId() != GID_IHNM_DEMO) {

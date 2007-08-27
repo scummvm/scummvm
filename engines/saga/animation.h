@@ -140,12 +140,7 @@ public:
 	void resume(uint16 animId, int cycles);
 	void resumeAll();
 	int16 getCurrentFrame(uint16 animId);
-	bool hasCutaway(void) {
-		return _cutawayActive;
-	}
-	void setCutAwayMode(int mode) {
-		_cutAwayMode = mode;
-	}
+
 	bool hasAnimation(uint16 animId) {
 		if (animId >= MAX_ANIMATIONS) {
 			if (animId < MAX_ANIMATIONS + ARRAYSIZE(_cutawayAnimations))
@@ -154,7 +149,13 @@ public:
 		}
 		return (_animations[animId] != NULL);
 	}
-	int cutawayResourceID(int cutaway) { return _cutawayList[cutaway].animResourceId; }
+
+	bool hasCutaway(void) { return _cutawayActive; }
+	void setCutAwayMode(int mode) { _cutAwayMode = mode; }
+	int cutawayListLength() { return _cutawayListLength; }
+	int cutawayBgResourceID(int cutaway) { return _cutawayList[cutaway].backgroundResourceId; }
+	int cutawayAnimResourceID(int cutaway) { return _cutawayList[cutaway].animResourceId; }
+
 private:
 	void decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength);
 	void fillFrameOffsets(AnimationData *anim);
