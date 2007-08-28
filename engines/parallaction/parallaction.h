@@ -259,6 +259,17 @@ struct Character {
 		_ani._label._text = strdup("yourself");
 	}
 
+	void getFoot(Common::Point &foot) {
+		foot.x = _ani._left + _ani.width() / 2;
+		foot.y = _ani._top + _ani.height();
+	}
+
+	void setFoot(const Common::Point &foot) {
+		_ani._left = foot.x - _ani.width() / 2;
+		_ani._top = foot.y - _ani.height();
+	}
+
+
 };
 
 

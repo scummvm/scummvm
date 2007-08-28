@@ -156,7 +156,7 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 	correctPathPoint(to);
 	debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to.x, to.y);
 
-	WalkNode *v48 = new WalkNode(to.x - _vm->_char._ani.width() / 2, to.y - _vm->_char._ani.height());
+	WalkNode *v48 = new WalkNode(to.x, to.y);
 	WalkNode *v44 = new WalkNode(*v48);
 
 	uint16 v38 = walkFunc1(to.x, to.y, v44);
@@ -178,7 +178,9 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 #endif
 
 	Common::Point stop(v48->_x, v48->_y);
-	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
+	Common::Point pos;
+	_vm->_char.getFoot(pos);
+
 	uint32 v34 = buildSubPath(pos, stop);
 	if (v38 != 0 && v34 > v38) {
 		// no alternative path (gap?)
@@ -216,10 +218,8 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
 
 	Common::Point v4(0, 0);
 
-	Common::Point foot(
-		_vm->_char._ani._left + _vm->_char._ani.width()/2,
-		_vm->_char._ani._top + _vm->_char._ani.height()
-	);
+	Common::Point foot;
+	_vm->_char.getFoot(foot);
 
 	Common::Point v8(foot);
 
@@ -249,8 +249,8 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
 				v8 = foot;
 			}
 
-			Node->_x = v4.x - _vm->_char._ani.width() / 2;
-			Node->_y = v4.y - _vm->_char._ani.height();
+			Node->_x = v4.x;
+			Node->_y = v4.y;
 
 			return (x - v4.x) * (x - v4.x) + (y - v4.y) * (y - v4.y);
 		}
@@ -265,19 +265,19 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
 
 void Parallaction::clipMove(Common::Point& pos, const WalkNode* from) {
 
-	if ((pos.x < from->_x) && (pos.x < _vm->_pathBuffer->w) && (_pathBuffer->getValue(_char._ani.width()/2 + pos.x + 2, _char._ani.height() + pos.y) != 0)) {
+	if ((pos.x < from->_x) && (pos.x < _vm->_pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
 		pos.x = (pos.x + 2 < from->_x) ? pos.x + 2 : from->_x;
 	}
 
-	if ((pos.x > from->_x) && (pos.x > -20) && (_pathBuffer->getValue(_char._ani.width()/2 + pos.x - 2, _char._ani.height() + pos.y) != 0)) {
+	if ((pos.x > from->_x) && (pos.x > 0) && (_pathBuffer->getValue(pos.x - 2, pos.y) != 0)) {
 		pos.x = (pos.x - 2 > from->_x) ? pos.x - 2 : from->_x;
 	}
 
-	if ((pos.y < from->_y) && (pos.y < (_vm->_pathBuffer->h - _char._ani.height())) && (_pathBuffer->getValue(_char._ani.width()/2 + pos.x, _char._ani.height() + pos.y + 2) != 0)) {
+	if ((pos.y < from->_y) && (pos.y < _vm->_pathBuffer->h) && (_pathBuffer->getValue(pos.x, pos.y + 2) != 0)) {
 		pos.y = (pos.y + 2 <= from->_y) ? pos.y + 2 : from->_y;
 	}
 
-	if ((pos.y > from->_y) && (pos.y > -20) && (_pathBuffer->getValue(_char._ani.width()/2 + pos.x, _char._ani.height() + pos.y- 2) != 0)) {
+	if ((pos.y > from->_y) && (pos.y > 0) && (_pathBuffer->getValue(pos.x, pos.y - 2) != 0)) {
 		pos.y = (pos.y - 2 >= from->_y) ? pos.y - 2 :from->_y;
 	}
 
@@ -335,13 +335,16 @@ uint16 Parallaction::checkDoor() {
 	}
 
 	_engineFlags &= ~kEngineWalking;
-	Zone *z = hitZone(kZoneDoor, _char._ani._left + _char._ani.width() / 2,	_char._ani._top + _char._ani.height());
+
+	Common::Point foot;
+
+	_char.getFoot(foot);
+	Zone *z = hitZone(kZoneDoor, foot.x, foot.y);
 
 	if (z != NULL) {
 
 		if ((z->_flags & kFlagsClosed) == 0) {
-			_location._startPosition.x = z->u.door->_startPos.x;
-			_location._startPosition.y = z->u.door->_startPos.y;
+			_location._startPosition = z->u.door->_startPos;
 			_location._startFrame = z->u.door->_startFrame;
 			strcpy(_location._name, z->u.door->_location);
 
@@ -353,7 +356,8 @@ uint16 Parallaction::checkDoor() {
 		}
 	}
 
-	z = hitZone(kZoneTrap, _char._ani._left + _char._ani.width() / 2, _char._ani._top + _char._ani.height());
+	_char.getFoot(foot);
+	z = hitZone(kZoneTrap, foot.x, foot.y);
 
 	if (z != NULL) {
 		_localFlags[_currentLocationIndex] |= kFlagsEnter;
@@ -383,8 +387,11 @@ void Parallaction::finalizeWalk(WalkNodeList *list) {
 void jobWalk(void *parm, Job *j) {
 	WalkNodeList *list = (WalkNodeList*)parm;
 
-	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
-	_vm->_char._ani._oldPos = pos;
+	_vm->_char._ani._oldPos.x = _vm->_char._ani._left;
+	_vm->_char._ani._oldPos.y = _vm->_char._ani._top;
+
+	Common::Point pos;
+	_vm->_char.getFoot(pos);
 
 	WalkNodeList::iterator it = list->begin();
 
@@ -406,10 +413,11 @@ void jobWalk(void *parm, Job *j) {
 	int16 v16 = _vm->selectWalkFrame(pos, *it);
 	_vm->clipMove(pos, *it);
 
-	_vm->_char._ani._left = pos.x;
-	_vm->_char._ani._top = pos.y;
+	_vm->_char.setFoot(pos);
 
-	if (pos == _vm->_char._ani._oldPos) {
+	Common::Point newpos(_vm->_char._ani._left, _vm->_char._ani._top);
+
+	if (newpos == _vm->_char._ani._oldPos) {
 		debugC(1, kDebugWalk, "jobWalk was blocked by an unforeseen obstacle");
 		j->_finished = 1;
 		_vm->finalizeWalk(list);

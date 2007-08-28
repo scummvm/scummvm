@@ -920,8 +920,8 @@ void Parallaction_ns::parseWalkNodes(Script& script, WalkNodeList &list) {
 		if (!scumm_stricmp(_tokens[0], "COORD")) {
 
 			WalkNode *v4 = new WalkNode(
-				atoi(_tokens[1]) - _char._ani.width()/2,
-				atoi(_tokens[2]) - _char._ani.height()
+				atoi(_tokens[1]),
+				atoi(_tokens[2])
 			);
 
 			list.push_front(v4);
