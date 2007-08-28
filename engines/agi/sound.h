@@ -102,7 +102,7 @@ struct IIgsWaveInfo {
 #define OSC_MODE_SWAP     3
 	uint mode;
 	bool halt;
-	uint16 relPitch; ///< 8b.8b fixed point, big endian?
+	int16 relPitch; ///< Relative pitch in semitones (Signed 8b.8b fixed point)
 
 	/** Reads an Apple IIGS wave information structure from the given stream. */
 	bool read(Common::SeekableReadStream &stream, bool ignoreAddr = false);

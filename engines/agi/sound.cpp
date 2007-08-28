@@ -139,7 +139,7 @@ bool IIgsWaveInfo::read(Common::SeekableReadStream &stream, bool ignoreAddr) {
 	mode    = (packedModeByte >> 1) & 3; // Bits 1-2
 	halt    = (packedModeByte & 1) != 0; // Bit 0 (Converted to boolean)
 
-	relPitch = stream.readUint16LE();
+	relPitch = stream.readSint16LE();
 
 	// Zero the wave address if we want to ignore the wave address info
 	if (ignoreAddr)
