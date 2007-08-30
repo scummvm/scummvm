@@ -51,8 +51,6 @@ int Scene::IHNMStartProc() {
 
 	IHNMLoadCutaways();
 
-	_vm->_music->play(0, MUSIC_NORMAL);
-
 	if (_vm->getGameId() != GID_IHNM_DEMO) {
 		// Play Cyberdreams logo for 168 frames
 		if (!playTitle(0, -168, true)) {
