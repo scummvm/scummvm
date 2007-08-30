@@ -115,7 +115,7 @@ public:
 
 	void loadCutawayList(const byte *resourcePointer, size_t resourceLength);
 	void freeCutawayList(void);
-	void playCutaway(int cut, bool fade);
+	int playCutaway(int cut, bool fade);
 	void endCutaway(void);
 	void returnFromCutaway(void);
 	void clearCutaway(void);
@@ -140,6 +140,8 @@ public:
 	void resume(uint16 animId, int cycles);
 	void resumeAll();
 	int16 getCurrentFrame(uint16 animId);
+	int getFrameTime(uint16 animId);
+	int getCycles(uint16 animId);
 
 	bool hasAnimation(uint16 animId) {
 		if (animId >= MAX_ANIMATIONS) {
@@ -169,7 +171,7 @@ private:
 			}
 		}
 		if (_animations[animId] == NULL) {
-			error("validateAnimationId: animId=%i unassigned", animId);
+			error("validateAnimationId: animId=%i unassigned.", animId);
 		}
 	}
 

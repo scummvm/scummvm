@@ -78,7 +78,7 @@ void Anim::freeCutawayList(void) {
 	_cutawayListLength = 0;
 }
 
-void Anim::playCutaway(int cut, bool fade) {
+int Anim::playCutaway(int cut, bool fade) {
 	debug(0, "playCutaway(%d, %d)", cut, fade);
 
 	bool startImmediately = false;
@@ -170,7 +170,7 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	if (cutawaySlot == -1) {
 		warning("Could not allocate cutaway animation slot");
-		return;
+		return 0;
 	}
 	
 	// Some cutaways in IHNM have animResourceId equal to 0, which means that they only have
@@ -199,6 +199,8 @@ void Anim::playCutaway(int cut, bool fade) {
 
 		_vm->_events->queue(&event);
 	}
+
+	return MAX_ANIMATIONS + cutawaySlot;
 }
 
 void Anim::endCutaway(void) {
@@ -415,6 +417,13 @@ void Anim::setCycles(uint16 animId, int cycles) {
 	anim->cycles = cycles;
 }
 
+int Anim::getCycles(uint16 animId) {
+	if (animId >= MAX_ANIMATIONS && _cutawayAnimations[animId - MAX_ANIMATIONS] == NULL)
+		return 0;
+	
+	return getAnimation(animId)->cycles;
+}
+
 void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	Event event;
 	Surface *backGroundSurface;
@@ -610,6 +619,14 @@ void Anim::setFrameTime(uint16 animId, int time) {
 	anim = getAnimation(animId);
 
 	anim->frameTime = time;
+}
+
+int Anim::getFrameTime(uint16 animId) {
+	AnimationData *anim;
+
+	anim = getAnimation(animId);
+
+	return anim->frameTime;
 }
 
 int16 Anim::getCurrentFrame(uint16 animId) {

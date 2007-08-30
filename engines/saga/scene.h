@@ -399,6 +399,12 @@ class Scene {
 	int IHNMCreditsProc();
 	int ITEStartProc();
 
+	void IHNMLoadCutaways();
+	bool checkKey();
+
+	bool playTitle(int title, int time, int mode = kPanelVideo);
+	bool playLoopingTitle(int title, int seconds);
+
  public:
 	static int SC_IHNMIntroMovieProc1(int param, void *refCon);
 	static int SC_IHNMIntroMovieProc2(int param, void *refCon);
