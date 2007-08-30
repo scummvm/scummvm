@@ -135,6 +135,9 @@ bool Scene::checkKey() {
 
 	while (_vm->_eventMan->pollEvent(event)) {
 		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_vm->shutDown();
+			// fallthrough
 		case Common::EVENT_KEYDOWN:
 			res = true;
 			break;
