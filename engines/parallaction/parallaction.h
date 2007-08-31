@@ -39,10 +39,6 @@
 #include "parallaction/disk.h"
 #include "parallaction/walk.h"
 
-namespace GUI {
-	class ListWidget;
-	class CommandSender;
-}
 
 extern OSystem *g_system;
 
@@ -368,8 +364,8 @@ public:
 
 	int init();
 
-	void loadGame();
-	void saveGame();
+	virtual void loadGame() = 0;
+	virtual void saveGame() = 0;
 
 	uint16 		updateInput();
 
@@ -537,11 +533,6 @@ protected:		// members
 	InputData 	*translateInput();
 	void		processInput(InputData*);
 
-	int         buildSaveFileList(Common::StringList& l);
-	int         selectSaveFile(uint16 arg_0, const char* caption, const char* button);
-	void		doLoadGame(uint16 slot);
-	void		doSaveGame(uint16 slot, const char* name);
-
 	void		doLocationEnterTransition();
 	virtual void changeLocation(char *location) = 0;
 	virtual void changeCharacter(const char *name) = 0;
@@ -598,6 +589,10 @@ public:
 	void renderLabel(Graphics::Surface *cnv, char *text);
 	void setMousePointer(int16 index);
 
+	void loadGame();
+	void saveGame();
+
+
 private:
 	Menu*			_menu;
 
@@ -607,6 +602,11 @@ private:
 private:
 	void changeLocation(char *location);
 	void changeCharacter(const char *name);
+
+	void doLoadGame(uint16 slot);
+	void doSaveGame(uint16 slot, const char* name);
+	int  buildSaveFileList(Common::StringList& l);
+	int  selectSaveFile(uint16 arg_0, const char* caption, const char* button);
 
 	void initResources();
 	void initCursors();

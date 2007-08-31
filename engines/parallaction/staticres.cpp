@@ -249,19 +249,6 @@ const char *_zoneTypeNamesRes_ns[] = {
 	"Command"
 };
 
-const char _gameNames[10][20] = {
-	"GAME1",
-	"GAME2",
-	"GAME3",
-	"GAME4",
-	"GAME5",
-	"GAME6",
-	"GAME7",
-	"GAME8",
-	"GAME9",
-	"GAME10"
-};
-
 const char *_commandsNamesRes_ns[] = {
 	"set",
 	"clear",
@@ -436,7 +423,8 @@ const char *_instructionNamesRes_br[] = {
 	"div",
 	"if",
 	"endif",
-	"stop"
+	"stop",
+	"endscript"
 };
 
 const char *_commandsNamesRes_br[] = {
