@@ -81,17 +81,25 @@ void Anim::freeCutawayList(void) {
 int Anim::playCutaway(int cut, bool fade) {
 	debug(0, "playCutaway(%d, %d)", cut, fade);
 
+	Event event;
+	Event *q_event = NULL;
 	bool startImmediately = false;
 
 	_cutAwayFade = fade;
 
 	_vm->_gfx->savePalette();
+	_vm->_gfx->getCurrentPal(saved_pal);
+
+	// TODO: Fade in and fade out at this point are problematic right now, caused
+	// by the fact that we're trying to mix events with direct calls:
+	// 1) The background of the animation is shown when _vm->decodeBGImage and
+	// bgSurface->blit are called below, before palette fadeout starts
+	// 2) Fade in to the animation is currently problematic (it fades in to white)
+	// We either have to use non-event calls to fade in/out the palette, or change
+	// the background display and animation parts to events
+	fade = false;	// remove this once palette fadein-fadeout works
 
 	if (fade) {
-		_vm->_gfx->getCurrentPal(saved_pal);
-		// TODO
-		/*
-		Event event;
 		static PalEntry cur_pal[PAL_ENTRIES];
 
 		_vm->_gfx->getCurrentPal(cur_pal);
@@ -103,8 +111,7 @@ int Anim::playCutaway(int cut, bool fade) {
 		event.duration = kNormalFadeDuration;
 		event.data = cur_pal;
 
-		_vm->_events->queue(&event);
-		*/
+		q_event = _vm->_events->queue(&event);
 	}
 
 	// Prepare cutaway
@@ -147,7 +154,19 @@ int Anim::playCutaway(int cut, bool fade) {
 	bgSurface->blit(rect, buf);
 	_vm->_frameCount++;
 
-	_vm->_gfx->setPalette(palette);
+	// Handle fade up, if we previously faded down
+	if (fade) {
+		event.type = kEvTImmediate;
+		event.code = kPalEvent;
+		event.op = kEventBlackToPal;
+		event.time = 0;
+		event.duration = kNormalFadeDuration;
+		event.data = (PalEntry *)palette;
+
+		q_event = _vm->_events->chain(q_event, &event);
+	} else {
+		_vm->_gfx->setPalette(palette);
+	}
 
 	free(buf);
 	free(resourceData);

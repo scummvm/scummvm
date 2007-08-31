@@ -171,7 +171,7 @@ bool Scene::playTitle(int title, int time, int mode) {
 
 	_vm->_gfx->getCurrentPal(cur_pal);
 
-	assignedId = _vm->_anim->playCutaway(title, true);
+	assignedId = _vm->_anim->playCutaway(title, false);
 
 	_vm->_gfx->getCurrentPal(pal_cut);
 
