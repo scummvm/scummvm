@@ -209,7 +209,6 @@ int Anim::playCutaway(int cut, bool fade) {
 	if (_cutAwayMode != kPanelVideo || startImmediately)
 		play(MAX_ANIMATIONS + cutawaySlot, 0);
 	else {
-		Event event;
 		event.type = kEvTOneshot;
 		event.code = kAnimEvent;
 		event.op = kEventPlay;
