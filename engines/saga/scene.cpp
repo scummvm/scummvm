@@ -205,6 +205,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 
 	_sceneLoaded = false;
 	_sceneNumber = 0;
+	_chapterNumber = 0;
 	_sceneResourceId = 0;
 	_inGame = false;
 	_loadDescription = false;
