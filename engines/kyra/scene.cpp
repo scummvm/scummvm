@@ -65,11 +65,11 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 				return 0x7D00;
 			}
 			// debug drawing
-			//if (curX >= 0 && curY >= 0 && curX < 320 && curY < 200) {
-			//	_screen->setPagePixel(0, curX, curY, 11);
-			//	_screen->updateScreen();
-			//	waitTicks(5);
-			//}
+			/*if (curX >= 0 && curY >= 0 && curX < 320 && curY < 200) {
+				screen()->setPagePixel(0, curX, curY, 11);
+				screen()->updateScreen();
+				//waitTicks(5);
+			}*/
 			moveTable[lastUsedEntry++] = newFacing;
 			x = curX;
 			y = curY;
@@ -81,11 +81,11 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 			newFacing = getFacingFromPointToPoint(curX, curY, toX, toY);
 			changePosTowardsFacing(curX, curY, newFacing);
 			// debug drawing
-			//if (curX >= 0 && curY >= 0 && curX < 320 && curY < 200) {
-			//	_screen->setPagePixel(0, curX, curY, 8);
-			//	_screen->updateScreen();
-			//	waitTicks(5);
-			//}
+			/*if (curX >= 0 && curY >= 0 && curX < 320 && curY < 200) {
+				screen()->setPagePixel(0, curX, curY, 8);
+				screen()->updateScreen();
+				//waitTicks(5);
+			}*/
 			
 			if (!lineIsPassable(curX, curY)) {
 				if (curX != toX || curY != toY)
