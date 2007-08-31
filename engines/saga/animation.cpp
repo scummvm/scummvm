@@ -869,8 +869,7 @@ int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
 			case SAGA_FRAME_LONG_UNCOMPRESSED_RUN: // (16) 0001 0000
 				// Long Uncompressed Run
 				runcount = readS.readSint16BE();
-				for (i = 0; i < runcount; i++)
-					readS.readByte();
+				readS.seek(runcount, SEEK_CUR);
 				continue;
 				break;
 			case SAGA_FRAME_NOOP: // Does nothing
