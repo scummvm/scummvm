@@ -181,13 +181,14 @@ bool Scene::playTitle(int title, int time, int mode) {
 		switch (phase) {
 		case 0: // fadeout
 		case 1: // fadeout 100%
-		case 3: // fadein
-		case 4: // fadein 100%
 		case 7: // fadeout
 		case 8: // fadeout 100%
-			if (phase == 0 || phase == 1 || phase == 7 || phase == 8)
-				_vm->_gfx->palToBlack(cur_pal, (double)(curTime - startTime) / kNormalFadeDuration);
-			else
+			_vm->_gfx->palToBlack(cur_pal, (double)(curTime - startTime) / kNormalFadeDuration);
+			// fall through
+
+		case 3: // fadein
+		case 4: // fadein 100%
+			if (phase == 3 || phase == 4)
 				_vm->_gfx->blackToPal(pal_cut, (double)(curTime - startTime) / kNormalFadeDuration);
 
 			if (curTime - startTime > kNormalFadeDuration) {
