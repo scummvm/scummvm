@@ -293,25 +293,13 @@ void Scene::startScene() {
 }
 
 void Scene::creditsScene() {
-	// FIXME: Just shutdown for now
-	_vm->shutDown();
-	return;
-
-	/*
-	SceneQueueList::iterator queueIterator;
-	LoadSceneParams *sceneQueue;
-	Event event;
-
 	// End the last game ending scene
 	_vm->_scene->endScene();
 	// We're not in the game anymore
 	_inGame = false;
 
 	// Hide cursor during credits
-	event.type = kEvTOneshot;
-	event.code = kCursorEvent;
-	event.op = kEventHide;
-	_vm->_events->queue(&event);
+	_vm->_gfx->showCursor(false);
 
 	switch (_vm->getGameType()) {
 	case GType_ITE:
@@ -325,16 +313,8 @@ void Scene::creditsScene() {
 		break;
 	}
 
-	// Load the head in scene queue
-	queueIterator = _sceneQueue.begin();
-	if (queueIterator == _sceneQueue.end()) {
-		return;
-	}
-
-	sceneQueue = queueIterator.operator->();
-
-	loadScene(sceneQueue);
-	*/
+	_vm->shutDown();
+	return;
 }
 
 void Scene::nextScene() {
