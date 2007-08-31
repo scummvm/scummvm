@@ -385,6 +385,7 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 	anim->start += temp;
 
 	// Cache frame offsets
+	anim->maxFrame = fillFrameOffsets(anim, false);
 	anim->frameOffsets = (size_t *)malloc((anim->maxFrame + 1) * sizeof(*anim->frameOffsets));
 	if (anim->frameOffsets == NULL) {
 		memoryError("Anim::load");
@@ -808,8 +809,8 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 	} while (1);
 }
 
-void Anim::fillFrameOffsets(AnimationData *anim) {
-	uint16 currentFrame;
+int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
+	uint16 currentFrame = 0;
 	byte markByte;
 	uint16 control;
 	uint16 runcount;
@@ -822,8 +823,10 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 
 	readS._bigEndian = !_vm->isBigEndian(); // RLE has inversion BE<>LE
 
-	for (currentFrame = 0; currentFrame <= anim->maxFrame; currentFrame++) {
-		anim->frameOffsets[currentFrame] = readS.pos();
+	while (!readS.eos()) {
+		if (reallyFill)
+			anim->frameOffsets[currentFrame] = readS.pos();
+		currentFrame++;
 
 		// For some strange reason, the animation header is in little
 		// endian format, but the actual RLE encoded frame data,
@@ -905,6 +908,8 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 			}
 		} while (markByte != SAGA_FRAME_END);
 	}
+
+	return currentFrame;
 }
 
 void Anim::animInfo() {

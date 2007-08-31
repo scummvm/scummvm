@@ -160,7 +160,7 @@ public:
 
 private:
 	void decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_t bufLength);
-	void fillFrameOffsets(AnimationData *anim);
+	int fillFrameOffsets(AnimationData *anim, bool reallyFill = true);
 
 	void validateAnimationId(uint16 animId) {
 		if (animId >= MAX_ANIMATIONS) {
