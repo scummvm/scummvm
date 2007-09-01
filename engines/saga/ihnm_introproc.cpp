@@ -52,8 +52,13 @@ int Scene::IHNMStartProc() {
 	IHNMLoadCutaways();
 
 	if (_vm->getGameId() != GID_IHNM_DEMO) {
+		int logoLength = -168;
+
+		if (_vm->getLanguage() == Common::DE_DEU || _vm->getLanguage() == Common::ES_ESP)
+			logoLength = -128;
+
 		// Play Cyberdreams logo for 168 frames
-		if (!playTitle(0, -168, true)) {
+		if (!playTitle(0, logoLength, true)) {
 			// Play Dreamers Guild logo for 10 seconds
 			if (!playLoopingTitle(1, 10)) {
 				// Play the title music
