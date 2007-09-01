@@ -97,18 +97,12 @@ bool OSystem_PalmOS5::setSoundCallback(SoundProc proc, void *param) {
 						sndOutput,
 						sndFormatPCM,
 						_samplesPerSec,
-#ifdef PALMOS_68K
-						sndInt16Big,
-#else
 						sndInt16Little,
-#endif
 						sndStereo,
 						sound_callback(),
 						&_soundEx,
 						8192
-#ifdef PALMOS_68K
-						,false
-#elif defined (COMPILE_OS5)
+#ifdef COMPILE_OS5
 						,true
 #endif
 						);

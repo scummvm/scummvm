@@ -29,21 +29,6 @@
 #include <VFSMgr.h>
 #include "stuffs.h"
 
-#ifdef PALMOS_68K
-
-#include "scumm_globals.h"
-
-enum {
-	kMemScummOldCostGames = 0,
-	kMemScummNewCostGames,
-	kMemSimon1Games,	
-	kMemSimon2Games,
-
-	kMemGamesCount
-};
-
-#endif
-
 enum {
 	INIT_VIBRATOR	= 1 <<	0x00,
 	INIT_PA1LIB		= 1 <<	0x01,
@@ -98,20 +83,6 @@ typedef struct {
 	UInt8 palmVolume;
 	UInt8 fmQuality;
 	UInt8 advancedMode;
-
-#ifdef PALMOS_68K
-	// 68k only part
-	struct {
-		Boolean enable;
-		UInt8 driver, format;
-		UInt16 defaultTrackLength;
-		UInt16 firstTrack;
-		UInt8 volume;		
-	} CD;
-
-	DmOpenRef globals[GBVARS_COUNT];
-	UInt32 memory[kMemGamesCount];
-#endif
 
 } GlobalsDataType, *GlobalsDataPtr;
 
