@@ -1000,7 +1000,7 @@ public:
 	int getSelection(int type);
 	bool waitAnyKeyChoice();
 	void waitAnyKey(bool anim = false);
-
+	int rnd(int hi) { return (rand() % hi + 1); }
 };
 
 } // End of namespace Agi

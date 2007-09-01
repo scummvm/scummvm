@@ -195,6 +195,7 @@ void Mickey::printStr(char *buffer) {
 
 	for (iRow = IDI_MSA_ROW_MENU_0; iRow < nRows; iRow++) {
 		iCol = *(buffer + pc++);
+		//_vm->printText(buffer + pc, 0, iRow, iCol, strlen(buffer + pc), 0x0f & 0x0f, (0x0f & 0xf0) / 0x10);
 		// drawStr(iRow, iCol, buffer + pc);	// TODO
 		pc += strlen(buffer + pc) + 1;
 	}
@@ -318,10 +319,8 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 				exit(0);
 			case Common::EVENT_MOUSEMOVE:
 				if (iRow < 2) {
-					// TODO
-					x = y = 0;	// TODO: remove this
-					//x = event.mouse.x / getFontWidth();
-					//y = event.mouse.y / getFontHeight();
+					x = event.mouse.x / 8;
+					y = event.mouse.y / 8;
 					getMouseMenuSelRow(menu, sel0, sel1, iRow, x, y);
 					drawMenu(menu, *sel0, *sel1);
 				}
@@ -353,16 +352,6 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 				break;
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
-				case Common::KEYCODE_F11:
-					//flipCGA();	// TODO
-					drawRoom();
-					drawMenu(menu, *sel0, *sel1);
-					break;
-				case Common::KEYCODE_F12:
-					//flipDblSize();	// TODO
-					drawRoom();
-					drawMenu(menu, *sel0, *sel1);
-					break;
 				case Common::KEYCODE_2:
 					hidden();
 					break;
@@ -545,7 +534,7 @@ void Mickey::PlaySound(ENUM_MSA_SOUND iSound) {
 	switch(iSound) {
 	case IDI_MSA_SND_XL30:
 		for (int iNote = 0; iNote < 6; iNote++) {
-			note.counter = _vm->Rnd(59600) + 59;
+			note.counter = _vm->rnd(59600) + 59;
 			note.length = 4;
 			_PlayNote(note);
 		}
@@ -1154,7 +1143,7 @@ void Mickey::randomize() {
 		} else {
 			done = false;
 			while (!done) {
-				//iPlanet = _vm->rnd(IDI_MSA_MAX_PLANET);	// TODO
+				iPlanet = _vm->rnd(IDI_MSA_MAX_PLANET);
 				done = true;
 				for (int j = 0; j < IDI_MSA_MAX_PLANET; j++) {
 					if (game.iPlanetXtal[j] == iPlanet) {
@@ -1169,7 +1158,7 @@ void Mickey::randomize() {
 		
 		done = false;
 		while (!done) {
-			//iHint = _vm->rnd(5);	// TODO
+			iHint = _vm->rnd(5);
 			done = true;
 		}
 
@@ -1220,9 +1209,7 @@ void Mickey::intro() {
 	drawRoom();
 	printRoomDesc();
 
-#ifdef _DEBUG
-	PlaySound(IDI_MSA_SND_SHIP_LAND);
-#endif
+	//playSound(IDI_MSA_SND_SHIP_LAND);	// TODO
 
 	flashScreen();
 	flashScreen();
