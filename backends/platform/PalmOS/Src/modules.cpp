@@ -4,7 +4,6 @@
 #include "args.h"
 #include "globals.h"
 #include "modules.h"
-#include "extend.h"
 #include "features.h"
 
 #include "rumble.h"
@@ -20,8 +19,6 @@
 #endif
 
 GlobalsDataPtr gVars;
-
-#ifdef PALMOS_NATIVE
 
 #include "endianutils.h"
 #include <PNOLoader.h>
@@ -80,90 +77,6 @@ void run(int argc, char *argv[]) {
 	// reset the palette if needed
 	WinPalette(winPaletteSetToDefault, 0, 256, NULL);
 }
-
-#else
-
-#include "stdafx.h"
-#include "base/main.h"
-#include "be_zodiac.h"
-#include "be_os5ex.h"
-
-static void palm_main(int argc, char **argvP)  {
-#ifdef COMPILE_OS5
-	if (gVars->advancedMode)
-		g_system = new OSystem_PalmOS5Ex();
-	else
-		g_system = new OSystem_PalmOS5();
-#elif defined(COMPILE_ZODIAC)
-	g_system = new OSystem_PalmZodiac();
-#else
-	#error "No target defined."
-#endif
-
-	assert(g_system);
-
-	// Invoke the actual ScummVM main entry point:
-	scummvm_main(argc, argvP);
-
-	g_system->quit();	// TODO: Consider removing / replacing this!
-}
-
-void run(int argc, char *argv[]) {
-
-	MathlibInit();
-	gVars->HRrefNum	= SonyHRInit(8);
-	if (gVars->HRrefNum == sysInvalidRefNum)
-		PalmHRInit(8);
-	gVars->slkRefNum= SilkInit(&(gVars->slkVersion));
-	gVars->screenPitch = StuffsGetPitch(gVars->screenFullWidth);
-
-	// create file for printf, warnings, etc...
-	StdioInit(gVars->VFS.volRefNum, "/PALM/Programs/ScummVM/scumm.log");
-	if (gVars->indicator.showLED) StdioSetLedProc(DrawStatus);
-	StdioSetCacheSize(gVars->VFS.cacheSize);
-	gUnistdCWD = SCUMMVM_SAVEPATH;
-	
-	// init hardware
-	if (HWR_INIT(INIT_GOLCD))							GoLCDInit(&gGoLcdH);
-	if (HWR_INIT(INIT_PA1LIB))							Pa1libInit(gVars->palmVolume);
-	if (HWR_INIT(INIT_VIBRATOR))	gVars->vibrator =	RumbleInit();
-														PalmInit(HWR_GET());
-
-	if (!gVars->vibrator)
-		HWR_RST(INIT_VIBRATOR);
-
-	GlbOpen();
-	// be sure to have a VG
-	void *__ptr = StuffsForceVG();
-
-	DO_EXIT( palm_main(argc, argv); )
-
-	// be sure to release features memory
-	FREE_FTR(ftrBufferOverlay)
-	FREE_FTR(ftrBufferBackup)
-	FREE_FTR(ftrBufferHotSwap)
-
-	StuffsReleaseVG(__ptr);
-	GlbClose();
-
-									PalmRelease(HWR_GET());
-	if (HWR_INIT(INIT_VIBRATOR))	RumbleRelease();
-	if (HWR_INIT(INIT_PA1LIB))		Pa1libRelease();
-	if (HWR_INIT(INIT_GOLCD))		GoLCDRelease(gGoLcdH);
-
-	// close log file
-	StdioRelease();
-
-	PalmHRRelease();
-	SonyHRRelease(gVars->HRrefNum);
-	SilkRelease(gVars->slkRefNum);
-	MathlibRelease();
-
-	MemPtrFree(gVars);
-	WinPalette(winPaletteSetToDefault, 0, 256, NULL);
-//	ArgsFree(argvP);	// called in main(...)
-}
-#endif
 
 static UInt32 ModulesPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 {
