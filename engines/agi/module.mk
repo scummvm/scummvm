@@ -2,9 +2,6 @@ MODULE := engines/agi
 
 MODULE_OBJS = \
 	agi.o \
-	agi_v2.o \
-	agi_v3.o \
-	agi_preagi.o \
 	checks.o \
 	console.o \
 	cycle.o \
@@ -14,6 +11,9 @@ MODULE_OBJS = \
 	id.o \
 	inv.o \
 	keyboard.o \
+	loader_preagi.o \
+	loader_v2.o \
+	loader_v3.o \
 	logic.o \
 	lzw.o \
 	menu.o \
@@ -24,7 +24,7 @@ MODULE_OBJS = \
 	op_test.o \
 	picture.o \
 	preagi.o \
-	preagi_keyboard.o \
+	preagi_input.o \
 	preagi_mickey.o \
 	predictive.o \
 	saveload.o \

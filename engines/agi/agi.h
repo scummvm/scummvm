@@ -849,7 +849,6 @@ public:
 	int decodeLogic(int);
 	void unloadLogic(int);
 	int runLogic(int);
-	void patchLogic(int n);	// DELETE THIS
 	void debugConsole(int, int, const char *);
 	int testIfCode(int);
 	void executeAgiCommand(uint8, uint8 *);
