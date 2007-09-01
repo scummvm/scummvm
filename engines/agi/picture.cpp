@@ -226,7 +226,7 @@ void PictureMgr::dynamicDrawLine() {
 	putVirtPixel(x1, y1);
 
 	for (;;) {
-		if ((disp = nextByte) >= 0xe0)
+		if ((disp = nextByte) >= 0xf0)
 			break;
 
 		dx = ((disp & 0xf0) >> 4) & 0x0f;
@@ -257,10 +257,10 @@ void PictureMgr::absoluteDrawLine() {
 	putVirtPixel(x1, y1);
 
 	for (;;) {
-		if ((x2 = nextByte) >= 0xe0)
+		if ((x2 = nextByte) >= 0xf0)
 			break;
 
-		if ((y2 = nextByte) >= 0xe0)
+		if ((y2 = nextByte) >= 0xf0)
 			break;
 
 		drawLine(x1, y1, x2, y2);
@@ -363,14 +363,14 @@ void PictureMgr::xCorner() {
 	for (;;) {
 		x2 = nextByte;
 
-		if (x2 >= 0xe0)
+		if (x2 >= 0xf0)
 			break;
 
 		drawLine(x1, y1, x2, y1);
 		x1 = x2;
 		y2 = nextByte;
 
-		if (y2 >= 0xe0)
+		if (y2 >= 0xf0)
 			break;
 
 		drawLine(x1, y1, x1, y2);
@@ -394,14 +394,14 @@ void PictureMgr::yCorner() {
 	for (;;) {
 		y2 = nextByte;
 
-		if (y2 >= 0xe0)
+		if (y2 >= 0xf0)
 			break;
 
 		drawLine(x1, y1, x1, y2);
 		y1 = y2;
 		x2 = nextByte;
 
-		if (x2 >= 0xe0)
+		if (x2 >= 0xf0)
 			break;
 
 		drawLine(x1, y1, x2, y1);
@@ -419,7 +419,7 @@ void PictureMgr::yCorner() {
 void PictureMgr::fill() {
 	int x1, y1;
 
-	while ((x1 = nextByte) < 0xe0 && (y1 = nextByte) < 0xe0)
+	while ((x1 = nextByte) < 0xf0 && (y1 = nextByte) < 0xf0)
 		agiFill(x1, y1);
 
 	foffs--;
@@ -481,15 +481,15 @@ void PictureMgr::plotBrush() {
 
 	for (;;) {
 		if (patCode & 0x20) {
-			if ((patNum = nextByte) >= 0xe0)
+			if ((patNum = nextByte) >= 0xf0)
 				break;
 			patNum = (patNum >> 1) & 0x7f;
 		}
 
-		if ((x1 = nextByte) >= 0xe0)
+		if ((x1 = nextByte) >= 0xf0)
 			break;
 
-		if ((y1 = nextByte) >= 0xe0)
+		if ((y1 = nextByte) >= 0xf0)
 			break;
 
 		plotPattern(x1, y1);
