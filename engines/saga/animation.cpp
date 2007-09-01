@@ -830,7 +830,7 @@ int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
 	readS._bigEndian = !_vm->isBigEndian(); // RLE has inversion BE<>LE
 
 	while (!readS.eos()) {
-		if (reallyFill)
+		if (reallyFill && currentFrame <= anim->maxFrame)
 			anim->frameOffsets[currentFrame] = readS.pos();
 		currentFrame++;
 
