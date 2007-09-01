@@ -829,8 +829,12 @@ int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
 	readS._bigEndian = !_vm->isBigEndian(); // RLE has inversion BE<>LE
 
 	while (!readS.eos()) {
-		if (reallyFill && currentFrame <= anim->maxFrame)
+		if (reallyFill) {
 			anim->frameOffsets[currentFrame] = readS.pos();
+
+			if (currentFrame == anim->maxFrame)
+				break;
+		}
 		currentFrame++;
 
 		// For some strange reason, the animation header is in little
