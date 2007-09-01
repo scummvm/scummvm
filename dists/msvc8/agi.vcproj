@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1250"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
@@ -169,6 +169,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\agi\agi_preagi.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\agi\agi_v2.cpp"
 			>
 		</File>
@@ -282,6 +286,22 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\picture.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_keyboard.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_mickey.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_mickey.h"
 			>
 		</File>
 		<File
