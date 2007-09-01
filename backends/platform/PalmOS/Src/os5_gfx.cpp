@@ -72,6 +72,7 @@ void OSystem_PalmOS5::load_gfx_mode() {
 	if (OPTIONS_TST(kOptModeRotatable)) {
 		_sysOldOrientation = __68K(SysGetOrientation());
 		__68K(SysSetOrientation(sysOrientationLandscape));
+		__68K(SysSetOrientationTriggerState(sysOrientationTriggerDisabled));
 	}
 
 	gVars->indicator.on = RGBToColor(0,255,0);

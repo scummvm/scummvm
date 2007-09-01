@@ -60,3 +60,15 @@ PACE_CLASS_WRAPPER(UInt16)
 	PACE_PIN_EXEC_NP(pinSysGetOrientation, UInt16)
 }
 
+PACE_CLASS_WRAPPER(Err)
+	__68k_SysSetOrientationTriggerState(UInt16 triggerState) {
+	PACE_PARAMS_INIT()
+	PACE_PARAMS_ADD16(triggerState)
+	PACE_PARAMS_END()
+	PACE_PIN_EXEC(pinSysSetOrientationTriggerState, Err)
+}
+
+PACE_CLASS_WRAPPER(UInt16)
+	__68k_SysGetOrientationTriggerState(void) {
+	PACE_PIN_EXEC_NP(pinSysGetOrientationTriggerState, UInt16)
+}

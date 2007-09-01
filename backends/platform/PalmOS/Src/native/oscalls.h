@@ -41,6 +41,8 @@ Err __68k_StatHide();
 Err __68k_PINSetInputAreaState(UInt16 state);
 Err __68k_SysSetOrientation(UInt16 orientation);
 UInt16 __68k_SysGetOrientation(void);
+Err __68k_SysSetOrientationTriggerState(UInt16 triggerState);
+UInt16 __68k_SysGetOrientationTriggerState(void);
 
 #ifdef __cplusplus
 }

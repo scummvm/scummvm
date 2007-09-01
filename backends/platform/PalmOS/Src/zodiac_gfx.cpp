@@ -71,6 +71,7 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 
 	_sysOldOrientation = SysGetOrientation();
 	SysSetOrientation(sysOrientationLandscape);
+	SysSetOrientationTriggerState(sysOrientationTriggerDisabled);
 
 	gVars->indicator.on = RGBToColor(0,255,0);
 	gVars->indicator.off = RGBToColor(0,0,0);
