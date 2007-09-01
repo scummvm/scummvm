@@ -995,23 +995,11 @@ public:
 		int16 p4, int16 p5, int16 p6, int16 p7) {}
 	void releaseImageStack() {}
 
-/*
-	int agiInit();
-	int agiDeinit();
-	int agiVersion();
-	int agiGetRelease();
-	void agiSetRelease(int);
-	int agiDetectGame();
-	int agiLoadResource(int, int);
-	int agiUnloadResource(int, int);
-	void agiUnloadResources();
-*/
-
 	// Keyboard, preagi
 	void waitAnyKeyAnim();
 	int getSelection(int type);
 	bool waitAnyKeyChoice();
-	void waitAnyKey(bool anim);
+	void waitAnyKey(bool anim = false);
 
 };
 
