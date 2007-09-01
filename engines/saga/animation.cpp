@@ -388,7 +388,7 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 
 	// WORKAROUND: Cutaway with background resource ID 37 (loaded as cutaway #4) is ending credits.
 	// For some reason it has wrong number of frames specified in its header. So we calculate it here:
-	if (animId > MAX_ANIMATIONS && _cutawayListLength > 4 && _cutawayList[4].backgroundResourceId == 37)
+	if (animId > MAX_ANIMATIONS && _cutawayListLength > 4 && _cutawayList[4].backgroundResourceId == 37 && anim->maxFrame == 143)
 		anim->maxFrame = fillFrameOffsets(anim, false);
 
 	anim->frameOffsets = (size_t *)malloc((anim->maxFrame + 1) * sizeof(*anim->frameOffsets));
