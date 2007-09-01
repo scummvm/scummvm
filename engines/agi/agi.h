@@ -103,7 +103,8 @@ enum AgiGameID {
 	GID_SQ1,
 	GID_SQ2,
 	GID_XMASCARD,
-	GID_FANMADE		// TODO: Should this be extended to include all fanmade games?
+	GID_FANMADE,		// TODO: Should this be extended to include all fanmade games?
+	GID_MICKEY			// PreAGI
 };
 
 } // End of namespace Agi
@@ -118,8 +119,9 @@ enum AgiGameID {
 namespace Agi {
 
 enum AgiGameType {
+	GType_PreAGI = 0,
 	GType_V2 = 1,
-	GType_V3
+	GType_V3 = 2
 };
 
 enum AgiGameFeatures {
@@ -536,10 +538,6 @@ struct AgiGame {
 };
 
 class AgiLoader {
-private:
-	int intVersion;
-	AgiEngine *_vm;
-
 public:
 
 	AgiLoader() {}
@@ -555,6 +553,33 @@ public:
 	virtual int version() = 0;
 	virtual void setIntVersion(int) = 0;
 	virtual int getIntVersion() = 0;
+};
+
+class AgiLoader_preagi : public AgiLoader {
+private:
+	int _intVersion;
+	PreAgiEngine *_vm;
+
+	int loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len);
+	uint8 *loadVolRes(AgiDir *agid);
+
+public:
+
+	AgiLoader_preagi(PreAgiEngine *vm) {
+		_vm = vm;
+		_intVersion = 0;
+	}
+
+	virtual int init();
+	virtual int deinit();
+	virtual int detectGame();
+	virtual int loadResource(int, int);
+	virtual int unloadResource(int, int);
+	virtual int loadObjects(const char *);
+	virtual int loadWords(const char *);
+	virtual int version();
+	virtual void setIntVersion(int);
+	virtual int getIntVersion();
 };
 
 class AgiLoader_v2 : public AgiLoader {
@@ -642,7 +667,45 @@ struct StringData {
 
 #define KEY_QUEUE_SIZE 16
 
-class AgiEngine : public ::Engine {
+class AgiBase : public ::Engine {
+public:
+	AgiButtonStyle _defaultButtonStyle;
+	AgiButtonStyle _buttonStyle;
+	Common::RenderMode _renderMode;
+	volatile uint32 _clockCount;
+	AgiDebug _debug;
+	AgiGame _game;
+	AgiLoader *_loader;	/* loader */
+	Common::RandomSource *_rnd;
+
+	virtual void agiTimerLow() = 0;
+	virtual int agiGetKeypressLow() = 0;
+	virtual int agiIsKeypressLow() = 0;
+
+	AgiBase(OSystem *syst);
+
+	#define INITIAL_IMAGE_STACK_SIZE 32
+
+	int _stackSize;
+	ImageStackElement *_imageStack;
+	int _imageStackPointer;
+
+	virtual void clearImageStack() = 0;
+	virtual void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
+		int16 p4, int16 p5, int16 p6, int16 p7) = 0;
+	virtual void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
+		int16 p4, int16 p5, int16 p6, int16 p7) = 0;
+	virtual void releaseImageStack() = 0;
+
+	const AGIGameDescription *_gameDescription;
+	uint32 getGameID() const;
+	uint32 getFeatures() const;
+	uint16 getVersion() const;
+	uint16 getGameType() const;
+	Common::Platform getPlatform() const;
+};
+
+class AgiEngine : public AgiBase {
 	int _gameId;
 
 protected:
@@ -659,12 +722,6 @@ public:
 	int getGameId() {
 		return _gameId;
 	}
-
-	const AGIGameDescription *_gameDescription;
-	uint32 getGameID() const;
-	uint32 getFeatures() const;
-	uint16 getVersion() const;
-	Common::Platform getPlatform() const;
 
 private:
 
@@ -683,14 +740,9 @@ private:
 	int _firstSlot;
 
 public:
-	AgiGame _game;
 	AgiObject *_objects;	/* objects in the game */
 
 	StringData _stringdata;
-
-	AgiLoader *_loader;	/* loader */
-
-	Common::RandomSource *_rnd;
 
 	const char *getSavegameFilename(int num);
 	void getSavegameDescription(int num, char *buf, bool showEmpty = true);
@@ -702,14 +754,10 @@ public:
 	int loadGameDialog();
 	int loadGameSimple();
 
-	volatile uint32 _clockCount;
-
 	uint8 *_intobj;
 	int _oldMode;
 
 	Menu* _menu;
-	AgiButtonStyle _buttonStyle;
-	AgiButtonStyle _defaultButtonStyle;
 
 	char _lastSentence[40];
 
@@ -718,12 +766,6 @@ public:
 	SoundMgr *_sound;
 	PictureMgr *_picture;
 
-	#define INITIAL_IMAGE_STACK_SIZE 32
-
-	int _stackSize;
-	ImageStackElement *_imageStack;
-	int _imageStackPointer;
-
 	void clearImageStack();
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 		int16 p4, int16 p5, int16 p6, int16 p7);
@@ -731,8 +773,6 @@ public:
 		int16 p4, int16 p5, int16 p6, int16 p7);
 	void releaseImageStack();
 
-	AgiDebug _debug;
-	Common::RenderMode _renderMode;
 	int _soundemu;
 
 	int _keyControl;
@@ -750,9 +790,9 @@ public:
 	int agiUnloadResource(int, int);
 	void agiUnloadResources();
 
-	void agiTimerLow();
-	int agiGetKeypressLow();
-	int agiIsKeypressLow();
+	virtual void agiTimerLow();
+	virtual int agiGetKeypressLow();
+	virtual int agiIsKeypressLow();
 	static void agiTimerFunctionLow(void *refCon);
 	void initPriTable();
 
@@ -809,7 +849,7 @@ public:
 	int decodeLogic(int);
 	void unloadLogic(int);
 	int runLogic(int);
-
+	void patchLogic(int n);	// DELETE THIS
 	void debugConsole(int, int, const char *);
 	int testIfCode(int);
 	void executeAgiCommand(uint8, uint8 *);
@@ -914,6 +954,66 @@ private:
 	bool _predictiveDialogRunning;
 public:
 	char _predictiveResult[40];
+};
+
+
+class PreAgiEngine : public AgiBase {
+	int _gameId;
+
+protected:
+	int init();
+	int go();
+	void shutdown();
+	void initialize();
+
+	bool initGame();
+
+public:
+	void agiTimerLow() {}
+	int agiGetKeypressLow() { return 0; }
+	int agiIsKeypressLow() { return 0; }
+
+	int preAgiLoadResource(int r, int n);
+	int preAgiUnloadResource(int r, int n);
+
+	PreAgiEngine(OSystem *syst);
+	virtual ~PreAgiEngine();
+	int getGameId() {
+		return _gameId;
+	}
+
+private:
+
+public:
+	GfxMgr *_gfx;
+	SoundMgr *_sound;
+	PictureMgr *_picture;
+
+	void clearImageStack() {}
+	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
+		int16 p4, int16 p5, int16 p6, int16 p7) {}
+	void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
+		int16 p4, int16 p5, int16 p6, int16 p7) {}
+	void releaseImageStack() {}
+
+/*
+	int agiInit();
+	int agiDeinit();
+	int agiVersion();
+	int agiGetRelease();
+	void agiSetRelease(int);
+	int agiDetectGame();
+	int agiLoadResource(int, int);
+	int agiUnloadResource(int, int);
+	void agiUnloadResources();
+*/
+
+	// Keyboard, preagi
+	void waitAnyKeyAnim();
+	int getSelection(int type);
+	bool waitAnyKeyChoice();
+	void waitAnyKey(bool anim);
+
 };
 
 } // End of namespace Agi

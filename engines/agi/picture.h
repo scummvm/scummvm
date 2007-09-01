@@ -38,11 +38,11 @@ struct AgiPicture {
 	uint8 *rdata;			/**< raw vector image data */
 };
 
-class AgiEngine;
+class AgiBase;
 class GfxMgr;
 
 class PictureMgr {
-	AgiEngine *_vm;
+	AgiBase *_vm;
 	GfxMgr *_gfx;
 
 private:
@@ -66,7 +66,7 @@ private:
 	void drawPictureV2();
 
 public:
-	PictureMgr(AgiEngine *agi, GfxMgr *gfx) {
+	PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 		_vm = agi;
 		_gfx = gfx;
 	}

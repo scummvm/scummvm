@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	agi.o \
 	agi_v2.o \
 	agi_v3.o \
+	agi_preagi.o \
 	checks.o \
 	console.o \
 	cycle.o \
@@ -22,6 +23,9 @@ MODULE_OBJS = \
 	op_dbg.o \
 	op_test.o \
 	picture.o \
+	preagi.o \
+	preagi_keyboard.o \
+	preagi_mickey.o \
 	predictive.o \
 	saveload.o \
 	sound.o \

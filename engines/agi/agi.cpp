@@ -46,8 +46,6 @@
 #include "agi/menu.h"
 #include "agi/sound.h"
 
-
-
 namespace Agi {
 
 static uint32 g_tickTimer;
@@ -495,7 +493,7 @@ int AgiEngine::agiDetectGame() {
 
 	assert(_gameDescription != NULL);
 
-	if(getVersion() <= 0x2999) {
+	if (getVersion() <= 0x2999) {
 		_loader = new AgiLoader_v2(this);
 	} else {
 		_loader = new AgiLoader_v3(this);
@@ -521,6 +519,7 @@ int AgiEngine::agiLoadResource(int r, int n) {
 	int i;
 
 	i = _loader->loadResource(r, n);
+
 	return i;
 }
 
@@ -602,7 +601,11 @@ AgiButtonStyle::AgiButtonStyle(Common::RenderMode renderMode) {
 	setAmigaStyle(renderMode == Common::kRenderAmiga);
 }
 
-AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
+AgiBase::AgiBase(OSystem *syst) : Engine(syst) {
+
+}
+
+AgiEngine::AgiEngine(OSystem *syst) : AgiBase(syst) {
 
 	// Setup mixer
 	if (!_mixer->isReady()) {

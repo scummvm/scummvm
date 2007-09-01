@@ -532,7 +532,7 @@ static struct UpdateBlock update = {
 	MAX_INT, MAX_INT, 0, 0
 };
 
-GfxMgr::GfxMgr(AgiEngine *vm) : _vm(vm) {
+GfxMgr::GfxMgr(AgiBase *vm) : _vm(vm) {
 	_shakeH = NULL;
 	_shakeV = NULL;
 	_agipalFileNum = 0;
@@ -1078,7 +1078,7 @@ void GfxMgr::putPixelsA(int x, int y, int n, uint8 *p) {
 	} else {
 		const uint16 mask = _vm->getFeatures() & (GF_AGI256 | GF_AGI256_2) && !_vm->_debug.priority ? 0xffff : 0x0f0f;
 		for (x *= 2; n--; p++, x += 2) {
-			register uint16 q = ((uint16) * p << 8) | *p;
+			register uint16 q = ((uint16)*p << 8) | *p;
 			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = (q >> rShift) & mask;
 		}
 	}

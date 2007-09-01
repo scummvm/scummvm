@@ -45,20 +45,24 @@ struct AGIGameDescription {
 	uint16 version;
 };
 
-uint32 AgiEngine::getGameID() const {
+uint32 AgiBase::getGameID() const {
 	return _gameDescription->gameID;
 }
 
-uint32 AgiEngine::getFeatures() const {
+uint32 AgiBase::getFeatures() const {
 	return _gameDescription->features;
 }
 
-Common::Platform AgiEngine::getPlatform() const {
+Common::Platform AgiBase::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-uint16 AgiEngine::getVersion() const {
+uint16 AgiBase::getVersion() const {
 	return _gameDescription->version;
+}
+
+uint16 AgiBase::getGameType() const {
+	return _gameDescription->gameType;
 }
 
 }
@@ -76,6 +80,7 @@ static const PlainGameDescriptor agiGames[] = {
 	{"kq3", "King's Quest III: To Heir Is Human"},
 	{"kq4", "King's Quest IV: The Perils of Rosella"},
 	{"lsl1", "Leisure Suit Larry in the Land of the Lounge Lizards"},
+	{"mickey", "Mickey\'s Space Adventure"},
 	{"mixedup", "Mixed-Up Mother Goose"},
 	{"mh1", "Manhunter 1: New York"},
 	{"mh2", "Manhunter 2: San Francisco"},
@@ -1114,6 +1119,23 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x3149,
 	},
 
+	{
+		// Mickey's Space Adventure
+		// Preagi game
+		{
+			"mickey",
+			"",
+			AD_ENTRY1("1.pic", "b6ec04c91a05df374792872c4d4ce66d"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_MICKEY,
+		GType_PreAGI,
+		0,
+		0x0000,
+	},
+
 #if 0
 	{
 		// Mixed-Up Mother Goose (Amiga) 1.1
@@ -2027,13 +2049,42 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(AGI, Agi::AgiEngine, detectionParams);
+bool engineCreateAgi(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)(encapsulatedDesc.realDesc);
+	bool res = true;
 
-REGISTER_PLUGIN(AGI, "AGI v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line Software");
+	switch (gd->gameType) {
+	case Agi::GType_PreAGI:
+		*engine = new Agi::PreAgiEngine(syst);
+		break;
+	case Agi::GType_V2:
+		*engine = new Agi::AgiEngine(syst);
+		break;
+	case Agi::GType_V3:
+		*engine = new Agi::AgiEngine(syst);
+		break;
+	default:
+		res = false;
+		error("AGI engine: unknown gameType");
+	}
+
+	return res;
+}
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(AGI, engineCreateAgi, detectionParams);
+
+REGISTER_PLUGIN(AGI, "AGI preAGI + v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line Software");
 
 namespace Agi {
 
 bool AgiEngine::initGame() {
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+	_gameDescription = (const AGIGameDescription *)(encapsulatedDesc.realDesc);
+
+	return (_gameDescription != 0);
+}
+
+bool PreAgiEngine::initGame() {
 	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
 	_gameDescription = (const AGIGameDescription *)(encapsulatedDesc.realDesc);
 

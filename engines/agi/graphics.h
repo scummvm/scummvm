@@ -39,7 +39,7 @@ class AgiEngine;
 
 class GfxMgr {
 private:
-	AgiEngine *_vm;
+	AgiBase *_vm;
 
 	uint8 _palette[256 * 4];
 	uint8 *_agiScreen;
@@ -54,7 +54,7 @@ private:
 	void rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor, bool border, int textOffset);
 
 public:
-	GfxMgr(AgiEngine *vm);
+	GfxMgr(AgiBase *vm);
 
 	void gfxPutBlock(int x1, int y1, int x2, int y2);
 
