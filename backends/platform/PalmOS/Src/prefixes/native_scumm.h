@@ -6,4 +6,7 @@
 #undef DISABLE_SCUMM_7_8
 #undef DISABLE_HE
 
+#define USE_ARM_GFX_ASM
+#define USE_ARM_SMUSH_ASM
+
 #endif
