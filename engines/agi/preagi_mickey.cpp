@@ -411,6 +411,8 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 					break;
 				}
 				break;
+			default:
+				break;
 			}
 			animate();
 			drawMenu(menu, *sel0, *sel1);
@@ -870,7 +872,7 @@ bool Mickey::loadGame() {
 
 void Mickey::saveGame() {
 	Common::File outfile;
-	char szFile[256] = {0};
+	//char szFile[256] = {0};
 	bool diskerror = true;
 	int sel;
 
@@ -1109,7 +1111,7 @@ void Mickey::flipSwitch() {
 }
 
 void Mickey::inventory() {
-	int iRow = IDI_MSA_ROW_INV_ITEMS;
+	//int iRow = IDI_MSA_ROW_INV_ITEMS;
 	char szCrystals[12] = {0};
 
 	sprintf(szCrystals, IDS_MSA_CRYSTALS, IDS_MSA_CRYSTAL_NO[game.nXtals]);
@@ -1218,7 +1220,7 @@ void Mickey::intro() {
 	drawRoom();
 	printRoomDesc();
 
-#ifndef _DEBUG
+#ifdef _DEBUG
 	PlaySound(IDI_MSA_SND_SHIP_LAND);
 #endif
 
