@@ -356,6 +356,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 }
 
 Music::~Music() {
+	_vm->_timer->removeTimerProc(&musicVolumeGaugeCallback);
 	_mixer->stopHandle(_musicHandle);
 	delete _player;
 	xmidiParser->setMidiDriver(NULL);
