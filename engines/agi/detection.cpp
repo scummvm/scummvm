@@ -28,6 +28,7 @@
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 
 #include "agi/agi.h"
@@ -1887,8 +1888,13 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 
 	// Use the current directory for searching if fslist == NULL
 	if (fslist == NULL) {
-		FilesystemNode fsCurrentDir(".");
-		fslistCurrentDir.push_back(fsCurrentDir);
+		Common::String path = ConfMan.get("path").c_str();
+
+		if (path.empty())
+			path = ".";
+
+		FilesystemNode fsCurrentDir(path);
+		fsCurrentDir.listDir(fslistCurrentDir, FilesystemNode::kListFilesOnly);
 		fslist = &fslistCurrentDir;
 	}
 
