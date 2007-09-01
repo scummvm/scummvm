@@ -188,7 +188,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 
 				} else if (keyCurrentState & _keyExtra.bitUp) {
 					_keyExtraPressed |= _keyExtra.bitUp;
-					event.kbd.keycode = Common::EVENT_KEYUP;
+					event.kbd.keycode = Common::KEYCODE_UP;
 
 				} else if (keyCurrentState & _keyExtra.bitDown) {
 					_keyExtraPressed |= _keyExtra.bitDown;
@@ -233,7 +233,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 #endif
 
 		if (ev.eType == keyUpEvent) {
-			int k = 0;
+			Common::KeyCode k = Common::KEYCODE_INVALID;
 			switch (ev.data.keyUp.chr) {
 
 			// arrow keys
@@ -256,7 +256,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 			}
 
 		} else if (ev.eType == keyDownEvent) {
-			int k = 0;
+			Common::KeyCode k = Common::KEYCODE_INVALID;
 			switch (ev.data.keyDown.chr) {
 			// ESC key
 			case vchrLaunch:
@@ -345,7 +345,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 						(3 * (3 * y / _screenHeight));
 
 				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = num;
+				event.kbd.keycode = (Common::KeyCode)num;
 				event.kbd.ascii = num;
 				event.kbd.flags = 0;
 
@@ -411,13 +411,8 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 
 			// F1 -> F10 key
 			if  (key >= '0' && key <= '9' && mask == (Common::KBD_CTRL|Common::KBD_ALT)) {
-				key = (key - '0' + 10 - 1) % 10;	// '0' -> 9, '1' -> 0, '2' -> 1, ...
-				_wasKey = true;
-				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = Common::KEYCODE_F1 + key;
-				event.kbd.ascii = Common::ASCII_F1 + key;
-				event.kbd.flags = 0;
-				return true;
+				key = (key == '0') ? 324 : (315 + key - '1');
+				mask = 0;
 
 #ifdef STDLIB_TRACE_MEMORY
 			// print memory
@@ -440,7 +435,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 			// other keys
 			_wasKey = true;
 			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = key;
+			event.kbd.keycode = (Common::KeyCode)key;
 			event.kbd.ascii = key;
 			event.kbd.flags = mask;
 			return true;

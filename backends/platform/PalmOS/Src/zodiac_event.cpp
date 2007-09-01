@@ -74,7 +74,7 @@ bool OSystem_PalmZodiac::check_event(Common::Event &event, EventPtr ev) {
 		// skip text
 		case vchrActionDown:
 			event.type = Common::EVENT_KEYDOWN;
-			event.kbd.keycode = '.';
+			event.kbd.keycode = Common::KEYCODE_PERIOD;
 			event.kbd.ascii = '.';
 			event.kbd.flags = 0;
 			return true;
