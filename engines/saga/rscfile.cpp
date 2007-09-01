@@ -748,15 +748,13 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
 
 	if (_metaResource.songTableID > 0) {
-		// FIXME: HACK for chapter 6 (last chapter) of IHNM. For some reason, the songtable with songTableID
-		// 1028 can't be loaded properly, so it's substituted here with Gorrister's songtable (ID 116)
-		// The strange thing is that the song invoked when each character enters the final chapter is
-		// supposed to be different, but the song numbers called by sfPlayMusic/sfQueueMusic are the 
-		// same every time, which leads me to believe that a different meta resource is loaded depending
-		// on the character selected
-		if (_vm->getGameType() == GType_IHNM && _metaResource.songTableID == 1028)
-			_metaResource.songTableID = 116;
 		_vm->_resource->loadResource(resourceContext, _metaResource.songTableID, resourcePointer, resourceLength);
+
+		if (chapter == 6) {
+			int32 id = READ_LE_UINT32(&resourcePointer[actorsEntrance * 4]);
+			free(resourcePointer);
+			_vm->_resource->loadResource(resourceContext, id, resourcePointer, resourceLength);
+		}
 
 		if (resourceLength == 0) {
 			error("Resource::loadGlobalResources Can't load songs list for current track");
