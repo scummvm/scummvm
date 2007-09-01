@@ -60,7 +60,10 @@ private:
 	int plotPatternPoint(int x, int y, int bitpos);
 	void plotPattern(int x, int y);
 	void plotBrush();
-	void drawPicture();
+	void drawPictureVC64();
+	void drawPictureV1();
+	void drawPictureV15();
+	void drawPictureV2();
 
 public:
 	PictureMgr(AgiEngine *agi, GfxMgr *gfx) {
