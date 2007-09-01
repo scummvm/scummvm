@@ -749,22 +749,6 @@ void AGOSEngine::windowScroll(WindowBlock *window) {
 	_lockWord &= ~0x8000;
 }
 
-#ifdef PALMOS_68K
-static const byte *feeble_windowFont;
-static const byte *czech_simonFont;
-static const byte *russian_simonFont;
-static const byte *polish_simonFont;
-static const byte *french_simonFont;
-static const byte *german_simonFont;
-static const byte *hebrew_simonFont;
-static const byte *italian_simonFont;
-static const byte *spanish_simonFont;
-static const byte *english_simonFont;
-static const byte *spanish_commonFont;
-static const byte *italian_commonFont;
-static const byte *french_commonFont;
-static const byte *english_commonFont;
-#else
 static const byte feeble_windowFont[] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,
 	128,128,128,128,128,128,128,0,0,128,0,0,0,
@@ -2275,7 +2259,6 @@ static const byte english_commonFont[] = {
 	0xFC, 0xFC, 0xFC, 0xFC, 0xFC, 0xFC, 0xFC, 0xFC,
 	0x00, 0xFC, 0xFC, 0xFC, 0xFC, 0xFC, 0xFC, 0x00,
 };
-#endif
 
 void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	const byte *src;
@@ -2387,29 +2370,3 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 
 } // End of namespace AGOS
 
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(AGOS_Charset)
-_GSETPTR(AGOS::russian_windowFont, GBVARS_RUSSIANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-//_GSETPTR(AGOS::polish_windowFont, GBVARS_POLISHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::french_windowFont, GBVARS_FRENCHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::german_windowFont, GBVARS_GERMANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::hebrew_windowFont, GBVARS_HEBREWVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::italian_windowFont, GBVARS_ITALIANVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::spanish_windowFont, GBVARS_SPANISHVIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GSETPTR(AGOS::english_windowFont, GBVARS_VIDEOFONT_INDEX, byte, GBVARS_AGOS)
-_GEND
-
-_GRELEASE(AGOS_Charset)
-_GRELEASEPTR(GBVARS_RUSSIANVIDEOFONT_INDEX, GBVARS_AGOS)
-//_GRELEASEPTR(GBVARS_POLISHVIDEOFONT_INDEX, GBVARS_AGOS)
-_GRELEASEPTR(GBVARS_FRENCHVIDEOFONT_INDEX, GBVARS_AGOS)
-_GRELEASEPTR(GBVARS_GERMANVIDEOFONT_INDEX, GBVARS_AGOS)
-_GRELEASEPTR(GBVARS_HEBREWVIDEOFONT_INDEX, GBVARS_AGOS)
-_GRELEASEPTR(GBVARS_ITALIANVIDEOFONT_INDEX, GBVARS_AGOS)
-_GRELEASEPTR(GBVARS_SPANISHVIDEOFONT_INDEX, GBVARS_AGOS)
-_GRELEASEPTR(GBVARS_VIDEOFONT_INDEX, GBVARS_AGOS)
-_GEND
-
-#endif

@@ -498,13 +498,6 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	setCurID(oldID);
 }
 
-#ifdef PALMOS_68K
-static const byte *englishCharsetDataV2;
-static const byte *germanCharsetDataV2;
-static const byte *frenchCharsetDataV2;
-static const byte *italianCharsetDataV2;
-static const byte *spanishCharsetDataV2;
-#else
 // English Zak font
 static const byte englishCharsetDataV2[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -1165,7 +1158,6 @@ static const byte spanishCharsetDataV2[] = {
 	0x1c, 0x36, 0x36, 0x7c, 0x66, 0x66, 0x7c, 0x40,
 	0x08, 0x0c, 0x0e, 0xff, 0xff, 0x0e, 0x0c, 0x08,
 };
-#endif
 
 CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 	: CharsetRendererV3(vm) {
@@ -1890,24 +1882,3 @@ void CharsetRendererNES::drawBits1(const Graphics::Surface &s, byte *dst, const 
 }
 
 } // End of namespace Scumm
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Charset)
-_GSETPTR(Scumm::germanCharsetDataV2, GBVARS_GERMANCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
-_GSETPTR(Scumm::frenchCharsetDataV2, GBVARS_FRENCHCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
-_GSETPTR(Scumm::englishCharsetDataV2, GBVARS_ENGLISHCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
-_GSETPTR(Scumm::italianCharsetDataV2, GBVARS_ITALIANCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
-_GSETPTR(Scumm::spanishCharsetDataV2, GBVARS_SPANISHCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
-_GEND
-
-_GRELEASE(Charset)
-_GRELEASEPTR(GBVARS_GERMANCHARSETDATAV2_INDEX, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_FRENCHCHARSETDATAV2_INDEX, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_ENGLISHCHARSETDATAV2_INDEX, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_ITALIANCHARSETDATAV2_INDEX, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_SPANISHCHARSETDATAV2_INDEX, GBVARS_SCUMM)
-_GEND
-
-#endif

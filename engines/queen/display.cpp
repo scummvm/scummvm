@@ -36,14 +36,6 @@
 
 namespace Queen {
 
-#ifdef PALMOS_68K
-static const uint8 *_fontRegular;
-static const uint8 *_fontHebrew;
-static const uint8 *_fontRussian;
-static const uint8 *_palJoeClothes;
-static const uint8 *_palJoeDress;
-#endif
-
 Display::Display(QueenEngine *vm, OSystem *system)
 	: _fullscreen(true), _horizontalScroll(0), _bdWidth(0), _bdHeight(0),
 	_system(system), _vm(vm) {
@@ -1230,7 +1222,6 @@ void Display::blankScreenEffect3() {
 	}
 }
 
-#ifndef PALMOS_68K
 const uint8 Display::_fontRegular[] = {
 	0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00,
 	0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00, 0xF8, 0xB0, 0xB0, 0x80, 0xB0, 0xB0, 0xC0, 0x00,
@@ -1636,25 +1627,4 @@ const uint8 Display::_palJoeDress[] = {
 	0x22, 0xED, 0x42, 0x42,	0x80, 0x45, 0x45, 0xA3, 0x5F, 0x5F, 0xC8, 0x7C, 0x7C, 0xEC, 0x9C, 0x9C
 };
 
-#endif
-
 } // End of namespace Queen
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Queen_Display)
-_GSETPTR(Queen::_fontRegular, GBVARS_DISPLAYFONTREGULAR_INDEX, uint8, GBVARS_QUEEN)
-_GSETPTR(Queen::_fontHebrew, GBVARS_DISPLAYFONTHEBREW_INDEX, uint8, GBVARS_QUEEN)
-_GSETPTR(Queen::_palJoeClothes, GBVARS_DISPLAYPALJOECLOTHES_INDEX, uint8, GBVARS_QUEEN)
-_GSETPTR(Queen::_palJoeDress, GBVARS_DISPLAYPALJOEDRESS_INDEX, uint8, GBVARS_QUEEN)
-_GEND
-
-_GRELEASE(Queen_Display)
-_GRELEASEPTR(GBVARS_DISPLAYFONTREGULAR_INDEX, GBVARS_QUEEN)
-_GRELEASEPTR(GBVARS_DISPLAYFONTHEBREW_INDEX, GBVARS_QUEEN)
-_GRELEASEPTR(GBVARS_DISPLAYPALJOECLOTHES_INDEX, GBVARS_QUEEN)
-_GRELEASEPTR(GBVARS_DISPLAYPALJOEDRESS_INDEX, GBVARS_QUEEN)
-_GEND
-
-#endif

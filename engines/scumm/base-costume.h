@@ -42,15 +42,8 @@ struct CostumeInfo {
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 
-
-#ifdef PALMOS_68K
-extern const byte *smallCostumeScaleTable;
-extern const byte *bigCostumeScaleTable;
-#else
 extern const byte smallCostumeScaleTable[256];
 extern const byte bigCostumeScaleTable[768];
-#endif
-
 
 
 class Actor;

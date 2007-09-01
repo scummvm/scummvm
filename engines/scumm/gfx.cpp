@@ -90,9 +90,6 @@ struct TransitionEffect {
 	byte stripTable[16];	// ditto
 };
 
-#ifdef PALMOS_68K
-static const TransitionEffect *transitionEffects;
-#else
 static const TransitionEffect transitionEffects[6] = {
 	// Iris effect (looks like an opening/closing camera iris)
 	{
@@ -197,7 +194,6 @@ static const TransitionEffect transitionEffects[6] = {
 	}
 	
 };
-#endif
 
 
 Gdi::Gdi(ScummEngine *vm) : _vm(vm) {
@@ -3314,15 +3310,6 @@ void ScummEngine::transitionEffect(int a) {
  * dissolveEffect(virtsrc[0].width, 1) produces a line-by-line dissolve
  */
 void ScummEngine::dissolveEffect(int width, int height) {
-#ifdef PALMOS_68K
-	// Remove this dissolve effect for now on PalmOS since it is a bit
-	// too slow using 68k emulation
-	if (width == 1 && height == 1) {
-		waitForTimer(30);
-		return;
-	}
-#endif
-
 	VirtScreen *vs = &virtscr[0];
 	int *offsets;
 	int blits_before_refresh, blits;
@@ -3557,15 +3544,3 @@ void ScummEngine::unkScreenEffect6() {
 
 } // End of namespace Scumm
 
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Gfx)
-_GSETPTR(Scumm::transitionEffects, GBVARS_TRANSITIONEFFECTS_INDEX, Scumm::TransitionEffect, GBVARS_SCUMM)
-_GEND
-
-_GRELEASE(Gfx)
-_GRELEASEPTR(GBVARS_TRANSITIONEFFECTS_INDEX, GBVARS_SCUMM)
-_GEND
-
-#endif

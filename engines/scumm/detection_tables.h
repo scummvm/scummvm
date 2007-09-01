@@ -37,11 +37,7 @@
 //#include "scumm/intern.h"
 //#include "scumm/he/intern_he.h"
 
-#ifdef PALMOS_68K
-#include "extras/palm-scumm-md5.h"
-#else
 #include "scumm/scumm-md5.h"
-#endif
 
 
 namespace Scumm {

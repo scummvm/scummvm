@@ -30,9 +30,6 @@
 
 namespace Queen {
 
-#ifdef PALMOS_68K
-static ResourceEntry *_resourceTablePEM10;
-#endif
 
 const char *Resource::_tableFilename = "queen.tbl";
 
@@ -325,16 +322,3 @@ Common::File *Resource::findSound(const char *filename, uint32 *size) {
 }
 
 } // End of namespace Queen
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Queen_Restables)
-_GSETPTR(Queen::_resourceTablePEM10, GBVARS_RESOURCETABLEPM10_INDEX, Queen::ResourceEntry, GBVARS_QUEEN)
-_GEND
-
-_GRELEASE(Queen_Restables)
-_GRELEASEPTR(GBVARS_RESOURCETABLEPM10_INDEX, GBVARS_QUEEN)
-_GEND
-
-#endif

@@ -1197,12 +1197,7 @@ void ScummEngine::setupScumm() {
 	}
 
 	int maxHeapThreshold = -1;
-#ifdef PALMOS_68K
-	if (_game.features & GF_NEW_COSTUMES)
-		maxHeapThreshold = gVars->memory[kMemScummNewCostGames];
-	else
-		maxHeapThreshold = gVars->memory[kMemScummOldCostGames];
-#else
+
 	if (_game.features & GF_NEW_COSTUMES) {
 		// Since the new costumes are very big, we increase the heap limit, to avoid having
 		// to constantly reload stuff from the data files.
@@ -1210,7 +1205,7 @@ void ScummEngine::setupScumm() {
 	} else {
 		maxHeapThreshold = 550000;
 	}
-#endif
+
 	_res->setHeapThreshold(400000, maxHeapThreshold);
 
 #if (defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))

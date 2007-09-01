@@ -52,10 +52,6 @@
 #include "gui/launcher.h"
 #endif
 
-#ifdef PALMOS_68K
-#include "args.h"
-#endif
-
 
 static bool launcherDialog(OSystem &system) {
 
@@ -249,9 +245,6 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// Parse the command line
 	Common::StringMap settings;
 	command = Base::parseCommandLine(settings, argc, argv);
-#ifdef PALMOS_68K
-	ArgsFree(argv);
-#endif
 
 	// Load the config file (possibly overriden via command line):
 	if (settings.contains("config")) {

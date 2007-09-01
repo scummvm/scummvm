@@ -27,17 +27,6 @@
 
 namespace Sky {
 
-#ifdef PALMOS_68K
-const HuffTree *Text::_huffTree_00109;
-const HuffTree *Text::_huffTree_00267;
-const HuffTree *Text::_huffTree_00288;
-const HuffTree *Text::_huffTree_00303;
-const HuffTree *Text::_huffTree_00331;
-const HuffTree *Text::_huffTree_00348;
-const HuffTree *Text::_huffTree_00365;
-const HuffTree *Text::_huffTree_00368;
-const HuffTree *Text::_huffTree_00372;
-#else
 const HuffTree Text::_huffTree_00109[] = {
 	{ 1, 22, 0 },
 	{ 2, 9, 0 },
@@ -2015,35 +2004,5 @@ const HuffTree Text::_huffTree_00372[] = {
 	{ 0, 0, 148 },
 	{ 0, 0, '!' },
 };
-#endif
 
 } // End of namespace Sky
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Sky_Hufftext)
-_GSETPTR(Sky::Text::_huffTree_00109, GBVARS_HUFFTREE_00109_INDEX, const Sky::HuffTree, GBVARS_QUEEN)
-_GSETPTR(Sky::Text::_huffTree_00267, GBVARS_HUFFTREE_00267_INDEX, const Sky::HuffTree, GBVARS_QUEEN)
-_GSETPTR(Sky::Text::_huffTree_00288, GBVARS_HUFFTREE_00288_INDEX, const Sky::HuffTree, GBVARS_QUEEN)
-_GSETPTR(Sky::Text::_huffTree_00303, GBVARS_HUFFTREE_00303_INDEX, const Sky::HuffTree, GBVARS_QUEEN)
-_GSETPTR(Sky::Text::_huffTree_00331, GBVARS_HUFFTREE_00331_INDEX, const Sky::HuffTree, GBVARS_QUEEN)
-_GSETPTR(Sky::Text::_huffTree_00348, GBVARS_HUFFTREE_00348_INDEX, const Sky::HuffTree, GBVARS_QUEEN)
-_GSETPTR(Sky::Text::_huffTree_00365, GBVARS_HUFFTREE_00365_INDEX, const Sky::HuffTree, GBVARS_QUEEN)
-_GSETPTR(Sky::Text::_huffTree_00368, GBVARS_HUFFTREE_00368_INDEX, const Sky::HuffTree, GBVARS_QUEEN)
-_GSETPTR(Sky::Text::_huffTree_00372, GBVARS_HUFFTREE_00372_INDEX, const Sky::HuffTree, GBVARS_QUEEN)
-_GEND
-
-_GRELEASE(Sky_Hufftext)
-_GRELEASEPTR(GBVARS_HUFFTREE_00109_INDEX, GBVARS_QUEEN)
-_GRELEASEPTR(GBVARS_HUFFTREE_00267_INDEX, GBVARS_QUEEN)
-_GRELEASEPTR(GBVARS_HUFFTREE_00288_INDEX, GBVARS_QUEEN)
-_GRELEASEPTR(GBVARS_HUFFTREE_00303_INDEX, GBVARS_QUEEN)
-_GRELEASEPTR(GBVARS_HUFFTREE_00331_INDEX, GBVARS_QUEEN)
-_GRELEASEPTR(GBVARS_HUFFTREE_00348_INDEX, GBVARS_QUEEN)
-_GRELEASEPTR(GBVARS_HUFFTREE_00365_INDEX, GBVARS_QUEEN)
-_GRELEASEPTR(GBVARS_HUFFTREE_00368_INDEX, GBVARS_QUEEN)
-_GRELEASEPTR(GBVARS_HUFFTREE_00372_INDEX, GBVARS_QUEEN)
-_GEND
-
-#endif

@@ -37,21 +37,10 @@
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"
 
-#ifdef PALMOS_68K
-#include "globals.h"
-#endif
-
 using Common::File;
 
 namespace AGOS {
 
-#ifdef PALMOS_68K
-#define PTR(a) a
-static const GameSpecificSettings *simon1_settings;
-static const GameSpecificSettings *simon2_settings;
-static const GameSpecificSettings *feeblefiles_settings;
-#else
-#define PTR(a) &a
 static const GameSpecificSettings simon1_settings = {
 	"EFFECTS",                              // effects_filename
 	"SIMON",                                // speech_filename
@@ -71,8 +60,6 @@ static const GameSpecificSettings puzzlepack_settings = {
 	"",                                     // effects_filename
 	"MUSIC",                               // speech_filename
 };
-#endif
-
 
 AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
 	: AGOSEngine_Feeble(system) {
@@ -692,13 +679,9 @@ static const uint16 initialVideoWindows_Common[20] = {
 };
 
 void AGOSEngine_PuzzlePack::setupGame() {
-	gss = PTR(puzzlepack_settings);
+	gss = &puzzlepack_settings;
 	_numVideoOpcodes = 85;
-#ifndef PALMOS_68K
 	_vgaMemSize = 7500000;
-#else
-	_vgaMemSize = gVars->memory[kMemSimon2Games];
-#endif
 	_itemMemSize = 20000;
 	_tableMemSize = 200000;
 	_frameCount = 1;
@@ -713,13 +696,9 @@ void AGOSEngine_PuzzlePack::setupGame() {
 }
 
 void AGOSEngine_Feeble::setupGame() {
-	gss = PTR(feeblefiles_settings);
+	gss = &feeblefiles_settings;
 	_numVideoOpcodes = 85;
-#ifndef PALMOS_68K
 	_vgaMemSize = 7500000;
-#else
-	_vgaMemSize = gVars->memory[kMemSimon2Games];
-#endif
 	_itemMemSize = 20000;
 	_tableMemSize = 200000;
 	_frameCount = 1;
@@ -736,14 +715,12 @@ void AGOSEngine_Feeble::setupGame() {
 }
 
 void AGOSEngine_Simon2::setupGame() {
-	gss = PTR(simon2_settings);
+	gss = &simon2_settings;
 	_tableIndexBase = 1580 / 4;
 	_textIndexBase = 1500 / 4;
 	_numVideoOpcodes = 75;
 #if defined(__DS__)
 	_vgaMemSize = 1300000;
-#elif defined(PALMOS_68K)
-	_vgaMemSize = gVars->memory[kMemSimon2Games];
 #else
 	_vgaMemSize = 2000000;
 #endif
@@ -772,15 +749,11 @@ void AGOSEngine_Simon2::setupGame() {
 }
 
 void AGOSEngine_Simon1::setupGame() {
-	gss = PTR(simon1_settings);
+	gss = &simon1_settings;
 	_tableIndexBase = 1576 / 4;
 	_textIndexBase = 1460 / 4;
 	_numVideoOpcodes = 64;
-#ifndef PALMOS_68K
 	_vgaMemSize = 1000000;
-#else
-	_vgaMemSize = gVars->memory[kMemSimon1Games];
-#endif
 	_itemMemSize = 20000;
 	_tableMemSize = 50000;
 	_musicIndexBase = 1316 / 4;
@@ -802,13 +775,9 @@ void AGOSEngine_Simon1::setupGame() {
 }
 
 void AGOSEngine_Waxworks::setupGame() {
-	gss = PTR(simon1_settings);
+	gss = &simon1_settings;
 	_numVideoOpcodes = 64;
-#ifndef PALMOS_68K
 	_vgaMemSize = 1000000;
-#else
-	_vgaMemSize = gVars->memory[kMemSimon1Games];
-#endif
 	_itemMemSize = 80000;
 	_tableMemSize = 50000;
 	_frameCount = 4;
@@ -826,13 +795,9 @@ void AGOSEngine_Waxworks::setupGame() {
 }
 
 void AGOSEngine_Elvira2::setupGame() {
-	gss = PTR(simon1_settings);
+	gss = &simon1_settings;
 	_numVideoOpcodes = 60;
-#ifndef PALMOS_68K
 	_vgaMemSize = 1000000;
-#else
-	_vgaMemSize = gVars->memory[kMemSimon1Games];
-#endif
 	_itemMemSize = 64000;
 	_tableMemSize = 100000;
 	_frameCount = 4;
@@ -849,13 +814,9 @@ void AGOSEngine_Elvira2::setupGame() {
 }
 
 void AGOSEngine_Elvira1::setupGame() {
-	gss = PTR(simon1_settings);
+	gss = &simon1_settings;
 	_numVideoOpcodes = 57;
-#ifndef PALMOS_68K
 	_vgaMemSize = 1000000;
-#else
-	_vgaMemSize = gVars->memory[kMemSimon1Games];
-#endif
 	_itemMemSize = 64000;
 	_tableMemSize = 256000;
 	_frameCount = 4;
@@ -1094,20 +1055,3 @@ void AGOSEngine::shutdown() {
 }
 
 } // End of namespace AGOS
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(AGOS_AGOS)
-_GSETPTR(AGOS::simon1_settings, GBVARS_SIMON1SETTINGS_INDEX, AGOS::GameSpecificSettings, GBVARS_AGOS)
-_GSETPTR(AGOS::simon2_settings, GBVARS_SIMON2SETTINGS_INDEX, AGOS::GameSpecificSettings, GBVARS_AGOS)
-_GSETPTR(AGOS::feeblefiles_settings, GBVARS_FEEBLEFILESSETTINGS_INDEX, AGOS::GameSpecificSettings, GBVARS_AGOS)
-_GEND
-
-_GRELEASE(AGOS_AGOS)
-_GRELEASEPTR(GBVARS_SIMON1SETTINGS_INDEX, GBVARS_AGOS)
-_GRELEASEPTR(GBVARS_SIMON2SETTINGS_INDEX, GBVARS_AGOS)
-_GRELEASEPTR(GBVARS_FEEBLEFILESSETTINGS_INDEX, GBVARS_AGOS)
-_GEND
-
-#endif

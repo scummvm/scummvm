@@ -183,11 +183,8 @@ static int *VIB_TABLE;
 /* envelope output curve table */
 /* attack + decay + OFF */
 //static int ENV_CURVE[2*EG_ENT+1];
-#ifndef PALMOS_68K
 static int ENV_CURVE[2 * 4096 + 1];   // to keep it static ...
-#else
-static int *ENV_CURVE = NULL;   // to keep it static ...
-#endif
+
 
 /* multiple table */
 #define ML(a) (int)(a * 2)
@@ -636,11 +633,6 @@ static int OPLOpenTable(void) {
 	int i,j;
 	double pom;
 
-#ifdef PALMOS_68K
-	if (!ENV_CURVE)
-		ENV_CURVE = (int *)calloc(2 * 4096 + 1, sizeof(int));
-#endif
-
 #ifdef __DS__
 	DS::fastRamReset();
 
@@ -732,10 +724,6 @@ static void OPLCloseTable(void) {
 	free(SIN_TABLE);
 	free(AMS_TABLE);
 	free(VIB_TABLE);
-#ifdef PALMOS_68K
-	free(ENV_CURVE);
-	ENV_CURVE = NULL;
-#endif
 }
 
 /* CSM Key Controll */

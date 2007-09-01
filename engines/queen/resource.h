@@ -165,10 +165,8 @@ protected:
 	//! known FOTAQ versions
 	static const RetailGameVersion _gameVersions[];
 
-#ifndef PALMOS_68K
 	//! resource table for english floppy version
 	static ResourceEntry _resourceTablePEM10[];
-#endif
 };
 
 } // End of namespace Queen

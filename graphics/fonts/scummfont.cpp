@@ -27,9 +27,6 @@
 
 namespace Graphics {
 
-#ifdef PALMOS_68K
-static const byte *guifont;
-#else
 // Built-in font
 static const byte guifont[] = {
 	// Header
@@ -279,7 +276,6 @@ static const byte guifont[] = {
 	28,  54,  54,  124, 102, 102, 124, 64,  	// 225
 	0,   0,   0					// ???
 };
-#endif
 
 int ScummFont::getCharWidth(byte chr) const {
 	return guifont[chr+6];
@@ -318,16 +314,3 @@ void ScummFont::drawChar(Surface *dst, byte chr, int tx, int ty, uint32 color) c
 }
 
 } // End of namespace Graphics
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(ScummFont)
-_GSETPTR(Graphics::guifont, GBVARS_GUIFONT_INDEX, byte, GBVARS_COMMON)
-_GEND
-
-_GRELEASE(ScummFont)
-_GRELEASEPTR(GBVARS_GUIFONT_INDEX, GBVARS_COMMON)
-_GEND
-
-#endif

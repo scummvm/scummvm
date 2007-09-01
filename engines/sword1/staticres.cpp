@@ -2894,9 +2894,6 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"rm3d",		// DONE 269 ONe the scene change after the Grand Master says, "George, we have watched you..." This one might need a bit of fiddling to get it to match to the fisticuffs.
 };
 
-#ifdef PALMOS_68K
-const FxDef *Sound::_fxList;
-#else
 const FxDef Sound::_fxList[312] = {
 		// 0
 	{
@@ -6445,7 +6442,7 @@ const FxDef Sound::_fxList[312] = {
 	},
 	//------------------------
 };
-#endif
+
 //--------------------------------------------------------------------------------------
 // Continuous & random background sound effects for each location
 
@@ -7156,16 +7153,3 @@ const uint8 *Logic::_helperData[] = {
 };
 
 } // End of namespace Sword1
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Sword1_fxList)
-_GSETPTR(Sword1::Sound::_fxList, GBVARS_FXLIST_INDEX, Sword1::FxDef, GBVARS_SWORD1)
-_GEND
-
-_GRELEASE(Sword1_fxList)
-_GRELEASEPTR(GBVARS_FXLIST_INDEX, GBVARS_SWORD1)
-_GEND
-
-#endif

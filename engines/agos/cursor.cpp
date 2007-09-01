@@ -790,16 +790,3 @@ void AGOSEngine::drawMousePointer() {
 }
 
 } // End of namespace AGOS
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(AGOS_Cursor)
-_GSETPTR(AGOS::_simon1_cursor, GBVARS_SIMON1CURSOR_INDEX, byte, GBVARS_AGOS)
-_GEND
-
-_GRELEASE(AGOS_Cursor)
-_GRELEASEPTR(GBVARS_SIMON1CURSOR_INDEX, GBVARS_AGOS)
-_GEND
-
-#endif
