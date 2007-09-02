@@ -571,7 +571,7 @@ void Mickey::PlaySound(ENUM_MSA_SOUND iSound) {
 void Mickey::debug() {
 	char szLine[41] = {0};
 
-	//ClearScreen(IDA_DEFAULT);	// TODO
+	_vm->clearScreen(IDA_DEFAULT);
 
 	sprintf(szLine, IDS_MSA_DEBUG_ROOM, game.iRoom);
 	_vm->drawStr(5, 10, IDA_DEFAULT, szLine);
@@ -924,7 +924,7 @@ void Mickey::printStory() {
 	
 	readExe(IDO_MSA_GAME_STORY, (uint8 *)buffer, sizeof(buffer));
 	
-	//ClearScreen(IDA_DEFAULT);	// TODO
+	_vm->clearScreen(IDA_DEFAULT);
 	for (iRow = 0; iRow < 25; iRow++) {
 		strcpy(szLine, buffer + pBuf);
 		_vm->drawStr(iRow, 0, IDA_DEFAULT, szLine);
@@ -934,7 +934,7 @@ void Mickey::printStory() {
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	_vm->waitAnyKey();
 
-	//ClearScreen(IDA_DEFAULT); // TODO
+	_vm->clearScreen(IDA_DEFAULT);
 	for (iRow = 0; iRow < 21; iRow++) {
 		strcpy(szLine, buffer + pBuf);
 		_vm->drawStr(iRow, 0, IDA_DEFAULT, szLine);	// TODO
@@ -1105,7 +1105,7 @@ void Mickey::inventory() {
 
 	sprintf(szCrystals, IDS_MSA_CRYSTALS, IDS_MSA_CRYSTAL_NO[game.nXtals]);
 
-	// ClearScreen(IDA_DEFAULT);
+	_vm->clearScreen(IDA_DEFAULT);
 	_vm->drawStr(IDI_MSA_ROW_INV_TITLE, IDI_MSA_COL_INV_TITLE, IDA_DEFAULT, IDS_MSA_INVENTORY);
 	_vm->drawStr(IDI_MSA_ROW_INV_CRYSTALS, IDI_MSA_COL_INV_ITEMS, IDA_DEFAULT, szCrystals);
 
@@ -1119,7 +1119,7 @@ void Mickey::inventory() {
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	_vm->waitAnyKey();
 
-	//ClearScreen(IDA_DEFAULT);		// TODO
+	_vm->clearScreen(IDA_DEFAULT);
 }
 
 void Mickey::randomize() {

@@ -995,6 +995,9 @@ public:
 		int16 p4, int16 p5, int16 p6, int16 p7) {}
 	void releaseImageStack() {}
 
+	// Screen
+	void clearScreen(int attr);
+
 	// Keyboard
 	void waitAnyKeyAnim();
 	int getSelection(int type);

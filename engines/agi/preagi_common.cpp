@@ -42,6 +42,11 @@
 
 namespace Agi {
 
+// Screen functions
+void PreAgiEngine::clearScreen(int attr) { 
+	_gfx->clearScreen((attr & 0xF0) / 0x10); 
+}
+
 // String functions
 
 void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
