@@ -30,6 +30,8 @@
 
 namespace Agi {
 
+#define _DEFAULT_WIDTH		160
+
 /**
  * AGI picture resource.
  */
@@ -72,6 +74,7 @@ private:
 
 	// TODO: this is hardcoded for V2 pictures for now
 	static const int pictureType = AGIPIC_V2;
+	int width;
 
 public:
 	PictureMgr(AgiBase *agi, GfxMgr *gfx) {
@@ -79,9 +82,9 @@ public:
 		_gfx = gfx;
 	}
 
-	int decodePicture(int n, int clear, bool agi256 = false);
+	int decodePicture(int n, int clear, bool agi256 = false, int pic_width = _DEFAULT_WIDTH);
 	int unloadPicture(int);
-	void showPic();
+	void showPic(int x = 0, int pic_width = _DEFAULT_WIDTH);
 	uint8 *convertV3Pic(uint8 *src, uint32 len);
 };
 

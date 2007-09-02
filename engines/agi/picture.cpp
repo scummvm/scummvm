@@ -84,10 +84,10 @@ static uint8 splatterStart[128] = {	/* starting bit position */
 void PictureMgr::putVirtPixel(int x, int y) {
 	uint8 *p;
 
-	if (x < 0 || y < 0 || x >= _WIDTH || y >= _HEIGHT)
+	if (x < 0 || y < 0 || x >= width || y >= _HEIGHT)
 		return;
 
-	p = &_vm->_game.sbuf16c[y * _WIDTH + x];
+	p = &_vm->_game.sbuf16c[y * width + x];
 
 	if (priOn)
 		*p = (priColour << 4) | (*p & 0x0f);
@@ -131,8 +131,8 @@ void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 
 	/* CM: Do clipping */
 #define clip(x, y) if((x)>=(y)) (x)=(y)
-	clip(x1, _WIDTH - 1);
-	clip(x2, _WIDTH - 1);
+	clip(x1, width - 1);
+	clip(x2, width - 1);
 	clip(y1, _HEIGHT - 1);
 	clip(y2, _HEIGHT - 1);
 
@@ -276,13 +276,13 @@ void PictureMgr::absoluteDrawLine() {
 INLINE int PictureMgr::isOkFillHere(int x, int y) {
 	uint8 p;
 
-	if (x < 0 || x >= _WIDTH || y < 0 || y >= _HEIGHT)
+	if (x < 0 || x >= width || y < 0 || y >= _HEIGHT)
 		return false;
 
 	if (!scrOn && !priOn)
 		return false;
 
-	p = _vm->_game.sbuf16c[y * _WIDTH + x];
+	p = _vm->_game.sbuf16c[y * width + x];
 
 	if (!priOn && scrOn && scrColour != 15)
 		return (p & 0x0f) == 15;
@@ -714,7 +714,7 @@ uint8 *PictureMgr::convertV3Pic(uint8 *src, uint32 len) {
  * @param clear  clear AGI screen before drawing
  * @param agi256 load an AGI256 picture resource
  */
-int PictureMgr::decodePicture(int n, int clear, bool agi256) {
+int PictureMgr::decodePicture(int n, int clear, bool agi256, int pic_width) {
 	debugC(8, kDebugLevelResources, "(%d)", n);
 
 	patCode = 0;
@@ -727,20 +727,22 @@ int PictureMgr::decodePicture(int n, int clear, bool agi256) {
 	flen = _vm->_game.dirPic[n].len;
 	foffs = 0;
 
+	width = pic_width;
+
 	if (clear && !agi256) // 256 color pictures should always fill the whole screen, so no clearing for them.
-		memset(_vm->_game.sbuf16c, 0x4f, _WIDTH * _HEIGHT); // Clear 16 color AGI screen (Priority 4, color white).
+		memset(_vm->_game.sbuf16c, 0x4f, width * _HEIGHT); // Clear 16 color AGI screen (Priority 4, color white).
 
 	if (!agi256) {
 		drawPicture(); // Draw 16 color picture.
 	} else {
-		const uint32 maxFlen = _WIDTH * _HEIGHT;
+		const uint32 maxFlen = width * _HEIGHT;
 		memcpy(_vm->_game.sbuf256c, data, MIN(flen, maxFlen)); // Draw 256 color picture.
 
 		if (flen < maxFlen) {
 			warning("Undersized AGI256 picture resource %d, using it anyway. Filling rest with white.", n);
 			memset(_vm->_game.sbuf256c + flen, 0x0f, maxFlen - flen); // Fill missing area with white.
 		} else if (flen > maxFlen)
-			warning("Oversized AGI256 picture resource %d, decoding only %ux%u part of it", n, _WIDTH, _HEIGHT);
+			warning("Oversized AGI256 picture resource %d, decoding only %ux%u part of it", n, width, _HEIGHT);
 	}
 
 	if (clear)
@@ -770,17 +772,18 @@ int PictureMgr::unloadPicture(int n) {
  * Show AGI picture.
  * This function copies a ``hidden'' AGI picture to the output device.
  */
-void PictureMgr::showPic() {
+void PictureMgr::showPic(int x, int pic_width) {
 	int i, y;
 	int offset;
+	width = pic_width;
 
 	debugC(8, kDebugLevelMain, "Show picture!");
 
 	i = 0;
 	offset = _vm->_game.lineMinPrint * CHAR_LINES;
 	for (y = 0; y < _HEIGHT; y++) {
-		_gfx->putPixelsA(0, y + offset, _WIDTH, &_vm->_game.sbuf16c[i]);
-		i += _WIDTH;
+		_gfx->putPixelsA(x, y + offset, width, &_vm->_game.sbuf16c[i]);
+		i += width;
 	}
 
 	_gfx->flushScreen();
