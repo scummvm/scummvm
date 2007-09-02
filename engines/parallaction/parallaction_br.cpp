@@ -81,6 +81,7 @@ int Parallaction_br::init() {
 
 	_activeZone2 = 0;
 
+	initJobs();
 	initResources();
 	initFonts();
 	initCursors();
@@ -358,7 +359,7 @@ void Parallaction_br::changeCharacter(const char *name) {
 }
 
 void Parallaction_br::initJobs() {
-/*
+
 	static const JobFn jobs[] = {
 		&Parallaction_br::jobDisplayAnimations,
 		&Parallaction_br::jobEraseAnimations,
@@ -366,12 +367,12 @@ void Parallaction_br::initJobs() {
 		&Parallaction_br::jobRemovePickedItem,
 		&Parallaction_br::jobRunScripts,
 		&Parallaction_br::jobWalk,
-		&Parallaction_br::jobDrawLabel,
+		&Parallaction_br::jobDisplayLabel,
 		&Parallaction_br::jobEraseLabel,
 		&Parallaction_br::jobWaitRemoveLabelJob,
 		&Parallaction_br::jobToggleDoor,
-		&Parallaction_br::jobClearSubtitle,
-		&Parallaction_br::jobDrawSubtitle,
+		&Parallaction_br::jobEraseSubtitle,
+		&Parallaction_br::jobDisplaySubtitle,
 		&Parallaction_br::jobWaitRemoveSubtitleJob,
 		&Parallaction_br::jobPauseSfx,
 		&Parallaction_br::jobStopFollower,
@@ -379,13 +380,10 @@ void Parallaction_br::initJobs() {
 	};
 
 	_jobsFn = jobs;
-*/
-
 }
 
 JobOpcode* Parallaction_br::createJobOpcode(uint functionId, Job *job) {
-	//return new OpcodeImpl2<Parallaction_br>(this, _jobsFn[functionId], job);
-	return 0;
+	return new OpcodeImpl2<Parallaction_br>(this, _jobsFn[functionId], job);
 }
 
 } // namespace Parallaction

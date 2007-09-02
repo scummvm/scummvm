@@ -45,6 +45,7 @@ typedef OpcodeImpl<Parallaction_br> OpcodeV2;
 #define DECLARE_INSTRUCTION_OPCODE(op) void Parallaction_br::instOp_##op()
 
 void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
+	debugC(5, kDebugLocation, "setupSubtitles(%s, %s, %i)", s, s2, y);
 
 	if (!scumm_stricmp("clear", s)) {
 
@@ -547,6 +548,34 @@ void Parallaction_br::initOpcodes() {
 
 
 }
+
+
+void Parallaction_br::jobWaitRemoveLabelJob(void *parm, Job *job) {
+
+}
+
+
+void Parallaction_br::jobWaitRemoveSubtitleJob(void *parm, Job *job) {
+
+}
+
+
+void Parallaction_br::jobPauseSfx(void *parm, Job *job) {
+
+}
+
+
+void Parallaction_br::jobStopFollower(void *parm, Job *job) {
+
+}
+
+
+void Parallaction_br::jobScroll(void *parm, Job *job) {
+
+}
+
+
+
 
 
 } // namespace Parallaction

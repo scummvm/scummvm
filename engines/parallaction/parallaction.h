@@ -940,7 +940,7 @@ private:
 	void 		initParsers();
 	void		initJobs();
 
-	typedef void (*JobFn)(void*, Job*);
+	typedef void (Parallaction_br::*JobFn)(void*, Job*);
 	const JobFn 	*_jobsFn;
 	JobOpcode* 		createJobOpcode(uint functionId, Job *job);
 
@@ -1091,10 +1091,15 @@ private:
 
 	Job *_jDisplaySubtitle;
 	Job *_jEraseSubtitle;
+	void setupSubtitles(char *s, char *s2, int y);
 
+	void jobWaitRemoveLabelJob(void *parm, Job *job);
 	void jobDisplaySubtitle(void *parm, Job *job);
 	void jobEraseSubtitle(void *parm, Job *job);
-	void setupSubtitles(char *s, char *s2, int y);
+	void jobWaitRemoveSubtitleJob(void *parm, Job *job);
+	void jobPauseSfx(void *parm, Job *job);
+	void jobStopFollower(void *parm, Job *job);
+	void jobScroll(void *parm, Job *job);
 
 };
 

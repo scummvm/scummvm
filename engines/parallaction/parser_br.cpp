@@ -740,7 +740,7 @@ void Parallaction_br::initParsers() {
 		COMMAND_PARSER(zone),		// leave
 		COMMAND_PARSER(math),		// inc
 		COMMAND_PARSER(math),		// dec
-		COMMAND_PARSER(math),		// test
+		COMMAND_PARSER(test),		// test
 		COMMAND_PARSER(invalid),
 		COMMAND_PARSER(invalid),
 		COMMAND_PARSER(math),		// let
