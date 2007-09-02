@@ -62,7 +62,7 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 			break;
 
 		default:
-			drawChar(col * 8, row * 8, attr, code, (const char*)mickey_fontdata);
+			_gfx->putTextCharacter(1, col * 8 , row * 8, static_cast<char>(code), attr & 0x0f, (attr & 0xf0) / 0x10, false, mickey_fontdata);
 
 			if (++col == 320 / 8) {
 				col = 0;
@@ -78,25 +78,8 @@ void PreAgiEngine::drawStrMiddle(int row, int attr, const char *buffer) {
 }
 
 void PreAgiEngine::clearTextArea() {
-	// FIXME: this causes crashes, I imagine it's because we're not currently locking the screen in drawStr
 	for (int row = IDI_MAX_ROW_PIC; row < 200 / 8; row++) {
-		//drawStr(row, 0, IDA_DEFAULT, "                                        ");	// 40 spaces
-	}
-}
-
-void PreAgiEngine::drawChar(int x, int y, int attr, int code, const char *fontdata) {
-	int cx, cy;
-	uint8 color;
-
-	for (cy = 0; cy < 8; cy++) {
-		for (cx = 0; cx < 8; cx++) {
-			if (fontdata[(code * 8) + cy] & (1 << (7 - cx)))
-				color = attr & 0x0f;			// foreground color
-			else
-				color = (attr & 0xf0) / 0x10;	// background color
-
-			_gfx->putPixelsA(x + cx, y + cy, 1, &color);
-		}
+		drawStr(row, 0, IDA_DEFAULT, "                                        ");	// 40 spaces
 	}
 }
 
