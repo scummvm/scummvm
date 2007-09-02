@@ -1006,7 +1006,7 @@ public:
 	void drawStr(int row, int col, int attr, char *buffer);
 	void drawStrMiddle(int row, int attr, char *buffer);
 	void clearTextArea();
-	void drawChar(int x, int y, int attr, int code, char *fontdata);
+	void drawChar(int x, int y, int attr, int code, const char *fontdata);
 };
 
 } // End of namespace Agi

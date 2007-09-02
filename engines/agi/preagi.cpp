@@ -282,16 +282,13 @@ int PreAgiEngine::preAgiUnloadResource(int r, int n) {
 // String functions
 // TODO: These need to be moved elsewhere
 
-void PreAgiEngine::drawStr(int row, int col, int attr, char *buffer)
-{
+void PreAgiEngine::drawStr(int row, int col, int attr, char *buffer) {
 	int code;
 
-	for (int iChar = 0; iChar < (int)strlen(buffer); iChar++)
-	{
+	for (int iChar = 0; iChar < (int)strlen(buffer); iChar++) {
 		code = buffer[iChar];
 
-		switch (code)
-		{
+		switch (code) {
 		case '\n':
 		case 0x8D:
 			if (++row == 200 / 8) return;
@@ -303,10 +300,9 @@ void PreAgiEngine::drawStr(int row, int col, int attr, char *buffer)
 			break;
 
 		default:
-			drawChar(col * 8, row * 8, attr, code, (char*)mickey_fontdata);
+			drawChar(col * 8, row * 8, attr, code, (const char*)mickey_fontdata);
 
-			if (++col == 320 / 8)
-			{
+			if (++col == 320 / 8) {
 				col = 0;
 				if (++row == 200 / 8) return;
 			}
@@ -326,15 +322,12 @@ void PreAgiEngine::clearTextArea() {
 	}
 }
 
-void PreAgiEngine::drawChar(int x, int y, int attr, int code, char *fontdata)
-{
+void PreAgiEngine::drawChar(int x, int y, int attr, int code, const char *fontdata) {
 	int cx, cy;
 	uint8 color;
 
-	for (cy = 0; cy < 8; cy++)
-	{
-		for (cx = 0; cx < 8; cx++)
-		{
+	for (cy = 0; cy < 8; cy++) {
+		for (cx = 0; cx < 8; cx++) {
 			if (fontdata[(code * 8) + cy] & (1 << (7 - cx)))
 				color = attr & 0x0f;			// foreground color
 			else
