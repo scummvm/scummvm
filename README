@@ -248,7 +248,7 @@ by ScummVM (yet):
 
      Other Humongous Entertainment games
 
-Please be aware that the engine may contain bugs and unimplemented features
+Please be aware that the engines may contain bugs and unimplemented features
 that sometimes make it impossible to finish the game. Save often, and please
 file a bug report (instructions on submitting bug reports are above) if you
 encounter such a bug in a 'supported' game.
@@ -326,7 +326,7 @@ Most common mistakes which prevents the game from running:
   * You try to feed ScummVM with the FULL ROM and not just the PRG section.
 
 It is also possible to extract the separate LFL files from the PRG section.
-To do so use the extract_mm_nes utility from the tools package.
+To do so use the 'extract_mm_nes' utility from the tools package.
 
 
 3.4) Macintosh games notes:
@@ -366,15 +366,6 @@ Fortunately, ScummVM has no problems running the games entirely from hard disk,
 if you create a directory with the correct combination of files. Usually, when
 a file appears on more than one CD you can pick either of them.
 
-These instructions are written for the PC versions (which in some case is the
-only version) of the games. Windows and DOS use case-insensitive file systems,
-so if one CD has a file called MONKEY.DAT and another has a file called
-monkey.dat, they are the same files. These instructions give file names in all
-lower-case names, even if that's not always how they appear on the CDs. In
-fact, on case-sensitive file systems you will have to make sure that all
-filenames use either all upper- or all lower-case letters for ScummVM to be
-able to find the files.
-
 
 3.6) The Curse of Monkey Island notes:
 ---- ---------------------------------
@@ -403,9 +394,9 @@ Viewing these cutscenes requires a version of ScummVM compiled with both
 FLAC and zlib support.
 
 For systems that are too slow to handle the decoding of FLAC audio,
-the audio for these cutscenes is provided separately as OGG Vorbis audio
-too. Viewing these cutscenes with OGG Vorbis audio requires a version of
-ScummVM compiled with both libVorbis and zlib support. 
+the audio for these cutscenes is also provided separately as OGG Vorbis audio.
+Viewing these cutscenes with OGG Vorbis audio requires a version of ScummVM
+compiled with both libVorbis and zlib support. 
 
 The cutscenes should be placed in the main game data directory. Note that
 currently this requires either copying the game to hard disk or burning
@@ -711,12 +702,6 @@ Use at your own risk!
 
 5.0) Running ScummVM:
 ---- ----------------
-Before you run the engine, you need to put the game's data files in a
-directory. The filenames must not be in mixed case on *nix systems
-(for example, these are valid names: "monkey2.000", "MONKEY2.000", while
-this is a bad one: "Monkey2.000"). If you use a game with speech, the file
-monster.sou must reside in the same directory as the data files.
-
 Please note that by default, ScummVM will save games in the directory
 it is executed from, so you should refrain from running it from more than
 one location. Further information, including how to specify a specific save
