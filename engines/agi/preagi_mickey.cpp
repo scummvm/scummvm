@@ -191,7 +191,7 @@ void Mickey::printStr(char *buffer) {
 	
 	nRows = *buffer + IDI_MSA_ROW_MENU_0;
 
-	//clearTextArea();	// TODO
+	_vm->clearTextArea();
 
 	for (iRow = IDI_MSA_ROW_MENU_0; iRow < nRows; iRow++) {
 		iCol = *(buffer + pc++);
@@ -244,7 +244,7 @@ void Mickey::drawMenu(MSA_MENU menu, int sel0, int sel1) {
 
 	// draw menu
 
-	// clearTextArea();	// TODO
+	_vm->clearTextArea();
 
 	for (iRow = 0; iRow < 2; iRow++) {
 		for (iWord = 0; iWord < menu.row[iRow].count; iWord++) {
@@ -950,9 +950,9 @@ void Mickey::printStory() {
 void Mickey::hidden() {
 	if (game.iRoom == IDI_MSA_PIC_MERCURY_CAVE_0) {
 		for (int i = 0; i < 5; i++) {
-			//printExeMsg(IDO_MSA_HIDDEN_MSG[i]);	// TODO
+			printExeMsg(IDO_MSA_HIDDEN_MSG[i]);
 		}
-		// clearTextArea();	// TODO
+		_vm->clearTextArea();
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		_vm->waitAnyKey();
@@ -1020,7 +1020,7 @@ void Mickey::checkAirSupply(bool fSuit, int *iSupply) {
 }
 
 void Mickey::insertDisk(int iDisk) {
-	//clearTextArea(); // TODO
+	_vm->clearTextArea();
 	_vm->drawStr(IDI_MSA_ROW_INSERT_DISK, IDI_MSA_COL_INSERT_DISK, IDA_DEFAULT, (char *)IDS_MSA_INSERT_DISK[iDisk]);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
@@ -1055,7 +1055,7 @@ void Mickey::flipSwitch() {
 		// activate screen animation
 		game.fAnimXL30 = true;
 
-		// clearTextArea();	// TODO
+		_vm->clearTextArea();
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		//playSound(IDI_MSA_SND_XL30);	// TODO
@@ -1953,7 +1953,7 @@ void Mickey::debug_DrawObjs() {
 		drawPic(0);
 		drawObj((ENUM_MSA_OBJECT)iObj, 0, 0);
 
-		///clearTextArea();	// TODO
+		_vm->clearTextArea();
 		sprintf(szTitle, "Object %d", iObj);
 		_vm->drawStrMiddle(22, IDA_DEFAULT, szTitle);
 		_vm->drawStrMiddle(23, IDA_DEFAULT, (char *)IDS_MSA_NAME_OBJ[iObj]);
@@ -1969,7 +1969,7 @@ void Mickey::debug_DrawPics(){
 	for (int iPic = 1; iPic <= IDI_MSA_MAX_PIC; iPic++) {
 		drawPic(iPic);
 
-		//clearTextArea();	// TODO
+		_vm->clearTextArea();
 		sprintf(szTitle, "Picture %d", iPic);
 		_vm->drawStrMiddle(22, IDA_DEFAULT, szTitle);
 		_vm->_gfx->doUpdate();

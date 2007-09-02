@@ -50,6 +50,12 @@
 // preagi engines
 #include "agi/preagi_mickey.h"
 
+// default attributes
+#define IDA_DEFAULT		0x0F
+#define IDA_DEFAULT_REV	0xF0
+
+#define IDI_MAX_ROW_PIC	20
+
 namespace Agi {
 
 PreAgiEngine::PreAgiEngine(OSystem *syst) : AgiBase(syst) {
@@ -274,6 +280,8 @@ int PreAgiEngine::preAgiUnloadResource(int r, int n) {
 }
 
 // String functions
+// TODO: These need to be moved elsewhere
+
 void PreAgiEngine::drawStr(int row, int col, int attr, char *buffer)
 {
 	int code;
@@ -309,6 +317,13 @@ void PreAgiEngine::drawStr(int row, int col, int attr, char *buffer)
 void PreAgiEngine::drawStrMiddle(int row, int attr, char *buffer) {
 	int col = (25 / 2) - (strlen(buffer) / 2);	// 25 = 320 / 8 (maximum column)
 	drawStr(row, col, attr, buffer);
+}
+
+void PreAgiEngine::clearTextArea() {
+	// FIXME: this causes crashes, I imagine it's because we're not currently locking the screen in drawStr
+	for (int row = IDI_MAX_ROW_PIC; row < 200 / 8; row++) {
+		//drawStr(row, 0, IDA_DEFAULT, "                                        ");	// 40 spaces
+	}
 }
 
 void PreAgiEngine::drawChar(int x, int y, int attr, int code, char *fontdata)
