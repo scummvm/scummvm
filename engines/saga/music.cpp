@@ -566,7 +566,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
 	_player->_parser = parser;
-	_player->setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
+	setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
 
 	if (flags & MUSIC_LOOP)
 		_player->setLoop(true);
