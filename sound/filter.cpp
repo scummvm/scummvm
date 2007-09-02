@@ -103,7 +103,11 @@ inline uint32 FIRFilter::windowLength(
  * Derives the coefficients for a Kaiser window of the given properties, using
  * standard Kaiser design formulae.
  */
-void FIRFilter::windowDesign(double *coeffs, uint32 length, double ripple) {
+void FIRFilter::windowDesign(
+		double *coeffs,
+		uint32 length,
+		double ripple,
+		uint16 subLen) {
 	uint32 i;
 	
 	double alpha = -ripple;
@@ -119,12 +123,13 @@ void FIRFilter::windowDesign(double *coeffs, uint32 length, double ripple) {
 	
 	for (i = 0; i <= (length - 1) / 2; i++) {
 		double n = (int32)(i - (length - 1) / 2) - ((length % 2) ? 0 : 0.5);
+		uint32 index = ((i * subLen) % length) + ((i * subLen) / length);
 		
 		/*
 		 * Both this window and the later filter are even symmetric, so we
 		 * only need to calculate half of the window for now.
 		 */
-		coeffs[i] = 
+		coeffs[index] = 
 			bessel_i0(beta * sqrt(1 - pow((2.0 * n) / (length - 1), 2.0)))
 			/ bessel_i0(beta);
 	}
@@ -148,11 +153,13 @@ void FIRFilter::LPDesign(
 		uint32 length,
 		double passbandEdge,
 		double stopbandEdge,
-		uint32 samplingFreq) {
+		uint32 samplingFreq,
+		uint16 subLen) {
 	uint32 i;
 	
 	for (i = 0; i <= (length - 1) / 2; i++) {
 		double n = (int32)(i - (length - 1) / 2) - ((length % 2) ? 0 : 0.5);
+		uint32 index = ((i * subLen) % length) + ((i * subLen) / length);
 		
 		/*
 		 * Use an ideal transition halfway between the passband and stopband
@@ -161,9 +168,9 @@ void FIRFilter::LPDesign(
 		double bandwidth = (passbandEdge + stopbandEdge) / samplingFreq;
 		// == 2 * ((passbandEdge + stopbandEdge) / 2) / samplingFreq
 		
-		coeffs[i] *= bandwidth *  sinc(M_PI * bandwidth * n);
+		coeffs[index] *= bandwidth *  sinc(M_PI * bandwidth * n);
 		/* Filter is even symmetric */
-		coeffs[length - i - 1] = coeffs[i];
+		coeffs[length - index - 1] = coeffs[index];
 	}
 }
 
@@ -184,12 +191,15 @@ FIRFilter::FIRFilter(double passbandEdge, double stopbandEdge,
 		windowLength(_ripple, _stopbandEdge - _passbandEdge, _samplingFreq,
 					 _upFactor);
 	
+	_subLen = _length / _upFactor;
+	
 	/* Calculate the window coefficients */
 	_coeffs = (double *)malloc(_length * sizeof(double));
-	windowDesign(_coeffs, _length, _ripple);
+	windowDesign(_coeffs, _length, _ripple, _subLen);
 	
 	/* Generate the coefficients of a low pass filter using this window */
-	LPDesign(_coeffs, _length, _passbandEdge, _stopbandEdge, _samplingFreq);
+	LPDesign(_coeffs, _length, _passbandEdge, _stopbandEdge, _samplingFreq,
+			_subLen);
 }
 
 FIRFilter *FIRFilter::getFilter(double passbandEdge, double stopbandEdge,

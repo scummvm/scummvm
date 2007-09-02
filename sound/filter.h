@@ -44,6 +44,7 @@ private:
 	double _ripple;
 	uint32 _length;
 	double *_coeffs;
+	uint16 _subLen;
 	
 	static Common::Array<FIRFilter *> filters;
 
@@ -88,7 +89,11 @@ private:
 			uint32 samplingFreq,
 			uint16 upFactor);
 	
-	void windowDesign(double *coeffs, uint32 length, double ripple);
+	void windowDesign(
+			double *coeffs,
+			uint32 length,
+			double ripple,
+			uint16 subLen);
 	
 	double sinc(double arg);
 	
@@ -97,7 +102,8 @@ private:
 			uint32 length,
 			double passbandEdge,
 			double stopbandEdge,
-			uint32 samplingFreq);
+			uint32 samplingFreq,
+			uint16 subLen);
 
 };
 

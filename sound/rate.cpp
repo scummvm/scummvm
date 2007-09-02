@@ -455,12 +455,15 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 		 * Convolve the input samples with the filter to get the next
 		 * outputs
 		 */
+		 
+		double *base = coeffs + (currBank * subLen);
+		 
 		for (i = 0; i < subLen; i++) {
 			accum0 += (double)inBuf[(inPos + numChan * i) % subLen]
-						* coeffs[currBank + i*upFactor];
+						* base[i];
 			if (stereo) {
 				accum1 += (double)inBuf[(inPos + numChan * i + 1) % subLen]
-						* coeffs[currBank + i*upFactor];
+						* base[i];
 			}
 		}
 		
