@@ -620,11 +620,15 @@ void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 
 void Mickey::drawPic(int iPic) {
 	_vm->preAgiLoadResource(rPICTURE, iPic);
+	// Note that decodePicture clears the screen
 	_vm->_picture->decodePicture(iPic, true, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-	_vm->_picture->showPic(10, _WIDTH - 20);
+	_vm->_picture->showPic(10, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 /*
+
+	// Original code used in TrollVM
+
 	int w = IDI_MSA_PIC_WIDTH, h = IDI_MSA_PIC_HEIGHT;
 	int flags = IDF_AGI_PIC_V2;
 
