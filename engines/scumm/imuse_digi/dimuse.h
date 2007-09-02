@@ -237,16 +237,6 @@ struct imuseFtSeqTable {
 	byte volume;
 };
 
-#ifdef PALMOS_68K
-extern const imuseRoomMap *_digStateMusicMap;
-extern const imuseDigTable *_digStateMusicTable;
-extern const imuseDigTable *_digSeqMusicTable;
-extern const imuseComiTable *_comiStateMusicTable;
-extern const imuseComiTable *_comiSeqMusicTable;
-extern const imuseFtStateTable *_ftStateMusicTable;
-extern const imuseFtSeqTable *_ftSeqMusicTable;
-extern const imuseFtNames *_ftSeqNames;
-#else
 extern const imuseRoomMap _digStateMusicMap[];
 extern const imuseDigTable _digStateMusicTable[];
 extern const imuseDigTable _digSeqMusicTable[];
@@ -255,7 +245,6 @@ extern const imuseComiTable _comiSeqMusicTable[];
 extern const imuseFtStateTable _ftStateMusicTable[];
 extern const imuseFtSeqTable _ftSeqMusicTable[];
 extern const imuseFtNames _ftSeqNames[];
-#endif
 
 } // End of namespace Scumm
 

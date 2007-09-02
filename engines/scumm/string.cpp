@@ -172,6 +172,20 @@ void ScummEngine_v6::drawBlastTexts() {
 				if (c == 0x0B)
 					continue;
 				
+				// Some localizations may override colors
+				// See credits in Chinese COMI
+				if (c == '^' && (buf == _blastTextQueue[i].text + 1)) {
+					int color;
+					switch (*buf) {
+					case 'c':
+						color = buf[3] - '0' + 10 *(buf[2] - '0');
+						_charset->setColor(color);
+
+						buf += 4;
+						c = *buf++;
+					}
+				}
+
 				if (c != 0 && c != 0xFF && c != '\n') {
 					if (c & 0x80 && _useCJKMode) {
 						if (_language == Common::JA_JPN && !checkSJISCode(c)) {
@@ -1060,7 +1074,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				num += (_game.version == 8) ? 4 : 2;
 			}
 		} else {
-			if (!(chr == '@' && _game.heversion <= 71)) {
+			if (!(chr == '@' && _game.heversion <= 71) || _language == Common::ZH_TWN) {
 				*dst++ = chr;
 			}
 		}

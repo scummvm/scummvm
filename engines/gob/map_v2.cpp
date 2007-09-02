@@ -38,13 +38,11 @@
 namespace Gob {
 
 Map_v2::Map_v2(GobEngine *vm) : Map_v1(vm) {
+	_screenHeight = 200;
 }
 
 Map_v2::~Map_v2() {
 	_passMap = 0;
-}
-
-void Map_v2::init(void) {
 }
 
 void Map_v2::loadMapObjects(const char *avjFile) {
@@ -86,7 +84,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	_tilesHeight &= 0xFF;
 
 	_mapWidth = _screenWidth / _tilesWidth;
-	_mapHeight = 200 / _tilesHeight;
+	_mapHeight = _screenHeight / _tilesHeight;
 
 	passPos = mapData.pos();
 	mapData.skip(_mapWidth * _mapHeight);
@@ -96,9 +94,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	else
 		wayPointsCount = _wayPointsCount == 0 ? 1 : _wayPointsCount;
 
-	if (_wayPoints)
-		delete[] _wayPoints;
-
+	delete[] _wayPoints;
 	_wayPoints = new Point[wayPointsCount];
 	for (int i = 0; i < _wayPointsCount; i++) {
 		_wayPoints[i].x = mapData.readSByte();
@@ -113,7 +109,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 		byte *sizes;
 
 		_passMap = (int8 *) variables;
-		mapHeight = 200 / _tilesHeight;
+		mapHeight = _screenHeight / _tilesHeight;
 		mapWidth = _screenWidth / _tilesWidth;
 		sizes = _vm->_global->_inter_variablesSizes +
 			(((byte *) _passMap) - _vm->_global->_inter_variables);

@@ -35,7 +35,6 @@
 
 #include "parallaction/parallaction.h"
 #include "parallaction/debug.h"
-#include "parallaction/menu.h"
 #include "parallaction/sound.h"
 
 
@@ -54,11 +53,9 @@ char		_saveData1[30] = { '\0' };
 uint16		_language = 0;
 char		_slideText[2][40];
 uint32		_engineFlags = 0;
-Zone	   *_activeZone = NULL;
 
 uint16		_score = 1;
 
-uint32		_localFlags[120] = { 0 };
 Command *	_forwardedCommands[20] = {
 	NULL,
 	NULL,
@@ -92,9 +89,6 @@ uint16		_introSarcData2 = 1;
 // private stuff
 
 static Job	   *_jDrawInventory = NULL;
-Job	   *_jDrawLabel = NULL;
-Job	   *_jEraseLabel = NULL;
-Zone    *_hoverZone = NULL;
 static Job	   *_jRunScripts = NULL;
 
 
@@ -123,11 +117,13 @@ Parallaction::Parallaction(OSystem *syst) :
 Parallaction::~Parallaction() {
 	delete _debugger;
 
+	freeBackground();
+	delete _backgroundInfo;
+
 	delete _globalTable;
 
 	delete _callableNames;
-	delete _commandsNames;
-	delete _instructionNames;
+	delete _localFlagNames;
 	delete _zoneTypeNames;
 	delete _zoneFlagNames;
 
@@ -146,73 +142,44 @@ Parallaction::~Parallaction() {
 
 int Parallaction::init() {
 
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
+	_engineFlags = 0;
 	_objectsNames = NULL;
 	_globalTable = NULL;
-	_localFlagNames = NULL;
-	initResources();
-
 	_hasLocationSound = false;
-
-	_skipMenu = false;
-
 	_transCurrentHoverItem = 0;
 	_actionAfterWalk = false;  // actived when the character needs to move before taking an action
 	_activeItem._index = 0;
 	_activeItem._id = 0;
 	_procCurrentHoverItem = -1;
-
-//	_musicData1 = 0;
-	strcpy(_characterName1, "null");
-
-	_soundMan = 0;
-
 	_baseTime = 0;
-
-	if (getPlatform() == Common::kPlatformPC) {
-		_disk = new DosDisk(this);
-	} else {
-		if (getFeatures() & GF_DEMO) {
-			strcpy(_location._name, "fognedemo");
-		}
-		_disk = new AmigaDisk(this);
-		_disk->selectArchive((_vm->getFeatures() & GF_DEMO) ? "disk0" : "disk1");
-	}
-
-	_engineFlags = 0;
-
-	strcpy(_characterName, "dough");
-
-	memset(_locationNames, 0, 120*32);
 	_numLocations = 0;
-
 	_location._startPosition.x = -1000;
 	_location._startPosition.y = -1000;
 	_location._startFrame = 0;
-
 	_location._comment = NULL;
 	_location._endComment = NULL;
 
-	initWalk();
+	_backgroundInfo = 0;
+	_pathBuffer = 0;
+	_activeZone = 0;
 
-	initInventory();
+	_screenSize = _screenWidth * _screenHeight;
 
-	_animations.push_front(&_vm->_char._ani);
+	_backgroundInfo = new BackgroundInfo;
+
+	strcpy(_characterName1, "null");
+	strcpy(_characterName, "dough");
+
+	memset(_locationNames, 0, NUM_LOCATIONS * 32);
+
+	initInventory();	// needs to be pushed into subclass
+
+	_jDrawLabel = NULL;
+	_jEraseLabel = NULL;
+	_hoverZone = NULL;
+
+	_animations.push_front(&_char._ani);
 	_gfx = new Gfx(this);
-
-	if (getPlatform() == Common::kPlatformPC) {
-		int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-		_soundMan = new DosSoundMan(this, driver);
-		_soundMan->setMusicVolume(ConfMan.getInt("music_volume"));
-	} else {
-		_soundMan = new AmigaSoundMan(this);
-	}
 
 	_debugger = new Debugger(this);
 
@@ -223,48 +190,7 @@ int Parallaction::init() {
 
 
 
-int Parallaction::go() {
 
-	initGame();
-	runGame();
-
-	return 0;
-}
-
-void Parallaction::initGame() {
-
-	_menu = new Menu(this);
-
-	initGlobals();
-	if (_skipMenu == false) {
-		_menu->start();
-	}
-
-	char *v4 = strchr(_location._name, '.');
-	if (v4) {
-		*v4 = '\0';
-	}
-
-	_engineFlags &= ~kEngineChangeLocation;
-	changeCharacter(_characterName);
-
-	strcpy(_saveData1, _location._name);
-	parseLocation(_location._name);
-
-	if (_location._startPosition.x != -1000) {
-		_vm->_char._ani._left = _location._startPosition.x;
-		_vm->_char._ani._top = _location._startPosition.y;
-		_vm->_char._ani._frame = _location._startFrame;
-		_location._startPosition.y = -1000;
-		_location._startPosition.x = -1000;
-	}
-
-	return;
-}
-
-void Parallaction::initGlobals() {
-	_globalTable = _disk->loadTable("global");
-}
 
 // FIXME: the engine has 3 event loops. The following routine hosts the main one,
 // and it's called from 8 different places in the code. There exist 2 more specialised
@@ -346,7 +272,8 @@ void waitUntilLeftClick() {
 			break;
 		}
 
-		g_system->delayMillis(10);
+		_vm->_gfx->updateScreen();
+		g_system->delayMillis(30);
 	}
 
 
@@ -423,8 +350,6 @@ void Parallaction::runGame() {
 
 	}
 
-	delete _menu;
-
 	return;
 }
 
@@ -498,9 +423,9 @@ void Parallaction::processInput(InputData *data) {
 		debugC(2, kDebugInput, "processInput: kEvWalk");
 		_hoverZone = NULL;
 		changeCursor(kCursorArrow);
-		if (_vm->_char._ani._flags & kFlagsRemove) break;
-		if ((_vm->_char._ani._flags & kFlagsActive) == 0) break;
-		WalkNodeList *v4 = _vm->_char._builder.buildPath(data->_mousePos.x, data->_mousePos.y);
+		if (_char._ani._flags & kFlagsRemove) break;
+		if ((_char._ani._flags & kFlagsActive) == 0) break;
+		WalkNodeList *v4 = _char._builder.buildPath(data->_mousePos.x, data->_mousePos.y);
 		addJob(&jobWalk, v4, kPriority19);
 		_engineFlags |= kEngineWalking; 								   // inhibits processing of input until walking is over
 		}
@@ -706,7 +631,7 @@ void Parallaction::changeCursor(int32 index) {
 		_activeItem._id = _inventory[index]._id;
 	}
 
-	_gfx->setMousePointer(index);
+	setMousePointer(index);
 
 	return;
 }
@@ -716,81 +641,31 @@ void Parallaction::changeCursor(int32 index) {
 void Parallaction::freeCharacter() {
 	debugC(3, kDebugLocation, "freeCharacter()");
 
-	if (!IS_DUMMY_CHARACTER(_vm->_characterName)) {
+	if (!IS_DUMMY_CHARACTER(_characterName)) {
 		if (_objectsNames)
 			delete _objectsNames;
 		_objectsNames = NULL;
 
-		if (_vm->_char._ani._cnv)
-			delete _vm->_char._ani._cnv;
-		_vm->_char._ani._cnv = NULL;
+		if (_char._ani._cnv)
+			delete _char._ani._cnv;
+		_char._ani._cnv = NULL;
 
-		if (_vm->_char._talk)
-			delete _vm->_char._talk;
-		_vm->_char._talk = NULL;
+		if (_char._talk)
+			delete _char._talk;
+		_char._talk = NULL;
 
-		_vm->_gfx->freeStaticCnv(_vm->_char._head);
-		if (_vm->_char._head)
-			delete _vm->_char._head;
-		_vm->_char._head = NULL;
+		delete _char._head;
+		_char._head = NULL;
 
-		if (_vm->_char._objs)
-			delete _vm->_char._objs;
-		_vm->_char._objs = NULL;
+		if (_char._objs)
+			delete _char._objs;
+		_char._objs = NULL;
 	}
 
 	return;
 }
 
-void Parallaction::changeCharacter(const char *name) {
-	debugC(1, kDebugLocation, "changeCharacter(%s)", name);
 
-	char baseName[20];
-	if (IS_MINI_CHARACTER(name)) {
-		strcpy(baseName, name+4);
-	} else {
-		strcpy(baseName, name);
-	}
-
-	char fullName[20];
-	strcpy(fullName, name);
-	if (_engineFlags & kEngineTransformedDonna)
-		strcat(fullName, "tras");
-
-	if (scumm_stricmp(fullName, _characterName1)) {
-
-		// freeCharacter takes responsibility for checking
-		// character for sanity before memory is freed
-		freeCharacter();
-
-		Common::String oldArchive = _disk->selectArchive((_vm->getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
-		_vm->_char._ani._cnv = _disk->loadFrames(fullName);
-
-		if (!IS_DUMMY_CHARACTER(name)) {
-			if (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT))
-				_disk->selectArchive("disk0");
-
-			_vm->_char._head = _disk->loadHead(baseName);
-			_vm->_char._talk = _disk->loadTalk(baseName);
-			_vm->_char._objs = _disk->loadObjects(baseName);
-			_objectsNames = _disk->loadTable(baseName);
-
-			_soundMan->playCharacterMusic(name);
-
-			if (!(getFeatures() & GF_DEMO))
-				parseLocation("common");
-		}
-
-		if (!oldArchive.empty())
-			_disk->selectArchive(oldArchive);
-	}
-
-	strcpy(_characterName1, fullName);
-
-	debugC(1, kDebugLocation, "changeCharacter() done");
-
-	return;
-}
 
 /*
 	helper function to provide *descending* ordering of the job list
@@ -897,8 +772,7 @@ Table::~Table() {
 
 	if (!_disposeMemory) return;
 
-	for (uint32 i = 0; i < _used; i++)
-		free(_data[i]);
+	clear();
 
 	free(_data);
 
@@ -913,13 +787,345 @@ void Table::addData(const char* s) {
 
 }
 
-int16 Table::lookup(const char* s) {
+uint16 Table::lookup(const char* s) {
 
 	for (uint16 i = 0; i < _used; i++) {
 		if (!scumm_stricmp(_data[i], s)) return i + 1;
 	}
 
-	return -1;
+	return notFound;
 }
+
+void Table::clear() {
+	for (uint32 i = 0; i < _used; i++)
+		free(_data[i]);
+
+	_used = 0;
+}
+
+FixedTable::FixedTable(uint32 size, uint32 fixed) : Table(size), _numFixed(fixed) {
+}
+
+FixedTable::~FixedTable() {
+	_numFixed = 0;
+}
+
+void FixedTable::clear() {
+	for (uint32 i = _numFixed; i < _used; i++) {
+		free(_data[i]);
+		_used--;
+	}
+}
+
+
+void Parallaction::pushParserTables(OpcodeSet *opcodes, Table *statements) {
+	_opcodes.push(_currentOpcodes);
+	_statements.push(_currentStatements);
+
+	_currentOpcodes = opcodes;
+	_currentStatements = statements;
+}
+
+void Parallaction::popParserTables() {
+	assert(_opcodes.size() > 0);
+
+	_currentOpcodes = _opcodes.pop();
+	_currentStatements = _statements.pop();
+}
+
+void Parallaction::parseStatement() {
+	assert(_currentOpcodes != 0);
+
+	_lookup = _currentStatements->lookup(_tokens[0]);
+
+	debugC(9, kDebugLocation, "parseStatement: %s (lookup = %i)", _tokens[0], _lookup);
+
+	(*(*_currentOpcodes)[_lookup])();
+}
+
+
+
+
+Animation *Parallaction::findAnimation(const char *name) {
+
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++)
+		if (!scumm_stricmp((*it)->_label._text, name)) return *it;
+
+	return NULL;
+}
+
+void Parallaction::freeAnimations() {
+	_animations.clear();
+	return;
+}
+
+int compareAnimationZ(const AnimationPointer &a1, const AnimationPointer &a2) {
+	if (a1->_z == a2->_z) return 0;
+	return (a1->_z < a2->_z ? -1 : 1);
+}
+
+void Parallaction::sortAnimations() {
+	_char._ani._z = _char._ani.height() + _char._ani._top;
+	_animations.sort(compareAnimationZ);
+	return;
+}
+
+
+void Parallaction::allocateLocationSlot(const char *name) {
+	// WORKAROUND: the original code erroneously incremented
+	// _currentLocationIndex, thus producing inconsistent
+	// savegames. This workaround modified the following loop
+	// and if-statement, so the code exactly matches the one
+	// in Big Red Adventure.
+	_currentLocationIndex = -1;
+	uint16 _di = 0;
+	while (_locationNames[_di][0] != '\0') {
+		if (!scumm_stricmp(_locationNames[_di], name)) {
+			_currentLocationIndex = _di;
+		}
+		_di++;
+	}
+
+	if (_di == 120)
+		error("No more location slots available. Please report this immediately to ScummVM team.");
+
+	if (_currentLocationIndex  == -1) {
+		strcpy(_locationNames[_numLocations], name);
+		_currentLocationIndex = _numLocations;
+
+		_numLocations++;
+		_locationNames[_numLocations][0] = '\0';
+		_localFlags[_numLocations] = 0;
+	} else {
+		_localFlags[_currentLocationIndex] |= kFlagsVisited;	// 'visited'
+	}
+}
+
+
+
+void Parallaction::freeLocation() {
+	debugC(7, kDebugLocation, "freeLocation");
+
+	_soundMan->stopSfx(0);
+	_soundMan->stopSfx(1);
+	_soundMan->stopSfx(2);
+	_soundMan->stopSfx(3);
+
+	_localFlagNames->clear();
+
+	_location._walkNodes.clear();
+
+	freeZones();
+	freeAnimations();
+
+	if (_location._comment) {
+		free(_location._comment);
+	}
+	_location._comment = NULL;
+
+	_location._commands.clear();
+	_location._aCommands.clear();
+
+	return;
+}
+
+
+
+
+void Parallaction::freeBackground() {
+
+	if (!_backgroundInfo)
+		return;
+
+	_backgroundInfo->bg.free();
+	_backgroundInfo->mask.free();
+	_backgroundInfo->path.free();
+
+	_pathBuffer = 0;
+
+}
+
+void Parallaction::setBackground(const char* name, const char* mask, const char* path) {
+
+	_disk->loadScenery(*_backgroundInfo, name, mask, path);
+
+	_gfx->setPalette(_backgroundInfo->palette);
+	_gfx->_palette.clone(_backgroundInfo->palette);
+	_gfx->setBackground(&_backgroundInfo->bg);
+
+	if (_backgroundInfo->mask.data)
+		_gfx->setMask(&_backgroundInfo->mask);
+
+	if (_backgroundInfo->path.data)
+		_pathBuffer = &_backgroundInfo->path;
+
+	return;
+}
+
+void Parallaction::showLocationComment(const char *text, bool end) {
+
+	_gfx->setFont(_dialogueFont);
+
+	int16 w, h;
+	_gfx->getStringExtent(const_cast<char*>(text), 130, &w, &h);
+
+	Common::Rect r(w + (end ? 5 : 10), h + 5);
+	r.moveTo(5, 5);
+
+	_gfx->floodFill(Gfx::kBitFront, r, 0);
+	r.grow(-2);
+	_gfx->floodFill(Gfx::kBitFront, r, 1);
+	_gfx->displayWrappedString(const_cast<char*>(text), 3, 5, 0, 130);
+
+	_gfx->updateScreen();
+
+	return;
+}
+
+void Parallaction::switchBackground(const char* background, const char* mask) {
+//	printf("switchBackground(%s)", name);
+
+	Palette pal;
+
+	uint16 v2 = 0;
+	if (!scumm_stricmp(background, "final")) {
+		_gfx->clearScreen(Gfx::kBitBack);
+		for (uint16 _si = 0; _si <= 32; _si++) {
+			pal.setEntry(_si, v2, v2, v2);
+			v2 += 4;
+		}
+
+		g_system->delayMillis(20);
+		_gfx->setPalette(pal);
+		_gfx->updateScreen();
+	}
+
+	setBackground(background, mask, mask);
+
+	return;
+}
+
+
+void Parallaction::showSlide(const char *name) {
+
+	BackgroundInfo info;
+
+	_disk->loadSlide(info, name);
+
+	// TODO: avoid using screen buffers for displaying slides. Using a generic buffer
+	// allows for positioning of graphics as needed by Big Red Adventure.
+	// The main problem lies with menu, which relies on multiple buffers, mainly because
+	// it is crappy code.
+	_gfx->setBackground(&info.bg);
+	_gfx->setPalette(info.palette);
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+
+	info.bg.free();
+	info.mask.free();
+	info.path.free();
+
+	return;
+}
+
+
+
+//	displays transition before a new location
+//
+//	clears screen (in white??)
+//	shows location comment (if any)
+//	waits for mouse click
+//	fades towards game palette
+//
+void Parallaction::doLocationEnterTransition() {
+	debugC(1, kDebugLocation, "doLocationEnterTransition");
+
+    if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
+        debugC(3, kDebugLocation, "skipping location transition");
+        return; // visited
+    }
+
+	Palette pal(_gfx->_palette);
+	pal.makeGrayscale();
+	_gfx->setPalette(pal);
+
+	jobRunScripts(NULL, NULL);
+	jobEraseAnimations(NULL, NULL);
+	jobDisplayAnimations(NULL, NULL);
+
+	_gfx->swapBuffers();
+	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
+
+	showLocationComment(_location._comment, false);
+	waitUntilLeftClick();
+
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront );
+
+	// fades maximum intensity palette towards approximation of main palette
+	for (uint16 _si = 0; _si<6; _si++) {
+		pal.fadeTo(_gfx->_palette, 4);
+		_gfx->setPalette(pal);
+		waitTime( 1 );
+		_gfx->updateScreen();
+	}
+
+	debugC(1, kDebugLocation, "doLocationEnterTransition completed");
+
+	return;
+}
+
+
+
+Zone *Parallaction::findZone(const char *name) {
+
+	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++) {
+		if (!scumm_stricmp((*it)->_label._text, name)) return *it;
+	}
+
+	return findAnimation(name);
+}
+
+
+void Parallaction::freeZones() {
+	debugC(1, kDebugLocation, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
+
+	ZoneList::iterator it = _zones.begin();
+
+	while ( it != _zones.end() ) {
+
+		Zone* z = *it;
+
+		// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
+		// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
+		// but we need to check it separately here. The same workaround is applied in hitZone.
+		if (((z->_top == -1) ||
+			((z->_left == -2) && (
+				(((z->_type & 0xFFFF) == kZoneMerge) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj1)) != 0) || (isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj2)) != 0))) ||
+				(((z->_type & 0xFFFF) == kZoneGet) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.get->_icon)) != 0)))
+			))) &&
+			((_engineFlags & kEngineQuit) == 0)) {
+
+			debugC(1, kDebugLocation, "freeZones preserving zone '%s'", z->_label._text);
+
+			it++;
+
+		} else
+
+			it = _zones.erase(it);
+
+	}
+
+	return;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 } // namespace Parallaction

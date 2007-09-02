@@ -28,6 +28,7 @@
 // Polygon Hit Test code ( HitTestPoly() ) adapted from code (C) Eric Haines
 // appearing in Graphics Gems IV, "Point in Polygon Strategies."
 // p. 24-46, code: p. 34-45
+
 #include "saga/saga.h"
 
 #include "saga/gfx.h"

@@ -117,9 +117,12 @@ void drawInventoryItem(uint16 pos, InventoryItem *item) {
 	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
+	Common::Rect r;
+	_vm->_char._objs->getRect(0, r);
+
 	// FIXME: this will end up in a general blit function
-	byte* s = _vm->_char._objs->getFramePtr(item->_index);
-	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * _vm->_char._objs->_height * INVENTORY_WIDTH;
+	byte* s = _vm->_char._objs->getData(item->_index);
+	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * r.height() * INVENTORY_WIDTH;
 	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
 		memcpy(d, s, INVENTORYITEM_WIDTH);
 
@@ -157,7 +160,7 @@ void Parallaction::dropItem(uint16 v) {
 	bool found = false;
 	for (uint16 slot = 0; slot < INVENTORY_MAX_ITEMS - 1; slot++) {
 
-		if (v + INVENTORY_FIRST_ITEM == _inventory[slot]._index) {
+		if (v == _inventory[slot]._index) {
 			found = true;
 		}
 
@@ -210,8 +213,10 @@ void highlightInventoryItem(int16 pos, byte color) {
 	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
-	Common::Rect r(INVENTORYITEM_WIDTH, _vm->_char._objs->_height);
-	r.moveTo(col * INVENTORYITEM_WIDTH, line * _vm->_char._objs->_height);
+	Common::Rect r;
+	_vm->_char._objs->getRect(0, r);
+	r.setWidth(INVENTORYITEM_WIDTH);
+	r.moveTo(col * INVENTORYITEM_WIDTH, line * r.height());
 
 	drawBorder(r, _buffer, color);
 
@@ -280,8 +285,8 @@ void openInventory() {
 	int16 slot = getNumUsedSlots();
 	uint16 lines = (slot + 4) / INVENTORY_ITEMS_PER_LINE;
 
-	_invPosition.x = CLIP(_vm->_mousePos.x - (INVENTORY_WIDTH / 2), 0, SCREEN_WIDTH - INVENTORY_WIDTH);
-	_invPosition.y = CLIP(_vm->_mousePos.y - 2 - (lines * INVENTORYITEM_HEIGHT), 0, SCREEN_HEIGHT - lines * INVENTORYITEM_HEIGHT);
+	_invPosition.x = CLIP(_vm->_mousePos.x - (INVENTORY_WIDTH / 2), 0, (int)(_vm->_screenWidth - INVENTORY_WIDTH));
+	_invPosition.y = CLIP(_vm->_mousePos.y - 2 - (lines * INVENTORYITEM_HEIGHT), 0, (int)(_vm->_screenHeight - lines * INVENTORYITEM_HEIGHT));
 
 	refreshInventory();
 

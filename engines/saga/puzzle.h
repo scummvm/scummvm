@@ -23,6 +23,8 @@
  *
  */
 
+// ITE puzzle scene
+
 #ifndef SAGA_PUZZLE_H
 #define SAGA_PUZZLE_H
 

@@ -166,19 +166,17 @@ void Video::retrace(bool mouse) {
 	if (_vm->_global->_primarySurfDesc) {
 		g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() +
 				_scrollOffsetY * _surfWidth + _scrollOffsetX, _surfWidth,
-				0, 0, 320, _splitHeight1);
+				0, 0, _vm->_width, _splitHeight1);
 		if (_splitHeight2 > 0)
 			g_system->copyRectToScreen(_vm->_global->_primarySurfDesc->getVidMem() +
 					_splitStart * _surfWidth, _surfWidth, 0,
-					200 - _splitHeight2, 320, _splitHeight2);
+					_vm->_height - _splitHeight2, _vm->_width, _splitHeight2);
 		g_system->updateScreen();
 	}
 }
 
 void Video::waitRetrace(bool mouse) {
-	uint32 time;
-
-	time = _vm->_util->getTimeKey();
+	uint32 time = _vm->_util->getTimeKey();
 	retrace(mouse);
 	_vm->_util->delay(MAX(1, 10 - (int)(_vm->_util->getTimeKey() - time)));
 }

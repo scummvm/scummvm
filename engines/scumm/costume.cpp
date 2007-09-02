@@ -32,9 +32,6 @@
 
 namespace Scumm {
 
-#ifdef PALMOS_68K
-const byte *smallCostumeScaleTable;
-#else
 const byte smallCostumeScaleTable[256] = {
 	0xFF, 0xFD, 0x7D, 0xBD, 0x3D, 0xDD, 0x5D, 0x9D,
 	0x1D, 0xED, 0x6D, 0xAD, 0x2D, 0xCD, 0x4D, 0x8D,
@@ -69,7 +66,6 @@ const byte smallCostumeScaleTable[256] = {
 	0x0E, 0x8E, 0x4E, 0xCE, 0x2E, 0xAE, 0x6E, 0xEE,
 	0x1E, 0x9E, 0x5E, 0xDE, 0x3E, 0xBE, 0x7E, 0xFE
 };
-#endif
 
 static const int v1MMNESLookup[25] = {
 	0x00, 0x03, 0x01, 0x06, 0x08,
@@ -1165,16 +1161,3 @@ byte C64CostumeLoader::increaseAnim(Actor *a, int slot) {
 
 
 } // End of namespace Scumm
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Costume)
-_GSETPTR(Scumm::smallCostumeScaleTable, GBVARS_SMALLSCALETABLE_INDEX, byte, GBVARS_SCUMM)
-_GEND
-
-_GRELEASE(Costume)
-_GRELEASEPTR(GBVARS_SMALLSCALETABLE_INDEX, GBVARS_SCUMM)
-_GEND
-
-#endif

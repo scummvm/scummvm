@@ -29,6 +29,7 @@
 #include "lure/screen.h"
 #include "lure/lure.h"
 #include "lure/room.h"
+#include "lure/sound.h"
 #include "lure/strings.h"
 #include "common/endian.h"
 
@@ -631,7 +632,6 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
-	Room &room = Room::getReference();
 	Resources &res = Resources::getReference();
 	LureEngine &engine = LureEngine::getReference();
 	int selectedLine = -1;
@@ -655,7 +655,6 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 		return false;
 	}
 
-	room.update();
 	Surface *s = new Surface(INFO_DIALOG_WIDTH, SR_SAVEGAME_NAMES_Y + 
 		numSaves * FONT_HEIGHT + FONT_HEIGHT + 2);
 
@@ -776,6 +775,141 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	Memory::dealloc(saveNames);
 
 	return doneFlag;
+}
+
+/*--------------------------------------------------------------------------*/
+
+struct RestartRecordPos {
+	int16 x, y;
+};
+
+struct RestartRecord {
+	Common::Language Language;
+	int16 width, height;
+	RestartRecordPos BtnRestart;
+	RestartRecordPos BtnRestore;
+};
+
+RestartRecord buttonBounds[] = {
+	{ EN_ANY, 48, 14, { 118, 152 }, { 168, 152 } },
+	{ DE_DEU, 48, 14, { 106, 152 }, { 168, 152 } },
+	{ UNK_LANG, 48, 14, { 112, 152 }, { 168, 152 } }
+};
+
+
+bool RestartRestoreDialog::show() {
+	Resources &res = Resources::getReference();
+	Events &events = Events::getReference();
+	Mouse &mouse = Mouse::getReference();
+	Screen &screen = Screen::getReference();
+	LureEngine &engine = LureEngine::getReference();
+
+	Sound.killSounds();
+	Sound.musicInterface_Play(60, true, 0);
+	mouse.setCursorNum(CURSOR_ARROW);
+
+	// See if there are any savegames that can be restored
+	String *firstSave = engine.detectSave(1);
+	bool restartFlag = (firstSave == NULL);
+	int highlightedButton = -1;
+
+	if (!restartFlag) {
+		Memory::dealloc(firstSave);
+
+		// Get the correct button bounds record to use
+		RestartRecord *btnRecord = &buttonBounds[0];
+		while ((btnRecord->Language != engine.getLanguage()) && 
+			   (btnRecord->Language != UNK_LANG))
+			++btnRecord;
+
+		// Fade out the screen
+		screen.paletteFadeOut(RES_PALETTE_ENTRIES);
+
+		// Get the palette that will be used, and first fade out the prior screen
+		Palette p(RESTART_RESOURCE_ID - 1);
+
+		// Turn on the mouse
+		mouse.cursorOn();
+
+		// Load the restore/restart screen image
+		Surface *s = Surface::getScreen(RESTART_RESOURCE_ID);
+		s->copyTo(&screen.screen(), 0, MENUBAR_Y_SIZE);
+		delete s;
+
+		res.activeHotspots().clear();
+		Hotspot *btnHotspot = new Hotspot();
+
+		// Restart button
+		btnHotspot->setSize(btnRecord->width, btnRecord->height);
+		btnHotspot->setPosition(btnRecord->BtnRestart.x, btnRecord->BtnRestart.y);
+		btnHotspot->setAnimation(0x184B);
+		btnHotspot->copyTo(&screen.screen());
+
+		// Restore button
+		btnHotspot->setFrameNumber(1);
+		btnHotspot->setPosition(btnRecord->BtnRestore.x, btnRecord->BtnRestore.y);
+		btnHotspot->copyTo(&screen.screen());
+
+		screen.update();
+		screen.paletteFadeIn(&p);
+
+		// Event loop for making selection
+		while (!events.quitFlag) {
+			// Handle events
+			if (events.pollEvent()) {
+				if ((events.type() == Common::EVENT_LBUTTONDOWN) && (highlightedButton != -1)) {
+					mouse.waitForRelease();
+					break;
+				}
+			}
+
+			// Check if the pointer is over either button
+			int currentButton = -1;
+			if ((mouse.y() >= btnRecord->BtnRestart.y) &&
+				(mouse.y() < btnRecord->BtnRestart.y + btnRecord->height)) {
+				// Check whether the Restart or Restore button is highlighted
+				if ((mouse.x() >= btnRecord->BtnRestart.x) &&
+					(mouse.x() < btnRecord->BtnRestart.x + btnRecord->width))
+					currentButton = 0;
+				else if ((mouse.x() >= btnRecord->BtnRestore.x) &&
+					(mouse.x() < btnRecord->BtnRestore.x + btnRecord->width))
+					currentButton = 1;
+			}
+
+			// Take care of highlighting as the selected button changes
+			if (currentButton != highlightedButton) {
+				highlightedButton = currentButton;
+
+				// Restart button
+				btnHotspot->setFrameNumber((highlightedButton == 0) ? 2 : 0);
+				btnHotspot->setPosition(btnRecord->BtnRestart.x, btnRecord->BtnRestart.y);
+				btnHotspot->copyTo(&screen.screen());
+
+				// Restore button
+				btnHotspot->setFrameNumber((highlightedButton == 1) ? 3 : 1);
+				btnHotspot->setPosition(btnRecord->BtnRestore.x, btnRecord->BtnRestore.y);
+				btnHotspot->copyTo(&screen.screen());
+			}
+
+
+			screen.update();
+			g_system->delayMillis(10);
+		}
+
+		restartFlag = highlightedButton == 0;
+		delete btnHotspot;
+	}
+
+	Sound.killSounds();
+
+	if (!restartFlag && !events.quitFlag) {
+		// Need to show Restore game dialog
+		if (!SaveRestoreDialog::show(false))
+			// User cancelled, so fall back on Restart
+			restartFlag = true;
+	}
+
+	return restartFlag;
 }
 
 } // end of namespace Lure

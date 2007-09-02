@@ -81,7 +81,6 @@ private:
 		int16 gameStateValue;
 	};
 
-#ifndef PALMOS_68K
 	struct SpeechParameters {
 		const char *name;
 		signed char state,faceDirection;
@@ -89,17 +88,6 @@ private:
 		const char *animation;
 		signed char ff;
 	};
-#else
-public:
-	struct SpeechParameters {
-		const char name[11];
-		signed char state,faceDirection;
-		signed char body,bf,rf,af;
-		const char animation[80];
-		signed char ff;
-	};
-private:
-#endif
 
 	QueenEngine *_vm;
 
@@ -154,9 +142,7 @@ private:
 	char _talkString[5][MAX_STRING_SIZE];
 	char _joeVoiceFilePrefix[5][MAX_STRING_SIZE];
 
-#ifndef PALMOS_68K
 	static const SpeechParameters _speechParameters[];
-#endif
 
 	Talk(QueenEngine *vm);
 	~Talk();

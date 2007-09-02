@@ -1136,13 +1136,13 @@ bool Inter_v1::o1_callSub(OpFuncParams &params) {
 	}
 
 	// Skipping the copy protection screen in Gobliiins
-	if (!_vm->_copyProtection && (_vm->_features & GF_GOB1) && (offset == 3905)
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob1) && (offset == 3905)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot)) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return false;
 	}
 	// Skipping the copy protection screen in Gobliins 2
-	if (!_vm->_copyProtection && (_vm->_features & GF_GOB2) && (offset == 1746)
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeGob2) && (offset == 1746)
 			&& !scumm_stricmp(_vm->_game->_curTotFile, _vm->_startTot0)) {
 		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
 		return false;
@@ -1174,6 +1174,10 @@ bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
 
 	id = load16();
 	index = (int8) *_vm->_global->_inter_execPtr++;
+
+	if ((index * _vm->_draw->_cursorWidth) >= _vm->_draw->_cursorSprites->getWidth())
+		return false;
+
 	itemPtr = &_vm->_game->_totResourceTable->items[id];
 	offset = itemPtr->offset;
 
@@ -1613,7 +1617,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
 
 		if (_vm->_global->_videoMode < 0x13) {
-			_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaSmallPalette;
+			_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
 			_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, 0, 0);
 			return false;
 		}
@@ -1650,8 +1654,9 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	// WORKAROUND for bug #1726130: Ween busy-waits in the intro for a counter
 	// to become 5000. We deliberately slow down busy-waiting, so we shorten
 	// the counting, too.
-	if (((_vm->_global->_inter_execPtr - _vm->_game->_totFileData) == 729) &&
-	    (VAR(59) < 4000) && !scumm_stricmp(_vm->_game->_curTotFile, "intro5.tot"))
+	if ((_vm->getGameType() == kGameTypeWeen) && (VAR(59) < 4000) &&
+	    ((_vm->_global->_inter_execPtr - _vm->_game->_totFileData) == 729) &&
+	    !scumm_stricmp(_vm->_game->_curTotFile, "intro5.tot"))
 		WRITE_VAR(59, 4000);
 
 	switch (cmd) {
@@ -1700,6 +1705,10 @@ bool Inter_v1::o1_capturePush(OpFuncParams &params) {
 	top = _vm->_parse->parseValExpr();
 	width = _vm->_parse->parseValExpr();
 	height = _vm->_parse->parseValExpr();
+
+	if ((width < 0) || (height < 0))
+		return false;
+
 	_vm->_game->capturePush(left, top, width, height);
 	(*_vm->_scenery->_pCaptureCounter)++;
 	return false;
@@ -1887,7 +1896,9 @@ bool Inter_v1::o1_copySprite(OpFuncParams &params) {
 }
 
 bool Inter_v1::o1_fillRect(OpFuncParams &params) {
-	_vm->_draw->_destSurface = load16();
+	int16 destSurf;
+
+	_vm->_draw->_destSurface = destSurf = load16();
 
 	_vm->_draw->_destSpriteX = _vm->_parse->parseValExpr();
 	_vm->_draw->_destSpriteY = _vm->_parse->parseValExpr();
@@ -1895,6 +1906,19 @@ bool Inter_v1::o1_fillRect(OpFuncParams &params) {
 	_vm->_draw->_spriteBottom = _vm->_parse->parseValExpr();
 
 	_vm->_draw->_backColor = _vm->_parse->parseValExpr();
+
+	if (!_vm->_draw->_spritesArray[(destSurf > 100) ? (destSurf - 80) : destSurf])
+		return false;
+
+	if (_vm->_draw->_spriteRight < 0) {
+		_vm->_draw->_destSpriteX += _vm->_draw->_spriteRight - 1;
+		_vm->_draw->_spriteRight = -_vm->_draw->_spriteRight + 2;
+	}
+	if (_vm->_draw->_spriteBottom < 0) {
+		_vm->_draw->_destSpriteY += _vm->_draw->_spriteBottom - 1;
+		_vm->_draw->_spriteBottom = -_vm->_draw->_spriteBottom + 2;
+	}
+
 	_vm->_draw->spriteOperation(DRAW_FILLRECT);
 	return false;
 }
@@ -2201,22 +2225,23 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 	WRITE_VAR(1, 1);
 	handle = _vm->_dataIO->openData(_vm->_global->_inter_resStr);
 	if (handle >= 0) {
+		DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
+
 		_vm->_draw->animateCursor(4);
 		if (offset < 0)
-			_vm->_dataIO->seekData(handle, -offset - 1, SEEK_END);
+			stream->seek(-offset - 1, SEEK_END);
 		else
-			_vm->_dataIO->seekData(handle, offset, SEEK_SET);
+			stream->seek(offset);
 
 		if (((dataVar >> 2) == 59) && (size == 4))
-			WRITE_VAR(59, _vm->_dataIO->readUint32(handle));
+			WRITE_VAR(59, stream->readUint32LE());
 		else
-			retSize = _vm->_dataIO->readData(handle,
-					_vm->_global->_inter_variables + dataVar, size);
-
-		_vm->_dataIO->closeData(handle);
+			retSize = stream->read(_vm->_global->_inter_variables + dataVar, size);
 
 		if (retSize == size)
 			WRITE_VAR(1, 0);
+
+		delete stream;
 	}
 
 	if (_vm->_game->_extHandle >= 0)

@@ -130,10 +130,7 @@ void Surface::drawPolyLine(const Point *points, int count, int color) {
 	}
 }
 
-/**
-* Dissolve one image with another.
-* If flags if set to 1, do zero masking.
-*/
+// Dissolve one image with another. If flags is set to 1, do zero masking.
 void Surface::transitionDissolve(const byte *sourceBuffer, const Common::Rect &sourceRect, int flags, double percent) {
 #define XOR_MASK 0xB400;
 	int pixelcount = w * h;
@@ -359,8 +356,6 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	// Exponential fade
 	fpercent = percent * percent;
 
-	fpercent = 1.0 - fpercent;
-
 	// Use the correct percentage change per frame for each palette entry
 	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
 		if (i < from || i >= from + numcolors)
@@ -368,7 +363,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 		else
 			palE = &srcPal[i];
 
-		new_entry = (int)(palE->red - palE->red * fpercent);
+		new_entry = (int)(palE->red * fpercent);
 
 		if (new_entry < 0) {
 			ppal[0] = 0;
@@ -376,7 +371,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 			ppal[0] = (byte)new_entry;
 		}
 
-		new_entry = (int)(palE->green - palE->green * fpercent);
+		new_entry = (int)(palE->green * fpercent);
 
 		if (new_entry < 0) {
 			ppal[1] = 0;
@@ -384,7 +379,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 			ppal[1] = (byte) new_entry;
 		}
 
-		new_entry = (int)(palE->blue - palE->blue * fpercent);
+		new_entry = (int)(palE->blue * fpercent);
 
 		if (new_entry < 0) {
 			ppal[2] = 0;
@@ -405,7 +400,85 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
 }
 
+// Used in IHNM only
+void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 numColors, double percent) {
+ 	int i;
+	int new_entry;
+	byte *ppal;
+	PalEntry *palE;
+	double fpercent;
+
+	from = from > 256 ? 256 : from;
+	from = from < 0 ? 0 : from;
+	to = to > 256 ? 256 : to;
+	to = to < 0 ? 0 : to;
+
+	// TODO: finish this (use from and to properly). The fpercent value will need to be
+	// correctly assigned, based on from and to. For now, only certain cases work correctly
+	if (from == 0 || to == 0) {
+		// This case works like palToBlack or blackToPal, so no changes are needed
+	} else if ((from / to == 2) || (to / from == 2)) {
+		// It's easy to use the current algorithm if we're trying to fade to half the value
+		percent /= 2;
+		if (from < to)
+			percent += 0.5;
+	} else {
+		// FIXME: In all other cases, throw a warning, as we'll fade out to/from black
+		if (percent == 0.0)
+			warning("Screen fading effect not supported yet, fading to/from black for now");
+	}
+
+	// Exponential fade
+	percent = percent > 1.0 ? 1.0 : percent;
+	fpercent = percent * percent;
+
+	if (from > to)
+		fpercent = 1.0 - fpercent;
+
+	// Use the correct percentage change per frame for each palette entry
+	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 4) {
+		if (i < start || i >= start + numColors)
+			palE = &_globalPalette[i];
+		else
+			palE = &srcPal[i];
+
+		new_entry = (int)(palE->red * fpercent);
+
+		if (new_entry < 0) {
+			ppal[0] = 0;
+		} else {
+			ppal[0] = (byte) new_entry;
+		}
+
+		new_entry = (int)(palE->green * fpercent);
+
+		if (new_entry < 0) {
+			ppal[1] = 0;
+		} else {
+			ppal[1] = (byte) new_entry;
+		}
+
+		new_entry = (int)(palE->blue * fpercent);
+
+		if (new_entry < 0) {
+			ppal[2] = 0;
+		} else {
+			ppal[2] = (byte) new_entry;
+		}
+		ppal[3] = 0;
+	}
+
+	// Color 0 should always be black in IHNM
+	memset(&_currentPal[0 * 4], 0, 4);
+
+	_system->setPalette(_currentPal, 0, PAL_ENTRIES);
+}
+
 void Gfx::showCursor(bool state) {
+	// Don't show the mouse cursor in the non-interactive part of the IHNM demo
+	if (_vm->_scene->isNonInteractiveIHNMDemoPart())
+		state = false;
+
 	CursorMan.showMouse(state);
 }
 
@@ -431,7 +504,10 @@ void Gfx::setCursor(CursorType cursorType) {
 
 		switch (cursorType) {
 		case kCursorBusy:
-			resourceId = RID_IHNM_HOURGLASS_CURSOR;
+			if (_vm->getGameId() != GID_IHNM_DEMO)
+				resourceId = RID_IHNM_HOURGLASS_CURSOR;
+			else
+				resourceId = (uint32)-1;
 			break;
 		default:
 			resourceId = (uint32)-1;

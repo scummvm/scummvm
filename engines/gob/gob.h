@@ -42,7 +42,7 @@ class Draw;
 class CDROM;
 class DataIO;
 class Goblin;
-class ImdPlayer;
+class VideoPlayer;
 class Init;
 class Inter;
 class Map;
@@ -78,14 +78,23 @@ class Adlib;
 #define VAR(var)			READ_VAR_UINT32(var)
 #define VAR_ADDRESS(var)		((uint32 *) VARP((var) << 2))
 
-enum {
-	GF_GOB1 = 1 << 0,
-	GF_GOB2 = 1 << 1,
-	GF_GOB3 = 1 << 2,
-	GF_WOODRUFF = 1 << 3,
-	GF_BARGON = 1 << 4,
-	GF_CD = 1 << 5,
-	GF_EGA = 1 << 6
+enum GameType {
+	kGameTypeNone = 0,
+	kGameTypeGob1,
+	kGameTypeGob2,
+	kGameTypeGob3,
+	kGameTypeWoodruff,
+	kGameTypeBargon,
+	kGameTypeWeen,
+	kGameTypeLostInTime
+};
+
+enum Features {
+	kFeaturesNone = 0,
+	kFeaturesCD = 1 << 0,
+	kFeaturesEGA = 1 << 1,
+	kFeaturesAdlib = 1 << 2,
+	kFeatures640 = 1 << 3
 };
 
 enum {
@@ -165,6 +174,9 @@ protected:
 	int go();
 	int init();
 
+	bool initGameParts();
+	void deinitGameParts();
+
 	bool detectGame();
 
 public:
@@ -172,9 +184,15 @@ public:
 
 	Common::RandomSource _rnd;
 
+	GameType _gameType;
 	int32 _features;
 	Common::Language _language;
 	Common::Platform _platform;
+
+	uint16 _width;
+	uint16 _height;
+	uint8 _mode;
+
 	char *_startTot;
 	char *_startTot0;
 	bool _copyProtection;
@@ -199,7 +217,7 @@ public:
 	Inter *_inter;
 	SaveLoad *_saveLoad;
 	Adlib *_adlib;
-	ImdPlayer *_imdPlayer;
+	VideoPlayer *_vidPlayer;
 
 	void shutdown();
 
@@ -210,6 +228,12 @@ public:
 	}
 	void validateLanguage();
 	void validateVideoMode(int16 videoMode);
+
+	GameType getGameType() { return _gameType; }
+	bool isCD() { return (_features & kFeaturesCD) != 0; }
+	bool isEGA() { return (_features & kFeaturesEGA) != 0; }
+	bool is640() { return (_features & kFeatures640) != 0; }
+	bool hasAdlib() { return (_features & kFeaturesAdlib) != 0; }
 
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();

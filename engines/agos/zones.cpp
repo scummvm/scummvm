@@ -44,6 +44,25 @@ void AGOSEngine::unfreezeBottom() {
 	_vgaFrozenBase = _vgaRealBase;
 }
 
+static const uint8 zoneTable[160] = {
+	0,  0,  2,  2,  2,  2,  0,  2,  2,  2,
+	3,  0,  0,  0,  0,  0,  0,  0,  1,  0,
+	3,  3,  3,  1,  3,  0,  0,  0,  1,  0,
+	2,  0,  3,  0,  3,  3,  0,  1,  1,  0,
+	1,  2,  2,  2,  0,  2,  2,  2,  0,  2,
+	1,  2,  2,  2,  0,  2,  2,  2,  2,  2,
+	2,  2,  2,  1,  2,  2,  2,  2,  2,  2,
+	2,  2,  2,  2,  2,  2,  2,  2,  2,  2,
+	2,  2,  0,  2,  0,  3,  2,  2,  2,  3,
+	2,  3,  3,  3,  1,  3,  3,  1,  1,  0,
+	2,  2,  2,  2,  2,  2,  2,  2,  2,  2,
+	2,  2,  2,  2,  2,  0,  0,  2,  2,  0,
+	0,  2,  0,  2,  2,  2,  0,  0,  0,  0,
+	0,  0,  0,  0,  0,  2,  2,  2,  2,  2,
+	2,  0,  2,  0,  0,  2,  2,  0,  2,  2,
+	2,  2,  2,  2,  2,  0,  0,  0,  0,  0,
+};
+
 void AGOSEngine::loadZone(uint16 zoneNum) {
 	VgaPointersEntry *vpe;
 
@@ -56,7 +75,13 @@ void AGOSEngine::loadZone(uint16 zoneNum) {
 	// Loading order is important
 	// due to resource managment
 
-	loadVGAVideoFile(zoneNum, 2);
+	if (getPlatform() == Common::kPlatformAmiga && getGameType() == GType_WW &&
+		zoneTable[zoneNum] == 3) {
+		uint8 num = (zoneNum >= 85) ? 94 : 18;
+		loadVGAVideoFile(num, 2);
+	} else {
+		loadVGAVideoFile(zoneNum, 2);
+	}
 	vpe->vgaFile2 = _block;
 	vpe->vgaFile2End = _blockEnd;
 

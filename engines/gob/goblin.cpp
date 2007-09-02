@@ -1698,6 +1698,9 @@ void Goblin::playSounds(Mult::Mult_Object *obj) {
 	int16 sndSlot;
 	int16 frame;
 
+	if (!obj->goblinStates)
+		return;
+
 	animData = obj->pAnimData;
 
 	for (int i = 1; i <= obj->goblinStates[animData->state][0].dataCount; i++) {

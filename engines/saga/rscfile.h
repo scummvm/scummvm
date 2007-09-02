@@ -83,6 +83,8 @@ struct ResourceContext {
 
 	Common::File *getFile(ResourceData *resourceData) const {
 		if (resourceData->patchData != NULL) {
+			if (!resourceData->patchData->_patchFile->isOpen())
+				resourceData->patchData->_patchFile->open(resourceData->patchData->_patchDescription->fileName);
 			return resourceData->patchData->_patchFile;
 		} else {
 			return file;

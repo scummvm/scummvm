@@ -23,7 +23,6 @@
  *
  */
 
-
 // Intro sequence scene procedures
 
 #include "saga/saga.h"

@@ -466,7 +466,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 			moveOffset += 2 * sizeof(uint16);
 
 			if (v1 == opponent.fwblocking) {
-				Sound.playSound(42);
+				Sound.addSound(42);
 				moveOffset = v2;
 			}
 			break;
@@ -478,7 +478,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 			if (fighter.fwdist <= FIGHT_DISTANCE) {
 				if (h.hotspotId() == PLAYER_ID) {
 					// Player hits opponent
-					Sound.playSound(52);
+					Sound.addSound(52);
 
 					if (opponent.fwhits != 5) {
 						opponent.fwseq_ad = v1;
@@ -490,13 +490,13 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 					}
 				} else {
 					// Opponent hit player
-					Sound.playSound(37);
+					Sound.addSound(37);
 					opponent.fwseq_ad = v1;
 					if (++opponent.fwhits == 10) {
 						// Player has been killed
 						fighter.fwhits = 10;
 						opponent.fwseq_ad = FIGHT_PLAYER_DIES;
-						Sound.playSound(36);
+						Sound.addSound(36);
 					}
 				}
 			}
@@ -526,7 +526,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 
 		case 0xFFEA:
 			// Fight sound
-			Sound.playSound(getWord(moveOffset));
+			Sound.addSound(getWord(moveOffset) & 0xff);
 			moveOffset += sizeof(uint16);
 			break;
 

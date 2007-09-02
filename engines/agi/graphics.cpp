@@ -68,7 +68,69 @@ uint8 egaPalette[16 * 3] = {
 };
 
 /**
- * First generation Amiga AGI palette.
+ * Atari ST AGI palette.
+ * Used by all of the tested Atari ST AGI games
+ * from Donald Duck's Playground (1986) to Manhunter II (1989).
+ * 16 RGB colors. 3 bits per color component.
+ */
+uint8 atariStAgiPalette[16 * 3] = {
+	0x0, 0x0, 0x0,
+	0x0, 0x0, 0x7,
+	0x0, 0x4, 0x0,
+	0x0, 0x5, 0x4,
+	0x5, 0x0, 0x0,
+	0x5, 0x3, 0x6,
+	0x4, 0x3, 0x0,
+	0x5, 0x5, 0x5,
+	0x3, 0x3, 0x2,
+	0x0, 0x5, 0x7,
+	0x0, 0x6, 0x0,
+	0x0, 0x7, 0x6,
+	0x7, 0x2, 0x3,
+	0x7, 0x4, 0x7,
+	0x7, 0x7, 0x4,
+	0x7, 0x7, 0x7
+};
+
+/**
+ * Second generation Apple IIGS AGI palette.
+ * A 16-color, 12-bit RGB palette.
+ *
+ * Used by at least the following Apple IIGS AGI versions:
+ * 1.003 (Leisure Suit Larry I  v1.0E, intro says 1987)
+ * 1.005 (AGI Demo 2            1987-06-30?)
+ * 1.006 (King's Quest I        v1.0S 1988-02-23)
+ * 1.007 (Police Quest I        v2.0B 1988-04-21 8:00am)
+ * 1.013 (King's Quest II       v2.0A 1988-06-16 (CE))
+ * 1.013 (Mixed-Up Mother Goose v2.0A 1988-05-31 10:00am)
+ * 1.014 (King's Quest III      v2.0A 1988-08-28 (CE))
+ * 1.014 (Space Quest II        v2.0A, LOGIC.141 says 1988)
+ * 2.004 (Manhunter I           v2.0E 1988-10-05 (CE))
+ * 2.006 (King's Quest IV       v1.0K 1988-11-22 (CE))
+ * 3.001 (Black Cauldron        v1.0O 1989-02-24 (CE))
+ * 3.003 (Gold Rush!            v1.0M 1989-02-28 (CE))
+ */
+uint8 appleIIgsAgiPaletteV2[16 * 3] = {
+	0x0, 0x0, 0x0,
+	0x0, 0x0, 0xF,
+	0x0, 0x8, 0x0,
+	0x0, 0xD, 0xB,
+	0xC, 0x0, 0x0,
+	0xB, 0x7, 0xD,
+	0x8, 0x5, 0x0,
+	0xB, 0xB, 0xB,
+	0x7, 0x7, 0x7,
+	0x0, 0xB, 0xF,
+	0x0, 0xE, 0x0,
+	0x0, 0xF, 0xD,
+	0xF, 0x9, 0x8,
+	0xD, 0x9, 0xF, // Only this differs from the 1st generation palette
+	0xE, 0xE, 0x0,
+	0xF, 0xF, 0xF
+};
+
+/**
+ * First generation Amiga & Apple IIGS AGI palette.
  * A 16-color, 12-bit RGB palette.
  *
  * Used by at least the following Amiga AGI versions:
@@ -78,6 +140,9 @@ uint8 egaPalette[16 * 3] = {
  * 2.107 (King's Quest II  v2.0J 1987-01-29)
  * x.yyy (Black Cauldron   v2.00 1987-06-14)
  * x.yyy (Larry I          v1.05 1987-06-26)
+ *
+ * Also used by at least the following Apple IIGS AGI versions:
+ * 1.002 (Space Quest I, intro says v2.2 1987)
  */
 uint8 amigaAgiPaletteV1[16 * 3] = {
 	0x0, 0x0, 0x0,
@@ -467,7 +532,7 @@ static struct UpdateBlock update = {
 	MAX_INT, MAX_INT, 0, 0
 };
 
-GfxMgr::GfxMgr(AgiEngine *vm) : _vm(vm) {
+GfxMgr::GfxMgr(AgiBase *vm) : _vm(vm) {
 	_shakeH = NULL;
 	_shakeV = NULL;
 	_agipalFileNum = 0;
@@ -846,7 +911,27 @@ static const byte sciMouseCursor[] = {
 };
 
 /**
- * RGBA-palette for the black and white SCI-style arrow cursor.
+ * A black and white Apple IIGS style arrow cursor (9x11).
+ * 0 = Transparent.
+ * 1 = Black (#000000 in 24-bit RGB).
+ * 2 = White (#FFFFFF in 24-bit RGB).
+ */
+static const byte appleIIgsMouseCursor[] = {
+	2,2,0,0,0,0,0,0,0,
+	2,1,2,0,0,0,0,0,0,
+	2,1,1,2,0,0,0,0,0,
+	2,1,1,1,2,0,0,0,0,
+	2,1,1,1,1,2,0,0,0,
+	2,1,1,1,1,1,2,0,0,
+	2,1,1,1,1,1,1,2,0,
+	2,1,1,1,1,1,1,1,2,
+	2,1,1,2,1,1,2,2,0,
+	2,2,2,0,2,1,1,2,0,
+	0,0,0,0,0,2,2,2,0
+};
+
+/**
+ * RGBA-palette for the black and white SCI and Apple IIGS arrow cursors.
  */
 static const byte sciMouseCursorPalette[] = {
 	0x00, 0x00, 0x00,	0x00, // Black
@@ -993,7 +1078,7 @@ void GfxMgr::putPixelsA(int x, int y, int n, uint8 *p) {
 	} else {
 		const uint16 mask = _vm->getFeatures() & (GF_AGI256 | GF_AGI256_2) && !_vm->_debug.priority ? 0xffff : 0x0f0f;
 		for (x *= 2; n--; p++, x += 2) {
-			register uint16 q = ((uint16) * p << 8) | *p;
+			register uint16 q = ((uint16)*p << 8) | *p;
 			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = (q >> rShift) & mask;
 		}
 	}

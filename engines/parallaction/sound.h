@@ -108,6 +108,22 @@ public:
 	void playLocationMusic(const char *location);
 };
 
+class DummySoundMan : public SoundMan {
+
+public:
+	DummySoundMan(Parallaction *vm) : SoundMan(vm) { }
+	~DummySoundMan()  { }
+	void playMusic()  { }
+	void stopMusic()  { }
+
+	void playSfx(const char *filename, uint channel, bool looping, int volume, int rate)  { }
+	void stopSfx(uint channel)  { }
+
+	void playCharacterMusic(const char *character)  { }
+	void playLocationMusic(const char *location)  { }
+
+};
+
 } // namespace Parallaction
 
 #endif

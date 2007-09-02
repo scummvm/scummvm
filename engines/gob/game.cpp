@@ -140,8 +140,18 @@ byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
 	size = item->size;
 	isPacked = (item->width & 0x8000) != 0;
 
-	if (pResWidth != 0) {
+	if ((pResWidth != 0) && (pResHeight != 0)) {
 		*pResWidth = item->width & 0x7FFF;
+
+		if (*pResWidth & 0x4000)
+			size += 1 << 16;
+		if (*pResWidth & 0x2000)
+			size += 2 << 16;
+		if (*pResWidth & 0x1000)
+			size += 4 << 16;
+
+		*pResWidth &= 0xFFF;
+
 		*pResHeight = item->height;
 		debugC(7, kDebugFileIO, "loadExtData(%d, %d, %d)",
 				itemId, *pResWidth, *pResHeight);
@@ -164,8 +174,10 @@ byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
 	} else
 		handle = _extHandle;
 
+	DataStream *stream = _vm->_dataIO->openAsStream(handle);
+
 	debugC(7, kDebugFileIO, "off: %d size: %d", offset, tableSize);
-	_vm->_dataIO->seekData(handle, offset + tableSize, SEEK_SET);
+	stream->seek(offset + tableSize);
 	realSize = size;
 	if (isPacked)
 		dataBuf = new byte[size + 2];
@@ -175,11 +187,13 @@ byte *Game::loadExtData(int16 itemId, int16 *pResWidth,
 	dataPtr = dataBuf;
 	while (size > 32000) {
 		// BUG: huge->far conversion. Need normalization?
-		_vm->_dataIO->readData(handle, dataPtr, 32000);
+		stream->read(dataPtr, 32000);
 		size -= 32000;
 		dataPtr += 32000;
 	}
-	_vm->_dataIO->readData(handle, dataPtr, size);
+	stream->read(dataPtr, size);
+
+	delete stream;
 	if (commonHandle != -1) {
 		_vm->_dataIO->closeData(commonHandle);
 		_extHandle = _vm->_dataIO->openData(_curExtFile);
@@ -315,11 +329,12 @@ void Game::evaluateScroll(int16 x, int16 y) {
 	}
 
 	int16 cursorRight = x + _vm->_draw->_cursorWidth;
-	int16 screenRight = _vm->_draw->_scrollOffsetX + 320;
+	int16 screenRight = _vm->_draw->_scrollOffsetX + _vm->_width;
 	int16 cursorBottom = y + _vm->_draw->_cursorHeight;
-	int16 screenBottom = _vm->_draw->_scrollOffsetY + 200;
+	int16 screenBottom = _vm->_draw->_scrollOffsetY + _vm->_height;
 
-	if ((cursorRight >= 320) && (screenRight < _vm->_video->_surfWidth)) {
+	if ((cursorRight >= _vm->_width) &&
+			(screenRight < _vm->_video->_surfWidth)) {
 		uint16 off;
 
 		off = MIN(_vm->_draw->_cursorWidth,
@@ -328,8 +343,8 @@ void Game::evaluateScroll(int16 x, int16 y) {
 
 		_vm->_draw->_scrollOffsetX += off;
 
-		_vm->_util->setMousePos(320 - _vm->_draw->_cursorWidth, y);
-	} else if ((cursorBottom >= (200 - _vm->_video->_splitHeight2)) &&
+		_vm->_util->setMousePos(_vm->_width - _vm->_draw->_cursorWidth, y);
+	} else if ((cursorBottom >= (_vm->_height - _vm->_video->_splitHeight2)) &&
 			(screenBottom < _vm->_video->_surfHeight)) {
 		uint16 off;
 
@@ -339,7 +354,7 @@ void Game::evaluateScroll(int16 x, int16 y) {
 
 		_vm->_draw->_scrollOffsetY += off;
 
-		_vm->_util->setMousePos(x, 200 - _vm->_video->_splitHeight2 -
+		_vm->_util->setMousePos(x, _vm->_height - _vm->_video->_splitHeight2 -
 				_vm->_draw->_cursorHeight);
 	}
 
@@ -368,10 +383,12 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 		_vm->_inter->_soundEndTimeKey = 0;
 	}
 
-	_vm->_util->getMouseState(pMouseX, pMouseY, pButtons);
+	if (pMouseX && pMouseY && pButtons) {
+		_vm->_util->getMouseState(pMouseX, pMouseY, pButtons);
 
-	if (*pButtons == 3)
-		*pButtons = 0;
+		if (*pButtons == 3)
+			*pButtons = 0;
+	}
 
 	return _vm->_util->checkKey();
 }
@@ -408,23 +425,26 @@ void Game::loadExtTable(void) {
 	if (_extHandle < 0)
 		return;
 
-	count = _vm->_dataIO->readUint16(_extHandle);
+	DataStream *stream = _vm->_dataIO->openAsStream(_extHandle);
+	count = stream->readUint16LE();
 
-	_vm->_dataIO->seekData(_extHandle, 0, SEEK_SET);
+	stream->seek(0);
 	_extTable = new ExtTable;
 	_extTable->items = 0;
 	if (count)
 		_extTable->items = new ExtItem[count];
 
-	_extTable->itemsCount = _vm->_dataIO->readUint16(_extHandle);
-	_extTable->unknown = _vm->_dataIO->readByte(_extHandle);
+	_extTable->itemsCount = stream->readUint16LE();
+	_extTable->unknown = stream->readByte();
 
 	for (int i = 0; i < count; i++) {
-		_extTable->items[i].offset = _vm->_dataIO->readUint32(_extHandle);
-		_extTable->items[i].size = _vm->_dataIO->readUint16(_extHandle);
-		_extTable->items[i].width = _vm->_dataIO->readUint16(_extHandle);
-		_extTable->items[i].height = _vm->_dataIO->readUint16(_extHandle);
+		_extTable->items[i].offset = stream->readUint32LE();
+		_extTable->items[i].size = stream->readUint16LE();
+		_extTable->items[i].width = stream->readUint16LE();
+		_extTable->items[i].height = stream->readUint16LE();
 	}
+
+	delete stream;
 }
 
 void Game::loadImFile(void) {
@@ -544,7 +564,7 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 	int16 newPos = _curBackupPos - index - ((index >= 0) ? 1 : 0);
 	// WORKAROUND: Some versions don't make the MOVEMENT menu item unselectable
 	// in the dreamland screen, resulting in a crash when it's clicked.
-	if ((_vm->_features & GF_GOB2) && (index == -1) && (skipPlay == 7) &&
+	if ((_vm->getGameType() == kGameTypeGob2) && (index == -1) && (skipPlay == 7) &&
 	    !scumm_stricmp(_curTotFileArray[newPos], "gob06.tot"))
 		return;
 
@@ -652,7 +672,7 @@ int16 Game::openLocTextFile(char *locTextFile, int language) {
 	return _vm->_dataIO->openData(locTextFile);
 }
 
-byte *Game::loadLocTexts(void) {
+byte *Game::loadLocTexts(int32 *dataSize) {
 	char locTextFile[20];
 	int16 handle;
 	int i;
@@ -661,23 +681,48 @@ byte *Game::loadLocTexts(void) {
 
 	handle = openLocTextFile(locTextFile, _vm->_global->_languageWanted);
 	if (handle >= 0) {
+
 		_foundTotLoc = true;
 		_vm->_global->_language = _vm->_global->_languageWanted;
-	}
-	else if (!_foundTotLoc) {
-		for (i = 0; i < 10; i++) {
-			handle = openLocTextFile(locTextFile, i);
+
+	} else if (!_foundTotLoc) {
+		bool found = false;
+
+		if (_vm->_global->_languageWanted == 2) {
+			handle = openLocTextFile(locTextFile, 5);
 			if (handle >= 0) {
-				_vm->_global->_language = i;
-				break;
+				_vm->_global->_language = 5;
+				found = true;
+			}
+		} else if (_vm->_global->_languageWanted == 5) {
+			handle = openLocTextFile(locTextFile, 2);
+			if (handle >= 0) {
+				_vm->_global->_language = 2;
+				found = true;
 			}
 		}
+
+		if (!found) {
+			for (i = 0; i < 10; i++) {
+				handle = openLocTextFile(locTextFile, i);
+				if (handle >= 0) {
+					_vm->_global->_language = i;
+					break;
+				}
+			}
+		}
+
 	}
+
 	debugC(1, kDebugFileIO, "Using language %d for %s",
 			_vm->_global->_language, _curTotFile);
 
 	if (handle >= 0) {
 		_vm->_dataIO->closeData(handle);
+
+		if (dataSize)
+			*dataSize = _vm->_dataIO->getDataSize(locTextFile);
+
 		return _vm->_dataIO->getData(locTextFile);
 	}
 	return 0;

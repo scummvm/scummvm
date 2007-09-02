@@ -60,7 +60,8 @@ enum EventCodes {
 	kScriptEvent,
 	kCursorEvent,
 	kGraphicsEvent,
-	kCutawayEvent
+	kCutawayEvent,
+	kPsychicProfileBgEvent
 };
 
 enum EventOps {
@@ -68,21 +69,20 @@ enum EventOps {
 	// BG events
 	kEventDisplay = 1,
 	// ANIM events
-	// kEventPlay = 1, // reused
-	// kEventStop = 2, // reused
+	kEventPlay = 1,			// used in music and sound events too
+	kEventStop = 2,			// used in music and sound events too
 	kEventFrame = 3,
-	kEventSetFlag = 4,
-	kEventClearFlag = 5,
+	kEventSetFlag = 4,		// used in graphics events too
+	kEventClearFlag = 5,	// used in graphics events too
 	kEventResumeAll = 6,
-	// MUISC & SOUND events
-	kEventPlay = 1,
-	kEventStop = 2,
+	// MUSIC and SOUND events
+	// Reused: kEventPlay, kEventStop
 	// SCENE events
 	kEventDraw = 1,
 	kEventEnd = 2,
 	// TEXT events
-	kEventHide = 2,
 	kEventRemove = 3,
+	// Reused: kEventHide
 	// PALANIM events
 	kEventCycleStart = 1,
 	kEventCycleStep = 2,
@@ -100,18 +100,18 @@ enum EventOps {
 	kEventThreadWake = 3,
 	// CURSOR events
 	kEventShow = 1,
-	// kEventHide = 2, // reused
+	kEventHide = 2,			// used in text events too
 	kEventSetNormalCursor = 3,
 	kEventSetBusyCursor = 4,
 	// GRAPHICS events
 	kEventFillRect = 1,
-	// kEventSetFlag = 4, // reused
-	// kEventClearFlag = 5, // reused
-
+	// Reused: kEventSetFlag, kEventClearFlag
 	// CONTINUOUS events
+	//
 	// PALETTE events
 	kEventPalToBlack = 1,
 	kEventBlackToPal = 2,
+	kEventPalFade = 3,
 	// TRANSITION events
 	kEventDissolve = 1,
 	kEventDissolveBGMask = 2,

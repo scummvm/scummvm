@@ -147,10 +147,13 @@ public:
 
 	void evaluateScroll(int16 x, int16 y);
 
-	int16 checkKeys(int16 *pMousex, int16 *pMouseY, int16 *pButtons, char handleMouse);
+	int16 checkKeys(int16 *pMousex = 0, int16 *pMouseY = 0,
+			int16 *pButtons = 0, char handleMouse = 0);
 	void start(void);
 	void totSub(int8 flags, const char *newTotFile);
 	void switchTotSub(int16 index, int16 skipPlay);
+
+	void freeCollision(int16 id);
 
 	virtual void playTot(int16 skipPlay) = 0;
 
@@ -215,13 +218,12 @@ protected:
 		
 	int16 adjustKey(int16 key);
 
-	byte *loadLocTexts(void);
+	byte *loadLocTexts(int32 *dataSize = 0);
 	int32 loadTotFile(const char *path);
 	void loadExtTable(void);
 	void loadImFile(void);
 
 	void setCollisions(void);
-	void freeCollision(int16 id);
 	void collSub(uint16 offset);
 	void collAreaSub(int16 index, int8 enter);
 	int16 openLocTextFile(char *locTextFile, int language);

@@ -265,7 +265,7 @@ void DosSoundMan::playCharacterMusic(const char *character) {
 		setMusicFile("dino");
 	} else
 	if (!scumm_stricmp(name, _donnaName)) {
-		setMusicFile("dough");
+		setMusicFile("donna");
 	} else
 	if (!scumm_stricmp(name, _doughName)) {
 		setMusicFile("nuts");
@@ -379,7 +379,7 @@ void AmigaSoundMan::playMusic() {
 
 	debugC(1, kDebugAudio, "AmigaSoundMan::playMusic()");
 
-	Common::ReadStream *stream = _vm->_disk->loadMusic(_musicFile);
+	Common::SeekableReadStream *stream = _vm->_disk->loadMusic(_musicFile);
 	_musicStream = Audio::makeProtrackerStream(stream);
 	delete stream;
 

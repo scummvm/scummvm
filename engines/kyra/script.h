@@ -27,33 +27,11 @@
 #define KYRA_SCRIPT_H
 
 #include "kyra/kyra.h"
+#include "kyra/util.h"
+
+#include "common/file.h"
 
 namespace Kyra {
-
-struct ScriptState;
-
-struct Opcode {
-	virtual ~Opcode() {}
-
-	virtual operator bool() const = 0;
-
-	virtual int operator()(ScriptState*) const = 0;
-};
-
-template<class T>
-struct OpcodeImpl : public Opcode {
-	T *vm;
-	typedef int (T::*Callback)(ScriptState*);
-	Callback callback;
-
-	OpcodeImpl(T *v, Callback c) : Opcode(), vm(v), callback(c) {} 
-
-	operator bool() const { return callback != 0; }
-
-	int operator()(ScriptState *state) const {
-		return (vm->*callback)(state);
-	}
-};
 
 struct ScriptData {
 	byte *text;
@@ -74,6 +52,31 @@ struct ScriptState {
 	int16 stack[61];	// VM stack
 };
 
+#define stackPos(x) script->stack[script->sp+x]
+#define stackPosString(x) (const char*)&script->dataPtr->text[READ_BE_UINT16(&((uint16 *)script->dataPtr->text)[stackPos(x)])]
+
+class ScriptFileParser {
+public:
+	ScriptFileParser() : _scriptFile(), _startOffset(0), _endOffset(0) {}
+	ScriptFileParser(const char *filename, Resource *res) : _scriptFile(), _startOffset(0), _endOffset(0) { setFile(filename, res); } 
+	~ScriptFileParser() { destroy(); }
+	
+	// 'script' must be allocated with new!
+	void setFile(const char *filename, Resource *res);
+	
+	operator bool() const { return (_startOffset != _endOffset) && _scriptFile.isOpen(); }
+
+	uint32 getFORMBlockSize();
+	uint32 getIFFBlockSize(const uint32 chunk);
+	bool loadIFFBlock(const uint32 chunk, void *loadTo, uint32 ptrSize);
+private:
+	void destroy();
+
+	Common::File _scriptFile;
+	uint32 _startOffset;
+	uint32 _endOffset;
+};
+
 class ScriptHelper {
 public:
 	ScriptHelper(KyraEngine *vm);
@@ -88,10 +91,6 @@ public:
 	
 	bool runScript(ScriptState *script);
 protected:
-	uint32 getFORMBlockSize(const byte *&data) const;
-	uint32 getIFFBlockSize(const byte *start, const byte *&data, uint32 maxSize, const uint32 chunk) const;
-	bool loadIFFBlock(const byte *start, const byte *&data, uint32 maxSize, const uint32 chunk, void *loadTo, uint32 ptrSize) const;
-	
 	KyraEngine *_vm;
 	int16 _parameter;
 	bool _continue;
@@ -104,25 +103,24 @@ protected:
 	
 	const CommandEntry *_commands;
 private:
-	void c1_jmpTo(ScriptState*);
-	void c1_setRetValue(ScriptState*);
-	void c1_pushRetOrPos(ScriptState*);
-	void c1_push(ScriptState*);
-	//void c1_push(); same as 03
-	void c1_pushReg(ScriptState*);
-	void c1_pushBPNeg(ScriptState*);
-	void c1_pushBPAdd(ScriptState*);
-	void c1_popRetOrPos(ScriptState*);
-	void c1_popReg(ScriptState*);
-	void c1_popBPNeg(ScriptState*);
-	void c1_popBPAdd(ScriptState*);
-	void c1_addSP(ScriptState*);
-	void c1_subSP(ScriptState*);
-	void c1_execOpcode(ScriptState*);
-	void c1_ifNotJmp(ScriptState*);
-	void c1_negate(ScriptState*);
-	void c1_eval(ScriptState*);
-	void c1_setRetAndJmp(ScriptState*);
+	void cmd_jmpTo(ScriptState*);
+	void cmd_setRetValue(ScriptState*);
+	void cmd_pushRetOrPos(ScriptState*);
+	void cmd_push(ScriptState*);
+	void cmd_pushReg(ScriptState*);
+	void cmd_pushBPNeg(ScriptState*);
+	void cmd_pushBPAdd(ScriptState*);
+	void cmd_popRetOrPos(ScriptState*);
+	void cmd_popReg(ScriptState*);
+	void cmd_popBPNeg(ScriptState*);
+	void cmd_popBPAdd(ScriptState*);
+	void cmd_addSP(ScriptState*);
+	void cmd_subSP(ScriptState*);
+	void cmd_execOpcode(ScriptState*);
+	void cmd_ifNotJmp(ScriptState*);
+	void cmd_negate(ScriptState*);
+	void cmd_eval(ScriptState*);
+	void cmd_setRetAndJmp(ScriptState*);
 };
 } // end of namespace Kyra
 

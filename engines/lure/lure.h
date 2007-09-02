@@ -71,6 +71,7 @@ public:
 	uint32 features() { return _features; }
 	uint8 game() { return _game; }
 	Disk &disk() { return *_disk; }
+	Common::Language getLanguage() { return _language; }
 
 	bool loadGame(uint8 slotNumber);
 	bool saveGame(uint8 slotNumber, Common::String &caption);

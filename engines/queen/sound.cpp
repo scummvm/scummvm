@@ -173,13 +173,8 @@ PCSound::~PCSound() {
 }
 
 void PCSound::playSfx(uint16 sfx) {
-	if (sfxOn() && sfx != 0) {
-#ifndef PALMOS_68K
+	if (sfxOn() && sfx != 0)
 		playSound(_sfxName[sfx - 1], false);
-#else
-		playSound(_sfxName + 10 * (sfx - 1), false);	// saved as 8char + /0/0
-#endif
-	}
 }
 
 void PCSound::playSong(int16 songNum) {

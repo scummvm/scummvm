@@ -617,10 +617,6 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 	} while (1);
 }
 
-#ifdef PALMOS_68K
-const byte *bigCostumeScaleTable;
-const byte *smallCostumeScaleTableAKOS;
-#else
 // This is exact duplicate of smallCostumeScaleTable[] in costume.cpp
 // See FIXME below for explanation
 const byte smallCostumeScaleTableAKOS[256] = {
@@ -757,7 +753,6 @@ const byte bigCostumeScaleTable[768] = {
 	0x0F, 0x8F, 0x4F, 0xCF, 0x2F, 0xAF, 0x6F, 0xEF,
 	0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF,
 };
-#endif
 
 byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	int num_colors;
@@ -1862,18 +1857,3 @@ void ScummEngine_v7::akos_processQueue() {
 #endif
 
 } // End of namespace Scumm
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Akos)
-_GSETPTR(Scumm::bigCostumeScaleTable, GBVARS_BIGSCALETABLE_INDEX, byte, GBVARS_SCUMM)
-//_GSETPTR(Scumm::smallCostumeScaleTableAKOS, GBVARS_SMALLSCALETABLEAKOS_INDEX, byte, GBVARS_SCUMM)
-_GEND
-
-_GRELEASE(Akos)
-_GRELEASEPTR(GBVARS_BIGSCALETABLE_INDEX, GBVARS_SCUMM)
-//_GRELEASEPTR(GBVARS_SMALLSCALETABLEAKOS_INDEX, GBVARS_SCUMM)
-_GEND
-
-#endif

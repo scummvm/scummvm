@@ -342,6 +342,7 @@ protected:
 	virtual void checkSwitchTable(byte **ppExec);
 
 	void o2_playMult();
+	void o2_freeMultKeys();
 	void o2_setRenderFlags();
 	void o2_multSub();
 	void o2_initMult();
@@ -378,6 +379,8 @@ protected:
 	bool o2_evaluateStore(OpFuncParams &params);
 	bool o2_printText(OpFuncParams &params);
 	bool o2_animPalInit(OpFuncParams &params);
+	bool o2_addCollision(OpFuncParams &params);
+	bool o2_freeCollision(OpFuncParams &params);
 	bool o2_goblinFunc(OpFuncParams &params);
 	bool o2_createSprite(OpFuncParams &params);
 	bool o2_stopSound(OpFuncParams &params);
@@ -478,6 +481,45 @@ protected:
 	bool o3_checkData(OpFuncParams &params);
 	bool o3_readData(OpFuncParams &params);
 	bool o3_writeData(OpFuncParams &params);
+
+	void o3_wobble(OpGobParams &params);
+};
+
+class Inter_v4 : public Inter_v3 {
+public:
+	Inter_v4(GobEngine *vm);
+	virtual ~Inter_v4() {}
+
+protected:
+	typedef void (Inter_v4::*OpcodeDrawProcV4)();
+	typedef bool (Inter_v4::*OpcodeFuncProcV4)(OpFuncParams &);
+	typedef void (Inter_v4::*OpcodeGoblinProcV4)(OpGobParams &);
+	struct OpcodeDrawEntryV4 {
+		OpcodeDrawProcV4 proc;
+		const char *desc;
+	};
+	struct OpcodeFuncEntryV4 {
+		OpcodeFuncProcV4 proc;
+		const char *desc;
+	};
+	struct OpcodeGoblinEntryV4 {
+		OpcodeGoblinProcV4 proc;
+		const char *desc;
+	};
+	const OpcodeDrawEntryV4 *_opcodesDrawV4;
+	const OpcodeFuncEntryV4 *_opcodesFuncV4;
+	const OpcodeGoblinEntryV4 *_opcodesGoblinV4;
+	static const int _goblinFuncLookUp[][2];
+
+	virtual void setupOpcodes();
+	virtual void executeDrawOpcode(byte i);
+	virtual bool executeFuncOpcode(byte i, byte j, OpFuncParams &params);
+	virtual void executeGoblinOpcode(int i, OpGobParams &params);
+	virtual const char *getOpcodeDrawDesc(byte i);
+	virtual const char *getOpcodeFuncDesc(byte i, byte j);
+	virtual const char *getOpcodeGoblinDesc(int i);
+
+	void o4_playVmdOrMusic();
 };
 
 } // End of namespace Gob

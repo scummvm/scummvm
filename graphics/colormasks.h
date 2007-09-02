@@ -48,7 +48,8 @@ The meaning of these is masks is the following:
  R = ((color & kRedMask) >> kRedShift) << (8-kRedBits)
  
  Actually, instead of the simple left shift, one might want to use somewhat
- more sophisticated code (which fills up the lower most bits.
+ more sophisticated code (which fills up the least significant bits with 
+ appropriate data).
  
  
  The highBits / lowBits / qhighBits / qlowBits are special values that are

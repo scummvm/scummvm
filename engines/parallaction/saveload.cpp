@@ -47,8 +47,6 @@
 namespace Parallaction {
 
 
-extern char _gameNames[][20];
-
 
 class SaveLoadChooser : public GUI::Dialog {
 	typedef Common::String String;
@@ -61,12 +59,12 @@ protected:
 	GUI::StaticTextWidget	*_time;
 	GUI::StaticTextWidget	*_playtime;
 	GUI::ContainerWidget	*_container;
-	Parallaction			*_vm;
+	Parallaction_ns			*_vm;
 
 	uint8 _fillR, _fillG, _fillB;
 
 public:
-	SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction *engine);
+	SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction_ns *engine);
 	~SaveLoadChooser();
 
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
@@ -80,7 +78,7 @@ public:
 
 
 
-void Parallaction::doLoadGame(uint16 slot) {
+void Parallaction_ns::doLoadGame(uint16 slot) {
 
 	_introSarcData3 = 200;
 	_introSarcData2 = 1;
@@ -179,7 +177,7 @@ void Parallaction::doLoadGame(uint16 slot) {
 }
 
 
-void Parallaction::doSaveGame(uint16 slot, const char* name) {
+void Parallaction_ns::doSaveGame(uint16 slot, const char* name) {
 
 	char path[PATH_LEN];
 	sprintf(path, "game.%i", slot);
@@ -251,8 +249,7 @@ enum {
 };
 
 
-
-SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction *engine)
+SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, Parallaction_ns *engine)
 	: Dialog("scummsaveload"), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
 
 //	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
@@ -340,7 +337,7 @@ void SaveLoadChooser::reflowLayout() {
 	Dialog::reflowLayout();
 }
 
-int Parallaction::buildSaveFileList(Common::StringList& l) {
+int Parallaction_ns::buildSaveFileList(Common::StringList& l) {
 
 	char name[16];
 	char buf[30];
@@ -367,7 +364,7 @@ int Parallaction::buildSaveFileList(Common::StringList& l) {
 }
 
 
-int Parallaction::selectSaveFile(uint16 arg_0, const char* caption, const char* button) {
+int Parallaction_ns::selectSaveFile(uint16 arg_0, const char* caption, const char* button) {
 
 	SaveLoadChooser* slc = new SaveLoadChooser(caption, button, this);
 
@@ -388,7 +385,7 @@ int Parallaction::selectSaveFile(uint16 arg_0, const char* caption, const char* 
 
 
 
-void Parallaction::loadGame() {
+void Parallaction_ns::loadGame() {
 
 	int _di = selectSaveFile( 0, "Load file", "Load" );
 	if (_di == -1) {
@@ -406,7 +403,7 @@ void Parallaction::loadGame() {
 }
 
 
-void Parallaction::saveGame() {
+void Parallaction_ns::saveGame() {
 
 	if (!scumm_stricmp(_location._name, "caveau"))
 		return;

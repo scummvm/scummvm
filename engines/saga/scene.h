@@ -221,6 +221,7 @@ class Scene {
 	void cmdSceneChange(int argc, const char **argv);
 
 	void startScene();
+	void creditsScene();
 	void nextScene();
 	void skipScene();
 	void endScene();
@@ -340,6 +341,15 @@ class Scene {
 			return _vm->getDisplayInfo().sceneHeight;
 	}
 
+	void clearPlacard();
+	void showPsychicProfile(const char *text);
+	void clearPsychicProfile();
+	void showIHNMDemoSpecialScreen();
+
+	bool isNonInteractiveIHNMDemoPart() {
+		return _vm->getGameId() == GID_IHNM_DEMO && (_sceneNumber >= 144 && _sceneNumber <= 149);
+	}
+
  private:
 	void loadScene(LoadSceneParams *loadSceneParams);
 	void loadSceneDescriptor(uint32 resourceId);
@@ -386,19 +396,26 @@ class Scene {
 
  private:
 	int IHNMStartProc();
+	int IHNMCreditsProc();
 	int ITEStartProc();
+
+	void IHNMLoadCutaways();
+	bool checkKey();
+
+	bool playTitle(int title, int time, int mode = kPanelVideo);
+	bool playLoopingTitle(int title, int seconds);
 
  public:
 	static int SC_IHNMIntroMovieProc1(int param, void *refCon);
 	static int SC_IHNMIntroMovieProc2(int param, void *refCon);
 	static int SC_IHNMIntroMovieProc3(int param, void *refCon);
-	static int SC_IHNMHateProc(int param, void *refCon);
+	static int SC_IHNMCreditsMovieProc(int param, void *refCon);
 
  private:
 	int IHNMIntroMovieProc1(int param);
 	int IHNMIntroMovieProc2(int param);
 	int IHNMIntroMovieProc3(int param);
-	int IHNMHateProc(int param);
+	int IHNMCreditsMovieProc(int param);
 
  public:
 	static int SC_ITEIntroAnimProc(int param, void *refCon);

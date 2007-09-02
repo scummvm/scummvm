@@ -24,6 +24,7 @@
 #include "lure/luredefs.h"
 #include "lure/res.h"
 #include "lure/screen.h"
+#include "lure/game.h"
 #include "lure/events.h"
 #include "lure/strings.h"
 #include "lure/scripts.h"
@@ -491,19 +492,28 @@ void Room::update() {
 }
 
 void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
-	Resources &r = Resources::getReference();
-	_roomData = r.getRoom(newRoomNumber);
+	Resources &res = Resources::getReference();
+	Game &game = Game::getReference();
+	Mouse &mouse = Mouse::getReference();
+
+	mouse.pushCursorNum(CURSOR_DISK);
+
+	_roomData = res.getRoom(newRoomNumber);
 	if (!_roomData)
 		error("Tried to change to non-existant room: %d", newRoomNumber);
-	bool leaveFlag = (_layers[0] && (newRoomNumber != _roomNumber));
+	bool leaveFlag = (_layers[0] && (newRoomNumber != _roomNumber) && (_roomNumber != 0));
 
 	_roomNumber = _roomData->roomNumber;
 	_descId = _roomData->descId;
 
-	_screen.empty();
-	_screen.resetPalette();
+	if (leaveFlag) {
+		_screen.paletteFadeOut();
+		leaveRoom();
+	}
 
-	if (leaveFlag) leaveRoom();
+	_screen.empty();
+	_screen.setPaletteEmpty(GAME_COLOURS);
+
 	_numLayers = _roomData->numLayers;
 	if (showOverlay) ++_numLayers;
 
@@ -512,23 +522,41 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 		_layers[layerNum] = new RoomLayer(_roomData->layers[layerNum],
 			layerNum == 0);
 
-	// Load in the palette, add in the two replacements segments, and then
-	// set to the system palette
-	Palette p(228, NULL, RGB64);
+	// Load in the game palette, which contains at it's top end general GUI element colours
+	Palette mainPalette(GAME_PALETTE_RESOURCE_ID);
+	_screen.setPalette(&mainPalette, 0, GAME_COLOURS);
+
+	// Generate the palette for the room that will be faded in
+	Palette p(MAIN_PALETTE_SIZE, NULL, RGB64);
 	Palette tempPalette(paletteId);
 	p.copyFrom(&tempPalette);
-	r.insertPaletteSubset(p);
-	_screen.setPalette(&p);
+	res.insertPaletteSubset(p);
 
 	// Set the new room number
-	r.fieldList().setField(ROOM_NUMBER, newRoomNumber);
+	res.fieldList().setField(ROOM_NUMBER, newRoomNumber);
 
 	if (_roomData->sequenceOffset != 0xffff)
 		Script::execute(_roomData->sequenceOffset);
 
 	loadRoomHotspots();
-	checkCursor();
+
+	if ((_roomData->exitTime != 0xffff) && (_roomData->exitTime != 0)) {
+		// If time has passed, animation ticks needed before room is displayed
+		int numSeconds = (g_system->getMillis() - _roomData->exitTime) / 1000;
+		if (numSeconds > 300) numSeconds = 300;
+
+		game.preloadFlag() = true;
+		while (numSeconds-- > 0)
+			game.tick();
+		game.preloadFlag() = false;
+	}
+
+	game.tick();
 	update();
+	_screen.update();
+	_screen.paletteFadeIn(&p);
+
+	mouse.popCursor();
 }
 
 // checkCursor

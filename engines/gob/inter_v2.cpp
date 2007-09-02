@@ -38,7 +38,6 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/goblin.h"
-#include "gob/imd.h"
 #include "gob/map.h"
 #include "gob/mult.h"
 #include "gob/parse.h"
@@ -46,6 +45,7 @@
 #include "gob/sound.h"
 #include "gob/video.h"
 #include "gob/saveload.h"
+#include "gob/videoplayer.h"
 
 namespace Gob {
 
@@ -134,7 +134,7 @@ void Inter_v2::setupOpcodes() {
 		/* 00 */
 		OPCODE(o1_loadMult),
 		OPCODE(o2_playMult),
-		OPCODE(o1_freeMultKeys),
+		OPCODE(o2_freeMultKeys),
 		{NULL, ""},
 		/* 04 */
 		{NULL, ""},
@@ -485,8 +485,8 @@ void Inter_v2::setupOpcodes() {
 		OPCODE(o1_capturePop),
 		OPCODE(o2_animPalInit),
 		/* 18 */
-		{NULL, ""},
-		{NULL, ""},
+		OPCODE(o2_addCollision),
+		OPCODE(o2_freeCollision),
 		{NULL, ""},
 		{NULL, ""},
 		/* 1C */
@@ -826,6 +826,17 @@ void Inter_v2::o2_playMult() {
 	_vm->_mult->playMult(VAR(57), -1, checkEscape & 0x1, 0);
 }
 
+void Inter_v2::o2_freeMultKeys() {
+	uint16 index = load16();
+
+	if (!_vm->_mult->hasMultData(index))
+		return;
+
+	_vm->_mult->setMultData(index);
+	_vm->_mult->freeMultKeys();
+	_vm->_mult->zeroMultData(index);
+}
+
 void Inter_v2::o2_setRenderFlags() {
 	int16 expr;
 
@@ -1094,7 +1105,7 @@ void Inter_v2::o2_getCDTrackPos() {
 	varPos = _vm->_parse->parseVarIndex();
 	varName = _vm->_parse->parseVarIndex();
 
-	WRITE_VAR_OFFSET(varPos, _vm->_cdrom->getTrackPos());
+	WRITE_VAR_OFFSET(varPos, _vm->_cdrom->getTrackPos(GET_VARO_STR(varName)));
 	WRITE_VARO_STR(varName, _vm->_cdrom->getCurTrack());
 }
 
@@ -1364,11 +1375,37 @@ void Inter_v2::o2_initScreen() {
 	width = _vm->_parse->parseValExpr();
 	height = _vm->_parse->parseValExpr();
 
+	// Lost in Time switches to 640x400x16 when showing the title screen
+	if (_vm->getGameType() == kGameTypeLostInTime) {
+		if (videoMode == 0x10) {
+			width = _vm->_width = 640;
+			height = _vm->_height = 400;
+			_vm->_global->_colorCount = 16;
+			_vm->_system->beginGFXTransaction();
+				_vm->_system->initSize(_vm->_width, _vm->_height);
+				_vm->initCommonGFX(true);
+		   	_vm->_system->endGFXTransaction();
+		} else if (_vm->_global->_videoMode == 0x10) {
+			if (width == -1)
+				width = 320;
+			if (height == -1)
+				height = 200;
+
+			_vm->_width = 320;
+			_vm->_height = 200;
+			_vm->_global->_colorCount = 256;
+			_vm->_system->beginGFXTransaction();
+				_vm->_system->initSize(_vm->_width, _vm->_height);
+				_vm->initCommonGFX(false);
+			_vm->_system->endGFXTransaction();
+		}
+	}
+
 	_vm->_global->_fakeVideoMode = videoMode;
 
 	// Some versions require this
 	if (videoMode == 0xD)
-		videoMode = 0x14;
+		videoMode = _vm->_mode;
 
 	if ((videoMode == _vm->_global->_videoMode) && (width == -1))
 		return;
@@ -1378,7 +1415,8 @@ void Inter_v2::o2_initScreen() {
 	if (height > 0)
 		_vm->_video->_surfHeight = height;
 	
-	_vm->_video->_splitHeight1 = MIN(200, _vm->_video->_surfHeight - offY);
+	_vm->_video->_splitHeight1 =
+		MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
 	_vm->_video->_splitHeight2 = offY;
 	_vm->_video->_splitStart = _vm->_video->_surfHeight - offY;
 
@@ -1414,13 +1452,13 @@ void Inter_v2::o2_scroll() {
 	int16 curY;
 
 	startX = CLIP((int) _vm->_parse->parseValExpr(), 0,
-			_vm->_video->_surfWidth - 320);
+			_vm->_video->_surfWidth - _vm->_width);
 	startY = CLIP((int) _vm->_parse->parseValExpr(), 0,
-			_vm->_video->_surfHeight - 200);
+			_vm->_video->_surfHeight - _vm->_height);
 	endX = CLIP((int) _vm->_parse->parseValExpr(), 0,
-			_vm->_video->_surfWidth - 320);
+			_vm->_video->_surfWidth - _vm->_width);
 	endY = CLIP((int) _vm->_parse->parseValExpr(), 0,
-			_vm->_video->_surfHeight - 200);
+			_vm->_video->_surfHeight - _vm->_height);
 	stepX = _vm->_parse->parseValExpr();
 	stepY = _vm->_parse->parseValExpr();
 
@@ -1481,48 +1519,28 @@ void Inter_v2::o2_playImd() {
 	palEnd = _vm->_parse->parseValExpr();
 	palCmd = 1 << (flags & 0x3F);
 	
-	if (!_vm->_imdPlayer->openImd(imd, x, y, startFrame, flags)) {
+	if ((imd[0] != 0) && !_vm->_vidPlayer->openVideo(imd, x, y, flags)) {
 		WRITE_VAR(11, -1);
 		return;
 	}
 
 	close = (lastFrame == -1);
-	if (lastFrame < 0)
-		lastFrame = _vm->_imdPlayer->_curImd->framesCount - 1;
 	if (startFrame == -2) {
 		startFrame = lastFrame = 0;
 		close = false;
 	}
 
-	_vm->_game->_preventScroll = true;
-	for (int i = startFrame; i <= lastFrame; i++) {
-		_vm->_imdPlayer->play(i, palCmd, palStart, palEnd, 0, lastFrame);
-		WRITE_VAR(11, i);
-
-		if (_vm->_quitRequested)
-			break;
-
-		if (breakKey != 0) {
-			_vm->_util->getMouseState(&_vm->_global->_inter_mouseX,
-					&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons);
-
-			storeKey(_vm->_util->checkKey());
-			if (VAR(0) == (unsigned) breakKey) {
-				if (_vm->_imdPlayer->_soundStage == 2)
-					_vm->_snd->stopSound(0);
-				_vm->_game->_preventScroll = false;
-				return;
-			}
-		}
+	if (startFrame >= 0) {
+		_vm->_game->_preventScroll = true;
+		_vm->_vidPlayer->play(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
+		_vm->_game->_preventScroll = false;
 	}
-	_vm->_game->_preventScroll = false;
 
 	if (close)
-		_vm->_imdPlayer->closeImd();
+		_vm->_vidPlayer->closeVideo();
 }
 
 void Inter_v2::o2_getImdInfo() {
-	ImdPlayer::Imd *imd;
 	int16 varX, varY;
 	int16 varFrames;
 	int16 varWidth, varHeight;
@@ -1533,21 +1551,9 @@ void Inter_v2::o2_getImdInfo() {
 	varFrames = _vm->_parse->parseVarIndex();
 	varWidth = _vm->_parse->parseVarIndex();
 	varHeight = _vm->_parse->parseVarIndex();
-	imd = _vm->_imdPlayer->loadImdFile(_vm->_global->_inter_resStr, 0, 2);
-	if (!imd) {
-		WRITE_VAR_OFFSET(varX, -1);
-		WRITE_VAR_OFFSET(varY, -1);
-		WRITE_VAR_OFFSET(varFrames, -1);
-		WRITE_VAR_OFFSET(varWidth, -1);
-		WRITE_VAR_OFFSET(varHeight, -1);
-	} else {
-		WRITE_VAR_OFFSET(varX, imd->x);
-		WRITE_VAR_OFFSET(varY, imd->y);
-		WRITE_VAR_OFFSET(varFrames, imd->framesCount);
-		WRITE_VAR_OFFSET(varWidth, imd->width);
-		WRITE_VAR_OFFSET(varHeight, imd->height);
-	}
-	_vm->_imdPlayer->finishImd(imd);
+
+	_vm->_vidPlayer->writeVideoInfo(_vm->_global->_inter_resStr, varX, varY,
+			varFrames, varWidth, varHeight);
 }
 
 void Inter_v2::o2_openItk() {
@@ -1555,7 +1561,8 @@ void Inter_v2::o2_openItk() {
 
 	evalExpr(0);
 	strncpy0(fileName, _vm->_global->_inter_resStr, 27);
-	strcat(fileName, ".ITK");
+	if (!strchr(fileName, '.'))
+		strcat(fileName, ".ITK");
 
 	_vm->_dataIO->openDataFile(fileName, true);
 }
@@ -1565,21 +1572,9 @@ void Inter_v2::o2_closeItk() {
 }
 
 void Inter_v2::o2_setImdFrontSurf() {
-	_vm->_imdPlayer->_frontSurf = 21;
-	if (_vm->_global->_videoMode == 0x14) {
-		_vm->_imdPlayer->_frontMem = _vm->_draw->_frontSurface->getVidMem();
-		_vm->_draw->blitInvalidated();
-		_vm->_imdPlayer->_frontSurf = 20;
-	}
 }
 
 void Inter_v2::o2_resetImdFrontSurf() {
-	_vm->_imdPlayer->_frontSurf = 21;
-	if (_vm->_imdPlayer->_frontMem) {
-		_vm->_imdPlayer->_frontMem = _vm->_draw->_frontSurface->getVidMem();
-		_vm->_draw->forceBlit();
-	} else
-		_vm->_draw->forceBlit(true);
 }
 
 bool Inter_v2::o2_evaluateStore(OpFuncParams &params) {
@@ -1718,6 +1713,71 @@ bool Inter_v2::o2_animPalInit(OpFuncParams &params) {
 		_animPalHighIndex[index] = _vm->_parse->parseValExpr();
 		_animPalDir[index] = -1;
 	}
+	return false;
+}
+
+bool Inter_v2::o2_addCollision(OpFuncParams &params) {
+	int16 id;
+	int16 left, top, width, height;
+	int16 flags;
+	int16 key;
+	int16 funcSub;
+
+	id = _vm->_parse->parseValExpr();
+	funcSub = _vm->_global->_inter_execPtr - _vm->_game->_totFileData;
+	left = _vm->_parse->parseValExpr();
+	top = _vm->_parse->parseValExpr();
+	width = _vm->_parse->parseValExpr();
+	height = _vm->_parse->parseValExpr();
+	flags = _vm->_parse->parseValExpr();
+	key = load16();
+
+	if (key == 0)
+		key = ABS(id) + 41960;
+
+	_vm->_draw->adjustCoords(0, &left, &top);
+	_vm->_draw->adjustCoords(2, &width, &height);
+
+	if (left < 0) {
+		width += left;
+		left = 0;
+	}
+
+	if (top < 0) {
+		height += top;
+		top = 0;
+	}
+
+	int16 index;
+	if (id < 0)
+		index = _vm->_game->addNewCollision(0xD000 - id, left & 0xFFFC, top & 0xFFFC,
+				left + width + 3, top + height + 3, flags, key, 0, 0);
+	else
+		index = _vm->_game->addNewCollision(0xE000 + id, left, top,
+				left + width - 1, top + height - 1, flags, key, 0, 0);
+
+	_vm->_game->_collisionAreas[index].funcSub = funcSub;
+
+	return false;
+}
+
+bool Inter_v2::o2_freeCollision(OpFuncParams &params) {
+	int16 id;
+
+	id = _vm->_parse->parseValExpr();
+	if (id == -2) {
+		for (int i = 0; i < 150; i++) {
+			if ((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xD000)
+				_vm->_game->_collisionAreas[i].left = 0xFFFF;
+		}
+	} else if (id == -1) {
+		for (int i = 0; i < 150; i++) {
+			if ((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xE000)
+				_vm->_game->_collisionAreas[i].left = 0xFFFF;
+		}
+	} else
+		_vm->_game->freeCollision(0xE000 + id);
+
 	return false;
 }
 
@@ -1870,25 +1930,27 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	if (handle < 0)
 		return false;
 
+	DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
+
 	_vm->_draw->animateCursor(4);
 	if (offset < 0)
-		_vm->_dataIO->seekData(handle, -offset - 1, SEEK_END);
+		stream->seek(-offset - 1, SEEK_END);
 	else
-		_vm->_dataIO->seekData(handle, offset, SEEK_SET);
+		stream->seek(offset);
 
 	if (((dataVar >> 2) == 59) && (size == 4)) {
-		WRITE_VAR(59, _vm->_dataIO->readUint32(handle));
+		WRITE_VAR(59, stream->readUint32LE());
 		// The scripts in some versions divide through 256^3 then,
 		// effectively doing a LE->BE conversion
 		if ((_vm->_platform != Common::kPlatformPC) && (VAR(59) < 256))
 			WRITE_VAR(59, SWAP_BYTES_32(VAR(59)));
 	} else
-		retSize = _vm->_dataIO->readData(handle, buf, size);
+		retSize = stream->read(buf, size);
 
 	if (retSize == size)
 		WRITE_VAR(1, 0);
 
-	_vm->_dataIO->closeData(handle);
+	delete stream;
 	return false;
 }
 

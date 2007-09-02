@@ -23,17 +23,9 @@
  *
  */
 
-#if defined(WIN32)
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-#endif
-
-#include "backends/platform/sdl/sdl-common.h"
-#include "backends/plugins/sdl/sdl-provider.h"
+#include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/util.h"
-#include "base/main.h"
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -41,91 +33,10 @@
 
 #include "icons/scummvm.xpm"
 
-#if defined(__SYMBIAN32__)
-#include "SymbianOs.h"
-#endif
-
-#ifndef __MAEMO__
-
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
 	return interval;
 }
-
-#ifndef _WIN32_WCE
-
-#if defined (WIN32)
-int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
-	SDL_SetModuleHandle(GetModuleHandle(NULL));
-	return main(__argc, __argv);
-}
-#endif
-
-int main(int argc, char *argv[]) {
-
-#if defined(__SYMBIAN32__)
-	//
-	// Set up redirects for stdout/stderr under Windows and Symbian.
-	// Code copied from SDL_main.
-	//
-	
-	// Symbian does not like any output to the console through any *print* function
-	char STDOUT_FILE[256], STDERR_FILE[256]; // shhh, don't tell anybody :)
-	strcpy(STDOUT_FILE, Symbian::GetExecutablePath());
-	strcpy(STDERR_FILE, Symbian::GetExecutablePath());
-	strcat(STDOUT_FILE, "scummvm.stdout.txt");
-	strcat(STDERR_FILE, "scummvm.stderr.txt");
-
-	/* Flush the output in case anything is queued */
-	fclose(stdout);
-	fclose(stderr);
-
-	/* Redirect standard input and standard output */
-	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
-	if (newfp == NULL) {	/* This happens on NT */
-#if !defined(stdout)
-		stdout = fopen(STDOUT_FILE, "w");
-#else
-		newfp = fopen(STDOUT_FILE, "w");
-		if (newfp) {
-			*stdout = *newfp;
-		}
-#endif
-	}
-	newfp = freopen(STDERR_FILE, "w", stderr);
-	if (newfp == NULL) {	/* This happens on NT */
-#if !defined(stderr)
-		stderr = fopen(STDERR_FILE, "w");
-#else
-		newfp = fopen(STDERR_FILE, "w");
-		if (newfp) {
-			*stderr = *newfp;
-		}
-#endif
-	}
-	setbuf(stderr, NULL);			/* No buffering */
-
-#endif // defined(__SYMBIAN32__)
-
-	// Create our OSystem instance
-#if defined(__SYMBIAN32__)
-	g_system = new OSystem_SDL_Symbian();
-#else
-	g_system = new OSystem_SDL();
-#endif
-	assert(g_system);
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-	g_system->quit();	// TODO: Consider removing / replacing this!
-	return res;
-}
-#endif	// defined(_WIN32_WCE)
-#endif	// defined(__MAEMO__)
 
 void OSystem_SDL::initBackend() {
 	assert(!_inited);
@@ -162,12 +73,15 @@ void OSystem_SDL::initBackend() {
 	_mode = GFX_DOUBLESIZE;
 	_scaleFactor = 2;
 	_scalerProc = Normal2x;
-	_fullscreen = ConfMan.getBool("fullscreen");
 	_adjustAspectRatio = ConfMan.getBool("aspect_ratio");
 #else // for small screen platforms
 	_mode = GFX_NORMAL;
 	_scaleFactor = 1;
 	_scalerProc = Normal1x;
+	_adjustAspectRatio = false;
+#endif
+	_scalerType = 0;
+	_modeFlags = 0;
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	_fullscreen = ConfMan.getBool("fullscreen");
@@ -175,13 +89,11 @@ void OSystem_SDL::initBackend() {
 	_fullscreen = true;
 #endif
 
-	_adjustAspectRatio = false;
-#endif
-	_scalerType = 0;
-	_modeFlags = 0;
-
-#if !defined(MACOSX) && !defined(__SYMBIAN32__)		// Don't set icon on OS X, as we use a nicer external icon there
-	setupIcon();									// Don't for Symbian: it uses the EScummVM.aif file for the icon
+#if !defined(MACOSX) && !defined(__SYMBIAN32__)
+	// Setup a custom program icon.
+	// Don't set icon on OS X, as we use a nicer external icon there.
+	// Don't for Symbian: it uses the EScummVM.aif file for the icon.
+	setupIcon();
 #endif
 
 	// enable joystick
@@ -208,17 +120,18 @@ void OSystem_SDL::initBackend() {
 	// Create and hook up the timer manager, if none exists yet (we check for
 	// this to allow subclasses to provide their own).
 	if (_timer == 0) {
-		// TODO: We could implement a custom SDLTimerManager by using
+		// Note: We could implement a custom SDLTimerManager by using
 		// SDL_AddTimer. That might yield better timer resolution, but it would
 		// also change the semantics of a timer: Right now, ScummVM timers
 		// *never* run in parallel, due to the way they are implemented. If we
 		// switched to SDL_AddTimer, each timer might run in a separate thread.
-		// Unfortunately, not all our code is prepared for that, so we can't just
-		// switch. But it's a long term goal to do just that!
+		// However, not all our code is prepared for that, so we can't just
+		// switch. Still, it's a potential future change to keep in mind.
 		_timer = new DefaultTimerManager();
 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 	}
 	
+	// Invoke parent implementation of this method
 	OSystem::initBackend();
 
 	_inited = true;
@@ -427,28 +340,22 @@ bool OSystem_SDL::setSoundCallback(SoundProc proc, void *param) {
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
 
-	memset(&desired, 0, sizeof(desired));
-
+	// Determine the desired output sampling frequency.
 	_samplesPerSec = 0;
-
 	if (ConfMan.hasKey("output_rate"))
 		_samplesPerSec = ConfMan.getInt("output_rate");
-
 	if (_samplesPerSec <= 0)
 		_samplesPerSec = SAMPLES_PER_SEC;
 
-	// Originally, we always used 2048 samples. This loop will produce the
-	// same result at 22050 Hz, and should hopefully produce something
-	// sensible for other frequencies. Note that it must be a power of two.
-
-	uint32 samples = 0x8000;
-
-	for (;;) {
-		if ((1000 * samples) / _samplesPerSec < 100)
-			break;
+	// Determine the sample buffer size. We want it to store enough data for
+	// about 1/10th of a second. Note that it must be a power of two.
+	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
+	int samples = 0x8000;
+	while (10 * samples >= _samplesPerSec) {
 		samples >>= 1;
 	}
 
+	memset(&desired, 0, sizeof(desired));
 	desired.freq = _samplesPerSec;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;

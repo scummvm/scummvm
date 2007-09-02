@@ -27,9 +27,6 @@
 #include "common/config-manager.h"
 #include "rumble.h"
 
-#ifdef PALMOS_68K
-#define _TwGfxOpen(x, y)	TwGfxOpen((TwGfxHandle*)x, y);
-#else
 static asm Err _TwGfxOpen(void **aResult, void *aInfoResult) {
 	stmfd sp!, {r4-r11,lr}
 	ldr r9, [r9]
@@ -39,7 +36,6 @@ static asm Err _TwGfxOpen(void **aResult, void *aInfoResult) {
 	mov r7, r1
 	ldr pc, =0x200995F0
 }
-#endif
 
 int OSystem_PalmZodiac::getDefaultGraphicsMode() const {
 	return GFX_WIDE;
@@ -71,6 +67,7 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 
 	_sysOldOrientation = SysGetOrientation();
 	SysSetOrientation(sysOrientationLandscape);
+	SysSetOrientationTriggerState(sysOrientationTriggerDisabled);
 
 	gVars->indicator.on = RGBToColor(0,255,0);
 	gVars->indicator.off = RGBToColor(0,0,0);

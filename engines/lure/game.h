@@ -39,7 +39,9 @@
 
 namespace Lure {
 
-enum GameState {GS_RESTORE_RESTART = 1, GS_CAUGHT = 2, GS_EXIT = 3};
+enum GameState {GS_ERROR = 1, GS_TICK = 2, GS_TOCK = 4, GS_PROT = 8, GS_RESTART = 0x10,
+	GS_CAUGHT = 0x20, GS_RESTORE = 0x40, GS_FLOPPY = 0x80,
+	GS_RESTORE_RESTART = 0x50};
 
 class Game {
 private:
@@ -48,6 +50,7 @@ private:
 	uint8 _state;
 	uint16 _tellCommands[MAX_TELL_COMMANDS * 3 + 1];
 	int _numTellCommands;
+	bool _preloadFlag;
 
 	void handleMenuResponse(uint8 selection);
 	void handleClick();
@@ -60,6 +63,7 @@ private:
 	void displayChuteAnimation();
 	void displayBarrelAnimation();
 	void handleBootParam(int value);
+	bool getYN();
 public:
 	Game();
 	virtual ~Game();
@@ -67,14 +71,17 @@ public:
 	static Game &getReference();
 
 	void tick();
+	void tickCheck();
 	void nextFrame();
 	void execute();
 	void setState(uint8 flags) { _state = flags; }
+	bool &preloadFlag() { return _preloadFlag; }
 
 	// Menu item support methods
 	void doDebugMenu();
 	void doShowCredits();
 	void doQuit();
+	void doRestart();
 	void doTextSpeed();
 	void doSound();
 };

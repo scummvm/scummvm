@@ -27,7 +27,6 @@
 
 namespace Queen {
 
-#ifndef PALMOS_68K
 //English Floppy Version
 ResourceEntry Resource::_resourceTablePEM10[] = {
 	{ "1000SSSS.SB", 1, 0x00000000, 0x000027fe },
@@ -1107,5 +1106,5 @@ ResourceEntry Resource::_resourceTablePEM10[] = {
 	{ "ZOMBIE1.DOG", 1, 0x0159ecef, 0x00000f6a },
 	{ "ZOMBIE2.DOG", 1, 0x0159fc59, 0x00000c40 }
 };
-#endif
+
 } // End of namespace Queen

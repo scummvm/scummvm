@@ -104,14 +104,14 @@ AnimationSequence::AnimationSequence(Screen &screen, OSystem &system, uint16 scr
 
 	_lineRefs = d.getEntry(_screenId + 1);
 
-	// Show the screen that preceeds the start of the animation data
-	_screen.setPaletteEmpty();
+	// Reset the palette and set the initial starting screen
+	_screen.setPaletteEmpty(RES_PALETTE_ENTRIES);
 	_screen.screen().data().copyFrom(_decodedData, 0, 0, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH);
 	_screen.update();
 
 	// Set the palette
 	if (fadeIn)	_screen.paletteFadeIn(&_palette);
-	else _screen.setPalette(&_palette);
+	else _screen.setPalette(&_palette, 0, _palette.numEntries());
 
 	// Set up frame poitners
 	_pPixels = _decodedData->data() + SCREEN_SIZE;

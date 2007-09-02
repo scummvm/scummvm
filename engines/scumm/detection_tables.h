@@ -37,11 +37,7 @@
 //#include "scumm/intern.h"
 //#include "scumm/he/intern_he.h"
 
-#ifdef PALMOS_68K
-#include "extras/palm-scumm-md5.h"
-#else
 #include "scumm/scumm-md5.h"
-#endif
 
 
 namespace Scumm {
@@ -399,6 +395,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "maniac", "Maniac Mansion (SW).prg", kGenUnchanged, Common::SE_SWE, Common::kPlatformNES, "NES" },
 	{ "maniac", "Maniac Mansion (U).prg", kGenUnchanged, Common::EN_USA, Common::kPlatformNES, "NES" },
 	{ "maniac", "Maniac Mansion (G).prg", kGenUnchanged, Common::DE_DEU, Common::kPlatformNES, "NES" },
+	{ "maniac", "Maniac Mansion (Sp).prg", kGenUnchanged, Common::ES_ESP, Common::kPlatformNES, "NES" },
 
 	{ "zak", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
 	{ "zak", "zak1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, 0 },         // ... and zak2.d64

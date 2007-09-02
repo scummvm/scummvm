@@ -205,6 +205,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 
 	_sceneLoaded = false;
 	_sceneNumber = 0;
+	_chapterNumber = 0;
 	_sceneResourceId = 0;
 	_inGame = false;
 	_loadDescription = false;
@@ -290,6 +291,31 @@ void Scene::startScene() {
 	sceneQueue = queueIterator.operator->();
 
 	loadScene(sceneQueue);
+}
+
+void Scene::creditsScene() {
+	// End the last game ending scene
+	_vm->_scene->endScene();
+	// We're not in the game anymore
+	_inGame = false;
+
+	// Hide cursor during credits
+	_vm->_gfx->showCursor(false);
+
+	switch (_vm->getGameType()) {
+	case GType_ITE:
+		// Not called by ITE
+		break;
+	case GType_IHNM:
+		IHNMCreditsProc();
+		break;
+	default:
+		error("Scene::creditsScene(): Error: Can't start credits scene... gametype not supported");
+		break;
+	}
+
+	_vm->shutDown();
+	return;
 }
 
 void Scene::nextScene() {
@@ -561,6 +587,9 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	Event *q_event;
 	static PalEntry current_pal[PAL_ENTRIES];
 
+	if (loadSceneParams->transitionType == kTransitionFade)
+		_vm->_interface->setFadeMode(kFadeOut);
+
 	// Change the cursor to an hourglass in IHNM
 	event.type = kEvTOneshot;
 	event.code = kCursorEvent;
@@ -575,11 +604,20 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			error("loadScene wrong usage");
 		}
 
-		if (loadSceneParams->chapter == 6)
+		if (loadSceneParams->chapter == 6 || loadSceneParams->chapter == 8)
 			_vm->_interface->setLeftPortrait(0);
 
 		_vm->_anim->freeCutawayList();
-		_vm->_script->freeModules();
+		// FIXME: Freed script modules are not reloaded correctly when changing chapters.
+		// This is apparent when returning back to the character selection screen,
+		// where the scene script module is loaded incorrectly
+		// Don't free them for now, but free them on game exit, like ITE.
+		// This has no impact on the game itself (other than increased memory usage),
+		// as each chapter uses a different module slot
+		// TODO: Find out why the script modules are not loaded correctly when
+		// changing chapters and uncomment this again
+		//_vm->_script->freeModules();
+
 		// deleteAllScenes();
 
 		// installSomeAlarm()
@@ -589,16 +627,21 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		_vm->_interface->addToInventory(IHNM_OBJ_PROFILE);
 		_vm->_interface->activate();
 
-		if (loadSceneParams->chapter == 8 || loadSceneParams->chapter == -1)
-			_vm->_interface->setMode(kPanelChapterSelection);
-		else
+		if (loadSceneParams->chapter == 8 || loadSceneParams->chapter == -1) {
+			if (_vm->getGameId() != GID_IHNM_DEMO)
+				_vm->_interface->setMode(kPanelChapterSelection);
+			else
+				_vm->_interface->setMode(kPanelNull);
+		} else {
 			_vm->_interface->setMode(kPanelMain);
+		}
 
 		_inGame = true;
 
 		_vm->_script->setVerb(_vm->_script->getVerbType(kVerbWalkTo));
 
 		if (loadSceneParams->sceneDescriptor == -2) {
+			_vm->_interface->setFadeMode(kNoFade);
 			return;
 		}
 	}
@@ -637,6 +680,15 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	}
 
 	debug(3, "Loading scene number %d:", _sceneNumber);
+
+	if (isNonInteractiveIHNMDemoPart()) {
+		// WORKAROUND for the non-interactive part of the IHNM demo: When restarting the 
+		// non-interactive demo, opcode sfMainMode is incorrectly called. Therefore, if any
+		// of the scenes of the non-interactive demo are loaded (scenes 144-149), set panel 
+		// to null and lock the user interface
+		_vm->_interface->deactivate();
+		_vm->_interface->setMode(kPanelNull);
+	}
 
 	// Load scene descriptor and resource list resources
 	if (_loadDescription) {
@@ -784,11 +836,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		}
 
 		_vm->_sound->stopAll();
-
-		// FIXME: Does IHNM use scene background music, or is all the
-		//        music scripted? At the very least, it shouldn't try
-		//        to start song 0 at the beginning of the game, since
-		//        it's the end credits music.
 
 		if (_vm->getGameType() == GType_ITE) {
 			if (_sceneDescription.musicResourceId >= 0) {
@@ -1156,7 +1203,9 @@ void Scene::endScene() {
 		_sceneProc(SCENE_END, this);
 	}
 
-	//
+	// Stop showing actors till the next scene's background is drawn from loadScene
+	_vm->_render->setFlag(RF_DISABLE_ACTORS);
+
 	_vm->_script->abortAllThreads();
 	_vm->_script->_skipSpeeches = false;
 
@@ -1278,6 +1327,176 @@ void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLengt
 		_entryList.entryList[i].location.z = readS.readSint16();
 		_entryList.entryList[i].facing = readS.readUint16();
 	}
+}
+
+void Scene::clearPlacard() {
+	static PalEntry cur_pal[PAL_ENTRIES];
+	PalEntry *pal;
+	Event event;
+	Event *q_event;
+
+	_vm->_interface->restoreMode();
+
+	_vm->_gfx->getCurrentPal(cur_pal);
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventPalToBlack;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = cur_pal;
+
+	q_event = _vm->_events->queue(&event);
+
+	event.type = kEvTOneshot;
+	event.code = kGraphicsEvent;
+	event.op = kEventClearFlag;
+	event.param = RF_PLACARD;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kTextEvent;
+	event.op = kEventRemove;
+	event.data = _vm->_script->getPlacardTextEntry();
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	_vm->_scene->getBGPal(pal);
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventBlackToPal;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = pal;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kCursorEvent;
+	event.op = kEventShow;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kScriptEvent;
+	event.op = kEventThreadWake;
+	event.param = kWaitTypePlacard;
+
+	q_event = _vm->_events->chain(q_event, &event);
+}
+
+void Scene::showPsychicProfile(const char *text) {
+	int textHeight;
+	static PalEntry cur_pal[PAL_ENTRIES];
+	PalEntry *pal;
+	TextListEntry textEntry;
+	Event event;
+	Event *q_event;
+
+	if (_vm->_interface->getMode() == kPanelPlacard)
+		return;
+
+	_vm->_interface->rememberMode();
+	_vm->_interface->setMode(kPanelPlacard);
+	_vm->_gfx->savePalette();
+
+	event.type = kEvTOneshot;
+	event.code = kCursorEvent;
+	event.op = kEventHide;
+
+	q_event = _vm->_events->queue(&event);
+
+	_vm->_gfx->getCurrentPal(cur_pal);
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventPalToBlack;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = cur_pal;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kInterfaceEvent;
+	event.op = kEventClearStatus;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kGraphicsEvent;
+	event.op = kEventSetFlag;
+	event.param = RF_PLACARD;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	// Set the background and palette for the psychic profile
+	event.type = kEvTOneshot;
+	event.code = kPsychicProfileBgEvent;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	_vm->_scene->_textList.clear();
+
+	if (text != NULL) {
+		textHeight = _vm->_font->getHeight(kKnownFontVerb, text, 226, kFontCentered);
+
+		textEntry.knownColor = kKnownColorBlack;
+		textEntry.useRect = true;
+		textEntry.rect.left = 245;
+		textEntry.rect.setHeight(210 + 76);
+		textEntry.rect.setWidth(226);
+		textEntry.rect.top = 210 - textHeight;
+		textEntry.font = kKnownFontVerb;
+		textEntry.flags = (FontEffectFlags)(kFontCentered);
+		textEntry.text = text;
+
+		TextListEntry *_psychicProfileTextEntry = _vm->_scene->_textList.addEntry(textEntry);
+
+		event.type = kEvTOneshot;
+		event.code = kTextEvent;
+		event.op = kEventDisplay;
+		event.data = _psychicProfileTextEntry;
+
+		q_event = _vm->_events->chain(q_event, &event);
+	}
+
+	_vm->_scene->getBGPal(pal);
+
+	event.type = kEvTImmediate;
+	event.code = kPalEvent;
+	event.op = kEventBlackToPal;
+	event.time = 0;
+	event.duration = kNormalFadeDuration;
+	event.data = pal;
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTOneshot;
+	event.code = kScriptEvent;
+	event.op = kEventThreadWake;
+	event.param = kWaitTypePlacard;
+
+	q_event = _vm->_events->chain(q_event, &event);
+}
+
+void Scene::clearPsychicProfile() {
+	if (_vm->_interface->getMode() == kPanelPlacard || _vm->getGameId() == GID_IHNM_DEMO) {
+		_vm->_scene->clearPlacard();
+		_vm->_scene->_textList.clear();
+		_vm->_render->setFlag(RF_DISABLE_ACTORS);
+		_vm->_gfx->restorePalette();
+		_vm->_scene->restoreScene();
+		_vm->_interface->activate();
+	}
+}
+
+void Scene::showIHNMDemoSpecialScreen() {
+	_vm->_gfx->showCursor(true);
+	_vm->_interface->clearInventory();
+	_vm->_scene->changeScene(150, 0, kTransitionFade);
 }
 
 } // End of namespace Saga

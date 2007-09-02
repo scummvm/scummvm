@@ -25,10 +25,6 @@
 
 #include "be_base.h"
 
-#ifdef PALMOS_68K
-#	include <BmpGlue.h>
-#endif
-
 /*
  * Graphics modes
  *
@@ -144,27 +140,6 @@ void OSystem_PalmBase::updateScreen() {
 		WinPalette(winPaletteSet, _paletteDirtyStart, _paletteDirtyEnd - _paletteDirtyStart, _currentPalette + _paletteDirtyStart);
 		_paletteDirtyEnd = 0;
 		//_redawOSD = true;
-
-#ifdef PALMOS_68Ks
-		UInt8 oldCol;
-		oldCol = gVars->indicator.on;
-		gVars->indicator.on = RGBToColor(0,255,0);
-
-		if (oldCol != gVars->indicator.on)
-			_redrawOSD = true;
-
-/*		 {
-			// redraw if needed
-			if (_lastKeyModifier)
-				draw1BitGfx((kDrawKeyState + _lastKeyModifier - 1), 2, getHeight() + 2, true);
-
-			if(_useNumPad)
-				draw1BitGfx(kDrawNumPad, (getWidth() >> 1) - 32, getHeight() + 2, true);
-
-			if (_showBatLow)
-				draw1BitGfx(kDrawBatLow, (getWidth() >> 1), -16, true);		
-		}*/	
-#endif
 	}
 	if (_redawOSD) {
 		_redawOSD = false;
@@ -184,11 +159,7 @@ void OSystem_PalmBase::clearScreen() {
 void OSystem_PalmBase::draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8 color) {
 //return;
 
-#ifdef PALMOS_68K
-	MemHandle hTemp = DmGetResource(bitmapRsc, id);
-#else
 	MemHandle hTemp = DmGetResource('abmp', id + 100);
-#endif
 
 	if (hTemp) {
 		/*static const UInt32 pal[3] = {
@@ -201,11 +172,8 @@ void OSystem_PalmBase::draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8
 		bmTemp	= (BitmapType *)MemHandleLock(hTemp);
 
 		Coord w, h;
-#ifdef PALMOS_68K
-		BmpGlueGetDimensions(bmTemp, &w, &h, 0);
-#else
 		BmpGetDimensions(bmTemp, &w, &h, 0);
-#endif
+
 		PointType dst = { _screenOffset.x + x, _screenOffset.y + y };
 		RectangleType r = { dst.x, dst.y, w, h };
 
@@ -233,49 +201,4 @@ void OSystem_PalmBase::draw_osd(UInt16 id, Int32 x, Int32 y, Boolean show, UInt8
 		MemPtrUnlock(bmTemp);
 		DmReleaseResource(hTemp);
 	}
-
-/*	MemHandle hTemp = DmGetResource(bitmapRsc, id);
-	
-	if (hTemp) {
-		BitmapType *bmTemp;
-		UInt32 *bmData;
-		UInt8 ih, iw, ib;
-		Coord w, h;
-		Int16 blocks, next;
-
-		UInt8 *scr = _screenP + x + _screenPitch * y;
-		bmTemp	= (BitmapType *)MemHandleLock(hTemp);
-		bmData	= (UInt32 *)BmpGetBits(bmTemp);
-
-#ifdef PALMOS_68K
-		BmpGlueGetDimensions(bmTemp, &w, &h, 0);
-#else
-		BmpGetDimensions(bmTemp, &w, &h, 0);
-#endif
-
-		blocks = w >> 5;
-		next = w - (blocks << 5);
-
-		if (next)
-			blocks++;
-
-		for (ih = 0; ih < h; ih++) {			// line
-			for (ib = 0; ib < blocks; ib++) {	// 32pix block
-				next = w - (ib << 5);
-				next = MIN(next, (Coord)32);
-		
-				for (iw = 0; iw < next; iw++) {	// row
-					*scr++ = ((*bmData & (1 << (31 - iw))) && show) ?
-						gVars->indicator.on :
-						gVars->indicator.off;
-				}
-
-				bmData++;
-			}
-			scr += _screenPitch - w;
-		}
-
-		MemHandleUnlock(hTemp);
-		DmReleaseResource(hTemp);
-	}*/
 }

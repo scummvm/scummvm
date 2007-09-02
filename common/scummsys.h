@@ -200,21 +200,11 @@
 
 #elif defined(__PALMOS_TRAPS__)	|| defined (__PALMOS_ARMLET__)
 
-	#ifdef PALMOS_68K
-	#	include "globals.h"
-	#	define SCUMM_BIG_ENDIAN
+	#include <extras_string.h>
+	#define SCUMM_LITTLE_ENDIAN
 
-	#	define scumm_stricmp StrCaselessCompare
-	#	define scumm_strnicmp StrNCaselessCompare
-
-	#else
-
-	#	include <extras_string.h>
-	#	define SCUMM_LITTLE_ENDIAN
-
-	#	define scumm_stricmp stricmp
-	#	define scumm_strnicmp strnicmp
-	#endif
+	#define scumm_stricmp stricmp
+	#define scumm_strnicmp strnicmp
 
 	#define SCUMM_NEED_ALIGNMENT
 	#define STRINGBUFLEN 256

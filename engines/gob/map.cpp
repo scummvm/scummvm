@@ -34,9 +34,11 @@
 namespace Gob {
 
 Map::Map(GobEngine *vm) : _vm(vm) {
+	_widthByte = 0;
 	_mapWidth = -1;
 	_mapHeight = -1;
 	_screenWidth = 0;
+	_screenHeight = 0;
 	_tilesWidth = 0;
 	_tilesHeight = 0;
 	_passWidth = 0;
@@ -261,7 +263,7 @@ void Map::findNearestWalkable(int16 &gobDestX, int16 &gobDestY,
 	int i;
 
 	mapWidth = _screenWidth / _tilesWidth;
-	mapHeight = 200 / _tilesHeight;
+	mapHeight = _vm->_width / _tilesHeight;
 	direction = 0;
 
 	for (i = 1; i <= gobDestX; i++)

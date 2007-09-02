@@ -27,16 +27,6 @@
 
 namespace Scumm {
 
-#ifdef PALMOS_68K
-const imuseRoomMap *_digStateMusicMap;
-const imuseDigTable *_digStateMusicTable;
-const imuseDigTable *_digSeqMusicTable;
-const imuseComiTable *_comiStateMusicTable;
-const imuseComiTable *_comiSeqMusicTable;
-const imuseFtStateTable *_ftStateMusicTable;
-const imuseFtSeqTable *_ftSeqMusicTable;
-const imuseFtNames *_ftSeqNames;
-#else
 const imuseRoomMap _digStateMusicMap[] = {
 	{0,   0,  0,  0,  0,  0 },
 	{1,   0,  0,  0,  0,  0 },
@@ -852,33 +842,5 @@ const imuseFtSeqTable _ftSeqMusicTable[] = {
 	{"legavox",  2,  127},
 	{"chances",  2,  90 },
 };
-#endif
 
 } // End of namespace Scumm
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(DimuseTables)
-_GSETPTR(Scumm::_digStateMusicMap,		GBVARS_DIGSTATEMUSICMAP_INDEX,		Scumm::imuseRoomMap		, GBVARS_SCUMM)
-_GSETPTR(Scumm::_digStateMusicTable,	GBVARS_DIGSTATEMUSICTABLE_INDEX,	Scumm::imuseDigTable	, GBVARS_SCUMM)
-_GSETPTR(Scumm::_digSeqMusicTable,		GBVARS_DIGSEQMUSICTABLE_INDEX,		Scumm::imuseDigTable	, GBVARS_SCUMM)
-_GSETPTR(Scumm::_comiStateMusicTable,	GBVARS_COMISTATEMUSICTABLE_INDEX,	Scumm::imuseComiTable	, GBVARS_SCUMM)
-_GSETPTR(Scumm::_comiSeqMusicTable,		GBVARS_COMISEQMUSICTABLE_INDEX,		Scumm::imuseComiTable	, GBVARS_SCUMM)
-_GSETPTR(Scumm::_ftStateMusicTable,		GBVARS_FTSTATEMUSICTABLE_INDEX,		Scumm::imuseFtStateTable, GBVARS_SCUMM)
-_GSETPTR(Scumm::_ftSeqMusicTable,		GBVARS_FTSEQMUSICTABLE_INDEX,		Scumm::imuseFtSeqTable	, GBVARS_SCUMM)
-_GSETPTR(Scumm::_ftSeqNames,			GBVARS_FTSEQNAMES_INDEX,			Scumm::imuseFtNames		, GBVARS_SCUMM)
-_GEND
-
-_GRELEASE(DimuseTables)
-_GRELEASEPTR(GBVARS_DIGSTATEMUSICMAP_INDEX		, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_DIGSTATEMUSICTABLE_INDEX	, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_DIGSEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_COMISTATEMUSICTABLE_INDEX	, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_COMISEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_FTSTATEMUSICTABLE_INDEX		, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_FTSEQMUSICTABLE_INDEX		, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_FTSEQNAMES_INDEX			, GBVARS_SCUMM)
-_GEND
-
-#endif

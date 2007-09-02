@@ -32,8 +32,8 @@
 
 namespace Touche {
 
-MidiPlayer::MidiPlayer(MidiDriver *driver)
-	: _driver(driver), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _masterVolume(0) {
+MidiPlayer::MidiPlayer(MidiDriver *driver, bool nativeMT32)
+	: _driver(driver), _parser(0), _midiData(0), _isLooping(false), _isPlaying(false), _masterVolume(0), _nativeMT32(nativeMT32) {
 	assert(_driver);
 	memset(_channelsTable, 0, sizeof(_channelsTable));
 	memset(_channelsVolume, 0, sizeof(_channelsVolume));
@@ -127,6 +127,11 @@ void MidiPlayer::send(uint32 b) {
 		if (!_channelsTable[ch]) {
 			// channel not yet allocated, no need to send the event
 			return;
+		}
+		break;
+	default:
+		if ((b & 0xF0) == 0xC0 && _nativeMT32) { // program change
+			b = (b & 0xFFFF00FF) | (_gmToRol[(b >> 8) & 0x7F] << 8);
 		}
 		break;
 	}

@@ -35,11 +35,11 @@ public:
 	void readLIC(const char *fname);
 	void freeLICbuffer();
 
-	void startTrack(const char *s);
+	void startTrack(const char *trackName);
 	void playBgMusic();
 	void playMultMusic();
 	void play(uint32 from, uint32 to);
-	int32 getTrackPos();
+	int32 getTrackPos(const char *keyTrack = 0);
 	const char *getCurTrack();
 	void stopPlaying();
 	void stop();
@@ -49,11 +49,14 @@ public:
 
 protected:
 	byte *_LICbuffer;
+	byte *_curTrackBuffer;
 	char _curTrack[16];
 	uint16 _numTracks;
 	uint32 _trackStop;
 	uint32 _startTime;
 	GobEngine *_vm;
+
+	byte *getTrackBuffer(const char *trackName);
 };
 
 } // End of namespace Gob

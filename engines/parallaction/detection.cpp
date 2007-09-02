@@ -27,6 +27,7 @@
 
 #include "base/plugins.h"
 
+#include "common/config-manager.h"
 #include "common/advancedDetector.h"
 
 #include "parallaction/parallaction.h"
@@ -49,6 +50,7 @@ Common::Platform Parallaction::getPlatform() const { return _gameDescription->de
 static const PlainGameDescriptor parallactionGames[] = {
 	{"parallaction", "Parallaction engine game"},
 	{"nippon", "Nippon Safes Inc."},
+	{"bra", "The Big Red Adventure"},
 	{0, 0}
 };
 
@@ -140,6 +142,24 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		GF_LANG_IT,
 	},
 
+	{
+		{
+			"bra",
+			"Multi-lingual",
+			{
+				{"tbra.bmp",     0, "3174c095a0e1a4eaf05c403445711e9b", 80972 },
+				{"russia.fnt",   0, "57f85ff62aeca6334fdcaf718e313b49", 18344 },
+				{NULL,   0, NULL, 0 }
+			},
+			Common::UNK_LANG,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_BRA,
+		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT
+	},
+
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
@@ -166,7 +186,26 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(PARALLACTION, Parallaction::Parallaction, detectionParams);
+bool engineCreateParallaction(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)(encapsulatedDesc.realDesc);
+	bool res = true;
+
+	switch (gd->gameType) {
+	case Parallaction::GType_Nippon:
+		*engine = new Parallaction::Parallaction_ns(syst);
+		break;
+	case Parallaction::GType_BRA:
+		*engine = new Parallaction::Parallaction_br(syst);
+		break;
+	default:
+		res = false;
+		error("Parallaction engine: unknown gameType");
+	}
+
+	return res;
+}
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(PARALLACTION, engineCreateParallaction, detectionParams);
 
 REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dynabyte");
 

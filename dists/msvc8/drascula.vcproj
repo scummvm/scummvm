@@ -172,6 +172,10 @@
 			RelativePath="..\..\engines\drascula\drascula.h"
 			>
 		</File>
+		<File
+			RelativePath="..\..\engines\drascula\texts.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

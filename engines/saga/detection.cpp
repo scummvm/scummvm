@@ -49,7 +49,6 @@ struct SAGAGameDescription {
 	const GameFontDescription *fontDescriptions;
 	const GameSoundInfo *voiceInfo;
 	const GameSoundInfo *sfxInfo;
-	const GameSoundInfo *musicInfo;
 	int patchesCount;
 	const GamePatchDescription *patchDescriptions;
 };
@@ -59,7 +58,18 @@ const bool SagaEngine::isMacResources() const { return (getPlatform() == Common:
 const GameResourceDescription *SagaEngine::getResourceDescription() { return _gameDescription->resourceDescription; }
 const GameSoundInfo *SagaEngine::getVoiceInfo() const { return _gameDescription->voiceInfo; }
 const GameSoundInfo *SagaEngine::getSfxInfo() const { return _gameDescription->sfxInfo; }
-const GameSoundInfo *SagaEngine::getMusicInfo() const { return _gameDescription->musicInfo; }
+const GameSoundInfo *SagaEngine::getMusicInfo() const { 
+	static GameSoundInfo musicInfo;
+	musicInfo.resourceType = kSoundPCM;
+	musicInfo.frequency = 11025;
+	musicInfo.sampleBits = 16;
+	// The digital music in the ITE Mac demo version is not stereo
+	musicInfo.stereo = _gameDescription->gameType == GID_ITE_MACDEMO2 ? false : true;
+	musicInfo.isBigEndian = false;
+	musicInfo.isSigned = true;
+
+	return &musicInfo; 
+}
 
 const GameFontDescription *SagaEngine::getFontDescription(int index) {
 	assert(index < _gameDescription->fontsCount);
@@ -150,12 +160,20 @@ bool SagaEngine::initGame() {
 	}
 
 	// If a compressed sound file is found in the game's directory, set the compressed flag to true
-	if (Common::File::exists("music.cmp")  || Common::File::exists("musicd.cmp")  ||
-		Common::File::exists("sounds.cmp") || Common::File::exists("soundsd.cmp") ||
-		Common::File::exists("voices.cmp") || Common::File::exists("voicesd.cmp") ||
-		Common::File::exists("inherit the earth voices.cmp")) {
-		_gf_compressed_sounds = true;
-	}	
+	if (_gameDescription->gameType == GType_ITE) {
+		if (Common::File::exists("sounds.cmp") || Common::File::exists("soundsd.cmp") ||
+			Common::File::exists("voices.cmp") || Common::File::exists("voicesd.cmp") ||
+			Common::File::exists("inherit the earth voices.cmp")) {
+			_gf_compressed_sounds = true;
+		}	
+	} else {
+		if (Common::File::exists("voicess.cmp") || Common::File::exists("voices1.cmp") ||
+			Common::File::exists("voices2.cmp") || Common::File::exists("voices3.cmp") ||
+			Common::File::exists("voices4.cmp") || Common::File::exists("voices5.cmp") ||
+			Common::File::exists("voices6.cmp") || Common::File::exists("voicesd.cmp")) {
+			_gf_compressed_sounds = true;
+		}	
+	}
 
 	return _resource->createContexts();
 }

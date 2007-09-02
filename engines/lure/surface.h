@@ -104,6 +104,11 @@ public:
 	static bool show(bool saveDialog);
 };
 
+class RestartRestoreDialog {
+public:
+	static bool show();
+};
+
 } // End of namespace Lure
 
 #endif

@@ -359,8 +359,6 @@ int Script::getVerbType(VerbTypes verbType) {
 		}
 	}
 	else {
-		// TODO: This is ugly and needs rewriting, but
-		// it works for now
 		switch (verbType) {
 		case kVerbNone:
 			return kVerbIHNMNone;
@@ -750,6 +748,10 @@ void Script::whichObject(const Point& mousePoint) {
 	_leftButtonVerb = _currentVerb;
 	newRightButtonVerb = getVerbType(kVerbNone);
 
+	// _protagonist can be null while loading a game from the command line
+	if (_vm->_actor->_protagonist == NULL)
+		return;
+
 	if (_vm->_actor->_protagonist->_currentAction != kActionWalkDir) {
 		if (_vm->_scene->getHeight() >= mousePoint.y) {
 			newObjectId = _vm->_actor->hitTest(mousePoint, true);
@@ -769,7 +771,13 @@ void Script::whichObject(const Point& mousePoint) {
 					objectId = newObjectId;
 					if (_vm->getGameType() == GType_ITE)
 						objectFlags = kObjUseWith;
+					// Note: for IHNM, the default right button action is "Look at" for actors,
+					// but "Talk to" makes much more sense
 					newRightButtonVerb = getVerbType(kVerbTalkTo);
+					// Slight hack because of the above change: the jukebox in Gorrister's chapter 
+					// is an actor, so change the right button action to "Look at"
+					if (_vm->getGameType() == GType_IHNM && objectId == 8199)
+						newRightButtonVerb = getVerbType(kVerbLookAt);
 
 					if ((_currentVerb == getVerbType(kVerbPickUp)) ||
 						(_currentVerb == getVerbType(kVerbOpen)) ||

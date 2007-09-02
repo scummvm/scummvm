@@ -114,7 +114,7 @@ void Menu::start() {
 
 	splash();
 
-	_vm->_gfx->setFont(kFontMenu);
+	_vm->_gfx->setFont(_vm->_menuFont);
 
 	_language = chooseLanguage();
 	_vm->_disk->setLanguage(_language);
@@ -128,15 +128,11 @@ void Menu::start() {
 
 void Menu::splash() {
 
-	_vm->_disk->loadSlide("intro");
-	_vm->_gfx->setPalette(_vm->_gfx->_palette);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_vm->showSlide("intro");
 	_vm->_gfx->updateScreen();
 	g_system->delayMillis(2000);
 
-	_vm->_disk->loadSlide("minintro");
-	_vm->_gfx->setPalette(_vm->_gfx->_palette);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+	_vm->showSlide("minintro");
 	_vm->_gfx->updateScreen();
 	g_system->delayMillis(2000);
 
@@ -155,8 +151,8 @@ void Menu::newGame() {
 
 	_vm->_disk->selectArchive("disk1");
 
-	_vm->_disk->loadScenery("test", NULL);
-	_vm->_gfx->setPalette(_vm->_gfx->_palette);
+	_vm->setBackground("test", NULL, NULL);
+
 	_vm->_gfx->swapBuffers();
 
 	_vm->_gfx->displayCenteredString(50, v14[0]);
@@ -200,11 +196,7 @@ uint16 Menu::chooseLanguage() {
 	}
 
 	// user can choose language in dos version
-
-	_vm->_disk->loadSlide("lingua");
-	_vm->_gfx->setPalette(_vm->_gfx->_palette);
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
+	_vm->showSlide("lingua");
 	_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE", 1);
 
 	_vm->changeCursor(kCursorArrow);
@@ -260,8 +252,7 @@ uint16 Menu::selectGame() {
 		return 0;	// can't load a savegame in demo versions
 	}
 
-	_vm->_disk->loadSlide("restore");
-	_vm->_gfx->setPalette(_vm->_gfx->_palette);
+	_vm->showSlide("restore");
 
 	uint16 _si = 0;
 	uint16 _di = 3;
@@ -343,23 +334,17 @@ void Menu::selectCharacter() {
 
 	uint16 _donna_points, _dino_points, _dough_points;
 
-	StaticCnv v14;
-
-	v14._data0 = (byte*)malloc(BLOCK_WIDTH*BLOCK_HEIGHT);
-	v14._width = BLOCK_WIDTH;
-	v14._height = BLOCK_HEIGHT;
+	Graphics::Surface v14;
+	v14.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
 
 	_vm->changeCursor(kCursorArrow);
 	_vm->_soundMan->stopMusic();
 
-	_vm->_gfx->setFont(kFontMenu);
+	_vm->_gfx->setFont(_vm->_menuFont);
 
 	_vm->_disk->selectArchive((_vm->getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 
-	_vm->_disk->loadSlide("password");	// loads background into kBitBack buffer
-	_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);	//
-
-	_vm->_gfx->setPalette(_vm->_gfx->_palette);
+	_vm->showSlide("password");	// loads background into kBitBack buffer
 
 	while (true) {
 
@@ -383,7 +368,7 @@ void Menu::selectCharacter() {
 			Common::Rect r;
 			int _si = getSelectedBlock(_vm->_mousePos, r);
 			if (_si != -1) {
-				_vm->_gfx->grabRect(v14._data0, r, Gfx::kBitFront, BLOCK_WIDTH);
+				_vm->_gfx->grabRect((byte*)v14.pixels, r, Gfx::kBitFront, BLOCK_WIDTH);
 				_vm->_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitFront);
 //				beep();
 
@@ -435,7 +420,7 @@ void Menu::selectCharacter() {
 
 	_engineFlags |= kEngineChangeLocation;
 
-	free(v14._data0);
+	v14.free();
 
 	return;
 

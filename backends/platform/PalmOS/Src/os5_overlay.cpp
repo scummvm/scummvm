@@ -80,9 +80,6 @@ OverlayColor OSystem_PalmOS5::RGBToColor(uint8 r, uint8 g, uint8 b) {
 }
 
 void OSystem_PalmOS5::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
-#ifdef PALMOS_68K
-	color = SWAP_BYTES_16(color);
-#endif
 	r = ((color >> 8) & 0xF8);
 	g = ((color >> 3) & 0xFC);
 	b = ((color << 3) & 0xF8);

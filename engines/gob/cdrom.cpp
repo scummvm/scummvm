@@ -68,29 +68,30 @@ void CDROM::readLIC(const char *fname) {
 	_vm->_dataIO->getUnpackedData(tmp);
 
 	handle = _vm->_dataIO->openData(tmp);
+	DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
 
-	version = _vm->_dataIO->readUint16(handle);
-	startChunk = _vm->_dataIO->readUint16(handle);
-	_numTracks = _vm->_dataIO->readUint16(handle);
+	version = stream->readUint16LE();
+	startChunk = stream->readUint16LE();
+	_numTracks = stream->readUint16LE();
 
 	if (version != 3)
 		error("%s: Unknown version %d", fname, version);
 
-	_vm->_dataIO->seekData(handle, 50, SEEK_SET);
+	stream->seek(50);
 
 	for (int i = 0; i < startChunk; i++) {
-		pos = _vm->_dataIO->readUint16(handle);
+		pos = stream->readUint16LE();
 
 		if (!pos)
 			break;
 
-		_vm->_dataIO->seekData(handle, pos, SEEK_CUR);
+		stream->skip(pos);
 	}
 
 	_LICbuffer = new byte[_numTracks * 22];
-	_vm->_dataIO->readData(handle, _LICbuffer, _numTracks * 22);
+	stream->read(_LICbuffer, _numTracks * 22);
 
-	_vm->_dataIO->closeData(handle);
+	delete stream;
 }
 
 void CDROM::freeLICbuffer() {
@@ -150,40 +151,27 @@ void CDROM::playMultMusic() {
 		}
 }
 
-void CDROM::startTrack(const char *trackname) {
-	byte *curPtr, *matchPtr;
-
+void CDROM::startTrack(const char *trackName) {
 	if (!_LICbuffer)
 		return;
 
-	debugC(1, kDebugMusic, "CDROM::startTrack(%s)", trackname);
+	debugC(1, kDebugMusic, "CDROM::startTrack(%s)", trackName);
 
-	matchPtr = 0;
-	curPtr = _LICbuffer;
-
-	for (int i = 0; i < _numTracks; i++) {
-		if (!scumm_stricmp((char *)curPtr, trackname)) {
-			matchPtr = curPtr;
-			break;
-		}
-		curPtr += 22;
-	}
-
+	byte *matchPtr = getTrackBuffer(trackName);
 	if (!matchPtr) {
-		warning("Track \"%s\" not found", trackname);
+		warning("Track \"%s\" not found", trackName);
 		return;
 	}
 
-	strncpy0(_curTrack, trackname, 15);
+	strncpy0(_curTrack, trackName, 15);
 
 	stopPlaying();
+	_curTrackBuffer = matchPtr;
 
-	while (getTrackPos() != -1);
+	while (getTrackPos() >= 0);
 
-	uint32 start, end;
-
-	start = READ_LE_UINT32(matchPtr + 12);
-	end   = READ_LE_UINT32(matchPtr + 16);
+	uint32 start = READ_LE_UINT32(matchPtr + 12);
+	uint32 end   = READ_LE_UINT32(matchPtr + 16);
 
 	play(start, end);
 
@@ -204,12 +192,27 @@ void CDROM::play(uint32 from, uint32 to) {
 	_cdPlaying = true;
 }
 
-int32 CDROM::getTrackPos() {
-	uint32 curPos = _vm->_util->getTimeKey() - _startTime;
+int32 CDROM::getTrackPos(const char *keyTrack) {
+	byte *keyBuffer = getTrackBuffer(keyTrack);
+	uint32 curPos = (_vm->_util->getTimeKey() - _startTime) * 3 / 40;
 
-	if (_cdPlaying && (_vm->_util->getTimeKey() < _trackStop))
-		return curPos * 3 / 40;
-	else
+	if (_cdPlaying && (_vm->_util->getTimeKey() < _trackStop)) {
+		if (keyBuffer && _curTrackBuffer && (keyBuffer != _curTrackBuffer)) {
+			uint32 kStart = READ_LE_UINT32(keyBuffer + 12);
+			uint32 kEnd = READ_LE_UINT32(keyBuffer + 16);
+			uint32 cStart = READ_LE_UINT32(_curTrackBuffer + 12);
+			uint32 cEnd = READ_LE_UINT32(_curTrackBuffer + 16);
+
+			if ((kStart >= cStart) && (kEnd <= cEnd)) {
+				if ((kStart - cStart) > curPos)
+					return -2;
+				if ((kEnd - cStart) < curPos)
+					return -1;
+			}
+		}
+
+		return curPos;
+	} else
 		return -1;
 }
 
@@ -226,6 +229,7 @@ void CDROM::stopPlaying() {
 void CDROM::stop() {
 	debugC(1, kDebugMusic, "CDROM::stop()");
 
+	_curTrackBuffer = 0;
 	AudioCD.stop();
 	_cdPlaying = false;
 }
@@ -242,6 +246,24 @@ void CDROM::testCD(int trySubst, const char *label) {
 	// Original checked CD label here
 	// but will skip it as it will require OSystem extensions of direct
 	// CD secor reading
+}
+
+byte *CDROM::getTrackBuffer(const char *trackName) {
+	if (!_LICbuffer || !trackName)
+		return 0;
+
+	byte *matchPtr = 0;
+	byte *curPtr = _LICbuffer;
+
+	for (int i = 0; i < _numTracks; i++) {
+		if (!scumm_stricmp((char *) curPtr, trackName)) {
+			matchPtr = curPtr;
+			break;
+		}
+		curPtr += 22;
+	}
+
+	return matchPtr;
 }
 
 } // End of namespace Gob

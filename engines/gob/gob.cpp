@@ -48,7 +48,7 @@
 #include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/music.h"
-#include "gob/imd.h"
+#include "gob/videoplayer.h"
 #include "gob/saveload.h"
 
 namespace Gob {
@@ -68,6 +68,16 @@ const Common::Language GobEngine::_gobToScummVMLang[] = {
 };
 
 GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
+	_vm = this;
+
+	_snd      = 0; _adlib  = 0; _mult      = 0;
+	_game     = 0; _global = 0; _cdrom     = 0;
+	_dataIO   = 0; _goblin = 0; _vidPlayer = 0;
+	_init     = 0; _inter  = 0; _map       = 0;
+	_palAnim  = 0; _parse  = 0; _scenery   = 0;
+	_draw     = 0; _util   = 0; _video     = 0;
+	_saveLoad = 0;
+
 	// Setup mixer
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
@@ -94,25 +104,7 @@ GobEngine::~GobEngine() {
 	// Stop all mixer streams (except for the permanent ones).
 	_vm->_mixer->stopAll();
 
-	delete _snd;
-	delete _adlib;
-	delete _mult;
-	delete _game;
-	delete _global;
-	delete _cdrom;
-	delete _dataIO;
-	delete _goblin;
-	delete _imdPlayer;
-	delete _init;
-	delete _inter;
-	delete _map;
-	delete _palAnim;
-	delete _parse;
-	delete _scenery;
-	delete _draw;
-	delete _util;
-	delete _video;
-	delete _saveLoad;
+	deinitGameParts();
 	delete[] _startTot;
 	delete[] _startTot0;
 }
@@ -129,15 +121,23 @@ void GobEngine::shutdown() {
 
 void GobEngine::validateLanguage() {
 	if (_vm->_global->_languageWanted != _vm->_global->_language) {
-		warning("Your game version doesn't support the requested language");
-		warning("Using the first language available: %s",
-				getLangDesc(_vm->_global->_language));
+		warning("Your game version doesn't support the requested language %s",
+				getLangDesc(_vm->_global->_languageWanted));
+
+		if (((_vm->_global->_languageWanted == 2) && (_vm->_global->_language == 5)) ||
+		    ((_vm->_global->_languageWanted == 5) && (_vm->_global->_language == 2)))
+			warning("Using %s instead", getLangDesc(_vm->_global->_language));
+		else
+			warning("Using the first language available: %s",
+					getLangDesc(_vm->_global->_language));
+
 		_vm->_global->_languageWanted = _vm->_global->_language;
 	}
 }
 
 void GobEngine::validateVideoMode(int16 videoMode) {
-	if ((videoMode != 0x13) && (videoMode != 0x14))
+	if ((videoMode != 0x10) && (videoMode != 0x13) &&
+		  (videoMode != 0x14) && (videoMode != 0x18))
 		error("Video mode 0x%X is not supported!", videoMode);
 }
 
@@ -148,82 +148,18 @@ int GobEngine::init() {
 		return -1;
 	}
 
-	_adlib = 0;
-	_saveLoad = 0;
-	_global = new Global(this);
-	_util = new Util(this);
-	_dataIO = new DataIO(this);
-	_palAnim = new PalAnim(this);
-	_imdPlayer = new ImdPlayer(this);
-	_cdrom = new CDROM(this);
-	_snd = new Snd(this);
-	if (_features & Gob::GF_GOB1) {
-		_init = new Init_v1(this);
-		_video = new Video_v1(this);
-		_inter = new Inter_v1(this);
-		_parse = new Parse_v1(this);
-		_mult = new Mult_v1(this);
-		_draw = new Draw_v1(this);
-		_game = new Game_v1(this);
-		_map = new Map_v1(this);
-		_goblin = new Goblin_v1(this);
-		_scenery = new Scenery_v1(this);
-	} else if (_features & Gob::GF_GOB2) {
-		_init = new Init_v2(this);
-		_video = new Video_v2(this);
-		_inter = new Inter_v2(this);
-		_parse = new Parse_v2(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_v2(this);
-		_game = new Game_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v2(this);
-		_scenery = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
-	} else if (_features & Gob::GF_BARGON) {
-		_init = new Init_v2(this);
-		_video = new Video_v2(this);
-		_inter = new Inter_Bargon(this);
-		_parse = new Parse_v2(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_Bargon(this);
-		_game = new Game_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v2(this);
-		_scenery = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
-	} else if (_features & Gob::GF_GOB3) {
-		_init = new Init_v3(this);
-		_video = new Video_v2(this);
-		_inter = new Inter_v3(this);
-		_parse = new Parse_v2(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_v2(this);
-		_game = new Game_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v3(this);
-		_scenery = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_v3(this, _targetName.c_str());
-	} else
-		error("GobEngine::init(): Unknown version of game engine");
-
-	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
-	if (!_noMusic && !(_platform == Common::kPlatformAmiga) &&
-		 !(_platform == Common::kPlatformAtariST) &&
-	   (((_platform == Common::kPlatformMacintosh) && (_features & Gob::GF_GOB1)) ||
-	     (_features & Gob::GF_GOB2) || (_features & Gob::GF_GOB3)))
-		_adlib = new Adlib(this);
-	_vm = this;
-
-	_map->init();
+	if (!initGameParts()) {
+		GUIErrorMessage("GobEngine::init(): Unknown version of game engine");
+		return -1;
+	}
 
 	_system->beginGFXTransaction();
-		initCommonGFX(false);
-		_system->initSize(320, 200);
+		_system->initSize(_width, _height);
+		initCommonGFX(is640());
 	_system->endGFXTransaction();
 
 	// On some systems it's not safe to run CD audio games from the CD.
-	if (_features & GF_CD) 
+	if (isCD())
 		checkCD();
 
 	int cd_num = ConfMan.getInt("cdrom");
@@ -291,6 +227,167 @@ int GobEngine::init() {
 
 	g_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
 	return 0;
+}
+
+bool GobEngine::initGameParts() {
+	_adlib = 0;
+	_saveLoad = 0;
+
+	_global = new Global(this);
+	_util = new Util(this);
+	_dataIO = new DataIO(this);
+	_palAnim = new PalAnim(this);
+	_vidPlayer = new VideoPlayer(this);
+	_cdrom = new CDROM(this);
+	_snd = new Snd(this);
+
+	switch (_gameType) {
+		case kGameTypeGob1:
+			_init = new Init_v1(this);
+			_video = new Video_v1(this);
+			_inter = new Inter_v1(this);
+			_parse = new Parse_v1(this);
+			_mult = new Mult_v1(this);
+			_draw = new Draw_v1(this);
+			_game = new Game_v1(this);
+			_map = new Map_v1(this);
+			_goblin = new Goblin_v1(this);
+			_scenery = new Scenery_v1(this);
+			break;
+
+		case kGameTypeGob2:
+			_init = new Init_v2(this);
+			_video = new Video_v2(this);
+			_inter = new Inter_v2(this);
+			_parse = new Parse_v2(this);
+			_mult = new Mult_v2(this);
+			_draw = new Draw_v2(this);
+			_game = new Game_v2(this);
+			_map = new Map_v2(this);
+			_goblin = new Goblin_v2(this);
+			_scenery = new Scenery_v2(this);
+			_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
+			break;
+
+		case kGameTypeBargon:
+			_init = new Init_v2(this);
+			_video = new Video_v2(this);
+			_inter = new Inter_Bargon(this);
+			_parse = new Parse_v2(this);
+			_mult = new Mult_v2(this);
+			_draw = new Draw_Bargon(this);
+			_game = new Game_v2(this);
+			_map = new Map_v2(this);
+			_goblin = new Goblin_v2(this);
+			_scenery = new Scenery_v2(this);
+			_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
+			break;
+
+		case kGameTypeWeen:
+			_init = new Init_v2(this);
+			_video = new Video_v2(this);
+			_inter = new Inter_v2(this);
+			_parse = new Parse_v2(this);
+			_mult = new Mult_v2(this);
+			_draw = new Draw_v2(this);
+			_game = new Game_v2(this);
+			_map = new Map_v2(this);
+			_goblin = new Goblin_v2(this);
+			_scenery = new Scenery_v2(this);
+			_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
+			break;
+
+		case kGameTypeGob3:
+			_init = new Init_v3(this);
+			_video = new Video_v2(this);
+			_inter = new Inter_v3(this);
+			_parse = new Parse_v2(this);
+			_mult = new Mult_v2(this);
+			_draw = new Draw_v2(this);
+			_game = new Game_v2(this);
+			_map = new Map_v2(this);
+			_goblin = new Goblin_v3(this);
+			_scenery = new Scenery_v2(this);
+			_saveLoad = new SaveLoad_v3(this, _targetName.c_str());
+			break;
+
+		case kGameTypeLostInTime:
+			_init = new Init_v3(this);
+			_video = new Video_v2(this);
+			_inter = new Inter_v3(this);
+			_parse = new Parse_v2(this);
+			_mult = new Mult_v2(this);
+			_draw = new Draw_v2(this);
+			_game = new Game_v2(this);
+			_map = new Map_v2(this);
+			_goblin = new Goblin_v3(this);
+			_scenery = new Scenery_v2(this);
+			_saveLoad = new SaveLoad_v3(this, _targetName.c_str(), 4768, 0, 50);
+			break;
+
+		case kGameTypeWoodruff:
+			_init = new Init_v3(this);
+			_video = new Video_v2(this);
+			_inter = new Inter_v4(this);
+			_parse = new Parse_v2(this);
+			_mult = new Mult_v2(this);
+			_draw = new Draw_v2(this);
+			_game = new Game_v2(this);
+			_map = new Map_v4(this);
+			_goblin = new Goblin_v3(this);
+			_scenery = new Scenery_v2(this);
+			_saveLoad = new SaveLoad_v3(this, _targetName.c_str());
+			break;
+
+		default:
+			deinitGameParts();
+			return false;
+			break;
+	}
+
+	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
+	if (!_noMusic && hasAdlib())
+		_adlib = new Adlib(this);
+
+	if (is640()) {
+		_video->_surfWidth = _width = 640;
+		_video->_surfHeight = _video->_splitHeight1 = _height = 480;
+		_global->_mouseMaxCol = 640;
+		_global->_mouseMaxRow = 480;
+		_mode = 0x18;
+		_global->_primarySurfDesc = new SurfaceDesc(0x18, 640, 480);
+	} else {
+		_video->_surfWidth = _width = 320;
+		_video->_surfHeight = _video->_splitHeight1 = _height = 200;
+		_global->_mouseMaxCol = 320;
+		_global->_mouseMaxRow = 200;
+		_mode = 0x14;
+		_global->_primarySurfDesc = new SurfaceDesc(0x14, 320, 200);
+	}
+
+	return true;
+}
+
+void GobEngine::deinitGameParts() {
+	delete _snd;       _snd = 0;
+	delete _adlib;     _adlib = 0;
+	delete _mult;      _mult = 0;
+	delete _game;      _game = 0;
+	delete _global;    _global = 0;
+	delete _cdrom;     _cdrom = 0;
+	delete _dataIO;    _dataIO = 0;
+	delete _goblin;    _goblin = 0;
+	delete _vidPlayer; _vidPlayer = 0;
+	delete _init;      _init = 0;
+	delete _inter;     _inter = 0;
+	delete _map;       _map = 0;
+	delete _palAnim;   _palAnim = 0;
+	delete _parse;     _parse = 0;
+	delete _scenery;   _scenery = 0;
+	delete _draw;      _draw = 0;
+	delete _util;      _util = 0;
+	delete _video;     _video = 0;
+	delete _saveLoad;  _saveLoad = 0;
 }
 
 } // End of namespace Gob

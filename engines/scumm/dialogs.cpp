@@ -81,11 +81,6 @@ struct ResString {
 	char string[80];
 };
 
-#ifdef PALMOS_68K
-static const ResString *string_map_table_v7;
-static const ResString *string_map_table_v6;
-static const ResString *string_map_table_v5;
-#else
 static const ResString string_map_table_v8[] = {
 	{0, "/BT_100/Please insert disk %d. Press ENTER"},
 	{0, "/BT__003/Unable to Find %s, (%s %d) Press Button."},
@@ -216,7 +211,6 @@ static const ResString string_map_table_v345[] = {
 	{20, "Select a game to LOAD"},
 	{28, "Game title"}
 };
-#endif
 
 #pragma mark -
 
@@ -967,20 +961,3 @@ void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {
 }
 
 } // End of namespace Scumm
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Dialogs)
-_GSETPTR(Scumm::string_map_table_v7, GBVARS_STRINGMAPTABLEV7_INDEX, Scumm::ResString, GBVARS_SCUMM)
-_GSETPTR(Scumm::string_map_table_v6, GBVARS_STRINGMAPTABLEV6_INDEX, Scumm::ResString, GBVARS_SCUMM)
-_GSETPTR(Scumm::string_map_table_v5, GBVARS_STRINGMAPTABLEV5_INDEX, Scumm::ResString, GBVARS_SCUMM)
-_GEND
-
-_GRELEASE(Dialogs)
-_GRELEASEPTR(GBVARS_STRINGMAPTABLEV7_INDEX, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_STRINGMAPTABLEV6_INDEX, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_STRINGMAPTABLEV5_INDEX, GBVARS_SCUMM)
-_GEND
-
-#endif

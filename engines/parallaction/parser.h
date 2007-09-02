@@ -57,6 +57,9 @@ public:
 	void seek(int32 offset, int whence = SEEK_SET);
 };
 
+void skip(Script* script, const char* endToken);
+
+
 } // namespace Parallaction
 
 #endif

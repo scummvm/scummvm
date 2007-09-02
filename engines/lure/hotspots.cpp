@@ -35,6 +35,7 @@
 #include "lure/events.h"
 #include "lure/game.h"
 #include "lure/fights.h"
+#include "lure/sound.h"
 #include "common/endian.h"
 
 namespace Lure {
@@ -163,6 +164,39 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_frameWidth = _width;
 	_frameStartsUsed = false;
 	_nameBuffer[0] = '\0';
+}
+
+Hotspot::Hotspot(): _pathFinder(NULL) {
+	_data = NULL;
+	_anim = NULL;
+	_frames = NULL;
+	_numFrames = 0;
+	_persistant = false;
+	_hotspotId = 0xffff;
+	_override = NULL;
+	_colourOffset = 0;
+	_destHotspotId = 0;
+	_blockedOffset = 0;
+	_exitCtr = 0;
+	_voiceCtr = 0;
+	_walkFlag = false;
+	_skipFlag = false;
+	_roomNumber = 0;
+	_destHotspotId = 0;
+	_startX = 0;
+	_startY = 0;
+	_destX = 0;
+	_destY = 0;
+	_layer = 0;
+	_height = 0;
+	_width = 0;
+	_heightCopy = 0;
+	_widthCopy = 0;
+	_yCorrection = 0;
+	_tickCtr = 0;
+	_tickHandler = NULL;
+	_frameWidth = _width;
+	_frameStartsUsed = false;
 }
 
 Hotspot::~Hotspot() {
@@ -689,7 +723,6 @@ void Hotspot::converse(uint16 destCharacterId, uint16 messageId, bool standStill
 	if (standStill) {
 		setDelayCtr(_data->talkCountdown);
 		_data->characterMode = CHARMODE_CONVERSING;
-		//TODO: HS[3Eh]=character_hotspot_id, HS[40h]=active_hotspot_id
 	}
 }
 
@@ -870,7 +903,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 				return PC_WAIT;
 
 		} else if (hotspot->actionHotspotId != _hotspotId) {
-			if (fields.getField(82) != 2) {
+			if (fields.getField(AREA_FLAG) != 2) {
 				showMessage(5, hotspot->hotspotId);
 				setDelayCtr(4);
 			}
@@ -1295,8 +1328,8 @@ void Hotspot::doClose(HotspotData *hotspot) {
 	joinRec = res.getExitJoin(hotspot->hotspotId);
 	if (!joinRec->blocked) {
 		// Close the door
-		if (!doorCloseCheck(joinRec->hotspot1Id) ||
-			!doorCloseCheck(joinRec->hotspot2Id)) {
+		if (!doorCloseCheck(joinRec->hotspots[0].hotspotId) ||
+			!doorCloseCheck(joinRec->hotspots[1].hotspotId)) {
 			// A character is preventing the door from closing
 			showMessage(2);
 		} else {
@@ -1332,7 +1365,10 @@ void Hotspot::doUse(HotspotData *hotspot) {
 	faceHotspot(hotspot);
 	endAction();
 
-	// TODO: If character=3E9h, HS[-1]=28h, HS[1Fh]=50h
+	if (hotspotId() == RATPOUCH_ID) {
+		_tempDest.position.x = 40;
+		setFrameCtr(80);
+	}
 
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, USE);
 
@@ -1727,7 +1763,6 @@ void Hotspot::doBribe(HotspotData *hotspot) {
 		++tempId;                      // Move over entry's sequence offset
 	}
 	
-	// TODO: call to talk_setup
 	faceHotspot(hotspot);
 	setActionCtr(0);
 	endAction();
@@ -1738,8 +1773,8 @@ void Hotspot::doBribe(HotspotData *hotspot) {
 		if (sequenceOffset != 0) return;
 	}
 
-	// TODO: talk_record_index
-	showMessage(sequenceOffset);
+	uint16 talkIndex = res.fieldList().getField(TALK_INDEX);
+	showMessage((talkIndex == 6) ? 0x30 : 0x29);
 }
 
 void Hotspot::doExamine(HotspotData *hotspot) {
@@ -1811,7 +1846,7 @@ void Hotspot::npcHeySir(HotspotData *hotspot) {
 		return;
 	}
 
-	// TODO: Check storage of hotspot Id in data_1090/data_1091=0
+	// TODO: Check storage of hotspot Id in talk_first=player/talk_second=0
 
 	// Get the npc to say "Hey Sir" to player
 	showMessage(0x22, PLAYER_ID);
@@ -2059,6 +2094,9 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 	stream->writeSint16LE(_destX);
 	stream->writeSint16LE(_destY);
 	stream->writeUint16LE(_destHotspotId);
+	stream->writeByte(_tempDest.counter);
+	stream->writeSint16LE(_tempDest.position.x);
+	stream->writeSint16LE(_tempDest.position.y);
 	stream->writeUint16LE(_frameWidth);
 	stream->writeUint16LE(_height);
 	stream->writeUint16LE(_width);
@@ -2096,6 +2134,9 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	_destX = stream->readSint16LE();
 	_destY = stream->readSint16LE();
 	_destHotspotId = stream->readUint16LE();
+	_tempDest.counter = stream->readByte();
+	_tempDest.position.x = stream->readSint16LE();
+	_tempDest.position.y = stream->readSint16LE();
 	_frameWidth = stream->readUint16LE();
 	_height = stream->readUint16LE();
 	_width = stream->readUint16LE();
@@ -2227,6 +2268,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 	RoomPathsData &paths = Resources::getReference().getRoom(h.roomNumber())->paths;
 	PathFinder &pathFinder = h.pathFinder();
 	CurrentActionStack &actions = h.currentActions();
+	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 	uint16 impingingList[MAX_NUM_IMPINGING];
 	int numImpinging;
 	bool bumpedPlayer;
@@ -2276,8 +2318,6 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 
 		if (numImpinging > 0) {
 			// Scan to check if the character has bumped into player
-			Hotspot *player = res.getActiveHotspot(PLAYER_ID);
-
 			if (bumpedPlayer && (player->characterMode() == CHARMODE_IDLE)) {
 				// Signal the player to move out of the way automatically
 				player->setBlockedState(BS_INITIAL);
@@ -2300,8 +2340,12 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		h.setSkipFlag(false);
 	}
 
-	// TODO: Handling of any set Tick Script Offset, as well as certain other
-	// as of yet unknown hotspot flags
+	if (h.resource()->scriptHotspotId != 0) {
+		// Character bumped against another
+		fields.setField(USE_HOTSPOT_ID, h.resource()->scriptHotspotId);
+		Script::execute(h.resource()->tickScriptOffset);
+		h.resource()->scriptHotspotId = 0;
+	}
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot standard character point 4");
 	if (h.pauseCtr() != 0) {
@@ -2332,13 +2376,14 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 			// All other character modes
 			if (h.delayCtr() > 0) {
 				// There is some countdown left to do
-				bool decrementFlag = true; 
+				h.updateMovement();
 
-				if (!decrementFlag) {
-					HotspotData *hotspot = res.getHotspot(0); // TODO: HS[50h]
-					decrementFlag = (hotspot->roomNumber != h.roomNumber()) ? false :
+				bool decrementFlag = (h.resource()->actionHotspotId != 0);
+				if (decrementFlag) {
+					HotspotData *hotspot = res.getHotspot(h.resource()->actionHotspotId);
+					decrementFlag = (hotspot->roomNumber != h.hotspotId()) ? false :
 						Support::charactersIntersecting(hotspot, h.resource());
-				}			
+				}
 
 				if (decrementFlag) {
 					h.setDelayCtr(h.delayCtr() - 1);
@@ -2353,11 +2398,19 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		h.pathFinder().clear();
 
 		if ((currentMode == CHARMODE_WAIT_FOR_PLAYER) || (currentMode == CHARMODE_WAIT_FOR_INTERACT)) {
-			// TODO: HS[33h]=0
+			h.resource()->talkOverride = 0;
 			h.showMessage(1);
 		}
 		return;
 	}
+
+	/* interactHotspotId never seems to be set 
+	if ((h.resource()->interactHotspotId != 0) && !player->currentActions().isEmpty())  {
+		h.setActionCtr(99);
+		if (!actions.isEmpty()) 
+			actions.top().setAction(DISPATCH_ACTION);
+	}
+	*/
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot standard character point 6");
 	CurrentAction action = actions.action();
@@ -2567,37 +2620,38 @@ void HotspotTickHandlers::puzzledAnimHandler(Hotspot &h) {
 }
 
 void HotspotTickHandlers::roomExitAnimHandler(Hotspot &h) {
-	RoomExitJoinData *rec = Resources::getReference().getExitJoin(h.hotspotId());
-	if (!rec) return;
-	byte *currentFrame, *destFrame;
+	Resources &res = Resources::getReference();
+	ValueTableData &fields = res.fieldList();
+	Room &room = Room::getReference();
 
-	if (rec->hotspot1Id == h.hotspotId()) {
-		currentFrame = &rec->h1CurrentFrame; 
-		destFrame = &rec->h1DestFrame;
-	} else {
-		currentFrame = &rec->h2CurrentFrame;
-		destFrame = &rec->h2DestFrame;
-	}
-	
-	if ((rec->blocked != 0) && (*currentFrame != *destFrame)) {
+	RoomExitJoinData *rec = res.getExitJoin(h.hotspotId());
+	if (!rec) return;
+	RoomExitJoinStruct &rs = (rec->hotspots[0].hotspotId == h.hotspotId()) ? 
+		rec->hotspots[0] : rec->hotspots[1];
+
+	if ((rec->blocked != 0) && (rs.currentFrame != rs.destFrame)) {
 		// Closing the door
 		h.setOccupied(true);
 
-		++*currentFrame;
-		if (*currentFrame == *destFrame) {
-			// TODO: play closed door sound
-		}
-	} else if ((rec->blocked == 0) && (*currentFrame != 0)) {
+		++rs.currentFrame;
+		if ((rs.currentFrame == rs.destFrame) && (h.hotspotId() == room.roomNumber()))
+			Sound.addSound(rs.closeSound);
+
+	} else if ((rec->blocked == 0) && (rs.currentFrame != 0)) {
 		// Opening the door
 		h.setOccupied(false);
 
-		--*currentFrame;
-		if (*currentFrame == *destFrame) {
-			//TODO: Check against script val 88 and play sound
+		--rs.currentFrame;
+		if ((rs.currentFrame == rs.destFrame) && (h.hotspotId() == room.roomNumber())) {
+			Sound.addSound(rs.openSound);
+			
+			// If in the outside village, trash reverb
+			if (fields.getField(AREA_FLAG) == 1)
+				Sound.musicInterface_TrashReverb();
 		}
 	}
 
-	h.setFrameNumber(*currentFrame);
+	h.setFrameNumber(rs.currentFrame);
 }
 
 void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
@@ -2607,7 +2661,6 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 	RoomPathsData &paths = Resources::getReference().getRoom(h.roomNumber())->paths;
 	PathFinder &pathFinder = h.pathFinder();
 	CurrentActionStack &actions = h.currentActions();
-	ValueTableData &fields = res.fieldList();
 	uint16 impingingList[MAX_NUM_IMPINGING];
 	int numImpinging;
 	Action hsAction;
@@ -2637,7 +2690,17 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 			return;
 		h.setSkipFlag(false);
 	}
-	// TODO: HS[58h] check
+
+	/* interactHotspotId never seems to be set 
+	if (h.resource()->interactHotspotId != 0) {
+		h.resource()->interactHotspotId = 0;
+		Hotspot *hotspot = res.getActiveHotspot(h.resource()->interactHotspotId);
+		assert(hotspot);
+		if ((hotspot->characterMode() != CHARMODE_WAIT_FOR_INTERACT) &&
+			!actions.isEmpty())
+			actions.top().setAction(ACTION_NONE);
+	}
+	*/
 
 	if (h.pauseCtr() > 0) {
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Pause countdown = %d", h.pauseCtr());
@@ -2668,10 +2731,10 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Character mode = %d", h.characterMode());
 		h.setOccupied(false);
 		h.setCharacterMode(CHARMODE_NONE);
-		if (fields.playerPendingPos().isSet) {
+		if (h.tempDest().counter != 0) {
 			// Start walking to the previously set destination
-			fields.playerPendingPos().isSet = false;
-			h.setDestPosition(fields.playerPendingPos().pos.x, fields.playerPendingPos().pos.y);
+			h.tempDest().counter = 0;
+			h.setDestPosition(h.tempDest().position.x, h.tempDest().position.y);
 			h.currentActions().addFront(START_WALKING, h.roomNumber());
 			h.setWalkFlag(false);
 		}
@@ -2753,9 +2816,9 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 				return;
 
 			} else if (h.blockedState() != BS_NONE) {
-				fields.playerPendingPos().pos.x = h.destX();
-				fields.playerPendingPos().pos.y = h.destY();
-				fields.playerPendingPos().isSet = true;
+				h.tempDest().position.x = h.destX();
+				h.tempDest().position.y = h.destY();
+				h.tempDest().counter = 1;
 				h.setBlockedState((BlockedState) ((int) h.blockedState() + 1));
 				h.setRandomDest();
 				return;
@@ -2795,7 +2858,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 				// Walking done
 				if (room.cursorState() == CS_BUMPED)
 					room.setCursorState(CS_NONE);
-				if (fields.playerPendingPos().isSet) {
+				if (h.tempDest().counter != 0) {
 					h.setCharacterMode(CHARMODE_PLAYER_WAIT);
 					h.setDelayCtr(IDLE_COUNTDOWN_SIZE);
 					return;
@@ -2901,10 +2964,11 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 void HotspotTickHandlers::jailorAnimHandler(Hotspot &h) {
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
+	Game &game = Game::getReference();
 	HotspotData *player = res.getHotspot(PLAYER_ID);
 
 	if ((fields.getField(11) != 0) || (h.hotspotId() == CASTLE_SKORL_ID)) {
-		if (!h.skipFlag() && (h.roomNumber() == player->roomNumber)) {
+		if (!h.skipFlag() && !game.preloadFlag() && (h.roomNumber() == player->roomNumber)) {
 			if (Support::charactersIntersecting(h.resource(), player)) {
 				// Skorl has caught the player
 				Game::getReference().setState(GS_RESTORE_RESTART | GS_CAUGHT);
@@ -2935,6 +2999,9 @@ void HotspotTickHandlers::droppingTorchAnimHandler(Hotspot &h) {
 			Resources &res = Resources::getReference();
 			res.deactivateHotspot(h.hotspotId());
 			res.activateHotspot(0x41C);
+
+			// Add sound
+			Sound.addSound(8);			
 
 			// Enable the fire and activate its animation
 			HotspotData *fire = res.getHotspot(0x418);
@@ -4474,9 +4541,9 @@ void Support::characterChangeRoom(Hotspot &h, uint16 roomNumber,
 
 		// TODO: Double-check.. is it impinging in leaving room (right now) or entering room
 		if (checkForIntersectingCharacter(h)) {
-			fields.playerPendingPos().pos.x = h.destX();
-			fields.playerPendingPos().pos.y = h.destY();
-			fields.playerPendingPos().isSet = true;
+			h.tempDest().position.x = h.destX();
+			h.tempDest().position.y = h.destY();
+			h.tempDest().counter = 1;
 			Room::getReference().setCursorState(CS_BUMPED);
 			h.setActionCtr(0);
 			h.setBlockedState((BlockedState) ((int) h.blockedState() + 1));

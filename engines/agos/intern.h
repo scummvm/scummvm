@@ -187,13 +187,8 @@ struct TimeEvent {
 };
 
 struct GameSpecificSettings {
-#ifndef PALMOS_68K
 	const char *effects_filename;
 	const char *speech_filename;
- #else
-	const char effects_filename[12];
-	const char speech_filename[12];
- #endif
 };
 
 enum BoxFlags {

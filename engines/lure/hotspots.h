@@ -243,6 +243,11 @@ enum HotspotPrecheckResult {PC_EXECUTE, PC_NOT_IN_ROOM, PC_FAILED, PC_WAIT, PC_E
 
 enum BarPlaceResult {BP_KEEP_TRYING, BP_GOT_THERE, BP_FAIL};
 
+struct DestStructure {
+	uint8 counter;
+	Point position;
+};
+
 #define MAX_NUM_FRAMES 16
 
 class Hotspot {
@@ -277,6 +282,7 @@ private:
 	bool _frameStartsUsed;
 	uint16 _frameStarts[MAX_NUM_FRAMES];
 	char _nameBuffer[MAX_HOTSPOT_NAME_SIZE];
+	DestStructure _tempDest;
 
 	// Runtime fields
 	uint16 _frameCtr;
@@ -339,6 +345,7 @@ private:
 public:
 	Hotspot(HotspotData *res);
 	Hotspot(Hotspot *character, uint16 objType);
+	Hotspot();
 	~Hotspot();
 
 	void setAnimation(uint16 newAnimId);
@@ -516,6 +523,7 @@ public:
 	void doAction(Action action, HotspotData *hotspot);
 	CurrentActionStack &currentActions() { return _currentActions; }
 	PathFinder &pathFinder() { return _pathFinder; }
+	DestStructure &tempDest() { return _tempDest; }
 	uint16 frameCtr() { return _frameCtr; }
 	void setFrameCtr(uint16 value) { _frameCtr = value; }
 	void decrFrameCtr() { if (_frameCtr > 0) --_frameCtr; }

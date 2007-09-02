@@ -38,15 +38,13 @@ SaveLoad_v2::SaveLoad_v2(GobEngine *vm, const char *targetName) :
 	SaveLoad(vm, targetName) {
 
 	_stagesCount = 1;
-
-	_buffer = new byte*[_stagesCount];
-
-	assert(_buffer);
-
-	_buffer[0] = 0;
 }
 
 SaveType SaveLoad_v2::getSaveType(const char *fileName) {
+	const char *backSlash;
+	if ((backSlash = strrchr(fileName, '\\')))
+		fileName = backSlash + 1;
+
 	if (!scumm_stricmp(fileName, "cat.inf"))
 		return kSaveGame;
 	if (!scumm_stricmp(fileName, "cat.cat"))
@@ -186,6 +184,8 @@ bool SaveLoad_v2::loadScreenshot(int16 dataVar, int32 size, int32 offset) {
 bool SaveLoad_v2::saveGame(int16 dataVar, int32 size, int32 offset) {
 	int32 varSize = READ_LE_UINT32(_vm->_game->_totFileData + 0x2C) * 4;
 
+	initBuffer();
+
 	if (size == 0) {
 		dataVar = 0;
 		size = varSize;
@@ -283,6 +283,15 @@ bool SaveLoad_v2::saveNotes(int16 dataVar, int32 size, int32 offset) {
 
 bool SaveLoad_v2::saveScreenshot(int16 dataVar, int32 size, int32 offset) {
 	return false;
+}
+
+void SaveLoad_v2::initBuffer() {
+	if (_buffer)
+		return;
+
+	_buffer = new byte*[_stagesCount];
+	assert(_buffer);
+	_buffer[0] = 0;
 }
 
 } // End of namespace Gob

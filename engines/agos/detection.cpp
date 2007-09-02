@@ -101,55 +101,42 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-GameList Engine_AGOS_gameIDList() {
-	return GameList(simonGames);
-}
- 
-GameDescriptor Engine_AGOS_findGameID(const char *gameid) {
-	return Common::AdvancedDetector::findGameID(gameid, simonGames, obsoleteGameIDsTable);
-}
+bool engineCreateAgos(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const AGOS::AGOSGameDescription *gd = (const AGOS::AGOSGameDescription *)(encapsulatedDesc.realDesc);
+	bool res = true;
 
-GameList Engine_AGOS_detectGames(const FSList &fslist) {
-	return Common::AdvancedDetector::detectAllGames(fslist, detectionParams);
-}
-
-PluginError Engine_AGOS_create(OSystem *syst, Engine **engine) {
-	assert(engine);
-	const char *gameid = ConfMan.get("gameid").c_str();
-	
-	//Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	//const AGOSGameDescription *gd = (const AGOSGameDescription *)(encapsulatedDesc.realDesc);
-	//if (gd == 0) {
-	//	return kNoGameDataFoundError;
-	//}
-
-	if (!scumm_stricmp("elvira1", gameid)) {
+	switch (gd->gameType) {
+	case AGOS::GType_ELVIRA1:
 		*engine = new AGOS::AGOSEngine_Elvira1(syst);
-	} else if (!scumm_stricmp("elvira2", gameid)) {
+		break;
+	case AGOS::GType_ELVIRA2:
 		*engine = new AGOS::AGOSEngine_Elvira2(syst);
-	} else if (!scumm_stricmp("waxworks", gameid)) {
+		break;
+	case AGOS::GType_WW:
 		*engine = new AGOS::AGOSEngine_Waxworks(syst);
-	} else if (!scumm_stricmp("simon1", gameid)) {
+		break;
+	case AGOS::GType_SIMON1:
 		*engine = new AGOS::AGOSEngine_Simon1(syst);
-	} else if (!scumm_stricmp("simon2", gameid)) {
+		break;
+	case AGOS::GType_SIMON2:
 		*engine = new AGOS::AGOSEngine_Simon2(syst);
-	} else if (!scumm_stricmp("feeble", gameid)) {
+		break;
+	case AGOS::GType_FF:
 		*engine = new AGOS::AGOSEngine_Feeble(syst);
-	} else if (!scumm_stricmp("dimp", gameid)) {
+		break;
+	case AGOS::GType_PP:
 		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
-	} else if (!scumm_stricmp("jumble", gameid)) {
-		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
-	} else if (!scumm_stricmp("puzzle", gameid)) {
-		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
-	} else if (!scumm_stricmp("swampy", gameid)) {
-		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
-	} else {
-		error("AGOS engine created with invalid gameid");
+		break;
+	default:
+		res = false;
+		error("AGOS engine: unknown gameType");
 	}
 
-	return kNoError;
+	return res;
 }
- 
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(AGOS, engineCreateAgos, detectionParams);
+
 REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 
 namespace AGOS {

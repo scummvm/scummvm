@@ -44,7 +44,7 @@
 namespace Saga {
 
 SndRes::SndRes(SagaEngine *vm) : _vm(vm) {
-	/* Load sound module resource file contexts */
+	// Load sound module resource file contexts
 	_sfxContext = _vm->_resource->getContext(GAME_SOUNDFILE);
 	if (_sfxContext == NULL) {
 		error("SndRes::SndRes resource context not found");
@@ -182,13 +182,17 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundWAV;
 		} 
 		
-		bool patchedSound = false;
+		bool uncompressedSound = false;
 		// If a patch file exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
 		if (_vm->getGameType() == GType_ITE && resourceId == 4 && 
 			(Common::File::exists("sound/p2_a.iaf") || Common::File::exists("sound/p2_a.voc")))
-			patchedSound = true;
+			uncompressedSound = true;
 
-		if ((_vm->getFeatures() & GF_COMPRESSED_SOUNDS) && !patchedSound) {
+		// FIXME: Currently, the SFX.RES file in IHNM cannot be compressed
+		if (_vm->getGameType() == GType_IHNM && (context->fileType & GAME_SOUNDFILE))
+			uncompressedSound = true;
+
+		if ((_vm->getFeatures() & GF_COMPRESSED_SOUNDS) && !uncompressedSound) {
 			if (soundResource[0] == char(0)) {
 				resourceType = kSoundMP3;
 			} else if (soundResource[0] == char(1)) {

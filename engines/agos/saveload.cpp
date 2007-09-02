@@ -1173,7 +1173,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 		addTimeEvent(timeout, subroutine_id);
 	}
 
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformPC) {
 		// TODO Load room state data
 		for (uint s = 0; s <= _numRoomStates; s++) {
 			f->readUint16BE();
@@ -1185,7 +1185,8 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 	for (num = _itemArrayInited - 1; num; num--) {
 		Item *item = _itemArrayPtr[item_index++], *parent_item;
 
-		if (getGameType() == GType_ELVIRA2) {
+		if ((getGameType() == GType_WW && getPlatform() == Common::kPlatformAmiga) ||
+			getGameType() == GType_ELVIRA2) {
 			parent_item = derefItem(readItemID(f));
 			setItemParent(item, parent_item);
 		} else {
@@ -1325,7 +1326,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 		f->writeUint16BE(te->subroutine_id);
 	}
 
-	if (getGameType() == GType_WW) {
+	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformPC) {
 		// TODO Save room state data
 		for (uint s = 0; s <= _numRoomStates; s++) {
 			f->writeUint16BE(0);
@@ -1337,7 +1338,8 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	for (num_item = _itemArrayInited - 1; num_item; num_item--) {
 		Item *item = _itemArrayPtr[item_index++];
 
-		if (getGameType() == GType_ELVIRA2) {
+		if ((getGameType() == GType_WW && getPlatform() == Common::kPlatformAmiga) ||
+			getGameType() == GType_ELVIRA2) {
 			writeItemID(f, item->parent);
 		} else {
 			f->writeUint16BE(item->parent);

@@ -70,50 +70,6 @@ public:
 	uint32 write(const void *dataPtr, uint32 dataSize);
 };
 
-class ScummNESFile : public BaseScummFile {
-public:
-	enum ROMset {
-		kROMsetUSA,
-		kROMsetEurope,
-		kROMsetSweden,
-		kROMsetFrance,
-		kROMsetGermany,
-		kROMsetNum
-	};
-
-	struct Resource;
-	struct LFLEntry;
-	struct LFL;
-
-private:
-	Common::MemoryReadStream *_stream;
-	ROMset _ROMset;
-	byte *_buf;
-
-	bool generateIndex();
-	bool generateResource(int res);
-	uint16 extractResource(Common::WriteStream *out, const Resource *res);
-
-	byte fileReadByte();
-	uint16 fileReadUint16LE();
-
-public:
-	ScummNESFile();
-	void setEnc(byte value);
-
-	bool open(const Common::String &filename, AccessMode mode = kFileReadMode);
-	bool openSubFile(const Common::String &filename);
-
-	void close();
-	bool eof() { return _stream->eos(); }
-	uint32 pos() { return _stream->pos(); }
-	uint32 size() { return _stream->size(); }
-	void seek(int32 offs, int whence = SEEK_SET) { _stream->seek(offs, whence); }
-	uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
-	uint32 write(const void *dataPtr, uint32 dataSize);
-};
-
-
 class ScummDiskImage : public BaseScummFile {
 private:
 	Common::MemoryReadStream *_stream;

@@ -592,3 +592,16 @@ void CDECL warning(const char *s, ...) {
 #endif
 #endif
 }
+
+char *scumm_strrev(char *str) {
+	if (!str)
+		return str;
+	int len = strlen(str);
+	if (len < 2)
+		return str;
+	char *p1, *p2;
+	for (p1 = str, p2 = str + len - 1; p1 < p2; p1++, p2--) {
+		SWAP(*p1, *p2);
+	}
+	return str;
+}

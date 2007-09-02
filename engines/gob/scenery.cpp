@@ -320,7 +320,7 @@ void Scenery::updateStatic(int16 orderFrom, byte index, byte layer) {
 	int16 top;
 	int16 bottom;
 
-	if (layer >= _statics[index].layersCount)
+	if ((index >= 10) || layer >= _statics[index].layersCount)
 		return;
 
 	layerPtr = &_statics[index].layers[layer];

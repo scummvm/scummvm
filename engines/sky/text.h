@@ -96,7 +96,6 @@ private:
 	static const uint16 _patchLangIdx[8];
 	static const uint16 _patchLangNum[8];
 
-#ifndef PALMOS_68K
 	static const HuffTree _huffTree_00109[]; // trees moved to hufftext.cpp
 	static const HuffTree _huffTree_00267[];
 	static const HuffTree _huffTree_00288[];
@@ -106,18 +105,6 @@ private:
 	static const HuffTree _huffTree_00365[];
 	static const HuffTree _huffTree_00368[];
 	static const HuffTree _huffTree_00372[];
-#else
-public:
-	static const HuffTree *_huffTree_00109; // trees moved to hufftext.cpp
-	static const HuffTree *_huffTree_00267;
-	static const HuffTree *_huffTree_00288;
-	static const HuffTree *_huffTree_00303;
-	static const HuffTree *_huffTree_00331;
-	static const HuffTree *_huffTree_00348;
-	static const HuffTree *_huffTree_00365;
-	static const HuffTree *_huffTree_00368;
-	static const HuffTree *_huffTree_00372;
-#endif
 };
 
 } // End of namespace Sky

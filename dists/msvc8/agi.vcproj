@@ -169,14 +169,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\agi_v2.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\agi_v3.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\agi\checks.cpp"
 			>
 		</File>
@@ -226,6 +218,18 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\keyboard.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\loader_preagi.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\loader_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\loader_v3.cpp"
 			>
 		</File>
 		<File
@@ -282,6 +286,22 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\picture.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_input.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_mickey.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_mickey.h"
 			>
 		</File>
 		<File

@@ -62,9 +62,6 @@ uint32 decode12BitsSample(const byte *src, byte **dst, uint32 size) {
 
 static byte _imcTableEntryBitCount[89];
 
-#ifdef PALMOS_68K
-static const int16 *imcTable;
-#else
 static const int16 imcTable[89] = {
 		7,	  8,	9,	 10,   11,	 12,   13,	 14,
 	   16,	 17,   19,	 21,   23,	 25,   28,	 31,
@@ -79,7 +76,6 @@ static const int16 imcTable[89] = {
 	15289,16818,18500,20350,22385,24623,27086,29794,
 	32767
 };
-#endif
 
 static const byte imxOtherTable[6][64] = {
 	{
@@ -651,16 +647,3 @@ int32 decompressCodec(int32 codec, byte *compInput, byte *compOutput, int32 inpu
 } // End of namespace BundleCodecs
 
 } // End of namespace Scumm
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(DimuseCodecs)
-_GSETPTR(Scumm::BundleCodecs::imcTable, GBVARS_IMCTABLE_INDEX, int16, GBVARS_SCUMM)
-_GEND
-
-_GRELEASE(DimuseCodecs)
-_GRELEASEPTR(GBVARS_IMCTABLE_INDEX, GBVARS_SCUMM)
-_GEND
-
-#endif

@@ -32,7 +32,6 @@
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
-#include "gob/imd.h"
 #include "gob/sound.h"
 #include "gob/video.h"
 
@@ -50,6 +49,9 @@ uint32 Util::getTimeKey(void) {
 }
 
 int16 Util::getRandom(int16 max) {
+	if (max == 0)
+		return 0;
+
 	return _vm->_rnd.getRandomNumber(max - 1);
 }
 
@@ -126,8 +128,8 @@ void Util::processInput(bool scroll) {
 
 	_vm->_global->_speedFactor = MIN(_fastMode + 1, 3);
 	if (scroll && hasMove) {
-		if (y >= (200 - _vm->_video->_splitHeight2)) {
-			y = 200 - _vm->_video->_splitHeight2 - 1;
+		if (y >= (_vm->_height - _vm->_video->_splitHeight2)) {
+			y = _vm->_height - _vm->_video->_splitHeight2 - 1;
 			_vm->_util->setMousePos(x, y);
 		}
 		_vm->_game->evaluateScroll(x, y);
@@ -301,7 +303,6 @@ void Util::setFrameRate(int16 rate) {
 
 	_vm->_global->_frameWaitTime = 1000 / rate;
 	_vm->_global->_startFrameTime = getTimeKey();
-	_vm->_imdPlayer->_frameDelay = 0;
 }
 
 void Util::waitEndFrame() {
@@ -312,17 +313,13 @@ void Util::waitEndFrame() {
 	time = getTimeKey() - _vm->_global->_startFrameTime;
 	if ((time > 1000) || (time < 0)) {
 		_vm->_global->_startFrameTime = getTimeKey();
-		_vm->_imdPlayer->_frameDelay = 0;
 		return;
 	}
 
-	if (_vm->_global->_frameWaitTime - time > 0) {
-		_vm->_imdPlayer->_frameDelay = 0;
-		delay(_vm->_global->_frameWaitTime - _vm->_imdPlayer->_frameDelay - time);
-	}
+	if ((_vm->_global->_frameWaitTime - time) > 0)
+		delay(_vm->_global->_frameWaitTime - time);
 
 	_vm->_global->_startFrameTime = getTimeKey();
-	_vm->_imdPlayer->_frameDelay = time - _vm->_global->_frameWaitTime;
 }
 
 void Util::setScrollOffset(int16 x, int16 y) {

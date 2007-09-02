@@ -33,6 +33,92 @@
 
 namespace Gob {
 
+DataStream::DataStream(DataIO &io, int16 handle, uint32 dSize, bool dispose) {
+	_io = &io;
+	_handle = handle;
+	_size = dSize;
+	_dispose = dispose;
+
+	_data = 0;
+	_stream = 0;
+}
+
+DataStream::DataStream(byte *buf, uint32 dSize, bool dispose) {
+	_data = buf;
+	_size = dSize;
+	_stream = new Common::MemoryReadStream(_data, _size);
+	_dispose = dispose;
+
+	_io = 0;
+	_handle = -1;
+}
+
+DataStream::~DataStream() {
+	delete _stream;
+
+	if (_dispose) {
+		delete[] _data;
+		if ((_handle >= 0) && _io)
+			_io->closeData(_handle);
+	}
+}
+
+uint32 DataStream::pos() const {
+	if (_stream)
+		return _stream->pos();
+
+	uint32 resPos = _io->getChunkPos(_handle);
+	if (resPos != 0xFFFFFFFF)
+		return resPos;
+
+	return _io->file_getHandle(_handle)->pos();
+}
+
+uint32 DataStream::size() const {
+	if (_stream)
+		return _stream->size();
+
+	return _size;
+}
+
+void DataStream::seek(int32 offset, int whence) {
+	if (_stream)
+		_stream->seek(offset, whence);
+
+	int32 resPos = _io->seekChunk(_handle, offset, whence);
+	if (resPos != -1)
+		return;
+
+	_io->file_getHandle(_handle)->seek(offset, whence);
+}
+
+bool DataStream::eos() const {
+	if (_stream)
+		return _stream->eos();
+
+	return pos() >= size();
+}
+
+uint32 DataStream::read(void *dataPtr, uint32 dataSize) {
+	if (_stream)
+		return _stream->read(dataPtr, dataSize);
+
+	if ((_handle < 50) || (_handle >= 128))
+		return _io->file_getHandle(_handle)->read((byte *) dataPtr, dataSize);
+
+	byte *data = (byte *) dataPtr;
+	uint32 haveRead = 0;
+	while (dataSize > 0x3FFF) {
+		_io->readChunk(_handle, (byte *) data, 0x3FFF);
+		dataSize -= 0x3FFF;
+		data += 0x3FFF;
+		haveRead += 0x3FFF;
+	}
+	_io->readChunk(_handle, (byte *) data, dataSize);
+
+	return haveRead + dataSize;
+}
+
 DataIO::DataIO(GobEngine *vm) : _vm(vm) {
 	for (int i = 0; i < MAX_DATA_FILES; i++) {
 		_dataFiles[i] = 0;
@@ -115,6 +201,10 @@ Common::File *DataIO::file_getHandle(int16 handle) {
 	return &_filesHandles[handle];
 }
 
+const Common::File *DataIO::file_getHandle(int16 handle) const {
+	return &_filesHandles[handle];
+}
+
 int16 DataIO::file_open(const char *path, Common::File::AccessMode mode) {
 	int16 i;
 
@@ -183,28 +273,27 @@ int32 DataIO::readChunk(int16 handle, byte *buf, uint16 size) {
 
 	file = (handle - 50) / 10;
 	slot = (handle - 50) % 10;
-	if (!_isCurrentSlot[file * MAX_SLOT_COUNT + slot]) {
+	int index = file * MAX_SLOT_COUNT + slot;
+
+	_chunkPos[index] = CLIP<int32>(_chunkPos[index], 0, _chunkSize[index]);
+
+	if (!_isCurrentSlot[index]) {
 		for (i = 0; i < MAX_SLOT_COUNT; i++)
 			_isCurrentSlot[file * MAX_SLOT_COUNT + i] = false;
 
-		offset = _chunkOffset[file * MAX_SLOT_COUNT + slot] +
-			_chunkPos[file * MAX_SLOT_COUNT + slot];
+		offset = _chunkOffset[index] + _chunkPos[index];
 
-		debugC(7, kDebugFileIO, "seek: %d, %d",
-				_chunkOffset[file * MAX_SLOT_COUNT + slot],
-				_chunkPos[file * MAX_SLOT_COUNT + slot]);
+		debugC(7, kDebugFileIO, "seek: %d, %d", _chunkOffset[index], _chunkPos[index]);
 
 		file_getHandle(_dataFileHandles[file])->seek(offset, SEEK_SET);
 	}
 
-	_isCurrentSlot[file * MAX_SLOT_COUNT + slot] = true;
-	if ((_chunkPos[file * MAX_SLOT_COUNT + slot] + size) >
-	    (_chunkSize[file * MAX_SLOT_COUNT + slot]))
-		size = _chunkSize[file * MAX_SLOT_COUNT + slot] -
-			_chunkPos[file * MAX_SLOT_COUNT + slot];
+	_isCurrentSlot[index] = true;
+	if ((_chunkPos[index] + size) > (_chunkSize[index]))
+		size = _chunkSize[index] - _chunkPos[index];
 
 	file_getHandle(_dataFileHandles[file])->read(buf, size);
-	_chunkPos[file * MAX_SLOT_COUNT + slot] += size;
+	_chunkPos[index] += size;
 	return size;
 }
 
@@ -217,16 +306,18 @@ int16 DataIO::seekChunk(int16 handle, int32 pos, int16 from) {
 
 	file = (handle - 50) / 10;
 	slot = (handle - 50) % 10;
-	_isCurrentSlot[file * MAX_SLOT_COUNT + slot] = false;
-	if (from == SEEK_SET)
-		_chunkPos[file * MAX_SLOT_COUNT + slot] = pos;
-	else
-		_chunkPos[file * MAX_SLOT_COUNT + slot] += pos;
+	int index = file * MAX_SLOT_COUNT + slot;
 
-	return _chunkPos[file * MAX_SLOT_COUNT + slot];
+	_isCurrentSlot[index] = false;
+	if (from == SEEK_SET)
+		_chunkPos[index] = pos;
+	else
+		_chunkPos[index] += pos;
+
+	return _chunkPos[index];
 }
 
-uint32 DataIO::getChunkPos(int16 handle) {
+uint32 DataIO::getChunkPos(int16 handle) const {
 	int16 file;
 	int16 slot;
 
@@ -390,39 +481,23 @@ int16 DataIO::openData(const char *path, Common::File::AccessMode mode) {
 	return file_open(path, mode);
 }
 
-int32 DataIO::readData(int16 handle, byte *buf, uint16 size) {
-	int32 res;
+DataStream *DataIO::openAsStream(int16 handle, bool dispose) {
+	uint32 curPos = getPos(handle);
+	seekData(handle, 0, SEEK_END);
+	uint32 size = getPos(handle);
+	seekData(handle, curPos, SEEK_SET);
 
-	res = readChunk(handle, buf, size);
-	if (res >= 0)
-		return res;
-
-	return file_getHandle(handle)->read(buf, size);
+	return new DataStream(*this, handle, size, dispose);
 }
 
-byte DataIO::readByte(int16 handle) {
-	byte buf;
+uint32 DataIO::getPos(int16 handle) {
+	uint32 resPos;
 
-	readData(handle, &buf, 1);
-	return ((byte) buf);
-}
+	resPos = getChunkPos(handle);
+	if (resPos != 0xFFFFFFFF)
+		return resPos;
 
-uint16 DataIO::readUint16(int16 handle) {
-	byte buf[2];
-
-	readData(handle, buf, 2);
-	return READ_LE_UINT16(buf);
-}
-
-uint32 DataIO::readUint32(int16 handle) {
-	byte buf[4];
-
-	readData(handle, buf, 4);
-	return READ_LE_UINT32(buf);
-}
-
-int32 DataIO::writeData(int16 handle, byte *buf, uint16 size) {
-	return file_getHandle(handle)->write(buf, size);
+	return file_getHandle(handle)->pos();
 }
 
 void DataIO::seekData(int16 handle, int32 pos, int16 from) {
@@ -435,14 +510,14 @@ void DataIO::seekData(int16 handle, int32 pos, int16 from) {
 	file_getHandle(handle)->seek(pos, from);
 }
 
-uint32 DataIO::getPos(int16 handle) {
-	uint32 resPos;
+int32 DataIO::readData(int16 handle, byte *buf, uint16 size) {
+	int32 res;
 
-	resPos = getChunkPos(handle);
-	if (resPos != 0xFFFFFFFF)
-		return resPos;
+	res = readChunk(handle, buf, size);
+	if (res >= 0)
+		return res;
 
-	return file_getHandle(handle)->pos();
+	return file_getHandle(handle)->read(buf, size);
 }
 
 int32 DataIO::getDataSize(const char *name) {
@@ -490,6 +565,13 @@ byte *DataIO::getData(const char *path) {
 	readData(handle, ptr, size);
 	closeData(handle);
 	return data;
+}
+
+DataStream *DataIO::getDataStream(const char *path) {
+	uint32 size = getDataSize(path);
+	byte *data = getData(path);
+
+	return new DataStream(data, size);
 }
 
 } // End of namespace Gob

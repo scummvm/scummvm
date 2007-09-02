@@ -130,13 +130,16 @@ protected:
 	virtual bool saveGame(int16 dataVar, int32 size, int32 offset);
 	virtual bool saveNotes(int16 dataVar, int32 size, int32 offset);
 	virtual bool saveScreenshot(int16 dataVar, int32 size, int32 offset);
+
+	void initBuffer();
 };
 
 class SaveLoad_v3 : public SaveLoad_v2 {
 public:
 	virtual SaveType getSaveType(const char *fileName);
 
-	SaveLoad_v3(GobEngine *vm, const char *targetName);
+	SaveLoad_v3(GobEngine *vm, const char *targetName, uint32 screenshotSize = 19968,
+			int32 indexOffset = 40, int32 screenshotOffset = 80);
 	virtual ~SaveLoad_v3() {}
 
 protected:
@@ -144,19 +147,22 @@ protected:
 	bool _firstSizeGame;
 	int8 _saveSlot;
 
+	uint32 _screenshotSize;
+	int32 _indexOffset;
+	int32 _screenshotOffset;
+
 	virtual uint32 getSaveGameSize();
 
 	virtual int32 getSizeGame();
-	virtual int32 getSizeNotes();
 	virtual int32 getSizeScreenshot();
 	virtual bool loadGame(int16 dataVar, int32 size, int32 offset);
-	virtual bool loadNotes(int16 dataVar, int32 size, int32 offset);
 	virtual bool loadScreenshot(int16 dataVar, int32 size, int32 offset);
 	virtual bool saveGame(int16 dataVar, int32 size, int32 offset);
 	virtual bool saveNotes(int16 dataVar, int32 size, int32 offset);
 	virtual bool saveScreenshot(int16 dataVar, int32 size, int32 offset);
 
 	bool saveGame(int32 screenshotSize);
+	void initBuffer();
 };
 
 } // End of namespace Gob

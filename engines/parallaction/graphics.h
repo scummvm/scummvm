@@ -29,39 +29,13 @@
 #include "common/rect.h"
 #include "common/stream.h"
 
+#include "graphics/surface.h"
 
 #include "parallaction/defs.h"
 
 
 namespace Parallaction {
 
-
-
-#define SCREEN_WIDTH		320
-#define SCREEN_HEIGHT		200
-#define SCREEN_SIZE 		SCREEN_WIDTH*SCREEN_HEIGHT
-
-#define SCREENMASK_WIDTH	SCREEN_WIDTH/4
-#define SCREENPATH_WIDTH	SCREEN_WIDTH/8
-
-#define BASE_PALETTE_COLORS		32
-#define FIRST_BASE_COLOR		0
-#define LAST_BASE_COLOR			(FIRST_BASE_COLOR+BASE_PALETTE_COLORS-1)
-
-#define EHB_PALETTE_COLORS		32										// extra half-brite colors for amiga
-#define FIRST_EHB_COLOR			(LAST_BASE_COLOR+1)
-#define LAST_EHB_COLOR			(FIRST_EHB_COLOR+EHB_PALETTE_COLORS-1)
-
-#define PALETTE_COLORS			(BASE_PALETTE_COLORS+EHB_PALETTE_COLORS)
-
-#define BASE_PALETTE_SIZE		BASE_PALETTE_COLORS*3
-#define PALETTE_SIZE			PALETTE_COLORS*3
-
-#define MOUSEARROW_WIDTH		16
-#define MOUSEARROW_HEIGHT		16
-
-#define MOUSECOMBO_WIDTH		32	// sizes for cursor + selected inventory item
-#define MOUSECOMBO_HEIGHT		32
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
@@ -98,19 +72,19 @@ public:
 
 };
 
-struct StaticCnv {
-	uint16	_width; 	//
-	uint16	_height;	//
-	byte*	_data0; 	// bitmap
-	byte*	_data1; 	// unused
 
-	StaticCnv() {
-		_width = _height = 0;
-		_data0 = _data1 = NULL;
-	}
+struct Frames {
+
+	virtual uint16	getNum() = 0;
+	virtual byte*	getData(uint16 index) = 0;
+	virtual void	getRect(uint16 index, Common::Rect &r) = 0;
+
+	virtual ~Frames() { }
+
 };
 
-struct Cnv {
+
+struct Cnv : public Frames {
 	uint16	_count; 	// # of frames
 	uint16	_width; 	//
 	uint16	_height;	//
@@ -137,6 +111,21 @@ public:
 			return NULL;
 		return &_data[index * _width * _height];
 	}
+
+	uint16	getNum() {
+		return _count;
+	}
+
+	byte	*getData(uint16 index) {
+		return getFramePtr(index);
+	}
+
+	void getRect(uint16 index, Common::Rect &r) {
+		r.left = 0;
+		r.top = 0;
+		r.setWidth(_width);
+		r.setHeight(_height);
+	}
 };
 
 
@@ -147,90 +136,127 @@ class Parallaction;
 struct DoorData;
 struct GetData;
 
-enum Fonts {
-	kFontDialogue = 0,
-	kFontLabel = 1,
-	kFontMenu = 2
+
+struct MaskBuffer {
+	// handles a 2-bit depth buffer used for z-buffering
+
+	uint16	w;
+	uint16  internalWidth;
+	uint16	h;
+	uint	size;
+	byte	*data;
+
+public:
+	MaskBuffer() : w(0), internalWidth(0), h(0), size(0), data(0) {
+	}
+
+	void create(uint16 width, uint16 height) {
+		w = width;
+		internalWidth = w >> 2;
+		h = height;
+		size = (internalWidth * h);
+		data = (byte*)calloc(size, 1);
+	}
+
+	void free() {
+		if (data)
+			::free(data);
+		data = 0;
+		w = 0;
+		h = 0;
+		internalWidth = 0;
+		size = 0;
+	}
+
+	inline byte getValue(uint16 x, uint16 y) {
+		byte m = data[(x >> 2) + y * internalWidth];
+		uint n = (x & 3) << 1;
+		return ((3 << n) & m) >> n;
+	}
+
+};
+
+class Palette {
+
+	byte	_data[768];
+	uint	_colors;
+	uint	_size;
+	bool	_hb;
+
+public:
+	Palette();
+	Palette(const Palette &pal);
+
+	void clone(const Palette &pal);
+
+	void makeBlack();
+	void setEntries(byte* data, uint first, uint num);
+	void setEntry(uint index, int red, int green, int blue);
+	void makeGrayscale();
+	void fadeTo(const Palette& target, uint step);
+	uint fillRGBA(byte *rgba);
+
+	void rotate(uint first, uint last, bool forward);
 };
 
 class Gfx {
 
 public:
-	typedef byte Palette[PALETTE_SIZE];
-
 	enum Buffers {
 		// bit buffers
 		kBitFront,
 		kBitBack,
-		kBit2,
-		// mask buffers
-		kMask0
+		kBit2
 	};
 
 public:
 
-	// dialogue and text
+	// balloons and text
 	void drawBalloon(const Common::Rect& r, uint16 arg_8);
 	void displayString(uint16 x, uint16 y, const char *text, byte color);
 	void displayCenteredString(uint16 y, const char *text);
-	bool displayWrappedString(char *text, uint16 x, uint16 y, byte color, uint16 wrapwidth = SCREEN_WIDTH);
+	bool displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16 wrapwidth = -1);
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 
-	// cnv management
-	void makeCnvFromString(StaticCnv *cnv, char *text);
-	void freeStaticCnv(StaticCnv *cnv);
-	void backupDoorBackground(DoorData *data, int16 x, int16 y);
-	void backupGetBackground(GetData *data, int16 x, int16 y);
-	void restoreZoneBackground(const Common::Rect& r, byte *data);
-
-	// location
-	void setBackground(byte *background);
-	void setMask(byte *mask);
-	int16 queryMask(int16 v);
-	void intGrottaHackMask();
+	// cut/paste
+	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer);
+	void flatBlitCnv(Frames *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
+	void blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
 	void restoreBackground(const Common::Rect& r);
+	void backupDoorBackground(DoorData *data, int16 x, int16 y);
+	void restoreDoorBackground(const Common::Rect& r, byte *data, byte* background);
+	void backupGetBackground(GetData *data, int16 x, int16 y);
+	void restoreGetBackground(const Common::Rect& r, byte *data);
 
-	// intro
-	void fillMaskRect(const Common::Rect& r, byte color);
-	void plotMaskPixel(uint16 x, uint16 y, byte color);
 
-	// low level
-	void swapBuffers();
-	void updateScreen();
+	// low level surfaces
 	void clearScreen(Gfx::Buffers buffer);
 	void copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer);
 	void copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch);
 	void grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch);
 	void floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color);
 
-	// NOTE: flatBlitCnv used to have an additional unused parameter,
-	// that was always the _data1 member of the StaticCnv parameter.
-	// DOS version didn't make use of it, but it is probably needed for Amiga stuff.
-	void flatBlitCnv(StaticCnv *cnv, int16 x, int16 y, Gfx::Buffers buffer);
-	void blitCnv(StaticCnv *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
-	void flatBlitCnv(Cnv *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
-
-
 	// palette
-	void setPalette(Palette palette, uint32 first = FIRST_BASE_COLOR, uint32 num = BASE_PALETTE_COLORS);
+	void setPalette(Palette palette);
 	void setBlackPalette();
 	void animatePalette();
-	void fadePalette(Palette palette);
-	void buildBWPalette(Palette palette);
-	void quickFadePalette(Palette palette);
 
 	// amiga specific
 	void setHalfbriteMode(bool enable);
+
+	// misc
+	int16 queryMask(int16 v);
+	void setFont(Font* font);
+	void swapBuffers();
+	void updateScreen();
+	void setBackground(Graphics::Surface *surf);
+	void setMask(MaskBuffer *buffer);
 
 	// init
 	Gfx(Parallaction* vm);
 	virtual ~Gfx();
 
-	void setMousePointer(int16 index);
-
-	void initFonts();
-	void setFont(Fonts name);
 
 public:
 	Common::Point		_labelPosition[2];
@@ -238,21 +264,27 @@ public:
 	PaletteFxRange		_palettefx[6];
 	Palette				_palette;
 
+	int 				_backgroundWidth;
+	int 				_backgroundHeight;
+
+	uint				_screenX;		// scrolling position
+	uint				_screenY;
+
 protected:
 	Parallaction*		_vm;
-	static byte *		_buffers[NUM_BUFFERS];
-	static byte			_mouseArrow[256];
-	StaticCnv			*_mouseComposedArrow;
+	Graphics::Surface	*_buffers[NUM_BUFFERS];
+	MaskBuffer			*_depthMask;
 	Font				*_font;
-	Font				*_fonts[3];
 	bool				_halfbrite;
 
 protected:
-	byte mapChar(byte c);
-	void flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer);
+	void initBuffers(int w, int h);
+	void freeBuffers();
+
+	void copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch);
+	void flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer, byte transparentColor);
 	void blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer);
-	void initBuffers();
-	void initMouse(uint16 arg_0);
+	void screenClip(Common::Rect& r, Common::Point& p);
 };
 
 
@@ -260,4 +292,7 @@ protected:
 
 
 #endif
+
+
+
 

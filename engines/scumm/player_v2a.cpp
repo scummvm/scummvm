@@ -32,11 +32,8 @@ namespace Scumm {
 
 #define BASE_FREQUENCY 3579545
 
-#ifdef PALMOS_68K
-static uint32 *CRCtable = NULL;
-#else
 static uint32 CRCtable[256];
-#endif
+
 
 static void	InitCRC (void)
 {
@@ -1309,9 +1306,6 @@ Player_V2A::Player_V2A(ScummEngine *scumm, Audio::Mixer *mixer) {
 	int i;
 	_vm = scumm;
 
-#ifdef PALMOS_68K
-	if (!CRCtable) CRCtable = (uint32 *)calloc(256, sizeof(uint32));
-#endif
 	InitCRC();
 
 	for (i = 0; i < V2A_MAXSLOTS; i++) {
@@ -1325,9 +1319,6 @@ Player_V2A::Player_V2A(ScummEngine *scumm, Audio::Mixer *mixer) {
 
 Player_V2A::~Player_V2A() {
 	delete _mod;
-#ifdef PALMOS_68K
-	free(CRCtable);
-#endif
 }
 
 void Player_V2A::setMusicVolume (int vol) {

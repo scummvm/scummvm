@@ -31,6 +31,7 @@
 
 #include "lure/disk.h"
 #include "lure/luredefs.h"
+#include "lure/res.h"
 
 namespace Lure {
 
@@ -125,6 +126,14 @@ void Disk::openFile(uint8 fileNum) {
 }
 
 uint32 Disk::getEntrySize(uint16 id) {
+	// Special room area check
+	uint16 tempId = id & 0x3fff;
+	if ((tempId == 0x120) || (tempId == 0x311) || (tempId == 8) || (tempId == 0x410)) {
+		ValueTableData &fieldList = Resources::getReference().fieldList();
+		if (fieldList.getField(AREA_FLAG) != 0)
+			id ^= 0x8000;
+	}
+
 	// Get the index of the resource, if necessary opening the correct file
 	uint8 index = indexOf(id);
 
@@ -137,6 +146,14 @@ uint32 Disk::getEntrySize(uint16 id) {
 
 MemoryBlock *Disk::getEntry(uint16 id)
 {
+	// Special room area check
+	uint16 tempId = id & 0x3fff;
+	if ((tempId == 0x120) || (tempId == 0x311) || (tempId == 8) || (tempId == 0x410)) {
+		ValueTableData &fieldList = Resources::getReference().fieldList();
+		if (fieldList.getField(AREA_FLAG) != 0)
+			id ^= 0x8000;
+	}
+
 	// Get the index of the resource, if necessary opening the correct file
 	uint8 index = indexOf(id);
 		

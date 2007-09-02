@@ -40,7 +40,7 @@ enum {
 #include "amiga.h"
 
 const Game kyra1FanTranslations[] = {
-	{ kKyra1, IT_ITA, kTalkieVersion, "7a6887428c4847625db132a461cabbbf", kyra1FreCD },
+	{ kKyra1, IT_ITA, kTalkieVersion, "2bffb79bda6c3ce1f7241b4c4305ee2c", kyra1FreCD },
 	GAME_DUMMY_ENTRY
 };
 

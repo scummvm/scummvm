@@ -47,11 +47,12 @@ public:
 	~Screen();
 	static Screen &getReference();
 
-	void setPaletteEmpty();
+	void setPaletteEmpty(int numEntries = RES_PALETTE_ENTRIES);
 	void setPalette(Palette *p);
+	void setPalette(Palette *p, uint16 start, uint16 num);
 	Palette &getPalette() { return *_palette; }
 	void paletteFadeIn(Palette *p);
-	void paletteFadeOut();
+	void paletteFadeOut(int numEntries = RES_PALETTE_ENTRIES);
 	void resetPalette();
 	void empty();
 	void update();

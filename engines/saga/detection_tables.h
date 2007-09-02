@@ -23,6 +23,8 @@
  *
  */
 
+// Game detection information and MD5s
+
 namespace Saga {
 
 static const GameResourceDescription ITE_Resources = {
@@ -32,10 +34,12 @@ static const GameResourceDescription ITE_Resources = {
 	RID_ITE_CONVERSE_PANEL,
 	RID_ITE_OPTION_PANEL,
 	0,					// Warning panel (IHNM only)
+	0,					// Warning panel sprites (IHNM only)
 	RID_ITE_MAIN_SPRITES,
 	RID_ITE_MAIN_PANEL_SPRITES,
 	0,					// Option panel sprites (IHNM only)
 	RID_ITE_DEFAULT_PORTRAITS,
+	0,					// Psychic profile background (IHNM only)
 	RID_ITE_MAIN_STRINGS,
 	RID_ITE_ACTOR_NAMES
 };
@@ -47,217 +51,15 @@ static const GameResourceDescription ITEDemo_Resources = {
 	RID_ITEDEMO_CONVERSE_PANEL,
 	RID_ITEDEMO_OPTION_PANEL,
 	0,						// Warning panel (IHNM only)
+	0,						// Warning panel sprites (IHNM only)
 	RID_ITEDEMO_MAIN_SPRITES,
 	RID_ITEDEMO_MAIN_PANEL_SPRITES,
 	0,						// Option panel sprites (IHNM only)
 	RID_ITEDEMO_DEFAULT_PORTRAITS,
+	0,						// Psychic profile background (IHNM only)
 	RID_ITEDEMO_MAIN_STRINGS,
 	RID_ITEDEMO_ACTOR_NAMES
 };
-
-// Inherit the Earth - DOS Demo version
-static const GameFontDescription ITEDEMO_GameFonts[] = {
-	{0},
-	{1}
-};
-
-static const GameSoundInfo ITEDEMO_GameSound = {
-	kSoundVOC,
-	-1,
-	-1,
-	false,
-	false,
-	true
-};
-
-// Inherit the Earth - Wyrmkeep Win32 Demo version
-
-static const GameFontDescription ITEWINDEMO_GameFonts[] = {
-	{2},
-	{0}
-};
-
-static const GameSoundInfo ITEWINDEMO1_GameSound = {
-	kSoundPCM,
-	22050,
-	8,
-	false,
-	false,
-	false
-};
-
-static const GameSoundInfo ITEWINDEMO2_GameVoice = {
-	kSoundVOX,
-	22050,
-	16,
-	false,
-	false,
-	true
-};
-
-static const GameSoundInfo ITEWINDEMO2_GameSound = {
-	kSoundPCM,
-	22050,
-	16,
-	false,
-	false,
-	true
-};
-
-// Inherit the Earth - Wyrmkeep Mac Demo version
-static const GameSoundInfo ITEMACDEMO_GameVoice = {
-	kSoundVOX,
-	22050,
-	16,
-	false,
-	false,
-	true
-};
-
-static const GameSoundInfo ITEMACDEMO_GameSound = {
-	kSoundPCM,
-	22050,
-	16,
-	false,
-	true,
-	true
-};
-
-/*
-// Not used
-static const GameSoundInfo ITEMACDEMO_GameMusic = {
-	kSoundPCM,
-	11025,
-	16,
-	false,
-	false,
-	true
-};
-*/
-
-// Inherit the Earth - Wyrmkeep Linux Demo version
-static const GameSoundInfo ITELINDEMO_GameMusic = {
-	kSoundPCM,
-	11025,
-	16,
-	true,
-	false,
-	true
-};
-
-static const GameSoundInfo ITEMACCD_G_GameSound = {
-	kSoundMacPCM,
-	22050,
-	8,
-	false,
-	false,
-	false
-};
-
-// Inherit the Earth - Mac Wyrmkeep version
-static const GameSoundInfo ITEMACCD_GameSound = {
-	kSoundPCM,
-	22050,
-	16,
-	false,
-	true,
-	true
-};
-
-static const GameSoundInfo ITEMACCD_GameMusic = {
-	kSoundPCM,
-	11025,
-	16,
-	true,
-	false,
-	true
-};
-
-// Inherit the Earth - Diskette version
-static const GameFontDescription ITEDISK_GameFonts[] = {
-	{2},
-	{0},
-	{1}
-};
-
-static const GameSoundInfo ITEDISK_GameSound = {
-	kSoundVOC,
-	-1,
-	-1,
-	false,
-	false,
-	true
-};
-
-static const GameFontDescription ITECD_GameFonts[] = {
-	{2},
-	{0},
-	{1}
-};
-
-static const GameSoundInfo ITECD_GameSound = {
-	kSoundPCM,
-	22050,
-	16,
-	false,
-	false,
-	true
-};
-
-// Patch files. Files not found will be ignored
-static const GamePatchDescription ITEPatch_Files[] = {
-	{ "cave.mid", GAME_RESOURCEFILE, 9, NULL},
-	{ "intro.mid", GAME_RESOURCEFILE, 10, NULL},
-	{ "fvillage.mid", GAME_RESOURCEFILE, 11, NULL},
-	{ "elkhall.mid", GAME_RESOURCEFILE, 12, NULL},
-	{ "mouse.mid", GAME_RESOURCEFILE, 13, NULL},
-	{ "darkclaw.mid", GAME_RESOURCEFILE, 14, NULL},
-	{ "birdchrp.mid", GAME_RESOURCEFILE, 15, NULL},
-	{ "orbtempl.mid", GAME_RESOURCEFILE, 16, NULL},
-	{ "spooky.mid", GAME_RESOURCEFILE, 17, NULL},
-	{ "catfest.mid", GAME_RESOURCEFILE, 18, NULL},
-	{ "elkfanfare.mid", GAME_RESOURCEFILE, 19, NULL},
-	{ "bcexpl.mid", GAME_RESOURCEFILE, 20, NULL},
-	{ "boargtnt.mid", GAME_RESOURCEFILE, 21, NULL},
-	{ "boarking.mid", GAME_RESOURCEFILE, 22, NULL},
-	{ "explorea.mid", GAME_RESOURCEFILE, 23, NULL},
-	{ "exploreb.mid", GAME_RESOURCEFILE, 24, NULL},
-	{ "explorec.mid", GAME_RESOURCEFILE, 25, NULL},
-	{ "sunstatm.mid", GAME_RESOURCEFILE, 26, NULL},
-	{ "nitstrlm.mid", GAME_RESOURCEFILE, 27, NULL},
-	{ "humruinm.mid", GAME_RESOURCEFILE, 28, NULL},
-	{ "damexplm.mid", GAME_RESOURCEFILE, 29, NULL},
-	{ "tychom.mid", GAME_RESOURCEFILE, 30, NULL},
-	{ "kitten.mid", GAME_RESOURCEFILE, 31, NULL},
-	{ "sweet.mid", GAME_RESOURCEFILE, 32, NULL},
-	{ "brutalmt.mid", GAME_RESOURCEFILE, 33, NULL},
-	{ "shiala.mid", GAME_RESOURCEFILE, 34, NULL},
-
-	{ "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
-	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
-	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
-	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
-	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
-	{ "credit3n.dlt", GAME_RESOURCEFILE, 1796, NULL},
-	{ "credit3m.dlt", GAME_RESOURCEFILE, 1796, NULL},	// Macintosh
-	{ "credit4n.dlt", GAME_RESOURCEFILE, 1797, NULL},
-	{ "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL},	// Macintosh
-	{ "p2_a.voc", GAME_VOICEFILE, 4, NULL},
-	{ "p2_a.iaf", GAME_VOICEFILE, 4, &ITECD_GameSound}
-};
-
-static const GamePatchDescription ITEMacPatch_Files[] = {
-	{ "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
-	{ "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
-	{ "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
-	{ "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
-	{ "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
-	{ "credit3m.dlt", GAME_RESOURCEFILE, 1796, NULL},
-	{ "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL},
-	{ "p2_a.iaf", GAME_VOICEFILE, 4, &ITEMACCD_GameSound}
-};
-
-// IHNM section
 
 static const GameResourceDescription IHNM_Resources = {
 	RID_IHNM_SCENE_LUT,  // Scene lookup table RN
@@ -266,10 +68,12 @@ static const GameResourceDescription IHNM_Resources = {
 	RID_IHNM_CONVERSE_PANEL,
 	RID_IHNM_OPTION_PANEL,
 	RID_IHNM_WARNING_PANEL,
+	RID_IHNM_WARNING_PANEL_SPRITES,
 	RID_IHNM_MAIN_SPRITES,
 	RID_IHNM_MAIN_PANEL_SPRITES,
 	RID_IHNM_OPTION_PANEL_SPRITES,
 	0,					// Default portraits (ITE only)
+	RID_IHNM_PROFILE_BG,
 	RID_IHNM_MAIN_STRINGS,
 	0					// Actors strings (ITE only)
 };
@@ -281,42 +85,93 @@ static const GameResourceDescription IHNMDEMO_Resources = {
 	RID_IHNMDEMO_CONVERSE_PANEL,
 	RID_IHNMDEMO_OPTION_PANEL,
 	RID_IHNMDEMO_WARNING_PANEL,
+	RID_IHNMDEMO_WARNING_PANEL_SPRITES,
 	RID_IHNMDEMO_MAIN_SPRITES,
 	RID_IHNMDEMO_MAIN_PANEL_SPRITES,
 	RID_IHNMDEMO_OPTION_PANEL_SPRITES,
 	0,					// Default portraits (ITE only)
+	RID_IHNMDEMO_PROFILE_BG,
 	RID_IHNMDEMO_MAIN_STRINGS,
 	0					// Actors strings (ITE only)
 };
 
-static const GameFontDescription IHNMDEMO_GameFonts[] = {
-	{2},
-	{3},
-	{4}
+static const GameFontDescription ITEDEMO_GameFonts[]    = { {0}, {1} };
+static const GameFontDescription ITEWINDEMO_GameFonts[] = { {2}, {0} };
+static const GameFontDescription ITE_GameFonts[]        = { {2}, {0}, {1} };
+static const GameFontDescription IHNMDEMO_GameFonts[]   = { {2}, {3}, {4} };
+// Font 6 is kIHNMFont8, font 8 is kIHNMMainFont
+static const GameFontDescription IHNMCD_GameFonts[]     = { {2}, {3}, {4}, {5}, {6}, {7}, {8} };
+
+//                                                             frequency, sampleBits, stereo, isBigEndian, isSigned
+static const GameSoundInfo ITEPC_GameSound       = { kSoundPCM,    22050,         16,  false,       false,     true };
+static const GameSoundInfo ITEMAC_GameSound      = { kSoundPCM,    22050,         16,  false,        true,     true };
+static const GameSoundInfo ITEWINDEMO1_GameSound = { kSoundPCM,    22050,          8,  false,       false,    false };
+static const GameSoundInfo ITEMACCD_G_GameSound  = { kSoundMacPCM, 22050,          8,  false,       false,    false };
+static const GameSoundInfo ITEDISK_GameSound     = { kSoundVOC,       -1,         -1,  false,       false,     true };
+static const GameSoundInfo ITEDEMO_GameVoice     = { kSoundVOX,    22050,         16,  false,       false,     true };
+static const GameSoundInfo IHNM_GameSound        = { kSoundWAV,       -1,         -1,  false,       false,     true };
+
+// Patch files. Files not found will be ignored
+static const GamePatchDescription ITEPatch_Files[] = {
+	{       "cave.mid", GAME_RESOURCEFILE,    9, NULL},
+	{      "intro.mid", GAME_RESOURCEFILE,   10, NULL},
+	{   "fvillage.mid", GAME_RESOURCEFILE,   11, NULL},
+	{    "elkhall.mid", GAME_RESOURCEFILE,   12, NULL},
+	{      "mouse.mid", GAME_RESOURCEFILE,   13, NULL},
+	{   "darkclaw.mid", GAME_RESOURCEFILE,   14, NULL},
+	{   "birdchrp.mid", GAME_RESOURCEFILE,   15, NULL},
+	{   "orbtempl.mid", GAME_RESOURCEFILE,   16, NULL},
+	{     "spooky.mid", GAME_RESOURCEFILE,   17, NULL},
+	{    "catfest.mid", GAME_RESOURCEFILE,   18, NULL},
+	{ "elkfanfare.mid", GAME_RESOURCEFILE,   19, NULL},
+	{     "bcexpl.mid", GAME_RESOURCEFILE,   20, NULL},
+	{   "boargtnt.mid", GAME_RESOURCEFILE,   21, NULL},
+	{   "boarking.mid", GAME_RESOURCEFILE,   22, NULL},
+	{   "explorea.mid", GAME_RESOURCEFILE,   23, NULL},
+	{   "exploreb.mid", GAME_RESOURCEFILE,   24, NULL},
+	{   "explorec.mid", GAME_RESOURCEFILE,   25, NULL},
+	{   "sunstatm.mid", GAME_RESOURCEFILE,   26, NULL},
+	{   "nitstrlm.mid", GAME_RESOURCEFILE,   27, NULL},
+	{   "humruinm.mid", GAME_RESOURCEFILE,   28, NULL},
+	{   "damexplm.mid", GAME_RESOURCEFILE,   29, NULL},
+	{     "tychom.mid", GAME_RESOURCEFILE,   30, NULL},
+	{     "kitten.mid", GAME_RESOURCEFILE,   31, NULL},
+	{      "sweet.mid", GAME_RESOURCEFILE,   32, NULL},
+	{   "brutalmt.mid", GAME_RESOURCEFILE,   33, NULL},
+	{     "shiala.mid", GAME_RESOURCEFILE,   34, NULL},
+
+	{       "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
+	{      "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
+	{      "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
+	{      "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
+	{      "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
+	{   "credit3n.dlt", GAME_RESOURCEFILE, 1796, NULL}, // PC
+	{   "credit3m.dlt", GAME_RESOURCEFILE, 1796, NULL}, // Macintosh
+	{   "credit4n.dlt", GAME_RESOURCEFILE, 1797, NULL}, // PC
+	{   "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL}, // Macintosh
+	{       "p2_a.voc", GAME_VOICEFILE,       4, NULL},
+	{       "p2_a.iaf", GAME_VOICEFILE,       4, &ITEPC_GameSound}
 };
 
-static const GameFontDescription IHNMCD_GameFonts[] = {
-	{2},
-	{3},
-	{4},
-	{5},
-	{6},  // kIHNMFont8
-	{7},
-	{8}   // kIHNMMainFont
-};
-
-static const GameSoundInfo IHNM_GameSound = {
-	kSoundWAV,
-	-1,
-	-1,
-	false,
-	false,
-	true
+static const GamePatchDescription ITEMacPatch_Files[] = {
+	{       "wyrm.pak", GAME_RESOURCEFILE, 1529, NULL},
+	{      "wyrm1.dlt", GAME_RESOURCEFILE, 1530, NULL},
+	{      "wyrm2.dlt", GAME_RESOURCEFILE, 1531, NULL},
+	{      "wyrm3.dlt", GAME_RESOURCEFILE, 1532, NULL},
+	{      "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
+	{   "credit3m.dlt", GAME_RESOURCEFILE, 1796, NULL},
+	{   "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL},
+	{       "p2_a.iaf", GAME_VOICEFILE,       4, &ITEMAC_GameSound}
 };
 
 static const SAGAGameDescription gameDescriptions[] = {
 	// ITE Section ////////////////////////////////////////////////////////////////////////////////////////////
+
+
 	// ITE Demos //////////////////////////////////////////////////////////////////////////////////////////////
+
+	// Note: This version is NOT supported yet
+	// Based on a very early version of the engine
 
 	// Inherit the earth - DOS Demo version
 	// sound unchecked
@@ -328,7 +183,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"ite.rsc",		GAME_RESOURCEFILE,					"986c79c4d2939dbe555576529fd37932", -1},
 	//{"ite.dmo",	GAME_DEMOFILE},						"0b9a70eb4e120b6f00579b46c8cae29e"
 	{"scripts.rsc", GAME_SCRIPTFILE,					"d5697dd3240a3ceaddaa986c47e1a2d7", -1},
-	{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c58e67c506af4ffa03fd0aac2079deb0", -1},
+	//{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c58e67c506af4ffa03fd0aac2079deb0", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -342,22 +197,55 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITEDemo_Resources,
 		ARRAYSIZE(ITEDEMO_GameFonts),
 		ITEDEMO_GameFonts,
-		&ITEDEMO_GameSound,
-		&ITEDEMO_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
+		&ITEDISK_GameSound,
+		&ITEDISK_GameSound,
 		0,
 		NULL,
 	},
 
-	// Inherit the earth - MAC Demo version 1 and 2
-	// Demo 1 has normal scenes, demo 2 has scene substitutes but the files are the same (apart from musicd.rsc)
+
+	// Inherit the earth - MAC Demo version
 	{
 		{
 			"ite",
-			"Demo 1/2",
+			"Demo 2",
 			{
-	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08", -1},
-	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b", -1},
+	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08", 1865461},
+	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b", 70083},
+	//{"soundsd.rsc",		GAME_SOUNDFILE,		"b3a831fbed337d1f1300fee1dd474f6c", -1},
+	//{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
+	//{"musicd.rsc",		GAME_MUSICFILE,		"495bdde51fd9f4bea2b9c911091b1ab2", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			Common::ADGF_DEMO
+		},
+		GType_ITE,
+		GID_ITE_MACDEMO2,
+		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX | GF_SCENE_SUBSTITUTES,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITEWINDEMO_GameFonts),
+		ITEWINDEMO_GameFonts,
+		&ITEDEMO_GameVoice,
+		&ITEMAC_GameSound,
+		ARRAYSIZE(ITEMacPatch_Files),
+		ITEMacPatch_Files,
+	},
+
+
+	// Note: This version is NOT supported yet
+	// Exiting the faire leads to a crash
+
+	// Inherit the earth - MAC Demo version 1
+	{
+		{
+			"ite",
+			"Demo 1",
+			{
+	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08", 1131098},
+	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b", 38613},
 	//{"soundsd.rsc",		GAME_SOUNDFILE,		"b3a831fbed337d1f1300fee1dd474f6c", -1},
 	//{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
 	//{"musicd.rsc",		GAME_MUSICFILE,		"1a91cd60169f367ecb6c6e058d899b2f", -1},
@@ -374,26 +262,24 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEMACDEMO_GameVoice,
-		&ITEMACDEMO_GameSound,
-		&ITEMACCD_GameMusic,
+		&ITEDEMO_GameVoice,
+		&ITEMAC_GameSound,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
 
+
 	// Inherit the earth - Win32 Demo version 2/3, Linux Demo version
 	// Win32 Version 3 and Linux Demo version have digital music, Win32 version 2 has MIDI music
-	// These demos have scene substitutes, and can only be distinguished from Win32 demo 1 (below)
-	// from soundsd.rsc and voicesd.rsc
 	{
 		{
 			"ite",
 			"Win Demo 2/3, Linux Demo",
 			{
-	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", -1},
-	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", -1},
-	{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c", -1},
-	{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
+	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", 1951395},
+	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", 70051},
+	//{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c", -1},
+	//{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
 	//{"musicd.rsc",		GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4", -1},
 	{ NULL, 0, NULL, 0}
 			},
@@ -408,25 +294,26 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEWINDEMO2_GameVoice,
-		&ITEWINDEMO2_GameSound,
-		&ITELINDEMO_GameMusic,
+		&ITEDEMO_GameVoice,
+		&ITEPC_GameSound,
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
 
+
+	// Note: This version is NOT supported yet
+	// Exiting the faire leads to a crash
+
 	// Inherit the earth - Win32 Demo version 1
-	// Demo version 1 does not have scene substitutes, and can only be distinguished from demo 2/3
-	// from soundsd.rsc and voicesd.rsc
 	{
 		{
 			"ite",
 			"Demo 1",
 			{
-	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", -1},
-	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", -1},
-	{"soundsd.rsc",		GAME_SOUNDFILE,		"a741139dd7365a13f463cd896ff9969a", -1},
-	{"voicesd.rsc",		GAME_VOICEFILE,		"0759eaf5b64ae19fd429920a70151ad3", -1},
+	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", 1327323},
+	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", 38613},
+	//{"soundsd.rsc",		GAME_SOUNDFILE,		"a741139dd7365a13f463cd896ff9969a", -1},
+	//{"voicesd.rsc",		GAME_VOICEFILE,		"0759eaf5b64ae19fd429920a70151ad3", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -442,10 +329,13 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEWINDEMO1_GameSound,
 		&ITEWINDEMO1_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
+
+
+	// TODO: Add Amiga demos here (not supported yet)
+
 
 	// ITE Mac versions ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -475,7 +365,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEWINDEMO_GameFonts,
 		&ITEMACCD_G_GameSound,
 		&ITEMACCD_G_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
@@ -504,14 +393,14 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEMACCD_GameSound,
-		&ITEMACCD_GameSound,
-		&ITEMACCD_GameMusic,
+		&ITEMAC_GameSound,
+		&ITEMAC_GameSound,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
 
-	// ITE CD versions ////////////////////////////////////////////////////////////////////////////////////////
+
+	// ITE PC CD versions //////////////////////////////////////////////////////////////////////////////////////
 
 	// Inherit the earth - Wyrmkeep combined Windows/Mac/Linux CD
 
@@ -540,11 +429,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GF_WYRMKEEP | GF_CD_FX,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITECD_GameFonts),
-		ITECD_GameFonts,
-		&ITEMACCD_GameSound,
-		&ITECD_GameSound,
-		&ITEMACCD_GameMusic,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEMAC_GameSound,
+		&ITEPC_GameSound,
 		0,
 		NULL,
 	},
@@ -571,11 +459,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GF_CD_FX,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITECD_GameFonts),
-		ITECD_GameFonts,
-		&ITECD_GameSound,
-		&ITECD_GameSound,
-		&ITEMACCD_GameMusic,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEPC_GameSound,
+		&ITEPC_GameSound,
 		ARRAYSIZE(ITEPatch_Files),
 		ITEPatch_Files,
 	},
@@ -601,13 +488,12 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GF_CD_FX,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITECD_GameFonts),
-		ITECD_GameFonts,
-		&ITECD_GameSound,
-		&ITECD_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
-		0,
-		NULL,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEPC_GameSound,
+		&ITEPC_GameSound,
+		ARRAYSIZE(ITEPatch_Files),
+		ITEPatch_Files,
 	},
 
 	// Inherit the earth - DOS CD German version
@@ -632,14 +518,14 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GF_CD_FX,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITECD_GameFonts),
-		ITECD_GameFonts,
-		&ITECD_GameSound,
-		&ITECD_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEPC_GameSound,
+		&ITEPC_GameSound,
 		0,
 		NULL,
 	},
+
 
 	// ITE floppy versions ////////////////////////////////////////////////////////////////////////////////////
 
@@ -663,11 +549,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITEDISK_GameFonts),
-		ITEDISK_GameFonts,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
 		0,
 		NULL,
 	},
@@ -692,14 +577,19 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
-		ARRAYSIZE(ITEDISK_GameFonts),
-		ITEDISK_GameFonts,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
 		&ITEDISK_GameSound,
 		&ITEDISK_GameSound,
-		&ITEMACCD_GameMusic,		// note: this version did not originally have digital music
-		0,
-		NULL,
+		ARRAYSIZE(ITEPatch_Files),
+		ITEPatch_Files,
 	},
+
+
+	// ITE Amiga versions /////////////////////////////////////////////////////////////////////////////////////
+
+	// TODO: Add the Amiga versions here (not supported yet)
+
 
 	// IHNM Section ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -709,10 +599,11 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ihnm",
 			"Demo",
 			{
+	{"music.res",		GAME_MUSICFILE_FM,	"0439083e3dfdc51b486071d45872ae52", -1},
 	{"scream.res",		GAME_RESOURCEFILE,	"46bbdc65d164ba7e89836a0935eec8e6", -1},
 	{"scripts.res",		GAME_SCRIPTFILE,	"9626bda8978094ff9b29198bc1ed5f9a", -1},
 	{"sfx.res",			GAME_SOUNDFILE,		"1c610d543f32ec8b525e3f652536f269", -1},
-	{"voicesd.res",		GAME_VOICEFILE,		"3bbc16a8f741dbb511da506c660a0b54", -1},
+	//{"voicesd.res",		GAME_VOICEFILE,		"3bbc16a8f741dbb511da506c660a0b54", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -722,13 +613,12 @@ static const SAGAGameDescription gameDescriptions[] = {
 		GType_IHNM,
 		GID_IHNM_DEMO,
 		0,
-		0,
+		IHNMDEMO_DEFAULT_SCENE,
 		&IHNMDEMO_Resources,
 		ARRAYSIZE(IHNMDEMO_GameFonts),
 		IHNMDEMO_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
@@ -745,13 +635,13 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-	{"voicess.res",	GAME_VOICEFILE,						"54b1f2013a075338ceb0e258d97808bd", -1}, //order of voice bank file is important
-	{"voices1.res",	GAME_VOICEFILE,						"fc6440b38025f4b2cc3ff55c3da5c3eb", -1},
-	{"voices2.res",	GAME_VOICEFILE,						"b37f10fd1696ade7d58704ccaaebceeb", -1},
-	{"voices3.res",	GAME_VOICEFILE,						"3bbc16a8f741dbb511da506c660a0b54", -1},
-	{"voices4.res",	GAME_VOICEFILE,						"ebfa160122d2247a676ca39920e5d481", -1},
-	{"voices5.res",	GAME_VOICEFILE,						"1f501ce4b72392bdd1d9ec38f6eec6da", -1},
-	{"voices6.res",	GAME_VOICEFILE,						"f580ed7568c7d6ef34e934ba20adf834", -1},
+	//{"voicess.res",	GAME_VOICEFILE,						"54b1f2013a075338ceb0e258d97808bd", -1}, //order of voice bank file is important
+	//{"voices1.res",	GAME_VOICEFILE,						"fc6440b38025f4b2cc3ff55c3da5c3eb", -1},
+	//{"voices2.res",	GAME_VOICEFILE,						"b37f10fd1696ade7d58704ccaaebceeb", -1},
+	//{"voices3.res",	GAME_VOICEFILE,						"3bbc16a8f741dbb511da506c660a0b54", -1},
+	//{"voices4.res",	GAME_VOICEFILE,						"ebfa160122d2247a676ca39920e5d481", -1},
+	//{"voices5.res",	GAME_VOICEFILE,						"1f501ce4b72392bdd1d9ec38f6eec6da", -1},
+	//{"voices6.res",	GAME_VOICEFILE,						"f580ed7568c7d6ef34e934ba20adf834", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -767,7 +657,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
@@ -786,12 +675,12 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"scripts.res",	GAME_SCRIPTFILE,					"32aa01a89937520fe0ea513950117292", -1},
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-	{"voicess.res",	GAME_VOICEFILE,						"8b09a196a52627cacb4eab13bfe0b2c3", -1}, //order of voice bank file is important
-	{"voices1.res",	GAME_VOICEFILE,						"424971e1e2373187c3f5734fe36071a2", -1},
-	{"voices2.res",	GAME_VOICEFILE,						"c270e0980782af43641a86e4a14e2a32", -1},
-	{"voices3.res",	GAME_VOICEFILE,						"49e42befea883fd101ec3d0f5d0647b9", -1},
-	{"voices5.res",	GAME_VOICEFILE,						"c477443c52a0aa56e686ebd8d051e4ab", -1},
-	{"voices6.res",	GAME_VOICEFILE,						"2b9aea838f74b4eecfb29a8f205a2bd4", -1},
+	//{"voicess.res",	GAME_VOICEFILE,						"8b09a196a52627cacb4eab13bfe0b2c3", -1}, //order of voice bank file is important
+	//{"voices1.res",	GAME_VOICEFILE,						"424971e1e2373187c3f5734fe36071a2", -1},
+	//{"voices2.res",	GAME_VOICEFILE,						"c270e0980782af43641a86e4a14e2a32", -1},
+	//{"voices3.res",	GAME_VOICEFILE,						"49e42befea883fd101ec3d0f5d0647b9", -1},
+	//{"voices5.res",	GAME_VOICEFILE,						"c477443c52a0aa56e686ebd8d051e4ab", -1},
+	//{"voices6.res",	GAME_VOICEFILE,						"2b9aea838f74b4eecfb29a8f205a2bd4", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
@@ -807,7 +696,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
@@ -824,13 +712,13 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-	{"voicess.res",	GAME_VOICEFILE,						"d869de9883c8faea7f687217a9ec7057", -1}, //order of voice bank file is important
-	{"voices1.res",	GAME_VOICEFILE,						"dc6a34e3d1668730ea46815a92c7847f", -1},
-	{"voices2.res",	GAME_VOICEFILE,						"dc6a5fa7a4cdc2ca5a6fd924e969986c", -1},
-	{"voices3.res",	GAME_VOICEFILE,						"dc6a5fa7a4cdc2ca5a6fd924e969986c", -1},
-	{"voices4.res",	GAME_VOICEFILE,						"0f87400b804232a58dd22e404420cc45", -1},
-	{"voices5.res",	GAME_VOICEFILE,						"172668cfc5d8c305cb5b1a9b4d995fc0", -1},
-	{"voices6.res",	GAME_VOICEFILE,						"96c9bda9a5f41d6bc232ed7bf6d371d9", -1},
+	//{"voicess.res",	GAME_VOICEFILE,						"d869de9883c8faea7f687217a9ec7057", -1}, //order of voice bank file is important
+	//{"voices1.res",	GAME_VOICEFILE,						"dc6a34e3d1668730ea46815a92c7847f", -1},
+	//{"voices2.res",	GAME_VOICEFILE,						"dc6a5fa7a4cdc2ca5a6fd924e969986c", -1},
+	//{"voices3.res",	GAME_VOICEFILE,						"dc6a5fa7a4cdc2ca5a6fd924e969986c", -1},
+	//{"voices4.res",	GAME_VOICEFILE,						"0f87400b804232a58dd22e404420cc45", -1},
+	//{"voices5.res",	GAME_VOICEFILE,						"172668cfc5d8c305cb5b1a9b4d995fc0", -1},
+	//{"voices6.res",	GAME_VOICEFILE,						"96c9bda9a5f41d6bc232ed7bf6d371d9", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
@@ -846,7 +734,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
@@ -863,13 +750,13 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-	{"voicess.res",	GAME_VOICEFILE,						"9df7cd3b18ddaa16b5291b3432567036", -1}, //order of voice bank file is important
-	{"voices1.res",	GAME_VOICEFILE,						"d6100d2dc3b2b9f2e1ad247f613dce9b", -1},
-	{"voices2.res",	GAME_VOICEFILE,						"84f6f48ecc2832841ea6417a9a379430", -1},
-	{"voices3.res",	GAME_VOICEFILE,						"ebb9501283047f27a0f54e27b3c8ba1e", -1},
-	{"voices4.res",	GAME_VOICEFILE,						"4c145da5fa6d1306162a7ca8ce5a4f2e", -1},
-	{"voices5.res",	GAME_VOICEFILE,						"871a559644281917677eca4af1b05620", -1},
-	{"voices6.res",	GAME_VOICEFILE,						"211be5c24f066d69a2f6cfa953acfba6", -1},
+	//{"voicess.res",	GAME_VOICEFILE,						"9df7cd3b18ddaa16b5291b3432567036", -1}, //order of voice bank file is important
+	//{"voices1.res",	GAME_VOICEFILE,						"d6100d2dc3b2b9f2e1ad247f613dce9b", -1},
+	//{"voices2.res",	GAME_VOICEFILE,						"84f6f48ecc2832841ea6417a9a379430", -1},
+	//{"voices3.res",	GAME_VOICEFILE,						"ebb9501283047f27a0f54e27b3c8ba1e", -1},
+	//{"voices4.res",	GAME_VOICEFILE,						"4c145da5fa6d1306162a7ca8ce5a4f2e", -1},
+	//{"voices5.res",	GAME_VOICEFILE,						"871a559644281917677eca4af1b05620", -1},
+	//{"voices6.res",	GAME_VOICEFILE,						"211be5c24f066d69a2f6cfa953acfba6", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::RU_RUS,
@@ -885,12 +772,12 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
 
 	// I Have No Mouth And I Must Scream - Fr CD version
+	// Censored CD version (without Nimdok)
 	{
 		{
 			"ihnm",
@@ -902,12 +789,12 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"scripts.res",	GAME_SCRIPTFILE,					"32aa01a89937520fe0ea513950117292", -1},
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-	{"voicess.res",	GAME_VOICEFILE,						"b8642e943bbebf89cef2f48b31cb4305", -1}, //order of voice bank file is important
-	{"voices1.res",	GAME_VOICEFILE,						"424971e1e2373187c3f5734fe36071a2", -1},
-	{"voices2.res",	GAME_VOICEFILE,						"c2d93a35d2c2def9c3d6d242576c794b", -1},
-	{"voices3.res",	GAME_VOICEFILE,						"49e42befea883fd101ec3d0f5d0647b9", -1},
-	{"voices5.res",	GAME_VOICEFILE,						"f4c415de7c03de86b73f9a12b8bd632f", -1},
-	{"voices6.res",	GAME_VOICEFILE,						"3fc5358a5d8eee43bdfab2740276572e", -1},
+	//{"voicess.res",	GAME_VOICEFILE,						"b8642e943bbebf89cef2f48b31cb4305", -1}, //order of voice bank file is important
+	//{"voices1.res",	GAME_VOICEFILE,						"424971e1e2373187c3f5734fe36071a2", -1},
+	//{"voices2.res",	GAME_VOICEFILE,						"c2d93a35d2c2def9c3d6d242576c794b", -1},
+	//{"voices3.res",	GAME_VOICEFILE,						"49e42befea883fd101ec3d0f5d0647b9", -1},
+	//{"voices5.res",	GAME_VOICEFILE,						"f4c415de7c03de86b73f9a12b8bd632f", -1},
+	//{"voices6.res",	GAME_VOICEFILE,						"3fc5358a5d8eee43bdfab2740276572e", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::FR_FRA,
@@ -923,11 +810,10 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		&IHNM_GameSound,
 		&IHNM_GameSound,
-		NULL,
 		0,
 		NULL,
 	},
-	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, NULL, 0, NULL, NULL, NULL, NULL, 0, NULL }
+	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, NULL, 0, NULL, NULL, NULL, 0, NULL }
 };
 
 } // End of namespace Saga

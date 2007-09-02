@@ -63,9 +63,11 @@ public:
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
+	byte _widthByte;
 	int16 _mapWidth;
 	int16 _mapHeight;
 	int16 _screenWidth;
+	int16 _screenHeight;
 	int16 _tilesWidth;
 	int16 _tilesHeight;
 	int16 _passWidth;
@@ -107,7 +109,6 @@ public:
 	virtual void findNearestToDest(Mult::Mult_Object *obj) = 0;
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y) = 0;
 
-	virtual void init(void) = 0;
 	Map(GobEngine *vm);
 	virtual ~Map();
 
@@ -127,18 +128,24 @@ public:
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
 
 	virtual int8 getPass(int x, int y, int heightOff = -1) {
+		if (!_passMap)
+			return 0;
+
 		return _passMap[y * _mapWidth + x];
 	}
 	
 	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
+		if (!_passMap)
+			return;
+
 		_passMap[y * _mapWidth + x] = pass;
 	}
 
-	virtual void init(void);
 	Map_v1(GobEngine *vm);
 	virtual ~Map_v1();
 
 protected:
+	void init(void);
 	void loadSounds(Common::SeekableReadStream &data);
 	void loadGoblins(Common::SeekableReadStream &data, uint32 gobsPos);
 	void loadObjects(Common::SeekableReadStream &data, uint32 objsPos);
@@ -153,23 +160,36 @@ public:
 	virtual void optimizePoints(Mult::Mult_Object *obj, int16 x, int16 y);
 
 	virtual int8 getPass(int x, int y, int heightOff = -1) {
+		if (!_passMap)
+			return 0;
+
 		if (heightOff == -1)
 			heightOff = _passWidth;
 		return _passMap[y * heightOff + x];
 	}
 	
 	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
+		if (!_passMap)
+			return;
+
 		if (heightOff == -1)
 			heightOff = _passWidth;
 		_passMap[y * heightOff + x] = pass;
 	}
 
-	virtual void init(void);
 	Map_v2(GobEngine *vm);
 	virtual ~Map_v2();
 
 protected:
 	void loadGoblinStates(Common::SeekableReadStream &data, int index);
+};
+
+class Map_v4 : public Map_v2 {
+public:
+	virtual void loadMapObjects(const char *avjFile);
+
+	Map_v4(GobEngine *vm);
+	virtual ~Map_v4();
 };
 
 } // End of namespace Gob

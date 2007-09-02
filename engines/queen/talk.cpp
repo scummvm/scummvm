@@ -46,10 +46,6 @@
 
 namespace Queen {
 
-#ifdef PALMOS_68K
-static const Talk::SpeechParameters *_speechParameters;
-#endif
-
 void Talk::talk(
 		const char *filename,
 		int personInRoom,
@@ -1357,7 +1353,6 @@ int16 Talk::selectSentence() {
 	return selectedSentence;
 }
 
-#ifndef PALMOS_68K
 const Talk::SpeechParameters Talk::_speechParameters[] = {
 	{ "JOE", 0, 1, 1, 10, 2, 3, "", 0 },
 	{ "JOE", 0, 3, 3, 28, 2, 3, "", 0 },
@@ -1818,19 +1813,5 @@ const Talk::SpeechParameters Talk::_speechParameters[] = {
 
 	{ "*", 0, 0, 0, 0, 0, 0, "", 0 }
 };
-#endif
 
 } // End of namespace Queen
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Queen_Talk)
-_GSETPTR(Queen::_speechParameters, GBVARS_SPEECHPARAMETERS_INDEX, Queen::Talk::SpeechParameters, GBVARS_QUEEN)
-_GEND
-
-_GRELEASE(Queen_Talk)
-_GRELEASEPTR(GBVARS_SPEECHPARAMETERS_INDEX, GBVARS_QUEEN)
-_GEND
-
-#endif

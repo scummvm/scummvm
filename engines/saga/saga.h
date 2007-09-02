@@ -69,7 +69,12 @@ struct StringList;
 
 #define MAXPATH 512 //TODO: remove
 
+// Note that IHNM has a smaller save title size than ITE
+// We allocate the ITE save title size in savegames, to
+// preserve savegame backwards compatibility. We only check
+// for IHNM's save title during text input
 #define SAVE_TITLE_SIZE 28
+#define IHNM_SAVE_TITLE_SIZE 22
 #define MAX_SAVES 96
 #define MAX_FILE_NAME 256
 
@@ -297,10 +302,12 @@ struct GameResourceDescription {
 	uint32 conversePanelResourceId;
 	uint32 optionPanelResourceId;
 	uint32 warningPanelResourceId;
+	uint32 warningPanelSpritesResourceId;
 	uint32 mainSpritesResourceId;
 	uint32 mainPanelSpritesResourceId;
 	uint32 optionPanelSpritesResourceId;
 	uint32 defaultPortraitsResourceId;
+	uint32 psychicProfileResourceId;
 	uint32 mainStringsResourceId;
 	uint32 actorsStringsResourceId;
 };
@@ -440,6 +447,7 @@ enum ColorId {
 enum KnownColor {
 	kKnownColorTransparent,
 	kKnownColorBrightWhite,	
+	kKnownColorWhite,	
 	kKnownColorBlack,
 
 	kKnownColorSubtitleTextColor,
@@ -550,7 +558,7 @@ public:
 	Resource *_resource;
 
 
-	/** Random number generator */
+	// Random number generator
 	Common::RandomSource _rnd;
 
 private:

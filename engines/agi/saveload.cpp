@@ -55,6 +55,7 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	int i;
 	struct ImageStackElement *ptr = _imageStack;
 	Common::OutSaveFile *out;
+	int result = errOK;
 
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::saveGame(%s, %s)", fileName, description);
 	if (!(out = _saveFileMan->openForSaving(fileName))) {
@@ -206,14 +207,15 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	out->writeSint16BE(_gfx->getAGIPalFileNum());
 
 	out->finalize();
-	if (out->ioFailed())
+	if (out->ioFailed()) {
 		warning("Can't write file '%s'. (Disk full?)", fileName);
-	else
+		result = errIOError;
+	} else
 		debugC(1, kDebugLevelMain | kDebugLevelSavegame, "Saved game %s in file %s", description, fileName);
 	
 	delete out;
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName);
-	return errOK;
+	return result;
 }
 
 int AgiEngine::loadGame(const char *fileName, bool checkId) {
@@ -751,20 +753,24 @@ int AgiEngine::saveGameDialog() {
 	sprintf(fileName, "%s", getSavegameFilename(slot));
 	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName);
 
-	saveGame(fileName, desc);
+	int result = saveGame(fileName, desc);
 
-	messageBox("Game saved.");
+	if (result == errOK)
+		messageBox("Game saved.");
+	else
+		messageBox("Error saving game.");
 
-	return errOK;
+	return result;
 }
 
 int AgiEngine::saveGameSimple() {
 	char fileName[MAX_PATH];
 
 	sprintf(fileName, "%s", getSavegameFilename(0));
-	saveGame(fileName, "Default savegame");
-
-	return errOK;
+	int result = saveGame(fileName, "Default savegame");
+	if (result != errOK)
+		messageBox("Error saving game.");
+	return result;
 }
 
 int AgiEngine::loadGameDialog() {

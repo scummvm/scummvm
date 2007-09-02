@@ -170,7 +170,7 @@ AGOS Games by Adventuresoft / Horrorsoft:
          - Swampy Adventures                     [swampy]
      The Feeble Files                            [feeble]
 
-GOB Games by Cocktel Vision:
+GOB Games by Coktel Vision:
      Bargon Attack                               [bargon]
      Gobliiins                                   [gob1]
      Gobliins 2                                  [gob2]
@@ -296,7 +296,7 @@ yet playable. Simply name the D64 disks "maniac1.d64" and
 should be able to automatically detect the game if you point it at the
 right directory.
 
-Alternatively, you can use extract_mm_c64 from the tools package to
+Alternatively, you can use 'extract_mm_c64' from the tools package to
 extract the data files. But then the game will not be properly
 autodetected by ScummVM, and you must make sure that the platform is
 set to Commodore64. We recommend using the much simpler approach
@@ -346,7 +346,7 @@ extra tools in order to copy it). ScummVM is able to directly use such a data fi
 simply point ScummVM at the directory containing it, and it should work (just like
 with every other supported game).
 
-We also provide a tool called 'rescumm' in the tools package to extract the
+We also provide a tool called 'extract_scumm_mac' in the tools package to extract the
 data from these data files, but this is neither required nor recommended.
 
 For further information on copying Macintosh game files to your hard disk see:
@@ -400,12 +400,12 @@ re-encoded Broken Sword cutscenes for download on our website:
 These cutscenes are provided in DXA format with FLAC audio. Their quality
 is equal to the original games due to the use of lossless compression.
 Viewing these cutscenes requires a version of ScummVM compiled with both
-FLAC and zLib support.
+FLAC and zlib support.
 
 For systems that are too slow to handle the decoding of FLAC audio,
 the audio for these cutscenes is provided separately as OGG Vorbis audio
 too. Viewing these cutscenes with OGG Vorbis audio requires a version of
-ScummVM compiled with both libVorbis and zLib support. 
+ScummVM compiled with both libVorbis and zlib support. 
 
 The cutscenes should be placed in the main game data directory. Note that
 currently this requires either copying the game to hard disk or burning
@@ -790,10 +790,10 @@ arguments -- see the next section.
                            Steel Sky and Flight of the Amazon Queen
   --copy-protection        Enable copy protection in games, when
                            ScummVM disables it by default.
+  --talkspeed=NUM          Set talk speed for games (default: 60)
   --demo-mode              Start demo mode of Maniac Mansion (Classic version)
   --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games
                            (default: 100)
-  --talkspeed=NUM          Set talk speed for games
 
 
 The meaning of most long options (that is, those options starting with a
@@ -831,6 +831,10 @@ multilanguage versions of Goblins games and Nippon Safes Inc., using this
 option does *not* change the language of the game (which usually is hardcoded),
 but rather is only used to select the appropriate font (e.g. for a German
 version of a game, one containing umlauts).
+
+An exception are The Dig and The Curse of Monkey Island - non-English versions
+can be set to 'English.' This however only affects subtitles; game speech will
+remain the same.
 
 Maniac Mansion and Zak McKracken
         en  - English (default)
@@ -933,7 +937,7 @@ will be scaled to 1280x960 and 1920x1440.
 ---- ---------
 TODO
 TODO: Rework this section to clearly state which hotkeys are implemented in *all*
-TODO  game (and for which backends).
+TODO  games (and for which backends).
 TODO: It would also be nice to add information about control on devices w/o a keyboard;
 TODO  I.e. document how input on DC, DS, PSP, PS2, PalmOS, WinCE, ... works for each game
 TODO  Or at the very least give points as to were one can read up on these.
@@ -1068,7 +1072,6 @@ other games.
         Ctrl-d                 - Starts the debugger
 
     Touche: The Adventures of the Fifth Musketeer:
-        Ctrl-d                 - Starts the debugger
         Ctrl-f                 - Toggle fast mode
         F5                     - Displays options
         F9                     - Turn fast walk mode on
@@ -1078,7 +1081,7 @@ other games.
         t                      - Switch between 'Voice only',
                                  'Voice and Text' and 'Text only'
 
-Note that using ctrl-f or ctrl-g is not recommended: games can crash when
+Note that using Ctrl-f or Ctrl-g is not recommended: games can crash when
 being run faster than their normal speed, as scripts will lose synchronisation.
 
 Note for WinCE users: Due to the limited keyboard input in most devices, a
@@ -1190,7 +1193,7 @@ strongly recommended.
 ---- ----------------------------------
 Some games (such as Sam & Max) only contain MIDI music data.  This once
 prevented music for these games from working on platforms that do not support
-MIDI, or soundcards that do not provide MIDI drivers (e.g, many soundcards will
+MIDI, or soundcards that do not provide MIDI drivers (e.g. many soundcards will
 not play MIDI under Linux). ScummVM can now emulate MIDI mode using sampled
 waves and Adlib, FluidSynth MIDI emulation or MT-32 emulation using the
 -eadlib, -efluidsynth or -emt32 options respectively.  However, if you are
@@ -1340,7 +1343,7 @@ affect the encoding time and resulting filesize.
 
 7.7.3) Compressing MONSTER.SOU with MP3:
 ------ ---------------------------------
-You need LAME, and our compress_scumm_sou utility from the scummvm-tools
+You need LAME, and our 'compress_scumm_sou' utility from the scummvm-tools
 package to perform this task, and ScummVM must be compiled with MAD support.
 
   compress_scumm_sou monster.sou
@@ -1364,7 +1367,7 @@ than MP3, so have a good book handy.
 ------ ----------------------------------------
 As above, but ScummVM must be compiled with Flac support. Run:
 
-  compress_scumm_sou --flac --best -b 1152 monster.sou
+  compress_scumm_sou --flac monster.sou
 
 This should produce a smaller monster.sof file, which you should copy to your
 game directory. Remember that the quality is always the same, varying encoder
@@ -1376,7 +1379,7 @@ to read the encoder documentation before you use other values.
 
 7.7.6) Compressing music/sfx/speech in AGOS games
 ------ -----------------------------------------------------------------
-Use our compress_agos utility from the scummvm-tools package to perform this
+Use our 'compress_agos' utility from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note that you can
 only use each if ScummVM was compiled with the respective decoder support
 enabled.
@@ -1403,7 +1406,7 @@ For Ogg Vorbis add --vorbis to the options, i.e.
 
 For Flac add --flac and optional parameters, i.e.
 
-  compress_agos --flac --best -b 1152
+  compress_agos --flac
 
 Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game directory. You can safely remove the old file.
@@ -1411,7 +1414,7 @@ file to your game directory. You can safely remove the old file.
 
 7.7.7) Compressing speech/music in Broken Sword 1
 ------ ------------------------------------------
-The compress_sword1 tool from the scummvm-tools package can encode music and
+The 'compress_sword1' tool from the scummvm-tools package can encode music and
 speech to MP3 as well as Ogg Vorbis.
 The easiest way to encode the files is simply copying the executable into your
 BS1 directory (together with the lame encoder) and run it from there.
@@ -1430,7 +1433,7 @@ Use "compress_sword1 --help" to get a full list of the options.
 
 7.7.8) Compressing speech/music in Broken Sword 2
 ------ ------------------------------------------
-Use our compress_sword2 utility from the scummvm-tools package to perform this
+Use our 'compress_sword2' utility from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note  that you can
 only use each if ScummVM was compiled with the respective decoder support
 enabled.

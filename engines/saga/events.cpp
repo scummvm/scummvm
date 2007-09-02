@@ -35,6 +35,7 @@
 #include "saga/palanim.h"
 #include "saga/render.h"
 #include "saga/sndres.h"
+#include "saga/rscfile.h"
 #include "saga/music.h"
 #include "saga/actor.h"
 
@@ -153,9 +154,11 @@ int Events::handleContinuous(Event *event) {
 		case kEventBlackToPal:
 			_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
 			break;
-
 		case kEventPalToBlack:
 			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
+			break;
+		case kEventPalFade:
+			_vm->_gfx->palFade((PalEntry *)event->data, event->param, event->param2, event->param3, event->param4, event_pc);
 			break;
 		default:
 			break;
@@ -236,9 +239,11 @@ int Events::handleImmediate(Event *event) {
 		case kEventBlackToPal:
 			_vm->_gfx->blackToPal((PalEntry *)event->data, event_pc);
 			break;
-
 		case kEventPalToBlack:
 			_vm->_gfx->palToBlack((PalEntry *)event->data, event_pc);
+			break;
+		case kEventPalFade:
+			_vm->_gfx->palFade((PalEntry *)event->data, event->param, event->param2, event->param3, event->param4, event_pc);
 			break;
 		default:
 			break;
@@ -250,6 +255,7 @@ int Events::handleImmediate(Event *event) {
 	case kSceneEvent:
 	case kAnimEvent:
 	case kCutawayEvent:
+	case kActorEvent:
 		handleOneShot(event);
 		event_done = true;
 		break;
@@ -337,11 +343,55 @@ int Events::handleOneShot(Event *event) {
 
 				if (event->param == kEvPSetPalette) {
 					PalEntry *palPointer;
+
+					if (_vm->getGameType() == GType_IHNM) {
+						if (_vm->_spiritualBarometer > 255)
+							_vm->_gfx->setPaletteColor(kIHNMColorPortrait, 0xff, 0xff, 0xff);
+						else
+							_vm->_gfx->setPaletteColor(kIHNMColorPortrait,
+								_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.red / 256,
+								_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.green / 256,
+								_vm->_spiritualBarometer * _vm->_interface->_portraitBgColor.blue / 256);
+					}
+
 					_vm->_scene->getBGPal(palPointer);
 					_vm->_gfx->setPalette(palPointer);
 				}
 			}
-			_vm->_actor->showActors(true);
+			_vm->_render->clearFlag(RF_DISABLE_ACTORS);
+		}
+		break;
+	case kPsychicProfileBgEvent:
+		{
+		ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
+
+		byte *resourceData;
+		size_t resourceDataLength;
+
+		_vm->_resource->loadResource(context, _vm->getResourceDescription()->psychicProfileResourceId, resourceData, resourceDataLength);
+
+		byte *buf;
+		size_t buflen;
+		int width;
+		int height;
+
+		_vm->decodeBGImage(resourceData, resourceDataLength, &buf, &buflen, &width, &height);
+
+		const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
+
+		Surface *bgSurface = _vm->_render->getBackGroundSurface();
+		const Rect profileRect(width, height);
+
+		bgSurface->blit(profileRect, buf);
+		_vm->_frameCount++;
+
+		_vm->_gfx->setPalette(palette);
+
+		free(buf);
+		free(resourceData);
+
+		// Draw the scene. It won't be drawn by Render::drawScene(), as the RF_PLACARD is set
+		_vm->_scene->draw();
 		}
 		break;
 	case kAnimEvent:
@@ -460,12 +510,13 @@ int Events::handleOneShot(Event *event) {
 			_vm->_gfx->showCursor(false);
 			break;
 		case kEventSetNormalCursor:
-			// in ITE there is just one cursor
-			if (_vm->getGameType() == GType_IHNM)
+			// in ITE and IHNM demo there is just one cursor
+			if (_vm->getGameType() == GType_IHNM && _vm->getGameId() != GID_IHNM_DEMO)
 				_vm->_gfx->setCursor(kCursorNormal);
 			break;
 		case kEventSetBusyCursor:
-			if (_vm->getGameType() == GType_IHNM)
+			// in ITE and IHNM demo there is just one cursor
+			if (_vm->getGameType() == GType_IHNM && _vm->getGameId() != GID_IHNM_DEMO)
 				_vm->_gfx->setCursor(kCursorBusy);
 			break;
 		default:
@@ -494,6 +545,14 @@ int Events::handleOneShot(Event *event) {
 		switch (event->op) {
 		case kEventClear:
 			_vm->_anim->clearCutaway();
+			break;
+		default:
+			break;
+		}
+	case kActorEvent:
+		switch (event->op) {
+		case kEventMove:
+			// TODO (check Actor::direct)
 			break;
 		default:
 			break;

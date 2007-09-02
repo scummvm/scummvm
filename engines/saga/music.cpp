@@ -22,6 +22,9 @@
  * $Id$
  *
  */
+
+// MIDI and digital music class
+
 #include "saga/saga.h"
 
 #include "saga/rscfile.h"
@@ -89,7 +92,7 @@ DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext
 
 	_compressedStream = NULL;
 
-	if (Common::File::exists("music.cmp")) {
+	if (Common::File::exists("music.cmp") || Common::File::exists("musicd.cmp")) {
 		// Read compressed header to determine compression type
 		_file->seek((long)resourceData->offset, SEEK_SET);
 		_file->read(compressedHeader, 9);
@@ -317,6 +320,8 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 
 void MusicPlayer::onTimer(void *refCon) {
 	MusicPlayer *music = (MusicPlayer *)refCon;
+	Common::StackLock lock(music->_mutex);
+
 	if (music->_isPlaying)
 		music->_parser->onTimer();
 }
@@ -326,6 +331,8 @@ void MusicPlayer::playMusic() {
 }
 
 void MusicPlayer::stopMusic() {
+	Common::StackLock lock(_mutex);
+
 	_isPlaying = false;
 	if (_parser) {
 		_parser->unloadMusic();
@@ -349,6 +356,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 }
 
 Music::~Music() {
+	_vm->_timer->removeTimerProc(&musicVolumeGaugeCallback);
 	_mixer->stopHandle(_musicHandle);
 	delete _player;
 	xmidiParser->setMidiDriver(NULL);
@@ -430,6 +438,10 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	_trackNumber = resourceId;
 	_player->stopMusic();
 	_mixer->stopHandle(_musicHandle);
+
+	if (!_vm->_musicVolume) {
+		return;
+	}
 
 	int realTrackNumber;
 
@@ -517,8 +529,10 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 		// Oddly enough, the intro music (song 1) is very
 		// different in the two files. I have no idea why.
+		// Note that the IHNM demo has only got one music file
+		// (music.rsc). It is assumed that it contains FM music
 
-		if (hasAdlib()) {
+		if (hasAdlib() || _vm->getGameId() == GID_IHNM_DEMO) {
 			context = _vm->_resource->getContext(GAME_MUSICFILE_FM);
 		} else {
 			context = _vm->_resource->getContext(GAME_MUSICFILE_GM);
@@ -565,15 +579,17 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 }
 
 void Music::pause(void) {
-	//TODO: do it
+	_player->setVolume(-1);
+	_player->setPlaying(false);
 }
 
 void Music::resume(void) {
-	//TODO: do it}
+	_player->setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
+	_player->setPlaying(true);
 }
 
 void Music::stop(void) {
-	//TODO: do it
+	_player->stopMusic();
 }
 
 } // End of namespace Saga

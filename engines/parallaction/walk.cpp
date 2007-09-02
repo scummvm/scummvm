@@ -29,8 +29,6 @@
 
 namespace Parallaction {
 
-static byte		*_buffer;
-
 static uint16 _doorData1 = 1000;
 static Zone *_zoneTrap = NULL;
 
@@ -38,32 +36,27 @@ static uint16	walkData1 = 0;
 static uint16	walkData2 = 0; 	// next walk frame
 
 
-uint16 queryPath(uint16 x, uint16 y) {
-
-	// NOTE: a better solution would have us mirror each byte in the mask in the loading routine
-	// AmigaDisk::loadPath() instead of doing it here.
-
-	byte _al = _buffer[y*40 + x/8];
-	byte _dl = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
-
-	return _al & (1 << _dl);
+inline byte PathBuffer::getValue(uint16 x, uint16 y) {
+	byte m = data[(x >> 3) + y * internalWidth];
+	uint n = (_vm->getPlatform() == Common::kPlatformPC) ? (x & 7) : (7 - (x & 7));
+	return ((1 << n) & m) >> n;
 }
 
 // adjusts position towards nearest walkable point
 //
 void PathBuilder::correctPathPoint(Common::Point &to) {
 
-	if (queryPath(to.x, to.y)) return;
+	if (_vm->_pathBuffer->getValue(to.x, to.y)) return;
 
 	int16 right = to.x;
 	int16 left = to.x;
 	do {
 		right++;
-	} while ((queryPath(right, to.y) == 0) && (right < SCREEN_WIDTH));
+	} while ((_vm->_pathBuffer->getValue(right, to.y) == 0) && (right < _vm->_pathBuffer->w));
 	do {
 		left--;
-	} while ((queryPath(left, to.y) == 0) && (left > 0));
-	right = (right == SCREEN_WIDTH) ? 1000 : right - to.x;
+	} while ((_vm->_pathBuffer->getValue(left, to.y) == 0) && (left > 0));
+	right = (right == _vm->_pathBuffer->w) ? 1000 : right - to.x;
 	left = (left == 0) ? 1000 : to.x - left;
 
 
@@ -71,12 +64,12 @@ void PathBuilder::correctPathPoint(Common::Point &to) {
 	int16 bottom = to.y;
 	do {
 		top--;
-	} while ((queryPath(to.x, top) == 0) && (top > 0));
+	} while ((_vm->_pathBuffer->getValue(to.x, top) == 0) && (top > 0));
 	do {
 		bottom++;
-	} while ((queryPath(to.x, bottom) == 0) && (bottom < SCREEN_HEIGHT));
+	} while ((_vm->_pathBuffer->getValue(to.x, bottom) == 0) && (bottom < _vm->_pathBuffer->h));
 	top = (top == 0) ? 1000 : to.y - top;
-	bottom = (bottom == SCREEN_HEIGHT) ? 1000 : bottom - to.y;
+	bottom = (bottom == _vm->_pathBuffer->h) ? 1000 : bottom - to.y;
 
 
 	int16 closeX = (right >= left) ? left : right;
@@ -163,7 +156,7 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 	correctPathPoint(to);
 	debugC(1, kDebugWalk, "found closest path point at (%i, %i)", to.x, to.y);
 
-	WalkNode *v48 = new WalkNode(to.x - _vm->_char._ani.width() / 2, to.y - _vm->_char._ani.height());
+	WalkNode *v48 = new WalkNode(to.x, to.y);
 	WalkNode *v44 = new WalkNode(*v48);
 
 	uint16 v38 = walkFunc1(to.x, to.y, v44);
@@ -185,7 +178,9 @@ WalkNodeList *PathBuilder::buildPath(uint16 x, uint16 y) {
 #endif
 
 	Common::Point stop(v48->_x, v48->_y);
-	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
+	Common::Point pos;
+	_vm->_char.getFoot(pos);
+
 	uint32 v34 = buildSubPath(pos, stop);
 	if (v38 != 0 && v34 > v38) {
 		// no alternative path (gap?)
@@ -223,19 +218,17 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
 
 	Common::Point v4(0, 0);
 
-	Common::Point foot(
-		_vm->_char._ani._left + _vm->_char._ani.width()/2,
-		_vm->_char._ani._top + _vm->_char._ani.height()
-	);
+	Common::Point foot;
+	_vm->_char.getFoot(foot);
 
 	Common::Point v8(foot);
 
 	while (foot != arg) {
 
-		if (foot.x < x && queryPath(foot.x + 1, foot.y) != 0) foot.x++;
-		if (foot.x > x && queryPath(foot.x - 1, foot.y) != 0) foot.x--;
-		if (foot.y < y && queryPath(foot.x, foot.y + 1) != 0) foot.y++;
-		if (foot.y > y && queryPath(foot.x, foot.y - 1) != 0) foot.y--;
+		if (foot.x < x && _vm->_pathBuffer->getValue(foot.x + 1, foot.y) != 0) foot.x++;
+		if (foot.x > x && _vm->_pathBuffer->getValue(foot.x - 1, foot.y) != 0) foot.x--;
+		if (foot.y < y && _vm->_pathBuffer->getValue(foot.x, foot.y + 1) != 0) foot.y++;
+		if (foot.y > y && _vm->_pathBuffer->getValue(foot.x, foot.y - 1) != 0) foot.y--;
 
 
 		if (foot == v8 && foot != arg) {
@@ -245,10 +238,10 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
 
 			while (foot != arg) {
 
-				if (foot.x < x && queryPath(foot.x + 1, foot.y) == 0) foot.x++;
-				if (foot.x > x && queryPath(foot.x - 1, foot.y) == 0) foot.x--;
-				if (foot.y < y && queryPath(foot.x, foot.y + 1) == 0) foot.y++;
-				if (foot.y > y && queryPath(foot.x, foot.y - 1) == 0) foot.y--;
+				if (foot.x < x && _vm->_pathBuffer->getValue(foot.x + 1, foot.y) == 0) foot.x++;
+				if (foot.x > x && _vm->_pathBuffer->getValue(foot.x - 1, foot.y) == 0) foot.x--;
+				if (foot.y < y && _vm->_pathBuffer->getValue(foot.x, foot.y + 1) == 0) foot.y++;
+				if (foot.y > y && _vm->_pathBuffer->getValue(foot.x, foot.y - 1) == 0) foot.y--;
 
 				if (foot == v8 && foot != arg)
 					return 0;
@@ -256,8 +249,8 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
 				v8 = foot;
 			}
 
-			Node->_x = v4.x - _vm->_char._ani.width() / 2;
-			Node->_y = v4.y - _vm->_char._ani.height();
+			Node->_x = v4.x;
+			Node->_y = v4.y;
 
 			return (x - v4.x) * (x - v4.x) + (y - v4.y) * (y - v4.y);
 		}
@@ -272,19 +265,19 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
 
 void Parallaction::clipMove(Common::Point& pos, const WalkNode* from) {
 
-	if ((pos.x < from->_x) && (pos.x < SCREEN_WIDTH) && (queryPath(_vm->_char._ani.width()/2 + pos.x + 2, _vm->_char._ani.height() + pos.y) != 0)) {
+	if ((pos.x < from->_x) && (pos.x < _vm->_pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
 		pos.x = (pos.x + 2 < from->_x) ? pos.x + 2 : from->_x;
 	}
 
-	if ((pos.x > from->_x) && (pos.x > -20) && (queryPath(_vm->_char._ani.width()/2 + pos.x - 2, _vm->_char._ani.height() + pos.y) != 0)) {
+	if ((pos.x > from->_x) && (pos.x > 0) && (_pathBuffer->getValue(pos.x - 2, pos.y) != 0)) {
 		pos.x = (pos.x - 2 > from->_x) ? pos.x - 2 : from->_x;
 	}
 
-	if ((pos.y < from->_y) && (pos.y < (SCREEN_HEIGHT - _vm->_char._ani.height())) && (queryPath(_vm->_char._ani.width()/2 + pos.x, _vm->_char._ani.height() + pos.y + 2) != 0)) {
+	if ((pos.y < from->_y) && (pos.y < _vm->_pathBuffer->h) && (_pathBuffer->getValue(pos.x, pos.y + 2) != 0)) {
 		pos.y = (pos.y + 2 <= from->_y) ? pos.y + 2 : from->_y;
 	}
 
-	if ((pos.y > from->_y) && (pos.y > -20) && (queryPath(_vm->_char._ani.width()/2 + pos.x, _vm->_char._ani.height() + pos.y- 2) != 0)) {
+	if ((pos.y > from->_y) && (pos.y > 0) && (_pathBuffer->getValue(pos.x, pos.y - 2) != 0)) {
 		pos.y = (pos.y - 2 >= from->_y) ? pos.y - 2 :from->_y;
 	}
 
@@ -304,7 +297,7 @@ int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNode* fr
 
 	// walk frame selection
 	int16 v16;
-	if (_vm->_char._ani.getFrameNum() == 20) {
+	if (_char._ani.getFrameNum() == 20) {
 
 		if (dist.x > dist.y) {
 			walkData2 = (from->_x > pos.x) ? 0 : 7;
@@ -336,49 +329,53 @@ int16 Parallaction::selectWalkFrame(const Common::Point& pos, const WalkNode* fr
 uint16 Parallaction::checkDoor() {
 //	printf("checkDoor()...");
 
-	if (_vm->_currentLocationIndex != _doorData1) {
-		_doorData1 = _vm->_currentLocationIndex;
+	if (_currentLocationIndex != _doorData1) {
+		_doorData1 = _currentLocationIndex;
 		_zoneTrap = NULL;
 	}
 
 	_engineFlags &= ~kEngineWalking;
-	Zone *z = _vm->hitZone(kZoneDoor, _vm->_char._ani._left + _vm->_char._ani.width() / 2,	_vm->_char._ani._top + _vm->_char._ani.height());
+
+	Common::Point foot;
+
+	_char.getFoot(foot);
+	Zone *z = hitZone(kZoneDoor, foot.x, foot.y);
 
 	if (z != NULL) {
 
 		if ((z->_flags & kFlagsClosed) == 0) {
-			_vm->_location._startPosition.x = z->u.door->_startPos.x;
-			_vm->_location._startPosition.y = z->u.door->_startPos.y;
-			_vm->_location._startFrame = z->u.door->_startFrame;
-			strcpy( _vm->_location._name, z->u.door->_location );
+			_location._startPosition = z->u.door->_startPos;
+			_location._startFrame = z->u.door->_startFrame;
+			strcpy(_location._name, z->u.door->_location);
 
 			_engineFlags |= kEngineChangeLocation;
 			_zoneTrap = NULL;
 
 		} else {
-			_vm->runCommands(z->_commands, z);
+			runCommands(z->_commands, z);
 		}
 	}
 
-	z = _vm->hitZone(kZoneTrap, _vm->_char._ani._left + _vm->_char._ani.width() / 2, _vm->_char._ani._top + _vm->_char._ani.height());
+	_char.getFoot(foot);
+	z = hitZone(kZoneTrap, foot.x, foot.y);
 
 	if (z != NULL) {
-		_localFlags[_vm->_currentLocationIndex] |= kFlagsEnter;
-		_vm->runCommands(z->_commands, z);
-		_localFlags[_vm->_currentLocationIndex] &= ~kFlagsEnter;
+		_localFlags[_currentLocationIndex] |= kFlagsEnter;
+		runCommands(z->_commands, z);
+		_localFlags[_currentLocationIndex] &= ~kFlagsEnter;
 		_zoneTrap = z;
 	} else
 	if (_zoneTrap != NULL) {
-		_localFlags[_vm->_currentLocationIndex] |= kFlagsExit;
-		_vm->runCommands(_zoneTrap->_commands, _zoneTrap);
-		_localFlags[_vm->_currentLocationIndex] &= ~kFlagsExit;
+		_localFlags[_currentLocationIndex] |= kFlagsExit;
+		runCommands(_zoneTrap->_commands, _zoneTrap);
+		_localFlags[_currentLocationIndex] &= ~kFlagsExit;
 		_zoneTrap = NULL;
 	}
 
 //	printf("done\n");
 
-	_vm->_char._ani._frame = walkData2;
-	return _vm->_char._ani._frame;
+	_char._ani._frame = walkData2;
+	return _char._ani._frame;
 }
 
 
@@ -390,8 +387,11 @@ void Parallaction::finalizeWalk(WalkNodeList *list) {
 void jobWalk(void *parm, Job *j) {
 	WalkNodeList *list = (WalkNodeList*)parm;
 
-	Common::Point pos(_vm->_char._ani._left, _vm->_char._ani._top);
-	_vm->_char._ani._oldPos = pos;
+	_vm->_char._ani._oldPos.x = _vm->_char._ani._left;
+	_vm->_char._ani._oldPos.y = _vm->_char._ani._top;
+
+	Common::Point pos;
+	_vm->_char.getFoot(pos);
 
 	WalkNodeList::iterator it = list->begin();
 
@@ -413,10 +413,11 @@ void jobWalk(void *parm, Job *j) {
 	int16 v16 = _vm->selectWalkFrame(pos, *it);
 	_vm->clipMove(pos, *it);
 
-	_vm->_char._ani._left = pos.x;
-	_vm->_char._ani._top = pos.y;
+	_vm->_char.setFoot(pos);
 
-	if (pos == _vm->_char._ani._oldPos) {
+	Common::Point newpos(_vm->_char._ani._left, _vm->_char._ani._top);
+
+	if (newpos == _vm->_char._ani._oldPos) {
 		debugC(1, kDebugWalk, "jobWalk was blocked by an unforeseen obstacle");
 		j->_finished = 1;
 		_vm->finalizeWalk(list);
@@ -425,15 +426,6 @@ void jobWalk(void *parm, Job *j) {
 	}
 
 	return;
-}
-
-
-void Parallaction::setPath(byte *path) {
-	memcpy(_buffer, path, SCREENPATH_WIDTH*SCREEN_HEIGHT);
-}
-
-void Parallaction::initWalk() {
-	_buffer = (byte*)malloc(SCREENPATH_WIDTH * SCREEN_HEIGHT);
 }
 
 
@@ -456,6 +448,7 @@ PathBuilder::PathBuilder(Animation *anim) : _anim(anim), _list(0) {
 
 
 } // namespace Parallaction
+
 
 
 

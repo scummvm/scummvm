@@ -31,81 +31,52 @@
 #include "saga/animation.h"
 #include "saga/events.h"
 #include "saga/interface.h"
+#include "saga/render.h"
+#include "saga/rscfile.h"
 #include "saga/sndres.h"
 #include "saga/music.h"
 
 #include "saga/scene.h"
 
+#include "common/events.h"
+
 namespace Saga {
 
-SceneResourceData IHNM_IntroMovie1RL[] = {
-	{30, 2, 0, 0, false} ,
-	{31, 14, 0, 0, false}
-};
-
-SceneDescription IHNM_IntroMovie1Desc = {
-	0, 0, 0, 0, 0, 0, 0, 0,
-	IHNM_IntroMovie1RL,
-	ARRAYSIZE(IHNM_IntroMovie1RL)
-};
-
-SceneResourceData IHNM_IntroMovie2RL[] = {
-	{32, 2, 0, 0, false} ,
-	{33, 14, 0, 0, false}
-};
-
-SceneDescription IHNM_IntroMovie2Desc = {
-	0, 0, 0, 0, 0, 0, 0, 0,
-	IHNM_IntroMovie2RL,
-	ARRAYSIZE(IHNM_IntroMovie2RL)
-};
-
-SceneResourceData IHNM_IntroMovie3RL[] = {
-	{34, 2, 0, 0, false},
-	{35, 14, 0, 0, false}
-};
-
-SceneDescription IHNM_IntroMovie3Desc = {
-	0, 0, 0, 0, 0, 0, 0, 0,
-	IHNM_IntroMovie3RL,
-	ARRAYSIZE(IHNM_IntroMovie3RL)
-};
-
-SceneResourceData IHNM_IntroMovie4RL[] = {
-	{1227, 2, 0, 0, false},
-	{1226, 14, 0, 0, false}
-};
-
-SceneDescription IHNM_IntroMovie4Desc = {
-	0, 0, 0, 0, 0, 0, 0, 0,
-	IHNM_IntroMovie4RL,
-	ARRAYSIZE(IHNM_IntroMovie4RL)
-};
-
-LoadSceneParams IHNM_IntroList[] = {
-	{0, kLoadByDescription, &IHNM_IntroMovie1Desc, Scene::SC_IHNMIntroMovieProc1, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{0, kLoadByDescription, &IHNM_IntroMovie2Desc, Scene::SC_IHNMIntroMovieProc2, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-	{0, kLoadByDescription, &IHNM_IntroMovie3Desc, Scene::SC_IHNMIntroMovieProc3, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
-};
+// IHNM cutaway intro resource IDs
+#define RID_IHNM_INTRO_CUTAWAYS 39
+#define RID_IHNMDEMO_INTRO_CUTAWAYS 25
 
 int Scene::IHNMStartProc() {
-	size_t n_introscenes;
-	size_t i;
-
 	LoadSceneParams firstScene;
 
-	// The original used the "play video" mechanism for the first part of
-	// the intro. We just use that panel mode.
+	IHNMLoadCutaways();
 
-	_vm->_anim->setCutAwayMode(kPanelVideo);
-	_vm->_interface->setMode(kPanelVideo);
+	if (_vm->getGameId() != GID_IHNM_DEMO) {
+		int logoLength = -168;
 
-	n_introscenes = ARRAYSIZE(IHNM_IntroList);
+		if (_vm->getLanguage() == Common::DE_DEU || _vm->getLanguage() == Common::ES_ESP)
+			logoLength = -128;
 
-	for (i = 0; i < n_introscenes; i++) {
-		_vm->_scene->queueScene(&IHNM_IntroList[i]);
+		// Play Cyberdreams logo for 168 frames
+		if (!playTitle(0, logoLength, true)) {
+			// Play Dreamers Guild logo for 10 seconds
+			if (!playLoopingTitle(1, 10)) {
+				// Play the title music
+				_vm->_music->play(1, MUSIC_NORMAL);
+				// Play title screen
+				playTitle(2, 17);
+			}
+		}
+	} else {
+		_vm->_music->play(1, MUSIC_NORMAL);
+		playTitle(0, 10);
+		playTitle(2, 12);
 	}
 
+	_vm->_music->setVolume(0, 1000);
+	_vm->_anim->freeCutawayList();
+
+	// Queue first scene
 	firstScene.loadFlag = kLoadBySceneNumber;
 	firstScene.sceneDescriptor = -1;
 	firstScene.sceneDescription = NULL;
@@ -120,212 +91,189 @@ int Scene::IHNMStartProc() {
 	return SUCCESS;
 }
 
-int Scene::SC_IHNMIntroMovieProc1(int param, void *refCon) {
-	return ((Scene *)refCon)->IHNMIntroMovieProc1(param);
-}
+int Scene::IHNMCreditsProc() {
+	IHNMLoadCutaways();
 
-int Scene::IHNMIntroMovieProc1(int param) {
-	Event event;
-	Event *q_event;
+	_vm->_music->play(0, MUSIC_NORMAL);
 
-	switch (param) {
-	case SCENE_BEGIN:
-		// Background for intro scene is the first frame of the
-		// intro animation; display it and set the palette
-		event.type = kEvTOneshot;
-		event.code = kBgEvent;
-		event.op = kEventDisplay;
-		event.param = kEvPSetPalette;
-		event.time = 0;
-
-		q_event = _vm->_events->queue(&event);
-
-		_vm->_anim->setFrameTime(0, IHNM_INTRO_FRAMETIME);
-		_vm->_anim->setFlag(0, ANIM_FLAG_ENDSCENE);
-
-		event.type = kEvTOneshot;
-		event.code = kAnimEvent;
-		event.op = kEventPlay;
-		event.param = 0;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-		break;
-	default:
-		break;
+	if (_vm->getGameId() != GID_IHNM_DEMO) {
+		// Display the credits for 400 frames
+		playTitle(4, -400, true);
+	} else {
+		// Display sales info for 60 seconds
+		playTitle(3, 60, true);
 	}
 
-	return 0;
+	_vm->_music->setVolume(0, 1000);
+	_vm->_anim->freeCutawayList();
+
+	return SUCCESS;
 }
 
-int Scene::SC_IHNMIntroMovieProc2(int param, void *refCon) {
-	return ((Scene *)refCon)->IHNMIntroMovieProc2(param);
-}
+void Scene::IHNMLoadCutaways() {
+	ResourceContext *resourceContext;
+	//ResourceContext *soundContext;
+	byte *resourcePointer;
+	size_t resourceLength;
 
-int Scene::IHNMIntroMovieProc2(int param) {
-	Event event;
-	Event *q_event;
-	PalEntry *pal;
-
-	static PalEntry current_pal[PAL_ENTRIES];
-
-	switch (param) {
-	case SCENE_BEGIN:
-		// Fade to black out of the intro CyberDreams logo anim
-		_vm->_gfx->getCurrentPal(current_pal);
-
-		event.type = kEvTContinuous;
-		event.code = kPalEvent;
-		event.op = kEventPalToBlack;
-		event.time = 0;
-		event.duration = IHNM_PALFADE_TIME;
-		event.data = current_pal;
-
-		q_event = _vm->_events->queue(&event);
-
-		// Background for intro scene is the first frame of the
-		// intro animation; display it but don't set palette
-		event.type = kEvTOneshot;
-		event.code = kBgEvent;
-		event.op = kEventDisplay;
-		event.param = kEvPNoSetPalette;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		_vm->_anim->setCycles(0, -1);
-
-		// Unlike the original, we keep the logo spinning during the
-		// palette fades. We don't have to, but I think it looks better
-		// that way.
-
-		event.type = kEvTOneshot;
-		event.code = kAnimEvent;
-		event.op = kEventPlay;
-		event.param = 0;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Fade in from black to the scene background palette
-		_vm->_scene->getBGPal(pal);
-
-		event.type = kEvTContinuous;
-		event.code = kPalEvent;
-		event.op = kEventBlackToPal;
-		event.time = 0;
-		event.duration = IHNM_PALFADE_TIME;
-		event.data = pal;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Fade to black after looping animation for a while
-		event.type = kEvTContinuous;
-		event.code = kPalEvent;
-		event.op = kEventPalToBlack;
-		event.time = IHNM_DGLOGO_TIME;
-		event.duration = IHNM_PALFADE_TIME;
-		event.data = pal;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Queue end of scene
-		event.type = kEvTOneshot;
-		event.code = kSceneEvent;
-		event.op = kEventEnd;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-		break;
-	default:
-		break;
+	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
+	if (resourceContext == NULL) {
+		error("Scene::IHNMStartProc() resource context not found");
 	}
 
-	return 0;
-}
+	if (_vm->getGameId() != GID_IHNM_DEMO)
+		_vm->_resource->loadResource(resourceContext, RID_IHNM_INTRO_CUTAWAYS, resourcePointer, resourceLength);
+	else
+		_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_INTRO_CUTAWAYS, resourcePointer, resourceLength);
 
-int Scene::SC_IHNMIntroMovieProc3(int param, void *refCon) {
-	return ((Scene *)refCon)->IHNMIntroMovieProc3(param);
-}
-
-int Scene::IHNMIntroMovieProc3(int param) {
-	Event event;
-	Event *q_event;
-	PalEntry *pal;
-	static PalEntry current_pal[PAL_ENTRIES];
-
-	switch (param) {
-	case SCENE_BEGIN:
-		// Fade to black out of the intro DG logo anim
-		_vm->_gfx->getCurrentPal(current_pal);
-
-		event.type = kEvTContinuous;
-		event.code = kPalEvent;
-		event.op = kEventPalToBlack;
-		event.time = 0;
-		event.duration = IHNM_PALFADE_TIME;
-		event.data = current_pal;
-
-		q_event = _vm->_events->queue(&event);
-
-		// Music, maestro
-
-		// In the GM file, this music also appears as tracks 7, 13, 19,
-		// 25 and 31, but only track 1 sounds right with the FM music.
-
-		event.type = kEvTOneshot;
-		event.code = kMusicEvent;
-		event.param = 1;
-		event.param2 = MUSIC_NORMAL;
-		event.op = kEventPlay;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Background for intro scene is the first frame of the intro
-		// animation; display it but don't set palette
-		event.type = kEvTOneshot;
-		event.code = kBgEvent;
-		event.op = kEventDisplay;
-		event.param = kEvPNoSetPalette;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Fade in from black to the scene background palette
-		_vm->_scene->getBGPal(pal);
-
-		event.type = kEvTContinuous;
-		event.code = kPalEvent;
-		event.op = kEventBlackToPal;
-		event.time = 0;
-		event.duration = IHNM_PALFADE_TIME;
-		event.data = pal;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		event.type = kEvTOneshot;
-		event.code = kAnimEvent;
-		event.op = kEventPlay;
-		event.param = 0;
-		event.time = 0;
-
-		q_event = _vm->_events->chain(q_event, &event);
-
-		// Queue end of scene after a while
-		// The delay has been increased so the speech won't start until the music has ended
-		event.type = kEvTOneshot;
-		event.code = kSceneEvent;
-		event.op = kEventEnd;
-		event.time = _vm->_music->hasAdlib() ? IHNM_TITLE_TIME_FM : IHNM_TITLE_TIME_GM;
-
-		q_event = _vm->_events->chain(q_event, &event);
-		break;
-	default:
-		break;
+	if (resourceLength == 0) {
+		error("Scene::IHNMStartProc() Can't load cutaway list");
 	}
 
-	return 0;
+	// Load the cutaways for the title screens
+	_vm->_anim->loadCutawayList(resourcePointer, resourceLength);
+}
+
+bool Scene::checkKey() {
+	Common::Event event;
+	bool res = false;
+
+	while (_vm->_eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_vm->shutDown();
+			// fallthrough
+		case Common::EVENT_KEYDOWN:
+			res = true;
+			break;
+		default:
+			break;
+		}
+	}
+
+	return res;
+}
+
+bool Scene::playTitle(int title, int time, int mode) {
+	bool interrupted = false;
+	Surface *backBufferSurface;
+	int startTime = _vm->_system->getMillis();
+	int frameTime = 0;
+	int curTime;
+	int assignedId;
+	int phase = 0;
+	bool done = false;
+	bool playParameter = true;
+	static PalEntry cur_pal[PAL_ENTRIES];
+	static PalEntry pal_cut[PAL_ENTRIES];
+
+	backBufferSurface = _vm->_render->getBackGroundSurface();
+
+	// Load the cutaway
+
+	_vm->_anim->setCutAwayMode(mode);
+	_vm->_frameCount = 0;
+
+	_vm->_gfx->getCurrentPal(cur_pal);
+
+	assignedId = _vm->_anim->playCutaway(title, false);
+
+	_vm->_gfx->getCurrentPal(pal_cut);
+
+	while (!done) {
+		curTime = _vm->_system->getMillis();
+
+		switch (phase) {
+		case 0: // fadeout
+		case 1: // fadeout 100%
+		case 7: // fadeout
+		case 8: // fadeout 100%
+			_vm->_gfx->palToBlack(cur_pal, (double)(curTime - startTime) / kNormalFadeDuration);
+			// fall through
+
+		case 3: // fadein
+		case 4: // fadein 100%
+			if (phase == 3 || phase == 4)
+				_vm->_gfx->blackToPal(pal_cut, (double)(curTime - startTime) / kNormalFadeDuration);
+
+			if (curTime - startTime > kNormalFadeDuration) {
+				phase++;
+				if (phase == 2 || phase == 5 || phase == 9)
+					startTime = curTime;
+				break;
+			}
+			break;
+
+		case 2: // display background
+			_vm->_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0,
+							  backBufferSurface->w, backBufferSurface->h);
+			phase++;
+			startTime = curTime;
+			break;
+
+		case 5: // playback
+			if (time < 0) {
+				if (_vm->_frameCount >= -time) {
+					phase++;
+					break;
+				}
+			} else {
+				if (curTime - startTime >= time * 1000) {
+					phase++;
+					break;
+				}
+			}
+			
+			if (checkKey()) {
+				interrupted = true;
+				done = true;
+				break;
+			}
+
+			if (_vm->_anim->getCycles(assignedId)) { // IHNM demo has 0 frames logo
+				if (curTime - frameTime > _vm->_anim->getFrameTime(assignedId)) {
+					_vm->_anim->play(assignedId, 0, playParameter);
+
+					if (playParameter == true) // Do not loop animations
+						playParameter = false;
+
+					frameTime = curTime;
+			
+					_vm->_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0,
+							  backBufferSurface->w, backBufferSurface->h);
+				}
+
+			}
+			break;
+
+		case 6: // playback end
+			startTime = curTime;
+			_vm->_gfx->getCurrentPal(cur_pal);
+			phase++;
+			break;
+
+		case 9: // end
+			done = true;
+			break;
+		}
+
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(10);
+	}
+
+	// Clean up
+
+	_vm->_anim->endVideo();
+
+	memset((byte *)backBufferSurface->pixels, 0,  backBufferSurface->w *  backBufferSurface->h);
+	_vm->_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0,
+							  backBufferSurface->w, backBufferSurface->h);
+
+	return interrupted;
+}
+
+bool Scene::playLoopingTitle(int title, int seconds) {
+	return playTitle(title, seconds, kPanelCutaway);
 }
 
 } // End of namespace Saga

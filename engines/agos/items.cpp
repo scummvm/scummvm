@@ -42,24 +42,15 @@ Child *AGOSEngine::allocateChildBlock(Item *i, uint type, uint size) {
 }
 
 byte *AGOSEngine::allocateItem(uint size) {
-	byte *org = _itemHeapPtr;
-	size = (size + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
+	byte *item = new byte[size];
 
-	_itemHeapPtr += size;
-	_itemHeapCurPos += size;
-
-	if (_itemHeapCurPos > _itemHeapSize)
-		error("allocateItem: Itemheap overflow");
-
-	return org;
+	memset(item, 0, size);
+	_itemHeap.push_back(item);
+	return item;
 }
 
 void AGOSEngine::allocItemHeap() {
-	_itemHeapSize = _itemMemSize;
-	_itemHeapCurPos = 0;
-	_itemHeapPtr = (byte *)calloc(_itemMemSize, 1);
-	if (!_itemHeapPtr)
-		error("Out Of Memory - Items");
+	_itemHeap.clear();
 }
 
 bool AGOSEngine::hasIcon(Item *item) {
@@ -391,8 +382,13 @@ int AGOSEngine::wordMatch(Item *item, int16 a, int16 n) {
 }
 
 Item *AGOSEngine::derefItem(uint item) {
-	if (item >= _itemArraySize)
-		error("derefItem: invalid item %d", item);
+	// Occurs when loading item store from restart state in
+	// Elvira 2 (Amiga/AtariST) and Waxworks (Amiga).
+	if (item >= _itemArraySize) {
+		debug(0, "derefItem: invalid item %d", item);
+		return NULL;
+	}
+
 	return _itemArrayPtr[item];
 }
 

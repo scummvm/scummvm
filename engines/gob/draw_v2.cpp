@@ -197,7 +197,12 @@ void Draw_v2::printTotText(int16 id) {
 	int16 rectLeft, rectTop, rectRight, rectBottom;
 	int16 size;
 
-	if (!_vm->_game->_totTextData || !_vm->_game->_totTextData->dataPtr)
+	id &= 0xFFF;
+
+	if (!_vm->_game->_totTextData || !_vm->_game->_totTextData->dataPtr ||
+	    (id >= _vm->_game->_totTextData->itemsCount) ||
+		  (_vm->_game->_totTextData->items[id].offset == -1) ||
+			(_vm->_game->_totTextData->items[id].size == 0))
 		return;
 
 	_vm->validateLanguage();
@@ -210,10 +215,34 @@ void Draw_v2::printTotText(int16 id) {
 	if ((_renderFlags & RENDERFLAG_SKIPOPTIONALTEXT) && (ptr[1] & 0x80))
 		return;
 
-	destX = READ_LE_UINT16(ptr) & 0x7FFF;
-	destY = READ_LE_UINT16(ptr + 2);
-	spriteRight = READ_LE_UINT16(ptr + 4);
-	spriteBottom = READ_LE_UINT16(ptr + 6);
+	if (_renderFlags & RENDERFLAG_DOUBLECOORDS) {
+		destX = (READ_LE_UINT16(ptr) & 0x7FFF) * 2;
+		spriteRight = READ_LE_UINT16(ptr + 4) * 2 + 1;
+	} else {
+		destX = READ_LE_UINT16(ptr) & 0x7FFF;
+		spriteRight = READ_LE_UINT16(ptr + 4);
+	}
+
+	if (_renderFlags & RENDERFLAG_FROMSPLIT) {
+		destY = _vm->_video->_splitHeight1;
+		spriteBottom = READ_LE_UINT16(ptr + 6) - READ_LE_UINT16(ptr + 2);
+		if (_renderFlags & RENDERFLAG_DOUBLECOORDS)
+			spriteBottom *= 3;
+		spriteBottom += _vm->_video->_splitHeight1;
+		if (_renderFlags & RENDERFLAG_DOUBLECOORDS) {
+			spriteBottom += _backDeltaX;
+			destY += _backDeltaX;
+		}
+	} else {
+		if (_renderFlags & RENDERFLAG_DOUBLECOORDS) {
+			destY = READ_LE_UINT16(ptr + 2) * 2;
+			spriteBottom = READ_LE_UINT16(ptr + 6) * 2;
+		} else {
+			destY = READ_LE_UINT16(ptr + 2);
+			spriteBottom = READ_LE_UINT16(ptr + 6);
+		}
+	}
+
 	ptr += 8;
 
 	if (_renderFlags & RENDERFLAG_CAPTUREPUSH) {

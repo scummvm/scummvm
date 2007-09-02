@@ -88,12 +88,13 @@ private:
 	int _talkStartEntry;
 	uint16 _talkingCharacter;
 
+	void reloadData();
 	void freeData();
 public:
 	Resources();
 	~Resources();
 	static Resources &getReference();
-	void reloadData();
+	void reset();
 
 	byte *getResource(uint16 resId);
 	RoomDataList &roomData() { return _roomData; }

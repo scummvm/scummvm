@@ -478,6 +478,7 @@ void read_room_exit_joins(byte *&data, uint16 &totalSize) {
 
 void read_anim_data(byte *&data, uint16 &totalSize) {
 	// Add special pixel records
+	add_anim_record(0x184B);	    // Restart/Restore buttons
 	add_anim_record(0x55C0);		// Player midswing animation
 	add_anim_record(0x55C9);		// Player mid-level defend
 	add_anim_record(0x55D2);		// Player high-level strike
@@ -1006,6 +1007,14 @@ void save_text_strings(byte *&data, uint16 &totalSize) {
 	}
 }
 
+void save_sound_desc_data(byte *&data, uint16 &totalSize) {
+	lure_exe.seek(DATA_SEGMENT + SOUND_1_OFFSET);
+	
+	totalSize = SOUND_1_SIZE;
+	data = (byte *) malloc(totalSize);
+	lure_exe.read(data, totalSize);
+}
+
 void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size)
 {
 	resourceId = 0x3f01 + entryIndex;
@@ -1127,6 +1136,11 @@ void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size)
 		save_text_strings(data, size);
 		break;
 
+	case 23:
+		// Save the sound header desc data
+		save_sound_desc_data(data, size);
+		break;
+		
 	default:
 		data = NULL;
 		size = 0;

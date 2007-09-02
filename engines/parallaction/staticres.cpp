@@ -30,7 +30,7 @@
 
 namespace Parallaction {
 
-byte Gfx::_mouseArrow[256] = {
+byte Parallaction_ns::_mouseArrow[256] = {
 	0x12, 0x11, 0x11, 0x11, 0x13, 0x12, 0x12, 0x12, 0x13, 0x12, 0x12, 0x11, 0x13, 0x12, 0x12, 0x00,
 	0x13, 0x12, 0x12, 0x11, 0x13, 0x12, 0x12, 0x12, 0x13, 0x12, 0x12, 0x12, 0x13, 0x12, 0x12, 0x12,
 	0x13, 0x12, 0x12, 0x12, 0x13, 0x12, 0x12, 0x12, 0x13, 0x12, 0x12, 0x13, 0x13, 0x13, 0x12, 0x00,
@@ -219,7 +219,7 @@ byte _amigaTopazFont[2600] =
 
 
 
-const char *_zoneFlagNamesRes[] = {
+const char *_zoneFlagNamesRes_ns[] = {
 	"closed",
 	"active",
 	"remove",
@@ -234,7 +234,7 @@ const char *_zoneFlagNamesRes[] = {
 	"nowalk"
 };
 
-const char *_zoneTypeNamesRes[] = {
+const char *_zoneTypeNamesRes_ns[] = {
 	"examine",
 	"door",
 	"get",
@@ -249,20 +249,7 @@ const char *_zoneTypeNamesRes[] = {
 	"Command"
 };
 
-const char _gameNames[10][20] = {
-	"GAME1",
-	"GAME2",
-	"GAME3",
-	"GAME4",
-	"GAME5",
-	"GAME6",
-	"GAME7",
-	"GAME8",
-	"GAME9",
-	"GAME10"
-};
-
-const char *_commandsNamesRes[] = {
+const char *_commandsNamesRes_ns[] = {
 	"set",
 	"clear",
 	"start",
@@ -278,10 +265,12 @@ const char *_commandsNamesRes[] = {
 	"drop",
 	"quit",
 	"move",
-	"stop"
+	"stop",
+	"endcommands",
+	"endzone"
 };
 
-const char *_instructionNamesRes[] = {
+const char *_instructionNamesRes_ns[] = {
 	"on",
 	"off",
 	"x",
@@ -299,10 +288,11 @@ const char *_instructionNamesRes[] = {
 	"wait",
 	"start",
 	"sound",
-	"move"
+	"move",
+	"endscript"
 };
 
-const char *_callableNamesRes[] = {
+const char *_callableNamesRes_ns[] = {
 	"Projector",
 	"HBOff",
 	"StartIntro",
@@ -330,48 +320,233 @@ const char *_callableNamesRes[] = {
 	"TestResult"
 };
 
-typedef void (*callable)(void*);
+const char *_locationStmtRes_ns[] = {
+	"endlocation",
+	"location",
+	"disk",
+	"nodes",
+	"zone",
+	"animation",
+	"localflags",
+	"commands",
+	"acommands",
+	"flags",
+	"comment",
+	"endcomment",
+	"sound",
+	"music",
+	"endanimation"
+};
 
+const char *_locationZoneStmtRes_ns[] = {
+	"limits",
+	"moveto",
+	"type",
+	"commands",
+	"label",
+	"flags",
+	"endzone"
+};
 
-void _c_play_boogie(void*);
-void _c_startIntro(void*);
-void _c_endIntro(void*);
-void _c_moveSheet(void*);
-void _c_sketch(void*);
-void _c_shade(void*);
-void _c_score(void*);
-void _c_fade(void*);
-void _c_moveSarc(void*);
-void _c_contaFoglie(void*);
-void _c_zeroFoglie(void*);
-void _c_trasformata(void*);
-void _c_offMouse(void*);
-void _c_onMouse(void*);
-void _c_setMask(void*);
-void _c_endComment(void*);
-void _c_frankenstein(void*);
-void _c_finito(void*);
-void _c_ridux(void*);
-void _c_testResult(void*);
-void _c_null(void*);
+const char *_locationAnimStmtRes_ns[] = {
+	"script",
+	"commands",
+	"type",
+	"label",
+	"flags",
+	"file",
+	"position",
+	"moveto",
+	"endanimation"
+};
 
-void _c_projector(void*);
-void _c_HBOff(void*);
-void _c_offSound(void*);
-void _c_startMusic(void*);
-void _c_closeMusic(void*);
-void _c_HBOn(void*);
+const char *_zoneTypeNamesRes_br[] = {
+	"examine",
+	"door",
+	"get",
+	"merge",
+	"taste",
+	"hear",
+	"feel",
+	"speak",
+	"none",
+	"trap",
+	"you",
+	"command",
+	"path",
+	"box"
+};
 
-callable _callables[25];
+const char *_zoneFlagNamesRes_br[] = {
+	"closed",
+	"active",
+	"remove",
+	"acting",
+	"locked",
+	"fixed",
+	"noname",
+	"nomasked",
+	"looping",
+	"added",
+	"character",
+	"nowalk",
+	"yourself",
+	"scaled",
+	"selfuse"
+};
 
+const char *_instructionNamesRes_br[] = {
+	"on",
+	"off",
+	"x",
+	"y",
+	"z",
+	"f",
+	"loop",
+	"endloop",
+	"show",
+	"inc",
+	"dec",
+	"set",
+	"put",
+	"call",
+	"wait",
+	"start",
+	"process",
+	"move",
+	"color",
+	"sound",
+	"mask",
+	"print",
+	"text",
+	"mul",
+	"div",
+	"if",
+	"endif",
+	"stop",
+	"endscript"
+};
 
-Credit _credits[] = {
-	{"Music and Sound Effects", "MARCO CAPRELLI"},
-	{"PC Version", "RICCARDO BALLARINO"},
-	{"Project Manager", "LOVRANO CANEPA"},
-	{"Production", "BRUNO BOZ"},
-	{"Special Thanks to", "LUIGI BENEDICENTI - GILDA and DANILO"},
-	{"Copyright 1992 Euclidea s.r.l ITALY", "All rights reserved"}
+const char *_commandsNamesRes_br[] = {
+	"set",
+	"clear",
+	"start",
+	"speak",
+	"get",
+	"location",
+	"open",
+	"close",
+	"on",
+	"off",
+	"call",
+	"toggle",
+	"drop",
+	"quit",
+	"move",
+	"stop",
+	"character",
+	"followme",
+	"onmouse",
+	"offmouse",
+	"add",
+	"leave",
+	"inc",
+	"dec",
+	"test",
+	"dummy",
+	"dummy",
+	"let",
+	"music",
+	"fix",
+	"unfix",
+	"zeta",
+	"scroll",
+	"swap",
+	"give",
+	"text",
+	"part",
+	"dummy",
+	"return",
+	"onsave",
+	"offsave",
+	"endcommands",
+	"ifchar",
+	"endif"
+};
+
+const char *_callableNamesRes_br[] = {
+	"blufade",
+	"resetpalette",
+	"ferrcycle",
+	"lipsinc",
+	"albycle",
+	"password"
+};
+
+const char *_audioCommandsNamesRes_br[] = {
+	"play",
+	"stop",
+	"pause",
+	"channel_level",
+	"fadein",
+	"fadeout",
+	"volume",
+	" ",
+	"faderate",
+	" ",
+	" ",
+	" ",
+	" ",
+	" ",
+	" ",
+	" ",
+	"loop"
+};
+
+const char *_locationStmtRes_br[] = {
+	"character",
+	"endlocation",
+	"ifchar",
+	"endif",
+	"location",
+	"mask",
+	"path",
+	"disk",
+	"localflags",
+	"commands",
+	"escape",
+	"acommands",
+	"flags",
+	"comment",
+	"endcomment",
+	"zone",
+	"animation",
+	"zeta",
+	"music",
+	"sound"
+};
+
+const char *_locationZoneStmtRes_br[] = {
+	"endzone",
+	"limits",
+	"moveto",
+	"type",
+	"commands",
+	"label",
+	"flags"
+};
+
+const char *_locationAnimStmtRes_br[] = {
+	"endanimation",
+	"endzone",
+	"script",
+	"commands",
+	"type",
+	"label",
+	"flags",
+	"file",
+	"position",
+	"moveto"
 };
 
 const char *_dinoName = "dino";
@@ -384,73 +559,130 @@ const char *_minidonnaName = "minidonna";
 const char *_minidoughName = "minidough";
 const char *_minidrkiName = "minidrki";
 
+#define CALLABLE_NS(x) &Parallaction_ns::x
 
-void Parallaction::initResources() {
+const Parallaction_ns::Callable Parallaction_ns::_dosCallables[] = {
+	CALLABLE_NS(_c_play_boogie),
+	CALLABLE_NS(_c_play_boogie),
+	CALLABLE_NS(_c_startIntro),
+	CALLABLE_NS(_c_endIntro),
+	CALLABLE_NS(_c_moveSheet),
+	CALLABLE_NS(_c_sketch),
+	CALLABLE_NS(_c_shade),
+	CALLABLE_NS(_c_score),
+	CALLABLE_NS(_c_null),
+	CALLABLE_NS(_c_null),
+	CALLABLE_NS(_c_null),
+	CALLABLE_NS(_c_fade),
+	CALLABLE_NS(_c_play_boogie),
+	CALLABLE_NS(_c_moveSarc),
+	CALLABLE_NS(_c_contaFoglie),
+	CALLABLE_NS(_c_zeroFoglie),
+	CALLABLE_NS(_c_trasformata),
+	CALLABLE_NS(_c_offMouse),
+	CALLABLE_NS(_c_onMouse),
+	CALLABLE_NS(_c_setMask),
+	CALLABLE_NS(_c_endComment),
+	CALLABLE_NS(_c_frankenstein),
+	CALLABLE_NS(_c_finito),
+	CALLABLE_NS(_c_ridux),
+	CALLABLE_NS(_c_testResult)
+};
 
-	_callableNames = new Table(ARRAYSIZE(_callableNamesRes), _callableNamesRes);
-	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes), _instructionNamesRes);
-	_zoneFlagNames = new Table(ARRAYSIZE(_zoneFlagNamesRes), _zoneFlagNamesRes);
-	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes), _zoneTypeNamesRes);
-	_commandsNames = new Table(ARRAYSIZE(_commandsNamesRes), _commandsNamesRes);
+const Parallaction_ns::Callable Parallaction_ns::_amigaCallables[] = {
+	CALLABLE_NS(_c_projector),
+	CALLABLE_NS(_c_HBOff),
+	CALLABLE_NS(_c_startIntro),
+	CALLABLE_NS(_c_endIntro),
+	CALLABLE_NS(_c_moveSheet),
+	CALLABLE_NS(_c_sketch),
+	CALLABLE_NS(_c_shade),
+	CALLABLE_NS(_c_score),
+	CALLABLE_NS(_c_offSound),
+	CALLABLE_NS(_c_startMusic),
+	CALLABLE_NS(_c_closeMusic),
+	CALLABLE_NS(_c_fade),
+	CALLABLE_NS(_c_HBOn),
+	CALLABLE_NS(_c_moveSarc),
+	CALLABLE_NS(_c_contaFoglie),
+	CALLABLE_NS(_c_zeroFoglie),
+	CALLABLE_NS(_c_trasformata),
+	CALLABLE_NS(_c_offMouse),
+	CALLABLE_NS(_c_onMouse),
+	CALLABLE_NS(_c_setMask),
+	CALLABLE_NS(_c_endComment),
+	CALLABLE_NS(_c_frankenstein),
+	CALLABLE_NS(_c_finito),
+	CALLABLE_NS(_c_ridux),
+	CALLABLE_NS(_c_testResult)
+};
 
-	_localFlagNames = new Table(120);
+#define CALLABLE_BR(x) &Parallaction_br::x
+
+const Parallaction_br::Callable Parallaction_br::_dosCallables[] = {
+	CALLABLE_BR(_c_blufade),
+	CALLABLE_BR(_c_resetpalette),
+	CALLABLE_BR(_c_ferrcycle),
+	CALLABLE_BR(_c_lipsinc),
+	CALLABLE_BR(_c_albcycle),
+	CALLABLE_BR(_c_password)
+};
+
+void Parallaction_ns::initResources() {
+
+	_zoneFlagNamesRes = _zoneFlagNamesRes_ns;
+	_zoneTypeNamesRes = _zoneTypeNamesRes_ns;
+	_commandsNamesRes = _commandsNamesRes_ns;
+	_callableNamesRes = _callableNamesRes_ns;
+	_instructionNamesRes = _instructionNamesRes_ns;
+
+	_callableNames = new Table(ARRAYSIZE(_callableNamesRes_ns), _callableNamesRes_ns);
+	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_ns), _instructionNamesRes_ns);
+	_zoneFlagNames = new Table(ARRAYSIZE(_zoneFlagNamesRes_ns), _zoneFlagNamesRes_ns);
+	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes_ns), _zoneTypeNamesRes_ns);
+	_commandsNames = new Table(ARRAYSIZE(_commandsNamesRes_ns), _commandsNamesRes_ns);
+	_locationStmt = new Table(ARRAYSIZE(_locationStmtRes_ns), _locationStmtRes_ns);
+	_locationZoneStmt = new Table(ARRAYSIZE(_locationZoneStmtRes_ns), _locationZoneStmtRes_ns);
+	_locationAnimStmt = new Table(ARRAYSIZE(_locationAnimStmtRes_ns), _locationAnimStmtRes_ns);
+
+	_localFlagNames = new FixedTable(NUM_LOCATIONS, 1);
 	_localFlagNames->addData("visited");
 
 	if (getPlatform() == Common::kPlatformPC) {
-		_callables[0] = 	_c_play_boogie;
-		_callables[1] = 	_c_play_boogie;
-		_callables[2] = 	_c_startIntro;
-		_callables[3] = 	_c_endIntro;
-		_callables[4] = 	_c_moveSheet;
-		_callables[5] = 	_c_sketch;
-		_callables[6] = 	_c_shade;
-		_callables[7] = 	_c_score;
-		_callables[8] = 	_c_null;
-		_callables[9] = 	_c_null;
-		_callables[10] = 	_c_null;
-		_callables[11] = 	_c_fade;
-		_callables[12] = 	_c_play_boogie;
-		_callables[13] = 	_c_moveSarc;
-		_callables[14] = 	_c_contaFoglie;
-		_callables[15] = 	_c_zeroFoglie;
-		_callables[16] = 	_c_trasformata;
-		_callables[17] = 	_c_offMouse;
-		_callables[18] = 	_c_onMouse;
-		_callables[19] = 	_c_setMask;
-		_callables[20] = 	_c_endComment;
-		_callables[21] = 	_c_frankenstein;
-		_callables[22] = 	_c_finito;
-		_callables[23] = 	_c_ridux;
-		_callables[24] = 	_c_testResult;
+		_callables = _dosCallables;
 	} else {
-		_callables[0] = 	_c_projector;
-		_callables[1] = 	_c_HBOff;
-		_callables[2] = 	_c_startIntro;
-		_callables[3] = 	_c_endIntro;
-		_callables[4] = 	_c_moveSheet;
-		_callables[5] = 	_c_sketch;
-		_callables[6] = 	_c_shade;
-		_callables[7] = 	_c_score;
-		_callables[8] = 	_c_offSound;
-		_callables[9] = 	_c_startMusic;
-		_callables[10] = 	_c_closeMusic;
-		_callables[11] = 	_c_fade;
-		_callables[12] = 	_c_HBOn;
-		_callables[13] = 	_c_moveSarc;
-		_callables[14] = 	_c_contaFoglie;
-		_callables[15] = 	_c_zeroFoglie;
-		_callables[16] = 	_c_trasformata;
-		_callables[17] = 	_c_offMouse;
-		_callables[18] = 	_c_onMouse;
-		_callables[19] = 	_c_setMask;
-		_callables[20] = 	_c_endComment;
-		_callables[21] = 	_c_frankenstein;
-		_callables[22] = 	_c_finito;
-		_callables[23] = 	_c_ridux;
-		_callables[24] = 	_c_testResult;
+		_callables = _amigaCallables;
 	}
 
 }
 
+void Parallaction_br::initResources() {
+
+	_zoneFlagNamesRes = _zoneFlagNamesRes_br;
+	_zoneTypeNamesRes = _zoneTypeNamesRes_br;
+	_commandsNamesRes = _commandsNamesRes_br;
+	_callableNamesRes = _callableNamesRes_br;
+	_instructionNamesRes = _instructionNamesRes_br;
+	_audioCommandsNamesRes = _audioCommandsNamesRes_br;
+
+	_callableNames = new Table(ARRAYSIZE(_callableNamesRes_br), _callableNamesRes_br);
+	_instructionNames = new Table(ARRAYSIZE(_instructionNamesRes_br), _instructionNamesRes_br);
+	_zoneFlagNames = new Table(ARRAYSIZE(_zoneFlagNamesRes_br), _zoneFlagNamesRes_br);
+	_zoneTypeNames = new Table(ARRAYSIZE(_zoneTypeNamesRes_br), _zoneTypeNamesRes_br);
+	_commandsNames = new Table(ARRAYSIZE(_commandsNamesRes_br), _commandsNamesRes_br);
+	_audioCommandsNames = new Table(ARRAYSIZE(_audioCommandsNamesRes_br), _audioCommandsNamesRes_br);
+	_locationStmt = new Table(ARRAYSIZE(_locationStmtRes_br), _locationStmtRes_br);
+	_locationZoneStmt = new Table(ARRAYSIZE(_locationZoneStmtRes_br), _locationZoneStmtRes_br);
+	_locationAnimStmt = new Table(ARRAYSIZE(_locationAnimStmtRes_br), _locationAnimStmtRes_br);
+
+	_localFlagNames = new FixedTable(NUM_LOCATIONS, 2);
+	_localFlagNames->addData("visited");
+	_localFlagNames->addData("testtrue");
+
+	if (getPlatform() == Common::kPlatformPC) {
+		_callables = _dosCallables;
+	}
+
+}
 
 } // namespace Parallaction

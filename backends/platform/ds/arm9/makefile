@@ -5,10 +5,12 @@ libndsdir = /home/neil/devkitpro/libnds
 # Select the build you want by uncommenting one of the following lines:
 
 
-#DS_BUILD_A = 1
+DS_BUILD_A = 1
 #DS_BUILD_B = 1
 #DS_BUILD_C = 1
-DS_BUILD_D = 1
+#DS_BUILD_D = 1
+#DS_BUILD_E = 1
+#DS_BUILD_F = 1
 #DS_BUILD_E = 1
 #DS_BUILD_F = 1
 
@@ -38,6 +40,7 @@ VPATH = $(srcdir)
 # Command to build libmad is:
 # ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork'
 
+USE_ARM_SOUND_ASM = 1
 ARM = 1
 
 ifdef DS_BUILD_A
@@ -249,7 +252,7 @@ PRE_OBJS_FLAGS = -Wl,--whole-archive
 POST_OBJS_FLAGS = -Wl,--no-whole-archive
 endif
 
-PORT_OBJS :=	$(portdir)/source/blitters.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
+PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
 		$(portdir)/../../../fs/ds/ds-fs.o $(portdir)/source/gbampsave.o $(portdir)/source/scummhelp.o\
 		$(portdir)/source/osystem_ds.o $(portdir)/source/portdefs.o $(portdir)/source/ramsave.o\
 		$(portdir)/source/scummconsole.o $(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
@@ -423,8 +426,8 @@ endif
 
 #---------------------------------------------------------------------------------
 %.nds: %.bin
-	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.10.0;DS Port"
-	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.10.0;DS Port"
+	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.11.0;DS Port"
+	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM 0.11.0;DS Port"
 	dsbuild $@ -l ../ndsloader.bin
 
 	padbin 16 $(basename $@).ds.gba

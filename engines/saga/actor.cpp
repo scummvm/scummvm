@@ -76,6 +76,16 @@ static int commonObjectCompare(const CommonObjectDataPointer& obj1, const Common
 	return 1;
 }
 
+static int commonObjectCompareIHNM(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
+	int p1 = obj1->_location.y;
+	int p2 = obj2->_location.y;
+	if (p1 == p2)
+		return 0;
+	if (p1 < p2)
+		return -1;
+	return 1;
+}
+
 static int tileCommonObjectCompare(const CommonObjectDataPointer& obj1, const CommonObjectDataPointer& obj2) {
 	int p1 = -obj1->_location.u() - obj1->_location.v() - obj1->_location.z;
 	int p2 = -obj2->_location.u() - obj2->_location.v() - obj2->_location.z;
@@ -267,8 +277,6 @@ Actor::Actor(SagaEngine *vm) : _vm(vm) {
 	_pathRect.right = _vm->getDisplayWidth();
 	_pathRect.top = _vm->getDisplayInfo().pathStartY;
 	_pathRect.bottom = _vm->_scene->getHeight();
-
-	_showActors = true;
 
 	// Get actor resource file context
 	_actorContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
@@ -897,7 +905,9 @@ void Actor::updateActorsScene(int actorsEntrance) {
 		}
 	}
 
-	assert(_protagonist);
+	// _protagonist can be null while loading a game from the command line
+	if (_protagonist == NULL)
+		return;
 
 	if ((actorsEntrance >= 0) && (_vm->_scene->_entryList.entryListCount > 0)) {
 		if (_vm->_scene->_entryList.entryListCount <= actorsEntrance) {
@@ -917,8 +927,8 @@ void Actor::updateActorsScene(int actorsEntrance) {
 		// game if you click on anything inside the building you
 		// start walking through the door, turn around and leave."
 		//
-		// After steping of action zone - Rif trying to exit.
-		// This piece of code shift Rif's entry position to non action zone area.
+		// After stepping on an action zone, Rif is trying to exit.
+		// Shift Rif's entry position to a non action zone area.
 		if (_vm->getGameType() == GType_ITE) {
 			if ((_vm->_scene->currentSceneNumber() >= 53) && (_vm->_scene->currentSceneNumber() <= 66))
 				_protagonist->_location.y += 10;
@@ -1606,8 +1616,11 @@ void Actor::handleActions(int msec, bool setup) {
 					stepZoneAction(actor, actor->_lastZone, true, false);
 				actor->_lastZone = hitZone;
 				// WORKAROUND for graphics glitch in the rat caves. Don't do this step zone action in the rat caves
-				// (room 51) to avoid the glitch
-				if (hitZone && !(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51))
+				// (room 51) for hitzone 24577 (the door with the copy protection) to avoid the glitch. This glitch
+				// happens because the copy protection is supposed to kick in at this point, but it's bypassed
+				// (with permission from Wyrmkeep Entertainment)
+				if (hitZone && 
+					!(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51 && hitZone->getHitZoneId() == 24577))
 					stepZoneAction(actor, hitZone, false, false);
 			}
 		}
@@ -1736,7 +1749,10 @@ void Actor::createDrawOrderList() {
 	if (_vm->_scene->getFlags() & kSceneFlagISO) {
 		compareFunction = &tileCommonObjectCompare;
 	} else {
-		compareFunction = &commonObjectCompare;
+		if (_vm->getGameType() == GType_ITE)
+			compareFunction = &commonObjectCompare;
+		else
+			compareFunction = &commonObjectCompareIHNM;
 	}
 
 	_drawOrderList.clear();
@@ -1809,10 +1825,6 @@ void Actor::drawActors() {
 	}
 
 	if (_vm->_scene->_entryList.entryListCount == 0) {
-		return;
-	}
-
-	if (!_showActors) {
 		return;
 	}
 
@@ -2129,7 +2141,10 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 			if ((((actor->_currentAction >= kActionWalkToPoint) &&
 				(actor->_currentAction <= kActionWalkDir)) || (actor == _protagonist)) &&
 				!_vm->_scene->canWalk(pointFrom)) {
-				for (i = 1; i < 8; i++) {
+				
+				int max = _vm->getGameType() == GType_ITE ? 8 : 4;
+
+				for (i = 1; i < max; i++) {
 					pointAdd = pointFrom;
 					pointAdd.y += i;
 					if (_vm->_scene->canWalk(pointAdd)) {
@@ -2142,17 +2157,19 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 						pointFrom = pointAdd;
 						break;
 					}
-					pointAdd = pointFrom;
-					pointAdd.x += i;
-					if (_vm->_scene->canWalk(pointAdd)) {
-						pointFrom = pointAdd;
-						break;
-					}
-					pointAdd = pointFrom;
-					pointAdd.x -= i;
-					if (_vm->_scene->canWalk(pointAdd)) {
-						pointFrom = pointAdd;
-						break;
+					if (_vm->getGameType() == GType_ITE) {
+						pointAdd = pointFrom;
+						pointAdd.x += i;
+						if (_vm->_scene->canWalk(pointAdd)) {
+							pointFrom = pointAdd;
+							break;
+						}
+						pointAdd = pointFrom;
+						pointAdd.x -= i;
+						if (_vm->_scene->canWalk(pointAdd)) {
+							pointFrom = pointAdd;
+							break;
+						}
 					}
 				}
 			}
@@ -2296,11 +2313,11 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 		_activeSpeech.speechBox.right = _vm->getDisplayWidth() - 10;
 	}
 
-	// WORKAROUND for the compact disk in Ellen's chapter
+	// HACK for the compact disk in Ellen's chapter
 	// Once Ellen starts saying that "Something is different", bring the compact disk in the
 	// scene. After speaking with AM, the compact disk is visible. She always says this line 
 	// when entering room 59, after speaking with AM, if the compact disk is not picked up yet
-	// Check Script::sfDropObject for the other part of this workaround
+	// Check Script::sfDropObject for the other part of this hack
 	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 3 &&
 		_vm->_scene->currentSceneNumber() == 59 && _activeSpeech.sampleResourceId == 286) {
 		for (i = 0; i < _objsCount; i++) {

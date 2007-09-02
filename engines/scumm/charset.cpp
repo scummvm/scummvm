@@ -50,10 +50,7 @@ void ScummEngine::loadCJKFont() {
 	_useCJKMode = false;
 	_textSurfaceMultiplier = 1;
 
-	if (_game.platform == Common::kPlatformSegaCD)
-		return;
-
-	if (_language == Common::JA_JPN && _game.version <= 5) { // FM-TOWNS v3 / v5 Kanji
+	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 		int numChar = 256 * 32;
 		_2byteWidth = 16;
 		_2byteHeight = 16;
@@ -66,7 +63,7 @@ void ScummEngine::loadCJKFont() {
 			fp.close();
 		}
 		_textSurfaceMultiplier = 2;
-	} else if (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN) {
+	} else if (_game.version >= 7 && (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN)) {
 		int numChar = 0;
 		const char *fontFile = NULL;
 
@@ -371,7 +368,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 					break;
 			}
 		} else {
-			if (chr == '@')
+			if (chr == '@' && _vm->_language != Common::ZH_TWN)
 				continue;
 			if (chr == 255 || (_vm->_game.version <= 6 && chr == 254)) {
 				chr = text[pos++];
@@ -395,6 +392,15 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 					pos += 2;
 					setCurID(set);
 					continue;
+				}
+			}
+			
+			// Some localizations may override colors
+			// See credits in Chinese COMI
+			if (chr == '^' && pos == 1) {
+				if (text[pos] == 'c') {
+					pos += 4;
+					chr = text[pos++];
 				}
 			}
 		}
@@ -492,13 +498,6 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	setCurID(oldID);
 }
 
-#ifdef PALMOS_68K
-static const byte *englishCharsetDataV2;
-static const byte *germanCharsetDataV2;
-static const byte *frenchCharsetDataV2;
-static const byte *italianCharsetDataV2;
-static const byte *spanishCharsetDataV2;
-#else
 // English Zak font
 static const byte englishCharsetDataV2[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -1159,7 +1158,6 @@ static const byte spanishCharsetDataV2[] = {
 	0x1c, 0x36, 0x36, 0x7c, 0x66, 0x66, 0x7c, 0x40,
 	0x08, 0x0c, 0x0e, 0xff, 0xff, 0x0e, 0x0c, 0x08,
 };
-#endif
 
 CharsetRendererV2::CharsetRendererV2(ScummEngine *vm, Common::Language language)
 	: CharsetRendererV3(vm) {
@@ -1778,7 +1776,7 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 		_str.left = _left;
 
 	// Original keeps glyph width and character dimensions separately
-	if (_vm->_language == Common::ZH_TWN)
+	if (_vm->_language == Common::ZH_TWN && width == 16)
 		width = 17;
 
 	_left += width;
@@ -1884,24 +1882,3 @@ void CharsetRendererNES::drawBits1(const Graphics::Surface &s, byte *dst, const 
 }
 
 } // End of namespace Scumm
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Charset)
-_GSETPTR(Scumm::germanCharsetDataV2, GBVARS_GERMANCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
-_GSETPTR(Scumm::frenchCharsetDataV2, GBVARS_FRENCHCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
-_GSETPTR(Scumm::englishCharsetDataV2, GBVARS_ENGLISHCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
-_GSETPTR(Scumm::italianCharsetDataV2, GBVARS_ITALIANCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
-_GSETPTR(Scumm::spanishCharsetDataV2, GBVARS_SPANISHCHARSETDATAV2_INDEX, byte, GBVARS_SCUMM)
-_GEND
-
-_GRELEASE(Charset)
-_GRELEASEPTR(GBVARS_GERMANCHARSETDATAV2_INDEX, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_FRENCHCHARSETDATAV2_INDEX, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_ENGLISHCHARSETDATAV2_INDEX, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_ITALIANCHARSETDATAV2_INDEX, GBVARS_SCUMM)
-_GRELEASEPTR(GBVARS_SPANISHCHARSETDATAV2_INDEX, GBVARS_SCUMM)
-_GEND
-
-#endif

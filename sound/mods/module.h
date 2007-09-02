@@ -53,12 +53,19 @@ struct sample_t {
 	int8 *data;
 };
 
+struct sample_offs {
+	byte name[23];
+	uint16 len;
+	uint32 offs;
+};
+
 class Module {
 public:
 	byte songname[21];
 
 	static const int NUM_SAMPLES = 31;
 	sample_t sample[NUM_SAMPLES];
+	sample_offs commonSamples[NUM_SAMPLES];
 
 	byte songlen;
 	byte undef;
@@ -69,7 +76,7 @@ public:
 	Module();
 	~Module();
 
-	bool load(Common::ReadStream &stream);
+	bool load(Common::SeekableReadStream &stream, int offs);
 	static byte periodToNote(int16 period, byte finetune = 0);
 	static int16 noteToPeriod(byte note, byte finetune = 0);
 

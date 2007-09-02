@@ -555,7 +555,7 @@ char *AgiEngine::agiSprintf(const char *s) {
 				break;
 			case 's':
 				i = strtoul(s, NULL, 10);
-				safeStrcat(p, _game.strings[i]);
+				safeStrcat(p, agiSprintf(_game.strings[i]));
 				break;
 			case 'm':
 				i = strtoul(s, NULL, 10) - 1;

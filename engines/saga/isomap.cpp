@@ -24,6 +24,7 @@
  */
 
 // Isometric level module
+
 #include "saga/saga.h"
 
 #include "saga/gfx.h"
@@ -1609,6 +1610,7 @@ void IsoMap::findTilePath(ActorData* actor, const Location &start, const Locatio
 /*	if (i > 64) {
 		i = 64;
 	}*/
+
 	actor->_walkStepsCount = i;
 	if (i) {
 		actor->setTileDirectionsSize(i, false);

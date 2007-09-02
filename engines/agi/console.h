@@ -31,6 +31,7 @@
 namespace Agi {
 
 class AgiEngine;
+class PreAgiEngine;
 
 struct AgiDebug {
 	int enabled;

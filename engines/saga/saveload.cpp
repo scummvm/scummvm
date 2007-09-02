@@ -154,14 +154,6 @@ void SagaEngine::fillSaveList() {
 		}
 		i++;
 	}
-/* 4debug
-	for (i = 0; i < 14; i++) {
-		sprintf(_saveFiles[i].name,"test%i", i);
-		_saveFiles[i].slotNumber = i;
-	}
-	_saveFilesCount = 14;
-	_saveFilesMaxCount = 14;
-	*/
 }
 
 
@@ -177,6 +169,9 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	_saveHeader.type = MKID_BE('SAGA');
 	_saveHeader.size = 0;
 	_saveHeader.version = CURRENT_SAGA_VER;
+	// Note that IHNM has a smaller save title size than ITE
+	// We allocate the ITE save title size here, to preserve
+	// savegame backwards compatibility
 	strncpy(_saveHeader.name, saveName, SAVE_TITLE_SIZE);
 
 	out->writeUint32BE(_saveHeader.type);
@@ -245,8 +240,8 @@ void SagaEngine::load(const char *fileName) {
 	// Some older saves were not written in an endian safe fashion.
 	// We try to detect this here by checking for extremly high version values.
 	// If found, we retry with the data swapped.
-	// FIXME: Maybe display a warning/error message instead?
 	if (_saveHeader.version > 0xFFFFFF) {
+		warning("This savegame is not endian safe, retrying with the data swapped");
 		_saveHeader.version = SWAP_BYTES_32(_saveHeader.version);
 	}
 
@@ -266,7 +261,6 @@ void SagaEngine::load(const char *fileName) {
 
 	// Surrounding scene
 	sceneNumber = in->readSint32LE();
-	// Protagonist
 	if (getGameType() != GType_ITE) {
 		int currentChapter = _scene->currentChapterNumber();
 		_scene->setChapterNumber(in->readSint32LE());
@@ -276,7 +270,13 @@ void SagaEngine::load(const char *fileName) {
 		_scene->setCurrentMusicTrack(in->readSint32LE());
 		_scene->setCurrentMusicRepeat(in->readSint32LE());
 		_music->stop();
-		_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
+		if (_scene->currentChapterNumber() == 8)
+			_interface->setMode(kPanelChapterSelection);
+		if (getGameId() != GID_IHNM_DEMO) {
+			_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
+		} else {
+			_music->play(3, MUSIC_LOOP);
+		}
 	}
 
 	// Inset scene
@@ -310,11 +310,14 @@ void SagaEngine::load(const char *fileName) {
 	if (getGameType() != GType_ITE) {
 		if (_scene->currentProtag() != 0 && _scene->currentChapterNumber() != 6) {
 			ActorData *actor1 = _actor->getFirstActor();
-			// Original stores the current protagonist ID from sfSwapActors:
-			//ActorData *actor2 = _actor->getActor(_scene->currentProtag());
-			// However, we already store the protagonist, so merely getting the saved
-			// protagonist is easier and safer, and works without glitches
-			ActorData *actor2 = _actor->_protagonist;
+			ActorData *actor2;
+			// The original gets actor2 from the current protagonist ID, but this is sometimes wrong
+			// If the current protagonist ID is not correct, use the stored protagonist
+			if (!_actor->validActorId(_scene->currentProtag())) {
+				actor2 = _actor->_protagonist;
+			} else {
+				actor2 = _actor->getActor(_scene->currentProtag());
+			}
 
 			SWAP(actor1->_location, actor2->_location);
 

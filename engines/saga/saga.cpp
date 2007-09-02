@@ -428,6 +428,9 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		case (kKnownColorBrightWhite):
 			colorId = kITEColorBrightWhite;
 			break;
+		case (kKnownColorWhite):
+			colorId = kITEColorWhite;
+			break;
 		case (kKnownColorBlack):
 			colorId = kITEColorBlack;
 			break;
@@ -455,6 +458,12 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 			colorId = kITEColorTransBlack;
 			break;
 
+		case (kKnownColorBrightWhite):
+			colorId = kITEColorBrightWhite;
+			break;
+		case (kKnownColorWhite):
+			colorId = kITEColorBrightWhite;
+			break;			
 		case (kKnownColorBlack):
 			colorId = kIHNMColorBlack;
 			break;

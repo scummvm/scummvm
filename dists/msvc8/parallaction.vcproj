@@ -161,23 +161,11 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\engines\parallaction\animation.cpp"
+			RelativePath="..\..\engines\parallaction\callables_br.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\archive.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\callables.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\commands.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\commands.h"
+			RelativePath="..\..\engines\parallaction\callables_ns.cpp"
 			>
 		</File>
 		<File
@@ -201,11 +189,23 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\disk.cpp"
+			RelativePath="..\..\engines\parallaction\disk.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\disk.h"
+			RelativePath="..\..\engines\parallaction\disk_br.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\disk_ns.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\exec_br.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\exec_ns.cpp"
 			>
 		</File>
 		<File
@@ -221,19 +221,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\intro.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\parallaction\inventory.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\inventory.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\location.cpp"
 			>
 		</File>
 		<File
@@ -245,6 +237,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\objects.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\objects.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\parallaction.cpp"
 			>
 		</File>
@@ -253,11 +253,27 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\parallaction_br.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\parallaction_ns.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\parser.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\parser.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\parser_br.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\parser_ns.cpp"
 			>
 		</File>
 		<File
@@ -282,14 +298,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\walk.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\zone.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\zone.h"
 			>
 		</File>
 	</Files>

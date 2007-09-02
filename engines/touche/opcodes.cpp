@@ -828,10 +828,16 @@ void ToucheEngine::op_setHitBoxText() {
 void ToucheEngine::op_fadePalette() {
 	debugC(9, kDebugOpcodes, "ToucheEngine::op_fadePalette()");
 	int16 fadeOut = _script.readNextWord();
+	int colorsCount = 240;
+	// Workaround for bug #1751149. Script triggers a palette fading, but some
+	// of the room graphics use palette colors >= 240.
+	if (_currentEpisodeNum == 104 && _currentRoomNum == 68) {
+		colorsCount = 256;
+	}
 	if (fadeOut) {
-		fadePalette(0, 240, 255, -2, 128);
+		fadePalette(0, colorsCount, 255, -2, 128);
 	} else {
-		fadePalette(0, 240, 0, 2, 128);
+		fadePalette(0, colorsCount, 0, 2, 128);
 	}
 }
 

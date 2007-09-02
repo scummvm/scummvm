@@ -379,6 +379,7 @@ private:
 
 public:
 	SpriteList _defPortraits;
+	PalEntry _portraitBgColor;
 
 private:
 	SagaEngine *_vm;
@@ -416,7 +417,6 @@ private:
 	int _statusOnceColor;
 	int _leftPortrait;
 	int _rightPortrait;
-	PalEntry _portraitBgColor;
 
 	Point _lastMousePoint;
 

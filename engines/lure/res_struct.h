@@ -225,6 +225,18 @@ struct RoomExitIndexedHotspotResource {
 	uint16 hotspotId;
 } PACKED_STRUCT;
 
+enum SoundDescFlags {SF_IN_USE = 1, SF_RESTORE = 2};
+
+// In desc entry, numChannels: bits 0-1 # roland, bits 2-3 #adlib, bits 4-5 #internal 
+
+struct SoundDescResource {
+	uint8 soundNumber;
+	uint8 channel;
+	uint8 numChannels;
+	uint8 flags;
+	uint8 volume;
+} PACKED_STRUCT;
+
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 /**
@@ -353,22 +365,21 @@ public:
 	void loadFromStream(ReadStream *stream);
 };
 
+struct RoomExitJoinStruct {
+	uint16 hotspotId;
+	byte currentFrame;
+	byte destFrame;
+	uint8 openSound;
+	uint8 closeSound;
+};
+
 class RoomExitJoinData {
 public:
 	RoomExitJoinData(RoomExitJoinResource *rec);
 
-	uint16 hotspot1Id;
-	byte h1CurrentFrame;
-	byte h1DestFrame;
-	uint8 h1OpenSound;
-	uint8 h1CloseSound;
-	uint16 hotspot2Id;
-	byte h2CurrentFrame;
-	byte h2DestFrame;
-	uint8 h2OpenSound;
-	uint8 h2CloseSound;
+	RoomExitJoinStruct hotspots[2];
+
 	byte blocked;
-	uint32 unknown;
 };
 
 class RoomExitJoinList: public ManagedList<RoomExitJoinData *> {
@@ -458,8 +469,7 @@ public:
 	uint16 talkGate;
 	uint16 actionHotspotId;
 	uint16 talkOverride;
-
-	uint16 use2HotspotId;
+	uint16 scriptHotspotId;
 
 	void enable() { flags |= 0x80; }
 	void disable() { flags &= 0x7F; }
@@ -798,7 +808,8 @@ enum FieldName {
 	BOTTLE_FILLED = 18,
 	TALK_INDEX = 19,
 	SACK_CUT = 20,
-	ROOM_EXIT_ANIMATION = 76
+	ROOM_EXIT_ANIMATION = 76,
+	AREA_FLAG = 82
 };
 
 enum GameFlags {
@@ -817,16 +828,10 @@ struct PlayerNewPosition {
 	uint16 roomNumber;
 };
 
-struct PlayerPendingPosition {
-	Point pos;
-	bool isSet;
-};
-
 class ValueTableData {
 private:
 	uint16 _numGroats;
 	PlayerNewPosition _playerNewPos;
-	PlayerPendingPosition _playerPendingPos;
 	uint8 _flags;
 	uint8 _hdrFlagMask;
 
@@ -834,6 +839,7 @@ private:
 	bool isKnownField(uint16 fieldIndex);
 public:
 	ValueTableData();
+	void reset();
 	uint16 getField(uint16 fieldIndex);
 	uint16 getField(FieldName fieldName);
 
@@ -845,7 +851,6 @@ public:
 	uint8 &flags() { return _flags; }
 	uint8 &hdrFlagMask() { return _hdrFlagMask; }
 	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
-	PlayerPendingPosition &playerPendingPos() { return _playerPendingPos; }
 
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);

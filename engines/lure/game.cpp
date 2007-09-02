@@ -24,12 +24,13 @@
  */
 
 #include "lure/game.h"
-#include "lure/strings.h"
-#include "lure/room.h"
-#include "lure/scripts.h"
-#include "lure/res_struct.h"
 #include "lure/animseq.h"
 #include "lure/fights.h"
+#include "lure/res_struct.h"
+#include "lure/room.h"
+#include "lure/scripts.h"
+#include "lure/sound.h"
+#include "lure/strings.h"
 
 #include "common/config-manager.h"
 
@@ -45,6 +46,7 @@ Game::Game() {
 	int_game = this;
 	_debugger = new Debugger();
 	_slowSpeedFlag = true;
+	_preloadFlag = false;
 	_soundFlag = true;
 }
 
@@ -65,7 +67,11 @@ void Game::tick() {
 	int idSize = 0;
 	for (i = res.activeHotspots().begin(); i != res.activeHotspots().end(); ++i) {
 		Hotspot *hotspot = *i;
-		idList[idSize++] = hotspot->hotspotId();
+
+		if (!_preloadFlag || ((hotspot->layer() != 0xff) && 
+			(hotspot->hotspotId() < FIRST_NONCHARACTER_ID)))
+			// Add hotspot to list to execute
+			idList[idSize++] = hotspot->hotspotId();
 	}
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot ticks begin");
@@ -79,6 +85,21 @@ void Game::tick() {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot ticks end");
 
 	delete[] idList;
+}
+
+void Game::tickCheck() {
+	Resources &res = Resources::getReference();
+	Room &room = Room::getReference();
+	bool remoteFlag = res.fieldList().getField(OLD_ROOM_NUMBER) != 0;
+
+	_state |= GS_TICK;
+	if ((room.roomNumber() == ROOMNUM_VILLAGE_SHOP) && !remoteFlag && ((_state & GS_TICK) != 0)) {
+		// In the village shop, 
+		bool tockFlag = (_state & GS_TOCK) != 0;
+		Sound.addSound(tockFlag ? 16 : 50);
+
+		_state = _state ^ (GS_TICK | GS_TOCK);
+	}
 }
 
 void Game::nextFrame() {
@@ -106,31 +127,48 @@ void Game::execute() {
 	ValueTableData &fields = res.fieldList();
 
 	uint32 timerVal = system.getMillis();
+	uint32 timerVal2 = system.getMillis();
 
 	screen.empty();
-	//_screen.resetPalette();
 	screen.setPaletteEmpty();
 
-	setState(0);
+	// Flag for starting game
+	setState(GS_RESTART);       
 
-	Script::execute(STARTUP_SCRIPT);
-
-	int bootParam = ConfMan.getInt("boot_param");
-	handleBootParam(bootParam);
-
-	// Set the player direction
-	res.getActiveHotspot(PLAYER_ID)->setDirection(UP);
-
-	room.update();
-	mouse.setCursorNum(CURSOR_ARROW);
-	mouse.cursorOn();
-	
 	while (!events.quitFlag) {
-		while (!events.quitFlag && (_state == 0)) {
+		
+		if ((_state & GS_RESTART) != 0) {
+			res.reset();
+
+			setState(0);
+			Script::execute(STARTUP_SCRIPT);
+
+			int bootParam = ConfMan.getInt("boot_param");
+			handleBootParam(bootParam);
+if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
+		}
+
+		// Set the player direction
+//		res.getActiveHotspot(PLAYER_ID)->setDirection(UP);
+
+		room.update();
+		mouse.setCursorNum(CURSOR_ARROW);
+		mouse.cursorOn();
+
+		// Main game loop
+		while (!events.quitFlag && ((_state & GS_RESTART) == 0)) {
 			// If time for next frame, allow everything to update
 			if (system.getMillis() > timerVal + GAME_FRAME_DELAY) {
 				timerVal = system.getMillis();
 				nextFrame();
+
+				Sound.musicInterface_ContinuePlaying();
+			}
+
+			// Also check if time to do another village shop tick check
+			if (system.getMillis() > timerVal2 + GAME_TICK_DELAY) {
+				timerVal2 = system.getMillis();
+				tickCheck();
 			}
 
 			res.delayList().tick();
@@ -157,48 +195,46 @@ void Game::execute() {
 							SaveRestoreDialog::show(false);
 							break;
 
+						case Common::KEYCODE_F9:
+							doRestart();
+							break;
+
+						case Common::KEYCODE_KP_PLUS:
+							while (++roomNum <= 51) 
+								if (res.getRoom(roomNum) != NULL) break; 
+							if (roomNum == 52) roomNum = 1;
+
+							room.leaveRoom();
+							room.setRoomNumber(roomNum);
+							break;
+
+						case Common::KEYCODE_KP_MINUS:
+							if (roomNum == 1) roomNum = 55;
+							while (res.getRoom(--roomNum) == NULL) ;
+
+							room.leaveRoom();
+							room.setRoomNumber(roomNum);
+							break;
+
+						case Common::KEYCODE_KP_MULTIPLY:
+							res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
+								room.roomNumber());
+							break;
+
+						case Common::KEYCODE_KP_DIVIDE:
+						case Common::KEYCODE_SLASH:
+							room.setShowInfo(!room.showInfo());
+							break;
+
+						case Common::KEYCODE_ESCAPE:
+							doQuit();
+							break;
+
 						default:
 							handled = false;
 					}
 					if (handled)
 						continue;
-
-					// Handle any remaining standard keys
-					switch (events.event().kbd.keycode) {
-					case Common::KEYCODE_ESCAPE:
-						events.quitFlag = true;
-						break;
-
-					case '+':
-						while (++roomNum <= 51) 
-							if (res.getRoom(roomNum) != NULL) break; 
-						if (roomNum == 52) roomNum = 1;
-
-						room.leaveRoom();
-						room.setRoomNumber(roomNum);
-						break;
-
-					case '-':
-						if (roomNum == 1) roomNum = 55;
-						while (res.getRoom(--roomNum) == NULL) ;
-
-						room.leaveRoom();
-						room.setRoomNumber(roomNum);
-						break;
-
-					case '*':
-						res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
-							room.roomNumber());
-						break;
-
-					case Common::KEYCODE_KP_DIVIDE:
-					case Common::KEYCODE_SLASH:
-						room.setShowInfo(!room.showInfo());
-						break;
-
-					default:
-						break;
-					}
 				}
 
 				if ((events.type() == Common::EVENT_LBUTTONDOWN) ||
@@ -228,24 +264,31 @@ void Game::execute() {
 				_debugger->onFrame();
 		}
 
+		room.leaveRoom();
+
 		// If Skorl catches player, show the catching animation
 		if ((_state & GS_CAUGHT) != 0) {
 			Palette palette(SKORL_CATCH_PALETTE_ID);
 			AnimationSequence *anim = new AnimationSequence(screen, system, 
 				SKORL_CATCH_ANIM_ID, palette, false);
 			mouse.cursorOff();
+			Sound.addSound(0x33);
 			anim->show();
-			mouse.cursorOn();
+			delete anim;
 		}
 
 		// If the Restart/Restore dialog is needed, show it
-		if ((_state & GS_RESTORE_RESTART) != 0) {
-			// TODO: Restore/Restart dialog - for now, simply flag for exit
-			events.quitFlag = true;
-		}
-	}
+		if ((_state & GS_RESTORE) != 0) {
+			// Show the Restore/Restart dialog 
+			bool restartFlag = RestartRestoreDialog::show();
 
-	room.leaveRoom();
+			if (restartFlag)
+				setState(GS_RESTART);
+
+		} else if ((_state & GS_RESTART) == 0)
+			// Exiting game
+			events.quitFlag = true;
+	}
 }
 
 void Game::handleMenuResponse(uint8 selection) {
@@ -257,6 +300,7 @@ void Game::handleMenuResponse(uint8 selection) {
 		break;
 
 	case MENUITEM_RESTART_GAME: 
+		doQuit();
 		break;
 
 	case MENUITEM_SAVE_GAME:
@@ -289,7 +333,10 @@ void Game::playerChangeRoom() {
 	uint16 roomNum = fields.playerNewPos().roomNumber;
 	fields.playerNewPos().roomNumber = 0;
 	Point &newPos = fields.playerNewPos().position;
+
 	delayList.clear();
+
+	Sound.removeSounds();
 
 	RoomData *roomData = res.getRoom(roomNum);
 	assert(roomData);
@@ -302,7 +349,9 @@ void Game::playerChangeRoom() {
 		displayChuteAnimation();
 	else if (animFlag != 0)
 		displayBarrelAnimation();
+	
 	fields.setField(ROOM_EXIT_ANIMATION, 0);
+	roomData->exitTime = g_system->getMillis();
 
 	// Change to the new room
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
@@ -354,7 +403,7 @@ void Game::displayChuteAnimation()
 	delete anim;
 
 	mouse.cursorOn();
-	fields.setField(82, 1);
+	fields.setField(AREA_FLAG, 1);
 }
 
 void Game::displayBarrelAnimation()
@@ -816,31 +865,13 @@ void Game::doShowCredits() {
 }
 
 void Game::doQuit() {
-	Mouse &mouse = Mouse::getReference();
-	Events &events = Events::getReference();
-	Screen &screen = Screen::getReference();
+	if (getYN()) 
+		Events::getReference().quitFlag = true;
+}
 
-	mouse.cursorOff();
-	Surface *s = Surface::newDialog(190, "Are you sure (y/n)?");
-	s->centerOnScreen();
-	delete s;
-
-	Common::KeyCode key = Common::KEYCODE_INVALID;
-	do {
-		if (events.pollEvent()) {
-			if (events.event().type == Common::EVENT_KEYDOWN) {
-				key = events.event().kbd.keycode;
-			}
-		}
-	} while ((key != Common::KEYCODE_ESCAPE) &&
-	         (key != Common::KEYCODE_y) &&
-	         (key != Common::KEYCODE_n));
-
-	events.quitFlag = (key == Common::KEYCODE_n);
-	if (!events.quitFlag) {
-		screen.update();
-		mouse.cursorOn();
-	}
+void Game::doRestart() {
+	if (getYN())
+		setState(GS_RESTART);
 }
 
 void Game::doTextSpeed() {
@@ -901,7 +932,53 @@ void Game::handleBootParam(int value) {
 
 		room.setRoomNumber(2);
 		break;
+
+	default:
+		room.setRoomNumber(value);
+		break;
 	}
+}
+
+bool Game::getYN() {
+	Mouse &mouse = Mouse::getReference();
+	Events &events = Events::getReference();
+	Screen &screen = Screen::getReference();
+
+	mouse.cursorOff();
+	Surface *s = Surface::newDialog(190, "Are you sure (y/n)?");
+	s->centerOnScreen();
+	delete s;
+
+	bool breakFlag = false;
+	bool result = false; 
+
+	do {
+		if (events.pollEvent()) {
+			if (events.event().type == Common::EVENT_KEYDOWN) {
+				Common::KeyCode key = events.event().kbd.keycode;
+				if ((key == Common::KEYCODE_y) || (key == Common::KEYCODE_n) ||
+					(key == Common::KEYCODE_ESCAPE)) {
+					breakFlag = true;
+					result = key == Common::KEYCODE_y;
+				}
+			}
+			if (events.event().type == Common::EVENT_LBUTTONUP) {
+				breakFlag = true;
+				result = true;
+			}
+			if (events.event().type == Common::EVENT_RBUTTONUP) {
+				breakFlag = true;
+				result = false;
+			}
+		}
+
+		g_system->delayMillis(10);
+	} while (!events.quitFlag && !breakFlag);
+
+	screen.update();
+	mouse.cursorOn();
+
+	return result;
 }
 
 } // end of namespace Lure

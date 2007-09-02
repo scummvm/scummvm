@@ -24,6 +24,7 @@
  */
 
 // Background animation management module
+
 #include "saga/saga.h"
 #include "saga/gfx.h"
 
@@ -77,30 +78,28 @@ void Anim::freeCutawayList(void) {
 	_cutawayListLength = 0;
 }
 
-void Anim::playCutaway(int cut, bool fade) {
+int Anim::playCutaway(int cut, bool fade) {
 	debug(0, "playCutaway(%d, %d)", cut, fade);
 
+	Event event;
+	Event *q_event = NULL;
 	bool startImmediately = false;
 
 	_cutAwayFade = fade;
 
-	// Chained cutaway, clean up the previous cutaway
-	if (_cutawayActive) {
-		clearCutaway();
-
-		// This is used because when AM is zapping the child's mother in Benny's chapter, 
-		// there is a cutaway followed by a video. The video needs to start immediately after
-		// the cutaway so that it looks like the original
-		startImmediately = true;
-	}
-
 	_vm->_gfx->savePalette();
+	_vm->_gfx->getCurrentPal(saved_pal);
+
+	// TODO: Fade in and fade out at this point are problematic right now, caused
+	// by the fact that we're trying to mix events with direct calls:
+	// 1) The background of the animation is shown when _vm->decodeBGImage and
+	// bgSurface->blit are called below, before palette fadeout starts
+	// 2) Fade in to the animation is currently problematic (it fades in to white)
+	// We either have to use non-event calls to fade in/out the palette, or change
+	// the background display and animation parts to events
+	fade = false;	// remove this once palette fadein-fadeout works
 
 	if (fade) {
-		_vm->_gfx->getCurrentPal(saved_pal);
-		// TODO
-		/*
-		Event event;
 		static PalEntry cur_pal[PAL_ENTRIES];
 
 		_vm->_gfx->getCurrentPal(cur_pal);
@@ -112,20 +111,25 @@ void Anim::playCutaway(int cut, bool fade) {
 		event.duration = kNormalFadeDuration;
 		event.data = cur_pal;
 
-		_vm->_events->queue(&event);
-		*/
+		q_event = _vm->_events->queue(&event);
 	}
 
 	// Prepare cutaway
-	_vm->_gfx->showCursor(false);
-	_vm->_interface->setStatusText("");
-	_vm->_interface->setSaveReminderState(0);
-	_vm->_interface->rememberMode();
+	if (!_cutawayActive) {
+		_vm->_gfx->showCursor(false);
+		_vm->_interface->setStatusText("");
+		_vm->_interface->setSaveReminderState(0);
+		_vm->_interface->rememberMode();
+		_cutawayActive = true;
+	} else {
+		// If another cutaway is up, start the next cutaway immediately
+		startImmediately = true;
+	}
+
 	if (_cutAwayMode == kPanelVideo)
 		_vm->_interface->setMode(kPanelVideo);
 	else
 		_vm->_interface->setMode(kPanelCutaway);
-	_cutawayActive = true;
 
 	// Set the initial background and palette for the cutaway
 	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
@@ -150,7 +154,19 @@ void Anim::playCutaway(int cut, bool fade) {
 	bgSurface->blit(rect, buf);
 	_vm->_frameCount++;
 
-	_vm->_gfx->setPalette(palette);
+	// Handle fade up, if we previously faded down
+	if (fade) {
+		event.type = kEvTImmediate;
+		event.code = kPalEvent;
+		event.op = kEventBlackToPal;
+		event.time = 0;
+		event.duration = kNormalFadeDuration;
+		event.data = (PalEntry *)palette;
+
+		q_event = _vm->_events->chain(q_event, &event);
+	} else {
+		_vm->_gfx->setPalette(palette);
+	}
 
 	free(buf);
 	free(resourceData);
@@ -173,7 +189,7 @@ void Anim::playCutaway(int cut, bool fade) {
 
 	if (cutawaySlot == -1) {
 		warning("Could not allocate cutaway animation slot");
-		return;
+		return 0;
 	}
 	
 	// Some cutaways in IHNM have animResourceId equal to 0, which means that they only have
@@ -181,22 +197,18 @@ void Anim::playCutaway(int cut, bool fade) {
 	// An example is the "nightfall" animation in Ben's chapter (fadein-fadeout), the animation
 	// for the second from the left monitor in Ellen's chapter etc
 	// Therefore, skip the animation bit if animResourceId is 0 and only show the background
-	if (_cutawayList[cut].animResourceId == 0)
-		return;
+	if (_cutawayList[cut].animResourceId != 0) {
+		_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData, resourceDataLength);
+		load(MAX_ANIMATIONS + cutawaySlot, resourceData, resourceDataLength);
+		free(resourceData);
 
-	_vm->_resource->loadResource(context, _cutawayList[cut].animResourceId, resourceData, resourceDataLength);
-
-	load(MAX_ANIMATIONS + cutawaySlot, resourceData, resourceDataLength);
-
-	free(resourceData);
-
-	setCycles(MAX_ANIMATIONS + cutawaySlot, _cutawayList[cut].cycles);
-	setFrameTime(MAX_ANIMATIONS + cutawaySlot, 1000 / _cutawayList[cut].frameRate);
+		setCycles(MAX_ANIMATIONS + cutawaySlot, _cutawayList[cut].cycles);
+		setFrameTime(MAX_ANIMATIONS + cutawaySlot, 1000 / _cutawayList[cut].frameRate);
+	}
 
 	if (_cutAwayMode != kPanelVideo || startImmediately)
 		play(MAX_ANIMATIONS + cutawaySlot, 0);
 	else {
-		Event event;
 		event.type = kEvTOneshot;
 		event.code = kAnimEvent;
 		event.op = kEventPlay;
@@ -205,20 +217,21 @@ void Anim::playCutaway(int cut, bool fade) {
 
 		_vm->_events->queue(&event);
 	}
+
+	return MAX_ANIMATIONS + cutawaySlot;
 }
 
 void Anim::endCutaway(void) {
-	// I believe this is called by scripts after running one cutaway. At
-	// this time, nothing needs to be done here.
+	// This is called by scripts after a cutaway is finished. At this time,
+	// nothing needs to be done here.
 
 	debug(0, "endCutaway()");
 }
 
 void Anim::returnFromCutaway(void) {
-	// I believe this is called by scripts after running a cutaway to
-	// ensure that we return to the scene as if nothing had happened. It's
-	// not called by the IHNM intro, presumably because there is no old
-	// scene to return to.
+	// This is called by scripts after a cutaway is finished, to return back
+	// to the scene that the cutaway was called from. It's not called by the
+	// IHNM intro, as there is no old scene to return to.
 
 	debug(0, "returnFromCutaway()");
 
@@ -297,7 +310,10 @@ void Anim::returnFromCutaway(void) {
 }
 
 void Anim::clearCutaway(void) {
+	PalEntry *pal;
+
 	debug(1, "clearCutaway()");
+
 	if (_cutawayActive) {
 		_cutawayActive = false;
 
@@ -308,6 +324,15 @@ void Anim::clearCutaway(void) {
 
 		_vm->_interface->restoreMode();
 		_vm->_gfx->showCursor(true);
+
+		if (_vm->getGameId() == GID_IHNM_DEMO) {
+			// Enable the save reminder state after each cutaway for the IHNM demo
+			_vm->_interface->setSaveReminderState(true);
+		}
+
+		// Set the scene's palette
+		_vm->_scene->getBGPal(pal);
+		_vm->_gfx->setPalette(pal);
 	}
 }
 
@@ -360,6 +385,12 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 	anim->start += temp;
 
 	// Cache frame offsets
+
+	// WORKAROUND: Cutaway with background resource ID 37 (loaded as cutaway #4) is ending credits.
+	// For some reason it has wrong number of frames specified in its header. So we calculate it here:
+	if (animId > MAX_ANIMATIONS && _cutawayListLength > 4 && _cutawayList[4].backgroundResourceId == 37 && anim->maxFrame == 143)
+		anim->maxFrame = fillFrameOffsets(anim, false);
+
 	anim->frameOffsets = (size_t *)malloc((anim->maxFrame + 1) * sizeof(*anim->frameOffsets));
 	if (anim->frameOffsets == NULL) {
 		memoryError("Anim::load");
@@ -367,18 +398,10 @@ void Anim::load(uint16 animId, const byte *animResourceData, size_t animResource
 
 	fillFrameOffsets(anim);
 
-	/*	char s[200];
-		sprintf(s, "d:\\anim%i",animId);
-		long flen=anim->resourceLength;
-		char *buf=(char*)anim->resourceData;
-		FILE*f;
-		f=fopen(s,"wb");
-		for (long i = 0; i < flen; i++)
-			fputc(buf[i],f);
-		fclose(f);*/
-
 	// Set animation data
-	anim->currentFrame = 0;
+	// HACK: We set currentFrame to -1, as the first frame of the animation is never drawn otherwise
+	// (check Anim::play)
+	anim->currentFrame = -1;
 	anim->completed = 0;
 	anim->cycles = anim->maxFrame;
 
@@ -412,6 +435,13 @@ void Anim::setCycles(uint16 animId, int cycles) {
 	anim->cycles = cycles;
 }
 
+int Anim::getCycles(uint16 animId) {
+	if (animId >= MAX_ANIMATIONS && _cutawayAnimations[animId - MAX_ANIMATIONS] == NULL)
+		return 0;
+	
+	return getAnimation(animId)->cycles;
+}
+
 void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	Event event;
 	Surface *backGroundSurface;
@@ -430,6 +460,24 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	if (animId < MAX_ANIMATIONS && _cutawayActive)
 		return;
 
+	if (animId >= MAX_ANIMATIONS && _cutawayAnimations[animId - MAX_ANIMATIONS] == NULL) {
+		// In IHNM, cutaways without an animation bit are not rendered, but the framecount 
+		// needs to be updated
+		_vm->_frameCount++;
+
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventFrame;
+		event.param = animId;
+		event.time = 10;
+
+		_vm->_events->queue(&event);
+
+		// Nothing to render here (apart from the background, which is already rendered),
+		// so return
+		return;
+	}
+
 	anim = getAnimation(animId);
 
 	backGroundSurface = _vm->_render->getBackGroundSurface();
@@ -443,19 +491,28 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		return;
 	}
 
-	if (anim->completed < anim->cycles) {
-		frame = anim->currentFrame;
+	// HACK: The first frame of the animation is never shown when entering a scene
+	// For now, we initialize currentFrame to be -1 instead of 0 and we draw the
+	// first frame of the animation on the next iteration of Anim::play
+	// FIXME: find out why this occurs and remove this hack. Note that when this
+	// hack is removed, currentFrame should be initialized to 0 again in Anim::load
+	if (anim->currentFrame < 0) {
+		anim->currentFrame = 0;
+		event.type = kEvTOneshot;
+		event.code = kAnimEvent;
+		event.op = kEventFrame;
+		event.param = animId;
+		event.time = 0;
 
-		// WORKAROUND for a buggy animation in IHNM. Animation 0 in scene 67 (the mob of angry prisoners) should
-		// start from frame 0, not frame 1. Frame 0 is the background of the animation (the mob of prisoners), whereas
-		// the rest of the frames are their animated arms. Therefore, in order for the prisoners to appear correctly,
-		// frame 0 should be displayed as the first frame, but anim->currentframe is set to 1, which means that the
-		// prisoners will never be shown. In the original, the prisoners (first frame in the animation) are shown a
-		// bit after the animation is started (which is wrong again, but not that apparent), whereas in ScummVM the
-		// first frame is never shown. Therefore, make sure that for this animation, frame 0 is shown first
-		if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 4 && 
-			_vm->_scene->currentSceneNumber() == 67 && animId == 0 && anim->completed == 1)
-			frame = 0;
+		_vm->_events->queue(&event);
+		return;
+	}
+
+	if (anim->completed < anim->cycles) {
+		if (anim->currentFrame < 0)
+			anim->currentFrame = 0;
+
+		frame = anim->currentFrame;
 
 		// FIXME: if start > 0, then this works incorrectly
 		decodeFrame(anim, anim->frameOffsets[frame], displayBuffer, _vm->getDisplayWidth() * _vm->getDisplayHeight());
@@ -478,6 +535,9 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		_vm->_frameCount += 100;	// make sure the waiting thread stops waiting
 		// Animation done playing
 		anim->state = ANIM_PAUSE;
+		anim->currentFrame = 0;
+		anim->completed = 0;
+
 		if (anim->linkId == -1) {
 			if (anim->flags & ANIM_FLAG_ENDSCENE) {
 				// This animation ends the scene
@@ -488,9 +548,6 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 				_vm->_events->queue(&event);
 			}
 			return;
-		} else {
-			anim->currentFrame = 0;
-			anim->completed = 0;
 		}
 	}
 
@@ -582,6 +639,14 @@ void Anim::setFrameTime(uint16 animId, int time) {
 	anim->frameTime = time;
 }
 
+int Anim::getFrameTime(uint16 animId) {
+	AnimationData *anim;
+
+	anim = getAnimation(animId);
+
+	return anim->frameTime;
+}
+
 int16 Anim::getCurrentFrame(uint16 animId) {
 	AnimationData *anim;
 
@@ -621,11 +686,12 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 
 	MemoryReadStream readS(anim->resourceData + frameOffset, anim->resourceLength - frameOffset);
 
-
+// FIXME: This is thrown when the first video of the IHNM end sequence is shown (the "turn off screen"
+// video), however the video is played correctly and the rest of the end sequence continues normally
 #if 1
 #define VALIDATE_WRITE_POINTER \
 	if ((writePointer < buf) || (writePointer >= (buf + screenWidth * screenHeight))) { \
-		error("VALIDATE_WRITE_POINTER: writePointer=%p buf=%p", (void *)writePointer, (void *)buf); \
+		warning("VALIDATE_WRITE_POINTER: writePointer=%p buf=%p", (void *)writePointer, (void *)buf); \
 	}
 #else
 #define VALIDATE_WRITE_POINTER
@@ -642,7 +708,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 				yStart = readS.readUint16BE();
 			else
 				yStart = readS.readByte();
-			readS.readByte();		/* Skip pad byte */
+			readS.readByte();		// Skip pad byte
 			/*xPos = */readS.readUint16BE();
 			/*yPos = */readS.readUint16BE();
 			/*width = */readS.readUint16BE();
@@ -748,8 +814,8 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 	} while (1);
 }
 
-void Anim::fillFrameOffsets(AnimationData *anim) {
-	uint16 currentFrame;
+int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
+	uint16 currentFrame = 0;
 	byte markByte;
 	uint16 control;
 	uint16 runcount;
@@ -762,12 +828,18 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 
 	readS._bigEndian = !_vm->isBigEndian(); // RLE has inversion BE<>LE
 
-	for (currentFrame = 0; currentFrame <= anim->maxFrame; currentFrame++) {
-		anim->frameOffsets[currentFrame] = readS.pos();
+	while (!readS.eos()) {
+		if (reallyFill) {
+			anim->frameOffsets[currentFrame] = readS.pos();
+
+			if (currentFrame == anim->maxFrame)
+				break;
+		}
+		currentFrame++;
 
 		// For some strange reason, the animation header is in little
 		// endian format, but the actual RLE encoded frame data,
-		// including the frame header, is in big endian format. */
+		// including the frame header, is in big endian format
 		do {
 			markByte = readS.readByte();
 //			debug(7, "_pos=%x currentFrame=%i markByte=%x", readS.pos(), currentFrame, markByte);
@@ -806,8 +878,7 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 			case SAGA_FRAME_LONG_UNCOMPRESSED_RUN: // (16) 0001 0000
 				// Long Uncompressed Run
 				runcount = readS.readSint16BE();
-				for (i = 0; i < runcount; i++)
-					readS.readByte();
+				readS.seek(runcount, SEEK_CUR);
 				continue;
 				break;
 			case SAGA_FRAME_NOOP: // Does nothing
@@ -845,6 +916,8 @@ void Anim::fillFrameOffsets(AnimationData *anim) {
 			}
 		} while (markByte != SAGA_FRAME_END);
 	}
+
+	return currentFrame;
 }
 
 void Anim::animInfo() {

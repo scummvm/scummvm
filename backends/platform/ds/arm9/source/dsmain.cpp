@@ -21,17 +21,6 @@
  */
  
 
-// - Turn off when quit - Done
-// - Simon and Kyrandia - Done
-// - 200% scale option - Done
-// - Change zoom range - Done
-// - Speed increase! - Done
-// - Fixed bugs in Sky - Done
-// - Change name of ini file and intro screen for build c - Done
-// - Check for existance of zip file in batch file - Done
-// - Add new support - Done
-// - Fix help screen
-
 // - Remove scummconsole.c
 // - Delete files
 // - Fatlib conversion?
@@ -39,38 +28,15 @@
 // - libcartreset
 // - Alternative controls - tap for left click, double for right
 // - Inherit the Earth?
-// - New Supercard, M3 drivers?
 // - Stereo audio?
 // - Delete saves?
 // - Software scaler?
-// - 100% scale
 
-// - Arrow keys cause key events when keyboard enabled - Done
-// - Mouse cursor display - Done
-// - Disable scaler on options menu - Done
-// - Fix scale icons on top screen - Done
-// - Fseek optimisation? - No need
-// - Fix agi hack to be cleaner - done
-// - Fix not typing looong words - Done
-// - Show keyboard by default in AGI games
-// - Fix mouse moving when cursor on keyboard screen - Done
-// - Fix 'fit' thingy always appearing - Done
-// - check cine backbuffer code - Done
-// - Add long filename support - Done
-// - New icons
-// - Add key config for gob engine: Start:F1, Shift-numbers: F keys - Done
-// - Fix [ds] appearing in game menu
-
-// - Find out what's going wrong when you turn the console off
-// - enable console when asserting
-
-// - AGI: Adding keyboard hack
-// - CINE: Framebuffer modification should check if it works without, fix for overwrite crash
-// - KYRA: GetFileSize modification
+// - Alternative controls?
 
 
-//#define USE_LIBCARTRESET
-//#define USE_BUILT_IN_DRIVER_SELECTION
+
+#define USE_LIBCARTRESET
 
 #include <nds.h>
 
@@ -102,7 +68,7 @@
 #include "cartreset_nolibfat.h"
 #include "keys.h"
 #include "profiler/cyg-profile.h"
-//test
+#include "blitters.h"
 
 namespace DS {
 
@@ -245,7 +211,7 @@ gameListType gameList[NUM_SUPPORTED_GAMES] = {
 	{"sky",			CONT_SKY},
 	{"simon1",		CONT_SIMON},
 	{"simon2",		CONT_SIMON},
-	{"gob",		CONT_GOBLINS},
+	{"gob1",		CONT_SCUMM_ORIGINAL},
 	{"queen",		CONT_SCUMM_ORIGINAL},
 	{"cine",		CONT_FUTURE_WARS},
 	{"agi",			CONT_AGI}
@@ -441,7 +407,7 @@ void initGame() {
 
 	//strcpy(gameName, ConfMan.getActiveDomain().c_str());
 	strcpy(gameName, ConfMan.get("gameid").c_str());
-	//consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
+	consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
 
 	currentGame = &gameList[0];		// Default game
 	
@@ -962,25 +928,25 @@ void addIndyFightingKeys() {
 
 	if ((getKeysChanged() & KEY_UP)) {
 		event.type = getKeyEvent(KEY_UP);
-		event.kbd.keycode = '8';
+		event.kbd.keycode = Common::KEYCODE_8;
 		event.kbd.ascii = '8';
 		system->addEvent(event);
 	}
 	if ((getKeysChanged() & KEY_LEFT)) {
 		event.type = getKeyEvent(KEY_LEFT);
-		event.kbd.keycode = '4';
+		event.kbd.keycode = Common::KEYCODE_4;
 		event.kbd.ascii = '4';
 		system->addEvent(event);
 	}
 	if ((getKeysChanged() & KEY_RIGHT)) {
 		event.type = getKeyEvent(KEY_RIGHT);
-		event.kbd.keycode = '6';
+		event.kbd.keycode = Common::KEYCODE_6;
 		event.kbd.ascii = '6';
 		system->addEvent(event);
 	}	
 	if ((getKeysChanged() & KEY_DOWN)) {
 		event.type = getKeyEvent(KEY_DOWN);
-		event.kbd.keycode = '2';
+		event.kbd.keycode = Common::KEYCODE_2;
 		event.kbd.ascii = '2';
 		system->addEvent(event);
 	}
@@ -989,19 +955,19 @@ void addIndyFightingKeys() {
 	
 		if ((getKeysChanged() & KEY_X)) {
 			event.type = getKeyEvent(KEY_X);
-			event.kbd.keycode = '9';
+			event.kbd.keycode = Common::KEYCODE_9;
 			event.kbd.ascii = '9';
 			system->addEvent(event);
 		}
 		if ((getKeysChanged() & KEY_A)) {
 			event.type = getKeyEvent(KEY_A);
-			event.kbd.keycode = '6';
+			event.kbd.keycode = Common::KEYCODE_6;
 			event.kbd.ascii = '6';
 			system->addEvent(event);
 		}
 		if ((getKeysChanged() & KEY_B)) {
 			event.type = getKeyEvent(KEY_B);
-			event.kbd.keycode = '3';
+			event.kbd.keycode = Common::KEYCODE_3;
 			event.kbd.ascii = '3';
 			system->addEvent(event);
 		}	
@@ -1010,19 +976,19 @@ void addIndyFightingKeys() {
 
 		if ((getKeysChanged() & KEY_X)) {
 			event.type = getKeyEvent(KEY_X);
-			event.kbd.keycode = '7';
+			event.kbd.keycode = Common::KEYCODE_7;
 			event.kbd.ascii = '7';
 			system->addEvent(event);
 		}
 		if ((getKeysChanged() & KEY_A)) {
 			event.type = getKeyEvent(KEY_A);
-			event.kbd.keycode = '4';
+			event.kbd.keycode = Common::KEYCODE_4;
 			event.kbd.ascii = '4';
 			system->addEvent(event);
 		}
 		if ((getKeysChanged() & KEY_B)) {
 			event.type = getKeyEvent(KEY_B);
-			event.kbd.keycode = '1';
+			event.kbd.keycode = Common::KEYCODE_1;
 			event.kbd.ascii = '1';
 			system->addEvent(event);
 		}	
@@ -1032,7 +998,7 @@ void addIndyFightingKeys() {
 	
 	if ((getKeysChanged() & KEY_Y)) {
 		event.type = getKeyEvent(KEY_Y);
-		event.kbd.keycode = '5';
+		event.kbd.keycode = Common::KEYCODE_5;
 		event.kbd.ascii = '5';
 		system->addEvent(event);
 	}
@@ -1143,7 +1109,7 @@ void addEventsToQueue() {
 			if (!indyFightState) {
 
 				if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) && (getKeysChanged() & KEY_B)) {	
-					event.kbd.keycode = 27;		
+					event.kbd.keycode = Common::KEYCODE_ESCAPE;		
 					event.kbd.ascii = 27;		
 					event.kbd.flags = 0;
 
@@ -1168,26 +1134,26 @@ void addEventsToQueue() {
 				event.kbd.flags = 0;
 
 				if (getKeysChanged() & KEY_LEFT) {
-					event.kbd.keycode = SDLK_LEFT;
-					event.kbd.ascii = SDLK_LEFT;
+					event.kbd.keycode = Common::KEYCODE_LEFT;
+					event.kbd.ascii = 0;
 					event.type = getKeyEvent(KEY_LEFT);
 				}
 
 				if (getKeysChanged() & KEY_RIGHT) {
-					event.kbd.keycode = SDLK_RIGHT;
-					event.kbd.ascii = SDLK_RIGHT;
+					event.kbd.keycode = Common::KEYCODE_RIGHT;
+					event.kbd.ascii = 0;
 					event.type = getKeyEvent(KEY_RIGHT);
 				}
 
 				if (getKeysChanged() & KEY_UP) {
-					event.kbd.keycode = SDLK_UP;
-					event.kbd.ascii = SDLK_UP;
+					event.kbd.keycode = Common::KEYCODE_UP;
+					event.kbd.ascii = 0;
 					event.type = getKeyEvent(KEY_UP);
 				}
 
 				if (getKeysChanged() & KEY_DOWN) {
-					event.kbd.keycode = SDLK_DOWN;
-					event.kbd.ascii = SDLK_DOWN;
+					event.kbd.keycode = Common::KEYCODE_DOWN;
+					event.kbd.ascii = 0;
 					event.type = getKeyEvent(KEY_DOWN);
 				}
 					
@@ -1323,8 +1289,8 @@ void addEventsToQueue() {
 						Common::Event event;
 					
 						event.type = getKeyEvent(KEY_DOWN);
-						event.kbd.keycode = '#';		// F10 or # - show hotspots
-						event.kbd.ascii = '#';
+						event.kbd.keycode = Common::KEYCODE_F10;		// F10 or # - show hotspots
+						event.kbd.ascii = Common::ASCII_F10;
 						event.kbd.flags = 0;
 						system->addEvent(event);
 //						consolePrintf("F10\n");
@@ -1337,7 +1303,7 @@ void addEventsToQueue() {
 						Common::Event event;
 					
 						event.type = getKeyEvent(KEY_DOWN);
-						event.kbd.keycode = '.';		// Full stop - skips current dialogue line
+						event.kbd.keycode = Common::KEYCODE_PERIOD;		// Full stop - skips current dialogue line
 						event.kbd.ascii = '.';
 						event.kbd.flags = 0;
 						system->addEvent(event);
@@ -1397,6 +1363,7 @@ void addEventsToQueue() {
 //				consolePrintf("!!!!!F5!!!!!");
 			}
 			event.kbd.flags = 0;
+			consolePrintf("!!!!!F5!!!!!");
 			system->addEvent(event);
 		}
 

@@ -46,8 +46,6 @@
 #include "agi/menu.h"
 #include "agi/sound.h"
 
-
-
 namespace Agi {
 
 static uint32 g_tickTimer;
@@ -370,7 +368,7 @@ int AgiEngine::agiInit() {
 		memset(&_game.views[i], 0, sizeof(struct AgiView));
 		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
 		memset(&_game.logics[i], 0, sizeof(struct AgiLogic));
-		memset(&_game.sounds[i], 0, sizeof(struct AgiSound));
+		memset(&_game.sounds[i], 0, sizeof(class AgiSound *)); // _game.sounds contains pointers now
 		memset(&_game.dirView[i], 0, sizeof(struct AgiDir));
 		memset(&_game.dirPic[i], 0, sizeof(struct AgiDir));
 		memset(&_game.dirLogic[i], 0, sizeof(struct AgiDir));
@@ -495,7 +493,7 @@ int AgiEngine::agiDetectGame() {
 
 	assert(_gameDescription != NULL);
 
-	if(getVersion() <= 0x2999) {
+	if (getVersion() <= 0x2999) {
 		_loader = new AgiLoader_v2(this);
 	} else {
 		_loader = new AgiLoader_v3(this);
@@ -521,6 +519,7 @@ int AgiEngine::agiLoadResource(int r, int n) {
 	int i;
 
 	i = _loader->loadResource(r, n);
+
 	return i;
 }
 
@@ -602,7 +601,11 @@ AgiButtonStyle::AgiButtonStyle(Common::RenderMode renderMode) {
 	setAmigaStyle(renderMode == Common::kRenderAmiga);
 }
 
-AgiEngine::AgiEngine(OSystem *syst) : Engine(syst) {
+AgiBase::AgiBase(OSystem *syst) : Engine(syst) {
+
+}
+
+AgiEngine::AgiEngine(OSystem *syst) : AgiBase(syst) {
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -677,13 +680,20 @@ void AgiEngine::initialize() {
 	//       drivers, and I'm not sure what they are. For now, they might
 	//       as well be called "PC Speaker" and "Not PC Speaker".
 
-	switch (MidiDriver::detectMusicDriver(MDT_PCSPK)) {
-	case MD_PCSPK:
-		_soundemu = SOUND_EMU_PC;
-		break;
-	default:
-		_soundemu = SOUND_EMU_NONE;
-		break;
+	// If used platform is Apple IIGS then we must use Apple IIGS sound emulation
+	// because Apple IIGS AGI games use only Apple IIGS specific sound resources.
+	if (ConfMan.hasKey("platform") &&
+		Common::parsePlatform(ConfMan.get("platform")) == Common::kPlatformApple2GS) {
+		_soundemu = SOUND_EMU_APPLE2GS;
+	} else {
+		switch (MidiDriver::detectMusicDriver(MDT_PCSPK)) {
+		case MD_PCSPK:
+			_soundemu = SOUND_EMU_PC;
+			break;
+		default:
+			_soundemu = SOUND_EMU_NONE;
+			break;
+		}
 	}
 
 	if (ConfMan.hasKey("render_mode")) {

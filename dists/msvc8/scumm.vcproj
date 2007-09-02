@@ -558,6 +558,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\file_nes.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\file_nes.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\gfx.cpp"
 			>
 		</File>

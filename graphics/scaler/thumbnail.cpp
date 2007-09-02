@@ -27,6 +27,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
+#include "graphics/colormasks.h"
 #include "graphics/scaler.h"
 #include "graphics/scaler/intern.h"
 
@@ -118,7 +119,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 			g = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 1];
 			b = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 2];
 
-			((uint16*)surf->pixels)[y * surf->w + x] = (((r >> 3) & 0x1F) << 11) | (((g >> 2) & 0x3F) << 5) | ((b >> 3) & 0x1F);
+			((uint16*)surf->pixels)[y * surf->w + x] = RGBToColor<ColorMasks<565> >(r, g, b);
 		}
 	}
 

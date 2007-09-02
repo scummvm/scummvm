@@ -503,8 +503,8 @@ void AGOSEngine::saveBackGround(VgaSprite *vsp) {
 	if (_window3Flag == 1) {
 		animTable->srcPtr = (const byte *)_window4BackScn;
 	} else {
-		uint xoffs = (_videoWindows[vsp->windowNum * 4 + 0] * 2 + x) * 8;
-		uint yoffs = (_videoWindows[vsp->windowNum * 4 + 1] + y);
+		int xoffs = (_videoWindows[vsp->windowNum * 4 + 0] * 2 + x) * 8;
+		int yoffs = (_videoWindows[vsp->windowNum * 4 + 1] + y);
 		animTable->srcPtr = getBackGround() + xoffs + yoffs * _screenWidth;
 	}
 

@@ -308,28 +308,29 @@ void RoomDataList::loadFromStream(ReadStream *stream) {
 // Room exit joins class
 
 RoomExitJoinData::RoomExitJoinData(RoomExitJoinResource *rec) {
-	hotspot1Id = FROM_LE_16(rec->hotspot1Id);
-	h1CurrentFrame = rec->h1CurrentFrame;
-	h1DestFrame = rec->h1DestFrame;
-	h1OpenSound = rec->h1OpenSound;
-	h1CloseSound = rec->h1CloseSound;
-	hotspot2Id = FROM_LE_16(rec->hotspot2Id);
-	h2CurrentFrame = rec->h2CurrentFrame;
-	h2DestFrame = rec->h2DestFrame;
-	h2OpenSound = rec->h2OpenSound;
-	h2CloseSound = rec->h2CloseSound;
+	hotspots[0].hotspotId = FROM_LE_16(rec->hotspot1Id);
+	hotspots[0].currentFrame = rec->h1CurrentFrame;
+	hotspots[0].destFrame = rec->h1DestFrame;
+	hotspots[0].openSound = rec->h1OpenSound;
+	hotspots[0].closeSound = rec->h1CloseSound;
+	hotspots[1].hotspotId = FROM_LE_16(rec->hotspot2Id);
+	hotspots[1].currentFrame = rec->h2CurrentFrame;
+	hotspots[1].destFrame = rec->h2DestFrame;
+	hotspots[1].openSound = rec->h2OpenSound;
+	hotspots[1].closeSound = rec->h2CloseSound;
 	blocked = rec->blocked;
 }
 
 void RoomExitJoinList::saveToStream(WriteStream *stream) {
 	for (RoomExitJoinList::iterator i = begin(); i != end(); ++i) {
 		RoomExitJoinData *rec = *i;
-		stream->writeUint16LE(rec->hotspot1Id);
-		stream->writeUint16LE(rec->hotspot2Id);
-		stream->writeByte(rec->h1CurrentFrame);
-		stream->writeByte(rec->h1DestFrame);
-		stream->writeByte(rec->h2CurrentFrame);
-		stream->writeByte(rec->h2DestFrame);
+
+		stream->writeUint16LE(rec->hotspots[0].hotspotId);
+		stream->writeUint16LE(rec->hotspots[1].hotspotId);
+		stream->writeByte(rec->hotspots[0].currentFrame);
+		stream->writeByte(rec->hotspots[0].destFrame);
+		stream->writeByte(rec->hotspots[1].currentFrame);
+		stream->writeByte(rec->hotspots[1].destFrame);
 		stream->writeByte(rec->blocked);
 	}
 
@@ -345,13 +346,14 @@ void RoomExitJoinList::loadFromStream(ReadStream *stream) {
 		if (hotspot1Id == 0xffff) error("Invalid room exit join list");
 		uint16 hotspot2Id = stream->readUint16LE();
 
-		if ((rec->hotspot1Id != hotspot1Id) || (rec->hotspot2Id != hotspot2Id))
+		if ((rec->hotspots[0].hotspotId != hotspot1Id) || 
+			(rec->hotspots[1].hotspotId != hotspot2Id))
 			break;
 
-		rec->h1CurrentFrame = stream->readByte();
-		rec->h1DestFrame = stream->readByte();
-		rec->h2CurrentFrame = stream->readByte();
-		rec->h2DestFrame = stream->readByte();
+		rec->hotspots[0].currentFrame = stream->readByte();
+		rec->hotspots[0].destFrame = stream->readByte();
+		rec->hotspots[1].currentFrame = stream->readByte();
+		rec->hotspots[1].destFrame = stream->readByte();
 		rec->blocked = stream->readByte();
 	}
 
@@ -429,6 +431,8 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	pauseCtr = 0;
 	actionHotspotId = 0;
 	talkOverride = 0;
+	talkGate = 0;
+	scriptHotspotId = 0;
 }
 
 void HotspotData::saveToStream(WriteStream *stream) {
@@ -466,7 +470,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(talkCountdown);
 	stream->writeUint16LE(pauseCtr);
 	stream->writeUint16LE(useHotspotId);
-	stream->writeUint16LE(use2HotspotId);
+	stream->writeUint16LE(scriptHotspotId);
 	stream->writeUint16LE(talkGate);
 	stream->writeUint16LE(actionHotspotId);
 	stream->writeUint16LE(talkOverride);
@@ -507,7 +511,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	talkCountdown = stream->readUint16LE();
 	pauseCtr = stream->readUint16LE();
 	useHotspotId = stream->readUint16LE();
-	use2HotspotId = stream->readUint16LE();
+	scriptHotspotId = stream->readUint16LE();
 	talkGate = stream->readUint16LE();
 	actionHotspotId = stream->readUint16LE();
 	talkOverride = stream->readUint16LE();
@@ -1119,7 +1123,7 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 			if ((charHotspot->characterMode() == CHARMODE_PAUSED) || 
 				((charHotspot->pauseCtr() == 0) && 
 				(charHotspot->characterMode() == CHARMODE_NONE))) {
-				hotspot->resource()->use2HotspotId = charId;
+				hotspot->resource()->scriptHotspotId = charId;
 			}
 
 			hotspot->setPauseCtr(IDLE_COUNTDOWN_SIZE);
@@ -1202,15 +1206,16 @@ void StringList::clear() {
 // Field list and miscellaneous variables
 
 ValueTableData::ValueTableData() {
+	reset();
+}
+
+void ValueTableData::reset() {
 	_numGroats = 0;
 	_playerNewPos.roomNumber = 0;
 	_playerNewPos.position.x = 0;
 	_playerNewPos.position.y = 0;
-	_playerPendingPos.pos.x = 0;
-	_playerPendingPos.pos.y = 0;
-	_playerPendingPos.isSet = false;
 	_flags = GAMEFLAG_4 | GAMEFLAG_1;
-	_hdrFlagMask = 1;
+	_hdrFlagMask = 1;    
 
 	for (uint16 index = 0; index < NUM_VALUE_FIELDS; ++index)
 		_fieldList[index] = 0;
@@ -1252,9 +1257,6 @@ void ValueTableData::saveToStream(Common::WriteStream *stream)
 	stream->writeSint16LE(_playerNewPos.position.x);
 	stream->writeSint16LE(_playerNewPos.position.y);
 	stream->writeUint16LE(_playerNewPos.roomNumber);
-	stream->writeByte(_playerPendingPos.isSet);
-	stream->writeSint16LE(_playerPendingPos.pos.x);
-	stream->writeSint16LE(_playerPendingPos.pos.y);
 	stream->writeByte(_flags);
 	stream->writeByte(_hdrFlagMask);
 	
@@ -1270,9 +1272,6 @@ void ValueTableData::loadFromStream(Common::ReadStream *stream)
 	_playerNewPos.position.x = stream->readSint16LE();
 	_playerNewPos.position.y = stream->readSint16LE();
 	_playerNewPos.roomNumber = stream->readUint16LE();
-	_playerPendingPos.isSet = stream->readByte() != 0;
-	_playerPendingPos.pos.x = stream->readSint16LE();
-	_playerPendingPos.pos.y = stream->readSint16LE();
 	_flags = stream->readByte();
 	_hdrFlagMask = stream->readByte();
 	

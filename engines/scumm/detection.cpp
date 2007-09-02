@@ -56,11 +56,7 @@ static int compareMD5Table(const void *a, const void *b) {
 }
 
 static const MD5Table *findInMD5Table(const char *md5) {
-#ifdef PALMOS_68K
-	uint32 arraySize = MemPtrSize((void *)md5table) / sizeof(MD5Table) - 1;
-#else
 	uint32 arraySize = ARRAYSIZE(md5table) - 1;
-#endif
 	return (const MD5Table *)bsearch(md5, md5table, arraySize, sizeof(MD5Table), compareMD5Table);
 }
 
@@ -886,11 +882,9 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 			*engine = new ScummEngine_v70he(syst, res);
 			break;
 #endif
-#ifndef PALMOS_68K
 		case 61:
 			*engine = new ScummEngine_v60he(syst, res);
 			break;
-#endif
 		default:
 			*engine = new ScummEngine_v6(syst, res);
 		}
@@ -913,16 +907,3 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 REGISTER_PLUGIN(SCUMM, "Scumm Engine",
 				"LucasArts SCUMM Games (C) LucasArts\n"
 				"Humongous SCUMM Games (C) Humongous" );
-
-#ifdef PALMOS_68K
-#include "scumm_globals.h"
-
-_GINIT(Scumm_md5table)
-_GSETPTR(md5table, GBVARS_MD5TABLE_INDEX, MD5Table, GBVARS_SCUMM)
-_GEND
-
-_GRELEASE(Scumm_md5table)
-_GRELEASEPTR(GBVARS_MD5TABLE_INDEX, GBVARS_SCUMM)
-_GEND
-
-#endif
