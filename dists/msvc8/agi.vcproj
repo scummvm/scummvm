@@ -293,7 +293,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\preagi_input.cpp"
+			RelativePath="..\..\engines\agi\preagi_common.cpp"
 			>
 		</File>
 		<File

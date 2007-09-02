@@ -24,7 +24,7 @@ MODULE_OBJS = \
 	op_test.o \
 	picture.o \
 	preagi.o \
-	preagi_input.o \
+	preagi_common.o \
 	preagi_mickey.o \
 	predictive.o \
 	saveload.o \
