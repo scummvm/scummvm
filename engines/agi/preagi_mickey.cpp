@@ -1025,7 +1025,7 @@ void Mickey::checkAirSupply(bool fSuit, int *iSupply) {
 
 void Mickey::insertDisk(int iDisk) {
 	_vm->clearTextArea();
-	_vm->drawStr(IDI_MSA_ROW_INSERT_DISK, IDI_MSA_COL_INSERT_DISK, IDA_DEFAULT, (char *)IDS_MSA_INSERT_DISK[iDisk]);
+	_vm->drawStr(IDI_MSA_ROW_INSERT_DISK, IDI_MSA_COL_INSERT_DISK, IDA_DEFAULT, (const char *)IDS_MSA_INSERT_DISK[iDisk]);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	_vm->waitAnyKey();
@@ -1111,7 +1111,7 @@ void Mickey::inventory() {
 
 	for (int iItem = 0; iItem < IDI_MSA_MAX_ITEM; iItem++) {
 		if (game.fItem[game.iItem[iItem]] && (game.iItem[iItem] != IDI_MSA_OBJECT_NONE)) {
-			_vm->drawStr(iRow++, IDI_MSA_COL_INV_ITEMS, IDA_DEFAULT, (char *)IDS_MSA_NAME_ITEM[game.iItem[iItem]]);
+			_vm->drawStr(iRow++, IDI_MSA_COL_INV_ITEMS, IDA_DEFAULT, (const char *)IDS_MSA_NAME_ITEM[game.iItem[iItem]]);
 		}
 	}
 
@@ -1812,9 +1812,9 @@ bool Mickey::parse(int cmd, int arg) {
 	case IDI_MSA_ACTION_READ_GAUGE:
 		printDatString(arg);
 		_vm->drawStr(IDI_MSA_ROW_TEMPERATURE, IDI_MSA_COL_TEMPERATURE_C, IDA_DEFAULT,
-			(char *)IDS_MSA_TEMP_C[game.iPlanet]);
+			(const char *)IDS_MSA_TEMP_C[game.iPlanet]);
 		_vm->drawStr(IDI_MSA_ROW_TEMPERATURE, IDI_MSA_COL_TEMPERATURE_F, IDA_DEFAULT,
-			(char *)IDS_MSA_TEMP_F[game.iPlanet]);
+			(const char *)IDS_MSA_TEMP_F[game.iPlanet]);
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		_vm->waitAnyKey();
@@ -1848,7 +1848,7 @@ bool Mickey::parse(int cmd, int arg) {
 			drawRoom();
 			printDatString(22);
 			_vm->drawStr(IDI_MSA_ROW_PLANET, IDI_MSA_COL_PLANET, IDA_DEFAULT,
-						(char *)IDS_MSA_PLANETS[game.iPlanet]);
+						(const char *)IDS_MSA_PLANETS[game.iPlanet]);
 			_vm->_gfx->doUpdate();
 			_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 			_vm->waitAnyKeyAnim();
@@ -1960,7 +1960,7 @@ void Mickey::debug_DrawObjs() {
 		_vm->clearTextArea();
 		sprintf(szTitle, "Object %d", iObj);
 		_vm->drawStrMiddle(22, IDA_DEFAULT, szTitle);
-		_vm->drawStrMiddle(23, IDA_DEFAULT, (char *)IDS_MSA_NAME_OBJ[iObj]);
+		_vm->drawStrMiddle(23, IDA_DEFAULT, (const char *)IDS_MSA_NAME_OBJ[iObj]);
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		_vm->waitAnyKey();

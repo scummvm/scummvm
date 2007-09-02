@@ -282,7 +282,7 @@ int PreAgiEngine::preAgiUnloadResource(int r, int n) {
 // String functions
 // TODO: These need to be moved elsewhere
 
-void PreAgiEngine::drawStr(int row, int col, int attr, char *buffer) {
+void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 	int code;
 
 	for (int iChar = 0; iChar < (int)strlen(buffer); iChar++) {
@@ -310,7 +310,7 @@ void PreAgiEngine::drawStr(int row, int col, int attr, char *buffer) {
 	}
 }
 
-void PreAgiEngine::drawStrMiddle(int row, int attr, char *buffer) {
+void PreAgiEngine::drawStrMiddle(int row, int attr, const char *buffer) {
 	int col = (25 / 2) - (strlen(buffer) / 2);	// 25 = 320 / 8 (maximum column)
 	drawStr(row, col, attr, buffer);
 }

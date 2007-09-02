@@ -1003,8 +1003,8 @@ public:
 	int rnd(int hi) { return (rand() % hi + 1); }
 
 	// Text
-	void drawStr(int row, int col, int attr, char *buffer);
-	void drawStrMiddle(int row, int attr, char *buffer);
+	void drawStr(int row, int col, int attr, const char *buffer);
+	void drawStrMiddle(int row, int attr, const char *buffer);
 	void clearTextArea();
 	void drawChar(int x, int y, int attr, int code, const char *fontdata);
 };
