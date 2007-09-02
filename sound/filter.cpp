@@ -31,6 +31,8 @@
 
 namespace Audio {
 
+Common::Array<FIRFilter *> FIRFilter::filters;
+
 static double bessel_i0(double x);
 
 /* 
@@ -188,6 +190,26 @@ FIRFilter::FIRFilter(double passbandEdge, double stopbandEdge,
 	
 	/* Generate the coefficients of a low pass filter using this window */
 	LPDesign(_coeffs, _length, _passbandEdge, _stopbandEdge, _samplingFreq);
+}
+
+FIRFilter *FIRFilter::getFilter(double passbandEdge, double stopbandEdge,
+					double dBPassbandRipple, double dBStopbandAtten,
+					uint32 samplingFreq, uint16 upFactor) {
+	uint i;
+	
+	for (i = 0; i < filters.size(); i++) {
+		if (filters[i]->_samplingFreq == samplingFreq
+			&& filters[i]->_upFactor == upFactor) {
+			return filters[i];
+		}
+	}
+	
+	FIRFilter *filter = new FIRFilter(passbandEdge, stopbandEdge, 
+				dBPassbandRipple, dBStopbandAtten, samplingFreq, upFactor);
+	
+	filters.push_back(filter);
+	
+	return filters[i];
 }
 
 } // End of namespace Audio

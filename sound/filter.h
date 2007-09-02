@@ -27,6 +27,7 @@
 #define SOUND_FILTER_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 
 namespace Audio {
 
@@ -43,9 +44,30 @@ private:
 	double _ripple;
 	uint32 _length;
 	double *_coeffs;
+	
+	static Common::Array<FIRFilter *> filters;
 
 public:
-/* Generates lowpass filter coefficients using the parameters provided */
+
+	/*
+	 * Returns a pointer to an existing FIRFilter if possible; otherwise
+	 * generates a new one
+	 */
+	static FIRFilter *getFilter(
+			double passbandEdge,
+			double stopbandEdge,
+			double dBPassbandRipple,
+			double dBStopbandAtten,
+			uint32 samplingFreq,
+			uint16 upFactor);
+	
+	uint32 getLength() { return _length; }
+	
+	double *getCoeffs() { return _coeffs; }
+
+private:
+
+	/* Generates lowpass filter coefficients using the parameters provided */
 	FIRFilter(
 			double passbandEdge,
 			double stopbandEdge,
@@ -56,11 +78,6 @@ public:
 	
 	~FIRFilter() { free(_coeffs); }
 	
-	uint32 getLength() { return _length; }
-	
-	double *getCoeffs() { return _coeffs; }
-
-private:
 	double equiripple(
 			double dBPassbandRipple,
 			double dBStopbandAtten);

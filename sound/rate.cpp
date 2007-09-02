@@ -284,6 +284,7 @@ template<bool stereo, bool reverseStereo>
 class FilteringRateConverter : public RateConverter {
 protected:
 	FIRFilter *filt;
+	double *coeffs;
 	
 	/* Circular buffers for inputs which are currently in the filter */
 	st_sample_t *inBuf;
@@ -330,7 +331,6 @@ protected:
 public:
 	FilteringRateConverter(st_rate_t inrate, st_rate_t outrate);
 	~FilteringRateConverter() {
-		delete filt;
 		free(inBuf);
 		delete rand;
 	}
@@ -368,8 +368,10 @@ FilteringRateConverter<stereo, reverseStereo>::FilteringRateConverter(st_rate_t 
 	// TODO: Make it so that this filter data can be reused by other
 	//       converters. 
 	/* Generate the filter coefficients */
-	filt = new FIRFilter(lowpassBW * stopband / 2.0, stopband / 2.0,
+	filt = FIRFilter::getFilter(lowpassBW * stopband / 2.0, stopband / 2.0,
 						-40, 80, (uint32)inrate * upFactor, upFactor);
+	
+	coeffs = filt->getCoeffs();
 	
 	uint32 len = filt->getLength();
 	
@@ -389,8 +391,8 @@ FilteringRateConverter<stereo, reverseStereo>::FilteringRateConverter(st_rate_t 
 		 * softer than those of other resamplers using otherwise equal
 		 * options.
 		 */
-		//gain[i % upFactor] += fabs((filt->getCoeffs())[i]);
-		gain[i % upFactor] += (filt->getCoeffs())[i];
+		//gain[i % upFactor] += fabs(coeffs[i]);
+		gain[i % upFactor] += coeffs[i];
 	}
 	
 	/* Find the maximum of these subfilter gains */
@@ -455,10 +457,10 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 		 */
 		for (i = 0; i < subLen; i++) {
 			accum0 += (double)inBuf[(inPos + numChan * i) % subLen]
-						* (filt->getCoeffs())[currBank + i*upFactor];
+						* coeffs[currBank + i*upFactor];
 			if (stereo) {
 				accum1 += (double)inBuf[(inPos + numChan * i + 1) % subLen]
-						* (filt->getCoeffs())[currBank + i*upFactor];
+						* coeffs[currBank + i*upFactor];
 			}
 		}
 		
