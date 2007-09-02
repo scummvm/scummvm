@@ -38,6 +38,14 @@ struct AgiPicture {
 	uint8 *rdata;			/**< raw vector image data */
 };
 
+// AGI picture version
+enum AgiPictureVersion {
+	AGIPIC_C64,
+	AGIPIC_V1,
+	AGIPIC_V15,
+	AGIPIC_V2,
+};
+
 class AgiBase;
 class GfxMgr;
 
@@ -60,10 +68,10 @@ private:
 	int plotPatternPoint(int x, int y, int bitpos);
 	void plotPattern(int x, int y);
 	void plotBrush();
-	void drawPictureVC64();
-	void drawPictureV1();
-	void drawPictureV15();
-	void drawPictureV2();
+	void drawPicture();
+
+	// TODO: this is hardcoded for V2 pictures for now
+	static const int pictureType = AGIPIC_V2;
 
 public:
 	PictureMgr(AgiBase *agi, GfxMgr *gfx) {

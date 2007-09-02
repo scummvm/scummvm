@@ -499,194 +499,10 @@ void PictureMgr::plotBrush() {
 }
 
 /**************************************************************************
-** Draw AGI vC64 format picture
+** Draw AGI picture
 **************************************************************************/
 
-void PictureMgr::drawPictureVC64() {
-	uint8 act;
-	int drawing;
-
-	patCode = 0;
-	patNum = 0;
-	priOn = scrOn = false;
-	scrColour = 0xf;
-	priColour = 0x4;
-
-	drawing = 1;
-
-	debugC(8, kDebugLevelMain, "Drawing vC64 picture");
-	for (drawing = 1; drawing && foffs < flen;) {
-		act = nextByte;
-		switch (act) {
-		case 0xe0:	/* x-corner */
-			xCorner();
-			break;
-		case 0xe1:	/* y-corner */
-			yCorner();
-			break;
-		case 0xe2:	/* dynamic draw lines */
-			dynamicDrawLine();
-			break;
-		case 0xe3:	/* absolute draw lines */
-			absoluteDrawLine();
-			break;
-		case 0xe4:	/* fill */
-			scrColour = nextByte;
-			scrColour &= 0xF;	/* for v3 drawing diff */
-			fill();
-			break;
-		case 0xe5:	/* enable screen drawing */
-			scrOn = true;
-			break;
-		case 0xe6:	/* plot brush */
-			patCode = nextByte;
-			plotBrush();
-			break;
-		case 0xf0:	/* set colour on screen */
-		case 0xf2:
-		case 0xf3:
-		case 0xf4:
-		case 0xf5:
-		case 0xf6:
-		case 0xf7:
-		case 0xf8:
-		case 0xf9:
-		case 0xfa:
-		case 0xfb:
-		case 0xfc:
-		case 0xfd:
-		case 0xfe:
-			scrColour = act - 0xf0;
-			break;
-		default:
-			warning("Unknown vC64 picture opcode (%x)", act);
-		}
-	}
-}
-
-/**************************************************************************
-** Draw AGI v1 format picture
-**************************************************************************/
-
-void PictureMgr::drawPictureV1() {
-	uint8 act;
-	int drawing;
-
-	patCode = 0;
-	patNum = 0;
-	priOn = scrOn = false;
-	scrColour = 0xf;
-	priColour = 0x4;
-
-	drawing = 1;
-
-	debugC(8, kDebugLevelMain, "Drawing v1 picture");
-	for (drawing = 1; drawing && foffs < flen;) {
-		act = nextByte;
-		switch (act) {
-		case 0xf1:	/* set colour on screen */
-			scrColour = nextByte;
-			scrColour &= 0xF;	/* for v3 drawing diff */
-			scrOn = true;
-			priOn = false;
-			break;
-		case 0xf3:	/* set colour on priority */
-			scrColour = nextByte;
-			scrColour &= 0xF;	/* for v3 drawing diff */
-			scrOn = true;
-			priColour = nextByte;
-			priColour &= 0xf;	/* for v3 drawing diff */
-			priOn = true;
-			break;
-		case 0xf4:	/* y-corner */
-			yCorner();
-			break;
-		case 0xf5:	/* x-corner */
-			xCorner();
-			break;
-		case 0xf6:	/* absolute draw lines */
-			absoluteDrawLine();
-			break;
-		case 0xf7:	/* dynamic draw lines */
-		case 0xfb:
-			dynamicDrawLine();
-			break;
-		case 0xfa:
-			scrOn = false;
-			priOn = true;
-			absoluteDrawLine();
-			scrOn = true;
-			priOn = false;
-			break;
-		case 0xfc:	/* fill */
-			scrColour = nextByte;
-			scrColour &= 0xF;
-			priColour = nextByte;
-			priColour &= 0xf;
-			fill();
-			break;
-		case 0xFF:	/* end of pic data */
-			drawing = 0;
-			break;
-		default:
-			warning("Unknown v1 picture opcode (%x)", act);
-		}
-	}
-}
-
-/**************************************************************************
-** Draw AGI v1.5 format picture
-**************************************************************************/
-
-void PictureMgr::drawPictureV15() {
-	uint8 act;
-	int drawing;
-
-	patCode = 0;
-	patNum = 0;
-	priOn = scrOn = false;
-	scrColour = 0xf;
-
-	drawing = 1;
-
-	debugC(8, kDebugLevelMain, "Drawing v1.5 picture");
-	for (drawing = 1; drawing && foffs < flen;) {
-		act = nextByte;
-		switch (act) {
-		case 0xf0:	
-			break;
-		case 0xf1:	/* set colour on screen */
-			scrColour = nextByte;
-			scrColour &= 0xF;
-			break;
-		case 0xf3:
-			break;
-		case 0xf8:	/* absolute draw lines */
-		case 0xf9:
-		case 0xfa:
-		case 0xfb:
-			absoluteDrawLine();
-			break;
-		case 0xfe:	/* fill */
-			scrColour = nextByte;
-			scrColour &= 0xF;
-			scrOn = true;
-			fill();
-			break;
-		case 0xFF:	/* end of pic data */
-			drawing = 0;
-			break;
-		default:
-			warning("Unknown v1.5 picture opcode (%x)", act);
-		}
-	}
-}
-
-/**************************************************************************
-** Draw AGI v2 format picture
-**************************************************************************/
-
-void PictureMgr::drawPictureV2() {
+void PictureMgr::drawPicture() {
 	uint8 act;
 	int drawing;
 
@@ -701,48 +517,138 @@ void PictureMgr::drawPictureV2() {
 	debugC(8, kDebugLevelMain, "Drawing v2 picture");
 	for (drawing = 1; drawing && foffs < flen;) {
 		act = nextByte;
+
+		if (pictureType == AGIPIC_C64 && act >= 0xf0 && act <= 0xfe) {
+			scrColour = act - 0xf0;
+			continue;
+		}
+
 		switch (act) {
-		case 0xf0:	/* set colour on screen */
-			scrColour = nextByte;
-			scrColour &= 0xF;	/* for v3 drawing diff */
-			scrOn = true;
-			break;
-		case 0xf1:	/* disable screen drawing */
-			scrOn = false;
-			break;
-		case 0xf2:	/* set colour on priority */
-			priColour = nextByte;
-			priColour &= 0xf;	/* for v3 drawing diff */
-			priOn = true;
-			break;
-		case 0xf3:	/* disable priority screen */
-			priOn = false;
-			break;
-		case 0xf4:	/* y-corner */
-			yCorner();
-			break;
-		case 0xf5:	/* x-corner */
+		case 0xe0:	// x-corner (C64)
 			xCorner();
 			break;
-		case 0xf6:	/* absolute draw lines */
-			absoluteDrawLine();
+		case 0xe1:	// y-corner (C64)
+			yCorner();
 			break;
-		case 0xf7:	/* dynamic draw lines */
+		case 0xe2:	// dynamic draw lines (C64)
 			dynamicDrawLine();
 			break;
-		case 0xf8:	/* fill */
+		case 0xe3:	// absolute draw lines (C64)
+			absoluteDrawLine();
+			break;
+		case 0xe4:	// fill (C64)
+			scrColour = nextByte;
+			scrColour &= 0xF;	/* for v3 drawing diff */
 			fill();
 			break;
-		case 0xf9:	/* set pattern */
-			patCode = nextByte;
-
-			if (_vm->getGameType() == GType_PreAGI)
-				plotBrush();
+		case 0xe5:	// enable screen drawing (C64)
+			scrOn = true;
 			break;
-		case 0xfA:	/* plot brush */
+		case 0xe6:	// plot brush (C64)
+			patCode = nextByte;
 			plotBrush();
 			break;
-		case 0xFF:	/* end of pic data */
+		case 0xf0:	// set colour on screen (AGI pic v2)
+			scrColour = nextByte;
+			scrColour &= 0xF;	// for v3 drawing diff
+			scrOn = true;
+			break;
+		case 0xf1:
+			if (pictureType == AGIPIC_V1) {
+				scrColour = nextByte;
+				scrColour &= 0xF;	// for v3 drawing diff
+				scrOn = true;
+				priOn = false;
+			} else if (pictureType == AGIPIC_V15) {	// set colour on screen
+				scrColour = nextByte;
+				scrColour &= 0xF;
+			} else if (pictureType == AGIPIC_V2) {	// disable screen drawing
+				scrOn = false;
+			}
+			break;
+		case 0xf2:	// set colour on priority (AGI pic v2)
+			priColour = nextByte;
+			priColour &= 0xf;	// for v3 drawing diff
+			priOn = true;
+			break;
+		case 0xf3:
+			if (pictureType == AGIPIC_V1) {
+				scrColour = nextByte;
+				scrColour &= 0xF;	// for v3 drawing diff
+				scrOn = true;
+				priColour = nextByte;
+				priColour &= 0xf;	// for v3 drawing diff
+				priOn = true;
+			}
+
+			// Empty in AGI pic V1.5
+
+			if (pictureType == AGIPIC_V2)	// disable priority screen
+				priOn = false;
+			break;
+		case 0xf4:	// y-corner
+			yCorner();
+			break;
+		case 0xf5:	// x-corner
+			xCorner();
+			break;
+		case 0xf6:	// absolute draw lines
+			absoluteDrawLine();
+			break;
+		case 0xf7:	// dynamic draw lines
+			dynamicDrawLine();
+			break;
+		case 0xf8:	// fill
+			if (pictureType == AGIPIC_V15) {
+				absoluteDrawLine();
+			} else if (pictureType == AGIPIC_V2) {
+				fill();
+			}
+			break;
+		case 0xf9:	// set pattern
+			if (pictureType == AGIPIC_V15) {
+				absoluteDrawLine();
+			} else if (pictureType == AGIPIC_V2) {
+				patCode = nextByte;
+
+				if (_vm->getGameType() == GType_PreAGI)
+					plotBrush();
+			}
+			break;
+		case 0xfa:	// plot brush
+			if (pictureType == AGIPIC_V1) {
+				scrOn = false;
+				priOn = true;
+				absoluteDrawLine();
+				scrOn = true;
+				priOn = false;
+			} else if (pictureType == AGIPIC_V15) {
+				absoluteDrawLine();
+			} else if (pictureType == AGIPIC_V2) {
+				plotBrush();
+			}
+			break;
+		case 0xfb:
+			if (pictureType == AGIPIC_V1) {
+				dynamicDrawLine();
+			} else if (pictureType == AGIPIC_V15) {
+				absoluteDrawLine();
+			}
+			break;
+		case 0xfc:	// fill (AGI pic v1)
+			scrColour = nextByte;
+			scrColour &= 0xF;
+			priColour = nextByte;
+			priColour &= 0xf;
+			fill();
+			break;
+		case 0xfe:	// fill (AGI pic v1.5)
+			scrColour = nextByte;
+			scrColour &= 0xF;
+			scrOn = true;
+			fill();
+			break;
+		case 0xff:	// end of pic data
 			drawing = 0;
 			break;
 		default:
@@ -825,7 +731,7 @@ int PictureMgr::decodePicture(int n, int clear, bool agi256) {
 		memset(_vm->_game.sbuf16c, 0x4f, _WIDTH * _HEIGHT); // Clear 16 color AGI screen (Priority 4, color white).
 
 	if (!agi256) {
-		drawPictureV2(); // Draw 16 color picture.
+		drawPicture(); // Draw 16 color picture.
 	} else {
 		const uint32 maxFlen = _WIDTH * _HEIGHT;
 		memcpy(_vm->_game.sbuf256c, data, MIN(flen, maxFlen)); // Draw 256 color picture.
