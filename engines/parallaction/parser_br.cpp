@@ -705,7 +705,8 @@ void Parallaction_br::initParsers() {
 		INSTRUCTION_PARSER(inc),		// div
 		INSTRUCTION_PARSER(if_op),
 		INSTRUCTION_PARSER(endif),
-		INSTRUCTION_PARSER(zone)		// stop
+		INSTRUCTION_PARSER(zone),		// stop
+		INSTRUCTION_PARSER(endscript)
 	};
 
 	uint i;

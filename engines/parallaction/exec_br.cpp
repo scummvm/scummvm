@@ -44,6 +44,50 @@ typedef OpcodeImpl<Parallaction_br> OpcodeV2;
 #define INSTRUCTION_OPCODE(op) OpcodeV2(this, &Parallaction_br::instOp_##op)
 #define DECLARE_INSTRUCTION_OPCODE(op) void Parallaction_br::instOp_##op()
 
+void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
+
+	if (!scumm_stricmp("clear", s)) {
+
+		removeJob(_jDisplaySubtitle);
+		addJob(kJobWaitRemoveSubtitleJob, _jEraseSubtitle, 15);
+		_jDisplaySubtitle = 0;
+
+		_subtitle0.free();
+		_subtitle1.free();
+		return;
+	}
+
+	_subtitle0.free();
+	_subtitle1.free();
+
+	renderLabel(&_subtitle0._cnv, s);
+	_subtitle0._text = strdup(s);
+
+	if (s2) {
+		renderLabel(&_subtitle1._cnv, s2);
+		_subtitle1._text = strdup(s2);
+	}
+
+	_subtitleLipSync = 0;
+
+	if (y != -1) {
+		_subtitle0._pos.y = y;
+		_subtitle1._pos.y = y + 5 + _labelFont->height();
+	}
+
+	_subtitle0._pos.x = (_gfx->_screenX << 2) + ((640 - _subtitle0._cnv.w) >> 1);
+	if (_subtitle1._text)
+		_subtitle1._pos.x = (_gfx->_screenX << 2) + ((640 - _subtitle1._cnv.w) >> 1);
+
+	if (_jDisplaySubtitle == 0) {
+		_subtitle0._old.x = -1000;
+		_subtitle0._old.y = -1000;
+		_jDisplaySubtitle = addJob(kJobDisplaySubtitle, 0, 1);
+		_jEraseSubtitle = addJob(kJobEraseSubtitle, 0, 20);
+	}
+}
+
+
 
 DECLARE_COMMAND_OPCODE(location) {
 	warning("Parallaction_br::cmdOp_location command not yet implemented");
@@ -201,7 +245,8 @@ DECLARE_COMMAND_OPCODE(give) {
 
 
 DECLARE_COMMAND_OPCODE(text) {
-	warning("Parallaction_br::cmdOp_text not yet implemented");
+	CommandData *data = &_cmdRunCtxt.cmd->u;
+	setupSubtitles(data->_string, data->_string2, data->_zeta0);
 }
 
 
@@ -354,8 +399,31 @@ DECLARE_INSTRUCTION_OPCODE(print) {
 }
 
 
+
+void Parallaction_br::jobDisplaySubtitle(void *parm, Job *job) {
+	_gfx->drawLabel(_subtitle0);
+	_gfx->drawLabel(_subtitle1);
+}
+
+void Parallaction_br::jobEraseSubtitle(void *parm, Job *job) {
+	Common::Rect r;
+
+	if (_subtitle0._old.x != -1000) {
+		_subtitle0.getRect(r);
+		_gfx->restoreBackground(r);
+	}
+	_subtitle0._old = _subtitle0._pos;
+
+	if (_subtitle1._old.x != -1000) {
+		_subtitle0.getRect(r);
+		_gfx->restoreBackground(r);
+	}
+	_subtitle1._old = _subtitle1._pos;
+}
+
 DECLARE_INSTRUCTION_OPCODE(text) {
-	warning("Parallaction_br::instOp_text not yet implemented");
+	Instruction *inst = (*_instRunCtxt.inst);
+	setupSubtitles(inst->_text, inst->_text2, inst->_y);
 }
 
 

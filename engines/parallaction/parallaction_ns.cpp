@@ -232,16 +232,10 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_soundMan->playLocationMusic(location);
 
-	// WORKAROUND: this if-statement has been added to avoid crashes caused by
+	// WORKAROUND: this hideLabel has been added to avoid crashes caused by
 	// execution of label jobs after a location switch. The other workaround in
 	// Parallaction::runGame should have been rendered useless by this one.
-	if (_jDrawLabel != NULL) {
-		removeJob(_jDrawLabel);
-		removeJob(_jEraseLabel);
-		_jDrawLabel = NULL;
-		_jEraseLabel = NULL;
-	}
-
+	hideLabel(kPriority99);
 
 	_hoverZone = NULL;
 	if (_engineFlags & kEngineBlockInput) {

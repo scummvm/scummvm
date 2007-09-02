@@ -90,7 +90,8 @@ enum {
 	kPriority18 = 18,
 	kPriority19 = 19,
 	kPriority20 = 20,
-	kPriority21 = 21
+	kPriority21 = 21,
+	kPriority99 = 99			// fictitious priority value used as a flag to handle quick label deletion
 };
 
 enum {
@@ -372,8 +373,8 @@ enum Jobs {
 	kJobHideInventory,
 
 	// BRA specific
-	kJobClearSubtitle = 10,
-	kJobDrawSubtitle,
+	kJobEraseSubtitle = 10,
+	kJobDisplaySubtitle,
 	kJobWaitRemoveSubtitleJob,
 	kJobPauseSfx,
 	kJobStopFollower,
@@ -474,6 +475,9 @@ public:
 	Table		*_callableNames;
 	Table		*_localFlagNames;
 
+
+	void showLabel(Label &label);
+	void hideLabel(uint priority);
 
 public:
 	int getGameType() const;
@@ -745,6 +749,9 @@ protected:
 		CommandList *list;
 		bool		endcommands;
 		Command		*cmd;
+
+		// BRA specific
+		int numZones;
 	} _locParseCtxt;
 
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(invalid);
@@ -914,16 +921,16 @@ public:
 	int			_zeta2;
 
 	int16		_lipSyncVal;
+	uint 		_subtitleLipSync;
+
+	Label 		_subtitle0;
+	Label 		_subtitle1;
 
 	Zone		*_activeZone2;
 
 	int32		_counters[32];
 
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
-
-	struct LocationParserContext_br : public LocationParserContext {
-		int numZones;
-	} _locParseCtxt;
 
 private:
 	void 		initResources();
@@ -1081,6 +1088,13 @@ private:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endif);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
+
+	Job *_jDisplaySubtitle;
+	Job *_jEraseSubtitle;
+
+	void jobDisplaySubtitle(void *parm, Job *job);
+	void jobEraseSubtitle(void *parm, Job *job);
+	void setupSubtitles(char *s, char *s2, int y);
 
 };
 

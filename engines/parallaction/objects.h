@@ -263,8 +263,15 @@ struct Label {
 	char*				_text;
 	Graphics::Surface	_cnv;
 
+	Common::Point		_pos;
+	Common::Point		_old;
+
 	Label();
 	~Label();
+
+	void free();
+	void resetPosition();
+	void getRect(Common::Rect &r, bool old = false);
 };
 
 struct Zone {

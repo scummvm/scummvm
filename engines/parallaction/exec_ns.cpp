@@ -858,9 +858,7 @@ void Parallaction_ns::jobDisplayLabel(void *parm, Job *j) {
 	Label *label = (Label*)parm;
 	debugC(9, kDebugJobs, "jobDisplayLabel (%p)", (const void*) label);
 
-	if (label->_cnv.w == 0)
-		return;
-	_gfx->flatBlitCnv(&label->_cnv, _gfx->_labelPosition[0].x, _gfx->_labelPosition[0].y, Gfx::kBitBack);
+	_gfx->drawLabel(*label);
 
 	return;
 }
@@ -886,13 +884,13 @@ void Parallaction_ns::jobEraseLabel(void *parm, Job *j) {
 	if (label->_cnv.w + _si > _screenWidth)
 		_si = _screenWidth - label->_cnv.w;
 
-	Common::Rect r(label->_cnv.w, label->_cnv.h);
-	r.moveTo(_gfx->_labelPosition[1]);
+	Common::Rect r;
+	label->getRect(r, true);
 	_gfx->restoreBackground(r);
 
-	_gfx->_labelPosition[1] = _gfx->_labelPosition[0];
-	_gfx->_labelPosition[0].x = _si;
-	_gfx->_labelPosition[0].y = _di;
+	label->_old = label->_pos;
+	label->_pos.x = _si;
+	label->_pos.y = _di;
 
 	return;
 }

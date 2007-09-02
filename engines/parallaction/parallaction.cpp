@@ -353,6 +353,31 @@ void Parallaction::runGame() {
 	return;
 }
 
+void Parallaction::showLabel(Label &label) {
+	label.resetPosition();
+	_jDrawLabel = addJob(kJobDisplayLabel, (void*)&label, kPriority0);
+	_jEraseLabel = addJob(kJobEraseLabel, (void*)&label, kPriority20);
+}
+
+void Parallaction::hideLabel(uint priority) {
+
+	if (!_jDrawLabel)
+		return;
+
+	removeJob(_jDrawLabel);
+	_jDrawLabel = 0;
+
+	if (priority == kPriority99) {
+		// remove job immediately
+		removeJob(_jEraseLabel);
+		_jEraseLabel = 0;
+	} else {
+		// schedule job for deletion
+		addJob(kJobWaitRemoveJob, _jEraseLabel, priority);
+	}
+
+}
+
 
 void Parallaction::processInput(InputData *data) {
 	Zone *z;
@@ -360,19 +385,12 @@ void Parallaction::processInput(InputData *data) {
 	switch (data->_event) {
 	case kEvEnterZone:
 		debugC(2, kDebugInput, "processInput: kEvEnterZone");
-		_gfx->_labelPosition[1].x = -1000;
-		_gfx->_labelPosition[1].y = -1000;
-		_gfx->_labelPosition[0].x = -1000;
-		_gfx->_labelPosition[0].y = -1000;
-		_jDrawLabel = addJob(kJobDisplayLabel, (void*)data->_label, kPriority0);
-		_jEraseLabel = addJob(kJobEraseLabel, (void*)data->_label, kPriority20);
+		showLabel(*data->_label);
 		break;
 
 	case kEvExitZone:
 		debugC(2, kDebugInput, "processInput: kEvExitZone");
-		removeJob(_jDrawLabel);
-		addJob(kJobWaitRemoveJob, _jEraseLabel, kPriority15);
-		_jDrawLabel = NULL;
+		hideLabel(kPriority15);
 		break;
 
 	case kEvAction:
@@ -390,13 +408,10 @@ void Parallaction::processInput(InputData *data) {
 	case kEvOpenInventory:
 		_procCurrentHoverItem = -1;
 		_hoverZone = NULL;
-		if (_jDrawLabel != 0) {
-			removeJob(_jDrawLabel);
-			_jDrawLabel = NULL;
-			addJob(kJobWaitRemoveJob, _jEraseLabel, kPriority2);
+		hideLabel(kPriority2);
+		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) == 0) {
+			changeCursor(kCursorArrow);
 		}
-		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) == 0)
-		changeCursor(kCursorArrow);
 		removeJob(_jRunScripts);
 		_jDrawInventory = addJob(kJobShowInventory, 0, kPriority2);
 		openInventory();
@@ -619,11 +634,7 @@ void Parallaction::changeCursor(int32 index) {
 
 		debugC(1, kDebugInput, "changeCursor(%i), label: %p", index, (const void*)_jDrawLabel);
 
-		if (_jDrawLabel != NULL) {
-			removeJob(_jDrawLabel);
-			addJob(kJobWaitRemoveJob, _jEraseLabel, kPriority15 );
-			_jDrawLabel = NULL;
-		}
+		hideLabel(kPriority15);
 
 		_activeItem._id = 0;
 

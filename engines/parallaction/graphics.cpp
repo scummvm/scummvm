@@ -409,12 +409,12 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 
 }
 
+void Gfx::drawLabel(Label &label) {
+	if (label._text == 0)
+		return;
 
-
-
-
-
-
+	flatBlitCnv(&label._cnv, label._pos.x, label._pos.y, Gfx::kBitBack);
+}
 
 
 //
