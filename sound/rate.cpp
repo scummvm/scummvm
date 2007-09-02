@@ -433,7 +433,7 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 			 */
 			 
 			/* Circularly decrement inPos by numChan */
-			inPos = (inPos + (subLen - numChan)) % subLen;
+			inPos = (inPos + (numChan * subLen - numChan)) % (numChan * subLen);
 			
 			uint8 inLen;
 			
@@ -459,10 +459,10 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 		double *base = coeffs + (currBank * subLen);
 		 
 		for (i = 0; i < subLen; i++) {
-			accum0 += (double)inBuf[(inPos + numChan * i) % subLen]
+			accum0 += (double)inBuf[(inPos + numChan * i) % (numChan * subLen)]
 						* base[i];
 			if (stereo) {
-				accum1 += (double)inBuf[(inPos + numChan * i + 1) % subLen]
+				accum1 += (double)inBuf[(inPos + numChan * i + 1) % (numChan * subLen)]
 						* base[i];
 			}
 		}
