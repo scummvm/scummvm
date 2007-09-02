@@ -39,6 +39,7 @@
 #include "sound/mixer.h"
 
 #include "agi/agi.h"
+#include "agi/font.h"
 #include "agi/graphics.h"
 #include "agi/sprite.h"
 #include "agi/opcodes.h"
@@ -270,6 +271,63 @@ int PreAgiEngine::preAgiLoadResource(int r, int n) {
 
 int PreAgiEngine::preAgiUnloadResource(int r, int n) {
 	return _loader->unloadResource(r, n);
+}
+
+// String functions
+void PreAgiEngine::drawStr(int row, int col, int attr, char *buffer)
+{
+	int code;
+
+	for (int iChar = 0; iChar < (int)strlen(buffer); iChar++)
+	{
+		code = buffer[iChar];
+
+		switch (code)
+		{
+		case '\n':
+		case 0x8D:
+			if (++row == 200 / 8) return;
+			col = 0;
+			break;
+
+		case '|':
+			// swap attribute nibbles
+			break;
+
+		default:
+			drawChar(col * 8, row * 8, attr, code, (char*)mickey_fontdata);
+
+			if (++col == 320 / 8)
+			{
+				col = 0;
+				if (++row == 200 / 8) return;
+			}
+		}
+	}
+}
+
+void PreAgiEngine::drawStrMiddle(int row, int attr, char *buffer) {
+	int col = (25 / 2) - (strlen(buffer) / 2);	// 25 = 320 / 8 (maximum column)
+	drawStr(row, col, attr, buffer);
+}
+
+void PreAgiEngine::drawChar(int x, int y, int attr, int code, char *fontdata)
+{
+	int cx, cy;
+	uint8 color;
+
+	for (cy = 0; cy < 8; cy++)
+	{
+		for (cx = 0; cx < 8; cx++)
+		{
+			if (fontdata[(code * 8) + cy] & (1 << (7 - cx)))
+				color = attr & 0x0f;			// foreground color
+			else
+				color = (attr & 0xf0) / 0x10;	// background color
+
+			_gfx->putPixelsA(x + cx, y + cy, 1, &color);
+		}
+	}
 }
 
 } // End of namespace Agi

@@ -995,12 +995,17 @@ public:
 		int16 p4, int16 p5, int16 p6, int16 p7) {}
 	void releaseImageStack() {}
 
-	// Keyboard, preagi
+	// Keyboard
 	void waitAnyKeyAnim();
 	int getSelection(int type);
 	bool waitAnyKeyChoice();
 	void waitAnyKey(bool anim = false);
 	int rnd(int hi) { return (rand() % hi + 1); }
+
+	// Text
+	void drawStr(int row, int col, int attr, char *buffer);
+	void drawStrMiddle(int row, int attr, char *buffer);
+	void drawChar(int x, int y, int attr, int code, char *fontdata);
 };
 
 } // End of namespace Agi

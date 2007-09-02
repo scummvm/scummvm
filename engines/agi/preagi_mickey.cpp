@@ -195,8 +195,7 @@ void Mickey::printStr(char *buffer) {
 
 	for (iRow = IDI_MSA_ROW_MENU_0; iRow < nRows; iRow++) {
 		iCol = *(buffer + pc++);
-		//_vm->printText(buffer + pc, 0, iRow, iCol, strlen(buffer + pc), 0x0f & 0x0f, (0x0f & 0xf0) / 0x10);
-		// drawStr(iRow, iCol, buffer + pc);	// TODO
+		_vm->drawStr(iRow, iCol, IDA_DEFAULT, buffer + pc);
 		pc += strlen(buffer + pc) + 1;
 	}
 }
@@ -259,9 +258,8 @@ void Mickey::drawMenu(MSA_MENU menu, int sel0, int sel1) {
 			else 
 				attr = IDA_DEFAULT;
 
-			// TODO
-			//drawStrAttr(IDI_MSA_ROW_MENU_0 + iRow, menu.row[iRow].entry[iWord].x0, 
-			//	attr, (char *)menu.row[iRow].entry[iWord].szText);
+			_vm->drawStr(IDI_MSA_ROW_MENU_0 + iRow, menu.row[iRow].entry[iWord].x0, 
+							 attr, (char *)menu.row[iRow].entry[iWord].szText);
 		}
 	}
 
@@ -576,16 +574,16 @@ void Mickey::debug() {
 	//ClearScreen(IDA_DEFAULT);	// TODO
 
 	sprintf(szLine, IDS_MSA_DEBUG_ROOM, game.iRoom);
-	//drawStr(5, 10, szLine);	// TODO
+	_vm->drawStr(5, 10, IDA_DEFAULT, szLine);
 
 	if (game.iRoom < IDI_MSA_MAX_PIC_ROOM) {
 		if (game.iRmObj[game.iRoom] != IDI_MSA_OBJECT_NONE) {
 			sprintf(szLine, IDS_MSA_DEBUG_OBJ, game.iRmObj[game.iRoom]);
-			//drawStr(7, 10, szLine); // TODO
+			_vm->drawStr(7, 10, IDA_DEFAULT, szLine);
 		}
 	} else {
 		sprintf(szLine, IDS_MSA_DEBUG_OBJ, 32);
-		//drawStr(7, 10, szLine); // TODO
+		_vm->drawStr(7, 10, IDA_DEFAULT, szLine);
 	}
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
@@ -925,7 +923,7 @@ void Mickey::printStory() {
 	//ClearScreen(IDA_DEFAULT);	// TODO
 	for (iRow = 0; iRow < 25; iRow++) {
 		strcpy(szLine, buffer + pBuf);
-		//drawStr(iRow, 0, szLine); // TODO
+		_vm->drawStr(iRow, 0, IDA_DEFAULT, szLine);
 		pBuf += strlen(szLine) + 1;
 	}
 	_vm->_gfx->doUpdate();
@@ -935,7 +933,7 @@ void Mickey::printStory() {
 	//ClearScreen(IDA_DEFAULT); // TODO
 	for (iRow = 0; iRow < 21; iRow++) {
 		strcpy(szLine, buffer + pBuf);
-		//drawStr(iRow, 0, szLine);	// TODO
+		_vm->drawStr(iRow, 0, IDA_DEFAULT, szLine);	// TODO
 		pBuf += strlen(szLine) + 1;
 	}
 	_vm->_gfx->doUpdate();
@@ -997,7 +995,7 @@ void Mickey::pressOB(int iButton) {
 
 	// print pressed buttons
 	printExeStr(IDO_MSA_MICKEY_HAS_PRESSED);
-	//drawStr(IDI_MSA_ROW_BUTTONS, IDI_MSA_COL_BUTTONS, szButtons);	// TODO
+	_vm->drawStr(IDI_MSA_ROW_BUTTONS, IDI_MSA_COL_BUTTONS, IDA_DEFAULT, szButtons);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	_vm->waitAnyKey();
@@ -1023,8 +1021,7 @@ void Mickey::checkAirSupply(bool fSuit, int *iSupply) {
 
 void Mickey::insertDisk(int iDisk) {
 	//clearTextArea(); // TODO
-	// TODO
-	//drawStr(IDI_MSA_ROW_INSERT_DISK, IDI_MSA_COL_INSERT_DISK, (char *)IDS_MSA_INSERT_DISK[iDisk]);
+	_vm->drawStr(IDI_MSA_ROW_INSERT_DISK, IDI_MSA_COL_INSERT_DISK, IDA_DEFAULT, (char *)IDS_MSA_INSERT_DISK[iDisk]);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	_vm->waitAnyKey();
@@ -1083,9 +1080,8 @@ void Mickey::flipSwitch() {
 			printExeStr(game.iClue[game.nXtals]);
 
 #ifdef _DEBUG
-			// TODO
-			//drawStr(24, 12, (char *)IDS_MSA_NAME_PLANET_2[game.iPlanetXtal[game.nXtals]]);
-			//drawStr(24, 22, (char *)IDS_MSA_ADDR_PLANET[game.iPlanetXtal[game.nXtals]]);
+			_vm->drawStr(24, 12, IDA_DEFAULT, (char *)IDS_MSA_NAME_PLANET_2[game.iPlanetXtal[game.nXtals]]);
+			_vm->drawStr(24, 22, IDA_DEFAULT, (char *)IDS_MSA_ADDR_PLANET[game.iPlanetXtal[game.nXtals]]);
 			strcpy(game.szAddr, (char *)IDS_MSA_ADDR_PLANET[game.iPlanetXtal[game.nXtals]]);
 			game.nButtons = strlen(game.szAddr);
 			_vm->_gfx->doUpdate();
@@ -1100,21 +1096,18 @@ void Mickey::flipSwitch() {
 }
 
 void Mickey::inventory() {
-	//int iRow = IDI_MSA_ROW_INV_ITEMS;
+	int iRow = IDI_MSA_ROW_INV_ITEMS;
 	char szCrystals[12] = {0};
 
 	sprintf(szCrystals, IDS_MSA_CRYSTALS, IDS_MSA_CRYSTAL_NO[game.nXtals]);
 
-	// TODO
-	/*
-	ClearScreen(IDA_DEFAULT);
-	drawStr(IDI_MSA_ROW_INV_TITLE, IDI_MSA_COL_INV_TITLE, IDS_MSA_INVENTORY);
-	drawStr(IDI_MSA_ROW_INV_CRYSTALS, IDI_MSA_COL_INV_ITEMS, szCrystals);
-	*/
+	// ClearScreen(IDA_DEFAULT);
+	_vm->drawStr(IDI_MSA_ROW_INV_TITLE, IDI_MSA_COL_INV_TITLE, IDA_DEFAULT, IDS_MSA_INVENTORY);
+	_vm->drawStr(IDI_MSA_ROW_INV_CRYSTALS, IDI_MSA_COL_INV_ITEMS, IDA_DEFAULT, szCrystals);
 
 	for (int iItem = 0; iItem < IDI_MSA_MAX_ITEM; iItem++) {
 		if (game.fItem[game.iItem[iItem]] && (game.iItem[iItem] != IDI_MSA_OBJECT_NONE)) {
-			//drawStr(iRow++, IDI_MSA_COL_INV_ITEMS, (char *)IDS_MSA_NAME_ITEM[game.iItem[iItem]]); // TODO
+			_vm->drawStr(iRow++, IDI_MSA_COL_INV_ITEMS, IDA_DEFAULT, (char *)IDS_MSA_NAME_ITEM[game.iItem[iItem]]);
 		}
 	}
 
@@ -1130,7 +1123,6 @@ void Mickey::randomize() {
 	int iHint = 0;
 	bool done;
 
-	// TODO
 	memset(game.iPlanetXtal, 0, sizeof(game.iPlanetXtal));
 	memset(game.iClue, 0, sizeof(game.iClue));
 
@@ -1815,12 +1807,10 @@ bool Mickey::parse(int cmd, int arg) {
 		break;
 	case IDI_MSA_ACTION_READ_GAUGE:
 		printDatString(arg);
-		/*
-		drawStr(IDI_MSA_ROW_TEMPERATURE, IDI_MSA_COL_TEMPERATURE_C, 
+		_vm->drawStr(IDI_MSA_ROW_TEMPERATURE, IDI_MSA_COL_TEMPERATURE_C, IDA_DEFAULT,
 			(char *)IDS_MSA_TEMP_C[game.iPlanet]);
-		drawStr(IDI_MSA_ROW_TEMPERATURE, IDI_MSA_COL_TEMPERATURE_F, 
+		_vm->drawStr(IDI_MSA_ROW_TEMPERATURE, IDI_MSA_COL_TEMPERATURE_F, IDA_DEFAULT,
 			(char *)IDS_MSA_TEMP_F[game.iPlanet]);
-		*/
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		_vm->waitAnyKey();
@@ -1853,9 +1843,8 @@ bool Mickey::parse(int cmd, int arg) {
 			memset(game.szAddr, 0, sizeof(game.szAddr));
 			drawRoom();
 			printDatString(22);
-			// TODO
-			//drawStr(IDI_MSA_ROW_PLANET, IDI_MSA_COL_PLANET, 
-			//	(char *)IDS_MSA_PLANETS[game.iPlanet]);
+			_vm->drawStr(IDI_MSA_ROW_PLANET, IDI_MSA_COL_PLANET, IDA_DEFAULT,
+						(char *)IDS_MSA_PLANETS[game.iPlanet]);
 			_vm->_gfx->doUpdate();
 			_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 			_vm->waitAnyKeyAnim();
@@ -1966,9 +1955,8 @@ void Mickey::debug_DrawObjs() {
 
 		///clearTextArea();	// TODO
 		sprintf(szTitle, "Object %d", iObj);
-		// TODO
-		//drawStrAttrMiddle(22, IDA_DEFAULT, szTitle);
-		//drawStrAttrMiddle(23, IDA_DEFAULT, (char *)IDS_MSA_NAME_OBJ[iObj]);
+		_vm->drawStrMiddle(22, IDA_DEFAULT, szTitle);
+		_vm->drawStrMiddle(23, IDA_DEFAULT, (char *)IDS_MSA_NAME_OBJ[iObj]);
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		_vm->waitAnyKey();
@@ -1983,7 +1971,7 @@ void Mickey::debug_DrawPics(){
 
 		//clearTextArea();	// TODO
 		sprintf(szTitle, "Picture %d", iPic);
-		//drawStrAttrMiddle(22, IDA_DEFAULT, szTitle);	// TODO
+		_vm->drawStrMiddle(22, IDA_DEFAULT, szTitle);
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		_vm->waitAnyKey();
