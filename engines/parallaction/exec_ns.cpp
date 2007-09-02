@@ -342,7 +342,7 @@ void Parallaction_ns::jobDisplayAnimations(void *parm, Job *j) {
 
 	uint16 _si = 0;
 
-	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 
 		Animation *v18 = *it;
 
@@ -357,11 +357,11 @@ void Parallaction_ns::jobDisplayAnimations(void *parm, Job *j) {
 			if (v18->_flags & kFlagsNoMasked)
 				_si = 3;
 			else
-				_si = _vm->_gfx->queryMask(v18->_top + v18->height());
+				_si = _gfx->queryMask(v18->_top + v18->height());
 
 			debugC(9, kDebugLocation, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, f:%i/%i, %p)", v18->_label._text, v18->_left, v18->_top, _si, v14.w, v14.h,
 				frame, v18->getFrameNum(), v14.pixels);
-			_vm->_gfx->blitCnv(&v14, v18->_left, v18->_top, _si, Gfx::kBitBack);
+			_gfx->blitCnv(&v14, v18->_left, v18->_top, _si, Gfx::kBitBack);
 
 		}
 
@@ -383,7 +383,7 @@ void Parallaction_ns::jobDisplayAnimations(void *parm, Job *j) {
 void Parallaction_ns::jobEraseAnimations(void *arg_0, Job *j) {
 	debugC(3, kDebugJobs, "jobEraseAnimations");
 
-	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 
 		Animation *a = *it;
 
@@ -391,7 +391,7 @@ void Parallaction_ns::jobEraseAnimations(void *arg_0, Job *j) {
 
 		Common::Rect r(a->width(), a->height());
 		r.moveTo(a->_oldPos);
-		_vm->_gfx->restoreBackground(r);
+		_gfx->restoreBackground(r);
 
 		if (arg_0) {
 			a->_oldPos.x = a->_left;
@@ -409,7 +409,7 @@ void Parallaction_ns::jobRunScripts(void *parm, Job *j) {
 
 	static uint16 modCounter = 0;
 
-	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 
 		Animation *a = *it;
 
@@ -422,18 +422,18 @@ void Parallaction_ns::jobRunScripts(void *parm, Job *j) {
 		InstructionList::iterator inst = a->_program->_ip;
 		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
 
-			debugC(9, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, _vm->_instructionNamesRes[(*inst)->_index - 1]);
+			debugC(9, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, _instructionNamesRes[(*inst)->_index - 1]);
 
-			_vm->_instRunCtxt.inst = inst;
-			_vm->_instRunCtxt.a = a;
-			_vm->_instRunCtxt.modCounter = modCounter;
-			_vm->_instRunCtxt.suspend = false;
+			_instRunCtxt.inst = inst;
+			_instRunCtxt.a = a;
+			_instRunCtxt.modCounter = modCounter;
+			_instRunCtxt.suspend = false;
 
-			(*_vm->_instructionOpcodes[(*inst)->_index])();
+			(*_instructionOpcodes[(*inst)->_index])();
 
-			inst = _vm->_instRunCtxt.inst;		// handles endloop correctly
+			inst = _instRunCtxt.inst;		// handles endloop correctly
 
-			if (_vm->_instRunCtxt.suspend)
+			if (_instRunCtxt.suspend)
 				goto label1;
 
 			inst++;
@@ -446,7 +446,7 @@ label1:
 			a->_z = a->_top + a->height();
 	}
 
-	_vm->sortAnimations();
+	sortAnimations();
 	modCounter++;
 
 	return;
@@ -627,11 +627,11 @@ void Parallaction_ns::jobToggleDoor(void *parm, Job *j) {
 		r.moveTo(z->_left, z->_top);
 
 		uint16 _ax = (z->_flags & kFlagsClosed ? 1 : 0);
-		_vm->_gfx->restoreDoorBackground(r, z->u.door->_cnv->getData(_ax), z->u.door->_background);
+		_gfx->restoreDoorBackground(r, z->u.door->_cnv->getData(_ax), z->u.door->_background);
 
 		_ax = (z->_flags & kFlagsClosed ? 0 : 1);
-		_vm->_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
-		_vm->_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBit2);
+		_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
+		_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBit2);
 	}
 
 	count++;
@@ -666,7 +666,7 @@ void Parallaction_ns::jobRemovePickedItem(void *parm, Job *j) {
 	if (z->u.get->_cnv) {
 		Common::Rect r(z->_left, z->_top, z->_left + z->u.get->_cnv->w, z->_top + z->u.get->_cnv->h);
 
-		_vm->_gfx->restoreGetBackground(r, z->u.get->_backup);
+		_gfx->restoreGetBackground(r, z->u.get->_backup);
 	}
 
 	count++;
@@ -685,11 +685,11 @@ void Parallaction_ns::jobDisplayDroppedItem(void *parm, Job *j) {
 
 	if (z->u.get->_cnv) {
 		if (j->_count == 0) {
-			_vm->_gfx->backupGetBackground(z->u.get, z->_left, z->_top);
+			_gfx->backupGetBackground(z->u.get, z->_left, z->_top);
 		}
 
-		_vm->_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBitBack);
-		_vm->_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBit2);
+		_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBitBack);
+		_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBit2);
 	}
 
 	j->_count++;
@@ -860,7 +860,7 @@ void Parallaction_ns::jobDisplayLabel(void *parm, Job *j) {
 
 	if (label->_cnv.w == 0)
 		return;
-	_vm->_gfx->flatBlitCnv(&label->_cnv, _vm->_gfx->_labelPosition[0].x, _vm->_gfx->_labelPosition[0].y, Gfx::kBitBack);
+	_gfx->flatBlitCnv(&label->_cnv, _gfx->_labelPosition[0].x, _gfx->_labelPosition[0].y, Gfx::kBitBack);
 
 	return;
 }
@@ -872,27 +872,27 @@ void Parallaction_ns::jobEraseLabel(void *parm, Job *j) {
 
 	int16 _si, _di;
 
-	if (_vm->_activeItem._id != 0) {
-		_si = _vm->_mousePos.x + 16 - label->_cnv.w/2;
-		_di = _vm->_mousePos.y + 34;
+	if (_activeItem._id != 0) {
+		_si = _mousePos.x + 16 - label->_cnv.w/2;
+		_di = _mousePos.y + 34;
 	} else {
-		_si = _vm->_mousePos.x + 8 - label->_cnv.w/2;
-		_di = _vm->_mousePos.y + 21;
+		_si = _mousePos.x + 8 - label->_cnv.w/2;
+		_di = _mousePos.y + 21;
 	}
 
 	if (_si < 0) _si = 0;
 	if (_di > 190) _di = 190;
 
-	if (label->_cnv.w + _si > _vm->_screenWidth)
-		_si = _vm->_screenWidth - label->_cnv.w;
+	if (label->_cnv.w + _si > _screenWidth)
+		_si = _screenWidth - label->_cnv.w;
 
 	Common::Rect r(label->_cnv.w, label->_cnv.h);
-	r.moveTo(_vm->_gfx->_labelPosition[1]);
-	_vm->_gfx->restoreBackground(r);
+	r.moveTo(_gfx->_labelPosition[1]);
+	_gfx->restoreBackground(r);
 
-	_vm->_gfx->_labelPosition[1] = _vm->_gfx->_labelPosition[0];
-	_vm->_gfx->_labelPosition[0].x = _si;
-	_vm->_gfx->_labelPosition[0].y = _di;
+	_gfx->_labelPosition[1] = _gfx->_labelPosition[0];
+	_gfx->_labelPosition[0].x = _si;
+	_gfx->_labelPosition[0].y = _di;
 
 	return;
 }
@@ -914,7 +914,7 @@ void Parallaction_ns::jobWaitRemoveJob(void *parm, Job *j) {
 	count++;
 	if (count == 2) {
 		count = 0;
-		_vm->removeJob(arg);
+		removeJob(arg);
 		_engineFlags &= ~kEngineBlockInput;
 		j->_finished = 1;
 	}

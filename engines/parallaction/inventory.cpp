@@ -243,12 +243,7 @@ void Parallaction_ns::jobShowInventory(void *parm, Job *j) {
 
 	r.moveTo(_invPosition);
 
-	_vm->_gfx->copyRect(
-		Gfx::kBitBack,
-		r,
-		_buffer,
-		INVENTORY_WIDTH
-	);
+	_gfx->copyRect(Gfx::kBitBack, r, _buffer, INVENTORY_WIDTH);
 
 	return;
 }
@@ -272,7 +267,7 @@ void Parallaction_ns::jobHideInventory(void *parm, Job *j) {
 	Common::Rect r(INVENTORY_WIDTH, _numInvLines * INVENTORYITEM_HEIGHT);
 	r.moveTo(_invPosition);
 
-	_vm->_gfx->restoreBackground(r);
+	_gfx->restoreBackground(r);
 
 	return;
 }

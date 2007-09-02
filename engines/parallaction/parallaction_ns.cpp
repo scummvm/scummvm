@@ -108,7 +108,7 @@ void Parallaction_ns::freeFonts() {
 
 void Parallaction_ns::renderLabel(Graphics::Surface *cnv, char *text) {
 
-	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+	if (getPlatform() == Common::kPlatformAmiga) {
 		cnv->create(_labelFont->getStringWidth(text) + 16, 10, 1);
 
 		_labelFont->setColor(7);

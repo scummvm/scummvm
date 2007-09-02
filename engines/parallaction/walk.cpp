@@ -265,7 +265,7 @@ uint16 PathBuilder::walkFunc1(int16 x, int16 y, WalkNode *Node) {
 
 void Parallaction::clipMove(Common::Point& pos, const WalkNode* from) {
 
-	if ((pos.x < from->_x) && (pos.x < _vm->_pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
+	if ((pos.x < from->_x) && (pos.x < _pathBuffer->w) && (_pathBuffer->getValue(pos.x + 2, pos.y) != 0)) {
 		pos.x = (pos.x + 2 < from->_x) ? pos.x + 2 : from->_x;
 	}
 
@@ -273,7 +273,7 @@ void Parallaction::clipMove(Common::Point& pos, const WalkNode* from) {
 		pos.x = (pos.x - 2 > from->_x) ? pos.x - 2 : from->_x;
 	}
 
-	if ((pos.y < from->_y) && (pos.y < _vm->_pathBuffer->h) && (_pathBuffer->getValue(pos.x, pos.y + 2) != 0)) {
+	if ((pos.y < from->_y) && (pos.y < _pathBuffer->h) && (_pathBuffer->getValue(pos.x, pos.y + 2) != 0)) {
 		pos.y = (pos.y + 2 <= from->_y) ? pos.y + 2 : from->_y;
 	}
 
@@ -387,11 +387,11 @@ void Parallaction::finalizeWalk(WalkNodeList *list) {
 void Parallaction_ns::jobWalk(void *parm, Job *j) {
 	WalkNodeList *list = (WalkNodeList*)parm;
 
-	_vm->_char._ani._oldPos.x = _vm->_char._ani._left;
-	_vm->_char._ani._oldPos.y = _vm->_char._ani._top;
+	_char._ani._oldPos.x = _char._ani._left;
+	_char._ani._oldPos.y = _char._ani._top;
 
 	Common::Point pos;
-	_vm->_char.getFoot(pos);
+	_char.getFoot(pos);
 
 	WalkNodeList::iterator it = list->begin();
 
@@ -404,25 +404,25 @@ void Parallaction_ns::jobWalk(void *parm, Job *j) {
 	if (it == list->end()) {
 		debugC(1, kDebugWalk, "jobWalk reached last node");
 		j->_finished = 1;
-		_vm->finalizeWalk(list);
+		finalizeWalk(list);
 		return;
 	}
 	j->_parm = list;
 
 	// selectWalkFrame must be performed before position is changed by clipMove
-	int16 v16 = _vm->selectWalkFrame(pos, *it);
-	_vm->clipMove(pos, *it);
+	int16 v16 = selectWalkFrame(pos, *it);
+	clipMove(pos, *it);
 
-	_vm->_char.setFoot(pos);
+	_char.setFoot(pos);
 
-	Common::Point newpos(_vm->_char._ani._left, _vm->_char._ani._top);
+	Common::Point newpos(_char._ani._left, _char._ani._top);
 
-	if (newpos == _vm->_char._ani._oldPos) {
+	if (newpos == _char._ani._oldPos) {
 		debugC(1, kDebugWalk, "jobWalk was blocked by an unforeseen obstacle");
 		j->_finished = 1;
-		_vm->finalizeWalk(list);
+		finalizeWalk(list);
 	} else {
-		_vm->_char._ani._frame = v16 + walkData2 + 1;
+		_char._ani._frame = v16 + walkData2 + 1;
 	}
 
 	return;
