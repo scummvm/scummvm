@@ -181,7 +181,7 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 	int16 y = inst->_opB.getRValue();
 
 	WalkNodeList *v4 = _char._builder.buildPath(x, y);
-	addJob(&jobWalk, v4, kPriority19 );
+	addJob(kJobWalk, v4, kPriority19 );
 	_engineFlags |= kEngineWalking;
 }
 
@@ -259,7 +259,7 @@ DECLARE_COMMAND_OPCODE(location) {
 DECLARE_COMMAND_OPCODE(open) {
 	_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsClosed;
 	if (_cmdRunCtxt.cmd->u._zone->u.door->_cnv) {
-		addJob(&jobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
+		addJob(kJobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
 	}
 }
 
@@ -267,7 +267,7 @@ DECLARE_COMMAND_OPCODE(open) {
 DECLARE_COMMAND_OPCODE(close) {
 	_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsClosed;
 	if (_cmdRunCtxt.cmd->u._zone->u.door->_cnv) {
-		addJob(&jobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
+		addJob(kJobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
 	}
 }
 
@@ -283,7 +283,7 @@ DECLARE_COMMAND_OPCODE(on) {
 		_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsRemove;
 		_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsActive;
 		if ((_cmdRunCtxt.cmd->u._zone->_type & 0xFFFF) == kZoneGet) {
-			addJob(&jobDisplayDroppedItem, _cmdRunCtxt.cmd->u._zone, kPriority17 );
+			addJob(kJobDisplayDroppedItem, _cmdRunCtxt.cmd->u._zone, kPriority17 );
 		}
 	}
 }
@@ -326,7 +326,7 @@ DECLARE_COMMAND_OPCODE(move) {
 
 	WalkNodeList *vC = _char._builder.buildPath(_cmdRunCtxt.cmd->u._move.x, _cmdRunCtxt.cmd->u._move.y);
 
-	addJob(&jobWalk, vC, kPriority19 );
+	addJob(kJobWalk, vC, kPriority19 );
 	_engineFlags |= kEngineWalking;
 }
 
@@ -336,7 +336,7 @@ DECLARE_COMMAND_OPCODE(stop) {
 }
 
 
-void jobDisplayAnimations(void *parm, Job *j) {
+void Parallaction_ns::jobDisplayAnimations(void *parm, Job *j) {
 
 	Graphics::Surface v14;
 
@@ -380,7 +380,7 @@ void jobDisplayAnimations(void *parm, Job *j) {
 }
 
 
-void jobEraseAnimations(void *arg_0, Job *j) {
+void Parallaction_ns::jobEraseAnimations(void *arg_0, Job *j) {
 	debugC(3, kDebugJobs, "jobEraseAnimations");
 
 	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
@@ -404,7 +404,7 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 }
 
 
-void jobRunScripts(void *parm, Job *j) {
+void Parallaction_ns::jobRunScripts(void *parm, Job *j) {
 	debugC(3, kDebugJobs, "jobRunScripts");
 
 	static uint16 modCounter = 0;
@@ -594,7 +594,7 @@ uint16 Parallaction::runZone(Zone *z) {
 		if (z->_flags & kFlagsLocked) break;
 		z->_flags ^= kFlagsClosed;
 		if (z->u.door->_cnv == NULL) break;
-		addJob(&jobToggleDoor, z, kPriority18 );
+		addJob(kJobToggleDoor, z, kPriority18 );
 		break;
 
 	case kZoneHear:
@@ -615,7 +615,7 @@ uint16 Parallaction::runZone(Zone *z) {
 //
 //	ZONE TYPE: DOOR
 //
-void jobToggleDoor(void *parm, Job *j) {
+void Parallaction_ns::jobToggleDoor(void *parm, Job *j) {
 
 	static byte count = 0;
 
@@ -652,12 +652,12 @@ void jobToggleDoor(void *parm, Job *j) {
 int16 Parallaction::pickupItem(Zone *z) {
 	int r = addInventoryItem(z->u.get->_icon);
 	if (r == 0)
-		addJob(&jobRemovePickedItem, z, kPriority17 );
+		addJob(kJobRemovePickedItem, z, kPriority17 );
 
 	return r;
 }
 
-void jobRemovePickedItem(void *parm, Job *j) {
+void Parallaction_ns::jobRemovePickedItem(void *parm, Job *j) {
 
 	Zone *z = (Zone*)parm;
 
@@ -678,7 +678,7 @@ void jobRemovePickedItem(void *parm, Job *j) {
 	return;
 }
 
-void jobDisplayDroppedItem(void *parm, Job *j) {
+void Parallaction_ns::jobDisplayDroppedItem(void *parm, Job *j) {
 //	printf("jobDisplayDroppedItem...");
 
 	Zone *z = (Zone*)parm;
@@ -849,6 +849,77 @@ void Parallaction_ns::initOpcodes() {
 	for (i = 0; i < ARRAYSIZE(op3); i++)
 		_commandOpcodes.push_back(&op3[i]);
 
+}
+
+
+
+void Parallaction_ns::jobDisplayLabel(void *parm, Job *j) {
+
+	Label *label = (Label*)parm;
+	debugC(9, kDebugJobs, "jobDisplayLabel (%p)", (const void*) label);
+
+	if (label->_cnv.w == 0)
+		return;
+	_vm->_gfx->flatBlitCnv(&label->_cnv, _vm->_gfx->_labelPosition[0].x, _vm->_gfx->_labelPosition[0].y, Gfx::kBitBack);
+
+	return;
+}
+
+void Parallaction_ns::jobEraseLabel(void *parm, Job *j) {
+	Label *label = (Label*)parm;
+
+	debugC(9, kDebugJobs, "jobEraseLabel (%p)", (const void*) label);
+
+	int16 _si, _di;
+
+	if (_vm->_activeItem._id != 0) {
+		_si = _vm->_mousePos.x + 16 - label->_cnv.w/2;
+		_di = _vm->_mousePos.y + 34;
+	} else {
+		_si = _vm->_mousePos.x + 8 - label->_cnv.w/2;
+		_di = _vm->_mousePos.y + 21;
+	}
+
+	if (_si < 0) _si = 0;
+	if (_di > 190) _di = 190;
+
+	if (label->_cnv.w + _si > _vm->_screenWidth)
+		_si = _vm->_screenWidth - label->_cnv.w;
+
+	Common::Rect r(label->_cnv.w, label->_cnv.h);
+	r.moveTo(_vm->_gfx->_labelPosition[1]);
+	_vm->_gfx->restoreBackground(r);
+
+	_vm->_gfx->_labelPosition[1] = _vm->_gfx->_labelPosition[0];
+	_vm->_gfx->_labelPosition[0].x = _si;
+	_vm->_gfx->_labelPosition[0].y = _di;
+
+	return;
+}
+
+
+
+// this Job uses a static counter to delay removal
+// and is in fact only used to remove jEraseLabel jobs
+//
+void Parallaction_ns::jobWaitRemoveJob(void *parm, Job *j) {
+	Job *arg = (Job*)parm;
+
+	static uint16 count = 0;
+
+	debugC(3, kDebugJobs, "jobWaitRemoveJob: count = %i", count);
+
+	_engineFlags |= kEngineBlockInput;
+
+	count++;
+	if (count == 2) {
+		count = 0;
+		_vm->removeJob(arg);
+		_engineFlags &= ~kEngineBlockInput;
+		j->_finished = 1;
+	}
+
+	return;
 }
 
 

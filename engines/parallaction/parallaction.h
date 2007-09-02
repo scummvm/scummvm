@@ -140,22 +140,18 @@ struct PARALLACTIONGameDescription;
 
 
 struct Job;
-typedef void (*JobFn)(void*, Job*);
 
 struct Job {
 	uint16		_count; 		// # of executions left
 	uint16		_tag;			// used for ordering
 	uint16		_finished;
 	void *		_parm;
-	JobFn		_fn;
 
 public:
-	Job() : _count(0), _tag(0), _finished(0), _parm(NULL), _fn(NULL) {
+	Job() : _count(0), _tag(0), _finished(0), _parm(NULL) {
 	}
 };
 
-typedef Job* JobPointer;
-typedef ManagedList<JobPointer> JobList;
 
 extern uint16 		_mouseButtons;
 extern uint16 		_score;
@@ -191,19 +187,6 @@ extern const char 	*_minidrkiName;
 
 void waitUntilLeftClick();
 
-
-void jobRemovePickedItem(void*, Job *j);
-void jobDisplayDroppedItem(void*, Job *j);
-void jobToggleDoor(void*, Job *j);
-void jobEraseAnimations(void *arg_0, Job *j);
-void jobWalk(void*, Job *j);
-void jobRunScripts(void*, Job *j);
-void jobDisplayAnimations(void*, Job *j);
-void jobDisplayLabel(void *parm, Job *j);
-void jobWaitRemoveJob(void *parm, Job *j);
-void jobShowInventory(void *parm, Job *j);
-void jobHideInventory(void *parm, Job *j);
-void jobEraseLabel(void *parm, Job *j);
 
 
 
@@ -337,9 +320,65 @@ public:
 
 };
 
-
 typedef Common::Array<const Opcode*>	OpcodeSet;
 
+class JobOpcode {
+
+public:
+	Job *_job;
+
+	JobOpcode(Job *job) : _job(job) { }
+
+	virtual void operator()() const = 0;
+	virtual ~JobOpcode() {
+		delete _job;
+	}
+};
+
+template <class T>
+class OpcodeImpl2 : public JobOpcode {
+
+	typedef void (T::*Fn)(void *, Job*);
+
+	T*	_instance;
+	Fn	_fn;
+
+public:
+	OpcodeImpl2(T* instance, const Fn &fn, Job* job) : JobOpcode(job), _instance(instance), _fn(fn) { }
+
+	void operator()() const {
+		(_instance->*_fn)(_job->_parm, _job);
+	}
+
+};
+
+typedef JobOpcode* JobPointer;
+typedef ManagedList<JobPointer> JobList;
+
+enum Jobs {
+	kJobDisplayAnimations = 0,
+	kJobEraseAnimations = 1,
+	kJobDisplayDroppedItem = 2,
+	kJobRemovePickedItem = 3,
+	kJobRunScripts = 4,
+	kJobWalk = 5,
+	kJobDisplayLabel = 6,
+	kJobEraseLabel = 7,
+	kJobWaitRemoveJob = 8,
+	kJobToggleDoor = 9,
+
+	// NS specific
+	kJobShowInventory = 10,
+	kJobHideInventory,
+
+	// BRA specific
+	kJobClearSubtitle = 10,
+	kJobDrawSubtitle,
+	kJobWaitRemoveSubtitleJob,
+	kJobPauseSfx,
+	kJobStopFollower,
+	kJobScroll
+};
 
 
 #define DECLARE_UNQUALIFIED_ZONE_PARSER(sig) void locZoneParse_##sig()
@@ -400,12 +439,12 @@ public:
 	void 		changeCursor(int32 index);
 	void		showCursor(bool visible);
 
-
-	Job 		*addJob(JobFn fn, void *parm, uint16 tag);
+	Job 		*addJob(uint functionId, void *parm, uint16 tag);
 	void 		removeJob(Job *j);
 	void 		pauseJobs();
 	void 		resumeJobs();
 	void 		runJobs();
+	virtual		JobOpcode* createJobOpcode(uint functionId, Job *job) = 0;
 
 	void 		finalizeWalk(WalkNodeList *list);
 	int16 		selectWalkFrame(const Common::Point& pos, const WalkNode* from);
@@ -563,6 +602,18 @@ public:
 
 	virtual void parseLocation(const char* name) = 0;
 
+	virtual void jobDisplayAnimations(void*, Job *j) = 0;
+	virtual void jobEraseAnimations(void *arg_0, Job *j) = 0;
+	virtual void jobRunScripts(void*, Job *j) = 0;
+	virtual void jobDisplayDroppedItem(void*, Job *j) = 0;
+	virtual void jobRemovePickedItem(void*, Job *j) = 0;
+	virtual void jobToggleDoor(void*, Job *j) = 0;
+	virtual void jobWalk(void*, Job *j) = 0;
+	virtual void jobDisplayLabel(void *parm, Job *j) = 0;
+	virtual void jobEraseLabel(void *parm, Job *j) = 0;
+	virtual void jobWaitRemoveJob(void *parm, Job *j) = 0;
+
+
 public:
 	const char **_zoneFlagNamesRes;
 	const char **_zoneTypeNamesRes;
@@ -588,6 +639,13 @@ public:
 	virtual	void callFunction(uint index, void* parm);
 	void renderLabel(Graphics::Surface *cnv, char *text);
 	void setMousePointer(int16 index);
+
+	void	initJobs();
+
+	typedef void (Parallaction_ns::*JobFn)(void*, Job*);
+
+	const JobFn 	*_jobsFn;
+	JobOpcode* 	createJobOpcode(uint functionId, Job *job);
 
 	void loadGame();
 	void saveGame();
@@ -653,6 +711,19 @@ private:
 	const Callable *_callables;
 
 protected:
+	void jobDisplayAnimations(void*, Job *j);
+	void jobEraseAnimations(void *arg_0, Job *j);
+	void jobRunScripts(void*, Job *j);
+	void jobDisplayDroppedItem(void*, Job *j);
+	void jobRemovePickedItem(void*, Job *j);
+	void jobToggleDoor(void*, Job *j);
+	void jobWalk(void*, Job *j);
+	void jobDisplayLabel(void *parm, Job *j);
+	void jobEraseLabel(void *parm, Job *j);
+	void jobWaitRemoveJob(void *parm, Job *j);
+	void jobShowInventory(void *parm, Job *j);
+	void jobHideInventory(void *parm, Job *j);
+
 	// location parser
 	OpcodeSet	_locationParsers;
 	OpcodeSet	_locationZoneParsers;
@@ -860,6 +931,12 @@ private:
 	void 		freeFonts();
 	void 		initOpcodes();
 	void 		initParsers();
+	void		initJobs();
+
+	typedef void (*JobFn)(void*, Job*);
+	const JobFn 	*_jobsFn;
+	JobOpcode* 		createJobOpcode(uint functionId, Job *job);
+
 
 	void 		changeLocation(char *location);
 	void		changeCharacter(const char *name);

@@ -233,7 +233,7 @@ int16 getInventoryItemIndex(int16 pos) {
 
 
 
-void jobShowInventory(void *parm, Job *j) {
+void Parallaction_ns::jobShowInventory(void *parm, Job *j) {
 //	printf("job_showInventory()...");
 
 	int16 slot = getNumUsedSlots();
@@ -255,7 +255,7 @@ void jobShowInventory(void *parm, Job *j) {
 
 
 
-void jobHideInventory(void *parm, Job *j) {
+void Parallaction_ns::jobHideInventory(void *parm, Job *j) {
 //	printf("job_hideInventory()\n");
 
 	static uint16 count = 0;

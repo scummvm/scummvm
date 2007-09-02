@@ -384,7 +384,7 @@ void Parallaction::finalizeWalk(WalkNodeList *list) {
 	delete list;
 }
 
-void jobWalk(void *parm, Job *j) {
+void Parallaction_ns::jobWalk(void *parm, Job *j) {
 	WalkNodeList *list = (WalkNodeList*)parm;
 
 	_vm->_char._ani._oldPos.x = _vm->_char._ani._left;

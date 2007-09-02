@@ -71,6 +71,7 @@ int Parallaction_ns::init() {
 		_soundMan = new AmigaSoundMan(this);
 	}
 
+	initJobs();
 	initResources();
 	initFonts();
 	initCursors();
@@ -384,4 +385,29 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	return;
 }
 
+void Parallaction_ns::initJobs() {
+
+	static const JobFn jobs[] = {
+		&Parallaction_ns::jobDisplayAnimations,
+		&Parallaction_ns::jobEraseAnimations,
+		&Parallaction_ns::jobDisplayDroppedItem,
+		&Parallaction_ns::jobRemovePickedItem,
+		&Parallaction_ns::jobRunScripts,
+		&Parallaction_ns::jobWalk,
+		&Parallaction_ns::jobDisplayLabel,
+		&Parallaction_ns::jobEraseLabel,
+		&Parallaction_ns::jobWaitRemoveJob,
+		&Parallaction_ns::jobToggleDoor,
+		&Parallaction_ns::jobShowInventory,
+		&Parallaction_ns::jobHideInventory
+	};
+
+	_jobsFn = jobs;
+
+
+};
+
+JobOpcode* Parallaction_ns::createJobOpcode(uint functionId, Job *job) {
+	return new OpcodeImpl2<Parallaction_ns>(this, _jobsFn[functionId], job);
+}
 } // namespace Parallaction

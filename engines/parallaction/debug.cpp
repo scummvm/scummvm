@@ -135,7 +135,7 @@ bool Debugger::Cmd_Jobs(int argc, const char **argv) {
 				"|tag| description                                                 |\n"
 				"+---+-------------------------------------------------------------+\n");
 	for ( ; b != e; b++) {
-		DebugPrintf("|%3i| %-60s|\n", (*b)->_tag, _jobDescriptions[(*b)->_tag] );
+		DebugPrintf("|%3i| %-60s|\n", (*b)->_job->_tag, _jobDescriptions[(*b)->_job->_tag] );
 	}
 	DebugPrintf("+---+-------------------------------------------------------------+\n");
 

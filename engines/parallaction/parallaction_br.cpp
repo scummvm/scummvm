@@ -357,5 +357,35 @@ void Parallaction_br::changeCharacter(const char *name) {
 
 }
 
+void Parallaction_br::initJobs() {
+/*
+	static const JobFn jobs[] = {
+		&Parallaction_br::jobDisplayAnimations,
+		&Parallaction_br::jobEraseAnimations,
+		&Parallaction_br::jobDisplayDroppedItem,
+		&Parallaction_br::jobRemovePickedItem,
+		&Parallaction_br::jobRunScripts,
+		&Parallaction_br::jobWalk,
+		&Parallaction_br::jobDrawLabel,
+		&Parallaction_br::jobEraseLabel,
+		&Parallaction_br::jobWaitRemoveLabelJob,
+		&Parallaction_br::jobToggleDoor,
+		&Parallaction_br::jobClearSubtitle,
+		&Parallaction_br::jobDrawSubtitle,
+		&Parallaction_br::jobWaitRemoveSubtitleJob,
+		&Parallaction_br::jobPauseSfx,
+		&Parallaction_br::jobStopFollower,
+		&Parallaction_br::jobScroll
+	};
+
+	_jobsFn = jobs;
+*/
+
+};
+
+JobOpcode* Parallaction_br::createJobOpcode(uint functionId, Job *job) {
+	//return new OpcodeImpl2<Parallaction_br>(this, _jobsFn[functionId], job);
+}
+
 
 } // namespace Parallaction

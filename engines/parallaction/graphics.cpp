@@ -410,49 +410,6 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 }
 
 
-void jobDisplayLabel(void *parm, Job *j) {
-
-	Label *label = (Label*)parm;
-	debugC(9, kDebugJobs, "jobDisplayLabel (%p)", (const void*) label);
-
-	if (label->_cnv.w == 0)
-		return;
-	_vm->_gfx->flatBlitCnv(&label->_cnv, _vm->_gfx->_labelPosition[0].x, _vm->_gfx->_labelPosition[0].y, Gfx::kBitBack);
-
-	return;
-}
-
-void jobEraseLabel(void *parm, Job *j) {
-	Label *label = (Label*)parm;
-
-	debugC(9, kDebugJobs, "jobEraseLabel (%p)", (const void*) label);
-
-	int16 _si, _di;
-
-	if (_vm->_activeItem._id != 0) {
-		_si = _vm->_mousePos.x + 16 - label->_cnv.w/2;
-		_di = _vm->_mousePos.y + 34;
-	} else {
-		_si = _vm->_mousePos.x + 8 - label->_cnv.w/2;
-		_di = _vm->_mousePos.y + 21;
-	}
-
-	if (_si < 0) _si = 0;
-	if (_di > 190) _di = 190;
-
-	if (label->_cnv.w + _si > _vm->_screenWidth)
-		_si = _vm->_screenWidth - label->_cnv.w;
-
-	Common::Rect r(label->_cnv.w, label->_cnv.h);
-	r.moveTo(_vm->_gfx->_labelPosition[1]);
-	_vm->_gfx->restoreBackground(r);
-
-	_vm->_gfx->_labelPosition[1] = _vm->_gfx->_labelPosition[0];
-	_vm->_gfx->_labelPosition[0].x = _si;
-	_vm->_gfx->_labelPosition[0].y = _di;
-
-	return;
-}
 
 
 

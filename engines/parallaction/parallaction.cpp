@@ -283,9 +283,9 @@ void waitUntilLeftClick() {
 
 void Parallaction::runGame() {
 
-	addJob(&jobEraseAnimations, (void*)1, kPriority20);
-	_jRunScripts = addJob(&jobRunScripts, 0, kPriority15);
-	addJob(&jobDisplayAnimations, 0, kPriority3);
+	addJob(kJobEraseAnimations, (void*)1, kPriority20);
+	_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
+	addJob(kJobDisplayAnimations, 0, kPriority3);
 
 	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 
@@ -364,14 +364,14 @@ void Parallaction::processInput(InputData *data) {
 		_gfx->_labelPosition[1].y = -1000;
 		_gfx->_labelPosition[0].x = -1000;
 		_gfx->_labelPosition[0].y = -1000;
-		_jDrawLabel = addJob(&jobDisplayLabel, (void*)data->_label, kPriority0);
-		_jEraseLabel = addJob(&jobEraseLabel, (void*)data->_label, kPriority20);
+		_jDrawLabel = addJob(kJobDisplayLabel, (void*)data->_label, kPriority0);
+		_jEraseLabel = addJob(kJobEraseLabel, (void*)data->_label, kPriority20);
 		break;
 
 	case kEvExitZone:
 		debugC(2, kDebugInput, "processInput: kEvExitZone");
 		removeJob(_jDrawLabel);
-		addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority15);
+		addJob(kJobWaitRemoveJob, _jEraseLabel, kPriority15);
 		_jDrawLabel = NULL;
 		break;
 
@@ -393,12 +393,12 @@ void Parallaction::processInput(InputData *data) {
 		if (_jDrawLabel != 0) {
 			removeJob(_jDrawLabel);
 			_jDrawLabel = NULL;
-			addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority2);
+			addJob(kJobWaitRemoveJob, _jEraseLabel, kPriority2);
 		}
 		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) == 0)
 		changeCursor(kCursorArrow);
 		removeJob(_jRunScripts);
-		_jDrawInventory = addJob(&jobShowInventory, 0, kPriority2);
+		_jDrawInventory = addJob(kJobShowInventory, 0, kPriority2);
 		openInventory();
 		break;
 
@@ -408,8 +408,8 @@ void Parallaction::processInput(InputData *data) {
 			// activates item
 			changeCursor(data->_inventoryIndex);
 		}
-		_jRunScripts = addJob(&jobRunScripts, 0, kPriority15);
-		addJob(&jobHideInventory, 0, kPriority20);
+		_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
+		addJob(kJobHideInventory, 0, kPriority20);
 		removeJob(_jDrawInventory);
 		break;
 
@@ -426,7 +426,7 @@ void Parallaction::processInput(InputData *data) {
 		if (_char._ani._flags & kFlagsRemove) break;
 		if ((_char._ani._flags & kFlagsActive) == 0) break;
 		WalkNodeList *v4 = _char._builder.buildPath(data->_mousePos.x, data->_mousePos.y);
-		addJob(&jobWalk, v4, kPriority19);
+		addJob(kJobWalk, v4, kPriority19);
 		_engineFlags |= kEngineWalking; 								   // inhibits processing of input until walking is over
 		}
 		break;
@@ -621,7 +621,7 @@ void Parallaction::changeCursor(int32 index) {
 
 		if (_jDrawLabel != NULL) {
 			removeJob(_jDrawLabel);
-			addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority15 );
+			addJob(kJobWaitRemoveJob, _jEraseLabel, kPriority15 );
 			_jDrawLabel = NULL;
 		}
 
@@ -672,21 +672,22 @@ void Parallaction::freeCharacter() {
 	(higher priorities values comes first in the list)
 */
 int compareJobPriority(const JobPointer &j1, const JobPointer &j2) {
-	return (j1->_tag >= j2->_tag ? -1 : 1);
+	return (j1->_job->_tag >= j2->_job->_tag ? -1 : 1);
 }
 
-Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
+Job *Parallaction::addJob(uint functionId, void *parm, uint16 tag) {
 	debugC(3, kDebugJobs, "addJob(%i)", tag);
 
 	Job *v8 = new Job;
 
 	v8->_parm = parm;
-	v8->_fn = fn;
 	v8->_tag = tag;
 	v8->_finished = 0;
 	v8->_count = 0;
 
-	_jobs.insertSorted(v8, compareJobPriority);
+	JobOpcode *op = createJobOpcode(functionId, v8);
+
+	_jobs.insertSorted(op, compareJobPriority);
 
 	return v8;
 }
@@ -718,7 +719,8 @@ void Parallaction::runJobs() {
 
 	JobList::iterator it = _jobs.begin();
 	while (it != _jobs.end()) {
-		if ((*it)->_finished == 1)
+		Job *job = (*it)->_job;
+		if (job->_finished == 1)
 			it = _jobs.erase(it);
 		else
 			it++;
@@ -726,38 +728,15 @@ void Parallaction::runJobs() {
 
 	it = _jobs.begin();
 	while (it != _jobs.end()) {
-		debugC(9, kDebugJobs, "runJobs: %i", (*it)->_tag);
-		(*(*it)->_fn)((*it)->_parm, (*it));
+		Job *job = (*it)->_job;
+		debugC(9, kDebugJobs, "runJobs: %i", job->_tag);
+		(*(*it))();
 		it++;
 	}
 
 
 	return;
 }
-
-// this Job uses a static counter to delay removal
-// and is in fact only used to remove jEraseLabel jobs
-//
-void jobWaitRemoveJob(void *parm, Job *j) {
-	Job *arg = (Job*)parm;
-
-	static uint16 count = 0;
-
-	debugC(3, kDebugJobs, "jobWaitRemoveJob: count = %i", count);
-
-	_engineFlags |= kEngineBlockInput;
-
-	count++;
-	if (count == 2) {
-		count = 0;
-		_vm->removeJob(arg);
-		_engineFlags &= ~kEngineBlockInput;
-		j->_finished = 1;
-	}
-
-	return;
-}
-
 
 
 Table::Table(uint32 size) : _size(size), _used(0), _disposeMemory(true) {
