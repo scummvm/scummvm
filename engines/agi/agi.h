@@ -1000,7 +1000,7 @@ public:
 	int getSelection(int type);
 	bool waitAnyKeyChoice();
 	void waitAnyKey(bool anim = false);
-	int rnd(int hi) { return (rand() % hi + 1); }
+	int rnd(int hi) { return (_rnd->getRandomNumber(hi) + 1); }
 
 	// Text
 	void drawStr(int row, int col, int attr, const char *buffer);
