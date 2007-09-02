@@ -381,11 +381,11 @@ void Parallaction_br::initJobs() {
 	_jobsFn = jobs;
 */
 
-};
+}
 
 JobOpcode* Parallaction_br::createJobOpcode(uint functionId, Job *job) {
 	//return new OpcodeImpl2<Parallaction_br>(this, _jobsFn[functionId], job);
+	return 0;
 }
-
 
 } // namespace Parallaction
