@@ -184,7 +184,7 @@ void PreAgiEngine::initialize() {
 	_game.sbuf16c  = _game.sbufOrig + SBUF16_OFFSET; // Make sbuf16c point to the 16 color (+control line & priority info) AGI screen
 	_game.sbuf     = _game.sbuf16c; // Make sbuf point to the 16 color (+control line & priority info) AGI screen by default
 
-	_game.lineMinPrint = 1; // hardcoded
+	_game.lineMinPrint = 0; // hardcoded
 
 	_gfx->initVideo();
 	//_sound->initSound();
