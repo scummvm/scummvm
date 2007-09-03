@@ -773,8 +773,8 @@ int PictureMgr::unloadPicture(int n) {
  * Show AGI picture.
  * This function copies a ``hidden'' AGI picture to the output device.
  */
-void PictureMgr::showPic(int x, int pic_width, int pic_height) {
-	int i, y;
+void PictureMgr::showPic(int x, int y, int pic_width, int pic_height) {
+	int i, y1;
 	int offset;
 	width = pic_width;
 	height = pic_height;
@@ -783,12 +783,22 @@ void PictureMgr::showPic(int x, int pic_width, int pic_height) {
 
 	i = 0;
 	offset = _vm->_game.lineMinPrint * CHAR_LINES;
-	for (y = 0; y < height; y++) {
-		_gfx->putPixelsA(x, y + offset, width, &_vm->_game.sbuf16c[i]);
+	for (y1 = y; y1 < y + height; y1++) {
+		_gfx->putPixelsA(x, y1 + offset, width, &_vm->_game.sbuf16c[i]);
 		i += width;
 	}
 
 	_gfx->flushScreen();
+}
+
+// preagi needed functions (for plotPattern)
+void PictureMgr::setPattern(uint8 code, uint8 num) {
+	patCode = code;
+	patNum = num;
+}
+
+void PictureMgr::setColor(uint8 color) {
+	scrColour = color;
 }
 
 } // End of namespace Agi

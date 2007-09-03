@@ -69,7 +69,6 @@ private:
 	void yCorner();
 	void fill();
 	int plotPatternPoint(int x, int y, int bitpos);
-	void plotPattern(int x, int y);
 	void plotBrush();
 	void drawPicture();
 
@@ -85,8 +84,14 @@ public:
 
 	int decodePicture(int n, int clear, bool agi256 = false, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
 	int unloadPicture(int);
-	void showPic(int x = 0, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
+	void showPic(int x = 0, int y = 0, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
 	uint8 *convertV3Pic(uint8 *src, uint32 len);
+
+	void plotPattern(int x, int y);		// public because it's used directly by preagi
+
+	// preagi needed functions (for plotPattern)
+	void setPattern(uint8 code, uint8 num);
+	void setColor(uint8 color);
 };
 
 } // End of namespace Agi

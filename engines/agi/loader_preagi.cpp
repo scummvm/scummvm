@@ -138,6 +138,7 @@ int AgiLoader_preagi::loadResource(int t, int n) {
 	int ec = errOK;
 	uint8 *data = NULL;
 	char szFile[255] = {0};
+	Common::File infile;
 
 	if (n > MAX_DIRS)
 		return errBadResource;
@@ -153,7 +154,6 @@ int AgiLoader_preagi::loadResource(int t, int n) {
 			data = new uint8[4096];
 
 			sprintf(szFile, IDS_MSA_PATH_PIC, n);
-			Common::File infile;
 			if (!infile.open(szFile))
 				return errBadResource;
 			infile.read(data, infile.size());
@@ -185,7 +185,23 @@ int AgiLoader_preagi::loadResource(int t, int n) {
 		*/
 		break;
 	case rVIEW:
-		//
+			data = new uint8[4096];
+
+			sprintf(szFile, IDS_MSA_PATH_OBJ, IDS_MSA_NAME_OBJ[n]);
+
+			if (!infile.open(szFile))
+				return errBadResource;
+			infile.read(data, infile.size());
+
+			if (data != NULL) {
+				_vm->_game.pictures[n].rdata = data;
+				_vm->_game.dirPic[n].len = infile.size();
+				_vm->_game.dirPic[n].flags |= RES_LOADED;
+			} else {
+				ec = errBadResource;
+			}
+
+			infile.close();
 		break;
 	default:
 		ec = errBadResource;

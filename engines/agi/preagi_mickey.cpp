@@ -601,37 +601,32 @@ void Mickey::debug() {
 // Graphics
 
 void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
-	uint8 *buffer = new uint8[4096];
-	char szFile[255] = {0};
+	// FIXME: objects are rendered incorrectly
 
-	sprintf(szFile, IDS_MSA_PATH_OBJ, IDS_MSA_NAME_OBJ[iObj]);
+	// FIXME: Not sure about object dimensions
+	int objWidth = 44;
+	int objHeight = 44;
+	_vm->preAgiLoadResource(rVIEW, iObj);
+	_vm->_picture->decodePicture(iObj, false, false, objWidth, objHeight);
+	_vm->_picture->showPic(x0, y0, objWidth, objHeight);
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
-	Common::File infile;
-
-	if(!infile.open(szFile))
-		return;
-	
-	
-	infile.read(buffer, infile.size());
-
-#if 0
-	// TODO
+	// TrollVM code
+	/*
 	if (iObj == IDI_MSA_OBJECT_CRYSTAL) {
 		AGI_DrawPic(IDI_MSA_PIC_X0 + x0, IDI_MSA_PIC_Y0 + y0, IDF_AGI_PIC_V2 | IDF_AGI_STEP, buffer);
 	} else {
 		AGI_DrawPic(IDI_MSA_PIC_X0 + x0, IDI_MSA_PIC_Y0 + y0, IDF_AGI_PIC_V2, buffer);
 	}
-#endif
-
-	infile.close();
-	delete [] buffer;
+	*/
 }
 
 void Mickey::drawPic(int iPic) {
 	_vm->preAgiLoadResource(rPICTURE, iPic);
 	// Note that decodePicture clears the screen
 	_vm->_picture->decodePicture(iPic, true, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-	_vm->_picture->showPic(10, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_vm->_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 }
@@ -705,29 +700,47 @@ void Mickey::drawRoomAnimation() {
 	case IDI_MSA_PIC_SHIP_JUPITER:
 	case IDI_MSA_PIC_SHIP_MARS:
 	case IDI_MSA_PIC_SHIP_URANUS:
-
+		{
 		// draw blinking ship lights
 
-		int iColor;
+#if 0
+		// TODO
+		uint8 iColor = 0;
+		uint8 x = 53;
+		uint8 y = 45;
+		int i = 0;
+		int lightWidth = 8;
+		int lightHeight = 8;
+
+		_vm->_picture->setPattern(2, 0);
 
 		for (int i = 0; i < 12; i++) {
 			iColor = game.nFrame + i;
 			if (iColor > 15) iColor -= 15;
 
-			objLight[1] = iColor;
-			objLight[4] += 7;
-			
-#if 0
-			// TODO
-			AGI_DrawPic(0, 0, IDF_AGI_PIC_V2 | IDF_AGI_CIRCLE, (uint8 *)objLight);
-#endif
+			_vm->_picture->setColor(iColor);
+			y += 7;
+			_vm->_picture->plotPattern(x, y);
+
+			for (int y1 = y; y1 < lightHeight; y1++) {
+				_vm->_gfx->putPixelsA(x, y1, lightWidth, &_vm->_game.sbuf16c[i]);
+				i += lightWidth;
+			}
+
+			_vm->_gfx->flushScreen();
+			_vm->_gfx->doUpdate();
+			_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+
+
+			//AGI_DrawPic(0, 0, IDF_AGI_PIC_V2 | IDF_AGI_CIRCLE, (uint8 *)objLight);	// TrollVM
 		}
 
 		game.nFrame--;
 		if (game.nFrame < 0) game.nFrame = 15;
+#endif
 
 		playSound(IDI_MSA_SND_PRESS_BLUE);
-
+		}
 		break;
 
 	case IDI_MSA_PIC_SHIP_CONTROLS:
@@ -795,13 +808,8 @@ void Mickey::drawLogo() {
 }
 
 void Mickey::animate() {
-#if 0
-	// TODO
-	if ((int)SDL_GetTicks() > (game.nTicks + IDI_MSA_ANIM_DELAY)) {
-		game.nTicks = SDL_GetTicks();
-		drawRoomAnimation();
-	}
-#endif
+	_vm->_system->delayMillis(IDI_MSA_ANIM_DELAY);
+	drawRoomAnimation();
 }
 
 void Mickey::printRoomDesc() {
@@ -1151,7 +1159,7 @@ void Mickey::flashScreen() {
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
-	_vm->_system->delayMillis(25);
+	_vm->_system->delayMillis(IDI_MSA_ANIM_DELAY);
 
 	//Set back to black
 	_vm->_gfx->clearScreen(0);
