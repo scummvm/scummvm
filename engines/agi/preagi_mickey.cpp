@@ -570,6 +570,8 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 					case Common::EVENT_KEYDOWN:
 						delete [] buffer;
 						return;
+					default:
+						break;
 					}
 				}
 			}
