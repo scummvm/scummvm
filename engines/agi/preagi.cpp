@@ -163,8 +163,6 @@ void PreAgiEngine::initialize() {
 		}
 	}
 
-	//_buttonStyle = AgiButtonStyle(_renderMode);
-	//_defaultButtonStyle = AgiButtonStyle();
 	//_console = new Console(this);
 	_gfx = new GfxMgr(this);
 	//_sound = new SoundMgr(this, _mixer);
@@ -208,11 +206,9 @@ void PreAgiEngine::initialize() {
 	for (int i = 0; i < MAX_DIRS; i++) {
 		//memset(&_game.views[i], 0, sizeof(struct AgiView));
 		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
-		//memset(&_game.logics[i], 0, sizeof(struct AgiLogic));
 		//memset(&_game.sounds[i], 0, sizeof(class AgiSound *)); // _game.sounds contains pointers now
 		//memset(&_game.dirView[i], 0, sizeof(struct AgiDir));
 		memset(&_game.dirPic[i], 0, sizeof(struct AgiDir));
-		//memset(&_game.dirLogic[i], 0, sizeof(struct AgiDir));
 		//memset(&_game.dirSound[i], 0, sizeof(struct AgiDir));
 	}
 

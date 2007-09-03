@@ -361,7 +361,10 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 				case Common::KEYCODE_ESCAPE:
 					*sel0 = 0; *sel1 = -1; return false;
 				case Common::KEYCODE_s:
-					//flipSound();	// TODO
+#if 0
+					// TODO
+					flipSound();
+#endif
 					break;
 				case Common::KEYCODE_c:
 					inventory();
@@ -510,21 +513,25 @@ void Mickey::printDatMessage(int iStr) {
 
 // Sound
 
+#if 0
 // TODO
-/*
-void Mickey::_PlayNote(MSA_SND_NOTE note) {
+void Mickey::_playNote(MSA_SND_NOTE note) {
 	if (!note.counter)
 		playNote(1, 0, note.length / IDI_SND_TIMER_RESOLUTION);
 	else
 		playNote(1, IDI_SND_OSCILLATOR_FREQUENCY / note.counter, 
 			note.length / IDI_SND_TIMER_RESOLUTION / IDI_SND_PITCH);
 }
+#endif
 
-void Mickey::PlaySound(ENUM_MSA_SOUND iSound) {
-	if (!GetSound())
+void Mickey::playSound(ENUM_MSA_SOUND iSound) {
+#if 0
+	// TODO
+	if (!getSound())
 		return;
+#endif
 
-	SDL_Event event;
+	Common::Event event;
 	MSA_SND_NOTE note;
 	uint8 *buffer = new uint8[1024];
 	int pBuf = 1;
@@ -534,7 +541,10 @@ void Mickey::PlaySound(ENUM_MSA_SOUND iSound) {
 		for (int iNote = 0; iNote < 6; iNote++) {
 			note.counter = _vm->rnd(59600) + 59;
 			note.length = 4;
+#if 0
+			// TODO
 			_PlayNote(note);
+#endif
 		}
 		break;
 	default:
@@ -544,16 +554,20 @@ void Mickey::PlaySound(ENUM_MSA_SOUND iSound) {
 			memcpy(&note, buffer + pBuf, sizeof(note));
 			if (!note.counter && !note.length)
 				break;
+#if 0
+			// TODO
 			_PlayNote(note);
+#endif
 			pBuf += 3;
 
 			if (iSound == IDI_MSA_SND_THEME) {
-				while (SDL_PollEvent(&event)) {
+				while (_vm->_system->getEventManager()->pollEvent(event)) {
 					switch(event.type) {
-					case SDL_QUIT:
-						exit(0);
-					case SDL_MOUSEBUTTONUP:
-					case SDL_KEYDOWN:
+					case Common::EVENT_QUIT:
+						_vm->_system->quit();
+					case Common::EVENT_LBUTTONUP:
+					case Common::EVENT_RBUTTONUP:
+					case Common::EVENT_KEYDOWN:
 						delete [] buffer;
 						return;
 					}
@@ -566,7 +580,6 @@ void Mickey::PlaySound(ENUM_MSA_SOUND iSound) {
 
 	delete [] buffer;
 }
-*/
 
 void Mickey::debug() {
 	char szLine[41] = {0};
@@ -605,14 +618,14 @@ void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 	
 	infile.read(buffer, infile.size());
 
+#if 0
 	// TODO
-	/*
 	if (iObj == IDI_MSA_OBJECT_CRYSTAL) {
 		AGI_DrawPic(IDI_MSA_PIC_X0 + x0, IDI_MSA_PIC_Y0 + y0, IDF_AGI_PIC_V2 | IDF_AGI_STEP, buffer);
 	} else {
 		AGI_DrawPic(IDI_MSA_PIC_X0 + x0, IDI_MSA_PIC_Y0 + y0, IDF_AGI_PIC_V2, buffer);
 	}
-	*/
+#endif
 
 	infile.close();
 	delete [] buffer;
@@ -708,15 +721,16 @@ void Mickey::drawRoomAnimation() {
 			objLight[1] = iColor;
 			objLight[4] += 7;
 			
+#if 0
 			// TODO
-			//AGI_DrawPic(0, 0, IDF_AGI_PIC_V2 | IDF_AGI_CIRCLE, (uint8 *)objLight);
+			AGI_DrawPic(0, 0, IDF_AGI_PIC_V2 | IDF_AGI_CIRCLE, (uint8 *)objLight);
+#endif
 		}
 
 		game.nFrame--;
 		if (game.nFrame < 0) game.nFrame = 15;
 
-		// TODO
-		//PlaySound(IDI_MSA_SND_PRESS_BLUE);
+		playSound(IDI_MSA_SND_PRESS_BLUE);
 
 		break;
 
@@ -775,7 +789,9 @@ void Mickey::drawLogo() {
 	infile.close();
 	
 	// draw logo bitmap
-	//drawPictureBCG(buffer);	// TODO
+#if 0
+	drawPictureBCG(buffer);	// TODO
+#endif
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
@@ -783,12 +799,13 @@ void Mickey::drawLogo() {
 }
 
 void Mickey::animate() {
+#if 0
 	// TODO
-/*	if ((int)SDL_GetTicks() > (game.nTicks + IDI_MSA_ANIM_DELAY)) {
+	if ((int)SDL_GetTicks() > (game.nTicks + IDI_MSA_ANIM_DELAY)) {
 		game.nTicks = SDL_GetTicks();
 		drawRoomAnimation();
 	}
-*/
+#endif
 }
 
 void Mickey::printRoomDesc() {
@@ -978,7 +995,7 @@ void Mickey::checkAirSupply(bool fSuit, int *iSupply) {
 		*iSupply -= 1;
 		for (int i = 0; i < 4; i++) {
 			if (*iSupply == IDI_MSA_AIR_SUPPLY[i]) {
-				//playSound(IDI_MSA_SND_XL30);	// TODO
+				playSound(IDI_MSA_SND_XL30);
 				printExeMsg(IDO_MSA_XL30_SPEAKING);
 				printExeMsg(IDO_MSA_AIR_SUPPLY[i]);
 				if (i == 3) {
@@ -1002,7 +1019,7 @@ void Mickey::insertDisk(int iDisk) {
 void Mickey::gameOver() {
 	drawPic(IDI_MSA_PIC_EARTH_SHIP_LEAVING);
 	printExeMsg(IDO_MSA_GAME_OVER[3]);
-	//playSound(IDI_MSA_SND_GAME_OVER);	// TODO
+	playSound(IDI_MSA_SND_GAME_OVER);
 
 	if (game.fItemUsed[IDI_MSA_ITEM_LETTER]) {
 		drawPic(IDI_MSA_PIC_EARTH_MINNIE);
@@ -1030,7 +1047,7 @@ void Mickey::flipSwitch() {
 		_vm->clearTextArea();
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-		//playSound(IDI_MSA_SND_XL30);	// TODO
+		playSound(IDI_MSA_SND_XL30);
 		printExeMsg(IDO_MSA_XL30_SPEAKING);
 
 		if (game.fHasXtal) {
@@ -1131,7 +1148,7 @@ void Mickey::randomize() {
 }
 
 void Mickey::flashScreen() {
-	//playSound(IDI_MSA_SND_PRESS_BLUE);	// TODO
+	playSound(IDI_MSA_SND_PRESS_BLUE);
 
 	//Set screen to white
 	_vm->_gfx->clearScreen(15);
@@ -1161,7 +1178,7 @@ void Mickey::intro() {
 	
 	// show copyright and play theme
 	printExeMsg(IDO_MSA_COPYRIGHT);
-	//playSound(IDI_MSA_SND_THEME);	// TODO
+	playSound(IDI_MSA_SND_THEME);
 	
 	// load game
 	game.fIntro = true;
@@ -1181,7 +1198,7 @@ void Mickey::intro() {
 	drawRoom();
 	printRoomDesc();
 
-	//playSound(IDI_MSA_SND_SHIP_LAND);	// TODO
+	playSound(IDI_MSA_SND_SHIP_LAND);
 
 	flashScreen();
 	flashScreen();
@@ -1194,7 +1211,7 @@ void Mickey::getItem(ENUM_MSA_ITEM iItem) {
 	game.fItem[iItem] = true;
 	game.iItem[game.nItems++] = iItem;
 	game.fRmTxt[game.iRoom] = 0;
-	//playSound(IDI_MSA_SND_TAKE);	// TODO
+	playSound(IDI_MSA_SND_TAKE);
 	drawRoom();
 }
 
@@ -1202,7 +1219,7 @@ void Mickey::getXtal(int iStr) {
 	game.fRmTxt[game.iRoom] = 0;
 	game.fHasXtal = true;
 	game.nXtals++;
-	//playSound(IDI_MSA_SND_CRYSTAL);	// TODO
+	playSound(IDI_MSA_SND_CRYSTAL);
 	drawRoom();
 	printDatMessage(iStr);
 }
@@ -1799,7 +1816,7 @@ bool Mickey::parse(int cmd, int arg) {
 		if (game.fFlying) {
 			printDatMessage(4);
 		} else {
-			//playSound(IDI_MSA_SND_PRESS_ORANGE);	// TODO
+			playSound(IDI_MSA_SND_PRESS_ORANGE);
 			printDatMessage(arg);
 			pressOB(IDI_MSA_BUTTON_ORANGE);
 		}
@@ -1808,7 +1825,7 @@ bool Mickey::parse(int cmd, int arg) {
 		if (game.fFlying) {
 			printDatMessage(4);
 		} else {
-			//playSound(IDI_MSA_SND_PRESS_BLUE);	// TODO
+			playSound(IDI_MSA_SND_PRESS_BLUE);
 			printDatMessage(arg);
 			pressOB(IDI_MSA_BUTTON_BLUE);
 		}
