@@ -25,6 +25,7 @@
 
 #include "common/stdafx.h"
 #include "common/events.h"
+#include "common/savefile.h"
 
 #include "agi/preagi_mickey.h"
 #include "agi/graphics.h"
@@ -824,7 +825,7 @@ void Mickey::printRoomDesc() {
 }
 
 bool Mickey::loadGame() {
-	Common::File infile;
+	Common::InSaveFile *infile;
 	char szFile[256] = {0};
 	bool diskerror = true;
 	int sel;
@@ -836,14 +837,14 @@ bool Mickey::loadGame() {
 
 		// load game
 		sprintf(szFile, "%s.s%2d", _vm->getTargetName().c_str(), sel);
-		if (!infile.open(szFile)) {
+		if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile))) {
 			printExeStr(IDO_MSA_CHECK_DISK_DRIVE);
 			if (!_vm->waitAnyKeyChoice())
 				return false;
 		} else {
-			infile.read(&game, sizeof(MSA_GAME));
+			infile->read(&game, sizeof(MSA_GAME));
 			diskerror = false;
-			infile.close();			
+			delete infile;			
 		}
 	}
 
@@ -852,7 +853,7 @@ bool Mickey::loadGame() {
 }
 
 void Mickey::saveGame() {
-	Common::File outfile;
+	Common::OutSaveFile* outfile;
 	char szFile[256] = {0};
 	bool diskerror = true;
 	int sel;
@@ -882,14 +883,14 @@ void Mickey::saveGame() {
 
 		// save game
 		sprintf(szFile, "%s.s%2d", _vm->getTargetName().c_str(), sel);
-		if (!outfile.open(szFile)) {
+		if (!(outfile = _vm->getSaveFileMan()->openForSaving(szFile))) {
 			printExeStr(IDO_MSA_CHECK_DISK_DRIVE);
 			if (!_vm->waitAnyKeyChoice())
 				return;
 		} else {
-			outfile.write(&game, sizeof(MSA_GAME));
+			outfile->write(&game, sizeof(MSA_GAME));
 			diskerror = false;
-			outfile.close();						
+			delete outfile;						
 		}
 	}
 

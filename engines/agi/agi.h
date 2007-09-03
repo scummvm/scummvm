@@ -1013,6 +1013,9 @@ public:
 	void drawStrMiddle(int row, int attr, const char *buffer);
 	void clearTextArea();
 	void clearRow(int row);
+
+	// Saved Games
+	Common::SaveFileManager* getSaveFileMan() { return _saveFileMan; }
 };
 
 } // End of namespace Agi
