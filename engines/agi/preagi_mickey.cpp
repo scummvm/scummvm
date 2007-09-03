@@ -142,7 +142,7 @@ void Mickey::readOfsData(int offset, int iItem, uint8 *buffer, long buflen) {
 	uint16 ofs[256];
 
 	readExe(offset, buffer, buflen);
-//	memcpy(ofs, buffer, sizeof(ofs));
+	memcpy(ofs, buffer, sizeof(ofs));
 	for (int i = 0; i < 256; i++)
 		ofs[i] = buffer[i*2] + 256 * buffer[i*2+1];
 	readExe(ofs[iItem] + IDI_MSA_OFS_EXE, buffer, buflen);
@@ -625,35 +625,6 @@ void Mickey::drawPic(int iPic) {
 	_vm->_picture->showPic(10, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-/*
-
-	// Original code used in TrollVM
-
-	int w = IDI_MSA_PIC_WIDTH, h = IDI_MSA_PIC_HEIGHT;
-	int flags = IDF_AGI_PIC_V2;
-
-	if (iPic == IDI_MSA_PIC_STAR_MAP) {
-		w++; 
-		h++;
-		flags |= IDF_AGI_CIRCLE;
-	}
-
-	ClearScreenAGI(w, h, IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, flags);
-
-	if (iPic) {
-		uint8 *buffer = new uint8[4096];
-		char szFile[255] = {0};
-
-		sprintf(szFile, IDS_MSA_PATH_PIC, iPic);
-		Common::File infile;
-		if (!infile.open(szFile))
-			return;
-		infile.read(buffer, infile.size());
-		infile.close();
-		AGI_DrawPic(IDI_MSA_PIC_X0, IDI_MSA_PIC_Y0, flags, buffer);
-		delete [] buffer;
-	}
-*/
 }
 
 void Mickey::drawRoomPicture() {
@@ -845,13 +816,13 @@ bool Mickey::loadGame() {
 			return false;
 
 		// load game
-		//sprintf(szFile, "%s.s%2d", target, sel);	// TODO
+		sprintf(szFile, "%s.s%2d", _vm->getTargetName().c_str(), sel);
 		if (!infile.open(szFile)) {
 			printExeStr(IDO_MSA_CHECK_DISK_DRIVE);
 			if (!_vm->waitAnyKeyChoice())
 				return false;
 		} else {
-			//infile->read(game, sizeof(MSA_GAME));
+			infile.read(&game, sizeof(MSA_GAME));
 			diskerror = false;
 			infile.close();			
 		}
@@ -863,7 +834,7 @@ bool Mickey::loadGame() {
 
 void Mickey::saveGame() {
 	Common::File outfile;
-	//char szFile[256] = {0};
+	char szFile[256] = {0};
 	bool diskerror = true;
 	int sel;
 
@@ -891,19 +862,16 @@ void Mickey::saveGame() {
 			return;
 
 		// save game
-		// TODO
-		/*
-		sprintf(szFile, "%s.s%2d", target, sel);
+		sprintf(szFile, "%s.s%2d", _vm->getTargetName().c_str(), sel);
 		if (!outfile.open(szFile)) {
 			printExeStr(IDO_MSA_CHECK_DISK_DRIVE);
 			if (!_vm->waitAnyKeyChoice())
 				return;
 		} else {
-			//outfile->write(game, sizeof(MSA_GAME))
+			outfile.write(&game, sizeof(MSA_GAME));
 			diskerror = false;
 			outfile.close();						
 		}
-		*/
 	}
 
 	printExeMsg(IDO_MSA_SAVE_GAME[6]);
@@ -937,7 +905,7 @@ void Mickey::printStory() {
 	_vm->clearScreen(IDA_DEFAULT);
 	for (iRow = 0; iRow < 21; iRow++) {
 		strcpy(szLine, buffer + pBuf);
-		_vm->drawStr(iRow, 0, IDA_DEFAULT, szLine);	// TODO
+		_vm->drawStr(iRow, 0, IDA_DEFAULT, szLine);
 		pBuf += strlen(szLine) + 1;
 	}
 	_vm->_gfx->doUpdate();
@@ -1165,7 +1133,7 @@ void Mickey::randomize() {
 void Mickey::flashScreen() {
 	//playSound(IDI_MSA_SND_PRESS_BLUE);	// TODO
 
-	//clearGfxScreen(15);	// TODO
+	_vm->_gfx->drawRectangle(20, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT - 1, 15);	// clear GFX screen
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
@@ -1477,7 +1445,7 @@ bool Mickey::parse(int cmd, int arg) {
 		game.fItemUsed[IDI_MSA_ITEM_WRENCH] = true;
 		printDatString(arg);
 		if (game.iRmPic[game.iRoom] == IDI_MSA_PIC_VENUS_PROBE_1) {
-			//ClearRow(22);	// TODO
+			_vm->clearRow(22);
 		}
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
@@ -1996,7 +1964,7 @@ void Mickey::initVars() {
 
 	// read room extended desc offsets
 	readExe(IDO_MSA_ROOM_TEXT_OFFSETS, buffer, sizeof(buffer));
-//	memcpy(game.oRmTxt, buffer, sizeof(game.oRmTxt));
+	memcpy(game.oRmTxt, buffer, sizeof(game.oRmTxt));
 	for (int i = 0; i < IDI_MSA_MAX_ROOM; i++)
 		game.oRmTxt[i] = buffer[i*2] + 256 * buffer[i*2+1];
 
@@ -2005,7 +1973,7 @@ void Mickey::initVars() {
 	memcpy(game.iRmObj, buffer, sizeof(game.iRmObj));
 	
 	// read room picture indices
-	//Mickey_readExe(IDO_MSA_ROOM_PICTURE, buffer, sizeof(buffer));
+	//readExe(IDO_MSA_ROOM_PICTURE, buffer, sizeof(buffer));
 	//memcpy(game.iRmPic, buffer, sizeof(game.iRmPic));
 
 	// read room menu patch indices

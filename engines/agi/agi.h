@@ -995,6 +995,9 @@ public:
 		int16 p4, int16 p5, int16 p6, int16 p7) {}
 	void releaseImageStack() {}
 
+	// Game
+	Common::String getTargetName() { return _targetName; }
+
 	// Screen
 	void clearScreen(int attr);
 
@@ -1009,6 +1012,7 @@ public:
 	void drawStr(int row, int col, int attr, const char *buffer);
 	void drawStrMiddle(int row, int attr, const char *buffer);
 	void clearTextArea();
+	void clearRow(int row);
 };
 
 } // End of namespace Agi

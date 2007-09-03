@@ -84,8 +84,12 @@ void PreAgiEngine::drawStrMiddle(int row, int attr, const char *buffer) {
 
 void PreAgiEngine::clearTextArea() {
 	for (int row = IDI_MAX_ROW_PIC; row < 200 / 8; row++) {
-		drawStr(row, 0, IDA_DEFAULT, "                                        ");	// 40 spaces
+		clearRow(row);		
 	}
+}
+
+void PreAgiEngine::clearRow(int row) {
+	drawStr(row, 0, IDA_DEFAULT, "                                        ");	// 40 spaces
 }
 
 // Input functions
