@@ -309,9 +309,11 @@ static const uint16 period[] = {
 	1448, 1534, 1625, 1722, 1825, 1933
 };
 
+#if 0
 static int noteToPeriod(int note) {
 	return 10 * (period[note % 12] >> (note / 12 - 3));
 }
+#endif
 
 void SoundMgr::unloadSound(int resnum) {
 	if (_vm->_game.dirSound[resnum].flags & RES_LOADED) {
