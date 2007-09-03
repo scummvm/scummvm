@@ -34,6 +34,8 @@
 #define IDA_DEFAULT		0x0F
 #define IDA_DEFAULT_REV	0xF0
 
+#define IDI_SND_OSCILLATOR_FREQUENCY	1193180
+
 namespace Agi {
 
 int Mickey::getDat(int iRoom) {
@@ -511,16 +513,17 @@ void Mickey::printDatMessage(int iStr) {
 
 // Sound
 
-#if 0
-// TODO
-void Mickey::_playNote(MSA_SND_NOTE note) {
-	if (!note.counter)
-		playNote(1, 0, note.length / IDI_SND_TIMER_RESOLUTION);
-	else
-		playNote(1, IDI_SND_OSCILLATOR_FREQUENCY / note.counter, 
-			note.length / IDI_SND_TIMER_RESOLUTION / IDI_SND_PITCH);
+void Mickey::playNote(MSA_SND_NOTE note) {
+	// TODO
+	if (!note.counter) {
+		//_vm->_sound->playNote(1, 0, 160);												// ScummVM
+		//playNote(1, 0, note.length / IDI_SND_TIMER_RESOLUTION);						// TrollVM
+	} else {
+		//_vm->_sound->playNote(1, IDI_SND_OSCILLATOR_FREQUENCY / note.counter, 160);	// ScummVM
+		//playNote(1, IDI_SND_OSCILLATOR_FREQUENCY / note.counter,
+		//	note.length / IDI_SND_TIMER_RESOLUTION / IDI_SND_PITCH);					// TrollVM
+	}
 }
-#endif
 
 void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 	if (!_vm->getflag(fSoundOn))
@@ -536,10 +539,7 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 		for (int iNote = 0; iNote < 6; iNote++) {
 			note.counter = _vm->rnd(59600) + 59;
 			note.length = 4;
-#if 0
-			// TODO
-			_PlayNote(note);
-#endif
+			playNote(note);
 		}
 		break;
 	default:
@@ -549,10 +549,9 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 			memcpy(&note, buffer + pBuf, sizeof(note));
 			if (!note.counter && !note.length)
 				break;
-#if 0
-			// TODO
-			_PlayNote(note);
-#endif
+
+			playNote(note);
+
 			pBuf += 3;
 
 			if (iSound == IDI_MSA_SND_THEME) {

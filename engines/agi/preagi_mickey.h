@@ -761,7 +761,7 @@ protected:
 	void patchMenu(MSA_MENU*);
 	void printDatString(int);
 	void printDatMessage(int);
-	void _playNote(MSA_SND_NOTE);
+	void playNote(MSA_SND_NOTE);
 	void playSound(ENUM_MSA_SOUND);
 	void debug();
 	void drawObj(ENUM_MSA_OBJECT, int, int);
