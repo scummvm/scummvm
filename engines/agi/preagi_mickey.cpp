@@ -1133,7 +1133,15 @@ void Mickey::randomize() {
 void Mickey::flashScreen() {
 	//playSound(IDI_MSA_SND_PRESS_BLUE);	// TODO
 
-	_vm->_gfx->drawRectangle(20, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT - 1, 15);	// clear GFX screen
+	//Set screen to white
+	_vm->_gfx->clearScreen(15);
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+
+	_vm->_system->delayMillis(25);
+
+	//Set back to black
+	_vm->_gfx->clearScreen(0);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
