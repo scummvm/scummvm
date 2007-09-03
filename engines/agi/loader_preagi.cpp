@@ -104,9 +104,6 @@ int AgiLoader_preagi::deinit() {
 
 int AgiLoader_preagi::unloadResource(int t, int n) {
 	switch (t) {
-	case rLOGIC:
-		//_vm->unloadLogic(n);
-		break;
 	case rPICTURE:
 		_vm->_picture->unloadPicture(n);
 		break;
@@ -140,24 +137,20 @@ uint8 *AgiLoader_preagi::loadVolRes(AgiDir *agid) {
 int AgiLoader_preagi::loadResource(int t, int n) {
 	int ec = errOK;
 	uint8 *data = NULL;
+	char szFile[255] = {0};
 
 	if (n > MAX_DIRS)
 		return errBadResource;
 
 	switch (t) {
-	case rLOGIC:
-		// The logic in preagi games is hardcoded
-		break;
 	case rPICTURE:
 		/* if picture is currently NOT loaded *OR* cacheing is off,
 		 * unload the resource (caching==off) and reload it
 		 */
-		if (true) { //(~_vm->_game.dirPic[n].flags & RES_LOADED) {
+		if (~_vm->_game.dirPic[n].flags & RES_LOADED) {
 			unloadResource(rPICTURE, n);
-			//data = loadVolRes(&_vm->_game.dirPic[n]);
 
 			data = new uint8[4096];
-			char szFile[255] = {0};
 
 			sprintf(szFile, IDS_MSA_PATH_PIC, n);
 			Common::File infile;
