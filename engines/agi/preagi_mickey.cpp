@@ -362,10 +362,7 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 				case Common::KEYCODE_ESCAPE:
 					*sel0 = 0; *sel1 = -1; return false;
 				case Common::KEYCODE_s:
-#if 0
-					// TODO
-					flipSound();
-#endif
+					_vm->flipflag(fSoundOn);
 					break;
 				case Common::KEYCODE_c:
 					inventory();
@@ -526,11 +523,8 @@ void Mickey::_playNote(MSA_SND_NOTE note) {
 #endif
 
 void Mickey::playSound(ENUM_MSA_SOUND iSound) {
-#if 0
-	// TODO
-	if (!getSound())
+	if (!_vm->getflag(fSoundOn))
 		return;
-#endif
 
 	Common::Event event;
 	MSA_SND_NOTE note;

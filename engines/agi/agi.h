@@ -697,6 +697,12 @@ public:
 		int16 p4, int16 p5, int16 p6, int16 p7) = 0;
 	virtual void releaseImageStack() = 0;
 
+	int _soundemu;
+
+	int getflag(int);
+	void setflag(int, int);
+	void flipflag(int);
+
 	const AGIGameDescription *_gameDescription;
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
@@ -773,8 +779,6 @@ public:
 		int16 p4, int16 p5, int16 p6, int16 p7);
 	void releaseImageStack();
 
-	int _soundemu;
-
 	int _keyControl;
 	int _keyAlt;
 
@@ -799,9 +803,6 @@ public:
 	void newInputMode(int);
 	void oldInputMode();
 
-	int getflag(int);
-	void setflag(int, int);
-	void flipflag(int);
 	int getvar(int);
 	void setvar(int, int);
 	void decrypt(uint8 * mem, int len);

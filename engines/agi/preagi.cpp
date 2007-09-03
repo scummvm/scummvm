@@ -61,14 +61,14 @@ PreAgiEngine::PreAgiEngine(OSystem *syst) : AgiBase(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
-/*
+	/*
 	const GameSettings *g;
 
 	const char *gameid = ConfMan.get("gameid").c_str();
 	for (g = agiSettings; g->gameid; ++g)
 		if (!scumm_stricmp(g->gameid, gameid))
 			_gameId = g->id;
-*/
+	*/
 
 	_rnd = new Common::RandomSource();
 
@@ -107,8 +107,6 @@ PreAgiEngine::PreAgiEngine(OSystem *syst) : AgiBase(syst) {
 	_imageStack = NULL;
 	_imageStackPointer = 0;
 
-	_menu = NULL;
-
 	_lastSentence[0] = 0;
 	memset(&_stringdata, 0, sizeof(struct StringData));
 
@@ -116,10 +114,6 @@ PreAgiEngine::PreAgiEngine(OSystem *syst) : AgiBase(syst) {
 
 	_oldMode = -1;
 	
-	_predictiveDialogRunning = false;
-	_predictiveDictText = NULL;
-	_predictiveDictLine = NULL;
-	_predictiveDictLineCount = 0;
 	_firstSlot = 0;
 */
 }
@@ -129,23 +123,14 @@ void PreAgiEngine::initialize() {
 	//       drivers, and I'm not sure what they are. For now, they might
 	//       as well be called "PC Speaker" and "Not PC Speaker".
 
-	// If used platform is Apple IIGS then we must use Apple IIGS sound emulation
-	// because Apple IIGS AGI games use only Apple IIGS specific sound resources.
-	/*
-	if (ConfMan.hasKey("platform") &&
-		Common::parsePlatform(ConfMan.get("platform")) == Common::kPlatformApple2GS) {
-		_soundemu = SOUND_EMU_APPLE2GS;
-	} else {
-		switch (MidiDriver::detectMusicDriver(MDT_PCSPK)) {
-		case MD_PCSPK:
-			_soundemu = SOUND_EMU_PC;
-			break;
-		default:
-			_soundemu = SOUND_EMU_NONE;
-			break;
-		}
+	switch (MidiDriver::detectMusicDriver(MDT_PCSPK)) {
+	case MD_PCSPK:
+		_soundemu = SOUND_EMU_PC;
+		break;
+	default:
+		_soundemu = SOUND_EMU_NONE;
+		break;
 	}
-	*/
 
 	if (ConfMan.hasKey("render_mode")) {
 		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
@@ -163,9 +148,8 @@ void PreAgiEngine::initialize() {
 		}
 	}
 
-	//_console = new Console(this);
 	_gfx = new GfxMgr(this);
-	//_sound = new SoundMgr(this, _mixer);
+	_sound = new SoundMgr(this, _mixer);
 	_picture = new PictureMgr(this, _gfx);
 	//_sprites = new SpritesMgr(this, _gfx);
 
@@ -185,7 +169,7 @@ void PreAgiEngine::initialize() {
 	_game.lineMinPrint = 0; // hardcoded
 
 	_gfx->initVideo();
-	//_sound->initSound();
+	_sound->initSound();
 
 	//_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);
 
@@ -204,12 +188,10 @@ void PreAgiEngine::initialize() {
 
 	/* clear all resources and events */
 	for (int i = 0; i < MAX_DIRS; i++) {
-		//memset(&_game.views[i], 0, sizeof(struct AgiView));
 		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
-		//memset(&_game.sounds[i], 0, sizeof(class AgiSound *)); // _game.sounds contains pointers now
-		//memset(&_game.dirView[i], 0, sizeof(struct AgiDir));
+		memset(&_game.sounds[i], 0, sizeof(class AgiSound *)); // _game.sounds contains pointers now
 		memset(&_game.dirPic[i], 0, sizeof(struct AgiDir));
-		//memset(&_game.dirSound[i], 0, sizeof(struct AgiDir));
+		memset(&_game.dirSound[i], 0, sizeof(struct AgiDir));
 	}
 
 	// load resources
@@ -244,6 +226,8 @@ int PreAgiEngine::init() {
 }
 
 int PreAgiEngine::go() {
+	setflag(fSoundOn, true);	// enable sound
+
 	// run preagi engine main loop
 	switch (getGameID()) {
 		case GID_MICKEY:
