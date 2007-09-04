@@ -701,7 +701,38 @@ public:
 	void animacion_2_4();
 	void animacion_3_4();
 	void animacion_4_4();
+	void animacion_1_5();
+	void animacion_2_5();
+	void animacion_3_5();
+	void animacion_4_5();
+	void animacion_5_5();
+	void animacion_6_5();
+	void animacion_7_5();
+	void animacion_8_5();
+	void animacion_9_5();
+	void animacion_10_5();
+	void animacion_11_5();
+	void animacion_12_5();
+	void animacion_13_5();
+	void animacion_14_5();
+	void animacion_15_5();
+	void animacion_16_5();
+	void animacion_17_5();
+	void pantalla_49(int);
+	void pantalla_53(int);
+	void pantalla_54(int);
+	void pantalla_55(int);
+	void pantalla_56(int);
+	void refresca_53_antes();
+	void refresca_54_antes();
+	void refresca_49_antes();
+	void refresca_56_antes();
+	void refresca_50();
+	void refresca_57();
 	void habla_igor_sentado(const char *, const char *);
+	void habla_lobo(char dicho[], char filename[]);
+	void habla_mus(char dicho[], char filename[]);
+
 
 private:
 
