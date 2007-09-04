@@ -27,6 +27,8 @@
 #include "common/events.h"
 #include "common/savefile.h"
 
+#include "graphics/cursorman.h"
+
 #include "agi/preagi_mickey.h"
 #include "agi/graphics.h"
 
@@ -322,18 +324,15 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 				if (iRow < 2) {
 					x = event.mouse.x / 8;
 					y = event.mouse.y / 8;
-					getMouseMenuSelRow(menu, sel0, sel1, iRow, x, y);
-					drawMenu(menu, *sel0, *sel1);
+					// If the mouse hovers over the menu, refresh the menu
+					if ((iRow == 0 && y == IDI_MSA_ROW_MENU_0) || (iRow == 1 && y == IDI_MSA_ROW_MENU_1)) {
+						getMouseMenuSelRow(menu, sel0, sel1, iRow, x, y);
+						drawMenu(menu, *sel0, *sel1);
+					}
 				}
 				break;
 			case Common::EVENT_LBUTTONUP:
 				return true;
-			//FIXME: ScummVM does not support middle button
-			/*case Common::EVENT_MBUTTONUP:
-				inventory();
-				drawRoom();
-				*sel0 = 0; *sel1 = -1;
-				return false;*/
 			case Common::EVENT_RBUTTONUP:
 				*sel0 = 0; *sel1 = -1; 
 				return false;
@@ -394,8 +393,7 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 					}
 					break;
 				case Common::KEYCODE_RETURN:
-				//FIXME:
-				//case SDLK_KP_ENTER:
+				case Common::KEYCODE_KP_ENTER:
 					return true;
 				default:
 					break;
@@ -420,6 +418,9 @@ void Mickey::getMenuSel(char *buffer, int *sel0, int *sel1) {
 	*sel0 = 0;
 	*sel1 = -1;
 
+	// Show the mouse cursor for the menu
+	CursorMan.showMouse(true);
+
 	for (;;) {
 		for (;;) {
 			if (getMenuSelRow(menu, sel0, sel1, 0)) {
@@ -433,6 +434,9 @@ void Mickey::getMenuSel(char *buffer, int *sel0, int *sel1) {
 			break;
 		}
 	}
+
+	// Menu selection made, hide the mouse cursor
+	CursorMan.showMouse(false);
 }
 
 void Mickey::centerMenu(MSA_MENU *menu) {
@@ -1094,6 +1098,8 @@ void Mickey::inventory() {
 
 	sprintf(szCrystals, IDS_MSA_CRYSTALS, IDS_MSA_CRYSTAL_NO[game.nXtals]);
 
+	CursorMan.showMouse(false);
+
 	_vm->clearScreen(IDA_DEFAULT);
 	_vm->drawStr(IDI_MSA_ROW_INV_TITLE, IDI_MSA_COL_INV_TITLE, IDA_DEFAULT, IDS_MSA_INVENTORY);
 	_vm->drawStr(IDI_MSA_ROW_INV_CRYSTALS, IDI_MSA_COL_INV_ITEMS, IDA_DEFAULT, szCrystals);
@@ -1109,6 +1115,8 @@ void Mickey::inventory() {
 	_vm->waitAnyKey();
 
 	_vm->clearScreen(IDA_DEFAULT);
+
+	CursorMan.showMouse(true);
 }
 
 void Mickey::randomize() {
