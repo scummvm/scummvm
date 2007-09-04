@@ -1497,7 +1497,7 @@ void DrasculaEngine::carga_escoba_1(const char *nom_fich) {
 
 	if (!strcmp(num_room, "54.alg")) {
 		for (l = suelo_y1 - 1; l > 84; l--) {
-			factor_red[l] = lejos - pequegnez;
+			factor_red[l] = (int)(lejos - pequegnez);
 			pequegnez = pequegnez + chiquez;
 		}
 	}
@@ -8495,7 +8495,7 @@ void DrasculaEngine::pantalla_56(int fl) {
 		hay_respuesta = 0;
 }
 
-void DrasculaEngine::habla_lobo(char dicho[], char filename[]) {
+void DrasculaEngine::habla_lobo(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 
@@ -8560,7 +8560,7 @@ bucless:
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
-void DrasculaEngine::habla_mus(char dicho[], char filename[]) {
+void DrasculaEngine::habla_mus(const char *dicho, const char *filename) {
 	int tiempou;
 	long tiempol;
 

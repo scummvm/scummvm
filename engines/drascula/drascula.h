@@ -730,8 +730,8 @@ public:
 	void refresca_50();
 	void refresca_57();
 	void habla_igor_sentado(const char *, const char *);
-	void habla_lobo(char dicho[], char filename[]);
-	void habla_mus(char dicho[], char filename[]);
+	void habla_lobo(const char *dicho, const char *filename);
+	void habla_mus(const char *dicho, const char *filename);
 
 
 private:
