@@ -1134,7 +1134,8 @@ void Mickey::flipSwitch() {
 			printExeMsg(IDO_MSA_GAME_OVER[1]);
 			printExeMsg(IDO_MSA_GAME_OVER[2]);
 
-#ifdef _DEBUG
+#if 0
+			// DEBUG
 			strcpy(game.szAddr, (char *)IDS_MSA_ADDR_PLANET[IDI_MSA_PLANET_EARTH]);
 			game.nButtons = strlen(game.szAddr);
 #endif
@@ -1142,7 +1143,8 @@ void Mickey::flipSwitch() {
 		} else {
 			printExeStr(game.iClue[game.nXtals]);
 
-#ifdef _DEBUG
+#if 0
+			// DEBUG
 			_vm->drawStr(24, 12, IDA_DEFAULT, (char *)IDS_MSA_NAME_PLANET_2[game.iPlanetXtal[game.nXtals]]);
 			_vm->drawStr(24, 22, IDA_DEFAULT, (char *)IDS_MSA_ADDR_PLANET[game.iPlanetXtal[game.nXtals]]);
 			strcpy(game.szAddr, (char *)IDS_MSA_ADDR_PLANET[game.iPlanetXtal[game.nXtals]]);
@@ -2119,8 +2121,8 @@ void Mickey::initVars() {
 	}
 	game.iRmPic[IDI_MSA_PIC_SHIP_AIRLOCK] = IDI_MSA_PIC_SHIP_AIRLOCK_0;
 
-#ifdef _DEBUG
-
+#if 0
+	// DEBUG
 	game.iPlanet = IDI_MSA_PLANET_EARTH;
 	game.iRoom = IDI_MSA_PIC_SHIP_CONTROLS;
 	game.fHasXtal = true;
