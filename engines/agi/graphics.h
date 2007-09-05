@@ -92,6 +92,7 @@ public:
 	void putBlock(int x1, int y1, int x2, int y2);
 	void gfxSetPalette();
 	void setCursor(bool amigaStyleCursor = false);
+	void setCursorPalette(bool amigaStylePalette = false);
 
 	int keypress();
 	int getKey();

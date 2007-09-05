@@ -358,18 +358,18 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 					// Change cursor
 					if (northIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
 						(event.mouse.y >= 0 && event.mouse.y <= 10)) {
-						_vm->_gfx->setCursor(true);
+						_vm->_gfx->setCursorPalette(true);
 					} else if (southIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
 						(event.mouse.y >= IDI_MSA_PIC_HEIGHT - 10 && event.mouse.y <= IDI_MSA_PIC_HEIGHT)) {
-						_vm->_gfx->setCursor(true);			
+						_vm->_gfx->setCursorPalette(true);			
 					} else if (westIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
 						(event.mouse.x >= 20 && event.mouse.x <= 30)) {
-						_vm->_gfx->setCursor(true);
+						_vm->_gfx->setCursorPalette(true);
 					} else if (eastIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
 						(event.mouse.x >= IDI_MSA_PIC_WIDTH * 2 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2)) {
-						_vm->_gfx->setCursor(true);
+						_vm->_gfx->setCursorPalette(true);
 					} else {
-						_vm->_gfx->setCursor(false);
+						_vm->_gfx->setCursorPalette(false);
 					}
 				}
 				break;
@@ -379,28 +379,28 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 					(event.mouse.y >= 0 && event.mouse.y <= 10)) {
 					*sel0 = goIndex; *sel1 = northIndex;
 					drawMenu(menu, *sel0, *sel1);
-					_vm->_gfx->setCursor(false);
+					_vm->_gfx->setCursorPalette(false);
 					clickToMove = true;
 				} else if (southIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
 					(event.mouse.y >= IDI_MSA_PIC_HEIGHT - 10 && event.mouse.y <= IDI_MSA_PIC_HEIGHT)) {
 					*sel0 = goIndex; *sel1 = southIndex;
 					drawMenu(menu, *sel0, *sel1);
-					_vm->_gfx->setCursor(false);			
+					_vm->_gfx->setCursorPalette(false);			
 					clickToMove = true;
 				} else if (westIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
 					(event.mouse.x >= 20 && event.mouse.x <= 30)) {
 					*sel0 = goIndex; *sel1 = westIndex;
 					drawMenu(menu, *sel0, *sel1);
-					_vm->_gfx->setCursor(false);
+					_vm->_gfx->setCursorPalette(false);
 					clickToMove = true;
 				} else if (eastIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
 					(event.mouse.x >= IDI_MSA_PIC_WIDTH * 2 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2)) {
 					*sel0 = goIndex; *sel1 = eastIndex;
 					drawMenu(menu, *sel0, *sel1);
-					_vm->_gfx->setCursor(false);
+					_vm->_gfx->setCursorPalette(false);
 					clickToMove = true;
 				} else {
-					_vm->_gfx->setCursor(false);
+					_vm->_gfx->setCursorPalette(false);
 				}
 				return true;
 			case Common::EVENT_RBUTTONUP:

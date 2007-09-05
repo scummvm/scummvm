@@ -1005,6 +1005,14 @@ void GfxMgr::setCursor(bool amigaStyleCursor) {
 	}
 }
 
+void GfxMgr::setCursorPalette(bool amigaStyleCursor) {
+	if (!amigaStyleCursor) {
+		CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 4);
+	} else { // amigaStyleCursor
+		CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 4);
+	}
+}
+
 /**
  * Initialize graphics device.
  *
