@@ -737,6 +737,7 @@ public:
 protected:
 	PreAgiEngine *_vm;
 	MSA_GAME game;
+	bool clickToMove;
 
 	int getDat(int);
 	void readExe(int, uint8*, long);
@@ -796,6 +797,8 @@ protected:
 	void initVars();
 	void initEngine();
 	void flipSwitch();
+	void waitAnyKeyAnim();
+	void waitAnyKey(bool anim = false);
 };
 
 }

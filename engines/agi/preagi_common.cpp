@@ -94,10 +94,6 @@ void PreAgiEngine::clearRow(int row) {
 
 // Input functions
 
-void PreAgiEngine::waitAnyKeyAnim() {
-	waitAnyKey(true);
-}
-
 int PreAgiEngine::getSelection(int type) {
 	Common::Event event;
 
@@ -176,30 +172,6 @@ bool PreAgiEngine::waitAnyKeyChoice() {
 				break;
 			}
 		}
-	}
-}
-
-void PreAgiEngine::waitAnyKey(bool anim) {
-	Common::Event event;
-	
-	for (;;) {
-		while (_eventMan->pollEvent(event)) {
-			switch(event.type) {
-			case Common::EVENT_QUIT:
-				_system->quit();
-			case Common::EVENT_KEYDOWN:
-			case Common::EVENT_LBUTTONUP:
-			case Common::EVENT_RBUTTONUP:
-				return;
-			default:
-				break;
-			}
-		}
-		// TODO
-		/*if (anim) {
-			_game->Animate();
-			UpdateScreen();
-		}*/
 	}
 }
 

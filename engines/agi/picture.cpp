@@ -480,7 +480,7 @@ void PictureMgr::plotPattern(int x, int y) {
 		circle_word = *circle_ptr++;
 		
 		for (counter = 0; counter <= pen_width; counter += counterStep) {
-			//if (pic.fCircle) pen_status |= 0x10;
+			if (_flagCircle) patCode |= 0x10;
 			if (circleCond || ((binary_list[counter>>1] & circle_word) != 0)) {
 				temp8 = t % 2;
 				t = t >> 1;
@@ -779,6 +779,8 @@ int PictureMgr::decodePicture(int n, int clear, bool agi256, int pic_width, int 
 		_vm->clearImageStack();
 	_vm->recordImageStackCall(ADD_PIC, n, clear, agi256, 0, 0, 0, 0);
 
+	_flagCircle = false;
+
 	return errOK;
 }
 
@@ -828,6 +830,10 @@ void PictureMgr::setPattern(uint8 code, uint8 num) {
 
 void PictureMgr::setColor(uint8 color) {
 	scrColour = color;
+}
+
+void PictureMgr::setFlagCircle() {
+	_flagCircle = true;
 }
 
 } // End of namespace Agi

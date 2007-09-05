@@ -75,11 +75,13 @@ private:
 	// TODO: this is hardcoded for V2 pictures for now
 	static const int pictureType = AGIPIC_V2;
 	int width, height;
+	bool _flagCircle;
 
 public:
 	PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 		_vm = agi;
 		_gfx = gfx;
+		_flagCircle = false;
 	}
 
 	int decodePicture(int n, int clear, bool agi256 = false, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
@@ -92,6 +94,7 @@ public:
 	// preagi needed functions (for plotPattern)
 	void setPattern(uint8 code, uint8 num);
 	void setColor(uint8 color);
+	void setFlagCircle();				// needed for some 
 };
 
 } // End of namespace Agi

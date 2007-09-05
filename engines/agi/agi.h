@@ -1003,10 +1003,8 @@ public:
 	void clearScreen(int attr);
 
 	// Keyboard
-	void waitAnyKeyAnim();
 	int getSelection(int type);
 	bool waitAnyKeyChoice();
-	void waitAnyKey(bool anim = false);
 	int rnd(int hi) { return (_rnd->getRandomNumber(hi) + 1); }
 
 	// Text

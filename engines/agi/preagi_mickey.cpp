@@ -165,7 +165,7 @@ bool Mickey::chooseY_N(int ofsPrompt, bool fErrorMsg) {
 			case 1: return true;
 			default: if (fErrorMsg) {
 						printExeStr(IDO_MSA_PRESS_YES_OR_NO);
-						_vm->waitAnyKey();
+						waitAnyKey();
 						printExeStr(ofsPrompt);
 					}
 					break;
@@ -222,7 +222,7 @@ void Mickey::printExeMsg(int ofs) {
 	if (!ofs)
 		return;
 	printExeStr(ofs);
-	_vm->waitAnyKeyAnim();
+	waitAnyKeyAnim();
 }
 
 void Mickey::printDatStr(int iDat, int iStr) {
@@ -302,6 +302,7 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 	int *sel = 0;
 	int nWords;
 	int x, y;
+	int goIndex = -1, northIndex = -1, southIndex = -1, eastIndex = -1, westIndex = -1;
 
 	switch(iRow) {
 	case 0:
@@ -312,6 +313,30 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 		break;
 	}
 	nWords = menu.row[iRow].count;
+	clickToMove = false;
+
+	for (int i = 0; i <= menu.row[0].count; i++)
+		if (menu.row[0].entry[i].szText[0] == 71 && menu.row[0].entry[i].szText[1] == 79)	// GO
+			goIndex = i;
+
+	if (goIndex >= 0) {
+		for (int j = 0; j <= menu.row[1].count; j++) {
+			if (menu.row[1].entry[j].szText[0] == 78 && menu.row[1].entry[j].szText[1] == 79 &&
+				menu.row[1].entry[j].szText[2] == 82 && menu.row[1].entry[j].szText[3] == 84 &&
+				menu.row[1].entry[j].szText[4] == 72)
+				northIndex = j;
+			if (menu.row[1].entry[j].szText[0] == 83 && menu.row[1].entry[j].szText[1] == 79 &&
+				menu.row[1].entry[j].szText[2] == 85 && menu.row[1].entry[j].szText[3] == 84 &&
+				menu.row[1].entry[j].szText[4] == 72)
+				southIndex = j;
+			if (menu.row[1].entry[j].szText[0] == 69 && menu.row[1].entry[j].szText[1] == 65 &&
+				menu.row[1].entry[j].szText[2] == 83 && menu.row[1].entry[j].szText[3] == 84)
+				eastIndex = j;
+			if (menu.row[1].entry[j].szText[0] == 87 && menu.row[1].entry[j].szText[1] == 69 &&
+				menu.row[1].entry[j].szText[2] == 83 && menu.row[1].entry[j].szText[3] == 84)
+				westIndex = j;
+		}
+	}
 
 	drawMenu(menu, *sel0, *sel1);
 
@@ -329,9 +354,54 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 						getMouseMenuSelRow(menu, sel0, sel1, iRow, x, y);
 						drawMenu(menu, *sel0, *sel1);
 					}
+
+					// Change cursor
+					if (northIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
+						(event.mouse.y >= 0 && event.mouse.y <= 10)) {
+						_vm->_gfx->setCursor(true);
+					} else if (southIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
+						(event.mouse.y >= IDI_MSA_PIC_HEIGHT - 10 && event.mouse.y <= IDI_MSA_PIC_HEIGHT)) {
+						_vm->_gfx->setCursor(true);			
+					} else if (westIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
+						(event.mouse.x >= 20 && event.mouse.x <= 30)) {
+						_vm->_gfx->setCursor(true);
+					} else if (eastIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
+						(event.mouse.x >= IDI_MSA_PIC_WIDTH * 2 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2)) {
+						_vm->_gfx->setCursor(true);
+					} else {
+						_vm->_gfx->setCursor(false);
+					}
 				}
 				break;
 			case Common::EVENT_LBUTTONUP:
+				// Click to move
+				if (northIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
+					(event.mouse.y >= 0 && event.mouse.y <= 10)) {
+					*sel0 = goIndex; *sel1 = northIndex;
+					drawMenu(menu, *sel0, *sel1);
+					_vm->_gfx->setCursor(false);
+					clickToMove = true;
+				} else if (southIndex >= 0 && (event.mouse.x >= 20 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2) &&
+					(event.mouse.y >= IDI_MSA_PIC_HEIGHT - 10 && event.mouse.y <= IDI_MSA_PIC_HEIGHT)) {
+					*sel0 = goIndex; *sel1 = southIndex;
+					drawMenu(menu, *sel0, *sel1);
+					_vm->_gfx->setCursor(false);			
+					clickToMove = true;
+				} else if (westIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
+					(event.mouse.x >= 20 && event.mouse.x <= 30)) {
+					*sel0 = goIndex; *sel1 = westIndex;
+					drawMenu(menu, *sel0, *sel1);
+					_vm->_gfx->setCursor(false);
+					clickToMove = true;
+				} else if (eastIndex >= 0 && (event.mouse.y >= 0  && event.mouse.y <= IDI_MSA_PIC_HEIGHT) &&
+					(event.mouse.x >= IDI_MSA_PIC_WIDTH * 2 && event.mouse.x <= (IDI_MSA_PIC_WIDTH + 10) * 2)) {
+					*sel0 = goIndex; *sel1 = eastIndex;
+					drawMenu(menu, *sel0, *sel1);
+					_vm->_gfx->setCursor(false);
+					clickToMove = true;
+				} else {
+					_vm->_gfx->setCursor(false);
+				}
 				return true;
 			case Common::EVENT_RBUTTONUP:
 				*sel0 = 0; *sel1 = -1; 
@@ -424,13 +494,15 @@ void Mickey::getMenuSel(char *buffer, int *sel0, int *sel1) {
 	for (;;) {
 		for (;;) {
 			if (getMenuSelRow(menu, sel0, sel1, 0)) {
+				if (clickToMove)
+					break;
 				*sel1 = 0;
 				if (getMenuSelRow(menu, sel0, sel1, 1)) {
 					break;
 				}
 			}
 		}
-		if (getMenuSelRow(menu, sel0, sel1, 2)) {
+		if (clickToMove || getMenuSelRow(menu, sel0, sel1, 2)) {
 			break;
 		}
 	}
@@ -512,7 +584,7 @@ void Mickey::printDatMessage(int iStr) {
 	printDatString(iStr);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-	_vm->waitAnyKeyAnim();
+	waitAnyKeyAnim();
 }
 
 // Sound
@@ -611,6 +683,9 @@ void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 	int objWidth = 44;
 	int objHeight = 44;
 	_vm->preAgiLoadResource(rVIEW, iObj);
+
+	if (iObj == IDI_MSA_OBJECT_CRYSTAL)
+		_vm->_picture->setFlagCircle();
 	_vm->_picture->decodePicture(iObj, false, false, objWidth, objHeight);
 	_vm->_picture->showPic(x0, y0, objWidth, objHeight);
 	_vm->_gfx->doUpdate();
@@ -820,7 +895,7 @@ void Mickey::printRoomDesc() {
 	// print room description
 
 	printDesc(game.iRoom);
-	_vm->waitAnyKeyAnim();
+	waitAnyKeyAnim();
 
 	// print extended room description
 
@@ -905,7 +980,7 @@ void Mickey::saveGame() {
 void Mickey::showPlanetInfo() {
 	for (int i = 0; i < IDI_MSA_MAX_PLANET_INFO; i++) {
 		printExeStr(IDO_MSA_PLANET_INFO[game.iPlanet][i]);
-		_vm->waitAnyKey();
+		waitAnyKey();
 	}
 }
 
@@ -925,7 +1000,7 @@ void Mickey::printStory() {
 	}
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-	_vm->waitAnyKey();
+	waitAnyKey();
 
 	_vm->clearScreen(IDA_DEFAULT);
 	for (iRow = 0; iRow < 21; iRow++) {
@@ -935,7 +1010,7 @@ void Mickey::printStory() {
 	}
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-	_vm->waitAnyKey();
+	waitAnyKey();
 
 	drawRoom();
 	_vm->_gfx->doUpdate();
@@ -952,7 +1027,7 @@ void Mickey::hidden() {
 		_vm->clearTextArea();
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-		_vm->waitAnyKey();
+		waitAnyKey();
 	}
 }
 
@@ -995,7 +1070,7 @@ void Mickey::pressOB(int iButton) {
 	_vm->drawStr(IDI_MSA_ROW_BUTTONS, IDI_MSA_COL_BUTTONS, IDA_DEFAULT, szButtons);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-	_vm->waitAnyKey();
+	waitAnyKey();
 }
 
 void Mickey::checkAirSupply(bool fSuit, int *iSupply) {
@@ -1021,7 +1096,7 @@ void Mickey::insertDisk(int iDisk) {
 	_vm->drawStr(IDI_MSA_ROW_INSERT_DISK, IDI_MSA_COL_INSERT_DISK, IDA_DEFAULT, (const char *)IDS_MSA_INSERT_DISK[iDisk]);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-	_vm->waitAnyKey();
+	waitAnyKey();
 }
 
 void Mickey::gameOver() {
@@ -1038,7 +1113,7 @@ void Mickey::gameOver() {
 		printExeMsg(IDO_MSA_GAME_OVER[7]);
 	}
 
-	_vm->waitAnyKey();
+	waitAnyKey();
 	exit(0);
 }
 
@@ -1085,7 +1160,7 @@ void Mickey::flipSwitch() {
 			_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 #endif
 
-			_vm->waitAnyKeyAnim();
+			waitAnyKeyAnim();
 		}
 	} else {
 		printStory();
@@ -1112,7 +1187,7 @@ void Mickey::inventory() {
 
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-	_vm->waitAnyKey();
+	waitAnyKey();
 
 	_vm->clearScreen(IDA_DEFAULT);
 
@@ -1486,7 +1561,7 @@ bool Mickey::parse(int cmd, int arg) {
 		}
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-		_vm->waitAnyKey();
+		waitAnyKey();
 		break;
 	case IDI_MSA_ACTION_GET_XTAL_VENUS:
 		game.iRmMenu[game.iRoom] = 3;
@@ -1822,7 +1897,7 @@ bool Mickey::parse(int cmd, int arg) {
 			(const char *)IDS_MSA_TEMP_F[game.iPlanet]);
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-		_vm->waitAnyKey();
+		waitAnyKey();
 		break;
 	case IDI_MSA_ACTION_PRESS_ORANGE:
 		if (game.fFlying) {
@@ -1856,7 +1931,7 @@ bool Mickey::parse(int cmd, int arg) {
 						(const char *)IDS_MSA_PLANETS[game.iPlanet]);
 			_vm->_gfx->doUpdate();
 			_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-			_vm->waitAnyKeyAnim();
+			waitAnyKeyAnim();
 			showPlanetInfo();
 		} else {
 			printDatMessage(arg);
@@ -1953,6 +2028,36 @@ void Mickey::gameLoop() {
 	delete [] buffer;
 }
 
+// Keyboard
+
+void Mickey::waitAnyKeyAnim() {
+	waitAnyKey(true);
+}
+
+void Mickey::waitAnyKey(bool anim) {
+	Common::Event event;
+	
+	for (;;) {
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch(event.type) {
+			case Common::EVENT_QUIT:
+				_vm->_system->quit();
+			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_LBUTTONUP:
+			case Common::EVENT_RBUTTONUP:
+				return;
+			default:
+				break;
+			}
+		}
+		if (anim) {
+			animate();
+			_vm->_gfx->doUpdate();
+			_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+		}
+	}
+}
+
 // Debug
 
 void Mickey::debug_DrawObjs() {
@@ -1968,7 +2073,7 @@ void Mickey::debug_DrawObjs() {
 		_vm->drawStrMiddle(23, IDA_DEFAULT, (const char *)IDS_MSA_NAME_OBJ[iObj]);
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-		_vm->waitAnyKey();
+		waitAnyKey();
 	}
 }
 
@@ -1983,7 +2088,7 @@ void Mickey::debug_DrawPics(){
 		_vm->drawStrMiddle(22, IDA_DEFAULT, szTitle);
 		_vm->_gfx->doUpdate();
 		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-		_vm->waitAnyKey();
+		waitAnyKey();
 	}
 }
 
