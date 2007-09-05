@@ -31,31 +31,31 @@
 
 namespace Agi {
 
-#define nextByte data[foffs++]
+PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
+	_vm = agi;
+	_gfx = gfx;
+	
+	_data = NULL;
+	_flen = _foffs = 0;
 
-static uint8 *data;
-static uint32 flen;
-static uint32 foffs;
+	_patCode = _patNum = _priOn = _scrOn = _scrColor = _priColor = 0;
 
-static uint8 patCode;
-static uint8 patNum;
-static uint8 priOn;
-static uint8 scrOn;
-static uint8 scrColour;
-static uint8 priColour;
+	_pictureType = AGIPIC_V2;
+	_minCommand = 0xf0;
+}
 
 void PictureMgr::putVirtPixel(int x, int y) {
 	uint8 *p;
 
-	if (x < 0 || y < 0 || x >= width || y >= height)
+	if (x < 0 || y < 0 || x >= _width || y >= _height)
 		return;
 
-	p = &_vm->_game.sbuf16c[y * width + x];
+	p = &_vm->_game.sbuf16c[y * _width + x];
 
-	if (priOn)
-		*p = (priColour << 4) | (*p & 0x0f);
-	if (scrOn)
-		*p = scrColour | (*p & 0xf0);
+	if (_priOn)
+		*p = (_priColor << 4) | (*p & 0x0f);
+	if (_scrOn)
+		*p = _scrColor | (*p & 0xf0);
 }
 
 /* For the flood fill routines */
@@ -94,10 +94,10 @@ void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 
 	/* CM: Do clipping */
 #define clip(x, y) if((x)>=(y)) (x)=(y)
-	clip(x1, width - 1);
-	clip(x2, width - 1);
-	clip(y1, height - 1);
-	clip(y2, height - 1);
+	clip(x1, _width - 1);
+	clip(x2, _width - 1);
+	clip(y1, _height - 1);
+	clip(y2, _height - 1);
 
 	/* Vertical line */
 
@@ -183,13 +183,13 @@ void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 void PictureMgr::dynamicDrawLine() {
 	int x1, y1, disp, dx, dy;
 
-	x1 = nextByte;
-	y1 = nextByte;
+	x1 = nextByte();
+	y1 = nextByte();
 
 	putVirtPixel(x1, y1);
 
 	for (;;) {
-		if ((disp = nextByte) >= 0xf0)
+		if ((disp = nextByte()) >= _minCommand)
 			break;
 
 		dx = ((disp & 0xf0) >> 4) & 0x0f;
@@ -204,7 +204,7 @@ void PictureMgr::dynamicDrawLine() {
 		x1 += dx;
 		y1 += dy;
 	}
-	foffs--;
+	_foffs--;
 }
 
 /**************************************************************************
@@ -215,22 +215,22 @@ void PictureMgr::dynamicDrawLine() {
 void PictureMgr::absoluteDrawLine() {
 	int x1, y1, x2, y2;
 
-	x1 = nextByte;
-	y1 = nextByte;
+	x1 = nextByte();
+	y1 = nextByte();
 	putVirtPixel(x1, y1);
 
 	for (;;) {
-		if ((x2 = nextByte) >= 0xf0)
+		if ((x2 = nextByte()) >= _minCommand)
 			break;
 
-		if ((y2 = nextByte) >= 0xf0)
+		if ((y2 = nextByte()) >= _minCommand)
 			break;
 
 		drawLine(x1, y1, x2, y2);
 		x1 = x2;
 		y1 = y2;
 	}
-	foffs--;
+	_foffs--;
 }
 
 /**************************************************************************
@@ -239,21 +239,21 @@ void PictureMgr::absoluteDrawLine() {
 INLINE int PictureMgr::isOkFillHere(int x, int y) {
 	uint8 p;
 
-	if (x < 0 || x >= width || y < 0 || y >= height)
+	if (x < 0 || x >= _width || y < 0 || y >= _height)
 		return false;
 
-	if (!scrOn && !priOn)
+	if (!_scrOn && !_priOn)
 		return false;
 
-	p = _vm->_game.sbuf16c[y * width + x];
+	p = _vm->_game.sbuf16c[y * _width + x];
 
-	if (!priOn && scrOn && scrColour != 15)
+	if (!_priOn && _scrOn && _scrColor != 15)
 		return (p & 0x0f) == 15;
 
-	if (priOn && !scrOn && priColour != 4)
+	if (_priOn && !_scrOn && _priColor != 4)
 		return (p >> 4) == 4;
 
-	return (scrOn && (p & 0x0f) == 15 && scrColour != 15);
+	return (_scrOn && (p & 0x0f) == 15 && _scrColor != 15);
 }
 
 /**************************************************************************
@@ -319,27 +319,27 @@ void PictureMgr::agiFill(unsigned int x, unsigned int y) {
 void PictureMgr::xCorner() {
 	int x1, x2, y1, y2;
 
-	x1 = nextByte;
-	y1 = nextByte;
+	x1 = nextByte();
+	y1 = nextByte();
 	putVirtPixel(x1, y1);
 
 	for (;;) {
-		x2 = nextByte;
+		x2 = nextByte();
 
-		if (x2 >= 0xf0)
+		if (x2 >= _minCommand)
 			break;
 
 		drawLine(x1, y1, x2, y1);
 		x1 = x2;
-		y2 = nextByte;
+		y2 = nextByte();
 
-		if (y2 >= 0xf0)
+		if (y2 >= _minCommand)
 			break;
 
 		drawLine(x1, y1, x1, y2);
 		y1 = y2;
 	}
-	foffs--;
+	_foffs--;
 }
 
 /**************************************************************************
@@ -350,28 +350,28 @@ void PictureMgr::xCorner() {
 void PictureMgr::yCorner() {
 	int x1, x2, y1, y2;
 
-	x1 = nextByte;
-	y1 = nextByte;
+	x1 = nextByte();
+	y1 = nextByte();
 	putVirtPixel(x1, y1);
 
 	for (;;) {
-		y2 = nextByte;
+		y2 = nextByte();
 
-		if (y2 >= 0xf0)
+		if (y2 >= _minCommand)
 			break;
 
 		drawLine(x1, y1, x1, y2);
 		y1 = y2;
-		x2 = nextByte;
+		x2 = nextByte();
 
-		if (x2 >= 0xf0)
+		if (x2 >= _minCommand)
 			break;
 
 		drawLine(x1, y1, x2, y1);
 		x1 = x2;
 	}
 
-	foffs--;
+	_foffs--;
 }
 
 /**************************************************************************
@@ -382,10 +382,10 @@ void PictureMgr::yCorner() {
 void PictureMgr::fill() {
 	int x1, y1;
 
-	while ((x1 = nextByte) < 0xf0 && (y1 = nextByte) < 0xf0)
+	while ((x1 = nextByte()) < _minCommand && (y1 = nextByte()) < _minCommand)
 		agiFill(x1, y1);
 
-	foffs--;
+	_foffs--;
 }
 
 /**************************************************************************
@@ -425,7 +425,7 @@ void PictureMgr::plotPattern(int x, int y) {
 	int	pen_x = x;
 	int	pen_y = y;
 	uint16	texture_num = 0;
-	uint16	pen_size = (patCode & 0x07);
+	uint16	pen_size = (_patCode & 0x07);
 
 	circle_ptr = &circle_data[circle_list[pen_size]];
 	
@@ -466,12 +466,15 @@ void PictureMgr::plotPattern(int x, int y) {
 	int counterStep;
 	int ditherCond;
 
+	if (_flags == kPicFCircle)
+		_patCode |= 0x10;
+
 	if (_vm->getGameType() == GType_PreAGI) {
-		circleCond = ((patCode & 0x10) == 0);
+		circleCond = ((_patCode & 0x10) == 0);
 		counterStep = 3;
 		ditherCond = 0x03;
 	} else {
-		circleCond = ((patCode & 0x10) != 0);
+		circleCond = ((_patCode & 0x10) != 0);
 		counterStep = 4;
 		ditherCond = 0x02;
 	}
@@ -480,7 +483,6 @@ void PictureMgr::plotPattern(int x, int y) {
 		circle_word = *circle_ptr++;
 		
 		for (counter = 0; counter <= pen_width; counter += counterStep) {
-			if (_flagCircle) patCode |= 0x10;
 			if (circleCond || ((binary_list[counter>>1] & circle_word) != 0)) {
 				temp8 = t % 2;
 				t = t >> 1;
@@ -488,7 +490,7 @@ void PictureMgr::plotPattern(int x, int y) {
 					t = t ^ 0xB8;
 
 				// == box plot, != circle plot
-				if ((patCode & 0x20) == 0 || (t & 0x03) == ditherCond)
+				if ((_patCode & 0x20) == 0 || (t & 0x03) == ditherCond)
 					putVirtPixel(pen_x, pen_y);
 			}
 			pen_x++;
@@ -509,22 +511,22 @@ void PictureMgr::plotBrush() {
 	int x1, y1;
 
 	for (;;) {
-		if (patCode & 0x20) {
-			if ((patNum = nextByte) >= 0xf0)
+		if (_patCode & 0x20) {
+			if ((_patNum = nextByte()) >= _minCommand)
 				break;
-			patNum = (patNum >> 1) & 0x7f;
+			_patNum = (_patNum >> 1) & 0x7f;
 		}
 
-		if ((x1 = nextByte) >= 0xf0)
+		if ((x1 = nextByte()) >= _minCommand)
 			break;
 
-		if ((y1 = nextByte) >= 0xf0)
+		if ((y1 = nextByte()) >= _minCommand)
 			break;
 
 		plotPattern(x1, y1);
 	}
 
-	foffs--;
+	_foffs--;
 }
 
 /**************************************************************************
@@ -535,20 +537,20 @@ void PictureMgr::drawPicture() {
 	uint8 act;
 	int drawing;
 
-	patCode = 0;
-	patNum = 0;
-	priOn = scrOn = false;
-	scrColour = 0xf;
-	priColour = 0x4;
+	_patCode = 0;
+	_patNum = 0;
+	_priOn = _scrOn = false;
+	_scrColor = 0xf;
+	_priColor = 0x4;
 
 	drawing = 1;
 
 	debugC(8, kDebugLevelMain, "Drawing v2 picture");
-	for (drawing = 1; drawing && foffs < flen;) {
-		act = nextByte;
+	for (drawing = 1; drawing && _foffs < _flen;) {
+		act = nextByte();
 
-		if (pictureType == AGIPIC_C64 && act >= 0xf0 && act <= 0xfe) {
-			scrColour = act - 0xf0;
+		if (_pictureType == AGIPIC_C64 && act >= 0xf0 && act <= 0xfe) {
+			_scrColor = act - 0xf0;
 			continue;
 		}
 
@@ -566,54 +568,54 @@ void PictureMgr::drawPicture() {
 			absoluteDrawLine();
 			break;
 		case 0xe4:	// fill (C64)
-			scrColour = nextByte;
-			scrColour &= 0xF;	/* for v3 drawing diff */
+			_scrColor = nextByte();
+			_scrColor &= 0xF;	/* for v3 drawing diff */
 			fill();
 			break;
 		case 0xe5:	// enable screen drawing (C64)
-			scrOn = true;
+			_scrOn = true;
 			break;
 		case 0xe6:	// plot brush (C64)
-			patCode = nextByte;
+			_patCode = nextByte();
 			plotBrush();
 			break;
 		case 0xf0:	// set colour on screen (AGI pic v2)
-			scrColour = nextByte;
-			scrColour &= 0xF;	// for v3 drawing diff
-			scrOn = true;
+			_scrColor = nextByte();
+			_scrColor &= 0xF;	// for v3 drawing diff
+			_scrOn = true;
 			break;
 		case 0xf1:
-			if (pictureType == AGIPIC_V1) {
-				scrColour = nextByte;
-				scrColour &= 0xF;	// for v3 drawing diff
-				scrOn = true;
-				priOn = false;
-			} else if (pictureType == AGIPIC_V15) {	// set colour on screen
-				scrColour = nextByte;
-				scrColour &= 0xF;
-			} else if (pictureType == AGIPIC_V2) {	// disable screen drawing
-				scrOn = false;
+			if (_pictureType == AGIPIC_V1) {
+				_scrColor = nextByte();
+				_scrColor &= 0xF;	// for v3 drawing diff
+				_scrOn = true;
+				_priOn = false;
+			} else if (_pictureType == AGIPIC_V15) {	// set colour on screen
+				_scrColor = nextByte();
+				_scrColor &= 0xF;
+			} else if (_pictureType == AGIPIC_V2) {	// disable screen drawing
+				_scrOn = false;
 			}
 			break;
 		case 0xf2:	// set colour on priority (AGI pic v2)
-			priColour = nextByte;
-			priColour &= 0xf;	// for v3 drawing diff
-			priOn = true;
+			_priColor = nextByte();
+			_priColor &= 0xf;	// for v3 drawing diff
+			_priOn = true;
 			break;
 		case 0xf3:
-			if (pictureType == AGIPIC_V1) {
-				scrColour = nextByte;
-				scrColour &= 0xF;	// for v3 drawing diff
-				scrOn = true;
-				priColour = nextByte;
-				priColour &= 0xf;	// for v3 drawing diff
-				priOn = true;
+			if (_pictureType == AGIPIC_V1) {
+				_scrColor = nextByte();
+				_scrColor &= 0xF;	// for v3 drawing diff
+				_scrOn = true;
+				_priColor = nextByte();
+				_priColor &= 0xf;	// for v3 drawing diff
+				_priOn = true;
 			}
 
 			// Empty in AGI pic V1.5
 
-			if (pictureType == AGIPIC_V2)	// disable priority screen
-				priOn = false;
+			if (_pictureType == AGIPIC_V2)	// disable priority screen
+				_priOn = false;
 			break;
 		case 0xf4:	// y-corner
 			yCorner();
@@ -628,53 +630,53 @@ void PictureMgr::drawPicture() {
 			dynamicDrawLine();
 			break;
 		case 0xf8:	// fill
-			if (pictureType == AGIPIC_V15) {
+			if (_pictureType == AGIPIC_V15) {
 				absoluteDrawLine();
-			} else if (pictureType == AGIPIC_V2) {
+			} else if (_pictureType == AGIPIC_V2) {
 				fill();
 			}
 			break;
 		case 0xf9:	// set pattern
-			if (pictureType == AGIPIC_V15) {
+			if (_pictureType == AGIPIC_V15) {
 				absoluteDrawLine();
-			} else if (pictureType == AGIPIC_V2) {
-				patCode = nextByte;
+			} else if (_pictureType == AGIPIC_V2) {
+				_patCode = nextByte();
 
 				if (_vm->getGameType() == GType_PreAGI)
 					plotBrush();
 			}
 			break;
 		case 0xfa:	// plot brush
-			if (pictureType == AGIPIC_V1) {
-				scrOn = false;
-				priOn = true;
+			if (_pictureType == AGIPIC_V1) {
+				_scrOn = false;
+				_priOn = true;
 				absoluteDrawLine();
-				scrOn = true;
-				priOn = false;
-			} else if (pictureType == AGIPIC_V15) {
+				_scrOn = true;
+				_priOn = false;
+			} else if (_pictureType == AGIPIC_V15) {
 				absoluteDrawLine();
-			} else if (pictureType == AGIPIC_V2) {
+			} else if (_pictureType == AGIPIC_V2) {
 				plotBrush();
 			}
 			break;
 		case 0xfb:
-			if (pictureType == AGIPIC_V1) {
+			if (_pictureType == AGIPIC_V1) {
 				dynamicDrawLine();
-			} else if (pictureType == AGIPIC_V15) {
+			} else if (_pictureType == AGIPIC_V15) {
 				absoluteDrawLine();
 			}
 			break;
 		case 0xfc:	// fill (AGI pic v1)
-			scrColour = nextByte;
-			scrColour &= 0xF;
-			priColour = nextByte;
-			priColour &= 0xf;
+			_scrColor = nextByte();
+			_scrColor &= 0xF;
+			_priColor = nextByte();
+			_priColor &= 0xf;
 			fill();
 			break;
 		case 0xfe:	// fill (AGI pic v1.5)
-			scrColour = nextByte;
-			scrColour &= 0xF;
-			scrOn = true;
+			_scrColor = nextByte();
+			_scrColor &= 0xF;
+			_scrOn = true;
 			fill();
 			break;
 		case 0xff:	// end of pic data
@@ -685,10 +687,6 @@ void PictureMgr::drawPicture() {
 		}
 	}
 }
-
-/*
- * Public functions
- */
 
 /**
  * convert AGI v3 format picture to AGI v2 format
@@ -746,40 +744,39 @@ uint8 *PictureMgr::convertV3Pic(uint8 *src, uint32 len) {
 int PictureMgr::decodePicture(int n, int clear, bool agi256, int pic_width, int pic_height) {
 	debugC(8, kDebugLevelResources, "(%d)", n);
 
-	patCode = 0;
-	patNum = 0;
-	priOn = scrOn = false;
-	scrColour = 0xF;
-	priColour = 0x4;
+	_patCode = 0;
+	_patNum = 0;
+	_priOn = _scrOn = false;
+	_scrColor = 0xF;
+	_priColor = 0x4;
 
-	data = _vm->_game.pictures[n].rdata;
-	flen = _vm->_game.dirPic[n].len;
-	foffs = 0;
+	_data = _vm->_game.pictures[n].rdata;
+	_flen = _vm->_game.dirPic[n].len;
+	_foffs = 0;
+	_flags = 0;
 
-	width = pic_width;
-	height = pic_height;
+	_width = pic_width;
+	_height = pic_height;
 
 	if (clear && !agi256) // 256 color pictures should always fill the whole screen, so no clearing for them.
-		memset(_vm->_game.sbuf16c, 0x4f, width * height); // Clear 16 color AGI screen (Priority 4, color white).
+		memset(_vm->_game.sbuf16c, 0x4f, _width * _height); // Clear 16 color AGI screen (Priority 4, color white).
 
 	if (!agi256) {
 		drawPicture(); // Draw 16 color picture.
 	} else {
-		const uint32 maxFlen = width * height;
-		memcpy(_vm->_game.sbuf256c, data, MIN(flen, maxFlen)); // Draw 256 color picture.
+		const uint32 maxFlen = _width * _height;
+		memcpy(_vm->_game.sbuf256c, _data, MIN(_flen, maxFlen)); // Draw 256 color picture.
 
-		if (flen < maxFlen) {
+		if (_flen < maxFlen) {
 			warning("Undersized AGI256 picture resource %d, using it anyway. Filling rest with white.", n);
-			memset(_vm->_game.sbuf256c + flen, 0x0f, maxFlen - flen); // Fill missing area with white.
-		} else if (flen > maxFlen)
-			warning("Oversized AGI256 picture resource %d, decoding only %ux%u part of it", n, width, height);
+			memset(_vm->_game.sbuf256c + _flen, 0x0f, maxFlen - _flen); // Fill missing area with white.
+		} else if (_flen > maxFlen)
+			warning("Oversized AGI256 picture resource %d, decoding only %ux%u part of it", n, _width, _height);
 	}
 
 	if (clear)
 		_vm->clearImageStack();
 	_vm->recordImageStackCall(ADD_PIC, n, clear, agi256, 0, 0, 0, 0);
-
-	_flagCircle = false;
 
 	return errOK;
 }
@@ -807,16 +804,16 @@ int PictureMgr::unloadPicture(int n) {
 void PictureMgr::showPic(int x, int y, int pic_width, int pic_height) {
 	int i, y1;
 	int offset;
-	width = pic_width;
-	height = pic_height;
+	_width = pic_width;
+	_height = pic_height;
 
 	debugC(8, kDebugLevelMain, "Show picture!");
 
 	i = 0;
 	offset = _vm->_game.lineMinPrint * CHAR_LINES;
-	for (y1 = y; y1 < y + height; y1++) {
-		_gfx->putPixelsA(x, y1 + offset, width, &_vm->_game.sbuf16c[i]);
-		i += width;
+	for (y1 = y; y1 < y + _height; y1++) {
+		_gfx->putPixelsA(x, y1 + offset, _width, &_vm->_game.sbuf16c[i]);
+		i += _width;
 	}
 
 	_gfx->flushScreen();
@@ -824,16 +821,24 @@ void PictureMgr::showPic(int x, int y, int pic_width, int pic_height) {
 
 // preagi needed functions (for plotPattern)
 void PictureMgr::setPattern(uint8 code, uint8 num) {
-	patCode = code;
-	patNum = num;
+	_patCode = code;
+	_patNum = num;
 }
 
-void PictureMgr::setColor(uint8 color) {
-	scrColour = color;
+void PictureMgr::setPictureType(int type) {
+	_pictureType = type;
+
+	if (type == AGIPIC_C64)
+		_minCommand = 0xe0;
+	else
+		_minCommand = 0xf0;
 }
 
-void PictureMgr::setFlagCircle() {
-	_flagCircle = true;
+void PictureMgr::setPictureData(uint8 *data, int len) {
+	_data = data;
+	_flen = len;
+	_foffs = 0;
+	_flags = 0;
 }
 
 } // End of namespace Agi

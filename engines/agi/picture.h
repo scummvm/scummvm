@@ -49,6 +49,12 @@ enum AgiPictureVersion {
 	AGIPIC_V2
 };
 
+enum AgiPictureFlags {
+	kPicFNone,
+	kPicFCircle,
+	kPicFStep
+};
+
 class AgiBase;
 class GfxMgr;
 
@@ -70,31 +76,45 @@ private:
 	void fill();
 	int plotPatternPoint(int x, int y, int bitpos);
 	void plotBrush();
-	void drawPicture();
 
-	// TODO: this is hardcoded for V2 pictures for now
-	static const int pictureType = AGIPIC_V2;
-	int width, height;
-	bool _flagCircle;
+	uint8 nextByte() { return _data[_foffs++]; }
 
 public:
-	PictureMgr(AgiBase *agi, GfxMgr *gfx) {
-		_vm = agi;
-		_gfx = gfx;
-		_flagCircle = false;
-	}
+	PictureMgr(AgiBase *agi, GfxMgr *gfx);
 
 	int decodePicture(int n, int clear, bool agi256 = false, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
 	int unloadPicture(int);
+	void drawPicture();
 	void showPic(int x = 0, int y = 0, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
 	uint8 *convertV3Pic(uint8 *src, uint32 len);
 
 	void plotPattern(int x, int y);		// public because it's used directly by preagi
 
-	// preagi needed functions (for plotPattern)
 	void setPattern(uint8 code, uint8 num);
-	void setColor(uint8 color);
-	void setFlagCircle();				// needed for some 
+
+	void setPictureType(int type);
+	void setPictureData(uint8 *data, int len);
+
+	void setPictureFlags(int flags) { _flags = flags; }
+
+private:
+	uint8 *_data;
+	uint32 _flen;
+	uint32 _foffs;
+
+	uint8 _patCode;
+	uint8 _patNum;
+	uint8 _priOn;
+	uint8 _scrOn;
+	uint8 _scrColor;
+	uint8 _priColor;
+
+	uint8 _minCommand;
+
+	int _pictureType;
+	int _width, _height;
+
+	int _flags;
 };
 
 } // End of namespace Agi
