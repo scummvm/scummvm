@@ -507,7 +507,6 @@ public:
 	void animacion_15();
 	void animacion_16();
 	void animacion_17();
-	void animacion_18();
 	void animacion_19();
 	void animacion_20();
 	void animacion_21();
@@ -653,6 +652,9 @@ public:
 	int GlobalSpeed;
 	int LastFrame;
 
+	int frame_pen;
+	int flag_tv;
+
 	byte *carga_pcx(byte *NamePcc);
 	void set_dac(byte *dac);
 	void WaitForNext(int FPS);
@@ -732,7 +734,40 @@ public:
 	void habla_igor_sentado(const char *, const char *);
 	void habla_lobo(const char *dicho, const char *filename);
 	void habla_mus(const char *dicho, const char *filename);
-
+	void pantalla_58(int);
+	void pantalla_59(int);
+	void pantalla_60(int);
+	void pantalla_61(int);
+	void pantalla_pendulo(int);
+	void refresca_pendulo();
+	void refresca_58();
+	void refresca_58_antes();
+	void refresca_59_antes();
+	void refresca_60_antes();
+	void refresca_60();
+	void refresca_61();
+	void animacion_1_6();
+	void animacion_2_6();
+	void animacion_3_6();
+	void animacion_4_6();
+	void animacion_5_6();
+	void animacion_6_6();
+	void animacion_7_6();
+	void animacion_9_6();
+	void animacion_10_6();
+	void animacion_11_6();
+	void animacion_12_6();
+	void animacion_13_6();
+	void animacion_14_6();
+	void animacion_15_6();
+	void animacion_18_6();
+	void animacion_19_6();
+	void activa_pendulo();
+	void habla_pen(const char *, const char *);
+	void habla_pen2(const char *, const char *);
+	void habla_taber2(const char *, const char *);
+	void habla_bj_cama(const char *dicho, const char * filename);
+	void habla_htel(const char *dicho, const char *filename);
 
 private:
 
