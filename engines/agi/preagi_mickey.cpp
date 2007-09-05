@@ -998,6 +998,11 @@ void Mickey::printStory() {
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	waitAnyKey();
 
+	//Set back to black
+	_vm->_gfx->clearScreen(0);
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+
 	drawRoom();
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
