@@ -481,8 +481,9 @@ void CDECL debugC(int level, uint32 engine_level, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
-	if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & engine_level))
-		return;
+	if (gDebugLevel != 11)
+		if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & engine_level))
+			return;
 
 	va_start(va, s);
 	vsnprintf(buf, STRINGBUFLEN, s, va);
