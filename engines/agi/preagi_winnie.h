@@ -323,6 +323,7 @@ private:
 	void incMenuSel(int*, int[]);
 	void decMenuSel(int*, int[]);
 	void drawMenu(char*, int, int[]);
+	void printRoomStr(int, int);
 };
 
 }

@@ -264,7 +264,8 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			case IDI_WTP_SEL_WEST:
 				iDir = iSel - IDI_WTP_SEL_NORTH;
 				if (hdr.roomNew[iDir] == IDI_WTP_ROOM_NONE) {
-					//PrintMsg(IDS_WTP_CANT_GO);
+					_vm->printStr(IDS_WTP_CANT_GO);
+					_vm->waitAnyKeyChoice();
 				} else {
 					room = hdr.roomNew[iDir];
 					return IDI_WTP_PAR_GOTO;
@@ -272,11 +273,11 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				break;
 			case IDI_WTP_SEL_TAKE:
 				//Winnie_TakeObj(room);
-				//Winnie_SetTakeDrop();
+				setTakeDrop();
 				break;
 			case IDI_WTP_SEL_DROP:
 				//Winnie_DropObj(room);
-				//Winnie_SetTakeDrop();
+				setTakeDrop();
 				break;
 			}
 		}
@@ -296,12 +297,12 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				break;
 			case IDO_WTP_PRINT_MSG:
 				opcode = *(buffer + pc++);
-				//Winnie_PrintRoomStr(room, opcode);
+				printRoomStr(room, opcode);
 				_vm->waitAnyKeyChoice();
 				break;
 			case IDO_WTP_PRINT_STR:
 				opcode = *(buffer + pc++);
-				//Winnie_PrintRoomStr(room, opcode);
+				printRoomStr(room, opcode);
 				break;
 			case IDO_WTP_DROP_OBJ:
 				opcode = *(buffer + pc++);
@@ -700,6 +701,17 @@ void Winnie::clrMenuSel(int *iSel, int fCanSel[]) {
 	while(!fCanSel[*iSel]) {
 		*iSel += 1;
 	}
+}
+
+void Winnie::printRoomStr(int iRoom, int iStr) {
+	WTP_ROOM_HDR hdr;
+	uint8 *buffer = (uint8 *)malloc(4096);
+
+	readRoom(iRoom, buffer, 4096);
+	memcpy(&hdr, buffer, sizeof(hdr));
+	_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM));
+
+	free(buffer);
 }
 
 Winnie::Winnie(PreAgiEngine* vm) : _vm(vm) {
