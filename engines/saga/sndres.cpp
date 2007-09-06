@@ -183,10 +183,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		} 
 		
 		bool uncompressedSound = false;
-		// If a patch file exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
-		if (_vm->getGameType() == GType_ITE && resourceId == 4 && 
-			(Common::File::exists("sound/p2_a.iaf") || Common::File::exists("sound/p2_a.voc") ||
-			 Common::File::exists("p2_a.iaf") || Common::File::exists("p2_a.voc")))
+		// If patch data exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
+		// Patch data for this resource is in file p2_a.iaf or p2_a.voc
+		if (_vm->getGameType() == GType_ITE && resourceId == 4 && context->table[resourceId].patchData != NULL)
 			uncompressedSound = true;
 
 		// FIXME: Currently, the SFX.RES file in IHNM cannot be compressed
