@@ -305,6 +305,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\agi\preagi_winnie.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_winnie.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\agi\predictive.cpp"
 			>
 		</File>
