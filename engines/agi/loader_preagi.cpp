@@ -225,25 +225,24 @@ int AgiLoader_preagi::loadResource(int t, const char* n) {
 		/* if picture is currently NOT loaded *OR* cacheing is off,
 		 * unload the resource (caching==off) and reload it
 		 */
-		if (~_vm->_game.dirPic[0].flags & RES_LOADED) {
+		if (~_vm->_game.dirPic[0].flags & RES_LOADED)
 			unloadResource(rPICTURE, 0);
 
-			data = new uint8[4096];
+		data = new uint8[4096];
 
-			if (!infile.open(n))
-				return errBadResource;
-			infile.read(data, infile.size());
+		if (!infile.open(n))
+			return errBadResource;
+		infile.read(data, infile.size());
 
-			if (data != NULL) {
-				_vm->_game.pictures[0].rdata = data;
-				_vm->_game.dirPic[0].len = infile.size();
-				_vm->_game.dirPic[0].flags |= RES_LOADED;
-			} else {
-				ec = errBadResource;
-			}
-
-			infile.close();
+		if (data != NULL) {
+			_vm->_game.pictures[0].rdata = data;
+			_vm->_game.dirPic[0].len = infile.size();
+			_vm->_game.dirPic[0].flags |= RES_LOADED;
+		} else {
+			ec = errBadResource;
 		}
+
+		infile.close();
 		break;
 	case rSOUND:
 		break;
@@ -269,16 +268,15 @@ int AgiLoader_preagi::loadResource(int t, byte* n) {
 		/* if picture is currently NOT loaded *OR* cacheing is off,
 		 * unload the resource (caching==off) and reload it
 		 */
-		if (~_vm->_game.dirPic[0].flags & RES_LOADED) {
+		if (~_vm->_game.dirPic[0].flags & RES_LOADED)
 			unloadResource(rPICTURE, 0);
 
-			if (n != NULL) {
-				_vm->_game.pictures[0].rdata = n;
-				_vm->_game.dirPic[0].len = 4096;		//FIXME
-				_vm->_game.dirPic[0].flags |= RES_LOADED;
-			} else {
-				ec = errBadResource;
-			}
+		if (n != NULL) {
+			_vm->_game.pictures[0].rdata = n;
+			_vm->_game.dirPic[0].len = 4096;		//FIXME
+			_vm->_game.dirPic[0].flags |= RES_LOADED;
+		} else {
+			ec = errBadResource;
 		}
 		break;
 	case rSOUND:
