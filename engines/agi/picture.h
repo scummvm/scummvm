@@ -102,6 +102,13 @@ public:
 		_yOffset = offY;
 	}
 
+	void putPixel(int x, int y, uint8 color) {
+		_scrColor = color;
+		_priOn = false;
+		_scrOn = true;
+		putVirtPixel(x, y);
+	}
+
 private:
 	uint8 *_data;
 	uint32 _flen;

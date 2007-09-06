@@ -841,9 +841,35 @@ void Mickey::drawRoom() {
 	drawRoomAnimation();
 }
 
+/*
+// TODO
+const uint32 colorBCG[16][2] = {
+	0x000000,	0x000000,	// 0 (black, black)
+	0, 0,
+	0x000000,	0xFF00FF,	// 2 (black, purple)
+	0x000000,	0xFFFFFF,	// 3 (black, white)
+	0, 0,
+	0, 0,
+	0, 0,
+	0, 0,
+	0xFF00FF,	0x000000,	// 8 (purple, black)
+	0, 0,
+	0xFF00FF,	0xFF00FF,	// A (purple, purple)
+	0, 0,
+	0xFFFFFF,	0x000000,	// C (white, black)
+	0, 0,
+	0, 0,
+	0xFFFFFF,	0xFFFFFF	// F (white, white)
+};
+*/
+
 void Mickey::drawLogo() {
 	char szFile[256] = {0};
 	uint8 *buffer = new uint8[16384];
+	const int w = 80;
+	const int h = 170;
+	uint8 bitmap[h][w];
+	uint8 color = 0, color2 = 0, color3 = 0, color4 = 0;
 
 	// read in logos.bcg
 	sprintf(szFile, IDS_MSA_PATH_LOGO);
@@ -854,9 +880,30 @@ void Mickey::drawLogo() {
 	infile.close();
 	
 	// draw logo bitmap
-#if 0
-	drawPictureBCG(buffer);	// TODO
-#endif
+	memcpy(bitmap, buffer, sizeof(bitmap));
+
+	/*
+	// TODO: Show BCG picture
+	for (int y = 0; y < h; y++) {
+		for (int x = 0; x < w; x++) {
+			color  = (uint8)colorBCG[(bitmap[y][x] & 0xf0) / 0x10][0];	// background
+			color2 = (uint8)colorBCG[(bitmap[y][x] & 0xf0) / 0x10][1];	// background
+			color3 = (uint8)colorBCG[ bitmap[y][x] & 0x0f][0];			// foreground
+			color4 = (uint8)colorBCG[ bitmap[y][x] & 0x0f][1];			// foreground
+
+			_vm->_picture->putPixel(x * 4,			y,		color);
+			_vm->_picture->putPixel(x * 4 + 1,		y,		color2);
+			_vm->_picture->putPixel(x * 4 + 2,		y,		color3);
+			_vm->_picture->putPixel(x * 4 + 3,		y,		color4);
+			_vm->_picture->putPixel(x * 4,			y + 1,	color);
+			_vm->_picture->putPixel(x * 4 + 1,		y + 1,	color2);
+			_vm->_picture->putPixel(x * 4 + 2,		y + 1,	color3);
+			_vm->_picture->putPixel(x * 4 + 3,		y + 1,	color4);
+		}
+	}
+
+	_vm->_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	*/
 	//_vm->_gfx->doUpdate();
 	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
@@ -1242,6 +1289,7 @@ void Mickey::flashScreen() {
 void Mickey::intro() {
 	// draw sierra logo
 	drawLogo();
+	//waitAnyKey();		// Not in the original, but needed so that the logo is visible
 
 	// draw title picture
 	game.iRoom = IDI_MSA_PIC_TITLE;
