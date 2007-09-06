@@ -158,6 +158,9 @@ void Mickey::readOfsData(int offset, int iItem, uint8 *buffer, long buflen) {
 bool Mickey::chooseY_N(int ofsPrompt, bool fErrorMsg) {
 	printExeStr(ofsPrompt);
 
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+
 	int a = _vm->getSelection(0);
 	for (;;) {
 		switch (a) {
@@ -176,6 +179,9 @@ bool Mickey::chooseY_N(int ofsPrompt, bool fErrorMsg) {
 
 int Mickey::choose1to9(int ofsPrompt) {
 	printExeStr(ofsPrompt);
+
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	int a = _vm->getSelection(1);
 	for (;;) {
@@ -213,9 +219,8 @@ void Mickey::printExeStr(int ofs) {
 
 	readExe(ofs, buffer, sizeof(buffer));
 	printStr((char *)buffer);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 }
 
 void Mickey::printExeMsg(int ofs) {
@@ -236,8 +241,8 @@ void Mickey::printDesc(int iRoom) {
 	char *buffer = (char *)malloc(256);
 	readDesc(iRoom, buffer, 256);
 	printStr(buffer);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	free(buffer);
 }
 
@@ -582,8 +587,8 @@ void Mickey::printDatString(int iStr) {
 
 void Mickey::printDatMessage(int iStr) {
 	printDatString(iStr);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	waitAnyKeyAnim();
 }
 
@@ -677,29 +682,15 @@ void Mickey::debug() {
 // Graphics
 
 void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
-	// FIXME: objects are rendered incorrectly
-
-	// FIXME: Not sure about object dimensions
-	int objWidth = 44;
-	int objHeight = 44;
 	_vm->preAgiLoadResource(rVIEW, iObj);
 
 	if (iObj == IDI_MSA_OBJECT_CRYSTAL)
-		_vm->_picture->setPictureFlags(kPicFCircle);
+		_vm->_picture->setPictureFlags(kPicFStep);
 
-	_vm->_picture->decodePicture(iObj, false, false, objWidth, objHeight);
-	_vm->_picture->showPic(x0, y0, objWidth, objHeight);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-
-	// TrollVM code
-	/*
-	if (iObj == IDI_MSA_OBJECT_CRYSTAL) {
-		AGI_DrawPic(IDI_MSA_PIC_X0 + x0, IDI_MSA_PIC_Y0 + y0, IDF_AGI_PIC_V2 | IDF_AGI_STEP, buffer);
-	} else {
-		AGI_DrawPic(IDI_MSA_PIC_X0 + x0, IDI_MSA_PIC_Y0 + y0, IDF_AGI_PIC_V2, buffer);
-	}
-	*/
+	_vm->_picture->setOffset(x0, y0);
+	_vm->_picture->decodePicture(iObj, false, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_vm->_picture->setOffset(0, 0);
+	_vm->_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 }
 
 void Mickey::drawPic(int iPic) {
@@ -707,8 +698,8 @@ void Mickey::drawPic(int iPic) {
 	// Note that decodePicture clears the screen
 	_vm->_picture->decodePicture(iPic, true, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_vm->_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 }
 
 void Mickey::drawRoomPicture() {
@@ -866,8 +857,8 @@ void Mickey::drawLogo() {
 #if 0
 	drawPictureBCG(buffer);	// TODO
 #endif
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	delete [] buffer;
 }
@@ -984,8 +975,8 @@ void Mickey::printStory() {
 		_vm->drawStr(iRow, 0, IDA_DEFAULT, szLine);
 		pBuf += strlen(szLine) + 1;
 	}
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	waitAnyKey();
 
 	_vm->clearScreen(IDA_DEFAULT);
@@ -994,18 +985,18 @@ void Mickey::printStory() {
 		_vm->drawStr(iRow, 0, IDA_DEFAULT, szLine);
 		pBuf += strlen(szLine) + 1;
 	}
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	waitAnyKey();
 
 	//Set back to black
 	_vm->_gfx->clearScreen(0);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	drawRoom();
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	game.fStoryShown = true;
 }
@@ -1016,8 +1007,8 @@ void Mickey::hidden() {
 			printExeMsg(IDO_MSA_HIDDEN_MSG[i]);
 		}
 		_vm->clearTextArea();
-		_vm->_gfx->doUpdate();
-		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+		//_vm->_gfx->doUpdate();
+		//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		waitAnyKey();
 	}
 }
@@ -1059,8 +1050,8 @@ void Mickey::pressOB(int iButton) {
 	// print pressed buttons
 	printExeStr(IDO_MSA_MICKEY_HAS_PRESSED);
 	_vm->drawStr(IDI_MSA_ROW_BUTTONS, IDI_MSA_COL_BUTTONS, IDA_DEFAULT, szButtons);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	waitAnyKey();
 }
 
@@ -1085,8 +1076,8 @@ void Mickey::checkAirSupply(bool fSuit, int *iSupply) {
 void Mickey::insertDisk(int iDisk) {
 	_vm->clearTextArea();
 	_vm->drawStr(IDI_MSA_ROW_INSERT_DISK, IDI_MSA_COL_INSERT_DISK, IDA_DEFAULT, (const char *)IDS_MSA_INSERT_DISK[iDisk]);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	waitAnyKey();
 }
 
@@ -1119,8 +1110,8 @@ void Mickey::flipSwitch() {
 		game.fAnimXL30 = true;
 
 		_vm->clearTextArea();
-		_vm->_gfx->doUpdate();
-		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+		//_vm->_gfx->doUpdate();
+		//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		playSound(IDI_MSA_SND_XL30);
 		printExeMsg(IDO_MSA_XL30_SPEAKING);
 
@@ -1178,8 +1169,8 @@ void Mickey::inventory() {
 		}
 	}
 
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	//_vm->_gfx->doUpdate();
+	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	waitAnyKey();
 
 	_vm->clearScreen(IDA_DEFAULT);
@@ -1552,8 +1543,8 @@ bool Mickey::parse(int cmd, int arg) {
 		if (game.iRmPic[game.iRoom] == IDI_MSA_PIC_VENUS_PROBE_1) {
 			_vm->clearRow(22);
 		}
-		_vm->_gfx->doUpdate();
-		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+		//_vm->_gfx->doUpdate();
+		//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		waitAnyKey();
 		break;
 	case IDI_MSA_ACTION_GET_XTAL_VENUS:
@@ -1888,8 +1879,8 @@ bool Mickey::parse(int cmd, int arg) {
 			(const char *)IDS_MSA_TEMP_C[game.iPlanet]);
 		_vm->drawStr(IDI_MSA_ROW_TEMPERATURE, IDI_MSA_COL_TEMPERATURE_F, IDA_DEFAULT,
 			(const char *)IDS_MSA_TEMP_F[game.iPlanet]);
-		_vm->_gfx->doUpdate();
-		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+		//_vm->_gfx->doUpdate();
+		//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		waitAnyKey();
 		break;
 	case IDI_MSA_ACTION_PRESS_ORANGE:
@@ -1922,8 +1913,8 @@ bool Mickey::parse(int cmd, int arg) {
 			printDatString(22);
 			_vm->drawStr(IDI_MSA_ROW_PLANET, IDI_MSA_COL_PLANET, IDA_DEFAULT,
 						(const char *)IDS_MSA_PLANETS[game.iPlanet]);
-			_vm->_gfx->doUpdate();
-			_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+			//_vm->_gfx->doUpdate();
+			//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 			waitAnyKeyAnim();
 			showPlanetInfo();
 		} else {
@@ -2029,7 +2020,12 @@ void Mickey::waitAnyKeyAnim() {
 
 void Mickey::waitAnyKey(bool anim) {
 	Common::Event event;
-	
+
+	if (!anim) {
+		_vm->_gfx->doUpdate();
+		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	}
+
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
@@ -2064,8 +2060,8 @@ void Mickey::debug_DrawObjs() {
 		sprintf(szTitle, "Object %d", iObj);
 		_vm->drawStrMiddle(22, IDA_DEFAULT, szTitle);
 		_vm->drawStrMiddle(23, IDA_DEFAULT, (const char *)IDS_MSA_NAME_OBJ[iObj]);
-		_vm->_gfx->doUpdate();
-		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+		//_vm->_gfx->doUpdate();
+		//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		waitAnyKey();
 	}
 }
@@ -2079,8 +2075,8 @@ void Mickey::debug_DrawPics(){
 		_vm->clearTextArea();
 		sprintf(szTitle, "Picture %d", iPic);
 		_vm->drawStrMiddle(22, IDA_DEFAULT, szTitle);
-		_vm->_gfx->doUpdate();
-		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+		//_vm->_gfx->doUpdate();
+		//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		waitAnyKey();
 	}
 }

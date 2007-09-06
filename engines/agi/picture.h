@@ -97,6 +97,11 @@ public:
 
 	void setPictureFlags(int flags) { _flags = flags; }
 
+	void setOffset(int offX, int offY) {
+		_xOffset = offX;
+		_yOffset = offY;
+	}
+
 private:
 	uint8 *_data;
 	uint32 _flen;
@@ -113,6 +118,7 @@ private:
 
 	int _pictureType;
 	int _width, _height;
+	int _xOffset, _yOffset;
 
 	int _flags;
 };

@@ -39,13 +39,18 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 	_flen = _foffs = 0;
 
 	_patCode = _patNum = _priOn = _scrOn = _scrColor = _priColor = 0;
+	_xOffset = _yOffset = 0;
 
 	_pictureType = AGIPIC_V2;
 	_minCommand = 0xf0;
+	_flags = 0;
 }
 
 void PictureMgr::putVirtPixel(int x, int y) {
 	uint8 *p;
+
+	x += _xOffset;
+	y += _yOffset;
 
 	if (x < 0 || y < 0 || x >= _width || y >= _height)
 		return;
@@ -536,6 +541,7 @@ void PictureMgr::plotBrush() {
 void PictureMgr::drawPicture() {
 	uint8 act;
 	int drawing;
+	int storedXOffset = 0, storedYOffset = 0;
 
 	_patCode = 0;
 	_patNum = 0;
@@ -685,6 +691,21 @@ void PictureMgr::drawPicture() {
 		default:
 			warning("Unknown v2 picture opcode (%x)", act);
 		}
+		if (_flags == kPicFStep && _vm->getGameType() == GType_PreAGI) {
+			// FIXME: This is used by Mickey for the crystal animation, but
+			// currently it's very very very slow
+			/*
+			storedXOffset = _xOffset;
+			storedYOffset = _yOffset;
+			// FIXME: picture coordinates are correct for Mickey only
+			showPic(10, 0, _width, _height);
+			_gfx->doUpdate();
+			g_system->updateScreen();
+			_xOffset = storedXOffset;
+			_yOffset = storedYOffset;
+			g_system->delayMillis(25);
+			*/
+		}
 	}
 }
 
@@ -753,7 +774,6 @@ int PictureMgr::decodePicture(int n, int clear, bool agi256, int pic_width, int 
 	_data = _vm->_game.pictures[n].rdata;
 	_flen = _vm->_game.dirPic[n].len;
 	_foffs = 0;
-	_flags = 0;
 
 	_width = pic_width;
 	_height = pic_height;
