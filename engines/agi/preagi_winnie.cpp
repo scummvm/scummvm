@@ -662,7 +662,7 @@ void Winnie::drawRoomPic() {
 	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-	_vm->preAgiUnloadResource(rPICTURE, 0);
+	//_vm->preAgiUnloadResource(rPICTURE, 0); // FIXME: This causes crashes
 
 	// draw object picture
 	//Winnie_DrawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
