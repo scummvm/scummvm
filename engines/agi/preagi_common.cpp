@@ -67,7 +67,7 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 			break;
 
 		default:
-			_gfx->putTextCharacter(1, col * 8 , row * 8, static_cast<char>(code), attr & 0x0f, (attr & 0xf0) / 0x10, false, mickey_fontdata);
+			_gfx->putTextCharacter(1, col * 8 , row * 8, static_cast<char>(code), attr & 0x0f, (attr & 0xf0) / 0x10, false, getGameID() == GID_MICKEY ? mickey_fontdata : ibm_fontdata);
 
 			if (++col == 320 / 8) {
 				col = 0;

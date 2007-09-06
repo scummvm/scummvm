@@ -104,7 +104,8 @@ enum AgiGameID {
 	GID_SQ2,
 	GID_XMASCARD,
 	GID_FANMADE,		// TODO: Should this be extended to include all fanmade games?
-	GID_MICKEY			// PreAGI
+	GID_MICKEY,			// PreAGI
+	GID_WINNIE			// PreAGI
 };
 
 } // End of namespace Agi
@@ -547,6 +548,7 @@ public:
 	virtual int deinit() = 0;
 	virtual int detectGame() = 0;
 	virtual int loadResource(int, int) = 0;
+	virtual int loadResource(int, const char*) = 0;
 	virtual int unloadResource(int, int) = 0;
 	virtual int loadObjects(const char *) = 0;
 	virtual int loadWords(const char *) = 0;
@@ -574,6 +576,7 @@ public:
 	virtual int deinit();
 	virtual int detectGame();
 	virtual int loadResource(int, int);
+	virtual int loadResource(int, const char*);
 	virtual int unloadResource(int, int);
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
@@ -601,6 +604,7 @@ public:
 	virtual int deinit();
 	virtual int detectGame();
 	virtual int loadResource(int, int);
+	virtual int loadResource(int, const char*) { return 0; }
 	virtual int unloadResource(int, int);
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
@@ -628,6 +632,7 @@ public:
 	virtual int deinit();
 	virtual int detectGame();
 	virtual int loadResource(int, int);
+	virtual int loadResource(int, const char*) { return 0; }
 	virtual int unloadResource(int, int);
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
@@ -675,8 +680,8 @@ public:
 	volatile uint32 _clockCount;
 	AgiDebug _debug;
 	AgiGame _game;
-	AgiLoader *_loader;	/* loader */
 	Common::RandomSource *_rnd;
+	AgiLoader *_loader;	/* loader */
 
 	virtual void agiTimerLow() = 0;
 	virtual int agiGetKeypressLow() = 0;
@@ -974,6 +979,7 @@ public:
 	int agiIsKeypressLow() { return 0; }
 
 	int preAgiLoadResource(int r, int n);
+	int preAgiLoadResource(int r, const char* n);
 	int preAgiUnloadResource(int r, int n);
 
 	PreAgiEngine(OSystem *syst);
@@ -982,9 +988,6 @@ public:
 		return _gameId;
 	}
 
-private:
-
-public:
 	GfxMgr *_gfx;
 	SoundMgr *_sound;
 	PictureMgr *_picture;

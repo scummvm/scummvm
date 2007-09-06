@@ -48,6 +48,7 @@
 
 // preagi engines
 #include "agi/preagi_mickey.h"
+#include "agi/preagi_winnie.h"
 
 namespace Agi {
 
@@ -237,6 +238,13 @@ int PreAgiEngine::go() {
 				mickey->run();
 			}
 			break;
+		case GID_WINNIE:
+			{
+				Winnie *winnie = new Winnie(this);
+				winnie->init();
+				winnie->run();
+			}
+			break;
 		default:
 			error("Unknown preagi engine");
 			break;
@@ -245,6 +253,10 @@ int PreAgiEngine::go() {
 }
 
 int PreAgiEngine::preAgiLoadResource(int r, int n) {
+	return _loader->loadResource(r, n);
+}
+
+int PreAgiEngine::preAgiLoadResource (int r, const char* n) {
 	return _loader->loadResource(r, n);
 }
 

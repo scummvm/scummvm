@@ -47,8 +47,8 @@ int AgiLoader_preagi::getIntVersion() {
 }
 
 int AgiLoader_preagi::detectGame() {
-	// TODO: Only Mickey is detected for now
-	if (!Common::File::exists("1.pic"))
+	// TODO: Only Mickey/Winnie are detected for now
+	if (!(Common::File::exists("1.pic") || Common::File::exists("title.pic")))
 		return errInvalidAGIFile;
 
 	_intVersion = 0x0000;
@@ -202,6 +202,52 @@ int AgiLoader_preagi::loadResource(int t, int n) {
 			}
 
 			infile.close();
+		break;
+	default:
+		ec = errBadResource;
+		break;
+	}
+
+	return ec;
+}
+
+/*
+ * Loads a resource into memory, a raw resource is loaded in
+ * with above routine, then further decoded here.
+ */
+int AgiLoader_preagi::loadResource(int t, const char* n) {
+	int ec = errOK;
+	uint8 *data = NULL;
+	Common::File infile;
+
+	switch (t) {
+	case rPICTURE:
+		/* if picture is currently NOT loaded *OR* cacheing is off,
+		 * unload the resource (caching==off) and reload it
+		 */
+		if (~_vm->_game.dirPic[0].flags & RES_LOADED) {
+			unloadResource(rPICTURE, 0);
+
+			data = new uint8[4096];
+
+			if (!infile.open(n))
+				return errBadResource;
+			infile.read(data, infile.size());
+
+			if (data != NULL) {
+				_vm->_game.pictures[0].rdata = data;
+				_vm->_game.dirPic[0].len = infile.size();
+				_vm->_game.dirPic[0].flags |= RES_LOADED;
+			} else {
+				ec = errBadResource;
+			}
+
+			infile.close();
+		}
+		break;
+	case rSOUND:
+		break;
+	case rVIEW:
 		break;
 	default:
 		ec = errBadResource;

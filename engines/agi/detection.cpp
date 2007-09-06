@@ -93,6 +93,7 @@ static const PlainGameDescriptor agiGames[] = {
 	{"sq2", "Space Quest II: Vohaul's Revenge"},
 	{"sqx", "Space Quest X: The Lost Chapter"},
 	{"tetris", "AGI Tetris"},
+	{"winnie", "Winnie the Pooh in the Hundred Acre Wood"},
 	{"xmascard", "Xmas Card"},
 
 	{0, 0}
@@ -1613,6 +1614,22 @@ static const AGIGameDescription gameDescriptions[] = {
 		0x2936,
 	},
 
+	{
+		// Winnie the Pooh in the Hundred Acre Wood
+		// preagi game
+		{
+			"winnie",
+			"",
+			AD_ENTRY1("title.pic", "2e7900c1ccaa7671d65405f6d1efed30"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_WINNIE,
+		GType_PreAGI,
+		0,
+		0x0000,
+	},
 
 	{
 		// Xmas Card 1986 (PC) [AGI 2.272]
