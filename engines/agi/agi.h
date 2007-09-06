@@ -549,6 +549,7 @@ public:
 	virtual int detectGame() = 0;
 	virtual int loadResource(int, int) = 0;
 	virtual int loadResource(int, const char*) = 0;
+	virtual int loadResource(int, byte*) = 0;
 	virtual int unloadResource(int, int) = 0;
 	virtual int loadObjects(const char *) = 0;
 	virtual int loadWords(const char *) = 0;
@@ -577,6 +578,7 @@ public:
 	virtual int detectGame();
 	virtual int loadResource(int, int);
 	virtual int loadResource(int, const char*);
+	virtual int loadResource(int, byte*);
 	virtual int unloadResource(int, int);
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
@@ -605,6 +607,7 @@ public:
 	virtual int detectGame();
 	virtual int loadResource(int, int);
 	virtual int loadResource(int, const char*) { return 0; }
+	virtual int loadResource(int, byte*) { return 0; }
 	virtual int unloadResource(int, int);
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
@@ -633,6 +636,7 @@ public:
 	virtual int detectGame();
 	virtual int loadResource(int, int);
 	virtual int loadResource(int, const char*) { return 0; }
+	virtual int loadResource(int, byte*) { return 0; }
 	virtual int unloadResource(int, int);
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
@@ -980,6 +984,7 @@ public:
 
 	int preAgiLoadResource(int r, int n);
 	int preAgiLoadResource(int r, const char* n);
+	int preAgiLoadResource(int r, byte* n);
 	int preAgiUnloadResource(int r, int n);
 
 	PreAgiEngine(OSystem *syst);
@@ -1015,6 +1020,9 @@ public:
 	void drawStrMiddle(int row, int attr, const char *buffer);
 	void clearTextArea();
 	void clearRow(int row);
+	void XOR80(char *buffer);
+	void printStr(const char *szMsg);
+	void printStrXOR(char *szMsg);
 
 	// Saved Games
 	Common::SaveFileManager* getSaveFileMan() { return _saveFileMan; }

@@ -92,6 +92,24 @@ void PreAgiEngine::clearRow(int row) {
 	drawStr(row, 0, IDA_DEFAULT, "                                        ");	// 40 spaces
 }
 
+void PreAgiEngine::printStr(const char* szMsg) {
+	clearTextArea();
+	drawStr(21, 0, IDA_DEFAULT, szMsg);
+	_gfx->doUpdate();
+	_system->updateScreen();
+}
+
+void PreAgiEngine::XOR80(char *buffer) {
+	for (size_t i = 0; i < strlen(buffer); i++)
+		if (buffer[i] & 0x80)
+			buffer[i] ^= 0x80;
+}
+
+void PreAgiEngine::printStrXOR(char *szMsg) {
+	XOR80(szMsg);
+	printStr(szMsg);
+}
+
 // Input functions
 
 int PreAgiEngine::getSelection(int type) {

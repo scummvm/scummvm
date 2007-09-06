@@ -257,6 +257,42 @@ int AgiLoader_preagi::loadResource(int t, const char* n) {
 	return ec;
 }
 
+/*
+ * Loads a resource into memory, a raw resource is loaded in
+ * with above routine, then further decoded here.
+ */
+int AgiLoader_preagi::loadResource(int t, byte* n) {
+	int ec = errOK;
+
+	switch (t) {
+	case rPICTURE:
+		/* if picture is currently NOT loaded *OR* cacheing is off,
+		 * unload the resource (caching==off) and reload it
+		 */
+		if (~_vm->_game.dirPic[0].flags & RES_LOADED) {
+			unloadResource(rPICTURE, 0);
+
+			if (n != NULL) {
+				_vm->_game.pictures[0].rdata = n;
+				_vm->_game.dirPic[0].len = 4096;		//FIXME
+				_vm->_game.dirPic[0].flags |= RES_LOADED;
+			} else {
+				ec = errBadResource;
+			}
+		}
+		break;
+	case rSOUND:
+		break;
+	case rVIEW:
+		break;
+	default:
+		ec = errBadResource;
+		break;
+	}
+
+	return ec;
+}
+
 int AgiLoader_preagi::loadObjects(const char *fname) {
 	return 0;
 	//return _vm->loadObjects(fname);

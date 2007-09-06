@@ -260,6 +260,10 @@ int PreAgiEngine::preAgiLoadResource (int r, const char* n) {
 	return _loader->loadResource(r, n);
 }
 
+int PreAgiEngine::preAgiLoadResource (int r, byte* n) {
+	return _loader->loadResource(r, n);
+}
+
 int PreAgiEngine::preAgiUnloadResource(int r, int n) {
 	return _loader->unloadResource(r, n);
 }

@@ -311,7 +311,18 @@ private:
 	void intro_DrawTitle();
 	void intro_PlayTheme();
 	void drawPic(const char*);
-	void printStr(const char*);
+	void gameLoop();
+	void readRoom(int, uint8*, int);
+	void drawRoomPic();
+	int parser(int, int, uint8*);
+	int getObjInRoom(int);
+	bool getSelOkBack();
+	void getMenuSel(char*, int*, int[]);
+	void keyHelp() {}
+	void clrMenuSel(int*, int[]);
+	void incMenuSel(int*, int[]);
+	void decMenuSel(int*, int[]);
+	void drawMenu(char*, int, int[]);
 };
 
 }
