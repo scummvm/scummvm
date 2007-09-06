@@ -318,12 +318,15 @@ private:
 	int getObjInRoom(int);
 	bool getSelOkBack();
 	void getMenuSel(char*, int*, int[]);
-	void keyHelp() {}
+	void keyHelp();
 	void clrMenuSel(int*, int[]);
 	void incMenuSel(int*, int[]);
 	void decMenuSel(int*, int[]);
 	void drawMenu(char*, int, int[]);
 	void printRoomStr(int, int);
+	void inventory();
+	void printObjStr(int, int);
+	void readObj(int, uint8*, int);
 };
 
 }

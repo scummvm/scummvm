@@ -65,6 +65,18 @@ void Winnie::readRoom(int iRoom, uint8 *buffer, int buflen) {
 	file.close();
 }
 
+void Winnie::readObj(int iObj, uint8 *buffer, int buflen) {
+	char szFile[256] = {0};
+	sprintf(szFile, IDS_WTP_PATH_OBJ, iObj);
+	Common::File file;
+	if (!file.open(szFile))
+		return;
+	uint32 filelen = file.size();
+	memset(buffer, 0, sizeof(buffer));
+	file.read(buffer, filelen);
+	file.close();
+}
+
 void Winnie::randomize() {
 	int iObj = 0;
 	int iRoom = 0;
@@ -362,6 +374,42 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 	}
 }
 
+void Winnie::keyHelp() {
+	//Winnie_PlaySound(IDI_WTP_SND_KEYHELP);
+	_vm->printStr(IDS_WTP_HELP_0);
+	_vm->waitAnyKeyChoice();
+	_vm->printStr(IDS_WTP_HELP_1);
+	_vm->waitAnyKeyChoice();
+}
+
+void Winnie::inventory() {
+	char szMissing[41] = {0};
+
+	if (game.iObjHave)
+		printObjStr(game.iObjHave, IDI_WTP_OBJ_TAKE);
+	else {
+		_vm->clearTextArea();
+		_vm->drawStr(IDI_WTP_ROW_MENU, IDI_WTP_COL_MENU, IDA_DEFAULT, IDS_WTP_INVENTORY_0);
+	}
+
+	sprintf(szMissing, IDS_WTP_INVENTORY_1, game.nObjMiss);
+	_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_MENU, IDA_DEFAULT, szMissing);
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();
+	_vm->waitAnyKeyChoice();
+}
+
+void Winnie::printObjStr(int iObj, int iStr) {
+	WTP_OBJ_HDR hdr;
+	uint8 *buffer = (uint8 *)malloc(2048);
+
+	readObj(iObj, buffer, 2048);
+	memcpy(&hdr, buffer, sizeof(hdr));
+	_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr] - IDI_WTP_OFS_OBJ));
+
+	free(buffer);
+}
+
 void Winnie::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 	int iRow = 0, iCol = 0;
 
@@ -504,7 +552,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					*iSel = IDI_WTP_SEL_BACK;
 					return;
 				case Common::KEYCODE_c:
-					//Winnie_Inventory();
+					inventory();
 					break;
 				case Common::KEYCODE_SPACE:
 				case Common::KEYCODE_RIGHT:
@@ -522,7 +570,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					if (fCanSel[*iSel + IDI_WTP_SEL_REAL_OPT_1]) {
 						return;
 					} else {
-						//Winnie_KeyHelp();
+						keyHelp();
 						clrMenuSel(iSel, fCanSel);
 					}
 					break;
@@ -573,7 +621,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 						break;
 					}
 				default:
-					//Winnie_KeyHelp();
+					keyHelp();
 					clrMenuSel(iSel, fCanSel);
 					break;
 				}
