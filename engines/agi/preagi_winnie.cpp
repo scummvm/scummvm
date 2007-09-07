@@ -52,7 +52,7 @@ void Winnie::initVars() {
 	room = IDI_WTP_ROOM_HOME;
 
 	mist = -1;
-	wind = false;
+	doWind = false;
 	winnie_event = false;
 }
 
@@ -240,14 +240,14 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 		done = false;
 		while (!done) {
 			// run wind if it's time
-			//if (wind)
-			//	Winnie_Wind();
+			if (doWind)
+				wind();
 
 			// get menu selection
 			getMenuSel(szMenu, &iSel, fCanSel);
 
 			if (++game.nMoves == IDI_WTP_MAX_MOVES_UNTIL_WIND)
-				wind = true;
+				doWind = true;
 
 			if (winnie_event && (room <= IDI_WTP_MAX_ROOM_TELEPORT)) {
 				if (!tigger_mist) {
@@ -330,7 +330,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			case IDO_WTP_DROP_OBJ:
 				opcode = *(buffer + pc++);
 				opcode = -1;
-				//Winnie_DropObjRnd();
+				dropObjRnd();
 				break;
 			case IDO_WTP_FLAG_CLEAR:
 				opcode = *(buffer + pc++);
@@ -364,7 +364,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				return IDI_WTP_PAR_GOTO;
 			case IDO_WTP_OWL_HELP:
 				opcode = *(buffer + pc++);
-				//Winnie_ShowOwlHelp();
+				showOwlHelp();
 				break;
 			case IDO_WTP_GOTO_RND:
 				room = _vm->rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
@@ -539,6 +539,81 @@ void Winnie::dropObj(int iRoom) {
 		}
 	}
 }
+
+void Winnie::dropObjRnd() {
+	if (!game.iObjHave)
+		return;
+	
+	int iRoom;
+	bool done = false;
+
+	while (!done) {
+		iRoom = _vm->rnd(IDI_WTP_MAX_ROOM_NORMAL);
+		done = true;
+		if (iRoom == room)
+			done = false;
+		for (int j = 0; j < IDI_WTP_MAX_ROOM_OBJ; j++) {
+			if (game.iObjRoom[j] == iRoom) {
+				done = false;
+			}
+		}
+	}
+
+	game.iObjRoom[game.iObjHave] = iRoom;
+	game.iObjHave = 0;
+}
+
+void Winnie::wind() {
+	int iRoom;
+	bool done;
+
+	doWind = 0;
+	game.nMoves = 0;
+	if (!game.nObjMiss)
+		return;
+
+	_vm->printStr(IDS_WTP_WIND_0);
+	//Winnie_PlaySound(IDI_WTP_SND_WIND_0);
+	_vm->waitAnyKeyChoice();
+	_vm->printStr(IDS_WTP_WIND_1);
+	//Winnie_PlaySound(IDI_WTP_SND_WIND_0);
+	_vm->waitAnyKeyChoice();
+
+	dropObjRnd();
+
+	// randomize positions of objects at large
+	for (int i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++) {
+		if (!(game.iUsedObj[i] & IDI_XOR_KEY)) {
+			done = false;
+			while (!done) {
+				iRoom = _vm->rnd(IDI_WTP_MAX_ROOM_NORMAL);
+				done = true;
+				for (int j = 0; j < IDI_WTP_MAX_ROOM_OBJ; j++) {
+					if (game.iObjRoom[j] == iRoom) {
+						done = false;
+					}
+				}
+			}
+			game.iObjRoom[game.iUsedObj[i]] = iRoom;
+		}
+	}
+}
+
+void Winnie::showOwlHelp() {
+	if (game.iObjHave) {
+		_vm->printStr(IDS_WTP_OWL_0);
+		_vm->waitAnyKeyChoice();
+		printObjStr(game.iObjHave, IDI_WTP_OBJ_HELP);
+		_vm->waitAnyKeyChoice();
+	}
+	if (getObjInRoom(room)) {
+		_vm->printStr(IDS_WTP_OWL_0);
+		_vm->waitAnyKeyChoice();
+		printObjStr(getObjInRoom(room), IDI_WTP_OBJ_HELP);
+		_vm->waitAnyKeyChoice();
+	}
+}
+
 
 void Winnie::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 	int iRow = 0, iCol = 0;

@@ -285,6 +285,8 @@ struct WTP_SAVE_GAME {
 	uint16	o1138;		// 1138		can be ignored
 };
 
+#define IDI_XOR_KEY			0x80
+
 class Winnie {
 	friend class PreAgiEngine;
 public:
@@ -299,7 +301,7 @@ private:
 	WTP_SAVE_GAME game;
 	int room;
 	int	mist;
-	bool wind;
+	bool doWind;
 	bool winnie_event;
 	int	tigger_mist;
 
@@ -339,6 +341,9 @@ private:
 	void loadGame();
 	void writeSaveGame(uint8*);
 	void readSaveGame(uint8*);
+	void dropObjRnd();
+	void wind();
+	void showOwlHelp();
 };
 
 }
