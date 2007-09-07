@@ -29,6 +29,7 @@
 #include "graphics/cursorman.h"
 
 #include "common/events.h"
+#include "common/savefile.h"
 
 namespace Agi {
 
@@ -155,6 +156,14 @@ int Winnie::getObjInRoom(int iRoom) {
 		fCanSel[IDI_WTP_SEL_DROP] = true;\
 	else\
 		fCanSel[IDI_WTP_SEL_DROP] = false;\
+}
+
+void Winnie::setFlag(int iFlag) {
+	game.fGame[iFlag] = 1;
+}
+
+void Winnie::clearFlag(int iFlag) {
+	game.fGame[iFlag] = 0;
 }
 
 int Winnie::parser(int pc, int index, uint8 *buffer) {
@@ -325,14 +334,14 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				break;
 			case IDO_WTP_FLAG_CLEAR:
 				opcode = *(buffer + pc++);
-				//Winnie_ClearFlag(opcode);
+				clearFlag(opcode);
 				break;
 			case IDO_WTP_FLAG_SET:
 				opcode = *(buffer + pc++);
-				//Winnie_SetFlag(opcode);
+				setFlag(opcode);
 				break;
 			case IDO_WTP_GAME_OVER:
-				//Winnie_GameOver();
+				gameOver();
 				break;
 			case IDO_WTP_WALK_MIST:
 				mist--;
@@ -346,11 +355,11 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				//Winnie_PlaySound((ENUM_WTP_SOUND)opcode);
 				break;
 			case IDO_WTP_SAVE_GAME:
-				//Winnie_SaveGame();
+				saveGame();
 				room = IDI_WTP_ROOM_HOME;
 				return IDI_WTP_PAR_GOTO;
 			case IDO_WTP_LOAD_GAME:
-				//Winnie_LoadGame();
+				loadGame();
 				room = IDI_WTP_ROOM_HOME;
 				return IDI_WTP_PAR_GOTO;
 			case IDO_WTP_OWL_HELP:
@@ -601,6 +610,28 @@ void Winnie::decMenuSel(int *iSel, int fCanSel[]) {
 	} while(!fCanSel[*iSel]);
 }
 
+void Winnie::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
+	switch(y) {
+	case IDI_WTP_ROW_OPTION_1:
+		if (fCanSel[IDI_WTP_SEL_OPT_1])	*iSel = IDI_WTP_SEL_OPT_1;
+		break;
+	case IDI_WTP_ROW_OPTION_2:
+		if (fCanSel[IDI_WTP_SEL_OPT_2])	*iSel = IDI_WTP_SEL_OPT_2;
+		break;
+	case IDI_WTP_ROW_OPTION_3:
+		if (fCanSel[IDI_WTP_SEL_OPT_3])	*iSel = IDI_WTP_SEL_OPT_3;
+		break;
+	case IDI_WTP_ROW_OPTION_4:
+		if (fCanSel[IDI_WTP_SEL_NORTH] && (x > IDI_WTP_COL_NORTH - 1) && (x < 6)) *iSel = IDI_WTP_SEL_NORTH;
+		if (fCanSel[IDI_WTP_SEL_SOUTH] && (x > IDI_WTP_COL_SOUTH - 1) && (x < 13)) *iSel = IDI_WTP_SEL_SOUTH;
+		if (fCanSel[IDI_WTP_SEL_EAST] && (x > IDI_WTP_COL_EAST - 1) && (x < 19)) *iSel = IDI_WTP_SEL_EAST;
+		if (fCanSel[IDI_WTP_SEL_WEST] && (x > IDI_WTP_COL_WEST - 1) && (x < 25)) *iSel = IDI_WTP_SEL_WEST;
+		if (fCanSel[IDI_WTP_SEL_TAKE] && (x > IDI_WTP_COL_TAKE - 1) && (x < 33)) *iSel = IDI_WTP_SEL_TAKE;
+		if (fCanSel[IDI_WTP_SEL_DROP] && (x > IDI_WTP_COL_DROP - 1) && (x < 39)) *iSel = IDI_WTP_SEL_DROP;
+		break;
+	}
+}
+
 #define makeSel() {\
 	if (fCanSel[*iSel]) {\
 		return;\
@@ -633,7 +664,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 			case Common::EVENT_MOUSEMOVE:
 				x = event.mouse.x;
 				y = event.mouse.y;
-				//Winnie_GetMenuMouseSel(iSel, fCanSel, x, y);
+				getMenuMouseSel(iSel, fCanSel, x, y);
 
 				// Change cursor
 				if (fCanSel[IDI_WTP_SEL_NORTH] && (event.mouse.x >= 20 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2) &&
@@ -934,6 +965,53 @@ void Winnie::printRoomStr(int iRoom, int iStr) {
 	_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM));
 
 	free(buffer);
+}
+
+void Winnie::gameOver() {
+	// sing the Pooh song forever
+	for (;;) {
+		_vm->printStr(IDS_WTP_SONG_0);
+		//Winnie_PlaySound(IDI_WTP_SND_POOH_0);
+		_vm->printStr(IDS_WTP_SONG_1);
+		//Winnie_PlaySound(IDI_WTP_SND_POOH_1);
+		_vm->printStr(IDS_WTP_SONG_2);
+		//Winnie_PlaySound(IDI_WTP_SND_POOH_2);
+		_vm->waitAnyKeyChoice();
+	}
+}
+
+void Winnie::saveGame() {
+	uint8 *buffer = new uint8[sizeof(WTP_SAVE_GAME)];
+	memcpy(buffer, &game, sizeof(WTP_SAVE_GAME));
+	writeSaveGame(buffer);
+	delete [] buffer;
+}
+
+void Winnie::loadGame() {
+	uint8 *buffer = new uint8[sizeof(WTP_SAVE_GAME)];
+	readSaveGame(buffer);
+	memcpy(&game, buffer, sizeof(WTP_SAVE_GAME));
+	delete [] buffer;
+}
+
+void Winnie::readSaveGame(uint8 *buffer) {
+	Common::InSaveFile* infile;
+	char szFile[256] = {0};
+	sprintf(szFile, IDS_WTP_FILE_SAVEGAME);
+	if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile)))
+		return;
+	infile->read(buffer, sizeof(WTP_SAVE_GAME));
+	delete infile;
+}
+
+void Winnie::writeSaveGame(uint8 *buffer) {
+	Common::OutSaveFile* outfile;
+	char szFile[256] = {0};
+	sprintf(szFile, IDS_WTP_FILE_SAVEGAME);
+	if (!(outfile = _vm->getSaveFileMan()->openForSaving(szFile)))
+		return;
+	outfile->write(buffer, sizeof(WTP_SAVE_GAME));
+	delete outfile;
 }
 
 Winnie::Winnie(PreAgiEngine* vm) : _vm(vm) {

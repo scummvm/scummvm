@@ -331,6 +331,14 @@ private:
 	void dropObj(int);
 	bool isRightObj(int, int, int*);
 	void drawObjPic(int, int, int);
+	void getMenuMouseSel(int*, int[], int, int);
+	void setFlag(int);
+	void clearFlag(int);
+	void gameOver();
+	void saveGame();
+	void loadGame();
+	void writeSaveGame(uint8*);
+	void readSaveGame(uint8*);
 };
 
 }
