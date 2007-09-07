@@ -26,6 +26,8 @@
 #include "agi/preagi_winnie.h"
 #include "agi/graphics.h"
 
+#include "graphics/cursorman.h"
+
 #include "common/events.h"
 
 namespace Agi {
@@ -490,26 +492,47 @@ void Winnie::decMenuSel(int *iSel, int fCanSel[]) {
 }
 
 void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
-	Common::Event event_;
+	Common::Event event;
 	int x, y;
 
 	clrMenuSel(iSel, fCanSel);
 	drawMenu(szMenu, *iSel, fCanSel);
+
+	// Show the mouse cursor for the menu
+	CursorMan.showMouse(true);
 
 	for (;;) {
 		// check if tigger/mist is to be triggered
 //			if (something)
 //				event = true;
 
-		while (_vm->_system->getEventManager()->pollEvent(event_)) {
-			switch(event_.type) {
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch(event.type) {
 			case Common::EVENT_QUIT:
 				_vm->_system->quit();
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				x = event_.mouse.x;
-				y = event_.mouse.y;
+				x = event.mouse.x;
+				y = event.mouse.y;
 				//Winnie_GetMenuMouseSel(iSel, fCanSel, x, y);
+
+				// Change cursor
+				if (fCanSel[IDI_WTP_SEL_NORTH] && (event.mouse.x >= 20 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2) &&
+					(event.mouse.y >= 0 && event.mouse.y <= 10)) {
+					_vm->_gfx->setCursorPalette(true);
+				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && (event.mouse.x >= 20 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2) &&
+					(event.mouse.y >= IDI_WTP_PIC_HEIGHT - 10 && event.mouse.y <= IDI_WTP_PIC_HEIGHT)) {
+					_vm->_gfx->setCursorPalette(true);			
+				} else if (fCanSel[IDI_WTP_SEL_WEST] && (event.mouse.y >= 0  && event.mouse.y <= IDI_WTP_PIC_HEIGHT) &&
+					(event.mouse.x >= 20 && event.mouse.x <= 30)) {
+					_vm->_gfx->setCursorPalette(true);
+				} else if (fCanSel[IDI_WTP_SEL_EAST] && (event.mouse.y >= 0  && event.mouse.y <= IDI_WTP_PIC_HEIGHT) &&
+					(event.mouse.x >= IDI_WTP_PIC_WIDTH * 2 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2)) {
+					_vm->_gfx->setCursorPalette(true);
+				} else {
+					_vm->_gfx->setCursorPalette(false);
+				}
+
 				break;
 			case Common::EVENT_LBUTTONUP:
 				switch(*iSel) {
@@ -519,12 +542,16 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 						for (int iSel2 = 0; iSel2 < IDI_WTP_MAX_OPTION; iSel2++) {
 							if (*iSel == (fCanSel[iSel2 + IDI_WTP_SEL_REAL_OPT_1] - 1)) {
 								*iSel = iSel2;
+								// Menu selection made, hide the mouse cursor
+								CursorMan.showMouse(false);
 								return;
 							}
 						}
 						break;
 					default:
 						if (fCanSel[*iSel]) {
+							// Menu selection made, hide the mouse cursor
+							CursorMan.showMouse(false);
 							return;
 						}
 						break;
@@ -532,11 +559,9 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				break;
 			case Common::EVENT_RBUTTONUP:
 				*iSel = IDI_WTP_SEL_BACK;
+				// Menu selection made, hide the mouse cursor
+				CursorMan.showMouse(false);
 				return;
-			//FIXME: ScummVM does not support the middle mouse button
-			//case Common::EVENT_MBUTTONUP:
-			//	Winnie_Inventory();
-			//	break;
 			case Common::EVENT_WHEELUP:
 				decMenuSel(iSel, fCanSel);
 				break;
@@ -544,12 +569,16 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				incMenuSel(iSel, fCanSel);
 				break;
 			case Common::EVENT_KEYDOWN:
-				switch (event_.kbd.keycode) {
+				switch (event.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
 					*iSel = IDI_WTP_SEL_HOME;
+					// Menu selection made, hide the mouse cursor
+					CursorMan.showMouse(false);
 					return;
 				case Common::KEYCODE_BACKSPACE:
 					*iSel = IDI_WTP_SEL_BACK;
+					// Menu selection made, hide the mouse cursor
+					CursorMan.showMouse(false);
 					return;
 				case Common::KEYCODE_c:
 					inventory();
@@ -566,8 +595,10 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				case Common::KEYCODE_1:
 				case Common::KEYCODE_2:
 				case Common::KEYCODE_3:
-					*iSel = event_.kbd.keycode - Common::KEYCODE_1;
+					*iSel = event.kbd.keycode - Common::KEYCODE_1;
 					if (fCanSel[*iSel + IDI_WTP_SEL_REAL_OPT_1]) {
+						// Menu selection made, hide the mouse cursor
+						CursorMan.showMouse(false);
 						return;
 					} else {
 						keyHelp();
@@ -579,7 +610,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					makeSel();
 					break;
 				case Common::KEYCODE_s:
-					if (event_.kbd.flags & Common::KBD_CTRL) {
+					if (event.kbd.flags & Common::KBD_CTRL) {
 						//FlipSound();
 					} else {
 						*iSel = IDI_WTP_SEL_SOUTH;
@@ -610,12 +641,16 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 						for (int iSel2 = 0; iSel2 < IDI_WTP_MAX_OPTION; iSel2++) {
 							if (*iSel == (fCanSel[iSel2 + IDI_WTP_SEL_REAL_OPT_1] - 1)) {
 								*iSel = iSel2;
+								// Menu selection made, hide the mouse cursor
+								CursorMan.showMouse(false);
 								return;
 							}
 						}
 						break;
 					default:
 						if (fCanSel[*iSel]) {
+							// Menu selection made, hide the mouse cursor
+							CursorMan.showMouse(false);
 							return;
 						}
 						break;
@@ -718,11 +753,11 @@ void Winnie::drawRoomPic() {
 }
 
 bool Winnie::getSelOkBack() {
-	Common::Event event_;
+	Common::Event event;
 
 	for (;;) {
-		while (_vm->_system->getEventManager()->pollEvent(event_)) {
-			switch (event_.type) {
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
 				case Common::EVENT_QUIT:
 					_vm->_system->quit();
 					break;
@@ -731,7 +766,7 @@ bool Winnie::getSelOkBack() {
 				case Common::EVENT_RBUTTONUP:
 					return false;
 				case Common::EVENT_KEYDOWN:
-					switch (event_.kbd.keycode) {
+					switch (event.kbd.keycode) {
 					case Common::KEYCODE_BACKSPACE:
 						return false;
 					default:
