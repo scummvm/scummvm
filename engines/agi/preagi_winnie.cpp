@@ -52,7 +52,7 @@ void Winnie::initVars() {
 
 	mist = -1;
 	wind = false;
-	event = false;
+	winnie_event = false;
 }
 
 void Winnie::readRoom(int iRoom, uint8 *buffer, int buflen) {
@@ -240,7 +240,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			if (++game.nMoves == IDI_WTP_MAX_MOVES_UNTIL_WIND)
 				wind = true;
 
-			if (event && (room <= IDI_WTP_MAX_ROOM_TELEPORT)) {
+			if (winnie_event && (room <= IDI_WTP_MAX_ROOM_TELEPORT)) {
 				if (!tigger_mist) {
 					tigger_mist = 1;
 					//Winnie_Tigger();
@@ -248,7 +248,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 					tigger_mist = 0;
 					//Winnie_Mist();
 				}
-				event = false;
+				winnie_event = false;
 				return IDI_WTP_PAR_GOTO;
 			}
 
@@ -286,11 +286,11 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				}
 				break;
 			case IDI_WTP_SEL_TAKE:
-				//Winnie_TakeObj(room);
+				takeObj(room);
 				setTakeDrop();
 				break;
 			case IDI_WTP_SEL_DROP:
-				//Winnie_DropObj(room);
+				dropObj(room);
 				setTakeDrop();
 				break;
 			}
@@ -410,6 +410,125 @@ void Winnie::printObjStr(int iObj, int iStr) {
 	_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr] - IDI_WTP_OFS_OBJ));
 
 	free(buffer);
+}
+
+bool Winnie::isRightObj(int iRoom, int iObj, int *iCode) {
+	WTP_ROOM_HDR roomhdr;
+	WTP_OBJ_HDR	objhdr;
+	uint8 *roomdata = new uint8[4096];
+	uint8 *objdata = new uint8[2048];
+
+	readRoom(iRoom, roomdata, 4096);
+	memcpy(&roomhdr, roomdata, sizeof(WTP_ROOM_HDR));
+	readObj(iObj, objdata, 2048);
+	memcpy(&objhdr, objdata, sizeof(WTP_OBJ_HDR));
+
+	delete [] roomdata;
+	delete [] objdata;
+
+	*iCode = objhdr.objId;
+
+	if (objhdr.objId == 11) objhdr.objId = 34;
+
+	if (roomhdr.objId == objhdr.objId)
+		return true;
+	else
+		return false;
+}
+
+void Winnie::takeObj(int iRoom) {
+	if (game.iObjHave) {
+		// player is already carrying an object, can't take
+		_vm->printStr(IDS_WTP_CANT_TAKE);
+		_vm->waitAnyKeyChoice();
+	} else {
+		// take object
+		int iObj = getObjInRoom(iRoom);
+		game.iObjHave = iObj;
+		game.iObjRoom[iObj] = 0;
+
+		_vm->printStr(IDS_WTP_OK);
+		//Winnie_PlaySound(IDI_WTP_SND_TAKE);
+
+		drawRoomPic();
+
+		// print object "take" string
+		printObjStr(game.iObjHave, IDI_WTP_OBJ_TAKE);
+		_vm->waitAnyKeyChoice();
+
+		// HACK WARNING
+		if (iObj == 18) {
+			game.fGame[0x0d] = 1;
+		}
+	}
+}
+
+void Winnie::dropObj(int iRoom) {
+	int iCode;
+
+	if (getObjInRoom(iRoom)) {
+		// there already is an object in the room, can't drop
+		_vm->printStr(IDS_WTP_CANT_DROP);
+		_vm->waitAnyKeyChoice();
+	} else {
+		// HACK WARNING
+		if (game.iObjHave == 18) {
+			game.fGame[0x0d] = 0;
+		}
+
+		if (isRightObj(iRoom, game.iObjHave, &iCode)) {
+			// object has been dropped in the right place
+			_vm->printStr(IDS_WTP_OK);
+			_vm->waitAnyKeyChoice();
+			//Winnie_PlaySound(IDI_WTP_SND_DROP_OK);
+			printObjStr(game.iObjHave, IDI_WTP_OBJ_DROP);
+			_vm->waitAnyKeyChoice();
+
+			// increase amount of objects returned, decrease amount of objects missing
+			game.nObjMiss--;
+			game.nObjRet++;
+			
+			// xor the dropped object with 0x80 to signify it has been dropped in the right place
+			for (int i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++) {
+				if (game.iUsedObj[i] == game.iObjHave) {
+					game.iUsedObj[i] ^= 0x80;
+					break;
+				}
+			}
+
+			// set flag according to dropped object's id
+			game.fGame[iCode] = 1;
+			
+			// player is carrying nothing
+			game.iObjHave = 0;
+			
+			if (!game.nObjMiss) {
+				// all objects returned, tell player to find party
+				//Winnie_PlaySound(IDI_WTP_SND_FANFARE);
+				_vm->printStr(IDS_WTP_GAME_OVER_0);
+				_vm->waitAnyKeyChoice();
+				_vm->printStr(IDS_WTP_GAME_OVER_1);
+				_vm->waitAnyKeyChoice();
+			}
+		} else {
+			// drop object in the given room
+			game.iObjRoom[game.iObjHave] = iRoom;
+
+			// object has been dropped in the wrong place
+			_vm->printStr(IDS_WTP_WRONG_PLACE);
+			_vm->waitAnyKeyChoice();
+			//Winnie_PlaySound(IDI_WTP_SND_DROP);
+			drawRoomPic();
+			_vm->printStr(IDS_WTP_WRONG_PLACE);
+			_vm->waitAnyKeyChoice();
+
+			// print object description
+			printObjStr(game.iObjHave, IDI_WTP_OBJ_DESC);
+			_vm->waitAnyKeyChoice();
+
+			game.iObjHave = 0;
+		}
+	}
 }
 
 void Winnie::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
@@ -683,8 +802,8 @@ phase0:
 	drawRoomPic();
 phase1:
 	if (getObjInRoom(room)) {
-	//	Winnie_PrintObjStr(Winnie_GetObjInRoom(room), IDI_WTP_OBJ_DESC);
-	//	_vm->waitAnyKeyChoice();
+		printObjStr(getObjInRoom(room), IDI_WTP_OBJ_DESC);
+		_vm->waitAnyKeyChoice();
 	}
 phase2:
 	for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
@@ -725,10 +844,31 @@ void Winnie::drawPic(const char *szName) {
 	delete [] buffer;
 }
 
+void Winnie::drawObjPic(int iObj, int x0, int y0) {
+	WTP_OBJ_HDR	objhdr;
+	uint8 *buffer = new uint8[2048];
+
+	if (!iObj)
+		return;
+
+	readObj(iObj, buffer, 2048);
+	memcpy(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
+
+	_vm->preAgiLoadResource(rPICTURE, buffer + objhdr.ofsPic - IDI_WTP_OFS_OBJ);
+	_vm->_picture->setOffset(x0, y0);
+	_vm->_picture->decodePicture(0, false, false, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_vm->_picture->setOffset(0, 0);
+	_vm->_picture->showPic(10, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();
+
+	delete [] buffer;
+}
+
 void Winnie::drawRoomPic() {
 	WTP_ROOM_HDR roomhdr;
 	uint8 *buffer = new uint8[4096];
-	//int iObj = Winnie_GetObjInRoom(room);
+	int iObj = getObjInRoom(room);
 
 	// clear gfx screen
 	_vm->_gfx->clearScreen(0);
@@ -747,7 +887,7 @@ void Winnie::drawRoomPic() {
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	// draw object picture
-	//Winnie_DrawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
+	drawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
 
 	delete [] buffer;
 }

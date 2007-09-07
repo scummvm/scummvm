@@ -300,7 +300,7 @@ private:
 	int room;
 	int	mist;
 	bool wind;
-	bool event;
+	bool winnie_event;
 	int	tigger_mist;
 
 	void initEngine();
@@ -327,6 +327,10 @@ private:
 	void inventory();
 	void printObjStr(int, int);
 	void readObj(int, uint8*, int);
+	void takeObj(int);
+	void dropObj(int);
+	bool isRightObj(int, int, int*);
+	void drawObjPic(int, int, int);
 };
 
 }
