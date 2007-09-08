@@ -801,7 +801,7 @@ void ScummEngine_v60he::o60_kernelSetFunctions() {
 void ScummEngine_v60he::virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2) {
 	vsUnpackCtx ctx;
 	memset(&ctx, 0, sizeof(ctx));
-	VirtScreen &vs = virtscr[kMainVirtScreen];
+	VirtScreen &vs = _virtscr[kMainVirtScreen];
 
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, resIdx);
 	virtScreenLoadUnpack(&ctx, ah->data);
@@ -875,7 +875,7 @@ void ScummEngine_v60he::o60_kernelGetFunctions() {
 
 int ScummEngine_v60he::virtScreenSave(byte *dst, int x1, int y1, int x2, int y2) {
 	int packedSize = 0;
-	VirtScreen &vs = virtscr[kMainVirtScreen];
+	VirtScreen &vs = _virtscr[kMainVirtScreen];
 
 	for (int j = y1; j <= y2; ++j) {
 		uint8 *p = vs.getBackPixels(x1, j - vs.topline);

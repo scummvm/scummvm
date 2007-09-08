@@ -1446,7 +1446,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 		bcr->_actorX *= V12_X_MULTIPLIER;
 		bcr->_actorY *= V12_Y_MULTIPLIER;
 	}
-	bcr->_actorX -= _vm->virtscr[0].xstart;
+	bcr->_actorX -= _vm->_virtscr[kMainVirtScreen].xstart;
 	
 	if (_vm->_game.platform == Common::kPlatformNES) {
 		// In the NES version, when the actor is facing right,
@@ -1532,7 +1532,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	_heNoTalkAnimation = 0;
 
 	// If the actor is partially hidden, redraw it next frame.
-	if (bcr->drawCostume(_vm->virtscr[0], _vm->_gdi->_numStrips, this, _drawToBackBuf) & 1) {
+	if (bcr->drawCostume(_vm->_virtscr[kMainVirtScreen], _vm->_gdi->_numStrips, this, _drawToBackBuf) & 1) {
 		_needRedraw = (_vm->_game.version <= 6);
 	}
 
@@ -2325,7 +2325,7 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 					int y = (int16)READ_LE_UINT16(axfd + 4) + dy;
 					int w = (int16)READ_LE_UINT16(axfd + 6);
 					int h = (int16)READ_LE_UINT16(axfd + 8);
-					VirtScreen *pvs = &virtscr[kMainVirtScreen];
+					VirtScreen *pvs = &_virtscr[kMainVirtScreen];
 					uint8 *dst1 = pvs->getPixels(0, pvs->topline);
 					uint8 *dst2 = pvs->getBackPixels(0, pvs->topline);
 					switch (comp) {

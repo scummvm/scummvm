@@ -51,6 +51,7 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height);
 static void clear8Col(byte *dst, int dstPitch, int height);
 
 static void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height);
+static void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
 
 struct StripTable {
 	int offsets[160];
@@ -318,7 +319,7 @@ void ScummEngine::initScreens(int b, int h) {
 
 void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int height, bool twobufs,
 													 bool scrollable) {
-	VirtScreen *vs = &virtscr[slot];
+	VirtScreen *vs = &_virtscr[slot];
 	int size;
 
 	assert(height >= 0);
@@ -374,7 +375,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 }
 
 VirtScreen *ScummEngine::findVirtScreen(int y) {
-	VirtScreen *vs = virtscr;
+	VirtScreen *vs = _virtscr;
 	int i;
 
 	for (i = 0; i < 3; i++, vs++) {
@@ -386,7 +387,7 @@ VirtScreen *ScummEngine::findVirtScreen(int y) {
 }
 
 void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, int top, int bottom, int dirtybit) {
-	VirtScreen *vs = &virtscr[virt];
+	VirtScreen *vs = &_virtscr[virt];
 	int lp, rp;
 
 	if (left > right || top > bottom)
@@ -452,7 +453,7 @@ void ScummEngine::drawDirtyScreenParts() {
 	// Update game area ("stage")
 	if (camera._last.x != camera._cur.x || (_game.version >= 7 && (camera._cur.y != camera._last.y))) {
 		// Camera moved: redraw everything
-		VirtScreen *vs = &virtscr[kMainVirtScreen];
+		VirtScreen *vs = &_virtscr[kMainVirtScreen];
 		drawStripToScreen(vs, 0, vs->w, 0, vs->h);
 		vs->setDirtyRange(vs->h, 0);
 	} else {
@@ -497,7 +498,7 @@ void ScummEngine_v6::drawDirtyScreenParts() {
  * a full blit is done, otherwise only the visible dirty areas are updated.
  */
 void ScummEngine::updateDirtyScreen(VirtScreenNumber slot) {
-	VirtScreen *vs = &virtscr[slot];
+	VirtScreen *vs = &_virtscr[slot];
 
 	// Do nothing for unused virtual screens
 	if (vs->h == 0)
@@ -741,7 +742,7 @@ void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *wid
 	*height = dsty - *y;
 }
 
-void ScummEngine::scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
+void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
 	byte *dstL1 = dst;
 	byte *dstL2 = dst + dstPitch;
 
@@ -775,7 +776,7 @@ void ScummEngine::initBGBuffers(int height) {
 		// Resize main virtual screen in V7 games. This is necessary
 		// because in V7, rooms may be higher than one screen, so we have
 		// to accomodate for that.
-		initVirtScreen(kMainVirtScreen, virtscr[0].topline, _screenWidth, height, true, true);
+		initVirtScreen(kMainVirtScreen, _virtscr[kMainVirtScreen].topline, _screenWidth, height, true, true);
 	}
 
 	if (_game.heversion >= 70)
@@ -899,7 +900,7 @@ void ScummEngine_v71he::redrawBGAreas() {
 	byte *room = getResourceAddress(rtRoomImage, _roomResource) + _IM00_offs;
 	if (_fullRedraw) {
 		_bgNeedsRedraw = false;
-		_gdi->drawBMAPBg(room, &virtscr[0]);
+		_gdi->drawBMAPBg(room, &_virtscr[kMainVirtScreen]);
 	}
 
 	drawRoomObjects(0);
@@ -925,7 +926,7 @@ void ScummEngine::redrawBGStrip(int start, int num) {
 	else
 		room = getResourceAddress(rtRoom, _roomResource);
 
-	_gdi->drawBitmap(room + _IM00_offs, &virtscr[0], s, 0, _roomWidth, virtscr[0].h, s, num, 0);
+	_gdi->drawBitmap(room + _IM00_offs, &_virtscr[kMainVirtScreen], s, 0, _roomWidth, _virtscr[kMainVirtScreen].h, s, num, 0);
 }
 
 void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
@@ -983,7 +984,7 @@ void ScummEngine::restoreCharsetBg() {
 		// restoreBackground(), but was changed to only restore those parts which are
 		// currently covered by the charset mask.
 
-		VirtScreen *vs = &virtscr[_charset->_textScreenID];
+		VirtScreen *vs = &_virtscr[_charset->_textScreenID];
 		if (!vs->h)
 			return;
 
@@ -1018,7 +1019,7 @@ void ScummEngine::clearTextSurface() {
 }
 
 byte *ScummEngine::getMaskBuffer(int x, int y, int z) {
-	return _gdi->getMaskBuffer((x + virtscr[0].xstart) / 8, y, z);
+	return _gdi->getMaskBuffer((x + _virtscr[kMainVirtScreen].xstart) / 8, y, z);
 }
 
 byte *Gdi::getMaskBuffer(int x, int y, int z) {
@@ -1219,7 +1220,7 @@ void ScummEngine_v5::clearFlashlight() {
 
 void ScummEngine_v5::drawFlashlight() {
 	int i, j, x, y;
-	VirtScreen *vs = &virtscr[kMainVirtScreen];
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	// Remove the flash light first if it was previously drawn
 	if (_flashlight.isDrawn) {
@@ -1919,7 +1920,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 
 	if (code == 8 || code == 9) {
 		Common::Rect rScreen(0, 0, vs->w, vs->h);
-		byte *dst = (byte *)_vm->virtscr[0].backBuf + scrX;
+		byte *dst = (byte *)_vm->_virtscr[kMainVirtScreen].backBuf + scrX;
 		Wiz::copyWizImage(dst, bmap_ptr, vs->w, vs->h, x - scrX, y, w, h, &rScreen);
 	}
 
@@ -1939,7 +1940,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 
 void ScummEngine_v70he::restoreBackgroundHE(Common::Rect rect, int dirtybit) {
 	byte *src, *dst;
-	VirtScreen *vs = &virtscr[0];
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	if (rect.top > vs->h || rect.bottom < 0)
 		return;
@@ -1965,12 +1966,12 @@ void ScummEngine_v70he::restoreBackgroundHE(Common::Rect rect, int dirtybit) {
 	if (rw == 0 || rh == 0)
 		return;
 
-	src = virtscr[0].getBackPixels(rect.left, rect.top);
-	dst = virtscr[0].getPixels(rect.left, rect.top);
+	src = _virtscr[kMainVirtScreen].getBackPixels(rect.left, rect.top);
+	dst = _virtscr[kMainVirtScreen].getPixels(rect.left, rect.top);
 	
 	assert(rw <= _screenWidth && rw > 0);
 	assert(rh <= _screenHeight && rh > 0);
-	blit(dst, virtscr[0].pitch, src, virtscr[0].pitch, rw, rh);
+	blit(dst, _virtscr[kMainVirtScreen].pitch, src, _virtscr[kMainVirtScreen].pitch, rw, rh);
 	markRectAsDirty(kMainVirtScreen, rect, dirtybit);
 }
 #endif
@@ -1979,7 +1980,7 @@ void ScummEngine_v70he::restoreBackgroundHE(Common::Rect rect, int dirtybit) {
  * Reset the background behind an actor or blast object.
  */
 void Gdi::resetBackground(int top, int bottom, int strip) {
-	VirtScreen *vs = &_vm->virtscr[0];
+	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 	byte *backbuff_ptr, *bgbak_ptr;
 	int numLinesToProcess;
 	
@@ -3158,7 +3159,7 @@ void ScummEngine::fadeIn(int effect) {
 		// that broke the FOA intro. Probably other things as well.
 		//
 		// Hopefully it's safe to do it at this point, at least.
-		virtscr[0].setDirtyRange(0, 0);
+		_virtscr[kMainVirtScreen].setDirtyRange(0, 0);
  		transitionEffect(effect - 1);
 		break;
 	case 128:
@@ -3176,7 +3177,7 @@ void ScummEngine::fadeIn(int effect) {
 		dissolveEffect(1, 1);
 		break;
 	case 135:
-		dissolveEffect(1, virtscr[0].h);
+		dissolveEffect(1, _virtscr[kMainVirtScreen].h);
 		break;
 	default:
 		error("Unknown screen effect, %d", effect);
@@ -3185,7 +3186,7 @@ void ScummEngine::fadeIn(int effect) {
 }
 
 void ScummEngine::fadeOut(int effect) {
-	VirtScreen *vs = &virtscr[0];
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	vs->setDirtyRange(0, 0);
 	if (_game.version < 7)
@@ -3222,7 +3223,7 @@ void ScummEngine::fadeOut(int effect) {
 			dissolveEffect(1, 1);
 			break;
 		case 135:
-			dissolveEffect(1, virtscr[0].h);
+			dissolveEffect(1, _virtscr[kMainVirtScreen].h);
 			break;
 		default:
 			error("fadeOut: default case %d", effect);
@@ -3252,7 +3253,7 @@ void ScummEngine::transitionEffect(int a) {
 	int i, j;
 	int bottom;
 	int l, t, r, b;
-	const int height = MIN((int)virtscr[0].h, _screenHeight);
+	const int height = MIN((int)_virtscr[kMainVirtScreen].h, _screenHeight);
 	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
 
 	for (i = 0; i < 16; i++) {
@@ -3274,8 +3275,8 @@ void ScummEngine::transitionEffect(int a) {
 			if (t == b) {
 				while (l <= r) {
 					if (l >= 0 && l < _gdi->_numStrips && t < bottom) {
-						virtscr[0].tdirty[l] = _screenTop + t * 8;
-						virtscr[0].bdirty[l] = _screenTop + (b + 1) * 8;
+						_virtscr[kMainVirtScreen].tdirty[l] = _screenTop + t * 8;
+						_virtscr[kMainVirtScreen].bdirty[l] = _screenTop + (b + 1) * 8;
 					}
 					l++;
 				}
@@ -3286,8 +3287,8 @@ void ScummEngine::transitionEffect(int a) {
 					b = bottom;
 				if (t < 0)
 					t = 0;
- 				virtscr[0].tdirty[l] = _screenTop + t * 8;
-				virtscr[0].bdirty[l] = _screenTop + (b + 1) * 8;
+ 				_virtscr[kMainVirtScreen].tdirty[l] = _screenTop + t * 8;
+				_virtscr[kMainVirtScreen].bdirty[l] = _screenTop + (b + 1) * 8;
 			}
 			updateDirtyScreen(kMainVirtScreen);
 		}
@@ -3310,7 +3311,7 @@ void ScummEngine::transitionEffect(int a) {
  * dissolveEffect(virtsrc[0].width, 1) produces a line-by-line dissolve
  */
 void ScummEngine::dissolveEffect(int width, int height) {
-	VirtScreen *vs = &virtscr[0];
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 	int *offsets;
 	int blits_before_refresh, blits;
 	int x, y;
@@ -3419,7 +3420,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 }
 
 void ScummEngine::scrollEffect(int dir) {
-	VirtScreen *vs = &virtscr[0];
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	int x, y;
 	int step;

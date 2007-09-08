@@ -1053,9 +1053,9 @@ void ScummEngine_v2::o2_drawSentence() {
 	}
 
 	_string[2].charset = 1;
-	_string[2].ypos = virtscr[kVerbVirtScreen].topline;
+	_string[2].ypos = _virtscr[kVerbVirtScreen].topline;
 	_string[2].xpos = 0;
-	_string[2].right = virtscr[kVerbVirtScreen].w - 1;
+	_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
 	if (_game.platform == Common::kPlatformNES) {
 		_string[2].xpos = 16;
 		_string[2].color = 0;
@@ -1087,15 +1087,15 @@ void ScummEngine_v2::o2_drawSentence() {
 	string[i] = 0;
 
 	if (_game.platform == Common::kPlatformNES) {
-		sentenceline.top = virtscr[kVerbVirtScreen].topline;
-		sentenceline.bottom = virtscr[kVerbVirtScreen].topline + 16;
+		sentenceline.top = _virtscr[kVerbVirtScreen].topline;
+		sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 16;
 		sentenceline.left = 16;
-		sentenceline.right = virtscr[kVerbVirtScreen].w - 1;
+		sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
 	} else {
-		sentenceline.top = virtscr[kVerbVirtScreen].topline;
-		sentenceline.bottom = virtscr[kVerbVirtScreen].topline + 8;
+		sentenceline.top = _virtscr[kVerbVirtScreen].topline;
+		sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8;
 		sentenceline.left = 0;
-		sentenceline.right = virtscr[kVerbVirtScreen].w - 1;
+		sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
 	}
 	restoreBackground(sentenceline);
 
@@ -1590,9 +1590,9 @@ void ScummEngine_v2::setUserState(byte state) {
 
 	// Hide all verbs and inventory
 	Common::Rect rect;
-	rect.top = virtscr[kVerbVirtScreen].topline;
-	rect.bottom = virtscr[kVerbVirtScreen].topline + 8 * 88;
-	rect.right = virtscr[kVerbVirtScreen].w - 1;
+	rect.top = _virtscr[kVerbVirtScreen].topline;
+	rect.bottom = _virtscr[kVerbVirtScreen].topline + 8 * 88;
+	rect.right = _virtscr[kVerbVirtScreen].w - 1;
 	if (_game.platform == Common::kPlatformNES) {
 		rect.left = 16;
 	} else {

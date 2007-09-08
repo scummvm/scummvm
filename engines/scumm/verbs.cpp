@@ -86,7 +86,7 @@ static const VerbSettings v0VerbTable_German[] = {
 };
 
 void ScummEngine_v0::resetVerbs() {
-	VirtScreen *virt = &virtscr[kVerbVirtScreen];
+	VirtScreen *virt = &_virtscr[kVerbVirtScreen];
 	VerbSlot *vs;
 	int i;
 
@@ -121,7 +121,7 @@ void ScummEngine_v0::resetVerbs() {
 }
 
 void ScummEngine_v0::setNewKidVerbs() {
-	VirtScreen *virt = &virtscr[kVerbVirtScreen];
+	VirtScreen *virt = &_virtscr[kVerbVirtScreen];
 	VerbSlot *vs;
 	int i;
 
@@ -283,7 +283,7 @@ void ScummEngine_v2::initNESMouseOver() {
 }
 
 void ScummEngine_v2::checkV2MouseOver(Common::Point pos) {
-	VirtScreen *vs = &virtscr[kVerbVirtScreen];
+	VirtScreen *vs = &_virtscr[kVerbVirtScreen];
 	Common::Rect rect;
 	byte *ptr, *dst;
 	int i, x, y, new_box = -1;
@@ -346,7 +346,7 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 	int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
 	int object = 0;
 
-	y -= virtscr[kVerbVirtScreen].topline;
+	y -= _virtscr[kVerbVirtScreen].topline;
 
 	if ((y < inventoryArea) || !(_mouseAndKeyboardStat & MBS_LEFT_CLICK))
 		return;
@@ -391,7 +391,7 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 }
 
 void ScummEngine_v2::redrawV2Inventory() {
-	VirtScreen *vs = &virtscr[kVerbVirtScreen];
+	VirtScreen *vs = &_virtscr[kVerbVirtScreen];
 	int i;
 	int max_inv;
 	Common::Rect inventoryBox;
@@ -405,7 +405,7 @@ void ScummEngine_v2::redrawV2Inventory() {
 
 	// Clear on all invocations
 	inventoryBox.top = vs->topline + inventoryArea;
-	inventoryBox.bottom = vs->topline + virtscr[kVerbVirtScreen].h;
+	inventoryBox.bottom = vs->topline + vs->h;
 	inventoryBox.left = 0;
 	inventoryBox.right = vs->w;
 	restoreBackground(inventoryBox);

@@ -456,7 +456,7 @@ void ScummEngine::CHARSET_1() {
 	if (a && _string[0].overhead) {
 		int s;
 
-		_string[0].xpos = a->getPos().x - virtscr[0].xstart;
+		_string[0].xpos = a->getPos().x - _virtscr[kMainVirtScreen].xstart;
 		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop;
 
 		if (_game.version <= 5) {
@@ -678,7 +678,7 @@ void ScummEngine_v8::CHARSET_1() {
 	if (a && _string[0].overhead) {
 		int s;
 
-		_string[0].xpos = a->getPos().x - virtscr[0].xstart;
+		_string[0].xpos = a->getPos().x - _virtscr[kMainVirtScreen].xstart;
 		s = a->_scalex * a->_talkPosX / 255;
 		_string[0].xpos += (a->_talkPosX - s) / 2 + s;
 

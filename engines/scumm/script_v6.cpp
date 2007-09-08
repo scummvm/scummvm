@@ -2715,7 +2715,7 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 	int i;
 	int slot;
 	Actor *a;
-	VirtScreen *vs = &virtscr[0];
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	getStackList(args, ARRAYSIZE(args));
 

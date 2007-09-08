@@ -917,7 +917,7 @@ protected:
 public:
 	int _roomHeight, _roomWidth;
 	int _screenHeight, _screenWidth;
-	VirtScreen virtscr[4];		// Virtual screen areas
+	VirtScreen _virtscr[4];		// Virtual screen areas
 	CameraData camera;			// 'Camera' - viewport
 
 	int _screenStartStrip, _screenEndStrip;
@@ -1031,7 +1031,6 @@ protected:
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
-	void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
 
 public:
 	VirtScreen *findVirtScreen(int y);

@@ -619,10 +619,10 @@ void ScummEngine::drawObject(int obj, int arg) {
 
 #ifndef DISABLE_HE
 		if (_game.heversion >= 70 && findResource(MKID_BE('SMAP'), ptr) == NULL)
-			_gdi->drawBMAPObject(ptr, &virtscr[0], obj, od.x_pos, od.y_pos, od.width, od.height);
+			_gdi->drawBMAPObject(ptr, &_virtscr[kMainVirtScreen], obj, od.x_pos, od.y_pos, od.width, od.height);
 		else
 #endif
-			_gdi->drawBitmap(ptr, &virtscr[0], x, ypos, width * 8, height, x - xpos, numstrip, flags);
+			_gdi->drawBitmap(ptr, &_virtscr[kMainVirtScreen], x, ypos, width * 8, height, x - xpos, numstrip, flags);
 	}
 }
 
@@ -1626,7 +1626,7 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 	int objnum;
 	BompDrawData bdd;
 
-	vs = &virtscr[0];
+	vs = &_virtscr[kMainVirtScreen];
 
 	assertRange(30, eo->number, _numGlobalObjects - 1, "blast object");
 
@@ -1704,7 +1704,7 @@ void ScummEngine_v6::removeBlastObjects() {
 }
 
 void ScummEngine_v6::removeBlastObject(BlastObject *eo) {
-	VirtScreen *vs = &virtscr[0];
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	Common::Rect r;
 	int left_strip, right_strip;

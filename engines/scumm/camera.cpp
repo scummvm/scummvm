@@ -199,7 +199,7 @@ void ScummEngine::cameraMoved() {
 		screenLeft = _screenStartStrip * 8;
 	}
 
-	virtscr[0].xstart = screenLeft;
+	_virtscr[kMainVirtScreen].xstart = screenLeft;
 }
 
 void ScummEngine::panCameraTo(int x, int y) {

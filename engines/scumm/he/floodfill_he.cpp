@@ -179,7 +179,7 @@ skip:
 
 void floodFill(FloodFillParameters *ffp, ScummEngine_v90he *vm) {
 	uint8 *dst;
-	VirtScreen *vs = &vm->virtscr[kMainVirtScreen];
+	VirtScreen *vs = &vm->_virtscr[kMainVirtScreen];
 	if (ffp->flags & 0x8000) {
 		dst = vs->getBackPixels(0, vs->topline);
 	} else {

@@ -84,7 +84,7 @@ enum VirtScreenNumber {
 struct VirtScreen : Graphics::Surface {
 	/**
 	 * The unique id of this screen (corresponds to its position in the
-	 * ScummEngine:virtscr array).
+	 * ScummEngine:_virtscr array).
 	 */
 	VirtScreenNumber number;
 

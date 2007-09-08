@@ -1009,7 +1009,7 @@ static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common
 void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, int compType) {
 	debug(5, "ScummEngine_v72he::captureWizImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
 	uint8 *src = NULL;
-	VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
+	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 	if (backBuffer) {
 		src = pvs->getBackPixels(0, 0);
 	} else {
@@ -1182,7 +1182,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 			assert(dst);
 			getWizImageDim(dstResNum, 0, cw, ch);
 		} else {
-			VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
+			VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 			if (flags & kWIFMarkBufferDirty) {
 				dst = pvs->getPixels(0, pvs->topline);
 			} else {
@@ -1377,7 +1377,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 	if (srcWizBuf) {
 		uint8 *dst;
 		int32 dstw, dsth, dstpitch, wizW, wizH;
-		VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
+		VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
 
 		if (dstResNum) {

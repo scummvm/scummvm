@@ -652,7 +652,7 @@ static int gfxPrimitivesCompareInt(const void *a, const void *b);
 
 
 static void hlineColor(ScummEngine *scumm, int x1, int x2, int y, byte color) {
-	VirtScreen *vs = &scumm->virtscr[0];
+	VirtScreen *vs = &scumm->_virtscr[kMainVirtScreen];
 	byte *ptr;
 
 	// Clip y

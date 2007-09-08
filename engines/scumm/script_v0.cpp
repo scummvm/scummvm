@@ -527,9 +527,9 @@ void ScummEngine_v0::drawSentence() {
 	}
 
 	_string[2].charset = 1;
-	_string[2].ypos = virtscr[kVerbVirtScreen].topline;
+	_string[2].ypos = _virtscr[kVerbVirtScreen].topline;
 	_string[2].xpos = 0;
-	_string[2].right = virtscr[kVerbVirtScreen].w - 1;
+	_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
 	_string[2].color = 16;
 
 	byte string[80];
@@ -550,10 +550,10 @@ void ScummEngine_v0::drawSentence() {
 	}
 	string[i] = 0;
 
-	sentenceline.top = virtscr[kVerbVirtScreen].topline;
-	sentenceline.bottom = virtscr[kVerbVirtScreen].topline + 8;
+	sentenceline.top = _virtscr[kVerbVirtScreen].topline;
+	sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8;
 	sentenceline.left = 0;
-	sentenceline.right = virtscr[kVerbVirtScreen].w - 1;
+	sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
 	restoreBackground(sentenceline);
 
 	drawString(2, (byte*)string);

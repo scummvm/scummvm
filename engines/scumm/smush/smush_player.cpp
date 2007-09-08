@@ -265,6 +265,8 @@ SmushPlayer::~SmushPlayer() {
 }
 
 void SmushPlayer::init(int32 speed) {
+	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
+
 	_frame = 0;
 	_speed = speed;
 	_endOfFile = false;
@@ -273,7 +275,7 @@ void SmushPlayer::init(int32 speed) {
 	_vm->_smushActive = true;
 
 	_vm->setDirtyColors(0, 255);
-	_dst = _vm->virtscr[0].getPixels(0, 0);
+	_dst = vs->getPixels(0, 0);
 
 	// HACK HACK HACK: This is an *evil* trick, beware!
 	// We do this to fix bug #1037052. A proper solution would change all the
@@ -281,10 +283,10 @@ void SmushPlayer::init(int32 speed) {
 	// However, since a lot of the SMUSH code currently assumes the screen
 	// width and pitch to be equal, this will require lots of changes. So
 	// we resort to this hackish solution for now.
-	_origPitch = _vm->virtscr[0].pitch;
+	_origPitch = vs->pitch;
 	_origNumStrips = _vm->_gdi->_numStrips;
-	_vm->virtscr[0].pitch = _vm->virtscr[0].w;
-	_vm->_gdi->_numStrips = _vm->virtscr[0].w / 8;
+	vs->pitch = vs->w;
+	_vm->_gdi->_numStrips = vs->w / 8;
 
 	_vm->_mixer->stopHandle(_compressedFileSoundHandle);
 	_vm->_mixer->stopHandle(_IACTchannel);
@@ -319,7 +321,7 @@ void SmushPlayer::release() {
 
 	// HACK HACK HACK: This is an *evil* trick, beware! See above for
 	// some explanation.
-	_vm->virtscr[0].pitch = _origPitch;
+	_vm->_virtscr[kMainVirtScreen].pitch = _origPitch;
 	_vm->_gdi->_numStrips = _origNumStrips;
 
 	delete _codec37;

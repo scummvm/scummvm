@@ -228,7 +228,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_roomWidth = 0;
 	_screenHeight = 0;
 	_screenWidth = 0;
-	memset(virtscr, 0, sizeof(virtscr));
+	memset(_virtscr, 0, sizeof(_virtscr));
 	memset(&camera, 0, sizeof(CameraData));
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 	memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
@@ -1377,7 +1377,7 @@ void ScummEngine::resetScumm() {
 	}
 	camera._follows = 0;
 
-	virtscr[0].xstart = 0;
+	_virtscr[0].xstart = 0;
 
 	_mouse.x = 104;
 	_mouse.y = 56;

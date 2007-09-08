@@ -546,7 +546,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 
 	scaleytab = &v1.scaletable[v1.scaleYindex];
 	maskbit = revBitMask(v1.x & 7);
-	mask = _vm->getMaskBuffer(v1.x - (_vm->virtscr[0].xstart & 7), v1.y, _zbuf);
+	mask = _vm->getMaskBuffer(v1.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), v1.y, _zbuf);
 
 	if (len)
 		goto StartPos;
@@ -610,7 +610,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 					skip_column = true;
 				v1.scaleXindex += v1.scaleXstep;
 				dst = v1.destptr;
-				mask = _vm->getMaskBuffer(v1.x - (_vm->virtscr[0].xstart & 7), v1.y, _zbuf);
+				mask = _vm->getMaskBuffer(v1.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), v1.y, _zbuf);
 			}
 		StartPos:;
 		} while (--len);
@@ -982,8 +982,8 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 }
 
 void AkosRenderer::markRectAsDirty(Common::Rect rect) {
-	rect.left -= _vm->virtscr[0].xstart & 7;
-	rect.right -= _vm->virtscr[0].xstart & 7;
+	rect.left -= _vm->_virtscr[kMainVirtScreen].xstart & 7;
+	rect.right -= _vm->_virtscr[kMainVirtScreen].xstart & 7;
 	_vm->markRectAsDirty(kMainVirtScreen, rect, _actorID);
 }
 

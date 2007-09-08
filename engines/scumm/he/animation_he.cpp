@@ -89,7 +89,7 @@ void MoviePlayer::handleNextFrame() {
 		return;
 	}
 
-	VirtScreen *pvs = &_vm->virtscr[kMainVirtScreen];
+	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 
 	decodeNextFrame();
 

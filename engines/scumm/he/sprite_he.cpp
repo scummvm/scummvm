@@ -1120,7 +1120,7 @@ void Sprite::resetBackground() {
 }
 
 void Sprite::setRedrawFlags(bool checkZOrder) {
-	VirtScreen *vs = &_vm->virtscr[kMainVirtScreen];
+	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 	for (int i = 0; i < _numSpritesToProcess; ++i) {
 		SpriteInfo *spi = _activeSpritesTable[i];
 		if (!(spi->flags & kSFNeedRedraw)) {

@@ -236,7 +236,7 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 }
 
 void ScummEngine_v6::useIm01Cursor(const byte *im, int w, int h) {
-	VirtScreen *vs = &virtscr[0];
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 	byte *buf, *dst;
 	const byte *src;
 	int i;

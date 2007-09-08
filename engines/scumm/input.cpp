@@ -249,14 +249,15 @@ void ScummEngine::processInput() {
 	if (_mouse.y > _screenHeight-1)
 		_mouse.y = _screenHeight-1;
 
-	_virtualMouse.x = _mouse.x + virtscr[0].xstart;
-	_virtualMouse.y = _mouse.y - virtscr[0].topline;
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+	_virtualMouse.x = _mouse.x + vs->xstart;
+	_virtualMouse.y = _mouse.y - vs->topline;
 	if (_game.version >= 7)
 		_virtualMouse.y += _screenTop;
 
 	if (_virtualMouse.y < 0)
 		_virtualMouse.y = -1;
-	if (_virtualMouse.y >= virtscr[0].h)
+	if (_virtualMouse.y >= vs->h)
 		_virtualMouse.y = -1;
 
 	//
