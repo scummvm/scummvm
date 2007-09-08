@@ -144,8 +144,7 @@ uint32 Disk::getEntrySize(uint16 id) {
 	return size;
 }
 
-MemoryBlock *Disk::getEntry(uint16 id)
-{
+MemoryBlock *Disk::getEntry(uint16 id) {
 	// Special room area check
 	uint16 tempId = id & 0x3fff;
 	if ((tempId == 0x120) || (tempId == 0x311) || (tempId == 8) || (tempId == 0x410)) {

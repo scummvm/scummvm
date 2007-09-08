@@ -420,8 +420,7 @@ uint16 Hotspot::nameId() {
 		return _data->nameId;
 }
 
-const char *Hotspot::getName()
-{
+const char *Hotspot::getName() {
 	// If name hasn't been loaded yet, then do so
 	if (!_nameBuffer[0] && (nameId() != 0))
 		StringData::getReference().getString(nameId(), _nameBuffer);
@@ -844,12 +843,12 @@ void Hotspot::startTalkDialog() {
 /*                                                                         */
 /*-------------------------------------------------------------------------*/
 
-uint16 validRoomExitHotspots[] = {0x2711, 0x2712, 0x2714, 0x2715, 0x2716, 0x2717,
+static const uint16 validRoomExitHotspots[] = {0x2711, 0x2712, 0x2714, 0x2715, 0x2716, 0x2717,
 	0x2718, 0x2719, 0x271A, 0x271E, 0x271F, 0x2720, 0x2721, 0x2722, 0x2725, 0x2726,
 	0x2729, 0x272A, 0x272B, 0x272C, 0x272D, 0x272E, 0x272F, 0};
 
 bool Hotspot::isRoomExit(uint16 id) {
-	for (uint16 *p = &validRoomExitHotspots[0]; *p != 0; ++p) 
+	for (const uint16 *p = &validRoomExitHotspots[0]; *p != 0; ++p) 
 		if (*p == id) return true;
 	return false;
 }
@@ -1155,12 +1154,10 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 
 void Hotspot::doNothing(HotspotData *hotspot) {
 	_currentActions.pop();
-	if (!_currentActions.isEmpty())
-	{
+	if (!_currentActions.isEmpty()) {
 		setBlockedFlag(false);
 		currentActions().top().setAction(DISPATCH_ACTION);
-	}
-	else if (hotspotId() == PLAYER_ID) {
+	} else if (hotspotId() == PLAYER_ID) {
 		Room::getReference().setCursorState(CS_NONE);
 	}
 }
@@ -1520,59 +1517,32 @@ void Hotspot::doLook(HotspotData *hotspot) {
 	Dialog::show(Room::getReference().descId());
 }
 
-uint16 hotspotLookAtList[] = {0x411, 0x412, 0x41F, 0x420, 0x421, 0x422, 0x426, 
+static const uint16 hotspotLookAtList[] = {0x411, 0x412, 0x41F, 0x420, 0x421, 0x422, 0x426, 
 	0x427, 0x428, 0x429, 0x436, 0x437, 0};
 
 void Hotspot::doLookAt(HotspotData *hotspot) {
-	Resources &res = Resources::getReference();
-	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, LOOK_AT);
-
-	if (hotspot->hotspotId >= FIRST_NONCHARACTER_ID) {
-		// Check if the hotspot appears in the list of hotspots that don't
-		// need to be walked to before being looked at
-		uint16 *tempId = &hotspotLookAtList[0];
-		while ((*tempId != 0) && (*tempId != hotspot->hotspotId)) ++tempId;
-		if (!*tempId) {
-			// Hotspot wasn't in the list
-			HotspotPrecheckResult result = actionPrecheck(hotspot);
-			if (result == PC_WAIT) return;
-			else if (result != PC_EXECUTE) {
-				endAction();
-				return;
-			}
-		}
-	}
-
-	faceHotspot(hotspot);
-	setActionCtr(0);
-	endAction();
-
-	if (sequenceOffset >= 0x8000) {
-		showMessage(sequenceOffset);
-	} else {
-		if (sequenceOffset != 0) 
-			sequenceOffset = Script::execute(sequenceOffset);
-
-		if (sequenceOffset == 0) {
-			uint16 descId = (hotspot->descId2 != 0) ? hotspot->descId2 : hotspot->descId;
-			Dialog::show(descId);
-		}
-	}
+	doLookAction(hotspot, LOOK_AT);
 }
 
 void Hotspot::doLookThrough(HotspotData *hotspot) {
+	doLookAction(hotspot, LOOK_THROUGH);
+}
+
+void Hotspot::doLookAction(HotspotData *hotspot, Action action) {
 	Resources &res = Resources::getReference();
-	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, LOOK_THROUGH);
+	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, action);
 
 	if (hotspot->hotspotId >= FIRST_NONCHARACTER_ID) {
 		// Check if the hotspot appears in the list of hotspots that don't
 		// need to be walked to before being looked at
-		uint16 *tempId = &hotspotLookAtList[0];
-		while ((*tempId != 0) && (*tempId != hotspot->hotspotId)) ++tempId;
+		const uint16 *tempId = &hotspotLookAtList[0];
+		while ((*tempId != 0) && (*tempId != hotspot->hotspotId))
+			++tempId;
 		if (!*tempId) {
 			// Hotspot wasn't in the list
 			HotspotPrecheckResult result = actionPrecheck(hotspot);
-			if (result == PC_WAIT) return;
+			if (result == PC_WAIT)
+				return;
 			else if (result != PC_EXECUTE) {
 				endAction();
 				return;
@@ -1735,7 +1705,7 @@ void Hotspot::doReturn(HotspotData *hotspot) {
 	endAction();
 }
 
-uint16 bribe_hotspot_list[] = {0x421, 0x879, 0x3E9, 0x8C7, 0x429, 0x8D1,
+static const uint16 bribe_hotspot_list[] = {0x421, 0x879, 0x3E9, 0x8C7, 0x429, 0x8D1,
 	0x422, 0x8D4, 0x420, 0x8D6, 0x42B, 0x956, 0x3F2, 0xBE6, 0};
 
 void Hotspot::doBribe(HotspotData *hotspot) {
@@ -1751,7 +1721,7 @@ void Hotspot::doBribe(HotspotData *hotspot) {
 		return;
 	}
 	
-	uint16 *tempId = &bribe_hotspot_list[0];
+	const uint16 *tempId = &bribe_hotspot_list[0];
 	uint16 sequenceOffset = 0x14B;     // Default sequence offset
 	while (*tempId != 0) {
 		if (*tempId++ == hotspotId()) {
@@ -2044,8 +2014,7 @@ uint16 Hotspot::getTalkId(HotspotData *charHotspot) {
 	TalkHeaderData *headerEntry;
 
 	// If the hotspot has a talk data override, return it
-	if (charHotspot->talkOverride != 0)
-	{
+	if (charHotspot->talkOverride != 0) {
 		// Has an override, so return it and reset back to zero
 		uint16 result = charHotspot->talkOverride;
 		charHotspot->talkOverride = 0;
@@ -2513,8 +2482,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 			
 			// Increment the blocked state 
 			h.setBlockedState((BlockedState) ((int) h.blockedState() + 1));
-			if (!h.blockedFlag())
-			{
+			if (!h.blockedFlag()) {
 				// Not already handling blocked, so add a new dummy action so that the new
 				// action set below will not replace the existing one
 				h.currentActions().addFront(DISPATCH_ACTION, 0);
@@ -2892,7 +2860,7 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 				h.currentActions().addFront(DISPATCH_ACTION, player->roomNumber());
 			else {
 				// Scan through the translation list for an alternate destination room
-				RoomTranslationRecord *p = &roomTranslations[0];
+				const RoomTranslationRecord *p = &roomTranslations[0];
 				while ((p->srcRoom != 0) && (p->srcRoom != player->roomNumber()))
 					++p;
 				h.currentActions().addFront(DISPATCH_ACTION, 
@@ -3013,12 +2981,9 @@ void HotspotTickHandlers::droppingTorchAnimHandler(Hotspot &h) {
 }
 
 void HotspotTickHandlers::playerSewerExitAnimHandler(Hotspot &h) {
-	if (h.frameCtr() > 0)
-	{
+	if (h.frameCtr() > 0) {
 		h.decrFrameCtr();
-	}
-	else if (h.executeScript())
-	{
+	} else if (h.executeScript()) {
 		Resources &res = Resources::getReference();
 
 		// Deactive the dropping animation
@@ -3521,7 +3486,7 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 
 	// All other actions
 	uint16 xp, id;
-	uint16 *frameList;
+	const uint16 *frameList;
 	uint16 frameNumber;
 
 	BarmanAction action = (BarmanAction) (h.frameCtr() & 0x3F);
@@ -3555,12 +3520,10 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 					HotspotData *gwyn = res.getHotspot(GOEWIN_ID);
 					HotspotData *wayne = res.getHotspot(WAYNE_ID);
 
-					if ((player->roomNumber != 35) && (gwyn->roomNumber != 35) && (wayne->roomNumber != 35))
-					{
+					if ((player->roomNumber != 35) && (gwyn->roomNumber != 35) && (wayne->roomNumber != 35)) {
 						if (rnd.getRandomNumber(1) == 1)
 							id = BG_EXTRA1 << 8;
-						else
-						{
+						else {
 							// Set up alternate animation
 							h.setWidth(32);
 							h.setAnimation(EWAN_ALT_ANIM_ID);
@@ -3581,15 +3544,13 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 		frameList = barEntry.graphics[h.supportValue() >> 8];
 		frameNumber = frameList[h.supportValue() & 0xff];
 
-		if (frameNumber != 0)
-		{
+		if (frameNumber != 0) {
 			h.setActionCtr(frameNumber);
 			h.setFrameNumber(frameNumber);
 			return;
 		}
 
-		if (h.hotspotId() == EWAN_ID)
-		{
+		if (h.hotspotId() == EWAN_ID) {
 			// Make sure Ewan is back to his standard animation
 			h.setWidth(16);
 			h.setAnimation(EWAN_ANIM_ID);
@@ -4298,16 +4259,13 @@ void CurrentActionEntry::saveToStream(WriteStream *stream) {
 	if (hasSupportData()) {
 		// Handle the support data
 		stream->writeByte(_dynamicSupportData);
-		if (_dynamicSupportData)
-		{
+		if (_dynamicSupportData) {
 			// Write out the dynamic data
 			stream->writeByte(supportData().action());
 			stream->writeSint16LE(supportData().numParams());
 			for (int index = 0; index < supportData().numParams(); ++index)
 				stream->writeUint16LE(supportData().param(index));
-		}
-		else
-		{
+		} else {
 			// Write out the Id for the static entry
 			stream->writeSint16LE(supportData().id());
 		}
@@ -4331,8 +4289,7 @@ CurrentActionEntry *CurrentActionEntry::loadFromStream(ReadStream *stream) {
 	} else {
 		// Handle support data for the entry
 		bool dynamicData = stream->readByte() != 0;
-		if (dynamicData)
-		{
+		if (dynamicData) {
 			// Load action entry that has dynamic data
 			result = new CurrentActionEntry(
 				(CurrentAction) actionNum, roomNumber);
@@ -4345,9 +4302,7 @@ CurrentActionEntry *CurrentActionEntry::loadFromStream(ReadStream *stream) {
 				
 			result->_supportData->setDetails2(action, numParams, paramList);
 			delete paramList;
-		}
-		else
-		{
+		} else {
 			// Load action entry with an NPC schedule entry
 			uint16 entryId = stream->readUint16LE();
 			CharacterScheduleEntry *entry = res.charSchedules().getEntry(entryId);
@@ -4431,8 +4386,7 @@ void CurrentActionStack::saveToStream(WriteStream *stream) {
 	list(buffer);
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "%s", buffer);
 
-	for (i = _actions.begin(); i != _actions.end(); ++i)
-	{
+	for (i = _actions.begin(); i != _actions.end(); ++i) {
 		CurrentActionEntry *rec = *i;
 		rec->saveToStream(stream);
 	}
@@ -4590,8 +4544,7 @@ bool Support::isCharacterInList(uint16 *lst, int numEntries, uint16 charId) {
 
 void HotspotList::saveToStream(WriteStream *stream) {
 	HotspotList::iterator i;
-	for (i = begin(); i != end(); ++i)
-	{
+	for (i = begin(); i != end(); ++i) {
 		Hotspot *hotspot = *i;
 		debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Saving hotspot %xh", hotspot->hotspotId());
 		bool dynamicObject = hotspot->hotspotId() != hotspot->originalId();
@@ -4611,8 +4564,7 @@ void HotspotList::loadFromStream(ReadStream *stream) {
 
 	clear();
 	uint16 hotspotId = stream->readUint16LE();
-	while (hotspotId != 0)
-	{
+	while (hotspotId != 0) {
 		debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Loading hotspot %xh", hotspotId);
 		bool dynamicObject = stream->readByte() != 0;
 		uint16 destHotspotId = stream->readUint16LE();
@@ -4622,9 +4574,7 @@ void HotspotList::loadFromStream(ReadStream *stream) {
 			Hotspot *destHotspot = res.getActiveHotspot(destHotspotId);
 			assert(destHotspot);
 			hotspot = new Hotspot(destHotspot, hotspotId);
-		}
-		else
-		{
+		} else {
 			HotspotData *hotspotData = res.getHotspot(hotspotId);
 			assert(hotspotData);
 			hotspot = new Hotspot(hotspotData);

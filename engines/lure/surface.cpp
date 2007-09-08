@@ -51,8 +51,7 @@ void Surface::initialise() {
 		byte *pChar = int_font->data() + (ctr * 8);
 		fontSize[ctr] = 0;
 
-		for (int yp = 0; yp < FONT_HEIGHT; ++yp) 
-		{
+		for (int yp = 0; yp < FONT_HEIGHT; ++yp)  {
 			byte v = *pChar++;
 
 			for (int xp = 0; xp < FONT_WIDTH; ++xp) {
@@ -156,13 +155,11 @@ void Surface::transparentCopyTo(Surface *dest) {
 	}
 }
 
-void Surface::copyTo(Surface *dest)
-{
+void Surface::copyTo(Surface *dest) {
 	copyTo(dest, 0, 0);
 }
 
-void Surface::copyTo(Surface *dest, uint16 x, uint16 y)
-{
+void Surface::copyTo(Surface *dest, uint16 x, uint16 y) {
 	if ((x == 0) && (dest->width() == _width)) {
 		// Use fast data transfer
 		uint32 dataSize = dest->data().size() - (y * _width);
@@ -790,7 +787,7 @@ struct RestartRecord {
 	RestartRecordPos BtnRestore;
 };
 
-RestartRecord buttonBounds[] = {
+static const RestartRecord buttonBounds[] = {
 	{ EN_ANY, 48, 14, { 118, 152 }, { 168, 152 } },
 	{ DE_DEU, 48, 14, { 106, 152 }, { 168, 152 } },
 	{ UNK_LANG, 48, 14, { 112, 152 }, { 168, 152 } }
@@ -817,7 +814,7 @@ bool RestartRestoreDialog::show() {
 		Memory::dealloc(firstSave);
 
 		// Get the correct button bounds record to use
-		RestartRecord *btnRecord = &buttonBounds[0];
+		const RestartRecord *btnRecord = &buttonBounds[0];
 		while ((btnRecord->Language != engine.getLanguage()) && 
 			   (btnRecord->Language != UNK_LANG))
 			++btnRecord;

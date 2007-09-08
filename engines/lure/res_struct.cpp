@@ -30,47 +30,47 @@
 
 namespace Lure {
 
-const Action sortedActions[] = {ASK, BRIBE, BUY, CLOSE, DRINK, EXAMINE, GET, GIVE, 
+extern const Action sortedActions[] = {ASK, BRIBE, BUY, CLOSE, DRINK, EXAMINE, GET, GIVE, 
 	GO_TO, LOCK, LOOK, LOOK_AT, LOOK_THROUGH, OPEN, OPERATE, PULL, PUSH, RETURN, 
 	STATUS, TALK_TO, TELL, UNLOCK, USE, NONE};
 
-int actionNumParams[NPC_JUMP_ADDRESS+1] = {0, 
+extern const int actionNumParams[NPC_JUMP_ADDRESS+1] = {0, 
 	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
 	0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
 
 // Barman related frame lists
 
-uint16 basicPolish[] = {8+13,8+14,8+15,8+16,8+17,8+18,8+17,8+16,8+15,8+14,
+static const uint16 basicPolish[] = {8+13,8+14,8+15,8+16,8+17,8+18,8+17,8+16,8+15,8+14,
 	8+15,8+16,8+17,8+18,8+17,8+16,8+15,8+14,8+13,0};
 
-uint16 sidsFetch[] = {12+1,12+2,12+3,12+4,12+5,12+6,12+5,12+6,12+5,12+4,12+3,12+7,12+8,0};
+static const uint16 sidsFetch[] = {12+1,12+2,12+3,12+4,12+5,12+6,12+5,12+6,12+5,12+4,12+3,12+7,12+8,0};
 
-uint16 nelliesScratch[] = {11+1,11+2,11+3,11+4,11+5,11+4,11+5,11+4,11+5,11+4,11+3,11+2,11+1,0};
+static const uint16 nelliesScratch[] = {11+1,11+2,11+3,11+4,11+5,11+4,11+5,11+4,11+5,11+4,11+3,11+2,11+1,0};
 
-uint16 nelliesFetch[] = {1,2,3,4,5,4,5,4,3,2,6,7,0};
+static const uint16 nelliesFetch[] = {1,2,3,4,5,4,5,4,3,2,6,7,0};
 
-uint16 ewansFetch[] = {13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,0};
+static const uint16 ewansFetch[] = {13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,0};
 
-uint16 ewanExtraGraphic1[]= {
+static const uint16 ewanExtraGraphic1[]= {
 	28,29,30,31,32,33,34,35,36,37,
 	38,39,40,41,42,43,44,45,46,47,
 	48,
 	40,39,38,37,36,35,34,33,32,31,30,29,28,
 	0};
 
-uint16 ewanExtraGraphic2[] = {
+static const uint16 ewanExtraGraphic2[] = {
 	1,2,3,4,5,6,7,8,9,
 	10,11,12,13,14,15,16,17,18,19,
 	20,21,22,23,24,0};
 
-BarEntry barList[3] = {
+static const BarEntry default_barList[3] = {
 	{29, SID_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&basicPolish[0], &sidsFetch[0], NULL, NULL}, 13, NULL},
 	{32, NELLIE_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&nelliesScratch[0], &nelliesFetch[0], NULL, NULL}, 14, NULL},
 	{35, EWAN_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&ewansFetch[0], &ewansFetch[0], 
 		&ewanExtraGraphic1[0], &ewanExtraGraphic2[0]}, 16, NULL}
 };
 
-RoomTranslationRecord roomTranslations[] = {
+extern const RoomTranslationRecord roomTranslations[] = {
 	{0x1E, 0x13}, {0x07, 0x08}, {0x1C, 0x12}, {0x26, 0x0F}, 
 	{0x27, 0x0F}, {0x28, 0x0F}, {0x29, 0x0F}, {0x22, 0x0A}, 
 	{0x23, 0x13}, {0x24, 0x14}, {0x31, 0x2C}, {0x2F, 0x2C},
@@ -521,8 +521,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 
 void HotspotDataList::saveToStream(WriteStream *stream) {
 	iterator i;
-	for (i = begin(); i != end(); ++i)
-	{
+	for (i = begin(); i != end(); ++i) {
 		HotspotData *hotspot = *i;
 		stream->writeUint16LE(hotspot->hotspotId);
 		hotspot->saveToStream(stream);
@@ -534,8 +533,7 @@ void HotspotDataList::loadFromStream(ReadStream *stream) {
 	Resources &res = Resources::getReference();
 	iterator i;
 	uint16 hotspotId = stream->readUint16LE();
-	while (hotspotId != 0)
-	{
+	while (hotspotId != 0) {
 		HotspotData *hotspot = res.getHotspot(hotspotId);
 		assert(hotspot);
 		hotspot->loadFromStream(stream);
@@ -967,8 +965,7 @@ RandomActionSet::~RandomActionSet() {
 
 RandomActionSet *RandomActionList::getRoom(uint16 roomNumber) {
 	iterator i;
-	for (i = begin(); i != end(); ++i) 
-	{
+	for (i = begin(); i != end(); ++i) {
 		RandomActionSet *v = *i;
 		if (v->roomNumber() == roomNumber)
 			return v;
@@ -1108,8 +1105,7 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 			// There was, so move to next impinging character entry
 			continue;
 
-		if ((hotspot->hotspotId() == PLAYER_ID) && !hotspot->coveredFlag())
-		{
+		if ((hotspot->hotspotId() == PLAYER_ID) && !hotspot->coveredFlag()) {
 			hotspot->updateMovement();
 			return 1;
 		}
@@ -1141,39 +1137,37 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 
 // Wrapper class for the barman lists
 
-BarEntry &BarmanLists::getDetails(uint16 roomNumber)
-{
+BarmanLists::BarmanLists() {
 	for (int index = 0; index < 3; ++index)
-		if (barList[index].roomNumber == roomNumber)
-			return barList[index];
+		_barList[index] = default_barList[index];
+}
+
+BarEntry &BarmanLists::getDetails(uint16 roomNumber) {
+	for (int index = 0; index < 3; ++index)
+		if (_barList[index].roomNumber == roomNumber)
+			return _barList[index];
 	error("Invalid room %d specified for barman details retrieval", roomNumber);
 }
 
-void BarmanLists::saveToStream(Common::WriteStream *stream)
-{
-	for (int index = 0; index < 2; ++index)
-	{
-		uint16 value = (barList[index].currentCustomer - &barList[index].customers[0]) / sizeof(BarEntry);
+void BarmanLists::saveToStream(Common::WriteStream *stream) {
+	for (int index = 0; index < 2; ++index) {
+		uint16 value = (_barList[index].currentCustomer - &_barList[index].customers[0]) / sizeof(BarEntry);
 		stream->writeUint16LE(value);
-		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr)
-		{
-			stream->writeUint16LE(barList[index].customers[ctr].hotspotId);
-			stream->writeByte(barList[index].customers[ctr].serveFlags);
+		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr) {
+			stream->writeUint16LE(_barList[index].customers[ctr].hotspotId);
+			stream->writeByte(_barList[index].customers[ctr].serveFlags);
 		}
 	}
 }
 
-void BarmanLists::loadFromStream(Common::ReadStream *stream)
-{
-	for (int index = 0; index < 2; ++index)
-	{
+void BarmanLists::loadFromStream(Common::ReadStream *stream) {
+	for (int index = 0; index < 2; ++index) {
 		int16 value = stream->readUint16LE();
-		barList[index].currentCustomer = (value == 0) ? NULL : &barList[index].customers[value];
+		_barList[index].currentCustomer = (value == 0) ? NULL : &_barList[index].customers[value];
 
-		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr)
-		{
-			barList[index].customers[ctr].hotspotId = stream->readUint16LE();
-			barList[index].customers[ctr].serveFlags = stream->readByte();
+		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr) {
+			_barList[index].customers[ctr].hotspotId = stream->readUint16LE();
+			_barList[index].customers[ctr].serveFlags = stream->readByte();
 		}
 	}
 }
@@ -1250,8 +1244,7 @@ void ValueTableData::setField(FieldName fieldName, uint16 value) {
 	setField((uint16) fieldName, value);
 }
 
-void ValueTableData::saveToStream(Common::WriteStream *stream)
-{
+void ValueTableData::saveToStream(Common::WriteStream *stream) {
 	// Write out the special fields
 	stream->writeUint16LE(_numGroats);
 	stream->writeSint16LE(_playerNewPos.position.x);
@@ -1265,8 +1258,7 @@ void ValueTableData::saveToStream(Common::WriteStream *stream)
 		stream->writeUint16LE(_fieldList[index]);
 }
 
-void ValueTableData::loadFromStream(Common::ReadStream *stream)
-{
+void ValueTableData::loadFromStream(Common::ReadStream *stream) {
 	// Load special fields
 	_numGroats = stream->readUint16LE();
 	_playerNewPos.position.x = stream->readSint16LE();

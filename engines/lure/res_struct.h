@@ -629,7 +629,7 @@ public:
 
 // The following classes holds the data for NPC schedules
 
-extern int actionNumParams[NPC_JUMP_ADDRESS+1];
+extern const int actionNumParams[NPC_JUMP_ADDRESS+1];
 
 class CharacterScheduleSet;
 
@@ -741,13 +741,16 @@ struct BarEntry {
 	uint16 roomNumber;
 	uint16 barmanId;
 	ServeEntry customers[NUM_SERVE_CUSTOMERS];
-	uint16 *graphics[4];
+	const uint16 *graphics[4];
 	uint16 gridLine;
 	ServeEntry *currentCustomer;
 };
 
 class BarmanLists {
+	BarEntry _barList[3];
 public:
+	BarmanLists();
+
 	BarEntry &getDetails(uint16 roomNumber);
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);
@@ -760,7 +763,7 @@ struct RoomTranslationRecord {
 	uint8 destRoom;
 };
 
-extern RoomTranslationRecord roomTranslations[];
+extern const RoomTranslationRecord roomTranslations[];
 
 enum StringEnum {S_CREDITS = 25, S_RESTART_GAME = 26, S_SAVE_GAME = 27, S_RESTORE_GAME = 28, 
 	S_QUIT = 29, S_FAST_TEXT = 30, S_SLOW_TEXT = 31, S_SOUND_ON = 32, S_SOUND_OFF = 33, 

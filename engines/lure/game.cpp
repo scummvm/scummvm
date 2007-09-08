@@ -374,8 +374,7 @@ void Game::playerChangeRoom() {
 	}
 }
 
-void Game::displayChuteAnimation()
-{
+void Game::displayChuteAnimation() {
 	OSystem &system = *g_system;
 	Resources &res = Resources::getReference();
 	Screen &screen = Screen::getReference();
@@ -406,8 +405,7 @@ void Game::displayChuteAnimation()
 	fields.setField(AREA_FLAG, 1);
 }
 
-void Game::displayBarrelAnimation()
-{
+void Game::displayBarrelAnimation() {
 	OSystem &system = *g_system;
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
@@ -673,8 +671,7 @@ bool Game::GetTellActions() {
 					--_numTellCommands;
 					if (_numTellCommands < 0) 
 						paramIndex = -1;
-					else
-					{
+					else {
 						paramIndex = 3;
 						statusLine = statusLinePos[_numTellCommands][paramIndex];
 						*statusLine = '\0';
@@ -833,14 +830,12 @@ void Game::doAction(Action action, uint16 hotspotId, uint16 usedId) {
 	room.setCursorState(CS_ACTION);
 
 	// Set the action
-	if (action == TELL)
-	{
+	if (action == TELL) {
 		// Tell action needs special handling because of the variable length parameter list - add in a
 		// placeholder entry, and then replace it's details with the TELL command data
 		player->currentActions().addFront(NONE, player->roomNumber(), 0, 0);
 		player->currentActions().top().supportData().setDetails2(TELL, _numTellCommands * 3 + 1, &_tellCommands[0]);
-	}
-	else
+	} else
 		// All other action types
 		player->currentActions().addFront(action, player->roomNumber(), hotspotId, usedId);
 }

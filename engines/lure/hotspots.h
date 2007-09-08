@@ -342,6 +342,9 @@ private:
 	void npcPause(HotspotData *hotspot); 
 	void npcStartTalking(HotspotData *hotspot);
 	void npcJumpAddress(HotspotData *hotspot);
+	
+	// Auxillaries
+	void doLookAction(HotspotData *hotspot, Action action);
 public:
 	Hotspot(HotspotData *res);
 	Hotspot(Hotspot *character, uint16 objType);
