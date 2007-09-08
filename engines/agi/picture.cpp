@@ -66,6 +66,7 @@ void PictureMgr::putVirtPixel(int x, int y) {
 /* For the flood fill routines */
 
 /* MH2 needs stack size > 300 */
+// FIXME: Consider using FixedStack<> or Stack<> from common/stack.h here
 #define STACK_SIZE 512
 static unsigned int stackPtr;
 static uint16 stack[STACK_SIZE];
@@ -401,12 +402,12 @@ void PictureMgr::fill() {
 **************************************************************************/
 
 void PictureMgr::plotPattern(int x, int y) {
-	static uint16 binary_list[] = {0x8000, 0x4000, 0x2000, 0x1000, 0x800, 0x400, 0x200, 0x100, 
+	static const uint16 binary_list[] = {0x8000, 0x4000, 0x2000, 0x1000, 0x800, 0x400, 0x200, 0x100, 
 		0x80, 0x40, 0x20, 0x10, 0x8, 0x4, 0x2, 0x1};
 
-	static uint8 circle_list[] = {0, 1, 4, 9, 16, 25, 37, 50};
+	static const uint8 circle_list[] = {0, 1, 4, 9, 16, 25, 37, 50};
 
-	static uint16 circle_data[] =
+	static const uint16 circle_data[] =
 		{0x8000, 
 		0xE000, 0xE000, 0xE000, 
 		0x7000, 0xF800, 0x0F800, 0x0F800, 0x7000, 
@@ -417,7 +418,7 @@ void PictureMgr::plotPattern(int x, int y) {
 		0x07C0, 0x1FF0, 0x3FF8, 0x7FFC, 0x7FFC, 0x0FFFE, 0x0FFFE, 0x0FFFE, 0x0FFFE, 0x0FFFE, 0x7FFC, 0x7FFC, 0x3FF8, 0x1FF0, 0x07C0};
 
 	uint16 circle_word;
-	uint16 *circle_ptr;
+	const uint16 *circle_ptr;
 	uint16 counter;
 	uint16 pen_width = 0;
 	int pen_final_x = 0;
@@ -541,7 +542,6 @@ void PictureMgr::plotBrush() {
 void PictureMgr::drawPicture() {
 	uint8 act;
 	int drawing;
-	int storedXOffset = 0, storedYOffset = 0;
 
 	_patCode = 0;
 	_patNum = 0;
@@ -695,8 +695,8 @@ void PictureMgr::drawPicture() {
 			// FIXME: This is used by Mickey for the crystal animation, but
 			// currently it's very very very slow
 			/*
-			storedXOffset = _xOffset;
-			storedYOffset = _yOffset;
+			int storedXOffset = _xOffset;
+			int storedYOffset = _yOffset;
 			// FIXME: picture coordinates are correct for Mickey only
 			showPic(10, 0, _width, _height);
 			_gfx->doUpdate();

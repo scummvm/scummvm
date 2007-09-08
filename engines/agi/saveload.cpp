@@ -525,7 +525,7 @@ int AgiEngine::selectSlot() {
 	int oldActive = active + 1;
 
 	for (;;) {
-		int sbPos;
+		int sbPos = 0;
 
 		if (oldFirstSlot != _firstSlot || oldActive != active) {
 			char dstr[64];

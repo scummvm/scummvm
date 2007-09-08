@@ -869,7 +869,6 @@ void Mickey::drawLogo() {
 	const int w = 80;
 	const int h = 170;
 	uint8 bitmap[h][w];
-	uint8 color = 0, color2 = 0, color3 = 0, color4 = 0;
 
 	// read in logos.bcg
 	sprintf(szFile, IDS_MSA_PATH_LOGO);
@@ -886,10 +885,10 @@ void Mickey::drawLogo() {
 	// TODO: Show BCG picture
 	for (int y = 0; y < h; y++) {
 		for (int x = 0; x < w; x++) {
-			color  = (uint8)colorBCG[(bitmap[y][x] & 0xf0) / 0x10][0];	// background
-			color2 = (uint8)colorBCG[(bitmap[y][x] & 0xf0) / 0x10][1];	// background
-			color3 = (uint8)colorBCG[ bitmap[y][x] & 0x0f][0];			// foreground
-			color4 = (uint8)colorBCG[ bitmap[y][x] & 0x0f][1];			// foreground
+			uint8 color  = (uint8)colorBCG[(bitmap[y][x] & 0xf0) / 0x10][0];	// background
+			uint8 color2 = (uint8)colorBCG[(bitmap[y][x] & 0xf0) / 0x10][1];	// background
+			uint8 color3 = (uint8)colorBCG[ bitmap[y][x] & 0x0f][0];			// foreground
+			uint8 color4 = (uint8)colorBCG[ bitmap[y][x] & 0x0f][1];			// foreground
 
 			_vm->_picture->putPixel(x * 4,			y,		color);
 			_vm->_picture->putPixel(x * 4 + 1,		y,		color2);
