@@ -1500,6 +1500,7 @@ void DrasculaEngine::carga_escoba_1(const char *nom_fich) {
 
 	canal_p(para_codificar);
 
+	obj_salir = -1;
 	for (l = 0; l < objs_room; l++) {
 		if (num_obj[l] == obj_saliendo)
 			obj_salir = l;
@@ -1550,6 +1551,7 @@ void DrasculaEngine::carga_escoba_1(const char *nom_fich) {
 	}
 
 	if (hare_x == -1) {
+		assert(obj_salir != -1);
 		hare_x = x_alakeva[obj_salir];
 		hare_y = y_alakeva[obj_salir];
 		alto_hare = (ALTO_PERSONAJE * factor_red[hare_y]) / 100;
@@ -1721,12 +1723,14 @@ martini:
 		strcpy(fondo_y_menu,"99.alg");
 	}
 
+	obj_salir = -1;
 	for (l = 0; l < objs_room; l++) {
 		if (num_obj[l] == obj_saliendo)
 			obj_salir = l;
 	}
 
 	if (hare_x == -1) {
+		assert(obj_salir != -1);
 		hare_x = x_alakeva[obj_salir];
 		hare_y = y_alakeva[obj_salir] - alto_hare;
 	}
@@ -2105,7 +2109,7 @@ void DrasculaEngine::mesa() {
 void DrasculaEngine::saves() {
 	char nombres[10][23];
 	char fichero[13];
-	int n, n2, num_sav, y = 27;
+	int n, n2, num_sav = 0, y = 27;
 	Common::InSaveFile *sav;
 
 	borra_pantalla();
@@ -2140,6 +2144,9 @@ void DrasculaEngine::saves() {
 			for (n = 0; n < NUM_SAVES; n++) {
 				if (x_raton > 115 && y_raton > y + (9 * n) && x_raton < 115 + 175 && y_raton < y + 10 + (9 * n)) {
 					strcpy(select, nombres[n]);
+					
+				// FIXME: The indention is wrong and misleading here!!! Or maybe there's simply a
+				// closing brace missing here??? See below for a second FIXME of a similar kind...
 
 				if (strcmp(select, "*"))
 					hay_seleccion = 1;
@@ -2147,6 +2154,8 @@ void DrasculaEngine::saves() {
 					introduce_nombre();
 					strcpy(nombres[n], select);
 					if (hay_seleccion == 1) {
+						// FIXME: Just use:
+						//sprintf(fichero, "gsave%02d", n+1);
 						if (n == 0)
 							strcpy(fichero, "gsave01");
 						if (n == 1)
@@ -2186,6 +2195,8 @@ void DrasculaEngine::saves() {
 					y = y + 9;
 				}
 				if (hay_seleccion == 1) {
+					// FIXME: Just use:
+					//sprintf(fichero, "gsave%02d", n+1);
 					if (n == 0)
 						strcpy(fichero, "gsave01");
 					if (n == 1)
@@ -2205,7 +2216,12 @@ void DrasculaEngine::saves() {
 					if (n == 8)
 						strcpy(fichero, "gsave09");
 					if (n == 9)
-						strcpy(fichero, "gsave10");}
+						strcpy(fichero, "gsave10");}	// FIXME: EVIL wrong place for closing brace!
+					// In particular: is the assignment below maybe supposed to be inside the "if"
+					// statement that was just closed?
+					// Also note that the indention is wrong here, which is not immediately visible
+					// due to the other indention mistake above. But is the indention wrong, or is
+					// the brace placement wrong???
 					num_sav = n;
 				}
 			}
@@ -4930,6 +4946,11 @@ void DrasculaEngine::WaitForNext(int FPS) {
 }
 
 float DrasculaEngine::vez() {
+	// FIXME: This function is really silly. It first divides an int by an int (resulting
+	// in an *int*, loosing precision), *then* converts the result to a float and returns
+	// that -- only so that many calling functions have to convert it back to an int :-).
+	// So: Either divide by 20.0 / cast to float *first*, if you absolutly need the precision.
+	// Or: Just change this to return int!
 	return _system->getMillis() / 20; // originaly was 1
 }
 
@@ -8293,10 +8314,10 @@ void DrasculaEngine::animacion_12_5() {
 	DacPalette256 palFondo3;
 
 	int frame;
-	int rayo_x[] = {1, 46, 91, 136, 181, 226, 271, 181};
-	int frusky_x[] = {100, 139, 178, 217, 100, 178, 217, 139, 100, 139};
-	int elfrusky_x[] = {1, 68, 135, 1, 68, 135, 1, 68, 135, 68, 1, 135, 68, 135, 68};
-	int humo_x[] = {1, 29, 57, 85, 113, 141, 169, 197, 225};
+	const int rayo_x[] = {1, 46, 91, 136, 181, 226, 271, 181};
+	const int frusky_x[] = {100, 139, 178, 217, 100, 178, 217, 139, 100, 139};
+	const int elfrusky_x[] = {1, 68, 135, 1, 68, 135, 1, 68, 135, 68, 1, 135, 68, 135, 68};
+	//const int humo_x[] = {1, 29, 57, 85, 113, 141, 169, 197, 225};
 	int color, componente;
 	char fundido;
 
@@ -9108,7 +9129,7 @@ void DrasculaEngine::activa_pendulo() {
 
 	DIBUJA_FONDO(0, 171, 0, 0, ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_dibujo3);
 
-	conta_ciego_vez = vez();
+	conta_ciego_vez = (int)vez();
 }
 
 void DrasculaEngine::habla_pen(const char *dicho, const char *filename) {
@@ -9376,7 +9397,7 @@ void DrasculaEngine::refresca_60_antes() {
 	if (flag_tv == 1)
 		DIBUJA_FONDO(114, 158, 8, 30, 8, 23, dir_dibujo3, dir_zona_pantalla);
 
-	diferencia = vez() - conta_ciego_vez;
+	diferencia = (int)vez() - conta_ciego_vez;
 	parpadeo = _rnd->getRandomNumber(7);
 	if (parpadeo == 5 && flag_tv == 0)
 		flag_tv = 1;
@@ -9386,7 +9407,7 @@ void DrasculaEngine::refresca_60_antes() {
 		frame_velas++;
 		if (frame_velas == 3)
 			frame_velas = 0;
-		conta_ciego_vez = vez();
+		conta_ciego_vez = (int)vez();
 	}
 }
 
@@ -9679,12 +9700,12 @@ void DrasculaEngine::refresca_pendulo() {
 	if (flags[1] == 0)
 		DIBUJA_BLOQUE(44, 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
 
-	diferencia = vez() - conta_ciego_vez;
+	diferencia = (int)vez() - conta_ciego_vez;
 	if (diferencia > 8) {
 		frame_pen++;
 		if (frame_pen == 17)
 			frame_pen = 0;
-		conta_ciego_vez = vez();
+		conta_ciego_vez = (int)vez();
 	}
 }
 
