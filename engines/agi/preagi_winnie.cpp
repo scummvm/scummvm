@@ -760,6 +760,35 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 
 				break;
 			case Common::EVENT_LBUTTONUP:
+				// Click to move
+				if (fCanSel[IDI_WTP_SEL_NORTH] && (event.mouse.x >= 20 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2) &&
+					(event.mouse.y >= 0 && event.mouse.y <= 10)) {
+					*iSel = IDI_WTP_SEL_NORTH;
+					makeSel();
+					_vm->_gfx->setCursorPalette(false);
+					return;
+				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && (event.mouse.x >= 20 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2) &&
+					(event.mouse.y >= IDI_WTP_PIC_HEIGHT - 10 && event.mouse.y <= IDI_WTP_PIC_HEIGHT)) {
+					*iSel = IDI_WTP_SEL_SOUTH;
+					makeSel();
+					_vm->_gfx->setCursorPalette(false);
+					return;
+				} else if (fCanSel[IDI_WTP_SEL_WEST] && (event.mouse.y >= 0  && event.mouse.y <= IDI_WTP_PIC_HEIGHT) &&
+					(event.mouse.x >= 20 && event.mouse.x <= 30)) {
+					*iSel = IDI_WTP_SEL_WEST;
+					makeSel();
+					_vm->_gfx->setCursorPalette(false);
+					return;
+				} else if (fCanSel[IDI_WTP_SEL_EAST] && (event.mouse.y >= 0  && event.mouse.y <= IDI_WTP_PIC_HEIGHT) &&
+					(event.mouse.x >= IDI_WTP_PIC_WIDTH * 2 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2)) {
+					*iSel = IDI_WTP_SEL_EAST;
+					makeSel();
+					_vm->_gfx->setCursorPalette(false);
+					return;
+				} else {
+					_vm->_gfx->setCursorPalette(false);
+				}
+
 				switch(*iSel) {
 					case IDI_WTP_SEL_OPT_1:
 					case IDI_WTP_SEL_OPT_2:
