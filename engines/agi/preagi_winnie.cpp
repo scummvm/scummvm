@@ -544,7 +544,7 @@ void Winnie::dropObjRnd() {
 	if (!game.iObjHave)
 		return;
 	
-	int iRoom;
+	int iRoom = 0;
 	bool done = false;
 
 	while (!done) {
@@ -564,7 +564,7 @@ void Winnie::dropObjRnd() {
 }
 
 void Winnie::wind() {
-	int iRoom;
+	int iRoom = 0;
 	bool done;
 
 	doWind = 0;
