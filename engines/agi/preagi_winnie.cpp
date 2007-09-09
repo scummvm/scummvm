@@ -737,8 +737,8 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				_vm->_system->quit();
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				x = event.mouse.x;
-				y = event.mouse.y;
+				x = event.mouse.x / 8;
+				y = event.mouse.y / 8;
 				getMenuMouseSel(iSel, fCanSel, x, y);
 
 				// Change cursor
