@@ -101,8 +101,7 @@ SndRes::~SndRes() {
 	}
 }
 
-void SndRes::setVoiceBank(int serial)
-{
+void SndRes::setVoiceBank(int serial) {
 	if (_voiceSerial == serial) return;
 
 	_voiceSerial = serial;

@@ -98,8 +98,7 @@ int loadBackground(char *name, int idx) {
 			backgroundPtrtable[idx] =
 			    (uint8 *) mallocAndZero(320 * 200 /*64000 */ );
 		}
-/*		else
-		{
+/*		else {
 			backgroundPtrtable[idx] = hwMemAddr[idx];
 		} */
 	}

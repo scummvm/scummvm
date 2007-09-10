@@ -1226,8 +1226,7 @@ int CharsetRendererV3::getCharWidth(byte chr) {
 	return spacing;
 }
 
-void CharsetRendererV3::setColor(byte color)
-{
+void CharsetRendererV3::setColor(byte color) {
 	bool useShadow = false;
 	_color = color;
 

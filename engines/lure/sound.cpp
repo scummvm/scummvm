@@ -131,8 +131,7 @@ void SoundManager::addSound2(uint8 soundIndex) {
 	if (soundIndex == 6)
 		// Chinese torture
 		addSound(6);
-	else
-	{
+	else {
 		SoundDescResource &descEntry = soundDescs()[soundIndex];
 		SoundDescResource *rec = findSound(descEntry.soundNumber);
 		if (rec == NULL)

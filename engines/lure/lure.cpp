@@ -169,8 +169,7 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 	// Check for header
 	char buffer[5];
 	f->read(buffer, 5);
-	if (memcmp(buffer, "lure", 5) != 0)
-	{
+	if (memcmp(buffer, "lure", 5) != 0) {
 		warning(FAILED_MSG, slotNumber);
 		delete f;
 		return false;
@@ -179,8 +178,7 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 	// Check language version 
 	uint8 language = f->readByte();
 	uint8 version = f->readByte();
-	if ((language != _language) || (version != LURE_DAT_MINOR))
-	{
+	if ((language != _language) || (version != LURE_DAT_MINOR)) {
 		warning("loadGame: Failed to load slot %d - incorrect version", slotNumber);
 		delete f;
 		return false;

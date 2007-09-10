@@ -35,14 +35,12 @@ namespace Scumm {
 static uint32 CRCtable[256];
 
 
-static void	InitCRC (void)
-{
+static void	InitCRC (void) {
 	const uint32 poly = 0xEDB88320;
 	int i, j;
 	uint32 n;
 
-	for (i = 0; i < 256; i++)
-	{
+	for (i = 0; i < 256; i++) {
 		n = i;
 		for (j = 0; j < 8; j++)
 			n = (n & 1) ? ((n >> 1) ^ poly) : (n >> 1);
@@ -50,8 +48,7 @@ static void	InitCRC (void)
 	}
 }
 
-static uint32 GetCRC (byte *data, int len)
-{
+static uint32 GetCRC (byte *data, int len) {
 	uint32 CRC = 0xFFFFFFFF;
 	int i;
 	for (i = 0; i < len; i++)
@@ -1113,8 +1110,7 @@ public:
 	}
 	virtual bool update() {
 		assert(_id);
-		if (_curfreq >= _freq2)
-		{
+		if (_curfreq >= _freq2) {
 			_mod->setChannelFreq(_id, BASE_FREQUENCY / _curfreq);
 			_curfreq -= _bendrate;
 			if (--_bendctr)
@@ -1122,9 +1118,7 @@ public:
 			_bendrate--;
 			if (_bendrate < 2)
 				_bendrate = 2;
-		}
-		else
-		{
+		} else {
 			if (!--_holdctr)
 				return false;
 		}
@@ -1160,15 +1154,12 @@ public:
 	}
 	virtual bool update() {
 		assert(_id);
-		if (!_loop)
-		{
+		if (!_loop) {
 			_vol--;
 			if (_vol)
 				_mod->setChannelVol(_id, _vol);
 			else	return false;
-		}
-		else if (!--_loop)
-		{
+		} else if (!--_loop) {
 			_mod->stopChannel(_id);
 			char *tmp_data = (char *)malloc(_size2);
 			memcpy(tmp_data, _data + _offset2, _size2);

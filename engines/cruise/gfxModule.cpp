@@ -526,10 +526,8 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 		int i;
 		int j;
 
-		for(i=x;i<height+x;i++)
-		{
-			for(j=y;j<width*16+y;j++)
-			{
+		for(i=x;i<height+x;i++) {
+			for(j=y;j<width*16+y;j++) {
 				if(i>=0&&i<200&&j>=0&&j<320)
 					destPtr[i*320+j] = *(sourcePtr++);
 			}

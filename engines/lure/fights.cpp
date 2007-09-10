@@ -335,8 +335,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 			return;
 		}
 
-		switch (moveValue)
-		{
+		switch (moveValue) {
 		case 0xFFFA:
 			// Walk left
 			if ((fighter.fwmove_number == 5) || (fighter.fwmove_number == 10)) {

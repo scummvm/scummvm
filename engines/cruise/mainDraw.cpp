@@ -24,7 +24,8 @@
  */
 
 #include "cruise/cruise_main.h"
-#include "polys.h"
+#include "cruise/polys.h"
+#include "common/util.h"
 
 namespace Cruise {
 
@@ -131,8 +132,7 @@ void getPolyData(int fileIndex, int X, int Y, int *outScale, int *outY,
 
 		newFileIndex += fileIndex;
 
-		if (true /*newFileIndex >= 0 */ )	// FIXME: comparison is always true due to limited range of data type
-		{
+		if (true /*newFileIndex >= 0 */ ) {	// FIXME: comparison is always true due to limited range of data type
 			if (filesDatabase[newFileIndex].resType == 0
 			    && filesDatabase[newFileIndex].subData.ptr) {
 				dataPtr =
@@ -180,8 +180,7 @@ void getPolySize(int positionX, int positionY, int scale, int sizeTable[4],
 	int lowerBorder;
 	m_flipLeftRight = 0;
 
-	if (scale < 0)		// flip left right
-	{
+	if (scale < 0) {		// flip left right
 		m_flipLeftRight = 1;
 		scale = -scale;
 	}
@@ -208,11 +207,8 @@ void getPolySize(int positionX, int positionY, int scale, int sizeTable[4],
 
 	upperBorder = (upscaleValue(upperBorder, scale) + 0x8000) >> 16;
 
-	if (upperBorder < lowerBorder)	// exchange borders if lower > upper
-	{
-		int temp = upperBorder;
-		upperBorder = lowerBorder;
-		lowerBorder = temp;
+	if (upperBorder < lowerBorder) {	// exchange borders if lower > upper
+		SWAP(upperBorder, lowerBorder);
 	}
 
 	sizeTable[0] = lowerBorder;	// left
@@ -231,11 +227,8 @@ void getPolySize(int positionX, int positionY, int scale, int sizeTable[4],
 	upperBorder -= *(dataPtr + 4);
 	upperBorder = (upscaleValue(upperBorder, scale) + 0x8000) >> 16;
 
-	if (upperBorder < lowerBorder)	// exchange borders if lower > upper
-	{
-		int temp = upperBorder;
-		upperBorder = lowerBorder;
-		lowerBorder = temp;
+	if (upperBorder < lowerBorder) {	// exchange borders if lower > upper
+		SWAP(upperBorder, lowerBorder);
 	}
 
 	sizeTable[2] = lowerBorder;	// bottom
@@ -397,8 +390,7 @@ void buildPolyModel(int positionX, int positionY, int scale, char *ptr2,
 		m_flipLeftRight = 1;
 	}
 
-	if (scale < 0x180)	// If scale is smaller than 384
-	{
+	if (scale < 0x180) {	// If scale is smaller than 384
 		m_useSmallScale = 1;
 		m_scaleValue = scale << 1;	// double scale
 	} else {
@@ -448,8 +440,7 @@ void buildPolyModel(int positionX, int positionY, int scale, char *ptr2,
 		x = *(dataPointer++) - m_first_X;
 		y = *(dataPointer++) - m_first_Y;
 
-		if (m_useSmallScale)	// shrink all coordinates by factor 2 if a scale smaller than 384 is used
-		{
+		if (m_useSmallScale) {	// shrink all coordinates by factor 2 if a scale smaller than 384 is used
 			x >>= 1;
 			y >>= 1;
 		}
@@ -502,8 +493,7 @@ void buildPolyModel(int positionX, int positionY, int scale, char *ptr2,
 	do {
 		int linesToDraw = *dataPointer++;
 
-		if (linesToDraw > 1)	// if value not zero
-		{
+		if (linesToDraw > 1) {	// if value not zero
 			uint16 minimumScale;
 
 			m_color = *dataPointer;	// color
@@ -514,8 +504,7 @@ void buildPolyModel(int positionX, int positionY, int scale, char *ptr2,
 
 			flipShort(&minimumScale);
 
-			if (minimumScale > scale)	// if the scale is too small, for the model to be drawn ...
-			{
+			if (minimumScale > scale) {	// if the scale is too small, for the model to be drawn ...
 				dataPointer += linesToDraw;	// ... skip ahead
 			} else {
 				if (m_flipLeftRight) {
@@ -913,13 +902,10 @@ void mainDraw(int16 param) {
 			}
 
 			if ((params.var5 >= 0) && (objZ2 >= 0) && filesDatabase[objZ2].subData.ptr) {
-				if (filesDatabase[objZ2].subData.resourceType == 8)	// Poly
-				{
+				if (filesDatabase[objZ2].subData.resourceType == 8) {	// Poly
 					mainDrawPolygons(objZ2, currentObjPtr, objX2, params.scale, objY2, (char *)gfxModuleData.pPage10, (char *)filesDatabase[objZ2].subData.ptr);	// poly
-				} else if (filesDatabase[objZ2].subData.resourceType == 6)	// sound
-				{
-				} else if (filesDatabase[objZ2].resType == 1)	//(num plan == 1)
-				{
+				} else if (filesDatabase[objZ2].subData.resourceType == 6) {	// sound
+				} else if (filesDatabase[objZ2].resType == 1) {	//(num plan == 1)
 				} else if (filesDatabase[objZ2].subData.resourceType == 4) {
 					objX1 = filesDatabase[objZ2].width;	// width
 					spriteHeight = filesDatabase[objZ2].height;	// height
@@ -953,12 +939,10 @@ void mainDraw(int16 param) {
 								change = false;
 								currentObjPtr->animStep = 0;
 
-								if (currentObjPtr->animType)	// should we resume the script ?
-								{
+								if (currentObjPtr->animType) {	// should we resume the script ?
 									if (currentObjPtr->parentType == 20) {
 										changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &procHead, 0, -1);
-									}
-									else if(currentObjPtr->parentType == 30) {
+									} else if (currentObjPtr->parentType == 30) {
 										changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &relHead,  0, -1);
 									}
 								}

@@ -95,8 +95,7 @@ void Screen::paletteFadeIn(Palette *p) {
 		byte *pFinal = p->data();
 		byte *pCurrent = _palette->data();
 
-		for (int palCtr = 0; palCtr < p->numEntries() * PALETTE_FADE_INC_SIZE; ++palCtr, ++pCurrent, ++pFinal)
-		{
+		for (int palCtr = 0; palCtr < p->numEntries() * PALETTE_FADE_INC_SIZE; ++palCtr, ++pCurrent, ++pFinal) {
 			if (palCtr % PALETTE_FADE_INC_SIZE == (PALETTE_FADE_INC_SIZE - 1)) continue;
 			bool isDifferent = *pCurrent < *pFinal;
 

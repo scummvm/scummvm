@@ -317,8 +317,7 @@ int Logic::logicArAnimate(Object *compact, uint32 id) {
 	}
 	compact->o_walk_pc++;
 
-	if	(route[compact->o_walk_pc].frame == 512)					//end of sequence
-	{
+	if	(route[compact->o_walk_pc].frame == 512) {					//end of sequence
 		compact->o_logic = LOGIC_script;
 		if (((_scriptVars[GEORGE_WALKING] == 2) || (_scriptVars[GEORGE_WALKING] == 1)) &&
 			(id == PLAYER)) {

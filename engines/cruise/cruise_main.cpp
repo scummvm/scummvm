@@ -627,192 +627,98 @@ int getCursorFromObject(int mouseX, int mouseY, int *outX, int *outY) {
 	cellStruct *currentObject = cellHead.prev;
 
 	while (currentObject) {
-		if (currentObject->overlay >= 0) {
-			if (overlayTable[currentObject->overlay].alreadyLoaded) {
-				if (currentObject->type == 4
-				    || currentObject->type == 1
-				    || currentObject->type == 9
-				    || currentObject->type == 3) {
-					strcpy(objectName,
-					    getObjectName(currentObject->idx,
-						overlayTable[currentObject->
-						    overlay].ovlData->
-						specialString2));
+		if (currentObject->overlay >= 0 && overlayTable[currentObject->overlay].alreadyLoaded
+		     && (currentObject->type == 4 || currentObject->type == 1
+			  || currentObject->type == 9 || currentObject->type == 3)) {
+			strcpy(objectName,
+				getObjectName(currentObject->idx,
+					overlayTable[currentObject->overlay].ovlData->specialString2));
 
-					if (strlen(objectName)) {
-						if (currentObject->freeze == 0) {
-							var_2 =
-							    currentObject->idx;
-							var_4 =
-							    currentObject->
-							    overlay;
-							var_14 =
-							    currentObject->
-							    followObjectIdx;
-							var_16 =
-							    currentObject->
-							    followObjectOverlayIdx;
+			if (strlen(objectName)) {
+				if (currentObject->freeze == 0) {
+					var_2 = currentObject->idx;
+					var_4 = currentObject->overlay;
+					var_14 = currentObject->followObjectIdx;
+					var_16 = currentObject->followObjectOverlayIdx;
 
-							getMultipleObjectParam
-							    (currentObject->
-							    overlay,
-							    currentObject->idx,
-							    &params);
+					getMultipleObjectParam(currentObject->overlay, currentObject->idx, &params);
 
-							var_10 = 0;
-							var_E = 0;
-							var_C = 0;
+					var_10 = 0;
+					var_E = 0;
+					var_C = 0;
 
-							if ((var_4 != var_16)
-							    && (var_2 !=
-								var_14)) {
-								getMultipleObjectParam
-								    (var_16,
-								    var_14,
-								    &params);
+					if ((var_4 != var_16)
+						&& (var_2 != var_14)) {
+						getMultipleObjectParam
+							(var_16, var_14, &params);
 
-								var_C =
-								    params.X;
-								var_E =
-								    params.Y;
-								var_10 =
-								    params.
-								    fileIdx;
+						var_C = params.X;
+						var_E = params.Y;
+						var_10 = params.fileIdx;
+					}
+
+					if (params.var5 >= 0 && params.fileIdx >= 0) {
+						if (currentObject->type == 3) {
+							assert(0);
+
+							var_2 = params.scale;
+							var_A = params.X + var_C;
+
+							// TODO: this var3 is stupid, investigate...
+							if ((var_A <= mouseX) && (var_A + params.fileIdx >= mouseX) && (mouseY >= params.Y + var_E) && (params.Y + var_E + var2 >= mouseY)) {
+								*outX = var_16;
+								*outY = var_14;
+
+								return (currentObject->type);
+							}
+						} else if (currentObject->type == 4 ||
+							currentObject->type == 1 ||
+							currentObject->type == 9) {
+							int si;
+							int var_8;
+							int di;
+
+							var_A = params.X + var_C;
+							var_6 = params.Y + var_E;
+
+							di = params.fileIdx;
+
+							if (di < 0) {
+								di += var_10;
 							}
 
-							if (params.var5 >= 0
-							    && params.
-							    fileIdx >= 0) {
-								if (currentObject->type == 3) {
-									assert
-									    (0);
+/*		                  if((filesDatabase[di].subData.resourceType == 8) && (filesDatabase[di].subData.ptr)) {
+								assert(0);
+							}
+*/
+							{
+								var_4 = filesDatabase[di].resType;
 
-									var_2 =
-									    params.
-									    scale;
-									var_A =
-									    params.
-									    X +
-									    var_C;
+								if (var_4 == 1) {
+									var_C = filesDatabase[di].widthInColumn / 2;
+								} else {
+									var_C = filesDatabase[di].width;
+								}
 
-									// TODO: this var3 is stupid, investigate...
-									if ((var_A <= mouseX) && (var_A + params.fileIdx >= mouseX) && (mouseY >= params.Y + var_E) && (params.Y + var_E + var2 >= mouseY)) {
-										*outX
-										    =
-										    var_16;
-										*outY
-										    =
-										    var_14;
+								var_8 = filesDatabase[di].height;
 
-										return
-										    (currentObject->
-										    type);
-									}
-								} else
-								    if
-								    (currentObject->
-								    type == 4
-								    ||
-								    currentObject->
-								    type == 1
-								    ||
-								    currentObject->
-								    type ==
-								    9) {
-									int si;
-									int var_8;
-									int di;
+								var_2 = mouseX - var_A;
+								si = mouseY - var_6;
 
-									var_A =
-									    params.
-									    X +
-									    var_C;
-									var_6 =
-									    params.
-									    Y +
-									    var_E;
-
-									di = params.fileIdx;
-
-									if (di
-									    <
-									    0)
-									{
-										di += var_10;
-									}
-
-/*                  if((filesDatabase[di].subData.resourceType == 8) && (filesDatabase[di].subData.ptr))
-                  {
-                    assert(0);
-                  }
-                  else */
-									{
-										var_4
-										    =
-										    filesDatabase
-										    [di].
-										    resType;
-
+								if (var_2 > 0 && var_C > var_2 && si > 0 && var_8 >= si) {
+									if (filesDatabase[di].subData.ptr) {
 										if (var_4 == 1) {
-											var_C
-											    =
-											    filesDatabase
-											    [di].
-											    widthInColumn
-											    /
-											    2;
 										} else {
-											var_C
-											    =
-											    filesDatabase
-											    [di].
-											    width;
 										}
 
-										var_8
-										    =
-										    filesDatabase
-										    [di].
-										    height;
+										printf("should compare to mask in getCursorFromObject...\n");
 
-										var_2
-										    =
-										    mouseX
-										    -
-										    var_A;
-										si = mouseY - var_6;
+										*outX = var_16;
+										*outY = var_14;
 
-										if (var_2 > 0) {
-											if (var_C > var_2) {
-												if (si > 0) {
-													if (var_8 >= si) {
-														if (filesDatabase[di].subData.ptr) {
-															if (var_4 == 1) {
-															} else {
-															}
+										printf("Selected: %s\n", objectName);
 
-															printf
-															    ("should compare to mask in getCursorFromObject...\n");
-
-															*outX
-															    =
-															    var_16;
-															*outY
-															    =
-															    var_14;
-
-															printf
-															    ("Selected: %s\n",
-															    objectName);
-
-															return
-															    currentObject->
-															    type;
-														}
-													}
-												}
-											}
-										}
+										return currentObject->type;
 									}
 								}
 							}
@@ -878,52 +784,22 @@ void buildInventory(int X, int Y) {
 	menuStruct *pMenu;
 
 	pMenu = createMenu(X, Y, "Inventaire");
-
 	menuTable[1] = pMenu;
 
-	if (pMenu) {
-		numObjectInInventory = 0;
+	if (pMenu && numOfLoadedOverlay > 1) {
+		for (int i = 1; i < numOfLoadedOverlay; i++) {
+			ovlDataStruct *pOvlData = overlayTable[i].ovlData;
 
-		if (numOfLoadedOverlay > 1) {
-			int i;
+			if (pOvlData && pOvlData->objDataTable && pOvlData->numObjData) {
+				for (int j = 0; j < pOvlData->numObjData; j++) {
+					if (buildInventorySub1(i, j) != 3) {
+						int16 returnVar;
 
-			for (i = 1; i < numOfLoadedOverlay; i++) {
-				ovlDataStruct *pOvlData =
-				    overlayTable[i].ovlData;
+						getSingleObjectParam(i, j, 5, &returnVar);
 
-				if (pOvlData && pOvlData->objDataTable) {
-					int var_2;
-
-					var_2 = 0;
-
-					if (pOvlData->numObjData) {
-						int j;
-
-						for (j = 0;
-						    j < pOvlData->numObjData;
-						    j++) {
-							if (buildInventorySub1
-							    (i, j) != 3) {
-								int16
-								    returnVar;
-
-								getSingleObjectParam
-								    (i, j, 5,
-								    &returnVar);
-
-								if (returnVar <
-								    -1) {
-									addSelectableMenuEntry
-									    (i,
-									    j,
-									    pMenu,
-									    1,
-									    -1,
-									    getObjectName
-									    (j, pOvlData->specialString2));
-									numObjectInInventory++;
-								}
-							}
+						if (returnVar < -1) {
+							addSelectableMenuEntry(i, j, pMenu, 1, -1, getObjectName(j, pOvlData->specialString2));
+							numObjectInInventory++;
 						}
 					}
 				}
@@ -1014,12 +890,9 @@ int callInventoryObject(int param0, int param1, int x, int y) {
 					    var_34->stringNameOffset);
 
 					if (var_2 == param0) {
-						if (param1 ==
-						    var_34->stringNameOffset) {
+						if (param1 == var_34->stringNameOffset) {
 							if (pObject) {
-								if (pObject->
-								    type !=
-								    3) {
+								if (pObject->type != 3) {
 									char var_214[80];
 									char var_1C4[80];
 									char var_174[80];
@@ -1027,110 +900,52 @@ int callInventoryObject(int param0, int param1, int x, int y) {
 									char var_D4[80];
 									char var_84[80];
 
-									ovlDataStruct
-									    *var_12;
-									ovlDataStruct
-									    *var_22;
+									ovlDataStruct *var_12;
+									ovlDataStruct *var_22;
 
 									int var_E = var_34->varIdx;
-									int cx
-									    =
-									    var_34->
-									    stringIdx;
+									int cx = var_34->stringIdx;
 									int var_C = var_34->procIdx;
 
-									int di
-									    =
-									    var_E;
+									int di = var_E;
 									if (var_E == 0)
 										di = var_1E;
 
-									var_2 =
-									    cx;
-									if (cx
-									    ==
-									    0)
-										var_2
-										    =
-										    var_1E;
+									var_2 = cx;
+									if (cx == 0)
+										var_2 = var_1E;
 
 									if (var_C == 0)
-										var_C
-										    =
-										    var_1E;
+										var_C = var_1E;
 
-									var_12
-									    =
-									    NULL;
-									var_22
-									    =
-									    NULL;
+									var_12 = NULL;
+									var_22 = NULL;
 
-									var_214
-									    [0]
-									    =
-									    0;
-									var_1C4
-									    [0]
-									    =
-									    0;
-									var_174
-									    [0]
-									    =
-									    0;
-									var_124
-									    [0]
-									    =
-									    0;
-									var_D4
-									    [0]
-									    =
-									    0;
-									var_84
-									    [0]
-									    =
-									    0;
+									var_214[0] = 0;
+									var_1C4[0] = 0;
+									var_174[0] = 0;
+									var_124[0] = 0;
+									var_D4[0] = 0;
+									var_84[0] = 0;
 
-									if (di
-									    >
-									    0)
-									{
-										var_22
-										    =
-										    overlayTable
-										    [di].
-										    ovlData;
+									if (di > 0) {
+										var_22 = overlayTable[di].ovlData;
 									}
 
 									if (var_2 > 0) {
-										var_12
-										    =
-										    overlayTable
-										    [var_2].
-										    ovlData;
+										var_12 = overlayTable[var_2].ovlData;
 									}
 
 									if (var_12) {
 										if (var_34->stringNameOffset) {
-											var_30
-											    =
-											    var_34->
-											    field_1A;
+											var_30 = var_34->field_1A;
 											if (var_28) {
 												if (var_12->specialString2) {
 													if (var_30 == -1 || var_30 == returnVar) {
 														char *ptrName = getObjectName(var_34->stringNameOffset, var_12->specialString2);
 
-														menuTable
-														    [0]
-														    =
-														    createMenu
-														    (x,
-														    y,
-														    ptrName);
-														var_28
-														    =
-														    0;
+														menuTable[0] = createMenu(x, y, ptrName);
+														var_28 = 0;
 													}
 												}
 											}
@@ -1138,8 +953,7 @@ int callInventoryObject(int param0, int param1, int x, int y) {
 									}
 
 									if (var_22) {
-										if (true /*var_34->varNameOffset>=0 */ )	// FIXME: This check is always true since varNameOffset is unsigned
-										{
+										if (true /*var_34->varNameOffset>=0 */ ) {	// FIXME: This check is always true since varNameOffset is unsigned
 											if (var_22->specialString1) {
 												char *ptr = getObjectName(var_34->varNameOffset, var_22->specialString1);
 
@@ -1289,8 +1103,7 @@ int processInput(void) {
 				ASSERT(0);
 			}
 
-			if (var38 == 0)	// are we in inventory mode ?
-			{
+			if (var38 == 0) {	// are we in inventory mode ?
 				if (menuTable[0] == 0) {
 					int X;
 					int Y;

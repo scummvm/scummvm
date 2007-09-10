@@ -657,8 +657,7 @@ void Resources::setTalkData(uint16 offset) {
 	error("Unknown talk entry offset %d requested", offset);
 }
 
-void Resources::saveToStream(Common::WriteStream *stream)
-{
+void Resources::saveToStream(Common::WriteStream *stream) {
 	_hotspotData.saveToStream(stream);
 	_activeHotspots.saveToStream(stream);
 	_fieldList.saveToStream(stream);

@@ -452,8 +452,7 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 			error("SagaEngine::KnownColor2ColorId unknown color %i", knownColor);
 		}
 	} else if (getGameType() == GType_IHNM) {
-		switch (knownColor)
-		{
+		switch (knownColor) {
 		case(kKnownColorTransparent):
 			colorId = kITEColorTransBlack;
 			break;

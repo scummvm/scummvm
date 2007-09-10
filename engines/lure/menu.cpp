@@ -106,8 +106,7 @@ uint8 Menu::execute() {
 		while (events.pollEvent()) {
 			if (events.quitFlag) return MENUITEM_NONE;
 
-			if (mouse.y() < MENUBAR_Y_SIZE)
-			{
+			if (mouse.y() < MENUBAR_Y_SIZE) {
 				MenuRecord *p = getMenuAt(mouse.x());
 
 				if (_selectedMenu != p) {

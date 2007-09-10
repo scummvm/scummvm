@@ -253,8 +253,7 @@ void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
 	outBufferPtr += heightOff * width * 2;	// param2 = height , param6 = width
 	outBufferPtr += drawPosPixel_X;	// param1 = drawPosPixel_X
 
-	for (i = 0; i < height; i++)	// y++
-	{
+	for (i = 0; i < height; i++) {	// y++
 		uint16 currentColor1 =
 		    (*(fontPtr_Data) << 8) | *(fontPtr_Data + 1);
 		uint16 currentColor2 =

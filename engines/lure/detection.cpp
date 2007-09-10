@@ -152,8 +152,7 @@ void LureEngine::detectGame() {
 			"Lure of the Temptress executable. See the documentation for creating it.",
 			SUPPORT_FILENAME);
 
-	for (uint8 fileNum = 1; fileNum <= 4; ++fileNum)
-	{
+	for (uint8 fileNum = 1; fileNum <= 4; ++fileNum) {
 		char sFilename[10];
 		sprintf(sFilename, "disk%d.vga", fileNum);
 

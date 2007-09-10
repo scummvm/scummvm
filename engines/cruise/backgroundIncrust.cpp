@@ -113,8 +113,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,
 	newElement->ptr = NULL;
 	strcpy(newElement->name, filesDatabase[params.fileIdx].subData.name);
 
-	if (filesDatabase[params.fileIdx].subData.resourceType == 4)	// sprite
-	{
+	if (filesDatabase[params.fileIdx].subData.resourceType == 4) {	// sprite
 		int width = filesDatabase[params.fileIdx].width;
 		int height = filesDatabase[params.fileIdx].height;
 
@@ -125,8 +124,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,
 		    newElement->Y, newElement->X, (char *)backgroundPtr,
 		    (char *)filesDatabase[params.fileIdx].subData.ptr);
 		//   ASSERT(0);
-	} else			// poly
-	{
+	} else {			// poly
 		/* if(param4 == 1)
 		 * {
 		 * int var_A;

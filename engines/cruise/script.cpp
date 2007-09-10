@@ -73,8 +73,7 @@ int32 opcodeType0(void) {
 
 			if (!byte2) {
 				ptr = scriptDataPtrTable[var_E] + short1;
-			} else	// TODO: 
-			{
+			} else	{ // TODO:
 				if (!overlayTable[byte2].alreadyLoaded) {
 					return (-7);
 				}
@@ -145,8 +144,7 @@ int32 opcodeType0(void) {
 
 			if (!byte2) {
 				ptr = scriptDataPtrTable[var_E] + var_12;
-			} else	// TODO: 
-			{
+			} else	{ // TODO:
 				if (!overlayTable[byte2].alreadyLoaded) {
 					return (-7);
 				}
@@ -635,8 +633,7 @@ uint8 *attacheNewScriptToTail(int16 overlayNumber,
 
 	oldTail = scriptHandlePtr;
 
-	while (oldTail->nextScriptPtr)	// go to the end of the list
-	{
+	while (oldTail->nextScriptPtr) {	// go to the end of the list
 		oldTail = oldTail->nextScriptPtr;
 	}
 
@@ -660,8 +657,7 @@ uint8 *attacheNewScriptToTail(int16 overlayNumber,
 	tempPtr->scriptNumber = param;
 	tempPtr->overlayNumber = overlayNumber;
 
-	if (scriptType == 20)	// Obj or not ?
-	{
+	if (scriptType == 20) {	// Obj or not ?
 		tempPtr->sysKey = useArg3Neg;
 	} else {
 		tempPtr->sysKey = 1;

@@ -66,16 +66,14 @@ void loadCtpSub2(short int coordCount, short int *ptr) {
 	short int *cur_ctp_routeCoords = (short int *)ctp_routeCoords;	// coordinates table
 	int8 *cur_ctp_routes = (int8 *) ctp_routes;
 
-	for (i = 0; i < coordCount; i++)	// for i < ctp_routeCoordCount
-	{
+	for (i = 0; i < coordCount; i++) {	// for i < ctp_routeCoordCount
 		int varX = cur_ctp_routeCoords[0];	// x
 		int varY = cur_ctp_routeCoords[1];	// y 
 
 		int di = 0;
 		int var4Offset = 2;
 
-		while (*(int16 *) cur_ctp_routes > di)	// while (coordCount > counter++)
-		{
+		while (*(int16 *) cur_ctp_routes > di) {	// while (coordCount > counter++)
 			int idx = *(int16 *) (cur_ctp_routes + var4Offset);
 			ptr[offset + idx] =
 			    ctpProc2(varX, varY, ctp_routeCoords[idx][0],
@@ -189,8 +187,7 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 
 	ASSERT(boxIdx <= 15);
 
-	if (_walkboxTable[boxIdx * 40] > 0)	// is walkbox used ?
-	{
+	if (_walkboxTable[boxIdx * 40] > 0) {	// is walkbox used ?
 		getWalkBoxCenter(boxIdx, _walkboxTable);
 
 		currentWalkBoxCenterYBis = currentWalkBoxCenterY;

@@ -471,8 +471,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 	(*nclick)++;
 	ctpVar19 = ctpVar11;
 
-	if (*nclick == 2)	// second point
-	{
+	if (*nclick == 2) {	// second point
 		x1 = table_ptselect[0][0];
 		y1 = table_ptselect[0][1];
 		x2 = table_ptselect[1][0];
@@ -858,26 +857,18 @@ void processAnimation(void) {
 								currentActor->phase = ANIM_PHASE_MOVE;
 						}
 
-						if ((currentActor->counter >=
-							0)
-						    && ((currentActor->phase ==
-							    ANIM_PHASE_STATIC_END)
-							|| (currentActor->
-							    phase ==
-							    ANIM_PHASE_STATIC)))
+						if ((currentActor->counter >= 0)
+						    && ((currentActor->phase == ANIM_PHASE_STATIC_END)
+							|| (currentActor->phase == ANIM_PHASE_STATIC)))
 						{
 							int newA;
 							int inc = 1;
-							int t_inc =
-							    currentActor->
-							    startDirection - 1;
+							int t_inc = currentActor->startDirection - 1;
 
 							if (t_inc < 0)
 								t_inc = 3;
 
-							if (currentActor->
-							    nextDirection ==
-							    t_inc)
+							if (currentActor->nextDirection == t_inc)
 								inc = -1;
 
 							if (inc > 0)

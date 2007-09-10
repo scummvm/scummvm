@@ -1006,8 +1006,7 @@ actorStruct *addAnimation(actorStruct * pHead, int overlay, int objIdx, int para
 	return pNewElement;
 }
 
-int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType)
-{
+int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType) {
 	actorStruct* pl;
 	actorStruct* pl2;
 	actorStruct* pl3;
@@ -1019,14 +1018,12 @@ int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType)
 	pl2 = pl;
 	pl = pl2->next;
 
-	while(pl)
-	{
+	while (pl) {
 		pl2 = pl;
 
-		if(((pl->overlayNumber == overlay) || (overlay == -1)) &&
+		if (((pl->overlayNumber == overlay) || (overlay == -1)) &&
 			((pl->idx == objIdx) || (objIdx == -1)) &&
-			((pl->type == objType) || (objType == -1)))
-		{
+			((pl->type == objType) || (objType == -1))) {
 			pl->type = -1;
 		}
 
@@ -1037,29 +1034,25 @@ int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType)
 	pl2 = pl;
 	pl = pl2->next;
 
-	while(pl)
-	{
-		if(pl->type == -1)
-		{
+	while (pl) {
+		if (pl->type == -1) {
 			pl4 = pl->next;
 			pl2->next = pl4;
 			pl3 = pl4;
 
-			if(pl3 == NULL)
+			if (pl3 == NULL)
 				pl3 = pHead;
 
 			pl3->prev = pl->prev;
 
 			dir = pl->startDirection;
 
-			if(pl->idx >= 0)
+			if (pl->idx >= 0)
 				freePerso(pl->idx);
 
 			free(pl);
 			pl = pl4;
-		}
-		else
-		{
+		} else {
 			pl2 = pl;
 			pl = pl2->next;
 		}

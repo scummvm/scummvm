@@ -221,8 +221,7 @@ int playerMenu(int menuX, int menuY) {
 			freeStuff2();
 		}
 /*
-    if(currentMenu)
-    {
+    if(currentMenu) {
       freeMenu(currentMenu);
       currentMenu = 0;
       var37 = 0;
@@ -230,8 +229,7 @@ int playerMenu(int menuX, int menuY) {
       main9 = -1;
     }
 
-    if(inventoryMenu)
-    {
+    if(inventoryMenu) {
       freeMenu(inventoryMenu);
       inventoryMenu = 0;
       var37 = 0;
@@ -239,8 +237,7 @@ int playerMenu(int menuX, int menuY) {
       main9 = -1;
     }*/
 
-/*    if(mouseVar2)
-    {
+/*    if(mouseVar2) {
       free3(mouseVar2);
     } */
 

@@ -181,8 +181,7 @@ void Cutaway::loadStrings(uint16 offset) {
 	debug(6, "_talkTo = %i", _talkTo);
 }
 
-const byte *Cutaway::getCutawayObject(const byte *ptr, CutawayObject &object)
-{
+const byte *Cutaway::getCutawayObject(const byte *ptr, CutawayObject &object) {
 	const byte *oldPtr = ptr;
 
 	object.objectNumber = (int16)READ_BE_INT16(ptr); ptr += 2;
@@ -216,8 +215,7 @@ const byte *Cutaway::getCutawayObject(const byte *ptr, CutawayObject &object)
 	return ptr;
 }
 
-void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
-{
+void Cutaway::dumpCutawayObject(int index, CutawayObject &object) {
 	debug(6, "----- CutawayObject[%i] -----", index);
 
 	const char *objectNumberStr;

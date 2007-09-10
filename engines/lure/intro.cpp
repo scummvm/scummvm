@@ -80,8 +80,7 @@ bool Introduction::show() {
 
 	PaletteCollection coll(0x32);
 	const AnimRecord *curr_anim = anim_screens;
-	for (; curr_anim->resourceId; ++curr_anim)
-	{
+	for (; curr_anim->resourceId; ++curr_anim) {
 		bool fadeIn = curr_anim == anim_screens;
 		anim = new AnimationSequence(_screen, _system, curr_anim->resourceId, 
 			coll.getPalette(curr_anim->paletteIndex), fadeIn);

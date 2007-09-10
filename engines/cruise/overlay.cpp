@@ -375,8 +375,7 @@ int loadOverlay(const uint8 *scriptName) {
 		if (!ovlData->ptr8) {
 /*      releaseScript(scriptIdx,scriptName);
 
-      if(freeIsNeeded)
-      {
+      if(freeIsNeeded) {
         freePtr(unpackedBuffer);
       } */
 
@@ -396,8 +395,7 @@ int loadOverlay(const uint8 *scriptName) {
 		if (!ovlData->objDataTable) {
 /*      releaseScript(scriptIdx,scriptName);
 
-      if(freeIsNeeded)
-      {
+      if(freeIsNeeded) {
         freePtr(unpackedBuffer);
       } */
 
@@ -457,8 +455,7 @@ int loadOverlay(const uint8 *scriptName) {
 		if (!ovlData->objData2WorkTable) {
 /*      releaseScript(scriptIdx,scriptName);
 
-      if(freeIsNeeded)
-      {
+      if(freeIsNeeded) {
         freePtr(unpackedBuffer);
       } */
 
@@ -474,8 +471,7 @@ int loadOverlay(const uint8 *scriptName) {
 		if (!ovlData->objData2SourceTable) {
 /*      releaseScript(scriptIdx,scriptName);
 
-      if(freeIsNeeded)
-      {
+      if(freeIsNeeded) {
         freePtr(unpackedBuffer);
       } */
 
@@ -501,8 +497,7 @@ int loadOverlay(const uint8 *scriptName) {
 		}
 	}
 
-/*  if(freeIsNeeded)
-  {
+/*  if(freeIsNeeded) {
     freePtr(unpackedBuffer);
   } */
 
@@ -701,14 +696,12 @@ int releaseOverlay(const char *name) {
 	if (!ovlDataPtr)
 		return -4;
 /*
-  if(overlayTable[overlayIdx].var1E)
-  {
+  if(overlayTable[overlayIdx].var1E) {
     free(overlayTable[overlayIdx].var1E);
     overlayTable[overlayIdx].var1E = NULL;
   }
 
-  if(overlayTable[overlayIdx].var16)
-  {
+  if(overlayTable[overlayIdx].var16) {
     free(overlayTable[overlayIdx].var16);
     overlayTable[overlayIdx].var16 = NULL;
   } */

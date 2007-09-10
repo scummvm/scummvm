@@ -130,8 +130,7 @@ int32 Router::routeFinder(int32 id, Object *megaObject, int32 x, int32 y, int32 
 	slowInFrames = 0;
 	slowOutFrames = 0;
 
-	if (megaId == GEORGE)
-	{
+	if (megaId == GEORGE) {
 		turnFramesLeft = 3 * _framesPerChar + NO_DIRECTIONS + 2 * SLOW_IN + 4 * SLOW_OUT;
 		turnFramesRight = 3 * _framesPerChar + NO_DIRECTIONS + 2 * SLOW_IN + 4 * SLOW_OUT + NO_DIRECTIONS;
 		walkFramesLeft = _framesPerChar + NO_DIRECTIONS;
@@ -703,8 +702,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	// TURN TO START THE WALK
 	//****************************************************************************
 	// rotate if we need to
-	if (lastDir != currentDir)
-	{
+	if (lastDir != currentDir) {
 		// get the direction to turn
 		turnDir = currentDir - lastDir;
 		if ( turnDir < 0)
@@ -717,10 +715,8 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 
 		// rotate to new walk direction
 		// for george and nico put in a head turn at the start
-		if ((megaId == GEORGE) || (megaId == NICO))
-		{
-			if ( turnDir < 0)	// new frames for turn frames	29oct95jps
-			{
+		if ((megaId == GEORGE) || (megaId == NICO)) {
+			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
 				module =	turnFramesLeft + lastDir;
 			} else {
 				module =	turnFramesRight + lastDir;
@@ -734,11 +730,9 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		}
 
 		// rotate till were facing new dir then go back 45 degrees
-		while (lastDir != currentDir)
-		{
+		while (lastDir != currentDir) {
 			lastDir += turnDir;
-			if ( turnDir < 0)	// new frames for turn frames	29oct95jps
-			{
+			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
 				if ( lastDir < 0)
 						lastDir += NO_DIRECTIONS;
 				module =	turnFramesLeft + lastDir;
@@ -774,8 +768,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	lastDir = 99;// this ensures that we don't put in turn frames for the start
 	currentDir = 99;// this ensures that we don't put in turn frames for the start
 	do {
-		while (_modularPath[p].num == 0)
-		{
+		while (_modularPath[p].num == 0) {
 			p = p + 1;
 			if (currentDir != 99)
 				lastRealDir = currentDir;
@@ -784,8 +777,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		}
 		//calculate	average amount to lose in each step on the way to the next _node
 		currentDir = _modularPath[p].dir;
-		if (currentDir < NO_DIRECTIONS)
-		{
+		if (currentDir < NO_DIRECTIONS) {
 			module =	currentDir * _framesPerStep * 2 + left;
 			if (left == 0)
 				left = _framesPerStep;
@@ -814,22 +806,18 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 			errorX = errorX * stepX;
 			errorY = _modularPath[p].y -	moduleY;
 			errorY = errorY * stepY;
-			if ((errorX < 0) || (errorY < 0))
-			{
+			if ((errorX < 0) || (errorY < 0)) {
 				_modularPath[p].num = 0;	// the end of the path
 				// okay those last steps took us past our target but do we want to scoot or moonwalk
 				frames = stepCount - lastCount;
 				errorX = _modularPath[p].x - walkAnim[stepCount-1].x;
 				errorY = _modularPath[p].y - walkAnim[stepCount-1].y;
 
-				if (frames > _framesPerStep)
-				{
+				if (frames > _framesPerStep) {
 					lastErrorX = _modularPath[p].x - walkAnim[stepCount-7].x;
 					lastErrorY = _modularPath[p].y - walkAnim[stepCount-7].y;
-					if (stepX==0)
-					{
-						if (3*ABS(lastErrorY) < ABS(errorY)) //the last stop was closest
-						{
+					if (stepX==0) {
+						if (3*ABS(lastErrorY) < ABS(errorY)) { //the last stop was closest
 							stepCount -= _framesPerStep;
 							if (left == 0)
 								left = _framesPerStep;
@@ -837,8 +825,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 								left = 0;
 						}
 					} else {
-						if (3*ABS(lastErrorX) < ABS(errorX)) //the last stop was closest
-						{
+						if (3*ABS(lastErrorX) < ABS(errorX)) { //the last stop was closest
 							stepCount -= _framesPerStep;
 							if (left == 0)
 								left = _framesPerStep;
@@ -850,8 +837,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 				errorX = _modularPath[p].x - walkAnim[stepCount-1].x;
 				errorY = _modularPath[p].y - walkAnim[stepCount-1].y;
 				// okay we've reached the end but we still have an error
-				if (errorX != 0)
-				{
+				if (errorX != 0) {
 					frameCount = 0;
 					frames = stepCount - lastCount;
 					do {
@@ -859,8 +845,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 						walkAnim[lastCount + frameCount - 1].x +=	errorX*frameCount/frames;
 					} while (frameCount<frames);
 				}
-				if (errorY != 0)
-				{
+				if (errorY != 0) {
 					frameCount = 0;
 					frames = stepCount - lastCount;
 					do {
@@ -874,25 +859,20 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 				if (currentDir != 99)
 					lastRealDir = currentDir;
 				// check each turn condition in turn
-				if (((lastDir != 99) && (currentDir != 99)) && (megaId == GEORGE)) // only for george
-				{
+				if (((lastDir != 99) && (currentDir != 99)) && (megaId == GEORGE)) { // only for george
 					lastDir = currentDir - lastDir;//1 and -7 going right -1 and 7 going left
-					if (((lastDir == -1) || (lastDir == 7)) || ((lastDir == -2) || (lastDir == 6)))
-					{
+					if (((lastDir == -1) || (lastDir == 7)) || ((lastDir == -2) || (lastDir == 6))) {
 						// turn at the end of the last walk
 						frame = lastCount - _framesPerStep;
-						do
-						{
+						do {
 							walkAnim[frame].frame += 104;//turning left
 							frame += 1;
 						} while (frame < lastCount );
 					}
-					if (((lastDir == 1) || (lastDir == -7)) || ((lastDir == 2) || (lastDir == -6)))
-					{
+					if (((lastDir == 1) || (lastDir == -7)) || ((lastDir == 2) || (lastDir == -6))) {
 						// turn at the end of the current walk
 						frame = lastCount - _framesPerStep;
-						do
-						{
+						do {
 							walkAnim[frame].frame += 200; //was 60 now 116
 							frame += 1;
 						} while (frame < lastCount );
@@ -912,8 +892,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 
 
 
-	if (lastRealDir == 99)
-	{
+	if (lastRealDir == 99) {
 		error("SlidyWalkAnimatorlast direction error\n");
 	}
 	//****************************************************************************
@@ -924,8 +903,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	// We've done the walk now put in any turns at the end
 
 
-	if (_targetDir == NO_DIRECTIONS)	// stand in the last direction
-	{
+	if (_targetDir == NO_DIRECTIONS) {	// stand in the last direction
 		module =	standFrames + lastRealDir;
 		_targetDir =	lastRealDir;
 		walkAnim[stepCount].frame = module;
@@ -935,10 +913,8 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		walkAnim[stepCount].y = moduleY;
 		stepCount += 1;
 	}
-	if (_targetDir == 9)
-	{
-		if (stepCount == 0)
-		{
+	if (_targetDir == 9) {
+		if (stepCount == 0) {
 			module =	_framesPerChar + lastRealDir;
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
@@ -947,8 +923,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 			walkAnim[stepCount].y = moduleY;
 			stepCount += 1;
 		}
-	} else if (_targetDir != lastRealDir) // rotate to _targetDir
-	{
+	} else if (_targetDir != lastRealDir) { // rotate to _targetDir
 		// rotate to target direction
 		turnDir = _targetDir - lastRealDir;
 		if ( turnDir < 0)
@@ -961,10 +936,8 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 
 		// rotate to target direction
 		// for george and nico put in a head turn at the start
-		if ((megaId == GEORGE) || (megaId == NICO))
-		{
-			if ( turnDir < 0)	// new frames for turn frames	29oct95jps
-			{
+		if ((megaId == GEORGE) || (megaId == NICO)) {
+			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
 				module =	turnFramesLeft + lastDir;
 			} else {
 				module =	turnFramesRight + lastDir;
@@ -978,11 +951,9 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		}
 
 		// rotate if we need to
-		while (lastRealDir != _targetDir)
-		{
+		while (lastRealDir != _targetDir) {
 			lastRealDir += turnDir;
-			if ( turnDir < 0)	// new frames for turn frames	29oct95jps
-			{
+			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
 				if ( lastRealDir < 0)
 						lastRealDir += NO_DIRECTIONS;
 				module =	turnFramesLeft + lastRealDir;
@@ -1000,8 +971,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		}
 		module =	standFrames + lastRealDir;
 		walkAnim[stepCount-1].frame = module;
-	} else // just stand at the end
-	{
+	} else { // just stand at the end
 		module =	standFrames + lastRealDir;
 		walkAnim[stepCount].frame = module;
 		walkAnim[stepCount].step = 0;
@@ -1150,8 +1120,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	// TURN TO START THE WALK
 	//****************************************************************************
 	// rotate if we need to
-	if (lastDir != currentDir)
-	{
+	if (lastDir != currentDir) {
 		// get the direction to turn
 		turnDir = currentDir - lastDir;
 		if ( turnDir < 0)
@@ -1164,10 +1133,8 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 
 		// rotate to new walk direction
 		// for george and nico put in a head turn at the start
-		if ((megaId == GEORGE) || (megaId == NICO))
-		{
-			if ( turnDir < 0)	// new frames for turn frames	29oct95jps
-			{
+		if ((megaId == GEORGE) || (megaId == NICO)) {
+			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
 				module =	turnFramesLeft + lastDir;
 			} else {
 				module =	turnFramesRight + lastDir;
@@ -1181,11 +1148,9 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 		}
 
 		// rotate till were facing new dir then go back 45 degrees
-		while (lastDir != currentDir)
-		{
+		while (lastDir != currentDir) {
 			lastDir += turnDir;
-			if ( turnDir < 0)	// new frames for turn frames	29oct95jps
-			{
+			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
 				if ( lastDir < 0)
 					lastDir += NO_DIRECTIONS;
 				module =	turnFramesLeft + lastDir;
@@ -1882,8 +1847,7 @@ int32 Router::checkTarget(int32 x, int32 y) {
 // * THE SETUP ROUTINES
 // ****************************************************************************
 
-int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
-{
+int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir) {
 	WalkGridHeader	floorHeader;
 	int32 	i;
 	uint8  *fPolygrid;
@@ -1915,8 +1879,7 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 	fPolygrid += sizeof(WalkGridHeader);
 	_nBars = _resMan->getUint32(floorHeader.numBars);
 
-	if (_nBars >= O_GRID_SIZE)
-	{
+	if (_nBars >= O_GRID_SIZE) {
 		#ifdef DEBUG												//check for id > number in file,
 		error("RouteFinder Error too many _bars %d", _nBars);
 		#endif
@@ -1925,8 +1888,7 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 
 	_nNodes = _resMan->getUint32(floorHeader.numNodes)+1;	//array starts at 0	begins at a start _node has nnodes nodes and a target _node
 
-	if (_nNodes >= O_GRID_SIZE)
-	{
+	if (_nNodes >= O_GRID_SIZE) {
 		#ifdef DEBUG												//check for id > number in file,
 			error("RouteFinder Error too many nodes %d", _nNodes);
 		#endif

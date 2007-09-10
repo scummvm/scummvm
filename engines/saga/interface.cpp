@@ -608,8 +608,7 @@ bool Interface::processAscii(uint16 ascii) {
 				return true;
 			}
 		}
-		if (ascii == 15) // ctrl-o
-		{
+		if (ascii == 15) { // ctrl-o
 			if (_saveReminderState > 0) {
 				setMode(kPanelOption);
 				return true;

@@ -186,70 +186,36 @@ int updateScriptImport(int ovlIdx) {
 								int temp =
 								    ptrImportData->
 								    offset;
-								if (out1)	//is sub function... (ie  'invent.livre:s')
-								{
+								if (out1) {	//is sub function... (ie  'invent.livre:s')
 									uint8 *ptr = ptrData + temp;
 
-									*(ptr +
-									    1)
-									    =
-									    out2;
-									*(int16
-									    *)
-									    (ptr
-									    +
-									    2)
-									    =
-									    ptrDest2->
-									    idx;
+									*(ptr + 1) = out2;
+									*(int16 *)(ptr + 2) = ptrDest2->idx;
 
-									flipShort
-									    (
-									    (int16
-										*)
-									    (ptr + 2));
+									flipShort((int16 *)(ptr + 2));
 								} else {
-									if (param2 == 20 || param2 == 30 || param2 == 40 || param2 == 50)	// this patch a double push
-									{
-										uint8
-										    *
-										    ptr
-										    =
-										    ptrData
-										    +
-										    temp;
+									if (param2 == 20 || param2 == 30 || param2 == 40 || param2 == 50) {	// this patch a double push
+										uint8 *ptr = ptrData + temp;
 
 										*(ptr + 1) = 0;
 										*(ptr + 2) = out2;	// update the overlay number
 
-										*(int16 *) (ptr + 4) = ptrDest2->idx;
+										*(int16 *)(ptr + 4) = ptrDest2->idx;
 
-										flipShort
-										    (
-										    (int16
-											*)
-										    (ptr + 4));
+										flipShort((int16 *)(ptr + 4));
 									} else {
 										int var_4 = ptrDest2->var4;
 
 										if (var_4 & 1) {
-											param2
-											    =
-											    8;
+											param2 = 8;
 										} else {
-											param2
-											    =
-											    16;
+											param2 = 16;
 										}
 
 										if (var_4 >= 0 && var_4 <= 3) {
-											param2
-											    |=
-											    5;
+											param2 |= 5;
 										} else {
-											param2
-											    |=
-											    6;
+											param2 |= 6;
 										}
 
 										*(ptrData + temp) = param2;
