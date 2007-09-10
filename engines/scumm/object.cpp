@@ -156,11 +156,14 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 }
 
 void ScummEngine::clearOwnerOf(int obj) {
-	int i, j;
+	int i;
 	uint16 *a;
 
+	// Stop the associated object script code (else crashes might occurs)
 	stopObjectScript(obj);
 
+	// If the object is "owned" by a the current room, we scan the
+	// object list and (only if it's a floating object) nuke it.
 	if (getOwner(obj) == OF_OWNER_ROOM) {
 		for (i = 0; i < _numLocalObjects; i++)  {
 			if (_objs[i].obj_nr == obj && _objs[i].fl_object_index) {
@@ -170,26 +173,28 @@ void ScummEngine::clearOwnerOf(int obj) {
 				_objs[i].fl_object_index = 0;
 			}
 		}
-		return;
-	}
-
-	for (i = 0; i < _numInventory; i++) {
-		if (_inventory[i] == obj) {
-			j = whereIsObject(obj);
-			if (j == WIO_INVENTORY) {
+	} else {
+	
+		// Alternatively, scan the inventory to see if the object is in there...
+		for (i = 0; i < _numInventory; i++) {
+			if (_inventory[i] == obj) {
+				assert(WIO_INVENTORY == whereIsObject(obj));
+				// Found the object! Nuke it from the inventory.
 				_res->nukeResource(rtInventory, i);
 				_inventory[i] = 0;
-			}
-			a = _inventory;
-			for (i = 0; i < _numInventory - 1; i++, a++) {
-				if (!a[0] && a[1]) {
-					a[0] = a[1];
-					a[1] = 0;
-					_res->address[rtInventory][i] = _res->address[rtInventory][i + 1];
-					_res->address[rtInventory][i + 1] = NULL;
+	
+				// Now fill up the gap removing the object from the inventory created.
+				a = _inventory;
+				for (i = 0; i < _numInventory - 1; i++, a++) {
+					if (!_inventory[i] && _inventory[i+1]) {
+						_inventory[i] = _inventory[i+1];
+						_inventory[i+1] = 0;
+						_res->address[rtInventory][i] = _res->address[rtInventory][i + 1];
+						_res->address[rtInventory][i + 1] = NULL;
+					}
 				}
+				break;
 			}
-			return;
 		}
 	}
 }
@@ -583,11 +588,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 		return;
 
 	ptr = getOBIMFromObjectData(od);
-
-	if (_game.features & GF_OLD_BUNDLE)
-		ptr += 0;
-	else
-		ptr = getObjectImage(ptr, getState(od.obj_nr));
+	ptr = getObjectImage(ptr, getState(od.obj_nr));
 
 	if (!ptr)
 		return;
