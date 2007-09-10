@@ -419,7 +419,7 @@ public:
 	char alapantallakeva[40][20];
 	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
-	int lleva_objeto , objeto_que_lleva;
+	int lleva_objeto, objeto_que_lleva;
 	int con_voces;
 	int menu_bar, menu_scr, hay_nombre;
 	char texto_nombre[20];
@@ -462,7 +462,7 @@ public:
 	int cont_sv;
 	int term_int;
 	int num_ejec;
-	int cual_ejec, hay_que_load;
+	int hay_que_load;
 	char nom_partida[13];
 	int _color;
 	int corta_musica;
@@ -525,7 +525,7 @@ public:
 	void animacion_32();
 	void animacion_33();
 	void animacion_34();
-	void animacion_35();
+	void animacion_35_2();
 	void animacion_36();
 
 	void refresca_1_antes();
@@ -551,8 +551,7 @@ public:
 
 	void sin_verbo();
 	void para_cargar(char[]);
-	void carga_escoba_1(const char *);
-	void carga_escoba_2(const char *);
+	void carga_escoba(const char *);
 	void borra_pantalla();
 	void lleva_al_hare(int, int);
 	void mueve_cursor();
