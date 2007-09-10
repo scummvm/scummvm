@@ -842,22 +842,22 @@ void Mickey::drawRoom() {
 }
 
 const uint8 colorBCG[16][2] = {
-	0x00,	0x00,	// 0 (black, black)
-	0, 0,
-	0x00,	0x0D,	// 2 (black, purple)
-	0x00,	0xFF,	// 3 (black, white)
-	0, 0,
-	0, 0,
-	0, 0,
-	0, 0,
-	0x0D,	0x00,	// 8 (purple, black)
-	0, 0,
-	0x0D,	0x0D,	// A (purple, purple)
-	0, 0,
-	0xFF,	0x00,	// C (white, black)
-	0, 0,
-	0, 0,
-	0xFF,	0xFF	// F (white, white)
+	{ 0x00,	0x00 },	// 0 (black, black)
+	{ 0, 0 },
+	{ 0x00,	0x0D },	// 2 (black, purple)
+	{ 0x00,	0xFF },	// 3 (black, white)
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0x0D,	0x00 },	// 8 (purple, black)
+	{ 0, 0 },
+	{ 0x0D,	0x0D },	// A (purple, purple)
+	{ 0, 0 },
+	{ 0xFF,	0x00 },	// C (white, black)
+	{ 0, 0 },
+	{ 0, 0 },
+	{ 0xFF,	0xFF }	// F (white, white)
 };
 
 void Mickey::drawLogo() {
