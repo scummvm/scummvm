@@ -682,21 +682,40 @@ void Mickey::debug() {
 // Graphics
 
 void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
-	_vm->preAgiLoadResource(rVIEW, iObj);
+	uint8* buffer = new uint8[4096];
+	char szFile[255] = {0};
+	sprintf(szFile, IDS_MSA_PATH_OBJ, IDS_MSA_NAME_OBJ[iObj]);
+
+	Common::File file;
+	if (!file.open(szFile))
+		return;
+	uint32 size = file.size();
+	file.read(buffer, size);
+	file.close();
 
 	if (iObj == IDI_MSA_OBJECT_CRYSTAL)
 		_vm->_picture->setPictureFlags(kPicFStep);
 
 	_vm->_picture->setOffset(x0, y0);
-	_vm->_picture->decodePicture(iObj, false, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_vm->_picture->decodePicture(buffer, size, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_vm->_picture->setOffset(0, 0);
 	_vm->_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 }
 
 void Mickey::drawPic(int iPic) {
-	_vm->preAgiLoadResource(rPICTURE, iPic);
+	uint8* buffer = new uint8[4096];
+	char szFile[255] = {0};
+	sprintf(szFile, IDS_MSA_PATH_PIC, iPic);
+
+	Common::File file;
+	if (!file.open(szFile))
+		return;
+	uint32 size = file.size();
+	file.read(buffer, size);
+	file.close();
+
 	// Note that decodePicture clears the screen
-	_vm->_picture->decodePicture(iPic, true, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
+	_vm->_picture->decodePicture(buffer, size, true, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_vm->_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	//_vm->_gfx->doUpdate();
 	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop

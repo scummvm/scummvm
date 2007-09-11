@@ -178,15 +178,6 @@ void PreAgiEngine::initialize() {
 
 	debugC(2, kDebugLevelMain, "Detect game");
 
-	_loader = new AgiLoader_preagi(this);
-
-	if (_loader->detectGame() == errOK) {
-		_game.state = STATE_LOADED;
-		debugC(2, kDebugLevelMain, "game loaded");
-	} else {
-		report("Could not open PreAGI game");
-	}
-
 	/* clear all resources and events */
 	for (int i = 0; i < MAX_DIRS; i++) {
 		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
@@ -194,9 +185,6 @@ void PreAgiEngine::initialize() {
 		memset(&_game.dirPic[i], 0, sizeof(struct AgiDir));
 		memset(&_game.dirSound[i], 0, sizeof(struct AgiDir));
 	}
-
-	// load resources
-	_loader->init();
 
 	debugC(2, kDebugLevelMain, "Init sound");
 }
@@ -250,14 +238,6 @@ int PreAgiEngine::go() {
 			break;
 	}		
 	return 0;
-}
-
-int PreAgiEngine::preAgiLoadResource(int r, int n) {
-	return _loader->loadResource(r, n);
-}
-
-int PreAgiEngine::preAgiUnloadResource(int r, int n) {
-	return _loader->unloadResource(r, n);
 }
 
 } // End of namespace Agi

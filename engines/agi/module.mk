@@ -11,7 +11,6 @@ MODULE_OBJS = \
 	id.o \
 	inv.o \
 	keyboard.o \
-	loader_preagi.o \
 	loader_v2.o \
 	loader_v3.o \
 	logic.o \

@@ -556,33 +556,6 @@ public:
 	virtual int getIntVersion() = 0;
 };
 
-class AgiLoader_preagi : public AgiLoader {
-private:
-	int _intVersion;
-	PreAgiEngine *_vm;
-
-	int loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len);
-	uint8 *loadVolRes(AgiDir *agid);
-
-public:
-
-	AgiLoader_preagi(PreAgiEngine *vm) {
-		_vm = vm;
-		_intVersion = 0;
-	}
-
-	virtual int init();
-	virtual int deinit();
-	virtual int detectGame();
-	virtual int loadResource(int, int);
-	virtual int unloadResource(int, int);
-	virtual int loadObjects(const char *);
-	virtual int loadWords(const char *);
-	virtual int version();
-	virtual void setIntVersion(int);
-	virtual int getIntVersion();
-};
-
 class AgiLoader_v2 : public AgiLoader {
 private:
 	int _intVersion;
@@ -677,7 +650,6 @@ public:
 	AgiDebug _debug;
 	AgiGame _game;
 	Common::RandomSource *_rnd;
-	AgiLoader *_loader;	/* loader */
 
 	virtual void agiTimerLow() = 0;
 	virtual int agiGetKeypressLow() = 0;
@@ -772,6 +744,7 @@ public:
 	GfxMgr *_gfx;
 	SoundMgr *_sound;
 	PictureMgr *_picture;
+	AgiLoader *_loader;	/* loader */
 
 	void clearImageStack();
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
@@ -973,9 +946,6 @@ public:
 	void agiTimerLow() {}
 	int agiGetKeypressLow() { return 0; }
 	int agiIsKeypressLow() { return 0; }
-
-	int preAgiLoadResource(int r, int n);
-	int preAgiUnloadResource(int r, int n);
 
 	PreAgiEngine(OSystem *syst);
 	virtual ~PreAgiEngine();
