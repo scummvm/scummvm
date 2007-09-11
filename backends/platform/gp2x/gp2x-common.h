@@ -165,7 +165,7 @@ public:
 	void hideOverlay();
 	void clearOverlay();
 	void grabOverlay(OverlayColor *buf, int pitch);
-	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h); // WinCE FIXME
+	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	int16 getHeight();
 	int16 getWidth();
 	int16 getOverlayHeight()  { return _overlayHeight; }

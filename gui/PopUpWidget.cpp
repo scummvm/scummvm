@@ -402,7 +402,6 @@ void PopUpWidget::clearEntries() {
 }
 
 void PopUpWidget::setSelected(int item) {
-	// FIXME
 	if (item != _selectedItem) {
 		if (item >= 0 && item < (int)_entries.size()) {
 			_selectedItem = item;

@@ -101,7 +101,7 @@ static const Plugin *detectPlugin() {
 
 	// FIXME: Do we really need this one? 
 	printf("Trying to start game '%s'\n", game.description().c_str());
-
+	
 	return plugin;
 }
 

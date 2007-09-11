@@ -42,7 +42,7 @@ EditableWidget::EditableWidget(GuiObject *boss, const String &name)
 void EditableWidget::init() {
 	_caretVisible = false;
 	_caretTime = 0;
-	_caretPos = 0;	// FIXME
+	_caretPos = 0;
 
 	_caretInverse = false;
 

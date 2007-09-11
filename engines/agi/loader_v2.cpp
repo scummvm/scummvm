@@ -174,9 +174,7 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 			}
 		} else {
 #if 0
-			/* FIXME: call some panic handler instead of
-			 *        deiniting directly
-			 */
+			// FIXME: call some panic handler instead of deiniting directly
 			deinitVideoMode();
 #endif
 			report("Error: bad signature %04x\n", sig);

@@ -1395,7 +1395,9 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 			if (id2 == (uint16)id) {
 				if (findWhat & foCodeHeader) {
 					fo->obcd = obcdptr;
-					fo->cdhd = (const CodeHeader *)(obcdptr + 10);	// TODO - FIXME
+					// We assume that the code header starts at a fixed offset.
+					// A bit hackish, but works reasonably well.
+					fo->cdhd = (const CodeHeader *)(obcdptr + 10);
 				}
 				if (findWhat & foImageHeader) {
 					fo->obim = obimptr;

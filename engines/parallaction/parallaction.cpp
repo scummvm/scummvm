@@ -95,6 +95,8 @@ static Job	   *_jRunScripts = NULL;
 Parallaction::Parallaction(OSystem *syst) :
 	Engine(syst) {
 
+	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+	// needs fixing, or remove it!
 	// FIXME
 	_vm = this;
 

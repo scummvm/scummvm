@@ -523,7 +523,7 @@ void Actor_v2::walkActor() {
 
 	if (_moving & MF_TURN) {
 		new_dir = updateActorDirection(false);
-		// FIXME -- is this correct?
+		// FIXME: is this correct?
 		if (_facing != new_dir)
 			setDirection(new_dir);
 		else
@@ -670,7 +670,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	bool flipX;
 	bool flipY;
 
-	// FIXME - It seems that at least in The Dig the original code does
+	// FIXME: It seems that at least in The Dig the original code does
 	// check _ignoreBoxes here. However, it breaks some animations in Loom,
 	// causing Bobbin to face towards the camera instead of away from it
 	// in some places: After the tree has been destroyed by lightning, and
@@ -1902,7 +1902,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
-	// FIXME: Workaround for bugs #770039 and #770049
+	// WORKAROUND for bugs #770039 and #770049
 	if (_game.id == GID_LOOM) {
 		if (!*_charsetBuffer)
 			return;

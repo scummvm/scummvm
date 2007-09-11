@@ -597,7 +597,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 		i = _resourceMapper[i & 0x7F];
 	}
 
-	// FIXME - TODO: This check used to be "i==0". However, that causes
+	// FIXME: This check used to be "i==0". However, that causes
 	// problems when using this function to ensure charset 0 is loaded.
 	// This is done for many games, e.g. Zak256 or Indy3 (EGA and VGA).
 	// For now we restrict the check to anything which is not a charset.

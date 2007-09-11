@@ -586,7 +586,7 @@ void ScummEngine::CHARSET_1() {
 				_nextTop += _charset->getFontHeight();
 			}
 			if (_game.version > 3) {
-				// FIXME - is this really needed?
+				// FIXME: is this really needed?
 				_charset->_disableOffsX = true;
 			}
 			continue;

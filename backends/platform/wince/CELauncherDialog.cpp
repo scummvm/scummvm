@@ -47,6 +47,8 @@ public:
 	: Dialog(10, 60, 300, 77) {
 		char tempo[100];
 
+		// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+		// needs fixing, or remove it!
 		addButton(this,(_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 
 		Common::String videoDriver("Using SDL driver ");

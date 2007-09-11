@@ -1099,6 +1099,8 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 
 	update_scalers();
 
+	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+	// needs fixing, or remove it!
 	// FIXME
 	if (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640) && mode)
 		_scaleFactorXm = -1;
@@ -1992,6 +1994,8 @@ void OSystem_WINCE3::hideOverlay() {
 }
 
 void OSystem_WINCE3::drawMouse() {
+	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+	// needs fixing, or remove it!
 	// FIXME
 	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset() && !_usesEmulatedMouse) && !_forceHideMouse)
 		internDrawMouse();		

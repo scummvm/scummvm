@@ -74,6 +74,8 @@ void ScummEngine::loadCJKFont() {
 			break;
 		case Common::JA_JPN:
 			fontFile = (_game.id == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
+			// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+			// needs fixing, or remove it!
 			numChar = 1024; //FIXME
 			break;
 		case Common::ZH_TWN:

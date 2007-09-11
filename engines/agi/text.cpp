@@ -67,6 +67,8 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 		for (m = (const unsigned char *)msg, x1 = y1 = 0; *m; m++) {
 
 			if (*m >= 0x20 || *m == 1 || *m == 2 || *m == 3) {
+				// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+				// needs fixing, or remove it!
 				/* FIXME */
 				int ypos;
 

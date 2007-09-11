@@ -161,11 +161,11 @@ public:
 	void deleteMutex(MutexRef mutex);
 
 	// Overlay
-	virtual void showOverlay(); // WinCE FIXME
-	virtual void hideOverlay(); // WinCE FIXME
+	virtual void showOverlay();
+	virtual void hideOverlay();
 	virtual void clearOverlay();
 	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h); // WinCE FIXME
+	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 	virtual int16 getOverlayHeight()  { return _overlayHeight; }

@@ -823,6 +823,8 @@ uint32 SoundMgr::mixSound(void) {
 
 				p += (uint32) 118600 *4 / _chn[c].freq;
 
+				// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+				// needs fixing, or remove it!
 				/* FIXME */
 				if (_chn[c].flags & AGI_SOUND_LOOP) {
 					p %= _chn[c].size << 8;

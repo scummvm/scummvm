@@ -43,7 +43,7 @@
 extern bool isSmartphone(void);
 #endif
 
-// FIXME - BIG HACK for MidiEmu & error()
+// FIXME: HACK for MidiEmu & error()
 Engine *g_engine = 0;
 
 

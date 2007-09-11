@@ -1014,8 +1014,8 @@ void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 	} else if (_game.features & GF_SMALL_HEADER) {
 		for (i = (_numLocalObjects-1); i > 0; i--) {
 			if (_objs[i].obj_nr == object) {
-				// FIXME - the only thing we need from the OBCD is the image size!
-				// So we could use almost the same code (save for offsets)
+				// FIXME: the only thing we need from the OBCD is the image size!
+				// So we could use almost the same code (except for offsets)
 				// as in the GF_OLD_BUNDLE code. But of course that would break save games
 				// unless we insert special conversion code... <sigh>
 				findObjectInRoom(&foir, foImageHeader, object, room);

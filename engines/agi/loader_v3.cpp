@@ -229,6 +229,8 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 
 		if (READ_BE_UINT16((uint8 *) x) != 0x1234) {
 #if 0
+			// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+			// needs fixing, or remove it!
 			/* FIXME */
 			deinitVideoMode();
 #endif

@@ -365,7 +365,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	_vm->logic()->oldRoom(_initialRoom);
 
-	// FIXME - Cutaway c41f is played at the end of the command 0x178. This command
+	// FIXME: Cutaway c41f is played at the end of the command 0x178. This command
 	// setups some persons and associates bob slots to them. They should be hidden as
 	// their y coordinate is > 150, but they aren't ! As a workaround, we display the room
 	// with the panel area enabled. We do the same problem for cutaway c62c.
