@@ -548,8 +548,6 @@ public:
 	virtual int deinit() = 0;
 	virtual int detectGame() = 0;
 	virtual int loadResource(int, int) = 0;
-	virtual int loadResource(int, const char*) = 0;
-	virtual int loadResource(int, byte*) = 0;
 	virtual int unloadResource(int, int) = 0;
 	virtual int loadObjects(const char *) = 0;
 	virtual int loadWords(const char *) = 0;
@@ -577,8 +575,6 @@ public:
 	virtual int deinit();
 	virtual int detectGame();
 	virtual int loadResource(int, int);
-	virtual int loadResource(int, const char*);
-	virtual int loadResource(int, byte*);
 	virtual int unloadResource(int, int);
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
@@ -606,8 +602,6 @@ public:
 	virtual int deinit();
 	virtual int detectGame();
 	virtual int loadResource(int, int);
-	virtual int loadResource(int, const char*) { return 0; }
-	virtual int loadResource(int, byte*) { return 0; }
 	virtual int unloadResource(int, int);
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
@@ -635,8 +629,6 @@ public:
 	virtual int deinit();
 	virtual int detectGame();
 	virtual int loadResource(int, int);
-	virtual int loadResource(int, const char*) { return 0; }
-	virtual int loadResource(int, byte*) { return 0; }
 	virtual int unloadResource(int, int);
 	virtual int loadObjects(const char *);
 	virtual int loadWords(const char *);
@@ -983,8 +975,6 @@ public:
 	int agiIsKeypressLow() { return 0; }
 
 	int preAgiLoadResource(int r, int n);
-	int preAgiLoadResource(int r, const char* n);
-	int preAgiLoadResource(int r, byte* n);
 	int preAgiUnloadResource(int r, int n);
 
 	PreAgiEngine(OSystem *syst);

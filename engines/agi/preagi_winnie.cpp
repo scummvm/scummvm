@@ -968,13 +968,17 @@ void Winnie::drawPic(const char *szName) {
 
 	// construct filename
 	sprintf(szFile, IDS_WTP_PATH, szName);
+	Common::File file;
+	if (!file.open(szName))
+		return;
+	uint32 size = file.size();
+	file.read(buffer, size);
+	file.close();
 
-	_vm->preAgiLoadResource(rPICTURE, szName);
-	_vm->_picture->decodePicture(0, true, false, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_vm->_picture->decodePicture(buffer, size, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-	_vm->preAgiUnloadResource(rPICTURE, 0);
 
 	delete [] buffer;
 }
@@ -989,9 +993,8 @@ void Winnie::drawObjPic(int iObj, int x0, int y0) {
 	readObj(iObj, buffer, 2048);
 	memcpy(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
 
-	_vm->preAgiLoadResource(rPICTURE, buffer + objhdr.ofsPic - IDI_WTP_OFS_OBJ);
 	_vm->_picture->setOffset(x0, y0);
-	_vm->_picture->decodePicture(0, false, false, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_vm->_picture->decodePicture(buffer + objhdr.ofsPic - IDI_WTP_OFS_OBJ, 4096, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_picture->setOffset(0, 0);
 	_vm->_picture->showPic(10, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_gfx->doUpdate();
@@ -1015,8 +1018,7 @@ void Winnie::drawRoomPic() {
 	memcpy(&roomhdr, buffer, sizeof(WTP_ROOM_HDR));
 
 	// draw room picture
-	_vm->preAgiLoadResource(rPICTURE, buffer + roomhdr.ofsPic - IDI_WTP_OFS_ROOM);
-	_vm->_picture->decodePicture(0, true, false, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_vm->_picture->decodePicture(buffer + roomhdr.ofsPic - IDI_WTP_OFS_ROOM, 4096, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop

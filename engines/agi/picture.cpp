@@ -802,6 +802,37 @@ int PictureMgr::decodePicture(int n, int clear, bool agi256, int pic_width, int 
 }
 
 /**
+ * Decode an AGI picture resource.
+ * This function decodes an AGI picture resource into the correct slot
+ * and draws it on the AGI screen, optionally clearing the screen before
+ * drawing.
+ * @param data   the AGI Picture data
+ * @param length the size of the picture data buffer
+ * @param clear  clear AGI screen before drawing
+ */
+int PictureMgr::decodePicture(byte* data, uint32 length, int clear, int pic_width, int pic_height) {
+	_patCode = 0;
+	_patNum = 0;
+	_priOn = _scrOn = false;
+	_scrColor = 0xF;
+	_priColor = 0x4;
+
+	_data = data;
+	_flen = length;
+	_foffs = 0;
+
+	_width = pic_width;
+	_height = pic_height;
+
+	if (clear) // 256 color pictures should always fill the whole screen, so no clearing for them.
+		memset(_vm->_game.sbuf16c, 0x4f, _width * _height); // Clear 16 color AGI screen (Priority 4, color white).
+
+	drawPicture(); // Draw 16 color picture.
+
+	return errOK;
+}
+
+/**
  * Unload an AGI picture resource.
  * This function unloads an AGI picture resource and deallocates
  * resource data.
