@@ -171,9 +171,7 @@ void Insane::runScene(int arraynum) {
 		writeArray(339, _enemy[EN_VULTF2].isEmpty);
 		writeArray(340, _enemy[EN_VULTM2].isEmpty);
 	}
-	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
-	// needs fixing, or remove it!
-	// insane_unlock(); // FIXME
+
 	_vm->_sound->stopAllSounds(); // IMUSE_StopAllSounds();
 }
 
@@ -330,10 +328,7 @@ int Insane::loadSceneData(int scene, int flag, int phase) {
 	int retvalue = 1;
 
 	debugC(DEBUG_INSANE, "Insane::loadSceneData(%d, %d, %d)", scene, flag, phase);
-	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
-	// needs fixing, or remove it!
-	//if (phase == 1) /// FIXME
-	//	insane_unlock();
+
 	switch (scene) {
 	case 1:
 		smlayer_loadSound(88, flag, phase);

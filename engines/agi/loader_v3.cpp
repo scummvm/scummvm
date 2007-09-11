@@ -228,12 +228,6 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 		fp.read(&x, 7);
 
 		if (READ_BE_UINT16((uint8 *) x) != 0x1234) {
-#if 0
-			// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
-			// needs fixing, or remove it!
-			/* FIXME */
-			deinitVideoMode();
-#endif
 			debugC(3, kDebugLevelResources, "path = %s", path.c_str());
 			debugC(3, kDebugLevelResources, "offset = %d", agid->offset);
 			debugC(3, kDebugLevelResources, "x = %x %x", x[0], x[1]);

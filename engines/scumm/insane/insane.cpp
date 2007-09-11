@@ -1169,10 +1169,6 @@ int Insane::smlayer_loadCostume(int id, int phase) {
 	_vm->ensureResourceLoaded(rtCostume, resid);
 	_vm->_res->setResourceCounter(rtCostume, resid, 1);
 
-	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
-	// needs fixing, or remove it!
-	// smlayer_lock(rtCostume, resid); // FIXME
-
 	if (phase == 1) {
 		_objArray1Idx2++;
 		_objArray1[_objArray1Idx2] = id;

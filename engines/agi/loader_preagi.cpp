@@ -273,9 +273,7 @@ int AgiLoader_preagi::loadResource(int t, byte* n) {
 
 		if (n != NULL) {
 			_vm->_game.pictures[0].rdata = n;
-			// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
-			// needs fixing, or remove it!
-			_vm->_game.dirPic[0].len = 4096;		//FIXME
+			_vm->_game.dirPic[0].len = 4096;		//FIXME: set up real resource length
 			_vm->_game.dirPic[0].flags |= RES_LOADED;
 		} else {
 			ec = errBadResource;
