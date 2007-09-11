@@ -2014,6 +2014,8 @@ bool Actor::followProtagonist(ActorData *actor) {
 					newLocation.y += _vm->_rnd.getRandomNumber(prefer1.y - 1) - prefer1.y / 2;
 				}
 
+				// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+				// needs fixing, or remove it!
 				newLocation.x = clamp(-31*4, newLocation.x, (_vm->getDisplayWidth() + 31) * 4); //fixme
 
 				return actorWalkTo(actor->_id, newLocation);

@@ -49,7 +49,7 @@ int SagaEngine::processInput() {
 					_console->attach();
 			}
 			if (_interface->_textInput || _interface->_statusTextInput) {
-				_interface->processAscii(event.kbd.ascii);
+				_interface->processAscii(event.kbd);
 				return SUCCESS;
 			}
 
@@ -115,7 +115,7 @@ int SagaEngine::processInput() {
 				_render->toggleFlag(RF_RENDERPAUSE);
 				break;
 			default:
-				_interface->processAscii(event.kbd.ascii);
+				_interface->processAscii(event.kbd);
 				break;
 			}
 			break;
