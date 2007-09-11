@@ -829,6 +829,9 @@ int PictureMgr::decodePicture(byte* data, uint32 length, int clear, int pic_widt
 
 	drawPicture(); // Draw 16 color picture.
 
+	free(_data);
+	_data = 0;
+
 	return errOK;
 }
 
