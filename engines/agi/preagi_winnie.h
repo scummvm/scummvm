@@ -309,9 +309,6 @@ private:
 	void initVars();
 	void randomize();
 	void intro();
-	void intro_DrawLogo();
-	void intro_DrawTitle();
-	void intro_PlayTheme();
 	void drawPic(const char*);
 	void gameLoop();
 	void readRoom(int, uint8*, int);

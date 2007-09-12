@@ -117,24 +117,12 @@ void Winnie::randomize() {
 }
 
 void Winnie::intro() {
-	intro_DrawLogo();
-	intro_DrawTitle();
-	intro_PlayTheme();
-}
-
-void Winnie::intro_DrawLogo() {
 	drawPic(IDS_WTP_FILE_LOGO);
 	_vm->printStr(IDS_WTP_INTRO_0);
-	_vm->waitAnyKeyChoice();
-}
-
-void Winnie::intro_DrawTitle() {
+	_vm->_system->delayMillis(0x640);
 	drawPic(IDS_WTP_FILE_TITLE);
 	_vm->printStr(IDS_WTP_INTRO_1);
-	_vm->waitAnyKeyChoice();
-}
-
-void Winnie::intro_PlayTheme() {
+	_vm->_system->delayMillis(0x640);
 	//if (!Winnie_PlaySound(IDI_WTP_SND_POOH_0)) return;
 	//if (!Winnie_PlaySound(IDI_WTP_SND_POOH_1)) return;
 	//if (!Winnie_PlaySound(IDI_WTP_SND_POOH_2)) return;
