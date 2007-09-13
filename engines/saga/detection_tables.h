@@ -235,10 +235,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 	},
 
 
-	// Note: This version is NOT supported yet
-	// Exiting the faire leads to a crash
-
 	// Inherit the earth - MAC Demo version 1
+	// Non-interactive demo
 	{
 		{
 			"ite",
@@ -257,7 +255,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		},
 		GType_ITE,
 		GID_ITE_MACDEMO1,
-		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX,
+		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX | GF_NON_INTERACTIVE,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -301,10 +299,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 	},
 
 
-	// Note: This version is NOT supported yet
-	// Exiting the faire leads to a crash
-
 	// Inherit the earth - Win32 Demo version 1
+	// Non-interactive demo
 	{
 		{
 			"ite",
@@ -322,7 +318,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		},
 		GType_ITE,
 		GID_ITE_WINDEMO1,
-		GF_WYRMKEEP | GF_CD_FX,
+		GF_WYRMKEEP | GF_CD_FX | GF_NON_INTERACTIVE,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),

@@ -332,6 +332,20 @@ void Script::sfMainMode(SCRIPTFUNC_PARAMS) {
 
 	if (_vm->getGameType() == GType_ITE)
 		setPointerVerb();
+
+	// The early Windows and Mac demos of ITE were non-interactive. In those demos,
+	// the intro is shown and then when the first scene is shown, there's a dialog
+	// thanking the user for playing the demo and asking him to buy the full game,
+	// without allowing him to continue any further. The game data itself for these
+	// demos does not contain any scripts for the first scene (i.e. there's no text
+	// in the game data to look at Rif's silver medallion). Also, there are no more
+	// scenes apart from the Grand Tournament scene. This opcode is called in those
+	// demos, and I assume that its use there is to just show the popup window and
+	// exit the game. Therefore, once this opcode is called in the older ITE demos,
+	// exit the game. Known non-interactive demos are GID_ITE_MACDEMO1 and
+	// GID_ITE_WINDEMO1
+	if (_vm->getFeatures() & GF_NON_INTERACTIVE)
+		_vm->shutDown();
 }
 
 // Script function #6 (0x06) blocking
