@@ -55,6 +55,10 @@ private:
 	bool cmdCurrentPanelMode(int argc, const char **argv);
 	bool cmdSetPanelMode(int argc, const char **argv);
 
+	bool cmdGlobalFlagsInfo(int argc, const char **argv);
+	bool cmdSetGlobalFlag(int argc, const char **argv);
+	bool cmdClearGlobalFlag(int argc, const char **argv);
+
 private:
 	SagaEngine *_vm;
 };

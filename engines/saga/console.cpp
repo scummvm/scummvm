@@ -75,6 +75,11 @@ Console::Console(SagaEngine *vm) : GUI::Debugger() {
 	// Panel commands
 	DCmd_Register("current_panel_mode",	WRAP_METHOD(Console, cmdCurrentPanelMode));
 	DCmd_Register("set_panel_mode",		WRAP_METHOD(Console, cmdSetPanelMode));
+
+	// Global flags commands
+	DCmd_Register("global_flags_info",	WRAP_METHOD(Console, cmdGlobalFlagsInfo));
+	DCmd_Register("set_global_flag",	WRAP_METHOD(Console, cmdSetGlobalFlag));
+	DCmd_Register("clear_global_flag",	WRAP_METHOD(Console, cmdClearGlobalFlag));
 }
 
 Console::~Console() {
@@ -155,6 +160,84 @@ bool Console::cmdSetPanelMode(int argc, const char **argv) {
 		DebugPrintf("Usage: %s <Panel mode number>\n", argv[0]);
 	else
 		_vm->_interface->setMode(atoi(argv[1]));
+	return true;
+}
+
+bool Console::cmdGlobalFlagsInfo(int argc, const char **argv) {
+	DebugPrintf("Global flags status for IHNM:\n");
+
+	// Global flags in IHNM:
+	// 00: Unknown
+	// 01: Unknown
+	// 02: Unknown
+	// 03: Unknown
+	// 04: Unknown
+	// 05: Unknown
+	// 06: Unknown
+	// 07: Unknown
+	// 08: Unknown
+	// 09: Unknown
+	// 10: Unknown
+	// 11: Unknown
+	// 12: Unknown
+	// 13: Unknown
+	// 14: Unknown
+	// 15: Unknown
+	// 16: Used in the final chapter. If it's 0 when a character dies, the "bad" ending for that character is shown
+	// 17: Unknown
+	// 18: Unknown
+	// 19: Unknown, used in the final chapter
+	// 20: Unknown
+	// 21: Unknown
+	// 22: Unknown
+	// 23: Unknown
+	// 24: Unknown
+	// 25: Unknown
+	// 26: Unknown
+	// 27: Unknown
+	// 28: Unknown
+	// 29: Unknown
+	// 30: Unknown
+	// 31: Unknown
+
+	int i = 0, k = 0, flagStatus = 0;
+
+	for (i = 0; i < 32; i += 8) {
+		for (k = i; k < i + 8; k ++) {
+			flagStatus = _vm->_globalFlags & (1 << k) ? 1 : 0;
+			_vm->_console->DebugPrintf("%02d: %u |", k, flagStatus);
+		}
+		_vm->_console->DebugPrintf("\n");
+	}
+
+	return true;
+}
+
+bool Console::cmdSetGlobalFlag(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <Global flag number>\nValid flag numbers are 0 - 31\n", argv[0]);
+	} else {
+		int flagNumber = atoi(argv[1]);
+		if (flagNumber >= 0 && flagNumber <= 31) {
+			_vm->_globalFlags |= (1 << flagNumber);
+		} else {
+			DebugPrintf("Valid flag numbers are 0 - 31\n");
+		}
+	}
+	return true;
+}
+
+bool Console::cmdClearGlobalFlag(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <Global flag number>\nValid flag numbers are 0 - 31\n", argv[0]);
+	} else {
+		int flagNumber = atoi(argv[1]);
+		if (flagNumber >= 0 && flagNumber <= 31) {
+			_vm->_globalFlags &= ~(1 << flagNumber);
+		} else {
+			DebugPrintf("Valid flag numbers are 0 - 31\n");
+		}
+	}
 	return true;
 }
 
