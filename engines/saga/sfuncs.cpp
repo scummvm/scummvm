@@ -1299,10 +1299,9 @@ void Script::sfResumeBgdAnim(SCRIPTFUNC_PARAMS) {
 // Param6: flags
 void Script::sfThrowActor(SCRIPTFUNC_PARAMS) {
 	ActorData *actor = _vm->_actor->getActor(thread->pop());
-	Location location;
-	location.x = thread->pop();
-	location.y = thread->pop();
-	location.z = actor->_location.z;
+	actor->_finalTarget.x = thread->pop();
+	actor->_finalTarget.y = thread->pop();
+	actor->_finalTarget.z = actor->_location.z;
 	thread->pop();	// not used
 	int32 actionCycle = thread->pop();
 	int16 flags = thread->pop();
@@ -1313,7 +1312,6 @@ void Script::sfThrowActor(SCRIPTFUNC_PARAMS) {
 	actor->_fallVelocity = - (actor->_fallAcceleration * actor->_actionCycle) / 2;
 	actor->_fallPosition = actor->_location.z << 4;
 
-	actor->_finalTarget = location;
 	actor->_actionCycle--;
 	if (!(flags & kWalkAsync)) {
 		thread->waitWalk(actor);
@@ -1343,9 +1341,7 @@ void Script::sfScriptSceneID(SCRIPTFUNC_PARAMS) {
 // Param2: scene number
 void Script::sfChangeActorScene(SCRIPTFUNC_PARAMS) {
 	ActorData *actor = _vm->_actor->getActor(thread->pop());
-	int32 sceneNumber = thread->pop();
-
-	actor->_sceneNumber = sceneNumber;
+	actor->_sceneNumber = thread->pop();
 }
 
 // Script function #56 (0x38)
