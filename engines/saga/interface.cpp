@@ -713,7 +713,7 @@ void Interface::setStatusText(const char *text, int statusColor) {
 	assert(text != NULL);
 	assert(strlen(text) < STATUS_TEXT_LEN);
 
-	if (_vm->_render->getFlags() & (RF_PLACARD | RF_MAP))
+	if (_vm->_render->getFlags() & RF_MAP || _vm->_interface->getMode() == kPanelPlacard)
 		return;
 
 	strncpy(_statusText, text, STATUS_TEXT_LEN);

@@ -739,15 +739,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	q_event = NULL;
 
-	//fix placard bug
-	//i guess we should remove RF_PLACARD flag - and use _interface->getMode()
-	event.type = kEvTOneshot;
-	event.code = kGraphicsEvent;
-	event.op = kEventClearFlag;
-	event.param = RF_PLACARD;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
 	if (loadSceneParams->transitionType == kTransitionFade) {
 
 		_vm->_interface->setFadeMode(kFadeOut);
@@ -1335,8 +1326,6 @@ void Scene::clearPlacard() {
 	Event event;
 	Event *q_event;
 
-	_vm->_interface->restoreMode();
-
 	_vm->_gfx->getCurrentPal(cur_pal);
 
 	event.type = kEvTImmediate;
@@ -1349,16 +1338,17 @@ void Scene::clearPlacard() {
 	q_event = _vm->_events->queue(&event);
 
 	event.type = kEvTOneshot;
-	event.code = kGraphicsEvent;
-	event.op = kEventClearFlag;
-	event.param = RF_PLACARD;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
 	event.code = kTextEvent;
 	event.op = kEventRemove;
 	event.data = _vm->_script->getPlacardTextEntry();
+
+	q_event = _vm->_events->chain(q_event, &event);
+
+	event.type = kEvTImmediate;
+	event.code = kInterfaceEvent;
+	event.op = kEventRestoreMode;
+	event.time = 0;
+	event.duration = 0;
 
 	q_event = _vm->_events->chain(q_event, &event);
 
@@ -1425,13 +1415,6 @@ void Scene::showPsychicProfile(const char *text) {
 
 	q_event = _vm->_events->chain(q_event, &event);
 
-	event.type = kEvTOneshot;
-	event.code = kGraphicsEvent;
-	event.op = kEventSetFlag;
-	event.param = RF_PLACARD;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
 	// Set the background and palette for the psychic profile
 	event.type = kEvTOneshot;
 	event.code = kPsychicProfileBgEvent;
@@ -1484,6 +1467,7 @@ void Scene::showPsychicProfile(const char *text) {
 
 void Scene::clearPsychicProfile() {
 	if (_vm->_interface->getMode() == kPanelPlacard || _vm->getGameId() == GID_IHNM_DEMO) {
+		_vm->_interface->restoreMode();
 		_vm->_scene->clearPlacard();
 		_vm->_scene->_textList.clear();
 		_vm->_render->setFlag(RF_DISABLE_ACTORS);

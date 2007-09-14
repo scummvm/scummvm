@@ -1054,26 +1054,16 @@ void Script::sfPlaceActor(SCRIPTFUNC_PARAMS) {
 	ActorData *actor = _vm->_actor->getActor(actorId);
 	actor->_location.x = thread->pop();
 	actor->_location.y = thread->pop();
-	int actorDirection = thread->pop();
+	actor->_facingDirection = actor->_actionDirection = thread->pop();
 	int frameType = thread->pop();
 	int frameOffset = thread->pop();
 	ActorFrameRange *frameRange;
 
 	debug(1, "sfPlaceActor(id = 0x%x, x=%d, y=%d, dir=%d, frameType=%d, frameOffset=%d)", actorId, actor->_location.x,
-		  actor->_location.y, actorDirection, frameType, frameOffset);
-
-	actor->_facingDirection = actor->_actionDirection = actorDirection;
-
-	if (!actor->_frames)
-		_vm->_actor->loadActorResources(actor); //? is not it already loaded ?
+		  actor->_location.y, actor->_facingDirection, frameType, frameOffset);
 
 	if (frameType >= 0) {
 		frameRange = _vm->_actor->getActorFrameRange(actorId, frameType);
-
-		if (frameRange->frameCount <= frameOffset) {
-			warning("Wrong frameOffset 0x%X", frameOffset);
-		}
-
 		actor->_frameNumber = frameRange->frameIndex + frameOffset;
 		actor->_currentAction = kActionFreeze;
 	} else {
@@ -1204,13 +1194,6 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.type = kEvTOneshot;
 	event.code = kInterfaceEvent;
 	event.op = kEventClearStatus;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
-	event.code = kGraphicsEvent;
-	event.op = kEventSetFlag;
-	event.param = RF_PLACARD;
 
 	q_event = _vm->_events->chain(q_event, &event);
 

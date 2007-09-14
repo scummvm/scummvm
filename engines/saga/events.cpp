@@ -390,7 +390,7 @@ int Events::handleOneShot(Event *event) {
 		free(buf);
 		free(resourceData);
 
-		// Draw the scene. It won't be drawn by Render::drawScene(), as the RF_PLACARD is set
+		// Draw the scene. It won't be drawn by Render::drawScene(), as a placard is up
 		_vm->_scene->draw();
 		}
 		break;
@@ -470,6 +470,9 @@ int Events::handleOneShot(Event *event) {
 			break;
 		case kEventSetFadeMode:
 			_vm->_interface->setFadeMode(event->param);
+			break;
+		case kEventRestoreMode:
+			_vm->_interface->restoreMode();
 			break;
 		default:
 			break;
