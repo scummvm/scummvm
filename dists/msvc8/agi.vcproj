@@ -221,10 +221,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\loader_preagi.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\agi\loader_v2.cpp"
 			>
 		</File>
