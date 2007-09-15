@@ -1047,7 +1047,10 @@ void Interface::setQuit(PanelButton *panelButton) {
 			setMode(kPanelOption);
 			break;
 		case kTextQuit:
-			_vm->shutDown();
+			if (_vm->getGameId() == GID_IHNM_DEMO)
+				_vm->_scene->creditsScene();	// display sales info for IHNM demo
+			else
+				_vm->shutDown();
 			break;
 	}
 }
