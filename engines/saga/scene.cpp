@@ -282,6 +282,9 @@ void Scene::startScene() {
 		break;
 	}
 
+	// Stop the intro music
+	_vm->_music->stop();
+
 	// Load the head in scene queue
 	queueIterator = _sceneQueue.begin();
 	if (queueIterator == _sceneQueue.end()) {
