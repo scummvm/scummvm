@@ -871,7 +871,7 @@ void Parallaction_ns::parseLocation(const char *filename) {
     debugC(5, kDebugLocation, "parseLocation('%s')", filename);
 
 	allocateLocationSlot(filename);
-	printf("got location slot #%i for %s\n", _currentLocationIndex, filename);
+//	printf("got location slot #%i for %s\n", _currentLocationIndex, filename);
 
 	Script *script = _disk->loadLocation(filename);
 

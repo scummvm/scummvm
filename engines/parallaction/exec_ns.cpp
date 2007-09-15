@@ -48,7 +48,7 @@ namespace Parallaction {
 #define INST_START						16
 #define INST_SOUND						17
 #define INST_MOVE						18
-#define INST_END						19
+#define INST_ENDSCRIPT					19
 
 
 typedef OpcodeImpl<Parallaction_ns> OpcodeV1;
@@ -185,7 +185,7 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 	_engineFlags |= kEngineWalking;
 }
 
-DECLARE_INSTRUCTION_OPCODE(end) {
+DECLARE_INSTRUCTION_OPCODE(endscript) {
 	if ((_instRunCtxt.a->_flags & kFlagsLooping) == 0) {
 		_instRunCtxt.a->_flags &= ~kFlagsActing;
 		runCommands(_instRunCtxt.a->_commands, _instRunCtxt.a);
@@ -819,7 +819,7 @@ void Parallaction_ns::initOpcodes() {
 		INSTRUCTION_OPCODE(start),
 		INSTRUCTION_OPCODE(sound),
 		INSTRUCTION_OPCODE(move),
-		INSTRUCTION_OPCODE(end)
+		INSTRUCTION_OPCODE(endscript)
 	};
 
 	uint i;

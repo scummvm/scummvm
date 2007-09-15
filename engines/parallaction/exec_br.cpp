@@ -29,12 +29,13 @@ namespace Parallaction {
 #define INST_TEXT		23
 #define INST_MUL		24
 #define INST_DIV		25
-#define INST_IF			26
-#define INST_IFEQ		27
-#define INST_IFLT		28
-#define INST_IFGT		29
-#define INST_ENDIF		30
-#define INST_STOP		31
+#define INST_IFEQ		26
+#define INST_IFLT		27
+#define INST_IFGT		28
+#define INST_ENDIF		29
+#define INST_STOP		30
+#define INST_ENDSCRIPT	31
+
 
 
 typedef OpcodeImpl<Parallaction_br> OpcodeV2;
@@ -411,12 +412,18 @@ void Parallaction_br::jobEraseSubtitle(void *parm, Job *job) {
 
 	if (_subtitle0._old.x != -1000) {
 		_subtitle0.getRect(r);
+
+//		printf("sub0: (%i, %i, %i, %i)\n", r.left, r.top, r.right, r.bottom);
+
 		_gfx->restoreBackground(r);
 	}
 	_subtitle0._old = _subtitle0._pos;
 
 	if (_subtitle1._old.x != -1000) {
 		_subtitle0.getRect(r);
+
+//		printf("sub1: (%i, %i, %i, %i)\n", r.left, r.top, r.right, r.bottom);
+
 		_gfx->restoreBackground(r);
 	}
 	_subtitle1._old = _subtitle1._pos;

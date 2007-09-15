@@ -421,6 +421,8 @@ const char *_instructionNamesRes_br[] = {
 	"mul",
 	"div",
 	"if",
+	"dummy",
+	"dummy",
 	"endif",
 	"stop",
 	"endscript"
