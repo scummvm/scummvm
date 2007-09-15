@@ -84,34 +84,38 @@ int Anim::playCutaway(int cut, bool fade) {
 	Event event;
 	Event *q_event = NULL;
 	bool startImmediately = false;
+	byte *resourceData;
+	size_t resourceDataLength;
+	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 
 	_cutAwayFade = fade;
 
 	_vm->_gfx->savePalette();
 	_vm->_gfx->getCurrentPal(saved_pal);
 
-	// TODO: Fade in and fade out at this point are problematic right now, caused
-	// by the fact that we're trying to mix events with direct calls:
-	// 1) The background of the animation is shown when _vm->decodeBGImage and
-	// bgSurface->blit are called below, before palette fadeout starts
-	// 2) Fade in to the animation is currently problematic (it fades in to white)
-	// We either have to use non-event calls to fade in/out the palette, or change
-	// the background display and animation parts to events
-	fade = false;	// remove this once palette fadein-fadeout works
-
 	if (fade) {
 		static PalEntry cur_pal[PAL_ENTRIES];
 
-		_vm->_gfx->getCurrentPal(cur_pal);
+		_vm->_interface->setFadeMode(kFadeOut);
 
+		// Fade to black out
+		_vm->_gfx->getCurrentPal(cur_pal);
 		event.type = kEvTImmediate;
 		event.code = kPalEvent;
 		event.op = kEventPalToBlack;
 		event.time = 0;
 		event.duration = kNormalFadeDuration;
 		event.data = cur_pal;
-
 		q_event = _vm->_events->queue(&event);
+
+		// set fade mode
+		event.type = kEvTImmediate;
+		event.code = kInterfaceEvent;
+		event.op = kEventSetFadeMode;
+		event.param = kNoFade;
+		event.time = 0;
+		event.duration = 0;
+		q_event = _vm->_events->chain(q_event, &event);
 	}
 
 	// Prepare cutaway
@@ -131,45 +135,18 @@ int Anim::playCutaway(int cut, bool fade) {
 	else
 		_vm->_interface->setMode(kPanelCutaway);
 
-	// Set the initial background and palette for the cutaway
-	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
-
-	byte *resourceData;
-	size_t resourceDataLength;
-
-	_vm->_resource->loadResource(context, _cutawayList[cut].backgroundResourceId, resourceData, resourceDataLength);
-
-	byte *buf;
-	size_t buflen;
-	int width;
-	int height;
-
-	_vm->decodeBGImage(resourceData, resourceDataLength, &buf, &buflen, &width, &height);
-
-	const PalEntry *palette = (const PalEntry *)_vm->getImagePal(resourceData, resourceDataLength);
-
-	Surface *bgSurface = _vm->_render->getBackGroundSurface();
-	const Rect rect(width, height);
-
-	bgSurface->blit(rect, buf);
-	_vm->_frameCount++;
-
-	// Handle fade up, if we previously faded down
 	if (fade) {
+		// Set the initial background and palette for the cutaway
 		event.type = kEvTImmediate;
-		event.code = kPalEvent;
-		event.op = kEventBlackToPal;
+		event.code = kCutawayEvent;
+		event.op = kEventShowCutawayBg;
 		event.time = 0;
-		event.duration = kNormalFadeDuration;
-		event.data = (PalEntry *)palette;
-
+		event.duration = 0;
+		event.param = _cutawayList[cut].backgroundResourceId;
 		q_event = _vm->_events->chain(q_event, &event);
 	} else {
-		_vm->_gfx->setPalette(palette);
+		showCutawayBg(_cutawayList[cut].backgroundResourceId);
 	}
-
-	free(buf);
-	free(resourceData);
 
 	// Play the animation
 
@@ -215,7 +192,10 @@ int Anim::playCutaway(int cut, bool fade) {
 		event.param = MAX_ANIMATIONS + cutawaySlot;
 		event.time = (40 / 3) * 1000 / _cutawayList[cut].frameRate;
 
-		_vm->_events->queue(&event);
+		if (fade)
+			q_event = _vm->_events->chain(q_event, &event);
+		else
+			_vm->_events->queue(&event);
 	}
 
 	return MAX_ANIMATIONS + cutawaySlot;
@@ -235,7 +215,6 @@ void Anim::returnFromCutaway(void) {
 
 	debug(0, "returnFromCutaway()");
 
-
 	if (_cutawayActive) {
 		Event event;
 		Event *q_event = NULL;
@@ -243,16 +222,26 @@ void Anim::returnFromCutaway(void) {
 		if (_cutAwayFade) {
 			static PalEntry cur_pal[PAL_ENTRIES];
 
-			_vm->_gfx->getCurrentPal(cur_pal);
+			_vm->_interface->setFadeMode(kFadeOut);
 
+			// Fade to black out
+			_vm->_gfx->getCurrentPal(cur_pal);
 			event.type = kEvTImmediate;
 			event.code = kPalEvent;
 			event.op = kEventPalToBlack;
 			event.time = 0;
 			event.duration = kNormalFadeDuration;
 			event.data = cur_pal;
-
 			q_event = _vm->_events->queue(&event);
+
+			// set fade mode
+			event.type = kEvTImmediate;
+			event.code = kInterfaceEvent;
+			event.op = kEventSetFadeMode;
+			event.param = kNoFade;
+			event.time = 0;
+			event.duration = 0;
+			q_event = _vm->_events->chain(q_event, &event);
 		}
 
 		// Clear the cutaway. Note that this sets _cutawayActive to false
@@ -275,7 +264,6 @@ void Anim::returnFromCutaway(void) {
 		event.op = kEventResumeAll;
 		event.time = 0;
 		event.duration = 0;
-
 		q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
 
 		// Draw the scene
@@ -284,7 +272,6 @@ void Anim::returnFromCutaway(void) {
 		event.op = kEventDraw;
 		event.time = 0;
 		event.duration = 0;
-
 		q_event = _vm->_events->chain(q_event, &event);		// chain with the other events
 
 		// Handle fade up, if we previously faded down
@@ -295,16 +282,13 @@ void Anim::returnFromCutaway(void) {
 			event.time = 0;
 			event.duration = kNormalFadeDuration;
 			event.data = saved_pal;
-
 			q_event = _vm->_events->chain(q_event, &event);
-
 		}
 
 		event.type = kEvTOneshot;
 		event.code = kScriptEvent;
 		event.op = kEventThreadWake;
 		event.param = kWaitTypeWakeUp;
-
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 }
@@ -334,6 +318,45 @@ void Anim::clearCutaway(void) {
 		_vm->_scene->getBGPal(pal);
 		_vm->_gfx->setPalette(pal);
 	}
+}
+
+void Anim::showCutawayBg(int bg) {
+	ResourceContext *context = _vm->_resource->getContext(GAME_RESOURCEFILE);
+
+	byte *resourceData;
+	size_t resourceDataLength;
+	byte *buf;
+	size_t buflen;
+	int width;
+	int height;
+	Event event;
+	static PalEntry pal[PAL_ENTRIES];
+
+	_vm->_resource->loadResource(context, bg, resourceData, resourceDataLength);
+	_vm->decodeBGImage(resourceData, resourceDataLength, &buf, &buflen, &width, &height);
+
+	const byte *palPointer = _vm->getImagePal(resourceData, resourceDataLength);
+	memcpy(pal, palPointer, sizeof(pal));
+	Surface *bgSurface = _vm->_render->getBackGroundSurface();
+	const Rect rect(width, height);
+	bgSurface->blit(rect, buf);
+	_vm->_frameCount++;
+
+	if (_cutAwayFade) {
+		// Handle fade up, if we previously faded down
+		event.type = kEvTImmediate;
+		event.code = kPalEvent;
+		event.op = kEventBlackToPal;
+		event.time = 0;
+		event.duration = kNormalFadeDuration;
+		event.data = pal;
+		_vm->_events->queue(&event);
+	} else {
+		_vm->_gfx->setPalette(pal);
+	}
+
+	free(buf);
+	free(resourceData);
 }
 
 void Anim::startVideo(int vid, bool fade) {
@@ -470,7 +493,6 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		event.op = kEventFrame;
 		event.param = animId;
 		event.time = 10;
-
 		_vm->_events->queue(&event);
 
 		// Nothing to render here (apart from the background, which is already rendered),
@@ -503,8 +525,8 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		event.op = kEventFrame;
 		event.param = animId;
 		event.time = 0;
-
 		_vm->_events->queue(&event);
+
 		return;
 	}
 
@@ -568,7 +590,6 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 	event.op = kEventFrame;
 	event.param = animId;
 	event.time = frameTime;
-
 	_vm->_events->queue(&event);
 }
 

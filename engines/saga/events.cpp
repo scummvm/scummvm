@@ -549,6 +549,9 @@ int Events::handleOneShot(Event *event) {
 		case kEventClear:
 			_vm->_anim->clearCutaway();
 			break;
+		case kEventShowCutawayBg:
+			_vm->_anim->showCutawayBg(event->param);
+			break;
 		default:
 			break;
 		}

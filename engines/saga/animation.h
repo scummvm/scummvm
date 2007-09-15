@@ -119,6 +119,7 @@ public:
 	void endCutaway(void);
 	void returnFromCutaway(void);
 	void clearCutaway(void);
+	void showCutawayBg(int bg);
 
 	void startVideo(int vid, bool fade);
 	void endVideo(void);

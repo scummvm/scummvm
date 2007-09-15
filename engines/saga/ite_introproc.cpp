@@ -115,7 +115,6 @@ Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialo
 		event.op = kEventDisplay;
 		event.data = entry;
 		event.time = (i == 0) ? 0 : VOICE_PAD;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Play voice
@@ -124,7 +123,6 @@ Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialo
 		event.op = kEventPlay;
 		event.param = dialogue[i].i_voice_rn;
 		event.time = 0;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		voice_len = _vm->_sndRes->getVoiceLength(dialogue[i].i_voice_rn);
@@ -138,7 +136,6 @@ Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialo
 		event.op = kEventRemove;
 		event.data = entry;
 		event.time = voice_len;
-
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 
@@ -265,7 +262,6 @@ Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 		event.op = kEventDisplay;
 		event.data = entry;
 		event.time = delta_time;
-
 		q_event = _vm->_events->queue(&event);
 
 		// Remove text
@@ -274,7 +270,6 @@ Event *Scene::ITEQueueCredits(int delta_time, int duration, int n_credits, const
 		event.op = kEventRemove;
 		event.data = entry;
 		event.time = duration;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		y += (_vm->_font->getHeight(font) + line_spacing);
@@ -301,7 +296,6 @@ int Scene::ITEIntroAnimProc(int param) {
 		event.op = kEventDisplay;
 		event.param = kEvPSetPalette;
 		event.time = 0;
-
 		q_event = _vm->_events->queue(&event);
 
 		debug(3, "Intro animation procedure started.");
@@ -340,7 +334,6 @@ int Scene::ITEIntroAnimProc(int param) {
 		event.op = kEventPlay;
 		event.param = 0;
 		event.time = 0;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue intro music playback
@@ -350,7 +343,6 @@ int Scene::ITEIntroAnimProc(int param) {
 		event.param2 = MUSIC_LOOP;
 		event.op = kEventPlay;
 		event.time = 0;
-
 		q_event = _vm->_events->chain(q_event, &event);
 		}
 		break;
@@ -427,7 +419,6 @@ int Scene::ITEIntroCave1Proc(int param) {
 		event.code = kPalAnimEvent;
 		event.op = kEventCycleStart;
 		event.time = 0;
-
 		q_event = _vm->_events->queue(&event);
 
 		// Queue narrator dialogue list
@@ -438,8 +429,8 @@ int Scene::ITEIntroCave1Proc(int param) {
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
 		event.time = VOICE_PAD;
-
 		q_event = _vm->_events->chain(q_event, &event);
+
 		break;
 	case SCENE_END:
 		break;
@@ -504,7 +495,6 @@ int Scene::ITEIntroCave2Proc(int param) {
 		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
-
 		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
@@ -512,7 +502,6 @@ int Scene::ITEIntroCave2Proc(int param) {
 		event.code = kPalAnimEvent;
 		event.op = kEventCycleStart;
 		event.time = 0;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
@@ -523,8 +512,8 @@ int Scene::ITEIntroCave2Proc(int param) {
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
 		event.time = VOICE_PAD;
-
 		q_event = _vm->_events->chain(q_event, &event);
+
 		break;
 	case SCENE_END:
 		break;
@@ -588,7 +577,6 @@ int Scene::ITEIntroCave3Proc(int param) {
 		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
-
 		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
@@ -596,7 +584,6 @@ int Scene::ITEIntroCave3Proc(int param) {
 		event.code = kPalAnimEvent;
 		event.op = kEventCycleStart;
 		event.time = 0;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
@@ -607,8 +594,8 @@ int Scene::ITEIntroCave3Proc(int param) {
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
 		event.time = VOICE_PAD;
-
 		q_event = _vm->_events->chain(q_event, &event);
+
 		break;
 	case SCENE_END:
 		break;
@@ -681,7 +668,6 @@ int Scene::ITEIntroCave4Proc(int param) {
 		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
-
 		q_event = _vm->_events->queue(&event);
 
 		// Begin palette cycling animation for candles
@@ -689,7 +675,6 @@ int Scene::ITEIntroCave4Proc(int param) {
 		event.code = kPalAnimEvent;
 		event.op = kEventCycleStart;
 		event.time = 0;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue narrator dialogue list
@@ -700,8 +685,8 @@ int Scene::ITEIntroCave4Proc(int param) {
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
 		event.time = VOICE_PAD;
-
 		q_event = _vm->_events->chain(q_event, &event);
+
 		break;
 	case SCENE_END:
 		break;
@@ -747,7 +732,6 @@ int Scene::ITEIntroValleyProc(int param) {
 		event.op = kEventPlay;
 		event.param = 0;
 		event.time = 0;
-
 		q_event = _vm->_events->queue(&event);
 
 		// Begin ITE title theme music
@@ -759,7 +743,6 @@ int Scene::ITEIntroValleyProc(int param) {
 		event.param2 = MUSIC_NORMAL;
 		event.op = kEventPlay;
 		event.time = 0;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Pause animation before logo
@@ -768,7 +751,6 @@ int Scene::ITEIntroValleyProc(int param) {
 		event.op = kEventStop;
 		event.param = 0;
 		event.time = 3000;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Display logo
@@ -777,7 +759,6 @@ int Scene::ITEIntroValleyProc(int param) {
 		event.op = kEventDissolveBGMask;
 		event.time = 0;
 		event.duration = LOGO_DISSOLVE_DURATION;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Remove logo
@@ -786,7 +767,6 @@ int Scene::ITEIntroValleyProc(int param) {
 		event.op = kEventDissolve;
 		event.time = 3000;
 		event.duration = LOGO_DISSOLVE_DURATION;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Unpause animation before logo
@@ -795,7 +775,6 @@ int Scene::ITEIntroValleyProc(int param) {
 		event.op = kEventPlay;
 		event.time = 0;
 		event.param = 0;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
@@ -806,8 +785,8 @@ int Scene::ITEIntroValleyProc(int param) {
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
 		event.time = 1000;
-
 		q_event = _vm->_events->chain(q_event, &event);
+
 		break;
 	case SCENE_END:
 		break;
@@ -870,7 +849,6 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
-
 		q_event = _vm->_events->queue(&event);
 
 		if (_vm->_anim->hasAnimation(0)) {
@@ -882,7 +860,6 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 			event.op = kEventPlay;
 			event.param = 0;
 			event.time = 0;
-
 			q_event = _vm->_events->chain(q_event, &event);
 		}
 
@@ -895,8 +872,8 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
 		event.time = 1000;
-
 		q_event = _vm->_events->chain(q_event, &event);
+
 		break;
 	case SCENE_END:
 		break;
@@ -950,7 +927,6 @@ int Scene::ITEIntroFairePathProc(int param) {
 		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
-
 		q_event = _vm->_events->queue(&event);
 
 		// Begin title screen background animation
@@ -961,7 +937,6 @@ int Scene::ITEIntroFairePathProc(int param) {
 		event.op = kEventPlay;
 		event.param = 0;
 		event.time = 0;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// Queue game credits list
@@ -973,8 +948,8 @@ int Scene::ITEIntroFairePathProc(int param) {
 		event.code = kSceneEvent;
 		event.op = kEventEnd;
 		event.time = 1000;
-
 		q_event = _vm->_events->chain(q_event, &event);
+
 		break;
 	case SCENE_END:
 		break;
@@ -1005,7 +980,6 @@ int Scene::ITEIntroFaireTentProc(int param) {
 		event.op = kEventDissolve;
 		event.time = 0;
 		event.duration = DISSOLVE_DURATION;
-
 		q_event_start = _vm->_events->queue(&event);
 
 		// End scene after momentary pause
@@ -1014,6 +988,7 @@ int Scene::ITEIntroFaireTentProc(int param) {
 		event.op = kEventEnd;
 		event.time = 5000;
 		q_event = _vm->_events->chain(q_event_start, &event);
+
 		break;
 	case SCENE_END:
 		break;

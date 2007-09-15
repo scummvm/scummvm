@@ -117,7 +117,8 @@ enum EventOps {
 	kEventDissolve = 1,
 	kEventDissolveBGMask = 2,
 	// CUTAWAY events
-	kEventClear = 1
+	kEventClear = 1,
+	kEventShowCutawayBg = 2
 };
 
 enum EventParams {

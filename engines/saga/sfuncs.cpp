@@ -431,7 +431,6 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 	event.param4 = theObject;	// Object
 	event.param5 = withObject;	// With Object
 	event.param6 = objectId;
-
 	_vm->_events->queue(&event);
 }
 
@@ -1177,24 +1176,32 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.type = kEvTOneshot;
 	event.code = kCursorEvent;
 	event.op = kEventHide;
-
 	q_event = _vm->_events->queue(&event);
 
-	_vm->_gfx->getCurrentPal(cur_pal);
+	_vm->_interface->setFadeMode(kFadeOut);
 
+	// Fade to black out
+	_vm->_gfx->getCurrentPal(cur_pal);
 	event.type = kEvTImmediate;
 	event.code = kPalEvent;
 	event.op = kEventPalToBlack;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
 	event.data = cur_pal;
+	q_event = _vm->_events->chain(q_event, &event);
 
+	// set fade mode
+	event.type = kEvTImmediate;
+	event.code = kInterfaceEvent;
+	event.op = kEventSetFadeMode;
+	event.param = kNoFade;
+	event.time = 0;
+	event.duration = 0;
 	q_event = _vm->_events->chain(q_event, &event);
 
 	event.type = kEvTOneshot;
 	event.code = kInterfaceEvent;
 	event.op = kEventClearStatus;
-
 	q_event = _vm->_events->chain(q_event, &event);
 
 	event.type = kEvTOneshot;
@@ -1206,7 +1213,6 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.param3 = _vm->_scene->getHeight();
 	event.param4 = 0;
 	event.param5 = _vm->getDisplayWidth();
-
 	q_event = _vm->_events->chain(q_event, &event);
 
 	// Put the text in the center of the viewport, assuming it will fit on
@@ -1231,25 +1237,21 @@ void Script::sfPlacard(SCRIPTFUNC_PARAMS) {
 	event.code = kTextEvent;
 	event.op = kEventDisplay;
 	event.data = _placardTextEntry;
-
 	q_event = _vm->_events->chain(q_event, &event);
 
 	_vm->_scene->getBGPal(pal);
-
 	event.type = kEvTImmediate;
 	event.code = kPalEvent;
 	event.op = kEventBlackToPal;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
 	event.data = pal;
-
 	q_event = _vm->_events->chain(q_event, &event);
 
 	event.type = kEvTOneshot;
 	event.code = kScriptEvent;
 	event.op = kEventThreadWake;
 	event.param = kWaitTypePlacard;
-
 	q_event = _vm->_events->chain(q_event, &event);
 
 }
@@ -1738,7 +1740,6 @@ void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
 	static PalEntry cur_pal[PAL_ENTRIES];
 
 	_vm->_gfx->getCurrentPal(cur_pal);
-
 	event.type = kEvTImmediate;
 	event.code = kPalEvent;
 	event.op = kEventPalFade;
@@ -1749,7 +1750,6 @@ void Script::sfScriptFade(SCRIPTFUNC_PARAMS) {
 	event.param2 = endingBrightness;
 	event.param3 = firstPalEntry;
 	event.param4 = lastPalEntry - firstPalEntry + 1;
-
 	_vm->_events->queue(&event);
 }
 
@@ -1798,7 +1798,6 @@ void Script::sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS) {
 	event.code = kTextEvent;
 	event.op = kEventDisplay;
 	event.data = _psychicProfileTextEntry;
-
 	_vm->_events->queue(&event);
 
 	_ihnmDemoCurrentY += 10;
@@ -1932,7 +1931,6 @@ void Script::sfQueueMusic(SCRIPTFUNC_PARAMS) {
 												// change
 												// FIXME: If this is too short for other cases apart from chapter
 												// point change, set it back to 1000
-
 		_vm->_events->queue(&event);
 
 		if (!_vm->_scene->haveChapterPointsChanged()) {

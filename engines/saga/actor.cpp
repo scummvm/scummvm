@@ -2415,8 +2415,8 @@ void Actor::moveDragon(ActorData *actor) {
 				event.param4 = -1;		// Object
 				event.param5 = -1;		// With Object
 				event.param6 = -1;		// Actor
-
 				_vm->_events->queue(&event);
+
 				_dragonHunt = false;
 			}
 		} else {
