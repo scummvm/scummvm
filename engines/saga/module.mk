@@ -2,6 +2,7 @@ MODULE := engines/saga
 
 MODULE_OBJS := \
 	actor.o \
+	actor_walk.o \
 	animation.o \
 	console.o \
 	detection.o \

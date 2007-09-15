@@ -94,6 +94,24 @@ enum ActorActions {
 	kActionClimb = 12
 };
 
+enum ActorFrameIds {
+//ITE
+	kFrameITEStand = 0,
+	kFrameITEWalk = 1,
+	kFrameITESpeak = 2,
+	kFrameITEGive = 3,
+	kFrameITEGesture = 4,
+	kFrameITEWait = 5,
+	kFrameITEPickUp = 6,
+	kFrameITELook = 7,
+//IHNM
+	kFrameIHNMStand = 0,
+	kFrameIHNMSpeak = 1,
+	kFrameIHNMWait = 2,
+	kFrameIHNMGesture = 3,
+	kFrameIHNMWalk = 4
+};
+
 enum SpeechFlags {
 	kSpeakNoAnimate = 1,
 	kSpeakAsync = 2,
@@ -110,6 +128,18 @@ enum ActorFrameTypes {
 	kFrameWait,
 	kFramePickUp,
 	kFrameLook
+};
+
+// Lookup table to convert 8 cardinal directions to 4
+static const int actorDirectectionsLUT[8] = {
+	ACTOR_DIRECTION_BACK,	// kDirUp
+	ACTOR_DIRECTION_RIGHT,	// kDirUpRight
+	ACTOR_DIRECTION_RIGHT,	// kDirRight
+	ACTOR_DIRECTION_RIGHT,	// kDirDownRight
+	ACTOR_DIRECTION_FORWARD,// kDirDown
+	ACTOR_DIRECTION_LEFT,	// kDirDownLeft
+	ACTOR_DIRECTION_LEFT,	// kDirLeft
+	ACTOR_DIRECTION_LEFT,	// kDirUpLeft
 };
 
 enum ActorFlagsEx {
