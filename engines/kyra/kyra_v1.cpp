@@ -180,7 +180,7 @@ int KyraEngine_v1::init() {
 
 	initStaticResource();
 	
-	if (_flags.platform == Common::kPlatformFMTowns)
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 		_sound->setSoundFileList(_soundFilesTowns, _soundFilesTownsCount);
 	else
 		_sound->setSoundFileList(_soundFiles, _soundFilesCount);

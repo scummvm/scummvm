@@ -84,8 +84,8 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 			warning("Can not load cdrom savefile for this (non cdrom) gameversion");
 			delete in;
 			return;
-		} else if ((flags & GF_FMTOWNS) && !(_flags.platform == Common::kPlatformFMTowns)) {
-			warning("can not load FM-Towns savefile for this (non FM-Towns) gameversion");
+		} else if ((flags & GF_FMTOWNS) && !(_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) {
+			warning("can not load FM-Towns/PC98 savefile for this (non FM-Towns/PC98) gameversion");
 			delete in;
 			return;
 		}
@@ -206,7 +206,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 		if (_curSfxFile >= _soundFilesTownsCount || _curSfxFile < 0)
 			_curSfxFile = 0;
 		
-		if (_flags.platform == Common::kPlatformFMTowns)
+		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 			_sound->loadSoundFile(_curSfxFile);
 	}
 
@@ -276,7 +276,7 @@ void KyraEngine_v1::saveGame(const char *fileName, const char *saveName) {
 	out->write(saveName, 31);
 	if (_flags.isTalkie)
 		out->writeUint32BE(GF_TALKIE);
-	else if (_flags.platform == Common::kPlatformFMTowns)
+	else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 		out->writeUint32BE(GF_FMTOWNS);
 	else
 		out->writeUint32BE(GF_FLOPPY);

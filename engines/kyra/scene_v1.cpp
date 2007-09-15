@@ -48,7 +48,7 @@ void KyraEngine_v1::enterNewScene(int sceneId, int facing, int unk1, int unk2, i
 	_abortWalkFlag = false;
 	_abortWalkFlag2 = false;
 
-	if (_flags.platform == Common::kPlatformFMTowns) {
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		int newSfxFile = -1;
 		if (_currentCharacter->sceneId == 7 && sceneId == 24)
 			newSfxFile = 2;

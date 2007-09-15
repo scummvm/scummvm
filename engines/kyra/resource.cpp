@@ -109,7 +109,7 @@ Resource::Resource(KyraEngine *vm) {
 			}
 		}
 
-		if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
+		if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98) {
 			uint unloadHash = (_vm->gameFlags().lang == Common::EN_ANY) ? Common::hashit_lower("JMC.PAK") : Common::hashit_lower("EMC.PAK");
 
 			ResIterator file = Common::find_if(_pakfiles.begin(), _pakfiles.end(), ResFilenameEqual(unloadHash));

@@ -435,7 +435,7 @@ void SeqPlayer::s1_playTrack() {
 		_sound->beginFadeOut();
 	} else {
 		_sound->haltTrack();
-		if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+		if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
 			msg += 2;
 		_sound->playTrack(msg);
 	}

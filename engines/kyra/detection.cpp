@@ -172,7 +172,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
-	{
+	{ // FM-Towns version
 		{
 			"kyra1",
 			0,
@@ -190,6 +190,37 @@ const KYRAGameDescription adGameDescs[] = {
 			AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"),
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA1_TOWNS_SJIS_FLAGS
+	},
+
+	{ // PC-9821 version
+		{
+			"kyra1",
+			0,
+			{
+				{ "EMC.PAK", 0, "a046bb0b422061aab8e4c4689400343a", -1 },
+				{ "MUSIC98.PAK", 0, "02fc212f799331b769b274e33d87b37f", -1 },
+				{ NULL, 0, NULL, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC98,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA1_TOWNS_FLAGS
+	},
+	{
+		{
+			"kyra1",
+			0,
+			{
+				{ "JMC.PAK", 0, "9c5707a2a478e8167e44283246612d2c", -1 },
+				{ "MUSIC98.PAK", 0, "02fc212f799331b769b274e33d87b37f", -1 },
+				{ NULL, 0, NULL, 0 }
+			},
+			Common::JA_JPN,
+			Common::kPlatformPC98,
 			Common::ADGF_NO_FLAGS
 		},
 		KYRA1_TOWNS_SJIS_FLAGS

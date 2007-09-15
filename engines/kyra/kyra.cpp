@@ -86,8 +86,13 @@ int KyraEngine::init() {
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
 
 	if (_flags.platform == Common::kPlatformFMTowns) {
-		// no sfx enabled for CD audio music atm
-		// later on here should be a usage of MixedSoundDriver
+		// TODO: later on here should be a usage of MixedSoundDriver
+		_sound = new SoundTowns(this, _mixer);
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		// TODO: currently we don't support the PC98 sound data,
+		// but since it has the FM-Towns data files, we just use the
+		// FM-Towns driver
+		// TODO: later on here should be a usage of MixedSoundDriver
 		_sound = new SoundTowns(this, _mixer);
 	} else if (midiDriver == MD_ADLIB) {
 		_sound = new SoundAdlibPC(this, _mixer);

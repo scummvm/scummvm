@@ -45,7 +45,7 @@ void KyraEngine_v1::snd_playTheme(int file, int track) {
 
 void KyraEngine_v1::snd_playSoundEffect(int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playSoundEffect(%d)", track);
-	if (_flags.platform == Common::kPlatformFMTowns && track == 49) {
+	if ((_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) && track == 49) {
 		snd_playWanderScoreViaMap(56, 1);
 		return;
 	}
@@ -57,7 +57,7 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 	if (restart)
 		_lastMusicCommand = -1;
 
-	if (_flags.platform == Common::kPlatformFMTowns) {
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		if (command == 1) {
 			_sound->beginFadeOut();
 		} else if (command >= 35 && command <= 38) {

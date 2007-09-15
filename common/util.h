@@ -150,6 +150,7 @@ enum Platform {
 	kPlatformPCEngine,
 
 	kPlatformApple2GS,
+	kPlatformPC98,
 
 	kPlatformUnknown = -1
 };

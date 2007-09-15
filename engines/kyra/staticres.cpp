@@ -86,7 +86,7 @@ uint32 createFeatures(const GameFlags &flags) {
 		return GF_TALKIE;
 	if (flags.isDemo)
 		return GF_DEMO;
-	if (flags.platform == Common::kPlatformFMTowns)
+	if (flags.platform == Common::kPlatformFMTowns || flags.platform == Common::kPlatformPC98)
 		return GF_FMTOWNS;
 	if (flags.platform == Common::kPlatformAmiga)
 		return GF_AMIGA;
@@ -605,7 +605,7 @@ uint8 *StaticResource::getFile(const char *name, int &size) {
 		ext = ".CD";
 	else if (_vm->gameFlags().isDemo)
 		ext = ".DEM";
-	else if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+	else if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
 		ext = ".TNS";
 	else if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		ext = ".AMG";

@@ -113,7 +113,7 @@ void KyraEngine_v1::seq_intro() {
 
 	_seq->setCopyViewOffs(true);
 	_screen->setFont(Screen::FID_8_FNT);
-	if (_flags.platform != Common::kPlatformFMTowns)
+	if (_flags.platform != Common::kPlatformFMTowns && _flags.platform != Common::kPlatformPC98)
 		snd_playTheme(0, 2);
 	_text->setTalkCoords(144);
 
@@ -133,7 +133,7 @@ void KyraEngine_v1::seq_intro() {
 void KyraEngine_v1::seq_introLogos() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::seq_introLogos()");
 
-	if (_flags.platform == Common::kPlatformFMTowns) {
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		_screen->loadBitmap("LOGO.CPS", 3, 3, _screen->_currentPalette);
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 		_screen->updateScreen();
@@ -1083,13 +1083,13 @@ void KyraEngine_v1::seq_playCredits() {
 	_screen->_charWidth = -1;
 
 	// we only need this for the fm-towns version
-	if (_flags.platform == Common::kPlatformFMTowns)
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 		snd_playWanderScoreViaMap(53, 1);
 
 	uint8 *buffer = 0;
 	uint32 size = 0;
 	
-	if (_flags.platform == Common::kPlatformFMTowns) {
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		int sizeTmp = 0;
 		const uint8 *bufferTmp = _staticres->loadRawData(kCreditsStrings, sizeTmp);
 		buffer = new uint8[sizeTmp];

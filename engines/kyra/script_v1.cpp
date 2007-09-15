@@ -52,7 +52,7 @@ int KyraEngine_v1::o1_characterSays(ScriptState *script) {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1characterSays(%p) ('%s', %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
 		const char *string = stackPosString(0);
 
-		if (_flags.platform == Common::kPlatformFMTowns && _flags.lang == Common::JA_JPN) {
+		if ((_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) && _flags.lang == Common::JA_JPN) {
 			static const uint8 townsString1[] = {
 				0x83, 0x75, 0x83, 0x89, 0x83, 0x93, 0x83, 0x83, 0x93, 0x81,
 				0x41, 0x82, 0xDC, 0x82, 0xBD, 0x97, 0x88, 0x82, 0xBD, 0x82,
