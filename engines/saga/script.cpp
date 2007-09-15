@@ -831,6 +831,10 @@ void Script::whichObject(const Point& mousePoint) {
 						if (newRightButtonVerb >= getVerbType(kVerbOptions)) {
 							newRightButtonVerb = getVerbType(kVerbNone);
 						}
+					} else {
+						if (newRightButtonVerb >= getVerbType(kVerbOptions)) {
+							newRightButtonVerb = getVerbType(kVerbWalkTo);
+						}
 					}
 
 					if ((_currentVerb == getVerbType(kVerbTalkTo)) || ((_currentVerb == getVerbType(kVerbGive)) && _firstObjectSet)) {
