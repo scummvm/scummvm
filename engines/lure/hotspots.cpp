@@ -77,6 +77,12 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_tickHandler = HotspotTickHandlers::getHandler(_data->tickProcOffset);
 	_nameBuffer[0] = '\0';
 
+	if (_hotspotId < FIRST_NONCHARACTER_ID) {
+		// Default characters to facing upwards until they start moving
+		_direction = UP;
+		setFrameNumber(_anim->upFrame);
+	}
+
 	_frameCtr = 0;
 	_skipFlag = false;
 	_charRectY = 0;
@@ -693,6 +699,8 @@ void Hotspot::updateMovement() {
 			setOccupied(true);
 		}
 	}
+
+	resetDirection();
 }
 
 void Hotspot::updateMovement2(CharacterMode value) {
@@ -1089,6 +1097,29 @@ bool Hotspot::doorCloseCheck(uint16 doorId) {
 
 	// No blocking characters, so return true that the door can be closed
 	return true;
+}
+
+void Hotspot::resetDirection() {
+	uint16 newFrameNumber;
+	switch (_direction) {
+	case UP:
+		newFrameNumber = _anim->upFrame;
+		break;
+	case DOWN:
+		newFrameNumber = _anim->downFrame;
+		break;
+	case LEFT:
+		newFrameNumber = _anim->leftFrame;
+		break;
+	case RIGHT:
+		newFrameNumber = _anim->rightFrame;
+		break;
+	default:
+		// No need to change
+		return;
+	}
+
+	setFrameNumber(newFrameNumber);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -2389,7 +2420,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 
 	switch (action) {
 	case NO_ACTION:
-		h.setCharacterMode(CHARMODE_IDLE);
+		h.updateMovement2(CHARMODE_IDLE);
 		break;
 
 	case DISPATCH_ACTION:
