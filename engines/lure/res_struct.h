@@ -254,23 +254,28 @@ public:
 	}
 
 	void clear() {
-		typename Common::List<T>::iterator i;
-		for (i = Common_List::begin(); i != Common_List::end(); ++i)
-			delete *i;
-		Common_List::clear();		
+		typename Common_List::iterator i = Common_List::begin();
+		while (i != Common_List::end()) {
+			T v = *i;
+			i = Common_List::erase(i);
+			delete v;
+		}
 	}
 
-	typename Common::List<T>::iterator erase(typename Common::List<T>::iterator pos) {
-		delete *pos;
-		return Common_List::erase(pos);
+	typename Common_List::iterator erase(typename Common_List::iterator pos) {
+		T obj = *pos;
+		typename Common_List::iterator result = Common_List::erase(pos);
+		delete obj;
+		return result;
 	}
 
-	typename Common::List<T>::iterator erase(typename Common::List<T>::iterator first, 
-			typename Common::List<T>::iterator last) {
-		typename Common::List<T>::iterator i;
-		for (i = first; i != last; ++i)
-			delete *i;
-		return Common_List::erase(first, last);
+	typename Common_List::iterator erase(typename Common_List::iterator first, 
+			typename Common_List::iterator last) {
+
+		while (first != last)
+			erase(first++);
+
+		return last;
 	}
 };
 
