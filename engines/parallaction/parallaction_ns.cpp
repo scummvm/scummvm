@@ -228,7 +228,7 @@ int Parallaction_ns::go() {
 		  is commented out, and would definitely crash the current implementation.
 */
 void Parallaction_ns::changeLocation(char *location) {
-	debugC(1, kDebugLocation, "changeLocation(%s)", location);
+	debugC(1, kDebugExec, "changeLocation(%s)", location);
 
 	_soundMan->playLocationMusic(location);
 
@@ -323,14 +323,14 @@ void Parallaction_ns::changeLocation(char *location) {
 	if (_hasLocationSound)
 		_soundMan->playSfx(_locationSound, 0, true);
 
-	debugC(1, kDebugLocation, "changeLocation() done");
+	debugC(1, kDebugExec, "changeLocation() done");
 
 	return;
 
 }
 
 void Parallaction_ns::changeCharacter(const char *name) {
-	debugC(1, kDebugLocation, "changeCharacter(%s)", name);
+	debugC(1, kDebugExec, "changeCharacter(%s)", name);
 
 	char baseName[20];
 	if (IS_MINI_CHARACTER(name)) {
@@ -374,7 +374,7 @@ void Parallaction_ns::changeCharacter(const char *name) {
 
 	strcpy(_characterName1, fullName);
 
-	debugC(1, kDebugLocation, "changeCharacter() done");
+	debugC(1, kDebugExec, "changeCharacter() done");
 
 	return;
 }

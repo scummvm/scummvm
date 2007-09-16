@@ -105,11 +105,11 @@ Parallaction::Parallaction(OSystem *syst) :
 	Common::File::addDefaultDirectory( _gameDataPath );
 
 	Common::addSpecialDebugLevel(kDebugDialogue, "dialogue", "Dialogues debug level");
-	Common::addSpecialDebugLevel(kDebugLocation, "location", "Location debug level");
+	Common::addSpecialDebugLevel(kDebugParser, "parser", "Parser debug level");
 	Common::addSpecialDebugLevel(kDebugDisk, "disk", "Disk debug level");
 	Common::addSpecialDebugLevel(kDebugWalk, "walk", "Walk debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "gfx", "Gfx debug level");
-	Common::addSpecialDebugLevel(kDebugJobs, "jobs", "Jobs debug level");
+	Common::addSpecialDebugLevel(kDebugExec, "exec", "Execution debug level");
 	Common::addSpecialDebugLevel(kDebugInput, "input", "Input debug level");
 	Common::addSpecialDebugLevel(kDebugAudio, "audio", "Audio debug level");
 	Common::addSpecialDebugLevel(kDebugMenu, "menu", "Menu debug level");
@@ -652,7 +652,7 @@ void Parallaction::changeCursor(int32 index) {
 
 
 void Parallaction::freeCharacter() {
-	debugC(3, kDebugLocation, "freeCharacter()");
+	debugC(1, kDebugExec, "freeCharacter()");
 
 	if (!IS_DUMMY_CHARACTER(_characterName)) {
 		if (_objectsNames)
@@ -689,7 +689,7 @@ int compareJobPriority(const JobPointer &j1, const JobPointer &j2) {
 }
 
 Job *Parallaction::addJob(uint functionId, void *parm, uint16 tag) {
-	debugC(3, kDebugJobs, "addJob(%i)", tag);
+	debugC(9, kDebugExec, "addJob(%i)", tag);
 
 	Job *v8 = new Job;
 
@@ -706,21 +706,21 @@ Job *Parallaction::addJob(uint functionId, void *parm, uint16 tag) {
 }
 
 void Parallaction::removeJob(Job *j) {
-	debugC(3, kDebugJobs, "addJob(%i)", j->_tag);
+	debugC(9, kDebugExec, "addJob(%i)", j->_tag);
 
 	j->_finished = 1;
 	return;
 }
 
 void Parallaction::pauseJobs() {
-	debugC(3, kDebugJobs, "pausing jobs execution");
+	debugC(9, kDebugExec, "pausing jobs execution");
 
 	_engineFlags |= kEnginePauseJobs;
 	return;
 }
 
 void Parallaction::resumeJobs() {
-	debugC(3, kDebugJobs, "resuming jobs execution");
+	debugC(9, kDebugExec, "resuming jobs execution");
 
 	_engineFlags &= ~kEnginePauseJobs;
 	return;
@@ -742,7 +742,7 @@ void Parallaction::runJobs() {
 	it = _jobs.begin();
 	while (it != _jobs.end()) {
 		Job *job = (*it)->_job;
-		debugC(9, kDebugJobs, "runJobs: %i", job->_tag);
+		debugC(9, kDebugExec, "runJobs: %i", job->_tag);
 		(*(*it))();
 		it++;
 	}
@@ -830,7 +830,7 @@ void Parallaction::parseStatement() {
 
 	_lookup = _currentStatements->lookup(_tokens[0]);
 
-	debugC(9, kDebugLocation, "parseStatement: %s (lookup = %i)", _tokens[0], _lookup);
+	debugC(9, kDebugParser, "parseStatement: %s (lookup = %i)", _tokens[0], _lookup);
 
 	(*(*_currentOpcodes)[_lookup])();
 }
@@ -896,7 +896,7 @@ void Parallaction::allocateLocationSlot(const char *name) {
 
 
 void Parallaction::freeLocation() {
-	debugC(7, kDebugLocation, "freeLocation");
+	debugC(2, kDebugExec, "freeLocation");
 
 	_soundMan->stopSfx(0);
 	_soundMan->stopSfx(1);
@@ -1029,10 +1029,10 @@ void Parallaction::showSlide(const char *name) {
 //	fades towards game palette
 //
 void Parallaction::doLocationEnterTransition() {
-	debugC(1, kDebugLocation, "doLocationEnterTransition");
+	debugC(2, kDebugExec, "doLocationEnterTransition");
 
     if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
-        debugC(3, kDebugLocation, "skipping location transition");
+        debugC(2, kDebugExec, "skipping location transition");
         return; // visited
     }
 
@@ -1060,7 +1060,7 @@ void Parallaction::doLocationEnterTransition() {
 		_gfx->updateScreen();
 	}
 
-	debugC(1, kDebugLocation, "doLocationEnterTransition completed");
+	debugC(2, kDebugExec, "doLocationEnterTransition completed");
 
 	return;
 }
@@ -1078,7 +1078,7 @@ Zone *Parallaction::findZone(const char *name) {
 
 
 void Parallaction::freeZones() {
-	debugC(1, kDebugLocation, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
+	debugC(2, kDebugExec, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
 
 	ZoneList::iterator it = _zones.begin();
 
@@ -1096,7 +1096,7 @@ void Parallaction::freeZones() {
 			))) &&
 			((_engineFlags & kEngineQuit) == 0)) {
 
-			debugC(1, kDebugLocation, "freeZones preserving zone '%s'", z->_label._text);
+			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_label._text);
 
 			it++;
 

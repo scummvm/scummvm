@@ -47,10 +47,10 @@ namespace Parallaction {
 enum {
 	kDebugDisk = 1 << 0,
 	kDebugWalk = 1 << 1,
-	kDebugLocation = 1 << 2,
+	kDebugParser = 1 << 2,
 	kDebugDialogue = 1 << 3,
 	kDebugGraphics = 1 << 4,
-	kDebugJobs = 1 << 5,
+	kDebugExec = 1 << 5,
 	kDebugInput = 1 << 6,
 	kDebugAudio = 1 << 7,
 	kDebugMenu = 1 << 8

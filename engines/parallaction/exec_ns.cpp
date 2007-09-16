@@ -359,7 +359,7 @@ void Parallaction_ns::jobDisplayAnimations(void *parm, Job *j) {
 			else
 				_si = _gfx->queryMask(v18->_top + v18->height());
 
-			debugC(9, kDebugLocation, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, f:%i/%i, %p)", v18->_label._text, v18->_left, v18->_top, _si, v14.w, v14.h,
+			debugC(9, kDebugExec, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, f:%i/%i, %p)", v18->_label._text, v18->_left, v18->_top, _si, v14.w, v14.h,
 				frame, v18->getFrameNum(), v14.pixels);
 			_gfx->blitCnv(&v14, v18->_left, v18->_top, _si, Gfx::kBitBack);
 
@@ -381,7 +381,7 @@ void Parallaction_ns::jobDisplayAnimations(void *parm, Job *j) {
 
 
 void Parallaction_ns::jobEraseAnimations(void *arg_0, Job *j) {
-	debugC(3, kDebugJobs, "jobEraseAnimations");
+	debugC(9, kDebugExec, "jobEraseAnimations");
 
 	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 
@@ -405,7 +405,7 @@ void Parallaction_ns::jobEraseAnimations(void *arg_0, Job *j) {
 
 
 void Parallaction_ns::jobRunScripts(void *parm, Job *j) {
-	debugC(3, kDebugJobs, "jobRunScripts");
+	debugC(9, kDebugExec, "jobRunScripts");
 
 	static uint16 modCounter = 0;
 
@@ -422,7 +422,7 @@ void Parallaction_ns::jobRunScripts(void *parm, Job *j) {
 		InstructionList::iterator inst = a->_program->_ip;
 		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
 
-			debugC(9, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, _instructionNamesRes[(*inst)->_index - 1]);
+			debugC(9, kDebugExec, "Animation: %s, instruction: %s", a->_label._text, _instructionNamesRes[(*inst)->_index - 1]);
 
 			_instRunCtxt.inst = inst;
 			_instRunCtxt.a = a;
@@ -454,7 +454,7 @@ label1:
 
 
 void Parallaction::runCommands(CommandList& list, Zone *z) {
-	debugC(1, kDebugLocation, "runCommands");
+	debugC(3, kDebugExec, "runCommands");
 
 	CommandList::iterator it = list.begin();
 	for ( ; it != list.end(); it++) {
@@ -472,7 +472,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 		if ((cmd->_flagsOn & v8) != cmd->_flagsOn) continue;
 		if ((cmd->_flagsOff & ~v8) != cmd->_flagsOff) continue;
 
-		debugC(1, kDebugLocation, "runCommands[%i]: %s (on: %x, off: %x)", cmd->_id, _commandsNamesRes[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
+		debugC(3, kDebugExec, "runCommands[%i]: %s (on: %x, off: %x)", cmd->_id, _commandsNamesRes[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
 
 		_cmdRunCtxt.z = z;
 		_cmdRunCtxt.cmd = cmd;
@@ -480,7 +480,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 		(*_commandOpcodes[cmd->_id])();
 	}
 
-	debugC(1, kDebugLocation, "runCommands completed");
+	debugC(3, kDebugExec, "runCommands completed");
 
 	return;
 
@@ -567,11 +567,11 @@ void Parallaction::displayItemComment(ExamineData *data) {
 
 
 uint16 Parallaction::runZone(Zone *z) {
-	debugC(3, kDebugLocation, "runZone (%s)", z->_label._text);
+	debugC(3, kDebugExec, "runZone (%s)", z->_label._text);
 
 	uint16 subtype = z->_type & 0xFFFF;
 
-	debugC(3, kDebugLocation, "type = %x, object = %x", subtype, (z->_type & 0xFFFF0000) >> 16);
+	debugC(3, kDebugExec, "type = %x, object = %x", subtype, (z->_type & 0xFFFF0000) >> 16);
 	switch(subtype) {
 
 	case kZoneExamine:
@@ -607,7 +607,7 @@ uint16 Parallaction::runZone(Zone *z) {
 
 	}
 
-	debugC(3, kDebugLocation, "runZone completed");
+	debugC(3, kDebugExec, "runZone completed");
 
 	return 0;
 }
@@ -856,7 +856,7 @@ void Parallaction_ns::initOpcodes() {
 void Parallaction_ns::jobDisplayLabel(void *parm, Job *j) {
 
 	Label *label = (Label*)parm;
-	debugC(9, kDebugJobs, "jobDisplayLabel (%p)", (const void*) label);
+	debugC(9, kDebugExec, "jobDisplayLabel (%p)", (const void*) label);
 
 	_gfx->drawLabel(*label);
 
@@ -866,7 +866,7 @@ void Parallaction_ns::jobDisplayLabel(void *parm, Job *j) {
 void Parallaction_ns::jobEraseLabel(void *parm, Job *j) {
 	Label *label = (Label*)parm;
 
-	debugC(9, kDebugJobs, "jobEraseLabel (%p)", (const void*) label);
+	debugC(9, kDebugExec, "jobEraseLabel (%p)", (const void*) label);
 
 	int16 _si, _di;
 
@@ -905,7 +905,7 @@ void Parallaction_ns::jobWaitRemoveJob(void *parm, Job *j) {
 
 	static uint16 count = 0;
 
-	debugC(3, kDebugJobs, "jobWaitRemoveJob: count = %i", count);
+	debugC(9, kDebugExec, "jobWaitRemoveJob: count = %i", count);
 
 	_engineFlags |= kEngineBlockInput;
 

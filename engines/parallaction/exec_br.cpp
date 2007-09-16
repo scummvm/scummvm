@@ -46,7 +46,7 @@ typedef OpcodeImpl<Parallaction_br> OpcodeV2;
 #define DECLARE_INSTRUCTION_OPCODE(op) void Parallaction_br::instOp_##op()
 
 void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
-	debugC(5, kDebugLocation, "setupSubtitles(%s, %s, %i)", s, s2, y);
+	debugC(5, kDebugExec, "setupSubtitles(%s, %s, %i)", s, s2, y);
 
 	if (!scumm_stricmp("clear", s)) {
 

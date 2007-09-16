@@ -519,7 +519,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 	_gfx->setFont(_menuFont);
 
-	debugC(1, kDebugLocation, "endIntro()");
+	debugC(1, kDebugExec, "endIntro()");
 
 	for (uint16 _si = 0; _si < 6; _si++) {
 		_gfx->displayCenteredString(80, _credits[_si]._role);
@@ -538,7 +538,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 		_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	}
-	debugC(1, kDebugLocation, "endIntro(): done showing credits");
+	debugC(1, kDebugExec, "endIntro(): done showing credits");
 
 	if ((getFeatures() & GF_DEMO) == 0) {
 		_gfx->displayCenteredString(80, "CLICK MOUSE BUTTON TO START");

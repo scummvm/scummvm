@@ -103,7 +103,7 @@ protected:
 };
 
 uint16 DialogueManager::askPassword() {
-	debugC(1, kDebugDialogue, "checkDialoguePassword()");
+	debugC(3, kDebugExec, "checkDialoguePassword()");
 
 	char password[100];
 	uint16 passwordLen;
@@ -241,7 +241,7 @@ uint16 DialogueManager::getAnswer() {
 
 	clear();
 
-	debugC(1, kDebugDialogue, "runDialogue: user selected answer #%i", answer);
+	debugC(3, kDebugExec, "runDialogue: user selected answer #%i", answer);
 
 	return answer;
 }
@@ -361,7 +361,7 @@ int16 DialogueManager::getHoverAnswer(int16 x, int16 y) {
 
 
 void Parallaction::runDialogue(SpeakData *data) {
-	debugC(1, kDebugDialogue, "runDialogue: starting dialogue '%s'", data->_name);
+	debugC(1, kDebugExec, "runDialogue: starting dialogue '%s'", data->_name);
 
 	_gfx->setFont(_dialogueFont);
 

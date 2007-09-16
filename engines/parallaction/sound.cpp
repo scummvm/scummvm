@@ -281,14 +281,14 @@ void DosSoundMan::playLocationMusic(const char *location) {
 	if (_musicData1 != 0) {
 		playCharacterMusic(_vm->_characterName);
 		_musicData1 = 0;
-		debugC(2, kDebugLocation, "changeLocation: started character specific music");
+		debugC(2, kDebugExec, "changeLocation: started character specific music");
 	}
 
 	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
 		setMusicFile("nuts");
 		playMusic();
 
-		debugC(2, kDebugLocation, "changeLocation: started music 'soft'");
+		debugC(2, kDebugExec, "changeLocation: started music 'soft'");
 	}
 
 	if (!scumm_stricmp(location, "museo") ||
@@ -302,7 +302,7 @@ void DosSoundMan::playLocationMusic(const char *location) {
 		stopMusic();
 		_musicData1 = 1;
 
-		debugC(2, kDebugLocation, "changeLocation: music stopped");
+		debugC(2, kDebugExec, "changeLocation: music stopped");
 	}
 }
 
