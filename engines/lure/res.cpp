@@ -42,11 +42,19 @@ Resources &Resources::getReference() {
 Resources::Resources() {
 	int_resources = this;
 	reloadData();
+
+	// Load the string list
+	MemoryBlock *mb = Disk::getReference().getEntry(STRING_LIST_RESOURCE_ID);
+	_stringList.load(mb);
+	delete mb;
 }
 
 Resources::~Resources() {
 	// Free up any loaded data
 	freeData();
+
+	// Free up constant data
+	_stringList.clear();
 }
 
 void Resources::freeData() {
@@ -61,7 +69,6 @@ void Resources::freeData() {
 	_randomActions.clear();
 	_indexedRoomExitHospots.clear();
 	_pausedList.clear();
-	_stringList.clear();
 	_actionsList.clear();
 	_coordinateList.clear();
 	_talkHeaders.clear();
@@ -323,11 +330,6 @@ void Resources::reloadData() {
 		_indexedRoomExitHospots.push_back(new RoomExitIndexedHotspotData(indexedRec));
 		indexedRec++;
 	}
-
-	// Load the string list
-	mb = d.getEntry(STRING_LIST_RESOURCE_ID);
-	_stringList.load(mb);
-	delete mb;
 
 	// Initialise delay list
 	_delayList.clear(true);
