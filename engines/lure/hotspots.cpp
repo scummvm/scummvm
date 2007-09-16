@@ -70,6 +70,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_hotspotScriptOffset = res->hotspotScriptOffset;
 	_tickCtr = res->tickTimeout;
 	_colourOffset = res->colourOffset;
+	_tempDest.counter = 0;
 
 	_override = resources.getHotspotOverride(res->hotspotId);
 	setAnimation(_data->animRecordId);
@@ -197,6 +198,7 @@ Hotspot::Hotspot(): _pathFinder(NULL) {
 	_tickHandler = NULL;
 	_frameWidth = _width;
 	_frameStartsUsed = false;
+	_tempDest.counter = 0;
 }
 
 Hotspot::~Hotspot() {
