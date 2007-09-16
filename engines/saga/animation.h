@@ -143,6 +143,7 @@ public:
 	int16 getCurrentFrame(uint16 animId);
 	int getFrameTime(uint16 animId);
 	int getCycles(uint16 animId);
+	bool isPlaying(uint16 animId);
 
 	bool hasAnimation(uint16 animId) {
 		if (animId >= MAX_ANIMATIONS) {

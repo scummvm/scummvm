@@ -452,7 +452,9 @@ void Script::sfStartBgdAnim(SCRIPTFUNC_PARAMS) {
 
 	_vm->_anim->setCycles(animId, cycles);
 	_vm->_anim->setFrameTime(animId, _vm->ticksToMSec(kRepeatSpeedTicks));
-	_vm->_anim->play(animId, 0);
+
+	if (!_vm->_anim->isPlaying(animId))
+		_vm->_anim->play(animId, 0);
 
 	debug(1, "sfStartBgdAnim(%d, %d)", animId, cycles);
 }
@@ -699,7 +701,9 @@ void Script::sfStartBgdAnimSpeed(SCRIPTFUNC_PARAMS) {
 
 	_vm->_anim->setCycles(animId, cycles);
 	_vm->_anim->setFrameTime(animId, _vm->ticksToMSec(speed));
-	_vm->_anim->play(animId, 0);
+
+	if (!_vm->_anim->isPlaying(animId))
+		_vm->_anim->play(animId, 0);
 
 	debug(1, "sfStartBgdAnimSpeed(%d, %d, %d)", animId, cycles, speed);
 }

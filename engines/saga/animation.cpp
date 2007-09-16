@@ -668,6 +668,14 @@ int Anim::getFrameTime(uint16 animId) {
 	return anim->frameTime;
 }
 
+bool Anim::isPlaying(uint16 animId) {
+	AnimationData *anim;
+
+	anim = getAnimation(animId);
+
+	return (anim->state == ANIM_PLAYING);
+}
+
 int16 Anim::getCurrentFrame(uint16 animId) {
 	AnimationData *anim;
 
