@@ -26,20 +26,26 @@
 #include "lure/intro.h"
 #include "lure/animseq.h"
 #include "lure/events.h"
+#include "lure/sound.h"
 
 namespace Lure {
 
 struct AnimRecord {
 	uint16 resourceId;
 	uint8 paletteIndex;
-	bool initialPause;
-	bool endingPause;
+	uint16 initialPause;
+	uint16 endingPause;
+	uint8 soundNumber;
 };
 
 static const uint16 start_screens[] = {0x18, 0x1A, 0x1E, 0x1C, 0};
-static const AnimRecord anim_screens[] = {{0x40, 0, true, true}, {0x42, 1, false, true}, 
-	{0x44, 2, false, false}, {0x24, 3, false, true}, {0x46, 3, false, false}, 
-	{0, 0, false, false}};
+static const AnimRecord anim_screens[] = {
+	{0x40, 0, 0x35A, 0xC8, 0},			// The kingdom was at peace
+	{0x42, 1, 0, 0x5FA, 1},				// Cliff overhang
+	{0x44, 2, 0, 0, 2},					// Siluette in moonlight
+	{0x24, 3, 0, 0x328 + 0x24, 0xff},	// Exposition of reaching town
+	{0x46, 3, 0, 0, 3},					// Skorl approaches
+	{0, 0, 0, 0, 0xff}};
 
 // showScreen
 // Shows a screen by loading it from the given resource, and then fading it in
@@ -73,25 +79,38 @@ bool Introduction::show() {
 		if (showScreen(start_screens[ctr], start_screens[ctr] + 1, 5000)) 
 			return true;	
 
-	AnimationSequence *anim;
-	bool result;
-
 	// Animated screens
 
+	AnimationSequence *anim;
+	bool result;
+	uint8 currentSound = 0xff;
 	PaletteCollection coll(0x32);
 	const AnimRecord *curr_anim = anim_screens;
 	for (; curr_anim->resourceId; ++curr_anim) {
+		// Handle sound selection
+		if (curr_anim->soundNumber != 0xff) {
+			if (currentSound != 0xff) 
+				// Fade out the previous sound
+				Sound.fadeOut();
+		
+			currentSound = curr_anim->soundNumber;
+			Sound.musicInterface_Play(currentSound, 0);
+			// DEBUG TEST
+//			g_system->delayMillis(1000);
+//			Sound.musicInterface_Play(1, 1);
+		}
+
 		bool fadeIn = curr_anim == anim_screens;
 		anim = new AnimationSequence(_screen, _system, curr_anim->resourceId, 
 			coll.getPalette(curr_anim->paletteIndex), fadeIn);
-		if (curr_anim->initialPause) 
-			if (events.interruptableDelay(12000)) return true;
+		if (curr_anim->initialPause != 0)  
+			if (events.interruptableDelay(curr_anim->initialPause * 1000 / 50)) return true;
 
 		result = false;
 		switch (anim->show()) {
 			case ABORT_NONE:
-				if (curr_anim->endingPause) {
-					result = events.interruptableDelay(12000);
+				if (curr_anim->endingPause != 0) {
+					result = events.interruptableDelay(curr_anim->endingPause * 1000 / 50);
 				}
 				break;
 
@@ -104,7 +123,10 @@ bool Introduction::show() {
 		}
 		delete anim;
 
-		if (result) return true;
+		if (result) {
+			Sound.musicInterface_KillAll();	
+			return true;
+		}
 	}
 
 	// Show battle pictures one frame at a time
@@ -118,12 +140,12 @@ bool Introduction::show() {
 		if (result) break;
 	} while (anim->step());
 	delete anim;
-	if (result) return true;
+	
+	if (!result) 
+		// Show final introduction screen
+		showScreen(0x22, 0x21, 10000);
 
-	// Show final introduction screen
-
-	showScreen(0x22, 0x21, 10000);
-
+	Sound.musicInterface_KillAll();
 	return false;
 }
 

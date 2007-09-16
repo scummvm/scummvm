@@ -33,6 +33,7 @@
 #include "lure/strings.h"
 
 #include "common/config-manager.h"
+#include "common/system.h"
 
 namespace Lure {
 
@@ -300,7 +301,7 @@ void Game::handleMenuResponse(uint8 selection) {
 		break;
 
 	case MENUITEM_RESTART_GAME: 
-		doQuit();
+		doRestart();
 		break;
 
 	case MENUITEM_SAVE_GAME:
@@ -883,6 +884,7 @@ void Game::doSound() {
 
 	_soundFlag = !_soundFlag;
 	menu.getMenu(2).entries()[2] = sl.getString(_soundFlag ? S_SOUND_ON : S_SOUND_OFF);
+	Sound.setVolume(_soundFlag ? DEFAULT_VOLUME : 0);
 }
 
 void Game::handleBootParam(int value) {

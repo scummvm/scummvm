@@ -45,7 +45,8 @@ enum {
 	kLureDebugScripts = 1 << 0,
 	kLureDebugAnimations = 1 << 1,
 	kLureDebugHotspots = 1 << 2,
-	kLureDebugFights = 1 << 3
+	kLureDebugFights = 1 << 3,
+	kLureDebugSounds = 1 << 4
 };
 
 #define ERROR_BASIC 1
@@ -229,6 +230,8 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 
 // Miscellaneous resources
 #define NAMES_RESOURCE_ID 9
+#define MAIN_SOUND_RESOURCE_ID 0xC
+#define INTRO_SOUND_RESOURCE_ID 0x31
 #define NOONE_ID 0x3E7
 #define PLAYER_ID 0x3E8
 #define RATPOUCH_ID 0x3E9
@@ -291,6 +294,7 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 #define EWAN_ALT_ANIM_ID 0x59ED
 #define PLAYER_ANIM_ID 0x5C80
 #define SELENA_ANIM_ID 0x5CAA
+#define DEFAULT_VOLUME 192
 
 #define CONVERSE_COUNTDOWN_SIZE 40
 #define IDLE_COUNTDOWN_SIZE 15

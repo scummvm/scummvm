@@ -142,7 +142,7 @@ public:
 	static void addActions(uint16 hotspotId, uint16 actions, uint16 v3);
 	static void randomToGeneral(uint16 maxVal, uint16 minVal, uint16 v3);
 	static void checkCellDoor(uint16 v1, uint16 v2, uint16 v3);
-	static void checkSound(uint16 v1, uint16 v2, uint16 v3);
+	static void checkSound(uint16 soundNumber, uint16 v2, uint16 v3);
 };
 
 class HotspotScript {

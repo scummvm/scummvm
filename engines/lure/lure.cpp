@@ -34,6 +34,7 @@
 #include "lure/lure.h"
 #include "lure/intro.h"
 #include "lure/game.h"
+#include "lure/sound.h"
 
 namespace Lure {
 
@@ -45,17 +46,16 @@ LureEngine::LureEngine(OSystem *system): Engine(system) {
 	Common::addSpecialDebugLevel(kLureDebugAnimations, "animations", "Animations debugging");
 	Common::addSpecialDebugLevel(kLureDebugHotspots, "hotspots", "Hotspots debugging");
 	Common::addSpecialDebugLevel(kLureDebugFights, "fights", "Fights debugging");
+	Common::addSpecialDebugLevel(kLureDebugSounds, "sounds", "Sounds debugging");
 
 	// Setup mixer
-/*
+
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
 	}
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-*/
 	
 	_features = 0;
 	_game = 0;
@@ -106,7 +106,9 @@ LureEngine &LureEngine::getReference() {
 int LureEngine::go() {
 	if (ConfMan.getInt("boot_param") == 0) {
 		// Show the introduction
+		Sound.loadSection(INTRO_SOUND_RESOURCE_ID);
 		Introduction *intro = new Introduction(*_screen, *_system);
+
 		intro->show();
 		delete intro;
 	}
@@ -114,6 +116,7 @@ int LureEngine::go() {
 	// Play the game
 	if (!_events->quitFlag) {
 		// Play the game
+		Sound.loadSection(MAIN_SOUND_RESOURCE_ID);
 		Game *gameInstance = new Game();
 		gameInstance->execute();
 		delete gameInstance;

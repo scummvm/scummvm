@@ -802,7 +802,7 @@ bool RestartRestoreDialog::show() {
 	LureEngine &engine = LureEngine::getReference();
 
 	Sound.killSounds();
-	Sound.musicInterface_Play(60, true, 0);
+	Sound.musicInterface_Play(60, 0);
 	mouse.setCursorNum(CURSOR_ARROW);
 
 	// See if there are any savegames that can be restored

@@ -720,14 +720,11 @@ void Script::checkCellDoor(uint16 v1, uint16 v2, uint16 v3) {
 
 // Checks if a sound is running
 
-void Script::checkSound(uint16 hotspotId, uint16 v2, uint16 v3) {
+void Script::checkSound(uint16 soundNumber, uint16 v2, uint16 v3) {
 	Sound.tidySounds();
 
-	// For now, simply set the general value field so that the Skorl schedule
-	// will work properly
-	Resources::getReference().fieldList().setField(GENERAL, 0);
-	
-	// TODO: Check whether active sound can be found or not
+	SoundDescResource *rec = Sound.findSound(soundNumber);
+	Resources::getReference().fieldList().setField(GENERAL, (rec != NULL) ? 1 : 0);
 }
 
 typedef void(*SequenceMethodPtr)(uint16, uint16, uint16);
