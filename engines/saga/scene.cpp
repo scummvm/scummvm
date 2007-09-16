@@ -611,15 +611,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			_vm->_interface->setLeftPortrait(0);
 
 		_vm->_anim->freeCutawayList();
-		// FIXME: Freed script modules are not reloaded correctly when changing chapters.
-		// This is apparent when returning back to the character selection screen,
-		// where the scene script module is loaded incorrectly
-		// Don't free them for now, but free them on game exit, like ITE.
-		// This has no impact on the game itself (other than increased memory usage),
-		// as each chapter uses a different module slot
-		// TODO: Find out why the script modules are not loaded correctly when
-		// changing chapters and uncomment this again
-		//_vm->_script->freeModules();
+		_vm->_script->freeModules();
 
 		// deleteAllScenes();
 

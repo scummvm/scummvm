@@ -204,6 +204,7 @@ void Script::freeModules() {
 	for (i = 0; i < _modulesCount; i++) {
 		if (_modules[i].loaded) {
 			_modules[i].freeMem();
+			_modules[i].loaded = false;
 		}
 	}
 	_staticSize = 0;
