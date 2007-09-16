@@ -1782,7 +1782,7 @@ void Script::sfShowIHNMDemoHelpBg(SCRIPTFUNC_PARAMS) {
 
 void Script::sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS) {
 	int stringId = thread->pop();
-	int textHeight = _vm->_font->getHeight(kKnownFontVerb, thread->_strings->getString(stringId), 226, kFontCentered);
+	//int textHeight = _vm->_font->getHeight(kKnownFontVerb, thread->_strings->getString(stringId), 226, kFontCentered);
 	TextListEntry textEntry;
 	Event event;
 
