@@ -335,6 +335,7 @@ void SagaEngine::load(const char *fileName) {
 
 	if (insetSceneNumber != sceneNumber) {
 		_render->setFlag(RF_DISABLE_ACTORS);
+		_scene->draw();
 		_render->drawScene();
 		_render->clearFlag(RF_DISABLE_ACTORS);
 		_scene->changeScene(insetSceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);
