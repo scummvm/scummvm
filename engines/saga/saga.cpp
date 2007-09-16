@@ -259,10 +259,10 @@ int SagaEngine::go() {
 		_scene->changeScene(getStartSceneNumber(), 0, kTransitionNoFade);
 		_events->handleEvents(0); // Process immediate events
 
+		_interface->setMode(kPanelMain);
 		char *fileName;
 		fileName = calcSaveFileName(ConfMan.getInt("save_slot"));
 		load(fileName);
-		_interface->setMode(kPanelMain);
 	} else {
 		_framesEsc = 0;
 		_scene->startScene();
