@@ -88,7 +88,8 @@ void Render::drawScene() {
 	if (!(_flags & (RF_DEMO_SUBST | RF_MAP) || _vm->_interface->getMode() == kPanelPlacard)) {
 		if (_vm->_interface->getFadeMode() != kFadeOut) {
 			// Display scene background
-			_vm->_scene->draw();
+			if (!(_flags & RF_DISABLE_ACTORS))
+				_vm->_scene->draw();
 
 			if (_vm->_puzzle->isActive()) {
 				_vm->_puzzle->movePiece(mousePoint);
