@@ -799,6 +799,13 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(move);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(endcommands);
 
+	virtual void parseGetData(Script &script, Zone *z);
+	virtual void parseExamineData(Script &script, Zone *z);
+	virtual void parseDoorData(Script &script, Zone *z);
+	virtual void parseMergeData(Script &script, Zone *z);
+	virtual void parseHearData(Script &script, Zone *z);
+	virtual void parseSpeakData(Script &script, Zone *z);
+
 	void 		parseLocation(const char *filename);
 	char   		*parseComment(Script &script);
 	char   		*parseDialogueString(Script &script);

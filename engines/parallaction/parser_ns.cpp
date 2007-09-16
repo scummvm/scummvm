@@ -1290,142 +1290,200 @@ void Parallaction_ns::parseZone(Script &script, ZoneList &list, char *name) {
 }
 
 
-void Parallaction_ns::parseZoneTypeBlock(Script &script, Zone *z) {
-	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_label._text, z->_type);
 
-	TypeData *u = &z->u;
 
-	switch (z->_type & 0xFFFF) {
-	case kZoneExamine:	// examine Zone alloc
-		u->examine = new ExamineData;
-		break;
+void Parallaction_ns::parseGetData(Script &script, Zone *z) {
 
-	case kZoneDoor: // door Zone alloc
-		u->door = new DoorData;
-		break;
-
-	case kZoneGet:	// get Zone alloc
-		u->get = new GetData;
-		break;
-
-	case kZoneMerge:	// merge Zone alloc
-		u->merge = new MergeData;
-		break;
-
-	case kZoneHear: // hear Zone alloc
-		u->hear = new HearData;
-		break;
-
-	case kZoneSpeak:	// speak Zone alloc
-		u->speak = new SpeakData;
-		break;
-
-	}
-
-	char vC8[PATH_LEN];
-
-//	printf("type = %x", z->_type);
+	GetData *data = new GetData;
 
 	do {
-		debugC(8, kDebugParser, "parseZoneTypeBlock(%s)", _tokens[0]);
 
-		switch (z->_type & 0xFFFF) {
-		case kZoneExamine: // examine Zone init
-			if (!scumm_stricmp(_tokens[0], "file")) {
-				u->examine->_filename = strdup(_tokens[1]);
+		if (!scumm_stricmp(_tokens[0], "file")) {
+			data->_cnv = _disk->loadStatic(_tokens[1]);
+			data->_backup = (byte*)malloc(data->_cnv->w*data->_cnv->h);
+
+			if ((z->_flags & kFlagsRemove) == 0) {
+				_gfx->backupGetBackground(data, z->_left, z->_top);
+				_gfx->flatBlitCnv(data->_cnv, z->_left, z->_top, Gfx::kBitBack);
 			}
-			if (!scumm_stricmp(_tokens[0], "desc")) {
-				u->examine->_description = parseComment(script);
-			}
-			break;
+		}
 
-		case kZoneDoor: // door Zone init
-			if (!scumm_stricmp(_tokens[0], "slidetext")) {
-				strcpy(_slideText[0], _tokens[1]);
-//				printf("%s\t", _slideText[0]);
-				strcpy(_slideText[1], _tokens[2]);
-			}
-
-			if (!scumm_stricmp(_tokens[0], "location")) {
-				u->door->_location = strdup(_tokens[1]);
-			}
-
-			if (!scumm_stricmp(_tokens[0], "file")) {
-//				printf("file: '%s'", _tokens[0]);
-
-				strcpy(vC8, _tokens[1]);
-
-				u->door->_cnv = _disk->loadFrames(vC8);
-				uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
-
-				Common::Rect r;
-				u->door->_cnv->getRect(0, r);
-
-				u->door->_background = (byte*)malloc(r.width() * r.height());
-				_gfx->backupDoorBackground(u->door, z->_left, z->_top);
-
-				_gfx->flatBlitCnv(u->door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
-			}
-
-			if (!scumm_stricmp(_tokens[0],	"startpos")) {
-				u->door->_startPos.x = atoi(_tokens[1]);
-				u->door->_startPos.y = atoi(_tokens[2]);
-				u->door->_startFrame = atoi(_tokens[3]);
-			}
-			break;
-
-		case kZoneGet: // get Zone init
-			if (!scumm_stricmp(_tokens[0], "file")) {
-				strcpy(vC8, _tokens[1]);
-				u->get->_cnv = _disk->loadStatic(vC8);
-				u->get->_backup = (byte*)malloc(u->get->_cnv->w*u->get->_cnv->h);
-
-				if ((z->_flags & kFlagsRemove) == 0) {
-					_gfx->backupGetBackground(u->get, z->_left, z->_top);
-					_gfx->flatBlitCnv(u->get->_cnv, z->_left, z->_top, Gfx::kBitBack);
-				}
-			}
-
-			if (!scumm_stricmp(_tokens[0], "icon")) {
-				u->get->_icon = 4 + _objectsNames->lookup(_tokens[1]);
-			}
-			break;
-
-		case kZoneMerge: // merge Zone init
-			if (!scumm_stricmp(_tokens[0], "obj1")) {
-				u->merge->_obj1 = 4 + _objectsNames->lookup(_tokens[1]);
-			}
-			if (!scumm_stricmp(_tokens[0], "obj2")) {
-				u->merge->_obj2 = 4 + _objectsNames->lookup(_tokens[1]);
-			}
-			if (!scumm_stricmp(_tokens[0], "newobj")) {
-				u->merge->_obj3 = 4 + _objectsNames->lookup(_tokens[1]);
-			}
-			break;
-
-		case kZoneHear: // hear Zone init
-			if (!scumm_stricmp(_tokens[0], "sound")) {
-				strcpy(u->hear->_name, _tokens[1]);
-				z->u.hear->_channel = atoi(_tokens[2]);
-			}
-			if (!scumm_stricmp(_tokens[0], "freq")) {
-				z->u.hear->_freq = atoi(_tokens[1]);
-			}
-			break;
-
-		case kZoneSpeak: // speak Zone init
-			if (!scumm_stricmp(_tokens[0], "file")) {
-				strcpy(u->speak->_name, _tokens[1]);
-//				printf("speak file name: %s", u.speak._name);
-			}
-			if (!scumm_stricmp(_tokens[0], "Dialogue")) {
-				u->speak->_dialogue = parseDialogue(script);
-			}
-			break;
+		if (!scumm_stricmp(_tokens[0], "icon")) {
+			data->_icon = 4 + _objectsNames->lookup(_tokens[1]);
 		}
 
 		fillBuffers(script, true);
 	} while (scumm_stricmp(_tokens[0], "endzone"));
+
+	z->u.get = data;
+
+}
+
+
+void Parallaction_ns::parseExamineData(Script &script, Zone *z) {
+
+	ExamineData *data = new ExamineData;
+
+	do {
+
+		if (!scumm_stricmp(_tokens[0], "file")) {
+			data->_filename = strdup(_tokens[1]);
+		}
+		if (!scumm_stricmp(_tokens[0], "desc")) {
+			data->_description = parseComment(script);
+		}
+
+		fillBuffers(script, true);
+	} while (scumm_stricmp(_tokens[0], "endzone"));
+
+	z->u.examine = data;
+
+}
+
+
+void Parallaction_ns::parseDoorData(Script &script, Zone *z) {
+
+	DoorData *data = new DoorData;
+
+	do {
+
+		if (!scumm_stricmp(_tokens[0], "slidetext")) {
+			strcpy(_slideText[0], _tokens[1]);
+//				printf("%s\t", _slideText[0]);
+			strcpy(_slideText[1], _tokens[2]);
+		}
+
+		if (!scumm_stricmp(_tokens[0], "location")) {
+			data->_location = strdup(_tokens[1]);
+		}
+
+		if (!scumm_stricmp(_tokens[0], "file")) {
+//				printf("file: '%s'", _tokens[0]);
+
+			data->_cnv = _disk->loadFrames(_tokens[1]);
+			uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
+
+			Common::Rect r;
+			data->_cnv->getRect(0, r);
+
+			data->_background = (byte*)malloc(r.width() * r.height());
+			_gfx->backupDoorBackground(data, z->_left, z->_top);
+
+			_gfx->flatBlitCnv(data->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
+		}
+
+		if (!scumm_stricmp(_tokens[0],	"startpos")) {
+			data->_startPos.x = atoi(_tokens[1]);
+			data->_startPos.y = atoi(_tokens[2]);
+			data->_startFrame = atoi(_tokens[3]);
+		}
+
+		fillBuffers(script, true);
+	} while (scumm_stricmp(_tokens[0], "endzone"));
+
+	z->u.door = data;
+
+}
+
+
+void Parallaction_ns::parseMergeData(Script &script, Zone *z) {
+
+	MergeData *data = new MergeData;
+
+	do {
+
+		if (!scumm_stricmp(_tokens[0], "obj1")) {
+			data->_obj1 = 4 + _objectsNames->lookup(_tokens[1]);
+		}
+		if (!scumm_stricmp(_tokens[0], "obj2")) {
+			data->_obj2 = 4 + _objectsNames->lookup(_tokens[1]);
+		}
+		if (!scumm_stricmp(_tokens[0], "newobj")) {
+			data->_obj3 = 4 + _objectsNames->lookup(_tokens[1]);
+		}
+
+		fillBuffers(script, true);
+	} while (scumm_stricmp(_tokens[0], "endzone"));
+
+	z->u.merge = data;
+
+}
+
+void Parallaction_ns::parseHearData(Script &script, Zone *z) {
+
+	HearData *data = new HearData;
+
+	do {
+
+		if (!scumm_stricmp(_tokens[0], "sound")) {
+			strcpy(data->_name, _tokens[1]);
+			data->_channel = atoi(_tokens[2]);
+		}
+		if (!scumm_stricmp(_tokens[0], "freq")) {
+			data->_freq = atoi(_tokens[1]);
+		}
+
+		fillBuffers(script, true);
+	} while (scumm_stricmp(_tokens[0], "endzone"));
+
+	z->u.hear = data;
+
+}
+
+void Parallaction_ns::parseSpeakData(Script &script, Zone *z) {
+
+	SpeakData *data = new SpeakData;
+
+	do {
+
+		if (!scumm_stricmp(_tokens[0], "file")) {
+			strcpy(data->_name, _tokens[1]);
+		}
+		if (!scumm_stricmp(_tokens[0], "Dialogue")) {
+			data->_dialogue = parseDialogue(script);
+		}
+
+		fillBuffers(script, true);
+	} while (scumm_stricmp(_tokens[0], "endzone"));
+
+	z->u.speak = data;
+
+}
+
+
+void Parallaction_ns::parseZoneTypeBlock(Script &script, Zone *z) {
+	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_label._text, z->_type);
+
+	switch (z->_type & 0xFFFF) {
+	case kZoneExamine:	// examine Zone alloc
+		parseExamineData(script, z);
+		break;
+
+	case kZoneDoor: // door Zone alloc
+		parseDoorData(script, z);
+		break;
+
+	case kZoneGet:	// get Zone alloc
+		parseGetData(script, z);
+		break;
+
+	case kZoneMerge:	// merge Zone alloc
+		parseMergeData(script, z);
+		break;
+
+	case kZoneHear: // hear Zone alloc
+		parseHearData(script, z);
+		break;
+
+	case kZoneSpeak:	// speak Zone alloc
+		parseSpeakData(script, z);
+		break;
+
+	default:
+		// eats up 'ENDZONE' line for unprocessed zone types
+		fillBuffers(script, true);
+		break;
+	}
 
 	debugC(7, kDebugParser, "parseZoneTypeBlock() done");
 
