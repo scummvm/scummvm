@@ -49,6 +49,7 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	_initialized = true;
+	_fontMapping = 0;
 }
 
 Font::~Font(void) {
@@ -325,8 +326,16 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 		c_code = *textPointer & 0xFFU;
 
 		// Translate character
-		if (!(flags & kFontDontmap))
+		if (_fontMapping == 0) {	// Check font mapping debug flag
+			// Default game behavior
+			if (!(flags & kFontDontmap))
+				c_code = _charMap[c_code];
+		} else if (_fontMapping == 1) {
+			// Force font mapping
 			c_code = _charMap[c_code];
+		} else {
+			// In all other cases, ignore font mapping
+		}
 		assert(c_code < FONT_CHARCOUNT);
 
 		// Check if character is defined

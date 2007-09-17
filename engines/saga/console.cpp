@@ -76,6 +76,9 @@ Console::Console(SagaEngine *vm) : GUI::Debugger() {
 	DCmd_Register("current_panel_mode",	WRAP_METHOD(Console, cmdCurrentPanelMode));
 	DCmd_Register("set_panel_mode",		WRAP_METHOD(Console, cmdSetPanelMode));
 
+	// Font commands
+	DCmd_Register("set_font_mapping",	WRAP_METHOD(Console, cmdSetFontMapping));
+
 	// Global flags commands
 	DCmd_Register("global_flags_info",	WRAP_METHOD(Console, cmdGlobalFlagsInfo));
 	DCmd_Register("set_global_flag",	WRAP_METHOD(Console, cmdSetGlobalFlag));
@@ -160,6 +163,16 @@ bool Console::cmdSetPanelMode(int argc, const char **argv) {
 		DebugPrintf("Usage: %s <Panel mode number>\n", argv[0]);
 	else
 		_vm->_interface->setMode(atoi(argv[1]));
+	return true;
+}
+
+bool Console::cmdSetFontMapping(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Sets font mapping\nUsage: %s <Font mapping flag>\n", argv[0]);
+		DebugPrintf("Mapping flags:\n0 - default game behavior\n1 - force font mapping\n2 - ignore font mapping\n");
+	} else {
+		_vm->_font->setFontMapping(atoi(argv[1]));
+	}
 	return true;
 }
 
