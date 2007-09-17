@@ -332,7 +332,7 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 		// Check if character is defined
 		if ((drawFont.fontCharEntry[c_code].index == 0) && (c_code != FONT_FIRSTCHAR)) {
 #if FONT_SHOWUNDEFINED
-			if (c_code == FONT_CH_SPACE || c_code == 9) {
+			if (c_code == FONT_CH_SPACE || c_code == FONT_CH_TAB) {
 				textPoint.x += drawFont.fontCharEntry[c_code].tracking;
 				continue;
 			}

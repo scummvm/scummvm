@@ -39,6 +39,7 @@ namespace Saga {
 // have a valid offset of '0'
 #define FONT_FIRSTCHAR 33
 
+#define FONT_CH_TAB 9
 #define FONT_CH_SPACE 32
 #define FONT_CH_QMARK 63
 
