@@ -752,62 +752,6 @@ void Parallaction::runJobs() {
 }
 
 
-Table::Table(uint32 size) : _size(size), _used(0), _disposeMemory(true) {
-	_data = (char**)malloc(sizeof(char*)*size);
-}
-
-Table::Table(uint32 size, const char **data) : _size(size), _used(size), _disposeMemory(false) {
-	_data = const_cast<char**>(data);
-}
-
-Table::~Table() {
-
-	if (!_disposeMemory) return;
-
-	clear();
-
-	free(_data);
-
-}
-
-void Table::addData(const char* s) {
-
-	if (!(_used < _size))
-		error("Table overflow");
-
-	_data[_used++] = strdup(s);
-
-}
-
-uint16 Table::lookup(const char* s) {
-
-	for (uint16 i = 0; i < _used; i++) {
-		if (!scumm_stricmp(_data[i], s)) return i + 1;
-	}
-
-	return notFound;
-}
-
-void Table::clear() {
-	for (uint32 i = 0; i < _used; i++)
-		free(_data[i]);
-
-	_used = 0;
-}
-
-FixedTable::FixedTable(uint32 size, uint32 fixed) : Table(size), _numFixed(fixed) {
-}
-
-FixedTable::~FixedTable() {
-	_numFixed = 0;
-}
-
-void FixedTable::clear() {
-	for (uint32 i = _numFixed; i < _used; i++) {
-		free(_data[i]);
-		_used--;
-	}
-}
 
 
 void Parallaction::pushParserTables(OpcodeSet *opcodes, Table *statements) {

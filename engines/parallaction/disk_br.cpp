@@ -357,13 +357,7 @@ Table* DosDisk_br::loadTable(const char* name) {
 	if (!stream.open(path))
 		errorFileNotFound(path);
 
-	Table *t = new Table(100);
-
-	fillBuffers(stream);
-	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
-		t->addData(_tokens[0]);
-		fillBuffers(stream);
-	}
+	Table *t = createTableFromStream(100, stream);
 
 	stream.close();
 

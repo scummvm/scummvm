@@ -253,38 +253,7 @@ struct Character {
 };
 
 
-class Table {
 
-protected:
-	char	**_data;
-	uint16	_size;
-	uint16	_used;
-	bool	_disposeMemory;
-
-public:
-	Table(uint32 size);
-	Table(uint32 size, const char** data);
-
-	virtual ~Table();
-
-	enum {
-		notFound = 0
-	};
-
-	virtual void addData(const char* s);
-	virtual void clear();
-	virtual uint16 lookup(const char* s);
-};
-
-class FixedTable : public Table {
-
-	uint16	_numFixed;
-
-public:
-	FixedTable(uint32 size, uint32 fixed);
-	~FixedTable();
-	void clear();
-};
 
 struct BackgroundInfo {
 	uint width;
