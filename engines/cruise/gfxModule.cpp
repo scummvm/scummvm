@@ -108,15 +108,15 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * ax = y;
 				 * si = 0;
 				 * 
-				 * if(y>199) // out of screen vertically
+				 * if (y>199) // out of screen vertically
 				 * return;
 				 * 
-				 * if(y<0) // cropped on the top
+				 * if (y<0) // cropped on the top
 				 * {
 				 * cx = bx;
 				 * bx -= ax;
 				 * dx -= bx;
-				 * if(dx <= 0)
+				 * if (dx <= 0)
 				 * {
 				 * return;
 				 * }
@@ -130,12 +130,12 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * ax += dx;
 				 * ax--;
 				 * 
-				 * if(ax > di)
+				 * if (ax > di)
 				 * {
 				 * ax -= di;
 				 * dx -= ax;
 				 * 
-				 * if(dx <= 0)
+				 * if (dx <= 0)
 				 * {
 				 * return;
 				 * }
@@ -170,7 +170,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * dx = ax;
 				 * ax = tempSwap;
 				 * 
-				 * if(ax > di)
+				 * if (ax > di)
 				 * {
 				 * return;
 				 * }
@@ -183,12 +183,12 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * 
 				 * dx = dx&0xFF;
 				 * 
-				 * if(cx<bx)
+				 * if (cx<bx)
 				 * {
 				 * return;
 				 * }
 				 * 
-				 * if(cx>di)
+				 * if (cx>di)
 				 * {
 				 * cx -= di;
 				 * cx >>= 3;
@@ -201,7 +201,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * di = 0xF8F8;
 				 * }
 				 * 
-				 * if(ax<bx)
+				 * if (ax<bx)
 				 * {
 				 * ax -= bx;
 				 * ax = -ax;
@@ -224,9 +224,9 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * 
 				 * dx = loc_1064;
 				 * 
-				 * if(dx)
+				 * if (dx)
 				 * {
-				 * if(di&1)
+				 * if (di&1)
 				 * {
 				 * loc_10C5++;
 				 * }
@@ -235,7 +235,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * ax--;
 				 * loc_11DC = ax;
 				 * 
-				 * if(di&0x100)
+				 * if (di&0x100)
 				 * {
 				 * bx--;
 				 * }
@@ -283,7 +283,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * bx = dx;
 				 * dx = 974;
 				 * 
-				 * if(!bx) // no crop ?
+				 * if (!bx) // no crop ?
 				 * {
 				 * do // for each line
 				 * {
@@ -299,12 +299,12 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * 
 				 * siPtr+=4;
 				 * diPtr++;
-				 * }while(--cx);
+				 * }while (--cx);
 				 * 
 				 * diPtr += loc_1147; // interline
 				 * siPtr += loc_114B;
 				 * bp = bpSave;
-				 * }while(--bp);
+				 * }while (--bp);
 				 * }
 				 * else // croped
 				 * {
@@ -326,7 +326,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * ax = bp;
 				 * loc_12E1 = ax;
 				 * 
-				 * if(loc_117C == 0xF8)
+				 * if (loc_117C == 0xF8)
 				 * {
 				 * direction = 1;
 				 * }
@@ -335,7 +335,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * direction = -1;
 				 * }
 				 * 
-				 * if(direction == -1)
+				 * if (direction == -1)
 				 * {
 				 * goto label_11DC;
 				 * }
@@ -358,7 +358,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * bx = (bx&0xFF00) | (ax&0xFF);
 				 * ax = ((((((ax&0xFF00)>>8)&0xFF) | (ax&0xFF))<<8)&0xFF00) | (ax&0xFF);
 				 * 
-				 * if(ax)
+				 * if (ax)
 				 * {
 				 * bp = dx;
 				 * ax = (ax&0xFF00) | (*diPtr)&0xFF;
@@ -375,7 +375,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * label_11DC:
 				 * 
 				 * bp = loc_11DC;
-				 * if(bp >0)
+				 * if (bp >0)
 				 * {
 				 * do
 				 * {
@@ -413,7 +413,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * ax = (ax&0xFF00) | ((ax&0xFF) | bx&0xFF);
 				 * ax = (ax&0xFF00) | ((ax&0xFF)<<8) | (ax&0xFF);
 				 * 
-				 * if(ax)
+				 * if (ax)
 				 * {
 				 * cx = dx;
 				 * ax = (ax&0xFF00) | (*diPtr)&0xFF;
@@ -427,10 +427,10 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * 
 				 * siPtr += 4;
 				 * diPtr++;
-				 * }while(--bp);
+				 * }while (--bp);
 				 * }
 				 * 
-				 * if(loc_122B == 0xF8)
+				 * if (loc_122B == 0xF8)
 				 * {
 				 * direction = 1;
 				 * }
@@ -439,7 +439,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * direction = -1;
 				 * }
 				 * 
-				 * if(direction == -1)
+				 * if (direction == -1)
 				 * {
 				 * goto label_12D9;
 				 * }
@@ -462,7 +462,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * bx = (bx&0xFF00) | (ax&0xFF);
 				 * ax = ((((((ax&0xFF00)>>8)&0xFF) | (ax&0xFF))<<8)&0xFF00) | (ax&0xFF);
 				 * 
-				 * if(ax)
+				 * if (ax)
 				 * {
 				 * bp = dx;
 				 * ax = (ax&0xFF00) | (*diPtr)&0xFF;
@@ -481,7 +481,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * siPtr+=loc_12DD;
 				 * bp = loc_12E1;
 				 * 
-				 * }while(--bp);
+				 * }while (--bp);
 				 * } */
 
 	{
@@ -526,9 +526,9 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 		int i;
 		int j;
 
-		for(i=x;i<height+x;i++) {
-			for(j=y;j<width*16+y;j++) {
-				if(i>=0&&i<200&&j>=0&&j<320)
+		for (i=x;i<height+x;i++) {
+			for (j=y;j<width*16+y;j++) {
+				if (i>=0&&i<200&&j>=0&&j<320)
 					destPtr[i*320+j] = *(sourcePtr++);
 			}
 		}

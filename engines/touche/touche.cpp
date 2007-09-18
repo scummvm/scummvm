@@ -2358,7 +2358,7 @@ void ToucheEngine::removeConversationChoice(int16 num) {
 	for (int i = 0; i < NUM_CONVERSATION_CHOICES; ++i) {
 		if (_conversationChoicesTable[i].num == num) {
 			_conversationChoicesUpdated = true;
-			for(; i < NUM_CONVERSATION_CHOICES - 1; ++i) {
+			for (; i < NUM_CONVERSATION_CHOICES - 1; ++i) {
 				_conversationChoicesTable[i].num = _conversationChoicesTable[i + 1].num;
 				_conversationChoicesTable[i].msg = _conversationChoicesTable[i + 1].msg;
 			}

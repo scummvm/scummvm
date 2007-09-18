@@ -148,7 +148,7 @@ void ComputeDivBy5TableIFN()
         return;
     isDivBy5Ready = true;
 
-    for(int i=0; i<160; ++i)
+    for (int i=0; i<160; ++i)
     {
         DIV_BY_5[i] = (2*i+5)/10;
     }                
@@ -311,7 +311,7 @@ static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const
 {
     ComputeDivBy5TableIFN();
     
-    for(size_t i=0; i<64; ++i)
+    for (size_t i=0; i<64; ++i)
     {
         u32 s0 = palette[src[5*i+0]];
         u32 s1 = palette[src[5*i+1]];
@@ -325,7 +325,7 @@ static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const
 #else
 static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, const u16* palette)
 {
-    for(size_t i=0; i<64; ++i)
+    for (size_t i=0; i<64; ++i)
     {
         u16 s0 = palette[src[5*i+0]];
         u16 s1 = palette[src[5*i+1]];
@@ -344,7 +344,7 @@ static inline void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const
 {
     ComputeDivBy5TableIFN();
     
-    for(size_t i=0; i<64; ++i)
+    for (size_t i=0; i<64; ++i)
     {
         u16 s0 = src[5*i+0];
         u16 s1 = src[5*i+1];
@@ -362,7 +362,7 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* p
 	u32 fastRam[768];
 
     // Palette lookup -> 0_888
-    for(size_t i=0; i<256; ++i)
+    for (size_t i=0; i<256; ++i)
     {
         u32 col = palette[i];
         u32 result = col & 0x0000001F;
@@ -372,7 +372,7 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* p
         fastRam[i] = result;
     }
 
-	for(size_t i=0; i<200; ++i)
+	for (size_t i=0; i<200; ++i)
 	{
 		Rescale_320xPAL8Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride, fastRam);			
 	}
@@ -381,10 +381,10 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* p
 void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
 {
 	u16 fastRam[256];
-    for(size_t i=0; i<128; ++i)
+    for (size_t i=0; i<128; ++i)
         ((u32*)fastRam)[i] = ((const u32*)palette)[i];
 
-	for(size_t i=0; i<200; ++i)
+	for (size_t i=0; i<200; ++i)
 	{
 		Rescale_320xPAL8Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride, fastRam);			
 	}
@@ -393,7 +393,7 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* p
 
 void Rescale_320x256x1555_To_256x256x1555(u16* dest, const u16* src, int destStride, int srcStride)
 {
-	for(size_t i=0; i<200; ++i)
+	for (size_t i=0; i<200; ++i)
 	{
 		Rescale_320x1555Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride);
 	}

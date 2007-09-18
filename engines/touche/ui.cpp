@@ -381,19 +381,19 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 					memset(menuData.saveLoadMarks, false, 100 * sizeof(bool));	//assume no savegames for this title	
 					filenames = _saveFileMan->listSavefiles(gameStateFileName);
 					
-					for(Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
+					for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
 						//Obtain the last 1 or 2 digits of the filename, since they correspond to the save slot
 						//This engine can save games either with one or two digits, hence the additional if statement
 						slot[0] = file->c_str()[file->size()-2];
 						slot[1] = file->c_str()[file->size()-1];
 						
-						if(!atoi(&slot[0])){
+						if (!atoi(&slot[0])){
 							slotNum = atoi(&slot[1]);
 						} else {
 							slotNum = atoi(slot);
 						}
 						
-						if(slotNum >= 0 && slotNum < 100)
+						if (slotNum >= 0 && slotNum < 100)
 							menuData.saveLoadMarks[slotNum] = true;	//mark this slot as valid
 					}
 					

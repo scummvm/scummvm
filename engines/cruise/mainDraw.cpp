@@ -930,7 +930,7 @@ void mainDraw(int16 param) {
 						if (newVal > currentObjPtr->animEnd) {
 							if (currentObjPtr->animLoop) {
 								newVal = currentObjPtr->animStart;
-								if(currentObjPtr->animLoop>0)
+								if (currentObjPtr->animLoop>0)
 									currentObjPtr->animLoop--;
 							} else {
 								int16 data2;
@@ -950,7 +950,7 @@ void mainDraw(int16 param) {
 						}
 					} else {
 						ASSERT(0);
-						/*     if(currentObjPtr->field_22>newVal)
+						/*     if (currentObjPtr->field_22>newVal)
 						 * {
 						 * } */
 					}

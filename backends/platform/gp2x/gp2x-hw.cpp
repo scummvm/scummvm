@@ -63,18 +63,18 @@ static volatile unsigned short *MEM_REG;
 
 void GP2X_device_init() {
 	// Open devices
-	if(!gp2x_dev[0])  gp2x_dev[0] = open("/dev/mixer", O_RDWR);
-	if(!gp2x_dev[1])  gp2x_dev[1] = open("/dev/batt",   O_RDONLY);
-	if(!gp2x_dev[2])  gp2x_dev[2] = open("/dev/mem",   O_RDWR);
+	if (!gp2x_dev[0])  gp2x_dev[0] = open("/dev/mixer", O_RDWR);
+	if (!gp2x_dev[1])  gp2x_dev[1] = open("/dev/batt",   O_RDONLY);
+	if (!gp2x_dev[2])  gp2x_dev[2] = open("/dev/mem",   O_RDWR);
 }
 
 void GP2X_device_deinit() {
 	// Close devices
 	{
 		int i;
-		for(i=0;i<8;i++)
+		for (i=0;i<8;i++)
 		{
-			if(gp2x_dev[i])
+			if (gp2x_dev[i])
 			{
 				close(gp2x_dev[i]);
 			}
@@ -211,7 +211,7 @@ void Disable_940(void)
 void gp2x_video_wait_vsync(void)
 {
 	MEM_REG[0x2846>>1]=(MEM_REG[0x2846>>1] | 0x20) & ~2;
-	while(!(MEM_REG[0x2846>>1] & 2));
+	while (!(MEM_REG[0x2846>>1] & 2));
 }
 
 //char GP2X_get_battery_level() {

@@ -172,7 +172,7 @@ int SDL_main(int argc, char **argv) {
 	extern void (*__CTOR_LIST__)() ;
 	void (**constructor)() = &__CTOR_LIST__ ;
 	constructor++ ;
-	while(*constructor) { 
+	while (*constructor) { 
             (*constructor)() ;
             constructor++ ;
         }
@@ -2141,7 +2141,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 
 	currentTime = GetTickCount();
 
-	while(SDL_PollEvent(&ev)) {
+	while (SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
 			debug(1, "Key down %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));

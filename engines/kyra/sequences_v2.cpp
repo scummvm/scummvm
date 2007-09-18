@@ -83,7 +83,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 			_screen->loadBitmap(sequences[i].filename, 2, 2, _screen->_currentPalette);
 			_screen->updateScreen();
 			seqDelay = sequences[i].frameDelay * _tickLength;
-		} else if(sequences[i].type == 1) {
+		} else if (sequences[i].type == 1) {
 			seq_loadWSA(0, sequences[i].filename, sequences[i].frameDelay);
 			seqDelay = sequences[i].duration * _tickLength;
 		}
@@ -410,7 +410,7 @@ void KyraEngine_v2::seq_introOverviewOver1(int currentFrame) {
 	
 	if (currentFrame == 2)
 		seq_waitForChatsToFinish();
-	else if(currentFrame == 3)
+	else if (currentFrame == 3)
 		seq_playIntroChat(12);
 }
 
@@ -419,7 +419,7 @@ void KyraEngine_v2::seq_introOverviewForest(int currentFrame) {
 	
 	if (currentFrame == 11) {
 		seq_waitForChatsToFinish();
-	} else if(currentFrame == 12) {
+	} else if (currentFrame == 12) {
 		delay(25);
 		seq_playIntroChat(2); // "...and tree by tree..."
 	}
@@ -430,7 +430,7 @@ void KyraEngine_v2::seq_introOverviewDragon(int currentFrame) {
 	
 	if (currentFrame == 3)
 		seq_playIntroChat(3); // "Kyrandia ceases to exist!"
-	else if(currentFrame == 11)
+	else if (currentFrame == 11)
 		seq_waitForChatsToFinish();
 }
 

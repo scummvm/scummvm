@@ -16,7 +16,7 @@ Char **ArgsInit() {
 	// initial position
 	argvP++;
 
-	for(UInt8 count = 0; count < MAX_ARG; count++)
+	for (UInt8 count = 0; count < MAX_ARG; count++)
 		argvP[count] = NULL;
 
 	return argvP;
@@ -49,7 +49,7 @@ void ArgsFree(Char **argvP) {
 
 	MemHandle oldH;
 
-	for(UInt8 count = 0; count < MAX_ARG; count++)
+	for (UInt8 count = 0; count < MAX_ARG; count++)
 		if (argvP[count]) {
 			oldH = MemPtrRecoverHandle(argvP[count]);
 			MemHandleUnlock(oldH);
@@ -68,7 +68,7 @@ void ArgsSetOwner(Char **argvP, UInt16 owner) {
 
 	MemHandle oldH;
 
-	for(UInt8 count = 0; count < MAX_ARG; count++)
+	for (UInt8 count = 0; count < MAX_ARG; count++)
 		if (argvP[count]) {
 			oldH = MemPtrRecoverHandle(argvP[count]);
 			MemHandleSetOwner(oldH, owner);
@@ -81,7 +81,7 @@ void ArgsSetOwner(Char **argvP, UInt16 owner) {
 
 void ArgsExportInit(Char **argvP, UInt32 countArg, Boolean arm) {
 	if (arm) {
-		for(UInt8 count = 0; count < MAX_ARG; count++)
+		for (UInt8 count = 0; count < MAX_ARG; count++)
 			if (argvP[count])
 				argvP[count] = (Char *)ByteSwap32(argvP[count]);
 	}
@@ -96,7 +96,7 @@ void ArgsExportRelease(Boolean arm) {
 		Err e = FtrGet(appFileCreator, ftrArgsData, (UInt32 *)&argvP);
 
 		if (argvP)
-			for(UInt8 count = 0; count < MAX_ARG; count++)
+			for (UInt8 count = 0; count < MAX_ARG; count++)
 				if (argvP[count])
 					argvP[count] = (Char *)ByteSwap32(argvP[count]);
 	}

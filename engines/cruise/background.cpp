@@ -93,7 +93,7 @@ int loadBackground(char *name, int idx) {
 	printf("Loading BG: %s\n", name);
 
 	if (!backgroundPtrtable[idx]) {
-		//if(!gfxModuleData.useEGA && !gfxModuleData.useVGA)
+		//if (!gfxModuleData.useEGA && !gfxModuleData.useVGA)
 		{
 			backgroundPtrtable[idx] =
 			    (uint8 *) mallocAndZero(320 * 200 /*64000 */ );
@@ -174,7 +174,7 @@ int loadBackground(char *name, int idx) {
 		}
 	}
 
-	//if(ptrToFree != gfxModuleData.pPage10)
+	//if (ptrToFree != gfxModuleData.pPage10)
 	//  free(ptrToFree);
 
 	if (gfxModuleData.useEGA || gfxModuleData.useTandy) {

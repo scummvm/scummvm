@@ -863,7 +863,7 @@ int16 Op_SetColor(void)	{
 
 #define convertRatio 36.571428571428571428571428571429
 
-	for(i=startIdx; i<=endIdx; i++) {
+	for (i=startIdx; i<=endIdx; i++) {
 		R = (int)(colorR*convertRatio);
 		G = (int)(colorG*convertRatio);
 		B = (int)(colorB*convertRatio);

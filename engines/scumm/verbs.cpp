@@ -564,7 +564,7 @@ void ScummEngine::checkExecVerbs() {
 			// like F5 (=0x8005) or joystick buttons (mask 0xFE00, e.g. SELECT=0xFE40 for the save/load menu).
 			// Hence the distinction with (_mouseAndKeyboardStat < MBS_MAX_KEY) between mouse- and key-events is not applicable
 			// to this games, so we have to remap the special keys here.
-			if(_mouseAndKeyboardStat == 319) {
+			if (_mouseAndKeyboardStat == 319) {
 				_mouseAndKeyboardStat = 0x8005;
 			}
 		}

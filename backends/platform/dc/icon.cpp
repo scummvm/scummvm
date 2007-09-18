@@ -33,7 +33,7 @@ void Icon::create_vmicon(void *buffer)
   unsigned short *pal = (unsigned short *)buffer;
   unsigned char *pix = ((unsigned char *)buffer)+32;
 
-  for(int n = 0; n<16; n++) {
+  for (int n = 0; n<16; n++) {
     int p = palette[n];
     pal[n] =
       ((p>>16)&0xf000)|
@@ -42,7 +42,7 @@ void Icon::create_vmicon(void *buffer)
       ((p>> 4)&0x000f);
   }
 
-  for(int line = 0; line < 32; line++) {
+  for (int line = 0; line < 32; line++) {
     memcpy(pix, &bitmap[32/2*(31-line)], 32/2);
     pix += 32/2;
   }
@@ -55,9 +55,9 @@ void Icon::create_texture()
   unsigned short *tex = (unsigned short *)ta_txalloc(512);
   unsigned short *linebase;
   unsigned char *src = bitmap+sizeof(bitmap)-17;
-  for(int y=0; y<16; y++) {
+  for (int y=0; y<16; y++) {
     linebase = tex + (tt[y]<<1);
-    for(int x=0; x<16; x++, --src)
+    for (int x=0; x<16; x++, --src)
       linebase[tt[x]] = src[16]|(src[0]<<8);
     src -= 16;
   }
@@ -67,7 +67,7 @@ void Icon::create_texture()
 void Icon::setPalette(int pal)
 {
   unsigned int (*hwpal)[64][16] = (unsigned int (*)[64][16])0xa05f9000;
-  for(int n = 0; n<16; n++)
+  for (int n = 0; n<16; n++)
     (*hwpal)[pal][n] = palette[n];
 }
 
@@ -124,13 +124,13 @@ int Icon::find_unused_pixel()
 {
   int use[16];
   memset(use, 0, sizeof(use));
-  for(int n=0; n<32*32/2; n++) {
+  for (int n=0; n<32*32/2; n++) {
     unsigned char pix = bitmap[n];
     use[pix&0xf]++;
     use[pix>>4]++;
   }
-  for(int i=0; i<16; i++)
-    if(!use[i])
+  for (int i=0; i<16; i++)
+    if (!use[i])
       return i;
   return -1;
 }
@@ -142,41 +142,41 @@ bool Icon::load_image2(const void *data, int len)
     short pla, bitcnt;
     int comp, sizeimg, xres, yres, used, imp;
   } hdr;
-  if(len < 40)
+  if (len < 40)
     return false;
   memcpy(&hdr, data, 40);
-  if(hdr.size != 40 || /* hdr.sizeimg<=0 || */ hdr.w<0 || hdr.h<0 ||
+  if (hdr.size != 40 || /* hdr.sizeimg<=0 || */ hdr.w<0 || hdr.h<0 ||
      hdr.bitcnt<0 || hdr.used<0)
     return false;
-  if(!hdr.used)
+  if (!hdr.used)
     hdr.used = 1<<hdr.bitcnt;
   hdr.h >>= 1;
   /* Fix incorrect sizeimg (The Dig) */
-  if(hdr.sizeimg < ((hdr.w*hdr.h*(1+hdr.bitcnt)+7)>>3))
+  if (hdr.sizeimg < ((hdr.w*hdr.h*(1+hdr.bitcnt)+7)>>3))
     hdr.sizeimg = ((hdr.w*hdr.h*(1+hdr.bitcnt)+7)>>3);
-  if(hdr.size + (hdr.used<<2) + hdr.sizeimg > len /* ||
+  if (hdr.size + (hdr.used<<2) + hdr.sizeimg > len /* ||
      hdr.sizeimg < ((hdr.w*hdr.h*(1+hdr.bitcnt)+7)>>3) */)
     return false;
-  if(hdr.w != 32 || hdr.h != 32 || hdr.bitcnt != 4 || hdr.used > 16)
+  if (hdr.w != 32 || hdr.h != 32 || hdr.bitcnt != 4 || hdr.used > 16)
     return false;
   memcpy(palette, ((const char *)data)+hdr.size, hdr.used<<2);
   memcpy(bitmap, ((const char *)data)+hdr.size+(hdr.used<<2), 32*32/2);
-  for(int i=0; i<16; i++)
+  for (int i=0; i<16; i++)
     palette[i] |= 0xff000000;
-  for(int i=hdr.used; i<16; i++)
+  for (int i=hdr.used; i<16; i++)
     palette[i] = 0;
   int unused = find_unused_pixel();
-  if(unused >= 0) {
+  if (unused >= 0) {
     const unsigned char *mask =
       ((const unsigned char *)data)+hdr.size+(hdr.used<<2)+32*32/2;
     unsigned char *pix = bitmap;
-    for(int y=0; y<32; y++)
-      for(int x=0; x<32/8; x++) {
+    for (int y=0; y<32; y++)
+      for (int x=0; x<32/8; x++) {
 	unsigned char mbits = *mask++;
-	for(int z=0; z<4; z++) {
+	for (int z=0; z<4; z++) {
 	  unsigned char pbits = *pix;
-	  if(mbits & 64) pbits = (pbits & ~0xf) | unused;
-	  if(mbits & 128) pbits = (pbits & 0xf) | (unused << 4);
+	  if (mbits & 64) pbits = (pbits & ~0xf) | unused;
+	  if (mbits & 128) pbits = (pbits & 0xf) | (unused << 4);
 	  *pix++ = pbits;
 	  mbits <<= 2;
 	}
@@ -193,10 +193,10 @@ bool Icon::load_image1(const void *data, int len, int offs)
     short pla, bitcnt;
     int bytes, offs;
   } hdr;
-  if(len < offs+16)
+  if (len < offs+16)
     return false;
   memcpy(&hdr, ((const char *)data)+offs, 16);
-  if(hdr.bytes > 0 && hdr.offs >= 0 && hdr.offs+hdr.bytes <= len)
+  if (hdr.bytes > 0 && hdr.offs >= 0 && hdr.offs+hdr.bytes <= len)
     return load_image2(((const char *)data)+hdr.offs, hdr.bytes);
   else
     return false;
@@ -208,13 +208,13 @@ bool Icon::load(const void *data, int len, int offs)
   memset(bitmap, 0, sizeof(bitmap));
   memset(palette, 0, sizeof(palette));
   texture = NULL;
-  if(len < offs+6)
+  if (len < offs+6)
     return false;
   memcpy(&hdr, ((const char *)data)+offs, 6);
-  if(hdr.type != 1 || hdr.cnt < 1 || offs+6+(hdr.cnt<<4) > len)
+  if (hdr.type != 1 || hdr.cnt < 1 || offs+6+(hdr.cnt<<4) > len)
     return false;
-  for(int i=0; i<hdr.cnt; i++)
-    if(load_image1(data, len, offs+6+(i<<4)))
+  for (int i=0; i<hdr.cnt; i++)
+    if (load_image1(data, len, offs+6+(i<<4)))
       return true;
   return false;
 }
@@ -223,11 +223,11 @@ bool Icon::load(const char *filename)
 {
   char buf[2048];
   int fd;
-  if((fd = open(filename, O_RDONLY))>=0) {
+  if ((fd = open(filename, O_RDONLY))>=0) {
     int sz;
     sz = read(fd, buf, sizeof(buf));
     close(fd);
-    if(sz>0)
+    if (sz>0)
       return load(buf, sz);
   }
   return false;

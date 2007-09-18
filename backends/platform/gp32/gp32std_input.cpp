@@ -195,7 +195,7 @@ bool gp_pumpButtonEvent() {
 bool gp_pollButtonEvent(GP32BtnEvent *ev) {
 	gp_pumpButtonEvent();
 
-	if(eventQueue.isEmpty()) {
+	if (eventQueue.isEmpty()) {
 		return false;
 	}
 

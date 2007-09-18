@@ -814,7 +814,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(browser.getResult());
-			if(dir.isWritable()) {
+			if (dir.isWritable()) {
 				_savePath->setLabel(dir.getPath());
 			} else {
 				MessageDialog error("The chosen directory cannot be written to. Please select another one.");

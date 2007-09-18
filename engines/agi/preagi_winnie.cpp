@@ -664,14 +664,14 @@ void Winnie::incMenuSel(int *iSel, int fCanSel[]) {
 	do {
 		*iSel += 1;
 		if (*iSel > IDI_WTP_SEL_DROP) *iSel = IDI_WTP_SEL_OPT_1;
-	} while(!fCanSel[*iSel]);
+	} while (!fCanSel[*iSel]);
 }
 
 void Winnie::decMenuSel(int *iSel, int fCanSel[]) {
 	do {
 		*iSel -= 1;
 		if (*iSel < IDI_WTP_SEL_OPT_1) *iSel = IDI_WTP_SEL_DROP;
-	} while(!fCanSel[*iSel]);
+	} while (!fCanSel[*iSel]);
 }
 
 void Winnie::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
@@ -1046,7 +1046,7 @@ bool Winnie::getSelOkBack() {
 }
 void Winnie::clrMenuSel(int *iSel, int fCanSel[]) {
 	*iSel = IDI_WTP_SEL_OPT_1;
-	while(!fCanSel[*iSel]) {
+	while (!fCanSel[*iSel]) {
 		*iSel += 1;
 	}
 }

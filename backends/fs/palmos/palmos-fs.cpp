@@ -197,7 +197,7 @@ bool PalmOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 	if (error)
 		return false;
 	
-	while(dirIterator != expIteratorStop) {
+	while (dirIterator != expIteratorStop) {
 		error = VFSDirEntryEnumerate(handle, &dirIterator, &desc);
 		if (!error) {
 			addFile(myList, mode, _path.c_str(), &desc);

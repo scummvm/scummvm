@@ -241,7 +241,7 @@ bool GP32FilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool
 }
 
 AbstractFilesystemNode *GP32FilesystemNode::getParent() const {
-	if(_isRoot)
+	if (_isRoot)
 		return 0;
 
 	const char *start = _path.c_str();

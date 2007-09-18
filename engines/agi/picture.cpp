@@ -99,7 +99,7 @@ void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 	int i, x, y, deltaX, deltaY, stepX, stepY, errorX, errorY, detdelta;
 
 	/* CM: Do clipping */
-#define clip(x, y) if((x)>=(y)) (x)=(y)
+#define clip(x, y) if ((x)>=(y)) (x)=(y)
 	clip(x1, _width - 1);
 	clip(x2, _width - 1);
 	clip(y1, _height - 1);

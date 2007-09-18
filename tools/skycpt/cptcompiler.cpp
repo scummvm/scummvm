@@ -64,7 +64,7 @@ void processMainLists(FILE *inf, CptObj *destArr, uint16 *idList) {
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
-	} while(1);
+	} while (1);
 
 	free(resBuf);
 }
@@ -116,7 +116,7 @@ void processCpts(FILE *inf, CptObj *destArr) {
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
-	} while(1);
+	} while (1);
 
 	free(resBuf);
 }
@@ -158,7 +158,7 @@ void processTurntabs(FILE *inf, CptObj *destArr) {
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
-	} while(1);
+	} while (1);
 
 	free(resBuf);
 }
@@ -200,7 +200,7 @@ void processBins(FILE *inf, CptObj *destArr, char *typeName, char *objName, uint
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
-	} while(1);
+	} while (1);
 
 	free(resBuf);
 }
@@ -239,7 +239,7 @@ void processSymlinks(FILE *inf, CptObj *destArr, uint16 *baseLists) {
 			assert(isEndOfObject(line, "SYMLINK", fromId));
 		} else
 			break;
-	} while(1);
+	} while (1);
 }
 
 void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *sve) {

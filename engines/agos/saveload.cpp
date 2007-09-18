@@ -50,14 +50,14 @@ int AGOSEngine::countSaveGames() {
 	memset(marks, false, 256 * sizeof(bool));	//assume no savegames for this title
 	filenames = _saveFileMan->listSavefiles(prefix);
 
-	for(Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
 		//Obtain the last 3 digits of the filename, since they correspond to the save slot
 		slot[0] = file->c_str()[file->size()-3];
 		slot[1] = file->c_str()[file->size()-2];
 		slot[2] = file->c_str()[file->size()-1];
 		
 		slotNum = atoi(slot);
-		if(slotNum >= 0 && slotNum < 256)
+		if (slotNum >= 0 && slotNum < 256)
 			marks[slotNum] = true;	//mark this slot as valid
 	}
 	

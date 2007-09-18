@@ -351,12 +351,12 @@ int loadFileSub1(uint8 **ptr, uint8 *name, uint8 *ptr2) {
 	if (!strcmp(buffer, ".SPL")) {
 		removeExtention((char *)name, buffer);
 
-		// if(useH32)
+		// if (useH32)
 		{
 			strcatuint8(buffer, ".H32");
 		}
 		/* else
-		 * if(useAdlib)
+		 * if (useAdlib)
 		 * {
 		 * strcatuint8(buffer,".ADL");
 		 * }
@@ -687,7 +687,7 @@ int getCursorFromObject(int mouseX, int mouseY, int *outX, int *outY) {
 								di += var_10;
 							}
 
-/*		                  if((filesDatabase[di].subData.resourceType == 8) && (filesDatabase[di].subData.ptr)) {
+/*		                  if ((filesDatabase[di].subData.resourceType == 8) && (filesDatabase[di].subData.ptr)) {
 								assert(0);
 							}
 */
@@ -1045,7 +1045,7 @@ int processInput(void) {
 	int16 mouseY = 0;
 	int16 button = 0;
 
-	/*if(inputSub1keyboad())
+	/*if (inputSub1keyboad())
 	 * {
 	 * return 1;
 	 * } */
@@ -1327,7 +1327,7 @@ void mainLoop(void) {
 //      readKeyboard();
 			playerDontAskQuit = processInput();
 
-			//if(enableUser)
+			//if (enableUser)
 			{
 				userEnabled = 1;
 				enableUser = 0;
@@ -1363,7 +1363,7 @@ void mainLoop(void) {
 				if (main5)
 					fadeVar = 0;
 
-				/*if(fadeVar)
+				/*if (fadeVar)
 				 * {
 				 * //  TODO!
 				 * } */
@@ -1371,11 +1371,11 @@ void mainLoop(void) {
 				mainDraw(0);
 				flipScreen();
 
-				/*     if(userEnabled && !main7 && !main15 && currentActiveMenu == -1)
+				/*     if (userEnabled && !main7 && !main15 && currentActiveMenu == -1)
 				 * {
 				 * getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
 				 * 
-				 * if(mouseX != oldMouseX && mouseY != oldMouseY)
+				 * if (mouseX != oldMouseX && mouseY != oldMouseY)
 				 * {
 				 * int cursorType;
 				 * int newCursor1;
@@ -1386,12 +1386,12 @@ void mainLoop(void) {
 				 * 
 				 * cursorType = getCursorFromObject(mouseX, mouseY, &newCursor1, &newCursor2);
 				 * 
-				 * if(cursorType == 9)
+				 * if (cursorType == 9)
 				 * {
 				 * changeCursor(5);
 				 * }
 				 * else
-				 * if(cursorType == -1)
+				 * if (cursorType == -1)
 				 * {
 				 * changeCursor(6);
 				 * }
@@ -1422,10 +1422,10 @@ void mainLoop(void) {
 			// t_end = t_start+SPEED;
 //      t_left=t_start-Osystem_GetTicks()+SPEED;
 #ifndef FASTDEBUG
-			/*    if(t_left>0)
-			 * if(t_left>SLEEP_MIN)
+			/*    if (t_left>0)
+			 * if (t_left>SLEEP_MIN)
 			 * Osystem_Delay(t_left-SLEEP_GRAN);
-			 * while(Osystem_GetTicks()<t_end){q++;}; */
+			 * while (Osystem_GetTicks()<t_end){q++;}; */
 #endif
 			manageEvents(4);
 

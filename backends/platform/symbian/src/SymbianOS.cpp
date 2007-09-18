@@ -351,7 +351,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 			case GUI::ACTION_MULTI: {
 				GUI::Key &key = GUI::Actions::Instance()->getKeyAction(loop);
 				// if key code is pause, then change event to interactive or just fall through
-				if(key.keycode() == SDLK_PAUSE) {
+				if (key.keycode() == SDLK_PAUSE) {
 					event.type = Common::EVENT_PREDICTIVE_DIALOG;
 					return true;
 					}
@@ -371,7 +371,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 					// Translate from SDL keymod event to Scummvm Key Mod Common::Event. 
 					// This codes is also present in GP32 backend and in SDL backend as a static function
 					// Perhaps it should be shared. 
-					if(key.flags() != 0) {									
+					if (key.flags() != 0) {									
 						event.kbd.flags = 0;
 
 						if (ev.key.keysym.mod & KMOD_SHIFT)

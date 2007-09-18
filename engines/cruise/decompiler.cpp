@@ -709,14 +709,14 @@ int decompCompare(void) {
 	addDecomp("sign(%s)", param);
 
 /*
-  if(!pop)
+  if (!pop)
     si = 1;
 
-  if(pop<0) {
+  if (pop<0) {
     si |= 4;
   }
 
-  if(pop>0) {
+  if (pop>0) {
     si |= 2;
   }
 

@@ -57,12 +57,12 @@ int stat(const char *fname, struct stat *ss)
 	HANDLE handle;
 	int len;
 
-	if(fname == NULL || ss == NULL)
+	if (fname == NULL || ss == NULL)
 		return -1;
 
 	/* Special case (dummy on WinCE) */
 	len = strlen(fname);
-	if(len >= 2 && fname[len-1] == '.' && fname[len-2] == '.' &&
+	if (len >= 2 && fname[len-1] == '.' && fname[len-2] == '.' &&
 		(len == 2 || fname[len-3] == '\\'))
 	{
 		/* That's everything implemented so far */
@@ -74,14 +74,14 @@ int stat(const char *fname, struct stat *ss)
 
 	MultiByteToWideChar(CP_ACP, 0, fname, -1, fnameUnc, MAX_PATH);
 	handle = FindFirstFile(fnameUnc, &wfd);
-	if(handle == INVALID_HANDLE_VALUE)
+	if (handle == INVALID_HANDLE_VALUE)
 		return -1;
 	else
 	{
 		/* That's everything implemented so far */
 		memset(ss, 0, sizeof(struct stat));
 		ss->st_size = wfd.nFileSizeLow;
-		if(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 			ss->st_mode |= S_IFDIR;
 
 		FindClose(handle);
@@ -98,7 +98,7 @@ EXT_C time_t time(time_t* res)
 
 	t = (time_t)(((((((st.wYear-1970)*12+st.wMonth)*31+st.wDay)*7+st.wDayOfWeek)*24+st.wHour)*60+st.wMinute)*60+st.wSecond);
 
-	if(res)
+	if (res)
 		*res = t;
 	return t;
 }
@@ -131,18 +131,18 @@ EXT_C char *getcwd(char *buffer, int maxlen)
 	TCHAR fileUnc[MAX_PATH+1];
 	char* plast;
 
-	if(cwd[0] == 0)
+	if (cwd[0] == 0)
 	{
 		GetModuleFileName(NULL, fileUnc, MAX_PATH);
 		WideCharToMultiByte(CP_ACP, 0, fileUnc, -1, cwd, MAX_PATH, NULL, NULL);
 		plast = strrchr(cwd, '\\');
-		if(plast)
+		if (plast)
 			*plast = 0;
 		/* Special trick to keep start menu clean... */
-		if(_stricmp(cwd, "\\windows\\start menu") == 0)
+		if (_stricmp(cwd, "\\windows\\start menu") == 0)
 			strcpy(cwd, "\\Apps");
 	}
-	if(buffer)
+	if (buffer)
 		strncpy(buffer, cwd, maxlen);
 	return cwd;
 }
@@ -165,9 +165,9 @@ EXT_C FILE *wce_fopen(const char* fname, const char* fmode)
 {
 	char fullname[MAX_PATH+1];
 
-	if(!fname || fname[0] == '\0')
+	if (!fname || fname[0] == '\0')
 		return NULL;
-	if(fname[0] != '\\' && fname[0] != '/')
+	if (fname[0] != '\\' && fname[0] != '/')
 	{
 		getcwd(fullname, MAX_PATH);
 		strncat(fullname, "\\", MAX_PATH-strlen(fullname)-1);
@@ -190,11 +190,11 @@ DIR* opendir(const char* fname)
 	TCHAR fnameUnc[MAX_PATH+1];
 	char nameFound[MAX_PATH+1];
 
-	if(fname == NULL)
+	if (fname == NULL)
 		return NULL;
 
 	strcpy(fnameMask, fname);
-	if(!strlen(fnameMask) || fnameMask[strlen(fnameMask)-1] != '\\')
+	if (!strlen(fnameMask) || fnameMask[strlen(fnameMask)-1] != '\\')
 		strncat(fnameMask, "\\", MAX_PATH-strlen(fnameMask)-1);
 	strncat(fnameMask, "*.*", MAX_PATH-strlen(fnameMask)-4);
 
@@ -209,7 +209,7 @@ DIR* opendir(const char* fname)
 	strcpy(pdir->dd_name, fname); /* it has exactly enough space for fname and nul char */
 
 	MultiByteToWideChar(CP_ACP, 0, fnameMask, -1, fnameUnc, MAX_PATH);
-	if((pdir->dd_handle = (long)FindFirstFile(fnameUnc, &wfd)) == (long)INVALID_HANDLE_VALUE)
+	if ((pdir->dd_handle = (long)FindFirstFile(fnameUnc, &wfd)) == (long)INVALID_HANDLE_VALUE)
 	{
 		free(pdir);
 		return NULL;
@@ -229,35 +229,35 @@ struct dirent*	readdir(DIR* dir)
 	char nameFound[MAX_PATH+1];
 	static struct dirent dummy;
 
-	if(dir->dd_stat == 0)
+	if (dir->dd_stat == 0)
 	{
 		dummy.d_name = ".";
 		dummy.d_namlen = 1;
 		dir->dd_stat ++;
 		return &dummy;
 	}
-	else if(dir->dd_stat == 1)
+	else if (dir->dd_stat == 1)
 	{
 		dummy.d_name = "..";
 		dummy.d_namlen = 2;
 		dir->dd_stat ++;
 		return &dummy;
 	}
-	else if(dir->dd_stat == 2)
+	else if (dir->dd_stat == 2)
 	{
 		dir->dd_stat++;
 		return &dir->dd_dir;
 	}
 	else
 	{
-		if(FindNextFile((HANDLE)dir->dd_handle, &wfd) == 0)
+		if (FindNextFile((HANDLE)dir->dd_handle, &wfd) == 0)
 		{
 			dir->dd_stat = -1;
 			return NULL;
 		}
 		WideCharToMultiByte(CP_ACP, 0, wfd.cFileName, -1, nameFound, MAX_PATH, NULL, NULL);
 
-		if(dir->dd_dir.d_name)
+		if (dir->dd_dir.d_name)
 			free(dir->dd_dir.d_name);
 
 		dir->dd_dir.d_name = strdup(nameFound);
@@ -271,13 +271,13 @@ struct dirent*	readdir(DIR* dir)
 
 int closedir(DIR* dir)
 {
-	if(dir == NULL)
+	if (dir == NULL)
 		return 0;
 
-	if(dir->dd_handle)
+	if (dir->dd_handle)
 		FindClose((HANDLE)dir->dd_handle);
 
-	if(dir->dd_dir.d_name)
+	if (dir->dd_dir.d_name)
 		free(dir->dd_dir.d_name);
 	free(dir);
 	return 1;
@@ -304,12 +304,12 @@ void mkdir(char* dirname, int mode)
 	TCHAR pathUnc[MAX_PATH+1];
 	char* ptr;
 	strncpy(path, dirname, MAX_PATH);
-	if(*path == '/')
+	if (*path == '/')
 		*path = '\\';
 	/* Run through the string and attempt creating all subdirs on the path */
-	for(ptr = path+1; *ptr; ptr ++)
+	for (ptr = path+1; *ptr; ptr ++)
 	{
-		if(*ptr == '\\' || *ptr == '/')
+		if (*ptr == '\\' || *ptr == '/')
 		{
 			*ptr = 0;
 			MultiByteToWideChar(CP_ACP, 0, path, -1, pathUnc, MAX_PATH);
@@ -333,7 +333,7 @@ char *tmpnam(char *string)
 	GetTempFileName(TEXT("."), TEXT("A8_"), 0, pTemp);
 	WideCharToMultiByte(CP_ACP, 0, pTemp, -1, buffer, MAX_PATH, NULL, NULL);
 
-	if(string)
+	if (string)
 	{
 		strcpy(string, buffer);
 		return string;
@@ -345,7 +345,7 @@ char *tmpnam(char *string)
 FILE *tmpfile()
 {
 	TCHAR pTemp[MAX_PATH+1];
-	if(!GetTempFileName(TEXT("."), TEXT("A8_"), 0, pTemp))
+	if (!GetTempFileName(TEXT("."), TEXT("A8_"), 0, pTemp))
 		return _wfopen(pTemp, TEXT("w+b"));
 	else
 		return 0;
@@ -374,7 +374,7 @@ char *strdup(const char *strSource)
 {
 	char* buffer;
 	buffer = (char*)malloc(strlen(strSource)+1);
-	if(buffer)
+	if (buffer)
 		strcpy(buffer, strSource);
 	return buffer;
 }
@@ -390,7 +390,7 @@ void gettimeofday(struct timeval* tp, void* dummy)
 void usleep(long usec)
 {
 	long msec = usec/1000;
-	if(msec <= 0)
+	if (msec <= 0)
 		Sleep(0);
 	else
 		Sleep(msec);
@@ -417,7 +417,7 @@ at least allows some projects to work.
 char* getenv(char* name)
 {
 	static char buffer[MAX_PATH+1];
-	if(strcmp(name, "HOME") == 0 || strcmp(name, "HOMEDIR") == 0)
+	if (strcmp(name, "HOME") == 0 || strcmp(name, "HOMEDIR") == 0)
 	{
 		getcwd(buffer, MAX_PATH);
 		return buffer;

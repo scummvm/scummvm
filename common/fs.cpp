@@ -47,7 +47,7 @@ static bool matchString(const char *str, const char *pat) {
 				if (p) {
 					pat = p;
 					str = ++q;
-					if(!*str)
+					if (!*str)
 						return !*pat;
 					break;
 				}
@@ -56,7 +56,7 @@ static bool matchString(const char *str, const char *pat) {
 			}
 			// fallthrough
 		case '?':
-			if(!*str)
+			if (!*str)
 				return !*pat;
 			pat++;
 			str++;

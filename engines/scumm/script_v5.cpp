@@ -947,7 +947,7 @@ void ScummEngine_v5::loadVars() {
 
 			if (a == STRINGID_IQ_SERIES && b == STRINGID_IQ_SERIES) {
 				// Zak256 loads the IQ script-slot but does not use it -> ignore it
-				if(_game.id == GID_INDY3) {
+				if (_game.id == GID_INDY3) {
 					loadIQPoints();
 				}
 				break;
@@ -968,7 +968,7 @@ void ScummEngine_v5::loadVars() {
 						if (!ptr[pos]) 
 							break;
 						// replace special characters
-						if(ptr[pos] >= 32 && ptr[pos] <= 122 && ptr[pos] != 64)
+						if (ptr[pos] >= 32 && ptr[pos] <= 122 && ptr[pos] != 64)
 							slotContent[pos] = ptr[pos];
 						else
 							slotContent[pos] = '_';

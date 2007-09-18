@@ -69,7 +69,7 @@ public:
 		assert(header == 0x1F8B ||
 		       ((header & 0x0F00) == 0x0800 && header % 31 == 0));
 		
-		if(header == 0x1F8B) {
+		if (header == 0x1F8B) {
 			// Retrieve the original file size
 			w->seek(-4, SEEK_END);
 			_origSize = w->readUint32LE();

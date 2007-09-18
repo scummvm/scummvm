@@ -235,13 +235,13 @@ void OSystem_PSP::updateScreen() {
 		}
 	}
 
-	if(_overlayVisible) {
+	if (_overlayVisible) {
 		for (int i = 0; i < _screenHeight; ++i) {
 			for (int j = 0; j < _screenWidth; ++j) {
 
 				OverlayColor pixel = _overlayBuffer[(i * _overlayWidth +j)];
 
-				if(pixel & 0x8000)
+				if (pixel & 0x8000)
 					putPixel(xStart + j, yStart + i, pixel);
 			}
 		}
@@ -362,7 +362,7 @@ void OSystem_PSP::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 OverlayColor OSystem_PSP::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
 	OverlayColor color = RGBToColor(r, g, b);
 
-	if(a == 255)
+	if (a == 255)
 		color |= 0x8000;
 
 	return color;
@@ -370,7 +370,7 @@ OverlayColor OSystem_PSP::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
 
 void OSystem_PSP::colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
 		colorToRGB(color, r, g, b);
-		if(color & 0x8000)
+		if (color & 0x8000)
 			a = 255;
 		else
 			a = 0;
@@ -530,7 +530,7 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 
 			if (newX < 0) newX = 0;
 			if (newY < 0) newY = 0;
-			if(_overlayVisible)
+			if (_overlayVisible)
 			{
 				if (newX >= _overlayWidth) newX = _overlayWidth - 1;
 				if (newY >= _overlayHeight) newY = _overlayHeight - 1;		

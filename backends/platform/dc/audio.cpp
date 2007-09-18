@@ -44,28 +44,28 @@ void OSystem_Dreamcast::checkSound()
   int n;
   int curr_ring_buffer_samples;
 
-  if(!_mixer)
+  if (!_mixer)
     return;
 
-  if(read_sound_int(&SOUNDSTATUS->mode) != MODE_PLAY)
+  if (read_sound_int(&SOUNDSTATUS->mode) != MODE_PLAY)
     start_sound();
 
   curr_ring_buffer_samples = read_sound_int(&SOUNDSTATUS->ring_length);
 
   n = read_sound_int(&SOUNDSTATUS->samplepos);
 
-  if((n-=fillpos)<0)
+  if ((n-=fillpos)<0)
     n += curr_ring_buffer_samples;
 
   n = ADJUST_BUFFER_SIZE(n-10);
 
-  if(n<100)
+  if (n<100)
     return;
 
   Audio::Mixer::mixCallback(_mixer, (byte*)temp_sound_buffer,
 			    2*SAMPLES_TO_BYTES(n));
 
-  if(fillpos+n > curr_ring_buffer_samples) {
+  if (fillpos+n > curr_ring_buffer_samples) {
     int r = curr_ring_buffer_samples - fillpos;
     memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(r));
     fillpos = 0;
@@ -74,7 +74,7 @@ void OSystem_Dreamcast::checkSound()
   } else {
     memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(n));
   }
-  if((fillpos += n) >= curr_ring_buffer_samples)
+  if ((fillpos += n) >= curr_ring_buffer_samples)
     fillpos = 0;
 }
 

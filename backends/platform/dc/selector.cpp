@@ -162,7 +162,7 @@ static void detectGames(FSList &files, GameList &candidates)
 static bool isIcon(const FilesystemNode &entry)
 {
   int l = entry.displayName().size();
-  if(l>4 && !strcasecmp(entry.displayName().c_str()+l-4, ".ICO"))
+  if (l>4 && !strcasecmp(entry.displayName().c_str()+l-4, ".ICO"))
     return true;
   else
     return false;
@@ -172,13 +172,13 @@ static bool loadIcon(Game &game, Dir *dirs, int num_dirs)
 {
   char icofn[520];
   sprintf(icofn, "%s%s.ICO", game.dir, game.filename_base);
-  if(game.icon.load(icofn))
+  if (game.icon.load(icofn))
     return true;
-  for(int i=0; i<num_dirs; i++)
-    if(!strcmp(dirs[i].name, game.dir) &&
+  for (int i=0; i<num_dirs; i++)
+    if (!strcmp(dirs[i].name, game.dir) &&
        dirs[i].deficon[0]) {
       sprintf(icofn, "%s%s", game.dir, dirs[i].deficon);
-      if(game.icon.load(icofn))
+      if (game.icon.load(icofn))
 	return true;
       break;
     }
@@ -193,8 +193,8 @@ static void makeDefIcon(Icon &icon)
 
 static bool uniqueGame(const char *base, const char *dir, Game *games, int cnt)
 {
-  while(cnt--)
-    if(!strcmp(dir, games->dir) &&
+  while (cnt--)
+    if (!strcmp(dir, games->dir) &&
        !stricmp(base, games->filename_base))
       return false;
     else
@@ -207,7 +207,7 @@ static int findGames(Game *games, int max)
   Dir *dirs = new Dir[MAX_DIR];
   int curr_game = 0, curr_dir = 0, num_dirs = 1;
   dirs[0].node = FilesystemNode("");
-  while(curr_game < max && curr_dir < num_dirs) {
+  while (curr_game < max && curr_dir < num_dirs) {
     strncpy(dirs[curr_dir].name, dirs[curr_dir].node.path().c_str(), 252);
     dirs[curr_dir].name[251] = '\0';
     dirs[curr_dir].deficon[0] = '\0';
@@ -216,13 +216,13 @@ static int findGames(Game *games, int max)
     for (FSList::const_iterator entry = fslist.begin(); entry != fslist.end();
 	 ++entry) {
       if (entry->isDirectory()) {
-	if(num_dirs < MAX_DIR && strcasecmp(entry->displayName().c_str(),
+	if (num_dirs < MAX_DIR && strcasecmp(entry->displayName().c_str(),
 					    "install")) {
 	  dirs[num_dirs].node = *entry;
 	  num_dirs++;
 	}
       } else
-	if(isIcon(*entry))
+	if (isIcon(*entry))
 	  strcpy(dirs[curr_dir-1].deficon, entry->displayName().c_str());
 	else
 	  files.push_back(*entry);
@@ -231,12 +231,12 @@ static int findGames(Game *games, int max)
     GameList candidates;
     detectGames(files, candidates);
     
-    for(GameList::const_iterator ge = candidates.begin();
+    for (GameList::const_iterator ge = candidates.begin();
 	ge != candidates.end(); ++ge)
-      if(curr_game < max) {
+      if (curr_game < max) {
 	strcpy(games[curr_game].filename_base, ge->gameid().c_str());
 	strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
-	if(uniqueGame(games[curr_game].filename_base,
+	if (uniqueGame(games[curr_game].filename_base,
 		      games[curr_game].dir, games, curr_game)) {
 	  
 	  strcpy(games[curr_game].text, ge->description().c_str());
@@ -251,8 +251,8 @@ static int findGames(Game *games, int max)
       }
   }
 
-  for(int i=0; i<curr_game; i++)
-    if(!loadIcon(games[i], dirs, num_dirs))
+  for (int i=0; i<curr_game; i++)
+    if (!loadIcon(games[i], dirs, num_dirs))
       makeDefIcon(games[i].icon);
   delete[] dirs;
   return curr_game;
@@ -279,11 +279,11 @@ void waitForDisk()
   void *mark = ta_txmark();
   lab.create_texture("Please insert game CD.");
   //printf("waitForDisk, cdstate = %d\n", getCdState());
-  for(;;) {
+  for (;;) {
     int s = getCdState();
-    if(s >= 6)
+    if (s >= 6)
       wasopen = 1;
-    if(s > 0 && s < 6 && wasopen) {
+    if (s > 0 && s < 6 && wasopen) {
       cdfs_reinit();
       chdir("/");
       chdir("/");
@@ -326,12 +326,12 @@ int gameMenu(Game *games, int num_games)
   int top_game = 0, selector_pos = 0;
   int mousex = 0, mousey = 0;
 
-  if(!num_games)
+  if (!num_games)
     return -1;
 
-  for(;;) {
+  for (;;) {
 
-    if(getCdState()>=6)
+    if (getCdState()>=6)
       return -1;
 
     ta_begin_frame();
@@ -341,10 +341,10 @@ int gameMenu(Game *games, int num_games)
     ta_commit_end();
 
     float y = 40.0;
-    for(int i=top_game, cnt=0; cnt<10 && i<num_games; i++, cnt++) {
+    for (int i=top_game, cnt=0; cnt<10 && i<num_games; i++, cnt++) {
       int pal = 48+(i&15);
 
-      if(cnt == selector_pos)
+      if (cnt == selector_pos)
 	draw_trans_quad(100.0, y, 590.0, y+32.0,
 			0x7000ff00, 0x7000ff00, 0x7000ff00, 0x7000ff00);
 
@@ -364,10 +364,10 @@ int gameMenu(Game *games, int num_games)
     event = handleInput(locked_get_pads(), mousex, mousey, shiftFlags);
     setimask(mask);
 
-    if(event==-Common::EVENT_LBUTTONDOWN || event==Common::KEYCODE_ENTER || event==Common::KEYCODE_F5) {
+    if (event==-Common::EVENT_LBUTTONDOWN || event==Common::KEYCODE_ENTER || event==Common::KEYCODE_F5) {
       int selected_game = top_game + selector_pos;
 
-      for(int fade=0; fade<=256; fade+=4) {
+      for (int fade=0; fade<=256; fade+=4) {
 
 	unsigned int fade_colour = 0x00ffffff | ((255-fade)<<24);
 
@@ -379,10 +379,10 @@ int gameMenu(Game *games, int num_games)
 
 	float y = 40.0;
 
-	if(fade < 256)
-	  for(int i=top_game, cnt=0; cnt<10 && i<num_games;
+	if (fade < 256)
+	  for (int i=top_game, cnt=0; cnt<10 && i<num_games;
 	      i++, cnt++, y += 40.0)
-	    if(cnt != selector_pos)
+	    if (cnt != selector_pos)
 	      drawGameLabel(games[i], 48+(i&15), 50.0, y, 0xffffff, fade);
 
 	y = (40.0/256.0 * (selector_pos + 1))*(256-fade) + 80.0/256.0*fade;
@@ -397,16 +397,16 @@ int gameMenu(Game *games, int num_games)
       return selected_game;
     }
 
-    if(mousey>=16) {
-      if(selector_pos + top_game + 1 < num_games)
-	if(++selector_pos >= 10) {
+    if (mousey>=16) {
+      if (selector_pos + top_game + 1 < num_games)
+	if (++selector_pos >= 10) {
 	  --selector_pos;
 	  ++top_game;
 	}
       mousey -= 16;
-    } else if(mousey<=-16) {
-      if(selector_pos + top_game > 0)
-	if(--selector_pos < 0) {
+    } else if (mousey<=-16) {
+      if (selector_pos + top_game > 0)
+	if (--selector_pos < 0) {
 	  ++selector_pos;
 	  --top_game;
 	}
@@ -423,10 +423,10 @@ bool selectGame(char *&ret, char *&dir_ret, Icon &icon)
   ta_sync();
   void *mark = ta_txmark();
 
-  for(;;) {
+  for (;;) {
     num_games = findGames(games, MAX_GAMES);
 
-    for(int i=0; i<num_games; i++) {
+    for (int i=0; i<num_games; i++) {
       games[i].icon.create_texture();
       games[i].label.create_texture(games[i].text);
     }
@@ -436,22 +436,22 @@ bool selectGame(char *&ret, char *&dir_ret, Icon &icon)
     ta_sync();
     ta_txrelease(mark);
 
-    if(selected == -1)
+    if (selected == -1)
       waitForDisk();
     else
       break;
 
   }
 
-  if(selected >= num_games)
+  if (selected >= num_games)
     selected = -1;
 
-  if(selected >= 0)
+  if (selected >= 0)
     the_game = games[selected];
 
   delete games;
 
-  if(selected>=0) {
+  if (selected>=0) {
 #if 0
     chdir(the_game.dir);
 #else

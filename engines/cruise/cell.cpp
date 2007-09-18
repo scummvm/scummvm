@@ -37,7 +37,7 @@ void resetPtr(cellStruct *ptr) {
 
 void freeMessageList(cellStruct *objPtr) {
 /*	if (objPtr) {
-		 if(objPtr->next)
+		 if (objPtr->next)
 		 free(objPtr->next);
 
 		free(objPtr);

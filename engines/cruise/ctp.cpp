@@ -204,7 +204,7 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 		var_E = 0;
 
 		si = &polyBuffer3[1];
-		/* if(*si>=0)
+		/* if (*si>=0)
 		 * {
 		 * di = si;
 		 * cx = var_12;
@@ -217,12 +217,12 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 		 * di++;
 		 * 
 		 * var_2 = ax;
-		 * if(var_C < bx)
+		 * if (var_C < bx)
 		 * {
 		 * var_C = bx;
 		 * }
 		 * 
-		 * if(var_2 < var_A)
+		 * if (var_2 < var_A)
 		 * {
 		 * var_A = var_2;
 		 * }
@@ -232,7 +232,7 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 		 * *cx = var_2;
 		 * cx++;
 		 * var_E ++;
-		 * }while(di);
+		 * }while (di);
 		 * 
 		 * var_12 = cx;
 		 * } */

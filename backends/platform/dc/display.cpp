@@ -49,7 +49,7 @@
 #define COPYPIXEL(n) do {			\
   unsigned short _tmp = pal[*s++];		\
   d[n] = _tmp|(pal[*s++]<<16);			\
-} while(0)
+} while (0)
 
 static void texture_memcpy64_pal(void *dest, void *src, int cnt, unsigned short *pal)
 {
@@ -58,7 +58,7 @@ static void texture_memcpy64_pal(void *dest, void *src, int cnt, unsigned short 
     (0xe0000000 | (((unsigned long)dest) & 0x03ffffc0));
   QACR0 = ((0xa4000000>>26)<<2)&0x1c;
   QACR1 = ((0xa4000000>>26)<<2)&0x1c;
-  while(cnt--) {
+  while (cnt--) {
     COPYPIXEL(0);
     COPYPIXEL(1);
     COPYPIXEL(2);
@@ -91,7 +91,7 @@ static void texture_memcpy64(void *dest, void *src, int cnt)
     (0xe0000000 | (((unsigned long)dest) & 0x03ffffc0));
   QACR0 = ((0xa4000000>>26)<<2)&0x1c;
   QACR1 = ((0xa4000000>>26)<<2)&0x1c;
-  while(cnt--) {
+  while (cnt--) {
     d[0] = *s++;
     d[1] = *s++;
     d[2] = *s++;
@@ -137,8 +137,8 @@ void commit_dummy_transpoly()
 void OSystem_Dreamcast::setPalette(const byte *colors, uint start, uint num)
 {
   unsigned short *dst = palette + start;
-  if(num>0)
-    while( num-- ) {
+  if (num>0)
+    while ( num-- ) {
       *dst++ = ((colors[0]<<7)&0x7c00)|
 	((colors[1]<<2)&0x03e0)|
 	((colors[2]>>3)&0x001f);
@@ -150,8 +150,8 @@ void OSystem_Dreamcast::setPalette(const byte *colors, uint start, uint num)
 void OSystem_Dreamcast::setCursorPalette(const byte *colors, uint start, uint num)
 {
   unsigned short *dst = cursor_palette + start;
-  if(num>0)
-    while( num-- ) {
+  if (num>0)
+    while ( num-- ) {
       *dst++ = ((colors[0]<<7)&0x7c00)|
 	((colors[1]<<2)&0x03e0)|
 	((colors[2]>>3)&0x001f);
@@ -168,8 +168,8 @@ void OSystem_Dreamcast::disableCursorPalette(bool disable)
 void OSystem_Dreamcast::grabPalette(byte *colors, uint start, uint num)
 {
   const unsigned short *src = palette + start;
-  if(num>0)
-    while( num-- ) {
+  if (num>0)
+    while ( num-- ) {
       unsigned short p = *src++;
       colors[0] = ((p&0x7c00)>>7)|((p&0x7000)>>12);
       colors[1] = ((p&0x03e0)>>2)|((p&0x0380)>>7);
@@ -181,10 +181,10 @@ void OSystem_Dreamcast::grabPalette(byte *colors, uint start, uint num)
 
 void OSystem_Dreamcast::setScaling()
 {
-  if(_screen_w > 400) {
+  if (_screen_w > 400) {
     _xscale = _yscale = 1.0;
     _top_offset = (SCREEN_H-_screen_h)>>1;
-  } else if(_aspect_stretch && _screen_w == 320 && _screen_h == 200) {
+  } else if (_aspect_stretch && _screen_w == 320 && _screen_h == 200) {
     _xscale = SCREEN_W/320.0;
     _yscale = SCREEN_H/200.0;
     _top_offset = 0;
@@ -206,22 +206,22 @@ void OSystem_Dreamcast::initSize(uint w, uint h)
   _screen_h = h;
   _overlay_x = (w-OVL_W)/2;
   _overlay_y = (h-OVL_H)/2;
-  if(_overlay_x<0) _overlay_x = 0;
-  if(_overlay_y<0) _overlay_y = 0;
+  if (_overlay_x<0) _overlay_x = 0;
+  if (_overlay_y<0) _overlay_y = 0;
   setScaling();
   ta_sync();
-  if(!screen)
+  if (!screen)
     screen = new unsigned char[SCREEN_W*SCREEN_H];
-  if(!overlay)
+  if (!overlay)
     overlay = new unsigned short[OVL_W*OVL_H];
-  for(int i=0; i<NUM_BUFFERS; i++)
-    if(!screen_tx[i])
+  for (int i=0; i<NUM_BUFFERS; i++)
+    if (!screen_tx[i])
       screen_tx[i] = ta_txalloc(SCREEN_W*SCREEN_H*2);
-  for(int i=0; i<NUM_BUFFERS; i++)
-    if(!mouse_tx[i])
+  for (int i=0; i<NUM_BUFFERS; i++)
+    if (!mouse_tx[i])
       mouse_tx[i] = ta_txalloc(MOUSE_W*MOUSE_H*2);
-  for(int i=0; i<NUM_BUFFERS; i++)
-    if(!ovl_tx[i])
+  for (int i=0; i<NUM_BUFFERS; i++)
+    if (!ovl_tx[i])
       ovl_tx[i] = ta_txalloc(OVL_TXSTRIDE*OVL_H*2);
   _screen_buffer = 0;
   _mouse_buffer = 0;
@@ -239,7 +239,7 @@ void OSystem_Dreamcast::initSize(uint w, uint h)
 void OSystem_Dreamcast::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 				  int w, int h)
 {
-  if(w<1 || h<1)
+  if (w<1 || h<1)
     return;
   unsigned char *dst = screen + y*SCREEN_W + x;
   do {
@@ -293,7 +293,7 @@ void OSystem_Dreamcast::updateScreen(void)
   struct polygon_list mypoly;
   struct packed_colour_vertex_list myvertex;
 
-  if(_screen_dirty) {
+  if (_screen_dirty) {
 
     _screen_buffer++;
     _screen_buffer &= NUM_BUFFERS-1;
@@ -301,10 +301,10 @@ void OSystem_Dreamcast::updateScreen(void)
     unsigned short *dst = (unsigned short *)screen_tx[_screen_buffer];
     unsigned char *src = screen;
 
-    // while((*((volatile unsigned int *)(void*)0xa05f810c) & 0x3ff) != 200);
+    // while ((*((volatile unsigned int *)(void*)0xa05f810c) & 0x3ff) != 200);
     // *((volatile unsigned int *)(void*)0xa05f8040) = 0xff0000;
 
-    for( int y = 0; y<_screen_h; y++ )
+    for ( int y = 0; y<_screen_h; y++ )
     {
       texture_memcpy64_pal( dst, src, _screen_w>>5, palette );
       src += SCREEN_W;
@@ -314,7 +314,7 @@ void OSystem_Dreamcast::updateScreen(void)
     _screen_dirty = false;
   }
 
-  if( _overlay_visible && _overlay_dirty ) {
+  if ( _overlay_visible && _overlay_dirty ) {
 
     _overlay_buffer++;
     _overlay_buffer &= NUM_BUFFERS-1;
@@ -322,7 +322,7 @@ void OSystem_Dreamcast::updateScreen(void)
     unsigned short *dst = (unsigned short *)ovl_tx[_overlay_buffer];
     unsigned short *src = overlay;
 
-    for( int y = 0; y<OVL_H; y++ )
+    for ( int y = 0; y<OVL_H; y++ )
     {
       texture_memcpy64( dst, src, OVL_W>>5 );
       src += OVL_W;
@@ -378,15 +378,15 @@ void OSystem_Dreamcast::updateScreen(void)
 
   ta_commit_end();
 
-  if(_overlay_visible) {
-    if(_overlay_fade < 1.0)
+  if (_overlay_visible) {
+    if (_overlay_fade < 1.0)
       _overlay_fade += 0.125;
   } else {
-    if(_overlay_fade > 0)
+    if (_overlay_fade > 0)
       _overlay_fade -= 0.125;
   }
 
-  if(_overlay_fade > 0.0) {
+  if (_overlay_fade > 0.0) {
 
     mypoly.cmd =
       TA_CMD_POLYGON|TA_CMD_POLYGON_TYPE_TRANSPARENT|TA_CMD_POLYGON_SUBLIST|
@@ -432,16 +432,16 @@ void OSystem_Dreamcast::updateScreen(void)
     ta_commit_list(&myvertex);
   }
 
-  if(_softkbd_on)
-    if(_softkbd_motion < 120)
+  if (_softkbd_on)
+    if (_softkbd_motion < 120)
       _softkbd_motion += 10;
     else
       ;
   else
-    if(_softkbd_motion > 0)
+    if (_softkbd_motion > 0)
       _softkbd_motion -= 10;
 
-  if(_softkbd_motion)
+  if (_softkbd_motion)
     _softkbd.draw(330.0*sin(0.013*_softkbd_motion) - 320.0, 200.0,
 		  120-_softkbd_motion);
 
@@ -467,11 +467,11 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
   unsigned short *dst = (unsigned short *)mouse_tx[_mouse_buffer];
   int y=0;
 
-  if(visible && w && h && w<=MOUSE_W && h<=MOUSE_H)
-    for(int y=0; y<h; y++) {
+  if (visible && w && h && w<=MOUSE_W && h<=MOUSE_H)
+    for (int y=0; y<h; y++) {
       int x;
-      for(x=0; x<w; x++)
-	if(*buf == _ms_keycolor) {
+      for (x=0; x<w; x++)
+	if (*buf == _ms_keycolor) {
 	  *dst++ = 0;
 	  buf++;
 	} else
@@ -527,7 +527,7 @@ void OSystem_Dreamcast::drawMouse(int xdraw, int ydraw, int w, int h,
 
 void OSystem_Dreamcast::mouseToSoftKbd(int x, int y, int &rx, int &ry) const
 {
-  if(_softkbd_motion) {
+  if (_softkbd_motion) {
     rx = (int)(x*_xscale - (330.0*sin(0.013*_softkbd_motion) - 320.0));
     ry = (int)(y*_yscale + TOP_OFFSET - 200.0);
   } else {
@@ -550,7 +550,7 @@ void OSystem_Dreamcast::hideOverlay()
 
 void OSystem_Dreamcast::clearOverlay()
 {
-  if(!_overlay_visible)
+  if (!_overlay_visible)
     return;
 
   memset(overlay, 0, OVL_W*OVL_H*sizeof(unsigned short));
@@ -572,7 +572,7 @@ void OSystem_Dreamcast::grabOverlay(int16 *buf, int pitch)
 void OSystem_Dreamcast::copyRectToOverlay(const int16 *buf, int pitch,
 					  int x, int y, int w, int h)
 {
-  if(w<1 || h<1)
+  if (w<1 || h<1)
     return;
   unsigned short *dst = overlay + y*OVL_W + x;
   do {

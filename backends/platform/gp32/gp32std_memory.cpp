@@ -114,7 +114,7 @@ void *MemBlock::addBlock(size_t size)
 		}
 		blk++;
 	}
-	if(i == NUM_BLOCK) {
+	if (i == NUM_BLOCK) {
 		blk = &block[0];
 		for (i = 0; i < prevBlock; i++) {
 			if (!blk->used) {
@@ -122,7 +122,7 @@ void *MemBlock::addBlock(size_t size)
 			}
 			blk++;
 		}
-		if(i == prevBlock) {
+		if (i == prevBlock) {
 			prevBlock = 0;
 			return gm_malloc(size);
 		}
@@ -289,7 +289,7 @@ void *operator new(size_t size) {
 	void *ptr = gp_malloc(size);
 
 #if defined(CLEAN_MEMORY_WITH_0xE7)
-	if(ptr != NULL) {
+	if (ptr != NULL) {
 		gp_memset(ptr, 0xE7, size);
 	}
 #endif

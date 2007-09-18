@@ -39,70 +39,70 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
   static byte lastlmb = 0, lastrmb = 0;
   static int8 mouse_wheel = 0, lastwheel = 0;
   shiftFlags = 0;
-  for(int i=0; i<4; i++, pad++)
-    if(pad->func & MAPLE_FUNC_CONTROLLER) {
+  for (int i=0; i<4; i++, pad++)
+    if (pad->func & MAPLE_FUNC_CONTROLLER) {
       int buttons = pad->cond.controller.buttons;
 
-      if(!(buttons & 0x060e)) exit(0);
+      if (!(buttons & 0x060e)) exit(0);
 
-      if(!(buttons & 4)) lmb++;
-      if(!(buttons & 2)) rmb++;
+      if (!(buttons & 4)) lmb++;
+      if (!(buttons & 2)) rmb++;
 
-      if(!(buttons & 8)) newkey = Common::KEYCODE_F5;
-      else if(!(buttons & 512)) newkey = ' ';
-      else if(!(buttons & 1024)) newkey = numpadmap[(buttons>>4)&15];
+      if (!(buttons & 8)) newkey = Common::KEYCODE_F5;
+      else if (!(buttons & 512)) newkey = ' ';
+      else if (!(buttons & 1024)) newkey = numpadmap[(buttons>>4)&15];
 
-      if(!(buttons & 128)) if(inter) newkey = 1001; else mouse_x++;
-      if(!(buttons & 64)) if(inter) newkey = 1002; else mouse_x--;
-      if(!(buttons & 32)) if(inter) newkey = 1003; else mouse_y++;
-      if(!(buttons & 16)) if(inter) newkey = 1004; else mouse_y--;
+      if (!(buttons & 128)) if (inter) newkey = 1001; else mouse_x++;
+      if (!(buttons & 64)) if (inter) newkey = 1002; else mouse_x--;
+      if (!(buttons & 32)) if (inter) newkey = 1003; else mouse_y++;
+      if (!(buttons & 16)) if (inter) newkey = 1004; else mouse_y--;
 
       mouse_x += ((int)pad->cond.controller.joyx-128)>>4;
       mouse_y += ((int)pad->cond.controller.joyy-128)>>4;
 
-      if(pad->cond.controller.ltrigger > 200) newkey = 1005;
-      else if(pad->cond.controller.rtrigger > 200) newkey = 1006;
+      if (pad->cond.controller.ltrigger > 200) newkey = 1005;
+      else if (pad->cond.controller.rtrigger > 200) newkey = 1006;
 
-    } else if(pad->func & MAPLE_FUNC_MOUSE) {
+    } else if (pad->func & MAPLE_FUNC_MOUSE) {
       int buttons = pad->cond.mouse.buttons;
 
-      if(!(buttons & 4)) lmb++;
-      if(!(buttons & 2)) rmb++;
+      if (!(buttons & 4)) lmb++;
+      if (!(buttons & 2)) rmb++;
 
-      if(!(buttons & 8)) newkey = Common::KEYCODE_F5;
+      if (!(buttons & 8)) newkey = Common::KEYCODE_F5;
 
       mouse_x += pad->cond.mouse.axis1;
       mouse_y += pad->cond.mouse.axis2;
       mouse_wheel += pad->cond.mouse.axis3;
 
-      if(inter)
+      if (inter)
 	inter->mouse(mouse_x, mouse_y);
 
       pad->cond.mouse.axis1 = 0;
       pad->cond.mouse.axis2 = 0;
       pad->cond.mouse.axis3 = 0;
-    } else if(pad->func & MAPLE_FUNC_KEYBOARD) {
-      for(int p=0; p<6; p++) {
+    } else if (pad->func & MAPLE_FUNC_KEYBOARD) {
+      for (int p=0; p<6; p++) {
 	int shift = pad->cond.kbd.shift;
 	int key = pad->cond.kbd.key[p];
-	if(shift & 0x08) lmb++;
-	if(shift & 0x80) rmb++;
-	if(shift & 0x11) shiftFlags |= Common::KBD_CTRL;
-	if(shift & 0x44) shiftFlags |= Common::KBD_ALT;
-	if(shift & 0x22) shiftFlags |= Common::KBD_SHIFT;
-	if(key >= 4 && key <= 0x1d)
+	if (shift & 0x08) lmb++;
+	if (shift & 0x80) rmb++;
+	if (shift & 0x11) shiftFlags |= Common::KBD_CTRL;
+	if (shift & 0x44) shiftFlags |= Common::KBD_ALT;
+	if (shift & 0x22) shiftFlags |= Common::KBD_SHIFT;
+	if (key >= 4 && key <= 0x1d)
 	  newkey = key+('a'-4);
-	else if(key >= 0x1e && key <= 0x26)
+	else if (key >= 0x1e && key <= 0x26)
 	  newkey = key+((shift & 0x22)? ('!'-0x1e) : ('1'-0x1e));
-	else if(key >= 0x59 && key <= 0x61)
+	else if (key >= 0x59 && key <= 0x61)
 	  newkey = key+('1'-0x59);
-	else if(key >= 0x2d && key <= 0x38 && key != 0x31)
+	else if (key >= 0x2d && key <= 0x38 && key != 0x31)
 	  newkey = ((shift & 0x22)?
 		    "=?`{ }+*?<>?" :
 		    "-^@[ ];:?,./")[key - 0x2d];
-	else if(key >= 0x3a && key <= 0x43)
+	else if (key >= 0x3a && key <= 0x43)
 	  newkey = key+(Common::KEYCODE_F1-0x3a);
-	else if(key >= 0x54 && key <= 0x57)
+	else if (key >= 0x54 && key <= 0x57)
 	  newkey = "/*-+"[key-0x54];
 	else switch(key) {
 	case 0x27: case 0x62:
@@ -118,17 +118,17 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 	case 0x2c:
 	  newkey = Common::KEYCODE_SPACE; break;
 	case 0x4c:
-	  if((shift & 0x11) && (shift & 0x44))
+	  if ((shift & 0x11) && (shift & 0x44))
 	    exit(0);
 	  break;
 	case 0x4f:
-	  if(inter) newkey = 1001; else mouse_x++; break;
+	  if (inter) newkey = 1001; else mouse_x++; break;
 	case 0x50:
-	  if(inter) newkey = 1002; else mouse_x--; break;
+	  if (inter) newkey = 1002; else mouse_x--; break;
 	case 0x51:
-	  if(inter) newkey = 1003; else mouse_y++; break;
+	  if (inter) newkey = 1003; else mouse_y++; break;
 	case 0x52:
-	  if(inter) newkey = 1004; else mouse_y--; break;
+	  if (inter) newkey = 1004; else mouse_y--; break;
 	case 0x63:
 	  newkey = '.'; break;
 	case 0x64: case 0x87:
@@ -139,28 +139,28 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       }
     }
 
-  if(lmb && inter && !lastlmb) {
+  if (lmb && inter && !lastlmb) {
     newkey = 1000;
     lmb = 0;
   }
 
-  if(lmb && !lastlmb) {
+  if (lmb && !lastlmb) {
     lastlmb = 1;
     return -Common::EVENT_LBUTTONDOWN;
-  } else if(lastlmb && !lmb) {
+  } else if (lastlmb && !lmb) {
     lastlmb = 0;
     return -Common::EVENT_LBUTTONUP;
   }
-  if(rmb && !lastrmb) {
+  if (rmb && !lastrmb) {
     lastrmb = 1;
     return -Common::EVENT_RBUTTONDOWN;
-  } else if(lastrmb && !rmb) {
+  } else if (lastrmb && !rmb) {
     lastrmb = 0;
     return -Common::EVENT_RBUTTONUP;
   }
 
-  if(mouse_wheel != lastwheel)
-    if(((int8)(mouse_wheel - lastwheel)) > 0) {
+  if (mouse_wheel != lastwheel)
+    if (((int8)(mouse_wheel - lastwheel)) > 0) {
       lastwheel++;
       return -Common::EVENT_WHEELDOWN;
     } else {
@@ -168,22 +168,22 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
       return -Common::EVENT_WHEELUP;
     }
 
-  if(newkey && inter && newkey != lastkey) {
+  if (newkey && inter && newkey != lastkey) {
     int transkey = inter->key(newkey, shiftFlags);
-    if(transkey) {
+    if (transkey) {
       newkey = transkey;
       inter = NULL;
     }
   }
 
-  if(!newkey || (lastkey && newkey != lastkey)) {
+  if (!newkey || (lastkey && newkey != lastkey)) {
     int upkey = lastkey;
     lastkey = 0;
-    if(upkey)
+    if (upkey)
       return upkey | (1<<30);
-  } else if(!lastkey) {
+  } else if (!lastkey) {
     lastkey = newkey;
-    if(newkey >= 1000 || !inter)
+    if (newkey >= 1000 || !inter)
       return newkey;
   }
 
@@ -194,13 +194,13 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
 {
   unsigned int t = Timer();
 
-  if(_timer != NULL)
+  if (_timer != NULL)
     _timer->handler();
 
-  if(((int)(t-_devpoll))<0)
+  if (((int)(t-_devpoll))<0)
     return false;
   _devpoll += USEC_TO_TIMER(17000);
-  if(((int)(t-_devpoll))>=0)
+  if (((int)(t-_devpoll))>=0)
     _devpoll = t + USEC_TO_TIMER(17000);
 
   int mask = getimask();
@@ -220,25 +220,25 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
     event.mouse.y -= _overlay_y;
   }
   event.kbd.ascii = event.kbd.keycode = 0;
-  if(e<0) {
+  if (e<0) {
     event.type = (Common::EventType)-e;
     return true;
-  } else if(e>0) {
+  } else if (e>0) {
     bool processed = false, down = !(e&(1<<30));
     e &= ~(1<<30);
-    if(e < 1000) {
+    if (e < 1000) {
       event.type = (down? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP);
       event.kbd.keycode = e;
       event.kbd.ascii = (e>='a' && e<='z' && (event.kbd.flags & Common::KBD_SHIFT)?
 			  e &~ 0x20 : e);
       processed = true;
-    } else if(down) {
-      if(e == 1005)
+    } else if (down) {
+      if (e == 1005)
 	setFeatureState(kFeatureVirtualKeyboard,
 			!getFeatureState(kFeatureVirtualKeyboard));
     }
     return processed;
-  } else if(_ms_cur_x != _ms_old_x || _ms_cur_y != _ms_old_y) {
+  } else if (_ms_cur_x != _ms_old_x || _ms_cur_y != _ms_old_y) {
     event.type = Common::EVENT_MOUSEMOVE;
     _ms_old_x = _ms_cur_x;
     _ms_old_y = _ms_cur_y;

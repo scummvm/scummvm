@@ -64,16 +64,16 @@ void OSystem_Dreamcast::initBackend()
 static bool find_track(int track, int &first_sec, int &last_sec)
 {
   struct TOC *toc = cdfs_gettoc();
-  if(!toc)
+  if (!toc)
     return false;
   int i, first, last;
   first = TOC_TRACK(toc->first);
   last = TOC_TRACK(toc->last);
-  if(first < 1 || last > 99 || first > last)
+  if (first < 1 || last > 99 || first > last)
     return false;
-  for(i=first; i<=last; i++)
-    if(!(TOC_CTRL(toc->entry[i-1])&4))
-      if(track==1) {
+  for (i=first; i<=last; i++)
+    if (!(TOC_CTRL(toc->entry[i-1])&4))
+      if (track==1) {
 	first_sec = TOC_LBA(toc->entry[i-1]);
 	last_sec = TOC_LBA(toc->entry[i]);
 	return true;
@@ -86,14 +86,14 @@ void OSystem_Dreamcast::playCD(int track, int num_loops, int start_frame, int du
 {
   int first_sec, last_sec;
 #if 1
-  if(num_loops)
+  if (num_loops)
     --num_loops;
 #endif
-  if(num_loops>14) num_loops=14;
-  else if(num_loops<0) num_loops=15; // infinity
-  if(!find_track(track, first_sec, last_sec))
+  if (num_loops>14) num_loops=14;
+  else if (num_loops<0) num_loops=15; // infinity
+  if (!find_track(track, first_sec, last_sec))
     return;
-  if(duration)
+  if (duration)
     last_sec = first_sec + start_frame + duration;
   first_sec += start_frame;
   play_cdda_sectors(first_sec, last_sec, num_loops);
@@ -168,7 +168,7 @@ void OSystem_Dreamcast::setFeatureState(Feature f, bool enable)
   switch(f) {
   case kFeatureAspectRatioCorrection:
     _aspect_stretch = enable;
-    if(screen)
+    if (screen)
       setScaling();
     break;
   case kFeatureVirtualKeyboard:
@@ -230,12 +230,12 @@ int DCLauncherDialog::runModal()
 {
   char *base = NULL, *dir = NULL;
 
-  if(!selectGame(base, dir, icon))
+  if (!selectGame(base, dir, icon))
     exit(0);
 
   // Set the game path.
   ConfMan.addGameDomain(base);
-  if(dir != NULL)
+  if (dir != NULL)
     ConfMan.set("path", dir, base);
 
   // Set the target.

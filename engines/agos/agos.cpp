@@ -969,7 +969,7 @@ int AGOSEngine::go() {
 		(getFeatures() & GF_DEMO)) {
 		int i;
 
-		while(1) {
+		while (1) {
 			for (i = 0; i < 4; i++) {
 				setWindowImage(3, 9902 + i);
 				debug(0, "Displaying image %d", 9902 + i);

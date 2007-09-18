@@ -125,7 +125,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,
 		    (char *)filesDatabase[params.fileIdx].subData.ptr);
 		//   ASSERT(0);
 	} else {			// poly
-		/* if(param4 == 1)
+		/* if (param4 == 1)
 		 * {
 		 * int var_A;
 		 * int var_8;

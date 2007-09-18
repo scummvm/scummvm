@@ -305,14 +305,14 @@ int getGameHeight() {
 }
 
 void initSprites() {
-	for(int i = 0; i < 128; i++) {
+	for (int i = 0; i < 128; i++) {
 	   sprites[i].attribute[0] = ATTR0_DISABLED;
 	   sprites[i].attribute[1] = 0;
 	   sprites[i].attribute[2] = 0;
 	   sprites[i].attribute[3] = 0;
     }
 	
-	for(int i = 0; i < 128; i++) {
+	for (int i = 0; i < 128; i++) {
 	   spritesMain[i].attribute[0] = ATTR0_DISABLED;
 	   spritesMain[i].attribute[1] = 0;
 	   spritesMain[i].attribute[2] = 0;

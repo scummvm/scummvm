@@ -40,11 +40,11 @@ void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton,
 
 	*pMouseButton = 0;
 /*
-  if(localStatus.left)
+  if (localStatus.left)
     *pMouseButton |= 1;
-  if(localStatus.right)
+  if (localStatus.right)
     *pMouseButton |= 2;
-  if(localStatus.middle)
+  if (localStatus.middle)
     *pMouseButton |= 4;
 	*/
 }

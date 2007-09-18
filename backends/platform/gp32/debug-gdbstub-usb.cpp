@@ -215,7 +215,7 @@ void WaitACK()
 	bool bBreak = false;
 	int iResult;
 
-	while(!bBreak) {
+	while (!bBreak) {
 		iResult = g_Comm.comm_recv((unsigned char *)g_SendBuffer, 0x100);
 		if (iResult > 0) {
 			bBreak = true;
@@ -234,7 +234,7 @@ void SendCommand(unsigned char *pCommand)
 	g_SendBuffer[iOffset++] = '$';
 
 	iCheckSum = 0;
-	while(*pCommand != 0) {
+	while (*pCommand != 0) {
 		g_SendBuffer[iOffset++] = *pCommand;
 		iCheckSum += *pCommand++;
 	}
@@ -285,7 +285,7 @@ void SendCommandSize(unsigned char *pCommand, int iSize)
 	g_SendBuffer[iOffset++] = '$';
 
 	iCheckSum = 0;
-	while(*pCommand != 0) {
+	while (*pCommand != 0) {
 		g_SendBuffer[iOffset++] = *pCommand;
 		iCheckSum += *pCommand++;
 	}
@@ -340,7 +340,7 @@ void HexToStringBW(char *pString, int iNumber)
 // equiv to strcat i imagine
 void PrintToString(char *pString, char *pOtherString)
 {
-	while(*pOtherString != 0) {
+	while (*pOtherString != 0) {
 		*pString = *pOtherString;
 		*pString++;
 		*pOtherString++;
@@ -644,7 +644,7 @@ void WriteMemory(void *pAddr, unsigned int uiBytes, char *pHexString)
 		uiOffset += 2;
 	}
 	/*
-	while(1);
+	while (1);
 	unsigned int *piData = (unsigned int *)pAddr;
 	*piData = 0xe7ffdefe;//0xfedeffe7;
 	*/
@@ -696,7 +696,7 @@ int FindChar(char *pBuffer, char sign)
 {
 	int iRetVal = 0;
 
-	while(*pBuffer != sign) {
+	while (*pBuffer != sign) {
 		iRetVal++;
 		*pBuffer++;
 	}
@@ -830,7 +830,7 @@ void ISR()
 			break;
 		case MODE_DUNNO:
 		default:
-			while(1);
+			while (1);
 	}
 	*/
 	SendBreakPoint();
@@ -928,7 +928,7 @@ void ISR()
 		case MODE_DUNNO:
 		default:
 			//Printf("Dunno!!\n");
-			while(1);
+			while (1);
 	}
 
 
@@ -1035,13 +1035,13 @@ void BreakPoint()
 			Printf("Restore: 0x%x", g_SavedStepInstruction);
 			#endif
 		} else {
-			while(1);
+			while (1);
 		}
 		g_LastWasStep = false;
 	}
 
 
-	while(!bBreakLoop) {
+	while (!bBreakLoop) {
 		iResult = RecvUSB(g_ReadBuffer, 0x100);
 		//Printf("%d\n", iResult);
 
@@ -1061,7 +1061,7 @@ void BreakPoint()
 
 			// I can see that i get a bunch of '+' and '-' in the messages.. lets remove them.
 			iOffsetAdd = 4;
-			while((g_ReadBuffer[iOffsetAdd] == '+') || (g_ReadBuffer[iOffsetAdd] == '-')) iOffsetAdd++;
+			while ((g_ReadBuffer[iOffsetAdd] == '+') || (g_ReadBuffer[iOffsetAdd] == '-')) iOffsetAdd++;
 
 			// Check whether it's legimit command
 			if (g_ReadBuffer[iOffsetAdd] == '$') {
@@ -1608,7 +1608,7 @@ unsigned int ROR(unsigned int uiValue, unsigned int uiSteps)
 {
 	unsigned int uiRetval;
 
-	while(uiSteps-- > 0) {
+	while (uiSteps-- > 0) {
 		if (uiValue & 0x01) {
 			uiValue = (uiValue >> 1) | 0x80000000;
 		} else {

@@ -994,7 +994,7 @@ cmd(version) {
 	/* insert our version into the other version */
 	len = strlen(verMsg);
 	gap = r - q;
-	if(gap < 0)
+	if (gap < 0)
 		gap = 0;
 	else
 		gap = (gap - len) / 2;

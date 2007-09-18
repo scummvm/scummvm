@@ -329,13 +329,13 @@ void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
 	memset(marks, false, SAVESTATE_MAX_NUM * sizeof(bool));	//assume no savegames for this title
 	filenames = _saveFileMan->listSavefiles(prefix);
 	
-	for(Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
 		//Obtain the last 2 digits of the filename, since they correspond to the save slot
 		slot[0] = file->c_str()[file->size()-2];
 		slot[1] = file->c_str()[file->size()-1];
 		
 		slotNum = atoi(slot);
-		if(slotNum >= 0 && slotNum < SAVESTATE_MAX_NUM)
+		if (slotNum >= 0 && slotNum < SAVESTATE_MAX_NUM)
 			marks[slotNum] = true;	//mark this slot as valid
 	}
 	

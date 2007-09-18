@@ -111,11 +111,11 @@ RoninCDFilesystemNode::RoninCDFilesystemNode(const String &p, bool verify) {
 	if (verify) {
 		int fd;
 
-		if((fd = open(_path.c_str(), O_RDONLY)) >= 0) {
+		if ((fd = open(_path.c_str(), O_RDONLY)) >= 0) {
 			close(fd);
 			_isDirectory = false;
 		}
-		else if((fd = open(_path.c_str(), O_DIR|O_RDONLY)) >= 0) {
+		else if ((fd = open(_path.c_str(), O_DIR|O_RDONLY)) >= 0) {
 			close(fd);
 		}
 		else {

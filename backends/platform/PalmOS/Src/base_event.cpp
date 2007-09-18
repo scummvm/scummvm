@@ -92,7 +92,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 	timer_handler();
 	sound_handler();
 
-	for(;;) {
+	for (;;) {
 		// check for hardkey repeat for mouse emulation
 		keyCurrentState = KeyCurrentState();
 

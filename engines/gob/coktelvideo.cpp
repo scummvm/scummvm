@@ -1281,7 +1281,7 @@ void Vmd::deDPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n) {
 
 	int32 s = init;
 	for (uint32 i = 0; i < n; i++) {
-		if(dataBuf[i] & 0x80)
+		if (dataBuf[i] & 0x80)
 			s -= _tableDPCM[dataBuf[i] & 0x7F];
 		else
 			s += _tableDPCM[dataBuf[i]];

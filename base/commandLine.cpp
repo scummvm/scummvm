@@ -388,9 +388,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 
 			DO_OPTION('p', "path")
 				FilesystemNode path(option);
-				if(!path.exists()) {
+				if (!path.exists()) {
 					usage("Non-existent game path '%s'", option);
-				} else if(!path.isReadable()) {
+				} else if (!path.isReadable()) {
 					usage("Non-readable game path '%s'", option);
 				}
 			END_OPTION
@@ -431,9 +431,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 
 			DO_LONG_OPTION("soundfont")
 				FilesystemNode path(option);
-				if(!path.exists()) {
+				if (!path.exists()) {
 					usage("Non-existent soundfont path '%s'", option);
-				} else if(!path.isReadable()) {
+				} else if (!path.isReadable()) {
 					usage("Non-readable soundfont path '%s'", option);
 				}
 			END_OPTION
@@ -461,9 +461,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 
 			DO_LONG_OPTION("savepath")
 				FilesystemNode path(option);
-				if(!path.exists()) {
+				if (!path.exists()) {
 					usage("Non-existent savegames path '%s'", option);
-				} else if(!path.isWritable()) {
+				} else if (!path.isWritable()) {
 					usage("Non-writable savegames path '%s'", option);
 				}
 			END_OPTION
@@ -479,9 +479,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 
 			DO_LONG_OPTION("themepath")
 				FilesystemNode path(option);
-				if(!path.exists()) {
+				if (!path.exists()) {
 					usage("Non-existent theme path '%s'", option);
-				} else if(!path.isReadable()) {
+				} else if (!path.isReadable()) {
 					usage("Non-readable theme path '%s'", option);
 				}
 			END_OPTION
@@ -691,9 +691,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		const char *dir = getenv("SCUMMVM_SAVEPATH");
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
 			FilesystemNode saveDir(dir);
-			if(!saveDir.exists()) {
+			if (!saveDir.exists()) {
 				warning("Non-existent SCUMMVM_SAVEPATH save path. It will be ignored.");
-			} else if(!saveDir.isWritable()) {
+			} else if (!saveDir.isWritable()) {
 				warning("Non-writable SCUMMVM_SAVEPATH save path. It will be ignored.");
 			} else {
 				settings["savepath"] = dir;

@@ -183,7 +183,7 @@ void freeDisk(void) {
 	}
 
 	/* TODO
-	 * if(PAL_fileHandle)
+	 * if (PAL_fileHandle)
 	 * {
 	 * freeAllDataPtr();
 	 * }

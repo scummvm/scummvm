@@ -157,7 +157,7 @@ AbstractFilesystemNode *SymbianFilesystemNode::getChild(const String &n) const {
 	fname.Copy(ptr);
 	TBool isFolder = EFalse;
 	BaflUtils::IsFolder(CEikonEnv::Static()->FsSession(), fname, isFolder);
-	if(!isFolder)
+	if (!isFolder)
 		return 0;
 
 	return new SymbianFilesystemNode(newPath);
@@ -182,12 +182,12 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 			TInt err = fs.Volume(volumeInfo, driveNumber);
 			if (err != KErrNone)
 				continue; 
-			if(fs.DriveToChar(driveNumber,driveLetter) != KErrNone)
+			if (fs.DriveToChar(driveNumber,driveLetter) != KErrNone)
 				continue;
 
 			driveLetterValue = driveLetter;
 
-			if(volumeInfo.iName.Length() > 0) {				
+			if (volumeInfo.iName.Length() > 0) {				
 				driveLabel8.Copy(volumeInfo.iName); // 16 to 8bit des // enabling this line alone gives KERN-EXEC 3 with non-optimized GCC? WHY? grrr
 				driveString8.Format(_L8("Drive %c: (%S)"), driveLetterValue, &driveLabel8);
 			} else {
@@ -211,10 +211,10 @@ bool SymbianFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		fname.Copy(ptr);
 		TBuf8<256>nameBuf;
 		CDir* dirPtr;
-		if(CEikonEnv::Static()->FsSession().GetDir(fname,KEntryAttNormal|KEntryAttDir,0,dirPtr)==KErrNone) {
+		if (CEikonEnv::Static()->FsSession().GetDir(fname,KEntryAttNormal|KEntryAttDir,0,dirPtr)==KErrNone) {
 			CleanupStack::PushL(dirPtr);
 			TInt cnt=dirPtr->Count();
-			for(TInt loop=0;loop<cnt;loop++) {
+			for (TInt loop=0;loop<cnt;loop++) {
 				TEntry fileentry=(*dirPtr)[loop];
 				nameBuf.Copy(fileentry.iName);
 				SymbianFilesystemNode entry(false);

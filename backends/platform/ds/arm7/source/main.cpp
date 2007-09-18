@@ -483,7 +483,7 @@ void InterruptTimer3() {
     IPC->battery   = batt;
     IPC->aux       = aux;
 
-    for(u32 i=0; i<sizeof(ct); i++) {
+    for (u32 i=0; i<sizeof(ct); i++) {
       IPC->curtime[i] = ct[i];
     }
 
@@ -527,7 +527,7 @@ void arm7_synctoarm9() { // send fifo message
 // interrupt handler to allow incoming notifications from arm9
 void arm7_fifo() { // check incoming fifo messages
    u32 msg = REG_IPC_FIFO_RX;
-   if(msg==0x87654321) Wifi_Sync();
+   if (msg==0x87654321) Wifi_Sync();
 }
 
  
@@ -543,13 +543,13 @@ void initDebugger() {
 	// sync with arm9 and init wifi
 	u32 fifo_temp;
 
-	while(1) { // wait for magic number
-		while(REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
+	while (1) { // wait for magic number
+		while (REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
 		fifo_temp=REG_IPC_FIFO_RX;
-		if(fifo_temp==0x12345678) break;
+		if (fifo_temp==0x12345678) break;
    	}
 
-   	while(REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
+   	while (REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
    	fifo_temp=REG_IPC_FIFO_RX; // give next value to wifi_init
    	Wifi_Init(fifo_temp);
 

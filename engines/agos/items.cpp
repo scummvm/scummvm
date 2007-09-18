@@ -410,7 +410,7 @@ Item *AGOSEngine::findInByClass(Item *i, int16 m) {
 
 Item *AGOSEngine::nextInByClass(Item *i, int16 m) {
 	i = _findNextPtr;
-	while(i) {
+	while (i) {
 		if (i->classFlags & m) {
 			_findNextPtr = derefItem(i->next);
 			return i;
