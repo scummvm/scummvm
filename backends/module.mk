@@ -2,11 +2,7 @@ MODULE := backends
 
 MODULE_OBJS := \
 	events/default/default-events.o \
-	fs/posix/posix-fs.o \
-	fs/morphos/abox-fs.o \
-	fs/windows/windows-fs.o \
-	fs/amigaos4/amigaos4-fs.o \
-	fs/dc/dc-fs.o \
+	fs/abstract-fs-factory.o \
 	midi/alsa.o \
 	midi/coreaudio.o \
 	midi/coremidi.o \

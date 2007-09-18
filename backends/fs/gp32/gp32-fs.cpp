@@ -82,7 +82,7 @@ const char gpRootPath[] = "gp:\\";
  * @param str Path to obtain the last component from.
  * @return Pointer to the first char of the last component inside str.
  */
-static const char *lastPathComponent(const Common::String &str) {
+const char *lastPathComponent(const Common::String &str) {
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
 
@@ -214,7 +214,7 @@ bool GP32FilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool
 	//listDir += "/";
 	
 	while (GpDirEnumList(listDir.c_str(), startIdx++, 1, &dirEntry, &read)  == SM_OK) {
-		if (dirEntry.name[0] == '.')
+da			if (dirEntry.name[0] == '.')
 			continue;
 			
 		entry._displayName = dirEntry.name;

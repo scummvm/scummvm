@@ -25,9 +25,9 @@
 #include "common/stdafx.h"
 #include "common/util.h"
 #include "backends/fs/abstract-fs.h"
-#include "backends/fs/fs-factory-maker.cpp"
+#include "backends/fs/abstract-fs-factory.h"
 
-/*
+/**
  * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
  * Taken from exult/files/listfiles.cc
  */
@@ -82,7 +82,7 @@ FilesystemNode::FilesystemNode(const FilesystemNode &node) {
 }
 
 FilesystemNode::FilesystemNode(const Common::String &p) {
-	AbstractFilesystemFactory *factory = makeFSFactory();
+	AbstractFilesystemFactory *factory = AbstractFilesystemFactory::makeFSFactory();
 	
 	if (p.empty() || p == ".")
 		_realNode = factory->makeCurrentDirectoryFileNode();
@@ -233,6 +233,9 @@ bool FilesystemNode::lookupFile(FSList &results, FilesystemNode &dir, Common::St
 	
 	return ((matches > 0) ? true : false);
 }
+
+// HACK HACK HACK
+extern const char *lastPathComponent(const Common::String &str);
 
 int FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
 {

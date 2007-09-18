@@ -60,7 +60,7 @@
  * 
  * @return AbstractFilesystemFactory* The specific factory for the current architecture. 
  */
-static AbstractFilesystemFactory *makeFSFactory() {
+AbstractFilesystemFactory *AbstractFilesystemFactory::makeFSFactory() {
 	#if defined(__amigaos4__)
 		return &AmigaOSFilesystemFactory::instance();
 	#elif defined(__DC__)
