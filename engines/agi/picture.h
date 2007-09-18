@@ -101,6 +101,8 @@ public:
 
 	void setPictureFlags(int flags) { _flags = flags; }
 
+	void clear();
+
 	void setOffset(int offX, int offY) {
 		_xOffset = offX;
 		_yOffset = offY;

@@ -253,11 +253,6 @@ INLINE int PictureMgr::isOkFillHere(int x, int y) {
 
 	p = _vm->_game.sbuf16c[y * _width + x];
 
-	// FIXME: This overflows stack, but otherwise is a wild guess
-	// original has some checks against color 11 (0xB)
-	if (_pictureVersion == AGIPIC_V15 && 0)
-		return (p & 0x0f) == 0;
-
 	if (!_priOn && _scrOn && _scrColor != 15)
 		return (p & 0x0f) == 15;
 
@@ -811,7 +806,7 @@ uint8 *PictureMgr::convertV3Pic(uint8 *src, uint32 len) {
  * @param clear  clear AGI screen before drawing
  * @param agi256 load an AGI256 picture resource
  */
-int PictureMgr::decodePicture(int n, int clear, bool agi256, int pic_width, int pic_height) {
+int PictureMgr::decodePicture(int n, int clr, bool agi256, int pic_width, int pic_height) {
 	debugC(8, kDebugLevelResources, "(%d)", n);
 
 	_patCode = 0;
@@ -827,7 +822,7 @@ int PictureMgr::decodePicture(int n, int clear, bool agi256, int pic_width, int 
 	_width = pic_width;
 	_height = pic_height;
 
-	if (clear && !agi256) // 256 color pictures should always fill the whole screen, so no clearing for them.
+	if (clr && !agi256) // 256 color pictures should always fill the whole screen, so no clearing for them.
 		memset(_vm->_game.sbuf16c, 0x4f, _width * _height); // Clear 16 color AGI screen (Priority 4, color white).
 
 	if (!agi256) {
@@ -843,9 +838,9 @@ int PictureMgr::decodePicture(int n, int clear, bool agi256, int pic_width, int 
 			warning("Oversized AGI256 picture resource %d, decoding only %ux%u part of it", n, _width, _height);
 	}
 
-	if (clear)
+	if (clr)
 		_vm->clearImageStack();
-	_vm->recordImageStackCall(ADD_PIC, n, clear, agi256, 0, 0, 0, 0);
+	_vm->recordImageStackCall(ADD_PIC, n, clr, agi256, 0, 0, 0, 0);
 
 	return errOK;
 }
@@ -859,7 +854,7 @@ int PictureMgr::decodePicture(int n, int clear, bool agi256, int pic_width, int 
  * @param length the size of the picture data buffer
  * @param clear  clear AGI screen before drawing
  */
-int PictureMgr::decodePicture(byte* data, uint32 length, int clear, int pic_width, int pic_height) {
+int PictureMgr::decodePicture(byte* data, uint32 length, int clr, int pic_width, int pic_height) {
 	_patCode = 0;
 	_patNum = 0;
 	_priOn = _scrOn = false;
@@ -873,7 +868,7 @@ int PictureMgr::decodePicture(byte* data, uint32 length, int clear, int pic_widt
 	_width = pic_width;
 	_height = pic_height;
 
-	if (clear) // 256 color pictures should always fill the whole screen, so no clearing for them.
+	if (clr) // 256 color pictures should always fill the whole screen, so no clearing for them.
 		memset(_vm->_game.sbuf16c, 0x4f, _width * _height); // Clear 16 color AGI screen (Priority 4, color white).
 
 	drawPicture(); // Draw 16 color picture.
@@ -898,6 +893,10 @@ int PictureMgr::unloadPicture(int n) {
 	}
 
 	return errOK;
+}
+
+void PictureMgr::clear() {
+	memset(_vm->_game.sbuf16c, 0x4f, _width * _height);
 }
 
 /**

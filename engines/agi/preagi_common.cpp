@@ -40,7 +40,7 @@ void PreAgiEngine::clearScreen(int attr, bool overrideDefault) {
 	if (overrideDefault)
 		_defaultColor = attr;
 
-	_gfx->clearScreen((attr & 0xF0) / 0x10); 
+	_gfx->clearScreen((attr & 0xF0) / 0x10);
 }
 
 void PreAgiEngine::clearGfxScreen(int attr) {

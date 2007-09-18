@@ -108,15 +108,17 @@ void Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 
 // Graphics
 
-void Troll::drawPic(int iPic, bool f3IsCont, bool clear) {
+void Troll::drawPic(int iPic, bool f3IsCont, bool clr) {
 	uint8 frame[] = {
 		0xf1, 0x3, 0xf9, 0x0, 0x0, 0x9f, 0x0, 0x9f, 0xa7, 0x0, 0xa7, 0x0, 0x0, 0xff
 	};
 
-	if (clear)
-		_vm->clearScreen(0x0f);
-
 	_vm->_picture->setDimensions(IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
+
+	if (clr) {
+		_vm->clearScreen(0x0f, false);
+		_vm->_picture->clear();
+	}
 
 	_vm->_picture->setPictureData(frame, ARRAYSIZE(frame));
 	_vm->_picture->drawPicture();
@@ -330,6 +332,7 @@ void Troll::intro() {
 	_vm->_system->delayMillis(3200);
 
 	// Draw logo
+	_vm->setDefaultTextColor(0x0f);
 	drawPic(45, false, true);
 	_vm->_gfx->doUpdate();
 	
@@ -368,7 +371,7 @@ void Troll::gameOver() {
 int Troll::drawRoom(char *menu) {
 	int n;
 
-	drawPic(_currentRoom - 1, false, true);
+	drawPic(_locationDescIndex, false, true);
 	_vm->_gfx->doUpdate();
 
 	// TODO: Troll
@@ -381,7 +384,7 @@ int Troll::drawRoom(char *menu) {
 			sprintf(tmp, "\n  %d.", i);
 			strcat(menu, tmp);
 
-			strncat(menu, (char *)_gameData + _options[_roomDescs[_currentRoom - 1].options[i]], 35);
+			strncat(menu, (char *)_gameData + _options[_roomDescs[_currentRoom - 1].options[i]- 1], 35);
 
 			n = i + 1;
 		}
@@ -400,6 +403,8 @@ void Troll::gameLoop() {
 	_treasuresLeft = IDI_TRO_MAX_TREASURE;
 	_haveFlashlight = false;
 	_locationDescIndex = 0;
+
+	memset(_roomStates, 0, sizeof(_roomStates));
 	
 	while (!done) {
 		*menu = 0;
@@ -412,13 +417,12 @@ void Troll::gameLoop() {
 		_moves++;
 
 		switch(_roomDescs[_currentRoom - 1].optionTypes[currentOption]) {
-		case IDI_TRO_SEL_OPTION_1:
+		case OT_GO:
+			_locationDescIndex = _roomDescs[_currentRoom - 1].roomDescIndex[currentOption];
+			_currentRoom = _roomPicStartIdx[_locationDescIndex];
+			_currentRoom += _roomStates[_locationDescIndex];
 			break;
-		case IDI_TRO_SEL_OPTION_2:
-			break;
-		case IDI_TRO_SEL_OPTION_3:
-			break;
-		case OT_UNKN:
+		default:
 			break;
 		}
 	}
@@ -433,6 +437,9 @@ void Troll::fillOffsets() {
 
 	for (i = 0; i < IDI_TRO_NUM_OPTIONS; i++)
 		_options[i] = READ_LE_UINT16(_gameData + IDO_TRO_OPTIONS + i * 2);
+
+	for (i = 0; i < IDI_TRO_NUM_NUMROOMS; i++)
+		_roomPicStartIdx[i] = _gameData[IDO_TRO_PICSTARTIDX + i];
 }
 
 void Troll::fillRoomDescs() {

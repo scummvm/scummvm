@@ -119,6 +119,7 @@ const char IDS_TRO_NAME_TREASURE[][16] = {
 
 #define IDI_TRO_NUM_ROOMDESCS	65
 #define IDI_TRO_NUM_OPTIONS		129
+#define IDI_TRO_NUM_NUMROOMS	43
 
 // offsets
 
@@ -129,6 +130,7 @@ const char IDS_TRO_NAME_TREASURE[][16] = {
 #define IDO_TRO_LOCMESSAGES 0x1F7C
 #define IDO_TRO_ROOMDESCS   0x0082
 #define IDO_TRO_OPTIONS     0x0364
+#define IDO_TRO_PICSTARTIDX 0x02CD
 
 enum OptionType {
 	OT_GO,
@@ -190,6 +192,8 @@ private:
 
 private:
 	int _pictureOffsets[IDI_TRO_PICNUM];
+	int _roomPicStartIdx[IDI_TRO_NUM_NUMROOMS];
+	int _roomStates[IDI_TRO_NUM_NUMROOMS];
 };
 
 } // End of namespace Agi
