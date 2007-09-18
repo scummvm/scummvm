@@ -32,6 +32,7 @@
 #include "common/file.h"
 
 #include "agi/agi.h"
+#include "agi/preagi.h"
 #include "agi/wagparser.h"
 
 
@@ -93,6 +94,7 @@ static const PlainGameDescriptor agiGames[] = {
 	{"sq2", "Space Quest II: Vohaul's Revenge"},
 	{"sqx", "Space Quest X: The Lost Chapter"},
 	{"tetris", "AGI Tetris"},
+	{"troll", "Troll\'s Tale"},
 	{"winnie", "Winnie the Pooh in the Hundred Acre Wood"},
 	{"xmascard", "Xmas Card"},
 
@@ -1612,6 +1614,23 @@ static const AGIGameDescription gameDescriptions[] = {
 		GType_V2,
 		0,
 		0x2936,
+	},
+
+	{
+		// Troll's Tale
+		// preagi game
+		{
+			"troll",
+			"",
+			AD_ENTRY1s("troll.exe", "c594b4d6791e9580d8d5dc9d71760027", 59120),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_TROLL,
+		GType_PreAGI,
+		0,
+		0x0000,
 	},
 
 	{

@@ -38,7 +38,7 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
-#include "agi/agi.h"
+#include "agi/preagi.h"
 #include "agi/graphics.h"
 #include "agi/sprite.h"
 #include "agi/opcodes.h"
@@ -48,6 +48,7 @@
 
 // preagi engines
 #include "agi/preagi_mickey.h"
+#include "agi/preagi_troll.h"
 #include "agi/preagi_winnie.h"
 
 namespace Agi {
@@ -161,6 +162,8 @@ void PreAgiEngine::initialize() {
 	_game.colorFg = 15;
 	_game.colorBg = 0;
 
+	_defaultColor = 0xF;
+
 	_game.name[0] = '\0';
 
 	_game.sbufOrig = (uint8 *)calloc(_WIDTH, _HEIGHT * 2); // Allocate space for two AGI screens vertically
@@ -231,6 +234,13 @@ int PreAgiEngine::go() {
 				Winnie *winnie = new Winnie(this);
 				winnie->init();
 				winnie->run();
+			}
+			break;
+		case GID_TROLL:
+			{
+				Troll *troll = new Troll(this);
+				troll->init();
+				troll->run();
 			}
 			break;
 		default:

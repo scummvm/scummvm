@@ -26,31 +26,33 @@
 #include "common/stdafx.h"
 #include "common/events.h"
 
-#include "agi/agi.h"
+#include "agi/preagi.h"
 #include "agi/font.h"
 #include "agi/graphics.h"
 #include "agi/keyboard.h"
 
-// preagi engines
-#include "agi/preagi_mickey.h"
-
-// default attributes
-#define IDA_DEFAULT		0x0F
-#define IDA_DEFAULT_REV	0xF0
-
-#define IDI_MAX_ROW_PIC	20
+#include "agi/preagi_common.h"
 
 namespace Agi {
 
 // Screen functions
-void PreAgiEngine::clearScreen(int attr) { 
+void PreAgiEngine::clearScreen(int attr) {
+	_defaultColor = attr;
+
 	_gfx->clearScreen((attr & 0xF0) / 0x10); 
+}
+
+void PreAgiEngine::clearGfxScreen(int attr) {
+	_gfx->drawRectangle(0, 0, GFX_WIDTH - 1, IDI_MAX_ROW_PIC * 8 -1, (attr & 0xF0) / 0x10);
 }
 
 // String functions
 
 void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 	int code;
+
+	if (attr == kColorDefault)
+		attr = _defaultColor;
 
 	for (int iChar = 0; iChar < (int)strlen(buffer); iChar++) {
 		code = buffer[iChar];
@@ -112,7 +114,7 @@ void PreAgiEngine::printStrXOR(char *szMsg) {
 
 // Input functions
 
-int PreAgiEngine::getSelection(int type) {
+int PreAgiEngine::getSelection(SelectionTypes type) {
 	Common::Event event;
 
 	// Selection types:
@@ -131,13 +133,13 @@ int PreAgiEngine::getSelection(int type) {
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_y:
-					if (type == 0)
+					if (type == kSelYesNo)
 						return 1;
 				case Common::KEYCODE_n:
-					if (type == 0)
+					if (type == kSelYesNo)
 						return 0;
 				case Common::KEYCODE_ESCAPE:
-					if (type == 1)
+					if (type == kSelNumber)
 						return 0;
 				case Common::KEYCODE_1:
 				case Common::KEYCODE_2:
@@ -148,10 +150,13 @@ int PreAgiEngine::getSelection(int type) {
 				case Common::KEYCODE_7:
 				case Common::KEYCODE_8:
 				case Common::KEYCODE_9:
-					if (type == 1)
+					if (type == kSelNumber)
 						return event.kbd.keycode - Common::KEYCODE_1 + 1;
+				case Common::KEYCODE_SPACE:
+					if (type == kSelSpace)
+						return 1;
 				default:
-					if (type == 0) {
+					if (type == kSelYesNo) {
 						return 2;
 					} else {
 						return 10;
@@ -162,6 +167,8 @@ int PreAgiEngine::getSelection(int type) {
 				break;
 			}
 		}
+		_system->updateScreen();
+		_system->delayMillis(10);
 	}
 	return 0;
 }
@@ -190,6 +197,8 @@ bool PreAgiEngine::waitAnyKeyChoice() {
 				break;
 			}
 		}
+		_system->updateScreen();
+		_system->delayMillis(10);
 	}
 }
 

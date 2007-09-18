@@ -25,6 +25,7 @@ MODULE_OBJS = \
 	preagi.o \
 	preagi_common.o \
 	preagi_mickey.o \
+	preagi_troll.o \
 	preagi_winnie.o \
 	predictive.o \
 	saveload.o \

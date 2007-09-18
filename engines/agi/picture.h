@@ -50,9 +50,12 @@ enum AgiPictureVersion {
 };
 
 enum AgiPictureFlags {
-	kPicFNone,
-	kPicFCircle,
-	kPicFStep
+	kPicFNone      = (1 >> 0),
+	kPicFCircle    = (1 >> 1),
+	kPicFStep      = (1 >> 2),
+	kPicFf3Stop    = (1 >> 3),
+	kPicFf3Cont    = (1 >> 4),
+	kPicFTrollMode = (1 >> 5)
 };
 
 class AgiBase;
@@ -71,8 +74,8 @@ private:
 	INLINE int isOkFillHere(int x, int y);
 	void fillScanline(int x, int y);
 	void agiFill(unsigned int x, unsigned int y);
-	void xCorner();
-	void yCorner();
+	void xCorner(bool skipOtherCoords = false);
+	void yCorner(bool skipOtherCoords = false);
 	void fill();
 	int plotPatternPoint(int x, int y, int bitpos);
 	void plotBrush();
@@ -93,7 +96,7 @@ public:
 
 	void setPattern(uint8 code, uint8 num);
 
-	void setPictureType(int type);
+	void setPictureVersion(AgiPictureVersion version);
 	void setPictureData(uint8 *data, int len);
 
 	void setPictureFlags(int flags) { _flags = flags; }
@@ -101,6 +104,11 @@ public:
 	void setOffset(int offX, int offY) {
 		_xOffset = offX;
 		_yOffset = offY;
+	}
+
+	void setDimensions(int w, int h) {
+		_width = w;
+		_height = h;
 	}
 
 	void putPixel(int x, int y, uint8 color) {
@@ -124,7 +132,7 @@ private:
 
 	uint8 _minCommand;
 
-	int _pictureType;
+	AgiPictureVersion _pictureVersion;
 	int _width, _height;
 	int _xOffset, _yOffset;
 

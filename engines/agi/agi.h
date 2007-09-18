@@ -103,9 +103,10 @@ enum AgiGameID {
 	GID_SQ1,
 	GID_SQ2,
 	GID_XMASCARD,
-	GID_FANMADE,		// TODO: Should this be extended to include all fanmade games?
+	GID_FANMADE,
 	GID_MICKEY,			// PreAGI
-	GID_WINNIE			// PreAGI
+	GID_WINNIE,			// PreAGI
+	GID_TROLL			// PreAGI
 };
 
 } // End of namespace Agi
@@ -928,64 +929,6 @@ private:
 	bool _predictiveDialogRunning;
 public:
 	char _predictiveResult[40];
-};
-
-
-class PreAgiEngine : public AgiBase {
-	int _gameId;
-
-protected:
-	int init();
-	int go();
-	void shutdown();
-	void initialize();
-
-	bool initGame();
-
-public:
-	void agiTimerLow() {}
-	int agiGetKeypressLow() { return 0; }
-	int agiIsKeypressLow() { return 0; }
-
-	PreAgiEngine(OSystem *syst);
-	virtual ~PreAgiEngine();
-	int getGameId() {
-		return _gameId;
-	}
-
-	GfxMgr *_gfx;
-	SoundMgr *_sound;
-	PictureMgr *_picture;
-
-	void clearImageStack() {}
-	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7) {}
-	void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7) {}
-	void releaseImageStack() {}
-
-	// Game
-	Common::String getTargetName() { return _targetName; }
-
-	// Screen
-	void clearScreen(int attr);
-
-	// Keyboard
-	int getSelection(int type);
-	bool waitAnyKeyChoice();
-	int rnd(int hi) { return (_rnd->getRandomNumber(hi) + 1); }
-
-	// Text
-	void drawStr(int row, int col, int attr, const char *buffer);
-	void drawStrMiddle(int row, int attr, const char *buffer);
-	void clearTextArea();
-	void clearRow(int row);
-	void XOR80(char *buffer);
-	void printStr(const char *szMsg);
-	void printStrXOR(char *szMsg);
-
-	// Saved Games
-	Common::SaveFileManager* getSaveFileMan() { return _saveFileMan; }
 };
 
 } // End of namespace Agi

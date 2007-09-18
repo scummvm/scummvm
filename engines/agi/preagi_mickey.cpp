@@ -29,12 +29,10 @@
 
 #include "graphics/cursorman.h"
 
+#include "agi/preagi.h"
+#include "agi/preagi_common.h"
 #include "agi/preagi_mickey.h"
 #include "agi/graphics.h"
-
-// default attributes
-#define IDA_DEFAULT		0x0F
-#define IDA_DEFAULT_REV	0xF0
 
 #define IDI_SND_OSCILLATOR_FREQUENCY	1193180
 
@@ -161,7 +159,7 @@ bool Mickey::chooseY_N(int ofsPrompt, bool fErrorMsg) {
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
-	int a = _vm->getSelection(0);
+	int a = _vm->getSelection(kSelYesNo);
 	for (;;) {
 		switch (a) {
 			case 0: return false;
@@ -173,7 +171,7 @@ bool Mickey::chooseY_N(int ofsPrompt, bool fErrorMsg) {
 					}
 					break;
 		}
-		a = _vm->getSelection(0);
+		a = _vm->getSelection(kSelYesNo);
 	}
 }
 
@@ -183,7 +181,7 @@ int Mickey::choose1to9(int ofsPrompt) {
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
-	int a = _vm->getSelection(1);
+	int a = _vm->getSelection(kSelNumber);
 	for (;;) {
 		if (a == 10) {
 			printExeStr(IDO_MSA_PRESS_1_TO_9);
@@ -191,7 +189,7 @@ int Mickey::choose1to9(int ofsPrompt) {
 				return 0;
 			printExeStr(ofsPrompt);
 		} else return a;
-		a = _vm->getSelection(1);
+		a = _vm->getSelection(kSelNumber);
 	}
 
 }

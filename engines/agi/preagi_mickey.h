@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef AGI_PREAGI_MICKEY_H
+#define AGI_PREAGI_MICKEY_H
+
 #include "agi/agi.h"
 
 namespace Agi {
@@ -801,4 +804,6 @@ protected:
 	void waitAnyKey(bool anim = false);
 };
 
-}
+} // End of namespace Agi
+
+#endif

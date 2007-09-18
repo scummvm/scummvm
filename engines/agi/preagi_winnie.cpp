@@ -23,6 +23,7 @@
  *
  */
 
+#include "agi/preagi.h"
 #include "agi/preagi_winnie.h"
 #include "agi/graphics.h"
 

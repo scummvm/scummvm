@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef AGI_PREAGI_WINNIE_H
+#define AGI_PREAGI_WINNIE_H
+
 #include "agi/agi.h"
 
 namespace Agi {
@@ -343,4 +346,7 @@ private:
 	void showOwlHelp();
 };
 
-}
+}  // End of namespace Agi
+
+#endif
+

@@ -41,7 +41,7 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 	_patCode = _patNum = _priOn = _scrOn = _scrColor = _priColor = 0;
 	_xOffset = _yOffset = 0;
 
-	_pictureType = AGIPIC_V2;
+	_pictureVersion = AGIPIC_V2;
 	_minCommand = 0xf0;
 	_flags = 0;
 }
@@ -253,6 +253,11 @@ INLINE int PictureMgr::isOkFillHere(int x, int y) {
 
 	p = _vm->_game.sbuf16c[y * _width + x];
 
+	// FIXME: This overflows stack, but otherwise is a wild guess
+	// original has some checks against color 11 (0xB)
+	if (_pictureVersion == AGIPIC_V15 && 0)
+		return (p & 0x0f) == 0;
+
 	if (!_priOn && _scrOn && _scrColor != 15)
 		return (p & 0x0f) == 15;
 
@@ -322,7 +327,7 @@ void PictureMgr::agiFill(unsigned int x, unsigned int y) {
 **
 ** Draws an xCorner  (drawing action 0xF5)
 **************************************************************************/
-void PictureMgr::xCorner() {
+void PictureMgr::xCorner(bool skipOtherCoords) {
 	int x1, x2, y1, y2;
 
 	x1 = nextByte();
@@ -332,11 +337,20 @@ void PictureMgr::xCorner() {
 	for (;;) {
 		x2 = nextByte();
 
+		if (skipOtherCoords)
+			if (nextByte() >= _minCommand)
+				break;
+
 		if (x2 >= _minCommand)
 			break;
 
 		drawLine(x1, y1, x2, y1);
 		x1 = x2;
+
+		if (skipOtherCoords)
+			if (nextByte() >= _minCommand)
+				break;
+
 		y2 = nextByte();
 
 		if (y2 >= _minCommand)
@@ -353,7 +367,7 @@ void PictureMgr::xCorner() {
 **
 ** Draws an yCorner  (drawing action 0xF4)
 **************************************************************************/
-void PictureMgr::yCorner() {
+void PictureMgr::yCorner(bool skipOtherCoords) {
 	int x1, x2, y1, y2;
 
 	x1 = nextByte();
@@ -361,6 +375,10 @@ void PictureMgr::yCorner() {
 	putVirtPixel(x1, y1);
 
 	for (;;) {
+		if (skipOtherCoords)
+			if (nextByte() >= _minCommand)
+				break;
+
 		y2 = nextByte();
 
 		if (y2 >= _minCommand)
@@ -372,6 +390,10 @@ void PictureMgr::yCorner() {
 
 		if (x2 >= _minCommand)
 			break;
+
+		if (skipOtherCoords)
+			if (nextByte() >= _minCommand)
+				break;
 
 		drawLine(x1, y1, x2, y1);
 		x1 = x2;
@@ -387,6 +409,10 @@ void PictureMgr::yCorner() {
 **************************************************************************/
 void PictureMgr::fill() {
 	int x1, y1;
+
+	if (_pictureVersion == AGIPIC_V15 && 0)
+		if (_scrColor == 0xf && !(_flags & kPicFTrollMode))
+			return;
 
 	while ((x1 = nextByte()) < _minCommand && (y1 = nextByte()) < _minCommand)
 		agiFill(x1, y1);
@@ -472,7 +498,7 @@ void PictureMgr::plotPattern(int x, int y) {
 	int counterStep;
 	int ditherCond;
 
-	if (_flags == kPicFCircle)
+	if (_flags & kPicFCircle)
 		_patCode |= 0x10;
 
 	if (_vm->getGameType() == GType_PreAGI) {
@@ -555,7 +581,7 @@ void PictureMgr::drawPicture() {
 	for (drawing = 1; drawing && _foffs < _flen;) {
 		act = nextByte();
 
-		if (_pictureType == AGIPIC_C64 && act >= 0xf0 && act <= 0xfe) {
+		if (_pictureVersion == AGIPIC_C64 && act >= 0xf0 && act <= 0xfe) {
 			_scrColor = act - 0xf0;
 			continue;
 		}
@@ -586,30 +612,37 @@ void PictureMgr::drawPicture() {
 			plotBrush();
 			break;
 		case 0xf0:	// set colour on screen (AGI pic v2)
+			if (_pictureVersion == AGIPIC_V15)
+				break;
+
 			_scrColor = nextByte();
 			_scrColor &= 0xF;	// for v3 drawing diff
 			_scrOn = true;
 			break;
 		case 0xf1:
-			if (_pictureType == AGIPIC_V1) {
+			if (_pictureVersion == AGIPIC_V1) {
 				_scrColor = nextByte();
 				_scrColor &= 0xF;	// for v3 drawing diff
 				_scrOn = true;
 				_priOn = false;
-			} else if (_pictureType == AGIPIC_V15) {	// set colour on screen
+			} else if (_pictureVersion == AGIPIC_V15) {	// set colour on screen
 				_scrColor = nextByte();
 				_scrColor &= 0xF;
-			} else if (_pictureType == AGIPIC_V2) {	// disable screen drawing
+				_scrOn = true;
+			} else if (_pictureVersion == AGIPIC_V2) {	// disable screen drawing
 				_scrOn = false;
 			}
 			break;
 		case 0xf2:	// set colour on priority (AGI pic v2)
+			if (_pictureVersion == AGIPIC_V15)
+				break;
+
 			_priColor = nextByte();
 			_priColor &= 0xf;	// for v3 drawing diff
 			_priOn = true;
 			break;
 		case 0xf3:
-			if (_pictureType == AGIPIC_V1) {
+			if (_pictureVersion == AGIPIC_V1) {
 				_scrColor = nextByte();
 				_scrColor &= 0xF;	// for v3 drawing diff
 				_scrOn = true;
@@ -618,34 +651,47 @@ void PictureMgr::drawPicture() {
 				_priOn = true;
 			}
 
-			// Empty in AGI pic V1.5
+			if (_pictureVersion == AGIPIC_V15 && (_flags & kPicFf3Stop))
+				drawing = 0;
 
-			if (_pictureType == AGIPIC_V2)	// disable priority screen
+			if (_pictureVersion == AGIPIC_V2)	// disable priority screen
 				_priOn = false;
 			break;
 		case 0xf4:	// y-corner
+			if (_pictureVersion == AGIPIC_V15)
+				break;
+
 			yCorner();
 			break;
 		case 0xf5:	// x-corner
+			if (_pictureVersion == AGIPIC_V15)
+				break;
+
 			xCorner();
 			break;
 		case 0xf6:	// absolute draw lines
+			if (_pictureVersion == AGIPIC_V15)
+				break;
+
 			absoluteDrawLine();
 			break;
 		case 0xf7:	// dynamic draw lines
+			if (_pictureVersion == AGIPIC_V15)
+				break;
+
 			dynamicDrawLine();
 			break;
 		case 0xf8:	// fill
-			if (_pictureType == AGIPIC_V15) {
-				absoluteDrawLine();
-			} else if (_pictureType == AGIPIC_V2) {
+			if (_pictureVersion == AGIPIC_V15) {
+				yCorner(true);
+			} else if (_pictureVersion == AGIPIC_V2) {
 				fill();
 			}
 			break;
 		case 0xf9:	// set pattern
-			if (_pictureType == AGIPIC_V15) {
-				absoluteDrawLine();
-			} else if (_pictureType == AGIPIC_V2) {
+			if (_pictureVersion == AGIPIC_V15) {
+				xCorner(true);
+			} else if (_pictureVersion == AGIPIC_V2) {
 				_patCode = nextByte();
 
 				if (_vm->getGameType() == GType_PreAGI)
@@ -653,26 +699,29 @@ void PictureMgr::drawPicture() {
 			}
 			break;
 		case 0xfa:	// plot brush
-			if (_pictureType == AGIPIC_V1) {
+			if (_pictureVersion == AGIPIC_V1) {
 				_scrOn = false;
 				_priOn = true;
 				absoluteDrawLine();
 				_scrOn = true;
 				_priOn = false;
-			} else if (_pictureType == AGIPIC_V15) {
+			} else if (_pictureVersion == AGIPIC_V15) {
 				absoluteDrawLine();
-			} else if (_pictureType == AGIPIC_V2) {
+			} else if (_pictureVersion == AGIPIC_V2) {
 				plotBrush();
 			}
 			break;
 		case 0xfb:
-			if (_pictureType == AGIPIC_V1) {
+			if (_pictureVersion == AGIPIC_V1) {
 				dynamicDrawLine();
-			} else if (_pictureType == AGIPIC_V15) {
+			} else if (_pictureVersion == AGIPIC_V15) {
 				absoluteDrawLine();
 			}
 			break;
 		case 0xfc:	// fill (AGI pic v1)
+			if (_pictureVersion == AGIPIC_V15)
+				break;
+
 			_scrColor = nextByte();
 			_scrColor &= 0xF;
 			_priColor = nextByte();
@@ -689,9 +738,9 @@ void PictureMgr::drawPicture() {
 			drawing = 0;
 			break;
 		default:
-			warning("Unknown v2 picture opcode (%x)", act);
+			warning("Unknown picture opcode (%x) at (%x)", act, _foffs - 1);
 		}
-		if (_flags == kPicFStep && _vm->getGameType() == GType_PreAGI) {
+		if ((_flags & kPicFStep) && _vm->getGameType() == GType_PreAGI) {
 			// FIXME: This is used by Mickey for the crystal animation, but
 			// currently it's very very very slow
 			/*
@@ -879,10 +928,10 @@ void PictureMgr::setPattern(uint8 code, uint8 num) {
 	_patNum = num;
 }
 
-void PictureMgr::setPictureType(int type) {
-	_pictureType = type;
+void PictureMgr::setPictureVersion(AgiPictureVersion version) {
+	_pictureVersion = version;
 
-	if (type == AGIPIC_C64)
+	if (version == AGIPIC_C64)
 		_minCommand = 0xe0;
 	else
 		_minCommand = 0xf0;
