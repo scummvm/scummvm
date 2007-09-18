@@ -37,6 +37,21 @@
 #endif
 #include <tchar.h>
 
+// F_OK, R_OK and W_OK are not defined under MSVC, so we define them here
+// For more information on the modes used by MSVC, check:
+// http://msdn2.microsoft.com/en-us/library/1w06ktdy(VS.80).aspx
+#ifndef F_OK
+#define F_OK 0
+#endif
+
+#ifndef R_OK
+#define R_OK 4
+#endif
+
+#ifndef W_OK
+#define W_OK 2
+#endif
+
 /**
  * Implementation of the ScummVM file system API based on Windows API.
  * 
