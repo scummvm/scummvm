@@ -328,7 +328,12 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 		// Translate character
 		if (_fontMapping == 0) {	// Check font mapping debug flag
 			// Default game behavior
-			if (!(flags & kFontDontmap))
+
+			// It seems that this font mapping causes problems with non-english
+			// versions of IHNM, so it has been changed to apply for ITE only.
+			// It doesn't make any difference for the English version of IHNM.
+			// Fixes bug #1796045: "IHNM: Spanish font wrong".
+			if (!(flags & kFontDontmap) && _vm->getGameType() == GType_ITE)
 				c_code = _charMap[c_code];
 		} else if (_fontMapping == 1) {
 			// Force font mapping
@@ -341,6 +346,8 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 		// Check if character is defined
 		if ((drawFont.fontCharEntry[c_code].index == 0) && (c_code != FONT_FIRSTCHAR)) {
 #if FONT_SHOWUNDEFINED
+			// A tab character appears in the IHNM demo instructions screen, so filter
+			// it out here
 			if (c_code == FONT_CH_SPACE || c_code == FONT_CH_TAB) {
 				textPoint.x += drawFont.fontCharEntry[c_code].tracking;
 				continue;
