@@ -142,24 +142,30 @@ struct MemParams {
 		Bit8u outlevel; // OUTPUT LEVEL 0-100
 		Bit8u panpot; // PANPOT 0-14 (R-L)
 		Bit8u dummyv[6];
-	} MT32EMU_ALIGN_PACKED patchSettings[9];
+	} MT32EMU_ALIGN_PACKED;
+	
+	PatchTemp patchSettings[9];
 
 	struct RhythmTemp {
 		Bit8u timbre; // TIMBRE  0-94 (M1-M64,R1-30,OFF)
 		Bit8u outlevel; // OUTPUT LEVEL 0-100
 		Bit8u panpot; // PANPOT 0-14 (R-L)
 		Bit8u reverbSwitch;  // REVERB SWITCH 0-1 (OFF,ON)
-	} MT32EMU_ALIGN_PACKED rhythmSettings[85];
+	} MT32EMU_ALIGN_PACKED;
+	
+	RhythmTemp rhythmSettings[85];
 
-	TimbreParam MT32EMU_ALIGN_PACKED timbreSettings[8];
+	TimbreParam timbreSettings[8];
 
-	PatchParam MT32EMU_ALIGN_PACKED patches[128];
+	PatchParam patches[128];
 
 	// NOTE: There are only 30 timbres in the "rhythm" bank for MT-32; the additional 34 are for LAPC-I and above
 	struct PaddedTimbre {
 		TimbreParam timbre;
 		Bit8u padding[10];
-	} MT32EMU_ALIGN_PACKED timbres[64 + 64 + 64 + 64]; // Group A, Group B, Memory, Rhythm
+	} MT32EMU_ALIGN_PACKED;
+	
+	PaddedTimbre timbres[64 + 64 + 64 + 64]; // Group A, Group B, Memory, Rhythm
 
 	struct SystemArea {
 		Bit8u masterTune; // MASTER TUNE 0-127 432.1-457.6Hz
@@ -169,7 +175,9 @@ struct MemParams {
 		Bit8u reserveSettings[9]; // PARTIAL RESERVE (PART 1) 0-32
 		Bit8u chanAssign[9]; // MIDI CHANNEL (PART1) 0-16 (1-16,OFF)
 		Bit8u masterVol; // MASTER VOLUME 0-100
-	} MT32EMU_ALIGN_PACKED system;
+	} MT32EMU_ALIGN_PACKED;
+	
+	SystemArea system;
 };
 
 #if defined(_MSC_VER) || defined (__MINGW32__)
