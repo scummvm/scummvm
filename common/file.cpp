@@ -444,7 +444,13 @@ bool File::exists(const String &filename) {
 	// path was passed). But we only use this to filter out directories.
 	FilesystemNode file(filename);
 	
-	return (!file.isDirectory() && file.exists());
+	// FIXME: since (as stated in the comment above) FilesystemNode creation
+	// just works for absolute paths, and we use this to tell if a file
+	// exsists in any of the setup paths we can't use:
+	//return (!file.isDirectory() && file.exists());
+	// if file.exsits() fails
+	if (file.exists())
+		return !file.isDirectory();
 	
 	//***DEPRECATED COMMENTS BELOW, LEFT FOR DISCUSSION***
 	// Next, try to locate the file by *opening* it in read mode. This has
