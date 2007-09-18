@@ -474,6 +474,9 @@ int Events::handleOneShot(Event *event) {
 		case kEventRestoreMode:
 			_vm->_interface->restoreMode();
 			break;
+		case kEventSetMode:
+			_vm->_interface->setMode(event->param);
+			break;
 		default:
 			break;
 		}

@@ -93,6 +93,7 @@ enum EventOps {
 	kEventClearStatus = 4,
 	kEventSetFadeMode = 5,
 	kEventRestoreMode = 6,
+	kEventSetMode = 7,
 	// ACTOR events
 	kEventMove = 1,
 	// SCRIPT events

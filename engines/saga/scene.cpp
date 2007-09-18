@@ -1310,7 +1310,6 @@ void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLengt
 
 void Scene::clearPlacard() {
 	static PalEntry cur_pal[PAL_ENTRIES];
-	PalEntry *pal;
 	Event event;
 	Event *q_event;
 
@@ -1335,11 +1334,15 @@ void Scene::clearPlacard() {
 	event.duration = 0;
 	q_event = _vm->_events->chain(q_event, &event);
 
-	event.type = kEvTOneshot;
-	event.code = kTextEvent;
-	event.op = kEventRemove;
-	event.data = _vm->_script->getPlacardTextEntry();
-	q_event = _vm->_events->chain(q_event, &event);
+	if (_vm->getGameType() == GType_ITE) {
+		event.type = kEvTOneshot;
+		event.code = kTextEvent;
+		event.op = kEventRemove;
+		event.data = _vm->_script->getPlacardTextEntry();
+		q_event = _vm->_events->chain(q_event, &event);
+	} else {
+		_vm->_scene->_textList.clear();
+	}
 
 	event.type = kEvTImmediate;
 	event.code = kInterfaceEvent;
@@ -1348,14 +1351,51 @@ void Scene::clearPlacard() {
 	event.duration = 0;
 	q_event = _vm->_events->chain(q_event, &event);
 
-	_vm->_scene->getBGPal(pal);
+	if (_vm->getGameType() == GType_IHNM) {
+		// set mode to main
+		event.type = kEvTImmediate;
+		event.code = kInterfaceEvent;
+		event.op = kEventSetMode;
+		event.param = kPanelMain;
+		event.time = 0;
+		event.duration = 0;
+		q_event = _vm->_events->chain(q_event, &event);
+	}
 
+	// Display scene background, but stay with black palette
+	event.type = kEvTImmediate;
+	event.code = kBgEvent;
+	event.op = kEventDisplay;
+	event.param = kEvPNoSetPalette;
+	event.time = 0;
+	event.duration = 0;
+	q_event = _vm->_events->chain(q_event, &event);
+
+	// set fade mode
+	event.type = kEvTImmediate;
+	event.code = kInterfaceEvent;
+	event.op = kEventSetFadeMode;
+	event.param = kFadeIn;
+	event.time = 0;
+	event.duration = 0;
+	q_event = _vm->_events->chain(q_event, &event);
+
+	// Fade in from black to the scene background palette
 	event.type = kEvTImmediate;
 	event.code = kPalEvent;
 	event.op = kEventBlackToPal;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
-	event.data = pal;
+	event.data = _bg.pal;
+	q_event = _vm->_events->chain(q_event, &event);
+
+	// set fade mode
+	event.type = kEvTImmediate;
+	event.code = kInterfaceEvent;
+	event.op = kEventSetFadeMode;
+	event.param = kNoFade;
+	event.time = 0;
+	event.duration = 0;
 	q_event = _vm->_events->chain(q_event, &event);
 
 	event.type = kEvTOneshot;
@@ -1464,12 +1504,8 @@ void Scene::showPsychicProfile(const char *text) {
 
 void Scene::clearPsychicProfile() {
 	if (_vm->_interface->getMode() == kPanelPlacard || _vm->getGameId() == GID_IHNM_DEMO) {
-		_vm->_interface->restoreMode();
-		_vm->_scene->clearPlacard();
-		_vm->_scene->_textList.clear();
 		_vm->_render->setFlag(RF_DISABLE_ACTORS);
-		_vm->_gfx->restorePalette();
-		_vm->_scene->restoreScene();
+		_vm->_scene->clearPlacard();
 		_vm->_interface->activate();
 	}
 }
