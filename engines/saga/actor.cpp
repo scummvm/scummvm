@@ -1244,7 +1244,7 @@ void Actor::loadState(Common::InSaveFile *in) {
 	int32 i;
 
 	int16 protagState = in->readSint16LE();
-	if (protagState != 0)
+	if (protagState != 0 || _protagonist->_shareFrames)
 		setProtagState(protagState);
 
 	for (i = 0; i < _actorsCount; i++) {
