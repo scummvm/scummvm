@@ -47,8 +47,8 @@ void Troll::pressAnyKey() {
 
 void Troll::drawMenu(const char *szMenu, int iSel) {
 	_vm->clearTextArea();
-	_vm->drawStr(20, 0, kColorDefault, szMenu);
-	_vm->drawStr(21 + iSel, 0, kColorDefault, " *");
+	_vm->drawStr(21, 0, kColorDefault, szMenu);
+	_vm->drawStr(22 + iSel, 0, kColorDefault, " *");
 	_vm->_gfx->doUpdate();
 }
 
@@ -66,8 +66,9 @@ void Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 			case Common::EVENT_MOUSEMOVE:
 				y = event.mouse.y / 8;
 
-				if (nSel > y - 21)
-					*iSel = y - 21;
+				if (y >= 22)
+					if (nSel > y - 22)
+						*iSel = y - 22;
 
 				drawMenu(szMenu, *iSel);
 				break;
@@ -239,20 +240,24 @@ void Troll::tutorial() {
 	//char szTreasure[16] = {0};
 
 	for (;;) {
-		//SetGfxMode();
+		_vm->clearScreen(0xFF);
+
 		_vm->printStr(IDS_TRO_TUTORIAL_0);
 		_vm->getSelection(kSelSpace);
 		
+		_vm->clearScreen(0x55);
+		_vm->setDefaultTextColor(0x0F);
+
 		done = false;
 		while (!done) {
 			getMenuSel(IDS_TRO_TUTORIAL_1, &iSel, IDI_TRO_MAX_OPTION);
 			switch(iSel) {
 			case IDI_TRO_SEL_OPTION_1:
-				_vm->clearGfxScreen(0x0B);
+				_vm->clearScreen(0x22, false);
 				_vm->_gfx->doUpdate();
 				break;
 			case IDI_TRO_SEL_OPTION_2:
-				_vm->clearGfxScreen(0x00);
+				_vm->clearScreen(0x00, false);
 				_vm->_gfx->doUpdate();
 				break;
 			case IDI_TRO_SEL_OPTION_3:

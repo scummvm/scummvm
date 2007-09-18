@@ -115,6 +115,8 @@ const char IDS_TRO_NAME_TREASURE[][16] = {
 #define IDI_TRO_SEL_OPTION_2	1
 #define IDI_TRO_SEL_OPTION_3	2
 
+#define IDI_TRO_MAX_ROW_PIC	21
+
 // offsets
 
 #define IDA_TRO_BINNAME "troll.exe"

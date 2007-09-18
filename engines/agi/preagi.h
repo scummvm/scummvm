@@ -68,8 +68,9 @@ public:
 	Common::String getTargetName() { return _targetName; }
 
 	// Screen
-	void clearScreen(int attr);
+	void clearScreen(int attr, bool overrideDefault = true);
 	void clearGfxScreen(int attr);
+	void setDefaultTextColor(int attr) { _defaultColor = attr; }
 
 	// Keyboard
 	int getSelection(SelectionTypes type);

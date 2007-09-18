@@ -36,8 +36,9 @@
 namespace Agi {
 
 // Screen functions
-void PreAgiEngine::clearScreen(int attr) {
-	_defaultColor = attr;
+void PreAgiEngine::clearScreen(int attr, bool overrideDefault) {
+	if (overrideDefault)
+		_defaultColor = attr;
 
 	_gfx->clearScreen((attr & 0xF0) / 0x10); 
 }
@@ -85,7 +86,12 @@ void PreAgiEngine::drawStrMiddle(int row, int attr, const char *buffer) {
 }
 
 void PreAgiEngine::clearTextArea() {
-	for (int row = IDI_MAX_ROW_PIC; row < 200 / 8; row++) {
+	int start = IDI_MAX_ROW_PIC;
+
+	if (getGameID() == GID_TROLL)
+		start = 21;
+
+	for (int row = start; row < 200 / 8; row++) {
 		clearRow(row);		
 	}
 }
@@ -126,7 +132,7 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 			case Common::EVENT_QUIT:
 				_system->quit();
 			case Common::EVENT_LBUTTONUP:
-				if (type == 0)
+				if (type == kSelYesNo)
 					return 1;
 			case Common::EVENT_RBUTTONUP:
 				return 0;
@@ -158,7 +164,7 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 				default:
 					if (type == kSelYesNo) {
 						return 2;
-					} else {
+					} else if (type == kSelNumber) {
 						return 10;
 					}
 				}
