@@ -411,10 +411,12 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 
 bool File::remove(const String &filename){
 	if (remove(filename.c_str()) != 0) {
-		if (errno == EACCES)
-			;//TODO: read-only file
-		if (errno == ENOENT)
-			;//TODO: non-existent file
+		if (errno == EACCES) {
+			//TODO: read-only file
+		}
+		if (errno == ENOENT) {
+			//TODO: non-existent file
+		}
 		
 		return false;
 	} else {
@@ -424,10 +426,12 @@ bool File::remove(const String &filename){
 
 bool File::remove(const FilesystemNode &node){
 	if (remove(node.getPath()) != 0) {
-		if (errno == EACCES)
-			;//TODO: read-only file
-		if (errno == ENOENT)
-			;//TODO: non-existent file
+		if (errno == EACCES) {
+			//TODO: read-only file
+		}
+		if (errno == ENOENT) {
+			//TODO: non-existent file
+		}
 				
 		return false;
 	} else {
