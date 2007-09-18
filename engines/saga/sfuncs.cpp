@@ -280,9 +280,9 @@ void Script::sfTakeObject(SCRIPTFUNC_PARAMS) {
 		// WORKAROUND for two incorrect object sprites in the IHNM demo
 		// (the mirror and the icon in Ted's part). Set them correctly here
 		if (_vm->getGameId() == GID_IHNM_DEMO) {
-			if (obj->_spriteListResourceId == 4 && objectId == 16408)
+			if (objectId == 16408)
 				obj->_spriteListResourceId = 24;
-			if (obj->_spriteListResourceId == 3 && objectId == 16409)
+			if (objectId == 16409)
 				obj->_spriteListResourceId = 25;
 		}
 
@@ -802,10 +802,10 @@ void Script::sfSceneEq(SCRIPTFUNC_PARAMS) {
 // Script function #32 (0x20)
 void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 	uint16 objectId = thread->pop();
-	uint16 spriteId = thread->pop();
-	int16 x = thread->pop();
-	int16 y = thread->pop();
 	ObjectData *obj = _vm->_actor->getObj(objectId);
+	uint16 spriteId = thread->pop();
+	obj->_location.x = thread->pop();
+	obj->_location.y = thread->pop();
 
 	if (obj->_sceneNumber == ITE_SCENE_INV) {
 		_vm->_interface->removeFromInventory(objectId);
@@ -831,9 +831,6 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 	} else {
 		obj->_spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
 	}
-
-	obj->_location.x = x;
-	obj->_location.y = y;
 }
 
 // Script function #33 (0x21)
@@ -1781,8 +1778,7 @@ void Script::sfShowIHNMDemoHelpBg(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS) {
-	int stringId = thread->pop();
-	//int textHeight = _vm->_font->getHeight(kKnownFontVerb, thread->_strings->getString(stringId), 226, kFontCentered);
+	int stringId = thread->pop();	
 	TextListEntry textEntry;
 	Event event;
 
@@ -1804,7 +1800,7 @@ void Script::sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS) {
 	event.data = _psychicProfileTextEntry;
 	_vm->_events->queue(&event);
 
-	_ihnmDemoCurrentY += 10;
+	_ihnmDemoCurrentY += _vm->_font->getHeight(kKnownFontVerb, thread->_strings->getString(stringId), 226, kFontCentered);
 }
 
 void Script::sfShowIHNMDemoHelpPage(SCRIPTFUNC_PARAMS) {
