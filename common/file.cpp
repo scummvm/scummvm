@@ -446,9 +446,13 @@ bool File::exists(const String &filename) {
 	
 	// FIXME: since (as stated in the comment above) FilesystemNode creation
 	// just works for absolute paths, and we use this to tell if a file
-	// exsists in any of the setup paths we can't use:
+	// exsists in any of the setup paths so we ca not use:
 	//return (!file.isDirectory() && file.exists());
-	// if file.exsits() fails
+	// 
+	// I.e.:
+	// FilesystemNode("foofile"); would fail for most (even all?)
+	// implementations where the file 'foofile' does not exist in the CWD,
+	// so we can not rely on FilesystemNode::exists, which would return false.
 	if (file.exists())
 		return !file.isDirectory();
 	
