@@ -446,7 +446,7 @@ bool File::exists(const String &filename) {
 	
 	// FIXME: since (as stated in the comment above) FilesystemNode creation
 	// just works for absolute paths, and we use this to tell if a file
-	// exsists in any of the setup paths so we ca not use:
+	// exists in any of the setup paths so we ca not use:
 	//return (!file.isDirectory() && file.exists());
 	// 
 	// I.e.:
