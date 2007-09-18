@@ -206,21 +206,17 @@ void Troll::credits() {
 
 	_vm->drawStr(1, 2, kColorDefault, IDS_TRO_CREDITS_0);
 
-	_vm->drawStr(7, 19, 10, "T");
-	_vm->drawStr(7, 20, 11, "R");
-	_vm->drawStr(7, 21, 12, "O");
-	_vm->drawStr(7, 22, 13, "L");
-	_vm->drawStr(7, 23, 14, "L");
-	_vm->drawStr(7, 24, 15, "'");
-	_vm->drawStr(7, 25, 9, "S");
-	_vm->drawStr(7, 27, 11, "T");
-	_vm->drawStr(7, 28, 12, "A");
-	_vm->drawStr(7, 29, 13, "L");
-	_vm->drawStr(7, 30, 14, "E");
-	_vm->drawStr(7, 32, 9, "(");
-	_vm->drawStr(7, 33, 10, "t");
-	_vm->drawStr(7, 34, 11, "m");
-	_vm->drawStr(7, 35, 12, ")");
+	int color = 10;
+	char str[2];
+
+	str[1] = 0;
+
+	for (uint i = 0; i < strlen(IDS_TRO_CREDITS_1); i++) {
+		str[0] = IDS_TRO_CREDITS_1[i];
+		_vm->drawStr(7, 19 + i, color++, str);
+		if (color > 15)
+			color = 9;
+	}
 
 	_vm->drawStr(8, 19, kColorDefault, IDS_TRO_CREDITS_2);
 
@@ -331,9 +327,7 @@ void Troll::intro() {
 	_vm->drawStr(14, 15, kColorDefault, IDS_TRO_INTRO_1);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
-
-	// draw troll picture
-	_vm->_system->delayMillis(320);
+	_vm->_system->delayMillis(3200);
 
 	// Draw logo
 	drawPic(45, false, true);
@@ -371,22 +365,53 @@ void Troll::gameOver() {
 	pressAnyKey();
 }
 
+int Troll::drawRoom(char *menu) {
+	int n;
+
+	drawPic(_currentRoom - 1, false, true);
+	_vm->_gfx->doUpdate();
+
+	// TODO: Troll
+
+	char tmp[10];
+	strncat(menu, (char*)_gameData + IDO_TRO_LOCMESSAGES + _locationDescIndex * 39, 39);
+
+	for (int i = 0; i < 3; i++) {
+		if (_roomDescs[_currentRoom - 1].options[i]) {
+			sprintf(tmp, "\n  %d.", i);
+			strcat(menu, tmp);
+
+			strncat(menu, (char *)_gameData + _options[_roomDescs[_currentRoom - 1].options[i]], 35);
+
+			n = i + 1;
+		}
+	}
+
+	return n;
+}
+
 void Troll::gameLoop() {
-	int iSel;
-	//int nSel;
 	bool done = false;
-	//char szMsg[161];
-	//char szMenu[161];
+	char menu[160+5];
+	int currentOption, numberOfOptions;
+
+	_moves = 0;
+	_currentRoom = 1;
+	_treasuresLeft = IDI_TRO_MAX_TREASURE;
+	_haveFlashlight = false;
+	_locationDescIndex = 0;
 	
 	while (!done) {
-//		Troll_DrawRoomPic(_currentRoom);
-//		Troll_ReadRoomText(_currentRoom, szMsg, szMenu, &nSel);
+		*menu = 0;
+		
+		currentOption = 0;
 
-		iSel = 0;
-		//getMenuSel(szMsg, szMenu, &iSel, nSel);
+		numberOfOptions = drawRoom(menu);
+
+		getMenuSel(menu, &currentOption, numberOfOptions);
 		_moves++;
 
-		switch(iSel) {
+		switch(_roomDescs[_currentRoom - 1].optionTypes[currentOption]) {
 		case IDI_TRO_SEL_OPTION_1:
 			break;
 		case IDI_TRO_SEL_OPTION_2:
@@ -398,20 +423,57 @@ void Troll::gameLoop() {
 
 }
 
-void Troll::fillPicOffsets() {
-	for (int i = 0; i < IDI_TRO_PICNUM; i++)
-		_pictureOffsets[i] = READ_LE_UINT16(_gameData + IDO_TRO_PIC_START + i * 2) 
-			+ IDO_TRO_DATA_START;
+void Troll::fillOffsets() {
+	int i;
+
+	for (i = 0; i < IDI_TRO_PICNUM; i++)
+		_pictureOffsets[i] = READ_LE_UINT16(_gameData + IDO_TRO_PIC_START + i * 2);
+
+	for (i = 0; i < IDI_TRO_NUM_OPTIONS; i++)
+		_options[i] = READ_LE_UINT16(_gameData + IDO_TRO_OPTIONS + i * 2);
+}
+
+void Troll::fillRoomDescs() {
+	int start = READ_LE_UINT16(_gameData + IDO_TRO_ROOMDESCS);
+	int ptr;
+	int j;
+
+	for (int i = 0; i < IDI_TRO_NUM_ROOMDESCS; i++) {
+		ptr = READ_LE_UINT16(_gameData + start);
+
+		for (j = 0; j < 3; j++)
+			_roomDescs[i].options[j] = _gameData[ptr++];
+
+		for (j = 0; j < 3; j++) {
+			switch (_gameData[ptr++]) {
+			case 0:
+				_roomDescs[i].optionTypes[j] = OT_GO;
+				break;
+			case 1:
+				_roomDescs[i].optionTypes[j] = OT_GET;
+				break;
+			case 2:
+				_roomDescs[i].optionTypes[j] = OT_WIN;
+				break;
+			case 3:
+				_roomDescs[i].optionTypes[j] = OT_UNKN;
+				break;
+			default:
+				error("Bad data @ (%x) %d", ptr - 1, i);
+			}
+		}
+
+		for (j = 0; j < 3; j++)
+			_roomDescs[i].roomDescIndex[j] = _gameData[ptr++];
+		
+		start += 2;
+	}
 }
 
 // Init
 
 void Troll::init() {
-	_moves = 0;
-	_currentRoom = 1;
-	_treasuresLeft = IDI_TRO_MAX_TREASURE;
-	
-	_vm->_picture->setPictureVersion(AGIPIC_V15);
+   	_vm->_picture->setPictureVersion(AGIPIC_V15);
 	//SetScreenPar(320, 200, (char*)ibm_fontdata);
 
 	Common::File infile;
@@ -419,15 +481,19 @@ void Troll::init() {
 		return;
 
 	_gameData = (byte *)malloc(infile.size());
-	infile.read(_gameData, infile.size());
+	infile.seek(IDO_TRO_DATA_START);
+	infile.read(_gameData, infile.size() - IDO_TRO_DATA_START);
 	infile.close();
 
-	fillPicOffsets();
+	fillOffsets();
+	fillRoomDescs();
 }
 
 void Troll::run() {
 	intro();
-	//gameLoop();
+
+	gameLoop();
+
 	gameOver();
 }
 

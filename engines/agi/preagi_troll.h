@@ -117,18 +117,36 @@ const char IDS_TRO_NAME_TREASURE[][16] = {
 
 #define IDI_TRO_MAX_ROW_PIC	21
 
+#define IDI_TRO_NUM_ROOMDESCS	65
+#define IDI_TRO_NUM_OPTIONS		129
+
 // offsets
 
 #define IDA_TRO_BINNAME "troll.exe"
 
-#define IDO_TRO_DATA_START (0x5855-0x3ef5)
-#define IDO_TRO_PIC_START			0x5855
+#define IDO_TRO_DATA_START  0x1960
+#define IDO_TRO_PIC_START	0x3EF5
+#define IDO_TRO_LOCMESSAGES 0x1F7C
+#define IDO_TRO_ROOMDESCS   0x0082
+#define IDO_TRO_OPTIONS     0x0364
+
+enum OptionType {
+	OT_GO,
+	OT_GET,
+	OT_WIN,
+	OT_UNKN
+};
+
+struct RoomDesc {
+	int options[3];
+	OptionType optionTypes[3];
+	int roomDescIndex[3];
+};
 
 class Troll {
 	friend class PreAgiEngine;
 public:
 	Troll(PreAgiEngine *vm);
-	//~Winnie();
 
 	void init();
 	void run();
@@ -137,6 +155,13 @@ private:
 	int _currentRoom;
 	int _moves;
 	int _treasuresLeft;
+	int _locationDescIndex;
+	int _numberOfOptions;
+	
+	bool _haveFlashlight;
+
+	RoomDesc _roomDescs[IDI_TRO_NUM_ROOMDESCS];
+	int _options[IDI_TRO_NUM_OPTIONS];
 
 	byte *_gameData;
 
@@ -151,6 +176,8 @@ private:
 
 	void inventory();
 
+	int drawRoom(char *menu);
+
 	void pressAnyKey();
 	void waitAnyKeyIntro();
 
@@ -158,7 +185,8 @@ private:
 
 	void drawMenu(const char *szMenu, int iSel);
 
-	void fillPicOffsets();
+	void fillOffsets();
+	void fillRoomDescs();
 
 private:
 	int _pictureOffsets[IDI_TRO_PICNUM];
