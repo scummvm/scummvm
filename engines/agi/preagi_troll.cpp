@@ -418,6 +418,8 @@ void Troll::gameLoop() {
 			break;
 		case IDI_TRO_SEL_OPTION_3:
 			break;
+		case OT_UNKN:
+			break;
 		}
 	}
 
