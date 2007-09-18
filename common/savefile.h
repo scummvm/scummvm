@@ -30,6 +30,8 @@
 #include "common/noncopyable.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "common/str.h"
+#include "common/error.h"
 
 namespace Common {
 
@@ -75,10 +77,40 @@ public:
  * returning the single SaveFileManager instances to be used.
  */
 class SaveFileManager : NonCopyable {
-
+	
+protected:
+	SFMError _error;
+	String _errorDesc;
+	
 public:
 	virtual ~SaveFileManager() {}
-
+	
+	/**
+	 * Clears the last set error code and string.
+	 */
+	virtual void clearError() { _error = SFM_NO_ERROR; _errorDesc = ""; }
+	
+	/**
+	 * Returns the last ocurred error code. If none ocurred, returns SFM_NO_ERROR.
+	 * 
+	 * @return A SFMError indicating the type of the last error.
+	 */
+	virtual SFMError getError() { return _error; }
+	
+	/**
+	 * Returns the last ocurred error description. If none ocurred, returns 0.
+	 * 
+	 * @return A string describing the last error.
+	 */
+	virtual String getErrorDesc() { return _errorDesc; }
+	
+	/**
+	 * Sets the last ocurred error.
+	 * @param error Code identifying the last error.
+	 * @param errorDesc String describing the last error.
+	 */
+	virtual void setError(SFMError error, String errorDesc) { _error = error; _errorDesc = errorDesc; }
+	
 	/**
 	 * Open the file with name filename in the given directory for saving.
 	 * @param filename	the filename
@@ -94,12 +126,18 @@ public:
 	virtual InSaveFile *openForLoading(const char *filename) = 0;
 
 	/**
-	 * Request a list of available savegames with a given prefix.
-	 * TODO: Document this better!
-	 * TODO: Or even replace it with a better API. For example, one that
-	 * returns a list of strings for all present file names. 
+	 * Removes the given savefile from the filesystem.
+	 * @param filename Filename path pointing to the savefile.
+	 * @return true if no error ocurred. false otherwise.
 	 */
-	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num) = 0;
+	virtual bool removeSavefile(const char *filename) = 0;
+	
+	/**
+	 * Request a list of available savegames with a given regex.
+	 * @param regex Regular expression to match. Wildcards like * or ? are available.
+	 * returns a list of strings for all present file names.
+	 */
+	virtual Common::StringList listSavefiles(const char *regex) = 0;
 
 	/**
 	 * Get the path to the save game directory.

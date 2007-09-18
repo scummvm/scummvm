@@ -1930,7 +1930,7 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 			path = ".";
 
 		FilesystemNode fsCurrentDir(path);
-		fsCurrentDir.listDir(fslistCurrentDir, FilesystemNode::kListFilesOnly);
+		fsCurrentDir.getChildren(fslistCurrentDir, FilesystemNode::kListFilesOnly);
 		fslist = &fslistCurrentDir;
 	}
 
@@ -1947,13 +1947,13 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 	// First grab all filenames and at the same time count the number of *.wag files
 	for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
 		if (file->isDirectory()) continue;
-		Common::String filename = file->name();
+		Common::String filename = file->getName();
 		filename.toLowercase();
 		allFiles[filename] = true; // Save the filename in a hash table
 		
 		if (filename.hasSuffix(".wag")) {
 			// Save latest found *.wag file's path (Can be used to open the file, the name can't)
-			wagFilePath = file->path();
+			wagFilePath = file->getPath();
 			wagFileCount++; // Count found *.wag files
 		}
 	}

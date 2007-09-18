@@ -23,8 +23,8 @@
  */
 
 #ifdef __PSP__
-#include "engines/engine.h"
 
+#include "engines/engine.h"
 #include "backends/fs/abstract-fs.h"
 
 #include <sys/stat.h>
@@ -32,39 +32,65 @@
 
 #define	ROOT_PATH	"ms0:/"
 
-
-/*
+/**
  * Implementation of the ScummVM file system API based on PSPSDK API.
+ * 
+ * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
-
 class PSPFilesystemNode : public AbstractFilesystemNode {
 protected:
 	String _displayName;
+	String _path;
 	bool _isDirectory;
 	bool _isValid;
-	String _path;
 	
 public:
+	/**
+	 * Creates a PSPFilesystemNode with the root node as path.
+	 */
 	PSPFilesystemNode();
+	
+	/**
+	 * Creates a PSPFilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
+	 */
 	PSPFilesystemNode(const Common::String &p, bool verify);
 
-	virtual String displayName() const { return _displayName; }
-	virtual String name() const { return _displayName; }
-	virtual bool isValid() const { return _isValid; }
+	virtual bool exists() const { return true; }		//FIXME: this is just a stub
+	virtual String getDisplayName() const { return _displayName; }
+	virtual String getName() const { return _displayName; }
+	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual String path() const { return _path; }
+	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isValid() const { return _isValid; }
+	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 
-	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
-	virtual AbstractFilesystemNode *parent() const;
-	virtual AbstractFilesystemNode *child(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
+	virtual AbstractFilesystemNode *getParent() const;
 };
 
-AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
-	return AbstractFilesystemNode::getRoot();
-}
+/**
+ * Returns the last component of a given path.
+ * 
+ * Examples:
+ * 			/foo/bar.txt would return /bar.txt
+ * 			/foo/bar/    would return /bar/
+ *  
+ * @param str String containing the path.
+ * @return Pointer to the first char of the last component inside str.
+ */
+static const char *lastPathComponent(const Common::String &str) {
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
 
-AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
-	return new PSPFilesystemNode();
+	while (cur >= start && *cur != '/') {
+		--cur;
+	}
+
+	return cur + 1;
 }
 
 PSPFilesystemNode::PSPFilesystemNode() {
@@ -89,13 +115,23 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 	}       
 }
 
-AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
-	return new PSPFilesystemNode(path, true);
+AbstractFilesystemNode *PSPFilesystemNode::getChild(const String &n) const {
+	// FIXME: Pretty lame implementation! We do no error checking to speak
+	// of, do not check if this is a special node, etc.
+	assert(_isDirectory);
+	
+	String newPath(_path);
+	if (_path.lastChar() != '/')
+		newPath += '/';
+	newPath += n;
+
+	return new PSPFilesystemNode(newPath, true);
 }
 
-
-bool PSPFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
+bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
+
+	//TODO: honor the hidden flag
 
 	int dfd  = sceIoDopen(_path.c_str());
 	if (dfd > 0) {
@@ -133,18 +169,7 @@ bool PSPFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	}
 }
 
-static const char *lastPathComponent(const Common::String &str) {
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '/') {
-		--cur;
-	}
-
-	return cur + 1;
-}
-
-AbstractFilesystemNode *PSPFilesystemNode::parent() const {
+AbstractFilesystemNode *PSPFilesystemNode::getParent() const {
 	assert(_isValid);
 	
 	if (_path == ROOT_PATH)
@@ -153,22 +178,7 @@ AbstractFilesystemNode *PSPFilesystemNode::parent() const {
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path);
 	
-	PSPFilesystemNode *p = new PSPFilesystemNode(String(start, end - start), false);
-	
-	return p;
+	return new PSPFilesystemNode(String(start, end - start), false);
 }
 
-AbstractFilesystemNode *PSPFilesystemNode::child(const String &n) const {
-	// FIXME: Pretty lame implementation! We do no error checking to speak
-	// of, do not check if this is a special node, etc.
-	assert(_isDirectory);
-	String newPath(_path);
-	if (_path.lastChar() != '/')
-		newPath += '/';
-	newPath += n;
-	PSPFilesystemNode *p = new PSPFilesystemNode(newPath, true);
-
-	return p;
-}
-
-#endif // PSP
+#endif //#ifdef __PSP__

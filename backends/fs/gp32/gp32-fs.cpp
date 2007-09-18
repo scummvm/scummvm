@@ -24,38 +24,81 @@
  */
 
 #include "stdafx.h"
-
 #include "backends/fs/abstract-fs.h"
 
+#define MAX_PATH_SIZE 256
+
+/**
+ * Implementation of the ScummVM file system API.
+ * 
+ * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
+ */
 class GP32FilesystemNode : public AbstractFilesystemNode {
 protected:
 	String _displayName;
+	String _path;
 	bool _isDirectory;
 	bool _isRoot;
-	String _path;
 
 public:
+	/**
+	 * Creates a GP32FilesystemNode with the root node as path.
+	 */
 	GP32FilesystemNode();
+	
+	/**
+	 * Creates a GP32FilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 */
 	GP32FilesystemNode(const String &path);
 
-	virtual String displayName() const { return _displayName; }
-	virtual String name() const { return _displayName; }
-	// FIXME: isValid should return false if this Node can't be used!
-	// client code can rely on the return value.
-	virtual bool isValid() const { return true; }
+	virtual bool exists() const { return true; }		//FIXME: this is just a stub
+	virtual String getDisplayName() const { return _displayName; }
+	virtual String getName() const { return _displayName; }
+	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual String path() const { return _path; }
+	// FIXME: isValid should return false if this Node can't be used!
+	// so client code can rely on the return value.
+	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isValid() const { return true; }
+	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 
-	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
-	virtual AbstractFilesystemNode *parent() const;
-	virtual AbstractFilesystemNode *child(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
+	virtual AbstractFilesystemNode *getParent() const;
 };
-
-#define MAX_PATH_SIZE 256
 
 const char gpRootPath[] = "gp:\\";
 //char gpCurrentPath[MAX_PATH_SIZE] = "gp:\\";		// must end with '\'
 
+/**
+ * Returns the last component of a given path.
+ * 
+ * Examples:
+ * 			gp:\foo\bar.txt would return "\bar.txt"
+ * 			gp:\foo\bar\    would return "\bar\"
+ *  
+ * @param str Path to obtain the last component from.
+ * @return Pointer to the first char of the last component inside str.
+ */
+static const char *lastPathComponent(const Common::String &str) {
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
+
+	while (cur >= start && *cur != '\\') {
+		--cur;
+	}
+
+	return cur + 1;
+}
+
+/**
+ * FIXME: document this function.
+ * 
+ * @param path
+ * @param convPath
+ */
 int gpMakePath(const char *path, char *convPath) {
 	// copy root or current directory
 	const char *p;
@@ -106,18 +149,6 @@ int gpMakePath(const char *path, char *convPath) {
 	return 0;
 }
 
-AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
-	return AbstractFilesystemNode::getRoot();
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getRoot() {
-	return new GP32FilesystemNode();
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
-	return new GP32FilesystemNode(path);
-}
-
 GP32FilesystemNode::GP32FilesystemNode() {
 	_isDirectory = true;
 	_isRoot = true;
@@ -132,8 +163,8 @@ GP32FilesystemNode::GP32FilesystemNode(const String &path) {
 	gpMakePath(path.c_str(), convPath);
 
 	_path = convPath;
-
 	pos = convPath;
+	
 	while (*pos)
 		if (*pos++ == '\\')
 			dsplName = pos;
@@ -150,14 +181,27 @@ GP32FilesystemNode::GP32FilesystemNode(const String &path) {
 	_isDirectory = true;
 }
 
-bool GP32FilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
+AbstractFilesystemNode *GP32FilesystemNode::getChild(const String &n) const {
+	// FIXME: Pretty lame implementation! We do no error checking to speak
+	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
+	
+	String newPath(_path);
+	if (_path.lastChar() != '\\')
+		newPath += '\\';
+	newPath += n;
+
+	return new GP32FilesystemNode(newPath);
+}
+
+bool GP32FilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
+	assert(_isDirectory);
+
+	//TODO: honor the hidden flag
 
 	GPDIRENTRY dirEntry;
 	GPFILEATTR attr;
-
 	GP32FilesystemNode entry;
-
 	uint32 read;
 
 	if (mode == FilesystemNode::kListAll)
@@ -168,9 +212,11 @@ bool GP32FilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	int startIdx = 0; // current file
 	String listDir(_path);
 	//listDir += "/";
+	
 	while (GpDirEnumList(listDir.c_str(), startIdx++, 1, &dirEntry, &read)  == SM_OK) {
 		if (dirEntry.name[0] == '.')
 			continue;
+			
 		entry._displayName = dirEntry.name;
 		entry._path = _path;
 		entry._path += dirEntry.name;
@@ -194,18 +240,7 @@ bool GP32FilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const {
 	return true;
 }
 
-static const char *lastPathComponent(const Common::String &str) {
-	const char *start = str.c_str();
-	const char *cur = start + str.size() - 2;
-
-	while (cur >= start && *cur != '\\') {
-		--cur;
-	}
-
-	return cur + 1;
-}
-
-AbstractFilesystemNode *GP32FilesystemNode::parent() const {
+AbstractFilesystemNode *GP32FilesystemNode::getParent() const {
 	if(_isRoot)
 		return 0;
 
@@ -215,19 +250,6 @@ AbstractFilesystemNode *GP32FilesystemNode::parent() const {
 	GP32FilesystemNode *p = new GP32FilesystemNode(String(start, end - start));
 
 	NP("%s", p->_path.c_str());
-
-	return p;
-}
-
-AbstractFilesystemNode *GP32FilesystemNode::child(const String &n) const {
-	// FIXME: Pretty lame implementation! We do no error checking to speak
-	// of, do not check if this is a special node, etc.
-	assert(_isDirectory);
-	String newPath(_path);
-	if (_path.lastChar() != '\\')
-		newPath += '\\';
-	newPath += n;
-	GP32FilesystemNode *p = new GP32FilesystemNode(newPath);
 
 	return p;
 }

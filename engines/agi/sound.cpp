@@ -989,7 +989,7 @@ struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const Filesyste
 	fsnodeNameEqualsIgnoreCase(const Common::String str) { _str.push_back(str); }
 	bool operator()(const FilesystemNode &param) const {
 		for (Common::StringList::const_iterator iter = _str.begin(); iter != _str.end(); iter++)
-			if (param.name().equalsIgnoreCase(*iter))
+			if (param.getName().equalsIgnoreCase(*iter))
 				return true;
 		return false;
 	}
@@ -1014,8 +1014,8 @@ bool SoundMgr::loadInstruments() {
 	// List files in the game path
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("Invalid game path (\"%s\"), not loading Apple IIGS instruments", dir.path().c_str());
+	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("Invalid game path (\"%s\"), not loading Apple IIGS instruments", dir.getPath().c_str());
 		return false;
 	}
 
@@ -1050,12 +1050,12 @@ bool SoundMgr::loadInstruments() {
 	// Finally fix the instruments' lengths using the wave file data
 	// (A zero in the wave file data can end the sample prematurely)
 	// and convert the wave file from 8-bit unsigned to 16-bit signed format.
-	Common::MemoryReadStream *uint8Wave = loadWaveFile(waveFsnode->path(), *exeInfo);
+	Common::MemoryReadStream *uint8Wave = loadWaveFile(waveFsnode->getPath(), *exeInfo);
 	// Seek the wave to its
 	if (uint8Wave != NULL)
 		uint8Wave->seek(0);
 
-	bool result = uint8Wave != NULL && loadInstrumentHeaders(exeFsnode->path(), *exeInfo) &&
+	bool result = uint8Wave != NULL && loadInstrumentHeaders(exeFsnode->getPath(), *exeInfo) &&
 		finalizeInstruments(*uint8Wave) && convertWave(*uint8Wave, g_wave, uint8Wave->size());
 
 	delete uint8Wave; // Free the 8-bit unsigned wave file buffer

@@ -107,15 +107,15 @@ GameDescriptor Engine_SWORD1_findGameID(const char *gameid) {
 void Sword1CheckDirectory(const FSList &fslist, bool *filesFound) {
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
-			const char *fileName = file->name().c_str();
+			const char *fileName = file->getName().c_str();
 			for (int cnt = 0; cnt < NUM_FILES_TO_CHECK; cnt++)
 				if (scumm_stricmp(fileName, g_filesToCheck[cnt]) == 0)
 					filesFound[cnt] = true;
 		} else {
 			for (int cnt = 0; cnt < ARRAYSIZE(g_dirNames); cnt++)
-				if (scumm_stricmp(file->name().c_str(), g_dirNames[cnt]) == 0) {
+				if (scumm_stricmp(file->getName().c_str(), g_dirNames[cnt]) == 0) {
 					FSList fslist2;
-					if (file->listDir(fslist2, FilesystemNode::kListFilesOnly))
+					if (file->getChildren(fslist2, FilesystemNode::kListFilesOnly))
 						Sword1CheckDirectory(fslist2, filesFound);
 				}
 		}

@@ -38,13 +38,29 @@ namespace AGOS {
 
 int AGOSEngine::countSaveGames() {
 	Common::InSaveFile *f;
+	Common::StringList filenames;
 	uint i = 1;
+	char slot[3];
+	int slotNum;
 	bool marks[256];
 
 	char *prefix = genSaveName(998);
-	prefix[strlen(prefix)-3] = '\0';
-	_saveFileMan->listSavefiles(prefix, marks, 256);
+	prefix[strlen(prefix)-3] = '*';
+	prefix[strlen(prefix)-2] = '\0';
+	memset(marks, false, 256 * sizeof(bool));	//assume no savegames for this title
+	filenames = _saveFileMan->listSavefiles(prefix);
 
+	for(Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
+		//Obtain the last 3 digits of the filename, since they correspond to the save slot
+		slot[0] = file->c_str()[file->size()-3];
+		slot[1] = file->c_str()[file->size()-2];
+		slot[2] = file->c_str()[file->size()-1];
+		
+		slotNum = atoi(slot);
+		if(slotNum >= 0 && slotNum < 256)
+			marks[slotNum] = true;	//mark this slot as valid
+	}
+	
 	while (i < 256) {
 		if (marks[i] &&
 		    (f = _saveFileMan->openForLoading(genSaveName(i)))) {
@@ -53,6 +69,7 @@ int AGOSEngine::countSaveGames() {
 		} else
 			break;
 	}
+	
 	return i;
 }
 

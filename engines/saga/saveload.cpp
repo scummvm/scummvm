@@ -112,14 +112,32 @@ uint SagaEngine::getNewSaveSlotNumber() {
 }
 
 void SagaEngine::fillSaveList() {
+	assert(_saveMarks);
+	
 	int i;
 	Common::InSaveFile *in;
+	Common::StringList filenames;
+	char slot[2];
+	int slotNum;
 	char *name;
 
 	name = calcSaveFileName(MAX_SAVES);
-	name[strlen(name) - 2] = 0;
-	_saveFileMan->listSavefiles(name, _saveMarks, MAX_SAVES);
-
+	name[strlen(name) - 2] = '*';
+	name[strlen(name) - 1] = 0;
+	
+	memset(_saveMarks, false, MAX_SAVES * sizeof(bool));	//assume no savegames for this title
+	filenames = _saveFileMan->listSavefiles(name);
+	
+	for(Common::StringList::iterator file = filenames.begin(); file != filenames.end(); file++){
+		//Obtain the last 2 digits of the filename, since they correspond to the save slot
+		slot[0] = file->c_str()[file->size()-2];
+		slot[1] = file->c_str()[file->size()-1];
+		
+		slotNum = atoi(slot);
+		if(slotNum >= 0 && slotNum < MAX_SAVES)
+			_saveMarks[slotNum] = true;	//mark this slot as valid
+	}
+	
 	_saveFilesMaxCount = 0;
 	for (i = 0; i < MAX_SAVES; i++) {
 		if (_saveMarks[i]) {

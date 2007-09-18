@@ -23,8 +23,6 @@
 #ifndef _DS_FS_H
 #define _DS_FS_H
 
-
-
 //#include <NDS/ARM9/console.h>
 #include "fs.h"
 #include "zipreader.h"
@@ -32,80 +30,136 @@
 #include "scummconsole.h"
 #include "gba_nds_fat.h"
 #include "backends/fs/abstract-fs.h"
-//#include "backends/fs/fs.h"
 
 namespace DS {
 
 /**
+ * Implementation of the ScummVM file system API.
  * This class is used when a Flash cart is in use.
+ * 
+ * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class DSFileSystemNode : public AbstractFilesystemNode {
 protected:
-	static ZipFile* _zipFile;
-
 	typedef class Common::String String;
 
+	static ZipFile* _zipFile;
+
 	String _displayName;
+	String _path;
 	bool _isDirectory;
 	bool _isValid;
-	String _path;
 	int _refCountVal;
 	
 public:
+	/**
+	 * Creates a DSFilesystemNode with the root node as path.
+	 */
 	DSFileSystemNode();
+	
+	/**
+	 * Creates a DSFilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 */
 	DSFileSystemNode(const String &path);
-	DSFileSystemNode(const DSFileSystemNode *node);
+	
+	/**
+	 * Creates a DSFilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 * @param path true if path is a directory, false otherwise.
+	 */
 	DSFileSystemNode(const String& path, bool isDir);
 	
-	virtual String displayName() const {  return _displayName; }
-	virtual String name() const {  return _displayName; }
-	virtual bool isValid() const { return _isValid; }
-	virtual bool isDirectory() const { return _isDirectory; }
-	virtual String path() const { return _path; }
+	/**
+	 * Copy constructor.
+	 */
+	DSFileSystemNode(const DSFileSystemNode *node);
 	
-	virtual bool listDir(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly) const;
-	virtual AbstractFilesystemNode *parent() const;
+	virtual bool exists() const { return true; }		//FIXME: this is just a stub
+	virtual String getDisplayName() const {  return _displayName; }
+	virtual String getName() const {  return _displayName; }
+	virtual String getPath() const { return _path; }
+	virtual bool isDirectory() const { return _isDirectory; }
+	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isValid() const { return _isValid; }
+	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
+	
+	/**
+	 * Returns a copy of this node.
+	 */
 	virtual AbstractFilesystemNode *clone() const { return new DSFileSystemNode(this); }
-	virtual AbstractFilesystemNode *child(const Common::String& name) const;
+	virtual AbstractFilesystemNode *getChild(const Common::String& name) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly, bool hidden) const;
+	virtual AbstractFilesystemNode *getParent() const;
+	
+	/**
+	 * Returns the zip file this node points to.
+	 * TODO: check this documentation.
+	 */
 	static ZipFile* getZip() { return _zipFile; }
 };
 
-
-/**
+ /**
+ * Implementation of the ScummVM file system API.
  * This class is used when the GBAMP (GBA Movie Player) is used with a CompactFlash card.
+ * 
+ * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class GBAMPFileSystemNode : public AbstractFilesystemNode {
 protected:
 	typedef class Common::String String;
 
 	String _displayName;
+	String _path;
 	bool _isDirectory;
 	bool _isValid;
-	String _path;
-	
 	int _refCountVal;
 	
 public:
+	/**
+	 * Creates a GBAMPFilesystemNode with the root node as path.
+	 */
 	GBAMPFileSystemNode();
+	
+	/**
+	 * Creates a GBAMPFilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 */
 	GBAMPFileSystemNode(const String &path);
+	
+	/**
+	 * Creates a DSFilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 * @param path true if path is a directory, false otherwise.
+	 */
 	GBAMPFileSystemNode(const String &path, bool isDirectory);
+	
+	/**
+	 * Copy constructor.
+	 */
 	GBAMPFileSystemNode(const GBAMPFileSystemNode *node);
 
-	virtual String displayName() const {  return _displayName; }
-	virtual String name() const {  return _displayName; }
-	
-	virtual bool isValid() const { return _isValid; }
+	virtual bool exists() const { return true; }		//FIXME: this is just a stub
+	virtual String getDisplayName() const {  return _displayName; }
+	virtual String getName() const {  return _displayName; }
+	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual String path() const { return _path; }
-	virtual bool listDir(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly) const;
-	virtual AbstractFilesystemNode *parent() const;
-	virtual AbstractFilesystemNode *clone() const { return new GBAMPFileSystemNode(this); }
-	virtual AbstractFilesystemNode *child(const Common::String& name) const;
+	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isValid() const { return _isValid; }
+	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 	
+	/**
+	 * Returns a copy of this node.
+	 */
+	virtual AbstractFilesystemNode *clone() const { return new GBAMPFileSystemNode(this); }
+	virtual AbstractFilesystemNode *getChild(const Common::String& name) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly, bool hidden) const;
+	virtual AbstractFilesystemNode *getParent() const;
 };
-
-
-
 
 struct fileHandle {
 	int pos;
@@ -115,7 +169,6 @@ struct fileHandle {
 	
 	DSSaveFile* sramFile;
 };
-
 
 #undef stderr
 #undef stdout
@@ -140,6 +193,6 @@ void 	std_clearerr(FILE* handle);
 void 	std_cwd(char* dir);
 void 	std_fflush(FILE* handle);
 
-}
+} //namespace DS
 
-#endif
+#endif //_DS_FS_H

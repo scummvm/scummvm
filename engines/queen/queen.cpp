@@ -73,7 +73,7 @@ GameList Engine_QUEEN_detectGames(const FSList &fslist) {
 		if (file->isDirectory()) {
 			continue;
 		}
-		if (file->name().equalsIgnoreCase("queen.1") || file->name().equalsIgnoreCase("queen.1c")) {
+		if (file->getName().equalsIgnoreCase("queen.1") || file->getName().equalsIgnoreCase("queen.1c")) {
 			Common::File dataFile;
 			if (!dataFile.open(*file)) {
 				continue;
@@ -317,11 +317,28 @@ void QueenEngine::makeGameStateName(uint16 slot, char *buf) {
 }
 
 void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
-	char filename[20];
-	makeGameStateName(0, filename);
-	filename[strlen(filename) - 2] = 0;
+	char prefix[20];
+	makeGameStateName(0, prefix);
+	prefix[strlen(prefix) - 2] = '*';
+	prefix[strlen(prefix) - 1] = 0;
 	bool marks[SAVESTATE_MAX_NUM];
-	_saveFileMan->listSavefiles(filename, marks, SAVESTATE_MAX_NUM);
+	char slot[2];
+	int slotNum;
+	Common::StringList filenames;
+
+	memset(marks, false, SAVESTATE_MAX_NUM * sizeof(bool));	//assume no savegames for this title
+	filenames = _saveFileMan->listSavefiles(prefix);
+	
+	for(Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
+		//Obtain the last 2 digits of the filename, since they correspond to the save slot
+		slot[0] = file->c_str()[file->size()-2];
+		slot[1] = file->c_str()[file->size()-1];
+		
+		slotNum = atoi(slot);
+		if(slotNum >= 0 && slotNum < SAVESTATE_MAX_NUM)
+			marks[slotNum] = true;	//mark this slot as valid
+	}
+	
 	for (int i = 0; i < SAVESTATE_MAX_NUM; ++i) {
 		if (marks[i]) {
 			GameStateHeader header;

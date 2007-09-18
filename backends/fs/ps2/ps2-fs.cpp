@@ -32,44 +32,52 @@
 extern AsyncFio fio;
 extern OSystem_PS2 *g_systemPs2;
 
+/**
+ * Implementation of the ScummVM file system API based on the Ps2SDK.
+ * 
+ * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
+ */
 class Ps2FilesystemNode : public AbstractFilesystemNode {
 protected:
 	String _displayName;
+	String _path;
 	bool _isDirectory;
 	bool _isRoot;
-	String _path;
 
 public:
-	Ps2FilesystemNode(void);
-	Ps2FilesystemNode(const Ps2FilesystemNode *node);
+	/**
+	 * Creates a PS2FilesystemNode with the root node as path.
+	 */
+	Ps2FilesystemNode();
+	
+	/**
+	 * Creates a PS2FilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 */
 	Ps2FilesystemNode(const String &path);
+	
+	/**
+	 * Copy constructor.
+	 */
+	Ps2FilesystemNode(const Ps2FilesystemNode *node);
 
-	virtual String displayName() const { return _displayName; }
-	virtual String name() const { return _displayName; }
-	virtual bool isValid() const { return !_isRoot; }
+	virtual bool exists() const { return true; }		//FIXME: this is just a stub
+	virtual String getDisplayName() const { return _displayName; }
+	virtual String getName() const { return _displayName; }
+	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual String path() const { return _path; }
+	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isValid() const { return !_isRoot; }
+	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 
-	//virtual FSList listDir(ListMode) const;
-	virtual bool listDir(AbstractFSList &list, ListMode mode) const;
-	virtual AbstractFilesystemNode *parent() const;
 	virtual AbstractFilesystemNode *clone() const { return new Ps2FilesystemNode(this); }
-	virtual AbstractFilesystemNode *child(const String &n) const;
+	virtual AbstractFilesystemNode *getChild(const String &n) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
+	virtual AbstractFilesystemNode *getParent() const;
 };
 
-AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
-	return AbstractFilesystemNode::getRoot();
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getRoot(void) {
-	return new Ps2FilesystemNode();
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String &path) {
-	return new Ps2FilesystemNode(path);
-}
-
-Ps2FilesystemNode::Ps2FilesystemNode(void) {
+Ps2FilesystemNode::Ps2FilesystemNode() {
 	_isDirectory = true;
 	_isRoot = true;
 	_displayName = "PlayStation 2";
@@ -108,7 +116,43 @@ Ps2FilesystemNode::Ps2FilesystemNode(const Ps2FilesystemNode *node) {
 	_isRoot = node->_isRoot;
 }
 
-bool Ps2FilesystemNode::listDir(AbstractFSList &list, ListMode mode) const {
+AbstractFilesystemNode *Ps2FilesystemNode::getChild(const String &n) const {
+	if (!_isDirectory)
+		return NULL;
+
+	char listDir[256];
+	sprintf(listDir, "%s/", _path.c_str());
+	int fd = fio.dopen(listDir);
+	
+	if (fd >= 0) {
+		iox_dirent_t dirent;
+		
+		while (fio.dread(fd, &dirent) > 0) {
+			if (strcmp(n.c_str(), dirent.name) == 0) {
+				Ps2FilesystemNode *dirEntry = new Ps2FilesystemNode();
+
+				dirEntry->_isDirectory = (bool)(dirent.stat.mode & FIO_S_IFDIR);
+				dirEntry->_isRoot = false;
+
+				dirEntry->_path = _path;
+				dirEntry->_path += "/";
+				dirEntry->_path += dirent.name;
+
+				dirEntry->_displayName = dirent.name;
+
+				fio.dclose(fd);
+				return dirEntry;
+			}
+		}
+		fio.dclose(fd);
+	}
+	
+	return NULL;
+}
+
+bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
+	//TODO: honor the hidden flag
+	
 	if (!_isDirectory)
 		return false;
 
@@ -135,6 +179,7 @@ bool Ps2FilesystemNode::listDir(AbstractFSList &list, ListMode mode) const {
 	} else {
 		char listDir[256];
 		int fd;
+		
 		if (_path.lastChar() == '/')
 			fd = fio.dopen(_path.c_str());
 		else {
@@ -173,7 +218,7 @@ bool Ps2FilesystemNode::listDir(AbstractFSList &list, ListMode mode) const {
 	}
 }
 
-AbstractFilesystemNode *Ps2FilesystemNode::parent() const {
+AbstractFilesystemNode *Ps2FilesystemNode::getParent() const {
 	if (_isRoot)
 		return new Ps2FilesystemNode(this);
 
@@ -190,37 +235,4 @@ AbstractFilesystemNode *Ps2FilesystemNode::parent() const {
 		return new Ps2FilesystemNode(String(_path.c_str(), slash - _path.c_str()));
 	else
 		return new Ps2FilesystemNode();
-}
-
-AbstractFilesystemNode *Ps2FilesystemNode::child(const String &n) const {
-	if (!_isDirectory)
-		return NULL;
-
-	char listDir[256];
-	sprintf(listDir, "%s/", _path.c_str());
-	int fd = fio.dopen(listDir);
-	
-	if (fd >= 0) {
-		iox_dirent_t dirent;
-
-		while (fio.dread(fd, &dirent) > 0) {
-			if (strcmp(n.c_str(), dirent.name) == 0) {
-				Ps2FilesystemNode *dirEntry = new Ps2FilesystemNode();
-
-				dirEntry->_isDirectory = (bool)(dirent.stat.mode & FIO_S_IFDIR);
-				dirEntry->_isRoot = false;
-
-				dirEntry->_path = _path;
-				dirEntry->_path += "/";
-				dirEntry->_path += dirent.name;
-
-				dirEntry->_displayName = dirent.name;
-
-				fio.dclose(fd);
-				return dirEntry;
-			}
-		}
-		fio.dclose(fd);
-	}
-	return NULL;
 }

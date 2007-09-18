@@ -28,12 +28,14 @@
 
 #include "common/stdafx.h"
 #include "common/savefile.h"
+#include "common/str.h"
 
 class DefaultSaveFileManager : public Common::SaveFileManager {
 public:
-	virtual Common::OutSaveFile *openForSaving(const char *filename);
+	virtual Common::StringList listSavefiles(const char *regex);
 	virtual Common::InSaveFile *openForLoading(const char *filename);
-	virtual void listSavefiles(const char * /* prefix */, bool *marks, int num);
+	virtual Common::OutSaveFile *openForSaving(const char *filename);
+	virtual bool removeSavefile(const char *filename);
 };
 
 #endif

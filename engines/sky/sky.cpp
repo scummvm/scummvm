@@ -124,11 +124,11 @@ GameList Engine_SKY_detectGames(const FSList &fslist) {
 	// Iterate over all files in the given directory
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
-			const char *fileName = file->name().c_str();
+			const char *fileName = file->getName().c_str();
 
 			if (0 == scumm_stricmp("sky.dsk", fileName)) {
 				Common::File dataDisk;
-				if (dataDisk.open(file->path())) {
+				if (dataDisk.open(file->getPath())) {
 					hasSkyDsk = true;
 					dataDiskSize = dataDisk.size();
 				}
@@ -136,7 +136,7 @@ GameList Engine_SKY_detectGames(const FSList &fslist) {
 
 			if (0 == scumm_stricmp("sky.dnr", fileName)) {
 				Common::File dinner;
-				if (dinner.open(file->path())) {
+				if (dinner.open(file->getPath())) {
 					hasSkyDnr = true;
 					dinnerTableEntries = dinner.readUint32LE();
 				}

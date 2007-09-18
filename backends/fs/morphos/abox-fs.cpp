@@ -35,51 +35,65 @@
 #include "base/engine.h"
 #include "backends/fs/abstract-fs.h"
 
-/*
+/**
  * Implementation of the ScummVM file system API based on the MorphOS A-Box API.
+ * 
+ * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
-
 class ABoxFilesystemNode : public AbstractFilesystemNode {
-	protected:
-		BPTR _lock;
-		String _displayName;
-		bool _isDirectory;
-		bool _isValid;
-		String _path;
+protected:
+	BPTR _lock;
+	String _displayName;
+	String _path;
+	bool _isDirectory;
+	bool _isValid;
 
-	public:
-		ABoxFilesystemNode();
-		ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name = NULL);
-		ABoxFilesystemNode(const String &p);
-		ABoxFilesystemNode(const ABoxFilesystemNode &node);
+public:
+	/**
+	 * Creates a ABoxFilesystemNode with the root node as path.
+	 */
+	ABoxFilesystemNode();
+	
+	/**
+	 * Creates a ABoxFilesystemNode for a given path.
+	 * 
+	 * @param path String with the path the new node should point to.
+	 */
+	ABoxFilesystemNode(const String &p);
+	
+	/**
+	 * FIXME: document this constructor.
+	 */
+	ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name = NULL);
+	
+	/**
+	 * Copy constructor.
+	 */
+	ABoxFilesystemNode(const ABoxFilesystemNode &node);
 
-		~ABoxFilesystemNode();
+	/**
+	 * Destructor.
+	 */
+	~ABoxFilesystemNode();
 
-		virtual String displayName() const { return _displayName; }
-		virtual String name() const { return _displayName; };
-		virtual bool isValid() const { return _isValid; }
-		virtual bool isDirectory() const { return _isDirectory; }
-		virtual String path() const { return _path; }
-
-		virtual bool listDir(AbstractFSList &list, ListMode mode) const;
-		static  AbstractFSList listRoot();
-		virtual AbstractFilesystemNode *parent() const;
-		virtual AbstractFilesystemNode *child(const String &name) const;
+	virtual bool exists() const { return true; }		//FIXME: this is just a stub
+	virtual String getDisplayName() const { return _displayName; }
+	virtual String getName() const { return _displayName; };
+	virtual String getPath() const { return _path; }
+	virtual bool isDirectory() const { return _isDirectory; }
+	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isValid() const { return _isValid; }
+	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
+	
+	virtual AbstractFilesystemNode *getChild(const String &name) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
+	virtual AbstractFilesystemNode *getParent() const;
+	
+	/**
+	 * Return the list of child nodes for the root node.
+	 */
+	static AbstractFSList getRootChildren();
 };
-
-
-AbstractFilesystemNode *AbstractFilesystemNode::getCurrentDirectory() {
-	return AbstractFilesystemNode::getRoot();
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getNodeForPath(const String	&path) {
-	return new ABoxFilesystemNode(path);
-}
-
-AbstractFilesystemNode *AbstractFilesystemNode::getRoot()
-{
-	return new ABoxFilesystemNode();
-}
 
 ABoxFilesystemNode::ABoxFilesystemNode()
 {
@@ -88,6 +102,62 @@ ABoxFilesystemNode::ABoxFilesystemNode()
 	_isDirectory = true;
 	_path = "";
 	_lock = NULL;
+}
+
+ABoxFilesystemNode::ABoxFilesystemNode(const String &p) {
+	int len = 0, offset = p.size();
+
+	assert(offset > 0);
+
+	_path = p;
+
+	// Extract last component from path
+	const char *str = p.c_str();
+	while (offset > 0 && (str[offset-1] == '/' || str[offset-1] == ':') )
+		offset--;
+	while (offset > 0 && (str[offset-1] != '/' && str[offset-1] != ':')) {
+		len++;
+		offset--;
+	}
+	_displayName = String(str + offset, len);
+	_lock = NULL;
+	_isDirectory = false;
+
+	struct FileInfoBlock *fib = (struct FileInfoBlock *)AllocDosObject(DOS_FIB, NULL);
+	if (!fib)
+	{
+		debug(6, "FileInfoBlock is NULL");
+		return;
+	}
+
+	// Check whether the node exists and if it is a directory
+	BPTR pLock = Lock((STRPTR)_path.c_str(), SHARED_LOCK);
+	if (pLock)
+	{
+		if (Examine(pLock, fib) != DOSFALSE) {
+			if (fib->fib_EntryType > 0)
+			{
+				_isDirectory = true;
+				_lock = DupLock(pLock);
+				_isValid = (_lock != 0);
+
+				// Add a trailing slash if it is needed
+				const char c = _path.lastChar();
+				if (c != '/' && c != ':')
+					_path += '/';
+
+			}
+			else
+			{
+				_isDirectory = false;
+				_isValid = true;
+			}
+		}
+	
+		UnLock(pLock);
+	}
+
+	FreeDosObject(DOS_FIB, fib);
 }
 
 ABoxFilesystemNode::ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name)
@@ -138,63 +208,7 @@ ABoxFilesystemNode::ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name)
 			_isValid = true;
 		}
 	}
-	FreeDosObject(DOS_FIB, fib);
-}
-
-ABoxFilesystemNode::ABoxFilesystemNode(const String &p) {
-	int len = 0, offset = p.size();
-
-	assert(offset > 0);
-
-	_path = p;
-
-	// Extract last component from path
-	const char *str = p.c_str();
-	while (offset > 0 && (str[offset-1] == '/' || str[offset-1] == ':') )
-		offset--;
-	while (offset > 0 && (str[offset-1] != '/' && str[offset-1] != ':')) {
-		len++;
-		offset--;
-	}
-	_displayName = String(str + offset, len);
-	_lock = NULL;
-	_isDirectory = false;
-
-	struct FileInfoBlock *fib = (struct FileInfoBlock *)AllocDosObject(DOS_FIB, NULL);
-	if (!fib)
-	{
-		debug(6, "FileInfoBlock is NULL");
-		return;
-	}
-
-	// Check whether the node exists and if it is a directory
-
-	BPTR pLock = Lock((STRPTR)_path.c_str(), SHARED_LOCK);
-	if (pLock)
-	{
-		if (Examine(pLock, fib) != DOSFALSE) {
-			if (fib->fib_EntryType > 0)
-			{
-				_isDirectory = true;
-				_lock = DupLock(pLock);
-				_isValid = (_lock != 0);
-
-				// Add a trailing slash if it is needed
-				const char c = _path.lastChar();
-				if (c != '/' && c != ':')
-					_path += '/';
-
-			}
-			else
-			{
-				_isDirectory = false;
-				_isValid = true;
-			}
-		}
 	
-		UnLock(pLock);
-	}
-
 	FreeDosObject(DOS_FIB, fib);
 }
 
@@ -216,8 +230,30 @@ ABoxFilesystemNode::~ABoxFilesystemNode()
 	}
 }
 
-bool ABoxFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const
+AbstractFilesystemNode *ABoxFilesystemNode::getChild(const String &name) const {
+	assert(_isDirectory);
+	String newPath(_path);
+
+	if (_path.lastChar() != '/')
+		newPath += '/';
+	newPath += name;
+
+	BPTR lock = Lock(newPath.c_str(), SHARED_LOCK);
+
+	if (!lock)
+	{
+		return 0;
+    }
+
+	UnLock(lock);
+
+	return new ABoxFilesystemNode(newPath);
+}
+
+bool ABoxFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const
 {
+	//TODO: honor the hidden flag
+	
 	if (!_isValid)
 	{
 		debug(6, "listDir() called on invalid node");
@@ -232,7 +268,7 @@ bool ABoxFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const
 	if (_lock == NULL)
 	{
 		/* This is the root node */
-		myList = listRoot();
+		list = getRootChildren();
 		return true;
 	}
 
@@ -266,7 +302,7 @@ bool ABoxFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const
 					if (entry)
 					{
 						if (entry->isValid())
-							myList.push_back(entry);
+							list.push_back(entry);
 						else
 							delete entry;
 					}
@@ -284,7 +320,7 @@ bool ABoxFilesystemNode::listDir(AbstractFSList &myList, ListMode mode) const
 	return true;
 }
 
-AbstractFilesystemNode *ABoxFilesystemNode::parent() const
+AbstractFilesystemNode *ABoxFilesystemNode::getParent() const
 {
 	AbstractFilesystemNode *node = NULL;
 
@@ -309,29 +345,9 @@ AbstractFilesystemNode *ABoxFilesystemNode::parent() const
 	return node;
 }
 
-AbstractFilesystemNode *ABoxFilesystemNode::child(const String &name) const {
-	assert(_isDirectory);
-	String newPath(_path);
-
-	if (_path.lastChar() != '/')
-		newPath += '/';
-	newPath += name;
-
-	BPTR lock = Lock(newPath.c_str(), SHARED_LOCK);
-
-	if (!lock)
-	{
-		return 0;
-    }
-
-	UnLock(lock);
-
-	return new ABoxFilesystemNode(newPath);
-}
-
-AbstractFSList ABoxFilesystemNode::listRoot()
+AbstractFSList ABoxFilesystemNode::getRootChildren()
 {
-	AbstractFSList myList;
+	AbstractFSList list;
 	DosList *dosList;
 	CONST ULONG lockDosListFlags = LDF_READ | LDF_VOLUMES;
 	char name[256];
@@ -339,15 +355,15 @@ AbstractFSList ABoxFilesystemNode::listRoot()
 	dosList = LockDosList(lockDosListFlags);
 	if (dosList == NULL)
 	{
-		return myList;
+		return list;
 	}
 
 	dosList = NextDosEntry(dosList, LDF_VOLUMES);
 	while (dosList)
 	{
-		if (dosList->dol_Type == DLT_VOLUME &&  // Should always be true, but ...
-			 dosList->dol_Name &&                                   // Same here
-			 dosList->dol_Task                                              // Will be NULL if volume is removed from drive but still in use by some program
+		if (dosList->dol_Type == DLT_VOLUME &&	// Should always be true, but ...
+			 dosList->dol_Name &&				// Same here
+			 dosList->dol_Task					// Will be NULL if volume is removed from drive but still in use by some program
 			)
 		{
 			ABoxFilesystemNode *entry;
@@ -365,7 +381,7 @@ AbstractFSList ABoxFilesystemNode::listRoot()
 				if (entry)
 				{
 					if (entry->isValid())
-						myList.push_back(entry);
+						list.push_back(entry);
 					else
 						delete entry;
 				}
@@ -377,9 +393,7 @@ AbstractFSList ABoxFilesystemNode::listRoot()
 
 	UnLockDosList(lockDosListFlags);
 
-	return myList;
+	return list;
 }
 
 #endif // defined(__MORPHOS__)
-
-

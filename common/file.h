@@ -52,7 +52,7 @@ private:
 	// code that accidentally copied File objects tended to break in strange
 	// ways.
 	File(const File &f);
-	File &operator  =(const File &f);
+	File &operator =(const File &f);
 
 public:
 	enum AccessMode {
@@ -86,6 +86,9 @@ public:
 
 	virtual void close();
 
+	virtual bool remove(const String &filename);
+	virtual bool remove(const FilesystemNode &node);
+	
 	/**
 	 * Checks if the object opened a file successfully.
 	 *

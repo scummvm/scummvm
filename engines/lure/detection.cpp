@@ -97,7 +97,7 @@ GameList Engine_LURE_detectGames(const FSList &fslist) {
 			continue;
 
 		for (g = lure_games; g->gameid; g++) {
-			if (scumm_stricmp(file->name().c_str(), g->checkFile) == 0)
+			if (scumm_stricmp(file->getName().c_str(), g->checkFile) == 0)
 				isFound = true;
 		}
 		if (isFound)

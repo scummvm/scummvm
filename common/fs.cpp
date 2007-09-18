@@ -23,19 +23,55 @@
  */
 
 #include "common/stdafx.h"
-
-#include "backends/fs/abstract-fs.h"
 #include "common/util.h"
+#include "backends/fs/abstract-fs.h"
+#include "backends/fs/fs-factory-maker.cpp"
 
+/*
+ * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
+ * Taken from exult/files/listfiles.cc
+ */
+static bool matchString(const char *str, const char *pat) {
+	const char *p = 0;
+	const char *q = 0;
+	
+	for (;;) {
+		switch (*pat) {
+		case '*':
+			p = ++pat;
+			q = str;
+			break;
 
-FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
-	_realNode = realNode;
-	_refCount = new int(1);
+		default:
+			if (*pat != *str) {
+				if (p) {
+					pat = p;
+					str = ++q;
+					if(!*str)
+						return !*pat;
+					break;
+				}
+				else
+					return false;
+			}
+			// fallthrough
+		case '?':
+			if(!*str)
+				return !*pat;
+			pat++;
+			str++;
+		}
+	}
 }
 
 FilesystemNode::FilesystemNode() {
 	_realNode = 0;
 	_refCount = 0;
+}
+
+FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
+	_realNode = realNode;
+	_refCount = new int(1);
 }
 
 FilesystemNode::FilesystemNode(const FilesystemNode &node) {
@@ -46,15 +82,39 @@ FilesystemNode::FilesystemNode(const FilesystemNode &node) {
 }
 
 FilesystemNode::FilesystemNode(const Common::String &p) {
+	AbstractFilesystemFactory *factory = makeFSFactory();
+	
 	if (p.empty() || p == ".")
-		_realNode = AbstractFilesystemNode::getCurrentDirectory();
+		_realNode = factory->makeCurrentDirectoryFileNode();
 	else
-		_realNode = AbstractFilesystemNode::getNodeForPath(p);
+		_realNode = factory->makeFileNodePath(p);
 	_refCount = new int(1);
 }
 
 FilesystemNode::~FilesystemNode() {
 	decRefCount();
+}
+
+FilesystemNode &FilesystemNode::operator= (const FilesystemNode &node) {
+	if (node._refCount)
+		++(*node._refCount);
+
+	decRefCount();
+
+	_realNode = node._realNode;
+	_refCount = node._refCount;
+
+	return *this;
+}
+
+bool FilesystemNode::operator<(const FilesystemNode& node) const
+{
+	if (isDirectory() && !node.isDirectory())
+		return true;
+	if (!isDirectory() && node.isDirectory())
+		return false;
+	
+	return scumm_stricmp(getDisplayName().c_str(), node.getDisplayName().c_str()) < 0;
 }
 
 void FilesystemNode::decRefCount() {
@@ -68,34 +128,11 @@ void FilesystemNode::decRefCount() {
 	}
 }
 
-FilesystemNode &FilesystemNode::operator  =(const FilesystemNode &node) {
-	if (node._refCount)
-		++(*node._refCount);
-
-	decRefCount();
-
-	_realNode = node._realNode;
-	_refCount = node._refCount;
-
-	return *this;
-}
-
-bool FilesystemNode::isValid() const {
+bool FilesystemNode::exists() const {
 	if (_realNode == 0)
 		return false;
-	return _realNode->isValid();
-}
-
-FilesystemNode FilesystemNode::getParent() const {
-	if (_realNode == 0)
-		return *this;
-
-	AbstractFilesystemNode *node = _realNode->parent();
-	if (node == 0) {
-		return *this;
-	} else {
-		return FilesystemNode(node);
-	}
+	
+	return _realNode->exists();
 }
 
 FilesystemNode FilesystemNode::getChild(const Common::String &n) const {
@@ -103,17 +140,17 @@ FilesystemNode FilesystemNode::getChild(const Common::String &n) const {
 		return *this;
 
 	assert(_realNode->isDirectory());
-	AbstractFilesystemNode *node = _realNode->child(n);
+	AbstractFilesystemNode *node = _realNode->getChild(n);
 	return FilesystemNode(node);
 }
 
-bool FilesystemNode::listDir(FSList &fslist, ListMode mode) const {
+bool FilesystemNode::getChildren(FSList &fslist, ListMode mode, bool hidden) const {
 	if (!_realNode || !_realNode->isDirectory())
 		return false;
 
 	AbstractFSList tmp;
 	
-	if (!_realNode->listDir(tmp, mode))
+	if (!_realNode->getChildren(tmp, mode, hidden))
 		return false;
 	
 	fslist.clear();
@@ -124,33 +161,108 @@ bool FilesystemNode::listDir(FSList &fslist, ListMode mode) const {
 	return true;
 }
 
+Common::String FilesystemNode::getDisplayName() const {
+	assert(_realNode);
+	return _realNode->getDisplayName();
+}
+
+Common::String FilesystemNode::getName() const {
+	assert(_realNode);
+	return _realNode->getName();
+}
+
+FilesystemNode FilesystemNode::getParent() const {
+	if (_realNode == 0)
+		return *this;
+
+	AbstractFilesystemNode *node = _realNode->getParent();
+	if (node == 0) {
+		return *this;
+	} else {
+		return FilesystemNode(node);
+	}
+}
+
+Common::String FilesystemNode::getPath() const {
+	assert(_realNode);
+	return _realNode->getPath();
+}
+
 bool FilesystemNode::isDirectory() const {
 	if (_realNode == 0)
 		return false;
+	
 	return _realNode->isDirectory();
 }
 
-Common::String FilesystemNode::displayName() const {
-	assert(_realNode);
-	return _realNode->displayName();
-}
-
-Common::String FilesystemNode::name() const {
-	assert(_realNode);
-	return _realNode->name();
-}
-
-Common::String FilesystemNode::path() const {
-	assert(_realNode);
-	return _realNode->path();
-}
-
-
-bool FilesystemNode::operator< (const FilesystemNode& node) const
-{
-	if (isDirectory() && !node.isDirectory())
-		return true;
-	if (!isDirectory() && node.isDirectory())
+bool FilesystemNode::isReadable() const {
+	if (_realNode == 0)
 		return false;
-	return scumm_stricmp(displayName().c_str(), node.displayName().c_str()) < 0;
+	
+	return _realNode->isReadable();
+}
+
+bool FilesystemNode::isWritable() const {
+	if (_realNode == 0)
+		return false;
+	
+	return _realNode->isWritable();
+}
+
+bool FilesystemNode::lookupFile(FSList &results, FSList &fslist, Common::String &filename, bool hidden, bool exhaustive) const
+{
+	int matches = 0;
+	
+	for (FSList::iterator entry = fslist.begin(); entry != fslist.end(); ++entry) {
+		if (entry->isDirectory()) {
+			matches += lookupFileRec(results, *entry, filename, hidden, exhaustive);
+		}
+	}
+
+	return ((matches > 0) ? true : false);
+}
+
+bool FilesystemNode::lookupFile(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
+{
+	int matches;
+	
+	if (!dir.isDirectory())
+		return false;
+		
+	matches = lookupFileRec(results, dir, filename, hidden, exhaustive);
+	
+	return ((matches > 0) ? true : false);
+}
+
+int FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
+{
+	FSList entries;
+	FSList children;
+	int matches = 0;
+	dir.getChildren(entries, FilesystemNode::kListAll, hidden);
+	
+	//Breadth search (entries in the same level)
+	for (FSList::iterator entry = entries.begin(); entry != entries.end(); ++entry) {
+		if (entry->isDirectory()) {
+			children.push_back(*entry);
+		} else {
+			//TODO: here we assume all backends implement the lastPathComponent method. It is currently static,
+			//		so it might be a good idea to include it inside the backend class. This would enforce its
+			//		implementation by all ports.
+			if (matchString(lastPathComponent(entry->getPath()), filename.c_str())) {
+				results.push_back(*entry);
+				matches++;
+				
+				if (!exhaustive)
+					break;
+			}
+		}
+	}
+	
+	//Depth search (entries in lower levels)
+	for (FSList::iterator child = children.begin(); child != children.end(); ++child) {
+		matches += lookupFileRec(results, *child, filename, hidden, exhaustive);
+	}
+	
+	return matches;
 }

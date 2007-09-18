@@ -33,7 +33,6 @@
 class FilesystemNode;
 class AbstractFilesystemNode;
 
-
 /**
  * List of multiple file system nodes. E.g. the contents of a given directory.
  * This is subclass instead of just a typedef so that we can use forward
@@ -41,9 +40,8 @@ class AbstractFilesystemNode;
  */
 class FSList : public Common::Array<FilesystemNode> {};
 
-
 /**
- * FilesystemNode provides an abstraction for file pathes, allowing for portable
+ * FilesystemNode provides an abstraction for file paths, allowing for portable
  * file system browsing. To this ends, multiple or single roots have to be supported
  * (compare Unix with a single root, Windows with multiple roots C:, D:, ...).
  *
@@ -64,12 +62,13 @@ class FSList : public Common::Array<FilesystemNode> {};
  * paths (MacOS 9 doesn't even have the notion of a "current directory").
  * And if we ever want to support devices with no FS in the classical sense (Palm...),
  * we can build upon this.
+ * 
+ * This class acts as a wrapper around the AbstractFilesystemNode class defined in backends/fs. 
  */
 class FilesystemNode {
 private:
-	AbstractFilesystemNode *_realNode;
 	int *_refCount;
-
+	AbstractFilesystemNode *_realNode;
 	FilesystemNode(AbstractFilesystemNode *realNode);
 
 public:
@@ -83,9 +82,9 @@ public:
 	};
 
 	/**
-	 * Create a new invalid FilesystemNode. In other words, isValid() for that
-	 * node returns false, and if you try to get it's path, an assert is
-	 * triggered.
+	 * Create a new pathless FilesystemNode. Since there's no path associated
+	 * with this node, path-related operations (i.e. exists(), isDirectory(), 
+	 * getPath()) will always return false or raise an assertion.
 	 */
 	FilesystemNode();
 
@@ -113,51 +112,44 @@ public:
 	/**
 	 * Copy operator.
 	 */
-	FilesystemNode &operator  =(const FilesystemNode &node);
+	FilesystemNode &operator= (const FilesystemNode &node);
+	
+	/**
+	 * Compare the name of this node to the name of another. Directories
+	 * go before normal files.
+	 */
+	bool operator<(const FilesystemNode& node) const;
 
 	/**
-	 * Checks if the FilesystemNode is valid for any usage
+	 * Indicates whether the object referred by this path exists in the filesystem or not.
+	 * 
+	 * @return bool true if the path exists, false otherwise.
 	 */
-	bool isValid() const;
-
-	/**
-	 * Get the parent node of this node. If this node has no parent node,
-	 * then it returns a duplicate of this node.
-	 */
-	FilesystemNode getParent() const;
+	virtual bool exists() const;
 
 	/**
 	 * Fetch a child node of this node, with the given name. Only valid for
-	 * directory nodes (an assertion is triggered otherwise). If no no child
-	 * node with the given name exists, an invalid node is returned.
+	 * directory nodes (an assertion is triggered otherwise).
+	 * If no child node with the given name exists, an invalid node is returned.
 	 */
 	FilesystemNode getChild(const Common::String &name) const;
-
+	
 	/**
 	 * Return a list of child nodes of this directory node. If called on a node
 	 * that does not represent a directory, false is returned.
+	 * 
 	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
-	 * @todo Rename this to listChildren or getChildren.
 	 */
-	virtual bool listDir(FSList &fslist, ListMode mode = kListDirectoriesOnly) const;
-
-	/**
-	 * Is this node pointing to a directory?
-	 * @todo Currently we assume that a valid node that is not a directory
-	 * automatically is a file (ignoring things like symlinks). That might
-	 * actually be OK... but we could still add an isFile method. Or even replace
-	 * isValid and isDirectory by a getType() method that can return values like
-	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
-	 */
-	virtual bool isDirectory() const;
+	virtual bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly, bool hidden = false) const;	
 
 	/**
 	 * Return a human readable string for this node, usable for display (e.g.
 	 * in the GUI code). Do *not* rely on it being usable for anything else,
 	 * like constructing paths!
+	 * 
 	 * @return the display name
 	 */
-	virtual Common::String displayName() const;
+	virtual Common::String getDisplayName() const;
 
 	/**
 	 * Return a string representation of the name of the file. This is can be
@@ -167,7 +159,7 @@ public:
 	 *
 	 * @return the file name
 	 */
-	virtual Common::String name() const;
+	virtual Common::String getName() const;
 
 	/**
 	 * Return a string representation of the file which can be passed to fopen(),
@@ -180,18 +172,107 @@ public:
 	 *
 	 * @return the 'path' represented by this filesystem node
 	 */
-	virtual Common::String path() const;
+	virtual Common::String getPath() const;
+	
+	/**
+	 * Get the parent node of this node. If this node has no parent node,
+	 * then it returns a duplicate of this node.
+	 */
+	FilesystemNode getParent() const;
 
 	/**
-	 * Compare the name of this node to the name of another. Directories
-	 * go before normal files.
+	 * Indicates whether the path refers to a directory or not.
+	 * 
+	 * @todo Currently we assume that a node that is not a directory
+	 * automatically is a file (ignoring things like symlinks or pipes).
+	 * That might actually be OK... but we could still add an isFile method.
+	 * Or even replace isDirectory by a getType() method that can return values like
+	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
 	 */
-	bool operator< (const FilesystemNode& node) const;
+	virtual bool isDirectory() const;
+	
+	/**
+	 * Indicates whether the object referred by this path can be read from or not.
+	 * 
+	 * If the path refers to a directory, readability implies being able to read 
+	 * and list the directory entries.
+	 * 
+	 * If the path refers to a file, readability implies being able to read the 
+	 * contents of the file.
+	 * 
+	 * @return bool true if the object can be read, false otherwise.
+	 */
+	virtual bool isReadable() const;
+	
+	/**
+	 * Indicates whether the object referred by this path can be written to or not.
+	 * 
+	 * If the path refers to a directory, writability implies being able to modify
+	 * the directory entry (i.e. rename the directory, remove it or write files inside of it).
+	 * 
+	 * If the path refers to a file, writability implies being able to write data
+	 * to the file.
+	 * 
+	 * @return bool true if the object can be written to, false otherwise.
+	 */
+	virtual bool isWritable() const;
+	
+	/**
+	 * Searches recursively for a filename inside the given directories.
+	 * 
+	 * For each directory in the directory list a breadth-first search is performed,
+	 * that is, the current directory entries are scanned before going into subdirectories.
+	 * 
+	 * @param results List to put the matches in.
+	 * @param fslist List of directories to search within.
+	 * @param filename Name of the file to look for.
+	 * @param hidden Whether to search hidden files or not.
+	 * @param exhaustive Whether to continue searching after one match has been found.
+	 * 
+	 * @return true if matches could be found, false otherwise.
+	 */
+	virtual bool lookupFile(FSList &results, FSList &fslist, Common::String &filename, bool hidden, bool exhaustive) const;
+	
+	/**
+	 * Searches recursively for a filename inside the given directory.
+	 * 
+	 * The search is performed breadth-first, that is, the current directory entries
+	 * are scanned before going into subdirectories.
+	 * 
+	 * @param results List to put the matches in.
+	 * @param FilesystemNode Directory to search within.
+	 * @param filename Name of the file to look for.
+	 * @param hidden Whether to search hidden files or not.
+	 * @param exhaustive Whether to continue searching after one match has been found.
+	 * 
+	 * @return true if matches could be found, false otherwise.
+	 */
+	virtual bool lookupFile(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const;
 
 protected:
+	/**
+	 * Decreases the reference count to the FilesystemNode, and if necessary,
+	 * deletes the corresponding underlying references.
+	 */
 	void decRefCount();
+	
+	/**
+	 * Searches recursively for a filename inside the given directory.
+	 * 
+	 * The search is performed breadth-first, that is, the current directory entries
+	 * are scanned before going into subdirectories.
+	 * 
+	 * @param results List to put the matches in.
+	 * @param FilesystemNode Directory to search within.
+	 * @param filename Name of the file to look for.
+	 * @param hidden Whether to search hidden files or not.
+	 * @param exhaustive Whether to continue searching after one match has been found.
+	 * 
+	 * @return The number of matches found.
+	 */
+	int lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const;
 };
 
 //} // End of namespace Common
 
-#endif
+#endif //COMMON_FS_H

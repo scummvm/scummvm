@@ -246,15 +246,18 @@ void md5_finish(md5_context *ctx, uint8 digest[16]) {
 }
 
 bool md5_file(const FilesystemNode &file, uint8 digest[16], uint32 length) {
-	if (!file.isValid()) {
-		warning("md5_file: using an invalid FilesystemNode");
+	if(!file.exists()) {
+		warning("md5_file: using an inexistent FilesystemNode");
+		return false;
+	} else if (!file.isReadable()) {
+		warning("md5_file: using an unreadable FilesystemNode");
 		return false;
 	} else if (file.isDirectory()) {
-		warning("md5_file: using a diretory FilesystemNode");
+		warning("md5_file: using a directory FilesystemNode");
 		return false;
 	}
 
-	return md5_file(file.path().c_str(), digest, length);
+	return md5_file(file.getPath().c_str(), digest, length);
 }
 
 bool md5_file(const char *name, uint8 digest[16], uint32 length) {

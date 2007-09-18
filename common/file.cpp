@@ -28,6 +28,7 @@
 #include "common/hashmap.h"
 #include "common/util.h"
 #include "common/hash-str.h"
+#include <errno.h>
 
 #ifdef MACOSX
 #include "CoreFoundation/CoreFoundation.h"
@@ -226,7 +227,7 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 		return;
 
 	FSList fslist;
-	if (!dir.listDir(fslist, FilesystemNode::kListAll)) {
+	if (!dir.getChildren(fslist, FilesystemNode::kListAll)) {
 		// Failed listing the contents of this node, so it is either not a 
 		// directory, or just doesn't exist at all.
 		return;
@@ -237,7 +238,7 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 
 	// Do not add directories multiple times, unless this time they are added
 	// with a bigger depth.
-	const String &directory(dir.path());
+	const String &directory(dir.getPath());
 	if (_defaultDirectories->contains(directory) && (*_defaultDirectories)[directory] >= level)
 		return;
 	(*_defaultDirectories)[directory] = level;
@@ -247,13 +248,13 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) {
-			addDefaultDirectoryRecursive(file->path(), level - 1, prefix + file->name() + "/");
+			addDefaultDirectoryRecursive(file->getPath(), level - 1, prefix + file->getName() + "/");
 		} else {
 			String lfn(prefix);
-			lfn += file->name();
+			lfn += file->getName();
 			lfn.toLowercase();
 			if (!_filesMap->contains(lfn)) {
-				(*_filesMap)[lfn] = file->path();
+				(*_filesMap)[lfn] = file->getPath();
 			}
 		}
 	}
@@ -364,15 +365,21 @@ bool File::open(const String &filename, AccessMode mode) {
 bool File::open(const FilesystemNode &node, AccessMode mode) {
 	assert(mode == kFileReadMode || mode == kFileWriteMode);
 
-	if (!node.isValid()) {
-		warning("File::open: Trying to open an invalid FilesystemNode object");
+	if (!node.exists()) {
+		warning("File::open: Trying to open a FilesystemNode which does not exist");
 		return false;
 	} else if (node.isDirectory()) {
 		warning("File::open: Trying to open a FilesystemNode which is a directory");
 		return false;
-	}
+	} /*else if (!node.isReadable() && mode == kFileReadMode) {
+		warning("File::open: Trying to open an unreadable FilesystemNode object for reading");
+		return false;
+	} else if (!node.isWritable() && mode == kFileWriteMode) {
+		warning("File::open: Trying to open an unwritable FilesystemNode object for writing");
+		return false;
+	}*/
 
-	String filename(node.name());
+	String filename(node.getName());
 
 	if (_handle) {
 		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), filename.c_str());
@@ -383,7 +390,7 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 
 	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
 
-	_handle = fopen(node.path().c_str(), modeStr);
+	_handle = fopen(node.getPath().c_str(), modeStr);
 
 	if (_handle == NULL) {
 		if (mode == kFileReadMode)
@@ -402,16 +409,40 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 	return true;
 }
 
+bool File::remove(const String &filename){
+	if (remove(filename.c_str()) != 0) {
+		if(errno == EACCES)
+			;//TODO: read-only file
+		if(errno == ENOENT)
+			;//TODO: non-existent file
+		
+		return false;
+	} else {
+		return true;
+	}
+}
+
+bool File::remove(const FilesystemNode &node){
+	if (remove(node.getPath()) != 0) {
+		if(errno == EACCES)
+			;//TODO: read-only file
+		if(errno == ENOENT)
+			;//TODO: non-existent file
+				
+		return false;
+	} else {
+		return true;
+	}
+}
+
 bool File::exists(const String &filename) {
 	// First try to find the file it via a FilesystemNode (in case an absolute
 	// path was passed). But we only use this to filter out directories.
 	FilesystemNode file(filename);
-	// FIXME: can't use isValid() here since at the time of writing
-	// FilesystemNode is to be unable to find for example files
-	// added in extrapath
-	if (file.isDirectory())
-		return false;
-
+	
+	return (!file.isDirectory() && file.exists());
+	
+	//***DEPRECATED COMMENTS BELOW, LEFT FOR DISCUSSION***
 	// Next, try to locate the file by *opening* it in read mode. This has
 	// multiple effects:
 	// 1) It takes _filesMap and _defaultDirectories into consideration -> good
