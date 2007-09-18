@@ -440,14 +440,14 @@ bool File::remove(const FilesystemNode &node){
 }
 
 bool File::exists(const String &filename) {
-	// First try to find the file it via a FilesystemNode (in case an absolute
+	// First try to find the file via a FilesystemNode (in case an absolute
 	// path was passed). But we only use this to filter out directories.
 	FilesystemNode file(filename);
 	
-	// FIXME: since (as stated in the comment above) FilesystemNode creation
-	// just works for absolute paths, and we use this to tell if a file
-	// exists in any of the setup paths so we ca not use:
-	//return (!file.isDirectory() && file.exists());
+	// FIXME: Since (as stated in the comment above) the FilesystemNode
+	// creation just works for absolute paths and we use this to tell if
+	// a file exists in any of the setup paths, we cannot use
+	// return (!file.isDirectory() && file.exists());
 	// 
 	// I.e.:
 	// FilesystemNode("foofile"); would fail for most (even all?)
