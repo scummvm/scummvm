@@ -25,6 +25,7 @@
 #ifndef COMMON_ARRAY_H
 #define COMMON_ARRAY_H
 
+#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 
