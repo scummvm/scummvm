@@ -287,6 +287,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\error.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\events.h"
 				>
 			</File>
@@ -893,11 +897,15 @@
 				Name="fs"
 				>
 				<File
-					RelativePath="..\..\backends\fs\abstract-fs.h"
+					RelativePath="..\..\backends\fs\abstract-fs-factory.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\backends\fs\windows\windows-fs.cpp"
+					RelativePath="..\..\backends\fs\abstract-fs-factory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\fs\abstract-fs.h"
 					>
 				</File>
 			</Filter>
