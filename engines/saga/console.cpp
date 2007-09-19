@@ -180,9 +180,9 @@ bool Console::cmdGlobalFlagsInfo(int argc, const char **argv) {
 	DebugPrintf("Global flags status for IHNM:\n");
 
 	// Global flags in IHNM:
-	// 00: Unknown
-	// 01: Unknown
-	// 02: Unknown
+	// 00: Tested when Gorrister's chapter ends. 0: Gorrister failed, 1: Gorrister won
+	// 01: Tested when Gorrister's chapter ends, when Gorrister fails (flag 0 is 0). 0: Gorrister died, 1: Gorrister failed
+	// 02: Unknown, set when Gorrister's chapter ends (perhaps it signifies that Gorrister's chapter is done)
 	// 03: Unknown
 	// 04: Unknown
 	// 05: Unknown
@@ -199,7 +199,7 @@ bool Console::cmdGlobalFlagsInfo(int argc, const char **argv) {
 	// 16: Used in the final chapter. If it's 0 when a character dies, the "bad" ending for that character is shown
 	// 17: Unknown
 	// 18: Unknown
-	// 19: Unknown, used in the final chapter
+	// 19: Unknown, used after any chapter ends
 	// 20: Unknown
 	// 21: Unknown
 	// 22: Unknown
