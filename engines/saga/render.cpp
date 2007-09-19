@@ -88,7 +88,7 @@ void Render::drawScene() {
 	if (!(_flags & (RF_DEMO_SUBST | RF_MAP) || _vm->_interface->getMode() == kPanelPlacard)) {
 		if (_vm->_interface->getFadeMode() != kFadeOut) {
 			// Display scene background
-			if (!(_flags & RF_DISABLE_ACTORS))
+			if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameType() == GType_ITE)
 				_vm->_scene->draw();
 
 			if (_vm->_puzzle->isActive()) {
