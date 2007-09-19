@@ -57,7 +57,7 @@ _build_queen=yes
 _build_saga=yes
 _build_gob=yes
 _build_kyra=yes
-_build_lure=no
+_build_lure=yes
 _build_cine=yes
 _build_agi=yes
 _build_touche=yes
@@ -357,7 +357,7 @@ Optional Features:
   --enable-drascula        build the Drascula: The Vampire Strikes Back engine
   --disable-gob            don't build the Gobli*ns engine
   --disable-kyra           don't build the Legend of Kyrandia engine
-  --enable-lure            build the Lure of the Temptress engine
+  --disable-lure           don't build the Lure of the Temptress engine
   --disable-he             exclude HE70+ games in SCUMM engine
   --disable-parallaction   don't build the Parallaction engine
   --disable-queen          don't build the Flight of the Amazon Queen engine
@@ -434,7 +434,7 @@ for ac_option in $@; do
       --disable-saga)           _build_saga=no ;;
       --disable-gob)            _build_gob=no ;;
       --disable-kyra)           _build_kyra=no ;;
-      --enable-lure)            _build_lure=yes ;;
+      --disable-lure)           _build_lure=no ;;
       --disable-cine)           _build_cine=no ;;
       --disable-agi)            _build_agi=no ;;
       --disable-touche)         _build_touche=no ;;
