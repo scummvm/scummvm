@@ -331,6 +331,8 @@ void Troll::intro() {
 	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(3200);
 
+	CursorMan.showMouse(true);
+
 	// Draw logo
 	_vm->setDefaultTextColor(0x0f);
 	drawPic(45, false, true);
