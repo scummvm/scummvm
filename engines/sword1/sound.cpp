@@ -27,6 +27,7 @@
 #include "common/endian.h"
 
 #include "common/util.h"
+#include "common/events.h"
 
 #include "sword1/sound.h"
 #include "sword1/resman.h"
@@ -44,6 +45,7 @@ namespace Sword1 {
 #define SPEECH_FLAGS (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_LITTLE_ENDIAN)
 
 Sound::Sound(const char *searchPath, Audio::Mixer *mixer, ResMan *pResMan) {
+	g_system->getEventManager()->registerRandomSource(_rnd, "sword1sound");
 	strcpy(_filePath, searchPath);
 	_mixer = mixer;
 	_resMan = pResMan;

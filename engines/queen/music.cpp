@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/events.h"
 
 #include "queen/music.h"
 #include "queen/queen.h"
@@ -48,6 +49,7 @@ MidiMusic::MidiMusic(MidiDriver *driver, QueenEngine *vm)
 	this->open();
 
 	_tune = vm->resource()->isDemo() ? Sound::_tuneDemo : Sound::_tune;
+	vm->_system->getEventManager()->registerRandomSource(_rnd, "queenMusic");
 }
 
 MidiMusic::~MidiMusic() {

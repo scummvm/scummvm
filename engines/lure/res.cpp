@@ -28,6 +28,7 @@
 #include "lure/scripts.h"
 #include "lure/screen.h"
 #include "common/endian.h"
+#include "common/events.h"
 
 namespace Lure {
 
@@ -40,6 +41,7 @@ Resources &Resources::getReference() {
 }
 
 Resources::Resources() {
+	g_system->getEventManager()->registerRandomSource(_rnd, "lureResources");
 	int_resources = this;
 	reloadData();
 

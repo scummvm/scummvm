@@ -85,6 +85,8 @@ public:
 	const CINEGameDescription *_gameDescription;
 	Common::File _partFileHandle;
 
+	Common::RandomSource _rnd;
+
 private:
 	void initialize(void);
 	bool makeLoad(char *saveName);

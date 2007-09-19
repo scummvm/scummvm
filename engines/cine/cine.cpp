@@ -23,7 +23,7 @@
  *
  */
 
-
+#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -62,6 +62,8 @@ CineEngine::CineEngine(OSystem *syst) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	g_cine = this;
+
+	syst->getEventManager()->registerRandomSource(_rnd, "cine");
 }
 
 CineEngine::~CineEngine() {

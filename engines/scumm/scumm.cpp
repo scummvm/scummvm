@@ -536,6 +536,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	// Add debug levels
 	for (int i = 0; i < ARRAYSIZE(debugChannels); ++i)
 		Common::addSpecialDebugLevel(debugChannels[i].flag,  debugChannels[i].channel, debugChannels[i].desc);
+
+	syst->getEventManager()->registerRandomSource(_rnd, "scumm");
 }
 
 

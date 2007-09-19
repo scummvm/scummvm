@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "agos/debugger.h"
 #include "agos/intern.h"
@@ -519,6 +520,8 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	File::addDefaultDirectory(_gameDataPath + "SFX");
 	File::addDefaultDirectory(_gameDataPath + "speech");
 	File::addDefaultDirectory(_gameDataPath + "SPEECH");
+	
+	syst->getEventManager()->registerRandomSource(_rnd, "agos");
 }
 
 int AGOSEngine::init() {

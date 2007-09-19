@@ -492,6 +492,7 @@ public:
 	Font		*_menuFont;
 	Font		*_dialogueFont;
 
+	Common::RandomSource _rnd;
 
 protected:		// data
 

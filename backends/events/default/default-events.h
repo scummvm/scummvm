@@ -27,6 +27,7 @@
 #define BACKEND_EVENTS_DEFAULT_H
 
 #include "common/events.h"
+#include "common/savefile.h"
 
 /*
 At some point we will remove pollEvent from OSystem and change
@@ -47,7 +48,45 @@ class DefaultEventManager : public Common::EventManager {
 	int _buttonState;
 	int _modifierState;
 	bool _shouldQuit;
+	
+	class RandomSourceRecord {
+	public:
+		Common::String name;
+		uint32 seed;
+	};
+	Common::Array<RandomSourceRecord> _randomSourceRecords; 
 
+	bool _recordSubtitles;
+	volatile uint32 _recordCount;
+	volatile uint32 _lastRecordEvent;
+	volatile uint32 _recordTimeCount;
+	Common::OutSaveFile *_recordFile;
+	Common::OutSaveFile *_recordTimeFile;
+	Common::MutexRef _timeMutex;
+	Common::MutexRef _recorderMutex;
+	volatile uint32 _lastMillis;
+
+	volatile uint32 _playbackCount;
+	volatile uint32 _playbackDiff;
+	volatile bool _hasPlaybackEvent;
+	volatile uint32 _playbackTimeCount;
+	Common::Event _playbackEvent;	
+	Common::InSaveFile *_playbackFile;
+	Common::InSaveFile *_playbackTimeFile;
+
+	volatile uint32 _eventCount;
+	volatile uint32 _lastEventCount;
+
+	enum RecordMode {
+		kPassthrough = 0,
+		kRecorderRecord = 1,
+		kRecorderPlayback = 2
+	};
+	volatile RecordMode _recordMode;
+	Common::String _recordFileName;
+	Common::String _recordTempFileName;
+	Common::String _recordTimeFileName;
+	
 	// for continuous events (keyDown)
 	enum {
 		kKeyRepeatInitialDelay = 400,
@@ -61,10 +100,15 @@ class DefaultEventManager : public Common::EventManager {
 	} _currentKeyDown;
 	uint32 _keyRepeatTime;
 
+	void record(Common::Event &event);
+	bool playback(Common::Event &event);
 public:
 	DefaultEventManager(OSystem *boss);
+	~DefaultEventManager();
 
 	virtual bool pollEvent(Common::Event &event);
+	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name);
+	virtual void processMillis(uint32 &millis);
 
 	virtual Common::Point getMousePos() const { return _mousePos; }
 	virtual int getButtonState() const { return _buttonState; }

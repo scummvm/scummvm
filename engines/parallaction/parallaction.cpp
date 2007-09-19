@@ -111,6 +111,8 @@ Parallaction::Parallaction(OSystem *syst) :
 	Common::addSpecialDebugLevel(kDebugInput, "input", "Input debug level");
 	Common::addSpecialDebugLevel(kDebugAudio, "audio", "Audio debug level");
 	Common::addSpecialDebugLevel(kDebugMenu, "menu", "Menu debug level");
+
+	syst->getEventManager()->registerRandomSource(_rnd, "parallaction");
 }
 
 

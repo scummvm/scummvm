@@ -623,6 +623,7 @@ AgiEngine::AgiEngine(OSystem *syst) : AgiBase(syst) {
 			_gameId = g->id;
 
 	_rnd = new Common::RandomSource();
+	syst->getEventManager()->registerRandomSource(*_rnd, "agi");
 
 	Common::addSpecialDebugLevel(kDebugLevelMain, "Main", "Generic debug level");
 	Common::addSpecialDebugLevel(kDebugLevelResources, "Resources", "Resources debugging");

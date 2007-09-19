@@ -72,6 +72,10 @@ private:
 public:
 	RandomSource();
 	void setSeed(uint32 seed);
+	
+	uint32 getSeed() {
+		return _randSeed;
+	}
 
 	/**
 	 * Generates a random unsigned integer in the interval [0, max].

@@ -23,6 +23,7 @@
  *
  */
 
+#include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 #include "cruise/cell.h"
 #include "common/util.h"
@@ -193,7 +194,7 @@ int16 Op_rand(void) {		// TODO: implement
 		return (0);
 	}
 
-	return (rand() % var);
+	return (g_cruise->_rnd.getRandomNumber(var - 1));
 }
 
 int16 Op_PlayFX(void) {		// TODO: implement

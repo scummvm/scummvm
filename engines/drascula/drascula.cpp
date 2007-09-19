@@ -71,6 +71,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst) : Engine(syst) {
 			_gameId = g->id;
 
 	_rnd = new Common::RandomSource();
+	syst->getEventManager()->registerRandomSource(*_rnd, "drascula");
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)

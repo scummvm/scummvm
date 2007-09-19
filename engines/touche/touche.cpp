@@ -73,6 +73,8 @@ ToucheEngine::ToucheEngine(OSystem *system)
 	Common::addSpecialDebugLevel(kDebugResource, "Resource", "Resource debug level");
 	Common::addSpecialDebugLevel(kDebugOpcodes,  "Opcodes",  "Opcodes debug level");
 	Common::addSpecialDebugLevel(kDebugUserIntf, "UserIntf", "UserInterface debug level");
+
+	system->getEventManager()->registerRandomSource(_rnd, "touche");
 }
 
 ToucheEngine::~ToucheEngine() {

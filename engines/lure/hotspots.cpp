@@ -588,6 +588,8 @@ void Hotspot::setRandomDest() {
 	Common::RandomSource rnd;
 	int16 xp, yp;
 
+	g_system->getEventManager()->registerRandomSource(rnd, "lureHotspots");
+
 	if (_currentActions.isEmpty())
 		_currentActions.addFront(START_WALKING, roomNumber());
 	else
@@ -2925,6 +2927,8 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 	Common::RandomSource rnd;
 	RandomActionType actionType;
 	uint16 scheduleId;
+	g_system->getEventManager()->registerRandomSource(rnd, "lureHotspots");
+
 	int actionIndex = rnd.getRandomNumber(set->numActions() - 1);
 	set->getEntry(actionIndex, actionType, scheduleId);
 
@@ -3113,6 +3117,8 @@ void HotspotTickHandlers::prisonerAnimHandler(Hotspot &h) {
 	ValueTableData &fields = Resources::getReference().fieldList();
 	Common::RandomSource rnd;
 
+	g_system->getEventManager()->registerRandomSource(rnd, "lureHotspots");
+
 	h.handleTalkDialog();
 	if (h.frameCtr() > 0) {
 		h.setFrameCtr(h.frameCtr() - 1);
@@ -3153,6 +3159,8 @@ void HotspotTickHandlers::morkusAnimHandler(Hotspot &h) {
 	if (h.executeScript()) {
 		// Script is done - set new script to one of two alternates randomly
 		Common::RandomSource rnd;
+		g_system->getEventManager()->registerRandomSource(rnd, "lureHotspots");
+
 		h.setHotspotScript(rnd.getRandomNumber(100) >= 50 ? 0x54 : 0); 
 		h.setFrameCtr(20 + rnd.getRandomNumber(63));
 	}
@@ -3416,6 +3424,8 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 	BarEntry &barEntry = res.barmanLists().getDetails(h.roomNumber());
 	Common::RandomSource rnd;
 	static bool ewanXOffset = false;
+
+	g_system->getEventManager()->registerRandomSource(rnd, "lureHotspots");
 
 	h.handleTalkDialog();
 	if (h.delayCtr() > 0) {

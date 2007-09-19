@@ -2355,7 +2355,7 @@ void drawFailureMessage(byte cmd) {
 	int16 localY;
 	int16 localWidth;
 
-	byte msgIdx = cmd * 4 + rand() % 4;
+	byte msgIdx = cmd * 4 + g_cine->_rnd.getRandomNumber(3);
 
 	const char *messagePtr = failureMessages[msgIdx];
 	int len = strlen(messagePtr);

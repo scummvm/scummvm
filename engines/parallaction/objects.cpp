@@ -23,6 +23,7 @@
  *
  */
 
+#include "parallaction/parallaction.h"
 #include "parallaction/objects.h"
 #include "parallaction/parser.h"
 
@@ -287,7 +288,7 @@ int16 ScriptVar::getRValue() {
 	}
 
 	if (_flags & kParaRandom) {
-		return (rand() * _value) / 32767;
+		return (_vm->_rnd.getRandomNumber(65536) * _value) / 32767;
 	}
 
 	error("Parameter is not an r-value");

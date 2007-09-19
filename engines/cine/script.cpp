@@ -909,7 +909,7 @@ void o1_loadVar() {
 			break;
 		case 5:
 			debugC(5, kCineDebugScript, "Line: %d: var[%d] = rand mod %d", _currentLine, varIdx, dataIdx);
-			_currentScriptElement->localVars[varIdx] = rand() % dataIdx;
+			_currentScriptElement->localVars[varIdx] = g_cine->_rnd.getRandomNumber(dataIdx - 1);
 			break;
 		case 8:
 			debugC(5, kCineDebugScript, "Line: %d: var[%d] = file[%d].packedSize", _currentLine, varIdx, dataIdx);

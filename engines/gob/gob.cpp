@@ -25,6 +25,7 @@
 
 
 #include "common/endian.h"
+#include "common/events.h"
 
 #include "base/plugins.h"
 #include "common/config-manager.h"
@@ -98,6 +99,8 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kDebugFileIO, "FileIO", "File Input/Output debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
 	Common::addSpecialDebugLevel(kDebugCollisions, "Collisions", "Collisions debug level");
+
+	syst->getEventManager()->registerRandomSource(_rnd, "gob");
 }
 
 GobEngine::~GobEngine() {

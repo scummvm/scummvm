@@ -209,6 +209,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	_gameSpeed = 1;
 
 	_quit = false;
+	syst->getEventManager()->registerRandomSource(_rnd, "sword2");
 }
 
 Sword2Engine::~Sword2Engine() {

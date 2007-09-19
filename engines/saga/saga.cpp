@@ -28,6 +28,7 @@
 #include "common/file.h"
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "sound/mixer.h"
 
@@ -113,6 +114,7 @@ SagaEngine::SagaEngine(OSystem *syst)
 	}
 
 	_displayClip.left = _displayClip.top = 0;
+	syst->getEventManager()->registerRandomSource(_rnd, "saga");
 }
 
 SagaEngine::~SagaEngine() {

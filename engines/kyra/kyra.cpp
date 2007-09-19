@@ -71,6 +71,8 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	Common::addSpecialDebugLevel(kDebugLevelSequence, "Sequence", "Sequence debug level");
 	Common::addSpecialDebugLevel(kDebugLevelMovie, "Movie", "Movie debug level");
 	Common::addSpecialDebugLevel(kDebugLevelTimer, "Timer", "Timer debug level");
+
+	system->getEventManager()->registerRandomSource(_rnd, "kyra");
 }
 
 int KyraEngine::init() {

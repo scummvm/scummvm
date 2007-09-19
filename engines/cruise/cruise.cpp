@@ -23,7 +23,7 @@
  *
  */
 
-
+#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -64,6 +64,8 @@ CruiseEngine::CruiseEngine(OSystem * syst) : Engine(syst) {
 	    ConfMan.getInt("music_volume"));
 
 	g_cruise = this;
+
+	syst->getEventManager()->registerRandomSource(_rnd, "cruise");
 }
 
 CruiseEngine::~CruiseEngine() {
@@ -75,8 +77,7 @@ CruiseEngine::~CruiseEngine() {
 int CruiseEngine::init() {
 	// Detect game
 	if (!initGame()) {
-		GUIErrorMessage
-		    ("No valid games were found in the specified directory.");
+		GUIErrorMessage ("No valid games were found in the specified directory.");
 		return -1;
 	}
 	// Initialize backend

@@ -25,6 +25,7 @@
 
 #include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/util.h"
 
 #include "backends/saves/default/default-saves.h"
@@ -187,7 +188,9 @@ OSystem_SDL::~OSystem_SDL() {
 }
 
 uint32 OSystem_SDL::getMillis() {
-	return SDL_GetTicks();
+	uint32 millis = SDL_GetTicks();
+	getEventManager()->processMillis(millis);
+	return millis;
 }
 
 void OSystem_SDL::delayMillis(uint msecs) {
@@ -268,6 +271,7 @@ void OSystem_SDL::quit() {
 	SDL_ShowCursor(SDL_ENABLE);
 	SDL_Quit();
 
+	delete getEventManager();
 	exit(0);
 }
 

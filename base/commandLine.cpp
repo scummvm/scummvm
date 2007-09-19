@@ -225,6 +225,11 @@ void registerDefaults() {
 	ConfMan.registerDefault("savepath", savePath);
 #endif
 #endif // #ifdef DEFAULT_SAVE_PATH
+
+	ConfMan.registerDefault("record_mode", "none");
+	ConfMan.registerDefault("record_file_name", "record.bin");
+	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
+	ConfMan.registerDefault("record_time_file_name", "record.time");
 }
 
 //
@@ -499,6 +504,19 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			DO_LONG_OPTION_BOOL("alt-intro")
 			END_OPTION
 #endif
+
+			DO_LONG_OPTION("record-mode")
+			END_OPTION
+
+			DO_LONG_OPTION("record-file-name")
+			END_OPTION
+
+			DO_LONG_OPTION("record-temp-file-name")
+			END_OPTION
+
+			DO_LONG_OPTION("record-time-file-name")
+			END_OPTION
+
 
 unknownOption:
 			// If we get till here, the option is unhandled and hence unknown.
