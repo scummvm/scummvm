@@ -41,7 +41,9 @@ namespace Agi {
 enum SelectionTypes {
 	kSelYesNo,
 	kSelNumber,
-	kSelSpace
+	kSelSpace,
+	kSelAnyKey,
+	kSelBackspace
 };
 
 } // End of namespace Agi

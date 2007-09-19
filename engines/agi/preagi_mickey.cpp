@@ -184,7 +184,7 @@ int Mickey::choose1to9(int ofsPrompt) {
 	for (;;) {
 		if (a == 10) {
 			printExeStr(IDO_MSA_PRESS_1_TO_9);
-			if (!_vm->waitAnyKeyChoice())
+			if (_vm->getSelection(kSelAnyKey) == 0)
 				return 0;
 			printExeStr(ofsPrompt);
 		} else return a;
@@ -956,7 +956,7 @@ bool Mickey::loadGame() {
 		sprintf(szFile, "%s.s%2d", _vm->getTargetName().c_str(), sel);
 		if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile))) {
 			printExeStr(IDO_MSA_CHECK_DISK_DRIVE);
-			if (!_vm->waitAnyKeyChoice())
+			if (_vm->getSelection(kSelAnyKey) == 0)
 				return false;
 		} else {
 			infile->read(&game, sizeof(MSA_GAME));
@@ -982,7 +982,7 @@ void Mickey::saveGame() {
 	else
 		printExeStr(IDO_MSA_SAVE_GAME[2]);
 
-	if (!_vm->waitAnyKeyChoice())
+	if (_vm->getSelection(kSelAnyKey) == 0)
 		return;
 
 	while (diskerror) {
@@ -995,14 +995,14 @@ void Mickey::saveGame() {
 		else
 			printExeStr(IDO_MSA_SAVE_GAME[4]);
 
-		if (!_vm->waitAnyKeyChoice())
+		if (_vm->getSelection(kSelAnyKey) == 0)
 			return;
 
 		// save game
 		sprintf(szFile, "%s.s%2d", _vm->getTargetName().c_str(), sel);
 		if (!(outfile = _vm->getSaveFileMan()->openForSaving(szFile))) {
 			printExeStr(IDO_MSA_CHECK_DISK_DRIVE);
-			if (!_vm->waitAnyKeyChoice())
+			if (_vm->getSelection(kSelAnyKey) == 0)
 				return;
 		} else {
 			outfile->write(&game, sizeof(MSA_GAME));
@@ -2082,10 +2082,8 @@ void Mickey::waitAnyKeyAnim() {
 void Mickey::waitAnyKey(bool anim) {
 	Common::Event event;
 
-	if (!anim) {
+	if (!anim)
 		_vm->_gfx->doUpdate();
-		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-	}
 
 	for (;;) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
@@ -2103,8 +2101,10 @@ void Mickey::waitAnyKey(bool anim) {
 		if (anim) {
 			animate();
 			_vm->_gfx->doUpdate();
-			_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 		}
+
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(10);
 	}
 }
 

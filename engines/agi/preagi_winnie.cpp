@@ -218,7 +218,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 		default:
 			// print description
 			_vm->printStrXOR((char *)(buffer + pc));
-			if (_vm->getSelOkBack())
+			if (_vm->getSelection(kSelBackspace) == 1)
 				return IDI_WTP_PAR_OK;
 			else 
 				return IDI_WTP_PAR_BACK;
@@ -277,7 +277,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				iDir = iSel - IDI_WTP_SEL_NORTH;
 				if (hdr.roomNew[iDir] == IDI_WTP_ROOM_NONE) {
 					_vm->printStr(IDS_WTP_CANT_GO);
-					_vm->waitAnyKeyChoice();
+					_vm->getSelection(kSelAnyKey);
 				} else {
 					room = hdr.roomNew[iDir];
 					return IDI_WTP_PAR_GOTO;
@@ -310,7 +310,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			case IDO_WTP_PRINT_MSG:
 				opcode = *(buffer + pc++);
 				printRoomStr(room, opcode);
-				_vm->waitAnyKeyChoice();
+				_vm->getSelection(kSelAnyKey);
 				break;
 			case IDO_WTP_PRINT_STR:
 				opcode = *(buffer + pc++);
@@ -377,9 +377,9 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 void Winnie::keyHelp() {
 	//Winnie_PlaySound(IDI_WTP_SND_KEYHELP);
 	_vm->printStr(IDS_WTP_HELP_0);
-	_vm->waitAnyKeyChoice();
+	_vm->getSelection(kSelAnyKey);
 	_vm->printStr(IDS_WTP_HELP_1);
-	_vm->waitAnyKeyChoice();
+	_vm->getSelection(kSelAnyKey);
 }
 
 void Winnie::inventory() {
@@ -396,7 +396,7 @@ void Winnie::inventory() {
 	_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_MENU, IDA_DEFAULT, szMissing);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
-	_vm->waitAnyKeyChoice();
+	_vm->getSelection(kSelAnyKey);
 }
 
 void Winnie::printObjStr(int iObj, int iStr) {
@@ -438,7 +438,7 @@ void Winnie::takeObj(int iRoom) {
 	if (game.iObjHave) {
 		// player is already carrying an object, can't take
 		_vm->printStr(IDS_WTP_CANT_TAKE);
-		_vm->waitAnyKeyChoice();
+		_vm->getSelection(kSelAnyKey);
 	} else {
 		// take object
 		int iObj = getObjInRoom(iRoom);
@@ -452,7 +452,7 @@ void Winnie::takeObj(int iRoom) {
 
 		// print object "take" string
 		printObjStr(game.iObjHave, IDI_WTP_OBJ_TAKE);
-		_vm->waitAnyKeyChoice();
+		_vm->getSelection(kSelAnyKey);
 
 		// HACK WARNING
 		if (iObj == 18) {
@@ -467,7 +467,7 @@ void Winnie::dropObj(int iRoom) {
 	if (getObjInRoom(iRoom)) {
 		// there already is an object in the room, can't drop
 		_vm->printStr(IDS_WTP_CANT_DROP);
-		_vm->waitAnyKeyChoice();
+		_vm->getSelection(kSelAnyKey);
 	} else {
 		// HACK WARNING
 		if (game.iObjHave == 18) {
@@ -477,10 +477,10 @@ void Winnie::dropObj(int iRoom) {
 		if (isRightObj(iRoom, game.iObjHave, &iCode)) {
 			// object has been dropped in the right place
 			_vm->printStr(IDS_WTP_OK);
-			_vm->waitAnyKeyChoice();
+			_vm->getSelection(kSelAnyKey);
 			//Winnie_PlaySound(IDI_WTP_SND_DROP_OK);
 			printObjStr(game.iObjHave, IDI_WTP_OBJ_DROP);
-			_vm->waitAnyKeyChoice();
+			_vm->getSelection(kSelAnyKey);
 
 			// increase amount of objects returned, decrease amount of objects missing
 			game.nObjMiss--;
@@ -504,9 +504,9 @@ void Winnie::dropObj(int iRoom) {
 				// all objects returned, tell player to find party
 				//Winnie_PlaySound(IDI_WTP_SND_FANFARE);
 				_vm->printStr(IDS_WTP_GAME_OVER_0);
-				_vm->waitAnyKeyChoice();
+				_vm->getSelection(kSelAnyKey);
 				_vm->printStr(IDS_WTP_GAME_OVER_1);
-				_vm->waitAnyKeyChoice();
+				_vm->getSelection(kSelAnyKey);
 			}
 		} else {
 			// drop object in the given room
@@ -514,15 +514,15 @@ void Winnie::dropObj(int iRoom) {
 
 			// object has been dropped in the wrong place
 			_vm->printStr(IDS_WTP_WRONG_PLACE);
-			_vm->waitAnyKeyChoice();
+			_vm->getSelection(kSelAnyKey);
 			//Winnie_PlaySound(IDI_WTP_SND_DROP);
 			drawRoomPic();
 			_vm->printStr(IDS_WTP_WRONG_PLACE);
-			_vm->waitAnyKeyChoice();
+			_vm->getSelection(kSelAnyKey);
 
 			// print object description
 			printObjStr(game.iObjHave, IDI_WTP_OBJ_DESC);
-			_vm->waitAnyKeyChoice();
+			_vm->getSelection(kSelAnyKey);
 
 			game.iObjHave = 0;
 		}
@@ -563,10 +563,10 @@ void Winnie::wind() {
 
 	_vm->printStr(IDS_WTP_WIND_0);
 	//Winnie_PlaySound(IDI_WTP_SND_WIND_0);
-	_vm->waitAnyKeyChoice();
+	_vm->getSelection(kSelAnyKey);
 	_vm->printStr(IDS_WTP_WIND_1);
 	//Winnie_PlaySound(IDI_WTP_SND_WIND_0);
-	_vm->waitAnyKeyChoice();
+	_vm->getSelection(kSelAnyKey);
 
 	dropObjRnd();
 
@@ -591,15 +591,15 @@ void Winnie::wind() {
 void Winnie::showOwlHelp() {
 	if (game.iObjHave) {
 		_vm->printStr(IDS_WTP_OWL_0);
-		_vm->waitAnyKeyChoice();
+		_vm->getSelection(kSelAnyKey);
 		printObjStr(game.iObjHave, IDI_WTP_OBJ_HELP);
-		_vm->waitAnyKeyChoice();
+		_vm->getSelection(kSelAnyKey);
 	}
 	if (getObjInRoom(room)) {
 		_vm->printStr(IDS_WTP_OWL_0);
-		_vm->waitAnyKeyChoice();
+		_vm->getSelection(kSelAnyKey);
 		printObjStr(getObjInRoom(room), IDI_WTP_OBJ_HELP);
-		_vm->waitAnyKeyChoice();
+		_vm->getSelection(kSelAnyKey);
 	}
 }
 
@@ -927,7 +927,7 @@ phase0:
 phase1:
 	if (getObjInRoom(room)) {
 		printObjStr(getObjInRoom(room), IDI_WTP_OBJ_DESC);
-		_vm->waitAnyKeyChoice();
+		_vm->getSelection(kSelAnyKey);
 	}
 phase2:
 	for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
@@ -1045,7 +1045,7 @@ void Winnie::gameOver() {
 		//Winnie_PlaySound(IDI_WTP_SND_POOH_1);
 		_vm->printStr(IDS_WTP_SONG_2);
 		//Winnie_PlaySound(IDI_WTP_SND_POOH_2);
-		_vm->waitAnyKeyChoice();
+		_vm->getSelection(kSelAnyKey);
 	}
 }
 

@@ -74,8 +74,6 @@ public:
 
 	// Keyboard
 	int getSelection(SelectionTypes type);
-	bool waitAnyKeyChoice();
-	bool getSelOkBack();
 
 	int rnd(int hi) { return (_rnd->getRandomNumber(hi) + 1); }
 

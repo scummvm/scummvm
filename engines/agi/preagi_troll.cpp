@@ -42,7 +42,7 @@ Troll::Troll(PreAgiEngine* vm) : _vm(vm) {
 void Troll::pressAnyKey() {
 	_vm->drawStr(24, 4, kColorDefault, IDS_TRO_PRESSANYKEY);
 	_vm->_gfx->doUpdate();
-	_vm->waitAnyKeyChoice();
+	_vm->getSelection(kSelAnyKey);
 }
 
 void Troll::drawMenu(const char *szMenu, int iSel) {
@@ -163,7 +163,7 @@ void Troll::inventory() {
 
 	_vm->drawStr(24, 6, kColorDefault, IDS_TRO_PRESSANYKEY);
 	_vm->_gfx->doUpdate();
-	_vm->waitAnyKeyChoice();
+	_vm->getSelection(kSelAnyKey);
 }
 
 void Troll::waitAnyKeyIntro() {

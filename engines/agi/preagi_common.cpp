@@ -122,19 +122,16 @@ void PreAgiEngine::printStrXOR(char *szMsg) {
 int PreAgiEngine::getSelection(SelectionTypes type) {
 	Common::Event event;
 
-	// Selection types:
-	// 0: Y/N
-	// 1: 1-9
 	for (;;) {
 		while (_eventMan->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_QUIT:
 				_system->quit();
-			case Common::EVENT_LBUTTONUP:
-				if (type == kSelYesNo)
-					return 1;
 			case Common::EVENT_RBUTTONUP:
 				return 0;
+			case Common::EVENT_LBUTTONUP:
+				if (type == kSelYesNo || type == kSelAnyKey)
+					return 1;
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_y:
@@ -144,7 +141,7 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 					if (type == kSelYesNo)
 						return 0;
 				case Common::KEYCODE_ESCAPE:
-					if (type == kSelNumber)
+					if (type == kSelNumber || type == kSelAnyKey)
 						return 0;
 				case Common::KEYCODE_1:
 				case Common::KEYCODE_2:
@@ -160,11 +157,16 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 				case Common::KEYCODE_SPACE:
 					if (type == kSelSpace)
 						return 1;
+				case Common::KEYCODE_BACKSPACE:
+					if (type == kSelBackspace)
+						return 0;
 				default:
 					if (type == kSelYesNo) {
 						return 2;
 					} else if (type == kSelNumber) {
 						return 10;
+					} else if (type == kSelAnyKey || type == kSelBackspace) {
+						return 1;
 					}
 				}
 				break;
@@ -176,62 +178,6 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 		_system->delayMillis(10);
 	}
 	return 0;
-}
-
-bool PreAgiEngine::waitAnyKeyChoice() {
-	Common::Event event;
-
-	for (;;) {
-		while (_eventMan->pollEvent(event)) {
-			switch(event.type) {
-			case Common::EVENT_QUIT:
-				_system->quit();
-			case Common::EVENT_LBUTTONUP:
-				return true;
-			case Common::EVENT_RBUTTONUP:
-				return false;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE: //Escape
-					return false;
-				default:
-					return true;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-		_system->updateScreen();
-		_system->delayMillis(10);
-	}
-}
-
-bool PreAgiEngine::getSelOkBack() {
-	Common::Event event;
-
-	for (;;) {
-		while (_eventMan->pollEvent(event)) {
-			switch (event.type) {
-				case Common::EVENT_QUIT:
-					_system->quit();
-					break;
-				case Common::EVENT_LBUTTONUP:
-					return true;
-				case Common::EVENT_RBUTTONUP:
-					return false;
-				case Common::EVENT_KEYDOWN:
-					switch (event.kbd.keycode) {
-					case Common::KEYCODE_BACKSPACE:
-						return false;
-					default:
-						return true;
-					}
-				default:
-					break;
-			}
-		}
-	}
 }
 
 }
