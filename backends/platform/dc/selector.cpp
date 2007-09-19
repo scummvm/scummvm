@@ -363,7 +363,7 @@ int gameMenu(Game *games, int num_games)
     event = handleInput(locked_get_pads(), mousex, mousey, shiftFlags);
     setimask(mask);
 
-    if (event==-Common::EVENT_LBUTTONDOWN || event==Common::KEYCODE_ENTER || event==Common::KEYCODE_F5) {
+    if (event==-Common::EVENT_LBUTTONDOWN || event==Common::KEYCODE_RETURN || event==Common::KEYCODE_F5) {
       int selected_game = top_game + selector_pos;
 
       for (int fade=0; fade<=256; fade+=4) {
