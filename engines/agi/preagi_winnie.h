@@ -328,7 +328,7 @@ private:
 	void printRoomStr(int, int);
 	void inventory();
 	void printObjStr(int, int);
-	void readObj(int, uint8*, int);
+	int readObj(int, uint8*, int);
 	void takeObj(int);
 	void dropObj(int);
 	bool isRightObj(int, int, int*);
