@@ -159,8 +159,9 @@ int DigitalMusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		return _compressedStream->readBuffer(buffer, numSamples);
 
 	int samples = 0;
+	int len = 0;
+
 	while (samples < numSamples && !eosIntern()) {
-		int len = 0;
 		len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
 		memcpy(buffer, _pos, len * 2);
 		buffer += len;
