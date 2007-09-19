@@ -289,7 +289,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\agi\preagi.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\agi\preagi_common.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_common.h"
 			>
 		</File>
 		<File
@@ -298,6 +306,14 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\preagi_mickey.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_troll.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_troll.h"
 			>
 		</File>
 		<File
