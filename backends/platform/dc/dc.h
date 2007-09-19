@@ -24,6 +24,7 @@
  */
 
 #include <common/system.h>
+#include <graphics/surface.h>
 #include <ronin/soundcommon.h>
 #include "backends/timer/default/default-timer.h"
 
