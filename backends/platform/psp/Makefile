@@ -54,7 +54,7 @@ CXXFLAGS := $(CXXFLAGS) -fno-exceptions -fno-rtti
 
 TARGET = scummvm-psp
 OBJS := psp_main.o \
-	$(srcdir)/backends/fs/psp/psp_fs.o \
+	$(srcdir)/backends/fs/psp/psp-fs.o \
 	osys_psp.o \
 	osys_psp_gu.o \
 	kbd_ss_c.o \
