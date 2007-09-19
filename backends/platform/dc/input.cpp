@@ -218,7 +218,8 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
     event.mouse.x -= _overlay_x;
     event.mouse.y -= _overlay_y;
   }
-  event.kbd.ascii = event.kbd.keycode = 0;
+  event.kbd.ascii = 0;
+  event.kbd.keycode = Common::KEYCODE_INVALID;
   if (e<0) {
     event.type = (Common::EventType)-e;
     return true;
@@ -227,7 +228,7 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
     e &= ~(1<<30);
     if (e < 1000) {
       event.type = (down? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP);
-      event.kbd.keycode = e;
+      event.kbd.keycode = (Common::KeyCode)e;
       event.kbd.ascii = (e>='a' && e<='z' && (event.kbd.flags & Common::KBD_SHIFT)?
 			  e &~ 0x20 : e);
       processed = true;
