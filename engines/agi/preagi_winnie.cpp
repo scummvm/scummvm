@@ -218,7 +218,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 		default:
 			// print description
 			_vm->printStrXOR((char *)(buffer + pc));
-			if (getSelOkBack())
+			if (_vm->getSelOkBack())
 				return IDI_WTP_PAR_OK;
 			else 
 				return IDI_WTP_PAR_BACK;
@@ -854,7 +854,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					break;
 				case Common::KEYCODE_s:
 					if (event.kbd.flags & Common::KBD_CTRL) {
-						//FlipSound();
+						_vm->flipflag(fSoundOn);
 					} else {
 						*iSel = IDI_WTP_SEL_SOUTH;
 						makeSel();
@@ -1018,32 +1018,6 @@ void Winnie::drawRoomPic() {
 	delete [] buffer;
 }
 
-bool Winnie::getSelOkBack() {
-	Common::Event event;
-
-	for (;;) {
-		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-				case Common::EVENT_QUIT:
-					_vm->_system->quit();
-					break;
-				case Common::EVENT_LBUTTONUP:
-					return true;
-				case Common::EVENT_RBUTTONUP:
-					return false;
-				case Common::EVENT_KEYDOWN:
-					switch (event.kbd.keycode) {
-					case Common::KEYCODE_BACKSPACE:
-						return false;
-					default:
-						return true;
-					}
-				default:
-					break;
-			}
-		}
-	}
-}
 void Winnie::clrMenuSel(int *iSel, int fCanSel[]) {
 	*iSel = IDI_WTP_SEL_OPT_1;
 	while (!fCanSel[*iSel]) {

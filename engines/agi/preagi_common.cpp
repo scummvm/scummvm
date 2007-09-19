@@ -208,4 +208,31 @@ bool PreAgiEngine::waitAnyKeyChoice() {
 	}
 }
 
+bool PreAgiEngine::getSelOkBack() {
+	Common::Event event;
+
+	for (;;) {
+		while (_eventMan->pollEvent(event)) {
+			switch (event.type) {
+				case Common::EVENT_QUIT:
+					_system->quit();
+					break;
+				case Common::EVENT_LBUTTONUP:
+					return true;
+				case Common::EVENT_RBUTTONUP:
+					return false;
+				case Common::EVENT_KEYDOWN:
+					switch (event.kbd.keycode) {
+					case Common::KEYCODE_BACKSPACE:
+						return false;
+					default:
+						return true;
+					}
+				default:
+					break;
+			}
+		}
+	}
+}
+
 }
