@@ -160,8 +160,8 @@ static void detectGames(FSList &files, GameList &candidates)
 
 static bool isIcon(const FilesystemNode &entry)
 {
-  int l = entry.displayName().size();
-  if (l>4 && !strcasecmp(entry.displayName().c_str()+l-4, ".ICO"))
+  int l = entry.getDisplayName().size();
+  if (l>4 && !strcasecmp(entry.getDisplayName().c_str()+l-4, ".ICO"))
     return true;
   else
     return false;
@@ -207,22 +207,22 @@ static int findGames(Game *games, int max)
   int curr_game = 0, curr_dir = 0, num_dirs = 1;
   dirs[0].node = FilesystemNode("");
   while (curr_game < max && curr_dir < num_dirs) {
-    strncpy(dirs[curr_dir].name, dirs[curr_dir].node.path().c_str(), 252);
+    strncpy(dirs[curr_dir].name, dirs[curr_dir].node.getPath().c_str(), 252);
     dirs[curr_dir].name[251] = '\0';
     dirs[curr_dir].deficon[0] = '\0';
     FSList files, fslist;
-    dirs[curr_dir++].node.listDir(fslist, FilesystemNode::kListAll);
+    dirs[curr_dir++].node.getChildren(fslist, FilesystemNode::kListAll);
     for (FSList::const_iterator entry = fslist.begin(); entry != fslist.end();
 	 ++entry) {
       if (entry->isDirectory()) {
-	if (num_dirs < MAX_DIR && strcasecmp(entry->displayName().c_str(),
+	if (num_dirs < MAX_DIR && strcasecmp(entry->getDisplayName().c_str(),
 					    "install")) {
 	  dirs[num_dirs].node = *entry;
 	  num_dirs++;
 	}
       } else
 	if (isIcon(*entry))
-	  strcpy(dirs[curr_dir-1].deficon, entry->displayName().c_str());
+	  strcpy(dirs[curr_dir-1].deficon, entry->getDisplayName().c_str());
 	else
 	  files.push_back(*entry);
     }
