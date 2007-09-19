@@ -26,7 +26,6 @@
 #ifndef CEDEVICE
 #define CEDEVICE
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/str.h"

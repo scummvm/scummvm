@@ -26,7 +26,7 @@
 #ifndef LURE_SURFACE_H
 #define LURE_SURFACE_H
 
-#include "common/stdafx.h"
+
 #include "common/str.h"
 #include "lure/disk.h"
 #include "lure/luredefs.h"
@@ -37,13 +37,13 @@ namespace Lure {
 
 class Surface {
 private:
-	MemoryBlock *_data;	
+	MemoryBlock *_data;
 	uint16 _width, _height;
 public:
 	Surface(MemoryBlock *src, uint16 width, uint16 height);
-	Surface(uint16 width, uint16 height);		
+	Surface(uint16 width, uint16 height);
 	~Surface();
-	
+
 	static void initialise();
 	static void deinitialise();
 
@@ -53,7 +53,7 @@ public:
 
 	void loadScreen(uint16 resourceId);
 	void writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour);
-	void writeString(uint16 x, uint16 y, Common::String line, bool transparent, 
+	void writeString(uint16 x, uint16 y, Common::String line, bool transparent,
 		uint8 colour = DIALOG_TEXT_COLOUR, bool varLength = true);
 	void transparentCopyTo(Surface *dest);
 	void copyTo(Surface *dest);

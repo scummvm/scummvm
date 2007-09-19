@@ -24,7 +24,7 @@
  */
 
 // Verb and hitarea handling
-#include "common/stdafx.h"
+
 
 #include "common/system.h"
 
@@ -239,7 +239,7 @@ void AGOSEngine::printVerbOf(uint hitarea_id) {
 			verb_prep_names = spanish_verb_prep_names;
 			break;
 		case Common::IT_ITA:
-			verb_prep_names = italian_verb_prep_names; 
+			verb_prep_names = italian_verb_prep_names;
 			break;
 		case Common::FR_FRA:
 			verb_prep_names = french_verb_prep_names;
@@ -247,7 +247,7 @@ void AGOSEngine::printVerbOf(uint hitarea_id) {
 		case Common::DE_DEU:
 			verb_prep_names = german_verb_prep_names;
 			break;
-		default: 
+		default:
 			verb_prep_names = english_verb_prep_names;
 			break;
 		}
@@ -273,7 +273,7 @@ void AGOSEngine::printVerbOf(uint hitarea_id) {
 		case Common::DE_DEU:
 			verb_names = german_verb_names;
 			break;
-		default: 
+		default:
 			verb_names = english_verb_names;
 			break;
 		}
@@ -717,7 +717,7 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 			}
 		}
 	}
- 
+
 	if ((getGameType() == GType_WW) && (_mouseCursor == 0 || _mouseCursor >= 4)) {
 		uint verb = best_ha->verb & 0x3FFF;
 		if  (verb >= 239 && verb <= 242) {

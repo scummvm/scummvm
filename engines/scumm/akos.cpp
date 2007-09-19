@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/akos.h"
@@ -250,7 +250,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 							}
 							if (!found) {
 								error("Sequence not found in actor %p costume %d", (void *)a, a->_costume);
-							}							
+							}
 						}
 					}
 
@@ -276,7 +276,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 								error("Sequence not found in actor %p costume %d", (void *)a, a->_costume);
 							}
 						}
-					}					
+					}
 					break;
 				}
 			} else {
@@ -312,7 +312,7 @@ void AkosRenderer::setPalette(byte *new_palette) {
 	if (_vm->_game.heversion == 70) {
 		for (i = 0; i < size; i++)
 			_palette[i] = _vm->_HEV7ActorPalette[_palette[i]];
-	} 
+	}
 
 	if (size == 256) {
 		byte color = new_palette[0];
@@ -571,7 +571,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 					if (color && !masked && !skip_column) {
 						pcolor = _palette[color];
 						if (_shadow_mode == 1) {
-							if (pcolor == 13)	
+							if (pcolor == 13)
 								pcolor = _shadow_table[*dst];
 						} else if (_shadow_mode == 2) {
 							error("codec1_spec2"); // TODO
@@ -977,7 +977,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	v1.destptr = (byte *)_out.pixels + v1.y * _out.pitch + v1.x;
 
 	codec1_genericDecode(v1);
-	
+
 	return drawFlag;
 }
 
@@ -1047,9 +1047,9 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	bdd.mirror = !_mirror;
 
 	drawBomp(bdd);
-	
+
 	_useBompPalette = false;
-	
+
 	return 0;
 }
 
@@ -1086,7 +1086,7 @@ void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
 			*buf = _akos16.color;
 			buf += dir;
 		}
-		
+
 		if (!_akos16.repeatMode) {
 			AKOS16_FILL_BITS()
 			bits = _akos16.bits & 3;
@@ -1143,7 +1143,7 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 	}
 
 	maskpitch = _numStrips;
-	
+
 	maskptr = _vm->getMaskBuffer(maskLeft, maskTop, zBuf);
 
 	assert(t_height > 0);
@@ -1172,7 +1172,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 		error("codec16: _actorHitMode not yet implemented");
 		return 0;
 	}
-	
+
 	if (!_mirror) {
 		clip.left = (_actorX - xmoveCur - _width) + 1;
 	} else {
@@ -1309,7 +1309,7 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	if (diff > 0) {
 		src.bottom -= diff;
 		dst.bottom -= diff;
-	}	
+	}
 
 	if (dst.isValidRect() == false)
 		return 0;
@@ -1420,7 +1420,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 				curpos += 3;
 				break;
 			case AKC_SoundStuff:
-				if (_game.heversion >= 61) 
+				if (_game.heversion >= 61)
 					curpos += 6;
 				else
 					curpos += 8;

@@ -29,7 +29,6 @@
 #undef ARRAYSIZE
 #endif
 
-#include "common/stdafx.h"
 #include "engines/engine.h"
 #include "common/config-manager.h"
 #include "common/file.h"

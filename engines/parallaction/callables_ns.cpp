@@ -24,7 +24,6 @@
  */
 
 
-#include "common/stdafx.h"
 #include "common/system.h"
 
 #include "common/file.h"

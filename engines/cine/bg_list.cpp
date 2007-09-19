@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/stream.h"
 
@@ -112,7 +112,7 @@ void createBgIncrustListElement(int16 objIdx, int16 param) {
 void freeBgIncrustList(void) {
 	BGIncrustList *bgIncrustPtr = bgIncrustList;
 	BGIncrustList *bgIncrustPtrN;
-	
+
 	while (bgIncrustPtr) {
 		bgIncrustPtrN = bgIncrustPtr->next;
 		free(bgIncrustPtr);
@@ -136,7 +136,7 @@ void loadBgIncrustFromSave(Common::InSaveFile *fHandle) {
 		bgIncrustPtrP = bgIncrustPtr;
 		bgIncrustPtr = bgIncrustPtr->next;
 	}
-	
+
 	bgIncrustPtr = (BGIncrustList *)malloc(sizeof(BGIncrustList));
 	if (bgIncrustPtrP)
 		bgIncrustPtrP->next = bgIncrustPtr;
@@ -173,7 +173,7 @@ void reincrustAllBg(void) {
 		}
 
 		bgIncrustPtr = bgIncrustPtr->next;
-	}	
+	}
 }
 
 } // End of namespace Cine

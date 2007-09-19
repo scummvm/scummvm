@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/system.h"
 
@@ -46,7 +46,7 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 	uint8 *p = _vm->resource()->fileData(filename, &fileSize);
 	if (!p)
 		return 0;
-	
+
 	const uint8 *wsaData = p;
 	_numFrames = READ_LE_UINT16(wsaData); wsaData += 2;
 	_width = READ_LE_UINT16(wsaData); wsaData += 2;
@@ -55,10 +55,10 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 	_offscreenBuffer = NULL;
 	_flags = 0;
 	if (_vm->gameFlags().useAltShapeHeader) {
-		flags = READ_LE_UINT16(wsaData); 
+		flags = READ_LE_UINT16(wsaData);
 		wsaData += 2;
 	}
-	
+
 	uint32 offsPal = 0;
 	if (flags & 1) {
 		offsPal = 0x300;
@@ -66,7 +66,7 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 		if (palBuf)
 			memcpy(palBuf, wsaData + (_numFrames + 2) * 4, 0x300);
 	}
-	
+
 	if (offscreenDecode) {
 		_flags |= WF_OFFSCREEN_DECODE;
 		const int offscreenBufferSize = _width * _height;
@@ -86,7 +86,7 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 
 	_deltaBuffer = new uint8[_deltaBufferSize];
 	memset(_deltaBuffer, 0, _deltaBufferSize);
-	
+
 	// read frame offsets
 	_frameOffsTable = new uint32[_numFrames + 2];
 	_frameOffsTable[0] = 0;
@@ -103,22 +103,22 @@ int WSAMovieV1::open(const char *filename, int offscreenDecode, uint8 *palBuf) {
 		_frameOffsTable[i] = READ_LE_UINT32(wsaData) - frameDataOffs;
 		wsaData += 4;
 	}
-	
+
 	// skip palette
 	wsaData += offsPal;
-	
+
 	// read frame data
 	const int frameDataSize = p + fileSize - wsaData;
 	_frameData = new uint8[frameDataSize];
 	memcpy(_frameData, wsaData, frameDataSize);
-	
+
 	// decode first frame
 	if (firstFrame)
 		Screen::decodeFrame4(_frameData, _deltaBuffer, _deltaBufferSize);
-	
+
 	delete [] p;
 	_opened = true;
-	
+
 	return _numFrames;
 }
 
@@ -143,7 +143,7 @@ void WSAMovieV1::displayFrame(int frameNum, ...) {
 		dst = _offscreenBuffer;
 	else
 		dst = _vm->screen()->getPageRect(_drawPage, _x, _y, _width, _height);
-		
+
 	if (_currentFrame == _numFrames) {
 		if (!(_flags & WF_NO_FIRST_FRAME)) {
 			if (_flags & WF_OFFSCREEN_DECODE)
@@ -171,7 +171,7 @@ void WSAMovieV1::displayFrame(int frameNum, ...) {
 			frameCount = diffCount;
 		}
 	}
-	
+
 	// process
 	if (frameStep > 0) {
 		uint16 cf = _currentFrame;
@@ -190,7 +190,7 @@ void WSAMovieV1::displayFrame(int frameNum, ...) {
 			cf += frameStep;
 		}
 	}
-	
+
 	// display
 	_currentFrame = frameNum;
 	if (_flags & WF_OFFSCREEN_DECODE)
@@ -223,7 +223,7 @@ int WSAMovieAmiga::open(const char *filename, int offscreenDecode, uint8 *palBuf
 
 	_buffer = new uint8[_width * _height];
 	assert(_buffer);
-	return res;	
+	return res;
 }
 
 void WSAMovieAmiga::close() {
@@ -282,7 +282,7 @@ void WSAMovieAmiga::displayFrame(int frameNum, ...) {
 			frameCount = diffCount;
 		}
 	}
-	
+
 	// process
 	if (frameStep > 0) {
 		uint16 cf = _currentFrame;
@@ -301,7 +301,7 @@ void WSAMovieAmiga::displayFrame(int frameNum, ...) {
 			cf += frameStep;
 		}
 	}
-	
+
 	// display
 	_currentFrame = frameNum;
 	if (_flags & WF_OFFSCREEN_DECODE)
@@ -334,7 +334,7 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 
 	for (int y = 0; y < _height; ++y) {
 		for (int x = 0; x < _width; ++x)
-			*dst++ ^= *src++;			
+			*dst++ ^= *src++;
 		dst += dstPitch - _width;
 	}
 }
@@ -354,7 +354,7 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 		warning("couldn't load wsa file: '%s'", filename);
 		return 0;
 	}
-	
+
 	const uint8 *wsaData = p;
 	_numFrames = READ_LE_UINT16(wsaData); wsaData += 2;
 	_xAdd = (int16)(READ_LE_UINT16(wsaData)); wsaData += 2;
@@ -365,7 +365,7 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	_offscreenBuffer = NULL;
 	_flags = 0;
 	flags = READ_LE_UINT16(wsaData); wsaData += 2;
-	
+
 	uint32 offsPal = 0;
 	if (flags & 1) {
 		offsPal = 0x300;
@@ -373,10 +373,10 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 		if (palBuf)
 			memcpy(palBuf, wsaData + 8 + ((_numFrames << 2) & 0xFFFF), 0x300);
 	}
-	
+
 	if (flags & 2)
 		_flags |= WF_XOR;
-	
+
 	if (!(unk1 & 2)) {
 		_flags |= WF_OFFSCREEN_DECODE;
 		const int offscreenBufferSize = _width * _height;
@@ -393,7 +393,7 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 
 	_deltaBuffer = new uint8[_deltaBufferSize];
 	memset(_deltaBuffer, 0, _deltaBufferSize);
-	
+
 	// read frame offsets
 	_frameOffsTable = new uint32[_numFrames + 2];
 	_frameOffsTable[0] = 0;
@@ -402,21 +402,21 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 		_frameOffsTable[i] = READ_LE_UINT32(wsaData) - frameDataOffs;
 		wsaData += 4;
 	}
-	
+
 	// skip palette
 	wsaData += offsPal;
-	
+
 	// read frame data
 	const int frameDataSize = p + fileSize - wsaData;
 	_frameData = new uint8[frameDataSize];
 	memcpy(_frameData, wsaData, frameDataSize);
-	
+
 	// decode first frame
 	Screen::decodeFrame4(_frameData, _deltaBuffer, _deltaBufferSize);
-	
+
 	delete [] p;
 	_opened = true;
-	
+
 	return _numFrames;
 }
 
@@ -430,7 +430,7 @@ void WSAMovieV2::displayFrame(int frameNum, ...) {
 		dst = _offscreenBuffer;
 	else
 		dst = _vm->screen()->getPageRect(_drawPage, _x, _y, _width, _height);
-		
+
 	if (_currentFrame == _numFrames) {
 		if (!(_flags & WF_NO_FIRST_FRAME)) {
 			if (_flags & WF_OFFSCREEN_DECODE)
@@ -458,7 +458,7 @@ void WSAMovieV2::displayFrame(int frameNum, ...) {
 			frameCount = diffCount;
 		}
 	}
-	
+
 	// process
 	if (frameStep > 0) {
 		uint16 cf = _currentFrame;
@@ -477,7 +477,7 @@ void WSAMovieV2::displayFrame(int frameNum, ...) {
 			cf += frameStep;
 		}
 	}
-	
+
 	// display
 	_currentFrame = frameNum;
 	if (_flags & WF_OFFSCREEN_DECODE) {
@@ -494,17 +494,17 @@ void WSAMovieV2::displayFrame(int frameNum, ...) {
 
 			va_list args;
 			va_start(args, frameNum);
-			
+
 			int copyParam = va_arg(args, int);
 			int plotFunc = (copyParam & 0xFF00) >> 12;
 			int unk1 = copyParam & 0xFF;
-			
+
 			const uint8 *unkPtr1 = va_arg(args, const uint8*);
 			const uint8 *unkPtr2 = va_arg(args, const uint8*);
 			va_end(args);
 
 			screen->copyWsaRect(_x, _y, _width, _height, 0, plotFunc, _offscreenBuffer, unk1, unkPtr1, unkPtr2);
-			
+
 			screen->_curPage = pageBackUp;
 		}
 	}

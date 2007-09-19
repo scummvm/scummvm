@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 #include "graphics/dxa_player.h"
 #include "common/util.h"
@@ -559,7 +558,7 @@ void DXAPlayer::decodeNextFrame() {
 		default:
 			error("decodeFrame: Unknown compression type %d", type);
 		}
-		
+
 		if (type == 3) {
 			for (int j = 0; j < _curHeight; ++j) {
 				for (int i = 0; i < _width; ++i) {

@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -115,7 +113,7 @@ PreAgiEngine::PreAgiEngine(OSystem *syst) : AgiBase(syst) {
 	_objects = NULL;
 
 	_oldMode = -1;
-	
+
 	_firstSlot = 0;
 */
 }
@@ -246,7 +244,7 @@ int PreAgiEngine::go() {
 		default:
 			error("Unknown preagi engine");
 			break;
-	}		
+	}
 	return 0;
 }
 

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/actor.h"
 #include "scumm/file.h"
 #include "scumm/imuse/imuse.h"
@@ -57,7 +57,7 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer)
 	_heMusicTracks(0) {
 
 	memset(_heChannel, 0, sizeof(_heChannel));
-}	
+}
 
 SoundHE::~SoundHE() {
 	free(_heMusic);
@@ -81,7 +81,7 @@ void SoundHE::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFla
 		if (_soundQue2[i].sound == sound && !(heFlags & 2))
 			return;
 	}
-	
+
 	Sound::addSoundToQueue2(sound, heOffset, heChannel, heFlags);
 }
 

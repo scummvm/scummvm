@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "scumm/actor.h"
 #include "scumm/boxes.h"
@@ -83,8 +83,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	if (_game.id == GID_SAMNMAX) {
 		// WORKAROUND bug #85373 SAM: Overlapping music at Bigfoot convention
 		// Added sound queue processing between execution of exit
-		// script and entry script. In the case of this bug, the 
-		// entry script required that the iMuse state be fully up 
+		// script and entry script. In the case of this bug, the
+		// entry script required that the iMuse state be fully up
 		// to  date, including last-moment changes from the previous
 		// exit script.
 		_sound->processSound();
@@ -423,8 +423,8 @@ void ScummEngine::setupRoomSubBlocks() {
 				_HEV7ActorPalette[i] = i;
 		}
 	}
-	
-	
+
+
 	// WORKAROUND bug #1074444: The dreaded DOTT "Can't get teeth" bug
 	// makes it impossible to go on playing w/o cheating in some way.
 	// It's not quite clear what causes it, but the effect is that object
@@ -729,7 +729,7 @@ void ScummEngine_v3old::resetRoomSubBlocks() {
 				numOfBoxes++;
 				ptr += 5;
 			}
-			
+
 			ptr = roomptr + *(roomptr + 0x15);
 			size = numOfBoxes * SIZEOF_BOX_C64 + 1;
 

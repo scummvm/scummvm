@@ -27,7 +27,6 @@
 #define GP32_OSYS_H
 
 //Standard ScummVM includes.
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "backends/intern.h"

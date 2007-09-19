@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "common/file.h"
 #include "common/util.h"
 
@@ -90,7 +88,7 @@ void WagProperty::clear() {
 	setDefaults();
 }
 
-void WagProperty::setDefaults() {	
+void WagProperty::setDefaults() {
 	_readOk   = false;
 	_propCode = PC_UNDEFINED;
 	_propType = PT_UNDEFINED;
@@ -134,7 +132,7 @@ uint16 WagFileParser::convertToAgiVersionNumber(const WagProperty &version) {
 		// Convert first ascii digit to an integer and put it in the fourth nibble (Bits 12...15) of the version number
 		// and at the same time set all other nibbles to zero.
 		uint16 agiVerNum = ((uint16) (version.getData()[0] - '0')) << (3 * 4);
-		
+
 		// Convert at most three least significant digits of the version number's minor part
 		// (i.e. the part after the decimal point) and put them in order to the third, second
 		// and the first nibble of the version number. Just to clarify version.getSize() - 2
@@ -189,7 +187,7 @@ bool WagFileParser::parse(const char *filename) {
 				// It seems we've got a valid *.wag file so let's parse its properties from the start.
 				stream->seek(0); // Rewind the stream
 				if (!_propList.empty()) _propList.clear(); // Clear out old properties (If any)
-				
+
 				do { // Parse the properties
 					if (property.read(*stream)) { // Read the property and check it was read ok
 						_propList.push_back(property); // Add read property to properties list

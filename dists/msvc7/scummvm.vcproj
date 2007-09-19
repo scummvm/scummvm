@@ -213,9 +213,6 @@
 				RelativePath="..\..\common\stack.h">
 			</File>
 			<File
-				RelativePath="..\..\common\stdafx.h">
-			</File>
-			<File
 				RelativePath="..\..\common\str.cpp">
 			</File>
 			<File

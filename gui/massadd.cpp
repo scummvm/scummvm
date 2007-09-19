@@ -22,8 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
-
 #include "engines/engine.h"
 #include "base/game.h"
 #include "base/plugins.h"
@@ -126,28 +124,28 @@ void MassAddDialog::handleTickle() {
 	// Perform a breadth-first scan of the filesystem.
 	while (!_scanStack.empty() && (g_system->getMillis() - t) < kMaxScanTime) {
 		FilesystemNode dir = _scanStack.pop();
-	
+
 		FSList files;
 		if (!dir.getChildren(files, FilesystemNode::kListAll)) {
 			error("browser returned a node that is not a directory: '%s'",
 					dir.getPath().c_str());
 		}
-	
+
 		// Run the detector on the dir
 		GameList candidates(PluginManager::instance().detectGames(files));
-		
+
 		if (candidates.size() >= 1) {
 			// At least one match was found. For now we just take the first one...
 			// a more sophisticated solution would do something more clever here,
-			// e.g. ask the user which one to pick (make sure to display the 
+			// e.g. ask the user which one to pick (make sure to display the
 			// path, too).
 			GameDescriptor result = candidates[0];
 			result["path"] = dir.getPath();
-			
+
 			_games.push_back(result);
 		}
-		
-		
+
+
 		// Recurse into all subdirs
 		for (FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
 			if (file->isDirectory()) {
@@ -157,8 +155,8 @@ void MassAddDialog::handleTickle() {
 
 		_dirsScanned++;
 	}
-	
-	
+
+
 	// Update the dialog
 	char buf[256];
 
@@ -168,14 +166,14 @@ void MassAddDialog::handleTickle() {
 
 		snprintf(buf, sizeof(buf), "Scan complete!");
 		_dirProgressText->setLabel(buf);
-	
+
 		snprintf(buf, sizeof(buf), "Discovered %d games.", _games.size());
 		_gameProgressText->setLabel(buf);
 
 	} else {
 		snprintf(buf, sizeof(buf), "Scanned %d directories ...", _dirsScanned);
 		_dirProgressText->setLabel(buf);
-	
+
 		snprintf(buf, sizeof(buf), "Discovered %d games ...", _games.size());
 		_gameProgressText->setLabel(buf);
 	}

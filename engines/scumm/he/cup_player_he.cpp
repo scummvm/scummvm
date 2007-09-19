@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"

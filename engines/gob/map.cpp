@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "gob/gob.h"
 #include "gob/map.h"

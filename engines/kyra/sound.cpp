@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
@@ -60,7 +60,7 @@ void Sound::voicePlay(const char *file) {
 		_vm->resource()->getFileHandle(filenamebuffer, &fileSize, _compressHandle);
 		if (!_compressHandle.isOpen())
 			continue;
-		
+
 		Common::MemoryReadStream *tmp = _compressHandle.readStream(fileSize);
 		assert(tmp);
 		_currentVocFile = _supportedCodes[i].streamFunc(tmp, true, 0, 0, 1);
@@ -71,7 +71,7 @@ void Sound::voicePlay(const char *file) {
 	if (!found) {
 		strcpy(filenamebuffer, file);
 		strcat(filenamebuffer, ".VOC");
-		
+
 		fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
 		if (!fileData)
 			return;
@@ -332,7 +332,7 @@ void SoundMidiPC::stopMusic() {
 		_parser = 0;
 		delete [] _parserSource;
 		_parserSource = 0;
-		
+
 		_fadeStartTime = 0;
 		_fadeMusicOut = false;
 		setVolume(255);
@@ -366,7 +366,7 @@ void SoundMidiPC::onTimer(void *refCon) {
 		music->_fadeStartTime = 0;
 		music->_fadeMusicOut = false;
 		music->_isPlaying = false;
-		
+
 		music->_eventFromMusic = true;
 		// from sound/midiparser.cpp
 		for (int i = 0; i < 128; ++i) {

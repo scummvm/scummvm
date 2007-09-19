@@ -29,8 +29,6 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
-#include <common/stdafx.h>
-
 #include "common/util.h"
 #include "base/engine.h"
 #include "backends/fs/abstract-fs.h"

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/system.h"
 #include "graphics/cursorman.h"

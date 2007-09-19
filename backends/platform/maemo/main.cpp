@@ -23,7 +23,6 @@
  *
  */
  
-#include <common/stdafx.h>
 #include <common/scummsys.h>
 #include <X11/Xlib.h> 
 #include <X11/extensions/Xsp.h>

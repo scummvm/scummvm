@@ -22,7 +22,7 @@
  * $Id$
  *
  */
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -745,7 +745,7 @@ void ScummDebugger::drawBox(int box) {
 	r[1] = coords.ur;
 	r[2] = coords.lr;
 	r[3] = coords.ll;
-	
+
 	if (_vm->_game.version <= 2) {
 		for (int i = 0; i < 4; ++i) {
 			r[i].x *= V12_X_MULTIPLIER;

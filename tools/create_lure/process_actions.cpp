@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "create_lure_dat.h"
 

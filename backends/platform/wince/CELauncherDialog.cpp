@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 
 #include "wince-sdl.h"
 

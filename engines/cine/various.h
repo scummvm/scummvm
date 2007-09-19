@@ -26,7 +26,7 @@
 #ifndef CINE_VARIOUS_H
 #define CINE_VARIOUS_H
 
-#include "common/stdafx.h"
+
 #include "common/file.h"
 
 #include "cine/cine.h"
@@ -41,7 +41,7 @@ void makeCommandLine(void);
 void makeActionMenu(void);
 
 extern bool disableSystemMenu;
-extern bool inMenu; 
+extern bool inMenu;
 
 struct unk1Struct {
 	byte *ptr;

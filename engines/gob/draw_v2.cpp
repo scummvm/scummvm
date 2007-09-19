@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "graphics/cursorman.h"
 
@@ -47,7 +47,7 @@ void Draw_v2::initScreen() {
 	initSpriteSurf(21, _vm->_video->_surfWidth, _vm->_video->_surfHeight, 0);
 	_backSurface = _spritesArray[21];
 	_vm->_video->clearSurf(_backSurface);
-	
+
 	initSpriteSurf(23, 32, 16, 2);
 	_cursorSpritesBack = _spritesArray[23];
 	_cursorSprites = _cursorSpritesBack;
@@ -69,7 +69,7 @@ void Draw_v2::closeScreen() {
 void Draw_v2::blitCursor() {
 	if (_cursorIndex == -1)
 		return;
-	
+
 	_showCursor = (_showCursor & ~2) | ((_showCursor & 1) << 1);
 }
 
@@ -122,7 +122,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 						_vm->_util->getTimeKey())) {
 				_cursorAnim++;
 				if ((_cursorAnimHigh[_cursorIndex] < _cursorAnim) ||
-						(_cursorAnimLow[_cursorIndex] > _cursorAnim)) 
+						(_cursorAnimLow[_cursorIndex] > _cursorAnim))
 					_cursorAnim = _cursorAnimLow[_cursorIndex];
 				_cursorTimeKey = _vm->_util->getTimeKey();
 			} else {
@@ -353,7 +353,7 @@ void Draw_v2::printTotText(int16 id) {
 	memset(str, ' ', 80);
 	_backColor = 0;
 	_transparency = 1;
-	
+
 	while (true) {
 		if ((((*ptr >= 1) && (*ptr <= 7)) || (*ptr == 10)) && (strPos != 0)) {
 			str[MAX(strPos, strPos2)] = 0;

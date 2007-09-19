@@ -25,7 +25,6 @@
 
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
 
-#include "common/stdafx.h"
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "backends/events/default/default-events.h"
@@ -48,9 +47,9 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = _boss->getMillis();
 	bool result;
-	
+
 	result = _boss->pollEvent(event);
-	
+
 	if (result) {
 		event.synthetic = false;
 		switch (event.type) {
@@ -124,7 +123,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			result = true;
 		}
 	}
-	
+
 	return result;
 }
 

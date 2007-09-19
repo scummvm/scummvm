@@ -26,7 +26,7 @@
 #ifndef AGI_VIEW_H
 #define AGI_VIEW_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 
 namespace Agi {

@@ -23,7 +23,8 @@
  *
  */
 
-#include "common/stdafx.h"
+#include "common/scummsys.h"
+
 #include "queen/debug.h"
 
 #include "queen/graphics.h"

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
@@ -34,7 +34,7 @@ namespace Agi {
 PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 	_vm = agi;
 	_gfx = gfx;
-	
+
 	_data = NULL;
 	_flen = _foffs = 0;
 
@@ -423,16 +423,16 @@ void PictureMgr::fill() {
 **************************************************************************/
 
 void PictureMgr::plotPattern(int x, int y) {
-	static const uint16 binary_list[] = {0x8000, 0x4000, 0x2000, 0x1000, 0x800, 0x400, 0x200, 0x100, 
+	static const uint16 binary_list[] = {0x8000, 0x4000, 0x2000, 0x1000, 0x800, 0x400, 0x200, 0x100,
 		0x80, 0x40, 0x20, 0x10, 0x8, 0x4, 0x2, 0x1};
 
 	static const uint8 circle_list[] = {0, 1, 4, 9, 16, 25, 37, 50};
 
 	static const uint16 circle_data[] =
-		{0x8000, 
-		0xE000, 0xE000, 0xE000, 
-		0x7000, 0xF800, 0x0F800, 0x0F800, 0x7000, 
-		0x3800, 0x7C00, 0x0FE00, 0x0FE00, 0x0FE00, 0x7C00, 0x3800, 
+		{0x8000,
+		0xE000, 0xE000, 0xE000,
+		0x7000, 0xF800, 0x0F800, 0x0F800, 0x7000,
+		0x3800, 0x7C00, 0x0FE00, 0x0FE00, 0x0FE00, 0x7C00, 0x3800,
 		0x1C00, 0x7F00, 0x0FF80, 0x0FF80, 0x0FF80, 0x0FF80, 0x0FF80, 0x7F00, 0x1C00,
 		0x0E00, 0x3F80, 0x7FC0, 0x7FC0, 0x0FFE0, 0x0FFE0, 0x0FFE0, 0x7FC0, 0x7FC0, 0x3F80, 0x1F00, 0x0E00,
 		0x0F80, 0x3FE0, 0x7FF0, 0x7FF0, 0x0FFF8, 0x0FFF8, 0x0FFF8, 0x0FFF8, 0x0FFF8, 0x7FF0, 0x7FF0, 0x3FE0, 0x0F80,
@@ -444,7 +444,7 @@ void PictureMgr::plotPattern(int x, int y) {
 	uint16 pen_width = 0;
 	int pen_final_x = 0;
 	int pen_final_y = 0;
-	
+
 	uint8 t = 0;
 	uint8 temp8;
 	uint16 temp16;
@@ -455,7 +455,7 @@ void PictureMgr::plotPattern(int x, int y) {
 	uint16	pen_size = (_patCode & 0x07);
 
 	circle_ptr = &circle_data[circle_list[pen_size]];
-	
+
 	// setup the X position
 	// = pen_x - pen.size/2
 
@@ -465,7 +465,7 @@ void PictureMgr::plotPattern(int x, int y) {
 	temp16 = 320 - (2 * pen_size);
 	if (pen_x >= temp16)
 		pen_x = temp16;
-		
+
 	pen_x /= 2;
 	pen_final_x = pen_x;	// original starting point?? -> used in plotrelated
 
@@ -477,13 +477,13 @@ void PictureMgr::plotPattern(int x, int y) {
 	temp16 = 167 - (2 * pen_size);
 	if (pen_y >= temp16)
 		pen_y = temp16;
-		
+
 	pen_final_y = pen_y;	// used in plotrelated
 
 	t = (uint8)(texture_num | 0x01);		// even
-	
+
 	// new purpose for temp16
-	
+
 	temp16 =( pen_size<<1) +1;	// pen size
 	pen_final_y += temp16;					// the last row of this shape
 	temp16 = temp16 << 1;
@@ -508,12 +508,12 @@ void PictureMgr::plotPattern(int x, int y) {
 
 	for (; pen_y < pen_final_y; pen_y++) {
 		circle_word = *circle_ptr++;
-		
+
 		for (counter = 0; counter <= pen_width; counter += counterStep) {
 			if (circleCond || ((binary_list[counter>>1] & circle_word) != 0)) {
 				temp8 = t % 2;
 				t = t >> 1;
-				if (temp8 != 0) 
+				if (temp8 != 0)
 					t = t ^ 0xB8;
 
 				// == box plot, != circle plot

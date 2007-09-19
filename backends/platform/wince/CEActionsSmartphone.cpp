@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "CEActionsSmartphone.h"
 #include "EventsBuffer.h"
 #include "gui/message.h"

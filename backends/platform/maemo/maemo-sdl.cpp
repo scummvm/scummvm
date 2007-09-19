@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "backends/platform/maemo/maemo-sdl.h"
 
 

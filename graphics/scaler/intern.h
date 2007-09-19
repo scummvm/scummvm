@@ -26,7 +26,6 @@
 #ifndef GRAPHICS_SCALER_INTERN_H
 #define GRAPHICS_SCALER_INTERN_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "graphics/colormasks.h"
 

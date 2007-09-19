@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -64,7 +63,7 @@ void GuiObject::reflowLayout() {
 			error("Undefined variable %s.y", _name.c_str());
 		_w = g_gui.evaluator()->getVar(_name + ".w");
 		_h = g_gui.evaluator()->getVar(_name + ".h");
-	
+
 		if (_x < 0)
 			error("Widget <%s> has x < 0", _name.c_str());
 		if (_x >= g_system->getOverlayWidth())
@@ -109,7 +108,7 @@ NewGui::NewGui() : _needRedraw(false),
 	   warning("falling back to classic style");
 	}
 #endif
-	
+
 	if (loadClassicTheme) {
 		_theme = new ThemeClassic(_system);
 		assert(_theme);
@@ -142,7 +141,7 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	if (style.compareToIgnoreCase("classic (builtin)") == 0 ||
 		style.compareToIgnoreCase("classic") == 0) {
 		_theme = new ThemeClassic(_system, style);
-	} else {	
+	} else {
 		if (Theme::themeConfigUseable(style, "", &styleType, &cfg)) {
 			if (0 == styleType.compareToIgnoreCase("classic"))
 				_theme = new ThemeClassic(_system, style, &cfg);
@@ -228,7 +227,7 @@ void NewGui::runLoop() {
 		if (_useStdCursor)
 			setupCursor();
 	}
-	
+
 	Common::EventManager *eventMan = _system->getEventManager();
 
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
@@ -269,7 +268,7 @@ void NewGui::runLoop() {
 				_themeChange = false;
 				redraw();
 			}
-			
+
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				activeDialog->handleKeyDown(event.kbd);

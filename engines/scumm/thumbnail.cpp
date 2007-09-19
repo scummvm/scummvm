@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "common/savefile.h"
 #include "graphics/scaler.h"

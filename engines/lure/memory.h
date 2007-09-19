@@ -26,7 +26,7 @@
 #ifndef LURE_MEMORY_H
 #define LURE_MEMORY_H
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "common/str.h"
 

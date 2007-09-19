@@ -26,7 +26,6 @@
 #ifndef CRUISE_CRUISE_H
 #define CRUISE_CRUISE_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/util.h"
 

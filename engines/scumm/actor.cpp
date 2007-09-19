@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"	// for setFocusRectangle/clearFocusRectangle
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
@@ -71,7 +71,7 @@ void Actor::initActor(int mode) {
 	_heFlags = 0;
 	_heTalking = false;
 	// end HE specific
-	
+
 
 	if (mode == -1) {
 		_offsX = _offsY = 0;
@@ -385,7 +385,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 			if (_moving && _walkdata.destdir == dir && _walkdata.dest.x == abr.x && _walkdata.dest.y == abr.y)
 				return;
 		}
-	
+
 		if (_pos.x == abr.x && _pos.y == abr.y) {
 			if (dir != _facing)
 				turnToDirection(dir);
@@ -937,7 +937,7 @@ static bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) 
 static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) {
 	BoxCoords box = g_scumm->getBoxCoordinates(boxnum);
 	int xmin, xmax;
-	
+
 	// We are supposed to determine the point (destX,destY) contained in
 	// the given box which is closest to the point (x,y), and then return
 	// some kind of "distance" between the two points.
@@ -981,7 +981,7 @@ static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) 
 			xmin = (ul + ll) / 2;
 			xmax = (ur + lr) / 2;
 			cury = (top + bottom) / 2;
-	
+
 			if (cury < y) {
 				top = cury;
 				ul = xmin;
@@ -993,7 +993,7 @@ static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) 
 			}
 		} while (cury != y);
 	}
-	
+
 	// Now that we have limited the value of destX to a fixed
 	// interval, it's a trivial matter to finally determine it.
 	if (x < xmin) {
@@ -1447,7 +1447,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 		bcr->_actorY *= V12_Y_MULTIPLIER;
 	}
 	bcr->_actorX -= _vm->_virtscr[kMainVirtScreen].xstart;
-	
+
 	if (_vm->_game.platform == Common::kPlatformNES) {
 		// In the NES version, when the actor is facing right,
 		// we need to shift it 8 pixels to the left
@@ -2497,7 +2497,7 @@ void Actor::saveLoadWithSerializer(Serializer *ser) {
 	}
 
 	ser->saveLoadEntries(this, actorEntries);
-	
+
 	if (ser->isLoading() && _vm->_game.version <= 2 && ser->getVersion() < VER(70)) {
 		_pos.x >>= V12_X_SHIFT;
 		_pos.y >>= V12_Y_SHIFT;

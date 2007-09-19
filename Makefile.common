@@ -87,7 +87,7 @@ clean:
 .PHONY: all clean dist distclean plugins
 
 # Old (dumb) compile & dependcy rules
-#INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
+#INCS	= scumm/scumm.h common/scummsys.h
 #.cpp.o:
 #	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 #$(OBJS): $(INCS)

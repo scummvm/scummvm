@@ -26,7 +26,6 @@
 #ifndef BACKEND_SAVES_PALM_H
 #define BACKEND_SAVES_PALM_H
 
-#include "common/stdafx.h"
 #include "saves/default/default-saves.h"
 
 class PalmSaveFileManager : public DefaultSaveFileManager {

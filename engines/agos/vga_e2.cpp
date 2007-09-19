@@ -24,7 +24,7 @@
  */
 
 // Video script opcodes for Simon1/Simon2
-#include "common/stdafx.h"
+
 
 #include "agos/agos.h"
 #include "agos/intern.h"

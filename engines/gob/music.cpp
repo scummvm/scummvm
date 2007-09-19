@@ -24,7 +24,7 @@
  */
 
 #include "common/file.h"
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -69,7 +69,7 @@ const char *Adlib::_trackFiles[] = {
 };
 
 const unsigned char Adlib::_operators[] = {0, 1, 2, 8, 9, 10, 16, 17, 18};
-const unsigned char Adlib::_volRegNums[] = { 
+const unsigned char Adlib::_volRegNums[] = {
 	3,  4,  5,
 	11, 12, 13,
 	19, 20, 21
@@ -176,8 +176,8 @@ void Adlib::setFreqs() {
 		_notCol[lin] = 0;
 		_notLin[lin] = 0;
 		_notOn[lin] = false;
-	} 
-		
+	}
+
 	// Run through the 25 lines
 	for (lin = 0; lin < 25; lin ++) {
 		// Run through the 12 columns
@@ -187,7 +187,7 @@ void Adlib::setFreqs() {
 					9 / 0x1B503;
 			_freqs[lin][col] = (short)((val + 4) >> 3);
 			val = val * 0x6A / 0x64;
-		} 
+		}
 	}
 }
 
@@ -429,7 +429,7 @@ void Adlib::playBgMusic() {
 
 void Adlib::playTrack(const char *trackname) {
 	if (_playing) return;
-	
+
 	debugC(1, kDebugMusic, "Adlib::playTrack(%s)", trackname);
 	unload();
 	load(_trackFiles[_vm->_util->getRandom(ARRAYSIZE(_trackFiles))]);
@@ -453,7 +453,7 @@ bool Adlib::load(const char *fileName) {
 	reset();
 	setVoices();
 	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
-	
+
 	return true;
 }
 

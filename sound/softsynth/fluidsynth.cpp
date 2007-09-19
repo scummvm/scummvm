@@ -22,12 +22,10 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 #ifdef USE_FLUIDSYNTH
 
-#include "common/stdafx.h"
 #include "common/config-manager.h"
 #include "sound/mpu401.h"
 #include "sound/softsynth/emumidi.h"

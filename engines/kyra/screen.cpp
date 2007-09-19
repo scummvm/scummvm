@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
@@ -71,7 +71,7 @@ Screen::~Screen() {
 		delete [] _saveLoadPage[i];
 		_saveLoadPage[i] = 0;
 	}
-	
+
 	for (int i = 0; i < ARRAYSIZE(_saveLoadPageOvl); ++i) {
 		delete [] _saveLoadPageOvl[i];
 		_saveLoadPageOvl[i] = 0;
@@ -79,7 +79,7 @@ Screen::~Screen() {
 
 	delete [] _unkPtr1;
 	delete [] _unkPtr2;
-	
+
 	delete [] _dirtyRects;
 }
 
@@ -171,7 +171,7 @@ bool Screen::init() {
 	_animBlockSize = 0;
 	_mouseLockCount = 1;
 	CursorMan.showMouse(false);
-	
+
 	_bitBlitRects = new Rect[BITBLIT_RECTS];
 	assert(_bitBlitRects);
 	memset(_bitBlitRects, 0, sizeof(Rect)*BITBLIT_RECTS);
@@ -185,7 +185,7 @@ bool Screen::init() {
 	_unkPtr2 = new uint8[getRectSize(1, 144)];
 	assert(_unkPtr2);
 	memset(_unkPtr2, 0, getRectSize(1, 144));
-	
+
 	_forceFullUpdate = false;
 	_numDirtyRects = 0;
 	_dirtyRects = new Rect[kMaxDirtyRects];
@@ -464,8 +464,8 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 		dstPage += SCREEN_W;
 	}
 	addDirtyRect(0, y, SCREEN_W, h);
-	// This would remove the text in the end sequence of 
-	// the FM-Towns version. 
+	// This would remove the text in the end sequence of
+	// the FM-Towns version.
 	// Since this method is just used for the Seqplayer
 	// this shouldn't be a problem anywhere else, so it's
 	// safe to disable the call here.
@@ -474,7 +474,7 @@ void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
 
 void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage, int flags) {
 	debugC(9, kDebugLevelScreen, "Screen::copyRegion(%d, %d, %d, %d, %d, %d, %d, %d, %d)", x1, y1, x2, y2, w, h, srcPage, dstPage, flags);
-	
+
 	if (flags & CR_CLIPPED) {
 		if (x2 < 0) {
 			if (x2  <= -w)
@@ -505,7 +505,7 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 	const uint8 *src = getPagePtr(srcPage) + y1 * SCREEN_W + x1;
 	assert(x2 + w <= SCREEN_W && y2 + h <= SCREEN_H);
 	uint8 *dst = getPagePtr(dstPage) + y2 * SCREEN_W + x2;
-	
+
 	if (dstPage == 0 || dstPage == 1)
 		addDirtyRect(x2, y2, w, h);
 
@@ -548,7 +548,7 @@ void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 	uint8 *dst = getPagePtr(dstPage);
 	memcpy(dst, src, SCREEN_W * SCREEN_H);
 	copyOverlayRegion(0, 0, 0, 0, SCREEN_W, SCREEN_H, srcPage, dstPage);
-	
+
 	if (dstPage == 0 || dstPage == 1) _forceFullUpdate = true;
 }
 
@@ -556,10 +556,10 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 	debugC(9, kDebugLevelScreen, "Screen::copyBlockToPage(%d, %d, %d, %d, %d, %p)", pageNum, x, y, w, h, (const void *)src);
 	assert(x >= 0 && x < Screen::SCREEN_W && y >= 0 && y < Screen::SCREEN_H);
 	uint8 *dst = getPagePtr(pageNum) + y * SCREEN_W + x;
-	
+
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, w, h);
-	
+
 	clearOverlayRect(pageNum, x, y, w, h);
 
 	while (h--) {
@@ -572,7 +572,7 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 void Screen::copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src) {
 	debugC(9, kDebugLevelScreen, "Screen::copyFromCurPageBlock(%d, %d, %d, %d, %p)", x, y, w, h, (const void *)src);
 	if (x < 0)
-		x = 0;	
+		x = 0;
 	else if (x >= 40)
 		return;
 
@@ -588,12 +588,12 @@ void Screen::copyFromCurPageBlock(int x, int y, int w, int h, const uint8 *src) 
 		h = 200 - y;
 
 	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x * 8;
-	
+
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x*8, y, w*8, h);
-	
+
 	clearOverlayRect(_curPage, x*8, y, w*8, h);
-	
+
 	while (h--) {
 		memcpy(dst, src, w*8);
 		dst += SCREEN_W;
@@ -605,7 +605,7 @@ void Screen::copyCurPageBlock(int x, int y, int w, int h, uint8 *dst) {
 	debugC(9, kDebugLevelScreen, "Screen::copyCurPageBlock(%d, %d, %d, %d, %p)", x, y, w, h, (const void *)dst);
 	assert(dst);
 	if (x < 0)
-		x = 0;	
+		x = 0;
 	else if (x >= 40)
 		return;
 
@@ -640,7 +640,7 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 		int i = _vm->_rnd.getRandomNumber(w - 1);
 		SWAP(x_offs[x], x_offs[i]);
 	}
-	
+
 	assert(sy >= 0 && h <= SCREEN_H);
 	int y;
 	uint8 y_offs[SCREEN_H];
@@ -692,12 +692,12 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum) 
 		pageNum = _curPage;
 
 	uint8 *dst = getPagePtr(pageNum) + y1 * SCREEN_W + x1;
-	
+
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x1, y1, x2-x1+1, y2-y1+1);
 
 	clearOverlayRect(pageNum, x1, y1, x2-x1+1, y2-y1+1);
-	
+
 	for (; y1 <= y2; ++y1) {
 		memset(dst, color, x2 - x1 + 1);
 		dst += SCREEN_W;
@@ -781,7 +781,7 @@ void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 		assert((x + length) <= SCREEN_W);
 		memset(ptr, color, length);
 	}
-	
+
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x, y, (vertical) ? 1 : length, (vertical) ? length : 1);
 
@@ -914,11 +914,11 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	cmap[0] = color2;
 	cmap[1] = color1;
 	setTextColor(cmap, 0, 1);
-	
+
 	Font *fnt = &_fonts[_currentFont];
 	const uint8 charHeightFnt = *(fnt->fontData + fnt->charSizeOffset + 4);
 	uint8 charHeight = 0;
-	
+
 	if (x < 0)
 		x = 0;
 	else if (x >= SCREEN_W)
@@ -982,10 +982,10 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 	uint8 charH1 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2);
 	uint8 charH2 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2 + 1);
 	charH0 -= charH1 + charH2;
-	
+
 	const uint8 *src = fnt->fontData + bitmapOffset;
 	const int pitch = SCREEN_W - charWidth;
-	
+
 	while (charH1--) {
 		uint8 col = _textColorsMap[0];
 		for (int i = 0; i < charWidth; ++i) {
@@ -995,7 +995,7 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 		}
 		dst += pitch;
 	}
-	
+
 	while (charH2--) {
 		uint8 b = 0;
 		for (int i = 0; i < charWidth; ++i) {
@@ -1013,7 +1013,7 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 		}
 		dst += pitch;
 	}
-	
+
 	while (charH0--) {
 		uint8 col = _textColorsMap[0];
 		for (int i = 0; i < charWidth; ++i) {
@@ -1023,7 +1023,7 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 		}
 		dst += pitch;
 	}
-	
+
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x, y, charWidth, *(fnt->fontData + fnt->charSizeOffset + 4));
 }
@@ -1041,7 +1041,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		return;
 	va_list args;
 	va_start(args, flags);
-	
+
 	static int drawShapeVar1 = 0;
 	static int drawShapeVar2[] = {
 		1, 3, 2, 5, 4, 3, 2, 1
@@ -1049,14 +1049,14 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	static int drawShapeVar3 = 1;
 	static int drawShapeVar4 = 0;
 	static int drawShapeVar5 = 0;
-	
+
 	uint8 *table = 0;
 	int tableLoopCount = 0;
 	int drawLayer = 0;
 	uint8 *table2 = 0;
 	uint8 *table3 = 0;
 	uint8 *table4 = 0;
-	
+
 	if (flags & 0x8000)
 		table2 = va_arg(args, uint8*);
 
@@ -1096,15 +1096,15 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		scale_w = 0x100;
 		scale_h = 0x100;
 	}
-	
+
 	int ppc = (flags >> 8) & 0x3F;
-	
+
 	const uint8 *src = shapeData;
 	if (_vm->gameFlags().useAltShapeHeader)
 		src += 2;
 
 	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;
-	
+
 	int shapeHeight = *src++;
 	int scaledShapeHeight = (shapeHeight * scale_h) >> 8;
 	if (scaledShapeHeight == 0) {
@@ -1123,9 +1123,9 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		x -= scaledShapeWidth >> 1;
 		y -= scaledShapeHeight >> 1;
 	}
-	
+
 	src += 3;
-	
+
 	uint16 frameSize = READ_LE_UINT16(src); src += 2;
 	if ((shapeFlags & 1) || (flags & 0x400))
 		src += 0x10;
@@ -1134,7 +1134,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		decodeFrame4(src, _animBlockPtr, frameSize);
 		src = _animBlockPtr;
 	}
-	
+
 	int shapeSize = shapeWidth * shapeHeight;
 	if (_decodeShapeBufferSize < shapeSize) {
 		delete [] _decodeShapeBuffer;
@@ -1149,12 +1149,12 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 	memset(_decodeShapeBuffer, 0, _decodeShapeBufferSize);
 	uint8 *decodedShapeFrame = _decodeShapeBuffer;
-	
+
 	// only used if shapeFlag & 1 is NOT zero
 	const uint8 *colorTable = shapeData + 10;
 	if (_vm->gameFlags().useAltShapeHeader)
 		colorTable += 2;
-	
+
 	for (int j = 0; j < shapeHeight; ++j) {
 		uint8 *dsbNextLine = decodedShapeFrame + shapeWidth;
 		int count = shapeWidth;
@@ -1177,7 +1177,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		}
 		decodedShapeFrame = dsbNextLine;
 	}
-	
+
 	uint16 sx1 = _screenDimTable[sd].sx * 8;
 	uint16 sy1 = _screenDimTable[sd].sy;
 	uint16 sx2 = sx1 + _screenDimTable[sd].w * 8;
@@ -1186,7 +1186,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		x += sx1;
 		y += sy1;
 	}
-	
+
 	int x1, x2;
 	if (x >= 0) {
 		x1 = 0;
@@ -1201,7 +1201,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		if (x2 > sx2)
 			x2 = sx2;
 	}
-	
+
 	int y1, y2;
 	if (y >= 0) {
 		y1 = 0;
@@ -1222,7 +1222,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, x2-x1, y2-y1);
 	clearOverlayRect(pageNum, x, y, x2-x1, y2-y1);
-	
+
 	int scaleYTable[SCREEN_H];
 	assert(y1 >= 0 && y2 < SCREEN_H);
 	for (y = y1; y < y2; ++y)
@@ -1232,13 +1232,13 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	assert(x1 >= 0 && x2 < SCREEN_W);
 	for (x = x1; x < x2; ++x)
 		scaleXTable[x] = (x << 8) / scale_w;
-	
+
 	const uint8 *shapeBuffer = _decodeShapeBuffer;
 	if (flags & DSF_Y_FLIPPED)
 		shapeBuffer += shapeWidth * (shapeHeight - 1);
 	if (flags & DSF_X_FLIPPED)
 		shapeBuffer += shapeWidth - 1;
-	
+
 	for (y = y1; y < y2; ++y) {
 		uint8 *dstNextLine = dst + SCREEN_W;
 		int j = scaleYTable[y];
@@ -1350,7 +1350,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						}
 					}
 					break;
-					
+
 				case 15:
 				case 11: {
 						int offset = dst - dstStart;
@@ -1426,7 +1426,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						}
 					}
 					break;
-					
+
 				case 17: {
 						for (int i = 0; i < tableLoopCount; ++i)
 							color = table[color];
@@ -1470,7 +1470,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						}
 					}
 					break;
-					
+
 				case 20: {
 						color = table2[color];
 						uint8 newColor = table3[color];
@@ -1480,7 +1480,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						}
 					}
 					break;
-					
+
 				case 21: {
 						color = table2[color];
 						for (int i = 0; i < tableLoopCount; ++i)
@@ -1493,7 +1493,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						}
 					}
 					break;
-					
+
 				case 22: {
 						int temp = drawShapeVar4 + drawShapeVar5;
 						if (temp & 0xFF00) {
@@ -1517,7 +1517,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 						}
 					}
 					break;
-					
+
 				case 24: {
 						int offset = dst - dstStart;
 						uint8 pixel = *(_shapePages[0] + offset);
@@ -1579,7 +1579,7 @@ uint Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
 
 		uint8 code = *src++;
 		if (!(code & 0x80)) { // 8th bit isn't set
-			int len = MIN(count, (code >> 4) + 3); //upper half of code is the length		
+			int len = MIN(count, (code >> 4) + 3); //upper half of code is the length
 			int offs = ((code & 0xF) << 8) | *src++; //lower half of code as byte 2 of offset.
 			const uint8 *dstOffs = dst - offs;
 			while (len--)
@@ -1683,7 +1683,7 @@ void Screen::wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src) {
 
 void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool noXor) {
 	debugC(9, kDebugLevelScreen, "Screen::decodeFrameDeltaPage(%p, %p, %d, %d)", (const void *)dst, (const void *)src, pitch, noXor);
-	
+
 	if (noXor) {
 		wrapped_decodeFrameDeltaPage<true>(dst, src, pitch);
 	} else {
@@ -1713,7 +1713,7 @@ void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
 				*dst4++ = *src++;
 				*dst5++ = *src++;
 			}
-	
+
 			curLine += 40;
 		}
 	} else {
@@ -1749,7 +1749,7 @@ void Screen::convertAmigaMsc(uint8 *data) {
 		d = (plane4[i] |= d);
 		d = (plane3[i] |= d);
 		d = (plane2[i] |= d);
-		d = (plane1[i] |= d);		
+		d = (plane1[i] |= d);
 	}
 	byte dst[320*144];
 	memset(dst, 0, sizeof(dst));
@@ -1797,7 +1797,7 @@ void Screen::wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitc
 			code -= 0x80;
 			if (code != 0) {
 				dst += code;
-				
+
 				count += code;
 				while (count >= pitch) {
 					count -= pitch;
@@ -1841,14 +1841,14 @@ void Screen::wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitc
 					}
 				} else {
 					dst += subcode;
-					
+
 					count += subcode;
 					while (count >= pitch) {
 						count -= pitch;
 						dstNext += SCREEN_W;
 						dst = dstNext + count;
 					}
-					
+
 				}
 			}
 		} else {
@@ -1882,38 +1882,38 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 		while (xpos) {
 			uint8 value = *tmp++;
 			--xpos;
-			
+
 			if (!value) {
 				shapeSize += 2;
 				int16 curX = xpos;
 				bool skip = false;
-				
+
 				while (xpos) {
 					value = *tmp++;
 					--xpos;
-					
+
 					if (value) {
 						skip = true;
 						break;
 					}
 				}
-				
+
 				if (!skip)
 					++curX;
-					
+
 				curX -= xpos;
 				shapeSize -= curX;
-				
+
 				while (curX > 0xFF) {
 					curX -= 0xFF;
 					shapeSize += 2;
 				}
 			}
 		}
-	
+
 		tmp = start + SCREEN_W;
 	}
-	
+
 	int16 shapeSize2 = shapeSize;
 	if (_vm->gameFlags().useAltShapeHeader)
 		shapeSize += 12;
@@ -1922,14 +1922,14 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 
 	if (flags & 1)
 		shapeSize += 16;
-	
-	static uint8 table[274];	
+
+	static uint8 table[274];
 	int tableIndex = 0;
-	
+
 	uint8 *newShape = 0;
 	newShape = new uint8[shapeSize+16];
 	assert(newShape);
-	
+
 	byte *dst = newShape;
 
 	if (_vm->gameFlags().useAltShapeHeader)
@@ -1948,7 +1948,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 		memset(table, 0, sizeof(uint8)*274);
 		tableIndex = 1;
 	}
-	
+
 	for (int ypos = h; ypos > 0; --ypos) {
 		uint8 *srcBackUp = src;
 		xpos = w;
@@ -1974,7 +1974,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 			} else {
 				int16 temp = 1;
 				--xpos;
-				
+
 				while (xpos) {
 					if (*src)
 						break;
@@ -1982,13 +1982,13 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 					++temp;
 					--xpos;
 				}
-				
+
 				while (temp > 0xFF) {
 					*dst++ = 0;
 					*dst++ = 0xFF;
 					temp -= 0xFF;
 				}
-				
+
 				if (temp & 0xFF) {
 					*dst++ = 0;
 					*dst++ = temp & 0xFF;
@@ -1997,7 +1997,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 		}
 		src = srcBackUp + SCREEN_W;
 	}
-	
+
 	if (!(flags & 2)) {
 		if (shapeSize > _animBlockSize) {
 			dst = newShape;
@@ -2018,7 +2018,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 			uint8 *shapePtrBackUp = src;
 			dst = _animBlockPtr;
 			memcpy(dst, src, shapeSize2);
-			
+
 			int16 size = encodeShapeAndCalculateSize(_animBlockPtr, shapePtrBackUp, shapeSize2);
 			if (size > shapeSize2) {
 				shapeSize -= shapeSize2 - size;
@@ -2038,12 +2038,12 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 			}
 		}
 	}
-	
+
 	dst = newShape;
 	if (_vm->gameFlags().useAltShapeHeader)
 		dst += 2;
 	WRITE_LE_UINT16((dst + 6), shapeSize);
-	
+
 	if (flags & 1) {
 		dst = newShape + 10;
 		if (_vm->gameFlags().useAltShapeHeader)
@@ -2051,7 +2051,7 @@ uint8 *Screen::encodeShape(int x, int y, int w, int h, int flags) {
 		src = &table[0x100];
 		memcpy(dst, src, sizeof(uint8)*16);
 	}
-	
+
 	return newShape;
 }
 
@@ -2063,21 +2063,21 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 	byte *toPtr = to;
 	byte *fromPtr = from;
 	byte *toPtr2 = to;
-	
+
 	*to++ = 0x81;
 	*to++ = *from++;
-	
+
 	while (from < fromPtrEnd) {
 		byte *curToPtr = to;
 		to = fromPtr;
 		int size = 1;
-		
+
 		while (true) {
 			byte curPixel = *from;
 			if (curPixel == *(from+0x40)) {
 				byte *toBackUp = to;
 				to = from;
-				
+
 				for (int i = 0; i < (fromPtrEnd - from); ++i) {
 					if (*to++ != curPixel)
 						break;
@@ -2098,7 +2098,7 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 					to = toBackUp;
 				}
 			}
-			
+
 			bool breakLoop = false;
 			while (true) {
 				if ((from - to) == 0) {
@@ -2112,7 +2112,7 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 				if (*to == curPixel) {
 					if (*(from+size-1) == *(to+size-2))
 						break;
-					
+
 					byte *fromBackUp = from;
 					byte *toBackUp = to;
 					--to;
@@ -2135,11 +2135,11 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 					break;
 				}
 			}
-			
+
 			if (breakLoop)
 				break;
 		}
-		
+
 		to = curToPtr;
 		if (size > 2) {
 			uint16 word = 0;
@@ -2154,14 +2154,14 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 					continue;
 				}
 			}
-			
+
 			if (size > 0x40) {
 				*to++ = 0xFF;
 				WRITE_LE_UINT16(to, size); to += 2;
 			} else {
 				*to++ = ((size & 0xFF) - 3) | 0xC0;
 			}
-			
+
 			word = tempPtr - fromPtr;
 			WRITE_LE_UINT16(to, word); to += 2;
 			from += size;
@@ -2171,19 +2171,19 @@ int16 Screen::encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size_to) {
 				toPtr2 = to;
 				*to++ = 0x80;
 			}
-			
+
 			if (*toPtr2 == 0xBF) {
 				toPtr2 = to;
 				*to++ = 0x80;
 			}
-			
+
 			++(*toPtr2);
 			*to++ = *from++;
-			skipPixel = true;			
+			skipPixel = true;
 		}
 	}
 	*to++ = 0x80;
-	
+
 	return (to - toPtr);
 }
 
@@ -2192,12 +2192,12 @@ int Screen::getRectSize(int x, int y) {
 		x = 1;
 	else if (x > 40)
 		x = 40;
-	
+
 	if (y < 1)
 		y = 1;
 	else if (y > 200)
 		y = 200;
-	
+
 	return ((x*y) << 3);
 }
 
@@ -2280,7 +2280,7 @@ void Screen::copyScreenFromRect(int x, int y, int w, int h, const uint8 *ptr) {
 		src += w;
 		dst += SCREEN_W;
 	}
-	
+
 	addDirtyRect(x, y, w, h);
 	clearOverlayRect(0, x, y, w, h);
 }
@@ -2302,7 +2302,7 @@ uint8 *Screen::getPalette(int num) {
 	assert(num >= 0 && num < (_vm->gameFlags().platform == Common::kPlatformAmiga ? 6 : 4));
 	if (num == 0)
 		return _currentPalette;
-	
+
 	return _palettes[num-1];
 }
 
@@ -2479,30 +2479,30 @@ int Screen::getDrawLayer2(int x, int y, int height) {
 	int xpos = x - 8;
 	int ypos = y - 1;
 	int layer = 1;
-	
+
 	for (int useX = xpos; useX < xpos + 16; ++useX) {
 		for (int useY = ypos - height; useY < ypos; ++useY) {
 			int tempLayer = getShapeFlag2(useX, useY);
 
 			if (tempLayer > layer)
 				layer = tempLayer;
-			
+
 			if (tempLayer >= 7)
 				return 7;
 		}
-	}	
+	}
 	return layer;
 }
 
 void Screen::copyBackgroundBlock(int x, int page, int flag) {
 	debugC(9, kDebugLevelScreen, "Screen::copyBackgroundBlock(%d, %d, %d)", x, page, flag);
-	
+
 	if (x < 1)
 		return;
-	
+
 	int height = 128;
 	if (flag)
-		height += 8;	
+		height += 8;
 	if (!(x & 1))
 		++x;
 	if (x == 19)
@@ -2512,7 +2512,7 @@ void Screen::copyBackgroundBlock(int x, int page, int flag) {
 	uint8 *ptr2 = _unkPtr2;
 	int oldVideoPage = _curPage;
 	_curPage = page;
-	
+
 	int curX = x;
 	hideMouse();
 	copyRegionToBuffer(_curPage, 8, 8, 8, height, ptr2);
@@ -2542,7 +2542,7 @@ void Screen::copyBackgroundBlock2(int x) {
 
 void Screen::shakeScreen(int times) {
 	debugC(9, kDebugLevelScreen, "Screen::shakeScreen(%d)", times);
-	
+
 	while (times--) {
 		// seems to be 1 line (320 pixels) offset in the original
 		// 4 looks more like dosbox though, maybe check this again
@@ -2569,7 +2569,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 
 	if (palData && palSize) {
 		debugC(9, kDebugLevelMain,"Loading a palette of size %i from %s", palSize, filename);
-		loadPalette(srcData + 10, palData, palSize); 
+		loadPalette(srcData + 10, palData, palSize);
 	}
 
 	uint8 *srcPtr = srcData + 10 + palSize;
@@ -2655,7 +2655,7 @@ void Screen::addDirtyRect(int x, int y, int w, int h) {
 		_forceFullUpdate = true;
 		return;
 	}
-	
+
 	if (w == 0 || h == 0 || x >= SCREEN_W || y >= SCREEN_H || x + w < 0 || y + h < 0)
 		return;
 
@@ -2674,7 +2674,7 @@ void Screen::addDirtyRect(int x, int y, int w, int h) {
 
 	if (y + h >= 200)
 		h = 200 - y;
-	
+
 	Rect &cur = _dirtyRects[_numDirtyRects++];
 	cur.x = x;
 	cur.x2 = w;
@@ -2840,7 +2840,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 	memset(_sjisTempPage2, 0x80, 324);
 	memset(_sjisSourceChar, 0, 36);
 	memcpy(_sjisSourceChar, _sjisFontData + 0x20 * SJIStoFMTChunk(c & 0xff, c >> 8), 0x20);
-	
+
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x, y, SJIS_CHARSIZE >> 1, SJIS_CHARSIZE >> 1);
 
@@ -2855,7 +2855,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 
    	destPage += y * 640 + x;
 	uint8 *src = 0, *dst = 0;
-	
+
 	if (color2 != 0x80) {
 		// draw color2 shadow
 		src = _sjisSourceChar;
@@ -2866,13 +2866,13 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 			dst += 2; src += 2;
 			*dst++ = 0;
 		}
-		
+
 		src = _sjisTempPage2;
 		dst = _sjisTempPage;
 		memset(dst, 0, 60);
 		for (int i = 0; i < 48; i++)
 			*dst++ |= *src++;
-		
+
 		src = _sjisTempPage2;
 		dst = _sjisTempPage + 3;
 		for (int i = 0; i < 48; i++)
@@ -2923,20 +2923,20 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 		if (color2 & 0xff00) {
 			height -= 3;
 			width--;
-			dst += 0x13;		
+			dst += 0x13;
 		}
-		
+
 		for (int i = 0; i < height; i++) {
 			uint8 rs = *src++;
 			for (int ii = 0; ii < 8; ii++) {
 				if (rs & 0x80)
 					*dst = (color2 & 0xff);
-				rs <<= 1;				
+				rs <<= 1;
 				dst++;
 
 				if (!--width) {
 					width = SJIS_CHARSIZE;
-					if (color2 & 0xff00) {						
+					if (color2 & 0xff00) {
 						width--;
 						dst++;
 					}
@@ -2966,28 +2966,28 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 	if (color1 & 0xff00) {
 		height -= 3;
 		width--;
-		dst += 0x13;		
+		dst += 0x13;
 	}
-		
+
 	for (int i = 0; i < height; i++) {
 		uint8 rs = *src++;
 		for (int ii = 0; ii < 8; ii++) {
 			if (rs & 0x80)
 				*dst = (color1 & 0xff);
-			rs <<= 1;				
+			rs <<= 1;
 			dst++;
 
 			if (!--width) {
 				width = SJIS_CHARSIZE;
-				if (color1 & 0xff00) {						
+				if (color1 & 0xff00) {
 					width--;
 					dst++;
 				}
 				break;
 			}
 		}
-	}    
-	
+	}
+
 	//	copy char to surface
 	src = _sjisTempPage2;
 	dst = destPage;
@@ -2997,7 +2997,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 		for (int ii = 0; ii < SJIS_CHARSIZE; ii++) {
 			if (*src != 0x80)
 				*dst = *src;
-			src++;			
+			src++;
 			dst++;
 		}
 		dst += pitch;

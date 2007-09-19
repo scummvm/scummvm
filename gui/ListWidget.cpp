@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/system.h"
 #include "common/events.h"
 #include "gui/ListWidget.h"
@@ -152,7 +151,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	// If this was a double click and the mouse is still over 
+	// If this was a double click and the mouse is still over
 	// the selected item, send the double click command
 	if (clickCount == 2 && (_selectedItem == findItem(x, y)) &&
 		_selectedItem >= 0) {
@@ -168,7 +167,7 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 int ListWidget::findItem(int x, int y) const {
 	if (y < _topPadding) return -1;
 	int item = (y - _topPadding) / kLineHeight + _currentPos;
-	if (item >= _currentPos && item < _currentPos + _entriesPerPage && 
+	if (item >= _currentPos && item < _currentPos + _entriesPerPage &&
 		item < (int)_list.size())
 		return item;
 	else

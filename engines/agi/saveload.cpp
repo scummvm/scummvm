@@ -28,7 +28,7 @@
  * Multi-slots by Claudio Matsuoka <claudio@helllabs.org>
  */
 
-#include "common/stdafx.h"
+
 #include "common/file.h"
 
 #include "agi/agi.h"
@@ -73,7 +73,7 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 
 	out->writeByte(_game.state);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game state (%d)", _game.state);
-	
+
 	strcpy(gameIDstring, _game.id);
 	out->write(gameIDstring, 8);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game id (%s, %s)", gameIDstring, _game.id);
@@ -104,7 +104,7 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 
 	for (i = 0; i < _HEIGHT; i++)
 		out->writeByte(_game.priTable[i]);
-	
+
 	out->writeSint16BE((int16)_game.gfxMode);
 	out->writeByte(_game.cursorChar);
 	out->writeSint16BE((int16)_game.colorFg);
@@ -212,7 +212,7 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 		result = errIOError;
 	} else
 		debugC(1, kDebugLevelMain | kDebugLevelSavegame, "Saved game %s in file %s", description, fileName);
-	
+
 	delete out;
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName);
 	return result;
@@ -239,23 +239,23 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 		debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Has AGI flag, good start");
 	} else {
 		warning("This doesn't appear to be an AGI savegame, game not restored");
-		delete in;	
+		delete in;
 		return errOK;
-	} 
+	}
 
 	in->read(description, 31);
-	
+
 	debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Description is: %s", description);
-	
+
 	saveVersion = in->readByte();
 	if (saveVersion != SAVEGAME_VERSION)
 		warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, SAVEGAME_VERSION);
 
 	_game.state = in->readByte();
-	
+
 	in->read(loadId, 8);
 	if (strcmp(loadId, _game.id) && checkId) {
-		delete in;	
+		delete in;
 		warning("This save seems to be from a different AGI game (save from %s, running %s), not loaded", loadId, _game.id);
 		return errBadFileOpen;
 	}
@@ -269,7 +269,7 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 	_game.lineStatus = in->readSint16BE();
 	_game.lineUserInput = in->readSint16BE();
 	_game.lineMinPrint = in->readSint16BE();
-	
+
 	/* These are never saved */
 	_game.cursorPos = 0;
 	_game.inputBuffer[0] = 0;
@@ -441,11 +441,11 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 				parm[3], parm[4], parm[5], parm[6]);
 	}
 
-	//Load AGIPAL Data 
+	//Load AGIPAL Data
 	if (saveVersion >= 3)
 		_gfx->setAGIPal(in->readSint16BE());
 
-	delete in;	
+	delete in;
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName);
 
 	setflag(fRestoreJustRan, true);
@@ -474,7 +474,7 @@ const char *AgiEngine::getSavegameFilename(int num) {
 void AgiEngine::getSavegameDescription(int num, char *buf, bool showEmpty) {
 	char fileName[MAX_PATH];
 	Common::InSaveFile *in;
-		
+
 	debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Current game id is %s", _targetName.c_str());
 	sprintf(fileName, "%s", getSavegameFilename(num));
 	if (!(in = _saveFileMan->openForLoading(fileName))) {
@@ -492,12 +492,12 @@ void AgiEngine::getSavegameDescription(int num, char *buf, bool showEmpty) {
 		} else {
 			warning("This doesn't appear to be an AGI savegame");
 			strcpy(buf, "(corrupt file)");
-		} 
+		}
 
 		delete in;
 	}
 }
-	
+
 int AgiEngine::selectSlot() {
 	int i, key, active = 0;
 	int rc = -1;
@@ -516,7 +516,7 @@ int AgiEngine::selectSlot() {
 	buttonX[0] = (textCentre - 3 * buttonLength / 2) * CHAR_COLS;
 	buttonX[1] = (textCentre + buttonLength / 2) * CHAR_COLS;
 	buttonY = (vm + 17) * CHAR_LINES;
-	
+
 	for (i = 0; i < 2; i++)
 		_gfx->drawCurrentStyleButton(buttonX[i], buttonY, buttonText[i], false, false, i == 0);
 
@@ -563,7 +563,7 @@ int AgiEngine::selectSlot() {
 			oldActive = active;
 			oldFirstSlot = _firstSlot;
 		}
-		
+
 		_gfx->pollTimer();	/* msdos driver -> does nothing */
 		key = doPollKeyboard();
 		switch (key) {
@@ -588,7 +588,7 @@ int AgiEngine::selectSlot() {
 			xmin = (hm + 1) * CHAR_COLS;
 			xmax = xmin + CHAR_COLS * 34;
 			if ((int)g_mouse.x >= xmin && (int)g_mouse.x <= xmax) {
-				if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS) 
+				if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS)
 					active = slotClicked;
 			}
 			xmin = (hm + 36) * CHAR_COLS;
@@ -630,7 +630,7 @@ int AgiEngine::selectSlot() {
 				}
 			}
 			break;
-			
+
 		// Page Up/Down and mouse wheel scrolling all leave 'active'
 		// unchanged so that a visible slot will remain selected.
 
@@ -686,7 +686,7 @@ int AgiEngine::saveGameDialog() {
 	const char *buttons[] = { "Do as I say!", "I regret", NULL };
 	char dstr[200];
 	int rc, slot = 0;
-	int hm, vm, hp, vp;	
+	int hm, vm, hp, vp;
 	int w;
 
 	hm = 1;
@@ -702,7 +702,7 @@ int AgiEngine::saveGameDialog() {
 			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOUR);
 
 	slot = selectSlot();
-	if (slot < 0)	
+	if (slot < 0)
 		return errOK;
 
 	drawWindow(hp, vp + 5 * CHAR_LINES, GFX_WIDTH - hp,

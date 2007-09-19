@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/imuse_digi/dimuse.h"
 
 namespace Scumm {

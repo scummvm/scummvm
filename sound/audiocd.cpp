@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "sound/audiocd.h"
 #include "sound/audiostream.h"
 #include "sound/mp3.h"

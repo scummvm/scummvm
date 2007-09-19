@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "queen/music.h"
 #include "queen/queen.h"
 #include "queen/resource.h"

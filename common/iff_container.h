@@ -25,7 +25,6 @@
 #ifndef COMMON_IFF_CONTAINER_H
 #define COMMON_IFF_CONTAINER_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/stream.h"

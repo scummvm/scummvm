@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "engines/engine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
@@ -297,7 +295,7 @@ void registerDefaults() {
 
 Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv) {
 	const char *s, *s2;
-	
+
 	// argv[0] contains the name of the executable.
 	if (argv && argv[0]) {
 		s = strrchr(argv[0], '/');
@@ -310,7 +308,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 	for (int i = 1; i < argc; ++i) {
 		s = argv[i];
 		s2 = (i < argc-1) ? argv[i+1] : 0;
-		
+
 		if (s[0] != '-') {
 			// The argument doesn't start with a dash, so it's not an option.
 			// Hence it must be the target name. We currently enforce that
@@ -559,7 +557,7 @@ static void runDetectorTest() {
 	// engines. Basically, it loops over all targets, and calls the detector
 	// for the given path. It then prints out the result and also checks
 	// whether the result agrees with the settings of the target.
-	
+
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	Common::ConfigManager::DomainMap::const_iterator iter = domains.begin();
 	int success = 0, failure = 0;
@@ -576,7 +574,7 @@ static void runDetectorTest() {
 		if (gameid.empty()) {
 			gameid = name;
 		}
-		
+
 		FilesystemNode dir(path);
 		FSList files;
 		if (!dir.getChildren(files, FilesystemNode::kListAll)) {
@@ -590,7 +588,7 @@ static void runDetectorTest() {
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
 			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameid().c_str()) != 0);
 		}
-		
+
 		if (candidates.empty()) {
 			printf(" FAILURE: No games detected\n");
 			failure++;
@@ -608,7 +606,7 @@ static void runDetectorTest() {
 			printf(" SUCCESS: Game was detected correctly\n");
 			success++;
 		}
-		
+
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
 			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
 				   x->gameid().c_str(),
@@ -680,7 +678,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 			usage("Unrecognized game target '%s'", command.c_str());
 		}
 	}
-	
+
 
 	// The user can override the savepath with the SCUMMVM_SAVEPATH
 	// environment variable. This is weaker than a --savepath on the
@@ -711,7 +709,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		for (Common::String::iterator c = key.begin(); c != key.end(); ++c)
 			if (*c == '-')
 				*c = '_';
-		
+
 		// Store it into ConfMan.
 		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
 	}

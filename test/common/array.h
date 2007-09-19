@@ -1,6 +1,5 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/stdafx.h"
 #include "common/array.h"
 
 class ArrayTestSuite : public CxxTest::TestSuite

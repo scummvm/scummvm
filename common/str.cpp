@@ -22,8 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
-
 #include "common/str.h"
 #include "common/hash-str.h"
 #include "common/util.h"
@@ -58,7 +56,7 @@ String::String(const char *str, uint32 len)
 		if (len <= 0)
 			len = tmp;
 		_len = len;
-		
+
 		if (len >= _builtinCapacity) {
 			// Not enough internal storage, so allocate more
 			_extern._capacity = computeCapacity(len);
@@ -66,7 +64,7 @@ String::String(const char *str, uint32 len)
 			_str = (char *)malloc(_extern._capacity+1);
 			assert(_str != 0);
 		}
-		
+
 		// Copy the string into the storage area
 		memcpy(_str, str, len);
 		_str[len] = 0;
@@ -89,10 +87,10 @@ String::String(const String &str)
 
 String::String(char c)
 : _len(0), _str(_storage) {
-	
+
 	_storage[0] = c;
 	_storage[1] = 0;
-	
+
 	_len = (c == 0) ? 0 : 1;
 }
 
@@ -145,7 +143,7 @@ String &String::operator  =(const String &str) {
 	} else {
 		str.incRefCount();
 		decRefCount(_extern._refCount);
-	
+
 		_extern._refCount = str._extern._refCount;
 		_extern._capacity = str._extern._capacity;
 		_len = str._len;
@@ -285,7 +283,7 @@ void String::ensureCapacity(uint32 new_len, bool keep_old) {
 	uint32 curCapacity, newCapacity;
 	char *newStorage;
 	int *oldRefCount = _extern._refCount;
-	
+
 	if (isStorageIntern()) {
 		isShared = false;
 		curCapacity = _builtinCapacity - 1;
@@ -293,7 +291,7 @@ void String::ensureCapacity(uint32 new_len, bool keep_old) {
 		isShared = (oldRefCount && *oldRefCount > 1);
 		curCapacity = _extern._capacity;
 	}
-	
+
 	// Special case: If there is enough space, and we do not share
 	// the storage, then there is nothing to do.
 	if (!isShared && new_len <= curCapacity)
@@ -341,7 +339,7 @@ void String::ensureCapacity(uint32 new_len, bool keep_old) {
 uint String::hash() const {
 	return hashit(c_str());
 }
-	
+
 #pragma mark -
 
 bool String::operator ==(const String &x) const {

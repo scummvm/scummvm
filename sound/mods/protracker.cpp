@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "sound/mods/protracker.h"
 #include "sound/mods/paula.h"
 #include "sound/mods/module.h"

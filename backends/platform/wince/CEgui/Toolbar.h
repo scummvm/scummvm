@@ -26,7 +26,6 @@
 #ifndef CEGUI_TOOLBAR
 #define CEGUI_TOOLBAR
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 

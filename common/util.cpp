@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "engines/engine.h"
 #include "common/util.h"
 #include "common/system.h"
@@ -51,7 +50,7 @@ extern bool isSmartphone(void);
 	#define stdout ((DS::fileHandle*) -1)
 	#define stderr ((DS::fileHandle*) -2)
 	#define stdin ((DS::fileHandle*) -3)
-	
+
 	void 	std_fprintf(FILE* handle, const char* fmt, ...);
 	void 	std_fflush(FILE* handle);
 

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/endian.h"
 #include "common/events.h"
@@ -74,12 +74,12 @@ bool MoviePlayer::load(const char *filename) {
 			char shortName[20];
 			memset(shortName, 0, sizeof(shortName));
 			memcpy(shortName, filename, 6);
-	
+
 			sprintf(shortName, "%s~1.dxa", shortName);
 
 			if (!loadFile(shortName))
 				error("Failed to load video file %s or %s", videoName, shortName);
-			
+
 			memset(baseName, 0, sizeof(baseName));
 			memcpy(baseName, shortName, 8);
 			debug(0, "Playing video %s", shortName);

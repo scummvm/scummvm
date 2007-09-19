@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/system.h"
 
@@ -742,7 +742,7 @@ void AGOSEngine::windowScroll(WindowBlock *window) {
 		} while (--h);
 
 		_system->unlockScreen();
-	} 
+	}
 
 	colorBlock(window, window->x * 8, (window->height - 1) * 8 + window->y, window->width * 8, 8);
 

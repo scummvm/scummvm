@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "base/plugins.h"
 
@@ -1894,7 +1894,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 /**
  * The fallback game descriptor used by the AGI engine's fallbackDetector.
- * Contents of this struct are to be overwritten by the fallbackDetector. 
+ * Contents of this struct are to be overwritten by the fallbackDetector.
  */
 static AGIGameDescription g_fallbackDesc = {
 	{
@@ -1919,7 +1919,7 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 	int wagFileCount = 0;
 	WagFileParser wagFileParser;
 	Common::String wagFilePath;
-	Common::String gameid("agi-fanmade"), description, extra; // Set the defaults for gameid, description and extra	
+	Common::String gameid("agi-fanmade"), description, extra; // Set the defaults for gameid, description and extra
 	FSList fslistCurrentDir; // Only used if fslist == NULL
 
 	// Use the current directory for searching if fslist == NULL
@@ -1950,7 +1950,7 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 		Common::String filename = file->getName();
 		filename.toLowercase();
 		allFiles[filename] = true; // Save the filename in a hash table
-		
+
 		if (filename.hasSuffix(".wag")) {
 			// Save latest found *.wag file's path (Can be used to open the file, the name can't)
 			wagFilePath = file->getPath();
@@ -1972,7 +1972,7 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 			g_fallbackDesc.features |= GF_AGIPAL; // Add AGIPAL feature flag
 		} else { // Not AGIPAL so just plain v2
 			description = "Unknown v2 Game";
-		}		
+		}
 	} else { // Try v3
 		char name[8];
 

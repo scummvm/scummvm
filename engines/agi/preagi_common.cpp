@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/events.h"
 
 #include "agi/preagi.h"
@@ -92,7 +91,7 @@ void PreAgiEngine::clearTextArea() {
 		start = 21;
 
 	for (int row = start; row < 200 / 8; row++) {
-		clearRow(row);		
+		clearRow(row);
 	}
 }
 

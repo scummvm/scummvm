@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 
 #include "kyra/kyra_v2.h"
@@ -66,8 +65,8 @@ void Screen_v2::k2IntroFadeToGrey(int delay) {
 
 	for (int i = 0; i <= 50; ++i) {
 		if (i <= 8 || i >= 30) {
-			_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] + 
-						      _currentPalette[3 * i + 1] + 
+			_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] +
+						      _currentPalette[3 * i + 1] +
 						      _currentPalette[3 * i + 2]) / 3;
 			_currentPalette[3 * i + 1] =  _currentPalette[3 * i + 0];
 			_currentPalette[3 * i + 2] =  _currentPalette[3 * i + 0];
@@ -77,8 +76,8 @@ void Screen_v2::k2IntroFadeToGrey(int delay) {
 	// color 71 is the same in both the overview and closeup scenes
 	// Converting it to greyscale makes the trees in the closeup look dull
 	for (int i = 71; i < 200; ++i) {
-		_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] + 
-					      _currentPalette[3 * i + 1] + 
+		_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] +
+					      _currentPalette[3 * i + 1] +
 					      _currentPalette[3 * i + 2]) / 3;
 		_currentPalette[3 * i + 1] =  _currentPalette[3 * i + 0];
 		_currentPalette[3 * i + 2] =  _currentPalette[3 * i + 0];
@@ -143,17 +142,17 @@ void Screen_v2::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFu
 
 	dstPtr += y * SCREEN_W + x;
 	uint8 *dst = dstPtr;
-	
+
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x, y, w, h);
-	
+
 	clearOverlayRect(_curPage, x, y, w, h);
 
 	temp = h;
 	while (h--) {
 		src += srcOffset;
 		int cW = w;
-		
+
 		switch (plotFunc) {
 		case 0:
 			memcpy(dst, src, cW);
@@ -270,14 +269,14 @@ uint16 Screen_v2::getShapeSize(const uint8 *shp) {
 
 uint8 *Screen_v2::makeShapeCopy(const uint8 *src, int index) {
 	debugC(9, kDebugLevelScreen, "Screen_v2::makeShapeCopy(%p, %d)", (const void *)src, index);
-	
+
 	const uint8 *shape = getPtrToShape(src, index);
 	int size = getShapeSize(shape);
 
 	uint8 *copy = new uint8[size];
 	assert(copy);
 	memcpy(copy, shape, size);
-	
+
 	return copy;
 }
 
@@ -290,7 +289,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 
 	va_list args;
 	va_start(args, flags);
-	
+
 	static int drawShapeVar1 = 0;
 	static int drawShapeVar2[] = {
 		1, 3, 2, 5, 4, 3, 2, 1
@@ -298,14 +297,14 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 	static int drawShapeVar3 = 1;
 	static int drawShapeVar4 = 0;
 	static int drawShapeVar5 = 0;
-	
+
 	uint8 *table = 0;
 	int tableLoopCount = 0;
 	int drawLayer = 0;
 	const uint8 *table2 = 0;
 	uint8 *table3 = 0;
 	uint8 *table4 = 0;
-	
+
 	if (flags & 0x8000) {
 		table2 = va_arg(args, uint8*);
 	}
@@ -340,12 +339,12 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 		scale_w = 0x100;
 		scale_h = 0x100;
 	}
-	
+
 	int ppc = (flags >> 8) & 0x3F;
-	
+
 	const uint8 *src = shape;
 	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;
-	
+
 	int shapeHeight = *src++;
 	int scaledShapeHeight = (shapeHeight * scale_h) >> 8;
 	if (scaledShapeHeight == 0) {
@@ -364,9 +363,9 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 		x -= scaledShapeWidth >> 1;
 		y -= scaledShapeHeight >> 1;
 	}
-	
+
 	src += 3;
-	
+
 	uint16 frameSize = READ_LE_UINT16(src); src += 2;
 	int colorTableColors = 0x10;
 
@@ -383,7 +382,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 		decodeFrame4(src, _animBlockPtr, frameSize);
 		src = _animBlockPtr;
 	}
-	
+
 	int shapeSize = shapeWidth * shapeHeight;
 	if (_decodeShapeBufferSize < shapeSize) {
 		delete [] _decodeShapeBuffer;
@@ -397,7 +396,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 	}
 	memset(_decodeShapeBuffer, 0, _decodeShapeBufferSize);
 	uint8 *decodedShapeFrame = _decodeShapeBuffer;
-	
+
 	for (int j = 0; j < shapeHeight; ++j) {
 		uint8 *dsbNextLine = decodedShapeFrame + shapeWidth;
 		int count = shapeWidth;
@@ -414,7 +413,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 		}
 		decodedShapeFrame = dsbNextLine;
 	}
-	
+
 	uint16 sx1 = getScreenDim(sd)->sx << 3;
 	uint16 sy1 = getScreenDim(sd)->sy;
 	uint16 sx2 = sx1 + (getScreenDim(sd)->w << 3);
@@ -423,7 +422,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 		x += sx1;
 		y += sy1;
 	}
-	
+
 	int x1, x2;
 	if (x >= 0) {
 		x1 = 0;
@@ -440,7 +439,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 			x2 = sx2;
 		}
 	}
-	
+
 	int y1, y2;
 	if (y >= 0) {
 		y1 = 0;
@@ -460,7 +459,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 
 	uint8 *dst = getPagePtr(page) + y * 320 + x;
 	uint8 *dstStart = getPagePtr(page);
-	
+
 	int scaleYTable[200];
 	for (y = y1; y < y2; ++y) {
 		scaleYTable[y] = (y << 8) / scale_h;
@@ -469,7 +468,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 	for (x = x1; x < x2; ++x) {
 		scaleXTable[x] = (x << 8) / scale_w;
 	}
-	
+
 	const uint8 *shapeBuffer = _decodeShapeBuffer;
 	if (flags & 0x02) {
 		shapeBuffer += shapeWidth * (shapeHeight - 1);
@@ -477,7 +476,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 	if (flags & 0x01) {
 		shapeBuffer += shapeWidth - 1;
 	}
-	
+
 	for (y = y1; y < y2; ++y) {
 		uint8 *dstNextLine = dst + 320;
 		int j = scaleYTable[y];
@@ -542,11 +541,11 @@ int Screen_v2::getLayer(int x, int y) {
 		y = 0;
 	else if (y >= 144)
 		y = 143;
-	
+
 	uint8 pixel = *(getCPagePtr(5) + y * 320 + x);
 	pixel &= 0x7F;
 	pixel >>= 3;
-	
+
 	if (pixel < 1)
 		pixel = 1;
 	else if (pixel > 15)

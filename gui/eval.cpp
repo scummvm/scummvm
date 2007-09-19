@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/system.h"
 #include "gui/eval.h"
 #include "gui/widget.h"
@@ -337,4 +336,4 @@ void Eval::reset() {
 	loadConstants();
 }
 
-} // end of namespace GUI 
+} // end of namespace GUI

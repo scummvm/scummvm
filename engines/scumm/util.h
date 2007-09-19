@@ -26,7 +26,7 @@
 #ifndef SCUMM_UTIL_H
 #define SCUMM_UTIL_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 
 namespace Scumm {

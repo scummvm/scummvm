@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/boxes.h"
@@ -552,7 +552,7 @@ bool ScummEngine::checkXYInBoxBounds(int boxnum, int x, int y) {
 		if (p.sqrDist(tmp) <= 4)
 			return true;
 	}
-	
+
 	// Finally, fall back to the classic algorithm to compute containment
 	// in a convex polygon: For each (oriented) side of the polygon
 	// (quadrangle in this case), compute whether p is "left" or "right"

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 
 #include "cruise/cruise_main.h"
@@ -78,7 +78,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * int loc_1277;
 				 * int loc_12D9;
 				 * int loc_12DD;
-				 * 
+				 *
 				 * int loc_11E7;
 				 * int loc_127A;
 				 * int loc_1203;
@@ -87,16 +87,16 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * int loc_11EF;
 				 * int loc_1217;
 				 * int loc_12E1;
-				 * 
+				 *
 				 * int tempSwap;
-				 * 
+				 *
 				 * int cx;
 				 * int bp;
 				 * int bpSave;
-				 * 
+				 *
 				 * char* diPtr;
 				 * char* siPtr;
-				 * 
+				 *
 				 * int direction = 1;
 				 * int dx = height;
 				 * int ax = width;
@@ -104,13 +104,13 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * int bx = 0;
 				 * int di = 199;
 				 * int si;
-				 * 
+				 *
 				 * ax = y;
 				 * si = 0;
-				 * 
+				 *
 				 * if (y>199) // out of screen vertically
 				 * return;
-				 * 
+				 *
 				 * if (y<0) // cropped on the top
 				 * {
 				 * cx = bx;
@@ -125,30 +125,30 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * si+=ax;
 				 * ax = cx;
 				 * }
-				 * 
+				 *
 				 * bx = ax;
 				 * ax += dx;
 				 * ax--;
-				 * 
+				 *
 				 * if (ax > di)
 				 * {
 				 * ax -= di;
 				 * dx -= ax;
-				 * 
+				 *
 				 * if (dx <= 0)
 				 * {
 				 * return;
 				 * }
 				 * }
-				 * 
+				 *
 				 * ax = dx;
 				 * loc_10DF = ax;
 				 * ax = bx;
 				 * loc_10AD = ax;
-				 * 
+				 *
 				 * bx = 0;
 				 * di = 319;
-				 * 
+				 *
 				 * ax = x;
 				 * dx = ax;
 				 * cx = ax&0xFF;
@@ -156,7 +156,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * {
 				 * int cl = cx;
 				 * int ch = cl;
-				 * 
+				 *
 				 * cl-=8;
 				 * cl=-cl;
 				 * cl&=7;
@@ -165,29 +165,29 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * loc_1064 = ax;
 				 * ax = es;
 				 * ax <<= 3;
-				 * 
+				 *
 				 * tempSwap = dx;
 				 * dx = ax;
 				 * ax = tempSwap;
-				 * 
+				 *
 				 * if (ax > di)
 				 * {
 				 * return;
 				 * }
-				 * 
+				 *
 				 * cx = ax;
 				 * cx += dx;
 				 * cx --;
-				 * 
+				 *
 				 * dx >>= 3;
-				 * 
+				 *
 				 * dx = dx&0xFF;
-				 * 
+				 *
 				 * if (cx<bx)
 				 * {
 				 * return;
 				 * }
-				 * 
+				 *
 				 * if (cx>di)
 				 * {
 				 * cx -= di;
@@ -200,13 +200,13 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * {
 				 * di = 0xF8F8;
 				 * }
-				 * 
+				 *
 				 * if (ax<bx)
 				 * {
 				 * ax -= bx;
 				 * ax = -ax;
 				 * ax >>= 3;
-				 * 
+				 *
 				 * si += ax;
 				 * dx = (dx&0xFF00) | (((dx&0xFF)-(ax&0xFF))&0xFF);
 				 * dx = (((dx&0xFF00) + ((ax&0xFF)<<8))&0xFF00) | (dx&0xFF);
@@ -215,31 +215,31 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * cx = (248<<8)|(cx&0xFF);
 				 * di = cx;
 				 * }
-				 * 
+				 *
 				 * loc_10AA = ax;
 				 * ax = (ax&0xFF00) | (((dx&0xFF00)>>8)&0xFF);
 				 * ax = ax&0xFF;
 				 * loc_10C5 = ax;
 				 * ax = (ax&0xFF00) | (dx&0xFF);
-				 * 
+				 *
 				 * dx = loc_1064;
-				 * 
+				 *
 				 * if (dx)
 				 * {
 				 * if (di&1)
 				 * {
 				 * loc_10C5++;
 				 * }
-				 * 
+				 *
 				 * bx = ax;
 				 * ax--;
 				 * loc_11DC = ax;
-				 * 
+				 *
 				 * if (di&0x100)
 				 * {
 				 * bx--;
 				 * }
-				 * 
+				 *
 				 * ax = bx;
 				 * ax -= 40;
 				 * ax = -ax;
@@ -256,19 +256,19 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * ax = -ax;
 				 * loc_1147 = ax;
 				 * }
-				 * 
+				 *
 				 * bx = loc_10AA;
 				 * ax = loc_10AD;
 				 * bx = ((((((bx&0xFF00)>>8)&0xFF) + (ax&0xFF))<<8)&0xFF00) | (bx&0xFF);
-				 * 
+				 *
 				 * bx>>=3;
 				 * ax<<=3;
-				 * 
+				 *
 				 * bx+=ax;
-				 * 
+				 *
 				 * diPtr = destPtr;
 				 * diPtr += bx;
-				 * 
+				 *
 				 * ax = loc_10C5;
 				 * ax<<=2;
 				 * loc_114B = ax;
@@ -276,31 +276,31 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * ax = si;
 				 * ax <<=2;
 				 * siPtr = sourcePtr;
-				 * 
+				 *
 				 * siPtr+=ax;
-				 * 
+				 *
 				 * bp = loc_10DF;
 				 * bx = dx;
 				 * dx = 974;
-				 * 
+				 *
 				 * if (!bx) // no crop ?
 				 * {
 				 * do // for each line
 				 * {
 				 * bpSave = bp;
 				 * cx = loc_10EC;
-				 * 
+				 *
 				 * do // for the line
 				 * {
 				 * outputBit(diPtr,0,*(siPtr));
 				 * outputBit(diPtr,1,*(siPtr+1));
 				 * outputBit(diPtr,2,*(siPtr+2));
 				 * outputBit(diPtr,3,*(siPtr+3));
-				 * 
+				 *
 				 * siPtr+=4;
 				 * diPtr++;
 				 * }while (--cx);
-				 * 
+				 *
 				 * diPtr += loc_1147; // interline
 				 * siPtr += loc_114B;
 				 * bp = bpSave;
@@ -314,18 +314,18 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * loc_11E7 = ax&0xFF;
 				 * loc_127A = ax&0xFF;
 				 * loc_1203 = ax&0xFF;
-				 * loc_122B = ax&0xFF; 
-				 * 
+				 * loc_122B = ax&0xFF;
+				 *
 				 * ax = (ax&0xFF00) | (((bx&0xFF00)>>8)&0xFF);
 				 * loc_117F = ax&0xFF;
 				 * loc_11EF = ax&0xFF;
 				 * loc_1217 = ax&0xFF;
-				 * 
+				 *
 				 * do // main copy loop
 				 * {
 				 * ax = bp;
 				 * loc_12E1 = ax;
-				 * 
+				 *
 				 * if (loc_117C == 0xF8)
 				 * {
 				 * direction = 1;
@@ -334,53 +334,53 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * {
 				 * direction = -1;
 				 * }
-				 * 
+				 *
 				 * if (direction == -1)
 				 * {
 				 * goto label_11DC;
 				 * }
-				 * 
+				 *
 				 * cx = loc_117F;
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*siPtr)&0xFF)>>cx)&0xFF;
 				 * dx = (((ax&0xFF)<<8)&0xFF00) | (dx&0xFF);
 				 * ax = (((ax&0xFF)<<8)&0xFF00) | (ax&0xFF);
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*(siPtr+1))&0xFF)>>cx)&0xFF;
 				 * dx = (dx&0xFF00) | (ax&0xFF);
 				 * ax = ((((((ax&0xFF00)>>8)&0xFF) | (ax&0xFF))<<8)&0xFF00) | (ax&0xFF);
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*(siPtr+2))&0xFF)>>cx)&0xFF;
 				 * bx = (((ax&0xFF)<<8)&0xFF00) | (bx&0xFF);
 				 * ax = ((((((ax&0xFF00)>>8)&0xFF) | (ax&0xFF))<<8)&0xFF00) | (ax&0xFF);
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*(siPtr+3))&0xFF)>>cx)&0xFF;
 				 * bx = (bx&0xFF00) | (ax&0xFF);
 				 * ax = ((((((ax&0xFF00)>>8)&0xFF) | (ax&0xFF))<<8)&0xFF00) | (ax&0xFF);
-				 * 
+				 *
 				 * if (ax)
 				 * {
 				 * bp = dx;
 				 * ax = (ax&0xFF00) | (*diPtr)&0xFF;
 				 * ax = (ax&0xFF00) | 8;
-				 * 
+				 *
 				 * outputBit(diPtr,0,(bp>>8)&0xFF);
 				 * outputBit(diPtr,1,(bp&0xFF));
 				 * outputBit(diPtr,2,(bx>>8)&0xFF);
 				 * outputBit(diPtr,3,(bx&0xFF));
 				 * }
-				 * 
+				 *
 				 * diPtr++;
-				 * 
+				 *
 				 * label_11DC:
-				 * 
+				 *
 				 * bp = loc_11DC;
 				 * if (bp >0)
 				 * {
 				 * do
 				 * {
 				 * cx = loc_11E7;
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*siPtr)&0xFF)>>cx)&0xFF;
 				 * dx = (((ax&0xFF)<<8)&0xFF00) | (dx&0xFF);
 				 * cx = loc_11EF;
@@ -388,7 +388,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * dx = (((dx&0xFF00) | (((ax&0xFF)<<8)&0xFF00))&0xFF00) | (dx&0xFF);
 				 * ax = (ax&0xFF00) | (((ax&0xFF) | (((dx&0xFF00)>>8)&0xFF))&0xFF);
 				 * ax = ((ax&0xFF)<<8) | (ax&0xFF);
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*(siPtr+5))&0xFF)>>cx)&0xFF;
 				 * dx = (dx&0xFF00) | (ax&0xFF);
 				 * cx = loc_1203;
@@ -396,7 +396,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * dx = (dx&0xFF00) | ((dx&0xFF) | (ax&0xFF));
 				 * ax = (ax&0xFF00) | ((ax&0xFF) | dx&0xFF);
 				 * ax = (ax&0xFF00) | ((ax&0xFF)<<8) | (ax&0xFF);
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*(siPtr+2))&0xFF)>>cx)&0xFF;
 				 * bx = (((ax&0xFF)<<8)&0xFF00) | (bx&0xFF);
 				 * cx = loc_1217;
@@ -404,7 +404,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * bx = (((bx&0xFF00) | (((ax&0xFF)<<8)&0xFF00))&0xFF00) | (bx&0xFF);
 				 * ax = (ax&0xFF00) | ((ax&0xFF) | ((bx&0xFF00)>>8));
 				 * ax = (ax&0xFF00) | ((ax&0xFF)<<8) | (ax&0xFF);
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*(siPtr+7))&0xFF)>>cx)&0xFF;
 				 * bx = (bx&0xFF00) | (ax&0xFF);
 				 * cx = loc_122B;
@@ -412,24 +412,24 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * bx = (bx&0xFF00) | ((bx&0xFF) | (ax&0xFF));
 				 * ax = (ax&0xFF00) | ((ax&0xFF) | bx&0xFF);
 				 * ax = (ax&0xFF00) | ((ax&0xFF)<<8) | (ax&0xFF);
-				 * 
+				 *
 				 * if (ax)
 				 * {
 				 * cx = dx;
 				 * ax = (ax&0xFF00) | (*diPtr)&0xFF;
 				 * ax = (ax&0xFF00) | 8;
-				 * 
+				 *
 				 * outputBit(diPtr,0,(cx>>8)&0xFF);
 				 * outputBit(diPtr,1,(cx&0xFF));
 				 * outputBit(diPtr,2,(cx>>8)&0xFF);
 				 * outputBit(diPtr,3,(cx&0xFF));
 				 * }
-				 * 
+				 *
 				 * siPtr += 4;
 				 * diPtr++;
 				 * }while (--bp);
 				 * }
-				 * 
+				 *
 				 * if (loc_122B == 0xF8)
 				 * {
 				 * direction = 1;
@@ -438,49 +438,49 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * {
 				 * direction = -1;
 				 * }
-				 * 
+				 *
 				 * if (direction == -1)
 				 * {
 				 * goto label_12D9;
 				 * }
-				 * 
+				 *
 				 * cx = loc_127A;
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*siPtr)&0xFF)>>cx)&0xFF;
 				 * dx = (((ax&0xFF)<<8)&0xFF00) | (dx&0xFF);
 				 * ax = (((ax&0xFF)<<8)&0xFF00) | (ax&0xFF);
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*(siPtr+1))&0xFF)>>cx)&0xFF;
 				 * dx = (dx&0xFF00) | (ax&0xFF);
 				 * ax = ((((((ax&0xFF00)>>8)&0xFF) | (ax&0xFF))<<8)&0xFF00) | (ax&0xFF);
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*(siPtr+2))&0xFF)>>cx)&0xFF;
 				 * bx = (((ax&0xFF)<<8)&0xFF00) | (bx&0xFF);
 				 * ax = ((((((ax&0xFF00)>>8)&0xFF) | (ax&0xFF))<<8)&0xFF00) | (ax&0xFF);
-				 * 
+				 *
 				 * ax = (ax&0xFF00) | (((*(siPtr+3))&0xFF)>>cx)&0xFF;
 				 * bx = (bx&0xFF00) | (ax&0xFF);
 				 * ax = ((((((ax&0xFF00)>>8)&0xFF) | (ax&0xFF))<<8)&0xFF00) | (ax&0xFF);
-				 * 
+				 *
 				 * if (ax)
 				 * {
 				 * bp = dx;
 				 * ax = (ax&0xFF00) | (*diPtr)&0xFF;
 				 * ax = (ax&0xFF00) | 8;
-				 * 
+				 *
 				 * outputBit(diPtr,0,(bp>>8)&0xFF);
 				 * outputBit(diPtr,1,(bp&0xFF));
 				 * outputBit(diPtr,2,(bx>>8)&0xFF);
 				 * outputBit(diPtr,3,(bx&0xFF));
 				 * }
-				 * 
+				 *
 				 * siPtr+=4;
-				 * 
+				 *
 				 * label_12D9:
 				 * diPtr+=loc_12D9;
 				 * siPtr+=loc_12DD;
 				 * bp = loc_12E1;
-				 * 
+				 *
 				 * }while (--bp);
 				 * } */
 

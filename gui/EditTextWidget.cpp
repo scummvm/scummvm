@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "gui/EditTextWidget.h"
 #include "gui/dialog.h"
 #include "gui/eval.h"

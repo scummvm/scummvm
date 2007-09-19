@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/util.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/abstract-fs-factory.h"
@@ -34,7 +33,7 @@
 static bool matchString(const char *str, const char *pat) {
 	const char *p = 0;
 	const char *q = 0;
-	
+
 	for (;;) {
 		switch (*pat) {
 		case '*':
@@ -83,7 +82,7 @@ FilesystemNode::FilesystemNode(const FilesystemNode &node) {
 
 FilesystemNode::FilesystemNode(const Common::String &p) {
 	AbstractFilesystemFactory *factory = AbstractFilesystemFactory::makeFSFactory();
-	
+
 	if (p.empty() || p == ".")
 		_realNode = factory->makeCurrentDirectoryFileNode();
 	else
@@ -113,7 +112,7 @@ bool FilesystemNode::operator<(const FilesystemNode& node) const
 		return true;
 	if (!isDirectory() && node.isDirectory())
 		return false;
-	
+
 	return scumm_stricmp(getDisplayName().c_str(), node.getDisplayName().c_str()) < 0;
 }
 
@@ -131,7 +130,7 @@ void FilesystemNode::decRefCount() {
 bool FilesystemNode::exists() const {
 	if (_realNode == 0)
 		return false;
-	
+
 	return _realNode->exists();
 }
 
@@ -149,15 +148,15 @@ bool FilesystemNode::getChildren(FSList &fslist, ListMode mode, bool hidden) con
 		return false;
 
 	AbstractFSList tmp;
-	
+
 	if (!_realNode->getChildren(tmp, mode, hidden))
 		return false;
-	
+
 	fslist.clear();
 	for (AbstractFSList::iterator i = tmp.begin(); i != tmp.end(); ++i) {
 		fslist.push_back(FilesystemNode(*i));
 	}
-	
+
 	return true;
 }
 
@@ -191,28 +190,28 @@ Common::String FilesystemNode::getPath() const {
 bool FilesystemNode::isDirectory() const {
 	if (_realNode == 0)
 		return false;
-	
+
 	return _realNode->isDirectory();
 }
 
 bool FilesystemNode::isReadable() const {
 	if (_realNode == 0)
 		return false;
-	
+
 	return _realNode->isReadable();
 }
 
 bool FilesystemNode::isWritable() const {
 	if (_realNode == 0)
 		return false;
-	
+
 	return _realNode->isWritable();
 }
 
 bool FilesystemNode::lookupFile(FSList &results, FSList &fslist, Common::String &filename, bool hidden, bool exhaustive) const
 {
 	int matches = 0;
-	
+
 	for (FSList::iterator entry = fslist.begin(); entry != fslist.end(); ++entry) {
 		if (entry->isDirectory()) {
 			matches += lookupFileRec(results, *entry, filename, hidden, exhaustive);
@@ -225,12 +224,12 @@ bool FilesystemNode::lookupFile(FSList &results, FSList &fslist, Common::String 
 bool FilesystemNode::lookupFile(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
 {
 	int matches;
-	
+
 	if (!dir.isDirectory())
 		return false;
-		
+
 	matches = lookupFileRec(results, dir, filename, hidden, exhaustive);
-	
+
 	return ((matches > 0) ? true : false);
 }
 
@@ -243,7 +242,7 @@ int FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::
 	FSList children;
 	int matches = 0;
 	dir.getChildren(entries, FilesystemNode::kListAll, hidden);
-	
+
 	//Breadth search (entries in the same level)
 	for (FSList::iterator entry = entries.begin(); entry != entries.end(); ++entry) {
 		if (entry->isDirectory()) {
@@ -255,17 +254,17 @@ int FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::
 			if (matchString(lastPathComponent(entry->getPath()), filename.c_str())) {
 				results.push_back(*entry);
 				matches++;
-				
+
 				if (!exhaustive)
 					break;
 			}
 		}
 	}
-	
+
 	//Depth search (entries in lower levels)
 	for (FSList::iterator child = children.begin(); child != children.end(); ++child) {
 		matches += lookupFileRec(results, *child, filename, hidden, exhaustive);
 	}
-	
+
 	return matches;
 }

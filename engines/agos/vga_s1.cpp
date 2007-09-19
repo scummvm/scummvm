@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -162,7 +162,7 @@ void AGOSEngine::vc48_setPathFinder() {
 				x = vsp->x & 7;
 				ydiff *= x;
 				ydiff /= 8;
-				ydiff = -ydiff;	
+				ydiff = -ydiff;
 			} else {
 				x = vsp->x & 7;
 				ydiff *= x;

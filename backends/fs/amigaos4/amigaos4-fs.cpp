@@ -35,8 +35,6 @@
 #include <strings.h>
 #endif
 
-#include <common/stdafx.h>
-
 #include "common/util.h"
 #include "engines/engine.h"
 #include "backends/fs/abstract-fs.h"

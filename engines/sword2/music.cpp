@@ -31,7 +31,7 @@
 //
 // All things considered, I think this is more bother than it's worth.
 
-#include "common/stdafx.h"
+
 #include "common/file.h"
 #include "common/system.h"
 
@@ -139,7 +139,7 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 	}
 
 	fh->file.seek(pos, SEEK_SET);
-	
+
 	Common::MemoryReadStream *tmp = 0;
 
 	switch (fh->fileType) {

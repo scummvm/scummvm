@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/bomp.h"
@@ -113,7 +113,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 
 	if (owner == 0) {
 		clearOwnerOf(obj);
-		
+
 		// FIXME: See bug #1535358 and many others. Essentially, the following
 		// code, while matching disasm of various versions of the SCUMM engine,
 		// is total bullocks, and leads to odd crashes due to out-of-bounds
@@ -125,7 +125,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 		// The bad code:
 		//   if (ss->where == WIO_INVENTORY && _inventory[ss->number] == obj) {
 		// That check makes no sense at all: _inventory only contains 80 items,
-		// which are in the order the player picked up items. We can only 
+		// which are in the order the player picked up items. We can only
 		// guess that the SCUMM coders meant to write
 		//   if (ss->where == WIO_INVENTORY && ss->number == obj) {
 		// which would ensure that an object script that nukes itself gets
@@ -133,10 +133,10 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 		// lead to new regressions.
 		// Another fix would be to completely remove this check, which should
 		// not cause much problems, since it'll only succeed by pure chance.
-		// 
+		//
 		// For now we follow a more defensive route: We perform the check
 		// if ss->number is small enough.
-		
+
 		ss = &vm.slot[_currentScript];
 		if (ss->where == WIO_INVENTORY) {
 			if (ss->number < _numInventory && _inventory[ss->number] == obj) {
@@ -174,7 +174,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 			}
 		}
 	} else {
-	
+
 		// Alternatively, scan the inventory to see if the object is in there...
 		for (i = 0; i < _numInventory; i++) {
 			if (_inventory[i] == obj) {
@@ -182,7 +182,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 				// Found the object! Nuke it from the inventory.
 				_res->nukeResource(rtInventory, i);
 				_inventory[i] = 0;
-	
+
 				// Now fill up the gap removing the object from the inventory created.
 				a = _inventory;
 				for (i = 0; i < _numInventory - 1; i++, a++) {

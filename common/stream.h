@@ -26,7 +26,6 @@
 #ifndef COMMON_STREAM_H
 #define COMMON_STREAM_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 namespace Common {
@@ -273,7 +272,7 @@ public:
 	int32 readSint32BE() {
 		return (int32)readUint32BE();
 	}
-	
+
 	/**
 	 * Read the specified amount of data into a malloc'ed buffer
 	 * which then is wrapped into a MemoryReadStream.

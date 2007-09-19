@@ -35,7 +35,7 @@ public:
 		: _plugin(plugin) {
 		assert(_plugin);
 	}
-	
+
 	~StaticPlugin() {
 		delete _plugin;
 	}
@@ -68,24 +68,24 @@ class StaticPluginProvider : public PluginProvider {
 public:
 	StaticPluginProvider() {
 	}
-	
+
 	~StaticPluginProvider() {
 	}
 
 	virtual PluginList getPlugins() {
 		PluginList pl;
-	
+
 		#define LINK_PLUGIN(ID) \
 			extern PluginRegistrator *g_##ID##_PluginReg; \
 			extern void g_##ID##_PluginReg_alloc(); \
 			g_##ID##_PluginReg_alloc(); \
 			plugin = g_##ID##_PluginReg; \
 			pl.push_back(new StaticPlugin(plugin));
-	
+
 		// "Loader" for the static plugins.
 		// Iterate over all registered (static) plugins and load them.
 		PluginRegistrator *plugin;
-	
+
 		#ifndef DISABLE_SCUMM
 		LINK_PLUGIN(SCUMM)
 		#endif
@@ -157,7 +157,7 @@ PluginManager::PluginManager() {
 PluginManager::~PluginManager() {
 	// Explicitly unload all loaded plugins
 	unloadPlugins();
-	
+
 	// Delete the plugin providers
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
@@ -208,7 +208,7 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	if (plugin->loadPlugin()) {
 		// If successful, add it to the list of known plugins and return.
 		_plugins.push_back(plugin);
-		
+
 		// TODO/FIXME: We should perform some additional checks here:
 		// * Check for some kind of "API version" (possibly derived from the
 		//   SVN tree revision?)
@@ -216,7 +216,7 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 		//   To detect this situation, we could just compare the plugin name.
 		//   To handle it, simply prefer modules loaded earlier to those coming.
 		//   Or vice versa... to be determined... :-)
-		
+
 		return true;
 	} else {
 		// Failed to load the plugin

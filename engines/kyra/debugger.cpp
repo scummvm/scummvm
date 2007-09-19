@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "kyra/debugger.h"
@@ -82,7 +82,7 @@ bool Debugger_v1::cmd_enterRoom(int argc, const char **argv) {
 
 		_vm->_system->hideOverlay();
 		_vm->_currentCharacter->facing = direction;
-		
+
 		_vm->enterNewScene(room, _vm->_currentCharacter->facing, 0, 0, 1);
 		_vm->_screen->_mouseLockCount = 0;
 
@@ -97,7 +97,7 @@ bool Debugger_v1::cmd_enterRoom(int argc, const char **argv) {
 bool Debugger_v1::cmd_listRooms(int argc, const char **argv) {
 	for (int i = 0; i < _vm->_roomTableSize; i++) {
 		DebugPrintf("%-3i: %-10s", i, _vm->_roomFilenameTable[_vm->_roomTable[i].nameIndex]);
-		if (!(i % 8)) 
+		if (!(i % 8))
 			DebugPrintf("\n");
 	}
 	DebugPrintf("\n");
@@ -108,7 +108,7 @@ bool Debugger_v1::cmd_listRooms(int argc, const char **argv) {
 bool Debugger_v1::cmd_listFlags(int argc, const char **argv) {
 	for (int i = 0; i < (int)sizeof(_vm->_flagsTable)*8; i++) {
 		DebugPrintf("(%-3i): %-5i", i, _vm->queryGameFlag(i));
-		if (!(i % 10)) 
+		if (!(i % 10))
 			DebugPrintf("\n");
 	}
 	DebugPrintf("\n");
@@ -122,7 +122,7 @@ bool Debugger_v1::cmd_toggleFlag(int argc, const char **argv) {
 			_vm->resetGameFlag(flag);
 		else
 			_vm->setGameFlag(flag);
-		DebugPrintf("Flag %i is now %i\n", flag, _vm->queryGameFlag(flag)); 
+		DebugPrintf("Flag %i is now %i\n", flag, _vm->queryGameFlag(flag));
 	} else {
 		DebugPrintf("Syntax: toggleflag <flag>\n");
 	}
@@ -133,7 +133,7 @@ bool Debugger_v1::cmd_toggleFlag(int argc, const char **argv) {
 bool Debugger_v1::cmd_queryFlag(int argc, const char **argv) {
 	if (argc > 1) {
 		uint flag = atoi(argv[1]);
-		DebugPrintf("Flag %i is %i\n", flag, _vm->queryGameFlag(flag)); 
+		DebugPrintf("Flag %i is %i\n", flag, _vm->queryGameFlag(flag));
 	} else {
 		DebugPrintf("Syntax: queryflag <flag>\n");
 	}
@@ -152,8 +152,8 @@ bool Debugger_v1::cmd_setTimerCountdown(int argc, const char **argv) {
 	if (argc > 2) {
 		uint timer = atoi(argv[1]);
 		uint countdown = atoi(argv[2]);
-		_vm->timer()->setCountdown(timer, countdown);	
-		DebugPrintf("Timer %i now has countdown %i\n", timer, _vm->timer()->getDelay(timer)); 
+		_vm->timer()->setCountdown(timer, countdown);
+		DebugPrintf("Timer %i now has countdown %i\n", timer, _vm->timer()->getDelay(timer));
 	} else {
 		DebugPrintf("Syntax: settimercountdown <timer> <countdown>\n");
 	}
@@ -176,7 +176,7 @@ bool Debugger_v1::cmd_giveItem(int argc, const char **argv) {
 	} else {
 		DebugPrintf("Syntax: give <itemid>\n");
 	}
-		
+
 	return true;
 }
 } // End of namespace Kyra

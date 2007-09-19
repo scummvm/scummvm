@@ -25,7 +25,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 #include "common/stream.h"
 #include "common/rect.h"
 

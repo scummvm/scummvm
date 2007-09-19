@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -50,7 +50,7 @@ int AGOSEngine::getScale(int16 y, int16 x) {
 
 	if (y > _baseY) {
 		return((int16)(x * (1 + ((y - _baseY) * _scale))));
-	} else {	
+	} else {
 		if (x == 0)
 			return(0);
 		if (x < 0) {
@@ -122,7 +122,7 @@ void AGOSEngine::vc77_setScaleYOffs() {
 	vsp->y += getScale(vsp->y, y);
 	_variableArrayPtr[var] = vsp->y;
 
-	if (y != 0) 
+	if (y != 0)
 		checkScrollY(y, vsp->y);
 
 	vsp->flags = kDFScaled;
@@ -337,7 +337,7 @@ void AGOSEngine::startOverlayAnims() {
 	int i;
 
 	zoneNum = _variableArray[999];
-	
+
 	for (i = 0; i < 600; i++) {
 		if (_variableArray[1000 + i] < 100)
 			continue;

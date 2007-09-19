@@ -26,7 +26,6 @@
 #ifndef SOUND_MP3_H
 #define SOUND_MP3_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 #ifdef USE_MAD
@@ -43,12 +42,12 @@ class AudioStream;
 /**
  * Create a new AudioStream from the MP3 data in the given stream.
  * Allows for looping (which is why we require a SeekableReadStream),
- * and specifying only a portion of the data to be played, based 
+ * and specifying only a portion of the data to be played, based
  * on time offsets.
  *
  * @param stream			the SeekableReadStream from which to read the MP3 data
  * @param disposeAfterUse	whether to delete the stream after use
- * @param startTime			the (optional) time offset in milliseconds from which to start playback 
+ * @param startTime			the (optional) time offset in milliseconds from which to start playback
  * @param duration			the (optional) time in milliseconds specifying how long to play
  * @param numLoops			how often the data shall be looped (0 = infinite)
  * @return	a new AudioStream, or NULL, if an error occured

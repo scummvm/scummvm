@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -114,7 +114,7 @@ static const ResString string_map_table_v7[] = {
 	{70, "/BOOT.008/Save"},
 	{71, "/BOOT.009/Load"},
 	{72, "/BOOT.010/Play"},
-	{73, "/BOOT.011/Cancel"}, 
+	{73, "/BOOT.011/Cancel"},
 	{74, "/BOOT.012/Quit"},
 	{75, "/BOOT.013/OK"},
 	{0, ""},
@@ -250,7 +250,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
-	
+
 	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
 	_time = new StaticTextWidget(this, 0, 0, 10, 10, "No time saved", kTextAlignCenter);
 	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", kTextAlignCenter);
@@ -327,22 +327,22 @@ void SaveLoadChooser::reflowLayout() {
 		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
 
 		_container->resize(thumbX - hPad, thumbY - vPad, kThumbnailWidth + hPad * 2, thumbH + vPad * 2 + kLineHeight * 4);
-	
+
 		// Add the thumbnail display
 		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth, thumbH);
-	
+
 		int height = thumbY + thumbH + kLineHeight;
 
 		_date->resize(thumbX, height, kThumbnailWidth, kLineHeight);
-	
+
 		height += kLineHeight;
 
 		_time->resize(thumbX, height, kThumbnailWidth, kLineHeight);
-	
+
 		height += kLineHeight;
 
 		_playtime->resize(thumbX, height, kThumbnailWidth, kLineHeight);
-	
+
 		_container->clearFlags(GUI::WIDGET_INVISIBLE);
 		_gfxWidget->clearFlags(GUI::WIDGET_INVISIBLE);
 		_date->clearFlags(GUI::WIDGET_INVISIBLE);
@@ -435,7 +435,7 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 			name[0] = 0;
 		descriptions.push_back(name);
 	}
-	
+
 	return descriptions;
 }
 
@@ -570,7 +570,7 @@ enum {
 //    If OTOH the dialog is closed with "Cancel" we do no such thing.
 //
 // These changes will achieve two things at once: Allow us to get rid of using
-//  "" as value for the domain, and in fact provide a somewhat better user 
+//  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
 ConfigDialog::ConfigDialog()
 	: GUI::OptionsDialog("", "scummconfig") {
@@ -907,7 +907,7 @@ void ValueDisplayDialog::open() {
 	_timer = getMillis() + kDisplayDelay;
 }
 
-SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value) 
+SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value)
 	: InfoDialog(scumm, ""), _value(value) {
 
 }
@@ -940,7 +940,7 @@ void SubtitleSettingsDialog::cycleValue() {
 		"Speech and Subtitles",
 		"Subtitles Only"
 	};
-	
+
 	_value = (_value + 1) % 3;
 
 	setInfoText(subtitleDesc[_value]);
@@ -954,7 +954,7 @@ Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)
 }
 
 void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {
-	if (state.ascii == 'i') 
+	if (state.ascii == 'i')
 		close();
 	else
 		ScummDialog::handleKeyDown(state);

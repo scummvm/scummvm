@@ -22,8 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
-
 #include "engines/engine.h"
 #include "base/game.h"
 #include "base/plugins.h"
@@ -122,7 +120,7 @@ class EditGameDialog : public OptionsDialog {
 public:
 	EditGameDialog(const String &domain, const String &desc);
 
-	virtual void reflowLayout();	
+	virtual void reflowLayout();
 
 	void open();
 	void close();
@@ -503,7 +501,7 @@ LauncherDialog::LauncherDialog()
 			new ButtonWidget(this, "launcher_start_button", "Start", kStartCmd, 'S');
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
-	_addButton = 
+	_addButton =
 		new ButtonWidget(this, "launcher_addGame_button", "Add Game...", kAddGameCmd, 'A');
 	_editButton =
 		new ButtonWidget(this, "launcher_editGame_button", "Edit Game...", kEditGameCmd, 'E');
@@ -554,7 +552,7 @@ void LauncherDialog::open() {
 	// re-launch the same game again.
 	ConfMan.setActiveDomain("");
 	Dialog::open();
-	
+
 	updateButtons();
 }
 
@@ -624,7 +622,7 @@ void LauncherDialog::updateListing() {
 void LauncherDialog::addGame() {
 	int modifiers = g_system->getEventManager()->getModifierState();
 	bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
-	
+
 	if (massAdd) {
 		MessageDialog alert("Do you really want to run the mass game detector? "
 							"This could potentially add a huge number of games.", "Yes", "No");
@@ -694,10 +692,10 @@ void LauncherDialog::addGame() {
 			EditGameDialog editDialog(domain, result.description());
 			if (editDialog.runModal() > 0) {
 				// User pressed OK, so make changes permanent
-		
+
 				// Write config to disk
 				ConfMan.flushToDisk();
-		
+
 				// Update the ListWidget, select the new item, and force a redraw
 				updateListing();
 				selectGame(domain);
@@ -747,13 +745,13 @@ Common::String addGameToConf(const GameDescriptor &result) {
 	// TODO: Setting the description field here has the drawback
 	// that the user does never notice when we upgrade our descriptions.
 	// It might be nice ot leave this field empty, and only set it to
-	// a value when the user edits the description string. 
+	// a value when the user edits the description string.
 	// However, at this point, that's impractical. Once we have a method
 	// to query all backends for the proper & full description of a given
 	// game target, we can change this (currently, you can only query
 	// for the generic gameid description; it's not possible to obtain
 	// a description which contains extended information like language, etc.).
-	
+
 	return domain;
 }
 

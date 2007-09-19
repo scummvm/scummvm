@@ -26,7 +26,6 @@
 #ifndef SOUND_WAVE_H
 #define SOUND_WAVE_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 namespace Common { class SeekableReadStream; }

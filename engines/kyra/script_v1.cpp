@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/system.h"
 
@@ -114,11 +114,11 @@ int KyraEngine_v1::o1_runNPCScript(ScriptState *script) {
 
 int KyraEngine_v1::o1_setSpecialExitList(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1setSpecialExitList(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9));
-	
+
 	for (int i = 0; i < 10; ++i)
 		_exitList[i] = stackPos(i);
 	_exitListPtr = _exitList;
-	
+
 	return 0;
 }
 
@@ -167,7 +167,7 @@ int KyraEngine_v1::o1_dropItemInScene(ScriptState *script) {
 	int item = stackPos(0);
 	int xpos = stackPos(1);
 	int ypos = stackPos(2);
-	
+
 	byte freeItem = findFreeItemInScene(_currentCharacter->sceneId);
 	if (freeItem != 0xFF) {
 		int sceneId = _currentCharacter->sceneId;
@@ -175,7 +175,7 @@ int KyraEngine_v1::o1_dropItemInScene(ScriptState *script) {
 		room->itemsXPos[freeItem] = xpos;
 		room->itemsYPos[freeItem] = ypos;
 		room->itemsTable[freeItem] = item;
-		
+
 		_animator->animAddGameItem(freeItem, sceneId);
 		_animator->updateAllObjectShapes();
 	} else {
@@ -276,7 +276,7 @@ int KyraEngine_v1::o1_fadeSpecialPalette(ScriptState *script) {
 		} else {
 			warning("KyraEngine_v1::o1fadeSpecialPalette not implemented");
 		}
-	} else { 
+	} else {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1fadeSpecialPalette(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 		_screen->fadeSpecialPalette(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	}
@@ -432,40 +432,40 @@ int KyraEngine_v1::o1_setScaleMode(ScriptState *script) {
 
 int KyraEngine_v1::o1_openWSAFile(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1openWSAFile(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3));
-	
+
 	const char *filename = stackPosString(0);
 	int wsaIndex = stackPos(1);
-	
+
 	_movieObjects[wsaIndex]->open(filename, (stackPos(3) != 0) ? 1 : 0, 0);
 	assert(_movieObjects[wsaIndex]->opened());
-	
+
 	return 0;
 }
 
 int KyraEngine_v1::o1_closeWSAFile(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1closeWSAFile(%p) (%d)", (const void *)script, stackPos(0));
-	
+
 	int wsaIndex = stackPos(0);
 	if (_movieObjects[wsaIndex])
 		_movieObjects[wsaIndex]->close();
-	
+
 	return 0;
 }
 
 int KyraEngine_v1::o1_runWSAFromBeginningToEnd(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1runWSAFromBeginningToEnd(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
-	
+
 	_screen->hideMouse();
-	
+
 	bool running = true;
-	
+
 	int xpos = stackPos(0);
 	int ypos = stackPos(1);
 	int waitTime = stackPos(2);
 	int wsaIndex = stackPos(3);
 	int worldUpdate = stackPos(4);
 	int wsaFrame = 0;
-	
+
 	_movieObjects[wsaIndex]->setX(xpos);
 	_movieObjects[wsaIndex]->setY(ypos);
 	_movieObjects[wsaIndex]->setDrawPage(0);
@@ -474,7 +474,7 @@ int KyraEngine_v1::o1_runWSAFromBeginningToEnd(ScriptState *script) {
 		_animator->_updateScreen = true;
 		if (wsaFrame >= _movieObjects[wsaIndex]->frames())
 			running = false;
-		
+
 		uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 		while (_system->getMillis() < continueTime) {
 			if (worldUpdate) {
@@ -487,9 +487,9 @@ int KyraEngine_v1::o1_runWSAFromBeginningToEnd(ScriptState *script) {
 				delay(10);
 		}
 	}
-	
+
 	_screen->showMouse();
-	
+
 	return 0;
 }
 
@@ -577,35 +577,35 @@ int KyraEngine_v1::o1_popBrandonIntoScene(ScriptState *script) {
 	int width = _defaultShapeTable[0].w << 3;
 	int height = _defaultShapeTable[0].h;
 	AnimObject *curAnim = _animator->actors();
-	
+
 	if (changeScaleMode) {
 		curAnim->x1 = _currentCharacter->x1;
 		curAnim->y1 = _currentCharacter->y1;
 		_animator->_brandonScaleY = _scaleTable[_currentCharacter->y1];
 		_animator->_brandonScaleX = _animator->_brandonScaleY;
-		
+
 		int animWidth = _animator->fetchAnimWidth(curAnim->sceneAnimPtr, _animator->_brandonScaleX) >> 1;
 		int animHeight = _animator->fetchAnimHeight(curAnim->sceneAnimPtr, _animator->_brandonScaleY);
-		
+
 		animWidth = (xOffset * animWidth) /  width;
 		animHeight = (yOffset * animHeight) / height;
-		
+
 		curAnim->x2 = curAnim->x1 += animWidth;
 		curAnim->y2 = curAnim->y1 += animHeight;
 	} else {
 		curAnim->x2 = curAnim->x1 = _currentCharacter->x1 + xOffset;
 		curAnim->y2 = curAnim->y1 = _currentCharacter->y1 + yOffset;
 	}
-	
+
 	int scaleModeBackup = _scaleMode;
 	if (changeScaleMode)
 		_scaleMode = 1;
-	
+
 	_animator->animRefreshNPC(0);
 	_animator->preserveAllBackgrounds();
 	_animator->prepDrawAllObjects();
 	_animator->copyChangedObjectsForward(0);
-	
+
 	_scaleMode = scaleModeBackup;
 
 	return 0;
@@ -693,7 +693,7 @@ int KyraEngine_v1::o1_changeCharactersFacing(ScriptState *script) {
 	int character = stackPos(0);
 	int facing = stackPos(1);
 	int newAnimFrame = stackPos(2);
-	
+
 	_animator->restoreAllObjectBackgrounds();
 	if (newAnimFrame != -1)
 		_characterList[character].currentAnimFrame = newAnimFrame;
@@ -702,7 +702,7 @@ int KyraEngine_v1::o1_changeCharactersFacing(ScriptState *script) {
 	_animator->preserveAllBackgrounds();
 	_animator->prepDrawAllObjects();
 	_animator->copyChangedObjectsForward(0);
-	
+
 	return 0;
 }
 
@@ -747,7 +747,7 @@ int KyraEngine_v1::o1_displayWSAFrameOnHidPage(ScriptState *script) {
 	int ypos = stackPos(2);
 	int waitTime = stackPos(3);
 	int wsaIndex = stackPos(4);
-	
+
 	_screen->hideMouse();
 	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	_movieObjects[wsaIndex]->setX(xpos);
@@ -765,7 +765,7 @@ int KyraEngine_v1::o1_displayWSAFrameOnHidPage(ScriptState *script) {
 			delay(10);
 	}
 	_screen->showMouse();
-	
+
 	return 0;
 }
 
@@ -841,7 +841,7 @@ int KyraEngine_v1::o1_displayWSASequentialFrames(ScriptState *script) {
 			++curTime;
 	}
 	_screen->showMouse();
-	
+
 	return 0;
 }
 
@@ -906,12 +906,12 @@ int KyraEngine_v1::o1_placeItemInOffScene(ScriptState *script) {
 	int xpos = stackPos(1);
 	int ypos = stackPos(2);
 	int sceneId = stackPos(3);
-	
+
 	byte freeItem = findFreeItemInScene(sceneId);
 	if (freeItem != 0xFF) {
 		assert(sceneId < _roomTableSize);
 		Room *room = &_roomTable[sceneId];
-		
+
 		room->itemsTable[freeItem] = item;
 		room->itemsXPos[freeItem] = xpos;
 		room->itemsYPos[freeItem] = ypos;
@@ -936,7 +936,7 @@ int KyraEngine_v1::o1_placeCharacterInOtherScene(ScriptState *script) {
 	int ypos = (int16)(stackPos(3) & 0xFFFE);
 	int facing = stackPos(4);
 	int animFrame = stackPos(5);
-	
+
 	_characterList[id].sceneId = sceneId;
 	_characterList[id].x1 = _characterList[id].x2 = xpos;
 	_characterList[id].y1 = _characterList[id].y2 = ypos;
@@ -965,13 +965,13 @@ int KyraEngine_v1::o1_popMobileNPCIntoScene(ScriptState *script) {
 	int16 xpos = (int16)(stackPos(4) & 0xFFFC);
 	int8 ypos = (int16)(stackPos(5) & 0xFFFE);
 	Character *curChar = &_characterList[character];
-	
+
 	curChar->sceneId = sceneId;
 	curChar->currentAnimFrame = animFrame;
 	curChar->facing = facing;
 	curChar->x1 = curChar->x2 = xpos;
 	curChar->y1 = curChar->y2 = ypos;
-	
+
 	_animator->animAddNPC(character);
 	_animator->updateAllObjectShapes();
 	return 0;
@@ -1004,7 +1004,7 @@ int KyraEngine_v1::o1_setCharactersLocation(ScriptState *script) {
 		if (_currentCharacter->sceneId != ch->sceneId)
 			animObj->active = 1;
 	}
-	
+
 	ch->sceneId = stackPos(1);
 	return 0;
 }
@@ -1070,10 +1070,10 @@ int KyraEngine_v1::o1_walkCharacterToPoint(ScriptState *script) {
 			forceContinue = true;
 			break;
 		}
-		
+
 		if (forceContinue || !running)
 			continue;
-		
+
 		setCharacterPosition(character, 0);
 		++curPos;
 
@@ -1298,20 +1298,20 @@ int KyraEngine_v1::o1_makeAmuletAppear(ScriptState *script) {
 		uint32 nextTime = 0;
 		for (int i = 0; _amuleteAnim[i] != 0xFF; ++i) {
 			nextTime = _system->getMillis() + 5 * _tickLength;
-			
+
 			uint8 code = _amuleteAnim[i];
 			if (code == 3 || code == 7)
 				snd_playSoundEffect(0x71);
-			
+
 			if (code == 5)
 				snd_playSoundEffect(0x72);
-			
+
 			if (code == 14)
 				snd_playSoundEffect(0x73);
-			
+
 			amulet.displayFrame(code);
 			_animator->_updateScreen = true;
-			
+
 			while (_system->getMillis() < nextTime) {
 				_sprites->updateSceneAnims();
 				_animator->updateAllObjectShapes();
@@ -1367,7 +1367,7 @@ int KyraEngine_v1::o1_waitForConfirmationMouseClick(ScriptState *script) {
 		_animator->updateAllObjectShapes();
 		delay(10);
 	}
-	
+
 	while (_mousePressFlag) {
 		updateMousePointer();
 		_sprites->updateSceneAnims();
@@ -1505,7 +1505,7 @@ int KyraEngine_v1::o1_totalItemsInScene(ScriptState *script) {
 
 int KyraEngine_v1::o1_restoreBrandonsMovementDelay(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1restoreBrandonsMovementDelay(%p) ()", (const void *)script);
-	setWalkspeed(_configWalkspeed);	
+	setWalkspeed(_configWalkspeed);
 	return 0;
 }
 
@@ -1564,7 +1564,7 @@ int KyraEngine_v1::o1_fadeEntirePalette(ScriptState *script) {
 			fadePal = _screen->getPalette(2);
 			uint8 *screenPal = _screen->getPalette(0);
 			uint8 *backUpPal = _screen->getPalette(3);
-		
+
 			memcpy(backUpPal, screenPal, sizeof(uint8)*768);
 			memset(fadePal, 0, sizeof(uint8)*768);
 		} else if (cmd == 1) {
@@ -1577,7 +1577,7 @@ int KyraEngine_v1::o1_fadeEntirePalette(ScriptState *script) {
 			fadePal = _screen->getPalette(0);
 		}
 	}
-	
+
 	_screen->fadePalette(fadePal, stackPos(1));
 	return 0;
 }

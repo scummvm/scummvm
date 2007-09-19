@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "agi/agi.h"
 #include "agi/lzw.h"
 

@@ -21,7 +21,6 @@
  */
 
 
-#include "stdafx.h"
 #include "zipreader.h"
 
 #define SWAP_U16(v) (((v & 0xFF) << 8) + (v & 0xFF00))

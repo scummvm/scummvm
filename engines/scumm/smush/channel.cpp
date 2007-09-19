@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/smush/channel.h"
 
 namespace Scumm {

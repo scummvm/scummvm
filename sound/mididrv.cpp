@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "engines/engine.h"
 #include "common/config-manager.h"
 #include "common/str.h"
@@ -48,7 +46,7 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	{"alsa", "ALSA", MD_ALSA, MDT_MIDI},
 #endif
 
-#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__) 
+#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__)
 	{"seq", "SEQ", MD_SEQ, MDT_MIDI},
 #endif
 
@@ -121,7 +119,7 @@ const MidiDriverDescription &MidiDriver::findMusicDriver(const Common::String &s
 	const char *s = str.c_str();
 	int len = 0;
 	const MidiDriverDescription *md = s_musicDrivers;
-	
+
 	// Scan for string end or a colon
 	while (s[len] != 0 && s[len] != ':')
 		len++;
@@ -240,7 +238,7 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #endif
 #endif
 
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) 
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	case MD_WINDOWS:   return MidiDriver_WIN_create();
 #endif
 #if defined(__MORPHOS__)

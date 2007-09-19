@@ -26,7 +26,6 @@
 #ifndef GUI_EVAL_H
 #define GUI_EVAL_H
 
-#include "common/stdafx.h"
 #include "common/str.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"

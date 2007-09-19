@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -89,7 +89,7 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 
 	_backupedCount = 0;
 	_curBackupPos = 0;
-	
+
 	for (int i = 0; i < 5; i++) {
 		_cursorHotspotXArray[i] = 0;
 		_cursorHotspotYArray[i] = 0;

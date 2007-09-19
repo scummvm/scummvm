@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "kyra/kyra.h"
 #include "kyra/screen.h"
@@ -76,7 +76,7 @@ int TextDisplayer::getCharLength(const char *str, int len) {
 			if (c >= 0x7F && _vm->gameFlags().lang == Common::JA_JPN) {
 				c = READ_LE_UINT16(str - 1);
 				++str;
-			}	
+			}
 			i += _screen->getCharWidth(*str++);
 			++charsCount;
 		}

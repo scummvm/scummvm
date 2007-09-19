@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/util.h"
@@ -76,13 +76,13 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 		error("Couldn't open script file '%s'", filename);
 		return false;
 	}
-	
+
 	uint32 formBlockSize = file.getFORMBlockSize();
 	if (formBlockSize == (uint32)-1) {
 		error("No FORM chunk found in file: '%s'", filename);
 		return false;
 	}
-	
+
 	uint32 chunkSize = file.getIFFBlockSize(TEXT_CHUNK);
 	if (chunkSize != (uint32)-1) {
 		scriptData->text = new byte[chunkSize];
@@ -93,7 +93,7 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 			return false;
 		}
 	}
-	
+
 	chunkSize = file.getIFFBlockSize(ORDR_CHUNK);
 	if (chunkSize == (uint32)-1) {
 		unloadScript(scriptData);
@@ -112,7 +112,7 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 
 	while (chunkSize--)
 		scriptData->ordr[chunkSize] = READ_BE_UINT16(&scriptData->ordr[chunkSize]);
-	
+
 	chunkSize = file.getIFFBlockSize(DATA_CHUNK);
 	if (chunkSize == (uint32)-1) {
 		unloadScript(scriptData);
@@ -145,8 +145,8 @@ void ScriptHelper::unloadScript(ScriptData *data) {
 	delete [] data->text;
 	delete [] data->ordr;
 	delete [] data->data;
-	
-	data->text = 0; 
+
+	data->text = 0;
 	data->ordr = data->data = 0;
 }
 
@@ -187,7 +187,7 @@ bool ScriptHelper::validScript(ScriptState *script) {
 bool ScriptHelper::runScript(ScriptState *script) {
 	_parameter = 0;
 	_continue = true;
-	
+
 	if (!script->ip)
 		return false;
 
@@ -200,18 +200,18 @@ bool ScriptHelper::runScript(ScriptState *script) {
 	} else if (code & 0x4000) {
 		_parameter = (int8)(code);
 	} else if (code & 0x2000) {
-		_parameter = *script->ip++; 
+		_parameter = *script->ip++;
 	} else {
 		_parameter = 0;
 	}
-	
+
 	if (opcode > 18) {
 		error("Script unknown command: %d", opcode);
 	} else {
 		debugC(5, kDebugLevelScript, "%s([%d/%u])", _commands[opcode].desc, _parameter, (uint)_parameter);
 		(this->*(_commands[opcode].proc))(script);
 	}
-	
+
 	return _continue;
 }
 
@@ -221,7 +221,7 @@ bool ScriptHelper::runScript(ScriptState *script) {
 
 void ScriptFileParser::setFile(const char *filename, Resource *res) {
 	destroy();
-	
+
 	if (!res->getFileHandle(filename, &_endOffset, _scriptFile))
 		return;
 	_startOffset = _scriptFile.pos();
@@ -235,7 +235,7 @@ void ScriptFileParser::destroy() {
 
 uint32 ScriptFileParser::getFORMBlockSize() {
 	uint32 oldOffset = _scriptFile.pos();
-	
+
 	uint32 data = _scriptFile.readUint32LE();
 
 	if (data != FORM_CHUNK) {
@@ -249,13 +249,13 @@ uint32 ScriptFileParser::getFORMBlockSize() {
 
 uint32 ScriptFileParser::getIFFBlockSize(const uint32 chunkName) {
 	uint32 size = (uint32)-1;
-	
+
 	_scriptFile.seek(_startOffset + 0x0C);
 
 	while (_scriptFile.pos() < _endOffset) {
 		uint32 chunk = _scriptFile.readUint32LE();
 		uint32 size_temp = _scriptFile.readUint32BE();
-	
+
 		if (chunk != chunkName) {
 			_scriptFile.seek((size_temp + 1) & (~1), SEEK_CUR);
 			assert(_scriptFile.pos() <= _endOffset);
@@ -428,10 +428,10 @@ void ScriptHelper::cmd_negate(ScriptState* script) {
 void ScriptHelper::cmd_eval(ScriptState* script) {
 	int16 ret = 0;
 	bool error = false;
-	
+
 	int16 val1 = script->stack[script->sp++];
 	int16 val2 = script->stack[script->sp++];
-	
+
 	switch (_parameter) {
 	case 0:
 		if (!val2 || !val1)
@@ -534,7 +534,7 @@ void ScriptHelper::cmd_eval(ScriptState* script) {
 		error = true;
 		break;
 	}
-	
+
 	if (error) {
 		script->ip = 0;
 		_continue = false;

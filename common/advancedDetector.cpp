@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "base/plugins.h"
 
 #include "common/util.h"
@@ -316,7 +314,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	File testFile;
 
 	String tstr;
-	
+
 	uint i;
 	char md5str[32+1];
 
@@ -458,7 +456,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		}
 	}
 
-	// We've found a match 
+	// We've found a match
 	if (!matched.empty())
 		return matched;
 

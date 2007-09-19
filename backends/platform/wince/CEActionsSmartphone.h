@@ -26,7 +26,6 @@
 #ifndef CEACTIONSSMARTPHONE
 #define CEACTIONSSMARTPHONE
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "wince-sdl.h"

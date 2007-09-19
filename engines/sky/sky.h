@@ -26,7 +26,7 @@
 #ifndef SKY_H
 #define SKY_H
 
-#include "common/stdafx.h"
+
 #include "common/events.h"
 #include "engines/engine.h"
 

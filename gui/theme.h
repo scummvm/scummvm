@@ -25,7 +25,6 @@
 #ifndef GUI_THEME_H
 #define GUI_THEME_H
 
-#include "common/stdafx.h"
 #include "common/system.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -51,16 +50,16 @@ enum {
 	// It may therefore be a good idea to save the background so that it
 	// can be redrawn quickly.
 	THEME_HINT_SAVE_BACKGROUND = 1 << 1,
-	
+
 	// Indicates that this is the launcher dialog (maybe delete this in the future)
 	THEME_HINT_MAIN_DIALOG = 1 << 2,
-	
+
 	// Indicates special colorfade
 	THEME_HINT_SPECIAL_COLOR = 1 << 3,
-	
+
 	// Indicates no colorfade
 	THEME_HINT_PLAIN_COLOR = 1 << 4,
-	
+
 	// Indictaes that a shadows should be drawn around the background
 	THEME_HINT_USE_SHADOW = 1 << 5,
 
@@ -75,7 +74,7 @@ enum {
 class Theme {
 public:
 	Theme();
-		
+
 	virtual ~Theme();
 
 	enum TextAlign {
@@ -138,11 +137,11 @@ public:
 
 	virtual void clearAll() = 0;
 	virtual void drawAll() = 0;
-	
+
 	virtual void setDrawArea(const Common::Rect &r) { _drawArea = r; }
 	// resets the draw area to the screen size
 	virtual void resetDrawArea() = 0;
-	
+
 	virtual const Common::ConfigFile &getConfigFile() { return _configFile; }
 
 	virtual const Graphics::Font *getFont(FontStyle font = kFontStyleBold) const = 0;
@@ -187,7 +186,7 @@ public:
 		};
 		return Graphics::kTextAlignCenter;
 	}
-	
+
 	TextAlign convertAligment(Graphics::TextAlignment align) const {
 		switch (align) {
 		case Graphics::kTextAlignLeft:

@@ -27,7 +27,6 @@
 
 #include <windows.h>
 #include <mmsystem.h>
-#include "common/stdafx.h"
 #include "sound/mpu401.h"
 #include "common/util.h"
 

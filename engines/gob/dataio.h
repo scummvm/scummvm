@@ -26,7 +26,7 @@
 #ifndef GOB_DATAIO_H
 #define GOB_DATAIO_H
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "common/file.h"

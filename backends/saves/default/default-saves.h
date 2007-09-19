@@ -26,7 +26,6 @@
 #if !defined(BACKEND_SAVES_DEFAULT_H) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 #define BACKEND_SAVES_DEFAULT_H
 
-#include "common/stdafx.h"
 #include "common/savefile.h"
 #include "common/str.h"
 

@@ -26,7 +26,7 @@
 #ifndef SKY_MUSIC_MUSICBASE_H
 #define SKY_MUSIC_MUSICBASE_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "common/mutex.h"
 

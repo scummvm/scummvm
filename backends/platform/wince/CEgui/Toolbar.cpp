@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "Toolbar.h"
 
 namespace CEGUI {

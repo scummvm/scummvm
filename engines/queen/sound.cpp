@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/stream.h"

@@ -31,7 +31,7 @@
 //
 // The jung2.vqa movie does work, but only thanks to a grotesque hack.
 
-#include "common/stdafx.h"
+
 #include "common/events.h"
 #include "common/system.h"
 #include "sound/audiostream.h"
@@ -273,7 +273,7 @@ bool VQAMovie::open(const char *filename) {
 				//
 				// This is good, because it means we won't have
 				// to worry about the confusing parts of the
-				// VQA spec, where 8- and 16-bit data have 
+				// VQA spec, where 8- and 16-bit data have
 				// different signedness and stereo sample
 				// layout varies between different games.
 

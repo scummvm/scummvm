@@ -27,7 +27,6 @@
 #include "PalmVersion.h"
 #include "globals.h"
 
-#include "common/stdafx.h"
 #include "backends/fs/abstract-fs.h"
 
 /**

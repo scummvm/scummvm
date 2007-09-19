@@ -42,7 +42,7 @@
 #ifndef KYRA_SOUND_H
 #define KYRA_SOUND_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "common/file.h"
 #include "common/mutex.h"

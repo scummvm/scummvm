@@ -35,6 +35,10 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\saga\actor_walk.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\saga\animation.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -50,6 +54,22 @@
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\saga\console.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\saga\detection.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\saga\detection_tables.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\saga\displayinfo.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -76,10 +96,6 @@
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\saga\font_map.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\saga\game.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
@@ -210,12 +226,6 @@
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\saga\saga.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\saga\sagagame.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />

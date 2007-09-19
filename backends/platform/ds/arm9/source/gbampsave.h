@@ -23,7 +23,6 @@
 #ifndef _GBAMPSAVE_H_
 #define _GBAMPSAVE_H_
 
-#include "stdafx.h"
 #include "system.h"
 
 #define SAVE_BUFFER_SIZE 100000

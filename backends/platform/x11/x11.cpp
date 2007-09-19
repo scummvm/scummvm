@@ -25,7 +25,6 @@
 
 /* The bare pure X11 port done by Lionel 'BBrox' Ulmer */
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "common/system.h"

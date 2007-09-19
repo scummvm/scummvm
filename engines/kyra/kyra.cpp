@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 
@@ -48,15 +48,15 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	_staticres = 0;
 	_timer = 0;
 	_scriptInterpreter = 0;
-	
+
 	_flags = flags;
 	_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);
-	
+
 	_quitFlag = false;
-	
+
 	_skipFlag = false;
-	
+
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	// sets up all engine specific debug levels
@@ -81,7 +81,7 @@ int KyraEngine::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	
+
 		// for now we prefer Adlib over native MIDI
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
 
@@ -112,7 +112,7 @@ int KyraEngine::init() {
 
 		// C55 appears to be XMIDI for General MIDI instruments
 		soundMidiPc->setUseC55(_flags.gameID == GI_KYRA2 && !native_mt32);
-		
+
 		// Unlike some SCUMM games, it's not that the MIDI sounds are
 		// missing. It's just that at least at the time of writing they
 		// are decidedly inferior to the Adlib ones.
@@ -120,7 +120,7 @@ int KyraEngine::init() {
 		if (midiDriver != MD_ADLIB && ConfMan.getBool("multi_midi")) {
 			SoundAdlibPC *adlib = new SoundAdlibPC(this, _mixer);
 			assert(adlib);
-			
+
 			_sound = new MixedSoundDriver(this, _mixer, soundMidiPc, adlib);
 			assert(_sound);
 		}
@@ -138,7 +138,7 @@ int KyraEngine::init() {
 	assert(_timer);
 	_scriptInterpreter = new ScriptHelper(this);
 	assert(_scriptInterpreter);
-	
+
 	setupOpcodeTable();
 
 	_lang = 0;

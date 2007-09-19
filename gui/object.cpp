@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/system.h"
 #include "gui/object.h"
 #include "gui/widget.h"

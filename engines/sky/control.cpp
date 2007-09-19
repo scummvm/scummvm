@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -245,7 +245,7 @@ void Control::removePanel(void) {
 	delete _musicPanButton;			delete _bodge;
 	delete _yesNo;					delete _text;
 	delete _statusBar;				delete _restoreButton;
-	
+
 	if (_textSprite) {
 		free(_textSprite);
 		_textSprite = NULL;

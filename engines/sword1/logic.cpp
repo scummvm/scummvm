@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/util.h"
 
@@ -67,7 +67,7 @@ Logic::Logic(ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse,
 	_eventMan = NULL;
 	_system = system;
 	_mixer = mixer;
-	
+
 	setupMcodeTable();
 }
 
@@ -789,7 +789,7 @@ void Logic::setupMcodeTable() {
 		&Logic::fnPurple,
 		&Logic::fnBlack
 	};
-	
+
 	_mcodeTable = mcodeTable;
 }
 

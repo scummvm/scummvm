@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -120,7 +120,7 @@ void CineEngine::initialize() {
 	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));
 
 	animDataTable = (AnimData *)malloc(NUM_MAX_ANIMDATA * sizeof(AnimData));
-	
+
 	loadTextData("texte.dat", textDataPtr);
 
 	if (g_cine->getGameType() == Cine::GType_OS && !(g_cine->getFeatures() & GF_DEMO)) {
@@ -190,7 +190,7 @@ void CineEngine::initialize() {
 		if (res)
 			_preLoad = true;
 	}
-	
+
 	if (!_preLoad) {
 		loadPrc(BOOT_PRC_NAME);
 		strcpy(currentPrcName, BOOT_PRC_NAME);

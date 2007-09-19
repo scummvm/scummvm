@@ -24,7 +24,6 @@
  */
 
 
-#include "stdafx.h"
 #include "common/scummsys.h"
 //#include "graphics/scaler.h"
 #include "common/system.h"

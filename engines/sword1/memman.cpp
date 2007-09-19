@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "sword1/memman.h"
 #include "common/util.h"
 

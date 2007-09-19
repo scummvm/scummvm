@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "sound/midiparser.h"
 #include "sound/mididrv.h"
 #include "common/util.h"
@@ -123,7 +122,7 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 				info.ext.data[2] = 0x20;
 			}
 			break;
-		
+
 		default:
 			warning("MidiParser_XMIDI::parseNextEvent: Unsupported event code %x", info.event);
 		}

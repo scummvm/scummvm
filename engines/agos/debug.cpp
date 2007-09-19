@@ -24,7 +24,7 @@
  */
 
 // AGOS debug functions
-#include "common/stdafx.h"
+
 
 #include "agos/debug.h"
 #include "agos/agos.h"
@@ -109,7 +109,7 @@ const byte *AGOSEngine::dumpOpcode(const byte *p) {
 						printf("[%d] ", n - 60000);
 					else
 						printf("%d ", n);
-					
+
 				} else {
 					if (n >= 30000 && n < 30512)
 						printf("[%d] ", n - 30000);

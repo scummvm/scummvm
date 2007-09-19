@@ -26,7 +26,7 @@
 #ifndef LURE_GAME_H
 #define LURE_GAME_H
 
-#include "common/stdafx.h"
+
 #include "engines/engine.h"
 #include "lure/luredefs.h"
 #include "lure/menu.h"

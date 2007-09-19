@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/savefile.h"
@@ -1006,7 +1006,7 @@ void CineEngine::makeSystemMenu(void) {
 							warning("Unable to open file %s for saving", tmp);
 							break;
 						}
-						
+
 						fHandle->write(currentSaveName, 200);
 						delete fHandle;
 
@@ -2187,18 +2187,18 @@ void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 			int16 maskWidth;
 			int16 maskHeight;
 			uint16 maskSpriteIdx;
-	 
+
 			if (!si) {
 				ptr = (byte *)malloc(width * 8 * height);
 				msk = (byte *)malloc(width * 8 * height);
 				si = 1;
 			}
-	 
+
 			maskX = objectTable[pCurrentOverlay->objIdx].x;
 			maskY = objectTable[pCurrentOverlay->objIdx].y;
-	 
+
 			maskSpriteIdx = objectTable[pCurrentOverlay->objIdx].frame;
-	 
+
 			maskWidth = animDataTable[maskSpriteIdx].width / 2;
 			maskHeight = animDataTable[maskSpriteIdx].height;
 			gfxSpriteFunc2(spritePtr, maskPtr, width, height, animDataTable[maskSpriteIdx].ptr1, maskWidth, maskHeight, ptr, msk, x, y, maskX, maskY, i++);
@@ -2206,10 +2206,10 @@ void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 			gfxFillSprite(animDataTable[maskSpriteIdx].ptr1, maskWidth, maskHeight, page, maskX, maskY, 1);
 #endif
 		}
-	 
+
 		pCurrentOverlay = pCurrentOverlay->next;
-	} 
-	 
+	}
+
 	if (si) {
 		gfxSpriteFunc1(ptr, msk, width, height, page, x, y);
 		free(ptr);
@@ -2366,7 +2366,7 @@ void drawFailureMessage(byte cmd) {
 
 	if (width > 300)
 		width = 300;
-	
+
 	int16 x = (320 - width) / 2;
 	int16 y = 80;
 	int16 color = 4;
@@ -3061,10 +3061,10 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 
 	if (width > 250)
 		width = 250;
-	
+
 	if (width < 180)
 		width = 180;
-	
+
 	int16 x = (320 - width) / 2;
 	int16 color = 2;
 
@@ -3267,7 +3267,7 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 					if ((inputLength != 0) && (inputPos != inputLength)) {
 						strncat(tempString, &inputString[inputPos - 1], inputLength - inputPos + 1);
 					}
-					
+
 					strcpy(inputString, tempString);
 					inputLength = strlen(inputString);
 					inputPos++;

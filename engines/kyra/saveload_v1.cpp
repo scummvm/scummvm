@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -70,7 +69,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 		delete in;
 		return;
 	}
-	
+
 	char saveName[31];
 	in->read(saveName, 31);
 
@@ -129,7 +128,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 
 	_marbleVaseItem = in->readSint16BE();
 	_itemInHand = in->readByte();
-	
+
 	for (int i = 0; i < 4; ++i)
 		_birthstoneGemTable[i] = in->readByte();
 	for (int i = 0; i < 3; ++i)
@@ -139,7 +138,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 	_cauldronState = in->readByte();
 	for (int i = 0; i < 2; ++i)
 		_crystalState[i] = in->readByte();
-	
+
 	_brandonStatusBit = in->readUint16BE();
 	_brandonStatusBit0x02Flag = in->readByte();
 	_brandonStatusBit0x20Flag = in->readByte();
@@ -188,7 +187,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 
 	// Version 4 stored settings in the savegame. As of version 5, they are
 	// handled by the config manager.
-	
+
 	if (version == 4) {
 		in->readByte(); // Text speed
 		in->readByte(); // Walk speed
@@ -205,7 +204,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 		// so if it's out of bounds we just set it to 0.
 		if (_curSfxFile >= _soundFilesTownsCount || _curSfxFile < 0)
 			_curSfxFile = 0;
-		
+
 		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 			_sound->loadSoundFile(_curSfxFile);
 	}
@@ -231,7 +230,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 	_animator->_noDrawShapesFlag = 1;
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 	_animator->_noDrawShapesFlag = 0;
-	
+
 	_currentCharacter->x1 = brandonX;
 	_currentCharacter->y1 = brandonY;
 	_animator->animRefreshNPC(0);
@@ -242,7 +241,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	_screen->_disableScreen = false;
 	_screen->updateScreen();
-	
+
 	_abortWalkFlag = true;
 	_abortWalkFlag2 = false;
 	_mousePressFlag = false;
@@ -295,10 +294,10 @@ void KyraEngine_v1::saveGame(const char *fileName, const char *saveName) {
 		//out->writeUint16BE(_characterList[i].field_20);
 		//out->writeUint16BE(_characterList[i].field_23);
 	}
-	
+
 	out->writeSint16BE(_marbleVaseItem);
 	out->writeByte(_itemInHand);
-	
+
 	for (int i = 0; i < 4; ++i)
 		out->writeByte(_birthstoneGemTable[i]);
 	for (int i = 0; i < 3; ++i)
@@ -308,7 +307,7 @@ void KyraEngine_v1::saveGame(const char *fileName, const char *saveName) {
 	out->writeByte(_cauldronState);
 	for (int i = 0; i < 2; ++i)
 		out->writeByte(_crystalState[i]);
-	
+
 	out->writeUint16BE(_brandonStatusBit);
 	out->writeByte(_brandonStatusBit0x02Flag);
 	out->writeByte(_brandonStatusBit0x20Flag);
@@ -334,7 +333,7 @@ void KyraEngine_v1::saveGame(const char *fileName, const char *saveName) {
 	}
 	// room table terminator
 	out->writeUint16BE(0xFFFF);
-	
+
 	out->writeSint16BE(_lastMusicCommand);
 
 	out->writeByte(_curSfxFile);

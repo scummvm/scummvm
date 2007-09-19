@@ -26,7 +26,6 @@
 #ifndef COMMON_FILE_H
 #define COMMON_FILE_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
@@ -88,7 +87,7 @@ public:
 
 	virtual bool remove(const String &filename);
 	virtual bool remove(const FilesystemNode &node);
-	
+
 	/**
 	 * Checks if the object opened a file successfully.
 	 *

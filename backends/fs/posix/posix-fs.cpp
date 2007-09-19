@@ -24,7 +24,6 @@
 
 #if defined(UNIX)
 
-#include "common/stdafx.h"
 #include "backends/fs/abstract-fs.h"
 
 #ifdef MACOSX

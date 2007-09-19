@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "gui/themebrowser.h"
 #include "gui/ListWidget.h"
 #include "gui/widget.h"
@@ -89,7 +88,7 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 
 void ThemeBrowser::updateListing() {
 	_themes.clear();
-	
+
 	// classic is always build in
 	Entry th;
 	th.name = "Classic (Builtin)";
@@ -164,7 +163,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 						break;
 					}
 				}
-				
+
 				if (add)
 					list.push_back(th);
 			}

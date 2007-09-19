@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/util.h"
 
 #include "scumm/smush/smush_mixer.h"

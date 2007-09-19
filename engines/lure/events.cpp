@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/events.h"
 
 #include "graphics/cursorman.h"
@@ -35,14 +35,14 @@ namespace Lure {
 
 static Mouse *int_mouse = NULL;
 
-Mouse &Mouse::getReference() { 
-	return *int_mouse; 
+Mouse &Mouse::getReference() {
+	return *int_mouse;
 }
 
 Mouse::Mouse() {
 	int_mouse = this;
 
-	_lButton = false; 
+	_lButton = false;
 	_rButton = false;
 	_cursorNum = CURSOR_ARROW;
 	_x = 0;
@@ -87,7 +87,7 @@ void Mouse::cursorOff() {
 void Mouse::setCursorNum(CursorType cursorNum) {
 	int hotspotX = 7, hotspotY = 7;
 	if ((cursorNum == CURSOR_ARROW) || (cursorNum == CURSOR_MENUBAR)) {
-		hotspotX = 0; 
+		hotspotX = 0;
 		hotspotY = 0;
 	}
 
@@ -105,7 +105,7 @@ void Mouse::setCursorNum(CursorType cursorNum, int hotspotX, int hotspotY) {
 void Mouse::pushCursorNum(CursorType cursorNum) {
 	int hotspotX = 7, hotspotY = 7;
 	if ((cursorNum == CURSOR_ARROW) || (cursorNum == CURSOR_MENUBAR)) {
-		hotspotX = 0; 
+		hotspotX = 0;
 		hotspotY = 0;
 	}
 
@@ -186,7 +186,7 @@ void Events::waitForPress() {
 			else if ((_event.type == Common::EVENT_LBUTTONDOWN) ||
 				(_event.type == Common::EVENT_RBUTTONDOWN)) {
 				keyButton = true;
-				Mouse::getReference().waitForRelease();				
+				Mouse::getReference().waitForRelease();
 			}
 		}
 		g_system->delayMillis(20);
@@ -205,7 +205,7 @@ bool Events::interruptableDelay(uint32 milliseconds) {
 		if (events.quitFlag) return true;
 
 		if (events.pollEvent()) {
-			if (events.type() == Common::EVENT_KEYDOWN) 
+			if (events.type() == Common::EVENT_KEYDOWN)
 				return events.event().kbd.keycode == 27;
 			else if (events.type() == Common::EVENT_LBUTTONDOWN)
 				return false;

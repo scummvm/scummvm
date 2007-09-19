@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
@@ -121,7 +119,7 @@ GameList Engine_LURE_detectGames(const FSList &fslist) {
 			printf("Your game version appears to be unknown. Please, report the following\n");
 			printf("data to the ScummVM team along with name of the game you tried to add\n");
 			printf("and its version/language/etc.:\n");
-			
+
 			printf("  LURE MD5 '%s'\n\n", md5str);
 
 			const PlainGameDescriptor *g1 = lure_list;
@@ -174,11 +172,11 @@ void LureEngine::detectGame() {
 			error("Error validating %s - file is invalid or out of date", SUPPORT_FILENAME);
 		else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR))
 			error("Incorrect version of %s file - expected %d.%d but got %d.%d",
-				SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR, 
+				SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR,
 				version.vMajor, version.vMinor);
 	}
 
-	// Do an md5 check 
+	// Do an md5 check
 
 	char md5str[32 + 1];
 	const GameSettings *g;

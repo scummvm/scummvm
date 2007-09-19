@@ -26,7 +26,6 @@
 #ifndef BASE_PLUGINS_H
 #define BASE_PLUGINS_H
 
-#include "common/stdafx.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/singleton.h"
@@ -46,7 +45,7 @@ enum PluginError {
 	kInvalidPathError,
 	kNoGameDataFoundError,
 	kUnsupportedGameidError,
-	
+
 	kUnknownError		// Catch-all error, used if no other error code matches
 };
 
@@ -158,7 +157,7 @@ typedef Common::Array<Plugin *> PluginList;
 class PluginProvider {
 public:
 	virtual ~PluginProvider() {}
-	
+
 	/**
 	 * Return a list of Plugin objects. The caller is responsible for actually
 	 * loading/unloading them (by invoking the appropriate methods).
@@ -189,7 +188,7 @@ private:
 
 public:
 	~PluginManager();
-	
+
 	void addPluginProvider(PluginProvider *pp);
 
 	void loadPlugins();

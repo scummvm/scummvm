@@ -26,7 +26,6 @@
 #ifndef __GP32STD_INPUT_H
 #define __GP32STD_INPUT_H
 
-#include "stdafx.h"
 #include "common/scummsys.h"
 
 #define BUTTON_DOWN 1

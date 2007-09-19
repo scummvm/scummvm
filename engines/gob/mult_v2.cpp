@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/stream.h"
 
@@ -64,7 +64,7 @@ void Mult_v2::loadMult(int16 resId) {
 	uint32 dataSize;
 	byte *extData;
 	bool hasImds;
-	
+
 	index = (resId & 0x8000) ? *_vm->_global->_inter_execPtr++ : 0;
 	resId &= 0x7FFF;
 
@@ -238,7 +238,7 @@ void Mult_v2::loadMult(int16 resId) {
 					_multData->sndKeys[i].cmd);
 		}
 	}
-	
+
 	_multData->imdFiles = 0;
 	_multData->somepointer10 = 0;
 
@@ -321,7 +321,7 @@ void Mult_v2::freeMultKeys() {
 	for (int i = 0; i < _multData->sndSlotsCount; i++)
 		if (!(_multData->sndSlot[i] & 0x8000))
 			_vm->_game->freeSoundSlot(_multData->sndSlot[i]);
-	
+
 	delete[] _multData->sndKeys;
 
 	delete[] _multData->imdFiles;
@@ -329,7 +329,7 @@ void Mult_v2::freeMultKeys() {
 
 	if (_animDataAllocated) {
 		freeMult();
-		
+
 		delete[] _animArrayX;
 		delete[] _animArrayY;
 		delete[] _animArrayData;
@@ -418,7 +418,7 @@ void Mult_v2::multSub(uint16 multIndex) {
 	expr = _vm->_parse->parseValExpr();
 	_multData->animKeysFrames[index] = expr;
 	_multData->animKeysStartFrames[index] = expr;
-	
+
 	WRITE_VAR(18 + index, expr);
 	if (expr == -1) {
 		if (!_objects)
@@ -589,7 +589,7 @@ void Mult_v2::drawStatics(bool &stop) {
 			_vm->_scenery->_curStatic = 0;
 			_vm->_scenery->_curStaticLayer =
 				_multData->staticKeys[_counter].layer;
-			
+
 			staticIndex = _multData->staticIndices[i];
 			while (_vm->_scenery->getStaticLayersCount(staticIndex) <=
 					_vm->_scenery->_curStaticLayer) {
@@ -625,7 +625,7 @@ void Mult_v2::drawStatics(bool &stop) {
 void Mult_v2::drawAnims(bool &stop) { // loc_50D5
 	int16 count;
 	int animIndex;
-	
+
 	for (int i = 0; i < 4; i++) {
 		int16 animKeysCount = _multData->animKeysCount[i];
 		if (_multData->animKeys[i][animKeysCount - 1].frame > _frame)
@@ -641,7 +641,7 @@ void Mult_v2::drawAnims(bool &stop) { // loc_50D5
 
 			if (key.frame != _frame)
 				continue;
-			
+
 			if (key.layer != -1) {
 				*(animObj.pPosX) = key.posX;
 				*(animObj.pPosY) = key.posY;
@@ -740,7 +740,7 @@ void Mult_v2::animate() {
 	int orderArrayPos = 0;
 	int8 animIndices[150];
 	int numAnims = 0;
-	
+
 	if (!_objects)
 		return;
 
@@ -752,7 +752,7 @@ void Mult_v2::animate() {
 		orderArray = 0;
 
 	advanceAllObjects();
-	
+
 	// Find relevant objects
 	for (int i = 0; i < _objCount; i++) {
 		Mult_Object &animObj = _objects[i];
@@ -778,7 +778,7 @@ void Mult_v2::animate() {
 		animObj.newLeft = 1000;
 		animObj.newBottom = 0;
 		animObj.newRight = 0;
-		
+
 		if (animData.isStatic == 2)
 			continue;
 
@@ -1085,7 +1085,7 @@ void Mult_v2::advanceObjects(int16 index) {
 	int16 frame;
 	bool stop = false;
 	bool hasImds = false;
-	
+
 	frame = _multData->animKeysFrames[index];
 	if (frame == -1)
 		return;
@@ -1193,7 +1193,7 @@ void Mult_v2::advanceObjects(int16 index) {
 			playImd(imdFile, key, dir, startFrame);
 		}
 	}
-	
+
 	if (!hasImds && (_vm->_draw->_showCursor == 3))
 		_vm->_game->_preventScroll = false;
 

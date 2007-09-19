@@ -26,7 +26,7 @@
 #ifndef LURE_DISK_H
 #define LURE_DISK_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "lure/memory.h"

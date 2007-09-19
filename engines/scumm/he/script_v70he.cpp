@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -1105,7 +1105,7 @@ void ScummEngine_v70he::o70_setSystemMessage() {
 		// behavior can occur, from strange wrong titles, up to crashes (happens
 		// under Mac OS X).
 		//
-		// Possible fixes/workarounds: 
+		// Possible fixes/workarounds:
 		// - Simply stop using this. It's a rather unimportant "feature" anyway.
 		// - Try to translate the text to ASCII.
 		// - Refine OSystem to accept window captions that are non-ASCII, e.g.

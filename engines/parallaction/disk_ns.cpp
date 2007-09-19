@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "graphics/iff.h"
 #include "graphics/surface.h"
 

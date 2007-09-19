@@ -26,7 +26,6 @@
 #ifndef SOUND_ADPCM_H
 #define SOUND_ADPCM_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
 

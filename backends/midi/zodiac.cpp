@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "sound/mpu401.h"
 #include "common/util.h"
 
@@ -113,7 +112,7 @@ void MidiDriver_Zodiac::send(uint32 b) {
 
 void MidiDriver_Zodiac::sysEx(const byte *msg, uint16 length) {
 	unsigned char buf[256];
-	
+
 	buf[0] = 0xF0;
 	memcpy(buf + 1, msg, length);
 	buf[length + 1] = 0xF7;

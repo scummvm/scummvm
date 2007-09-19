@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/events.h"
 #include "common/file.h"
@@ -667,7 +667,7 @@ AgiEngine::AgiEngine(OSystem *syst) : AgiBase(syst) {
 	_objects = NULL;
 
 	_oldMode = -1;
-	
+
 	_predictiveDialogRunning = false;
 	_predictiveDictText = NULL;
 	_predictiveDictLine = NULL;

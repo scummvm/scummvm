@@ -26,7 +26,6 @@
 #ifndef CEGUI_GUIELEMENT
 #define CEGUI_GUIELEMENT
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 

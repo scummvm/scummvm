@@ -26,7 +26,7 @@
 #ifndef CRUISE_CELL_H
 #define CRUISE_CELL_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 
 namespace Cruise {

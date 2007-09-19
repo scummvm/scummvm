@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "common/util.h"
 
@@ -139,7 +139,7 @@ void Screen::fnSetPalette(uint8 start, uint16 length, uint32 id, bool fadeUp) {
 	uint8 *palData = (uint8*)_resMan->openFetchRes(id);
 	if (start == 0) // force color 0 to black
 		palData[0] = palData[1] = palData[2] = 0;
-	
+
 	if (SwordEngine::_systemVars.isMac) {  // see bug #1701058
 		if (start != 0 && start + length == 256) // and force color 255 to black as well
 			palData[(length-1)*3+0] = palData[(length-1)*3+1] = palData[(length-1)*3+2] = 0;

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "engines/engine.h"
 #include "scumm/player_v3a.h"
 #include "scumm/scumm.h"

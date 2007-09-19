@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "gui/KeysDialog.h"
 #include "gui/Actions.h"
 #include <SDL_keyboard.h>
@@ -102,7 +101,7 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 			if (key >= Common::ASCII_F1 && key <= Common::ASCII_F9)
 				key = key - Common::ASCII_F1 + SDLK_F1;
 #endif
-			if (key != 0) 
+			if (key != 0)
 				sprintf(selection, "Associated key : %s", SDL_GetKeyName((SDLKey)key));
 			else
 				sprintf(selection, "Associated key : none");
@@ -153,7 +152,7 @@ void KeysDialog::handleKeyUp(Common::KeyState state) {
 		_actionSelected = -1;
 		_actionsList->setEnabled(true);
 		Actions::Instance()->beginMapping(false);
-	} else 
+	} else
 		Dialog::handleKeyUp(state);
 }
 

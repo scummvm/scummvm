@@ -26,7 +26,6 @@
 #ifndef SOUND_MPU401_H
 #define SOUND_MPU401_H
 
-#include "common/stdafx.h"
 #include "sound/mididrv.h"
 
 ////////////////////////////////////////

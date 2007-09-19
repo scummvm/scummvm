@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "lure/luredefs.h"
@@ -51,12 +51,12 @@ Debugger::Debugger(): GUI::Debugger() {
 }
 
 static int strToInt(const char *s) {
-	if (!*s) 
+	if (!*s)
 		// No string at all
 		return 0;
-	else if (strcmp(s, "player") == 0) 
+	else if (strcmp(s, "player") == 0)
 		return PLAYER_ID;
-	else if (strcmp(s, "ratpouch") == 0) 
+	else if (strcmp(s, "ratpouch") == 0)
 		return RATPOUCH_ID;
 	else if (toupper(s[strlen(s) - 1]) != 'H')
 		// Standard decimal string
@@ -93,11 +93,11 @@ bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 
 		if (argc > 2) {
 			remoteFlag = strToInt(argv[2]);
-		} 
+		}
 
 		room.leaveRoom();
 		room.setRoomNumber(roomNumber);
-		if (!remoteFlag) 
+		if (!remoteFlag)
 			res.getActiveHotspot(PLAYER_ID)->setRoomNumber(roomNumber);
 
 		_detach_now = true;
@@ -119,10 +119,10 @@ bool Debugger::cmd_listRooms(int argc, const char **argv) {
 	DebugPrintf("Available rooms are:\n");
 	for (RoomDataList::iterator i = rooms.begin(); i != rooms.end(); ++i) {
 		RoomData *room = *i;
-		// Explictly note the second drawbridge room as "Alt" 
-		if (room->roomNumber == 49) { 
+		// Explictly note the second drawbridge room as "Alt"
+		if (room->roomNumber == 49) {
 			strings.getString(47, buffer);
-			strcat(buffer, " (alt)"); 
+			strcat(buffer, " (alt)");
 		} else {
 			strings.getString(room->roomNumber, buffer);
 		}
@@ -150,7 +150,7 @@ bool Debugger::cmd_listFields(int argc, const char **argv) {
 
 	for (int ctr = 0; ctr < fields.size(); ++ctr) {
 		DebugPrintf("(%-2d): %-5d", ctr, fields.getField(ctr));
-		if (!((ctr + 1) % 7)) 
+		if (!((ctr + 1) % 7))
 			DebugPrintf("\n");
 	}
 	DebugPrintf("\n");
@@ -163,7 +163,7 @@ bool Debugger::cmd_setField(int argc, const char **argv) {
 	if (argc >= 3) {
 		int fieldNum = strToInt(argv[1]);
 		uint16 value = strToInt(argv[2]);
-		
+
 		if ((fieldNum < 0) || (fieldNum >= fields.size())) {
 			// Invalid field number
 			DebugPrintf("Invalid field number specified\n");
@@ -188,7 +188,7 @@ bool Debugger::cmd_queryField(int argc, const char **argv) {
 			DebugPrintf("Invalid field number specified\n");
 		} else {
 			// Get the field value
-			DebugPrintf("Field %d is %d (%xh)\n", fieldNum, 
+			DebugPrintf("Field %d is %d (%xh)\n", fieldNum,
 				fields.getField(fieldNum), fields.getField(fieldNum));
 		}
 	} else {
@@ -207,7 +207,7 @@ bool Debugger::cmd_giveItem(int argc, const char **argv) {
 	if (argc >= 2) {
 		itemNum = strToInt(argv[1]);
 
-		if (argc == 3) 
+		if (argc == 3)
 			charNum = strToInt(argv[2]);
 
 		itemHotspot = res.getHotspot(itemNum);
@@ -236,7 +236,7 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 	StringData &strings = StringData::getReference();
 	Room &room = Room::getReference();
 	char buffer[MAX_DESC_SIZE];
-	
+
 	if (argc > 1) {
 		if (strcmp(argv[1], "active") == 0) {
 			// Loop for displaying active hotspots
@@ -288,7 +288,7 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("hotspot <hotspot_id> ['paths' | 'schedule' | 'actions' | 'activate' | 'deactivate']\n");
 		return true;
-	} 
+	}
 	hs = res.getHotspot(strToInt(argv[1]));
 	if (!hs) {
 		DebugPrintf("Unknown hotspot specified\n");
@@ -299,22 +299,22 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 	if (argc == 2) {
 		// Show the hotspot properties
 		strings.getString(hs->nameId, buffer);
-		DebugPrintf("name = %d - %s, descs = (%d,%d)\n", hs->nameId, buffer, 
+		DebugPrintf("name = %d - %s, descs = (%d,%d)\n", hs->nameId, buffer,
 			hs->descId, hs->descId2);
 		DebugPrintf("actions = %xh, offset = %xh\n", hs->actions, hs->actionsOffset);
 		DebugPrintf("flags = %xh, layer = %d\n", hs->flags, hs->layer);
 		DebugPrintf("position = %d,%d,%d\n", hs->startX, hs->startY, hs->roomNumber);
-		DebugPrintf("size = %d,%d, alt = %d,%d, yCorrection = %d\n", 
+		DebugPrintf("size = %d,%d, alt = %d,%d, yCorrection = %d\n",
 			hs->width, hs->height,  hs->widthCopy, hs->heightCopy, hs->yCorrection);
 		DebugPrintf("Talk bubble offset = %d,%d\n", hs->talkX, hs->talkY);
 		DebugPrintf("load offset = %xh, script load = %d\n", hs->loadOffset, hs->scriptLoadFlag);
 		DebugPrintf("Animation Id = %xh, Colour offset = %d\n", hs->animRecordId, hs->colourOffset);
-		DebugPrintf("Talk Script offset = %xh, Tick Script offset = %xh\n", 
+		DebugPrintf("Talk Script offset = %xh, Tick Script offset = %xh\n",
 			hs->talkScriptOffset, hs->tickScriptOffset);
 		DebugPrintf("Tick Proc offset = %xh\n", hs->tickProcOffset);
 		DebugPrintf("Tick timeout = %d\n", hs->tickTimeout);
 		DebugPrintf("NPC Shcedule = %xh\n", hs->npcSchedule);
-		DebugPrintf("Character mode = %d, delay ctr = %d, pause ctr = %d\n", 
+		DebugPrintf("Character mode = %d, delay ctr = %d, pause ctr = %d\n",
 			hs->characterMode, hs->delayCtr, hs->pauseCtr);
 
 		if (h != NULL) {
@@ -347,13 +347,13 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 		DebugPrintf("Deactivated\n");
 
 	} else {
-		if (!h) 
+		if (!h)
 			DebugPrintf("The specified hotspot is not currently active\n");
 		else if (strcmp(argv[2], "paths") == 0) {
 			// List any paths for a charcter
 			h->pathFinder().list(buffer);
 			DebugPrintf("%s", buffer);
-		} 
+		}
 		else if (strcmp(argv[2], "schedule") == 0) {
 			// List any current schedule for the character
 			h->currentActions().list(buffer);
@@ -365,7 +365,7 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 			DebugPrintf("Record Id = %xh\n", pData.animRecordId);
 			DebugPrintf("Flags = %d\n", pData.flags);
 			DebugPrintf("Frames: up=%d down=%d left=%d right=%d\n",
-				pData.upFrame, pData.downFrame, pData.leftFrame, pData.rightFrame);		
+				pData.upFrame, pData.downFrame, pData.leftFrame, pData.rightFrame);
 			DebugPrintf("Current frame = %d of %d\n", h->frameNumber(), h->numFrames());
 		}
 	}
@@ -384,7 +384,7 @@ bool Debugger::cmd_room(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("room <room_number>\n");
 		return true;
-	} 
+	}
 	int roomNumber = strToInt(argv[1]);
 	RoomData *room = res.getRoom(roomNumber);
 	if (!room) {
@@ -398,8 +398,8 @@ bool Debugger::cmd_room(int argc, const char **argv) {
 	strings.getString(room->descId, buffer);
 	DebugPrintf("%s\n", buffer);
 	DebugPrintf("Horizontal clipping = %d->%d walk area=(%d,%d)-(%d,%d)\n",
-		room->clippingXStart, room->clippingXEnd, 
-		room->walkBounds.left, room->walkBounds.top, 
+		room->clippingXStart, room->clippingXEnd,
+		room->walkBounds.left, room->walkBounds.top,
 		room->walkBounds.right, room->walkBounds.bottom);
 
 	DebugPrintf("Exit hotspots:");
@@ -410,7 +410,7 @@ bool Debugger::cmd_room(int argc, const char **argv) {
 		RoomExitHotspotList::iterator i;
 		for (i = exits.begin(); i != exits.end(); ++i) {
 			RoomExitHotspotData *rec = *i;
-			
+
 			DebugPrintf("\nArea - (%d,%d)-(%d,%d) Room=%d Cursor=%d Hotspot=%xh",
 				rec->xs, rec->ys, rec->xe, rec->ye, rec->destRoomNumber, rec->cursorNum, rec->hotspotId);
 		}
@@ -419,7 +419,7 @@ bool Debugger::cmd_room(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Room exits:");
-	if (room->exits.empty()) 
+	if (room->exits.empty())
 		DebugPrintf(" none\n");
 	else {
 		RoomExitList::iterator i2;
@@ -427,7 +427,7 @@ bool Debugger::cmd_room(int argc, const char **argv) {
 			RoomExitData *rec2 = *i2;
 
 			DebugPrintf("\nExit - (%d,%d)-(%d,%d) Dest=%d,(%d,%d) Dir=%s Sequence=%xh",
-				rec2->xs, rec2->ys, rec2->xe, rec2->ye, rec2->roomNumber, 
+				rec2->xs, rec2->ys, rec2->xe, rec2->ye, rec2->roomNumber,
 				rec2->x, rec2->y, directionList[rec2->direction], rec2->sequenceOffset);
 		}
 
@@ -455,7 +455,7 @@ bool Debugger::cmd_showAnim(int argc, const char **argv) {
 	// Figure out the total size of the animation - this will be used for guestimating
 	// frame sizes, or validating that a specified frame size is correct
 	MemoryBlock *src = Disk::getReference().getEntry(data->animId);
-	
+
 	int numFrames = READ_LE_UINT16(src->data());
 	uint16 *headerEntry = (uint16 *) (src->data() + 2);
 	assert((numFrames >= 1) && (numFrames < 100));
@@ -498,9 +498,9 @@ bool Debugger::cmd_showAnim(int argc, const char **argv) {
 				destSize, width, height, numFrames, width * height * numFrames / 2);
 		}
 	} else {
-		// Guestimate a frame size 
+		// Guestimate a frame size
 		frameSize = destSize / numFrames;
-		
+
 		// Figure out the approximate starting point of a width 3/4 the frame size
 		width = frameSize * 3 / 4;
 
@@ -509,7 +509,7 @@ bool Debugger::cmd_showAnim(int argc, const char **argv) {
 
 		while ((width > 0) && (descFlag || (((frameSize * 2) % width) != 0))) {
 			if (((frameSize * 2) % width) == 0)
-				DebugPrintf("Frame size (%d,%d) found\n", width, frameSize * 2 / width); 
+				DebugPrintf("Frame size (%d,%d) found\n", width, frameSize * 2 / width);
 			--width;
 		}
 
@@ -520,14 +520,14 @@ bool Debugger::cmd_showAnim(int argc, const char **argv) {
 			DebugPrintf("Total size = %d, # frames = %d, frame Size = %d - No valid frame dimensions\n",
 				destSize, numFrames, frameSize);
 			return true;
-		} 
+		}
 
 		height = (frameSize * 2) / width;
 		DebugPrintf("# frames = %d, guestimated frame size = (%d,%d)\n",
 			numFrames, width, height);
 	}
 
-	// Bottle object is used as a handy hotspot holder that doesn't have any 
+	// Bottle object is used as a handy hotspot holder that doesn't have any
 	// tick proc behaviour that we need to worry about
 	Hotspot *hotspot = res.activateHotspot(BOTTLE_HOTSPOT_ID);
 	hotspot->setLayer(0xfe);

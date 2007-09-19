@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "scumm/he/floodfill_he.h"
 #include "scumm/he/intern_he.h"
@@ -31,7 +31,7 @@
 #include "scumm/scumm.h"
 
 namespace Scumm {
-	
+
 static bool floodFillPixelCheck(int x, int y, const FloodFillState *ffs) {
 	int diffColor = ffs->color1 - ffs->color2;
 	if (x >= 0 && x < ffs->dst_w && y >= 0 && y < ffs->dst_h) {
@@ -81,10 +81,10 @@ static void floodFillAddLine(FloodFillLine **ffl, int y, int x1, int x2, int dy)
 static void floodFillProcess(int x, int y, FloodFillState *ffs, FloodFillPixelCheckCallback pixelCheckCallback) {
 	ffs->dstBox.left = ffs->dstBox.top = 12345;
 	ffs->dstBox.right = ffs->dstBox.bottom = -12345;
-	
+
 	FloodFillLine **fillLineCur = &ffs->fillLineTableCur;
 	FloodFillLine **fillLineEnd = &ffs->fillLineTableEnd;
-	
+
 	assert(*fillLineCur < *fillLineEnd);
 	if (ffs->srcBox.top <= y + 1 && ffs->srcBox.bottom >= y + 1) {
 		(*fillLineCur)->y = y;
@@ -93,7 +93,7 @@ static void floodFillProcess(int x, int y, FloodFillState *ffs, FloodFillPixelCh
 		(*fillLineCur)->inc = 1;
 		(*fillLineCur)++;
 	}
-	
+
 	assert(*fillLineCur < *fillLineEnd);
 	if (ffs->srcBox.top <= y && ffs->srcBox.bottom >= y) {
 		(*fillLineCur)->y = y + 1;
@@ -105,7 +105,7 @@ static void floodFillProcess(int x, int y, FloodFillState *ffs, FloodFillPixelCh
 
 	assert(ffs->fillLineTable <= *fillLineCur);
 	FloodFillLine **fillLineStart = fillLineCur;
-	
+
 	while (ffs->fillLineTable < *fillLineStart) {
 		Common::Rect r;
 		int x_start;
@@ -190,7 +190,7 @@ void floodFill(FloodFillParameters *ffp, ScummEngine_v90he *vm) {
 	Common::Rect r;
 	r.left = r.top = 12345;
 	r.right = r.bottom = -12345;
-	
+
 	FloodFillState *ffs = new FloodFillState;
 	ffs->fillLineTableCount = vs->h * 2;
 	ffs->fillLineTable = new FloodFillLine[ffs->fillLineTableCount];
@@ -201,25 +201,25 @@ void floodFill(FloodFillParameters *ffp, ScummEngine_v90he *vm) {
 	ffs->srcBox = ffp->box;
 	ffs->fillLineTableCur = &ffs->fillLineTable[0];
 	ffs->fillLineTableEnd = &ffs->fillLineTable[ffs->fillLineTableCount];
-	
+
 	if (ffp->x < 0 || ffp->y < 0 || ffp->x >= vs->w || ffp->y >= vs->h) {
 		ffs->color1 = color;
 	} else {
 		ffs->color1 = *(dst + ffp->y * vs->w + ffp->x);
 	}
-	
+
 	debug(5, "floodFill() x=%d y=%d color1=%d ffp->flags=0x%X", ffp->x, ffp->y, ffs->color1, ffp->flags);
 	if (ffs->color1 != color) {
 		floodFillProcess(ffp->x, ffp->y, ffs, floodFillPixelCheck);
 		r = ffs->dstBox;
 	}
 	r.debugPrint(5, "floodFill() dirty_rect");
-	
+
 	delete[] ffs->fillLineTable;
 	delete ffs;
-	
+
 	vm->VAR(119) = 1;
-	
+
 	if (r.left <= r.right && r.top <= r.bottom) {
 		if (ffp->flags & 0x8000) {
 			vm->restoreBackgroundHE(r);
@@ -271,19 +271,19 @@ void Wiz::fillWizFlood(const WizParameters *params) {
 				ffs->srcBox = imageRect;
 				ffs->fillLineTableCur = &ffs->fillLineTable[0];
 				ffs->fillLineTableEnd = &ffs->fillLineTable[ffs->fillLineTableCount];
-	
+
 				if (px < 0 || py < 0 || px >= w || py >= h) {
 					ffs->color1 = color;
 				} else {
 					ffs->color1 = *(wizd + py * w + px);
 				}
-	
+
 				debug(0, "floodFill() x=%d y=%d color1=%d", px, py, ffs->color1);
 
 				if (ffs->color1 != color) {
 					floodFillProcess(px, py, ffs, floodFillPixelCheck);
 				}
-	
+
 				delete[] ffs->fillLineTable;
 				delete ffs;
 			}

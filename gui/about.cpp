@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "engines/engine.h"
 #include "base/plugins.h"
 #include "base/version.h"

@@ -28,7 +28,6 @@
    Read unzip.h for more info
 */
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 #ifdef USE_ZLIB

@@ -25,7 +25,7 @@
 
 // Item script opcodes for Simon1/Simon2
 
-#include "common/stdafx.h"
+
 
 #include "common/system.h"
 
@@ -805,7 +805,7 @@ void AGOSEngine::o_freezeZones() {
 			_variableArray[135] = 3;
 			setBitFlag(135, 1);
 			setScriptCondition(0);
-		} 
+		}
 	}
 }
 

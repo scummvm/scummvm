@@ -31,6 +31,10 @@
 			<Add directory="..\..\engines" />
 			<Add directory="..\..\..\scummvm" />
 		</Compiler>
+		<Unit filename="..\..\engines\touche\detection.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\touche\graphics.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -52,10 +56,6 @@
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\touche\opcodes.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\touche\plugin.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>

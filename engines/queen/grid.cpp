@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "queen/grid.h"
 
 #include "queen/display.h"

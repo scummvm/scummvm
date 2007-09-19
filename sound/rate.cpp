@@ -31,7 +31,6 @@
  * improvments over the original code were made.
  */
 
-#include "common/stdafx.h"
 #include "sound/audiostream.h"
 #include "sound/rate.h"
 #include "sound/mixer.h"
@@ -141,7 +140,7 @@ int SimpleRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 
 		// output right channel
 		clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
-		
+
 		obuf += 2;
 	}
 	return ST_SUCCESS;
@@ -256,7 +255,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 
 			// output right channel
 			clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
-			
+
 			obuf += 2;
 
 			// Increment output position
@@ -314,7 +313,7 @@ public:
 
 			// output right channel
 			clampedAdd(obuf[reverseStereo ^ 1], (out1 * (int)vol_r) / Audio::Mixer::kMaxMixerVolume);
-			
+
 			obuf += 2;
 		}
 		return ST_SUCCESS;

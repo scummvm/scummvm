@@ -22,7 +22,6 @@
  
 #ifndef _ZIPREADER_H_
 #define _ZIPREADER_H_
-#include "stdafx.h"
 #include "portdefs.h"
 #define ZF_SEARCH_START 0x08000000
 #define ZF_SEARCH_END 0x09000000

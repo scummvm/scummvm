@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/file.h"
 
@@ -72,7 +71,7 @@ SaveLoad::~SaveLoad() {
 
 	delete[] _saveFiles[0];
 	delete[] _saveFiles[2];
-	delete[] _saveFiles; 
+	delete[] _saveFiles;
 }
 
 const char *SaveLoad::setCurSlot(int slot) {

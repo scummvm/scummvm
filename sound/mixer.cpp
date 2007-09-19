@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "common/file.h"
 #include "common/util.h"
 #include "common/system.h"
@@ -78,7 +76,7 @@ public:
 	}
 	void pause(bool paused) {
 		//assert((paused && _pauseLevel >= 0) || (!paused && _pauseLevel));
-	
+
 		if (paused)
 			_pauseLevel++;
 		else if (_pauseLevel > 0)
@@ -163,7 +161,7 @@ void Mixer::playRaw(
 
 	// Create the input stream
 	AudioStream *input = makeLinearInputStream((byte *)sound, size, rate, flags, loopStart, loopEnd);
-	
+
 	// Play it
 	playInputStream(type, handle, input, id, volume, balance, true, false, ((flags & Mixer::FLAG_REVERSE_STEREO) != 0));
 }
@@ -202,7 +200,7 @@ void Mixer::playInputStream(
 
 void Mixer::mix(int16 *buf, uint len) {
 	Common::StackLock lock(_mutex);
-	
+
 	// Since the mixer callback has been called, the mixer must be ready...
 	_mixerReady = true;
 

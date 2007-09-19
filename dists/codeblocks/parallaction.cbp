@@ -32,26 +32,12 @@
 			<Add directory="..\..\engines" />
 			<Add directory="..\..\..\scummvm" />
 		</Compiler>
-		<Unit filename="..\..\engines\parallaction\animation.cpp">
+		<Unit filename="..\..\engines\parallaction\callables_br.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
-		<Unit filename="..\..\engines\parallaction\archive.cpp">
+		<Unit filename="..\..\engines\parallaction\callables_ns.cpp">
 			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\parallaction\callables.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\parallaction\commands.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\parallaction\commands.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\parallaction\debug.cpp">
@@ -78,14 +64,26 @@
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
-		<Unit filename="..\..\engines\parallaction\disk.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
 		<Unit filename="..\..\engines\parallaction\disk.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\parallaction\disk_br.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\parallaction\disk_ns.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\parallaction\exec_br.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\parallaction\exec_ns.cpp">
+			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\parallaction\font.cpp">
@@ -102,10 +100,6 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
-		<Unit filename="..\..\engines\parallaction\intro.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
 		<Unit filename="..\..\engines\parallaction\inventory.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -114,10 +108,6 @@
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\parallaction\location.cpp">
-			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\parallaction\menu.cpp">
@@ -136,6 +126,16 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\parallaction\objects.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\parallaction\objects.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\parallaction\parallaction.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -146,6 +146,14 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\parallaction\parallaction_br.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\parallaction\parallaction_ns.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\parallaction\parser.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -154,6 +162,14 @@
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\parallaction\parser_br.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\parallaction\parser_ns.cpp">
+			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\parallaction\saveload.cpp">
@@ -179,16 +195,6 @@
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\parallaction\walk.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\parallaction\zone.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\parallaction\zone.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />

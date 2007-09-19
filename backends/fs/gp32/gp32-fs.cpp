@@ -23,7 +23,6 @@
  *
  */
 
-#include "stdafx.h"
 #include "backends/fs/abstract-fs.h"
 
 #define MAX_PATH_SIZE 256

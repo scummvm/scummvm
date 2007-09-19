@@ -27,7 +27,6 @@
 #ifdef _WIN32_WCE
 #include <windows.h>
 #endif
-#include "common/stdafx.h"
 #include "backends/fs/abstract-fs.h"
 #include <io.h>
 #include <stdio.h>
@@ -54,7 +53,7 @@
 
 /**
  * Implementation of the ScummVM file system API based on Windows API.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class WindowsFilesystemNode : public AbstractFilesystemNode {
@@ -68,25 +67,25 @@ protected:
 public:
 	/**
 	 * Creates a WindowsFilesystemNode with the root node as path.
-	 * 
+	 *
 	 * In regular windows systems, a virtual root path is used "".
 	 * In windows CE, the "\" root is used instead.
 	 */
 	WindowsFilesystemNode();
-	
+
 	/**
 	 * Creates a WindowsFilesystemNode for a given path.
-	 * 
+	 *
 	 * Examples:
 	 *			path=c:\foo\bar.txt, currentDir=false -> c:\foo\bar.txt
 	 * 			path=c:\foo\bar.txt, currentDir=true -> current directory
 	 * 			path=NULL, currentDir=true -> current directory
-	 * 
+	 *
 	 * @param path String with the path the new node should point to.
 	 * @param currentDir if true, the path parameter will be ignored and the resulting node will point to the current directory.
 	 */
 	WindowsFilesystemNode(const String &path, const bool currentDir);
-	
+
 	virtual bool exists() const { return _access(_path.c_str(), F_OK) == 0; }
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; }
@@ -103,26 +102,26 @@ public:
 private:
 	/**
 	 * Adds a single WindowsFilesystemNode to a given list.
-	 * This method is used by getChildren() to populate the directory entries list. 
-	 * 
+	 * This method is used by getChildren() to populate the directory entries list.
+	 *
 	 * @param list List to put the file entry node in.
 	 * @param mode Mode to use while adding the file entry to the list.
 	 * @param base String with the directory being listed.
 	 * @param find_data Describes a file that the FindFirstFile, FindFirstFileEx, or FindNextFile functions find.
  	 */
 	static void addFile(AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
-	
+
 	/**
 	 * Converts a Unicode string to Ascii format.
-	 * 
+	 *
 	 * @param str String to convert from Unicode to Ascii.
 	 * @return str in Ascii format.
  	 */
 	static char *toAscii(TCHAR *str);
-	
+
 	/**
 	 * Converts an Ascii string to Unicode format.
-	 * 
+	 *
 	 * @param str String to convert from Ascii to Unicode.
 	 * @return str in Unicode format.
  	 */
@@ -131,11 +130,11 @@ private:
 
 /**
  * Returns the last component of a given path.
- * 
+ *
  * Examples:
  * 			c:\foo\bar.txt would return "\bar.txt"
  * 			c:\foo\bar\    would return "\bar\"
- *  
+ *
  * @param str Path to obtain the last component from.
  * @return Pointer to the first char of the last component inside str.
  */
@@ -229,7 +228,7 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool current
 		assert(p.size() > 0);
 		_path = p;
 	}
-	
+
 	_displayName = lastPathComponent(_path);
 
 	// Check whether it is a directory, and whether the file actually exists
@@ -247,7 +246,7 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool current
 
 AbstractFilesystemNode *WindowsFilesystemNode::getChild(const String &n) const {
 	assert(_isDirectory);
-	
+
 	String newPath(_path);
 	if (_path.lastChar() != '\\')
 		newPath += '\\';
@@ -297,12 +296,12 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		sprintf(searchPath, "%s*", _path.c_str());
 
 		handle = FindFirstFile(toUnicode(searchPath), &desc);
-		
+
 		if (handle == INVALID_HANDLE_VALUE)
 			return false;
-			
+
 		addFile(myList, mode, _path.c_str(), &desc);
-		
+
 		while (FindNextFile(handle, &desc))
 			addFile(myList, mode, _path.c_str(), &desc);
 
@@ -314,10 +313,10 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 AbstractFilesystemNode *WindowsFilesystemNode::getParent() const {
 	assert(_isValid || _isPseudoRoot);
-	
+
 	if (_isPseudoRoot)
 		return 0;
-		
+
 	WindowsFilesystemNode *p = new WindowsFilesystemNode();
 	if (_path.size() > 3) {
 		const char *start = _path.c_str();
@@ -330,7 +329,7 @@ AbstractFilesystemNode *WindowsFilesystemNode::getParent() const {
 		p->_displayName = lastPathComponent(p->_path);
 		p->_isPseudoRoot = false;
 	}
-	
+
 	return p;
 }
 

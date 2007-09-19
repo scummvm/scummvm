@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "common/system.h"
@@ -150,7 +150,7 @@ void manageEvents(int count) {
 	for (i = 0; i < count; i++) {
 		//FIXME(?): Maybe there's a better way to "fix" this?
 		//
-		//Since not all backends/ports can update the screen 
+		//Since not all backends/ports can update the screen
 		//100 times per second, only update the screen every
 		//other frame (1000 / 2 * 10 i.e. 50 times per second max.)
 		if (i % 2)

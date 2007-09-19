@@ -26,7 +26,7 @@
 #ifndef SKY_TEXT_H
 #define SKY_TEXT_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 
 namespace Sky {
@@ -61,7 +61,7 @@ public:
 	void logicCursor(Compact *textCompact, uint16 mouseX, uint16 mouseY);
 	void changeTextSpriteColour(uint8 *sprData, uint8 newCol);
 	uint32 giveCurrentCharSet(void);
-	
+
 	uint32 _numLetters;	//no of chars in message
 
 private:

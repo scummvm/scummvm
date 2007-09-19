@@ -26,7 +26,6 @@
 #ifndef CEGUI_ITEMSWITCH
 #define CEGUI_ITEMSWITCH
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 

@@ -26,7 +26,7 @@
 #ifndef CINE_TEXTE_H
 #define CINE_TEXTE_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 
 namespace Cine {

@@ -31,7 +31,6 @@
  * of almost all the classes, methods and variables, and how they interact.
  */
 
-#include "common/stdafx.h"
 #include "engines/engine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
@@ -99,9 +98,9 @@ static const Plugin *detectPlugin() {
 		return 0;
 	}
 
-	// FIXME: Do we really need this one? 
+	// FIXME: Do we really need this one?
 	printf("Trying to start game '%s'\n", game.description().c_str());
-	
+
 	return plugin;
 }
 
@@ -119,7 +118,7 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	}
 
 	// We add the game "path" to the file search path via File::addDefaultDirectory(),
-	// so that MD5-based detection will be able to properly find files with mixed case 
+	// so that MD5-based detection will be able to properly find files with mixed case
 	// filenames.
 	// FIXME/TODO: Fingolfin still doesn't like this; if those MD5-based detectors used
 	// FSNodes instead of File::open, they wouldn't have to do this.
@@ -238,7 +237,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 	// Verify that the backend has been initialized (i.e. g_system has been set).
 	assert(g_system);
 	OSystem &system = *g_system;
-	
+
 	// Register config manager defaults
 	Base::registerDefaults();
 
@@ -259,7 +258,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 
 	// Load and setup the debuglevel and the debug flags. We do this at the
-	// soonest possible moment to ensure debug output starts early on, if 
+	// soonest possible moment to ensure debug output starts early on, if
 	// requested.
 	if (settings.contains("debuglevel")) {
 		gDebugLevel = (int)strtol(settings["debuglevel"].c_str(), 0, 10);
@@ -275,7 +274,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 
 	// Load the plugins.
 	PluginManager::instance().loadPlugins();
-	
+
 	// Process the remaining command line settings. Must be done after the
 	// config file and the plugins have been loaded.
 	if (!Base::processSettings(command, settings))
@@ -318,7 +317,7 @@ extern "C" int scummvm_main(int argc, char *argv[]) {
 			// Discard any command line options. It's unlikely that the user
 			// wanted to apply them to *all* games ever launched.
 			ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
-			
+
 			// Clear the active config domain
 			ConfMan.setActiveDomain("");
 

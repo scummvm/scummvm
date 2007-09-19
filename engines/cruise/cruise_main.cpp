@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/events.h"
 
@@ -361,7 +361,7 @@ int loadFileSub1(uint8 **ptr, uint8 *name, uint8 *ptr2) {
 		 * strcatuint8(buffer,".ADL");
 		 * }
 		 * else
-		 * { 
+		 * {
 		 * strcatuint8(buffer,".HP");
 		 * } */
 	} else {
@@ -1255,7 +1255,7 @@ void manageEvents(int count) {
 			 * if (!disableSystemMenu && !inMenu) {
 			 * g_cine->makeSystemMenu();
 			 * }
-			 * break; 
+			 * break;
 			 * default:
 			 * //lastKeyStroke = event.kbd.keycode;
 			 * break;
@@ -1278,7 +1278,7 @@ void manageEvents(int count) {
 	for (i = 0; i < count; i++) {
 		//FIXME(?): Maybe there's a better way to "fix" this?
 		//
-		//Since not all backends/ports can update the screen 
+		//Since not all backends/ports can update the screen
 		//100 times per second, only update the screen every
 		//other frame (1000 / 2 * 10 i.e. 50 times per second max.)
 		if (i % 2)
@@ -1346,7 +1346,7 @@ void mainLoop(void) {
 				/*    main3 = 0;
 				 * var24 = 0;
 				 * var23 = 0;
-				 * 
+				 *
 				 * freeStuff2(); */
 			}
 
@@ -1374,18 +1374,18 @@ void mainLoop(void) {
 				/*     if (userEnabled && !main7 && !main15 && currentActiveMenu == -1)
 				 * {
 				 * getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
-				 * 
+				 *
 				 * if (mouseX != oldMouseX && mouseY != oldMouseY)
 				 * {
 				 * int cursorType;
 				 * int newCursor1;
 				 * int newCursor2;
-				 * 
+				 *
 				 * oldMouseX = mouseX;
 				 * oldMouseY = mouseY;
-				 * 
+				 *
 				 * cursorType = getCursorFromObject(mouseX, mouseY, &newCursor1, &newCursor2);
-				 * 
+				 *
 				 * if (cursorType == 9)
 				 * {
 				 * changeCursor(5);
@@ -1399,8 +1399,8 @@ void mainLoop(void) {
 				 * {
 				 * changeCursor(4);
 				 * }
-				 * 
-				 * } 
+				 *
+				 * }
 				 * }
 				 * else */
 				{

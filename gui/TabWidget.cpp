@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/util.h"
 #include "gui/TabWidget.h"
 #include "gui/dialog.h"
@@ -123,16 +122,16 @@ void TabWidget::removeTab(int tabID) {
 		releaseFocus();
 		_firstWidget = 0;
 	}
-	
+
 	// Dispose the widgets in that tab and then the tab itself
 	delete _tabs[tabID].firstWidget;
 	_tabs.remove_at(tabID);
-	
+
 	// Adjust _firstVisibleTab if necessary
 	if (_firstVisibleTab >= (int)_tabs.size()) {
 		_firstVisibleTab = MAX(0, (int)_tabs.size() - 1);
 	}
-	
+
 	// The active tab was removed, so select a new active one (if any remains)
 	if (tabID == _activeTab) {
 		_activeTab = -1;

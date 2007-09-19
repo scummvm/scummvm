@@ -1,6 +1,5 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/stdafx.h"
 #include "common/hashmap.h"
 
 class HashMapTestSuite : public CxxTest::TestSuite

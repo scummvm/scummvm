@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/stream.h"
 #include "common/str.h"
 #include "common/util.h"

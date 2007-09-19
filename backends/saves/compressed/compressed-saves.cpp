@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/savefile.h"
 #include "common/util.h"
 #include "backends/saves/compressed/compressed-saves.h"
@@ -45,7 +44,7 @@ protected:
 	enum {
 		BUFSIZE = 16384		// 1 << MAX_WBITS
 	};
-	
+
 	byte	_buf[BUFSIZE];
 
 	Common::InSaveFile *_wrapped;
@@ -62,13 +61,13 @@ public:
 		_stream.zalloc = Z_NULL;
 		_stream.zfree = Z_NULL;
 		_stream.opaque = Z_NULL;
-		
+
 		// Verify file header is correct once more
 		w->seek(0, SEEK_SET);
 		uint16 header = w->readUint16BE();
 		assert(header == 0x1F8B ||
 		       ((header & 0x0F00) == 0x0800 && header % 31 == 0));
-		
+
 		if (header == 0x1F8B) {
 			// Retrieve the original file size
 			w->seek(-4, SEEK_END);
@@ -79,7 +78,7 @@ public:
 		}
 		_pos = 0;
 		w->seek(0, SEEK_SET);
-		
+
 		// Adding 32 to windowBits indicates to zlib that it is supposed to
 		// automatically detect whether gzip or zlib headers are used for
 		// the compressed file. This feature was added in zlib 1.2.0.4,
@@ -88,7 +87,7 @@ public:
 		_zlibErr = inflateInit2(&_stream, MAX_WBITS + 32);
 		if (_zlibErr != Z_OK)
 			return;
-		
+
 		// Setup input buffer
 		_stream.next_in = _buf;
 		_stream.avail_in = 0;
@@ -115,7 +114,7 @@ public:
 			}
 			_zlibErr = inflate(&_stream, Z_NO_FLUSH);
 		}
-		
+
 		// Update the position counter
 		_pos += dataSize - _stream.avail_out;
 
@@ -155,7 +154,7 @@ public:
 		// in the constructor, and wrap it into a MemoryReadStream -- but that
 		// would be rather wasteful. As long as we don't need it, I'd rather not
 		// implement this at all. -- Fingolfin
-		
+
 		// Skip the given amount of data (very inefficient if one tries to skip
 		// huge amounts of data, but usually client code will only skip a few
 		// bytes, so this should be fine.
@@ -176,7 +175,7 @@ protected:
 	enum {
 		BUFSIZE = 16384		// 1 << MAX_WBITS
 	};
-	
+
 	byte	_buf[BUFSIZE];
 	Common::OutSaveFile *_wrapped;
 	z_stream _stream;
@@ -203,7 +202,7 @@ public:
 		_stream.zalloc = Z_NULL;
 		_stream.zfree = Z_NULL;
 		_stream.opaque = Z_NULL;
-		
+
 		// Adding 16 to windowBits indicates to zlib that it is supposed to
 		// write gzip headers. This feature was added in zlib 1.2.0.4,
 		// released 10 August 2003.
@@ -267,7 +266,7 @@ public:
 		// of the const keyword.
 		_stream.next_in = const_cast<byte *>((const byte *)dataPtr);
 		_stream.avail_in = dataSize;
-	
+
 		// ... and flush it to disk
 		processData(Z_NO_FLUSH);
 

@@ -77,15 +77,21 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\agos\detection.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agos\detection_tables.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\agos\draw.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\agos\event.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\agos\game.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>

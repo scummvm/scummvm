@@ -22,7 +22,7 @@
  * $Id$
  *
  */
-#include "common/stdafx.h"
+
 
 
 #include "common/file.h"
@@ -397,7 +397,7 @@ void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundReso
 	if (verb == _script->getVerbType(kVerbPickUp)) {
 		textString = getTextString(kTextICantPickup);
 		soundResourceId = RID_BOAR_VOICE_007;
-	} else 
+	} else
 		if (verb == _script->getVerbType(kVerbLookAt)) {
 		textString = getTextString(kTextNothingSpecial);
 		soundResourceId = RID_BOAR_VOICE_006;
@@ -462,7 +462,7 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 			break;
 		case (kKnownColorWhite):
 			colorId = kITEColorBrightWhite;
-			break;			
+			break;
 		case (kKnownColorBlack):
 			colorId = kIHNMColorBlack;
 			break;

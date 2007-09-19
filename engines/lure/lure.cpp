@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -56,7 +56,7 @@ LureEngine::LureEngine(OSystem *system): Engine(system) {
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	
+
 	_features = 0;
 	_game = 0;
 }
@@ -178,7 +178,7 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 		return false;
 	}
 
-	// Check language version 
+	// Check language version
 	uint8 language = f->readByte();
 	uint8 version = f->readByte();
 	if ((language != _language) || (version != LURE_DAT_MINOR)) {
@@ -209,7 +209,7 @@ Common::String *LureEngine::detectSave(int slotNumber) {
 	char buffer[5];
 	f->read(&buffer[0], 5);
 	if (memcmp(&buffer[0], "lure", 5) == 0) {
-		// Check language version 
+		// Check language version
 		uint8 language = f->readByte();
 		uint8 version = f->readByte();
 		if ((language == _language) && (version == LURE_DAT_MINOR)) {

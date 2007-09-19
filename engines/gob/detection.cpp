@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "base/plugins.h"
 #include "common/advancedDetector.h"
 

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/scumm.h"
 #include "scumm/file.h"
 #include "scumm/he/intern_he.h"
@@ -668,7 +668,7 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 		DOSImageHeader *mz_header = MZ_HEADER(fi->memory);
 
 		RETURN_IF_BAD_POINTER(false, mz_header->lfanew);
-		
+
 		// Apply endian fix (currently only lfanew is used from the DOSImageHeader,
 		// so we don't bother to 'fix' the rest).
 		LE32(mz_header->lfanew);
@@ -726,7 +726,7 @@ bool Win32ResExtractor::read_library(WinLibrary *fi) {
 			error("%s: file contains no resources", fi->file->name());
 			return false;
 		}
-		
+
 		fix_win32_image_data_directory(dir);
 
 		fi->first_resource = fi->memory + dir->virtual_address;
@@ -1154,7 +1154,7 @@ int MacResExtractor::extractResource(int id, byte **buf) {
 		// Some programs write it as .bin. Try that too
 		if (!in.open(_fileName)) {
 			Common::String tmp(_fileName);
-			
+
 			_fileName += ".bin";
 
 			if (!in.open(_fileName)) {
@@ -1749,7 +1749,7 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		src = sdat2Ptr + 8;
 		dst = sdat1Ptr + 8 + _sndPtrOffs;
 		len = sdat2size;
-		
+
 		memcpy(dst, src, len);
 
 		_sndPtrOffs += sdat2size;
@@ -1758,14 +1758,14 @@ void ScummEngine_v80he::createSound(int snd1id, int snd2id) {
 		src = sdat2Ptr + 8;
 		dst = sdat1Ptr + 8 + _sndPtrOffs;
 		len = sdat1size;
-		
+
 		memcpy(dst, src, len);
 
 		if (sdat2size != sdat1size) {
 			src = sdat2Ptr + 8 + sdat1size;
 			dst = sdat1Ptr + 8;
 			len = sdat2size - sdat1size;
-		
+
 			memcpy(dst, src, len);
 		}
 

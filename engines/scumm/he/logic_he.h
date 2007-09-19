@@ -26,7 +26,7 @@
 #if !defined(SCUMM_HE_LOGIC_HE_H) && !defined(DISABLE_HE)
 #define SCUMM_HE_LOGIC_HE_H
 
-#include "common/stdafx.h"
+
 
 namespace Scumm {
 

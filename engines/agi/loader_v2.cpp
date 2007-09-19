@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/file.h"
 
 #include "agi/agi.h"

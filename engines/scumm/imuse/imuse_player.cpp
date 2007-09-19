@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/util.h"
 #include "engines/engine.h"

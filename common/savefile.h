@@ -26,7 +26,6 @@
 #ifndef COMMON_SAVEFILE_H
 #define COMMON_SAVEFILE_H
 
-#include "common/stdafx.h"
 #include "common/noncopyable.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
@@ -77,40 +76,40 @@ public:
  * returning the single SaveFileManager instances to be used.
  */
 class SaveFileManager : NonCopyable {
-	
+
 protected:
 	SFMError _error;
 	String _errorDesc;
-	
+
 public:
 	virtual ~SaveFileManager() {}
-	
+
 	/**
 	 * Clears the last set error code and string.
 	 */
 	virtual void clearError() { _error = SFM_NO_ERROR; _errorDesc = ""; }
-	
+
 	/**
 	 * Returns the last ocurred error code. If none ocurred, returns SFM_NO_ERROR.
-	 * 
+	 *
 	 * @return A SFMError indicating the type of the last error.
 	 */
 	virtual SFMError getError() { return _error; }
-	
+
 	/**
 	 * Returns the last ocurred error description. If none ocurred, returns 0.
-	 * 
+	 *
 	 * @return A string describing the last error.
 	 */
 	virtual String getErrorDesc() { return _errorDesc; }
-	
+
 	/**
 	 * Sets the last ocurred error.
 	 * @param error Code identifying the last error.
 	 * @param errorDesc String describing the last error.
 	 */
 	virtual void setError(SFMError error, String errorDesc) { _error = error; _errorDesc = errorDesc; }
-	
+
 	/**
 	 * Open the file with name filename in the given directory for saving.
 	 * @param filename	the filename
@@ -131,7 +130,7 @@ public:
 	 * @return true if no error ocurred. false otherwise.
 	 */
 	virtual bool removeSavefile(const char *filename) = 0;
-	
+
 	/**
 	 * Request a list of available savegames with a given regex.
 	 * @param regex Regular expression to match. Wildcards like * or ? are available.

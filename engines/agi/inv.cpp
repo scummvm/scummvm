@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agi/agi.h"
 #include "agi/sprite.h"
@@ -138,7 +138,7 @@ void AgiEngine::selectItems(int n) {
 		default:
 			break;
 		}
-		
+
 		if (!exit_select) {
 			showItems();
 			_gfx->doUpdate();

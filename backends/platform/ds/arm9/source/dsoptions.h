@@ -23,7 +23,6 @@
 #ifndef _DSOPTIONS_H_
 #define _DSOPTIONS_H_
 
-#include "stdafx.h"
 
 #include "common/scummsys.h"
 #include "common/str.h"

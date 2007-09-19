@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -187,7 +187,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_inCallBack = 0;
 	_cepeFlag = 0;
 	_fastMode = 0;
-	
+
 	_backFlag = 0;
 
 	_debugMode = 0;
@@ -336,7 +336,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
  	_iconToggleCount = 0;
  	_voiceCount = 0;
- 
+
 	_lastTickCount = 0;
 	_thisTickCount = 0;
 	_startSecondCount = 0;

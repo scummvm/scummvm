@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "touche/graphics.h"
 #include "touche/touche.h"

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/util.h"
@@ -64,9 +64,9 @@ uint8 Disk::indexOf(uint16 id, bool suppressError) {
 		if (_entries[entryIndex].id == HEADER_ENTRY_UNUSED_ID) break;
 		else if (_entries[entryIndex].id == id) return entryIndex;
 	}
-	
+
 	if (suppressError) return 0xff;
-	if (_fileNum == 0) 
+	if (_fileNum == 0)
 		error("Could not find entry Id #%d in file %s", id, SUPPORT_FILENAME);
 	else
 		error("Could not find entry Id #%d in file disk%d.vga", id, _fileNum);
@@ -79,16 +79,16 @@ void Disk::openFile(uint8 fileNum) {
 
 	// Only load up the new file if the current file number has changed
 	if (fileNum == _fileNum) return;
-	
+
 	// Delete any existing open file handle
-	if (_fileNum != 0xff) delete _fileHandle;		
+	if (_fileNum != 0xff) delete _fileHandle;
 	_fileNum = fileNum;
-	
+
 	// Open up the the new file
 	_fileHandle = new Common::File();
 
 	char sFilename[10];
-	if (_fileNum == 0) 
+	if (_fileNum == 0)
 		strcpy(sFilename, SUPPORT_FILENAME);
 	else
 		sprintf(sFilename, "disk%d.vga", _fileNum);
@@ -155,7 +155,7 @@ MemoryBlock *Disk::getEntry(uint16 id) {
 
 	// Get the index of the resource, if necessary opening the correct file
 	uint8 index = indexOf(id);
-		
+
 	// Calculate the offset and size of the entry
 	uint32 size = (uint32) _entries[index].size;
 	if (_entries[index].sizeExtension) size += 0x10000;
@@ -180,7 +180,7 @@ uint8 Disk::numEntries() {
 	// Figure out how many entries there are by count until an unused entry is found
 	for (byte entryIndex = 0; entryIndex < NUM_ENTRIES_IN_HEADER; ++entryIndex)
 		if (_entries[entryIndex].id == HEADER_ENTRY_UNUSED_ID) return entryIndex;
-	
+
 	return NUM_ENTRIES_IN_HEADER;
 }
 

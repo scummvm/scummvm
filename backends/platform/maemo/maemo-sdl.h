@@ -26,7 +26,6 @@
 #ifndef MAEMO_SDL_H
 #define MAEMO_SDL_H
 
-#include "common/stdafx.h"
 #include "backends/platform/sdl/sdl-common.h"
 
 //#include "CEkeys.h"

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
@@ -109,7 +109,7 @@ int AgiEngine::handleController(int key) {
 
 	// AGI 3.149 games and The Black Cauldron need KEY_ESCAPE to use menus
 	// Games with the GF_ESCPAUSE flag need KEY_ESCAPE to pause the game
-	if (key == 0 || 
+	if (key == 0 ||
 		(key == KEY_ESCAPE && agiGetRelease() != 0x3149 && getGameID() != GID_BC && !(getFeatures() & GF_ESCPAUSE)) )
 		return false;
 

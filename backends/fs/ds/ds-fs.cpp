@@ -20,7 +20,6 @@
  *
  */
 
-#include "stdafx.h"
 #include "str.h"
 #include "common/util.h"
 //#include <NDS/ARM9/console.h> //basic print funcionality

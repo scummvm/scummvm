@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "base/version.h"
 
 #include "agi/agi.h"
@@ -261,7 +261,7 @@ cmd(set_priority) {
 	// the dwarf to be drawn behind ego
 	// With this workaround, when the game scripts set the priority of view 152
 	// (seventh dwarf with soup bowls), ego's priority is set to 7
-	// The game script itself sets priotity 8 for ego before she starts walking, 
+	// The game script itself sets priotity 8 for ego before she starts walking,
 	// and then releases the fixed priority set on ego after ego is seated
 	// Therefore, this workaround only affects that specific part of this scene
 	// Ego is set to object 19 by script 54
@@ -625,11 +625,11 @@ cmd(draw_pic) {
 	// behavior from view 46 (the spider droid). View 46 is supposed to
 	// follow ego and explode when it comes in contact with him. However, as
 	// flag 103 is not reset correctly, when the player goes down the path
-	// and back up, the spider is always at the base of the path (since it 
-	// can't go up) and kills the player when he goes down at ground level 
-	// (although the spider droid sprite itself seems to be correctly positioned). 
-	// With this workaround, when the player goes back to picture 20 (1 screen 
-	// above the ground), flag 103 is reset, thereby fixing this issue. Note 
+	// and back up, the spider is always at the base of the path (since it
+	// can't go up) and kills the player when he goes down at ground level
+	// (although the spider droid sprite itself seems to be correctly positioned).
+	// With this workaround, when the player goes back to picture 20 (1 screen
+	// above the ground), flag 103 is reset, thereby fixing this issue. Note
 	// that this is a script bug and occurs in the original interpreter as well.
 	// Fixes bug #1658514: AGI: SQ1 (2.2 DOS ENG) bizzare exploding roger
 	if (g_agi->getGameID() == GID_SQ1 && _v[p0] == 20)
@@ -720,8 +720,8 @@ cmd(draw) {
 	// cause regressions with some AGI games. The original workaround no longer
 	// works for Space Trek in ScummVM, as all fanmade games are set to use
 	// AGI version 2.917, but it applies to all other games where AGI version is
-	// <= 2.440, which was not the original purpose of this workaround. It is 
-	// assumed that this bug is caused by AGI Studio, so this applies to all 
+	// <= 2.440, which was not the original purpose of this workaround. It is
+	// assumed that this bug is caused by AGI Studio, so this applies to all
 	// fanmade games only.
 	// TODO: Investigate this further and check if any other fanmade AGI
 	// games are affected. If yes, then it'd be best to set this for Space
@@ -1310,7 +1310,7 @@ cmd(shake_screen) {
 		} else {
 			warning("It looks like GF_AGIPAL flag is missing");
 		}
-	} 
+	}
 
 	// Disables input while shaking to prevent bug
 	// #1678230: AGI: Entering text while screen is shaking

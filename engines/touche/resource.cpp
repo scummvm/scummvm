@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "sound/flac.h"
 #include "sound/mixer.h"

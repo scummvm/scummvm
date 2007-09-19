@@ -25,7 +25,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "common/events.h"
 

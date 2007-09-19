@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "backends/intern.h"
 #include "backends/events/default/default-events.h"
 
@@ -111,7 +109,7 @@ static Common::EventManager *s_eventManager = 0;
 
 Common::EventManager *OSystem::getEventManager() {
 	// FIXME/TODO: Eventually this method should be turned into an abstract one,
-	// to force backends to implement this conciously (even if they 
+	// to force backends to implement this conciously (even if they
 	// end up returning the default event manager anyway).
 	if (!s_eventManager)
 		s_eventManager = new DefaultEventManager(this);

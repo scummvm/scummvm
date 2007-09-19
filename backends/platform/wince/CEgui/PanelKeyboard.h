@@ -26,7 +26,6 @@
 #ifndef CEGUI_PANELKEYBOARD
 #define CEGUI_PANELKEYBOARD
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "sky/music/adlibmusic.h"
@@ -122,16 +122,16 @@ void AdlibMusic::setVolume(uint16 param) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 2 * param);
 }
 
-bool AdlibMusic::isStereo(void) const { 
-	return false; 
+bool AdlibMusic::isStereo(void) const {
+	return false;
 }
 
 bool AdlibMusic::endOfData(void) const {
-	return false; 
+	return false;
 }
 
-int AdlibMusic::getRate(void) const { 
-	return _sampleRate; 
+int AdlibMusic::getRate(void) const {
+	return _sampleRate;
 }
 
 } // End of namespace Sky

@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 
 #include "cruise/overlay.h"

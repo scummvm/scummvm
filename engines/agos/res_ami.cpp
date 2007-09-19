@@ -24,7 +24,7 @@
  */
 
 // Conversion routines for planar graphics in Amiga versions
-#include "common/stdafx.h"
+
 
 #include "agos/agos.h"
 #include "agos/intern.h"

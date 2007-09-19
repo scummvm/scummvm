@@ -26,7 +26,6 @@
 #ifndef CEGUI_TOOLBARHANDLER
 #define CEGUI_TOOLBARHANDLER
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/str.h"

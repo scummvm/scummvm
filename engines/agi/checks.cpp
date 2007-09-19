@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "agi/agi.h"
 
 namespace Agi {
@@ -113,7 +113,7 @@ int AgiEngine::checkPriority(VtEntry *v) {
 		}
 
 		return pass;
-	}		
+	}
 
 	water = 1;
 

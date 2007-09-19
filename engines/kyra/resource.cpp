@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/file.h"
@@ -137,7 +137,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 
 	const bool isKyraDat = filename.equalsIgnoreCase("KYRA.DAT");
 	uint32 size = 0;
-	
+
 	Common::File handle;
 	if (!getFileHandle(filename.c_str(), &size, handle)) {
 		(!isKyraDat ? error : warning)("couldn't load file: '%s'", filename.c_str());
@@ -233,7 +233,7 @@ bool Resource::getFileHandle(const char *file, uint32 *size, Common::File &fileh
 
 		if ((*start)->getFileHandle(fileHash, filehandle)) {
 			uint32 tSize = (*start)->getFileSize(fileHash);
-		
+
 			if (!tSize)
 				continue;
 
@@ -243,7 +243,7 @@ bool Resource::getFileHandle(const char *file, uint32 *size, Common::File &fileh
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -258,7 +258,7 @@ uint32 Resource::getFileSize(const char *file) const {
 			continue;
 
 		uint32 size = (*start)->getFileSize(fileHash);
-		
+
 		if (size)
 			return size;
 	}
@@ -313,22 +313,22 @@ PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, 
 		PakChunk chunk;
 		uint8 buffer[64];
 		uint32 nameLength;
-		
+
 		// Move to the position of the next file entry
 		pakfile.seek(pos);
-		
+
 		// Read in the header
 		if (pakfile.read(&buffer, 64) < 5) {
 			warning("PAK file '%s' is corrupted", file);
 			return;
 		}
-		
+
 		// Quit now if we encounter an empty string
 		if (!(*((const char*)buffer)))
 			break;
 
 		chunk._name = Common::hashit_lower((const char*)buffer);
-		nameLength = strlen((const char*)buffer) + 1; 
+		nameLength = strlen((const char*)buffer) + 1;
 
 		if (nameLength > 60) {
 			warning("PAK file '%s' is corrupted", file);
@@ -361,7 +361,7 @@ PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, 
 		pos += nameLength + 4;
 	}
 
-	_open = true;	
+	_open = true;
 	_filename = Common::hashit_lower(file);
 	_physfile = physfile;
 	_physOffset = off;
@@ -506,7 +506,7 @@ bool INSFile::getFileHandle(uint hash, Common::File &filehandle) const {
 	if (file == _files.end())
 		return false;
 
-	if (!filehandle.open(_physfile)) 
+	if (!filehandle.open(_physfile))
 		return false;
 
 	filehandle.seek(file->_start, SEEK_CUR);

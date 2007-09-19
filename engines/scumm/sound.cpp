@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/actor.h"
 #include "scumm/file.h"
 #include "scumm/imuse/imuse.h"
@@ -200,7 +200,7 @@ void Sound::playSound(int soundID) {
 	else if (READ_BE_UINT32(ptr) == 0x460e200d) {
 		// This sound resource occurs in the Macintosh version of Monkey Island.
 		// I do now know whether it is used in any place other than the one
-		// mentioned in the bug report above; in case it is, I put a check here. 
+		// mentioned in the bug report above; in case it is, I put a check here.
 		assert(soundID == 39);
 
 		// The samplerate is copied from the sound resouce 39 of the PC CD/VGA
@@ -927,7 +927,7 @@ BaseScummFile *Sound::openSfxFile() {
 
 	Common::String basename[2];
 	Common::String tmp;
-	
+
 	const char *ptr = strchr(_vm->_filenamePattern.pattern, '.');
 	if (ptr) {
 		basename[0] = Common::String(_vm->_filenamePattern.pattern, ptr - _vm->_filenamePattern.pattern + 1);

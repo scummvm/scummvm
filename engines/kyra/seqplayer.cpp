@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 
 #include "engines/engine.h"
@@ -85,7 +85,7 @@ uint8 *SeqPlayer::setPanPages(int pageNum, int shape) {
 			data += offs;
 			uint16 sz = READ_LE_UINT16(data + 6);
 			panPage = new uint8[sz];
-			assert(panPage);	
+			assert(panPage);
 			memcpy(panPage, data, sz);
 		}
 	}
@@ -97,7 +97,7 @@ void SeqPlayer::makeHandShapes() {
 	_screen->loadBitmap("WRITING.CPS", 3, 3, _screen->_currentPalette);
 	if (_vm->gameFlags().platform == Common::kPlatformMacintosh || _vm->gameFlags().platform == Common::kPlatformAmiga) {
 		freeHandShapes();
-		
+
 		int pageBackUp = _screen->_curPage;
 		_screen->_curPage = 2;
 		_handShapes[0] = _screen->encodeShape(0, 0, 88, 122, 0);
@@ -490,7 +490,7 @@ void SeqPlayer::s1_prefetchVocFile() {
 bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 	debugC(9, kDebugLevelSequence, "SeqPlayer::seq_playSequence(%p, %d)", (const void *)seqData, skipSeq);
 	assert(seqData);
-	
+
 	static SeqEntry floppySeqProcs[] = {
 		// 0x00
 		SEQOP(3, s1_wsaOpen),

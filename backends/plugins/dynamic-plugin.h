@@ -26,7 +26,6 @@
 #ifndef BACKENDS_PLUGINS_DYNAMICPLUGIN_H
 #define BACKENDS_PLUGINS_DYNAMICPLUGIN_H
 
-#include "common/stdafx.h"
 #include "base/plugins.h"
 
 

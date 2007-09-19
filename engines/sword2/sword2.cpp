@@ -25,7 +25,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 
 #include "base/plugins.h"
 
@@ -112,7 +112,7 @@ GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 		}
 	}
 
-	
+
 	if (detectedGames.empty()) {
 		// Nothing found -- try to recurse into the 'clusters' subdirectory,
 		// present e.g. if the user copied the data straight from CD.
@@ -179,7 +179,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 		_features = GF_DEMO;
 	else
 		_features = 0;
-	
+
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
 

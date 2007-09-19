@@ -30,7 +30,6 @@
 
 #if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__)
 
-#include "common/stdafx.h"
 #include "sound/mpu401.h"
 #include "common/util.h"
 

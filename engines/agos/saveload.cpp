@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/savefile.h"
 #include "common/system.h"
@@ -55,12 +55,12 @@ int AGOSEngine::countSaveGames() {
 		slot[0] = file->c_str()[file->size()-3];
 		slot[1] = file->c_str()[file->size()-2];
 		slot[2] = file->c_str()[file->size()-1];
-		
+
 		slotNum = atoi(slot);
 		if (slotNum >= 0 && slotNum < 256)
 			marks[slotNum] = true;	//mark this slot as valid
 	}
-	
+
 	while (i < 256) {
 		if (marks[i] &&
 		    (f = _saveFileMan->openForLoading(genSaveName(i)))) {
@@ -69,7 +69,7 @@ int AGOSEngine::countSaveGames() {
 		} else
 			break;
 	}
-	
+
 	return i;
 }
 
@@ -242,7 +242,7 @@ void AGOSEngine::userGame(bool load) {
 	char buf[8];
 
 	numSaveGames = countSaveGames();
-	
+
 	time_t saveTime = time(NULL);
 	haltAnimation();
 

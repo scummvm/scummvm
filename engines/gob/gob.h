@@ -26,7 +26,7 @@
 #ifndef GOB_GOB_H
 #define GOB_GOB_H
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "common/savefile.h"
 

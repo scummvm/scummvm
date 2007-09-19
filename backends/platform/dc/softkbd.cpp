@@ -23,7 +23,6 @@
  *
  */
 
-#include <common/stdafx.h>
 #include <common/scummsys.h>
 #include "common/events.h"
 #include "engines/engine.h"

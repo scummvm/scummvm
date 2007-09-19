@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/util.h"
 #include "sky/music/adlibchannel.h"
@@ -158,7 +158,7 @@ uint8 AdlibChannel::process(uint16 aktTime) {
 				case 8: com90_loopMusic(); break;
 				case 9: com90_keyOff(); break;
 				case 12: com90_setLoopPoint(); break;
-				
+
 				default:
 					error("AdlibChannel: Unknown music opcode 0x%02X", opcode);
 					break;

@@ -48,7 +48,7 @@
 //
 // The number zero is used to represent the NULL pointer.
 
-#include "common/stdafx.h"
+
 #include "sword2/sword2.h"
 #include "sword2/memory.h"
 

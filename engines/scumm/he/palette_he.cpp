@@ -22,7 +22,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "scumm/scumm.h"
 #include "scumm/he/intern_he.h"

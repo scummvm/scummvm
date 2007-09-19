@@ -26,7 +26,7 @@
 #ifndef LURE_EVENTS_H
 #define LURE_EVENTS_H
 
-#include "common/stdafx.h"
+
 #include "common/events.h"
 #include "common/str.h"
 #include "lure/luredefs.h"
@@ -42,7 +42,7 @@ private:
 public:
 	Mouse();
 	~Mouse();
-	static Mouse &getReference(); 
+	static Mouse &getReference();
 	void handleEvent(Common::Event event);
 
 	void cursorOn();
@@ -57,7 +57,7 @@ public:
 	bool rButton() { return _rButton; }
 	void waitForRelease();
 	void pushCursorNum(CursorType cursorNum);
-	void pushCursorNum(CursorType cursorNum, int hotspotX, int hotspotY);	
+	void pushCursorNum(CursorType cursorNum, int hotspotX, int hotspotY);
 	void popCursor();
 };
 

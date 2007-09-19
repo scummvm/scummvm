@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/scumm.h"
 #include "scumm/file.h"
 #include "scumm/nut_renderer.h"
@@ -118,7 +118,7 @@ void NutRenderer::loadFont(const char *filename) {
 	uint32 offset = 0;
 	uint32 decodedLength = 0;
 	int l;
-	
+
 	_paletteMap = new byte[256];
 	for (l = 0; l < 256; l++) {
 		_paletteMap[l] = 0;

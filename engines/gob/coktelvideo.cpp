@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/system.h"
 
@@ -194,7 +193,7 @@ void Imd::setXY(int16 x, int16 y) {
 		if (y >= 0)
 			_stdY = _stdY - _y + y;
 	}
-	
+
 	// Going through the coordinate table as well
 	if (_frameCoords) {
 		for (int i = 0; i < _framesCount; i++) {
@@ -1116,7 +1115,7 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 
 				_stream->read(_palette + index * 3, (count + 1) * 3);
 				_stream->skip((255 - count) * 3);
-				
+
 				state.flags |= kStatePalette;
 			}
 

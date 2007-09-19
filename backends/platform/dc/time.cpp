@@ -25,7 +25,6 @@
 
 #define RONIN_TIMER_ACCESS
 
-#include <common/stdafx.h>
 #include <common/scummsys.h>
 #include "dc.h"
 

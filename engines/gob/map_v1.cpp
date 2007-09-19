@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/stream.h"
 
 #include "gob/gob.h"
@@ -283,7 +283,7 @@ void Map_v1::loadObjects(Common::SeekableReadStream &data, uint32 objsPos) {
 	Goblin::Gob_State *pState;
 	uint32 tmpStateData[40 * 6];
 	uint32 tmpPos;
-	
+
 	_vm->_goblin->_objCount = data.readUint16LE();
 	for (int i = 0; i < _vm->_goblin->_objCount; i++) {
 		_vm->_goblin->_objects[i] = new Goblin::Gob_Object;

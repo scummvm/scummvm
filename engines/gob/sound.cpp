@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -152,7 +152,7 @@ int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
 			_remainingSamples--;
 		_mixedSamples++;
 	}
-	
+
 	// Clear the rest of the buffer
 	if (i < numSamples)
 		memset(buffer + i, 0, (numSamples - i) * sizeof(int16));
@@ -196,7 +196,7 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 
 Snd::~Snd() {
 	// stop permanent streams manually:
-	
+
 	// First the speaker stream
 	_vm->_mixer->stopHandle(_speakerHandle);
 
@@ -365,7 +365,7 @@ void Snd::playSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 	Common::StackLock slock(_mutex);
 
 	if (!_end)
-		return; 
+		return;
 
 	setSample(sndDesc, repCount, frequency, fadeLength);
 }
@@ -400,7 +400,7 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 		int32 val = (_last + (((_cur - _last) * _offsetFrac +
 					FRAC_HALF) >> FRAC_BITS)) << 8;
 		*buffer++ = (val * _fadeVol) >> 16;
-		
+
 		_offsetFrac += _offsetInc;
 
 		// Was there an integral change?

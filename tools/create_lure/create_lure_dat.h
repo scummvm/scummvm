@@ -26,7 +26,6 @@
 #ifndef __createlure_dat__
 #define __createlure_dat__
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 
 #define VERSION_MAJOR 1

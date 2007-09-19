@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "cine/cine.h"
@@ -96,7 +96,7 @@ void loadRel(char *pRelName) {
 			ptr += relTable[i].size;
 		}
 	}
-	
+
 	free(dataPtr);
 
 #ifdef DUMP_SCRIPTS

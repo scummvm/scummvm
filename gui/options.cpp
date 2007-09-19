@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "gui/browser.h"
 #include "gui/themebrowser.h"
 #include "gui/chooser.h"
@@ -368,7 +367,7 @@ void OptionsDialog::close() {
 					break;
 				}
 
-				ConfMan.setBool("subtitles", subtitles, _domain); 
+				ConfMan.setBool("subtitles", subtitles, _domain);
 				ConfMan.setBool("speech_mute", speech_mute, _domain);
 
 				// Engines that reuse the subtitle speed widget set their own max value.
@@ -415,7 +414,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		if (_subMode < 2)
 			_subMode++;
 		else
-			_subMode = 0;	
+			_subMode = 0;
 
 		_subToggleButton->setLabel(_subModeDesc[_subMode]);
 		_subToggleButton->draw();
@@ -635,7 +634,7 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 		return 1;
 	else if (subtitles && speech_mute) // Subtitles only
 		return 2;
-	else 
+	else
 		warning("Wrong configuration: Both subtitles and speech are off. Assuming subtitles only");
 	return 2;
 }
@@ -820,7 +819,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 				MessageDialog error("The chosen directory cannot be written to. Please select another one.");
 				error.runModal();
 				return;
-			}	
+			}
 			draw();
 		}
 		break;

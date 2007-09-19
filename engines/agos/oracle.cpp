@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/savefile.h"
 #include "common/system.h"
@@ -91,7 +91,7 @@ void AGOSEngine_Feeble::checkUp(WindowBlock *window) {
 		if (!isBoxDead(j + 201)) {
 			uint index = getWindowNum(window);
 			drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
-			animate(4, 9, k + 34, 0, 0, 0);	
+			animate(4, 9, k + 34, 0, 0, 0);
 		}
 	}
 	if ((_variableArray[31] - _variableArray[30]) == 76) {
@@ -114,7 +114,7 @@ void AGOSEngine_Feeble::checkUp(WindowBlock *window) {
 void AGOSEngine_Feeble::inventoryUp(WindowBlock *window) {
 	_marks = 0;
 	checkUp(window);
-	animate(4, 9, 21, 0 ,0, 0);	
+	animate(4, 9, 21, 0 ,0, 0);
 	while (1) {
 		if (_currentBox->id != 0x7FFB || !getBitFlag(89))
 			break;
@@ -136,7 +136,7 @@ void AGOSEngine_Feeble::checkDown(WindowBlock *window) {
 		uint index = getWindowNum(window);
 		drawIconArray(index, window->iconPtr->itemRef, 0, window->iconPtr->classMask);
 		k = ((_variableArray[31] / 52) % 3);
-		animate(4, 9, k + 25, 0, 0, 0);	
+		animate(4, 9, k + 25, 0, 0, 0);
 		_variableArray[31] += 52;
 	}
 	if (((_variableArray[31] - _variableArray[30]) == 40) && (_variableArray[30] > 52)) {
@@ -157,7 +157,7 @@ void AGOSEngine_Feeble::checkDown(WindowBlock *window) {
 void AGOSEngine_Feeble::inventoryDown(WindowBlock *window) {
 	_marks = 0;
 	checkDown(window);
-	animate(4, 9, 23, 0, 0, 0);	
+	animate(4, 9, 23, 0, 0, 0);
 	while (1) {
 		if (_currentBox->id != 0x7FFC || !getBitFlag(89))
 		break;

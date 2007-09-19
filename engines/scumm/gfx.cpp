@@ -22,7 +22,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
@@ -37,7 +37,7 @@
 #include "scumm/util.h"
 
 #ifdef USE_ARM_GFX_ASM
-extern "C" void DrawStripToScreenARM(int height, int width, byte const* text, byte const* src, byte* dst, 
+extern "C" void DrawStripToScreenARM(int height, int width, byte const* text, byte const* src, byte* dst,
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
 extern "C" void Copy8ColARM(byte* dst, int dstPitch, const byte* src, int height);
 #endif /* USE_ARM_GFX_ASM */
@@ -108,7 +108,7 @@ static const TransitionEffect transitionEffects[6] = {
 			0,  0,  0, 24
 		}
 	},
-	
+
 	// Box wipe (a box expands from the upper-left corner to the lower-right corner)
 	{
 		25,		// Number of iterations
@@ -125,7 +125,7 @@ static const TransitionEffect transitionEffects[6] = {
 		  255,  0,  0,  0
 		}
 	},
-	
+
 	// Box wipe (a box expands from the lower-right corner to the upper-left corner)
 	{
 		25,		// Number of iterations
@@ -142,7 +142,7 @@ static const TransitionEffect transitionEffects[6] = {
 		  255,  0,  0,  0
 		}
 	},
-	
+
 	// Inverse box wipe
 	{
 		25,		// Number of iterations
@@ -193,7 +193,7 @@ static const TransitionEffect transitionEffects[6] = {
 			255, 0,  0,  0
 		}
 	}
-	
+
 };
 
 
@@ -313,7 +313,7 @@ void ScummEngine::initScreens(int b, int h) {
 	initVirtScreen(kVerbVirtScreen, h + adj, _screenWidth, _screenHeight - h - adj, false, false);
 	_screenB = b;
 	_screenH = h;
-	
+
 	_gdi->init();
 }
 
@@ -446,7 +446,7 @@ void ScummEngine::markRectAsDirty(VirtScreenNumber virt, int left, int right, in
 void ScummEngine::drawDirtyScreenParts() {
 	// Update verbs
 	updateDirtyScreen(kVerbVirtScreen);
-	
+
 	// Update the conversation area (at the top of the screen)
 	updateDirtyScreen(kTextVirtScreen);
 
@@ -544,7 +544,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	assert(top >= 0 && bottom <= vs->h);
 	assert(x >= 0 && width <= vs->pitch);
 	assert(_textSurface.pixels);
-	
+
 	// Perform some clipping
 	if (width > vs->w - x)
 		width = vs->w - x;
@@ -556,10 +556,10 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	// Convert the vertical coordinates to real screen coords
 	int y = vs->topline + top - _screenTop;
 	int height = bottom - top;
-	
+
 	if (width <= 0 || height <= 0)
 		return;
-	
+
 	const byte *src = vs->getPixels(x, top);
 	int m = _textSurfaceMultiplier;
 	byte *dst;
@@ -579,7 +579,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	}
 
 	dst = _compositeBuf;
-		
+
 	if (_game.version < 7) {
 		// For The Dig, FT and COMI, we just blit everything to the screen at once.
 		// For older games, things are more complicated. First off, we need to
@@ -597,7 +597,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		assert(0 == (width & 3));
 
 		// Compose the text over the game graphics
-		
+
 		// TODO: Optimize this code. There are several things that come immediately to mind:
 		// (1) Loop unrolling: We could read 4 or even 8 pixels at once, since everything is
 		//     a multiple of 8 here.
@@ -956,7 +956,7 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 
 	const int height = rect.height();
 	const int width = rect.width();
-	
+
 	if (!height)
 		return;
 
@@ -989,7 +989,7 @@ void ScummEngine::restoreCharsetBg() {
 			return;
 
 		markRectAsDirty(vs->number, Common::Rect(vs->w, vs->h), USAGE_BIT_RESTORED);
-	
+
 		byte *screenBuf = vs->getPixels(0, 0);
 
 		if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
@@ -1037,7 +1037,7 @@ static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, 
 	assert(h > 0);
 	assert(src != NULL);
 	assert(dst != NULL);
-	
+
 	if (w == srcPitch && w == dstPitch) {
 		memcpy(dst, src, w*h);
 	} else {
@@ -1052,7 +1052,7 @@ static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, 
 static void fill(byte *dst, int dstPitch, byte color, int w, int h) {
 	assert(h > 0);
 	assert(dst != NULL);
-	
+
 	if (w == dstPitch) {
 		memset(dst, color, w*h);
 	} else {
@@ -1117,7 +1117,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	// Adjust for the topline of the VirtScreen
 	y -= vs->topline;
 	y2 -= vs->topline;
-	
+
 	// Clip the coordinates
 	if (x < 0)
 		x = 0;
@@ -1138,7 +1138,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 		return;
 	else if (y2 > vs->h)
 		y2 = vs->h;
-	
+
 	width = x2 - x;
 	height = y2 - y;
 
@@ -1226,7 +1226,7 @@ void ScummEngine_v5::drawFlashlight() {
 	if (_flashlight.isDrawn) {
 		markRectAsDirty(kMainVirtScreen, _flashlight.x, _flashlight.x + _flashlight.w,
 										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
-		
+
 		if (_flashlight.buffer) {
 			fill(_flashlight.buffer, vs->pitch, 0, _flashlight.w, _flashlight.h);
 		}
@@ -1294,7 +1294,7 @@ void ScummEngine_v5::drawFlashlight() {
 			_flashlight.buffer[maxrow + maxcol - j] = 0;
 		}
 	}
-	
+
 	_flashlight.isDrawn = true;
 }
 
@@ -1399,7 +1399,7 @@ void GdiV2::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 		theX = 0;
 		maxX = width;
 	}
-	
+
 	// Decode and draw the image data.
 	assert(height <= 128);
 	for (; theX < maxX; theX++) {
@@ -1453,7 +1453,7 @@ void GdiV2::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 		do {
 			if (!runFlag)
 				data = *src++;
-			
+
 			if (left <= theX) {
 				*mask_ptr = data;
 				mask_ptr += _numStrips;
@@ -1491,7 +1491,7 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 	else {
 		numzbuf = _numZBuffer;
 		assert(numzbuf <= 9);
-		
+
 		if (_vm->_game.features & GF_SMALL_HEADER) {
 			if (_vm->_game.features & GF_16COLOR)
 				zplane_list[1] = ptr + READ_LE_UINT16(ptr);
@@ -1508,7 +1508,7 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 		} else if (_vm->_game.version == 8) {
 			// Find the OFFS chunk of the ZPLN chunk
 			const byte *zplnOffsChunkStart = ptr + 24 + READ_BE_UINT32(ptr + 12);
-			
+
 			// Each ZPLN contains a WRAP chunk, which has (as always) an OFFS subchunk pointing
 			// at ZSTR chunks. These once more contain a WRAP chunk which contains nothing but
 			// an OFFS chunk. The content of this OFFS chunk contains the offsets to the
@@ -1529,13 +1529,13 @@ int Gdi::getZPlanes(const byte *ptr, const byte *zplane_list[9], bool bmapImage)
 				MKID_BE('ZP03'),
 				MKID_BE('ZP04')
 			};
-			
+
 			for (i = 1; i < numzbuf; i++) {
 				zplane_list[i] = _vm->findResource(zplane_tags[i], ptr);
 			}
 		}
 	}
-	
+
 	return numzbuf;
 }
 
@@ -1574,7 +1574,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 	}
 
 	numzbuf = getZPlanes(ptr, zplane_list, false);
-	
+
 	const byte *tmsk_ptr = NULL;
 	if (_vm->_game.heversion >= 72) {
 		tmsk_ptr = _vm->findResource(MKID_BE('TMSK'), ptr);
@@ -1626,7 +1626,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		// COMI and HE games only uses flag value
 		if (_vm->_game.version == 8 || _vm->_game.heversion >= 60)
 			transpStrip = true;
-		
+
 		if (vs->hasTwoBuffers) {
 			byte *frontBuf = (byte *)vs->pixels + y * vs->pitch + x * 8;
 			if (lightsOn)
@@ -1843,7 +1843,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 	// in decompressBitmap call drawStripHE()
 	_decomp_shr = code % 10;
 	_decomp_mask = 0xFF >> (8 - _decomp_shr);
-		
+
 	switch (code) {
 	case 134:
 	case 135:
@@ -1933,7 +1933,7 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 		rect1.right -= rect2.left;
 		rect1.top -= rect2.top;
 		rect1.bottom -= rect2.top;
-		
+
 		((ScummEngine_v71he *)_vm)->restoreBackgroundHE(rect1);
 	}
 }
@@ -1962,13 +1962,13 @@ void ScummEngine_v70he::restoreBackgroundHE(Common::Rect rect, int dirtybit) {
 
 	const int rw = rect.width();
 	const int rh = rect.height();
-	
+
 	if (rw == 0 || rh == 0)
 		return;
 
 	src = _virtscr[kMainVirtScreen].getBackPixels(rect.left, rect.top);
 	dst = _virtscr[kMainVirtScreen].getPixels(rect.left, rect.top);
-	
+
 	assert(rw <= _screenWidth && rw > 0);
 	assert(rh <= _screenHeight && rh > 0);
 	blit(dst, _virtscr[kMainVirtScreen].pitch, src, _virtscr[kMainVirtScreen].pitch, rw, rh);
@@ -1983,7 +1983,7 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 	byte *backbuff_ptr, *bgbak_ptr;
 	int numLinesToProcess;
-	
+
 	if (top < 0)
 		top = 0;
 
@@ -2031,7 +2031,7 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	bool transpStrip = false;
 	_decomp_shr = code % 10;
 	_decomp_mask = 0xFF >> (8 - _decomp_shr);
-	
+
 	switch (code) {
 	case 1:
 		drawStripRaw(dst, dstPitch, src, numLinesToProcess, false);
@@ -2154,7 +2154,7 @@ bool Gdi::decompressBitmap(byte *dst, int dstPitch, const byte *src, int numLine
 	default:
 		error("Gdi::decompressBitmap: default case %d", code);
 	}
-	
+
 	return transpStrip;
 }
 
@@ -2236,7 +2236,7 @@ void Gdi::decompressMaskImgOr(byte *dst, const byte *src, int height) const {
 
 	while (height) {
 		b = *src++;
-		
+
 		if (b & 0x80) {
 			b &= 0x7F;
 			c = *src++;
@@ -2650,7 +2650,7 @@ StripTable *GdiV2::generateStripTable(const byte *src, int width, int height, St
 	x = 0;
 	y = height;
 	width /= 8;
-	
+
 	for (;;) {
 		length = *src++;
 		const byte runFlag = length & 0x80;
@@ -2684,7 +2684,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 
 	while (x < 8) {
 		color = *src++;
-		
+
 		if (color & 0x80) {
 			run = color & 0x3f;
 
@@ -2723,7 +2723,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 			if (run == 0) {
 				run = *src++;
 			}
-			
+
 			for (z = 0; z < run; z++) {
 				*(dst + y * dstPitch + x) = _roomPalette[color & 0xf] + _paletteMod;
 
@@ -2751,12 +2751,12 @@ void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int h
 	uint32 dataBit, data;
 	byte color;
 	int shift;
-	
+
 	color = *src++;
 	data = READ_LE_UINT24(src);
 	src += 3;
 	shift = 24;
-	
+
 	int x = width;
 	while (1) {
 		if (!transpCheck || color != _transparentColor)
@@ -3197,10 +3197,10 @@ void ScummEngine::fadeOut(int effect) {
  	// to get cleared. This fixes glitches, at least, in the first cutscenes
  	// when bypassed of FT and TheDig.
  	if ((_game.version == 7 || _screenEffectFlag) && effect != 0) {
-	
+
 		// Fill screen 0 with black
 		memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
-	
+
 		// Fade to black with the specified effect, if any.
 		switch (effect) {
 		case 1:
@@ -3305,7 +3305,7 @@ void ScummEngine::transitionEffect(int a) {
 /**
  * Update width*height areas of the screen, in random order, until the whole
  * screen has been updated. For instance:
- * 
+ *
  * dissolveEffect(1, 1) produces a pixel-by-pixel dissolve
  * dissolveEffect(8, 8) produces a square-by-square dissolve
  * dissolveEffect(virtsrc[0].width, 1) produces a line-by-line dissolve
@@ -3384,7 +3384,7 @@ void ScummEngine::dissolveEffect(int width, int height) {
 
 	blits = 0;
 	blits_before_refresh = (3 * w * h) / 25;
-	
+
 	// Speed up the effect for CD Loom since it uses it so often. I don't
 	// think the original had any delay at all, so on modern hardware it
 	// wasn't even noticeable.

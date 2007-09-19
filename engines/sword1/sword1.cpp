@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "sword1/sword1.h"
 
 #include "base/plugins.h"
@@ -128,7 +128,7 @@ GameList Engine_SWORD1_detectGames(const FSList &fslist) {
 	bool filesFound[NUM_FILES_TO_CHECK];
 	for (i = 0; i < NUM_FILES_TO_CHECK; i++)
 		filesFound[i] = false;
-		
+
 	Sword1CheckDirectory(fslist, filesFound);
 	bool mainFilesFound = true;
 	bool pcFilesFound = true;
@@ -181,7 +181,7 @@ SwordEngine::SwordEngine(OSystem *syst)
 	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo"))
 		_features = GF_DEMO;
 	else
-		_features = 0;	
+		_features = 0;
 
 	if (!_mixer->isReady())
 		warning("Sound initialization failed");
@@ -215,12 +215,12 @@ int SwordEngine::init() {
 		initCommonGFX(true);
 		_system->initSize(640, 480);
 	_system->endGFXTransaction();
-	
+
 	if ( 0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") ||
 	     0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo") )
 		_systemVars.isMac = true;
 	else
-		_systemVars.isMac = false;	
+		_systemVars.isMac = false;
 
 	checkCdFiles();
 

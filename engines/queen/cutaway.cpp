@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "queen/cutaway.h"
 
 #include "queen/bankman.h"

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agos/agos.h"
 
@@ -703,7 +703,7 @@ void AGOSEngine_Elvira2::printStats() {
 	if (val < -99)
 		val = -99;
 	if (val > 99)
-		val = 99;	
+		val = 99;
 	writeChar(window, 10, y, 0, val);
 
 	// PP
@@ -711,7 +711,7 @@ void AGOSEngine_Elvira2::printStats() {
 	if (val < -99)
 		val = -99;
 	if (val > 99)
-		val = 99;	
+		val = 99;
 	writeChar(window, 16, y, 6, val);
 
 	// HP
@@ -719,7 +719,7 @@ void AGOSEngine_Elvira2::printStats() {
 	if (val < -99)
 		val = -99;
 	if (val > 99)
-		val = 99;	
+		val = 99;
 	writeChar(window, 23, y, 4, val);
 
 	// Experience
@@ -727,7 +727,7 @@ void AGOSEngine_Elvira2::printStats() {
 	if (val < -99)
 		val = -99;
 	if (val > 9999)
-		val = 9999;	
+		val = 9999;
 	writeChar(window, 30, y, 6, val / 100);
 	writeChar(window, 32, y, 2, val % 100);
 

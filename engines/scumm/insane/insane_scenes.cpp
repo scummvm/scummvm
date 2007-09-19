@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "engines/engine.h"
 
@@ -1226,7 +1226,7 @@ void Insane::postCase6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			flu = &_fluConf[7 + _iactSceneId2];
 		else
 			flu = &_fluConf[0 + _iactSceneId2];
-	
+
 		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
 			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 		else

@@ -23,7 +23,6 @@
  *
  */
 
-#include <common/stdafx.h>
 #include <common/scummsys.h>
 #include <engines/engine.h>
 #include <base/plugins.h>

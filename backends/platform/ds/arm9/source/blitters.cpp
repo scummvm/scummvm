@@ -20,7 +20,6 @@
  *
  */
 
-#include "stdafx.h"
 #include "blitters.h"
 #define CHARSET_MASK_TRANSPARENCY 253
 

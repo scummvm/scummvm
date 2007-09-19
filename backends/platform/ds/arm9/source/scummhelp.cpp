@@ -20,7 +20,6 @@
  *
  */
  
-#include "stdafx.h"
 #include "scummhelp.h"
 
 #define ADD_BIND(k,d) do { key[i] = k; dsc[i] = d; i++; } while (0)

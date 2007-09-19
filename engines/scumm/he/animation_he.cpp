@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
@@ -58,11 +58,11 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 
 	// Change file extension to dxa
 	sprintf(videoName, "%s.dxa", baseName);
-	
+
 	if (!loadFile(videoName)) {
 		warning("Failed to load video file %s", videoName);
 		return -1;
-	} 
+	}
 	debug(1, "Playing video %s", videoName);
 
 	// Skip sound tag
@@ -101,7 +101,7 @@ void MoviePlayer::handleNextFrame() {
 		copyFrameToBuffer(dst, 0, 0, _vm->_screenWidth);
 	} else if (_flags & 1) {
 		copyFrameToBuffer(pvs->getBackPixels(0, 0), 0, 0, _vm->_screenWidth);
-		
+
 		Common::Rect imageRect(_width, _height);
 		_vm->restoreBackgroundHE(imageRect);
 	} else {

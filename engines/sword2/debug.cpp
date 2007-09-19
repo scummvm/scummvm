@@ -25,7 +25,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 #include "common/rect.h"
 
 #include "sword2/sword2.h"

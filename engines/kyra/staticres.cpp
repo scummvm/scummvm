@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/md5.h"
 #include "kyra/kyra.h"
@@ -41,14 +41,14 @@ bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
 	if (!kyraDat.open("KYRA.DAT"))
 		return false;
-	
+
 	uint32 size = kyraDat.size() - 16;
 	uint8 digest[16];
 	kyraDat.seek(size, SEEK_SET);
 	if (kyraDat.read(digest, 16) != 16)
 		return false;
 	kyraDat.close();
-	
+
 	uint8 digestCalc[16];
 	if (!Common::md5_file("KYRA.DAT", digestCalc, size))
 		return false;
@@ -183,7 +183,7 @@ bool StaticResource::init() {
 		// GUI strings table
 		{ kGUIStrings, kLanguageList, "GUISTRINGS." },
 		{ kConfigStrings, kLanguageList, "CONFIGSTRINGS." },
-		
+
 		// ROOM table/filenames
 		{ Kyra::kRoomList, StaticResource::kRoomList, "ROOM-TABLE.ROOM" },
 		{ kRoomFilenames, kStringList, "ROOM-FILENAMES.TXT" },
@@ -210,7 +210,7 @@ bool StaticResource::init() {
 
 		// PALETTE table
 		{ kPaletteList, kPaletteTable, "1 33 PALTABLE" },
-		
+
 		// FM-TOWNS specific
 		{ kKyra1TownsSFXTable, kRawData, "SFXTABLE" },
 		{ kCreditsStrings, kRawData, "CREDITS" },
@@ -233,14 +233,14 @@ bool StaticResource::init() {
 		warning("no matching INDEX file found");
 		return false;
 	}
-	
+
 	uint32 version = READ_BE_UINT32(temp);
 	uint32 gameID = READ_BE_UINT32((temp+4));
 	uint32 featuresValue = READ_BE_UINT32((temp+8));
-	
+
 	delete [] temp;
 	temp = 0;
-	
+
 	if (version != RESFILE_VERSION)
 		error("invalid KYRA.DAT file version (%d, required %d)", version, RESFILE_VERSION);
 	if (gameID != _vm->game())
@@ -381,7 +381,7 @@ const StaticResource::FileType *StaticResource::getFiletype(int type) {
 
 const void *StaticResource::getData(int id, int requesttype, int &size) {
 	const void *ptr = 0;
-	int type = -1;	
+	int type = -1;
 	size = 0;
 
 	if (checkResList(id, type, ptr, size)) {
@@ -413,7 +413,7 @@ bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &si
 	for (int i = 0; languages[i].ext; ++i) {
 		if (languages[i].flags != createLanguage(_vm->gameFlags()))
 			continue;
-			
+
 		strcpy(file, filename);
 		strcat(file, languages[i].ext);
 		if (loadStringTable(file, ptr, size))
@@ -444,7 +444,7 @@ bool StaticResource::loadStringTable(const char *filename, void *&ptr, int &size
 	size = count;
 	char **output = new char*[count];
 	assert(output);
-		
+
 	const char *curPos = (const char*)src;
 	for (uint32 i = 0; i < count; ++i) {
 		int strLen = strlen(curPos);
@@ -477,7 +477,7 @@ bool StaticResource::loadShapeTable(const char *filename, void *&ptr, int &size)
 	size = count;
 	Shape *loadTo = new Shape[count];
 	assert(loadTo);
-	
+
 	for (uint32 i = 0; i < count; ++i) {
 		loadTo[i].imageIndex = *src++;
 		loadTo[i].x = *src++;
@@ -504,7 +504,7 @@ bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) 
 	size = count;
 	Room *loadTo = new Room[count];
 	assert(loadTo);
-	
+
 	for (uint32 i = 0; i < count; ++i) {
 		loadTo[i].nameIndex = *src++;
 		loadTo[i].northExit = READ_BE_UINT16(src); src += 2;
@@ -656,9 +656,9 @@ void KyraEngine_v1::initStaticResource() {
 	_veryClever = _staticres->loadStrings(kVeryCleverString, _veryClever_Size);
 	_homeString = _staticres->loadStrings(kOutroHomeString, _homeString_Size);
 	_newGameString = _staticres->loadStrings(kNewGameString, _newGameString_Size);
-	
+
 	_healingShapeTable = _staticres->loadShapeTable(kHealing1Shapes, _healingShapeTableSize);
-	_healingShape2Table = _staticres->loadShapeTable(kHealing2Shapes, _healingShape2TableSize);	
+	_healingShape2Table = _staticres->loadShapeTable(kHealing2Shapes, _healingShape2TableSize);
 	_posionDeathShapeTable = _staticres->loadShapeTable(kPoisonDeathShapes, _posionDeathShapeTableSize);
 	_fluteAnimShapeTable = _staticres->loadShapeTable(kFluteShapes, _fluteAnimShapeTableSize);
 	_winterScrollTable = _staticres->loadShapeTable(kWinter1Shapes, _winterScrollTableSize);
@@ -672,14 +672,14 @@ void KyraEngine_v1::initStaticResource() {
 	_characterImageTable = _staticres->loadStrings(kCharacterImageFilenames, _characterImageTableSize);
 
 	_roomFilenameTable = _staticres->loadStrings(kRoomFilenames, _roomFilenameTableSize);
-	
+
 	_amuleteAnim = _staticres->loadRawData(kAmuleteAnimSeq, temp);
-	
+
 	_specialPalettes = _staticres->loadPaletteTable(kPaletteList, temp);
 
 	_guiStrings = _staticres->loadStrings(kGUIStrings, _guiStringsSize);
 	_configStrings = _staticres->loadStrings(kConfigStrings, _configStringsSize);
-	
+
 	// copied static res
 
 	// room list
@@ -729,7 +729,7 @@ void KyraEngine_v1::loadCharacterShapes() {
 	int curImage = 0xFF;
 	int videoPage = _screen->_curPage;
 	_screen->_curPage = 2;
-	for (int i = 0; i < 115; ++i) {	
+	for (int i = 0; i < 115; ++i) {
 		assert(i < _defaultShapeTableSize);
 		Shape *shape = &_defaultShapeTable[i];
 		if (shape->imageIndex == 0xFF) {
@@ -749,17 +749,17 @@ void KyraEngine_v1::loadCharacterShapes() {
 void KyraEngine_v1::loadSpecialEffectShapes() {
 	_screen->loadBitmap("EFFECTS.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
- 
-	int currShape; 
+
+	int currShape;
 	for (currShape = 173; currShape < 183; currShape++)
 		_shapes[currShape] = _screen->encodeShape((currShape-173) * 24, 0, 24, 24, 1);
- 
+
 	for (currShape = 183; currShape < 190; currShape++)
 		_shapes[currShape] = _screen->encodeShape((currShape-183) * 24, 24, 24, 24, 1);
- 
+
 	for (currShape = 190; currShape < 201; currShape++)
 		_shapes[currShape] = _screen->encodeShape((currShape-190) * 24, 48, 24, 24, 1);
- 
+
 	for (currShape = 201; currShape < 206; currShape++)
 		_shapes[currShape] = _screen->encodeShape((currShape-201) * 16, 106, 16, 16, 1);
 }
@@ -835,7 +835,7 @@ void KyraEngine_v1::loadMainScreen(int page) {
 
 	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
 		_screen->loadBitmap("MAIN15.CPS", page, page, _screen->getPalette(0));
-	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN || (_flags.isTalkie && _flags.lang == Common::IT_ITA)) 
+	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN || (_flags.isTalkie && _flags.lang == Common::IT_ITA))
 		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
 	else if (_flags.lang == Common::FR_FRA)
 		_screen->loadBitmap("MAIN_FRE.CPS", page, page, 0);
@@ -982,7 +982,7 @@ void KyraEngine_v1::setupButtonData() {
 		&buttonData[14],
 		0
 	};
-	
+
 	_buttonData = buttonData;
 	_buttonDataListPtr = buttonDataListPtr;
 }
@@ -1001,7 +1001,7 @@ Button KyraEngine_v1::_menuButtonData[] = {
 
 void KyraEngine_v1::setupMenu() {
 	static Menu menu[] = {
-		{ -1, -1, 208, 136, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1, 
+		{ -1, -1, 208, 136, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1,
 			{
 				{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
 				248, 249, 250, &KyraEngine_v1::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
@@ -1030,16 +1030,16 @@ void KyraEngine_v1::setupMenu() {
 		},
 		{ -1, -1, 288, 160, 248, 249, 250, 0, 251, -1, 8, 0, 6, 132, 22, 132, 124,
 			{
-				{1, 0, 0, 0, -1, 255, 39, 256, 15, 252, 253, 5, 0, 
+				{1, 0, 0, 0, -1, 255, 39, 256, 15, 252, 253, 5, 0,
 				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
 
-				{1, 0, 0, 0, -1, 255, 56, 256, 15, 252, 253, 5, 0, 
+				{1, 0, 0, 0, -1, 255, 56, 256, 15, 252, 253, 5, 0,
 				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
 
-				{1, 0, 0, 0, -1, 255, 73, 256, 15, 252, 253, 5, 0, 
+				{1, 0, 0, 0, -1, 255, 73, 256, 15, 252, 253, 5, 0,
 				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
 
-				{1, 0, 0, 0, -1, 255, 90, 256, 15, 252, 253, 5, 0, 
+				{1, 0, 0, 0, -1, 255, 90, 256, 15, 252, 253, 5, 0,
 				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
 
 				{1, 0, 0, 0, -1, 255, 107, 256, 15, 252, 253, 5, 0,
@@ -1058,7 +1058,7 @@ void KyraEngine_v1::setupMenu() {
 				248, 249, 250, &KyraEngine_v1::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0}
 			}
 		},
-		{ -1, -1, 208, 76, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1, 
+		{ -1, -1, 208, 76, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1,
 			{
 				{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
 				248, 249, 250, &KyraEngine_v1::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
@@ -1067,7 +1067,7 @@ void KyraEngine_v1::setupMenu() {
 				248, 249, 250, &KyraEngine_v1::gui_quitPlaying, -1, 0, 0, 0, 0, 0}
 			}
 		},
-		{ -1, -1, 208, 153, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1, 
+		{ -1, -1, 208, 153, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1,
 			{
 				{1, 0, 0, 0, 110, 0, 30, 64, 15, 252, 253, 5, 0,
 				248, 249, 250, &KyraEngine_v1::gui_controlsChangeMusic, -1, 0, 34, 32, 0, 0},
@@ -1089,7 +1089,7 @@ void KyraEngine_v1::setupMenu() {
 			}
 		}
 	};
-	
+
 	_menu = menu;
 }
 

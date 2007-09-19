@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "cine/cine.h"
@@ -1475,7 +1475,7 @@ void o1_setZoneDataEntry() {
 void o1_getZoneDataEntry() {
 	byte zoneIdx = getNextByte();
 	byte var = getNextByte();
-	
+
 	_currentScriptElement->localVars[var] = zoneData[zoneIdx];
 }
 
@@ -1574,7 +1574,7 @@ void o1_playSample() {
 				channel2 = 1;
 			} else {
 				channel1 = 2;
-				channel2 = 3;			
+				channel2 = 3;
 			}
 			g_sound->playSound(channel1, freq, animDataTable[anim].ptr1, size, -1, volume, 63, repeat);
 			g_sound->playSound(channel2, freq, animDataTable[anim].ptr1, size,  1, volume,  0, repeat);

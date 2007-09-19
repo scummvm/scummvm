@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
@@ -173,10 +171,10 @@ Common::Platform AGOSEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-const char *AGOSEngine::getFileName(int type) const { 
+const char *AGOSEngine::getFileName(int type) const {
 	for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileType; i++) {
 		if (_gameDescription->desc.filesDescriptions[i].fileType == type)
-			return _gameDescription->desc.filesDescriptions[i].fileName; 
+			return _gameDescription->desc.filesDescriptions[i].fileName;
 	}
 	return NULL;
 }

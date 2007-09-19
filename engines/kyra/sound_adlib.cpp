@@ -39,7 +39,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "common/mutex.h"
 #include "kyra/resource.h"
@@ -184,7 +184,7 @@ private:
 		uint8 opLevel2;
 		uint8 opExtraLevel3;
 		uint8 twoChan;
-		uint8 unk39;	
+		uint8 unk39;
 		uint8 unk40;
 		uint8 spacing1;
 		uint8 durationRandomness;
@@ -250,7 +250,7 @@ private:
 		POpcode function;
 		const char *name;
 	};
-	
+
 	void setupParserOpcodeTable();
 	const ParserOpcode *_parserOpcodeTable;
 	int _parserOpcodeTableSize;
@@ -797,7 +797,7 @@ void AdlibDriver::executePrograms() {
 	}
 }
 
-// 
+//
 
 void AdlibDriver::resetAdlibState() {
 	debugC(9, kDebugLevelSound, "resetAdlibState()");
@@ -1180,7 +1180,7 @@ void AdlibDriver::primaryEffect2(Channel &channel) {
 
 		uint16 unk2 = (channel.regAx | (channel.regBx << 8)) & 0x3FF;
 		unk2 += unk1;
-		
+
 		channel.regAx = unk2 & 0xFF;
 		channel.regBx = (channel.regBx & 0xFC) | (unk2 >> 8);
 
@@ -1893,7 +1893,7 @@ void AdlibDriver::setupOpcodeList() {
 		COMMAND(snd_setFlag),
 		COMMAND(snd_clearFlag)
 	};
-	
+
 	_opcodeList = opcodeList;
 	_opcodesEntries = ARRAYSIZE(opcodeList);
 }
@@ -2013,7 +2013,7 @@ void AdlibDriver::setupParserOpcodeTable() {
 		COMMAND(updateCallback56),
 		COMMAND(update_stopChannel)
 	};
-	
+
 	_parserOpcodeTable = parserOpcodeTable;
 	_parserOpcodeTableSize = ARRAYSIZE(parserOpcodeTable);
 }
@@ -2281,7 +2281,7 @@ void SoundAdlibPC::playSoundEffect(uint8 track) {
 
 void SoundAdlibPC::play(uint8 track) {
 	uint16 soundId = 0;
-	
+
 	if (_v2)
 		soundId = READ_LE_UINT16(&_trackEntries[track<<1]);
 	else

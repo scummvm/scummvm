@@ -25,7 +25,6 @@
 
 // NOTE: formatted for tabstop=4
 
-#include "common/stdafx.h"
 #include "backends/platform/wince/wince-sdl.h"
 
 #include "common/config-manager.h"

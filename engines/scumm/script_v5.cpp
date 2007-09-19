@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/intern.h"
@@ -591,7 +591,7 @@ void ScummEngine_v5::o5_animateActor() {
 
 	// WORKAROUND bug #859513: While on mars, going outside without your helmet
 	// (or missing some other part of your "space suite" will cause your
-	// character to complain ("I can't breathe."). Unfortunately, this is 
+	// character to complain ("I can't breathe."). Unfortunately, this is
 	// coupled with an animate command, making it very difficult to return to
 	// safety (from where you came). The following hack works around this by
 	// ignoring that particular turn command.
@@ -951,9 +951,9 @@ void ScummEngine_v5::loadVars() {
 					loadIQPoints();
 				}
 				break;
-			} 
-			
-			listSavegames(avail_saves, ARRAYSIZE(avail_saves));							
+			}
+
+			listSavegames(avail_saves, ARRAYSIZE(avail_saves));
 			for (slot = a; slot <= b; ++slot) {
 				slotSize = getResourceSize(rtString, slot);
 				slotContent = getResourceAddress(rtString, slot);
@@ -965,7 +965,7 @@ void ScummEngine_v5::loadVars() {
 					char *ptr = name;
 					// slotContent ends with {'\0','@'} -> max. length = slotSize-2
 					for (pos = 0; pos < slotSize - 2; ++pos) {
-						if (!ptr[pos]) 
+						if (!ptr[pos])
 							break;
 						// replace special characters
 						if (ptr[pos] >= 32 && ptr[pos] <= 122 && ptr[pos] != 64)
@@ -973,7 +973,7 @@ void ScummEngine_v5::loadVars() {
 						else
 							slotContent[pos] = '_';
 					}
-					slotContent[pos] = '\0';						
+					slotContent[pos] = '\0';
 				} else {
 					slotContent[0] = '\0';
 				}
@@ -1020,7 +1020,7 @@ void ScummEngine_v5::loadIQPoints() {
 		byte *tmp = (byte*)malloc(size);
 		int nread = file->read(tmp, size);
 		if (nread == size) {
-			memcpy(ptr, tmp, size); 
+			memcpy(ptr, tmp, size);
 		}
 		free(tmp);
 		delete file;
@@ -2855,7 +2855,7 @@ void ScummEngine_v5::decodeParseString() {
 			break;
 		case 15:{	// SO_TEXTSTRING
 				const int len = resStrLen(_scriptPointer);
-	
+
 				if (_game.id == GID_LOOM && strcmp((const char *) _scriptPointer, "I am Choas.") == 0) {
 					// WORKAROUND: This happens when Chaos introduces
 					// herself to bishop Mandible. Of all the places to put

@@ -26,7 +26,7 @@
 #ifndef AGI_H
 #define AGI_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/util.h"
@@ -352,7 +352,7 @@ public:
 		amigaBlack  = 0x00, ///< Accurate,                   is          #000000 (24-bit RGB)
 		amigaWhite  = 0x0F, ///< Practically accurate,       is close to #FFFFFF (24-bit RGB)
 		amigaGreen  = 0x02, ///< Quite accurate,             should be   #008A00 (24-bit RGB)
-		amigaOrange = 0x0C, ///< Inaccurate, too much blue,  should be   #FF7500 (24-bit RGB) 
+		amigaOrange = 0x0C, ///< Inaccurate, too much blue,  should be   #FF7500 (24-bit RGB)
 		amigaPurple = 0x0D, ///< Inaccurate, too much green, should be   #FF00FF (24-bit RGB)
 		amigaRed    = 0x04, ///< Quite accurate,             should be   #BD0000 (24-bit RGB)
 		amigaCyan   = 0x0B, ///< Inaccurate, too much red,   should be   #00FFDE (24-bit RGB)
@@ -505,10 +505,10 @@ struct AgiGame {
 #define SBUF256_OFFSET ((_WIDTH) * (_HEIGHT))
 #define FROM_SBUF16_TO_SBUF256_OFFSET ((SBUF256_OFFSET) - (SBUF16_OFFSET))
 #define FROM_SBUF256_TO_SBUF16_OFFSET ((SBUF16_OFFSET) - (SBUF256_OFFSET))
-	uint8 *sbufOrig;		/**< Pointer to the 160x336 AGI screen buffer that contains vertically two 160x168 screens (16 color and 256 color). */	
+	uint8 *sbufOrig;		/**< Pointer to the 160x336 AGI screen buffer that contains vertically two 160x168 screens (16 color and 256 color). */
 	uint8 *sbuf16c;			/**< 160x168 16 color (+control line & priority information) AGI screen buffer. Points at sbufOrig + SBUF16_OFFSET. */
 	uint8 *sbuf256c;		/**< 160x168 256 color AGI screen buffer (For AGI256 and AGI256-2 support). Points at sbufOrig + SBUF256_OFFSET. */
-	uint8 *sbuf;			/**< Currently chosen AGI screen buffer (sbuf256c if AGI256 or AGI256-2 is used, otherwise sbuf16c). */	
+	uint8 *sbuf;			/**< Currently chosen AGI screen buffer (sbuf256c if AGI256 or AGI256-2 is used, otherwise sbuf16c). */
 
 	/* player command line */
 	AgiWord egoWords[MAX_WORDS];

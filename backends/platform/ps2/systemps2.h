@@ -26,7 +26,6 @@
 #ifndef SYSTEMPS2_H
 #define SYSTEMPS2_H
 
-#include "common/stdafx.h"
 #include "common/system.h"
 
 class Gs2dScreen;

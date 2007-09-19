@@ -23,8 +23,8 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"

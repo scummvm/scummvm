@@ -24,7 +24,6 @@
 
 #if defined(__DC__)
 
-#include "common/stdafx.h"
 #include "backends/fs/abstract-fs.h"
 
 #include <ronin/cdfs.h>

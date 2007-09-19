@@ -25,7 +25,6 @@
 #ifndef GRAPHICS_SCALER_H
 #define GRAPHICS_SCALER_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "graphics/surface.h"
 

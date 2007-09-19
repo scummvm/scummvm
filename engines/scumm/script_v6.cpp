@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 
@@ -2238,12 +2238,12 @@ void ScummEngine_v6::o6_wait() {
 			break;
 		return;
 	case 232:		// SO_WAIT_FOR_TURN
-		// WORKAROUND for bug #744441: An angle will often be received as the 
+		// WORKAROUND for bug #744441: An angle will often be received as the
 		// actor number due to script bugs in The Dig. In all cases where this
 		// occurs, _curActor is set just before it, so we can use it instead.
 		//
 		// For now, if the value passed in is divisible by 45, assume it is an
-		// angle, and use _curActor as the actor to wait for. 
+		// angle, and use _curActor as the actor to wait for.
 		offs = fetchScriptWordSigned();
  		actnum = pop();
  		if (actnum % 45 == 0) {

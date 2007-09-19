@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "queen/graphics.h"
 
 #include "queen/bankman.h"

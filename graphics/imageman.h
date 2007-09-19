@@ -25,7 +25,6 @@
 #ifndef GRAPHICS_IMAGEMAN_H
 #define GRAPHICS_IMAGEMAN_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/singleton.h"
 #include "common/str.h"
@@ -34,7 +33,7 @@
 
 namespace Graphics {
 struct Surface;
- 
+
 class ImageManager : public Common::Singleton<ImageManager> {
 public:
 	~ImageManager();
@@ -56,7 +55,7 @@ public:
 	 */
 	void remArchive(const Common::String &name);
 
-	/** 
+	/**
 	 * registers a surface to the ImageManager.
 	 * surf->free(), also delete surf, will be called when the ImageManager will
 	 * be destroyed or if ImageManager::unregisterSurface is called.
@@ -101,7 +100,7 @@ private:
 	};
 	typedef Common::List<Archive>::iterator ZipIterator;
 #endif
-	
+
 	Iterator searchHandle(const Common::String &name);
 
 	Common::List<Entry*> _surfaces;

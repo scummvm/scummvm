@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/stream.h"
 
@@ -551,7 +551,7 @@ void Scenery::freeAnim(int16 index) {
 			_spriteResId[spr] = -1;
 		}
 	}
-	
+
 	for (int i = 0; i < _animations[index].layersCount; i++)
 		delete[] _animations[index].layers[i].frames;
 	delete[] _animations[index].layers;

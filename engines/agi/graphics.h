@@ -26,7 +26,7 @@
 #ifndef AGI_GRAPHICS_H
 #define AGI_GRAPHICS_H
 
-#include "common/stdafx.h"
+
 #include "agi/font.h"
 
 namespace Agi {

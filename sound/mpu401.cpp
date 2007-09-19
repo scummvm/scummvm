@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "sound/mpu401.h"
 #include "common/system.h"
 #include "common/timer.h"

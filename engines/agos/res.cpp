@@ -24,7 +24,7 @@
  */
 
 // Resource file routines for Simon1/Simon2
-#include "common/stdafx.h"
+
 
 #include "common/file.h"
 
@@ -125,7 +125,7 @@ int AGOSEngine::allocGamePcVars(Common::SeekableReadStream *in) {
 		item_array_size += 2;
 		item_array_inited = item_array_size;
 	} else {
-		item_array_inited += 2;		
+		item_array_inited += 2;
 		item_array_size += 2;
 	}
 
@@ -395,7 +395,7 @@ void AGOSEngine::readItemChildren(Common::SeekableReadStream *in, Item *item, ui
 		setUserFlag(item, 6, in->readUint16BE());
 		setUserFlag(item, 7, in->readUint16BE());
 		SubUserFlag *subUserFlag = (SubUserFlag *)findChildOfType(item, kUserFlagType);
-		subUserFlag->userItems[0] = (uint16)fileReadItemID(in); 
+		subUserFlag->userItems[0] = (uint16)fileReadItemID(in);
 		fileReadItemID(in);
 		fileReadItemID(in);
 		fileReadItemID(in);
@@ -658,7 +658,7 @@ void AGOSEngine::loadVGABeardFile(uint16 id) {
 		if (getPlatform() == Common::kPlatformAmiga) {
 			if (getFeatures() & GF_TALKIE)
 				sprintf(filename, "0%d.out", id);
-			else 
+			else
 				sprintf(filename, "0%d.pkd", id);
 		} else {
 			sprintf(filename, "0%d.VGA", id);

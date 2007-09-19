@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/file.h"
@@ -1462,7 +1460,7 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", num_room);
 	strcat(num_room, ".alg");
-	
+
 	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &musica_room);
 	getLine(ald, buffer, size);
@@ -1582,7 +1580,7 @@ martini:
 			strcpy(fondo_y_menu, "99.alg");
 		}
 	}
-	
+
 	obj_salir = -1;
 	for (l = 0; l < objs_room; l++) {
 		if (num_obj[l] == obj_saliendo)
@@ -1702,7 +1700,7 @@ martini:
 		hare_se_ve = 0;
 	if (!strcmp(num_room, "49.alg") && flags[7] == 0)
 		animacion_4_5();
- 
+
 	refresca_pantalla();
 }
 
@@ -2065,7 +2063,7 @@ void DrasculaEngine::saves() {
 			for (n = 0; n < NUM_SAVES; n++) {
 				if (x_raton > 115 && y_raton > y + (9 * n) && x_raton < 115 + 175 && y_raton < y + 10 + (9 * n)) {
 					strcpy(select, nombres[n]);
-					
+
 				// FIXME: The indention is wrong and misleading here!!! Or maybe there's simply a
 				// closing brace missing here??? See below for a second FIXME of a similar kind...
 
@@ -3405,7 +3403,7 @@ void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 
 	if (factor_red[hare_y + alto_hare] == 100)
 		suma_1_pixel = 0;
-	
+
 	if (num_ejec == 2)
 		buffer_teclado();
 
@@ -3460,7 +3458,7 @@ bucless:
 	} else if (sentido_hare == 1) {
 		if (num_ejec == 1)
 			reduce_hare_chico(x_habla_dch[cara], y_mask_habla, hare_x + 12 * factor_red[hare_y + alto_hare] / 100,
-						hare_y, ancho_habla,alto_habla, factor_red[hare_y + alto_hare], 
+						hare_y, ancho_habla,alto_habla, factor_red[hare_y + alto_hare],
 						dir_hare_dch, dir_zona_pantalla);
 		else if (num_ejec == 2)
 			DIBUJA_BLOQUE(x_habla_dch[cara], y_mask_habla, hare_x + 8, hare_y, ancho_habla, alto_habla,
@@ -6168,7 +6166,7 @@ void DrasculaEngine::animacion_2_2() {
 		x = x + 50;
 		pausa(3);
 	}
-	
+
 	x = 0;
 
 	for (n = 0; n < 6; n++){
@@ -6212,7 +6210,7 @@ void DrasculaEngine::animacion_2_2() {
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	fin_sound();        
+	fin_sound();
 
 	pausa (4);
 
@@ -6341,7 +6339,7 @@ void DrasculaEngine::animacion_14() {
 	pos_cabina[3] = -160;
 	pos_cabina[4] = 158;
 	pos_cabina[5] = 161;
- 
+
 	for (n = -160; n <= 0; n = n + 5 + l) {
 		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		actualiza_refresco_antes();
@@ -6361,7 +6359,7 @@ void DrasculaEngine::animacion_14() {
 	comienza_sound("s7.als");
 	hipo(15);
 
-	fin_sound();        
+	fin_sound();
 
 	lee_dibujos("99.alg");
 	descomprime_dibujo(dir_hare_fondo, 1);
@@ -6459,7 +6457,7 @@ void DrasculaEngine::animacion_16() {
 	if (key != 0)
 		goto asco;
 
-	_system->delayMillis(4);   
+	_system->delayMillis(4);
 	key = getscan();
 	if (key != 0)
 		goto asco;
@@ -6487,7 +6485,7 @@ asco:
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	FundeDelNegro(0);
 	if (musica_room != 0)
-		playmusic(musica_room);  
+		playmusic(musica_room);
 	else
 		stopmusic();
 }
@@ -6517,7 +6515,7 @@ void DrasculaEngine::animacion_20() {
 	} else {
 		hablar(TEXT386, "386.als");
 		habla_vbpuerta(TEXTVB12, "VB12.als");
-		flags[18] = 0;               
+		flags[18] = 0;
 		flags[14] = 1;
 		abre_puerta(15, 1);
 		sal_de_la_habitacion(1);
@@ -6542,7 +6540,7 @@ void DrasculaEngine::animacion_23() {
 
 	flags[21] = 1;
 
-	if (flags[25] == 0) { 
+	if (flags[25] == 0) {
 		habla_vb(TEXTVB13, "VB13.als");
 		habla_vb(TEXTVB14, "VB14.als");
 		pausa(10);
@@ -6550,7 +6548,7 @@ void DrasculaEngine::animacion_23() {
 	}
 
 	habla_vb(TEXTVB15, "VB15.als");
-	lleva_vb(42);        
+	lleva_vb(42);
 	sentido_vb = 1;
 	habla_vb(TEXTVB16, "VB16.als");
 	sentido_vb = 2;
@@ -6573,7 +6571,7 @@ void DrasculaEngine::animacion_23() {
 	animacion_25();
 	lleva_vb(99);
 
-	if (flags[29] == 0) {        
+	if (flags[29] == 0) {
 		habla_vb(TEXTVB19, "VB19.als");
 		if (flags[25] == 0) {
 			habla_vb(TEXTVB20,"VB20.als");
@@ -6643,7 +6641,7 @@ void DrasculaEngine::animacion_25() {
 	descomprime_dibujo(dir_hare_fondo, 1);
 	lee_dibujos("18.alg");
 	descomprime_dibujo(dir_dibujo1, 1);
-	  
+
 	pos_cabina[0] = 150;
 	pos_cabina[1] = 6;
 	pos_cabina[2] = 69;
@@ -6652,9 +6650,9 @@ void DrasculaEngine::animacion_25() {
 	pos_cabina[5] = 161;
 
 	flags[24] = 0;
-	  
+
 	comienza_sound("s6.als");
-	  
+
 	for (n = 0; n >= -160; n = n - 8) {
 		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
@@ -6669,14 +6667,14 @@ void DrasculaEngine::animacion_25() {
 		actualiza_refresco();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	}
-	  
+
 	fin_sound();
 
 	lee_dibujos("99.alg");
 	descomprime_dibujo(dir_hare_fondo, 1);
 }
 
-void DrasculaEngine::animacion_27() {        
+void DrasculaEngine::animacion_27() {
 	flags[22] = 1;
 
 	sin_verbo();
@@ -6695,14 +6693,14 @@ void DrasculaEngine::animacion_27() {
 	habla_vb(TEXTVB26,"VB26.als");
 }
 
-void DrasculaEngine::animacion_28(){        
+void DrasculaEngine::animacion_28(){
 	habla_vb(TEXTVB27, "VB27.als");
 	habla_vb(TEXTVB28, "VB28.als");
 	habla_vb(TEXTVB29, "VB29.als");
 	habla_vb(TEXTVB30, "VB30.als");
 }
 
-void DrasculaEngine::animacion_29(){        
+void DrasculaEngine::animacion_29(){
 	if (flags[33] == 0) {
 		habla_vb(TEXTVB32, "VB32.als");
 		hablar(TEXT398, "398.als");
@@ -6733,12 +6731,12 @@ void DrasculaEngine::animacion_29(){
 		hablar(TEXT386, "386.als");
 }
 
-void DrasculaEngine::animacion_30(){        
+void DrasculaEngine::animacion_30(){
 	habla_vb(TEXTVB31, "VB31.als");
 	hablar(TEXT396, "396.als");
 }
 
-void DrasculaEngine::animacion_31(){        
+void DrasculaEngine::animacion_31(){
 	habla_vb(TEXTVB44, "VB44.als");
 	lleva_vb(-50);
 	pausa(15);
@@ -6756,11 +6754,11 @@ void DrasculaEngine::animacion_31(){
 	hablar(TEXT406, "406.als");
 	lleva_vb(98);
 	habla_vb(TEXTVB45, "VB45.als");
-	habla_vb(TEXTVB46, "VB46.als"); 
+	habla_vb(TEXTVB46, "VB46.als");
 	habla_vb(TEXTVB47, "VB47.als");
 	hablar(TEXT407, "407.als");
 	habla_vb(TEXTVB48, "VB48.als");
-	habla_vb(TEXTVB49, "VB49.als"); 
+	habla_vb(TEXTVB49, "VB49.als");
 	hablar(TEXT408, "408.als");
 	habla_vb(TEXTVB50, "VB50.als");
 	habla_vb(TEXTVB51, "VB51.als");
@@ -7019,7 +7017,7 @@ bucless:
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	pos_ciego[5] = 149;
 	char c = toupper(sincronia[p]);
-	if (c == '0') 
+	if (c == '0')
 		cara = 0;
 	if (c == '1')
 		cara = 1;
@@ -7098,7 +7096,7 @@ void DrasculaEngine::habla_hacker(const char *dicho, const char *filename) {
 
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	
+
 	color_abc(AMARILLO);
 
 	if (hay_sb == 1) {
@@ -7250,7 +7248,7 @@ void DrasculaEngine::abre_puerta(int nflag, int n_puerta) {
 			comienza_sound("s3.als");
 			flags[nflag] = 1;
 		}
-		if (num_ejec == 1 && nflag == 7) 
+		if (num_ejec == 1 && nflag == 7)
 			return;
 		comienza_sound("s3.als");
 		flags[nflag] = 1;
@@ -8618,7 +8616,7 @@ bucless:
 	pon_hare();
 	actualiza_refresco();
 
-	if (con_voces == 0) 
+	if (con_voces == 0)
 		centra_texto(dicho, 203, 78);
 
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);

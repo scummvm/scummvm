@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "cine/unpack.h"
@@ -35,7 +35,7 @@ struct UnpackCtx {
 	uint32 crc;
 	uint32 chk;
 	byte *dst;
-	const byte *src;	
+	const byte *src;
 };
 
 static int rcr(UnpackCtx *uc, int CF) {
@@ -63,7 +63,7 @@ static uint16 getCode(UnpackCtx *uc, byte numChunks) {
 		c <<= 1;
 		if (nextChunk(uc)) {
 			c |= 1;
-		}			
+		}
 	}
 	return c;
 }

@@ -26,7 +26,6 @@
 #ifndef BACKENDS_PLUGINS_DC_H
 #define BACKENDS_PLUGINS_DC_H
 
-#include "common/stdafx.h"
 #include "base/plugins.h"
 
 #if defined(DYNAMIC_MODULES) && defined(__DC__)

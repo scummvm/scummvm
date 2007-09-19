@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "sword1/eventman.h"
 #include "sword1/sworddefs.h"
 #include "common/util.h"

@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
@@ -110,7 +108,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 
 /**
  * The fallback game descriptor used by the Drascula engine's fallbackDetector.
- * Contents of this struct are to be overwritten by the fallbackDetector. 
+ * Contents of this struct are to be overwritten by the fallbackDetector.
  */
 static DrasculaGameDescription g_fallbackDesc = {
 	{

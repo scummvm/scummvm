@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/stream.h"
 #include "common/util.h"
@@ -87,7 +87,7 @@ void Sprites::setupSceneAnims() {
 
 			//sceneUnk2[i] = READ_LE_UINT16(data);
 			data += 4;
-			
+
 			_anims[i].x = READ_LE_UINT16(data);
 			data += 4;
 			_anims[i].y = READ_LE_UINT16(data);
@@ -216,7 +216,7 @@ void Sprites::updateSceneAnims() {
 			data += 2;
 			debugC(1, kDebugLevelSprites, "func: Set value of unknown animation property to 0");
 			_anims[i].unk1 = 0;
-			break;		
+			break;
 		case 0xFF97:
 			data += 2;
 			debugC(6, kDebugLevelSprites, "func: Set default X coordinate of sprite");
@@ -425,7 +425,7 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 		if (_vm->queryGameFlag(0xA0))
 			memcpy(_screen->getPalette(3), _screen->getPalette(4), 32*3);
 		else
-			memcpy(_screen->getPalette(3), _screen->getPalette(0), 32*3);	
+			memcpy(_screen->getPalette(3), _screen->getPalette(0), 32*3);
 	} else {
 		if (_vm->queryGameFlag(0xA0))
 			memcpy(_screen->getPalette(1), _screen->getPalette(3), 768);
@@ -446,7 +446,7 @@ void Sprites::loadDat(const char *filename, SceneExits &exits) {
 
 		while (1) {
 			if (((uint16)(data - _dat) >= fileSize) || (data - start) >= length)
-				break;	
+				break;
 
 			if (READ_LE_UINT16(data) == 0xFF83) {
 				//debugC(1, kDebugLevelSprites, "Body section end.");

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agos/agos.h"
 #include "agos/debugger.h"
@@ -490,7 +490,7 @@ void AGOSEngine::delay(uint amount) {
 					} else if (event.kbd.keycode == Common::KEYCODE_u) {
 						dumpAllSubroutines();
 					}
-				} 
+				}
 
 				if (getGameType() == GType_PP) {
 					if (event.kbd.flags == Common::KBD_SHIFT)
@@ -588,7 +588,7 @@ void AGOSEngine_Feeble::timer_proc1() {
 		}
 
 		animateSprites();
-	} 
+	}
 
 	if (_displayScreen) {
 		if (getGameType() == GType_FF) {
@@ -623,7 +623,7 @@ void AGOSEngine::timer_proc1() {
 		_cepeFlag ^= 1;
 		if (!_cepeFlag)
 			processVgaEvents();
-	} 
+	}
 
 	if (_displayScreen) {
 		displayScreen();
@@ -647,7 +647,7 @@ void AGOSEngine::dimp_idle() {
 					while (z == 0) {
 						n = _rnd.getRandomNumber(2);
 						switch (n) {
-							case(0): 
+							case(0):
 								if (_variableArray[110] > 2)
 									break;
 								n = _rnd.getRandomNumber(6);

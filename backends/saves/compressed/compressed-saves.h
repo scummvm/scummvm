@@ -26,7 +26,6 @@
 #ifndef BACKEND_SAVES_COMPRESSED_H
 #define BACKEND_SAVES_COMPRESSED_H
 
-#include "common/stdafx.h"
 #include "common/savefile.h"
 
 /**

@@ -29,7 +29,6 @@
 // http://www.dreampoint.co.uk
 // This code is public domain
 
-#include "common/stdafx.h"
 #include "sound/softsynth/mt32/freeverb.h"
 
 comb::comb() {

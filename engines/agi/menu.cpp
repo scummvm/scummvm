@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agi/agi.h"
 #include "agi/sprite.h"
@@ -66,7 +66,7 @@ AgiMenu *Menu::getMenu(int i) {
 AgiMenuOption *Menu::getMenuOption(int i, int j) {
 	AgiMenu *m = getMenu(i);
 	MenuOptionList::iterator iter;
-	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {	
+	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {
 		AgiMenuOption* d = *iter;
 		if (d->index == j)
 			return d;
@@ -80,7 +80,7 @@ void Menu::drawMenuBar() {
 	_vm->flushLines(0, 0);
 
 	MenuList::iterator iter;
-	for (iter = _menubar.begin(); iter != _menubar.end(); ++iter) {	
+	for (iter = _menubar.begin(); iter != _menubar.end(); ++iter) {
 		AgiMenu *m = *iter;
 		_vm->printText(m->text, 0, m->col, 0, 40, MENU_FG, MENU_BG);
 	}
@@ -103,7 +103,7 @@ void Menu::drawMenuOption(int hMenu) {
 			(1 + m->height + 2) * CHAR_LINES, MENU_BG, MENU_LINE, 0);
 
 	MenuOptionList::iterator iter;
-	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {	
+	for (iter = m->down.begin(); iter != m->down.end(); ++iter) {
 		AgiMenuOption* d = *iter;
 		_vm->printText(d->text, 0, m->wincol + 1, d->index + 2, m->width + 2,
 				MENU_FG, MENU_BG, !d->enabled);

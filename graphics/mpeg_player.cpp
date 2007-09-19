@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "graphics/mpeg_player.h"
 #include "common/file.h"
 #include "common/system.h"

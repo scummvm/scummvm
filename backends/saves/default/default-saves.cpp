@@ -25,7 +25,6 @@
 
 #if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
-#include "common/stdafx.h"
 #include "common/savefile.h"
 #include "common/util.h"
 #include "common/fs.h"
@@ -119,13 +118,13 @@ Common::StringList DefaultSaveFileManager::listSavefiles(const char *regex) {
 	FSList savefiles;
 	Common::StringList results;
 	Common::String search(regex);
-	
+
 	if (savePath.lookupFile(savefiles, savePath, search, false, true)) {
 		for (FSList::const_iterator file = savefiles.begin(); file != savefiles.end(); file++) {
 			results.push_back(file->getPath());
 		}
 	}
-				
+
 	return results;
 }
 
@@ -148,11 +147,11 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 	// Ensure that the savepath exists and is writeable. If not, generate
 	// an appropriate error
 	const char *savePath = getSavePath();
-	
+
 #if defined(UNIX) || defined(__SYMBIAN32__)
 	struct stat sb;
 	clearError();
-	
+
 	// Check whether the dir exists
 	if (stat(savePath, &sb) == -1) {
 		// The dir does not exist, or stat failed for some other reason.
@@ -174,7 +173,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 				// or is not writeable, the path could be completly bogus, etc.
 				warning("mkdir for '%s' failed!", savePath);
 				perror("mkdir");
-				
+
 				switch (errno) {
 				case EACCES:
 					setError(SFM_DIR_ACCESS, Common::String("Search or write permission denied"));
@@ -198,19 +197,19 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 					setError(SFM_DIR_ROFS, Common::String("The parent directory resides on a read-only file system"));
 					break;
 				}
-				
+
 				return 0;
 			}
 			break;
 		case ENOTDIR:
 			setError(SFM_DIR_NOTDIR, Common::String("A component of the path prefix is not a directory"));
 			break;
-		} 
+		}
 	} else {
 		// So stat() succeeded. But is the path actually pointing to a directory?
 		if (!S_ISDIR(sb.st_mode)) {
 			setError(SFM_DIR_NOTDIR, Common::String("The given savepath is not a directory"));
-			
+
 			return 0;
 		}
 	}
@@ -225,7 +224,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 		delete sf;
 		sf = 0;
 	}
-	
+
 	return wrapOutSaveFile(sf);
 }
 

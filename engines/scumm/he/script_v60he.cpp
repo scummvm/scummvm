@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/savefile.h"
 
 #include "scumm/actor.h"

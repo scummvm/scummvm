@@ -24,7 +24,6 @@
 #define _DSMAIN_H
 
 #include <nds.h>
-#include "stdafx.h"
 #include "osystem_ds.h"
 #include "scummconsole.h"
 #include "NDS/scummvm_ipc.h"

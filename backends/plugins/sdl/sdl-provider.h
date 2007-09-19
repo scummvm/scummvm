@@ -26,7 +26,6 @@
 #ifndef BACKENDS_PLUGINS_SDL_H
 #define BACKENDS_PLUGINS_SDL_H
 
-#include "common/stdafx.h"
 #include "base/plugins.h"
 
 #if defined(DYNAMIC_MODULES) && defined(SDL_BACKEND)

@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "CEDevice.h"
 
 #include <SDL.h>

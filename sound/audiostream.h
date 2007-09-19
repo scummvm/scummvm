@@ -26,7 +26,6 @@
 #ifndef SOUND_AUDIOSTREAM_H
 #define SOUND_AUDIOSTREAM_H
 
-#include "common/stdafx.h"
 #include "common/util.h"
 #include "common/scummsys.h"
 
@@ -87,7 +86,7 @@ public:
 	 * In case of an error, the file handle will be closed, but deleting
 	 * it is still the responsibilty of the caller.
 	 * @param basename	a filename without an extension
-	 * @param startTime	the (optional) time offset in milliseconds from which to start playback 
+	 * @param startTime	the (optional) time offset in milliseconds from which to start playback
 	 * @param duration	the (optional) time in milliseconds specifying how long to play
 	 * @param numLoops	how often the data shall be looped (0 = infinite)
 	 * @return	an Audiostream ready to use in case of success;
@@ -111,7 +110,7 @@ AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte f
  */
 class AppendableAudioStream : public Audio::AudioStream {
 public:
-	
+
 	/**
 	 * Queue another audio data buffer for playback. The stream
 	 * will playback all queued buffers, in the order they were
@@ -120,7 +119,7 @@ public:
 	 * with new[], not with malloc).
 	 */
 	virtual void queueBuffer(byte *data, uint32 size) = 0;
-	
+
 	/**
 	 * Mark the stream as finished, that is, signal that no further data
 	 * will be appended to it. Only after this has been done can the

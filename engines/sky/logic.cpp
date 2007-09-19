@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/rect.h"
 
@@ -66,7 +66,7 @@ void Logic::setupLogicTable() {
 		&Logic::waitSync,	 // 15 Set to l_script when sync!=0
 		&Logic::simpleAnim,	 // 16 Module anim without x,y's
 	};
-	
+
 	_logicTable = logicTable;
 }
 
@@ -960,7 +960,7 @@ void Logic::setupMcodeTable() {
 		&Logic::fnUnPauseFx,
 		&Logic::fnPrintf
 	};
-	
+
 	_mcodeTable = mcodeTable;
 }
 

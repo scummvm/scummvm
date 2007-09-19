@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "sound/mods/module.h"
 
 #include "common/util.h"
@@ -173,7 +171,7 @@ bool Module::load(Common::SeekableReadStream &st, int offs) {
 		if (!sample[i].len) {
 			sample[i].data = 0;
 		} else {
-			if (offs != 0) {		
+			if (offs != 0) {
 				// For modules that use common samples
 				for (int j = 0; j < NUM_SAMPLES; ++j) {
 					if (!scumm_stricmp((const char *)commonSamples[j].name, (const char *)sample[i].name)) {

@@ -26,7 +26,7 @@
 #ifndef LURE_ROOM_H
 #define LURE_ROOM_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "lure/disk.h"
 #include "lure/res.h"
@@ -49,7 +49,7 @@ private:
 	bool _cells[FULL_VERT_RECTS][FULL_HORIZ_RECTS];
 public:
 	RoomLayer(uint16 screenId, bool backgroundLayer);
-	bool isOccupied(byte cellX, byte cellY) { 
+	bool isOccupied(byte cellX, byte cellY) {
 		return _cells[cellY][cellX];
 	}
 };
@@ -90,7 +90,7 @@ public:
 	Room();
 	~Room();
 	static Room &getReference();
-	
+
 	void update();
 	void nextFrame();
 	void checkCursor();

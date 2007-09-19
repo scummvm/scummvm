@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/util.h"
@@ -108,12 +108,12 @@ int BaseAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 					*buffer++ = (int16)*src++ << 8;
 			}
 		}
-		
+
 		if (!_samplesLeft && _loop) {
 			rewind();
 		}
 	}
-	
+
 	return retVal;
 }
 
@@ -173,7 +173,7 @@ AiffAudioStream::AiffAudioStream(Common::SeekableReadStream *source, bool loop) 
 void AiffAudioStream::rewind() {
 	int rate, size;
 	byte flags;
-	
+
 	_sourceStream->seek(0);
 
 	if (Audio::loadAIFFFromStream(*_sourceStream, size, rate, flags)) {
@@ -189,7 +189,7 @@ int AiffAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			buffer[i] = (int16)READ_BE_UINT16(buffer + i);
 		}
 	}
-	
+
 	return retVal;
 }
 
@@ -244,7 +244,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 		if (_file.open(fileName))
 			_audioSource = new AiffAudioStream(&_file, loop);
 	}
-	
+
 	if (!_audioSource)
 		return false;
 

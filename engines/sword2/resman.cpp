@@ -25,7 +25,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 #include "common/file.h"
 #include "common/system.h"
 
@@ -89,7 +89,7 @@ ResourceManager::~ResourceManager() {
 	free(_resConvTable);
 }
 
-    
+
 bool ResourceManager::init() {
 	uint32 i, j;
 

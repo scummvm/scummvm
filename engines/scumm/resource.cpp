@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/str.h"
 
 #include "scumm/charset.h"
@@ -101,7 +101,7 @@ void ScummEngine::openRoom(const int room) {
 			_fileOffset = _res->roomoffs[rtRoom][room];
 			return;
 		}
-		
+
 		Common::String filename(generateFilename(room));
 
 		// Determine the encryption, if any.
@@ -327,7 +327,7 @@ void ScummEngine::readIndexFile() {
 bool checkTryMedia(BaseScummFile *handle) {
 	byte buf[TRYMEDIA_MARK_LEN];
 	bool matched = true;
-	const byte magic[2][TRYMEDIA_MARK_LEN] = 
+	const byte magic[2][TRYMEDIA_MARK_LEN] =
 		{{ 0x00,  'T', 'M', 'S', 'A', 'M' },
 		 { 'i',   '=', '$', ':', '(', '$' }};  // Same but 0x69 xored
 

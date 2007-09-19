@@ -35,26 +35,6 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
-		<Unit filename="..\..\engines\lure\debug-input.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\lure\debug-input.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\lure\debug-methods.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\lure\debug-methods.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="default" />
-		</Unit>
 		<Unit filename="..\..\engines\lure\debugger.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -75,6 +55,10 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\lure\detection.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\lure\disk.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -93,6 +77,10 @@
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\lure\fights.cpp">
+			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\lure\game.cpp">
@@ -221,6 +209,10 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\lure\sound.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\lure\strings.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -236,16 +228,6 @@
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\lure\surface.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\lure\system.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\lure\system.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />

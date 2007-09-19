@@ -20,7 +20,6 @@
  *
  */
  
-#include "stdafx.h"
 #include "cdaudio.h"
 #include "ds-fs.h"
 #include "config-manager.h"

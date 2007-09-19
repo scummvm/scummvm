@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "parallaction/parallaction.h"
 
 

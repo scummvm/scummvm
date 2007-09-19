@@ -20,7 +20,6 @@
  * 
  */
  // Save in order 1,2,3,4,larger 2,5
-#include "stdafx.h"
 #include "system.h"
 #include "ramsave.h"
 #include "nds.h"
