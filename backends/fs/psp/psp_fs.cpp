@@ -104,7 +104,7 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 	assert(p.size() > 0);
         
 	_path = p;
-	_displayName = _path;
+	_displayName = lastPathComponent(_path);
 	_isValid = true;
 	_isDirectory = true;
 
