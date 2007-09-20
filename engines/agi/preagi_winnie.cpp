@@ -57,19 +57,20 @@ void Winnie::initVars() {
 	winnie_event = false;
 }
 
-void Winnie::readRoom(int iRoom, uint8 *buffer, int buflen) {
+uint32 Winnie::readRoom(int iRoom, uint8 *buffer) {
 	char szFile[256] = {0};
 	sprintf(szFile, IDS_WTP_PATH_ROOM, iRoom);
 	Common::File file;
 	if (!file.open(szFile))
-		return;
+		return 0;
 	uint32 filelen = file.size();
 	memset(buffer, 0, sizeof(buffer));
 	file.read(buffer, filelen);
 	file.close();
+	return filelen;
 }
 
-int Winnie::readObj(int iObj, uint8 *buffer, int buflen) {
+uint32 Winnie::readObj(int iObj, uint8 *buffer) {
 	char szFile[256] = {0};
 	sprintf(szFile, IDS_WTP_PATH_OBJ, iObj);
 	Common::File file;
@@ -404,7 +405,7 @@ void Winnie::printObjStr(int iObj, int iStr) {
 	WTP_OBJ_HDR hdr;
 	uint8 *buffer = (uint8 *)malloc(2048);
 
-	readObj(iObj, buffer, 2048);
+	readObj(iObj, buffer);
 	memcpy(&hdr, buffer, sizeof(hdr));
 	_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr] - IDI_WTP_OFS_OBJ));
 
@@ -417,9 +418,9 @@ bool Winnie::isRightObj(int iRoom, int iObj, int *iCode) {
 	uint8 *roomdata = (uint8 *)malloc(4096);
 	uint8 *objdata = (uint8 *)malloc(2048);
 
-	readRoom(iRoom, roomdata, 4096);
+	readRoom(iRoom, roomdata);
 	memcpy(&roomhdr, roomdata, sizeof(WTP_ROOM_HDR));
-	readObj(iObj, objdata, 2048);
+	readObj(iObj, objdata);
 	memcpy(&objhdr, objdata, sizeof(WTP_OBJ_HDR));
 
 	free(roomdata);
@@ -922,7 +923,7 @@ void Winnie::gameLoop() {
 phase0:
 	if (!game.nObjMiss && (room == IDI_WTP_ROOM_PICNIC))
 		room = IDI_WTP_ROOM_PARTY;
-	readRoom(room, roomdata, 4096);
+	readRoom(room, roomdata);
 	memcpy(&hdr, roomdata, sizeof(WTP_ROOM_HDR));
 	drawRoomPic();
 phase1:
@@ -949,7 +950,7 @@ phase2:
 		}
 	}
 
-	delete [] roomdata;
+	free(roomdata);
 }
 
 void Winnie::drawPic(const char *szName) {
@@ -970,7 +971,7 @@ void Winnie::drawPic(const char *szName) {
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
-	delete [] buffer;
+	free(buffer);
 }
 
 void Winnie::drawObjPic(int iObj, int x0, int y0) {
@@ -980,7 +981,7 @@ void Winnie::drawObjPic(int iObj, int x0, int y0) {
 	if (!iObj)
 		return;
 
-	int objSize = readObj(iObj, buffer, 2048);
+	uint32 objSize = readObj(iObj, buffer);
 	memcpy(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
 
 	_vm->_picture->setOffset(x0, y0);
@@ -990,7 +991,7 @@ void Winnie::drawObjPic(int iObj, int x0, int y0) {
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
 
-	delete [] buffer;
+	free(buffer);
 }
 
 void Winnie::drawRoomPic() {
@@ -1004,7 +1005,7 @@ void Winnie::drawRoomPic() {
 	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	// read room picture
-	readRoom(room, buffer, 4096);
+	readRoom(room, buffer);
 	memcpy(&roomhdr, buffer, sizeof(WTP_ROOM_HDR));
 
 	// draw room picture
@@ -1016,7 +1017,7 @@ void Winnie::drawRoomPic() {
 	// draw object picture
 	drawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
 
-	delete [] buffer;
+	free(buffer);
 }
 
 void Winnie::clrMenuSel(int *iSel, int fCanSel[]) {
@@ -1030,7 +1031,7 @@ void Winnie::printRoomStr(int iRoom, int iStr) {
 	WTP_ROOM_HDR hdr;
 	uint8 *buffer = (uint8 *)malloc(4096);
 
-	readRoom(iRoom, buffer, 4096);
+	readRoom(iRoom, buffer);
 	memcpy(&hdr, buffer, sizeof(hdr));
 	_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM));
 
@@ -1054,14 +1055,14 @@ void Winnie::saveGame() {
 	uint8 *buffer = (uint8 *)malloc(sizeof(WTP_SAVE_GAME));
 	memcpy(buffer, &game, sizeof(WTP_SAVE_GAME));
 	writeSaveGame(buffer);
-	delete [] buffer;
+	free(buffer);
 }
 
 void Winnie::loadGame() {
 	uint8 *buffer = (uint8 *)malloc(sizeof(WTP_SAVE_GAME));
 	readSaveGame(buffer);
 	memcpy(&game, buffer, sizeof(WTP_SAVE_GAME));
-	delete [] buffer;
+	free(buffer);
 }
 
 void Winnie::readSaveGame(uint8 *buffer) {

@@ -314,7 +314,7 @@ private:
 	void intro();
 	void drawPic(const char*);
 	void gameLoop();
-	void readRoom(int, uint8*, int);
+	uint32 readRoom(int, uint8*);
 	void drawRoomPic();
 	int parser(int, int, uint8*);
 	int getObjInRoom(int);
@@ -328,7 +328,7 @@ private:
 	void printRoomStr(int, int);
 	void inventory();
 	void printObjStr(int, int);
-	int readObj(int, uint8*, int);
+	uint32 readObj(int, uint8*);
 	void takeObj(int);
 	void dropObj(int);
 	bool isRightObj(int, int, int*);
