@@ -83,7 +83,7 @@ uint16 get_sequence_index(uint16 offset, int supportIndex) {
 		}
 	}
 
-	for (int index = 0; index <= numSupportEntries; ++index) {
+	for (index = 0; index <= numSupportEntries; ++index) {
 		SupportStructure &rec = supportList[index];
 
 		if ((rec.numInstructions > 0) &&
@@ -294,7 +294,6 @@ struct RoomRandomActionSet {
 void read_action_sequence(byte *&data, uint16 &totalSize) 
 {
 	const uint16 hsOffset = 0x5d98;
-	const uint16 hsStartId = 0x3e8;
 	uint16 hotspotIndex;
 	HotspotHeaderEntry entryHeader;
 	CurrentActionInput action;
@@ -335,7 +334,6 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 		randomActions[roomIndex].entries = new RoomRandomActionEntry[randomActions[roomIndex].numEntries];
 
 		// Loop through the entries
-		uint16 sequenceVal;
 		uint16 offset = randomActions[roomIndex].offset + 1;
 		for (uint8 entryCtr = 0; entryCtr < randomActions[roomIndex].numEntries; ++entryCtr)
 		{

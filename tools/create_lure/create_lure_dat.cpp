@@ -110,7 +110,6 @@ void read_room_data(byte *&data, uint16 &totalSize)
 	uint16 offset = (ROOM_NUM_ENTRIES + 1) * sizeof(uint16);
 	uint16 pixelOffset;
 	RoomResource buffer;
-	int outputIndex = 0;
 	RoomHeaderEntry headerEntry;
 	RoomRectIn bounds;
 
@@ -737,7 +736,7 @@ void read_talk_headers(byte *&data, uint16 &totalSize) {
 	TalkEntry *entry = (TalkEntry *) data;
 	uint16 offset = TALK_NUM_ENTRIES * sizeof(TalkEntry) + sizeof(uint16);
 
-	for (int entryCtr = 0; entryCtr < TALK_NUM_ENTRIES; ++entryCtr) {
+	for (entryCtr = 0; entryCtr < TALK_NUM_ENTRIES; ++entryCtr) {
 		entry->hotspotId = entries[entryCtr].hotspotId;
 		entry->offset = TO_LE_16(offset);
 		++entry;
@@ -1248,20 +1247,17 @@ void validate_executable() {
 }
 
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
+	// FIXME: This is not portable
 	const char *inFilename = (argc >= 2) ? argv[1] : "c:\\games\\lure\\lure.exe";
 	const char *outFilename = (argc == 3) ? argv[2] : "c:\\games\\lure\\lure.dat";
 
-	if (!lure_exe.open(inFilename))
-	{
+	if (!lure_exe.open(inFilename)) {
 		if (argc == 1) 
 			printf("Format: %s input_exe_filename output_filename\n", argv[0]);
 		else
 			printf("Could not open file: %s\n", inFilename);
-	} 
-	else 
-	{
+	} else  {
 		validate_executable();
 		createFile(outFilename);	
 		lure_exe.close();

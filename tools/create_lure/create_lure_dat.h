@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef __createlure_dat__
-#define __createlure_dat__
+#ifndef __CREATELURE_DAT__
+#define __CREATELURE_DAT__
 
 #include "common/endian.h"
 
@@ -90,7 +90,10 @@
 #define SOUND_1_OFFSET 0x5671
 #define SOUND_1_SIZE 265
 
-#pragma pack(1)
+#include "common/pack-start.h"	// START STRUCT PACKING
+
+// FIXME: Add PACKED_STRUCT to all structs which actually need packing,
+// for increased portability
 
 // Rect currently copied from common/rect.h - if I try directly including it,
 // the link complains about an unresolved external token Common.String.__dtor
@@ -367,6 +370,10 @@ enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRI
 extern void read_action_sequence(byte *&data, uint16 &totalSize);
 
 extern uint16 get_sequence_index(uint16 offset, int supportIndex = -1);
+
+#include "common/pack-end.h"	// END STRUCT PACKING
+
+
 
 enum AccessMode {
 	kFileReadMode = 1,
