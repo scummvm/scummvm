@@ -877,11 +877,16 @@ const uint8 colorBCG[16][2] = {
 };
 
 void Mickey::drawLogo() {
+	// TODO: clean this up and make it work properly, the logo is drawn way off to the right
+	return;	// remove this once the code below is done
+
 	char szFile[256] = {0};
 	uint8 *buffer = new uint8[16384];
-	const int w = 80;
-	const int h = 170;
-	uint8 bitmap[h][w];
+	const int w = 150;
+	const int h = 80;
+	const int xoffset = 30;	// FIXME: remove this
+	uint8 bitmap[w][h];
+	uint8 color, color2, color3, color4;
 
 	// read in logos.bcg
 	sprintf(szFile, IDS_MSA_PATH_LOGO);
@@ -894,31 +899,31 @@ void Mickey::drawLogo() {
 	// draw logo bitmap
 	memcpy(bitmap, buffer, sizeof(bitmap));
 
-	/*
-	// TODO: Show BCG picture
-	for (int y = 0; y < h; y++) {
-		for (int x = 0; x < w; x++) {
-			uint8 color  = colorBCG[(bitmap[y][x] & 0xf0) / 0x10][0];	// background
-			uint8 color2 = colorBCG[(bitmap[y][x] & 0xf0) / 0x10][1];	// background
-			uint8 color3 = colorBCG[ bitmap[y][x] & 0x0f][0];			// foreground
-			uint8 color4 = colorBCG[ bitmap[y][x] & 0x0f][1];			// foreground
+	_vm->_picture->setDimensions(w, h);
 
-			_vm->_picture->putPixel(x * 4,			y,		color);
-			_vm->_picture->putPixel(x * 4 + 1,		y,		color2);
-			_vm->_picture->putPixel(x * 4 + 2,		y,		color3);
-			_vm->_picture->putPixel(x * 4 + 3,		y,		color4);
-			_vm->_picture->putPixel(x * 4,			y + 1,	color);
-			_vm->_picture->putPixel(x * 4 + 1,		y + 1,	color2);
-			_vm->_picture->putPixel(x * 4 + 2,		y + 1,	color3);
-			_vm->_picture->putPixel(x * 4 + 3,		y + 1,	color4);
+	// Show BCG picture
+	for (int y = 0; y < h; y++) {
+		for (int x = xoffset; x < w; x++) {
+			color  = colorBCG[(bitmap[y][x] & 0xf0) / 0x10][0];	// background
+			color2 = colorBCG[(bitmap[y][x] & 0xf0) / 0x10][1];	// background
+			color3 = colorBCG[ bitmap[y][x] & 0x0f][0];			// foreground
+			color4 = colorBCG[ bitmap[y][x] & 0x0f][1];			// foreground
+
+			_vm->_picture->putPixel(x * 4 - xoffset,			y,		color);
+			_vm->_picture->putPixel(x * 4 + 1 - xoffset,		y,		color2);
+			_vm->_picture->putPixel(x * 4 + 2 - xoffset,		y,		color3);
+			_vm->_picture->putPixel(x * 4 + 3 - xoffset,		y,		color4);
+			_vm->_picture->putPixel(x * 4 - xoffset,			y + 1,	color);
+			_vm->_picture->putPixel(x * 4 + 1 - xoffset,		y + 1,	color2);
+			_vm->_picture->putPixel(x * 4 + 2 - xoffset,		y + 1,	color3);
+			_vm->_picture->putPixel(x * 4 + 3 - xoffset,		y + 1,	color4);
 		}
 	}
 
-	_vm->_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-	*/
-
-	//_vm->_gfx->doUpdate();
-	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	_vm->_picture->showPic(10, 10, w, h);
+	
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	delete [] buffer;
 }
