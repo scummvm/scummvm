@@ -129,7 +129,7 @@ void SoundManager::killSounds() {
 
 	// Clear the active sounds
 	_activeSounds.clear();
-	for (int channelNum = 0; channelNum < NUM_CHANNELS_INNER; ++channelNum)
+	for (int channelNum = 0; channelNum < NUM_CHANNELS_OUTER; ++channelNum)
 		_channelsInUse[channelNum] = false;
 }
 
