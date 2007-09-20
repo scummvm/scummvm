@@ -260,6 +260,9 @@ INLINE int PictureMgr::isOkFillHere(int x, int y) {
 
 	p = _vm->_game.sbuf16c[y * _width + x];
 
+	if (_flags & kPicFTrollMode)
+		return ((p & 0x0f) != 11 && (p & 0x0f) != _scrColor);
+
 	if (!_priOn && _scrOn && _scrColor != 15)
 		return (p & 0x0f) == 15;
 
@@ -419,10 +422,6 @@ void PictureMgr::yCorner(bool skipOtherCoords) {
 **************************************************************************/
 void PictureMgr::fill() {
 	int x1, y1;
-
-	if (_pictureVersion == AGIPIC_V15 && 0)
-		if (_scrColor == 0xf && !(_flags & kPicFTrollMode))
-			return;
 
 	while ((x1 = nextByte()) < _minCommand && (y1 = nextByte()) < _minCommand)
 		agiFill(x1, y1);

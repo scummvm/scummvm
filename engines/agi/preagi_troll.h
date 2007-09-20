@@ -118,6 +118,8 @@ namespace Agi {
 
 #define IDI_TRO_NUM_LOCDESCS    59
 
+#define IDI_TRO_NUM_NONTROLL    9
+
 // offsets
 
 #define IDA_TRO_BINNAME "troll.exe"
@@ -134,12 +136,13 @@ namespace Agi {
 #define IDO_TRO_ITEMS         0x34E8
 #define IDO_TRO_FRAMEPIC      0x3EC2
 #define IDO_TRO_ROOMCONNECTS  0x02FA
+#define IDO_TRO_NONTROLLROOMS 0x3CF9
 
 enum OptionType {
 	OT_GO,
 	OT_GET,
-	OT_WIN,
-	OT_UNKN
+	OT_DO,
+	OT_FLASHLIGHT
 };
 
 struct RoomDesc {
@@ -168,25 +171,23 @@ public:
 	void run();
 
 private:
+	int _roomPicture;
+	int _treasuresLeft;
 	int _currentRoom;
 	int _moves;
-	int _treasuresLeft;
-	int _locationDescIndex;
-	int _numberOfOptions;
-	int _roomDescIndex;
 
 	bool _isTrollAway;
 	
-	bool _haveFlashlight;
-
 	int _inventory[IDI_TRO_MAX_TREASURE];
+
+	bool _soundOn;
 
 	byte *_gameData;
 
 	PreAgiEngine *_vm;
 
 	void intro();
-	void drawPic(int iPic, bool f3IsCont, bool clear);
+	void drawPic(int iPic, bool f3IsCont, bool clear, bool troll = false);
 	void drawTroll();
 	void gameLoop();
 	void gameOver();
@@ -194,10 +195,10 @@ private:
 	void credits();
 
 	void inventory();
-	void pickupTreasure();
+	void pickupTreasure(int treasureId);
 
 	int drawRoom(char *menu);
-	void printUserMessage();
+	void printUserMessage(int msgId);
 
 	void pressAnyKey(int col = 4);
 	void waitAnyKeyIntro();
@@ -223,6 +224,9 @@ private:
 	int _options[IDI_TRO_NUM_OPTIONS];
 	Item _items[IDI_TRO_MAX_TREASURE];
 	int _roomConnects[IDI_TRO_NUM_OPTIONS];
+	int _nonTrollRooms[IDO_TRO_NONTROLLROOMS];
+
+	int _tunes[6];
 };
 
 } // End of namespace Agi

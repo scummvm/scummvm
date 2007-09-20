@@ -92,6 +92,16 @@ bool Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 				case Common::KEYCODE_RETURN:
 				case Common::KEYCODE_KP_ENTER:
 					return true;
+				case Common::KEYCODE_s:
+					if (event.kbd.flags == Common::KBD_CTRL) {
+						if (_soundOn) {
+							playTune(2, 1);
+							_soundOn = !_soundOn;
+						} else {
+							_soundOn = !_soundOn;
+							playTune(3, 1);
+						}
+					}
 				default:
 					break;
 				}
@@ -109,10 +119,8 @@ bool Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 
 // Graphics
 
-void Troll::drawPic(int iPic, bool f3IsCont, bool clr) {
+void Troll::drawPic(int iPic, bool f3IsCont, bool clr, bool troll) {
 	_vm->_picture->setDimensions(IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
-
-	debug(0, "drawPic(%d, %d, %d)", iPic, f3IsCont, clr);
 
 	if (clr) {
 		_vm->clearScreen(0x0f, false);
@@ -124,10 +132,15 @@ void Troll::drawPic(int iPic, bool f3IsCont, bool clr) {
 
 	_vm->_picture->setPictureData(_gameData + _pictureOffsets[iPic]);
 
+	int addFlag = 0;
+
+	if (troll)
+		addFlag = kPicFTrollMode;
+
 	if (f3IsCont) {
-		_vm->_picture->setPictureFlags(kPicFf3Cont);
+		_vm->_picture->setPictureFlags(kPicFf3Cont | addFlag);
 	} else {
-		_vm->_picture->setPictureFlags(kPicFf3Stop);
+		_vm->_picture->setPictureFlags(kPicFf3Stop | addFlag);
 	}
 
 	_vm->_picture->drawPicture();
@@ -365,13 +378,18 @@ void Troll::intro() {
 void Troll::gameOver() {
 	char szMoves[40];
 
-	_vm->clearScreen(0x0f); // hack
+	_vm->clearTextArea();
+	drawPic(42, true, true);
+
+	playTune(4, 25);
+			
+	printUserMessage(16);
+
+	printUserMessage(33);
 
 	_vm->clearTextArea();
-	//DrawPic(0);
 
-	_vm->clearTextArea();
-	//DrawPic(0);
+	drawPic(46, true, true);
 
 	sprintf(szMoves, IDS_TRO_GAMEOVER_0, _moves);
 	_vm->drawStr(21, 1, kColorDefault, szMoves);
@@ -381,28 +399,35 @@ void Troll::gameOver() {
 }
 
 void Troll::drawTroll() {
-	warning("STUB: drawTroll()");
+	for (int i = 0; i < IDI_TRO_NUM_NONTROLL; i++)
+		if (_currentRoom == _nonTrollRooms[i]) {
+			_isTrollAway = true;
+			return;
+		}
+
+	drawPic(43, false, false, true);
 }
 
 int Troll::drawRoom(char *menu) {
 	int n;
 	bool contFlag = false;
 
-	if (_locationDescIndex == 1) {
+	if (_currentRoom == 1) {
 		_vm->_picture->setDimensions(IDI_TRO_PIC_WIDTH, IDI_TRO_PIC_HEIGHT);
 		_vm->clearScreen(0x00, false);
 		_vm->_picture->clear();
 	} else {
 
-		if (_locationDescIndex != 42) {
-			if (_roomPicDeltas[_locationDescIndex]) {
+		if (_currentRoom != 42) {
+			if (_roomPicDeltas[_currentRoom]) {
 				contFlag = true;
 			}
 		}
 
-		drawPic(_locationDescIndex, contFlag, true);
+		drawPic(_currentRoom, contFlag, true);
+		_vm->_gfx->doUpdate();
 
-		if (_locationDescIndex == 42) {
+		if (_currentRoom == 42) {
 			drawPic(44, false, false); // don't clear
 		} else {
 			if (!_isTrollAway) {
@@ -414,14 +439,14 @@ int Troll::drawRoom(char *menu) {
 	_vm->_gfx->doUpdate();
 
 	char tmp[10];
-	strncat(menu, (char*)_gameData + _locMessagesIdx[_locationDescIndex], 39);
+	strncat(menu, (char*)_gameData + _locMessagesIdx[_currentRoom], 39);
 
 	for (int i = 0; i < 3; i++) {
-		if (_roomDescs[_currentRoom - 1].options[i]) {
+		if (_roomDescs[_roomPicture - 1].options[i]) {
 			sprintf(tmp, "\n  %d.", i);
 			strcat(menu, tmp);
 
-			strncat(menu, (char *)_gameData + _options[_roomDescs[_currentRoom - 1].options[i]- 1], 35);
+			strncat(menu, (char *)_gameData + _options[_roomDescs[_roomPicture - 1].options[i]- 1], 35);
 
 			n = i + 1;
 		}
@@ -431,23 +456,40 @@ int Troll::drawRoom(char *menu) {
 }
 
 void Troll::playTune(int tune, int len) {
+	if (!_soundOn)
+		return;
+
 	warning("STUB: playTune(%d, %d)", tune, len);
+
+	// TODO:
+	//
+	// apparently sound format consist of 16bit LE pairs of frequency and duration
+
+	int freq, duration;
+	int ptr = _tunes[tune - 1];
+
+	for (int i = 0; i < len; i++) {
+		freq = READ_LE_UINT16(_gameData + ptr);
+		ptr += 2;
+		duration = READ_LE_UINT16(_gameData + ptr);
+		ptr += 2;
+
+		// playNote(freq, duration);
+	}
 }
 
-void Troll::pickupTreasure() {
+void Troll::pickupTreasure(int treasureId) {
 	char tmp[40];
 
-	_inventory[IDI_TRO_MAX_TREASURE - _treasuresLeft] = _roomDescIndex;
+	_inventory[IDI_TRO_MAX_TREASURE - _treasuresLeft] = treasureId;
 
-	_roomDescIndex += 16;
-
-	if (_locationDescIndex != 24) {
+	if (_currentRoom != 24) {
 		_vm->clearTextArea();
-		drawPic(_locationDescIndex, false, true);
+		drawPic(_currentRoom, false, true);
 		_vm->_gfx->doUpdate();
 	}
 
-	printUserMessage();
+	printUserMessage(treasureId + 16);
 
 	_vm->clearTextArea();
 
@@ -474,14 +516,16 @@ void Troll::pickupTreasure() {
 	pressAnyKey();
 }
 
-void Troll::printUserMessage() {
+void Troll::printUserMessage(int msgId) {
 	int i;
 
-	for (i = 0; i < _userMessages[_roomDescIndex - 1].num; i++) {
-		_vm->drawStr(21 + i, 1, kColorDefault, _userMessages[_roomDescIndex - 1].msg[i]);
+	_vm->clearTextArea();
+
+	for (i = 0; i < _userMessages[msgId - 1].num; i++) {
+		_vm->drawStr(21 + i, 1, kColorDefault, _userMessages[msgId - 1].msg[i]);
 	}
 		
-	if (_roomDescIndex == 34) {
+	if (msgId == 34) {
 		for (i = 0; i < 2; i++)
 			playTune(5, 11);
 	}
@@ -492,13 +536,16 @@ void Troll::gameLoop() {
 	bool done = false;
 	char menu[160+5];
 	int currentOption, numberOfOptions;
+	int roomParam;
+	int haveFlashlight;
 
 	_moves = 0;
-	_currentRoom = 1;
+	_roomPicture = 1;
 	_treasuresLeft = IDI_TRO_MAX_TREASURE;
-	_haveFlashlight = false;
-	_locationDescIndex = 0;
+	haveFlashlight = false;
+	_currentRoom = 0;
 	_isTrollAway = true;
+	_soundOn = true;
 
 	memset(_roomStates, 0, sizeof(_roomStates));
 
@@ -517,41 +564,61 @@ void Troll::gameLoop() {
 			continue;
 		}
 
-		_roomDescIndex = _roomDescs[_currentRoom - 1].roomDescIndex[currentOption];
+		roomParam = _roomDescs[_roomPicture - 1].roomDescIndex[currentOption];
 
-		switch(_roomDescs[_currentRoom - 1].optionTypes[currentOption]) {
+		switch(_roomDescs[_roomPicture - 1].optionTypes[currentOption]) {
+		case OT_FLASHLIGHT:
+			if (!haveFlashlight) {
+				printUserMessage(13);
+				break;
+			}
+			// fall down
 		case OT_GO:
-			_locationDescIndex = _roomDescIndex;
-			_currentRoom = _roomPicStartIdx[_locationDescIndex];
-			_currentRoom += _roomStates[_locationDescIndex];
+			_currentRoom = roomParam;
+			_roomPicture = _roomPicStartIdx[_currentRoom];
+			_roomPicture += _roomStates[_currentRoom];
+
+			if (_currentRoom < 6 || _treasuresLeft == 0) {
+				_isTrollAway = true;
+			} else { // make odd 1:3
+				_isTrollAway = (_vm->rnd(3) != 2);
+			}
 			break;
 		case OT_GET:
 			if (!_isTrollAway) {
-				_roomDescIndex = 34;
-				printUserMessage();
+				printUserMessage(34);
 			} else {
 				for (int i = 0; i < 4; i++) {
 					playTune(1, 3);
 					// delayMillis()
 				}
 
-				_roomStates[_locationDescIndex] = 1;
-				_roomPicDeltas[_locationDescIndex] = 0;
+				_roomStates[_currentRoom] = 1;
+				_roomPicDeltas[_currentRoom] = 0;
 
-				_currentRoom++;
+				_roomPicture++;
 
-				if (_roomConnects[_roomDescIndex - 1] != 0xff) {
-					_roomStates[_roomConnects[_roomDescIndex - 1]] = 1;
+				if (_roomConnects[roomParam - 1] != 0xff) {
+					_roomStates[_roomConnects[roomParam - 1]] = 1;
 				}
 
-				if (_roomDescIndex == 1)
-					_haveFlashlight = true;
+				if (roomParam == 1)
+					haveFlashlight = true;
 
-				_locMessagesIdx[_locationDescIndex] = IDO_TRO_LOCMESSAGES + 
-					(_roomDescIndex + 42) * 39;
+				_locMessagesIdx[_currentRoom] = IDO_TRO_LOCMESSAGES + 
+					(roomParam + 42) * 39;
 
-				pickupTreasure();
+				pickupTreasure(roomParam);
 			}
+			break;
+		case OT_DO:
+			if (roomParam != 16) {
+				printUserMessage(roomParam);
+				break;
+			}
+
+			done = true;
+			break;
 		default:
 			break;
 		}
@@ -596,10 +663,10 @@ void Troll::fillOffsets() {
 				_roomDescs[i].optionTypes[j] = OT_GET;
 				break;
 			case 2:
-				_roomDescs[i].optionTypes[j] = OT_WIN;
+				_roomDescs[i].optionTypes[j] = OT_DO;
 				break;
 			case 3:
-				_roomDescs[i].optionTypes[j] = OT_UNKN;
+				_roomDescs[i].optionTypes[j] = OT_FLASHLIGHT;
 				break;
 			default:
 				error("Bad data @ (%x) %d", ptr - 1, i);
@@ -632,6 +699,16 @@ void Troll::fillOffsets() {
 		memcpy(_items[i].name, _gameData + ptr, 15);
 		_items[i].name[15] = 0;
 	}
+
+	for (i = 0; i < IDO_TRO_NONTROLLROOMS; i++)
+		_nonTrollRooms[i] = _gameData[IDO_TRO_NONTROLLROOMS + i];
+
+	_tunes[0] = 0x3BFD;
+	_tunes[1] = 0x3C09;
+	_tunes[2] = 0x3C0D;
+	_tunes[3] = 0x3C11;
+	_tunes[4] = 0x3C79;
+	_tunes[5] = 0x3CA5;
 }
 
 // Init
@@ -653,11 +730,13 @@ void Troll::init() {
 }
 
 void Troll::run() {
-	intro();
+	while (1) {
+		intro();
 
-	gameLoop();
+		gameLoop();
 
-	gameOver();
+		gameOver();
+	}
 }
 
 } // end of namespace Agi
