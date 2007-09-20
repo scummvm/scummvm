@@ -50,12 +50,12 @@ enum AgiPictureVersion {
 };
 
 enum AgiPictureFlags {
-	kPicFNone      = (1 >> 0),
-	kPicFCircle    = (1 >> 1),
-	kPicFStep      = (1 >> 2),
-	kPicFf3Stop    = (1 >> 3),
-	kPicFf3Cont    = (1 >> 4),
-	kPicFTrollMode = (1 >> 5)
+	kPicFNone      = (1 << 0),
+	kPicFCircle    = (1 << 1),
+	kPicFStep      = (1 << 2),
+	kPicFf3Stop    = (1 << 3),
+	kPicFf3Cont    = (1 << 4),
+	kPicFTrollMode = (1 << 5)
 };
 
 class AgiBase;
@@ -97,7 +97,7 @@ public:
 	void setPattern(uint8 code, uint8 num);
 
 	void setPictureVersion(AgiPictureVersion version);
-	void setPictureData(uint8 *data, int len);
+	void setPictureData(uint8 *data, int len = 4096);
 
 	void setPictureFlags(int flags) { _flags = flags; }
 

@@ -189,8 +189,11 @@ void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 void PictureMgr::dynamicDrawLine() {
 	int x1, y1, disp, dx, dy;
 
-	x1 = nextByte();
-	y1 = nextByte();
+	if ((x1 = nextByte()) >= _minCommand ||
+		(y1 = nextByte()) >= _minCommand) {
+		_foffs--;
+		return;
+	}
 
 	putVirtPixel(x1, y1);
 
@@ -221,8 +224,12 @@ void PictureMgr::dynamicDrawLine() {
 void PictureMgr::absoluteDrawLine() {
 	int x1, y1, x2, y2;
 
-	x1 = nextByte();
-	y1 = nextByte();
+	if ((x1 = nextByte()) >= _minCommand ||
+		(y1 = nextByte()) >= _minCommand) {
+		_foffs--;
+		return;
+	}
+
 	putVirtPixel(x1, y1);
 
 	for (;;) {
@@ -325,19 +332,23 @@ void PictureMgr::agiFill(unsigned int x, unsigned int y) {
 void PictureMgr::xCorner(bool skipOtherCoords) {
 	int x1, x2, y1, y2;
 
-	x1 = nextByte();
-	y1 = nextByte();
+	if ((x1 = nextByte()) >= _minCommand ||
+		(y1 = nextByte()) >= _minCommand) {
+		_foffs--;
+		return;
+	}
+
 	putVirtPixel(x1, y1);
 
 	for (;;) {
 		x2 = nextByte();
 
+		if (x2 >= _minCommand)
+			break;
+
 		if (skipOtherCoords)
 			if (nextByte() >= _minCommand)
 				break;
-
-		if (x2 >= _minCommand)
-			break;
 
 		drawLine(x1, y1, x2, y1);
 		x1 = x2;
@@ -365,8 +376,12 @@ void PictureMgr::xCorner(bool skipOtherCoords) {
 void PictureMgr::yCorner(bool skipOtherCoords) {
 	int x1, x2, y1, y2;
 
-	x1 = nextByte();
-	y1 = nextByte();
+	if ((x1 = nextByte()) >= _minCommand ||
+		(y1 = nextByte()) >= _minCommand) {
+		_foffs--;
+		return;
+	}
+
 	putVirtPixel(x1, y1);
 
 	for (;;) {

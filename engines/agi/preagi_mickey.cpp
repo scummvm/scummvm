@@ -801,7 +801,7 @@ void Mickey::drawRoomAnimation() {
 			objLight[1] = iColor;
 			objLight[4] += 7;
 
-			_vm->_picture->setPictureData(objLight, ARRAYSIZE(objLight));
+			_vm->_picture->setPictureData(objLight);
 			_vm->_picture->setPictureFlags(kPicFCircle);
 			_vm->_picture->drawPicture();
 		}

@@ -78,7 +78,7 @@ namespace Agi {
 #define IDS_TRO_TREASURE_0	"TREASURES FOUND"
 #define IDS_TRO_TREASURE_1	"---------------"
 #define IDS_TRO_TREASURE_2	"NONE"
-#define IDS_TRO_TREASURE_3	"THERE ARE STILL"
+#define IDS_TRO_TREASURE_3	"THERE ARE STILL %d TREASURES TO FIND"
 #define IDS_TRO_TREASURE_4	"%d TREASURES TO FIND"
 #define IDS_TRO_TREASURE_5	"%d TREASURE TO FIND"
 #define IDS_TRO_TREASURE_6	"YOU HAVE FOUND ALL OF THE TREASURES!!"
@@ -88,13 +88,6 @@ namespace Agi {
 
 #define IDS_TRO_GAMEOVER_0	"You took %d moves to complete TROLL'S"
 #define IDS_TRO_GAMEOVER_1	"TALE. Do you think you can do better?"
-
-const char IDS_TRO_NAME_TREASURE[][16] = {
-	"  FLASHLIGHT   ", "  BAG OF GOLD  ", " BOX OF JEWELS ", "  DIAMOND RING ",
-	" CANDY SUCKER  ", "DOLLAR AND CENT", "     FIDDLE    ", "BAG OF PENNIES ",
-	" TREASURE CHEST", "     PENNY     ", "  SILVER CUP   ", "    NECKLACE   ",
-	"     SHELL     ", "  GOLD BRICK   ", "     GIFT      ", " POT OF MONEY  "
-};
 
 // picture
 
@@ -121,16 +114,26 @@ const char IDS_TRO_NAME_TREASURE[][16] = {
 #define IDI_TRO_NUM_OPTIONS		129
 #define IDI_TRO_NUM_NUMROOMS	43
 
+#define IDI_TRO_NUM_USERMSGS    34
+
+#define IDI_TRO_NUM_LOCDESCS    59
+
 // offsets
 
 #define IDA_TRO_BINNAME "troll.exe"
 
-#define IDO_TRO_DATA_START  0x1960
-#define IDO_TRO_PIC_START	0x3EF5
-#define IDO_TRO_LOCMESSAGES 0x1F7C
-#define IDO_TRO_ROOMDESCS   0x0082
-#define IDO_TRO_OPTIONS     0x0364
-#define IDO_TRO_PICSTARTIDX 0x02CD
+#define IDO_TRO_DATA_START    0x1960
+#define IDO_TRO_PIC_START	  0x3EF5
+#define IDO_TRO_LOCMESSAGES   0x1F7C
+#define IDO_TRO_USERMESSAGES  0x34A4
+#define IDO_TRO_ROOMDESCS     0x0082
+#define IDO_TRO_OPTIONS       0x0364
+#define IDO_TRO_PICSTARTIDX   0x02CD
+#define IDO_TRO_ROOMPICDELTAS 0x030C
+#define IDO_TRO_ALLTREASURES  0x3B24
+#define IDO_TRO_ITEMS         0x34E8
+#define IDO_TRO_FRAMEPIC      0x3EC2
+#define IDO_TRO_ROOMCONNECTS  0x02FA
 
 enum OptionType {
 	OT_GO,
@@ -143,6 +146,17 @@ struct RoomDesc {
 	int options[3];
 	OptionType optionTypes[3];
 	int roomDescIndex[3];
+};
+
+struct UserMsg {
+	int num;
+	char msg[3][40];
+};
+
+struct Item {
+	byte bg;
+	byte fg;
+	char name[16];
 };
 
 class Troll {
@@ -159,11 +173,13 @@ private:
 	int _treasuresLeft;
 	int _locationDescIndex;
 	int _numberOfOptions;
+	int _roomDescIndex;
+
+	bool _isTrollAway;
 	
 	bool _haveFlashlight;
 
-	RoomDesc _roomDescs[IDI_TRO_NUM_ROOMDESCS];
-	int _options[IDI_TRO_NUM_OPTIONS];
+	int _inventory[IDI_TRO_MAX_TREASURE];
 
 	byte *_gameData;
 
@@ -171,29 +187,42 @@ private:
 
 	void intro();
 	void drawPic(int iPic, bool f3IsCont, bool clear);
+	void drawTroll();
 	void gameLoop();
 	void gameOver();
 	void tutorial();
 	void credits();
 
 	void inventory();
+	void pickupTreasure();
 
 	int drawRoom(char *menu);
+	void printUserMessage();
 
-	void pressAnyKey();
+	void pressAnyKey(int col = 4);
 	void waitAnyKeyIntro();
 
-	void getMenuSel(const char*, int*, int);
+	void playTune(int tune, int len);
+
+	bool getMenuSel(const char*, int*, int);
 
 	void drawMenu(const char *szMenu, int iSel);
 
 	void fillOffsets();
-	void fillRoomDescs();
 
 private:
+	// These are come from game data
+
 	int _pictureOffsets[IDI_TRO_PICNUM];
 	int _roomPicStartIdx[IDI_TRO_NUM_NUMROOMS];
+	int _roomPicDeltas[IDI_TRO_NUM_NUMROOMS];
 	int _roomStates[IDI_TRO_NUM_NUMROOMS];
+	UserMsg _userMessages[IDI_TRO_NUM_USERMSGS];
+	int _locMessagesIdx[IDI_TRO_NUM_LOCDESCS];
+	RoomDesc _roomDescs[IDI_TRO_NUM_ROOMDESCS];
+	int _options[IDI_TRO_NUM_OPTIONS];
+	Item _items[IDI_TRO_MAX_TREASURE];
+	int _roomConnects[IDI_TRO_NUM_OPTIONS];
 };
 
 } // End of namespace Agi
