@@ -262,6 +262,15 @@ public:
 	virtual void handleKeyDown(Common::KeyState state);
 };
 
+class DebugInputDialog : public InfoDialog {
+public:
+	DebugInputDialog(ScummEngine *scumm, char* text);
+	virtual void handleKeyDown(Common::KeyState state);
+	bool done;
+	Common::String buffer;
+	Common::String mainText;
+};
+
 } // End of namespace Scumm
 
 #endif

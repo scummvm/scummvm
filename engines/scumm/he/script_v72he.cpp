@@ -31,6 +31,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/dialogs.h"
 #include "scumm/file.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
@@ -1692,13 +1693,20 @@ void ScummEngine_v72he::o72_drawWizImage() {
 
 void ScummEngine_v72he::o72_debugInput() {
 	byte string[255];
+	byte *debugInputString;
 
 	copyScriptString(string, sizeof(string));
-	debug(0,"o72_debugInput: String %s", string);
 
-	// TODO: Request input and store string result in array
+	DebugInputDialog dialog(this, (char*)string);
+	runDialog(dialog);
+	while (!dialog.done) {
+		parseEvents();
+		dialog.handleKeyDown(_keyPressed);
+	}
+
 	writeVar(0, 0);
-	defineArray(0, kStringArray, 0, 0, 0, 0);
+	debugInputString = defineArray(0, kStringArray, 0, 0, 0, dialog.buffer.size());
+	memcpy(debugInputString, dialog.buffer.c_str(), dialog.buffer.size());
 	push(readVar(0));
 }
 

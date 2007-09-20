@@ -960,4 +960,30 @@ void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {
 		ScummDialog::handleKeyDown(state);
 }
 
+DebugInputDialog::DebugInputDialog(ScummEngine *scumm, char* text)
+	: InfoDialog(scumm, text) {
+	mainText = text;
+	done = 0;
+}
+
+void DebugInputDialog::handleKeyDown(Common::KeyState state) {
+	if (state.keycode == Common::KEYCODE_BACKSPACE && buffer.size() > 0) {
+		buffer.deleteLastChar();
+		Common::String total = mainText + ' ' + buffer;
+		setInfoText(total);
+		draw();
+		reflowLayout();
+	} else if (state.keycode == Common::KEYCODE_RETURN) {
+		done = 1;
+		close();
+		return;
+	} else if ((state.ascii >= '0' && state.ascii <= '9') || (state.ascii >= 'A' && state.ascii <= 'Z') || (state.ascii >= 'a' && state.ascii <= 'z') || state.ascii == '.' || state.ascii == ' ') {
+		buffer += state.ascii;
+		Common::String total = mainText + ' ' + buffer;
+		draw();
+		reflowLayout();
+		setInfoText(total);
+	} 
+}
+
 } // End of namespace Scumm
