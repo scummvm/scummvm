@@ -81,11 +81,20 @@ bool Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 					inventory();
 					return false;
 					break;
+				case Common::KEYCODE_DOWN:
 				case Common::KEYCODE_SPACE:
 					*iSel += 1;
 
 					if (*iSel == nSel)
 						*iSel = IDI_TRO_SEL_OPTION_1;
+
+					drawMenu(szMenu, *iSel);
+					break;
+				case Common::KEYCODE_UP:
+					*iSel -= 1;
+
+					if (*iSel == IDI_TRO_SEL_OPTION_1 - 1)
+						*iSel = nSel - 1;
 
 					drawMenu(szMenu, *iSel);
 					break;
