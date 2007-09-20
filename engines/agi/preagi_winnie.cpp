@@ -122,9 +122,13 @@ void Winnie::randomize() {
 void Winnie::intro() {
 	drawPic(IDS_WTP_FILE_LOGO);
 	_vm->printStr(IDS_WTP_INTRO_0);
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(0x640);
 	drawPic(IDS_WTP_FILE_TITLE);
 	_vm->printStr(IDS_WTP_INTRO_1);
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(0x640);
 	if (!playSound(IDI_WTP_SND_POOH_0))
 		return;
@@ -376,6 +380,8 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 
 		if (iBlock == 1)
 			return IDI_WTP_PAR_OK;
+		_vm->_gfx->doUpdate();
+		_vm->_system->updateScreen();
 	}
 }
 
@@ -399,8 +405,6 @@ void Winnie::inventory() {
 
 	sprintf(szMissing, IDS_WTP_INVENTORY_1, game.nObjMiss);
 	_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_MENU, IDA_DEFAULT, szMissing);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();
 	_vm->getSelection(kSelAnyKey);
 }
 
@@ -662,7 +666,7 @@ void Winnie::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 	}
 	_vm->drawStr(iRow, iCol - 1, IDA_DEFAULT, IDS_WTP_SELECTION);
 	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	_vm->_system->updateScreen(); //TODO: Move to game's main loop
 }
 
 void Winnie::incMenuSel(int *iSel, int fCanSel[]) {
@@ -929,6 +933,8 @@ phase0:
 	readRoom(room, roomdata);
 	memcpy(&hdr, roomdata, sizeof(WTP_ROOM_HDR));
 	drawRoomPic();
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();
 phase1:
 	if (getObjInRoom(room)) {
 		printObjStr(getObjInRoom(room), IDI_WTP_OBJ_DESC);
@@ -971,8 +977,6 @@ void Winnie::drawPic(const char *szName) {
 
 	_vm->_picture->decodePicture(buffer, size, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	free(buffer);
 }
@@ -991,8 +995,6 @@ void Winnie::drawObjPic(int iObj, int x0, int y0) {
 	_vm->_picture->decodePicture(buffer + objhdr.ofsPic - IDI_WTP_OFS_OBJ, objSize, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_picture->setOffset(0, 0);
 	_vm->_picture->showPic(10, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();
 
 	free(buffer);
 }
@@ -1004,8 +1006,6 @@ void Winnie::drawRoomPic() {
 
 	// clear gfx screen
 	_vm->_gfx->clearScreen(0);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	// read room picture
 	readRoom(room, buffer);
@@ -1014,8 +1014,6 @@ void Winnie::drawRoomPic() {
 	// draw room picture
 	_vm->_picture->decodePicture(buffer + roomhdr.ofsPic - IDI_WTP_OFS_ROOM, 4096, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	// draw object picture
 	drawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
