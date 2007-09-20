@@ -344,6 +344,7 @@ private:
 	void dropObjRnd();
 	void wind();
 	void showOwlHelp();
+	bool playSound(ENUM_WTP_SOUND);
 };
 
 }  // End of namespace Agi

@@ -126,9 +126,12 @@ void Winnie::intro() {
 	drawPic(IDS_WTP_FILE_TITLE);
 	_vm->printStr(IDS_WTP_INTRO_1);
 	_vm->_system->delayMillis(0x640);
-	//if (!Winnie_PlaySound(IDI_WTP_SND_POOH_0)) return;
-	//if (!Winnie_PlaySound(IDI_WTP_SND_POOH_1)) return;
-	//if (!Winnie_PlaySound(IDI_WTP_SND_POOH_2)) return;
+	if (!playSound(IDI_WTP_SND_POOH_0))
+		return;
+	if (!playSound(IDI_WTP_SND_POOH_1))
+		return;
+	if (!playSound(IDI_WTP_SND_POOH_2))
+		return;
 }
 
 int Winnie::getObjInRoom(int iRoom) {
@@ -343,7 +346,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				break;
 			case IDO_WTP_PLAY_SOUND:
 				opcode = *(buffer + pc++);
-				//Winnie_PlaySound((ENUM_WTP_SOUND)opcode);
+				playSound((ENUM_WTP_SOUND)opcode);
 				break;
 			case IDO_WTP_SAVE_GAME:
 				saveGame();
@@ -377,7 +380,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 }
 
 void Winnie::keyHelp() {
-	//Winnie_PlaySound(IDI_WTP_SND_KEYHELP);
+	playSound(IDI_WTP_SND_KEYHELP);
 	_vm->printStr(IDS_WTP_HELP_0);
 	_vm->getSelection(kSelAnyKey);
 	_vm->printStr(IDS_WTP_HELP_1);
@@ -448,7 +451,7 @@ void Winnie::takeObj(int iRoom) {
 		game.iObjRoom[iObj] = 0;
 
 		_vm->printStr(IDS_WTP_OK);
-		//Winnie_PlaySound(IDI_WTP_SND_TAKE);
+		playSound(IDI_WTP_SND_TAKE);
 
 		drawRoomPic();
 
@@ -480,7 +483,7 @@ void Winnie::dropObj(int iRoom) {
 			// object has been dropped in the right place
 			_vm->printStr(IDS_WTP_OK);
 			_vm->getSelection(kSelAnyKey);
-			//Winnie_PlaySound(IDI_WTP_SND_DROP_OK);
+			playSound(IDI_WTP_SND_DROP_OK);
 			printObjStr(game.iObjHave, IDI_WTP_OBJ_DROP);
 			_vm->getSelection(kSelAnyKey);
 
@@ -504,7 +507,7 @@ void Winnie::dropObj(int iRoom) {
 			
 			if (!game.nObjMiss) {
 				// all objects returned, tell player to find party
-				//Winnie_PlaySound(IDI_WTP_SND_FANFARE);
+				playSound(IDI_WTP_SND_FANFARE);
 				_vm->printStr(IDS_WTP_GAME_OVER_0);
 				_vm->getSelection(kSelAnyKey);
 				_vm->printStr(IDS_WTP_GAME_OVER_1);
@@ -517,7 +520,7 @@ void Winnie::dropObj(int iRoom) {
 			// object has been dropped in the wrong place
 			_vm->printStr(IDS_WTP_WRONG_PLACE);
 			_vm->getSelection(kSelAnyKey);
-			//Winnie_PlaySound(IDI_WTP_SND_DROP);
+			playSound(IDI_WTP_SND_DROP);
 			drawRoomPic();
 			_vm->printStr(IDS_WTP_WRONG_PLACE);
 			_vm->getSelection(kSelAnyKey);
@@ -564,10 +567,10 @@ void Winnie::wind() {
 		return;
 
 	_vm->printStr(IDS_WTP_WIND_0);
-	//Winnie_PlaySound(IDI_WTP_SND_WIND_0);
+	playSound(IDI_WTP_SND_WIND_0);
 	_vm->getSelection(kSelAnyKey);
 	_vm->printStr(IDS_WTP_WIND_1);
-	//Winnie_PlaySound(IDI_WTP_SND_WIND_0);
+	playSound(IDI_WTP_SND_WIND_0);
 	_vm->getSelection(kSelAnyKey);
 
 	dropObjRnd();
@@ -1020,6 +1023,12 @@ void Winnie::drawRoomPic() {
 	free(buffer);
 }
 
+bool Winnie::playSound(ENUM_WTP_SOUND iSound) {
+	//TODO
+	warning ("STUB: playSound(%d)", iSound);
+	return 1;
+}
+
 void Winnie::clrMenuSel(int *iSel, int fCanSel[]) {
 	*iSel = IDI_WTP_SEL_OPT_1;
 	while (!fCanSel[*iSel]) {
@@ -1042,11 +1051,11 @@ void Winnie::gameOver() {
 	// sing the Pooh song forever
 	for (;;) {
 		_vm->printStr(IDS_WTP_SONG_0);
-		//Winnie_PlaySound(IDI_WTP_SND_POOH_0);
+		playSound(IDI_WTP_SND_POOH_0);
 		_vm->printStr(IDS_WTP_SONG_1);
-		//Winnie_PlaySound(IDI_WTP_SND_POOH_1);
+		playSound(IDI_WTP_SND_POOH_1);
 		_vm->printStr(IDS_WTP_SONG_2);
-		//Winnie_PlaySound(IDI_WTP_SND_POOH_2);
+		playSound(IDI_WTP_SND_POOH_2);
 		_vm->getSelection(kSelAnyKey);
 	}
 }
