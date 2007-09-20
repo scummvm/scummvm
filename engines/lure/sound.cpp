@@ -35,6 +35,7 @@ DECLARE_SINGLETON(Lure::SoundManager);
 namespace Lure {
 
 SoundManager::SoundManager() {
+	int index;
 	_descs = Disk::getReference().getEntry(SOUND_DESC_RESOURCE_ID);
 	_numDescs = _descs->size() / sizeof(SoundDescResource);
 	_soundData = NULL;
@@ -42,7 +43,8 @@ SoundManager::SoundManager() {
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 
-	memset(_channelsInUse, false, NUM_CHANNELS_OUTER);
+	for (index = 0; index < NUM_CHANNELS_OUTER; ++index)
+		_channelsInUse[index] = false;
 
 	_driver = MidiDriver::createMidi(midiDriver);
 	int statusCode = _driver->open();
@@ -54,7 +56,7 @@ SoundManager::SoundManager() {
 		if (_nativeMT32)
 			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-		for (int index = 0; index < NUM_CHANNELS_INNER; ++index) {
+		for (index = 0; index < NUM_CHANNELS_INNER; ++index) {
 			_channelsInner[index].midiChannel = _driver->allocateChannel();
 			_channelsInner[index].volume = DEFAULT_VOLUME;
 		}
