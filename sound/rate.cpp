@@ -411,7 +411,12 @@ FilteringRateConverter<stereo, reverseStereo>::FilteringRateConverter(st_rate_t 
 	
 	numChan = (stereo ? 2 : 1);
 	
-	inBuf = (st_sample_t *)calloc(numChan * subLen, sizeof(st_sample_t));
+	/*
+	 * Buffer for the input samples.  Twice the required length is
+	 * allocated so that the input samples can be read linearly in the main
+	 * filtering loop.
+	 */
+	inBuf = (st_sample_t *)calloc(2 * numChan * subLen, sizeof(st_sample_t));
 	
 	inPos = 0;
 	
@@ -438,6 +443,17 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 			uint8 inLen;
 			
 			inLen = input.readBuffer(&inBuf[inPos], numChan);
+			
+			/*
+			 * Store a second copy of the input sample(s) so that
+			 * the input buffer can be accessed linearly (rather
+			 * than circularly) during the filtering loop
+			 */
+			inBuf[inPos + numChan * subLen] = inBuf[inPos];
+			if (stereo) {
+				inBuf[inPos + numChan * subLen + 1] = inBuf[inPos + 1];
+			}
+			
 			if (inLen == 0) {
 				/* No more input samples */
 				return this->drain(obuf, (oend - obuf) / 2, vol_l, vol_r);
@@ -459,10 +475,10 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 		double *base = coeffs + (currBank * subLen);
 		 
 		for (i = 0; i < subLen; i++) {
-			accum0 += (double)inBuf[(inPos + numChan * i) % (numChan * subLen)]
+			accum0 += (double)inBuf[inPos + numChan * i]
 						* base[i];
 			if (stereo) {
-				accum1 += (double)inBuf[(inPos + numChan * i + 1) % (numChan * subLen)]
+				accum1 += (double)inBuf[inPos + numChan * i + 1]
 						* base[i];
 			}
 		}
