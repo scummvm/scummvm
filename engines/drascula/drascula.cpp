@@ -4647,7 +4647,7 @@ void DrasculaEngine::para_grabar(char nom_game[]) {
 
 void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
 	MiVideoSSN = (byte *)malloc(64256);
-	GlobalSpeed = CLOCKS_PER_SEC / Pause;
+	GlobalSpeed = 1000 / Pause;
 	FrameSSN = 0;
 	UsingMem = 0;
 	if (MiVideoSSN == NULL)
@@ -4655,7 +4655,7 @@ void DrasculaEngine::OpenSSN(const char *Name, int Pause) {
 	_Sesion = new Common::File;
 	_Sesion->open(Name);
 	mSesion = TryInMem(_Sesion);
-	LastFrame = clock();
+	LastFrame = _system->getMillis();
 }
 
 int DrasculaEngine::PlayFrameSSN() {
@@ -4823,8 +4823,9 @@ void DrasculaEngine::MixVideo(byte *OldScreen, byte *NewScreen) {
 }
 
 void DrasculaEngine::WaitFrameSSN() {
-	while ((int)clock() < LastFrame + GlobalSpeed)
-		;
+	uint32 now;
+	while ((now = _system->getMillis()) - LastFrame < GlobalSpeed)
+		_system->delayMillis(GlobalSpeed - (now - LastFrame));
 	LastFrame = LastFrame + GlobalSpeed;
 }
 

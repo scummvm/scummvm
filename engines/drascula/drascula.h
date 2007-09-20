@@ -648,7 +648,7 @@ public:
 	byte *mSesion;
 	int FrameSSN;
 	int GlobalSpeed;
-	int LastFrame;
+	uint32 LastFrame;
 
 	int frame_pen;
 	int flag_tv;
