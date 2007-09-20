@@ -147,7 +147,7 @@ void LureEngine::detectGame() {
 
 	if (!Common::File::exists(SUPPORT_FILENAME))
 		error("Missing %s - this is a custom file containing resources from the\n"
-			"Lure of the Temptress executable. See the documentation for creating it.",
+			"Lure of the Temptress executable. See the documentation for creating it",
 			SUPPORT_FILENAME);
 
 	for (uint8 fileNum = 1; fileNum <= 4; ++fileNum) {
