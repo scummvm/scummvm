@@ -1255,7 +1255,6 @@ void Mickey::inventory() {
 void Mickey::randomize() {
 	int iPlanet = 0;
 	int iHint = 0;
-	bool done;
 
 	memset(game.iPlanetXtal, 0, sizeof(game.iPlanetXtal));
 	memset(game.iClue, 0, sizeof(game.iClue));
@@ -1263,22 +1262,11 @@ void Mickey::randomize() {
 	game.iPlanetXtal[0] = IDI_MSA_PLANET_EARTH;
 	game.iPlanetXtal[8] = IDI_MSA_PLANET_URANUS;
 
-	for (int i = 1; i < 9; i++) {
-		if (i == 8) {
-			iPlanet = IDI_MSA_PLANET_URANUS;
-		} else {
-			done = false;
-			while (!done) {
-				iPlanet = _vm->rnd(IDI_MSA_MAX_PLANET - 2);	// Earth (planet 0) is excluded
-				done = true;
-				for (int j = 0; j < IDI_MSA_MAX_PLANET; j++) {
-					if (game.iPlanetXtal[j] == iPlanet) {
-						done = false;
-						break;
-					}
-				}
-			}
-		}
+	for (int i = 1; i < 8; i++) {
+		do {
+			// Earth (planet 0) and Uranus (planet 8) are excluded
+			iPlanet = _vm->rnd(IDI_MSA_MAX_PLANET - 2);
+		} while (planetIsAlreadyAssigned(iPlanet));
 
 		game.iPlanetXtal[i] = iPlanet;
 

@@ -732,7 +732,6 @@ struct MSA_GAME {
 class Mickey {
 	friend class PreAgiEngine;
 public:
-
 	Mickey(PreAgiEngine *vm);
 	~Mickey();
 
@@ -803,6 +802,14 @@ protected:
 	void flipSwitch();
 	void waitAnyKeyAnim();
 	void waitAnyKey(bool anim = false);
+
+	bool planetIsAlreadyAssigned(int planet) {
+		for (int j = 0; j < IDI_MSA_MAX_PLANET; j++) {
+			if (game.iPlanetXtal[j] == planet)
+				return true;
+		}
+		return false;
+	}
 };
 
 } // End of namespace Agi
