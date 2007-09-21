@@ -708,6 +708,7 @@ struct MSA_GAME {
 	bool fShipDoorOpen;
 	bool fFlying;
 	bool fStoryShown;
+	bool fPlanetsInitialized;
 	bool fTempleDoorOpen;
 
 	bool fItem[IDI_MSA_MAX_ITEM];

@@ -216,8 +216,8 @@ void Mickey::printExeStr(int ofs) {
 
 	readExe(ofs, buffer, sizeof(buffer));
 	printStr((char *)buffer);
-	//_vm->_gfx->doUpdate();
-	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 }
 
 void Mickey::printExeMsg(int ofs) {
@@ -693,6 +693,14 @@ void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 	if (iObj == IDI_MSA_OBJECT_CRYSTAL)
 		_vm->_picture->setPictureFlags(kPicFStep);
 
+	// HACK: attempting to draw the scale in Mickey's house causes a crash, so we don't draw it
+	if (iObj == IDI_MSA_OBJECT_SCALE)
+		return;
+
+	// HACK: attempting to draw the rock in Jupiter causes a crash, so we don't draw it
+	if (iObj == IDI_MSA_OBJECT_ROCK_1 || iObj == IDI_MSA_OBJECT_ROCK_2 || iObj == IDI_MSA_OBJECT_ROCK_3)
+		return;
+	
 	_vm->_picture->setOffset(x0, y0);
 	_vm->_picture->decodePicture(buffer, size, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_vm->_picture->setOffset(0, 0);
@@ -958,7 +966,7 @@ bool Mickey::loadGame() {
 			return false;
 
 		// load game
-		sprintf(szFile, "%s.s%2d", _vm->getTargetName().c_str(), sel);
+		sprintf(szFile, "%s.s%02d", _vm->getTargetName().c_str(), sel);
 		if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile))) {
 			printExeStr(IDO_MSA_CHECK_DISK_DRIVE);
 			if (_vm->getSelection(kSelAnyKey) == 0)
@@ -1004,7 +1012,7 @@ void Mickey::saveGame() {
 			return;
 
 		// save game
-		sprintf(szFile, "%s.s%2d", _vm->getTargetName().c_str(), sel);
+		sprintf(szFile, "%s.s%02d", _vm->getTargetName().c_str(), sel);
 		if (!(outfile = _vm->getSaveFileMan()->openForSaving(szFile))) {
 			printExeStr(IDO_MSA_CHECK_DISK_DRIVE);
 			if (_vm->getSelection(kSelAnyKey) == 0)
@@ -1166,10 +1174,11 @@ void Mickey::gameOver() {
 
 void Mickey::flipSwitch() {
 	if (game.fHasXtal || game.nXtals) {
-		if (!game.fStoryShown) {
+		if (!game.fStoryShown)
 			printStory();
+
+		if (!game.fPlanetsInitialized)
 			randomize();
-		}
 
 		// activate screen animation
 		game.fAnimXL30 = true;
@@ -1260,7 +1269,7 @@ void Mickey::randomize() {
 		} else {
 			done = false;
 			while (!done) {
-				iPlanet = _vm->rnd(IDI_MSA_MAX_PLANET);
+				iPlanet = _vm->rnd(IDI_MSA_MAX_PLANET - 2);	// Earth (planet 0) is excluded
 				done = true;
 				for (int j = 0; j < IDI_MSA_MAX_PLANET; j++) {
 					if (game.iPlanetXtal[j] == iPlanet) {
@@ -1273,14 +1282,11 @@ void Mickey::randomize() {
 
 		game.iPlanetXtal[i] = iPlanet;
 
-		done = false;
-		while (!done) {
-			iHint = _vm->rnd(5);
-			done = true;
-		}
-
+		iHint = _vm->rnd(5) - 1;	// clues are 0-4
 		game.iClue[i] = IDO_MSA_NEXT_PIECE[iPlanet][iHint];
 	}
+
+	game.fPlanetsInitialized = true;
 }
 
 void Mickey::flashScreen() {
