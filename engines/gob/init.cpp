@@ -125,7 +125,7 @@ void Init::initGame(const char *totName) {
 
 		infEnd = (char *) (infBuf + _vm->_dataIO->getDataSize("intro.inf"));
 
-		for (int i = 0; i < 4; i++, infPtr++) {
+		for (int i = 0; i < 8; i++, infPtr++) {
 			int j;
 
 			for (j = 0; infPtr < infEnd && *infPtr >= ' '; j++, infPtr++)
