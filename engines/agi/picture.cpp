@@ -759,8 +759,6 @@ void PictureMgr::drawPicture() {
 			int storedYOffset = _yOffset;
 			// Note that picture coordinates are correct for Mickey only
 			showPic(10, 0, _width, _height);
-			_gfx->doUpdate();
-			g_system->updateScreen();
 			_xOffset = storedXOffset;
 			_yOffset = storedYOffset;
 			_currentStep++;
