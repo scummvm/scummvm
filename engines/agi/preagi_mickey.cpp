@@ -1265,10 +1265,10 @@ void Mickey::randomize() {
 		do {
 			// Earth (planet 0) and Uranus (planet 8) are excluded
 			game.iPlanetXtal[i] = _vm->rnd(IDI_MSA_MAX_PLANET - 2);
-		} while (planetIsAlreadyAssigned(iPlanet));
+		} while (planetIsAlreadyAssigned(game.iPlanetXtal[i]));
 
 		iHint = _vm->rnd(5) - 1;	// clues are 0-4
-		game.iClue[i] = IDO_MSA_NEXT_PIECE[iPlanet][iHint];
+		game.iClue[i] = IDO_MSA_NEXT_PIECE[game.iPlanetXtal[i]][iHint];
 	}
 
 	game.fPlanetsInitialized = true;
