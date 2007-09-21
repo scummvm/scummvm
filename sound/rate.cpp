@@ -299,7 +299,7 @@ protected:
 	uint16 toFetch;
 	
 	/*
-     * Fraction of the input frequency which should be used as passband for
+	 * Fraction of the input frequency which should be used as passband for
 	 * the filter design.
 	 */
 	double lowpassBW;
@@ -472,14 +472,15 @@ int FilteringRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_s
 		 * outputs
 		 */
 		 
-		double *base = coeffs + (currBank * subLen);
+		double *coeffBase = coeffs + (currBank * subLen);
+		st_sample_t *inputBase = inBuf + inPos;
 		 
 		for (i = 0; i < subLen; i++) {
-			accum0 += (double)inBuf[inPos + numChan * i]
-						* base[i];
+			accum0 += (double)inputBase[numChan * i]
+					* coeffBase[i];
 			if (stereo) {
-				accum1 += (double)inBuf[inPos + numChan * i + 1]
-						* base[i];
+				accum1 += (double)inputBase[numChan * i + 1]
+						* coeffBase[i];
 			}
 		}
 		
