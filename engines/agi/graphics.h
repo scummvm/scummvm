@@ -50,6 +50,7 @@ private:
 
 	uint8 _agipalPalette[16 * 3];
 	int _agipalFileNum;
+	int _currentCursorPalette;	// 0 - palette not set, 1 - PC, 2 - Amiga
 
 private:
 	void rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor, bool border, int textOffset);

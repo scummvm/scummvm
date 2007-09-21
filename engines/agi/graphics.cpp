@@ -536,6 +536,7 @@ GfxMgr::GfxMgr(AgiBase *vm) : _vm(vm) {
 	_shakeH = NULL;
 	_shakeV = NULL;
 	_agipalFileNum = 0;
+	_currentCursorPalette = 0;	// cursor palette not set
 }
 
 
@@ -1007,9 +1008,15 @@ void GfxMgr::setCursor(bool amigaStyleCursor) {
 
 void GfxMgr::setCursorPalette(bool amigaStyleCursor) {
 	if (!amigaStyleCursor) {
-		CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 4);
+		if (_currentCursorPalette != 1) {
+			CursorMan.replaceCursorPalette(sciMouseCursorPalette, 1, ARRAYSIZE(sciMouseCursorPalette) / 4);
+			_currentCursorPalette = 1;
+		}
 	} else { // amigaStyleCursor
-		CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 4);
+		if (_currentCursorPalette != 2) {
+			CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 4);
+			_currentCursorPalette = 2;
+		}
 	}
 }
 
