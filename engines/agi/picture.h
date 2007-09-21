@@ -139,6 +139,7 @@ private:
 	int _xOffset, _yOffset;
 
 	int _flags;
+	int _currentStep;
 };
 
 } // End of namespace Agi

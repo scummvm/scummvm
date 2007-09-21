@@ -44,6 +44,7 @@ PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
 	_pictureVersion = AGIPIC_V2;
 	_minCommand = 0xf0;
 	_flags = 0;
+	_currentStep = 0;
 }
 
 void PictureMgr::putVirtPixel(int x, int y) {
@@ -577,6 +578,7 @@ void PictureMgr::plotBrush() {
 void PictureMgr::drawPicture() {
 	uint8 act;
 	int drawing;
+	int iteration = 0;
 
 	_patCode = 0;
 	_patNum = 0;
@@ -749,21 +751,27 @@ void PictureMgr::drawPicture() {
 		default:
 			warning("Unknown picture opcode (%x) at (%x)", act, _foffs - 1);
 		}
-		if ((_flags & kPicFStep) && _vm->getGameType() == GType_PreAGI) {
-			// FIXME: This is used by Mickey for the crystal animation, but
-			// currently it's very very very slow
-			/*
+
+		// This is used by Mickey for the crystal animation
+		// One frame of the crystal animation is shown on each iteration, based on _currentStep
+		if ((_flags & kPicFStep) && _vm->getGameType() == GType_PreAGI && _currentStep == iteration) {
 			int storedXOffset = _xOffset;
 			int storedYOffset = _yOffset;
-			// FIXME: picture coordinates are correct for Mickey only
+			// Note that picture coordinates are correct for Mickey only
 			showPic(10, 0, _width, _height);
 			_gfx->doUpdate();
 			g_system->updateScreen();
 			_xOffset = storedXOffset;
 			_yOffset = storedYOffset;
-			g_system->delayMillis(25);
-			*/
+			_currentStep++;
+			if (_currentStep > 14)	// crystal animation is 15 frames
+				_currentStep = 0;
+			// reset the picture step flag - it will be set when the next frame of the crystal animation is drawn
+			_flags &= ~kPicFStep;
+			return;		// return back to the game loop
 		}
+
+		iteration++;
 	}
 }
 
