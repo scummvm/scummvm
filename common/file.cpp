@@ -409,7 +409,7 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 	return true;
 }
 
-bool File::remove(const String &filename){
+bool File::removeFile(const String &filename){
 	if (remove(filename.c_str()) != 0) {
 		if (errno == EACCES) {
 			//TODO: read-only file
@@ -424,8 +424,8 @@ bool File::remove(const String &filename){
 	}
 }
 
-bool File::remove(const FilesystemNode &node){
-	if (remove(node.getPath()) != 0) {
+bool File::removeFile(const FilesystemNode &node){
+	if (remove(node.getPath().c_str()) != 0) {
 		if (errno == EACCES) {
 			//TODO: read-only file
 		}

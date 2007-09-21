@@ -229,9 +229,12 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 }
 
 bool DefaultSaveFileManager::removeSavefile(const char *filename) {
+	char buf[256];
+	join_paths(filename, getSavePath(), buf, sizeof(buf));
+
 	Common::File file;
-	FilesystemNode savePath(filename);
-	return file.remove(savePath);
+	FilesystemNode savePath((const char *)buf);
+	return file.removeFile(savePath);
 }
 
 #endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
