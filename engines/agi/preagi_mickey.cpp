@@ -71,6 +71,7 @@ void Mickey::readDatHdr(char *szFile, MSA_DAT_HEADER *hdr) {
 
 	hdr->filelen = infile.readByte();
 	hdr->filelen += infile.readByte() * 0x100;
+
 	for (int i = 0; i < IDI_MSA_MAX_ROOM; i++) {
 		hdr->ofsRoom[i] = infile.readByte();
 		hdr->ofsRoom[i] += infile.readByte() * 0x100;
@@ -223,6 +224,7 @@ void Mickey::printExeStr(int ofs) {
 void Mickey::printExeMsg(int ofs) {
 	if (!ofs)
 		return;
+
 	printExeStr(ofs);
 	waitAnyKeyAnim();
 }
@@ -943,12 +945,10 @@ void Mickey::animate() {
 
 void Mickey::printRoomDesc() {
 	// print room description
-
 	printDesc(game.iRoom);
 	waitAnyKeyAnim();
 
 	// print extended room description
-
 	if (game.fRmTxt[game.iRoom]) {
 		printExeMsg(game.oRmTxt[game.iRoom] + IDI_MSA_OFS_EXE);
 	}
@@ -1253,7 +1253,6 @@ void Mickey::inventory() {
 }
 
 void Mickey::randomize() {
-	int iPlanet = 0;
 	int iHint = 0;
 
 	memset(game.iPlanetXtal, 0, sizeof(game.iPlanetXtal));
@@ -1265,10 +1264,8 @@ void Mickey::randomize() {
 	for (int i = 1; i < 8; i++) {
 		do {
 			// Earth (planet 0) and Uranus (planet 8) are excluded
-			iPlanet = _vm->rnd(IDI_MSA_MAX_PLANET - 2);
+			game.iPlanetXtal[i] = _vm->rnd(IDI_MSA_MAX_PLANET - 2);
 		} while (planetIsAlreadyAssigned(iPlanet));
-
-		game.iPlanetXtal[i] = iPlanet;
 
 		iHint = _vm->rnd(5) - 1;	// clues are 0-4
 		game.iClue[i] = IDO_MSA_NEXT_PIECE[iPlanet][iHint];
