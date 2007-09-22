@@ -494,6 +494,14 @@ void Script::doVerb() {
 		}
 	}
 
+	// WORKAROUND for a bug in the original game scripts of IHNM. Gorrister's heart is not supposed to have a
+	// "use" phrase attached to it (it's not used anywhere, it's only given), but when "used", an incorrect
+	// reply is given to the player ("It's too narrow for me to pass", said when Gorrister tries to pick up the
+	// heart without a rope). Therefore, for object number 16397 (Gorrister's heart), when the active verb is
+	// "Use", set it to "Push", which gives a more appropriate reply ("What good will that do me?")
+	if (_vm->getGameType() == GType_IHNM && _pendingObject[0] == 16397 && _pendingVerb == 4)
+		_pendingVerb = 8;
+
 	if (scriptEntrypointNumber > 0) {
 
 		event.type = kEvTOneshot;
