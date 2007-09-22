@@ -179,9 +179,7 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 	int16 x = inst->_opA.getRValue();
 	int16 y = inst->_opB.getRValue();
 
-	WalkNodeList *v4 = _char._builder.buildPath(x, y);
-	addJob(kJobWalk, v4, kPriority19 );
-	_engineFlags |= kEngineWalking;
+	_char.scheduleWalk(x, y);
 }
 
 DECLARE_INSTRUCTION_OPCODE(endscript) {
@@ -319,14 +317,7 @@ DECLARE_COMMAND_OPCODE(quit) {
 
 
 DECLARE_COMMAND_OPCODE(move) {
-	if ((_char._ani._flags & kFlagsRemove) || (_char._ani._flags & kFlagsActive) == 0) {
-		return;
-	}
-
-	WalkNodeList *vC = _char._builder.buildPath(_cmdRunCtxt.cmd->u._move.x, _cmdRunCtxt.cmd->u._move.y);
-
-	addJob(kJobWalk, vC, kPriority19 );
-	_engineFlags |= kEngineWalking;
+	_char.scheduleWalk(_cmdRunCtxt.cmd->u._move.x, _cmdRunCtxt.cmd->u._move.y);
 }
 
 

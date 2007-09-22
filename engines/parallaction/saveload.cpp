@@ -92,7 +92,9 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 
 	f->readLine(s, 29);
 
-	f->readLine(_characterName, 15);
+	f->readLine(s, 15);
+	_char.setName(s);
+
 	f->readLine(_location._name, 15);
 
 	strcat(_location._name, ".");
@@ -144,32 +146,11 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 
 	delete f;
 
-	_engineFlags &= ~kEngineTransformedDonna;
-	if (!scumm_stricmp(_characterName, "donnatras")) {
-		_engineFlags |= kEngineTransformedDonna;
-		strcpy(_characterName, "donna");
-	}
-	if (!scumm_stricmp(_characterName, "minidonnatras")) {
-		_engineFlags |= kEngineTransformedDonna;
-		strcpy(_characterName, _minidonnaName);
-	}
-
-	if (IS_MINI_CHARACTER(_characterName)) {
-		strcpy(filename, _characterName+4);
-	} else {
-		strcpy(filename, _characterName);
-	}
-//	strcat(filename, ".tab");
-//	freeTable(_objectsNames);
-//	initTable(filename, _objectsNames);
-
-//	parseLocation("common");
-
 	// force reload of character to solve inventory
 	// bugs, but it's a good maneuver anyway
 	strcpy(_characterName1, "null");
 
-	strcat(_location._name, _characterName);
+	strcat(_location._name, _char.getName());
 	_engineFlags |= kEngineChangeLocation;
 
 	return;
@@ -201,11 +182,7 @@ void Parallaction_ns::doSaveGame(uint16 slot, const char* name) {
 	f->writeString(s);
 	f->writeString("\n");
 
-	if (_engineFlags & kEngineTransformedDonna) {
-		sprintf(s, "%stras\n", _characterName);
-	} else {
-		sprintf(s, "%s\n", _characterName);
-	}
+	sprintf(s, "%s\n", _char.getFullName());
 	f->writeString(s);
 
 	sprintf(s, "%s\n", _saveData1);

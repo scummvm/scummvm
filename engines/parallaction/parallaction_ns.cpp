@@ -187,7 +187,7 @@ int Parallaction_ns::go() {
 	_globalTable = _disk->loadTable("global");
 
 	_engineFlags &= ~kEngineChangeLocation;
-	changeCharacter(_characterName);
+	changeCharacter(_char.getName());
 
 	strcpy(_saveData1, _location._name);
 	parseLocation(_location._name);
@@ -272,7 +272,6 @@ void Parallaction_ns::changeLocation(char *location) {
 		// list is now only [L].{[C]} (see above comment)
 		if (list.size() == 2) {
 			changeCharacter(list[1].c_str());
-			strcpy(_characterName, list[1].c_str());
 		}
 	}
 
@@ -331,49 +330,41 @@ void Parallaction_ns::changeLocation(char *location) {
 void Parallaction_ns::changeCharacter(const char *name) {
 	debugC(1, kDebugExec, "changeCharacter(%s)", name);
 
-	char baseName[20];
-	if (IS_MINI_CHARACTER(name)) {
-		strcpy(baseName, name+4);
-	} else {
-		strcpy(baseName, name);
+	_char.setName(name);
+
+	if (!scumm_stricmp(_char.getFullName(), _characterName1)) {
+		debugC(3, kDebugExec, "changeCharacter: nothing done");
+		return;
 	}
 
-	char fullName[20];
-	strcpy(fullName, name);
-	if (_engineFlags & kEngineTransformedDonna)
-		strcat(fullName, "tras");
+	// freeCharacter takes responsibility for checking
+	// character for sanity before memory is freed
+	freeCharacter();
 
-	if (scumm_stricmp(fullName, _characterName1)) {
+	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
+	_char._ani._cnv = _disk->loadFrames(_char.getFullName());
 
-		// freeCharacter takes responsibility for checking
-		// character for sanity before memory is freed
-		freeCharacter();
+	if (_char.getBaseName()[0] != '\0') {
+		if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT))
+			_disk->selectArchive("disk0");
 
-		Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
-		_char._ani._cnv = _disk->loadFrames(fullName);
+		_char._head = _disk->loadHead(_char.getBaseName());
+		_char._talk = _disk->loadTalk(_char.getBaseName());
+		_char._objs = _disk->loadObjects(_char.getBaseName());
+		_objectsNames = _disk->loadTable(_char.getBaseName());
 
-		if (!IS_DUMMY_CHARACTER(name)) {
-			if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT))
-				_disk->selectArchive("disk0");
+		_soundMan->playCharacterMusic(_char.getBaseName());
 
-			_char._head = _disk->loadHead(baseName);
-			_char._talk = _disk->loadTalk(baseName);
-			_char._objs = _disk->loadObjects(baseName);
-			_objectsNames = _disk->loadTable(baseName);
-
-			_soundMan->playCharacterMusic(name);
-
-			if (!(getFeatures() & GF_DEMO))
-				parseLocation("common");
-		}
-
-		if (!oldArchive.empty())
-			_disk->selectArchive(oldArchive);
+		if (!(getFeatures() & GF_DEMO))
+			parseLocation("common");
 	}
 
-	strcpy(_characterName1, fullName);
+	if (!oldArchive.empty())
+		_disk->selectArchive(oldArchive);
 
-	debugC(1, kDebugExec, "changeCharacter() done");
+	strcpy(_characterName1, _char.getFullName());
+
+	debugC(3, kDebugExec, "changeCharacter: switch completed");
 
 	return;
 }

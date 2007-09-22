@@ -392,7 +392,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 
 	Common::File stream;
 
-	stream.open(_characterName, Common::File::kFileWriteMode);
+	stream.open(_char.getBaseName(), Common::File::kFileWriteMode);
 	if (stream.isOpen())
 		stream.close();
 

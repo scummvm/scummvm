@@ -81,7 +81,7 @@ void Debugger::postEnter() {
 
 bool Debugger::Cmd_Location(int argc, const char **argv) {
 
-	char *character = _vm->_characterName;
+	const char *character = _vm->_char.getName();
 	char *location = _vm->_location._name;
 
 	switch (argc) {

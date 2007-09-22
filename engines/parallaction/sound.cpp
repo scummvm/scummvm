@@ -257,9 +257,6 @@ void DosSoundMan::playCharacterMusic(const char *character) {
 
 	char *name = const_cast<char*>(character);
 
-	if (IS_MINI_CHARACTER(name))
-		name+=4;
-
 	if (!scumm_stricmp(name, _dinoName)) {
 		setMusicFile("dino");
 	} else
@@ -278,7 +275,7 @@ void DosSoundMan::playCharacterMusic(const char *character) {
 
 void DosSoundMan::playLocationMusic(const char *location) {
 	if (_musicData1 != 0) {
-		playCharacterMusic(_vm->_characterName);
+		playCharacterMusic(_vm->_char.getBaseName());
 		_musicData1 = 0;
 		debugC(2, kDebugExec, "changeLocation: started character specific music");
 	}

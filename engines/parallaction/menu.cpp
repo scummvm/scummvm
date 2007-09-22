@@ -178,7 +178,7 @@ void Menu::newGame() {
 	selectCharacter();
 
 	char *v4 = strchr(_vm->_location._name, '.') + 1;
-	strcpy(_vm->_characterName, v4);
+	_vm->_char.setName(v4);
 
 	return; // start game
 }
@@ -291,8 +291,7 @@ uint16 Menu::selectGame() {
 	// The 2 strcpy's below act as workaround to prevent crashes for
 	// time being.
 	strcpy(_vm->_location._name, "fogne");
-	strcpy(_vm->_characterName, "dough");
-
+	_vm->_char.setName("dough");
 	_vm->loadGame();
 
 	return 1;  // load game

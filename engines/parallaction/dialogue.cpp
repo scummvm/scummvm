@@ -142,9 +142,9 @@ uint16 DialogueManager::askPassword() {
 			g_system->delayMillis(20);
 		}
 
-		if ((!scumm_stricmp(_vm->_characterName, _doughName) && !scumm_strnicmp(password, "1732461", 7)) ||
-			(!scumm_stricmp(_vm->_characterName, _donnaName) && !scumm_strnicmp(password, "1622", 4)) ||
-			(!scumm_stricmp(_vm->_characterName, _dinoName) && !scumm_strnicmp(password, "179", 3))) {
+		if ((!scumm_stricmp(_vm->_char.getBaseName(), _doughName) && !scumm_strnicmp(password, "1732461", 7)) ||
+			(!scumm_stricmp(_vm->_char.getBaseName(), _donnaName) && !scumm_strnicmp(password, "1622", 4)) ||
+			(!scumm_stricmp(_vm->_char.getBaseName(), _dinoName) && !scumm_strnicmp(password, "179", 3))) {
 
 			break;
 

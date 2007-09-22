@@ -91,7 +91,7 @@ static Job	   *_jRunScripts = NULL;
 
 
 Parallaction::Parallaction(OSystem *syst) :
-	Engine(syst) {
+	Engine(syst), _char(this) {
 
 	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
 	// needs fixing, or remove it!
@@ -170,7 +170,8 @@ int Parallaction::init() {
 	_backgroundInfo = new BackgroundInfo;
 
 	strcpy(_characterName1, "null");
-	strcpy(_characterName, "dough");
+//	strcpy(_char._name, "dough");
+	_char.setName("dough");
 
 	memset(_locationNames, 0, NUM_LOCATIONS * 32);
 
@@ -440,11 +441,7 @@ void Parallaction::processInput(InputData *data) {
 		debugC(2, kDebugInput, "processInput: kEvWalk");
 		_hoverZone = NULL;
 		changeCursor(kCursorArrow);
-		if (_char._ani._flags & kFlagsRemove) break;
-		if ((_char._ani._flags & kFlagsActive) == 0) break;
-		WalkNodeList *v4 = _char._builder.buildPath(data->_mousePos.x, data->_mousePos.y);
-		addJob(kJobWalk, v4, kPriority19);
-		_engineFlags |= kEngineWalking; 								   // inhibits processing of input until walking is over
+		_char.scheduleWalk(data->_mousePos.x, data->_mousePos.y);
 		}
 		break;
 
@@ -654,26 +651,11 @@ void Parallaction::changeCursor(int32 index) {
 void Parallaction::freeCharacter() {
 	debugC(1, kDebugExec, "freeCharacter()");
 
-	if (!IS_DUMMY_CHARACTER(_characterName)) {
-		if (_objectsNames)
-			delete _objectsNames;
-		_objectsNames = NULL;
+	if (_objectsNames)
+		delete _objectsNames;
+	_objectsNames = NULL;
 
-		if (_char._ani._cnv)
-			delete _char._ani._cnv;
-		_char._ani._cnv = NULL;
-
-		if (_char._talk)
-			delete _char._talk;
-		_char._talk = NULL;
-
-		delete _char._head;
-		_char._head = NULL;
-
-		if (_char._objs)
-			delete _char._objs;
-		_char._objs = NULL;
-	}
+	_char.free();
 
 	return;
 }
@@ -1054,11 +1036,137 @@ void Parallaction::freeZones() {
 }
 
 
+const char Character::_prefixMini[] = "mini";
+const char Character::_suffixTras[] = "tras";
+const char Character::_empty[] = "\0";
 
 
+Character::Character(Parallaction *vm) : _vm(vm), _builder(&_ani) {
+	_talk = NULL;
+	_head = NULL;
+	_objs = NULL;
+
+	_ani._left = 150;
+	_ani._top = 100;
+	_ani._z = 10;
+	_ani._oldPos.x = -1000;
+	_ani._oldPos.y = -1000;
+	_ani._frame = 0;
+	_ani._flags = kFlagsActive | kFlagsNoName;
+	_ani._type = kZoneYou;
+	_ani._label._cnv.pixels = NULL;
+	_ani._label._text = strdup("yourself");
+}
+
+void Character::getFoot(Common::Point &foot) {
+	foot.x = _ani._left + _ani.width() / 2;
+	foot.y = _ani._top + _ani.height();
+}
+
+void Character::setFoot(const Common::Point &foot) {
+	_ani._left = foot.x - _ani.width() / 2;
+	_ani._top = foot.y - _ani.height();
+}
+
+void Character::scheduleWalk(int16 x, int16 y) {
+	if ((_ani._flags & kFlagsRemove) || (_ani._flags & kFlagsActive) == 0) {
+		return;
+	}
+
+	WalkNodeList *list = _builder.buildPath(x, y);
+	_vm->addJob(kJobWalk, list, kPriority19 );
+
+	_engineFlags |= kEngineWalking;
+}
+
+void Character::free() {
+
+	if (_ani._cnv)
+		delete _ani._cnv;
+	if (_talk)
+		delete _talk;
+	if (_head)
+		delete _head;
+	if (_objs)
+		delete _objs;
+
+	_ani._cnv = NULL;
+	_talk = NULL;
+	_head = NULL;
+	_objs = NULL;
+
+	return;
+}
 
 
+// Various ways of detecting character modes used to exist
+// inside the engine, so they have been unified in the two
+// following macros.
+// Mini characters are those used in far away shots, like
+// the highway scenery, while Dummy characters are a mere
+// workaround to keep the engine happy when showing slides.
+// As a sidenote, standard sized characters' names start
+// with a lowercase 'd'.
+#define IS_MINI_CHARACTER(s) (((s)[0] == 'm'))
+#define IS_DUMMY_CHARACTER(s) (((s)[0] == 'D'))
 
+void Character::setName(const char *name) {
+	const char *begin = name;
+	const char *end = begin + strlen(name);
+
+	_prefix = _empty;
+	_suffix = _empty;
+
+	if (IS_DUMMY_CHARACTER(name)) {
+		begin = 0;
+		end = 0;
+	} else {
+
+		char *s = strstr(name, "tras");
+		if (s) {
+			_suffix = _suffixTras;
+			end = s;
+		}
+
+		if (IS_MINI_CHARACTER(name)) {
+			_prefix = _prefixMini;
+			begin = name+4;
+		}
+
+	}
+
+	memset(_baseName, 0, 30);
+	strncpy(_baseName, begin, end - begin);
+	sprintf(_name, "%s%s", _prefix, _baseName);
+	sprintf(_fullName, "%s%s%s", _prefix, _baseName, _suffix);
+}
+
+void Character::transform() {
+	if (scumm_stricmp("donna", _baseName)) {
+		error("can't transform character %s", _baseName);
+	}
+
+	if (_suffix) {
+		_suffix = _empty;
+	} else {
+		_suffix = _suffixTras;
+	}
+
+	_engineFlags ^= kEngineTransformedDonna;
+	setName(_name);
+}
+
+const char *Character::getName() const {
+	return _name;
+}
+
+const char *Character::getBaseName() const {
+	return _baseName;
+}
+
+const char *Character::getFullName() const {
+	return _fullName;
+}
 
 
 

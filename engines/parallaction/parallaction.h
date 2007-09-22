@@ -175,16 +175,6 @@ extern const char 	*_minidonnaName;
 extern const char 	*_minidoughName;
 extern const char 	*_minidrkiName;
 
-// Various ways of detecting character modes used to exist
-// inside the engine, so they have been unified in the two
-// following macros.
-// Mini characters are those used in far away shots, like
-// the highway scenery, while Dummy characters are a mere
-// workaround to keep the engine happy when showing slides.
-// As a sidenote, standard sized characters' names start
-// with a lowercase 'd'.
-#define IS_MINI_CHARACTER(s) (((s)[0] == 'm'))
-#define IS_DUMMY_CHARACTER(s) (((s)[0] == 'D'))
 
 void waitUntilLeftClick();
 
@@ -215,41 +205,43 @@ struct Location {
 	CommandList		_escapeCommands;
 };
 
+
+
+
 struct Character {
+	Parallaction	*_vm;
+
+
 	Animation		_ani;
 	Graphics::Surface		*_head;
 	Frames		    *_talk;
 	Frames 			*_objs;
 	PathBuilder		_builder;
 
-	Character() : _builder(&_ani) {
-		_talk = NULL;
-		_head = NULL;
-		_objs = NULL;
+	Character(Parallaction *vm);
+	void getFoot(Common::Point &foot);
+	void setFoot(const Common::Point &foot);
+	void scheduleWalk(int16 x, int16 y);
 
-		_ani._left = 150;
-		_ani._top = 100;
-		_ani._z = 10;
-		_ani._oldPos.x = -1000;
-		_ani._oldPos.y = -1000;
-		_ani._frame = 0;
-		_ani._flags = kFlagsActive | kFlagsNoName;
-		_ani._type = kZoneYou;
-		_ani._label._cnv.pixels = NULL;
-		_ani._label._text = strdup("yourself");
-	}
+	void free();
 
-	void getFoot(Common::Point &foot) {
-		foot.x = _ani._left + _ani.width() / 2;
-		foot.y = _ani._top + _ani.height();
-	}
+protected:
+	const char *_prefix;
+	const char *_suffix;
 
-	void setFoot(const Common::Point &foot) {
-		_ani._left = foot.x - _ani.width() / 2;
-		_ani._top = foot.y - _ani.height();
-	}
+	char _name[30];
+	char _baseName[30];
+	char _fullName[30];
+	static const char _prefixMini[];
+	static const char _suffixTras[];
+	static const char _empty[];
 
-
+public:
+	void setName(const char *name);
+	void transform();
+	const char *getName() const;
+	const char *getBaseName() const;
+	const char *getFullName() const;
 };
 
 
@@ -471,7 +463,6 @@ public:
 	Disk*			_disk;
 
 	Character		_char;
-	char			_characterName[30];
 
 	uint32			_localFlags[NUM_LOCATIONS];
 	char			_locationNames[NUM_LOCATIONS][32];

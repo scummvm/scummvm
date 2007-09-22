@@ -312,7 +312,7 @@ DECLARE_LOCATION_PARSER(zeta)  {
 DECLARE_COMMAND_PARSER(ifchar)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(ifchar) ");
 
-	if (!scumm_stricmp(_characterName, _tokens[1]))
+	if (!scumm_stricmp(_char.getName(), _tokens[1]))
 		skip(_locParseCtxt.script, "endif");
 }
 
