@@ -1,3 +1,25 @@
+/* ScummVM Tools
+ * Copyright (C) 2007 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
 #include "stdafx.h"
 #include "cpthelp.h"
 
@@ -5,7 +27,7 @@ void assertEmpty(CptObj *cpt) {
 	assert((cpt->len == 0) && (cpt->data == NULL) && (cpt->dbgName == NULL) && (cpt->type == 0));
 }
 
-uint16 getInfo(char *line, char *type, char *nameDest) {
+uint16 getInfo(const char *line, const char *type, char *nameDest) {
 	assert(*line == '\t');
 	line++;
 	assert(!memcmp(line, type, strlen(type)));
@@ -32,7 +54,7 @@ void dofgets(char *dest, int len, FILE *inf) {
 			dest++;
 }
 
-bool lineMatchSection(char *line, char *sec) {
+bool lineMatchSection(const char *line, const char *sec) {
 	if (memcmp(line, "SECTION::", 9))
 		return false;
 	if (memcmp(line + 9, sec, strlen(sec)))
@@ -40,13 +62,13 @@ bool lineMatchSection(char *line, char *sec) {
 	return true;
 }
 
-bool isEndOfSection(char *line) {
+bool isEndOfSection(const char *line) {
 	if (strcmp(line, "SECTION::ENDS"))
 		return false;
 	return true;
 }
 
-bool isEndOfObject(char *line, char *type, uint16 id) {
+bool isEndOfObject(const char *line, const char *type, uint16 id) {
 	if (*line != '\t')
 		return false;
 	line++;
