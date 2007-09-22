@@ -365,7 +365,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	uint8 *buffer = new uint8[targetsize];
 	assert(buffer);
 	uint8 *output = buffer;
-	uint8 *input = (uint8*) data;
+	const uint8 *input = (const uint8*) data;
 
 	WRITE_BE_UINT32(output, entries); output += 4;
 	if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
