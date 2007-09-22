@@ -1622,7 +1622,7 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"troll",
 			"",
-			AD_ENTRY1s("troll.exe", "c594b4d6791e9580d8d5dc9d71760027", 59120),
+			AD_ENTRY1s("troll.img", "62903f264b3d849be4214b3a5c42a2fa", 184320),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS

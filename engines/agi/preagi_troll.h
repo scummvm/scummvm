@@ -122,9 +122,9 @@ namespace Agi {
 
 // offsets
 
-#define IDA_TRO_BINNAME "troll.exe"
+#define IDA_TRO_BINNAME "troll.img"
 
-#define IDO_TRO_DATA_START    0x1960
+#define IDO_TRO_DATA_START    0x3A40
 #define IDO_TRO_PIC_START	  0x3EF5
 #define IDO_TRO_LOCMESSAGES   0x1F7C
 #define IDO_TRO_USERMESSAGES  0x34A4

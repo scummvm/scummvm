@@ -726,13 +726,38 @@ void Troll::init() {
    	_vm->_picture->setPictureVersion(AGIPIC_V15);
 	//SetScreenPar(320, 200, (char*)ibm_fontdata);
 
+	const int gaps[] = { 0x3A40,  0x4600,  0x4800,  0x5800,  0x5a00,  0x6a00,
+						 0x6c00,  0x7400,  0x7600,  0x7c00,  0x7e00,  0x8e00,
+						 0x9000,  0xa000,  0xa200,  0xb200,  0xb400,  0xc400,
+						 0xc600,  0xd600,  0xd800,  0xe800,  0xea00,  0xfa00,
+						 0xfc00,  0x10c00, 0x10e00, 0x11e00, 0x12000, 0x13000 };
+
 	Common::File infile;
 	if (!infile.open(IDA_TRO_BINNAME))
 		return;
 
-	_gameData = (byte *)malloc(infile.size());
-	infile.seek(IDO_TRO_DATA_START);
-	infile.read(_gameData, infile.size() - IDO_TRO_DATA_START);
+	_gameData = (byte *)malloc(0xD9C0);
+
+	bool flip = true;
+	byte *ptr = _gameData;
+	int diff;
+
+	for (int i = 0; i < ARRAYSIZE(gaps) - 1; i++) {
+		diff = gaps[i + 1] - gaps[i];
+
+		if (flip) {
+			infile.seek(gaps[i]);
+			infile.read(ptr, diff);
+			ptr += diff;
+		} else {
+		}
+		flip = !flip;
+	}
+
+	// One sector is off
+	infile.seek(0x18470);
+	infile.read(_gameData + 15632, 592);
+
 	infile.close();
 
 	fillOffsets();
