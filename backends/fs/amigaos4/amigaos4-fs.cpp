@@ -116,16 +116,16 @@ public:
  * @return Pointer to the first char of the last component inside str.
  */
 const char *lastPathComponent(const Common::String &str) {
-	int offset = p.size();
-	const char *str = p.c_str();
+	int offset = str.size();
+	const char *p = str.c_str();
 
-	while (offset > 0 && (str[offset-1] == '/' || str[offset-1] == ':'))
+	while (offset > 0 && (p[offset-1] == '/' || p[offset-1] == ':'))
 		offset--;
 
-	while (offset > 0 && (str[offset-1] != '/' && str[offset-1] != ':'))
+	while (offset > 0 && (p[offset-1] != '/' && p[offset-1] != ':'))
 		offset--;
 
-	return str.c_str() + offset;
+	return p + offset;
 }
 
 AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
