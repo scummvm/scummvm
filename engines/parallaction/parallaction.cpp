@@ -1122,7 +1122,7 @@ void Character::setName(const char *name) {
 		end = 0;
 	} else {
 
-		char *s = strstr(name, "tras");
+		const char *s = strstr(name, "tras");
 		if (s) {
 			_suffix = _suffixTras;
 			end = s;
