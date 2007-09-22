@@ -106,6 +106,28 @@ public:
 	virtual AbstractFSList listVolumes() const;
 };
 
+// TODO: this is ripped of
+// AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p)
+// maybe change it to use this function instead?
+/**
+ * Returns the last component of a given path.
+ * 
+ * @param str String containing the path.
+ * @return Pointer to the first char of the last component inside str.
+ */
+const char *lastPathComponent(const Common::String &str) {
+	int offset = p.size();
+	const char *str = p.c_str();
+
+	while (offset > 0 && (str[offset-1] == '/' || str[offset-1] == ':'))
+		offset--;
+
+	while (offset > 0 && (str[offset-1] != '/' && str[offset-1] != ':'))
+		offset--;
+
+	return str.c_str() + offset;
+}
+
 AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 	ENTER();
 	_sDisplayName = "Available Disks";
