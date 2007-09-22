@@ -752,7 +752,6 @@ protected:
 	void printStr(char*);
 	void printExeStr(int);
 	void printExeMsg(int);
-	void printDatStr(int, int);
 	void printDesc(int);
 	void drawMenu(MSA_MENU, int, int);
 	void getMouseMenuSelRow(MSA_MENU, int*, int*, int, int, int);
@@ -767,8 +766,6 @@ protected:
 	void debug();
 	void drawObj(ENUM_MSA_OBJECT, int, int);
 	void drawPic(int);
-	void drawRoomPicture();
-	void drawRoomObjects();
 	void drawRoomAnimation();
 	void drawRoom();
 	void drawLogo();
@@ -778,7 +775,6 @@ protected:
 	void saveGame();
 	void showPlanetInfo();
 	void printStory();
-	void hidden();
 	int getPlanet();
 	void pressOB(int);
 	void insertDisk(int);
@@ -788,11 +784,8 @@ protected:
 	void getItem(ENUM_MSA_ITEM);
 	void getXtal(int);
 	bool parse(int, int);
-	void gameLoop();
 	void debug_DrawObjs();
 	void debug_DrawPics();
-	void initVars();
-	void initEngine();
 	void flipSwitch();
 	void waitAnyKeyAnim();
 	void waitAnyKey(bool anim = false);

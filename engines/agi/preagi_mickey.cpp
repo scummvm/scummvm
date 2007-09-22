@@ -176,8 +176,9 @@ void Mickey::printExeMsg(int ofs) {
 	waitAnyKeyAnim();
 }
 
-void Mickey::printDatStr(int iDat, int iStr) {
+void Mickey::printDatString(int iStr) {
 	char *buffer = (char *)malloc(256);
+	int iDat = getDat(game.iRoom);
 
 	MSA_DAT_HEADER hdr;
 	char szFile[256] = {0};
@@ -406,7 +407,16 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_2:
-					hidden();
+					// Hidden message
+					if (game.iRoom == IDI_MSA_PIC_MERCURY_CAVE_0) {
+						for (int i = 0; i < 5; i++) {
+							printExeMsg(IDO_MSA_HIDDEN_MSG[i]);
+						}
+						_vm->clearTextArea();
+						//_vm->_gfx->doUpdate();
+						//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+						waitAnyKey();
+					}
 					break;
 				case Common::KEYCODE_8:
 					if (event.kbd.flags & Common::KBD_CTRL) {
@@ -559,10 +569,6 @@ void Mickey::patchMenu(MSA_MENU *menu) {
 	centerMenu(menu);
 }
 
-void Mickey::printDatString(int iStr) {
-	printDatStr(getDat(game.iRoom), iStr);
-}
-
 void Mickey::printDatMessage(int iStr) {
 	printDatString(iStr);
 	//_vm->_gfx->doUpdate();
@@ -707,52 +713,6 @@ void Mickey::drawPic(int iPic) {
 	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 }
 
-void Mickey::drawRoomPicture() {
-	if (false) {	// (getDebug()) {	// TODO
-		drawPic(0);
-		debug();
-	} else {
-		if (game.iRoom == IDI_MSA_PIC_TITLE) {
-			drawPic(IDI_MSA_PIC_TITLE);
-		} else {
-			drawPic(game.iRmPic[game.iRoom]);
-		}
-	}
-}
-
-void Mickey::drawRoomObjects() {
-	if (game.iRoom >= IDI_MSA_MAX_PIC_ROOM)
-		return;
-
-	uint8 buffer[256];
-	int pBuf = 0;
-	int nObjs;
-
-	// draw ship control room window
-
-	if (game.iRoom == IDI_MSA_PIC_SHIP_CONTROLS) {
-		if (game.fFlying) {
-			drawObj(IDI_MSA_OBJECT_W_SPACE, 0, 0);
-		} else {
-			drawObj((ENUM_MSA_OBJECT)(IDI_MSA_OBJECT_W_EARTH + game.iPlanet), 0, 1);
-		}
-	}
-
-	// draw objects
-
-	if (game.iRmObj[game.iRoom] != IDI_MSA_OBJECT_NONE) {
-		readOfsData(IDO_MSA_ROOM_OBJECT_XY_OFFSETS,
-			game.iRmObj[game.iRoom], buffer, sizeof(buffer));
-
-		nObjs = buffer[pBuf++];
-
-		for (int iObj = 0; iObj < nObjs; iObj++) {
-			drawObj((ENUM_MSA_OBJECT)buffer[pBuf], buffer[pBuf + 1], buffer[pBuf + 2]);
-			pBuf += 3;
-		}
-	}
-}
-
 void Mickey::drawRoomAnimation() {
 	uint8 objLight[] = {
 		0xF0, 1, 0xF9, 2, 43, 45, 0xFF
@@ -807,7 +767,6 @@ void Mickey::drawRoomAnimation() {
 	case IDI_MSA_PIC_SHIP_CONTROLS:
 
 		// draw XL30 screen
-
 		if (game.fAnimXL30) {
 			if (game.nFrame > 5) game.nFrame = 0;
 			drawObj((ENUM_MSA_OBJECT)(IDI_MSA_OBJECT_XL31 + game.nFrame), 0, 4);
@@ -819,7 +778,6 @@ void Mickey::drawRoomAnimation() {
 	default:
 
 		// draw crystal
-
 		if (game.iRoom == IDI_MSA_XTAL_ROOM_XY[game.iPlanet][0]) {
 			if (!game.fHasXtal) {
 				switch(game.iPlanet) {
@@ -841,8 +799,51 @@ void Mickey::drawRoomAnimation() {
 }
 
 void Mickey::drawRoom() {
-	drawRoomPicture();
-	drawRoomObjects();
+	uint8 buffer[256];
+	int pBuf = 0;
+	int nObjs;
+
+	// Draw room picture
+	if (true) {	// (!getDebug()) {	// TODO
+		if (game.iRoom == IDI_MSA_PIC_TITLE) {
+			drawPic(IDI_MSA_PIC_TITLE);
+		} else {
+			drawPic(game.iRmPic[game.iRoom]);
+
+			if (game.iRoom == IDI_MSA_PIC_SHIP_CONTROLS) {
+				// Draw ship control room window
+				if (game.fFlying) {
+					drawObj(IDI_MSA_OBJECT_W_SPACE, 0, 0);
+				} else {
+					drawObj((ENUM_MSA_OBJECT)(IDI_MSA_OBJECT_W_EARTH + game.iPlanet), 0, 1);
+				}
+			}
+		}
+	} else {
+		// Debug
+		drawPic(0);
+		debug();
+	}
+
+	// Draw room objects
+	if (game.iRoom >= IDI_MSA_MAX_PIC_ROOM) {
+		drawRoomAnimation();
+		return;
+	}
+
+	if (game.iRmObj[game.iRoom] != IDI_MSA_OBJECT_NONE) {
+		readOfsData(IDO_MSA_ROOM_OBJECT_XY_OFFSETS,
+			game.iRmObj[game.iRoom], buffer, sizeof(buffer));
+
+		nObjs = buffer[pBuf++];
+
+		for (int iObj = 0; iObj < nObjs; iObj++) {
+			drawObj((ENUM_MSA_OBJECT)buffer[pBuf], buffer[pBuf + 1], buffer[pBuf + 2]);
+			pBuf += 3;
+		}
+	}
+
+	// Draw room animation
 	drawRoomAnimation();
 }
 
@@ -1051,18 +1052,6 @@ void Mickey::printStory() {
 	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	game.fStoryShown = true;
-}
-
-void Mickey::hidden() {
-	if (game.iRoom == IDI_MSA_PIC_MERCURY_CAVE_0) {
-		for (int i = 0; i < 5; i++) {
-			printExeMsg(IDO_MSA_HIDDEN_MSG[i]);
-		}
-		_vm->clearTextArea();
-		//_vm->_gfx->doUpdate();
-		//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-		waitAnyKey();
-	}
 }
 
 int Mickey::getPlanet() {
@@ -1975,72 +1964,6 @@ bool Mickey::parse(int cmd, int arg) {
 	return false;
 }
 
-void Mickey::gameLoop() {
-	char *buffer = new char[sizeof(MSA_MENU)];
-	MSA_MENU menu;
-	int iSel0, iSel1;
-	bool done;
-	MSA_DAT_HEADER hdr;
-	char szFile[256] = {0};
-	Common::File infile;
-
-	for (;;) {
-		drawRoom();
-
-		if (game.fIntro) {
-			game.fIntro = false;
-		} else {
-			printRoomDesc();
-		}
-
-		if (game.iRoom == IDI_MSA_PIC_NEPTUNE_GUARD) {
-			game.iRoom = IDI_MSA_PIC_NEPTUNE_LEADER;
-			done = true;
-		} else {
-			done = false;
-		}
-
-		while (!done) {
-			// Check air supply
-			if (game.fSuit) {
-				game.nAir -= 1;
-				for (int i = 0; i < 4; i++) {
-					if (game.nAir == IDI_MSA_AIR_SUPPLY[i]) {
-						playSound(IDI_MSA_SND_XL30);
-						printExeMsg(IDO_MSA_XL30_SPEAKING);
-						printExeMsg(IDO_MSA_AIR_SUPPLY[i]);
-						if (i == 3) {
-							exit(0);
-						}
-					}
-				}
-			} else {
-				game.nAir = IDI_MSA_MAX_AIR_SUPPLY;
-			}
-
-			// Read menu
-			getDatFileName(game.iRoom, szFile);
-			readDatHdr(szFile, &hdr);
-			if (!infile.open(szFile))
-				return;
-			infile.seek(hdr.ofsRoom[game.iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
-			infile.read((uint8 *)buffer, sizeof(MSA_MENU));
-			infile.close();
-
-			memcpy(&menu, buffer, sizeof(MSA_MENU));
-			patchMenu(&menu);
-			memcpy(buffer, &menu, sizeof(MSA_MENU));
-
-			getMenuSel(buffer, &iSel0, &iSel1);
-			done = parse(menu.cmd[iSel0].data[iSel1], menu.arg[iSel0].data[iSel1]);
-		}
-
-		game.nFrame = 0;
-	}
-
-	delete [] buffer;
-}
-
 // Keyboard
 
 void Mickey::waitAnyKeyAnim() {
@@ -2112,7 +2035,13 @@ void Mickey::debug_DrawPics(){
 
 // Init
 
-void Mickey::initVars() {
+Mickey::Mickey(PreAgiEngine *vm) : _vm(vm) {
+}
+
+Mickey::~Mickey() {
+}
+
+void Mickey::init() {
 	uint8 buffer[512];
 
 	// clear game struct
@@ -2161,27 +2090,77 @@ void Mickey::initVars() {
 	game.fItemUsed[IDI_MSA_ITEM_LETTER] = true;
 
 #endif
-
-}
-
-void Mickey::initEngine() {
-	// PreAGI sets the screen params here, but we've already done that in the preagi class
-}
-
-Mickey::Mickey(PreAgiEngine *vm) : _vm(vm) {
-}
-
-Mickey::~Mickey() {
-}
-
-void Mickey::init() {
-	initEngine();
-	initVars();
 }
 
 void Mickey::run() {
+	char *buffer = new char[sizeof(MSA_MENU)];
+	MSA_MENU menu;
+	int iSel0, iSel1;
+	bool done;
+	MSA_DAT_HEADER hdr;
+	char szFile[256] = {0};
+	Common::File infile;
+
+	// Game intro
 	intro();
-	gameLoop();
+
+	// Game loop
+	for (;;) {
+		drawRoom();
+
+		if (game.fIntro) {
+			game.fIntro = false;
+		} else {
+			printRoomDesc();
+		}
+
+		if (game.iRoom == IDI_MSA_PIC_NEPTUNE_GUARD) {
+			game.iRoom = IDI_MSA_PIC_NEPTUNE_LEADER;
+			done = true;
+		} else {
+			done = false;
+		}
+
+		while (!done) {
+			// Check air supply
+			if (game.fSuit) {
+				game.nAir -= 1;
+				for (int i = 0; i < 4; i++) {
+					if (game.nAir == IDI_MSA_AIR_SUPPLY[i]) {
+						playSound(IDI_MSA_SND_XL30);
+						printExeMsg(IDO_MSA_XL30_SPEAKING);
+						printExeMsg(IDO_MSA_AIR_SUPPLY[i]);
+						if (i == 3) {
+							exit(0);
+						}
+					}
+				}
+			} else {
+				game.nAir = IDI_MSA_MAX_AIR_SUPPLY;
+			}
+
+			// Read menu
+			getDatFileName(game.iRoom, szFile);
+			readDatHdr(szFile, &hdr);
+			if (!infile.open(szFile))
+				return;
+			infile.seek(hdr.ofsRoom[game.iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
+			infile.read((uint8 *)buffer, sizeof(MSA_MENU));
+			infile.close();
+
+			memcpy(&menu, buffer, sizeof(MSA_MENU));
+			patchMenu(&menu);
+			memcpy(buffer, &menu, sizeof(MSA_MENU));
+
+			getMenuSel(buffer, &iSel0, &iSel1);
+			done = parse(menu.cmd[iSel0].data[iSel1], menu.arg[iSel0].data[iSel1]);
+		}
+
+		game.nFrame = 0;
+	}
+
+	delete [] buffer;
+
 	gameOver();
 }
 
