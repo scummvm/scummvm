@@ -2176,11 +2176,11 @@ void Mickey::initVars() {
 		game.iRmObj[i] = -1;
 	}
 	game.iRmPic[IDI_MSA_PIC_SHIP_AIRLOCK] = IDI_MSA_PIC_SHIP_AIRLOCK_0;
-	game.iRmObj[23] = 11;
-	game.iRmObj[110] = 21;
-	game.iRmObj[112] = 20;
-	game.iRmObj[119] = 19;
-	game.iRmObj[154] = 1;
+	game.iRmObj[IDI_MSA_PIC_EARTH_BATHROOM] = 11;
+	game.iRmObj[IDI_MSA_PIC_JUPITER_LAVA] = 21;
+	game.iRmObj[IDI_MSA_PIC_JUPITER_ROCK_0] = 20;
+	game.iRmObj[IDI_MSA_PIC_JUPITER_ROCK_1] = 19;
+	game.iRmObj[IDI_MSA_PIC_EARTH_IN_DOGHOUSE] = 1;
 
 #if 0
 	// DEBUG
