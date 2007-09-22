@@ -22,7 +22,7 @@
 
 #include "stdafx.h"
 #include "cpthelp.h"
-#include "textfile.h"
+#include "TextFile.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
