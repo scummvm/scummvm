@@ -120,12 +120,14 @@ void Winnie::randomize() {
 }
 
 void Winnie::intro() {
-	drawPic(IDS_WTP_FILE_LOGO);
+	drawPic((!_vm->getPlatform() == Common::kPlatformAmiga) ? IDS_WTP_FILE_LOGO : "logo");
 	_vm->printStr(IDS_WTP_INTRO_0);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(0x640);
-	drawPic(IDS_WTP_FILE_TITLE);
+	if (_vm->getPlatform() == Common::kPlatformAmiga)
+		_vm->_gfx->clearScreen(0);
+	drawPic((!_vm->getPlatform() == Common::kPlatformAmiga) ? IDS_WTP_FILE_TITLE : "title");
 	_vm->printStr(IDS_WTP_INTRO_1);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
@@ -969,8 +971,10 @@ void Winnie::drawPic(const char *szName) {
 	// construct filename
 	sprintf(szFile, IDS_WTP_PATH, szName);
 	Common::File file;
-	if (!file.open(szName))
+	if (!file.open(szName)) {
+		warning ("Could not open file \'%s\'", szName);
 		return;
+	}
 	uint32 size = file.size();
 	file.read(buffer, size);
 	file.close();
@@ -1104,7 +1108,8 @@ void Winnie::init() {
 void Winnie::run() {
 	randomize();
 	intro();
-	gameLoop();
+	if (!_vm->getPlatform() == Common::kPlatformAmiga)
+		gameLoop();
 }
 
 }
