@@ -88,59 +88,6 @@ void Mickey::readDatHdr(char *szFile, MSA_DAT_HEADER *hdr) {
 	infile.close();
 }
 
-void Mickey::readDesc(int iRoom, char *buffer, long buflen) {
-	MSA_DAT_HEADER hdr;
-	char szFile[256] = {0};
-
-	getDatFileName(iRoom, szFile);
-	readDatHdr(szFile, &hdr);
-
-	Common::File infile;
-
-	if (!infile.open(szFile))
-		return;
-
-	memset(buffer, 0, buflen);
-
-	infile.seek(hdr.ofsDesc[iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
-	infile.read(buffer, buflen);
-	infile.close();
-}
-
-void Mickey::readMenu(int iRoom, char *buffer) {
-	MSA_DAT_HEADER hdr;
-	char szFile[256] = {0};
-
-	getDatFileName(iRoom, szFile);
-	readDatHdr(szFile, &hdr);
-
-	Common::File infile;
-
-	if (!infile.open(szFile))
-		return;
-
-	infile.seek(hdr.ofsRoom[iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
-	infile.read((uint8 *)buffer, sizeof(MSA_MENU));
-	infile.close();
-}
-
-void Mickey::readDatStr(int iDat, int iStr, char *buffer, long buflen) {
-	MSA_DAT_HEADER hdr;
-	char szFile[256] = {0};
-
-	sprintf(szFile, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[iDat]);
-	readDatHdr(szFile, &hdr);
-
-	Common::File infile;
-
-	if (!infile.open(szFile))
-		return;
-
-	infile.seek(hdr.ofsStr[iStr] + IDI_MSA_OFS_DAT, SEEK_SET);
-	infile.read((uint8 *)buffer, buflen);
-	infile.close();
-}
-
 void Mickey::readOfsData(int offset, int iItem, uint8 *buffer, long buflen) {
 	uint16 ofs[256];
 
@@ -231,14 +178,46 @@ void Mickey::printExeMsg(int ofs) {
 
 void Mickey::printDatStr(int iDat, int iStr) {
 	char *buffer = (char *)malloc(256);
-	readDatStr(iDat, iStr, buffer, 256);
+
+	MSA_DAT_HEADER hdr;
+	char szFile[256] = {0};
+
+	sprintf(szFile, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[iDat]);
+	readDatHdr(szFile, &hdr);
+
+	Common::File infile;
+
+	if (!infile.open(szFile))
+		return;
+
+	infile.seek(hdr.ofsStr[iStr] + IDI_MSA_OFS_DAT, SEEK_SET);
+	infile.read((uint8 *)buffer, 256);
+	infile.close();
+
 	printStr(buffer);
 	free(buffer);
 }
 
 void Mickey::printDesc(int iRoom) {
 	char *buffer = (char *)malloc(256);
-	readDesc(iRoom, buffer, 256);
+
+	MSA_DAT_HEADER hdr;
+	char szFile[256] = {0};
+
+	getDatFileName(iRoom, szFile);
+	readDatHdr(szFile, &hdr);
+
+	Common::File infile;
+
+	if (!infile.open(szFile))
+		return;
+
+	memset(buffer, 0, 256);
+
+	infile.seek(hdr.ofsDesc[iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
+	infile.read(buffer, 256);
+	infile.close();
+
 	printStr(buffer);
 	//_vm->_gfx->doUpdate();
 	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
@@ -1128,24 +1107,6 @@ void Mickey::pressOB(int iButton) {
 	waitAnyKey();
 }
 
-void Mickey::checkAirSupply(bool fSuit, int *iSupply) {
-	if (fSuit) {
-		*iSupply -= 1;
-		for (int i = 0; i < 4; i++) {
-			if (*iSupply == IDI_MSA_AIR_SUPPLY[i]) {
-				playSound(IDI_MSA_SND_XL30);
-				printExeMsg(IDO_MSA_XL30_SPEAKING);
-				printExeMsg(IDO_MSA_AIR_SUPPLY[i]);
-				if (i == 3) {
-					exit(0);
-				}
-			}
-		}
-	} else {
-		*iSupply = IDI_MSA_MAX_AIR_SUPPLY;
-	}
-}
-
 void Mickey::insertDisk(int iDisk) {
 	_vm->clearTextArea();
 	_vm->drawStr(IDI_MSA_ROW_INSERT_DISK, IDI_MSA_COL_INSERT_DISK, IDA_DEFAULT, (const char *)IDS_MSA_INSERT_DISK[iDisk]);
@@ -1177,8 +1138,30 @@ void Mickey::flipSwitch() {
 		if (!game.fStoryShown)
 			printStory();
 
-		if (!game.fPlanetsInitialized)
-			randomize();
+		// Initialize planet data
+		if (!game.fPlanetsInitialized) {
+			int iHint = 0;
+			int iPlanet = 0;
+
+			memset(game.iPlanetXtal, 0, sizeof(game.iPlanetXtal));
+			memset(game.iClue, 0, sizeof(game.iClue));
+
+			game.iPlanetXtal[0] = IDI_MSA_PLANET_EARTH;
+			game.iPlanetXtal[8] = IDI_MSA_PLANET_URANUS;
+
+			for (int i = 1; i < 8; i++) {
+				do {
+					// Earth (planet 0) and Uranus (planet 8) are excluded
+					iPlanet = _vm->rnd(IDI_MSA_MAX_PLANET - 2);
+				} while (planetIsAlreadyAssigned(iPlanet));
+
+				game.iPlanetXtal[i] = iPlanet;
+				iHint = _vm->rnd(5) - 1;	// clues are 0-4
+				game.iClue[i] = IDO_MSA_NEXT_PIECE[iPlanet][iHint];
+			}
+
+			game.fPlanetsInitialized = true;
+		}
 
 		// activate screen animation
 		game.fAnimXL30 = true;
@@ -1252,51 +1235,6 @@ void Mickey::inventory() {
 	CursorMan.showMouse(true);
 }
 
-void Mickey::randomize() {
-	int iHint = 0;
-	int iPlanet = 0;
-
-	memset(game.iPlanetXtal, 0, sizeof(game.iPlanetXtal));
-	memset(game.iClue, 0, sizeof(game.iClue));
-
-	game.iPlanetXtal[0] = IDI_MSA_PLANET_EARTH;
-	game.iPlanetXtal[8] = IDI_MSA_PLANET_URANUS;
-
-	for (int i = 1; i < 8; i++) {
-		do {
-			// Earth (planet 0) and Uranus (planet 8) are excluded
-			iPlanet = _vm->rnd(IDI_MSA_MAX_PLANET - 2);
-		} while (planetIsAlreadyAssigned(iPlanet));
-
-		game.iPlanetXtal[i] = iPlanet;
-		iHint = _vm->rnd(5) - 1;	// clues are 0-4
-		game.iClue[i] = IDO_MSA_NEXT_PIECE[iPlanet][iHint];
-	}
-
-	game.fPlanetsInitialized = true;
-}
-
-void Mickey::flashScreen() {
-	playSound(IDI_MSA_SND_PRESS_BLUE);
-
-	//Set screen to white
-	_vm->_gfx->clearScreen(15);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-
-	_vm->_system->delayMillis(IDI_MSA_ANIM_DELAY);
-
-	//Set back to black
-	_vm->_gfx->clearScreen(0);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-
-	drawRoom();
-	printDesc(game.iRoom);
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-}
-
 void Mickey::intro() {
 	// draw sierra logo
 	drawLogo();
@@ -1330,9 +1268,27 @@ void Mickey::intro() {
 
 	playSound(IDI_MSA_SND_SHIP_LAND);
 
-	flashScreen();
-	flashScreen();
-	flashScreen();
+	// Flash screen 3 times
+	for (int i = 1; i <= 3; i++) {
+		playSound(IDI_MSA_SND_PRESS_BLUE);
+
+		//Set screen to white
+		_vm->_gfx->clearScreen(15);
+		_vm->_gfx->doUpdate();
+		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+
+		_vm->_system->delayMillis(IDI_MSA_ANIM_DELAY);
+
+		//Set back to black
+		_vm->_gfx->clearScreen(0);
+		_vm->_gfx->doUpdate();
+		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+
+		drawRoom();
+		printDesc(game.iRoom);
+		_vm->_gfx->doUpdate();
+		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	}
 
 	printExeMsg(IDO_MSA_INTRO);
 }
@@ -2024,6 +1980,9 @@ void Mickey::gameLoop() {
 	MSA_MENU menu;
 	int iSel0, iSel1;
 	bool done;
+	MSA_DAT_HEADER hdr;
+	char szFile[256] = {0};
+	Common::File infile;
 
 	for (;;) {
 		drawRoom();
@@ -2042,11 +2001,36 @@ void Mickey::gameLoop() {
 		}
 
 		while (!done) {
-			checkAirSupply(game.fSuit, &game.nAir);
-			readMenu(game.iRoom, buffer);
+			// Check air supply
+			if (game.fSuit) {
+				game.nAir -= 1;
+				for (int i = 0; i < 4; i++) {
+					if (game.nAir == IDI_MSA_AIR_SUPPLY[i]) {
+						playSound(IDI_MSA_SND_XL30);
+						printExeMsg(IDO_MSA_XL30_SPEAKING);
+						printExeMsg(IDO_MSA_AIR_SUPPLY[i]);
+						if (i == 3) {
+							exit(0);
+						}
+					}
+				}
+			} else {
+				game.nAir = IDI_MSA_MAX_AIR_SUPPLY;
+			}
+
+			// Read menu
+			getDatFileName(game.iRoom, szFile);
+			readDatHdr(szFile, &hdr);
+			if (!infile.open(szFile))
+				return;
+			infile.seek(hdr.ofsRoom[game.iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
+			infile.read((uint8 *)buffer, sizeof(MSA_MENU));
+			infile.close();
+
 			memcpy(&menu, buffer, sizeof(MSA_MENU));
 			patchMenu(&menu);
 			memcpy(buffer, &menu, sizeof(MSA_MENU));
+
 			getMenuSel(buffer, &iSel0, &iSel1);
 			done = parse(menu.cmd[iSel0].data[iSel1], menu.arg[iSel0].data[iSel1]);
 		}

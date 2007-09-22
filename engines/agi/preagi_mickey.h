@@ -746,9 +746,6 @@ protected:
 	void readExe(int, uint8*, long);
 	void getDatFileName(int, char*);
 	void readDatHdr(char*, MSA_DAT_HEADER*);
-	void readDesc(int, char*, long);
-	void readMenu(int, char*);
-	void readDatStr(int, int, char*, long);
 	void readOfsData(int, int, uint8*, long);
 	bool chooseY_N(int, bool);
 	int choose1to9(int);
@@ -784,12 +781,9 @@ protected:
 	void hidden();
 	int getPlanet();
 	void pressOB(int);
-	void checkAirSupply(bool, int*);
 	void insertDisk(int);
 	void gameOver();
 	void inventory();
-	void randomize();
-	void flashScreen();
 	void intro();
 	void getItem(ENUM_MSA_ITEM);
 	void getXtal(int);
