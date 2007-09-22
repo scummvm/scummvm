@@ -1025,15 +1025,21 @@ void Winnie::drawRoomPic() {
 	_vm->_gfx->clearScreen(0);
 
 	// read room picture
-	readRoom(room, buffer);
+	uint32 size = readRoom(room, buffer);
 	memcpy(&roomhdr, buffer, sizeof(WTP_ROOM_HDR));
 
+	if (_vm->getPlatform() == Common::kPlatformAmiga)
+		roomhdr.ofsPic = SWAP_BYTES_16(roomhdr.ofsPic);
+	else if (_vm->getPlatform() == Common::kPlatformPC)
+		roomhdr.ofsPic = roomhdr.ofsPic - IDI_WTP_OFS_ROOM;
+
 	// draw room picture
-	_vm->_picture->decodePicture(buffer + roomhdr.ofsPic - IDI_WTP_OFS_ROOM, 4096, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_vm->_picture->decodePicture(buffer + roomhdr.ofsPic, 4096, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	// draw object picture
-	drawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
+	if (!_vm->getPlatform() == Common::kPlatformAmiga)
+		drawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
 
 	free(buffer);
 }
@@ -1121,8 +1127,7 @@ void Winnie::init() {
 void Winnie::run() {
 	randomize();
 	intro();
-	if (!_vm->getPlatform() == Common::kPlatformAmiga)
-		gameLoop();
+	gameLoop();
 }
 
 }
