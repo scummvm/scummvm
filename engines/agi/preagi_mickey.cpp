@@ -1453,9 +1453,7 @@ bool Mickey::parse(int cmd, int arg) {
 		}
 		break;
 	case IDI_MSA_ACTION_GET_FLASHLIGHT:
-		if (game.fItem[IDI_MSA_ITEM_FLASHLIGHT]) {
-			printDatMessage(90);
-		} else {
+		if (!mickeyHasItem(IDI_MSA_ITEM_FLASHLIGHT)) {
 			game.iRmObj[game.iRoom] = IDI_MSA_OBJECT_NONE;
 			getItem(IDI_MSA_ITEM_FLASHLIGHT);
 			drawRoom();
@@ -1474,18 +1472,14 @@ bool Mickey::parse(int cmd, int arg) {
 		}
 		break;
 	case IDI_MSA_ACTION_GET_CROWBAR:
-		if (game.fItem[IDI_MSA_ITEM_CROWBAR]) {
-			printDatMessage(90);
-		} else {
+		if (!mickeyHasItem(IDI_MSA_ITEM_CROWBAR)) {
 			game.iRmObj[game.iRoom]--;
 			getItem(IDI_MSA_ITEM_CROWBAR);
 			printDatMessage(arg);
 		}
 		break;
 	case IDI_MSA_ACTION_GET_WRENCH:
-		if (game.fItem[IDI_MSA_ITEM_WRENCH]) {
-			printDatMessage(90);
-		} else {
+		if (!mickeyHasItem(IDI_MSA_ITEM_WRENCH)) {
 			game.iRmObj[game.iRoom] -= 2;
 			getItem(IDI_MSA_ITEM_WRENCH);
 			printDatMessage(arg);
@@ -1503,36 +1497,28 @@ bool Mickey::parse(int cmd, int arg) {
 		}
 		break;
 	case IDI_MSA_ACTION_GET_MATTRESS:
-		if (game.fItem[IDI_MSA_ITEM_MATTRESS]) {
-			printDatMessage(90);
-		} else {
+		if (!mickeyHasItem(IDI_MSA_ITEM_MATTRESS)) {
 			game.iRmObj[game.iRoom]--;
 			getItem(IDI_MSA_ITEM_MATTRESS);
 			printDatMessage(arg);
 		}
 		break;
 	case IDI_MSA_ACTION_GET_SCARF:
-		if (game.fItem[IDI_MSA_ITEM_SCARF]) {
-			printDatMessage(90);
-		} else {
+		if (!mickeyHasItem(IDI_MSA_ITEM_SCARF)) {
 			game.iRmObj[game.iRoom] -= 2;
 			getItem(IDI_MSA_ITEM_SCARF);
 			printDatMessage(arg);
 		}
 		break;
 	case IDI_MSA_ACTION_GET_SUNGLASSES:
-		if (game.fItem[IDI_MSA_ITEM_SUNGLASSES]) {
-			printDatMessage(90);
-		} else {
+		if (!mickeyHasItem(IDI_MSA_ITEM_SUNGLASSES)) {
 			game.iRmObj[game.iRoom]--;
 			getItem(IDI_MSA_ITEM_SUNGLASSES);
 			printDatMessage(arg);
 		}
 		break;
 	case IDI_MSA_ACTION_GET_SCALE:
-		if (game.fItem[IDI_MSA_ITEM_SCALE]) {
-			printDatMessage(90);
-		} else {
+		if (!mickeyHasItem(IDI_MSA_ITEM_SCALE)) {
 			game.iRmMenu[IDI_MSA_PIC_VENUS_WEIGH] = 1;
 			game.iRmMenu[IDI_MSA_PIC_NEPTUNE_WEIGH] = 1;
 			game.iRmMenu[IDI_MSA_PIC_MERCURY_WEIGH] = 1;

@@ -117,6 +117,7 @@ const char IDS_MSA_INSERT_DISK[][40] = {
 #define IDI_MSA_MSG_SPACESUIT_CANT_WEAR_ON_EARTH	12
 #define IDI_MSA_MSG_SHIP_LAUNCH						16
 #define IDI_MSA_MSG_SHIP_LAND						22
+#define IDI_MSA_MSG_MICKEY_ALREADY_HAS_ITEM			90
 
 // screen
 
@@ -808,6 +809,15 @@ protected:
 				return true;
 		}
 		return false;
+	}
+
+	bool mickeyHasItem(int item) {
+		if (game.fItem[item]) {
+			printDatMessage(IDI_MSA_MSG_MICKEY_ALREADY_HAS_ITEM);
+			return true;
+		} else {
+			return false;
+		}
 	}
 };
 
