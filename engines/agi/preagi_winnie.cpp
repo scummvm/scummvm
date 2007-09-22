@@ -1025,11 +1025,11 @@ void Winnie::drawRoomPic() {
 	_vm->_gfx->clearScreen(0);
 
 	// read room picture
-	uint32 size = readRoom(room, buffer);
+	readRoom(room, buffer);
 	memcpy(&roomhdr, buffer, sizeof(WTP_ROOM_HDR));
 
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
-		roomhdr.ofsPic = SWAP_BYTES_16(roomhdr.ofsPic);
+		roomhdr.ofsPic = TO_BE_16(roomhdr.ofsPic);
 	else if (_vm->getPlatform() == Common::kPlatformPC)
 		roomhdr.ofsPic = roomhdr.ofsPic - IDI_WTP_OFS_ROOM;
 
