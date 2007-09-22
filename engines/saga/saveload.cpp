@@ -59,7 +59,7 @@ char* SagaEngine::calcSaveFileName(uint slotNumber) {
 }
 
 SaveFileData *SagaEngine::getSaveFile(uint idx) {
-	if (idx >= _saveFilesMaxCount) {
+	if (idx >= MAX_SAVES) {
 		error("getSaveFileName wrong idx");
 	}
 	if (isSaveListFull()) {
@@ -94,7 +94,7 @@ uint SagaEngine::getNewSaveSlotNumber() {
 		error("getNewSaveSlotNumber save list is full");
 	}
 	for (i = 0; i < MAX_SAVES; i++) {
-		if (_saveMarks[i]) {
+		if (!_saveMarks[i]) {
 			found = false;
 			for (j = 0; j < _saveFilesCount; j++) {
 				if (_saveFiles[j].slotNumber == i) {
@@ -138,11 +138,7 @@ void SagaEngine::fillSaveList() {
 			_saveMarks[slotNum] = true;	//mark this slot as valid
 	}
 
-	_saveFilesMaxCount = 0;
 	for (i = 0; i < MAX_SAVES; i++) {
-		if (_saveMarks[i]) {
-			_saveFilesMaxCount++;
-		}
 		_saveFiles[i].name[0] = 0;
 		_saveFiles[i].slotNumber = (uint)-1;
 	}

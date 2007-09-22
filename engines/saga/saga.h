@@ -517,7 +517,7 @@ public:
 	uint getNewSaveSlotNumber();
 	bool locateSaveFile(char *saveName, uint &titleNumber);
 	bool isSaveListFull() const {
-		return _saveFilesMaxCount == _saveFilesCount;
+		return _saveFilesCount == MAX_SAVES;
 	}
 	uint getSaveFilesCount() const {
 		return isSaveListFull() ? _saveFilesCount : _saveFilesCount + 1;
@@ -611,7 +611,6 @@ public:
 	}
 
  private:
-	uint _saveFilesMaxCount;
 	uint _saveFilesCount;
 	SaveFileData _saveFiles[MAX_SAVES];
 	bool _saveMarks[MAX_SAVES];
