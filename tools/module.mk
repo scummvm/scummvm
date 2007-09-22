@@ -10,9 +10,9 @@ MODULE_DIRS += \
 
 TOOLS := \
 	tools/convbdf$(EXEEXT) \
-	tools/md5table$(EXEEXT) \
-	tools/create_lure/create_lure$(EXEEXT)
+	tools/md5table$(EXEEXT)
 
+include $(srcdir)/tools/*/module.mk
 
 # Make sure the 'all' / 'clean' targets build/clean the tools, too
 all: tools
@@ -35,10 +35,6 @@ tools/convbdf$(EXEEXT): $(srcdir)/tools/convbdf.c
 tools/md5table$(EXEEXT): $(srcdir)/tools/md5table.c
 	$(MKDIR) tools/$(DEPDIR)
 	$(CC) $(CFLAGS) -Wall -o $@ $<
-
-tools/create_lure/create_lure$(EXEEXT): tools/create_lure/create_lure_dat.o tools/create_lure/process_actions.o
-	$(MKDIR) tools/create_lure/$(DEPDIR)
-	$(CXX) $(LDFLAGS) $+ -o $@
 
 #
 # Rules to explicitly rebuild the credits / MD5 tables.
@@ -77,7 +73,6 @@ md5scumm: tools/md5table$(EXEEXT)
 
 #gui/credits.h: $(srcdir)/tools/credits.pl
 #	$(srcdir)/tools/credits.pl --cpp > $@
-
 
 
 .PHONY: clean-tools tools credits md5scumm md5simon

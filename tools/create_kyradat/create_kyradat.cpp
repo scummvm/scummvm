@@ -58,7 +58,7 @@ const ExtractType extractTypeTable[] = {
 	{ kTypeRoomList, extractRooms, createFilename },
 	{ kTypeShapeList, extractShapes, createFilename },
 	{ kTypeRawData, extractRaw, createFilename },
-	{ -1, 0 }
+	{ -1, 0, 0}
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -336,10 +336,16 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 					// We simply skip every other string
 					if (i == size)
 						continue;
-					uint32 size = strlen((const char*) data + i);
-					i += size; targetsize = --targetsize - size;
+					uint32 len = strlen((const char*) data + i);
+					i += len;
+#if 1
+					// FIXME: Not sure whether this correct; the original code was ambiguious, see below
+					targetsize = targetsize - 1 - len;
+#else
+					targetsize = --targetsize - len;	// FIXME: This operation is undefined
+#endif
 					while (!data[++i]) {
-						if (i == size)
+						if (i == len)
 							break;
 						targetsize--;
 					}
@@ -404,7 +410,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	} else if (g->special == kAmigaVersion) {
 		// we need to strip some aligment zeros out here
 		int dstPos = 0;
-		for (int i = 0; i < size; ++i) {
+		for (uint32 i = 0; i < size; ++i) {
 			if (!data[i] && ((i+1) & 0x1))
 				continue;
 			*output++ = data[i];
