@@ -34,13 +34,16 @@ namespace Agi {
 
 #define IDS_WTP_SELECTION		">"
 
-#define IDS_WTP_PATH_ROOM		"rooms\\rm.%02d"
-#define IDS_WTP_PATH_OBJ		"obj.%02d"
+#define IDS_WTP_ROOM_DOS		"rooms\\rm.%02d"
+#define IDS_WTP_ROOM_AMIGA		"room.%d"
+#define IDS_WTP_OBJ_DOS			"obj.%02d"
+#define IDS_WTP_OBJ_AMIGA		"object.%d"
 #define IDS_WTP_PATH_SND		"snd.%02d"
+#define IDS_WTP_SND_AMIGA		"Sounds"
 #define IDS_WTP_PATH			"%s"
 
-#define IDS_WTP_FILE_LOGO		"logo.pic"
-#define IDS_WTP_FILE_TITLE		"title.pic"
+#define IDS_WTP_FILE_LOGO		"logo"
+#define IDS_WTP_FILE_TITLE		"title"
 #define IDS_WTP_FILE_SAVEGAME	"savegame"
 #define IDS_WTP_FILE_RND		"rnd"
 

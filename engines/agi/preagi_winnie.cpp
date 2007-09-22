@@ -59,10 +59,15 @@ void Winnie::initVars() {
 
 uint32 Winnie::readRoom(int iRoom, uint8 *buffer) {
 	char szFile[256] = {0};
-	sprintf(szFile, IDS_WTP_PATH_ROOM, iRoom);
+	if (_vm->getPlatform() == Common::kPlatformPC)
+		sprintf(szFile, IDS_WTP_ROOM_DOS, iRoom);
+	else if (_vm->getPlatform() == Common::kPlatformAmiga)
+		sprintf(szFile, IDS_WTP_ROOM_AMIGA, iRoom);
 	Common::File file;
-	if (!file.open(szFile))
+	if (!file.open(szFile)) {
+		warning ("Could not open file \'%s\'", szFile);
 		return 0;
+	}
 	uint32 filelen = file.size();
 	memset(buffer, 0, sizeof(buffer));
 	file.read(buffer, filelen);
@@ -72,10 +77,15 @@ uint32 Winnie::readRoom(int iRoom, uint8 *buffer) {
 
 uint32 Winnie::readObj(int iObj, uint8 *buffer) {
 	char szFile[256] = {0};
-	sprintf(szFile, IDS_WTP_PATH_OBJ, iObj);
+	if (_vm->getPlatform() == Common::kPlatformPC)
+		sprintf(szFile, IDS_WTP_OBJ_DOS, iObj);
+	else if (_vm->getPlatform() == Common::kPlatformAmiga)
+		sprintf(szFile, IDS_WTP_OBJ_AMIGA, iObj);
 	Common::File file;
-	if (!file.open(szFile))
+	if (!file.open(szFile)) {
+		warning ("Could not open file \'%s\'", szFile);
 		return 0;
+	}
 	uint32 filelen = file.size();
 	memset(buffer, 0, sizeof(buffer));
 	file.read(buffer, filelen);
@@ -120,14 +130,14 @@ void Winnie::randomize() {
 }
 
 void Winnie::intro() {
-	drawPic((!_vm->getPlatform() == Common::kPlatformAmiga) ? IDS_WTP_FILE_LOGO : "logo");
+	drawPic(IDS_WTP_FILE_LOGO);
 	_vm->printStr(IDS_WTP_INTRO_0);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(0x640);
 	if (_vm->getPlatform() == Common::kPlatformAmiga)
 		_vm->_gfx->clearScreen(0);
-	drawPic((!_vm->getPlatform() == Common::kPlatformAmiga) ? IDS_WTP_FILE_TITLE : "title");
+	drawPic(IDS_WTP_FILE_TITLE);
 	_vm->printStr(IDS_WTP_INTRO_1);
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
@@ -969,10 +979,13 @@ void Winnie::drawPic(const char *szName) {
 	uint8 *buffer = (uint8 *)malloc(4096);
 
 	// construct filename
-	sprintf(szFile, IDS_WTP_PATH, szName);
+	if (!_vm->getPlatform() == Common::kPlatformAmiga)
+		sprintf(szFile, "%s.pic", szName);
+	else
+		strcpy(szFile, szName);
 	Common::File file;
-	if (!file.open(szName)) {
-		warning ("Could not open file \'%s\'", szName);
+	if (!file.open(szFile)) {
+		warning ("Could not open file \'%s\'", szFile);
 		return;
 	}
 	uint32 size = file.size();
