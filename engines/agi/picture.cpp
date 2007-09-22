@@ -291,7 +291,7 @@ void PictureMgr::fillScanline(int x, int y) {
 		putVirtPixel(c, y);
 		if (isOkFillHere(c, y - 1)) {
 			if (newspanUp) {
-				lpush(c + 320 * (y - 1));
+				lpush(c + (_width * 2) * (y - 1));
 				newspanUp = 0;
 			}
 		} else {
@@ -300,7 +300,7 @@ void PictureMgr::fillScanline(int x, int y) {
 
 		if (isOkFillHere(c, y + 1)) {
 			if (newspanDown) {
-				lpush(c + 320 * (y + 1));
+				lpush(c + (_width * 2) * (y + 1));
 				newspanDown = 0;
 			}
 		} else {
@@ -310,7 +310,7 @@ void PictureMgr::fillScanline(int x, int y) {
 }
 
 void PictureMgr::agiFill(unsigned int x, unsigned int y) {
-	lpush(x + 320 * y);
+	lpush(x + (_width * 2) * y);
 
 	for (;;) {
 		uint16 c = lpop();
@@ -319,8 +319,8 @@ void PictureMgr::agiFill(unsigned int x, unsigned int y) {
 		if (c == 0xffff)
 			break;
 
-		x = c % 320;
-		y = c / 320;
+		x = c % (_width * 2);
+		y = c / (_width * 2);
 
 		fillScanline(x, y);
 	}
@@ -477,7 +477,7 @@ void PictureMgr::plotPattern(int x, int y) {
 	pen_x = (pen_x * 2) - pen_size;
 	if (pen_x < 0) pen_x = 0;
 
-	temp16 = 320 - (2 * pen_size);
+	temp16 = (_width * 2) - (2 * pen_size);
 	if (pen_x >= temp16)
 		pen_x = temp16;
 
