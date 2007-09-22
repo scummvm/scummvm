@@ -949,7 +949,7 @@ void Mickey::printRoomDesc() {
 	waitAnyKeyAnim();
 
 	// print extended room description
-	if (game.fRmTxt[game.iRoom]) {
+	if (game.oRmTxt[game.iRoom]) {
 		printExeMsg(game.oRmTxt[game.iRoom] + IDI_MSA_OFS_EXE);
 	}
 }
@@ -1340,13 +1340,13 @@ void Mickey::intro() {
 void Mickey::getItem(ENUM_MSA_ITEM iItem) {
 	game.fItem[iItem] = true;
 	game.iItem[game.nItems++] = iItem;
-	game.fRmTxt[game.iRoom] = 0;
+	game.oRmTxt[game.iRoom] = 0;
 	playSound(IDI_MSA_SND_TAKE);
 	drawRoom();
 }
 
 void Mickey::getXtal(int iStr) {
-	game.fRmTxt[game.iRoom] = 0;
+	game.oRmTxt[game.iRoom] = 0;
 	game.fHasXtal = true;
 	game.nXtals++;
 	playSound(IDI_MSA_SND_CRYSTAL);
@@ -2149,8 +2149,8 @@ void Mickey::initVars() {
 	memset(&game, 0, sizeof(game));
 	memset(&game.iItem, IDI_MSA_OBJECT_NONE, sizeof(game.iItem));
 	// read room extended desc flags
-	readExe(IDO_MSA_ROOM_TEXT, buffer, sizeof(buffer));
-	memcpy(game.fRmTxt, buffer, sizeof(game.fRmTxt));
+	//readExe(IDO_MSA_ROOM_TEXT, buffer, sizeof(buffer));
+	//memcpy(game.fRmTxt, buffer, sizeof(game.fRmTxt));
 
 	// read room extended desc offsets
 	readExe(IDO_MSA_ROOM_TEXT_OFFSETS, buffer, sizeof(buffer));
@@ -2159,8 +2159,8 @@ void Mickey::initVars() {
 		game.oRmTxt[i] = buffer[i*2] + 256 * buffer[i*2+1];
 
 	// read room object indices
-	readExe(IDO_MSA_ROOM_OBJECT, buffer, sizeof(buffer));
-	memcpy(game.iRmObj, buffer, sizeof(game.iRmObj));
+	//readExe(IDO_MSA_ROOM_OBJECT, buffer, sizeof(buffer));
+	//memcpy(game.iRmObj, buffer, sizeof(game.iRmObj));
 
 	// read room picture indices
 	//readExe(IDO_MSA_ROOM_PICTURE, buffer, sizeof(buffer));
@@ -2170,11 +2170,17 @@ void Mickey::initVars() {
 	readExe(IDO_MSA_ROOM_MENU_FIX, buffer, sizeof(buffer));
 	memcpy(game.nRmMenu, buffer, sizeof(game.nRmMenu));
 
-	// set room picture indices
+	// set room picture and room object indices
 	for (int i = 0; i < IDI_MSA_MAX_ROOM; i++) {
 		game.iRmPic[i] = i;
+		game.iRmObj[i] = -1;
 	}
 	game.iRmPic[IDI_MSA_PIC_SHIP_AIRLOCK] = IDI_MSA_PIC_SHIP_AIRLOCK_0;
+	game.iRmObj[23] = 11;
+	game.iRmObj[110] = 21;
+	game.iRmObj[112] = 20;
+	game.iRmObj[119] = 19;
+	game.iRmObj[154] = 1;
 
 #if 0
 	// DEBUG

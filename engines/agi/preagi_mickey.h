@@ -75,7 +75,6 @@ const char IDS_MSA_INSERT_DISK[][40] = {
 #define IDI_MSA_MAX_PIC_ROOM			224
 #define IDI_MSA_MAX_SOUND				8
 #define IDI_MSA_MAX_ROOM				160
-#define IDI_MSA_MAX_STR					160
 
 #define IDI_MSA_MAX_BUTTON				6
 #define IDI_MSA_MAX_ITEM				11
@@ -466,7 +465,7 @@ struct MSA_DAT_HEADER {
 	uint16	filelen;
 	uint16	ofsRoom[IDI_MSA_MAX_ROOM];
 	uint16	ofsDesc[IDI_MSA_MAX_ROOM];
-	uint16	ofsStr[IDI_MSA_MAX_STR];
+	uint16	ofsStr[IDI_MSA_MAX_ROOM];
 };
 
 struct MSA_SND_NOTE {
@@ -716,7 +715,7 @@ struct MSA_GAME {
 	int iItem[IDI_MSA_MAX_ITEM];
 	int nItems;
 
-	int8 fRmTxt[IDI_MSA_MAX_ROOM];
+	//int8 fRmTxt[IDI_MSA_MAX_ROOM];
 	int8 iRmObj[IDI_MSA_MAX_ROOM];
 	uint8 iRmPic[IDI_MSA_MAX_ROOM];
 	uint16 oRmTxt[IDI_MSA_MAX_ROOM];
