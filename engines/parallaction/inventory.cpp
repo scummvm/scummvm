@@ -67,9 +67,7 @@ int Parallaction::addInventoryItem(ItemName item, uint32 value) {
 }
 
 void Parallaction::dropItem(uint16 v) {
-	printf("dropItem: %i (# = %i)\n", v, _inv->getNumItems());
 	_inv->removeItem(v);
-	printf("# = %i\n", _inv->getNumItems());
 }
 
 
@@ -241,8 +239,6 @@ void highlightInventoryItem(ItemPosition pos, byte color) {
 
 	if (pos == -1) return;
 
-	printf("highlight item: %i\n", pos);
-
 	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
@@ -311,7 +307,6 @@ ItemPosition Inventory::findItem(ItemName name) const {
 void Inventory::removeItem(ItemName name) {
 	ItemPosition pos = findItem(name);
 	if (pos == -1) {
-		printf("removeItem: name %i not found\n", name);
 		return;
 	}
 

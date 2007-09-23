@@ -648,7 +648,6 @@ int16 Parallaction::pickupItem(Zone *z) {
 }
 
 void Parallaction_ns::jobRemovePickedItem(void *parm, Job *j) {
-	printf("picking up item\n");
 
 	Zone *z = (Zone*)parm;
 
