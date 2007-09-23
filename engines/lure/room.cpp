@@ -512,7 +512,7 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	}
 
 	_screen.empty();
-	_screen.setPaletteEmpty(GAME_COLOURS);
+	_screen.setPaletteEmpty(RES_PALETTE_ENTRIES);
 
 	_numLayers = _roomData->numLayers;
 	if (showOverlay) ++_numLayers;
@@ -521,11 +521,12 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	for (uint8 layerNum = 0; layerNum < _numLayers; ++layerNum) 
 		_layers[layerNum] = new RoomLayer(_roomData->layers[layerNum],
 			layerNum == 0);
-
+/*
 	// Load in the game palette, which contains at it's top end general GUI element colours
 	Palette mainPalette(GAME_PALETTE_RESOURCE_ID);
-	_screen.setPalette(&mainPalette, 0, GAME_COLOURS);
-
+	_screen.setPalette(&mainPalette, RES_PALETTE_ENTRIES, 
+		GAME_COLOURS - RES_PALETTE_ENTRIES);
+*/
 	// Generate the palette for the room that will be faded in
 	Palette p(MAIN_PALETTE_SIZE, NULL, RGB64);
 	Palette tempPalette(paletteId);
