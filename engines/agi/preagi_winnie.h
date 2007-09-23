@@ -134,7 +134,8 @@ namespace Agi {
 
 // data file offset modifiers
 
-#define IDI_WTP_OFS_ROOM		0x5400
+#define IDI_WTP_OFS_ROOM_DOS	0x5400
+#define IDI_WTP_OFS_ROOM_C64	0x5400		//FIXME: This number needs to be higher to show the image
 #define IDI_WTP_OFS_OBJ			0x0800
 
 // picture

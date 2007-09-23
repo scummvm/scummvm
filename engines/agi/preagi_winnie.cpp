@@ -385,7 +385,13 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 		}
 
 		// jump to the script block of the selected option
-		pc = hdr.opt[index].ofsOpt[iSel] - IDI_WTP_OFS_ROOM;
+		if (_vm->getPlatform() == Common::kPlatformPC)
+			pc = hdr.opt[index].ofsOpt[iSel] - IDI_WTP_OFS_ROOM_DOS;
+		else if (_vm->getPlatform() == Common::kPlatformC64)
+			pc = hdr.opt[index].ofsOpt[iSel] - IDI_WTP_OFS_ROOM_C64;
+		else if (_vm->getPlatform() == Common::kPlatformAmiga)
+			pc = hdr.opt[index].ofsOpt[iSel];
+
 		opcode = *(buffer + pc);
 		if (!opcode) pc++;
 
@@ -1022,19 +1028,46 @@ phase1:
 	}
 phase2:
 	for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
-		if (parser(hdr.ofsDesc[iBlock] - IDI_WTP_OFS_ROOM, iBlock, roomdata) == IDI_WTP_PAR_BACK) {
-			goto phase1;
+		if (_vm->getPlatform() == Common::kPlatformPC) {
+			if (parser(hdr.ofsDesc[iBlock] - IDI_WTP_OFS_ROOM_DOS, iBlock, roomdata) == IDI_WTP_PAR_BACK)
+				goto phase1;
+		} else if (_vm->getPlatform() == Common::kPlatformC64) {
+			if (parser(hdr.ofsDesc[iBlock] - IDI_WTP_OFS_ROOM_C64, iBlock, roomdata) == IDI_WTP_PAR_BACK)
+				goto phase1;
+		} else if (_vm->getPlatform() == Common::kPlatformAmiga) {
+			if (parser(hdr.ofsDesc[iBlock], iBlock, roomdata) == IDI_WTP_PAR_BACK)
+				goto phase1;
 		}
 	}
 	for (;;) {
 		for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
-			switch(parser(hdr.ofsBlock[iBlock] - IDI_WTP_OFS_ROOM, iBlock, roomdata)) {
-			case IDI_WTP_PAR_GOTO:
-				goto phase0;
-				break;
-			case IDI_WTP_PAR_BACK:
-				goto phase2;
-				break;
+			if (_vm->getPlatform() == Common::kPlatformPC) {
+				switch(parser(hdr.ofsBlock[iBlock] - IDI_WTP_OFS_ROOM_DOS, iBlock, roomdata)) {
+				case IDI_WTP_PAR_GOTO:
+					goto phase0;
+					break;
+				case IDI_WTP_PAR_BACK:
+					goto phase2;
+					break;
+				}
+			} else if (_vm->getPlatform() == Common::kPlatformC64) {
+				switch(parser(hdr.ofsBlock[iBlock] - IDI_WTP_OFS_ROOM_C64, iBlock, roomdata)) {
+				case IDI_WTP_PAR_GOTO:
+					goto phase0;
+					break;
+				case IDI_WTP_PAR_BACK:
+					goto phase2;
+					break;
+				}
+			} else if (_vm->getPlatform() == Common::kPlatformAmiga) {
+				switch(parser(hdr.ofsBlock[iBlock], iBlock, roomdata)) {
+				case IDI_WTP_PAR_GOTO:
+					goto phase0;
+					break;
+				case IDI_WTP_PAR_BACK:
+					goto phase2;
+					break;
+				}
 			}
 		}
 	}
@@ -1095,8 +1128,10 @@ void Winnie::drawRoomPic() {
 	// read room picture
 	readRoom(room, buffer, roomhdr);
 
-	if (_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64)
-		roomhdr.ofsPic = roomhdr.ofsPic - IDI_WTP_OFS_ROOM;
+	if (_vm->getPlatform() == Common::kPlatformPC)
+		roomhdr.ofsPic = roomhdr.ofsPic - IDI_WTP_OFS_ROOM_DOS;
+	else if (_vm->getPlatform() == Common::kPlatformC64)
+		roomhdr.ofsPic = roomhdr.ofsPic - IDI_WTP_OFS_ROOM_C64;
 
 	// draw room picture
 	_vm->_picture->decodePicture(buffer + roomhdr.ofsPic, 4096, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
@@ -1127,7 +1162,12 @@ void Winnie::printRoomStr(int iRoom, int iStr) {
 	uint8 *buffer = (uint8 *)malloc(4096);
 
 	readRoom(iRoom, buffer, hdr);
-	_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM));
+	if (_vm->getPlatform() == Common::kPlatformPC)
+		_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM_DOS));
+	else if (_vm->getPlatform() == Common::kPlatformC64)
+		_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM_C64));
+	else if (_vm->getPlatform() == Common::kPlatformAmiga)
+		_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1]));
 
 	free(buffer);
 }
