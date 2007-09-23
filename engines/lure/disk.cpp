@@ -30,6 +30,7 @@
 #include "common/scummsys.h"
 
 #include "lure/disk.h"
+#include "lure/lure.h"
 #include "lure/luredefs.h"
 #include "lure/res.h"
 
@@ -97,9 +98,38 @@ void Disk::openFile(uint8 fileNum) {
 	if (!_fileHandle->isOpen())
 		error("Could not open %s", sFilename);
 
-	// Validate the header
 	char buffer[7];
 	uint32 bytesRead;
+
+	// If it's the support file, then move to the correct language area
+
+	_dataOffset = 0;
+	if (_fileNum == 0) {
+		// Validate overall header
+		_fileHandle->read(buffer, 6);
+		buffer[4] = '\0';
+
+		if (strcmp(buffer, SUPPORT_IDENT_STRING) != 0)
+			error("The file %s is not a valid Lure support file", sFilename);
+
+		// Scan for the correct language block
+		Common::Language language = LureEngine::getReference().getLanguage();
+		bool foundFlag = false;
+
+		while (!foundFlag) {
+			_fileHandle->read(buffer, 5);
+			if ((byte)buffer[0] == 0xff)
+				error("Could not find language data in support file");
+
+			if ((language == (Common::Language)buffer[0]) || (language == UNK_LANG)) {
+				foundFlag = true;
+				_dataOffset = READ_LE_UINT32(&buffer[1]);
+				_fileHandle->seek(_dataOffset);
+			}
+		}
+	}
+
+	// Validate the header
 
 	bytesRead = _fileHandle->read(buffer, 6);
 	buffer[6] = '\0';
@@ -159,7 +189,7 @@ MemoryBlock *Disk::getEntry(uint16 id) {
 	// Calculate the offset and size of the entry
 	uint32 size = (uint32) _entries[index].size;
 	if (_entries[index].sizeExtension) size += 0x10000;
-	uint32 offset = (uint32) _entries[index].offset * 0x20;
+	uint32 offset = (uint32) _entries[index].offset * 0x20 + _dataOffset;
 
 	MemoryBlock *result = Memory::allocate(size);
 	_fileHandle->seek(offset, SEEK_SET);
