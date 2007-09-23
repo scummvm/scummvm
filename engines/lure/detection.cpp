@@ -55,6 +55,8 @@ struct GameSettings {
 static const GameSettings lure_games[] = {
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::EN_ANY,
 										"b2a8aa6d7865813a17a3c636e063572e", "disk1.vga" },
+	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::IT_ITA,
+										"cf69d5ada228dd74f89046691c16aafb", "disk1.vga" },
 /*
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::DE_DEU,
 										"7aa19e444dab1ac7194d9f7a40ffe54a", "disk1.vga" },
@@ -160,21 +162,20 @@ void LureEngine::detectGame() {
 
 	// Check the version of the lure.dat file
 	Common::File f;
-	if (!f.open(SUPPORT_FILENAME)) {
-		error("Error opening %s for validation", SUPPORT_FILENAME);
-	} else {
-		f.seek(0xbf * 8);
 		VersionStructure version;
-		f.read(&version, sizeof(VersionStructure));
-		f.close();
+	if (!f.open(SUPPORT_FILENAME)) 
+		error("Error opening %s for validation", SUPPORT_FILENAME);
+	
+	f.seek(0xbf * 8);
+	f.read(&version, sizeof(VersionStructure));
+	f.close();
 
-		if (READ_LE_UINT16(&version.id) != 0xffff)
-			error("Error validating %s - file is invalid or out of date", SUPPORT_FILENAME);
-		else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR))
-			error("Incorrect version of %s file - expected %d.%d but got %d.%d",
-				SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR,
-				version.vMajor, version.vMinor);
-	}
+	if (READ_LE_UINT16(&version.id) != 0xffff)
+		error("Error validating %s - file is invalid or out of date", SUPPORT_FILENAME);
+	else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR))
+		error("Incorrect version of %s file - expected %d.%d but got %d.%d",
+			SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR, 
+			version.vMajor, version.vMinor);
 
 	// Do an md5 check
 
@@ -208,7 +209,8 @@ void LureEngine::detectGame() {
 		debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team", md5str);
 		_features = GF_LNGUNK || GF_FLOPPY;
 		_game = GI_LURE;
-	}
+
+	} 
 }
 
 } // End of namespace Lure
