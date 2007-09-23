@@ -641,13 +641,14 @@ void Parallaction_ns::jobToggleDoor(void *parm, Job *j) {
 
 int16 Parallaction::pickupItem(Zone *z) {
 	int r = addInventoryItem(z->u.get->_icon);
-	if (r == 0)
+	if (r != -1)
 		addJob(kJobRemovePickedItem, z, kPriority17 );
 
-	return r;
+	return (r == -1);
 }
 
 void Parallaction_ns::jobRemovePickedItem(void *parm, Job *j) {
+	printf("picking up item\n");
 
 	Zone *z = (Zone*)parm;
 

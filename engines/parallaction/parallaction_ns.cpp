@@ -139,33 +139,47 @@ void Parallaction_ns::initCursors() {
 	return;
 }
 
-void Parallaction_ns::setMousePointer(int16 index) {
+void Parallaction_ns::setArrowCursor() {
 
-	if (index == kCursorArrow) {		// standard mouse pointer
+	debugC(1, kDebugInput, "setting mouse cursor to arrow");
 
-		_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
-		_system->showMouse(true);
+	// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
+	hideLabel(kPriority15);
+	_activeItem._id = 0;
 
-	} else {
-		// inventory item pointer
-		byte *v8 = (byte*)_mouseComposedArrow->pixels;
+	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
+	_system->showMouse(true);
 
-		// FIXME: destination offseting is not clear
-		byte* s = _char._objs->getData(getInventoryItemIndex(index));
-		byte* d = v8 + 7 + MOUSECOMBO_WIDTH * 7;
+}
 
-		for (uint i = 0; i < INVENTORYITEM_HEIGHT; i++) {
-			memcpy(d, s, INVENTORYITEM_WIDTH);
+void Parallaction_ns::setInventoryCursor(int pos) {
 
-			s += INVENTORYITEM_PITCH;
-			d += MOUSECOMBO_WIDTH;
-		}
+	if (pos == -1)
+		return;
 
-		_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
+	const InventoryItem *item = getInventoryItem(pos);
+	if (item->_index == 0)
+		return;
+
+	_activeItem._id = item->_id;
+
+	byte *v8 = (byte*)_mouseComposedArrow->pixels;
+
+	// FIXME: destination offseting is not clear
+	byte* s = _char._objs->getData(item->_index);
+	byte* d = v8 + 7 + MOUSECOMBO_WIDTH * 7;
+
+	for (uint i = 0; i < INVENTORYITEM_HEIGHT; i++) {
+		memcpy(d, s, INVENTORYITEM_WIDTH);
+
+		s += INVENTORYITEM_PITCH;
+		d += MOUSECOMBO_WIDTH;
 	}
 
-	return;
+	_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
+
 }
+
 
 void Parallaction_ns::callFunction(uint index, void* parm) {
 	assert(index < 25);	// magic value 25 is maximum # of callables for Nippon Safes
@@ -238,7 +252,7 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_hoverZone = NULL;
 	if (_engineFlags & kEngineBlockInput) {
-		changeCursor( kCursorArrow );
+		setArrowCursor();
 	}
 
 	_animations.remove(&_char._ani);

@@ -303,7 +303,7 @@ void Parallaction::runGame() {
 	if (_hasLocationSound)
 		_soundMan->playSfx(_locationSound, 0, true);
 
-	changeCursor(kCursorArrow);
+	_vm->setArrowCursor();
 
 	if (_location._aCommands.size() > 0)
 		runCommands(_location._aCommands);
@@ -413,7 +413,7 @@ void Parallaction::processInput(InputData *data) {
 		_hoverZone = NULL;
 		hideLabel(kPriority2);
 		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) == 0) {
-			changeCursor(kCursorArrow);
+			setArrowCursor();
 		}
 		removeJob(_jRunScripts);
 		_jDrawInventory = addJob(kJobShowInventory, 0, kPriority2);
@@ -422,10 +422,7 @@ void Parallaction::processInput(InputData *data) {
 
 	case kEvCloseInventory: // closes inventory and possibly select item
 		closeInventory();
-		if ((data->_inventoryIndex != -1) && (_inventory[data->_inventoryIndex]._id != 0)) {
-			// activates item
-			changeCursor(data->_inventoryIndex);
-		}
+		setInventoryCursor(data->_inventoryIndex);
 		_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
 		addJob(kJobHideInventory, 0, kPriority20);
 		removeJob(_jDrawInventory);
@@ -437,12 +434,11 @@ void Parallaction::processInput(InputData *data) {
 		_procCurrentHoverItem = data->_inventoryIndex;
 		break;
 
-	case kEvWalk: {
+	case kEvWalk:
 		debugC(2, kDebugInput, "processInput: kEvWalk");
 		_hoverZone = NULL;
-		changeCursor(kCursorArrow);
+		setArrowCursor();
 		_char.scheduleWalk(data->_mousePos.x, data->_mousePos.y);
-		}
 		break;
 
 	case kEvQuitGame:
@@ -452,13 +448,13 @@ void Parallaction::processInput(InputData *data) {
 	case kEvSaveGame:
 		_hoverZone = NULL;
 		saveGame();
-		changeCursor(kCursorArrow);
+		setArrowCursor();
 		break;
 
 	case kEvLoadGame:
 		_hoverZone = NULL;
 		loadGame();
-		changeCursor(kCursorArrow);
+		setArrowCursor();
 		break;
 
 	}
@@ -552,7 +548,7 @@ Parallaction::InputData *Parallaction::translateInput() {
 			}
 
 //			beep();
-			changeCursor(kCursorArrow);
+			setArrowCursor();
 			return &_input;
 		}
 
@@ -573,11 +569,11 @@ Parallaction::InputData *Parallaction::translateInput() {
 		if ((_engineFlags & kEngineDragging) == 0) return &_input;
 
 		_engineFlags &= ~kEngineDragging;
-		Zone *z = hitZone(kZoneMerge, _activeItem._index, _inventory[_input._inventoryIndex]._index);
+		Zone *z = hitZone(kZoneMerge, _activeItem._index, getInventoryItemIndex(_input._inventoryIndex));
 
 		if (z != NULL) {
-			dropItem(z->u.merge->_obj1 - 4);
-			dropItem(z->u.merge->_obj2 - 4);
+			dropItem(z->u.merge->_obj1);
+			dropItem(z->u.merge->_obj2);
 			addInventoryItem(z->u.merge->_obj3);
 			runCommands(z->_commands);
 		}
@@ -621,29 +617,6 @@ void Parallaction::waitTime(uint32 t) {
 void Parallaction::showCursor(bool visible) {
 	_mouseHidden = !visible;
 	g_system->showMouse(visible);
-}
-
-//	changes the mouse pointer
-//	index 0 means standard pointer (from pointer.cnv)
-//	index > 0 means inventory item
-//
-void Parallaction::changeCursor(int32 index) {
-
-	if (index == kCursorArrow) {		// standard mouse pointer
-
-		debugC(1, kDebugInput, "changeCursor(%i), label: %p", index, (const void*)_jDrawLabel);
-
-		hideLabel(kPriority15);
-
-		_activeItem._id = 0;
-
-	} else {
-		_activeItem._id = _inventory[index]._id;
-	}
-
-	setMousePointer(index);
-
-	return;
 }
 
 

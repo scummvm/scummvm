@@ -398,7 +398,6 @@ public:
 	} _instRunCtxt;
 
 
-	void 		changeCursor(int32 index);
 	void		showCursor(bool visible);
 
 	Job 		*addJob(uint functionId, void *parm, uint16 tag);
@@ -553,17 +552,20 @@ protected:		// members
 
 	void 		freeCharacter();
 
-	int 		addInventoryItem(uint16 item);
-	void 		dropItem(uint16 item);
+
+	int 		addInventoryItem(ItemName item, uint32 value);
+	int 		addInventoryItem(ItemName item);
+	void 		dropItem(ItemName item);
 	int16 		pickupItem(Zone *z);
-	int16 		isItemInInventory(int32 v);
+	bool 		isItemInInventory(int32 v);
 	int16		getHoverInventoryItem(int16 x, int16 y);
 
 public:
 	virtual	void callFunction(uint index, void* parm) { }
 	virtual void renderLabel(Graphics::Surface *cnv, char *text) { }
-	virtual void setMousePointer(int16 index) = 0;
 
+	virtual void setArrowCursor() = 0;
+	virtual void setInventoryCursor(int pos) = 0;
 
 	virtual void parseLocation(const char* name) = 0;
 
@@ -603,7 +605,7 @@ public:
 
 	virtual	void callFunction(uint index, void* parm);
 	void renderLabel(Graphics::Surface *cnv, char *text);
-	void setMousePointer(int16 index);
+	void setMousePointer(uint32 value);
 
 	void	initJobs();
 
@@ -625,6 +627,10 @@ private:
 private:
 	void changeLocation(char *location);
 	void changeCharacter(const char *name);
+
+	void setArrowCursor();
+	void setInventoryCursor(int pos);
+
 
 	void doLoadGame(uint16 slot);
 	void doSaveGame(uint16 slot, const char* name);
@@ -907,6 +913,10 @@ private:
 	void 		initOpcodes();
 	void 		initParsers();
 	void		initJobs();
+
+	void setArrowCursor();
+	void setInventoryCursor(int pos);
+
 
 	typedef void (Parallaction_br::*JobFn)(void*, Job*);
 	const JobFn 	*_jobsFn;

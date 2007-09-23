@@ -136,12 +136,19 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	}
 	_locationNames[_si][0] = '\0';
 
+	cleanInventory(false);
+	ItemName name;
+	uint32 value;
+
 	for (_si = 0; _si < 30; _si++) {
 		f->readLine(s, 15);
-		_inventory[_si]._id = atoi(s);
+		value = atoi(s);
 
 		f->readLine(s, 15);
-		_inventory[_si]._index = atoi(s);
+		name = atoi(s);
+
+		printf("loadGame: inv[%i].id = %i, inv[%i].index = %i\n", _si, value, _si, name);
+		addInventoryItem(name, value);
 	}
 
 	delete f;
@@ -203,8 +210,10 @@ void Parallaction_ns::doSaveGame(uint16 slot, const char* name) {
 		f->writeString(s);
 	}
 
+	const InventoryItem *item;
 	for (uint16 _si = 0; _si < 30; _si++) {
-		sprintf(s, "%u\n%d\n", _inventory[_si]._id, _inventory[_si]._index);
+		item = getInventoryItem(_si);
+		sprintf(s, "%u\n%d\n", item->_id, item->_index);
 		f->writeString(s);
 	}
 
@@ -373,7 +382,7 @@ void Parallaction_ns::loadGame() {
 	GUI::TimedMessageDialog dialog("Loading game...", 1500);
 	dialog.runModal();
 
-	changeCursor(kCursorArrow);
+	setArrowCursor();
 
 	return;
 }

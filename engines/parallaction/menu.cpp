@@ -198,7 +198,7 @@ uint16 Menu::chooseLanguage() {
 	_vm->showSlide("lingua");
 	_vm->_gfx->displayString(60, 30, "SELECT LANGUAGE", 1);
 
-	_vm->changeCursor(kCursorArrow);
+	_vm->setArrowCursor();
 
 	do {
 		_vm->updateInput();
@@ -335,7 +335,7 @@ void Menu::selectCharacter() {
 	Graphics::Surface v14;
 	v14.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
 
-	_vm->changeCursor(kCursorArrow);
+	_vm->setArrowCursor();
 	_vm->_soundMan->stopMusic();
 
 	_vm->_gfx->setFont(_vm->_menuFont);

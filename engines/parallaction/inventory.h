@@ -30,6 +30,7 @@
 
 namespace Parallaction {
 
+class Parallaction;
 
 struct InventoryItem {
 	uint32		_id;            // object name (lowest 16 bits are always zero)
@@ -42,19 +43,76 @@ struct InventoryItem {
 
 #define MAKE_INVENTORY_ID(x) (((x) & 0xFFFF) << 16)
 
-
-extern InventoryItem _inventory[];
-
 void initInventory();
 void destroyInventory();
+
+
+
 void openInventory();
 void closeInventory();
-void cleanInventory();
-void addInventoryItem(uint16 item);
-
-int16 getInventoryItemIndex(int16 pos);
 void highlightInventoryItem(int16 pos, byte color);
 
+
+void cleanInventory(bool keepVerbs = true);
+const InventoryItem* getInventoryItem(int16 pos);
+int16 getInventoryItemIndex(int16 pos);
+
+typedef int16 ItemPosition;
+typedef uint16 ItemName;
+
+class Inventory {
+
+protected:
+	InventoryItem	*_items;
+	uint16			_maxItems;
+	uint16			_numItems;
+
+public:
+	Inventory(uint16 maxItems);
+	virtual ~Inventory();
+
+	ItemPosition addItem(ItemName name, uint32 value);
+	ItemPosition addItem(ItemName item);
+	void removeItem(ItemName name);
+	void clear(bool keepVerbs = true);
+
+	const InventoryItem* getItem(ItemPosition pos) const;
+	ItemName getItemName(ItemPosition pos) const;
+
+	ItemPosition findItem(ItemName name) const;
+
+	int16	getNumItems() const { return _numItems; }
+};
+
+
+
+class InventoryRenderer {
+	Parallaction	*_vm;
+	Inventory 		*_inv;
+	Common::Point	_pos;
+
+	byte			*_buffer;
+
+protected:
+	void drawItem(ItemPosition pos, ItemName name);
+	void refresh();
+
+public:
+	InventoryRenderer(Parallaction *vm);
+	virtual ~InventoryRenderer();
+
+	void bindInventory(Inventory *inv) { _inv = inv; }
+
+	void showInventory();
+	void hideInventory();
+
+	ItemPosition hitTest(const Common::Point &p) const;
+
+	byte*	getData() const { return _buffer; }
+
+	void	getRect(Common::Rect &r) const;
+	int16	getNumLines() const;
+};
 
 } // namespace Parallaction
 

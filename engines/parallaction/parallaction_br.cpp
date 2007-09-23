@@ -386,4 +386,17 @@ JobOpcode* Parallaction_br::createJobOpcode(uint functionId, Job *job) {
 	return new OpcodeImpl2<Parallaction_br>(this, _jobsFn[functionId], job);
 }
 
+
+void Parallaction_br::setArrowCursor() {
+
+
+
+}
+
+void Parallaction_br::setInventoryCursor(int pos) {
+
+
+
+}
+
 } // namespace Parallaction
