@@ -2,15 +2,18 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.11.0 (????-??-??)
+ New Games:
+   - Added support for Elvira: Mistress of the Dark
+   - Added support for Elvira 2: The Jaws of Cerberus
+   - Added support for I Have no Mouth, and I Must Scream
+   - Added support for preAGI game Troll's Tale.
+ 
  General:
    - Added ARM assembly routines for code in the sound mixer and SCUMM
      video playback, resulting in some nice speedups on several ports.
    - Improved the way keyboard input is handled internally, resolving
      some odd quirks in some game / port combinations.
    - Added optional 'confirm exit' dialog to the SDL backend.
-
- AGI:
-   - Added support for preAGI game Troll's Tale.
 
  AGOS:
    - Fixed crashes related to OmniTV playback in The Feeble Files.
