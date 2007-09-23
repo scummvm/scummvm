@@ -40,14 +40,19 @@ namespace Lure {
 
 static MemoryBlock *int_font = NULL;
 static MemoryBlock *int_dialog_frame = NULL;
-static uint8 fontSize[NUM_CHARS_IN_FONT];
+static uint8 fontSize[256];
+static int numFontChars;
 
 void Surface::initialise() {
 	int_font = Disk::getReference().getEntry(FONT_RESOURCE_ID);
 	int_dialog_frame = Disk::getReference().getEntry(DIALOG_RESOURCE_ID);
 
+	numFontChars = int_font->size() / 8;
+	if (numFontChars > 256)
+		error("Font data exceeded maximum allowable size");
+
 	// Calculate the size of each font character
-	for (int ctr = 0; ctr < NUM_CHARS_IN_FONT; ++ctr) {
+	for (int ctr = 0; ctr < numFontChars; ++ctr) {
 		byte *pChar = int_font->data() + (ctr * 8);
 		fontSize[ctr] = 0;
 
@@ -98,10 +103,10 @@ void Surface::loadScreen(uint16 resourceId) {
 	delete tmpScreen;
 }
 
-void Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour) {
+int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour) {
 	byte *const addr = _data->data() + (y * _width) + x;
 
-	if ((ascii < 32) || (ascii >= 32 + NUM_CHARS_IN_FONT))
+	if ((ascii < 32) || (ascii >= 32 + numFontChars))
 		error("Invalid ascii character passed for display '%d'", ascii);
 	
 	uint8 v;
@@ -122,6 +127,8 @@ void Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8
 			v = (v << 1) & 0xff;
 		}
 	}
+
+	return charWidth;
 }
 
 void Surface::writeString(uint16 x, uint16 y, Common::String line, bool transparent, 
@@ -133,7 +140,7 @@ void Surface::writeString(uint16 x, uint16 y, Common::String line, bool transpar
 
 		// Move to after the character in preparation for the next character
 		if (!varLength) x += FONT_WIDTH;
-		else x += fontSize[*sPtr - ' '] + 2;
+		else x += fontSize[(uint8)*sPtr - 32] + 2;
 
 		++sPtr;		// Move to next character
 	}
@@ -515,7 +522,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	assert(talkingChar);
 
 	strings.getString(talkingChar->nameId & 0x1fff, srcCharName);
-	characterArticle = talkingChar->nameId >> 14;
+	characterArticle = (talkingChar->nameId >> 13) + 1;
 
 	strcpy(destCharName, "");
 	if (destCharacter != NULL)
@@ -523,7 +530,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	strcpy(itemName, "");
 	if (itemHotspot != NULL) {
 		strings.getString(itemHotspot->nameId & 0x1fff, itemName);
-		hotspotArticle = itemHotspot->nameId >> 14;
+		hotspotArticle = (itemHotspot->nameId >> 13) - 1;
 	}
 
 	strings.getString(descId, _desc, itemName, destCharName, hotspotArticle, characterArticle);
@@ -907,6 +914,151 @@ bool RestartRestoreDialog::show() {
 	}
 
 	return restartFlag;
+}
+
+/*--------------------------------------------------------------------------*/
+
+struct ItemDesc {
+	Common::Language language;
+	int16 x, y;
+	uint16 width, height;
+	uint16 animId;
+	uint8 startColour;
+};
+
+#define PROT_SPR_HEADER 0x1830
+#define WORDING_HEADER 0x1839
+#define NUMBER_HEADER 0x1842
+
+static const ItemDesc copyProtectElements[] = {
+	{UNK_LANG, 104, 96, 32, 48, PROT_SPR_HEADER, 0},
+	{UNK_LANG, 179, 96, 32, 48, PROT_SPR_HEADER, 0},
+	
+	{EN_ANY, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{FR_FRA, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{DE_DEU, 39, 40, 208, 40, WORDING_HEADER, 32},
+	{NL_NLD, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{ES_ESP, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{IT_ITA, 57, 40, 208, 40, WORDING_HEADER, 32},
+
+	{UNK_LANG, 138, 168, 16, 8, NUMBER_HEADER, 32},
+	{UNK_LANG, 145, 168, 16, 8, NUMBER_HEADER, 32},
+	{UNK_LANG, 164, 168, 16, 8, NUMBER_HEADER, 32},
+	{UNK_LANG, 171, 168, 16, 8, NUMBER_HEADER, 32},
+	{UNK_LANG, 0, 0, 0, 0, 0, 0}
+};
+
+int pageNumbers[20] = {
+	4, 10, 16, 22, 5, 11, 17, 23, 6, 12, 18, 7, 13, 19, 8, 14, 20, 9, 15, 21};
+
+CopyProtectionDialog::CopyProtectionDialog() {
+	// Get objects for the screen
+	LureEngine &engine = LureEngine::getReference();
+
+	const ItemDesc *ptr = &copyProtectElements[0];
+	while ((ptr->width != 0) || (ptr->height != 0)) {
+		if ((ptr->language == UNK_LANG) || (ptr->language == engine.getLanguage())) {
+			if (ptr->animId == 0) break; //***DEBUG***
+			Hotspot *h = new Hotspot();
+			h->setPosition(ptr->x, ptr->y);
+			h->setSize(ptr->width, ptr->height);
+			h->setColourOffset(ptr->startColour);
+			h->setAnimation(ptr->animId);
+
+			_hotspots.push_back(h);
+		}
+
+		++ptr;
+	}
+}
+
+bool CopyProtectionDialog::show() {
+	Screen &screen = Screen::getReference();
+	Events &events = Events::getReference();
+	Common::RandomSource rnd;
+
+	screen.setPaletteEmpty();
+	Palette p(COPY_PROTECTION_RESOURCE_ID - 1);
+
+	for (int tryCounter = 0; tryCounter < 3; ++tryCounter) {
+		// Copy the base screen to the output screen
+		Surface *s = Surface::getScreen(COPY_PROTECTION_RESOURCE_ID);
+		s->copyTo(&screen.screen(), 0, MENUBAR_Y_SIZE);
+		delete s;
+
+		// Add wording header and display screen
+		_hotspots[2]->setFrameNumber(1);
+		_hotspots[2]->copyTo(&screen.screen());
+		screen.update();
+		screen.setPalette(&p);
+
+		// Cycle through displaying different characters until a key or mouse button is pressed
+		do {
+			chooseCharacters();
+		} while (!events.interruptableDelay(100));
+
+		// Change title text to selection
+		_hotspots[2]->setFrameNumber(0);
+		_hotspots[2]->copyTo(&screen.screen());
+		screen.update();
+
+		// Clear any prior try
+		_charIndex = 0;
+
+		while (!events.quitFlag) {
+			if (events.pollEvent()) {
+				if (events.type() == Common::EVENT_KEYDOWN) { 
+					if ((events.event().kbd.keycode == Common::KEYCODE_BACKSPACE) && (_charIndex > 0)) {
+						// Remove the last number typed
+						--_charIndex;
+						_hotspots[_charIndex + 3]->setFrameNumber(10);   // Blank space
+						_hotspots[_charIndex + 3]->copyTo(&screen.screen());
+
+						screen.update();
+					} else if ((events.event().kbd.keycode >= Common::KEYCODE_0) &&
+								(events.event().kbd.keycode <= Common::KEYCODE_9)) {
+						// Number pressed
+						_hotspots[_charIndex + 3]->setFrameNumber(events.event().kbd.ascii - '0');
+						_hotspots[_charIndex + 3]->copyTo(&screen.screen());
+						
+						if (++_charIndex == 4)
+							break;
+					}
+
+					screen.update();
+				}
+			}
+
+			g_system->delayMillis(10);
+		}
+
+		if (events.quitFlag)
+			return false;
+
+		// At this point, two page numbers have been entered - validate them
+		int page1 = (_hotspots[3]->frameNumber() * 10) + _hotspots[4]->frameNumber();
+		int page2 = (_hotspots[5]->frameNumber() * 10) + _hotspots[6]->frameNumber();
+		
+		if ((page1 == pageNumbers[_hotspots[0]->frameNumber()]) &&
+			(page2 == pageNumbers[_hotspots[1]->frameNumber()]))
+			return true;
+	}
+
+	// Copy protection failed
+	return false;
+}
+
+void CopyProtectionDialog::chooseCharacters() {
+	Screen &screen = Screen::getReference();
+	int char1 = _rnd.getRandomNumber(19);
+	int char2 = _rnd.getRandomNumber(19);
+
+	_hotspots[0]->setFrameNumber(char1);
+	_hotspots[0]->copyTo(&screen.screen());
+	_hotspots[1]->setFrameNumber(char2);
+	_hotspots[1]->copyTo(&screen.screen());
+
+	screen.update();
 }
 
 } // end of namespace Lure
