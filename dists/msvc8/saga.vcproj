@@ -384,10 +384,6 @@
 			RelativePath="..\..\engines\saga\sthread.cpp"
 			>
 		</File>
-		<File
-			RelativePath="..\..\engines\saga\stream.h"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
