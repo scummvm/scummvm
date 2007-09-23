@@ -9,6 +9,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      some odd quirks in some game / port combinations.
    - Added optional 'confirm exit' dialog to the SDL backend.
 
+ AGI:
+   - Added support for preAGI game Troll's Tale.
+
  AGOS:
    - Fixed crashes related to OmniTV playback in The Feeble Files.
 
