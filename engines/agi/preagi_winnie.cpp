@@ -1076,7 +1076,7 @@ void Winnie::drawRoomPic() {
 	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	// draw object picture
-	if (!_vm->getPlatform() == Common::kPlatformAmiga && !_vm->getPlatform() == Common::kPlatformC64)
+	if (_vm->getPlatform() != Common::kPlatformAmiga && _vm->getPlatform() != Common::kPlatformC64)
 		drawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
 
 	free(buffer);
@@ -1163,7 +1163,7 @@ void Winnie::init() {
 
 void Winnie::run() {
 	randomize();
-	if (!_vm->getPlatform() == Common::kPlatformC64)
+	if (_vm->getPlatform() != Common::kPlatformC64)
 		intro();
 	gameLoop();
 }
