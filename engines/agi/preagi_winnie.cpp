@@ -52,7 +52,7 @@ void Winnie::initVars() {
 	game.fGame[1] = 1;
 	room = IDI_WTP_ROOM_HOME;
 
-	mist = -1;
+	_mist = -1;
 	doWind = false;
 	winnie_event = false;
 
@@ -338,10 +338,10 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			if (winnie_event && (room <= IDI_WTP_MAX_ROOM_TELEPORT)) {
 				if (!tigger_mist) {
 					tigger_mist = 1;
-					//Winnie_Tigger();
+					tigger();
 				} else {
 					tigger_mist = 0;
-					//Winnie_Mist();
+					mist();
 				}
 				winnie_event = false;
 				return IDI_WTP_PAR_GOTO;
@@ -436,8 +436,8 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 				gameOver();
 				break;
 			case IDO_WTP_WALK_MIST:
-				mist--;
-				if (!mist) {
+				_mist--;
+				if (!_mist) {
 					room = _vm->rnd(IDI_WTP_MAX_ROOM_TELEPORT) + 1;
 					return IDI_WTP_PAR_GOTO;
 				}
@@ -692,6 +692,25 @@ void Winnie::wind() {
 			game.iObjRoom[game.iUsedObj[i]] = iRoom;
 		}
 	}
+}
+
+void Winnie::mist() {
+	// mist length in turns is (2-5)
+	_mist = _vm->rnd(4) + 2;
+
+	room = IDI_WTP_ROOM_MIST;
+	drawRoomPic();
+
+	_vm->printStr(IDS_WTP_MIST);
+}
+
+void Winnie::tigger() {
+	room = IDI_WTP_ROOM_TIGGER;
+
+	drawRoomPic();
+	_vm->printStr(IDS_WTP_TIGGER);
+
+	dropObjRnd();
 }
 
 void Winnie::showOwlHelp() {

@@ -306,7 +306,7 @@ private:
 	PreAgiEngine *_vm;
 	WTP_SAVE_GAME game;
 	int room;
-	int	mist;
+	int	_mist;
 	bool doWind;
 	bool winnie_event;
 	int	tigger_mist;
@@ -349,7 +349,11 @@ private:
 	void writeSaveGame(uint8*);
 	void readSaveGame(uint8*);
 	void dropObjRnd();
+
 	void wind();
+	void mist();
+	void tigger();
+
 	void showOwlHelp();
 	bool playSound(ENUM_WTP_SOUND);
 };
