@@ -820,10 +820,10 @@ CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleSet *parentSet,
 		CharacterScheduleResource *&rec) {
 	_parent = parentSet;
 
-	if ((rec->action == 0) || (rec->action > NPC_JUMP_ADDRESS))
+	if ((rec->action == 0) || (FROM_LE_16(rec->action) > NPC_JUMP_ADDRESS))
 		error("Invalid action encountered reading NPC schedule");
 
-	_action = (Action) rec->action;
+	_action = (Action) FROM_LE_16(rec->action);
 	_numParams = actionNumParams[_action];
 	for (int index = 0; index < _numParams; ++index) 
 		_params[index] = FROM_LE_16(rec->params[index]);
