@@ -3,9 +3,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 0.11.0 (????-??-??)
  New Games:
-   - Added support for Elvira: Mistress of the Dark
-   - Added support for Elvira 2: The Jaws of Cerberus
-   - Added support for I Have no Mouth, and I Must Scream
+   - Added support for Elvira: Mistress of the Dark.
+   - Added support for Elvira 2: The Jaws of Cerberus.
+   - Added support for I Have no Mouth, and I Must Scream.
    - Added support for preAGI game Troll's Tale.
  
  General:
@@ -24,11 +24,13 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  SCUMM:
    - Added subtitle skipping (via '.' key) in older games which didn't have
      this feature so far (e.g. Zak, MM, Indy3, Loom).
-   - Added support for Chinese COMI
+   - Added support for Chinese COMI.
 
  SAGA:
-   - Added support for compressed sound effects, voices and music
+   - Added support for compressed sound effects, voices and music.
 
+ Kyrandia:
+   - Added support for Macintosh version.
 
 0.10.0 (2007-06-20)
  New Games:
