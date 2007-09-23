@@ -46,6 +46,7 @@ Debugger_v1::Debugger_v1(KyraEngine_v1 *vm)
 	DCmd_Register("timers",				WRAP_METHOD(Debugger_v1, cmd_listTimers));
 	DCmd_Register("settimercountdown",	WRAP_METHOD(Debugger_v1, cmd_setTimerCountdown));
 	DCmd_Register("give",				WRAP_METHOD(Debugger_v1, cmd_giveItem));
+	DCmd_Register("birthstones",		WRAP_METHOD(Debugger_v1, cmd_listBirthstones));
 }
 
 void Debugger_v1::preEnter() {
@@ -179,5 +180,13 @@ bool Debugger_v1::cmd_giveItem(int argc, const char **argv) {
 
 	return true;
 }
+
+bool Debugger_v1::cmd_listBirthstones(int argc, const char **argv) {
+	DebugPrintf("Needed Birthstone gems:\n");
+	for (int i = 0; i < ARRAYSIZE(_vm->_birthstoneGemTable); ++i)
+		DebugPrintf("%-2d '%s'\n", _vm->_birthstoneGemTable[i], _vm->_itemList[_vm->_birthstoneGemTable[i]]);
+	return true;
+}
+
 } // End of namespace Kyra
 
