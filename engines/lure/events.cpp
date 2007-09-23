@@ -205,10 +205,9 @@ bool Events::interruptableDelay(uint32 milliseconds) {
 		if (events.quitFlag) return true;
 
 		if (events.pollEvent()) {
-			if (events.type() == Common::EVENT_KEYDOWN)
-				return events.event().kbd.keycode == 27;
-			else if (events.type() == Common::EVENT_LBUTTONDOWN)
-				return false;
+			if ((events.type() == Common::EVENT_KEYDOWN) ||
+				(events.type() == Common::EVENT_LBUTTONDOWN))
+				return true;
 		}
 
 		uint32 delayAmount = delayCtr - g_system->getMillis();

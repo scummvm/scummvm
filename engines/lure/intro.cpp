@@ -59,18 +59,34 @@ bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySiz
 	Palette p(paletteId);
 	_screen.paletteFadeIn(&p);
 	
-	bool result = events.interruptableDelay(delaySize);
+	bool result = interruptableDelay(delaySize);
 	if (events.quitFlag) return true;
 
 	_screen.paletteFadeOut();
 	return result;
 }
 
+// interruptableDelay
+// Delays for a given number of milliseconds. If it returns true, it indicates that
+// the Escape has been pressed to abort whatever sequence is being displayed
+
+bool Introduction::interruptableDelay(uint32 milliseconds) {
+	Events &events = Events::getReference();
+
+	if (events.interruptableDelay(milliseconds)) {
+		if (events.type() == Common::EVENT_KEYDOWN) 
+			return events.event().kbd.keycode == 27;
+		else if (events.type() == Common::EVENT_LBUTTONDOWN)
+			return false;
+	}
+
+	return false;
+}
+
 // show
 // Main method for the introduction sequence
 
 bool Introduction::show() {
-	Events &events = Events::getReference();
 	_screen.setPaletteEmpty();
 
 	// Initial game company and then game screen
@@ -104,13 +120,13 @@ bool Introduction::show() {
 		anim = new AnimationSequence(_screen, _system, curr_anim->resourceId, 
 			coll.getPalette(curr_anim->paletteIndex), fadeIn);
 		if (curr_anim->initialPause != 0)  
-			if (events.interruptableDelay(curr_anim->initialPause * 1000 / 50)) return true;
+			if (interruptableDelay(curr_anim->initialPause * 1000 / 50)) return true;
 
 		result = false;
 		switch (anim->show()) {
 		case ABORT_NONE:
 			if (curr_anim->endingPause != 0) {
-				result = events.interruptableDelay(curr_anim->endingPause * 1000 / 50);
+				result = interruptableDelay(curr_anim->endingPause * 1000 / 50);
 			}
 			break;
 
@@ -134,9 +150,9 @@ bool Introduction::show() {
 	result = false;
 	anim = new AnimationSequence(_screen, _system, 0x48, coll.getPalette(4), false);
 	do {
-		result = events.interruptableDelay(2000);
+		result = interruptableDelay(2000);
 		_screen.paletteFadeOut();
-		if (!result) result = events.interruptableDelay(500);
+		if (!result) result = interruptableDelay(500);
 		if (result) break;
 	} while (anim->step());
 	delete anim;
