@@ -739,8 +739,8 @@ public:
 	void run();
 protected:
 	PreAgiEngine *_vm;
-	MSA_GAME game;
-	bool clickToMove;
+	MSA_GAME _game;
+	bool _clickToMove;
 
 	int getDat(int);
 	void readExe(int, uint8*, long);
@@ -792,14 +792,14 @@ protected:
 
 	bool planetIsAlreadyAssigned(int planet) {
 		for (int j = 0; j < IDI_MSA_MAX_PLANET; j++) {
-			if (game.iPlanetXtal[j] == planet)
+			if (_game.iPlanetXtal[j] == planet)
 				return true;
 		}
 		return false;
 	}
 
 	bool mickeyHasItem(int item) {
-		if (game.fItem[item]) {
+		if (_game.fItem[item]) {
 			printDatMessage(IDI_MSA_MSG_MICKEY_ALREADY_HAS_ITEM);
 			return true;
 		} else {
