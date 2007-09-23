@@ -33,7 +33,6 @@
 
 #include "saga/script.h"
 
-#include "saga/stream.h"
 #include "saga/scene.h"
 #include "saga/sagaresnames.h"
 

@@ -32,7 +32,6 @@
 #include "saga/rscfile.h"
 #include "saga/sndres.h"
 #include "saga/sound.h"
-#include "saga/stream.h"
 
 #include "common/file.h"
 

@@ -34,7 +34,6 @@
 #include "saga/rscfile.h"
 #include "saga/scene.h"
 #include "saga/sndres.h"
-#include "saga/stream.h"
 
 #include "common/advancedDetector.h"
 

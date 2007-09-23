@@ -41,7 +41,6 @@
 #include "saga/music.h"
 
 #include "saga/scene.h"
-#include "saga/stream.h"
 #include "saga/actor.h"
 #include "saga/rscfile.h"
 #include "saga/sagaresnames.h"

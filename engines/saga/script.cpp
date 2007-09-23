@@ -30,7 +30,6 @@
 #include "saga/console.h"
 
 #include "saga/script.h"
-#include "saga/stream.h"
 #include "saga/interface.h"
 #include "saga/itedata.h"
 #include "saga/scene.h"

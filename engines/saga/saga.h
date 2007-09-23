@@ -61,6 +61,9 @@ class Resource;
 struct ResourceContext;
 struct StringList;
 
+using Common::MemoryReadStream;
+using Common::MemoryReadStreamEndian;
+
 //#define MIN_IMG_RLECODE    3
 //#define MODEX_SCANLINE_LIMIT 200 //TODO: remove
 

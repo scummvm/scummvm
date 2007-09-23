@@ -30,7 +30,6 @@
 #include "saga/events.h"
 
 #include "saga/palanim.h"
-#include "saga/stream.h"
 
 namespace Saga {
 

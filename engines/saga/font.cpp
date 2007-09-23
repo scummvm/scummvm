@@ -30,7 +30,6 @@
 #include "saga/rscfile.h"
 
 #include "saga/font.h"
-#include "saga/stream.h"
 
 namespace Saga {
 

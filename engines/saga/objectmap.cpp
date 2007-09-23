@@ -36,7 +36,6 @@
 #include "saga/font.h"
 #include "saga/interface.h"
 #include "saga/objectmap.h"
-#include "saga/stream.h"
 #include "saga/actor.h"
 #include "saga/scene.h"
 #include "saga/isomap.h"

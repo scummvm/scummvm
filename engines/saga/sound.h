@@ -96,7 +96,7 @@ public:
 
 	SagaEngine *_vm;
 	Audio::Mixer *_mixer;
-	Common::MemoryReadStream *_voxStream;
+	MemoryReadStream *_voxStream;
 
 	SndHandle _handles[SOUND_HANDLES];
 };

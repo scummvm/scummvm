@@ -28,8 +28,6 @@
 #ifndef SAGA_ANIMATION_H
 #define SAGA_ANIMATION_H
 
-#include "saga/stream.h"
-
 namespace Saga {
 
 #define MAX_ANIMATIONS 10

@@ -30,7 +30,7 @@
 #include "saga/rscfile.h"
 #include "saga/sagaresnames.h"
 #include "saga/music.h"
-#include "saga/stream.h"
+
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
@@ -57,7 +57,7 @@ private:
 	const int16 *_bufferEnd;
 	const int16 *_pos;
 	const GameSoundInfo *_musicInfo;
-	Common::MemoryReadStream *_memoryStream;
+	MemoryReadStream *_memoryStream;
 
 	void refill();
 	bool eosIntern() const {

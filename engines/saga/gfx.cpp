@@ -31,7 +31,6 @@
 #include "saga/sagaresnames.h"
 #include "saga/rscfile.h"
 #include "saga/scene.h"
-#include "saga/stream.h"
 
 #include "common/system.h"
 #include "graphics/cursorman.h"
