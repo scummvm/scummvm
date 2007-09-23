@@ -60,9 +60,62 @@ void Winnie::initVars() {
 		_vm->_picture->setPictureVersion(AGIPIC_C64);
 }
 
+void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
+	byte isBigEndian = !(_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64);
+	int i;
+
+	Common::MemoryReadStreamEndian readS(buffer, len, isBigEndian);
+
+	roomHdr->roomNumber = readS.readByte();
+	roomHdr->objId = readS.readByte();
+	roomHdr->ofsPic = readS.readUint16();
+	roomHdr->fileLen = readS.readUint16();
+	roomHdr->reserved0 = readS.readUint16();
+
+	for (i = 0; i < IDI_WTP_MAX_DIR; i++)
+		roomHdr->roomNew[i] = readS.readUint16();
+
+	roomHdr->objX = readS.readUint16();
+	roomHdr->objY = readS.readUint16();
+
+	roomHdr->reserved1 = readS.readUint16();
+
+	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
+		roomHdr->ofsDesc[i] = readS.readUint16();
+
+	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
+		roomHdr->ofsBlock[i] = readS.readUint16();
+
+	for (i = 0; i < IDI_WTP_MAX_STR; i++)
+		roomHdr->ofsStr[i] = readS.readUint16();
+
+	roomHdr->reserved2 = readS.readUint32();
+
+	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
+		for (byte j = 0; j < IDI_WTP_MAX_BLOCK; j++)
+			roomHdr->opt[i].ofsOpt[j] = readS.readUint16();
+}
+
+void Winnie::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
+	byte isBigEndian = !(_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64);
+	int i;
+
+	Common::MemoryReadStreamEndian readS(buffer, len, isBigEndian);
+
+	objHdr->fileLen = readS.readUint16();
+	objHdr->objId = readS.readUint16();
+
+	for (i = 0; i < IDI_WTP_MAX_OBJ_STR_END; i++)
+		objHdr->ofsEndStr[i] = readS.readUint16();
+
+	for (i = 0; i < IDI_WTP_MAX_OBJ_STR; i++)
+		objHdr->ofsStr[i] = readS.readUint16();
+
+	objHdr->ofsPic = readS.readUint16();
+}
+
 uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 	char szFile[256] = {0};
-	int i;
 
 	if (_vm->getPlatform() == Common::kPlatformPC)
 		sprintf(szFile, IDS_WTP_ROOM_DOS, iRoom);
@@ -84,38 +137,7 @@ uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 	file.read(buffer, filelen);
 	file.close();
 
-	byte isBigEndian = !(_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64);
-
-	Common::MemoryReadStreamEndian readS(buffer, filelen, isBigEndian);
-
-	roomHdr.roomNumber = readS.readByte();
-	roomHdr.objId = readS.readByte();
-	roomHdr.ofsPic = readS.readUint16();
-	roomHdr.fileLen = readS.readUint16();
-	roomHdr.reserved0 = readS.readUint16();
-
-	for (i = 0; i < IDI_WTP_MAX_DIR; i++)
-		roomHdr.roomNew[i] = readS.readUint16();
-
-	roomHdr.objX = readS.readUint16();
-	roomHdr.objY = readS.readUint16();
-
-	roomHdr.reserved1 = readS.readUint16();
-
-	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
-		roomHdr.ofsDesc[i] = readS.readUint16();
-
-	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
-		roomHdr.ofsBlock[i] = readS.readUint16();
-
-	for (i = 0; i < IDI_WTP_MAX_STR; i++)
-		roomHdr.ofsStr[i] = readS.readUint16();
-
-	roomHdr.reserved2 = readS.readUint32();
-
-	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
-		for (byte j = 0; j < IDI_WTP_MAX_BLOCK; j++)
-			roomHdr.opt[i].ofsOpt[j] = readS.readUint16();
+	parseRoomHeader(&roomHdr, buffer, filelen);
 
 	return filelen;
 }
@@ -236,7 +258,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 	int fBlock;
 
 	// extract header from buffer
-	memcpy(&hdr, buffer, sizeof(WTP_ROOM_HDR));
+	parseRoomHeader(&hdr, buffer, sizeof(WTP_ROOM_HDR));
 
 	for (;;) {
 		pc = startpc;
@@ -472,7 +494,8 @@ void Winnie::printObjStr(int iObj, int iStr) {
 	uint8 *buffer = (uint8 *)malloc(2048);
 
 	readObj(iObj, buffer);
-	memcpy(&hdr, buffer, sizeof(hdr));
+	parseObjHeader(&hdr, buffer, sizeof(hdr));
+
 	_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr] - IDI_WTP_OFS_OBJ));
 
 	free(buffer);
@@ -486,7 +509,7 @@ bool Winnie::isRightObj(int iRoom, int iObj, int *iCode) {
 
 	readRoom(iRoom, roomdata, roomhdr);
 	readObj(iObj, objdata);
-	memcpy(&objhdr, objdata, sizeof(WTP_OBJ_HDR));
+	parseObjHeader(&objhdr, objdata, sizeof(WTP_OBJ_HDR));
 
 	free(roomdata);
 	free(objdata);
@@ -1051,7 +1074,7 @@ void Winnie::drawObjPic(int iObj, int x0, int y0) {
 		return;
 
 	uint32 objSize = readObj(iObj, buffer);
-	memcpy(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
+	parseObjHeader(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
 
 	_vm->_picture->setOffset(x0, y0);
 	_vm->_picture->decodePicture(buffer + objhdr.ofsPic - IDI_WTP_OFS_OBJ, objSize, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
