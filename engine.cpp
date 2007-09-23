@@ -38,7 +38,7 @@
 
 // CHAR_KEY tests to see whether a keycode is for
 // a "character" handler or a "button" handler
-#define CHAR_KEY(k) (k >= 'a' && k <= 'z') || (k >= 'A' && k <= 'Z') || (k >= '0' && k <= '9') || k == ' '
+#define CHAR_KEY(k) ((k >= 'a' && k <= 'z') || (k >= 'A' && k <= 'Z') || (k >= '0' && k <= '9') || k == ' ')
 
 Engine *g_engine = NULL;
 
