@@ -34,7 +34,7 @@ namespace Agi {
 
 #define IDS_WTP_SELECTION		">"
 
-#define IDS_WTP_ROOM_DOS		"rooms\\rm.%02d"
+#define IDS_WTP_ROOM_DOS		"rooms/rm.%02d"
 #define IDS_WTP_ROOM_AMIGA		"room.%d"
 #define IDS_WTP_ROOM_C64		"room%02d"
 #define IDS_WTP_OBJ_DOS			"obj.%02d"
