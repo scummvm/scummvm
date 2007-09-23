@@ -133,7 +133,7 @@ void Winnie::randomize() {
 	for (int i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++) {
 		done = false;
 		while (!done) {
-			iObj = _vm->rnd(IDI_WTP_MAX_OBJ - 1) + 2;
+			iObj = _vm->rnd(IDI_WTP_MAX_OBJ - 1) + 1;
 			done = true;
 			for (int j = 0; j < IDI_WTP_MAX_OBJ_MISSING; j++) {
 				if (game.iUsedObj[j] == iObj) {
