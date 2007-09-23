@@ -947,9 +947,18 @@ cmd(set_game_id) {
 cmd(pause) {
 	int tmp = game.clockEnabled;
 	const char *b[] = { "Continue", NULL };
+	const char *b_ru[] = { "\x8f\xe0\xae\xa4\xae\xab\xa6\xa8\xe2\xec", NULL };
 
 	game.clockEnabled = false;
-	g_agi->selectionBox("  Game is paused.  \n\n\n", b);
+
+	switch (g_agi->getLanguage()) {
+	case Common::RU_RUS:
+		g_agi->selectionBox("  \x88\xa3\xe0\xa0 \xae\xe1\xe2\xa0\xad\xae\xa2\xab\xa5\xad\xa0.  \n\n\n", b_ru);
+		break;
+	default:
+		g_agi->selectionBox("  Game is paused.  \n\n\n", b);
+		break;
+	}
 	game.clockEnabled = tmp;
 }
 

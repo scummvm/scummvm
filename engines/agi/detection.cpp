@@ -59,6 +59,10 @@ Common::Platform AgiBase::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
+Common::Language AgiBase::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
 uint16 AgiBase::getVersion() const {
 	return _gameDescription->version;
 }
@@ -277,6 +281,23 @@ static const AGIGameDescription gameDescriptions[] = {
 			"2.00 1987-06-14",
 			AD_ENTRY1("logdir", "7f598d4712319b09d7bd5b3be10a2e4a"),
 			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_BC,
+		GType_V2,
+		0,
+		0x2440,
+	},
+
+
+	{
+		// Black Cauldron (Russian)
+		{
+			"bc",
+			"",
+			AD_ENTRY1s("logdir",  "b7de782dfdf8ea7dde8064f09804bcf5", 357),
+			Common::RU_RUS,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -641,6 +662,23 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
+		// King's Quest 2 (Russian)
+		{
+			"kq2",
+			"",
+			AD_ENTRY1s("logdir", "35211c574ececebdc723b23e35f99275", 543),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_KQ2,
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
+	{
 		// King's Quest 3 (Amiga) 1.01 11/8/86
 		// The original game did not have menus, they are enabled under ScummVM
 		{
@@ -735,6 +773,23 @@ static const AGIGameDescription gameDescriptions[] = {
 			"1.01 1986-11-08",
 			AD_ENTRY1("logdir", "9c2b34e7ffaa89c8e2ecfeb3695d444b"),
 			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_KQ3,
+		GType_V2,
+		GF_ESCPAUSE,
+		0x2272,
+	},
+
+
+	{
+		// King's Quest 3 (Russian)
+		{
+			"kq3",
+			"",
+			AD_ENTRY1s("logdir", "5856dec6ccb9c4b70aee21044a19270a", 390),
+			Common::RU_RUS,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -1317,6 +1372,23 @@ static const AGIGameDescription gameDescriptions[] = {
 
 
 	{
+		// Police Quest 1 (Russian)
+		{
+			"pq1",
+			"",
+			AD_ENTRY1s("logdir", "604cc8041d24c4c7e5fa8baf386ef76e", 360),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_PQ1,
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
+	{
 		// Police Quest 1 (Mac) 2.0G 12/3/87
 		{
 			"pq1",
@@ -1456,6 +1528,22 @@ static const AGIGameDescription gameDescriptions[] = {
 	},
 
 
+	{
+		// Space Quest 1 (Russian)
+		{
+			"sq1",
+			"",
+			AD_ENTRY1s("logdir", "a279eb8ddbdefdb1ea6adc827a1d632a", 372),
+			Common::RU_RUS,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_SQ1,
+		GType_V2,
+		GF_ESCPAUSE,
+		0x2089,
+	},
+
 
 	{
 		// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.426/2.917]
@@ -1555,6 +1643,23 @@ static const AGIGameDescription gameDescriptions[] = {
 			"2.0A 1987-11-06 5.25\"",
 			AD_ENTRY1s("logdir", "ad7ce8f800581ecc536f3e8021d7a74d", 423),
 			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_SQ2,
+		GType_V2,
+		0,
+		0x2917,
+	},
+
+
+	{
+		// Space Quest 2 (Russian)
+		{
+			"sq2",
+			"",
+			AD_ENTRY1s("logdir", "ba21c8934caf28e3ba45ce7d1cd6b041", 423),
+			Common::RU_RUS,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},

@@ -613,7 +613,7 @@ void GfxMgr::shakeEnd() {
 	free(_shakeH);
 }
 
-void GfxMgr::putTextCharacter(int l, int x, int y, unsigned int c, int fg, int bg, bool checkerboard, const uint8 *font) {
+void GfxMgr::putTextCharacter(int l, int x, int y, unsigned char c, int fg, int bg, bool checkerboard, const uint8 *font) {
 	int x1, y1, xx, yy, cc;
 	const uint8 *p;
 

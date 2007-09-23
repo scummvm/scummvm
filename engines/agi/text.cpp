@@ -606,8 +606,16 @@ void AgiEngine::writeStatus() {
 		return;
 	}
 
-	sprintf(x, " Score:%i of %-3i", _game.vars[vScore], _game.vars[vMaxScore]);
-	printStatus("%-17s             Sound:%s ", x, getflag(fSoundOn) ? "on " : "off");
+	switch (getLanguage()) {
+	case Common::RU_RUS:
+		sprintf(x, " \x91\xe7\xa5\xe2: %i \xa8\xa7 %-3i", _game.vars[vScore], _game.vars[vMaxScore]);
+		printStatus("%-17s              \x87\xa2\xe3\xaa:%s", x, getflag(fSoundOn) ? "\xa2\xaa\xab " : "\xa2\xeb\xaa\xab");
+		break;
+	default:
+		sprintf(x, " Score:%i of %-3i", _game.vars[vScore], _game.vars[vMaxScore]);
+		printStatus("%-17s             Sound:%s ", x, getflag(fSoundOn) ? "on " : "off");
+		break;
+	}
 }
 
 /**
