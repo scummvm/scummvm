@@ -52,7 +52,7 @@ public:
 	MemoryBlock &data() { return *_data; }
 
 	void loadScreen(uint16 resourceId);
-	void writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour);
+	int writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour);
 	void writeString(uint16 x, uint16 y, Common::String line, bool transparent,
 		uint8 colour = DIALOG_TEXT_COLOUR, bool varLength = true);
 	void transparentCopyTo(Surface *dest);
@@ -107,6 +107,18 @@ public:
 class RestartRestoreDialog {
 public:
 	static bool show();
+};
+
+class CopyProtectionDialog {
+private:
+	Common::RandomSource _rnd;
+	ManagedList<Hotspot *> _hotspots;
+	int _charIndex;
+
+	void chooseCharacters();
+public:
+	CopyProtectionDialog();
+	bool show();
 };
 
 } // End of namespace Lure
