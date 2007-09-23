@@ -432,7 +432,8 @@ public:
 	 * Grabs a specified part of the currently active palette.
 	 * The format is the same as for setPalette.
 	 *
-	 * @param colors	the palette data, in interleaved RGB format
+	 * @see setPalette
+	 * @param colors	the palette data, in interleaved RGBA format
 	 * @param start		the first platte entry to be read
 	 * @param num		the number of palette entries to be read
 	 */
