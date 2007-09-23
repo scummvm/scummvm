@@ -90,7 +90,7 @@ public:
 	virtual Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() { return _screen; }
 	
-	Movie *createWSAMovie();
+	virtual Movie *createWSAMovie();
 protected:
 	// Main menu code, also used for Kyra 3
 	static const char *_mainMenuStrings[];

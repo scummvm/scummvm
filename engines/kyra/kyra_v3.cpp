@@ -697,5 +697,12 @@ bool KyraEngine_v3::loadLanguageFile(const char *file, uint8 *&buffer) {
 	return size != 0 && buffer != 0;
 }
 
+Movie *KyraEngine_v3::createWSAMovie() {
+	WSAMovieV2 *movie = new WSAMovieV2(this);
+	assert(movie);
+	movie->flagOldOff(true);
+	return movie;
+}
+
 } // end of namespace Kyra
 
