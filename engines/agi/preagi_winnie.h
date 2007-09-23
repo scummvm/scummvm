@@ -304,12 +304,12 @@ public:
 
 private:
 	PreAgiEngine *_vm;
-	WTP_SAVE_GAME game;
-	int room;
+	WTP_SAVE_GAME _game;
+	int _room;
 	int	_mist;
-	bool doWind;
-	bool winnie_event;
-	int	tigger_mist;
+	bool _doWind;
+	bool _winnieEvent;
+	int	_tiggerMist;
 
 	void randomize();
 	void intro();
