@@ -156,6 +156,10 @@ uint32 Winnie::readObj(int iObj, uint8 *buffer) {
 		return 0;
 	}
 	uint32 filelen = file.size();
+	if (_vm->getPlatform() == Common::kPlatformC64) { //Skip the loading address
+		filelen -= 2;
+		file.seek(2, SEEK_CUR);
+	}
 	memset(buffer, 0, sizeof(buffer));
 	file.read(buffer, filelen);
 	file.close();
@@ -307,7 +311,10 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			break;
 		default:
 			// print description
-			_vm->printStrXOR((char *)(buffer + pc));
+			if (_vm->getPlatform() != Common::kPlatformAmiga)
+				_vm->printStrXOR((char *)(buffer + pc));
+			else
+				_vm->printStr((char *)(buffer + pc));
 			if (_vm->getSelection(kSelBackspace) == 1)
 				return IDI_WTP_PAR_OK;
 			else 
@@ -502,7 +509,10 @@ void Winnie::printObjStr(int iObj, int iStr) {
 	readObj(iObj, buffer);
 	parseObjHeader(&hdr, buffer, sizeof(hdr));
 
-	_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr] - IDI_WTP_OFS_OBJ));
+	if (_vm->getPlatform() != Common::kPlatformAmiga)
+		_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr] - IDI_WTP_OFS_OBJ));
+	else
+		_vm->printStr((char *)(buffer + hdr.ofsStr[iStr]));
 
 	free(buffer);
 }
@@ -1108,9 +1118,12 @@ void Winnie::drawObjPic(int iObj, int x0, int y0) {
 
 	uint32 objSize = readObj(iObj, buffer);
 	parseObjHeader(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
+	
+	if (_vm->getPlatform() == Common::kPlatformPC)
+		objhdr.ofsPic -= IDI_WTP_OFS_OBJ;
 
 	_vm->_picture->setOffset(x0, y0);
-	_vm->_picture->decodePicture(buffer + objhdr.ofsPic - IDI_WTP_OFS_OBJ, objSize, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_vm->_picture->decodePicture(buffer + objhdr.ofsPic, objSize, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_picture->setOffset(0, 0);
 	_vm->_picture->showPic(10, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
@@ -1138,7 +1151,7 @@ void Winnie::drawRoomPic() {
 	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	// draw object picture
-	if (_vm->getPlatform() != Common::kPlatformAmiga && _vm->getPlatform() != Common::kPlatformC64)
+	if (_vm->getPlatform() != Common::kPlatformC64)
 		drawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
 
 	free(buffer);
@@ -1167,7 +1180,7 @@ void Winnie::printRoomStr(int iRoom, int iStr) {
 	else if (_vm->getPlatform() == Common::kPlatformC64)
 		_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM_C64));
 	else if (_vm->getPlatform() == Common::kPlatformAmiga)
-		_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1]));
+		_vm->printStr((char *)(buffer + hdr.ofsStr[iStr - 1]));
 
 	free(buffer);
 }
