@@ -21,15 +21,10 @@
  * $URL$
  * $Id$
  *
- * This is a utility for extracting needed resource data from the Lure of the Temptress
- * lure.exe file into a new file lure.dat - this file is required for the ScummVM
- * Lure of the Temptress module to work properly
- *
- * TODO: 
- * Some of the field values, such as hotspot tick proc offsets, will vary with
- * different language versions. These will need to be remapped to a language independant
- * value once I've fully implemented the English version.
- * Some areas of the data segment are still to be decoded
+ * This is a utility for extracting needed resource data from different language
+ * version of the Lure of the Temptress lure.exe executable files into a new file 
+ * lure.dat - this file is required for the ScummVM  Lure of the Temptress module 
+ * to work properly
  */
 
 #include <stdio.h>
@@ -37,13 +32,28 @@
 #include <string.h>
 #include "create_lure_dat.h"
 
-File lure_exe;
+using namespace Common;
 
+File outputFile, lureExe;
+Common::Language language;
+uint16 dataSegment;
+
+#define NUM_BYTES_VALIDATE 1024
+#define ENGLISH_FILE_CHECKSUM 0xFD70
+#define ITALIAN_FILE_CHECKSUM 0x109AD
+
+Common::Language processedLanguages[100];
+int langIndex = 0;
 uint16 animOffsets[MAX_NUM_ANIM_RECORDS];
 int animIndex = 0;
 uint16 actionOffsets[MAX_NUM_ACTION_RECORDS];
 int actionIndex = 0;
 
+#define TALK_NUM_ENTRIES 28
+#define MAX_TALK_LISTS 300
+
+uint16 talkOffsets[MAX_TALK_LISTS];
+int talkOffsetIndex = 0;
 
 void add_anim_record(uint16 offset) {
 	for (int ctr = 0; ctr < animIndex; ++ctr)
@@ -67,9 +77,12 @@ void add_action_list(uint16 offset) {
 
 void read_basic_palette(byte *&data, uint16 &totalSize) {
 	totalSize = PALETTE_SIZE;
-	lure_exe.seek(PALETTE_OFFSET);
-	data = (byte *) malloc(PALETTE_SIZE);
-	lure_exe.read(data, totalSize);
+	uint16 dataStart = 0xC0A7;
+	if (language == IT_ITA) dataStart = 0xC107;
+
+	lureExe.seek(dataStart);
+	data = (byte *) malloc(totalSize);
+	lureExe.read(data, totalSize);
 }
 
 #define ALT_PALETTE_1 0x1757
@@ -81,24 +94,30 @@ void read_replacement_palette(byte *&data, uint16 &totalSize) {
 	totalSize = ALT_PALETTE_1_SIZE + ALT_PALETTE_2_SIZE;
 	data = (byte *) malloc(totalSize);
 
-	lure_exe.seek(DATA_SEGMENT + ALT_PALETTE_1);
-	lure_exe.read(data, ALT_PALETTE_1_SIZE);
-	lure_exe.seek(DATA_SEGMENT + ALT_PALETTE_2);
-	lure_exe.read(data + ALT_PALETTE_1_SIZE, ALT_PALETTE_2_SIZE);
+	lureExe.seek(dataSegment + ALT_PALETTE_1);
+	lureExe.read(data, ALT_PALETTE_1_SIZE);
+	lureExe.seek(dataSegment + ALT_PALETTE_2);
+	lureExe.read(data + ALT_PALETTE_1_SIZE, ALT_PALETTE_2_SIZE);
 }
 
 void read_dialog_data(byte *&data, uint16 &totalSize) {
+	uint32 segmentStart = 0x1dcb0;
+	if (language == IT_ITA) segmentStart = 0x1ddd0;
+
 	totalSize = DIALOG_SIZE;
-	lure_exe.seek(DIALOG_OFFSET);
-	data = (byte *) malloc(DIALOG_SIZE);
-	lure_exe.read(data, totalSize);
+	lureExe.seek(segmentStart);
+	data = (byte *) malloc(totalSize);
+	lureExe.read(data, totalSize);
 }
 
 void read_talk_dialog_data(byte *&data, uint16 &totalSize) {
+	uint32 segmentStart = 0x1de00;
+	if (language == IT_ITA) segmentStart = 0x1df20;
+
 	totalSize = TALK_DIALOG_SIZE;
-	lure_exe.seek(TALK_DIALOG_OFFSET, SEEK_SET);
-	data = (byte *) malloc(TALK_DIALOG_SIZE);
-	lure_exe.read(data, totalSize);
+	lureExe.seek(segmentStart);
+	data = (byte *) malloc(totalSize);
+	lureExe.read(data, totalSize);
 }
 
 void read_room_data(byte *&data, uint16 &totalSize) 
@@ -113,10 +132,17 @@ void read_room_data(byte *&data, uint16 &totalSize)
 	RoomHeaderEntry headerEntry;
 	RoomRectIn bounds;
 
+	uint16 dataStart = 0xbf40;
+	uint16 walkAreaOffset = 0x2eb1;
+	if (language == IT_ITA) {
+		dataStart = 0xc000;
+		walkAreaOffset = 0x2ec0;
+	}
+
 	for (int index = 0; index < ROOM_NUM_ENTRIES; ++index) {
 
-		lure_exe.seek(DATA_SEGMENT + ROOM_TABLE + index * 9);
-		lure_exe.read(&headerEntry, sizeof(RoomHeaderEntry));
+		lureExe.seek(dataSegment + dataStart + index * 9);
+		lureExe.read(&headerEntry, sizeof(RoomHeaderEntry));
 
 		if ((FROM_LE_16(headerEntry.offset) != 0) && 
 			(FROM_LE_16(headerEntry.offset) != 0xffff) &&
@@ -125,8 +151,8 @@ void read_room_data(byte *&data, uint16 &totalSize)
 			*offsetPtr++ = TO_LE_16(offset);
 
 			// Copy over basic room details
-			lure_exe.seek(DATA_SEGMENT + headerEntry.offset);
-			lure_exe.read(&buffer, sizeof(RoomResource));
+			lureExe.seek(dataSegment + headerEntry.offset);
+			lureExe.read(&buffer, sizeof(RoomResource));
 			RoomResourceOutput *rec = (RoomResourceOutput *) (data + offset);
 			rec->hdrFlags = headerEntry.hdrFlags;
 			rec->actions = FROM_LE_32(buffer.actions);
@@ -147,7 +173,7 @@ void read_room_data(byte *&data, uint16 &totalSize)
 			// Copy over room exits
 			for (;;) {
 				RoomResourceExit1 *p = (RoomResourceExit1 *) (data + offset);
-				lure_exe.read(p, sizeof(RoomResourceExit1));
+				lureExe.read(p, sizeof(RoomResourceExit1));
 				if (FROM_LE_16(p->xs) == 0xffff) break;
 
 				rec->numExits = TO_LE_16(FROM_LE_16(rec->numExits) + 1);
@@ -159,7 +185,7 @@ void read_room_data(byte *&data, uint16 &totalSize)
 				RoomResourceExit2 *p2 = (RoomResourceExit2 *) (data + offset);
 
 				if (FROM_LE_16(p->sequenceOffset) == 0xffff) {
-					lure_exe.read(p2, sizeof(RoomResourceExit2));
+					lureExe.read(p2, sizeof(RoomResourceExit2));
 					p2->newRoomX = TO_LE_16(FROM_LE_16(p2->newRoomX) - 0x80);
 					p2->newRoomY = TO_LE_16(FROM_LE_16(p2->newRoomY) - 0x80);
 				} else {
@@ -173,9 +199,10 @@ void read_room_data(byte *&data, uint16 &totalSize)
 			}
 
 			// Handle the random destination walk bounds for the room
-			lure_exe.seek(DATA_SEGMENT + WALK_AREAS_OFFSET + 
+
+			lureExe.seek(dataSegment + walkAreaOffset + 
 				buffer.walkBoundsIndex * sizeof(RoomRectIn));
-			lure_exe.read(&bounds, sizeof(RoomRectIn));
+			lureExe.read(&bounds, sizeof(RoomRectIn));
 			rec->walkBounds.xs = TO_LE_16(FROM_LE_16(bounds.xs) - 0x80);
 			rec->walkBounds.xe = TO_LE_16(FROM_LE_16(bounds.xe) - 0x80);
 			rec->walkBounds.ys = TO_LE_16(FROM_LE_16(bounds.ys) - 0x80);
@@ -183,11 +210,11 @@ void read_room_data(byte *&data, uint16 &totalSize)
 
 			// If the room has a default pixel blocks list, add the references
 			if (buffer.pixelListOffset != 0) {
-				lure_exe.seek(DATA_SEGMENT + FROM_LE_16(buffer.pixelListOffset));
-				pixelOffset = lure_exe.readWord();
+				lureExe.seek(dataSegment + FROM_LE_16(buffer.pixelListOffset));
+				pixelOffset = lureExe.readWord();
 				while (pixelOffset != 0) {
 					add_anim_record(pixelOffset);
-					pixelOffset = lure_exe.readWord();
+					pixelOffset = lureExe.readWord();
 				}
 			}
 		}
@@ -197,9 +224,30 @@ void read_room_data(byte *&data, uint16 &totalSize)
 	totalSize = offset;
 }
 
+uint16 englishTickProcOffsets[] = {
+	0x41BD, 0x4f82, 0x5e44, 0x625e, 0x6571, 0x7207, 0x7c14, 0x7c24, 0x7efa, 0x7f02,
+	0x7F37, 0x7f3a, 0x7f54, 0x7f69, 0x7fa1, 0x8009, 0x80c6, 0x813f, 0x8180, 0x81b3,
+	0x81f3, 0x820e, 0x8241, 0x82a0, 0x85ce, 0x862d, 0x865A, 0x86FA, 0x86FF, 0x871E,
+	0x873D, 0x8742, 0x8747, 0x87B3, 0x87EC, 0x882A, 0x8ABD, 0x982D, 0x98B6, 
+	0xffff
+};
+
+uint16 italianTickProcOffsets[] = {
+	0x4205, 0x4fca, 0x5e8c, 0x62a6, 0x65b9, 0x724f, 0x7c5c, 0x7c6c, 0x7f58, 0x7f60,
+	0x7f95, 0x7f98, 0x7fb2, 0x7fc7, 0x7fff, 0x8019, 0x8067, 0x8124, 0x819d, 0x81de, 
+	0x8211, 0x8251, 0x826c, 0x829f, 0x82fe, 0x862c, 0x868b, 0x8758, 0x875D, 0x877C, 
+    0x879B, 0x87a0, 0x87a5, 0x8811, 0x884a, 0x8888,	0x8b20,	0x988f, 0x9918, 
+	0xffff
+};
+
+uint16 englishOffsets[4] = {0x5d98, 0x5eb8, 0x623e, 0x63b1};
+uint16 italianOffsets[4] = {0x5e58, 0x5f78, 0x62fe, 0x6471};
+
+uint16 englishLoadOffsets[] = {0x3afe, 0x41BD, 0x7167, 0x7172, 0x8617, 0x88ac, 0};
+uint16 italianLoadOffsets[] = {0x3b46, 0x4205, 0x71af, 0x71ba, 0x8675, 0x890a, 0};
+
 void read_hotspot_data(byte *&data, uint16 &totalSize) 
 {
-	uint16 offsets[4] = {0x5d98, 0x5eb8, 0x623e, 0x63b1};
 	uint16 startId[4] = {0x3e8, 0x408, 0x2710, 0x7530};
 	int walkNumEntries = 0;
 	int walkCtr;
@@ -212,21 +260,34 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)
 	HotspotResourceOutput *r;
 	CurrentActionInput action;
 
+	// Set up list pointers for various languages
+	uint16 *offsets = &englishOffsets[0];
+	uint16 *procList = &englishTickProcOffsets[0];
+	uint16 *loadOffsets = &englishLoadOffsets[0];
+	uint16 walkToOffset = 0xBC4B;
+	if (language == IT_ITA) {
+		offsets = &italianOffsets[0];
+		procList = &italianTickProcOffsets[0];
+		walkToOffset = 0xBD0B;
+		loadOffsets = &italianLoadOffsets[0];
+	}
+
 	// Allocate enough space for output hotspot list
 	data = (byte *) malloc(MAX_HOTSPOTS * sizeof(HotspotResourceOutput));
 
 	// Determine number of hotspot walk to entries
-	lure_exe.seek(DATA_SEGMENT + HOTSPOT_WALK_TO_OFFSET);
+
+	lureExe.seek(dataSegment + walkToOffset);
 	do {
 		++walkNumEntries;
-		lure_exe.read(&rec, sizeof(HotspotWalkToRecord));
+		lureExe.read(&rec, sizeof(HotspotWalkToRecord));
 	} while (TO_LE_16(rec.hotspotId) != 0);
 	--walkNumEntries;
 
 	dataSize = walkNumEntries * sizeof(HotspotWalkToRecord);
 	walkList = (HotspotWalkToRecord *) malloc(dataSize);
-	lure_exe.seek(DATA_SEGMENT + HOTSPOT_WALK_TO_OFFSET);
-	lure_exe.read(walkList, sizeof(HotspotWalkToRecord) * walkNumEntries);
+	lureExe.seek(dataSegment + walkToOffset);
+	lureExe.read(walkList, sizeof(HotspotWalkToRecord) * walkNumEntries);
 
 	// Main code for creating the hotspot list
 
@@ -236,20 +297,24 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)
 	for (int tableNum = 0; tableNum < 4; ++tableNum) {
 		uint16 hotspotIndex = 0;
 		for (;;) {
-			lure_exe.seek(DATA_SEGMENT + offsets[tableNum] +  hotspotIndex * 9);
-			lure_exe.read(&entryHeader, sizeof(HotspotHeaderEntry));
+			lureExe.seek(dataSegment + offsets[tableNum] +  hotspotIndex * 9);
+			lureExe.read(&entryHeader, sizeof(HotspotHeaderEntry));
 			if (FROM_LE_16(entryHeader.offset) == 0xffff) break;
+			if (FROM_LE_16(entryHeader.offset) == 0) {
+				++hotspotIndex;
+				continue;
+			}
 
 			memset(r, 0, sizeof(HotspotResourceOutput));
 			r->hotspotId = TO_LE_16(startId[tableNum] + hotspotIndex);
 			r->nameId = entryHeader.resourceId;
-			r->descId = entryHeader.descId; //TO_LE_16(FROM_LE_16(entryHeader.descId) & 0x1fff);
-			r->descId2 = entryHeader.descId2; //TO_LE_16(FROM_LE_16(entryHeader.descId2) & 0x1fff);
+			r->descId = entryHeader.descId; 
+			r->descId2 = entryHeader.descId2;
 			r->hdrFlags = entryHeader.hdrFlags;
 
 			// Get the hotspot data
-			lure_exe.seek(DATA_SEGMENT + entryHeader.offset);
-			lure_exe.read(&entry, sizeof(HotspotResource));
+			lureExe.seek(dataSegment + entryHeader.offset);
+			lureExe.read(&entry, sizeof(HotspotResource));
 			
 			r->actions = entry.actions;
 			r->roomNumber = entry.roomNumber;
@@ -268,18 +333,60 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)
 			r->tickSequenceOffset = entry.tickSequenceOffset;
 
 			r->layer = entry.layer;
-			r->scriptLoadFlag = entry.scriptLoadFlag;
-			r->loadOffset = entry.loadOffset;
 			r->colourOffset = entry.colourOffset;
 			r->hotspotScriptOffset = entry.hotspotScriptOffset;
 			r->talkScriptOffset = entry.talkScriptOffset;
-			r->tickProcOffset = entry.tickProcOffset;
 			r->flags = entry.flags;
+
+			// Handle any necessary translation of script load offsets
+
+			r->scriptLoadFlag = entry.scriptLoadFlag;
+			if (r->scriptLoadFlag || (tableNum == 3))
+				// Load offset is in script segment, so leave as is
+				r->loadOffset = entry.loadOffset;
+			else {
+				// Translate load offset to an index
+				int loadIndex = 0;
+				while ((loadOffsets[loadIndex] != FROM_LE_16(entry.loadOffset)) &&
+						(loadOffsets[loadIndex] != 0))
+					++loadIndex;
+
+				if (loadOffsets[loadIndex] == 0) {
+					printf("Unknown load offset encountered for hotspot %xh offset %xh\n", 
+						startId[tableNum] + hotspotIndex,
+						FROM_LE_16(entry.loadOffset));
+					exit(1);
+				}
+
+				r->loadOffset = TO_LE_16(loadIndex + 1);
+			}
+
+			if (tableNum == 3)
+				r->tickProcId = 0;
+			else {
+				// Scan through the proc list for the correct offset
+				int procIndex = 0;
+				while ((procList[procIndex] != FROM_LE_16(entry.tickProcOffset)) &&
+						(procList[procIndex] != 0xffff))
+					++procIndex;
+
+				if (procList[procIndex] == 0xffff) {
+					if ((FROM_LE_16(entry.tickProcOffset) != 0xe00) &&
+						(FROM_LE_16(entry.tickProcOffset) != 2))
+						printf("Could not find a tick proc handler for hotspot %xh offset %xh\n", 
+							startId[tableNum] + hotspotIndex,
+							FROM_LE_16(entry.tickProcOffset));
+					r->tickProcId = 0;
+				}
+				else
+					r->tickProcId = TO_LE_16(procIndex + 1);
+			}
 
 			// Special check for the tinderbox hotspot to set it's room number correctly - the original 
 			// game used this as a backup against people trying to hack the copy protection
 			if (startId[tableNum] + hotspotIndex == 0x271C)
 				r->roomNumber = TO_LE_16(28);
+if (startId[tableNum] + hotspotIndex == 0x46b) r->tickProcId = 1;
 
 			// Find the walk-to coordinates for the hotspot
 			uint16 findId = FROM_LE_16(r->hotspotId);
@@ -315,8 +422,8 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)
 				r->npcSchedule = 0;
 			} else {
 				// Check for an NPC schedule
-				lure_exe.seek(DATA_SEGMENT + entryHeader.offset + 0x63);
-				lure_exe.read(&action, sizeof(CurrentActionInput));
+				lureExe.seek(dataSegment + entryHeader.offset + 0x63);
+				lureExe.read(&action, sizeof(CurrentActionInput));
 
 				if (action.action != 2) 
 					r->npcSchedule = 0;
@@ -345,22 +452,22 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)
 
 void read_hotspot_override_data(byte *&data, uint16 &totalSize) 
 {
-	lure_exe.seek(DATA_SEGMENT + HOTSPOT_OVERRIDE_OFFSET);
+	lureExe.seek(dataSegment + HOTSPOT_OVERRIDE_OFFSET);
 	int numOverrides = 0;
 	HotspotOverride rec;
 
 	// Determine number of hotspot overrides
 	do {
 		++numOverrides;
-		lure_exe.read(&rec, sizeof(HotspotOverride));
+		lureExe.read(&rec, sizeof(HotspotOverride));
 	} while (FROM_LE_16(rec.hotspotId) != 0);
 	--numOverrides;
 
 	// Prepare output data and read in all entries at once
 	totalSize = numOverrides * sizeof(HotspotOverride) + 2;
 	data = (byte *) malloc(totalSize);
-	lure_exe.seek(DATA_SEGMENT + HOTSPOT_OVERRIDE_OFFSET);
-	lure_exe.read(data, totalSize - 2);
+	lureExe.seek(dataSegment + HOTSPOT_OVERRIDE_OFFSET);
+	lureExe.read(data, totalSize - 2);
 	WRITE_LE_UINT16(data + totalSize - 2, 0xffff);
 
 	// Post-process the coordinates
@@ -380,9 +487,12 @@ void read_room_exits(byte *&data, uint16 &totalSize) {
 	int roomCtr;
 	totalSize = (NUM_ROOM_EXITS + 1) * sizeof(uint16);
 
-	lure_exe.seek(DATA_SEGMENT + ROOM_EXITS_OFFSET);
+	uint16 dataStart = 0x2F61;
+	if (language == IT_ITA) dataStart = 0x2f70;
+
+	lureExe.seek(dataSegment + dataStart);
 	for (roomCtr = 0; roomCtr < NUM_ROOM_EXITS; ++roomCtr)
-		offsets[roomCtr] = lure_exe.readWord();
+		offsets[roomCtr] = lureExe.readWord();
 
 	// First loop to find total of room exit records there are
 	for (roomCtr = 0; roomCtr < NUM_ROOM_EXITS; ++roomCtr) {
@@ -390,12 +500,12 @@ void read_room_exits(byte *&data, uint16 &totalSize) {
 		if (offsets[roomCtr] == 0) continue;
 
 		// Get number of exits for the room
-		lure_exe.seek(DATA_SEGMENT + offsets[roomCtr]);
-		lure_exe.read(&rec, sizeof(RoomExitHotspotRecord));
+		lureExe.seek(dataSegment + offsets[roomCtr]);
+		lureExe.read(&rec, sizeof(RoomExitHotspotRecord));
 		while (FROM_LE_16(rec.xs) != 0) {
 			totalSize += sizeof(RoomExitHotspotOutputRecord);
 			numEntries[roomCtr]++;
-			lure_exe.read(&rec, sizeof(RoomExitHotspotRecord));
+			lureExe.read(&rec, sizeof(RoomExitHotspotRecord));
 		}
 		totalSize += sizeof(uint16); // save room for room list end flag
 	}
@@ -418,10 +528,10 @@ void read_room_exits(byte *&data, uint16 &totalSize) {
 			RoomExitHotspotOutputRecord *destP = (RoomExitHotspotOutputRecord *) 
 				(data + destIndex);
 
-			lure_exe.seek(DATA_SEGMENT + offsets[roomCtr]);
+			lureExe.seek(dataSegment + offsets[roomCtr]);
 
 			for (entryCtr = 0; entryCtr < numEntries[roomCtr]; ++entryCtr, ++destP) {
-				lure_exe.read(&rec, sizeof(RoomExitHotspotRecord));
+				lureExe.read(&rec, sizeof(RoomExitHotspotRecord));
 
 				// Copy over the record
 				destP->xs = TO_LE_16(FROM_LE_16(rec.xs) - 0x80);
@@ -443,14 +553,16 @@ void read_room_exits(byte *&data, uint16 &totalSize) {
 
 void read_room_exit_joins(byte *&data, uint16 &totalSize) {
 	RoomExitHotspotJoinRecord rec, *p;
-	lure_exe.seek(DATA_SEGMENT + ROOM_EXIT_JOINS_OFFSET);
 	int numRecords = 0;
 	uint32 unused;
 
-	lure_exe.seek(DATA_SEGMENT + ROOM_EXIT_JOINS_OFFSET);
+	uint16 dataStart = 0xce30;
+	if (language == IT_ITA) dataStart = 0xcef0;
+	lureExe.seek(dataSegment + dataStart);
+
 	do {
-		lure_exe.read(&rec, sizeof(RoomExitHotspotJoinRecord));
-		lure_exe.read(&unused, sizeof(uint32));
+		lureExe.read(&rec, sizeof(RoomExitHotspotJoinRecord));
+		lureExe.read(&unused, sizeof(uint32));
 		++numRecords;
 	} while (FROM_LE_16(rec.hotspot1Id) != 0);
 	--numRecords;
@@ -458,54 +570,73 @@ void read_room_exit_joins(byte *&data, uint16 &totalSize) {
 	// Allocate the data and read in all the records
 	totalSize = (numRecords * sizeof(RoomExitHotspotJoinRecord)) + 2;
 	data = (byte *) malloc(totalSize);
-	lure_exe.seek(DATA_SEGMENT + ROOM_EXIT_JOINS_OFFSET);
+	lureExe.seek(dataSegment + dataStart);
 	
 	p = (RoomExitHotspotJoinRecord *) data;
 	for (int recordCtr = 0; recordCtr < numRecords; ++recordCtr)
 	{
-		lure_exe.read(p, sizeof(RoomExitHotspotJoinRecord));
-		lure_exe.read(&unused, sizeof(uint32));
+		lureExe.read(p, sizeof(RoomExitHotspotJoinRecord));
+		lureExe.read(&unused, sizeof(uint32));
 		++p;
 	}
+
 	WRITE_LE_UINT16(p, 0xffff);
 }
 
-// This next method reads in the animation and movement data. At the moment I
-// figure out which animations have valid movement record sets by finding
-// animations whose four direction offsets are near each other. There's 
-// probably a better method than this, but it'll do for now
+// This next method reads in the animation and movement data
+
+#define NUM_LANGUAGES 2
+struct AnimListRecord {
+	uint16 languages[NUM_LANGUAGES];
+};
+
+AnimListRecord animDataList[] = {
+	{0x1830, 0x1830},	// Copy protection header
+	{0x1839, 0x1839},	// Copy protection wording header
+	{0x1842, 0x1842},	// Copy protection numbers
+	{0x184B, 0x184B},	// Restart/Restore buttons
+	{0x55C0, 0x5680},	// Player midswing animation
+	{0x55C9, 0x5689},	// Player mid-level defend
+	{0x55D2, 0x5692},	// Player high-level strike
+	{0x55DB, 0x569B},	// Player high-level defend
+	{0x55E4, 0x56A4},	// Player low-level strike
+	{0x55ED, 0x56AD},	// Player low-level defend
+	{0x55F6, 0x56B6},	// Player fight animation
+	{0x55FF, 0x56BF},	// Pig fight animation
+	{0x5611, 0x56D1},	// Player mid-level strike
+	{0x5623, 0x56E3},	// Pig fight animation
+	{0x562C, 0x56EC},	// Misc fight animation
+	{0x5635, 0x56F5},	// Pig fight animation
+	{0x563E, 0x56FE},	// Player recoiling from hit
+	{0x5647, 0x5707},	// Pig recoiling from hit
+	{0x5650, 0x5710},	// Pig dies
+	{0x5810, 0x58D0},	// Voice bubble
+	{0x5915, 0x59D5},	// Blacksmith hammering
+	{0x59ED, 0x5AAD},	// Ewan's alternate animation
+	{0x59FF, 0x5ABF},	// Dragon breathing fire
+	{0x5A08, 0x5AC8},	// Dragon breathing fire 2
+	{0x5A11, 0x5AD1},	// Dragon breathing fire 3
+	{0x5A1A, 0x5ADA},	// Player turning winch in room #48
+	{0x5A59, 0x5B19},	// Player pulling lever in room #48
+	{0x5A62, 0x5B22},	// Minnow pulling lever in room #48
+	{0x5AAA, 0x5B6A},	// Goewin mixing potion
+	{0x5C95, 0x5D55},
+	{0x5CAA, 0x5D6A},	// Selena animation
+	{0x5CE9, 0x5DA9},	// Blacksmith in bar?
+	{0x5D28, 0x5DE8},	// Goewin animation
+	{0, 0}
+};
 
 void read_anim_data(byte *&data, uint16 &totalSize) {
 	// Add special pixel records
-	add_anim_record(0x184B);	    // Restart/Restore buttons
-	add_anim_record(0x55C0);		// Player midswing animation
-	add_anim_record(0x55C9);		// Player mid-level defend
-	add_anim_record(0x55D2);		// Player high-level strike
-	add_anim_record(0x55DB);		// Player high-level defend
-	add_anim_record(0x55E4);		// Player low-level strike
-	add_anim_record(0x55ED);		// Player low-level defend
-	add_anim_record(0x55F6);		// Player fight animation
-	add_anim_record(0x55FF);		// Pig fight animation
-	add_anim_record(0x5611);		// Player mid-level strike
-	add_anim_record(0x5623);		// Pig fight animation
-	add_anim_record(0x562C);		// Misc fight animation
-	add_anim_record(0x5635);		// Pig fight animation
-	add_anim_record(0x563E);		// Player recoiling from hit
-	add_anim_record(0x5647);		// Pig recoiling from hit
-	add_anim_record(0x5650);		// Pig dies
-	add_anim_record(0x5915);		// Blacksmith hammering
-	add_anim_record(0x59ED);		// Ewan's alternate animation
-	add_anim_record(0x59FF);		// Dragon breathing fire
-	add_anim_record(0x5A08);		// Dragon breathing fire 2
-	add_anim_record(0x5A11);		// Dragon breathing fire 3
-	add_anim_record(0x5A1A);		// Player turning winch in room #48
-	add_anim_record(0x5A59);		// Player pulling lever in room #48
-	add_anim_record(0x5A62);		// Minnow pulling lever in room #48
-	add_anim_record(0x5AAA);		// Goewin mixing potion
-	add_anim_record(0x5C95);
-	add_anim_record(0x5CAA);		// Selena animation
-	add_anim_record(0x5CE9);		// Blacksmith in bar?
-	add_anim_record(0x5D28);		// Goewin animation
+	int index = 0;
+	if (language == IT_ITA) index = 1;
+
+	AnimListRecord *p = &animDataList[0];
+	while (p->languages[index] != 0) {
+		add_anim_record(p->languages[index]);
+		++p;;
+	}
 
 	// Get the animation data records
 	AnimRecord inRec;
@@ -519,8 +650,8 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 
 	// Loop to figure out the total number of movement records there are
 	for (ctr = 0; ctr < animIndex; ++ctr) {
-		lure_exe.seek(DATA_SEGMENT + animOffsets[ctr]);
-		lure_exe.read(&inRec, sizeof(AnimRecord));
+		lureExe.seek(dataSegment + animOffsets[ctr]);
+		lureExe.read(&inRec, sizeof(AnimRecord));
 
 		if ((FROM_LE_16(inRec.leftOffset) < 0x5000) || 
 			(FROM_LE_16(inRec.rightOffset) < 0x5000) ||
@@ -547,12 +678,12 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 				}
 
 				if (offset != 0) {
-					lure_exe.seek(DATA_SEGMENT + offset);
-					lure_exe.read(&move, sizeof(MovementRecord));
+					lureExe.seek(dataSegment + offset);
+					lureExe.read(&move, sizeof(MovementRecord));
 
 					while (FROM_LE_16(move.frameNumber) != 0xffff) {
 						movementSize += sizeof(MovementRecord);
-						lure_exe.read(&move, sizeof(MovementRecord));
+						lureExe.read(&move, sizeof(MovementRecord));
 					}
 					movementSize += 2;
 				}
@@ -567,8 +698,8 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 
 	// Loop to get in the animation records
 	for (ctr = 0; ctr < animIndex; ++ctr, ++rec) {
-		lure_exe.seek(DATA_SEGMENT + animOffsets[ctr]);
-		lure_exe.read(&inRec, sizeof(AnimRecord));
+		lureExe.seek(dataSegment + animOffsets[ctr]);
+		lureExe.read(&inRec, sizeof(AnimRecord));
 
 		rec->animRecordId = animOffsets[ctr];
 		rec->animId = inRec.animId;
@@ -599,8 +730,8 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 				} else {
 					startOffset = moveOffset;
 
-					lure_exe.seek(DATA_SEGMENT + offset);
-					lure_exe.read(&move, sizeof(MovementRecord));
+					lureExe.seek(dataSegment + offset);
+					lureExe.read(&move, sizeof(MovementRecord));
 					destMove = (MovementRecord *) (data + moveOffset);
 
 					while (FROM_LE_16(move.frameNumber) != 0xffff) {
@@ -610,7 +741,7 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 
 						moveOffset += sizeof(MovementRecord);
 						++destMove;
-						lure_exe.read(&move, sizeof(MovementRecord));
+						lureExe.read(&move, sizeof(MovementRecord));
 					}
 					
 					destMove->frameNumber = TO_LE_16(0xffff);
@@ -627,34 +758,38 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 }
 
 void read_script_data(byte *&data, uint16 &totalSize) {
-	lure_exe.seek(SCRIPT_SEGMENT);
+	uint32 scriptSegment = 0x1df00;
+	if (language == IT_ITA) scriptSegment = 0x1e020;
+	lureExe.seek(scriptSegment);
 	
 	totalSize = SCRIPT_SEGMENT_SIZE;
 	data = (byte *) malloc(totalSize);
-	lure_exe.read(data, totalSize);
+	lureExe.read(data, totalSize);
 }
 
 void read_script2_data(byte *&data, uint16 &totalSize) {
-	lure_exe.seek(SCRIPT2_SEGMENT);
+	uint32 scriptSegment = 0x19c70;
+	if (language == IT_ITA) scriptSegment = 0x19D90;
+	lureExe.seek(scriptSegment);
 	
 	totalSize = SCRIPT2_SEGMENT_SIZE;
 	data = (byte *) malloc(totalSize);
-	lure_exe.read(data, totalSize);
+	lureExe.read(data, totalSize);
 }
 
 void read_hotspot_script_offsets(byte *&data, uint16 &totalSize) {
-	lure_exe.seek(DATA_SEGMENT + HOTSPOT_SCRIPT_LIST);
+	lureExe.seek(dataSegment + HOTSPOT_SCRIPT_LIST);
 	
 	totalSize = HOTSPOT_SCRIPT_SIZE;
 	data = (byte *) malloc(totalSize);
-	lure_exe.read(data, totalSize);
+	lureExe.read(data, totalSize);
 }
 
 void read_messages_segment(byte *&data, uint16 &totalSize) {
-	lure_exe.seek(MESSAGES_SEGMENT);
+	lureExe.seek(MESSAGES_SEGMENT);
 	totalSize = MESSAGES_SEGMENT_SIZE;
 	data = (byte *) malloc(totalSize);
-	lure_exe.read(data, totalSize);
+	lureExe.read(data, totalSize);
 }
 
 // Reads in the list of actions used
@@ -670,13 +805,13 @@ void read_actions_list(byte *&data, uint16 &totalSize) {
 		header->offset = offset;
 		++header;
 
-		lure_exe.seek(DATA_SEGMENT + actionOffsets[ctr]);
+		lureExe.seek(dataSegment + actionOffsets[ctr]);
 		uint16 *numItems = (uint16 *) (data + offset);
-		lure_exe.read(numItems, sizeof(uint16));
+		lureExe.read(numItems, sizeof(uint16));
 		offset += 2;
 
 		if (READ_UINT16(numItems) > 0) {
-			lure_exe.read(data + offset, READ_UINT16(numItems) * 3);
+			lureExe.read(data + offset, READ_UINT16(numItems) * 3);
 			offset += READ_UINT16(numItems) * 3;
 		}
 	}
@@ -684,13 +819,6 @@ void read_actions_list(byte *&data, uint16 &totalSize) {
 }
 
 // Reads in the talk data 
-
-#define TALK_OFFSET 0x505c
-#define TALK_NUM_ENTRIES 28
-#define MAX_TALK_LISTS 300
-
-uint16 talkOffsets[MAX_TALK_LISTS];
-int talkOffsetIndex = 0;
 
 void add_talk_offset(uint16 offset) {
 	for (int ctr = 0; ctr < talkOffsetIndex; ++ctr) 
@@ -713,8 +841,10 @@ void read_talk_headers(byte *&data, uint16 &totalSize) {
 	uint16 sortedOffsets[TALK_NUM_ENTRIES+1];
 	int entryCtr, subentryCtr;
 
-	lure_exe.seek(DATA_SEGMENT + TALK_OFFSET);
-	lure_exe.read(&entries[0], sizeof(TalkEntry) * TALK_NUM_ENTRIES);
+	uint16 dataStart = 0x505c;
+	if (language == IT_ITA) dataStart = 0x511C;
+	lureExe.seek(dataSegment + dataStart);
+	lureExe.read(&entries[0], sizeof(TalkEntry) * TALK_NUM_ENTRIES);
 
 	// Sort the entry offsets into a list - this is used to figure out each entry's size
 	int currVal, prevVal = 0;
@@ -754,10 +884,10 @@ void read_talk_headers(byte *&data, uint16 &totalSize) {
 			exit(1);
 
 		// Read in line entries into the data
-		lure_exe.seek(DATA_SEGMENT + startOffset);
+		lureExe.seek(dataSegment + startOffset);
 		int size = nextOffset - startOffset;
 		uint16 *talkOffset = (uint16 *) (data + offset);
-		lure_exe.read(talkOffset, size);
+		lureExe.read(talkOffset, size);
 
 		while (size > 0) {
 			if (READ_UINT16(talkOffset) != 0) 
@@ -784,12 +914,16 @@ struct TalkRecord {
 	uint16 responsesOffset;
 };
 
-uint16 giveTalkIds[6] = {0xCF5E, 0xCF14, 0xCF90, 0xCFAA, 0xCFD0, 0xCFF6};
+uint16 englishGiveTalkIds[7] = {0xCF5E, 0xCF14, 0xCF90, 0xCFAA, 0xCFD0, 0xCFF6, 0xf010};
+uint16 italianGiveTalkIds[7] = {0xD01E, 0xCFD4, 0xD050, 0xD06A, 0xD090, 0xD0B6, 0xf0d0};
 
 void read_talk_data(byte *&data, uint16 &totalSize) {
 	uint16 responseOffset;
 	int talkCtr, subentryCtr;
 	uint16 size;
+
+	uint16 *giveTalkIds = &englishGiveTalkIds[0];
+	if (language == IT_ITA) giveTalkIds = &italianGiveTalkIds[0];
 
 	for (talkCtr = 0; talkCtr < 6; ++talkCtr)
 		add_talk_offset(giveTalkIds[talkCtr]);
@@ -815,7 +949,7 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 		sortedList[talkCtr] = currVal;
 		prevVal = currVal;
 	}
-	sortedList[talkCtr] = 0xf010;
+	sortedList[talkCtr] = giveTalkIds[6];
 	int numTalks = talkCtr;
 
 	// Loop through the talk list
@@ -827,8 +961,8 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 		header->recordId = startOffset;
 		header->listOffset = offset;
 		
-		lure_exe.seek(DATA_SEGMENT + startOffset);
-		responseOffset = lure_exe.readWord();
+		lureExe.seek(dataSegment + startOffset);
+		responseOffset = lureExe.readWord();
 		startOffset += 2;
 
 		// Special handling for entry at 0d930h
@@ -843,12 +977,12 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 			size = responseOffset - startOffset;
 		if ((size % 6) == 2) size -= 2;
 		if ((size % 6) != 0) {
-			printf("Failure reading talk data\n");
+			printf("Failure reading talk data: size=%d\n", size);
 			exit(1);
 		}
 
 		// Read in the list of talk entries
-		lure_exe.read(data + offset, size);
+		lureExe.read(data + offset, size);
 		offset += size;
 		memset(data + offset, 0xff, 2);
 		offset += 2;
@@ -871,7 +1005,7 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 			}
 		}
 		if (nextOffset < responseOffset) {
-			printf("Failure reading talk data\n");
+			printf("Failure reading talk data: no response found\n");
 			exit(1);
 		}
 		
@@ -879,11 +1013,11 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 		if ((size % 6) != 0) size -= (size % 6);
 
 		if ((size % 6) != 0) {
-			printf("Failure reading talk data\n");
+			printf("Failure reading talk data: newSize=%d\n", size);
 			exit(1);
 		}
 
-		lure_exe.read(data + offset, size);
+		lureExe.read(data + offset, size);
 		offset += size;
 		WRITE_LE_UINT16(data + offset, 0xffff);
 		offset += 2;
@@ -897,11 +1031,13 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 }
 
 void read_room_pathfinding_data(byte *&data, uint16 &totalSize) {
-	lure_exe.seek(DATA_SEGMENT + PATHFIND_OFFSET);
+	uint16 dataStart = 0x984A;
+	if (language == IT_ITA) dataStart = 0x990A;
+	lureExe.seek(dataSegment + dataStart);
 	
 	totalSize = PATHFIND_SIZE;
 	data = (byte *) malloc(totalSize);
-	lure_exe.read(data, totalSize);
+	lureExe.read(data, totalSize);
 }
 
 void read_room_exit_coordinate_data(byte *&data, uint16 &totalSize) 
@@ -913,13 +1049,13 @@ void read_room_exit_coordinate_data(byte *&data, uint16 &totalSize)
 
 	totalSize = EXIT_COORDINATES_NUM_ROOMS * sizeof(RoomExitCoordinateEntryOutputResource) + 2; 
 	data = (byte *) malloc(totalSize);
-	lure_exe.seek(DATA_SEGMENT + EXIT_COORDINATES_OFFSET);
+	lureExe.seek(dataSegment + EXIT_COORDINATES_OFFSET);
 	WRITE_LE_UINT16(data + totalSize - 2, 0xffff);
 
 	// Post process the list to adjust data
 	RoomExitCoordinateEntryOutputResource *rec = (RoomExitCoordinateEntryOutputResource *) data;
 	for (roomNum = 1; roomNum <= EXIT_COORDINATES_NUM_ROOMS; ++roomNum, ++rec) {
-		lure_exe.read(&dataIn, sizeof(RoomExitCoordinateEntryInputResource));
+		lureExe.read(&dataIn, sizeof(RoomExitCoordinateEntryInputResource));
 
 		for (entryNum = 0; entryNum < ROOM_EXIT_COORDINATES_NUM_ENTRIES; ++entryNum) {
 			x = FROM_LE_16(dataIn.entries[entryNum].x);
@@ -950,13 +1086,16 @@ void read_room_exit_hotspots_data(byte *&data, uint16 &totalSize) {
 	data = (byte *) malloc(MAX_DATA_SIZE);
 
 	RoomExitIndexedHotspotResource *rec = (RoomExitIndexedHotspotResource *) data;
-	lure_exe.seek(DATA_SEGMENT + EXIT_HOTSPOTS_OFFSET);
-
-	lure_exe.read(rec, sizeof(RoomExitIndexedHotspotResource));
+	
+	uint16 dataStart = 0x2E57;
+	if (language == IT_ITA) dataStart = 0x2E66;
+	lureExe.seek(dataSegment + dataStart);
+	
+	lureExe.read(rec, sizeof(RoomExitIndexedHotspotResource));
 	while (FROM_LE_16(rec->roomNumber) != 0) {
 		++rec;
 		totalSize += sizeof(RoomExitIndexedHotspotResource);
-		lure_exe.read(rec, sizeof(RoomExitIndexedHotspotResource));
+		lureExe.read(rec, sizeof(RoomExitIndexedHotspotResource));
 	}
 
 	WRITE_LE_UINT16(rec, 0xffff);
@@ -964,30 +1103,49 @@ void read_room_exit_hotspots_data(byte *&data, uint16 &totalSize) {
 }
 
 void save_fight_segment(byte *&data, uint16 &totalSize) {
-	lure_exe.seek(FIGHT_SEGMENT);
+	uint16 fightSegment = 0x1C400;
+	if (language == IT_ITA) fightSegment = 0x1c520;
+	lureExe.seek(fightSegment);
 	
 	totalSize = FIGHT_SEGMENT_SIZE;
 	data = (byte *) malloc(totalSize);
-	lure_exe.read(data, totalSize);
+	lureExe.read(data, totalSize);
 }
 
-#define NUM_TEXT_ENTRIES 40
-const char *text_strings[NUM_TEXT_ENTRIES] = {
+#define NUM_TEXT_ENTRIES 49
+const char *englishTextStrings[NUM_TEXT_ENTRIES] = {
 	"Get", NULL, "Push", "Pull", "Operate", "Open", "Close", "Lock", "Unlock", "Use", 
 	"Give", "Talk to", "Tell", "Buy", "Look", "Look at", "Look through", "Ask", NULL, 
 	"Drink", "Status", "Go to", "Return", "Bribe", "Examine",
 	"Credits", "Restart game", "Save game", "Restore game", "Quit", "Fast Text", "Slow Text", 
-	"Sound on", "Sound off", "(nothing)", " for ", " to ", " on ", "and then", "finish"};
+	"Sound on", "Sound off", "(nothing)", " for ", " to ", " on ", "and then", "finish",
+	"Are you sure (y/n)?",
+	"a ", "the ", "a ", "a ", "an ", "an ", "an ", "an "
+};
 
+const char *italianTextStrings[NUM_TEXT_ENTRIES] = {
+	"Prendi", NULL,	"Spingi", "Tira", "Aziona", "Apri", "Chiudi", "Blocca",
+	"Sblocca", "Usa", "Dai", "Parla con", "Ordina a", "Buy", "Guarda", "Osserva",
+	"Guarda tra", "Chiedi", NULL,  "Bevi", "Stato", "Vai a", "Ritorna",
+	"Corrompi", "Esamina",
+	"Inform", "Reavvia", "Salva gioco", "Ripristina", "Abbandona", "Testo lento", 
+	"Testo veloce",  "Sonoro acceso", "Sonoro spento", 
+	"(niente)", " per ", " a ", " su ", 
+	"e poi", "finito", "Sei sicuro (s/n)?",
+	NULL, "l' ", "la ", NULL, "le ", "i ", "il ", NULL 
+};
 
 void save_text_strings(byte *&data, uint16 &totalSize) {
 	int index;
 
+	const char **textStrings = &englishTextStrings[0];
+	if (language == IT_ITA) textStrings = &italianTextStrings[0];
+
 	// Calculate the total needed space
 	totalSize = sizeof(uint16);
 	for (index = 0; index < NUM_TEXT_ENTRIES; ++index) {
-		if (text_strings[index] != NULL) 
-			totalSize += strlen(text_strings[index]);
+		if (textStrings[index] != NULL) 
+			totalSize += strlen(textStrings[index]);
 		++totalSize;
 	}
 
@@ -997,27 +1155,123 @@ void save_text_strings(byte *&data, uint16 &totalSize) {
 	char *p = (char *) data + sizeof(uint16);
 
 	for (index = 0; index < NUM_TEXT_ENTRIES; ++index) {
-		if (text_strings[index] == NULL)
+		if (textStrings[index] == NULL)
 			*p++ = '\0';
 		else {
-			strcpy(p, text_strings[index]);
+			strcpy(p, textStrings[index]);
 			p += strlen(p) + 1;
 		}
 	}
 }
 
 void save_sound_desc_data(byte *&data, uint16 &totalSize) {
-	lure_exe.seek(DATA_SEGMENT + SOUND_1_OFFSET);
+	uint16 dataStart = 0x5671;
+	if (language == IT_ITA) dataStart = 0x5731;
+	lureExe.seek(dataSegment + dataStart);
 	
-	totalSize = SOUND_1_SIZE;
+	totalSize = SOUND_DESCS_SIZE;
 	data = (byte *) malloc(totalSize);
-	lure_exe.read(data, totalSize);
+	lureExe.read(data, totalSize);
 }
 
-void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size)
-{
-	resourceId = 0x3f01 + entryIndex;
+struct DecoderEntry {
+	char *sequence;
+	char character;
+};
 
+const DecoderEntry englishDecoders[] = {
+	{"00", ' '}, {"0100", 'e'}, {"0101", 'o'}, {"0110", 't'}, {"01110", 'a'}, 
+	{"01111", 'n'}, {"1000", 's'}, {"1001", 'i'}, {"1010", 'r'}, {"10110", 'h'}, 
+	{"101110", 'u'}, {"1011110", 'l'}, {"1011111", 'd'}, {"11000", 'y'}, 
+	{"110010", 'g'}, {"110011", '\0'}, {"110100", 'w'}, {"110101", 'c'}, 
+	{"110110", 'f'}, {"1101110", '.'}, {"1101111", 'm'}, {"111000", 'p'}, 
+	{"111001", 'b'}, {"1110100", ','}, {"1110101", 'k'}, {"1110110", '\''}, 
+	{"11101110", 'I'}, {"11101111", 'v'}, {"1111000", '!'}, {"1111001", '\xb4'}, 
+	{"11110100", 'T'}, {"11110101", '\xb5'}, {"11110110", '?'}, {"111101110", '\xb2'}, 
+	{"111101111", '\xb3'}, {"11111000", 'W'}, {"111110010", 'H'}, {"111110011", 'A'}, 
+	{"111110100", '\xb1'}, {"111110101", 'S'}, {"111110110", 'Y'}, {"1111101110", 'G'}, 
+	{"11111011110", 'M'}, {"11111011111", 'N'}, {"111111000", 'O'}, {"1111110010", 'E'}, 
+	{"1111110011", 'L'}, {"1111110100", '-'}, {"1111110101", 'R'}, {"1111110110", 'B'}, 
+	{"11111101110", 'D'}, {"11111101111", '\xa6'}, {"1111111000", 'C'}, 
+	{"11111110010", 'x'}, {"11111110011", 'j'}, {"1111111010", '\xac'}, 
+	{"11111110110", '\xa3'}, {"111111101110", 'P'}, {"111111101111", 'U'}, 
+	{"11111111000", 'q'}, {"11111111001", '\xad'}, {"111111110100", 'F'}, 
+	{"111111110101", '1'}, {"111111110110", '\xaf'}, {"1111111101110", ';'}, 
+	{"1111111101111", 'z'}, {"111111111000", '\xa5'}, {"1111111110010", '2'}, 
+	{"1111111110011", '\xb0'}, {"111111111010", 'K'}, {"1111111110110", '%'}, 
+	{"11111111101110", '\xa2'}, {"11111111101111", '5'}, {"1111111111000", ':'}, 
+	{"1111111111001", 'J'}, {"1111111111010", 'V'}, {"11111111110110", '6'}, 
+	{"11111111110111", '3'}, {"1111111111100", '\xab'}, {"11111111111010", '\xae'}, 
+	{"111111111110110", '0'}, {"111111111110111", '4'}, {"11111111111100", '7'}, 
+	{"111111111111010", '9'}, {"111111111111011", '"'}, {"111111111111100", '8'}, 
+	{"111111111111101", '\xa7'}, {"1111111111111100", '/'}, {"1111111111111101", 'Q'}, 
+	{"11111111111111100", '\xa8'}, {"11111111111111101", '('}, {"111111111111111100", ')'}, 
+	{"111111111111111101", '\x99'}, {"11111111111111111", '\xa9'}, 
+	{NULL, '\0'}
+};
+
+const DecoderEntry italianDecoders[] = {
+	{"00", ' '}, {"010", 0x69},	{"0110", 0x6F}, {"01110", 0x61}, {"01111", 0x65},
+	{"1000", 0x72}, {"1001", 0x6E}, {"1010", 0x74}, {"10110", 0x73}, {"101110", 0x6C},
+	{"101111", 0x63}, {"11000", 0x75}, {"110010", 0x70}, {"110011", 0x64}, {"110100", 0},
+	{"110101", 0x6D}, {"110110", 0x67}, {"1101110", 0x2E}, {"1101111", 0x76},
+	{"111000", 0x68}, {"1110010", 0x2C}, {"1110011", 0x62}, {"1110100", 0x66},
+	{"1110101", 0x21}, {"1110110", 0xB5}, {"11101110", 0xB1}, {"111011110", 0xB3},
+	{"111011111", 0x7A}, {"1111000", 0xB4}, {"11110010", 0x27}, {"111100110", 0x4E},
+	{"111100111", 0x4C}, {"11110100", 0x3F}, {"111101010", 0x85}, {"111101011", 0x53},
+	{"11110110", 0x43}, {"111101110", 0x4D}, {"1111011110", 0xAC}, {"1111011111", 0x49},
+	{"11111000", 0x45}, {"111110010", 0x41}, {"1111100110", 0x54}, {"1111100111", 0xB2},
+	{"111110100", 0x71}, {"111110101", 0x4F}, {"111110110", 0x47}, {"1111101110", 0xAB},
+	{"11111011110", 0x50}, {"11111011111", 0x44}, {"111111000", 0x81},
+	{"1111110010", 0x55}, {"11111100110", 0xAE}, {"11111100111", 0x52},
+	{"1111110100", 0xA6}, {"1111110101", 0x56}, {"1111110110", 0xA8},
+	{"11111101110", 0x42}, {"111111011110", 0x51}, {"111111011111", 0xB0},
+	{"1111111000", 0x95}, {"11111110010", 0x48}, {"11111110011", 0x2D},
+	{"11111110100", 0xA9}, {"11111110101", 0x8A}, {"11111110110", 0xA3},
+	{"111111101110", 0x46}, {"111111101111", 0xA7}, {"11111111000", 0x8D},
+	{"11111111001", 0x77}, {"11111111010", 0x79}, {"111111110110", 0x7F},
+	{"1111111101110", 0x6B}, {"1111111101111", 0x31}, {"111111111000", 0x3B},
+	{"111111111001", 0xA5}, {"111111111010", 0x57}, {"1111111110110", 0x32},
+	{"11111111101110", 0xAF}, {"11111111101111", 0x35}, {"1111111111000", 0xA2},
+	{"1111111111001", 0xAD}, {"1111111111010", 0x25}, {"11111111110110", 0x36},
+	{"11111111110111", 0x3A}, {"1111111111100", 0x5A}, {"11111111111010", 0x33},
+	{"11111111111011", 0x30}, {"11111111111100", 0x34}, {"111111111111010", 0x39},
+	{"111111111111011", 0x37}, {"111111111111100", 0x38}, {"111111111111101", 0x2F},
+	{"1111111111111100", 0x4B}, {"1111111111111101", 0x22}, {"111111111111111000", 0x09},
+	{"111111111111111001", 0x28}, {"11111111111111101", 0x29}, {"111111111111111100", 0x4A},
+	{"111111111111111101", 0x59}, {"11111111111111111", 0x78},
+	{NULL, '\0'}
+};
+
+void save_string_decoder_data(byte *&data, uint16 &totalSize) {
+	const DecoderEntry *list = &englishDecoders[0];
+	if (language == IT_ITA) list = &italianDecoders[0];
+
+	totalSize = 1;
+	const DecoderEntry *pSrc = list;
+	while (pSrc->sequence != NULL) {
+		totalSize += strlen(pSrc->sequence) + 2;
+		++pSrc;
+	}
+
+	data = (byte *) malloc(totalSize);
+	char *pDest = (char *)data;
+
+	pSrc = list;
+	while (pSrc->sequence != NULL) {
+		*pDest++ = pSrc->character;
+		strcpy(pDest, pSrc->sequence);
+		pDest += strlen(pSrc->sequence) + 1;
+
+		++pSrc;
+	}
+
+	*pDest = 0xff;
+}
+
+void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size) {
+	resourceId = 0x3f01 + entryIndex;
+printf("Get resource #%d\n", entryIndex);
 	switch (entryIndex) 
 	{
 	case 0:
@@ -1139,6 +1393,11 @@ void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size)
 		// Save the sound header desc data
 		save_sound_desc_data(data, size);
 		break;
+
+	case 24:
+		// Save the decoder sequence list
+		save_string_decoder_data(data, size);
+		break;
 		
 	default:
 		data = NULL;
@@ -1148,25 +1407,57 @@ void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size)
 	}
 }
 
+void openOutputFile(const char *outFilename) {
+	outputFile.open(outFilename, kFileWriteMode);
+
+	// Write header
+	outputFile.write("lure", 4);
+	outputFile.writeWord(0);
+
+	outputFile.seek(0xBF * 8);
+	FileEntry fileVersion;
+	memset(&fileVersion, 0xff, sizeof(FileEntry));
+	fileVersion.unused = VERSION_MAJOR;
+	fileVersion.sizeExtension = VERSION_MINOR;
+	outputFile.write(&fileVersion, sizeof(FileEntry));
+}
+
+void closeOutputFile() {
+	outputFile.seek(6 + 5 * langIndex);
+	outputFile.writeByte(0xff);
+	outputFile.close();
+}
+
 void createFile(const char *outFilename)
 {
 	FileEntry rec;
 	uint32 startOffset, numBytes;
+	uint32 outputStart;
 	uint16 resourceId;
 	uint16 resourceSize;
 	byte *resourceData;
 	bool resourceFlag;
 	byte tempBuffer[32];
 
-	File f;
-	f.open(outFilename, kFileWriteMode);
 	memset(tempBuffer, 0, 32);
 
-	// Write header
-	f.write("heywow", 6);
-	f.writeWord(0);
-
+	// Reset list counters
+	outputStart = ((outputFile.pos() + 0xff) / 0x100) * 0x100;
 	startOffset = 0x600;
+	animIndex = 0;
+	actionIndex = 0;
+	talkOffsetIndex = 0;
+
+	// Write out the position of the next language set
+	outputFile.seek(6 + 5 * (langIndex - 1));
+	outputFile.writeByte(language);
+	outputFile.writeLong(outputStart);
+
+	// Write out start header
+	outputFile.seek(outputStart);
+	outputFile.write("heywow", 6);
+	outputFile.writeWord(0);
+
 	resourceFlag = true;
 	for (int resIndex=0; resIndex<0xBE; ++resIndex)
 	{
@@ -1178,7 +1469,7 @@ void createFile(const char *outFilename)
 			getEntry(resIndex, resourceId, resourceData, resourceSize); 
 
 		// Write out the next header entry
-		f.seek(8 + resIndex * 8);
+		outputFile.seek(outputStart + (resIndex + 1) * 8);
 		if (resourceSize == 0) 
 		{
 			// Unused entry
@@ -1194,13 +1485,13 @@ void createFile(const char *outFilename)
 			rec.unused = 0xff;
 		}
 
-		f.write(&rec, sizeof(FileEntry));
+		outputFile.write(&rec, sizeof(FileEntry));
 
 		// Write out the resource
 		if (resourceFlag)
 		{
-			f.seek(startOffset);
-			f.write(resourceData, resourceSize);
+			outputFile.seek(outputStart + startOffset);
+			outputFile.write(resourceData, resourceSize);
 			startOffset += resourceSize;
 			free(resourceData);		// Free the data block
 
@@ -1208,21 +1499,14 @@ void createFile(const char *outFilename)
 			numBytes = 0x20 * ((startOffset + 0x1f) / 0x20) - startOffset;
 			if (numBytes != 0) 
 			{
-				f.write(tempBuffer, numBytes);
+				outputFile.write(tempBuffer, numBytes);
 				startOffset += numBytes;
 			}
 		}
 	}
 
-	// Store file version in final file slot
-	f.seek(0xBF * 8);
-	FileEntry fileVersion;
-	memset(&fileVersion, 0xff, sizeof(FileEntry));
-	fileVersion.unused = VERSION_MAJOR;
-	fileVersion.sizeExtension = VERSION_MINOR;
-	f.write(&fileVersion, sizeof(FileEntry));
-
-	f.close();
+	// Move to the end of the written file
+	outputFile.seek(0, SEEK_END);
 }
 
 // validate_executable
@@ -1230,36 +1514,58 @@ void createFile(const char *outFilename)
 // resource file. Eventually the resource file creator will need to work
 // with the other language executables, but for now just make 
 
-#define NUM_BYTES_VALIDATE 1024
-#define FILE_CHECKSUM 64880
-
-void validate_executable() {
+bool validate_executable() {
 	uint32 sumTotal = 0;
 	byte buffer[NUM_BYTES_VALIDATE];
-	lure_exe.read(buffer, NUM_BYTES_VALIDATE);
+	lureExe.read(buffer, NUM_BYTES_VALIDATE);
 	for (int ctr = 0; ctr < NUM_BYTES_VALIDATE; ++ctr) 
 		sumTotal += buffer[ctr];
 
-	if (sumTotal != FILE_CHECKSUM) {
-		printf("Lure executable not correct English version\n");
-		exit(1);
+	if (sumTotal == ENGLISH_FILE_CHECKSUM) {
+		language = EN_ANY;
+		dataSegment = 0xAC50;
+		printf("Detected English version\n");
+	} else if (sumTotal == ITALIAN_FILE_CHECKSUM) {
+		language = IT_ITA;
+		dataSegment = 0xACB0;
+		printf("Detected Italian version\n");
+	} else {
+		printf("Lure executable version not recognised. Checksum = %xh\n", sumTotal);
+		return false;
 	}
+
+	// Double-check that the given language has not already been done
+	for (int index = 0; index < langIndex; ++index) {
+		if (processedLanguages[index] == language) {
+			printf("Identical language executable listed multiple times\n");
+			return false;
+		}
+	}
+
+	processedLanguages[langIndex++] = language;
+	return true;
 }
 
 
 int main(int argc, char *argv[]) {
-	// FIXME: This is not portable
-	const char *inFilename = (argc >= 2) ? argv[1] : "c:\\games\\lure\\lure.exe";
-	const char *outFilename = (argc == 3) ? argv[2] : "c:\\games\\lure\\lure.dat";
+	const char *inFilename, *outFilename;
 
-	if (!lure_exe.open(inFilename)) {
-		if (argc == 1) 
-			printf("Format: %s input_exe_filename output_filename\n", argv[0]);
-		else
-			printf("Could not open file: %s\n", inFilename);
-	} else  {
-		validate_executable();
-		createFile(outFilename);	
-		lure_exe.close();
+	if (argc == 1) {
+		printf("Format: %s output_filename [lureExecutable ..]\n", argv[0]);
+		exit(0);
 	}
+
+	openOutputFile(argv[1]);
+
+	for (int argi = 2; argi < argc; ++argi) {
+		if (!lureExe.open(argv[argi])) 
+			printf("Could not open file: %s\n", argv[argi]);
+		else {
+			if (validate_executable()) 
+				createFile(outFilename);	
+			lureExe.close();
+		}
+	}
+
+	closeOutputFile();
 }
