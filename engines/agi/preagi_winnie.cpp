@@ -73,10 +73,10 @@ void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
 	roomHdr->reserved0 = readS.readUint16();
 
 	for (i = 0; i < IDI_WTP_MAX_DIR; i++)
-		roomHdr->roomNew[i] = readS.readUint16();
+		roomHdr->roomNew[i] = readS.readByte();
 
-	roomHdr->objX = readS.readUint16();
-	roomHdr->objY = readS.readUint16();
+	roomHdr->objX = readS.readByte();
+	roomHdr->objY = readS.readByte();
 
 	roomHdr->reserved1 = readS.readUint16();
 
