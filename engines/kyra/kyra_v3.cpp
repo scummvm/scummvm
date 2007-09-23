@@ -88,6 +88,11 @@ KyraEngine_v3::~KyraEngine_v3() {
 }
 
 int KyraEngine_v3::init() {
+	_screen = new Screen_v2(this, _system);
+	assert(_screen);
+	if (!_screen->init())
+		error("_screen->init() failed");
+
 	KyraEngine::init();
 
 	gui_initMainMenu();
