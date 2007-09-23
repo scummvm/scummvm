@@ -480,10 +480,11 @@ void Resources::setTalkingCharacter(uint16 id) {
 		assert(character);
 
 		// Add the special "voice" animation above the character
-		Hotspot *hotspot = new Hotspot(character, VOICE_ANIM_ID);
+		Hotspot *hotspot = new Hotspot(character, VOICE_ANIM_INDEX);
 		addHotspot(hotspot);
 	}
 }
+uint16 englishLoadOffsets[] = {0x3afe, 0x41BD, 0x7167, 0x7172, 0x8617, 0x88ac, 0};
 
 Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 	HotspotData *res = getHotspot(hotspotId);
@@ -508,24 +509,23 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 		uint16 talkIndex;
 
 		switch (res->loadOffset) {
-		case 0x3afe:
-			// Copy protection check - since the game is freeware now,
-			// don't bother with it
+		case 1:
+			// Copy protection check - since the game is freeware now, ignore it
 			loadFlag = false;
 			break;
 
-		case 0x41BD:
+		case 2:
 			// Empty handler used to prevent loading hotspots that
 			// are yet to be active (such as the straw fire)
 			loadFlag = false;
 			break;
 
-		case 0x7172:
-		case 0x7167:
+		case 3:
+		case 4:
 			// Standard animation load
 			break;
 
-		case 0x8617:
+		case 5:
 			// Custom loader used by the notice hotspot 42ah in room #20
 			talkIndex = _fieldList.getField(TALK_INDEX);
 			if ((talkIndex < 8) || (talkIndex >= 14))
@@ -536,14 +536,14 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 				res->startY = 85;    
 			break;
 
-		case 0x88ac:
+		case 6:
 			// Torch in room #1
 			loadFlag = _fieldList.getField(TORCH_HIDE) == 0;
 			break;
 
 		default:
 			// All others simply activate the hotspot
-			warning("Hotspot %d uses unknown load offset proc %d",
+			warning("Hotspot %d uses unknown load offset index %d",
 				res->hotspotId, res->loadOffset);
 		}
 
@@ -552,8 +552,8 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 			assert(hotspot);
 
 			// Special post-load handling
-			if (res->loadOffset == 0x7167) hotspot->setPersistant(true);
-			if (res->loadOffset == 0x8617) hotspot->handleTalkDialog();
+			if (res->loadOffset == 3) hotspot->setPersistant(true);
+			if (res->loadOffset == 5) hotspot->handleTalkDialog();
 			
 			// TODO: Figure out why there's a room set in the animation decode for a range of characters,
 			// particularly since it doesn't seem to match what happens in-game

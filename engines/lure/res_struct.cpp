@@ -410,7 +410,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	animRecordId = FROM_LE_16(rec->animRecordId);
 	hotspotScriptOffset = FROM_LE_16(rec->hotspotScriptOffset);
 	talkScriptOffset = FROM_LE_16(rec->talkScriptOffset);
-	tickProcOffset = FROM_LE_16(rec->tickProcOffset);
+	tickProcId = FROM_LE_16(rec->tickProcId);
 	tickTimeout = FROM_LE_16(rec->tickTimeout);
 	tickScriptOffset = FROM_LE_16(rec->tickScriptOffset);
 	npcSchedule = FROM_LE_16(rec->npcSchedule);
@@ -454,7 +454,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(heightCopy);
 	stream->writeUint16LE(yCorrection);
 	stream->writeUint16LE(hotspotScriptOffset);
-	stream->writeUint16LE(tickProcOffset);
+	stream->writeUint16LE(tickProcId);
 	stream->writeUint16LE(tickTimeout);
 	stream->writeUint16LE(tickScriptOffset);
 	stream->writeUint16LE(characterMode);
@@ -495,7 +495,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	heightCopy = stream->readUint16LE();
 	yCorrection = stream->readUint16LE();
 	hotspotScriptOffset = stream->readUint16LE();
-	tickProcOffset = stream->readUint16LE();
+	tickProcId = stream->readUint16LE();
 	tickTimeout = stream->readUint16LE();
 	tickScriptOffset = stream->readUint16LE();
 	characterMode = (CharacterMode) stream->readUint16LE();

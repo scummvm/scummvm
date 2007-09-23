@@ -91,7 +91,7 @@ private:
 	static void fighterAnimHandler(Hotspot &h);
 	static void playerFightAnimHandler(Hotspot &h);
 public:
-	static HandlerMethodPtr getHandler(uint16 procOffset);
+	static HandlerMethodPtr getHandler(uint16 procIndex);
 };
 
 enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRIPT, 

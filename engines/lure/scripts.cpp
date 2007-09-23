@@ -235,7 +235,7 @@ void Script::setupSkorlFight(uint16 v1, uint16 v2, uint16 v3) {
 void Script::remoteRoomViewSetup(uint16 v1, uint16 v2, uint16 v3) {
 	Hotspot *player = Resources::getReference().getActiveHotspot(PLAYER_ID);
 
-	player->setTickProc(0); // disable player actions
+	player->setTickProc(NULL_TICK_PROC_ID);
 	Resources::getReference().fieldList().setField(OLD_ROOM_NUMBER,
 		player->roomNumber());
 }

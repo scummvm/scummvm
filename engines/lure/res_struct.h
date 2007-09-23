@@ -83,7 +83,7 @@ struct HotspotResource {
 	uint16 animRecordId;
 	uint16 hotspotScriptOffset;
 	uint16 talkScriptOffset;
-	uint16 tickProcOffset;
+	uint16 tickProcId;
 	uint16 tickTimeout;
 	uint16 tickScriptOffset;
 	uint16 npcSchedule;
@@ -277,6 +277,13 @@ public:
 
 		return last;
 	}
+
+	T operator[](int index) {
+		typename Common_List::iterator i = Common_List::begin();
+		while (index-- > 0) 
+			++i;
+		return *i;
+	}
 };
 
 /** Enumeration used for direction facings */
@@ -452,7 +459,7 @@ public:
 	uint16 animRecordId;
 	uint16 hotspotScriptOffset;
 	uint16 talkScriptOffset;
-	uint16 tickProcOffset;
+	uint16 tickProcId;
 	uint16 tickTimeout;
 	uint16 tickScriptOffset;
 	uint16 npcSchedule;
@@ -772,8 +779,8 @@ extern const RoomTranslationRecord roomTranslations[];
 
 enum StringEnum {S_CREDITS = 25, S_RESTART_GAME = 26, S_SAVE_GAME = 27, S_RESTORE_GAME = 28, 
 	S_QUIT = 29, S_FAST_TEXT = 30, S_SLOW_TEXT = 31, S_SOUND_ON = 32, S_SOUND_OFF = 33, 
-	S_NOTHING = 34, S_FOR = 35, S_TO = 36, S_ON = 37, S_AND_THEN = 38,
-	S_FINISH = 39};
+	S_NOTHING = 34, S_FOR = 35, S_TO = 36, S_ON = 37, S_AND_THEN = 38, S_FINISH = 39, 
+	S_CONFIRM_YN = 40, S_ARTICLE_LIST = 41};
 
 class StringList {
 private:

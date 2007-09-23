@@ -36,6 +36,7 @@
 #include "lure/game.h"
 #include "lure/fights.h"
 #include "lure/sound.h"
+#include "lure/lure.h"
 #include "common/endian.h"
 
 namespace Lure {
@@ -74,7 +75,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 
 	_override = resources.getHotspotOverride(res->hotspotId);
 	setAnimation(_data->animRecordId);
-	_tickHandler = HotspotTickHandlers::getHandler(_data->tickProcOffset);
+	_tickHandler = HotspotTickHandlers::getHandler(_data->tickProcId);
 	_nameBuffer[0] = '\0';
 
 	if (_hotspotId < FIRST_NONCHARACTER_ID) {
@@ -103,6 +104,11 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 
 Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	assert(character);
+
+	Common::Language language = LureEngine::getReference().getLanguage();
+	uint16 animId = 0x5810;
+	if (language == IT_ITA) animId = 0x58D0;
+
 	_originalId = objType;
 	_data = NULL;
 	_anim = NULL;
@@ -120,7 +126,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_skipFlag = false;
 
 	switch (objType) {
-	case VOICE_ANIM_ID:
+	case VOICE_ANIM_INDEX:
 		_roomNumber = character->roomNumber();
 		_destHotspotId = character->hotspotId();
 		_startX = character->x() + character->talkX() + 12;
@@ -138,11 +144,11 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 		_voiceCtr = 40;
 
 		_tickHandler = HotspotTickHandlers::getHandler(VOICE_TICK_PROC_ID);
-		setAnimation(VOICE_ANIM_ID);
+		setAnimation(animId);
 		break;
 
-	case PUZZLED_ANIM_ID:
-	case EXCLAMATION_ANIM_ID:
+	case PUZZLED_ANIM_INDEX:
+	case EXCLAMATION_ANIM_INDEX:
 		_roomNumber = character->roomNumber();
 		_hotspotId = 0xfffe;
 		_startX = character->x() + character->talkX() + 12;
@@ -158,8 +164,8 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 
 		_destHotspotId = character->hotspotId();
 		_tickHandler = HotspotTickHandlers::getHandler(PUZZLED_TICK_PROC_ID);
-		setAnimation(VOICE_ANIM_ID);
-		setFrameNumber(objType == PUZZLED_ANIM_ID ? 1 : 2);
+		setAnimation(animId);
+		setFrameNumber(objType == PUZZLED_ANIM_INDEX ? 1 : 2);
 		
 		character->setFrameCtr(_voiceCtr);
 		break;
@@ -467,7 +473,8 @@ void Hotspot::tick() {
 
 void Hotspot::setTickProc(uint16 newVal) {
 	if (_data)
-		_data->tickProcOffset = newVal;
+		_data->tickProcId = newVal;
+
 	_tickHandler = HotspotTickHandlers::getHandler(newVal);	
 }
 
@@ -763,12 +770,12 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 
 	if (idVal == 0x76) {
 		// Special code id for showing the puzzled talk bubble
-		hotspot = new Hotspot(this, PUZZLED_ANIM_ID);
+		hotspot = new Hotspot(this, PUZZLED_ANIM_INDEX);
 		res.addHotspot(hotspot);
 
 	} else if (idVal == 0x120) {
 		// Special code id for showing the exclamation talk bubble
-		hotspot = new Hotspot(this, EXCLAMATION_ANIM_ID);
+		hotspot = new Hotspot(this, EXCLAMATION_ANIM_INDEX);
 		res.addHotspot(hotspot);
 
 	} else if (idVal >= 0x8000) {
@@ -2170,83 +2177,81 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 
 /*------------------------------------------------------------------------*/
 
-HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procOffset) {
-	switch (procOffset) {
-	case 0:
-	case 0x41BD:
+HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procIndex) {
+	switch (procIndex) {
+	case 1:
 		return defaultHandler;
 	case STANDARD_CHARACTER_TICK_PROC:
 		return standardCharacterAnimHandler;
+	case PLAYER_TICK_PROC_ID:
+		return playerAnimHandler;
 	case VOICE_TICK_PROC_ID:
 		return voiceBubbleAnimHandler;
 	case PUZZLED_TICK_PROC_ID:
 		return puzzledAnimHandler;
-	case 0x7207:
+	case 6:
 		return roomExitAnimHandler;
-	case PLAYER_TICK_PROC_ID:
-		return playerAnimHandler;
-	case 0x7C14:
+	case 7:
 	case FOLLOWER_TICK_PROC_2:
 		return followerAnimHandler;
 	case JAILOR_TICK_PROC_ID:
-	case 0x7F02:
+	case 10:
 		return jailorAnimHandler;
 	case STANDARD_ANIM_2_TICK_PROC:
 		return standardAnimHandler2;
 	case STANDARD_ANIM_TICK_PROC:
 		return standardAnimHandler;
-	case 0x7F54:
+	case 13:
 		return sonicRatAnimHandler;
-	case 0x7F69:
+	case 14:
 		return droppingTorchAnimHandler;
-	case 0x7FA1:
+	case 15:
 		return playerSewerExitAnimHandler;
-	case 0x8009:
+	case 16:
 		return fireAnimHandler;
-	case 0x80C6:
+	case 17:
 		return sparkleAnimHandler;
-	case 0x813F:
+	case 18:
 		return teaAnimHandler;
-	case 0x8180:
+	case 19:
 		return goewinCaptiveAnimHandler;
-	case 0x81B3:
+	case 20:
 		return prisonerAnimHandler;
-	case 0x81F3:
+	case 21:
 		return catrionaAnimHandler;
-	case 0x820E:
+	case 22:
 		return morkusAnimHandler;
-	case 0x8241:
+	case 23:
 		return grubAnimHandler;
-	case 0x82A0:
+	case 24:
 		return barmanAnimHandler;
-	case 0x85ce:
+	case 25:
 		return skorlAnimHandler;
-	case 0x862D:
+	case 26:
 		return gargoyleAnimHandler;
 	case GOEWIN_SHOP_TICK_PROC:
 		return goewinShopAnimHandler;
-	case 0x86FA:
-	case 0x86FF:
-	case 0x871E:
-	case 0x873D:
-	case 0x8742:
-	case 0x8747:
+	case 28:
+	case 29:
+	case 30:
+	case 31:
+	case 32:
+	case 33:
 		return skullAnimHandler;
-	case 0x87B3:
+	case 34:
 		return dragonFireAnimHandler;
-	case 0x87EC:
+	case 35:
 		return castleSkorlAnimHandler;
-	case 0x882A:
+	case 36:
 		return rackSerfAnimHandler;
 	case TALK_TICK_PROC_ID:
 		return talkAnimHandler;
-	case 0x982D:
+	case 38:
 		return fighterAnimHandler;
 	case PLAYER_FIGHT_TICK_PROC_ID:
 		return playerFightAnimHandler;
 	default:
-		error("Unknown tick proc %xh for hotspot", procOffset);
-//		return defaultHandler;
+		error("Unknown tick proc Id %xh for hotspot", procIndex);
 	}
 }
 
@@ -2888,7 +2893,7 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 	ValueTableData &fields = res.fieldList();
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 
-	if ((h.resource()->tickProcOffset == FOLLOWER_TICK_PROC_2) || (fields.getField(37) == 0)) {
+	if ((h.resource()->tickProcId == FOLLOWER_TICK_PROC_2) || (fields.getField(37) == 0)) {
 		if (h.currentActions().isEmpty() && (h.roomNumber() != player->roomNumber())) {
 			// Character in different room than player
 			if (h.hotspotId() == GOEWIN_ID) 

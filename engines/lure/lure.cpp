@@ -62,6 +62,8 @@ LureEngine::LureEngine(OSystem *system): Engine(system) {
 }
 
 int LureEngine::init() {
+	int_engine = this;
+
 	_system->beginGFXTransaction();
 		initCommonGFX(false);
 		_system->initSize(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
@@ -78,7 +80,6 @@ int LureEngine::init() {
 	Surface::initialise();
 	_room = new Room();
 	_fights = new FightsManager();
-	int_engine = this;
 	return 0;
 }
 
@@ -104,6 +105,18 @@ LureEngine &LureEngine::getReference() {
 }
 
 int LureEngine::go() {
+
+	if (ConfMan.getBool("copy_protection")) {
+		CopyProtectionDialog *dialog = new CopyProtectionDialog();
+		bool result = dialog->show();
+		delete dialog;
+		if (_events->quitFlag)
+			return 0;
+
+		if (!result)
+			error("Sorry - copy protection failed");
+	}
+
 	if (ConfMan.getInt("boot_param") == 0) {
 		// Show the introduction
 		Sound.loadSection(INTRO_SOUND_RESOURCE_ID);
