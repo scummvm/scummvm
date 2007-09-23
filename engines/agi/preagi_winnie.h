@@ -36,11 +36,13 @@ namespace Agi {
 
 #define IDS_WTP_ROOM_DOS		"rooms\\rm.%02d"
 #define IDS_WTP_ROOM_AMIGA		"room.%d"
+#define IDS_WTP_ROOM_C64		"room%02d"
 #define IDS_WTP_OBJ_DOS			"obj.%02d"
 #define IDS_WTP_OBJ_AMIGA		"object.%d"
-#define IDS_WTP_PATH_SND		"snd.%02d"
+#define IDS_WTP_OBJ_C64			"object%02d"
+#define IDS_WTP_SND_DOS			"snd.%02d"
 #define IDS_WTP_SND_AMIGA		"Sounds"
-#define IDS_WTP_PATH			"%s"
+#define IDS_WTP_SND_C64			"sound.obj"
 
 #define IDS_WTP_FILE_LOGO		"logo"
 #define IDS_WTP_FILE_TITLE		"title"
@@ -84,9 +86,6 @@ namespace Agi {
 
 // COMMODORE 64 version strings
 
-#define IDS_WTP_PATH_ROOM_C64		"%sroom%02d"
-#define IDS_WTP_PATH_OBJ_C64		"%sobject%02d"
-#define IDS_WTP_PATH_SND_C64		"%ssound.obj"
 #define IDS_WTP_FILE_SAVEGAME_C64	"saved game"
 #define IDS_WTP_DISK_ERROR_C64		"There is a problem with your disk drive.Please make sure your disk is in the    drive correctly."
 #define IDS_WTP_HELP_0_C64			"The <SPACE BAR> moves the pointer.      Press <RETURN> when it is by the choice you want.  <F1> brings back what you    have already read."
