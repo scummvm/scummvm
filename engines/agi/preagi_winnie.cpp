@@ -62,6 +62,8 @@ void Winnie::initVars() {
 
 uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 	char szFile[256] = {0};
+	int i;
+
 	if (_vm->getPlatform() == Common::kPlatformPC)
 		sprintf(szFile, IDS_WTP_ROOM_DOS, iRoom);
 	else if (_vm->getPlatform() == Common::kPlatformAmiga)
@@ -82,36 +84,38 @@ uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 	file.read(buffer, filelen);
 	file.close();
 
-	memcpy(&roomHdr, buffer, sizeof(WTP_ROOM_HDR));
-	if (_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64) {
-		roomHdr.ofsPic = TO_LE_16(roomHdr.ofsPic);
-		roomHdr.fileLen = TO_LE_16(roomHdr.fileLen);
-		roomHdr.reserved0 = TO_LE_16(roomHdr.reserved0);
-		roomHdr.reserved1 = TO_LE_16(roomHdr.reserved1);
-		for (byte i = 0; i < IDI_WTP_MAX_BLOCK; i++) {
-			roomHdr.ofsDesc[i] = TO_LE_16(roomHdr.ofsDesc[i]);
-			roomHdr.ofsBlock[i] = TO_LE_16(roomHdr.ofsBlock[i]);
-			for (byte j = 0; j < IDI_WTP_MAX_BLOCK; j++)
-				roomHdr.opt[i].ofsOpt[j] = TO_LE_16(roomHdr.opt[i].ofsOpt[j]);
-		}
-		for (byte i = 0; i < IDI_WTP_MAX_STR; i++)
-			roomHdr.ofsStr[i] = TO_LE_16(roomHdr.ofsStr[i]);
-		roomHdr.reserved2 = TO_LE_32(roomHdr.reserved2);
-	} else if (_vm->getPlatform() == Common::kPlatformAmiga) {
-		roomHdr.ofsPic = TO_BE_16(roomHdr.ofsPic);
-		roomHdr.fileLen = TO_BE_16(roomHdr.fileLen);
-		roomHdr.reserved0 = TO_BE_16(roomHdr.reserved0);
-		roomHdr.reserved1 = TO_BE_16(roomHdr.reserved1);
-		for (byte i = 0; i < IDI_WTP_MAX_BLOCK; i++) {
-			roomHdr.ofsDesc[i] = TO_BE_16(roomHdr.ofsDesc[i]);
-			roomHdr.ofsBlock[i] = TO_BE_16(roomHdr.ofsBlock[i]);
-			for (byte j = 0; j < IDI_WTP_MAX_BLOCK; j++)
-				roomHdr.opt[i].ofsOpt[j] = TO_BE_16(roomHdr.opt[i].ofsOpt[j]);
-		}
-		for (byte i = 0; i < IDI_WTP_MAX_STR; i++)
-			roomHdr.ofsStr[i] = TO_BE_16(roomHdr.ofsStr[i]);
-		roomHdr.reserved2 = TO_BE_32(roomHdr.reserved2);
-	}
+	byte isBigEndian = !(_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64);
+
+	Common::MemoryReadStreamEndian readS(buffer, filelen, isBigEndian);
+
+	roomHdr.roomNumber = readS.readByte();
+	roomHdr.objId = readS.readByte();
+	roomHdr.ofsPic = readS.readUint16();
+	roomHdr.fileLen = readS.readUint16();
+	roomHdr.reserved0 = readS.readUint16();
+
+	for (i = 0; i < IDI_WTP_MAX_DIR; i++)
+		roomHdr.roomNew[i] = readS.readUint16();
+
+	roomHdr.objX = readS.readUint16();
+	roomHdr.objY = readS.readUint16();
+
+	roomHdr.reserved1 = readS.readUint16();
+
+	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
+		roomHdr.ofsDesc[i] = readS.readUint16();
+
+	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
+		roomHdr.ofsBlock[i] = readS.readUint16();
+
+	for (i = 0; i < IDI_WTP_MAX_STR; i++)
+		roomHdr.ofsStr[i] = readS.readUint16();
+
+	roomHdr.reserved2 = readS.readUint32();
+
+	for (i = 0; i < IDI_WTP_MAX_BLOCK; i++)
+		for (byte j = 0; j < IDI_WTP_MAX_BLOCK; j++)
+			roomHdr.opt[i].ofsOpt[j] = readS.readUint16();
 
 	return filelen;
 }
