@@ -108,18 +108,18 @@ bool Introduction::show() {
 
 		result = false;
 		switch (anim->show()) {
-			case ABORT_NONE:
-				if (curr_anim->endingPause != 0) {
-					result = events.interruptableDelay(curr_anim->endingPause * 1000 / 50);
-				}
-				break;
+		case ABORT_NONE:
+			if (curr_anim->endingPause != 0) {
+				result = events.interruptableDelay(curr_anim->endingPause * 1000 / 50);
+			}
+			break;
 
-			case ABORT_END_INTRO:
-				result = true;
-				break;
+		case ABORT_END_INTRO:
+			result = true;
+			break;
 
-			case ABORT_NEXT_SCENE:
-				break;
+		case ABORT_NEXT_SCENE:
+			break;
 		}
 		delete anim;
 

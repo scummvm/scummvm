@@ -188,51 +188,51 @@ if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
 					// Handle special keys
 					bool handled = true;
 					switch (events.event().kbd.keycode) {
-						case Common::KEYCODE_F5:
-							SaveRestoreDialog::show(true);
-							break;
+					case Common::KEYCODE_F5:
+						SaveRestoreDialog::show(true);
+						break;
 
-						case Common::KEYCODE_F7:
-							SaveRestoreDialog::show(false);
-							break;
+					case Common::KEYCODE_F7:
+						SaveRestoreDialog::show(false);
+						break;
 
-						case Common::KEYCODE_F9:
-							doRestart();
-							break;
+					case Common::KEYCODE_F9:
+						doRestart();
+						break;
 
-						case Common::KEYCODE_KP_PLUS:
-							while (++roomNum <= 51) 
-								if (res.getRoom(roomNum) != NULL) break; 
-							if (roomNum == 52) roomNum = 1;
+					case Common::KEYCODE_KP_PLUS:
+						while (++roomNum <= 51) 
+							if (res.getRoom(roomNum) != NULL) break; 
+						if (roomNum == 52) roomNum = 1;
 
-							room.leaveRoom();
-							room.setRoomNumber(roomNum);
-							break;
+						room.leaveRoom();
+						room.setRoomNumber(roomNum);
+						break;
 
-						case Common::KEYCODE_KP_MINUS:
-							if (roomNum == 1) roomNum = 55;
-							while (res.getRoom(--roomNum) == NULL) ;
+					case Common::KEYCODE_KP_MINUS:
+						if (roomNum == 1) roomNum = 55;
+						while (res.getRoom(--roomNum) == NULL) ;
 
-							room.leaveRoom();
-							room.setRoomNumber(roomNum);
-							break;
+						room.leaveRoom();
+						room.setRoomNumber(roomNum);
+						break;
 
-						case Common::KEYCODE_KP_MULTIPLY:
-							res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
-								room.roomNumber());
-							break;
+					case Common::KEYCODE_KP_MULTIPLY:
+						res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
+							room.roomNumber());
+						break;
 
-						case Common::KEYCODE_KP_DIVIDE:
-						case Common::KEYCODE_SLASH:
-							room.setShowInfo(!room.showInfo());
-							break;
+					case Common::KEYCODE_KP_DIVIDE:
+					case Common::KEYCODE_SLASH:
+						room.setShowInfo(!room.showInfo());
+						break;
 
-						case Common::KEYCODE_ESCAPE:
-							doQuit();
-							break;
+					case Common::KEYCODE_ESCAPE:
+						doQuit();
+						break;
 
-						default:
-							handled = false;
+					default:
+						handled = false;
 					}
 					if (handled)
 						continue;

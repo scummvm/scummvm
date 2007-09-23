@@ -158,18 +158,25 @@ uint8 Menu::execute() {
 	screen.update();
 	
 	if ((_selectedMenu == NULL) || (_selectedIndex == 0)) return MENUITEM_NONE;
-	else if (_selectedMenu == _menus[0]) return MENUITEM_CREDITS;
+	else if (_selectedMenu == _menus[0])
+		return MENUITEM_CREDITS;
 	else if (_selectedMenu == _menus[1]) {
 		switch (_selectedIndex) {
-			case 1: return MENUITEM_RESTART_GAME;
-			case 2: return MENUITEM_SAVE_GAME;
-			case 3: return MENUITEM_RESTORE_GAME;
+		case 1:
+			return MENUITEM_RESTART_GAME;
+		case 2:
+			return MENUITEM_SAVE_GAME;
+		case 3:
+			return MENUITEM_RESTORE_GAME;
 		}
 	} else {
 		switch (_selectedIndex) {
-			case 1: return MENUITEM_QUIT;
-			case 2: return MENUITEM_TEXT_SPEED;
-			case 3: return MENUITEM_SOUND;
+		case 1:
+			return MENUITEM_QUIT;
+		case 2:
+			return MENUITEM_TEXT_SPEED;
+		case 3:
+			return MENUITEM_SOUND;
 		}
 	}
 	return MENUITEM_NONE;
