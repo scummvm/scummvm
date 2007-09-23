@@ -311,8 +311,6 @@ private:
 	bool winnie_event;
 	int	tigger_mist;
 
-	void initEngine();
-	void initVars();
 	void randomize();
 	void intro();
 	void drawPic(const char*);
@@ -346,8 +344,6 @@ private:
 	void gameOver();
 	void saveGame();
 	void loadGame();
-	void writeSaveGame(uint8*);
-	void readSaveGame(uint8*);
 	void dropObjRnd();
 
 	void wind();

@@ -38,30 +38,8 @@ namespace Agi {
 #define IDA_DEFAULT		0x0F
 #define IDA_DEFAULT_REV	0xF0
 
-void Winnie::initEngine() {
-	//SetScreenPar(320, 200, (char*)ibm_fontdata);
-	//SetMenuPars(21, 21, IDS_WTP_SELECTION);
-}
-
-void Winnie::initVars() {
-	memset(&game, 0, sizeof(game));
-	game.fSound = 1;
-	game.nObjMiss = IDI_WTP_MAX_OBJ_MISSING;
-	game.nObjRet = 0;
-	game.fGame[0] = 1;
-	game.fGame[1] = 1;
-	room = IDI_WTP_ROOM_HOME;
-
-	_mist = -1;
-	doWind = false;
-	winnie_event = false;
-
-	if (_vm->getPlatform() == Common::kPlatformC64)
-		_vm->_picture->setPictureVersion(AGIPIC_C64);
-}
-
 void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
-	byte isBigEndian = !(_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64);
+	bool isBigEndian = !(_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64);
 	int i;
 
 	Common::MemoryReadStreamEndian readS(buffer, len, isBigEndian);
@@ -97,7 +75,7 @@ void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
 }
 
 void Winnie::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
-	byte isBigEndian = !(_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64);
+	bool isBigEndian = !(_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64);
 	int i;
 
 	Common::MemoryReadStreamEndian readS(buffer, len, isBigEndian);
@@ -1220,35 +1198,31 @@ void Winnie::gameOver() {
 void Winnie::saveGame() {
 	uint8 *buffer = (uint8 *)malloc(sizeof(WTP_SAVE_GAME));
 	memcpy(buffer, &game, sizeof(WTP_SAVE_GAME));
-	writeSaveGame(buffer);
-	free(buffer);
-}
-
-void Winnie::loadGame() {
-	uint8 *buffer = (uint8 *)malloc(sizeof(WTP_SAVE_GAME));
-	readSaveGame(buffer);
-	memcpy(&game, buffer, sizeof(WTP_SAVE_GAME));
-	free(buffer);
-}
-
-void Winnie::readSaveGame(uint8 *buffer) {
-	Common::InSaveFile* infile;
-	char szFile[256] = {0};
-	sprintf(szFile, IDS_WTP_FILE_SAVEGAME);
-	if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile)))
-		return;
-	infile->read(buffer, sizeof(WTP_SAVE_GAME));
-	delete infile;
-}
-
-void Winnie::writeSaveGame(uint8 *buffer) {
 	Common::OutSaveFile* outfile;
 	char szFile[256] = {0};
+
 	sprintf(szFile, IDS_WTP_FILE_SAVEGAME);
 	if (!(outfile = _vm->getSaveFileMan()->openForSaving(szFile)))
 		return;
 	outfile->write(buffer, sizeof(WTP_SAVE_GAME));
 	delete outfile;
+
+	free(buffer);
+}
+
+void Winnie::loadGame() {
+	uint8 *buffer = (uint8 *)malloc(sizeof(WTP_SAVE_GAME));
+	Common::InSaveFile* infile;
+	char szFile[256] = {0};
+
+	sprintf(szFile, IDS_WTP_FILE_SAVEGAME);
+	if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile)))
+		return;
+	infile->read(buffer, sizeof(WTP_SAVE_GAME));
+	delete infile;
+
+	memcpy(&game, buffer, sizeof(WTP_SAVE_GAME));
+	free(buffer);
 }
 
 Winnie::Winnie(PreAgiEngine* vm) : _vm(vm) {
@@ -1256,8 +1230,20 @@ Winnie::Winnie(PreAgiEngine* vm) : _vm(vm) {
 }
 
 void Winnie::init() {
-	initEngine();
-	initVars();
+	memset(&game, 0, sizeof(game));
+	game.fSound = 1;
+	game.nObjMiss = IDI_WTP_MAX_OBJ_MISSING;
+	game.nObjRet = 0;
+	game.fGame[0] = 1;
+	game.fGame[1] = 1;
+	room = IDI_WTP_ROOM_HOME;
+
+	_mist = -1;
+	doWind = false;
+	winnie_event = false;
+
+	if (_vm->getPlatform() == Common::kPlatformC64)
+		_vm->_picture->setPictureVersion(AGIPIC_C64);
 }
 
 void Winnie::run() {
