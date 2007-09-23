@@ -23,6 +23,7 @@
  *
  */
 
+#include "lure/lure.h"
 #include "lure/game.h"
 #include "lure/animseq.h"
 #include "lure/fights.h"
@@ -146,11 +147,7 @@ void Game::execute() {
 
 			int bootParam = ConfMan.getInt("boot_param");
 			handleBootParam(bootParam);
-if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
 		}
-
-		// Set the player direction
-//		res.getActiveHotspot(PLAYER_ID)->setDirection(UP);
 
 		room.update();
 		mouse.setCursorNum(CURSOR_ARROW);
@@ -204,16 +201,12 @@ if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
 						while (++roomNum <= 51) 
 							if (res.getRoom(roomNum) != NULL) break; 
 						if (roomNum == 52) roomNum = 1;
-
-						room.leaveRoom();
 						room.setRoomNumber(roomNum);
 						break;
 
 					case Common::KEYCODE_KP_MINUS:
 						if (roomNum == 1) roomNum = 55;
 						while (res.getRoom(--roomNum) == NULL) ;
-
-						room.leaveRoom();
 						room.setRoomNumber(roomNum);
 						break;
 
@@ -730,11 +723,11 @@ bool Game::GetTellActions() {
 				// Second parameter
 				action = (Action) commands[_numTellCommands * 3]; 
 				if (action == ASK)
-					strcat(statusLine, " for ");
+					strcat(statusLine, stringList.getString(S_FOR));
 				else if (action == GIVE)
-					strcat(statusLine, " to ");
+					strcat(statusLine, stringList.getString(S_TO));
 				else if (action == USE)
-					strcat(statusLine, " on ");
+					strcat(statusLine, stringList.getString(S_ON));
 				else {
 					// All other commads don't need a second parameter
 					++paramIndex;
@@ -936,13 +929,26 @@ void Game::handleBootParam(int value) {
 	}
 }
 
+struct YNKeyStruct {
+	Common::Language language;
+	Common::KeyCode y;
+	Common::KeyCode n;
+};
+
 bool Game::getYN() {
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
+	Resources &res = Resources::getReference();
+	
+	Common::Language l = LureEngine::getReference().getLanguage();
+	Common::KeyCode y = Common::KEYCODE_y;
+	if (l == FR_FRA) y = Common::KEYCODE_o;
+	else if ((l == DE_DEU) || (l == NL_NLD)) y = Common::KEYCODE_j;
+	else if ((l == ES_ESP) || (l == IT_ITA)) y = Common::KEYCODE_s;
 
 	mouse.cursorOff();
-	Surface *s = Surface::newDialog(190, "Are you sure (y/n)?");
+	Surface *s = Surface::newDialog(190, res.stringList().getString(S_CONFIRM_YN));
 	s->centerOnScreen();
 	delete s;
 
@@ -953,10 +959,10 @@ bool Game::getYN() {
 		if (events.pollEvent()) {
 			if (events.event().type == Common::EVENT_KEYDOWN) {
 				Common::KeyCode key = events.event().kbd.keycode;
-				if ((key == Common::KEYCODE_y) || (key == Common::KEYCODE_n) ||
+				if ((key == y) || (key == Common::KEYCODE_n) ||
 					(key == Common::KEYCODE_ESCAPE)) {
 					breakFlag = true;
-					result = key == Common::KEYCODE_y;
+					result = key == y;
 				}
 			}
 			if (events.event().type == Common::EVENT_LBUTTONUP) {
