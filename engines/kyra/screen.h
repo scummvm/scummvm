@@ -99,6 +99,10 @@ public:
 
 	void updateScreen();
 
+	// debug functions
+	bool queryScreenDebug() const { return _debugEnabled; }
+	bool enableScreenDebug(bool enable);
+
 	// page cur. functions
 	int setCurPage(int pageNum);
 
@@ -307,6 +311,12 @@ protected:
 
 	OSystem *_system;
 	KyraEngine *_vm;
+
+	// init
+	virtual void setResolution();
+
+	// debug
+	bool _debugEnabled;
 };
 
 } // End of namespace Kyra

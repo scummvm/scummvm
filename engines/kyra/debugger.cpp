@@ -33,6 +33,30 @@
 
 namespace Kyra {
 
+Debugger::Debugger(KyraEngine *vm)
+	: GUI::Debugger() {
+	_vm = vm;
+
+	DCmd_Register("screen_debug_mode",	WRAP_METHOD(Debugger, cmd_setScreenDebug));
+}
+
+bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "enable") == 0)
+			_vm->screen()->enableScreenDebug(true);
+		else if (scumm_stricmp(argv[1], "disable") == 0)
+			_vm->screen()->enableScreenDebug(false);
+		else
+			DebugPrintf("Use screen_debug_mode <enable/disable> to enable or disable it.\n");
+	} else {
+		DebugPrintf("Screen debug mode is %s.\n", (_vm->screen()->queryScreenDebug() ? "enabled" : "disabled"));
+		DebugPrintf("Use screen_debug_mode <enable/disable> to enable or disable it.\n");
+	}
+	return true;
+}
+
+#pragma mark -
+
 Debugger_v1::Debugger_v1(KyraEngine_v1 *vm)
 	: Debugger(vm) {
 	_vm = vm;

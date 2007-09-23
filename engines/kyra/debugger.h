@@ -35,8 +35,13 @@ class KyraEngine_v1;
 
 class Debugger : public GUI::Debugger {
 public:
-	Debugger(KyraEngine *vm) {}
+	Debugger(KyraEngine *vm);
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ
+
+protected:
+	KyraEngine *_vm;
+
+	bool cmd_setScreenDebug(int argc, const char **argv);
 };
 
 class Debugger_v1 : public Debugger {

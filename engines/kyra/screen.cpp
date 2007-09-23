@@ -86,6 +86,7 @@ Screen::~Screen() {
 bool Screen::init() {
 	debugC(9, kDebugLevelScreen, "Screen::init()");
 	_disableScreen = false;
+	_debugEnabled = false;
 
 	_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, false);
 
@@ -94,37 +95,7 @@ bool Screen::init() {
 	_useSJIS = false;
 	_sjisTempPage = _sjisFontData = 0;
 
-	if (_vm->gameFlags().useHiResOverlay) {
-		_system->beginGFXTransaction();
-			_vm->initCommonGFX(true);
-			_system->initSize(640, 400);
-		_system->endGFXTransaction();
-
-		for (int i = 0; i < SCREEN_OVLS_NUM; ++i) {
-			_sjisOverlayPtrs[i] = new uint8[SCREEN_OVL_SJIS_SIZE];
-			assert(_sjisOverlayPtrs[i]);
-			memset(_sjisOverlayPtrs[i], 0x80, SCREEN_OVL_SJIS_SIZE);
-		}
-		_useOverlays = true;
-		_useSJIS = (_vm->gameFlags().lang == Common::JA_JPN);
-
-		if (_useSJIS) {
-			_sjisFontData = _vm->resource()->fileData("FMT_FNT.ROM", 0);
-			if (!_sjisFontData)
-				error("missing font rom ('FMT_FNT.ROM') required for this version");
-			_sjisTempPage = new uint8[420];
-			assert(_sjisTempPage);
-			_sjisTempPage2 = _sjisTempPage + 60;
-			_sjisSourceChar = _sjisTempPage + 384;
-		}
-	} else {
-		_system->beginGFXTransaction();
-			_vm->initCommonGFX(false);
-			//for debug reasons (see Screen::updateScreen)
-			//_system->initSize(640, 200);
-			_system->initSize(320, 200);
-		_system->endGFXTransaction();
-	}
+	setResolution();
 
 	_curPage = 0;
 	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
@@ -194,6 +165,69 @@ bool Screen::init() {
 	return true;
 }
 
+bool Screen::enableScreenDebug(bool enable) {
+	bool temp = _debugEnabled;
+
+	if (_debugEnabled != enable) {
+		_debugEnabled = enable;
+		setResolution();
+		_forceFullUpdate = true;
+		updateScreen();
+	}
+
+	return temp;
+}
+
+void Screen::setResolution() {
+	byte palette[4*256];
+	_system->grabPalette(palette, 0, 256);
+
+	if (_vm->gameFlags().useHiResOverlay) {
+		_system->beginGFXTransaction();
+			_vm->initCommonGFX(true);
+			if (_debugEnabled)
+				_system->initSize(960, 400);
+			else
+				_system->initSize(640, 400);
+		_system->endGFXTransaction();
+
+		for (int i = 0; i < SCREEN_OVLS_NUM; ++i) {
+			if (!_sjisOverlayPtrs[i]) {
+				_sjisOverlayPtrs[i] = new uint8[SCREEN_OVL_SJIS_SIZE];
+				assert(_sjisOverlayPtrs[i]);
+				memset(_sjisOverlayPtrs[i], 0x80, SCREEN_OVL_SJIS_SIZE);
+			}
+		}
+		_useOverlays = true;
+		_useSJIS = (_vm->gameFlags().lang == Common::JA_JPN);
+
+		if (_useSJIS) {
+			if (!_sjisFontData) {
+				_sjisFontData = _vm->resource()->fileData("FMT_FNT.ROM", 0);
+				if (!_sjisFontData)
+					error("missing font rom ('FMT_FNT.ROM') required for this version");
+			}
+
+			if (!_sjisTempPage) {
+				_sjisTempPage = new uint8[420];
+				assert(_sjisTempPage);
+				_sjisTempPage2 = _sjisTempPage + 60;
+				_sjisSourceChar = _sjisTempPage + 384;
+			}
+		}
+	} else {
+		_system->beginGFXTransaction();
+			_vm->initCommonGFX(false);
+			if (_debugEnabled)
+				_system->initSize(640, 200);
+			else
+				_system->initSize(320, 200);
+		_system->endGFXTransaction();
+	}
+
+	_system->setPalette(palette, 0, 256);
+}
+
 void Screen::updateScreen() {
 	debugC(9, kDebugLevelScreen, "Screen::updateScreen()");
 	if (_disableScreen)
@@ -204,8 +238,13 @@ void Screen::updateScreen() {
 	else
 		updateDirtyRects();
 
-	//for debug reasons (needs 640x200 screen)
-	//_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
+	if (_debugEnabled) {
+		if (!_useOverlays)
+			_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
+		else
+			_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 640, 0, SCREEN_W, SCREEN_H);
+	}
+
 	_system->updateScreen();
 }
 
