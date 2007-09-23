@@ -833,13 +833,13 @@ void Player_V2::lowPassFilter(int16 *sample, uint len) {
 
 void Player_V2::squareGenerator(int channel, int freq, int vol,
 								int noiseFeedback, int16 *sample, uint len) {
-	int period = _update_step * freq;
-	long nsample;
+	int32 period = _update_step * freq;
+	int32 nsample;
 	if (period == 0)
 		period = _update_step;
 
 	for (uint i = 0; i < len; i++) {
-		unsigned int duration = 0;
+		uint32 duration = 0;
 
 		if (_timer_output & (1 << channel))
 			duration += _timer_count[channel];
@@ -867,8 +867,8 @@ void Player_V2::squareGenerator(int channel, int freq, int vol,
 			duration -= _timer_count[channel];
 
 		nsample = *sample +
-			(((signed long) (duration - (1 << (FIXP_SHIFT - 1)))
-				* (signed long) _volumetable[vol]) >> FIXP_SHIFT);
+			(((int32) (duration - (1 << (FIXP_SHIFT - 1)))
+				* (int32) _volumetable[vol]) >> FIXP_SHIFT);
 		/* overflow: clip value */
 		if (nsample > 0x7fff)
 			nsample = 0x7fff;
