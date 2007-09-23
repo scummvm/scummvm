@@ -616,7 +616,6 @@ public:
  private:
 	uint _saveFilesCount;
 	SaveFileData _saveFiles[MAX_SAVES];
-	bool _saveMarks[MAX_SAVES];
 	SaveGameHeader _saveHeader;
 
 	bool _leftMouseButtonPressed;

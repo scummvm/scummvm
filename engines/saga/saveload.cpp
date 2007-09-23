@@ -90,21 +90,16 @@ bool SagaEngine::locateSaveFile(char *saveName, uint &titleNumber) {
 uint SagaEngine::getNewSaveSlotNumber() {
 	uint i, j;
 	bool found;
-	if (isSaveListFull()) {
-		error("getNewSaveSlotNumber save list is full");
-	}
 	for (i = 0; i < MAX_SAVES; i++) {
-		if (!_saveMarks[i]) {
-			found = false;
-			for (j = 0; j < _saveFilesCount; j++) {
-				if (_saveFiles[j].slotNumber == i) {
-					found = true;
-					break;
-				}
+		found = false;
+		for (j = 0; j < _saveFilesCount; j++) {
+			if (_saveFiles[j].slotNumber == i) {
+				found = true;
+				break;
 			}
-			if (!found) {
-				return i;
-			}
+		}
+		if (!found) {
+			return i;
 		}
 	}
 
@@ -112,31 +107,19 @@ uint SagaEngine::getNewSaveSlotNumber() {
 }
 
 void SagaEngine::fillSaveList() {
-	assert(_saveMarks);
 
 	int i;
 	Common::InSaveFile *in;
 	Common::StringList filenames;
 	char slot[2];
-	int slotNum;
+	int slotNumber;
 	char *name;
 
 	name = calcSaveFileName(MAX_SAVES);
 	name[strlen(name) - 2] = '*';
 	name[strlen(name) - 1] = 0;
 
-	memset(_saveMarks, false, MAX_SAVES * sizeof(bool));	//assume no savegames for this title
 	filenames = _saveFileMan->listSavefiles(name);
-
-	for (Common::StringList::iterator file = filenames.begin(); file != filenames.end(); file++){
-		//Obtain the last 2 digits of the filename, since they correspond to the save slot
-		slot[0] = file->c_str()[file->size()-2];
-		slot[1] = file->c_str()[file->size()-1];
-
-		slotNum = atoi(slot);
-		if (slotNum >= 0 && slotNum < MAX_SAVES)
-			_saveMarks[slotNum] = true;	//mark this slot as valid
-	}
 
 	for (i = 0; i < MAX_SAVES; i++) {
 		_saveFiles[i].name[0] = 0;
@@ -145,10 +128,14 @@ void SagaEngine::fillSaveList() {
 
 	_saveFilesCount = 0;
 
-	i = 0;
-	while (i < MAX_SAVES) {
-		if (_saveMarks[i]) {
-			name = calcSaveFileName(i);
+	for (Common::StringList::iterator file = filenames.begin(); file != filenames.end(); file++){
+		//Obtain the last 2 digits of the filename, since they correspond to the save slot
+		slot[0] = file->c_str()[file->size()-2];
+		slot[1] = file->c_str()[file->size()-1];
+
+		slotNumber = atoi(slot);
+		if (slotNumber >= 0 && slotNumber < MAX_SAVES) {
+			name = calcSaveFileName(slotNumber);
 			if ((in = _saveFileMan->openForLoading(name)) != NULL) {
 				_saveHeader.type = in->readUint32BE();
 				_saveHeader.size = in->readUint32LE();
@@ -161,12 +148,11 @@ void SagaEngine::fillSaveList() {
 					continue;
 				}
 				strcpy(_saveFiles[_saveFilesCount].name, _saveHeader.name);
-				_saveFiles[_saveFilesCount].slotNumber = i;
+				_saveFiles[_saveFilesCount].slotNumber = slotNumber;
 				delete in;
 				_saveFilesCount++;
 			}
 		}
-		i++;
 	}
 }
 
