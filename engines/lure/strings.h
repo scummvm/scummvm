@@ -62,7 +62,7 @@ public:
 	static StringData &getReference();
 
 	void getString(uint16 stringId, char *dest, const char *hotspotName, const char *characterName,
-		int hotspotArticle = 3, int characterArticle = 3);
+		int hotspotArticle = 0, int characterArticle = 0);
 	void getString(uint16 stringId, char *dest) {
 		getString(stringId, dest, NULL, NULL);
 	}
