@@ -317,7 +317,7 @@ private:
 	void intro();
 	void drawPic(const char*);
 	void gameLoop();
-	uint32 readRoom(int, uint8*);
+	uint32 readRoom(int, uint8*, WTP_ROOM_HDR&);
 	void drawRoomPic();
 	int parser(int, int, uint8*);
 	int getObjInRoom(int);

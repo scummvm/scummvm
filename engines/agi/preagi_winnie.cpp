@@ -57,7 +57,7 @@ void Winnie::initVars() {
 	winnie_event = false;
 }
 
-uint32 Winnie::readRoom(int iRoom, uint8 *buffer) {
+uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 	char szFile[256] = {0};
 	if (_vm->getPlatform() == Common::kPlatformPC)
 		sprintf(szFile, IDS_WTP_ROOM_DOS, iRoom);
@@ -72,6 +72,38 @@ uint32 Winnie::readRoom(int iRoom, uint8 *buffer) {
 	memset(buffer, 0, sizeof(buffer));
 	file.read(buffer, filelen);
 	file.close();
+
+	memcpy(&roomHdr, buffer, sizeof(WTP_ROOM_HDR));
+	if (_vm->getPlatform() == Common::kPlatformPC) {
+		roomHdr.ofsPic = TO_LE_16(roomHdr.ofsPic);
+		roomHdr.fileLen = TO_LE_16(roomHdr.fileLen);
+		roomHdr.reserved0 = TO_LE_16(roomHdr.reserved0);
+		roomHdr.reserved1 = TO_LE_16(roomHdr.reserved1);
+		for (byte i = 0; i < IDI_WTP_MAX_BLOCK; i++) {
+			roomHdr.ofsDesc[i] = TO_LE_16(roomHdr.ofsDesc[i]);
+			roomHdr.ofsBlock[i] = TO_LE_16(roomHdr.ofsBlock[i]);
+			for (byte j = 0; j < IDI_WTP_MAX_BLOCK; j++)
+				roomHdr.opt[i].ofsOpt[j] = TO_LE_16(roomHdr.opt[i].ofsOpt[j]);
+		}
+		for (byte i = 0; i < IDI_WTP_MAX_STR; i++)
+			roomHdr.ofsStr[i] = TO_LE_16(roomHdr.ofsStr[i]);
+		roomHdr.reserved2 = TO_LE_32(roomHdr.reserved2);
+	} else if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		roomHdr.ofsPic = TO_BE_16(roomHdr.ofsPic);
+		roomHdr.fileLen = TO_BE_16(roomHdr.fileLen);
+		roomHdr.reserved0 = TO_BE_16(roomHdr.reserved0);
+		roomHdr.reserved1 = TO_BE_16(roomHdr.reserved1);
+		for (byte i = 0; i < IDI_WTP_MAX_BLOCK; i++) {
+			roomHdr.ofsDesc[i] = TO_BE_16(roomHdr.ofsDesc[i]);
+			roomHdr.ofsBlock[i] = TO_BE_16(roomHdr.ofsBlock[i]);
+			for (byte j = 0; j < IDI_WTP_MAX_BLOCK; j++)
+				roomHdr.opt[i].ofsOpt[j] = TO_BE_16(roomHdr.opt[i].ofsOpt[j]);
+		}
+		for (byte i = 0; i < IDI_WTP_MAX_STR; i++)
+			roomHdr.ofsStr[i] = TO_BE_16(roomHdr.ofsStr[i]);
+		roomHdr.reserved2 = TO_BE_32(roomHdr.reserved2);
+	}
+
 	return filelen;
 }
 
@@ -437,8 +469,7 @@ bool Winnie::isRightObj(int iRoom, int iObj, int *iCode) {
 	uint8 *roomdata = (uint8 *)malloc(4096);
 	uint8 *objdata = (uint8 *)malloc(2048);
 
-	readRoom(iRoom, roomdata);
-	memcpy(&roomhdr, roomdata, sizeof(WTP_ROOM_HDR));
+	readRoom(iRoom, roomdata, roomhdr);
 	readObj(iObj, objdata);
 	memcpy(&objhdr, objdata, sizeof(WTP_OBJ_HDR));
 
@@ -942,8 +973,7 @@ void Winnie::gameLoop() {
 phase0:
 	if (!game.nObjMiss && (room == IDI_WTP_ROOM_PICNIC))
 		room = IDI_WTP_ROOM_PARTY;
-	readRoom(room, roomdata);
-	memcpy(&hdr, roomdata, sizeof(WTP_ROOM_HDR));
+	readRoom(room, roomdata, hdr);
 	drawRoomPic();
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen();
@@ -1025,12 +1055,9 @@ void Winnie::drawRoomPic() {
 	_vm->_gfx->clearScreen(0);
 
 	// read room picture
-	readRoom(room, buffer);
-	memcpy(&roomhdr, buffer, sizeof(WTP_ROOM_HDR));
+	readRoom(room, buffer, roomhdr);
 
-	if (_vm->getPlatform() == Common::kPlatformAmiga)
-		roomhdr.ofsPic = TO_BE_16(roomhdr.ofsPic);
-	else if (_vm->getPlatform() == Common::kPlatformPC)
+	if (_vm->getPlatform() == Common::kPlatformPC)
 		roomhdr.ofsPic = roomhdr.ofsPic - IDI_WTP_OFS_ROOM;
 
 	// draw room picture
@@ -1061,8 +1088,7 @@ void Winnie::printRoomStr(int iRoom, int iStr) {
 	WTP_ROOM_HDR hdr;
 	uint8 *buffer = (uint8 *)malloc(4096);
 
-	readRoom(iRoom, buffer);
-	memcpy(&hdr, buffer, sizeof(hdr));
+	readRoom(iRoom, buffer, hdr);
 	_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM));
 
 	free(buffer);
