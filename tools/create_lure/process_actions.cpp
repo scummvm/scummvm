@@ -140,6 +140,8 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 		if (startOffset == 0x7866) { startOffset = 0x740a; maxOffset = 0x7876; }
 		if (startOffset == 0x3600) { startOffset = 0x35c6; maxOffset = 0x3622; }
 		break;
+	default:
+		break;
 	}
 
 //printf("Start=%xh max=%xh\n", startOffset, maxOffset);

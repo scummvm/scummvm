@@ -591,40 +591,40 @@ struct AnimListRecord {
 };
 
 AnimListRecord animDataList[] = {
-	{0x1830, 0x1830},	// Copy protection header
-	{0x1839, 0x1839},	// Copy protection wording header
-	{0x1842, 0x1842},	// Copy protection numbers
-	{0x184B, 0x184B},	// Restart/Restore buttons
-	{0x55C0, 0x5680},	// Player midswing animation
-	{0x55C9, 0x5689},	// Player mid-level defend
-	{0x55D2, 0x5692},	// Player high-level strike
-	{0x55DB, 0x569B},	// Player high-level defend
-	{0x55E4, 0x56A4},	// Player low-level strike
-	{0x55ED, 0x56AD},	// Player low-level defend
-	{0x55F6, 0x56B6},	// Player fight animation
-	{0x55FF, 0x56BF},	// Pig fight animation
-	{0x5611, 0x56D1},	// Player mid-level strike
-	{0x5623, 0x56E3},	// Pig fight animation
-	{0x562C, 0x56EC},	// Misc fight animation
-	{0x5635, 0x56F5},	// Pig fight animation
-	{0x563E, 0x56FE},	// Player recoiling from hit
-	{0x5647, 0x5707},	// Pig recoiling from hit
-	{0x5650, 0x5710},	// Pig dies
-	{0x5810, 0x58D0},	// Voice bubble
-	{0x5915, 0x59D5},	// Blacksmith hammering
-	{0x59ED, 0x5AAD},	// Ewan's alternate animation
-	{0x59FF, 0x5ABF},	// Dragon breathing fire
-	{0x5A08, 0x5AC8},	// Dragon breathing fire 2
-	{0x5A11, 0x5AD1},	// Dragon breathing fire 3
-	{0x5A1A, 0x5ADA},	// Player turning winch in room #48
-	{0x5A59, 0x5B19},	// Player pulling lever in room #48
-	{0x5A62, 0x5B22},	// Minnow pulling lever in room #48
-	{0x5AAA, 0x5B6A},	// Goewin mixing potion
-	{0x5C95, 0x5D55},
-	{0x5CAA, 0x5D6A},	// Selena animation
-	{0x5CE9, 0x5DA9},	// Blacksmith in bar?
-	{0x5D28, 0x5DE8},	// Goewin animation
-	{0, 0}
+	{{0x1830, 0x1830}},	// Copy protection header
+	{{0x1839, 0x1839}},	// Copy protection wording header
+	{{0x1842, 0x1842}},	// Copy protection numbers
+	{{0x184B, 0x184B}},	// Restart/Restore buttons
+	{{0x55C0, 0x5680}},	// Player midswing animation
+	{{0x55C9, 0x5689}},	// Player mid-level defend
+	{{0x55D2, 0x5692}},	// Player high-level strike
+	{{0x55DB, 0x569B}},	// Player high-level defend
+	{{0x55E4, 0x56A4}},	// Player low-level strike
+	{{0x55ED, 0x56AD}},	// Player low-level defend
+	{{0x55F6, 0x56B6}},	// Player fight animation
+	{{0x55FF, 0x56BF}},	// Pig fight animation
+	{{0x5611, 0x56D1}},	// Player mid-level strike
+	{{0x5623, 0x56E3}},	// Pig fight animation
+	{{0x562C, 0x56EC}},	// Misc fight animation
+	{{0x5635, 0x56F5}},	// Pig fight animation
+	{{0x563E, 0x56FE}},	// Player recoiling from hit
+	{{0x5647, 0x5707}},	// Pig recoiling from hit
+	{{0x5650, 0x5710}},	// Pig dies
+	{{0x5810, 0x58D0}},	// Voice bubble
+	{{0x5915, 0x59D5}},	// Blacksmith hammering
+	{{0x59ED, 0x5AAD}},	// Ewan's alternate animation
+	{{0x59FF, 0x5ABF}},	// Dragon breathing fire
+	{{0x5A08, 0x5AC8}},	// Dragon breathing fire 2
+	{{0x5A11, 0x5AD1}},	// Dragon breathing fire 3
+	{{0x5A1A, 0x5ADA}},	// Player turning winch in room #48
+	{{0x5A59, 0x5B19}},	// Player pulling lever in room #48
+	{{0x5A62, 0x5B22}},	// Minnow pulling lever in room #48
+	{{0x5AAA, 0x5B6A}},	// Goewin mixing potion
+	{{0x5C95, 0x5D55}},
+	{{0x5CAA, 0x5D6A}},	// Selena animation
+	{{0x5CE9, 0x5DA9}},	// Blacksmith in bar?
+	{{0x5D28, 0x5DE8}},	// Goewin animation
+	{{0, 0}}
 };
 
 void read_anim_data(byte *&data, uint16 &totalSize) {
@@ -1103,8 +1103,8 @@ void read_room_exit_hotspots_data(byte *&data, uint16 &totalSize) {
 }
 
 void save_fight_segment(byte *&data, uint16 &totalSize) {
-	uint16 fightSegment = 0x1C400;
-	if (language == IT_ITA) fightSegment = 0x1c520;
+	uint16 fightSegment = (uint16) 0x1C400;
+	if (language == IT_ITA) fightSegment = (uint16) 0x1c520;
 	lureExe.seek(fightSegment);
 	
 	totalSize = FIGHT_SEGMENT_SIZE;
@@ -1175,7 +1175,7 @@ void save_sound_desc_data(byte *&data, uint16 &totalSize) {
 }
 
 struct DecoderEntry {
-	char *sequence;
+	const char *sequence;
 	char character;
 };
 
@@ -1211,35 +1211,35 @@ const DecoderEntry englishDecoders[] = {
 };
 
 const DecoderEntry italianDecoders[] = {
-	{"00", ' '}, {"010", 0x69},	{"0110", 0x6F}, {"01110", 0x61}, {"01111", 0x65},
-	{"1000", 0x72}, {"1001", 0x6E}, {"1010", 0x74}, {"10110", 0x73}, {"101110", 0x6C},
-	{"101111", 0x63}, {"11000", 0x75}, {"110010", 0x70}, {"110011", 0x64}, {"110100", 0},
-	{"110101", 0x6D}, {"110110", 0x67}, {"1101110", 0x2E}, {"1101111", 0x76},
-	{"111000", 0x68}, {"1110010", 0x2C}, {"1110011", 0x62}, {"1110100", 0x66},
-	{"1110101", 0x21}, {"1110110", 0xB5}, {"11101110", 0xB1}, {"111011110", 0xB3},
-	{"111011111", 0x7A}, {"1111000", 0xB4}, {"11110010", 0x27}, {"111100110", 0x4E},
-	{"111100111", 0x4C}, {"11110100", 0x3F}, {"111101010", 0x85}, {"111101011", 0x53},
-	{"11110110", 0x43}, {"111101110", 0x4D}, {"1111011110", 0xAC}, {"1111011111", 0x49},
-	{"11111000", 0x45}, {"111110010", 0x41}, {"1111100110", 0x54}, {"1111100111", 0xB2},
-	{"111110100", 0x71}, {"111110101", 0x4F}, {"111110110", 0x47}, {"1111101110", 0xAB},
-	{"11111011110", 0x50}, {"11111011111", 0x44}, {"111111000", 0x81},
-	{"1111110010", 0x55}, {"11111100110", 0xAE}, {"11111100111", 0x52},
-	{"1111110100", 0xA6}, {"1111110101", 0x56}, {"1111110110", 0xA8},
-	{"11111101110", 0x42}, {"111111011110", 0x51}, {"111111011111", 0xB0},
-	{"1111111000", 0x95}, {"11111110010", 0x48}, {"11111110011", 0x2D},
-	{"11111110100", 0xA9}, {"11111110101", 0x8A}, {"11111110110", 0xA3},
-	{"111111101110", 0x46}, {"111111101111", 0xA7}, {"11111111000", 0x8D},
-	{"11111111001", 0x77}, {"11111111010", 0x79}, {"111111110110", 0x7F},
-	{"1111111101110", 0x6B}, {"1111111101111", 0x31}, {"111111111000", 0x3B},
-	{"111111111001", 0xA5}, {"111111111010", 0x57}, {"1111111110110", 0x32},
-	{"11111111101110", 0xAF}, {"11111111101111", 0x35}, {"1111111111000", 0xA2},
-	{"1111111111001", 0xAD}, {"1111111111010", 0x25}, {"11111111110110", 0x36},
-	{"11111111110111", 0x3A}, {"1111111111100", 0x5A}, {"11111111111010", 0x33},
-	{"11111111111011", 0x30}, {"11111111111100", 0x34}, {"111111111111010", 0x39},
-	{"111111111111011", 0x37}, {"111111111111100", 0x38}, {"111111111111101", 0x2F},
-	{"1111111111111100", 0x4B}, {"1111111111111101", 0x22}, {"111111111111111000", 0x09},
-	{"111111111111111001", 0x28}, {"11111111111111101", 0x29}, {"111111111111111100", 0x4A},
-	{"111111111111111101", 0x59}, {"11111111111111111", 0x78},
+	{"00", ' '}, {"010", (char) 0x69},	{"0110", (char) 0x6F}, {"01110", (char) 0x61}, {"01111", (char) 0x65},
+	{"1000", (char) 0x72}, {"1001", (char) 0x6E}, {"1010", (char) 0x74}, {"10110", (char) 0x73}, {"101110", (char) 0x6C},
+	{"101111", (char) 0x63}, {"11000", (char) 0x75}, {"110010", (char) 0x70}, {"110011", (char) 0x64}, {"110100", 0},
+	{"110101", (char) 0x6D}, {"110110", (char) 0x67}, {"1101110", (char) 0x2E}, {"1101111", (char) 0x76},
+	{"111000", (char) 0x68}, {"1110010", (char) 0x2C}, {"1110011", (char) 0x62}, {"1110100", (char) 0x66},
+	{"1110101", (char) 0x21}, {"1110110", (char) 0xB5}, {"11101110", (char) 0xB1}, {"111011110", (char) 0xB3},
+	{"111011111", (char) 0x7A}, {"1111000", (char) 0xB4}, {"11110010", (char) 0x27}, {"111100110", (char) 0x4E},
+	{"111100111", (char) 0x4C}, {"11110100", (char) 0x3F}, {"111101010", (char) 0x85}, {"111101011", (char) 0x53},
+	{"11110110", (char) 0x43}, {"111101110", (char) 0x4D}, {"1111011110", (char) 0xAC}, {"1111011111", (char) 0x49},
+	{"11111000", (char) 0x45}, {"111110010", (char) 0x41}, {"1111100110", (char) 0x54}, {"1111100111", (char) 0xB2},
+	{"111110100", (char) 0x71}, {"111110101", (char) 0x4F}, {"111110110", (char) 0x47}, {"1111101110", (char) 0xAB},
+	{"11111011110", (char) 0x50}, {"11111011111", (char) 0x44}, {"111111000", (char) 0x81},
+	{"1111110010", (char) 0x55}, {"11111100110", (char) 0xAE}, {"11111100111", (char) 0x52},
+	{"1111110100", (char) 0xA6}, {"1111110101", (char) 0x56}, {"1111110110", (char) 0xA8},
+	{"11111101110", (char) 0x42}, {"111111011110", (char) 0x51}, {"111111011111", (char) 0xB0},
+	{"1111111000", (char) 0x95}, {"11111110010", (char) 0x48}, {"11111110011", (char) 0x2D},
+	{"11111110100", (char) 0xA9}, {"11111110101", (char) 0x8A}, {"11111110110", (char) 0xA3},
+	{"111111101110", (char) 0x46}, {"111111101111", (char) 0xA7}, {"11111111000", (char) 0x8D},
+	{"11111111001", (char) 0x77}, {"11111111010", (char) 0x79}, {"111111110110", (char) 0x7F},
+	{"1111111101110", (char) 0x6B}, {"1111111101111", (char) 0x31}, {"111111111000", (char) 0x3B},
+	{"111111111001", (char) 0xA5}, {"111111111010", (char) 0x57}, {"1111111110110", (char) 0x32},
+	{"11111111101110", (char) 0xAF}, {"11111111101111", (char) 0x35}, {"1111111111000", (char) 0xA2},
+	{"1111111111001", (char) 0xAD}, {"1111111111010", (char) 0x25}, {"11111111110110", (char) 0x36},
+	{"11111111110111", (char) 0x3A}, {"1111111111100", (char) 0x5A}, {"11111111111010", (char) 0x33},
+	{"11111111111011", (char) 0x30}, {"11111111111100", (char) 0x34}, {"111111111111010", (char) 0x39},
+	{"111111111111011", (char) 0x37}, {"111111111111100", (char) 0x38}, {"111111111111101", (char) 0x2F},
+	{"1111111111111100", (char) 0x4B}, {"1111111111111101", (char) 0x22}, {"111111111111111000", (char) 0x09},
+	{"111111111111111001", (char) 0x28}, {"11111111111111101", (char) 0x29}, {"111111111111111100", (char) 0x4A},
+	{"111111111111111101", (char) 0x59}, {"11111111111111111", (char) 0x78},
 	{NULL, '\0'}
 };
 
@@ -1266,7 +1266,7 @@ void save_string_decoder_data(byte *&data, uint16 &totalSize) {
 		++pSrc;
 	}
 
-	*pDest = 0xff;
+	*pDest = (char) 0xff;
 }
 
 void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size) {
@@ -1548,7 +1548,7 @@ bool validate_executable() {
 
 
 int main(int argc, char *argv[]) {
-	const char *inFilename, *outFilename;
+	const char /**inFilename,*/ *outFilename;
 
 	if (argc == 1) {
 		printf("Format: %s output_filename [lureExecutable ..]\n", argv[0]);
