@@ -117,11 +117,11 @@ RoomExitHotspotData::RoomExitHotspotData(RoomExitHotspotResource *rec) {
 //  Room exit class
 
 RoomExitData::RoomExitData(RoomExitResource *rec) {
-	xs = rec->xs; 
-	ys = rec->ys;
-	xe = rec->xe;
-	ye = rec->ye;
-	sequenceOffset = rec->sequenceOffset;
+	xs = FROM_LE_16(rec->xs); 
+	ys = FROM_LE_16(rec->ys);
+	xe = FROM_LE_16(rec->xe);
+	ye = FROM_LE_16(rec->ye);
+	sequenceOffset = FROM_LE_16(rec->sequenceOffset);
 	roomNumber = rec->newRoom;
 	x = rec->newRoomX;
 	y = rec->newRoomY;
