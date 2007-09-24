@@ -45,6 +45,7 @@ enum kSequences {
 
 class WSAMovieV2;
 class KyraEngine_v2;
+class Debugger_v2;
 
 struct SequenceControl {
 	int8 frameIndex;
@@ -83,6 +84,7 @@ struct Sequence {
 };
 
 class KyraEngine_v2 : public KyraEngine {
+friend class Debugger_v2;
 public:
 	KyraEngine_v2(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v2();
@@ -133,6 +135,7 @@ protected:
 	int go();
 	
 	Screen_v2 *_screen;
+	Debugger_v2 *_debugger;
 	
 	ActiveWSA *_activeWSA;
 	ActiveChat *_activeChat;

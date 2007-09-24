@@ -32,6 +32,7 @@
 #include "kyra/script.h"
 #include "kyra/text.h"
 #include "kyra/timer.h"
+#include "kyra/debugger.h"
 
 #include "common/system.h"
 
@@ -40,6 +41,8 @@ namespace Kyra {
 KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngine(system, flags) {
 	memset(_defaultShapeTable, 0, sizeof(_defaultShapeTable));
 	_mouseSHPBuf = 0;
+	_debugger = 0;
+	_screen = 0;
 	
 	_gamePlayBuffer = 0;
 	_cCodeBuffer = _optionsBuffer = _chapterBuffer = 0;
@@ -66,6 +69,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 KyraEngine_v2::~KyraEngine_v2() {
 	delete [] _mouseSHPBuf;
 	delete _screen;
+	delete _debugger;
 }
 
 Movie *KyraEngine_v2::createWSAMovie() {
@@ -79,6 +83,9 @@ int KyraEngine_v2::init() {
 		error("_screen->init() failed");
 
 	KyraEngine::init();
+
+	_debugger = new Debugger_v2(this);
+	assert(_debugger);
 	
 	setupTimers();
 
@@ -475,6 +482,11 @@ int KyraEngine_v2::checkInput(void *p) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_RETURN)
 				keys = 199;
+
+			if (event.kbd.flags == Common::KBD_CTRL) {
+				if (event.kbd.keycode == 'd')
+					_debugger->attach();
+			}
 			break;
 
 		case Common::EVENT_LBUTTONUP:
@@ -489,8 +501,8 @@ int KyraEngine_v2::checkInput(void *p) {
 			break;
 		}
 	
-		//if ( _debugger->isAttached())
-		//	_debugger->onFrame();
+		if (_debugger->isAttached())
+			_debugger->onFrame();
 	}
 	
 	_system->delayMillis(10);

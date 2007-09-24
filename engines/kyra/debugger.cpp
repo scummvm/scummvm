@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "kyra/debugger.h"
 #include "kyra/kyra_v1.h"
+#include "kyra/kyra_v2.h"
 #include "kyra/screen.h"
 #include "kyra/timer.h"
 
@@ -210,6 +211,11 @@ bool Debugger_v1::cmd_listBirthstones(int argc, const char **argv) {
 	for (int i = 0; i < ARRAYSIZE(_vm->_birthstoneGemTable); ++i)
 		DebugPrintf("%-2d '%s'\n", _vm->_birthstoneGemTable[i], _vm->_itemList[_vm->_birthstoneGemTable[i]]);
 	return true;
+}
+
+#pragma mark -
+
+Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
 }
 
 } // End of namespace Kyra
