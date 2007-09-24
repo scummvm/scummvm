@@ -254,7 +254,7 @@ bool DefaultEventManager::playback(Common::Event &event) {
 
 	if (!_hasPlaybackEvent) {
 		if (_recordCount > _playbackCount) {
-			readRecord(_playbackFile, (uint32&)_playbackDiff, _playbackEvent);
+			readRecord(_playbackFile, const_cast<uint32&>(_playbackDiff), _playbackEvent);
 			_playbackCount++;
 			_hasPlaybackEvent = true;
 		}
