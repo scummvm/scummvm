@@ -30,6 +30,8 @@
 #include "kyra/script.h"
 #include "kyra/screen_v2.h"
 
+#include "common/list.h"
+
 namespace Kyra {
 
 enum kSequences {
@@ -165,9 +167,15 @@ protected:
 	void updateMouse();
 	
 	int checkInput(void *p);
+	void removeInputTop();
 	void handleInput(int x, int y);
-	
+
 	int inputSceneChange(int x, int y, int unk1, int unk2);
+
+	// - Input
+	void updateInput();
+
+	Common::List<Common::Event> _eventList;
 	
 	// gfx/animation specific
 	uint8 *_gamePlayBuffer;

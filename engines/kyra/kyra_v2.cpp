@@ -278,13 +278,18 @@ void KyraEngine_v2::runLoop() {
 	_quitFlag = false;
 	while (!_quitFlag) {
 		//XXX
+
 		int inputFlag = checkInput(0/*dword_324C5*/);
+		removeInputTop();
+
 		update();
+
 		if (inputFlag == 198 || inputFlag == 199) {
 			_unk3 = _handItemSet;
 			Common::Point mouse = getMousePos();
 			handleInput(mouse.x, mouse.y);
 		}
+
 		//XXX
 	}
 }
@@ -353,6 +358,8 @@ void KyraEngine_v2::handleInput(int x, int y) {
 }
 
 int KyraEngine_v2::update() {
+	updateInput();
+
 	refreshAnimObjectsIfNeed();
 	updateMouse();
 	updateSpecialSceneScripts();
@@ -362,6 +369,7 @@ int KyraEngine_v2::update() {
 	//sub_1574C();
 	//XXX
 	_screen->updateScreen();
+
 	return 0;
 }
 
@@ -474,10 +482,22 @@ void KyraEngine_v2::updateMouse() {
 	}
 }
 
-int KyraEngine_v2::checkInput(void *p) {
+void KyraEngine_v2::updateInput() {
 	Common::Event event;
+
+	while (_eventMan->pollEvent(event))
+		_eventList.push_back(event);
+}
+
+int KyraEngine_v2::checkInput(void *p) {
+	updateInput();
+
 	int keys = 0;
-	while (_eventMan->pollEvent(event)) {
+
+	while (_eventList.size()) {
+		Common::Event event = *_eventList.begin();
+		bool breakLoop = false;
+
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_RETURN)
@@ -487,10 +507,12 @@ int KyraEngine_v2::checkInput(void *p) {
 				if (event.kbd.keycode == 'd')
 					_debugger->attach();
 			}
+			breakLoop = true;
 			break;
 
 		case Common::EVENT_LBUTTONUP:
 			keys = 198;
+			breakLoop = true;
 			break;
 
 		case Common::EVENT_QUIT:
@@ -503,10 +525,20 @@ int KyraEngine_v2::checkInput(void *p) {
 	
 		if (_debugger->isAttached())
 			_debugger->onFrame();
+
+		if (breakLoop)
+			break;
+
+		_eventList.erase(_eventList.begin());
 	}
 	
 	_system->delayMillis(10);
 	return keys;
+}
+
+void KyraEngine_v2::removeInputTop() {
+	if (_eventList.begin() != _eventList.end())
+		_eventList.erase(_eventList.begin());
 }
 
 void KyraEngine_v2::cleanup() {
