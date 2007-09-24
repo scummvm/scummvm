@@ -49,21 +49,21 @@ _mt32emu=yes
 _build_scumm=yes
 _build_scumm_7_8=yes
 _build_he=yes
+_build_agi=yes
 _build_agos=yes
-_build_sky=yes
-_build_sword1=yes
-_build_sword2=yes
-_build_queen=yes
-_build_saga=yes
+_build_cine=yes
+_build_cruise=no
+_build_drascula=no
 _build_gob=yes
 _build_kyra=yes
 _build_lure=yes
-_build_cine=yes
-_build_agi=yes
-_build_touche=yes
 _build_parallaction=yes
-_build_cruise=no
-_build_drascula=no
+_build_queen=yes
+_build_saga=yes
+_build_sky=yes
+_build_sword1=yes
+_build_sword2=yes
+_build_touche=yes
 _build_hq_scalers=yes
 _build_scalers=yes
 
@@ -350,6 +350,9 @@ Special configuration feature:
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
+  --disable-scumm          don't build the SCUMM engine
+  --disable-scumm-7-8      exclude v7 and v8 game in SCUMM engine (ft, dig, comi and demos)
+  --disable-he             exclude HE70+ games in SCUMM engine
   --disable-agi            don't build the AGI engine
   --disable-agos           don't build the AGOS engine
   --disable-cine           don't build the Cinematique engine evo 1
@@ -358,12 +361,9 @@ Optional Features:
   --disable-gob            don't build the Gobli*ns engine
   --disable-kyra           don't build the Legend of Kyrandia engine
   --disable-lure           don't build the Lure of the Temptress engine
-  --disable-he             exclude HE70+ games in SCUMM engine
   --disable-parallaction   don't build the Parallaction engine
   --disable-queen          don't build the Flight of the Amazon Queen engine
   --disable-saga           don't build the SAGA engine
-  --disable-scumm          don't build the SCUMM engine
-  --disable-scumm-7-8      exclude v7 and v8 game in SCUMM engine (ft, dig, comi and demos)
   --disable-sky            don't build the Beneath a Steel Sky engine
   --disable-sword1         don't build the Broken Sword 1 engine
   --disable-sword2         don't build the Broken Sword 2 engine
@@ -426,21 +426,21 @@ for ac_option in $@; do
       --disable-scumm)          _build_scumm=no ;;
       --disable-scumm-7-8)      _build_scumm_7_8=no ;;
       --disable-he)             _build_he=no ;;
+      --disable-agi)            _build_agi=no ;;
       --disable-agos)           _build_agos=no ;;
-      --disable-sky)            _build_sky=no ;;
-      --disable-sword1)         _build_sword1=no ;;
-      --disable-sword2)         _build_sword2=no ;;
-      --disable-queen)          _build_queen=no ;;
-      --disable-saga)           _build_saga=no ;;
+      --disable-cine)           _build_cine=no ;;
+      --enable-cruise)          _build_cruise=yes ;;
+      --enable-drascula)        _build_drascula=yes ;;
       --disable-gob)            _build_gob=no ;;
       --disable-kyra)           _build_kyra=no ;;
       --disable-lure)           _build_lure=no ;;
-      --disable-cine)           _build_cine=no ;;
-      --disable-agi)            _build_agi=no ;;
-      --disable-touche)         _build_touche=no ;;
       --disable-parallaction)   _build_parallaction=no ;;
-      --enable-cruise)          _build_cruise=yes ;;
-      --enable-drascula)        _build_drascula=yes ;;
+      --disable-queen)          _build_queen=no ;;
+      --disable-saga)           _build_saga=no ;;
+      --disable-sky)            _build_sky=no ;;
+      --disable-sword1)         _build_sword1=no ;;
+      --disable-sword2)         _build_sword2=no ;;
+      --disable-touche)         _build_touche=no ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
@@ -719,21 +719,21 @@ fi;
 add_to_config_mk_if_no $_build_scumm        'DISABLE_SCUMM = 1'
 add_to_config_mk_if_no $_build_scumm_7_8    'DISABLE_SCUMM_7_8 = 1'
 add_to_config_mk_if_no $_build_he           'DISABLE_HE = 1'
+add_to_config_mk_if_no $_build_agi          'DISABLE_AGI = 1'
 add_to_config_mk_if_no $_build_agos         'DISABLE_AGOS = 1'
+add_to_config_mk_if_no $_build_cine         'DISABLE_CINE = 1'
+add_to_config_mk_if_no $_build_cruise       'DISABLE_CRUISE = 1'
+add_to_config_mk_if_no $_build_drascula     'DISABLE_DRASCULA = 1'
+add_to_config_mk_if_no $_build_gob          'DISABLE_GOB = 1'
+add_to_config_mk_if_no $_build_kyra         'DISABLE_KYRA = 1'
+add_to_config_mk_if_no $_build_lure         'DISABLE_LURE = 1'
+add_to_config_mk_if_no $_build_parallaction 'DISABLE_PARALLACTION = 1'
+add_to_config_mk_if_no $_build_queen        'DISABLE_QUEEN = 1'
+add_to_config_mk_if_no $_build_saga         'DISABLE_SAGA = 1'
 add_to_config_mk_if_no $_build_sky          'DISABLE_SKY = 1'
 add_to_config_mk_if_no $_build_sword1       'DISABLE_SWORD1 = 1'
 add_to_config_mk_if_no $_build_sword2       'DISABLE_SWORD2 = 1'
-add_to_config_mk_if_no $_build_queen        'DISABLE_QUEEN = 1'
-add_to_config_mk_if_no $_build_kyra         'DISABLE_KYRA = 1'
-add_to_config_mk_if_no $_build_saga         'DISABLE_SAGA = 1'
-add_to_config_mk_if_no $_build_gob          'DISABLE_GOB = 1'
-add_to_config_mk_if_no $_build_lure         'DISABLE_LURE = 1'
-add_to_config_mk_if_no $_build_cine         'DISABLE_CINE = 1'
-add_to_config_mk_if_no $_build_agi          'DISABLE_AGI = 1'
 add_to_config_mk_if_no $_build_touche       'DISABLE_TOUCHE = 1'
-add_to_config_mk_if_no $_build_parallaction 'DISABLE_PARALLACTION = 1'
-add_to_config_mk_if_no $_build_cruise       'DISABLE_CRUISE = 1'
-add_to_config_mk_if_no $_build_drascula     'DISABLE_DRASCULA = 1'
 add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
 add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
 
@@ -1340,8 +1340,38 @@ if test "$_build_scumm" = yes ; then
 	fi
 	echo
 fi
+if test "$_build_agi" = yes ; then
+	echo "    AGI"
+fi
 if test "$_build_agos" = yes ; then
 	echo "    AGOS"
+fi
+if test "$_build_cine" = yes ; then
+	echo "    Cinematique evo 1"
+fi
+if test "$_build_cruise" = yes ; then
+	echo "    Cinematique evo 2"
+fi
+if test "$_build_drascula" = yes ; then
+	echo "    Drascula"
+fi
+if test "$_build_gob" = yes ; then
+	echo "    Gobli*ns"
+fi
+if test "$_build_kyra" = yes ; then
+	echo "    Legend of Kyrandia"
+fi
+if test "$_build_lure" = yes ; then
+	echo "    Lure of the Temptress"
+fi
+if test "$_build_parallaction" = yes ; then
+	echo "    Parallaction"
+fi
+if test "$_build_queen" = yes ; then
+	echo "    Flight of the Amazon Queen"
+fi
+if test "$_build_saga" = yes ; then
+	echo "    SAGA"
 fi
 if test "$_build_sky" = yes ; then
 	echo "    Beneath a Steel Sky"
@@ -1362,38 +1392,8 @@ if test "$_build_sword2" = yes ; then
 		echo " (without mpeg2 cutscenes)"
 	fi
 fi
-if test "$_build_queen" = yes ; then
-	echo "    Flight of the Amazon Queen"
-fi
-if test "$_build_saga" = yes ; then
-	echo "    SAGA"
-fi
-if test "$_build_kyra" = yes ; then
-	echo "    Legend of Kyrandia"
-fi
-if test "$_build_gob" = yes ; then
-	echo "    Gobli*ns"
-fi
-if test "$_build_lure" = yes ; then
-	echo "    Lure of the Temptress"
-fi
-if test "$_build_cine" = yes ; then
-	echo "    Cinematique evo 1"
-fi
-if test "$_build_agi" = yes ; then
-	echo "    AGI"
-fi
 if test "$_build_touche" = yes ; then
 	echo "    Touche: The Adventures of the Fifth Musketeer"
-fi
-if test "$_build_parallaction" = yes ; then
-	echo "    Parallaction"
-fi
-if test "$_build_cruise" = yes ; then
-	echo "    Cinematique evo 2"
-fi
-if test "$_build_drascula" = yes ; then
-	echo "    Drascula"
 fi
 
 echo

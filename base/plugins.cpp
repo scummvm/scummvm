@@ -89,6 +89,39 @@ public:
 		#ifndef DISABLE_SCUMM
 		LINK_PLUGIN(SCUMM)
 		#endif
+		#ifndef DISABLE_AGI
+		LINK_PLUGIN(AGI)
+		#endif
+		#ifndef DISABLE_AGOS
+		LINK_PLUGIN(AGOS)
+		#endif
+		#ifndef DISABLE_CINE
+		LINK_PLUGIN(CINE)
+		#endif
+		#ifndef DISABLE_CRUISE
+		LINK_PLUGIN(CRUISE)
+		#endif
+		#ifndef DISABLE_DRASCULA
+		LINK_PLUGIN(DRASCULA)
+		#endif
+		#ifndef DISABLE_GOB
+		LINK_PLUGIN(GOB)
+		#endif
+		#ifndef DISABLE_KYRA
+		LINK_PLUGIN(KYRA)
+		#endif
+		#ifndef DISABLE_LURE
+		LINK_PLUGIN(LURE)
+		#endif
+		#ifndef DISABLE_PARALLACTION
+		LINK_PLUGIN(PARALLACTION)
+		#endif
+		#ifndef DISABLE_QUEEN
+		LINK_PLUGIN(QUEEN)
+		#endif
+		#ifndef DISABLE_SAGA
+		LINK_PLUGIN(SAGA)
+		#endif
 		#ifndef DISABLE_SKY
 		LINK_PLUGIN(SKY)
 		#endif
@@ -98,41 +131,8 @@ public:
 		#ifndef DISABLE_SWORD2
 		LINK_PLUGIN(SWORD2)
 		#endif
-		#ifndef DISABLE_AGOS
-		LINK_PLUGIN(AGOS)
-		#endif
-		#ifndef DISABLE_QUEEN
-		LINK_PLUGIN(QUEEN)
-		#endif
-		#ifndef DISABLE_SAGA
-		LINK_PLUGIN(SAGA)
-		#endif
-		#ifndef DISABLE_KYRA
-		LINK_PLUGIN(KYRA)
-		#endif
-		#ifndef DISABLE_GOB
-		LINK_PLUGIN(GOB)
-		#endif
-		#ifndef DISABLE_LURE
-		LINK_PLUGIN(LURE)
-		#endif
-		#ifndef DISABLE_CINE
-		LINK_PLUGIN(CINE)
-		#endif
-		#ifndef DISABLE_AGI
-		LINK_PLUGIN(AGI)
-		#endif
 		#ifndef DISABLE_TOUCHE
 		LINK_PLUGIN(TOUCHE)
-		#endif
-		#ifndef DISABLE_PARALLACTION
-		LINK_PLUGIN(PARALLACTION)
-		#endif
-		#ifndef DISABLE_CRUISE
-		LINK_PLUGIN(CRUISE)
-		#endif
-		#ifndef DISABLE_DRASCULA
-		LINK_PLUGIN(DRASCULA)
 		#endif
 
 		return pl;
