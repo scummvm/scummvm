@@ -293,6 +293,9 @@ protected:
 	};
 	
 	SceneDesc *_sceneList;
+	int _sceneListSize;
+	uint16 _currentScene;
+
 	const char *_sceneCommentString;
 	uint16 _sceneExit1, _sceneExit2, _sceneExit3, _sceneExit4;
 	int _sceneEnterX1, _sceneEnterY1, _sceneEnterX2, _sceneEnterY2,

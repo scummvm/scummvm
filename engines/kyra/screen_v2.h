@@ -33,6 +33,7 @@ namespace Kyra {
 class KyraEngine_v2;
 
 class Screen_v2 : public Screen {
+friend class Debugger_v2;
 public:
 	Screen_v2(KyraEngine_v2 *vm, OSystem *system);
 	virtual ~Screen_v2();

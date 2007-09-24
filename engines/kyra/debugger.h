@@ -43,6 +43,7 @@ protected:
 	KyraEngine *_vm;
 
 	bool cmd_setScreenDebug(int argc, const char **argv);
+	bool cmd_showFacings(int argc, const char **argv);
 };
 
 class Debugger_v1 : public Debugger {
@@ -74,6 +75,12 @@ public:
 
 protected:
 	KyraEngine_v2 *_vm;
+
+	bool cmd_enterScene(int argc, const char **argv);
+	bool cmd_listScenes(int argc, const char **argv);
+	bool cmd_sceneInfo(int argc, const char **argv);
+	bool cmd_characterInfo(int argc, const char **argv);
+	bool cmd_sceneToFacing(int argc, const char **argv);
 };
 
 } // End of namespace Kyra

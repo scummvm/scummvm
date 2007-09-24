@@ -258,6 +258,8 @@ void KyraEngine_v2::startup() {
 	// XXX
 	
 	_sceneList = new SceneDesc[86];
+	memset(_sceneList, 0, sizeof(SceneDesc)*86);
+	_sceneListSize = 86;
 	runStartScript(1, 0);
 	loadNPCScript();
 	

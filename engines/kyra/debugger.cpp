@@ -39,6 +39,7 @@ Debugger::Debugger(KyraEngine *vm)
 	_vm = vm;
 
 	DCmd_Register("screen_debug_mode",	WRAP_METHOD(Debugger, cmd_setScreenDebug));
+	DCmd_Register("facings",			WRAP_METHOD(Debugger, cmd_showFacings));
 }
 
 bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
@@ -53,6 +54,16 @@ bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
 		DebugPrintf("Screen debug mode is %s.\n", (_vm->screen()->queryScreenDebug() ? "enabled" : "disabled"));
 		DebugPrintf("Use screen_debug_mode <enable/disable> to enable or disable it.\n");
 	}
+	return true;
+}
+
+bool Debugger::cmd_showFacings(int argc, const char **argv) {
+	DebugPrintf("Facing directions:\n");
+	DebugPrintf("7  0  1\n");
+	DebugPrintf(" \\ | / \n");
+	DebugPrintf("6--*--2\n");
+	DebugPrintf(" / | \\\n");
+	DebugPrintf("5  4  3\n");
 	return true;
 }
 
@@ -96,13 +107,13 @@ bool Debugger_v1::cmd_enterRoom(int argc, const char **argv) {
 		if (argc > 2) {
 			direction = atoi(argv[2]);
 		} else {
-			if (_vm->_roomTable[room].northExit != 0xff)
+			if (_vm->_roomTable[room].northExit != 0xFFFF)
 				direction = 3;
-			else if (_vm->_roomTable[room].eastExit != 0xff)
+			else if (_vm->_roomTable[room].eastExit != 0xFFFF)
 				direction = 4;
-			else if (_vm->_roomTable[room].southExit != 0xff)
+			else if (_vm->_roomTable[room].southExit != 0xFFFF)
 				direction = 1;
-			else if (_vm->_roomTable[room].westExit != 0xff)
+			else if (_vm->_roomTable[room].westExit != 0xFFFF)
 				direction = 2;
 		}
 
@@ -216,6 +227,136 @@ bool Debugger_v1::cmd_listBirthstones(int argc, const char **argv) {
 #pragma mark -
 
 Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
+	DCmd_Register("continue",			WRAP_METHOD(Debugger_v2, Cmd_Exit));
+	DCmd_Register("character_info",		WRAP_METHOD(Debugger_v2, cmd_characterInfo));
+	DCmd_Register("enter",				WRAP_METHOD(Debugger_v2, cmd_enterScene));
+	DCmd_Register("rooms",				WRAP_METHOD(Debugger_v2, cmd_listScenes));	// for consistency with kyra_v1
+	DCmd_Register("scenes",				WRAP_METHOD(Debugger_v2, cmd_listScenes));
+	DCmd_Register("scene_info",			WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
+	DCmd_Register("scene_to_facing",	WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
+}
+
+bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
+	uint direction = 0;
+	if (argc > 1) {
+		int scene = atoi(argv[1]);
+
+		// game will crash if entering a non-existent scene 
+		if (scene >= _vm->_sceneListSize) {
+			DebugPrintf("scene number must be any value between (including) 0 and %d\n", _vm->_sceneListSize-1);
+			return true;
+		}
+
+		if (argc > 2) {
+			direction = atoi(argv[2]);
+		} else {
+			if (_vm->_sceneList[scene].exit1 != 0xFFFF)
+				direction = 4;
+			else if (_vm->_sceneList[scene].exit2 != 0xFFFF)
+				direction = 6;
+			else if (_vm->_sceneList[scene].exit3 != 0xFFFF)
+				direction = 0;
+			else if (_vm->_sceneList[scene].exit4 != 0xFFFF)
+				direction = 2;
+		}
+
+		_vm->_system->hideOverlay();
+		_vm->_mainCharacter.facing = direction;
+
+		_vm->enterNewScene(scene, _vm->_mainCharacter.facing, 0, 0, 1);
+		_vm->_screen->_mouseLockCount = 0;
+
+		_detach_now = true;
+		return false;
+	}
+
+	DebugPrintf("Syntax: %d <scenenum> <direction>\n", argv[0]);
+	return true;
+}
+
+bool Debugger_v2::cmd_listScenes(int argc, const char **argv) {
+	int shown = 1;
+	for (int i = 0; i < _vm->_sceneListSize; ++i) {
+		if (_vm->_sceneList[i].filename[0]) {
+			DebugPrintf("%-2i: %-10s", i, _vm->_sceneList[i].filename);
+			if (!(shown % 5))
+				DebugPrintf("\n");
+			++shown;
+		}
+	}
+	DebugPrintf("\n");
+	DebugPrintf("Current scene: %i\n", _vm->_currentScene);
+	return true;
+}
+
+bool Debugger_v2::cmd_sceneInfo(int argc, const char **argv) {
+	DebugPrintf("Current scene: %d '%s'\n", _vm->_currentScene, _vm->_sceneList[_vm->_currentScene].filename);
+	DebugPrintf("\n");
+	DebugPrintf("Exit information:\n");
+	DebugPrintf("Exit1: leads to %d, position %dx%d\n", int16(_vm->_sceneExit1), _vm->_sceneEnterX1, _vm->_sceneEnterY1);
+	DebugPrintf("Exit2: leads to %d, position %dx%d\n", int16(_vm->_sceneExit2), _vm->_sceneEnterX2, _vm->_sceneEnterY2);
+	DebugPrintf("Exit3: leads to %d, position %dx%d\n", int16(_vm->_sceneExit3), _vm->_sceneEnterX3, _vm->_sceneEnterY3);
+	DebugPrintf("Exit4: leads to %d, position %dx%d\n", int16(_vm->_sceneExit4), _vm->_sceneEnterX4, _vm->_sceneEnterY4);
+	DebugPrintf("Special exit information:\n");
+	if (!_vm->_specialExitCount) {
+		DebugPrintf("No special exits.\n");
+	} else {
+		DebugPrintf("This scene has %d special exits.\n", _vm->_specialExitCount);
+		for (int i = 0; i < _vm->_specialExitCount; ++i) {
+			DebugPrintf("SpecialExit%d: facing %d, position (x1/y1/x2/y2): %d/%d/%d/%d\n", i,
+					_vm->_specialExitTable[20+i], _vm->_specialExitTable[0+i], _vm->_specialExitTable[5+i],
+					_vm->_specialExitTable[10+i], _vm->_specialExitTable[15+i]);
+		}
+	}
+
+	return true;
+}
+
+bool Debugger_v2::cmd_characterInfo(int argc, const char **argv) {
+	DebugPrintf("Main character is in scene: %d '%s'\n", _vm->_mainCharacter.sceneId, _vm->_sceneList[_vm->_mainCharacter.sceneId].filename);
+	DebugPrintf("Position: %dx%d\n", _vm->_mainCharacter.x1, _vm->_mainCharacter.y1);
+	DebugPrintf("Facing: %d\n", _vm->_mainCharacter.facing);
+	DebugPrintf("Inventory:\n");
+	for (int i = 0; i < 20; ++i) {
+		DebugPrintf("%-2d ", int8(_vm->_mainCharacter.inventory[i]));
+		if (i == 9 || i == 19)
+			DebugPrintf("\n");
+	}
+	return true;
+}
+
+bool Debugger_v2::cmd_sceneToFacing(int argc, const char **argv) {
+	if (argc == 2) {
+		int facing = atoi(argv[1]);
+		int16 exit = -1;
+
+		switch (facing) {
+		case 0: case 1: case 7:
+			exit = _vm->_sceneList[_vm->_currentScene].exit1;
+			break;
+
+		case 6:
+			exit = _vm->_sceneList[_vm->_currentScene].exit2;
+			break;
+
+		case 3: case 4: case 5:
+			exit = _vm->_sceneList[_vm->_currentScene].exit3;
+			break;
+
+		case 2:
+			exit = _vm->_sceneList[_vm->_currentScene].exit4;
+			break;
+
+		default:
+			break;
+		}
+
+		DebugPrintf("Exit to facing %d leads to room %d.\n", facing, exit);
+	} else {
+		DebugPrintf("Usage: %s <facing>\n", argv[0]);
+	}
+
+	return true;
 }
 
 } // End of namespace Kyra
