@@ -152,7 +152,7 @@ void Winnie::randomize() {
 	for (int i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++) {
 		done = false;
 		while (!done) {
-			iObj = _vm->rnd(IDI_WTP_MAX_OBJ - 1) + 1;
+			iObj = _vm->rnd(IDI_WTP_MAX_OBJ - 1);
 			done = true;
 			for (int j = 0; j < IDI_WTP_MAX_OBJ_MISSING; j++) {
 				if (_game.iUsedObj[j] == iObj) {
@@ -166,7 +166,7 @@ void Winnie::randomize() {
 		
 		done = false;
 		while (!done) {
-			iRoom = _vm->rnd(IDI_WTP_MAX_ROOM_NORMAL) + 1;
+			iRoom = _vm->rnd(IDI_WTP_MAX_ROOM_NORMAL);
 			done = true;
 			for (int j = 0; j < IDI_WTP_MAX_ROOM_OBJ; j++) {
 				if (_game.iObjRoom[j] == iRoom) {
