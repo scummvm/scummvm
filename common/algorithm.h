@@ -53,6 +53,15 @@ Out copy_if(In first, In last, Out dst, Op op) {
 	return dst;
 }
 
+// TODO: this is can be slower than memset for most normal data
+// maybe specialize the template for char, short, int, long, long long
+template<class In, class Value>
+In set_to(In first, In last, Value val) {
+	while (first != last)
+		*first++ = val;
+	return first;
+}
+
 template<class In, class T>
 In find(In first, In last, const T &v) {
 	while (first != last) {
