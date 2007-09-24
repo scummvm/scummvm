@@ -1109,7 +1109,7 @@ void Winnie::drawObjPic(int iObj, int x0, int y0) {
 	uint32 objSize = readObj(iObj, buffer);
 	parseObjHeader(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
 	
-	if (_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformApple2GS)
+	if (_vm->getPlatform() != Common::kPlatformAmiga)
 		objhdr.ofsPic -= IDI_WTP_OFS_OBJ;
 
 	_vm->_picture->setOffset(x0, y0);
@@ -1139,8 +1139,7 @@ void Winnie::drawRoomPic() {
 	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	// draw object picture
-	if (_vm->getPlatform() != Common::kPlatformC64)
-		drawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
+	drawObjPic(iObj, IDI_WTP_PIC_X0 + roomhdr.objX, IDI_WTP_PIC_Y0 + roomhdr.objY);
 
 	free(buffer);
 }
