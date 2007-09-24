@@ -477,6 +477,8 @@ void Winnie::inventory() {
 
 	sprintf(szMissing, IDS_WTP_INVENTORY_1, _game.nObjMiss);
 	_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_MENU, IDA_DEFAULT, szMissing);
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen(); //TODO: Move to game's main loop
 	_vm->getSelection(kSelAnyKey);
 }
 
