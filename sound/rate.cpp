@@ -222,7 +222,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 	while (obuf < oend) {
 
 		// read enough input samples so that opos < 0
-		while (FRAC_ONE <= opos) {
+		while ((frac_t)FRAC_ONE <= opos) {
 			// Check if we have to refill the buffer
 			if (inLen == 0) {
 				inPtr = inBuf;
@@ -242,7 +242,7 @@ int LinearRateConverter<stereo, reverseStereo>::flow(AudioStream &input, st_samp
 
 		// Loop as long as the outpos trails behind, and as long as there is
 		// still space in the output buffer.
-		while (opos < FRAC_ONE && obuf < oend) {
+		while (opos < (frac_t)FRAC_ONE && obuf < oend) {
 			// interpolate
 			st_sample_t out0, out1;
 			out0 = (st_sample_t)(ilast0 + (((icur0 - ilast0) * opos + FRAC_HALF) >> FRAC_BITS));
