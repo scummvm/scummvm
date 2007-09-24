@@ -333,10 +333,7 @@ void Inventory::clear(bool keepVerbs) {
 
 
 ItemName Inventory::getItemName(ItemPosition pos) const {
-	// TODO: should assert against the number of items actually contained,
-	// not the theoretical limit.
-	assert(pos >= 0 && pos < INVENTORY_MAX_ITEMS);
-	return _items[pos]._index;
+	return (pos >= 0 && pos < INVENTORY_MAX_ITEMS) ? _items[pos]._index : 0;
 }
 
 const InventoryItem* Inventory::getItem(ItemPosition pos) const {

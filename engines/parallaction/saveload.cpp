@@ -147,7 +147,6 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 		f->readLine(s, 15);
 		name = atoi(s);
 
-		printf("loadGame: inv[%i].id = %i, inv[%i].index = %i\n", _si, value, _si, name);
 		addInventoryItem(name, value);
 	}
 
