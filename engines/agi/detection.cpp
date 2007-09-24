@@ -1790,6 +1790,23 @@ static const AGIGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Winnie the Pooh in the Hundred Acre Wood
+		// preagi game
+		{
+			"winnie",
+			"",
+			AD_ENTRY1("title.pic", "45e06010a3c61d78f4661103c901ae11"),
+			Common::EN_ANY,
+			Common::kPlatformApple2GS,
+			Common::ADGF_NO_FLAGS
+		},
+		GID_WINNIE,
+		GType_PreAGI,
+		0,
+		0x0000,
+	},
+
+	{
 		// Xmas Card 1986 (PC) [AGI 2.272]
 		{
 			"xmascard",

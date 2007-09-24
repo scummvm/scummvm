@@ -39,7 +39,7 @@ namespace Agi {
 #define IDA_DEFAULT_REV	0xF0
 
 void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
-	bool isBigEndian = !(_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64);
+	bool isBigEndian = (_vm->getPlatform() == Common::kPlatformAmiga);
 	int i;
 
 	Common::MemoryReadStreamEndian readS(buffer, len, isBigEndian);
@@ -75,7 +75,7 @@ void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
 }
 
 void Winnie::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
-	bool isBigEndian = !(_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformC64);
+	bool isBigEndian = (_vm->getPlatform() == Common::kPlatformAmiga);
 	int i;
 
 	Common::MemoryReadStreamEndian readS(buffer, len, isBigEndian);
@@ -101,6 +101,8 @@ uint32 Winnie::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 		sprintf(szFile, IDS_WTP_ROOM_AMIGA, iRoom);
 	else if (_vm->getPlatform() == Common::kPlatformC64)
 		sprintf(szFile, IDS_WTP_ROOM_C64, iRoom);
+	else if (_vm->getPlatform() == Common::kPlatformApple2GS)
+		sprintf(szFile, IDS_WTP_ROOM_APPLE, iRoom);
 	Common::File file;
 	if (!file.open(szFile)) {
 		warning ("Could not open file \'%s\'", szFile);
@@ -128,6 +130,8 @@ uint32 Winnie::readObj(int iObj, uint8 *buffer) {
 		sprintf(szFile, IDS_WTP_OBJ_AMIGA, iObj);
 	else if (_vm->getPlatform() == Common::kPlatformC64)
 		sprintf(szFile, IDS_WTP_OBJ_C64, iObj);
+	else if (_vm->getPlatform() == Common::kPlatformApple2GS)
+		sprintf(szFile, IDS_WTP_OBJ_APPLE, iObj);
 	Common::File file;
 	if (!file.open(szFile)) {
 		warning ("Could not open file \'%s\'", szFile);
@@ -370,11 +374,9 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 		}
 
 		// jump to the script block of the selected option
-		if (_vm->getPlatform() == Common::kPlatformPC)
-			pc = hdr.opt[index].ofsOpt[iSel] - IDI_WTP_OFS_ROOM_DOS;
-		else if (_vm->getPlatform() == Common::kPlatformC64)
-			pc = hdr.opt[index].ofsOpt[iSel] - IDI_WTP_OFS_ROOM_C64;
-		else if (_vm->getPlatform() == Common::kPlatformAmiga)
+		if (_vm->getPlatform() != Common::kPlatformAmiga)
+			pc = hdr.opt[index].ofsOpt[iSel] - IDI_WTP_OFS_ROOM;
+		else
 			pc = hdr.opt[index].ofsOpt[iSel];
 
 		opcode = *(buffer + pc);
@@ -1038,21 +1040,18 @@ phase1:
 	}
 phase2:
 	for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
-		if (_vm->getPlatform() == Common::kPlatformPC) {
-			if (parser(hdr.ofsDesc[iBlock] - IDI_WTP_OFS_ROOM_DOS, iBlock, roomdata) == IDI_WTP_PAR_BACK)
+		if (_vm->getPlatform() != Common::kPlatformAmiga) {
+			if (parser(hdr.ofsDesc[iBlock] - IDI_WTP_OFS_ROOM, iBlock, roomdata) == IDI_WTP_PAR_BACK)
 				goto phase1;
-		} else if (_vm->getPlatform() == Common::kPlatformC64) {
-			if (parser(hdr.ofsDesc[iBlock] - IDI_WTP_OFS_ROOM_C64, iBlock, roomdata) == IDI_WTP_PAR_BACK)
-				goto phase1;
-		} else if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		} else {
 			if (parser(hdr.ofsDesc[iBlock], iBlock, roomdata) == IDI_WTP_PAR_BACK)
 				goto phase1;
 		}
 	}
 	for (;;) {
 		for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
-			if (_vm->getPlatform() == Common::kPlatformPC) {
-				switch(parser(hdr.ofsBlock[iBlock] - IDI_WTP_OFS_ROOM_DOS, iBlock, roomdata)) {
+			if (_vm->getPlatform() != Common::kPlatformAmiga) {
+				switch(parser(hdr.ofsBlock[iBlock] - IDI_WTP_OFS_ROOM, iBlock, roomdata)) {
 				case IDI_WTP_PAR_GOTO:
 					goto phase0;
 					break;
@@ -1060,16 +1059,7 @@ phase2:
 					goto phase2;
 					break;
 				}
-			} else if (_vm->getPlatform() == Common::kPlatformC64) {
-				switch(parser(hdr.ofsBlock[iBlock] - IDI_WTP_OFS_ROOM_C64, iBlock, roomdata)) {
-				case IDI_WTP_PAR_GOTO:
-					goto phase0;
-					break;
-				case IDI_WTP_PAR_BACK:
-					goto phase2;
-					break;
-				}
-			} else if (_vm->getPlatform() == Common::kPlatformAmiga) {
+			} else {
 				switch(parser(hdr.ofsBlock[iBlock], iBlock, roomdata)) {
 				case IDI_WTP_PAR_GOTO:
 					goto phase0;
@@ -1090,7 +1080,7 @@ void Winnie::drawPic(const char *szName) {
 	uint8 *buffer = (uint8 *)malloc(4096);
 
 	// construct filename
-	if (!_vm->getPlatform() == Common::kPlatformAmiga)
+	if (_vm->getPlatform() != Common::kPlatformAmiga)
 		sprintf(szFile, "%s.pic", szName);
 	else
 		strcpy(szFile, szName);
@@ -1119,7 +1109,7 @@ void Winnie::drawObjPic(int iObj, int x0, int y0) {
 	uint32 objSize = readObj(iObj, buffer);
 	parseObjHeader(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
 	
-	if (_vm->getPlatform() == Common::kPlatformPC)
+	if (_vm->getPlatform() == Common::kPlatformPC || _vm->getPlatform() == Common::kPlatformApple2GS)
 		objhdr.ofsPic -= IDI_WTP_OFS_OBJ;
 
 	_vm->_picture->setOffset(x0, y0);
@@ -1141,10 +1131,8 @@ void Winnie::drawRoomPic() {
 	// read room picture
 	readRoom(_room, buffer, roomhdr);
 
-	if (_vm->getPlatform() == Common::kPlatformPC)
-		roomhdr.ofsPic = roomhdr.ofsPic - IDI_WTP_OFS_ROOM_DOS;
-	else if (_vm->getPlatform() == Common::kPlatformC64)
-		roomhdr.ofsPic = roomhdr.ofsPic - IDI_WTP_OFS_ROOM_C64;
+	if (_vm->getPlatform() != Common::kPlatformAmiga)
+		roomhdr.ofsPic = roomhdr.ofsPic - IDI_WTP_OFS_ROOM;
 
 	// draw room picture
 	_vm->_picture->decodePicture(buffer + roomhdr.ofsPic, 4096, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
@@ -1175,11 +1163,9 @@ void Winnie::printRoomStr(int iRoom, int iStr) {
 	uint8 *buffer = (uint8 *)malloc(4096);
 
 	readRoom(iRoom, buffer, hdr);
-	if (_vm->getPlatform() == Common::kPlatformPC)
-		_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM_DOS));
-	else if (_vm->getPlatform() == Common::kPlatformC64)
-		_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM_C64));
-	else if (_vm->getPlatform() == Common::kPlatformAmiga)
+	if (_vm->getPlatform() != Common::kPlatformAmiga)
+		_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM));
+	else
 		_vm->printStr((char *)(buffer + hdr.ofsStr[iStr - 1]));
 
 	free(buffer);
@@ -1245,13 +1231,13 @@ void Winnie::init() {
 	_doWind = false;
 	_winnieEvent = false;
 
-	if (_vm->getPlatform() == Common::kPlatformC64)
+	if (_vm->getPlatform() == Common::kPlatformC64 || _vm->getPlatform() == Common::kPlatformApple2GS)
 		_vm->_picture->setPictureVersion(AGIPIC_C64);
 }
 
 void Winnie::run() {
 	randomize();
-	if (_vm->getPlatform() != Common::kPlatformC64)
+	if (_vm->getPlatform() != Common::kPlatformC64 && _vm->getPlatform() != Common::kPlatformApple2GS)
 		intro();
 	gameLoop();
 }

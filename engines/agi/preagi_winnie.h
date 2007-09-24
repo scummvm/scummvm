@@ -37,12 +37,15 @@ namespace Agi {
 #define IDS_WTP_ROOM_DOS		"rooms/rm.%02d"
 #define IDS_WTP_ROOM_AMIGA		"room.%d"
 #define IDS_WTP_ROOM_C64		"room%02d"
+#define IDS_WTP_ROOM_APPLE		"room%d.obj"
 #define IDS_WTP_OBJ_DOS			"obj.%02d"
 #define IDS_WTP_OBJ_AMIGA		"object.%d"
 #define IDS_WTP_OBJ_C64			"object%02d"
+#define IDS_WTP_OBJ_APPLE		"object%d.obj"
 #define IDS_WTP_SND_DOS			"snd.%02d"
 #define IDS_WTP_SND_AMIGA		"Sounds"
 #define IDS_WTP_SND_C64			"sound.obj"
+#define IDS_WTP_SND_APPLE		"sound.obj"
 
 #define IDS_WTP_FILE_LOGO		"logo"
 #define IDS_WTP_FILE_TITLE		"title"
@@ -134,8 +137,7 @@ namespace Agi {
 
 // data file offset modifiers
 
-#define IDI_WTP_OFS_ROOM_DOS	0x5400
-#define IDI_WTP_OFS_ROOM_C64	0x5400		//FIXME: This number needs to be higher to show the image
+#define IDI_WTP_OFS_ROOM		0x5400
 #define IDI_WTP_OFS_OBJ			0x0800
 
 // picture
