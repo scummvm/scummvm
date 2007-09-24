@@ -542,7 +542,7 @@ void ToucheEngine::sortKeyChars() {
 }
 
 void ToucheEngine::runKeyCharScript(KeyChar *key) {
-	debugC(9, kDebugEngine, "ToucheEngine::runKeyCharScript() keyChar=%d", key - _keyCharsTable);
+	debugC(9, kDebugEngine, "ToucheEngine::runKeyCharScript() keyChar=%d", (int)(key - _keyCharsTable));
 	if (key->scriptDataOffset != 0 && (key->flags & (kScriptStopped | kScriptPaused)) == 0) {
 		int16 scriptParam = key->num - 1;
 		int16 *prevStackDataPtr = _script.stackDataPtr;
@@ -2728,7 +2728,7 @@ bool ToucheEngine::sortPointsData(int num1, int num2) {
 }
 
 void ToucheEngine::updateKeyCharWalkPath(KeyChar *key, int16 dx, int16 dy, int16 dz) {
-	debugC(9, kDebugEngine, "ToucheEngine::updateKeyCharWalkPath(key=%d, dx=%d, dy=%d, dz=%d)", key - _keyCharsTable, dx, dy, dz);
+	debugC(9, kDebugEngine, "ToucheEngine::updateKeyCharWalkPath(key=%d, dx=%d, dy=%d, dz=%d)", (int)(key - _keyCharsTable), dx, dy, dz);
 	if (key->walkDataNum == -1) {
 		return;
 	}
