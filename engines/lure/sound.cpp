@@ -26,6 +26,7 @@
 #include "lure/res.h"
 #include "lure/room.h"
 
+#include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "sound/midiparser.h"
@@ -43,8 +44,7 @@ SoundManager::SoundManager() {
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 
-	for (index = 0; index < NUM_CHANNELS_OUTER; ++index)
-		_channelsInUse[index] = false;
+	Common::set_to(_channelsInUse, _channelsInUse+NUM_CHANNELS_OUTER, false);
 
 	_driver = MidiDriver::createMidi(midiDriver);
 	int statusCode = _driver->open();
@@ -131,8 +131,7 @@ void SoundManager::killSounds() {
 
 	// Clear the active sounds
 	_activeSounds.clear();
-	for (int channelNum = 0; channelNum < NUM_CHANNELS_OUTER; ++channelNum)
-		_channelsInUse[channelNum] = false;
+	Common::set_to(_channelsInUse, _channelsInUse+NUM_CHANNELS_OUTER, false);
 }
 
 void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
@@ -175,8 +174,7 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 	}
 
 	// Mark the found channels as in use
-	for (int channelCtr2 = 0; channelCtr2 < numChannels; ++channelCtr2)
-		_channelsInUse[channelCtr + channelCtr2] = true;
+	Common::set_to(_channelsInUse+channelCtr, _channelsInUse+channelCtr+numChannels, true);
 
 	SoundDescResource *newEntry = new SoundDescResource();
 	newEntry->soundNumber = rec.soundNumber;
@@ -273,8 +271,7 @@ void SoundManager::tidySounds() {
 			++i;
 		else {
 			// Mark the channels that it used as now being free
-			for (int channelCtr = 0; channelCtr < rec->numChannels; ++channelCtr) 
-				_channelsInUse[rec->channel + channelCtr] = false;
+			Common::set_to(_channelsInUse+rec->channel, _channelsInUse+rec->channel+rec->numChannels, false);
 			
 			i = _activeSounds.erase(i);
 		}
@@ -305,8 +302,7 @@ void SoundManager::restoreSounds() {
 		SoundDescResource *rec = *i;
 
 		if ((rec->numChannels != 0) && ((rec->flags & SF_RESTORE) != 0)) {
-			for (int channelCtr = 0; channelCtr < rec->numChannels; ++channelCtr)
-				_channelsInUse[rec->channel + channelCtr] = true;
+			Common::set_to(_channelsInUse+rec->channel, _channelsInUse+rec->channel+rec->numChannels, true);
 
 			musicInterface_Play(rec->soundNumber, rec->channel);
 			musicInterface_SetVolume(rec->soundNumber, rec->volume);
