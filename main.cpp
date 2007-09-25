@@ -181,25 +181,12 @@ needshelp:
 	if (splash_bm != NULL)
 		splash_bm->ref();
 
-	SDL_Event event;
-	
-// For some reason we don't get the SDL_VIDEOEXPOSE event on OSX, so just don't wait for it.
-#ifndef MACOSX
-	while (SDL_PollEvent(&event)) {
-		if (event.type == SDL_VIDEOEXPOSE) {
-#else
-	SDL_PollEvent(&event);
-#endif	
-			g_driver->clearScreen();
+	g_driver->clearScreen();
 
-			if (!(g_flags & GF_DEMO))
-				splash_bm->draw();
+	if (!(g_flags & GF_DEMO))
+		splash_bm->draw();
 
-			g_driver->flipBuffer();
-#ifndef MACOSX
-		}
-	}
-#endif
+	g_driver->flipBuffer();
 
 	if (splash_bm != NULL)
 		splash_bm->deref();
