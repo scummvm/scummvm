@@ -50,13 +50,14 @@ namespace Parallaction {
 Inventory *_inv = 0;
 InventoryRenderer *_re = 0;
 
-//	get inventory item index at position (x,y)
-//	in screen coordinates
-//
+
 int16 Parallaction::getHoverInventoryItem(int16 x, int16 y) {
 	return _re->hitTest(Common::Point(x,y));
 }
 
+void highlightInventoryItem(ItemPosition pos, byte color) {
+	_re->highlightItem(pos, color);
+}
 
 int Parallaction::addInventoryItem(ItemName item) {
 	return _inv->addItem(item);
@@ -69,7 +70,6 @@ int Parallaction::addInventoryItem(ItemName item, uint32 value) {
 void Parallaction::dropItem(uint16 v) {
 	_inv->removeItem(v);
 }
-
 
 bool Parallaction::isItemInInventory(int32 v) {
 	return (_inv->findItem(v) != -1);
@@ -98,6 +98,13 @@ void cleanInventory(bool keepVerbs) {
 	_inv->clear(keepVerbs);
 }
 
+void openInventory() {
+	_re->showInventory();
+}
+
+void closeInventory() {
+	_re->hideInventory();
+}
 
 
 
@@ -124,24 +131,16 @@ void Parallaction_ns::jobHideInventory(void *parm, Job *j) {
 	_gfx->restoreBackground(r);
 }
 
-void openInventory() {
-	_re->showInventory();
-}
 
-void closeInventory() {
-	_re->hideInventory();
-}
 
 
 
 InventoryRenderer::InventoryRenderer(Parallaction *vm) : _vm(vm) {
-	_buffer = (byte*)malloc(INVENTORY_WIDTH * INVENTORY_HEIGHT);
+	_surf.create(INVENTORY_WIDTH, INVENTORY_HEIGHT, 1);
 }
 
 InventoryRenderer::~InventoryRenderer() {
-	if (_buffer)
-		free(_buffer);
-	_buffer = 0;
+	_surf.free();
 }
 
 void InventoryRenderer::showInventory() {
@@ -182,16 +181,14 @@ ItemPosition InventoryRenderer::hitTest(const Common::Point &p) const {
 
 
 void InventoryRenderer::drawItem(ItemPosition pos, ItemName name) {
-	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
-	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
 	Common::Rect r;
-	_vm->_char._objs->getRect(0, r);
+	getItemRect(pos, r);
 
 	// FIXME: this will end up in a general blit function
 
 	byte* s = _vm->_char._objs->getData(name);
-	byte* d = _buffer + col * INVENTORYITEM_WIDTH + line * r.height() * INVENTORY_WIDTH;
+	byte* d = (byte*)_surf.getBasePtr(r.left, r.top);
 	for (uint32 i = 0; i < INVENTORYITEM_HEIGHT; i++) {
 		memcpy(d, s, INVENTORYITEM_WIDTH);
 
@@ -213,44 +210,32 @@ void InventoryRenderer::refresh() {
 	}
 }
 
-void drawBorder(const Common::Rect& r, byte *buffer, byte color) {
+void InventoryRenderer::highlightItem(ItemPosition pos, byte color) {
+	if (pos == -1)
+		return;
 
-	byte *d = buffer + r.left + INVENTORY_WIDTH * r.top;
+	Common::Rect r;
+	getItemRect(pos, r);
 
-	memset(d, color, r.width());
+	if (color != 12)
+		color = 19;
 
-	for (uint16 i = 0; i < r.height(); i++) {
-		d[i * INVENTORY_WIDTH] = color;
-		d[i * INVENTORY_WIDTH + r.width() - 1] = color;
-	}
-
-	d = buffer + r.left + INVENTORY_WIDTH * (r.bottom - 1);
-	memset(d, color, r.width());
-
-	return;
+	_surf.frameRect(r, color);
 }
 
-//
-//	draws a color border around the specified position in the inventory
-//
-void highlightInventoryItem(ItemPosition pos, byte color) {
+void InventoryRenderer::getItemRect(ItemPosition pos, Common::Rect &r) {
 
-	if (color != 12) color = 19;
-
-	if (pos == -1) return;
+	r.setHeight(INVENTORYITEM_HEIGHT);
+	r.setWidth(INVENTORYITEM_WIDTH);
 
 	uint16 line = pos / INVENTORY_ITEMS_PER_LINE;
 	uint16 col = pos % INVENTORY_ITEMS_PER_LINE;
 
-	Common::Rect r;
-	_vm->_char._objs->getRect(0, r);
-	r.setWidth(INVENTORYITEM_WIDTH);
-	r.moveTo(col * INVENTORYITEM_WIDTH, line * r.height());
+	r.moveTo(col * INVENTORYITEM_WIDTH, line * INVENTORYITEM_HEIGHT);
 
-	drawBorder(r, _re->getData(), color);
-
-	return;
 }
+
+
 
 
 

@@ -27,6 +27,7 @@
 #define PARALLACTION_INVENTORY_H
 
 
+#include "graphics/surface.h"
 
 namespace Parallaction {
 
@@ -91,9 +92,11 @@ class InventoryRenderer {
 	Inventory 		*_inv;
 	Common::Point	_pos;
 
-	byte			*_buffer;
+	Graphics::Surface	_surf;
 
 protected:
+	void getItemRect(ItemPosition pos, Common::Rect &r);
+
 	void drawItem(ItemPosition pos, ItemName name);
 	void refresh();
 
@@ -107,8 +110,9 @@ public:
 	void hideInventory();
 
 	ItemPosition hitTest(const Common::Point &p) const;
+	void highlightItem(ItemPosition pos, byte color);
 
-	byte*	getData() const { return _buffer; }
+	byte*	getData() const { return (byte*)_surf.pixels; }
 
 	void	getRect(Common::Rect &r) const;
 	int16	getNumLines() const;
