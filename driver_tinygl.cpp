@@ -124,11 +124,33 @@ DriverTinyGL::~DriverTinyGL() {
 }
 
 void DriverTinyGL::toggleFullscreenMode() {
-	uint32 flags = SDL_HWSURFACE;
+	int result;
 
-	if (!_isFullscreen)
-		flags |= SDL_FULLSCREEN;
-	if (SDL_SetVideoMode(_screenWidth, _screenHeight, _screenBPP, flags) == 0)
+#if (defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)) || defined(__MAEMO__)
+	// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
+	// before SDL 1.2.6 it always returned -1 (which would indicate a
+	// successful switch). So we simply don't call it at all.
+	result = 0;
+#else
+	result = SDL_WM_ToggleFullScreen(_screen);
+#endif
+
+	if (!result) {
+		if (_screen)
+			SDL_FreeSurface(_screen);
+
+		uint32 flags = SDL_HWSURFACE;
+		if (!_isFullscreen)
+			flags |= SDL_FULLSCREEN;
+
+		_screen = SDL_SetVideoMode(_screenWidth, _screenHeight, _screenBPP, flags);
+		if (_screen == NULL)
+			error("Could not change fullscreen mode");
+		else
+			result = 1;
+	}
+
+	if (!result)
 		warning("Could not change fullscreen mode");
 	else
 		_isFullscreen = !_isFullscreen;
