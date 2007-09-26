@@ -150,7 +150,7 @@ void read_room_data(byte *&data, uint16 &totalSize)  {
 			*offsetPtr++ = TO_LE_16(offset);
 
 			// Copy over basic room details
-			lureExe.seek(dataSegment + headerEntry.offset);
+			lureExe.seek(dataSegment + FROM_LE_16(headerEntry.offset));
 			lureExe.read(&buffer, sizeof(RoomResource));
 			RoomResourceOutput *rec = (RoomResourceOutput *) (data + offset);
 			rec->hdrFlags = headerEntry.hdrFlags;
