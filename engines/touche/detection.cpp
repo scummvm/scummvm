@@ -86,6 +86,14 @@ static const Common::ADGameDescription gameDescriptions[] = {
 		Common::kPlatformPC,
 		Common::ADGF_NO_FLAGS
 	},
+	{ // retail version - tracker item #1800500
+		"touche",
+		"",
+		AD_ENTRY1s("touche.dat", "42d19a0bef65465109020440a9caa228", 26487370),
+		Common::PL_POL,
+		Common::kPlatformPC,
+		Common::ADGF_NO_FLAGS
+	},
 	{ // demo version
 		"touche",
 		"Demo",
