@@ -1,12 +1,12 @@
 This is a modified version of TinyGL 0.4 intended for use with Residual.
 The changes made from the original version of TinyGL 0.4 are:
 
-* Changed files extensions from *.c to *.cpp to compile as C++.
+* Changed file extensions from *.c to *.cpp to compile as C++.
 * Included only files needed by Residual.
-* Changed includes paths in source files.
-* Added needed type cast and fixes for proper compile.
-* Added 't/T' prefix to prevent OpenGl names duplication.
+* Changed include paths in source files.
+* Added needed type casts and fixes for proper compile.
+* Added 't/T' prefix to prevent OpenGL name clashes.
 * Added light shading texture mapping mode.
 * Removed not needed code.
 * Introduced second 32-bit z-buffer for 3d objects only,
-  and keeped 16-bit only for static z-buffer bitmaps.
+  and keept 16-bit only for static z-buffer bitmaps.
