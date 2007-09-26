@@ -120,8 +120,7 @@ void read_talk_dialog_data(byte *&data, uint16 &totalSize) {
 	lureExe.read(data, totalSize);
 }
 
-void read_room_data(byte *&data, uint16 &totalSize) 
-{
+void read_room_data(byte *&data, uint16 &totalSize)  {
 	data = (byte *) malloc(MAX_DATA_SIZE);
 	memset(data, 0, MAX_DATA_SIZE);
 
@@ -171,7 +170,7 @@ void read_room_data(byte *&data, uint16 &totalSize)
 			offset += sizeof(RoomResourceOutput);
 
 			// Copy over room exits
-			for (;;) {
+			for (int foo = 0; ; ++foo) {
 				RoomResourceExit1 *p = (RoomResourceExit1 *) (data + offset);
 				lureExe.read(p, sizeof(RoomResourceExit1));
 				if (FROM_LE_16(p->xs) == 0xffff) break;
@@ -181,6 +180,7 @@ void read_room_data(byte *&data, uint16 &totalSize)
 				p->ys = TO_LE_16(FROM_LE_16(p->ys) - 0x80);
 				p->xe = TO_LE_16(FROM_LE_16(p->xe) - 0x80);
 				p->ye = TO_LE_16(FROM_LE_16(p->ye) - 0x80);
+
 				offset += sizeof(RoomResourceExit1);
 				RoomResourceExit2 *p2 = (RoomResourceExit2 *) (data + offset);
 
@@ -246,8 +246,7 @@ uint16 italianOffsets[4] = {0x5e58, 0x5f78, 0x62fe, 0x6471};
 uint16 englishLoadOffsets[] = {0x3afe, 0x41BD, 0x7167, 0x7172, 0x8617, 0x88ac, 0};
 uint16 italianLoadOffsets[] = {0x3b46, 0x4205, 0x71af, 0x71ba, 0x8675, 0x890a, 0};
 
-void read_hotspot_data(byte *&data, uint16 &totalSize) 
-{
+void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 	uint16 startId[4] = {0x3e8, 0x408, 0x2710, 0x7530};
 	int walkNumEntries = 0;
 	int walkCtr;
@@ -361,9 +360,9 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)
 				r->loadOffset = TO_LE_16(loadIndex + 1);
 			}
 
-			if (tableNum == 3)
+			if (tableNum == 3) {
 				r->tickProcId = 0;
-			else {
+			} else {
 				// Scan through the proc list for the correct offset
 				int procIndex = 0;
 				while ((procList[procIndex] != FROM_LE_16(entry.tickProcOffset)) &&
@@ -1271,9 +1270,8 @@ void save_string_decoder_data(byte *&data, uint16 &totalSize) {
 
 void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size) {
 	resourceId = 0x3f01 + entryIndex;
-printf("Get resource #%d\n", entryIndex);
-	switch (entryIndex) 
-	{
+	printf("Get resource #%d\n", entryIndex);
+	switch (entryIndex) {
 	case 0:
 		// Copy the default palette to file
 		read_basic_palette(data, size);
@@ -1428,8 +1426,7 @@ void closeOutputFile() {
 	outputFile.close();
 }
 
-void createFile(const char *outFilename)
-{
+void createFile(const char *outFilename) {
 	FileEntry rec;
 	uint32 startOffset, numBytes;
 	uint32 outputStart;
@@ -1459,8 +1456,7 @@ void createFile(const char *outFilename)
 	outputFile.writeWord(0);
 
 	resourceFlag = true;
-	for (int resIndex=0; resIndex<0xBE; ++resIndex)
-	{
+	for (int resIndex=0; resIndex < 0xBE; ++resIndex) {
 		resourceData = NULL;
 
 		// Get next data entry
@@ -1470,14 +1466,11 @@ void createFile(const char *outFilename)
 
 		// Write out the next header entry
 		outputFile.seek(outputStart + (resIndex + 1) * 8);
-		if (resourceSize == 0) 
-		{
+		if (resourceSize == 0) {
 			// Unused entry
 			memset(&rec, 0xff, sizeof(FileEntry));
 			resourceFlag = false;
-		}
-		else
-		{
+		} else {
 			rec.id = TO_LE_16(resourceId);
 			rec.offset = TO_LE_16(startOffset >> 5);
 			rec.sizeExtension = (uint8) ((resourceSize >> 16) & 0xff);
@@ -1488,8 +1481,7 @@ void createFile(const char *outFilename)
 		outputFile.write(&rec, sizeof(FileEntry));
 
 		// Write out the resource
-		if (resourceFlag)
-		{
+		if (resourceFlag) {
 			outputFile.seek(outputStart + startOffset);
 			outputFile.write(resourceData, resourceSize);
 			startOffset += resourceSize;
