@@ -2195,23 +2195,15 @@ int ToucheEngine::updateKeyCharTalk(int skipFlag) {
 	if (_keyCharTalkCounter) {
 		--_keyCharTalkCounter;
 	}
+	_currentObjectNum = talkingKeyChar;
 	if (_speechPlaying) {
 		_flagsTable[297] = 0;
+		_keyCharTalkCounter = 1;
 		if (_talkTextMode == kTalkModeVoiceOnly) {
-			_keyCharTalkCounter = 0;
-		}
-		_currentObjectNum = talkingKeyChar;
-		if (_keyCharTalkCounter == 0) {
-			_keyCharTalkCounter = 1;
-		}
-	}
-	if (_talkTextMode == kTalkModeVoiceOnly) {
-		if (_speechPlaying) {
 			return 1;
 		}
 	}
 	if (_keyCharTalkCounter != 0) {
-		_currentObjectNum = talkingKeyChar;
 		_talkTextDisplayed = true;
 		int textHeight = kTextHeight;
 		y -= kTextHeight;
