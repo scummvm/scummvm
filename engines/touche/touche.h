@@ -269,7 +269,7 @@ enum {
 	kDebugGraphics = 1 << 1,
 	kDebugResource = 1 << 2,
 	kDebugOpcodes  = 1 << 3,
-	kDebugUserIntf = 1 << 4
+	kDebugMenu     = 1 << 4
 };
 
 enum ResourceType {

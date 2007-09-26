@@ -566,7 +566,7 @@ void ToucheEngine::clearStatusString() {
 }
 
 int ToucheEngine::displayQuitDialog() {
-	debug(kDebugUserIntf, "ToucheEngine::displayQuitDialog()");
+	debug(kDebugMenu, "ToucheEngine::displayQuitDialog()");
 	printStatusString(getString(-85));
 	int ret = 0;
 	bool quitLoop = false;
@@ -622,7 +622,7 @@ int ToucheEngine::displayQuitDialog() {
 }
 
 void ToucheEngine::displayTextMode(int str) {
-	debug(kDebugUserIntf, "ToucheEngine::displayTextMode(%d)", str);
+	debug(kDebugMenu, "ToucheEngine::displayTextMode(%d)", str);
 	printStatusString(getString(str));
 	_system->delayMillis(1000);
 	clearStatusString();
