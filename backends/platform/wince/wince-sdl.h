@@ -30,7 +30,7 @@
 #include "common/system.h"
 #include "graphics/scaler.h"
 #include "backends/intern.h"
-#include "backends/platform/sdl/sdl-common.h"
+#include "backends/platform/sdl/sdl.h"
 
 #include "CEGUI.h"
 #include "CEKeys.h"
@@ -258,6 +258,12 @@ private:
 	} zoneDesc;
 
 	static zoneDesc _zones[TOTAL_ZONES];
+
+	// Copied from old sdl-common.h because we still use it and
+	// sdl-common.h no longer supplies it.
+	enum {
+		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 1
+	};
 };
 
 #endif
