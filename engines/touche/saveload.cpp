@@ -407,4 +407,13 @@ void ToucheEngine::generateGameStateFileName(int num, char *dst, int len, bool p
 	dst[len] = 0;
 }
 
+int ToucheEngine::getGameStateFileSlot(const char *filename) const {
+	int i = -1;
+	const char *slot = strrchr(filename, '.');
+	if (slot) {
+		i = atoi(slot + 1);
+	}
+	return i;
+}
+
 } // namespace Touche

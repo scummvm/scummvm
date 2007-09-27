@@ -92,8 +92,7 @@ struct MenuData {
 	uint buttonsCount;
 	bool quit;
 	bool exit;
-	bool saveLoadMarks[100];
-	char saveLoadDescriptionsTable[100][33];
+	char saveLoadDescriptionsTable[kMaxSaveStates][33];
 
 	void removeLastCharFromDescription(int slot) {
 		char *description = saveLoadDescriptionsTable[slot];
@@ -370,36 +369,15 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 				setupMenu(menuData.mode, &menuData);
 				curMode = menuData.mode;
 				if (menuData.mode == kMenuLoadStateMode || menuData.mode == kMenuSaveStateMode) {
-					assert(menuData.saveLoadMarks);
-
+					for (int i = 0; i < kMaxSaveStates; ++i) {
+						menuData.saveLoadDescriptionsTable[i][0] = 0;
+					}
 					char gameStateFileName[16];
 					generateGameStateFileName(999, gameStateFileName, 15, true);
-					char slot[2];
-					int slotNum;
-					Common::StringList filenames;
-
-					memset(menuData.saveLoadMarks, false, 100 * sizeof(bool));	//assume no savegames for this title
-					filenames = _saveFileMan->listSavefiles(gameStateFileName);
-
-					for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
-						//Obtain the last 1 or 2 digits of the filename, since they correspond to the save slot
-						//This engine can save games either with one or two digits, hence the additional if statement
-						slot[0] = file->c_str()[file->size()-2];
-						slot[1] = file->c_str()[file->size()-1];
-
-						if (!atoi(&slot[0])){
-							slotNum = atoi(&slot[1]);
-						} else {
-							slotNum = atoi(slot);
-						}
-
-						if (slotNum >= 0 && slotNum < 100)
-							menuData.saveLoadMarks[slotNum] = true;	//mark this slot as valid
-					}
-
-					for (int i = 0; i < 100; ++i) {
-						menuData.saveLoadDescriptionsTable[i][0] = 0;
-						if (menuData.saveLoadMarks[i]) {
+					Common::StringList filenames = _saveFileMan->listSavefiles(gameStateFileName);
+					for (Common::StringList::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
+						int i = getGameStateFileSlot(it->c_str());
+						if (i >= 0 && i < kMaxSaveStates) {
 							readGameStateDescription(i, menuData.saveLoadDescriptionsTable[i], 32);
 						}
 					}

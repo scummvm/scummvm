@@ -327,7 +327,8 @@ enum {
 	kCursorWidth = 58,
 	kCursorHeight = 42,
 	kTextHeight = 16,
-	kMaxProgramDataSize = 61440
+	kMaxProgramDataSize = 61440,
+	kMaxSaveStates = 100
 };
 
 class MidiPlayer;
@@ -490,6 +491,7 @@ protected:
 	bool loadGameState(int num);
 	void readGameStateDescription(int num, char *description, int len);
 	void generateGameStateFileName(int num, char *dst, int len, bool prefixOnly = false) const;
+	int getGameStateFileSlot(const char *filename) const;
 
 	void setupOpcodes();
 	void op_nop();
