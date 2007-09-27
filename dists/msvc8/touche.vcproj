@@ -173,6 +173,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\touche\menu.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\touche\midi.cpp"
 			>
 		</File>
@@ -202,10 +206,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\touche\touche.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\touche\ui.cpp"
 			>
 		</File>
 	</Files>
