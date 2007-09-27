@@ -216,12 +216,6 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool current
 	if (currentDir) {
 		char path[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, path);
-
-		// Add a trailing slash, if necessary.
-		if (path[0] != 0) {
-			if (path[strlen(path) - 1] != '\\')
-				strcat(path, "\\");
-		}
 		_path = path;
 	}
 	else {
@@ -240,6 +234,10 @@ WindowsFilesystemNode::WindowsFilesystemNode(const String &p, const bool current
 	} else {
 		_isDirectory = ((fileAttribs & FILE_ATTRIBUTE_DIRECTORY) != 0);
 		_isValid = true;
+		// Add a trailing slash, if necessary.
+		if (_path.lastChar() != '\\') {
+			_path += '\\';
+		}
 	}
 	_isPseudoRoot = false;
 }
