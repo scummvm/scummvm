@@ -777,8 +777,10 @@ void read_script2_data(byte *&data, uint16 &totalSize) {
 }
 
 void read_hotspot_script_offsets(byte *&data, uint16 &totalSize) {
-	lureExe.seek(dataSegment + HOTSPOT_SCRIPT_LIST);
-	
+	uint16 dataStart = 0x57e0;
+	if (language == IT_ITA) dataStart = 0x58a0;
+
+	lureExe.seek(dataSegment + dataStart);
 	totalSize = HOTSPOT_SCRIPT_SIZE;
 	data = (byte *) malloc(totalSize);
 	lureExe.read(data, totalSize);
