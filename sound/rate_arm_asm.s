@@ -203,6 +203,9 @@ SimpleRate_M_end:
 SimpleRate_M_read:
         LDR     r0, [r13,#4*2]          @ r0 = sr
         ADD     r0, r0, #16             @ r0 = inPtr = inBuf
+ .ifdef PALMOS
+	LDR	r10,[r13,#4*8]		@ restore r10
+ .endif
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
@@ -217,6 +220,9 @@ SimpleRate_M_read:
         SUBS    r1, r0, #1              @ r1 = inLen-1
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     SimpleRate_M_end
+ .ifdef PALMOS
+	MOV	r10,#0
+ .endif
         SUBS    r2, r2, #1              @ r2 = opos--
         ADDGE   r0, r0, #2              @ if (r2 >= 0) { sr.inPtr++
         BGE     SimpleRate_M_loop       @                and loop }
@@ -281,8 +287,10 @@ SimpleRate_S_end:
 SimpleRate_S_read:
         LDR     r0, [r13,#4*2]          @ r0 = sr
         ADD     r0, r0, #16             @ r0 = inPtr = inBuf
+ .ifdef PALMOS
+	LDR	r10,[r13,#4*8]		@ restore r10
+ .endif
         STMFD   r13!,{r0,r2-r3,r12,r14}
-
         MOV     r1, r0                  @ r1 = inBuf
         LDR     r0, [r13,#4*5]          @ r0 = AudioStream & input
         MOV     r2, #512                @ r2 = ARRAYSIZE(inBuf)
@@ -295,6 +303,9 @@ SimpleRate_S_read:
         SUBS    r1, r0, #2              @ r1 = inLen-2
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     SimpleRate_S_end
+ .ifdef PALMOS
+	MOV	r10,#0
+ .endif
         SUBS    r2, r2, #1              @ r2 = opos--
         ADDGE   r0, r0, #4              @ if (r2 >= 0) { sr.inPtr += 2
         BGE     SimpleRate_S_loop       @                and loop }
@@ -360,6 +371,9 @@ SimpleRate_R_end:
 SimpleRate_R_read:
         LDR     r0, [r13,#4*2]          @ r0 = sr
         ADD     r0, r0, #16             @ r0 = inPtr = inBuf
+ .ifdef PALMOS
+	LDR	r10,[r13,#4*8]		@ restore r10
+ .endif
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
@@ -374,6 +388,9 @@ SimpleRate_R_read:
         SUBS    r1, r0, #2              @ r1 = inLen-2
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     SimpleRate_R_end
+ .ifdef PALMOS
+	MOV	r10,#0
+ .endif
         SUBS    r2, r2, #1              @ r2 = opos--
         ADDGE   r0, r0, #4              @ if (r2 >= 0) { sr.inPtr += 2
         BGE     SimpleRate_R_loop       @                and loop }
@@ -455,6 +472,9 @@ LinearRate_M_end:
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_M_read:
         ADD     r0, r2, #28             @ r0 = inPtr = inBuf
+ .ifdef PALMOS
+	LDR	r10,[r13,#4*8]		@ restore r10
+ .endif
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
@@ -469,6 +489,9 @@ LinearRate_M_read:
         SUBS    r1, r0, #1              @ r1 = inLen-1
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     LinearRate_M_end
+ .ifdef PALMOS
+	MOV	r10,#0
+ .endif
         B       LinearRate_M_read_return
 
 ARM_LinearRate_S:
@@ -556,6 +579,9 @@ LinearRate_S_end:
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_S_read:
         ADD     r0, r2, #28             @ r0 = inPtr = inBuf
+ .ifdef PALMOS
+	LDR	r10,[r13,#4*8]		@ restore r10
+ .endif
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
@@ -657,6 +683,9 @@ LinearRate_R_end:
         LDMFD   r13!,{r4-r11,PC}
 LinearRate_R_read:
         ADD     r0, r2, #28             @ r0 = inPtr = inBuf
+ .ifdef PALMOS
+	LDR	r10,[r13,#4*8]		@ restore r10
+ .endif
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
