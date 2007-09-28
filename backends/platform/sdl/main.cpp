@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(WIN32)
+#if defined(WIN32) && !defined(__SYMBIAN32__)
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
 #undef ARRAYSIZE
