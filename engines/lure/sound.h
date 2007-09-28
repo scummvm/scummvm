@@ -117,11 +117,13 @@ private:
 	bool _channelsInUse[NUM_CHANNELS_OUTER];
 	bool _isPlaying;
 	bool _nativeMT32;
+	Common::MutexRef _soundMutex;
 
 	// Internal support methods
 	void bellsBodge();
 	void musicInterface_TidySounds();
 	static void onTimer(void *data);
+	void doTimer();
 public:
 	SoundManager();
 	~SoundManager();
