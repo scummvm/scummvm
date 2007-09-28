@@ -161,9 +161,11 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 		case EACCES:
 			setError(SFM_DIR_ACCESS, Common::String("Search or write permission denied"));
 			break;
+#if !defined(__SYMBIAN32__)
 		case ELOOP:
 			setError(SFM_DIR_LOOP, Common::String("Too many symbolic links encountered while traversing the path"));
 			break;
+#endif
 		case ENAMETOOLONG:
 			setError(SFM_DIR_NAMETOOLONG, Common::String("The path name is too long"));
 			break;
@@ -181,9 +183,11 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 				case EMLINK:
 					setError(SFM_DIR_LINKMAX, Common::String("The link count of the parent directory would exceed {LINK_MAX}"));
 					break;
+#if !defined(__SYMBIAN32__)
 				case ELOOP:
 					setError(SFM_DIR_LOOP, Common::String("Too many symbolic links encountered while traversing the path"));
 					break;
+#endif
 				case ENAMETOOLONG:
 					setError(SFM_DIR_NAMETOOLONG, Common::String("The path name is too long"));
 					break;
