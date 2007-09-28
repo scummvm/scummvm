@@ -94,7 +94,7 @@ uint16 get_sequence_index(uint16 offset, int supportIndex) {
 		}
 	}
 
-	for (index = 0; index <= numSupportEntries; ++index) {
+	for (index = 0; index < numSupportEntries; ++index) {
 		SupportStructure &rec = supportList[index];
 
 		if ((rec.numInstructions > 0) &&
@@ -298,15 +298,16 @@ void process_entry(uint16 offset, byte *data, uint16 &totalSize) {
 		supportList[numSupportEntries].offset = offset;
 		supportList[numSupportEntries].numInstructions = 0;
 		supportList[numSupportEntries].resourceOffset = totalSize;
-//printf("process_entry index=%d, offset=%xh\n", numSupportEntries + 1, offset);
-		totalSize += process_action_sequence_entry(numSupportEntries, 
-			data + totalSize,  MAX_DATA_SIZE - totalSize);
 
 		++numSupportEntries;
 		if (numSupportEntries == MAX_BUFFER_ENTRIES) {
 			printf("Ran out of buffer space in processing NPC schedules\n");
 			exit(1);
 		}
+
+//printf("process_entry index=%d, offset=%xh\n", numSupportEntries, offset);
+		totalSize += process_action_sequence_entry(numSupportEntries - 1, 
+			data + totalSize,  MAX_DATA_SIZE - totalSize);
 	}
 }
 
