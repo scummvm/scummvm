@@ -58,7 +58,7 @@ ALWAYS_BUILD_AS_ARM
 	//MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
 	//MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib
 	//MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
-
+	//MACRO			DISABLE_DRASCULA	// LIB:scummvm_drascula.lib
 
 //STOP_AUTO_MACROS_MASTER//
 
@@ -108,7 +108,11 @@ SOURCEPATH ..\..\..\..\sound
 	// empty base file, will be updated by Perl build scripts
 
 //STOP_AUTO_OBJECTS_SOUND_//
-
+#if defined (WINS)
+SOURCE rate.cpp
+#else
+SOURCE rate_arm.cpp
+#endif
 sourcepath ..\..\..\..
 source	   backends\events\default\default-events.cpp
 source	   backends\timer\default\default-timer.cpp
