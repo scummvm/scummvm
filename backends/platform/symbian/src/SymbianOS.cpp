@@ -22,6 +22,9 @@
  * $Id$
  */
 
+#include <eikenv.h> // for CEikonEnv::Static() @ Symbian::FatalError()
+#include <sdlapp.h> // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
+
 #include "backends/platform/symbian/src/SymbianOS.h"
 #include "backends/platform/symbian/src/SymbianActions.h"
 #include "common/config-manager.h"
@@ -30,8 +33,7 @@
 #include "gui/Key.h"
 #include "gui/message.h"
 
-#include <eikenv.h> // for CEikonEnv::Static() @ Symbian::FatalError()
-#include "ESDL/sdlapp.h" // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
+#include "..\..\sdl\main.cpp"
 
 ////////// extern "C" ///////////////////////////////////////////////////
 namespace Symbian {
