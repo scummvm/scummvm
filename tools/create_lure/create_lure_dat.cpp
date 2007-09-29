@@ -27,6 +27,12 @@
  * to work properly
  */
 
+// HACK to allow building with the SDL backend on MinGW
+// see bug #1800764 "TOOLS: MinGW tools building broken"
+#ifdef main
+#undef main
+#endif // main
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
