@@ -141,10 +141,15 @@ bool Scene::checkKey() {
 	while (_vm->_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			_vm->shutDown();
-			// fallthrough
-		case Common::EVENT_KEYDOWN:
 			res = true;
+			_vm->shutDown();
+			break;
+		case Common::EVENT_KEYDOWN:
+			// Don't react to modifier keys alone. The original did
+			// non, and the user may want to change scaler without
+			// terminating the intro.
+			if (event.kbd.ascii)
+				res = true;
 			break;
 		default:
 			break;
