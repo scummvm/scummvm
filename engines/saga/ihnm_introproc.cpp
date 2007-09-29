@@ -230,6 +230,7 @@ bool Scene::playTitle(int title, int time, int mode) {
 			}
 			
 			if (checkKey()) {
+				_vm->_scene->cutawaySkip();
 				interrupted = true;
 				done = true;
 				break;
