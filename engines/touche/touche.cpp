@@ -55,7 +55,6 @@ ToucheEngine::ToucheEngine(OSystem *system)
 
 	_processRandomPaletteCounter = 0;
 
-	_roomNeedRedraw = false;
 	_fastWalkMode = false;
 	_fastMode = false;
 
@@ -63,7 +62,7 @@ ToucheEngine::ToucheEngine(OSystem *system)
 	_objectDescriptionNum = 0;
 	_speechPlaying = false;
 
-	_roomNeedRedraw	= false;
+	_roomNeedRedraw = false;
 	_fullRedrawCounter = 0;
 	_menuRedrawCounter = 0;
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));

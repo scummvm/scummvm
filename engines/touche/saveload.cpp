@@ -328,7 +328,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
 	  kScreenWidth, kRoomHeight);
 	updateRoomRegions();
-	updateEntireScreen();
+	_fullRedrawCounter = 1;
 	_roomNeedRedraw = false;
 	if (_flagsTable[617] != 0) {
 		res_loadSpeech(_flagsTable[617]);
