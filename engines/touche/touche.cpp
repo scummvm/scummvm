@@ -1914,6 +1914,12 @@ void ToucheEngine::updateRoomAreas(int num, int flags) {
 	for (uint i = 0; i < _programAreaTable.size(); ++i) {
 		if (_programAreaTable[i].id == num) {
 			Area area = _programAreaTable[i].area;
+			if (i == 14 && _currentRoomNum == 8 && area.r.left == 715) {
+				// Workaround for bug #1751170. area[14].r.left (update rect) should
+				// be equal to area[7].r.left (redraw rect) but it's one off, which
+				// leads to a glitch when that room area needs to be redrawn.
+				area.r.left = 714;
+			}
 			Graphics::copyRect(_backdropBuffer, _currentBitmapWidth, area.r.left, area.r.top,
 			  _backdropBuffer, _currentBitmapWidth, area.srcX, area.srcY,
 			  area.r.width(), area.r.height(),
