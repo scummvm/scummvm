@@ -80,7 +80,7 @@ int Scene::IHNMStartProc() {
 	firstScene.loadFlag = kLoadBySceneNumber;
 	firstScene.sceneDescriptor = -1;
 	firstScene.sceneDescription = NULL;
-	firstScene.sceneSkipTarget = true;
+	firstScene.sceneSkipTarget = false;
 	firstScene.sceneProc = NULL;
 	firstScene.transitionType = kTransitionFade;
 	firstScene.actorsEntrance = 0;
