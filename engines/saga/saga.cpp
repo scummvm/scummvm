@@ -391,11 +391,20 @@ const char *SagaEngine::getTextString(int textStringId) {
 	const char *string;
 	int lang = 0;
 
-	if (getLanguage() == Common::DE_DEU)
-		lang = 1;
-
-	if (getLanguage() == Common::IT_ITA)
-		lang = 2;
+	switch (getLanguage()) {
+		case Common::DE_DEU:
+			lang = 1;
+			break;
+		case Common::ES_ESP:
+			lang = 2;
+			break;
+		case Common::IT_ITA:
+			lang = 3;
+			break;
+		default:
+			lang = 0;
+			break;
+	}
 
 	string = ITEinterfaceTextStrings[lang][textStringId];
 	if (!string)
