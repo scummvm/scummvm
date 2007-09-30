@@ -280,7 +280,6 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 #define PLAYER_FIGHT_TICK_PROC_ID 39
 
 // String constants
-#define STRANGER_ID 0x17A
 #define TALK_MAGIC_ID 0x424
 #define TALK_RESPONSE_MAGIC_ID 0x1092
 

@@ -2054,6 +2054,7 @@ uint16 Hotspot::getTalkId(HotspotData *charHotspot) {
 	Resources &res = Resources::getReference();
 	uint16 talkIndex;
 	TalkHeaderData *headerEntry;
+	bool isEnglish = LureEngine::getReference().getLanguage() == EN_ANY;
 
 	// If the hotspot has a talk data override, return it
 	if (charHotspot->talkOverride != 0) {
@@ -2066,10 +2067,13 @@ uint16 Hotspot::getTalkId(HotspotData *charHotspot) {
 	// Get offset of talk set to use
 	headerEntry = res.getTalkHeader(charHotspot->hotspotId);
 
-	// Calculate talk index to use
-	if (charHotspot->nameId == STRANGER_ID)
+	// Check whether character is a stranger 
+	if ((isEnglish && (charHotspot->nameId == 378)) ||
+		(!isEnglish && ((charHotspot->nameId == 381) || (charHotspot->nameId == 382))))
+		// Is a stranger, so force talk Index to be 0 (initial talk)
 		talkIndex = 0;
 	else
+		// Set the talk index based on the current game-wide talk index
 		talkIndex = res.fieldList().getField(TALK_INDEX) + 1;
 
 	return headerEntry->getEntry(talkIndex);
@@ -3016,7 +3020,7 @@ void HotspotTickHandlers::droppingTorchAnimHandler(Hotspot &h) {
 			// Enable the fire and activate its animation
 			HotspotData *fire = res.getHotspot(0x418);
 			fire->flags |= 0x80;
-			fire->loadOffset = 0x7172; 
+			fire->loadOffset = 4;
 			res.activateHotspot(0x418);
 		}
  	}
