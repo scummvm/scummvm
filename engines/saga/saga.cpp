@@ -343,7 +343,12 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 			break;
 		}
 		if (offset > stringsLength) {
-			error("SagaEngine::loadStrings wrong strings table");
+			// This case should never occur, but apparently it does in the Italian fan
+			// translation of IHNM
+			warning("SagaEngine::loadStrings wrong strings table");
+			stringsCount = i;
+			stringsTable.strings = (const char **)realloc(stringsTable.strings, stringsCount * sizeof(*stringsTable.strings));
+			break;
 		}
 		stringsTable.strings[i] = (const char *)stringsTable.stringsPointer + offset;
 		debug(9, "string[%i]=%s", i, stringsTable.strings[i]);
@@ -384,7 +389,13 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 
 const char *SagaEngine::getTextString(int textStringId) {
 	const char *string;
-	int lang = (getLanguage() == Common::DE_DEU) ? 1 : 0;
+	int lang = 0;
+
+	if (getLanguage() == Common::DE_DEU)
+		lang = 1;
+
+	if (getLanguage() == Common::IT_ITA)
+		lang = 2;
 
 	string = ITEinterfaceTextStrings[lang][textStringId];
 	if (!string)

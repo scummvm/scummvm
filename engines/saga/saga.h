@@ -139,7 +139,8 @@ enum GameIds {
 	GID_IHNM_CD_DE,   // reported by mld. German retail
 	GID_IHNM_CD_ES,
 	GID_IHNM_CD_RU,
-	GID_IHNM_CD_FR
+	GID_IHNM_CD_FR,
+	GID_IHNM_CD_ITA
 };
 
 enum GameFileTypes {

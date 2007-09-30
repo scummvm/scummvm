@@ -375,7 +375,27 @@ const char *ITEinterfaceTextStrings[][52] = {
 		"Ich wei$ nicht, wie ich das machen soll.",
 		"Text zeigen",
 		"Wie lautet die Antwort?"
-	}
+	},
+	// Italian fan translation of IHNM
+	{
+		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
+		"Close", "Use", "Give", "Options", "Test",
+		"Demo", "Help", "Quit Game", "Fast", "Slow",
+		"On", "Off", "Continue Playing", "Load", "Save",
+		"Game Options", "Reading Speed", "Music", "Sound", "Cancel",
+		"Quit", "OK", "Mid", "Click", "10%",
+		"20%", "30%", "40%", "50%", "60%",
+		"70%", "80%", "90%", "Max", "Uscire?",
+		"Load Successful!", "Nome del salvataggio", "Dai %s a %s", "Usa %s con %s",
+		"[New Save Game]",
+		"I can't pick that up.",
+		"I see nothing special about it.",
+		"There's no place to open it.",
+		"There's no opening to close.",
+		"I don't know how to do that.",
+		"Show Dialog",
+		"What is Rif's reply?"
+	},
 };
 
 Point pieceOrigins[PUZZLE_PIECES] = {
