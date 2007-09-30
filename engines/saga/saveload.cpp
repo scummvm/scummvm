@@ -111,7 +111,7 @@ void SagaEngine::fillSaveList() {
 	int i;
 	Common::InSaveFile *in;
 	Common::StringList filenames;
-	char slot[2];
+	char slot[3];
 	int slotNumber;
 	char *name;
 
