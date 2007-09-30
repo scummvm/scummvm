@@ -67,6 +67,9 @@ enum MidiDriverType {
 	// MorphOS
 	MD_ETUDE,
 
+	// IRIX
+	MD_DMEDIA,
+
 	// MIDI softsynths
 	MD_FLUIDSYNTH,
 	MD_MT32,
@@ -273,6 +276,7 @@ extern MidiDriver *MidiDriver_CORE_create();
 extern MidiDriver *MidiDriver_CoreMIDI_create();
 extern MidiDriver *MidiDriver_ETUDE_create();
 extern MidiDriver *MidiDriver_ALSA_create();
+extern MidiDriver *MidiDriver_DMEDIA_create();
 extern MidiDriver *MidiDriver_YM2612_create(Audio::Mixer *mixer);
 #ifdef USE_FLUIDSYNTH
 extern MidiDriver *MidiDriver_FluidSynth_create(Audio::Mixer *mixer);
