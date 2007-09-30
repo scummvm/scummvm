@@ -34,8 +34,6 @@ namespace Lure {
 
 using namespace Common;
 
-extern const Action sortedActions[];
-
 /*-------------------------------------------------------------------------*/
 /* Structure definitions                                                   */
 /*                                                                         */

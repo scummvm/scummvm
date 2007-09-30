@@ -30,10 +30,6 @@
 
 namespace Lure {
 
-extern const Action sortedActions[] = {ASK, BRIBE, BUY, CLOSE, DRINK, EXAMINE, GET, GIVE, 
-	GO_TO, LOCK, LOOK, LOOK_AT, LOOK_THROUGH, OPEN, OPERATE, PULL, PUSH, RETURN, 
-	STATUS, TALK_TO, TELL, UNLOCK, USE, NONE};
-
 extern const int actionNumParams[NPC_JUMP_ADDRESS+1] = {0, 
 	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
 	0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};

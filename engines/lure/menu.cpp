@@ -381,12 +381,18 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 	return result;
 }
 
+static int entryCompare(const char **p1, const char **p2) {
+	return strcmp(*p1, *p2);
+}
+
+typedef int (*CompareMethod)(const void*, const void*);
+
 Action PopupMenu::Show(uint32 actionMask) {
 	StringList &stringList = Resources::getReference().stringList();
 	int numEntries = 0;
 	uint32 v = actionMask;
 	int index;
-	const Action *currentAction;
+	int currentAction;
 	uint16 resultIndex;
 	Action resultAction;
 
@@ -395,26 +401,33 @@ Action PopupMenu::Show(uint32 actionMask) {
 	}
 
 	const char **strList = (const char **) Memory::alloc(sizeof(char *) * numEntries);
-	Action *actionSet = (Action *) Memory::alloc(sizeof(Action) * numEntries);
 
 	int strIndex = 0;
-	for (currentAction = &sortedActions[0]; *currentAction != NONE; ++currentAction) {
-		if ((actionMask & (1 << (*currentAction - 1))) != 0) {
-			strList[strIndex] = stringList.getString(*currentAction);
-			actionSet[strIndex] = *currentAction;
+	for (currentAction = 0; currentAction < (int)EXAMINE; ++currentAction) {
+		if ((actionMask & (1 << currentAction)) != 0) {
+			strList[strIndex] = stringList.getString(currentAction);
 			++strIndex;
 		}
 	}
 
+	// Sort the list
+	qsort(strList, numEntries, sizeof(const char *), (CompareMethod) entryCompare);
+
+	// Show the entries
 	resultIndex = Show(numEntries, strList);
 
-	if (resultIndex == 0xffff) 
-		resultAction = NONE;
-	else 
-		resultAction = actionSet[resultIndex];
+	resultAction = NONE;
+	if (resultIndex != 0xffff) {
+		// Scan through the list of actions to find the selected entry
+		for (currentAction = 0; currentAction < (int)EXAMINE; ++currentAction) {
+			if (strList[resultIndex] == stringList.getString(currentAction)) {
+				resultAction = (Action) (currentAction + 1);
+				break;
+			}
+		}
+	}
 
 	Memory::dealloc(strList);
-	Memory::dealloc(actionSet);
 	return resultAction;
 }
 
