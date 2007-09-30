@@ -312,7 +312,7 @@ Common::InSaveFile *QueenEngine::readGameStateHeader(int slot, GameStateHeader *
 
 void QueenEngine::makeGameStateName(int slot, char *buf) const {
 	if (slot == SLOT_LISTPREFIX) {
-		strcpy(buf, "queen.*");
+		strcpy(buf, "queen.s*");
 	} else if (slot == SLOT_AUTOSAVE) {
 		strcpy(buf, "queen.asd");
 	} else {
