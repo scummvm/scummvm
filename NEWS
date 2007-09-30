@@ -20,6 +20,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  Broken Sword 1:
    - Added support for FLAC encoded music.
+ 
+ IRIX:
+   - Added DMedia MIDI driver for IRIX.
 
  SCUMM:
    - Added subtitle skipping (via '.' key) in older games which didn't have
