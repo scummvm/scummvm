@@ -874,7 +874,7 @@ void Interface::drawPanelText(Surface *ds, InterfacePanel *panel, PanelButton *p
 		textFont = kKnownFontMedium;
 		textShadowKnownColor = kKnownColorVerbTextShadow;
 	} else {
-		if (panelButton->id < 39 || panelButton->id > 50) {
+		if (panelButton->id < 39) {
 			// Read non-hardcoded strings from the LUT string table, loaded from the game
 			// data files
 			text = _vm->_script->_mainStrings.getString(IHNMTextStringIdsLUT[panelButton->id]);
@@ -2223,7 +2223,7 @@ void Interface::drawPanelButtonText(Surface *ds, InterfacePanel *panel, PanelBut
 		textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
 		textHeight = _vm->_font->getHeight(kKnownFontMedium);
 	} else {
-		if (textId < 39 || textId > 50) {
+		if (textId < 39) {
 			// Read non-hardcoded strings from the LUT string table, loaded from the game
 			// data files
 			text = _vm->_script->_mainStrings.getString(IHNMTextStringIdsLUT[textId]);

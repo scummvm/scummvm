@@ -516,13 +516,16 @@ void Script::doVerb() {
 		_vm->_events->queue(&event);
 
 	} else {
-		_vm->getExcuseInfo(_pendingVerb, excuseText, excuseSampleResourceId);
-		if (excuseText) {
-			// In Floppy versions we don't have excuse texts
-			if (!(_vm->getFeatures() & GF_CD_FX))
-				excuseSampleResourceId = -1;
+		// Show excuse text in ITE CD Versions
+		if (_vm->getGameType() == GType_ITE) {
+			_vm->getExcuseInfo(_pendingVerb, excuseText, excuseSampleResourceId);
+			if (excuseText) {
+				// In Floppy versions we don't have excuse texts
+				if (!(_vm->getFeatures() & GF_CD_FX))
+					excuseSampleResourceId = -1;
 
-			_vm->_actor->actorSpeech(ID_PROTAG, &excuseText, 1, excuseSampleResourceId, 0);
+				_vm->_actor->actorSpeech(ID_PROTAG, &excuseText, 1, excuseSampleResourceId, 0);
+			}
 		}
 	}
 
