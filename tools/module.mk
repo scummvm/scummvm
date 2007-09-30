@@ -15,7 +15,7 @@ TOOLS := \
 include $(srcdir)/tools/*/module.mk
 
 # Make sure the 'all' / 'clean' targets build/clean the tools, too
-all: tools
+all:
 clean: clean-tools
 
 # Main target
