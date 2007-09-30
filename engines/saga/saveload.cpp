@@ -132,6 +132,7 @@ void SagaEngine::fillSaveList() {
 		//Obtain the last 2 digits of the filename, since they correspond to the save slot
 		slot[0] = file->c_str()[file->size()-2];
 		slot[1] = file->c_str()[file->size()-1];
+		slot[2] = 0;
 
 		slotNumber = atoi(slot);
 		if (slotNumber >= 0 && slotNumber < MAX_SAVES) {
