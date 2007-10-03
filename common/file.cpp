@@ -132,6 +132,11 @@
 	#define clearerr(handle)					symbian_clearerr(handle)
 #endif
 
+#ifdef __DC__
+	/* Can't remove files from CD-ROM... */
+	#define remove(name)  ((errno = EROFS), -1)
+#endif
+
 namespace Common {
 
 typedef HashMap<String, int, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringIntMap;
