@@ -156,13 +156,54 @@ static bool tryLoad(char *&buffer, int &size, const char *filename, int vm)
   return false;
 }
 
-static void tryList(const char *prefix, bool *marks, int num, int vm)
+static bool tryDelete(const char *filename, int vm)
+{
+  struct vmsinfo info;
+  struct superblock super;
+
+  if (!vmsfs_check_unit(vm, 0, &info))
+    return false;
+  if (!vmsfs_get_superblock(&info, &super))
+    return false;
+
+#if 0
+  // FIXME: implement this function in vmsfs...
+  if (!vmsfs_delete_file(&super, filename))
+    return false;
+#else
+  return false;
+#endif
+
+  return true;
+}
+
+static bool matches(const char *glob, const char *name)
+{
+  while(*glob)
+    if(*glob == '*') {
+      while(*glob == '*')
+	glob++;
+      do {
+	if((*name == *glob || *glob == '?') &&
+	   matches(glob, name))
+	  return true;
+      } while(*name++);
+      return false;
+    } else if(!*name)
+      return false;
+    else if(*glob == '?' || *glob == *name) {
+      glob++;
+      name++;
+    }
+  return !*name;
+}
+
+static void tryList(const char *glob, int vm, Common::StringList &list)
 {
   struct vmsinfo info;
   struct superblock super;
   struct dir_iterator iter;
   struct dir_entry de;
-  int pl = strlen(prefix);
 
   if (!vmsfs_check_unit(vm, 0, &info))
     return;
@@ -171,15 +212,11 @@ static void tryList(const char *prefix, bool *marks, int num, int vm)
   vmsfs_open_dir(&super, &iter);
   while (vmsfs_next_dir_entry(&iter, &de))
     if (de.entry[0]) {
-      char buf[16], *endp = NULL;
+      char buf[16];
       strncpy(buf, (char *)de.entry+4, 12);
       buf[12] = 0;
-      int l = strlen(buf);
-      long i = 42;
-      if (l > pl && !strncmp(buf, prefix, pl) &&
-	 (i = strtol(buf+pl, &endp, 10))>=0 && i<num &&
-	 (endp - buf) == l)
-	marks[i] = true;
+      if (matches(glob, buf))
+	list.push_back(buf);
     }
 }
 
@@ -210,6 +247,21 @@ bool readSaveGame(char *&buffer, int &size, const char *filename)
 
   for (int i=0; i<24; i++)
     if (tryLoad(buffer, size, filename, i)) {
+      lastvm = i;
+      return true;
+    }
+
+  return false;
+}
+
+bool deleteSaveGame(const char *filename)
+{
+  if (lastvm >= 0 &&
+     tryDelete(filename, lastvm))
+    return true;
+
+  for (int i=0; i<24; i++)
+    if (tryDelete(filename, i)) {
       lastvm = i;
       return true;
     }
@@ -302,7 +354,11 @@ public:
 	}
   }
 
-  virtual void listSavefiles(const char *prefix, bool *marks, int num);
+  virtual bool removeSavefile(const char *filename) {
+	return ::deleteSaveGame(filename);
+  }
+
+  virtual Common::StringList VMSaveManager::listSavefiles(const char *glob);
 };
 
 void OutVMSave::finalize()
@@ -394,12 +450,14 @@ uint32 OutVMSave::write(const void *buf, uint32 cnt)
 }
 
 
-void VMSaveManager::listSavefiles(const char *prefix, bool *marks, int num)
+Common::StringList VMSaveManager::listSavefiles(const char *glob)
 {
-  memset(marks, false, num*sizeof(bool));
+  Common::StringList list;
 
   for (int i=0; i<24; i++)
-    tryList(prefix, marks, num, i);
+    tryList(glob, i, list);
+
+  return list;
 }
 
 Common::SaveFileManager *OSystem_Dreamcast::createSavefileManager()
