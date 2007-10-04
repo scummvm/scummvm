@@ -385,10 +385,14 @@ FixedTable::FixedTable(uint32 size, uint32 fixed) : Table(size), _numFixed(fixed
 }
 
 void FixedTable::clear() {
+	uint32 deleted = 0;
 	for (uint32 i = _numFixed; i < _used; i++) {
 		free(_data[i]);
-		_used--;
+		_data[i] = 0;
+		deleted++;
 	}
+
+	_used -= deleted;
 }
 
 Table* createTableFromStream(uint32 size, Common::SeekableReadStream &stream) {
