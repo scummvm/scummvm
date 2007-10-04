@@ -26,43 +26,6 @@
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/abstract-fs-factory.h"
 
-/**
- * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
- * Taken from exult/files/listfiles.cc
- */
-static bool matchString(const char *str, const char *pat) {
-	const char *p = 0;
-	const char *q = 0;
-
-	for (;;) {
-		switch (*pat) {
-		case '*':
-			p = ++pat;
-			q = str;
-			break;
-
-		default:
-			if (*pat != *str) {
-				if (p) {
-					pat = p;
-					str = ++q;
-					if (!*str)
-						return !*pat;
-					break;
-				}
-				else
-					return false;
-			}
-			// fallthrough
-		case '?':
-			if (!*str)
-				return !*pat;
-			pat++;
-			str++;
-		}
-	}
-}
-
 FilesystemNode::FilesystemNode() {
 	_realNode = 0;
 	_refCount = 0;
@@ -233,25 +196,19 @@ bool FilesystemNode::lookupFile(FSList &results, FilesystemNode &dir, Common::St
 	return ((matches > 0) ? true : false);
 }
 
-// HACK HACK HACK
-extern const char *lastPathComponent(const Common::String &str);
-
 int FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
 {
 	FSList entries;
 	FSList children;
 	int matches = 0;
 	dir.getChildren(entries, FilesystemNode::kListAll, hidden);
-
+	
 	//Breadth search (entries in the same level)
 	for (FSList::iterator entry = entries.begin(); entry != entries.end(); ++entry) {
 		if (entry->isDirectory()) {
 			children.push_back(*entry);
 		} else {
-			//TODO: here we assume all backends implement the lastPathComponent method. It is currently static,
-			//		so it might be a good idea to include it inside the backend class. This would enforce its
-			//		implementation by all ports.
-			if (matchString(lastPathComponent(entry->getPath()), filename.c_str())) {
+			if (Common::matchString(entry->getName().c_str(), filename.c_str())) {
 				results.push_back(*entry);
 				matches++;
 

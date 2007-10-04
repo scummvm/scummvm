@@ -53,6 +53,28 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 namespace Common {
 
 /**
+ * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
+ * Taken from exult/files/listfiles.cc
+ * 
+ * Token meaning:
+ * 		"*": any character, any amount of times.
+ * 		"?": any character, only once.
+ * 
+ * Example strings/patterns:
+ * 		String: monkey.s??	 Pattern: monkey.s01 	=> true
+ *		String: monkey.s??	 Pattern: monkey.s101 	=> false
+ *		String: monkey.s?1	 Pattern: monkey.s99 	=> false
+ *		String: monkey.s*	 Pattern: monkey.s101 	=> true
+ *		String: monkey.s*1	 Pattern: monkey.s99 	=> false
+ * 
+ * @param str Text to be matched against the given pattern.
+ * @param pat Glob pattern.
+ * 
+ * @return true if str matches the pattern, false otherwise.
+ */
+bool matchString(const char *str, const char *pat);
+
+/**
  * Print a hexdump of the data passed in. The number of bytes per line is
  * customizable.
  * @param data	the data to be dumped
