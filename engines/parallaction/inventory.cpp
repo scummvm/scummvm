@@ -265,8 +265,12 @@ ItemPosition Inventory::addItem(ItemName name, uint32 value) {
 	if (_numItems == INVENTORY_MAX_ITEMS)
 		return -1;
 
+	// NOTE: items whose name == 0 aren't really inventory items,
+	// but the engine expects the inventory to accept them as valid.
+	// This nasty trick has been discovered because of regression
+	// after r29060.
 	if (name == 0)
-		return -1;
+		return 0;
 
 	_items[_numItems]._id = value;
 	_items[_numItems]._index = name;
