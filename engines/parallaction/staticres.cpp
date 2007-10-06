@@ -343,7 +343,8 @@ const char *_locationZoneStmtRes_ns[] = {
 	"commands",
 	"label",
 	"flags",
-	"endzone"
+	"endzone",
+	"endcommands"		// this to prevent unexpected statements in the scripts to crash the parser
 };
 
 const char *_locationAnimStmtRes_ns[] = {

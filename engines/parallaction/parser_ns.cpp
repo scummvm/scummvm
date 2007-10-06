@@ -1136,7 +1136,8 @@ void Parallaction_ns::initParsers() {
 		ZONE_PARSER(commands),
 		ZONE_PARSER(label),
 		ZONE_PARSER(flags),
-		ZONE_PARSER(endzone)
+		ZONE_PARSER(endzone),
+		ZONE_PARSER(null)
 	};
 
 	for (i = 0; i < ARRAYSIZE(op5); i++)
@@ -1188,6 +1189,10 @@ char *Parallaction_ns::parseComment(Script &script) {
 	_tmp_comment[0] = '\0';
 
 	return v194;
+}
+
+DECLARE_ZONE_PARSER(null) {
+	debugC(7, kDebugParser, "ZONE_PARSER(null) ");
 }
 
 
