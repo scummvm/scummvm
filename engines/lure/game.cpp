@@ -529,7 +529,7 @@ void Game::handleRightClickMenu() {
 		case DRINK:
 			hasItems = (res.numInventoryItems() != 0);
 			if (!hasItems)
-				strcat(statusLine, stringList.getString(S_NOTHING));
+				strcat(statusLine, stringList.getString(S_ACTION_NOTHING));
 			statusLine += strlen(statusLine);
 
 			room.update();
