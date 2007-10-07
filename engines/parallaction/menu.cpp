@@ -212,7 +212,7 @@ uint16 Menu::chooseLanguage() {
 				if (128 + _si * 49 <= _vm->_mousePos.x) continue;
 				if (180 - _si * 25 <= _vm->_mousePos.y) continue;
 
-//				beep();
+				_vm->beep();
 
 				switch (_si) {
 				case 0:
@@ -368,7 +368,7 @@ void Menu::selectCharacter() {
 			if (_si != -1) {
 				_vm->_gfx->grabRect((byte*)v14.pixels, r, Gfx::kBitFront, BLOCK_WIDTH);
 				_vm->_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitFront);
-//				beep();
+				_vm->beep();
 
 				if (_vm->getPlatform() == Common::kPlatformAmiga && (_vm->getFeatures() & GF_LANG_MULT)) {
 					if (_amigaDinoKey[_di] == _si)

@@ -407,4 +407,5 @@ JobOpcode* Parallaction_ns::createJobOpcode(uint functionId, Job *job) {
 	return new OpcodeImpl2<Parallaction_ns>(this, _jobsFn[functionId], job);
 }
 
+
 } // namespace Parallaction

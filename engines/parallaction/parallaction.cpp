@@ -547,7 +547,7 @@ Parallaction::InputData *Parallaction::translateInput() {
 				}
 			}
 
-//			beep();
+			beep();
 			setArrowCursor();
 			return &_input;
 		}
@@ -1142,6 +1142,9 @@ const char *Character::getFullName() const {
 }
 
 
+void Parallaction::beep() {
+	_soundMan->playSfx("beep", 3, false);
+}
 
 
 

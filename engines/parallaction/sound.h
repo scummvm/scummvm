@@ -95,6 +95,8 @@ class AmigaSoundMan : public SoundMan {
 		uint32				flags;
 	} _channels[NUM_AMIGA_CHANNELS];
 
+	void loadChannelData(const char *filename, Channel *ch);
+
 public:
 	AmigaSoundMan(Parallaction *vm);
 	~AmigaSoundMan();

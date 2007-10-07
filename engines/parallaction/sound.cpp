@@ -318,6 +318,28 @@ AmigaSoundMan::~AmigaSoundMan() {
 	stopSfx(3);
 }
 
+static byte res_amigaBeep[] = {
+	0, 20, 40, 60, 80, 60, 40, 20, 0, 236, 216, 196, 176, 196, 216, 236
+};
+
+void AmigaSoundMan::loadChannelData(const char *filename, Channel *ch) {
+	if (!scumm_stricmp("beep", filename)) {
+		ch->header.oneShotHiSamples = 0;
+		ch->header.repeatHiSamples = 0;
+		ch->header.samplesPerHiCycle = 0;
+		ch->header.samplesPerSec = 12000;
+		ch->header.volume = 255;
+		ch->data = res_amigaBeep;
+		ch->dataSize = 16;
+		return;
+	}
+
+	Common::ReadStream *stream = _vm->_disk->loadSound(filename);
+	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
+	decoder.decode();
+	delete stream;
+}
+
 void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, int volume, int rate) {
 	if (channel >= NUM_AMIGA_CHANNELS) {
 		warning("unknown sfx channel");
@@ -327,10 +349,7 @@ void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, in
 	debugC(1, kDebugAudio, "AmigaSoundMan::playSfx(%s, %i)", filename, channel);
 
 	Channel *ch = &_channels[channel];
-	Common::ReadStream *stream = _vm->_disk->loadSound(filename);
-	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
-	decoder.decode();
-	delete stream;
+	loadChannelData(filename, ch);
 
 	uint32 loopStart, loopEnd, flags;
 	if (looping) {

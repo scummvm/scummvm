@@ -580,6 +580,7 @@ public:
 	virtual void jobEraseLabel(void *parm, Job *j) = 0;
 	virtual void jobWaitRemoveJob(void *parm, Job *j) = 0;
 
+	void		beep();
 
 public:
 	const char **_zoneFlagNamesRes;
@@ -788,7 +789,6 @@ protected:
 	void		addCommand();
 	void 		initOpcodes();
 	void 		initParsers();
-
 
 	// program parser
 	OpcodeSet	_instructionParsers;
