@@ -302,7 +302,7 @@ void Inventory::removeItem(ItemName name) {
 	_numItems--;
 
 	if (_numItems != pos) {
-		memcpy(&_items[pos], &_items[pos+1], (_numItems - pos) * sizeof(InventoryItem));
+		memmove(&_items[pos], &_items[pos+1], (_numItems - pos) * sizeof(InventoryItem));
 	}
 
 	_items[_numItems]._id = 0;
