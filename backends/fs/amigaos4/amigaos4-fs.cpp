@@ -116,7 +116,7 @@ const char *lastPathComponent(const Common::String &str) {
 		
 	if (offset <= 0) {
 		debug(6, "Bad offset");
-		return;
+		return 0;
 	}
 	
 	const char *p = str.c_str();
