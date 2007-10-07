@@ -75,49 +75,49 @@ extern const RoomTranslationRecord roomTranslations[] = {
 // Room data holding class
 
 RoomData::RoomData(RoomResource *rec, MemoryBlock *pathData) { 
-	roomNumber = FROM_LE_16(rec->roomNumber);
+	roomNumber = READ_LE_UINT16(&rec->roomNumber);
 	hdrFlags = rec->hdrFlags;
 	actions = FROM_LE_32(rec->actions) & 0xfffffff;
 	flags = (FROM_LE_32(rec->actions) >> 24) & 0xf0;
-	descId = FROM_LE_16(rec->descId);
-	sequenceOffset = FROM_LE_16(rec->sequenceOffset);
-	numLayers = FROM_LE_16(rec->numLayers);
+	descId = READ_LE_UINT16(&rec->descId);
+	sequenceOffset = READ_LE_UINT16(&rec->sequenceOffset);
+	numLayers = READ_LE_UINT16(&rec->numLayers);
 
 	paths.load(pathData->data() + (roomNumber - 1) * ROOM_PATHS_SIZE);
 
 	for (int ctr = 0; ctr < 4; ++ctr)
-		layers[ctr] = FROM_LE_16(rec->layers[ctr]);
+		layers[ctr] = READ_LE_UINT16(&rec->layers[ctr]);
 
-	clippingXStart = FROM_LE_16(rec->clippingXStart);
-	clippingXEnd = FROM_LE_16(rec->clippingXEnd);
+	clippingXStart = READ_LE_UINT16(&rec->clippingXStart);
+	clippingXEnd = READ_LE_UINT16(&rec->clippingXEnd);
 	exitTime = FROM_LE_32(rec->exitTime);
 	areaFlag = rec->areaFlag;
-	walkBounds.left = FROM_LE_16(rec->walkBounds.xs);
-	walkBounds.right = FROM_LE_16(rec->walkBounds.xe);
-	walkBounds.top = FROM_LE_16(rec->walkBounds.ys);
-	walkBounds.bottom = FROM_LE_16(rec->walkBounds.ye);
+	walkBounds.left = READ_LE_UINT16(&rec->walkBounds.xs);
+	walkBounds.right = READ_LE_UINT16(&rec->walkBounds.xe);
+	walkBounds.top = READ_LE_UINT16(&rec->walkBounds.ys);
+	walkBounds.bottom = READ_LE_UINT16(&rec->walkBounds.ye);
 }
 
 // Room exit hotspot area holding class
 
 RoomExitHotspotData::RoomExitHotspotData(RoomExitHotspotResource *rec) {
-	hotspotId = FROM_LE_16(rec->hotspotId);
-	xs = FROM_LE_16(rec->xs);
-	ys = FROM_LE_16(rec->ys);
-	xe = FROM_LE_16(rec->xe);
-	ye = FROM_LE_16(rec->ye);
+	hotspotId = READ_LE_UINT16(&rec->hotspotId);
+	xs = READ_LE_UINT16(&rec->xs);
+	ys = READ_LE_UINT16(&rec->ys);
+	xe = READ_LE_UINT16(&rec->xe);
+	ye = READ_LE_UINT16(&rec->ye);
 	cursorNum = rec->cursorNum;
-	destRoomNumber = FROM_LE_16(rec->destRoomNumber);
+	destRoomNumber = READ_LE_UINT16(&rec->destRoomNumber);
 }
 
 //  Room exit class
 
 RoomExitData::RoomExitData(RoomExitResource *rec) {
-	xs = FROM_LE_16(rec->xs); 
-	ys = FROM_LE_16(rec->ys);
-	xe = FROM_LE_16(rec->xe);
-	ye = FROM_LE_16(rec->ye);
-	sequenceOffset = FROM_LE_16(rec->sequenceOffset);
+	xs = READ_LE_UINT16(&rec->xs); 
+	ys = READ_LE_UINT16(&rec->ys);
+	xe = READ_LE_UINT16(&rec->xe);
+	ye = READ_LE_UINT16(&rec->ye);
+	sequenceOffset = READ_LE_UINT16(&rec->sequenceOffset);
 	roomNumber = rec->newRoom;
 	x = rec->newRoomX;
 	y = rec->newRoomY;
@@ -304,12 +304,12 @@ void RoomDataList::loadFromStream(ReadStream *stream) {
 // Room exit joins class
 
 RoomExitJoinData::RoomExitJoinData(RoomExitJoinResource *rec) {
-	hotspots[0].hotspotId = FROM_LE_16(rec->hotspot1Id);
+	hotspots[0].hotspotId = READ_LE_UINT16(&rec->hotspot1Id);
 	hotspots[0].currentFrame = rec->h1CurrentFrame;
 	hotspots[0].destFrame = rec->h1DestFrame;
 	hotspots[0].openSound = rec->h1OpenSound;
 	hotspots[0].closeSound = rec->h1CloseSound;
-	hotspots[1].hotspotId = FROM_LE_16(rec->hotspot2Id);
+	hotspots[1].hotspotId = READ_LE_UINT16(&rec->hotspot2Id);
 	hotspots[1].currentFrame = rec->h2CurrentFrame;
 	hotspots[1].destFrame = rec->h2DestFrame;
 	hotspots[1].openSound = rec->h2OpenSound;
@@ -378,42 +378,42 @@ uint16 HotspotActionList::getActionOffset(Action action) {
 // Hotspot data
 
 HotspotData::HotspotData(HotspotResource *rec) {
-	hotspotId = FROM_LE_16(rec->hotspotId);
-	nameId = FROM_LE_16(rec->nameId);
-	descId = FROM_LE_16(rec->descId);
-	descId2 = FROM_LE_16(rec->descId2);
+	hotspotId = READ_LE_UINT16(&rec->hotspotId);
+	nameId = READ_LE_UINT16(&rec->nameId);
+	descId = READ_LE_UINT16(&rec->descId);
+	descId2 = READ_LE_UINT16(&rec->descId2);
 	actions = READ_LE_UINT32(&rec->actions);
-	actionsOffset = FROM_LE_16(rec->actionsOffset);
+	actionsOffset = READ_LE_UINT16(&rec->actionsOffset);
 	flags = (byte) (actions >> 24) & 0xf0;
 	actions &= 0xfffffff;
 
-	roomNumber = FROM_LE_16(rec->roomNumber);
+	roomNumber = READ_LE_UINT16(&rec->roomNumber);
 	layer = rec->layer;
 	scriptLoadFlag = rec->scriptLoadFlag;
-	loadOffset = FROM_LE_16(rec->loadOffset);
-	startX = FROM_LE_16(rec->startX);
-	startY = FROM_LE_16(rec->startY);
-	width = FROM_LE_16(rec->width);
-	height = FROM_LE_16(rec->height);
-	widthCopy = FROM_LE_16(rec->widthCopy);
-	heightCopy = FROM_LE_16(rec->heightCopy);
-	yCorrection = FROM_LE_16(rec->yCorrection);
-	walkX = FROM_LE_16(rec->walkX);
-	walkY = FROM_LE_16(rec->walkY);
+	loadOffset = READ_LE_UINT16(&rec->loadOffset);
+	startX = READ_LE_UINT16(&rec->startX);
+	startY = READ_LE_UINT16(&rec->startY);
+	width = READ_LE_UINT16(&rec->width);
+	height = READ_LE_UINT16(&rec->height);
+	widthCopy = READ_LE_UINT16(&rec->widthCopy);
+	heightCopy = READ_LE_UINT16(&rec->heightCopy);
+	yCorrection = READ_LE_UINT16(&rec->yCorrection);
+	walkX = READ_LE_UINT16(&rec->walkX);
+	walkY = READ_LE_UINT16(&rec->walkY);
 	talkX = rec->talkX;
 	talkY = rec->talkY;
-	colourOffset = FROM_LE_16(rec->colourOffset);
-	animRecordId = FROM_LE_16(rec->animRecordId);
-	hotspotScriptOffset = FROM_LE_16(rec->hotspotScriptOffset);
-	talkScriptOffset = FROM_LE_16(rec->talkScriptOffset);
-	tickProcId = FROM_LE_16(rec->tickProcId);
-	tickTimeout = FROM_LE_16(rec->tickTimeout);
-	tickScriptOffset = FROM_LE_16(rec->tickScriptOffset);
-	npcSchedule = FROM_LE_16(rec->npcSchedule);
-	characterMode = (CharacterMode) FROM_LE_16(rec->characterMode);
-	delayCtr = FROM_LE_16(rec->delayCtr);
-	flags2 = FROM_LE_16(rec->flags2);
-	headerFlags = FROM_LE_16(rec->hdrFlags);
+	colourOffset = READ_LE_UINT16(&rec->colourOffset);
+	animRecordId = READ_LE_UINT16(&rec->animRecordId);
+	hotspotScriptOffset = READ_LE_UINT16(&rec->hotspotScriptOffset);
+	talkScriptOffset = READ_LE_UINT16(&rec->talkScriptOffset);
+	tickProcId = READ_LE_UINT16(&rec->tickProcId);
+	tickTimeout = READ_LE_UINT16(&rec->tickTimeout);
+	tickScriptOffset = READ_LE_UINT16(&rec->tickScriptOffset);
+	npcSchedule = READ_LE_UINT16(&rec->npcSchedule);
+	characterMode = (CharacterMode) READ_LE_UINT16(&rec->characterMode);
+	delayCtr = READ_LE_UINT16(&rec->delayCtr);
+	flags2 = READ_LE_UINT16(&rec->flags2);
+	headerFlags = READ_LE_UINT16(&rec->hdrFlags);
 
 	// Initialise runtime fields
 	actionCtr = 0;
@@ -540,19 +540,19 @@ void HotspotDataList::loadFromStream(ReadStream *stream) {
 // Hotspot override data
 
 HotspotOverrideData::HotspotOverrideData(HotspotOverrideResource *rec) {
-	hotspotId = FROM_LE_16(rec->hotspotId);
-	xs = FROM_LE_16(rec->xs);
-	ys = FROM_LE_16(rec->ys);
-	xe = FROM_LE_16(rec->xe);
-	ye = FROM_LE_16(rec->ye);
+	hotspotId = READ_LE_UINT16(&rec->hotspotId);
+	xs = READ_LE_UINT16(&rec->xs);
+	ys = READ_LE_UINT16(&rec->ys);
+	xe = READ_LE_UINT16(&rec->xe);
+	ye = READ_LE_UINT16(&rec->ye);
 }
 
 // Hotspot animation movement frame
 
 MovementData::MovementData(MovementResource *rec) {
-	frameNumber = FROM_LE_16(rec->frameNumber);
-	xChange = FROM_LE_16(rec->xChange);
-	yChange = FROM_LE_16(rec->yChange);
+	frameNumber = READ_LE_UINT16(&rec->frameNumber);
+	xChange = READ_LE_UINT16(&rec->xChange);
+	yChange = READ_LE_UINT16(&rec->yChange);
 }
 
 // List of movement frames
@@ -577,13 +577,12 @@ bool MovementDataList::getFrame(uint16 currentFrame, int16 &xChange,
 	return true;
 }
 
-
 // Hotspot animation data
 
 HotspotAnimData::HotspotAnimData(HotspotAnimResource *rec) {
-	animRecordId = FROM_LE_16(rec->animRecordId);
-	animId = FROM_LE_16(rec->animId);
-	flags = FROM_LE_16(rec->flags);
+	animRecordId = READ_LE_UINT16(&rec->animRecordId);
+	animId = READ_LE_UINT16(&rec->animId);
+	flags = READ_LE_UINT16(&rec->flags);
 
 	upFrame = rec->upFrame;
 	downFrame = rec->downFrame;
@@ -649,9 +648,9 @@ uint16 TalkHeaderData::getEntry(int index) {
 // The following class holds a single talking entry
 
 TalkEntryData::TalkEntryData(TalkDataResource *rec) {
-	preSequenceId = FROM_LE_16(rec->preSequenceId);
-	descId = FROM_LE_16(rec->descId);
-	postSequenceId = FROM_LE_16(rec->postSequenceId);
+	preSequenceId = READ_LE_UINT16(&rec->preSequenceId);
+	descId = READ_LE_UINT16(&rec->descId);
+	postSequenceId = READ_LE_UINT16(&rec->postSequenceId);
 }
 
 // The following class acts as a container for all the talk entries and
@@ -685,10 +684,10 @@ RoomExitCoordinates::RoomExitCoordinates(RoomExitCoordinateEntryResource *rec) {
 	int ctr;
 
 	for (ctr = 0; ctr < ROOM_EXIT_COORDINATES_NUM_ENTRIES; ++ctr) {
-		uint16 tempY = FROM_LE_16(rec->entries[ctr].y);
-		_entries[ctr].x = FROM_LE_16(rec->entries[ctr].x);
+		uint16 tempY = READ_LE_UINT16(&rec->entries[ctr].y);
+		_entries[ctr].x = READ_LE_UINT16(&rec->entries[ctr].x);
 		_entries[ctr].y = tempY & 0xfff;
-		_entries[ctr].roomNumber = FROM_LE_16(rec->entries[ctr].roomNumber);
+		_entries[ctr].roomNumber = READ_LE_UINT16(&rec->entries[ctr].roomNumber);
 		_entries[ctr].hotspotIndexId = (tempY >> 12) << 4;
 	}
 
@@ -816,13 +815,13 @@ CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleSet *parentSet,
 		CharacterScheduleResource *&rec) {
 	_parent = parentSet;
 
-	if ((rec->action == 0) || (FROM_LE_16(rec->action) > NPC_JUMP_ADDRESS))
+	if ((rec->action == 0) || (READ_LE_UINT16(&rec->action) > NPC_JUMP_ADDRESS))
 		error("Invalid action encountered reading NPC schedule");
 
-	_action = (Action) FROM_LE_16(rec->action);
+	_action = (Action) READ_LE_UINT16(&rec->action);
 	_numParams = actionNumParams[_action];
 	for (int index = 0; index < _numParams; ++index) 
-		_params[index] = FROM_LE_16(rec->params[index]);
+		_params[index] = READ_LE_UINT16(&rec->params[index]);
 
 	rec = (CharacterScheduleResource *) ((byte *) rec + 
 		(_numParams + 1) * sizeof(uint16));
@@ -999,7 +998,7 @@ void RandomActionList::loadFromStream(Common::ReadStream *stream) {
 RoomExitIndexedHotspotData::RoomExitIndexedHotspotData(RoomExitIndexedHotspotResource *rec) {
 	roomNumber = rec->roomNumber;
 	hotspotIndex = rec->hotspotIndex;
-	hotspotId = FROM_LE_16(rec->hotspotId);
+	hotspotId = READ_LE_UINT16(&rec->hotspotId);
 }
 
 uint16 RoomExitIndexedHotspotList::getHotspot(uint16 roomNumber, uint8 hotspotIndexId) {

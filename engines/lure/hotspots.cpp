@@ -234,21 +234,36 @@ void Hotspot::setAnimation(uint16 newAnimId) {
 	setAnimation(tempAnim);
 }
 
+void Hotspot::setAnimationIndex(int animIndex) {
+	Resources &r = Resources::getReference();
+
+	// Get the animation specified
+	HotspotAnimData *tempAnim = r.animRecords()[animIndex];
+	
+	_animId = tempAnim->animRecordId;
+	if (_data)
+		_data->animRecordId = tempAnim->animRecordId;
+
+	setAnimation(tempAnim);
+}
+
 struct SizeOverrideEntry {
-	uint16 animId;
+	int animIndex;
 	uint16 width, height;
 };
 
 static const SizeOverrideEntry sizeOverrides[] = {
-	{BLACKSMITH_STANDARD, 32, 48},
-	{BLACKSMITH_HAMMERING_ANIM_ID, 48, 47},
+	{BLACKSMITH_DEFAULT_ANIM_INDEX, 32, 48},
+	{BLACKSMITH_HAMMERING_ANIM_INDEX, 48, 47},
 	{0, 0, 0}
 };
 
 void Hotspot::setAnimation(HotspotAnimData *newRecord) {
-	Disk &r = Disk::getReference();
+	Disk &disk = Disk::getReference();
+	Resources &res = Resources::getReference();
 	uint16 tempWidth, tempHeight;
 	int16 xStart;
+	int animIndex = res.getAnimationIndex(newRecord);
 
 	if (_frames) {
 		delete _frames;
@@ -258,13 +273,13 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 	_numFrames = 0;
 	_frameNumber = 0;
 	if (!newRecord) return;
-	if (!r.exists(newRecord->animId)) return;
+	if (!disk.exists(newRecord->animId)) return;
 
 	// Scan for any size overrides - some animations get their size set after decoding, but
 	// we want it in advance so we can decode the animation straight to a graphic surface
 	const SizeOverrideEntry *p = &sizeOverrides[0];
-	while ((p->animId != 0) && (p->animId != newRecord->animId)) ++p;
-	if (p->animId != 0)
+	while ((p->animIndex != 0) && (p->animIndex != animIndex)) ++p;
+	if (p->animIndex != 0)
 		setSize(p->width, p->height);
 
 	_anim = newRecord;
@@ -289,7 +304,7 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 	_frameNumber = 0;
 	
 	// Special handling need
-	if (newRecord->animRecordId == SERF_ANIM_ID) {
+	if (_hotspotId == RACK_SERF_ID) {
 		_frameStartsUsed = true;
 		_frames = new Surface(416, 27);
 	} else {
@@ -315,7 +330,7 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 			pSrc = dest->data() + frameOffset;
 		}
 		
-		if (newRecord->animRecordId == SERF_ANIM_ID) {
+		if (_hotspotId == RACK_SERF_ID) {
 			// Save the start of each frame for serf, since the size varies 
 			xStart = (frameNumCtr == 0) ? 0 : _frameStarts[frameNumCtr - 1] + tempWidth;
 			_frameStarts[frameNumCtr] = xStart;
@@ -1422,8 +1437,6 @@ void Hotspot::doUse(HotspotData *hotspot) {
 	}
 }
 
-uint16 giveTalkIds[6] = {0xCF5E, 0xCF14, 0xCF90, 0xCFAA, 0xCFD0, 0xCFF6};
-
 void Hotspot::doGive(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	uint16 usedId = _currentActions.top().supportData().param(1);
@@ -1462,8 +1475,8 @@ void Hotspot::doGive(HotspotData *hotspot) {
 		if (sequenceOffset == NOONE_ID) {
 			// Start a conversation based on the index of field #6
 			uint16 index = fields.getField(GIVE_TALK_INDEX);
-			assert(index < 6);
-			startTalk(hotspot, giveTalkIds[index]);
+			uint16 id = res.getGiveTalkId(index);
+			startTalk(hotspot, id);
 
 		} else if (sequenceOffset == 0) {
 			// Move item into character's inventory
@@ -1686,18 +1699,20 @@ void Hotspot::doDrink(HotspotData *hotspot) {
 void Hotspot::doStatus(HotspotData *hotspot) {
 	char buffer[MAX_DESC_SIZE];
 	uint16 numItems = 0;
+	Resources &res = Resources::getReference();
+	StringList &stringList = res.stringList();
 	StringData &strings = StringData::getReference();
-	Resources &resources = Resources::getReference();
 	Room &room = Room::getReference();
 	
 	room.update();
 	endAction();
 
 	strings.getString(room.roomNumber(), buffer);
-	strcat(buffer, "\n\nYou are carrying ");
+	strcat(buffer, "\n\n");
+	strcat(buffer, stringList.getString(S_YOU_ARE_CARRYING));
 
 	// Scan through the list and add in any items assigned to the player
-	HotspotDataList &list = resources.hotspotData();
+	HotspotDataList &list = res.hotspotData();
 	HotspotDataList::iterator i;
 	for (i = list.begin(); i != list.end(); ++i) {
 		HotspotData *rec = *i;
@@ -1710,13 +1725,16 @@ void Hotspot::doStatus(HotspotData *hotspot) {
 	}
 
 	// If there were no items, add in the word 'nothing'
-	if (numItems == 0) strcat(buffer, "nothing.");
+	if (numItems == 0) strcat(buffer, stringList.getString(S_INV_NOTHING));
 
 	// If the player has money, add it in
-	uint16 numGroats = resources.fieldList().numGroats();
+	uint16 numGroats = res.fieldList().numGroats();
 	if (numGroats > 0) {
-		sprintf(buffer + strlen(buffer), "\n\nYou have %d groat", numGroats);
-		if (numGroats > 1) strcat(buffer, "s");
+		strcat(buffer, "\n\n");
+		strcat(buffer, stringList.getString(S_YOU_HAVE));
+		sprintf(buffer + strlen(buffer), "%d", numGroats);
+		strcat(buffer, " ");
+		strcat(buffer, stringList.getString((numGroats == 1) ? S_GROAT : S_GROATS));
 	}
 
 	// Display the dialog
@@ -2391,9 +2409,10 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 				// There is some countdown left to do
 				h.updateMovement();
 
-				bool decrementFlag = (h.resource()->actionHotspotId != 0);
-				if (decrementFlag) {
+				bool decrementFlag = (h.resource()->actionHotspotId == 0);
+				if (!decrementFlag) {
 					HotspotData *hotspot = res.getHotspot(h.resource()->actionHotspotId);
+					assert(hotspot);
 					decrementFlag = (hotspot->roomNumber != h.hotspotId()) ? false :
 						Support::charactersIntersecting(hotspot, h.resource());
 				}
@@ -3069,16 +3088,16 @@ void HotspotTickHandlers::sparkleAnimHandler(Hotspot &h) {
 	h.setPosition(player->x() - 14, player->y() - 10);
 	h.setActionCtr(h.actionCtr() + 1);
 	if (h.actionCtr() == 6) {
-		uint16 animId;
+		int animIndex;
 		if ((fields.getField(11) == 2) || (fields.getField(28) != 0)) {
 			fields.setField(28, 0);
-			animId = PLAYER_ANIM_ID;
+			animIndex = PLAYER_ANIM_INDEX;
 		} else {
 			fields.setField(28, fields.getField(28) + 1);
-			animId = SELENA_ANIM_ID;
+			animIndex = SELENA_ANIM_INDEX;
 		}
 
-		player->setAnimation(animId);
+		player->setAnimationIndex(animIndex);
 	}
 
 	if (h.executeScript()) {
@@ -3578,7 +3597,7 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 						else {
 							// Set up alternate animation
 							h.setWidth(32);
-							h.setAnimation(EWAN_ALT_ANIM_ID);
+							h.setAnimationIndex(EWAN_ALT_ANIM_INDEX);
 							ewanXOffset = true;
 							h.setPosition(h.x() - 8, h.y());
 							id = BG_EXTRA2 << 8;
@@ -3605,7 +3624,7 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 		if (h.hotspotId() == EWAN_ID) {
 			// Make sure Ewan is back to his standard animation
 			h.setWidth(16);
-			h.setAnimation(EWAN_ANIM_ID);
+			h.setAnimationIndex(EWAN_ANIM_INDEX);
 			
 			if (ewanXOffset) {
 				h.setPosition(h.x() + 8, h.y());

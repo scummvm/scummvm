@@ -352,6 +352,7 @@ public:
 	~Hotspot();
 
 	void setAnimation(uint16 newAnimId);
+	void setAnimationIndex(int animIndex);
 	void setAnimation(HotspotAnimData *newRecord);
 	uint16 hotspotId() { return _hotspotId; }
 	uint16 originalId() { return _originalId; }
