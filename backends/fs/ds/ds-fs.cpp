@@ -36,12 +36,30 @@ namespace DS {
 ZipFile*   	DSFileSystemNode::_zipFile = NULL;
 char		currentDir[128];
 
+const char *lastPathComponentDS(const Common::String &str) {
+	if (str.empty())
+		return "";
+	
+	char disp[128];
+	char* pathStr = (char *) str.c_str();
+	int lastSlash = 3;
+	
+	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
+		if (path[r] == '\\') {
+			lastSlash = r;
+		}
+	}
+	
+	strcpy(disp, pathStr + lastSlash + 1);
+	
+	return disp;
+}
+
 DSFileSystemNode::DSFileSystemNode() {
-	_displayName = "ds:/";
 	_path = "ds:/";
+	_displayName = "ds:/";
 	_isValid = true;
 	_isDirectory = true;
-	_path = "ds:/";
 
 /*	if (!_archive) {
 		_archive = (GBFS_FILE *) find_first_gbfs_file(scummdata);
@@ -56,23 +74,12 @@ DSFileSystemNode::DSFileSystemNode() {
 DSFileSystemNode::DSFileSystemNode(const String& path) {
 //	consolePrintf("--%s ",path.c_str());
 	
-	char disp[128];
-	char* pathStr = (char *) path.c_str();
-	
-	int lastSlash = 3;
-	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
-		if (path[r] == '\\') {
-			lastSlash = r;
-		}
-	}
-	
-	strcpy(disp, pathStr + lastSlash + 1);
-	
-	_displayName = String(disp);
 	_path = path;
+	_displayName = lastPathComponentDS(_path);
 //	_isValid = true;
 //	_isDirectory = false;
 
+	char* pathStr = (char *) path.c_str();
 	if (!strncmp(pathStr, "ds:/", 4)) {
 		pathStr += 4;
 	}
@@ -99,19 +106,8 @@ DSFileSystemNode::DSFileSystemNode(const String& path) {
 DSFileSystemNode::DSFileSystemNode(const String& path, bool isDir) {
 //	consolePrintf("--%s ",path.c_str());
 	
-	char disp[128];
-	char* pathStr = (char *) path.c_str();
-	int lastSlash = 3;
-	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
-		if (path[r] == '\\') {
-			lastSlash = r;
-		}
-	}
-	
-	strcpy(disp, pathStr + lastSlash + 1);
-	
-	_displayName = String(disp);
 	_path = path;
+	_displayName = lastPathComponentDS(_path);
 	_isValid = true;
 	_isDirectory = isDir;
 	
@@ -206,20 +202,14 @@ AbstractFilesystemNode* DSFileSystemNode::getParent() const {
 // GBAMPFileSystemNode - File system using GBA Movie Player and CF card //
 //////////////////////////////////////////////////////////////////////////
 
-GBAMPFileSystemNode::GBAMPFileSystemNode() {
-	_displayName = "mp:/";
-	_path = "mp:/";
-	_isValid = true;
-	_isDirectory = true;
-	_path = "mp:/";
-}
-
-GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
-//	consolePrintf("'%s'",path.c_str());
+const char *lastPathComponentGBAMP(const Common::String &str) {
+	if (str.empty())
+		return "";
 	
 	char disp[128];
-	char* pathStr = (char *) path.c_str();
+	char* pathStr = (char *) str.c_str();
 	int lastSlash = 3;
+	
 	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
 		if ((path[r] == '\\') || (path[r] == '/')) {
 			lastSlash = r;
@@ -227,7 +217,20 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
 	}
 	
 	strcpy(disp, pathStr + lastSlash + 1);
+	
+	return disp;
+}
 
+GBAMPFileSystemNode::GBAMPFileSystemNode() {
+	_path = "mp:/";
+	_displayName = "mp:/";
+	_isValid = true;
+	_isDirectory = true;
+}
+
+GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
+//	consolePrintf("'%s'",path.c_str());
+	
 	char check[128];
 	int success;
 	
@@ -243,8 +246,8 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
 	}
 //	consolePrintf("Path: %s  (%d)\n", check, success);
 	
-	_displayName = String(disp);
 	_path = path;
+	_displayName = lastPathComponentGBAMP(_path);
 	_isValid = success == FT_FILE;
 	_isDirectory = success == FT_DIR;
 }
@@ -252,19 +255,8 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
 GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path, bool isDirectory) {
 //	consolePrintf("'%s'",path.c_str());
 	
-	char disp[128];
-	char* pathStr = (char *) path.c_str();
-	int lastSlash = 3;
-	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
-		if ((path[r] == '\\') || (path[r] == '/')) {
-			lastSlash = r;
-		}
-	}
-	
-	strcpy(disp, pathStr + lastSlash + 1);
-
-	_displayName = String(disp);
 	_path = path;
+	_displayName = lastPathComponentGBAMP(_path);
 	_isValid = true;
 	_isDirectory = isDirectory;
 }

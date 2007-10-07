@@ -92,7 +92,6 @@ public:
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return _access(_path.c_str(), R_OK) == 0; }
-	virtual bool isValid() const { return _isValid; }
 	virtual bool isWritable() const { return _access(_path.c_str(), W_OK) == 0; }
 
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
@@ -139,6 +138,9 @@ private:
  * @return Pointer to the first char of the last component inside str.
  */
 const char *lastPathComponent(const Common::String &str) {
+	if(str.empty())
+		return "";
+		
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
 

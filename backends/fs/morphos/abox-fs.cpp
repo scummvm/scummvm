@@ -80,7 +80,6 @@ public:
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
-	virtual bool isValid() const { return _isValid; }
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 	
 	virtual AbstractFilesystemNode *getChild(const String &name) const;
@@ -93,12 +92,33 @@ public:
 	static AbstractFSList getRootChildren();
 };
 
+/**
+ * Returns the last component of a given path.
+ * 
+ * @param str String containing the path.
+ * @return Pointer to the first char of the last component inside str.
+ */
+const char *lastPathComponent(const Common::String &str) {
+	if (str.empty())
+		return "";
+	
+	const char *str = _path.c_str();
+	while (offset > 0 && (str[offset-1] == '/' || str[offset-1] == ':') )
+		offset--;
+	while (offset > 0 && (str[offset-1] != '/' && str[offset-1] != ':')) {
+		len++;
+		offset--;
+	}
+	
+	return str + offset;
+}
+
 ABoxFilesystemNode::ABoxFilesystemNode()
 {
+	_path = "";
 	_displayName = "Mounted Volumes";
 	_isValid = true;
 	_isDirectory = true;
-	_path = "";
 	_lock = NULL;
 }
 
@@ -108,16 +128,7 @@ ABoxFilesystemNode::ABoxFilesystemNode(const String &p) {
 	assert(offset > 0);
 
 	_path = p;
-
-	// Extract last component from path
-	const char *str = p.c_str();
-	while (offset > 0 && (str[offset-1] == '/' || str[offset-1] == ':') )
-		offset--;
-	while (offset > 0 && (str[offset-1] != '/' && str[offset-1] != ':')) {
-		len++;
-		offset--;
-	}
-	_displayName = String(str + offset, len);
+	_displayName = lastPathComponent(_path);
 	_lock = NULL;
 	_isDirectory = false;
 
@@ -212,10 +223,10 @@ ABoxFilesystemNode::ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name)
 
 ABoxFilesystemNode::ABoxFilesystemNode(const ABoxFilesystemNode& node)
 {
+	_path = node._path;
 	_displayName = node._displayName;
 	_isValid = node._isValid;
 	_isDirectory = node._isDirectory;
-	_path = node._path;
 	_lock = DupLock(node._lock);
 }
 
@@ -299,7 +310,12 @@ bool ABoxFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool h
 					entry = new ABoxFilesystemNode(lock, fib->fib_FileName);
 					if (entry)
 					{
-						if (entry->isValid())
+						//FIXME: since the isValid() function is no longer part of the AbstractFilesystemNode
+						//       specification, the following call had to be changed:
+						//       	if (entry->isValid())
+						//		 Please verify that the logic of the code remains coherent. Also, remember
+						//		 that the isReadable() and isWritable() methods are available.
+						if (entry->exists())
 							list.push_back(entry);
 						else
 							delete entry;
@@ -378,7 +394,12 @@ AbstractFSList ABoxFilesystemNode::getRootChildren()
 				entry = new ABoxFilesystemNode(volume_lock, name);
 				if (entry)
 				{
-					if (entry->isValid())
+					//FIXME: since the isValid() function is no longer part of the AbstractFilesystemNode
+					//       specification, the following call had to be changed:
+					//       	if (entry->isValid())
+					//		 Please verify that the logic of the code remains coherent. Also, remember
+					//		 that the isReadable() and isWritable() methods are available.
+					if (entry->exists())
 						list.push_back(entry);
 					else
 						delete entry;

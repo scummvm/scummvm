@@ -101,9 +101,15 @@ public:
 	 * @note By default, this method returns the value of getName().
 	 */
 	virtual String getDisplayName() const { return getName(); }
-
+	
 	/**
-	 * Returns a string with an architecture dependent path description.
+	 * Returns the last component of the path pointed by this FilesystemNode.
+	 * 
+	 * Examples (POSIX):
+	 * 			/foo/bar.txt would return /bar.txt
+	 * 			/foo/bar/    would return /bar/
+	 *  
+	 * @note This method is very architecture dependent, please check the concrete implementation for more information.
 	 */
 	virtual String getName() const = 0;
 	

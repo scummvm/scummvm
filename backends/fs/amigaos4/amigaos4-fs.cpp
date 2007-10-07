@@ -93,7 +93,6 @@ public:
 	virtual String getPath() const { return _sPath; };
 	virtual bool isDirectory() const { return _bIsDirectory; };
 	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
-	virtual bool isValid() const { return _bIsValid; };
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 	
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
@@ -106,9 +105,6 @@ public:
 	virtual AbstractFSList listVolumes() const;
 };
 
-// TODO: this is ripped of
-// AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p)
-// maybe change it to use this function instead?
 /**
  * Returns the last component of a given path.
  * 
@@ -117,6 +113,12 @@ public:
  */
 const char *lastPathComponent(const Common::String &str) {
 	int offset = str.size();
+		
+	if (offset <= 0) {
+		debug(6, "Bad offset");
+		return;
+	}
+	
 	const char *p = str.c_str();
 
 	while (offset > 0 && (p[offset-1] == '/' || p[offset-1] == ':'))
@@ -151,19 +153,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const String &p) {
 	}
 
 	_sPath = p;
-
-	// Extract last	component from path
-	const char *str = p.c_str();
-
-	while (offset > 0 && (str[offset-1] == '/' || str[offset-1] == ':'))
-		offset--;
-
-	while (offset > 0 && (str[offset-1] != '/' && str[offset-1] != ':')) {
-		len++;
-		offset--;
-	}
-
-	_sDisplayName = String(str + offset, len);
+	_sDisplayName = lastPathComponent(_sPath);
 	_pFileLock = 0;
 	_bIsDirectory = false;
 
@@ -352,7 +342,12 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 						if (lock) {
 							AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(lock, (char *)ead->ed_Name);
 							if (entry) {
-								if (entry->isValid())
+								//FIXME: since the isValid() function is no longer part of the AbstractFilesystemNode
+								//       specification, the following call had to be changed:
+								//       	if (entry->isValid())
+								//		 Please verify that the logic of the code remains coherent. Also, remember
+								//		 that the isReadable() and isWritable() methods are available.
+								if (entry->exists())
 								    myList.push_back(entry);
 								else
 									delete entry;
@@ -453,7 +448,12 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 
 				AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(volumeLock, buffer);
 				if (entry) {
-					if (entry->isValid())
+					//FIXME: since the isValid() function is no longer part of the AbstractFilesystemNode
+					//       specification, the following call had to be changed:
+					//       	if (entry->isValid())
+					//		 Please verify that the logic of the code remains coherent. Also, remember
+					//		 that the isReadable() and isWritable() methods are available.
+					if(entry->exists())
 						myList.push_back(entry);
 					else
 						delete entry;

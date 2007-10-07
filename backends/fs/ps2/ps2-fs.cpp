@@ -68,7 +68,6 @@ public:
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
-	virtual bool isValid() const { return !_isRoot; }
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
 
 	virtual AbstractFilesystemNode *clone() const { return new Ps2FilesystemNode(this); }
@@ -76,6 +75,22 @@ public:
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
 };
+
+/**
+ * Returns the last component of a given path.
+ * 
+ * @param str String containing the path.
+ * @return Pointer to the first char of the last component inside str.
+ */
+const char *lastPathComponent(const Common::String &str) {
+	//FIXME: implement this method properly.
+	// This code is probably around the constructors,
+	// but I couldn't figure it out without having
+	// doubts on the correctness of my assumptions.
+	// Therefore, I leave it to the porter to correctly
+	// implement this method.
+	assert(false);
+}
 
 Ps2FilesystemNode::Ps2FilesystemNode() {
 	_isDirectory = true;
