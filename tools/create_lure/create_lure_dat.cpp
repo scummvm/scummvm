@@ -61,6 +61,50 @@ int actionIndex = 0;
 uint16 talkOffsets[MAX_TALK_LISTS];
 int talkOffsetIndex = 0;
 
+#define NUM_LANGUAGES 2
+struct AnimListRecord {
+	uint16 languages[NUM_LANGUAGES];
+};
+
+AnimListRecord animDataList[] = {
+	{{0x1830, 0x1830}},	// Copy protection header
+	{{0x1839, 0x1839}},	// Copy protection wording header
+	{{0x1842, 0x1842}},	// Copy protection numbers
+	{{0x184B, 0x184B}},	// Restart/Restore buttons
+	{{0x55C0, 0x5680}},	// Player midswing animation
+	{{0x55C9, 0x5689}},	// Player mid-level defend
+	{{0x55D2, 0x5692}},	// Player high-level strike
+	{{0x55DB, 0x569B}},	// Player high-level defend
+	{{0x55E4, 0x56A4}},	// Player low-level strike
+	{{0x55ED, 0x56AD}},	// Player low-level defend
+	{{0x55F6, 0x56B6}},	// Player fight animation
+	{{0x55FF, 0x56BF}},	// Pig fight animation
+	{{0x5608, 0x56C8}}, // Pig fight animation
+	{{0x5611, 0x56D1}},	// Player mid-level strike
+	{{0x5623, 0x56E3}},	// Pig fight animation
+	{{0x562C, 0x56EC}},	// Misc fight animation
+	{{0x5635, 0x56F5}},	// Pig fight animation
+	{{0x563E, 0x56FE}},	// Player recoiling from hit
+	{{0x5647, 0x5707}},	// Pig recoiling from hit
+	{{0x5650, 0x5710}},	// Pig dies
+	{{0x5810, 0x58D0}},	// Voice bubble
+	{{0x5915, 0x59D5}},	// Blacksmith hammering
+	{{0x59E4, 0x5AA4}}, // Ewan's standard animation
+	{{0x59ED, 0x5AAD}},	// Ewan's alternate animation
+	{{0x59FF, 0x5ABF}},	// Dragon breathing fire
+	{{0x5A08, 0x5AC8}},	// Dragon breathing fire 2
+	{{0x5A11, 0x5AD1}},	// Dragon breathing fire 3
+	{{0x5A1A, 0x5ADA}},	// Player turning winch in room #48
+	{{0x5A59, 0x5B19}},	// Player pulling lever in room #48
+	{{0x5A62, 0x5B22}},	// Minnow pulling lever in room #48
+	{{0x5AAA, 0x5B6A}},	// Goewin mixing potion
+	{{0x5C80, 0x5D40}}, // Player standard animation
+	{{0x5CAA, 0x5D6A}},	// Selena animation
+	{{0x5CE9, 0x5DA9}},	// Blacksmith default
+	{{0x5D28, 0x5DE8}},	// Goewin animation
+	{{0, 0}}
+};
+
 void add_anim_record(uint16 offset) {
 	for (int ctr = 0; ctr < animIndex; ++ctr)
 		if (animOffsets[ctr] == offset) return;
@@ -68,6 +112,20 @@ void add_anim_record(uint16 offset) {
 		printf("Animation record offset table size exceeded\n");
 		exit(1);
 	}
+
+	if (animIndex == 0) {
+		// First call to the method, so add the fixed list for the current
+		// language in at the start, so they'll be at fixed indexes
+		int index = 0;
+		if (language == IT_ITA) index = 1;
+
+		AnimListRecord *p = &animDataList[0];
+		while (p->languages[index] != 0) {
+			animOffsets[animIndex++] = p->languages[index];
+			++p;
+		}
+	}
+
 	animOffsets[animIndex++] = offset;
 }
 
@@ -590,60 +648,7 @@ void read_room_exit_joins(byte *&data, uint16 &totalSize) {
 
 // This next method reads in the animation and movement data
 
-#define NUM_LANGUAGES 2
-struct AnimListRecord {
-	uint16 languages[NUM_LANGUAGES];
-};
-
-AnimListRecord animDataList[] = {
-	{{0x1830, 0x1830}},	// Copy protection header
-	{{0x1839, 0x1839}},	// Copy protection wording header
-	{{0x1842, 0x1842}},	// Copy protection numbers
-	{{0x184B, 0x184B}},	// Restart/Restore buttons
-	{{0x55C0, 0x5680}},	// Player midswing animation
-	{{0x55C9, 0x5689}},	// Player mid-level defend
-	{{0x55D2, 0x5692}},	// Player high-level strike
-	{{0x55DB, 0x569B}},	// Player high-level defend
-	{{0x55E4, 0x56A4}},	// Player low-level strike
-	{{0x55ED, 0x56AD}},	// Player low-level defend
-	{{0x55F6, 0x56B6}},	// Player fight animation
-	{{0x55FF, 0x56BF}},	// Pig fight animation
-	{{0x5611, 0x56D1}},	// Player mid-level strike
-	{{0x5623, 0x56E3}},	// Pig fight animation
-	{{0x562C, 0x56EC}},	// Misc fight animation
-	{{0x5635, 0x56F5}},	// Pig fight animation
-	{{0x563E, 0x56FE}},	// Player recoiling from hit
-	{{0x5647, 0x5707}},	// Pig recoiling from hit
-	{{0x5650, 0x5710}},	// Pig dies
-	{{0x5810, 0x58D0}},	// Voice bubble
-	{{0x5915, 0x59D5}},	// Blacksmith hammering
-	{{0x59ED, 0x5AAD}},	// Ewan's alternate animation
-	{{0x59FF, 0x5ABF}},	// Dragon breathing fire
-	{{0x5A08, 0x5AC8}},	// Dragon breathing fire 2
-	{{0x5A11, 0x5AD1}},	// Dragon breathing fire 3
-	{{0x5A1A, 0x5ADA}},	// Player turning winch in room #48
-	{{0x5A59, 0x5B19}},	// Player pulling lever in room #48
-	{{0x5A62, 0x5B22}},	// Minnow pulling lever in room #48
-	{{0x5AAA, 0x5B6A}},	// Goewin mixing potion
-	{{0x5C95, 0x5D55}},
-	{{0x5CAA, 0x5D6A}},	// Selena animation
-	{{0x5CE9, 0x5DA9}},	// Blacksmith in bar?
-	{{0x5D28, 0x5DE8}},	// Goewin animation
-	{{0, 0}}
-};
-
 void read_anim_data(byte *&data, uint16 &totalSize) {
-	// Add special pixel records
-	int index = 0;
-	if (language == IT_ITA) index = 1;
-
-	AnimListRecord *p = &animDataList[0];
-	while (p->languages[index] != 0) {
-		add_anim_record(p->languages[index]);
-		++p;;
-	}
-
-	// Get the animation data records
 	AnimRecord inRec;
 	MovementRecord move;
 	MovementRecord *destMove;
@@ -921,6 +926,7 @@ struct TalkRecord {
 	uint16 responsesOffset;
 };
 
+#define NUM_GIVE_TALK_IDS 7
 uint16 englishGiveTalkIds[7] = {0xCF5E, 0xCF14, 0xCF90, 0xCFAA, 0xCFD0, 0xCFF6, 0xf010};
 uint16 italianGiveTalkIds[7] = {0xD01E, 0xCFD4, 0xD050, 0xD06A, 0xD090, 0xD0B6, 0xf0d0};
 
@@ -932,11 +938,16 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 	uint16 *giveTalkIds = &englishGiveTalkIds[0];
 	if (language == IT_ITA) giveTalkIds = &italianGiveTalkIds[0];
 
-	for (talkCtr = 0; talkCtr < 6; ++talkCtr)
-		add_talk_offset(giveTalkIds[talkCtr]);
-
 	data = (byte *) malloc(MAX_DATA_SIZE);
-	TalkRecord *header = (TalkRecord *) data;
+	uint16 *v = (uint16 *) data;
+
+	for (talkCtr = 0; talkCtr < NUM_GIVE_TALK_IDS; ++talkCtr) {
+		add_talk_offset(giveTalkIds[talkCtr]);
+		*v++ = TO_LE_16(giveTalkIds[talkCtr]);
+	}
+
+	byte *dataStart = (byte *) v;
+	TalkRecord *header = (TalkRecord *) dataStart;
 	uint16 offset = talkOffsetIndex * sizeof(TalkRecord) + sizeof(uint16);
 
 	uint16 *sortedList = (uint16 *) malloc((talkOffsetIndex+1) * sizeof(uint16));
@@ -989,9 +1000,9 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 		}
 
 		// Read in the list of talk entries
-		lureExe.read(data + offset, size);
+		lureExe.read(dataStart + offset, size);
 		offset += size;
-		memset(data + offset, 0xff, 2);
+		memset(dataStart + offset, 0xff, 2);
 		offset += 2;
 
 		// Handle the response data
@@ -1024,16 +1035,16 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 			exit(1);
 		}
 
-		lureExe.read(data + offset, size);
+		lureExe.read(dataStart + offset, size);
 		offset += size;
-		WRITE_LE_UINT16(data + offset, 0xffff);
+		WRITE_LE_UINT16(dataStart + offset, 0xffff);
 		offset += 2;
 
 		++header;
 	}
 
 	header->recordId = TO_LE_16(0xffff);
-	totalSize = offset;
+	totalSize = offset + NUM_GIVE_TALK_IDS * sizeof(uint16);
 	free(sortedList);
 }
 
@@ -1110,8 +1121,8 @@ void read_room_exit_hotspots_data(byte *&data, uint16 &totalSize) {
 }
 
 void save_fight_segment(byte *&data, uint16 &totalSize) {
-	uint16 fightSegment = (uint16) 0x1C400;
-	if (language == IT_ITA) fightSegment = (uint16) 0x1c520;
+	uint32 fightSegment = 0x1C400;
+	if (language == IT_ITA) fightSegment = 0x1c520;
 	lureExe.seek(fightSegment);
 	
 	totalSize = FIGHT_SEGMENT_SIZE;
@@ -1119,7 +1130,7 @@ void save_fight_segment(byte *&data, uint16 &totalSize) {
 	lureExe.read(data, totalSize);
 }
 
-#define NUM_TEXT_ENTRIES 49
+#define NUM_TEXT_ENTRIES 54
 const char *englishTextStrings[NUM_TEXT_ENTRIES] = {
 	"Get", NULL, "Push", "Pull", "Operate", "Open", "Close", "Lock", "Unlock", "Use", 
 	"Give", "Talk to", "Tell", "Buy", "Look", "Look at", "Look through", "Ask", NULL, 
@@ -1127,7 +1138,8 @@ const char *englishTextStrings[NUM_TEXT_ENTRIES] = {
 	"Credits", "Restart game", "Save game", "Restore game", "Quit", "Fast Text", "Slow Text", 
 	"Sound on", "Sound off", "(nothing)", " for ", " to ", " on ", "and then", "finish",
 	"Are you sure (y/n)?",
-	"a ", "the ", "a ", "a ", "an ", "an ", "an ", "an "
+	"a ", "the ", "a ", "a ", "an ", "an ", "an ", "an ",
+	"You are carrying ", "nothing", "You have ", "groat", "groats",
 };
 
 const char *italianTextStrings[NUM_TEXT_ENTRIES] = {
@@ -1139,7 +1151,8 @@ const char *italianTextStrings[NUM_TEXT_ENTRIES] = {
 	"Testo veloce",  "Sonoro acceso", "Sonoro spento", 
 	"(niente)", " per ", " a ", " su ", 
 	"e poi", "finito", "Sei sicuro (s/n)?",
-	NULL, "l' ", "la ", NULL, "le ", "i ", "il ", NULL 
+	NULL, "l' ", "la ", NULL, "le ", "i ", "il ", NULL,
+	"Stai portando ", "niente", "e hai ", "soldi", "soldis",
 };
 
 void save_text_strings(byte *&data, uint16 &totalSize) {
