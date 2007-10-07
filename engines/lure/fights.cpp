@@ -72,7 +72,7 @@ void FightsManager::setupPigFight() {
 	player->resource()->colourOffset = 16;
 	player->setTickProc(PLAYER_FIGHT_TICK_PROC_ID);
 	player->setSize(48, 53);
-	player->setAnimation(PLAYER_FIGHT_ANIM_ID);
+	player->setAnimationIndex(PLAYER_FIGHT_ANIM_INDEX);
 	player->resource()->width = 48;
 	player->resource()->height = 53;
 
@@ -159,8 +159,10 @@ struct KeyMapping {
 };
 
 const KeyMapping keyList[] = {
-	{Common::KEYCODE_LEFT, 10}, {Common::KEYCODE_RIGHT, 14}, {Common::KEYCODE_7, 11}, {Common::KEYCODE_4, 12}, 
-	{Common::KEYCODE_1, 13}, {Common::KEYCODE_9, 6}, {Common::KEYCODE_6, 7}, {Common::KEYCODE_3, 8}, {Common::KEYCODE_INVALID, 0}};
+	{Common::KEYCODE_LEFT, 10}, {Common::KEYCODE_RIGHT, 14}, 
+	{Common::KEYCODE_KP7, 11}, {Common::KEYCODE_KP4, 12}, {Common::KEYCODE_KP1, 13}, 
+	{Common::KEYCODE_KP9, 6},  {Common::KEYCODE_KP6, 7},  {Common::KEYCODE_KP3, 8}, 
+	{Common::KEYCODE_INVALID, 0}};
 
 void FightsManager::checkEvents() {
 	Events &events = Events::getReference();
@@ -556,7 +558,7 @@ void FightsManager::enemyKilled() {
 	playerHotspot->setSize(32, 48);
 	playerHotspot->resource()->width = 32;
 	playerHotspot->resource()->height = 48;
-	playerHotspot->setAnimation(PLAYER_ANIM_ID);
+	playerHotspot->setAnimationIndex(PLAYER_ANIM_INDEX);
 	playerHotspot->setPosition(playerHotspot->x(), playerHotspot->y() + 5);
 	playerHotspot->setDirection(LEFT);
 	
