@@ -75,6 +75,7 @@ void Resources::freeData() {
 	_coordinateList.clear();
 	_talkHeaders.clear();
 	_talkData.clear();
+	_giveTalkIds.clear();
 
 	free(_hotspotScriptData);
 	delete _paletteSubset;
@@ -104,6 +105,7 @@ void Resources::reloadData() {
 	uint16 *offset, offsetVal;
 	uint16 recordId, startOffset;
 	int ctr;
+	uint16 *v;
 
 	// Get the palette subset data
 	_paletteSubset = new Palette(ALT_PALETTE_RESOURCE_ID);
@@ -233,7 +235,7 @@ void Resources::reloadData() {
 
 	// Handle the hotspot action lists
 	mb = d.getEntry(ACTION_LIST_RESOURCE_ID);
-	uint16 *v = (uint16 *) mb->data();
+	v = (uint16 *) mb->data();
 	while ((recordId = READ_LE_UINT16(v)) != 0xffff) {
 		++v;
 		offsetVal = READ_LE_UINT16(v);
@@ -249,8 +251,8 @@ void Resources::reloadData() {
 	mb = d.getEntry(TALK_HEADER_RESOURCE_ID);
 	TalkHeaderResource *thHeader = (TalkHeaderResource *) mb->data();
 	uint16 hotspotId;
-	while ((hotspotId = FROM_LE_16(thHeader->hotspotId)) != 0xffff) {
-		uint16 *offsets = (uint16 *) (mb->data() + FROM_LE_16(thHeader->offset));
+	while ((hotspotId = READ_LE_UINT16(&thHeader->hotspotId)) != 0xffff) {
+		uint16 *offsets = (uint16 *) (mb->data() + READ_LE_UINT16(&thHeader->offset));
 		TalkHeaderData *newEntry = new TalkHeaderData(hotspotId, offsets);
 
 		_talkHeaders.push_back(newEntry);
@@ -260,22 +262,30 @@ void Resources::reloadData() {
 
 	// Read in the talk data entries
 	mb = d.getEntry(TALK_DATA_RESOURCE_ID);
-	TalkDataHeaderResource *tdHeader = (TalkDataHeaderResource *) mb->data();
+	
+	// First get the list of give talk Ids
+	v = (uint16 *) mb->data();
 
-	while ((recordId = FROM_LE_16(tdHeader->recordId)) != 0xffff) {
+	for (int talkIndex = 0; talkIndex < NUM_GIVE_TALK_IDS; ++talkIndex)
+		_giveTalkIds.push_back(READ_LE_UINT16(v++));
+
+	// Get the following talk ata
+
+	byte *dataStart = (byte *) v;
+	TalkDataHeaderResource *tdHeader = (TalkDataHeaderResource *) dataStart;
+
+	while ((recordId = READ_LE_UINT16(&tdHeader->recordId)) != 0xffff) {
 		TalkData *data = new TalkData(recordId);
 
-		TalkDataResource *entry = (TalkDataResource *) (mb->data() +
-			FROM_LE_16(tdHeader->listOffset));
-		while (FROM_LE_16(entry->preSequenceId) != 0xffff) {
+		TalkDataResource *entry = (TalkDataResource *) (dataStart + READ_LE_UINT16(&tdHeader->listOffset));
+		while (READ_LE_UINT16(&entry->preSequenceId) != 0xffff) {
 			TalkEntryData *newEntry = new TalkEntryData(entry);
 			data->entries.push_back(newEntry);
 			++entry;
 		}
 
-		entry = (TalkDataResource *) (mb->data() +
-			FROM_LE_16(tdHeader->responsesOffset));
-		while (FROM_LE_16(entry->preSequenceId) != 0xffff) {
+		entry = (TalkDataResource *) (dataStart + READ_LE_UINT16(&tdHeader->responsesOffset));
+		while (READ_LE_UINT16(&entry->preSequenceId) != 0xffff) {
 			TalkEntryData *newEntry = new TalkEntryData(entry);
 			data->responses.push_back(newEntry);
 			++entry;
@@ -435,6 +445,19 @@ HotspotAnimData *Resources::getAnimation(uint16 animRecordId) {
 	}
 
 	return NULL;
+}
+
+int Resources::getAnimationIndex(HotspotAnimData *animData) {
+	HotspotAnimList::iterator i;
+	int index = 0;
+
+	for (i = _animData.begin(); i != _animData.end(); ++i, ++index) {
+		HotspotAnimData *rec = *i;
+		if (rec == animData)
+			return index;
+	}
+
+	return -1;
 }
 
 uint16 Resources::getHotspotAction(uint16 actionsOffset, Action action) {
