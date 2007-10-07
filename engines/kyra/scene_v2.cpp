@@ -457,6 +457,19 @@ void KyraEngine_v2::runSceneScript4(int unk1) {
 		_scriptInterpreter->runScript(&_sceneScriptState);
 }
 
+void KyraEngine_v2::runSceneScript6() {
+	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+
+	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
+	_sceneScriptState.regs[1] = _mouseX;
+	_sceneScriptState.regs[2] = _mouseY;
+	_sceneScriptState.regs[4] = _itemInHand;
+
+	_scriptInterpreter->startScript(&_sceneScriptState, 6);
+	while (_scriptInterpreter->validScript(&_sceneScriptState))
+		_scriptInterpreter->runScript(&_sceneScriptState);
+}
+
 void KyraEngine_v2::runSceneScript7() {
 	int oldPage = _screen->_curPage;
 	_screen->_curPage = 2;

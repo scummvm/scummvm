@@ -175,6 +175,7 @@ protected:
 	// - Input
 	void updateInput();
 
+	int _mouseX, _mouseY;
 	Common::List<Common::Event> _eventList;
 	
 	// gfx/animation specific
@@ -283,6 +284,9 @@ protected:
 	
 	void updateCharacterAnim(int);
 	void updateSceneAnim(int anim, int newFrame);
+
+	void addItemToAnimList(int item);
+	void deleteItemAnimEntry(int item);
 	
 	// scene
 	struct SceneDesc {
@@ -317,6 +321,7 @@ protected:
 	void startSceneScript(int unk1);
 	void runSceneScript2();
 	void runSceneScript4(int unk1);
+	void runSceneScript6();
 	void runSceneScript7();
 	
 	void initSceneAnims(int unk1);
@@ -353,11 +358,22 @@ protected:
 	Item *_itemList;
 	
 	int findFreeItem();
-	int findItem(uint16 sceneId, int id);
+	int countAllItems();
+	int findItem(uint16 sceneId, uint16 id);
+	int checkItemCollision(int x, int y);
 	void resetItemList();
 	
 	int _itemInHand;
 	int _handItemSet;
+
+	bool dropItem(int unk1, uint16 item, int x, int y, int unk2);
+	bool processItemDrop(uint16 sceneId, uint16 item, int x, int y, int unk1, int unk2);
+	void exchangeMouseItem(int itemPos);
+	bool pickUpItem(int x, int y);
+
+	int getItemCommandString(uint16 item);
+
+	void setMouseCursor(uint16 item);
 	
 	// inventroy
 	static int _inventoryX[];
@@ -423,6 +439,8 @@ protected:
 	void showMessageFromCCode(int id, int16 palIndex, int);
 	void showMessage(const char *string, int16 palIndex);
 	void showChapterMessage(int id, int16 palIndex);
+
+	void updateCommandLineEx(int str1, int str2, int16 palIndex);
 	
 	const char *_shownMessage;
 

@@ -310,4 +310,52 @@ void KyraEngine_v2::drawCharacterAnimObject(AnimObj *obj, int x, int y, int laye
 	_screen->drawShape(2, getShapePtr(obj->shapeIndex1), x, y, 2, obj->flags | 4, layer, _charScaleX, _charScaleY);
 }
 
+void KyraEngine_v2::addItemToAnimList(int item) {
+	restorePage3();
+
+	AnimObj *animObj = &_animObjects[11+item];
+
+	animObj->enabled = 1;
+	animObj->needRefresh = 1;
+	animObj->unk8 = 1;
+
+	int itemId = _itemList[item].id;
+
+	animObj->xPos2 = animObj->xPos1 = _itemList[item].x;
+	animObj->yPos2 = animObj->yPos1 = _itemList[item].y;
+
+	animObj->shapePtr = _defaultShapeTable[64+itemId];
+	animObj->shapeIndex2 = animObj->shapeIndex1 = 64+itemId;
+
+	int scaleY, scaleX;
+	scaleY = scaleX = getScale(animObj->xPos1, animObj->yPos1);
+
+	uint8 *shapePtr = getShapePtr(64+itemId);
+	animObj->xPos3 = (animObj->xPos2 -= _screen->getShapeScaledWidth(shapePtr, scaleX) >> 1);
+	animObj->yPos3 = (animObj->yPos2 -= _screen->getShapeScaledHeight(shapePtr, scaleY));
+
+	animObj->width2 = animObj->height2 = 0;
+
+	_animList = addToAnimListSorted(_animList, animObj);
+	animObj->needRefresh = 1;
+	animObj->unk8 = 1;
+}
+
+void KyraEngine_v2::deleteItemAnimEntry(int item) {
+	AnimObj *animObj = &_animObjects[11+item];
+
+	restorePage3();
+
+	animObj->shapePtr = 0;
+	animObj->shapeIndex1 = 0xFFFF;
+	animObj->shapeIndex2 = 0xFFFF;
+	animObj->needRefresh = 1;
+	animObj->unk8 = 1;
+
+	refreshAnimObjectsIfNeed();
+
+	animObj->enabled = 0;
+	_animList = deleteAnimListEntry(_animList, animObj);
+}
+
 } // end of namespace Kyra

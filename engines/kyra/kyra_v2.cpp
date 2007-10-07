@@ -62,6 +62,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(_animObjects, 0, sizeof(_animObjects));
 	_unkHandleSceneChangeFlag = false;
 	_pathfinderFlag = 0;
+	_mouseX = _mouseY = 0;
 	
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 }
@@ -288,8 +289,7 @@ void KyraEngine_v2::runLoop() {
 
 		if (inputFlag == 198 || inputFlag == 199) {
 			_unk3 = _handItemSet;
-			Common::Point mouse = getMousePos();
-			handleInput(mouse.x, mouse.y);
+			handleInput(_mouseX, _mouseY);
 		}
 
 		//XXX
@@ -350,13 +350,54 @@ void KyraEngine_v2::handleInput(int x, int y) {
 	if (checkCharCollision(x, y) >= 0 && _unk3 >= -1) {
 		runSceneScript2();
 		return;
+	} else if (pickUpItem(x, y)) {
+		return;
 	} else {
-		//XXX
+		int skipHandling = 0;
+
+	   	if (checkItemCollision(x, y) == -1) {
+			resetGameFlag(0x1EF);
+			//skipHandling = sub_153D6(x, y);
+
+			if (queryGameFlag(0x1EF)) {
+				resetGameFlag(0x1EF);
+				return;
+			}
+
+			if (_unk5) {
+				_unk5 = 0;
+				return;
+			}
+		}
+
+		//if (_unk1 <= -1)
+		//	skipHandling = 1;
+		
+		if (skipHandling)
+			return;
+
+		if (checkCharCollision(x, y) >= 0) {
+			runSceneScript2();
+			return;
+		}
+
+		/*if (_itemInHand >= 0) {
+			if (y > 136)
+				return;
+
+			dropItem(0, _itemInHand, x, y, 1);
+		} else {*/
+			if (_unk3 == -2 || y > 135)
+				return;
+
+			if (!_unk5) {
+				inputSceneChange(x, y, 1, 1);
+				return;
+			}
+
+			_unk5 = 0;
+		//}
 	}
-	
-	//XXX
-	
-	inputSceneChange(x, y, 1, 1);
 }
 
 int KyraEngine_v2::update() {
@@ -502,8 +543,14 @@ int KyraEngine_v2::checkInput(void *p) {
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_RETURN)
+			if (event.kbd.keycode == Common::KEYCODE_RETURN) {
+				// this doesn't make sure the mouse position is the same
+				// as when RETURN was pressed, but it *should* work for now
+				Common::Point pos = getMousePos();
+				_mouseX = pos.x;
+				_mouseY = pos.y;	
 				keys = 199;
+			}
 
 			if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'd')
@@ -513,6 +560,8 @@ int KyraEngine_v2::checkInput(void *p) {
 			break;
 
 		case Common::EVENT_LBUTTONUP:
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
 			keys = 198;
 			breakLoop = true;
 			break;
@@ -727,6 +776,29 @@ void KyraEngine_v2::showMessage(const char *string, int16 palIndex) {
 void KyraEngine_v2::showChapterMessage(int id, int16 palIndex) {
 	showMessage(getChapterString(id), palIndex);
 }
+
+void KyraEngine_v2::updateCommandLineEx(int str1, int str2, int16 palIndex) {
+	char buffer[0x51];
+	char *src = buffer;
+
+	strcpy(src, getTableString(str1, _cCodeBuffer, 1));
+
+	while (*src != 0x20)
+		++src;
+	++src;
+
+	*src = toupper(*src);
+	strcpy((char*)_unkBuf500Bytes, src);
+
+	if (str2 > 0) {
+		strcat((char*)_unkBuf500Bytes, " ");
+		strcat((char*)_unkBuf500Bytes, getTableString(str2, _cCodeBuffer, 1));
+	}
+
+	showMessage((char*)_unkBuf500Bytes, palIndex);
+}
+
+#pragma mark -
 
 void KyraEngine_v2::loadMouseShapes() {
 	_screen->loadBitmap("_MOUSE.CSH", 3, 3, 0);
