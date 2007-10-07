@@ -337,7 +337,7 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 			*(wordStart - 1) = '\0';
 			++numLines;
 			lineWidth = 0;
-			wordEnd = wordStart;
+			wordEnd = wordStart - 1;
 		} else if (newLine) {
 			// Break on newline
 			++numLines;
