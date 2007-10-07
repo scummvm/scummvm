@@ -146,7 +146,7 @@ void ScummEngine_v0::setNewKidVerbs() {
 		vs->curRect.top = virt->topline + 8;
 
 		Actor *a = derefActor(VAR(96 + i), "setNewKidVerbs");
-		loadPtrToResource(rtVerb, i, (const byte*)(const byte*)a->getActorName());
+		loadPtrToResource(rtVerb, i, (const byte*)a->getActorName());
 	}
 	setUserState(191);
 }
