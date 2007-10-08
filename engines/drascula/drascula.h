@@ -713,7 +713,7 @@ public:
 	void pantalla_17(int);
 	void pantalla_18(int);
 	void pantalla_19(int);
-	void pantalla_21(int);
+	bool pantalla_21(int);
 	void pantalla_22(int);
 	void pantalla_23(int);
 	void pantalla_24(int);
@@ -750,11 +750,16 @@ public:
 	void animacion_4_3();
 	void animacion_5_3();
 	void animacion_6_3();
-	void animacion_7_4();
 	void animacion_rayo();
+	void animacion_1_4();
 	void animacion_2_4();
 	void animacion_3_4();
 	void animacion_4_4();
+	void animacion_5_4();
+	void animacion_6_4();
+	void animacion_7_4();
+	void animacion_8_4();
+	void animacion_9_4();
 	void animacion_1_5();
 	void animacion_2_5();
 	void animacion_3_5();
