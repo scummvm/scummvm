@@ -470,7 +470,7 @@ int KyraEngine_v2::o2_runTemporaryScript(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_runTemporaryScript(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1),
 			stackPos(2), stackPos(3));
 
-	runTemporaryScript(stackPosString(0), stackPos(2) ? 1 : 0, stackPos(1), stackPos(2), stackPos(3));
+	runTemporaryScript(stackPosString(0), stackPos(3), stackPos(2) ? 1 : 0, stackPos(1), stackPos(2));
 
 	return 0;
 }

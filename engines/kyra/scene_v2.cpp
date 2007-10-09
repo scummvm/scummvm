@@ -258,7 +258,12 @@ int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
 		}
 		
 		if (unk1) {
-			//XXX
+			// TODO: check this again
+			int inputFlag = checkInput(0/*dword_324C5*/);
+			if (inputFlag == 198 || inputFlag == 199) {
+				running = false;
+				_unk4 = 1;
+			}
 		}
 		
 		if (!unkFlag || !running)
@@ -272,11 +277,6 @@ int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
 
 		if (ret)
 			++moveTable;
-
-		// TODO: check this again
-		int inputFlag = checkInput(0/*dword_324C5*/);
-		if (inputFlag == 198 || inputFlag == 199)
-			break;
 
 		++updateType;
 		if (!updateType) {
