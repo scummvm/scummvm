@@ -422,6 +422,19 @@ void KyraEngine_v2::setMouseCursor(uint16 item) {
 	_screen->setMouseCursor(hotX, hotY, getShapePtr(shape));
 }
 
+void KyraEngine_v2::setHandItem(uint16 item) {
+	_screen->hideMouse();
+
+	if (item == 0xFFFF) {
+		removeHandItem();
+	} else {
+		setMouseCursor(item);
+		_itemInHand = item;
+	}
+
+	_screen->showMouse();
+}
+
 void KyraEngine_v2::removeHandItem() {
 	_screen->hideMouse();
 	_screen->setMouseCursor(0, 0, _defaultShapeTable[0]);

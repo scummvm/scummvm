@@ -884,4 +884,13 @@ void KyraEngine_v2::pathfinderUnk5(int *moveTable, int tableLen, int x, int y, i
 	}
 }
 
+void KyraEngine_v2::fadeScenePal(int srcIndex, int delayTime) {
+	uint8 *dst = _screen->getPalette(0) + 336;
+	const uint8 *src = _scenePal + (srcIndex << 4)*3;
+	memcpy(dst, src, 48);
+
+	// TODO: original passes delay function too
+	_screen->fadePalette(_screen->getPalette(0), delayTime);
+}
+
 } // end of namespace Kyra

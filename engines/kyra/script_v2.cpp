@@ -89,6 +89,25 @@ int KyraEngine_v2::o2_setSceneComment(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_trySceneChange(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_trySceneChange(%p) (%d, %d, %d, %d)", (const void *)script,
+			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+
+	_unkHandleSceneChangeFlag = 1;
+	int success = inputSceneChange(stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	_unkHandleSceneChangeFlag = 0;
+
+	if (success) {
+		_scriptInterpreter->initScript(script, script->dataPtr);
+		_unk4 = 0;
+		_unk3 = -1;
+		_unk5 = 1;
+		return 0;
+	} else {
+		return (_unk4 != 0) ? 1 : 0;
+	}
+}
+
 int KyraEngine_v2::o2_showChapterMessage(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_showChapterMessage(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	showChapterMessage(stackPos(0), stackPos(1));
@@ -230,6 +249,17 @@ int KyraEngine_v2::o2_setGameFlag(ScriptState *script) {
 	return setGameFlag(stackPos(0));
 }
 
+int KyraEngine_v2::o2_setHandItem(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setHandItem(%p) (%d)", (const void *)script, stackPos(0));
+	setHandItem(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_handItemSet(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_handItemSet(%p) ()", (const void *)script);
+	return _handItemSet;
+}
+
 int KyraEngine_v2::o2_hideMouse(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_hideMouse(%p) ()", (const void *)script);
 	_screen->hideMouse();
@@ -256,6 +286,15 @@ int KyraEngine_v2::o2_showMouse(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_delay(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	//if (stackPos(1))
+	//	sub_27100(stackPos(0) * _tickLength);
+	//else
+		delay(stackPos(0) * _tickLength);
+	return 0;
+}
+
 int KyraEngine_v2::o2_setScaleTableItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setScaleTableItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	setScaleTableItem(stackPos(0), stackPos(1));
@@ -265,6 +304,37 @@ int KyraEngine_v2::o2_setScaleTableItem(ScriptState *script) {
 int KyraEngine_v2::o2_setDrawLayerTableItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setDrawLayerTableItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	setDrawLayerTableEntry(stackPos(0), stackPos(1));
+	return 0;
+}
+
+int KyraEngine_v2::o2_setCharPalEntry(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setCharPalEntry(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	setCharPalEntry(stackPos(0), stackPos(1));
+	return 0;
+}
+
+int KyraEngine_v2::o2_drawSceneShape(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_drawSceneShape(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1),
+		stackPos(2), stackPos(3));
+
+	int shape = stackPos(0);
+	int x = stackPos(1);
+	int y = stackPos(2);
+	int flag = (stackPos(3) != 0) ? 1 : 0;
+
+	_screen->hideMouse();
+	restorePage3();
+	
+	_screen->drawShape(2, _sceneShapeTable[shape], x, y, 2, flag);
+	
+	memcpy(_gamePlayBuffer, _screen->getCPagePtr(3), 46080);
+
+	_screen->drawShape(0, _sceneShapeTable[shape], x, y, 2, flag);
+
+	//sub_B521();
+	flagAnimObjsForRefresh();
+	refreshAnimObjectsIfNeed();
+	_screen->showMouse();
 	return 0;
 }
 
@@ -294,11 +364,63 @@ int KyraEngine_v2::o2_restoreBackBuffer(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_update(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_update(%p) (%d)", (const void *)script, stackPos(0));
+
+	int times = stackPos(0);
+	while (times--) {
+		//if (dword_30BB2)
+		//	sub_159D6();
+		//else
+			update();
+	}
+
+	return 0;	
+}
+
+int KyraEngine_v2::o2_fadeScenePal(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_fadeScenePal(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	fadeScenePal(stackPos(0), stackPos(1));
+	return 0;
+}
+
+int KyraEngine_v2::o2_enterNewSceneEx(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_enterNewSceneEx(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0),
+		stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+
+	enterNewScene(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+
+	if (!stackPos(3))
+		runSceneScript4(0);
+
+	_unk5 = 1;
+	
+	if (_mainCharX == -1 || _mainCharY == -1) {
+		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+		updateCharacterAnim(0);
+	}
+
+	return 0;
+}
+
 int KyraEngine_v2::o2_setLayerFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setLayerFlag(%p) (%d)", (const void *)script, stackPos(0));
 	int layer = stackPos(0);
 	if (layer >= 1 && layer <= 16)
 		_layerFlagTable[layer] = 1;
+	return 0;
+}
+
+int KyraEngine_v2::o2_setZanthiaPos(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setZanthiaPos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	_mainCharX = stackPos(0);
+	_mainCharY = stackPos(1);
+
+	if (_mainCharX == -1 && _mainCharY == -1)
+		_mainCharacter.animFrame = 32;
+	else
+		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+
 	return 0;
 }
 
@@ -341,6 +463,15 @@ int KyraEngine_v2::o2_defineRoomEntrance(ScriptState *script) {
 	default:
 		break;
 	}
+	return 0;
+}
+
+int KyraEngine_v2::o2_runTemporaryScript(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_runTemporaryScript(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1),
+			stackPos(2), stackPos(3));
+
+	runTemporaryScript(stackPosString(0), stackPos(2) ? 1 : 0, stackPos(1), stackPos(2), stackPos(3));
+
 	return 0;
 }
 
@@ -432,6 +563,37 @@ int KyraEngine_v2::o2_querySpecialSceneScriptState(ScriptState *script) {
 
 int KyraEngine_v2::o2_dummy(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_dummy(%p) ()", (const void *)script);
+	return 0;
+}
+
+#pragma mark -
+
+int KyraEngine_v2::o2t_defineNewShapes(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2t_defineNewShapes(%p) ('%s', %d, %d, %d, %d, %d, %d)", (const void *)script, stackPosString(0),
+			stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6));
+
+	strcpy(_newShapeFilename, stackPosString(0));
+	_newShapeLastEntry = stackPos(1);
+	_newShapeWidth = stackPos(2);
+	_newShapeHeight = stackPos(3);
+	_newShapeXAdd = stackPos(4);
+	_newShapeYAdd = stackPos(5);
+	//word_324EB = stackPos(6); <- never used
+
+	return 0;
+}
+
+int KyraEngine_v2::o2t_setCurrentFrame(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2t_setCurrentFrame(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	_newShapeAnimFrame = stackPos(0);
+	_newShapeDelay = stackPos(1);
+	_temporaryScriptExecBit = true;
+	return 0;
+}
+
+int KyraEngine_v2::o2t_setShapeFlag(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2t_setShapeFlag(%p) (%d)", (const void *)script, stackPos(0));
+	_newShapeFlag = stackPos(0);
 	return 0;
 }
 

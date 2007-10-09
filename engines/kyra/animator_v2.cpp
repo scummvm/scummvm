@@ -191,6 +191,11 @@ void KyraEngine_v2::refreshAnimObjectsIfNeed() {
 	}
 }
 
+void KyraEngine_v2::flagAnimObjsForRefresh() {
+	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject)
+		curEntry->needRefresh = 1;
+}
+
 void KyraEngine_v2::updateCharFacing() {
 	if (_mainCharacter.x1 > _mouseX)
 		_mainCharacter.facing = 5;
@@ -367,6 +372,23 @@ void KyraEngine_v2::deleteItemAnimEntry(int item) {
 
 	animObj->enabled = 0;
 	_animList = deleteAnimListEntry(_animList, animObj);
+}
+
+void KyraEngine_v2::setCharacterAnimDim(int w, int h) {
+	restorePage3();
+
+	_animObj0Width = _animObjects[0].width;
+	_animObj0Height = _animObjects[0].height;
+
+	_animObjects[0].width = w;
+	_animObjects[0].height = h;
+}
+
+void KyraEngine_v2::resetCharacterAnimDim() {
+	restorePage3();
+
+	_animObjects[0].width = _animObj0Width;
+	_animObjects[0].height = _animObj0Height;
 }
 
 } // end of namespace Kyra

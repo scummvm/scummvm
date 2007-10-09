@@ -63,6 +63,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_unkHandleSceneChangeFlag = false;
 	_pathfinderFlag = 0;
 	_mouseX = _mouseY = 0;
+	_newShapeCount = 0;
+	_newShapeFiledata = 0;
 	
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 }
@@ -234,14 +236,14 @@ void KyraEngine_v2::startup() {
 	memset(_shapeDescTable, 0, sizeof(ShapeDesc)*55);
 	
 	for (int i = 9; i <= 32; ++i) {
-		_shapeDescTable[i-9].unk5 = 30;
-		_shapeDescTable[i-9].unk7 = 55;
+		_shapeDescTable[i-9].width = 30;
+		_shapeDescTable[i-9].height = 55;
 		_shapeDescTable[i-9].xAdd = -15;
 		_shapeDescTable[i-9].yAdd = -50;
 	}
 	
 	for (int i = 19; i <= 24; ++i) {
-		_shapeDescTable[i-9].unk7 = 53;
+		_shapeDescTable[i-9].width = 53;
 		_shapeDescTable[i-9].yAdd = -51;
 	}
 	
@@ -363,7 +365,7 @@ void KyraEngine_v2::handleInput(int x, int y) {
 
 	   	if (checkItemCollision(x, y) == -1) {
 			resetGameFlag(0x1EF);
-			//skipHandling = sub_153D6(x, y);
+			skipHandling = handleInputUnkSub(x, y) ? 1 : 0;
 
 			if (queryGameFlag(0x1EF)) {
 				resetGameFlag(0x1EF);
@@ -403,6 +405,38 @@ void KyraEngine_v2::handleInput(int x, int y) {
 
 			_unk5 = 0;
 		}
+	}
+}
+
+bool KyraEngine_v2::handleInputUnkSub(int x, int y) {
+	if (y >= 143/* || _unk1 > -1 */|| queryGameFlag(0x164))
+		return false;
+
+	if (_handItemSet <= -3 && findItem(_mainCharacter.sceneId, 13) >= 0) {
+		updateCharFacing();
+		//sub_277FA(getTableString(0xFC, _cCodeBuffer, 1), 0, 0x83, 0xFC);
+		return true;
+	} else {
+		_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+		
+		_sceneScriptState.regs[1] = x;
+		_sceneScriptState.regs[2] = y;
+		_sceneScriptState.regs[3] = 0;
+		_sceneScriptState.regs[4] = _itemInHand;
+		
+		_scriptInterpreter->startScript(&_sceneScriptState, 1);
+
+		while (_scriptInterpreter->validScript(&_sceneScriptState))
+			_scriptInterpreter->runScript(&_sceneScriptState);
+
+		//XXXsys_unkKeyboad (flush? wait? whatever...)
+
+		if (queryGameFlag(0x1ED)) {
+			// XXX
+			_quitFlag = true;
+		}
+
+		return _sceneScriptState.regs[3] != 0;
 	}
 }
 
@@ -604,6 +638,8 @@ void KyraEngine_v2::cleanup() {
 	delete [] _screenBuffer;
 	delete [] _unkBuf200kByte;
 	
+	resetNewShapes(_newShapeCount, _newShapeFiledata);
+
 	for (int i = 0; i < ARRAYSIZE(_defaultShapeTable); ++i)
 		delete [] _defaultShapeTable[i];
 	freeSceneShapePtrs();
@@ -899,6 +935,49 @@ void KyraEngine_v2::loadNPCScript() {
 	_scriptInterpreter->loadScript(filename, &_npcScriptData, &_opcodes);
 }
 
+void KyraEngine_v2::runTemporaryScript(const char *filename, int unk1, int unk2, int newShapes, int shapeUnload) {
+	memset(&_temporaryScriptData, 0, sizeof(_temporaryScriptData));
+	memset(&_temporaryScriptState, 0, sizeof(_temporaryScriptState));
+
+	if (!_scriptInterpreter->loadScript(filename, &_temporaryScriptData, &_opcodesTemporary))
+		error("couldn't load temporary script '%s'", filename);
+
+	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
+	_scriptInterpreter->startScript(&_temporaryScriptState, 0);
+
+	_newShapeFlag = -1;
+
+	while (_scriptInterpreter->validScript(&_temporaryScriptState))
+		_scriptInterpreter->runScript(&_temporaryScriptState);
+
+	uint8 *fileData = 0;
+
+	if (newShapes) {
+		_newShapeFiledata = _res->fileData(_newShapeFilename, 0);
+		assert(_newShapeFiledata);
+	}
+	
+	fileData = _newShapeFiledata;
+
+	if (!fileData)
+		return;
+
+	if (newShapes)
+		_newShapeCount = initNewShapes(fileData);
+
+	processNewShapes(unk1, unk2);
+
+	if (shapeUnload) {
+		resetNewShapes(_newShapeCount, fileData);
+		_newShapeCount = 0;
+		_newShapeFiledata = 0;
+	}
+
+	_scriptInterpreter->unloadScript(&_temporaryScriptData);
+}
+
+#pragma mark -
+
 void KyraEngine_v2::resetScaleTable() {
 	for (int i = 0; i < ARRAYSIZE(_scaleTable); ++i)
 		_scaleTable[i] = 0x100;
@@ -957,6 +1036,16 @@ void KyraEngine_v2::updateCharPal(int unk1) {
 		_screen->setScreenPalette(_screen->getPalette(0));
 		unkVar1 = false;
 	}
+}
+
+void KyraEngine_v2::setCharPalEntry(int entry, int value) {
+	if (entry > 15 || entry < 1)
+		entry = 1;
+	if (value > 8 || value < 0)
+		value = 0;
+	_charPalTable[entry] = value;
+	_useCharPal = 1;
+	_charPalEntry = 0;
 }
 
 int KyraEngine_v2::inputSceneChange(int x, int y, int unk1, int unk2) {
@@ -1180,6 +1269,78 @@ int KyraEngine_v2::checkCharCollision(int x, int y) {
 	return -1;
 }
 
+int KyraEngine_v2::initNewShapes(uint8 *filedata) {
+	const int lastEntry = MIN(_newShapeLastEntry, 31);
+	for (int i = 0; i < lastEntry; ++i) {
+		_defaultShapeTable[33+i] = _screen->getPtrToShape(filedata, i);
+		ShapeDesc *desc = &_shapeDescTable[24+i];
+		desc->xAdd = _newShapeXAdd;
+		desc->yAdd = _newShapeYAdd;
+		desc->width = _newShapeWidth;
+		desc->height = _newShapeHeight;
+	}
+	return lastEntry;
+}
+
+void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
+	setCharacterAnimDim(_newShapeWidth, _newShapeHeight);
+
+	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
+	_scriptInterpreter->startScript(&_temporaryScriptState, 1);
+
+	while (_scriptInterpreter->validScript(&_temporaryScriptState) && !_skipFlag) {
+		_temporaryScriptExecBit = false;
+		while (_scriptInterpreter->validScript(&_temporaryScriptState) && !_temporaryScriptExecBit)
+			_scriptInterpreter->runScript(&_temporaryScriptState);
+
+		if (_newShapeAnimFrame < 0)
+			continue;
+
+		_mainCharacter.animFrame = _newShapeAnimFrame + 33;
+		updateCharacterAnim(0);
+		//if (dword_30BB2)
+		//	sub_159D6();
+		//else
+			update();
+
+		uint32 delayEnd = _system->getMillis() + _newShapeDelay * _tickLength;
+
+		while (!_skipFlag && _system->getMillis() < delayEnd) {
+			// XXX skipFlag handling, unk1 seems to make a scene not skipable
+
+			//if (dword_30BB2)
+			//	sub_159D6();
+			//else
+				update();
+
+			delay(10);
+		}
+	}
+
+	if (unk2) {
+		if (_newShapeFlag >= 0) {
+			_mainCharacter.animFrame = _newShapeFlag + 33;
+			updateCharacterAnim(0);
+			//if (dword_30BB2)
+			//	sub_159D6();
+			//else
+				update();
+		}
+
+		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+		updateCharacterAnim(0);
+	}
+
+	_newShapeFlag = -1;
+	resetCharacterAnimDim();
+}
+
+void KyraEngine_v2::resetNewShapes(int count, uint8 *filedata) {
+	Common::set_to(_defaultShapeTable+33, _defaultShapeTable+33+count, (uint8*)0);
+	delete [] filedata;
+	//setNextIdleAnimTimer();
+}
+
 #pragma mark -
 
 void KyraEngine_v2::backUpGfxRect24x24(int x, int y) {
@@ -1214,7 +1375,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		// 0x0c
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_trySceneChange),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x10
@@ -1250,10 +1411,10 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x28
 		Opcode(o2_resetGameFlag),
 		Opcode(o2_setGameFlag),
-		OpcodeUnImpl(),
+		Opcode(o2_setHandItem),
 		OpcodeUnImpl(),
 		// 0x2c
-		OpcodeUnImpl(),
+		Opcode(o2_handItemSet),
 		Opcode(o2_hideMouse),
 		Opcode(o2_addSpecialExit),
 		OpcodeUnImpl(),
@@ -1273,9 +1434,9 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_setScaleTableItem),
 		Opcode(o2_setDrawLayerTableItem),
 		// 0x3c
+		Opcode(o2_setCharPalEntry),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_drawSceneShape),
 		Opcode(o2_drawSceneShapeOnPage),
 		// 0x40
 		OpcodeUnImpl(),
@@ -1291,21 +1452,21 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_update),
 		// 0x4c
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_fadeScenePal),
 		Opcode(o2_dummy),
 		Opcode(o2_dummy),
 		// 0x50
-		OpcodeUnImpl(),
+		Opcode(o2_enterNewSceneEx),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x54
 		OpcodeUnImpl(),
 		Opcode(o2_setLayerFlag),
-		OpcodeUnImpl(),
+		Opcode(o2_setZanthiaPos),
 		OpcodeUnImpl(),
 		// 0x58
 		OpcodeUnImpl(),
@@ -1335,7 +1496,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x6c
 		Opcode(o2_encodeShape),
 		Opcode(o2_defineRoomEntrance),
-		OpcodeUnImpl(),
+		Opcode(o2_runTemporaryScript),
 		Opcode(o2_setSpecialSceneScriptRunTime),
 		// 0x70
 		Opcode(o2_defineSceneAnim),
@@ -1421,6 +1582,18 @@ void KyraEngine_v2::setupOpcodeTable() {
 	
 	for (int i = 0; i < ARRAYSIZE(opcodeTable); ++i)
 		_opcodes.push_back(&opcodeTable[i]);
+	
+	static const OpcodeV2 opcodeTemporaryTable[] = {
+		Opcode(o2t_defineNewShapes),
+		Opcode(o2t_setCurrentFrame),
+		OpcodeUnImpl(),
+		OpcodeUnImpl(),
+		Opcode(o2t_setShapeFlag),
+		Opcode(o2_dummy)
+	};
+
+	for (int i = 0; i < ARRAYSIZE(opcodeTemporaryTable); ++i)
+		_opcodesTemporary.push_back(&opcodeTemporaryTable[i]);
 }
 
 } // end of namespace Kyra

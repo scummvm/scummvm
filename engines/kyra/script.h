@@ -52,8 +52,8 @@ struct ScriptState {
 	int16 stack[61];	// VM stack
 };
 
-#define stackPos(x) script->stack[script->sp+x]
-#define stackPosString(x) (const char*)&script->dataPtr->text[READ_BE_UINT16(&((uint16 *)script->dataPtr->text)[stackPos(x)])]
+#define stackPos(x) (script->stack[script->sp+x])
+#define stackPosString(x) ((const char*)&script->dataPtr->text[READ_BE_UINT16(&((uint16 *)script->dataPtr->text)[stackPos(x)])])
 
 class ScriptFileParser {
 public:

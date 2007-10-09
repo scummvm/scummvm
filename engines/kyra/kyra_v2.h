@@ -169,6 +169,7 @@ protected:
 	int checkInput(void *p);
 	void removeInputTop();
 	void handleInput(int x, int y);
+	bool handleInputUnkSub(int x, int y);
 
 	int inputSceneChange(int x, int y, int unk1, int unk2);
 
@@ -199,7 +200,7 @@ protected:
 	
 	struct ShapeDesc {
 		uint8 unk0, unk1, unk2, unk3, unk4;
-		uint16 unk5, unk7;
+		uint16 width, height;
 		int16 xAdd, yAdd;
 	};
 	
@@ -243,6 +244,20 @@ protected:
 	int _drawLayerTable[15];
 
 	int _layerFlagTable[16]; // seems to indicate layers where items get destroyed when dropped to (TODO: check this!)
+
+	char _newShapeFilename[13];
+	int _newShapeLastEntry;
+	int _newShapeWidth, _newShapeHeight;
+	int _newShapeXAdd, _newShapeYAdd;
+	int _newShapeFlag;
+	uint8 *_newShapeFiledata;
+	int _newShapeCount;
+	int _newShapeAnimFrame;
+	int _newShapeDelay;
+
+	int initNewShapes(uint8 *filedata);
+	void processNewShapes(int unk1, int unk2);
+	void resetNewShapes(int count, uint8 *filedata);
 	
 	// animator
 	struct AnimObj {
@@ -286,6 +301,8 @@ protected:
 	
 	void refreshAnimObjects(int force);
 	void refreshAnimObjectsIfNeed();
+
+	void flagAnimObjsForRefresh();
 	
 	void updateCharFacing();
 	void updateCharacterAnim(int);
@@ -293,6 +310,10 @@ protected:
 
 	void addItemToAnimList(int item);
 	void deleteItemAnimEntry(int item);
+
+	int _animObj0Width, _animObj0Height;
+	void setCharacterAnimDim(int w, int h);
+	void resetCharacterAnimDim();
 	
 	// scene
 	struct SceneDesc {
@@ -323,6 +344,8 @@ protected:
 
 	void loadScenePal();
 	void loadSceneMsc();
+
+	void fadeScenePal(int srcIndex, int delay);
 	
 	void startSceneScript(int unk1);
 	void runSceneScript2();
@@ -388,6 +411,7 @@ protected:
 	int getItemCommandStringPickUp(uint16 item);
 
 	void setMouseCursor(uint16 item);
+	void setHandItem(uint16 item);
 	void removeHandItem();
 	
 	// inventroy
@@ -437,6 +461,7 @@ protected:
 	int _charPalEntry;
 	uint8 _charPalTable[16];
 	void updateCharPal(int unk1);
+	void setCharPalEntry(int entry, int value);
 	
 	void moveCharacter(int facing, int x, int y);
 	int updateCharPos(int *table);
@@ -479,6 +504,7 @@ protected:
 	int o2_getCharacterY(ScriptState *script);
 	int o2_getCharacterFacing(ScriptState *script);
 	int o2_setSceneComment(ScriptState *script);
+	int o2_trySceneChange(ScriptState *script);
 	int o2_showChapterMessage(ScriptState *script);
 	int o2_wsaClose(ScriptState *script);
 	int o2_displayWsaFrame(ScriptState *script);
@@ -488,17 +514,27 @@ protected:
 	int o2_queryGameFlag(ScriptState *script);
 	int o2_resetGameFlag(ScriptState *script);
 	int o2_setGameFlag(ScriptState *script);
+	int o2_setHandItem(ScriptState *script);
+	int o2_handItemSet(ScriptState *script);
 	int o2_hideMouse(ScriptState *script);
 	int o2_addSpecialExit(ScriptState *script);
 	int o2_showMouse(ScriptState *script);
+	int o2_delay(ScriptState *script);
 	int o2_setScaleTableItem(ScriptState *script);
 	int o2_setDrawLayerTableItem(ScriptState *script);
+	int o2_setCharPalEntry(ScriptState *script);
+	int o2_drawSceneShape(ScriptState *script);
 	int o2_drawSceneShapeOnPage(ScriptState *script);
 	int o2_restoreBackBuffer(ScriptState *script);
+	int o2_update(ScriptState *script);
+	int o2_fadeScenePal(ScriptState *script);
+	int o2_enterNewSceneEx(ScriptState *script);
 	int o2_setLayerFlag(ScriptState *script);
+	int o2_setZanthiaPos(ScriptState *script);
 	int o2_getRand(ScriptState *script);
 	int o2_encodeShape(ScriptState *script);
 	int o2_defineRoomEntrance(ScriptState *script);
+	int o2_runTemporaryScript(ScriptState *script);
 	int o2_setSpecialSceneScriptRunTime(ScriptState *script);
 	int o2_defineSceneAnim(ScriptState *script);
 	int o2_updateSceneAnim(ScriptState *script);
@@ -507,6 +543,11 @@ protected:
 	int o2_clearSpecialSceneScriptState(ScriptState *script);
 	int o2_querySpecialSceneScriptState(ScriptState *script);
 	int o2_dummy(ScriptState *script);
+
+	// opcodes temporary
+	int o2t_defineNewShapes(ScriptState *script);
+	int o2t_setCurrentFrame(ScriptState *script);
+	int o2t_setShapeFlag(ScriptState *script);
 	
 	// script
 	void runStartScript(int script, int unk1);
@@ -518,6 +559,13 @@ protected:
 	
 	ScriptData _sceneScriptData;
 	ScriptState _sceneScriptState;
+	
+	ScriptData _temporaryScriptData;
+	ScriptState _temporaryScriptState;
+	bool _temporaryScriptExecBit;
+	Common::Array<const Opcode*> _opcodesTemporary;
+
+	void runTemporaryScript(const char *filename, int unk1, int unk2, int newShapes, int shapeUnload);
 	
 	// pathfinder
 	int _pathfinderFlag;
