@@ -1427,7 +1427,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_delay),
 		// 0x38
 		Opcode(o2_dummy),
 		OpcodeUnImpl(),
