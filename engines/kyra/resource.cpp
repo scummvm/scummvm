@@ -185,7 +185,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 		f.seek(offset + 16, SEEK_SET);
 
 		Common::String filename = (char*)buffer;
-		debug("%s", filename.c_str());
+		filename.toUppercase();
 
 		if (filename.hasSuffix(".PAK")) {
 			if (!loadPakFile(filename)) {
