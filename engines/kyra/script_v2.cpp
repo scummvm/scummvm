@@ -403,6 +403,22 @@ int KyraEngine_v2::o2_enterNewSceneEx(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_switchScene(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_switchScene(%p) (%d)", (const void *)script, stackPos(0));
+	setGameFlag(0x1EF);
+	_mainCharX = _mainCharacter.x1;
+	_mainCharY = _mainCharacter.y1;
+	_noScriptEnter = 0;
+	enterNewScene(stackPos(0), _mainCharacter.facing, 0, 0, 0);
+	_noScriptEnter = 1;
+	return 0;
+}
+
+int KyraEngine_v2::o2_getShapeFlag1(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getShapeFlag1(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return _screen->getShapeFlag1(stackPos(0), stackPos(1));
+}
+
 int KyraEngine_v2::o2_setLayerFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setLayerFlag(%p) (%d)", (const void *)script, stackPos(0));
 	int layer = stackPos(0);

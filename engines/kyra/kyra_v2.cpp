@@ -1460,8 +1460,8 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_dummy),
 		// 0x50
 		Opcode(o2_enterNewSceneEx),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_switchScene),
+		Opcode(o2_getShapeFlag1),
 		OpcodeUnImpl(),
 		// 0x54
 		OpcodeUnImpl(),

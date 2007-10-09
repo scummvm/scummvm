@@ -529,6 +529,8 @@ protected:
 	int o2_update(ScriptState *script);
 	int o2_fadeScenePal(ScriptState *script);
 	int o2_enterNewSceneEx(ScriptState *script);
+	int o2_switchScene(ScriptState *script);
+	int o2_getShapeFlag1(ScriptState *script);
 	int o2_setLayerFlag(ScriptState *script);
 	int o2_setZanthiaPos(ScriptState *script);
 	int o2_getRand(ScriptState *script);
