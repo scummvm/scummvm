@@ -573,10 +573,28 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 
 void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *dest) {
 	debugC(9, kDebugLevelScreen, "Screen::copyRegionToBuffer(%d, %d, %d, %d, %d)", pageNum, x, y, w, h);
-	assert(x >= 0 && x < Screen::SCREEN_W && y >= 0 && y < Screen::SCREEN_H && dest);
+	if (y < 0) {
+		dest += (-y) * w;
+		h += y;
+		y = 0;
+	} else if (y + h > SCREEN_H) {
+		h = SCREEN_H - y;
+	}
+
+	if (x < 0) {
+		dest += -x;
+		w += x;	
+		x = 0;
+	} else if (x + w > SCREEN_W) {
+		w = SCREEN_W - x;
+	}
+
+	if (w < 0 || h < 0)
+		return;
+
 	uint8 *pagePtr = getPagePtr(pageNum);
 
-	for (int i = y; i < y + h; i++)
+	for (int i = y; i < y + h; ++i)
 		memcpy(dest + (i - y) * w, pagePtr + i * SCREEN_W + x, w);
 }
 
@@ -593,7 +611,25 @@ void Screen::copyPage(uint8 srcPage, uint8 dstPage) {
 
 void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src) {
 	debugC(9, kDebugLevelScreen, "Screen::copyBlockToPage(%d, %d, %d, %d, %d, %p)", pageNum, x, y, w, h, (const void *)src);
-	assert(x >= 0 && x < Screen::SCREEN_W && y >= 0 && y < Screen::SCREEN_H);
+	if (y < 0) {
+		src += (-y) * w;
+		h += y;
+		y = 0;
+	} else if (y + h > SCREEN_H) {
+		h = SCREEN_H - y;
+	}
+
+	if (x < 0) {
+		src += -x;
+		w += x;	
+		x = 0;
+	} else if (x + w > SCREEN_W) {
+		w = SCREEN_W - x;
+	}
+
+	if (w < 0 || h < 0)
+		return;
+
 	uint8 *dst = getPagePtr(pageNum) + y * SCREEN_W + x;
 
 	if (pageNum == 0 || pageNum == 1)

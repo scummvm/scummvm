@@ -191,6 +191,17 @@ void KyraEngine_v2::refreshAnimObjectsIfNeed() {
 	}
 }
 
+void KyraEngine_v2::updateCharFacing() {
+	if (_mainCharacter.x1 > _mouseX)
+		_mainCharacter.facing = 5;
+	else
+		_mainCharacter.facing = 3;
+
+	_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.animFrame];
+	updateCharacterAnim(0);
+	refreshAnimObjectsIfNeed();
+}
+
 void KyraEngine_v2::updateCharacterAnim(int) {
 	Character *c = &_mainCharacter;
 	AnimObj *animState = _animObjects;
@@ -331,7 +342,7 @@ void KyraEngine_v2::addItemToAnimList(int item) {
 	scaleY = scaleX = getScale(animObj->xPos1, animObj->yPos1);
 
 	uint8 *shapePtr = getShapePtr(64+itemId);
-	animObj->xPos3 = (animObj->xPos2 -= _screen->getShapeScaledWidth(shapePtr, scaleX) >> 1);
+	animObj->xPos3 = (animObj->xPos2 -= (_screen->getShapeScaledWidth(shapePtr, scaleX) >> 1));
 	animObj->yPos3 = (animObj->yPos2 -= _screen->getShapeScaledHeight(shapePtr, scaleY));
 
 	animObj->width2 = animObj->height2 = 0;

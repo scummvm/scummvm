@@ -185,6 +185,9 @@ protected:
 	uint8 *_screenBuffer;
 	uint8 *_maskPage;
 	uint8 *_gfxBackUpRect;
+
+	void backUpGfxRect24x24(int x, int y);
+	void restoreGfxRect24x24(int x, int y);
 	
 	uint8 *getShapePtr(int index) { return _defaultShapeTable[index]; }
 	uint8 *_defaultShapeTable[250];
@@ -238,6 +241,8 @@ protected:
 	void setDrawLayerTableEntry(int entry, int data);
 	int getDrawLayer(int x, int y);
 	int _drawLayerTable[15];
+
+	int _layerFlagTable[16]; // seems to indicate layers where items get destroyed when dropped to (TODO: check this!)
 	
 	// animator
 	struct AnimObj {
@@ -282,6 +287,7 @@ protected:
 	void refreshAnimObjects(int force);
 	void refreshAnimObjectsIfNeed();
 	
+	void updateCharFacing();
 	void updateCharacterAnim(int);
 	void updateSceneAnim(int anim, int newFrame);
 
@@ -352,7 +358,7 @@ protected:
 		uint16 id;
 		uint16 sceneId;
 		int16 x;
-		int8 y;
+		uint8 y;
 		uint16 unk7;
 	};
 	Item *_itemList;
@@ -368,16 +374,25 @@ protected:
 
 	bool dropItem(int unk1, uint16 item, int x, int y, int unk2);
 	bool processItemDrop(uint16 sceneId, uint16 item, int x, int y, int unk1, int unk2);
+	void itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, uint16 item);
 	void exchangeMouseItem(int itemPos);
 	bool pickUpItem(int x, int y);
 
-	int getItemCommandString(uint16 item);
+	bool isDropable(int x, int y);
+
+	static const byte _itemStringMap[];
+	static const int _itemStringMapSize;
+
+	// Just used in French version
+	int getItemCommandStringDrop(uint16 item);
+	int getItemCommandStringPickUp(uint16 item);
 
 	void setMouseCursor(uint16 item);
+	void removeHandItem();
 	
 	// inventroy
-	static int _inventoryX[];
-	static int _inventoryY[];
+	static const int _inventoryX[];
+	static const int _inventoryY[];
 	
 	// localization
 	void loadCCodeBuffer(const char *file);
@@ -433,7 +448,7 @@ protected:
 	int _mainCharX, _mainCharY;
 	int _charScaleX, _charScaleY;
 
-	static int _characterFrameTable[];
+	static const int _characterFrameTable[];
 	
 	// text
 	void showMessageFromCCode(int id, int16 palIndex, int);
@@ -480,6 +495,7 @@ protected:
 	int o2_setDrawLayerTableItem(ScriptState *script);
 	int o2_drawSceneShapeOnPage(ScriptState *script);
 	int o2_restoreBackBuffer(ScriptState *script);
+	int o2_setLayerFlag(ScriptState *script);
 	int o2_getRand(ScriptState *script);
 	int o2_encodeShape(ScriptState *script);
 	int o2_defineRoomEntrance(ScriptState *script);

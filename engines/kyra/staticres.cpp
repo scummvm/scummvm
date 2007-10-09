@@ -1229,17 +1229,44 @@ const char *KyraEngine_v2::_scriptLangExt[] = {
 	"SMC"*/
 };
 
-int KyraEngine_v2::_characterFrameTable[] = {
+const int KyraEngine_v2::_characterFrameTable[] = {
 	0x19, 0x09, 0x09, 0x12, 0x12, 0x12, 0x09, 0x09
 };
 
-int KyraEngine_v2::_inventoryX[] = {
+const int KyraEngine_v2::_inventoryX[] = {
 	0x4F, 0x63, 0x77, 0x8B, 0x9F, 0x4F, 0x63, 0x77, 0x8B, 0x9F
 };
 
-int KyraEngine_v2::_inventoryY[] = {
+const int KyraEngine_v2::_inventoryY[] = {
 	0x95, 0x95, 0x95, 0x95, 0x95, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA
 };
+
+const byte KyraEngine_v2::_itemStringMap[] = {
+	2,    2,    0,    0,    2,    2,    2,    0,
+	2,    2,    0,    0,    0,    2,    0,    0,
+	0,    0,    0,    0,    2,    0,    0,    0,
+	0,    1,    0,    2,    2,    2,    2,    0,
+	3,    0,    3,    2,    2,    2,    3,    2,
+	2,    2,    0,    0,    0,    0,    0,    0,
+	0,    0,    0,    0,    2,    0,    0,    0,
+	0,    0,    0,    0,    0,    2,    0,    0,
+	2,    0,    0,    0,    0,    0,    0,    2,
+	2,    0,    0,    0,    2,    2,    2,    2,
+	2,    2,    2,    2,    2,    2,    2,    2,
+	2,    2,    2,    2,    2,    2,    2,    0,
+	2,    2,    2,    0,    0,    1,    3,    2,
+	2,    2,    2,    2,    2,    0,    0,    0,
+	0,    2,    2,    1,    0,    1,    2,    0,
+	0,    0,    0,    0,    0,    2,    2,    2,
+	2,    2,    2,    2,    0,    2,    2,    2,
+	2,    3,    2,    0,    0,    0,    0,    1,
+	2,    0,    0,    0,    0,    0,    0,    0,
+	0,    0,    0,    0,    0,    0,    0,    0,
+	2,    2,    0,    0,    0,    0,    0,    2,
+	0,    2,    0,    0,    0,    0,    0,    0
+};
+
+const int KyraEngine_v2::_itemStringMapSize = ARRAYSIZE(KyraEngine_v2::_itemStringMap);
 
 // kyra 3 static res
 

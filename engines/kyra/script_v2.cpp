@@ -294,6 +294,14 @@ int KyraEngine_v2::o2_restoreBackBuffer(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_setLayerFlag(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setLayerFlag(%p) (%d)", (const void *)script, stackPos(0));
+	int layer = stackPos(0);
+	if (layer >= 1 && layer <= 16)
+		_layerFlagTable[layer] = 1;
+	return 0;
+}
+
 int KyraEngine_v2::o2_getRand(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < stackPos(1));

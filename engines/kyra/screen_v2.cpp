@@ -500,7 +500,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 
 				case 8: {
 						int layer = _shapePages[0][dst - dstStart] & 7;
-						if (drawLayer > layer)
+						if (drawLayer < layer)
 							color = _shapePages[1][dst - dstStart];
 						*dst = color;
 					} break;

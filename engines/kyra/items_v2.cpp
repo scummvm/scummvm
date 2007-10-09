@@ -117,8 +117,203 @@ bool KyraEngine_v2::processItemDrop(uint16 sceneId, uint16 item, int x, int y, i
 		return false;
 	}
 
-	//XXX
-	return false;
+	int freeItemSlot = -1;
+
+	if (unk1 != 3) {
+		for (int i = 0; i < 30; ++i) {
+			if (_itemList[i].id == 0xFFFF) {
+				freeItemSlot = i;
+				break;
+			}
+		}
+	}
+
+	if (freeItemSlot == -1)
+		return false;
+
+	if (sceneId != _mainCharacter.sceneId) {
+		//addToItemList(sceneId, item, freeItemSlot, x, y);
+		//return true;
+		//XXX
+		return false;
+	}
+
+	int itemHeight = _itemHtDat[item];
+	
+	// no idea why it's '&&' here and not single checks for x and y
+	if (x == -1 && y == -1) {
+		x = _rnd.getRandomNumberRng(0x10, 0x130);
+		y = _rnd.getRandomNumberRng(0x10, 0x87);
+	}
+
+	int posX = x, posY = y;
+	int itemX = -1, itemY = -1;
+	bool needRepositioning = true;
+
+	while (needRepositioning) {
+		if ((_screen->getDrawLayer(posX, posY) <= 1 && _screen->getDrawLayer2(posX, posY, itemHeight) <= 1 && isDropable(posX, posY)) || posY == 136) {
+			int posX2 = posX, posX3 = posX;
+			bool repositioning = true;
+
+			while (repositioning) {
+				if (isDropable(posX3, posY) && _screen->getDrawLayer(posX3, posY) < 7 && checkItemCollision(posX3, posY) == -1) {
+					itemX = posX3;
+					itemY = posY;
+					needRepositioning = false;
+					repositioning = false;
+				}
+
+				if (isDropable(posX2, posY) && _screen->getDrawLayer(posX2, posY) < 7 && checkItemCollision(posX2, posY) == -1) {
+					itemX = posX2;
+					itemY = posY;
+					needRepositioning = false;
+					repositioning = false;
+				}
+
+				if (repositioning) {
+					posX3 = MAX(posX3 - 2, 16);
+					posX2 = MIN(posX2 + 2, 304);
+
+					if (posX3 <= 16 && posX2 >= 304)
+						repositioning = false;
+				}
+			}
+		}
+
+		if (posY == 136)
+			needRepositioning = false;
+		else
+			posY = MIN(posY + 2, 136);
+	}
+
+	if (itemX == -1 || itemY == -1)
+		return false;
+	
+	if (unk1 == 3) {
+		_itemList[freeItemSlot].x = itemX;
+		_itemList[freeItemSlot].y = itemY;
+		return true;
+	} else if (unk1 == 2) {
+		itemDropDown(x, y, itemX, itemY, freeItemSlot, item);
+	}
+
+	if (!unk1)
+		removeHandItem();
+
+	itemDropDown(x, y, itemX, itemY, freeItemSlot, item);
+
+	if (!unk1 && unk2) {
+		int itemStr = 3;
+		if (_lang == 1)
+			itemStr = getItemCommandStringDrop(item);
+		updateCommandLineEx(item+54, itemStr, 0xD6);
+	}
+
+	return true;
+}
+
+void KyraEngine_v2::itemDropDown(int startX, int startY, int dstX, int dstY, int itemSlot, uint16 item) {
+	uint8 *itemShape = getShapePtr(item + 64);
+
+	if (startX == dstX && startY == dstY) {
+		if (_layerFlagTable[_screen->getLayer(dstX, dstY)] && item != 13) {
+			updateCharFacing();
+			//snd_playSfx(0x2d);
+			removeHandItem();
+			//XXX sub_277FA(getTableString(0xFF, _cCodeBuffer), 1, 0, 0x83, 0xFF);
+		} else {
+			_itemList[itemSlot].x = dstX;
+			_itemList[itemSlot].y = dstY;
+			_itemList[itemSlot].id = item;
+			_itemList[itemSlot].sceneId = _mainCharacter.sceneId;
+			//snd_playSfx(0x0c);
+			addItemToAnimList(itemSlot);
+		}
+	} else {
+		_screen->hideMouse();
+
+		if (startY <= dstY) {
+			int speed = 2;
+			int curY = startY;
+			int curX = startX - 8;
+
+			backUpGfxRect24x24(curX, curY-16);
+			while (curY < dstY) {
+				restoreGfxRect24x24(curX, curY-16);
+
+				curY = MIN(curY + speed, dstY);
+				++speed;
+
+				backUpGfxRect24x24(curX, curY-16);
+				uint32 endDelay = _system->getMillis() + _tickLength;
+
+				_screen->drawShape(0, itemShape, curX, curY-16, 0, 0);
+				_screen->updateScreen();
+
+				// XXX: original doesn't update game state while delaying
+				// our implementation *could* do it, so maybe check this again
+				delayUntil(endDelay);
+			}
+
+			if (dstX != dstY || (dstY - startY > 16)) {
+				//snd_playSfx(0x69);
+				speed = MAX(speed, 6);
+				int speedX = ((dstX - startX) << 4) / speed;
+				int origSpeed = speed;
+				speed >>= 1;
+
+				if (dstY - startY <= 8)
+					speed >>= 1;
+
+				speed = -speed;
+
+				curX = startX << 4;
+
+				int x = 0, y = 0;
+				while (--origSpeed) {
+					x = (curX >> 4) - 8;
+					y = curY - 16;
+
+					restoreGfxRect24x24(x, y);
+					curY = MIN(curY + speed, dstY);
+					curX += speedX;
+					++speed;
+
+					x = (curX >> 4) - 8;
+					y = curY - 16;
+					backUpGfxRect24x24(x, y);
+
+					uint16 endDelay = _system->getMillis() + _tickLength;
+					_screen->drawShape(0, itemShape, x, y, 0, 0);
+					_screen->updateScreen();
+					
+					// XXX: original doesn't update game state while delaying
+					// our implementation *could* do it, so maybe check this again
+					delayUntil(endDelay);
+				}
+
+				restoreGfxRect24x24(x, y);
+			} else {
+				restoreGfxRect24x24(curX, curY-16);
+			}	
+		}
+
+		if (_layerFlagTable[_screen->getLayer(dstX, dstY)] && item != 13) {
+			updateCharFacing();
+			//snd_playSfx(0x2d);
+			removeHandItem();
+			_screen->showMouse();
+			//XXX sub_277FA(getTableString(0xFF, _cCodeBuffer), 1, 0, 0x83, 0xFF);
+		} else {
+			_itemList[itemSlot].x = dstX;
+			_itemList[itemSlot].y = dstY;
+			_itemList[itemSlot].id = item;
+			_itemList[itemSlot].sceneId = _mainCharacter.sceneId;
+			//snd_playSfx(0x0c);
+			addItemToAnimList(itemSlot);
+			_screen->showMouse();
+		}
+	}
 }
 
 void KyraEngine_v2::exchangeMouseItem(int itemPos) {
@@ -136,7 +331,7 @@ void KyraEngine_v2::exchangeMouseItem(int itemPos) {
 	int str2 = 7;
 		
 	if (_lang == 1)
-		str2 = getItemCommandString(itemId);
+		str2 = getItemCommandStringPickUp(itemId);
 	
 	updateCommandLineEx(itemId + 54, str2, 0xD6);
 	_screen->showMouse();
@@ -162,7 +357,7 @@ bool KyraEngine_v2::pickUpItem(int x, int y) {
 		int str2 = 7;
 		
 		if (_lang == 1)
-			str2 = getItemCommandString(itemId);
+			str2 = getItemCommandStringPickUp(itemId);
 		
 		updateCommandLineEx(itemId + 54, str2, 0xD6);
 		_itemInHand = itemId;
@@ -174,42 +369,43 @@ bool KyraEngine_v2::pickUpItem(int x, int y) {
 	return true;
 }
 
-int KyraEngine_v2::getItemCommandString(uint16 item) {
-	// This is just needed for French version
-	static const uint8 index[] = {
-		2,    2,    0,    0,    2,    2,    2,    0,
-		2,    2,    0,    0,    0,    2,    0,    0,
-		0,    0,    0,    0,    2,    0,    0,    0,
-		0,    1,    0,    2,    2,    2,    2,    0,
-		3,    0,    3,    2,    2,    2,    3,    2,
-		2,    2,    0,    0,    0,    0,    0,    0,
-		0,    0,    0,    0,    2,    0,    0,    0,
-		0,    0,    0,    0,    0,    2,    0,    0,
-		2,    0,    0,    0,    0,    0,    0,    2,
-		2,    0,    0,    0,    2,    2,    2,    2,
-		2,    2,    2,    2,    2,    2,    2,    2,
-		2,    2,    2,    2,    2,    2,    2,    0,
-		2,    2,    2,    0,    0,    1,    3,    2,
-		2,    2,    2,    2,    2,    0,    0,    0,
-		0,    2,    2,    1,    0,    1,    2,    0,
-		0,    0,    0,    0,    0,    2,    2,    2,
-		2,    2,    2,    2,    0,    2,    2,    2,
-		2,    3,    2,    0,    0,    0,    0,    1,
-		2,    0,    0,    0,    0,    0,    0,    0,
-		0,    0,    0,    0,    0,    0,    0,    0,
-		2,    2,    0,    0,    0,    0,    0,    2,
-		0,    2,    0,    0,    0,    0,    0,    0
+bool KyraEngine_v2::isDropable(int x, int y) {
+	if (x < 14 || x > 304 || y < 14 || y > 136)
+		return false;
+
+	x -= 8;
+	y -= 1;
+	
+	for (int xpos = x; xpos < x + 16; ++xpos) {
+		if (_screen->getShapeFlag1(xpos, y) == 0)
+			return false;
+	}
+
+	return true;
+}
+
+int KyraEngine_v2::getItemCommandStringDrop(uint16 item) {
+	assert(item < _itemStringMapSize);
+	int stringId = _itemStringMap[item];
+
+	static const int dropStringIds[] = {
+		0x2D, 0x103, 0x003, 0x106
 	};
+	assert(stringId < ARRAYSIZE(dropStringIds));
 
-	assert(item < ARRAYSIZE(index));
+	return dropStringIds[stringId];
+}
 
-	static const int stringId[] = {
-		0x02B, 0x102, 0x007, 0x105, 0x02D, 0x103,
-		0x003, 0x106, 0x02C, 0x104, 0x008, 0x107
+int KyraEngine_v2::getItemCommandStringPickUp(uint16 item) {
+	assert(item < _itemStringMapSize);
+	int stringId = _itemStringMap[item];
+
+	static const int pickUpStringIds[] = {
+		0x02B, 0x102, 0x007, 0x105
 	};
+	assert(stringId < ARRAYSIZE(pickUpStringIds));
 
-	assert(index[item] < ARRAYSIZE(index));
-	return stringId[index[item]];
+	return pickUpStringIds[stringId];
 }
 
 void KyraEngine_v2::setMouseCursor(uint16 item) {
@@ -224,6 +420,14 @@ void KyraEngine_v2::setMouseCursor(uint16 item) {
 	}
 
 	_screen->setMouseCursor(hotX, hotY, getShapePtr(shape));
+}
+
+void KyraEngine_v2::removeHandItem() {
+	_screen->hideMouse();
+	_screen->setMouseCursor(0, 0, _defaultShapeTable[0]);
+	_itemInHand = -1;
+	_handItemSet = -1;
+	_screen->showMouse();
 }
 
 } // end of namespace Kyra

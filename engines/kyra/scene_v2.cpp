@@ -392,7 +392,7 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 	resetScaleTable();
 	_useCharPal = false;
 	memset(_charPalTable, 0, sizeof(_charPalTable));
-	//XXX _unkTable33
+	memset(_layerFlagTable, 0, sizeof(_layerFlagTable));
 	memset(_specialSceneScriptState, 0, sizeof(_specialSceneScriptState));
 
 	_sceneEnterX1 = 160;

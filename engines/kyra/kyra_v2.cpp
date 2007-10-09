@@ -242,6 +242,7 @@ void KyraEngine_v2::startup() {
 	
 	_gfxBackUpRect = new uint8[_screen->getRectSize(32, 32)];
 	_itemList = new Item[30];
+	memset(_itemList, 0, sizeof(Item)*30);
 	resetItemList();
 	//loadButtonShapes();
 	_loadedZTable = 1;
@@ -381,12 +382,12 @@ void KyraEngine_v2::handleInput(int x, int y) {
 			return;
 		}
 
-		/*if (_itemInHand >= 0) {
+		if (_itemInHand >= 0) {
 			if (y > 136)
 				return;
 
 			dropItem(0, _itemInHand, x, y, 1);
-		} else {*/
+		} else {
 			if (_unk3 == -2 || y > 135)
 				return;
 
@@ -396,7 +397,7 @@ void KyraEngine_v2::handleInput(int x, int y) {
 			}
 
 			_unk5 = 0;
-		//}
+		}
 	}
 }
 
@@ -1176,6 +1177,16 @@ int KyraEngine_v2::checkCharCollision(int x, int y) {
 
 #pragma mark -
 
+void KyraEngine_v2::backUpGfxRect24x24(int x, int y) {
+	_screen->copyRegionToBuffer(_screen->_curPage, x, y, 24, 24, _gfxBackUpRect);
+}
+
+void KyraEngine_v2::restoreGfxRect24x24(int x, int y) {
+	_screen->copyBlockToPage(_screen->_curPage, x, y, 24, 24, _gfxBackUpRect);
+}
+
+#pragma mark -
+
 typedef Functor1Mem<ScriptState*, int, KyraEngine_v2> OpcodeV2;
 #define Opcode(x) OpcodeV2(this, &KyraEngine_v2::x)
 #define OpcodeUnImpl() OpcodeV2(this, 0)
@@ -1288,7 +1299,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		// 0x54
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_setLayerFlag),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x58
