@@ -154,6 +154,11 @@ void KyraEngine_v2::mainMenu() {
 		switch (gui_handleMainMenu()) {
 			case 0:
 				_screen->showMouse();
+
+				// load just the pak files needed for ingame
+				_res->unloadAllPakFiles();
+				_res->loadFileList("FILEDATA.FDT");
+
 				startup();
 				runLoop();
 				cleanup();

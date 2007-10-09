@@ -116,9 +116,15 @@ public:
 	Resource(KyraEngine *vm);
 	~Resource();
 
+	bool reset();
+
 	bool loadPakFile(const Common::String &filename);
 	void unloadPakFile(const Common::String &filename);
 	bool isInPakList(const Common::String &filename) const;
+
+	bool loadFileList(const Common::String &filedata);
+	// This unloads *all* pakfiles, even kyra.dat and protected ones
+	void unloadAllPakFiles();
 
 	uint32 getFileSize(const char *file) const;
 	uint8* fileData(const char *file, uint32 *size) const;

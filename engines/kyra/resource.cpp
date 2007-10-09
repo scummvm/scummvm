@@ -52,8 +52,20 @@ struct ResFilenameEqual : public Common::UnaryFunction<ResourceFile*, bool> {
 };
 } // end of anonymous namespace
 
-Resource::Resource(KyraEngine *vm) {
-	_vm = vm;
+Resource::Resource(KyraEngine *vm) : _vm(vm) {
+}
+
+Resource::~Resource() {
+	unloadAllPakFiles();
+}
+
+bool Resource::reset() {
+	unloadAllPakFiles();
+
+	FilesystemNode dir(ConfMan.get("path"));
+	
+	if (!dir.exists() || !dir.isDirectory())
+		error("invalid game path '%s'", dir.getPath().c_str());
 
 	if (_vm->game() == GI_KYRA1) {
 		// we're loading KYRA.DAT here too (but just for Kyrandia 1)
@@ -65,7 +77,7 @@ Resource::Resource(KyraEngine *vm) {
 
 		// We only need kyra.dat for the demo.
 		if (_vm->gameFlags().isDemo)
-			return;
+			return true;
 
 		// only VRM file we need in the *whole* game for kyra1
 		if (_vm->gameFlags().isTalkie)
@@ -80,10 +92,8 @@ Resource::Resource(KyraEngine *vm) {
 	}
 
 	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-
 	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly))
-		error("invalid game path '%s'", dir.getPath().c_str());
+		error("can't list files inside game path '%s'", dir.getPath().c_str());
 
 	if (_vm->game() == GI_KYRA1 && _vm->gameFlags().isTalkie) {
 		static const char *list[] = {
@@ -95,6 +105,10 @@ Resource::Resource(KyraEngine *vm) {
 		Common::for_each(list, list + ARRAYSIZE(list), Common::bind1st(Common::mem_fun(&Resource::loadPakFile), this));
 		Common::for_each(_pakfiles.begin(), _pakfiles.end(), Common::bind2nd(Common::mem_fun(&ResourceFile::protect), true));
 	} else {
+		// TODO: Kyra 2 InGame uses a special pak file list shipped with the game "FILEDATA.FDT", so we just have to load
+		// the files needed for Kyra 2 intro here. What has to be done is, checking what files are required in the intro
+		// and make a list similar to that for Kyra 1 and just load the files from the list and not all pak files we find.
+
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			Common::String filename = file->getName();
 			filename.toUppercase();
@@ -119,13 +133,8 @@ Resource::Resource(KyraEngine *vm) {
 			}
 		}
 	}
-}
 
-Resource::~Resource() {
-	for (ResIterator start = _pakfiles.begin() ;start != _pakfiles.end(); ++start) {
-		delete *start;
-		*start = 0;
-	}
+	return true;
 }
 
 bool Resource::loadPakFile(const Common::String &filename) {
@@ -160,6 +169,35 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	return true;
 }
 
+bool Resource::loadFileList(const Common::String &filedata) {
+	Common::File f;
+	
+	if (!f.open(filedata))
+		return false;
+
+	uint32 filenameOffset = 0;
+	while ((filenameOffset = f.readUint32LE()) != 0) {
+		uint32 offset = f.pos();
+		f.seek(filenameOffset, SEEK_SET);
+
+		uint8 buffer[64];
+		f.read(buffer, sizeof(buffer));
+		f.seek(offset + 16, SEEK_SET);
+
+		Common::String filename = (char*)buffer;
+		debug("%s", filename.c_str());
+
+		if (filename.hasSuffix(".PAK")) {
+			if (!loadPakFile(filename)) {
+				error("couldn't load file '%s'", filename.c_str());
+				return false;
+			}
+		}			
+	}
+
+	return true;
+}
+
 void Resource::unloadPakFile(const Common::String &filename) {
 	ResIterator pak = Common::find_if(_pakfiles.begin(), _pakfiles.end(), ResFilenameEqual(Common::hashit_lower(filename)));
 	if (pak != _pakfiles.end())
@@ -168,6 +206,14 @@ void Resource::unloadPakFile(const Common::String &filename) {
 
 bool Resource::isInPakList(const Common::String &filename) const {
 	return (Common::find_if(_pakfiles.begin(), _pakfiles.end(), ResFilenameEqual(Common::hashit_lower(filename))) != _pakfiles.end());
+}
+
+void Resource::unloadAllPakFiles() {
+	for (ResIterator start = _pakfiles.begin(); start != _pakfiles.end(); ++start) {
+		delete *start;
+		*start = 0;
+	}
+	_pakfiles.clear();
 }
 
 uint8 *Resource::fileData(const char *file, uint32 *size) const {

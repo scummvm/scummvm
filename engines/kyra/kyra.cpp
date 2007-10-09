@@ -130,6 +130,7 @@ int KyraEngine::init() {
 
 	_res = new Resource(this);
 	assert(_res);
+	_res->reset();
 	_text = new TextDisplayer(this, this->screen());
 	assert(_text);
 	_staticres = new StaticResource(this);
