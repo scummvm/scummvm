@@ -98,7 +98,7 @@ bool KyraEngine_v2::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
 
 	bool success = processItemDrop(_mainCharacter.sceneId, item, x, y, unk1, unk2);
 	if (!success) {
-		//snd_playSfx(0x0d);
+		snd_playSoundEffect(0x0d);
 		if (countAllItems() >= 30)
 			showMessageFromCCode(5, 0x84, 0);
 	}
@@ -218,7 +218,7 @@ void KyraEngine_v2::itemDropDown(int startX, int startY, int dstX, int dstY, int
 	if (startX == dstX && startY == dstY) {
 		if (_layerFlagTable[_screen->getLayer(dstX, dstY)] && item != 13) {
 			updateCharFacing();
-			//snd_playSfx(0x2d);
+			snd_playSoundEffect(0x2d);
 			removeHandItem();
 			//XXX sub_277FA(getTableString(0xFF, _cCodeBuffer), 1, 0, 0x83, 0xFF);
 		} else {
@@ -226,7 +226,7 @@ void KyraEngine_v2::itemDropDown(int startX, int startY, int dstX, int dstY, int
 			_itemList[itemSlot].y = dstY;
 			_itemList[itemSlot].id = item;
 			_itemList[itemSlot].sceneId = _mainCharacter.sceneId;
-			//snd_playSfx(0x0c);
+			snd_playSoundEffect(0x0c);
 			addItemToAnimList(itemSlot);
 		}
 	} else {
@@ -256,7 +256,7 @@ void KyraEngine_v2::itemDropDown(int startX, int startY, int dstX, int dstY, int
 			}
 
 			if (dstX != dstY || (dstY - startY > 16)) {
-				//snd_playSfx(0x69);
+				snd_playSoundEffect(0x69);
 				speed = MAX(speed, 6);
 				int speedX = ((dstX - startX) << 4) / speed;
 				int origSpeed = speed;
@@ -300,7 +300,7 @@ void KyraEngine_v2::itemDropDown(int startX, int startY, int dstX, int dstY, int
 
 		if (_layerFlagTable[_screen->getLayer(dstX, dstY)] && item != 13) {
 			updateCharFacing();
-			//snd_playSfx(0x2d);
+			snd_playSoundEffect(0x2d);
 			removeHandItem();
 			_screen->showMouse();
 			//XXX sub_277FA(getTableString(0xFF, _cCodeBuffer), 1, 0, 0x83, 0xFF);
@@ -309,7 +309,7 @@ void KyraEngine_v2::itemDropDown(int startX, int startY, int dstX, int dstY, int
 			_itemList[itemSlot].y = dstY;
 			_itemList[itemSlot].id = item;
 			_itemList[itemSlot].sceneId = _mainCharacter.sceneId;
-			//snd_playSfx(0x0c);
+			snd_playSoundEffect(0x0c);
 			addItemToAnimList(itemSlot);
 			_screen->showMouse();
 		}
@@ -326,7 +326,7 @@ void KyraEngine_v2::exchangeMouseItem(int itemPos) {
 	_itemInHand = itemId;
 
 	addItemToAnimList(itemPos);
-	//snd_playSfx(0x0b);
+	snd_playSoundEffect(0x0b);
 	setMouseCursor(_itemInHand);
 	int str2 = 7;
 		
@@ -352,7 +352,7 @@ bool KyraEngine_v2::pickUpItem(int x, int y) {
 		deleteItemAnimEntry(itemPos);
 		int itemId = _itemList[itemPos].id;
 		_itemList[itemPos].id = 0xFFFF;
-		//snd_playSfx(0x0b);
+		snd_playSoundEffect(0x0b);
 		setMouseCursor(itemId);
 		int str2 = 7;
 		

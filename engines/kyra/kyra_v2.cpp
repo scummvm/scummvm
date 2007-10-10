@@ -182,6 +182,10 @@ void KyraEngine_v2::mainMenu() {
 }
 
 void KyraEngine_v2::startup() {
+	_sound->setSoundFileList(_dosSoundFileList, _dosSoundFileListSize);
+	_trackMap = _dosTrackMap;
+	_trackMapSize = _dosTrackMapSize;
+
 	_screen->_curPage = 0;
 	delete [] _mouseSHPBuf;
 	_mouseSHPBuf = 0;
@@ -273,6 +277,8 @@ void KyraEngine_v2::startup() {
 	loadNPCScript();
 	
 	// XXX
+	snd_playWanderScoreViaMap(52, 1);
+	// XXX
 	
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	_screen->showMouse();
@@ -315,7 +321,7 @@ void KyraEngine_v2::handleInput(int x, int y) {
 		return;
 	
 	if (_unk3 == -2) {
-		//snd_playSfx(13);
+		snd_playSoundEffect(13);
 		return;
 	}
 	
@@ -1353,6 +1359,18 @@ void KyraEngine_v2::restoreGfxRect24x24(int x, int y) {
 
 #pragma mark -
 
+void KyraEngine_v2::snd_loadSoundFile(int id) {
+	if (id < 0 || !_trackMap)
+		return;
+
+	assert(id < _trackMapSize);
+	int file = _trackMap[id*2];
+	_curSfxFile = _curMusicTheme = file;
+	_sound->loadSoundFile(file);
+}
+
+#pragma mark -
+
 typedef Functor1Mem<ScriptState*, int, KyraEngine_v2> OpcodeV2;
 #define Opcode(x) OpcodeV2(this, &KyraEngine_v2::x)
 #define OpcodeUnImpl() OpcodeV2(this, 0)
@@ -1425,7 +1443,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		// 0x34
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_playSoundEffect),
 		OpcodeUnImpl(),
 		Opcode(o2_delay),
 		// 0x38
@@ -1467,10 +1485,10 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		Opcode(o2_setLayerFlag),
 		Opcode(o2_setZanthiaPos),
-		OpcodeUnImpl(),
+		Opcode(o2_loadMusicTrack),
 		// 0x58
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_playWanderScoreViaMap),
+		Opcode(o2_playSoundEffect),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x5c

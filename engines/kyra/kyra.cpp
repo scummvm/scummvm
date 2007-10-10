@@ -57,6 +57,11 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 
 	_skipFlag = false;
 
+	_trackMap = 0;
+	_trackMapSize = 0;
+	_lastMusicCommand = -1;
+	_curSfxFile = _curMusicTheme = -1;
+
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	// sets up all engine specific debug levels

@@ -434,6 +434,50 @@ void SoundMidiPC::beginFadeOut() {
 	_fadeStartTime = _vm->_system->getMillis();
 }
 
+void KyraEngine::snd_playTheme(int file, int track) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d)", file);
+	_curSfxFile = _curMusicTheme = file;
+	_sound->loadSoundFile(_curMusicTheme);
+	_sound->playTrack(track);
+}
+
+void KyraEngine::snd_playSoundEffect(int track) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playSoundEffect(%d)", track);
+	_sound->playSoundEffect(track);
+}
+
+void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", command, restart);
+	if (restart)
+		_lastMusicCommand = -1;
+
+	// no track mapping given
+	// so don't do anything here
+	if (!_trackMap || !_trackMapSize)
+		return;
+
+	//if (!_disableSound) {
+	//	XXX
+	//}
+	
+	assert(command*2+1 < _trackMapSize);
+	if (_curMusicTheme != _trackMap[command*2]) {
+		if (_trackMap[command*2] != -1 && _trackMap[command*2] != -2)
+			snd_playTheme(_trackMap[command*2]);
+	}
+
+	if (command != 1) {
+		if (_lastMusicCommand != command) {
+			_sound->haltTrack();
+			_sound->playTrack(_trackMap[command*2+1]);
+		}
+	} else {
+		_sound->beginFadeOut();
+	}
+
+	_lastMusicCommand = command;
+}
+
 // static res
 
 const Sound::SpeechCodecs Sound::_supportedCodes[] = {

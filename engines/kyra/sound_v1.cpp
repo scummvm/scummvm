@@ -36,20 +36,14 @@ bool KyraEngine_v1::textEnabled() {
 	return !_flags.isTalkie || (_configVoice == 0 || _configVoice == 2);
 }
 
-void KyraEngine_v1::snd_playTheme(int file, int track) {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playTheme(%d)", file);
-	_curSfxFile = _curMusicTheme = file;
-	_sound->loadSoundFile(_curMusicTheme);
-	_sound->playTrack(track);
-}
-
 void KyraEngine_v1::snd_playSoundEffect(int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playSoundEffect(%d)", track);
 	if ((_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) && track == 49) {
 		snd_playWanderScoreViaMap(56, 1);
 		return;
 	}
-	_sound->playSoundEffect(track);
+
+	KyraEngine::snd_playSoundEffect(track);
 }
 
 void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
@@ -71,42 +65,8 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 			_sound->haltTrack();
 		}
 	} else {
-		static const int8 soundTable[] = {
-			-1,   0,  -1,   1,   0,   3,   0,   2,
-			 0,   4,   1,   2,   1,   3,   1,   4,
-			 1,  92,   1,   6,   1,   7,   2,   2,
-			 2,   3,   2,   4,   2,   5,   2,   6,
-			 2,   7,   3,   3,   3,   4,   1,   8,
-			 1,   9,   4,   2,   4,   3,   4,   4,
-			 4,   5,   4,   6,   4,   7,   4,   8,
-			 1,  11,   1,  12,   1,  14,   1,  13,
-			 4,   9,   5,  12,   6,   2,   6,   6,
-			 6,   7,   6,   8,   6,   9,   6,   3,
-			 6,   4,   6,   5,   7,   2,   7,   3,
-			 7,   4,   7,   5,   7,   6,   7,   7,
-			 7,   8,   7,   9,   8,   2,   8,   3,
-			 8,   4,   8,   5,   6,  11,   5,  11
-		};
-		//if (!_disableSound) {
-		//	XXX
-		//}
-		assert(command*2+1 < ARRAYSIZE(soundTable));
-		if (_curMusicTheme != soundTable[command*2]+1) {
-			if (soundTable[command*2] != -1)
-				snd_playTheme(soundTable[command*2]+1);
-		}
-	
-		if (command != 1) {
-			if (_lastMusicCommand != command) {
-				_sound->haltTrack();
-				_sound->playTrack(soundTable[command*2+1]);
-			}
-		} else {
-			_sound->beginFadeOut();
-		}
+		KyraEngine::snd_playWanderScoreViaMap(command, restart);
 	}
-
-	_lastMusicCommand = command;
 }
 
 void KyraEngine_v1::snd_playVoiceFile(int id) {

@@ -440,6 +440,24 @@ int KyraEngine_v2::o2_setZanthiaPos(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_loadMusicTrack(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_loadMusicTrack(%p) (%d)", (const void *)script, stackPos(0));
+	snd_loadSoundFile(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_playWanderScoreViaMap(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_playWanderScoreViaMap(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	snd_playWanderScoreViaMap(stackPos(0), stackPos(1));
+	return 0;
+}
+
+int KyraEngine_v2::o2_playSoundEffect(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
+	snd_playSoundEffect(stackPos(0));
+	return 0;
+}
+
 int KyraEngine_v2::o2_getRand(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < stackPos(1));
@@ -604,6 +622,12 @@ int KyraEngine_v2::o2t_setCurrentFrame(ScriptState *script) {
 	_newShapeAnimFrame = stackPos(0);
 	_newShapeDelay = stackPos(1);
 	_temporaryScriptExecBit = true;
+	return 0;
+}
+
+int KyraEngine_v2::o2t_playSoundEffect(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2t_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
+	snd_playSoundEffect(stackPos(0));
 	return 0;
 }
 

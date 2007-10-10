@@ -143,6 +143,11 @@ protected:
 	ActiveChat *_activeChat;
 	uint8 *_mouseSHPBuf;
 
+	static const char *_dosSoundFileList[];
+	static const int _dosSoundFileListSize;
+	static const int8 _dosTrackMap[];
+	static const int _dosTrackMapSize;
+
 	static const char *_introSoundList[];
 	static const int _introSoundListSize;
 	static const char *_introStrings[];
@@ -486,6 +491,9 @@ protected:
 
 	byte _messagePal[3];
 	int _msgUnk1;
+
+	// sound
+	void snd_loadSoundFile(int id);
 	
 	// timer
 	void timerFunc2(int);
@@ -519,6 +527,7 @@ protected:
 	int o2_hideMouse(ScriptState *script);
 	int o2_addSpecialExit(ScriptState *script);
 	int o2_showMouse(ScriptState *script);
+	//int o2_playSoundEffect(ScriptState *script);
 	int o2_delay(ScriptState *script);
 	int o2_setScaleTableItem(ScriptState *script);
 	int o2_setDrawLayerTableItem(ScriptState *script);
@@ -533,6 +542,9 @@ protected:
 	int o2_getShapeFlag1(ScriptState *script);
 	int o2_setLayerFlag(ScriptState *script);
 	int o2_setZanthiaPos(ScriptState *script);
+	int o2_loadMusicTrack(ScriptState *script);
+	int o2_playWanderScoreViaMap(ScriptState *script);
+	int o2_playSoundEffect(ScriptState *script);
 	int o2_getRand(ScriptState *script);
 	int o2_encodeShape(ScriptState *script);
 	int o2_defineRoomEntrance(ScriptState *script);
@@ -547,8 +559,10 @@ protected:
 	int o2_dummy(ScriptState *script);
 
 	// opcodes temporary
+	// TODO: rename it from temporary to something more appropriate
 	int o2t_defineNewShapes(ScriptState *script);
 	int o2t_setCurrentFrame(ScriptState *script);
+	int o2t_playSoundEffect(ScriptState *script);
 	int o2t_setShapeFlag(ScriptState *script);
 	
 	// script

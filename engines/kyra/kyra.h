@@ -112,6 +112,11 @@ public:
 	int setGameFlag(int flag);
 	int queryGameFlag(int flag) const;
 	int resetGameFlag(int flag);
+
+	// sound
+	virtual void snd_playTheme(int file, int track = 0);
+	virtual void snd_playSoundEffect(int id);
+	virtual void snd_playWanderScoreViaMap(int command, int restart);
 	
 	// delay functionallity
 	virtual void delayUntil(uint32 timestamp, bool updateGameTimers = false, bool update = false, bool isMainLoop = false);
@@ -148,6 +153,14 @@ protected:
 	
 	// game flags
 	uint8 _flagsTable[100];	// TODO: check this value
+
+	// sound
+	int _curMusicTheme;
+	int _curSfxFile;
+	int16 _lastMusicCommand;
+
+	const int8 *_trackMap;
+	int _trackMapSize;
 	
 	// input	
 	Common::Point getMousePos() const;

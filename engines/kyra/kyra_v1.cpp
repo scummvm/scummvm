@@ -98,8 +98,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
 	_currHeadShape = 0;
 
-	_curSfxFile = _curMusicTheme = 0;
-
 	memset(&_itemBkgBackUp, 0, sizeof(_itemBkgBackUp));
 }
 
@@ -184,12 +182,16 @@ int KyraEngine_v1::init() {
 		_sound->setSoundFileList(_soundFilesTowns, _soundFilesTownsCount);
 	else
 		_sound->setSoundFileList(_soundFiles, _soundFilesCount);
+
+	_trackMap = _dosTrackMap;
+	_trackMapSize = _dosTrackMapSize;
 	
 	if (!_sound->init())
 		error("Couldn't init sound");
 
 	_sound->setVolume(255);
-	_sound->loadSoundFile(0);
+	if (_flags.platform != Common::kPlatformFMTowns && _flags.platform != Common::kPlatformPC98)
+		_sound->loadSoundFile(9);
 
 	setupTimers();
 	setupButtonData();

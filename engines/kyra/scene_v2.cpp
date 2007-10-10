@@ -25,6 +25,7 @@
  
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_v2.h"
+#include "kyra/sound.h"
 #include "kyra/wsamovie.h"
 
 #include "common/func.h"
@@ -68,7 +69,12 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 		moveCharacter(facing, x, y);
 	}
 	
-	//XXX sound
+	bool newSoundFile = false;
+	if (_sceneList[newScene].sound != _lastMusicCommand) {
+		newSoundFile = true;
+		//XXX
+		_sound->beginFadeOut();
+	}
 	
 	_unkFlag1 = false;
 	
@@ -95,7 +101,10 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 	_sceneExit3 = scene.exit3;
 	_sceneExit4 = scene.exit4;
 	
-	//XXX sound
+	if (newSoundFile) {
+		//XXX while (snd_isPlaying()) ;
+		snd_loadSoundFile(_sceneList[newScene].sound);
+	}
 	
 	startSceneScript(unk3);
 	
@@ -204,9 +213,8 @@ void KyraEngine_v2::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 	_mainCharacter.y1 = _mainCharacter.y2 = y2;
 	initSceneAnims(unk2);
 	
-	if (!unk2) {
-		//XXX sound
-	}
+	if (!unk2)
+		snd_playWanderScoreViaMap(_sceneList[_mainCharacter.sceneId].sound, 0);
 	
 	if (unk1 && !unk2 && _mainCharacter.animFrame != 32)
 		moveCharacter(facing, x, y);

@@ -905,7 +905,6 @@ const int8 KyraEngine::_addYPosTable[] = {
 };
 
 const char *KyraEngine_v1::_soundFiles[] = {
-	"INTRO",
 	"KYRA1A",
 	"KYRA1B",
 	"KYRA2A",
@@ -914,7 +913,8 @@ const char *KyraEngine_v1::_soundFiles[] = {
 	"KYRA4B",
 	"KYRA5A",
 	"KYRA5B",
-	"KYRAMISC"
+	"KYRAMISC",
+	"INTRO"
 };
 
 const int KyraEngine_v1::_soundFilesCount = ARRAYSIZE(KyraEngine_v1::_soundFiles);
@@ -925,7 +925,7 @@ const char *KyraEngine_v1::_soundFilesTowns[] = {
 	"TW_SCEN2.SFX",
 	"TW_SCEN3.SFX",
 	"TW_SCEN4.SFX",
-	"TW_SCEN5.SFX",
+	"TW_SCEN5.SFX"
 };
 
 const int KyraEngine_v1::_soundFilesTownsCount = ARRAYSIZE(KyraEngine_v1::_soundFilesTowns);
@@ -1115,6 +1115,25 @@ const uint16 KyraEngine_v1::_amuletY[] = { 170, 170, 159, 181 };
 const uint16 KyraEngine_v1::_amuletX2[] = { 0x000, 0x0FD, 0x0E7, 0x0FD, 0x113, 0x000 };
 const uint16 KyraEngine_v1::_amuletY2[] = { 0x000, 0x09F, 0x0AA, 0x0B5, 0x0AA, 0x000 };
 
+const int8 KyraEngine_v1::_dosTrackMap[] = {
+	-1,   0,  -1,   1,   0,   3,   0,   2,
+	 0,   4,   1,   2,   1,   3,   1,   4,
+	 1,  92,   1,   6,   1,   7,   2,   2,
+	 2,   3,   2,   4,   2,   5,   2,   6,
+	 2,   7,   3,   3,   3,   4,   1,   8,
+	 1,   9,   4,   2,   4,   3,   4,   4,
+	 4,   5,   4,   6,   4,   7,   4,   8,
+	 1,  11,   1,  12,   1,  14,   1,  13,
+	 4,   9,   5,  12,   6,   2,   6,   6,
+	 6,   7,   6,   8,   6,   9,   6,   3,
+	 6,   4,   6,   5,   7,   2,   7,   3,
+	 7,   4,   7,   5,   7,   6,   7,   7,
+	 7,   8,   7,   9,   8,   2,   8,   3,
+	 8,   4,   8,   5,   6,  11,   5,  11
+};
+
+const int KyraEngine_v1::_dosTrackMapSize = ARRAYSIZE(KyraEngine_v1::_dosTrackMap);
+
 // Kyra 2 and 3 main menu
 
 const char *KyraEngine_v2::_mainMenuStrings[] = {
@@ -1266,7 +1285,54 @@ const byte KyraEngine_v2::_itemStringMap[] = {
 	0,    2,    0,    0,    0,    0,    0,    0
 };
 
+const char *KyraEngine_v2::_dosSoundFileList[] = {
+	"K2TEST1",
+	"K2TEST2",
+	"K2TEST3",
+	"K2TEST4",
+	"K2TEST5",
+	"K2TEST6",
+	"K2TEST7",
+	"K2TEST8",
+	"K2TEST9",
+	"K2TEST10",
+	"K2TEST11",
+	"K2TEST12",
+	"K2TEST13",
+	"K2TEST14",
+	"K2TEST15"
+};
+
+const int KyraEngine_v2::_dosSoundFileListSize = ARRAYSIZE(KyraEngine_v2::_dosSoundFileList);
+
 const int KyraEngine_v2::_itemStringMapSize = ARRAYSIZE(KyraEngine_v2::_itemStringMap);
+
+const int8 KyraEngine_v2::_dosTrackMap[] = {
+	-1,    0,   -1,    1,    9,    6,    5,    4,
+	 8,    3,   -2,    0,   -2,    0,    2,    3,
+	-2,    0,   -2,    0,   -2,    0,   -2,    0,
+	 0,    2,    0,    3,    1,    2,    1,    3,
+	 2,    2,    2,    0,    3,    2,    3,    3,
+	 3,    4,    4,    2,    5,    2,    5,    3,
+	 5,    4,    6,    2,    6,    3,    6,    4,
+	 6,    5,    6,    6,    6,    7,    6,    8,
+	 6,    0,    6,    9,    7,    2,    7,    3,
+	 7,    4,    7,    5,    8,    6,    7,    6,
+	 7,    7,    7,    8,    7,    9,    8,    2,
+	14,    2,    8,    4,    8,    7,    8,    8,
+	 8,    9,    9,    2,    9,    3,    9,    4,
+	 9,    5,    9,    7,    9,    8,    9,    9,
+	10,    2,   10,    3,   10,    4,   10,    5,
+	10,    6,   10,    7,   11,    2,   11,    3,
+	11,    4,   11,    5,   11,    6,   11,    7,
+	11,    8,   11,    9,   12,    2,   12,    3,
+	12,    4,   12,    5,   12,    6,   12,    7,
+	12,    8,   12,    9,   13,    2,    4,    7,
+	14,    3,   14,    4,   14,    5,    4,    2,
+	 4,    3,    4,    4,    4,    5,    4,    6
+};
+
+const int KyraEngine_v2::_dosTrackMapSize = ARRAYSIZE(KyraEngine_v2::_dosTrackMap);
 
 // kyra 3 static res
 
