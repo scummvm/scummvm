@@ -272,8 +272,8 @@ int KyraEngine_v2::o2_addSpecialExit(ScriptState *script) {
 	if (_specialExitCount < 5) {
 		_specialExitTable[_specialExitCount+0] = stackPos(0);
 		_specialExitTable[_specialExitCount+5] = stackPos(1);
-		_specialExitTable[_specialExitCount+10] = stackPos(2);
-		_specialExitTable[_specialExitCount+15] = stackPos(3);
+		_specialExitTable[_specialExitCount+10] = stackPos(2) + stackPos(0) - 1;
+		_specialExitTable[_specialExitCount+15] = stackPos(3) + stackPos(1) - 1;
 		_specialExitTable[_specialExitCount+20] = stackPos(4);
 		++_specialExitCount;
 	}
