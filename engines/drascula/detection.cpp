@@ -86,7 +86,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-
+/*
 	{
 		// Drascula Spanish version
 		{
@@ -101,7 +101,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		0,
 		0,
 		0,
-	},
+	},*/
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
