@@ -441,7 +441,7 @@ public:
 	int cerca, lejos;
 	int sentido_final, anda_a_objeto;
 	int obj_saliendo;
-	float diff_vez, conta_vez;
+	int diff_vez, conta_vez;
 	int hay_respuesta;
 	int conta_ciego_vez;
 	int cambio_de_color;
@@ -682,7 +682,7 @@ public:
 	byte *carga_pcx(byte *NamePcc);
 	void set_dac(byte *dac);
 	void WaitForNext(int FPS);
-	float vez();
+	int vez();
 	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
 	char codifica(char);
 	void cuadrante_1();

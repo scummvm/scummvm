@@ -1692,7 +1692,7 @@ martini:
 	if ((!strcmp(num_room, "9.alg")) || (strcmp(num_room, "2.alg"))
 			|| (!strcmp(num_room, "14.alg")) || (!strcmp(num_room, "18.alg"))
 			|| (!strcmp(num_room, "26.alg")))
-		conta_ciego_vez = (int)vez();
+		conta_ciego_vez = vez();
 
 	if (!strcmp(num_room, "24.alg") && flags[29] == 1)
 		animacion_7_4();
@@ -2069,14 +2069,52 @@ void DrasculaEngine::saves() {
 				if (x_raton > 115 && y_raton > y + (9 * n) && x_raton < 115 + 175 && y_raton < y + 10 + (9 * n)) {
 					strcpy(select, nombres[n]);
 
-				// FIXME: The indention is wrong and misleading here!!! Or maybe there's simply a
-				// closing brace missing here??? See below for a second FIXME of a similar kind...
+					if (strcmp(select, "*"))
+						hay_seleccion = 1;
+					else {
+						introduce_nombre();
+						strcpy(nombres[n], select);
+						if (hay_seleccion == 1) {
+							// FIXME: Just use:
+							//sprintf(fichero, "gsave%02d", n+1);
+							if (n == 0)
+								strcpy(fichero, "gsave01");
+							if (n == 1)
+								strcpy(fichero, "gsave02");
+							if (n == 2)
+								strcpy(fichero, "gsave03");
+							if (n == 3)
+								strcpy(fichero, "gsave04");
+							if (n == 4)
+							strcpy(fichero, "gsave05");
+							if (n == 5)
+								strcpy(fichero, "gsave06");
+							if (n == 6)
+								strcpy(fichero, "gsave07");
+							if (n == 7)
+								strcpy(fichero, "gsave08");
+							if (n == 8)
+								strcpy(fichero, "gsave09");
+							if (n == 9)
+								strcpy(fichero, "gsave10");
+							para_grabar(fichero);
+							Common::OutSaveFile *tsav;
+							if (!(tsav = _saveFileMan->openForSaving("saves.epa"))) {
+								error("Can't open saves.epa file.");
+							}
+							for (n = 0; n < NUM_SAVES; n++)
+								tsav->write(nombres[n], 23);
+							tsav->finalize();
+							delete tsav;
+						}
+					}
 
-				if (strcmp(select, "*"))
-					hay_seleccion = 1;
-				else {
-					introduce_nombre();
-					strcpy(nombres[n], select);
+					print_abc(select, 117, 15);
+					y = 27;
+					for (n2 = 0; n2 < NUM_SAVES; n2++) {
+						print_abc(nombres[n2], 116, y);
+						y = y + 9;
+					}
 					if (hay_seleccion == 1) {
 						// FIXME: Just use:
 						//sprintf(fichero, "gsave%02d", n+1);
@@ -2100,52 +2138,7 @@ void DrasculaEngine::saves() {
 							strcpy(fichero, "gsave09");
 						if (n == 9)
 							strcpy(fichero, "gsave10");
-						para_grabar(fichero);
-						Common::OutSaveFile *tsav;
-						if (!(tsav = _saveFileMan->openForSaving("saves.epa"))) {
-							error("Can't open saves.epa file.");
-						}
-						for (n = 0; n < NUM_SAVES; n++)
-							tsav->write(nombres[n], 23);
-						tsav->finalize();
-						delete tsav;
 					}
-				}
-
-				print_abc(select, 117, 15);
-				y = 27;
-				for (n2 = 0; n2 < NUM_SAVES; n2++) {
-					print_abc(nombres[n2], 116, y);
-					y = y + 9;
-				}
-				if (hay_seleccion == 1) {
-					// FIXME: Just use:
-					//sprintf(fichero, "gsave%02d", n+1);
-					if (n == 0)
-						strcpy(fichero, "gsave01");
-					if (n == 1)
-						strcpy(fichero, "gsave02");
-					if (n == 2)
-						strcpy(fichero, "gsave03");
-					if (n == 3)
-						strcpy(fichero, "gsave04");
-					if (n == 4)
-						strcpy(fichero, "gsave05");
-					if (n == 5)
-						strcpy(fichero, "gsave06");
-					if (n == 6)
-						strcpy(fichero, "gsave07");
-					if (n == 7)
-						strcpy(fichero, "gsave08");
-					if (n == 8)
-						strcpy(fichero, "gsave09");
-					if (n == 9)
-						strcpy(fichero, "gsave10");}	// FIXME: EVIL wrong place for closing brace!
-					// In particular: is the assignment below maybe supposed to be inside the "if"
-					// statement that was just closed?
-					// Also note that the indention is wrong here, which is not immediately visible
-					// due to the other indention mistake above. But is the indention wrong, or is
-					// the brace placement wrong???
 					num_sav = n;
 				}
 			}
@@ -5051,12 +5044,7 @@ void DrasculaEngine::WaitForNext(int FPS) {
 	_system->delayMillis(1000 / FPS);
 }
 
-float DrasculaEngine::vez() {
-	// FIXME: This function is really silly. It first divides an int by an int (resulting
-	// in an *int*, loosing precision), *then* converts the result to a float and returns
-	// that -- only so that many calling functions have to convert it back to an int :-).
-	// So: Either divide by 20.0 / cast to float *first*, if you absolutly need the precision.
-	// Or: Just change this to return int!
+int DrasculaEngine::vez() {
 	return _system->getMillis() / 20; // originaly was 1
 }
 
@@ -5222,7 +5210,7 @@ void DrasculaEngine::refresca_62_antes() {
 	if (flags[12] == 1)
 		DIBUJA_FONDO(borracho_x[frame_borracho], 82, 170, 50, 40, 53, dir_dibujo3, dir_zona_pantalla);
 
-	diferencia = (int)vez() - conta_ciego_vez;
+	diferencia = vez() - conta_ciego_vez;
 	if (diferencia > 6) {
 		if (flags[12] == 1) {
 			frame_borracho++;
@@ -5240,7 +5228,7 @@ void DrasculaEngine::refresca_62_antes() {
 		if (frame_piano == 9)
 			frame_piano = 0;
 		parpadeo = _rnd->getRandomNumber(10);
-		conta_ciego_vez = (int)vez();
+		conta_ciego_vez = vez();
 	}
 }
 
@@ -5279,7 +5267,7 @@ void DrasculaEngine::graba_partida(char nom_game[]) {
 void DrasculaEngine::aumenta_num_frame() {
 	diff_vez = vez() - conta_vez;
 
-	if (diff_vez >= 5.7) {
+	if (diff_vez >= 6) {
 		conta_vez = vez();
 		num_frame++;
 		if (num_frame == 6)
@@ -7583,10 +7571,10 @@ void DrasculaEngine::refresca_2(){
 	pos_murci[3] = 19;
 
 	DIBUJA_BLOQUE_CUT(pos_murci, dir_dibujo3, dir_zona_pantalla);
-	diferencia = (int)vez() - conta_ciego_vez;
+	diferencia = vez() - conta_ciego_vez;
 	if (diferencia >= 6) {
 		frame_murcielago++;
-		conta_ciego_vez = (int)vez();
+		conta_ciego_vez = vez();
 	}
 
 	DIBUJA_BLOQUE(29, 37, 58, 114, 57, 39, dir_dibujo3, dir_zona_pantalla);
@@ -7674,10 +7662,10 @@ void DrasculaEngine::refresca_9_antes() {
 
 	DIBUJA_BLOQUE(ciego_x[frame_ciego], ciego_y[frame_ciego], 122, 57, 41, 72, dir_dibujo3, dir_zona_pantalla);
 	if (flags[9] == 0) {
-		diferencia = (int)vez() - conta_ciego_vez;
+		diferencia = vez() - conta_ciego_vez;
 		if (diferencia >= 11) {
 			frame_ciego++;
-			conta_ciego_vez = (int)vez();
+			conta_ciego_vez = vez();
 		}
 		if (frame_ciego == 9)
 			frame_ciego = 0;
@@ -7713,7 +7701,7 @@ void DrasculaEngine::refresca_14_antes() {
 
 	if (flags[12] == 1)
 		DIBUJA_FONDO(borracho_x[frame_borracho], 82, 170, 50, 40, 53, dir_dibujo3, dir_zona_pantalla);
-	diferencia = (int)vez() - conta_ciego_vez;
+	diferencia = vez() - conta_ciego_vez;
 	if (diferencia > 6) {
 		if (flags[12] == 1) {
 			frame_borracho++;
@@ -7731,7 +7719,7 @@ void DrasculaEngine::refresca_14_antes() {
 		if (frame_piano == 9)
 			frame_piano = 0;
 		parpadeo = _rnd->getRandomNumber(10);
-		conta_ciego_vez = (int)vez();
+		conta_ciego_vez = vez();
 	}
 }
 
@@ -7758,12 +7746,12 @@ void DrasculaEngine::refresca_18_antes() {
 	} else
 		pon_vb();
 
-	diferencia = (int)vez() - conta_ciego_vez;
+	diferencia = vez() - conta_ciego_vez;
 	if (diferencia > 9) {
 		frame_ronquido++;
 		if (frame_ronquido == 16)
 			frame_ronquido = 0;
-		conta_ciego_vez = (int)vez();
+		conta_ciego_vez = vez();
 	}
 }
 
@@ -9293,7 +9281,7 @@ void DrasculaEngine::activa_pendulo() {
 
 	DIBUJA_FONDO(0, 171, 0, 0, ANCHOBJ, ALTOBJ, dir_hare_fondo, dir_dibujo3);
 
-	conta_ciego_vez = (int)vez();
+	conta_ciego_vez = vez();
 }
 
 void DrasculaEngine::habla_pen(const char *dicho, const char *filename) {
@@ -9561,7 +9549,7 @@ void DrasculaEngine::refresca_60_antes() {
 	if (flag_tv == 1)
 		DIBUJA_FONDO(114, 158, 8, 30, 8, 23, dir_dibujo3, dir_zona_pantalla);
 
-	diferencia = (int)vez() - conta_ciego_vez;
+	diferencia = vez() - conta_ciego_vez;
 	parpadeo = _rnd->getRandomNumber(7);
 	if (parpadeo == 5 && flag_tv == 0)
 		flag_tv = 1;
@@ -9571,7 +9559,7 @@ void DrasculaEngine::refresca_60_antes() {
 		frame_velas++;
 		if (frame_velas == 3)
 			frame_velas = 0;
-		conta_ciego_vez = (int)vez();
+		conta_ciego_vez = vez();
 	}
 }
 
@@ -9867,12 +9855,12 @@ void DrasculaEngine::refresca_pendulo() {
 	if (flags[1] == 0)
 		DIBUJA_BLOQUE(44, 145, 145, 105, 25, 29, dir_dibujo3, dir_zona_pantalla);
 
-	diferencia = (int)vez() - conta_ciego_vez;
+	diferencia = vez() - conta_ciego_vez;
 	if (diferencia > 8) {
 		frame_pen++;
 		if (frame_pen == 17)
 			frame_pen = 0;
-		conta_ciego_vez = (int)vez();
+		conta_ciego_vez = vez();
 	}
 }
 
