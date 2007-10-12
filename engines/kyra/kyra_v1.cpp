@@ -175,6 +175,8 @@ int KyraEngine_v1::init() {
 	assert(_animator);
 	_animator->init(5, 11, 12);
 	assert(*_animator);
+	_text = new TextDisplayer(this, screen());
+	assert(_text);
 
 	initStaticResource();
 	

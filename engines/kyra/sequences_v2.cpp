@@ -28,7 +28,7 @@
 #include "kyra/screen.h"
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
-#include "kyra/text.h"
+#include "kyra/text_v2.h"
 
 #include "common/system.h"
 

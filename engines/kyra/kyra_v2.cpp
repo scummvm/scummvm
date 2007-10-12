@@ -30,7 +30,7 @@
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
 #include "kyra/script.h"
-#include "kyra/text.h"
+#include "kyra/text_v2.h"
 #include "kyra/timer.h"
 #include "kyra/debugger.h"
 
@@ -43,6 +43,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_mouseSHPBuf = 0;
 	_debugger = 0;
 	_screen = 0;
+	_text = 0;
 	
 	_gamePlayBuffer = 0;
 	_cCodeBuffer = _optionsBuffer = _chapterBuffer = 0;
@@ -72,6 +73,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 KyraEngine_v2::~KyraEngine_v2() {
 	delete [] _mouseSHPBuf;
 	delete _screen;
+	delete _text;
+	_text = 0;
 	delete _debugger;
 }
 
@@ -89,6 +92,8 @@ int KyraEngine_v2::init() {
 
 	_debugger = new Debugger_v2(this);
 	assert(_debugger);
+	_text = new TextDisplayer_v2(this, _screen);
+	assert(_text);
 	
 	setupTimers();
 
@@ -460,6 +465,30 @@ int KyraEngine_v2::update() {
 	_screen->updateScreen();
 
 	return 0;
+}
+
+void KyraEngine_v2::updateWithText() {
+	updateInput();
+
+	updateMouse();
+	//sub_157C();
+	updateSpecialSceneScripts();
+	_timer->update();
+	//sub_274C0();
+	//updateInvWsa();
+	//XXX
+	restorePage3();
+	drawAnimObjects();
+
+	if (1/*textEnabled()*/ && _chatText) {
+		int pageBackUp = _screen->_curPage;
+		_screen->_curPage = 2;
+		objectChatPrintText(_chatText, _chatObject);
+		_screen->_curPage = pageBackUp;
+	}
+
+	refreshAnimObjects(0);
+	_screen->updateScreen();
 }
 
 void KyraEngine_v2::updateMouse() {
@@ -1304,9 +1333,9 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 
 		_mainCharacter.animFrame = _newShapeAnimFrame + 33;
 		updateCharacterAnim(0);
-		//if (dword_30BB2)
-		//	sub_159D6();
-		//else
+		if (_chatText)
+			updateWithText();
+		else
 			update();
 
 		uint32 delayEnd = _system->getMillis() + _newShapeDelay * _tickLength;
@@ -1314,9 +1343,9 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 		while (!_skipFlag && _system->getMillis() < delayEnd) {
 			// XXX skipFlag handling, unk1 seems to make a scene not skipable
 
-			//if (dword_30BB2)
-			//	sub_159D6();
-			//else
+			if (_chatText)
+				updateWithText();
+			else
 				update();
 
 			delay(10);
@@ -1327,9 +1356,9 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 		if (_newShapeFlag >= 0) {
 			_mainCharacter.animFrame = _newShapeFlag + 33;
 			updateCharacterAnim(0);
-			//if (dword_30BB2)
-			//	sub_159D6();
-			//else
+			if (_chatText)
+				updateWithText();
+			else
 				update();
 		}
 
@@ -1567,8 +1596,8 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_wsaClose),
 		OpcodeUnImpl(),
 		// 0x98
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_customChat),
+		Opcode(o2_customChatFinish),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x9c
@@ -1588,7 +1617,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		// 0xa8
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_zanthiaChat),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0xac

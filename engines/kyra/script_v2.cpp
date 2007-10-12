@@ -24,6 +24,7 @@
  */
 
 #include "kyra/kyra_v2.h"
+#include "kyra/text_v2.h"
 #include "kyra/wsamovie.h"
 
 #include "common/endian.h"
@@ -49,7 +50,7 @@ int KyraEngine_v2::o2_defineObject(ScriptState *script) {
 	object->scriptId = stackPos(2);
 	object->x = stackPos(3);
 	object->y = stackPos(4);
-	object->unk12 = stackPos(5);
+	object->color = stackPos(5);
 	return 0;
 }
 
@@ -369,9 +370,9 @@ int KyraEngine_v2::o2_update(ScriptState *script) {
 
 	int times = stackPos(0);
 	while (times--) {
-		//if (dword_30BB2)
-		//	sub_159D6();
-		//else
+		if (_chatText)
+			updateWithText();
+		else
 			update();
 	}
 
@@ -593,6 +594,31 @@ int KyraEngine_v2::o2_clearSpecialSceneScriptState(ScriptState *script) {
 int KyraEngine_v2::o2_querySpecialSceneScriptState(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_querySpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
 	return _specialSceneScriptState[stackPos(0)];
+}
+
+int KyraEngine_v2::o2_customChat(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_customChat(%p) ('%s', %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
+	strcpy((char*)_unkBuf500Bytes, stackPosString(0));
+	_chatText = (char*)_unkBuf500Bytes;
+	_chatObject = stackPos(1);
+	//XXX
+	objectChatInit(_chatText, _chatObject, 0/*_unk11*/, stackPos(2));
+	//XXX
+	return 0;
+}
+
+int KyraEngine_v2::o2_customChatFinish(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_customChatFinish(%p) ()", (const void *)script);
+	_text->restoreScreen();
+	_chatText = 0;
+	_chatObject = -1;
+	return 0;
+}
+
+int KyraEngine_v2::o2_zanthiaChat(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_zanthiaChat(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
+	objectChat(stackPosString(0), 0, /*_unk11*/0, stackPos(1));
+	return 0;
 }
 
 int KyraEngine_v2::o2_dummy(ScriptState *script) {

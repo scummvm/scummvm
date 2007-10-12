@@ -47,6 +47,7 @@ enum kSequences {
 
 class WSAMovieV2;
 class KyraEngine_v2;
+class TextDisplayer_v2;
 class Debugger_v2;
 
 struct SequenceControl {
@@ -87,12 +88,14 @@ struct Sequence {
 
 class KyraEngine_v2 : public KyraEngine {
 friend class Debugger_v2;
+friend class TextDisplayer_v2;
 public:
 	KyraEngine_v2(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v2();
 	
 	virtual Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() { return _screen; }
+	int language() const { return _lang; }
 	
 	virtual Movie *createWSAMovie();
 protected:
@@ -137,6 +140,7 @@ protected:
 	int go();
 	
 	Screen_v2 *_screen;
+	TextDisplayer_v2 *_text;
 	Debugger_v2 *_debugger;
 	
 	ActiveWSA *_activeWSA;
@@ -169,6 +173,7 @@ protected:
 	
 	// run
 	int update();
+	void updateWithText();
 	void updateMouse();
 	
 	int checkInput(void *p);
@@ -492,6 +497,24 @@ protected:
 	byte _messagePal[3];
 	int _msgUnk1;
 
+	// chat
+	const char *_chatText;
+	int _chatObject;
+	bool _chatIsNote;
+	uint32 _chatEndTime;
+
+	ScriptData _chatScriptData;
+	ScriptState _chatScriptState;
+
+	int chatGetType(const char *text);
+	int chatCalcDuration(const char *text);
+
+	void objectChat(const char *text, int object, int unk1, int unk2);
+	void objectChatInit(const char *text, int object, int unk1, int unk2);
+	void objectChatPrintText(const char *text, int object);
+	void objectChatProcess(const char *script);
+	void objectChatWaitToFinish();
+
 	// sound
 	void snd_loadSoundFile(int id);
 	
@@ -556,6 +579,9 @@ protected:
 	int o2_setSpecialSceneScriptState(ScriptState *script);
 	int o2_clearSpecialSceneScriptState(ScriptState *script);
 	int o2_querySpecialSceneScriptState(ScriptState *script);
+	int o2_customChat(ScriptState *script);
+	int o2_customChatFinish(ScriptState *script);
+	int o2_zanthiaChat(ScriptState *script);
 	int o2_dummy(ScriptState *script);
 
 	// opcodes temporary
@@ -591,7 +617,7 @@ protected:
 		char filename[13];
 		uint8 scriptId;
 		int16 x, y;
-		int8 unk12;
+		int8 color;
 	};
 	Object *_objectList;
 	
