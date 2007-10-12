@@ -5,4 +5,4 @@ The major changes made from the original version of Lua 3.1 are:
 * Revamped the way function calls and returns are handled in order to
   facilitate implementing Residual/GrimE's cooperative multithreading model.
 * Added several internal functions which implement this multithreading.
-* Added save/reastore Lua state.
+* Added save/restore Lua state.
