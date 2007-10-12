@@ -10596,28 +10596,28 @@ bucless:
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
 	actualiza_refresco_antes();
-	DIBUJA_FONDO(hare_x, hare_y, ANCHOBJ + 1, 0, ((float)ancho_hare / 100) * factor_red[hare_y + alto_hare],
-				((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare], dir_zona_pantalla, dir_dibujo3);
+	DIBUJA_FONDO(hare_x, hare_y, ANCHOBJ + 1, 0, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
+				(int)(((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare]), dir_zona_pantalla, dir_dibujo3);
 	pon_hare();
-	DIBUJA_FONDO(ANCHOBJ + 1, 0, hare_x, hare_y, ((float)ancho_hare / 100) * factor_red[hare_y + alto_hare],
-				((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare], dir_dibujo3, dir_zona_pantalla);
+	DIBUJA_FONDO(ANCHOBJ + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
+				(int)(((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare]), dir_dibujo3, dir_zona_pantalla);
 
 	if (sentido_hare == 0) {
-		reduce_hare_chico(x_habla_izq[cara], y_mask_habla, hare_x + ((float)8 / 100) * factor_red[hare_y + alto_hare],
+		reduce_hare_chico(x_habla_izq[cara], y_mask_habla, (int)(hare_x + ((float)8 / 100) * factor_red[hare_y + alto_hare]),
 							hare_y, ancho_habla, alto_habla, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
 		actualiza_refresco();
 	} else if (sentido_hare == 1) {
-		reduce_hare_chico(x_habla_dch[cara], y_mask_habla, hare_x + ((float)12 / 100) * factor_red[hare_y + alto_hare],
+		reduce_hare_chico(x_habla_dch[cara], y_mask_habla, (int)(hare_x + ((float)12 / 100) * factor_red[hare_y + alto_hare]),
 							hare_y, ancho_habla, alto_habla, factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
 		actualiza_refresco();
 	} else if (sentido_hare == 2) {
 		reduce_hare_chico(x_habla_izq[cara], y_mask_habla,
-						suma_1_pixel + hare_x + ((float)12 / 100) * factor_red[hare_y + alto_hare], hare_y,
+						(int)(suma_1_pixel + hare_x + ((float)12 / 100) * factor_red[hare_y + alto_hare]), hare_y,
 						ancho_habla, alto_habla, factor_red[hare_y + alto_hare], dir_hare_frente, dir_zona_pantalla);
 		actualiza_refresco();
 	} else if (sentido_hare == 3) {
 		reduce_hare_chico(x_habla_dch[cara], y_mask_habla,
-						suma_1_pixel + hare_x + ((float)8 / 100) * factor_red[hare_y + alto_hare], hare_y,
+						(int)(suma_1_pixel + hare_x + ((float)8 / 100) * factor_red[hare_y + alto_hare]), hare_y,
 						ancho_habla, alto_habla, factor_red[hare_y + alto_hare], dir_hare_frente, dir_zona_pantalla);
 		actualiza_refresco();
 	}
