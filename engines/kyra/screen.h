@@ -28,9 +28,13 @@
 
 #include "common/util.h"
 
+#include "kyra/util.h"
+
 class OSystem;
 
 namespace Kyra {
+
+typedef Functor0<void> UpdateFunctor;
 
 class KyraEngine;
 struct Rect;
@@ -134,10 +138,10 @@ public:
 	uint8 *getPageRect(int pageNum, int x, int y, int w, int h);
 
 	// palette handling
-	void fadeFromBlack(int delay=0x54);
-	void fadeToBlack(int delay=0x54);
+	void fadeFromBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
+	void fadeToBlack(int delay=0x54, const UpdateFunctor *upFunc = 0);
 
-	void fadePalette(const uint8 *palData, int delay);
+	void fadePalette(const uint8 *palData, int delay, const UpdateFunctor *upFunc = 0);
 
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
 	void setScreenPalette(const uint8 *palData);

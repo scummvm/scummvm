@@ -382,20 +382,20 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 	_pagePtrs[pageNum][y * SCREEN_W + x] = color;
 }
 
-void Screen::fadeFromBlack(int delay) {
-	debugC(9, kDebugLevelScreen, "Screen::fadeFromBlack()");
-	fadePalette(_currentPalette, delay);
+void Screen::fadeFromBlack(int delay, const UpdateFunctor *upFunc) {
+	debugC(9, kDebugLevelScreen, "Screen::fadeFromBlack(%d, %p)", delay, (const void*)upFunc);
+	fadePalette(_currentPalette, delay, upFunc);
 }
 
-void Screen::fadeToBlack(int delay) {
-	debugC(9, kDebugLevelScreen, "Screen::fadeToBlack()");
+void Screen::fadeToBlack(int delay, const UpdateFunctor *upFunc) {
+	debugC(9, kDebugLevelScreen, "Screen::fadeToBlack(%d, %p)", delay, (const void*)upFunc);
 	uint8 blackPal[768];
 	memset(blackPal, 0, 768);
-	fadePalette(blackPal, delay);
+	fadePalette(blackPal, delay, upFunc);
 }
 
-void Screen::fadePalette(const uint8 *palData, int delay) {
-	debugC(9, kDebugLevelScreen, "Screen::fadePalette(%p, %d)", (const void *)palData, delay);
+void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *upFunc) {
+	debugC(9, kDebugLevelScreen, "Screen::fadePalette(%p, %d, %p)", (const void *)palData, delay, (const void*)upFunc);
 	updateScreen();
 
 	uint8 fadePal[768];
@@ -448,7 +448,10 @@ void Screen::fadePalette(const uint8 *palData, int delay) {
 			break;
 
 		setScreenPalette(fadePal);
-		_system->updateScreen();
+		if (upFunc && *upFunc)
+			(*upFunc)();
+		else
+			_system->updateScreen();
 		//_system->delayMillis((delayAcc >> 8) * 1000 / 60);
 		_vm->delay((delayAcc >> 8) * 1000 / 60);
 		delayAcc &= 0xFF;
@@ -456,7 +459,10 @@ void Screen::fadePalette(const uint8 *palData, int delay) {
 
 	if (_vm->quit()) {
 		setScreenPalette(palData);
-		_system->updateScreen();
+		if (upFunc && *upFunc)
+			(*upFunc)();
+		else
+			_system->updateScreen();
 	}
 }
 

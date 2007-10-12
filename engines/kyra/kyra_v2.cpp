@@ -38,7 +38,7 @@
 
 namespace Kyra {
 
-KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngine(system, flags) {
+KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngine(system, flags), _updateFunctor(this, &KyraEngine_v2::update) {
 	memset(_defaultShapeTable, 0, sizeof(_defaultShapeTable));
 	_mouseSHPBuf = 0;
 	_debugger = 0;
@@ -66,6 +66,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_mouseX = _mouseY = 0;
 	_newShapeCount = 0;
 	_newShapeFiledata = 0;
+
+	_chatText = 0;
+	_chatObject = -1;
 	
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 }
@@ -451,7 +454,7 @@ bool KyraEngine_v2::handleInputUnkSub(int x, int y) {
 	}
 }
 
-int KyraEngine_v2::update() {
+void KyraEngine_v2::update() {
 	updateInput();
 
 	refreshAnimObjectsIfNeed();
@@ -463,8 +466,6 @@ int KyraEngine_v2::update() {
 	//sub_1574C();
 	//XXX
 	_screen->updateScreen();
-
-	return 0;
 }
 
 void KyraEngine_v2::updateWithText() {
@@ -1323,6 +1324,8 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
 	_scriptInterpreter->startScript(&_temporaryScriptState, 1);
 
+	_skipFlag = false;
+
 	while (_scriptInterpreter->validScript(&_temporaryScriptState) && !_skipFlag) {
 		_temporaryScriptExecBit = false;
 		while (_scriptInterpreter->validScript(&_temporaryScriptState) && !_temporaryScriptExecBit)
@@ -1365,6 +1368,8 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 		updateCharacterAnim(0);
 	}
+
+	_skipFlag = false;
 
 	_newShapeFlag = -1;
 	resetCharacterAnimDim();

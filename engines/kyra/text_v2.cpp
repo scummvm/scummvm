@@ -274,7 +274,7 @@ void KyraEngine_v2::objectChatWaitToFinish() {
 	bool running = true;
 	const uint32 endTime = _chatEndTime;
 
-	while (running) {
+	while (running && !_quitFlag) {
 		if (!_scriptInterpreter->validScript(&_chatScriptState))
 			_scriptInterpreter->startScript(&_chatScriptState, 1);
 
@@ -292,7 +292,7 @@ void KyraEngine_v2::objectChatWaitToFinish() {
 
 		uint32 nextFrame = _system->getMillis() + delayTime * _tickLength;
 
-		while (_system->getMillis() < nextFrame) {
+		while (_system->getMillis() < nextFrame && !_quitFlag) {
 			updateWithText();
 
 			int inputFlag = checkInput(0);

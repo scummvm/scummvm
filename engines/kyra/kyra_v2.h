@@ -172,8 +172,11 @@ protected:
 	void loadItemShapes();
 	
 	// run
-	int update();
+	void update();
 	void updateWithText();
+
+	Functor0Mem<void, KyraEngine_v2> _updateFunctor;
+
 	void updateMouse();
 	
 	int checkInput(void *p);

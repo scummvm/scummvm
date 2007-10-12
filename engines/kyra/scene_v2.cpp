@@ -247,7 +247,7 @@ int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
 	int changedScene = 0;
 	const int *moveTableStart = moveTable;
 	_unk4 = 0;
-	while (running) {
+	while (running && !_quitFlag) {
 		if (*moveTable >= 0 && *moveTable <= 7) {
 			_mainCharacter.facing = getOppositeFacingDirection(*moveTable);
 			unkFlag = true;
@@ -898,7 +898,7 @@ void KyraEngine_v2::fadeScenePal(int srcIndex, int delayTime) {
 	memcpy(dst, src, 48);
 
 	// TODO: original passes delay function too
-	_screen->fadePalette(_screen->getPalette(0), delayTime);
+	_screen->fadePalette(_screen->getPalette(0), delayTime, &_updateFunctor);
 }
 
 } // end of namespace Kyra
