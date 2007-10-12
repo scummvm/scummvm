@@ -42,7 +42,7 @@ public:
 	void restoreScreen();
 
 	char *preprocessString(const char *str);
-	void calcWidestLineBounds(int &x1, int &x1, int w, int x);
+	void calcWidestLineBounds(int &x1, int &x2, int w, int x);
 private:
 	KyraEngine_v2 *_vm;
 };
