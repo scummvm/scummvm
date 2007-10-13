@@ -410,7 +410,7 @@ public:
 	char fondo_y_menu[20];
 
 	char nombre_obj[30][20];
-	char nombre_icono[14][20];
+	char nombre_icono[44][13];
 
 	int num_obj[40], visible[40], espuerta[40];
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
