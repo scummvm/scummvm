@@ -28,6 +28,8 @@
 
 #include "gui/debugger.h"
 
+#include "agi/preagi_winnie.h"
+
 namespace Agi {
 
 class AgiEngine;
@@ -71,6 +73,34 @@ private:
 
 private:
 	AgiEngine *_vm;
+};
+
+class PreAGI_Console : public GUI::Debugger {
+public:
+	PreAGI_Console(PreAgiEngine *vm);
+	virtual ~PreAGI_Console(void) {}
+
+protected:
+	virtual void preEnter() {}
+	virtual void postEnter() {}
+
+private:
+	PreAgiEngine *_vm;
+};
+
+class Winnie_Console : public PreAGI_Console {
+public:
+	Winnie_Console(PreAgiEngine *vm, Winnie *winnie);
+	virtual ~Winnie_Console(void) {}
+
+protected:
+	virtual void preEnter() {}
+	virtual void postEnter() {}
+
+private:
+	Winnie *_winnie;
+
+	bool Cmd_CurRoom(int argc, const char **argv);
 };
 
 }                             // End of namespace Agi

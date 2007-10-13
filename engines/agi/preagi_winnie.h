@@ -304,6 +304,8 @@ public:
 	void init();
 	void run();
 
+	void debugCurRoom();
+
 private:
 	PreAgiEngine *_vm;
 	WTP_SAVE_GAME _game;
@@ -359,4 +361,5 @@ private:
 }  // End of namespace Agi
 
 #endif
+
 

@@ -133,6 +133,14 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 				if (type == kSelYesNo || type == kSelAnyKey)
 					return 1;
 			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL) && _console) {
+					_console->attach();
+					_console->onFrame();
+					//FIXME: If not cleared, clicking again will start the console
+					event.kbd.keycode = Common::KEYCODE_INVALID;
+					event.kbd.flags = 0;
+					continue;
+				}
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_y:
 					if (type == kSelYesNo)
@@ -161,6 +169,8 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 					if (type == kSelBackspace)
 						return 0;
 				default:
+					if (event.kbd.flags & Common::KBD_CTRL)
+						break;
 					if (type == kSelYesNo) {
 						return 2;
 					} else if (type == kSelNumber) {
