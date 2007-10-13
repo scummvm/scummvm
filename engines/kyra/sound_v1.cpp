@@ -87,14 +87,4 @@ void KyraEngine_v1::snd_voiceWaitForFinish(bool ingame) {
 	}
 }
 
-void KyraEngine_v1::snd_stopVoice() {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_stopVoice()");
-	_sound->voiceStop();
-}
-
-bool KyraEngine_v1::snd_voiceIsPlaying() {
-	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_voiceIsPlaying()");
-	return _sound->voiceIsPlaying();
-}
-
 } // end of namespace Kyra

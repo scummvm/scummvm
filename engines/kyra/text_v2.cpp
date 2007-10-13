@@ -126,12 +126,12 @@ int KyraEngine_v2::chatCalcDuration(const char *str) {
 	return MIN<int>(strlen(str) << 3, 120);
 }
 
-void KyraEngine_v2::objectChat(const char *str, int object, int unk1, int unk2) {
+void KyraEngine_v2::objectChat(const char *str, int object, int vocHigh, int vocLow) {
 	//setNextIdleAnimTimer();
 
-	//XXX
+	_chatVocHigh = _chatVocLow = -1;
 	
-	objectChatInit(str, object, unk1, unk2);
+	objectChatInit(str, object, vocHigh, vocLow);
 	_chatText = str;
 	_chatObject = object;
 	_chatIsNote = (chatGetType(str) == -1);
@@ -179,7 +179,7 @@ void KyraEngine_v2::objectChat(const char *str, int object, int unk1, int unk2) 
 	//setNextIdelAnimTimer();
 }
 
-void KyraEngine_v2::objectChatInit(const char *str, int object, int unk1, int unk2) {
+void KyraEngine_v2::objectChatInit(const char *str, int object, int vocHigh, int vocLow) {
 	str = _text->preprocessString(str);
 	int lineNum = _text->buildMessageSubstrings(str);
 
@@ -216,7 +216,12 @@ void KyraEngine_v2::objectChatInit(const char *str, int object, int unk1, int un
 		_chatEndTime = _system->getMillis();
 	}
 
-	//XXX
+	if (1/*voiceEnabled()*/) {
+		_chatVocHigh = vocHigh;
+		_chatVocLow = vocLow;
+	} else {
+		_chatVocHigh = _chatVocLow = -1;
+	}
 	
 	_screen->showMouse();
 }
@@ -254,8 +259,14 @@ void KyraEngine_v2::objectChatProcess(const char *script) {
 	uint8 *shapeBuffer = _res->fileData(_newShapeFilename, 0);
 	if (shapeBuffer) {
 		int shapeCount = initNewShapes(shapeBuffer);
-		//XXX
+
+		if (_chatVocHigh >= 0) {
+			playVoice(_chatVocHigh, _chatVocLow);
+			_chatVocHigh = _chatVocLow = -1;
+		}
+
 		objectChatWaitToFinish();
+
 		resetNewShapes(shapeCount, shapeBuffer);
 	} else {
 		warning("couldn't load file '%s'", _newShapeFilename);
@@ -300,11 +311,11 @@ void KyraEngine_v2::objectChatWaitToFinish() {
 			if (inputFlag == 198 || inputFlag == 199) {
 				//XXX
 				_skipFlag = true;
+				snd_stopVoice();
 			}
 
 			const uint32 curTime = _system->getMillis();
-			//XXX
-			if (curTime > endTime || _skipFlag) {
+			if ((1/*textEnabled()*/ && curTime > endTime) || (1/*voiceEnabled()*/ && !snd_voiceIsPlaying()) || _skipFlag) {
 				_skipFlag = false;
 				nextFrame = curTime;
 				running = false;

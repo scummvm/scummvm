@@ -57,6 +57,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_noScriptEnter = true;
 	_currentChapter = 0;
 	_newChapterFile = 1;
+	_oldTalkFile = -1;
+	_currentTalkFile = 0;
 	_handItemSet = -1;
 	_lastProcessedSceneScript = 0;
 	_specialSceneScriptRunFlag = false;
@@ -67,6 +69,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_newShapeCount = 0;
 	_newShapeFiledata = 0;
 
+	_vocHigh = -1;
+	_chatVocHigh = -1;
+	_chatVocLow = -1;
 	_chatText = 0;
 	_chatObject = -1;
 	
@@ -218,11 +223,11 @@ void KyraEngine_v2::startup() {
 	
 	showMessageFromCCode(265, 150, 0);
 	
-	// XXX
+	openTalkFile(0);
+	_currentTalkFile = 1;
+	openTalkFile(1);
 	
-	showMessageFromCCode(0, 0, 207);
-	
-	// XXX
+	showMessage(0, 207);
 	
 	_screen->setShapePages(5, 3);
 
@@ -1393,6 +1398,34 @@ void KyraEngine_v2::restoreGfxRect24x24(int x, int y) {
 
 #pragma mark -
 
+void KyraEngine_v2::openTalkFile(int newFile) {
+	char talkFilename[16];
+
+	if (_oldTalkFile > 0) {
+		sprintf(talkFilename, "CH%dVOC.TLK", _oldTalkFile);
+		_res->unloadPakFile(talkFilename);
+		_oldTalkFile = -1;
+	}
+
+	if (newFile == 0) {
+		strcpy(talkFilename, "ANYTALK.TLK");
+		_res->loadPakFile(talkFilename);
+	} else {
+		sprintf(talkFilename, "CH%dVOC.TLK", newFile);
+		_res->loadPakFile(talkFilename);
+	}
+
+	_oldTalkFile = newFile;
+}
+
+void KyraEngine_v2::snd_playVoiceFile(int id) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::snd_playVoiceFile(%d)", id);
+	char vocFile[9];
+	assert(id >= 0 && id <= 9999999);
+	sprintf(vocFile, "%07d", id);
+	_sound->voicePlay(vocFile);
+}
+
 void KyraEngine_v2::snd_loadSoundFile(int id) {
 	if (id < 0 || !_trackMap)
 		return;
@@ -1401,6 +1434,11 @@ void KyraEngine_v2::snd_loadSoundFile(int id) {
 	int file = _trackMap[id*2];
 	_curSfxFile = _curMusicTheme = file;
 	_sound->loadSoundFile(file);
+}
+
+void KyraEngine_v2::playVoice(int high, int low) {
+	int vocFile = high * 10000 + low * 10;
+	snd_playVoiceFile(vocFile);
 }
 
 #pragma mark -
@@ -1619,15 +1657,15 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_setVocHigh),
 		// 0xa8
-		OpcodeUnImpl(),
+		Opcode(o2_getVocHigh),
 		Opcode(o2_zanthiaChat),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_isVoiceEnabled),
+		Opcode(o2_isVoicePlaying),
 		// 0xac
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_stopVoicePlaying),
+		Opcode(o2_getGameLanguage),
 		Opcode(o2_dummy),
 		Opcode(o2_dummy),
 	};

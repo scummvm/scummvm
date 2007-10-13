@@ -33,7 +33,15 @@
 namespace Kyra {
 
 void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk2, int unk3) {
-	// XXX
+	if (_newChapterFile != _currentTalkFile) {
+		_currentTalkFile = _newChapterFile;
+		showMessageFromCCode(265, 150, 0);
+		_screen->updateScreen();
+		openTalkFile(_currentTalkFile);
+		showMessage(0, 207);
+		_screen->updateScreen();
+	}
+
 	_screen->hideMouse();
 	
 	if (!unk3) {
@@ -897,7 +905,6 @@ void KyraEngine_v2::fadeScenePal(int srcIndex, int delayTime) {
 	const uint8 *src = _scenePal + (srcIndex << 4)*3;
 	memcpy(dst, src, 48);
 
-	// TODO: original passes delay function too
 	_screen->fadePalette(_screen->getPalette(0), delayTime, &_updateFunctor);
 }
 

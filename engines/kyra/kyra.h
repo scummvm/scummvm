@@ -117,6 +117,9 @@ public:
 	virtual void snd_playTheme(int file, int track = 0);
 	virtual void snd_playSoundEffect(int id);
 	virtual void snd_playWanderScoreViaMap(int command, int restart);
+	virtual void snd_playVoiceFile(int id) = 0;
+	virtual bool snd_voiceIsPlaying();
+	virtual void snd_stopVoice();
 	
 	// delay functionallity
 	virtual void delayUntil(uint32 timestamp, bool updateGameTimers = false, bool update = false, bool isMainLoop = false);

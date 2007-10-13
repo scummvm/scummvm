@@ -601,9 +601,10 @@ int KyraEngine_v2::o2_customChat(ScriptState *script) {
 	strcpy((char*)_unkBuf500Bytes, stackPosString(0));
 	_chatText = (char*)_unkBuf500Bytes;
 	_chatObject = stackPos(1);
-	//XXX
-	objectChatInit(_chatText, _chatObject, 0/*_unk11*/, stackPos(2));
-	//XXX
+
+	_chatVocHigh = _chatVocLow = -1;
+	objectChatInit(_chatText, _chatObject, _vocHigh, stackPos(2));
+	playVoice(_vocHigh, stackPos(2));
 	return 0;
 }
 
@@ -615,10 +616,42 @@ int KyraEngine_v2::o2_customChatFinish(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_setVocHigh(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setVocHigh(%p) (%d)", (const void *)script, stackPos(0));
+	_vocHigh = stackPos(0);
+	return _vocHigh;
+}
+
+int KyraEngine_v2::o2_getVocHigh(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getVocHigh(%p) ()", (const void *)script);
+	return _vocHigh;
+}
+
 int KyraEngine_v2::o2_zanthiaChat(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_zanthiaChat(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
-	objectChat(stackPosString(0), 0, /*_unk11*/0, stackPos(1));
+	objectChat(stackPosString(0), 0, _vocHigh, stackPos(1));
 	return 0;
+}
+
+int KyraEngine_v2::o2_isVoiceEnabled(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_isVoiceEnabled(%p) ()", (const void *)script);
+	return 1/*voiceEnabled()*/;
+}
+
+int KyraEngine_v2::o2_isVoicePlaying(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_isVoicePlaying(%p) ()", (const void *)script);
+	return snd_voiceIsPlaying() ? 1 : 0;
+}
+
+int KyraEngine_v2::o2_stopVoicePlaying(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_stopVoicePlaying(%p) ()", (const void *)script);
+	snd_stopVoice();
+	return 0;
+}
+
+int KyraEngine_v2::o2_getGameLanguage(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getGameLanguage(%p) ()", (const void *)script);
+	return _lang;
 }
 
 int KyraEngine_v2::o2_dummy(ScriptState *script) {

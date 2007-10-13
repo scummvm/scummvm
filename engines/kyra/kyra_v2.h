@@ -501,10 +501,13 @@ protected:
 	int _msgUnk1;
 
 	// chat
+	int _vocHigh;
+
 	const char *_chatText;
 	int _chatObject;
 	bool _chatIsNote;
 	uint32 _chatEndTime;
+	int _chatVocHigh, _chatVocLow;
 
 	ScriptData _chatScriptData;
 	ScriptState _chatScriptState;
@@ -512,14 +515,21 @@ protected:
 	int chatGetType(const char *text);
 	int chatCalcDuration(const char *text);
 
-	void objectChat(const char *text, int object, int unk1, int unk2);
-	void objectChatInit(const char *text, int object, int unk1, int unk2);
+	void objectChat(const char *text, int object, int vocHigh, int vocLow);
+	void objectChatInit(const char *text, int object, int vocHigh, int vocLow);
 	void objectChatPrintText(const char *text, int object);
 	void objectChatProcess(const char *script);
 	void objectChatWaitToFinish();
 
 	// sound
+	int _oldTalkFile;
+	int _currentTalkFile;
+	void openTalkFile(int newFile);
+
+	virtual void snd_playVoiceFile(int id);
 	void snd_loadSoundFile(int id);
+
+	void playVoice(int high, int low);
 	
 	// timer
 	void timerFunc2(int);
@@ -584,7 +594,13 @@ protected:
 	int o2_querySpecialSceneScriptState(ScriptState *script);
 	int o2_customChat(ScriptState *script);
 	int o2_customChatFinish(ScriptState *script);
+	int o2_setVocHigh(ScriptState *script);
+	int o2_getVocHigh(ScriptState *script);
 	int o2_zanthiaChat(ScriptState *script);
+	int o2_isVoiceEnabled(ScriptState *script);
+	int o2_isVoicePlaying(ScriptState *script);
+	int o2_stopVoicePlaying(ScriptState *script);
+	int o2_getGameLanguage(ScriptState *script);
 	int o2_dummy(ScriptState *script);
 
 	// opcodes temporary

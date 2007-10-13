@@ -275,12 +275,10 @@ public:
 	void readSettings();
 	void writeSettings();
 
-	void snd_playVoiceFile(int id);
-	void snd_voiceWaitForFinish(bool ingame = true);
-	bool snd_voiceIsPlaying();
-	void snd_stopVoice();
 	void snd_playSoundEffect(int track);
 	void snd_playWanderScoreViaMap(int command, int restart);
+	virtual void snd_playVoiceFile(int id);
+	void snd_voiceWaitForFinish(bool ingame = true);
 
 	bool speechEnabled();
 	bool textEnabled();

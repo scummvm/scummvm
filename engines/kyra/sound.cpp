@@ -478,6 +478,16 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 	_lastMusicCommand = command;
 }
 
+void KyraEngine::snd_stopVoice() {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_stopVoice()");
+	_sound->voiceStop();
+}
+
+bool KyraEngine::snd_voiceIsPlaying() {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_voiceIsPlaying()");
+	return _sound->voiceIsPlaying();
+}
+
 // static res
 
 const Sound::SpeechCodecs Sound::_supportedCodes[] = {
