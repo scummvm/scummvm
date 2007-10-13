@@ -103,14 +103,13 @@ protected:
 uint16 DialogueManager::askPassword() {
 	debugC(3, kDebugExec, "checkDialoguePassword()");
 
-	char password[100];
 	uint16 passwordLen;
 
 	while (true) {
 		clear();
 
 		passwordLen = 0;
-		strcpy(password, ".......");
+		_password[0] = '\0';
 
 		Common::Rect r(_answerBalloonW[0], _answerBalloonH[0]);
 		r.moveTo(_answerBalloonX[0], _answerBalloonY[0]);
@@ -118,7 +117,6 @@ uint16 DialogueManager::askPassword() {
 		_vm->_gfx->drawBalloon(r, 1);
 		_vm->_gfx->displayWrappedString(_q->_answers[0]->_text, _answerBalloonX[0], _answerBalloonY[0], 3, MAX_BALLOON_WIDTH);
 		_vm->_gfx->flatBlitCnv(_answerer, 0, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y,	Gfx::kBitFront);
-		_vm->_gfx->displayString(_answerBalloonX[0] + 5, _answerBalloonY[0] + _answerBalloonH[0] - 15, "> ", 0);
 		_vm->_gfx->updateScreen();
 
 		Common::Event e;
@@ -132,19 +130,21 @@ uint16 DialogueManager::askPassword() {
 			if (e.type != Common::EVENT_KEYDOWN) continue;
 			if (!isdigit(e.kbd.ascii)) continue;
 
-			password[passwordLen] = e.kbd.ascii;
+			_password[passwordLen] = e.kbd.ascii;
 			passwordLen++;
-			password[passwordLen] = '\0';
+			_password[passwordLen] = '\0';
 
-			_vm->_gfx->displayString(_answerBalloonX[0] + 10, _answerBalloonY[0] + _answerBalloonH[0] - 15, password, 0);
+
+			_vm->_gfx->drawBalloon(r, 1);
+			_vm->_gfx->displayWrappedString(_q->_answers[0]->_text, _answerBalloonX[0], _answerBalloonY[0], 3, MAX_BALLOON_WIDTH);
 			_vm->_gfx->updateScreen();
 
 			g_system->delayMillis(20);
 		}
 
-		if ((!scumm_stricmp(_vm->_char.getBaseName(), _doughName) && !scumm_strnicmp(password, "1732461", 7)) ||
-			(!scumm_stricmp(_vm->_char.getBaseName(), _donnaName) && !scumm_strnicmp(password, "1622", 4)) ||
-			(!scumm_stricmp(_vm->_char.getBaseName(), _dinoName) && !scumm_strnicmp(password, "179", 3))) {
+		if ((!scumm_stricmp(_vm->_char.getBaseName(), _doughName) && !scumm_strnicmp(_password, "1732461", 7)) ||
+			(!scumm_stricmp(_vm->_char.getBaseName(), _donnaName) && !scumm_strnicmp(_password, "1622", 4)) ||
+			(!scumm_stricmp(_vm->_char.getBaseName(), _dinoName) && !scumm_strnicmp(_password, "179", 3))) {
 
 			break;
 

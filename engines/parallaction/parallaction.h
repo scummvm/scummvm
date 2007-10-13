@@ -155,6 +155,7 @@ public:
 
 
 extern uint16 		_mouseButtons;
+extern char			_password[8];
 extern uint16 		_score;
 extern uint16 		_language;
 extern uint32 		_engineFlags;

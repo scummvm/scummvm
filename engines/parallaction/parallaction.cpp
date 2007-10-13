@@ -53,6 +53,7 @@ char		_slideText[2][40];
 uint32		_engineFlags = 0;
 
 uint16		_score = 1;
+char		_password[8];
 
 Command *	_forwardedCommands[20] = {
 	NULL,

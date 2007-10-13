@@ -556,23 +556,34 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16
 	while (strlen(text) > 0) {
 
 		text = parseNextToken(text, token, 40, "   ", true);
-		linewidth += getStringWidth(token);
 
-		if (linewidth > wrapwidth) {
-			// wrap line
-			lines++;
-			rx = x + 10;			// x
-			ry = y + 4 + lines*10;	// y
-			linewidth = getStringWidth(token);
-		}
-
-		if (!scumm_stricmp(token, "%s")) {
-			sprintf(token, "%d", _score);
-		}
 		if (!scumm_stricmp(token, "%p")) {
+			lines++;
+			rx = x + 10;
+			ry = y + 4 + lines*10;	// y
+
+			strcpy(token, "> .......");
+			strncpy(token+2, _password, strlen(_password));
 			rv = true;
-		} else
-			displayString(rx, ry, token, color);
+		} else {
+
+			linewidth += getStringWidth(token);
+
+			if (linewidth > wrapwidth) {
+				// wrap line
+				lines++;
+				rx = x + 10;			// x
+				ry = y + 4 + lines*10;	// y
+				linewidth = getStringWidth(token);
+			}
+
+			if (!scumm_stricmp(token, "%s")) {
+				sprintf(token, "%d", _score);
+			}
+
+		}
+
+		displayString(rx, ry, token, color);
 
 		rx += getStringWidth(token) + getStringWidth(" ");
 		linewidth += getStringWidth(" ");
@@ -601,13 +612,17 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 		text = parseNextToken(text, token, 40, "   ", true);
 		w += getStringWidth(token);
 
-		if (w > maxwidth) {
-			w -= getStringWidth(token);
+		if (!scumm_stricmp(token, "%p")) {
 			lines++;
-			if (w > *width)
-				*width = w;
+		} else {
+			if (w > maxwidth) {
+				w -= getStringWidth(token);
+				lines++;
+				if (w > *width)
+					*width = w;
 
-			w = getStringWidth(token);
+				w = getStringWidth(token);
+			}
 		}
 
 		w += getStringWidth(" ");
