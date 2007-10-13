@@ -504,15 +504,30 @@ Graphics::Surface *OSystem_DS::lockScreen() {
 	_framebuffer.create(DS::getGameWidth(), DS::getGameHeight(), 1);
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
+<<<<<<< .working
 	
 
+=======
+	
+    size_t imageStrideInBytes = DS::isCpuScalerEnabled()? DS::getGameWidth() : 512;
+    size_t imageStrideInWords = imageStrideInBytes / 2;
+
+>>>>>>> .merge-right.r28656
 	u16* image = (u16 *) DS::get8BitBackBuffer();
 	for (int y = 0; y <  DS::getGameHeight(); y++)
 	{
+<<<<<<< .working
 		DC_FlushRange(image + (y << 8), DS::getGameWidth());
+=======
+		DC_FlushRange(image + (y * imageStrideInWords), DS::getGameWidth());
+>>>>>>> .merge-right.r28656
 		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
 		{
+<<<<<<< .working
 			*(((u16 *) (_framebuffer.pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y << 8 + x];
+=======
+			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y * imageStrideInWords + x];
+>>>>>>> .merge-right.r28656
 		}
 	}
 

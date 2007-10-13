@@ -122,7 +122,10 @@ public:
 	
 	virtual Common::OutSaveFile* openForSaving(const char* filename) { return openSavefile(filename, true); }
 	virtual Common::InSaveFile* openForLoading(const char* filename) { return openSavefile(filename, false); }
-	
+
+	virtual bool removeSavefile(const char *filename) { return false; } // TODO: Implement this
+	virtual Common::StringList listSavefiles(const char *regex) { return Common::StringList(); }	// TODO: I don't know what this is for!
+		
 	
 	void listSavefiles(const char *prefix, bool *marks, int num);
 	

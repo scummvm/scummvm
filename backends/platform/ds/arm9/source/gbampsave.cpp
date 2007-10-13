@@ -22,6 +22,7 @@
 
 #include "gbampsave.h"
 #include "gba_nds_fat.h"
+#include "ds-fs.h"
 
 /////////////////////////
 // GBAMP Save File
@@ -39,7 +40,7 @@ GBAMPSaveFile::GBAMPSaveFile(char* name, bool saveOrLoad) {
 GBAMPSaveFile::~GBAMPSaveFile() {
 	flushSaveBuffer();
 	if (handle) DS::std_fclose(handle);
-	consolePrintf("Closed file\n");
+//	consolePrintf("Closed file\n");
 }
 
 uint32 GBAMPSaveFile::read(void *buf, uint32 size) {
@@ -164,8 +165,8 @@ GBAMPSaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool saveOrL
 }
 
 void GBAMPSaveFileManager::listSavefiles(char const* prefix, bool* marks, int num) {
-	memset(marks, true, num * sizeof(bool));
-	return;
+//	memset(marks, true, num * sizeof(bool));
+//	return;
 	
 	// Seems like I misunderstood what this function was supposed to do.
 	// I thought I was meant to set the marks[] array according to which
@@ -175,7 +176,6 @@ void GBAMPSaveFileManager::listSavefiles(char const* prefix, bool* marks, int nu
 	char path[128];
 	
 	DS::std_cwd((char *) getSavePath());
-
 	consolePrintf("Save path: %s\n", getSavePath());
 	
 	int fileType = FAT_FindFirstFileLFN(name);
@@ -209,3 +209,46 @@ void GBAMPSaveFileManager::listSavefiles(char const* prefix, bool* marks, int nu
 	
 	FAT_chdir("/");
 }
+
+Common::StringList GBAMPSaveFileManager::listSavefiles(const char *regex) { 
+
+	
+
+	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
+	char name[256];
+
+	
+	DS::std_cwd((char *) getSavePath());
+//	consolePrintf("Save path: '%s', regex: '%s'\n", getSavePath(),regex);
+
+	
+	int fileType = FAT_FindFirstFileLFN(name);
+
+	Common::StringList list;
+	
+	
+	do {
+	
+		if (fileType == TYPE_FILE) {
+
+			FAT_GetLongFilename(name);
+
+			for (int r = 0; r < strlen(name); r++) {
+				name[r] = tolower(name[r]);
+			}
+			
+			
+			if (Common::matchString(name, regex)) {
+				list.push_back(name);
+			}
+		}
+	
+	} while ((fileType = FAT_FindNextFileLFN(name)));
+	
+	FAT_chdir("/");
+
+
+	return list;
+}	
+
+

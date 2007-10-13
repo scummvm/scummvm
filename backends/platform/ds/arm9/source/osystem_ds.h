@@ -58,8 +58,6 @@ public:
 
 
 	static OSystem_DS* _instance;
-
-
 	
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	typedef int  (*TimerProc)(int interval);

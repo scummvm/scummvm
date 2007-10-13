@@ -11,8 +11,6 @@ DS_BUILD_A = 1
 #DS_BUILD_D = 1
 #DS_BUILD_E = 1
 #DS_BUILD_F = 1
-#DS_BUILD_E = 1
-#DS_BUILD_F = 1
 
 # Uncomment the following line to build in support for MP3 audio
 # using libmad:
@@ -21,8 +19,15 @@ ifdef DS_BUILD_F
 	# TODO: Fix this.  When libmad is compiled in, the Kyrandia resource loading
 	# searches through it's entire index to find an mp3 each time a voice sample is requested
 	# this causes a nasty pause.
-else
-	USE_MAD = 1
+else 
+	ifdef DS_BUILD_E
+	# TODO: Inherit the earth uses so much RAM that I have removed libmad in order to
+	# claw some back.	
+
+
+	else
+		USE_MAD = 1
+	endif
 endif
 
 # Uncomment the following line to enable support for the
@@ -64,6 +69,8 @@ ifdef DS_BUILD_A
 	DISABLE_PARALLACTION = 1
 	DISABLE_CRUISE = 1
 	USE_ARM_GFX_ASM = 1
+	DISABLE_CRUISE = 1
+	DISABLE_DRASCULA = 1
 	BUILD=scummvm-A
 endif
 
@@ -87,6 +94,7 @@ ifdef DS_BUILD_B
 	DISABLE_TOUCHE = 1
 	DISABLE_PARALLACTION = 1
 	DISABLE_CRUISE = 1
+	DISABLE_DRASCULA = 1
 	BUILD=scummvm-B
 endif
 
@@ -110,12 +118,13 @@ ifdef DS_BUILD_C
 	DISABLE_TOUCHE = 1
 	DISABLE_PARALLACTION = 1
 	DISABLE_CRUISE = 1
+	DISABLE_DRASCULA = 1
 	BUILD=scummvm-C
 endif
 
 ifdef DS_BUILD_D
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_D
-	LOGO = logoc.bmp
+	LOGO = logod.bmp
 	DISABLE_HE = 1
 	DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1
@@ -133,12 +142,14 @@ ifdef DS_BUILD_D
 	DISABLE_TOUCHE = 1
 	DISABLE_PARALLACTION = 1
 	DISABLE_CRUISE = 1
+	DISABLE_DRASCULA = 1
 	BUILD=scummvm-D
 endif
 
+
 ifdef DS_BUILD_E
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_E
-	LOGO = logoc.bmp
+	LOGO = logoe.bmp
 	DISABLE_HE = 1
 	DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1
@@ -156,12 +167,14 @@ ifdef DS_BUILD_E
 	DISABLE_TOUCHE = 1
 	DISABLE_PARALLACTION = 1
 	DISABLE_CRUISE = 1
+	DISABLE_DRASCULA = 1
 	BUILD=scummvm-E
 endif
 
+
 ifdef DS_BUILD_F
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_F
-	LOGO = logoc.bmp
+	LOGO = logof.bmp
 	DISABLE_HE = 1
 	DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1
@@ -179,6 +192,7 @@ ifdef DS_BUILD_F
 	DISABLE_TOUCHE = 1
 	DISABLE_PARALLACTION = 1
 	DISABLE_CRUISE = 1
+	DISABLE_DRASCULA = 1
 	BUILD=scummvm-F
 
 endif
@@ -219,7 +233,7 @@ LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt
 INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)/source -I$(portdir)/source/compressor -I$(portdir)/source/fat \
 			-I$(srcdir)/backends/fs  -I$(srcdir)/backends/fs/ds -I$(portdir)/data -I$(libndsdir)/include -I$(portdir)/../commoninclude\
 			-I$(srcdir)/scumm -I$(libndsdir)/include -I$(libndsdir)/include/nds -I$(srcdir)/engines -I$(portdir)/source/mad\
-			-I$(portdir)/source/libcartreset
+			-I$(portdir)/source/libcartreset -include $(srcdir)/common/scummsys.h
 			
 
 LIBS	= -lm -L$(libndsdir)/lib -L$(portdir)/lib -lnds9
