@@ -23,7 +23,7 @@
  */
 
 #include "backends/fs/ds/ds-fs-factory.h"
-#include "backends/fs/ds/ds-fs.cpp"
+#include "backends/fs/ds/ds-fs.h"
 #include "dsmain.h" //for the isGBAMPAvailable() function
 
 DECLARE_SINGLETON(DSFilesystemFactory);

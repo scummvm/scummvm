@@ -90,7 +90,7 @@ public:
 	 */
 	virtual AbstractFilesystemNode *clone() const { return new DSFileSystemNode(this); }
 	virtual AbstractFilesystemNode *getChild(const Common::String& name) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly, bool hidden) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly, bool hidden = false) const;
 	virtual AbstractFilesystemNode *getParent() const;
 	
 	/**
@@ -155,7 +155,7 @@ public:
 	 */
 	virtual AbstractFilesystemNode *clone() const { return new GBAMPFileSystemNode(this); }
 	virtual AbstractFilesystemNode *getChild(const Common::String& name) const;
-	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly, bool hidden) const;
+	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly, bool hidden = false) const;
 	virtual AbstractFilesystemNode *getParent() const;
 };
 

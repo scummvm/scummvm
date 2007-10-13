@@ -27,6 +27,8 @@
 #include "dsmain.h"
 #include "gba_nds_fat.h"
 
+
+
 namespace DS {
 
 //////////////////////////////////////////////////////////////
@@ -36,30 +38,12 @@ namespace DS {
 ZipFile*   	DSFileSystemNode::_zipFile = NULL;
 char		currentDir[128];
 
-const char *lastPathComponentDS(const Common::String &str) {
-	if (str.empty())
-		return "";
-	
-	char disp[128];
-	char* pathStr = (char *) str.c_str();
-	int lastSlash = 3;
-	
-	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
-		if (path[r] == '\\') {
-			lastSlash = r;
-		}
-	}
-	
-	strcpy(disp, pathStr + lastSlash + 1);
-	
-	return disp;
-}
-
 DSFileSystemNode::DSFileSystemNode() {
-	_path = "ds:/";
 	_displayName = "ds:/";
+	_path = "ds:/";
 	_isValid = true;
 	_isDirectory = true;
+	_path = "ds:/";
 
 /*	if (!_archive) {
 		_archive = (GBFS_FILE *) find_first_gbfs_file(scummdata);
@@ -74,12 +58,23 @@ DSFileSystemNode::DSFileSystemNode() {
 DSFileSystemNode::DSFileSystemNode(const String& path) {
 //	consolePrintf("--%s ",path.c_str());
 	
+	char disp[128];
+	char* pathStr = (char *) path.c_str();
+	
+	int lastSlash = 3;
+	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
+		if (path[r] == '\\') {
+			lastSlash = r;
+		}
+	}
+	
+	strcpy(disp, pathStr + lastSlash + 1);
+	
+	_displayName = String(disp);
 	_path = path;
-	_displayName = lastPathComponentDS(_path);
 //	_isValid = true;
 //	_isDirectory = false;
 
-	char* pathStr = (char *) path.c_str();
 	if (!strncmp(pathStr, "ds:/", 4)) {
 		pathStr += 4;
 	}
@@ -106,8 +101,19 @@ DSFileSystemNode::DSFileSystemNode(const String& path) {
 DSFileSystemNode::DSFileSystemNode(const String& path, bool isDir) {
 //	consolePrintf("--%s ",path.c_str());
 	
+	char disp[128];
+	char* pathStr = (char *) path.c_str();
+	int lastSlash = 3;
+	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
+		if (path[r] == '\\') {
+			lastSlash = r;
+		}
+	}
+	
+	strcpy(disp, pathStr + lastSlash + 1);
+	
+	_displayName = String(disp);
 	_path = path;
-	_displayName = lastPathComponentDS(_path);
 	_isValid = true;
 	_isDirectory = isDir;
 	
@@ -202,14 +208,20 @@ AbstractFilesystemNode* DSFileSystemNode::getParent() const {
 // GBAMPFileSystemNode - File system using GBA Movie Player and CF card //
 //////////////////////////////////////////////////////////////////////////
 
-const char *lastPathComponentGBAMP(const Common::String &str) {
-	if (str.empty())
-		return "";
+GBAMPFileSystemNode::GBAMPFileSystemNode() {
+	_displayName = "mp:/";
+	_path = "mp:/";
+	_isValid = true;
+	_isDirectory = true;
+	_path = "mp:/";
+}
+
+GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
+//	consolePrintf("'%s'",path.c_str());
 	
 	char disp[128];
-	char* pathStr = (char *) str.c_str();
+	char* pathStr = (char *) path.c_str();
 	int lastSlash = 3;
-	
 	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
 		if ((path[r] == '\\') || (path[r] == '/')) {
 			lastSlash = r;
@@ -217,20 +229,7 @@ const char *lastPathComponentGBAMP(const Common::String &str) {
 	}
 	
 	strcpy(disp, pathStr + lastSlash + 1);
-	
-	return disp;
-}
 
-GBAMPFileSystemNode::GBAMPFileSystemNode() {
-	_path = "mp:/";
-	_displayName = "mp:/";
-	_isValid = true;
-	_isDirectory = true;
-}
-
-GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
-//	consolePrintf("'%s'",path.c_str());
-	
 	char check[128];
 	int success;
 	
@@ -246,8 +245,8 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
 	}
 //	consolePrintf("Path: %s  (%d)\n", check, success);
 	
+	_displayName = String(disp);
 	_path = path;
-	_displayName = lastPathComponentGBAMP(_path);
 	_isValid = success == FT_FILE;
 	_isDirectory = success == FT_DIR;
 }
@@ -255,8 +254,19 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path) {
 GBAMPFileSystemNode::GBAMPFileSystemNode(const String& path, bool isDirectory) {
 //	consolePrintf("'%s'",path.c_str());
 	
+	char disp[128];
+	char* pathStr = (char *) path.c_str();
+	int lastSlash = 3;
+	for (int r = 0; r < (int) strlen(pathStr) - 1; r++) {
+		if ((path[r] == '\\') || (path[r] == '/')) {
+			lastSlash = r;
+		}
+	}
+	
+	strcpy(disp, pathStr + lastSlash + 1);
+
+	_displayName = String(disp);
 	_path = path;
-	_displayName = lastPathComponentGBAMP(_path);
 	_isValid = true;
 	_isDirectory = isDirectory;
 }
@@ -283,7 +293,7 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	
-	char temp[128], fname[128], *path, *pathTemp;
+	char temp[128], fname[256], *path, *pathTemp;
 	strcpy(temp, _path.c_str());
 	
 	path = temp + 3;
@@ -296,16 +306,18 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 		pathTemp++;
 	}
 
-//	consolePrintf("This dir: %s\n", path);
+	consolePrintf("This dir: %s\n", path);
 	FAT_chdir(path);
 	
-	int entryType = FAT_FindFirstFile(fname);
+	int entryType = FAT_FindFirstFileLFN(fname);
 	
 	while (entryType != TYPE_NO_MORE) {
 	
 		if ( ((entryType == TYPE_DIR) && ((mode == FilesystemNode::kListDirectoriesOnly) || (mode == FilesystemNode::kListAll)))
 		||   ((entryType == TYPE_FILE) && ((mode == FilesystemNode::kListFilesOnly) || (mode == FilesystemNode::kListAll))) ) {
 			GBAMPFileSystemNode* dsfsn;
+
+			consolePrintf("Fname: %s\n", fname);
 			
 			if (strcmp(fname, ".") && strcmp(fname, "..")) {
 				
@@ -322,7 +334,7 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 //			consolePrintf("Skipping %s\n", fname);
 		}
 		
-		entryType = FAT_FindNextFile(fname);
+		entryType = FAT_FindNextFileLFN(fname);
 	}
 	
 //	consolePrintf("No more");
@@ -777,7 +789,7 @@ void std_cwd(char* dir) {
 		if (*(currentDir + strlen(currentDir) - 1) == '/') {
 			*(currentDir + strlen(currentDir) - 1) = '\0';
 		}
-		consolePrintf("CWD: %s\n", currentDir);
+//		consolePrintf("CWD: %s\n", currentDir);
 	}	
 }
 
@@ -786,3 +798,25 @@ int std_ferror(FILE* handle) {
 }
 
 } // namespace DS
+
+/**
+ * Returns the last component of a given path.
+ * 
+ * Examples:
+ * 			/foo/bar.txt would return /bar.txt
+ * 			/foo/bar/    would return /bar/
+ *  
+ * @param str String containing the path.
+ * @return Pointer to the first char of the last component inside str.
+ */
+const char *lastPathComponent(const Common::String &str) {
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
+
+	while (cur >= start && *cur != '/' && *cur != '\\') {
+		--cur;
+	}
+
+	return cur + 1;
+}
+
