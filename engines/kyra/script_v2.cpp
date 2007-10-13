@@ -93,10 +93,10 @@ int KyraEngine_v2::o2_setSceneComment(ScriptState *script) {
 int KyraEngine_v2::o2_setCharacterAnimFrame(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setCharacterAnimFrame(%p) (-, %d, %d)", (const void *)script, stackPos(1), stackPos(2));
 	int animFrame = stackPos(1);
-	int skipRefresh = stackPos(2);
+	int updateAnim = stackPos(2);
 	
 	_mainCharacter.animFrame = animFrame;
-	if (skipRefresh)
+	if (updateAnim)
 		updateCharacterAnim(0);
 
 	return 0;
