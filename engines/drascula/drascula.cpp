@@ -173,6 +173,7 @@ int DrasculaEngine::go() {
 		frame_murcielago = 0;
 		c_mirar = 0;
 		c_poder = 0;
+		ald = NULL;
 
 		asigna_memoria();
 		carga_info();
@@ -1406,8 +1407,10 @@ void DrasculaEngine::para_cargar(char nom_game[]) {
 	if (num_ejec != 1)
 		borra_pantalla();
 	carga_partida(nom_game);
-	if (num_ejec == 2 || num_ejec == 3 || num_ejec == 5)
+	if (num_ejec == 2 || num_ejec == 3 || num_ejec == 5) {
 		delete ald;
+		ald = NULL;
+	}
 	carga_escoba(datos_actuales);
 	sin_verbo();
 }
@@ -1563,6 +1566,7 @@ martini:
 		sscanf(buffer, "%d", &cerca);
 	}
 	delete ald;
+	ald = NULL;
 	canal_p(para_codificar);
 
 	if (num_ejec == 2) {
@@ -4181,6 +4185,7 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			}
 			borra_pantalla();
 			delete ald;
+			ald = NULL;
 			strcpy(salgo, alapantallakeva[l]);
 			strcat(salgo, ".ald");
 			hare_x =- 1;
@@ -5578,6 +5583,7 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	getLine(ald, buffer, size);
 	sscanf(buffer, "%d", &respuesta3);
 	delete ald;
+	ald = NULL;
 	canal_p(para_codificar);
 
 	if (num_ejec == 2 && !strcmp(nom_fich, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
