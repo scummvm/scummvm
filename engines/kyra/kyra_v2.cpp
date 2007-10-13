@@ -669,7 +669,7 @@ int KyraEngine_v2::checkInput(void *p) {
 }
 
 void KyraEngine_v2::removeInputTop() {
-	if (_eventList.begin() != _eventList.end())
+	if (!_eventList.empty())
 		_eventList.erase(_eventList.begin());
 }
 
