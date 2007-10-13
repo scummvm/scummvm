@@ -26,6 +26,7 @@
 #ifndef COMMON_SCUMMSYS_H
 #define COMMON_SCUMMSYS_H
 
+
 #if defined(_WIN32_WCE) && _WIN32_WCE < 300
 	#define NONSTANDARD_PORT
 #endif
@@ -37,7 +38,6 @@
 	// "portdefs.h" header file (and not by directly modifying this
 	// header file).
 	#include <portdefs.h>
-
 #else // defined(NONSTANDARD_PORT)
 
 	#if defined(WIN32)
@@ -379,8 +379,9 @@
 
 	#include "nds/jtypes.h"
 
-	#define STRINGBUFLEN 256
+	#define SCUMMVM_DONT_DEFINE_TYPES
 
+	#define STRINGBUFLEN 256
 	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
 
 #else
@@ -438,6 +439,7 @@
 // Typedef our system types unless SCUMMVM_DONT_DEFINE_TYPES is set.
 //
 #ifndef SCUMMVM_DONT_DEFINE_TYPES
+
 	typedef unsigned char byte;
 
 	typedef unsigned char uint8;
@@ -456,6 +458,7 @@
 	typedef unsigned int uint;
 	#endif
 #endif
+
 
 
 //
