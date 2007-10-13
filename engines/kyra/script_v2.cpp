@@ -42,6 +42,22 @@ int KyraEngine_v2::o2_setCharacterFacingRefresh(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_setCharacterPos(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setCharacterFacingRefresh(%p) (-, %d, %d)", (const void *)script, stackPos(1), stackPos(2));
+	int x = stackPos(1);
+	int y = stackPos(2);
+
+	if (x != -1 && y != -1) {
+		x &= ~3;
+		y &= ~1;
+	}
+
+	restorePage3();
+	_mainCharacter.x2 = _mainCharacter.x1 = x;
+	_mainCharacter.y2 = _mainCharacter.y1 = y;
+	return 0;
+}
+
 int KyraEngine_v2::o2_defineObject(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_defineObject(%p) (%d, '%s', %d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));

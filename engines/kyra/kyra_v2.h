@@ -545,6 +545,7 @@ protected:
 
 	// opcodes
 	int o2_setCharacterFacingRefresh(ScriptState *script);
+	int o2_setCharacterPos(ScriptState *script);
 	int o2_defineObject(ScriptState *script);
 	int o2_refreshCharacter(ScriptState *script);
 	int o2_getCharacterX(ScriptState *script);

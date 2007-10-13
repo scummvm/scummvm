@@ -1466,7 +1466,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 	static const OpcodeV2 opcodeTable[] = {
 		// 0x00
 		Opcode(o2_setCharacterFacingRefresh),
-		OpcodeUnImpl(),
+		Opcode(o2_setCharacterPos),
 		Opcode(o2_defineObject),
 		Opcode(o2_refreshCharacter),
 		// 0x04
