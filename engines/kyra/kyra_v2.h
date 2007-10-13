@@ -540,6 +540,9 @@ protected:
 	
 	void setTimer1DelaySecs(int secs);
 	
+	// delay
+	void delay(uint32 millis, bool updateGame = false, bool isMainLoop = false);
+
 	// opcodes
 	int o2_setCharacterFacingRefresh(ScriptState *script);
 	int o2_defineObject(ScriptState *script);
@@ -548,6 +551,7 @@ protected:
 	int o2_getCharacterY(ScriptState *script);
 	int o2_getCharacterFacing(ScriptState *script);
 	int o2_setSceneComment(ScriptState *script);
+	int o2_setCharacterAnimFrame(ScriptState *script);
 	int o2_trySceneChange(ScriptState *script);
 	int o2_showChapterMessage(ScriptState *script);
 	int o2_wsaClose(ScriptState *script);

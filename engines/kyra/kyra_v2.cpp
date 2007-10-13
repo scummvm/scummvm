@@ -671,6 +671,24 @@ void KyraEngine_v2::removeInputTop() {
 		_eventList.erase(_eventList.begin());
 }
 
+void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
+
+	uint32 start = _system->getMillis();
+	do {
+		if (updateGame) {
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+		}
+
+
+		if (amount > 0 )
+			_system->delayMillis(amount > 10 ? 10 : amount);
+
+	} while (!_skipFlag && _system->getMillis() < start + amount && !_quitFlag);
+}
+
 void KyraEngine_v2::cleanup() {
 	delete [] _gamePlayBuffer;
 	delete [] _unkBuf500Bytes;
@@ -1460,7 +1478,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_setSceneComment),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_setCharacterAnimFrame),
 		// 0x0c
 		OpcodeUnImpl(),
 		Opcode(o2_trySceneChange),

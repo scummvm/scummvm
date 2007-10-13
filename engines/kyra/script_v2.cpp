@@ -90,6 +90,18 @@ int KyraEngine_v2::o2_setSceneComment(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_setCharacterAnimFrame(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setCharacterAnimFrame(%p) (-, %d, %d)", (const void *)script, stackPos(1), stackPos(2));
+	int animFrame = stackPos(1);
+	int skipRefresh = stackPos(2);
+	
+	_mainCharacter.animFrame = animFrame;
+	if (skipRefresh)
+		updateCharacterAnim(0);
+
+	return 0;
+}
+
 int KyraEngine_v2::o2_trySceneChange(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_trySceneChange(%p) (%d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
@@ -292,7 +304,7 @@ int KyraEngine_v2::o2_delay(ScriptState *script) {
 	//if (stackPos(1))
 	//	sub_27100(stackPos(0) * _tickLength);
 	//else
-		delay(stackPos(0) * _tickLength);
+		delay(stackPos(0) * _tickLength, true);
 	return 0;
 }
 
