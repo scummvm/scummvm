@@ -5310,8 +5310,8 @@ void DrasculaEngine::aumenta_num_frame() {
 	}
 
 	if (num_ejec != 2) {
-		diferencia_y = alto_hare - (int)nuevo_alto;
-		diferencia_x = ancho_hare - (int)nuevo_ancho;
+		diferencia_y = (int)(alto_hare - nuevo_alto);
+		diferencia_x = (int)(ancho_hare - nuevo_ancho);
 		hare_y = hare_y + diferencia_y;
 		hare_x = hare_x + diferencia_x;
 		alto_hare = (int)nuevo_alto;
@@ -5484,7 +5484,7 @@ void DrasculaEngine::pantalla_62(int fl) {
 	if (objeto_que_lleva == HABLAR && fl == 53)
 		conversa("op_13.cal");
 	else if (objeto_que_lleva == HABLAR && fl == 52 && flags[0] == 0)
-		animacion_3_2();
+		animacion_3_1();
 	else if (objeto_que_lleva == HABLAR && fl == 52 && flags[0] == 1)
 		hablar(TEXT109, "109.als");
 	else if (objeto_que_lleva == HABLAR && fl == 54)
