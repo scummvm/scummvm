@@ -248,6 +248,11 @@ int KyraEngine_v2::o2_wsaOpen(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_checkForItem(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_checkForItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return findItem(stackPos(0), stackPos(1)) == -1 ? 0 : 1;
+}
+
 int KyraEngine_v2::o2_defineItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_defineItem(%p) (%d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
@@ -261,6 +266,22 @@ int KyraEngine_v2::o2_defineItem(ScriptState *script) {
 	}
 
 	return freeItem;
+}
+
+int KyraEngine_v2::o2_countItemInInventory(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_countItemInInventory(%p) (%d)", (const void *)script, stackPos(0));
+	uint16 item = stackPos(0);
+	int count = 0;
+
+	for (int i = 0; i < 20; ++i) {
+		if (_mainCharacter.inventory[i] == item)
+			++count;
+	}
+
+	if (_itemInHand == int16(item))
+		++count;
+	
+	return count;
 }
 
 int KyraEngine_v2::o2_queryGameFlag(ScriptState *script) {
@@ -306,6 +327,12 @@ int KyraEngine_v2::o2_addSpecialExit(ScriptState *script) {
 		_specialExitTable[_specialExitCount+20] = stackPos(4);
 		++_specialExitCount;
 	}
+	return 0;
+}
+
+int KyraEngine_v2::o2_setMousePos(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setMousePos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	_system->warpMouse(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -605,6 +632,39 @@ int KyraEngine_v2::o2_defineRoom(ScriptState *script) {
 	}
 
 	return 0;
+}
+
+int KyraEngine_v2::o2_countItemInstances(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_countItemInstances(%p) (%d)", (const void *)script, stackPos(0));
+	uint16 item = stackPos(0);
+
+	int count = 0;
+	for (int i = 0; i < 20; ++i) {
+		if (_mainCharacter.inventory[i] == item)
+			++count;
+	}
+
+	if (_itemInHand == int16(item))
+		++count;
+
+	for (int i = 0; i < 30; ++i) {
+		if (_itemList[i].id == item)
+			++count;
+	}
+	
+	/*XXX
+	if (_unkTable3[0] == item && _newChapterFile == 1)
+		++count;
+	if (_unkTable3[1] == item && _newChapterFile == 1)
+		++count;
+	if (_unkTable3[2] == item && _newChapterFile == 2)
+		++count;
+	if (_unkTable3[3] == item && _newChapterFile == 2)
+		++count;
+	if (_unkTable3[4] == item && _newChapterFile == 1)
+		++count;*/
+
+	return count;
 }
 
 int KyraEngine_v2::o2_setSpecialSceneScriptState(ScriptState *script) {

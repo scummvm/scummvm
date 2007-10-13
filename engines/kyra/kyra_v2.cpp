@@ -1505,13 +1505,13 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x20
-		OpcodeUnImpl(),
+		Opcode(o2_checkForItem),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		Opcode(o2_defineItem),
 		// 0x24
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_countItemInInventory),
 		OpcodeUnImpl(),
 		Opcode(o2_queryGameFlag),
 		// 0x28
@@ -1523,7 +1523,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_handItemSet),
 		Opcode(o2_hideMouse),
 		Opcode(o2_addSpecialExit),
-		OpcodeUnImpl(),
+		Opcode(o2_setMousePos),
 		// 0x30
 		Opcode(o2_showMouse),
 		OpcodeUnImpl(),
@@ -1635,7 +1635,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x88
-		OpcodeUnImpl(),
+		Opcode(o2_countItemInstances),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),

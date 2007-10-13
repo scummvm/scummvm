@@ -559,7 +559,9 @@ protected:
 	int o2_displayWsaFrame(ScriptState *script);
 	int o2_displayWsaSequentialFrames(ScriptState *script);
 	int o2_wsaOpen(ScriptState *script);
+	int o2_checkForItem(ScriptState *script);
 	int o2_defineItem(ScriptState *script);
+	int o2_countItemInInventory(ScriptState *script);
 	int o2_queryGameFlag(ScriptState *script);
 	int o2_resetGameFlag(ScriptState *script);
 	int o2_setGameFlag(ScriptState *script);
@@ -567,6 +569,7 @@ protected:
 	int o2_handItemSet(ScriptState *script);
 	int o2_hideMouse(ScriptState *script);
 	int o2_addSpecialExit(ScriptState *script);
+	int o2_setMousePos(ScriptState *script);
 	int o2_showMouse(ScriptState *script);
 	//int o2_playSoundEffect(ScriptState *script);
 	int o2_delay(ScriptState *script);
@@ -594,6 +597,7 @@ protected:
 	int o2_defineSceneAnim(ScriptState *script);
 	int o2_updateSceneAnim(ScriptState *script);
 	int o2_defineRoom(ScriptState *script);
+	int o2_countItemInstances(ScriptState *script);
 	int o2_setSpecialSceneScriptState(ScriptState *script);
 	int o2_clearSpecialSceneScriptState(ScriptState *script);
 	int o2_querySpecialSceneScriptState(ScriptState *script);
