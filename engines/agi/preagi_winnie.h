@@ -295,6 +295,8 @@ struct WTP_SAVE_GAME {
 
 #define IDI_XOR_KEY			0x80
 
+class PreAgiEngine;
+
 class Winnie {
 	friend class PreAgiEngine;
 public:
