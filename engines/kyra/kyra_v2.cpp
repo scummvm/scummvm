@@ -469,7 +469,6 @@ void KyraEngine_v2::update() {
 	//sub_274C0();
 	//updateInvWsa();
 	//sub_1574C();
-	//XXX
 	_screen->updateScreen();
 }
 
@@ -482,7 +481,6 @@ void KyraEngine_v2::updateWithText() {
 	_timer->update();
 	//sub_274C0();
 	//updateInvWsa();
-	//XXX
 	restorePage3();
 	drawAnimObjects();
 
