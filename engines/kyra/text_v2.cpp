@@ -417,7 +417,7 @@ byte *KyraEngine_v2::loadTIMFile(const char *filename, byte *buffer, int32 buffe
 		return NULL;
 	}
 
-	formBlockSize += 120 + sizeof(TIMStructUnk1) * 10;
+	formBlockSize += sizeof(TIMHeader) + 120 + sizeof(TIMStructUnk1) * 10;
 	
 	TIMHeader *timHeader;
 	if (buffer == NULL || bufferSize < formBlockSize) {
@@ -432,7 +432,7 @@ byte *KyraEngine_v2::loadTIMFile(const char *filename, byte *buffer, int32 buffe
 	int32 chunkSize = file.getIFFBlockSize(AVTL_CHUNK);
 	timHeader->unkFlag = -1;
 	timHeader->unkFlag2 = 0;
-	timHeader->unkOffset = 14;
+	timHeader->unkOffset = sizeof(TIMHeader);
 	timHeader->unkOffset2 = timHeader->unkOffset + sizeof(TIMStructUnk1) * 10;
 	timHeader->AVTLOffset = timHeader->unkOffset2 + 120;
 	timHeader->TEXTOffset = timHeader->AVTLOffset + chunkSize;
