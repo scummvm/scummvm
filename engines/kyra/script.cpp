@@ -32,11 +32,6 @@
 #include "kyra/resource.h"
 #include "kyra/script.h"
 
-#define FORM_CHUNK 0x4D524F46
-#define TEXT_CHUNK 0x54584554
-#define DATA_CHUNK 0x41544144
-#define ORDR_CHUNK 0x5244524F
-
 namespace Kyra {
 ScriptHelper::ScriptHelper(KyraEngine *vm) : _vm(vm) {
 #define COMMAND(x) { &ScriptHelper::x, #x }

@@ -61,7 +61,7 @@ int KyraEngine_v2::o2_setCharacterPos(ScriptState *script) {
 int KyraEngine_v2::o2_defineObject(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_defineObject(%p) (%d, '%s', %d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	Object *object = &_objectList[stackPos(0)];
+	TalkObject *object = &_talkObjectList[stackPos(0)];
 	strcpy(object->filename, stackPosString(1));
 	object->scriptId = stackPos(2);
 	object->x = stackPos(3);
@@ -665,6 +665,20 @@ int KyraEngine_v2::o2_countItemInstances(ScriptState *script) {
 		++count;*/
 
 	return count;
+}
+
+int KyraEngine_v2::o2_initObject(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_initObject(%p) (%d)", (const void *)script, stackPos(0));
+	initTalkObject(stackPos(0));
+
+	return 0;
+}
+
+int KyraEngine_v2::o2_deinitObject(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_deinitObject(%p) (%d)", (const void *)script, stackPos(0));
+	deinitTalkObject(stackPos(0));
+
+	return 0;
 }
 
 int KyraEngine_v2::o2_setSpecialSceneScriptState(ScriptState *script) {

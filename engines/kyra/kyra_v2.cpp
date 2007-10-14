@@ -75,6 +75,10 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_chatText = 0;
 	_chatObject = -1;
 	
+	_currentTalkSections.STATim = NULL;
+	_currentTalkSections.TLKTim = NULL;
+	_currentTalkSections.ENDTim = NULL;
+	
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 }
 
@@ -247,8 +251,8 @@ void KyraEngine_v2::startup() {
 	_maskPage = 0;//_screen->getPagePtr(5);
 	_screen->_curPage = 0;
 	
-	_objectList = new Object[72];
-	memset(_objectList, 0, sizeof(Object)*72);
+	_talkObjectList = new TalkObject[72];
+	memset(_talkObjectList, 0, sizeof(TalkObject)*72);
 	_shapeDescTable = new ShapeDesc[55];
 	memset(_shapeDescTable, 0, sizeof(ShapeDesc)*55);
 	
@@ -705,7 +709,7 @@ void KyraEngine_v2::cleanup() {
 	delete [] _optionsBuffer;
 	delete [] _chapterBuffer;
 	
-	delete [] _objectList;
+	delete [] _talkObjectList;
 	delete [] _shapeDescTable;
 	
 	delete [] _gfxBackUpRect;
@@ -1638,9 +1642,10 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_countItemInstances),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
+		Opcode(o2_initObject),
 		OpcodeUnImpl(),
 		// 0x8c
-		OpcodeUnImpl(),
+		Opcode(o2_deinitObject),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		Opcode(o2_setSpecialSceneScriptState),

@@ -190,8 +190,8 @@ void KyraEngine_v2::objectChatInit(const char *str, int object, int vocHigh, int
 		yPos = _mainCharacter.y1 - ((_mainCharacter.height * scale) >> 8) - 8;
 		xPos = _mainCharacter.x1;
 	} else {
-		yPos = _objectList[object].y;
-		xPos = _objectList[object].x;
+		yPos = _talkObjectList[object].y;
+		xPos = _talkObjectList[object].x;
 	}
 
 	yPos -= lineNum * 10;
@@ -227,11 +227,11 @@ void KyraEngine_v2::objectChatInit(const char *str, int object, int vocHigh, int
 }
 
 void KyraEngine_v2::objectChatPrintText(const char *str, int object) {
-	int c1 = _objectList[object].color;
+	int c1 = _talkObjectList[object].color;
 	str = _text->preprocessString(str);
 	int lineNum = _text->buildMessageSubstrings(str);
 	int maxWidth = _text->getWidestLineWidth(lineNum);
-	int x = (object == 0) ? _mainCharacter.x1 : _objectList[object].x;
+	int x = (object == 0) ? _mainCharacter.x1 : _talkObjectList[object].x;
 	int cX1 = 0, cX2 = 0;
 	_text->calcWidestLineBounds(cX1, cX2, maxWidth, x);
 
@@ -330,5 +330,148 @@ void KyraEngine_v2::objectChatWaitToFinish() {
 	resetCharacterAnimDim();
 }
 
+void KyraEngine_v2::initTalkObject(int initObject) {
+	TalkObject &object = _talkObjectList[initObject];
+	
+	char STAFilename[13];
+	char TLKFilename[13];
+	char ENDFilename[13];
+	
+	strcpy(STAFilename, object.filename);
+	strcpy(TLKFilename, object.filename);
+	strcpy(ENDFilename, object.filename);
+	
+	strcpy(STAFilename + 4, "_STA.TIM");
+	strcpy(TLKFilename + 4, "_TLK.TIM");
+	strcpy(ENDFilename + 4, "_END.TIM");
+	
+	_currentTalkSections.STATim = loadTIMFile(STAFilename, NULL, 0);
+	_currentTalkSections.TLKTim = loadTIMFile(TLKFilename, NULL, 0);
+	_currentTalkSections.ENDTim = loadTIMFile(ENDFilename, NULL, 0);
+
+	if (object.scriptId != -1) {
+		_specialSceneScriptStateBackup[object.scriptId] = _specialSceneScriptState[object.scriptId];
+		_specialSceneScriptState[object.scriptId] = 1;
+	}
+	
+	/*if (_currentTalkObject.STATim) {
+		_objectChatFinished = false;
+		while (!_objectChatFinished) {
+			processTalkObject(_currentTalkObject.STATim, 0);
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+		}
+	}*/
+}
+
+void KyraEngine_v2::deinitTalkObject(int initObject) {
+	TalkObject &object = _talkObjectList[initObject];
+		
+	/*if (_currentTalkObject.ENDTim) {
+		_objectChatFinished = false;
+		while (!_objectChatFinished) {
+			processTalkObject(_currentTalkObject.ENDTim, 0);
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+		}
+	}*/
+		
+	if (object.scriptId != -1) {
+		_specialSceneScriptState[object.scriptId] = _specialSceneScriptStateBackup[object.scriptId];
+	}
+	
+	if (_currentTalkSections.STATim != NULL) {
+		freeTIM(_currentTalkSections.STATim);
+		_currentTalkSections.STATim = NULL;
+	}
+	
+	if (_currentTalkSections.TLKTim != NULL) {
+		freeTIM(_currentTalkSections.TLKTim);
+		_currentTalkSections.TLKTim = NULL;
+	}
+	
+	if (_currentTalkSections.ENDTim != NULL) {
+		freeTIM(_currentTalkSections.ENDTim);
+		_currentTalkSections.ENDTim = NULL;
+	}		
+}
+
+byte *KyraEngine_v2::loadTIMFile(const char *filename, byte *buffer, int32 bufferSize) {
+	ScriptFileParser file(filename, _res);
+	if (!file) {
+		error("Couldn't open script file '%s'", filename);
+		return NULL;
+	}
+
+	int32 formBlockSize = file.getFORMBlockSize();
+	if (formBlockSize == -1) {
+		error("No FORM chunk found in file: '%s'", filename);
+		return NULL;
+	}
+	
+	if (formBlockSize < 20) {
+		return NULL;
+	}
+
+	formBlockSize += 120 + sizeof(TIMStructUnk1) * 10;
+	
+	TIMHeader *timHeader;
+	if (buffer == NULL || bufferSize < formBlockSize) {
+		buffer = new byte[formBlockSize];
+		timHeader = (TIMHeader *)buffer;
+		timHeader->deleteBufferFlag = 0xBABE;
+	} else {
+		timHeader = (TIMHeader *)buffer;
+		timHeader->deleteBufferFlag = 0x0;	
+	}
+	
+	int32 chunkSize = file.getIFFBlockSize(AVTL_CHUNK);
+	timHeader->unkFlag = -1;
+	timHeader->unkFlag2 = 0;
+	timHeader->unkOffset = 14;
+	timHeader->unkOffset2 = timHeader->unkOffset + sizeof(TIMStructUnk1) * 10;
+	timHeader->AVTLOffset = timHeader->unkOffset2 + 120;
+	timHeader->TEXTOffset = timHeader->AVTLOffset + chunkSize;
+	
+	_TIMBuffers.AVTLChunk = (uint16 *)(buffer + timHeader->AVTLOffset);
+	_TIMBuffers.TEXTChunk = buffer + timHeader->TEXTOffset;
+	
+	if (!file.loadIFFBlock(AVTL_CHUNK, _TIMBuffers.AVTLChunk, chunkSize)) {
+		error("Couldn't load AVTL chunk from file: '%s'", filename);
+		return NULL;
+	}
+	
+	_TIMBuffers.UnkChunk = (TIMStructUnk1 *)(buffer + timHeader->unkOffset);
+	
+	for (int i = 0; i < 10; i++) {
+		_TIMBuffers.UnkChunk[i].unk_0 = 0;
+		_TIMBuffers.UnkChunk[i].unk_2 = 0;
+		_TIMBuffers.UnkChunk[i].unk_20 = &_TIMBuffers.AVTLChunk[ _TIMBuffers.AVTLChunk[i] ];
+		_TIMBuffers.UnkChunk[i].unk_4 = 0;
+		_TIMBuffers.UnkChunk[i].unk_8 = 0;
+	}
+
+	chunkSize = file.getIFFBlockSize(TEXT_CHUNK);
+	if (chunkSize > 0) {
+		if (!file.loadIFFBlock(TEXT_CHUNK, _TIMBuffers.TEXTChunk, chunkSize)) {
+			error("Couldn't load TEXT chunk from file: '%s'", filename);
+			return NULL;
+		}	
+	}
+	
+	return buffer;
+}
+
+void KyraEngine_v2::freeTIM(byte *buffer) {
+	TIMHeader *timHeader = (TIMHeader *)buffer;
+	
+	if (timHeader->deleteBufferFlag == 0xBABE) {
+		delete[] buffer;
+	}
+}
 } // end of namespace Kyra
 

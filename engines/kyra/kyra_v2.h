@@ -235,6 +235,7 @@ protected:
 	SceneAnim _sceneAnims[10];
 	WSAMovieV2 *_sceneAnimMovie[10];
 	bool _specialSceneScriptState[10];
+	bool _specialSceneScriptStateBackup[10];
 	ScriptState _sceneSpecialScripts[10];
 	uint32 _sceneSpecialScriptsTimer[10];
 	int _lastProcessedSceneScript;
@@ -520,6 +521,8 @@ protected:
 	void objectChatPrintText(const char *text, int object);
 	void objectChatProcess(const char *script);
 	void objectChatWaitToFinish();
+	void initTalkObject(int initObject);
+	void deinitTalkObject(int initObject);
 
 	// sound
 	int _oldTalkFile;
@@ -542,6 +545,51 @@ protected:
 	
 	// delay
 	void delay(uint32 millis, bool updateGame = false, bool isMainLoop = false);
+
+	// Talk object handling 
+	struct TalkObject {
+		char filename[13];
+		int8 scriptId;
+		int16 x, y;
+		int8 color;
+	};
+	TalkObject *_talkObjectList;
+
+	struct TIMHeader {
+		uint16 deleteBufferFlag;
+		int16 unkFlag;
+		int16 unkFlag2;
+		int16 unkOffset;
+		int16 unkOffset2;
+		int16 AVTLOffset;
+		int16 TEXTOffset;
+	};
+	
+	struct TIMStructUnk1 {
+		uint16 unk_0;
+		uint16 unk_2;
+		uint16 unk_4;
+		uint16 unk_8;
+		uint16* unk_20;
+	};
+	
+	struct TIMBuffers {
+		uint16 *AVTLChunk;
+		byte *TEXTChunk;
+		TIMStructUnk1 *UnkChunk;
+	};
+	TIMBuffers _TIMBuffers;
+	
+	struct TalkSections {
+		byte *STATim;
+		byte *TLKTim;
+		byte *ENDTim;
+	};
+	TalkSections _currentTalkSections;
+	
+	bool _objectChatFinished;
+	byte* loadTIMFile(const char *filename, byte *buffer, int32 bufferSize);
+	void freeTIM(byte *buffer);
 
 	// opcodes
 	int o2_setCharacterFacingRefresh(ScriptState *script);
@@ -598,6 +646,8 @@ protected:
 	int o2_updateSceneAnim(ScriptState *script);
 	int o2_defineRoom(ScriptState *script);
 	int o2_countItemInstances(ScriptState *script);
+	int o2_initObject(ScriptState *script);
+	int o2_deinitObject(ScriptState *script);
 	int o2_setSpecialSceneScriptState(ScriptState *script);
 	int o2_clearSpecialSceneScriptState(ScriptState *script);
 	int o2_querySpecialSceneScriptState(ScriptState *script);
@@ -639,15 +689,6 @@ protected:
 	
 	// pathfinder
 	int _pathfinderFlag;
-	
-	// unk
-	struct Object {
-		char filename[13];
-		uint8 scriptId;
-		int16 x, y;
-		int8 color;
-	};
-	Object *_objectList;
 	
 	uint8 *_unkBuf500Bytes;
 	uint8 *_unkBuf200kByte;
