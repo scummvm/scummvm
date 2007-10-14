@@ -1641,7 +1641,6 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x88
 		Opcode(o2_countItemInstances),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
 		Opcode(o2_initObject),
 		OpcodeUnImpl(),
 		// 0x8c
