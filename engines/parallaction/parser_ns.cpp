@@ -75,7 +75,7 @@ namespace Parallaction {
 
 
 void Parallaction_ns::warning_unexpected() {
-	warning("unexpected keyword '%s'", _tokens[0]);
+	debugC(1, kDebugParser, "unexpected keyword '%s' in line %i", _tokens[0], _locParseCtxt.script->getLine());
 }
 
 
