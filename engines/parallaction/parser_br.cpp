@@ -784,6 +784,8 @@ typedef OpcodeImpl<Parallaction_br> OpcodeV2;
 #define LOCATION_PARSER(sig) 	OpcodeV2(this, &Parallaction_br::locParse_##sig)
 #define COMMAND_PARSER(sig) 	OpcodeV2(this, &Parallaction_br::cmdParse_##sig)
 
+#define WARNING_PARSER(sig)		OpcodeV2(this, &Parallaction_br::warning_##sig)
+
 void Parallaction_br::initParsers() {
 
 	static const OpcodeV2 op0[] = {
@@ -827,7 +829,7 @@ void Parallaction_br::initParsers() {
 
 
 	static const OpcodeV2 op2[] = {
-		COMMAND_PARSER(invalid),
+		WARNING_PARSER(unexpected),
 		COMMAND_PARSER(flags),		// set
 		COMMAND_PARSER(flags),		// clear
 		COMMAND_PARSER(animation),	// start
@@ -853,8 +855,8 @@ void Parallaction_br::initParsers() {
 		COMMAND_PARSER(math),		// inc
 		COMMAND_PARSER(math),		// dec
 		COMMAND_PARSER(test),		// test
-		COMMAND_PARSER(invalid),
-		COMMAND_PARSER(invalid),
+		WARNING_PARSER(unexpected),
+		WARNING_PARSER(unexpected),
 		COMMAND_PARSER(math),		// let
 		COMMAND_PARSER(music),
 		COMMAND_PARSER(zone),		// fix
@@ -865,7 +867,7 @@ void Parallaction_br::initParsers() {
 		COMMAND_PARSER(give),
 		COMMAND_PARSER(text),
 		COMMAND_PARSER(unary),		// part
-		COMMAND_PARSER(invalid),
+		WARNING_PARSER(unexpected),
 		COMMAND_PARSER(simple),		// return
 		COMMAND_PARSER(simple),		// onsave
 		COMMAND_PARSER(simple),		// offsave
@@ -878,7 +880,7 @@ void Parallaction_br::initParsers() {
 		_commandParsers.push_back(&op2[i]);
 
 	static const OpcodeV2 op4[] = {
-		LOCATION_PARSER(invalid),
+		WARNING_PARSER(unexpected),
 		LOCATION_PARSER(character),
 		LOCATION_PARSER(endlocation),
 		LOCATION_PARSER(ifchar),
@@ -899,14 +901,13 @@ void Parallaction_br::initParsers() {
 		LOCATION_PARSER(zeta),
 		LOCATION_PARSER(music),
 		LOCATION_PARSER(sound)
-//		LOCATION_PARSER(redundant)	// for redundant endanimation
 	};
 
 	for (i = 0; i < ARRAYSIZE(op4); i++)
 		_locationParsers.push_back(&op4[i]);
 
 	static const OpcodeV2 op5[] = {
-		ZONE_PARSER(invalid),
+		WARNING_PARSER(unexpected),
 		ZONE_PARSER(endzone),
 		ZONE_PARSER(limits),
 		ZONE_PARSER(moveto),
@@ -920,7 +921,7 @@ void Parallaction_br::initParsers() {
 		_locationZoneParsers.push_back(&op5[i]);
 
 	static const OpcodeV2 op6[] = {
-		ANIM_PARSER(invalid),
+		WARNING_PARSER(unexpected),
 		ANIM_PARSER(endanimation),
 		ANIM_PARSER(endanimation),		// endzone
 		ANIM_PARSER(script),

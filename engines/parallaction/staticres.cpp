@@ -332,8 +332,7 @@ const char *_locationStmtRes_ns[] = {
 	"comment",
 	"endcomment",
 	"sound",
-	"music",
-	"endanimation"
+	"music"
 };
 
 const char *_locationZoneStmtRes_ns[] = {
@@ -343,8 +342,7 @@ const char *_locationZoneStmtRes_ns[] = {
 	"commands",
 	"label",
 	"flags",
-	"endzone",
-	"endcommands"		// this to prevent unexpected statements in the scripts to crash the parser
+	"endzone"
 };
 
 const char *_locationAnimStmtRes_ns[] = {

@@ -74,12 +74,8 @@ namespace Parallaction {
 #define DECLARE_LOCATION_PARSER(sig) void Parallaction_ns::locParse_##sig()
 
 
-
-
-DECLARE_ANIM_PARSER(invalid)  {
-	debugC(7, kDebugParser, "ANIM_PARSER(invalid) ");
-
-	error("unknown statement '%s' in animation %s", _tokens[0], _locParseCtxt.a->_label._text);
+void Parallaction_ns::warning_unexpected() {
+	warning("unexpected keyword '%s'", _tokens[0]);
 }
 
 
@@ -590,12 +586,6 @@ DECLARE_COMMAND_PARSER(move)  {
 	addCommand();
 }
 
-DECLARE_COMMAND_PARSER(invalid)  {
-	debugC(7, kDebugParser, "COMMAND_PARSER(invalid) ");
-
-	error("Can't parse unknown command '%s'", _tokens[0]);
-}
-
 DECLARE_COMMAND_PARSER(endcommands)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(endcommands) ");
 
@@ -822,12 +812,6 @@ char *Parallaction_ns::parseDialogueString(Script &script) {
 }
 
 
-DECLARE_LOCATION_PARSER(invalid)  {
-	debugC(7, kDebugParser, "LOCATION_PARSER(invalid) ");
-
-	error("unknown keyword '%s' in location '%s'", _tokens[0], _locParseCtxt.filename);
-}
-
 DECLARE_LOCATION_PARSER(endlocation)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(endlocation) ");
 
@@ -967,12 +951,6 @@ DECLARE_LOCATION_PARSER(music)  {
 		_soundMan->setMusicFile(_tokens[1]);
 }
 
-DECLARE_LOCATION_PARSER(redundant)  {
-	debugC(7, kDebugParser, "LOCATION_PARSER(redundant) ");
-
-	warning("redundant '%s' line found in script '%s'", _tokens[0], _locParseCtxt.filename);
-}
-
 
 void Parallaction_ns::parseLocation(const char *filename) {
     debugC(1, kDebugParser, "parseLocation('%s')", filename);
@@ -1050,6 +1028,8 @@ typedef OpcodeImpl<Parallaction_ns> OpcodeV1;
 #define LOCATION_PARSER(sig) 	OpcodeV1(this, &Parallaction_ns::locParse_##sig)
 #define COMMAND_PARSER(sig) 	OpcodeV1(this, &Parallaction_ns::cmdParse_##sig)
 
+#define WARNING_PARSER(sig)		OpcodeV1(this, &Parallaction_br::warning_##sig)
+
 void Parallaction_ns::initParsers() {
 
 	static const OpcodeV1 op0[] = {
@@ -1081,7 +1061,7 @@ void Parallaction_ns::initParsers() {
 
 
 	static const OpcodeV1 op2[] = {
-		COMMAND_PARSER(invalid),
+		WARNING_PARSER(unexpected),
 		COMMAND_PARSER(flags),			// set
 		COMMAND_PARSER(flags),			// clear
 		COMMAND_PARSER(animation),		// start
@@ -1107,7 +1087,7 @@ void Parallaction_ns::initParsers() {
 
 
 	static const OpcodeV1 op4[] = {
-		LOCATION_PARSER(invalid),
+		WARNING_PARSER(unexpected),
 		LOCATION_PARSER(endlocation),
 		LOCATION_PARSER(location),
 		LOCATION_PARSER(disk),
@@ -1121,30 +1101,28 @@ void Parallaction_ns::initParsers() {
 		LOCATION_PARSER(comment),
 		LOCATION_PARSER(endcomment),
 		LOCATION_PARSER(sound),
-		LOCATION_PARSER(music),
-		LOCATION_PARSER(redundant)	// for redundant endanimation
+		LOCATION_PARSER(music)
 	};
 
 	for (i = 0; i < ARRAYSIZE(op4); i++)
 		_locationParsers.push_back(&op4[i]);
 
 	static const OpcodeV1 op5[] = {
-		ZONE_PARSER(invalid),
+		WARNING_PARSER(unexpected),
 		ZONE_PARSER(limits),
 		ZONE_PARSER(moveto),
 		ZONE_PARSER(type),
 		ZONE_PARSER(commands),
 		ZONE_PARSER(label),
 		ZONE_PARSER(flags),
-		ZONE_PARSER(endzone),
-		ZONE_PARSER(null)
+		ZONE_PARSER(endzone)
 	};
 
 	for (i = 0; i < ARRAYSIZE(op5); i++)
 		_locationZoneParsers.push_back(&op5[i]);
 
 	static const OpcodeV1 op6[] = {
-		ANIM_PARSER(invalid),
+		WARNING_PARSER(unexpected),
 		ANIM_PARSER(script),
 		ANIM_PARSER(commands),
 		ANIM_PARSER(type),
@@ -1195,12 +1173,6 @@ DECLARE_ZONE_PARSER(null) {
 	debugC(7, kDebugParser, "ZONE_PARSER(null) ");
 }
 
-
-DECLARE_ZONE_PARSER(invalid)  {
-	debugC(7, kDebugParser, "ZONE_PARSER(invalid) ");
-
-	error("unknown statement '%s' in zone %s", _tokens[0], _locParseCtxt.z->_label._text);
-}
 
 DECLARE_ZONE_PARSER(endzone)  {
 	debugC(7, kDebugParser, "ZONE_PARSER(endzone) ");
