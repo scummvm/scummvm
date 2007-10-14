@@ -233,7 +233,7 @@ void Parallaction_ns::loadProgram(Animation *a, const char *filename) {
 	_instParseCtxt.program = a->_program;
 
 	do {
-		fillBuffers(*script);
+		script->readLineToken();
 		parseInstruction(a, a->_program->_locals);
 	} while (!_instParseCtxt.end);
 
@@ -684,7 +684,7 @@ Dialogue *Parallaction_ns::parseDialogue(Script &script) {
 
 	Table forwards(20);
 
-	fillBuffers(script, true);
+	script.readLineToken(true);
 
 	while (scumm_stricmp(_tokens[0], "enddialogue")) {
 		if (scumm_stricmp(_tokens[0], "Question")) continue;
@@ -696,12 +696,12 @@ Dialogue *Parallaction_ns::parseDialogue(Script &script) {
 
 		question->_text = parseDialogueString(script);
 
-		fillBuffers(script, true);
+		script.readLineToken(true);
 		question->_mood = atoi(_tokens[0]);
 
 		uint16 numAnswers = 0;
 
-		fillBuffers(script, true);
+		script.readLineToken(true);
 		while (scumm_stricmp(_tokens[0], "endquestion")) {	// parse answers
 
 			Answer *answer = new Answer;
@@ -739,27 +739,27 @@ Dialogue *Parallaction_ns::parseDialogue(Script &script) {
 
 			answer->_text = parseDialogueString(script);
 
-			fillBuffers(script, true);
+			script.readLineToken(true);
 			answer->_mood = atoi(_tokens[0]);
 			answer->_following._name = parseDialogueString(script);
 
-			fillBuffers(script, true);
+			script.readLineToken(true);
 			if (!scumm_stricmp(_tokens[0], "commands")) {
 
 				parseCommands(script, answer->_commands);
 				_locParseCtxt.endcommands = false;
 				do {
-					fillBuffers(script, true);
+					script.readLineToken(true);
 					parseStatement();
 				} while (!_locParseCtxt.endcommands);
 
-				fillBuffers(script, true);
+				script.readLineToken(true);
 			}
 
 			numAnswers++;
 		}
 
-		fillBuffers(script, true);
+		script.readLineToken(true);
 		numQuestions++;
 
 	}
@@ -971,7 +971,7 @@ void Parallaction_ns::parseLocation(const char *filename) {
 
 	pushParserTables(&_locationParsers, _locationStmt);
 	do {
-		fillBuffers(*script, true);
+		script->readLineToken(true);
 		parseStatement();
 	} while (!_locParseCtxt.end);
 	popParserTables();
@@ -1000,7 +1000,7 @@ void Parallaction_ns::parseLocation(const char *filename) {
 void Parallaction_ns::parseWalkNodes(Script& script, WalkNodeList &list) {
 	debugC(5, kDebugParser, "parseWalkNodes()");
 
-	fillBuffers(script, true);
+	script.readLineToken(true);
 	while (scumm_stricmp(_tokens[0], "ENDNODES")) {
 
 		if (!scumm_stricmp(_tokens[0], "COORD")) {
@@ -1013,7 +1013,7 @@ void Parallaction_ns::parseWalkNodes(Script& script, WalkNodeList &list) {
 			list.push_front(v4);
 		}
 
-		fillBuffers(script, true);
+		script.readLineToken(true);
 	}
 
 	debugC(5, kDebugParser, "parseWalkNodes() done");
@@ -1246,7 +1246,7 @@ void Parallaction_ns::parseZone(Script &script, ZoneList &list, char *name) {
 
 	if (findZone(name)) {
 		while (scumm_stricmp(_tokens[0], "endzone")) {
-			fillBuffers(script, true);
+			script.readLineToken(true);
 		}
 		return;
 	}
@@ -1288,7 +1288,7 @@ void Parallaction_ns::parseGetData(Script &script, Zone *z) {
 			data->_icon = 4 + _objectsNames->lookup(_tokens[1]);
 		}
 
-		fillBuffers(script, true);
+		script.readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone"));
 
 	z->u.get = data;
@@ -1309,7 +1309,7 @@ void Parallaction_ns::parseExamineData(Script &script, Zone *z) {
 			data->_description = parseComment(script);
 		}
 
-		fillBuffers(script, true);
+		script.readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone"));
 
 	z->u.examine = data;
@@ -1354,7 +1354,7 @@ void Parallaction_ns::parseDoorData(Script &script, Zone *z) {
 			data->_startFrame = atoi(_tokens[3]);
 		}
 
-		fillBuffers(script, true);
+		script.readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone"));
 
 	z->u.door = data;
@@ -1378,7 +1378,7 @@ void Parallaction_ns::parseMergeData(Script &script, Zone *z) {
 			data->_obj3 = 4 + _objectsNames->lookup(_tokens[1]);
 		}
 
-		fillBuffers(script, true);
+		script.readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone"));
 
 	z->u.merge = data;
@@ -1399,7 +1399,7 @@ void Parallaction_ns::parseHearData(Script &script, Zone *z) {
 			data->_freq = atoi(_tokens[1]);
 		}
 
-		fillBuffers(script, true);
+		script.readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone"));
 
 	z->u.hear = data;
@@ -1419,7 +1419,7 @@ void Parallaction_ns::parseSpeakData(Script &script, Zone *z) {
 			data->_dialogue = parseDialogue(script);
 		}
 
-		fillBuffers(script, true);
+		script.readLineToken(true);
 	} while (scumm_stricmp(_tokens[0], "endzone"));
 
 	z->u.speak = data;
@@ -1457,7 +1457,7 @@ void Parallaction_ns::parseZoneTypeBlock(Script &script, Zone *z) {
 
 	default:
 		// eats up 'ENDZONE' line for unprocessed zone types
-		fillBuffers(script, true);
+		script.readLineToken(true);
 		break;
 	}
 

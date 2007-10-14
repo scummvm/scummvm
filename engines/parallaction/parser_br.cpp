@@ -258,7 +258,7 @@ DECLARE_LOCATION_PARSER(character)  {
 DECLARE_LOCATION_PARSER(ifchar)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(ifchar) ");
 
-	skip(_locParseCtxt.script, "ENDIF");
+	_locParseCtxt.script->skip("ENDIF");
 }
 
 
@@ -313,7 +313,7 @@ DECLARE_COMMAND_PARSER(ifchar)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(ifchar) ");
 
 	if (!scumm_stricmp(_char.getName(), _tokens[1]))
-		skip(_locParseCtxt.script, "endif");
+		_locParseCtxt.script->skip("endif");
 }
 
 

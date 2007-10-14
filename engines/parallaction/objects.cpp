@@ -399,10 +399,12 @@ Table* createTableFromStream(uint32 size, Common::SeekableReadStream &stream) {
 
 	Table *t = new Table(size);
 
-	fillBuffers(stream);
+	Script s(&stream, false);
+
+	s.readLineToken();
 	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
 		t->addData(_tokens[0]);
-		fillBuffers(stream);
+		s.readLineToken();
 	}
 
 	return t;
