@@ -331,12 +331,14 @@ void AmigaSoundMan::loadChannelData(const char *filename, Channel *ch) {
 		ch->header.volume = 255;
 		ch->data = res_amigaBeep;
 		ch->dataSize = 16;
+		ch->dispose = false;
 		return;
 	}
 
 	Common::ReadStream *stream = _vm->_disk->loadSound(filename);
 	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
 	decoder.decode();
+	ch->dispose = true;
 	delete stream;
 }
 
@@ -381,7 +383,7 @@ void AmigaSoundMan::stopSfx(uint channel) {
 		return;
 	}
 
-    if (_channels[channel].data) {
+    if (_channels[channel].dispose) {
         debugC(1, kDebugAudio, "AmigaSoundMan::stopSfx(%i)", channel);
         _mixer->stopHandle(_channels[channel].handle);
         free(_channels[channel].data);

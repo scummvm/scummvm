@@ -91,6 +91,7 @@ class AmigaSoundMan : public SoundMan {
 		Audio::Voice8Header	header;
 		byte				*data;
 		uint32				dataSize;
+		bool				dispose;
 		Audio::SoundHandle	handle;
 		uint32				flags;
 	} _channels[NUM_AMIGA_CHANNELS];
