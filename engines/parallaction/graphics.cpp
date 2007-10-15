@@ -239,6 +239,9 @@ void Gfx::setBlackPalette() {
 
 void Gfx::animatePalette() {
 
+	// avoid forcing setPalette when not needed
+	bool done = false;
+
 	for (uint16 i = 0; i < 4; i++) {
 
 		if ((_palettefx[i]._flags & 1) == 0) continue;		// animated palette
@@ -250,9 +253,13 @@ void Gfx::animatePalette() {
 		_palettefx[i]._timer = 0;							// reset timer
 
 		_palette.rotate(_palettefx[i]._first, _palettefx[i]._last, (_palettefx[i]._flags & 2) != 0);
+
+		done = true;
 	}
 
-	setPalette(_palette);
+	if (done) {
+		setPalette(_palette);
+	}
 
 	return;
 }
