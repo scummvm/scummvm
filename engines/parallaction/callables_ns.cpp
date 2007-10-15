@@ -359,7 +359,7 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 	Palette pal0(_gfx->_palette);
 	Palette pal1;
 
-	for (uint16 i = 0; i <= 32; i++) {
+	for (uint16 i = 0; i < 32; i++) {
 		pal0.setEntry(i, -1, 0, 0);			// leaves reds unchanged while zeroing other components
 	}
 
