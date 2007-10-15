@@ -318,20 +318,29 @@ AmigaSoundMan::~AmigaSoundMan() {
 	stopSfx(3);
 }
 
-static byte res_amigaBeep[] = {
-	0, 20, 40, 60, 80, 60, 40, 20, 0, 236, 216, 196, 176, 196, 216, 236
+#define AMIGABEEP_SIZE	16
+#define NUM_REPEATS		60
+
+static int8 res_amigaBeep[AMIGABEEP_SIZE] = {
+	0, 20, 40, 60, 80, 60, 40, 20, 0, -20, -40, -60, -80, -60, -40, -20
 };
+
 
 void AmigaSoundMan::loadChannelData(const char *filename, Channel *ch) {
 	if (!scumm_stricmp("beep", filename)) {
 		ch->header.oneShotHiSamples = 0;
 		ch->header.repeatHiSamples = 0;
 		ch->header.samplesPerHiCycle = 0;
-		ch->header.samplesPerSec = 12000;
-		ch->header.volume = 255;
-		ch->data = res_amigaBeep;
-		ch->dataSize = 16;
-		ch->dispose = false;
+		ch->header.samplesPerSec = 11934;
+		ch->header.volume = 160;
+		ch->data = new int8[AMIGABEEP_SIZE * NUM_REPEATS];
+		int8* odata = ch->data;
+		for (uint i = 0; i < NUM_REPEATS; i++) {
+			memcpy(odata, res_amigaBeep, AMIGABEEP_SIZE);
+			odata += AMIGABEEP_SIZE;
+		}
+		ch->dataSize = AMIGABEEP_SIZE * NUM_REPEATS;
+		ch->dispose = true;
 		return;
 	}
 

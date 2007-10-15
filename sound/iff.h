@@ -54,7 +54,7 @@ class A8SVXDecoder : public Common::IFFParser {
 
 protected:
 	Voice8Header  	&_header;
-	byte* 			&_data;
+	int8* 			&_data;
 	uint32			&_dataSize;
 
 protected:
@@ -62,7 +62,7 @@ protected:
 	void readBODY(Common::IFFChunk &chunk);
 
 public:
-	A8SVXDecoder(Common::ReadStream &input, Voice8Header &header, byte *&data, uint32 &dataSize);
+	A8SVXDecoder(Common::ReadStream &input, Voice8Header &header, int8 *&data, uint32 &dataSize);
 	void decode();
 };
 

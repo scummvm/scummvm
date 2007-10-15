@@ -89,7 +89,7 @@ class AmigaSoundMan : public SoundMan {
 
 	struct Channel {
 		Audio::Voice8Header	header;
-		byte				*data;
+		int8				*data;
 		uint32				dataSize;
 		bool				dispose;
 		Audio::SoundHandle	handle;
