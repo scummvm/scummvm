@@ -225,29 +225,28 @@ public:
 	 * 
 	 * @param results List to put the matches in.
 	 * @param fslist List of directories to search within.
-	 * @param filename Name of the file to look for.
+	 * @param pattern Pattern of the files to look for.
 	 * @param hidden Whether to search hidden files or not.
 	 * @param exhaustive Whether to continue searching after one match has been found.
 	 * 
 	 * @return true if matches could be found, false otherwise.
 	 */
-	virtual bool lookupFile(FSList &results, FSList &fslist, Common::String &filename, bool hidden, bool exhaustive) const;
+	virtual bool lookupFile(FSList &results, FSList &fslist, Common::String &pattern, bool hidden, bool exhaustive) const;
 	
 	/**
-	 * Searches recursively for a filename inside the given directory.
+	 * Searches recursively for a filename inside this directory.
 	 * 
 	 * The search is performed breadth-first, that is, the current directory entries
 	 * are scanned before going into subdirectories.
 	 * 
 	 * @param results List to put the matches in.
-	 * @param FilesystemNode Directory to search within.
-	 * @param filename Name of the file to look for.
+	 * @param pattern Pattern of the files to look for.
 	 * @param hidden Whether to search hidden files or not.
 	 * @param exhaustive Whether to continue searching after one match has been found.
 	 * 
 	 * @return true if matches could be found, false otherwise.
 	 */
-	virtual bool lookupFile(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const;
+	virtual bool lookupFile(FSList &results, Common::String &pattern, bool hidden, bool exhaustive) const;
 
 protected:
 	/**
@@ -263,14 +262,14 @@ protected:
 	 * are scanned before going into subdirectories.
 	 * 
 	 * @param results List to put the matches in.
-	 * @param FilesystemNode Directory to search within.
-	 * @param filename Name of the file to look for.
+	 * @param dir Directory to search within.
+	 * @param pattern Pattern of the files to look for.
 	 * @param hidden Whether to search hidden files or not.
 	 * @param exhaustive Whether to continue searching after one match has been found.
 	 * 
 	 * @return The number of matches found.
 	 */
-	int lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const;
+	int lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &pattern, bool hidden, bool exhaustive) const;
 };
 
 //} // End of namespace Common

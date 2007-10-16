@@ -119,7 +119,7 @@ Common::StringList DefaultSaveFileManager::listSavefiles(const char *regex) {
 	Common::StringList results;
 	Common::String search(regex);
 
-	if (savePath.lookupFile(savefiles, savePath, search, false, true)) {
+	if (savePath.lookupFile(savefiles, search, false, true)) {
 		for (FSList::const_iterator file = savefiles.begin(); file != savefiles.end(); file++) {
 			results.push_back(file->getPath());
 		}

@@ -171,36 +171,38 @@ bool FilesystemNode::isWritable() const {
 	return _realNode->isWritable();
 }
 
-bool FilesystemNode::lookupFile(FSList &results, FSList &fslist, Common::String &filename, bool hidden, bool exhaustive) const
+bool FilesystemNode::lookupFile(FSList &results, FSList &fslist, Common::String &pattern, bool hidden, bool exhaustive) const
 {
 	int matches = 0;
 
 	for (FSList::iterator entry = fslist.begin(); entry != fslist.end(); ++entry) {
 		if (entry->isDirectory()) {
-			matches += lookupFileRec(results, *entry, filename, hidden, exhaustive);
+			matches += lookupFileRec(results, *entry, pattern, hidden, exhaustive);
 		}
 	}
 
 	return ((matches > 0) ? true : false);
 }
 
-bool FilesystemNode::lookupFile(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
+bool FilesystemNode::lookupFile(FSList &results, Common::String &pattern, bool hidden, bool exhaustive) const
 {
 	int matches;
 
-	if (!dir.isDirectory())
+	if (!isDirectory())
 		return false;
 
-	matches = lookupFileRec(results, dir, filename, hidden, exhaustive);
+	FilesystemNode dir = *this;
+	matches = lookupFileRec(results, dir, pattern, hidden, exhaustive);
 
 	return ((matches > 0) ? true : false);
 }
 
-int FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &filename, bool hidden, bool exhaustive) const
+int FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &pattern, bool hidden, bool exhaustive) const
 {
 	FSList entries;
 	FSList children;
 	int matches = 0;
+	pattern.toUppercase();
 	dir.getChildren(entries, FilesystemNode::kListAll, hidden);
 	
 	//Breadth search (entries in the same level)
@@ -208,7 +210,9 @@ int FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::
 		if (entry->isDirectory()) {
 			children.push_back(*entry);
 		} else {
-			if (Common::matchString(entry->getName().c_str(), filename.c_str())) {
+			Common::String filename = entry->getName();
+			filename.toUppercase();
+			if (Common::matchString(filename.c_str(), pattern.c_str())) {
 				results.push_back(*entry);
 				matches++;
 
@@ -220,7 +224,7 @@ int FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::
 
 	//Depth search (entries in lower levels)
 	for (FSList::iterator child = children.begin(); child != children.end(); ++child) {
-		matches += lookupFileRec(results, *child, filename, hidden, exhaustive);
+		matches += lookupFileRec(results, *child, pattern, hidden, exhaustive);
 	}
 
 	return matches;
