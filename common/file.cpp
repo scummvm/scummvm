@@ -447,43 +447,37 @@ bool File::removeFile(const FilesystemNode &node){
 }
 
 bool File::exists(const String &filename) {
+	FilesystemNode* file;
+	String fname = filename;
+	
 	// First try to find the file via a FilesystemNode (in case an absolute
-	// path was passed). But we only use this to filter out directories.
-	FilesystemNode file(filename);
+	// path was passed). This is only used to filter out directories.
+	file = new FilesystemNode(fname);
+	if (file->exists())
+		return !file->isDirectory();
 	
-	// FIXME: Since (as stated in the comment above) the FilesystemNode
-	// creation just works for absolute paths and we use this to tell if
-	// a file exists in any of the setup paths, we cannot use
-	// return (!file.isDirectory() && file.exists());
-	// 
-	// I.e.:
-	// FilesystemNode("foofile"); would fail for most (even all?)
-	// implementations where the file 'foofile' does not exist in the CWD,
-	// so we can not rely on FilesystemNode::exists, which would return false.
-	if (file.exists())
-		return !file.isDirectory();
+	// See if the file is already mapped
+	if (_filesMap && _filesMap->contains(fname)) {
+		fname = (*_filesMap)[fname];
+		file = new FilesystemNode(fname);
+		
+		if (file->exists())
+			return !file->isDirectory();
+	}
 	
-	//***DEPRECATED COMMENTS BELOW, LEFT FOR DISCUSSION***
-	// Next, try to locate the file by *opening* it in read mode. This has
-	// multiple effects:
-	// 1) It takes _filesMap and _defaultDirectories into consideration -> good
-	// 2) It returns true if and only if File::open is possible on the file -> good
-	// 3) If this method is misused, it could lead to an fopen call on a directory
-	//    -> bad!
-	// 4) It also checks whether we can read the file. This is not 100%
-	//    desirable; after all, even when we can't read it, the file is present.
-	//    Since this method is often used to check whether a file should be
-	//    re-created, that's not nice.
-	//
-	// TODO/FIXME: We should clarify the semantics of this method, and then
-	// maybe should introduce several new methods:
-	//   fileExistsAndReadable
-	//   fileExists
-	//   fileExistsAtPath
-	//   dirExists
-	//   dirExistsAtPath
-	// or maybe only 1-2 methods which take some params :-).
+	// Try all default directories
+	if (_defaultDirectories) {
+		StringIntMap::const_iterator i(_defaultDirectories->begin());
+		for (; i != _defaultDirectories->end(); ++i) {
+			fname = i->_key+fname;
+			file = new FilesystemNode(fname);
+			
+			if(file->exists())
+				return !file->isDirectory();
+		}
+	}
 	
+	//Try opening the file inside the local directory as a last resort	
 	File tmp;
 	return tmp.open(filename, kFileReadMode);
 }
