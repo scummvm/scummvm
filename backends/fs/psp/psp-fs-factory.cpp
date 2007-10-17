@@ -23,7 +23,7 @@
  */
 
 #include "backends/fs/psp/psp-fs-factory.h"
-#include "backends/fs/psp/psp_fs.cpp"
+#include "backends/fs/psp/psp-fs.cpp"
 
 DECLARE_SINGLETON(PSPFilesystemFactory);
 
