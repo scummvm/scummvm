@@ -44,6 +44,12 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_debugger = 0;
 	_screen = 0;
 	_text = 0;
+
+	_pageBuffer1 = _pageBuffer2 = 0;
+	_seqProcessedString = 0;
+	_activeWSA = 0;
+	_activeText = 0;
+	_seqWsa = 0;
 	
 	_gamePlayBuffer = 0;
 	_cCodeBuffer = _optionsBuffer = _chapterBuffer = 0;
@@ -83,6 +89,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
+	seq_uninit();
+
 	delete [] _mouseSHPBuf;
 	delete _screen;
 	delete _text;
@@ -116,10 +124,14 @@ int KyraEngine_v2::init() {
 	_screen->setAnimBlockPtr(3504);
 	_screen->setScreenDim(0);
 	
-	assert(_introStringsSize == 21);
-	for (int i = 0; i < 21; i++)
-		_introStringsDuration[i] = strlen(_introStrings[i]) * 8;
+	for (int i = 0; i < 33; i++)
+		_sequenceStringsDuration[i] = strlen(_sequenceStrings[i]) * 8;
 	
+	_abortIntroFlag = false;
+
+	_sequenceSoundList = (const char * const *) _sequenceSoundListPC;
+	_sequenceSoundListSize = _sequenceSoundListPCSize;
+
 	// No mouse display in demo
 	if (_flags.isDemo)
 		return 0;
@@ -136,7 +148,11 @@ int KyraEngine_v2::init() {
 	return 0;
 }
 
-int KyraEngine_v2::go() {	
+int KyraEngine_v2::go() {
+	// TODO move this to a better location, since for ingame we setup
+	// our soundfile list in KyraEngine_v2::startup for example
+	// so this should be just used in the sequenceplayer code,
+	// so maybe move this to KyraEngine_v2::seq_init
 	if (_flags.isDemo) {
 		static const char *soundFileList[] = {
 			"K2_DEMO",
@@ -157,45 +173,17 @@ int KyraEngine_v2::go() {
 	_res->unloadPakFile("OUTFARM.PAK");
 	_res->unloadPakFile("FLYTRAP.PAK");
 
-	//seq_playSequences(kSequenceVirgin, kSequenceWestwood);
-	mainMenu();
+	seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
+
+	if (_menuChoice == 1) {
+		startup();
+		runLoop();
+		cleanup();
+	} else if (_menuChoice == 3) {
+		// Load Savegame
+	}
 
 	return 0;
-}
-
-void KyraEngine_v2::mainMenu() {
-	bool running = true;
-
-	while (running && !_quitFlag) {
-		seq_playSequences(kSequenceTitle);
-		_screen->showMouse();
-		
-		switch (gui_handleMainMenu()) {
-			case 0:
-				_screen->showMouse();
-
-				// load just the pak files needed for ingame
-				_res->unloadAllPakFiles();
-				_res->loadFileList("FILEDATA.FDT");
-
-				startup();
-				runLoop();
-				cleanup();
-				running = false;
-				break;
-			case 1:
-				seq_playSequences(kSequenceOverview, kSequenceZanFaun); 
-				break;
-			case 2:
-				break;
-			case 3:
-				running = false;
-				break;
-			default:
-				break;
-		}
-		_screen->hideMouse();
-	}
 }
 
 void KyraEngine_v2::startup() {
@@ -1707,4 +1695,5 @@ void KyraEngine_v2::setupOpcodeTable() {
 }
 
 } // end of namespace Kyra
+
 

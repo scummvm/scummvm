@@ -398,6 +398,13 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	_frameOffsTable = new uint32[_numFrames + 2];
 	_frameOffsTable[0] = 0;
 	uint32 frameDataOffs = READ_LE_UINT32(wsaData); wsaData += 4;
+	bool firstFrame = true;
+	if (frameDataOffs == 0) {
+		firstFrame = false;
+		frameDataOffs = READ_LE_UINT32(wsaData);
+		_flags |= WF_NO_FIRST_FRAME;
+	}
+
 	for (int i = 1; i < _numFrames + 2; ++i) {
 		_frameOffsTable[i] = READ_LE_UINT32(wsaData) - frameDataOffs;
 		wsaData += 4;
@@ -412,7 +419,8 @@ int WSAMovieV2::open(const char *filename, int unk1, uint8 *palBuf) {
 	memcpy(_frameData, wsaData, frameDataSize);
 
 	// decode first frame
-	Screen::decodeFrame4(_frameData, _deltaBuffer, _deltaBufferSize);
+	if (firstFrame)
+		Screen::decodeFrame4(_frameData, _deltaBuffer, _deltaBufferSize);
 
 	delete [] p;
 	_opened = true;
@@ -483,11 +491,11 @@ void WSAMovieV2::displayFrame(int frameNum, ...) {
 	if (_flags & WF_OFFSCREEN_DECODE) {
 		if (_oldOff) {
 			// Kyrandia 1 offscreen buffer -> screen copy method of Kyrandia 1, needs to be present
-			// for our intro code that doesn't supply all the needed parameters for the Kyrandia 2 method
+			// for our Kyrandia 3 menu code
 			_vm->screen()->copyBlockToPage(_drawPage, _x, _y, _width, _height, _offscreenBuffer);
 		} else {
 			// This is the offscreen buffer -> screen copy method of Kyrandia 2 as it's implemented
-			// in the original, we use this in game
+			// in the original
 			Screen_v2 *screen = _vm->screen_v2();
 			int pageBackUp = screen->_curPage;
 			screen->_curPage = _drawPage;
@@ -511,4 +519,5 @@ void WSAMovieV2::displayFrame(int frameNum, ...) {
 }
 
 } // end of namespace Kyra
+
 

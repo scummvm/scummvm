@@ -63,10 +63,12 @@ int KyraEngine_v2::gui_handleMainMenu() {
 	int charWidthBackUp = _screen->_charWidth;
 	
 	_screen->_charWidth = -2;
+
 	if (_flags.gameID == GI_KYRA2)
 		_screen->setScreenDim(11);
 	else
 		_screen->setScreenDim(3);
+
 	int backUpX = _screen->_curDim->sx;
 	int backUpY = _screen->_curDim->sy;
 	int backUpWidth = _screen->_curDim->w;
@@ -101,14 +103,21 @@ int KyraEngine_v2::gui_handleMainMenu() {
 			int item = (mouse.y - menuRect.top) / fh;
 
 			if (item != selected) {
-				gui_printString(strings[selected], textPos, menuRect.top + selected * fh, 0x80, 0, 5);
-				gui_printString(strings[item], textPos, menuRect.top + item * fh, 0xFF, 0, 5);
+				gui_printString(strings[selected], textPos, menuRect.top + selected * fh, (_flags.gameID == GI_KYRA3) ? 0x80 : 0xd7, 0, 5);
+				gui_printString(strings[item], textPos, menuRect.top + item * fh, (_flags.gameID == GI_KYRA3) ? 0xFF : 0xd6, 0, 5);
 
 				selected = item;
 			}
 
 			if (mousePressed) {
-				// TODO: Flash the text
+				for (int i = 0; i < 3; i++) {
+					gui_printString(strings[selected], textPos, menuRect.top + selected * fh, (_flags.gameID == GI_KYRA3) ? 0x80 : 0xd7, 0, 5);
+					_screen->updateScreen();
+					_system->delayMillis(50);
+					gui_printString(strings[selected], textPos, menuRect.top + selected * fh, (_flags.gameID == GI_KYRA3) ? 0xFF : 0xd6, 0, 5);
+					_screen->updateScreen();
+					_system->delayMillis(50);
+				}
 				command = item;
 				break;
 			}
@@ -126,10 +135,17 @@ int KyraEngine_v2::gui_handleMainMenu() {
 	return command;
 }
 
-void KyraEngine_v2::gui_drawMainMenu(const char * const *strings, int select) {
+void KyraEngine_v2::gui_drawMainMenu(const char *const *strings, int select) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::gui_drawMainMenu(%p)", (const void*)strings);
-	static const uint16 menuTable[] = { 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF, 0x00, 0x01, 0x02, 0x03 };
-	
+	static const uint16 menuTable2[] = { 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6, 0x00, 0x01, 0x02, 0x03 };
+	static const uint16 menuTable3[] = { 0x01, 0x04, 0x0C, 0x04, 0x00, 0x80, 0xFF, 0x00, 0x01, 0x02, 0x03 };
+	const uint16 *menuTable;
+
+	if (_flags.gameID == GI_KYRA3)
+		menuTable = menuTable3;
+	else
+		menuTable = menuTable2;
+
 	int top = _screen->_curDim->sy;
 	top += menuTable[1];
 	
@@ -143,8 +159,8 @@ void KyraEngine_v2::gui_drawMainMenu(const char * const *strings, int select) {
 void KyraEngine_v2::gui_drawMainBox(int x, int y, int w, int h, int fill) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::gui_drawMainBox(%d, %d, %d, %d, %d)", x, y, w, h, fill);
 	static const uint8 kyra3ColorTable[] = { 0x16, 0x19, 0x1A, 0x16 };
-	static const uint8 kyra2ColorTable[] = { 0x0, 0x19, 0x28, 0xc8 };
-	
+	static const uint8 kyra2ColorTable[] = {0xd8, 0xda, 0xd9, 0xd8 };
+
 	const uint8 *colorTable;
 	if (_flags.gameID == GI_KYRA3)
 		colorTable = kyra3ColorTable;
@@ -196,3 +212,4 @@ void KyraEngine_v2::gui_printString(const char *format, int x, int y, int col1, 
 }
 
 } // end of namespace Kyra
+

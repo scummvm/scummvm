@@ -1154,7 +1154,7 @@ const char *KyraEngine_v2::_mainMenuStrings[] = {
 
 // kyra 2 static res
 
-const char *KyraEngine_v2::_introStrings[] = {
+const char *KyraEngine_v2::_sequenceStrings[] = {
 	"Kyrandia is disappearing!",
 	"Rock by rock...",
 	"...and tree by tree.",
@@ -1175,12 +1175,98 @@ const char *KyraEngine_v2::_introStrings[] = {
 	" DUMMY STRING... ",
 	"If they think I'm going to walk all the way down there, they're nuts!",
 	" DUMMY STRING... ",
-	"Hurry up faun!"
+	" DUMMY STRING... ",
+	"Hurry up Faun!",
+
+	"Boy, that was a close call!",
+	"You said it pal. I, for one, am never going hunting again!",
+	"Ribbit.",
+	"How many times do I have to tell you? You're a toad.",
+	"Oh no! We're out of cheese!",
+	"Let's try this earwax. It's orange.",
+	"Mommy, when do I get the ivy?",
+	"Get out of here, shoo!",
+	"You cut, and I'll choose.",
+	"No. You cut and I'll choose.",
+	"I still say it was derivative drivel.",
+	"Aw, you still wouldn't recognize iambic pentameter if it bit you on the butt!",
+
+	"Executive Producer",
+	"Brett W. Sperry",
+	"Designed & Directed by",
+	"Rick Gush",
+	"Lead Programmer",
+	"Michael Legg",
+	"Art Management",
+	"Louis Castle",
+	"Joseph B. Hewitt IV",
+	"Lead Artist",
+	"Rick Parks",
+	"Additional Coding by",
+	"Philip W. Gorrow",
+	"Matt Collins",
+	"Mark McCubbin",
+	"Artists",
+	"Cameron Chun",
+	"Cary Averett",
+	"Cindy Chinn",
+	"Elie Arabian",
+	"Fei Cheng",
+	"Ferby Miguel",
+	"Frank Mendeola",
+	"Jack Martin",
+	"Jerry Moore",
+	"",
+	"Judith Peterson",
+	"Larry Miller",
+	"Lenny Lee",
+	"Louise Sandoval",
+	"Ren Olsen",
+	"Music & Sounds by",
+	"Paul Mudra",
+	"Frank Klepacki",
+	"Dwight Okahara",
+	"Pat Collins",
+	"Qualilty Assurance by",
+	"Glenn Sperry",
+	"Michael Lightner",
+	"William Foster",
+	"Jesse Clemit",
+	"Jeff Fillhaber",
+	"Manual, Package Design",
+	"& Fulfillment",
+	"Eydie Laramore",
+	"Lisa Marcinko",
+	"Lauren Rifkin",
+	"Congratulations!",
+	"Thank you for playing The Hand of Fate!",
+	"Guest Coding",
+	"Producer Liaison",
+	"Scott Duckett",
+	"Irvine Testers",
+	"Chris McFarland",
+	"Paul Moore",
+	"Chad Soares",
+	"Jared Brinkley",
+	"Jon Willliams",
+	"Chris Toft",
+	"Chris's Hair by",
+	"Cumulo Nimbus",
+	"Load a game",
+	"Introduction",
+	"Start a new game",
+	"Exit the game",
+	"Special Thanks to",
+	"Sake Joe Bostic-san",
+	"Tim Fritz",
+	"Kenny Dunne",
+	"Yukio Sekiguchi (Japan)",
+	"Takeshi Abo (Japan)"
 };
 
-const int KyraEngine_v2::_introStringsSize = ARRAYSIZE(KyraEngine_v2::_introStrings);
+const int KyraEngine_v2::_sequenceStringsSize = ARRAYSIZE(KyraEngine_v2::_sequenceStrings);
 
-const char *KyraEngine_v2::_introSoundList[] = {
+const char *KyraEngine_v2::_sequenceSoundListPC[] = {
 	"eintro1",
 	"eintro2",
 	"eintro3",
@@ -1198,6 +1284,7 @@ const char *KyraEngine_v2::_introSoundList[] = {
 	"0000130",
 	"0000180",
 	"0000160",
+
 	"asong",
 	"crowcaw",
 	"eyerub2",
@@ -1208,7 +1295,7 @@ const char *KyraEngine_v2::_introSoundList[] = {
 	"lambmom3",
 	"lambkid1",
 	"thunder2",
-	"tunder3",
+	"thunder3",
 	"wind6",
 	"h2odrop2",
 	"gasleak",
@@ -1230,7 +1317,9 @@ const char *KyraEngine_v2::_introSoundList[] = {
 	"theend"
 };
 
-const int KyraEngine_v2::_introSoundListSize = ARRAYSIZE(KyraEngine_v2::_introSoundList);
+const int KyraEngine_v2::_sequenceSoundListPCSize = ARRAYSIZE(KyraEngine_v2::_sequenceSoundListPC);
+
+const uint8 KyraEngine_v2::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
 
 const char *KyraEngine_v2::_languageExtension[] = {
 	"ENG",
@@ -1394,4 +1483,5 @@ const char *KyraEngine_v3::_languageExtension[] = {
 const int KyraEngine_v3::_languageExtensionSize = ARRAYSIZE(KyraEngine_v3::_languageExtension);
 
 } // End of namespace Kyra
+
 

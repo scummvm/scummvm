@@ -2644,8 +2644,9 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 		return;
 	}
 
+	const char *ext = filename + strlen(filename) - 3;
 	uint8 compType = srcData[2];
-	uint32 imgSize = READ_LE_UINT32(srcData + 4);
+	uint32 imgSize = scumm_stricmp(ext, "CMP") ? READ_LE_UINT32(srcData + 4) : READ_LE_UINT16(srcData);
 	uint16 palSize = READ_LE_UINT16(srcData + 8);
 
 	if (palData && palSize) {

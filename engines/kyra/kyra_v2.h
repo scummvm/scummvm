@@ -36,13 +36,42 @@ namespace Kyra {
 
 enum kSequences {
 	kSequenceVirgin = 0,
-	kSequenceWestwood = 1,
-	kSequenceTitle = 2,
-	kSequenceOverview = 3,
-	kSequenceLibrary = 4,
-	kSequenceHand = 5,
-	kSequencePoint = 6,
-	kSequenceZanFaun = 7
+	kSequenceWestwood,
+	kSequenceTitle,
+	kSequenceOverview,
+	kSequenceLibrary,
+	kSequenceHand,
+	kSequencePoint,
+	kSequenceZanfaun,
+
+	kSequenceFunters,
+	kSequenceFerb,
+	kSequenceFish,
+	kSequenceFheep,
+	kSequenceFarmer,
+	kSequenceFuards,
+	kSequenceFirates,
+	kSequenceFrash,
+
+	kSequenceArraySize
+};
+
+enum kNestedSequences {
+	kSequenceFiggle = 0,
+	kSequenceOver1,
+	kSequenceOver2,
+	kSequenceForest,
+	kSequenceDragon,
+	kSequenceDarm,
+	kSequenceLibrary2,
+	kSequenceLibrary3,
+	kSequenceMarco,
+	kSequenceHand1a,
+	kSequenceHand1b,
+	kSequenceHand1c,
+	kSequenceHand2,
+	kSequenceHand3,
+	kSequenceHand4
 };
 
 class WSAMovieV2;
@@ -56,34 +85,62 @@ struct SequenceControl {
 };
 
 struct ActiveWSA {
+	int16 flags;
 	WSAMovieV2 *movie;
-	uint16 currentFrame;
+	uint16 startFrame;
 	uint16 endFrame;
 	uint16 frameDelay;
+	int (KyraEngine_v2::*callback)(WSAMovieV2*, int, int, int);
 	uint32 nextFrame;
-	void (KyraEngine_v2::*callback)(int);
+	uint16 currentFrame;
+	uint16 lastFrame;
+	uint16 x;
+	uint16 y;	
 	const SequenceControl *control;
+	uint16 startupCommand;
+	uint16 finalCommand;
 };
 
-struct ActiveChat {
+struct ActiveText {
 	uint16 strIndex;
 	uint16 x;
 	uint16 y;
 	int duration;
-	uint16 field_8;
-	uint16 startTime;
-	uint16 field_E;
+	uint16 width;
+	uint32 startTime;
+	int16 textcolor;
 };
 
 struct Sequence {
-	uint8 type;
-	const char *filename;
-	int (KyraEngine_v2::*callback)(int);
-	uint8 frameDelay;
+	uint16 flags;
+	const char * wsaFile;
+	const char * cpsFile;
+	uint8 startupCommand;
+	uint8 finalCommand;
+	int16 stringIndex1;
+	int16 stringIndex2;
+	uint16 startFrame;
+	uint16 numFrames;
+	uint16 frameDelay;
+	uint16 xPos;
+	uint16 yPos;
+	int (KyraEngine_v2::*callback)(WSAMovieV2*, int, int, int);
 	uint16 duration;
-	uint8 numFrames;
-	bool timeOut;
-	bool fadeOut;
+};
+
+struct NestedSequence {
+	uint16 flags;
+	const char * wsaFile;
+	uint16 startframe;
+	uint16 endFrame;
+	uint16 frameDelay;
+	int (KyraEngine_v2::*callback)(WSAMovieV2*, int, int, int);
+	uint16 x;
+	uint16 y;
+	const SequenceControl * wsaControl;
+	uint16 startupCommand;
+	uint16 finalCommand;
+	uint16 unk1;
 };
 
 class KyraEngine_v2 : public KyraEngine {
@@ -105,36 +162,57 @@ protected:
 	virtual void gui_initMainMenu() {}
 	int gui_handleMainMenu();
 	virtual void gui_updateMainMenuAnimation();
-	void gui_drawMainMenu(const char * const *strings, int select);
+	void gui_drawMainMenu(const char *const *strings, int select);
 	void gui_drawMainBox(int x, int y, int w, int h, int fill);
 	bool gui_mainMenuGetInput();
 	
 	void gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...);
 
-	// intro
+	// intro/outro
 	void seq_playSequences(int startSeq, int endSeq = -1);
-	int seq_introWestwood(int seqNum);
-	int seq_introTitle(int seqNum);
-	int seq_introOverview(int seqNum);
-	int seq_introLibrary(int seqNum);	
-	int seq_introHand(int seqNum);
-	int seq_introPoint(int seqNum);
-	int seq_introZanFaun(int seqNum);
 
-	void seq_introOverviewOver1(int currentFrame);
-	void seq_introOverviewForest(int currentFrame);	
-	void seq_introOverviewDragon(int currentFrame);
-	void seq_loadWSA(int wsaNum, const char *filename, int frameDelay, void (KyraEngine_v2::*callback)(int) = 0, 
-					 const SequenceControl *control = 0 );
+	int seq_introWestwood(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introTitle(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introOverview(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introLibrary(WSAMovieV2 *wsaObj, int x, int y, int frm);	
+	int seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introPoint(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introZanfaun(WSAMovieV2 *wsaObj, int x, int y, int frm);
+
+	int seq_introOver1(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introOver2(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introForest(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introDragon(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introDarm(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introLibrary2(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introMarco(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introHand1a(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introHand1b(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introHand1c(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introHand2(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_introHand3(WSAMovieV2 *wsaObj, int x, int y, int frm);
+
+	void seq_sequenceCommand(int command);
+	void seq_loadNestedSequence(int wsaNum, int seqNum);
+	void seq_nestedSequenceFrame(int command, int wsaNum);
+	void seq_animatedSubFrame(int srcPage, int dstPage, int delaytime,
+		int steps, int x, int y, int w, int h, int openClose, int directionFlags);
+	bool seq_processNextSubFrame(int wsaNum);
+	void seq_resetActiveWSA(int wsaNum);
 	void seq_unloadWSA(int wsaNum);
-	void seq_playWSAs();
-	void seq_showChats();
-	void seq_playIntroChat(uint8 chatNum);
-	void seq_resetAllChatEntries();
-	void seq_waitForChatsToFinish();
-	void seq_setChatEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 unk1);
+	void seq_processWSAs();
+	void seq_cmpFadeFrame(const char *cmpFile);
+	
+	void seq_playTalkText(uint8 chatNum);
+	void seq_resetAllTextEntries();
+	uint32 seq_activeTextsTimeLeft();
+	void seq_waitForTextsTimeout();
+	int seq_setTextEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 width);
+	void seq_processText();
+	char *seq_preprocessString(const char *str, int width);
 
-	void mainMenu();
+	void seq_init();
+	void seq_uninit();
 
 	int init();
 	int go();
@@ -143,8 +221,6 @@ protected:
 	TextDisplayer_v2 *_text;
 	Debugger_v2 *_debugger;
 	
-	ActiveWSA *_activeWSA;
-	ActiveChat *_activeChat;
 	uint8 *_mouseSHPBuf;
 
 	static const char *_dosSoundFileList[];
@@ -696,9 +772,48 @@ protected:
 	int _unk3, _unk4, _unk5;
 	bool _unkSceneScreenFlag1;
 	bool _unkHandleSceneChangeFlag;
+
+	// sequence player
+	ActiveWSA *_activeWSA;
+	ActiveText *_activeText;
+
+	const char *const *_sequenceSoundList;
+	int _sequenceSoundListSize;
+	
+	static const char *_sequenceSoundListPC[];
+	static const int _sequenceSoundListPCSize;
+	static const char *_sequenceStrings[];
+	static const int _sequenceStringsSize;
+	
+	int _sequenceStringsDuration[33];
+
+	uint8 *_pageBuffer1;
+	uint8 *_pageBuffer2;
+	static const uint8 _seqTextColorPresets[];
+	char *_seqProcessedString;
+	WSAMovieV2 *_seqWsa;
+
+	bool _abortIntroFlag;
+	int _menuChoice;
+
+	uint32 _seqFrameDelay;
+	uint32 _seqEndTime;
+	int _seqFrameCounter;
+	bool _seqSubframePlaying;
+	uint8 _seqTextColor[2];
+	
+	static const Sequence _sequences[];
+	static const NestedSequence _nSequences[];
+	static const SequenceControl _wsaControlLibrary[];
+	static const SequenceControl _wsaControlHand1b[];
+	static const SequenceControl _wsaControlHand1c[];
+	static const SequenceControl _wsaControlHand2[];
+	static const SequenceControl _wsaControlHand3[];
+	static const SequenceControl _wsaControlHand4[];
 };
 
 } // end of namespace Kyra
 
 #endif
+
 
