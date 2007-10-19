@@ -381,6 +381,12 @@ void Table::clear() {
 	_used = 0;
 }
 
+const char *Table::item(uint index) const {
+	assert(index < _used);
+	return _data[index];
+}
+
+
 FixedTable::FixedTable(uint32 size, uint32 fixed) : Table(size), _numFixed(fixed) {
 }
 

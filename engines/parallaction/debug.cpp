@@ -67,7 +67,7 @@ Debugger::Debugger(Parallaction *vm)
 	DCmd_Register("jobs",     WRAP_METHOD(Debugger, Cmd_Jobs));
 	DCmd_Register("zones",     WRAP_METHOD(Debugger, Cmd_Zones));
 	DCmd_Register("animations",     WRAP_METHOD(Debugger, Cmd_Animations));
-
+	DCmd_Register("localflags", WRAP_METHOD(Debugger, Cmd_LocalFlags));
 
 }
 
@@ -108,6 +108,25 @@ bool Debugger::Cmd_Location(int argc, const char **argv) {
 	return true;
 }
 
+
+bool Debugger::Cmd_LocalFlags(int argc, const char **argv) {
+
+	JobList::iterator b = _vm->_jobs.begin();
+	JobList::iterator e = _vm->_jobs.end();
+
+	uint32 flags = _vm->_localFlags[_vm->_currentLocationIndex];
+
+	DebugPrintf("+------------------------------+---------+\n"
+				"| flag name                    |  value  |\n"
+				"+------------------------------+---------+\n");
+	for (uint i = 0; i < _vm->_localFlagNames->count(); i++) {
+		const char *value = ((flags & (1 << i)) == 0) ? "OFF" : "ON";
+		DebugPrintf("|%-30s|%   -6s|\n", _vm->_localFlagNames->item(i),  value);
+	}
+	DebugPrintf("+------------------------------+---------+\n");
+
+	return true;
+}
 
 bool Debugger::Cmd_Give(int argc, const char **argv) {
 

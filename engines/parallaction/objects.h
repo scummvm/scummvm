@@ -442,6 +442,9 @@ public:
 		notFound = 0
 	};
 
+	uint count() const { return _used; }
+	const char *item(uint index) const;
+
 	virtual void addData(const char* s);
 	virtual void clear();
 	virtual uint16 lookup(const char* s);
