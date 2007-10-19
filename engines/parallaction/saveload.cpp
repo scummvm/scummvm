@@ -123,6 +123,8 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	_engineFlags &= ~kEngineQuit;
 
 	_numLocations = atoi(s);
+	memset(_localFlags, 0, sizeof(_localFlags));
+	memset(_locationNames, 0, sizeof(_locationNames));
 
 	uint16 _si;
 	for (_si = 0; _si < _numLocations; _si++) {
@@ -134,7 +136,6 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 		f->readLine(s, 15);
 		_localFlags[_si] = atoi(s);
 	}
-	_locationNames[_si][0] = '\0';
 
 	cleanInventory(false);
 	ItemName name;
