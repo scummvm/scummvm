@@ -1094,14 +1094,14 @@ void Game_v2::collisionsBlock(void) {
 						_vm->_util->prepareStr(_collStr);
 
 					if (strcmp(_tempStr, _collStr) == 0) {
-						VAR(17)++;
+						WRITE_VAR(17, VAR(17) + 1);
 						WRITE_VAR(17 + var_26, 1);
 						break;
 					}
 				} while (READ_LE_UINT16(descArray[var_24].ptr - 2) > pos);
 				collStackPos++;
 			} else {
-				VAR(17 + var_26) = 2;
+				WRITE_VAR(17 + var_26, 2);
 			}
 			var_24++;
 			var_26++;
