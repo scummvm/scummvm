@@ -121,7 +121,7 @@ bool Debugger::Cmd_LocalFlags(int argc, const char **argv) {
 				"+------------------------------+---------+\n");
 	for (uint i = 0; i < _vm->_localFlagNames->count(); i++) {
 		const char *value = ((flags & (1 << i)) == 0) ? "OFF" : "ON";
-		DebugPrintf("|%-30s|%   -6s|\n", _vm->_localFlagNames->item(i),  value);
+		DebugPrintf("|%-30s|   %-6s|\n", _vm->_localFlagNames->item(i),  value);
 	}
 	DebugPrintf("+------------------------------+---------+\n");
 
