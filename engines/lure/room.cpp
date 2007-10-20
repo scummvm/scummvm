@@ -39,10 +39,8 @@ RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer):
 	byte *screenData = data().data();
 	int cellY;
 
-	// Reset all the cells to false
-	for (cellY = 0; cellY < FULL_VERT_RECTS; ++cellY) 
-		for (int cellX = 0; cellX < FULL_HORIZ_RECTS; ++cellX) 
-			_cells[cellY][cellX] = false;
+	// Reset all the cells to unused
+	Common::set_to((bool *) _cells, (bool *) _cells + GRID_SIZE, false);
 
 	// Loop through each cell of the screen
 	for (cellY = 0; cellY < NUM_VERT_RECTS; ++cellY) {
@@ -55,7 +53,7 @@ RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer):
 				// Check the cell
 				for (int yP = 0; yP < RECT_SIZE; ++yP) {
 					if (hasPixels) break;
-					byte *linePos = screenData + (cellY * RECT_SIZE + yP + 8) 
+					byte *linePos = screenData + (cellY * RECT_SIZE + yP + MENUBAR_Y_SIZE) 
 						* FULL_SCREEN_WIDTH + (cellX * RECT_SIZE);
 
 					for (int xP = 0; xP < RECT_SIZE; ++xP) {
@@ -267,27 +265,6 @@ CursorType Room::checkRoomExits() {
 	return CURSOR_ARROW;
 }
 
-void Room::flagCoveredCells(Hotspot &h) {
-	int16 yStart = (h.y() - MENUBAR_Y_SIZE) / RECT_SIZE;
-	int16 yEnd = (h.y() + h.heightCopy() - 1 - MENUBAR_Y_SIZE) / RECT_SIZE;
-	int16 numY = yEnd - yStart + 1;
-	int16 xStart = h.x() / RECT_SIZE;
-	int16 xEnd = (h.x() + h.width() - 1) / RECT_SIZE;
-	int16 numX = xEnd - xStart + 1;
-
-	int index = yStart * NUM_HORIZ_RECTS + xStart;
-
-	for (int16 yP = 0; yP < numY; ++yP) {
-		for (int16 xP = 0; xP < numX; ++xP) {
-			int indexPos = index + xP;
-			if ((indexPos < 0) || (indexPos >= NUM_HORIZ_RECTS*NUM_VERT_RECTS)) 
-				continue;
-			_cells[index+xP] = true;
-		}
-		index += NUM_HORIZ_RECTS;
-	}
-}
-
 void Room::addAnimation(Hotspot &h) {
 	Surface &s = _screen.screen();
 	char buffer[10];
@@ -303,8 +280,8 @@ void Room::addAnimation(Hotspot &h) {
 }
 
 void Room::addLayers(Hotspot &h) {
-	int16 hsX = h.x() + (4 * RECT_SIZE);
-	int16 hsY = h.y() + (4 * RECT_SIZE) - MENUBAR_Y_SIZE;
+	int16 hsX = h.x() + (NUM_EDGE_RECTS * RECT_SIZE);
+	int16 hsY = h.y() + (NUM_EDGE_RECTS * RECT_SIZE) - MENUBAR_Y_SIZE;
 
 	int16 xStart = hsX / RECT_SIZE;
 	int16 xEnd = (hsX + h.width()) / RECT_SIZE;
@@ -317,17 +294,18 @@ void Room::addLayers(Hotspot &h) {
 		return;
 
 	for (int16 xCtr = 0; xCtr < numX; ++xCtr, ++xStart) {
-		int16 xs = xStart - 4;
+		int16 xs = xStart - NUM_EDGE_RECTS;
 		if (xs < 0) continue;
 
 		// Check foreground layers for an occupied one
 
-		int layerNum = _numLayers - 1;
-		while ((layerNum > 0) && !_layers[layerNum]->isOccupied(xStart, yEnd)) 
-			--layerNum;
-		if (layerNum == 0) continue;
+		int layerNum = 1;
+		while ((layerNum < 4) && (_layers[layerNum] != NULL) &&
+				!_layers[layerNum]->isOccupied(xStart, yEnd)) 
+			++layerNum;
+		if ((layerNum == 4) || (_layers[layerNum] == NULL)) continue;
 
-		int16 ye = yEnd - 4;
+		int16 ye = yEnd - NUM_EDGE_RECTS;
 		for (int16 yCtr = 0; yCtr < numY; ++yCtr, --ye) {
 			if (ye < 0) break;
 			addCell(xs, ye, layerNum);
@@ -338,13 +316,14 @@ void Room::addLayers(Hotspot &h) {
 void Room::addCell(int16 xp, int16 yp, int layerNum) {
 	Surface &s = _screen.screen();
 
-	while ((layerNum > 0) && !_layers[layerNum]->isOccupied(xp+4, yp+4))
-		--layerNum;
-	if (layerNum == 0) return;
+	while ((layerNum < 4) && (_layers[layerNum] != NULL) &&
+			!_layers[layerNum]->isOccupied(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS))
+		++layerNum;
+	if ((layerNum == 4) || (_layers[layerNum] == NULL)) return;
 
 	RoomLayer *layer = _layers[layerNum];
 
-	int index = ((yp * RECT_SIZE + 8) * FULL_SCREEN_WIDTH) + (xp * RECT_SIZE);
+	int index = ((yp * RECT_SIZE + MENUBAR_Y_SIZE) * FULL_SCREEN_WIDTH) + (xp * RECT_SIZE);
 	byte *srcPos = layer->data().data() + index;
 	byte *destPos = s.data().data() + index;
 
@@ -360,15 +339,43 @@ void Room::addCell(int16 xp, int16 yp, int layerNum) {
 	}
 }
 
+void Room::blockMerge() {
+	for (int layerNum1 = 0; layerNum1 < 3; ++layerNum1) {
+		if (_layers[layerNum1] == NULL) break;
+
+		for (int layerNum2 = layerNum1 + 1; layerNum2 < 4; ++layerNum2) {
+			if (_layers[layerNum2] == NULL) break;
+
+			for (int yp = 0; yp < NUM_VERT_RECTS; ++yp) {
+				for (int xp = 0; xp < NUM_HORIZ_RECTS; ++xp) {
+					if (_layers[layerNum1]->isOccupied(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS) &&
+						_layers[layerNum2]->isOccupied(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS)) {
+						// Copy the rect from the later layer onto the earlier layer
+						int offset = (yp * RECT_SIZE + MENUBAR_Y_SIZE) * FULL_SCREEN_WIDTH + (xp * RECT_SIZE);
+						byte *src = _layers[layerNum2]->data().data() + offset;
+						byte *dest = _layers[layerNum1]->data().data() + offset;
+
+						for (int y = 0; y < RECT_SIZE; ++y) {
+							for (int x = 0; x < RECT_SIZE; ++x, ++src, ++dest) {
+								if (*src != 0) *dest = *src;
+							}
+							src += FULL_SCREEN_WIDTH - RECT_SIZE;
+							dest += FULL_SCREEN_WIDTH - RECT_SIZE;
+						}
+					}
+				}
+			}
+		}			
+	}					
+}
+
 void Room::update() {
 	Surface &s = _screen.screen();
 	Resources &res = Resources::getReference();
 	HotspotList &hotspots = res.activeHotspots();
 	HotspotList::iterator i;
 
-	memset(_cells, false, NUM_HORIZ_RECTS*NUM_VERT_RECTS);
-
-	// Copy the background to the temporary srceen surface
+	// Copy the background to the temporary screen surface
 	_layers[0]->copyTo(&s);
 
 	// Handle first layer (layer 3)
@@ -376,7 +383,6 @@ void Room::update() {
 		Hotspot &h = *i.operator*();
 
 		if ((h.roomNumber() == _roomNumber) && h.isActiveAnimation() && (h.layer() == 3)) {
-			flagCoveredCells(h);
 			addAnimation(h);
 			addLayers(h);
 		}
@@ -401,7 +407,6 @@ void Room::update() {
 	}
 	for (iTemp = tempList.begin(); iTemp != tempList.end(); ++iTemp) {
 		Hotspot &h = *iTemp.operator*();
-		flagCoveredCells(h);
 		addAnimation(h);
 		addLayers(h);
 	}
@@ -411,22 +416,7 @@ void Room::update() {
 		Hotspot &h = *i.operator*();
 
 		if ((h.roomNumber() == _roomNumber) && h.isActiveAnimation() && (h.layer() == 2)) {
-			flagCoveredCells(h);
 			addAnimation(h);
-		}
-	}
-
-	// Loop to add in any remaining cells
-	for (int yp = 0; yp < NUM_VERT_RECTS; ++yp) {
-		for (int xp = 0; xp < NUM_HORIZ_RECTS; ++xp) {
-			if (_cells[yp*NUM_HORIZ_RECTS+xp]) continue;
-
-			int layerNum = _numLayers - 1;
-			while ((layerNum > 0) && !_layers[layerNum]->isOccupied(xp+4, yp+4))
-				--layerNum;
-			if (layerNum != 0) 
-				// Add in the cell
-				addCell(xp, yp, layerNum);
 		}
 	}
 
@@ -486,7 +476,8 @@ void Room::update() {
 		}
 
 		Mouse &m = Mouse::getReference();
-		sprintf(buffer, "Room %d Pos (%d,%d)", _roomNumber, m.x(), m.y());
+		sprintf(buffer, "Room %d Pos (%d,%d) @ (%d,%d)", _roomNumber, m.x(), m.y(),
+			m.x() / RECT_SIZE, (m.y() - MENUBAR_Y_SIZE) / RECT_SIZE);
 		s.writeString(FULL_SCREEN_WIDTH / 2, 0, buffer, false, DIALOG_TEXT_COLOUR);
 	}
 }
@@ -521,12 +512,9 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	for (uint8 layerNum = 0; layerNum < _numLayers; ++layerNum) 
 		_layers[layerNum] = new RoomLayer(_roomData->layers[layerNum],
 			layerNum == 0);
-/*
-	// Load in the game palette, which contains at it's top end general GUI element colours
-	Palette mainPalette(GAME_PALETTE_RESOURCE_ID);
-	_screen.setPalette(&mainPalette, RES_PALETTE_ENTRIES, 
-		GAME_COLOURS - RES_PALETTE_ENTRIES);
-*/
+
+	blockMerge();
+
 	// Generate the palette for the room that will be faded in
 	Palette p(MAIN_PALETTE_SIZE, NULL, RGB64);
 	Palette tempPalette(paletteId);

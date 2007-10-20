@@ -43,6 +43,7 @@ namespace Lure {
 #define FULL_HORIZ_RECTS 18
 #define FULL_VERT_RECTS 14
 #define NUM_EDGE_RECTS 4
+#define GRID_SIZE (FULL_VERT_RECTS * FULL_HORIZ_RECTS)
 
 class RoomLayer: public Surface {
 private:
@@ -72,7 +73,6 @@ private:
 	bool _showInfo;
 	uint8 _numLayers;
 	RoomLayer *_layers[MAX_NUM_LAYERS];
-	bool _cells[NUM_HORIZ_RECTS*NUM_VERT_RECTS];
 	TalkDialog *_talkDialog;
 	int16 _talkDialogX, _talkDialogY;
 	CursorState _cursorState;
@@ -80,11 +80,10 @@ private:
 	void checkRoomHotspots();
 	CursorType checkRoomExits();
 	void loadRoomHotspots();
-	bool sub_112() { return false; } // not yet implemented
-	void flagCoveredCells(Hotspot &h);
 	void addAnimation(Hotspot &h);
 	void addLayers(Hotspot &h);
 	void addCell(int16 xp, int16 yp, int layerNum);
+	void blockMerge();
 public:
 	RoomPathsDecompressedData tempLayer;
 	Room();
@@ -97,6 +96,7 @@ public:
 	uint16 roomNumber() { return _roomNumber; }
 	void setRoomNumber(uint16 newRoomNumber, bool showOverlay = false);
 	void leaveRoom();
+	uint8 numLayers() { return _numLayers; }
 	uint16 hotspotId() { return _hotspotId; }
 	uint16 destRoomNumber() { return _destRoomNumber; }
 	uint16 isExit() { return _isExit; }
