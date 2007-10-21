@@ -262,8 +262,12 @@ Inventory::~Inventory() {
 }
 
 ItemPosition Inventory::addItem(ItemName name, uint32 value) {
-	if (_numItems == INVENTORY_MAX_ITEMS)
+	debugC(1, kDebugInventory, "addItem(%i, %i)", name, value);
+
+	if (_numItems == INVENTORY_MAX_ITEMS) {
+		debugC(3, kDebugInventory, "addItem: inventory is full");
 		return -1;
+	}
 
 	// NOTE: items whose name == 0 aren't really inventory items,
 	// but the engine expects the inventory to accept them as valid.
@@ -276,6 +280,8 @@ ItemPosition Inventory::addItem(ItemName name, uint32 value) {
 	_items[_numItems]._index = name;
 
 	_numItems++;
+
+	debugC(3, kDebugInventory, "addItem: done");
 
 	return _numItems;
 }
@@ -294,8 +300,11 @@ ItemPosition Inventory::findItem(ItemName name) const {
 }
 
 void Inventory::removeItem(ItemName name) {
+	debugC(1, kDebugInventory, "removeItem(%i)", name);
+
 	ItemPosition pos = findItem(name);
 	if (pos == -1) {
+		debugC(3, kDebugInventory, "removeItem: can't find item, nothing to remove");
 		return;
 	}
 
@@ -307,9 +316,13 @@ void Inventory::removeItem(ItemName name) {
 
 	_items[_numItems]._id = 0;
 	_items[_numItems]._index = 0;
+
+	debugC(3, kDebugInventory, "removeItem: item removed");
 }
 
 void Inventory::clear(bool keepVerbs) {
+	debugC(1, kDebugInventory, "clearInventory()");
+
 	uint first = (keepVerbs ? INVENTORY_FIRST_ITEM : 0);
 
 	for (uint16 slot = first; slot < _maxItems; slot++) {
