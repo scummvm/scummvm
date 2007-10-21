@@ -985,26 +985,15 @@ void Parallaction::freeZones() {
 
 	while ( it != _zones.end() ) {
 
+		// NOTE : this condition has been relaxed compared to the original, to allow the engine
+		// to retain special - needed - zones that were lost across location switches.
 		Zone* z = *it;
-
-		// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
-		// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
-		// but we need to check it separately here. The same workaround is applied in hitZone.
-		if (((z->_top == -1) ||
-			((z->_left == -2) && (
-				(((z->_type & 0xFFFF) == kZoneMerge) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj1)) != 0) || (isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj2)) != 0))) ||
-				(((z->_type & 0xFFFF) == kZoneGet) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.get->_icon)) != 0)))
-			))) &&
-			((_engineFlags & kEngineQuit) == 0)) {
-
+		if (((z->_top == -1) || (z->_left == -2)) && ((_engineFlags & kEngineQuit) == 0)) {
 			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_label._text);
-
 			it++;
-
-		} else
-
+		} else {
 			it = _zones.erase(it);
-
+		}
 	}
 
 	return;
