@@ -1245,9 +1245,7 @@ void Parallaction_ns::parseZone(Script &script, ZoneList &list, char *name) {
 	debugC(5, kDebugParser, "parseZone(name: %s)", name);
 
 	if (findZone(name)) {
-		while (scumm_stricmp(_tokens[0], "endzone")) {
-			script.readLineToken(true);
-		}
+		script.skip("endzone");
 		return;
 	}
 
