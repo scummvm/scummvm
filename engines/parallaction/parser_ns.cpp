@@ -988,8 +988,9 @@ void Parallaction_ns::parseLocation(const char *filename) {
 	// this loads animation scripts
 	AnimationList::iterator it = _animations.begin();
 	for ( ; it != _animations.end(); it++) {
-		if ((*it)->_scriptName)
+		if (((*it)->_scriptName) && ((*it)->_program == 0)) {
 			loadProgram(*it, (*it)->_scriptName);
+		}
 	}
 
 	debugC(1, kDebugParser, "parseLocation('%s') done", filename);
