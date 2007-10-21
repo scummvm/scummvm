@@ -539,6 +539,8 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 	}
 	debugC(1, kDebugExec, "endIntro(): done showing credits");
 
+	_soundMan->stopMusic();
+
 	if ((getFeatures() & GF_DEMO) == 0) {
 		_gfx->displayCenteredString(80, "CLICK MOUSE BUTTON TO START");
 		_gfx->updateScreen();

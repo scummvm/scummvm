@@ -31,6 +31,7 @@
 #include "gui/message.h"
 
 #include "parallaction/parallaction.h"
+#include "parallaction/sound.h"
 
 
 /* Nippon Safes savefiles are called 'game.0' to 'game.9'. The game conventiently allows users to
@@ -78,6 +79,8 @@ public:
 
 
 void Parallaction_ns::doLoadGame(uint16 slot) {
+
+	_soundMan->stopMusic();
 
 	_introSarcData3 = 200;
 	_introSarcData2 = 1;
