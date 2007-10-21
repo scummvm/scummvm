@@ -73,6 +73,12 @@ void TimerManager::reset() {
 void TimerManager::addTimer(uint8 id, TimerFunc *func, int countdown, bool enabled) {
 	debugC(9, kDebugLevelTimer, "TimerManager::addTimer(%d, %p, %d, %d)", id, (const void*)func, countdown, enabled);
 
+	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
+	if (timer != _timers.end()) {
+		warning("Adding allready existing timer %d", id);
+		return;
+	}
+
 	TimerEntry newTimer;
 	
 	newTimer.id = id;

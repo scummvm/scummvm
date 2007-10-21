@@ -381,7 +381,6 @@ void KyraEngine_v1::startup() {
 	loadButtonShapes();
 	initMainButtonList();
 	loadMainScreen();
-	setupTimers();
 	_screen->loadPalette("PALETTE.COL", _screen->_currentPalette);
 
 	// XXX
