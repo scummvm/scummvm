@@ -929,12 +929,6 @@ void Game::handleBootParam(int value) {
 	}
 }
 
-struct YNKeyStruct {
-	Common::Language language;
-	Common::KeyCode y;
-	Common::KeyCode n;
-};
-
 bool Game::getYN() {
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
