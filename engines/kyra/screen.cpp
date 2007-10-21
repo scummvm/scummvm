@@ -2675,7 +2675,6 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		const char *ext = filename + strlen(filename) - 3;
 		if (!scumm_stricmp(ext, "MSC"))
 			Screen::convertAmigaMsc(dstData);
 		else
