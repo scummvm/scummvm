@@ -79,9 +79,9 @@ Graphics::Surface *ScummEngine::loadThumbnail(Common::InSaveFile *file) {
 	}
 
 	Graphics::Surface *thumb = new Graphics::Surface();
-	thumb->create(header.width, header.height, sizeof(uint16));
+	thumb->create(header.width, header.height, sizeof(OverlayColor));
 
-	uint16* pixels = (uint16 *)thumb->pixels;
+	OverlayColor* pixels = (OverlayColor *)thumb->pixels;
 
 	for (int y = 0; y < thumb->h; ++y) {
 		for (int x = 0; x < thumb->w; ++x) {
