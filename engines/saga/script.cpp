@@ -776,6 +776,19 @@ void Script::whichObject(const Point& mousePoint) {
 						objectId = ID_NOTHING;
 						newObjectId = ID_NOTHING;
 					}
+
+					// WORKAROUND for a script bug in the original game scripts of IHNM
+					// When the note (item 16406) in the first screen of Gorrister's chapter
+					// is read, an invisible ghost object is created in the upper left corner
+					// of the screen, that the player can interact with. We ignore that invalid
+					// object here
+					if (_vm->getGameType() == GType_IHNM) {
+						if (objectId == 16406 && mousePoint.x < 60 && mousePoint.y < 60) {
+							objectId = ID_NOTHING;
+							newObjectId = ID_NOTHING;
+							newRightButtonVerb = getVerbType(kVerbNone);
+						}
+					}
 				} else {
 					actor = _vm->_actor->getActor(newObjectId);
 					objectId = newObjectId;
