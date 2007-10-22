@@ -192,8 +192,8 @@ int KyraEngine_v1::init() {
 		error("Couldn't init sound");
 
 	_sound->setVolume(255);
-	if (_flags.platform != Common::kPlatformFMTowns && _flags.platform != Common::kPlatformPC98)
-		_sound->loadSoundFile(9);
+	_sound->loadSoundFile((_flags.platform == Common::kPlatformFMTowns
+		|| _flags.platform == Common::kPlatformPC98) ? 0 : 9);
 
 	setupTimers();
 	setupButtonData();
@@ -1221,4 +1221,5 @@ void KyraEngine_v1::setupOpcodeTable() {
 #undef Opcode
 
 } // end of namespace Kyra
+
 
