@@ -47,7 +47,7 @@ Game &Game::getReference() {
 Game::Game() {
 	int_game = this;
 	_debugger = new Debugger();
-	_slowSpeedFlag = true;
+	_fastTextFlag = false;
 	_preloadFlag = false;
 	_soundFlag = true;
 }
@@ -867,8 +867,8 @@ void Game::doTextSpeed() {
 	Menu &menu = Menu::getReference();
 	StringList &sl = Resources::getReference().stringList();
 
-	_slowSpeedFlag = !_slowSpeedFlag;
-	menu.getMenu(2).entries()[1] = sl.getString(_slowSpeedFlag ? S_SLOW_TEXT : S_FAST_TEXT);
+	_fastTextFlag = !_fastTextFlag;
+	menu.getMenu(2).entries()[1] = sl.getString(_fastTextFlag ? S_FAST_TEXT : S_SLOW_TEXT);
 }
 
 void Game::doSound() {
@@ -977,5 +977,18 @@ bool Game::getYN() {
 
 	return result;
 }
+
+void Game::saveToStream(WriteStream *stream) {
+	stream->writeByte(_fastTextFlag);
+}
+
+void Game::loadFromStream(ReadStream *stream) {
+	Menu &menu = Menu::getReference();
+	StringList &sl = Resources::getReference().stringList();
+
+	_fastTextFlag = stream->readByte() != 0;
+	menu.getMenu(2).entries()[1] = sl.getString(_fastTextFlag ? S_FAST_TEXT : S_SLOW_TEXT);
+}
+
 
 } // end of namespace Lure

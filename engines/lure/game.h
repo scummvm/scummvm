@@ -46,7 +46,7 @@ enum GameState {GS_ERROR = 1, GS_TICK = 2, GS_TOCK = 4, GS_PROT = 8, GS_RESTART 
 class Game {
 private:
 	Debugger *_debugger;
-	bool _slowSpeedFlag, _soundFlag;
+	bool _fastTextFlag, _soundFlag;
 	uint8 _state;
 	uint16 _tellCommands[MAX_TELL_COMMANDS * 3 + 1];
 	int _numTellCommands;
@@ -69,6 +69,8 @@ public:
 	virtual ~Game();
 
 	static Game &getReference();
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
 
 	void tick();
 	void tickCheck();
@@ -76,6 +78,7 @@ public:
 	void execute();
 	void setState(uint8 flags) { _state = flags; }
 	bool &preloadFlag() { return _preloadFlag; }
+	bool fastTextFlag() { return _fastTextFlag; }
 
 	// Menu item support methods
 	void doDebugMenu();
