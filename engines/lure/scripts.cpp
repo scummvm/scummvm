@@ -247,7 +247,7 @@ void Script::startSpeakingToNoone(uint16 characterId, uint16 stringId, uint16 v3
 	Hotspot *charHotspot = res.getActiveHotspot(characterId);
 	assert(charHotspot);
 
-	charHotspot->converse(NOONE_ID, stringId, false);
+	charHotspot->converse(NOONE_ID, stringId, true);
 }
 
 // Stops playing the specified sound index
