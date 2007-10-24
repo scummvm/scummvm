@@ -811,7 +811,6 @@ void Hotspot::handleTalkDialog() {
 	assert(_data);
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
-	Game &game = Game::getReference();
 	Room &room = Room::getReference();
 
 	// Return if no talk dialog is necessary
