@@ -142,7 +142,7 @@ void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len,
 
 	const char *sPtr = line.c_str();
 
-	for (int index = 0; (index < len) && (*sPtr != NULL); ++index, ++sPtr) {
+	for (int index = 0; (index < len) && (*sPtr != '\0'); ++index, ++sPtr) {
 		writeChar(x, y, (uint8) *sPtr, transparent, colour);
 
 		// Move to after the character in preparation for the next character
