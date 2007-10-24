@@ -472,6 +472,7 @@ public:
 	bool blockedFlag;
 	VariantBool coveredFlag;
 	uint16 talkMessageId;
+	uint16 talkerId;
 	uint16 talkDestCharacterId;
 	uint16 talkCountdown;
 	uint16 pauseCtr;
@@ -826,17 +827,6 @@ enum FieldName {
 	AREA_FLAG = 82
 };
 
-enum GameFlags {
-	GAMEFLAG_1 = 1,
-	GAMEFLAG_2 = 2,
-	GAMEFLAG_4 = 4,
-	GAMEFLAG_8 = 8,
-	GAMEFLAG_10 = 0x10,
-	GAMEFLAG_20 = 0x20,
-	GAMEFLAG_40 = 0x40,
-	GAMEFLAG_FAST_TEXTSPEED = 0x80
-};
-
 struct PlayerNewPosition {
 	Point position;
 	uint16 roomNumber;
@@ -846,7 +836,7 @@ class ValueTableData {
 private:
 	uint16 _numGroats;
 	PlayerNewPosition _playerNewPos;
-	uint8 _flags;
+	uint8 _textCtr1, _textCtr2; // originally 2 2-bit counters
 	uint8 _hdrFlagMask;
 
 	uint16 _fieldList[NUM_VALUE_FIELDS];
@@ -862,7 +852,8 @@ public:
 	int size() { return NUM_VALUE_FIELDS; }
 
 	uint16 &numGroats() { return _numGroats; }
-	uint8 &flags() { return _flags; }
+	uint8 &textCtr1() { return _textCtr1; }
+	uint8 &textCtr2() { return _textCtr2; }
 	uint8 &hdrFlagMask() { return _hdrFlagMask; }
 	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
 

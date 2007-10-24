@@ -421,6 +421,7 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	blockedFlag = false;
 	coveredFlag = VB_INITIAL;
 	talkMessageId = 0;
+	talkerId = 0;
 	talkDestCharacterId = 0;
 	talkCountdown = 0;
 	useHotspotId = 0;
@@ -462,6 +463,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	stream->writeByte((byte)blockedFlag);
 	stream->writeByte((byte)coveredFlag);
 	stream->writeUint16LE(talkMessageId);
+	stream->writeUint16LE(talkerId);
 	stream->writeUint16LE(talkDestCharacterId);
 	stream->writeUint16LE(talkCountdown);
 	stream->writeUint16LE(pauseCtr);
@@ -503,6 +505,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	blockedFlag = stream->readByte() != 0;
 	coveredFlag = (VariantBool)stream->readByte();
 	talkMessageId = stream->readUint16LE();
+	talkerId = stream->readUint16LE();
 	talkDestCharacterId = stream->readUint16LE();
 	talkCountdown = stream->readUint16LE();
 	pauseCtr = stream->readUint16LE();
@@ -1203,7 +1206,6 @@ void ValueTableData::reset() {
 	_playerNewPos.roomNumber = 0;
 	_playerNewPos.position.x = 0;
 	_playerNewPos.position.y = 0;
-	_flags = GAMEFLAG_4 | GAMEFLAG_1;
 	_hdrFlagMask = 1;    
 
 	for (uint16 index = 0; index < NUM_VALUE_FIELDS; ++index)
@@ -1245,7 +1247,6 @@ void ValueTableData::saveToStream(Common::WriteStream *stream) {
 	stream->writeSint16LE(_playerNewPos.position.x);
 	stream->writeSint16LE(_playerNewPos.position.y);
 	stream->writeUint16LE(_playerNewPos.roomNumber);
-	stream->writeByte(_flags);
 	stream->writeByte(_hdrFlagMask);
 	
 	// Write out the special fields
@@ -1259,7 +1260,6 @@ void ValueTableData::loadFromStream(Common::ReadStream *stream) {
 	_playerNewPos.position.x = stream->readSint16LE();
 	_playerNewPos.position.y = stream->readSint16LE();
 	_playerNewPos.roomNumber = stream->readUint16LE();
-	_flags = stream->readByte();
 	_hdrFlagMask = stream->readByte();
 	
 	// Read in the field list

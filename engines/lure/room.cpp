@@ -425,7 +425,7 @@ void Room::update() {
 		// Make sure the character is still active and in the viewing room
 		Hotspot *talkCharacter = res.getActiveHotspot(res.getTalkingCharacter());
 		if ((talkCharacter != NULL) && (talkCharacter->roomNumber() == _roomNumber)) 
-			_talkDialog->surface().copyTo(&s, _talkDialogX, _talkDialogY);
+			_talkDialog->copyTo(&s, _talkDialogX, _talkDialogY);
 	}
 
 	// Handle showing the status line
@@ -601,6 +601,7 @@ void Room::checkCursor() {
 }
 
 void Room::setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 usedId, uint16 stringId) {
+	Resources &res = Resources::getReference();
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Room::setTalkDialog - char=%xh string=%d",
 		srcCharacterId, stringId);
 
@@ -609,7 +610,16 @@ void Room::setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 u
 		_talkDialog = NULL;
 	}
 
-	Resources &res = Resources::getReference();
+	if (res.getTalkingCharacter() != 0) {
+		// Signal to any talked to character that they're no longer being talked to
+		HotspotData *talkingChar = res.getHotspot(res.getTalkingCharacter());
+		if ((talkingChar->talkDestCharacterId != 0) &&
+			(talkingChar->talkDestCharacterId != NOONE_ID)) {
+			HotspotData *destChar = res.getHotspot(talkingChar->talkDestCharacterId);
+			destChar->talkerId = 0;
+		}
+	}
+
 	res.setTalkingCharacter(srcCharacterId);
 
 	if (srcCharacterId == 0)
@@ -635,6 +645,9 @@ void Room::setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 u
 bool Room::checkInTalkDialog() {
 	// Make sure there is a talk dialog active
 	if (!_talkDialog) return false;
+	
+	// Don't allow dialog close if it's still in progress
+	if (_talkDialog->isBuilding()) return false;
 
 	// Check boundaries
 	Mouse &mouse = Mouse::getReference();

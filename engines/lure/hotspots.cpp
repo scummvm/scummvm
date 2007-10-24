@@ -749,8 +749,8 @@ void Hotspot::converse(uint16 destCharacterId, uint16 messageId, bool standStill
 		HotspotData *hotspot = Resources::getReference().getHotspot(destCharacterId);
 		_data->talkCountdown += hotspot->talkCountdown;
 		
-		_data->talkDestCharacterId = destCharacterId;
-		_data->talkGate = 0;
+		hotspot->talkerId = _hotspotId ;
+		hotspot->talkGate = 0;
 	}
 
 	if (standStill) {
@@ -811,6 +811,7 @@ void Hotspot::handleTalkDialog() {
 	assert(_data);
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
+	Game &game = Game::getReference();
 	Room &room = Room::getReference();
 
 	// Return if no talk dialog is necessary
@@ -840,24 +841,37 @@ void Hotspot::handleTalkDialog() {
 					charHotspot->faceHotspot(resource());
 			}
 		}
-
-	} else if ((fields.flags() & GAMEFLAG_FAST_TEXTSPEED) != 0) {
+/*
+	} else if (game.fastTextFlag()) {
 		// Fast text speed
 		--_data->talkCountdown;
-	} else if ((fields.flags() & (GAMEFLAG_8 | GAMEFLAG_4)) != 0) {
-		fields.flags() |= GAMEFLAG_4;
+	} else if (fields.textCtr2() != 0) {
+		fields.textCtr2() = 1;
 		--_data->talkCountdown;
 	} else {
 		--_data->talkCountdown;
-		fields.flags() -= GAMEFLAG_4;
-	}
+		--fields.textCtr2();
+	}*/
 
-	if (_data->talkCountdown == 0) {
-		// Talking is finish - stop talking and free voice animation
-		debugC(ERROR_DETAILED, kLureDebugAnimations, "Talk dialog close");
-		room.setTalkDialog(0, 0, 0, 0);
-		_data->talkDestCharacterId = 0;
-		_data->talkGate = 0;
+	} else if ((room.talkDialog() != NULL) && (room.talkDialog()->isBuilding())) {
+		return;
+
+	} else if (_data->talkCountdown > 0) {
+		--_data->talkCountdown;
+
+		if (_data->talkCountdown == 0) {
+			// Talking is finish - stop talking and free voice animation
+			debugC(ERROR_DETAILED, kLureDebugAnimations, "Talk dialog close");
+			room.setTalkDialog(0, 0, 0, 0);
+
+			if (_data->talkDestCharacterId != 0) {
+				HotspotData *destChar = res.getHotspot(_data->talkDestCharacterId);
+				destChar->talkerId = 0;
+			}
+
+			_data->talkerId = 0;
+			_data->talkGate = 0;
+		}
 	}
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Talk handler method end");
@@ -2314,16 +2328,15 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 	// Handle any active talk dialog
 	h.handleTalkDialog();
 
-	// Handle any active hotspot the character is using (for example, if the player is
-	// talking to a character, this stops them from moving for the duration)
-	if (h.resource()->talkDestCharacterId != 0) {
-		debugC(ERROR_DETAILED, kLureDebugAnimations, "Use Hotspot Id = %xh, talk_gate = %d",
+	// If someone is talking to the character, this stops them from moving for the duration)
+	if (h.resource()->talkerId != 0) {
+		debugC(ERROR_DETAILED, kLureDebugAnimations, "Talker Id = %xh, talk_gate = %d",
 			h.resource()->talkDestCharacterId, h.talkGate());
 		if (h.talkGate() == GENERAL_MAGIC_ID) {
 			fields.setField(ACTIVE_HOTSPOT_ID, h.talkGate());
-			fields.setField(USE_HOTSPOT_ID, h.resource()->talkDestCharacterId);
+			fields.setField(USE_HOTSPOT_ID, h.resource()->talkerId);
 			Script::execute(h.talkScript());
-			h.resource()->talkDestCharacterId = 0;
+			h.resource()->talkerId = 0;
 		} else {
 			h.updateMovement();
 			return;
@@ -3268,7 +3281,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 
 			// Make sure the dest character holds still while an option is selected
 			HotspotData *destHotspot = res.getHotspot(talkDestCharacter);
-			destHotspot->talkDestCharacterId = h.hotspotId();
+			destHotspot->talkerId = h.hotspotId();
 		} else {
 			res.setTalkState(TALK_RESPOND);
 			res.setTalkSelection(1);
@@ -3486,8 +3499,8 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 						h.setFrameCtr(barEntry.currentCustomer->serveFlags);
 						barEntry.currentCustomer->serveFlags &= 0xf8;
 
-					} else if (h.resource()->talkDestCharacterId == 0) {
-						// Player is not currently talking
+					} else if (h.resource()->talkerId == 0) {
+						// Barman is not currently being talked to
 						// Clear entry from list
 						barEntry.currentCustomer->hotspotId = 0;
 						barEntry.currentCustomer->serveFlags = 0;
