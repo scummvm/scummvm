@@ -23,14 +23,15 @@
  *
  */
 
-#include "lure/surface.h"
 #include "lure/decode.h"
 #include "lure/events.h"
-#include "lure/screen.h"
+#include "lure/game.h"
 #include "lure/lure.h"
 #include "lure/room.h"
+#include "lure/screen.h"
 #include "lure/sound.h"
 #include "lure/strings.h"
+#include "lure/surface.h"
 #include "common/endian.h"
 
 namespace Lure {
@@ -133,16 +134,20 @@ int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 
 
 void Surface::writeString(uint16 x, uint16 y, Common::String line, bool transparent, 
 						  uint8 colour, bool varLength) {
+	writeSubstring(x, y, line, line.size(), transparent, colour, varLength);
+}
+
+void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len, 
+		  bool transparent, uint8 colour, bool varLength) {
+
 	const char *sPtr = line.c_str();
 
-	while (*sPtr) {
+	for (int index = 0; (index < len) && (*sPtr != NULL); ++index, ++sPtr) {
 		writeChar(x, y, (uint8) *sPtr, transparent, colour);
 
 		// Move to after the character in preparation for the next character
 		if (!varLength) x += FONT_WIDTH;
 		else x += fontSize[(uint8)*sPtr - 32] + 2;
-
-		++sPtr;		// Move to next character
 	}
 }
 
@@ -538,6 +543,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	// Apply word wrapping to figure out the needed size of the dialog
 	Surface::wordWrap(_desc, TALK_DIALOG_WIDTH - (TALK_DIALOG_EDGE_SIZE + 3) * 2,
 		_lines, _numLines);
+	_endLine = 0; _endIndex = 0;
 
 	_surface = new Surface(TALK_DIALOG_WIDTH, 
 		(_numLines + 1) * FONT_HEIGHT + TALK_DIALOG_EDGE_SIZE * 4);
@@ -592,22 +598,53 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 		*pDest++ = *pSrc++;
 	}
 
+	_wordCountdown = 0;
+
 	// Write out the character name
 	uint16 charWidth = Surface::textWidth(srcCharName);
 	_surface->writeString((TALK_DIALOG_WIDTH-charWidth)/2, TALK_DIALOG_EDGE_SIZE + 2,
 		srcCharName, true, DIALOG_WHITE_COLOUR);
-
-	// TEMPORARY CODE - write out description. More properly, the text is meant to
-	// be displayed slowly, word by word
-	for (int lineCtr = 0; lineCtr < _numLines; ++lineCtr) 
-		_surface->writeString(TALK_DIALOG_EDGE_SIZE + 2, 
-			TALK_DIALOG_EDGE_SIZE + 4 + (lineCtr + 1) * FONT_HEIGHT,
-			_lines[lineCtr], true);
 }
 
 TalkDialog::~TalkDialog() {
 	delete _lines;
 	delete _surface;
+}
+
+void TalkDialog::copyTo(Surface *dest, uint16 x, uint16 y) {
+	if (_endLine < _numLines) {
+		if (_wordCountdown > 0) {
+			// Handle delay between words
+			--_wordCountdown;
+
+		} else {
+			// Set a delay before the next word is displayed
+			Game &game = Game::getReference();
+			_wordCountdown = game.fastTextFlag() ? 0 : 1;
+
+			// Scan forward to find the next word break
+			char ch = '\0';
+			bool wordFlag = false;
+
+			while (!wordFlag) {
+				ch = _lines[_endLine][++_endIndex];
+				wordFlag = (ch == ' ') || (ch == '\0');
+			}
+
+			// Write out the completed portion of the current line
+			_surface->writeSubstring(TALK_DIALOG_EDGE_SIZE + 2, 
+				TALK_DIALOG_EDGE_SIZE + 4 + (_endLine + 1) * FONT_HEIGHT,
+				_lines[_endLine], _endIndex, true);
+
+			// If at end of line, move to next line for next time
+			if (ch == '\0') {
+				++_endLine;
+				_endIndex = -1;
+			}
+		}
+	}
+
+	_surface->copyTo(dest, x, y);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -55,6 +55,8 @@ public:
 	int writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour);
 	void writeString(uint16 x, uint16 y, Common::String line, bool transparent,
 		uint8 colour = DIALOG_TEXT_COLOUR, bool varLength = true);
+	void writeSubstring(uint16 x, uint16 y, Common::String line, int len, 
+		bool transparent, uint8 colour = DIALOG_TEXT_COLOUR, bool varLength = true);
 	void transparentCopyTo(Surface *dest);
 	void copyTo(Surface *dest);
 	void copyTo(Surface *dest, uint16 x, uint16 y);
@@ -89,12 +91,16 @@ private:
 	char _desc[MAX_DESC_SIZE];
 	char **_lines;
 	uint8 _numLines;
+	int _endLine, _endIndex;
+	int _wordCountdown;
 public:
 	TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId);
 	~TalkDialog();
 
 	char *desc() { return _desc; }
 	Surface &surface() { return *_surface; }
+	void copyTo(Surface *dest, uint16 x, uint16 y);
+	bool isBuilding() { return _endLine < _numLines; }
 };
 
 class SaveRestoreDialog {
