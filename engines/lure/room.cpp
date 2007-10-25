@@ -649,6 +649,20 @@ bool Room::checkInTalkDialog() {
 	// Don't allow dialog close if it's still in progress
 	if (_talkDialog->isBuilding()) return false;
 
+	// Only allow the dialog to be closable if it's the player talking, or 
+	// someone talking to the player
+	Resources &res = Resources::getReference();
+	uint16 talkerId = res.getTalkingCharacter();
+	if ((talkerId == NOONE_ID) || (talkerId == 0))
+		return false;
+
+	if (talkerId != PLAYER_ID) {
+		HotspotData *charHotspot = res.getHotspot(talkerId);
+		assert(charHotspot);
+		if (charHotspot->talkDestCharacterId != PLAYER_ID)
+			return false;
+	}
+
 	// Check boundaries
 	Mouse &mouse = Mouse::getReference();
 	return ((mouse.x() >= _talkDialogX) && (mouse.y() >= _talkDialogY) &&
