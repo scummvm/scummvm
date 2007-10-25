@@ -365,6 +365,10 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber) {
 		// Only play sounds if a sound driver is active
 		return;
 
+	if (!Game::getReference().soundFlag())
+		// Don't play sounds if sound is turned off
+		return;
+
 	uint32 dataOfs = READ_LE_UINT32(_soundData->data() + soundNum * 4 + 2);
 	uint8 *soundStart = _soundData->data() + dataOfs;
 	uint32 dataSize;

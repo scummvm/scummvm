@@ -79,6 +79,7 @@ public:
 	void setState(uint8 flags) { _state = flags; }
 	bool &preloadFlag() { return _preloadFlag; }
 	bool fastTextFlag() { return _fastTextFlag; }
+	bool soundFlag() { return _soundFlag; }
 
 	// Menu item support methods
 	void doDebugMenu();

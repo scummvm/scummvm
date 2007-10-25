@@ -877,7 +877,9 @@ void Game::doSound() {
 
 	_soundFlag = !_soundFlag;
 	menu.getMenu(2).entries()[2] = sl.getString(_soundFlag ? S_SOUND_ON : S_SOUND_OFF);
-	Sound.setVolume(_soundFlag ? DEFAULT_VOLUME : 0);
+
+	// Stop all currently playing sounds
+	Sound.killSounds();
 }
 
 void Game::handleBootParam(int value) {
@@ -980,6 +982,7 @@ bool Game::getYN() {
 
 void Game::saveToStream(WriteStream *stream) {
 	stream->writeByte(_fastTextFlag);
+	stream->writeByte(_soundFlag);
 }
 
 void Game::loadFromStream(ReadStream *stream) {
@@ -988,6 +991,9 @@ void Game::loadFromStream(ReadStream *stream) {
 
 	_fastTextFlag = stream->readByte() != 0;
 	menu.getMenu(2).entries()[1] = sl.getString(_fastTextFlag ? S_FAST_TEXT : S_SLOW_TEXT);
+
+	_soundFlag = stream->readByte() != 0;
+	menu.getMenu(2).entries()[2] = sl.getString(_soundFlag ? S_SOUND_ON : S_SOUND_OFF);
 }
 
 
