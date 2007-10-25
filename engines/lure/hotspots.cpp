@@ -863,7 +863,7 @@ void Hotspot::handleTalkDialog() {
 			debugC(ERROR_DETAILED, kLureDebugAnimations, "Talk dialog close");
 			room.setTalkDialog(0, 0, 0, 0);
 
-			if (_data->talkDestCharacterId != 0) {
+			if ((_data->talkDestCharacterId != 0) && (_data->talkDestCharacterId != NOONE_ID)) {
 				HotspotData *destChar = res.getHotspot(_data->talkDestCharacterId);
 				destChar->talkerId = 0;
 			}
@@ -2155,6 +2155,7 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 	stream->writeUint16LE(_hotspotScriptOffset);
 	stream->writeUint16LE(_tickCtr);
 	stream->writeByte(_colourOffset);
+	stream->writeByte((byte)_direction);
 	stream->writeUint16LE(_animId);
 	stream->writeUint16LE(_frameNumber);
 
@@ -2195,6 +2196,7 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	_hotspotScriptOffset = stream->readUint16LE();
 	_tickCtr = stream->readUint16LE();
 	_colourOffset = stream->readByte();
+	_direction = (Direction)stream->readByte();
 	setAnimation(stream->readUint16LE());
 	setFrameNumber(stream->readUint16LE());
 
