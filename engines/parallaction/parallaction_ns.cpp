@@ -257,6 +257,12 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_animations.remove(&_char._ani);
 
+	// WORKAROUND: eat up any pending short-lived job that may be referring to the
+	// current location before the actual switch is performed, or engine may
+	// segfault because of invalid pointers.
+	runJobs();
+	runJobs();
+
 	freeLocation();
 	char buf[100];
 	strcpy(buf, location);
