@@ -520,7 +520,7 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Cinematique evo 2");
-		  add_person("Vincent Hamm", "yazoo", "");
+		  add_person("Vincent Hamm", "yazoo", "original CruisE engine author");
 	  end_section();
 
 	  begin_section("FOTAQ");	# Flight of the Amazon Queen
@@ -646,6 +646,7 @@ begin_credits("Credits");
 		add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 		add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
 		add_person("R&uuml;diger Hanke", "", "Port: MorphOS");
+		add_person("Vincent Hamm", "yaz0r", "ScummVM co-founder, Original Cruise/CinE author");
 		add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
 		add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
 		add_person("Peter Moraliyski", "ph0x", "Port: GP32");
