@@ -56,7 +56,7 @@ ScummVM Team
        Eugene Sandulenko    
 
     Cinematique evo 2:
-       Vincent Hamm         
+       Vincent Hamm          - original CruisE engine author
 
     FOTAQ:
        David Eriksson       
@@ -157,6 +157,7 @@ ScummVM Team
      Ralph Brorsen         - Help with GUI implementation
      Jamieson Christian    - iMUSE, MIDI, all things musical
      Ruediger Hanke        - Port: MorphOS
+     Vincent Hamm          - ScummVM co-founder, Original Cruise/CinE author
      Felix Jakschitsch     - Zak256 reverse engineering
      Mutwin Kraus          - Original MacOS porter
      Peter Moraliyski      - Port: GP32
