@@ -827,6 +827,18 @@ void Script::whichObject(const Point& mousePoint) {
 
 				hitZoneIndex = _vm->_scene->_objectMap->hitTest(pickPoint);
 
+				// WORKAROUND for an incorrect hitzone which exists in IHNM
+				// In Gorrister's chapter, in the toilet screen, the hitzone of the exit is
+				// placed over the place where Gorrister sits to examine the graffiti on the wall
+				// to the left, which makes him exit the screen when the graffiti is examined.
+				// We effectively change the left side of the hitzone here so that it starts from
+				// pixel 301 onwards. The same workaround is applied in Actor::handleActions
+				if (_vm->getGameType() == GType_IHNM) {
+					if (_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 22)
+						if (hitZoneIndex == 8 && pickPoint.x <= 300)
+							hitZoneIndex = -1;
+				}
+
 				if ((hitZoneIndex != -1)) {
 					hitZone = _vm->_scene->_objectMap->getHitZone(hitZoneIndex);
 					objectId = hitZone->getHitZoneId();

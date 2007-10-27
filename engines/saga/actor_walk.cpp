@@ -749,6 +749,18 @@ void Actor::handleActions(int msec, bool setup) {
 				hitZone = _vm->_scene->_actionMap->getHitZone(hitZoneIndex);
 			}
 
+			// WORKAROUND for an incorrect hitzone which exists in IHNM
+			// In Gorrister's chapter, in the toilet screen, the hitzone of the exit is
+			// placed over the place where Gorrister sits to examine the graffiti on the wall
+			// to the left, which makes him exit the screen when the graffiti is examined.
+			// We effectively change the left side of the hitzone here so that it starts from
+			// pixel 301 onwards. The same workaround is applied in Script::whichObject
+			if (_vm->getGameType() == GType_IHNM) {
+				if (_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 22)
+					if (hitPoint.x <= 300)
+						hitZone = NULL;
+			}
+
 			if (hitZone != actor->_lastZone) {
 				if (actor->_lastZone)
 					stepZoneAction(actor, actor->_lastZone, true, false);
@@ -757,9 +769,10 @@ void Actor::handleActions(int msec, bool setup) {
 				// (room 51) for hitzone 24577 (the door with the copy protection) to avoid the glitch. This glitch
 				// happens because the copy protection is supposed to kick in at this point, but it's bypassed
 				// (with permission from Wyrmkeep Entertainment)
-				if (hitZone && 
-					!(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51 && hitZone->getHitZoneId() == 24577))
-					stepZoneAction(actor, hitZone, false, false);
+				if (!(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51 && hitZone->getHitZoneId() == 24577)) {
+					if (hitZone)
+						stepZoneAction(actor, hitZone, false, false);
+				}
 			}
 		}
 	}
