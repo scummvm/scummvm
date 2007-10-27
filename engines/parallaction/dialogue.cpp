@@ -124,8 +124,12 @@ uint16 DialogueManager::askPassword() {
 
 			// FIXME: see comment for updateInput()
 			if (!g_system->getEventManager()->pollEvent(e)) continue;
-			if (e.type == Common::EVENT_QUIT)
+			if (e.type == Common::EVENT_QUIT) {
+				// TODO: don't quit() here, just have caller routines to check
+				// on kEngineQuit and exit gracefully to allow the engine to shut down
+				_engineFlags |= kEngineQuit;
 				g_system->quit();
+			}
 
 			if (e.type != Common::EVENT_KEYDOWN) continue;
 			if (!isdigit(e.kbd.ascii)) continue;

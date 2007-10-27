@@ -242,6 +242,8 @@ uint16 Parallaction::updateInput() {
 			break;
 
 		case Common::EVENT_QUIT:
+			// TODO: don't quit() here, just have caller routines to check
+			// on kEngineQuit and exit gracefully to allow the engine to shut down
 			_engineFlags |= kEngineQuit;
 			g_system->quit();
 			break;
@@ -273,7 +275,10 @@ void waitUntilLeftClick() {
 			break;
 
 		if (e.type == Common::EVENT_QUIT) {
+			// TODO: don't quit() here, just have caller routines to check
+			// on kEngineQuit and exit gracefully to allow the engine to shut down
 			_engineFlags |= kEngineQuit;
+			g_system->quit();
 			break;
 		}
 
