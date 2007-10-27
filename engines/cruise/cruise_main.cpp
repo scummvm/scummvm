@@ -1178,7 +1178,9 @@ int processInput(void) {
 int oldMouseX;
 int oldMouseY;
 
-void manageEvents(int count) {
+bool bFastMode = false;
+
+void manageEvents() {
 	Common::Event event;
 
 	Common::EventManager * eventMan = g_system->getEventManager();
@@ -1195,7 +1197,8 @@ void manageEvents(int count) {
 		case Common::EVENT_QUIT:
 			g_system->quit();
 			break;
-			/*      case Common::EVENT_KEYDOWN:
+	    case Common::EVENT_KEYDOWN:
+			/*
 			 * switch (event.kbd.keycode) {
 			 * case '\n':
 			 * case '\r':
@@ -1261,6 +1264,18 @@ void manageEvents(int count) {
 			 * break;
 			 * }
 			 * break; */
+			if (event.kbd.flags == Common::KBD_CTRL)
+			{
+				if (event.kbd.keycode == Common::KEYCODE_d)
+				{
+					// enable debugging stuff ?
+				}
+				else if (event.kbd.keycode == Common::KEYCODE_f)
+				{
+					bFastMode = !bFastMode;
+				}
+			}
+
 		default:
 			break;
 		}
@@ -1273,18 +1288,11 @@ void manageEvents(int count) {
 	 * mouseRight = 0;
 	 * }
 	 */
-	int i;
+	g_system->updateScreen();
 
-	for (i = 0; i < count; i++) {
-		//FIXME(?): Maybe there's a better way to "fix" this?
-		//
-		//Since not all backends/ports can update the screen
-		//100 times per second, only update the screen every
-		//other frame (1000 / 2 * 10 i.e. 50 times per second max.)
-		if (i % 2)
-			g_system->updateScreen();
-		g_system->delayMillis(10);
-		manageEvents(0);
+	if(!bFastMode)
+	{
+		g_system->delayMillis(40);
 	}
 }
 
@@ -1427,7 +1435,7 @@ void mainLoop(void) {
 			 * Osystem_Delay(t_left-SLEEP_GRAN);
 			 * while (Osystem_GetTicks()<t_end){q++;}; */
 #endif
-			manageEvents(4);
+			manageEvents();
 
 		} while (!playerDontAskQuit && quitValue2 && quitValue != 7);
 	}
