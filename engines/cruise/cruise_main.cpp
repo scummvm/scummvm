@@ -1233,6 +1233,8 @@ void manageEvents() {
 				case 27: // ESC
 					currentMouseButton &= ~4;
 					break;
+				default:
+					break;
 			}
 			break;
 	    case Common::EVENT_KEYDOWN:
@@ -1240,6 +1242,8 @@ void manageEvents() {
 			{
 				case 27: // ESC
 					currentMouseButton |= 4;
+					break;
+				default:
 					break;
 			}
 
