@@ -48,7 +48,7 @@ struct backgroundIncrustStruct {
 	uint16 field_22;
 	uint16 field_24;
 	char name[14];
-	uint16 var34;
+	uint16 aniX;
 };
 
 extern backgroundIncrustStruct backgroundIncrustHead;

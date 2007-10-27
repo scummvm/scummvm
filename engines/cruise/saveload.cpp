@@ -197,13 +197,13 @@ int loadSavegameData(int saveGameIdx) {
 	fread(&var3, 2, 1, fileHandle);
 	fread(&var4, 2, 1, fileHandle);
 	fread(&userEnabled, 2, 1, fileHandle);
-	fread(&var6, 2, 1, fileHandle);
+	fread(&dialogueEnabled, 2, 1, fileHandle);
 	fread(&var7, 2, 1, fileHandle);
 	fread(&var8, 2, 1, fileHandle);
 	fread(&userDelay, 2, 1, fileHandle);
 	fread(&sysKey, 2, 1, fileHandle);
-	fread(&var11, 2, 1, fileHandle);
-	fread(&var12, 2, 1, fileHandle);
+	fread(&sysX, 2, 1, fileHandle);
+	fread(&sysY, 2, 1, fileHandle);
 	fread(&var13, 2, 1, fileHandle);
 	fread(&var14, 2, 1, fileHandle);
 	fread(&affichePasMenuJoueur, 2, 1, fileHandle);
@@ -224,8 +224,8 @@ int loadSavegameData(int saveGameIdx) {
 
 	fread(&var30, 2, 1, fileHandle);
 	fread(&var31, 2, 1, fileHandle);
-	fread(&var34, 2, 1, fileHandle);
-	fread(&var35, 2, 1, fileHandle);
+	fread(&aniX, 2, 1, fileHandle);
+	fread(&aniY, 2, 1, fileHandle);
 	int16 bTemp;
 	fread(&bTemp, 2, 1, fileHandle);
 	animationStart = bTemp != 0;

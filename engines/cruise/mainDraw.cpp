@@ -1007,7 +1007,7 @@ void mainDraw(int16 param) {
 		}
 	}
 
-	if (mouseVar1) {
+	if (linkedRelation) {
 		ASSERT(0);
 		// TODO: draw mouse here
 	}

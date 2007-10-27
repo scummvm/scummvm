@@ -57,7 +57,7 @@ int16 numOfDisks;
 uint8 scriptNameBuffer[15];
 int16 currentActiveMenu;
 int16 main14;
-int16 mouseVar1;
+int16 linkedRelation;
 int16 main21;
 int16 main22;
 int16 main7;
@@ -114,21 +114,23 @@ int16 var3;
 int16 var4;
 int16 userEnabled;
 int16 var5;
-int16 var6;
+int16 dialogueEnabled;
 int16 var7;
 int16 var8;
 int16 userDelay;
+
 int16 sysKey = -1;
-int16 var11 = 0;
-int16 var12;
+int16 sysX = 0;
+int16 sysY = 0;
+
 int16 var13;
 int16 var14;
 int16 var20;
 int16 var23;
 int16 var24;
 int16 automaticMode;
-int16 var34;
-int16 var35;
+int16 aniX;
+int16 aniY;
 bool animationStart;
 
 int16 main17;

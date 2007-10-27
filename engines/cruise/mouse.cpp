@@ -28,7 +28,7 @@
 namespace Cruise {
 
 int16 main10;
-
+#if 0
 void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton,
 	    int16 *pMouseY) {
 	// mouseStatusStruct localStatus;
@@ -48,5 +48,6 @@ void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton,
     *pMouseButton |= 4;
 	*/
 }
+#endif
 
 } // End of namespace Cruise

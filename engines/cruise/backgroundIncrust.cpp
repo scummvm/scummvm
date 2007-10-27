@@ -109,7 +109,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,
 	newElement->Y = params.Y;
 	newElement->scale = params.scale;
 	newElement->field_E = params.fileIdx;
-	newElement->var34 = filesDatabase[params.fileIdx].subData.index;
+	newElement->aniX = filesDatabase[params.fileIdx].subData.index;
 	newElement->ptr = NULL;
 	strcpy(newElement->name, filesDatabase[params.fileIdx].subData.name);
 
@@ -176,7 +176,7 @@ void loadBackgroundIncrustFromSave(FILE *fileHandle) {
 		fread(&current->field_22, 2, 1, fileHandle);
 		fread(&current->field_24, 2, 1, fileHandle);
 		fread(current->name, 14, 1, fileHandle);
-		fread(&current->var34, 2, 1, fileHandle);
+		fread(&current->aniX, 2, 1, fileHandle);
 
 		if (current->size) {
 			current->ptr = (uint8 *) mallocAndZero(current->size);

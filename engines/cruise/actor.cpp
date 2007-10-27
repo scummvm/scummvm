@@ -580,7 +580,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 	}
 }
 
-//computePathfinding(returnVar2, params.X, params.Y, var34, var35, currentActor->stepX, currentActor->stepY);
+//computePathfinding(returnVar2, params.X, params.Y, aniX, aniY, currentActor->stepX, currentActor->stepY);
 int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX,
 	    int16 destY, int16 stepX, int16 stepY, int16 oldPathId) {
 	persoStruct *perso;
@@ -776,8 +776,8 @@ void processAnimation(void) {
 			if (((animationStart && !currentActor->flag) || (!animationStart && currentActor->x_dest != -1 && currentActor->y_dest != -1)) && (currentActor->type == 0)) {
 				// mouse animation
 				if (!animationStart) {
-					var34 = currentActor->x_dest;
-					var35 = currentActor->y_dest;
+					aniX = currentActor->x_dest;
+					aniY = currentActor->y_dest;
 
 					currentActor->x_dest = -1;
 					currentActor->y_dest = -1;
@@ -785,7 +785,7 @@ void processAnimation(void) {
 					currentActor->flag = 1;
 				}
 
-				currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, var34, var35, currentActor->stepX, currentActor->stepY, currentActor->pathId);
+				currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, aniX, aniY, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
 				if (currentActor->pathId == -1) {
 					if ((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection)) {

@@ -605,9 +605,9 @@ int removeFinishedScripts(scriptInstanceStruct *ptrHandle) {
 	return (0);
 }
 
-int nePasAffichierMenuDialogue;
-int var37 = 0;
-int var38 = 0;
+int buttonDown;
+int selectDown = 0;
+int menuDown = 0;
 
 int getCursorFromObject(int mouseX, int mouseY, int *outX, int *outY) {
 	int16 var_2;
@@ -626,99 +626,101 @@ int getCursorFromObject(int mouseX, int mouseY, int *outX, int *outY) {
 
 	cellStruct *currentObject = cellHead.prev;
 
-	while (currentObject) {
-		if (currentObject->overlay >= 0 && overlayTable[currentObject->overlay].alreadyLoaded
-		     && (currentObject->type == 4 || currentObject->type == 1
-			  || currentObject->type == 9 || currentObject->type == 3)) {
-			strcpy(objectName,
-				getObjectName(currentObject->idx,
-					overlayTable[currentObject->overlay].ovlData->specialString2));
+	while (currentObject)
+	{
+		if (currentObject->overlay >= 0 && overlayTable[currentObject->overlay].alreadyLoaded && (currentObject->type == 4 || currentObject->type == 1 || currentObject->type == 9 || currentObject->type == 3))
+		{
+			char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->specialString2);
+			if(pObjectName)
+			{
+				strcpy(objectName, pObjectName);
 
-			if (strlen(objectName)) {
-				if (currentObject->freeze == 0) {
-					var_2 = currentObject->idx;
-					var_4 = currentObject->overlay;
-					var_14 = currentObject->followObjectIdx;
-					var_16 = currentObject->followObjectOverlayIdx;
+				if (strlen(objectName)) {
+					if (currentObject->freeze == 0) {
+						var_2 = currentObject->idx;
+						var_4 = currentObject->overlay;
+						var_14 = currentObject->followObjectIdx;
+						var_16 = currentObject->followObjectOverlayIdx;
 
-					getMultipleObjectParam(currentObject->overlay, currentObject->idx, &params);
+						getMultipleObjectParam(currentObject->overlay, currentObject->idx, &params);
 
-					var_10 = 0;
-					var_E = 0;
-					var_C = 0;
+						var_10 = 0;
+						var_E = 0;
+						var_C = 0;
 
-					if ((var_4 != var_16)
-						&& (var_2 != var_14)) {
-						getMultipleObjectParam
-							(var_16, var_14, &params);
+						if ((var_4 != var_16)
+							&& (var_2 != var_14)) {
+							getMultipleObjectParam
+								(var_16, var_14, &params);
 
-						var_C = params.X;
-						var_E = params.Y;
-						var_10 = params.fileIdx;
-					}
+							var_C = params.X;
+							var_E = params.Y;
+							var_10 = params.fileIdx;
+						}
 
-					if (params.var5 >= 0 && params.fileIdx >= 0) {
-						if (currentObject->type == 3) {
-							assert(0);
-
-							var_2 = params.scale;
-							var_A = params.X + var_C;
-
-							// TODO: this var3 is stupid, investigate...
-							if ((var_A <= mouseX) && (var_A + params.fileIdx >= mouseX) && (mouseY >= params.Y + var_E) && (params.Y + var_E + var2 >= mouseY)) {
-								*outX = var_16;
-								*outY = var_14;
-
-								return (currentObject->type);
-							}
-						} else if (currentObject->type == 4 ||
-							currentObject->type == 1 ||
-							currentObject->type == 9) {
-							int si;
-							int var_8;
-							int di;
-
-							var_A = params.X + var_C;
-							var_6 = params.Y + var_E;
-
-							di = params.fileIdx;
-
-							if (di < 0) {
-								di += var_10;
-							}
-
-/*		                  if ((filesDatabase[di].subData.resourceType == 8) && (filesDatabase[di].subData.ptr)) {
+						if (params.var5 >= 0 && params.fileIdx >= 0) {
+							if (currentObject->type == 3) {
 								assert(0);
-							}
-*/
-							{
-								var_4 = filesDatabase[di].resType;
 
-								if (var_4 == 1) {
-									var_C = filesDatabase[di].widthInColumn / 2;
-								} else {
-									var_C = filesDatabase[di].width;
+								var_2 = params.scale;
+								var_A = params.X + var_C;
+
+								// TODO: this var3 is stupid, investigate...
+								if ((var_A <= mouseX) && (var_A + params.fileIdx >= mouseX) && (mouseY >= params.Y + var_E) && (params.Y + var_E + var2 >= mouseY)) {
+									*outX = var_16;
+									*outY = var_14;
+
+									return (currentObject->type);
+								}
+							} else if (currentObject->type == 4 ||
+								currentObject->type == 1 ||
+								currentObject->type == 9) {
+								int si;
+								int var_8;
+								int di;
+
+								var_A = params.X + var_C;
+								var_6 = params.Y + var_E;
+
+								di = params.fileIdx;
+
+								if (di < 0) {
+									di += var_10;
 								}
 
-								var_8 = filesDatabase[di].height;
+	/*		                  if ((filesDatabase[di].subData.resourceType == 8) && (filesDatabase[di].subData.ptr)) {
+									assert(0);
+								}
+	*/
+								{
+									var_4 = filesDatabase[di].resType;
 
-								var_2 = mouseX - var_A;
-								si = mouseY - var_6;
+									if (var_4 == 1) {
+										var_C = filesDatabase[di].widthInColumn / 2;
+									} else {
+										var_C = filesDatabase[di].width;
+									}
 
-								if (var_2 > 0 && var_C > var_2 && si > 0 && var_8 >= si) {
-									if (filesDatabase[di].subData.ptr) {
-										if (var_4 == 1) {
-										} else {
+									var_8 = filesDatabase[di].height;
+
+									var_2 = mouseX - var_A;
+									si = mouseY - var_6;
+
+									if (var_2 > 0 && var_C > var_2 && si > 0 && var_8 >= si) {
+										if (filesDatabase[di].subData.ptr) {
+											if (var_4 == 1) {
+											} else {
+											}
+
+											printf("should compare to mask in getCursorFromObject...\n");
+
+											*outX = var_16;
+											*outY = var_14;
+
+											printf("Selected: %s\n", objectName);
+
+											return currentObject->type;
 										}
-
-										printf("should compare to mask in getCursorFromObject...\n");
-
-										*outX = var_16;
-										*outY = var_14;
-
-										printf("Selected: %s\n", objectName);
-
-										return currentObject->type;
 									}
 								}
 							}
@@ -1038,9 +1040,8 @@ int processInventory(void) {
 	return 0;
 }
 
-int processInput(void) {
-	menuStruct *var_5C;
-
+int processInput(void)
+{
 	int16 mouseX = 0;
 	int16 mouseY = 0;
 	int16 button = 0;
@@ -1052,28 +1053,31 @@ int processInput(void) {
 
 	button = 0;
 
-	if (sysKey != -1) {
+	if (sysKey != -1)
+	{
 		button = sysKey;
-		mouseX = var11;
-		mouseY = var12;
+		mouseX = sysX;
+		mouseY = sysY;
 		sysKey = -1;
-	} else {
-		if (automaticMode == 0) {
-			getMouseStatus(&main10, &mouseX, &button, &mouseY);
-		}
+	}
+	else if (automaticMode == 0)
+	{
+		getMouseStatus(&main10, &mouseX, &button, &mouseY);
 	}
 
-	if (button) {
-		nePasAffichierMenuDialogue = 0;
+	if (!button)
+	{
+		buttonDown = 0;
 	}
 
 	if (userDelay) {
 		userDelay--;
 		return 0;
 	}
-	// test both buttons
 
-	if (((button & 3) == 3) || keyboardVar == 0x44 || keyboardVar == 0x53) {
+	// test both buttons
+	if (((button & 3) == 3) || keyboardVar == 0x44 || keyboardVar == 0x53)
+	{
 		changeCursor(0);
 		keyboardVar = 0;
 		return (playerMenu(mouseX, mouseY));
@@ -1083,100 +1087,118 @@ int processInput(void) {
 		return 0;
 	}
 
-	if (currentActiveMenu != -1) {
-		var_5C = menuTable[currentActiveMenu];
-
-		if (var_5C) {
-			updateMenuMouse(mouseX, mouseY, var_5C);
-		}
+	if ((currentActiveMenu != -1) && menuTable[currentActiveMenu])
+	{
+		updateMenuMouse(mouseX, mouseY, menuTable[currentActiveMenu]);
 	}
 
-	if (var6) {
+	if (dialogueEnabled)
+	{
 		ASSERT(0);
 	}
+	else
+	{
+		// not in dialogue
 
-	if (button & 1) {
-		if (nePasAffichierMenuDialogue == 0) {
-			nePasAffichierMenuDialogue = 1;
+		// left click
+		if ((button & 1) && (buttonDown == 0))
+		{
+			buttonDown = 1;
 
-			if (mouseVar1) {
+			// is there a relation
+			if (linkedRelation)
+			{
 				ASSERT(0);
 			}
+			else
+			{
+				// manage click on object menu
+				if (menuDown == 0)
+				{
+					// Handle left click on an object
+					if (menuTable[0] == 0)
+					{
+						int X;
+						int Y;
+						int objIdx;
 
-			if (var38 == 0) {	// are we in inventory mode ?
-				if (menuTable[0] == 0) {
-					int X;
-					int Y;
-					int objIdx;
+						objIdx = getCursorFromObject(mouseX, mouseY, &X, &Y);
 
-					objIdx =
-					    getCursorFromObject(mouseX, mouseY,
-					    &X, &Y);
-
-					if (objIdx != -1) {
-						//ASSERT(0);
-						//moveActor(X,Y,mouseVar1);
-					} else {
-						var34 = mouseX;
-						var35 = mouseY;
-						animationStart = true;
-						var38 = 0;
+						if (objIdx != -1)
+						{
+							ASSERT(0);
+						}else {
+							// No object found, we move the character to the cursor
+							aniX = mouseX;
+							aniY = mouseY;
+							animationStart = true;
+							menuDown = 0;
+						}
+					}
+					else
+					{
+						ASSERT(0);
 					}
 				}
-				//ASSERT(0);
-			} else {
-				if (processInventory()) {
-					var37 = 1;
-					currentActiveMenu = 0;
-					var38 = 0;
-				} else {
+				else
+				{
+					// Handle left click in inventory
+					if (processInventory())
+					{
+						currentActiveMenu = 0;
+						selectDown = 1;
+						menuDown = 0;
+					} else {
+						currentActiveMenu = -1;
+						menuDown = 0;
+					}
+				}
+			}
+		}
+		// test right button
+		else if ((button & 2) || (keyboardVar == 0x43) || (keyboardVar == 0x52))
+		{
+			if (buttonDown == 0)
+			{
+				keyboardVar = 0;
+
+				// close object menu if there is no linked relation
+				if ((linkedRelation == 0) && (menuTable[0])) {
+					freeMenu(menuTable[0]);
+					menuTable[0] = NULL;
+					selectDown = 0;
+					menuDown = 0;
 					currentActiveMenu = -1;
-					var38 = 0;
 				}
 
-				return 0;
+				if ((!selectDown) && (!menuDown) && (menuTable[1] == NULL))
+				{
+					buildInventory(mouseX, mouseY);
+
+					if (menuTable[1]) {
+						currentActiveMenu = 1;
+						menuDown = 1;
+					} else {
+						menuDown = 1;
+					}
+				}
+				buttonDown = 1;
 			}
-
-			//ASSERT(0);
-		}
-	}
-
-	if ((button & 2) || (keyboardVar == 0x43) || (keyboardVar == 0x52)) {
-		if (nePasAffichierMenuDialogue == 0) {
-			keyboardVar = 0;
-
-			if ((mouseVar1 == 0) && (menuTable[0])) {
-				ASSERT(0);
-				freeMenu(menuTable[0]);
-				menuTable[0] = NULL;
-				var37 = 0;
-				var38 = 0;
-				currentActiveMenu = -1;
-			}
-
-			if (var37 || var38 || menuTable[1]) {
-				nePasAffichierMenuDialogue = 1;
-				return 0;
-			}
-
-			buildInventory(mouseX, mouseY);
-
-			if (menuTable[1]) {
-				currentActiveMenu = 1;
-				var38 = 1;
-			} else {
-				var38 = 1;
-			}
-
-			nePasAffichierMenuDialogue = 1;
-			return 0;
 		}
 	}
 	return 0;
 }
 
-int oldMouseX;
-int oldMouseY;
+int currentMouseX = 0;
+int currentMouseY = 0;
+int currentMouseButton = 0;
+
+void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY)
+{
+	*pMouseX = currentMouseX;
+	*pMouseY = currentMouseY;
+	*pMouseButton = currentMouseButton;
+}
 
 bool bFastMode = false;
 
@@ -1186,18 +1208,41 @@ void manageEvents() {
 	Common::EventManager * eventMan = g_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-			/*      case Common::EVENT_LBUTTONDOWN:
-			 * mouseLeft = 1;
-			 * break;
-			 * case Common::EVENT_RBUTTONDOWN:
-			 * mouseRight = 1;
-			 * break;
-			 * case Common::EVENT_MOUSEMOVE:
-			 * break; */
+			case Common::EVENT_LBUTTONDOWN:
+				currentMouseButton |= 1;
+				break;
+			case Common::EVENT_LBUTTONUP:
+				currentMouseButton &= ~1;
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				currentMouseButton |= 2;
+				break;
+			case Common::EVENT_RBUTTONUP:
+				currentMouseButton &= ~2;
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				currentMouseX = event.mouse.x;
+				currentMouseY = event.mouse.y;
+				break;
 		case Common::EVENT_QUIT:
 			g_system->quit();
 			break;
+		case Common::EVENT_KEYUP:
+			switch(event.kbd.keycode)
+			{
+				case 27: // ESC
+					currentMouseButton &= ~4;
+					break;
+			}
+			break;
 	    case Common::EVENT_KEYDOWN:
+			switch(event.kbd.keycode)
+			{
+				case 27: // ESC
+					currentMouseButton |= 4;
+					break;
+			}
+
 			/*
 			 * switch (event.kbd.keycode) {
 			 * case '\n':
@@ -1297,10 +1342,6 @@ void manageEvents() {
 }
 
 void mainLoop(void) {
-#define SPEED 40		/* Ticks per Frame */
-#define SLEEP_MIN 20		/* Minimum time a sleep takes, usually 2*GRAN */
-#define SLEEP_GRAN 1		/* Granularity of sleep */
-
 	int frames = 0;		/* Number of frames displayed */
 	//int32 t_start,t_left;
 	//uint32 t_end;
@@ -1316,7 +1357,7 @@ void mainLoop(void) {
 	initVar4[0] = 0;
 	currentActiveMenu = -1;
 	main14 = -1;
-	mouseVar1 = 0;
+	linkedRelation = 0;
 	main21 = 0;
 	main22 = 0;
 	main7 = 0;

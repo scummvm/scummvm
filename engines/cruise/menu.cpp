@@ -168,6 +168,8 @@ void updateMenuMouse(int mouseX, int mouseY, menuStruct *pMenu) {
 	}
 }
 
+void manageEvents();
+
 int processMenu(menuStruct *pMenu) {
 	int16 mouseX;
 	int16 mouseY;
@@ -198,6 +200,8 @@ int processMenu(menuStruct *pMenu) {
 		mainDraw(1);
 		flipScreen();
 
+		manageEvents();
+
 //    readKeyboard();
 	} while (!si);
 
@@ -224,16 +228,16 @@ int playerMenu(int menuX, int menuY) {
     if (currentMenu) {
       freeMenu(currentMenu);
       currentMenu = 0;
-      var37 = 0;
-      var38 = 0;
+      selectDown = 0;
+      menuDown = 0;
       main9 = -1;
     }
 
     if (inventoryMenu) {
       freeMenu(inventoryMenu);
       inventoryMenu = 0;
-      var37 = 0;
-      var38 = 0;
+      selectDown = 0;
+      menuDown = 0;
       main9 = -1;
     }*/
 
@@ -242,7 +246,7 @@ int playerMenu(int menuX, int menuY) {
     } */
 
 /*    mouseVar2 = 0;
-    mouseVar1 = 0; */
+    linkedRelation = 0; */
 		freeDisk();
 
 		menuTable[0] = createMenu(menuX, menuY, "Menu Joueur");
