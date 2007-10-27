@@ -1623,9 +1623,19 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		// When opening the psychic profile, or the options screen in the non-interactive part of the IHNM demo,
 		// the interface is locked (_active is false)
 		// Don't return in those cases, so that mouse actions can be processed
-		if (!(_vm->getGameType() == GType_IHNM && _panelMode == kPanelPlacard && (updateFlag & UPDATE_MOUSECLICK)) &&
-			!(_vm->getGameId() == GID_IHNM_DEMO && (_panelMode == kPanelOption || _panelMode == kPanelQuit)))
+		if (_vm->getGameType() == GType_ITE) {
 			return;
+		} else {
+			if (_panelMode == kPanelPlacard && (updateFlag & UPDATE_MOUSECLICK)) {
+				// the psychic profile or the special screen in IHNM demo is open, don't return
+			} else if (_panelMode == kPanelOption || _panelMode == kPanelQuit) {
+				// options/quit panel is open, set interface to active and don't return
+				_vm->_actor->abortSpeech();	// abort any speech being played
+				_active = true;
+			} else {
+				return;
+			}
+		}
 	}
 
 	if (_statusTextInput) {
