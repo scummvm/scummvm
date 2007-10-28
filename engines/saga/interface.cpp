@@ -2790,10 +2790,14 @@ void Interface::keyBoss() {
 	_vm->_gfx->getCurrentPal(_mapSavedPal);
 	pal = _vm->getImagePal(resource, resourceLength);
 
-	for (i = 0; i < PAL_ENTRIES; i++) {
-		cPal[i].red = *pal++;
-		cPal[i].green = *pal++;
-		cPal[i].blue = *pal++;
+	cPal[0].red = 0;
+	cPal[0].green = 0;
+	cPal[0].blue = 0;
+
+	for (i = 1; i < PAL_ENTRIES; i++) {
+		cPal[i].red = 128;
+		cPal[i].green = 128;
+		cPal[i].blue = 128;
 	}
 
 	backBuffer->blit(rect, image);
