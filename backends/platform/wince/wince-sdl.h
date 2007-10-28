@@ -258,12 +258,6 @@ private:
 	} zoneDesc;
 
 	static zoneDesc _zones[TOTAL_ZONES];
-
-	// Copied from old sdl-common.h because we still use it and
-	// sdl-common.h no longer supplies it.
-	enum {
-		DF_UPDATE_EXPAND_1_PIXEL	= 1 << 1
-	};
 };
 
 #endif
