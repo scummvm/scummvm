@@ -765,13 +765,14 @@ void Theme::loadTheme(Common::ConfigFile &config, bool reset) {
 
 	debug(3, "Number of variables: %d", _evaluator->getNumVars());
 }
+
 void Theme::loadTheme(Common::ConfigFile &config, bool reset, bool doBackendSpecificPostProcessing) {
 	loadTheme(config, reset);
 
 	if (doBackendSpecificPostProcessing && !g_system->getExtraThemeConfig().empty()) {
 		Common::ConfigFile myConfig;
 		Common::String myConfigINI = g_system->getExtraThemeConfig();
-		Common::MemoryReadStream s((const byte *)myConfigINI.c_str(), strlen(myConfigINI.c_str()));
+		Common::MemoryReadStream s((const byte *)myConfigINI.c_str(), myConfigINI.size());
 		myConfig.loadFromStream(s);
 		loadTheme(myConfig, false);
 	}
