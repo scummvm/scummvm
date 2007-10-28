@@ -279,6 +279,7 @@ protected:
 	virtual void readMAXS(int blockSize);
 
 	virtual void redrawBGAreas();
+	virtual void checkExecVerbs();
 
 	byte *defineArray(int array, int type, int dim2start, int dim2end, int dim1start, int dim1end);
 	virtual int readArray(int array, int idx2, int idx1);
@@ -359,6 +360,8 @@ protected:
 	byte VAR_NUM_CHARSETS;
 
 	byte VAR_POLYGONS_ONLY;
+
+	byte VAR_MOUSE_STATE;			// Used in checkExecVerbs();
 };
 
 class ScummEngine_v80he : public ScummEngine_v72he {

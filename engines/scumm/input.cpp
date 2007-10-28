@@ -90,6 +90,8 @@ void ScummEngine::parseEvents() {
 			}
 
 			if (_game.heversion >= 80) {
+				// FIXME: Move this code & VAR_KEY_STATE to class ScummEngine_v80he
+
 				// Keyboard is controlled via variable
 				int keyState = 0;
 

@@ -26,6 +26,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/he/intern_he.h"
 #include "scumm/intern.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
@@ -513,18 +514,25 @@ void ScummEngine_v0::handleMouseOver(bool updateInventory) {
 	drawSentence();
 }
 
-void ScummEngine::checkExecVerbs() {
-	int i, over;
-	VerbSlot *vs;
-
-	if (VAR_MOUSE_STATE != 0xFF)
-		VAR(VAR_MOUSE_STATE) = 0;
+#ifndef DISABLE_HE
+void ScummEngine_v72he::checkExecVerbs() {
+	VAR(VAR_MOUSE_STATE) = 0;
 
 	if (_userPut <= 0 || _mouseAndKeyboardStat == 0)
 		return;
 
-	if (VAR_MOUSE_STATE != 0xFF)
-		VAR(VAR_MOUSE_STATE) = _mouseAndKeyboardStat;
+	VAR(VAR_MOUSE_STATE) = _mouseAndKeyboardStat;
+
+	ScummEngine::checkExecVerbs();
+}
+#endif
+
+void ScummEngine::checkExecVerbs() {
+	int i, over;
+	VerbSlot *vs;
+
+	if (_userPut <= 0 || _mouseAndKeyboardStat == 0)
+		return;
 
 	if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
 		/* Check keypresses */
@@ -572,7 +580,7 @@ void ScummEngine::checkExecVerbs() {
 		if ((_game.platform == Common::kPlatformFMTowns && _game.id == GID_ZAK) &&
 			(_mouseAndKeyboardStat >= 315 && _mouseAndKeyboardStat <= 318)) {
 			// Hack: Handle switching to a person via F1-F4 keys.
-			// This feature isn't available in the scripts of the FM-TOWNS verison.
+			// This feature isn't available in the scripts of the FM-TOWNS version.
 			int fKey = _mouseAndKeyboardStat - 314;
 			int switchSlot = getVerbSlot(36, 0);
 			// check if switch-verb is enabled
@@ -590,25 +598,67 @@ void ScummEngine::checkExecVerbs() {
 		runInputScript(kKeyClickArea, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
 		VirtScreen *zone = findVirtScreen(_mouse.y);
-		byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
-		int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
+		const byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
 
 		// This could be kUnkVirtScreen.
 		// Fixes bug #1536932: "MANIACNES: Crash on click in speechtext-area"
 		if (!zone)
 			return;
 
-		if (_game.version <= 2 && zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
+		over = findVerbAtPos(_mouse.x, _mouse.y);
+		if (over != 0) {
+			// Verb was clicked
+			runInputScript(kVerbClickArea, _verbs[over].verbid, code);
+		} else {
+			// Scene was clicked
+			runInputScript((zone->number == kMainVirtScreen) ? kSceneClickArea : kVerbClickArea, 0, code);
+		}
+	}
+}
+
+void ScummEngine_v2::checkExecVerbs() {
+	int i, over;
+	VerbSlot *vs;
+
+	if (_userPut <= 0 || _mouseAndKeyboardStat == 0)
+		return;
+
+	if (_mouseAndKeyboardStat < MBS_MAX_KEY) {
+		/* Check keypresses */
+		vs = &_verbs[1];
+		for (i = 1; i < _numVerbs; i++, vs++) {
+			if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
+				if (_mouseAndKeyboardStat == vs->key) {
+					// Trigger verb as if the user clicked it
+					runInputScript(1, vs->verbid, 1);
+					return;
+				}
+			}
+		}
+	
+		// Generic keyboard input
+		runInputScript(4, _mouseAndKeyboardStat, 1);
+	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
+		VirtScreen *zone = findVirtScreen(_mouse.y);
+		const byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
+		const int inventoryArea = (_game.platform == Common::kPlatformNES) ? 48: 32;
+
+		// This could be kUnkVirtScreen.
+		// Fixes bug #1536932: "MANIACNES: Crash on click in speechtext-area"
+		if (!zone)
+			return;
+
+		if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 			// Click into V2 sentence line
-			runInputScript(kSentenceClickArea, 0, 0);
-		} else if (_game.version <= 2 && zone->number == kVerbVirtScreen && _mouse.y > zone->topline + inventoryArea) {
+			runInputScript(5, 0, 0);
+		} else if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + inventoryArea) {
 			// Click into V2 inventory
-			((ScummEngine_v2 *)this)->checkV2Inventory(_mouse.x, _mouse.y);
+			checkV2Inventory(_mouse.x, _mouse.y);
 		} else {
 			over = findVerbAtPos(_mouse.x, _mouse.y);
 			if (over != 0) {
 				// Verb was clicked
-				runInputScript(kVerbClickArea, _verbs[over].verbid, code);
+				runInputScript(1, _verbs[over].verbid, code);
 			} else {
 				// Scene was clicked
 				runInputScript((zone->number == kMainVirtScreen) ? kSceneClickArea : kVerbClickArea, 0, code);

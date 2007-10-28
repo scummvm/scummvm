@@ -1342,7 +1342,6 @@ public:
 	byte VAR_NUM_SCRIPT_CYCLES;		// Used in runAllScripts()
 
 	byte VAR_KEY_STATE;			// Used in parseEvents()
-	byte VAR_MOUSE_STATE;			// Used in checkExecVerbs();
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;
