@@ -26,6 +26,7 @@
 
 #ifdef _WIN32_WCE
 #include <windows.h>
+#undef GetCurrentDirectory
 #endif
 #include "backends/fs/abstract-fs.h"
 #include <io.h>
