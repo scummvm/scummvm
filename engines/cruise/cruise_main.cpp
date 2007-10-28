@@ -1350,9 +1350,6 @@ void mainLoop(void) {
 	//int32 q=0;                     /* Dummy */
 
 	int enableUser = 0;
-	//int16 mouseX;
-	//int16 mouseY;
-	//int16 mouseButton;
 
 	scriptNameBuffer[0] = 0;
 	systemStrings.bootScriptName[0] = 0;
@@ -1410,7 +1407,8 @@ void mainLoop(void) {
         initVar4 = 0; */
 			}
 
-			if (affichePasMenuJoueur) {
+			if (affichePasMenuJoueur)
+			{
 				if (main5)
 					fadeVar = 0;
 
@@ -1422,38 +1420,51 @@ void mainLoop(void) {
 				mainDraw(0);
 				flipScreen();
 
-				/*     if (userEnabled && !main7 && !main15 && currentActiveMenu == -1)
-				 * {
-				 * getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
-				 *
-				 * if (mouseX != oldMouseX && mouseY != oldMouseY)
-				 * {
-				 * int cursorType;
-				 * int newCursor1;
-				 * int newCursor2;
-				 *
-				 * oldMouseX = mouseX;
-				 * oldMouseY = mouseY;
-				 *
-				 * cursorType = getCursorFromObject(mouseX, mouseY, &newCursor1, &newCursor2);
-				 *
-				 * if (cursorType == 9)
-				 * {
-				 * changeCursor(5);
-				 * }
-				 * else
-				 * if (cursorType == -1)
-				 * {
-				 * changeCursor(6);
-				 * }
-				 * else
-				 * {
-				 * changeCursor(4);
-				 * }
-				 *
-				 * }
-				 * }
-				 * else */
+				if (userEnabled && !main7 && !main15)
+				{
+					if(currentActiveMenu == -1)
+					{
+						int16 mouseX;
+						int16 mouseY;
+						int16 mouseButton;
+
+						static int16 oldMouseX = -1;
+						static int16 oldMouseY = -1;
+
+						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
+					 
+						if (mouseX != oldMouseX && mouseY != oldMouseY)
+						{
+							int cursorType;
+							int newCursor1;
+							int newCursor2;
+							
+							oldMouseX = mouseX;
+							oldMouseY = mouseY;
+							
+							cursorType = getCursorFromObject(mouseX, mouseY, &newCursor1, &newCursor2);
+							
+							if (cursorType == 9)
+							{
+								changeCursor(CURSOR_EXIT);
+							}
+							else
+							if (cursorType != -1)
+							{
+								changeCursor(CURSOR_MAGNIFYING_GLASS);
+							}
+							else
+							{
+								changeCursor(CURSOR_WALK);
+							}
+						}
+					}
+					else
+					{
+						changeCursor(CURSOR_NORMAL);
+					}
+				}
+				else
 				{
 					changeCursor(CURSOR_NORMAL);
 				}
