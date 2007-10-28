@@ -139,6 +139,13 @@
 	#define remove(name)  ((errno = EROFS), -1)
 #endif
 
+#ifdef _WIN32_WCE
+	#define ENOENT 2
+	#define EACCES 13
+	static int errno;
+	#define remove(x)  ( errno = (remove(x) == 0) ? 0 : EACCES )
+#endif
+
 namespace Common {
 
 typedef HashMap<String, int, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringIntMap;
