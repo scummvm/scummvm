@@ -102,6 +102,7 @@ static const char HELP_STRING[] =
 	"                           acorn, amiga, atari, c64, fmtowns, nes, mac, pc,\n"
 	"                           pce, segacd, windows)\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"
+	"  --extrapath=PATH         Extra path to additional game data\n"
 	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
 	"                           supported by some MIDI drivers)\n"
 	"  --multi-midi             Enable combination Adlib and native MIDI\n"
@@ -468,6 +469,15 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 					usage("Non-existent savegames path '%s'", option);
 				} else if (!path.isWritable()) {
 					usage("Non-writable savegames path '%s'", option);
+				}
+			END_OPTION
+
+			DO_LONG_OPTION("extrapath")
+				FilesystemNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent extra path '%s'", option);
+				} else if (!path.isReadable()) {
+					usage("Non-readable extra path '%s'", option);
 				}
 			END_OPTION
 

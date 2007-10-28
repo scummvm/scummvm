@@ -735,6 +735,7 @@ arguments -- see the next section.
 
   -c, --config=CONFIG      Use alternate configuration file
   -p, --path=PATH          Path to where the game is installed
+  --extrapath=PATH         Extra path to additional game data
   -x, --save-slot[=NUM]    Savegame slot to load (default: autosave)
   -f, --fullscreen         Force full-screen mode
   -F, --no-fullscreen      Force windowed mode
