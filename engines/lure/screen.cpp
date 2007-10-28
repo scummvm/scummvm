@@ -56,10 +56,15 @@ Screen::~Screen() {
 // Defaults the palette to an empty set
 
 void Screen::setPaletteEmpty(int numEntries) {
+	Palette emptyPalette(numEntries, NULL, RGB64);
+	_system.setPalette(emptyPalette.data(), 0, numEntries);
+	_palette->copyFrom(&emptyPalette);
+/*
 	delete _palette;
 	_palette = new Palette();
 
 	_system.setPalette(_palette->data(), 0, numEntries);
+*/
 	_system.updateScreen();
 }
 

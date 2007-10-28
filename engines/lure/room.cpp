@@ -498,7 +498,9 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	_descId = _roomData->descId;
 
 	if (leaveFlag) {
-		_screen.paletteFadeOut();
+		// Fade out all the colours except the high index 0FFh, which is used to show the
+		// disk cursor as a room changes
+		_screen.paletteFadeOut(GAME_COLOURS - 1);
 		leaveRoom();
 	}
 
@@ -516,7 +518,8 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	blockMerge();
 
 	// Generate the palette for the room that will be faded in
-	Palette p(MAIN_PALETTE_SIZE, NULL, RGB64);
+	//Palette p(MAIN_PALETTE_SIZE, NULL, RGB64);
+	Palette p(GAME_PALETTE_RESOURCE_ID);
 	Palette tempPalette(paletteId);
 	p.copyFrom(&tempPalette);
 	res.insertPaletteSubset(p);
@@ -543,7 +546,11 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	game.tick();
 	update();
 	_screen.update();
-	_screen.paletteFadeIn(&p);
+
+	if (leaveFlag)
+		_screen.paletteFadeIn(&p);
+	else
+		_screen.setPalette(&p);
 
 	mouse.popCursor();
 }
