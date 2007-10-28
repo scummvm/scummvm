@@ -886,6 +886,17 @@ public:
 	 */
 	virtual Common::SaveFileManager *getSavefileManager() = 0;
 
+
+	/**
+	 * Return String which is used for backend-specific addition to theme
+	 * config.
+	 * 
+	 * Typical usage is to disable unneeded GUI widgets or defining
+	 * theme-specific tab.
+	 */
+	virtual Common::String getExtraThemeConfig() {
+		return "";
+	}
 	//@}
 };
 

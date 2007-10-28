@@ -135,7 +135,7 @@ bool ThemeModern::init() {
 
 	if (isThemeLoadingRequired()) {
 		loadTheme(_defaultConfig);
-		loadTheme(_configFile, false); // Don't reset
+		loadTheme(_configFile, false, true); // Don't reset
 
 		processExtraValues();
 	}

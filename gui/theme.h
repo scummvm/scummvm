@@ -210,7 +210,7 @@ public:
 	bool isThemeLoadingRequired();
 	bool sectionIsSkipped(Common::ConfigFile &config, const char *name, int w, int h);
 	void loadTheme(Common::ConfigFile &config, bool reset = true);
-
+	void loadTheme(Common::ConfigFile &config, bool reset, bool doBackendSpecificPostProcessing);
 	Eval *_evaluator;
 
 	static bool themeConfigUseable(const Common::String &file, const Common::String &style="", Common::String *cStyle=0, Common::ConfigFile *cfg=0);

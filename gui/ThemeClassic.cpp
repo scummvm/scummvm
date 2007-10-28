@@ -70,7 +70,7 @@ bool ThemeClassic::init() {
 
 	if (isThemeLoadingRequired()) {
 		loadTheme(_defaultConfig);
-		loadTheme(_configFile, false);
+		loadTheme(_configFile, false, true);
 
 		setupConfig();
 	}
