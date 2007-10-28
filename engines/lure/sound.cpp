@@ -42,6 +42,7 @@ SoundManager::SoundManager() {
 	_descs = Disk::getReference().getEntry(SOUND_DESC_RESOURCE_ID);
 	_numDescs = _descs->size() / sizeof(SoundDescResource);
 	_soundData = NULL;
+	_paused = false;
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
@@ -86,6 +87,36 @@ SoundManager::~SoundManager() {
 
 	g_system->deleteMutex(_soundMutex);
 }
+
+void SoundManager::saveToStream(WriteStream *stream) {
+	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::saveToStream");
+	ManagedList<SoundDescResource *>::iterator i;
+
+	for (i = _activeSounds.begin(); i != _activeSounds.end(); ++i) {
+		SoundDescResource *rec = *i;
+		stream->writeByte(rec->soundNumber);
+	}
+	stream->writeByte(0xff);
+}
+
+void SoundManager::loadFromStream(ReadStream *stream) {
+	// Stop any existing sounds playing
+	killSounds();
+
+	// Load any playing sounds
+	uint8 soundNumber;
+	while ((soundNumber = stream->readByte()) != 0xff) {
+		uint8 soundIndex = descIndexOf(soundNumber);
+		if (soundIndex != 0xff) {
+			// Make sure that the sound is allowed to be restored
+			SoundDescResource &rec = soundDescs()[soundIndex];
+			if ((rec.flags & SF_RESTORE) != 0)
+				// Requeue the sound for playing
+				addSound(soundIndex, false);
+		}
+	}
+}
+
 
 void SoundManager::loadSection(uint16 sectionId) {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::loadSection = %xh", sectionId);
@@ -245,6 +276,17 @@ void SoundManager::setVolume(uint8 volume) {
 		_channelsInner[index].midiChannel->volume(volume);
 		_channelsInner[index].volume = volume;
 	}
+}
+
+uint8 SoundManager::descIndexOf(uint8 soundNumber) {
+	SoundDescResource *rec = soundDescs();
+	
+	for (uint8 index = 0; index < _numDescs; ++index, ++rec) {
+		if (rec->soundNumber == soundNumber)
+			return index;
+	}
+
+	return 0xff;   // Couldn't find entry
 }
 
 SoundDescResource *SoundManager::findSound(uint8 soundNumber) {
@@ -499,6 +541,9 @@ void SoundManager::onTimer(void *data) {
 }
 
 void SoundManager::doTimer() {
+	if (_paused)
+		return;
+
 	g_system->lockMutex(_soundMutex);
 
 	ManagedList<MidiMusic *>::iterator i;

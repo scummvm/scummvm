@@ -166,6 +166,7 @@ bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 
 	Resources::getReference().saveToStream(f);
 	Game::getReference().saveToStream(f);
+	Sound.saveToStream(f);
 	Room::getReference().saveToStream(f);
 	Fights.saveToStream(f);
 
@@ -207,6 +208,7 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 	// Load in the data
 	Resources::getReference().loadFromStream(f);
 	Game::getReference().loadFromStream(f);
+	Sound.loadFromStream(f);
 	Room::getReference().loadFromStream(f);
 	Fights.loadFromStream(f);
 

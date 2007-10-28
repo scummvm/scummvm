@@ -118,6 +118,7 @@ private:
 	bool _isPlaying;
 	bool _nativeMT32;
 	Common::MutexRef _soundMutex;
+	bool _paused;
 
 	// Internal support methods
 	void bellsBodge();
@@ -128,6 +129,9 @@ public:
 	SoundManager();
 	~SoundManager();
 
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
+
 	void loadSection(uint16 sectionId);
 	void killSounds();
 	void addSound(uint8 soundIndex, bool tidyFlag = true);
@@ -137,10 +141,14 @@ public:
 	void setVolume(uint8 soundNumber, uint8 volume);
 	void setVolume(uint8 volume);
 	void tidySounds();
+	uint8 descIndexOf(uint8 soundNumber);
 	SoundDescResource *findSound(uint8 soundNumber);
 	void removeSounds();
 	void restoreSounds();
 	void fadeOut();
+	void pause() { _paused = true; }
+	void resume() { _paused = false; }
+	bool getPaused() { return _paused; }
 
 	// The following methods implement the external sound player module
 	void musicInterface_Initialise();
