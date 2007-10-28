@@ -137,8 +137,7 @@ int16 main10;
 		0xff, 0xff, 0xff, 0xff
 	};
 
-	void changeCursor(CursorType eType)
-	{
+	void changeCursor(CursorType eType) {
 		assert(eType >= 0 && eType < CURSOR_MAX);
 		if (currentCursor != eType) {
 			byte mouseCursor[16 * 16];

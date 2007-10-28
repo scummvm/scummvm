@@ -30,8 +30,7 @@ namespace Cruise {
 
 	extern int16 main10;
 
-	enum CursorType
-	{
+	enum CursorType {
 		CURSOR_NORMAL = 0,
 		CURSOR_DISK = 1,
 		CURSOR_CROSS = 2,
@@ -40,7 +39,7 @@ namespace Cruise {
 		CURSOR_EXIT = 5,
 		CURSOR_MAGNIFYING_GLASS = 6,
 
-		CURSOR_MAX = 7,
+		CURSOR_MAX = 7
 	};
 
 	void changeCursor(CursorType eType);
