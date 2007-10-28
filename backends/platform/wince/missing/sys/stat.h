@@ -2,6 +2,7 @@
 
 #include <sys/types.h>
 
+#ifndef __MINGW32CE__
 struct stat {
 	_dev_t st_dev;
 	_ino_t st_ino;
@@ -16,8 +17,9 @@ struct stat {
 	time_t st_ctime;
 };
 
+int stat(const char *, struct stat *);
+
+#endif
 
 #define _S_IFDIR        0040000         /* directory */
 #define S_IFDIR  _S_IFDIR
-
-int stat(const char *, struct stat *);

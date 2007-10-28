@@ -42,7 +42,7 @@ using namespace Common;
 
 class CEAboutDialog : public Dialog {
 public:
-	CEAboutDialog::CEAboutDialog()
+	CEAboutDialog()
 	: Dialog(10, 60, 300, 77) {
 		char tempo[100];
 
