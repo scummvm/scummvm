@@ -452,11 +452,6 @@ bool Resource::createContexts() {
 					sprintf(voicesFileName, "inherit the earth voices.cmp");
 					_vm->_gf_compressed_sounds = true;
 				}
-				// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
-				// the voice file is big endian. If we got such a version with mixed files, mark this voice file
-				// as big endian
-				if (!_vm->isBigEndian())
-					voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
 #else
 			} else if (Common::File::exists("\"inherit the earth voices\"") || 
 					   Common::File::exists("\"inherit the earth voices.cmp\"")) {
@@ -469,12 +464,12 @@ bool Resource::createContexts() {
 					sprintf(voicesFileName, "\"inherit the earth voices.cmp\"");
 					_vm->_gf_compressed_sounds = true;
 				}
+#endif
 				// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
 				// the voice file is big endian. If we got such a version with mixed files, mark this voice file
 				// as big endian
 				if (!_vm->isBigEndian())
 					voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
-#endif
 			} else {
 				// No voice file found, don't add any file to the array
 				voicesFileInArray = true;
