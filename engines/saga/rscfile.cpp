@@ -406,8 +406,8 @@ bool Resource::createContexts() {
 			if (Common::File::exists("sfx.res") || Common::File::exists("sfx.cmp")) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				if (Common::File::exists("sfx.rsc")) {
-					sprintf(soundFileName, "sfx.rsc");
+				if (Common::File::exists("sfx.res")) {
+					sprintf(soundFileName, "sfx.res");
 				} else {
 					sprintf(soundFileName, "sfx.cmp");
 					_vm->_gf_compressed_sounds = true;
