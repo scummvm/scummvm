@@ -47,7 +47,7 @@ PocketPCHalfARM:
 	BLT	end
 height_loop:
 
-        SUBS	r11,r4,#8		@ r11= width_minus_8
+        SUBS	r11, r4, #8		@ r11= width_minus_8
 	BLT	thin
 
 width_loop:
@@ -145,7 +145,7 @@ width_loop:
 
 thin:
 	ADDS	r11,r11,#8		@ r11= width
-	BEQ	width_end		@ if no more left to do, then bale
+	BEQ	width_end		@ if no more left to do, then bail
 thin_lp:
 	@ single output pixels done in this bit
 	LDRH	r8,[r0],r1		@ r8 = A = srcPtr[0]
