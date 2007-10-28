@@ -37,12 +37,28 @@
 
 
 class Win32Plugin : public DynamicPlugin {
+private:
+	static const TCHAR* toUnicode(const char *x) {
+	#ifndef _WIN32_WCE
+		return (const TCHAR *)x;
+	#else
+		static TCHAR unicodeString[MAX_PATH];
+		MultiByteToWideChar(CP_ACP, 0, x, strlen(x) + 1, unicodeString, sizeof(unicodeString) / sizeof(TCHAR));
+		return unicodeString;
+	#endif
+	}
+
+
 protected:
 	void *_dlHandle;
 	Common::String _filename;
 
 	virtual VoidFunc findSymbol(const char *symbol) {
+		#ifndef _WIN32_WCE
 		void *func = (void *)GetProcAddress((HMODULE)_dlHandle, symbol);
+		#else
+		void *func = (void *)GetProcAddress((HMODULE)_dlHandle, toUnicode(symbol));
+		#endif
 		if (!func)
 			warning("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
 	
@@ -62,10 +78,14 @@ public:
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
+		#ifndef _WIN32_WCE
 		_dlHandle = LoadLibrary(_filename.c_str());
+		#else
+		_dlHandle = LoadLibrary(toUnicode(_filename.c_str()));
+		#endif
 	
 		if (!_dlHandle) {
-			warning("Failed loading plugin '%s'", _filename.c_str());
+			warning("Failed loading plugin '%s' (error code %d)", _filename.c_str(), GetLastError());
 			return false;
 		}
 
