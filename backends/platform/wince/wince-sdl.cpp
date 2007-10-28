@@ -23,8 +23,6 @@
  *
  */
 
-// NOTE: formatted for tabstop=4
-
 #include "backends/platform/wince/wince-sdl.h"
 
 #include "common/config-manager.h"
@@ -67,6 +65,10 @@
 #else
 #include <tremor/ivorbisfile.h>
 #endif
+#endif
+
+#ifdef DYNAMIC_MODULES
+#include "backends/plugins/win32/win32-provider.h"
 #endif
 
 #ifdef __GNUC__
@@ -162,6 +164,7 @@ OSystem *OSystem_WINCE3_create() {
 	return new OSystem_WINCE3();
 }
 
+extern "C" char *getcwd(char *buf, int size);
 int SDL_main(int argc, char **argv) {
 	FILE *newfp = NULL;
 #ifdef __GNUC__
@@ -196,7 +199,7 @@ int SDL_main(int argc, char **argv) {
 #else
 		newfp = fopen(stdout_fname, "w");
 		if (newfp) {
-			*stdout = *newfp;
+			//*stdout = *newfp;
 			stdout_file = stdout;
 		}
 #endif
@@ -209,15 +212,19 @@ int SDL_main(int argc, char **argv) {
 #else
 		newfp = fopen(stderr_fname, "w");
 		if (newfp) {
-			*stderr = *newfp;
+			//*stderr = *newfp;
 			stderr_file = stderr;
 		}
 #endif
 	}
 #endif
 
-	int res = 0;
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new Win32PluginProvider());
+#endif
 
+
+	int res = 0;
 #if !defined(DEBUG) && !defined(__GNUC__)
 	__try {
 #endif
@@ -235,6 +242,138 @@ int SDL_main(int argc, char **argv) {
 
 	return res;
 }
+
+#ifdef DYNAMIC_MODULES
+
+/* This is the OS startup code in the case of a plugin-enabled build.
+ * It contains copied and slightly modified parts of SDL's win32/ce startup functions.
+ * We copy these here because the calling stub already has a WinMain procedure
+ * which overrides SDL's one and hence we essentially re-implement the startup procedure.
+ * Note also that this has to be here and not in the stub because SDL is statically
+ * linked in the scummvm.dll archive.
+ * Take a look at the comments in stub.cpp as well.
+ */
+
+int console_main(int argc, char *argv[])
+{
+	int n;
+	char *bufp, *appname;
+
+	appname = argv[0];
+	if ( (bufp=strrchr(argv[0], '\\')) != NULL )
+		appname = bufp + 1;
+	else if ( (bufp=strrchr(argv[0], '/')) != NULL )
+		appname = bufp + 1;
+
+	if ( (bufp=strrchr(appname, '.')) == NULL )
+		n = strlen(appname);
+	else
+		n = (bufp-appname);
+
+	bufp = (char *) alloca(n + 1);
+	strncpy(bufp, appname, n);
+	bufp[n] = '\0';
+	appname = bufp;
+
+	if ( SDL_Init(SDL_INIT_NOPARACHUTE) < 0 ) {
+		error("WinMain() error: %d", SDL_GetError());
+		return(FALSE);
+	}
+
+	SDL_SetModuleHandle(GetModuleHandle(NULL));
+
+	// Run the application main() code
+	SDL_main(argc, argv);
+
+	return(0);
+}
+
+static int ParseCommandLine(char *cmdline, char **argv)
+{
+	char *bufp;
+	int argc;
+
+	argc = 0;
+	for (bufp = cmdline; *bufp;) {
+		// Skip leading whitespace 
+		while (isspace(*bufp))
+			++bufp;
+
+		// Skip over argument
+		if (*bufp == '"') {
+			++bufp;
+			if (*bufp) {
+				if (argv)
+					argv[argc] = bufp;
+				++argc;
+			}
+			// Skip over word
+			while (*bufp && (*bufp != '"'))
+				++bufp;
+		} else {
+			if (*bufp) {
+				if (argv)
+					argv[argc] = bufp;
+				++argc;
+			}
+			// Skip over word
+			while (*bufp && ! isspace(*bufp))
+				++bufp;
+		}
+		if (*bufp) {
+			if (argv)
+				*bufp = '\0';
+			++bufp;
+		}
+	}
+	if (argv)
+		argv[argc] = NULL;
+
+	return(argc);
+}
+
+int dynamic_modules_main(HINSTANCE hInst, HINSTANCE hPrev, LPWSTR szCmdLine, int sw) {
+	HINSTANCE handle;
+	char **argv;
+	int argc;
+	char *cmdline;
+	wchar_t *bufp;
+	int nLen;
+
+	if (wcsncmp(szCmdLine, TEXT("\\"), 1)) {
+		nLen = wcslen(szCmdLine)+128+1;
+		bufp = (wchar_t *) alloca(nLen*2);
+		wcscpy (bufp, TEXT("\""));
+		GetModuleFileName(NULL, bufp+1, 128-3);
+		wcscpy (bufp+wcslen(bufp), TEXT("\" "));
+		wcsncpy(bufp+wcslen(bufp), szCmdLine,nLen-wcslen(bufp));
+	} else
+		bufp = szCmdLine;
+
+	nLen = wcslen(bufp)+1;
+	cmdline = (char *) alloca(nLen);
+	WideCharToMultiByte(CP_ACP, 0, bufp, -1, cmdline, nLen, NULL, NULL);
+
+	// Parse command line into argv and argc
+	argc = ParseCommandLine(cmdline, NULL);
+	argv = (char **) alloca((argc+1)*(sizeof *argv));
+	ParseCommandLine(cmdline, argv);
+
+	/* fix gdb-emulator combo */
+	while (argc > 1 && !strstr(argv[0], ".exe")) {
+		OutputDebugString(TEXT("SDL: gdb argv[0] fixup\n"));
+		*(argv[1]-1) = ' ';
+		int i;
+		for (i=1; i<argc; i++)
+			argv[i] = argv[i+1];
+		argc--;
+	}
+
+	// Run the main program (after a little SDL initialization)
+	return(console_main(argc, argv));
+
+}
+#endif
 
 // ********************************************************************************************
 
@@ -1206,7 +1345,6 @@ void OSystem_WINCE3::loadGFXMode() {
 
 	_fullscreen = true; // forced
 	_forceFull = true;
-	_modeFlags |= DF_UPDATE_EXPAND_1_PIXEL;
 
 	_tmpscreen = NULL;
 
@@ -1381,7 +1519,8 @@ void OSystem_WINCE3::update_keyboard() {
 	if (_monkeyKeyboard && !_isSmartphone)
 		if (!_panelVisible || _toolbarHandler.activeName() != NAME_PANEL_KEYBOARD)
 			swap_panel();
-#ifndef DISABLE_SCUMM
+#if !defined(DISABLE_SCUMM) && !defined(DYNAMIC_MODULES)
+	// This REALLY, REALLY has to go. Check out Fingolfin's comment at the top.
 	if (_monkeyKeyboard && Scumm::g_scumm->VAR_ROOM != 0xff && Scumm::g_scumm && Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&
 		Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 90) {
 			// Switch back to the normal panel now that the keyboard is not used anymore
@@ -1395,7 +1534,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	static bool old_overlayVisible = false;
 	int numRectsOut = 0;
-	int16 routx, routy, routw, routh;
+	int16 routx, routy, routw, routh, stretch;
 
 	assert(_hwscreen != NULL);
 
@@ -1431,8 +1570,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 	if (!_overlayVisible) {
 		origSurf = _screen;
 		srcSurf = _tmpscreen;
-	}
-	else {
+	} else {
 		origSurf = _overlayscreen;
 		srcSurf = _tmpscreen2;
 	}
@@ -1486,6 +1624,21 @@ void OSystem_WINCE3::internUpdateScreen() {
 		dstPitch = _hwscreen->pitch;
 
 		for (r = _dirtyRectList, rout = _dirtyRectOut; r != last_rect; ++r) {
+
+			// always clamp to enclosing, downsampled-grid-aligned rect in the downscaled image
+			if (_scaleFactorXd != 1) {
+				stretch = r->x % _scaleFactorXd;
+				r->x -= stretch;
+				r->w += stretch;
+				r->w = (r->x + r->w + _scaleFactorXd - 1) / _scaleFactorXd * _scaleFactorXd - r->x;
+			}
+			if (_scaleFactorYd != 1) {
+				stretch = r->y % _scaleFactorYd;
+				r->y -= stretch;
+				r->h += stretch;
+				r->h = (r->y + r->h + _scaleFactorYd - 1) / _scaleFactorYd * _scaleFactorYd - r->y;
+			}
+
 			// transform
 			routx = r->x * _scaleFactorXm / _scaleFactorXd;				// locate position in scaled screen
 			routy = (r->y + _currentShakePos) * _scaleFactorYm / _scaleFactorYd;	// adjust for shake offset
@@ -1589,7 +1742,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 }
 
 Graphics::Surface *OSystem_WINCE3::lockScreen() {
-	// FIXME: Fingolfing asks: Why is undrawMouse() needed here?
+	// FIXME: Fingolfin asks: Why is undrawMouse() needed here?
 	// Please document this.
 	undrawMouse();
 	return OSystem_SDL::lockScreen();
@@ -2044,43 +2197,7 @@ void OSystem_WINCE3::warpMouse(int x, int y) {
 
 void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 
-	// Align on boundaries
-	if (_scaleFactorXd > 1) {
-		while (x % _scaleFactorXd) {
-			x--;
-			w++;
-		}
-		while (w % _scaleFactorXd) w++;
-	}
-
-	if (_scaleFactorYd > 1) {
-		while (y % _scaleFactorYd) {
-			y--;
-			h++;
-		}
-		while (h % _scaleFactorYd) h++;
-	}
-
-	if (_scalerProc == PocketPCHalfZoom) {
-		// Restrict rect if we're zooming
-		if (_zoomUp) {
-			if (y + h >= 240) {
-				if (y >= 240)
-					return;
-				else
-					h = 240 - y;
-			}
-		} else if (_zoomDown) {
-			if (y + h >= 240) {
-				if (y < 240) {
-					h = 240 - y;
-					y = 240;
-				}
-			}
-			else
-				return;
-		}
-	}
+	if (_forceFull || _paletteDirtyEnd) return;
 
 	OSystem_SDL::addDirtyRect(x, y, w, h, false);
 }
