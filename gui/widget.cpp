@@ -133,6 +133,12 @@ Widget *Widget::findWidgetInChain(Widget *w, const char *name) {
 	}
 	return 0;
 }
+bool Widget::isEnabled() const {
+	if (g_gui.evaluator()->getVar(_name + ".enabled") == 0) {
+		return false;
+	}
+	return _flags & WIDGET_ENABLED;
+}
 
 bool Widget::isVisible() const {
 	if (g_gui.evaluator()->getVar(_name + ".visible") == 0)

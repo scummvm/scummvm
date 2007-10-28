@@ -148,7 +148,7 @@ public:
 	int getHints() const		{ return _hints; }
 
 	void setEnabled(bool e)		{ if (e) setFlags(WIDGET_ENABLED); else clearFlags(WIDGET_ENABLED); }
-	bool isEnabled() const		{ return _flags & WIDGET_ENABLED; }
+	bool isEnabled() const;
 	bool isVisible() const;
 
 protected:
