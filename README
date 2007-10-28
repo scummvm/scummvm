@@ -735,7 +735,6 @@ arguments -- see the next section.
 
   -c, --config=CONFIG      Use alternate configuration file
   -p, --path=PATH          Path to where the game is installed
-  --extrapath=PATH         Extra path to additional game data
   -x, --save-slot[=NUM]    Savegame slot to load (default: autosave)
   -f, --fullscreen         Force full-screen mode
   -F, --no-fullscreen      Force windowed mode
@@ -762,6 +761,7 @@ arguments -- see the next section.
                            acorn, amiga, atari, c64, fmtowns, mac, nes, pc,
                            pce, segacd, windows)
   --savepath=PATH          Path to where savegames are stored
+  --extrapath=PATH         Extra path to additional game data
   --soundfont=FILE         Select the SoundFont for MIDI playback (Only
                            supported by some MIDI drivers)
   --multi-midi             Enable combination of Adlib and native MIDI
