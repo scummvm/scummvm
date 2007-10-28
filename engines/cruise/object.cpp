@@ -46,10 +46,10 @@ objDataStruct *getObjectDataFromOverlay(int ovlIdx, int objIdx) {
 	if (!overlayTable[ovlIdx].ovlData)
 		return NULL;
 
-	if (overlayTable[ovlIdx].ovlData->numObjData <= objIdx)
+	if (overlayTable[ovlIdx].ovlData->numObj <= objIdx)
 		return NULL;
 
-	var_6 = overlayTable[ovlIdx].ovlData->objDataTable;
+	var_6 = overlayTable[ovlIdx].ovlData->arrayObject;
 
 	if (!var_6)
 		return NULL;
@@ -76,7 +76,7 @@ int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuer
 	switch (ptr->type) {
 	case 0:
 		{
-			ptr2 = &ovlData->objData2SourceTable[ptr->var5];
+			ptr2 = &ovlData->arrayStates[ptr->var5];
 
 			var_14 = globalVars[*(int16 *) (&overlayTable[overlayIdx].state + ptr->stateTableIdx)];
 
@@ -86,13 +86,13 @@ int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuer
 		}
 	case 1:
 		{
-			ptr2 = &ovlData->objData2WorkTable[ptr->var4];
+			ptr2 = &ovlData->arrayObjVar[ptr->var4];
 
 			var_A = var_14 = ptr2->state;
 			size = var_A + ptr->var5;
 
 			if (ptr->var5 + var_14 <= ovlData->size8) {
-				var_A = ovlData->objData2SourceTable[ptr->var5 + var_14].state;
+				var_A = ovlData->arrayStates[ptr->var5 + var_14].state;
 			}
 			break;
 		}
@@ -130,7 +130,7 @@ void setObjectPosition(int16 ovlIdx, int16 objIdx, int16 param3, int16 param4) {
 	switch (ptr->type) {
 	case 1:
 		{
-			ptr2 =  &overlayTable[ovlIdx].ovlData->objData2WorkTable[ptr->var4];
+			ptr2 =  &overlayTable[ovlIdx].ovlData->arrayObjVar[ptr->var4];
 
 			switch (param3) {
 			case 0:	// x
@@ -210,8 +210,8 @@ int16 objInit(int ovlIdx, int objIdx, int newState) {
 				return 0;
 			}
 
-			destEntry = &ovlData->objData2WorkTable[ptr->var4];
-			sourceEntry = &ovlData->objData2SourceTable[ptr->var5 + newState];
+			destEntry = &ovlData->arrayObjVar[ptr->var4];
+			sourceEntry = &ovlData->arrayStates[ptr->var5 + newState];
 
 			memcpy(destEntry, sourceEntry, sizeof(objectParams));
 
@@ -250,12 +250,12 @@ int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 *
 		{
 			var_A = globalVars[ptr->stateTableIdx];
 
-			ptr2 = &ovlData->objData2SourceTable[ptr->var5];
+			ptr2 = &ovlData->arrayStates[ptr->var5];
 			break;
 		}
 	case 1:
 		{
-			ptr2 = &ovlData->objData2WorkTable[ptr->var4];
+			ptr2 = &ovlData->arrayObjVar[ptr->var4];
 
 			var_A = ptr2->state;
 			break;

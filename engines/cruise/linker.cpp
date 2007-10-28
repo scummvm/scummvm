@@ -35,7 +35,7 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx,
 	char *dotPtr;
 	char *ptr2;
 	int idx;
-	int numExport;
+	int numSymbGlob;
 	exportEntryStruct *currentExportEntry;
 	uint8 *entity1Name;
 	int i;
@@ -81,14 +81,14 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx,
 	if (!overlayTable[idx].ovlData)
 		return (NULL);
 
-	numExport = overlayTable[idx].ovlData->numExport;
-	currentExportEntry = overlayTable[idx].ovlData->exportDataPtr;
-	entity1Name = overlayTable[idx].ovlData->exportNamesPtr;
+	numSymbGlob = overlayTable[idx].ovlData->numSymbGlob;
+	currentExportEntry = overlayTable[idx].ovlData->arraySymbGlob;
+	entity1Name = overlayTable[idx].ovlData->arrayNameSymbGlob;
 
 	if (!entity1Name)
 		return (0);
 
-	for (i = 0; i < numExport; i++) {
+	for (i = 0; i < numSymbGlob; i++) {
 		uint8 exportedName[256];
 		uint8 *name = entity1Name + currentExportEntry->offsetToName;
 
@@ -112,22 +112,22 @@ int updateScriptImport(int ovlIdx) {
 	ovlDataStruct *ovlData;
 	int numData3;
 	int size5;
-	int numImport;
+	int numRelocGlob;
 	int param;
 	int var_32;
 	ovlData3Struct *pScript;
-//  char* importDataPtr;
+//  char* arrayRelocGlob;
 //  char* namePtr;
-//  char* linkDataPtr;
+//  char* arrayMsgRelHeader;
 
 	if (!overlayTable[ovlIdx].ovlData)
 		return (-4);
 
 	ovlData = overlayTable[ovlIdx].ovlData;
 
-	numData3 = ovlData->numScripts1;
-	size5 = ovlData->numScripts2;
-	numImport = ovlData->numImport;
+	numData3 = ovlData->numProc;
+	size5 = ovlData->numRel;
+	numRelocGlob = ovlData->numRelocGlob;
 	param = 0;
 
 	// do it for the 2 first string types
@@ -161,8 +161,8 @@ int updateScriptImport(int ovlIdx) {
 
 				var_22 = 0;
 
-				if (pScript->numImport > 0) {
-					int counter = pScript->numImport;
+				if (pScript->numRelocGlob > 0) {
+					int counter = pScript->numRelocGlob;
 
 					do {
 						int param2 =
@@ -247,8 +247,8 @@ int updateScriptImport(int ovlIdx) {
 
 	} while (++param < 2);
 
-	if (ovlData->importDataPtr && ovlData->importNamePtr && numImport) {
-		int numImport2 = numImport;
+	if (ovlData->arrayRelocGlob && ovlData->arrayNameRelocGlob && numRelocGlob) {
+		int numImport2 = numRelocGlob;
 		int i;
 
 		for (i = 0; i < numImport2; i++) {
@@ -259,47 +259,47 @@ int updateScriptImport(int ovlIdx) {
 			int linkEntryIdx;
 
 			strcpyuint8(buffer,
-			    ovlData->importNamePtr +
-			    ovlData->importDataPtr[i].nameOffset);
+			    ovlData->arrayNameRelocGlob +
+			    ovlData->arrayRelocGlob[i].nameOffset);
 
 			pFoundExport =
 			    parseExport(&out1, &foundExportIdx, buffer);
 
-			linkType = ovlData->importDataPtr[i].linkType;
-			linkEntryIdx = ovlData->importDataPtr[i].linkIdx;
+			linkType = ovlData->arrayRelocGlob[i].linkType;
+			linkEntryIdx = ovlData->arrayRelocGlob[i].linkIdx;
 
 			if (pFoundExport && foundExportIdx) {
 				switch (linkType) {
 				case 0:	// var
 					{
 						ovlData->
-						    linkDataPtr[linkEntryIdx].
-						    varIdx = foundExportIdx;
+						    arrayMsgRelHeader[linkEntryIdx].
+						    verbOverlay = foundExportIdx;
 						ovlData->
-						    linkDataPtr[linkEntryIdx].
-						    varNameOffset =
+						    arrayMsgRelHeader[linkEntryIdx].
+						    verbNumber =
 						    pFoundExport->offsetToName;
 						break;
 					}
 				case 1:	// string
 					{
 						ovlData->
-						    linkDataPtr[linkEntryIdx].
-						    stringIdx = foundExportIdx;
+						    arrayMsgRelHeader[linkEntryIdx].
+						    obj1Overlay = foundExportIdx;
 						ovlData->
-						    linkDataPtr[linkEntryIdx].
-						    stringNameOffset =
+						    arrayMsgRelHeader[linkEntryIdx].
+						    obj1Number =
 						    pFoundExport->offsetToName;
 						break;
 					}
 				case 2:	// proc
 					{
 						ovlData->
-						    linkDataPtr[linkEntryIdx].
-						    procIdx = foundExportIdx;
+						    arrayMsgRelHeader[linkEntryIdx].
+						    obj2Overlay = foundExportIdx;
 						ovlData->
-						    linkDataPtr[linkEntryIdx].
-						    procNameOffset =
+						    arrayMsgRelHeader[linkEntryIdx].
+						    obj2Number =
 						    pFoundExport->offsetToName;
 						break;
 					}

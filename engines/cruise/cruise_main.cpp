@@ -85,17 +85,17 @@ int loadScriptSub1(int scriptIdx, int param) {
 	if (!overlayTable[scriptIdx].ovlData)
 		return (0);
 
-	ptr2 = overlayTable[scriptIdx].ovlData->objDataTable;
+	ptr2 = overlayTable[scriptIdx].ovlData->arrayObject;
 
 	if (!ptr2)
 		return (0);
 
-	if (overlayTable[scriptIdx].ovlData->numObjData == 0)
+	if (overlayTable[scriptIdx].ovlData->numObj == 0)
 		return (0);
 
 	counter = 0;
 
-	for (i = 0; i < overlayTable[scriptIdx].ovlData->numObjData; i++) {
+	for (i = 0; i < overlayTable[scriptIdx].ovlData->numObj; i++) {
 		if (ptr2[i].var0 == param) {
 			counter++;
 		}
@@ -129,9 +129,9 @@ void resetFileEntryRange(int param1, int param2) {
 }
 
 int getProcParam(int overlayIdx, int param2, uint8 *name) {
-	int numExport;
+	int numSymbGlob;
 	int i;
-	exportEntryStruct *exportDataPtr;
+	exportEntryStruct *arraySymbGlob;
 	uint8 *exportNamePtr;
 	uint8 exportName[80];
 
@@ -141,20 +141,20 @@ int getProcParam(int overlayIdx, int param2, uint8 *name) {
 	if (!overlayTable[overlayIdx].ovlData)
 		return 0;
 
-	numExport = overlayTable[overlayIdx].ovlData->numExport;
-	exportDataPtr = overlayTable[overlayIdx].ovlData->exportDataPtr;
-	exportNamePtr = overlayTable[overlayIdx].ovlData->exportNamesPtr;
+	numSymbGlob = overlayTable[overlayIdx].ovlData->numSymbGlob;
+	arraySymbGlob = overlayTable[overlayIdx].ovlData->arraySymbGlob;
+	exportNamePtr = overlayTable[overlayIdx].ovlData->arrayNameSymbGlob;
 
 	if (!exportNamePtr)
 		return 0;
 
-	for (i = 0; i < numExport; i++) {
-		if (exportDataPtr[i].var4 == param2) {
+	for (i = 0; i < numSymbGlob; i++) {
+		if (arraySymbGlob[i].var4 == param2) {
 			strcpyuint8(exportName,
-			    exportDataPtr[i].offsetToName + exportNamePtr);
+			    arraySymbGlob[i].offsetToName + exportNamePtr);
 
 			if (!strcmpuint8(exportName, name)) {
-				return (exportDataPtr[i].idx);
+				return (arraySymbGlob[i].idx);
 			}
 		}
 	}
@@ -212,15 +212,15 @@ ovlData3Struct *getOvlData3Entry(int32 scriptNumber, int32 param) {
 		return NULL;
 	}
 
-	if (ovlData->numScripts1 <= param) {
+	if (ovlData->numProc <= param) {
 		return NULL;
 	}
 
-	if (!ovlData->data3Table) {
+	if (!ovlData->arrayProc) {
 		return NULL;
 	}
 
-	return (&ovlData->data3Table[param]);
+	return (&ovlData->arrayProc[param]);
 }
 
 ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param) {
@@ -234,7 +234,7 @@ ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param) {
 		return NULL;
 	}
 
-	if (ovlData->numScripts2 <= param) {
+	if (ovlData->numRel <= param) {
 		return NULL;
 	}
 
@@ -617,7 +617,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx)
 	{
 		if (currentObject->overlay >= 0 && overlayTable[currentObject->overlay].alreadyLoaded && (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUEL))
 		{
-			char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->specialString2);
+			char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
 			if(pObjectName)
 			{
 				strcpy(objectName, pObjectName);
@@ -781,15 +781,15 @@ void buildInventory(int X, int Y) {
 		for (int i = 1; i < numOfLoadedOverlay; i++) {
 			ovlDataStruct *pOvlData = overlayTable[i].ovlData;
 
-			if (pOvlData && pOvlData->objDataTable && pOvlData->numObjData) {
-				for (int j = 0; j < pOvlData->numObjData; j++) {
+			if (pOvlData && pOvlData->arrayObject && pOvlData->numObj) {
+				for (int j = 0; j < pOvlData->numObj; j++) {
 					if (buildInventorySub1(i, j) != 3) {
 						int16 returnVar;
 
 						getSingleObjectParam(i, j, 5, &returnVar);
 
 						if (returnVar < -1) {
-							addSelectableMenuEntry(i, j, pMenu, 1, -1, getObjectName(j, pOvlData->specialString2));
+							addSelectableMenuEntry(i, j, pMenu, 1, -1, getObjectName(j, pOvlData->arrayNameObj));
 							numObjectInInventory++;
 						}
 					}
@@ -836,159 +836,100 @@ menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu) {
 	return NULL;
 }
 
-int callInventoryObject(int param0, int param1, int x, int y) {
-	int var_2C;
-	int var_30;
-	int var_28;
-	int var_1E;
-	int16 returnVar;
+bool findRelation(int objOvl, int objIdx, int x, int y) {
+	bool found = false;
+	bool first = true;
+	int testState;
+	int j;
+	int16 objectState;
 
-	var_30 = -1;
+	testState = -1;
 
-	getSingleObjectParam(param0, param1, 5, &returnVar);
+	getSingleObjectParam(objOvl, objIdx, 5, &objectState);
 
-	var_2C = 0;
-	var_28 = 1;
+	for (j = 1; j < numOfLoadedOverlay; j++)
+	{
+		if (overlayTable[j].alreadyLoaded)
+		{
+			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
 
-	for (var_1E = 1; var_1E < numOfLoadedOverlay; var_1E++) {
-		ovlDataStruct *var_2A = overlayTable[var_1E].ovlData;
-		if (var_2A->ptr1) {
-			int var_18;
-			int var_14;
+			int i;
+			for(i=0; i<idHeader; i++)
+			{
+				linkDataStruct* ptrHead = &overlayTable[j].ovlData->arrayMsgRelHeader[i];
+				int thisOvl = ptrHead->obj1Overlay;
 
-			var_18 = var_2A->numLinkData;
+				if (!thisOvl) {
+					thisOvl = j;
+				}
 
-			if (var_18) {
-				int var_16;
+				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
 
-				var_16 = 0;
+				if ((thisOvl == objOvl) && (objIdx ==ptrHead->obj1Number) && pObject && pObject->type != 3)
+				{
+					int verbeOvl = ptrHead->verbOverlay;
+					int obj1Ovl = ptrHead->obj1Overlay;
+					int obj2Ovl = ptrHead->obj2Overlay;
 
-				for (var_14 = 0; var_14 < var_18; var_14++) {
-					objDataStruct *pObject;
-					linkDataStruct *var_34;
-					int var_2;
+					if (!verbeOvl) verbeOvl=j;
+					if (!obj1Ovl)  obj1Ovl=j;
+					if (!obj2Ovl)  obj2Ovl=j;
+					
+					char verbe_name[80];
+					char obj1_name[80];
+					char obj2_name[80];
+					char r_verbe_name[80];
+					char r_obj1_name[80];
+					char r_obj2_name[80];
 
-					var_34 = &var_2A->linkDataPtr[var_14];
+					verbe_name[0]	=0;
+					obj1_name[0]	=0;
+					obj2_name[0]	=0;
+					r_verbe_name[0] =0;
+					r_obj1_name[0]	=0;
+					r_obj2_name[0]	=0;
 
-					var_2 = var_34->stringIdx;
+					ovlDataStruct *ovl2 = NULL;
+					ovlDataStruct *ovl3 = NULL;
+					ovlDataStruct *ovl4 = NULL;
 
-					if (!var_2) {
-						var_2 = var_1E;
+					if(verbeOvl > 0)
+						ovl2 = overlayTable[verbeOvl].ovlData;
+
+					if(obj1Ovl > 0)
+						ovl3 = overlayTable[obj1Ovl].ovlData;
+
+					if(obj2Ovl > 0)
+						ovl4 = overlayTable[obj2Ovl].ovlData;
+
+					if((ovl3) && (ptrHead->obj1Number >= 0))
+					{
+						testState = ptrHead->field_1A;
+
+						if((first) && (ovl3->arrayNameObj) && ((testState ==-1) || (testState == objectState)))
+						{
+							char *ptrName = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
+
+							menuTable[0] = createMenu(x, y, ptrName);
+							first = false;
+						}
 					}
+					if((ovl2) && (ptrHead->verbNumber))
+					{
+						if(ovl2->nameVerbGlob)
+						{
+							char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
+							strcpy(verbe_name, ptr);
 
-					pObject =
-					    getObjectDataFromOverlay(var_2,
-					    var_34->stringNameOffset);
-
-					if (var_2 == param0) {
-						if (param1 == var_34->stringNameOffset) {
-							if (pObject) {
-								if (pObject->type != 3) {
-									char var_214[80];
-									char var_1C4[80];
-									char var_174[80];
-									char var_124[80];
-									char var_D4[80];
-									char var_84[80];
-
-									ovlDataStruct *var_12;
-									ovlDataStruct *var_22;
-
-									int var_E = var_34->varIdx;
-									int cx = var_34->stringIdx;
-									int var_C = var_34->procIdx;
-
-									int di = var_E;
-									if (var_E == 0)
-										di = var_1E;
-
-									var_2 = cx;
-									if (cx == 0)
-										var_2 = var_1E;
-
-									if (var_C == 0)
-										var_C = var_1E;
-
-									var_12 = NULL;
-									var_22 = NULL;
-
-									var_214[0] = 0;
-									var_1C4[0] = 0;
-									var_174[0] = 0;
-									var_124[0] = 0;
-									var_D4[0] = 0;
-									var_84[0] = 0;
-
-									if (di > 0) {
-										var_22 = overlayTable[di].ovlData;
-									}
-
-									if (var_2 > 0) {
-										var_12 = overlayTable[var_2].ovlData;
-									}
-
-									if (var_12) {
-										if (var_34->stringNameOffset) {
-											var_30 = var_34->field_1A;
-											if (var_28) {
-												if (var_12->specialString2) {
-													if (var_30 == -1 || var_30 == returnVar) {
-														char *ptrName = getObjectName(var_34->stringNameOffset, var_12->specialString2);
-
-														menuTable[0] = createMenu(x, y, ptrName);
-														var_28 = 0;
-													}
-												}
-											}
-										}
-									}
-
-									if (var_22) {
-										if (true /*var_34->varNameOffset>=0 */ ) {	// FIXME: This check is always true since varNameOffset is unsigned
-											if (var_22->specialString1) {
-												char *ptr = getObjectName(var_34->varNameOffset, var_22->specialString1);
-
-												strcpy
-												    (var_214,
-												    ptr);
-
-												if (var_28 == 0) {
-													if (var_30 == -1 || var_30 == returnVar) {
-														if (strlen(var_214)) {
-															attacheNewScriptToTail
-															    (var_1E,
-															    &relHead,
-															    var_34->
-															    field_2,
-															    30,
-															    currentScriptPtr->
-															    scriptNumber,
-															    currentScriptPtr->
-															    overlayNumber,
-															    scriptType_REL);
-														} else {
-															if (var_22->specialString1) {
-																ptr = getObjectName(var_34->varNameOffset, var_22->specialString1);
-
-																var_2C
-																    =
-																    1;
-
-																addSelectableMenuEntry
-																    (var_1E,
-																    var_14,
-																    menuTable
-																    [0],
-																    1,
-																    -1,
-																    ptr);
-															}
-														}
-													}
-												}
-											}
-										}
-									}
+							if( (!first) && ((testState==-1) || (testState==objectState)))
+							{
+								if(!strlen(verbe_name))
+									attacheNewScriptToTail(j, &relHead, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+								else if(ovl2->nameVerbGlob)
+								{
+									found = true;
+									ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
+									addSelectableMenuEntry(i, j, menuTable[0], 1, -1, ptr);
 								}
 							}
 						}
@@ -998,7 +939,7 @@ int callInventoryObject(int param0, int param1, int x, int y) {
 		}
 	}
 
-	return var_2C;
+	return found;
 }
 
 int processInventory(void) {
@@ -1016,8 +957,7 @@ int processInventory(void) {
 			freeMenu(menuTable[1]);
 			menuTable[1] = NULL;
 
-			callInventoryObject(var2, var4,
-			    currentMenuElementX + 80, currentMenuElementY);
+			findRelation(var2, var4, currentMenuElementX + 80, currentMenuElementY);
 
 			return 1;
 		} else {
@@ -1107,26 +1047,55 @@ int processInput(void)
 					// Handle left click on an object
 					if (menuTable[0] == 0)
 					{
-						int X;
-						int Y;
+						int objOvl;
 						int objIdx;
+						int objType;
 
-						objIdx = findObject(mouseX, mouseY, &X, &Y);
+						objType = findObject(mouseX, mouseY, &objOvl, &objIdx);
 
-						if (objIdx != -1)
+						if (objType != -1)
 						{
-							ASSERT(0);
+							int relation = findRelation(objOvl, objIdx, mouseX, mouseY);
+							if(menuTable[0])
+							{
+								if(relation)
+								{
+									currentActiveMenu = 0;
+									selectDown = 1;
+								}
+								else
+								{
+									// object has a name but no relation, just move the character
+									freeMenu(menuTable[0]);
+									menuTable[0] = NULL;
+
+									aniX = mouseX;
+									aniY = mouseY;
+									animationStart = true;
+									buttonDown = 0;
+								}
+							}
+							else
+							{
+								aniX = mouseX;
+								aniY = mouseY;
+								animationStart = true;
+								buttonDown = 0;
+							}
 						}else {
 							// No object found, we move the character to the cursor
 							aniX = mouseX;
 							aniY = mouseY;
 							animationStart = true;
-							menuDown = 0;
+							buttonDown = 0;
 						}
 					}
 					else
 					{
-						ASSERT(0);
+						aniX = mouseX;
+						aniY = mouseY;
+						animationStart = true;
+						buttonDown = 0;
 					}
 				}
 				else

@@ -301,12 +301,12 @@ int loadSavegameData(int saveGameIdx) {
 				}
 
 				if (filesData[j].field_4) {
-					if (ovlData->objData2WorkTable) {
+					if (ovlData->arrayObjVar) {
 						free(ovlData->
-						    objData2WorkTable);
+						    arrayObjVar);
 					}
 
-					ovlData->objData2WorkTable = (objectParams *) filesData[j].field_4;	// TODO: fix !
+					ovlData->arrayObjVar = (objectParams *) filesData[j].field_4;	// TODO: fix !
 					ovlData->size9 = filesData2[j].field_2;
 				}
 

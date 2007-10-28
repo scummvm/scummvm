@@ -142,7 +142,7 @@ void resolveDecompShort(char *buffer) {
 		(importScriptStruct *) (data3Ptr->dataPtr +
 		data3Ptr->offsetToImportData);
 
-	for (i = 0; i < data3Ptr->numImport; i++) {
+	for (i = 0; i < data3Ptr->numRelocGlob; i++) {
 		switch (importEntry->type) {
 		case 20:	// script
 		case 30:
@@ -191,7 +191,7 @@ void resolveDecompChar(char *buffer) {
 		(importScriptStruct *) (data3Ptr->dataPtr +
 		data3Ptr->offsetToImportData);
 
-	for (i = 0; i < data3Ptr->numImport; i++) {
+	for (i = 0; i < data3Ptr->numRelocGlob; i++) {
 		switch (importEntry->type) {
 		default:
 			{
@@ -332,19 +332,19 @@ void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
 	if (!strcmp(ovlIdxString, "0")) {
 		int i;
 
-		for (i = 0; i < currentDecompOvl->numExport; i++) {
-			if (varIdx == currentDecompOvl->exportDataPtr[i].idx) {
-				if (((currentDecompOvl->exportDataPtr[i].var4 & 0xF0) == 0) && varType != 0x20) {	// var
+		for (i = 0; i < currentDecompOvl->numSymbGlob; i++) {
+			if (varIdx == currentDecompOvl->arraySymbGlob[i].idx) {
+				if (((currentDecompOvl->arraySymbGlob[i].var4 & 0xF0) == 0) && varType != 0x20) {	// var
 					strcpy(outputName,
-					    currentDecompOvl->exportNamesPtr +
-					    currentDecompOvl->exportDataPtr[i].
+					    currentDecompOvl->arrayNameSymbGlob +
+					    currentDecompOvl->arraySymbGlob[i].
 					    offsetToName);
 					return;
 				}
-				if ((currentDecompOvl->exportDataPtr[i].var4) == 20 && varType == 0x20) {	// script
+				if ((currentDecompOvl->arraySymbGlob[i].var4) == 20 && varType == 0x20) {	// script
 					strcpy(outputName,
-					    currentDecompOvl->exportNamesPtr +
-					    currentDecompOvl->exportDataPtr[i].
+					    currentDecompOvl->arrayNameSymbGlob +
+					    currentDecompOvl->arraySymbGlob[i].
 					    offsetToName);
 					return;
 				}
@@ -1474,7 +1474,7 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 
 	failed = 0;
 
-	currentScript = &ovlData->data3Table[idx];
+	currentScript = &ovlData->arrayProc[idx];
 
 	currentDecompScript = currentScript->dataPtr;
 	currentDecompScriptPtr->var4 = 0;

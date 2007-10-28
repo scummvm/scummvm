@@ -366,8 +366,7 @@ char *drawPolyMode2(char *dataPointer, int linesToDraw) {
 }
 
 // this function builds the poly model and then calls the draw functions (OLD: mainDrawSub1Sub5)
-void buildPolyModel(int positionX, int positionY, int scale, char *ptr2,
-	    char *destBuffer, char *dataPtr) {
+void buildPolyModel(int positionX, int positionY, int scale, char *ptr2, char *destBuffer, char *dataPtr) {
 	int counter = 0;	// numbers of coordinates to process
 	int startX = 0;		// first X in model
 	int startY = 0;		// first Y in model
@@ -600,8 +599,9 @@ void mainDrawPolygons(int fileIndex, cellStruct *pObject, int X, int scale,
 		cellStruct *pCurrentObject = pObject;
 
 		do {
-			if (pCurrentObject->type == 2) {
-				// ASSERT(0);
+			if (pCurrentObject->type == OBJ_TYPE_BGMK)
+			{
+//				ASSERT(0);
 			}
 
 			pCurrentObject = pCurrentObject->next;

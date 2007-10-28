@@ -54,7 +54,7 @@ struct ovlData3Struct {
 	short int offsetToSubData5;
 	short int sysKey;
 	short int var12;
-	short int numImport;
+	short int numRelocGlob;
 	short int subData2Size;
 	short int var18;
 	short int var1A;
@@ -67,15 +67,15 @@ struct stringEntryStruct {
 };
 
 struct linkDataStruct {
-	uint16 field_0;
-	uint16 field_2;
-	uint16 field_4;
-	uint16 varIdx;
-	uint16 varNameOffset;
-	uint16 stringIdx;
-	uint16 stringNameOffset;
-	uint16 procIdx;
-	uint16 procNameOffset;
+	uint16 type;
+	uint16 id;
+	uint16 offsetVerbeName;
+	uint16 verbOverlay;
+	uint16 verbNumber;
+	uint16 obj1Overlay;
+	uint16 obj1Number;
+	uint16 obj2Overlay;
+	uint16 obj2Number;
 
 	int16 field_12;
 	int16 field_14;
@@ -120,27 +120,29 @@ struct objectParams {
 };
 
 struct ovlDataStruct {
-	ovlData3Struct *data3Table;
+
+	ovlData3Struct *arrayProc;
 	uint8 *ptr1;
-	objDataStruct *objDataTable;
-	objectParams *objData2SourceTable;
-	objectParams *objData2WorkTable;
+	objDataStruct *arrayObject;
+	objectParams *arrayStates;
+	objectParams *arrayObjVar;
 	stringEntryStruct *stringTable;
-	exportEntryStruct *exportDataPtr;
-	importDataStruct *importDataPtr;
-	linkDataStruct *linkDataPtr;
-	uint8 *specialString1;
-	uint8 *specialString2;
-	uint8 *importNamePtr;
-	uint8 *exportNamesPtr;
+	exportEntryStruct *arraySymbGlob;
+	importDataStruct *arrayRelocGlob;
+	linkDataStruct *arrayMsgRelHeader;
+
+	uint8 *nameVerbGlob;
+	uint8 *arrayNameObj;
+	uint8 *arrayNameRelocGlob;
+	uint8 *arrayNameSymbGlob;
 	uint8 *data4Ptr;
 	uint8 *ptr8;
-	unsigned short int numScripts1;
-	unsigned short int numScripts2;
-	unsigned short int numExport;
-	unsigned short int numImport;
-	unsigned short int numLinkData;
-	unsigned short int numObjData;
+	unsigned short int numProc;
+	unsigned short int numRel;
+	unsigned short int numSymbGlob;
+	unsigned short int numRelocGlob;
+	unsigned short int numMsgRelHeader;
+	unsigned short int numObj;
 	unsigned short int numStrings;
 	unsigned short int size8;
 	unsigned short int size9;
