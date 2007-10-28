@@ -37,7 +37,6 @@ static DWORD _lastTime = 0;
 static DWORD REG_bat = 0, REG_ac = 0, REG_disp = 0, bat_timeout = 0;
 #ifdef __GNUC__
 extern "C" void WINAPI SystemIdleTimerReset(void);
-#define SPI_GETPLATFORMTYPE 		257
 #define SPI_SETBATTERYIDLETIMEOUT	251
 #define SPI_GETBATTERYIDLETIMEOUT	252
 #endif
