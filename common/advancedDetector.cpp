@@ -301,6 +301,45 @@ PluginError detectGameForEngineCreation(
 	return kNoGameDataFoundError;
 }
 
+void reportUnknown(StringMap &filesMD5, HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> &filesSize) {
+	// TODO: This message should be cleaned up / made more specific.
+	// For example, we should specify at least which engine triggered this.
+	//
+	// Might also be helpful to display the full path (for when this is used
+	// from the mass detector).
+	printf("Your game version appears to be unknown. Please, report the following\n");
+	printf("data to the ScummVM team along with name of the game you tried to add\n");
+	printf("and its version/language/etc.:\n");
+
+	for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
+		printf("  \"%s\", \"%s\", %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
+
+	printf("\n");
+}
+
+void reportUnknown(StringList &files, int md5Bytes) {
+	StringMap filesMD5;
+	HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> filesSize;
+
+	char md5str[32+1];
+	File testFile;
+
+	// Fill the data structures for the requested files
+	for (StringList::iterator file = files.begin(); file != files.end(); file++) {
+
+		if (testFile.open(*file)) {
+			filesSize[*file] = (int32)testFile.size();
+
+			if (md5_file_string(testFile, md5str, md5Bytes))
+				filesMD5[*file] = md5str;
+
+			testFile.close();
+		}
+	}
+
+	reportUnknown(filesMD5, filesSize);
+}
+
 static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
@@ -460,21 +499,8 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	if (!matched.empty())
 		return matched;
 
-	if (!filesMD5.empty()) {
-		// TODO: This message should be cleaned up / made more specific.
-		// For example, we should specify at least which engine triggered this.
-		//
-		// Might also be helpful to display the full path (for when this is used
-		// from the mass detector).
-		printf("Your game version appears to be unknown. Please, report the following\n");
-		printf("data to the ScummVM team along with name of the game you tried to add\n");
-		printf("and its version/language/etc.:\n");
-
-		for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
-			printf("  \"%s\", \"%s\", %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
-
-		printf("\n");
-	}
+	if (!filesMD5.empty())
+		reportUnknown(filesMD5, filesSize);
 
 	// Filename based fallback
 	if (params.fileBasedFallback != 0) {

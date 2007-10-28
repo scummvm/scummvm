@@ -240,6 +240,9 @@ EncapsulatedADGameDesc detectBestMatchingGame(const Common::ADParams &params);
 // Only used by ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC
 PluginError detectGameForEngineCreation(const Common::ADParams &params);
 
+// Helper function to announce an unknown version of the game (useful for
+// fallback detection functions).
+void reportUnknown(StringList &files, int md5Bytes);
 
 // FIXME: It would probably be good to merge detectBestMatchingGame
 // and detectGameForEngineCreation into a single function. Right now, the
