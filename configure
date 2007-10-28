@@ -1322,53 +1322,91 @@ DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/scummvm\\\""
 #
 # Check which engines ("frontends") are to be built
 #
+
+skipped_engines=""
+
 echo
 echo "Engines:"
 if test "$_build_scumm" = yes ; then
 	echo_n "    SCUMM"
 	if test "$_build_scumm_7_8" = yes ; then
 		echo_n " [v7 & v8 games]"
+	else
+	    skipped_engines="$skipped_engines [v7 & v8 games]"
 	fi
 	if test "$_build_he" = yes ; then
 		echo_n " [HE70+ games]"
+	else
+	    skipped_engines="$skipped_engines [HE70+ games]"
 	fi
 	echo
+
+	if test "$skipped_engines" = "" ; then
+	else
+	    skipped_engines="#SCUMM$skipped_engines@"
+	fi
+else
+	skipped_engines="${skipped_engines}#SCUMM [all games]@"
 fi
 if test "$_build_agi" = yes ; then
 	echo "    AGI"
+else
+	skipped_engines="${skipped_engines}#AGI@"
 fi
 if test "$_build_agos" = yes ; then
 	echo "    AGOS"
+else
+	skipped_engines="${skipped_engines}#AGOS@"
 fi
 if test "$_build_cine" = yes ; then
 	echo "    Cinematique evo 1"
+else
+	skipped_engines="${skipped_engines}#Cinematique evo 1@"
 fi
 if test "$_build_cruise" = yes ; then
 	echo "    Cinematique evo 2"
+else
+	skipped_engines="${skipped_engines}#Cinematique evo 2@"
 fi
 if test "$_build_drascula" = yes ; then
 	echo "    Drascula"
+else
+	skipped_engines="${skipped_engines}#Drascula@"
 fi
 if test "$_build_gob" = yes ; then
 	echo "    Gobli*ns"
+else
+	skipped_engines="${skipped_engines}#Gobli*ns@"
 fi
 if test "$_build_kyra" = yes ; then
 	echo "    Legend of Kyrandia"
+else
+	skipped_engines="${skipped_engines}#Legend of Kyrandia@"
 fi
 if test "$_build_lure" = yes ; then
 	echo "    Lure of the Temptress"
+else
+	skipped_engines="${skipped_engines}#Lure of the Temptress@"
 fi
 if test "$_build_parallaction" = yes ; then
 	echo "    Parallaction"
+else
+	skipped_engines="${skipped_engines}#Parallaction@"
 fi
 if test "$_build_queen" = yes ; then
 	echo "    Flight of the Amazon Queen"
+else
+	skipped_engines="${skipped_engines}#Flight of the Amazon Queen@"
 fi
 if test "$_build_saga" = yes ; then
 	echo "    SAGA"
+else
+	skipped_engines="${skipped_engines}#SAGA@"
 fi
 if test "$_build_sky" = yes ; then
 	echo "    Beneath a Steel Sky"
+else
+	skipped_engines="${skipped_engines}#Beneath a Steel Sky@"
 fi
 if test "$_build_sword1" = yes ; then
 	echo_n "    Broken Sword 1"
@@ -1377,6 +1415,8 @@ if test "$_build_sword1" = yes ; then
 	else
 		echo " (without mpeg2 cutscenes)"
 	fi
+else
+	skipped_engines="${skipped_engines}#Broken Sword 1@"
 fi
 if test "$_build_sword2" = yes ; then
 	echo_n "    Broken Sword 2"
@@ -1385,12 +1425,24 @@ if test "$_build_sword2" = yes ; then
 	else
 		echo " (without mpeg2 cutscenes)"
 	fi
+else
+	skipped_engines="${skipped_engines}#Broken Sword 2@"
 fi
 if test "$_build_touche" = yes ; then
 	echo "    Touche: The Adventures of the Fifth Musketeer"
+else
+	skipped_engines="${skipped_engines}#Touche: The Adventures of the Fifth Musketeer@"
 fi
 
 echo
+
+if test "$skipped_engines" = "" ; then
+else
+	echo "Engines Skipped:"
+	echo $skipped_engines | sed 's/@/\
+/g
+s/#/    /g'
+fi
 
 echo_n "Backend... "
 echo_n "$_backend"
