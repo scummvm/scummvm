@@ -92,6 +92,7 @@ int CruiseEngine::init() {
 }
 
 int CruiseEngine::go() {
+	Cruise::changeCursor(Cruise::CURSOR_NORMAL);
 	CursorMan.showMouse(true);
 
 	Cruise::mainLoop();

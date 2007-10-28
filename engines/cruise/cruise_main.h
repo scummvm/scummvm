@@ -90,13 +90,13 @@ int32 prepareWordRender(int32 param, int32 var1, int16 * out2, uint8 * ptr3,
     const uint8 * string);
 void removeExtention(const char *name, char *buffer);
 void resetRaster(uint8 * rasterPtr, int32 rasterSize);
-void changeCursor(uint16 cursorType);
 void resetPtr2(scriptInstanceStruct * ptr);
 void getFileExtention(const char *name, char *buffer);
 void *allocAndZero(int size);
 void freeStuff2(void);
 char *getObjectName(int index, uint8 * string);
 void mainLoop(void);
+void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY);
 
 } // End of namespace Cruise
 

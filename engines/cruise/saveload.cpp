@@ -404,7 +404,7 @@ int loadSavegameData(int saveGameIdx) {
 
 	// to finish
 
-	changeCursor(0);
+	changeCursor(CURSOR_NORMAL);
 	mainDraw(1);
 	flipScreen();
 

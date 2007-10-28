@@ -77,7 +77,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 		return (-14);
 	}
 
-	changeCursor(1);
+	changeCursor(CURSOR_DISK);
 
 	currentVolumeFile.read(&volumeNumberOfEntry, 2);
 	currentVolumeFile.read(&volumeSizeOfEntry, 2);

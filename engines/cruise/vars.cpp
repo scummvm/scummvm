@@ -71,8 +71,6 @@ Common::File *_currentVolumeFile;
 Common::File currentVolumeFile;
 #endif
 
-int16 currentCursor;
-
 int16 volumeNumEntry;
 fileEntry *volumePtrToFileDescriptor = NULL;
 

@@ -436,7 +436,7 @@ int16 Op_LoadBackground(void) {
 		result = loadBackground((char *)bgName, bgIdx);
 	}
 
-	changeCursor(0);
+	changeCursor(CURSOR_NORMAL);
 
 	return result;
 }
@@ -485,7 +485,7 @@ int16 Op_loadFile(void) {
 		saveVar6[0] = 0;
 	}
 
-	changeCursor(0);
+	changeCursor(CURSOR_NORMAL);
 	return 0;
 }
 
@@ -512,7 +512,7 @@ int16 Op_LoadAbs(void) {
 		result = loadFullBundle(name, param1);
 	}
 
-	changeCursor(0);
+	changeCursor(CURSOR_NORMAL);
 	return result;
 }
 

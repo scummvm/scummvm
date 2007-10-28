@@ -174,8 +174,6 @@ extern Common::File *_currentVolumeFile;
 extern Common::File currentVolumeFile;
 #endif
 
-extern int16 currentCursor;
-
 extern int16 volumeNumEntry;
 extern fileEntry *volumePtrToFileDescriptor;
 

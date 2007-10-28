@@ -71,12 +71,10 @@ void drawInfoStringSmallBlackBox(uint8 *string) {
 }
 
 void loadPakedFileToMem(int fileIdx, uint8 *buffer) {
-	//changeCursor(1);
+	changeCursor(CURSOR_DISK);
 
-	currentVolumeFile.seek(volumePtrToFileDescriptor[fileIdx].offset,
-	    SEEK_SET);
-	currentVolumeFile.read(buffer,
-	    volumePtrToFileDescriptor[fileIdx].size);
+	currentVolumeFile.seek(volumePtrToFileDescriptor[fileIdx].offset, SEEK_SET);
+	currentVolumeFile.read(buffer, volumePtrToFileDescriptor[fileIdx].size);
 }
 
 int loadScriptSub1(int scriptIdx, int param) {
@@ -1078,7 +1076,7 @@ int processInput(void)
 	// test both buttons
 	if (((button & 3) == 3) || keyboardVar == 0x44 || keyboardVar == 0x53)
 	{
-		changeCursor(0);
+		changeCursor(CURSOR_NORMAL);
 		keyboardVar = 0;
 		return (playerMenu(mouseX, mouseY));
 	}
@@ -1457,7 +1455,7 @@ void mainLoop(void) {
 				 * }
 				 * else */
 				{
-					changeCursor(0);
+					changeCursor(CURSOR_NORMAL);
 				}
 
 				if (main7) {
@@ -1532,10 +1530,6 @@ int oldmain(int argc, char *argv[]) {
 	//freePtr(ptr_something);
 
 	return (0);
-}
-
-void changeCursor(uint16 cursorType) {
-	//printf("changeCursor %d\n", cursorType);
 }
 
 void *mallocAndZero(int32 size) {
