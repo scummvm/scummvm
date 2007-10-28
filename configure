@@ -240,34 +240,25 @@ echo_n()
 #
 find_type_with_size ()
 {
+for datatype in int short char long unknown; do
 cat <<EOF >tmp_find_type_with_size.cpp
-#include <stdio.h>
-int main(int argc, char **argv)
-{
-	int size = argv[1][0] - '0';
-	if (size == sizeof(int))
-		printf("int\n");
-	else if (size == sizeof(short))
-		printf("short\n");
-	else if (size == sizeof(char))
-		printf("char\n");
-	else if (size == sizeof(long))
-		printf("long\n");
-	else {
-		printf("unknown\n");
-		return 1;
-	}
-
+typedef $datatype ac__type_sizeof_;
+int main() {
+	static int test_array [1 - 2 * !(((long int) (sizeof (ac__type_sizeof_))) == $1)];
+	test_array [0] = 0;
 	return 0;
 }
 EOF
-if eval "$CXX $CXXFLAGS -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp"; then
-	datatype=`./tmp_find_type_with_size $1`
+if ! $CXX $CXXFLAGS -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null; then
 	if test "$datatype" = "unknown"; then
 		echo "couldn't find data type with $1 bytes"
 		exit 1
 	fi
+	continue
+else
+	break
 fi
+done
 rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
 echo $datatype
 }
@@ -577,7 +568,11 @@ i586-mingw32msvc)
 	_host_cpu=i586
 	;;
 *)
-	guessed_host=`$_srcdir/config.guess`
+	if test -z "$_host"; then
+		guessed_host=`$_srcdir/config.guess`
+	else
+		guessed_host=`$_srcdir/config.sub $_host`
+	fi
 	_host_cpu=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
 	_host_os=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 	_host_vendor=`echo $guessed_host | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
@@ -619,7 +614,7 @@ esac
 #
 echo_n "Looking for C++ compiler... "
 if test -n "$_host"; then
-	compilers="$CXX $_host_cpu-$_host_os-g++ $_host_cpu-$_host_os-c++"
+	compilers="$CXX $_host_cpu-$_host_os-g++ $_host_cpu-$_host_os-c++ $_host-g++ $_host-c++"
 else
 	compilers="$CXX g++ c++"
 fi
@@ -737,6 +732,108 @@ add_to_config_mk_if_no $_build_touche       'DISABLE_TOUCHE = 1'
 add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
 add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
 
+#
+# Check for endianness
+#
+echo_n "Checking endianness... "
+cat <<EOF >tmp_endianness_check.cpp
+short ascii_mm[] = { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
+short ascii_ii[] = { 0x694C, 0x5454, 0x656C, 0x6E45, 0x6944, 0x6E61, 0 };
+void _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; }
+short ebcdic_ii[] = { 0x89D3, 0xE3E3, 0x8593, 0x95C5, 0x89C4, 0x9581, 0 };
+short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0 };
+void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
+int main() { _ascii (); _ebcdic (); return 0; }
+EOF
+$CXX $CXXFLAGS -c -o tmp_endianness_check.o tmp_endianness_check.cpp
+if grep BIGenDianSyS tmp_endianness_check.o >/dev/null; then
+	_endian=big
+else
+	_endian=little
+fi
+echo $_endian;
+rm -f tmp_endianness_check.o tmp_endianness_check.cpp
+
+#
+# Determine data type sizes
+# TODO: proper error checking
+# TODO: Actually, we should check individually for both signed & unsigned
+# data types - there are systems on which the size of an unsigned int
+# differs from that of a signed int!
+# However, so far we haven't encountered one of those, so we can live with
+# the limited check for now.
+#
+echo_n "Type with 1 byte... "
+type_1_byte=`find_type_with_size 1`
+echo "$type_1_byte"
+	
+echo_n "Type with 2 bytes... "
+type_2_byte=`find_type_with_size 2`
+echo "$type_2_byte"
+	
+echo_n "Type with 4 bytes... "
+type_4_byte=`find_type_with_size 4`
+echo "$type_4_byte"
+	
+#
+# Check whether we can use x86 asm routines
+#
+echo_n "Running on x86... "
+case $_host_cpu in
+	i386|i486|i586|i686)
+		_have_x86=yes
+		;;
+	*)
+		_have_x86=no
+		;;
+esac
+echo "$_have_x86"
+
+#
+# Determine build settings
+#
+# TODO - also add an command line option to override this?!?
+echo_n "Checking hosttype... "
+echo $_host_os
+case $_host_os in
+	linux* | uclinux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | hpux* | beos*)
+		DEFINES="$DEFINES -DUNIX"
+		;;
+	solaris*)
+		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		;;
+	irix*)
+		DEFINES="$DEFINES -DUNIX -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		LIBS="$LIBS -lmd "
+		_ranlib=:
+		;;
+	darwin*)
+		DEFINES="$DEFINES -DUNIX -DMACOSX"
+		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
+		;;
+	mingw*)
+		DEFINES="$DEFINES -DWIN32"
+		LIBS="$LIBS -lmingw32 -lwinmm"
+		OBJS="$OBJS scummvmico.o"
+		;;
+	cygwin*)
+		DEFINES="$DEFINES -mno-cygwin -DWIN32"
+		LIBS="$LIBS -mno-cygwin -lmingw32 -lwinmm"
+		OBJS="$OBJS scummvmico.o"
+		;;
+	os2-emx*)
+		DEFINES="$DEFINES -DUNIX"
+		;;
+	mint*)
+		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		;;
+	# given this is a shell script assume some type of unix
+	*)
+		echo "WARNING: could not establish system type, assuming unix like"
+		DEFINES="$DEFINES -DUNIX"
+		;;
+esac
+
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	case "$_host" in
@@ -761,6 +858,9 @@ if test -n "$_host"; then
 			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			;;
+		bfin*)
+			_need_memalign=yes
 			;;
  		gp2x)
  			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -813,96 +913,11 @@ if test -n "$_host"; then
 			OBJS="$OBJS scummvmico.o"
 		;;
 		*)
-			echo "Cross-compiling to unknown target $_host, please add your target to configure."
-			exit 1
+			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
 			;;
 	esac
 	
 else
-	#
-	# Determine build settings
-	#
-	# TODO - also add an command line option to override this?!?
-	echo_n "Checking hosttype... "
-	echo $_host_os
-	case $_host_os in
-		linux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | hpux* | beos*)
-			DEFINES="$DEFINES -DUNIX"
-			;;
-		solaris*)
-			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-			;;
-		irix*)
-			DEFINES="$DEFINES -DUNIX -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-			LIBS="$LIBS -lmd "
-			_ranlib=:
-			;;
-		darwin*)
-			DEFINES="$DEFINES -DUNIX -DMACOSX"
-			LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
-			;;
-		mingw*)
-			DEFINES="$DEFINES -DWIN32"
-			LIBS="$LIBS -lmingw32 -lwinmm"
-			OBJS="$OBJS scummvmico.o"
-			;;
-		cygwin*)
-			DEFINES="$DEFINES -mno-cygwin -DWIN32"
-			LIBS="$LIBS -mno-cygwin -lmingw32 -lwinmm"
-			OBJS="$OBJS scummvmico.o"
-			;;
-		os2-emx*)
-			DEFINES="$DEFINES -DUNIX"
-			;;
-		mint*)
-			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-			;;
-		# given this is a shell script assume some type of unix
-		*)
-			echo "WARNING: could not establish system type, assuming unix like"
-			DEFINES="$DEFINES -DUNIX"
-			;;
-	esac
-
-	#
-	# Check for endianness
-	#
-	echo_n "Checking endianness... "
-	cat <<EOF >tmp_endianness_check.cpp
-#include <stdio.h>
-#include <stdlib.h>
-int main(int argc, char **argv)
-{
-	unsigned int data = 0x01234567;
-	char *ptr = (char *)&data;
-	if (ptr[0] == 0x01 && ptr[1] == 0x23 && ptr[2] == 0x45 && ptr[3] == 0x67)
-		printf("big\n");
-	else if (ptr[3] == 0x01 && ptr[2] == 0x23 && ptr[1] == 0x45 && ptr[0] == 0x67)
-		printf("little\n");
-	else
-		printf("unknown\n");
-	return 0;
-}
-EOF
-	$CXX $CXXFLAGS -o tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
-	_endian=`./tmp_endianness_check`
-	echo $_endian;
-	rm -f tmp_endianness_check$EXEEXT tmp_endianness_check.cpp
-
-	#
-	# Check whether we can use x86 asm routines
-	#
-	echo_n "Running on x86... "
-	case $_host_cpu in
-		i386|i486|i586|i686)
-			_have_x86=yes
-			;;
-		*)
-			_have_x86=no
-			;;
-	esac
-	echo "$_have_x86"
-
 	#
 	# Check whether memory alignment is required
 	#
@@ -949,28 +964,6 @@ EOF
 			;;
 	esac
 	echo "$_need_memalign"
-
-	#
-	# Determine data type sizes
-	# TODO: proper error checking
-	# TODO: Actually, we should check individually for both signed & unsigned
-	# data types - there are systems on which the size of an unsigned int
-	# differs from that of a signed int!
-	# However, so far we haven't encountered one of those, so we can live with
-	# the limited check for now.
-	#
-	echo_n "Type with 1 byte... "
-	type_1_byte=`find_type_with_size 1`
-	echo "$type_1_byte"
-	
-	echo_n "Type with 2 bytes... "
-	type_2_byte=`find_type_with_size 2`
-	echo "$type_2_byte"
-	
-	echo_n "Type with 4 bytes... "
-	type_4_byte=`find_type_with_size 4`
-	echo "$type_4_byte"
-	
 fi
 
 #
