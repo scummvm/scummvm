@@ -1,19 +1,18 @@
 # ScummVM Makefile for Windows CE port
-# Uses the VLC toolchain
+# Uses the cegcc toolchain. For build info check out the wiki: http://wiki.scummvm.org
 # $URL$
 # $Id$
-
-########################################################################
-## Set this to point to where the tools are installed on your system
-
-wince_gcc_root = /cygdrive/e/wince-gcc-root
-
 
 ########################################################################
 ## Do you want a debug build or not?
 
 #WINCE_DEBUG_BUILD = 1
+#UNOPTIMIZED_BUILD = 1
 
+########################################################################
+## Do you want a build using plugins?
+
+BUILD_PLUGINS = 1
 
 ########################################################################
 ## Disable whichever engines you want here
@@ -22,7 +21,7 @@ wince_gcc_root = /cygdrive/e/wince-gcc-root
 #DISABLE_SKY = 1
 #DISABLE_QUEEN = 1
 #DISABLE_GOB = 1
-DISABLE_LURE = 1
+#DISABLE_LURE = 1
 #DISABLE_CINE = 1
 #DISABLE_SAGA = 1
 #DISABLE_KYRA = 1
@@ -33,6 +32,7 @@ DISABLE_LURE = 1
 #DISABLE_TOUCHE = 1
 #DISABLE_PARALLACTION = 1
 DISABLE_CRUISE = 1
+DISABLE_DRASCULA = 1
 
 
 ########################################################################
@@ -63,40 +63,42 @@ USE_ARM_GFX_ASM   = 1
 srcdir    = ../../..
 VPATH     = $(srcdir)
 
-CXX    = arm-wince-pe-g++
-LD     = arm-wince-pe-g++
-AR     = arm-wince-pe-ar cru
-RANLIB = arm-wince-pe-ranlib
-STRIP  = arm-wince-pe-strip
-WINDRES= arm-wince-pe-windres
+CXX    = arm-wince-mingw32ce-g++
+LD     = arm-wince-mingw32ce-g++
+AR     = arm-wince-mingw32ce-ar cru
+RANLIB = arm-wince-mingw32ce-ranlib
+STRIP  = arm-wince-mingw32ce-strip
+WINDRES= arm-wince-mingw32ce-windres
 MKDIR  = mkdir -p
 RM     = rm -f
 RM_REC = rm -rf
 ECHO   = echo -n
 CAT    = cat
-AS     = arm-wince-pe-as
+AS     = arm-wince-mingw32ce-as
 
 ########################################################################
 ## Set up defines, includes, cflags etc
 
-DEFINES := -D_WIN32_WCE=300 -DARM -D__ARM__ -D_ARM_ -DUNICODE -DSCUMM_NEED_ALIGNMENT
+DEFINES := -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DSCUMM_NEED_ALIGNMENT
 DEFINES += -DFPM_DEFAULT
 
 DEFINES += -DNONSTANDARD_PORT
-DEFINES += -DWIN32 
-DEFINES += -D__stdcall= -Dcdecl= -D__cdecl__= -D__cdecl= -Wno-multichar
+DEFINES += -DWIN32
+DEFINES += -Dcdecl= -D__cdecl__= -Wno-multichar
 
-INCLUDES := -I$(srcdir) -I. -I$(srcdir)/engines -Imissing/gcc -Ilibs/include -Ilibs/include/sdl -ICEgui -ICEkeys -I$(wince_gcc_root)/include
+INCLUDES := -I$(srcdir) -I. -I$(srcdir)/engines -Imissing/gcc -Ilibs/include -Ilibs/include/sdl -ICEgui -ICEkeys
 
-CFLAGS := -O3 -march=armv4 -mtune=xscale
+CFLAGS :=
+ifndef UNOPTIMIZED_BUILD
+CFLAGS += -O3 -march=armv4 -mtune=xscale
+endif
 
-CXXFLAGS := $(CFLAGS)
-
-LDFLAGS := -Llibs/lib -L$(wince_gcc_root)/lib
-LIBS := -lSDL
+LDFLAGS := -Wl,-Map,scummvm.exe.map -Wl,--stack,65536
+LIBS := -Llibs/lib -lSDL
 
 ifdef WINCE_DEBUG_BUILD
-DEFINES += -DDEBUG -DUSE_WINDBG -g
+DEFINES += -DDEBUG -DUSE_WINDBG
+CFLAGS += -g
 LDFLAGS += -debug
 endif
 
@@ -139,12 +141,11 @@ ifdef USE_ARM_GFX_ASM
 DEFINES += -DUSE_ARM_GFX_ASM
 endif
 
-LIBS += --entry WinMainCRTStartup
-
 ########################################################################
 # Targets follow here
 
-TARGET = scummvm.exe
+EXECUTABLE = scummvm.exe
+CXXFLAGS := $(CFLAGS)
 OBJS := 
 MODULE_DIRS += .
 
@@ -157,20 +158,35 @@ OBJS += CEkeys/EventsBuffer.o
 OBJS += $(srcdir)/gui/Actions.o $(srcdir)/gui/Key.o $(srcdir)/gui/KeysDialog.o 
 OBJS += ../sdl/sdl.o ../sdl/graphics.o ../sdl/events.o 
 OBJS += missing/missing.o
-OBJS += PocketSCUMM.o ARMscaler.o
+OBJS += ARMscaler.o
+ifndef BUILD_PLUGINS
+OBJS += PocketSCUMM.o
+endif
+
+ifdef BUILD_PLUGINS
+EXECUTABLE			= scummvm.dll
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .dll
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
+CXXFLAGS			+= -DDYNAMIC_MODULES
+PLUGIN_LDFLAGS		:= -shared -L. -lscummvm -Llibs/lib
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a -shared
+endif
 
 include $(srcdir)/Makefile.common
 
 all: dist
 
-dist: $(TARGET)
-	$(STRIP) $(TARGET)
+dist: ARMscaler.o PocketSCUMM.o $(EXECUTABLE)
+
+plugins-stub: stub.o
+	$(CXX) stub.o PocketSCUMM.o -L. -lscummvm -o scummvm.exe
+
+dist-plugins: $(EXECUTABLE) plugins PocketSCUMM.o plugins-stub
 
 PocketSCUMM.o:
 	$(WINDRES) $*.rc $@
 
 ARMscaler.o:
 	$(AS) $*.s -o $@
-
-$(TARGET): $(OBJS)
-	$(LD) $^ $(LDFLAGS) $(LIBS) -o $@ -Wl,-Map,scummvm.exe.map -Wl,--stack,65536
