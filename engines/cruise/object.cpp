@@ -57,8 +57,7 @@ objDataStruct *getObjectDataFromOverlay(int ovlIdx, int objIdx) {
 	return (&var_6[objIdx]);
 }
 
-int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx,
-	    objectParamsQuery *returnParam) {
+int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuery *returnParam) {
 	int16 size;
 	int16 var_A;
 	int16 var_14;

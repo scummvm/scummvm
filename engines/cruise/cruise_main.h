@@ -67,6 +67,17 @@ namespace Cruise {
 #define ASSERT_PTR assert
 #define ASSERT assert
 
+#define	OBJ_TYPE_LINE		  0
+#define	OBJ_TYPE_MASK		  1
+#define	OBJ_TYPE_BGMK		  2
+#define	OBJ_TYPE_VIRTUEL	  3
+#define	OBJ_TYPE_SPRITE		  4
+#define	OBJ_TYPE_MSG		  5
+#define	OBJ_TYPE_SOUND		  6
+#define	OBJ_TYPE_FONT		  7
+#define	OBJ_TYPE_POLY		  8
+#define	OBJ_TYPE_EXIT		  9
+
 bool delphineUnpack(byte *dst, const byte *src, int len);
 
 ovlData3Struct *getOvlData3Entry(int32 scriptNumber, int32 param);

@@ -681,8 +681,9 @@ int16 Op_AddMessage(void) {
 		overlayIdx = currentScriptPtr->overlayNumber;
 
 	if (color == -1) {
-		color = 0;
-		ASSERT(0);
+		color = 1;
+		printf("Unimplemented automatic message color\n");
+	//	ASSERT(0);
 		//color = calcTabSomething();
 	} else {
 		if (CVTLoaded) {

@@ -581,8 +581,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 }
 
 //computePathfinding(returnVar2, params.X, params.Y, aniX, aniY, currentActor->stepX, currentActor->stepY);
-int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX,
-	    int16 destY, int16 stepX, int16 stepY, int16 oldPathId) {
+int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 destY, int16 stepX, int16 stepY, int16 oldPathId) {
 	persoStruct *perso;
 	int num;
 
@@ -762,16 +761,15 @@ int raoul_invstat[][13] = {
 void processAnimation(void) {
 	objectParamsQuery params;
 	int16 returnVar2[5];
-	actorStruct *currentActor = &actorHead;
+	actorStruct *currentActor = actorHead.next;
 	actorStruct *nextActor;
 
 	while (currentActor) {
 		nextActor = currentActor->next;
 
-		if (!currentActor->freeze && ((currentActor->type == 0)
-			|| (currentActor->type == 1))) {
-			getMultipleObjectParam(currentActor->overlayNumber,
-			    currentActor->idx, &params);
+		if (!currentActor->freeze && ((currentActor->type == 0)	|| (currentActor->type == 1)))
+		{
+			getMultipleObjectParam(currentActor->overlayNumber, currentActor->idx, &params);
 
 			if (((animationStart && !currentActor->flag) || (!animationStart && currentActor->x_dest != -1 && currentActor->y_dest != -1)) && (currentActor->type == 0)) {
 				// mouse animation

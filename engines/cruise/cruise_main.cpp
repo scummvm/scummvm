@@ -607,120 +607,111 @@ int buttonDown;
 int selectDown = 0;
 int menuDown = 0;
 
-int getCursorFromObject(int mouseX, int mouseY, int *outX, int *outY) {
-	int16 var_2;
-	int16 var_4;
-	int16 var_14;
-	int16 var_16;
-	objectParamsQuery params;
-	int16 var_10;
-	int16 var_E;
-	int16 var_C;
-//  int16 var_42;
-	int16 var_A;
-	int16 var_6;
-
+int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx)
+{
 	char objectName[80];
 
 	cellStruct *currentObject = cellHead.prev;
 
 	while (currentObject)
 	{
-		if (currentObject->overlay >= 0 && overlayTable[currentObject->overlay].alreadyLoaded && (currentObject->type == 4 || currentObject->type == 1 || currentObject->type == 9 || currentObject->type == 3))
+		if (currentObject->overlay >= 0 && overlayTable[currentObject->overlay].alreadyLoaded && (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUEL))
 		{
 			char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->specialString2);
 			if(pObjectName)
 			{
 				strcpy(objectName, pObjectName);
 
-				if (strlen(objectName)) {
-					if (currentObject->freeze == 0) {
-						var_2 = currentObject->idx;
-						var_4 = currentObject->overlay;
-						var_14 = currentObject->followObjectIdx;
-						var_16 = currentObject->followObjectOverlayIdx;
+				if (strlen(objectName) && (currentObject->freeze == 0))
+				{
+					int objIdx = currentObject->idx;
+					int objOvl = currentObject->overlay;
+					int linkedObjIdx = currentObject->followObjectIdx;
+					int linkedObjOvl = currentObject->followObjectOverlayIdx;
 
-						getMultipleObjectParam(currentObject->overlay, currentObject->idx, &params);
+					objectParamsQuery params;
+					getMultipleObjectParam(objOvl, objIdx, &params);
 
-						var_10 = 0;
-						var_E = 0;
-						var_C = 0;
+					int x2 = 0;
+					int y2 = 0;
+					int j2 = 0;
 
-						if ((var_4 != var_16)
-							&& (var_2 != var_14)) {
-							getMultipleObjectParam
-								(var_16, var_14, &params);
+					if ((objOvl != linkedObjOvl) || (objIdx != linkedObjIdx))
+					{
+						getMultipleObjectParam(linkedObjOvl, linkedObjIdx, &params);
 
-							var_C = params.X;
-							var_E = params.Y;
-							var_10 = params.fileIdx;
-						}
+						x2 = params.X;
+						y2 = params.Y;
+						j2 = params.fileIdx;
+					}
 
-						if (params.var5 >= 0 && params.fileIdx >= 0) {
-							if (currentObject->type == 3) {
-								assert(0);
+					if (params.var5 >= 0 && params.fileIdx >= 0)
+					{
+						if (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT)
+						{
+							int x = params.X + x2;
+							int y = params.Y + y2;
+							int j = params.fileIdx;
 
-								var_2 = params.scale;
-								var_A = params.X + var_C;
+							if (j >= 0) {
+								j += j2;
+							}
 
-								// TODO: this var3 is stupid, investigate...
-								if ((var_A <= mouseX) && (var_A + params.fileIdx >= mouseX) && (mouseY >= params.Y + var_E) && (params.Y + var_E + var2 >= mouseY)) {
-									*outX = var_16;
-									*outY = var_14;
+							/*if ((filesDatabase[j].subData.resourceType == OBJ_TYPE_POLY) && (filesDatabase[j].subData.ptr)) {
+								ASSERT(0);
+							}
+							else*/
+							{
+								int numBitPlanes = filesDatabase[j].resType;
 
-									return (currentObject->type);
-								}
-							} else if (currentObject->type == 4 ||
-								currentObject->type == 1 ||
-								currentObject->type == 9) {
-								int si;
-								int var_8;
-								int di;
+								int nWidth;
+								int nHeight;
 
-								var_A = params.X + var_C;
-								var_6 = params.Y + var_E;
-
-								di = params.fileIdx;
-
-								if (di < 0) {
-									di += var_10;
-								}
-
-	/*		                  if ((filesDatabase[di].subData.resourceType == 8) && (filesDatabase[di].subData.ptr)) {
-									assert(0);
-								}
-	*/
+								if (numBitPlanes == 1)
 								{
-									var_4 = filesDatabase[di].resType;
-
-									if (var_4 == 1) {
-										var_C = filesDatabase[di].widthInColumn / 2;
-									} else {
-										var_C = filesDatabase[di].width;
-									}
-
-									var_8 = filesDatabase[di].height;
-
-									var_2 = mouseX - var_A;
-									si = mouseY - var_6;
-
-									if (var_2 > 0 && var_C > var_2 && si > 0 && var_8 >= si) {
-										if (filesDatabase[di].subData.ptr) {
-											if (var_4 == 1) {
-											} else {
-											}
-
-											printf("should compare to mask in getCursorFromObject...\n");
-
-											*outX = var_16;
-											*outY = var_14;
-
-											printf("Selected: %s\n", objectName);
-
-											return currentObject->type;
-										}
-									}
+									nWidth = filesDatabase[j].widthInColumn / 2;
+								} else {
+									nWidth = filesDatabase[j].width;
 								}
+
+								nHeight = filesDatabase[j].height;
+
+								int offsetX = mouseX - x;
+								int offsetY = mouseY - y;
+
+								if ((offsetX >= 0) && (offsetX < nWidth * 16) && (offsetY >= 0) && (nWidth <= nHeight) && filesDatabase[j].subData.ptr)
+								{
+									if (numBitPlanes == 1)
+									{
+									}
+									else
+									{
+									}
+
+									printf("should compare to mask in findObject...\n");
+
+									*outObjOvl = objOvl;
+									*outObjIdx = objIdx;
+
+									printf("Selected: %s\n", objectName);
+
+									return currentObject->type;
+								}
+							}
+						}
+						else if (currentObject->type == OBJ_TYPE_VIRTUEL)
+						{
+							int x = params.X + x2;
+							int y = params.Y + y2;
+							int width = params.fileIdx;
+							int height = params.scale;
+
+							if ((mouseX >= x) && (mouseX <= x+width) && (mouseY >= y) && (mouseY <= y+height))
+							{
+								*outObjOvl = objOvl;
+								*outObjIdx = objIdx;
+
+								return (currentObject->type);
 							}
 						}
 					}
@@ -731,8 +722,8 @@ int getCursorFromObject(int mouseX, int mouseY, int *outX, int *outY) {
 		currentObject = currentObject->prev;
 	}
 
-	*outX = 0;
-	*outY = 0;
+	*outObjOvl = 0;
+	*outObjIdx = 0;
 
 	return -1;
 }
@@ -1120,7 +1111,7 @@ int processInput(void)
 						int Y;
 						int objIdx;
 
-						objIdx = getCursorFromObject(mouseX, mouseY, &X, &Y);
+						objIdx = findObject(mouseX, mouseY, &X, &Y);
 
 						if (objIdx != -1)
 						{
@@ -1435,21 +1426,21 @@ void mainLoop(void) {
 					 
 						if (mouseX != oldMouseX && mouseY != oldMouseY)
 						{
-							int cursorType;
+							int objectType;
 							int newCursor1;
 							int newCursor2;
 							
 							oldMouseX = mouseX;
 							oldMouseY = mouseY;
 							
-							cursorType = getCursorFromObject(mouseX, mouseY, &newCursor1, &newCursor2);
+							objectType = findObject(mouseX, mouseY, &newCursor1, &newCursor2);
 							
-							if (cursorType == 9)
+							if (objectType == 9)
 							{
 								changeCursor(CURSOR_EXIT);
 							}
 							else
-							if (cursorType != -1)
+							if (objectType != -1)
 							{
 								changeCursor(CURSOR_MAGNIFYING_GLASS);
 							}
