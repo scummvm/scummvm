@@ -1337,13 +1337,14 @@ if test "$_build_scumm" = yes ; then
 	if test "$_build_he" = yes ; then
 		echo_n " [HE70+ games]"
 	else
-	    skipped_engines="$skipped_engines [HE70+ games]"
+		skipped_engines="$skipped_engines [HE70+ games]"
 	fi
 	echo
 
 	if test "$skipped_engines" = "" ; then
+		true
 	else
-	    skipped_engines="#SCUMM$skipped_engines@"
+		skipped_engines="#SCUMM$skipped_engines@"
 	fi
 else
 	skipped_engines="${skipped_engines}#SCUMM [all games]@"
@@ -1437,6 +1438,7 @@ fi
 echo
 
 if test "$skipped_engines" = "" ; then
+	true
 else
 	echo "Engines Skipped:"
 	echo $skipped_engines | sed 's/@/\
