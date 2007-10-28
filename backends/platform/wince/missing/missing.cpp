@@ -178,6 +178,42 @@ EXT_C FILE *wce_fopen(const char* fname, const char* fmode)
 		return fopen(fname, fmode);
 }
 
+/* Remove file by name */
+int remove(const char* path)
+{
+	TCHAR pathUnc[MAX_PATH+1];
+	MultiByteToWideChar(CP_ACP, 0, path, -1, pathUnc, MAX_PATH);
+	return !DeleteFile(pathUnc);
+}
+
+
+/* check out file access permissions */
+int _access(const char *path, int mode) {
+	TCHAR fname[MAX_PATH];
+	MultiByteToWideChar(CP_ACP, 0, path, -1, fname, sizeof(fname)/sizeof(TCHAR));
+ 
+	WIN32_FIND_DATA ffd;
+	HANDLE h=FindFirstFile(fname, &ffd);
+
+	if (h == INVALID_HANDLE_VALUE)
+		return -1;  //Can't find file
+	FindClose(h);
+
+	if (ffd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)
+		return 0; //Always return success if target is directory and exists
+
+	switch (mode) {
+		case 00: //Check existence
+			return 0;
+		case 06: //Check Read & Write permission
+		case 02: //Check Write permission
+			return ffd.dwFileAttributes&FILE_ATTRIBUTE_READONLY?-1:0;
+		case 04: //Check Read permission
+			return 0; //Assume always have read permission
+	} 
+	//Bad mode value supplied, return failure
+	return -1;
+}
 
 // evc only functions follow
 #ifndef __GNUC__
@@ -281,14 +317,6 @@ int closedir(DIR* dir)
 		free(dir->dd_dir.d_name);
 	free(dir);
 	return 1;
-}
-
-/* Remove file by name */
-int remove(const char* path)
-{
-	TCHAR pathUnc[MAX_PATH+1];
-	MultiByteToWideChar(CP_ACP, 0, path, -1, pathUnc, MAX_PATH);
-	return !DeleteFile(pathUnc);
 }
 
 /* in our case unlink is the same as remove */
@@ -662,6 +690,7 @@ long int strtol(const char *nptr, char **endptr, int base) {
 // gcc build only functions follow
 #else // defined(__GNUC__)
 
+#ifndef __MINGW32CE__
 int islower(int c)
 {
 	return (c>='a' && c<='z');
@@ -695,4 +724,6 @@ extern "C" int atexit(void (*function)(void))
 {
 	return 0;
 }
+#endif
+
 #endif
