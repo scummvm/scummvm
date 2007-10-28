@@ -839,6 +839,7 @@ void Game::doShowCredits() {
 	Mouse &mouse = Mouse::getReference();
 	Screen &screen = Screen::getReference();
 
+	Sound.pause();
 	mouse.cursorOff();
 	Palette p(CREDITS_RESOURCE_ID - 1);
 	Surface *s = Surface::getScreen(CREDITS_RESOURCE_ID);
@@ -851,16 +852,21 @@ void Game::doShowCredits() {
 	screen.resetPalette();
 	screen.update();
 	mouse.cursorOn();
+	Sound.resume();
 }
 
 void Game::doQuit() {
+	Sound.pause();
 	if (getYN()) 
 		Events::getReference().quitFlag = true;
+	Sound.resume();
 }
 
 void Game::doRestart() {
+	Sound.pause();
 	if (getYN())
 		setState(GS_RESTART);
+	Sound.resume();
 }
 
 void Game::doTextSpeed() {
@@ -878,8 +884,9 @@ void Game::doSound() {
 	_soundFlag = !_soundFlag;
 	menu.getMenu(2).entries()[2] = sl.getString(_soundFlag ? S_SOUND_ON : S_SOUND_OFF);
 
-	// Stop all currently playing sounds
-	Sound.killSounds();
+	if (!_soundFlag)
+		// Stop all currently playing sounds
+		Sound.killSounds();
 }
 
 void Game::handleBootParam(int value) {

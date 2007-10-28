@@ -719,6 +719,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	s->copyTo(&screen.screen(), SAVE_DIALOG_X, SAVE_DIALOG_Y);
 	screen.update();
 	mouse.pushCursorNum(CURSOR_ARROW);
+	Sound.pause();
 
 	bool abortFlag = false;
 	bool doneFlag = false;
@@ -800,6 +801,8 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 		}
 		doneFlag = true;
 	}
+
+	Sound.resume();
 
 	if (doneFlag) {
 		// Handle save or restore
