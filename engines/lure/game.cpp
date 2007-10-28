@@ -838,6 +838,7 @@ void Game::doShowCredits() {
 	Events &events = Events::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Screen &screen = Screen::getReference();
+	Room &room = Room::getReference();
 
 	Sound.pause();
 	mouse.cursorOff();
@@ -849,8 +850,7 @@ void Game::doShowCredits() {
 
 	events.waitForPress();
 
-	screen.resetPalette();
-	screen.update();
+	room.setRoomNumber(room.roomNumber());
 	mouse.cursorOn();
 	Sound.resume();
 }
