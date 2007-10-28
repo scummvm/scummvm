@@ -137,7 +137,7 @@ bool Widget::isEnabled() const {
 	if (g_gui.evaluator()->getVar(_name + ".enabled") == 0) {
 		return false;
 	}
-	return _flags & WIDGET_ENABLED;
+	return ((_flags & WIDGET_ENABLED) != 0);
 }
 
 bool Widget::isVisible() const {
