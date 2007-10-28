@@ -35,6 +35,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Kyrandia:
    - Added support for Macintosh version.
 
+ WinCE Port:
+   - Switched compilers again. Now using cegcc (http://cegcc.sourceforge.net/).
+   - Plugins now supported for WinCE.
+
 0.10.0 (2007-06-20)
  New Games:
    - Added Cinematique evo 1 engine. Currently only Future Wars is supported.
