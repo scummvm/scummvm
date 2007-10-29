@@ -1323,128 +1323,122 @@ DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/scummvm\\\""
 # Check which engines ("frontends") are to be built
 #
 
-skipped_engines=""
-
 echo
 echo "Engines:"
+echo_n "    SCUMM engine..."
 if test "$_build_scumm" = yes ; then
-	echo_n "    SCUMM"
+	echo_n " [v0-v6 games]"
 	if test "$_build_scumm_7_8" = yes ; then
 		echo_n " [v7 & v8 games]"
-	else
-	    skipped_engines="$skipped_engines [v7 & v8 games]"
 	fi
 	if test "$_build_he" = yes ; then
 		echo_n " [HE70+ games]"
-	else
-		skipped_engines="$skipped_engines [HE70+ games]"
 	fi
 	echo
+else
+	echo "disable"
+fi
 
-	if test "$skipped_engines" = "" ; then
-		true
-	else
-		skipped_engines="#SCUMM$skipped_engines@"
-	fi
-else
-	skipped_engines="${skipped_engines}#SCUMM [all games]@"
-fi
+echo_n "    AGI engine..."
 if test "$_build_agi" = yes ; then
-	echo "    AGI"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#AGI@"
+	echo "disable"
 fi
+echo_n "    AGOS engine..."
 if test "$_build_agos" = yes ; then
-	echo "    AGOS"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#AGOS@"
+	echo "disable"
 fi
+echo_n "    Cinematique evo 1 engine..."
 if test "$_build_cine" = yes ; then
-	echo "    Cinematique evo 1"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#Cinematique evo 1@"
+	echo "disable"
 fi
+echo_n "    Cinematique evo 2 engine..."
 if test "$_build_cruise" = yes ; then
-	echo "    Cinematique evo 2"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#Cinematique evo 2@"
+	echo "disable"
 fi
+echo_n "    Drascula engine..."
 if test "$_build_drascula" = yes ; then
-	echo "    Drascula"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#Drascula@"
+	echo "disable"
 fi
+echo_n "    Gobli*ns engine..."
 if test "$_build_gob" = yes ; then
-	echo "    Gobli*ns"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#Gobli*ns@"
+	echo "disable"
 fi
+echo_n "    Legend of Kyrandia engine..."
 if test "$_build_kyra" = yes ; then
-	echo "    Legend of Kyrandia"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#Legend of Kyrandia@"
+	echo "disable"
 fi
+echo_n "    Lure of the Temptress engine..."
 if test "$_build_lure" = yes ; then
-	echo "    Lure of the Temptress"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#Lure of the Temptress@"
+	echo "disable"
 fi
+echo_n "    Parallaction engine..."
 if test "$_build_parallaction" = yes ; then
-	echo "    Parallaction"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#Parallaction@"
+	echo "disable"
 fi
+echo_n "    Flight of the Amazon Queen engine..."
 if test "$_build_queen" = yes ; then
-	echo "    Flight of the Amazon Queen"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#Flight of the Amazon Queen@"
+	echo "disable"
 fi
+echo_n "    SAGA engine..."
 if test "$_build_saga" = yes ; then
-	echo "    SAGA"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#SAGA@"
+	echo "disable"
 fi
+echo_n "    Beneath a Steel Sky engine..."
 if test "$_build_sky" = yes ; then
-	echo "    Beneath a Steel Sky"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#Beneath a Steel Sky@"
+	echo "disable"
 fi
+echo_n "    Broken Sword 1 engine..."
 if test "$_build_sword1" = yes ; then
-	echo_n "    Broken Sword 1"
 	if test "$_mpeg2" = yes ; then
 		echo " (w/ mpeg2 cutscenes)"
 	else
 		echo " (without mpeg2 cutscenes)"
 	fi
 else
-	skipped_engines="${skipped_engines}#Broken Sword 1@"
+	echo "disable"
 fi
+echo_n "    Broken Sword 2 engine..."
 if test "$_build_sword2" = yes ; then
-	echo_n "    Broken Sword 2"
 	if test "$_mpeg2" = yes ; then
 		echo " (w/ mpeg2 cutscenes)"
 	else
 		echo " (without mpeg2 cutscenes)"
 	fi
 else
-	skipped_engines="${skipped_engines}#Broken Sword 2@"
+	echo "disable"
 fi
+echo_n "    Touche: The Adventures of the Fifth Musketeer engine..."
 if test "$_build_touche" = yes ; then
-	echo "    Touche: The Adventures of the Fifth Musketeer"
+	echo "enable"
 else
-	skipped_engines="${skipped_engines}#Touche: The Adventures of the Fifth Musketeer@"
+	echo "disable"
 fi
 
 echo
-
-if test "$skipped_engines" = "" ; then
-	true
-else
-	echo "Engines Skipped:"
-	echo $skipped_engines | sed 's/@/\
-/g
-s/#/    /g'
-fi
 
 echo_n "Backend... "
 echo_n "$_backend"
