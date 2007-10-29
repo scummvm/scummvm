@@ -107,6 +107,9 @@ public:
 		#ifndef DISABLE_GOB
 		LINK_PLUGIN(GOB)
 		#endif
+		#ifndef DISABLE_IGOR
+		LINK_PLUGIN(IGOR)
+		#endif
 		#ifndef DISABLE_KYRA
 		LINK_PLUGIN(KYRA)
 		#endif

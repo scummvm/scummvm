@@ -49,6 +49,12 @@ else
 MODULES += engines/gob
 endif
 
+ifdef DISABLE_IGOR
+DEFINES += -DDISABLE_IGOR
+else
+MODULES += engines/igor
+endif
+
 ifdef DISABLE_KYRA
 DEFINES += -DDISABLE_KYRA
 else

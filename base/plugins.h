@@ -89,7 +89,7 @@ public:
  *      Note: This MUST succeed for every gameID on the list returned by
  *      gameIDList(), but MAY also work for additional gameids (e.g. to support
  *      obsolete targets).
- * - DetectedGameList Engine_##ID##_detectGames(const FSList &fslist)
+ * - GameList Engine_##ID##_detectGames(const FSList &fslist)
  *   -> scans through the given file list (usually the contents of a directory),
  *      and attempts to detects games present in that location.
  * - PluginError Engine_##ID##_create(OSystem *syst, Engine **engine)

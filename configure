@@ -55,6 +55,7 @@ _build_cine=yes
 _build_cruise=no
 _build_drascula=no
 _build_gob=yes
+_build_igor=no
 _build_kyra=yes
 _build_lure=yes
 _build_parallaction=yes
@@ -350,6 +351,7 @@ Optional Features:
   --enable-cruise          build the Cruise for a Corpse engine
   --enable-drascula        build the Drascula: The Vampire Strikes Back engine
   --disable-gob            don't build the Gobli*ns engine
+  --enable-igor            build the Igor: Objective Uikokahonia engine
   --disable-kyra           don't build the Legend of Kyrandia engine
   --disable-lure           don't build the Lure of the Temptress engine
   --disable-parallaction   don't build the Parallaction engine
@@ -423,6 +425,7 @@ for ac_option in $@; do
       --enable-cruise)          _build_cruise=yes ;;
       --enable-drascula)        _build_drascula=yes ;;
       --disable-gob)            _build_gob=no ;;
+      --enable-igor)            _build_igor=yes ;;
       --disable-kyra)           _build_kyra=no ;;
       --disable-lure)           _build_lure=no ;;
       --disable-parallaction)   _build_parallaction=no ;;
@@ -720,6 +723,7 @@ add_to_config_mk_if_no $_build_cine         'DISABLE_CINE = 1'
 add_to_config_mk_if_no $_build_cruise       'DISABLE_CRUISE = 1'
 add_to_config_mk_if_no $_build_drascula     'DISABLE_DRASCULA = 1'
 add_to_config_mk_if_no $_build_gob          'DISABLE_GOB = 1'
+add_to_config_mk_if_no $_build_igor         'DISABLE_IGOR = 1'
 add_to_config_mk_if_no $_build_kyra         'DISABLE_KYRA = 1'
 add_to_config_mk_if_no $_build_lure         'DISABLE_LURE = 1'
 add_to_config_mk_if_no $_build_parallaction 'DISABLE_PARALLACTION = 1'
@@ -1371,6 +1375,12 @@ else
 fi
 echo_n "    Gobli*ns engine..."
 if test "$_build_gob" = yes ; then
+	echo "enable"
+else
+	echo "disable"
+fi
+echo_n "    Igor: Objective Uikokahonia engine..."
+if test "$_build_igor" = yes ; then
 	echo "enable"
 else
 	echo "disable"
