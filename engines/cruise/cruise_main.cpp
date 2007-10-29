@@ -993,8 +993,8 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj)
 
 		if((obj2Ovl == nOvl) && (pHeader->obj2Number != -1) && (pHeader->obj2Number == nObj))
 		{
-			int x = 60;
-			int y = 60;
+//			int x = 60;
+//			int y = 60;
 
 			objectParamsQuery params;
 			memset(&params, 0, sizeof(objectParamsQuery)); // to remove warning
