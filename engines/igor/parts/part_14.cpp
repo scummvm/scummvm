@@ -98,7 +98,7 @@ void IgorEngine::PART_14_ACTION_103() {
 	fadeOutPalette(768);
 	PART_14_HELPER_9();
 	loadResourceData__ROOM_ChurchPuzzle();
-	memcpy(_screenVGA + 46080, 0, 17920);
+	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
 	drawInventory(_inventoryInfo[72], 0);
 	fadeInPalette(768);
