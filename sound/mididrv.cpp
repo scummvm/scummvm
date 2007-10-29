@@ -48,6 +48,9 @@ static const MidiDriverDescription s_musicDrivers[] = {
 
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__)
 	{"seq", "SEQ", MD_SEQ, MDT_MIDI},
+#endif
+
+#if defined(IRIX)
 	{"dmedia", "DMedia", MD_DMEDIA, MDT_MIDI},
 #endif
 
