@@ -158,12 +158,12 @@ extern int16 numOfDisks;
 
 extern uint8 scriptNameBuffer[15];
 extern int16 currentActiveMenu;
-extern int16 main14;
+extern int16 autoMsg;
 extern menuElementSubStruct* linkedRelation;
 extern int16 main21;
 extern int16 main22;
-extern int16 main7;
-extern int16 main8;
+extern int16 userWait;
+extern int16 autoTrack;
 
 extern int16 currentDiskNumber;
 
@@ -230,7 +230,7 @@ extern int16 aniX;
 extern int16 aniY;
 extern bool animationStart;
 
-extern int16 main17;
+extern int16 autoOvl;
 extern int16 var39;
 extern int16 entrerMenuJoueur;
 extern int16 var39;

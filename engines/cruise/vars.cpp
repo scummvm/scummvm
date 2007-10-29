@@ -56,12 +56,12 @@ int16 numOfDisks;
 
 uint8 scriptNameBuffer[15];
 int16 currentActiveMenu;
-int16 main14;
+int16 autoMsg;
 menuElementSubStruct* linkedRelation;
 int16 main21;
 int16 main22;
-int16 main7;
-int16 main8;
+int16 userWait;
+int16 autoTrack;
 
 int16 currentDiskNumber = 1;
 
@@ -131,7 +131,7 @@ int16 aniX;
 int16 aniY;
 bool animationStart;
 
-int16 main17;
+int16 autoOvl;
 int16 var39;
 int16 entrerMenuJoueur;
 int16 var41;

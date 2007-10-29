@@ -81,7 +81,7 @@ namespace Cruise {
 extern gfxEntryStruct* linkedMsgList;
 
 bool delphineUnpack(byte *dst, const byte *src, int len);
-
+int findHighColor();
 ovlData3Struct *getOvlData3Entry(int32 scriptNumber, int32 param);
 ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param);
 int16 loadShort(void *ptr);

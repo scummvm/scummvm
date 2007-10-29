@@ -164,12 +164,12 @@ int getProcParam(int overlayIdx, int param2, uint8 *name) {
 	return 0;
 }
 
-void changeScriptParamInList(int param1, int param2, scriptInstanceStruct *pScriptInstance, int newValue, int param3) {
+void changeScriptParamInList(int param1, int param2, scriptInstanceStruct *pScriptInstance, int oldFreeze, int newValue) {
 	pScriptInstance = pScriptInstance->nextScriptPtr;
 	while (pScriptInstance) {
 		if ((pScriptInstance->overlayNumber == param1) || (param1 == -1))
 		    if ((pScriptInstance->scriptNumber == param2) || (param2 == -1))
-				if ((pScriptInstance->freeze == param3) || (param3 == -1)) {
+				if ((pScriptInstance->freeze == oldFreeze) || (oldFreeze == -1)) {
 					pScriptInstance->freeze = newValue;
 		}
 
@@ -1022,6 +1022,12 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj)
 	}
 }
 
+int findHighColor()
+{
+	printf("Unimplemented findHighColor\n");
+	return 1;
+}
+
 void callRelation(menuElementSubStruct *pMenuElement, int nObj2)
 {
 	if(pMenuElement == NULL)
@@ -1038,6 +1044,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2)
 
 		if(pHeader->obj2Number == nObj2)
 		{
+			// REL
 			if(pHeader->type == 30)
 			{
 				attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
@@ -1056,7 +1063,11 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2)
 						}
 						else if((pHeader->field_12 == 9999) && (pHeader->field_14 == 9999))
 						{
-							ASSERT(0);
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = pHeader->field_1E;
 						}
 						else
 						{
@@ -1069,13 +1080,92 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2)
 
 						autoTrack = true;
 						userEnabled = 0;
-						changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 9998, 0);
+						changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 0, 9998);
 					}
 				}
 			}
-			else
+			// MSG
+			else if(pHeader->type == 50)
 			{
-				ASSERT(0);
+				int obj1Ovl = pHeader->obj1Overlay;
+				if(!obj1Ovl)
+					obj1Ovl = ovlIdx;
+
+				int x = 60;
+				int y = 40;
+
+				if(pHeader->obj1Number >= 0)
+				{
+					objectParamsQuery params;
+					getMultipleObjectParam(obj1Ovl, pHeader->obj1Number, &params);
+
+					if(narratorOvl > 0)
+					{
+						if((pHeader->field_12 !=-1) && (pHeader->field_14 != -1) && (pHeader->field_12 != 9999) && (pHeader->field_14 != 9999))
+						{
+							x = pHeader->field_12 - 100;
+							y = pHeader->field_14 - 150;
+						}
+						else
+						{
+							getMultipleObjectParam(narratorOvl, narratorIdx, &params);
+							x = params.X - 100;
+							y = params.Y - 150;
+						}
+					}
+					else if(params.scale >= 0)
+					{
+						x = params.X - 100;
+						y = params.Y - 40;
+					}
+
+					if(pHeader->field_16 != -1)
+					{
+						ASSERT(0);
+					}
+				}
+
+				createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
+				
+				userWait = 1;
+				autoOvl = ovlIdx;
+				autoMsg = pHeader->id;
+
+				if((narratorOvl > 0) && (pHeader->field_12 != -1) && (pHeader->field_14 != -1))
+				{
+					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
+
+					if(pTrack)
+					{
+						animationStart = false;
+
+						if(pHeader->field_1E == 9999)
+						{
+							ASSERT(0);
+						}
+						else if((pHeader->field_12 == 9999) && (pHeader->field_14 == 9999))
+						{
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = pHeader->field_1E;
+						}
+						else
+						{
+							pTrack->x_dest = pHeader->field_12;
+							pTrack->y_dest = pHeader->field_14;
+							pTrack->endDirection = pHeader->field_1E;
+						}
+
+						pTrack->flag = 1;
+
+						autoTrack = true;
+						userWait = 0;
+						userEnabled = 0;
+						freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
+					}
+				}
 			}
 		}
 		else
@@ -1482,12 +1572,12 @@ void mainLoop(void) {
 	systemStrings.bootScriptName[0] = 0;
 	initVar4[0] = 0;
 	currentActiveMenu = -1;
-	main14 = -1;
+	autoMsg = -1;
 	linkedRelation = 0;
 	main21 = 0;
 	main22 = 0;
-	main7 = 0;
-	main8 = 0;
+	userWait = 0;
+	autoTrack = 0;
 	autoTrack = 0;
 
 	if (initAllData()) {
@@ -1547,7 +1637,7 @@ void mainLoop(void) {
 				mainDraw(0);
 				flipScreen();
 
-				if (userEnabled && !main7 && !autoTrack)
+				if (userEnabled && !userWait && !autoTrack)
 				{
 					if(currentActiveMenu == -1)
 					{
@@ -1596,8 +1686,31 @@ void mainLoop(void) {
 					changeCursor(CURSOR_NORMAL);
 				}
 
-				if (main7) {
-					ASSERT(0);
+				if (userWait)
+				{
+					int16 button = 0;
+					while(!button)
+					{
+						manageScripts(&relHead);
+						manageScripts(&procHead);
+
+						removeFinishedScripts(&relHead);
+						removeFinishedScripts(&procHead);
+
+						processAnimation();
+
+						// not exactly this
+						manageEvents();
+
+						int16 mouseVar;
+						int16 mouseX;
+						int16 mouseY;
+						getMouseStatus(&mouseVar, &mouseX, &button, &mouseY);
+					}
+
+					changeScriptParamInList(-1, -1, &procHead, 9999, 0);
+					changeScriptParamInList(-1, -1, &relHead, 9999, 0);
+					userWait = 0;
 				}
 
 				// wait for character to finish auto track
@@ -1605,9 +1718,14 @@ void mainLoop(void) {
 				{
 					if(mainProc13(narratorOvl, narratorIdx, &actorHead, 0))
 					{
-						if(main14 != -1)
+						if(autoMsg != -1)
 						{
-							ASSERT(0);
+							freezeCell(&cellHead, autoOvl, autoMsg, 5, -1, 9998, 0);
+
+							char* pText = getText(autoMsg, autoOvl);
+
+							if(strlen(pText))
+								userWait = 1;
 						}
 
 						changeScriptParamInList(-1, -1, &relHead, 9998, 0);
@@ -1619,9 +1737,10 @@ void mainLoop(void) {
 						userEnabled = false;
 					}
 				}
-
-				if (main14 != -1) {
-					ASSERT(0);
+				else if (autoMsg != -1)
+				{
+					removeCell(&cellHead, autoOvl, autoMsg, 5, currentActiveBackgroundPlane );
+					autoMsg = -1;
 				}
 			}
 			// t_end = t_start+SPEED;

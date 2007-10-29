@@ -941,18 +941,35 @@ void mainDraw(int16 param) {
 
 								if (currentObjPtr->animType) {	// should we resume the script ?
 									if (currentObjPtr->parentType == 20) {
-										changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &procHead, 0, -1);
+										changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &procHead, -1, 0);
 									} else if (currentObjPtr->parentType == 30) {
-										changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &relHead,  0, -1);
+										changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &relHead, -1, 0);
 									}
 								}
 							}
 						}
 					} else {
-						ASSERT(0);
-						/*     if (currentObjPtr->field_22>newVal)
-						 * {
-						 * } */
+						if (newVal < currentObjPtr->animEnd) {
+							if (currentObjPtr->animLoop) {
+								newVal = currentObjPtr->animStart;
+								if (currentObjPtr->animLoop>0)
+									currentObjPtr->animLoop--;
+							} else {
+								int16 data2;
+								data2 = currentObjPtr->animStart;
+
+								change = false;
+								currentObjPtr->animStep = 0;
+
+								if (currentObjPtr->animType) {	// should we resume the script ?
+									if (currentObjPtr->parentType == 20) {
+										changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &procHead, -1, 0);
+									} else if (currentObjPtr->parentType == 30) {
+										changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &relHead, -1, 0);
+									}
+								}
+							}
+						}
 					}
 
 					if (currentObjPtr->animWait >= 0) {
@@ -961,9 +978,9 @@ void mainDraw(int16 param) {
 
 					if ((currentObjPtr->animSignal >= 0) && (currentObjPtr->animSignal == newVal) && (currentObjPtr->animType != 0)) {
 						if (currentObjPtr->parentType == 20) {
-							changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &procHead, 0, -1);
+							changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &procHead, -1, 0);
 						} else if (currentObjPtr->parentType == 30) {
-							changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &relHead, 0, -1);
+							changeScriptParamInList(currentObjPtr->parentOverlay, currentObjPtr->parent, &relHead, -1, 0);
 						}
 
 						currentObjPtr->animType = 0;

@@ -238,10 +238,10 @@ int loadSavegameData(int saveGameIdx) {
 	fread(&setup1, 2, 1, fileHandle);
 	fread(&fontFileIndex, 2, 1, fileHandle);
 	fread(&currentActiveMenu, 2, 1, fileHandle);
-	fread(&main7, 2, 1, fileHandle);	// ok
-	fread(&main17, 2, 1, fileHandle);
-	fread(&main14, 2, 1, fileHandle);
-	fread(&main8, 2, 1, fileHandle);
+	fread(&userWait, 2, 1, fileHandle);	// ok
+	fread(&autoOvl, 2, 1, fileHandle);
+	fread(&autoMsg, 2, 1, fileHandle);
+	fread(&autoTrack, 2, 1, fileHandle);
 	fread(&var39, 2, 1, fileHandle);
 	fread(&var42, 2, 1, fileHandle);
 	fread(&var45, 2, 1, fileHandle);

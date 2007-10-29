@@ -67,7 +67,7 @@ extern cellStruct cellHead;
 void resetPtr(cellStruct * ptr);
 void loadSavegameDataSub2(FILE * f);
 cellStruct *addCell(cellStruct *pHead, int16 overlayIdx, int16 objIdx, int16 type, int16 backgroundPlane, int16 scriptOverlay, int16 scriptNumber, int16 scriptType);
-void createTextObject(int overlayIdx, int oldVar8, cellStruct * pObject, int scriptNumber, int scriptOverlayNumber, int backgroundPlane, int16 color, int oldVar2, int oldVar4, int oldVar6);
+void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x, int y, int width, int16 color, int backgroundPlane, int parentOvl, int parentIdx);
 void removeCell(cellStruct *objPtr, int ovlNumber, int objectIdx, int objType, int backgroundPlane );
 void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, int backgroundPlane, int oldFreeze, int newFreeze );
 void sortCells(int16 param1, int16 param2, cellStruct *objPtr);

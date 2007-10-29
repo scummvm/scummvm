@@ -156,7 +156,8 @@ cellStruct *addCell(cellStruct *pHead, int16 overlayIdx, int16 objIdx, int16 typ
 	return newElement;
 }
 
-void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject, int scriptNumber, int scriptOverlayNumber, int backgroundPlane, int16 color, int oldVar2, int oldVar4, int oldVar6) {
+void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x, int y, int width, int16 color, int backgroundPlane, int parentOvl, int parentIdx)
+{
 
 	char *ax;
 	cellStruct *savePObject = pObject;
@@ -178,17 +179,17 @@ void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject, int scri
 	pNewElement->next = pObject->next;
 	pObject->next = pNewElement;
 
-	pNewElement->idx = oldVar8;
+	pNewElement->idx = messageIdx;
 	pNewElement->type = 5;
 	pNewElement->backgroundPlane = backgroundPlane;
 	pNewElement->overlay = overlayIdx;
-	pNewElement->x = oldVar6;
-	pNewElement->field_C = oldVar4;
-	pNewElement->spriteIdx = oldVar2;
+	pNewElement->x = x;
+	pNewElement->field_C = y;
+	pNewElement->spriteIdx = width;
 	pNewElement->color = color;
 	pNewElement->freeze = 0;
-	pNewElement->parent = scriptNumber;
-	pNewElement->parentOverlay = scriptOverlayNumber;
+	pNewElement->parent = parentIdx;
+	pNewElement->parentOverlay = parentOvl;
 	pNewElement->gfxPtr = NULL;
 
 	if (var_2) {
@@ -200,10 +201,10 @@ void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject, int scri
 	pNewElement->prev = cx->prev;
 	cx->prev = pNewElement;
 
-	ax = getText(oldVar8, overlayIdx);
+	ax = getText(messageIdx, overlayIdx);
 
 	if (ax) {
-		pNewElement->gfxPtr = renderText(oldVar2, (uint8 *) ax);
+		pNewElement->gfxPtr = renderText(width, (uint8 *) ax);
 	}
 }
 

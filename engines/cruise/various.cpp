@@ -29,7 +29,6 @@ namespace Cruise {
 
 uint16 var0 = 0;
 uint16 fadeVar;
-uint16 autoTrack;
 
 int16 readB16(void *ptr) {
 	int16 temp;

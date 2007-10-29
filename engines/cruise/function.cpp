@@ -405,10 +405,9 @@ int16 Op_changeCutSceneState(void) {
 
 int16 Op_62(void) {
 	if (currentScriptPtr->var1A == 20) {
-		changeScriptParamInList(currentScriptPtr->var18, currentScriptPtr->var16, &procHead, 9997, -1);
+		changeScriptParamInList(currentScriptPtr->var18, currentScriptPtr->var16, &procHead, -1, 9997);
 	} else if (currentScriptPtr->var1A == 30) {
-		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &relHead, 9997, -1);
+		changeScriptParamInList(currentScriptPtr->var18, currentScriptPtr->var16, &relHead, -1, 9997);
 	}
 
 	return 0;
@@ -645,11 +644,9 @@ int16 Op_SetFontFileIndex(void) {
 
 int16 Op_63(void) {
 	if (currentScriptPtr->var1A == 0x14) {
-		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &procHead, 0, -1);
+		changeScriptParamInList(currentScriptPtr->var18, currentScriptPtr->var16, &procHead, -1, 0);
 	} else if (currentScriptPtr->var1A == 0x1E) {
-		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &relHead, 0, -1);
+		changeScriptParamInList(currentScriptPtr->var18, currentScriptPtr->var16, &relHead, -1, 0);
 	}
 
 	return 0;
@@ -680,19 +677,14 @@ int16 Op_AddMessage(void) {
 		overlayIdx = currentScriptPtr->overlayNumber;
 
 	if (color == -1) {
-		color = 1;
-		printf("Unimplemented automatic message color\n");
-	//	ASSERT(0);
-		//color = calcTabSomething();
+		color = findHighColor();
 	} else {
 		if (CVTLoaded) {
 			color = cvtPalette[color];
 		}
 	}
 
-	createTextObject(overlayIdx, var_8, &cellHead,
-	    currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber,
-	    currentActiveBackgroundPlane, color, var_2, var_4, var_6);
+	createTextObject(&cellHead, overlayIdx, var_8, var_6, var_4, var_2, color, currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
 
 	return 0;
 }
@@ -764,9 +756,9 @@ int16 Op_AutoCell(void) {
 
 	if (type) {
 		if (currentScriptPtr->type == scriptType_PROC) {
-			changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &procHead, 9996, -1);
+			changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &procHead, -1, 9996);
 		} else if (currentScriptPtr->type == scriptType_REL) {
-			changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &relHead, 9996, -1);
+			changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &relHead, -1, 9996);
 		}
 	}
 
