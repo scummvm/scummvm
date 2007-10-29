@@ -222,8 +222,8 @@ int loadSavegameData(int saveGameIdx) {
 
 	//
 
-	fread(&var30, 2, 1, fileHandle);
-	fread(&var31, 2, 1, fileHandle);
+	fread(&narratorOvl, 2, 1, fileHandle);
+	fread(&narratorIdx, 2, 1, fileHandle);
 	fread(&aniX, 2, 1, fileHandle);
 	fread(&aniY, 2, 1, fileHandle);
 	int16 bTemp;

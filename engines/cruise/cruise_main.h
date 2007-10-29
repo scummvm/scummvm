@@ -78,6 +78,8 @@ namespace Cruise {
 #define	OBJ_TYPE_POLY		  8
 #define	OBJ_TYPE_EXIT		  9
 
+extern gfxEntryStruct* linkedMsgList;
+
 bool delphineUnpack(byte *dst, const byte *src, int len);
 
 ovlData3Struct *getOvlData3Entry(int32 scriptNumber, int32 param);

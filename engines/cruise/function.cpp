@@ -104,7 +104,7 @@ int16 Op_startScript(void) {
 		ovlIdx = currentScriptPtr->overlayNumber;
 	}
 
-	ptr = attacheNewScriptToTail(ovlIdx, &procHead, scriptIdx, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_MinusPROC);
+	ptr = attacheNewScriptToTail(&procHead, ovlIdx, scriptIdx, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_MinusPROC);
 
 	if (!ptr)
 		return (0);
@@ -142,7 +142,7 @@ int16 Op_AddProc(void) {
 	if (!overlay)
 		return (0);
 
-	attacheNewScriptToTail(overlay, &procHead, pop2, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_PROC);
+	attacheNewScriptToTail(&procHead, overlay, pop2, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_PROC);
 
 	if (pop1 > 0) {
 		printf("Unsupported art send in op6!\n");
@@ -159,8 +159,8 @@ int16 Op_37(void) {
 	if (!pop2)
 		pop2 = currentScriptPtr->overlayNumber;
 
-	var30 = pop2;
-	var31 = pop1;
+	narratorOvl = pop2;
+	narratorIdx = pop1;
 
 	return (0);
 }
@@ -405,8 +405,7 @@ int16 Op_changeCutSceneState(void) {
 
 int16 Op_62(void) {
 	if (currentScriptPtr->var1A == 20) {
-		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &procHead, 9997, -1);
+		changeScriptParamInList(currentScriptPtr->var18, currentScriptPtr->var16, &procHead, 9997, -1);
 	} else if (currentScriptPtr->var1A == 30) {
 		changeScriptParamInList(currentScriptPtr->var18,
 		    currentScriptPtr->var16, &relHead, 9997, -1);
@@ -1201,7 +1200,7 @@ int16 Op_1E(void) {		// setup actor position
 		overlay = currentScriptPtr->overlayNumber;
 	}
 
-	pActor = findActor(overlay, var2, &actorHead, var1);
+	pActor = findActor(&actorHead, overlay, var2, var1);
 
 	if (!pActor) {
 		return 1;
@@ -1310,9 +1309,8 @@ int16 Op_FreezeCell(void) {
 	return 0;
 }
 
-void Op_60Sub(int overlayIdx, actorStruct * pActorHead, int _var0, int _var1,
-	    int _var2, int _var3) {
-	actorStruct *pActor = findActor(overlayIdx, _var0, pActorHead, _var3);
+void Op_60Sub(int overlayIdx, actorStruct * pActorHead, int _var0, int _var1, int _var2, int _var3) {
+	actorStruct *pActor = findActor(pActorHead, overlayIdx, _var0, _var3);
 
 	if (pActor) {
 		if ((pActor->freeze == _var2) || (_var2 == -1)) {

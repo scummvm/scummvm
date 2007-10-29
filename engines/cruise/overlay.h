@@ -67,15 +67,15 @@ struct stringEntryStruct {
 };
 
 struct linkDataStruct {
-	uint16 type;
-	uint16 id;
-	uint16 offsetVerbeName;
-	uint16 verbOverlay;
-	uint16 verbNumber;
-	uint16 obj1Overlay;
-	uint16 obj1Number;
-	uint16 obj2Overlay;
-	uint16 obj2Number;
+	int16 type;
+	int16 id;
+	int16 offsetVerbeName;
+	int16 verbOverlay;
+	int16 verbNumber;
+	int16 obj1Overlay;
+	int16 obj1Number;
+	int16 obj2Overlay;
+	int16 obj2Number;
 
 	int16 field_12;
 	int16 field_14;

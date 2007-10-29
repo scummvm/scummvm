@@ -46,8 +46,7 @@ menuStruct *createMenu(int X, int Y, const char *menuName) {
 }
 
 // TODO: rewrite to remove the goto
-void addSelectableMenuEntry(int param0, int param1, menuStruct *pMenu,
-	    int param2, int color, const char *menuText) {
+void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int param2, int color, const char *menuText) {
 	menuElementStruct *di;
 	menuElementStruct *var_6;
 	menuElementStruct *pNewElement;
@@ -70,8 +69,8 @@ void addSelectableMenuEntry(int param0, int param1, menuStruct *pMenu,
 						ASSERT(pSubStruct);
 
 						pSubStruct->pNext = NULL;
-						pSubStruct->var2 = param0;
-						pSubStruct->var4 = param1;
+						pSubStruct->ovlIdx = ovlIdx;
+						pSubStruct->header = headerIdx;
 
 						pSubStructCurrent =
 						    pNewElement->ptrSub;
@@ -129,8 +128,8 @@ void addSelectableMenuEntry(int param0, int param1, menuStruct *pMenu,
 		pNewElement->ptrSub = pSubStruct;
 
 		pSubStruct->pNext = NULL;
-		pSubStruct->var2 = param0;
-		pSubStruct->var4 = param1;
+		pSubStruct->ovlIdx = ovlIdx;
+		pSubStruct->header = headerIdx;
 
 		pMenu->numElements++;
 	}

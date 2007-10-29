@@ -32,8 +32,8 @@ namespace Cruise {
 
 struct menuElementSubStruct {
 	struct menuElementSubStruct *pNext;
-	int16 var2;
-	int16 var4;
+	int16 ovlIdx;
+	int16 header;
 };
 
 struct menuElementStruct {
@@ -159,7 +159,7 @@ extern int16 numOfDisks;
 extern uint8 scriptNameBuffer[15];
 extern int16 currentActiveMenu;
 extern int16 main14;
-extern int16 linkedRelation;
+extern menuElementSubStruct* linkedRelation;
 extern int16 main21;
 extern int16 main22;
 extern int16 main7;
@@ -204,8 +204,8 @@ extern int16 currentScriptOpcodeType;
 
 extern int16 saveOpcodeVar;
 
-extern int16 var30;
-extern int16 var31;
+extern int16 narratorOvl;
+extern int16 narratorIdx;
 
 extern int16 var1;
 extern int16 var2;

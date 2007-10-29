@@ -27,16 +27,18 @@
 
 namespace Cruise {
 
-int16 mainProc13(int overlayIdx, int param1, actorStruct *pStartEntry,
-	    int param2) {
+int16 mainProc13(int overlayIdx, int param1, actorStruct *pStartEntry, int param2) {
 	actorStruct *pCurrentEntry = pStartEntry->next;
 
 	while (pCurrentEntry) {
-		if ((pCurrentEntry->overlayNumber == overlayIdx
-			|| overlayIdx == -1) && (pCurrentEntry->idx == param1
-			|| param1 == -1) && (pCurrentEntry->type == param2
-			|| param2 == -1) && (pCurrentEntry->pathId != -2)) {
-			return 0;
+		if ((pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) &&
+			(pCurrentEntry->idx == param1 || param1 == -1) &&
+			(pCurrentEntry->type == param2 || param2 == -1))
+		{
+			if(pCurrentEntry->pathId != -2)
+			{
+				return 0;
+			}
 		}
 
 		pCurrentEntry = pCurrentEntry->next;
@@ -45,15 +47,14 @@ int16 mainProc13(int overlayIdx, int param1, actorStruct *pStartEntry,
 	return 1;
 }
 
-actorStruct *findActor(int overlayIdx, int param1, actorStruct *pStartEntry,
-	    int param2) {
+actorStruct *findActor(actorStruct *pStartEntry, int overlayIdx, int objIdx, int type) {
 	actorStruct *pCurrentEntry = pStartEntry->next;
 
 	while (pCurrentEntry) {
 		if ((pCurrentEntry->overlayNumber == overlayIdx
-			|| overlayIdx == -1) && (pCurrentEntry->idx == param1
-			|| param1 == -1) && (pCurrentEntry->type == param2
-			|| param2 == -1)) {
+			|| overlayIdx == -1) && (pCurrentEntry->idx == objIdx
+			|| objIdx == -1) && (pCurrentEntry->type == type
+			|| type == -1)) {
 			return pCurrentEntry;
 		}
 
@@ -598,7 +599,8 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 		}
 	}
 
-	if (!flagCt) {
+	//if (!flagCt)
+	{
 		int i;
 		int16 *ptr;
 

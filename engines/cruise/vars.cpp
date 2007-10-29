@@ -57,7 +57,7 @@ int16 numOfDisks;
 uint8 scriptNameBuffer[15];
 int16 currentActiveMenu;
 int16 main14;
-int16 linkedRelation;
+menuElementSubStruct* linkedRelation;
 int16 main21;
 int16 main22;
 int16 main7;
@@ -103,8 +103,8 @@ int16 currentScriptOpcodeType;
 
 int16 saveOpcodeVar;
 
-int16 var30 = 0;
-int16 var31 = 0;
+int16 narratorOvl = 0;
+int16 narratorIdx = 0;
 
 int16 var1;
 int16 var2;

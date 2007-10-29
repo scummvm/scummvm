@@ -34,6 +34,8 @@ namespace Cruise {
 
 unsigned int timer = 0;
 
+gfxEntryStruct* linkedMsgList = NULL;
+
 void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color) {
 	int32 i;
 	int32 j;
@@ -567,7 +569,7 @@ int initAllData(void) {
 	if (bootOverlayNumber) {
 		positionInStack = 0;
 
-		attacheNewScriptToTail(bootOverlayNumber, &procHead, 0, 20, 0, 0, scriptType_PROC);
+		attacheNewScriptToTail(&procHead, bootOverlayNumber, 0, 20, 0, 0, scriptType_PROC);
 		scriptFunc2(bootOverlayNumber, &procHead, 1, 0);
 	}
 
@@ -836,7 +838,8 @@ menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu) {
 	return NULL;
 }
 
-bool findRelation(int objOvl, int objIdx, int x, int y) {
+bool findRelation(int objOvl, int objIdx, int x, int y)
+{
 	bool found = false;
 	bool first = true;
 	int testState;
@@ -924,12 +927,12 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 							if( (!first) && ((testState==-1) || (testState==objectState)))
 							{
 								if(!strlen(verbe_name))
-									attacheNewScriptToTail(j, &relHead, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+									attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 								else if(ovl2->nameVerbGlob)
 								{
 									found = true;
 									ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
-									addSelectableMenuEntry(i, j, menuTable[0], 1, -1, ptr);
+									addSelectableMenuEntry(j, i, menuTable[0], 1, -1, ptr);
 								}
 							}
 						}
@@ -944,15 +947,14 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 
 int processInventory(void) {
 	if (menuTable[1]) {
-		menuElementSubStruct *pMenuElementSub =
-		    getSelectedEntryInMenu(menuTable[1]);
+		menuElementSubStruct *pMenuElementSub = getSelectedEntryInMenu(menuTable[1]);
 
 		if (pMenuElementSub) {
 			//int var2;
 			//int var4;
 
-			var2 = pMenuElementSub->var2;
-			var4 = pMenuElementSub->var4;
+			var2 = pMenuElementSub->ovlIdx;
+			var4 = pMenuElementSub->header;
 
 			freeMenu(menuTable[1]);
 			menuTable[1] = NULL;
@@ -967,6 +969,122 @@ int processInventory(void) {
 	}
 
 	return 0;
+}
+
+void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj)
+{
+	if(pMenuElement == NULL)
+		return;
+
+	menuElementSubStruct* pCurrent = pMenuElement;
+
+	while(pCurrent != NULL)
+	{
+		int ovlIdx = pCurrent->ovlIdx;
+		int header = pCurrent->header;
+
+		linkDataStruct* pHeader = &overlayTable[ovlIdx].ovlData->arrayMsgRelHeader[header];
+
+		int obj2Ovl = pHeader->obj2Overlay;
+		if(obj2Ovl == 0)
+		{
+			obj2Ovl = ovlIdx;
+		}
+
+		if((obj2Ovl == nOvl) && (pHeader->obj2Number != -1) && (pHeader->obj2Number == nObj))
+		{
+			int x = 60;
+			int y = 60;
+
+			objectParamsQuery params;
+			memset(&params, 0, sizeof(objectParamsQuery)); // to remove warning
+
+			if(pHeader->obj2Number >= 0)
+			{
+				getMultipleObjectParam(obj2Ovl, pHeader->obj2Number, &params);
+			}
+
+			if((pHeader->field_1C != -1) || (params.scale == pHeader->field_1C))
+			{
+				if(pHeader->type == 30)
+				{
+					ASSERT(0);
+				}
+				else
+				if(pHeader->type == 50)
+				{
+					ASSERT(0);
+				}
+			}
+		}
+
+		pCurrent = pCurrent->pNext;
+	}
+}
+
+void callRelation(menuElementSubStruct *pMenuElement, int nObj2)
+{
+	if(pMenuElement == NULL)
+		return;
+
+	menuElementSubStruct* pCurrent = pMenuElement;
+
+	while(pCurrent != NULL)
+	{
+		int ovlIdx = pCurrent->ovlIdx;
+		int header = pCurrent->header;
+
+		linkDataStruct* pHeader = &overlayTable[ovlIdx].ovlData->arrayMsgRelHeader[header];
+
+		if(pHeader->obj2Number == nObj2)
+		{
+			if(pHeader->type == 30)
+			{
+				attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+
+				if((narratorOvl > 0) && (pHeader->field_12 != -1) && (pHeader->field_14 != -1))
+				{
+					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
+
+					if(pTrack)
+					{
+						animationStart = false;
+
+						if(pHeader->field_1E == 9999)
+						{
+							ASSERT(0);
+						}
+						else if((pHeader->field_12 == 9999) && (pHeader->field_14 == 9999))
+						{
+							ASSERT(0);
+						}
+						else
+						{
+							pTrack->x_dest = pHeader->field_12;
+							pTrack->y_dest = pHeader->field_14;
+							pTrack->endDirection = pHeader->field_1E;
+						}
+
+						pTrack->flag = 1;
+
+						autoTrack = true;
+						userEnabled = 0;
+						changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 9998, 0);
+					}
+				}
+			}
+			else
+			{
+				ASSERT(0);
+			}
+		}
+		else
+		{
+			linkedRelation = pMenuElement;
+		}
+
+		pCurrent = pCurrent->pNext;
+	}
 }
 
 int processInput(void)
@@ -1026,72 +1144,93 @@ int processInput(void)
 		ASSERT(0);
 	}
 	else
+	if ((button & 1) && (buttonDown == 0))
 	{
-		// not in dialogue
-
 		// left click
-		if ((button & 1) && (buttonDown == 0))
-		{
-			buttonDown = 1;
+		buttonDown = 1;
 
-			// is there a relation
-			if (linkedRelation)
+		// is there a relation
+		if (linkedRelation)
+		{
+			// call sub relation when clicking on an object
+			if(menuDown == 0)
+			{
+				if(menuTable[0])
+				{
+					int objOvl;
+					int objIdx;
+					int objType;
+
+					objType = findObject(mouseX, mouseY, &objOvl, &objIdx);
+
+					if (objType != -1)
+					{
+						callSubRelation(linkedRelation, objOvl, objIdx);
+					}
+					freeMenu(menuTable[0]);
+					menuTable[0] = NULL;
+				}
+
+				if(linkedMsgList)
+				{
+					ASSERT(0);
+//					freeMsgList(linkedMsgList);
+				}
+				linkedMsgList = NULL;
+				linkedRelation = NULL;
+				changeCursor(CURSOR_NORMAL);
+			}
+			// call sub relation when clicking in inventory
+			else
 			{
 				ASSERT(0);
 			}
-			else
+		}
+		else
+		{
+			// manage click on object menu
+			if (menuDown == 0)
 			{
-				// manage click on object menu
-				if (menuDown == 0)
+				// Handle left click on an object
+				if (menuTable[0] == 0)
 				{
-					// Handle left click on an object
-					if (menuTable[0] == 0)
+					int objOvl;
+					int objIdx;
+					int objType;
+
+					objType = findObject(mouseX, mouseY, &objOvl, &objIdx);
+
+					if (objType != -1)
 					{
-						int objOvl;
-						int objIdx;
-						int objType;
-
-						objType = findObject(mouseX, mouseY, &objOvl, &objIdx);
-
-						if (objType != -1)
+						int relation = findRelation(objOvl, objIdx, mouseX, mouseY);
+						if(menuTable[0])
 						{
-							int relation = findRelation(objOvl, objIdx, mouseX, mouseY);
-							if(menuTable[0])
+							if(relation)
 							{
-								if(relation)
-								{
-									currentActiveMenu = 0;
-									selectDown = 1;
-								}
-								else
-								{
-									// object has a name but no relation, just move the character
-									freeMenu(menuTable[0]);
-									menuTable[0] = NULL;
-
-									aniX = mouseX;
-									aniY = mouseY;
-									animationStart = true;
-									buttonDown = 0;
-								}
+								currentActiveMenu = 0;
+								selectDown = 1;
 							}
 							else
 							{
+								// object has a name but no relation, just move the character
+								freeMenu(menuTable[0]);
+								menuTable[0] = NULL;
+
 								aniX = mouseX;
 								aniY = mouseY;
 								animationStart = true;
 								buttonDown = 0;
 							}
-						}else {
-							// No object found, we move the character to the cursor
+						}
+						else
+						{
 							aniX = mouseX;
 							aniY = mouseY;
 							animationStart = true;
 							buttonDown = 0;
 						}
-					}
-					else
-					{
+					}else {
+						// No object found, we move the character to the cursor
 						aniX = mouseX;
 						aniY = mouseY;
 						animationStart = true;
@@ -1100,48 +1239,76 @@ int processInput(void)
 				}
 				else
 				{
-					// Handle left click in inventory
-					if (processInventory())
+					// handle click in menu
+					if (menuTable[0])
 					{
-						currentActiveMenu = 0;
-						selectDown = 1;
-						menuDown = 0;
-					} else {
-						currentActiveMenu = -1;
-						menuDown = 0;
+						menuElementSubStruct *pMenuElementSub = getSelectedEntryInMenu(menuTable[0]);
+
+						callRelation(pMenuElementSub, -1);
+
+						// if there is a linked relation, close menu
+						if(!linkedRelation)
+						{
+							freeMenu(menuTable[0]);
+							menuTable[0] = NULL;
+							changeCursor(CURSOR_NORMAL);
+						}
+						// else create the message for the linked relation
+						else
+						{
+							char text[80];
+							strcpy(text, menuTable[0]->stringPtr);
+							strcat(text, ":");
+							strcat(text, currentMenuElement->string);
+							linkedMsgList = renderText(320, (const uint8 *)text);
+							changeCursor(CURSOR_CROSS);
+						}
 					}
+				}
+			}
+			else
+			{
+				// Handle left click in inventory
+				if (processInventory())
+				{
+					currentActiveMenu = 0;
+					selectDown = 1;
+					menuDown = 0;
+				} else {
+					currentActiveMenu = -1;
+					menuDown = 0;
 				}
 			}
 		}
-		// test right button
-		else if ((button & 2) || (keyboardVar == 0x43) || (keyboardVar == 0x52))
+	}
+	// test right button
+	else if ((button & 2) || (keyboardVar == 0x43) || (keyboardVar == 0x52))
+	{
+		if (buttonDown == 0)
 		{
-			if (buttonDown == 0)
-			{
-				keyboardVar = 0;
+			keyboardVar = 0;
 
-				// close object menu if there is no linked relation
-				if ((linkedRelation == 0) && (menuTable[0])) {
-					freeMenu(menuTable[0]);
-					menuTable[0] = NULL;
-					selectDown = 0;
-					menuDown = 0;
-					currentActiveMenu = -1;
-				}
-
-				if ((!selectDown) && (!menuDown) && (menuTable[1] == NULL))
-				{
-					buildInventory(mouseX, mouseY);
-
-					if (menuTable[1]) {
-						currentActiveMenu = 1;
-						menuDown = 1;
-					} else {
-						menuDown = 1;
-					}
-				}
-				buttonDown = 1;
+			// close object menu if there is no linked relation
+			if ((linkedRelation == 0) && (menuTable[0])) {
+				freeMenu(menuTable[0]);
+				menuTable[0] = NULL;
+				selectDown = 0;
+				menuDown = 0;
+				currentActiveMenu = -1;
 			}
+
+			if ((!selectDown) && (!menuDown) && (menuTable[1] == NULL))
+			{
+				buildInventory(mouseX, mouseY);
+
+				if (menuTable[1]) {
+					currentActiveMenu = 1;
+					menuDown = 1;
+				} else {
+					menuDown = 1;
+				}
+			}
+			buttonDown = 1;
 		}
 	}
 	return 0;
@@ -1321,7 +1488,7 @@ void mainLoop(void) {
 	main22 = 0;
 	main7 = 0;
 	main8 = 0;
-	main15 = 0;
+	autoTrack = 0;
 
 	if (initAllData()) {
 		int playerDontAskQuit = 1;
@@ -1335,7 +1502,7 @@ void mainLoop(void) {
 //      readKeyboard();
 			playerDontAskQuit = processInput();
 
-			//if (enableUser)
+			if (enableUser)
 			{
 				userEnabled = 1;
 				enableUser = 0;
@@ -1380,7 +1547,7 @@ void mainLoop(void) {
 				mainDraw(0);
 				flipScreen();
 
-				if (userEnabled && !main7 && !main15)
+				if (userEnabled && !main7 && !autoTrack)
 				{
 					if(currentActiveMenu == -1)
 					{
@@ -1433,8 +1600,24 @@ void mainLoop(void) {
 					ASSERT(0);
 				}
 
-				if (main15) {
-					ASSERT(0);
+				// wait for character to finish auto track
+				if (autoTrack)
+				{
+					if(mainProc13(narratorOvl, narratorIdx, &actorHead, 0))
+					{
+						if(main14 != -1)
+						{
+							ASSERT(0);
+						}
+
+						changeScriptParamInList(-1, -1, &relHead, 9998, 0);
+						autoTrack = 0;
+						enableUser = 1;
+					}
+					else
+					{
+						userEnabled = false;
+					}
 				}
 
 				if (main14 != -1) {

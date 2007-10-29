@@ -1006,8 +1006,9 @@ void mainDraw(int16 param) {
 			return;
 		}
 	}
-
-	if (linkedRelation) {
+	else
+	if ((linkedRelation) && (linkedMsgList))
+	{
 		ASSERT(0);
 		// TODO: draw mouse here
 	}

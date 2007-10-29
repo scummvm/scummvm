@@ -595,9 +595,7 @@ int removeScript(int overlay, int idx, scriptInstanceStruct *headPtr) {
 	return (0);
 }
 
-uint8 *attacheNewScriptToTail(int16 overlayNumber,
-		  scriptInstanceStruct *scriptHandlePtr, int16 param, int16 arg0,
-		  int16 arg1, int16 arg2, scriptTypeEnum scriptType) {
+uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overlayNumber, int16 param, int16 arg0, int16 arg1, int16 arg2, scriptTypeEnum scriptType) {
 	int useArg3Neg = 0;
 	ovlData3Struct *data3Ptr;
 	scriptInstanceStruct *tempPtr;
