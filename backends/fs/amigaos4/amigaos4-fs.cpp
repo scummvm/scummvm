@@ -276,7 +276,7 @@ bool AmigaOSFilesystemNode::exists() const {
 	if (!fib) {
 		debug(6, "FileInfoBlock is NULL");
 		LEAVE();
-		return falsep;
+		return false;
 	}
 	
 	BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
