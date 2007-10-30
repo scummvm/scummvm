@@ -831,6 +831,9 @@ case $_host_os in
 	mint*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
+	amigaos*)
+		# TODO: anything to be added here?
+		;;
 	# given this is a shell script assume some type of unix
 	*)
 		echo "WARNING: could not establish system type, assuming unix like"
