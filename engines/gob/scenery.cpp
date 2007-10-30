@@ -392,11 +392,15 @@ void Scenery::updateStatic(int16 orderFrom) {
 	if (_curStatic == -1)
 		return;
 
-	updateStatic(orderFrom, _curStatic & 0xFF, _curStaticLayer & 0xFF);
+	if (_curStatic < 10000) {
+		updateStatic(orderFrom, _curStatic & 0xFF, _curStaticLayer & 0xFF);
 
-	if (_curStatic & 0xFF00)
-		updateStatic(orderFrom, ((_curStatic >> 8) & 0xFF) - 1,
-				(_curStaticLayer >> 8) & 0xFF);
+		if (_curStatic & 0xFF00)
+			updateStatic(orderFrom, ((_curStatic >> 8) & 0xFF) - 1,
+					(_curStaticLayer >> 8) & 0xFF);
+	} else
+		for (int i = 0; i < (_curStatic - 10000); i++)
+			updateStatic(orderFrom, i, 0);
 }
 
 int16 Scenery::loadAnim(char search) {
