@@ -440,28 +440,16 @@ bool Resource::createContexts() {
 					sprintf(voicesFileName, "voicesd.cmp");
 					_vm->_gf_compressed_sounds = true;
 				}
-#ifndef __amigaos4__
 			} else if (Common::File::exists("inherit the earth voices") || 
 					   Common::File::exists("inherit the earth voices.cmp")) {
+				_contextsCount++;
+				voicesFileIndex = _contextsCount - 1;
 				if (Common::File::exists("inherit the earth voices")) {
 					sprintf(voicesFileName, "inherit the earth voices");
 				} else {
 					sprintf(voicesFileName, "inherit the earth voices.cmp");
 					_vm->_gf_compressed_sounds = true;
 				}
-#else
-			} else if (Common::File::exists("\"inherit the earth voices\"") || 
-					   Common::File::exists("\"inherit the earth voices.cmp\"")) {
-				if (Common::File::exists("\"inherit the earth voices\"")) {
-					sprintf(voicesFileName, "\"inherit the earth voices\"");
-				} else {
-					sprintf(voicesFileName, "\"inherit the earth voices.cmp\"");
-					_vm->_gf_compressed_sounds = true;
-				}
-#endif
-
-				_contextsCount++;
-				voicesFileIndex = _contextsCount - 1;
 
 				// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
 				// the voice file is big endian. If we got such a version with mixed files, mark this voice file
