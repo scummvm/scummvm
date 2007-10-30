@@ -218,7 +218,7 @@ struct WalkData {
 struct GameStateData {
 	uint8 enableLight;
 	int8 colorLum;
-	int16 counter[5];
+	int32 counter[5];
 	bool igorMoving;
 	bool dialogueTextRunning;
 	bool updateLight;
