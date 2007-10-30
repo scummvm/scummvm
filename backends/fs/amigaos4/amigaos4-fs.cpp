@@ -266,11 +266,11 @@ AmigaOSFilesystemNode::~AmigaOSFilesystemNode() {
 }
 
 bool AmigaOSFilesystemNode::exists() const {
+	ENTER();
 	if(_sPath.empty())
 		return false;
 	
 	bool nodeExists = false;
-	ENTER();
 	
 	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
 	if (!fib) {
@@ -281,17 +281,18 @@ bool AmigaOSFilesystemNode::exists() const {
 	
 	BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
 	if (pLock) {
-		if (IDOS->Examine(pLock, fib) != DOSFALSE) {
+		if (IDOS->Examine(pLock, fib) != DOSFALSE)
 			nodeExists = true;
-		}
 		IDOS->UnLock(pLock);
 	}
 	
+	IDOS->FreeDosObject(DOS_FIB, fib);
 	LEAVE();
 	return nodeExists;
 }
 
 AbstractFilesystemNode *AmigaOSFilesystemNode::getChild(const String &n) const {
+	ENTER();
 	if (!_bIsDirectory) {
 		debug(6, "Not a directory");
 		return 0;
@@ -312,6 +313,7 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::getChild(const String &n) const {
 
 	IDOS->UnLock(lock);
 
+	LEAVE();
 	return new AmigaOSFilesystemNode(newPath);
 }
 
