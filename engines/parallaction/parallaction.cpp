@@ -1015,6 +1015,8 @@ Character::Character(Parallaction *vm) : _vm(vm), _builder(&_ani) {
 	_head = NULL;
 	_objs = NULL;
 
+	_dummy = false;
+
 	_ani._left = 150;
 	_ani._top = 100;
 	_ani._z = 10;
@@ -1086,22 +1088,18 @@ void Character::setName(const char *name) {
 	_prefix = _empty;
 	_suffix = _empty;
 
-	if (IS_DUMMY_CHARACTER(name)) {
-		begin = 0;
-		end = 0;
-	} else {
+	_dummy = IS_DUMMY_CHARACTER(name);
 
+	if (!_dummy) {
 		const char *s = strstr(name, "tras");
 		if (s) {
 			_suffix = _suffixTras;
 			end = s;
 		}
-
 		if (IS_MINI_CHARACTER(name)) {
 			_prefix = _prefixMini;
 			begin = name+4;
 		}
-
 	}
 
 	memset(_baseName, 0, 30);
@@ -1137,6 +1135,9 @@ const char *Character::getFullName() const {
 	return _fullName;
 }
 
+bool Character::dummy() const {
+	return _dummy;
+}
 
 void Parallaction::beep() {
 	_soundMan->playSfx("beep", 3, false);

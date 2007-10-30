@@ -231,6 +231,8 @@ protected:
 	const char *_prefix;
 	const char *_suffix;
 
+	bool _dummy;
+
 	char _name[30];
 	char _baseName[30];
 	char _fullName[30];
@@ -244,6 +246,7 @@ public:
 	const char *getName() const;
 	const char *getBaseName() const;
 	const char *getFullName() const;
+	bool dummy() const;
 };
 
 

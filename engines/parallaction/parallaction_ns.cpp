@@ -364,7 +364,7 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 	_char._ani._cnv = _disk->loadFrames(_char.getFullName());
 
-	if (_char.getBaseName()[0] != '\0') {
+	if (!_char.dummy()) {
 		if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT))
 			_disk->selectArchive("disk0");
 
