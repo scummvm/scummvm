@@ -188,17 +188,17 @@ void IgorEngine::PART_21_ACTION_111() {
 		memcpy(_screenVGA + i * 320 + offset, _animFramesBuffer + 0xCBE1 + i * 26, 26);
 	}
 	waitForTimer(100);
-	int i = 1;
+	int k = 1;
 	do {
 		if (compareGameTick(3, 24)) {
 			for (int j = 0; j <= 49; ++j) {
-				memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + 0xBCA5 + PART_21_ANIM_DATA_2[i] * 1300 + j * 26, 26);
+				memcpy(_screenVGA + j * 320 + offset, _animFramesBuffer + 0xBCA5 + PART_21_ANIM_DATA_2[k] * 1300 + j * 26, 26);
 			}
-			++i;
+			++k;
 		}
 		PART_21_UPDATE_ROOM_BACKGROUND();
 		waitForTimer();
-	} while (i != 10);
+	} while (k != 10);
 	IN_ACTION_111 = false;
 	removeObjectFromInventory(56);
 	_objectsState[65] = 1;
