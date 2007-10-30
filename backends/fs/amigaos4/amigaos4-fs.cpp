@@ -87,7 +87,7 @@ public:
 	 */
 	virtual ~AmigaOSFilesystemNode();
 
-	virtual bool exists() const { return true; }		//FIXME: this is just a stub
+	virtual bool exists() const;
 	virtual String getDisplayName() const { return _sDisplayName; };
 	virtual String getName() const { return _sDisplayName; };
 	virtual String getPath() const { return _sPath; };
@@ -263,6 +263,25 @@ AmigaOSFilesystemNode::~AmigaOSFilesystemNode() {
 	if (_pFileLock)
 		IDOS->UnLock(_pFileLock);
 	LEAVE();
+}
+
+bool AmigaOSFilesystemNode::exists() const {
+	if(_sPath.empty())
+		return false;
+	
+	bool nodeExists = false;
+	ENTER();
+	
+	BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
+	if (pLock) {
+		if (IDOS->Examine(pLock, fib) != DOSFALSE) {
+			nodeExists = true;
+		}
+		IDOS->UnLock(pLock);
+	}
+	
+	LEAVE();
+	return nodeExists;
 }
 
 AbstractFilesystemNode *AmigaOSFilesystemNode::getChild(const String &n) const {
