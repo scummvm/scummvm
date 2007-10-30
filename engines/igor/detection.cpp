@@ -31,12 +31,22 @@
 
 #include "igor/igor.h"
 
-static const PlainGameDescriptor igorGameDescriptor = {
-	"igor", "Igor: Objective Uikokahonia"
+struct GameDetectVersion {
+	uint32 borlandOverlaySize;
+	const char *versionString;
+};
+
+static const GameDetectVersion igorDetectVersionsTable[] = {
+	{ 4086790, " 1.00s" },
+	{ 4094103, " 1.10s" },
+	{ 0, 0 }
 };
 
 static const char *igorDetectFileName = "IGOR.DAT";
-static uint32 igorDetectFileSize = 4086790;
+
+static const PlainGameDescriptor igorGameDescriptor = {
+	"igor", "Igor: Objective Uikokahonia"
+};
 
 GameList Engine_IGOR_gameIDList() {
 	GameList games;
@@ -63,11 +73,18 @@ GameList Engine_IGOR_detectGames(const FSList &fslist) {
 				continue;
 			}
 			const uint32 sig = f.readUint32BE();
-			if (sig == MKID_BE('FBOV') && f.size() == igorDetectFileSize) {
-				GameDescriptor gd(igorGameDescriptor.gameid, igorGameDescriptor.description, Common::EN_ANY, Common::kPlatformPC);
-				gd.updateDesc("Demo");
-				detectedGames.push_back(gd);
-				break;
+			if (sig == MKID_BE('FBOV')) {
+				const uint32 fileSize = f.size();
+				for (int i = 0; igorDetectVersionsTable[i].borlandOverlaySize; ++i) {
+					if (igorDetectVersionsTable[i].borlandOverlaySize != fileSize) {
+						continue;
+					}
+					GameDescriptor gd(igorGameDescriptor.gameid, igorGameDescriptor.description, Common::EN_ANY, Common::kPlatformPC);
+					gd.description() += igorDetectVersionsTable[i].versionString;
+					gd.updateDesc("Demo");
+					detectedGames.push_back(gd);
+					break;
+				}
 			}
 		}
 	}

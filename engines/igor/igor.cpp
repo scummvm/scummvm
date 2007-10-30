@@ -160,6 +160,7 @@ int IgorEngine::go() {
 	if (!_sndFile.open("IGOR.FSD")) {
 		error("Unable to open 'IGOR.FSD'");
 	}
+	readResourceEntriesTable();
 	loadMainTexts();
 	loadIgorFrames();
 	_gameState.talkMode = kTalkModeTextOnly;
@@ -169,7 +170,37 @@ int IgorEngine::go() {
 	PART_MAIN();
 	_ovlFile.close();
 	_sndFile.close();
+	delete[] _resourceEntriesTable;
 	return 0;
+}
+
+void IgorEngine::readResourceEntriesTable() {
+	Common::File f;
+	if (f.open("IGOR.TBL") && f.readUint32BE() == MKID_BE('ITBL') && f.readUint32BE() == 1) {
+		bool foundVersion = false;
+		uint32 borlandOverlaySize = _ovlFile.size();
+		int gameVersionsCount = f.readByte();
+		for (int i = 0; i < gameVersionsCount; ++i) {
+			uint32 size = f.readUint32BE();
+			uint32 offs = f.readUint32BE();
+			if (size == borlandOverlaySize) {
+				f.seek(offs);
+				foundVersion = true;
+				break;
+			}
+		}
+		assert(foundVersion);
+		_resourceEntriesCount = f.readUint16BE();
+		_resourceEntriesTable = new ResourceEntry[_resourceEntriesCount];
+		for (int i = 0; i < _resourceEntriesCount; ++i) {
+			ResourceEntry *re = &_resourceEntriesTable[i];
+			re->id = f.readUint16BE();
+			re->offs = f.readUint32BE();
+			re->size = f.readUint32BE();
+		}
+	} else {
+		error("Unable to open 'IGOR.TBL'");
+	}
 }
 
 void IgorEngine::waitForTimer(int ticks) {

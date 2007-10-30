@@ -273,6 +273,7 @@ public:
 	virtual int init();
 	virtual int go();
 
+	void readResourceEntriesTable();
 	void restart();
 	void waitForTimer(int ticks = -1);
 
@@ -460,8 +461,9 @@ protected:
 	UpdateDialogueProc _updateDialogue;
 	UpdateRoomBackgroundProc _updateRoomBackground;
 	int _gameTicks;
-
 	char _saveStateDescriptions[10][100];
+	ResourceEntry *_resourceEntriesTable;
+	int _resourceEntriesCount;
 
 	static const uint8 _dialogueColor[];
 	static const uint8 _sentenceColorIndex[];
@@ -478,8 +480,6 @@ protected:
 	static const uint8 _mouseCursorMask[];
 	static const uint8 _mouseCursorData[];
 	static const uint32 _fdsOffsetsTable[];
-	static const ResourceEntry _resourceEntriesTable[];
-	static const int _resourceEntriesCount;
 
 
 	//
