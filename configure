@@ -250,14 +250,14 @@ int main() {
 	return 0;
 }
 EOF
-if ! $CXX $CXXFLAGS -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null; then
+if $CXX $CXXFLAGS -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
+	break
+else
 	if test "$datatype" = "unknown"; then
 		echo "couldn't find data type with $1 bytes"
 		exit 1
 	fi
 	continue
-else
-	break
 fi
 done
 rm -f tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp
