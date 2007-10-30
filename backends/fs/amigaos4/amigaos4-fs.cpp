@@ -272,6 +272,13 @@ bool AmigaOSFilesystemNode::exists() const {
 	bool nodeExists = false;
 	ENTER();
 	
+	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
+	if (!fib) {
+		debug(6, "FileInfoBlock is NULL");
+		LEAVE();
+		return falsep;
+	}
+	
 	BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
 	if (pLock) {
 		if (IDOS->Examine(pLock, fib) != DOSFALSE) {
