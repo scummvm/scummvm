@@ -32,20 +32,20 @@
 #endif
 
 static void scaleUpBy2(byte *dst, byte *src, uint16 width, uint16 h) {
-  uint16 x;
+	uint16 x;
 
-  while (h > 0) {
-    for (x = width; x > 0; x--) {
-      register byte v;
+	while (h > 0) {
+		for (x = width; x > 0; x--) {
+			register byte v;
 
-      v = *src++;
-      *dst++ = v;
-      *dst++ = v;
-    }
-    memcpy(dst, dst - width * 2, width * 2);
-    dst += width * 2;
-    h--;
-  }
+			v = *src++;
+			*dst++ = v;
+			*dst++ = v;
+		}
+		memcpy(dst, dst - width * 2, width * 2);
+		dst += width * 2;
+		h--;
+	}
 }
 
 namespace Graphics {
