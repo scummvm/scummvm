@@ -56,6 +56,14 @@ protected:
 	String _sPath;
 	bool _bIsDirectory;
 	bool _bIsValid;
+	
+	/**
+	 * Obtain the FileInfoBlock protection value for this FilesystemNode,
+	 * as defined in the <proto/dos.h> header.
+	 * 
+	 * @return -1 if there were errors, 0 or a positive integer otherwise.
+	 */
+	virtual int getFibProtection() const;
 
 public:
 	/**
@@ -398,6 +406,30 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	return true;
 }
 
+int AmigaOSFilesystemNode::getFibProtection() const {
+	ENTER();
+	
+	int fibProt = -1;
+	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
+	if (!fib) {
+		debug(6, "FileInfoBlock is NULL");
+		LEAVE();
+		return fibProt;
+	}
+	
+	BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
+	if (pLock) {
+		if (IDOS->Examine(pLock, fib) != DOSFALSE) {
+			fibProt = fib->fib_Protection;
+		}
+		IDOS->UnLock(pLock);
+	}
+	
+	IDOS->FreeDosObject(DOS_FIB, fib);
+	LEAVE();
+	return fibProt;
+}
+
 AbstractFilesystemNode *AmigaOSFilesystemNode::getParent() const {
 	ENTER();
 
@@ -429,64 +461,34 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::getParent() const {
 }
 
 bool AmigaOSFilesystemNode::isReadable() const {
-	ENTER();
+	bool readable = false;
+	int fibProt = getFibProtection();
 	
-	bool readable = false;	
-	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
-	if (!fib) {
-		debug(6, "FileInfoBlock is NULL");
-		LEAVE();
-		return false;
+	if (fibProt >= 0) {
+		/* The fib_Protection flag is low-active or inverted, thus the negation.
+		 * 
+		 * For more information, consult the compiler/include/dos/dos.h
+		 * file from the AROS source (http://aros.sourceforge.net/).
+		 */
+		readable = !(fibProt & FIBF_READ);
 	}
 	
-	BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
-	if (pLock) {
-		if (IDOS->Examine(pLock, fib) != DOSFALSE) {
-			/* The fib_Protection flag is low-active or inverted, thus the negation.
-			 * 
-			 * For more information, consult the compiler/include/dos/dos.h
-			 * file from the AROS source (http://aros.sourceforge.net/).
-			 */
-			if (!(fib->fib_Protection & FIBF_READ)) {
-				readable = true;
-			}
-		}
-		IDOS->UnLock(pLock);
-	}
-	
-	IDOS->FreeDosObject(DOS_FIB, fib);
-	LEAVE();
 	return readable;
 }
 
 bool AmigaOSFilesystemNode::isWritable() const {
-	ENTER();
+	bool writable = false;
+	int fibProt = getFibProtection();
 	
-	bool writable = false;	
-	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
-	if (!fib) {
-		debug(6, "FileInfoBlock is NULL");
-		LEAVE();
-		return false;
+	if (fibProt >= 0) {
+		/* The fib_Protection flag is low-active or inverted, thus the negation.
+		 * 
+		 * For more information, consult the compiler/include/dos/dos.h
+		 * file from the AROS source (http://aros.sourceforge.net/).
+		 */
+		writable = !(fibProt & FIBF_WRITE);
 	}
 	
-	BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
-	if (pLock) {
-		if (IDOS->Examine(pLock, fib) != DOSFALSE) {
-			/* The fib_Protection flag is low-active or inverted, thus the negation.
-			 * 
-			 * For more information, consult the compiler/include/dos/dos.h
-			 * file from the AROS source (http://aros.sourceforge.net/).
-			 */
-			if (!(fib->fib_Protection & FIBF_WRITE)) {
-				writable = true;
-			}
-		}
-		IDOS->UnLock(pLock);
-	}
-	
-	IDOS->FreeDosObject(DOS_FIB, fib);
-	LEAVE();
 	return writable;
 }
 
