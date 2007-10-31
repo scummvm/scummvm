@@ -335,6 +335,13 @@ int AgiEngine::testIfCode(int lognum) {
 		case 0x12:
 			ec = testObjRight(p[0], p[1], p[2], p[3], p[4]);
 			break;
+		case 0x13: // Unknown test command 19
+			// Used at least by the Amiga version of Gold Rush! in logic.001.
+			// Don't know what this actually does in the Amiga executable but
+			// evaluating this to false seems to fix the bug #1745950
+			// (GR: Birds stuck in opening screen (Amiga version)).
+			ec = false;
+			break;
 		default:
 			ec = false;
 			end_test = true;
