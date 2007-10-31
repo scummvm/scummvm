@@ -340,6 +340,8 @@ int AgiEngine::testIfCode(int lognum) {
 			// Don't know what this actually does in the Amiga executable but
 			// evaluating this to false seems to fix the bug #1745950
 			// (GR: Birds stuck in opening screen (Amiga version)).
+			// FIXME: This hack was taken from NAGI. Need to check it with disassembly.
+			warning("op_test: Amiga-specific testcase 19 was triggered");
 			ec = false;
 			break;
 		default:
