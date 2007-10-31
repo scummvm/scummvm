@@ -105,13 +105,19 @@ DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext
 			soundType = kSoundFLAC;
 		}
 
+		_file->seek((long)resourceData->offset + 9, SEEK_SET);
 		createCompressedStream();
-		resourceData->offset += 9;	// Skip compressed header
 	}
 
 	// Determine the end position
 	_filePos = resourceData->offset;
 	_endPos = _filePos + resourceData->size;
+
+	if (_compressedStream != NULL) {
+		_filePos += 9;	// skip compressed header
+		_endPos -= 9;	// decrease size by the size of the compressed header
+	}
+
 	_startPos = _filePos + loopStart;
 	if (_startPos >= _endPos)
 		_startPos = _filePos;
@@ -126,7 +132,7 @@ DigitalMusicInputStream::~DigitalMusicInputStream() {
 
 void DigitalMusicInputStream::createCompressedStream() {
 	uint numLoops = _looping ? 0 : 1;
-	_memoryStream = _file->readStream(resourceData->size);
+	_memoryStream = _file->readStream(resourceData->size - 9);
 
 	switch (soundType) {
 #ifdef USE_MAD
