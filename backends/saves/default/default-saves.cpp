@@ -34,9 +34,9 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 #if defined(UNIX) || defined(__SYMBIAN32__)
-#include <errno.h>
 #include <sys/stat.h>
 #endif
 
