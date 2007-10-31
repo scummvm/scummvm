@@ -48,6 +48,15 @@ enum {
 };
 
 enum {
+	kIdEngDemo100,
+	kIdEngDemo110,
+	kIdEngFloppy,
+	kIdSpaFloppy,
+	kIdEngCD,
+	kIdSpaCD
+};
+
+enum {
 	kStartupPart = 900,
 	kTalkColor = 240,
 	kTalkShadowColor = 241,
@@ -218,7 +227,7 @@ struct WalkData {
 struct GameStateData {
 	uint8 enableLight;
 	int8 colorLum;
-	int32 counter[5];
+	int16 counter[5];
 	bool igorMoving;
 	bool dialogueTextRunning;
 	bool updateLight;
@@ -267,15 +276,11 @@ public:
 	typedef void (IgorEngine::*UpdateDialogueProc)(int action);
 	typedef void (IgorEngine::*UpdateRoomBackgroundProc)();
 
-	IgorEngine(OSystem *system);
+	IgorEngine(OSystem *system, int gameVersion);
 	virtual ~IgorEngine();
 
 	virtual int init();
 	virtual int go();
-
-	void readResourceEntriesTable();
-	void restart();
-	void waitForTimer(int ticks = -1);
 
 	void handleOptionsMenu_paintSave();
 	bool handleOptionsMenu_handleKeyDownSave(int key);
@@ -290,6 +295,10 @@ protected:
 
 	bool compareGameTick(int add, int mod) const { return ((_gameTicks + (add & ~7)) % mod) == 0; } // { return ((_gameTicks + add) % mod) == 0; }
 	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); } // { return _gameTicks == eq; }
+	int getPart() const { return _currentPart / 10; }
+	void readResourceTableFile();
+	void restart();
+	void waitForTimer(int ticks = -1);
 	void copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent = false);
 	int getRandomNumber(int m);
 	void handleOptionsMenu();
@@ -306,8 +315,7 @@ protected:
 	void startIgorDialogue();
 	void waitForEndOfIgorDialogue();
 	int getObjectFromInventory(int x) const;
-	int getSelectedVerb() const;
-	const ResourceEntry *findData(int num) const;
+	ResourceEntry findData(int num);
 	uint8 *loadData(int num, uint8 *dst = 0, int *size = 0);
 	void decodeMainText(const uint8 *p);
 	void decodeRoomStrings(const uint8 *p, bool skipObjectNames = false);
@@ -354,7 +362,6 @@ protected:
 	void handleRoomInventoryScroll();
 	void handleRoomLight();
 	int lookupScale(int xOffset, int yOffset, int h) const;
-	void moveIgorHelper1(int pos, int frame);
 	void moveIgor(int pos, int frame);
 	void buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY);
 	void getClosestAreaTrianglePoint(int dstArea, int srcArea, int *dstY, int *dstX, int srcY, int srcX);
@@ -382,6 +389,7 @@ protected:
 
 	Common::File _ovlFile;
 	Common::File _sndFile;
+	Common::File _tblFile;
 
 	Audio::SoundHandle _sfxHandle;
 
@@ -403,6 +411,7 @@ protected:
 	uint32 _nextTimer;
 	bool _fastMode;
 	int _language;
+	int _gameVersion;
 
 	WalkData _walkData[100];
 	uint8 _walkCurrentPos;
@@ -461,9 +470,8 @@ protected:
 	UpdateDialogueProc _updateDialogue;
 	UpdateRoomBackgroundProc _updateRoomBackground;
 	int _gameTicks;
-	char _saveStateDescriptions[10][100];
-	ResourceEntry *_resourceEntriesTable;
 	int _resourceEntriesCount;
+	int _resourceEntriesOffset;
 
 	static const uint8 _dialogueColor[];
 	static const uint8 _sentenceColorIndex[];

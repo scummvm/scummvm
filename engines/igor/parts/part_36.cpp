@@ -77,28 +77,28 @@ void IgorEngine::PART_36_EXEC_ACTION(int action) {
 }
 
 void IgorEngine::PART_36_ACTION_102() {
-	for (_gameState.counter[0] = 1; _gameState.counter[0] >= 0; --_gameState.counter[0]) {
-		for (_gameState.counter[1] = 0; _gameState.counter[1] <= 48; ++_gameState.counter[1]) {
-			for (_gameState.counter[2] = 0; _gameState.counter[2] <= 33; ++_gameState.counter[2]) {
-				uint8 color = _animFramesBuffer[14 + _gameState.counter[0] * 1666 + _gameState.counter[1] * 34 + _gameState.counter[2]];
-				int offset = (_gameState.counter[1] + 74) * 320 + _gameState.counter[2] + 70;
+	for (int i = 1; i >= 0; --i) {
+		for (int j = 0; j <= 48; ++j) {
+			for (int k = 0; k <= 33; ++k) {
+				uint8 color = _animFramesBuffer[14 + i * 1666 + j * 34 + k];
+				int offset = (j + 74) * 320 + k + 70;
 				if (color < 192 || color > 207) {
-					_screenTempLayer[100 * _gameState.counter[1] + _gameState.counter[2]] = color;
+					_screenTempLayer[100 * j + k] = color;
 					continue;
 				}
 				RoomObjectArea *roa = &_roomObjectAreasTable[_screenLayer2[offset]];
 				if (roa->y1Lum > 0) {
-					_screenTempLayer[100 * _gameState.counter[1] + _gameState.counter[2]] = _screenLayer1[offset];
+					_screenTempLayer[100 * j + k] = _screenLayer1[offset];
 				} else {
 					if (roa->y2Lum > 0) {
 						color -= roa->deltaLum;
 					}
-					_screenTempLayer[100 * _gameState.counter[1] + _gameState.counter[2]] = color;
+					_screenTempLayer[100 * j + k] = color;
 				}
 			}
 		}
-		for (_gameState.counter[1] = 0; _gameState.counter[1] <= 48; ++_gameState.counter[1]) {
-			memcpy(_screenVGA + _gameState.counter[1] * 320 + 23750, _screenTempLayer + _gameState.counter[1] * 100, 34);
+		for (int j = 0; j <= 48; ++j) {
+			memcpy(_screenVGA + j * 320 + 23750, _screenTempLayer + j * 100, 34);
 		}
 		waitForTimer(45);
 	}

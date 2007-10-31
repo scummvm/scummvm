@@ -424,20 +424,20 @@ void IgorEngine::PART_15_HELPER_5() {
 
 void IgorEngine::PART_15_HELPER_6(int frame) {
 	_roomCursorOn = false;
-	for (_gameState.counter[1] = 0; _gameState.counter[1] <= 17; ++_gameState.counter[1]) {
-		for (_gameState.counter[2] = 0; _gameState.counter[2] <= 52; ++_gameState.counter[2]) {
-			int offset = (_gameState.counter[1] + 23) * 320 + _gameState.counter[2] + 18;
+	for (int i = 0; i <= 17; ++i) {
+		for (int j = 0; j <= 52; ++j) {
+			int offset = (i + 23) * 320 + j + 18;
 			uint8 color = _screenVGA[offset];
 			if (color < 0xF0 || color > 0xF1) {
-				color = _animFramesBuffer[0x4B8C + frame * 954 + _gameState.counter[1] * 53 + _gameState.counter[2]];
+				color = _animFramesBuffer[0x4B8C + frame * 954 + i * 53 + j];
 			}
-			_screenTempLayer[_gameState.counter[1] * 100 + _gameState.counter[2]] = color;
+			_screenTempLayer[i * 100 + j] = color;
 		}
 	}
 	int offset = 7378;
-	for (_gameState.counter[1] = 0; _gameState.counter[1] <= 17; ++_gameState.counter[1]) {
-		memcpy(_screenVGA + _gameState.counter[1] * 320 + offset, _screenTempLayer + _gameState.counter[1] * 100, 53);
-		memcpy(_screenLayer1 + _gameState.counter[1] * 320 + offset, _animFramesBuffer + 0x4B8C + frame * 954 + _gameState.counter[1] * 53, 53);
+	for (int i = 0; i <= 17; ++i) {
+		memcpy(_screenVGA + i * 320 + offset, _screenTempLayer + i * 100, 53);
+		memcpy(_screenLayer1 + i * 320 + offset, _animFramesBuffer + 0x4B8C + frame * 954 + i * 53, 53);
 	}
 	if (_gameState.dialogueTextRunning) {
 		memcpy(_screenTextLayer + 23040, _screenLayer1 + _dialogueDirtyRectY, _dialogueDirtyRectSize);

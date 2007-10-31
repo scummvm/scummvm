@@ -33,13 +33,14 @@
 
 struct GameDetectVersion {
 	uint32 borlandOverlaySize;
-	const char *versionString;
+	int gameVersion;
+	Common::Language language;
+	const char *descriptionSuffix;
 };
 
 static const GameDetectVersion igorDetectVersionsTable[] = {
-	{ 4086790, " 1.00s" },
-	{ 4094103, " 1.10s" },
-	{ 0, 0 }
+	{ 4086790, Igor::kIdEngDemo100, Common::EN_ANY, " 1.00s" },
+	{ 4094103, Igor::kIdEngDemo110, Common::EN_ANY, " 1.10s" }
 };
 
 static const char *igorDetectFileName = "IGOR.DAT";
@@ -61,32 +62,34 @@ GameDescriptor Engine_IGOR_findGameID(const char *gameid) {
 	return GameDescriptor();
 }
 
-GameList Engine_IGOR_detectGames(const FSList &fslist) {
-	GameList detectedGames;
+static const GameDetectVersion *Engine_IGOR_findGameVersion(const FSList &fslist) {
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory()) {
+		if (file->isDirectory() || !file->getName().equalsIgnoreCase(igorDetectFileName)) {
 			continue;
 		}
-		if (file->getName().equalsIgnoreCase(igorDetectFileName)) {
-			Common::File f;
-			if (!f.open(*file)) {
-				continue;
-			}
-			const uint32 sig = f.readUint32BE();
-			if (sig == MKID_BE('FBOV')) {
-				const uint32 fileSize = f.size();
-				for (int i = 0; igorDetectVersionsTable[i].borlandOverlaySize; ++i) {
-					if (igorDetectVersionsTable[i].borlandOverlaySize != fileSize) {
-						continue;
+		Common::File f;
+		if (f.open(*file)) {
+			const uint32 fileSize = f.size();
+			if (f.readUint32BE() == MKID_BE('FBOV')) {
+				for (int i = 0; i < ARRAYSIZE(igorDetectVersionsTable); ++i) {
+					if (igorDetectVersionsTable[i].borlandOverlaySize == fileSize) {
+						return &igorDetectVersionsTable[i];
 					}
-					GameDescriptor gd(igorGameDescriptor.gameid, igorGameDescriptor.description, Common::EN_ANY, Common::kPlatformPC);
-					gd.description() += igorDetectVersionsTable[i].versionString;
-					gd.updateDesc("Demo");
-					detectedGames.push_back(gd);
-					break;
 				}
 			}
 		}
+	}
+	return 0;
+}
+
+GameList Engine_IGOR_detectGames(const FSList &fslist) {
+	GameList detectedGames;
+	const GameDetectVersion *gdv = Engine_IGOR_findGameVersion(fslist);
+	if (gdv) {
+		GameDescriptor gd(igorGameDescriptor.gameid, igorGameDescriptor.description, gdv->language, Common::kPlatformPC);
+		gd.description() += gdv->descriptionSuffix;
+		gd.updateDesc("Demo");
+		detectedGames.push_back(gd);
 	}
 	return detectedGames;
 }
@@ -97,12 +100,12 @@ PluginError Engine_IGOR_create(OSystem *system, Engine **engine) {
 	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
 		return kInvalidPathError;
 	}
-	GameList gameList = Engine_IGOR_detectGames(fslist);
-	if (gameList.size() != 1) {
+	const GameDetectVersion *gdv = Engine_IGOR_findGameVersion(fslist);
+	if (!gdv) {
 		return kNoGameDataFoundError;
 	}
 	assert(engine);
-	*engine = new Igor::IgorEngine(system);
+	*engine = new Igor::IgorEngine(system, gdv->gameVersion);
 	return kNoError;
 }
 

@@ -137,15 +137,15 @@ void IgorEngine::PART_13_ACTION_101_103() {
 void IgorEngine::PART_13_ACTION_104() {
 	_walkDataCurrentIndex = 0;
 	_walkCurrentFrame = 1;
-	for (_gameState.counter[1] = 9; _gameState.counter[1] >= 0; --_gameState.counter[1]) {
-		if (_gameState.counter[1] == 9) {
+	for (int i = 9; i >= 0; --i) {
+		if (i == 9) {
 			_walkCurrentFrame = 0;
 		}
 		_walkData[0].setPos(189, 143, 3, _walkCurrentFrame);
 		WalkData::setNextFrame(3, _walkCurrentFrame);
 		_walkData[0].clipSkipX = 1;
 		_walkData[0].clipWidth = 13;
-		_walkData[0].scaleWidth = 13 + _gameState.counter[1];
+		_walkData[0].scaleWidth = 13 + i;
 		_walkData[0].xPosChanged = 1;
 		_walkData[0].dxPos = 0;
 		_walkData[0].yPosChanged = 1;

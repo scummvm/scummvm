@@ -35,8 +35,8 @@
 
 namespace Igor {
 
-IgorEngine::IgorEngine(OSystem *system)
-	: Engine(system) {
+IgorEngine::IgorEngine(OSystem *system, int gameVersion)
+	: Engine(system), _gameVersion(gameVersion) {
 
 	_screenVGA = (uint8 *)malloc(320 * 200);
 	for (int i = 0; i < 4; ++i) {
@@ -160,7 +160,10 @@ int IgorEngine::go() {
 	if (!_sndFile.open("IGOR.FSD")) {
 		error("Unable to open 'IGOR.FSD'");
 	}
-	readResourceEntriesTable();
+	if (!_tblFile.open("IGOR.TBL")) {
+		error("Unable to open 'IGOR.TBL'");
+	}
+	readResourceTableFile();
 	loadMainTexts();
 	loadIgorFrames();
 	_gameState.talkMode = kTalkModeTextOnly;
@@ -170,37 +173,26 @@ int IgorEngine::go() {
 	PART_MAIN();
 	_ovlFile.close();
 	_sndFile.close();
-	delete[] _resourceEntriesTable;
+	_tblFile.close();
 	return 0;
 }
 
-void IgorEngine::readResourceEntriesTable() {
-	Common::File f;
-	if (f.open("IGOR.TBL") && f.readUint32BE() == MKID_BE('ITBL') && f.readUint32BE() == 1) {
-		bool foundVersion = false;
+void IgorEngine::readResourceTableFile() {
+	if (_tblFile.readUint32BE() == MKID_BE('ITBL') && _tblFile.readUint32BE() == 1) {
 		uint32 borlandOverlaySize = _ovlFile.size();
-		int gameVersionsCount = f.readByte();
+		int gameVersionsCount = _tblFile.readByte();
 		for (int i = 0; i < gameVersionsCount; ++i) {
-			uint32 size = f.readUint32BE();
-			uint32 offs = f.readUint32BE();
+			uint32 size = _tblFile.readUint32BE();
+			uint32 offs = _tblFile.readUint32BE();
 			if (size == borlandOverlaySize) {
-				f.seek(offs);
-				foundVersion = true;
-				break;
+				_tblFile.seek(offs);
+				_resourceEntriesCount = _tblFile.readUint16BE();
+				_resourceEntriesOffset = offs + 2;
+				return;
 			}
 		}
-		assert(foundVersion);
-		_resourceEntriesCount = f.readUint16BE();
-		_resourceEntriesTable = new ResourceEntry[_resourceEntriesCount];
-		for (int i = 0; i < _resourceEntriesCount; ++i) {
-			ResourceEntry *re = &_resourceEntriesTable[i];
-			re->id = f.readUint16BE();
-			re->offs = f.readUint32BE();
-			re->size = f.readUint32BE();
-		}
-	} else {
-		error("Unable to open 'IGOR.TBL'");
 	}
+	error("Unable to read 'IGOR.TBL'");
 }
 
 void IgorEngine::waitForTimer(int ticks) {
@@ -466,7 +458,7 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 		}
 		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
 			if (_talkSpeechCounter > 2) {
-				if (_gameState.talkMode < 2) {
+				if (_gameState.talkMode != kTalkModeTextOnly) {
 					_talkDelayCounter = _talkDelay;
 				}
 				if (_talkDelay == _talkDelayCounter) {
@@ -478,7 +470,7 @@ void IgorEngine::waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b)
 						_gameState.dialogueTextRunning = 0;
 					} else {
 						++_dialogueTextsStart;
-						if (_gameState.talkMode < 2) {
+						if (_gameState.talkMode != kTalkModeTextOnly) {
 							if (_talkSpeechCounter != -1) {
 								_talkSpeechCounter = 0;
 							} else {
@@ -551,17 +543,17 @@ void IgorEngine::startIgorDialogue() {
 	}
 	setPaletteColor(kTalkColor, _dialogueColor[0], _dialogueColor[1], _dialogueColor[2]);
 	setPaletteColor(kTalkShadowColor, 0, 0, 0);
-	if (_gameState.talkMode > 0) {
+	if (_gameState.talkMode != kTalkModeSpeechOnly) {
 		memcpy(_screenVGA + _dialogueDirtyRectY, _screenTextLayer, _dialogueDirtyRectSize);
 	}
-	if (_gameState.talkMode == 2) {
+	if (_gameState.talkMode == kTalkModeTextOnly) {
 		_talkDelay = (2 * dt->count) * _talkDelays[_gameState.talkSpeed];
 		_talkDelayCounter = 0;
 	} else {
 		_talkDelay = -1;
 		_talkDelayCounter = 0;
 	}
-	if (_gameState.talkMode >= 2) {
+	if (_gameState.talkMode == kTalkModeTextOnly) {
 		playSound(24, 0);
 	}
 	_gameState.dialogueTextRunning = true;
@@ -576,7 +568,7 @@ void IgorEngine::waitForEndOfIgorDialogue() {
 		}
 		if (compareGameTick(19, 32) && _gameState.dialogueTextRunning) {
 			if (_talkSpeechCounter > 2) {
-				if (_gameState.talkMode < 2) {
+				if (_gameState.talkMode != kTalkModeTextOnly) {
 					_talkDelayCounter = _talkDelay;
 				}
 				if (_talkDelay == _talkDelayCounter) {
@@ -586,7 +578,7 @@ void IgorEngine::waitForEndOfIgorDialogue() {
 						_gameState.dialogueTextRunning = 0;
 					} else {
 						++_dialogueTextsStart;
-						if (_gameState.talkMode < 2) {
+						if (_gameState.talkMode != kTalkModeTextOnly) {
 							if (_talkSpeechCounter != -1) {
 								_talkSpeechCounter = 0;
 							} else {
@@ -626,40 +618,30 @@ int IgorEngine::getObjectFromInventory(int x) const {
 	return 0;
 }
 
-int IgorEngine::getSelectedVerb() const {
-	for (int i = 0; i <= 6; ++i) {
-		for (int w = 0; w <= 19; ++w) {
-			const uint8 *p = _screenVGA + 320 * 156 + i * 46 + w;
-			if (*p == 251) {
-				return i + 2;
-			}
-		}
-	}
-	return 0;
-}
-
-const ResourceEntry *IgorEngine::findData(int id) const {
-	--id;
-	assert(id >= 0 && id < _resourceEntriesCount);
-	const ResourceEntry *re = &_resourceEntriesTable[id];
-	assert(re->id == id + 1);
+ResourceEntry IgorEngine::findData(int id) {
+	assert(id >= 1 && id <= _resourceEntriesCount);
+	_tblFile.seek(_resourceEntriesOffset + (id - 1) * 10);
+	ResourceEntry re;
+	re.id = _tblFile.readUint16BE();
+	re.offs = _tblFile.readUint32BE();
+	re.size = _tblFile.readUint32BE();
+	assert(re.id == id);
 	return re;
 }
 
 uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
-	const ResourceEntry *re = findData(id);
-	assert(re);
-	debug(kDebugResource, "loadData() id %d offset %d size %d", id, re->offs, re->size);
+	ResourceEntry re = findData(id);
+	debug(kDebugResource, "loadData() id %d offset %d size %d", id, re.offs, re.size);
 	if (!dst) {
-		dst = (uint8 *)malloc(re->size);
+		dst = (uint8 *)malloc(re.size);
 		if (!dst) {
-			error("Unable to allocate %d bytes", re->size);
+			error("Unable to allocate %d bytes", re.size);
 		}
 	}
-	_ovlFile.seek(re->offs);
-	_ovlFile.read(dst, re->size);
+	_ovlFile.seek(re.offs);
+	_ovlFile.read(dst, re.size);
 	if (size) {
-		*size = re->size;
+		*size = re.size;
 	}
 	return dst;
 }
@@ -814,7 +796,7 @@ void IgorEngine::loadAnimData(const int *anm, int loadOffset) {
 
 void IgorEngine::loadActionData(int act) {
 	if (act != 0) {
-		assert(findData(act)->size <= 0x2000);
+		assert(findData(act).size <= 0x2000);
 		loadData(act, _roomActionsTable);
 	}
 }
@@ -1146,44 +1128,42 @@ void IgorEngine::updateRoomLight(int fl) {
 		return;
 	}
 	offset += x;
+	RoomObjectArea *roa;
 	int color = (fl == 0) ? 196 : 195;
 	switch (wd->posNum) {
-	case 2: {
-			RoomObjectArea *roa = &_roomObjectAreasTable[_screenLayer2[offset + 1298]];
-			if (wd->y > roa->y1Lum) {
-				 if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
-				 	color -= roa->deltaLum;
-				 }
-				 _screenVGA[offset + 1298] = color;
+	case 2:
+		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1298]];
+		if (wd->y > roa->y1Lum) {
+			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
+				color -= roa->deltaLum;
 			}
+			_screenVGA[offset + 1298] = color;
 		}
 		break;
-	case 3: {
-			RoomObjectArea *roa = &_roomObjectAreasTable[_screenLayer2[offset + 1293]];
-			if (wd->y > roa->y1Lum) {
-				 if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
-				 	color -= roa->deltaLum;
-				 }
-				 _screenVGA[offset + 1293] = color;
+	case 3:
+		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1293]];
+		if (wd->y > roa->y1Lum) {
+			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
+				color -= roa->deltaLum;
 			}
-			color = (fl == 0) ? 196 : 195;
-			roa = &_roomObjectAreasTable[_screenLayer2[offset + 1296]];
-			if (wd->y > roa->y1Lum) {
-				 if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
-				 	color -= roa->deltaLum;
-				 }
-				 _screenVGA[offset + 1296] = color;
+			_screenVGA[offset + 1293] = color;
+		}
+		color = (fl == 0) ? 196 : 195;
+		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1296]];
+		if (wd->y > roa->y1Lum) {
+			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
+				color -= roa->deltaLum;
 			}
+			_screenVGA[offset + 1296] = color;
 		}
 		break;
-	case 4: {
-			RoomObjectArea *roa = &_roomObjectAreasTable[_screenLayer2[offset + 1291]];
-			if (wd->y > roa->y1Lum) {
-				 if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
-				 	color -= roa->deltaLum;
-				 }
-				 _screenVGA[offset + 1291] = color;
+	case 4:
+		roa = &_roomObjectAreasTable[_screenLayer2[offset + 1291]];
+		if (wd->y > roa->y1Lum) {
+			if (wd->y <= roa->y2Lum && _gameState.enableLight == 1) {
+				color -= roa->deltaLum;
 			}
+			_screenVGA[offset + 1291] = color;
 		}
 		break;
 	}
@@ -1323,10 +1303,10 @@ void IgorEngine::scrollInventory() {
 		memcpy(_screenVGA + 54400, _inventoryPanelBuffer + (_scrollInventoryStartY - 1) * 320, 9600);
 		_scrollInventory = false;
 	} else {
-		_gameState.counter[2] = 54420;
-		for (_gameState.counter[1] = _scrollInventoryStartY; _gameState.counter[1] < _scrollInventoryStartY + 29; ++_gameState.counter[1]) {
-			memcpy(_screenVGA + _gameState.counter[2], _inventoryPanelBuffer + 320 * _gameState.counter[1] - 300, 280);
-			_gameState.counter[2] += 320;
+		int offset = 54420;
+		for (int y = _scrollInventoryStartY; y < _scrollInventoryStartY + 29; ++y) {
+			memcpy(_screenVGA + offset, _inventoryPanelBuffer + 320 * y - 300, 280);
+			offset += 320;
 		}
 		_scrollInventoryStartY += _scrollInventoryDy;
 	}
@@ -1598,7 +1578,7 @@ void IgorEngine::handleRoomInput() {
 }
 
 void IgorEngine::animateIgorTalking(int frame) {
-	if (_currentPart == 850) {
+	if (getPart() == 85) {
 		PART_85_HELPER_6(frame);
 		return;
 	}
@@ -1706,24 +1686,26 @@ int IgorEngine::lookupScale(int xOffset, int yOffset, int h) const {
 	return offset;
 }
 
-void IgorEngine::moveIgorHelper1(int pos, int frame) {
-	debug(kDebugWalk, "moveIgorHelper1 _walkDataCurrentIndex %d pos %d frame %d", _walkDataCurrentIndex, pos, frame);
-	uint8 _walkClipSkipX = _walkData[_walkDataCurrentIndex].clipSkipX;
-	uint8 _walkHeightScale = _walkData[_walkDataCurrentIndex].scaleHeight;
-	int16 _walkClipWidth = _walkData[_walkDataCurrentIndex].clipWidth;
-	uint16 _walkScaleWidth = _walkData[_walkDataCurrentIndex].scaleWidth;
-	uint8 _walkXPosChanged = _walkData[_walkDataCurrentIndex].xPosChanged;
-	int16 _walkDxPos = _walkData[_walkDataCurrentIndex].dxPos + 1;
-	uint8 _walkYPosChanged = _walkData[_walkDataCurrentIndex].yPosChanged;
-	int16 _walkDyPos = _walkData[_walkDataCurrentIndex].dyPos;
-	int16 _walkDataCurrentPosX2 = _walkData[_walkDataCurrentIndex].x;
-	int16 _walkDataCurrentPosY2 = _walkData[_walkDataCurrentIndex].y;
+void IgorEngine::moveIgor(int pos, int frame) {
+	assert(_gameState.enableLight == 1 || _gameState.enableLight == 2);
+	debug(kDebugWalk, "moveIgorHelper _walkDataCurrentIndex %d pos %d frame %d", _walkDataCurrentIndex, pos, frame);
+	WalkData *wd = &_walkData[_walkDataCurrentIndex];
+	uint8 _walkClipSkipX = wd->clipSkipX;
+	uint8 _walkHeightScale = wd->scaleHeight;
+	int16 _walkClipWidth = wd->clipWidth;
+	uint16 _walkScaleWidth = wd->scaleWidth;
+	uint8 _walkXPosChanged = wd->xPosChanged;
+	int16 _walkDxPos = wd->dxPos + 1;
+	uint8 _walkYPosChanged = wd->yPosChanged;
+	int16 _walkDyPos = wd->dyPos;
+	int16 _walkDataCurrentPosX2 = wd->x;
+	int16 _walkDataCurrentPosY2 = wd->y;
 
-	uint16 _walkDataDrawOffset = (_walkData[_walkDataCurrentIndex].y - _walkData[_walkDataCurrentIndex].scaleWidth + 1) * 320;
+	uint16 _walkDataDrawOffset = (wd->y - wd->scaleWidth + 1) * 320;
 
-	int xPos = _walkWidthScaleTable[_walkData[_walkDataCurrentIndex].scaleHeight - 1] / 2;
-	if (_walkData[_walkDataCurrentIndex].x > xPos) {
-		_walkDataDrawOffset += _walkData[_walkDataCurrentIndex].x - xPos;
+	int xPos = _walkWidthScaleTable[wd->scaleHeight - 1] / 2;
+	if (wd->x > xPos) {
+		_walkDataDrawOffset += wd->x - xPos;
 	}
 	if (_walkXPosChanged != 0) {
 		_walkDataDrawOffset -= _walkDxPos;
@@ -1765,10 +1747,6 @@ void IgorEngine::moveIgorHelper1(int pos, int frame) {
 			memcpy(_igorTempFrames + igorBodyScanLine * 50, _screenLayer1 + _walkDataDrawOffset, _walkDxPos);
 			int xOffset = _walkClipSkipX - 1;
 			for (int i = 0; i < _walkClipWidth; ++i) {
-/*				int index = READ_LE_UINT16(_walkScaleTable + 0x734 + _walkWidthScaleTable[_walkHeightScale - 1] * 2);
-				int offset = _walkScaleTable[0x4FC + index + xOffset];
-				index = READ_LE_UINT16(_walkScaleTable + 0x6CE + _walkHeightScale * 2);
-				offset += _walkScaleTable[index + yOffset] * 30;*/
 				int offset = lookupScale(xOffset, yOffset, _walkHeightScale);
 				offset += frame * 1500;
 				uint8 color = _facingIgorFrames[pos - 1][offset];
@@ -1776,10 +1754,10 @@ void IgorEngine::moveIgorHelper1(int pos, int frame) {
 					assert(_walkDataDrawOffset + _walkDxPos + i >= 0);
 					int index = _screenLayer2[_walkDataDrawOffset + _walkDxPos + i];
 					int yPos = _roomObjectAreasTable[index].y1Lum;
-					if (_walkData[_walkDataCurrentIndex].y <= yPos) {
+					if (wd->y <= yPos) {
 						_igorTempFrames[igorBodyScanLine * 50 + i + _walkDxPos] = _screenLayer1[_walkDataDrawOffset + _walkDxPos + i];
 					} else {
-						if (_gameState.enableLight == 1 && _walkData[_walkDataCurrentIndex].y <= _roomObjectAreasTable[index].y2Lum) {
+						if (_gameState.enableLight == 1 && wd->y <= _roomObjectAreasTable[index].y2Lum) {
 							color -= _roomObjectAreasTable[index].deltaLum;
 						}
 						_igorTempFrames[igorBodyScanLine * 50 + i + _walkDxPos] = color;
@@ -1796,10 +1774,6 @@ void IgorEngine::moveIgorHelper1(int pos, int frame) {
 		for (int yOffset = 0; yOffset < _walkScaleWidth; ++yOffset) {
 			int xOffset = _walkClipSkipX - 1;
 			for (int i = 0; i < _walkClipWidth; ++i) {
-/*				int index = READ_LE_UINT16(_walkScaleTable + 0x734 + _walkWidthScaleTable[_walkHeightScale - 1] * 2);
-				int offset = _walkScaleTable[0x4FC + index + xOffset];
-				index = READ_LE_UINT16(_walkScaleTable + 0x6CE + _walkHeightScale * 2);
-				offset += _walkScaleTable[index + yOffset] * 30;*/
 				int offset = lookupScale(xOffset, yOffset, _walkHeightScale);
 				offset += frame * 1500;
 				uint8 color = _facingIgorFrames[pos - 1][offset];
@@ -1807,10 +1781,10 @@ void IgorEngine::moveIgorHelper1(int pos, int frame) {
 					assert(_walkDataDrawOffset + i >= 0);
 					int index = _screenLayer2[_walkDataDrawOffset + i];
 					int yPos = _roomObjectAreasTable[index].y1Lum;
-					if (_walkData[_walkDataCurrentIndex].y <= yPos) {
+					if (wd->y <= yPos) {
 						_igorTempFrames[igorBodyScanLine * 50 + i] = _screenLayer1[_walkDataDrawOffset + i];
 					} else {
-						if (_gameState.enableLight == 1 && _walkData[_walkDataCurrentIndex].y <= _roomObjectAreasTable[index].y2Lum) {
+						if (_gameState.enableLight == 1 && wd->y <= _roomObjectAreasTable[index].y2Lum) {
 							color -= _roomObjectAreasTable[index].deltaLum;
 						}
 						_igorTempFrames[igorBodyScanLine * 50 + i] = color;
@@ -1838,11 +1812,6 @@ void IgorEngine::moveIgorHelper1(int pos, int frame) {
 		memcpy(_screenVGA + screenIgorDrawOffset, _igorTempFrames + igorBodyScanLine * 50, igorScaledWidth);
 		screenIgorDrawOffset += 320;
 	}
-}
-
-void IgorEngine::moveIgor(int pos, int frame) {
-	assert(_gameState.enableLight == 1 || _gameState.enableLight == 2);
-	moveIgorHelper1(pos, frame);
 }
 
 void IgorEngine::buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY) {
@@ -2756,13 +2725,13 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 	if (xPos > _roomWalkBounds.x2) {
 		xPos = _roomWalkBounds.x2;
 	}
-	if (_currentPart == 22) {
+	if (getPart() == 22) {
 		*x = xPos;
 		*y = _roomWalkBounds.y1;
 		return;
 	}
 	int yPos = *y;
-	if (_currentPart == 13) {
+	if (getPart() == 13) {
 		if (xPos >= 92 && xPos <= 186 && yPos > 127) {
 			*x = xPos;
 			*y = 127;
@@ -2778,7 +2747,7 @@ void IgorEngine::fixWalkPosition(int *x, int *y) {
 	while (_roomObjectAreasTable[_screenLayer2[yPos * 320 + xPos]].area == 0 && yPos < _roomWalkBounds.y2) {
 		++yPos;
 	}
-	if (_currentPart == 17) {
+	if (getPart() == 17) {
 		if (yPos != 143 || _roomObjectAreasTable[_screenLayer2[45760 + xPos]].area != 0) {
 			*x = xPos;
 			*y = yPos;
@@ -2814,10 +2783,10 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b) {
 	_gameState.dialogueChoiceCount = 1;
 	_dialogueEnded = false;
 	do {
-		if (_currentPart / 10 == 15 && _objectsState[48] == 0) {
+		if (getPart() == 15 && _objectsState[48] == 0) {
 			_gameState.dialogueData[6] = 0;
 		}
-		if (_currentPart / 10 == 12 && _objectsState[44] == 0) {
+		if (getPart() == 12 && _objectsState[44] == 0) {
 			_gameState.dialogueData[6] = 1;
 		}
 		drawDialogueChoices();
@@ -2832,12 +2801,12 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b) {
 		dialogueReplyToQuestion(x, y, r, g, b);
 		int offset = (_dialogueInfo[_dialogueChoiceSelected] - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
 		int code = _gameState.dialogueData[offset + 5];
-		if ((code >= 1 && code <= 99) || (_currentPart / 10 == 15 && code == 1)) {
+		if ((code >= 1 && code <= 99) || (getPart() == 15 && code == 1)) {
 			_gameState.dialogueData[offset] = 0;
-			if (_currentPart / 10 == 21 && (code == 60 || code == 70 || code == 80) && _dialogueInfo[0] == 1) {
+			if (getPart() == 21 && (code == 60 || code == 70 || code == 80) && _dialogueInfo[0] == 1) {
 				_gameState.dialogueData[offset + 2] = 4;
 			}
-			if (_currentPart / 10 == 33 && (code == 21 || code == 22 || code == 23) && _dialogueInfo[0] == 1) {
+			if (getPart() == 33 && (code == 21 || code == 22 || code == 23) && _dialogueInfo[0] == 1) {
 				_gameState.dialogueData[offset + 2] = 2;
 			}
 		}
@@ -2927,7 +2896,7 @@ void IgorEngine::dialogueAskQuestion() {
 	memset(_screenVGA + 46080, 0, 17920);
 	int offset = (_dialogueInfo[_dialogueChoiceSelected] - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
 	int num = _gameState.dialogueData[offset + 3] - 1;
-	if (_currentPart / 10 == 17) {
+	if (getPart() == 17) {
 		num = 5;
 	}
 	debug(kDebugEngine, "dialogueAskQuestion() num %d offset %d", num, offset);
