@@ -46,27 +46,73 @@ _mpeg2=auto
 _fluidsynth=auto
 _mt32emu=yes
 # default option behaviour yes/no
-_build_scumm=yes
-_build_scumm_7_8=yes
-_build_he=yes
-_build_agi=yes
-_build_agos=yes
-_build_cine=yes
-_build_cruise=no
-_build_drascula=no
-_build_gob=yes
-_build_igor=no
-_build_kyra=yes
-_build_lure=yes
-_build_parallaction=yes
-_build_queen=yes
-_build_saga=yes
-_build_sky=yes
-_build_sword1=yes
-_build_sword2=yes
-_build_touche=yes
 _build_hq_scalers=yes
 _build_scalers=yes
+
+_engines='
+scumm
+scumm_7_8
+he
+agi
+agos
+cine
+cruise
+drascula
+gob
+igor
+kyra
+lure
+parallaction
+queen
+saga
+sky
+sword1
+sword2
+touche
+'
+_engine_scumm_name="SCUMM"
+_engine_scumm_build=yes
+_engine_scumm_check=check_scumm_build
+_engine_scumm_7_8_name="v7 and v8 games (ft, dig, comi and demos) in SCUMM"
+_engine_scumm_7_8_build=yes
+_engine_scumm_7_8_sub=yes
+_engine_he_name="HE70+ games in SCUMM"
+_engine_he_build=yes
+_engine_he_sub=yes
+_engine_agi_name="AGI"
+_engine_agi_build=yes
+_engine_agos_name="AGOS"
+_engine_agos_build=yes
+_engine_cine_name="Cinematique evo 1"
+_engine_cine_build=yes
+_engine_cruise_name="Cinematique evo 2"
+_engine_cruise_build=no
+_engine_drascula_name="Drascula: The Vampire Strikes Back"
+_engine_drascula_build=no
+_engine_gob_name="Gobli*ns"
+_engine_gob_build=yes
+_engine_igor_name="Igor: Objective Uikokahonia"
+_engine_igor_build=no
+_engine_kyra_name="Legend of Kyrandia"
+_engine_kyra_build=yes
+_engine_lure_name="Lure of the Temptress"
+_engine_lure_build=yes
+_engine_parallaction_name="Parallaction"
+_engine_parallaction_build=yes
+_engine_queen_name="Flight of the Amazon Queen"
+_engine_queen_build=yes
+_engine_saga_name="SAGA"
+_engine_saga_build=yes
+_engine_sky_name="Beneath a Steel Sky"
+_engine_sky_build=yes
+_engine_sword1_name="Broken Sword 1"
+_engine_sword1_build=yes
+_engine_sword1_check=check_sword_build
+_engine_sword2_name="Broken Sword 2"
+_engine_sword2_build=yes
+_engine_sword2_check=check_sword_build
+_engine_touche_name="Touche: The Adventures of the Fifth Musketeer"
+_engine_touche_build=yes
 
 _endian=unknown
 _need_memalign=no
@@ -303,6 +349,117 @@ CheckNASM()
 	fi
 }
 
+# Get the name of the engine
+get_engine_name() {
+	eval echo \$_engine_$1_name
+}
+
+# Will this engine be built?
+get_engine_build() {
+	eval echo \$_engine_$1_build
+}
+
+# Ask if this is a subengine
+get_engine_sub() {
+	sub=`eval echo \\$_engine_$1_sub`
+	if test "$sub" = "" ; then
+		sub=no
+	fi
+	echo $sub
+}
+
+# Enable the given engine
+engine_enable() {
+	engine=`echo $1 | sed 's/-/_/g'`
+	if test "`get_engine_build ${engine}`" = "no" ; then
+		eval _engine_${engine}_build=yes
+	else
+		option_error --enable-$1
+	fi
+}
+
+# Disable the given engine
+engine_disable() {
+	engine=`echo $1 | sed 's/-/_/g'`
+	if test "`get_engine_build $engine`" = "yes" ; then
+		eval _engine_${engine}_build=no
+	else
+		option_error --disable-$1
+	fi
+}
+
+# Show the configure help line for a given engine
+show_engine_help() {
+	if test `get_engine_build $1` = yes ; then
+		option="disable"
+		do="don't "
+	else
+		option="enable"
+		do=""
+	fi
+	option=`echo "--${option}-$(echo $1 | sed 's/_/-/g')                       " | head -c 23`
+	name=`get_engine_name $1`
+	echo "  ${option}  ${do}build the ${name} engine"
+}
+
+check_engine_build() {
+	check=`eval echo \\$_engine_$1_check`
+	if test "$check" = "" ; then
+		name=`get_engine_name $1`
+		if test `get_engine_build $1` = yes ; then
+			_engines_built="${_engines_built}#$name@"
+		else
+			_engines_skipped="${_engines_skipped}#$name@"
+		fi
+	else
+		$check $1
+	fi
+}
+
+check_sword_build() {
+	name=`get_engine_name $1`
+	if test `get_engine_build $1` = yes ; then
+		_engines_built="${_engines_built}#$name"
+		if test "$_mpeg2" = yes ; then
+			_engines_built="${_engines_built} (w/ mpeg2 cutscenes)"
+		else
+			_engines_built="${_engines_built} (without mpeg2 cutscenes)"
+		fi
+		_engines_built="${_engines_built}@"
+	else
+		_engines_skipped="${_engines_skipped}#$name@"
+	fi
+}
+
+check_scumm_build() {
+	name=`get_engine_name $1`
+
+	if test `get_engine_build $1` = yes ; then
+		_engines_built="${_engines_built}#$name [v0-v6 games]"
+
+		if test "$_engine_scumm_7_8_build" = yes ; then
+			_engines_built="${_engines_built} [v7 & v8 games]"
+		else
+			skip=" [v7 & v8 games]"
+		fi
+		if test "$_engine_he_build" = yes ; then
+			_engines_built="${_engines_built} [HE70+ games]"
+		else
+			skip="$skip [HE70+ games]"
+		fi
+
+		if test "$skip" = "" ; then
+			true
+		else
+			_engines_skipped="$_engines_skipped#$name$skip@"
+		fi
+
+		_engines_built="${_engines_built}@"
+	else
+		_engines_skipped="${_engines_skipped}#$name [all games]@"
+	fi
+}
+
 #
 # Greet user
 #
@@ -321,6 +478,10 @@ echo "Configure run on" `date` > $TMPLOG
 
 for parm in "$@" ; do
   if test "$parm" = "--help" || test "$parm" = "-help" || test "$parm" = "-h" ; then
+    for engine in $_engines; do
+      engines_help="$engines_help`show_engine_help $engine`
+"
+    done
     cat << EOF
 
 Usage: $0 [OPTIONS]...
@@ -342,26 +503,7 @@ Special configuration feature:
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
-  --disable-scumm          don't build the SCUMM engine
-  --disable-scumm-7-8      exclude v7 and v8 game in SCUMM engine (ft, dig, comi and demos)
-  --disable-he             exclude HE70+ games in SCUMM engine
-  --disable-agi            don't build the AGI engine
-  --disable-agos           don't build the AGOS engine
-  --disable-cine           don't build the Cinematique engine evo 1
-  --enable-cruise          build the Cruise for a Corpse engine
-  --enable-drascula        build the Drascula: The Vampire Strikes Back engine
-  --disable-gob            don't build the Gobli*ns engine
-  --enable-igor            build the Igor: Objective Uikokahonia engine
-  --disable-kyra           don't build the Legend of Kyrandia engine
-  --disable-lure           don't build the Lure of the Temptress engine
-  --disable-parallaction   don't build the Parallaction engine
-  --disable-queen          don't build the Flight of the Amazon Queen engine
-  --disable-saga           don't build the SAGA engine
-  --disable-sky            don't build the Beneath a Steel Sky engine
-  --disable-sword1         don't build the Broken Sword 1 engine
-  --disable-sword2         don't build the Broken Sword 2 engine
-  --disable-touche         don't build the Touche: The Adventures of the Fifth Musketeer engine
-
+$engines_help
   --enable-plugins         build engines as loadable modules instead of
                            static linking them
   --disable-mt32emu        don't enable the integrated MT-32 emulator
@@ -414,27 +556,14 @@ done # for parm in ...
 
 DEBFLAGS="-g"
 
+option_error() {
+    echo "error: unrecognised option: $ac_option
+Try \`$0 --help' for more information." >&2
+    exit 1
+}
+
 for ac_option in $@; do
     case "$ac_option" in
-      --disable-scumm)          _build_scumm=no ;;
-      --disable-scumm-7-8)      _build_scumm_7_8=no ;;
-      --disable-he)             _build_he=no ;;
-      --disable-agi)            _build_agi=no ;;
-      --disable-agos)           _build_agos=no ;;
-      --disable-cine)           _build_cine=no ;;
-      --enable-cruise)          _build_cruise=yes ;;
-      --enable-drascula)        _build_drascula=yes ;;
-      --disable-gob)            _build_gob=no ;;
-      --enable-igor)            _build_igor=yes ;;
-      --disable-kyra)           _build_kyra=no ;;
-      --disable-lure)           _build_lure=no ;;
-      --disable-parallaction)   _build_parallaction=no ;;
-      --disable-queen)          _build_queen=no ;;
-      --disable-saga)           _build_saga=no ;;
-      --disable-sky)            _build_sky=no ;;
-      --disable-sword1)         _build_sword1=no ;;
-      --disable-sword2)         _build_sword2=no ;;
-      --disable-touche)         _build_touche=no ;;
       --disable-hq-scalers)     _build_hq_scalers=no ;;
       --disable-scalers)        _build_scalers=no ;;
       --enable-alsa)            _alsa=yes       ;;
@@ -539,10 +668,14 @@ for ac_option in $@; do
       --datadir=*)
         _datadir=`echo $ac_option | cut -d '=' -f 2`
         ;;
+      --enable-*)
+        engine_enable `echo $ac_option | cut -d '-' -f 4-`
+        ;;
+      --disable-*)
+        engine_disable `echo $ac_option | cut -d '-' -f 4-`
+        ;;
       *)
-        echo "error: unrecognised option: $ac_option
-Try \`$0 --help' for more information." >&2
-        exit 1
+        option_error $ac_option
         ;;
     esac;
 done;
@@ -714,25 +847,9 @@ fi;
 #
 # Engine selection
 #
-add_to_config_mk_if_no $_build_scumm        'DISABLE_SCUMM = 1'
-add_to_config_mk_if_no $_build_scumm_7_8    'DISABLE_SCUMM_7_8 = 1'
-add_to_config_mk_if_no $_build_he           'DISABLE_HE = 1'
-add_to_config_mk_if_no $_build_agi          'DISABLE_AGI = 1'
-add_to_config_mk_if_no $_build_agos         'DISABLE_AGOS = 1'
-add_to_config_mk_if_no $_build_cine         'DISABLE_CINE = 1'
-add_to_config_mk_if_no $_build_cruise       'DISABLE_CRUISE = 1'
-add_to_config_mk_if_no $_build_drascula     'DISABLE_DRASCULA = 1'
-add_to_config_mk_if_no $_build_gob          'DISABLE_GOB = 1'
-add_to_config_mk_if_no $_build_igor         'DISABLE_IGOR = 1'
-add_to_config_mk_if_no $_build_kyra         'DISABLE_KYRA = 1'
-add_to_config_mk_if_no $_build_lure         'DISABLE_LURE = 1'
-add_to_config_mk_if_no $_build_parallaction 'DISABLE_PARALLACTION = 1'
-add_to_config_mk_if_no $_build_queen        'DISABLE_QUEEN = 1'
-add_to_config_mk_if_no $_build_saga         'DISABLE_SAGA = 1'
-add_to_config_mk_if_no $_build_sky          'DISABLE_SKY = 1'
-add_to_config_mk_if_no $_build_sword1       'DISABLE_SWORD1 = 1'
-add_to_config_mk_if_no $_build_sword2       'DISABLE_SWORD2 = 1'
-add_to_config_mk_if_no $_build_touche       'DISABLE_TOUCHE = 1'
+for engine in $_engines; do
+	add_to_config_mk_if_no `get_engine_build $engine` "DISABLE_$(echo $engine | tr [a-z] [A-Z]) = 1"
+done
 add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
 add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
 
@@ -1327,131 +1444,36 @@ DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/scummvm\\\""
 
 
 #
-# Check which engines ("frontends") are to be built
+# Show which engines ("frontends") are to be built
 #
 
-echo
-echo "Engines:"
-echo_n "    SCUMM engine..."
-if test "$_build_scumm" = yes ; then
-	echo_n " [v0-v6 games]"
-	if test "$_build_scumm_7_8" = yes ; then
-		echo_n " [v7 & v8 games]"
-	fi
-	if test "$_build_he" = yes ; then
-		echo_n " [HE70+ games]"
-	fi
-	echo
-else
-	echo "disable"
-fi
+_engines_built=""
+_engines_skipped=""
 
-echo_n "    AGI engine..."
-if test "$_build_agi" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    AGOS engine..."
-if test "$_build_agos" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    Cinematique evo 1 engine..."
-if test "$_build_cine" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    Cinematique evo 2 engine..."
-if test "$_build_cruise" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    Drascula engine..."
-if test "$_build_drascula" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    Gobli*ns engine..."
-if test "$_build_gob" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    Igor: Objective Uikokahonia engine..."
-if test "$_build_igor" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    Legend of Kyrandia engine..."
-if test "$_build_kyra" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    Lure of the Temptress engine..."
-if test "$_build_lure" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    Parallaction engine..."
-if test "$_build_parallaction" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    Flight of the Amazon Queen engine..."
-if test "$_build_queen" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    SAGA engine..."
-if test "$_build_saga" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    Beneath a Steel Sky engine..."
-if test "$_build_sky" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
-echo_n "    Broken Sword 1 engine..."
-if test "$_build_sword1" = yes ; then
-	if test "$_mpeg2" = yes ; then
-		echo " (w/ mpeg2 cutscenes)"
-	else
-		echo " (without mpeg2 cutscenes)"
+for engine in $_engines; do
+	if test "`get_engine_sub $engine`" = "no" ; then
+		check_engine_build $engine
 	fi
-else
-	echo "disable"
-fi
-echo_n "    Broken Sword 2 engine..."
-if test "$_build_sword2" = yes ; then
-	if test "$_mpeg2" = yes ; then
-		echo " (w/ mpeg2 cutscenes)"
-	else
-		echo " (without mpeg2 cutscenes)"
-	fi
-else
-	echo "disable"
-fi
-echo_n "    Touche: The Adventures of the Fifth Musketeer engine..."
-if test "$_build_touche" = yes ; then
-	echo "enable"
-else
-	echo "disable"
-fi
+done
 
 echo
+if test "$_engines_built" = "" ; then
+	true
+else
+	echo "Engines:"
+	echo $_engines_built | sed 's/@/\
+/g
+s/#/    /g'
+fi
+
+if test "$_engines_skipped" = "" ; then
+	true
+else
+	echo "Engines Skipped:"
+	echo $_engines_skipped | sed 's/@/\
+/g
+s/#/    /g'
+fi
 
 echo_n "Backend... "
 echo_n "$_backend"
