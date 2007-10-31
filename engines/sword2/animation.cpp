@@ -516,7 +516,9 @@ bool MoviePlayerDXA::load() {
 
 	snprintf(filename, sizeof(filename), "%s.dxa", _name);
 
-	if (loadFile(filename)) {
+	if (loadFile(filename,
+			_vm->_screen->getScreenWide(),
+			_vm->_screen->getScreenDeep())) {
 		// The Broken Sword games always use external audio tracks.
 		if (_fd->readUint32BE() != MKID_BE('NULL'))
 			return false;

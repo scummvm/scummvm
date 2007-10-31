@@ -31,6 +31,23 @@
 #include <zlib.h>
 #endif
 
+static void scaleUpBy2(byte *dst, byte *src, uint16 width, uint16 h) {
+  uint16 x;
+
+  while (h > 0) {
+    for (x = width; x > 0; x--) {
+      register byte v;
+
+      v = *src++;
+      *dst++ = v;
+      *dst++ = v;
+    }
+    memcpy(dst, dst - width * 2, width * 2);
+    dst += width * 2;
+    h--;
+  }
+}
+
 namespace Graphics {
 
 DXAPlayer::DXAPlayer() {
@@ -40,6 +57,7 @@ DXAPlayer::DXAPlayer() {
 	_frameBuffer2 = 0;
 	_scaledBuffer = 0;
 	_drawBuffer = 0;
+	_scaledBuffer2 = 0;
 
 	_inBuffer = 0;
 	_inBufferSize = 0;
@@ -58,6 +76,8 @@ DXAPlayer::DXAPlayer() {
 	_frameTicks = 0;
 
 	_scaleMode = S_NONE;
+
+	_scaling = 1;
 }
 
 DXAPlayer::~DXAPlayer() {
@@ -66,13 +86,13 @@ DXAPlayer::~DXAPlayer() {
 int DXAPlayer::getWidth() {
 	if (!_fd)
 		return 0;
-	return _width;
+	return _width * _scaling;
 }
 
 int DXAPlayer::getHeight() {
 	if (!_fd)
 		return 0;
-	return _height;
+	return _height * _scaling;
 }
 
 int DXAPlayer::getCurFrame() {
@@ -85,6 +105,25 @@ int DXAPlayer::getFrameCount() {
 	if (!_fd)
 		return 0;
 	return _framesCount;
+}
+
+bool DXAPlayer::loadFile(const char *filename, uint16 maxWidth, uint16 maxHeight) {
+	bool result = loadFile(filename);
+
+	if (result) {
+		_scaling = MIN(maxWidth / _width, maxHeight / _height);
+		if (_scaling < 1)
+			_scaling = 1;
+		if (_scaling > 2)
+			_scaling = 2;
+		if (_scaling >= 2) {
+			_scaledBuffer2 = (uint8 *)malloc(_width * _height * _scaling * _scaling);
+			if (!_scaledBuffer2) {
+				_scaling = 1;
+			}
+		}
+	}
+	return result;
 }
 
 bool DXAPlayer::loadFile(const char *filename) {
@@ -189,6 +228,7 @@ void DXAPlayer::closeFile() {
 	free(_frameBuffer1);
 	free(_frameBuffer2);
 	free(_scaledBuffer);
+	free(_scaledBuffer2);
 	free(_inBuffer);
 	free(_decompBuffer);
 
@@ -587,6 +627,12 @@ void DXAPlayer::decodeNextFrame() {
 	case S_NONE:
 		_drawBuffer = _frameBuffer1;
 		break;
+	}
+
+	if (_scaling == 2) {
+		/* Scale up here */
+		scaleUpBy2(_scaledBuffer2, _drawBuffer, _width, _height);
+		_drawBuffer = _scaledBuffer2;
 	}
 }
 

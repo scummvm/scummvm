@@ -67,7 +67,7 @@ bool MoviePlayer::load(const char *filename) {
 	// Change file extension to dxa
 	sprintf(videoName, "%s.dxa", baseName);
 
-	if (!loadFile(videoName)) {
+	if (!loadFile(videoName, _vm->_screenWidth, _vm->_screenHeight)) {
 		// Check short filename to work around
 		// bug in a German Windows 2CD version.
 		if (baseLen >= 8) {

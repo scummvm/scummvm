@@ -408,7 +408,7 @@ bool MoviePlayerDXA::load(uint32 id) {
 
 	char filename[20];
 	snprintf(filename, sizeof(filename), "%s.dxa", sequenceList[id]);
-	if (loadFile(filename)) {
+	if (loadFile(filename, 640, 480)) {
 		// The Broken Sword games always use external audio tracks.
 		if (_fd->readUint32BE() != MKID_BE('NULL'))
 			return false;
