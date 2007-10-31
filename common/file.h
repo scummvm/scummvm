@@ -85,9 +85,6 @@ public:
 
 	virtual void close();
 
-	virtual bool removeFile(const String &filename);
-	virtual bool removeFile(const FilesystemNode &node);
-
 	/**
 	 * Checks if the object opened a file successfully.
 	 *

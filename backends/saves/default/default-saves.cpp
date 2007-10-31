@@ -120,7 +120,7 @@ Common::StringList DefaultSaveFileManager::listSavefiles(const char *regex) {
 	Common::String search(regex);
 
 	if (savePath.lookupFile(savefiles, search, false, true)) {
-		for (FSList::const_iterator file = savefiles.begin(); file != savefiles.end(); file++) {
+		for (FSList::const_iterator file = savefiles.begin(); file != savefiles.end(); ++file) {
 			results.push_back(file->getPath());
 		}
 	}
@@ -219,7 +219,6 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 	}
 #endif
 
-
 	join_paths(filename, savePath, buf, sizeof(buf));
 
 	StdioSaveFile *sf = new StdioSaveFile(buf, true);
@@ -235,10 +234,18 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 	char buf[256];
 	join_paths(filename, getSavePath(), buf, sizeof(buf));
-
-	Common::File file;
-	FilesystemNode savePath((const char *)buf);
-	return file.removeFile(savePath);
+	
+	if (remove(buf) != 0) {
+		if (errno == EACCES)
+			setError(SFM_DIR_ACCESS, Common::String("Search or write permission denied"));
+		
+		if (errno == ENOENT)
+			setError(SFM_DIR_NOENT, Common::String("A component of the path path does not exist, or the path is an empty string"));
+		
+		return false;
+	} else {
+		return true;
+	}	
 }
 
 #endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
