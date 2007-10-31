@@ -192,7 +192,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 					setError(SFM_DIR_NAMETOOLONG, Common::String("The path name is too long"));
 					break;
 				case ENOENT:
-					setError(SFM_DIR_NOENT, Common::String("A component of the path path does not exist, or the path is an empty string"));
+					setError(SFM_DIR_NOENT, Common::String("A component of the path does not exist, or the path is an empty string"));
 					break;
 				case ENOTDIR:
 					setError(SFM_DIR_NOTDIR, Common::String("A component of the path prefix is not a directory"));
@@ -240,12 +240,12 @@ bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 			setError(SFM_DIR_ACCESS, Common::String("Search or write permission denied"));
 		
 		if (errno == ENOENT)
-			setError(SFM_DIR_NOENT, Common::String("A component of the path path does not exist, or the path is an empty string"));
+			setError(SFM_DIR_NOENT, Common::String("A component of the path does not exist, or the path is an empty string"));
 		
 		return false;
 	} else {
 		return true;
-	}	
+	}
 }
 
 #endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
