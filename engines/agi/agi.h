@@ -811,6 +811,7 @@ public:
 
 	void allowSynthetic(bool);
 	void processEvents();
+	void checkQuickLoad();
 
 	// Objects
 	int showObjects();

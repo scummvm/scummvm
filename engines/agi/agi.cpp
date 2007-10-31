@@ -247,6 +247,19 @@ void AgiEngine::processEvents() {
 	}
 }
 
+void AgiEngine::checkQuickLoad() {
+	if (ConfMan.hasKey("save_slot")) {
+		char saveNameBuffer[256];
+
+		snprintf (saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
+
+		if (loadGame(saveNameBuffer, false) == errOK) {	 // Do not check game id
+			_game.exitAllLogics = 1;
+			_menu->enableAll();
+		}
+	}
+}
+
 int AgiEngine::agiIsKeypressLow() {
 	processEvents();
 	return _keyQueueStart != _keyQueueEnd;
@@ -436,15 +449,6 @@ int AgiEngine::agiInit() {
 	/* Load logic 0 into memory */
 	if (ec == errOK)
 		ec = _loader->loadResource(rLOGIC, 0);
-
-
-	if (ConfMan.hasKey("save_slot")) {
-		char saveNameBuffer[256];
-
-		snprintf (saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
-
-		loadGame(saveNameBuffer, false); // Do not check game id
-	}
 
 #ifdef __DS__
 	// Normally, the engine loads the predictive text dictionary when the predictive dialog
