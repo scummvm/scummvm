@@ -92,8 +92,8 @@ public:
 	virtual String getName() const { return _sDisplayName; };
 	virtual String getPath() const { return _sPath; };
 	virtual bool isDirectory() const { return _bIsDirectory; };
-	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
-	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isReadable() const;
+	virtual bool isWritable() const;
 	
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
@@ -426,6 +426,68 @@ AbstractFilesystemNode *AmigaOSFilesystemNode::getParent() const {
 	LEAVE();
 	
 	return node;
+}
+
+bool AmigaOSFilesystemNode::isReadable() const {
+	ENTER();
+	
+	bool readable = false;	
+	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
+	if (!fib) {
+		debug(6, "FileInfoBlock is NULL");
+		LEAVE();
+		return false;
+	}
+	
+	BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
+	if (pLock) {
+		if (IDOS->Examine(pLock, fib) != DOSFALSE) {
+			/* The fib_Protection flag is low-active or inverted, thus the negation.
+			 * 
+			 * For more information, consult the compiler/include/dos/dos.h
+			 * file from the AROS source (http://aros.sourceforge.net/).
+			 */
+			if (!(fib->fib_Protection & FIBF_READ)) {
+				readable = true;
+			}
+		}
+		IDOS->UnLock(pLock);
+	}
+	
+	IDOS->FreeDosObject(DOS_FIB, fib);
+	LEAVE();
+	return readable;
+}
+
+bool AmigaOSFilesystemNode::isWritable() const {
+	ENTER();
+	
+	bool writable = false;	
+	struct FileInfoBlock *fib = (struct FileInfoBlock *)IDOS->AllocDosObject(DOS_FIB, NULL);
+	if (!fib) {
+		debug(6, "FileInfoBlock is NULL");
+		LEAVE();
+		return false;
+	}
+	
+	BPTR pLock = IDOS->Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
+	if (pLock) {
+		if (IDOS->Examine(pLock, fib) != DOSFALSE) {
+			/* The fib_Protection flag is low-active or inverted, thus the negation.
+			 * 
+			 * For more information, consult the compiler/include/dos/dos.h
+			 * file from the AROS source (http://aros.sourceforge.net/).
+			 */
+			if (!(fib->fib_Protection & FIBF_WRITE)) {
+				writable = true;
+			}
+		}
+		IDOS->UnLock(pLock);
+	}
+	
+	IDOS->FreeDosObject(DOS_FIB, fib);
+	LEAVE();
+	return writable;
 }
 
 AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
