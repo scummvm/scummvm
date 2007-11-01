@@ -721,6 +721,23 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 						doVerb();
 					}
 				}
+
+				// Auto-use hitzone with id 24576 (the exit to the left) in screens 16 - 19
+				// (screens with Gorrister's heart) in IHNM. For some reason, this zone does
+				// not have a corresponding action zone, so we auto-use it here, like the exits
+				// in Benny's chapter
+				if (_vm->_scene->currentChapterNumber() == 1 && 
+					_vm->_scene->currentSceneNumber() >= 16 && 
+					_vm->_scene->currentSceneNumber() <= 19 &&
+					_pendingVerb == getVerbType(kVerbWalkTo) &&
+					hitZone != NULL && hitZone->getHitZoneId() == 24576) {
+					_pendingVerb = getVerbType(kVerbUse);
+					if (objectTypeId(_pendingObject[0]) == kGameObjectActor) {
+						_vm->_actor->actorFaceTowardsObject(ID_PROTAG, _pendingObject[0]);
+						doVerb();
+					}
+				}
+
 		} else {
 			if (_pendingVerb == getVerbType(kVerbLookAt)) {
 				if (objectTypeId(_pendingObject[0]) != kGameObjectActor) {
