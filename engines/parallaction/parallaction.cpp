@@ -1084,15 +1084,20 @@ void Character::setName(const char *name) {
 	const char *end = begin + strlen(name);
 
 	_prefix = _empty;
-	_suffix = _empty;
 
 	_dummy = IS_DUMMY_CHARACTER(name);
 
 	if (!_dummy) {
-		const char *s = strstr(name, "tras");
-		if (s) {
+		if (_engineFlags & kEngineTransformedDonna) {
 			_suffix = _suffixTras;
-			end = s;
+		} else {
+			const char *s = strstr(name, "tras");
+			if (s) {
+				_suffix = _suffixTras;
+				end = s;
+			} else {
+				_suffix = _empty;
+			}
 		}
 		if (IS_MINI_CHARACTER(name)) {
 			_prefix = _prefixMini;
@@ -1104,21 +1109,6 @@ void Character::setName(const char *name) {
 	strncpy(_baseName, begin, end - begin);
 	sprintf(_name, "%s%s", _prefix, _baseName);
 	sprintf(_fullName, "%s%s%s", _prefix, _baseName, _suffix);
-}
-
-void Character::transform() {
-	if (scumm_stricmp("donna", _baseName)) {
-		error("can't transform character %s", _baseName);
-	}
-
-	if (_suffix) {
-		_suffix = _empty;
-	} else {
-		_suffix = _suffixTras;
-	}
-
-	_engineFlags ^= kEngineTransformedDonna;
-	setName(_name);
 }
 
 const char *Character::getName() const {

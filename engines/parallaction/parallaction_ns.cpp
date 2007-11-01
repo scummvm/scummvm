@@ -455,6 +455,8 @@ JobOpcode* Parallaction_ns::createJobOpcode(uint functionId, Job *job) {
 
 void Parallaction_ns::cleanupGame() {
 
+	_engineFlags &= ~kEngineTransformedDonna;
+
 	// this code saves main character animation from being removed from the following code
 	_animations.remove(&_char._ani);
 	_numLocations = 0;

@@ -241,7 +241,6 @@ protected:
 
 public:
 	void setName(const char *name);
-	void transform();
 	const char *getName() const;
 	const char *getBaseName() const;
 	const char *getFullName() const;

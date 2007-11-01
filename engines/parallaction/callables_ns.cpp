@@ -308,6 +308,9 @@ void Parallaction_ns::_c_zeroFoglie(void *parm) {
 
 void Parallaction_ns::_c_trasformata(void *parm) {
 	_engineFlags ^= kEngineTransformedDonna;
+	// No need to invoke changeCharacter here, as
+	// transformation happens on a location switch
+	// and character change is automatically triggered.
 	return;
 }
 
