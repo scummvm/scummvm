@@ -47,7 +47,6 @@ protected:
 	byte *_frameBuffer2;
 	byte *_scaledBuffer;
 	byte *_drawBuffer;
-	byte *_scaledBuffer2;
 	byte *_inBuffer;
 	uint32 _inBufferSize;
 	byte *_decompBuffer;
@@ -61,7 +60,6 @@ protected:
 	uint16 _frameSkipped;
 	uint32 _frameTicks;
 	ScaleMode _scaleMode;
-	uint32 _scaling;
 
 public:
 	DXAPlayer();
@@ -98,14 +96,6 @@ public:
 	 * @param filename	the filename to load
 	 */
 	bool loadFile(const char *filename);
-
-	/**
-	 * Load a DXA encoded video file and setup scaling if required
-	 * @param filename	the filename to load
-	 * @param maxWidth      the maximum width  available to the film
-	 * @param maxHeight     the maximum height available to the film
-	 */
-	bool loadFile(const char *filename, uint16 maxWidth, uint16 maxHeight);
 
 	/**
 	 * Close a DXA encoded video file
