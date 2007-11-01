@@ -314,28 +314,47 @@ uint16 Parallaction_ns::guiSelectGame() {
 	return _si ? LOAD_GAME : NEW_GAME;
 }
 
+static Common::Rect codeSelectBlocks[9] = {
+	Common::Rect( 111, 129, 127, 153 ),		// na
+	Common::Rect( 128, 120, 144, 144 ),		// wa
+	Common::Rect( 145, 111, 161, 135 ),		// ra
+	Common::Rect( 162, 102, 178, 126 ),		// ri
+	Common::Rect( 179, 93, 195, 117 ),		// i
+	Common::Rect( 196, 84, 212, 108 ),		// ne
+	Common::Rect( 213, 75, 229, 99 ),		// ho
+	Common::Rect( 230, 66, 246, 90 ),		// ki
+	Common::Rect( 247, 57, 263, 81 )		// ka
+};
 
-int Parallaction_ns::guiGetSelectedBlock(const Common::Point &p, Common::Rect &r) {
+static Common::Rect codeTrueBlocks[9] = {
+	Common::Rect( 112, 130, 128, 154 ),
+	Common::Rect( 129, 121, 145, 145 ),
+	Common::Rect( 146, 112, 162, 136 ),
+	Common::Rect( 163, 103, 179, 127 ),
+	Common::Rect( 180, 94, 196, 118 ),
+	Common::Rect( 197, 85, 213, 109 ),
+	Common::Rect( 214, 76, 230, 100 ),
+	Common::Rect( 231, 67, 247, 91 ),
+	Common::Rect( 248, 58, 264, 82 )
+};
 
-	for (uint16 _si = 0; _si < 9; _si++) {
 
-		Common::Rect q(
-			_si * BLOCK_X_OFFSET + BLOCK_SELECTION_X,
-			BLOCK_SELECTION_Y - _si * BLOCK_Y_OFFSET,
-			(_si + 1) * BLOCK_X_OFFSET + BLOCK_SELECTION_X,
-			BLOCK_SELECTION_Y + BLOCK_HEIGHT - _si * BLOCK_Y_OFFSET
-		);
+int Parallaction_ns::guiGetSelectedBlock(const Common::Point &p) {
 
-		if (q.contains(p)) {
-			r.setWidth(BLOCK_WIDTH);
-			r.setHeight(BLOCK_HEIGHT);
-			r.moveTo(_si * BLOCK_X_OFFSET + BLOCK_X, BLOCK_Y - _si * BLOCK_Y_OFFSET);
-			return _si;
+	int selection = -1;
+
+	for (uint16 i = 0; i < 9; i++) {
+		if (codeSelectBlocks[i].contains(p)) {
+			selection = i;
+			break;
 		}
-
 	}
 
-	return -1;
+	if (selection != -1) {
+		beep();
+	}
+
+	return selection;
 }
 
 
@@ -359,46 +378,33 @@ int Parallaction_ns::guiSelectCharacter() {
 
 
 	uint16 (*keys)[PASSWORD_LEN] = (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;
-	uint16 points[3];
 	int character = -1;
 	uint16 _di = 0;
 
-	while (true) {
+	uint16 key[PASSWORD_LEN];
 
-		_di = 0;
+	while (true) {
 
 		_gfx->displayString(60, 30, introMsg1[_language], 1);			// displays message
 
-		points[0] = 0;
-		points[1] = 0;
-		points[2] = 0;
-
+		_di = 0;
 		while (_di < PASSWORD_LEN) {
 
-			_mouseButtons = kMouseNone;
-			do {
-				updateInput();
-				_gfx->updateScreen();
-			} while (_mouseButtons != kMouseLeftUp);	// waits for left click
+			waitUntilLeftClick();
+			int _si = guiGetSelectedBlock(_mousePos);
 
-			Common::Rect r;
-			int _si = guiGetSelectedBlock(_mousePos, r);
 			if (_si != -1) {
-				_gfx->grabRect((byte*)v14.pixels, r, Gfx::kBitFront, BLOCK_WIDTH);
+				_gfx->grabRect((byte*)v14.pixels, codeTrueBlocks[_si], Gfx::kBitFront, BLOCK_WIDTH);
 				_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitFront);
-				beep();
 
-				for (int i = 0; i < 3; i++) {
-					if (keys[i][_di] == _si) {
-						points[i]++;
-					}
+				key[_di++] = _si;
+			}
+		}
 
-					if (points[i] == PASSWORD_LEN) {
-						character = i;
-					}
-				}
-
-				_di++;
+		for (int i = 0; i < 3; i++) {
+			if (!memcmp(key, keys[i], sizeof(key))) {
+				character = i;
+				break;
 			}
 		}
 

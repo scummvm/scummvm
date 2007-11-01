@@ -910,7 +910,7 @@ protected:
 	int			guiNewGame();
 	uint16		guiChooseLanguage();
 	uint16		guiSelectGame();
-	int			guiGetSelectedBlock(const Common::Point &p, Common::Rect& r);
+	int			guiGetSelectedBlock(const Common::Point &p);
 };
 
 
