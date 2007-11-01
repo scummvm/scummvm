@@ -18,20 +18,20 @@ CXXFLAGS="$CXXFLAGS $CPPFLAGS"
 # Borrowed from the Sane configure script
 
 if test "$ac_emxsupport" != "no" -a "$ac_emxsupport" != "NO"; then
-  ac_save_IFS="$IFS"
-  IFS="\\"
-  ac_TEMP_PATH=
-  for ac_dir in $PATH; do
-    IFS=$ac_save_IFS
-    if test -z "$ac_TEMP_PATH"; then
-      ac_TEMP_PATH="$ac_dir"
-    else
-      ac_TEMP_PATH="$ac_TEMP_PATH/$ac_dir"
-    fi
-  done
-  PATH="$ac_TEMP_PATH"
-  export PATH
-  unset ac_TEMP_PATH
+	ac_save_IFS="$IFS"
+	IFS="\\"
+	ac_TEMP_PATH=
+	for ac_dir in $PATH; do
+		IFS=$ac_save_IFS
+		if test -z "$ac_TEMP_PATH"; then
+			ac_TEMP_PATH="$ac_dir"
+		else
+			ac_TEMP_PATH="$ac_TEMP_PATH/$ac_dir"
+		fi
+	done
+	PATH="$ac_TEMP_PATH"
+	export PATH
+	unset ac_TEMP_PATH
 fi
 
 
@@ -477,12 +477,12 @@ echo "Configure run on" `date` > $TMPLOG
 #
 
 for parm in "$@" ; do
-  if test "$parm" = "--help" || test "$parm" = "-help" || test "$parm" = "-h" ; then
-    for engine in $_engines; do
-      engines_help="$engines_help`show_engine_help $engine`
+	if test "$parm" = "--help" || test "$parm" = "-help" || test "$parm" = "-h" ; then
+		for engine in $_engines; do
+			engines_help="$engines_help`show_engine_help $engine`
 "
-    done
-    cat << EOF
+		done
+		cat << EOF
 
 Usage: $0 [OPTIONS]...
 
@@ -550,134 +550,134 @@ Some influential environment variables:
             headers in a nonstandard directory <include dir>
 
 EOF
-    exit 0
-  fi
+		exit 0
+	fi
 done # for parm in ...
 
 DEBFLAGS="-g"
 
 option_error() {
-    echo "error: unrecognised option: $ac_option
+	echo "error: unrecognised option: $ac_option
 Try \`$0 --help' for more information." >&2
-    exit 1
+	exit 1
 }
 
 for ac_option in $@; do
-    case "$ac_option" in
-      --disable-hq-scalers)     _build_hq_scalers=no ;;
-      --disable-scalers)        _build_scalers=no ;;
-      --enable-alsa)            _alsa=yes       ;;
-      --disable-alsa)           _alsa=no        ;;
-      --enable-vorbis)          _vorbis=yes     ;;
-      --disable-vorbis)         _vorbis=no      ;;
-      --enable-tremor)          _tremor=yes     ;;
-      --disable-tremor)         _tremor=no      ;;
-      --enable-flac)            _flac=yes       ;;
-      --disable-flac)           _flac=no        ;;
-      --enable-mad)             _mad=yes        ;;
-      --disable-mad)            _mad=no         ;;
-      --enable-zlib)            _zlib=yes       ;;
-      --disable-zlib)           _zlib=no        ;;
-      --enable-nasm)            _nasm=yes       ;;
-      --disable-nasm)           _nasm=no        ;;
-      --disable-mpeg2)          _mpeg2=no       ;;
-      --disable-fluidsynth)     _fluidsynth=no  ;;
-      --enable-plugins)         _build_plugins=yes ;;
-      --enable-mt32emu)         _mt32emu=yes    ;;
-      --disable-mt32emu)        _mt32emu=no     ;;
-      --with-fluidsynth-prefix=*)
-        arg=`echo $ac_option | cut -d '=' -f 2`
-        FLUIDSYNTH_CFLAGS="-I$arg/include"
-        FLUIDSYNTH_LIBS="-L$arg/lib"
-        ;;
-      --with-mpeg2-prefix=*)
-        arg=`echo $ac_option | cut -d '=' -f 2`
-        MPEG2_CFLAGS="-I$arg/include"
-        MPEG2_LIBS="-L$arg/lib"
-        ;;
-      --with-alsa-prefix=*)
-        arg=`echo $ac_option | cut -d '=' -f 2`
-        ALSA_CFLAGS="-I$arg/include"
-        ALSA_LIBS="-L$arg/lib"
-        ;;
-      --with-ogg-prefix=*)
-        arg=`echo $ac_option | cut -d '=' -f 2`
-        OGG_CFLAGS="-I$arg/include"
-        OGG_LIBS="-L$arg/lib"
-        ;;
-      --with-vorbis-prefix=*)
-        arg=`echo $ac_option | cut -d '=' -f 2`
-        VORBIS_CFLAGS="-I$arg/include"
-        VORBIS_LIBS="-L$arg/lib"
-        ;;
-      --with-tremor-prefix=*)
-        arg=`echo $ac_option | cut -d '=' -f 2`
-        TREMOR_CFLAGS="-I$arg/include"
-        TREMOR_LIBS="-L$arg/lib"
-        ;;
-      --with-flac-prefix=*)
-        arg=`echo $ac_option | cut -d '=' -f 2`
-        FLAC_CFLAGS="-I$arg/include"
-        FLAC_LIBS="-L$arg/lib"
-        ;;
-      --with-mad-prefix=*)
-        arg=`echo $ac_option | cut -d '=' -f 2`
-        MAD_CFLAGS="-I$arg/include"
-        MAD_LIBS="-L$arg/lib"
-        ;;
-      --with-zlib-prefix=*)
-        arg=`echo $ac_option | cut -d '=' -f 2`
-        ZLIB_CFLAGS="-I$arg/include"
-        ZLIB_LIBS="-L$arg/lib"
-        ;;
-      --backend=*)
-        _backend=`echo $ac_option | cut -d '=' -f 2`
-        ;;
-      --enable-debug)
-        # debug is enabled by default
-        ;;
-      --disable-debug)
-        DEBFLAGS=""
-        ;;
-      --enable-Werror)
-        CXXFLAGS="$CXXFLAGS -Werror"
-        ;;
-      --enable-release)
-        DEBFLAGS="-O2 -Wuninitialized"
-        ;;
-      --with-sdl-prefix=*)
-        arg=`echo $ac_option | cut -d '=' -f 2`
-        _sdlpath="$arg:$arg/bin"
-        ;;
-      --with-nasm-prefix=*)
-        arg=`echo $ac_option | cut -d '=' -f 2`
-        _nasmpath="$arg:$arg/bin"
-        ;;
-      --host=*)
-        _host=`echo $ac_option | cut -d '=' -f 2`
-        ;;
-      --prefix=*)
-        _prefix=`echo $ac_option | cut -d '=' -f 2`
-        ;;
-      --bindir=*)
-        _bindir=`echo $ac_option | cut -d '=' -f 2`
-        ;;
-      --mandir=*)
-        _mandir=`echo $ac_option | cut -d '=' -f 2`
-        ;;
-      --datadir=*)
-        _datadir=`echo $ac_option | cut -d '=' -f 2`
-        ;;
-      --enable-*)
-        engine_enable `echo $ac_option | cut -d '-' -f 4-`
-        ;;
-      --disable-*)
-        engine_disable `echo $ac_option | cut -d '-' -f 4-`
-        ;;
-      *)
-        option_error $ac_option
-        ;;
-    esac;
+	case "$ac_option" in
+	--disable-hq-scalers)     _build_hq_scalers=no ;;
+	--disable-scalers)        _build_scalers=no ;;
+	--enable-alsa)            _alsa=yes       ;;
+	--disable-alsa)           _alsa=no        ;;
+	--enable-vorbis)          _vorbis=yes     ;;
+	--disable-vorbis)         _vorbis=no      ;;
+	--enable-tremor)          _tremor=yes     ;;
+	--disable-tremor)         _tremor=no      ;;
+	--enable-flac)            _flac=yes       ;;
+	--disable-flac)           _flac=no        ;;
+	--enable-mad)             _mad=yes        ;;
+	--disable-mad)            _mad=no         ;;
+	--enable-zlib)            _zlib=yes       ;;
+	--disable-zlib)           _zlib=no        ;;
+	--enable-nasm)            _nasm=yes       ;;
+	--disable-nasm)           _nasm=no        ;;
+	--disable-mpeg2)          _mpeg2=no       ;;
+	--disable-fluidsynth)     _fluidsynth=no  ;;
+	--enable-plugins)         _build_plugins=yes ;;
+	--enable-mt32emu)         _mt32emu=yes    ;;
+	--disable-mt32emu)        _mt32emu=no     ;;
+	--with-fluidsynth-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		FLUIDSYNTH_CFLAGS="-I$arg/include"
+		FLUIDSYNTH_LIBS="-L$arg/lib"
+		;;
+	--with-mpeg2-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		MPEG2_CFLAGS="-I$arg/include"
+		MPEG2_LIBS="-L$arg/lib"
+		;;
+	--with-alsa-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		ALSA_CFLAGS="-I$arg/include"
+		ALSA_LIBS="-L$arg/lib"
+		;;
+	--with-ogg-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		OGG_CFLAGS="-I$arg/include"
+		OGG_LIBS="-L$arg/lib"
+		;;
+	--with-vorbis-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		VORBIS_CFLAGS="-I$arg/include"
+		VORBIS_LIBS="-L$arg/lib"
+		;;
+	--with-tremor-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		TREMOR_CFLAGS="-I$arg/include"
+		TREMOR_LIBS="-L$arg/lib"
+		;;
+	--with-flac-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		FLAC_CFLAGS="-I$arg/include"
+		FLAC_LIBS="-L$arg/lib"
+		;;
+	--with-mad-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		MAD_CFLAGS="-I$arg/include"
+		MAD_LIBS="-L$arg/lib"
+		;;
+	--with-zlib-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		ZLIB_CFLAGS="-I$arg/include"
+		ZLIB_LIBS="-L$arg/lib"
+		;;
+	--backend=*)
+		_backend=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--enable-debug)
+		# debug is enabled by default
+		;;
+	--disable-debug)
+		DEBFLAGS=""
+		;;
+	--enable-Werror)
+		CXXFLAGS="$CXXFLAGS -Werror"
+		;;
+	--enable-release)
+		DEBFLAGS="-O2 -Wuninitialized"
+		;;
+	--with-sdl-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_sdlpath="$arg:$arg/bin"
+		;;
+	--with-nasm-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_nasmpath="$arg:$arg/bin"
+		;;
+	--host=*)
+		_host=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--prefix=*)
+		_prefix=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--bindir=*)
+		_bindir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--mandir=*)
+		_mandir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--datadir=*)
+		_datadir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--enable-*)
+		engine_enable `echo $ac_option | cut -d '-' -f 4-`
+		;;
+	--disable-*)
+		engine_disable `echo $ac_option | cut -d '-' -f 4-`
+		;;
+	*)
+		option_error $ac_option
+		;;
+	esac;
 done;
 
 CXXFLAGS="$CXXFLAGS $DEBFLAGS"
@@ -1121,8 +1121,8 @@ _mak_plugins=
 _def_plugin="/* -> plugins disabled */"
 
 if test "$_build_plugins" = yes ; then
-    echo_n "Checking whether building plugins is supported... "
-    case $_host_os in
+	echo_n "Checking whether building plugins is supported... "
+	case $_host_os in
 	linux*)
 _def_plugin='
 #define PLUGIN_PREFIX	"lib"
@@ -1140,7 +1140,7 @@ PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
-	    ;;
+		;;
 	freebsd*)
 _def_plugin='
 #define PLUGIN_PREFIX	"lib"
@@ -1157,7 +1157,7 @@ PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
-	    ;;
+		;;
 	darwin*)
 _def_plugin='
 #define PLUGIN_PREFIX	""
@@ -1174,7 +1174,7 @@ PRE_OBJS_FLAGS  := -all_load
 POST_OBJS_FLAGS :=
 LIBS            += -ldl
 '
-	    ;;
+		;;
 	*mingw32*)
 _def_plugin='
 #define PLUGIN_PREFIX	""
@@ -1192,12 +1192,12 @@ POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-im
 '
 		;;
 	*)
-	    _build_plugins=no
+		_build_plugins=no
 		_mak_plugins=
 		_def_plugin=
-	    ;;
-    esac
-    echo "$_build_plugins"
+		;;
+	esac
+	echo "$_build_plugins"
 fi
 
 
@@ -1223,7 +1223,7 @@ if test "$_vorbis" = auto ; then
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
 	cc_check $LDFLAGS $CXXFLAGS $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
-	-lvorbisfile -lvorbis -logg -lm && _vorbis=yes
+		-lvorbisfile -lvorbis -logg -lm && _vorbis=yes
 fi
 if test "$_vorbis" = yes ; then
 	_def_vorbis='#define USE_VORBIS'
@@ -1241,13 +1241,13 @@ echo "$_vorbis"
 #
 echocheck "Tremor"
 if test "$_tremor" = auto ; then
-  _tremor=no
-  cat > $TMPC << EOF
+	_tremor=no
+	cat > $TMPC << EOF
 #include <tremor/ivorbiscodec.h>
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
-cc_check $LDFLAGS $CXXFLAGS $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
-  _tremor=yes
+	cc_check $LDFLAGS $CXXFLAGS $TREMOR_CFLAGS $TREMOR_LIBS -lvorbisidec && \
+	_tremor=yes
 fi
 if test "$_tremor" = yes && test "$_vorbis" = no; then
 	_def_tremor='#define USE_TREMOR'
@@ -1275,7 +1275,7 @@ if test "$_flac" = auto ; then
 int main(void) { return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */ }
 EOF
 	cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
-	-lFLAC -logg -lm && _flac=yes
+		-lFLAC -logg -lm && _flac=yes
 fi
 if test "$_flac" = yes ; then
 	_def_flac='#define USE_FLAC'
@@ -1374,7 +1374,7 @@ int main(void) {
 	/* mpeg2_state_t first appears in 0.4.0 */
 	mpeg2_state_t state;
 
-        #ifdef MPEG2_RELEASE
+		#ifdef MPEG2_RELEASE
 		if (MPEG2_RELEASE >= MPEG2_VERSION(0, 3, 2))
 			return 0;
 	#endif
@@ -1427,7 +1427,7 @@ rm -f $TMPC $TMPO$EXEEXT
 # Check for nasm
 #
 if test "$_have_x86" = yes ; then
-    CheckNASM
+	CheckNASM
 fi
 
 add_to_config_h_if_yes $_nasm '#define USE_NASM'
