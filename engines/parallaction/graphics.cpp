@@ -334,6 +334,21 @@ void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 	return;
 }
 
+void Gfx::invertRect(Gfx::Buffers buffer, const Common::Rect& r) {
+
+	byte *d = (byte*)_buffers[buffer]->getBasePtr(r.left, r.top);
+
+	for (int i = 0; i < r.height(); i++) {
+		for (int j = 0; j < r.width(); j++) {
+			*d ^= 0x1F;
+			d++;
+		}
+
+		d += (_buffers[buffer]->pitch - r.width());
+	}
+
+}
+
 void Gfx::screenClip(Common::Rect& r, Common::Point& p) {
 
 	int32 x = r.left;

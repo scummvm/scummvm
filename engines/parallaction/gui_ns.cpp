@@ -350,8 +350,13 @@ int Parallaction_ns::guiGetSelectedBlock(const Common::Point &p) {
 		}
 	}
 
-	if (selection != -1) {
+	if ((selection != -1) && (getPlatform() == Common::kPlatformAmiga)) {
+		_gfx->invertRect(Gfx::kBitFront, codeTrueBlocks[selection]);
+		_gfx->updateScreen();
 		beep();
+		g_system->delayMillis(100);
+		_gfx->invertRect(Gfx::kBitFront, codeTrueBlocks[selection]);
+		_gfx->updateScreen();
 	}
 
 	return selection;

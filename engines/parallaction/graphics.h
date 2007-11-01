@@ -238,6 +238,7 @@ public:
 	void copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch);
 	void grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch);
 	void floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color);
+	void invertRect(Gfx::Buffers buffer, const Common::Rect& r);
 
 	// palette
 	void setPalette(Palette palette);
