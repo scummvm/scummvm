@@ -263,27 +263,11 @@ uint16 Parallaction::updateInput() {
 // FIXME: see comment for updateInput()
 void waitUntilLeftClick() {
 
-	Common::Event e;
-
-	Common::EventManager *eventMan = g_system->getEventManager();
-	for (;;) {
-		eventMan->pollEvent(e);
-
-		if (e.type == Common::EVENT_LBUTTONUP)
-			break;
-
-		if (e.type == Common::EVENT_QUIT) {
-			// TODO: don't quit() here, just have caller routines to check
-			// on kEngineQuit and exit gracefully to allow the engine to shut down
-			_engineFlags |= kEngineQuit;
-			g_system->quit();
-			break;
-		}
-
+	do {
+		_vm->updateInput();
 		_vm->_gfx->updateScreen();
 		g_system->delayMillis(30);
-	}
-
+	} while (_mouseButtons != kMouseLeftUp);
 
 	return;
 }
