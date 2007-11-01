@@ -382,30 +382,31 @@ void Journal::handleMouseDown(int x, int y) {
 
 void Journal::drawPanelText(int y, const char *text) {
 	debug(7, "Journal::drawPanelText(%d, '%s')", y, text);
-	char s[80];
-	strncpy(s, text, 79);
-	s[79] = 0;
+	char s[128];
+	strncpy(s, text, 127);
+	s[127] = 0;
 	// remove leading and trailing spaces (necessary for spanish version)
 	for (char *p = s + strlen(s) - 1; p >= s && *p == ' '; --p) {
 		*p = 0;
 	}
+	text = s;
 	for (char *p = s; *p == ' '; ++p) {
-		*p = 0;
+		text = p + 1;
 	}
 	// draw the substrings
-	char *p = strchr(s, ' ');
+	char *p = strchr(text, ' ');
 	if (!p) {
-		int x = (128 - _vm->display()->textWidth(s)) / 2;
-		_vm->display()->setText(x, y, s, false);
+		int x = (128 - _vm->display()->textWidth(text)) / 2;
+		_vm->display()->setText(x, y, text, false);
 		assert(_panelTextCount < MAX_PANEL_TEXTS);
 		_panelTextY[_panelTextCount++] = y;
 	} else {
 		*p++ = '\0';
 		if (_vm->resource()->getLanguage() == Common::HB_ISR) {
 			drawPanelText(y - 5, p);
-			drawPanelText(y + 5, s);
+			drawPanelText(y + 5, text);
 		} else {
-			drawPanelText(y - 5, s);
+			drawPanelText(y - 5, text);
 			drawPanelText(y + 5, p);
 		}
 	}
