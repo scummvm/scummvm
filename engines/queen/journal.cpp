@@ -394,7 +394,7 @@ void Journal::drawPanelText(int y, const char *text) {
 		text = p + 1;
 	}
 	// draw the substrings
-	char *p = strchr(text, ' ');
+	char *p = (char *)strchr(text, ' ');
 	if (!p) {
 		int x = (128 - _vm->display()->textWidth(text)) / 2;
 		_vm->display()->setText(x, y, text, false);
