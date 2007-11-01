@@ -383,9 +383,18 @@ void Journal::handleMouseDown(int x, int y) {
 void Journal::drawPanelText(int y, const char *text) {
 	debug(7, "Journal::drawPanelText(%d, '%s')", y, text);
 	char s[80];
-	strcpy(s, text);
+	strncpy(s, text, 79);
+	s[79] = 0;
+	// remove leading and trailing spaces (necessary for spanish version)
+	for (char *p = s + strlen(s) - 1; p >= s && *p == ' '; --p) {
+		*p = 0;
+	}
+	for (char *p = s; *p == ' '; ++p) {
+		*p = 0;
+	}
+	// draw the substrings
 	char *p = strchr(s, ' ');
-	if (p == NULL) {
+	if (!p) {
 		int x = (128 - _vm->display()->textWidth(s)) / 2;
 		_vm->display()->setText(x, y, s, false);
 		assert(_panelTextCount < MAX_PANEL_TEXTS);
@@ -423,14 +432,7 @@ void Journal::drawPanel(const int *frames, const int *titles, int n) {
 	int y = 8;
 	while (n--) {
 		showBob(bobNum++, 32, y, *frames++);
-		// trim panel texts for spanish version
-		char buf[128];
-		strncpy(buf, _vm->logic()->joeResponse(*titles++), 128);
-		buf[127] = 0;
-		if (_vm->resource()->getLanguage() != Common::GR_GRE)
-			drawPanelText(y + 12, Common::trim(buf));
-		else
-			drawPanelText(y + 12, buf);	// don't trim panel text in Greek version
+		drawPanelText(y + 12, _vm->logic()->joeResponse(*titles++));
 		y += 48;
 	}
 }
