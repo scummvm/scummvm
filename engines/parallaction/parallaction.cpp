@@ -172,8 +172,6 @@ int Parallaction::init() {
 	_backgroundInfo = new BackgroundInfo;
 
 	strcpy(_characterName1, "null");
-//	strcpy(_char._name, "dough");
-	_char.setName("dough");
 
 	memset(_locationNames, 0, NUM_LOCATIONS * 32);
 

@@ -597,6 +597,48 @@ public:
 };
 
 
+class LocationName {
+
+	Common::String _slide;
+	Common::String _character;
+	Common::String _location;
+
+	bool _hasCharacter;
+	bool _hasSlide;
+	char *_buf;
+
+public:
+	LocationName();
+	~LocationName();
+
+	void bind(const char*);
+
+	const char *location() const {
+		return _location.c_str();
+	}
+
+	bool hasCharacter() const {
+		return _hasCharacter;
+	}
+
+	const char *character() const {
+		return _character.c_str();
+	}
+
+	bool hasSlide() const {
+		return _hasSlide;
+	}
+
+	const char *slide() const {
+		return _slide.c_str();
+	}
+
+	const char *c_str() const {
+		return _buf;
+	}
+};
+
+
 class Parallaction_ns : public Parallaction {
 
 public:

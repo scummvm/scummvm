@@ -40,6 +40,76 @@ namespace Parallaction {
 #define MOUSECOMBO_WIDTH		32	// sizes for cursor + selected inventory item
 #define MOUSECOMBO_HEIGHT		32
 
+LocationName::LocationName() {
+	_buf = 0;
+	_hasSlide = false;
+	_hasCharacter = false;
+}
+
+LocationName::~LocationName() {
+	if (_buf)
+		free(_buf);
+}
+
+
+/*
+	bind accept the following input formats:
+
+    1 - [S].slide.[L]{.[C]}
+	2 - [L]{.[C]}
+
+    where:
+
+	[S] is the slide to be shown
+    [L] is the location to switch to (immediately in case 2, or right after slide [S] in case 1)
+    [C] is the character to be selected, and is optional
+
+    The routine tells one form from the other by searching for the '.slide.'
+
+    NOTE: there exists one script in which [L] is not used in the case 1, but its use
+		  is commented out, and would definitely crash the current implementation.
+*/
+void LocationName::bind(const char *s) {
+
+	if (_buf)
+		free(_buf);
+
+	_buf = strdup(s);
+	_hasSlide = false;
+	_hasCharacter = false;
+
+	Common::StringList list;
+	char *tok = strtok(_buf, ".");
+	while (tok) {
+		list.push_back(tok);
+		tok = strtok(NULL, ".");
+	}
+
+	if (list.size() < 1 || list.size() > 4)
+		error("changeLocation: ill-formed location name '%s'", s);
+
+	if (list.size() > 1) {
+		if (list[1] == "slide") {
+			_hasSlide = true;
+			_slide = list[0];
+
+			list.remove_at(0);		// removes slide name
+			list.remove_at(0);		// removes 'slide'
+		}
+
+		if (list.size() == 2) {
+			_hasCharacter = true;
+			_character = list[1];
+		}
+	}
+
+	_location = list[0];
+
+	strcpy(_buf, s);		// kept as reference
+}
+
+
+
 int Parallaction_ns::init() {
 
 	// Detect game
@@ -193,10 +263,11 @@ int Parallaction_ns::go() {
 	_menu = new Menu(this);
 	_menu->start();
 
-	char *v4 = strchr(_location._name, '.');
-	if (v4) {
-		*v4 = '\0';
-	}
+	LocationName locname;
+	locname.bind(_location._name);
+
+	_char.setName(locname.character());
+	strcpy(_location._name, locname.location());
 
 	_globalTable = _disk->loadTable("global");
 
@@ -221,25 +292,9 @@ int Parallaction_ns::go() {
 	return 0;
 }
 
-
-/*
-	changeLocation handles transitions between locations, and is able to display slides
-	between one and the other. The input parameter 'location' exists in some flavours:
-
-    1 - [S].slide.[L]{.[C]}
-	2 - [L]{.[C]}
-
-    where:
-
-	[S] is the slide to be shown
-    [L] is the location to switch to (immediately in case 2, or right after slide [S] in case 1)
-    [C] is the character to be selected, and is optional
-
-    The routine tells one form from the other by searching for the '.slide.'
-
-    NOTE: there exists one script in which [L] is not used in the case 1, but its use
-		  is commented out, and would definitely crash the current implementation.
-*/
+//	changeLocation handles transitions between locations, and is able to display slides
+//	between one and the other.
+//
 void Parallaction_ns::changeLocation(char *location) {
 	debugC(1, kDebugExec, "changeLocation(%s)", location);
 
@@ -264,41 +319,26 @@ void Parallaction_ns::changeLocation(char *location) {
 	runJobs();
 
 	freeLocation();
-	char buf[100];
-	strcpy(buf, location);
 
-	Common::StringList list;
-	char *tok = strtok(location, ".");
-	while (tok) {
-		list.push_back(tok);
-		tok = strtok(NULL, ".");
+	LocationName locname;
+	locname.bind(location);
+
+	if (locname.hasSlide()) {
+		showSlide(locname.slide());
+		_gfx->setFont(_menuFont);
+		_gfx->displayCenteredString(14, _slideText[0]); // displays text on screen
+		_gfx->updateScreen();
+		waitUntilLeftClick();
 	}
 
-	if (list.size() < 1 || list.size() > 4)
-		error("changeLocation: ill-formed location string '%s'", location);
-
-	if (list.size() > 1) {
-		if (list[1] == "slide") {
-			showSlide(list[0].c_str());
-			_gfx->setFont(_menuFont);
-			_gfx->displayCenteredString(14, _slideText[0]); // displays text on screen
-			_gfx->updateScreen();
-			waitUntilLeftClick();
-
-			list.remove_at(0);		// removes slide name
-			list.remove_at(0);		// removes 'slide'
-		}
-
-		// list is now only [L].{[C]} (see above comment)
-		if (list.size() == 2) {
-			changeCharacter(list[1].c_str());
-		}
+	if (locname.hasCharacter()) {
+		changeCharacter(locname.character());
 	}
 
 	_animations.push_front(&_char._ani);
 
-	strcpy(_saveData1, list[0].c_str());
-	parseLocation(list[0].c_str());
+	strcpy(_saveData1, locname.location());
+	parseLocation(_saveData1);
 
 	_char._ani._oldPos.x = -1000;
 	_char._ani._oldPos.y = -1000;

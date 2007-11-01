@@ -142,7 +142,7 @@ void Menu::newGame() {
 	if (_vm->getFeatures() & GF_DEMO) {
 		// character screen is not shown on demo
 		// so user warps to the playable intro
-		strcpy(_vm->_location._name, "fognedemo");
+		strcpy(_vm->_location._name, "fognedemo.dough");
 		return;
 	}
 
@@ -171,14 +171,11 @@ void Menu::newGame() {
 	_vm->showCursor(true);
 
 	if (_mouseButtons != kMouseRightUp) {
-		strcpy(_vm->_location._name, "fogne");
+		strcpy(_vm->_location._name, "fogne.dough");
 		return;    // show intro
 	}
 
 	selectCharacter();
-
-	char *v4 = strchr(_vm->_location._name, '.') + 1;
-	_vm->_char.setName(v4);
 
 	return; // start game
 }
@@ -290,8 +287,7 @@ uint16 Menu::selectGame() {
 	// game window without picking a savegame.
 	// The 2 strcpy's below act as workaround to prevent crashes for
 	// time being.
-	strcpy(_vm->_location._name, "fogne");
-	_vm->_char.setName("dough");
+	strcpy(_vm->_location._name, "fogne.dough");
 	_vm->loadGame();
 
 	return 1;  // load game
