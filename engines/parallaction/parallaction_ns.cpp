@@ -29,7 +29,6 @@
 
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
-#include "parallaction/menu.h"
 
 
 namespace Parallaction {
@@ -260,8 +259,7 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 
 int Parallaction_ns::go() {
 
-	_menu = new Menu(this);
-	_menu->start();
+	guiStart();
 
 	LocationName locname;
 	locname.bind(_location._name);
@@ -286,8 +284,6 @@ int Parallaction_ns::go() {
 	};
 
 	runGame();
-
-	delete _menu;
 
 	return 0;
 }

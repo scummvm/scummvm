@@ -185,7 +185,6 @@ void waitUntilLeftClick();
 
 class Debugger;
 class Gfx;
-class Menu;
 class SoundMan;
 
 
@@ -667,8 +666,6 @@ public:
 
 
 private:
-	Menu*			_menu;
-
 	void initFonts();
 	void freeFonts();
 
@@ -904,6 +901,15 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(sound);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(move);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
+
+	void		guiStart();
+	void		guiSelectCharacter();
+	void 		guiSplash();
+	void		guiNewGame();
+	uint16		guiChooseLanguage();
+	uint16		guiSelectGame();
+	int			guiGetSelectedBlock(const Common::Point &p, Common::Rect& r);
+
 
 };
 

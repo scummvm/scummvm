@@ -31,7 +31,6 @@
 #include "graphics/primitives.h"			// for Graphics::drawLine
 
 #include "parallaction/parallaction.h"
-#include "parallaction/menu.h"
 #include "parallaction/sound.h"
 
 
@@ -435,7 +434,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 		_gfx->updateScreen();
 		waitUntilLeftClick();
 
-		_menu->selectCharacter();
+		guiSelectCharacter();
 	}
 
 	// this code saves main character animation from being removed from the following code
@@ -548,7 +547,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 		waitUntilLeftClick();
 
 		_engineFlags &= ~kEngineBlockInput;
-		_menu->selectCharacter();
+		guiSelectCharacter();
 	} else {
 		waitUntilLeftClick();
 	}
