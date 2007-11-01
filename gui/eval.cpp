@@ -33,10 +33,7 @@
 namespace GUI {
 
 static bool isdelim(char c) {
-	if (strchr(" ;,+-<>/*%^=()", c) || c == 9 || c == '\n' || !c)
-		return true;
-
-	return false;
+	return strchr(" ;,+-<>/*%^=()", c) != 0 || c == 9 || c == '\n' || !c;
 }
 
 Eval::Eval() {
@@ -151,8 +148,6 @@ void Eval::primitive(int *result) {
 }
 
 void Eval::arith(char op, int *r, int *h) {
-	int t;
-
 	switch (op) {
 	case '-':
 		*r = *r - *h;
