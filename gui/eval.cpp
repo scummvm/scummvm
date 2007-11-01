@@ -167,8 +167,7 @@ void Eval::arith(char op, int *r, int *h) {
 		*r = (*r) / (*h);
 		break;
 	case '%':
-		t = (*r) / (*h);
-		*r = *r - (t * (*h));
+		*r = (*r) % (*h);
 		break;
 	}
 }
