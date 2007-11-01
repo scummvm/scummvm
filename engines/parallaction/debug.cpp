@@ -68,6 +68,7 @@ Debugger::Debugger(Parallaction *vm)
 	DCmd_Register("zones",     WRAP_METHOD(Debugger, Cmd_Zones));
 	DCmd_Register("animations",     WRAP_METHOD(Debugger, Cmd_Animations));
 	DCmd_Register("localflags", WRAP_METHOD(Debugger, Cmd_LocalFlags));
+	DCmd_Register("locations", WRAP_METHOD(Debugger, Cmd_Locations));
 
 }
 
@@ -108,6 +109,18 @@ bool Debugger::Cmd_Location(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::Cmd_Locations(int argc, const char **argv) {
+
+	DebugPrintf("+------------------------------+---------+\n"
+				"| location name                |  flags  |\n"
+				"+------------------------------+---------+\n");
+	for (uint i = 0; i < _vm->_numLocations; i++) {
+		DebugPrintf("|%-30s| %08x|\n", _vm->_locationNames[i], _vm->_localFlags[i]);
+	}
+	DebugPrintf("+------------------------------+---------+\n");
+
+	return true;
+}
 
 bool Debugger::Cmd_LocalFlags(int argc, const char **argv) {
 
