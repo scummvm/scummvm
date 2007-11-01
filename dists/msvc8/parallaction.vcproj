@@ -229,11 +229,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\parallaction\menu.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\menu.h"
+			RelativePath="..\..\engines\parallaction\gui_ns.cpp"
 			>
 		</File>
 		<File
