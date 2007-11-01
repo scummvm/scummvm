@@ -44,6 +44,7 @@ namespace AGOS {
 MoviePlayer::MoviePlayer(AGOSEngine *vm, Audio::Mixer *mixer)
 	: DXAPlayer(), _vm(vm), _mixer(mixer) {
 	_omniTV = false;
+	_omniTVLoad = false;
 
 	_omniTVFile = 0;
 
@@ -67,7 +68,15 @@ bool MoviePlayer::load(const char *filename) {
 	// Change file extension to dxa
 	sprintf(videoName, "%s.dxa", baseName);
 
-	if (!loadFile(videoName, _vm->_screenWidth, _vm->_screenHeight)) {
+	uint16 dstWidth = _vm->_screenWidth;
+	uint16 dstHeight = _vm->_screenHeight;
+	if (_omniTVLoad) {
+		dstWidth = 56;
+		dstHeight = 104;
+		_omniTVLoad = false;
+	}
+
+	if (!loadFile(videoName, dstWidth, dstHeight)) {
 		// Check short filename to work around
 		// bug in a German Windows 2CD version.
 		if (baseLen >= 8) {
@@ -120,6 +129,7 @@ void MoviePlayer::playOmniTV() {
 			_omniTV = true;
 		} else {
 			_vm->_variableArray[254] = 6747;
+			_omniTVLoad = true;
 		}
 	}
 }
@@ -248,6 +258,7 @@ void MoviePlayer::nextFrame() {
 		_omniTVFile = 0;
 		closeFile();
 		_vm->_variableArray[254] = 6747;
+		_omniTVLoad = true;
 	}
 }
 

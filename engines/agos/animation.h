@@ -47,7 +47,7 @@ class MoviePlayer : public Graphics::DXAPlayer {
 	Audio::SoundHandle _omniTVSound;
 	Common::SeekableReadStream *_omniTVFile;
 
-	bool _omniTV;
+	bool _omniTV, _omniTVLoad;
 	bool _leftButtonDown;
 	bool _rightButtonDown;
 	uint32 _ticks;
