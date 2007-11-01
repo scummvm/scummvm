@@ -92,15 +92,14 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	if (!f) return;
 
 	char s[30];
+	char n[16];
+	char l[16];
 
 	f->readLine(s, 29);
 
-	f->readLine(s, 15);
-	_char.setName(s);
+	f->readLine(n, 15);
 
-	f->readLine(_location._name, 15);
-
-	strcat(_location._name, ".");
+	f->readLine(l, 15);
 
 	f->readLine(s, 15);
 	_location._startPosition.x = atoi(s);
@@ -160,7 +159,7 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	// bugs, but it's a good maneuver anyway
 	strcpy(_characterName1, "null");
 
-	strcat(_location._name, _char.getName());
+	sprintf(_location._name, "%s.%s" , l, n);
 	_engineFlags |= kEngineChangeLocation;
 
 	return;

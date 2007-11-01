@@ -263,6 +263,8 @@ int Parallaction_ns::go() {
 
 	guiStart();
 
+	_engineFlags &= ~kEngineChangeLocation;
+
 	LocationName locname;
 	locname.bind(_location._name);
 
