@@ -82,6 +82,8 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 
 	_soundMan->stopMusic();
 
+	cleanupGame();
+
 	_introSarcData3 = 200;
 	_introSarcData2 = 1;
 
@@ -125,8 +127,6 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	_engineFlags &= ~kEngineQuit;
 
 	_numLocations = atoi(s);
-	memset(_localFlags, 0, sizeof(_localFlags));
-	memset(_locationNames, 0, sizeof(_locationNames));
 
 	uint16 _si;
 	for (_si = 0; _si < _numLocations; _si++) {

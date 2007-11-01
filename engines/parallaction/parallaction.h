@@ -672,6 +672,7 @@ private:
 private:
 	void changeLocation(char *location);
 	void changeCharacter(const char *name);
+	void cleanupGame();
 
 	void setArrowCursor();
 	void setInventoryCursor(int pos);
@@ -911,8 +912,6 @@ protected:
 	uint16		guiChooseLanguage();
 	uint16		guiSelectGame();
 	int			guiGetSelectedBlock(const Common::Point &p, Common::Rect& r);
-
-
 };
 
 

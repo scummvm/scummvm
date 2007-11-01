@@ -453,4 +453,30 @@ JobOpcode* Parallaction_ns::createJobOpcode(uint functionId, Job *job) {
 	return new OpcodeImpl2<Parallaction_ns>(this, _jobsFn[functionId], job);
 }
 
+void Parallaction_ns::cleanupGame() {
+
+	// this code saves main character animation from being removed from the following code
+	_animations.remove(&_char._ani);
+	_numLocations = 0;
+	_commandFlags = 0;
+
+	memset(_localFlags, 0, sizeof(_localFlags));
+	memset(_locationNames, 0, sizeof(_locationNames));
+
+	// this flag tells freeZones to unconditionally remove *all* Zones
+	_engineFlags |= kEngineQuit;
+
+	freeZones();
+	freeAnimations();
+
+	// this dangerous flag can now be cleared
+	_engineFlags &= ~kEngineQuit;
+
+	// main character animation is restored
+	_animations.push_front(&_char._ani);
+	_score = 0;
+
+	return;
+}
+
 } // namespace Parallaction

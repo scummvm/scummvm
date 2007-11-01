@@ -438,24 +438,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 		_engineFlags |= kEngineChangeLocation;
 	}
 
-	// this code saves main character animation from being removed from the following code
-	_animations.remove(&_char._ani);
-	_locationNames[0][0] = '\0';
-	_numLocations = 0;
-	_commandFlags = 0;
-
-	// this flag tells freeZones to unconditionally remove *all* Zones
-	_engineFlags |= kEngineQuit;
-
-	freeZones();
-	freeAnimations();
-
-	// this dangerous flag can now be cleared
-	_engineFlags &= ~kEngineQuit;
-
-	// main character animation is restored
-	_animations.push_front(&_char._ani);
-	_score = 0;
+	cleanupGame();
 
 	return;
 }
@@ -550,6 +533,9 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 		_engineFlags &= ~kEngineBlockInput;
 		selectCharacterForNewLocation();
 		_engineFlags |= kEngineChangeLocation;
+
+		cleanupGame();
+
 	} else {
 		waitUntilLeftClick();
 	}
