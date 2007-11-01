@@ -109,35 +109,32 @@ void pixel(int x, int y, char color) {
 }
 
 // this function checks if the dataPtr is not 0, else it retrives the data for X, Y, scale and DataPtr again (OLD: mainDrawSub1Sub1)
-void getPolyData(int fileIndex, int X, int Y, int *outScale, int *outY,
-	    int *outX, char **outDataPtr, int scale, char *dataPtr) {
-	if (*(uint16 *) dataPtr == 0) {
-		uint16 newFileIndex;
-		uint16 newX;
-		char *newDataPtr;	// this one is quite useless
-		uint16 newY;
+void flipPoly(int fileId, int16 *dataPtr, int scale, char** newFrame, int X, int Y, int *outX, int *outY, int *outScale)
+{
+	if (*dataPtr == 0)
+	{
+		int16 offset;
+		int16 newX;
+		int16 newY;
 
-		dataPtr += 2;
-		newFileIndex = *(uint16 *) dataPtr;
-		flipShort(&newFileIndex);
+		dataPtr ++;
 
-		dataPtr += 2;
-		newX = *(uint16 *) dataPtr;
+		offset = *(dataPtr++);
+		flipShort(&offset);
+
+		newX = *(dataPtr++);
 		flipShort(&newX);
 
-		newDataPtr = dataPtr;	// useless
-
-		newY = *(uint16 *) (newDataPtr + 2);
+		newY = *(dataPtr++);
 		flipShort(&newY);
 
-		newFileIndex += fileIndex;
+		offset += fileId;
 
-		if (true /*newFileIndex >= 0 */ ) {	// FIXME: comparison is always true due to limited range of data type
-			if (filesDatabase[newFileIndex].resType == 0
-			    && filesDatabase[newFileIndex].subData.ptr) {
-				dataPtr =
-				    (char *)filesDatabase[newFileIndex].
-				    subData.ptr;
+		if (offset >= 0 )
+		{
+			if (filesDatabase[offset].resType == 0 && filesDatabase[offset].subData.ptr)
+			{
+				dataPtr = (int16 *)filesDatabase[offset].subData.ptr;
 			}
 		}
 
@@ -146,7 +143,7 @@ void getPolyData(int fileIndex, int X, int Y, int *outScale, int *outY,
 		Y -= newY;
 	}
 
-	*outDataPtr = dataPtr;
+	*newFrame = (char*)dataPtr;
 	*outX = X;
 	*outY = Y;
 	*outScale = scale;
@@ -164,18 +161,16 @@ int m_coordCount;
 int m_first_X;
 int m_first_Y;
 int m_scaleValue;
-int m_current_X;
-int m_current_Y;
 int m_color;
 
-int16 polyBuffer[512];
+int16 DIST_3D[512];
 int16 polyBuffer2[512];
-int16 polyBuffer3[404];
+int16 XMIN_XMAX[404];
 int16 polyBuffer4[512];
 
 // this function fills the sizeTable for the poly (OLD: mainDrawSub1Sub2)
-void getPolySize(int positionX, int positionY, int scale, int sizeTable[4],
-	    unsigned char *dataPtr) {
+void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], unsigned char *dataPtr)
+{
 	int upperBorder;
 	int lowerBorder;
 	m_flipLeftRight = 0;
@@ -235,10 +230,22 @@ void getPolySize(int positionX, int positionY, int scale, int sizeTable[4],
 	sizeTable[3] = upperBorder;	// top
 }
 
-void blitPolyMode1(char *dest, char *ptr, int16 * buffer, char color) {
+int polyVar1;
+
+void blitPolyMode1(char *dest, char *ptr, int16 * buffer, char color)
+{
+	ASSERT(0);
 }
 
-void blitPolyMode2(char *dest, int16 * buffer, char color) {
+void blitPolyMode2(char *dest, int16 * buffer, char color)
+{
+	int i;
+
+	for (i = 0; i < polyVar1; i++) {
+		line(buffer[i * 2], buffer[i * 2 + 1], buffer[(i + 1) * 2], buffer[(i + 1) * 2 + 1], color);
+	} 
+
+	fillpoly(buffer, polyVar1, color);
 }
 
 int polySize1;
@@ -246,20 +253,7 @@ int polySize2;
 int polySize3;
 int polySize4;
 
-int polyVar1;
 int16 *polyVar2;
-
-void drawPolySub(void) {
-	int i;
-
-	for (i = 0; i < polyVar1; i++) {
-		line(polyBuffer4[i * 2], polyBuffer4[i * 2 + 1],
-		    polyBuffer4[(i + 1) * 2], polyBuffer4[(i + 1) * 2 + 1],
-		    m_color & 0xF);
-	}
-
-	fillpoly(polyBuffer4, polyVar1, m_color & 0xF);
-}
 
 char *drawPolyMode1(char *dataPointer, int linesToDraw) {
 	int index;
@@ -269,10 +263,8 @@ char *drawPolyMode1(char *dataPointer, int linesToDraw) {
 	pBufferDest = &polyBuffer4[polyVar1 * 2];
 	index = *(dataPointer++);
 
-	polySize1 = polySize2 = pBufferDest[-2] =
-	    pBufferDest[-2 + linesToDraw * 2] = polyBuffer2[index * 2];
-	polySize1 = polySize2 = pBufferDest[-1] =
-	    pBufferDest[-1 + linesToDraw * 2] = polyBuffer2[(index * 2) + 1];
+	polySize1 = polySize2 = pBufferDest[-2] = pBufferDest[-2 + linesToDraw * 2] = polyBuffer2[index * 2];
+	polySize1 = polySize2 = pBufferDest[-1] = pBufferDest[-1 + linesToDraw * 2] = polyBuffer2[(index * 2) + 1];
 
 	linesToDraw--;
 
@@ -284,8 +276,7 @@ char *drawPolyMode1(char *dataPointer, int linesToDraw) {
 		int value;
 
 		index = *(dataPointer++);
-		value = pBufferDest[-2] = pBufferDest[-2 + polyVar1 * 2] =
-		    polyBuffer2[index * 2];
+		value = pBufferDest[-2] = pBufferDest[-2 + polyVar1 * 2] = polyBuffer2[index * 2];
 
 		if (value < polySize1) {
 			polySize1 = value;
@@ -294,8 +285,7 @@ char *drawPolyMode1(char *dataPointer, int linesToDraw) {
 			polySize2 = value;
 		}
 
-		value = pBufferDest[-1] = pBufferDest[-1 + polyVar1 * 2] =
-		    polyBuffer2[(index * 2) + 1];
+		value = pBufferDest[-1] = pBufferDest[-1 + polyVar1 * 2] = polyBuffer2[(index * 2) + 1];
 
 		if (value > polySize4) {
 			polySize4 = value;
@@ -308,12 +298,11 @@ char *drawPolyMode1(char *dataPointer, int linesToDraw) {
 
 	} while (--linesToDraw);
 
-	drawPolySub();
-
 	return dataPointer;
 }
 
-char *drawPolyMode2(char *dataPointer, int linesToDraw) {
+char *drawPolyMode2(char *dataPointer, int linesToDraw)
+{
 	int index;
 	int16 *pBufferDest;
 
@@ -322,10 +311,8 @@ char *drawPolyMode2(char *dataPointer, int linesToDraw) {
 	polyVar2 = polyBuffer4;
 	index = *(dataPointer++);
 
-	polySize1 = polySize2 = pBufferDest[0] = pBufferDest[linesToDraw * 2] =
-	    polyBuffer2[index * 2];
-	polySize1 = polySize2 = pBufferDest[1] =
-	    pBufferDest[linesToDraw * 2 + 1] = polyBuffer2[(index * 2) + 1];
+	polySize1 = polySize2 = pBufferDest[0] = pBufferDest[linesToDraw * 2] = polyBuffer2[index * 2];
+	polySize1 = polySize2 = pBufferDest[1] = pBufferDest[linesToDraw * 2 + 1] = polyBuffer2[(index * 2) + 1];
 
 	linesToDraw--;
 
@@ -335,8 +322,7 @@ char *drawPolyMode2(char *dataPointer, int linesToDraw) {
 		int value;
 
 		index = *(dataPointer++);
-		value = pBufferDest[0] = pBufferDest[polyVar1 * 2] =
-		    polyBuffer2[index * 2];
+		value = pBufferDest[0] = pBufferDest[polyVar1 * 2] = polyBuffer2[index * 2];
 
 		if (value < polySize1) {
 			polySize1 = value;
@@ -345,8 +331,7 @@ char *drawPolyMode2(char *dataPointer, int linesToDraw) {
 			polySize2 = value;
 		}
 
-		value = pBufferDest[1] = pBufferDest[polyVar1 * 2 + 1] =
-		    polyBuffer2[(index * 2) + 1];
+		value = pBufferDest[1] = pBufferDest[polyVar1 * 2 + 1] = polyBuffer2[(index * 2) + 1];
 
 		if (value > polySize4) {
 			polySize4 = value;
@@ -360,13 +345,11 @@ char *drawPolyMode2(char *dataPointer, int linesToDraw) {
 
 	} while (--linesToDraw);
 
-	drawPolySub();
-
 	return dataPointer;
 }
 
 // this function builds the poly model and then calls the draw functions (OLD: mainDrawSub1Sub5)
-void buildPolyModel(int positionX, int positionY, int scale, char *ptr2, char *destBuffer, char *dataPtr) {
+void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *destBuffer, char *dataPtr) {
 	int counter = 0;	// numbers of coordinates to process
 	int startX = 0;		// first X in model
 	int startY = 0;		// first Y in model
@@ -375,7 +358,7 @@ void buildPolyModel(int positionX, int positionY, int scale, char *ptr2, char *d
 	int offsetXinModel = 0;	// offset of the X value in the model
 	int offsetYinModel = 0;	// offset of the Y value in the model
 	unsigned char *dataPointer = (unsigned char *)dataPtr;
-	int16 *ptrPoly_1_Buf = polyBuffer;
+	int16 *ptrPoly_1_Buf = DIST_3D;
 	int16 *ptrPoly_2_Buf;
 	polyOutputBuffer = destBuffer;	// global
 
@@ -425,29 +408,28 @@ void buildPolyModel(int positionX, int positionY, int scale, char *ptr2, char *d
 
 	// get coordinates from data
 
-	startX =
-	    positionX - ((upscaleValue(startX, m_scaleValue) + 0x8000) >> 16);
-	startY =
-	    positionY - ((upscaleValue(startY, m_scaleValue) + 0x8000) >> 16);
+	startX = positionX - ((upscaleValue(startX, m_scaleValue) + 0x8000) >> 16);
+	startY = positionY - ((upscaleValue(startY, m_scaleValue) + 0x8000) >> 16);
 
 	ptrPoly_1_Buf[0] = 0;
 	ptrPoly_1_Buf[1] = 0;
 	ptrPoly_1_Buf += 2;
 	counter = m_coordCount - 1 - 1;	// skip the first pair, we already have the values
 
+	// dpbcl0
 	do {
 		x = *(dataPointer++) - m_first_X;
-		y = *(dataPointer++) - m_first_Y;
-
 		if (m_useSmallScale) {	// shrink all coordinates by factor 2 if a scale smaller than 384 is used
 			x >>= 1;
-			y >>= 1;
 		}
-
 		ptrPoly_1_Buf[0] = offsetXinModel - x;
 		ptrPoly_1_Buf++;
 		offsetXinModel = x;
 
+		y = *(dataPointer++) - m_first_Y;
+		if (m_useSmallScale) {
+			y >>= 1;
+		}
 		ptrPoly_1_Buf[0] = -(offsetYinModel - y);
 		ptrPoly_1_Buf++;
 		offsetYinModel = y;
@@ -455,16 +437,11 @@ void buildPolyModel(int positionX, int positionY, int scale, char *ptr2, char *d
 	} while (--counter);
 
 	// scale and adjust coordinates with offset (using two polybuffers by doing that)
-
-	/*
-	 * NOTE: Is there a need for having two, a scaled and unscaled polybuffer?
-	 */
-
-	ptrPoly_2_Buf = polyBuffer;
+	ptrPoly_2_Buf = DIST_3D;
 	ptrPoly_1_Buf = polyBuffer2;
 	counter = m_coordCount - 1;	// reset counter // process first pair two
-	m_current_X = 0;
-	m_current_Y = 0;
+	int m_current_X = 0;
+	int m_current_Y = 0;
 
 	do {
 		x = ptrPoly_2_Buf[0];
@@ -503,33 +480,24 @@ void buildPolyModel(int positionX, int positionY, int scale, char *ptr2, char *d
 
 			flipShort(&minimumScale);
 
-			if (minimumScale > scale) {	// if the scale is too small, for the model to be drawn ...
-				dataPointer += linesToDraw;	// ... skip ahead
-			} else {
+			if (minimumScale <= scale)
+			{	
 				if (m_flipLeftRight) {
-					dataPointer =
-					    (unsigned char *)
-					    drawPolyMode1((char *)dataPointer,
-					    linesToDraw);
+					drawPolyMode1((char *)dataPointer, linesToDraw);
 				} else {
-					dataPointer =
-					    (unsigned char *)
-					    drawPolyMode2((char *)dataPointer,
-					    linesToDraw);
+					drawPolyMode2((char *)dataPointer, linesToDraw);
 				}
 
 				if (destBuffer) {
-					if (ptr2) {
-						blitPolyMode1(destBuffer, ptr2,
-						    polyBuffer3,
-						    m_color & 0xF);
+					if (pMask) {
+						blitPolyMode1(destBuffer, pMask, polyBuffer4, m_color & 0xF);
 					} else {
-						blitPolyMode2(destBuffer,
-						    polyBuffer3,
-						    m_color & 0xF);
+						blitPolyMode2(destBuffer, polyBuffer4, m_color & 0xF);
 					}
 				}
 			}
+
+			dataPointer += linesToDraw;
 		} else {
 			dataPointer += 4;
 		}
@@ -537,34 +505,27 @@ void buildPolyModel(int positionX, int positionY, int scale, char *ptr2, char *d
 }
 
 // draw poly sprite (OLD: mainDrawSub1)
-void mainDrawPolygons(int fileIndex, cellStruct *pObject, int X, int scale,
-	    int Y, char *destBuffer, char *dataPtr) {
+void mainDrawPolygons(int fileIndex, cellStruct *pObject, int X, int scale, int Y, char *destBuffer, char *dataPtr) {
 	int newX;
 	int newY;
 	int newScale;
-	char *newDataPtr;
-	char *ptr2;		// unused
+	char *newFrame;
+	
 	int var_8;		// unused
 
 	int sizeTable[4];	// 0 = left, 1 = right, 2 = bottom, 3 = top
 
 	// this function checks if the dataPtr is not 0, else it retrives the data for X, Y, scale and DataPtr again (OLD: mainDrawSub1Sub1)
-	getPolyData(fileIndex, X, Y, &newScale, &newY, &newX, &newDataPtr,
-	    scale, dataPtr);
+	flipPoly(fileIndex, (int16*)dataPtr, scale, &newFrame, X, Y, &newX, &newY, &newScale);
 
 	// this function fills the sizeTable for the poly (OLD: mainDrawSub1Sub2)
-	getPolySize(newX, newY, newScale, sizeTable,
-	    (unsigned char *)newDataPtr);
+	getPolySize(newX, newY, newScale, sizeTable, (unsigned char *)newFrame);
 
 	spriteX2 = sizeTable[0] - 2;	// left   border
 	spriteX1 = sizeTable[1] + 18;	// right  border
 	spriteY2 = sizeTable[2] - 2;	// bottom border
 	spriteY1 = sizeTable[3] + 2;	// top    border
 
-/*	if (X == 28 && Y == 80 && scale == 1024)  {
-		printf("0--> x1: %i, y1: %i, x2: %i, y2: %i\n", sizeTable[1], sizeTable[3], sizeTable[0], sizeTable[2]);
-		printf("1--> x1: %i, y1: %i, x2: %i, y2: %i\n", spriteX1, spriteY1, spriteX2, spriteY2);
-	} */
 	if (spriteX2 >= 320)
 		return;
 	if (spriteX1 < 0)
@@ -592,7 +553,7 @@ void mainDrawPolygons(int fileIndex, cellStruct *pObject, int X, int scale,
 	if (spriteY1 == spriteY2)
 		return;
 
-	ptr2 = NULL;
+	char *pMask = NULL;
 	var_8 = 0;
 
 	if (pObject) {
@@ -607,8 +568,9 @@ void mainDrawPolygons(int fileIndex, cellStruct *pObject, int X, int scale,
 			pCurrentObject = pCurrentObject->next;
 		} while (pCurrentObject);
 	}
+
 	// this function builds the poly model and then calls the draw functions (OLD: mainDrawSub1Sub5)
-	buildPolyModel(newX, newY, newScale, ptr2, destBuffer, newDataPtr);
+	buildPolyModel(newX, newY, newScale, pMask, destBuffer, newFrame);
 }
 
 void mainSprite(int globalX, int globalY, gfxEntryStruct *pGfxPtr,

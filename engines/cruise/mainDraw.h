@@ -29,8 +29,8 @@
 namespace Cruise {
 
 extern int currentTransparent;
-extern int16 polyBuffer3[404];
 extern int16 polyBuffer2[512];
+extern int16 XMIN_XMAX[404];
 extern int m_color;
 
 int upscaleValue(int value, int scale);
@@ -40,8 +40,6 @@ void mainDraw(int16 param);
 void flipScreen(void);
 void buildPolyModel(int X, int Y, int scale, char *ptr2, char *destBuffer,
     char *dataPtr);
-void getPolyData(int fileIndex, int X, int Y, int *newScale, int *newY,
-    int *newX, char **newDataPtr, int scale, char *dataPtr);
 void mainDrawSub4(int objX1, int var_6, cellStruct * currentObjPtr,
     char *data1, int objY2, int objX2, char *output, char *data2);
 char *drawPolyMode2(char *si, int cx);

@@ -173,14 +173,14 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 
 	ctpVar19Struct *var_1C;
 	ctpVar19Struct *var_12;
-	int16 *var_18;
-	int16 *si;
+//	int16 *var_18;
+//	int16 *si;
 	//  int16* di;
 	//  uint8* cx;
 	//  int bx;
 	//  int ax;
 	//  int var_2;
-	int var_E;
+//	int var_E;
 	//int var_C = 1000;
 	//int var_A = 0;
 	ctpVar19SubStruct *subStruct;
@@ -199,12 +199,12 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 
 		var_1C = param4;
 		var_12 = var_1C + 1;	// next
-
-		var_18 = polyBuffer3;
+/*
+		var_18 = XMIN_XMAX;
 		var_E = 0;
 
-		si = &polyBuffer3[1];
-		/* if (*si>=0)
+		si = &XMIN_XMAX[1];
+		 if (*si>=0)
 		 * {
 		 * di = si;
 		 * cx = var_12;
