@@ -434,7 +434,8 @@ void Parallaction_ns::_c_finito(void *parm) {
 		_gfx->updateScreen();
 		waitUntilLeftClick();
 
-		guiSelectCharacter();
+		selectCharacterForNewLocation();
+		_engineFlags |= kEngineChangeLocation;
 	}
 
 	// this code saves main character animation from being removed from the following code
@@ -547,7 +548,8 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 		waitUntilLeftClick();
 
 		_engineFlags &= ~kEngineBlockInput;
-		guiSelectCharacter();
+		selectCharacterForNewLocation();
+		_engineFlags |= kEngineChangeLocation;
 	} else {
 		waitUntilLeftClick();
 	}

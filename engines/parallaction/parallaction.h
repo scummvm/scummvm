@@ -369,8 +369,8 @@ public:
 
 	int init();
 
-	virtual void loadGame() = 0;
-	virtual void saveGame() = 0;
+	virtual bool loadGame() = 0;
+	virtual bool saveGame() = 0;
 
 	uint16 		updateInput();
 
@@ -661,8 +661,8 @@ public:
 	const JobFn 	*_jobsFn;
 	JobOpcode* 	createJobOpcode(uint functionId, Job *job);
 
-	void loadGame();
-	void saveGame();
+	bool loadGame();
+	bool saveGame();
 
 
 private:
@@ -902,10 +902,12 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(move);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
 
+	void		selectCharacterForNewLocation();
+
 	void		guiStart();
-	void		guiSelectCharacter();
+	int			guiSelectCharacter();
 	void 		guiSplash();
-	void		guiNewGame();
+	int			guiNewGame();
 	uint16		guiChooseLanguage();
 	uint16		guiSelectGame();
 	int			guiGetSelectedBlock(const Common::Point &p, Common::Rect& r);

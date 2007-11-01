@@ -259,19 +259,16 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 
 int Parallaction_ns::go() {
 
+	_globalTable = _disk->loadTable("global");
+
 	guiStart();
 
 	LocationName locname;
 	locname.bind(_location._name);
 
-	_char.setName(locname.character());
+	changeCharacter(locname.character());
+
 	strcpy(_location._name, locname.location());
-
-	_globalTable = _disk->loadTable("global");
-
-	_engineFlags &= ~kEngineChangeLocation;
-	changeCharacter(_char.getName());
-
 	strcpy(_saveData1, _location._name);
 	parseLocation(_location._name);
 
@@ -453,6 +450,5 @@ void Parallaction_ns::initJobs() {
 JobOpcode* Parallaction_ns::createJobOpcode(uint functionId, Job *job) {
 	return new OpcodeImpl2<Parallaction_ns>(this, _jobsFn[functionId], job);
 }
-
 
 } // namespace Parallaction

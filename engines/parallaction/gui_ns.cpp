@@ -100,9 +100,22 @@ static uint16 _pcKeys[][PASSWORD_LEN] = {
 	{ 0, 2, 8, 5, 5, 1 }		// donna
 };
 
+static const char *_charStartLocation[] = {
+	"test.dough",
+	"test.dino",
+	"test.donna"
+};
+
 enum {
 	NEW_GAME,
 	LOAD_GAME
+};
+
+enum {
+	START_DEMO,
+	START_INTRO,
+	GAME_LOADED,
+	SELECT_CHARACTER
 };
 
 void Parallaction_ns::guiStart() {
@@ -116,17 +129,48 @@ void Parallaction_ns::guiStart() {
 	_language = guiChooseLanguage();
 	_disk->setLanguage(_language);
 
+	int event;
+
 	if (getFeatures() & GF_DEMO) {
-		strcpy(_location._name, "fognedemo.dough");
-		return;
+		event = START_DEMO;
+	} else {
+		if (guiSelectGame() == NEW_GAME) {
+			event = guiNewGame();
+		} else {
+			event = loadGame() ? GAME_LOADED : START_INTRO;
+		}
 	}
 
-	if (guiSelectGame() == NEW_GAME) {
-		guiNewGame();
+	switch (event) {
+	case START_DEMO:
+		strcpy(_location._name, "fognedemo.dough");
+		break;
+
+	case START_INTRO:
+		strcpy(_location._name, "fogne.dough");
+		break;
+
+	case GAME_LOADED:
+		// nothing to do here
+		return;
+
+	case SELECT_CHARACTER:
+		selectCharacterForNewLocation();
+		break;
+
 	}
 
 	return;
 }
+
+void Parallaction_ns::selectCharacterForNewLocation() {
+	int character = guiSelectCharacter();
+	if (character == -1)
+		error("invalid character selected from menu screen");
+
+	strcpy(_location._name, _charStartLocation[character]);
+}
+
 
 void Parallaction_ns::guiSplash() {
 
@@ -140,7 +184,7 @@ void Parallaction_ns::guiSplash() {
 
 }
 
-void Parallaction_ns::guiNewGame() {
+int Parallaction_ns::guiNewGame() {
 
 	const char **v14 = introMsg3;
 
@@ -167,13 +211,10 @@ void Parallaction_ns::guiNewGame() {
 	showCursor(true);
 
 	if (_mouseButtons != kMouseRightUp) {
-		strcpy(_location._name, "fogne.dough");
-		return;    // show intro
+		return START_INTRO;
 	}
 
-	guiSelectCharacter();
-
-	return; // start game
+	return SELECT_CHARACTER;
 }
 
 uint16 Parallaction_ns::guiChooseLanguage() {
@@ -226,8 +267,8 @@ uint16 Parallaction_ns::guiChooseLanguage() {
 			}
 		}
 
-		g_system->delayMillis(30);
 		_gfx->updateScreen();
+		g_system->delayMillis(30);
 
 	} while (true);
 
@@ -266,23 +307,11 @@ uint16 Parallaction_ns::guiSelectGame() {
 
 		}
 
-		g_system->delayMillis(30);
 		_gfx->updateScreen();
+		g_system->delayMillis(30);
 	}
 
-	if (_si == 0) return NEW_GAME; // new game
-
-	// load game
-
-	// TODO: allow the user to change her mind in this screen, that is
-	// don't force her to start at the intro when she closes her load
-	// game window without picking a savegame.
-	// The 2 strcpy's below act as workaround to prevent crashes for
-	// time being.
-	strcpy(_location._name, "fogne.dough");
-	loadGame();
-
-	return LOAD_GAME;  // load game
+	return _si ? LOAD_GAME : NEW_GAME;
 }
 
 
@@ -313,7 +342,7 @@ int Parallaction_ns::guiGetSelectedBlock(const Common::Point &p, Common::Rect &r
 //
 //	character selection and protection
 //
-void Parallaction_ns::guiSelectCharacter() {
+int Parallaction_ns::guiSelectCharacter() {
 	debugC(1, kDebugMenu, "Parallaction_ns::guiselectCharacter()");
 
 	Graphics::Surface v14;
@@ -331,7 +360,7 @@ void Parallaction_ns::guiSelectCharacter() {
 
 	uint16 (*keys)[PASSWORD_LEN] = (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;
 	uint16 points[3];
-	bool matched = false;
+	int character = -1;
 	uint16 _di = 0;
 
 	while (true) {
@@ -349,7 +378,6 @@ void Parallaction_ns::guiSelectCharacter() {
 			_mouseButtons = kMouseNone;
 			do {
 				updateInput();
-				g_system->delayMillis(30);
 				_gfx->updateScreen();
 			} while (_mouseButtons != kMouseLeftUp);	// waits for left click
 
@@ -366,7 +394,7 @@ void Parallaction_ns::guiSelectCharacter() {
 					}
 
 					if (points[i] == PASSWORD_LEN) {
-						matched = true;
+						character = i;
 					}
 				}
 
@@ -374,7 +402,7 @@ void Parallaction_ns::guiSelectCharacter() {
 			}
 		}
 
-		if (matched) {
+		if (character != -1) {
 			break;
 		}
 
@@ -387,24 +415,12 @@ void Parallaction_ns::guiSelectCharacter() {
 		_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	}
 
-	if (points[1] == PASSWORD_LEN) {
-		sprintf(_location._name, "test.%s", _dinoName);
-	} else
-	if (points[2] == PASSWORD_LEN) {
-		sprintf(_location._name, "test.%s", _donnaName);
-	} else
-	if (points[0] == PASSWORD_LEN) {
-		sprintf(_location._name, "test.%s", _doughName);
-	}
-
 	_gfx->setBlackPalette();
 	_gfx->updateScreen();
 
-	_engineFlags |= kEngineChangeLocation;
-
 	v14.free();
 
-	return;
+	return character;
 
 }
 

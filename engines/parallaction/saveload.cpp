@@ -373,11 +373,11 @@ int Parallaction_ns::selectSaveFile(uint16 arg_0, const char* caption, const cha
 
 
 
-void Parallaction_ns::loadGame() {
+bool Parallaction_ns::loadGame() {
 
 	int _di = selectSaveFile( 0, "Load file", "Load" );
 	if (_di == -1) {
-		return;
+		return false;
 	}
 
 	doLoadGame(_di);
@@ -387,18 +387,19 @@ void Parallaction_ns::loadGame() {
 
 	setArrowCursor();
 
-	return;
+	return true;
 }
 
 
-void Parallaction_ns::saveGame() {
+bool Parallaction_ns::saveGame() {
 
-	if (!scumm_stricmp(_location._name, "caveau"))
-		return;
+	if (!scumm_stricmp(_location._name, "caveau")) {
+		return false;
+	}
 
 	int slot = selectSaveFile( 1, "Save file", "Save" );
 	if (slot == -1) {
-		return;
+		return false;
 	}
 
 	doSaveGame(slot, _saveFileName.c_str());
@@ -406,9 +407,7 @@ void Parallaction_ns::saveGame() {
 	GUI::TimedMessageDialog dialog("Saving game...", 1500);
 	dialog.runModal();
 
-	return;
-
-
+	return true;
 }
 
 
