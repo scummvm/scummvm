@@ -143,7 +143,7 @@ void IgorEngine::handleOptionsMenu_paintQuit() {
 
 bool IgorEngine::handleOptionsMenu_handleKeyDownQuit(int key) {
 	if (key == Common::KEYCODE_y) {
-		_currentPart = 255; // display the shareware screens
+		_currentPart = kInvalidPart;
 	}
 	return true;
 }
@@ -257,13 +257,13 @@ void IgorEngine::handleOptionsMenu() {
 	int currentPage = 0;
 	bool menuLoop = true;
 	bool focusOnPage = false;
-	while (menuLoop && _currentPart != 255) {
+	while (menuLoop && !_eventQuitGame && _currentPart != kInvalidPart) {
 		int previousPage = currentPage;
 		Common::Event ev;
 		while (_eventMan->pollEvent(ev)) {
 			switch (ev.type) {
 			case Common::EVENT_QUIT:
-				_currentPart = 255;
+				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
 				break;
 			case Common::EVENT_KEYDOWN:
@@ -332,6 +332,11 @@ void IgorEngine::handleOptionsMenu() {
 		setPaletteRange(1, 245);
 		_system->updateScreen();
 		_system->delayMillis(1000 / 60);
+	}
+	if (!_eventQuitGame && _currentPart == kInvalidPart) {
+		if (_gameVersion == kIdEngDemo100 || _gameVersion == kIdEngDemo110) {
+			_currentPart = kSharewarePart;
+		}
 	}
 }
 

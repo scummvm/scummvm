@@ -58,6 +58,8 @@ enum {
 
 enum {
 	kStartupPart = 900,
+	kInvalidPart = 255,
+	kSharewarePart = 950,
 	kTalkColor = 240,
 	kTalkShadowColor = 241,
 	kTickDelay = 1193180 / 4096

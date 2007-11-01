@@ -153,7 +153,10 @@ void IgorEngine::restart() {
 int IgorEngine::go() {
 	restart();
 	setupDefaultPalette();
-	_currentPart = kStartupPart;
+	_currentPart = ConfMan.getInt("boot_param");
+	if (_currentPart == 0) {
+		_currentPart = kStartupPart;
+	}
 	if (!_ovlFile.open("IGOR.DAT")) {
 		error("Unable to open 'IGOR.DAT'");
 	}
@@ -204,7 +207,8 @@ void IgorEngine::waitForTimer(int ticks) {
 		while (_eventMan->pollEvent(ev)) {
 			switch (ev.type) {
 			case Common::EVENT_QUIT:
-				_currentPart = 255;
+				_inputVars[kInputEscape] = 1;
+				_currentPart = kInvalidPart;
 				_eventQuitGame = true;
 				break;
 			case Common::EVENT_KEYDOWN:
