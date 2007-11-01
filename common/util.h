@@ -126,6 +126,7 @@ enum Language {
 	EN_USA,
 	FR_FRA,
 	DE_DEU,
+	GR_GRE,
 	HB_ISR,
 	IT_ITA,
 	JA_JPN,

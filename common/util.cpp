@@ -189,6 +189,7 @@ const LanguageDescription g_languages[] = {
 	{"us", "English (US)", EN_USA},
 	{"fr", "French", FR_FRA},
 	{"de", "German", DE_DEU},
+	{"gr", "Greek", GR_GRE},
 	{"hb", "Hebrew", HB_ISR},
 	{"it", "Italian", IT_ITA},
 	{"jp", "Japanese", JA_JPN},
