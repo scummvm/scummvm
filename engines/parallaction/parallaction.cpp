@@ -1077,6 +1077,7 @@ void Character::setName(const char *name) {
 		} else {
 			const char *s = strstr(name, "tras");
 			if (s) {
+				_engineFlags |= kEngineTransformedDonna;
 				_suffix = _suffixTras;
 				end = s;
 			} else {
