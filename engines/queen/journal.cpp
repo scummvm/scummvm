@@ -427,7 +427,10 @@ void Journal::drawPanel(const int *frames, const int *titles, int n) {
 		char buf[128];
 		strncpy(buf, _vm->logic()->joeResponse(*titles++), 128);
 		buf[127] = 0;
-		drawPanelText(y + 12, Common::trim(buf));
+		if (_vm->resource()->getLanguage() != Common::GR_GRE)
+			drawPanelText(y + 12, Common::trim(buf));
+		else
+			drawPanelText(y + 12, buf);	// don't trim panel text in Greek version
 		y += 48;
 	}
 }

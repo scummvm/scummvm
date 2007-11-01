@@ -179,6 +179,8 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 	case 'E':
 		if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
 			ver->language = Common::RU_RUS;
+		} else if (Common::parseLanguage(ConfMan.get("language")) == Common::GR_GRE) {
+			ver->language = Common::GR_GRE;
 		} else {
 			ver->language = Common::EN_ANY;
 		}

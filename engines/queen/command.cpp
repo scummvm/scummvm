@@ -75,10 +75,19 @@ void CmdText::displayTemp(InkColor color, Verb v, const char *name, bool outline
 
 void CmdText::displayTemp(InkColor color, const char *name, bool outlined) {
 	char temp[MAX_COMMAND_LEN];
-	if (_isReversed)
+	if (_isReversed) {
 		sprintf(temp, "%s %s", name, _command);
-	else
-		sprintf(temp, "%s %s", _command, name);
+	} else {
+		if (_vm->resource()->getLanguage() != Common::GR_GRE) {
+			sprintf(temp, "%s %s", _command, name);
+		} else {
+			// don't show a space after the goto command in the Greek version
+			if (_command[1] != -34)
+				sprintf(temp, "%s %s", _command, name);
+			else
+				sprintf(temp, "%s%s", _command, name);
+		}
+	}
 	_vm->display()->textCurrentColor(_vm->display()->getInkColor(color));
 	_vm->display()->setTextCentered(_y, temp, outlined);
 }
@@ -110,7 +119,13 @@ void CmdText::addObject(const char *objName) {
 		strcat(_command, " ");
 		strcat(_command, temp);
 	} else {
-		strcat(_command, " ");
+		if (_vm->resource()->getLanguage() != Common::GR_GRE) {
+			strcat(_command, " ");
+		} else {
+			// don't show a space after the goto command in the Greek version
+			if (_command[1] != -34)
+				strcat(_command, " ");
+		}
 		strcat(_command, objName);
 	}
 }

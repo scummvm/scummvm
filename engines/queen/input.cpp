@@ -60,6 +60,7 @@ Input::Input(Common::Language language, OSystem *system) :
 
 	switch (language) {
 	case Common::EN_ANY:
+	case Common::GR_GRE:
 	case Common::RU_RUS:
 		_currentCommandKeys = _commandKeys[0];
 		break;
