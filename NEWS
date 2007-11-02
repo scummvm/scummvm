@@ -14,6 +14,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Improved the way keyboard input is handled internally, resolving
      some odd quirks in some game / port combinations.
    - Added optional 'confirm exit' dialog to the SDL backend.
+   - Added support for TiMidity++ MIDI server.
 
  AGOS:
    - Fixed crashes related to OmniTV playback in The Feeble Files.

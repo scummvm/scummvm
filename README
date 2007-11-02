@@ -46,8 +46,9 @@ Table of Contents:
  * 7.4 MIDI emulation
  * 7.5 Native MIDI support
  * 7.6 UNIX native and ALSA sequencer support
- * 7.7 Using compressed audio files (MP3, Ogg Vorbis, Flac)
- * 7.8 Output sample rate
+ * 7.7 TiMidity++ MIDI server support
+ * 7.8 Using compressed audio files (MP3, Ogg Vorbis, Flac)
+ * 7.9 Output sample rate
 8.0) Configuration Files
 9.0) Compiling
 
@@ -1122,6 +1123,7 @@ your operating system and configuration.
                      a hardware MIDI synthesizer.
         qt         - Quicktime sound, for Macintosh users.
         seq        - Use /dev/sequencer for MIDI, *nix users. See below.
+        timidity   - Connect to TiMidity++ MIDI server. See below.
         windows    - Windows MIDI. Uses built-in sequencer, for Windows users
 
 To select a sound driver, select it in the Launcher, or pass its name
@@ -1225,8 +1227,8 @@ For these games, you may wish to specify --multi-midi in order to combine
 MIDI music with Adlib sound effects.
 
 
-7.6.0) Playing sound with Sequencer MIDI:                        [UNIX ONLY]
------- ----------------------------------
+7.6) Playing sound with Sequencer MIDI:                          [UNIX ONLY]
+---- ----------------------------------
 If your soundcard driver supports a sequencer, you may set the environment
 variable "SCUMMVM_MIDI" to your sequencer device -- for example, to
 /dev/sequencer
@@ -1289,7 +1291,25 @@ Once either TiMidity or FluidSynth are running, use the 'aconnect -o -l'
 command as described earlier in this section.
 
 
-7.7.0) Using MP3 files for CD audio:
+7.7) Using TiMidity++ MIDI server:
+---- -----------------------------
+If you system lacks any MIDI sequencer, but you still want better MIDI quality
+than default Adlib emulation can offer, you can try TiMidity++ MIDI server. See
+http://timidity.sourceforge.net/ for download and install instructions.
+
+First, you need to start a daemon:
+
+timidity -ir 7777
+
+Now you can start scummvm and try selection TiMidity music output.  By default,
+it will connect to localhost:7777, but you can change host/port by defining
+"TIMIDITY_HOST" environment variable.
+
+
+7.8) Using compressed audio files
+---- ----------------------------
+
+7.8.0) Using MP3 files for CD audio:
 ------ -----------------------------
 Use LAME or some other MP3 encoder to rip the cd audio tracks to files. Name
 the files track1.mp3 track2.mp3 etc. ScummVM must be compiled with MAD support
@@ -1300,7 +1320,7 @@ following LAME command line:
   lame -t -q 0 -b 96 track1.wav track1.mp3
 
 
-7.7.1) Using Ogg Vorbis files for CD audio:
+7.8.1) Using Ogg Vorbis files for CD audio:
 ------ ------------------------------------
 Use oggenc or some other vorbis encoder to encode the audio tracks to files.
 Name the files track1.ogg track2.ogg etc. ScummVM must be compiled with vorbis
@@ -1312,7 +1332,7 @@ command line with the value after q specifying the desired quality from
   oggenc -q 5 track1.wav
 
 
-7.7.2) Using Flac files for CD audio:
+7.8.2) Using Flac files for CD audio:
 ------ ------------------------------------
 Use flac or some other flac encoder to encode the audio tracks to files.
 Name the files track1.flac track2.flac etc. In your filesystem only allows
@@ -1327,7 +1347,7 @@ Remember that the quality is always the same, varying encoder options will only
 affect the encoding time and resulting filesize.
 
 
-7.7.3) Compressing MONSTER.SOU with MP3:
+7.8.3) Compressing MONSTER.SOU with MP3:
 ------ ---------------------------------
 You need LAME, and our 'compress_scumm_sou' utility from the scummvm-tools
 package to perform this task, and ScummVM must be compiled with MAD support.
@@ -1338,7 +1358,7 @@ Eventually you will have a much smaller monster.so3 file, copy this file
 to your game directory. You can safely remove the monster.sou file.
 
 
-7.7.4) Compressing MONSTER.SOU with Ogg Vorbis:
+7.8.4) Compressing MONSTER.SOU with Ogg Vorbis:
 ------ ----------------------------------------
 As above, but ScummVM must be compiled with OGG support. Run:
 
@@ -1349,7 +1369,7 @@ game directory. Ogg encoding may take a considerable longer amount of time
 than MP3, so have a good book handy.
 
 
-7.7.5) Compressing MONSTER.SOU with Flac:
+7.8.5) Compressing MONSTER.SOU with Flac:
 ------ ----------------------------------------
 As above, but ScummVM must be compiled with Flac support. Run:
 
@@ -1363,7 +1383,7 @@ filesize -- 1152 seems to be a good value for those kind of soundfiles. Be sure
 to read the encoder documentation before you use other values.
 
 
-7.7.6) Compressing music/sfx/speech in AGOS games
+7.8.6) Compressing music/sfx/speech in AGOS games
 ------ -----------------------------------------------------------------
 Use our 'compress_agos' utility from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note that you can
@@ -1398,7 +1418,7 @@ Eventually you will have a much smaller *.mp3, *.ogg or *.fla file, copy this
 file to your game directory. You can safely remove the old file.
 
 
-7.7.7) Compressing speech/music in Broken Sword 1
+7.8.7) Compressing speech/music in Broken Sword 1
 ------ ------------------------------------------
 The 'compress_sword1' tool from the scummvm-tools package can encode music and
 speech to MP3 as well as Ogg Vorbis.
@@ -1417,7 +1437,7 @@ instead of MP3.
 Use "compress_sword1 --help" to get a full list of the options.
 
 
-7.7.8) Compressing speech/music in Broken Sword 2
+7.8.8) Compressing speech/music in Broken Sword 2
 ------ ------------------------------------------
 Use our 'compress_sword2' utility from the scummvm-tools package to perform this
 task. You can choose between multiple target formats, but note  that you can
@@ -1442,7 +1462,7 @@ files in Broken Sword 2. It will not work with any of the other *.clu files,
 nor will it work with the speech files from Broken Sword 1.
 
 
-7.8) Output sample rate:
+7.9) Output sample rate:
 ---- -------------------
 The output sample rate tells ScummVM how many sound samples to play per channel
 per second. There is much that could be said on this subject, but most of it

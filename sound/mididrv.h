@@ -78,7 +78,8 @@ enum MidiDriverType {
 	MD_ADLIB,
 	MD_PCSPK,
 	MD_PCJR,
-	MD_TOWNS
+	MD_TOWNS,
+	MD_TIMIDITY
 };
 
 /**
@@ -271,6 +272,7 @@ extern MidiDriver *MidiDriver_NULL_create();
 extern MidiDriver *MidiDriver_ADLIB_create(Audio::Mixer *mixer);
 extern MidiDriver *MidiDriver_WIN_create();
 extern MidiDriver *MidiDriver_SEQ_create();
+extern MidiDriver *MidiDriver_TIMIDITY_create();
 extern MidiDriver *MidiDriver_QT_create();
 extern MidiDriver *MidiDriver_CORE_create();
 extern MidiDriver *MidiDriver_CoreMIDI_create();

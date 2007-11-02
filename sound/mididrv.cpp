@@ -84,6 +84,9 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	{"pcspk", "PC Speaker", MD_PCSPK, MDT_PCSPK},
 	{"pcjr", "IBM PCjr", MD_PCJR, MDT_PCSPK},
 	{"towns", "FM Towns", MD_TOWNS, MDT_TOWNS},
+#if defined(UNIX)
+	{"timidity", "TiMidity", MD_TIMIDITY, MDT_MIDI},
+#endif
 
 	{0, 0, MD_NULL, MDT_NONE}
 };
@@ -250,6 +253,9 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #endif
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__)
 	case MD_SEQ:       return MidiDriver_SEQ_create();
+#endif
+#if defined(UNIX)
+	case MD_TIMIDITY:  return MidiDriver_TIMIDITY_create();
 #endif
 #if defined(IRIX)
 	case MD_DMEDIA:    return MidiDriver_DMEDIA_create();

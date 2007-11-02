@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	midi/morphos.o \
 	midi/quicktime.o \
 	midi/seq.o \
+	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \
 	plugins/dc/dc-provider.o \
