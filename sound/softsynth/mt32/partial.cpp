@@ -639,8 +639,8 @@ bool Partial::produceOutput(Bit16s *partialBuf, long length) {
 	partialBuf += donelen * 2;
 #endif
 	while (length--) {
-		*partialBuf++ = (Bit16s)(((Bit32s)*mixedBuf * (Bit32s)leftvol) >> 16);
-		*partialBuf++ = (Bit16s)(((Bit32s)*mixedBuf * (Bit32s)rightvol) >> 16);
+		*partialBuf++ = (Bit16s)(((Bit32s)*mixedBuf * (Bit32s)leftvol) >> 15);
+		*partialBuf++ = (Bit16s)(((Bit32s)*mixedBuf * (Bit32s)rightvol) >> 15);
 		mixedBuf++;
 	}
 	return true;
