@@ -252,7 +252,7 @@ void MidiDriver_TIMIDITY::teardown() {
 		 * messages till we reach something like "200 Bye" */
 		do {
 			res = timidity_ctl_command("QUIT");
-		} while(*res && atoi(res) && atoi(res) != 302);
+		} while (*res && atoi(res) && atoi(res) != 302);
 	}
 
 	/* now close and nullify both filedescs */
@@ -269,7 +269,7 @@ in_addr_t MidiDriver_TIMIDITY::host_to_addr(const char* address) {
 
 	/* if not, try to resolve a hostname */
 	if ((hp = gethostbyname(address)) == NULL) {
-		warning("TiMidity: unknown hostname: %s\n", address);
+		warning("TiMidity: unknown hostname: %s", address);
 		return INADDR_NONE;
 	}
 
@@ -317,14 +317,14 @@ char *MidiDriver_TIMIDITY::timidity_ctl_command(const char *fmt, ...) {
 		va_end(ap);
 
 		/* add newline if needed */
-		if(len > 0 && buff[len - 1] != '\n')
+		if (len > 0 && buff[len - 1] != '\n')
 			buff[len++] = '\n';
 
 		/* write command to control socket */
 		write(_control_fd, buff, len);
 	}
 
-	while(1) {
+	while (1) {
 		/* read reply */
 		if (fdgets(buff, sizeof(buff)) <= 0) {
 			strcpy(buff, "Read error\n");
@@ -372,17 +372,17 @@ int MidiDriver_TIMIDITY::timidity_sync(int centsec) {
 		res = timidity_ctl_command(NULL);
 		status = atoi(res);
 
-		if(status != 301)
+		if (status != 301)
 			warning("TiMidity: error: SYNC: %s", res);
 
-	} while(status && status != 301);
+	} while (status && status != 301);
 
-	if(status != 301)
+	if (status != 301)
 		return -1; /* error */
 
 	sleep_usec = (unsigned long)(atof(res + 4) * 1000000);
 
-	if(sleep_usec > 0)
+	if (sleep_usec > 0)
 		usleep(sleep_usec);
 
 	return 0;
@@ -429,7 +429,7 @@ int MidiDriver_TIMIDITY::fdgets(char *buff, size_t buff_size) {
 			size = _controlbuffer_size = n;
 		}
 		*buff++ = pbuff[count++];
-	} while(*(buff - 1) != '\n' && buff != buff_endp);
+	} while (*(buff - 1) != '\n' && buff != buff_endp);
 
 	*buff = '\0';
 	_controlbuffer_count = count;
