@@ -870,7 +870,7 @@ void Parallaction::switchBackground(const char* background, const char* mask) {
 	uint16 v2 = 0;
 	if (!scumm_stricmp(background, "final")) {
 		_gfx->clearScreen(Gfx::kBitBack);
-		for (uint16 _si = 0; _si <= 32; _si++) {
+		for (uint16 _si = 0; _si < 32; _si++) {
 			pal.setEntry(_si, v2, v2, v2);
 			v2 += 4;
 		}
