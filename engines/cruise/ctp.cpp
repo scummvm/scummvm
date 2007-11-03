@@ -160,7 +160,7 @@ void renderCTPWalkBox(int X1, int Y1, int X2, int scale, int Y2,
 		walkboxTable[i] = i;
 	}
 
-	drawPolyMode2((char *)walkboxTable, numPoints);
+	drawPolyMode2((unsigned char *)walkboxTable, numPoints);
 }
 
 // this process the walkboxes

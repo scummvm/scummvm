@@ -42,8 +42,8 @@ void buildPolyModel(int X, int Y, int scale, char *ptr2, char *destBuffer,
     char *dataPtr);
 void mainDrawSub4(int objX1, int var_6, cellStruct * currentObjPtr,
     char *data1, int objY2, int objX2, char *output, char *data2);
-char *drawPolyMode2(char *si, int cx);
 
+unsigned char *drawPolyMode2(unsigned char *dataPointer, int linesToDraw);
 } // End of namespace Cruise
 
 #endif
