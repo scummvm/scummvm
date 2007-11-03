@@ -236,12 +236,13 @@ bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 	join_paths(filename, getSavePath(), buf, sizeof(buf));
 	
 	if (remove(buf) != 0) {
+#ifndef _WIN32_WCE
 		if (errno == EACCES)
 			setError(SFM_DIR_ACCESS, Common::String("Search or write permission denied"));
 		
 		if (errno == ENOENT)
 			setError(SFM_DIR_NOENT, Common::String("A component of the path does not exist, or the path is an empty string"));
-		
+#endif
 		return false;
 	} else {
 		return true;
