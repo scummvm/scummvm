@@ -397,11 +397,7 @@ void buildSegment(void)
 
 				if(Y2 >= Y1)
 				{
-					int16* temp;
-
-					temp=BX;
-					BX = DI;
-					DI = temp;
+					SWAP(BX, DI);
 				}
 
 				do
@@ -425,20 +421,11 @@ void buildSegment(void)
 					cx = -cx;
 					dx = Y2;
 
-					int temp;
-					temp = X1;
-					X1 = X2;
-					X2 = temp;
-
-					temp = Y1;
-					Y1 = Y2;
-					Y2 = temp;
+					SWAP(X1, X2);
+					SWAP(Y1, Y2);
 				}
 				 // swap again ?
-				int temp;
-				temp = X1;
-				X1 = X2;
-				X2 = temp;
+				SWAP(X1, X2);
 
 				int patchAdd = 2;
 
@@ -480,10 +467,7 @@ void buildSegment(void)
 					{
 						stepType = 1; // DX < DY
 
-						int temp;
-						temp = dy;
-						dy = cx;
-						cx = dy;
+						SWAP(dy, cx);
 					}
 					int patchinc1 = 2*dy;
 
