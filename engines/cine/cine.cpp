@@ -50,7 +50,7 @@ Common::SaveFileManager *g_saveFileMan;
 
 CineEngine *g_cine;
 
-CineEngine::CineEngine(OSystem *syst) : Engine(syst) {
+CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	Common::addSpecialDebugLevel(kCineDebugScript, "Script", "Script debug level");
 
 	// Setup mixer
@@ -74,12 +74,6 @@ CineEngine::~CineEngine() {
 }
 
 int CineEngine::init() {
-	// Detect game
-	if (!initGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);

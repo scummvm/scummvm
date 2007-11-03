@@ -487,17 +487,14 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(CINE, Cine::CineEngine, detectionParams);
-
-REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Stealth (C) Delphine Software");
-
-namespace Cine {
-
-bool CineEngine::initGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	_gameDescription = (const CINEGameDescription *)(encapsulatedDesc.realDesc);
-
-	return (_gameDescription != 0);
+static bool Engine_CINE_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Cine::CINEGameDescription *gd = (const Cine::CINEGameDescription *)(encapsulatedDesc.realDesc);
+	if (gd) {
+		*engine = new Cine::CineEngine(syst, gd);
+	}
+	return gd != 0;
 }
 
-} // End of namespace Cine
+ADVANCED_DETECTOR_DEFINE_PLUGIN(CINE, Engine_CINE_createInstance, detectionParams);
+
+REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Stealth (C) Delphine Software");

@@ -145,12 +145,6 @@ void GobEngine::validateVideoMode(int16 videoMode) {
 }
 
 int GobEngine::init() {
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	if (!initGameParts()) {
 		GUIErrorMessage("GobEngine::init(): Unknown version of game engine");
 		return -1;

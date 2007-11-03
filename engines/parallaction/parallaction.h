@@ -363,7 +363,7 @@ class Parallaction : public Engine {
 
 public:
 
-	Parallaction(OSystem *syst);
+	Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc);
 	~Parallaction();
 
 	int init();
@@ -640,7 +640,7 @@ public:
 class Parallaction_ns : public Parallaction {
 
 public:
-	Parallaction_ns(OSystem* syst) : Parallaction(syst) { }
+	Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc) { }
 	~Parallaction_ns();
 
 	int init();
@@ -922,7 +922,7 @@ class Parallaction_br : public Parallaction_ns {
 	typedef Parallaction_ns Super;
 
 public:
-	Parallaction_br(OSystem* syst) : Parallaction_ns(syst) { }
+	Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction_ns(syst, gameDesc) { }
 	~Parallaction_br();
 
 	int init();

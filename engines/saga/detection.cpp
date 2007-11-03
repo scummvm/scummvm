@@ -139,19 +139,21 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(SAGA, Saga::SagaEngine, detectionParams);
+static bool Engine_SAGA_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Saga::SAGAGameDescription *gd = (const Saga::SAGAGameDescription *)(encapsulatedDesc.realDesc);
+	if (gd) {
+		*engine = new Saga::SagaEngine(syst, gd);
+	}
+	return gd != 0;
+}
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN(SAGA, Engine_SAGA_createInstance, detectionParams);
 
 REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainment");
 
 namespace Saga {
 
 bool SagaEngine::initGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	_gameDescription = (const SAGAGameDescription *)(encapsulatedDesc.realDesc);
-
-	if (_gameDescription == 0)
-		return false;
-
 	_displayClip.right = getDisplayInfo().logicalWidth;
 	_displayClip.bottom = getDisplayInfo().logicalHeight;
 

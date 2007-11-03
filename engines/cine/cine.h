@@ -71,7 +71,7 @@ protected:
 	bool initGame();
 
 public:
-	CineEngine(OSystem *syst);
+	CineEngine(OSystem *syst, const CINEGameDescription *gameDesc);
 	virtual ~CineEngine();
 
 	int getGameType() const;

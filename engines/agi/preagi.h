@@ -40,14 +40,12 @@ protected:
 	void shutdown();
 	void initialize();
 
-	bool initGame();
-
 public:
 	void agiTimerLow() {}
 	int agiGetKeypressLow() { return 0; }
 	int agiIsKeypressLow() { return 0; }
 
-	PreAgiEngine(OSystem *syst);
+	PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	virtual ~PreAgiEngine();
 	int getGameId() {
 		return _gameId;

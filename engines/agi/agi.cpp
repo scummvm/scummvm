@@ -605,11 +605,11 @@ AgiButtonStyle::AgiButtonStyle(Common::RenderMode renderMode) {
 	setAmigaStyle(renderMode == Common::kRenderAmiga);
 }
 
-AgiBase::AgiBase(OSystem *syst) : Engine(syst) {
+AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
 }
 
-AgiEngine::AgiEngine(OSystem *syst) : AgiBase(syst) {
+AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -782,13 +782,6 @@ AgiEngine::~AgiEngine() {
 }
 
 int AgiEngine::init() {
-
-	// Detect game
-	if (!initGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 
 	// Initialize backend
 	_system->beginGFXTransaction();

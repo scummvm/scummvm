@@ -236,21 +236,12 @@ GameList detectAllGames(const FSList &fslist, const Common::ADParams &params);
 // FIXME/TODO: Rename this function to something more sensible.
 EncapsulatedADGameDesc detectBestMatchingGame(const Common::ADParams &params);
 
-// FIXME/TODO: Rename this function to something more sensible.
-// Only used by ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_FUNC
-PluginError detectGameForEngineCreation(const Common::ADParams &params);
+void upgradeTargetIfNecessary(const Common::ADParams &params);
 
+// FIXME/TODO: Rename this function to something more sensible.
 // Helper function to announce an unknown version of the game (useful for
 // fallback detection functions).
 void reportUnknown(StringList &files, int md5Bytes);
-
-// FIXME: It would probably be good to merge detectBestMatchingGame
-// and detectGameForEngineCreation into a single function. Right now, the
-// detection code called priort to creating an engine instance
-// (i.e. detectGameForEngineCreation) differs from the detection code the 
-// engines call internally (i.e. detectBestMatchingGame). This could lead
-// to hard to debug and odd errors.
-
 
 } // End of namespace AdvancedDetector
 
@@ -267,22 +258,11 @@ void reportUnknown(StringList &files, int md5Bytes);
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 
-#define _ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_PREDEFINED_FUNC(engine,factoryFunc,params) \
-	_ADVANCED_DETECTOR_DEFINE_PLUGIN_HEAD(engine,params); \
-	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
-		assert(syst); \
-		assert(engine); \
-		PluginError err = Common::AdvancedDetector::detectGameForEngineCreation(params); \
-		if (err == kNoError) \
-			*engine = factoryFunc(syst); \
-		return err; \
-	} \
-	void dummyFuncToAllowTrailingSemicolon()
-
-#define ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(engine,factoryFunc,params) \
+#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,factoryFunc,params) \
 	_ADVANCED_DETECTOR_DEFINE_PLUGIN_HEAD(engine,params); \
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(engine); \
+		Common::AdvancedDetector::upgradeTargetIfNecessary(params); \
 		Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(params); \
 		if (encapsulatedDesc.realDesc == 0) { \
 			return kNoGameDataFoundError; \
@@ -293,14 +273,6 @@ void reportUnknown(StringList &files, int md5Bytes);
 		return kNoError; \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
-
-#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,className,params) \
-	static Engine *engine##_createInstance(OSystem *syst) { \
-		return new className(syst); \
-	} \
-	_ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_PREDEFINED_FUNC(engine,engine##_createInstance,params); \
-	void dummyFuncToAllowTrailingSemicolon()
-
 
 }	// End of namespace Common
 

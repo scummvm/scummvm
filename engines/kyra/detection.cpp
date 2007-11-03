@@ -436,7 +436,7 @@ bool engineCreateKyra(OSystem *syst, Engine **engine, Common::EncapsulatedADGame
 	return res;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(KYRA, engineCreateKyra, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(KYRA, engineCreateKyra, detectionParams);
 
 REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine", "The Legend of Kyrandia (C) Westwood Studios");
 

@@ -164,18 +164,15 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(DRASCULA, Drascula::DrasculaEngine, detectionParams);
-
-REGISTER_PLUGIN(DRASCULA, "Drascula Engine", "Drascula Engine (C) 2000 Alcachofa Soft, 1996 (C) Digital Dreams Multimedia, 1994 (C) Emilio de Paz");
-
-namespace Drascula {
-
-bool DrasculaEngine::initGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	_gameDescription = (const DrasculaGameDescription *)(encapsulatedDesc.realDesc);
-
-	return (_gameDescription != 0);
+static bool Engine_DRASCULA_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Drascula::DrasculaGameDescription *gd = (const Drascula::DrasculaGameDescription *)(encapsulatedDesc.realDesc);
+	if (gd) {
+		*engine = new Drascula::DrasculaEngine(syst, gd);
+	}
+	return gd != 0;
 }
 
-} // End of namespace Drascula
+ADVANCED_DETECTOR_DEFINE_PLUGIN(DRASCULA, Engine_DRASCULA_createInstance, detectionParams);
+
+REGISTER_PLUGIN(DRASCULA, "Drascula Engine", "Drascula Engine (C) 2000 Alcachofa Soft, 1996 (C) Digital Dreams Multimedia, 1994 (C) Emilio de Paz");
 

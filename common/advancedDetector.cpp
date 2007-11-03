@@ -70,7 +70,7 @@ GameList gameIDList(const Common::ADParams &params) {
 	return GameList(params.list);
 }
 
-static void upgradeTargetIfNecessary(const Common::ADParams &params) {
+void upgradeTargetIfNecessary(const Common::ADParams &params) {
 	if (params.obsoleteList == 0)
 		return;
 
@@ -262,43 +262,6 @@ EncapsulatedADGameDesc detectBestMatchingGame(
 	}
 
 	return result;
-}
-
-PluginError detectGameForEngineCreation(
-	const Common::ADParams &params
-	) {
-
-	upgradeTargetIfNecessary(params);
-
-	Common::String gameid = ConfMan.get("gameid");
-
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
-		return kInvalidPathError;
-	}
-
-	ADGameDescList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
-
-	// We have single ID set, so we have a game if there are hits
-	if (params.singleid != NULL && matches.size())
-		return kNoError;
-
-	for (uint i = 0; i < matches.size(); i++) {
-		if (matches[i]->gameid == gameid) {
-			return kNoError;
-		}
-	}
-
-	// Use fallback detector if there were no matches by other means
-	if (params.fallbackDetectFunc != NULL) {
-		EncapsulatedADGameDesc fallbackDesc = (*params.fallbackDetectFunc)(&fslist);
-		if (fallbackDesc.realDesc != 0 && (params.singleid != NULL || fallbackDesc.getGameID() == gameid)) {
-			return kNoError;
-		}
-	}
-
-	return kNoGameDataFoundError;
 }
 
 void reportUnknown(StringMap &filesMD5, HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> &filesSize) {

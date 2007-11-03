@@ -504,7 +504,7 @@ protected:
 	int go();
 	int init();
 public:
-	SagaEngine(OSystem *syst);
+	SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc);
 	virtual ~SagaEngine();
 	void shutDown() { _quit = true; }
 

@@ -656,7 +656,7 @@ public:
 	virtual int agiGetKeypressLow() = 0;
 	virtual int agiIsKeypressLow() = 0;
 
-	AgiBase(OSystem *syst);
+	AgiBase(OSystem *syst, const AGIGameDescription *gameDesc);
 
 	#define INITIAL_IMAGE_STACK_SIZE 32
 
@@ -695,10 +695,8 @@ protected:
 	void shutdown();
 	void initialize();
 
-	bool initGame();
-
 public:
-	AgiEngine(OSystem *syst);
+	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	virtual ~AgiEngine();
 	int getGameId() {
 		return _gameId;

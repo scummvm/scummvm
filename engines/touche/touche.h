@@ -351,7 +351,7 @@ public:
 
 	typedef void (ToucheEngine::*OpcodeProc)();
 
-	ToucheEngine(OSystem *system);
+	ToucheEngine(OSystem *system, Common::Language language);
 	virtual ~ToucheEngine();
 
 	virtual int init();

@@ -111,17 +111,14 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(CRUISE, Cruise::CruiseEngine, detectionParams);
-
-REGISTER_PLUGIN(CRUISE, "Cinematique evo 2 engine", "Cruise for a Corpse (C) Delphine Software");
-
-namespace Cruise {
-
-bool CruiseEngine::initGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	_gameDescription = (const CRUISEGameDescription *)(encapsulatedDesc.realDesc);
-
-	return (_gameDescription != 0);
+static bool Engine_CRUISE_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Cruise::CRUISEGameDescription *gd = (const Cruise::CRUISEGameDescription *)(encapsulatedDesc.realDesc);
+	if (gd) {
+		*engine = new Cruise::CruiseEngine(syst, gd);
+	}
+	return gd != 0;
 }
 
-} // End of namespace Cruise
+ADVANCED_DETECTOR_DEFINE_PLUGIN(CRUISE, Engine_CRUISE_createInstance, detectionParams);
+
+REGISTER_PLUGIN(CRUISE, "Cinematique evo 2 engine", "Cruise for a Corpse (C) Delphine Software");

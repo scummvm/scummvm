@@ -167,6 +167,8 @@ private:
 	friend class Ptr;
 };
 
+struct GOBGameDescription;
+
 class GobEngine : public Engine {
 protected:
 	GobEngine *_vm;
@@ -176,8 +178,6 @@ protected:
 
 	bool initGameParts();
 	void deinitGameParts();
-
-	bool detectGame();
 
 public:
 	static const Common::Language _gobToScummVMLang[];
@@ -237,6 +237,8 @@ public:
 
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();
+
+	void initGame(const GOBGameDescription *gd);
 };
 
 } // End of namespace Gob

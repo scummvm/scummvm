@@ -51,7 +51,7 @@ protected:
 	bool initGame();
 
 public:
-	CruiseEngine(OSystem * syst);
+	CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc);
 	virtual ~ CruiseEngine();
 
 	int getGameType() const;

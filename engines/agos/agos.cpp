@@ -525,12 +525,6 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 }
 
 int AGOSEngine::init() {
-	// Detect game
-	if (!initGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	if (getGameId() == GID_DIMP) {
 		_screenWidth = 496;
 		_screenHeight = 400;

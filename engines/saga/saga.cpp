@@ -59,8 +59,8 @@ namespace Saga {
 
 #define MAX_TIME_DELTA 100
 
-SagaEngine::SagaEngine(OSystem *syst)
-	: Engine(syst) {
+SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
+	: Engine(syst), _gameDescription(gameDesc) {
 
 	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
 

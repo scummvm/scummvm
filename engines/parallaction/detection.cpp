@@ -184,16 +184,16 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-bool engineCreateParallaction(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+static bool Engine_PARALLACTION_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
 	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)(encapsulatedDesc.realDesc);
 	bool res = true;
 
 	switch (gd->gameType) {
 	case Parallaction::GType_Nippon:
-		*engine = new Parallaction::Parallaction_ns(syst);
+		*engine = new Parallaction::Parallaction_ns(syst, gd);
 		break;
 	case Parallaction::GType_BRA:
-		*engine = new Parallaction::Parallaction_br(syst);
+		*engine = new Parallaction::Parallaction_br(syst, gd);
 		break;
 	default:
 		res = false;
@@ -203,18 +203,6 @@ bool engineCreateParallaction(OSystem *syst, Engine **engine, Common::Encapsulat
 	return res;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(PARALLACTION, engineCreateParallaction, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(PARALLACTION, Engine_PARALLACTION_createInstance, detectionParams);
 
 REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dynabyte");
-
-
-namespace Parallaction {
-
-bool Parallaction::detectGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	_gameDescription = (const PARALLACTIONGameDescription *)(encapsulatedDesc.realDesc);
-
-	return (_gameDescription != 0);
-}
-
-} // End of namespace Parallaction

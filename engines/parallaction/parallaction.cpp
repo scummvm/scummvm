@@ -91,8 +91,8 @@ static Job	   *_jDrawInventory = NULL;
 static Job	   *_jRunScripts = NULL;
 
 
-Parallaction::Parallaction(OSystem *syst) :
-	Engine(syst), _char(this) {
+Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) :
+	Engine(syst), _gameDescription(gameDesc), _char(this) {
 
 	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
 	// needs fixing, or remove it!

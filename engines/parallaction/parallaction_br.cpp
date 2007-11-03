@@ -59,12 +59,6 @@ const char *partFirstLocation[] = {
 
 int Parallaction_br::init() {
 
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	_screenWidth = 640;
 	_screenHeight = 400;
 

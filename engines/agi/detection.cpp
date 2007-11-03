@@ -2253,13 +2253,13 @@ bool engineCreateAgi(OSystem *syst, Engine **engine, Common::EncapsulatedADGameD
 
 	switch (gd->gameType) {
 	case Agi::GType_PreAGI:
-		*engine = new Agi::PreAgiEngine(syst);
+		*engine = new Agi::PreAgiEngine(syst, gd);
 		break;
 	case Agi::GType_V2:
-		*engine = new Agi::AgiEngine(syst);
+		*engine = new Agi::AgiEngine(syst, gd);
 		break;
 	case Agi::GType_V3:
-		*engine = new Agi::AgiEngine(syst);
+		*engine = new Agi::AgiEngine(syst, gd);
 		break;
 	default:
 		res = false;
@@ -2269,25 +2269,7 @@ bool engineCreateAgi(OSystem *syst, Engine **engine, Common::EncapsulatedADGameD
 	return res;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(AGI, engineCreateAgi, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(AGI, engineCreateAgi, detectionParams);
 
 REGISTER_PLUGIN(AGI, "AGI preAGI + v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line Software");
-
-namespace Agi {
-
-bool AgiEngine::initGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	_gameDescription = (const AGIGameDescription *)(encapsulatedDesc.realDesc);
-
-	return (_gameDescription != 0);
-}
-
-bool PreAgiEngine::initGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	_gameDescription = (const AGIGameDescription *)(encapsulatedDesc.realDesc);
-
-	return (_gameDescription != 0);
-}
-
-} // End of namespace Agi
 

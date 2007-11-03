@@ -337,10 +337,8 @@ protected:
 	int go();
 //	void shutdown();
 
-	bool initGame();
-
 public:
-	DrasculaEngine(OSystem *syst);
+	DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc);
 	virtual ~DrasculaEngine();
 	int getGameId() {
 		return _gameId;

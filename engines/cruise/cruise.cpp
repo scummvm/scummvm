@@ -44,7 +44,7 @@ Common::SaveFileManager * g_saveFileMan;
 
 CruiseEngine *g_cruise;
 
-CruiseEngine::CruiseEngine(OSystem * syst) : Engine(syst) {
+CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
 #ifdef PALMOS_MODE
 	_currentVolumeFile = new Common::File();
@@ -75,11 +75,6 @@ CruiseEngine::~CruiseEngine() {
 }
 
 int CruiseEngine::init() {
-	// Detect game
-	if (!initGame()) {
-		GUIErrorMessage ("No valid games were found in the specified directory.");
-		return -1;
-	}
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);

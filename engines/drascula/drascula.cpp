@@ -53,7 +53,7 @@ static const GameSettings drasculaSettings[] = {
 	{NULL, NULL, 0, 0, NULL}
 };
 
-DrasculaEngine::DrasculaEngine(OSystem *syst) : Engine(syst) {
+DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -119,12 +119,6 @@ static char poder_t[6][88] = {TEXT11, TEXT109, TEXT111, TEXT110, TEXT115, TEXT11
 static char poder_v[6][14] = {"11.als", "109.als", "111.als", "110.als", "115.als", "116.als"};
 
 int DrasculaEngine::init() {
-	// Detect game
-	if (!initGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	// Initialize backend
 	_system->beginGFXTransaction();
 		initCommonGFX(false);

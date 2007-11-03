@@ -110,7 +110,7 @@ static const Common::ADFileBasedFallback fileBasedFallback[] = {
 	{ 0, { 0 } }
 };
 
-}
+} // End of namespace Touche
 
 static const Common::ADParams detectionParams = {
 	(const byte *)Touche::gameDescriptions,
@@ -124,21 +124,14 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget | Common::kADFlagPrintWarningOnFileBasedFallback
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(TOUCHE, Touche::ToucheEngine, detectionParams);
-
-REGISTER_PLUGIN(TOUCHE, "Touche Engine", "Touche: The Adventures of the 5th Musketeer (C) Clipper Software");
-
-namespace Touche {
-
-bool ToucheEngine::detectGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
+static bool Engine_TOUCHE_createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) {
 	const Common::ADGameDescription *gd = encapsulatedDesc.realDesc;
-
-	if (gd == 0)
-		return false;
-
-	_language = gd->language;
-	return true;
+	if (gd) {
+		*engine = new Touche::ToucheEngine(syst, gd->language);
+	}
+	return gd != 0;
 }
 
-} // End of namespace Touche
+ADVANCED_DETECTOR_DEFINE_PLUGIN(TOUCHE, Engine_TOUCHE_createInstance, detectionParams);
+
+REGISTER_PLUGIN(TOUCHE, "Touche Engine", "Touche: The Adventures of the 5th Musketeer (C) Clipper Software");

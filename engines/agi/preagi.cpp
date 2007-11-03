@@ -51,7 +51,7 @@
 
 namespace Agi {
 
-PreAgiEngine::PreAgiEngine(OSystem *syst) : AgiBase(syst) {
+PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -195,13 +195,6 @@ PreAgiEngine::~PreAgiEngine() {
 }
 
 int PreAgiEngine::init() {
-
-	// Detect game
-	if (!initGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);

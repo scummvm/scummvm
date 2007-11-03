@@ -111,12 +111,6 @@ void LocationName::bind(const char *s) {
 
 int Parallaction_ns::init() {
 
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	_screenWidth = 320;
 	_screenHeight = 200;
 

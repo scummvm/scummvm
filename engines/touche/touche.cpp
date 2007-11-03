@@ -37,8 +37,8 @@
 
 namespace Touche {
 
-ToucheEngine::ToucheEngine(OSystem *system)
-	: Engine(system), _midiPlayer(0) {
+ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
+	: Engine(system), _midiPlayer(0), _language(language) {
 
 	_saveLoadCurrentPage = 0;
 	_saveLoadCurrentSlot = 0;
@@ -86,12 +86,6 @@ int ToucheEngine::init() {
 		initCommonGFX(true);
 		_system->initSize(kScreenWidth, kScreenHeight);
 	_system->endGFXTransaction();
-
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
 
 	Graphics::setupFont(_language);
 
