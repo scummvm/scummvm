@@ -474,8 +474,6 @@ void KyraEngine_v1::delayUntil(uint32 timestamp, bool updateTimers, bool update,
 
 void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
 	Common::Event event;
-	char saveLoadSlot[20];
-	char savegameName[14];
 
 	uint32 start = _system->getMillis();
 	do {
@@ -484,10 +482,12 @@ void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' && 
 						(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && isMainLoop) {
-					sprintf(saveLoadSlot, "%s.00%d", _targetName.c_str(), event.kbd.keycode - '0');
+					const char *saveLoadSlot = getSavegameFilename(event.kbd.keycode - '0');
+
 					if (event.kbd.flags == Common::KBD_CTRL)
 						loadGame(saveLoadSlot);
 					else {
+						char savegameName[14];
 						sprintf(savegameName, "Quicksave %d",  event.kbd.keycode - '0');
 						saveGame(saveLoadSlot, savegameName);
 					}
