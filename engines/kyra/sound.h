@@ -59,27 +59,89 @@ class AudioStream;
 
 namespace Kyra {
 
-class AUDStream;
-
+/** 
+ * Analog audio output device API for Kyrandia games.
+ * It countains functionallity to play music tracks,
+ * sound effects and voices.
+ */
 class Sound {
 public:
 	Sound(KyraEngine *vm, Audio::Mixer *mixer);
 	virtual ~Sound();
 
+	/**
+	 * Initializes the output device.
+	 *
+	 * @return true on success, else false
+	 */
 	virtual bool init() = 0;
+
+	/**
+	 * Updates the device, this is needed for some devices.
+	 */
 	virtual void process() {}
 
+	/**
+	 * Set the volume of the device.
+	 *
+	 * @param volume	value between 0 and 255
+	 *
+	 * @see getVolume
+	 */
 	virtual void setVolume(int volume) = 0;
+
+	/**
+	 * Returns the current volume.
+	 *
+	 * @return volume
+	 *
+	 * @see setVolume
+	 */
 	virtual int getVolume() = 0;
 
+	/**
+	 * Sets the soundfiles the output device will use
+	 * when playing a track and/or sound effect.
+	 *
+	 * @param list	soundfile list
+	 * @param s		number of soundfiles
+	 */
 	virtual void setSoundFileList(const char * const *list, uint s) { _soundFileList = list; _soundFileListSize = s; }
+
+	/**
+	 * Load a specifc sound file for use of
+	 * playing music and sound effects.
+	 */
 	virtual void loadSoundFile(uint file) = 0;
 
+	/**
+	 * Plays the specified track.
+	 *
+	 * @param track	track number
+	 */
 	virtual void playTrack(uint8 track) = 0;
+
+	/**
+	 * Stop playback of the current track
+	 */
 	virtual void haltTrack() = 0;
 
+	/**
+	 * Plays the specified sound effect
+	 *
+	 * @param track	sound effect id
+	 */
 	virtual void playSoundEffect(uint8 track) = 0;
 
+	/**
+	 * Starts fading out the volume.
+	 *
+	 * This keeps fading out the output until
+	 * it is silenced, but does not change
+	 * the volume set by setVolume! It will
+	 * automatically reset the volume when
+	 * playing a new track or sound effect.
+	 */
 	virtual void beginFadeOut() = 0;
 
 	void enableMusic(int enable) { _musicEnabled = enable; }
@@ -87,9 +149,30 @@ public:
 	void enableSFX(bool enable) { _sfxEnabled = enable; }
 	bool sfxEnabled() const { return _sfxEnabled; }
 
+	/**
+	 * Plays the specified voice file.
+	 *
+	 * Also before starting to play the
+	 * specified voice file, it stops the
+	 * current voice.
+	 *
+	 * TODO: add support for queueing voice
+	 * files
+	 *
+	 * @param file	file to be played
+	 */
 	void voicePlay(const char *file);
-	void voiceUnload() {}
+
+	/**
+	 * Checks if a voice is being played.
+	 *
+	 * @return true when playing, else false
+	 */
 	bool voiceIsPlaying();
+
+	/**
+	 * Stops playback of the current voice.
+	 */
 	void voiceStop();
 
 protected:
@@ -99,6 +182,7 @@ protected:
 
 	KyraEngine *_vm;
 	Audio::Mixer *_mixer;
+
 private:
 	const char * const *_soundFileList;
 	uint _soundFileListSize;
@@ -122,6 +206,17 @@ private:
 
 class AdlibDriver;
 
+/**
+ * AdLib implementation of the sound output device.
+ *
+ * It uses a special sound file format special to
+ * Dune II, Kyrandia 1 and 2. While Dune II and
+ * Kyrandia 1 are using exact the same format, the
+ * one of Kyrandia 2 slightly differs.
+ * 
+ * See AdlibDriver for more information.
+ * @see AdlibDriver
+ */
 class SoundAdlibPC : public Sound {
 public:
 	SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer);
@@ -165,6 +260,18 @@ private:
 	static const int _kyra1SoundTriggers[];
 };
 
+/**
+ * MIDI output device.
+ *
+ * This device supports both MT-32 MIDI, as used in
+ * Kyrandia 1 and 2, and GM MIDI, as used in Kyrandia 2.
+ *
+ * Currently it does not initialize the MT-32 output properly,
+ * so MT-32 output does sound a bit odd in some cases.
+ * 
+ * TODO: this code needs some serious cleanup and rework
+ * to support MT-32 and GM properly.
+ */
 class SoundMidiPC : public MidiDriver, public Sound {
 public:
 	SoundMidiPC(KyraEngine *vm, Audio::Mixer *mixer, MidiDriver *driver);
@@ -320,18 +427,59 @@ private:
 	Sound *_music, *_sfx;
 };
 
+// Digital Audio
+
 #define SOUND_STREAMS 4
 
+class AUDStream;
+
+/**
+ * Digital audio output device.
+ *
+ * This is just used for Kyrandia 3.
+ */
 class SoundDigital {
 public:
 	SoundDigital(KyraEngine *vm, Audio::Mixer *mixer);
 	~SoundDigital();
 
-	bool init();
+	bool init() { return true; }
 
+	/**
+	 * Plays a sound.
+	 *
+	 * @param fileHandle	file handle used for playback.
+	 *                      It will be deleted when playback is finished
+	 * @param loop			true if the sound should loop (endlessly)
+	 * @param fadeIn		true if the sound should be faded in volume wise
+	 * @param channel		tell the sound player to use a specific channel for playback
+	 *
+	 * @return channel playing the sound
+	 */
 	int playSound(Common::File *fileHandle, bool loop = false, bool fadeIn = false, int channel = -1);
+
+	/**
+	 * Checks if a given channel is playing a sound.
+	 *
+	 * @param channel	channel number to check
+	 * @return true if playing, else false
+	 */
 	bool isPlaying(int channel);
+
+	/**
+	 * Stop the playback of a sound in the given
+	 * channel.
+	 *
+	 * @param channel	channel number
+	 */
 	void stopSound(int channel);
+
+	/**
+	 * Makes the sound in a given channel
+	 * fading out.
+	 *
+	 * @param channel	channel number
+	 */
 	void beginFadeOut(int channel);
 private:
 	KyraEngine *_vm;
