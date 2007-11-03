@@ -1083,7 +1083,7 @@ int main(int argc, char **argv)
 	return 0;
 }
 EOF
- 		   _need_memalign=yes
+			_need_memalign=yes
 			cc_check && $TMPO && _need_memalign=no
 			;;
 	esac
@@ -1133,7 +1133,7 @@ BUILD_PLUGINS := 1
 PLUGIN_PREFIX := lib
 PLUGIN_SUFFIX := .so
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
-CXXFLAGS      += -DDYNAMIC_MODULES
+CXXFLAGS        += -DDYNAMIC_MODULES
 CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
@@ -1151,7 +1151,7 @@ BUILD_PLUGINS := 1
 PLUGIN_PREFIX := lib
 PLUGIN_SUFFIX := .so
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
-CXXFLAGS      += -DDYNAMIC_MODULES
+CXXFLAGS        += -DDYNAMIC_MODULES
 CXXFLAGS        += -fpic
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
@@ -1168,7 +1168,7 @@ BUILD_PLUGINS := 1
 PLUGIN_PREFIX := 
 PLUGIN_SUFFIX := .plugin
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
-CXXFLAGS      += -DDYNAMIC_MODULES
+CXXFLAGS        += -DDYNAMIC_MODULES
 PLUGIN_LDFLAGS  += -bundle -bundle_loader $(EXECUTABLE) -exported_symbols_list "$(srcdir)/plugin.exp"
 PRE_OBJS_FLAGS  := -all_load
 POST_OBJS_FLAGS :=
