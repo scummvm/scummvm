@@ -33,6 +33,7 @@ BUILD_PLUGINS = 1
 #DISABLE_PARALLACTION = 1
 DISABLE_CRUISE = 1
 DISABLE_DRASCULA = 1
+DISABLE_IGOR = 1
 
 
 ########################################################################
