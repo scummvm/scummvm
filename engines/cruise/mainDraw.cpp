@@ -248,8 +248,7 @@ void blitPolyMode2(char *dest, int16 * buffer, char color)
 		int XMIN = XMIN_XMAX[1+i*2];
 		int XMAX = XMIN_XMAX[1+i*2+1];
 
-		if(XMAX > 0)
-			line(XMIN, currentY, XMAX, currentY, color);
+		line(XMIN, currentY, XMAX, currentY, color);
 	}
 /*	int i;
 
@@ -402,7 +401,7 @@ void buildSegment(void)
 
 				do
 				{
-					if((BX < ptrMax) && (BX > ptrMini)) // are we in screen ?
+					if((BX <= ptrMax) && (BX >= ptrMini)) // are we in screen ?
 					{
 						if(CX < BX[0])
 							BX[0] = CX;
@@ -588,7 +587,7 @@ void buildSegment(void)
 	}while(--segCount);
 }
 
-char *drawPolyMode1(char *dataPointer, int linesToDraw) {
+unsigned char *drawPolyMode1(unsigned char *dataPointer, int linesToDraw) {
 	int index;
 	int16 *pBufferDest;
 
@@ -638,7 +637,7 @@ char *drawPolyMode1(char *dataPointer, int linesToDraw) {
 	return dataPointer;
 }
 
-char *drawPolyMode2(char *dataPointer, int linesToDraw)
+unsigned char *drawPolyMode2(unsigned char *dataPointer, int linesToDraw)
 {
 	int index;
 	int16 *pBufferDest;
@@ -805,10 +804,12 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 
 	// position of the dataPointer is m_coordCount * 2
 
+	int polygonCount = 0;
+
 	do {
 		int linesToDraw = *dataPointer++;
 
-		if (linesToDraw > 1) {	// if value not zero
+		if (linesToDraw > 1){	// if value not zero
 			uint16 minimumScale;
 
 			m_color = *dataPointer;	// color
@@ -822,9 +823,9 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 			if (minimumScale <= scale)
 			{	
 				if (m_flipLeftRight) {
-					drawPolyMode1((char *)dataPointer, linesToDraw);
+					drawPolyMode1((unsigned char *)dataPointer, linesToDraw);
 				} else {
-					drawPolyMode2((char *)dataPointer, linesToDraw);
+					drawPolyMode2((unsigned char *)dataPointer, linesToDraw);
 				}
 
 				if (destBuffer) {
@@ -840,6 +841,8 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 		} else {
 			dataPointer += 4;
 		}
+
+		polygonCount ++;
 	} while (*dataPointer != 0xFF);
 }
 
