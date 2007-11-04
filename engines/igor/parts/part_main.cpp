@@ -793,7 +793,7 @@ void IgorEngine::PART_MAIN() {
 		drawInventory(1, 0);
 	}
 	do {
-		debug(kDebugGame, "PART_MAIN _currentPart %d", _currentPart);
+		debugC(9, kDebugGame, "PART_MAIN _currentPart %d", _currentPart);
 		switch (_currentPart) {
 		case 40:
 			PART_04();

@@ -30,7 +30,7 @@
 namespace Igor {
 
 void IgorEngine::PART_05_EXEC_ACTION(int action) {
-	debug(kDebugGame, "PART_05_EXEC_ACTION %d", action);
+	debugC(9, kDebugGame, "PART_05_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101:
 		ADD_DIALOGUE_TEXT(201, 2);

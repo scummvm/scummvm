@@ -218,6 +218,11 @@ void IgorEngine::waitForTimer(int ticks) {
 					_inputVars[kInputOptions] = 1;
 				} else if (ev.kbd.keycode == Common::KEYCODE_p) {
 					_inputVars[kInputPause] = 1;
+				} else if (ev.kbd.keycode == Common::KEYCODE_F11) {
+					sprintf(_saveStateDescriptions[kQuickSaveSlot], "Quicksave part %d", _currentPart);
+					saveGameState(kQuickSaveSlot);
+				} else if (ev.kbd.keycode == Common::KEYCODE_F12) {
+					loadGameState(kQuickSaveSlot);
 				}
 				break;
 			case Common::EVENT_MOUSEMOVE:
@@ -241,11 +246,11 @@ void IgorEngine::waitForTimer(int ticks) {
 			break;
 		}
 	} while (!_fastMode);
-	_nextTimer = _system->getMillis() + 8 * 1000 / kTickDelay;
+	_nextTimer = _system->getMillis() + kTimerTicksCount * 1000 / kTickDelay;
 	if (ticks != -1) {
 		return;
 	}
-	_gameTicks += 8;
+	_gameTicks += kTimerTicksCount;
 	if (_gameTicks == 64) {
 		_gameTicks = 0;
 		setCursor(_currentCursor);
@@ -276,7 +281,7 @@ int IgorEngine::getRandomNumber(int m) {
 }
 
 void IgorEngine::playMusic(int num) {
-	debug(kDebugEngine, "playMusic() %d", num);
+	debugC(9, kDebugEngine, "playMusic() %d", num);
 	const int *seq = 0;
 	switch (num) {
 	case 2: {
@@ -358,6 +363,7 @@ void IgorEngine::updateMusic() {
 }
 
 void IgorEngine::playSound(int num, int fl) {
+	debugC(9, kDebugEngine, "playSound() %d", num);
 	if (fl && _mixer->isSoundHandleActive(_sfxHandle)) {
 		return;
 	}
@@ -417,7 +423,7 @@ void IgorEngine::fixDialogueTextPosition(int num, int count, int *x, int *y) {
 }
 
 void IgorEngine::startCutsceneDialogue(int x, int y, int r, int g, int b) {
-	debug(kDebugEngine, "startCutsceneDialogue() pos %d,%d color %d,%d,%d", x, y, r, g, b);
+	debugC(9, kDebugEngine, "startCutsceneDialogue() pos %d,%d color %d,%d,%d", x, y, r, g, b);
 	--_dialogueTextsCount;
 	int talkX = x;
 	int talkY = y;
@@ -514,7 +520,7 @@ void IgorEngine::fixIgorDialogueTextPosition(int num, int count, int *x, int *y)
 }
 
 void IgorEngine::startIgorDialogue() {
-	debug(kDebugEngine, "startIgorDialogue()");
+	debugC(9, kDebugEngine, "startIgorDialogue()");
 //	if (_dialogueCursorOn) {
 //		clearCursor();
 //	}
@@ -635,7 +641,7 @@ ResourceEntry IgorEngine::findData(int id) {
 
 uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
 	ResourceEntry re = findData(id);
-	debug(kDebugResource, "loadData() id %d offset %d size %d", id, re.offs, re.size);
+	debugC(9, kDebugResource, "loadData() id %d offset %d size %d", id, re.offs, re.size);
 	if (!dst) {
 		dst = (uint8 *)malloc(re.size);
 		if (!dst) {
@@ -701,7 +707,7 @@ void IgorEngine::decodeRoomStrings(const uint8 *p, bool skipObjectNames) {
 				decodeRoomString(p, _roomObjectNames[index], len);
 				p += len;
 				_roomObjectNames[index][len] = '\0';
-				debug(kDebugResource, "decodeRoomStrings() _roomObjectNames[%d] '%s'", index, _roomObjectNames[index]);
+				debugC(9, kDebugResource, "decodeRoomStrings() _roomObjectNames[%d] '%s'", index, _roomObjectNames[index]);
 			}
 			code = *p++;
 		}
@@ -720,14 +726,14 @@ void IgorEngine::decodeRoomStrings(const uint8 *p, bool skipObjectNames) {
 			decodeRoomString(p, _globalDialogueTexts[index], len);
 			p += len;
 			_globalDialogueTexts[index][len] = '\0';
-			debug(kDebugResource, "decodeRoomStrings() _globalDialogueTexts[%d] '%s'", index, _globalDialogueTexts[index]);
+			debugC(9, kDebugResource, "decodeRoomStrings() _globalDialogueTexts[%d] '%s'", index, _globalDialogueTexts[index]);
 		}
 		code = *p++;
 	}
 }
 
 void IgorEngine::decodeRoomText(const uint8 *p) {
-	debug(kDebugResource, "decodeRoomText()");
+	debugC(9, kDebugResource, "decodeRoomText()");
 	memcpy(_walkXScaleRoom, p, 320); p += 320;
 	memcpy(_walkYScaleRoom, p, 432); p += 432;
 	decodeRoomStrings(p);
@@ -818,7 +824,7 @@ void IgorEngine::loadDialogueData(int dlg) {
 			if (len != 0) {
 				decodeRoomString(src, _dialogueQuestions[i][n], len);
 				_dialogueQuestions[i][n][len] = '\0';
-				debug(kDebugResource, "loadDialogueData() _dialogueQuestions[%d][%d] '%s'", i, n, _dialogueQuestions[i][n]);
+				debugC(9, kDebugResource, "loadDialogueData() _dialogueQuestions[%d][%d] '%s'", i, n, _dialogueQuestions[i][n]);
 			}
 		}
 	}
@@ -829,7 +835,7 @@ void IgorEngine::loadDialogueData(int dlg) {
 		if (len != 0) {
 			decodeRoomString(src, _dialogueReplies[i], len);
 			_dialogueReplies[i][len] = '\0';
-			debug(kDebugResource, "loadDialogueData() _dialogueReplies[%d] '%s'", i, _dialogueReplies[i]);
+			debugC(9, kDebugResource, "loadDialogueData() _dialogueReplies[%d] '%s'", i, _dialogueReplies[i]);
 		}
 	}
 	free(p);
@@ -854,22 +860,22 @@ void IgorEngine::loadMainTexts() {
 	const uint8 *src = &p[0] + _language * 7;
 	for (int i = 0; i < 3; ++i, src += 7 * 2) {
 		decodeMainString(src, _verbPrepositions[i]);
-		debug(kDebugResource, "loadMainTexts() _verbPrepositions[%d] '%s'", i, _verbPrepositions[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _verbPrepositions[%d] '%s'", i, _verbPrepositions[i]);
 	}
 	src = &p[0x2A] + _language * 31;
 	for (int i = 0; i < 35; ++i, src += 31 * 2) {
 		decodeMainString(src, _globalObjectNames[i]);
-		debug(kDebugResource, "loadMainTexts() _globalObjectNames[%d] '%s'", i, _globalObjectNames[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _globalObjectNames[%d] '%s'", i, _globalObjectNames[i]);
 	}
 	src = &p[0x8BA] + _language * 51;
 	for (int i = 0; i < 250; ++i, src += 51 * 2) {
 		decodeMainString(src, _globalDialogueTexts[i]);
-		debug(kDebugResource, "loadMainTexts() _globalDialogueTexts[%d] '%s'", i, _globalDialogueTexts[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _globalDialogueTexts[%d] '%s'", i, _globalDialogueTexts[i]);
 	}
 	src = &p[0x6CA4] + _language * 12;
 	for (int i = 0; i < 9; ++i, src += 12 * 2) {
 		decodeMainString(src, _verbsName[i]);
-		debug(kDebugResource, "loadMainTexts() _verbsName[%d] '%s'", i, _verbsName[i]);
+		debugC(9, kDebugResource, "loadMainTexts() _verbsName[%d] '%s'", i, _verbsName[i]);
 	}
 	free(p);
 }
@@ -907,7 +913,7 @@ void IgorEngine::setPaletteColor(uint8 index, uint8 r, uint8 g, uint8 b) {
 }
 
 void IgorEngine::setPaletteRange(int startColor, int endColor) {
-	debug(kDebugScreen, "setPaletteRange(%d, %d)", startColor, endColor);
+	debugC(9, kDebugScreen, "setPaletteRange(%d, %d)", startColor, endColor);
 	assert(endColor - startColor + 1 <= 256);
 	for (int i = startColor; i <= endColor; ++i) {
 		setPaletteColor(i, _currentPalette[3 * i], _currentPalette[3 * i + 1], _currentPalette[3 * i + 2]);
@@ -915,7 +921,7 @@ void IgorEngine::setPaletteRange(int startColor, int endColor) {
 }
 
 void IgorEngine::fadeInPalette(int count) {
-	debug(kDebugScreen, "fadeInPalette(%d)", count);
+	debugC(9, kDebugScreen, "fadeInPalette(%d)", count);
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 	int m = 66;
 	do {
@@ -936,7 +942,7 @@ void IgorEngine::fadeInPalette(int count) {
 }
 
 void IgorEngine::fadeOutPalette(int count) {
-	debug(kDebugScreen, "fadeOutPalette(%d)", count);
+	debugC(9, kDebugScreen, "fadeOutPalette(%d)", count);
 	_system->copyRectToScreen(_screenVGA, 320, 0, _screenVGAVOffset, 320, 200 - _screenVGAVOffset);
 	memcpy(_paletteBuffer, _currentPalette, 768);
 	int m = 0;
@@ -960,7 +966,7 @@ void IgorEngine::fadeOutPalette(int count) {
 }
 
 void IgorEngine::scrollPalette(int startColor, int endColor) {
-	debug(kDebugScreen, "scrollPalette(%d, %d)", startColor, endColor);
+	debugC(9, kDebugScreen, "scrollPalette(%d, %d)", startColor, endColor);
 	uint8 c[3];
 	memcpy(c, &_currentPalette[startColor * 3], 3);
 	memmove(&_currentPalette[startColor * 3], &_currentPalette[(startColor + 1) * 3], (endColor - startColor) * 3);
@@ -1110,13 +1116,13 @@ void IgorEngine::setCursor(int num) {
 }
 
 void IgorEngine::showCursor() {
-	debug(kDebugEngine, "showCursor()");
+	debugC(9, kDebugEngine, "showCursor()");
 	_roomCursorOn = true;
 	CursorMan.showMouse(_roomCursorOn);
 }
 
 void IgorEngine::hideCursor() {
-	debug(kDebugEngine, "hideCursor()");
+	debugC(9, kDebugEngine, "hideCursor()");
 	_roomCursorOn = false;
 	CursorMan.showMouse(_roomCursorOn);
 }
@@ -1337,7 +1343,7 @@ void IgorEngine::removeObjectFromInventory(int index) {
 }
 
 void IgorEngine::executeAction(int action) {
-	debug(kDebugEngine, "executeAction %d", action);
+	debugC(9, kDebugEngine, "executeAction %d", action);
 	assert(action < 200);
 	if (action <= 100) {
 		(this->*_executeMainAction)(action);
@@ -1511,7 +1517,7 @@ void IgorEngine::handleRoomInput() {
 		_actionCode = 0;
 		return;
 	}
-	debug(kDebugEngine, "handleRoomInput() actionCode %d", _actionCode);
+	debugC(9, kDebugEngine, "handleRoomInput() actionCode %d", _actionCode);
 	if (_actionCode == 0) {
 		clearAction();
 		return;
@@ -1534,7 +1540,7 @@ void IgorEngine::handleRoomInput() {
 					int offset = READ_LE_UINT16(_roomActionsTable + _roomDataOffsets.obj.walkPoints + _currentAction.object1Num * 2);
 					_walkToObjectPosX = offset % 320;
 					_walkToObjectPosY = offset / 320;
-					debug(kDebugEngine, "handleRoomInput() walkToObject offset %d (0x%X)", offset, _roomDataOffsets.obj.walkPoints);
+					debugC(9, kDebugEngine, "handleRoomInput() walkToObject offset %d (0x%X)", offset, _roomDataOffsets.obj.walkPoints);
 				}
 				if (_gameState.igorMoving) {
 					// stop igor at the current position
@@ -1692,7 +1698,7 @@ int IgorEngine::lookupScale(int xOffset, int yOffset, int h) const {
 
 void IgorEngine::moveIgor(int pos, int frame) {
 	assert(_gameState.enableLight == 1 || _gameState.enableLight == 2);
-	debug(kDebugWalk, "moveIgorHelper _walkDataCurrentIndex %d pos %d frame %d", _walkDataCurrentIndex, pos, frame);
+	debugC(9, kDebugWalk, "moveIgorHelper _walkDataCurrentIndex %d pos %d frame %d", _walkDataCurrentIndex, pos, frame);
 	WalkData *wd = &_walkData[_walkDataCurrentIndex];
 	uint8 _walkClipSkipX = wd->clipSkipX;
 	uint8 _walkHeightScale = wd->scaleHeight;
@@ -1819,7 +1825,7 @@ void IgorEngine::moveIgor(int pos, int frame) {
 }
 
 void IgorEngine::buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY) {
-	debug(kDebugWalk, "IgorEngine::buildWalkPathSimple(%d, %d, %d, %d)", srcX, srcY, dstX, dstY);
+	debugC(9, kDebugWalk, "IgorEngine::buildWalkPathSimple(%d, %d, %d, %d)", srcX, srcY, dstX, dstY);
 	if (srcX != dstX || srcY != dstY) {
 		_walkData[0] = _walkData[_walkDataLastIndex];
 		_walkDataLastIndex = 1;
@@ -1845,7 +1851,7 @@ void IgorEngine::getClosestAreaTrianglePoint(int dstArea, int srcArea, int *dstY
 			minSqrDist = sqrDist;
 		}
 	}
-	debug(kDebugWalk, "getClosestAreaTrianglePoint() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
+	debugC(9, kDebugWalk, "getClosestAreaTrianglePoint() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
 }
 
 void IgorEngine::getClosestAreaTrianglePoint2(int dstArea, int srcArea, int *dstY, int *dstX, int srcY1, int srcX1, int srcY2, int srcX2) {
@@ -1867,7 +1873,7 @@ void IgorEngine::getClosestAreaTrianglePoint2(int dstArea, int srcArea, int *dst
 			minSqrDist = sqrDist;
 		}
 	}
-	debug(kDebugWalk, "getClosestAreaTrianglePoint2() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
+	debugC(9, kDebugWalk, "getClosestAreaTrianglePoint2() sqrDist %d pos %d,%d", minSqrDist, *dstX, *dstY);
 }
 
 void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
@@ -1876,19 +1882,19 @@ void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
 		_walkDataLastIndex = 1;
 		int srcArea = _roomObjectAreasTable[_screenLayer2[srcY * 320 + srcX]].area;
 		int dstArea = _roomObjectAreasTable[_screenLayer2[dstY * 320 + dstX]].area;
-		debug(kDebugWalk, "srcArea = %d dstArea = %d", srcArea, dstArea);
+		debugC(9, kDebugWalk, "srcArea = %d dstArea = %d", srcArea, dstArea);
 		int currentArea = srcArea;
 		for (int i = 1; dstArea != currentArea; ++i) {
 			const int boxOffset = srcArea * _roomDataOffsets.area.boxSrcSize + dstArea * _roomDataOffsets.area.boxDstSize;
 			int nextArea = _roomActionsTable[boxOffset + i + _roomDataOffsets.area.box];
-			debug(kDebugWalk, "nextArea %d (%d,%d,%d)", nextArea, _roomDataOffsets.area.box, _roomDataOffsets.area.boxSrcSize, _roomDataOffsets.area.boxDstSize);
+			debugC(9, kDebugWalk, "nextArea %d (%d,%d,%d)", nextArea, _roomDataOffsets.area.box, _roomDataOffsets.area.boxSrcSize, _roomDataOffsets.area.boxDstSize);
 			int nextPosX, nextPosY;
 			if (dstArea != nextArea) {
 				getClosestAreaTrianglePoint(nextArea, currentArea, &nextPosY, &nextPosX, srcY, srcX);
 			} else {
 				getClosestAreaTrianglePoint2(nextArea, currentArea, &nextPosY, &nextPosX, dstY, dstX, srcY, srcX);
 			}
-			debug(kDebugWalk, "buildWalkPath() transitionArea = %d next %d,%d pos %d,%d offset 0x%X", nextArea, nextPosX, nextPosY, dstX, dstY, _roomDataOffsets.area.box);
+			debugC(9, kDebugWalk, "buildWalkPath() transitionArea = %d next %d,%d pos %d,%d offset 0x%X", nextArea, nextPosX, nextPosY, dstX, dstY, _roomDataOffsets.area.box);
 			buildWalkPathArea(srcX, srcY, nextPosX, nextPosY);
 			srcX = nextPosX;
 			srcY = nextPosY;
@@ -1897,14 +1903,14 @@ void IgorEngine::buildWalkPath(int srcX, int srcY, int dstX, int dstY) {
 		buildWalkPathArea(srcX, srcY, dstX, dstY);
 		--_walkDataLastIndex;
 	}
-	debug(kDebugWalk, "buildWalkPath() end _walkDataLastIndex %d", _walkDataLastIndex);
+	debugC(9, kDebugWalk, "buildWalkPath() end _walkDataLastIndex %d", _walkDataLastIndex);
 }
 
 void IgorEngine::buildWalkPathArea(int srcX, int srcY, int dstX, int dstY) {
 	if (srcX != dstX || srcY != dstY) {
 		const int dx = dstX - srcX;
 		const int dy = dstY - srcY;
-		debug(kDebugWalk, "buildWalkPathArea() dx = %d dy = %d src %d,%d dst %d,%d", dx, dy, srcX, srcY, dstX, dstY);
+		debugC(9, kDebugWalk, "buildWalkPathArea() dx = %d dy = %d src %d,%d dst %d,%d", dx, dy, srcX, srcY, dstX, dstY);
 		assert(_walkDataLastIndex > 0);
 		if (ABS(dy) * 2 > ABS(dx)) {
 			if (srcY > dstY) {
@@ -1931,7 +1937,7 @@ static int16 truncReal(float f) {
 }
 
 int IgorEngine::getVerticalStepsCount(int minX, int minY, int maxX, int maxY) {
-	debug(kDebugWalk, "getVerticalStepsCount() %d %d %d %d", minX, minY, maxX, maxY);
+	debugC(9, kDebugWalk, "getVerticalStepsCount() %d %d %d %d", minX, minY, maxX, maxY);
 	int curX = 2;
 	if ((_walkXScaleRoom[minX] != 1 || _walkXScaleRoom[maxX] != 3) && (_walkXScaleRoom[maxX] != 1 || _walkXScaleRoom[minX] != 3)) {
 		curX = _walkXScaleRoom[minX];
@@ -1957,7 +1963,7 @@ int IgorEngine::getHorizontalStepsCount(int minX, int minY, int maxX, int maxY) 
 	float r1 = _walkScaleSpeedTable[scale - 1];
 	scale = _walkYScaleRoom[(_walkXScaleRoom[minX] - 1) * 144 + minY];
 	float r2 = _walkScaleSpeedTable[scale - 1];
-	debug(kDebugWalk, "getHorizontalStepsCount() maxX - minX = %d r1 = %f r2 = %f", maxX - minX, r1, r2);
+	debugC(9, kDebugWalk, "getHorizontalStepsCount() maxX - minX = %d r1 = %f r2 = %f", maxX - minX, r1, r2);
 
 	int16 steps = roundReal((maxX - minX) / ((r1 + r2) / 2.));
 	int count = 0;
@@ -2814,7 +2820,7 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b) {
 				_gameState.dialogueData[offset + 2] = 2;
 			}
 		}
-		debug(kDebugEngine, "handleDialogue() action %d offset %d", _gameState.dialogueData[offset + 2], offset);
+		debugC(9, kDebugEngine, "handleDialogue() action %d offset %d", _gameState.dialogueData[offset + 2], offset);
 		switch (_gameState.dialogueData[offset + 2]) {
 		case 1:
 			_gameState.dialogueChoiceCount = _gameState.dialogueData[offset + 1];
@@ -2832,7 +2838,7 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b) {
 			_dialogueEnded = true;
 			break;
 		}
-		debug(kDebugEngine, "handleDialogue() end %d start %d count %d", _dialogueEnded, _gameState.dialogueChoiceStart, _gameState.dialogueChoiceCount);
+		debugC(9, kDebugEngine, "handleDialogue() end %d start %d count %d", _dialogueEnded, _gameState.dialogueChoiceStart, _gameState.dialogueChoiceCount);
 	} while (!_dialogueEnded);
 	memset(_screenVGA + 46080, 0, 17920);
 	drawVerbsPanel();
@@ -2858,7 +2864,7 @@ void IgorEngine::drawDialogueChoices() {
 			sprintf(questionText, "@%s %s", _dialogueQuestions[num][0], _dialogueQuestions[num][1]);
 			drawString(_screenVGA, questionText, 0, _dialogueInfo[0] * 11 + 135, 240, 0, 0);
 		}
-		 debug(kDebugEngine, "drawDialogueChoices() i %d state %d num %d", i, _gameState.dialogueData[offset], _gameState.dialogueData[offset + 3]);
+		 debugC(9, kDebugEngine, "drawDialogueChoices() i %d state %d num %d", i, _gameState.dialogueData[offset], _gameState.dialogueData[offset + 3]);
 	}
 	setPaletteColor(240, _paletteBuffer[0x2F6 + 1], _paletteBuffer[0x2F6 + 2], _paletteBuffer[0x2F6 + 3]);
 	setPaletteColor(241, _paletteBuffer[0x2F0 + 1], _paletteBuffer[0x2F0 + 2], _paletteBuffer[0x2F0 + 3]);
@@ -2903,7 +2909,7 @@ void IgorEngine::dialogueAskQuestion() {
 	if (getPart() == 17) {
 		num = 5;
 	}
-	debug(kDebugEngine, "dialogueAskQuestion() num %d offset %d", num, offset);
+	debugC(9, kDebugEngine, "dialogueAskQuestion() num %d offset %d", num, offset);
 	strcpy(_globalDialogueTexts[250], _dialogueQuestions[num][0]);
 	strcpy(_globalDialogueTexts[251], _dialogueQuestions[num][1]);
 	if (_globalDialogueTexts[251][0]) {
@@ -2919,7 +2925,7 @@ void IgorEngine::dialogueAskQuestion() {
 void IgorEngine::dialogueReplyToQuestion(int x, int y, int r, int g, int b) {
 	int offset = (_dialogueInfo[_dialogueChoiceSelected] - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
 	int reply = _gameState.dialogueData[offset + 4];
-	debug(kDebugEngine, "dialogueReplyToQuestion() dialogue choice %d reply %d", _dialogueChoiceSelected, reply);
+	debugC(9, kDebugEngine, "dialogueReplyToQuestion() dialogue choice %d reply %d", _dialogueChoiceSelected, reply);
 	if (reply == 0) {
 		return;
 	}
@@ -2929,7 +2935,7 @@ void IgorEngine::dialogueReplyToQuestion(int x, int y, int r, int g, int b) {
 	for (int i = 0; i < count; ++i) {
 		int num = _gameState.dialogueData[offset] - 1;
 		int len = _gameState.dialogueData[offset + 1];
-		debug(kDebugEngine, "dialogueReplyToQuestion() reply %d %d offset %d", num, len, offset);
+		debugC(9, kDebugEngine, "dialogueReplyToQuestion() reply %d %d offset %d", num, len, offset);
 		ADD_DIALOGUE_TEXT(dialogueIndex, len);
 		for (int j = 0; j < len; ++j) {
 			strcpy(_globalDialogueTexts[dialogueIndex], _dialogueReplies[num + j]);

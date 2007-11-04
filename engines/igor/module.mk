@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	detection.o \
 	igor.o \
 	menu.o \
+	saveload.o \
 	staticres.o \
 	parts/part_04.o \
 	parts/part_05.o \

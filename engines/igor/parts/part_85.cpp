@@ -181,7 +181,7 @@ void IgorEngine::PART_85() {
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 	PART_85_HELPER_1(0x74CA, 0xA6C4, 1, 6, 32);
 	if (_inputVars[kInputEscape]) goto PART_85_EXIT;
-	for (int i = 0; i != 200; ++i) {
+	for (int i = 0; i <= 200 / kTimerTicksCount; ++i) {
 		PART_85_UPDATE_ROOM_BACKGROUND();
 		if (_inputVars[kInputEscape]) goto PART_85_EXIT;
 		waitForTimer();

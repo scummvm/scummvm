@@ -62,7 +62,10 @@ enum {
 	kSharewarePart = 950,
 	kTalkColor = 240,
 	kTalkShadowColor = 241,
-	kTickDelay = 1193180 / 4096
+	kTickDelay = 1193180 / 4096,
+	kTimerTicksCount = 8,
+	kQuickSaveSlot = 0,
+	kMaxSaveStates = 10
 };
 
 enum {
@@ -204,7 +207,7 @@ struct WalkData {
 		scaleHeight = h;
 	}
 
-	static void setNextFrame(int pos, int &frame) {
+	static void setNextFrame(uint8 pos, uint8 &frame) {
 		switch (pos) {
 		case kFacingPositionBack:
 		case kFacingPositionFront:
@@ -260,6 +263,8 @@ struct Action {
 	uint8 object2Num;
 	uint8 object2Type;
 };
+
+class TypeSerializer;
 
 class IgorEngine: public Engine {
 public:
@@ -387,7 +392,10 @@ protected:
 	void dialogueAskQuestion();
 	void dialogueReplyToQuestion(int x, int y, int r, int g, int b);
 
-//	void serializeGameState(int slot, File *f, bool saving);
+	void saveOrLoadGameState(TypeSerializer &typeSerializer);
+	void loadGameState(int slot);
+	void saveGameState(int slot);
+	void generateGameStateFileName(int num, char *dst, int len) const;
 
 	Common::File _ovlFile;
 	Common::File _sndFile;
@@ -417,13 +425,13 @@ protected:
 
 	WalkData _walkData[100];
 	uint8 _walkCurrentPos;
-	int _walkDataLastIndex;
-	int _walkDataCurrentIndex;
-	int _walkCurrentFrame;
+	uint8 _walkDataLastIndex;
+	uint8 _walkDataCurrentIndex;
+	uint8 _walkCurrentFrame;
 	int _walkDataCurrentPosX, _walkDataCurrentPosY;
 	int _walkToObjectPosX, _walkToObjectPosY;
 
-	int _currentPart;
+	int16 _currentPart;
 	int _talkDelay;
 	int _talkSpeechCounter;
 	int _talkDelayCounter;
@@ -461,7 +469,7 @@ protected:
 	Action _currentAction;
 	uint8 _actionCode;
 	uint8 _actionWalkPoint;
-	int _inputVars[kInputVarCount];
+	int16 _inputVars[kInputVarCount];
 	bool _scrollInventory;
 	int _scrollInventoryStartY, _scrollInventoryEndY, _scrollInventoryDy;
 	bool _roomCursorOn;
@@ -474,6 +482,7 @@ protected:
 	int _gameTicks;
 	int _resourceEntriesCount;
 	int _resourceEntriesOffset;
+	char _saveStateDescriptions[kMaxSaveStates][100];
 
 	static const uint8 _dialogueColor[];
 	static const uint8 _sentenceColorIndex[];

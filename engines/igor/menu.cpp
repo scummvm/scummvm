@@ -338,6 +338,7 @@ void IgorEngine::handleOptionsMenu() {
 			_currentPart = kSharewarePart;
 		}
 	}
+	showCursor();
 }
 
 void IgorEngine::handlePause() {
