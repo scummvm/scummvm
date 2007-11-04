@@ -116,6 +116,9 @@
 			RelativePath="..\..\engines\saga\actor.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\saga\actor_walk.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\saga\animation.cpp">
 		</File>
 		<File
@@ -273,9 +276,6 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\saga\sthread.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\stream.h">
 		</File>
 	</Files>
 	<Globals>

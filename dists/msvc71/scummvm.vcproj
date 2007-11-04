@@ -202,6 +202,9 @@
 				RelativePath="..\..\common\endian.h">
 			</File>
 			<File
+				RelativePath="..\..\common\error.h">
+			</File>
+			<File
 				RelativePath="..\..\common\events.h">
 			</File>
 			<File
@@ -575,10 +578,10 @@
 				Name="fs"
 				Filter="">
 				<File
-					RelativePath="..\..\backends\fs\abstract-fs.h">
+					RelativePath="..\..\backends\fs\abstract-fs-factory.cpp">
 				</File>
 				<File
-					RelativePath="..\..\backends\fs\windows\windows-fs.cpp">
+					RelativePath="..\..\backends\fs\abstract-fs-factory.h">
 				</File>
 			</Filter>
 			<Filter
@@ -608,10 +611,25 @@
 					RelativePath="..\..\backends\platform\sdl\graphics.cpp">
 				</File>
 				<File
-					RelativePath="..\..\backends\platform\sdl\sdl-common.h">
+					RelativePath="..\..\backends\platform\sdl\main.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\backends\platform\sdl\sdl.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\platform\sdl\sdl.h">
 				</File>
 			</Filter>
 			<Filter
