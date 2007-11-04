@@ -184,9 +184,10 @@ void NewGui::redraw() {
 	// This is necessary to get the blending right.
 	_theme->clearAll();
 
-	for (i = 0; i < _dialogStack.size(); ++i) {
-		_theme->closeDialog();
-	}
+	_theme->closeAllDialogs();
+	//for (i = 0; i < _dialogStack.size(); ++i)
+	//	_theme->closeDialog();
+
 	for (i = 0; i < _dialogStack.size(); i++) {
 		// Special treatment when topmost dialog has dimsInactive() set to false
 		// This is the case for PopUpWidget which should not dim a dialog
@@ -201,7 +202,7 @@ void NewGui::redraw() {
 		_dialogStack[i]->drawDialog();
 	}
 
-	_theme->drawAll();
+	_theme->updateScreen();
 }
 
 Dialog *NewGui::getTopDialog() const {
@@ -243,7 +244,7 @@ void NewGui::runLoop() {
 
 		if (_useStdCursor)
 			animateCursor();
-		_theme->drawAll();
+		_theme->updateScreen();
 		_system->updateScreen();
 
 		Common::Event event;
@@ -321,7 +322,10 @@ void NewGui::runLoop() {
 		_system->delayMillis(10);
 	}
 
-	_theme->closeDialog();
+	// HACK: since we reopen all dialogs anyway on redraw
+	// we for now use Theme::closeAllDialogs here, until
+	// we properly add (and implement) Theme::closeDialog
+	_theme->closeAllDialogs();
 
 	if (didSaveState) {
 		_theme->disable();

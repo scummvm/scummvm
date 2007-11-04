@@ -41,16 +41,16 @@ public:
 
 	void refresh();
 
-	bool ownCursor() { return _useCursor; }
+	bool ownCursor() const { return _useCursor; }
 
 	void enable();
 	void disable();
 	
 	void openDialog(bool topDialog);
-	void closeDialog();
+	void closeAllDialogs();
 
 	void clearAll();
-	void drawAll();
+	void updateScreen();
 	
 	void setDrawArea(const Common::Rect &r);
 	void resetDrawArea();

@@ -134,7 +134,7 @@ void ThemeClassic::openDialog(bool topDialog) {
 #endif
 }
 
-void ThemeClassic::closeDialog() {
+void ThemeClassic::closeAllDialogs() {
 #ifndef CT_NO_TRANSPARENCY
 	if (_dialog) {
 		_dialog->screen.free();
@@ -153,7 +153,7 @@ void ThemeClassic::clearAll() {
 	_system->grabOverlay((OverlayColor*)_screen.pixels, _screen.w);
 }
 
-void ThemeClassic::drawAll() {
+void ThemeClassic::updateScreen() {
 	_forceRedraw = false;
 }
 

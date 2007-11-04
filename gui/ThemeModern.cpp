@@ -211,7 +211,7 @@ void ThemeModern::openDialog(bool topDialog) {
 		addDirtyRect(Common::Rect(0, 0, _screen.w, _screen.h), false, false);
 }
 
-void ThemeModern::closeDialog() {
+void ThemeModern::closeAllDialogs() {
 	if (_dialog) {
 		_dialog->screen.free();
 		delete _dialog;
@@ -228,7 +228,7 @@ void ThemeModern::clearAll() {
 	_system->grabOverlay((OverlayColor*)_screen.pixels, _screen.w);
 }
 
-void ThemeModern::drawAll() {
+void ThemeModern::updateScreen() {
 	// TODO: see ThemeModern::addDirtyRect
 	_forceRedraw = false;
 }

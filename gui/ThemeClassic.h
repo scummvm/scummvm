@@ -46,10 +46,10 @@ public:
 	void disable();
 
 	void openDialog(bool topDialog);
-	void closeDialog();
+	void closeAllDialogs();
 
 	void clearAll();
-	void drawAll();
+	void updateScreen();
 	
 	void resetDrawArea();
 
