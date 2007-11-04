@@ -177,7 +177,13 @@ endif
 
 include $(srcdir)/Makefile.common
 
+# Our top level target depends on whether we are building the plugin version
+# or not...
+ifdef BUILD_PLUGINS
+all: dist-plugins
+else
 all: dist
+endif
 
 dist: ARMscaler.o PocketSCUMM.o $(EXECUTABLE)
 
