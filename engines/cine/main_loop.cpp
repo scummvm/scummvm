@@ -228,8 +228,8 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		playerCommand = -1;
 		strcpy(commandBuffer, "");
 
-		globalVars[0x1F2] = 0;
-		globalVars[0x1F4] = 0;
+		globalVars[VAR_MOUSE_X_POS] = 0;
+		globalVars[VAR_MOUSE_Y_POS] = 0;
 
 		for (i = 0; i < 16; i++) {
 			c_palette[i] = 0;
