@@ -49,70 +49,36 @@ _mt32emu=yes
 _build_hq_scalers=yes
 _build_scalers=yes
 
-_engines='
-scumm
-scumm_7_8
-he
-agi
-agos
-cine
-cruise
-drascula
-gob
-igor
-kyra
-lure
-parallaction
-queen
-saga
-sky
-sword1
-sword2
-touche
-'
-_engine_scumm_name="SCUMM"
-_engine_scumm_build=yes
-_engine_scumm_check=check_scumm_build
-_engine_scumm_7_8_name="v7 and v8 games (ft, dig, comi and demos) in SCUMM"
-_engine_scumm_7_8_build=yes
-_engine_scumm_7_8_sub=yes
-_engine_he_name="HE70+ games in SCUMM"
-_engine_he_build=yes
-_engine_he_sub=yes
-_engine_agi_name="AGI"
-_engine_agi_build=yes
-_engine_agos_name="AGOS"
-_engine_agos_build=yes
-_engine_cine_name="Cinematique evo 1"
-_engine_cine_build=yes
-_engine_cruise_name="Cinematique evo 2"
-_engine_cruise_build=no
-_engine_drascula_name="Drascula: The Vampire Strikes Back"
-_engine_drascula_build=no
-_engine_gob_name="Gobli*ns"
-_engine_gob_build=yes
-_engine_igor_name="Igor: Objective Uikokahonia"
-_engine_igor_build=no
-_engine_kyra_name="Legend of Kyrandia"
-_engine_kyra_build=yes
-_engine_lure_name="Lure of the Temptress"
-_engine_lure_build=yes
-_engine_parallaction_name="Parallaction"
-_engine_parallaction_build=yes
-_engine_queen_name="Flight of the Amazon Queen"
-_engine_queen_build=yes
-_engine_saga_name="SAGA"
-_engine_saga_build=yes
-_engine_sky_name="Beneath a Steel Sky"
-_engine_sky_build=yes
-_engine_sword1_name="Broken Sword 1"
-_engine_sword1_build=yes
-_engine_sword1_check=check_sword_build
-_engine_sword2_name="Broken Sword 2"
-_engine_sword2_build=yes
-_engine_sword2_check=check_sword_build
-_engine_touche_name="Touche: The Adventures of the Fifth Musketeer"
-_engine_touche_build=yes
+# Add an engine: id name build subengines
+add_engine() {
+	_engines="${_engines} ${1}"
+	eval _engine_${1}_name='${2}'
+	eval _engine_${1}_build='${3}'
+	eval _engine_${1}_subengines='${4}'
+	for sub in ${4}; do
+		eval _engine_${sub}_sub=yes
+	done
+}
+
+add_engine scumm "SCUMM" yes "scumm_7_8 he"
+add_engine scumm_7_8 "v7 & v8 games" yes
+add_engine he "HE70+ games" yes
+add_engine agi "AGI" yes
+add_engine agos "AGOS" yes
+add_engine cine "Cinematique evo 1" yes
+add_engine cruise "Cinematique evo 2" no
+add_engine drascula "Drascula: The Vampire Strikes Back" no
+add_engine gob "Gobli*ns" yes
+add_engine igor "Igor: Objective Uikokahonia" no
+add_engine kyra "Legend of Kyrandia" yes
+add_engine lure "Lure of the Temptress" yes
+add_engine parallaction "Parallaction" yes
+add_engine queen "Flight of the Amazon Queen" yes
+add_engine saga "SAGA" yes
+add_engine sky "Beneath a Steel Sky" yes
+add_engine sword1 "Broken Sword 1" yes
+add_engine sword2 "Broken Sword 2" yes
+add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 
 _endian=unknown
 _need_memalign=no
@@ -359,10 +325,15 @@ get_engine_build() {
 	eval echo \$_engine_$1_build
 }
 
+# Get the subengines
+get_engine_subengines() {
+	eval echo \$_engine_$1_subengines
+}
+
 # Ask if this is a subengine
 get_engine_sub() {
 	sub=`eval echo \\$_engine_$1_sub`
-	if test "$sub" = "" ; then
+	if test -z "$sub" ; then
 		sub=no
 	fi
 	echo $sub
@@ -388,6 +359,12 @@ engine_disable() {
 	fi
 }
 
+# Show the configure help line for an option
+option_help() {
+	option=`echo "--$(echo $1 | sed 's/_/-/g')                       " | head -c 23`
+	echo "  ${option}  ${2}"
+}
+
 # Show the configure help line for a given engine
 show_engine_help() {
 	if test `get_engine_build $1` = yes ; then
@@ -397,67 +374,111 @@ show_engine_help() {
 		option="enable"
 		do=""
 	fi
-	option=`echo "--${option}-$(echo $1 | sed 's/_/-/g')                       " | head -c 23`
 	name=`get_engine_name $1`
-	echo "  ${option}  ${do}build the ${name} engine"
+	option_help ${option}-${1} "${do}build the ${name} engine"
+	for sub in `get_engine_subengines $1`; do
+		show_subengine_help $sub $1
+	done
 }
 
-check_engine_build() {
-	check=`eval echo \\$_engine_$1_check`
-	if test "$check" = "" ; then
-		name=`get_engine_name $1`
-		if test `get_engine_build $1` = yes ; then
-			_engines_built="${_engines_built}#$name@"
-		else
-			_engines_skipped="${_engines_skipped}#$name@"
-		fi
+# Show the configure help line for a given subengine
+show_subengine_help() {
+	if test `get_engine_build $1` = yes ; then
+		option="disable"
+		do="exclude"
 	else
-		$check $1
+		option="enable"
+		do="include"
+	fi
+	name=`get_engine_name $1`
+	parent=`get_engine_name $2`
+	option_help ${option}-${1} "${do} the ${name} in ${parent} engine"
+}
+
+# Prepare the strings about the engines to build
+prepare_engine_build_strings() {
+	string_yes=`get_engine_build_string $1 yes`
+	if test -n "$string_yes" ; then
+		_engines_built="${_engines_built}#$string_yes@"
+	fi
+
+	string_no=`get_engine_build_string $1 no`
+	if test -n "$string_no" ; then
+		_engines_skipped="${_engines_skipped}#$string_no@"
 	fi
 }
 
-check_sword_build() {
-	name=`get_engine_name $1`
-	if test `get_engine_build $1` = yes ; then
-		_engines_built="${_engines_built}#$name"
+# Get the string about building an engine
+get_engine_build_string() {
+	engine_string=""
+	if test `get_engine_build $1` = no ; then
+		if test $2 = no ; then
+			engine_string=`get_engine_name $1`
+		else
+			engine_string=""
+		fi
+	else
+		build_string_func=get_${1}_build_string
+		if ( type $build_string_func | grep function ) 2> /dev/null > /dev/null ; then
+			engine_string=`$build_string_func $1 $2`
+		else
+			engine_string=`get_subengines_build_string $1 $2`
+		fi
+
+		if test $2 = yes ; then
+			engine_string="`get_engine_name $1` $engine_string"
+		else
+			if test -n "$engine_string" ; then
+				engine_string="`get_engine_name $1` $engine_string"
+			fi
+		fi
+	fi
+
+	echo $engine_string
+}
+
+# Get the string about building subengines
+get_subengines_build_string() {
+	all=yes
+	subengine_string=$3
+	for subeng in `get_engine_subengines $1` ; do
+		if test `get_engine_build $subeng` = $2 ; then
+			subengine_string="$subengine_string [`get_engine_name $subeng`]"
+		else
+			all=no
+		fi
+	done
+	if test $2 = yes ; then
+		if test -n "$subengine_string" ; then
+			if test $all = yes ; then
+				subengine_string="[all games]"
+			fi
+		fi
+	fi
+
+	echo $subengine_string
+}
+
+# Engine specific build strings
+get_sword1_build_string() {
+	if test $2 = yes ; then
 		if test "$_mpeg2" = yes ; then
-			_engines_built="${_engines_built} (w/ mpeg2 cutscenes)"
+			echo "(w/ mpeg2 cutscenes)"
 		else
-			_engines_built="${_engines_built} (without mpeg2 cutscenes)"
+			echo "(without mpeg2 cutscenes)"
 		fi
-		_engines_built="${_engines_built}@"
-	else
-		_engines_skipped="${_engines_skipped}#$name@"
 	fi
 }
 
-check_scumm_build() {
-	name=`get_engine_name $1`
+get_sword2_build_string() {
+	get_sword1_build_string $1 $2
+}
 
-	if test `get_engine_build $1` = yes ; then
-		_engines_built="${_engines_built}#$name [v0-v6 games]"
-
-		if test "$_engine_scumm_7_8_build" = yes ; then
-			_engines_built="${_engines_built} [v7 & v8 games]"
-		else
-			skip=" [v7 & v8 games]"
-		fi
-		if test "$_engine_he_build" = yes ; then
-			_engines_built="${_engines_built} [HE70+ games]"
-		else
-			skip="$skip [HE70+ games]"
-		fi
-
-		if test "$skip" = "" ; then
-			true
-		else
-			_engines_skipped="$_engines_skipped#$name$skip@"
-		fi
-
-		_engines_built="${_engines_built}@"
-	else
-		_engines_skipped="${_engines_skipped}#$name [all games]@"
+get_scumm_build_string() {
+	if test $2 = yes ; then
+		base="[v0-v6 games]"
 	fi
+	get_subengines_build_string $1 $2 "$base"
 }
 
 #
@@ -479,8 +500,10 @@ echo "Configure run on" `date` > $TMPLOG
 for parm in "$@" ; do
 	if test "$parm" = "--help" || test "$parm" = "-help" || test "$parm" = "-h" ; then
 		for engine in $_engines; do
-			engines_help="$engines_help`show_engine_help $engine`
+			if test `get_engine_sub $engine` = no ; then
+				engines_help="$engines_help`show_engine_help $engine`
 "
+			fi
 		done
 		cat << EOF
 
@@ -1452,23 +1475,19 @@ _engines_skipped=""
 
 for engine in $_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then
-		check_engine_build $engine
+		prepare_engine_build_strings $engine
 	fi
 done
 
 echo
-if test "$_engines_built" = "" ; then
-	true
-else
+if test -n "$_engines_built" ; then
 	echo "Engines:"
 	echo $_engines_built | sed 's/@/\
 /g
 s/#/    /g'
 fi
 
-if test "$_engines_skipped" = "" ; then
-	true
-else
+if test -n "$_engines_skipped" ; then
 	echo "Engines Skipped:"
 	echo $_engines_skipped | sed 's/@/\
 /g
