@@ -257,28 +257,60 @@ int Parallaction_ns::go() {
 
 	guiStart();
 
-	_engineFlags &= ~kEngineChangeLocation;
+	changeLocation(_location._name);
 
-	LocationName locname;
-	locname.bind(_location._name);
-
-	changeCharacter(locname.character());
-
-	strcpy(_location._name, locname.location());
-	strcpy(_saveData1, _location._name);
-	parseLocation(_location._name);
-
-	if (_location._startPosition.x != -1000) {
-		_char._ani._left = _location._startPosition.x;
-		_char._ani._top = _location._startPosition.y;
-		_char._ani._frame = _location._startFrame;
-		_location._startPosition.y = -1000;
-		_location._startPosition.x = -1000;
-	};
+	addJob(kJobEraseAnimations, (void*)1, kPriority20);
+	_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
+	addJob(kJobDisplayAnimations, 0, kPriority3);
 
 	runGame();
 
 	return 0;
+}
+
+void Parallaction_ns::switchBackground(const char* background, const char* mask) {
+//	printf("switchBackground(%s)", name);
+
+	Palette pal;
+
+	uint16 v2 = 0;
+	if (!scumm_stricmp(background, "final")) {
+		_gfx->clearScreen(Gfx::kBitBack);
+		for (uint16 _si = 0; _si < 32; _si++) {
+			pal.setEntry(_si, v2, v2, v2);
+			v2 += 4;
+		}
+
+		g_system->delayMillis(20);
+		_gfx->setPalette(pal);
+		_gfx->updateScreen();
+	}
+
+	setBackground(background, mask, mask);
+
+	return;
+}
+
+
+void Parallaction_ns::showSlide(const char *name) {
+
+	BackgroundInfo info;
+
+	_disk->loadSlide(info, name);
+
+	// TODO: avoid using screen buffers for displaying slides. Using a generic buffer
+	// allows for positioning of graphics as needed by Big Red Adventure.
+	// The main problem lies with menu, which relies on multiple buffers, mainly because
+	// it is crappy code.
+	_gfx->setBackground(&info.bg);
+	_gfx->setPalette(info.palette);
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+
+	info.bg.free();
+	info.mask.free();
+	info.path.free();
+
+	return;
 }
 
 //	changeLocation handles transitions between locations, and is able to display slides
@@ -441,6 +473,9 @@ void Parallaction_ns::initJobs() {
 	};
 
 	_jobsFn = jobs;
+
+	_jDrawInventory = 0;
+	_jRunScripts = 0;
 }
 
 JobOpcode* Parallaction_ns::createJobOpcode(uint functionId, Job *job) {

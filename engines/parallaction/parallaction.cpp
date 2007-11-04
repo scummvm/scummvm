@@ -87,9 +87,6 @@ uint16		_introSarcData2 = 1;
 
 // private stuff
 
-static Job	   *_jDrawInventory = NULL;
-static Job	   *_jRunScripts = NULL;
-
 
 Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) :
 	Engine(syst), _gameDescription(gameDesc), _char(this) {
@@ -274,28 +271,6 @@ void waitUntilLeftClick() {
 
 
 void Parallaction::runGame() {
-
-	addJob(kJobEraseAnimations, (void*)1, kPriority20);
-	_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
-	addJob(kJobDisplayAnimations, 0, kPriority3);
-
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-
-	if (_location._commands.size() > 0)
-		runCommands(_location._commands);
-
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
-	if (_location._comment)
-		doLocationEnterTransition();
-
-	if (_hasLocationSound)
-		_soundMan->playSfx(_locationSound, 0, true);
-
-	_vm->setArrowCursor();
-
-	if (_location._aCommands.size() > 0)
-		runCommands(_location._aCommands);
 
 	while ((_engineFlags & kEngineQuit) == 0) {
 		_keyDown = updateInput();
@@ -862,50 +837,7 @@ void Parallaction::showLocationComment(const char *text, bool end) {
 	return;
 }
 
-void Parallaction::switchBackground(const char* background, const char* mask) {
-//	printf("switchBackground(%s)", name);
 
-	Palette pal;
-
-	uint16 v2 = 0;
-	if (!scumm_stricmp(background, "final")) {
-		_gfx->clearScreen(Gfx::kBitBack);
-		for (uint16 _si = 0; _si < 32; _si++) {
-			pal.setEntry(_si, v2, v2, v2);
-			v2 += 4;
-		}
-
-		g_system->delayMillis(20);
-		_gfx->setPalette(pal);
-		_gfx->updateScreen();
-	}
-
-	setBackground(background, mask, mask);
-
-	return;
-}
-
-
-void Parallaction::showSlide(const char *name) {
-
-	BackgroundInfo info;
-
-	_disk->loadSlide(info, name);
-
-	// TODO: avoid using screen buffers for displaying slides. Using a generic buffer
-	// allows for positioning of graphics as needed by Big Red Adventure.
-	// The main problem lies with menu, which relies on multiple buffers, mainly because
-	// it is crappy code.
-	_gfx->setBackground(&info.bg);
-	_gfx->setPalette(info.palette);
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
-	info.bg.free();
-	info.mask.free();
-	info.path.free();
-
-	return;
-}
 
 
 

@@ -427,7 +427,6 @@ public:
 	void		sortAnimations();
 	void 		freeAnimations();
 
-	void 		showSlide(const char *name);
 	void 		setBackground(const char *background, const char *mask, const char *path);
 	void 		freeBackground();
 
@@ -528,6 +527,10 @@ protected:		// data
 	Job	   *_jEraseLabel;
 	Zone    *_hoverZone;
 
+	Job	   *_jDrawInventory;
+	Job	   *_jRunScripts;
+
+
 protected:		// members
 	bool detectGame(void);
 
@@ -544,7 +547,6 @@ protected:		// members
 	virtual void changeCharacter(const char *name) = 0;
 	void		allocateLocationSlot(const char *name);
 	void 		finalizeLocationParsing();
-	void 		switchBackground(const char* background, const char* mask);
 	void 		freeLocation();
 	void 		showLocationComment(const char *text, bool end);
 
@@ -911,6 +913,9 @@ protected:
 	uint16		guiChooseLanguage();
 	uint16		guiSelectGame();
 	int			guiGetSelectedBlock(const Common::Point &p);
+
+	void 		switchBackground(const char* background, const char* mask);
+	void 		showSlide(const char *name);
 };
 
 
