@@ -301,6 +301,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\igor\saveload.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\igor\staticres.cpp"
 			>
 		</File>
