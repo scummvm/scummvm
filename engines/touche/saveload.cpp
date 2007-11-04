@@ -36,39 +36,27 @@ enum {
 	kGameStateDescriptionLen = 32
 };
 
-template <class S, class T>
-static void saveOrLoad(S &s, T &t);
-
-template <>
 static void saveOrLoad(Common::WriteStream &stream, uint16 &i) {
 	stream.writeUint16LE(i);
 }
 
-template <>
 static void saveOrLoad(Common::ReadStream &stream, uint16 &i) {
 	i = stream.readUint16LE();
 }
 
-template <>
 static void saveOrLoad(Common::WriteStream &stream, int16 &i) {
 	stream.writeSint16LE(i);
 }
 
-template <>
 static void saveOrLoad(Common::ReadStream &stream, int16 &i) {
 	i = stream.readSint16LE();
 }
 
-template <class S, class T>
-static void saveOrLoadPtr(S &s, T *&t, T *base);
-
-template <>
 static void saveOrLoadPtr(Common::WriteStream &stream, int16 *&p, int16 *base) {
 	int32 offset = (int32)(p - base);
 	stream.writeSint32LE(offset);
 }
 
-template <>
 static void saveOrLoadPtr(Common::ReadStream &stream, int16 *&p, int16 *base) {
 	int32 offset = stream.readSint32LE();
 	p = base + offset;
@@ -338,8 +326,8 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 
 bool ToucheEngine::saveGameState(int num, const char *description) {
 	bool saveOk = false;
-	char gameStateFileName[16];
-	generateGameStateFileName(num, gameStateFileName, 15);
+	char gameStateFileName[64];
+	generateGameStateFileName(num, gameStateFileName, 63);
 	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName);
 	if (f) {
 		f->writeUint16LE(kCurrentGameStateVersion);
@@ -362,8 +350,8 @@ bool ToucheEngine::saveGameState(int num, const char *description) {
 
 bool ToucheEngine::loadGameState(int num) {
 	bool loadOk = false;
-	char gameStateFileName[16];
-	generateGameStateFileName(num, gameStateFileName, 15);
+	char gameStateFileName[64];
+	generateGameStateFileName(num, gameStateFileName, 63);
 	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName);
 	if (f) {
 		uint16 version = f->readUint16LE();
@@ -384,8 +372,8 @@ bool ToucheEngine::loadGameState(int num) {
 }
 
 void ToucheEngine::readGameStateDescription(int num, char *description, int len) {
-	char gameStateFileName[16];
-	generateGameStateFileName(num, gameStateFileName, 15);
+	char gameStateFileName[64];
+	generateGameStateFileName(num, gameStateFileName, 63);
 	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName);
 	if (f) {
 		uint16 version = f->readUint16LE();
