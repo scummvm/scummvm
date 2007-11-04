@@ -232,7 +232,7 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 		 * *cx = var_2;
 		 * cx++;
 		 * var_E ++;
-		 * }while (di);
+		 * } while (di);
 		 * 
 		 * var_12 = cx;
 		 * } */
@@ -280,7 +280,7 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 }
 
 int getNode(int nodeResult[2], int nodeId){
-	if(nodeId < 0 || nodeId >= ctp_routeCoordCount)
+	if (nodeId < 0 || nodeId >= ctp_routeCoordCount)
 		return -1;
 	
 	nodeResult[0] = ctp_routeCoords[nodeId][0];

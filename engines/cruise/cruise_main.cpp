@@ -609,23 +609,18 @@ int buttonDown;
 int selectDown = 0;
 int menuDown = 0;
 
-int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx)
-{
+int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 	char objectName[80];
 
 	cellStruct *currentObject = cellHead.prev;
 
-	while (currentObject)
-	{
-		if (currentObject->overlay >= 0 && overlayTable[currentObject->overlay].alreadyLoaded && (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUEL))
-		{
+	while (currentObject) {
+		if (currentObject->overlay >= 0 && overlayTable[currentObject->overlay].alreadyLoaded && (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUEL)) {
 			char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
-			if(pObjectName)
-			{
+			if (pObjectName) {
 				strcpy(objectName, pObjectName);
 
-				if (strlen(objectName) && (currentObject->freeze == 0))
-				{
+				if (strlen(objectName) && (currentObject->freeze == 0)) {
 					int objIdx = currentObject->idx;
 					int objOvl = currentObject->overlay;
 					int linkedObjIdx = currentObject->followObjectIdx;
@@ -638,8 +633,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx)
 					int y2 = 0;
 					int j2 = 0;
 
-					if ((objOvl != linkedObjOvl) || (objIdx != linkedObjIdx))
-					{
+					if ((objOvl != linkedObjOvl) || (objIdx != linkedObjIdx)) {
 						getMultipleObjectParam(linkedObjOvl, linkedObjIdx, &params);
 
 						x2 = params.X;
@@ -647,10 +641,8 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx)
 						j2 = params.fileIdx;
 					}
 
-					if (params.var5 >= 0 && params.fileIdx >= 0)
-					{
-						if (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT)
-						{
+					if (params.var5 >= 0 && params.fileIdx >= 0) {
+						if (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT) {
 							int x = params.X + x2;
 							int y = params.Y + y2;
 							int j = params.fileIdx;
@@ -664,8 +656,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx)
 
 								int16* dataPtr = (int16*)filesDatabase[j].subData.ptr;
 
-								if (*dataPtr == 0)
-								{
+								if (*dataPtr == 0) {
 									int16 offset;
 									int16 newX;
 									int16 newY;
@@ -683,10 +674,8 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx)
 
 									offset += j;
 
-									if (offset >= 0 )
-									{
-										if (filesDatabase[offset].resType == 0 && filesDatabase[offset].subData.ptr)
-										{
+									if (offset >= 0 ) {
+										if (filesDatabase[offset].resType == 0 && filesDatabase[offset].subData.ptr) {
 											dataPtr = (int16 *)filesDatabase[offset].subData.ptr;
 										}
 									}
@@ -696,23 +685,19 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx)
 									y -= newY;
 								}
 
-								if(dataPtr && findPoly((char*)dataPtr, x, y, zoom, mouseX, mouseY))
-								{
+								if (dataPtr && findPoly((char*)dataPtr, x, y, zoom, mouseX, mouseY)) {
 									*outObjOvl = objOvl;
 									*outObjIdx = objIdx;
 
 									return (currentObject->type);
 								}
-							}
-							else
-							{
+							} else {
 								int numBitPlanes = filesDatabase[j].resType;
 
 								int nWidth;
 								int nHeight;
 
-								if (numBitPlanes == 1)
-								{
+								if (numBitPlanes == 1) {
 									nWidth = filesDatabase[j].widthInColumn / 2;
 								} else {
 									nWidth = filesDatabase[j].width;
@@ -723,13 +708,9 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx)
 								int offsetX = mouseX - x;
 								int offsetY = mouseY - y;
 
-								if ((offsetX >= 0) && (offsetX < nWidth * 16) && (offsetY >= 0) && (nWidth <= nHeight) && filesDatabase[j].subData.ptr)
-								{
-									if (numBitPlanes == 1)
-									{
-									}
-									else
-									{
+								if ((offsetX >= 0) && (offsetX < nWidth * 16) && (offsetY >= 0) && (nWidth <= nHeight) && filesDatabase[j].subData.ptr) {
+									if (numBitPlanes == 1) {
+									} else {
 									}
 
 									printf("should compare to mask in findObject...\n");
@@ -742,16 +723,13 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx)
 									return currentObject->type;
 								}
 							}
-						}
-						else if (currentObject->type == OBJ_TYPE_VIRTUEL)
-						{
+						} else if (currentObject->type == OBJ_TYPE_VIRTUEL) {
 							int x = params.X + x2;
 							int y = params.Y + y2;
 							int width = params.fileIdx;
 							int height = params.scale;
 
-							if ((mouseX >= x) && (mouseX <= x+width) && (mouseY >= y) && (mouseY <= y+height))
-							{
+							if ((mouseX >= x) && (mouseX <= x+width) && (mouseY >= y) && (mouseY <= y+height)) {
 								*outObjOvl = objOvl;
 								*outObjIdx = objIdx;
 
@@ -879,8 +857,7 @@ menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu) {
 	return NULL;
 }
 
-bool findRelation(int objOvl, int objIdx, int x, int y)
-{
+bool findRelation(int objOvl, int objIdx, int x, int y) {
 	bool found = false;
 	bool first = true;
 	int testState;
@@ -891,15 +868,12 @@ bool findRelation(int objOvl, int objIdx, int x, int y)
 
 	getSingleObjectParam(objOvl, objIdx, 5, &objectState);
 
-	for (j = 1; j < numOfLoadedOverlay; j++)
-	{
-		if (overlayTable[j].alreadyLoaded)
-		{
+	for (j = 1; j < numOfLoadedOverlay; j++) {
+		if (overlayTable[j].alreadyLoaded) {
 			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
 
 			int i;
-			for(i=0; i<idHeader; i++)
-			{
+			for (i=0; i<idHeader; i++) {
 				linkDataStruct* ptrHead = &overlayTable[j].ovlData->arrayMsgRelHeader[i];
 				int thisOvl = ptrHead->obj1Overlay;
 
@@ -909,8 +883,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y)
 
 				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
 
-				if ((thisOvl == objOvl) && (objIdx ==ptrHead->obj1Number) && pObject && pObject->type != 3)
-				{
+				if ((thisOvl == objOvl) && (objIdx ==ptrHead->obj1Number) && pObject && pObject->type != 3) {
 					int verbeOvl = ptrHead->verbOverlay;
 					int obj1Ovl = ptrHead->obj1Overlay;
 					int obj2Ovl = ptrHead->obj2Overlay;
@@ -937,40 +910,34 @@ bool findRelation(int objOvl, int objIdx, int x, int y)
 					ovlDataStruct *ovl3 = NULL;
 					ovlDataStruct *ovl4 = NULL;
 
-					if(verbeOvl > 0)
+					if (verbeOvl > 0)
 						ovl2 = overlayTable[verbeOvl].ovlData;
 
-					if(obj1Ovl > 0)
+					if (obj1Ovl > 0)
 						ovl3 = overlayTable[obj1Ovl].ovlData;
 
-					if(obj2Ovl > 0)
+					if (obj2Ovl > 0)
 						ovl4 = overlayTable[obj2Ovl].ovlData;
 
-					if((ovl3) && (ptrHead->obj1Number >= 0))
-					{
+					if ((ovl3) && (ptrHead->obj1Number >= 0)) {
 						testState = ptrHead->field_1A;
 
-						if((first) && (ovl3->arrayNameObj) && ((testState ==-1) || (testState == objectState)))
-						{
+						if ((first) && (ovl3->arrayNameObj) && ((testState ==-1) || (testState == objectState))) {
 							char *ptrName = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
 
 							menuTable[0] = createMenu(x, y, ptrName);
 							first = false;
 						}
 					}
-					if((ovl2) && (ptrHead->verbNumber>=0))
-					{
-						if(ovl2->nameVerbGlob)
-						{
+					if ((ovl2) && (ptrHead->verbNumber>=0)) {
+						if (ovl2->nameVerbGlob) {
 							char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
 							strcpy(verbe_name, ptr);
 
-							if( (!first) && ((testState==-1) || (testState==objectState)))
-							{
-								if(!strlen(verbe_name))
+							if ( (!first) && ((testState==-1) || (testState==objectState))) {
+								if (!strlen(verbe_name))
 									attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
-								else if(ovl2->nameVerbGlob)
-								{
+								else if (ovl2->nameVerbGlob) {
 									found = true;
 									ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
 									addSelectableMenuEntry(j, i, menuTable[0], 1, -1, ptr);
@@ -1012,48 +979,38 @@ int processInventory(void) {
 	return 0;
 }
 
-void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj)
-{
-	if(pMenuElement == NULL)
+void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
+	if (pMenuElement == NULL)
 		return;
 
 	menuElementSubStruct* pCurrent = pMenuElement;
 
-	while(pCurrent != NULL)
-	{
+	while (pCurrent != NULL) {
 		int ovlIdx = pCurrent->ovlIdx;
 		int header = pCurrent->header;
 
 		linkDataStruct* pHeader = &overlayTable[ovlIdx].ovlData->arrayMsgRelHeader[header];
 
 		int obj2Ovl = pHeader->obj2Overlay;
-		if(obj2Ovl == 0)
-		{
+		if (obj2Ovl == 0) {
 			obj2Ovl = ovlIdx;
 		}
 
-		if((obj2Ovl == nOvl) && (pHeader->obj2Number != -1) && (pHeader->obj2Number == nObj))
-		{
+		if ((obj2Ovl == nOvl) && (pHeader->obj2Number != -1) && (pHeader->obj2Number == nObj)) {
 //			int x = 60;
 //			int y = 60;
 
 			objectParamsQuery params;
 			memset(&params, 0, sizeof(objectParamsQuery)); // to remove warning
 
-			if(pHeader->obj2Number >= 0)
-			{
+			if (pHeader->obj2Number >= 0) {
 				getMultipleObjectParam(obj2Ovl, pHeader->obj2Number, &params);
 			}
 
-			if((pHeader->field_1C != -1) || (params.scale == pHeader->field_1C))
-			{
-				if(pHeader->type == 30)
-				{
+			if ((pHeader->field_1C != -1) || (params.scale == pHeader->field_1C)) {
+				if (pHeader->type == 30) {
 					ASSERT(0);
-				}
-				else
-				if(pHeader->type == 50)
-				{
+				} else if (pHeader->type == 50) {
 					ASSERT(0);
 				}
 			}
@@ -1063,55 +1020,43 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj)
 	}
 }
 
-int findHighColor()
-{
+int findHighColor() {
 	printf("Unimplemented findHighColor\n");
 	return 1;
 }
 
-void callRelation(menuElementSubStruct *pMenuElement, int nObj2)
-{
-	if(pMenuElement == NULL)
+void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
+	if (pMenuElement == NULL)
 		return;
 
 	menuElementSubStruct* pCurrent = pMenuElement;
 
-	while(pCurrent != NULL)
-	{
+	while (pCurrent != NULL) {
 		int ovlIdx = pCurrent->ovlIdx;
 		int header = pCurrent->header;
 
 		linkDataStruct* pHeader = &overlayTable[ovlIdx].ovlData->arrayMsgRelHeader[header];
 
-		if(pHeader->obj2Number == nObj2)
-		{
+		if (pHeader->obj2Number == nObj2) {
 			// REL
-			if(pHeader->type == 30)
-			{
+			if (pHeader->type == 30) {
 				attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 
-				if((narratorOvl > 0) && (pHeader->field_12 != -1) && (pHeader->field_14 != -1))
-				{
+				if ((narratorOvl > 0) && (pHeader->field_12 != -1) && (pHeader->field_14 != -1)) {
 					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
 
-					if(pTrack)
-					{
+					if (pTrack) {
 						animationStart = false;
 
-						if(pHeader->field_1E == 9999)
-						{
+						if (pHeader->field_1E == 9999) {
 							ASSERT(0);
-						}
-						else if((pHeader->field_12 == 9999) && (pHeader->field_14 == 9999))
-						{
+						} else if ((pHeader->field_12 == 9999) && (pHeader->field_14 == 9999)) {
 							objectParamsQuery naratorParams;
 							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
 							pTrack->x_dest = naratorParams.X;
 							pTrack->y_dest = naratorParams.Y;
 							pTrack->endDirection = pHeader->field_1E;
-						}
-						else
-						{
+						} else {
 							pTrack->x_dest = pHeader->field_12;
 							pTrack->y_dest = pHeader->field_14;
 							pTrack->endDirection = pHeader->field_1E;
@@ -1124,44 +1069,33 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2)
 						changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 0, 9998);
 					}
 				}
-			}
-			// MSG
-			else if(pHeader->type == 50)
-			{
+			} else if (pHeader->type == 50) { // MSG
 				int obj1Ovl = pHeader->obj1Overlay;
-				if(!obj1Ovl)
+				if (!obj1Ovl)
 					obj1Ovl = ovlIdx;
 
 				int x = 60;
 				int y = 40;
 
-				if(pHeader->obj1Number >= 0)
-				{
+				if (pHeader->obj1Number >= 0) {
 					objectParamsQuery params;
 					getMultipleObjectParam(obj1Ovl, pHeader->obj1Number, &params);
 
-					if(narratorOvl > 0)
-					{
-						if((pHeader->field_12 !=-1) && (pHeader->field_14 != -1) && (pHeader->field_12 != 9999) && (pHeader->field_14 != 9999))
-						{
+					if (narratorOvl > 0) {
+						if ((pHeader->field_12 !=-1) && (pHeader->field_14 != -1) && (pHeader->field_12 != 9999) && (pHeader->field_14 != 9999)) {
 							x = pHeader->field_12 - 100;
 							y = pHeader->field_14 - 150;
-						}
-						else
-						{
+						} else {
 							getMultipleObjectParam(narratorOvl, narratorIdx, &params);
 							x = params.X - 100;
 							y = params.Y - 150;
 						}
-					}
-					else if(params.scale >= 0)
-					{
+					} else if (params.scale >= 0) {
 						x = params.X - 100;
 						y = params.Y - 40;
 					}
 
-					if(pHeader->field_16 != -1)
-					{
+					if (pHeader->field_16 != -1) {
 						ASSERT(0);
 					}
 				}
@@ -1172,28 +1106,21 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2)
 				autoOvl = ovlIdx;
 				autoMsg = pHeader->id;
 
-				if((narratorOvl > 0) && (pHeader->field_12 != -1) && (pHeader->field_14 != -1))
-				{
+				if ((narratorOvl > 0) && (pHeader->field_12 != -1) && (pHeader->field_14 != -1)) {
 					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
 
-					if(pTrack)
-					{
+					if (pTrack) {
 						animationStart = false;
 
-						if(pHeader->field_1E == 9999)
-						{
+						if (pHeader->field_1E == 9999) {
 							ASSERT(0);
-						}
-						else if((pHeader->field_12 == 9999) && (pHeader->field_14 == 9999))
-						{
+						} else if ((pHeader->field_12 == 9999) && (pHeader->field_14 == 9999)) {
 							objectParamsQuery naratorParams;
 							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
 							pTrack->x_dest = naratorParams.X;
 							pTrack->y_dest = naratorParams.Y;
 							pTrack->endDirection = pHeader->field_1E;
-						}
-						else
-						{
+						} else {
 							pTrack->x_dest = pHeader->field_12;
 							pTrack->y_dest = pHeader->field_14;
 							pTrack->endDirection = pHeader->field_1E;
@@ -1208,9 +1135,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2)
 					}
 				}
 			}
-		}
-		else
-		{
+		} else {
 			linkedRelation = pMenuElement;
 		}
 
@@ -1218,8 +1143,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2)
 	}
 }
 
-int processInput(void)
-{
+int processInput(void) {
 	int16 mouseX = 0;
 	int16 mouseY = 0;
 	int16 button = 0;
@@ -1231,20 +1155,16 @@ int processInput(void)
 
 	button = 0;
 
-	if (sysKey != -1)
-	{
+	if (sysKey != -1) {
 		button = sysKey;
 		mouseX = sysX;
 		mouseY = sysY;
 		sysKey = -1;
-	}
-	else if (automaticMode == 0)
-	{
+	} else if (automaticMode == 0) {
 		getMouseStatus(&main10, &mouseX, &button, &mouseY);
 	}
 
-	if (!button)
-	{
+	if (!button) {
 		buttonDown = 0;
 	}
 
@@ -1254,8 +1174,7 @@ int processInput(void)
 	}
 
 	// test both buttons
-	if (((button & 3) == 3) || keyboardVar == 0x44 || keyboardVar == 0x53)
-	{
+	if (((button & 3) == 3) || keyboardVar == 0x44 || keyboardVar == 0x53) {
 		changeCursor(CURSOR_NORMAL);
 		keyboardVar = 0;
 		return (playerMenu(mouseX, mouseY));
@@ -1265,84 +1184,62 @@ int processInput(void)
 		return 0;
 	}
 
-	if ((currentActiveMenu != -1) && menuTable[currentActiveMenu])
-	{
+	if ((currentActiveMenu != -1) && menuTable[currentActiveMenu]) {
 		updateMenuMouse(mouseX, mouseY, menuTable[currentActiveMenu]);
 	}
 
-	if (dialogueEnabled)
-	{
+	if (dialogueEnabled) {
 		ASSERT(0);
-	}
-	else
-	if ((button & 1) && (buttonDown == 0))
-	{
+	} else if ((button & 1) && (buttonDown == 0)) {
 		// left click
 		buttonDown = 1;
 
 		// is there a relation
-		if (linkedRelation)
-		{
+		if (linkedRelation) {
 			// call sub relation when clicking on an object
-			if(menuDown == 0)
-			{
-				if(menuTable[0])
-				{
+			if (menuDown == 0) {
+				if (menuTable[0]) {
 					int objOvl;
 					int objIdx;
 					int objType;
 
 					objType = findObject(mouseX, mouseY, &objOvl, &objIdx);
 
-					if (objType != -1)
-					{
+					if (objType != -1) {
 						callSubRelation(linkedRelation, objOvl, objIdx);
 					}
 					freeMenu(menuTable[0]);
 					menuTable[0] = NULL;
 				}
 
-				if(linkedMsgList)
-				{
+				if (linkedMsgList) {
 					ASSERT(0);
 //					freeMsgList(linkedMsgList);
 				}
 				linkedMsgList = NULL;
 				linkedRelation = NULL;
 				changeCursor(CURSOR_NORMAL);
-			}
-			// call sub relation when clicking in inventory
-			else
-			{
+			} else { // call sub relation when clicking in inventory
 				ASSERT(0);
 			}
-		}
-		else
-		{
+		} else {
 			// manage click on object menu
-			if (menuDown == 0)
-			{
+			if (menuDown == 0) {
 				// Handle left click on an object
-				if (menuTable[0] == 0)
-				{
+				if (menuTable[0] == 0) {
 					int objOvl;
 					int objIdx;
 					int objType;
 
 					objType = findObject(mouseX, mouseY, &objOvl, &objIdx);
 
-					if (objType != -1)
-					{
+					if (objType != -1) {
 						int relation = findRelation(objOvl, objIdx, mouseX, mouseY);
-						if(menuTable[0])
-						{
-							if(relation)
-							{
+						if (menuTable[0]) {
+							if (relation) {
 								currentActiveMenu = 0;
 								selectDown = 1;
-							}
-							else
-							{
+							} else {
 								// object has a name but no relation, just move the character
 								freeMenu(menuTable[0]);
 								menuTable[0] = NULL;
@@ -1352,9 +1249,7 @@ int processInput(void)
 								animationStart = true;
 								buttonDown = 0;
 							}
-						}
-						else
-						{
+						} else {
 							aniX = mouseX;
 							aniY = mouseY;
 							animationStart = true;
@@ -1367,26 +1262,19 @@ int processInput(void)
 						animationStart = true;
 						buttonDown = 0;
 					}
-				}
-				else
-				{
+				} else {
 					// handle click in menu
-					if (menuTable[0])
-					{
+					if (menuTable[0]) {
 						menuElementSubStruct *pMenuElementSub = getSelectedEntryInMenu(menuTable[0]);
 
 						callRelation(pMenuElementSub, -1);
 
 						// if there is a linked relation, close menu
-						if(!linkedRelation)
-						{
+						if (!linkedRelation) {
 							freeMenu(menuTable[0]);
 							menuTable[0] = NULL;
 							changeCursor(CURSOR_NORMAL);
-						}
-						// else create the message for the linked relation
-						else
-						{
+						} else { // else create the message for the linked relation
 							char text[80];
 							strcpy(text, menuTable[0]->stringPtr);
 							strcat(text, ":");
@@ -1396,12 +1284,9 @@ int processInput(void)
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				// Handle left click in inventory
-				if (processInventory())
-				{
+				if (processInventory()) {
 					currentActiveMenu = 0;
 					selectDown = 1;
 					menuDown = 0;
@@ -1411,12 +1296,8 @@ int processInput(void)
 				}
 			}
 		}
-	}
-	// test right button
-	else if ((button & 2) || (keyboardVar == 0x43) || (keyboardVar == 0x52))
-	{
-		if (buttonDown == 0)
-		{
+	} else if ((button & 2) || (keyboardVar == 0x43) || (keyboardVar == 0x52)) { // test right button
+		if (buttonDown == 0) {
 			keyboardVar = 0;
 
 			// close object menu if there is no linked relation
@@ -1428,8 +1309,7 @@ int processInput(void)
 				currentActiveMenu = -1;
 			}
 
-			if ((!selectDown) && (!menuDown) && (menuTable[1] == NULL))
-			{
+			if ((!selectDown) && (!menuDown) && (menuTable[1] == NULL)) {
 				buildInventory(mouseX, mouseY);
 
 				if (menuTable[1]) {
@@ -1449,8 +1329,7 @@ int currentMouseX = 0;
 int currentMouseY = 0;
 int currentMouseButton = 0;
 
-void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY)
-{
+void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY) {
 	*pMouseX = currentMouseX;
 	*pMouseY = currentMouseY;
 	*pMouseButton = currentMouseButton;
@@ -1484,8 +1363,7 @@ void manageEvents() {
 			g_system->quit();
 			break;
 		case Common::EVENT_KEYUP:
-			switch(event.kbd.keycode)
-			{
+			switch (event.kbd.keycode) {
 				case 27: // ESC
 					currentMouseButton &= ~4;
 					break;
@@ -1494,8 +1372,7 @@ void manageEvents() {
 			}
 			break;
 	    case Common::EVENT_KEYDOWN:
-			switch(event.kbd.keycode)
-			{
+			switch (event.kbd.keycode) {
 				case 27: // ESC
 					currentMouseButton |= 4;
 					break;
@@ -1569,14 +1446,10 @@ void manageEvents() {
 			 * break;
 			 * }
 			 * break; */
-			if (event.kbd.flags == Common::KBD_CTRL)
-			{
-				if (event.kbd.keycode == Common::KEYCODE_d)
-				{
+			if (event.kbd.flags == Common::KBD_CTRL) {
+				if (event.kbd.keycode == Common::KEYCODE_d) {
 					// enable debugging stuff ?
-				}
-				else if (event.kbd.keycode == Common::KEYCODE_f)
-				{
+				} else if (event.kbd.keycode == Common::KEYCODE_f) {
 					bFastMode = !bFastMode;
 				}
 			}
@@ -1595,8 +1468,7 @@ void manageEvents() {
 	 */
 	g_system->updateScreen();
 
-	if(!bFastMode)
-	{
+	if (!bFastMode) {
 		g_system->delayMillis(40);
 	}
 }
@@ -1633,8 +1505,7 @@ void mainLoop(void) {
 //      readKeyboard();
 			playerDontAskQuit = processInput();
 
-			if (enableUser)
-			{
+			if (enableUser) {
 				userEnabled = 1;
 				enableUser = 0;
 			}
@@ -1665,8 +1536,7 @@ void mainLoop(void) {
         initVar4 = 0; */
 			}
 
-			if (affichePasMenuJoueur)
-			{
+			if (affichePasMenuJoueur) {
 				if (main5)
 					fadeVar = 0;
 
@@ -1678,10 +1548,8 @@ void mainLoop(void) {
 				mainDraw(0);
 				flipScreen();
 
-				if (userEnabled && !userWait && !autoTrack)
-				{
-					if(currentActiveMenu == -1)
-					{
+				if (userEnabled && !userWait && !autoTrack) {
+					if (currentActiveMenu == -1) {
 						int16 mouseX;
 						int16 mouseY;
 						int16 mouseButton;
@@ -1691,8 +1559,7 @@ void mainLoop(void) {
 
 						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
 					 
-						if (mouseX != oldMouseX && mouseY != oldMouseY)
-						{
+						if (mouseX != oldMouseX && mouseY != oldMouseY) {
 							int objectType;
 							int newCursor1;
 							int newCursor2;
@@ -1702,36 +1569,24 @@ void mainLoop(void) {
 							
 							objectType = findObject(mouseX, mouseY, &newCursor1, &newCursor2);
 							
-							if (objectType == 9)
-							{
+							if (objectType == 9) {
 								changeCursor(CURSOR_EXIT);
-							}
-							else
-							if (objectType != -1)
-							{
+							} else if (objectType != -1) {
 								changeCursor(CURSOR_MAGNIFYING_GLASS);
-							}
-							else
-							{
+							} else {
 								changeCursor(CURSOR_WALK);
 							}
 						}
-					}
-					else
-					{
+					} else {
 						changeCursor(CURSOR_NORMAL);
 					}
-				}
-				else
-				{
+				} else {
 					changeCursor(CURSOR_NORMAL);
 				}
 
-				if (userWait)
-				{
+				if (userWait) {
 					int16 button = 0;
-					while(!button)
-					{
+					while (!button) {
 						manageScripts(&relHead);
 						manageScripts(&procHead);
 
@@ -1755,31 +1610,24 @@ void mainLoop(void) {
 				}
 
 				// wait for character to finish auto track
-				if (autoTrack)
-				{
-					if(mainProc13(narratorOvl, narratorIdx, &actorHead, 0))
-					{
-						if(autoMsg != -1)
-						{
+				if (autoTrack) {
+					if (mainProc13(narratorOvl, narratorIdx, &actorHead, 0)) {
+						if (autoMsg != -1) {
 							freezeCell(&cellHead, autoOvl, autoMsg, 5, -1, 9998, 0);
 
 							char* pText = getText(autoMsg, autoOvl);
 
-							if(strlen(pText))
+							if (strlen(pText))
 								userWait = 1;
 						}
 
 						changeScriptParamInList(-1, -1, &relHead, 9998, 0);
 						autoTrack = 0;
 						enableUser = 1;
-					}
-					else
-					{
+					} else {
 						userEnabled = false;
 					}
-				}
-				else if (autoMsg != -1)
-				{
+				} else if (autoMsg != -1) {
 					removeCell(&cellHead, autoOvl, autoMsg, 5, currentActiveBackgroundPlane );
 					autoMsg = -1;
 				}

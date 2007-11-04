@@ -150,8 +150,7 @@ void bsubline_4(int x1, int y1, int x2, int y2, char c) {
 	}
 }
 
-void line(int x1, int y1, int x2, int y2, char c)
-{
+void line(int x1, int y1, int x2, int y2, char c) {
 	float k;
 
 	if ((x1 == x2) && (y1 == y2)) {

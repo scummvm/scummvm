@@ -299,12 +299,12 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 *
 				 * siPtr+=4;
 				 * diPtr++;
-				 * }while (--cx);
+				 * } while (--cx);
 				 *
 				 * diPtr += loc_1147; // interline
 				 * siPtr += loc_114B;
 				 * bp = bpSave;
-				 * }while (--bp);
+				 * } while (--bp);
 				 * }
 				 * else // croped
 				 * {
@@ -427,7 +427,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 *
 				 * siPtr += 4;
 				 * diPtr++;
-				 * }while (--bp);
+				 * } while (--bp);
 				 * }
 				 *
 				 * if (loc_122B == 0xF8)
@@ -481,7 +481,7 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height,
 				 * siPtr+=loc_12DD;
 				 * bp = loc_12E1;
 				 *
-				 * }while (--bp);
+				 * } while (--bp);
 				 * } */
 
 	{

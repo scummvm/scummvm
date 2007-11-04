@@ -1401,13 +1401,12 @@ int16 Op_SetObjectAtNode(void) {
 	int16 obj = popVar();
 	int16 ovl = popVar();
 
-	if(!ovl)
+	if (!ovl)
 		ovl = currentScriptPtr->overlayNumber;;
 
 	int nodeInfo[2];
 
-	if(!getNode(nodeInfo, node))
-	{
+	if (!getNode(nodeInfo, node)) {
 		setObjectPosition(ovl, obj, 0, nodeInfo[0]);
 		setObjectPosition(ovl, obj, 1, nodeInfo[1]);
 		setObjectPosition(ovl, obj, 2, nodeInfo[1]);

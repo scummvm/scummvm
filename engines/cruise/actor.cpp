@@ -33,10 +33,8 @@ int16 mainProc13(int overlayIdx, int param1, actorStruct *pStartEntry, int param
 	while (pCurrentEntry) {
 		if ((pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) &&
 			(pCurrentEntry->idx == param1 || param1 == -1) &&
-			(pCurrentEntry->type == param2 || param2 == -1))
-		{
-			if(pCurrentEntry->pathId != -2)
-			{
+			(pCurrentEntry->type == param2 || param2 == -1)) {
+			if (pCurrentEntry->pathId != -2) {
 				return 0;
 			}
 		}
@@ -769,8 +767,7 @@ void processAnimation(void) {
 	while (currentActor) {
 		nextActor = currentActor->next;
 
-		if (!currentActor->freeze && ((currentActor->type == 0)	|| (currentActor->type == 1)))
-		{
+		if (!currentActor->freeze && ((currentActor->type == 0)	|| (currentActor->type == 1))) {
 			getMultipleObjectParam(currentActor->overlayNumber, currentActor->idx, &params);
 
 			if (((animationStart && !currentActor->flag) || (!animationStart && currentActor->x_dest != -1 && currentActor->y_dest != -1)) && (currentActor->type == 0)) {
@@ -859,8 +856,7 @@ void processAnimation(void) {
 
 						if ((currentActor->counter >= 0)
 						    && ((currentActor->phase == ANIM_PHASE_STATIC_END)
-							|| (currentActor->phase == ANIM_PHASE_STATIC)))
-						{
+							|| (currentActor->phase == ANIM_PHASE_STATIC))) {
 							int newA;
 							int inc = 1;
 							int t_inc = currentActor->startDirection - 1;

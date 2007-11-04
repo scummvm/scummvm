@@ -109,10 +109,8 @@ void pixel(int x, int y, char color) {
 }
 
 // this function checks if the dataPtr is not 0, else it retrives the data for X, Y, scale and DataPtr again (OLD: mainDrawSub1Sub1)
-void flipPoly(int fileId, int16 *dataPtr, int scale, char** newFrame, int X, int Y, int *outX, int *outY, int *outScale)
-{
-	if (*dataPtr == 0)
-	{
+void flipPoly(int fileId, int16 *dataPtr, int scale, char** newFrame, int X, int Y, int *outX, int *outY, int *outScale) {
+	if (*dataPtr == 0) {
 		int16 offset;
 		int16 newX;
 		int16 newY;
@@ -130,10 +128,8 @@ void flipPoly(int fileId, int16 *dataPtr, int scale, char** newFrame, int X, int
 
 		offset += fileId;
 
-		if (offset >= 0 )
-		{
-			if (filesDatabase[offset].resType == 0 && filesDatabase[offset].subData.ptr)
-			{
+		if (offset >= 0 ) {
+			if (filesDatabase[offset].resType == 0 && filesDatabase[offset].subData.ptr) {
 				dataPtr = (int16 *)filesDatabase[offset].subData.ptr;
 			}
 		}
@@ -169,8 +165,7 @@ int16 XMIN_XMAX[404];
 int16 polyBuffer4[512];
 
 // this function fills the sizeTable for the poly (OLD: mainDrawSub1Sub2)
-void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], unsigned char *dataPtr)
-{
+void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], unsigned char *dataPtr) {
 	int upperBorder;
 	int lowerBorder;
 	m_flipLeftRight = 0;
@@ -233,17 +228,14 @@ void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], unsi
 int nbseg;
 int16 nbligne;
 
-void blitPolyMode1(char *dest, char *ptr, int16 * buffer, char color)
-{
+void blitPolyMode1(char *dest, char *ptr, int16 * buffer, char color) {
 	ASSERT(0);
 }
 
-void blitPolyMode2(char *dest, int16 * buffer, char color)
-{
+void blitPolyMode2(char *dest, int16 * buffer, char color) {
 	int Y = XMIN_XMAX[0];
 
-	for(int i=0; i<nbligne; i++)
-	{
+	for (int i=0; i<nbligne; i++) {
 		int currentY = Y+i;
 		int XMIN = XMIN_XMAX[1+i*2];
 		int XMAX = XMIN_XMAX[1+i*2+1];
@@ -268,19 +260,16 @@ int16 *A2ptr;
 
 
 
-void buildSegment(void)
-{
+void buildSegment(void) {
 	int16* pOut = XMIN_XMAX;
 
-	if((polyXMin >= 320) || (polyXMax < 0) || (polyYMax < 0) || (polyYMin >= 200))
-	{
+	if ((polyXMin >= 320) || (polyXMax < 0) || (polyYMax < 0) || (polyYMin >= 200)) {
 		XMIN_XMAX[0] = -1;
 		nbligne = -1;
 		return;
 	}
 
-	if(polyYMin == polyYMax) // line
-	{
+	if (polyYMin == polyYMax) { // line
 		*(pOut++) = polyYMin; // store initial Y
 
 		int cx = nbseg-1;
@@ -292,25 +281,24 @@ void buildSegment(void)
 		XLeft = XRight = *pIn; // init to first X
 		pIn+=2;
 
-		do
-		{
+		do {
 			int X = *pIn;
-			if(XLeft > X)
+			if (XLeft > X)
 				XLeft = X;
-			if(XRight < X)
+			if (XRight < X)
 				XRight = X;
 			pIn+=2;
-		}while(--cx);
+		} while (--cx);
 
 		// now store left and right coordinates in XMIN_XMAX
 
 		int XMin = XLeft;
 		int XMax = XRight;
 
-		if(XLeft < 0)
+		if (XLeft < 0)
 			XMin = 0;
 
-		if(XRight >= 320)
+		if (XRight >= 320)
 			XMax = 319;
 
 		*(pOut++) = XMin;
@@ -325,14 +313,14 @@ void buildSegment(void)
 
 	int ydep;
 
-	if(polyYMin < 0)
+	if (polyYMin < 0)
 		ydep = 0;
 	else
 		ydep = polyYMin;
 
 	int yfin;
 
-	if(polyYMax > 199)
+	if (polyYMax > 199)
 		yfin = 199;
 	else
 		yfin = polyYMax;
@@ -348,18 +336,16 @@ void buildSegment(void)
 	// init table with default values
 	int16* si = XMIN_XMAX + 1;
 	int tempCount = nbligne;
-	do
-	{
+	do {
 		si[0] = 5000;
 		si[1] = -5000;
 		si+=2;
-	}while(--tempCount);
+	} while (--tempCount);
 
 	int16* di = A2ptr;
 	int segCount = nbseg;
 
-	do
-	{
+	do {
 		int X2 = di[2];
 		int X1 = di[0];
 		int Y2 = di[3];
@@ -368,55 +354,46 @@ void buildSegment(void)
 		
 		int tempAX = Y1;
 		int tempDX = Y2;
-		if(tempAX > tempDX)
-		{
+		if (tempAX > tempDX) {
 			// swap
 			tempAX = Y2;
 			tempDX = Y1;
 		}
 
 		// is segment on screen ?
-		if(!((tempAX > 199) || (tempDX < 0)))
-		{
+		if (!((tempAX > 199) || (tempDX < 0))) {
 			int dx = Y1;
 			int cx = X2 - X1;
-			if(cx == 0)
-			{
+			if (cx == 0) {
 				// vertical line
 				int CX = X2;
-				if(CX < 0)
+				if (CX < 0)
 					CX = 0;
 
 				int DX = X2;
-				if(DX > 319)
+				if (DX > 319)
 					DX = 319;
 
 				int16* BX = XMIN_XMAX + (Y2 - ydep) * 2 +1;
 				int16* DI = XMIN_XMAX + (Y1 - ydep) * 2 +1;
 
-				if(Y2 >= Y1)
-				{
+				if (Y2 >= Y1) {
 					SWAP(BX, DI);
 				}
 
-				do
-				{
-					if((BX <= ptrMax) && (BX >= ptrMini)) // are we in screen ?
-					{
-						if(CX < BX[0])
+				do {
+					if ((BX <= ptrMax) && (BX >= ptrMini)) { // are we in screen ?
+						if (CX < BX[0])
 							BX[0] = CX;
 
-						if(DX > BX[1])
+						if (DX > BX[1])
 							BX[1] = DX;
 					}
 
 					BX+=2;
-				}while(BX <= DI);
-			}
-			else
-			{
-				if( cx < 0 )
-				{
+				} while (BX <= DI);
+			} else {
+				if ( cx < 0 ) {
 					cx = -cx;
 					dx = Y2;
 
@@ -430,40 +407,34 @@ void buildSegment(void)
 
 				int dy = Y2 - Y1;
 
-				if( dy == 0 )
-				{
+				if ( dy == 0 ) {
 					// hline
 					int16* ptr = (Y1 - ydep) * 2 + XMIN_XMAX + 1;
 
-					if((ptr <= ptrMax) && (ptr >= ptrMini)) // are we in screen ?
-					{
+					if ((ptr <= ptrMax) && (ptr >= ptrMini)) { // are we in screen ?
 						int CX = X1;
-						if(CX < 0)
+						if (CX < 0)
 							CX = 0;
 
 						int SI = X2;
-						if(SI > 319)
+						if (SI > 319)
 							SI = 319;
 
-						if(CX < ptr[0])
+						if (CX < ptr[0])
 							ptr[0] = CX;
 
-						if(SI > ptr[1])
+						if (SI > ptr[1])
 							ptr[1] = SI;
 					}
-				}
-				else
-				{
-					if( dy < 0 )
-					{
+				} else {
+					if ( dy < 0 ) {
 						dy = -dy;
 						patchAdd = -2;
 					}
 
 					int stepType = 0; // small DY <= DX
 
-					if(dy > cx)
-					{
+					if (dy > cx) {
 						stepType = 1; // DX < DY
 
 						SWAP(dy, cx);
@@ -479,26 +450,23 @@ void buildSegment(void)
 
 					int16* ptr = (Y1 - ydep)*2 + XMIN_XMAX + 1;
 
-					if(stepType == 0)
-					{
+					if (stepType == 0) {
 						// small step
 						int BP = X2;
 
 						int SI = BP;
-						if(SI < 0)
+						if (SI < 0)
 							SI = 0;
 						int DX = BP;
-						if(DX > 319)
+						if (DX > 319)
 							DX = 319;
 
-						do
-						{
-							if((ptr <= ptrMax) && (ptr >= ptrMini)) // are we in screen ?
-							{
-								if(SI < ptr[0])
+						do {
+							if ((ptr <= ptrMax) && (ptr >= ptrMini)) { // are we in screen ?
+								if (SI < ptr[0])
 									ptr[0] = SI;
 
-								if(DX > ptr[1])
+								if (DX > ptr[1])
 									ptr[1] = DX;
 							}
 
@@ -506,77 +474,65 @@ void buildSegment(void)
 
 							// test limits
 							SI = BP;
-							if(SI < 0)
+							if (SI < 0)
 								SI = 0;
 							DX = BP;
-							if(DX > 319)
+							if (DX > 319)
 								DX = 319;
 
-							if(d < 0)
-							{
+							if (d < 0) {
 								d += patchinc1;
-								if( cx == 1 ) // last ?
-								{
-									if((ptr <= ptrMax) && (ptr >= ptrMini)) // are we in screen ?
-									{
-										if(SI < ptr[0])
+								if ( cx == 1 ) { // last ?
+									if ((ptr <= ptrMax) && (ptr >= ptrMini)) { // are we in screen ?
+										if (SI < ptr[0])
 											ptr[0] = SI;
 
-										if(DX > ptr[1])
+										if (DX > ptr[1])
 											ptr[1] = DX;
 									}
 								}
-							}
-							else
-							{
+							} else {
 								d += patchinc2;
 								ptr+=patchAdd;
 							}
-						}while(--cx);
-					}
-					else
-					{
+						} while (--cx);
+					} else {
 						// big step
 						int BP = X2;
 
 						int SI = BP;
-						if(SI < 0)
+						if (SI < 0)
 							SI = 0;
 						int DX = BP;
-						if(DX > 319)
+						if (DX > 319)
 							DX = 319;
 
-						do
-						{
-							if((ptr <= ptrMax) && (ptr >= ptrMini)) // are we in screen ?
-							{
-								if(SI < ptr[0])
+						do {
+							if ((ptr <= ptrMax) && (ptr >= ptrMini)) { // are we in screen ?
+								if (SI < ptr[0])
 									ptr[0] = SI;
 
-								if(DX > ptr[1])
+								if (DX > ptr[1])
 									ptr[1] = DX;
 							}
 
 							ptr += patchAdd; // next line
 
-							if(d < 0)
-							{
+							if (d < 0) {
 								d += patchinc1;
-							}
-							else
-							{
+							} else {
 								d += patchinc2;
 								BP ++;
 
 								// test limits
 								SI = BP;
-								if(SI < 0)
+								if (SI < 0)
 									SI = 0;
 								DX = BP;
-								if(DX > 319)
+								if (DX > 319)
 									DX = 319;
 							}
-						}while(--cx);
+						} while (--cx);
 					}
 
 				}
@@ -584,7 +540,7 @@ void buildSegment(void)
 		}
 
 		di+=2;
-	}while(--segCount);
+	} while (--segCount);
 }
 
 unsigned char *drawPolyMode1(unsigned char *dataPointer, int linesToDraw) {
@@ -637,8 +593,7 @@ unsigned char *drawPolyMode1(unsigned char *dataPointer, int linesToDraw) {
 	return dataPointer;
 }
 
-unsigned char *drawPolyMode2(unsigned char *dataPointer, int linesToDraw)
-{
+unsigned char *drawPolyMode2(unsigned char *dataPointer, int linesToDraw) {
 	int index;
 	int16 *pBufferDest;
 
@@ -824,8 +779,7 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 
 			flipShort(&minimumScale);
 
-			if ((minimumScale <= scale))
-			{	
+			if ((minimumScale <= scale)) {	
 				if (m_flipLeftRight) {
 					drawPolyMode1((unsigned char *)dataPointer, linesToDraw);
 				} else {
@@ -850,8 +804,7 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 	} while (*dataPointer != 0xFF);
 }
 
-bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX, int mouseY)
-{
+bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX, int mouseY) {
 	int counter = 0;	// numbers of coordinates to process
 	int startX = 0;		// first X in model
 	int startY = 0;		// first Y in model
@@ -987,8 +940,7 @@ bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX
 
 			flipShort(&minimumScale);
 
-			if ((minimumScale <= scale))
-			{	
+			if ((minimumScale <= scale)) {	
 				if (m_flipLeftRight) {
 					drawPolyMode1((unsigned char *)dataPointer, linesToDraw);
 				} else {
@@ -998,14 +950,13 @@ bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX
 				int polygonYMin = XMIN_XMAX[0];
 				int polygonYMax = polygonYMin + nbligne;
 
-				if((mouseY >= polygonYMin) && (mouseY <= polygonYMax))
-				{
+				if ((mouseY >= polygonYMin) && (mouseY <= polygonYMax)) {
 					int polygonLineNumber = mouseY - polygonYMin;
 
 					int XMIN = XMIN_XMAX[1+polygonLineNumber*2];
 					int XMAX = XMIN_XMAX[1+polygonLineNumber*2+1];
 
-					if((mouseX >= XMIN) && (mouseX <= XMAX))
+					if ((mouseX >= XMIN) && (mouseX <= XMAX))
 						return true;
 				}
 			}
@@ -1077,8 +1028,7 @@ void mainDrawPolygons(int fileIndex, cellStruct *pObject, int X, int scale, int 
 		cellStruct *pCurrentObject = pObject;
 
 		do {
-			if (pCurrentObject->type == OBJ_TYPE_BGMK)
-			{
+			if (pCurrentObject->type == OBJ_TYPE_BGMK) {
 //				ASSERT(0);
 			}
 
@@ -1501,10 +1451,7 @@ void mainDraw(int16 param) {
 			drawMenu(menuTable[currentActiveMenu]);
 			return;
 		}
-	}
-	else
-	if ((linkedRelation) && (linkedMsgList))
-	{
+	} else if ((linkedRelation) && (linkedMsgList)) {
 		ASSERT(0);
 		// TODO: draw mouse here
 	}
