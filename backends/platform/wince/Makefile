@@ -35,7 +35,6 @@ DISABLE_CRUISE = 1
 DISABLE_DRASCULA = 1
 DISABLE_IGOR = 1
 
-
 ########################################################################
 ## Pick which libraries you want to use here
 
@@ -46,6 +45,18 @@ USE_TREMOR        = 1
 USE_FLAC          = 1
 USE_ZLIB          = 1
 
+########################################################################
+## For remote deployment (copying the built files onto a device
+## automatically), we need to know various things, like which
+## tools to use. I use pput, pdel and mkdir from
+##     http://www.xs4all.nl/~itsme/projects/xda/tools.html
+## and I keep my installation on the storage card, but other people
+## may prefer other things.
+
+REMOTE_COPY      = pput
+REMOTE_MKDIR     = pmkdir
+REMOTE_DELETE    = pdel
+REMOTE_DIRECTORY = \Storage Card\Program Files\Scummvm
 
 ########################################################################
 ## You're probably not going to want to change these defines...
@@ -165,11 +176,11 @@ OBJS += PocketSCUMM.o
 endif
 
 ifdef BUILD_PLUGINS
-EXECUTABLE			= scummvm.dll
+EXECUTABLE		 = scummvm.dll
 PLUGIN_PREFIX		:=
 PLUGIN_SUFFIX		:= .dll
-PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-CXXFLAGS			+= -DDYNAMIC_MODULES
+PLUGIN_EXTRA_DEPS	 = $(EXECUTABLE)
+CXXFLAGS		+= -DDYNAMIC_MODULES
 PLUGIN_LDFLAGS		:= -shared -L. -lscummvm -Llibs/lib
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a -shared
@@ -177,12 +188,21 @@ endif
 
 include $(srcdir)/Makefile.common
 
-# Our top level target depends on whether we are building the plugin version
-# or not...
+########################################################################
+## Our top level target, and what we deploy depends on whether we are
+## building the plugin version or not...
 ifdef BUILD_PLUGINS
+
 all: dist-plugins
+
+deploy: deploy-plugins deploy-exe
+
 else
+
 all: dist
+
+deploy: deploy-exe
+
 endif
 
 dist: ARMscaler.o PocketSCUMM.o $(EXECUTABLE)
@@ -194,6 +214,20 @@ dist-plugins: $(EXECUTABLE) plugins PocketSCUMM.o plugins-stub
 
 PocketSCUMM.o:
 	$(WINDRES) $*.rc $@
+
+deploy-plugins: plugins PocketSCUMM.o plugins-stub
+	@echo Deploying DLLs
+	$(REMOTE_MKDIR) "$(REMOTE_DIRECTORY)\plugins"
+	$(REMOTE_DELETE) "$(REMOTE_DIRECTORY)\plugins\*.dll"
+	$(REMOTE_COPY) plugins/*.dll "$(REMOTE_DIRECTORY)\plugins"
+
+deploy-exe: $(EXECUTABLE) 
+	@ Deploying modern theme - errors are normal here!
+	@-$(REMOTE_COPY) ../../../gui/themes/modern.ini "$(REMOTE_DIRECTORY)"
+	@-$(REMOTE_COPY) ../../../gui/themes/modern.zip "$(REMOTE_DIRECTORY)"
+	@echo Deploying EXE
+	$(REMOTE_DELETE) "$(REMOTE_DIRECTORY)\scummvm.exe"
+	$(REMOTE_COPY) scummvm.exe "$(REMOTE_DIRECTORY)"
 
 ARMscaler.o:
 	$(AS) $*.s -o $@
