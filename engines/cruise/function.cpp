@@ -247,16 +247,18 @@ int16 Op_freeBackgroundInscrustList(void) {
 
 int16 Op_removeBackground(void) {
 	int backgroundIdx = popVar();
-	int ovl = popVar();
+	int ovl;
 
+	ovl = popVar();
 	printf("Op_removeBackground: remove background %d\n", backgroundIdx);
 	return (0);
 }
 
 int16 Op_UnmergeBackgroundIncrust(void) {
 	int backgroundIdx = popVar();
-	int ovl = popVar();
+	int ovl;
 
+	ovl = popVar();
 	printf("Op_UnmergeBackgroundIncrust: unmerge background %d\n", backgroundIdx);
 	return (0);
 }
@@ -1449,9 +1451,11 @@ int16 Op_songExist(void) {
 }
 
 int16 Op_SetNodeColor(void) {
-	int16 color = popVar();
-	int16 node = popVar();
+	int16 color;
+	int16 node;
 
+	color = popVar();
+	node = popVar();
 	printf("Unimplemented \"Op_SetNodeColor\"\n");
 
 	return 0;
