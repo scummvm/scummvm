@@ -222,7 +222,7 @@ deploy-plugins: plugins PocketSCUMM.o plugins-stub
 	$(REMOTE_COPY) plugins/*.dll "$(REMOTE_DIRECTORY)\plugins"
 
 deploy-exe: $(EXECUTABLE) 
-	@ Deploying modern theme - errors are normal here!
+	@echo Deploying modern theme - errors are normal here!
 	@-$(REMOTE_COPY) ../../../gui/themes/modern.ini "$(REMOTE_DIRECTORY)"
 	@-$(REMOTE_COPY) ../../../gui/themes/modern.zip "$(REMOTE_DIRECTORY)"
 	@echo Deploying EXE
