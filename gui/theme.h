@@ -67,7 +67,7 @@ enum ThemeHint {
 	/**
 	 * Indicates that no background should be restored when drawing the widget
 	 * (note that this can be silently ignored if for example the theme does
-	 * alpha blending and would blend over a allready drawn widget)
+	 * alpha blending and would blend over an already drawn widget)
 	 * TODO: currently only ThemeModern::drawButton supports this
 	 */
 	THEME_HINT_NO_BACKGROUND_RESTORE = 1 << 6
@@ -132,12 +132,12 @@ public:
 	//! Function used to process areas other than the current dialog
 	enum ShadingStyle {
 		kShadingNone,		//! No special post processing
-		kShadingDim,		//! Dimming unsued areas
-		kShadingLuminance	//! Converting colors to luminance for unsued areas
+		kShadingDim,		//! Dimming unused areas
+		kShadingLuminance	//! Converting colors to luminance for unused areas
 	};
 
 	/**
-	 * This initalizes all the data needed by the theme renderer.
+	 * This initializes all the data needed by the theme renderer.
 	 * It should just be called *once*, when first using the renderer.
 	 *
 	 * Other functions of the renderer should just be used after
@@ -171,17 +171,17 @@ public:
 	/**
 	 * Enables the theme renderer for use.
 	 *
-	 * This for examples shows up the overlay, clears the
-	 * renderers temporary screen buffers and does other
+	 * This for examples displays the overlay, clears the
+	 * renderer's temporary screen buffers and does other
 	 * things to make the renderer for use. 
 	 *
-	 * This may NOT back up the data on the overlay.
-	 * So if you got data in the overlay save it before
+	 * This will NOT back up the data on the overlay.
+	 * So if you've got data in the overlay save it before
 	 * calling this.
 	 *
-	 * As a difference to init, this makes the renderer
-	 * ready to draw something to the screen. And of course
-	 * it relies on the data loaded by init.
+	 * Unlike init, this makes the renderer ready to draw
+	 * something to the screen. And of course it relies on the data
+	 * loaded by init.
 	 *
 	 * @see disable
 	 * @see init
@@ -194,9 +194,9 @@ public:
 	 * This for example hides the overlay and undoes
 	 * other things done by enable.
 	 *
-	 * As a difference to uninit, this just makes the
-	 * renderer unable to do any screen drawing, but
-	 * still keeps all data loaded into memory.
+	 * Unlike uninit, this just makes the renderer unable
+	 * to do any screen drawing, but still keeps all data
+	 * loaded into memory.
 	 *
 	 * @see enable
 	 * @see uninit
@@ -247,10 +247,10 @@ public:
 	 * draw.
 	 *
 	 * This does not affect the coordinates for the draw* functions,
-	 * it just markes the screen rect given in param r as writeable.
+	 * it just marks the screen rect given in param r as writeable.
 	 *
 	 * This is for example used in the credits dialog, which, if not
-	 * just a part of the screen would be marked as writebale, would
+	 * just a part of the screen would be marked as writeable, would
 	 * draw parts of the scrolling text outside the dialog box and
 	 * thus would look strange.
 	 *
@@ -347,7 +347,7 @@ public:
 	const Common::String &getThemeName() const { return _stylename; }
 
 	/**
-	 * Checks if the theme renderer suppots drawing of images.
+	 * Checks if the theme renderer supports drawing of images.
 	 *
 	 * @return true on support, else false
 	 */
