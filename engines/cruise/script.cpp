@@ -276,9 +276,9 @@ int32 opcodeType1(void)	{
 				di = currentScriptPtr->overlayNumber;
 			}
 
-			if (var == 0x85)	// Special case to handle...
+			if ((var == 0x85) && !strcmp((char*)currentCtpName, "S26.CTP") && !di && mode == 1) // patch in bar
 			{
-				ASSERT(0);
+				var= 0x87;
 			}
 
 			setObjectPosition(di, var_4, mode, var);
@@ -732,8 +732,7 @@ int executeScripts(scriptInstanceStruct *ptr) {
 		currentScriptOpcodeType = opcodeType & 7;
 
 		if (!opcodeTypeTable[(opcodeType & 0xFB) >> 3]) {
-			printf("Unsupported opcode type %d\n",
-			    (opcodeType & 0xFB) >> 3);
+			printf("Unsupported opcode type %d\n", (opcodeType & 0xFB) >> 3);
 			exit(1);
 			return (-21);
 		}

@@ -1389,6 +1389,27 @@ int16 Op_2A(void) {
 	return getProcParam(overlayIdx, 40, (uint8 *) var_26);
 }
 
+int16 Op_SetObjectAtNode(void) {
+	int16 node = popVar();
+	int16 obj = popVar();
+	int16 ovl = popVar();
+
+	if(!ovl)
+		ovl = currentScriptPtr->overlayNumber;;
+
+	int nodeInfo[2];
+
+	if(!getNode(nodeInfo, node))
+	{
+		setObjectPosition(ovl, obj, 0, nodeInfo[0]);
+		setObjectPosition(ovl, obj, 1, nodeInfo[1]);
+		setObjectPosition(ovl, obj, 2, nodeInfo[1]);
+		setObjectPosition(ovl, obj, 4, computeZoom(nodeInfo[1]));
+	}
+
+	return 0;
+}
+
 void setupOpcodeTable(void) {
 	int i;
 
@@ -1422,6 +1443,7 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x18] = Op_AddAnimation;
 	opcodeTablePtr[0x19] = Op_RemoveAnimation;
 	opcodeTablePtr[0x1A] = Op_SetZoom;
+	opcodeTablePtr[0x1B] = Op_SetObjectAtNode;
 	opcodeTablePtr[0x1E] = Op_1E;
 	opcodeTablePtr[0x21] = Op_21;
 	opcodeTablePtr[0x22] = Op_22;

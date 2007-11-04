@@ -275,7 +275,7 @@ void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, i
 }
 
 void sortCells(int16 param1, int16 param2, cellStruct *objPtr) {
-	int16 var;
+/*int16 var;
 	cellStruct *var8_;
 	cellStruct *var40;
 	cellStruct *var3E;
@@ -358,7 +358,7 @@ void sortCells(int16 param1, int16 param2, cellStruct *objPtr) {
 		}
 
 		temp->prev = match;
-	}
+	}*/
 }
 
 } // End of namespace Cruise

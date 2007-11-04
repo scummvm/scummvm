@@ -169,7 +169,7 @@ int16 XMIN_XMAX[404];
 int16 polyBuffer4[512];
 
 // this function fills the sizeTable for the poly (OLD: mainDrawSub1Sub2)
-void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], char *dataPtr)
+void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], unsigned char *dataPtr)
 {
 	int upperBorder;
 	int lowerBorder;
@@ -1036,7 +1036,7 @@ void mainDrawPolygons(int fileIndex, cellStruct *pObject, int X, int scale, int 
 	flipPoly(fileIndex, (int16*)dataPtr, scale, &newFrame, X, Y, &newX, &newY, &newScale);
 
 	// this function fills the sizeTable for the poly (OLD: mainDrawSub1Sub2)
-	getPolySize(newX, newY, newScale, sizeTable, (char*)newFrame);
+	getPolySize(newX, newY, newScale, sizeTable, (unsigned char*)newFrame);
 
 	spriteX2 = sizeTable[0] - 2;	// left   border
 	spriteX1 = sizeTable[1] + 18;	// right  border

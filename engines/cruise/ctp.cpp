@@ -279,13 +279,22 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 	}
 }
 
+int getNode(int nodeResult[2], int nodeId){
+	if(nodeId < 0 || nodeId >= ctp_routeCoordCount)
+		return -1;
+	
+	nodeResult[0] = ctp_routeCoords[nodeId][0];
+	nodeResult[1] = ctp_routeCoords[nodeId][1];
+
+	return 0;
+}
+
 int loadCtp(uint8 *ctpName) {
 	int walkboxCounter;	// si
 	uint8 *ptr;
 	uint8 *dataPointer;	// ptr2
 	char fileType[5];	// string2
 	short int segementSizeTable[7];	// tempTable
-	char string[32];
 
 	if (ctpVar1 == 0) {
 		int i;
@@ -354,7 +363,7 @@ int loadCtp(uint8 *ctpName) {
 
 	free(ptr);
 
-	strcpyuint8(string, currentCtpName);
+	strcpyuint8(currentCtpName, ctpName);
 
 	numberOfWalkboxes = segementSizeTable[6] / 2;	// get the number of walkboxes
 

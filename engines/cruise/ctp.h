@@ -54,6 +54,8 @@ extern ctpVar19Struct *ctpVar19;
 int loadCtp(uint8 * ctpName);
 int ctpProc2(int varX, int varY, int paramX, int paramY);
 
+int getNode(int nodeResult[2], int nodeId);
+
 } // End of namespace Cruise
 
 #endif
