@@ -246,11 +246,18 @@ int16 Op_freeBackgroundInscrustList(void) {
 }
 
 int16 Op_removeBackground(void) {
-	int backgroundIdx;
-
-	backgroundIdx = popVar();
+	int backgroundIdx = popVar();
+	int ovl = popVar();
 
 	printf("Op_removeBackground: remove background %d\n", backgroundIdx);
+	return (0);
+}
+
+int16 Op_UnmergeBackgroundIncrust(void) {
+	int backgroundIdx = popVar();
+	int ovl = popVar();
+
+	printf("Op_UnmergeBackgroundIncrust: unmerge background %d\n", backgroundIdx);
 	return (0);
 }
 
@@ -944,14 +951,14 @@ int16 subOp23(int param1, int param2) {
 	return (param1 * param2) >> 8;
 }
 
-int16 Op_23(void) {
+int16 Op_GetStep(void) {
 	int si = popVar();
 	int dx = popVar();
 
 	return subOp23(dx, si);
 }
 
-int16 Op_22(void) {
+int16 Op_GetZoom(void) {
 	return (computeZoom(popVar()));
 }
 
@@ -1410,6 +1417,47 @@ int16 Op_SetObjectAtNode(void) {
 	return 0;
 }
 
+int16 Op_GetNodeX(void) {
+	int16 node = popVar();
+
+	int nodeInfo[2];
+
+	int result = getNode(nodeInfo, node);
+
+	ASSERT(result == 0);
+
+	return nodeInfo[0];
+}
+
+int16 Op_GetNodeY(void) {
+	int16 node = popVar();
+
+	int nodeInfo[2];
+
+	int result = getNode(nodeInfo, node);
+
+	ASSERT(result == 0);
+
+	return nodeInfo[1];
+}
+
+int16 Op_songExist(void) {
+	char* songName = (char*)popPtr();
+
+	printf("Unimplemented \"Op_songExist\": %s\n", songName);
+
+	return 0;
+}
+
+int16 Op_SetNodeColor(void) {
+	int16 color = popVar();
+	int16 node = popVar();
+
+	printf("Unimplemented \"Op_SetNodeColor\"\n");
+
+	return 0;
+}
+
 void setupOpcodeTable(void) {
 	int i;
 
@@ -1444,9 +1492,13 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x19] = Op_RemoveAnimation;
 	opcodeTablePtr[0x1A] = Op_SetZoom;
 	opcodeTablePtr[0x1B] = Op_SetObjectAtNode;
+	opcodeTablePtr[0x1D] = Op_SetNodeColor;
 	opcodeTablePtr[0x1E] = Op_1E;
+	opcodeTablePtr[0x1F] = Op_GetNodeX;
+	opcodeTablePtr[0x20] = Op_GetNodeY;
 	opcodeTablePtr[0x21] = Op_21;
-	opcodeTablePtr[0x22] = Op_22;
+	opcodeTablePtr[0x22] = Op_GetZoom;
+	opcodeTablePtr[0x23] = Op_GetStep;
 	opcodeTablePtr[0x24] = Op_SetStringColors;
 	opcodeTablePtr[0x28] = Op_ChangeSaveAllowedState;
 	opcodeTablePtr[0x29] = Op_freeAllPerso;
@@ -1456,6 +1508,7 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x2E] = Op_releaseOverlay;
 	opcodeTablePtr[0x2F] = Op_AddBackgroundIncrust;
 	opcodeTablePtr[0x30] = Op_RemoveBackgroundIncrust;
+	opcodeTablePtr[0x31] = Op_UnmergeBackgroundIncrust;
 	opcodeTablePtr[0x32] = Op_freeBackgroundInscrustList;
 	opcodeTablePtr[0x37] = Op_37;
 	opcodeTablePtr[0x38] = Op_removeBackground;
@@ -1468,6 +1521,7 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x3F] = Op_3F;
 	opcodeTablePtr[0x40] = Op_40;
 	opcodeTablePtr[0x41] = Op_isFileLoaded2;
+	opcodeTablePtr[0x43] = Op_songExist;
 	opcodeTablePtr[0x45] = Op_45;
 	opcodeTablePtr[0x54] = Op_SetFontFileIndex;
 	opcodeTablePtr[0x56] = Op_changeCutSceneState;
@@ -1516,11 +1570,11 @@ int32 opcodeType8(void) {
 		return (-21);
 
 	if (opcodeTablePtr[opcode]) {
-		//printf("Function: %X\n",opcode);
+		printf("Function: %d\n",opcode);
 		pushVar(opcodeTablePtr[opcode] ());
 		return (0);
 	} else {
-		printf("Unsupported opcode %X in opcode type 8\n", opcode);
+		printf("Unsupported opcode %d in opcode type 8\n", opcode);
 		// exit(1);
 	}
 

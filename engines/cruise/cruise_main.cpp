@@ -804,8 +804,7 @@ char *getObjectName(int index, uint8 *string) {
 }
 
 int buildInventorySub1(int overlayIdx, int objIdx) {
-	objDataStruct *pObjectData =
-	    getObjectDataFromOverlay(overlayIdx, objIdx);
+	objDataStruct *pObjectData = getObjectDataFromOverlay(overlayIdx, objIdx);
 
 	if (pObjectData) {
 		return pObjectData->type;

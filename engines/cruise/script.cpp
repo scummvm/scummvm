@@ -32,8 +32,8 @@ scriptInstanceStruct procHead;
 
 scriptInstanceStruct *currentScriptPtr;
 
-uint8 getByteFromScript(void) {
-	uint8 var = currentData3DataPtr[currentScriptPtr->var4];
+int8 getByteFromScript(void) {
+	int8 var = *(int8*)(currentData3DataPtr+currentScriptPtr->var4);
 
 	currentScriptPtr->var4 = currentScriptPtr->var4 + 1;
 
@@ -727,7 +727,7 @@ int executeScripts(scriptInstanceStruct *ptr) {
 		}
 		opcodeType = getByteFromScript();
 
-		//printf("opType: %d\n",(opcodeType&0xFB)>>3);
+		printf("opType: %d\n",(opcodeType&0xFB)>>3);
 
 		currentScriptOpcodeType = opcodeType & 7;
 
