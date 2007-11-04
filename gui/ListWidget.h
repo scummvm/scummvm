@@ -106,7 +106,7 @@ public:
 	void endEditMode();
 
 protected:
-	void drawWidget(bool hilite);
+	void drawWidget();
 
 	//! Finds the item at position (x,y). Returns -1 if there is no item there.
 	int findItem(int x, int y) const;

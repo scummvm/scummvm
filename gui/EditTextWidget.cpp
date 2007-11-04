@@ -31,7 +31,7 @@ namespace GUI {
 
 EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text)
 	: EditableWidget(boss, x, y - 1, w, h + 2) {
-	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
 
 	setEditString(text);
@@ -39,7 +39,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 
 EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String &text)
 	: EditableWidget(boss, name) {
-	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
 	_hints |= THEME_HINT_USE_SHADOW;
 
@@ -81,12 +81,12 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 
-void EditTextWidget::drawWidget(bool hilite) {
+void EditTextWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundEditText);
 
 	// Draw the text
 	adjustOffset();
-	g_gui.theme()->drawText(Common::Rect(_x+2+ _leftPadding,_y+2, _x+_leftPadding+getEditRect().width()+2, _y+_h-2), _editString, Theme::kStateEnabled, Theme::kTextAlignLeft, false, -_editScrollOffset, false, _font);
+	g_gui.theme()->drawText(Common::Rect(_x+2+ _leftPadding,_y+2, _x+_leftPadding+getEditRect().width()+2, _y+_h-2), _editString, _state, Theme::kTextAlignLeft, false, -_editScrollOffset, false, _font);
 }
 
 Common::Rect EditTextWidget::getEditRect() const {

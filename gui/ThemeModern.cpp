@@ -50,8 +50,10 @@ extern int gBitFormat;
 
 namespace GUI {
 
+// TODO: This should be moved to ThemeModern
 OverlayColor getColorAlpha(OverlayColor col1, OverlayColor col2, int alpha);
 OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max, uint factor);
+void getStateColor(OverlayColor &s, OverlayColor &e, OverlayColor enabledS, OverlayColor enabledE, OverlayColor highlightS, OverlayColor highlightE, Theme::WidgetStateInfo state);
 
 #pragma mark -
 
@@ -251,7 +253,7 @@ void ThemeModern::resetDrawArea() {
 
 #define surface(x) (_images[x])
  
-void ThemeModern::drawDialogBackground(const Common::Rect &r, uint16 hints, State state) {
+void ThemeModern::drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state) {
 	if (!_initOk)
 		return;
 
@@ -285,7 +287,7 @@ void ThemeModern::drawDialogBackground(const Common::Rect &r, uint16 hints, Stat
 	addDirtyRect(r2, (hints & THEME_HINT_SAVE_BACKGROUND) != 0, true);
 }
 
-void ThemeModern::drawText(const Common::Rect &r, const Common::String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
+void ThemeModern::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!_initOk)
 		return;
 
@@ -304,7 +306,7 @@ void ThemeModern::drawText(const Common::Rect &r, const Common::String &str, Sta
 	addDirtyRect(r);
 }
 
-void ThemeModern::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state) {
+void ThemeModern::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state) {
 	if (!_initOk)
 		return;
 	restoreBackground(r);
@@ -312,7 +314,7 @@ void ThemeModern::drawChar(const Common::Rect &r, byte ch, const Graphics::Font 
 	addDirtyRect(r);
 }
 
-void ThemeModern::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, State state) {
+void ThemeModern::drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, WidgetStateInfo state) {
 	if (!_initOk)
 		return;
 
@@ -389,7 +391,7 @@ void ThemeModern::drawWidgetBackground(const Common::Rect &r, uint16 hints, Widg
 	addDirtyRect((hints & THEME_HINT_USE_SHADOW) ? r2 : r, (hints & THEME_HINT_SAVE_BACKGROUND) != 0);
 }
 
-void ThemeModern::drawButton(const Common::Rect &r, const Common::String &str, State state, uint16 hints) {
+void ThemeModern::drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints) {
 	if (!_initOk)
 		return;
 	
@@ -401,15 +403,17 @@ void ThemeModern::drawButton(const Common::Rect &r, const Common::String &str, S
 	// shadow
 	drawShadow(r, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd), kShadowButton);
 
-	if (state == kStateHighlight) {
-		drawRectMasked(r, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd),
-						256, _colors[kButtonBackgroundHighlightStart], _colors[kButtonBackgroundHighlightEnd],
-						_gradientFactors[kButtonFactor]);
-	} else {
-		drawRectMasked(r, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd),
-						(state == kStateDisabled) ? -30 : 256, _colors[kButtonBackgroundStart], _colors[kButtonBackgroundEnd],
-						_gradientFactors[kButtonFactor]);
-	}
+	OverlayColor start, end;
+	int alpha = 256;
+
+	getStateColor(start, end, _colors[kButtonBackgroundStart], _colors[kButtonBackgroundEnd],
+				_colors[kButtonBackgroundHighlightStart], _colors[kButtonBackgroundHighlightEnd], state);
+
+	if (state != kStateHighlight)
+		alpha = (state == kStateDisabled) ? -30 : 256;
+
+	drawRectMasked(r, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd),
+					alpha, start, end, _gradientFactors[kButtonFactor]);
 
 	const int off = (r.height() - getFontHeight()) / 2;
 
@@ -433,7 +437,7 @@ void ThemeModern::drawButton(const Common::Rect &r, const Common::String &str, S
 	addDirtyRect(r2);
 }
 
-void ThemeModern::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state, int alpha, bool themeTrans) {
+void ThemeModern::drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state, int alpha, bool themeTrans) {
 	if (!_initOk)
 		return;
 
@@ -476,7 +480,7 @@ void ThemeModern::drawSurface(const Common::Rect &r, const Graphics::Surface &su
 	addDirtyRect(rect);
 }
 
-void ThemeModern::drawSlider(const Common::Rect &rr, int width, State state) {
+void ThemeModern::drawSlider(const Common::Rect &rr, int width, WidgetStateInfo state) {
 	if (!_initOk)
 		return;
 
@@ -497,18 +501,22 @@ void ThemeModern::drawSlider(const Common::Rect &rr, int width, State state) {
 	}
 	
 	drawShadow(r2, surface(kButtonBkgdCorner), surface(kButtonBkgdTop), surface(kButtonBkgdLeft), surface(kButtonBkgd), kShadowButton);
-	if (state == kStateHighlight) {
-		drawRectMasked(r2, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd),
-					256, _colors[kSliderHighStart], _colors[kSliderHighEnd], _gradientFactors[kSliderFactor]);
-	} else {
-		drawRectMasked(r2, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd),
-					(state == kStateDisabled) ? -30 : 256, _colors[kSliderStart], _colors[kSliderEnd], _gradientFactors[kSliderFactor]);
-	}
+
+	OverlayColor start, end;
+	int alpha = 256;
+
+	getStateColor(start, end, _colors[kSliderStart], _colors[kSliderEnd], _colors[kSliderHighStart], _colors[kSliderHighEnd], state);
+
+	if (state != kStateHighlight)
+		alpha = (state == kStateDisabled) ? -30 : 256;
+
+	drawRectMasked(r2, surface(kSliderCorner), surface(kSliderTop), surface(kSliderLeft), surface(kSliderBkgd),
+				alpha, start, end, _gradientFactors[kSliderFactor]);
 
 	addDirtyRect(r);
 }
 
-void ThemeModern::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align) {
+void ThemeModern::drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state, TextAlign align) {
 	if (!_initOk)
 		return;
 
@@ -550,7 +558,7 @@ void ThemeModern::drawPopUpWidget(const Common::Rect &r, const Common::String &s
 	addDirtyRect(r2);
 }
 
-void ThemeModern::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, State state) {
+void ThemeModern::drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
 	if (!_initOk)
 		return;
 	Common::Rect r2 = r;
@@ -568,7 +576,7 @@ void ThemeModern::drawCheckbox(const Common::Rect &r, const Common::String &str,
 	addDirtyRect(r);
 }
 
-void ThemeModern::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, State state) {
+void ThemeModern::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state) {
 	if (!_initOk)
 		return;
 
@@ -632,7 +640,7 @@ void ThemeModern::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 	addDirtyRect(Common::Rect(r.left, r.top-2, r.right, r.bottom));
 }
 
-void ThemeModern::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, State state) {
+void ThemeModern::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState scrollState, WidgetStateInfo state) {
 	if (!_initOk)
 		return;
 	const int UP_DOWN_BOX_HEIGHT = r.width() + 1;
@@ -643,16 +651,11 @@ void ThemeModern::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 					_colors[kScrollbarBackgroundStart], _colors[kScrollbarBackgroundEnd], _gradientFactors[kScrollbarBkgdFactor]);
 
 	// draws the 'up' button
-	OverlayColor buttonStart = 0;
-	OverlayColor buttonEnd = 0;
+	OverlayColor buttonStart = _colors[kScrollbarButtonStart];
+	OverlayColor buttonEnd = _colors[kScrollbarButtonEnd];
 	
-	if (scrollState == kScrollbarStateUp) {
-		buttonStart = _colors[kScrollbarButtonHighlightStart];
-		buttonEnd = _colors[kScrollbarButtonHighlightEnd];
-	} else {
-		buttonStart = _colors[kScrollbarButtonStart];
-		buttonEnd = _colors[kScrollbarButtonEnd];
-	}
+	if (scrollState == kScrollbarStateUp)
+		getStateColor(buttonStart, buttonEnd, buttonStart, buttonEnd, _colors[kScrollbarButtonHighlightStart], _colors[kScrollbarButtonHighlightEnd], state);
 	
 	r2.bottom = r2.top + UP_DOWN_BOX_HEIGHT;
 	drawRectMasked(r2, surface(kScrollbarBkgdCorner), surface(kScrollbarBkgdTop), surface(kScrollbarBkgdLeft), surface(kScrollbarBkgd), 256,
@@ -666,16 +669,11 @@ void ThemeModern::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 	drawSurface(r2, arrow, false, false, 256);
 
 	// draws the slider
-	OverlayColor sliderStart = 0;
-	OverlayColor sliderEnd = 0;
+	OverlayColor sliderStart = _colors[kScrollbarSliderStart];
+	OverlayColor sliderEnd = _colors[kScrollbarSliderEnd];
 	
-	if (scrollState == kScrollbarStateSlider) {
-		sliderStart = _colors[kScrollbarSliderHighlightStart];
-		sliderEnd = _colors[kScrollbarSliderHighlightEnd];
-	} else {
-		sliderStart = _colors[kScrollbarSliderStart];
-		sliderEnd = _colors[kScrollbarSliderEnd];
-	}
+	if (scrollState == kScrollbarStateSlider)
+		getStateColor(sliderStart, sliderEnd, sliderStart, sliderEnd, _colors[kScrollbarSliderHighlightStart], _colors[kScrollbarSliderHighlightEnd], state);
 	
 	r2 = r;
 	r2.left += 1;
@@ -697,14 +695,11 @@ void ThemeModern::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 					sliderEnd, sliderStart, _gradientFactors[kScrollbarFactor]);
 
 	// draws the 'down' button
+	buttonStart = _colors[kScrollbarButtonStart];
+	buttonEnd = _colors[kScrollbarButtonEnd];
 	
-	if (scrollState == kScrollbarStateDown) {
-		buttonStart = _colors[kScrollbarButtonHighlightStart];
-		buttonEnd = _colors[kScrollbarButtonHighlightEnd];
-	} else {
-		buttonStart = _colors[kScrollbarButtonStart];
-		buttonEnd = _colors[kScrollbarButtonEnd];
-	}
+	if (scrollState == kScrollbarStateDown)
+		getStateColor(buttonStart, buttonEnd, buttonStart, buttonEnd, _colors[kScrollbarButtonHighlightStart], _colors[kScrollbarButtonHighlightEnd], state);
 	
 	r2 = r;
 	r2.top = r2.bottom - UP_DOWN_BOX_HEIGHT;
@@ -720,7 +715,7 @@ void ThemeModern::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 	addDirtyRect(r);
 }
 
-void ThemeModern::drawCaret(const Common::Rect &r, bool erase, State state) {
+void ThemeModern::drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state) {
 	if (!_initOk)
 		return;
 
@@ -749,7 +744,7 @@ void ThemeModern::drawCaret(const Common::Rect &r, bool erase, State state) {
 	addDirtyRect(r);
 }
 
-void ThemeModern::drawLineSeparator(const Common::Rect &r, State state) {
+void ThemeModern::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
 	if (!_initOk)
 		return;
 	_screen.hLine(r.left - 1, r.top + r.height() / 2, r.right, _system->RGBToColor(0, 0, 0));
@@ -1572,6 +1567,20 @@ OverlayColor calcGradient(OverlayColor start, OverlayColor end, int pos, int max
 		return calcGradient<ColorMasks<555> >(start, end, pos);
 	}
 }
+
+void getStateColor(OverlayColor &s, OverlayColor &e,
+					OverlayColor enabledS, OverlayColor enabledE,
+					OverlayColor highlightS, OverlayColor highlightE,
+					Theme::WidgetStateInfo state) {
+	if (state == Theme::kStateHighlight) {
+		s = highlightS;
+		e = highlightE;
+	} else {
+		s = enabledS;
+		e = enabledE;
+	}
+}
+
 } // end of namespace GUI
 
 #endif

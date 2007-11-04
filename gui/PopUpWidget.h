@@ -87,7 +87,7 @@ public:
 
 	virtual void reflowLayout();
 protected:
-	void drawWidget(bool hilite);
+	void drawWidget();
 };
 
 } // End of namespace GUI

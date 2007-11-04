@@ -31,6 +31,7 @@
 #include "graphics/font.h"
 #include "graphics/surface.h"
 #include "gui/object.h"
+#include "gui/theme.h"
 
 namespace Graphics {
 	class Font;
@@ -45,7 +46,7 @@ enum {
 	WIDGET_INVISIBLE	= 1 << 1,
 	WIDGET_HILITED		= 1 << 2,
 	WIDGET_BORDER		= 1 << 3,
-	WIDGET_INV_BORDER	= 1 << 4,
+	//WIDGET_INV_BORDER	= 1 << 4,
 	WIDGET_CLEARBG		= 1 << 5,
 	WIDGET_WANT_TICKLE	= 1 << 7,
 	WIDGET_TRACK_MOUSE	= 1 << 8,
@@ -97,9 +98,12 @@ protected:
 	GuiObject	*_boss;
 	Widget		*_next;
 	uint16		_id;
-	uint16		_flags;
 	uint16		_hints;
 	bool		_hasFocus;
+	Theme::WidgetStateInfo _state;
+
+private:
+	uint16		_flags;
 
 public:
 	static Widget *findWidgetInChain(Widget *start, int x, int y);
@@ -139,8 +143,8 @@ public:
 	void lostFocus() { _hasFocus = false; lostFocusWidget(); }
 	virtual bool wantsFocus() { return false; }
 
-	void setFlags(int flags)	{ _flags |= flags; }
-	void clearFlags(int flags)	{ _flags &= ~flags; }
+	void setFlags(int flags);
+	void clearFlags(int flags);
 	int getFlags() const		{ return _flags; }
 
 	void setHints(int hints)	{ _hints |= hints; }
@@ -152,7 +156,9 @@ public:
 	bool isVisible() const;
 
 protected:
-	virtual void drawWidget(bool hilite) {}
+	void updateState(int oldFlags, int newFlags);
+
+	virtual void drawWidget() = 0;
 
 	virtual void receivedFocusWidget() {}
 	virtual void lostFocusWidget() {}
@@ -182,7 +188,7 @@ public:
 	TextAlignment getAlign() const		{ return _align; }
 
 protected:
-	void drawWidget(bool hilite);
+	void drawWidget();
 };
 
 /* ButtonWidget */
@@ -203,7 +209,7 @@ public:
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
 
 protected:
-	void drawWidget(bool hilite);
+	void drawWidget();
 };
 
 /* CheckboxWidget */
@@ -223,7 +229,7 @@ public:
 	bool getState() const		{ return _state; }
 
 protected:
-	void drawWidget(bool hilite);
+	void drawWidget();
 };
 
 /* SliderWidget */
@@ -256,7 +262,7 @@ public:
 	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
 
 protected:
-	void drawWidget(bool hilite);
+	void drawWidget();
 
 	int valueToPos(int value);
 	int posToValue(int pos);
@@ -276,7 +282,7 @@ public:
 	void useThemeTransparency(bool enable) { _transparency = enable; }
 
 protected:
-	void drawWidget(bool hilite);
+	void drawWidget();
 
 	Graphics::Surface _gfx;
 	int _alpha;
@@ -290,7 +296,7 @@ public:
 	ContainerWidget(GuiObject *boss, const Common::String &name);
 
 protected:
-	void drawWidget(bool hilite);
+	void drawWidget();
 };
 
 } // End of namespace GUI

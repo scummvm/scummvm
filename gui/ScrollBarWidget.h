@@ -80,7 +80,7 @@ public:
 	void recalc();
 
 protected:
-	void drawWidget(bool hilite);
+	void drawWidget();
 	void checkBounds(int old_pos);
 };
 

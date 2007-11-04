@@ -258,3 +258,4 @@ bool Theme::themeConfigUseable(const Common::String &stylefile, const Common::St
 }
 
 } // End of namespace GUI
+

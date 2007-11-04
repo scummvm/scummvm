@@ -32,7 +32,7 @@ namespace GUI {
 
 ScrollBarWidget::ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget (boss, x, y, w, h), CommandSender(boss) {
-	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG | WIDGET_WANT_TICKLE;
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG | WIDGET_WANT_TICKLE);
 	_type = kScrollBarWidget;
 
 	_part = kNoPart;
@@ -183,7 +183,7 @@ void ScrollBarWidget::recalc() {
 	}
 }
 
-void ScrollBarWidget::drawWidget(bool hilite) {
+void ScrollBarWidget::drawWidget() {
 	if (_draggingPart != kNoPart)
 		_part = _draggingPart;
 
@@ -198,8 +198,7 @@ void ScrollBarWidget::drawWidget(bool hilite) {
 		state = Theme::kScrollbarStateSlider;
 	}
 
-	g_gui.theme()->drawScrollbar(Common::Rect(_x, _y, _x+_w, _y+_h), _sliderPos, _sliderHeight, state,
-								isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled);
+	g_gui.theme()->drawScrollbar(Common::Rect(_x, _y, _x+_w, _y+_h), _sliderPos, _sliderHeight, state, _state);
 }
 
 } // End of namespace GUI

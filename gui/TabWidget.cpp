@@ -50,7 +50,7 @@ void TabWidget::init() {
 	_tabSpacing = g_gui.theme()->getTabSpacing();
 	_tabPadding = g_gui.theme()->getTabPadding();
 
-	_flags = WIDGET_ENABLED;
+	setFlags(WIDGET_ENABLED);
  	_type = kTabWidget;
 	_activeTab = -1;
 	_firstVisibleTab = 0;
@@ -248,7 +248,7 @@ void TabWidget::reflowLayout() {
 	_tabPadding = g_gui.theme()->getTabPadding();
 }
 
-void TabWidget::drawWidget(bool hilite) {
+void TabWidget::drawWidget() {
 	Common::Array<Common::String> tabs;
 	for (int i = _firstVisibleTab; i < (int)_tabs.size(); ++i) {
 		tabs.push_back(_tabs[i].title);

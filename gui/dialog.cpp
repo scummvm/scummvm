@@ -296,9 +296,8 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 
 void Dialog::handleTickle() {
 	// Focused widget receives tickle notifications
-	if (_focusedWidget && _focusedWidget->getFlags() & WIDGET_WANT_TICKLE) {
+	if (_focusedWidget && _focusedWidget->getFlags() & WIDGET_WANT_TICKLE)
 		_focusedWidget->handleTickle();
-	}
 }
 
 void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

@@ -53,7 +53,7 @@ public:
 	virtual void reflowLayout();
 
 protected:
-	void drawWidget(bool hilite);
+	void drawWidget();
 	void receivedFocusWidget();
 	void lostFocusWidget();
 

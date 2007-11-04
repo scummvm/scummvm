@@ -105,10 +105,12 @@ public:
 
 	//! State of the widget to be drawn
 	enum State {
-		kStateDisabled,	//! Indicates that the widget is disabled, that does NOT include that it is invisible
-		kStateEnabled,	//! Indicates that the widget is enabled
-		kStateHighlight	//! Indicates that the widget is highlighted by the user
+		kStateDisabled,		//! Indicates that the widget is disabled, that does NOT include that it is invisible
+		kStateEnabled,		//! Indicates that the widget is enabled
+		kStateHighlight		//! Indicates that the widget is highlighted by the user
 	};
+
+	typedef State WidgetStateInfo;
 
 	enum ScrollbarState {
 		kScrollbarStateNo,
@@ -277,21 +279,21 @@ public:
 	virtual int getStringWidth(const Common::String &str, FontStyle font = kFontStyleBold) const = 0;
 	virtual int getCharWidth(byte c, FontStyle font = kFontStyleBold) const = 0;
 
-	virtual void drawDialogBackground(const Common::Rect &r, uint16 hints, State state = kStateEnabled) = 0;
-	virtual void drawText(const Common::Rect &r, const Common::String &str, State state = kStateEnabled, TextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold) = 0;
+	virtual void drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state = kStateEnabled) = 0;
+	virtual void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold) = 0;
 	// this should ONLY be used by the debugger until we get a nicer solution
-	virtual void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state = kStateEnabled) = 0;
+	virtual void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled) = 0;
 
-	virtual void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background = kWidgetBackgroundPlain, State state = kStateEnabled) = 0;
-	virtual void drawButton(const Common::Rect &r, const Common::String &str, State state = kStateEnabled, uint16 hints = 0) = 0;
-	virtual void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state = kStateEnabled, int alpha = 256, bool themeTrans = false) = 0;
-	virtual void drawSlider(const Common::Rect &r, int width, State state = kStateEnabled) = 0;
-	virtual void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, State state = kStateEnabled) = 0;
-	virtual void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, State state = kStateEnabled) = 0;
-	virtual void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, State state = kStateEnabled) = 0;
-	virtual void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state = kStateEnabled, TextAlign align = kTextAlignLeft) = 0;
-	virtual void drawCaret(const Common::Rect &r, bool erase, State state = kStateEnabled) = 0;
-	virtual void drawLineSeparator(const Common::Rect &r, State state = kStateEnabled) = 0;
+	virtual void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background = kWidgetBackgroundPlain, WidgetStateInfo state = kStateEnabled) = 0;
+	virtual void drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, uint16 hints = 0) = 0;
+	virtual void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state = kStateEnabled, int alpha = 256, bool themeTrans = false) = 0;
+	virtual void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled) = 0;
+	virtual void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state = kStateEnabled) = 0;
+	virtual void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state = kStateEnabled) = 0;
+	virtual void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, WidgetStateInfo state = kStateEnabled) = 0;
+	virtual void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state = kStateEnabled, TextAlign align = kTextAlignLeft) = 0;
+	virtual void drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state = kStateEnabled) = 0;
+	virtual void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state = kStateEnabled) = 0;
 
 	virtual void restoreBackground(Common::Rect r, bool special = false) = 0;
 	virtual bool addDirtyRect(Common::Rect r, bool save = false, bool special = false) = 0;
