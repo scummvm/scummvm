@@ -659,10 +659,52 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx)
 								j += j2;
 							}
 
-							/*if ((filesDatabase[j].subData.resourceType == OBJ_TYPE_POLY) && (filesDatabase[j].subData.ptr)) {
-								ASSERT(0);
+							if ((filesDatabase[j].subData.resourceType == OBJ_TYPE_POLY) && (filesDatabase[j].subData.ptr)) {
+								int zoom = params.scale;
+
+								int16* dataPtr = (int16*)filesDatabase[j].subData.ptr;
+
+								if (*dataPtr == 0)
+								{
+									int16 offset;
+									int16 newX;
+									int16 newY;
+
+									dataPtr ++;
+
+									offset = *(dataPtr++);
+									flipShort(&offset);
+
+									newX = *(dataPtr++);
+									flipShort(&newX);
+
+									newY = *(dataPtr++);
+									flipShort(&newY);
+
+									offset += j;
+
+									if (offset >= 0 )
+									{
+										if (filesDatabase[offset].resType == 0 && filesDatabase[offset].subData.ptr)
+										{
+											dataPtr = (int16 *)filesDatabase[offset].subData.ptr;
+										}
+									}
+
+									zoom = -zoom;
+									x -= newX;
+									y -= newY;
+								}
+
+								if(dataPtr && findPoly((char*)dataPtr, x, y, zoom, mouseX, mouseY))
+								{
+									*outObjOvl = objOvl;
+									*outObjIdx = objIdx;
+
+									return (currentObject->type);
+								}
 							}
-							else*/
+							else
 							{
 								int numBitPlanes = filesDatabase[j].resType;
 
@@ -917,7 +959,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y)
 							first = false;
 						}
 					}
-					if((ovl2) && (ptrHead->verbNumber))
+					if((ovl2) && (ptrHead->verbNumber>=0))
 					{
 						if(ovl2->nameVerbGlob)
 						{

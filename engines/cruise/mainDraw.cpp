@@ -850,6 +850,177 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 	} while (*dataPointer != 0xFF);
 }
 
+bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX, int mouseY)
+{
+	int counter = 0;	// numbers of coordinates to process
+	int startX = 0;		// first X in model
+	int startY = 0;		// first Y in model
+	int x = 0;		// current X
+	int y = 0;		// current Y
+	int offsetXinModel = 0;	// offset of the X value in the model
+	int offsetYinModel = 0;	// offset of the Y value in the model
+	unsigned char *dataPointer = (unsigned char *)dataPtr;
+	int16 *ptrPoly_1_Buf = DIST_3D;
+	int16 *ptrPoly_2_Buf;
+
+	m_flipLeftRight = 0;
+	m_useSmallScale = 0;
+	m_lowerX = *(dataPointer + 3);
+	m_lowerY = *(dataPointer + 4);
+
+	if (scale < 0) {
+		scale = -scale;	// flip left right
+		m_flipLeftRight = 1;
+	}
+
+	if (scale < 0x180) {	// If scale is smaller than 384
+		m_useSmallScale = 1;
+		m_scaleValue = scale << 1;	// double scale
+	} else {
+		m_scaleValue = scale;
+	}
+
+	dataPointer += 5;
+
+	m_coordCount = (*(dataPointer++)) + 1;	// original uses +1 here but its later substracted again, we could skip it
+	m_first_X = *(dataPointer);
+	dataPointer++;
+	m_first_Y = *(dataPointer);
+	dataPointer++;
+	startX = m_lowerX - m_first_X;
+	startY = m_lowerY - m_first_Y;
+
+	if (m_useSmallScale) {
+		startX >>= 1;
+		startY >>= 1;
+	}
+
+	if (m_flipLeftRight) {
+		startX = -startX;
+	}
+
+	/*
+	 * NOTE:
+	 * 
+	 * The original code continues here with using X, Y instead of startX and StartY.
+	 * 
+	 * Original code:
+	 * positionX -= (upscaleValue(startX, m_scaleValue) + 0x8000) >> 16;
+	 * positionY -= (upscaleValue(startX, m_scaleValue) + 0x8000) >> 16;
+	 */
+
+	// get coordinates from data
+
+	startX = positionX - ((upscaleValue(startX, m_scaleValue) + 0x8000) >> 16);
+	startY = positionY - ((upscaleValue(startY, m_scaleValue) + 0x8000) >> 16);
+
+	ptrPoly_1_Buf[0] = 0;
+	ptrPoly_1_Buf[1] = 0;
+	ptrPoly_1_Buf += 2;
+	counter = m_coordCount - 1 - 1;	// skip the first pair, we already have the values
+
+	// dpbcl0
+	do {
+		x = *(dataPointer) - m_first_X;
+		dataPointer++;
+		if (m_useSmallScale) {	// shrink all coordinates by factor 2 if a scale smaller than 384 is used
+			x >>= 1;
+		}
+		ptrPoly_1_Buf[0] = offsetXinModel - x;
+		ptrPoly_1_Buf++;
+		offsetXinModel = x;
+
+		y = *(dataPointer) - m_first_Y;
+		dataPointer++;
+		if (m_useSmallScale) {
+			y >>= 1;
+		}
+		ptrPoly_1_Buf[0] = -(offsetYinModel - y);
+		ptrPoly_1_Buf++;
+		offsetYinModel = y;
+
+	} while (--counter);
+
+	// scale and adjust coordinates with offset (using two polybuffers by doing that)
+	ptrPoly_2_Buf = DIST_3D;
+	ptrPoly_1_Buf = polyBuffer2;
+	counter = m_coordCount - 1;	// reset counter // process first pair two
+	int m_current_X = 0;
+	int m_current_Y = 0;
+
+	do {
+		x = ptrPoly_2_Buf[0];
+
+		if (m_flipLeftRight == 0) {
+			x = -x;
+		}
+		//////////////////
+
+		m_current_X += upscaleValue(x, m_scaleValue);
+		ptrPoly_1_Buf[0] = ((m_current_X + 0x8000) >> 16) + startX;	// adjust X value with start offset
+
+		m_current_Y += upscaleValue(ptrPoly_2_Buf[1], m_scaleValue);
+		ptrPoly_1_Buf[1] = ((m_current_Y + 0x8000) >> 16) + startY;	// adjust Y value with start offset
+
+		/////////////////
+
+		ptrPoly_1_Buf += 2;
+		ptrPoly_2_Buf += 2;
+
+	} while (--counter);
+
+	// position of the dataPointer is m_coordCount * 2
+
+	int polygonCount = 0;
+
+	do {
+		int linesToDraw = *dataPointer++;
+
+		if (linesToDraw > 1){	// if value not zero
+			uint16 minimumScale;
+
+			m_color = *dataPointer;	// color
+			dataPointer += 2;
+
+			minimumScale = *(uint16 *) (dataPointer);
+			dataPointer += 2;
+
+			flipShort(&minimumScale);
+
+			if ((minimumScale <= scale))
+			{	
+				if (m_flipLeftRight) {
+					drawPolyMode1((unsigned char *)dataPointer, linesToDraw);
+				} else {
+					drawPolyMode2((unsigned char *)dataPointer, linesToDraw);
+				}
+
+				int polygonYMin = XMIN_XMAX[0];
+				int polygonYMax = polygonYMin + nbligne;
+
+				if((mouseY >= polygonYMin) && (mouseY <= polygonYMax))
+				{
+					int polygonLineNumber = mouseY - polygonYMin;
+
+					int XMIN = XMIN_XMAX[1+polygonLineNumber*2];
+					int XMAX = XMIN_XMAX[1+polygonLineNumber*2+1];
+
+					if((mouseX >= XMIN) && (mouseX <= XMAX))
+						return true;
+				}
+			}
+
+			dataPointer += linesToDraw;
+		} else {
+			dataPointer += 4;
+		}
+
+		polygonCount ++;
+	} while (*dataPointer != 0xFF);
+
+	return false;
+}
+
 // draw poly sprite (OLD: mainDrawSub1)
 void mainDrawPolygons(int fileIndex, cellStruct *pObject, int X, int scale, int Y, char *destBuffer, char *dataPtr) {
 	int newX;
