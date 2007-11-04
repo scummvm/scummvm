@@ -32,6 +32,7 @@
 #include "cine/cine.h"
 
 namespace Cine {
+
 struct CINEGameDescription {
 	Common::ADGameDescription desc;
 
@@ -44,7 +45,7 @@ uint32 CineEngine::getFeatures() const { return _gameDescription->features; }
 Common::Language CineEngine::getLanguage() const { return _gameDescription->desc.language; }
 Common::Platform CineEngine::getPlatform() const { return _gameDescription->desc.platform; }
 
-}
+} // End of namespace Cine
 
 static const PlainGameDescriptor cineGames[] = {
 	{"cine", "Cinematique evo.1 engine game"},
@@ -464,7 +465,7 @@ static const CINEGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
-}
+} // End of namespace Cine
 
 static const Common::ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
