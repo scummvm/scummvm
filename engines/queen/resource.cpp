@@ -188,11 +188,17 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 	case 'G':
 		ver->language = Common::DE_DEU;
 		break;
+	case 'g':
+		ver->language = Common::GR_GRE;
+		break;
 	case 'F':
 		ver->language = Common::FR_FRA;
 		break;
 	case 'I':
 		ver->language = Common::IT_ITA;
+		break;
+	case 'R':
+		ver->language = Common::RU_RUS;
 		break;
 	case 'S':
 		ver->language = Common::ES_ESP;
