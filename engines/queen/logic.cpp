@@ -1195,8 +1195,8 @@ void Logic::handlePinnacleRoom() {
 
 	_entryObj = 0;
 	uint16 prevObj = 0;
-	CmdText cmdText(5, _vm);
-	cmdText.setVerb(VERB_WALK_TO);
+	CmdText *cmdText = CmdText::makeCmdTextInstance(5, _vm);
+	cmdText->setVerb(VERB_WALK_TO);
 	while (_vm->input()->mouseButton() == 0 || _entryObj == 0) {
 
 		_vm->update();
@@ -1218,11 +1218,12 @@ void Logic::handlePinnacleRoom() {
 			ObjectData *objData = objectData(curObj);
 			if (objData->name > 0) {
 				_entryObj = objData->entryObj;
-				cmdText.displayTemp(INK_PINNACLE_ROOM, objectName(objData->name), true);
+				cmdText->displayTemp(INK_PINNACLE_ROOM, objectName(objData->name), true);
 			}
 			prevObj = curObj;
 		}
 	}
+	delete cmdText;
 	_vm->input()->clearMouseButton();
 
 	_newRoom = objectData(_entryObj)->room;
