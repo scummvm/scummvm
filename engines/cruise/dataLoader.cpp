@@ -117,8 +117,7 @@ void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
 	uint8 *buffer;
 	uint8 *dataPtr = pCurrentFileEntry->subData.ptr;
 
-	int spriteSize =
-	    pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn;
+	int spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn;
 	int x = 0;
 	int range = pCurrentFileEntry->height * pCurrentFileEntry->width;
 
@@ -140,8 +139,7 @@ void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
 
 		/* decode planes */
 		for (c = 0; c < 16; c++) {
-			buffer[x + c] =
-			    ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) & 4) | ((p3 >> 12) & 8) | ((p4 >> 11) & 16);
+			buffer[x + c] = ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) & 4) | ((p3 >> 12) & 8) | ((p4 >> 11) & 16);
 
 			p0 <<= 1;
 			p1 <<= 1;
@@ -388,8 +386,7 @@ void loadFNTSub(uint8 *ptr, int destIdx) {
 	}
 }
 
-void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx,
-	    int currentDestEntry) {
+void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx, int currentDestEntry) {
 	uint8 *ptr2;
 	uint8 *ptr3;
 	int offset;
@@ -455,6 +452,8 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx,
 				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 8;
 				filesDatabase[fileIndex].subData.resourceType = 2;
 				decodeGfxFormat1(&filesDatabase[fileIndex]);
+				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
 				break;
 			}
 		case 4:
@@ -462,6 +461,8 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx,
 				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 2;
 				filesDatabase[fileIndex].subData.resourceType = 4;
 				decodeGfxFormat4(&filesDatabase[fileIndex]);
+				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
 				break;
 			}
 		case 5:
@@ -471,14 +472,20 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx,
 					ASSERT(0);
 					return;
 				}
+				
 				filesDatabase[fileIndex].subData.resourceType = 4;
 				decodeGfxFormat5(&filesDatabase[fileIndex]);
+				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
+				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
 				break;
 			}
 		case 8:
 			{
-				ASSERT(0);
-				filesDatabase[fileIndex].subData.resourceType = 4;	// dummy !
+				filesDatabase[fileIndex].subData.resourceType = 4;
+				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
+				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
 				break;
 			}
 		default:
@@ -487,9 +494,6 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx,
 				break;
 			}
 		}
-
-		filesDatabase[fileIndex].subData.index = currentDestEntry;
-		filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
 
 		strcpyuint8(filesDatabase[fileIndex].subData.name, name);
 
