@@ -48,13 +48,12 @@ USE_ZLIB          = 1
 ########################################################################
 ## For remote deployment (copying the built files onto a device
 ## automatically), we need to know various things, like which
-## tools to use. I use pput, pdel and mkdir from
+## tools to use. I use pput and pdel from
 ##     http://www.xs4all.nl/~itsme/projects/xda/tools.html
 ## and I keep my installation on the storage card, but other people
 ## may prefer other things.
 
 REMOTE_COPY      = pput
-REMOTE_MKDIR     = pmkdir
 REMOTE_DELETE    = pdel
 REMOTE_DIRECTORY = \Storage Card\Program Files\Scummvm
 
@@ -217,16 +216,18 @@ PocketSCUMM.o:
 
 deploy-plugins: plugins PocketSCUMM.o plugins-stub
 	@echo Deploying DLLs
-	$(REMOTE_MKDIR) "$(REMOTE_DIRECTORY)\plugins"
-	$(REMOTE_DELETE) "$(REMOTE_DIRECTORY)\plugins\*.dll"
-	$(REMOTE_COPY) plugins/*.dll "$(REMOTE_DIRECTORY)\plugins"
+	-$(REMOTE_MKDIR) "$(REMOTE_DIRECTORY)"
+	-$(REMOTE_DELETE) "$(REMOTE_DIRECTORY)\*.dll"
+	$(REMOTE_COPY) plugins/*.dll "$(REMOTE_DIRECTORY)"
+	$(REMOTE_COPY) scummvm.dll "$(REMOTE_DIRECTORY)"
 
 deploy-exe: $(EXECUTABLE) 
 	@echo Deploying modern theme - errors are normal here!
+	-$(REMOTE_MKDIR) "$(REMOTE_DIRECTORY)"
 	@-$(REMOTE_COPY) ../../../gui/themes/modern.ini "$(REMOTE_DIRECTORY)"
 	@-$(REMOTE_COPY) ../../../gui/themes/modern.zip "$(REMOTE_DIRECTORY)"
 	@echo Deploying EXE
-	$(REMOTE_DELETE) "$(REMOTE_DIRECTORY)\scummvm.exe"
+	-$(REMOTE_DELETE) "$(REMOTE_DIRECTORY)\scummvm.exe"
 	$(REMOTE_COPY) scummvm.exe "$(REMOTE_DIRECTORY)"
 
 ARMscaler.o:
