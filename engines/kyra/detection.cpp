@@ -49,7 +49,7 @@ namespace {
 #define KYRA1_CD_FLAGS FLAGS(false, true, true, false, Kyra::GI_KYRA1)
 #define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA1)
 
-#define KYRA2_CD_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, Kyra::GI_KYRA2)
 #define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA2)
 
 #define KYRA3_CD_FLAGS FLAGS(false, false, true, false, Kyra::GI_KYRA3)

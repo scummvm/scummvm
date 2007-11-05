@@ -45,15 +45,14 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_screen = 0;
 	_text = 0;
 
-	_pageBuffer1 = _pageBuffer2 = 0;
 	_seqProcessedString = 0;
 	_activeWSA = 0;
 	_activeText = 0;
 	_seqWsa = 0;
-	
+
 	_gamePlayBuffer = 0;
 	_cCodeBuffer = _optionsBuffer = _chapterBuffer = 0;
-	
+
 	_overwriteSceneFacing = false;
 	_mainCharX = _mainCharY = -1;
 	_drawNoShapeFlag = false;
@@ -80,11 +79,11 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_chatVocLow = -1;
 	_chatText = 0;
 	_chatObject = -1;
-	
+
 	_currentTalkSections.STATim = NULL;
 	_currentTalkSections.TLKTim = NULL;
 	_currentTalkSections.ENDTim = NULL;
-	
+
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 }
 
@@ -114,7 +113,7 @@ int KyraEngine_v2::init() {
 	assert(_debugger);
 	_text = new TextDisplayer_v2(this, _screen);
 	assert(_text);
-	
+
 	setupTimers();
 
 	_screen->loadFont(_screen->FID_6_FNT, "6.FNT");
@@ -123,14 +122,26 @@ int KyraEngine_v2::init() {
 	_screen->loadFont(_screen->FID_BOOKFONT_FNT, "BOOKFONT.FNT");
 	_screen->setAnimBlockPtr(3504);
 	_screen->setScreenDim(0);
-	
-	for (int i = 0; i < 33; i++)
-		_sequenceStringsDuration[i] = strlen(_sequenceStrings[i]) * 8;
-	
+
 	_abortIntroFlag = false;
 
-	_sequenceSoundList = (const char * const *) _sequenceSoundListPC;
-	_sequenceSoundListSize = _sequenceSoundListPCSize;
+	// temporary solution until staticres manager support (kyra.dat) is added for kyra 2
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
+		_sequenceSoundList = (const char * const *) _sequenceSoundList_TOWNS;
+		_sequenceSoundListSize = _sequenceSoundListSize_TOWNS;
+		_sequenceStrings = (const char * const *) _sequenceStrings_TOWNS_EN;
+		_sequenceStringsSize = _sequenceStringsSize_TOWNS_EN;
+		_sequences = (const Sequence*) _sequences_TOWNS;
+	} else {
+		_sequenceSoundList = (const char * const *) _sequenceSoundList_PC;
+		_sequenceSoundListSize = _sequenceSoundListSize_PC;
+		_sequenceStrings = (const char * const *) _sequenceStrings_PC_EN;
+		_sequenceStringsSize = _sequenceStringsSize_PC_EN;
+		_sequences = (const Sequence*) _sequences_PC;
+	}
+
+	for (int i = 0; i < 33; i++)
+		_sequenceStringsDuration[i] = strlen(_sequenceStrings[i]) * 8;
 
 	// No mouse display in demo
 	if (_flags.isDemo)
@@ -149,38 +160,20 @@ int KyraEngine_v2::init() {
 }
 
 int KyraEngine_v2::go() {
-	// TODO move this to a better location, since for ingame we setup
-	// our soundfile list in KyraEngine_v2::startup for example
-	// so this should be just used in the sequenceplayer code,
-	// so maybe move this to KyraEngine_v2::seq_init
-	if (_flags.isDemo) {
-		static const char *soundFileList[] = {
-			"K2_DEMO",
-			"LOLSYSEX"
-		};
-		_sound->setSoundFileList(soundFileList, 2);
-	} else {
-		// TODO: move this to proper place
-		static const char *soundFileList[] = {
-			"K2INTRO"
-		};
-		_sound->setSoundFileList(soundFileList, 1);
-	}
-	_sound->loadSoundFile(0);
-
-	// Temporary measure to work around the fact that there's 
+	// Temporary measure to work around the fact that there's
 	// several WSA files with identical names in different PAK files.
 	_res->unloadPakFile("OUTFARM.PAK");
 	_res->unloadPakFile("FLYTRAP.PAK");
 
 	seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
+	//seq_playSequences(kSequenceFunters, kSequenceFrash);
 
 	if (_menuChoice == 1) {
 		startup();
 		runLoop();
 		cleanup();
 	} else if (_menuChoice == 3) {
-		// Load Savegame
+		// Load Game
 	}
 
 	return 0;
@@ -199,28 +192,28 @@ void KyraEngine_v2::startup() {
 	memset(_sceneShapeTable, 0, sizeof(_sceneShapeTable));
 	_gamePlayBuffer = new uint8[46080];
 	_unkBuf500Bytes = new uint8[500];
-	
+
 	loadMouseShapes();
 	loadItemShapes();
-	
+
 	_screen->setMouseCursor(0, 0, getShapePtr(0));
-	
+
 	_screenBuffer = new uint8[64000];
-	
+
 	loadCCodeBuffer("C_CODE.XXX");
 	loadOptionsBuffer("OPTIONS.XXX");
 	loadChapterBuffer(_newChapterFile);
-	
+
 	_unkBuf200kByte = new uint8[200000];
-	
+
 	showMessageFromCCode(265, 150, 0);
-	
+
 	openTalkFile(0);
 	_currentTalkFile = 1;
 	openTalkFile(1);
-	
+
 	showMessage(0, 207);
-	
+
 	_screen->setShapePages(5, 3);
 
 	memset(&_mainCharacter, 0, sizeof(_mainCharacter));
@@ -228,34 +221,34 @@ void KyraEngine_v2::startup() {
 	_mainCharacter.facing = 4;
 	_mainCharacter.animFrame = 0x12;
 	memset(_mainCharacter.inventory, -1, sizeof(_mainCharacter.inventory));
-	
+
 	memset(_sceneAnims, 0, sizeof(_sceneAnims));
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
 		_sceneAnimMovie[i] = new WSAMovieV2(this);
 	memset(_wsaSlots, 0, sizeof(_wsaSlots));
 	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
 		_wsaSlots[i] = new WSAMovieV2(this);
-	
+
 	_maskPage = 0;//_screen->getPagePtr(5);
 	_screen->_curPage = 0;
-	
+
 	_talkObjectList = new TalkObject[72];
 	memset(_talkObjectList, 0, sizeof(TalkObject)*72);
 	_shapeDescTable = new ShapeDesc[55];
 	memset(_shapeDescTable, 0, sizeof(ShapeDesc)*55);
-	
+
 	for (int i = 9; i <= 32; ++i) {
 		_shapeDescTable[i-9].width = 30;
 		_shapeDescTable[i-9].height = 55;
 		_shapeDescTable[i-9].xAdd = -15;
 		_shapeDescTable[i-9].yAdd = -50;
 	}
-	
+
 	for (int i = 19; i <= 24; ++i) {
 		_shapeDescTable[i-9].width = 53;
 		_shapeDescTable[i-9].yAdd = -51;
 	}
-	
+
 	_gfxBackUpRect = new uint8[_screen->getRectSize(32, 32)];
 	_itemList = new Item[30];
 	memset(_itemList, 0, sizeof(Item)*30);
@@ -270,24 +263,24 @@ void KyraEngine_v2::startup() {
 	_screen->copyPage(3, 0);
 	_screen->showMouse();
 	_screen->hideMouse();
-	
+
 	clearAnimObjects();
-	
+
 	// XXX
-	
+
 	_sceneList = new SceneDesc[86];
 	memset(_sceneList, 0, sizeof(SceneDesc)*86);
 	_sceneListSize = 86;
 	runStartScript(1, 0);
 	loadNPCScript();
-	
+
 	// XXX
 	snd_playWanderScoreViaMap(52, 1);
 	// XXX
-	
+
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	_screen->showMouse();
-	
+
 	//sub_20EE8(1);
 	//setNextIdleAnimTimer();
 	//XXX
@@ -296,7 +289,7 @@ void KyraEngine_v2::startup() {
 
 void KyraEngine_v2::runLoop() {
 	_screen->updateScreen();
-	
+
 	_quitFlag = false;
 	while (!_quitFlag) {
 		//XXX
@@ -321,17 +314,17 @@ void KyraEngine_v2::handleInput(int x, int y) {
 		_unk5 = 0;
 		return;
 	}
-	
+
 	if (!_screen->isMouseVisible())
 		return;
-	
+
 	if (_unk3 == -2) {
 		snd_playSoundEffect(13);
 		return;
 	}
-	
+
 	//setNextIdleAnimTimer();
-	
+
 	if (x <= 6 || x >= 312 || y <= 6 || y >= 135) {
 		bool exitOk = false;
 		assert(_unk3 + 6 >= 0);
@@ -340,32 +333,32 @@ void KyraEngine_v2::handleInput(int x, int y) {
 			if (_sceneExit1 != 0xFFFF)
 				exitOk = true;
 			break;
-		
+
 		case 1:
 			if (_sceneExit2 != 0xFFFF)
 				exitOk = true;
 			break;
-		
+
 		case 2:
 			if (_sceneExit3 != 0xFFFF)
 				exitOk = true;
 			break;
-		
+
 		case 3:
 			if (_sceneExit4 != 0xFFFF)
 				exitOk = true;
 			break;
-		
+
 		default:
 			break;
 		}
-		
+
 		if (exitOk) {
 			inputSceneChange(x, y, 1, 1);
 			return;
 		}
 	}
-	
+
 	if (checkCharCollision(x, y) >= 0 && _unk3 >= -1) {
 		runSceneScript2();
 		return;
@@ -391,7 +384,7 @@ void KyraEngine_v2::handleInput(int x, int y) {
 
 		//if (_unk1 <= -1)
 		//	skipHandling = 1;
-		
+
 		if (skipHandling)
 			return;
 
@@ -429,12 +422,12 @@ bool KyraEngine_v2::handleInputUnkSub(int x, int y) {
 		return true;
 	} else {
 		_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
-		
+
 		_sceneScriptState.regs[1] = x;
 		_sceneScriptState.regs[2] = y;
 		_sceneScriptState.regs[3] = 0;
 		_sceneScriptState.regs[4] = _itemInHand;
-		
+
 		_scriptInterpreter->startScript(&_sceneScriptState, 1);
 
 		while (_scriptInterpreter->validScript(&_sceneScriptState))
@@ -492,7 +485,7 @@ void KyraEngine_v2::updateMouse() {
 	int type = 0;
 	int xOffset = 0, yOffset = 0;
 	Common::Point mouse = getMousePos();
-	
+
 	if (mouse.y <= 145) {
 		if (mouse.x <= 6) {
 			if (_sceneExit4 != 0xFFFF) {
@@ -511,7 +504,7 @@ void KyraEngine_v2::updateMouse() {
 				yOffset = 5;
 			} else {
 				type = -2;
-			}			
+			}
 		} else if (mouse.y >= 135) {
 			if (_sceneExit3 != 0xFFFF) {
 				type = -4;
@@ -520,7 +513,7 @@ void KyraEngine_v2::updateMouse() {
 				yOffset = 10;
 			} else {
 				type = -2;
-			}			
+			}
 		} else if (mouse.y <= 6) {
 			if (_sceneExit1 != 0xFFFF) {
 				type = -6;
@@ -529,10 +522,10 @@ void KyraEngine_v2::updateMouse() {
 				yOffset = 1;
 			} else {
 				type = -2;
-			}			
+			}
 		}
 	}
-	
+
 	for (int i = 0; i < _specialExitCount; ++i) {
 		if (checkSpecialSceneExit(i, mouse.x, mouse.y)) {
 			switch (_specialExitTable[20+i]) {
@@ -542,47 +535,47 @@ void KyraEngine_v2::updateMouse() {
 				xOffset = 5;
 				yOffset = 1;
 				break;
-			
+
 			case 2:
 				type = -5;
 				shapeIndex = 2;
 				xOffset = 7;
 				yOffset = 5;
 				break;
-			
+
 			case 4:
 				type = -4;
 				shapeIndex = 3;
 				xOffset = 5;
 				yOffset = 7;
 				break;
-			
+
 			case 6:
 				type = -3;
 				shapeIndex = 4;
 				xOffset = 1;
 				yOffset = 5;
 				break;
-			
+
 			default:
 				break;
 			}
 		}
 	}
-	
+
 	if (type == -2) {
 		shapeIndex = 5;
 		xOffset = 5;
 		yOffset = 9;
 	}
-	
+
 	if (type != 0 && _handItemSet != type) {
 		_handItemSet = type;
 		_screen->hideMouse();
 		_screen->setMouseCursor(xOffset, yOffset, getShapePtr(shapeIndex));
 		_screen->showMouse();
 	}
-	
+
 	if (type == 0 && _handItemSet != _itemInHand) {
 		if ((mouse.y > 145) || (mouse.x > 6 && mouse.x < 312 && mouse.y > 6 && mouse.y < 135)) {
 			_handItemSet = _itemInHand;
@@ -619,7 +612,7 @@ int KyraEngine_v2::checkInput(void *p) {
 				// as when RETURN was pressed, but it *should* work for now
 				Common::Point pos = getMousePos();
 				_mouseX = pos.x;
-				_mouseY = pos.y;	
+				_mouseY = pos.y;
 				keys = 199;
 			}
 
@@ -640,11 +633,11 @@ int KyraEngine_v2::checkInput(void *p) {
 		case Common::EVENT_QUIT:
 			_quitFlag = true;
 			break;
-		
+
 		default:
 			break;
 		}
-	
+
 		if (_debugger->isAttached())
 			_debugger->onFrame();
 
@@ -653,7 +646,7 @@ int KyraEngine_v2::checkInput(void *p) {
 
 		_eventList.erase(_eventList.begin());
 	}
-	
+
 	_system->delayMillis(10);
 	return keys;
 }
@@ -686,24 +679,24 @@ void KyraEngine_v2::cleanup() {
 	delete [] _unkBuf500Bytes;
 	delete [] _screenBuffer;
 	delete [] _unkBuf200kByte;
-	
+
 	resetNewShapes(_newShapeCount, _newShapeFiledata);
 
 	for (int i = 0; i < ARRAYSIZE(_defaultShapeTable); ++i)
 		delete [] _defaultShapeTable[i];
 	freeSceneShapePtrs();
-	
+
 	delete [] _cCodeBuffer;
 	delete [] _optionsBuffer;
 	delete [] _chapterBuffer;
-	
+
 	delete [] _talkObjectList;
 	delete [] _shapeDescTable;
-	
+
 	delete [] _gfxBackUpRect;
-	
+
 	delete [] _sceneList;
-	
+
 	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
 		delete _sceneAnimMovie[i];
 	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
@@ -716,7 +709,7 @@ void KyraEngine_v2::loadCCodeBuffer(const char *file) {
 	char tempString[13];
 	strcpy(tempString, file);
 	changeFileExtension(tempString);
-	
+
 	delete [] _cCodeBuffer;
 	_cCodeBuffer = _res->fileData(tempString, 0);
 }
@@ -725,7 +718,7 @@ void KyraEngine_v2::loadOptionsBuffer(const char *file) {
 	char tempString[13];
 	strcpy(tempString, file);
 	changeFileExtension(tempString);
-	
+
 	delete [] _optionsBuffer;
 	_optionsBuffer = _res->fileData(tempString, 0);
 }
@@ -740,7 +733,7 @@ void KyraEngine_v2::loadChapterBuffer(int chapter) {
 	assert(chapter >= 1 && chapter <= ARRAYSIZE(chapterFilenames));
 	strcpy(tempString, chapterFilenames[chapter-1]);
 	changeFileExtension(tempString);
-	
+
 	delete [] _chapterBuffer;
 	_chapterBuffer = _res->fileData(tempString, 0);
 	_currentChapter = chapter;
@@ -759,20 +752,20 @@ const uint8 *KyraEngine_v2::getTableEntry(const uint8 *buffer, int id) {
 
 const char *KyraEngine_v2::getTableString(int id, const uint8 *buffer, int decode) {
 	const char *string = (const char*)getTableEntry(buffer, id);
-	
+
 	if (decode) {
 		decodeString1(string, _internStringBuf);
 		decodeString2(_internStringBuf, _internStringBuf);
 		string = _internStringBuf;
 	}
-	
+
 	return string;
 }
 
 const char *KyraEngine_v2::getChapterString(int id) {
 	if (_currentChapter != _newChapterFile)
 		loadChapterBuffer(_newChapterFile);
-	
+
 	return getTableString(id, _chapterBuffer, 1);
 }
 
@@ -781,7 +774,7 @@ int KyraEngine_v2::decodeString1(const char *src, char *dst) {
 		0x20, 0x65, 0x74, 0x61, 0x69, 0x6E, 0x6F, 0x73, 0x72, 0x6C, 0x68,
 		0x63, 0x64, 0x75, 0x70, 0x6D
 	};
-	
+
 	static const uint8 decodeTable2[] = {
 		0x74, 0x61, 0x73, 0x69, 0x6F, 0x20, 0x77, 0x62, 0x20, 0x72, 0x6E,
 		0x73, 0x64, 0x61, 0x6C, 0x6D, 0x68, 0x20, 0x69, 0x65, 0x6F, 0x72,
@@ -845,7 +838,7 @@ void KyraEngine_v2::showMessage(const char *string, int16 palIndex) {
 	_shownMessage = string;
 	_screen->hideMouse();
 	_screen->fillRect(0, 190, 319, 199, 0xCF);
-	
+
 	if (string) {
 		if (palIndex != -1 || _msgUnk1) {
 			palIndex *= 3;
@@ -859,7 +852,7 @@ void KyraEngine_v2::showMessage(const char *string, int16 palIndex) {
 
 		setTimer1DelaySecs(7);
 	}
-	
+
 	_msgUnk1 = 0;
 	_screen->showMouse();
 }
@@ -893,7 +886,7 @@ void KyraEngine_v2::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 
 void KyraEngine_v2::loadMouseShapes() {
 	_screen->loadBitmap("_MOUSE.CSH", 3, 3, 0);
-	
+
 	for (int i = 0; i <= 8; ++i) {
 		_defaultShapeTable[i] = _screen->makeShapeCopy(_screen->getCPagePtr(3), i);
 		assert(_defaultShapeTable[i]);
@@ -902,44 +895,44 @@ void KyraEngine_v2::loadMouseShapes() {
 
 void KyraEngine_v2::loadItemShapes() {
 	_screen->loadBitmap("_ITEMS.CSH", 3, 3, 0);
-	
+
 	for (int i = 64; i <= 239; ++i) {
 		_defaultShapeTable[i] = _screen->makeShapeCopy(_screen->getCPagePtr(3), i-64);
 		assert(_defaultShapeTable[i]);
 	}
-	
+
 	_res->loadFileToBuf("_ITEMHT.DAT", _itemHtDat, sizeof(_itemHtDat));
 	assert(_res->getFileSize("_ITEMHT.DAT") == sizeof(_itemHtDat));
-	
+
 	_screen->_curPage = 0;
 }
 
 void KyraEngine_v2::loadZShapes(int shapes) {
 	char file[10];
 	strcpy(file, "_ZX.SHP");
-	
+
 	_loadedZTable = shapes;
 	file[2] = '0' + shapes;
-	
+
 	uint8 *data = _res->fileData(file, 0);
 	for (int i = 9; i <= 32; ++i) {
 		delete [] _defaultShapeTable[i];
 		_defaultShapeTable[i] = _screen->makeShapeCopy(data, i-9);
 	}
 	delete [] data;
-	
+
 	_loadedZTable = shapes;
 }
 
 void KyraEngine_v2::loadInventoryShapes() {
 	int curPageBackUp = _screen->_curPage;
 	_screen->_curPage = 2;
-	
+
 	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
-	
+
 	for (int i = 0; i < 10; ++i)
 		_defaultShapeTable[240+i] = _screen->encodeShape(_inventoryX[i], _inventoryY[i], 16, 16, 0);
-	
+
 	_screen->_curPage = curPageBackUp;
 }
 
@@ -950,7 +943,7 @@ void KyraEngine_v2::runStartScript(int script, int unk1) {
 
 	ScriptData scriptData;
 	ScriptState scriptState;
-	
+
 	_scriptInterpreter->loadScript(filename, &scriptData, &_opcodes);
 	_scriptInterpreter->initScript(&scriptState, &scriptData);
 	scriptState.regs[6] = unk1;
@@ -963,24 +956,24 @@ void KyraEngine_v2::runStartScript(int script, int unk1) {
 void KyraEngine_v2::loadNPCScript() {
 	char filename[12];
 	strcpy(filename, "_NPC.EMC");
-	
+
 	switch (_lang) {
 	case 0:
 		filename[5] = 'E';
 		break;
-	
+
 	case 1:
 		filename[5] = 'F';
 		break;
-	
+
 	case 2:
 		filename[5] = 'G';
 		break;
-	
+
 	default:
 		break;
 	};
-	
+
 	_scriptInterpreter->loadScript(filename, &_npcScriptData, &_opcodes);
 }
 
@@ -1005,7 +998,7 @@ void KyraEngine_v2::runTemporaryScript(const char *filename, int unk1, int unk2,
 		_newShapeFiledata = _res->fileData(_newShapeFilename, 0);
 		assert(_newShapeFiledata);
 	}
-	
+
 	fileData = _newShapeFiledata;
 
 	if (!fileData)
@@ -1108,13 +1101,13 @@ int KyraEngine_v2::inputSceneChange(int x, int y, int unk1, int unk2) {
 				x = 4;
 				y = _sceneEnterY4;
 				_pathfinderFlag = 7;
-			}				
+			}
 		} else if (_unk3 == -5) {
 			if (_sceneList[curScene].exit2 != 0xFFFF) {
 				x = 316;
 				y = _sceneEnterY2;
 				_pathfinderFlag = 7;
-			}		
+			}
 		} else if (_unk3 == -6) {
 			if (_sceneList[curScene].exit1 != 0xFFFF) {
 				x = _sceneEnterX1;
@@ -1129,7 +1122,7 @@ int KyraEngine_v2::inputSceneChange(int x, int y, int unk1, int unk2) {
 			}
 		}
 	}
-	
+
 	if (_pathfinderFlag) {
 		if (findItem(curScene, 13) >= 0 && _unk3 <= -3) {
 			//XXX
@@ -1149,27 +1142,27 @@ int KyraEngine_v2::inputSceneChange(int x, int y, int unk1, int unk2) {
 			return 0;
 		}
 	}
-	
+
 	if (ABS(_mainCharacter.x1 - x) < 4 || ABS(_mainCharacter.y1 - y) < 2)
 		return 0;
-	
+
 	int curX = _mainCharacter.x1 & ~3;
 	int curY = _mainCharacter.y1 & ~1;
 	int dstX = x & ~3;
 	int dstY = y & ~1;
-	
+
 	int wayLength = findWay(curX, curY, dstX, dstY, _movFacingTable, 600);
 	_pathfinderFlag = 0;
 	_timer->disable(5);
-	
+
 	if (wayLength != 0 && wayLength != 0x7D00)
 		refreshNPC = (trySceneChange(_movFacingTable, unk1, unk2) != 0);
 
 	//XXX
-	
+
 	if (refreshNPC)
 		enterNewSceneUnk2(0);
-	
+
 	_pathfinderFlag = 0;
 	return refreshNPC;
 }
@@ -1185,29 +1178,29 @@ void KyraEngine_v2::moveCharacter(int facing, int x, int y) {
 	_mainCharacter.facing = facing;
 	x &= ~3;
 	y &= ~1;
-	
+
 	_screen->hideMouse();
 	switch (facing) {
 	case 0:
 		while (y < _mainCharacter.y1)
 			updateCharPosWithUpdate();
 		break;
-		
-	case 2:	
+
+	case 2:
 		while (_mainCharacter.x1 < x)
 			updateCharPosWithUpdate();
 		break;
-		
+
 	case 4:
 		while (y > _mainCharacter.y1)
 			updateCharPosWithUpdate();
 		break;
-		
+
 	case 6:
 		while (_mainCharacter.x1 > x)
 			updateCharPosWithUpdate();
 		break;
-		
+
 	default:
 		break;
 	}
@@ -1222,7 +1215,7 @@ int KyraEngine_v2::updateCharPos(int *table) {
 
 	if (_system->getMillis() < nextUpdate)
 		return 0;
-	
+
 	int facing = _mainCharacter.facing;
 	_mainCharacter.x1 += updateX[facing];
 	_mainCharacter.y1 += updateY[facing];
@@ -1306,15 +1299,15 @@ int KyraEngine_v2::checkCharCollision(int x, int y) {
 	scale1 = getScale(_mainCharacter.x1, _mainCharacter.y1);
 	scale2 = (scale1 * 24) >> 8;
 	scale3 = (scale1 * 48) >> 8;
-	
+
 	x1 = _mainCharacter.x1 - (scale2 >> 1);
 	x2 = _mainCharacter.x1 + (scale2 >> 1);
 	y1 = _mainCharacter.y1 - scale3;
 	y2 = _mainCharacter.y1;
-	
+
 	if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
 		return 0;
-	
+
 	return -1;
 }
 
@@ -1677,10 +1670,10 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_dummy),
 		Opcode(o2_dummy),
 	};
-	
+
 	for (int i = 0; i < ARRAYSIZE(opcodeTable); ++i)
 		_opcodes.push_back(&opcodeTable[i]);
-	
+
 	static const OpcodeV2 opcodeTemporaryTable[] = {
 		Opcode(o2t_defineNewShapes),
 		Opcode(o2t_setCurrentFrame),

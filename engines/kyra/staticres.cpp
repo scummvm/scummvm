@@ -1154,7 +1154,116 @@ const char *KyraEngine_v2::_mainMenuStrings[] = {
 
 // kyra 2 static res
 
-const char *KyraEngine_v2::_sequenceStrings[] = {
+const char *KyraEngine_v2::_sequenceStrings_PC_EN[] = {
+	"Kyrandia is disappearing!",
+	"Rock by rock...",
+	"...and tree by tree.",
+	"Kyrandia ceases to exist!",
+	"The Royal Mystics are baffled.",
+	"Every reference has been consulted.",
+	"Even Marko and his new valet have been allowed into the conference.",
+	"Luckily, the Hand was experienced in these matters.",
+	"And finally a plan was approved...",
+	"...that required a magic Anchor Stone...",
+	"...to be retrieved from the center of the world.",
+	"Zanthia, youngest of the Kyrandian Mystics, has been selected to retrieve the Stone.",
+	"Thank you for playing The Hand of Fate.",
+	"This should be enough blueberries to open a portal to the center of the world.",
+	" DUMMY STRING... ",
+	" DUMMY STRING... ",
+	"Hey! All my equipment has been stolen!",
+	" DUMMY STRING... ",
+	"If they think I'm going to walk all the way down there, they're nuts!",
+	" DUMMY STRING... ",
+	" DUMMY STRING... ",
+	"Hurry up Faun!",
+
+	"Boy, that was a close call!",
+	"You said it pal. I, for one, am never going hunting again!",
+	"Ribbit.",
+	"How many times do I have to tell you? You're a toad.",
+	"Oh no! We're out of cheese!",
+	"Let's try this earwax. It's orange.",
+	"Mommy, when do I get the ivy?",
+	"Get out of here, shoo!",
+	"You cut, and I'll choose.",
+	"No. You cut and I'll choose.",
+	"I still say it was derivative drivel.",
+	"Aw, you still wouldn't recognize iambic pentameter if it bit you on the butt!",
+
+	"Executive Producer",
+	"Brett W. Sperry",
+	"Direction & Design",
+	"Rick Gush",
+	"Lead Programmer",
+	"Michael Legg",
+	"Art Management",
+	"Louis Castle",
+	"Joseph B. Hewitt IV",
+	"Lead Artist",
+	"Rick Parks",
+	"Additional Coding by",
+	"Philip W. Gorrow",
+	"Mike Grayford",
+	"Mark McCubbin",
+	"Artists",
+	"Cameron Chun",
+	"Cary Averett",
+	"Cindy Chinn",
+	"Elie Arabian",
+	"Fei Cheng",
+	"Ferby Miguel",
+	"Frank Mendeola",
+	"Jack Martin",
+	"Jerry Moore",
+	"DUMMY STRING... ",
+	"Judith Peterson",
+	"Larry Miller",
+	"Lenny Lee",
+	"Louise Sandoval",
+	"Ren Olsen",
+	"Music & Sounds by",
+	"Paul Mudra",
+	"Frank Klepacki",
+	"Dwight Okahara",
+	"Pat Collins",
+	"Quality Assurance by",
+	"Glenn Sperry",
+	"Michael Lightner",
+	"William Foster",
+	"Jesse Clemit",
+	"Jeff Fillhaber",
+	"Manual, Package Design",
+	"& Fulfillment",
+	"Eydie Laramore",
+	"Lisa Marcinko",
+	"Lauren Rifkin",
+	"Congratulations!",
+	"Thank you for playing The Hand of Fate!",
+	"Guest Coding",
+	"Producer Liaison",
+	"Scott Duckett",
+	"Irvine Testers",
+	"Chris McFarland",
+	"Paul Moore",
+	"Chad Soares",
+	"Jared Brinkley",
+	"Jon Willliams",
+	"Chris Toft",
+	"Joe Kucan's Hair by",
+	"Theodore A. Morris",
+	"Load a game",
+	"Introduction",
+	"Start a new game",
+	"Exit the game",
+	"Special Thanks, to",
+	"Sake Joe Bostic-san",
+	"Tim Fritz",
+	"Kenny Dunne",
+	"Thank you for playing \"The Hand of Fate\."
+};
+
+const char *KyraEngine_v2::_sequenceStrings_TOWNS_EN[] = {
 	"Kyrandia is disappearing!",
 	"Rock by rock...",
 	"...and tree by tree.",
@@ -1264,9 +1373,10 @@ const char *KyraEngine_v2::_sequenceStrings[] = {
 	"Takeshi Abo (Japan)"
 };
 
-const int KyraEngine_v2::_sequenceStringsSize = ARRAYSIZE(KyraEngine_v2::_sequenceStrings);
+const int KyraEngine_v2::_sequenceStringsSize_PC_EN = ARRAYSIZE(KyraEngine_v2::_sequenceStrings_PC_EN);
+const int KyraEngine_v2::_sequenceStringsSize_TOWNS_EN = ARRAYSIZE(KyraEngine_v2::_sequenceStrings_TOWNS_EN);
 
-const char *KyraEngine_v2::_sequenceSoundListPC[] = {
+const char *KyraEngine_v2::_sequenceSoundList_PC[] = {
 	"eintro1",
 	"eintro2",
 	"eintro3",
@@ -1317,7 +1427,44 @@ const char *KyraEngine_v2::_sequenceSoundListPC[] = {
 	"theend"
 };
 
-const int KyraEngine_v2::_sequenceSoundListPCSize = ARRAYSIZE(KyraEngine_v2::_sequenceSoundListPC);
+const char *KyraEngine_v2::_sequenceSoundList_TOWNS[] = {
+	"intro1.pcm",
+	"intro2.pcm",
+	"intro3.pcm",
+	"intro4.pcm",
+	"intro5.pcm",
+	"intro6.pcm",
+	"intro7.pcm",
+	"intro8.pcm",
+	"intro9.pcm",
+	"intro10.pcm",
+	"intro11.pcm",
+	"intro12.pcm",
+	"glow.pcm",
+
+	"asong.pcm",
+	"crowcaw.pcm",
+	"eyerub2.pcm",
+	"pluck3.pcm",
+	"rodnreel.pcm",
+	"frog1.pcm",
+	"scavmov2.pcm",
+	"lambmom3.pcm",
+	"lambkid1.pcm",
+	"thunder2.pcm",
+	"thunder3.pcm",
+	"wind6.pcm",
+	"h2odrop2.pcm",
+	"gasleak.pcm",
+	"polgulp1.pcm",
+	"hndslap1.pcm",
+	"burp1.pcm",
+	"scream1.pcm",
+	"theend.pcm"
+};
+
+const int KyraEngine_v2::_sequenceSoundListSize_PC = ARRAYSIZE(KyraEngine_v2::_sequenceSoundList_PC);
+const int KyraEngine_v2::_sequenceSoundListSize_TOWNS = ARRAYSIZE(KyraEngine_v2::_sequenceSoundList_TOWNS);
 
 const uint8 KyraEngine_v2::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
 
@@ -1373,6 +1520,9 @@ const byte KyraEngine_v2::_itemStringMap[] = {
 	2,    2,    0,    0,    0,    0,    0,    2,
 	0,    2,    0,    0,    0,    0,    0,    0
 };
+
+const char *KyraEngine_v2::_dosSoundFileListIntro[] = { "K2INTRO" };
+const char *KyraEngine_v2::_dosSoundFileListFinale[] = { "K2FINALE" };
 
 const char *KyraEngine_v2::_dosSoundFileList[] = {
 	"K2TEST1",

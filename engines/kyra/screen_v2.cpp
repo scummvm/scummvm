@@ -742,4 +742,9 @@ bool Screen_v2::isMouseVisible() const {
 	return _mouseLockCount == 0;
 }
 
+void Screen_v2::setTextColorMap(const uint8 *cmap) {
+	debugC(9, kDebugLevelScreen, "Screen_v2::setTextColorMap(%p)", (const void *)cmap);
+	setTextColor(cmap, 0, 15);
+}
+
 } // end of namespace Kyra

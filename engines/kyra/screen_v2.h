@@ -76,6 +76,9 @@ public:
 	
 	// mouse handling
 	bool isMouseVisible() const;
+
+	// text display
+	void setTextColorMap(const uint8 *cmap);
 private:
 	KyraEngine_v2 *_vm;
 	

@@ -95,7 +95,7 @@ struct ActiveWSA {
 	uint16 currentFrame;
 	uint16 lastFrame;
 	uint16 x;
-	uint16 y;	
+	uint16 y;
 	const SequenceControl *control;
 	uint16 startupCommand;
 	uint16 finalCommand;
@@ -149,11 +149,11 @@ friend class TextDisplayer_v2;
 public:
 	KyraEngine_v2(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v2();
-	
+
 	virtual Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() { return _screen; }
 	int language() const { return _lang; }
-	
+
 	virtual Movie *createWSAMovie();
 protected:
 	// Main menu code, also used for Kyra 3
@@ -165,7 +165,7 @@ protected:
 	void gui_drawMainMenu(const char *const *strings, int select);
 	void gui_drawMainBox(int x, int y, int w, int h, int fill);
 	bool gui_mainMenuGetInput();
-	
+
 	void gui_printString(const char *string, int x, int y, int col1, int col2, int flags, ...);
 
 	// intro/outro
@@ -174,7 +174,7 @@ protected:
 	int seq_introWestwood(WSAMovieV2 *wsaObj, int x, int y, int frm);
 	int seq_introTitle(WSAMovieV2 *wsaObj, int x, int y, int frm);
 	int seq_introOverview(WSAMovieV2 *wsaObj, int x, int y, int frm);
-	int seq_introLibrary(WSAMovieV2 *wsaObj, int x, int y, int frm);	
+	int seq_introLibrary(WSAMovieV2 *wsaObj, int x, int y, int frm);
 	int seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm);
 	int seq_introPoint(WSAMovieV2 *wsaObj, int x, int y, int frm);
 	int seq_introZanfaun(WSAMovieV2 *wsaObj, int x, int y, int frm);
@@ -192,6 +192,18 @@ protected:
 	int seq_introHand2(WSAMovieV2 *wsaObj, int x, int y, int frm);
 	int seq_introHand3(WSAMovieV2 *wsaObj, int x, int y, int frm);
 
+	int seq_finaleFunters(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFerb(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFish(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFheep(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFarmer(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFuards(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFirates(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm);
+
+	void seq_finaleActorScreen();
+	int seq_finaleFiggle(WSAMovieV2 *wsaObj, int x, int y, int frm);
+
 	void seq_sequenceCommand(int command);
 	void seq_loadNestedSequence(int wsaNum, int seqNum);
 	void seq_nestedSequenceFrame(int command, int wsaNum);
@@ -202,7 +214,7 @@ protected:
 	void seq_unloadWSA(int wsaNum);
 	void seq_processWSAs();
 	void seq_cmpFadeFrame(const char *cmpFile);
-	
+
 	void seq_playTalkText(uint8 chatNum);
 	void seq_resetAllTextEntries();
 	uint32 seq_activeTextsTimeLeft();
@@ -210,19 +222,25 @@ protected:
 	int seq_setTextEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 width);
 	void seq_processText();
 	char *seq_preprocessString(const char *str, int width);
+	void seq_printCreditsString(uint16 strIndex, int x, int y, uint8 * colorMap, uint8 textcolor);
+	void seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width,
+		WSAMovieV2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos);
 
 	void seq_init();
 	void seq_uninit();
 
 	int init();
 	int go();
-	
+
 	Screen_v2 *_screen;
 	TextDisplayer_v2 *_text;
 	Debugger_v2 *_debugger;
-	
+
 	uint8 *_mouseSHPBuf;
 
+
+	static const char *_dosSoundFileListIntro[];
+	static const char *_dosSoundFileListFinale[];
 	static const char *_dosSoundFileList[];
 	static const int _dosSoundFileListSize;
 	static const int8 _dosTrackMap[];
@@ -232,21 +250,21 @@ protected:
 	static const int _introSoundListSize;
 	static const char *_introStrings[];
 	static const int _introStringsSize;
-	
+
 	int _introStringsDuration[21];
-	
+
 protected:
 	// game initialization
 	void startup();
 	void runLoop();
 	void cleanup();
-	
+
 	void setupTimers();
 	void setupOpcodeTable();
-	
+
 	void loadMouseShapes();
 	void loadItemShapes();
-	
+
 	// run
 	void update();
 	void updateWithText();
@@ -254,7 +272,7 @@ protected:
 	Functor0Mem<void, KyraEngine_v2> _updateFunctor;
 
 	void updateMouse();
-	
+
 	int checkInput(void *p);
 	void removeInputTop();
 	void handleInput(int x, int y);
@@ -267,7 +285,7 @@ protected:
 
 	int _mouseX, _mouseY;
 	Common::List<Common::Event> _eventList;
-	
+
 	// gfx/animation specific
 	uint8 *_gamePlayBuffer;
 	void restorePage3();
@@ -278,23 +296,23 @@ protected:
 
 	void backUpGfxRect24x24(int x, int y);
 	void restoreGfxRect24x24(int x, int y);
-	
+
 	uint8 *getShapePtr(int index) { return _defaultShapeTable[index]; }
 	uint8 *_defaultShapeTable[250];
 	uint8 *_sceneShapeTable[50];
-	
+
 	WSAMovieV2 *_wsaSlots[10];
-	
+
 	void freeSceneShapePtrs();
-	
+
 	struct ShapeDesc {
 		uint8 unk0, unk1, unk2, unk3, unk4;
 		uint16 width, height;
 		int16 xAdd, yAdd;
 	};
-	
+
 	ShapeDesc *_shapeDescTable;
-	
+
 	struct SceneAnim {
 		uint16 flags;
 		int16 x, y;
@@ -307,7 +325,7 @@ protected:
 		uint16 wsaFlag;
 		char filename[14];
 	};
-	
+
 	SceneAnim _sceneAnims[10];
 	WSAMovieV2 *_sceneAnimMovie[10];
 	bool _specialSceneScriptState[10];
@@ -316,19 +334,19 @@ protected:
 	uint32 _sceneSpecialScriptsTimer[10];
 	int _lastProcessedSceneScript;
 	bool _specialSceneScriptRunFlag;
-	
-	void updateSpecialSceneScripts();	
+
+	void updateSpecialSceneScripts();
 	void freeSceneAnims();
-	
+
 	int _loadedZTable;
 	void loadZShapes(int shapes);
 	void loadInventoryShapes();
-	
+
 	void resetScaleTable();
 	void setScaleTableItem(int item, int data);
 	int getScale(int x, int y);
 	uint16 _scaleTable[15];
-	
+
 	void setDrawLayerTableEntry(int entry, int data);
 	int getDrawLayer(int x, int y);
 	int _drawLayerTable[15];
@@ -348,7 +366,7 @@ protected:
 	int initNewShapes(uint8 *filedata);
 	void processNewShapes(int unk1, int unk2);
 	void resetNewShapes(int count, uint8 *filedata);
-	
+
 	// animator
 	struct AnimObj {
 		uint16 index;
@@ -375,25 +393,25 @@ protected:
 		int16 width2, height2;
 		AnimObj *nextObject;
 	};
-	
+
 	AnimObj _animObjects[42];
 	void clearAnimObjects();
-	
+
 	AnimObj *_animList;
 	bool _drawNoShapeFlag;
 	AnimObj *initAnimList(AnimObj *list, AnimObj *entry);
 	AnimObj *addToAnimListSorted(AnimObj *list, AnimObj *entry);
 	AnimObj *deleteAnimListEntry(AnimObj *list, AnimObj *entry);
-	
+
 	void drawAnimObjects();
 	void drawSceneAnimObject(AnimObj *obj, int x, int y, int drawLayer);
 	void drawCharacterAnimObject(AnimObj *obj, int x, int y, int drawLayer);
-	
+
 	void refreshAnimObjects(int force);
 	void refreshAnimObjectsIfNeed();
 
 	void flagAnimObjsForRefresh();
-	
+
 	void updateCharFacing();
 	void updateCharacterAnim(int);
 	void updateSceneAnim(int anim, int newFrame);
@@ -404,7 +422,7 @@ protected:
 	int _animObj0Width, _animObj0Height;
 	void setCharacterAnimDim(int w, int h);
 	void resetCharacterAnimDim();
-	
+
 	// scene
 	struct SceneDesc {
 		char filename[10];
@@ -412,7 +430,7 @@ protected:
 		uint8 flags;
 		uint8 sound;
 	};
-	
+
 	SceneDesc *_sceneList;
 	int _sceneListSize;
 	uint16 _currentScene;
@@ -426,7 +444,7 @@ protected:
 	bool checkSpecialSceneExit(int num, int x, int y);
 	uint8 _scenePal[688];
 	bool _overwriteSceneFacing;
-	
+
 	void enterNewScene(uint16 newScene, int facing, int unk1, int unk2, int unk3);
 	void enterNewSceneUnk1(int facing, int unk1, int unk2);
 	void enterNewSceneUnk2(int unk1);
@@ -436,37 +454,37 @@ protected:
 	void loadSceneMsc();
 
 	void fadeScenePal(int srcIndex, int delay);
-	
+
 	void startSceneScript(int unk1);
 	void runSceneScript2();
 	void runSceneScript4(int unk1);
 	void runSceneScript6();
 	void runSceneScript7();
-	
+
 	void initSceneAnims(int unk1);
 	void initSceneScreen(int unk1);
-	
+
 	int trySceneChange(int *moveTable, int unk1, int updateChar);
 	int checkSceneChange();
-	
+
 	// pathfinder
 	int _movFacingTable[600];
 	int findWay(int curX, int curY, int dstX, int dstY, int *moveTable, int moveTableSize);
 	bool lineIsPassable(int x, int y);
 	bool directLinePassable(int x, int y, int toX, int toY);
-	
+
 	int pathfinderUnk1(int *moveTable);
 	int pathfinderUnk2(int index, int v1, int v2);
 	int pathfinderUnk3(int tableLen, int x, int y);
 	int pathfinderUnk4(int index, int v);
 	void pathfinderUnk5(int *moveTable, int unk1, int x, int y, int moveTableSize);
-	
+
 	int _pathfinderUnkTable1[400];
 	int _pathfinderUnkTable2[200];
-	
+
 	// item
 	uint8 _itemHtDat[176];
-	
+
 	struct Item {
 		uint16 id;
 		uint16 sceneId;
@@ -475,13 +493,13 @@ protected:
 		uint16 unk7;
 	};
 	Item *_itemList;
-	
+
 	int findFreeItem();
 	int countAllItems();
 	int findItem(uint16 sceneId, uint16 id);
 	int checkItemCollision(int x, int y);
 	void resetItemList();
-	
+
 	int _itemInHand;
 	int _handItemSet;
 
@@ -503,11 +521,11 @@ protected:
 	void setMouseCursor(uint16 item);
 	void setHandItem(uint16 item);
 	void removeHandItem();
-	
+
 	// inventroy
 	static const int _inventoryX[];
 	static const int _inventoryY[];
-	
+
 	// localization
 	void loadCCodeBuffer(const char *file);
 	void loadOptionsBuffer(const char *file);
@@ -518,7 +536,7 @@ protected:
 	uint8 *_chapterBuffer;
 	int _currentChapter;
 	int _newChapterFile;
-	
+
 	const uint8 *getTableEntry(const uint8 *buffer, int id);
 	const char *getTableString(int id, const uint8 *buffer, int decode);
 	const char *getChapterString(int id);
@@ -526,11 +544,11 @@ protected:
 	void decodeString2(const char *src, char *dst);
 
 	void changeFileExtension(char *buffer);
-	
+
 	char _internStringBuf[200];
 	static const char *_languageExtension[];
 	static const char *_scriptLangExt[];
-	
+
 	// character
 	struct Character {
 		uint16 sceneId;
@@ -545,33 +563,33 @@ protected:
 		int16 x1, y1;
 		int16 x2, y2;
 	};
-	
+
 	Character _mainCharacter;
 	bool _useCharPal;
 	int _charPalEntry;
 	uint8 _charPalTable[16];
 	void updateCharPal(int unk1);
 	void setCharPalEntry(int entry, int value);
-	
+
 	void moveCharacter(int facing, int x, int y);
 	int updateCharPos(int *table);
 	void updateCharPosWithUpdate();
 	void updateCharAnimFrame(int num, int *table);
-	
+
 	int checkCharCollision(int x, int y);
 
 	int _mainCharX, _mainCharY;
 	int _charScaleX, _charScaleY;
 
 	static const int _characterFrameTable[];
-	
+
 	// text
 	void showMessageFromCCode(int id, int16 palIndex, int);
 	void showMessage(const char *string, int16 palIndex);
 	void showChapterMessage(int id, int16 palIndex);
 
 	void updateCommandLineEx(int str1, int str2, int16 palIndex);
-	
+
 	const char *_shownMessage;
 
 	byte _messagePal[3];
@@ -609,20 +627,20 @@ protected:
 	void snd_loadSoundFile(int id);
 
 	void playVoice(int high, int low);
-	
+
 	// timer
 	void timerFunc2(int);
 	void timerFunc3(int);
 	void timerFunc4(int);
 	void timerFunc5(int);
 	void timerFunc6(int);
-	
+
 	void setTimer1DelaySecs(int secs);
-	
+
 	// delay
 	void delay(uint32 millis, bool updateGame = false, bool isMainLoop = false);
 
-	// Talk object handling 
+	// Talk object handling
 	struct TalkObject {
 		char filename[13];
 		int8 scriptId;
@@ -640,7 +658,7 @@ protected:
 		int16 AVTLOffset;
 		int16 TEXTOffset;
 	};
-	
+
 	struct TIMStructUnk1 {
 		uint16 unk_0;
 		uint16 unk_2;
@@ -648,21 +666,21 @@ protected:
 		uint16 unk_8;
 		uint16* unk_20;
 	};
-	
+
 	struct TIMBuffers {
 		uint16 *AVTLChunk;
 		byte *TEXTChunk;
 		TIMStructUnk1 *UnkChunk;
 	};
 	TIMBuffers _TIMBuffers;
-	
+
 	struct TalkSections {
 		byte *STATim;
 		byte *TLKTim;
 		byte *ENDTim;
 	};
 	TalkSections _currentTalkSections;
-	
+
 	bool _objectChatFinished;
 	byte* loadTIMFile(const char *filename, byte *buffer, int32 bufferSize);
 	void freeTIM(byte *buffer);
@@ -744,28 +762,28 @@ protected:
 	int o2t_setCurrentFrame(ScriptState *script);
 	int o2t_playSoundEffect(ScriptState *script);
 	int o2t_setShapeFlag(ScriptState *script);
-	
+
 	// script
 	void runStartScript(int script, int unk1);
 	void loadNPCScript();
-	
+
 	bool _noScriptEnter;
 
 	ScriptData _npcScriptData;
-	
+
 	ScriptData _sceneScriptData;
 	ScriptState _sceneScriptState;
-	
+
 	ScriptData _temporaryScriptData;
 	ScriptState _temporaryScriptState;
 	bool _temporaryScriptExecBit;
 	Common::Array<const Opcode*> _opcodesTemporary;
 
 	void runTemporaryScript(const char *filename, int unk1, int unk2, int newShapes, int shapeUnload);
-	
+
 	// pathfinder
 	int _pathfinderFlag;
-	
+
 	uint8 *_unkBuf500Bytes;
 	uint8 *_unkBuf200kByte;
 	bool _unkFlag1;
@@ -779,16 +797,20 @@ protected:
 
 	const char *const *_sequenceSoundList;
 	int _sequenceSoundListSize;
-	
-	static const char *_sequenceSoundListPC[];
-	static const int _sequenceSoundListPCSize;
-	static const char *_sequenceStrings[];
-	static const int _sequenceStringsSize;
-	
+	const char *const *_sequenceStrings;
+	int _sequenceStringsSize;
+
+	static const char *_sequenceSoundList_PC[];
+	static const int _sequenceSoundListSize_PC;
+	static const char *_sequenceSoundList_TOWNS[];
+	static const int _sequenceSoundListSize_TOWNS;
+	static const char *_sequenceStrings_TOWNS_EN[];
+	static const int _sequenceStringsSize_TOWNS_EN;
+	static const char *_sequenceStrings_PC_EN[];
+	static const int _sequenceStringsSize_PC_EN;
+
 	int _sequenceStringsDuration[33];
 
-	uint8 *_pageBuffer1;
-	uint8 *_pageBuffer2;
 	static const uint8 _seqTextColorPresets[];
 	char *_seqProcessedString;
 	WSAMovieV2 *_seqWsa;
@@ -799,10 +821,16 @@ protected:
 	uint32 _seqFrameDelay;
 	uint32 _seqEndTime;
 	int _seqFrameCounter;
+	int _seqWsaCurrentFrame;
+	bool _seqSpecialFlag;
 	bool _seqSubframePlaying;
 	uint8 _seqTextColor[2];
-	
-	static const Sequence _sequences[];
+	uint8 _seqTextColorMap[16];
+
+	const Sequence *_sequences;
+
+	static const Sequence _sequences_PC[];
+	static const Sequence _sequences_TOWNS[];
 	static const NestedSequence _nSequences[];
 	static const SequenceControl _wsaControlLibrary[];
 	static const SequenceControl _wsaControlHand1b[];

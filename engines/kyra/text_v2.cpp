@@ -30,7 +30,7 @@
 namespace Kyra {
 
 TextDisplayer_v2::TextDisplayer_v2(KyraEngine_v2 *vm, Screen_v2 *screen)
-	: _vm(vm), TextDisplayer(vm, screen) {
+	: TextDisplayer(vm, screen), _vm(vm) {
 }
 
 void TextDisplayer_v2::backupTalkTextMessageBkgd(int srcPage, int dstPage) {

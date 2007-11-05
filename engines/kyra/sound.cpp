@@ -81,7 +81,7 @@ void Sound::voicePlay(const char *file) {
 	}
 
 	if (_currentVocFile) {
-		_mixer->stopHandle(_vocHandle);
+		//_mixer->stopHandle(_vocHandle);
 		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandle, _currentVocFile);
 	}
 	delete [] fileData;
