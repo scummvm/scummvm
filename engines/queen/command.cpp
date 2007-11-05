@@ -81,8 +81,8 @@ void CmdText::displayTemp(InkColor color, const char *name, bool outlined) {
 		if (_vm->resource()->getLanguage() != Common::GR_GRE) {
 			sprintf(temp, "%s %s", _command, name);
 		} else {
-			// don't show a space after the goto command in the Greek version
-			if (_command[1] != -34)
+			// don't show a space after the goto and give commands in the Greek version
+			if (_command[1] != -34 && !(_command[1] == -2 && strlen(_command) > 5))
 				sprintf(temp, "%s %s", _command, name);
 			else
 				sprintf(temp, "%s%s", _command, name);
@@ -122,8 +122,8 @@ void CmdText::addObject(const char *objName) {
 		if (_vm->resource()->getLanguage() != Common::GR_GRE) {
 			strcat(_command, " ");
 		} else {
-			// don't show a space after the goto command in the Greek version
-			if (_command[1] != -34)
+			// don't show a space after the goto and give commands in the Greek version
+			if (_command[1] != -34 && !(_command[1] == -2 && strlen(_command) > 5))
 				strcat(_command, " ");
 		}
 		strcat(_command, objName);
