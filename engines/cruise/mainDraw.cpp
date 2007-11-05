@@ -29,8 +29,6 @@
 
 namespace Cruise {
 
-int currentTransparent;
-
 struct autoCellStruct {
 	struct autoCellStruct *next;
 	short int ovlIdx;
@@ -228,8 +226,23 @@ void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], unsi
 int nbseg;
 int16 nbligne;
 
-void blitPolyMode1(char *dest, char *ptr, int16 * buffer, char color) {
-	ASSERT(0);
+void blitPolyMode1(char *dest, char *pMask, int16 * buffer, char color) {
+	int Y = XMIN_XMAX[0];
+
+	for (int i=0; i<nbligne; i++) {
+		int currentY = Y+i;
+		int XMIN = XMIN_XMAX[1+i*2];
+		int XMAX = XMIN_XMAX[1+i*2+1];
+
+		for(int x=XMIN; x<=XMAX; x++)
+		{
+			if(testMask(x, currentY, (unsigned char*)pMask, 40))
+			{
+				*(dest + currentY * 320 + x) = color;
+			}
+		}
+		//line(XMIN, currentY, XMAX, currentY, color);
+	}
 }
 
 void blitPolyMode2(char *dest, int16 * buffer, char color) {
@@ -240,15 +253,11 @@ void blitPolyMode2(char *dest, int16 * buffer, char color) {
 		int XMIN = XMIN_XMAX[1+i*2];
 		int XMAX = XMIN_XMAX[1+i*2+1];
 
-		line(XMIN, currentY, XMAX, currentY, color);
+		for(int x=XMIN; x<=XMAX; x++)
+		{
+			*(dest + currentY * 320 + x) = color;
+		}
 	}
-/*	int i;
-
-	for (i = 0; i < nbseg; i++) {
-		line(buffer[i * 2], buffer[i * 2 + 1], buffer[(i + 1) * 2], buffer[(i + 1) * 2 + 1], color);
-	} 
-
-	fillpoly(buffer, nbseg, color); */
 }
 
 int polyXMin;
@@ -950,7 +959,7 @@ bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX
 				int polygonYMin = XMIN_XMAX[0];
 				int polygonYMax = polygonYMin + nbligne;
 
-				if ((mouseY >= polygonYMin) && (mouseY <= polygonYMax)) {
+				if ((mouseY >= polygonYMin) && (mouseY < polygonYMax)) {
 					int polygonLineNumber = mouseY - polygonYMin;
 
 					int XMIN = XMIN_XMAX[1+polygonLineNumber*2];
@@ -972,8 +981,38 @@ bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX
 	return false;
 }
 
+void clearMaskBit(int x, int y, unsigned char* pData, int stride)
+{
+	unsigned char* ptr = y * stride + x/8 + pData;
+
+	unsigned char bitToTest = 0x80 >> (x & 7);
+
+	*(ptr) &= ~bitToTest;
+}
+
+
+void drawMask(unsigned char* workBuffer, int wbWidth, int wbHeight, unsigned char* pMask, int maskWidth, int maskHeight, int maskX, int maskY, int passIdx)
+{
+	for(int y=0; y<maskHeight; y++)
+	{
+		for(int x=0; x<maskWidth*8; x++)
+		{
+			if(testMask(x,y, pMask, maskWidth))
+			{
+				int destX = maskX + x;
+				int destY = maskY + y;
+
+				if((destX >= 0) && (destX < wbWidth*8) && (destY >= 0) && (destY < wbHeight))
+					clearMaskBit(destX, destY, workBuffer, wbWidth);
+			}
+		}
+	}
+}
+
+unsigned char polygonMask[(320*200)/8];
+
 // draw poly sprite (OLD: mainDrawSub1)
-void mainDrawPolygons(int fileIndex, cellStruct *pObject, int X, int scale, int Y, char *destBuffer, char *dataPtr) {
+void mainDrawPolygons(int fileIndex, cellStruct *plWork, int X, int scale, int Y, char *destBuffer, char *dataPtr) {
 	int newX;
 	int newY;
 	int newScale;
@@ -1021,27 +1060,44 @@ void mainDrawPolygons(int fileIndex, cellStruct *pObject, int X, int scale, int 
 	if (spriteY1 == spriteY2)
 		return;
 
-	char *pMask = NULL;
 	var_8 = 0;
 
-	if (pObject) {
-		cellStruct *pCurrentObject = pObject;
+	memset(polygonMask, 0xFF, (320*200)/8);
 
-		do {
-			if (pCurrentObject->type == OBJ_TYPE_BGMK) {
-//				ASSERT(0);
+	int numPasses = 0;
+
+	while(plWork)
+	{
+		if(plWork->type == OBJ_TYPE_BGMK && plWork->freeze == 0)
+		{
+			objectParamsQuery params;
+
+			getMultipleObjectParam(plWork->overlay, plWork->idx, &params);
+
+			int maskX = params.X;
+			int maskY = params.Y;
+			int maskFrame = params.fileIdx;
+
+			if(filesDatabase[maskFrame].subData.resourceType == OBJ_TYPE_BGMK && filesDatabase[maskFrame].subData.ptrMask)
+			{
+				drawMask(polygonMask, 40, 200, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width/8, filesDatabase[maskFrame].height, maskX, maskY, numPasses++);
+			}
+			else
+			if(filesDatabase[maskFrame].subData.resourceType == OBJ_TYPE_SPRITE && filesDatabase[maskFrame].subData.ptrMask)
+			{
+				drawMask(polygonMask, 40, 200, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width/8, filesDatabase[maskFrame].height, maskX, maskY, numPasses++);
 			}
 
-			pCurrentObject = pCurrentObject->next;
-		} while (pCurrentObject);
+		}
+
+		plWork = plWork->next;
 	}
 
 	// this function builds the poly model and then calls the draw functions (OLD: mainDrawSub1Sub5)
-	buildPolyModel(newX, newY, newScale, pMask, destBuffer, newFrame);
+	buildPolyModel(newX, newY, newScale, (char*)polygonMask, destBuffer, newFrame);
 }
 
-void mainSprite(int globalX, int globalY, gfxEntryStruct *pGfxPtr,
-	    uint8 *ouputPtr, int newColor, int idx) {
+void mainSprite(int globalX, int globalY, gfxEntryStruct *pGfxPtr, uint8 *ouputPtr, int newColor, int idx) {
 	// this is used for font only
 
 	if (pGfxPtr) {
@@ -1080,8 +1136,7 @@ void mainSprite(int globalX, int globalY, gfxEntryStruct *pGfxPtr,
 						if (color == 1) {
 							*output = (uint8) 0;
 						} else {
-							*output =
-							    (uint8) newColor;
+							*output = (uint8) newColor;
 						}
 					}
 				}
@@ -1091,25 +1146,59 @@ void mainSprite(int globalX, int globalY, gfxEntryStruct *pGfxPtr,
 	}
 }
 
-void mainDrawSub4(int objX1, int var_6, cellStruct *currentObjPtr,
-	    char *data1, int objY2, int objX2, char *output, char *data2) {
+void drawSprite(int objX1, int var_6, cellStruct *currentObjPtr, char *data1, int objY2, int objX2, char *output, char *data2) {
 	int x = 0;
 	int y = 0;
 
+	cellStruct* plWork = currentObjPtr;
+	int workBufferSize = var_6 * (objX1/8);
+
+	unsigned char* workBuffer = (unsigned char*)malloc(workBufferSize);
+	memcpy(workBuffer, data2, workBufferSize);
+
+	int numPasses = 0;
+
+	while(plWork)
+	{
+		if(plWork->type == OBJ_TYPE_BGMK && plWork->freeze == 0)
+		{
+			objectParamsQuery params;
+
+			getMultipleObjectParam(plWork->overlay, plWork->idx, &params);
+
+			int maskX = params.X;
+			int maskY = params.Y;
+			int maskFrame = params.fileIdx;
+
+			if(filesDatabase[maskFrame].subData.resourceType == OBJ_TYPE_BGMK && filesDatabase[maskFrame].subData.ptrMask)
+			{
+				drawMask(workBuffer, objX1/8, var_6, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width/8, filesDatabase[maskFrame].height, maskX - objX2, maskY - objY2, numPasses++);
+			}
+			else
+			if(filesDatabase[maskFrame].subData.resourceType == OBJ_TYPE_SPRITE && filesDatabase[maskFrame].subData.ptrMask)
+			{
+				drawMask(workBuffer, objX1/8, var_6, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width/8, filesDatabase[maskFrame].height, maskX - objX2, maskY - objY2, numPasses++);
+			}
+
+		}
+
+		plWork = plWork->next;
+	}
+
 	for (y = 0; y < var_6; y++) {
-		for (x = 0; x < (objX1 * 8); x++) {
+		for (x = 0; x < (objX1); x++) {
 			uint8 color = (data1[0]);
 			data1++;
 
-			if ((x + objX2) >= 0 && (x + objX2) < 320
-			    && (y + objY2) >= 0 && (y + objY2) < 200) {
-				if (color != currentTransparent) {
-					output[320 * (y + objY2) + x + objX2] =
-					    color;
+			if ((x + objX2) >= 0 && (x + objX2) < 320 && (y + objY2) >= 0 && (y + objY2) < 200) {
+				if(testMask(x, y, workBuffer, objX1/8)) {
+					output[320 * (y + objY2) + x + objX2] = color;
 				}
 			}
 		}
 	}
+
+	free(workBuffer);
 }
 
 #ifdef _DEBUG
@@ -1299,7 +1388,7 @@ void mainDraw(int16 param) {
 	//-------------------------------------------------- PROCESS SPRITES -----------------------------------------//
 
 	while (currentObjPtr) {
-		if ((currentActiveBackgroundPlane == currentObjPtr->backgroundPlane) && (currentObjPtr->freeze == 0) && (currentObjPtr->type == OBJ_SPRITE)) {
+		if ((currentActiveBackgroundPlane == currentObjPtr->backgroundPlane) && (currentObjPtr->freeze == 0) && (currentObjPtr->type == OBJ_TYPE_SPRITE)) {
 			objectParamsQuery params;
 
 			currentObjIdx = currentObjPtr->idx;
@@ -1319,8 +1408,7 @@ void mainDraw(int16 param) {
 				objZ1 = 0;
 			}
 
-			getMultipleObjectParam(currentObjPtr->overlay,
-			    currentObjIdx, &params);
+			getMultipleObjectParam(currentObjPtr->overlay, currentObjIdx, &params);
 
 			objX2 = objX1 + params.X;
 			objY2 = objY1 + params.Y;
@@ -1340,9 +1428,7 @@ void mainDraw(int16 param) {
 					spriteHeight = filesDatabase[objZ2].height;	// height
 
 					if (filesDatabase[objZ2].subData.ptr) {
-						currentTransparent = filesDatabase[objZ2].subData.transparency;
-
-						mainDrawSub4(objX1, spriteHeight, currentObjPtr, (char *)filesDatabase[objZ2].subData.ptr, objY2, objX2,(char *)gfxModuleData.pPage10,(char *)filesDatabase[objZ2].subData.ptr);
+						drawSprite(objX1, spriteHeight, currentObjPtr, (char *)filesDatabase[objZ2].subData.ptr, objY2, objX2,(char *)gfxModuleData.pPage10,(char *)filesDatabase[objZ2].subData.ptrMask);
 					}
 				}
 			}
@@ -1437,7 +1523,7 @@ void mainDraw(int16 param) {
 	currentObjPtr = cellHead.next;
 
 	while (currentObjPtr) {
-		if (currentObjPtr->type == 5 && currentObjPtr->freeze == 0) {
+		if (currentObjPtr->type == OBJ_TYPE_MSG && currentObjPtr->freeze == 0) {
 			mainSprite(currentObjPtr->x, currentObjPtr->field_C, currentObjPtr->gfxPtr, gfxModuleData.pPage10, currentObjPtr->color, currentObjPtr->spriteIdx);
 			var20 = 1;
 		}

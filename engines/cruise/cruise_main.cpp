@@ -186,7 +186,7 @@ void initBigVar3() {
 		}
 
 		filesDatabase[i].subData.ptr = NULL;
-		filesDatabase[i].subData.ptr2 = NULL;
+		filesDatabase[i].subData.ptrMask = NULL;
 
 		filesDatabase[i].subData.index = -1;
 		filesDatabase[i].subData.resourceType = 0;
@@ -418,7 +418,7 @@ void resetFileEntry(int32 entryNumber) {
 	free(filesDatabase[entryNumber].subData.ptr);
 
 	filesDatabase[entryNumber].subData.ptr = NULL;
-	filesDatabase[entryNumber].subData.ptr2 = NULL;
+	filesDatabase[entryNumber].subData.ptrMask = NULL;
 	filesDatabase[entryNumber].widthInColumn = 0;
 	filesDatabase[entryNumber].width = 0;
 	filesDatabase[entryNumber].resType = 0;
@@ -465,7 +465,7 @@ int initAllData(void) {
 
 	for (i = 0; i < 257; i++) {
 		filesDatabase[i].subData.ptr = NULL;
-		filesDatabase[i].subData.ptr2 = NULL;
+		filesDatabase[i].subData.ptrMask = NULL;
 	}
 
 	initBigVar3();
@@ -605,6 +605,17 @@ int removeFinishedScripts(scriptInstanceStruct *ptrHandle) {
 	return (0);
 }
 
+bool testMask(int x, int y, unsigned char* pData, int stride)
+{
+	unsigned char* ptr = y * stride + x/8 + pData;
+
+	unsigned char bitToTest = 0x80 >> (x & 7);
+
+	if((*ptr) & bitToTest)
+		return true;
+	return false;
+}
+
 int buttonDown;
 int selectDown = 0;
 int menuDown = 0;
@@ -697,30 +708,18 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 								int nWidth;
 								int nHeight;
 
-								if (numBitPlanes == 1) {
-									nWidth = filesDatabase[j].widthInColumn / 2;
-								} else {
-									nWidth = filesDatabase[j].width;
-								}
-
+								nWidth = filesDatabase[j].width;
 								nHeight = filesDatabase[j].height;
 
 								int offsetX = mouseX - x;
 								int offsetY = mouseY - y;
 
-								if ((offsetX >= 0) && (offsetX < nWidth * 16) && (offsetY >= 0) && (nWidth <= nHeight) && filesDatabase[j].subData.ptr) {
-									if (numBitPlanes == 1) {
-									} else {
+								if ((offsetX >= 0) && (offsetX < nWidth) && (offsetY >= 0) && (offsetY <= nHeight) && filesDatabase[j].subData.ptr) {
+									if(testMask(offsetX, offsetY, filesDatabase[j].subData.ptrMask, filesDatabase[j].width/8)) {
+										*outObjOvl = objOvl;
+										*outObjIdx = objIdx;
+										return currentObject->type;
 									}
-
-									printf("should compare to mask in findObject...\n");
-
-									*outObjOvl = objOvl;
-									*outObjIdx = objIdx;
-
-									printf("Selected: %s\n", objectName);
-
-									return currentObject->type;
 								}
 							}
 						} else if (currentObject->type == OBJ_TYPE_VIRTUEL) {

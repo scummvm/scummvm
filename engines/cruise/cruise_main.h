@@ -110,6 +110,7 @@ void freeStuff2(void);
 char *getObjectName(int index, uint8 * string);
 void mainLoop(void);
 void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY);
+bool testMask(int x, int y, unsigned char* pData, int stride);
 
 } // End of namespace Cruise
 

@@ -47,7 +47,7 @@ void decodeGfxFormat1(dataFileEntry *pCurrentFileEntry) {
 	uint8 *dataPtr = pCurrentFileEntry->subData.ptr;
 
 	int spriteSize =
-	    pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn * 8;
+	    pCurrentFileEntry->height * pCurrentFileEntry->width;
 	int x = 0;
 
 	buffer = (uint8 *) malloc(spriteSize);
@@ -77,8 +77,7 @@ void decodeGfxFormat4(dataFileEntry *pCurrentFileEntry) {
 	uint8 *buffer;
 	uint8 *dataPtr = pCurrentFileEntry->subData.ptr;
 
-	int spriteSize =
-	    pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn * 2;
+	int spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->width;
 	int x = 0;
 
 	buffer = (uint8 *) malloc(spriteSize);
@@ -98,8 +97,7 @@ void decodeGfxFormat4(dataFileEntry *pCurrentFileEntry) {
 		/* decode planes */
 		for (c = 0; c < 16; c++) {
 			buffer[x + c] =
-			    ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) &
-			    4) | ((p3 >> 12) & 8);
+			    ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) & 4) | ((p3 >> 12) & 8);
 
 			p0 <<= 1;
 			p1 <<= 1;
@@ -143,8 +141,7 @@ void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
 		/* decode planes */
 		for (c = 0; c < 16; c++) {
 			buffer[x + c] =
-			    ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) &
-			    4) | ((p3 >> 12) & 8) | ((p4 >> 11) & 16);
+			    ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) & 4) | ((p3 >> 12) & 8) | ((p4 >> 11) & 16);
 
 			p0 <<= 1;
 			p1 <<= 1;
@@ -163,28 +160,26 @@ void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
 
 int updateResFileEntry(int height, int width, int entryNumber, int resType) {
 	int div = 0;
-	int size;
 
 	resetFileEntry(entryNumber);
 
 	filesDatabase[entryNumber].subData.field_1C = 0;
 
-	size = height * width;	// for sprites: width * height
+	int maskSize = height * width;	// for sprites: width * height
 
 	if (resType == 4) {
-		div = size / 4;
+		div = maskSize / 4;
 	} else if (resType == 5) {
 		width = (width * 8) / 5;
 	}
 
-	filesDatabase[entryNumber].subData.ptr =
-	    (uint8 *) mallocAndZero(size + div);
+	filesDatabase[entryNumber].subData.ptr = (uint8 *) mallocAndZero(maskSize + div);
 
 	if (!filesDatabase[entryNumber].subData.ptr)
 		return (-2);
 
 	filesDatabase[entryNumber].widthInColumn = width;
-	filesDatabase[entryNumber].subData.ptr2 = filesDatabase[entryNumber].subData.ptr + size;
+	filesDatabase[entryNumber].subData.ptrMask = (uint8 *) mallocAndZero(maskSize);
 	filesDatabase[entryNumber].width = width / 8;
 	filesDatabase[entryNumber].resType = resType;
 	filesDatabase[entryNumber].height = height;
@@ -230,7 +225,7 @@ int createResFileEntry(int width, int height, int resType) {
 	}
 
 	filesDatabase[entryNumber].widthInColumn = width;
-	filesDatabase[entryNumber].subData.ptr2 = filesDatabase[entryNumber].subData.ptr + size;
+	filesDatabase[entryNumber].subData.ptrMask = filesDatabase[entryNumber].subData.ptr + size;
 	filesDatabase[entryNumber].width = width / 8;
 	filesDatabase[entryNumber].resType = resType;
 	filesDatabase[entryNumber].height = height;
@@ -435,14 +430,9 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx,
 		resourceSize = localBuffer.width * localBuffer.height;
 
 		if (currentDestEntry == -1) {
-			fileIndex =
-			    createResFileEntry(localBuffer.width,
-			    localBuffer.height, localBuffer.type);
+			fileIndex = createResFileEntry(localBuffer.width, localBuffer.height, localBuffer.type);
 		} else {
-			fileIndex =
-			    updateResFileEntry(localBuffer.height,
-			    localBuffer.width, currentDestEntry,
-			    localBuffer.type);
+			fileIndex = updateResFileEntry(localBuffer.height, localBuffer.width, currentDestEntry, localBuffer.type);
 		}
 
 		if (fileIndex < 0) {
@@ -451,29 +441,26 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx,
 
 		ptr5 = ptr3 + localBuffer.field_0 + numIdx * 16;
 
-		memcpy(filesDatabase[fileIndex].subData.ptr, ptr5,
-		    resourceSize);
+		memcpy(filesDatabase[fileIndex].subData.ptr, ptr5, resourceSize);
 		ptr5 += resourceSize;
 
 		switch (localBuffer.type) {
 		case 0:
 			{
-				filesDatabase[fileIndex].subData.resourceType =
-				    8;
+				filesDatabase[fileIndex].subData.resourceType = 8;
 				break;
 			}
 		case 1:
 			{
-				filesDatabase[fileIndex].subData.resourceType =
-				    2;
+				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 8;
+				filesDatabase[fileIndex].subData.resourceType = 2;
 				decodeGfxFormat1(&filesDatabase[fileIndex]);
 				break;
 			}
 		case 4:
 			{
-				filesDatabase[fileIndex].width *= 2;
-				filesDatabase[fileIndex].subData.resourceType =
-				    4;
+				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 2;
+				filesDatabase[fileIndex].subData.resourceType = 4;
 				decodeGfxFormat4(&filesDatabase[fileIndex]);
 				break;
 			}
@@ -481,31 +468,60 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx,
 			{
 				if (sec == 0) {
 					// TODO sec type 5 needs special conversion. cut out 2 bytes at every width/5 position.
+					ASSERT(0);
 					return;
 				}
-				filesDatabase[fileIndex].subData.resourceType =
-				    4;
+				filesDatabase[fileIndex].subData.resourceType = 4;
 				decodeGfxFormat5(&filesDatabase[fileIndex]);
 				break;
 			}
 		case 8:
 			{
+				ASSERT(0);
 				filesDatabase[fileIndex].subData.resourceType = 4;	// dummy !
 				break;
 			}
 		default:
 			{
-				printf("Unsuported gfx loading type: %d\n",
-				    localBuffer.type);
+				printf("Unsuported gfx loading type: %d\n", localBuffer.type);
 				break;
 			}
 		}
 
 		filesDatabase[fileIndex].subData.index = currentDestEntry;
-		filesDatabase[fileIndex].subData.transparency =
-		    localBuffer.transparency; /*% 0x10 */ ;
+		filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
 
 		strcpyuint8(filesDatabase[fileIndex].subData.name, name);
+
+		// create the mask
+		switch(localBuffer.type)
+		{
+		case 1:
+		case 4:
+		case 5:
+		case 8:
+			{
+				int maskX;
+				int maskY;
+
+				memset(filesDatabase[fileIndex].subData.ptrMask, 0, filesDatabase[fileIndex].width/8 * filesDatabase[fileIndex].height);
+
+				for(maskY=0; maskY<filesDatabase[fileIndex].height; maskY++)
+				{
+					for(maskX=0; maskX<filesDatabase[fileIndex].width; maskX++)
+					{
+						if(*(filesDatabase[fileIndex].subData.ptr + filesDatabase[fileIndex].width * maskY + maskX) != filesDatabase[fileIndex].subData.transparency)
+						{
+							*(filesDatabase[fileIndex].subData.ptrMask + filesDatabase[fileIndex].width/8 * maskY + maskX / 8) |= 0x80 >> (maskX&7);
+						}
+					}
+				}
+				break;
+			}
+		default:
+			{
+			}
+		}
 	}
 
 	// TODO: free

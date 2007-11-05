@@ -274,90 +274,76 @@ void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, i
 }
 
 void sortCells(int16 param1, int16 param2, cellStruct *objPtr) {
-/*int16 var;
-	cellStruct *var8_;
-	cellStruct *var40;
-	cellStruct *var3E;
-	cellStruct *currentObjPtrPrevious;
-	cellStruct *currentObjPtr2;
-	cellStruct *match;
+	cellStruct *pl,*pl2,*pl3,*pl4,*plz,*pllast;
+	cellStruct prov;
+	int16 newz, objz, sobjz;
 
-	getSingleObjectParam(param1, param2, 2, &var);
+	pl4 = NULL;
 
-	currentObjPtrPrevious = objPtr;
-	currentObjPtr2 = objPtr->next;
+	getSingleObjectParam(param1, param2, 2, &sobjz);
+	pl = objPtr;
+	prov.next = NULL;
+	prov.prev = NULL;
 
-	match = NULL;
-	var40 = NULL;
-	var3E = NULL;
-	var8_ = objPtr;
+	pl2 = pl->next;
+	pllast = NULL;
+	plz = objPtr;
 
-	while (currentObjPtr2) {
-		if ((currentObjPtr2->overlay == param1) && (currentObjPtr2->idx == param2)) {// found
-			currentObjPtrPrevious->next = currentObjPtr2->next;
+	while (pl2) {
+		pl3 = pl2->next;
+		if ((pl2->overlay == param1) && (pl2->idx == param2)) {// found
+			pl->next = pl3;
 
-			if (currentObjPtr2->next) {
-				currentObjPtr2->next->prev =
-				    currentObjPtr2->prev;
+			if (pl3) {
+				pl3->prev = pl2->prev;
 			} else {
-				objPtr->prev = currentObjPtr2->prev;
+				objPtr->prev = pl2->prev;
 			}
 
-			if (var40) {
-				var40->prev = currentObjPtr2;
+			if (pl4) {
+				pl4->prev = pl2;
 			} else {
-				var3E = currentObjPtr2;
+				prov.prev = pl2;
 			}
 
-			currentObjPtr2->prev = NULL;
+			pl2->prev = NULL;
+			pl2->next = prov.next;
+			prov.next = pl2;
 
-			currentObjPtr2->next = var40;
-
-			var40 = currentObjPtr2;
-
-			if (match == NULL) {
-				match = currentObjPtr2;
+			if (pllast == NULL) {
+				pllast = pl2;
 			}
 		} else {
-			if (currentObjPtr2->type == 5) {
-				var2 = 32000;
+			if (pl2->type == 5) {
+				newz = 32000;
 			} else {
-				int16 varC;
-
-				getSingleObjectParam(currentObjPtr2->overlay,
-				    currentObjPtr2->idx, 2, &varC);
-
-				var2 = varC;
+				getSingleObjectParam(pl2->overlay, pl2->idx, 2, &objz);
+				newz = objz;
 			}
 
-			if (var > var2) {
-				var8_ = currentObjPtr2;
+			if (newz < sobjz) {
+				plz = pl2;
 			}
 
-			currentObjPtrPrevious = currentObjPtrPrevious->next;
+			pl = pl->next;
 		}
 
-		currentObjPtr2 = currentObjPtr2->next;
+		pl2 = pl3;
 	}
 
-	if (match) {
-		cellStruct *temp;
+	if (pllast) {
+		pl2 = prov.next;
+		pl4 = plz->next;
+		plz->next = pl2;
+		pllast->next = pl4;
 
-		temp = var8_->next;
-
-		var8_->next = var40;
-		match->next = temp;
-
-		if (objPtr != var8_) {
-			var40->prev = var8_;
-		}
-
-		if (!temp) {
-			temp = match;
-		}
-
-		temp->prev = match;
-	}*/
+		if(plz != objPtr)
+			pl2->prev = plz;
+		if(!pl4)
+			objPtr->prev = pllast;
+		else
+			pl4->prev = pllast;
+	}
 }
 
 } // End of namespace Cruise

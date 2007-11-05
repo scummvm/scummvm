@@ -125,7 +125,7 @@ struct dataFileEntrySub {
 	int16 index;		// sprite index
 	char name[14];
 	int16 transparency;	// sprite transparency
-	uint8 *ptr2;
+	uint8 *ptrMask;
 	uint8 resourceType;	// sprite and image type 2,4,8 , fnt = 7, spl = 6
 	uint8 field_1B;
 	int16 field_1C;

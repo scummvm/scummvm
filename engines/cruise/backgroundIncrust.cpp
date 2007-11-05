@@ -44,9 +44,7 @@ void addBackgroundIncrustSub1(int fileIdx, int X, int Y, char *ptr2,
 	buildPolyModel(X, Y, scale, ptr2, destBuffer, dataPtr);
 }
 
-backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,
-    	int16 objectIdx, backgroundIncrustStruct *pHead, int16 scriptNumber,
-	    int16 scriptOverlay, int16 backgroundIdx, int16 param4) {
+backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx, backgroundIncrustStruct *pHead, int16 scriptNumber, int16 scriptOverlay, int16 backgroundIdx, int16 param4) {
 	uint8 *backgroundPtr;
 	uint8 *ptr;
 	objectParamsQuery params;
@@ -117,12 +115,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,
 		int width = filesDatabase[params.fileIdx].width;
 		int height = filesDatabase[params.fileIdx].height;
 
-		currentTransparent =
-		    filesDatabase[params.fileIdx].subData.transparency;
-		mainDrawSub4(width, height, NULL,
-		    (char *)filesDatabase[params.fileIdx].subData.ptr,
-		    newElement->Y, newElement->X, (char *)backgroundPtr,
-		    (char *)filesDatabase[params.fileIdx].subData.ptr);
+		drawSprite(width, height, NULL, (char *)filesDatabase[params.fileIdx].subData.ptr, newElement->Y, newElement->X, (char *)backgroundPtr, (char *)filesDatabase[params.fileIdx].subData.ptrMask);
 		//   ASSERT(0);
 	} else {			// poly
 		/* if (param4 == 1)

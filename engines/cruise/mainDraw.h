@@ -40,7 +40,7 @@ void mainDraw(int16 param);
 void flipScreen(void);
 void buildPolyModel(int X, int Y, int scale, char *ptr2, char *destBuffer,
     char *dataPtr);
-void mainDrawSub4(int objX1, int var_6, cellStruct * currentObjPtr,
+void drawSprite(int objX1, int var_6, cellStruct * currentObjPtr,
     char *data1, int objY2, int objX2, char *output, char *data2);
 
 bool findPoly(char* dataPtr, int x, int y, int zoom, int mouseX, int mouseY);

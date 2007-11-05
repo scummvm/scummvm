@@ -36,7 +36,6 @@ struct gfxEntryStruct {
 	int width;		// for font: max right border; for sprite: just width
 };
 
-#define	OBJ_SPRITE 4
 
 struct objectParamsQuery {
 	int16 X;

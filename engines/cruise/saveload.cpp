@@ -339,11 +339,11 @@ int loadSavegameData(int saveGameIdx) {
 			}
 
 			for (k = j; k < i; k++) {
-				if (filesDatabase[k].subData.ptr2)
+				if (filesDatabase[k].subData.ptrMask)
 					initVar1 = 0;
 
 				filesDatabase[k].subData.ptr = NULL;
-				filesDatabase[k].subData.ptr2 = NULL;
+				filesDatabase[k].subData.ptrMask = NULL;
 			}
 
 			if (i < 2) {
