@@ -1260,7 +1260,7 @@ const char *KyraEngine_v2::_sequenceStrings_PC_EN[] = {
 	"Sake Joe Bostic-san",
 	"Tim Fritz",
 	"Kenny Dunne",
-	"Thank you for playing \"The Hand of Fate\."
+	"Thank you for playing \"The Hand of Fate\"."
 };
 
 const char *KyraEngine_v2::_sequenceStrings_TOWNS_EN[] = {
