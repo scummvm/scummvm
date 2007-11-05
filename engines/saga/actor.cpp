@@ -826,9 +826,16 @@ void Actor::handleSpeech(int msec) {
 			width = _activeSpeech.speechBox.width();
 			height = _vm->_font->getHeight(kKnownFontScript, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
 
-			if (height > 40 && width < _vm->getDisplayWidth() - 100) {
-				width = _vm->getDisplayWidth() - 100;
-				height = _vm->_font->getHeight(kKnownFontScript, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
+			if (_vm->getGameType() == GType_IHNM) {
+				if (height > _vm->_scene->getHeight(true) / 2 && width < _vm->getDisplayWidth() - 20) {
+					width = _vm->getDisplayWidth() - 20;
+					height = _vm->_font->getHeight(kKnownFontScript, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
+				}
+			} else if (_vm->getGameType() == GType_ITE) {
+				if (height > 40 && width < _vm->getDisplayWidth() - 100) {
+					width = _vm->getDisplayWidth() - 100;
+					height = _vm->_font->getHeight(kKnownFontScript, _activeSpeech.strings[0], width - 2, _activeSpeech.getFontFlags(0)) + 1;
+				}
 			}
 
 			_activeSpeech.speechBox.setWidth(width);
@@ -844,8 +851,8 @@ void Actor::handleSpeech(int msec) {
 				}
 
 				height2 = actor->_screenPosition.y - 50;
-				if (height2 > _vm->_scene->getHeight())
-					_activeSpeech.speechBox.top = _activeSpeech.drawRect.top = _vm->_scene->getHeight() - 1 - height - 10;
+				if (height2 > _vm->_scene->getHeight(true))
+					_activeSpeech.speechBox.top = _activeSpeech.drawRect.top = _vm->_scene->getHeight(true) - 1 - height - 10;
 				else
 					_activeSpeech.speechBox.top = _activeSpeech.drawRect.top = MAX(10, (height2 - height) / 2);
 			} else {
@@ -1095,7 +1102,11 @@ void Actor::drawSpeech(void) {
 			calcScreenPosition(actor);
 
 			textPoint.x = clamp(10, actor->_screenPosition.x - width / 2, _vm->getDisplayWidth() - 10 - width);
-			textPoint.y = clamp(10, actor->_screenPosition.y - 58, _vm->_scene->getHeight() - 10 - height);
+
+			if (_vm->getGameType() == GType_ITE)
+				textPoint.y = clamp(10, actor->_screenPosition.y - 58, _vm->_scene->getHeight(true) - 10 - height);
+			else if (_vm->getGameType() == GType_IHNM)
+				textPoint.y = 10; // clamp(10, actor->_screenPosition.y - 160, _vm->_scene->getHeight(true) - 10 - height);
 
 			_vm->_font->textDraw(kKnownFontScript, backBuffer, outputString, textPoint,
 				_activeSpeech.speechColor[i], _activeSpeech.outlineColor[i], _activeSpeech.getFontFlags(i));
@@ -1130,7 +1141,11 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	_activeSpeech.slowModeCharIndex = 0;
 
 	dist = MIN(actor->_screenPosition.x - 10, _vm->getDisplayWidth() - 10 - actor->_screenPosition.x);
-	dist = clamp(60, dist, 150);
+
+	if (_vm->getGameType() == GType_ITE)
+		dist = clamp(60, dist, 150);
+	else
+		dist = clamp(120, dist, 300);
 
 	_activeSpeech.speechBox.left = actor->_screenPosition.x - dist;
 	_activeSpeech.speechBox.right = actor->_screenPosition.x + dist;

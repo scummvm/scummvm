@@ -334,8 +334,8 @@ class Scene {
 
 	void drawTextList(Surface *ds);
 
-	int getHeight() const {
-		if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
+	int getHeight(bool speech = false) const {
+		if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8 && !speech)
 			return _vm->getDisplayInfo().logicalHeight;
 		else
 			return _vm->getDisplayInfo().sceneHeight;
