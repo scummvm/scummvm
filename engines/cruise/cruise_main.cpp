@@ -703,7 +703,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 									return (currentObject->type);
 								}
 							} else {
-								int numBitPlanes = filesDatabase[j].resType;
+								// int numBitPlanes = filesDatabase[j].resType;
 
 								int nWidth;
 								int nHeight;
