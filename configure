@@ -9,6 +9,12 @@
 # * detect whether the chosen backend is available (e.g. call sdl-config)
 # * ....
 
+# Save the current environment variables for next runs
+SAVED_CONFIGFLAGS=$@
+SAVED_LDFLAGS=$LDFLAGS
+SAVED_CXX=$CXX
+SAVED_CXXFLAGS=$CXXFLAGS
+SAVED_CPPFLAGS=$CPPFLAGS
 
 # use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
@@ -1625,6 +1631,14 @@ INCLUDES += $INCLUDES
 OBJS += $OBJS
 DEFINES += $DEFINES
 LDFLAGS += $LDFLAGS
+
+SAVED_CONFIGFLAGS := $SAVED_CONFIGFLAGS
+SAVED_LDFLAGS     := $SAVED_LDFLAGS
+SAVED_CXX         := $SAVED_CXX
+SAVED_CXXFLAGS    := $SAVED_CXXFLAGS
+SAVED_CPPFLAGS    := $SAVED_CPPFLAGS
+
+CONFIG_MK_IS_PRESENT := 1
 EOF
 
 #
