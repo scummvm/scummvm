@@ -131,7 +131,7 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 
 	int width = r.width();
 	int height = r.height();
-	int i;
+//	int i;
 
 	if (bytesPerPixel == 1) {
 		byte *ptr = (byte *)getBasePtr(r.left, r.top);
