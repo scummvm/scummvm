@@ -404,6 +404,8 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	debugC(1, kDebugExec, "changeLocation() done");
 
+	_engineFlags &= ~kEngineChangeLocation;
+
 	return;
 
 }

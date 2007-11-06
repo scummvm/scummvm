@@ -301,7 +301,6 @@ void Parallaction::runGame() {
 		}
 
 		if (_engineFlags & kEngineChangeLocation) {
-			_engineFlags &= ~kEngineChangeLocation;
 			changeLocation(_location._name);
 			continue;
 		}
