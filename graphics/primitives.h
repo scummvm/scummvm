@@ -27,8 +27,9 @@
 
 namespace Graphics {
 
-extern void drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, int, int, void *), void *data);
+void drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, int, int, void *), void *data);
 
 }	// End of namespace Graphics
 
 #endif
+
