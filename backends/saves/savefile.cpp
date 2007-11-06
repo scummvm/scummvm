@@ -32,6 +32,42 @@
 
 namespace Common {
 
+bool SaveFileManager::renameSavefile(const char *oldFilename, const char *newFilename) {
+
+	InSaveFile *inFile = 0;
+	OutSaveFile *outFile = 0;
+	uint32 size = 0;
+	void *buffer = 0;
+	bool success = false;
+
+	inFile = openForLoading(oldFilename);
+
+	if (inFile) {
+		size = inFile->size();
+		buffer = malloc(size);
+		assert(buffer);
+
+		outFile = openForSaving(newFilename);
+
+		if (buffer && outFile) {
+			inFile->read(buffer, size);
+			if (!inFile->ioFailed()) {
+				outFile->write(buffer, size);
+				outFile->finalize();
+				if (!outFile->ioFailed()) {
+					success = removeSavefile(oldFilename);
+				}
+			}
+		}
+	
+		free(buffer);
+		delete outFile;
+		delete inFile;
+	}
+
+	return success;
+}
+
 const char *SaveFileManager::getSavePath() const {
 
 #if defined(PALMOS_MODE) || defined(__PSP__)

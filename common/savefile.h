@@ -132,6 +132,14 @@ public:
 	virtual bool removeSavefile(const char *filename) = 0;
 
 	/**
+	 * Renames the given savefile.
+	 * @param oldFilename Old filename.
+	 * @param newFilename New filename.
+	 * @return true if no error ocurred. false otherwise.
+	 */
+	virtual bool renameSavefile(const char *oldFilename, const char *newFilename);
+
+	/**
 	 * Request a list of available savegames with a given regex.
 	 * @param regex Regular expression to match. Wildcards like * or ? are available.
 	 * returns a list of strings for all present file names.
