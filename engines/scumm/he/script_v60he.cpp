@@ -568,11 +568,19 @@ void ScummEngine_v60he::o60_roomOps() {
 		copyPalColor(a, b);
 		break;
 	case 221:
-		int len;
+		byte buffer[100];
+		int len, r;
+
+		convertMessageToString(_scriptPointer, buffer, sizeof(buffer));
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
+
+		r = convertFilePath(buffer);
+		memcpy(_saveLoadFileName, buffer + r, sizeof(buffer) - r);
+		debug(1, "o60_roomOps: case 221: filename %s", _saveLoadFileName);
+
 		_saveLoadFlag = pop();
-		_saveLoadSlot = 1;
+		_saveLoadSlot = 255;
 		_saveTemporaryState = true;
 		break;
 	case 234:		// HE 7.2
@@ -982,7 +990,6 @@ void ScummEngine_v60he::o60_openFile() {
 	const char *filename;
 
 	convertMessageToString(_scriptPointer, buffer, sizeof(buffer));
-
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
@@ -1042,34 +1049,35 @@ void ScummEngine_v60he::o60_deleteFile() {
 	const char *filename;
 
 	convertMessageToString(_scriptPointer, buffer, sizeof(buffer));
-
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
 	filename = (char *)buffer + convertFilePath(buffer);
+
 	debug(1, "o60_deleteFile stub (\"%s\")", filename);
+
+	_saveFileMan->removeSavefile(filename);
 }
 
 void ScummEngine_v60he::o60_rename() {
 	int len;
 	byte buffer1[100], buffer2[100];
-	const char *filename1, *filename2;
+	const char *newFilename, *oldFilename;
 
 	convertMessageToString(_scriptPointer, buffer1, sizeof(buffer1));
-
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
-
-	filename1 = (char *)buffer1 + convertFilePath(buffer1);
 
 	convertMessageToString(_scriptPointer, buffer2, sizeof(buffer2));
-
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	filename2 = (char *)buffer2 + convertFilePath(buffer2);
+	oldFilename = (char *)buffer1 + convertFilePath(buffer1);
+	newFilename = (char *)buffer2 + convertFilePath(buffer2);
 
-	debug(1, "o60_rename stub (\"%s\" to \"%s\")", filename1, filename2);
+	debug(1, "o60_rename stub (\"%s\" to \"%s\")", newFilename, oldFilename);
+
+	_saveFileMan->renameSavefile(oldFilename, newFilename);
 }
 
 int ScummEngine_v60he::readFileToArray(int slot, int32 size) {

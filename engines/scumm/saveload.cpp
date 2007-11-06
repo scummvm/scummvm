@@ -86,18 +86,7 @@ void ScummEngine::requestLoad(int slot) {
 	_saveLoadFlag = 2;		// 2 for load
 }
 
-bool ScummEngine::saveState(int slot, bool compat) {
-	char filename[256];
-	Common::OutSaveFile *out;
-	SaveGameHeader hdr;
-
-	makeSavegameName(filename, slot, compat);
-
-	if (!(out = _saveFileMan->openForSaving(filename)))
-		return false;
-
-	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
-
+static bool saveSaveGameHeader(Common::OutSaveFile *out, SaveGameHeader &hdr) {
 	hdr.type = MKID_BE('SCVM');
 	hdr.size = 0;
 	hdr.ver = CURRENT_VER;
@@ -106,6 +95,25 @@ bool ScummEngine::saveState(int slot, bool compat) {
 	out->writeUint32LE(hdr.size);
 	out->writeUint32LE(hdr.ver);
 	out->write(hdr.name, sizeof(hdr.name));
+	return true;
+}
+
+bool ScummEngine::saveState(int slot, bool compat) {
+	char filename[256];
+	Common::OutSaveFile *out;
+	SaveGameHeader hdr;
+
+	if (_saveLoadSlot == 255) {
+		// Allow custom filenames for save game system in HE Games
+		memcpy(filename, _saveLoadFileName, sizeof(_saveLoadFileName));
+	} else {
+		makeSavegameName(filename, slot, compat);
+	}
+	if (!(out = _saveFileMan->openForSaving(filename)))
+		return false;
+
+	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
+	saveSaveGameHeader(out, hdr);
 	saveThumbnail(out);
 	saveInfos(out);
 
@@ -137,7 +145,12 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	SaveGameHeader hdr;
 	int sb, sh;
 
-	makeSavegameName(filename, slot, compat);
+	if (_saveLoadSlot == 255) {
+		// Allow custom filenames for save game system in HE Games
+		memcpy(filename, _saveLoadFileName, sizeof(_saveLoadFileName));
+	} else {
+		makeSavegameName(filename, slot, compat);
+	}
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return false;
 

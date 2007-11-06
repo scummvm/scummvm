@@ -607,6 +607,7 @@ protected:
 	byte _saveLoadFlag, _saveLoadSlot;
 	uint32 _lastSaveTime;
 	bool _saveTemporaryState;
+	char _saveLoadFileName[32];
 	char _saveLoadName[32];
 
 	bool saveState(int slot, bool compat);
