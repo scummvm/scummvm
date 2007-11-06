@@ -28,27 +28,20 @@
 
 namespace Graphics {
 
-static void plotPoint1(int x, int y, int color, void *data) {
+template<typename T>
+static void plotPoint(int x, int y, int color, void *data) {
 	Surface *s = (Surface *)data;
 	if (x >= 0 && x < s->w && y >= 0 && y < s->h) {
-		byte *ptr = (byte *)s->getBasePtr(x, y);
-		*ptr = (byte)color;
-	}
-}
-
-static void plotPoint2(int x, int y, int color, void *data) {
-	Surface *s = (Surface *)data;
-	if (x >= 0 && x < s->w && y >= 0 && y < s->h) {
-		uint16 *ptr = (uint16 *)s->getBasePtr(x, y);
-		*ptr = (uint16)color;
+		T *ptr = (T *)s->getBasePtr(x, y);
+		*ptr = (T)color;
 	}
 }
 
 void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 	if (bytesPerPixel == 1)
-		Graphics::drawLine(x0, y0, x1, y1, color, &plotPoint1, this);
+		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<byte>, this);
 	else if (bytesPerPixel == 2)
-		Graphics::drawLine(x0, y0, x1, y1, color, &plotPoint2, this);
+		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<uint16>, this);
 	else
 		error("Surface::drawLine: bytesPerPixel must be 1 or 2");
 }
