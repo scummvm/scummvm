@@ -116,7 +116,7 @@ bool delphineUnpack(byte *dst, const byte *src, int len) {
 				unpackHelper2(&uc, 12);
 			}
 		}
-	} while (uc.datasize > 0);
+	} while (uc.datasize > 0 && uc.src >= src - 4);
 	return uc.crc == 0;
 }
 
