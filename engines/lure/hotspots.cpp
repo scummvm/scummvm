@@ -69,7 +69,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_talkY = res->talkY;
 	_layer = res->layer;
 	_hotspotScriptOffset = res->hotspotScriptOffset;
-	_tickCtr = res->tickTimeout;
+	_frameCtr = res->tickTimeout;
 	_colourOffset = res->colourOffset;
 	_tempDest.counter = 0;
 
@@ -84,7 +84,6 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 		setFrameNumber(_anim->upFrame);
 	}
 
-	_frameCtr = 0;
 	_skipFlag = false;
 	_charRectY = 0;
 	_voiceCtr = 0;
@@ -140,7 +139,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 		_widthCopy = 24;
 		_yCorrection = 1;
 
-		_tickCtr = 0;
+		_frameCtr = 0;
 		_voiceCtr = 40;
 
 		_tickHandler = HotspotTickHandlers::getHandler(VOICE_TICK_PROC_ID);
@@ -206,7 +205,7 @@ Hotspot::Hotspot(): _pathFinder(NULL) {
 	_heightCopy = 0;
 	_widthCopy = 0;
 	_yCorrection = 0;
-	_tickCtr = 0;
+	_frameCtr = 0;
 	_tickHandler = NULL;
 	_frameWidth = _width;
 	_frameStartsUsed = false;
@@ -749,7 +748,7 @@ void Hotspot::converse(uint16 destCharacterId, uint16 messageId, bool standStill
 		HotspotData *hotspot = Resources::getReference().getHotspot(destCharacterId);
 		_data->talkCountdown += hotspot->talkCountdown;
 		
-		hotspot->talkerId = _hotspotId ;
+//		hotspot->talkerId = _hotspotId ;
 		hotspot->talkGate = 0;
 	}
 
@@ -879,6 +878,11 @@ void Hotspot::handleTalkDialog() {
 void Hotspot::startTalkDialog() {
 	assert(_data);
 	Room &room = Room::getReference();
+
+	if ((_data->talkDestCharacterId != 0) && (_data->talkDestCharacterId != NOONE_ID)) {
+		HotspotData *hotspot = Resources::getReference().getHotspot(_data->talkDestCharacterId);
+		hotspot->talkerId = _hotspotId;
+	}
 
 	if (room.roomNumber() != roomNumber()) return;
 	room.setTalkDialog(hotspotId(), _data->talkDestCharacterId, _data->useHotspotId, 
@@ -2153,7 +2157,6 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 	stream->writeUint16LE(_talkY);
 	stream->writeByte(_layer);
 	stream->writeUint16LE(_hotspotScriptOffset);
-	stream->writeUint16LE(_tickCtr);
 	stream->writeByte(_colourOffset);
 	stream->writeByte((byte)_direction);
 	stream->writeUint16LE(_animId);
@@ -2194,7 +2197,6 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	_talkY = stream->readUint16LE();
 	_layer = stream->readByte();
 	_hotspotScriptOffset = stream->readUint16LE();
-	_tickCtr = stream->readUint16LE();
 	_colourOffset = stream->readByte();
 	_direction = (Direction)stream->readByte();
 	setAnimation(stream->readUint16LE());
@@ -2297,8 +2299,8 @@ void HotspotTickHandlers::defaultHandler(Hotspot &h) {
 }
 
 void HotspotTickHandlers::standardAnimHandler(Hotspot &h) {
-	if (h.tickCtr() > 0) 
-		h.setTickCtr(h.tickCtr() - 1);
+	if (h.frameCtr() > 0) 
+		h.decrFrameCtr();
 	else 
 		h.executeScript();
 }
@@ -2875,6 +2877,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 
 		if (pathFinder.isEmpty()) {
 			mouse.setCursorNum(CURSOR_ARROW);
+			h.currentActions().top().setAction(DISPATCH_ACTION);
 			break;
 		}
 

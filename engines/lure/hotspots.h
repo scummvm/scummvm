@@ -271,7 +271,6 @@ private:
 	Direction _direction;
 	uint8 _layer;
 	uint16 _hotspotScriptOffset;
-	uint16 _tickCtr;
 	uint8 _colourOffset;
 	bool _persistant;
 	HotspotOverrideData *_override;
@@ -392,9 +391,7 @@ public:
 	}
 	uint16 hotspotScript() { return _hotspotScriptOffset; }
 	uint8 layer() { return _layer; }
-	uint16 tickCtr() { return _tickCtr; }
 	bool skipFlag() { return _skipFlag; }
-	void setTickCtr(uint16 newVal) { _tickCtr = newVal; }
 	void setTickProc(uint16 newVal);
 	bool persistant() { return _persistant; }
 	void setPersistant(bool value) { _persistant = value; }

@@ -1174,7 +1174,7 @@ bool HotspotScript::execute(Hotspot *h) {
 			param1 = nextVal(scriptData, offset);
 			debugC(ERROR_DETAILED, kLureDebugScripts, "SET FRAME_CTR = %d", param1);
 
-			h->setTickCtr(param1);
+			h->setFrameCtr(param1);
 			h->setHotspotScript(offset);
 			breakFlag = true;
 			break;
