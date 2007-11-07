@@ -1434,6 +1434,8 @@ void o1_freePartRange() {
 
 	assert(startIdx + numIdx <= NUM_MAX_ANIMDATA);
 
+	g_sound->stopMusic();
+
 	debugC(5, kCineDebugScript, "Line: %d: freePartRange(%d,%d)", _currentLine, startIdx, numIdx);
 	freeAnimDataRange(startIdx, numIdx);
 }
