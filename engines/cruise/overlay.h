@@ -72,18 +72,22 @@ struct linkDataStruct {
 	int16 offsetVerbeName;
 	int16 verbOverlay;
 	int16 verbNumber;
+
 	int16 obj1Overlay;
 	int16 obj1Number;
 	int16 obj2Overlay;
 	int16 obj2Number;
 
-	int16 field_12;
-	int16 field_14;
-	int16 field_16;
-	int16 field_18;
-	int16 field_1A;
-	int16 field_1C;
-	int16 field_1E;
+	int16 trackX;
+	int16 trackY;
+
+	int16 obj1NewState;
+	int16 obj2NewState;
+
+	int16 obj1OldState;
+	int16 obj2OldState;
+
+	int16 trackDirection;
 	int16 field_20;
 };
 
@@ -135,8 +139,10 @@ struct ovlDataStruct {
 	uint8 *arrayNameObj;
 	uint8 *arrayNameRelocGlob;
 	uint8 *arrayNameSymbGlob;
+
 	uint8 *data4Ptr;
 	uint8 *ptr8;
+
 	unsigned short int numProc;
 	unsigned short int numRel;
 	unsigned short int numSymbGlob;
@@ -146,6 +152,7 @@ struct ovlDataStruct {
 	unsigned short int numStrings;
 	unsigned short int size8;
 	unsigned short int size9;
+
 	unsigned short int nameExportSize;
 	unsigned short int exportNamesSize;
 	unsigned short int specialString2Length;
@@ -156,27 +163,14 @@ struct ovlDataStruct {
 };
 
 struct overlayStruct {
-	char overlayName[14];
+	char overlayName[13];
 	ovlDataStruct *ovlData;
 	short int alreadyLoaded;
-	char state;
-	char field_15;
-	char field_16;
-	char field_17;
-	char field_18;
-	char field_19;
-	char field_1A;
-	char field_1B;
-	char field_1C;
-	char field_1D;
-	char field_1E;
-	char field_1F;
-	char field_20;
-	char field_21;
-	char field_22;
-	char field_23;
-	char field_24;
-	char field_25;
+	short int state;
+	char* pDebug;
+	long int debugSize;
+	char* pSource;
+	long int sourceSize;
 	short int executeScripts;
 };
 

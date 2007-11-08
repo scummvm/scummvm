@@ -69,15 +69,13 @@ extern int16 main5;
 extern int16 var22;
 
 struct mediumVarStruct {
-	uint8 name[16];
-	int16 field_10;
-	int16 field_12;
-	int16 field_14;
-	int16 field_16;
+	uint8 name[15];
+	int32 size;
+	int32 sourceSize;
 	uint8 *ptr;
-	int16 field_1C;
-	int16 field_1E;
-	int16 field_20;
+	int16 nofree;
+	int16 protect;
+	int16 ovl;
 };
 
 struct filesDataStruct {
@@ -123,19 +121,18 @@ struct fileEntry {
 struct dataFileEntrySub {
 	uint8 *ptr;
 	int16 index;		// sprite index
-	char name[14];
+	char name[13];
 	int16 transparency;	// sprite transparency
 	uint8 *ptrMask;
 	uint8 resourceType;	// sprite and image type 2,4,8 , fnt = 7, spl = 6
-	uint8 field_1B;
-	int16 field_1C;
+	int16 compression;
 };
 
 struct dataFileEntry {
-	int16 widthInColumn;
-	int16 width;
-	int16 resType;
-	int16 height;
+	uint16 widthInColumn;
+	uint16 width;
+	uint16 resType;
+	uint16 height;
 	dataFileEntrySub subData;
 };
 

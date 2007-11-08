@@ -425,7 +425,7 @@ void resetFileEntry(int32 entryNumber) {
 	filesDatabase[entryNumber].height = 0;
 	filesDatabase[entryNumber].subData.index = -1;
 	filesDatabase[entryNumber].subData.resourceType = 0;
-	filesDatabase[entryNumber].subData.field_1C = 0;
+	filesDatabase[entryNumber].subData.compression = 0;
 	filesDatabase[entryNumber].subData.name[0] = 0;
 
 }
@@ -859,11 +859,9 @@ menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu) {
 bool findRelation(int objOvl, int objIdx, int x, int y) {
 	bool found = false;
 	bool first = true;
-	int testState;
+	int testState = -1;
 	int j;
 	int16 objectState;
-
-	testState = -1;
 
 	getSingleObjectParam(objOvl, objIdx, 5, &objectState);
 
@@ -919,7 +917,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 						ovl4 = overlayTable[obj2Ovl].ovlData;
 
 					if ((ovl3) && (ptrHead->obj1Number >= 0)) {
-						testState = ptrHead->field_1A;
+						testState = ptrHead->obj1OldState;
 
 						if ((first) && (ovl3->arrayNameObj) && ((testState ==-1) || (testState == objectState))) {
 							char *ptrName = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
@@ -1006,7 +1004,7 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 				getMultipleObjectParam(obj2Ovl, pHeader->obj2Number, &params);
 			}
 
-			if ((pHeader->field_1C != -1) || (params.scale == pHeader->field_1C)) {
+			if ((pHeader->obj2OldState != -1) || (params.scale == pHeader->obj2OldState)) {
 				if (pHeader->type == 30) {
 					ASSERT(0);
 				} else if (pHeader->type == 50) {
@@ -1041,24 +1039,24 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 			if (pHeader->type == 30) {
 				attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 
-				if ((narratorOvl > 0) && (pHeader->field_12 != -1) && (pHeader->field_14 != -1)) {
+				if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
 					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
 
 					if (pTrack) {
 						animationStart = false;
 
-						if (pHeader->field_1E == 9999) {
+						if (pHeader->trackDirection == 9999) {
 							ASSERT(0);
-						} else if ((pHeader->field_12 == 9999) && (pHeader->field_14 == 9999)) {
+						} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
 							objectParamsQuery naratorParams;
 							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
 							pTrack->x_dest = naratorParams.X;
 							pTrack->y_dest = naratorParams.Y;
-							pTrack->endDirection = pHeader->field_1E;
+							pTrack->endDirection = pHeader->trackDirection;
 						} else {
-							pTrack->x_dest = pHeader->field_12;
-							pTrack->y_dest = pHeader->field_14;
-							pTrack->endDirection = pHeader->field_1E;
+							pTrack->x_dest = pHeader->trackX;
+							pTrack->y_dest = pHeader->trackY;
+							pTrack->endDirection = pHeader->trackDirection;
 						}
 
 						pTrack->flag = 1;
@@ -1081,9 +1079,9 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 					getMultipleObjectParam(obj1Ovl, pHeader->obj1Number, &params);
 
 					if (narratorOvl > 0) {
-						if ((pHeader->field_12 !=-1) && (pHeader->field_14 != -1) && (pHeader->field_12 != 9999) && (pHeader->field_14 != 9999)) {
-							x = pHeader->field_12 - 100;
-							y = pHeader->field_14 - 150;
+						if ((pHeader->trackX !=-1) && (pHeader->trackY != -1) && (pHeader->trackX != 9999) && (pHeader->trackY != 9999)) {
+							x = pHeader->trackX - 100;
+							y = pHeader->trackY - 150;
 						} else {
 							getMultipleObjectParam(narratorOvl, narratorIdx, &params);
 							x = params.X - 100;
@@ -1094,7 +1092,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 						y = params.Y - 40;
 					}
 
-					if (pHeader->field_16 != -1) {
+					if (pHeader->obj1NewState != -1) {
 						ASSERT(0);
 					}
 				}
@@ -1105,24 +1103,24 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 				autoOvl = ovlIdx;
 				autoMsg = pHeader->id;
 
-				if ((narratorOvl > 0) && (pHeader->field_12 != -1) && (pHeader->field_14 != -1)) {
+				if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
 					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
 
 					if (pTrack) {
 						animationStart = false;
 
-						if (pHeader->field_1E == 9999) {
+						if (pHeader->trackDirection == 9999) {
 							ASSERT(0);
-						} else if ((pHeader->field_12 == 9999) && (pHeader->field_14 == 9999)) {
+						} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
 							objectParamsQuery naratorParams;
 							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
 							pTrack->x_dest = naratorParams.X;
 							pTrack->y_dest = naratorParams.Y;
-							pTrack->endDirection = pHeader->field_1E;
+							pTrack->endDirection = pHeader->trackDirection;
 						} else {
-							pTrack->x_dest = pHeader->field_12;
-							pTrack->y_dest = pHeader->field_14;
-							pTrack->endDirection = pHeader->field_1E;
+							pTrack->x_dest = pHeader->trackX;
+							pTrack->y_dest = pHeader->trackY;
+							pTrack->endDirection = pHeader->trackDirection;
 						}
 
 						pTrack->flag = 1;
@@ -1492,7 +1490,12 @@ void mainLoop(void) {
 	autoTrack = 0;
 	autoTrack = 0;
 
-	if (initAllData()) {
+	initAllData();
+
+	// debug code: automaticaly load savegame 0 at startup
+	loadSavegameData(0);
+
+	{
 		int playerDontAskQuit = 1;
 		int quitValue2 = 1;
 		int quitValue = 0;

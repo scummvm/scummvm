@@ -425,7 +425,7 @@ int32 opcodeType6(void) {
 		si |= 2;
 	}
 
-	currentScriptPtr->bitMask = si;
+	currentScriptPtr->ccr = si;
 
 	return (0);
 }
@@ -444,7 +444,7 @@ int32 opcodeType5(void) {
 	int offset = currentScriptPtr->var4;
 	int short1 = getShortFromScript();
 	int newSi = short1 + offset;
-	int bitMask = currentScriptPtr->bitMask;
+	int bitMask = currentScriptPtr->ccr;
 
 	switch (currentScriptOpcodeType) {
 	case 0:

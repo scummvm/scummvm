@@ -22,7 +22,7 @@
  * $Id$
  *
  */
-
+#include "common/file.h"
 #include "cruise/cell.h"
 #include "cruise/cruise_main.h"
 
@@ -44,7 +44,7 @@ void freeMessageList(cellStruct *objPtr) {
 	} */
 }
 
-void loadSavegameDataSub2(FILE *f) {
+void loadSavegameDataSub2(Common::File& currentSaveFile) {
 	unsigned short int n_chunks;
 	int i;
 	cellStruct *p;
@@ -53,17 +53,41 @@ void loadSavegameDataSub2(FILE *f) {
 	cellHead.next = NULL;	// Not in ASM code, but I guess the variable is defaulted
 	// to this value in the .exe
 
-	fread(&n_chunks, 2, 1, f);
-	// BIG ENDIAN MACHINES, PLEASE SWAP IT
+	n_chunks = currentSaveFile.readSint16LE();
 
 	p = &cellHead;
 
 	for (i = 0; i < n_chunks; i++) {
 		t = (cellStruct *) mallocAndZero(sizeof(cellStruct));
 
-		fseek(f, 4, SEEK_CUR);
-		fread(&t->idx, 1, 0x30, f);
+		currentSaveFile.skip(2);
+		currentSaveFile.skip(2);
 
+		t->idx = currentSaveFile.readSint16LE();
+		t->type = currentSaveFile.readSint16LE();
+		t->overlay = currentSaveFile.readSint16LE();
+		t->x = currentSaveFile.readSint16LE();
+		t->field_C = currentSaveFile.readSint16LE();
+		t->spriteIdx = currentSaveFile.readSint16LE();
+		t->color = currentSaveFile.readSint16LE();
+		t->backgroundPlane = currentSaveFile.readSint16LE();
+		t->freeze = currentSaveFile.readSint16LE();
+		t->parent = currentSaveFile.readSint16LE();
+		t->parentOverlay = currentSaveFile.readSint16LE();
+		t->parentType = currentSaveFile.readSint16LE();
+		t->followObjectOverlayIdx = currentSaveFile.readSint16LE();
+		t->followObjectIdx = currentSaveFile.readSint16LE();
+		t->animStart = currentSaveFile.readSint16LE();
+		t->animEnd = currentSaveFile.readSint16LE();
+		t->animWait = currentSaveFile.readSint16LE();
+		t->animStep = currentSaveFile.readSint16LE();
+		t->animChange = currentSaveFile.readSint16LE();
+		t->animType = currentSaveFile.readSint16LE();
+		t->animSignal = currentSaveFile.readSint16LE();
+		t->animCounter = currentSaveFile.readSint16LE();
+		t->animLoop = currentSaveFile.readSint16LE();
+		currentSaveFile.skip(2);
+		
 		t->next = NULL;
 		p->next = t;
 		t->prev = cellHead.prev;

@@ -174,8 +174,8 @@ void loadSystemFont(void) {
 	colorOfSelectedSaveDrive = 10;
 
 	for (i = 0; i < 64; i++) {
-		mediumVar[i].ptr = 0;
-		mediumVar[i].field_1C = 0;
+		mediumVar[i].ptr = NULL;
+		mediumVar[i].nofree = 0;
 	}
 
 	initVar1 = 0;

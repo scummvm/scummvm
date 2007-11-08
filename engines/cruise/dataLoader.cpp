@@ -161,7 +161,7 @@ int updateResFileEntry(int height, int width, int entryNumber, int resType) {
 
 	resetFileEntry(entryNumber);
 
-	filesDatabase[entryNumber].subData.field_1C = 0;
+	filesDatabase[entryNumber].subData.compression = 0;
 
 	int maskSize = height * width;	// for sprites: width * height
 
@@ -206,7 +206,7 @@ int createResFileEntry(int width, int height, int resType) {
 
 	entryNumber = i;
 
-	filesDatabase[entryNumber].subData.field_1C = 0;
+	filesDatabase[entryNumber].subData.compression = 0;
 
 	size = width * height;	// for sprites: width * height
 

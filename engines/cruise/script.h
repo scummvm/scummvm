@@ -37,6 +37,7 @@ enum scriptTypeEnum {
 
 struct scriptInstanceStruct {
 	struct scriptInstanceStruct *nextScriptPtr;
+	int16 ccr;
 	int16 var4;
 	uint8 *var6;
 	int16 varA;
@@ -48,8 +49,6 @@ struct scriptInstanceStruct {
 	int16 var16;
 	int16 var18;
 	int16 var1A;
-////// EXTRA ! not in original code. Needed for cross platform.
-	int16 bitMask;
 };
 
 extern scriptInstanceStruct relHead;

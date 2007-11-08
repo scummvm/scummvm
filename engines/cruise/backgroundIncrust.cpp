@@ -135,45 +135,46 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 	return newElement;
 }
 
-void loadBackgroundIncrustFromSave(FILE *fileHandle) {
+void loadBackgroundIncrustFromSave(Common::File& currentSaveFile) {
 	int16 numEntry;
 	backgroundIncrustStruct *ptr1;
 	backgroundIncrustStruct *ptr2;
 	int32 i;
 
-	fread(&numEntry, 2, 1, fileHandle);
+	numEntry = currentSaveFile.readSint16LE();
 
 	ptr1 = &backgroundIncrustHead;
 	ptr2 = &backgroundIncrustHead;
 
 	for (i = 0; i < numEntry; i++) {
-		backgroundIncrustStruct *current =
-		    (backgroundIncrustStruct *)
-		    mallocAndZero(sizeof(backgroundIncrustStruct));
+		backgroundIncrustStruct *current = (backgroundIncrustStruct *)mallocAndZero(sizeof(backgroundIncrustStruct));
 
-		fseek(fileHandle, 4, SEEK_CUR);
-
-		fread(&current->objectIdx, 2, 1, fileHandle);
-		fread(&current->type, 2, 1, fileHandle);
-		fread(&current->overlayIdx, 2, 1, fileHandle);
-		fread(&current->X, 2, 1, fileHandle);
-		fread(&current->Y, 2, 1, fileHandle);
-		fread(&current->field_E, 2, 1, fileHandle);
-		fread(&current->scale, 2, 1, fileHandle);
-		fread(&current->backgroundIdx, 2, 1, fileHandle);
-		fread(&current->scriptNumber, 2, 1, fileHandle);
-		fread(&current->scriptOverlayIdx, 2, 1, fileHandle);
-		fread(&current->ptr, 4, 1, fileHandle);
-		fread(&current->field_1C, 4, 1, fileHandle);
-		fread(&current->size, 2, 1, fileHandle);
-		fread(&current->field_22, 2, 1, fileHandle);
-		fread(&current->field_24, 2, 1, fileHandle);
-		fread(current->name, 14, 1, fileHandle);
-		fread(&current->aniX, 2, 1, fileHandle);
+		currentSaveFile.skip(2);
+		currentSaveFile.skip(2);
+		
+		current->objectIdx = currentSaveFile.readSint16LE();
+		current->type = currentSaveFile.readSint16LE();
+		current->overlayIdx = currentSaveFile.readSint16LE();
+		current->X = currentSaveFile.readSint16LE();
+		current->Y = currentSaveFile.readSint16LE();
+		current->field_E = currentSaveFile.readSint16LE();
+		current->scale = currentSaveFile.readSint16LE();
+		current->backgroundIdx = currentSaveFile.readSint16LE();
+		current->scriptNumber = currentSaveFile.readSint16LE();
+		current->scriptOverlayIdx = currentSaveFile.readSint16LE();
+		currentSaveFile.skip(4);
+		current->field_1C = currentSaveFile.readSint32LE();
+		current->size = currentSaveFile.readSint16LE();
+		current->field_22 = currentSaveFile.readSint16LE();
+		current->field_24 = currentSaveFile.readSint16LE();
+		currentSaveFile.read(current->name, 13);
+		currentSaveFile.skip(1);
+		current->aniX = currentSaveFile.readSint16LE();
+		currentSaveFile.skip(2);
 
 		if (current->size) {
 			current->ptr = (uint8 *) mallocAndZero(current->size);
-			fread(current->ptr, current->size, 1, fileHandle);
+			currentSaveFile.read(current->ptr, current->size);
 		}
 
 		current->next = NULL;
