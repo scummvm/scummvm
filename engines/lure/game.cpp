@@ -380,6 +380,9 @@ void Game::displayChuteAnimation() {
 	debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Starting chute animation");
 	mouse.cursorOff();
 
+	Sound.killSounds();
+	Sound.musicInterface_Play(0x40, 0);
+
 	AnimationSequence *anim = new AnimationSequence(screen, system, 
 		CHUTE_ANIM_ID, palette, false);
 	anim->show();
@@ -395,6 +398,7 @@ void Game::displayChuteAnimation() {
 	anim->show();
 	delete anim;
 
+	Sound.killSounds();
 	mouse.cursorOn();
 	fields.setField(AREA_FLAG, 1);
 }
