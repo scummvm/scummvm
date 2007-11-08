@@ -747,8 +747,9 @@ void Hotspot::converse(uint16 destCharacterId, uint16 messageId, bool standStill
 		// in case the destination is already in process of talking
 		HotspotData *hotspot = Resources::getReference().getHotspot(destCharacterId);
 		_data->talkCountdown += hotspot->talkCountdown;
-		
-//		hotspot->talkerId = _hotspotId ;
+
+		if (hotspot->talkCountdown == 0)
+			hotspot->talkerId = _hotspotId ;
 		hotspot->talkGate = 0;
 	}
 
@@ -1559,7 +1560,7 @@ void Hotspot::doTell(HotspotData *hotspot) {
 		return;
 	}
 
-	converse(hotspot->hotspotId, 0x7C);
+	converse(hotspot->hotspotId, 0x7C, true);
 
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, TELL);
 	if (sequenceOffset >= 0x8000) {
