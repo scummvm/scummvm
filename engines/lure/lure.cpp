@@ -117,6 +117,8 @@ int LureEngine::go() {
 			error("Sorry - copy protection failed");
 	}
 
+	Game *gameInstance = new Game();
+
 	if (ConfMan.getInt("boot_param") == 0) {
 		// Show the introduction
 		Sound.loadSection(INTRO_SOUND_RESOURCE_ID);
@@ -130,12 +132,10 @@ int LureEngine::go() {
 	if (!_events->quitFlag) {
 		// Play the game
 		Sound.loadSection(MAIN_SOUND_RESOURCE_ID);
-		Game *gameInstance = new Game();
 		gameInstance->execute();
-		delete gameInstance;
 	}
 
-	//quitGame();
+	delete gameInstance;
 	return 0;
 }
 
