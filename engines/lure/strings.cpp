@@ -199,12 +199,15 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 			// Copy over hotspot or action 
 			ch = readCharacter();
 			const char *p = (ch == '1') ? hotspotName : characterName;
-			int article = !includeArticles ? 3 : ((ch == 1) ? hotspotArticle : characterArticle);
+			int article = !includeArticles ? 0 : ((ch == 1) ? hotspotArticle : characterArticle);
 
 			if (p != NULL) {
-				if (article > 0)
+				if (article > 0) {
 					strcpy(destPos, stringList.getString(S_ARTICLE_LIST + article - 1));
-				strcat(destPos, p);
+					strcat(destPos, p);
+				} else {
+					strcpy(destPos, p);
+				}
 				destPos += strlen(destPos);
 			}
 		} else if ((uint8) ch >= 0xa0) {
