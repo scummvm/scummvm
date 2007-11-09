@@ -1117,7 +1117,8 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 			if ((charHotspot->characterMode() == CHARMODE_PAUSED) || 
 				((charHotspot->pauseCtr() == 0) && 
 				(charHotspot->characterMode() == CHARMODE_NONE))) {
-				hotspot->resource()->scriptHotspotId = charId;
+				if (hotspot->characterMode() != CHARMODE_WAIT_FOR_INTERACT)
+					hotspot->resource()->scriptHotspotId = charId;
 			}
 
 			hotspot->setPauseCtr(IDLE_COUNTDOWN_SIZE);
