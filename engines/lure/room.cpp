@@ -685,8 +685,9 @@ void Room::saveToStream(Common::WriteStream *stream) {
 }
 
 void Room::loadFromStream(Common::ReadStream *stream) {
-	_roomNumber = stream->readUint16LE();
-	setRoomNumber(_roomNumber, false);
+	uint16 roomNum = stream->readUint16LE();
+	_roomNumber = 999; // Dummy room number so current room is faded out
+	setRoomNumber(roomNum, false);
 
 	_destRoomNumber = stream->readUint16LE();
 	_showInfo = stream->readByte() != 0;
