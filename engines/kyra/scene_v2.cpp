@@ -128,7 +128,7 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 	enterNewSceneUnk2(unk3);
 	_screen->showMouse();
 	_unk5 = 0;
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
 
 	_currentScene = newScene;
 }

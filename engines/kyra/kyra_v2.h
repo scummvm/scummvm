@@ -636,6 +636,14 @@ protected:
 	void timerFunc6(int);
 
 	void setTimer1DelaySecs(int secs);
+	
+	uint32 _nextIdleAnim;
+	int _lastIdleScript;
+
+	void setNextIdleAnimTimer();
+	void showIdleAnim();
+	void runIdleScript(int script);
+
 
 	// delay
 	void delay(uint32 millis, bool updateGame = false, bool isMainLoop = false);

@@ -127,7 +127,7 @@ int KyraEngine_v2::chatCalcDuration(const char *str) {
 }
 
 void KyraEngine_v2::objectChat(const char *str, int object, int vocHigh, int vocLow) {
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
 
 	_chatVocHigh = _chatVocLow = -1;
 	
@@ -176,7 +176,7 @@ void KyraEngine_v2::objectChat(const char *str, int object, int vocHigh, int voc
 	_chatText = 0;
 	_chatObject = -1;
 
-	//setNextIdelAnimTimer();
+	setNextIdleAnimTimer();
 }
 
 void KyraEngine_v2::objectChatInit(const char *str, int object, int vocHigh, int vocLow) {

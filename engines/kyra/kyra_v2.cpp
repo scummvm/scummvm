@@ -79,6 +79,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_chatVocLow = -1;
 	_chatText = 0;
 	_chatObject = -1;
+	_lastIdleScript = -1;
 
 	_currentTalkSections.STATim = NULL;
 	_currentTalkSections.TLKTim = NULL;
@@ -282,7 +283,7 @@ void KyraEngine_v2::startup() {
 	_screen->showMouse();
 
 	//sub_20EE8(1);
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
 	//XXX
 	_timer->setDelay(0, 5);
 }
@@ -292,6 +293,11 @@ void KyraEngine_v2::runLoop() {
 
 	_quitFlag = false;
 	while (!_quitFlag) {
+		//XXX
+		
+		if (_system->getMillis() > _nextIdleAnim)
+			showIdleAnim();
+
 		//XXX
 
 		int inputFlag = checkInput(0/*dword_324C5*/);
@@ -309,7 +315,7 @@ void KyraEngine_v2::runLoop() {
 }
 
 void KyraEngine_v2::handleInput(int x, int y) {
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
 	if (_unk5) {
 		_unk5 = 0;
 		return;
@@ -323,7 +329,7 @@ void KyraEngine_v2::handleInput(int x, int y) {
 		return;
 	}
 
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
 
 	if (x <= 6 || x >= 312 || y <= 6 || y >= 135) {
 		bool exitOk = false;
@@ -1384,7 +1390,65 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 void KyraEngine_v2::resetNewShapes(int count, uint8 *filedata) {
 	Common::set_to(_defaultShapeTable+33, _defaultShapeTable+33+count, (uint8*)0);
 	delete [] filedata;
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
+}
+
+void KyraEngine_v2::setNextIdleAnimTimer() {
+	_nextIdleAnim = _system->getMillis() + _rnd.getRandomNumberRng(10, 15) * 60 * _tickLength;
+}
+
+void KyraEngine_v2::showIdleAnim() {
+	static const uint8 scriptMinTable[] = {
+		0x00, 0x05, 0x07, 0x08, 0x00, 0x09, 0x0A, 0x0B, 0xFF, 0x00
+	};
+
+	static const uint8 scriptMaxTable[] = {
+		0x04, 0x06, 0x07, 0x08, 0x04, 0x09, 0x0A, 0x0B, 0xFF, 0x00
+	};
+
+	if (queryGameFlag(0x159))
+		return;
+
+	//if (!word_28432) {
+	//	word_28432 = 1;
+	//	sub_2715D();
+	//} else {
+	//	word_28432 = 0;
+		if (_loadedZTable > 8)
+			return;
+
+		int scriptMin = scriptMinTable[_loadedZTable-1];
+		int scriptMax = scriptMaxTable[_loadedZTable-1];
+		int script = 0;
+
+		if (scriptMin < scriptMax) {
+			do {
+				script = _rnd.getRandomNumberRng(scriptMin, scriptMax);
+			} while (script == _lastIdleScript);
+		} else {
+			script = scriptMin;
+		}
+
+		runIdleScript(script);
+		_lastIdleScript = script;
+	//}
+}
+
+void KyraEngine_v2::runIdleScript(int script) {
+	if (script < 0 || script >= 12)
+		script = 0;
+
+	if (_mainCharacter.animFrame != 18) {
+		setNextIdleAnimTimer();
+	} else {
+		// FIXME: move this to staticres.cpp?
+		static const char *idleScriptFiles[] = {
+			"_IDLHAIR.EMC", "_IDLDUST.EMC", "_IDLLEAN.EMC", "_IDLDIRT.EMC", "_IDLTOSS.EMC", "_IDLNOSE.EMC",
+			"_IDLBRSH.EMC", "_Z3IDLE.EMC", "_Z4IDLE.EMC", "_Z6IDLE.EMC", "_Z7IDLE.EMC", "_Z8IDLE.EMC"
+		};
+
+		runTemporaryScript(idleScriptFiles[script], 1, 1, 1, 1);
+	}
 }
 
 #pragma mark -
