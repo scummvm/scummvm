@@ -493,6 +493,18 @@ void Script::doVerb() {
 		}
 	}
 
+	// WORKAROUND for a bug in the original game scripts of IHNM. Edna's script (actor 8197) is problematic, so
+	// when the knife (object 16385) is used with her, the expected result is not correct. The first time that
+	// the knife is used, Edna's heart is cut out (which is correct). But on subsequent use, the object's script
+	// is buggy, therefore it's possible to talk to a dead Edna by using the knife on her, or to incorrectly get her
+	// heart again, which remove's Gorrister's heart from the inventory. The solution is to disable the "use knife with
+	// Edna" action altogether, because if the player wants to kill Edna, he can do that by talking to her and
+	// choosing "[Cut out Edna's heart]", which works correctly. To disable this action, if the knife is used on Edna, we
+	// change the action here to "use knife with the knife", which yields a better reply ("I'd just dull my knife").
+	// Fixes bug #1826871 - "IHNM: Edna's got two hearts but loves to be on the hook"
+	if (_vm->getGameType() == GType_IHNM && _pendingObject[0] == 16385 && _pendingObject[1] == 8197 && _pendingVerb == 4)
+		_pendingObject[1] = 16385;
+
 	// WORKAROUND for a bug in the original game scripts of IHNM. Gorrister's heart is not supposed to have a
 	// "use" phrase attached to it (it's not used anywhere, it's only given), but when "used", an incorrect
 	// reply is given to the player ("It's too narrow for me to pass", said when Gorrister tries to pick up the
