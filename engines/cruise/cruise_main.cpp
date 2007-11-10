@@ -770,7 +770,7 @@ const char *getObjectName(int index, const char *string) {
 		return NULL;
 
 	int i = 0;
-	int j = 0;
+//	int j = 0;
 
 	while (i < index)
 	{

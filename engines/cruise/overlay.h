@@ -104,7 +104,7 @@ enum eClass
 	MULTIPLE = 0,
 	VARIABLE = 1,
 	UNIQUE = 2,
-	THEME = 3,
+	THEME = 3
 };
 
 struct objDataStruct {
