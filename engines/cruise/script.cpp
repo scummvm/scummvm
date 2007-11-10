@@ -727,7 +727,7 @@ int executeScripts(scriptInstanceStruct *ptr) {
 		}
 		opcodeType = getByteFromScript();
 
-		printf("opType: %d\n",(opcodeType&0xFB)>>3);
+	//	printf("opType: %d\n",(opcodeType&0xFB)>>3);
 
 		currentScriptOpcodeType = opcodeType & 7;
 

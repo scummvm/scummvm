@@ -93,7 +93,7 @@ void printInfoBlackBox(const char *string);
 void waitForPlayerInput(void);
 int loadCtp(const char * ctpName);
 void loadPakedFileToMem(int fileIdx, uint8 * buffer);
-int loadScriptSub1(int scriptIdx, int param);
+int getNumObjectsByClass(int scriptIdx, int param);
 void resetFileEntryRange(int param1, int param2);
 int getProcParam(int overlayIdx, int param2, const char * name);
 void changeScriptParamInList(int param1, int param2, scriptInstanceStruct * pScriptInstance, int newValue, int param3);

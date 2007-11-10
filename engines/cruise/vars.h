@@ -184,7 +184,7 @@ extern opcodeTypeFunction opcodeTypeTable[64];
 extern int16 positionInStack;
 extern actorStruct actorHead;
 
-extern int16 setup1;
+extern int16 stateID;
 
 extern uint8 *currentData3DataPtr;
 extern uint8 *scriptDataPtrTable[7];

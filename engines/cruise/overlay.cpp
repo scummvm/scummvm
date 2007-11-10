@@ -170,8 +170,7 @@ int loadOverlay(const char *scriptName) {
 	if (ovlData->numSymbGlob)	{ // export data
 		int i;
 		ovlData->arraySymbGlob =
-		    (exportEntryStruct *) mallocAndZero(ovlData->numSymbGlob *
-		    sizeof(exportEntryStruct));
+		    (exportEntryStruct *) mallocAndZero(ovlData->numSymbGlob * sizeof(exportEntryStruct));
 
 		if (!ovlData->arraySymbGlob) {
 			return (-2);
@@ -179,13 +178,10 @@ int loadOverlay(const char *scriptName) {
 
 		for (i = 0; i < ovlData->numSymbGlob; i++) {
 			ovlData->arraySymbGlob[i].var0 = readB16(scriptPtr);
-			ovlData->arraySymbGlob[i].var2 =
-			    readB16(scriptPtr + 2);
-			ovlData->arraySymbGlob[i].var4 =
-			    readB16(scriptPtr + 4);
+			ovlData->arraySymbGlob[i].var2 = readB16(scriptPtr + 2);
+			ovlData->arraySymbGlob[i].var4 = readB16(scriptPtr + 4);
 			ovlData->arraySymbGlob[i].idx = readB16(scriptPtr + 6);
-			ovlData->arraySymbGlob[i].offsetToName =
-			    readB16(scriptPtr + 8);
+			ovlData->arraySymbGlob[i].offsetToName = readB16(scriptPtr + 8);
 
 			scriptPtr += 10;
 		}
@@ -215,14 +211,10 @@ int loadOverlay(const char *scriptName) {
 
 		for (i = 0; i < ovlData->numRelocGlob; i++) {
 			ovlData->arrayRelocGlob[i].var0 = readB16(scriptPtr);
-			ovlData->arrayRelocGlob[i].var1 =
-			    readB16(scriptPtr + 2);
-			ovlData->arrayRelocGlob[i].linkType =
-			    readB16(scriptPtr + 4);
-			ovlData->arrayRelocGlob[i].linkIdx =
-			    readB16(scriptPtr + 6);
-			ovlData->arrayRelocGlob[i].nameOffset =
-			    readB16(scriptPtr + 8);
+			ovlData->arrayRelocGlob[i].var1 = readB16(scriptPtr + 2);
+			ovlData->arrayRelocGlob[i].linkType = readB16(scriptPtr + 4);
+			ovlData->arrayRelocGlob[i].linkIdx = readB16(scriptPtr + 6);
+			ovlData->arrayRelocGlob[i].nameOffset = readB16(scriptPtr + 8);
 
 			scriptPtr += 10;
 		}
@@ -243,19 +235,15 @@ int loadOverlay(const char *scriptName) {
 	if (ovlData->numMsgRelHeader) {	// link data
 		ASSERT(sizeof(linkDataStruct) == 0x22);
 
-		ovlData->arrayMsgRelHeader =
-		    (linkDataStruct *) mallocAndZero(ovlData->numMsgRelHeader *
-		    sizeof(linkDataStruct));
+		ovlData->arrayMsgRelHeader = (linkDataStruct *) mallocAndZero(ovlData->numMsgRelHeader * sizeof(linkDataStruct));
 
 		if (!ovlData->arrayMsgRelHeader) {
 			return (-2);
 		}
 
-		memcpy(ovlData->arrayMsgRelHeader, scriptPtr,
-		    ovlData->numMsgRelHeader * sizeof(linkDataStruct));
+		memcpy(ovlData->arrayMsgRelHeader, scriptPtr, ovlData->numMsgRelHeader * sizeof(linkDataStruct));
 		scriptPtr += ovlData->numMsgRelHeader * sizeof(linkDataStruct);
-		flipGen(ovlData->arrayMsgRelHeader,
-		    ovlData->numMsgRelHeader * sizeof(linkDataStruct));
+		flipGen(ovlData->arrayMsgRelHeader, ovlData->numMsgRelHeader * sizeof(linkDataStruct));
 	}
 
 	if (ovlData->numProc) {	// script
@@ -430,16 +418,11 @@ int loadOverlay(const char *scriptName) {
 			flipShort(&ovlData->arrayObject[i]._stateTableIdx);
 		}
 
+		// allocte states for object with multiple states
+
 		if (scriptNotLoadedBefore) {
-			//int var1;
-			//int var2;
-
-			overlayTable[scriptIdx].state = (char)setup1;
-
-			var1 = loadScriptSub1(scriptIdx, 3);
-			var2 = loadScriptSub1(scriptIdx, 0);
-
-			setup1 = var1 + var2;
+			overlayTable[scriptIdx].state = stateID;
+			stateID += getNumObjectsByClass(scriptIdx, MULTIPLE) + getNumObjectsByClass(scriptIdx, THEME);
 		}
 	}
 

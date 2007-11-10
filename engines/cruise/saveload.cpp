@@ -270,7 +270,7 @@ int loadSavegameData(int saveGameIdx) {
 	var22 = currentSaveFile.readSint16LE();
 	main5 = currentSaveFile.readSint16LE();
 	numOfLoadedOverlay = currentSaveFile.readSint16LE();
-	setup1 = currentSaveFile.readSint16LE();
+	stateID = currentSaveFile.readSint16LE();
 	fontFileIndex = currentSaveFile.readSint16LE();
 	currentActiveMenu = currentSaveFile.readSint16LE();
 	userWait = currentSaveFile.readSint16LE();
@@ -304,7 +304,7 @@ int loadSavegameData(int saveGameIdx) {
 
 	currentSaveFile.read(palette, 256*2);
 	currentSaveFile.read(initVar5, 24);
-	currentSaveFile.read(globalVars, setup1 * 2); // ok
+	currentSaveFile.read(globalVars, stateID * 2); // ok
 	for(int i=0; i<257; i++)
 	{
 		filesDatabase[i].widthInColumn = currentSaveFile.readUint16LE();

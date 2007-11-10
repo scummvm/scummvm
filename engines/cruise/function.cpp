@@ -30,6 +30,8 @@
 
 namespace Cruise {
 
+//#define FUNCTION_DEBUG
+
 opcodeFunction opcodeTablePtr[256];
 
 int16 Op_LoadOverlay(void) {
@@ -520,6 +522,10 @@ int16 Op_InitializeState(void) {
 
 	if (!ovlIdx)
 		ovlIdx = currentScriptPtr->overlayNumber;
+
+#ifdef FUNCTION_DEBUG
+	printf("Init %s state to %d\n", getObjectName(objIdx, overlayTable[ovlIdx].ovlData->arrayNameObj), param1);
+#endif
 
 	objInit(ovlIdx, objIdx, param1);
 
@@ -1582,7 +1588,7 @@ int32 opcodeType8(void) {
 		return (-21);
 
 	if (opcodeTablePtr[opcode]) {
-		printf("Function: %d\n",opcode);
+	//	printf("Function: %d\n",opcode);
 		pushVar(opcodeTablePtr[opcode] ());
 		return (0);
 	} else {

@@ -79,7 +79,7 @@ void loadPakedFileToMem(int fileIdx, uint8 *buffer) {
 	currentVolumeFile.read(buffer, volumePtrToFileDescriptor[fileIdx].size);
 }
 
-int loadScriptSub1(int scriptIdx, int param) {
+int getNumObjectsByClass(int scriptIdx, int param) {
 	objDataStruct *ptr2;
 	int counter;
 	int i;
@@ -98,7 +98,7 @@ int loadScriptSub1(int scriptIdx, int param) {
 	counter = 0;
 
 	for (i = 0; i < overlayTable[scriptIdx].ovlData->numObj; i++) {
-		if (ptr2[i]._type == param) {
+		if (ptr2[i]._class == param) {
 			counter++;
 		}
 	}
@@ -442,7 +442,7 @@ int initAllData(void) {
 	setupOpcodeTable();
 	initOverlayTable();
 
-	setup1 = 0;
+	stateID = 0;
 	currentActiveBackgroundPlane = 0;
 
 	freeDisk();
@@ -625,114 +625,113 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 	cellStruct *currentObject = cellHead.prev;
 
 	while (currentObject) {
-		if (currentObject->overlay >= 0 && overlayTable[currentObject->overlay].alreadyLoaded && (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUEL)) {
+		if (currentObject->overlay > 0 && overlayTable[currentObject->overlay].alreadyLoaded && (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUEL)) {
 			const char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
-			if (pObjectName) {
-				strcpy(objectName, pObjectName);
 
-				if (strlen(objectName) && (currentObject->freeze == 0)) {
-					int objIdx = currentObject->idx;
-					int objOvl = currentObject->overlay;
-					int linkedObjIdx = currentObject->followObjectIdx;
-					int linkedObjOvl = currentObject->followObjectOverlayIdx;
+			strcpy(objectName, pObjectName);
 
-					objectParamsQuery params;
-					getMultipleObjectParam(objOvl, objIdx, &params);
+			if (strlen(objectName) && (currentObject->freeze == 0)) {
+				int objIdx = currentObject->idx;
+				int objOvl = currentObject->overlay;
+				int linkedObjIdx = currentObject->followObjectIdx;
+				int linkedObjOvl = currentObject->followObjectOverlayIdx;
 
-					int x2 = 0;
-					int y2 = 0;
-					int j2 = 0;
+				objectParamsQuery params;
+				getMultipleObjectParam(objOvl, objIdx, &params);
 
-					if ((objOvl != linkedObjOvl) || (objIdx != linkedObjIdx)) {
-						getMultipleObjectParam(linkedObjOvl, linkedObjIdx, &params);
+				int x2 = 0;
+				int y2 = 0;
+				int j2 = 0;
 
-						x2 = params.X;
-						y2 = params.Y;
-						j2 = params.fileIdx;
-					}
+				if ((objOvl != linkedObjOvl) || (objIdx != linkedObjIdx)) {
+					getMultipleObjectParam(linkedObjOvl, linkedObjIdx, &params);
 
-					if (params.var5 >= 0 && params.fileIdx >= 0) {
-						if (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT) {
-							int x = params.X + x2;
-							int y = params.Y + y2;
-							int j = params.fileIdx;
+					x2 = params.X;
+					y2 = params.Y;
+					j2 = params.fileIdx;
+				}
 
-							if (j >= 0) {
-								j += j2;
-							}
+				if (params.var5 >= 0 && params.fileIdx >= 0) {
+					if (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT) {
+						int x = params.X + x2;
+						int y = params.Y + y2;
+						int j = params.fileIdx;
 
-							if ((filesDatabase[j].subData.resourceType == OBJ_TYPE_POLY) && (filesDatabase[j].subData.ptr)) {
-								int zoom = params.scale;
+						if (j >= 0) {
+							j += j2;
+						}
 
-								int16* dataPtr = (int16*)filesDatabase[j].subData.ptr;
+						if ((filesDatabase[j].subData.resourceType == OBJ_TYPE_POLY) && (filesDatabase[j].subData.ptr)) {
+							int zoom = params.scale;
 
-								if (*dataPtr == 0) {
-									int16 offset;
-									int16 newX;
-									int16 newY;
+							int16* dataPtr = (int16*)filesDatabase[j].subData.ptr;
 
-									dataPtr ++;
+							if (*dataPtr == 0) {
+								int16 offset;
+								int16 newX;
+								int16 newY;
 
-									offset = *(dataPtr++);
-									flipShort(&offset);
+								dataPtr ++;
 
-									newX = *(dataPtr++);
-									flipShort(&newX);
+								offset = *(dataPtr++);
+								flipShort(&offset);
 
-									newY = *(dataPtr++);
-									flipShort(&newY);
+								newX = *(dataPtr++);
+								flipShort(&newX);
 
-									offset += j;
+								newY = *(dataPtr++);
+								flipShort(&newY);
 
-									if (offset >= 0 ) {
-										if (filesDatabase[offset].resType == 0 && filesDatabase[offset].subData.ptr) {
-											dataPtr = (int16 *)filesDatabase[offset].subData.ptr;
-										}
-									}
+								offset += j;
 
-									zoom = -zoom;
-									x -= newX;
-									y -= newY;
-								}
-
-								if (dataPtr && findPoly((char*)dataPtr, x, y, zoom, mouseX, mouseY)) {
-									*outObjOvl = objOvl;
-									*outObjIdx = objIdx;
-
-									return (currentObject->type);
-								}
-							} else {
-								// int numBitPlanes = filesDatabase[j].resType;
-
-								int nWidth;
-								int nHeight;
-
-								nWidth = filesDatabase[j].width;
-								nHeight = filesDatabase[j].height;
-
-								int offsetX = mouseX - x;
-								int offsetY = mouseY - y;
-
-								if ((offsetX >= 0) && (offsetX < nWidth) && (offsetY >= 0) && (offsetY <= nHeight) && filesDatabase[j].subData.ptr) {
-									if(testMask(offsetX, offsetY, filesDatabase[j].subData.ptrMask, filesDatabase[j].width/8)) {
-										*outObjOvl = objOvl;
-										*outObjIdx = objIdx;
-										return currentObject->type;
+								if (offset >= 0 ) {
+									if (filesDatabase[offset].resType == 0 && filesDatabase[offset].subData.ptr) {
+										dataPtr = (int16 *)filesDatabase[offset].subData.ptr;
 									}
 								}
-							}
-						} else if (currentObject->type == OBJ_TYPE_VIRTUEL) {
-							int x = params.X + x2;
-							int y = params.Y + y2;
-							int width = params.fileIdx;
-							int height = params.scale;
 
-							if ((mouseX >= x) && (mouseX <= x+width) && (mouseY >= y) && (mouseY <= y+height)) {
+								zoom = -zoom;
+								x -= newX;
+								y -= newY;
+							}
+
+							if (dataPtr && findPoly((char*)dataPtr, x, y, zoom, mouseX, mouseY)) {
 								*outObjOvl = objOvl;
 								*outObjIdx = objIdx;
 
 								return (currentObject->type);
 							}
+						} else {
+							// int numBitPlanes = filesDatabase[j].resType;
+
+							int nWidth;
+							int nHeight;
+
+							nWidth = filesDatabase[j].width;
+							nHeight = filesDatabase[j].height;
+
+							int offsetX = mouseX - x;
+							int offsetY = mouseY - y;
+
+							if ((offsetX >= 0) && (offsetX < nWidth) && (offsetY >= 0) && (offsetY <= nHeight) && filesDatabase[j].subData.ptr) {
+								if(testMask(offsetX, offsetY, filesDatabase[j].subData.ptrMask, filesDatabase[j].width/8)) {
+									*outObjOvl = objOvl;
+									*outObjIdx = objIdx;
+									return currentObject->type;
+								}
+							}
+						}
+					} else if (currentObject->type == OBJ_TYPE_VIRTUEL) {
+						int x = params.X + x2;
+						int y = params.Y + y2;
+						int width = params.fileIdx;
+						int height = params.scale;
+
+						if ((mouseX >= x) && (mouseX <= x+width) && (mouseY >= y) && (mouseY <= y+height)) {
+							*outObjOvl = objOvl;
+							*outObjIdx = objIdx;
+
+							return (currentObject->type);
 						}
 					}
 				}
@@ -872,8 +871,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 		if (overlayTable[j].alreadyLoaded) {
 			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
 
-			int i;
-			for (i=0; i<idHeader; i++) {
+			for (int i=0; i<idHeader; i++) {
 				linkDataStruct* ptrHead = &overlayTable[j].ovlData->arrayMsgRelHeader[i];
 				int thisOvl = ptrHead->obj1Overlay;
 
@@ -883,7 +881,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 
 				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
 
-				if ((thisOvl == objOvl) && (objIdx ==ptrHead->obj1Number) && pObject && pObject->_class != 3) {
+				if ((thisOvl == objOvl) && (objIdx == ptrHead->obj1Number) && pObject && (pObject->_class != THEME)) {
 					int verbeOvl = ptrHead->verbOverlay;
 					int obj1Ovl = ptrHead->obj1Overlay;
 					int obj2Ovl = ptrHead->obj2Overlay;
@@ -922,7 +920,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					if ((ovl3) && (ptrHead->obj1Number >= 0)) {
 						testState = ptrHead->obj1OldState;
 
-						if ((first) && (ovl3->arrayNameObj) && ((testState ==-1) || (testState == objectState))) {
+						if ((first) && (ovl3->arrayNameObj) && ((testState == -1) || (testState == objectState))) {
 							const char *ptrName = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
 
 							menuTable[0] = createMenu(x, y, ptrName);

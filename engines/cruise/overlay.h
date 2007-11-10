@@ -88,7 +88,7 @@ struct linkDataStruct {
 	int16 obj2OldState;
 
 	int16 trackDirection;
-	int16 field_20;
+	int16 dialog;
 };
 
 struct importDataStruct {

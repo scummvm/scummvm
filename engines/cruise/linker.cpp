@@ -250,49 +250,31 @@ int updateScriptImport(int ovlIdx) {
 			int linkType;
 			int linkEntryIdx;
 
-			strcpy(buffer,
-			    ovlData->arrayNameRelocGlob +
-			    ovlData->arrayRelocGlob[i].nameOffset);
+			strcpy(buffer, ovlData->arrayNameRelocGlob + ovlData->arrayRelocGlob[i].nameOffset);
 
-			pFoundExport =
-			    parseExport(&out1, &foundExportIdx, buffer);
+			pFoundExport = parseExport(&out1, &foundExportIdx, buffer);
 
 			linkType = ovlData->arrayRelocGlob[i].linkType;
 			linkEntryIdx = ovlData->arrayRelocGlob[i].linkIdx;
 
 			if (pFoundExport && foundExportIdx) {
 				switch (linkType) {
-				case 0:	// var
+				case 0:	// verb
 					{
-						ovlData->
-						    arrayMsgRelHeader[linkEntryIdx].
-						    verbOverlay = foundExportIdx;
-						ovlData->
-						    arrayMsgRelHeader[linkEntryIdx].
-						    verbNumber =
-						    pFoundExport->offsetToName;
+						ovlData->arrayMsgRelHeader[linkEntryIdx].verbOverlay = foundExportIdx;
+						ovlData->arrayMsgRelHeader[linkEntryIdx].verbNumber = pFoundExport->idx;
 						break;
 					}
-				case 1:	// string
+				case 1:	// obj1
 					{
-						ovlData->
-						    arrayMsgRelHeader[linkEntryIdx].
-						    obj1Overlay = foundExportIdx;
-						ovlData->
-						    arrayMsgRelHeader[linkEntryIdx].
-						    obj1Number =
-						    pFoundExport->offsetToName;
+						ovlData->arrayMsgRelHeader[linkEntryIdx].obj1Overlay = foundExportIdx;
+						ovlData->arrayMsgRelHeader[linkEntryIdx].obj1Number = pFoundExport->idx;
 						break;
 					}
-				case 2:	// proc
+				case 2:	// obj2
 					{
-						ovlData->
-						    arrayMsgRelHeader[linkEntryIdx].
-						    obj2Overlay = foundExportIdx;
-						ovlData->
-						    arrayMsgRelHeader[linkEntryIdx].
-						    obj2Number =
-						    pFoundExport->offsetToName;
+						ovlData->arrayMsgRelHeader[linkEntryIdx].obj2Overlay = foundExportIdx;
+						ovlData->arrayMsgRelHeader[linkEntryIdx].obj2Number = pFoundExport->idx;
 						break;
 					}
 				}

@@ -91,7 +91,7 @@ int16 positionInStack;
 
 actorStruct actorHead;
 
-int16 setup1;
+int16 stateID;
 
 uint8 *currentData3DataPtr;
 uint8 *scriptDataPtrTable[7];
