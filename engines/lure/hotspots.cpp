@@ -736,7 +736,8 @@ void Hotspot::resetPosition() {
 	setDirection(direction());
 }
 
-void Hotspot::converse(uint16 destCharacterId, uint16 messageId, bool standStill) {
+void Hotspot::converse(uint16 destCharacterId, uint16 messageId, bool srcStandStill, 
+					   bool destStandStill) {
 	assert(_data);
 	_data->talkDestCharacterId = destCharacterId;
 	_data->talkMessageId = messageId;
@@ -748,12 +749,13 @@ void Hotspot::converse(uint16 destCharacterId, uint16 messageId, bool standStill
 		HotspotData *hotspot = Resources::getReference().getHotspot(destCharacterId);
 		_data->talkCountdown += hotspot->talkCountdown;
 
-		if (hotspot->talkCountdown == 0)
-			hotspot->talkerId = _hotspotId ;
-		hotspot->talkGate = 0;
+		if (destStandStill) {
+			hotspot->talkerId = _hotspotId;
+			hotspot->talkGate = 0;
+		}
 	}
 
-	if (standStill) {
+	if (srcStandStill) {
 		setDelayCtr(_data->talkCountdown);
 		_data->characterMode = CHARMODE_CONVERSING;
 	}
@@ -862,7 +864,7 @@ void Hotspot::handleTalkDialog() {
 			// Talking is finish - stop talking and free voice animation
 			debugC(ERROR_DETAILED, kLureDebugAnimations, "Talk dialog close");
 			room.setTalkDialog(0, 0, 0, 0);
-
+/*
 			if ((_data->talkDestCharacterId != 0) && (_data->talkDestCharacterId != NOONE_ID)) {
 				HotspotData *destChar = res.getHotspot(_data->talkDestCharacterId);
 				destChar->talkerId = 0;
@@ -870,6 +872,7 @@ void Hotspot::handleTalkDialog() {
 
 			_data->talkerId = 0;
 			_data->talkGate = 0;
+*/
 		}
 	}
 
@@ -882,7 +885,7 @@ void Hotspot::startTalkDialog() {
 
 	if ((_data->talkDestCharacterId != 0) && (_data->talkDestCharacterId != NOONE_ID)) {
 		HotspotData *hotspot = Resources::getReference().getHotspot(_data->talkDestCharacterId);
-		hotspot->talkerId = _hotspotId;
+//		hotspot->talkerId = _hotspotId;
 	}
 
 	if (room.roomNumber() != roomNumber()) return;
@@ -960,7 +963,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 			}
 
 			hotspot->talkGate = GENERAL_MAGIC_ID;
-			hotspot->talkDestCharacterId = _hotspotId;
+			hotspot->talkerId = _hotspotId;
 			return PC_WAIT;
 		} 
 	}
@@ -970,7 +973,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 	if (hotspot->hotspotId < FIRST_NONCHARACTER_ID) {
 		hotspot->characterMode = CHARMODE_INTERACTING;
 		hotspot->delayCtr = 30;
-		hotspot->actionHotspotId = hotspot->hotspotId;
+		hotspot->actionHotspotId = _hotspotId;
 	}
 	return PC_EXECUTE;
 }
@@ -1560,7 +1563,7 @@ void Hotspot::doTell(HotspotData *hotspot) {
 		return;
 	}
 
-	converse(hotspot->hotspotId, 0x7C, true);
+	converse(hotspot->hotspotId, 0x7C, true, false);
 
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, TELL);
 	if (sequenceOffset >= 0x8000) {
@@ -2122,8 +2125,9 @@ void Hotspot::startTalk(HotspotData *charHotspot, uint16 id) {
 	setTickProc(TALK_TICK_PROC_ID);    
 	
 	// Signal the character that they're being talked to
-	charHotspot->talkDestCharacterId = _hotspotId;
+	charHotspot->talkerId = _hotspotId;
 	charHotspot->talkGate = 0;
+	charHotspot->talkDestCharacterId = _hotspotId;
 	_data->talkDestCharacterId = charHotspot->hotspotId;
 	_data->talkGate = 0;
 	
@@ -2335,7 +2339,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 	// If someone is talking to the character, this stops them from moving for the duration)
 	if (h.resource()->talkerId != 0) {
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Talker Id = %xh, talk_gate = %d",
-			h.resource()->talkDestCharacterId, h.talkGate());
+			h.resource()->talkerId, h.talkGate());
 		if (h.talkGate() == GENERAL_MAGIC_ID) {
 			fields.setField(ACTIVE_HOTSPOT_ID, h.talkGate());
 			fields.setField(USE_HOTSPOT_ID, h.resource()->talkerId);
@@ -2430,7 +2434,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 				if (!decrementFlag) {
 					HotspotData *hotspot = res.getHotspot(h.resource()->actionHotspotId);
 					assert(hotspot);
-					decrementFlag = (hotspot->roomNumber != h.hotspotId()) ? false :
+					decrementFlag = (hotspot->roomNumber != h.roomNumber()) ? false :
 						Support::charactersIntersecting(hotspot, h.resource());
 				}
 
@@ -3286,7 +3290,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 
 			// Make sure the dest character holds still while an option is selected
 			HotspotData *destHotspot = res.getHotspot(talkDestCharacter);
-			destHotspot->talkerId = h.hotspotId();
+			//destHotspot->talkerId = h.hotspotId();
 		} else {
 			res.setTalkState(TALK_RESPOND);
 			res.setTalkSelection(1);
@@ -3339,7 +3343,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 		// Get the response the destination character will say
 		if (descId != TALK_MAGIC_ID) {
 			// Set up to display the question and response in talk dialogs
-			h.converse(talkDestCharacter, descId, false);
+			h.converse(talkDestCharacter, descId);
 			res.setTalkState(TALK_RESPOND_2);
 		} else {
 			res.setTalkState(TALK_RESPOND_3);
@@ -3425,7 +3429,11 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			// End the conversation
 			res.getActiveHotspot(PLAYER_ID)->setTickProc(PLAYER_TICK_PROC_ID);
 			if (charHotspot)
+			{
 				charHotspot->setUseHotspotId(0);
+				charHotspot->resource()->talkerId = 0;
+				charHotspot->setDelayCtr(24);
+			}
 			res.setTalkData(0);
 			res.setCurrentAction(NONE);
 			res.setTalkState(TALK_NONE);

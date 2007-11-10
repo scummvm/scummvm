@@ -616,7 +616,7 @@ void Room::setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 u
 		delete _talkDialog;
 		_talkDialog = NULL;
 	}
-
+/*
 	if (res.getTalkingCharacter() != 0) {
 		// Signal to any talked to character that they're no longer being talked to
 		HotspotData *talkingChar = res.getHotspot(res.getTalkingCharacter());
@@ -626,7 +626,7 @@ void Room::setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 u
 			destChar->talkerId = 0;
 		}
 	}
-
+*/
 	res.setTalkingCharacter(srcCharacterId);
 
 	if (srcCharacterId == 0)

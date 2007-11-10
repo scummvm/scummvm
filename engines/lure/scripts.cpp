@@ -338,7 +338,7 @@ void Script::decrInventoryItems(uint16 v1, uint16 v2, uint16 v3) {
 void Script::setTalking(uint16 characterId, uint16 destHotspot, uint16 messageId) {
 	Hotspot *hotspot = Resources::getReference().getActiveHotspot(characterId);
 	if (hotspot)
-		hotspot->converse(destHotspot, messageId, false);	
+		hotspot->converse(destHotspot, messageId, true, false);	
 }
 
 // Sets the current action ctr value for the given hotspot
@@ -353,7 +353,7 @@ void Script::setActionCtr(uint16 hotspotId, uint16 value, uint16 v3) {
 
 void Script::startSpeaking(uint16 characterId, uint16 destHotspot, uint16 messageId) {
 	Hotspot *hotspot = Resources::getReference().getActiveHotspot(characterId);
-	hotspot->converse(destHotspot, messageId, false);
+	hotspot->converse(destHotspot, messageId, false, false);
 }
 
 // Disables the given hotspot from being highlighted by the cursor
