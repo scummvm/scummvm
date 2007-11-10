@@ -345,10 +345,10 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 		}
 	}
 
-	getFileExtention((char *)name, buffer);
+	getFileExtention(name, buffer);
 
 	if (!strcmp(buffer, ".SPL")) {
-		removeExtention((char *)name, buffer);
+		removeExtention(name, buffer);
 
 		// if (useH32)
 		{

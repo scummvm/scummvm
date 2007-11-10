@@ -72,7 +72,7 @@ void restoreBackground(backgroundIncrustStruct *pIncrust)
 	if(pBackground == NULL)
 		return;
 
-	int X = pIncrust->savedX;
+	//int X = pIncrust->savedX;
 	int Y = pIncrust->savedY;
 	int width = pIncrust->saveWidth;
 	int height = pIncrust->saveHeight;
@@ -257,7 +257,7 @@ void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
 
 		bool bLoad = false;
 		int frame = pl->field_E;
-		int screen = pl->backgroundIdx;
+		//int screen = pl->backgroundIdx;
 
 		if((filesDatabase[frame].subData.ptr == NULL) || (strcmp(pl->name, filesDatabase[frame].subData.name))) {
 			frame = 257 - 1;
