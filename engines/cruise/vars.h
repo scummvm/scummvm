@@ -78,11 +78,6 @@ struct mediumVarStruct {
 	int16 ovl;
 };
 
-struct filesDataStruct {
-	uint8 *field_0;
-	uint8 *field_4;
-};
-
 struct filesData2Struct {
 	int16 field_0;
 	int16 field_2;
@@ -141,9 +136,6 @@ struct systemStringsStruct {
 	char string[12];
 	char bootScriptName[8];
 };
-
-extern filesDataStruct filesData[90];
-extern filesData2Struct filesData2[90];
 
 extern mediumVarStruct mediumVar[64];
 

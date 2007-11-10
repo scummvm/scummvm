@@ -43,9 +43,6 @@ int16 currentActiveBackgroundPlane;
 int16 main5;
 int16 var22 = 0;
 
-filesDataStruct filesData[90];
-filesData2Struct filesData2[90];
-
 mediumVarStruct mediumVar[64];
 
 volumeDataStruct volumeData[20];

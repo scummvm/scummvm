@@ -27,30 +27,47 @@
 
 namespace Cruise {
 
+struct overlayRestoreTemporary {
+	int _sBssSize;
+	uint8* _pBss;
+	int _sNumObj;
+	objectParams* _pObj;
+};
+
+overlayRestoreTemporary ovlRestoreData[90];
+
 void loadSavegameDataSub1(Common::File& currentSaveFile) {
 	int i;
 
 	for (i = 1; i < numOfLoadedOverlay; i++) {
-		filesData[i].field_4 = NULL;
-		filesData[i].field_0 = NULL;
-		filesData2[i].field_0 = 0;
+		ovlRestoreData[i]._sBssSize = ovlRestoreData[i]._sNumObj = 0;
+		ovlRestoreData[i]._pBss = NULL;
+		ovlRestoreData[i]._pObj = NULL;
 
 		if (overlayTable[i].alreadyLoaded) {
-			filesData2[i].field_0 = currentSaveFile.readSint16LE();
+			ovlRestoreData[i]._sBssSize = currentSaveFile.readSint16LE();
 
-			if (filesData2[i].field_0) {
-				filesData[i].field_0 = (uint8 *) mallocAndZero(filesData2[i].field_0);
-				if (filesData[i].field_0) {
-					currentSaveFile.read(filesData[i].field_0, filesData2[i].field_0);
-				}
+			if (ovlRestoreData[i]._sBssSize) {
+				ovlRestoreData[i]._pBss = (uint8 *) mallocAndZero(ovlRestoreData[i]._sBssSize);
+				ASSERT(ovlRestoreData[i]._pBss);
+
+				currentSaveFile.read(ovlRestoreData[i]._pBss, ovlRestoreData[i]._sBssSize);
 			}
 
-			filesData2[i].field_2 = currentSaveFile.readSint16LE();
+			ovlRestoreData[i]._sNumObj = currentSaveFile.readSint16LE();
 
-			if (filesData2[i].field_2) {
-				filesData[i].field_4 = (uint8 *) mallocAndZero(filesData2[i].field_2 * 12);
-				if (filesData[i].field_4) {
-					currentSaveFile.read(filesData[i].field_4, filesData2[i].field_2 * 12);
+			if (ovlRestoreData[i]._sNumObj) {
+				ovlRestoreData[i]._pObj = (objectParams *) mallocAndZero(ovlRestoreData[i]._sNumObj * sizeof(objectParams));
+				ASSERT(ovlRestoreData[i]._pObj);
+
+				for(int j=0; j<ovlRestoreData[i]._sNumObj; j++)
+				{
+					ovlRestoreData[i]._pObj[j].X = currentSaveFile.readSint16LE();
+					ovlRestoreData[i]._pObj[j].Y = currentSaveFile.readSint16LE();
+					ovlRestoreData[i]._pObj[j].Z = currentSaveFile.readSint16LE();
+					ovlRestoreData[i]._pObj[j].frame = currentSaveFile.readSint16LE();
+					ovlRestoreData[i]._pObj[j].scale = currentSaveFile.readSint16LE();
+					ovlRestoreData[i]._pObj[j].state = currentSaveFile.readSint16LE();
 				}
 			}
 		}
@@ -355,22 +372,26 @@ int loadSavegameData(int saveGameIdx) {
 			if (overlayTable[j].alreadyLoaded) {
 				ovlDataStruct *ovlData = overlayTable[j].ovlData;
 
-				if (filesData[j].field_0) {
+				// overlay BSS
+
+				if (ovlRestoreData[j]._sBssSize) {
 					if (ovlData->data4Ptr) {
 						free(ovlData->data4Ptr);
 					}
 
-					ovlData->data4Ptr = (uint8 *) filesData[j].field_0;
-					ovlData->sizeOfData4 = filesData2[j].field_0;
+					ovlData->data4Ptr = ovlRestoreData[j]._pBss;
+					ovlData->sizeOfData4 = ovlRestoreData[j]._sBssSize;
 				}
 
-				if (filesData[j].field_4) {
+				// overlay object data
+
+				if (ovlRestoreData[j]._sNumObj) {
 					if (ovlData->arrayObjVar) {
 						free(ovlData->arrayObjVar);
 					}
 
-					ovlData->arrayObjVar = (objectParams *) filesData[j].field_4;	// TODO: fix !
-					ovlData->size9 = filesData2[j].field_2;
+					ovlData->arrayObjVar = ovlRestoreData[j]._pObj;
+					ovlData->size9 = ovlRestoreData[j]._sNumObj;
 				}
 
 			}

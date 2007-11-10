@@ -99,19 +99,22 @@ struct importDataStruct {
 	uint16 nameOffset;
 };
 
-#define MULTIPLE 0
-#define VARIABLE 1
-#define UNIQUE   2
-#define THEME    3
+enum eClass
+{
+	MULTIPLE = 0,
+	VARIABLE = 1,
+	UNIQUE = 2,
+	THEME = 3,
+};
 
 struct objDataStruct {
-	int16 var0;
-	int16 type;
-	int16 var2;
-	int16 var3;
-	int16 var4;
-	int16 var5;
-	int16 stateTableIdx;
+	int16 _type;
+	eClass _class;
+	int16 _nameOffset;
+	int16 _numStates;
+	int16 _varTableIdx;
+	int16 _firstStateIdx;
+	int16 _stateTableIdx;
 };
 
 struct objectParams {

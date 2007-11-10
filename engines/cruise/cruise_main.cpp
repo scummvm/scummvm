@@ -98,7 +98,7 @@ int loadScriptSub1(int scriptIdx, int param) {
 	counter = 0;
 
 	for (i = 0; i < overlayTable[scriptIdx].ovlData->numObj; i++) {
-		if (ptr2[i].var0 == param) {
+		if (ptr2[i]._type == param) {
 			counter++;
 		}
 	}
@@ -764,45 +764,49 @@ void *allocAndZero(int size) {
 }
 
 const char *getObjectName(int index, const char *string) {
-	int i;
 	const char *ptr = string;
 
 	if (!string)
 		return NULL;
 
-	for (i = 0; i < index; i++) {
-		while (*ptr) {
-			ptr++;
-		}
-		ptr++;
+	int i = 0;
+	int j = 0;
+
+	while (i < index)
+	{
+		ptr += strlen(ptr)+1;
+		i++;
 	}
 	return ptr;
 }
 
-int buildInventorySub1(int overlayIdx, int objIdx) {
+int getObjectClass(int overlayIdx, int objIdx) {
 	objDataStruct *pObjectData = getObjectDataFromOverlay(overlayIdx, objIdx);
 
 	if (pObjectData) {
-		return pObjectData->type;
+		return pObjectData->_class;
 	} else {
 		return -11;
 	}
 }
 
 void buildInventory(int X, int Y) {
-	int numObjectInInventory = 0;
 	menuStruct *pMenu;
 
 	pMenu = createMenu(X, Y, "Inventaire");
 	menuTable[1] = pMenu;
 
-	if (pMenu && numOfLoadedOverlay > 1) {
-		for (int i = 1; i < numOfLoadedOverlay; i++) {
-			ovlDataStruct *pOvlData = overlayTable[i].ovlData;
+	if(pMenu == NULL)
+		return;
 
-			if (pOvlData && pOvlData->arrayObject && pOvlData->numObj) {
+	int numObjectInInventory = 0;
+	for (int i = 1; i < numOfLoadedOverlay; i++) {
+		ovlDataStruct *pOvlData = overlayTable[i].ovlData;
+
+		if (overlayTable[i].alreadyLoaded) {
+			if(overlayTable[i].ovlData->arrayObject) {
 				for (int j = 0; j < pOvlData->numObj; j++) {
-					if (buildInventorySub1(i, j) != 3) {
+					if (getObjectClass(i, j) != 3) {
 						int16 returnVar;
 
 						getSingleObjectParam(i, j, 5, &returnVar);
@@ -879,7 +883,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 
 				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
 
-				if ((thisOvl == objOvl) && (objIdx ==ptrHead->obj1Number) && pObject && pObject->type != 3) {
+				if ((thisOvl == objOvl) && (objIdx ==ptrHead->obj1Number) && pObject && pObject->_class != 3) {
 					int verbeOvl = ptrHead->verbOverlay;
 					int obj1Ovl = ptrHead->obj1Overlay;
 					int obj2Ovl = ptrHead->obj2Overlay;

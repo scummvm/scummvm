@@ -400,33 +400,34 @@ int loadOverlay(const char *scriptName) {
 		}
 
 		for (i = 0; i < ovlData->numObj; i++) {
-			ovlData->arrayObject[i].var0 = *(int16 *) scriptPtr;
+			ovlData->arrayObject[i]._type = *(int16 *) scriptPtr;
 			scriptPtr += 2;
-			flipShort(&ovlData->arrayObject[i].var0);
+			flipShort(&ovlData->arrayObject[i]._type);
 
-			ovlData->arrayObject[i].type = *(int16 *) scriptPtr;
+			int16 tempClass = *(int16 *) scriptPtr;
+			flipShort(&tempClass);
+			ovlData->arrayObject[i]._class = (eClass)tempClass;
 			scriptPtr += 2;
-			flipShort(&ovlData->arrayObject[i].type);
 
-			ovlData->arrayObject[i].var2 = *(int16 *) scriptPtr;
+			ovlData->arrayObject[i]._nameOffset = *(int16 *) scriptPtr;
 			scriptPtr += 2;
-			flipShort(&ovlData->arrayObject[i].var2);
+			flipShort(&ovlData->arrayObject[i]._nameOffset);
 
-			ovlData->arrayObject[i].var3 = *(int16 *) scriptPtr;
+			ovlData->arrayObject[i]._numStates = *(int16 *) scriptPtr;
 			scriptPtr += 2;
-			flipShort(&ovlData->arrayObject[i].var3);
+			flipShort(&ovlData->arrayObject[i]._numStates);
 
-			ovlData->arrayObject[i].var4 = *(int16 *) scriptPtr;
+			ovlData->arrayObject[i]._varTableIdx = *(int16 *) scriptPtr;
 			scriptPtr += 2;
-			flipShort(&ovlData->arrayObject[i].var4);
+			flipShort(&ovlData->arrayObject[i]._varTableIdx);
 
-			ovlData->arrayObject[i].var5 = *(int16 *) scriptPtr;
+			ovlData->arrayObject[i]._firstStateIdx = *(int16 *) scriptPtr;
 			scriptPtr += 2;
-			flipShort(&ovlData->arrayObject[i].var5);
+			flipShort(&ovlData->arrayObject[i]._firstStateIdx);
 
-			ovlData->arrayObject[i].stateTableIdx = *(int16 *) scriptPtr;
+			ovlData->arrayObject[i]._stateTableIdx = *(int16 *) scriptPtr;
 			scriptPtr += 2;
-			flipShort(&ovlData->arrayObject[i].stateTableIdx);
+			flipShort(&ovlData->arrayObject[i]._stateTableIdx);
 		}
 
 		if (scriptNotLoadedBefore) {
