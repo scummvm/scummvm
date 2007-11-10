@@ -29,14 +29,14 @@
 namespace Cruise {
 
 int16 readVolCnf(void);
-int16 findFileInDisks(uint8 * fileName);
+int16 findFileInDisks(char * fileName);
 void freeDisk(void);
-int16 findFileInList(uint8 * fileName);
+int16 findFileInList(const char * fileName);
 
 ////////////////
 
-void strToUpper(uint8 * fileName);
-void drawMsgString(uint8 * string);
+void strToUpper(char * fileName);
+void drawMsgString(const char * string);
 void askDisk(int16 discNumber);
 void setObjectPosition(int16 param1, int16 param2, int16 param3, int16 param4);
 

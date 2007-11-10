@@ -36,7 +36,7 @@ uint8 colorOfSelectedSaveDrive = 5;
 
 int16 initVar1;
 int16 initVar2;
-int16 initVar3;
+int16 switchPal;
 uint8 initVar4[90];
 
 int16 currentActiveBackgroundPlane;
@@ -54,7 +54,7 @@ int32 volumeDataLoaded = 0;
 
 int16 numOfDisks;
 
-uint8 scriptNameBuffer[15];
+char currentOverlay[15];
 int16 currentActiveMenu;
 int16 autoMsg;
 menuElementSubStruct* linkedRelation;
@@ -147,7 +147,7 @@ int16 palette[256 * 3];
 
 systemStringsStruct systemStrings;
 
-uint8 currentCtpName[40];
+char currentCtpName[40];
 
 int16 saveVar1;
 uint8 saveVar2[97];		// recheck size
@@ -156,7 +156,7 @@ int16 numberOfWalkboxes;	// saveVar3
 int16 walkboxType[15];		// saveVar4
 int16 walkboxChange[15];	// saveVar5
 
-uint8 saveVar6[16];
+uint8 lastAni[16];
 
 int32 loadFileVar1;
 

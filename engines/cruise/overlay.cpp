@@ -43,11 +43,11 @@ void initOverlayTable(void) {
 	numOfLoadedOverlay = 1;
 }
 
-int loadOverlay(const uint8 *scriptName) {
+int loadOverlay(const char *scriptName) {
 	int newNumberOfScript;
 	bool scriptNotLoadedBefore;
 	int scriptIdx;
-	uint8 fileName[50];
+	char fileName[50];
 	int fileIdx;
 	int unpackedSize;
 	char *unpackedBuffer;
@@ -80,7 +80,7 @@ int loadOverlay(const uint8 *scriptName) {
 	if (!overlayTable[scriptIdx].ovlData)
 		return (-2);
 
-	strcpyuint8(overlayTable[scriptIdx].overlayName, scriptName);
+	strcpy(overlayTable[scriptIdx].overlayName, scriptName);
 
 	overlayTable[scriptIdx].alreadyLoaded = 1;
 
@@ -88,9 +88,9 @@ int loadOverlay(const uint8 *scriptName) {
 
 	overlayTable[scriptIdx].ovlData->scriptNumber = scriptIdx;
 
-	strcpyuint8(fileName, scriptName);
+	strcpy(fileName, scriptName);
 
-	strcatuint8(fileName, ".OVL");
+	strcat(fileName, ".OVL");
 
 	printf("Attempting to load overlay file %s...\n", fileName);
 
@@ -192,15 +192,13 @@ int loadOverlay(const uint8 *scriptName) {
 	}
 
 	if (ovlData->exportNamesSize) {	// export names
-		ovlData->arrayNameSymbGlob =
-		    (uint8 *) mallocAndZero(ovlData->exportNamesSize);
+		ovlData->arrayNameSymbGlob = (char *) mallocAndZero(ovlData->exportNamesSize);
 
 		if (!ovlData->arrayNameSymbGlob) {
 			return (-2);
 		}
 
-		memcpy(ovlData->arrayNameSymbGlob, scriptPtr,
-		    ovlData->exportNamesSize);
+		memcpy(ovlData->arrayNameSymbGlob, scriptPtr, ovlData->exportNamesSize);
 		scriptPtr += ovlData->exportNamesSize;
 	}
 
@@ -231,8 +229,7 @@ int loadOverlay(const uint8 *scriptName) {
 	}
 
 	if (ovlData->nameExportSize) {	// import name
-		ovlData->arrayNameRelocGlob =
-		    (uint8 *) mallocAndZero(ovlData->nameExportSize);
+		ovlData->arrayNameRelocGlob = (char *) mallocAndZero(ovlData->nameExportSize);
 
 		if (!ovlData->arrayNameRelocGlob) {
 			return (-2);
@@ -521,9 +518,9 @@ int loadOverlay(const uint8 *scriptName) {
 		//uint8 fileName[50];
 		//char* unpackedBuffer;
 
-		strcpyuint8(fileName, scriptName);
+		strcpy(fileName, scriptName);
 
-		strcatuint8(fileName, ".FR");
+		strcat(fileName, ".FR");
 
 		fileIdx = findFileInDisks(fileName);
 
@@ -564,9 +561,7 @@ int loadOverlay(const uint8 *scriptName) {
 		flipShort(&ovlData->specialString1Length);	// recheck if needed
 
 		if (ovlData->specialString1Length) {
-			ovlData->nameVerbGlob =
-			    (uint8 *) mallocAndZero(ovlData->
-			    specialString1Length);
+			ovlData->nameVerbGlob = (char *) mallocAndZero(ovlData->specialString1Length);
 
 			if (!ovlData->nameVerbGlob) {
 				/*      releaseScript(scriptIdx,scriptName);
@@ -589,9 +584,7 @@ int loadOverlay(const uint8 *scriptName) {
 		flipShort(&ovlData->specialString2Length);	// recheck if needed
 
 		if (ovlData->specialString2Length) {
-			ovlData->arrayNameObj =
-			    (uint8 *) mallocAndZero(ovlData->
-			    specialString2Length);
+			ovlData->arrayNameObj = (char *) mallocAndZero(ovlData->specialString2Length);
 
 			if (!ovlData->arrayNameObj) {
 				/*      releaseScript(scriptIdx,scriptName);
@@ -717,11 +710,11 @@ int releaseOverlay(const char *name) {
 	return 0;
 }
 
-int32 findOverlayByName2(const uint8 *name) {
+int32 findOverlayByName2(const char *name) {
 	int i;
 
 	for (i = 1; i < numOfLoadedOverlay; i++) {
-		if (!strcmpuint8(overlayTable[i].overlayName, name))
+		if (!strcmp(overlayTable[i].overlayName, name))
 			return (i);
 	}
 

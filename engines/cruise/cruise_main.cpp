@@ -130,12 +130,12 @@ void resetFileEntryRange(int param1, int param2) {
 	}
 }
 
-int getProcParam(int overlayIdx, int param2, uint8 *name) {
+int getProcParam(int overlayIdx, int param2, const char *name) {
 	int numSymbGlob;
 	int i;
 	exportEntryStruct *arraySymbGlob;
-	uint8 *exportNamePtr;
-	uint8 exportName[80];
+	char *exportNamePtr;
+	char exportName[80];
 
 	if (!overlayTable[overlayIdx].alreadyLoaded)
 		return 0;
@@ -152,10 +152,9 @@ int getProcParam(int overlayIdx, int param2, uint8 *name) {
 
 	for (i = 0; i < numSymbGlob; i++) {
 		if (arraySymbGlob[i].var4 == param2) {
-			strcpyuint8(exportName,
-			    arraySymbGlob[i].offsetToName + exportNamePtr);
+			strcpy(exportName, arraySymbGlob[i].offsetToName + exportNamePtr);
 
-			if (!strcmpuint8(exportName, name)) {
+			if (!strcmp(exportName, name)) {
 				return (arraySymbGlob[i].idx);
 			}
 		}
@@ -330,7 +329,7 @@ void removeExtention(const char *name, char *buffer) {	// not like in original
 
 int lastFileSize;
 
-int loadFileSub1(uint8 **ptr, uint8 *name, uint8 *ptr2) {
+int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 	int i;
 	char buffer[256];
 	int fileIdx;
@@ -339,7 +338,7 @@ int loadFileSub1(uint8 **ptr, uint8 *name, uint8 *ptr2) {
 
 	for (i = 0; i < 64; i++) {
 		if (mediumVar[i].ptr) {
-			if (!strcmpuint8(mediumVar[i].name, name)) {
+			if (!strcmp(mediumVar[i].name, name)) {
 				printf("Unsupported code in loadFIleSub1 !\n");
 				exit(1);
 			}
@@ -353,7 +352,7 @@ int loadFileSub1(uint8 **ptr, uint8 *name, uint8 *ptr2) {
 
 		// if (useH32)
 		{
-			strcatuint8(buffer, ".H32");
+			strcat(buffer, ".H32");
 		}
 		/* else
 		 * if (useAdlib)
@@ -365,10 +364,10 @@ int loadFileSub1(uint8 **ptr, uint8 *name, uint8 *ptr2) {
 		 * strcatuint8(buffer,".HP");
 		 * } */
 	} else {
-		strcpyuint8(buffer, name);
+		strcpy(buffer, name);
 	}
 
-	fileIdx = findFileInDisks((uint8 *) buffer);
+	fileIdx = findFileInDisks(buffer);
 
 	if (fileIdx < 0)
 		return (-18);
@@ -478,7 +477,7 @@ int initAllData(void) {
 	resetActorPtr(&actorHead);
 	resetBackgroundIncrustList(&backgroundIncrustHead);
 
-	bootOverlayNumber = loadOverlay((const uint8 *) "AUTO00");
+	bootOverlayNumber = loadOverlay("AUTO00");
 
 #ifdef DUMP_SCRIPT
 	loadOverlay("TITRE");
@@ -573,7 +572,7 @@ int initAllData(void) {
 		scriptFunc2(bootOverlayNumber, &procHead, 1, 0);
 	}
 
-	strcpyuint8(systemStrings.bootScriptName, "AUTO00");
+	strcpy(systemStrings.bootScriptName, "AUTO00");
 
 	return (bootOverlayNumber);
 }
@@ -627,7 +626,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 
 	while (currentObject) {
 		if (currentObject->overlay >= 0 && overlayTable[currentObject->overlay].alreadyLoaded && (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUEL)) {
-			char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
+			const char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
 			if (pObjectName) {
 				strcpy(objectName, pObjectName);
 
@@ -764,9 +763,9 @@ void *allocAndZero(int size) {
 	return ptr;
 }
 
-char *getObjectName(int index, uint8 *string) {
+const char *getObjectName(int index, const char *string) {
 	int i;
-	char *ptr = (char *)string;
+	const char *ptr = string;
 
 	if (!string)
 		return NULL;
@@ -920,7 +919,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 						testState = ptrHead->obj1OldState;
 
 						if ((first) && (ovl3->arrayNameObj) && ((testState ==-1) || (testState == objectState))) {
-							char *ptrName = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
+							const char *ptrName = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
 
 							menuTable[0] = createMenu(x, y, ptrName);
 							first = false;
@@ -928,7 +927,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					}
 					if ((ovl2) && (ptrHead->verbNumber>=0)) {
 						if (ovl2->nameVerbGlob) {
-							char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
+							const char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
 							strcpy(verbe_name, ptr);
 
 							if ( (!first) && ((testState==-1) || (testState==objectState))) {
@@ -1478,7 +1477,7 @@ void mainLoop(void) {
 
 	int enableUser = 0;
 
-	scriptNameBuffer[0] = 0;
+	strcpy(currentOverlay, "");
 	systemStrings.bootScriptName[0] = 0;
 	initVar4[0] = 0;
 	currentActiveMenu = -1;
@@ -1493,7 +1492,7 @@ void mainLoop(void) {
 	initAllData();
 
 	// debug code: automaticaly load savegame 0 at startup
-	loadSavegameData(0);
+//	loadSavegameData(0);
 
 	{
 		int playerDontAskQuit = 1;

@@ -27,16 +27,4 @@
 
 namespace Cruise {
 
-void strcpyuint8(void *dest, const void *source) {
-	strcpy((char *)dest, (const char *)source);
-}
-
-void strcatuint8(void *dest, const void *source) {
-	strcat((char *)dest, (const char *)source);
-}
-
-uint8 strcmpuint8(const void *string1, const void *string2) {
-	return strcmp((const char *)string1, (const char *)string2);
-}
-
 } // End of namespace Cruise

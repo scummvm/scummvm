@@ -248,7 +248,7 @@ int loadSavegameData(int saveGameIdx) {
 		animationStart = false;
 
 	currentActiveBackgroundPlane = currentSaveFile.readSint16LE();
-	initVar3 = currentSaveFile.readSint16LE();
+	switchPal = currentSaveFile.readSint16LE();
 	initVar2 = currentSaveFile.readSint16LE();
 	var22 = currentSaveFile.readSint16LE();
 	main5 = currentSaveFile.readSint16LE();
@@ -350,7 +350,7 @@ int loadSavegameData(int saveGameIdx) {
 	for (int j = 1; j < numOfLoadedOverlay; j++) {
 		if (overlayTable[j].alreadyLoaded) {
 			overlayTable[j].alreadyLoaded = 0;
-			loadOverlay((uint8 *) overlayTable[j].overlayName);
+			loadOverlay(overlayTable[j].overlayName);
 
 			if (overlayTable[j].alreadyLoaded) {
 				ovlDataStruct *ovlData = overlayTable[j].ovlData;
@@ -379,26 +379,18 @@ int loadSavegameData(int saveGameIdx) {
 
 	updateAllScriptsImports();
 
-	saveVar6[0] = 0;
+	lastAni[0] = 0;
 
 	initVar1Save = initVar1;
 
-	for (int j = 0; j < 257; j++) {
-		if (filesDatabase[j].subData.ptr) {
-			int i;
+	for (int i = 0; i < 257; i++) {
+		if (filesDatabase[i].subData.ptr) {
+			int j;
 			int k;
 
-			for (i = j + 1; i < 257; i++) {
-				if (filesDatabase[i].subData.ptr) {
-					if (strcmpuint8(filesDatabase[j].subData.name, filesDatabase[i].subData.name)) {
-						break;
-					}
-				} else {
-					break;
-				}
-			}
+			for (j = i + 1; j < 257 && filesDatabase[j].subData.ptr && !strcmp(filesDatabase[i].subData.name, filesDatabase[j].subData.name) && (filesDatabase[j].subData.index == (j-i)); j++);
 
-			for (k = j; k < i; k++) {
+			for (k = i; k < j; k++) {
 				if (filesDatabase[k].subData.ptrMask)
 					initVar1 = 0;
 
@@ -406,27 +398,26 @@ int loadSavegameData(int saveGameIdx) {
 				filesDatabase[k].subData.ptrMask = NULL;
 			}
 
-			if (i < 2) {
+			if (j < 2) {
 				printf("Unsupported mono file load!\n");
-				exit(1);
+				ASSERT(0);
 				//loadFileMode1(filesDatabase[j].subData.name,filesDatabase[j].subData.var4);
 			} else {
-				loadFileMode2((uint8 *) filesDatabase[j].subData.name, filesDatabase[j].subData.index, j, i - j);
-				j = i - 1;
+				loadFileRange(filesDatabase[i].subData.name, filesDatabase[i].subData.index, i, j - i);
+				i = j - 1;
 			}
 
 			initVar1 = initVar1Save;
 		}
 	}
 
-	saveVar6[0] = 0;
+	lastAni[0] = 0;
 
 	currentcellHead = cellHead.next;
 
 	while (currentcellHead) {
 		if (currentcellHead->type == 5) {
-			uint8 *ptr = mainProc14(currentcellHead->overlay,
-			    currentcellHead->idx);
+			uint8 *ptr = mainProc14(currentcellHead->overlay, currentcellHead->idx);
 
 			ASSERT(0);
 
@@ -434,6 +425,7 @@ int loadSavegameData(int saveGameIdx) {
 				ASSERT(0);
 				//*(int16*)(currentcellHead->datas+0x2E) = getSprite(ptr,*(int16*)(currentcellHead->datas+0xE));
 			} else {
+				ASSERT(0);
 				//*(int16*)(currentcellHead->datas+0x2E) = 0;
 			}
 		}
@@ -443,7 +435,7 @@ int loadSavegameData(int saveGameIdx) {
 
 	//TODO: here, restart music
 
-	if (strlen((char *)currentCtpName)) {
+	if (strlen(currentCtpName)) {
 		ctpVar1 = 1;
 		loadCtp(currentCtpName);
 		ctpVar1 = 0;

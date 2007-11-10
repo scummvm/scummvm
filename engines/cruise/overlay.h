@@ -135,10 +135,10 @@ struct ovlDataStruct {
 	importDataStruct *arrayRelocGlob;
 	linkDataStruct *arrayMsgRelHeader;
 
-	uint8 *nameVerbGlob;
-	uint8 *arrayNameObj;
-	uint8 *arrayNameRelocGlob;
-	uint8 *arrayNameSymbGlob;
+	char *nameVerbGlob;
+	char *arrayNameObj;
+	char *arrayNameRelocGlob;
+	char *arrayNameSymbGlob;
 
 	uint8 *data4Ptr;
 	uint8 *ptr8;
@@ -178,8 +178,8 @@ extern overlayStruct overlayTable[90];
 extern int numOfLoadedOverlay;
 
 void initOverlayTable(void);
-int loadOverlay(const uint8 * scriptName);
-int32 findOverlayByName2(const uint8 * name);
+int loadOverlay(const char * scriptName);
+int32 findOverlayByName2(const char * name);
 int findOverlayByName(const char *overlayName);
 int releaseOverlay(const char *name);
 

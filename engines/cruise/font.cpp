@@ -107,17 +107,17 @@ int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth,
 	}
 }
 
-void loadFNT(const void *fileNameChar) {
+void loadFNT(const char *fileName) {
 	uint8 header[6];
 	int32 fontSize;
 	int32 data2;
 	uint8 data3[6];
-	const uint8 *fileName = (const uint8 *)fileNameChar;
+
 	_systemFNT = NULL;
 
 	Common::File fontFileHandle;
 
-	if (!fontFileHandle.exists((const char *)fileName)) {
+	if (!fontFileHandle.exists(fileName)) {
 		return;
 	}
 
@@ -125,7 +125,7 @@ void loadFNT(const void *fileNameChar) {
 
 	fontFileHandle.read(header, 4);
 
-	if (strcmpuint8(header, "FNT") == 0) {
+	if (strcmp((char*)header, "FNT") == 0) {
 		fontFileHandle.read(&fontSize, 4);
 		flipLong(&fontSize);
 
@@ -182,7 +182,7 @@ void loadSystemFont(void) {
 	main5 = 0;
 	var22 = 0;
 	initVar2 = 0;
-	initVar3 = 0;
+	switchPal = 0;
 	currentActiveBackgroundPlane = 0;
 
 	//changeCursor();

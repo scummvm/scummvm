@@ -85,7 +85,7 @@ int loadCVT(uint8 **ptr) {
 
 extern int lastFileSize;
 
-int loadBackground(char *name, int idx) {
+int loadBackground(const char *name, int idx) {
 	uint8 *ptr;
 	uint8 *ptr2;
 	uint8 *ptrToFree;
@@ -109,15 +109,14 @@ int loadBackground(char *name, int idx) {
 	}
 
 	ptrToFree = gfxModuleData.pPage10;
-	if (loadFileSub1(&ptrToFree, (uint8 *) name, NULL) < 0) {
+	if (loadFileSub1(&ptrToFree, name, NULL) < 0) {
 		if (ptrToFree != gfxModuleData.pPage10)
 			free(ptrToFree);
 
 		return (-18);
 	}
 
-	if (lastFileSize == 32078 || lastFileSize == 32080
-	    || lastFileSize == 32034) {
+	if (lastFileSize == 32078 || lastFileSize == 32080 || lastFileSize == 32034) {
 		colorMode = 0;
 	} else {
 		colorMode = 1;
@@ -126,7 +125,7 @@ int loadBackground(char *name, int idx) {
 	ptr = ptrToFree;
 	ptr2 = ptrToFree;
 
-	if (!strcmpuint8(name, "LOGO.PI1")) {
+	if (!strcmp(name, "LOGO.PI1")) {
 		bgVar3 = bgVar2;
 		bgVar1 = 1;
 		bgVar2 = 1;
@@ -137,7 +136,7 @@ int loadBackground(char *name, int idx) {
 		}
 	}
 
-	if (!strcmpuint8(ptr, "PAL")) {
+	if (!strcmp((char*)ptr, "PAL")) {
 		printf("Pal loading unsupported !\n");
 		exit(1);
 	} else {

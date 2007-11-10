@@ -91,23 +91,21 @@ void *mallocAndZero(int32 size);
 uint8 *mainProc14(uint16 overlay, uint16 idx);
 void printInfoBlackBox(const char *string);
 void waitForPlayerInput(void);
-int loadCtp(uint8 * ctpName);
+int loadCtp(const char * ctpName);
 void loadPakedFileToMem(int fileIdx, uint8 * buffer);
 int loadScriptSub1(int scriptIdx, int param);
 void resetFileEntryRange(int param1, int param2);
-int getProcParam(int overlayIdx, int param2, uint8 * name);
-void changeScriptParamInList(int param1, int param2,
-    scriptInstanceStruct * pScriptInstance, int newValue, int param3);
+int getProcParam(int overlayIdx, int param2, const char * name);
+void changeScriptParamInList(int param1, int param2, scriptInstanceStruct * pScriptInstance, int newValue, int param3);
 uint8 *getDataFromData3(ovlData3Struct * ptr, int param);
-int32 prepareWordRender(int32 param, int32 var1, int16 * out2, uint8 * ptr3,
-    const uint8 * string);
+int32 prepareWordRender(int32 param, int32 var1, int16 * out2, uint8 * ptr3, const uint8 * string);
 void removeExtention(const char *name, char *buffer);
 void resetRaster(uint8 * rasterPtr, int32 rasterSize);
 void resetPtr2(scriptInstanceStruct * ptr);
 void getFileExtention(const char *name, char *buffer);
 void *allocAndZero(int size);
 void freeStuff2(void);
-char *getObjectName(int index, uint8 * string);
+const char *getObjectName(int index, const char * string);
 void mainLoop(void);
 void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY);
 bool testMask(int x, int y, unsigned char* pData, int stride);

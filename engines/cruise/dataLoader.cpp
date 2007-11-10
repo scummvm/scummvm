@@ -27,10 +27,6 @@
 
 namespace Cruise {
 
-void loadSetEntry(uint8 * name, uint8 * ptr, int currentEntryIdx,
-    int currentDestEntry);
-void loadFNTSub(uint8 * ptr, int destIdx);
-
 enum fileTypeEnum {
 	type_UNK,
 	type_SPL,
@@ -232,12 +228,12 @@ int createResFileEntry(int width, int height, int resType) {
 	return entryNumber;
 }
 
-fileTypeEnum getFileType(uint8 *name) {
+fileTypeEnum getFileType(const char *name) {
 	char extentionBuffer[16];
 
 	fileTypeEnum newFileType = type_UNK;
 
-	getFileExtention((char *)name, extentionBuffer);
+	getFileExtention(name, extentionBuffer);
 
 	if (!strcmp(extentionBuffer, ".SPL")) {
 		newFileType = type_SPL;
@@ -259,7 +255,46 @@ int getNumMaxEntiresInSet(uint8 *ptr) {
 	return numEntries;
 }
 
-int loadFileMode2(uint8 *name, int startIdx, int currentEntryIdx, int numIdx) {
+int loadFile(const char* name, int idx, int destIdx)
+{
+	uint8 *ptr = NULL;
+	fileTypeEnum fileType;
+
+	fileType = getFileType(name);
+
+	loadFileSub1(&ptr, name, NULL);
+
+	switch (fileType) {
+	case type_SET:
+		{
+
+			int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);
+
+			if (idx > numMaxEntriesInSet) {
+				return 0;	// exit if limit is reached 
+			}
+			return loadSetEntry(name, ptr, idx, destIdx );
+
+			break;
+		}
+	case type_FNT:
+		{
+			return loadFNTSub(ptr, idx);
+			break;
+		}
+	case type_UNK:
+		{
+			break;
+		}
+	case type_SPL:
+		{
+			break;
+		}
+	}
+	return -1;
+}
+
+int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numIdx) {
 	uint8 *ptr = NULL;
 	fileTypeEnum fileType;
 
@@ -274,11 +309,10 @@ int loadFileMode2(uint8 *name, int startIdx, int currentEntryIdx, int numIdx) {
 			int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);
 
 			for (i = 0; i < numIdx; i++) {
-				if ((currentEntryIdx + i) > numMaxEntriesInSet) {
+				if ((startIdx + i) > numMaxEntriesInSet) {
 					return 0;	// exit if limit is reached 
 				}
-				loadSetEntry(name, ptr, currentEntryIdx + i,
-				    startIdx + i);
+				loadSetEntry(name, ptr, startIdx + i, currentEntryIdx + i );
 			}
 
 			break;
@@ -300,7 +334,7 @@ int loadFileMode2(uint8 *name, int startIdx, int currentEntryIdx, int numIdx) {
 	return 0;
 }
 
-int loadFullBundle(uint8 *name, int startIdx) {
+int loadFullBundle(const char *name, int startIdx) {
 	uint8 *ptr = NULL;
 	fileTypeEnum fileType;
 
@@ -340,7 +374,7 @@ int loadFullBundle(uint8 *name, int startIdx) {
 	return 0;
 }
 
-void loadFNTSub(uint8 *ptr, int destIdx) {
+int loadFNTSub(uint8 *ptr, int destIdx) {
 	uint8 *ptr2 = ptr;
 	uint8 *destPtr;
 	int fileIndex;
@@ -384,16 +418,18 @@ void loadFNTSub(uint8 *ptr, int destIdx) {
 			currentPtr += 8;
 		}
 	}
+
+	return 1;
 }
 
-void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx, int currentDestEntry) {
+int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentDestEntry) {
 	uint8 *ptr2;
 	uint8 *ptr3;
 	int offset;
 	int sec = 0;
 	uint16 numIdx;
 
-	if (!strcmpuint8(ptr, "SEC")) {
+	if (!strcmp((char*)ptr, "SEC")) {
 		sec = 1;
 	}
 
@@ -433,7 +469,7 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx, int currentDestE
 		}
 
 		if (fileIndex < 0) {
-			return;	// TODO: buffer is not freed
+			return -1;	// TODO: buffer is not freed
 		}
 
 		ptr5 = ptr3 + localBuffer.field_0 + numIdx * 16;
@@ -470,7 +506,7 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx, int currentDestE
 				if (sec == 0) {
 					// TODO sec type 5 needs special conversion. cut out 2 bytes at every width/5 position.
 					ASSERT(0);
-					return;
+					return -1;
 				}
 				
 				filesDatabase[fileIndex].subData.resourceType = 4;
@@ -495,7 +531,7 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx, int currentDestE
 			}
 		}
 
-		strcpyuint8(filesDatabase[fileIndex].subData.name, name);
+		strcpy(filesDatabase[fileIndex].subData.name, name);
 
 		// create the mask
 		switch(localBuffer.type)
@@ -530,7 +566,7 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx, int currentDestE
 
 	// TODO: free
 
-	return;
+	return 1;
 }
 
 } // End of namespace Cruise

@@ -61,7 +61,7 @@ extern uint8 colorOfSelectedSaveDrive;
 
 extern int16 initVar1;
 extern int16 initVar2;
-extern int16 initVar3;
+extern int16 switchPal;
 extern uint8 initVar4[90];
 
 extern int16 currentActiveBackgroundPlane;
@@ -69,7 +69,7 @@ extern int16 main5;
 extern int16 var22;
 
 struct mediumVarStruct {
-	uint8 name[15];
+	char name[15];
 	int32 size;
 	int32 sourceSize;
 	uint8 *ptr;
@@ -89,7 +89,7 @@ struct filesData2Struct {
 };
 
 struct fileName {
-	uint8 name[13];
+	char name[13];
 };
 
 struct setHeaderEntry {
@@ -111,7 +111,7 @@ struct volumeDataStruct {
 };
 
 struct fileEntry {
-	uint8 name[14];
+	char name[14];
 	int32 offset;
 	int32 size;
 	int32 extSize;
@@ -138,8 +138,8 @@ struct dataFileEntry {
 
 struct systemStringsStruct {
 	int8 param;
-	uint8 string[12];
-	uint8 bootScriptName[8];
+	char string[12];
+	char bootScriptName[8];
 };
 
 extern filesDataStruct filesData[90];
@@ -153,7 +153,7 @@ extern int32 volumeDataLoaded;
 
 extern int16 numOfDisks;
 
-extern uint8 scriptNameBuffer[15];
+extern char currentOverlay[15];
 extern int16 currentActiveMenu;
 extern int16 autoMsg;
 extern menuElementSubStruct* linkedRelation;
@@ -244,7 +244,7 @@ extern int16 palette[256 * 3];
 
 extern systemStringsStruct systemStrings;
 
-extern uint8 currentCtpName[40];
+extern char currentCtpName[40];
 
 extern int16 saveVar1;
 extern uint8 saveVar2[97];	// recheck size
@@ -253,7 +253,7 @@ extern int16 numberOfWalkboxes;	// saveVar3
 extern int16 walkboxType[15];	// saveVar4     // Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
 extern int16 walkboxChange[15];	// saveVar5 // walkbox can change its type: 0x00 - not changeable, 0x01 - changeable
 												// Assumption: To change the type: walkboxType[i] -= walkboxChane[i] and vice versa
-extern uint8 saveVar6[16];
+extern uint8 lastAni[16];
 
 extern int32 loadFileVar1;
 

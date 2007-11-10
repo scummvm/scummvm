@@ -51,7 +51,7 @@ extern ctpVar19Struct *ctpVar15;
 extern uint8 *ctpVar17;
 extern ctpVar19Struct *ctpVar19;
 
-int loadCtp(uint8 * ctpName);
+int loadCtp(const char * ctpName);
 int ctpProc2(int varX, int varY, int paramX, int paramY);
 
 int getNode(int nodeResult[2], int nodeId);

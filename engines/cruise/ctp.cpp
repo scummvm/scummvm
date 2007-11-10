@@ -289,7 +289,7 @@ int getNode(int nodeResult[2], int nodeId){
 	return 0;
 }
 
-int loadCtp(uint8 *ctpName) {
+int loadCtp(const char *ctpName) {
 	int walkboxCounter;	// si
 	uint8 *ptr;
 	uint8 *dataPointer;	// ptr2
@@ -363,7 +363,7 @@ int loadCtp(uint8 *ctpName) {
 
 	free(ptr);
 
-	strcpyuint8(currentCtpName, ctpName);
+	strcpy(currentCtpName, ctpName);
 
 	numberOfWalkboxes = segementSizeTable[6] / 2;	// get the number of walkboxes
 

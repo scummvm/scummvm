@@ -69,7 +69,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 	askDisk(-1);
 
-	strcpyuint8(buffer, entry->ident);
+	strcpy(buffer, entry->ident);
 
 	currentVolumeFile.open(buffer);
 
@@ -121,7 +121,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 	return 0;
 }
 
-int searchFileInVolCnf(uint8 *fileName, int32 diskNumber) {
+int searchFileInVolCnf(const char *fileName, int32 diskNumber) {
 	int foundDisk = -1;
 	int i;
 
@@ -131,8 +131,7 @@ int searchFileInVolCnf(uint8 *fileName, int32 diskNumber) {
 			int numOfEntry = volumeData[i].size / 13;
 
 			for (j = 0; j < numOfEntry; j++) {
-				if (!strcmpuint8(volumeData[i].ptr[j].name,
-					fileName)) {
+				if (!strcmp(volumeData[i].ptr[j].name, fileName)) {
 					return (i);
 				}
 			}
@@ -142,7 +141,7 @@ int searchFileInVolCnf(uint8 *fileName, int32 diskNumber) {
 	return (foundDisk);
 }
 
-int32 findFileInDisksSub1(uint8 *fileName) {
+int32 findFileInDisksSub1(const char *fileName) {
 	int foundDisk = -1;
 	int i;
 
@@ -151,7 +150,7 @@ int32 findFileInDisksSub1(uint8 *fileName) {
 		int numOfEntry = volumeData[i].size / 13;
 
 		for (j = 0; j < numOfEntry; j++) {
-			if (!strcmpuint8(volumeData[i].ptr[j].name, fileName)) {
+			if (!strcmp(volumeData[i].ptr[j].name, fileName)) {
 				return (i);
 			}
 		}
@@ -160,7 +159,7 @@ int32 findFileInDisksSub1(uint8 *fileName) {
 	return (foundDisk);
 }
 
-void strToUpper(uint8 *fileName) {
+void strToUpper(char *fileName) {
 	char character;
 
 	do {
@@ -190,7 +189,7 @@ void freeDisk(void) {
 	 */
 }
 
-int16 findFileInList(uint8 *fileName) {
+int16 findFileInList(char *fileName) {
 	int i;
 
 	if (!currentVolumeFile.isOpen()) {
@@ -204,7 +203,7 @@ int16 findFileInList(uint8 *fileName) {
 	}
 
 	for (i = 0; i < volumeNumEntry; i++) {
-		if (!strcmpuint8(volumePtrToFileDescriptor[i].name, fileName)) {
+		if (!strcmp(volumePtrToFileDescriptor[i].name, fileName)) {
 			return (i);
 		}
 	}
@@ -213,9 +212,8 @@ int16 findFileInList(uint8 *fileName) {
 }
 
 void askDisk(int16 discNumber) {
-	char diskNumberString[256];
-	uint8 fileName[256];
-	uint8 string[256];
+	char fileName[256];
+	char string[256];
 	char messageDrawn = 0;
 
 	if (discNumber != -1) {
@@ -223,13 +221,9 @@ void askDisk(int16 discNumber) {
 	}
 	// skip drive selection stuff
 
-	strcpyuint8(fileName, "VOL.");
-	sprintf(diskNumberString, "%d", currentDiskNumber);
-	strcatuint8(fileName, diskNumberString);
+	sprintf(fileName, "VOL.%d", currentDiskNumber);
 
-	strcpyuint8(string, "INSERER LE DISQUE ");
-	strcatuint8(string, diskNumberString);
-	strcatuint8(string, " EN ");
+	sprintf(string, "INSERER LE DISQUE %d EN ", currentDiskNumber);
 
 	//while (Common::File::exists((const char*)fileName))
 	{
@@ -242,7 +236,7 @@ void askDisk(int16 discNumber) {
 	changeCursor(currentCursor);
 }
 
-int16 findFileInDisks(uint8 *fileName) {
+int16 findFileInDisks(char *fileName) {
 	int disk;
 	int fileIdx;
 
@@ -449,7 +443,7 @@ int16 readVolCnf(void) {
 
 ///////////////////////////::
 
-void drawMsgString(uint8 *string) {
+void drawMsgString(const char *string) {
 	//printf("%s\n",string);
 }
 

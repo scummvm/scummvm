@@ -33,34 +33,28 @@ namespace Cruise {
 opcodeFunction opcodeTablePtr[256];
 
 int16 Op_LoadOverlay(void) {
-	uint8 *originalScriptName;
-	uint8 scriptName[38];
-	int returnValue;
+	char *pOverlayName;
+	char overlayName[38] = "";
+	int overlayLoadResult;
 
-	scriptName[0] = 0;
+	pOverlayName = (char *) popPtr();
 
-	originalScriptName = (uint8 *) popPtr();
+	if(strlen(pOverlayName) == 0)
+		return 0;
 
-	if (originalScriptName) {
-		strcpyuint8(scriptName, originalScriptName);
-	}
-
-	if (!scriptName[0] || !originalScriptName) {
-		return (0);
-	}
-
-	strToUpper(scriptName);
+	strcpy(overlayName, pOverlayName);
+	strToUpper(overlayName);
 
 	//gfxModuleData.field_84();
 	//gfxModuleData.field_84();
 
-	returnValue = loadOverlay(scriptName);
+	overlayLoadResult = loadOverlay(overlayName);
 
 	updateAllScriptsImports();
 
-	strcpyuint8(scriptNameBuffer, scriptName);
+	strcpy(currentOverlay, overlayName);
 
-	return (returnValue);
+	return(overlayLoadResult);
 }
 
 int16 Op_strcpy(void) {
@@ -245,21 +239,17 @@ int16 Op_freeBackgroundInscrustList(void) {
 	return (0);
 }
 
-int16 Op_removeBackground(void) {
-	int backgroundIdx = popVar();
-	int ovl;
-
-	ovl = popVar();
-	printf("Op_removeBackground: remove background %d\n", backgroundIdx);
-	return (0);
-}
 
 int16 Op_UnmergeBackgroundIncrust(void) {
-	int backgroundIdx = popVar();
-	int ovl;
+	int obj = popVar();
+	int ovl = popVar();
 
-	ovl = popVar();
-	printf("Op_UnmergeBackgroundIncrust: unmerge background %d\n", backgroundIdx);
+	if (!ovl) {
+		ovl = currentScriptPtr->overlayNumber;
+	}
+
+	unmergeBackgroundIncrust(&backgroundIncrustHead, ovl, obj);
+
 	return (0);
 }
 
@@ -287,20 +277,20 @@ int16 Op_RemoveMessage(void) {
 
 int16 Op_isFileLoaded(void) {
 	int16 i;
-	uint8 name[36] = "";
-	uint8 *ptr;
+	char name[36] = "";
+	char *ptr;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *) popPtr();
 
 	if (!ptr) {
 		return -1;
 	}
 
-	strcpyuint8(name, ptr);
+	strcpy(name, ptr);
 	strToUpper(name);
 
 	for (i = 0; i < 257; i++) {
-		if (!strcmpuint8(name, filesDatabase[i].subData.name)) {
+		if (!strcmp(name, filesDatabase[i].subData.name)) {
 			return (i);
 		}
 	}
@@ -347,12 +337,12 @@ int16 Op_RemoveProc(void) {
 }
 
 int16 Op_FreeOverlay(void) {
-	uint8 localName[36] = "";
-	uint8 *namePtr;
+	char localName[36] = "";
+	char *namePtr;
 
-	namePtr = (uint8 *) popPtr();
+	namePtr = (char *) popPtr();
 
-	strcpyuint8(localName, namePtr);
+	strcpy(localName, namePtr);
 
 	if (localName[0]) {
 		strToUpper(localName);
@@ -363,13 +353,13 @@ int16 Op_FreeOverlay(void) {
 }
 
 int16 Op_2B(void) {
-	uint8 name[36] = "";
-	uint8 *ptr;
+	char name[36] = "";
+	char *ptr;
 	int param;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *)popPtr();
 
-	strcpyuint8(name, ptr);
+	strcpy(name, ptr);
 
 	param = getProcParam(popVar(), 20, name);
 
@@ -424,13 +414,13 @@ int16 Op_62(void) {
 
 int16 Op_LoadBackground(void) {
 	int result = 0;
-	uint8 bgName[36] = "";
-	uint8 *ptr;
+	char bgName[36] = "";
+	char *ptr;
 	int bgIdx;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *) popPtr();
 
-	strcpyuint8(bgName, ptr);
+	strcpy(bgName, ptr);
 
 	bgIdx = popVar();
 
@@ -440,7 +430,7 @@ int16 Op_LoadBackground(void) {
 		gfxModuleData_gfxWaitVSync();
 		gfxModuleData_gfxWaitVSync();
 
-		result = loadBackground((char *)bgName, bgIdx);
+		result = loadBackground(bgName, bgIdx);
 	}
 
 	changeCursor(CURSOR_NORMAL);
@@ -468,12 +458,12 @@ int16 Op_loadFile(void) {
 	int param1;
 	int param2;
 	int param3;
-	uint8 name[36] = "";
-	uint8 *ptr;
+	char name[36] = "";
+	char *ptr;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *) popPtr();
 
-	strcpyuint8(name, ptr);
+	strcpy(name, ptr);
 
 	param1 = popVar();
 	param2 = popVar();
@@ -485,11 +475,11 @@ int16 Op_loadFile(void) {
 		gfxModuleData_gfxWaitVSync();
 		gfxModuleData_gfxWaitVSync();
 
-		saveVar6[0] = 0;
+		lastAni[0] = 0;
 
-		loadFileMode2(name, param3, param2, param1);
+		loadFileRange(name, param2, param3, param1);
 
-		saveVar6[0] = 0;
+		lastAni[0] = 0;
 	}
 
 	changeCursor(CURSOR_NORMAL);
@@ -500,13 +490,13 @@ int16 Op_LoadAbs(void) {
 	int param1;
 //  int param2;
 //  int param3;
-	uint8 name[36] = "";
-	uint8 *ptr;
+	char name[36] = "";
+	char *ptr;
 	int result = 0;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *) popPtr();
 
-	strcpyuint8(name, ptr);
+	strcpy(name, ptr);
 
 	param1 = popVar();
 
@@ -545,12 +535,11 @@ int16 Op_FadeOut(void) {
 	return 0;
 }
 
-int16 isOverlayLoaded(uint8 * name) {
+int16 isOverlayLoaded(const char * name) {
 	int16 i;
 
 	for (i = 1; i < numOfLoadedOverlay; i++) {
-		if (!strcmpuint8(overlayTable[i].overlayName, name)
-		    && overlayTable[i].alreadyLoaded) {
+		if (!strcmp(overlayTable[i].overlayName, name) && overlayTable[i].alreadyLoaded) {
 			return i;
 		}
 	}
@@ -559,12 +548,12 @@ int16 isOverlayLoaded(uint8 * name) {
 }
 
 int16 Op_FindOverlay(void) {
-	uint8 name[36] = "";
-	uint8 *ptr;
+	char name[36] = "";
+	char *ptr;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *) popPtr();
 
-	strcpyuint8(name, ptr);
+	strcpy(name, ptr);
 	strToUpper(name);
 
 	return (isOverlayLoaded(name));
@@ -706,7 +695,7 @@ int16 Op_loadAudioResource(void) {
 }
 
 int16 Op_LoadCt(void) {
-	return loadCtp((uint8 *) popPtr());
+	return loadCtp((char*)popPtr());
 }
 
 int16 Op_loadMusic(void) {
@@ -807,11 +796,31 @@ int16 Op_SetActiveBackgroundPlane(void) {
 	if (newPlane >= 0 && newPlane < 8) {
 		if (backgroundPtrtable[newPlane]) {
 			currentActiveBackgroundPlane = newPlane;
-			initVar3 = 1;
+			switchPal = 1;
 		}
 	}
 
 	return currentPlane;
+}
+
+int16 Op_removeBackground(void) {
+	int backgroundIdx = popVar();
+
+	if(backgroundIdx > 0 && backgroundIdx < 8) {
+		if(backgroundPtrtable[backgroundIdx])
+			free(backgroundPtrtable[backgroundIdx]);
+
+		if(currentActiveBackgroundPlane == backgroundIdx)
+			currentActiveBackgroundPlane = 0;
+
+		strcpy(backgroundTable[backgroundIdx].name, "");
+	}
+	else
+	{
+		strcpy(backgroundTable[0].name, "");
+	}
+
+	return (0);
 }
 
 int op6AVar;
@@ -1376,7 +1385,7 @@ int16 Op_InitializeState2(void) {
 	if (!var1)
 		var1 = currentScriptPtr->overlayNumber;
 
-	return getProcParam(var1, var0, (uint8 *) ptr);
+	return getProcParam(var1, var0, ptr);
 }
 
 int16 Op_2A(void) {
@@ -1395,7 +1404,7 @@ int16 Op_2A(void) {
 	if (!overlayIdx)
 		overlayIdx = currentScriptPtr->overlayNumber;
 
-	return getProcParam(overlayIdx, 40, (uint8 *) var_26);
+	return getProcParam(overlayIdx, 40, var_26);
 }
 
 int16 Op_SetObjectAtNode(void) {

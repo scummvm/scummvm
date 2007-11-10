@@ -735,8 +735,8 @@ int decompSwapStack(void) {
 	stack1 = popDecomp();
 	stack2 = popDecomp();
 
-	strcpyuint8(buffer1, stack1);
-	strcpyuint8(buffer2, stack2);
+	strcpy(buffer1, stack1);
+	strcpy(buffer2, stack2);
 
 	pushDecomp(buffer1);
 	pushDecomp(buffer2);

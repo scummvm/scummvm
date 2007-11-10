@@ -27,34 +27,33 @@
 
 namespace Cruise {
 
-exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx,
-	    char *buffer) {
+exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx, char *buffer) {
 	char localBuffer[256];
-	uint8 functionName[256];
-	uint8 overlayName[256];
+	char functionName[256];
+	char overlayName[256];
 	char *dotPtr;
 	char *ptr2;
 	int idx;
 	int numSymbGlob;
 	exportEntryStruct *currentExportEntry;
-	uint8 *entity1Name;
+	char *entity1Name;
 	int i;
 
 	*out1 = 0;
 	*pExportedFuncionIdx = 0;
 
-	strcpyuint8(localBuffer, buffer);
+	strcpy(localBuffer, buffer);
 	dotPtr = strchr(localBuffer, '.');
 
 	if (dotPtr) {
-		strcpyuint8(functionName, dotPtr + 1);
+		strcpy(functionName, dotPtr + 1);
 		*dotPtr = 0;
 
-		strcpyuint8(overlayName, localBuffer);
+		strcpy(overlayName, localBuffer);
 	} else {
 		overlayName[0] = 0;
 
-		strcpyuint8(functionName, buffer);
+		strcpy(functionName, buffer);
 	}
 
 	ptr2 = strchr((char *)functionName, ':');
@@ -89,13 +88,13 @@ exportEntryStruct *parseExport(int *out1, int *pExportedFuncionIdx,
 		return (0);
 
 	for (i = 0; i < numSymbGlob; i++) {
-		uint8 exportedName[256];
-		uint8 *name = entity1Name + currentExportEntry->offsetToName;
+		char exportedName[256];
+		char *name = entity1Name + currentExportEntry->offsetToName;
 
-		strcpyuint8(exportedName, name);
+		strcpy(exportedName, name);
 		strToUpper(exportedName);
 
-		if (!strcmpuint8(functionName, exportedName)) {
+		if (!strcmp(functionName, exportedName)) {
 			*pExportedFuncionIdx = idx;
 
 			return (currentExportEntry);
@@ -144,7 +143,7 @@ int updateScriptImport(int ovlIdx) {
 		if (var_32) {
 			do {
 				importScriptStruct *ptrImportData;
-				uint8 *ptrImportName;
+				const char *ptrImportName;
 				uint8 *ptrData;
 
 				int var_22 = 0;
@@ -156,7 +155,7 @@ int updateScriptImport(int ovlIdx) {
 				}
 
 				ptrImportData = (importScriptStruct *) (pScript->dataPtr + pScript->offsetToImportData);	// import data
-				ptrImportName = pScript->dataPtr + pScript->offsetToImportName;	// import name
+				ptrImportName = (const char*)(pScript->dataPtr + pScript->offsetToImportName);	// import name
 				ptrData = pScript->dataPtr;
 
 				var_22 = 0;
@@ -165,22 +164,15 @@ int updateScriptImport(int ovlIdx) {
 					int counter = pScript->numRelocGlob;
 
 					do {
-						int param2 =
-						    ptrImportData->type;
+						int param2 = ptrImportData->type;
 
 						if (param2 != 70) {
-							exportEntryStruct
-							    * ptrDest2;
+							exportEntryStruct * ptrDest2;
 							int out1;
 							int out2;
 
-							strcpyuint8(buffer,
-							    ptrImportName +
-							    ptrImportData->
-							    offsetToName);
-							ptrDest2 =
-							    parseExport(&out1,
-							    &out2, buffer);
+							strcpy(buffer, ptrImportName + ptrImportData->offsetToName);
+							ptrDest2 = parseExport(&out1, &out2, buffer);
 
 							if (ptrDest2 && out2) {
 								int temp =
@@ -258,7 +250,7 @@ int updateScriptImport(int ovlIdx) {
 			int linkType;
 			int linkEntryIdx;
 
-			strcpyuint8(buffer,
+			strcpy(buffer,
 			    ovlData->arrayNameRelocGlob +
 			    ovlData->arrayRelocGlob[i].nameOffset);
 

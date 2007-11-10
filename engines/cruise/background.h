@@ -38,7 +38,7 @@ extern int CVTLoaded;
 extern uint8 *backgroundPtrtable[8];
 extern backgroundTableStruct backgroundTable[8];
 
-int loadBackground(char *name, int idx);
+int loadBackground(const char *name, int idx);
 
 } // End of namespace Cruise
 
