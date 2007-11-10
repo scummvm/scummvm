@@ -293,12 +293,41 @@ void KyraEngine_v2::runLoop() {
 
 	_quitFlag = false;
 	while (!_quitFlag) {
-		//XXX
+		//if (_unk1 >= 0) {
+		//	removeHandItem();
+		//	waitTicks(5);
+		//	sub_270A0();
+		//}
 		
 		if (_system->getMillis() > _nextIdleAnim)
 			showIdleAnim();
 
-		//XXX
+		//if (queryGameFlag(0x159) {
+		//	sub_C86A();
+		//	resetGameFlag(0x159);
+		//}
+
+		if (queryGameFlag(0x124) && !queryGameFlag(0x125)) {
+			_mainCharacter.animFrame = 32;
+			enterNewScene(39, -1, 0, 0, 0);
+		}
+
+		//if (queryGameFlag(0xD8)) {
+		//	resetGameFlag(0xD8);
+		//	if (_mainCharacter.sceneId == 34) {
+		//		if (queryGameFlag(0xD1) {
+		//			initObject(28);
+		//			sub_2741F(getTableString(0xFA, _cCodeBuffer, 1), 28, 0x83, 0xFA);
+		//			deinitObject(28);
+		//			enterNewScene(35, 4, 0, 0, 0);
+		//		} else if (queryGameFlag(0xD0) {
+		//			initObject(29);
+		//			sub_2741F(getTableString(0xFB, _ccodeBuffer, 1), 29, 0x83, 0xFB);
+		//			deinitObject(29);
+		//			enterNewScene(33, 6, 0, 0, 0);
+		//		}
+		//	}
+		//}
 
 		int inputFlag = checkInput(0/*dword_324C5*/);
 		removeInputTop();
@@ -310,7 +339,8 @@ void KyraEngine_v2::runLoop() {
 			handleInput(_mouseX, _mouseY);
 		}
 
-		//XXX
+		//if (queryGameFlag(0x1EE) && inputFlag)
+		//	sub_13B19(inputFlag);
 	}
 }
 
@@ -419,12 +449,12 @@ void KyraEngine_v2::handleInput(int x, int y) {
 }
 
 bool KyraEngine_v2::handleInputUnkSub(int x, int y) {
-	if (y >= 143/* || _unk1 > -1 */|| queryGameFlag(0x164))
+	if (y > 143/* || _unk1 > -1 */|| queryGameFlag(0x164))
 		return false;
 
 	if (_handItemSet <= -3 && findItem(_mainCharacter.sceneId, 13) >= 0) {
 		updateCharFacing();
-		//sub_277FA(getTableString(0xFC, _cCodeBuffer, 1), 0, 0x83, 0xFC);
+		//objectChat(getTableString(0xFC, _cCodeBuffer, 1), 0, 0x83, 0xFC);
 		return true;
 	} else {
 		_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
@@ -442,7 +472,8 @@ bool KyraEngine_v2::handleInputUnkSub(int x, int y) {
 		//XXXsys_unkKeyboad (flush? wait? whatever...)
 
 		if (queryGameFlag(0x1ED)) {
-			// XXX
+			_sound->beginFadeOut();
+			_screen->fadeToBlack();
 			_quitFlag = true;
 		}
 
