@@ -858,6 +858,117 @@ menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu) {
 	return NULL;
 }
 
+bool createDialog(int objOvl, int objIdx, int x, int y) {
+	bool found = false;
+	bool first = true;
+	int testState1 = -1;
+	int testState2 = -1;
+	int j;
+	int16 objectState;
+	int16 objectState2;
+
+	getSingleObjectParam(objOvl, objIdx, 5, &objectState);
+
+	menuTable[0] = createMenu(x, y, "Parler de...");
+
+	for (j = 1; j < numOfLoadedOverlay; j++) {
+		if (overlayTable[j].alreadyLoaded) {
+			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
+
+			for (int i=0; i<idHeader; i++) {
+				linkDataStruct* ptrHead = &overlayTable[j].ovlData->arrayMsgRelHeader[i];
+				int thisOvl = ptrHead->obj1Overlay;
+
+				if (!thisOvl) {
+					thisOvl = j;
+				}
+
+				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
+
+				getSingleObjectParam(thisOvl, ptrHead->obj1Number, 5, &objectState2);
+
+				if (pObject && (pObject->_class == THEME) && (objectState2 <-1)) {
+
+					thisOvl = ptrHead->obj2Overlay;
+					if (!thisOvl) {
+						thisOvl = j;
+					}
+
+					if((thisOvl==objOvl) && (ptrHead->obj2Number==objIdx)) {
+						int verbeOvl = ptrHead->verbOverlay;
+						int obj1Ovl = ptrHead->obj1Overlay;
+						int obj2Ovl = ptrHead->obj2Overlay;
+
+						if (!verbeOvl) verbeOvl=j;
+						if (!obj1Ovl)  obj1Ovl=j;
+						if (!obj2Ovl)  obj2Ovl=j;
+						
+						char verbe_name[80];
+						char obj1_name[80];
+						char obj2_name[80];
+						char r_verbe_name[80];
+						char r_obj1_name[80];
+						char r_obj2_name[80];
+
+						verbe_name[0]	=0;
+						obj1_name[0]	=0;
+						obj2_name[0]	=0;
+						r_verbe_name[0] =0;
+						r_obj1_name[0]	=0;
+						r_obj2_name[0]	=0;
+
+						ovlDataStruct *ovl2 = NULL;
+						ovlDataStruct *ovl3 = NULL;
+						ovlDataStruct *ovl4 = NULL;
+
+						if (verbeOvl > 0)
+							ovl2 = overlayTable[verbeOvl].ovlData;
+
+						if (obj1Ovl > 0)
+							ovl3 = overlayTable[obj1Ovl].ovlData;
+
+						if (obj2Ovl > 0)
+							ovl4 = overlayTable[obj2Ovl].ovlData;
+
+						if ((ovl3) && (ptrHead->obj1Number >= 0)) {
+							testState1 = ptrHead->obj1OldState;
+						}
+						if ((ovl4) && (ptrHead->obj2Number >= 0)) {
+							testState2 = ptrHead->obj2OldState;
+						}
+
+						if ((ovl4) && (ptrHead->verbNumber>=0) &&
+							((testState1 == -1) || (testState1 == objectState2)) &&
+							((testState2 == -1) || (testState2 == objectState)) ) {
+							if (ovl2->nameVerbGlob) {
+								const char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
+								strcpy(verbe_name, ptr);
+
+								if (!strlen(verbe_name))
+									attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+								else if (ovl2->nameVerbGlob) {
+									found = true;
+									int color;
+
+									if(objectState2==-2)
+										color = colorOfSelectedSaveDrive;
+									else
+										color = -1;
+
+									ptr = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
+									addSelectableMenuEntry(j, i, menuTable[0], 1, color, ptr);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return found;
+}
+
 bool findRelation(int objOvl, int objIdx, int x, int y) {
 	bool found = false;
 	bool first = true;
@@ -1094,7 +1205,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 					}
 
 					if (pHeader->obj1NewState != -1) {
-						ASSERT(0);
+						objInit(obj1Ovl, pHeader->obj1Number, pHeader->obj1NewState);
 					}
 				}
 
@@ -1139,6 +1250,25 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 
 		pCurrent = pCurrent->pNext;
 	}
+}
+
+void closeAllMenu(void) {
+	if(menuTable[0]) {
+		freeMenu(menuTable[0]);
+		menuTable[0] = NULL;
+	}
+
+	if(menuTable[1]) {
+		freeMenu(menuTable[1]);
+		menuTable[1] = NULL;
+	}
+	if (linkedMsgList) {
+		ASSERT(0);
+//					freeMsgList(linkedMsgList);
+	}
+
+	linkedMsgList = NULL;
+	linkedRelation = NULL;
 }
 
 int processInput(void) {
@@ -1187,7 +1317,55 @@ int processInput(void) {
 	}
 
 	if (dialogueEnabled) {
-		ASSERT(0);
+		
+		if( menuDown || selectDown || linkedRelation ) {
+			closeAllMenu();
+			menuDown = 0;
+			selectDown = 0;
+			currentActiveMenu = -1;
+			changeCursor(CURSOR_NORMAL);
+		}
+
+		if((menuTable[0]==NULL) && (!buttonDown)) {
+			int dialogFound = createDialog(dialogueOvl, dialogueObj, xdial, 0);
+
+			if(menuTable[0]) {
+				if(dialogFound) {
+					currentActiveMenu = 0;
+				}
+				else {
+					freeMenu(menuTable[0]);
+					menuTable[0] = NULL;
+					currentActiveMenu = -1;
+				}
+			}
+			else {
+				menuDown = 0;
+			}
+		}
+		else {
+			if((button & 1) && (buttonDown == 0)) {
+				if(menuTable[0]) {
+					callRelation(getSelectedEntryInMenu(menuTable[0]), dialogueObj);
+
+					freeMenu(menuTable[0]);
+					menuTable[0] = NULL;
+
+					if (linkedMsgList) {
+						ASSERT(0);
+				//					freeMsgList(linkedMsgList);
+					}
+
+					linkedMsgList = NULL;
+					linkedRelation = NULL;
+
+					changeCursor(CURSOR_NORMAL);
+					currentActiveMenu = -1;
+				}
+				buttonDown = 1;
+			}
+		}
+
 	} else if ((button & 1) && (buttonDown == 0)) {
 		// left click
 		buttonDown = 1;
@@ -1220,6 +1398,8 @@ int processInput(void) {
 			} else { // call sub relation when clicking in inventory
 				ASSERT(0);
 			}
+			selectDown = 0;
+			menuDown = 0;
 		} else {
 			// manage click on object menu
 			if (menuDown == 0) {
@@ -1281,6 +1461,9 @@ int processInput(void) {
 							changeCursor(CURSOR_CROSS);
 						}
 					}
+
+					currentActiveMenu = -1;
+					selectDown = 0;
 				}
 			} else {
 				// Handle left click in inventory

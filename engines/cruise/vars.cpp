@@ -92,6 +92,7 @@ int16 positionInStack;
 actorStruct actorHead;
 
 int16 stateID;
+int16 xdial = 0;
 
 uint8 *currentData3DataPtr;
 uint8 *scriptDataPtrTable[7];
@@ -110,8 +111,8 @@ int16 var4;
 int16 userEnabled;
 int16 var5;
 int16 dialogueEnabled;
-int16 var7;
-int16 var8;
+int16 dialogueOvl;
+int16 dialogueObj;
 int16 userDelay;
 
 int16 sysKey = -1;

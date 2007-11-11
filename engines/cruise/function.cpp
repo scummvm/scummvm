@@ -1360,26 +1360,47 @@ int16 Op_60(void) {
 }
 
 int16 Op_6F(void) {
-	int numArgs = popVar();
+	int nbp = popVar();
+	int param[160];
+	char txt[40];
+	char format[30];
+	char nbf[20];
 
-	assert(numArgs == 0);
+	for(int i=nbp-1; i>= 0; i--)
+		param[i] = popVar();
 
+	int val = popVar();
+	char* pDest = (char*)popPtr();
+
+	if(!nbp)
+		sprintf(txt, "%d", val);
+	else
 	{
-		popVar();
-		char *string = (char *)popPtr();
-
-		printf("partial opcode 6F sprintf (%s)\n", string);
+		strcpy(format, "%");
+		sprintf(nbf, "%d", param[0]);
+		strcat(format, nbf );
+		strcat(format, "d");
+		sprintf(txt, format, val);
 	}
+
+	for(int i=0; txt[i]; i++)
+		*(pDest++) = txt[i];
+	*(pDest++) = '\0';
 
 	return 0;
 }
 
 int16 Op_6E(void) {
-	char *ptr0 = (char *)popPtr();
-	char *ptr1 = (char *)popPtr();
+	char *pSource = (char *)popPtr();
+	char *pDest = (char *)popPtr();
 
-	printf("partial opcode 6E (%s)(%s)\n", ptr0, ptr1);
+	while(*pDest)
+		pDest++;
 
+	while(*pSource)
+		*(pDest++) = *(pSource++);
+	*(pDest++) = '\0';
+	
 	return 0;
 }
 
@@ -1419,7 +1440,7 @@ int16 Op_SetObjectAtNode(void) {
 	int16 ovl = popVar();
 
 	if (!ovl)
-		ovl = currentScriptPtr->overlayNumber;;
+		ovl = currentScriptPtr->overlayNumber;
 
 	int nodeInfo[2];
 
@@ -1476,6 +1497,42 @@ int16 Op_SetNodeColor(void) {
 	return 0;
 }
 
+int16 Op_SetXDial(void) {
+	int16 old;
+
+	old = xdial;
+	xdial = popVar();
+
+	return old;
+}
+
+int16 Op_DialogOn(void) {
+	dialogueObj = popVar();
+	dialogueOvl = popVar();
+
+	if(dialogueOvl == 0)
+		dialogueOvl = currentScriptPtr->overlayNumber;
+
+	dialogueEnabled = true;
+
+	return 0;
+}
+
+int16 Op_DialogOff(void) {
+	dialogueEnabled = false;
+
+	objectReset();
+
+	if(menuTable[0]) {
+		freeMenu(menuTable[0]);
+		menuTable[0] = NULL;
+		changeCursor(CURSOR_NORMAL);
+		currentActiveMenu = -1;
+	}
+
+	return 0;
+}
+
 void setupOpcodeTable(void) {
 	int i;
 
@@ -1528,6 +1585,8 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x30] = Op_RemoveBackgroundIncrust;
 	opcodeTablePtr[0x31] = Op_UnmergeBackgroundIncrust;
 	opcodeTablePtr[0x32] = Op_freeBackgroundInscrustList;
+	opcodeTablePtr[0x33] = Op_DialogOn;
+	opcodeTablePtr[0x34] = Op_DialogOff;
 	opcodeTablePtr[0x37] = Op_37;
 	opcodeTablePtr[0x38] = Op_removeBackground;
 	opcodeTablePtr[0x39] = Op_SetActiveBackgroundPlane;
@@ -1568,6 +1627,7 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x70] = Op_comment;
 	opcodeTablePtr[0x71] = Op_SetColorrawLine;
 	opcodeTablePtr[0x72] = Op_InitializeState2;
+	opcodeTablePtr[0x73] = Op_SetXDial;
 	opcodeTablePtr[0x74] = Op_GetInitVar1;
 	opcodeTablePtr[0x76] = Op_InitializeState6;
 	opcodeTablePtr[0x79] = Op_PlayFXnterPlayerMenu;

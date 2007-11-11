@@ -308,4 +308,18 @@ int16 getSingleObjectParam(int16 overlayIdx, int16 param2, int16 param3, int16 *
 	return 0;
 }
 
+void objectReset(void) {
+	for(int i=1; i<numOfLoadedOverlay; i++)	{
+		if(overlayTable[i].alreadyLoaded && overlayTable[i].ovlData) {
+			if(overlayTable[i].ovlData->arrayObject) {
+				for(int j=0; j<overlayTable[i].ovlData->numObj; j++) {
+					int stateIdx = overlayTable[i].state + overlayTable[i].ovlData->arrayObject[j]._stateTableIdx;
+					if((overlayTable[i].ovlData->arrayObject[j]._class == THEME) && (globalVars[stateIdx] == -2))
+						globalVars[stateIdx] = 0;
+				}
+			}
+		}
+	}
+}
+
 } // End of namespace Cruise

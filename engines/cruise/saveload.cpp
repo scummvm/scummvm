@@ -230,8 +230,8 @@ int loadSavegameData(int saveGameIdx) {
 	userEnabled = currentSaveFile.readSint16LE();
 	dialogueEnabled = currentSaveFile.readSint16LE();
 
-	var7 = currentSaveFile.readSint16LE();
-	var8 = currentSaveFile.readSint16LE();
+	dialogueOvl = currentSaveFile.readSint16LE();
+	dialogueObj = currentSaveFile.readSint16LE();
 	userDelay = currentSaveFile.readSint16LE();
 	sysKey = currentSaveFile.readSint16LE();
 	sysX = currentSaveFile.readSint16LE();

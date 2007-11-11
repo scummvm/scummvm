@@ -185,6 +185,7 @@ extern int16 positionInStack;
 extern actorStruct actorHead;
 
 extern int16 stateID;
+extern int16 xdial;
 
 extern uint8 *currentData3DataPtr;
 extern uint8 *scriptDataPtrTable[7];
@@ -203,8 +204,8 @@ extern int16 var4;
 extern int16 userEnabled;
 extern int16 var5;
 extern int16 dialogueEnabled;
-extern int16 var7;
-extern int16 var8;
+extern int16 dialogueOvl;
+extern int16 dialogueObj;
 extern int16 userDelay;
 extern int16 sysKey;
 extern int16 sysX;
