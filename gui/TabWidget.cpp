@@ -79,6 +79,7 @@ TabWidget::~TabWidget() {
 		_tabs[i].firstWidget = 0;
 	}
 	_tabs.clear();
+	delete _navRight;
 }
 
 int16 TabWidget::getChildY() const {
