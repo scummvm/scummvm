@@ -989,6 +989,13 @@ void Actor::createDrawOrderList() {
 		if (obj->_sceneNumber != _vm->_scene->currentSceneNumber())
 			 continue;
 
+		// WORKAROUND for a bug found in the original interpreter of IHNM
+		// If an object's x or y value is negative, don't draw it
+		// Scripts set negative values for an object's x and y when it shouldn't
+		// be drawn anymore (i.e. when it's picked up or used)
+		if (obj->_location.x < 0 || obj->_location.y < 0)
+			continue;
+
 		if (calcScreenPosition(obj)) {
 			_drawOrderList.pushBack(obj, compareFunction);
 		}
