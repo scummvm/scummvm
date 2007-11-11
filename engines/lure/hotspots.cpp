@@ -884,11 +884,12 @@ void Hotspot::startTalkDialog() {
 	Room &room = Room::getReference();
 
 	if ((_data->talkDestCharacterId != 0) && (_data->talkDestCharacterId != NOONE_ID)) {
-		HotspotData *hotspot = Resources::getReference().getHotspot(_data->talkDestCharacterId);
+//		HotspotData *hotspot = Resources::getReference().getHotspot(_data->talkDestCharacterId);
 //		hotspot->talkerId = _hotspotId;
 	}
 
-	if (room.roomNumber() != roomNumber()) return;
+	if (room.roomNumber() != roomNumber())
+		return;
 	room.setTalkDialog(hotspotId(), _data->talkDestCharacterId, _data->useHotspotId, 
 		_data->talkMessageId);
 }
@@ -3289,7 +3290,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			res.setTalkState(TALK_SELECT);
 
 			// Make sure the dest character holds still while an option is selected
-			HotspotData *destHotspot = res.getHotspot(talkDestCharacter);
+			//HotspotData *destHotspot = res.getHotspot(talkDestCharacter);
 			//destHotspot->talkerId = h.hotspotId();
 		} else {
 			res.setTalkState(TALK_RESPOND);
