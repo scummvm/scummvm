@@ -412,33 +412,28 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 }
 
 bool File::exists(const String &filename) {
-	FilesystemNode* file;
-	String fname = filename;
-	
 	// First try to find the file via a FilesystemNode (in case an absolute
 	// path was passed). This is only used to filter out directories.
-	file = new FilesystemNode(fname);
-	if (file->exists())
-		return !file->isDirectory();
+	FilesystemNode file(filename);
+	if (file.exists())
+		return !file.isDirectory();
 	
 	// See if the file is already mapped
-	if (_filesMap && _filesMap->contains(fname)) {
-		fname = (*_filesMap)[fname];
-		file = new FilesystemNode(fname);
+	if (_filesMap && _filesMap->contains(filename)) {
+		FilesystemNode file2((*_filesMap)[filename]);
 		
-		if (file->exists())
-			return !file->isDirectory();
+		if (file2.exists())
+			return !file2.isDirectory();
 	}
 	
 	// Try all default directories
 	if (_defaultDirectories) {
 		StringIntMap::const_iterator i(_defaultDirectories->begin());
 		for (; i != _defaultDirectories->end(); ++i) {
-			fname = i->_key+fname;
-			file = new FilesystemNode(fname);
+			FilesystemNode file2(i->_key + filename);
 			
-			if(file->exists())
-				return !file->isDirectory();
+			if(file2.exists())
+				return !file2.isDirectory();
 		}
 	}
 	
