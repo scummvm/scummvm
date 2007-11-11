@@ -644,11 +644,12 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 				int j2 = 0;
 
 				if ((objOvl != linkedObjOvl) || (objIdx != linkedObjIdx)) {
-					getMultipleObjectParam(linkedObjOvl, linkedObjIdx, &params);
+					objectParamsQuery params2;
+					getMultipleObjectParam(linkedObjOvl, linkedObjIdx, &params2);
 
-					x2 = params.X;
-					y2 = params.Y;
-					j2 = params.fileIdx;
+					x2 = params2.X;
+					y2 = params2.Y;
+					j2 = params2.fileIdx;
 				}
 
 				if (params.var5 >= 0 && params.fileIdx >= 0) {
@@ -696,8 +697,8 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 							}
 
 							if (dataPtr && findPoly((char*)dataPtr, x, y, zoom, mouseX, mouseY)) {
-								*outObjOvl = objOvl;
-								*outObjIdx = objIdx;
+								*outObjOvl = linkedObjOvl;
+								*outObjIdx = linkedObjIdx;
 
 								return (currentObject->type);
 							}
@@ -715,8 +716,8 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 
 							if ((offsetX >= 0) && (offsetX < nWidth) && (offsetY >= 0) && (offsetY <= nHeight) && filesDatabase[j].subData.ptr) {
 								if(testMask(offsetX, offsetY, filesDatabase[j].subData.ptrMask, filesDatabase[j].width/8)) {
-									*outObjOvl = objOvl;
-									*outObjIdx = objIdx;
+									*outObjOvl = linkedObjOvl;
+									*outObjIdx = linkedObjIdx;
 									return currentObject->type;
 								}
 							}
@@ -728,8 +729,8 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 						int height = params.scale;
 
 						if ((mouseX >= x) && (mouseX <= x+width) && (mouseY >= y) && (mouseY <= y+height)) {
-							*outObjOvl = objOvl;
-							*outObjIdx = objIdx;
+							*outObjOvl = linkedObjOvl;
+							*outObjIdx = linkedObjIdx;
 
 							return (currentObject->type);
 						}
@@ -990,6 +991,8 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					thisOvl = j;
 				}
 
+				const char* pName = getObjectName(ptrHead->obj1Number, overlayTable[thisOvl].ovlData->arrayNameObj);
+
 				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
 
 				if ((thisOvl == objOvl) && (objIdx == ptrHead->obj1Number) && pObject && (pObject->_class != THEME)) {
@@ -1116,9 +1119,41 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 				getMultipleObjectParam(obj2Ovl, pHeader->obj2Number, &params);
 			}
 
-			if ((pHeader->obj2OldState != -1) || (params.scale == pHeader->obj2OldState)) {
-				if (pHeader->type == 30) {
-					ASSERT(0);
+			if ((pHeader->obj2OldState == -1) || (params.scale == pHeader->obj2OldState)) {
+				if (pHeader->type == 30) { // REL
+				attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+
+				if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
+					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
+
+					if (pTrack) {
+						animationStart = false;
+
+						if (pHeader->trackDirection == 9999) {
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = direction(naratorParams.X, naratorParams.Y, pTrack->x_dest, pTrack->y_dest, 0, 0);
+						} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = pHeader->trackDirection;
+						} else {
+							pTrack->x_dest = pHeader->trackX;
+							pTrack->y_dest = pHeader->trackY;
+							pTrack->endDirection = pHeader->trackDirection;
+						}
+
+						pTrack->flag = 1;
+
+						autoTrack = true;
+						userEnabled = 0;
+						changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 0, 9998);
+					}
+				}
 				} else if (pHeader->type == 50) {
 					ASSERT(0);
 				}
@@ -1158,7 +1193,11 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 						animationStart = false;
 
 						if (pHeader->trackDirection == 9999) {
-							ASSERT(0);
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = direction(naratorParams.X, naratorParams.Y, pTrack->x_dest, pTrack->y_dest, 0, 0);
 						} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
 							objectParamsQuery naratorParams;
 							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
@@ -1222,7 +1261,11 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 						animationStart = false;
 
 						if (pHeader->trackDirection == 9999) {
-							ASSERT(0);
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = direction(naratorParams.X, naratorParams.Y, pTrack->x_dest, pTrack->y_dest, 0, 0);
 						} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
 							objectParamsQuery naratorParams;
 							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
@@ -1389,14 +1432,21 @@ int processInput(void) {
 				}
 
 				if (linkedMsgList) {
-					ASSERT(0);
 //					freeMsgList(linkedMsgList);
 				}
 				linkedMsgList = NULL;
 				linkedRelation = NULL;
 				changeCursor(CURSOR_NORMAL);
 			} else { // call sub relation when clicking in inventory
-				ASSERT(0);
+				if(menuTable[0] && menuTable[1]) {
+					menuElementSubStruct * p0 = getSelectedEntryInMenu(menuTable[1]);
+
+					if(p0)
+						callSubRelation(linkedRelation, p0->ovlIdx, p0->header);
+
+					closeAllMenu();
+					changeCursor(CURSOR_NORMAL);
+				}
 			}
 			selectDown = 0;
 			menuDown = 0;

@@ -35,7 +35,7 @@ menuStruct *createMenu(int X, int Y, const char *menuName) {
 	entry = (menuStruct *) malloc(sizeof(menuStruct));
 	ASSERT(entry);
 
-	entry->x = X - 80;
+	entry->x = X - 160/2;
 	entry->y = Y;
 	entry->stringPtr = menuName;
 	entry->numElements = 0;
@@ -62,38 +62,27 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 				if (param2) {
 					if (!strcmp(var_6->string, menuText)) {
 						pNewElement = var_6;
-						pSubStruct =
-						    (menuElementSubStruct *)
-						    allocAndZero(sizeof
-						    (menuElementSubStruct));
+						pSubStruct = (menuElementSubStruct *)allocAndZero(sizeof(menuElementSubStruct));
 						ASSERT(pSubStruct);
 
 						pSubStruct->pNext = NULL;
 						pSubStruct->ovlIdx = ovlIdx;
 						pSubStruct->header = headerIdx;
 
-						pSubStructCurrent =
-						    pNewElement->ptrSub;
+						pSubStructCurrent = pNewElement->ptrSub;
 
 						if (!pSubStructCurrent) {
-							pNewElement->ptrSub =
-							    pSubStruct;
+							pNewElement->ptrSub = pSubStruct;
 							return;
 						}
 
 						if (pSubStructCurrent->pNext) {
 							do {
-								pSubStructCurrent
-								    =
-								    pSubStructCurrent->
-								    pNext;
-							} while
-							    (pSubStructCurrent->
-							    pNext);
+								pSubStructCurrent = pSubStructCurrent->pNext;
+							} while(pSubStructCurrent->pNext);
 						}
 
-						pSubStructCurrent->pNext =
-						    pSubStruct;
+						pSubStructCurrent->pNext = pSubStruct;
 						return;
 					}
 				}
@@ -104,13 +93,9 @@ void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int pa
 			var_6 = di;
 		}
 
-		pNewElement =
-		    (menuElementStruct *)
-		    allocAndZero(sizeof(menuElementStruct));
+		pNewElement = (menuElementStruct *)allocAndZero(sizeof(menuElementStruct));
 		ASSERT(pNewElement);
-		pSubStruct =
-		    (menuElementSubStruct *)
-		    allocAndZero(sizeof(menuElementSubStruct));
+		pSubStruct = (menuElementSubStruct *)allocAndZero(sizeof(menuElementSubStruct));
 		ASSERT(pSubStruct);
 
 		pNewElement->string = menuText;

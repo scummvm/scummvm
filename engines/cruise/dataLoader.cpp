@@ -505,8 +505,8 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 			{
 				if (sec == 0) {
 					// TODO sec type 5 needs special conversion. cut out 2 bytes at every width/5 position.
-					ASSERT(0);
-					return -1;
+//					ASSERT(0);
+//					return -1;
 				}
 				
 				filesDatabase[fileIndex].subData.resourceType = 4;

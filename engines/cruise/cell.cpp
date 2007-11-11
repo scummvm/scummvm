@@ -279,6 +279,21 @@ void removeCell(cellStruct *objPtr, int ovlNumber, int objectIdx, int objType, i
 	}
 }
 
+void linkCell(cellStruct *pHead, int ovl, int obj, int type, int ovl2, int obj2) {
+	while (pHead) {
+		if ((pHead->overlay == ovl) || (ovl == -1)) {
+			if ((pHead->idx == obj) || (obj == -1)) {
+				if ((pHead->type == type) || (type == -1)) {
+					pHead->followObjectIdx = obj2;
+					pHead->followObjectOverlayIdx = ovl2;
+				}
+			}
+		}
+
+		pHead = pHead->next;
+	}
+}
+
 void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, int backgroundPlane, int oldFreeze, int newFreeze ) {
 	while (pObject) {
 		if ((pObject->overlay == overlayIdx) || (overlayIdx == -1)) {

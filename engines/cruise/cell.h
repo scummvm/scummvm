@@ -71,6 +71,8 @@ void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x
 void removeCell(cellStruct *objPtr, int ovlNumber, int objectIdx, int objType, int backgroundPlane );
 void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, int backgroundPlane, int oldFreeze, int newFreeze );
 void sortCells(int16 param1, int16 param2, cellStruct *objPtr);
+void linkCell(cellStruct *pHead, int ovl, int obj, int type, int ovl2, int obj2);
+
 
 } // End of namespace Cruise
 

@@ -1533,6 +1533,23 @@ int16 Op_DialogOff(void) {
 	return 0;
 }
 
+int16 Op_LinkObjects(void) {
+	int type = popVar();
+	int obj2 = popVar();
+	int ovl2 = popVar();
+	int obj = popVar();
+	int ovl = popVar();
+
+	if(!ovl)
+		ovl = currentScriptPtr->overlayNumber;
+	if(!ovl2)
+		ovl2 = currentScriptPtr->overlayNumber;
+
+	linkCell(&cellHead, ovl, obj, type, ovl2, obj2);
+
+	return 0;
+}
+
 void setupOpcodeTable(void) {
 	int i;
 
@@ -1600,6 +1617,7 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x41] = Op_isFileLoaded2;
 	opcodeTablePtr[0x43] = Op_songExist;
 	opcodeTablePtr[0x45] = Op_45;
+	opcodeTablePtr[0x4B] = Op_LinkObjects;
 	opcodeTablePtr[0x54] = Op_SetFontFileIndex;
 	opcodeTablePtr[0x56] = Op_changeCutSceneState;
 	opcodeTablePtr[0x57] = Op_GetMouseX;

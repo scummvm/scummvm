@@ -1097,7 +1097,7 @@ void mainDrawPolygons(int fileIndex, cellStruct *plWork, int X, int scale, int Y
 	buildPolyModel(newX, newY, newScale, (char*)polygonMask, destBuffer, newFrame);
 }
 
-void mainSprite(int globalX, int globalY, gfxEntryStruct *pGfxPtr, uint8 *ouputPtr, int newColor, int idx) {
+void drawMessage(gfxEntryStruct *pGfxPtr, int globalX, int globalY, int idx, int newColor, uint8 *ouputPtr) {
 	// this is used for font only
 
 	if (pGfxPtr) {
@@ -1231,101 +1231,83 @@ void drawCtp(void) {
 #endif
 
 void drawMenu(menuStruct *pMenu) {
-	if (pMenu && pMenu->numElements) {
-		int height;
-		int x;
-		int y;
-		int var_10;
-		int bx;
-		int newX;
-		int var_6;
-		int currentY;
-		int var_8;
-		int di;
-		menuElementStruct *si;
+	if (pMenu == NULL)
+		return;
+	
+	if(pMenu->numElements == 0)
+		return;
 
-		height = pMenu->gfx->height;
-		x = pMenu->x;
-		y = pMenu->y;
+	int hline = pMenu->gfx->height;
+	int x = pMenu->x;
+	int y = pMenu->y + hline;
 
-		var_10 = pMenu->gfx->width / (199 - (pMenu->gfx->width * 2));
+	int numItemByLine = (199 - hline * 2) / hline;
+	int nbcol = pMenu->numElements / numItemByLine;
 
-		bx = var_10 / (pMenu->numElements + 1);	// rustine...
+	if (!nbcol) {
+		nbcol++;
 
-		if (!bx) {
-			bx++;
+		if (y+pMenu->numElements*hline > 199-hline) {
+			y = 200 - (pMenu->numElements * hline) - hline;
+		}
+	} else {
+		if (pMenu->numElements % numItemByLine) {
+			nbcol++;
+		}
 
-			if ((pMenu->numElements * height) + y > 199 - height) {
-				y = ((-1 - pMenu->numElements) * height) + 200;
-			}
+		y = hline;
+	}
+
+	if (x > (320-(nbcol*160)))
+		x = 320-(nbcol*160);
+
+	if (x < 0)
+		x = 0;
+
+	int wx = x + (nbcol - 1) * (160/2);
+
+	if (wx <= 320 - 160) {
+		drawMessage(pMenu->gfx, wx, y - hline, 160, video4, gfxModuleData.pPage10);
+	}
+
+	wx = x;
+	int wy = y;
+	int wc = 0;
+	menuElementStruct* p1 = pMenu->ptrNextElement;
+
+	while(p1) {
+		gfxEntryStruct *p2 = p1->gfx;
+
+		p1->x = wx;
+		p1->y = wy;
+		p1->varA = 160;
+
+		int color;
+
+		if (p1->varC) {
+			color = video3;
 		} else {
-			if (var_10 % pMenu->numElements) {
-				bx++;
+			if (p1->color != 255) {
+				color = p1->color;
+			} else {
+				color = video2;
 			}
-
-			y = height;
 		}
 
-		newX = 320 * (2 - bx);
-
-		if (newX < x) {
-			x = newX;
+		if (wx <= (320-160)) {
+			drawMessage(p2, wx, wy, 160, color, gfxModuleData.pPage10);
 		}
 
-		if (x < 0) {
-			x = 0;
+		wy += hline;
+		wc ++;
+
+		if (wc == numItemByLine) {
+			wc = 0;
+			wx += 160;
+			wy = y;
 		}
 
-		var_6 = (80 * (bx - 1)) + x;
-
-		if (var_6 <= 320) {
-			mainSprite(var_6, y - height, pMenu->gfx,
-			    gfxModuleData.pPage10, video4, 320);
-		}
-
-		currentY = y;
-		var_8 = 0;
-		di = x;
-
-		si = pMenu->ptrNextElement;
-
-		if (si) {
-			do {
-				int color;
-
-				gfxEntryStruct *var_2 = si->gfx;
-
-				si->x = di;
-				si->y = currentY;
-				si->varA = 320;
-
-				if (si->varC) {
-					color = video3;
-				} else {
-					if (si->color != 255) {
-						color = si->color;
-					} else {
-						color = video2;
-					}
-				}
-
-				if (di < 320) {
-					mainSprite(di, currentY, var_2,
-					    gfxModuleData.pPage10, color, 320);
-				}
-
-				currentY += height;
-				var_8++;
-
-				if (var_8 == var_10) {
-					var_8 = 0;
-					di += 320;
-					currentY = y;
-				}
-
-				si = si->next;
-			} while (si);
-		}
+		p1 = p1->next;
 	}
 }
 
@@ -1361,9 +1343,9 @@ void mainDraw(int16 param) {
 	int16 objX1 = 0;
 	int16 objY1 = 0;
 	int16 objZ1 = 0;
-	int16 objX2;
-	int16 objY2;
-	int16 objZ2;
+	int16 objX2 = 0;
+	int16 objY2 = 0;
+	int16 objZ2 = 0;
 	int16 spriteHeight;
 
 	if (fadeVar) {
@@ -1524,7 +1506,7 @@ void mainDraw(int16 param) {
 
 	while (currentObjPtr) {
 		if (currentObjPtr->type == OBJ_TYPE_MSG && currentObjPtr->freeze == 0) {
-			mainSprite(currentObjPtr->x, currentObjPtr->field_C, currentObjPtr->gfxPtr, gfxModuleData.pPage10, currentObjPtr->color, currentObjPtr->spriteIdx);
+			drawMessage(currentObjPtr->gfxPtr, currentObjPtr->x, currentObjPtr->field_C, currentObjPtr->spriteIdx, currentObjPtr->color, gfxModuleData.pPage10);
 			var20 = 1;
 		}
 		currentObjPtr = currentObjPtr->next;
@@ -1538,8 +1520,15 @@ void mainDraw(int16 param) {
 			return;
 		}
 	} else if ((linkedRelation) && (linkedMsgList)) {
-		ASSERT(0);
-		// TODO: draw mouse here
+		int16 mouseX;
+		int16 mouseY;
+		int16 button;
+		getMouseStatus(&main10, &mouseX, &button, &mouseY);
+
+		if(mouseY>(linkedMsgList->height)*2)
+			drawMessage(linkedMsgList, 0, 0, 320, findHighColor(), gfxModuleData.pPage10);
+		else
+			drawMessage(linkedMsgList, 0, 200, 320, findHighColor(), gfxModuleData.pPage10);
 	}
 }
 

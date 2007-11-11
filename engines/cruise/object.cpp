@@ -128,7 +128,18 @@ void setObjectPosition(int16 ovlIdx, int16 objIdx, int16 param3, int16 param4) {
 	//overlayTable[param1].ovlData
 
 	switch (ptr->_class) {
-	case 1:
+	case THEME:
+	case MULTIPLE:
+		{
+			if(param3 != 5)
+				return;
+			globalVars[overlayTable[ovlIdx].state + ptr->_stateTableIdx] = param4;
+			sortCells(ovlIdx, objIdx, &cellHead);
+			break;
+		}
+	case UNIQUE:
+		return;
+	case VARIABLE:
 		{
 			ptr2 =  &overlayTable[ovlIdx].ovlData->arrayObjVar[ptr->_varTableIdx];
 
