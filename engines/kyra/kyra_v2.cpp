@@ -170,6 +170,9 @@ int KyraEngine_v2::go() {
 	//seq_playSequences(kSequenceFunters, kSequenceFrash);
 
 	if (_menuChoice == 1) {
+		// load just the pak files needed for ingame
+		_res->unloadAllPakFiles();
+		_res->loadFileList("FILEDATA.FDT");
 		startup();
 		runLoop();
 		cleanup();
