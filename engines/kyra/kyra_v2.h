@@ -693,6 +693,28 @@ protected:
 	byte* loadTIMFile(const char *filename, byte *buffer, int32 bufferSize);
 	void freeTIM(byte *buffer);
 
+	// ingame static sequence handling
+	void seq_makeBookOrCauldronAppear(int type);
+	void seq_makeBookAppear();
+
+	struct InventoryWsa {
+		int x, y, x2, y2, w, h;
+		int page;
+		int curFrame, lastFrame, specialFrame;
+		int sfx;
+		int delay;
+		bool running;
+		uint32 timer;
+		WSAMovieV2 *wsa;
+	} _invWsa;
+
+	// TODO: move inside KyraEngine_v2::InventoryWsa?
+	void loadInvWsa(const char *filename, int run, int delay, int page, int sfx, int sFrame, int flags);
+	void closeInvWsa();
+
+	void updateInvWsa();
+	void displayInvWsaLastFrame();
+
 	// opcodes
 	int o2_setCharacterFacingRefresh(ScriptState *script);
 	int o2_setCharacterPos(ScriptState *script);
@@ -716,6 +738,7 @@ protected:
 	int o2_resetGameFlag(ScriptState *script);
 	int o2_setGameFlag(ScriptState *script);
 	int o2_setHandItem(ScriptState *script);
+	int o2_removeHandItem(ScriptState *script);
 	int o2_handItemSet(ScriptState *script);
 	int o2_hideMouse(ScriptState *script);
 	int o2_addSpecialExit(ScriptState *script);
@@ -750,6 +773,7 @@ protected:
 	int o2_countItemInstances(ScriptState *script);
 	int o2_initObject(ScriptState *script);
 	int o2_deinitObject(ScriptState *script);
+	int o2_makeBookOrCauldronAppear(ScriptState *script);
 	int o2_setSpecialSceneScriptState(ScriptState *script);
 	int o2_clearSpecialSceneScriptState(ScriptState *script);
 	int o2_querySpecialSceneScriptState(ScriptState *script);

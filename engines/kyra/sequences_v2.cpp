@@ -29,6 +29,7 @@
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
 #include "kyra/text_v2.h"
+#include "kyra/timer.h"
 
 #include "common/system.h"
 
@@ -2171,6 +2172,114 @@ void KyraEngine_v2::seq_uninit() {
 
 	delete _seqWsa;
 	_seqWsa = NULL;
+}
+
+#pragma mark -
+#pragma mark - Ingame sequences
+#pragma mark -
+
+void KyraEngine_v2::seq_makeBookOrCauldronAppear(int type) {
+	_screen->hideMouse();
+	showMessage(0, 0xCF);
+	
+	if (type == 1) {
+		seq_makeBookAppear();
+	} else if (type == 2) {
+		loadInvWsa("CAULDRON.WSA", 1, 6, 0, -2, -2, 1);
+	}
+
+	_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _screenBuffer);
+	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
+	
+	static int16 bookCauldronRects[] = {
+		0x46, 0x90, 0x7F, 0x2B,	// unknown rect (maybe unused?)
+		0xCE, 0x90, 0x2C, 0x2C,	// book rect
+		0xFA, 0x90, 0x46, 0x2C	// cauldron rect
+	};
+
+	int x = bookCauldronRects[type*4+0];
+	int y = bookCauldronRects[type*4+1];
+	int w = bookCauldronRects[type*4+2];
+	int h = bookCauldronRects[type*4+3];
+	_screen->copyRegion(x, y, x, y, w, h, 2, 0, Screen::CR_NO_P_CHECK);
+
+	_screen->copyBlockToPage(2, 0, 0, 320, 200, _screenBuffer);
+
+	if (type == 2) {
+		int32 countdown = _rnd.getRandomNumberRng(45, 80);
+		_timer->setCountdown(2, countdown * 60);
+	}
+
+	_screen->showMouse();
+}
+
+void KyraEngine_v2::seq_makeBookAppear() {
+	_screen->hideMouse();
+	
+	displayInvWsaLastFrame();
+	
+	showMessage(0, 0xCF);
+
+	loadInvWsa("BOOK2.WSA", 0, 4, 2, -1, -1, 0);
+	
+	uint8 *rect = new uint8[_screen->getRectSize(_invWsa.w, _invWsa.h)];
+	assert(rect);
+	
+	_screen->copyRegionToBuffer(_invWsa.page, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
+
+	_invWsa.running = false;
+	snd_playSoundEffect(0xAF);
+
+	_invWsa.wsa->setX(0);
+	_invWsa.wsa->setY(0);
+	_invWsa.wsa->setDrawPage(_invWsa.page);
+
+	while (true) {
+		_invWsa.timer = _system->getMillis() + _invWsa.delay * _tickLength;
+		
+		_screen->copyBlockToPage(_invWsa.page, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
+
+		_invWsa.wsa->displayFrame(_invWsa.curFrame, 0x4000, 0, 0);
+
+		if (_invWsa.page)
+			_screen->copyRegion(_invWsa.x, _invWsa.y, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, _invWsa.page, 0, Screen::CR_NO_P_CHECK);
+		
+		++_invWsa.curFrame;
+
+		if (_invWsa.curFrame >= _invWsa.lastFrame && !_quitFlag)
+			break;
+		
+		switch (_invWsa.curFrame) {
+		case 39:
+			snd_playSoundEffect(0xCA);
+			break;
+
+		case 50:
+			snd_playSoundEffect(0x6A);
+			break;
+
+		case 72:
+			snd_playSoundEffect(0xCB);
+			break;
+
+		case 85:
+			snd_playSoundEffect(0x38);
+			break;
+
+		default:
+			break;
+		}
+
+		do {
+			update();
+		} while (_invWsa.timer > _system->getMillis() && !_skipFlag);
+	}
+
+	closeInvWsa();
+	delete [] rect;
+	_invWsa.running = false;
+
+	_screen->showMouse();
 }
 
 // static res

@@ -85,6 +85,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_currentTalkSections.TLKTim = NULL;
 	_currentTalkSections.ENDTim = NULL;
 
+	_invWsa.wsa = 0;
+
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 }
 
@@ -96,6 +98,7 @@ KyraEngine_v2::~KyraEngine_v2() {
 	delete _text;
 	_text = 0;
 	delete _debugger;
+	delete _invWsa.wsa;
 }
 
 Movie *KyraEngine_v2::createWSAMovie() {
@@ -492,7 +495,7 @@ void KyraEngine_v2::update() {
 	updateSpecialSceneScripts();
 	_timer->update();
 	//sub_274C0();
-	//updateInvWsa();
+	updateInvWsa();
 	//sub_1574C();
 	_screen->updateScreen();
 }
@@ -505,7 +508,7 @@ void KyraEngine_v2::updateWithText() {
 	updateSpecialSceneScripts();
 	_timer->update();
 	//sub_274C0();
-	//updateInvWsa();
+	updateInvWsa();
 	restorePage3();
 	drawAnimObjects();
 
@@ -1542,6 +1545,118 @@ void KyraEngine_v2::playVoice(int high, int low) {
 
 #pragma mark -
 
+void KyraEngine_v2::loadInvWsa(const char *filename, int run, int delayTime, int page, int sfx, int sFrame, int flags) {
+	int wsaFlags = 1;
+	if (flags)
+		wsaFlags |= 2;
+
+	if (!_invWsa.wsa)
+		_invWsa.wsa = new WSAMovieV2(this);
+
+	if (!_invWsa.wsa->open(filename, wsaFlags, 0))
+		error("Couldn't open inventory WSA file '%s'", filename);
+
+	_invWsa.curFrame = 0;
+	_invWsa.lastFrame = _invWsa.wsa->frames();
+
+	_invWsa.x = _invWsa.wsa->xAdd();
+	_invWsa.y = _invWsa.wsa->yAdd();
+	_invWsa.w = _invWsa.wsa->width();
+	_invWsa.h = _invWsa.wsa->height();
+	_invWsa.x2 = _invWsa.x + _invWsa.w - 1;
+	_invWsa.y2 = _invWsa.y + _invWsa.h - 1;
+
+	_invWsa.delay = delayTime;
+	_invWsa.page = page;
+	_invWsa.sfx = sfx;
+
+	_invWsa.specialFrame = sFrame;
+
+	if (_invWsa.page)
+		_screen->copyRegion(_invWsa.x, _invWsa.y, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, 0, _invWsa.page, Screen::CR_NO_P_CHECK);
+
+	_invWsa.running = true;
+	_invWsa.timer = _system->getMillis();
+
+	if (run) {
+		while (_invWsa.running && !_skipFlag && !_quitFlag) {
+			update();
+			//XXX delay?
+		}
+	}
+}
+
+void KyraEngine_v2::closeInvWsa() {
+	_invWsa.wsa->close();
+	delete _invWsa.wsa;
+	_invWsa.wsa = 0;
+	_invWsa.running = false;
+}
+
+void KyraEngine_v2::updateInvWsa() {
+	if (!_invWsa.running || !_invWsa.wsa)
+		return;
+
+	if (_invWsa.timer > _system->getMillis())
+		return;
+
+	_invWsa.wsa->setX(0);
+	_invWsa.wsa->setY(0);
+	_invWsa.wsa->setDrawPage(_invWsa.page);
+	_invWsa.wsa->displayFrame(_invWsa.curFrame, 0, 0, 0);
+
+	if (_invWsa.page)
+		_screen->copyRegion(_invWsa.x, _invWsa.y, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, _invWsa.page, 0, Screen::CR_NO_P_CHECK);
+
+	_invWsa.timer = _system->getMillis() + _invWsa.delay * _tickLength;
+
+	++_invWsa.curFrame;
+	if (_invWsa.curFrame >= _invWsa.lastFrame)
+		displayInvWsaLastFrame();
+
+	if (_invWsa.curFrame == _invWsa.specialFrame)
+		snd_playSoundEffect(_invWsa.sfx);
+
+	if (_invWsa.sfx == -2) {
+		switch (_invWsa.curFrame) {
+		case 9: case 27: case 40:
+			snd_playSoundEffect(0x39);
+			break;
+
+		case 18: case 34: case 44:
+			snd_playSoundEffect(0x33);
+			break;
+
+		case 48:
+			snd_playSoundEffect(0x38);
+			break;
+		
+		default:
+			break;
+		}
+	}
+}
+
+void KyraEngine_v2::displayInvWsaLastFrame() {
+	if (!_invWsa.wsa)
+		return;
+
+	_invWsa.wsa->setX(0);
+	_invWsa.wsa->setY(0);
+	_invWsa.wsa->setDrawPage(_invWsa.page);
+	_invWsa.wsa->displayFrame(_invWsa.lastFrame-1, 0, 0, 0);
+
+	if (_invWsa.page)
+		_screen->copyRegion(_invWsa.x, _invWsa.y, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, _invWsa.page, 0, Screen::CR_NO_P_CHECK);
+
+	closeInvWsa();
+
+	int32 countdown = _rnd.getRandomNumberRng(45, 80);
+	_timer->setCountdown(2, countdown * 60);
+}
+
+#pragma mark -
+
 typedef Functor1Mem<ScriptState*, int, KyraEngine_v2> OpcodeV2;
 #define Opcode(x) OpcodeV2(this, &KyraEngine_v2::x)
 #define OpcodeUnImpl() OpcodeV2(this, 0)
@@ -1601,7 +1716,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_resetGameFlag),
 		Opcode(o2_setGameFlag),
 		Opcode(o2_setHandItem),
-		OpcodeUnImpl(),
+		Opcode(o2_removeHandItem),
 		// 0x2c
 		Opcode(o2_handItemSet),
 		Opcode(o2_hideMouse),
@@ -1725,7 +1840,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x8c
 		Opcode(o2_deinitObject),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_makeBookOrCauldronAppear),
 		Opcode(o2_setSpecialSceneScriptState),
 		// 0x90
 		Opcode(o2_clearSpecialSceneScriptState),

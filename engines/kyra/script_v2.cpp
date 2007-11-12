@@ -305,6 +305,12 @@ int KyraEngine_v2::o2_setHandItem(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_removeHandItem(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_removeHandItem(%p) ()", (const void *)script);
+	removeHandItem();
+	return 0;
+}
+
 int KyraEngine_v2::o2_handItemSet(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_handItemSet(%p) ()", (const void *)script);
 	return _handItemSet;
@@ -670,14 +676,18 @@ int KyraEngine_v2::o2_countItemInstances(ScriptState *script) {
 int KyraEngine_v2::o2_initObject(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_initObject(%p) (%d)", (const void *)script, stackPos(0));
 	initTalkObject(stackPos(0));
-
 	return 0;
 }
 
 int KyraEngine_v2::o2_deinitObject(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_deinitObject(%p) (%d)", (const void *)script, stackPos(0));
 	deinitTalkObject(stackPos(0));
+	return 0;
+}
 
+int KyraEngine_v2::o2_makeBookOrCauldronAppear(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_makeBookOrCauldronAppear(%p) (%d)", (const void *)script, stackPos(0));
+	seq_makeBookOrCauldronAppear(stackPos(0));
 	return 0;
 }
 
