@@ -2022,16 +2022,16 @@ void Hotspot::npcTalkNpcToNpc(HotspotData *hotspot) {
 
 	// Handle the source's talk message
 	if (entry.param(1) != 0) {
-		converse(hotspot->hotspotId, entry.param(1));
-		resource()->talkCountdown += entry.param(2);
-		resource()->delayCtr = entry.param(2);
+		converse(hotspot->hotspotId, entry.param(1), true, false);
+		_data->talkCountdown += entry.param(2);
+		setDelayCtr(delayCtr() + entry.param(2));
 	}
 
 	// Handle the destination's response message
 	if (entry.param(3) != 0) {
 		Hotspot *destHotspot = res.getActiveHotspot(hotspot->hotspotId);
 		assert(destHotspot);
-		destHotspot->converse(this->hotspotId(), entry.param(3));
+		destHotspot->converse(this->hotspotId(), entry.param(3), true, false);
 	}
 
 	endAction();
