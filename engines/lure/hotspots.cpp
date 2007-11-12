@@ -3333,6 +3333,12 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 	case TALK_RESPOND:
 		// Handle initial response to show the question in a talk dialog if needed
 
+		if (h.resource()->talkCountdown != 0) {
+			// Current talk dialog already pending needs to finish
+			h.handleTalkDialog();
+			return;
+		}
+
 		// Get the original question for display
 		selectedLine = res.getTalkSelection();
 		entry = talkSelections[selectedLine-1];
@@ -3400,10 +3406,11 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 	case TALK_RESPONSE_WAIT:
 		// Wait until the character's response has finished being displayed
 		charHotspot = res.getActiveHotspot(talkDestCharacter);
+		assert(charHotspot);
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Player talk dialog countdown %d", 
 			(charHotspot) ? charHotspot->resource()->talkCountdown : 0);
 
-		if (res.getTalkingCharacter() != 0) 
+		if ((charHotspot->resource()->talkCountdown > 0) || (res.getTalkingCharacter() != 0))
 			return;
 
 		result = _talkResponse->postSequenceId;
