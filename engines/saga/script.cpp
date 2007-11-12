@@ -861,6 +861,19 @@ void Script::whichObject(const Point& mousePoint) {
 					objectFlags = 0;
 					newRightButtonVerb = hitZone->getRightButtonVerb() & 0x7f;
 
+					// WORKAROUND for a problematic object in IHNM
+					// In the freezer room, the key that drops is made of a hitzone which
+					// contains the key object itself. We change the object ID that the
+					// hitzone contains (object ID 24578 - "The key") to the ID of the key
+					// object itself (object ID 16402 - "Edna's key"), as the user can keep
+					// hovering the cursor to both items, but can only pick up one
+					if (_vm->getGameType() == GType_IHNM) {
+						if (_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 24) {
+							if (objectId == 24578)
+								objectId = 16402;
+						}
+					}
+
 					if (_vm->getGameType() == GType_ITE) {
 
 						if (newRightButtonVerb == getVerbType(kVerbWalkOnly)) {
