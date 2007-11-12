@@ -3196,7 +3196,8 @@ void HotspotTickHandlers::catrionaAnimHandler(Hotspot &h) {
 		h.decrFrameCtr();
 	} else {
 		h.executeScript();
-		h.setFrameCtr(h.actionCtr());
+		int delayVal = (h.actionCtr() == 0) ? 5 : h.actionCtr();
+		h.setFrameCtr(delayVal);
 	}
 }
 
