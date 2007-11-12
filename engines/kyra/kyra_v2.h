@@ -630,7 +630,7 @@ protected:
 
 	// timer
 	void timerFunc2(int);
-	void timerFunc3(int);
+	void timerCauldronAnimation(int);
 	void timerFunc4(int);
 	void timerFunc5(int);
 	void timerFunc6(int);
