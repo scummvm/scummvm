@@ -28,6 +28,7 @@
 #include "lure/events.h"
 #include "lure/strings.h"
 #include "lure/scripts.h"
+#include "lure/sound.h"
 
 namespace Lure {
 
@@ -502,6 +503,8 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 		// disk cursor as a room changes
 		_screen.paletteFadeOut(GAME_COLOURS - 1);
 		leaveRoom();
+
+		Sound.removeSounds();
 	}
 
 	_screen.empty();

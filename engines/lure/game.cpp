@@ -330,8 +330,6 @@ void Game::playerChangeRoom() {
 
 	delayList.clear();
 
-	Sound.removeSounds();
-
 	RoomData *roomData = res.getRoom(roomNum);
 	assert(roomData);
 	roomData->flags |= HOTSPOTFLAG_FOUND;
