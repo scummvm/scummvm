@@ -35,6 +35,7 @@ static DWORD (WINAPI* _ReleasePowerRequirement)(HANDLE) = NULL;
 static HANDLE _hPowerManagement = NULL;
 static DWORD _lastTime = 0;
 static DWORD REG_bat = 0, REG_ac = 0, REG_disp = 0, bat_timeout = 0;
+static bool REG_tampered = false;
 #ifdef __GNUC__
 extern "C" void WINAPI SystemIdleTimerReset(void);
 #define SPI_SETBATTERYIDLETIMEOUT	251
@@ -99,6 +100,7 @@ void CEDevice::init() {
 	// older devices
 	REG_bat = REG_ac = REG_disp = 2 * 60 * 60 * 1000;	// 2hrs should do it
 	backlight_xchg();
+	REG_tampered = true;
 	SystemParametersInfo(SPI_GETBATTERYIDLETIMEOUT, 0, (void *) &bat_timeout, 0);
 	SystemParametersInfo(SPI_SETBATTERYIDLETIMEOUT, 60 * 60 * 2, NULL, SPIF_SENDCHANGE);	
 }
@@ -106,8 +108,8 @@ void CEDevice::init() {
 void CEDevice::end() {
 	if (_ReleasePowerRequirement && _hPowerManagement)
 		_ReleasePowerRequirement(_hPowerManagement);
-
-	backlight_xchg();
+	if (REG_tampered)
+		backlight_xchg();
 	SystemParametersInfo(SPI_SETBATTERYIDLETIMEOUT, bat_timeout, NULL, SPIF_SENDCHANGE);	
 }
 
