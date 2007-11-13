@@ -40,18 +40,11 @@
 
 #include "backends/timer/default/default-timer.h"
 
-// FIXME: The following #include is necessary for the evil _monkeyKeyboard hack.
-// Fingolfin says: It would be a lot better to get this resolved in a cleaner way.
-// E.g. by using setFeatureState in the SCUMM engine in the appropriate place.
-// Even an "#ifdef WINCE" in the SCUMM engine would probably be nicer than this :/
-#include "engines/scumm/scumm.h"
-
-#include "backends/platform/wince/resource.h"
-
 #include "gui/Actions.h"
 #include "gui/KeysDialog.h"
 #include "gui/message.h"
 
+#include "backends/platform/wince/resource.h"
 #include "backends/platform/wince/CEActionsPocket.h"
 #include "backends/platform/wince/CEActionsSmartphone.h"
 #include "backends/platform/wince/CEgui/ItemAction.h"
@@ -467,7 +460,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_orientationLandscape(0), _newOrientation(0), _panelInitialized(false),
 	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false), _unfilteredkeys(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
-	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0), _tapTime(0),
+	_scalersChanged(false), _lastKeyPressed(0), _tapTime(0),
 	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false), _hasfocus(true),
 	_usesEmulatedMouse(false), _mouseBackupOld(NULL), _mouseBackupToolbar(NULL), _mouseBackupDim(0)
 {
@@ -948,58 +941,58 @@ bool OSystem_WINCE3::getFeatureState(Feature f) {
 }
 
 void OSystem_WINCE3::check_mappings() {
-		CEActionsPocket *instance;
+	CEActionsPocket *instance;
 
-		Common::String gameid(ConfMan.get("gameid"));
+	Common::String gameid(ConfMan.get("gameid"));
 
-		if (gameid.empty() || GUI_Actions::Instance()->initialized())
-			return;
+	if (gameid.empty() || GUI_Actions::Instance()->initialized())
+		return;
 
-		GUI_Actions::Instance()->initInstanceGame();
-		instance = (CEActionsPocket*)GUI_Actions::Instance();
+	GUI_Actions::Instance()->initInstanceGame();
+	instance = (CEActionsPocket*)GUI_Actions::Instance();
 
-		// Some games need to map the right click button, signal it here if it wasn't done
-		if (instance->needsRightClickMapping()) {
-			GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map right click action");
-			while (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
-				keysDialog->runModal();
-				if (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
-					GUI::MessageDialog alert("You must map a key to the 'Right Click' action to play this game");
-					alert.runModal();
-				}
-			}
-			delete keysDialog;
-		}
-
-		// Map the "hide toolbar" action if needed
-		if (instance->needsHideToolbarMapping()) {
-			GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map hide toolbar action");
-			while (!instance->getMapping(POCKET_ACTION_HIDE)) {
-				keysDialog->runModal();
-				if (!instance->getMapping(POCKET_ACTION_HIDE)) {
-					GUI::MessageDialog alert("You must map a key to the 'Hide toolbar' action to play this game");
-					alert.runModal();
-				}
-			}
-			delete keysDialog;
-		}
-
-		// Map the "zoom" actions if needed
-		if (instance->needsZoomMapping()) {
-			GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map Zoom Up action (optional)");
+	// Some games need to map the right click button, signal it here if it wasn't done
+	if (instance->needsRightClickMapping()) {
+		GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map right click action");
+		while (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
 			keysDialog->runModal();
-			delete keysDialog;
-			keysDialog = new GUI::KeysDialog("Map Zoom Down action (optional)");
-			keysDialog->runModal();
-			delete keysDialog;
+			if (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
+				GUI::MessageDialog alert("You must map a key to the 'Right Click' action to play this game");
+				alert.runModal();
+			}
 		}
+		delete keysDialog;
+	}
 
-		// Extra warning for Zak Mc Kracken
-		if (strncmp(gameid.c_str(), "zak", 3) == 0 &&
-			!GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
-			GUI::MessageDialog alert("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory");
-			alert.runModal();
+	// Map the "hide toolbar" action if needed
+	if (instance->needsHideToolbarMapping()) {
+		GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map hide toolbar action");
+		while (!instance->getMapping(POCKET_ACTION_HIDE)) {
+			keysDialog->runModal();
+			if (!instance->getMapping(POCKET_ACTION_HIDE)) {
+				GUI::MessageDialog alert("You must map a key to the 'Hide toolbar' action to play this game");
+				alert.runModal();
+			}
 		}
+		delete keysDialog;
+	}
+
+	// Map the "zoom" actions if needed
+	if (instance->needsZoomMapping()) {
+		GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map Zoom Up action (optional)");
+		keysDialog->runModal();
+		delete keysDialog;
+		keysDialog = new GUI::KeysDialog("Map Zoom Down action (optional)");
+		keysDialog->runModal();
+		delete keysDialog;
+	}
+
+	// Extra warning for Zak Mc Kracken
+	if (strncmp(gameid.c_str(), "zak", 3) == 0 &&
+		!GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
+		GUI::MessageDialog alert("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory");
+		alert.runModal();
+	}
 
 }
 
@@ -1036,12 +1029,6 @@ void OSystem_WINCE3::update_game_settings() {
 		_toolbarHandler.add(NAME_MAIN_PANEL, *panel);
 		_toolbarHandler.setActive(NAME_MAIN_PANEL);
 		_toolbarHandler.setVisible(true);
-
-		// Keyboard is active for Monkey 1 or 2 initial copy-protection
-		if (strncmp(gameid.c_str(), "monkey", 6) == 0) {
-			_monkeyKeyboard = true;
-			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
-		}
 
 		if (_mode == GFX_NORMAL && ConfMan.hasKey("landscape") && ConfMan.getInt("landscape")) {
 			setGraphicsMode(GFX_NORMAL);
@@ -1514,22 +1501,6 @@ void OSystem_WINCE3::hotswapGFXMode() {
 //	_modeChanged = true;
 }
 
-void OSystem_WINCE3::update_keyboard() {
-	// Update the forced keyboard for Monkey Island copy protection
-	if (_monkeyKeyboard && !_isSmartphone)
-		if (!_panelVisible || _toolbarHandler.activeName() != NAME_PANEL_KEYBOARD)
-			swap_panel();
-#if !defined(DISABLE_SCUMM) && !defined(DYNAMIC_MODULES)
-	// This REALLY, REALLY has to go. Check out Fingolfin's comment at the top.
-	if (_monkeyKeyboard && Scumm::g_scumm->VAR_ROOM != 0xff && Scumm::g_scumm && Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&
-		Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 90) {
-			// Switch back to the normal panel now that the keyboard is not used anymore
-			_monkeyKeyboard = false;
-			_toolbarHandler.setActive(NAME_MAIN_PANEL);
-	}
-#endif
-}
-
 void OSystem_WINCE3::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	static bool old_overlayVisible = false;
@@ -1543,8 +1514,6 @@ void OSystem_WINCE3::internUpdateScreen() {
 		Sleep(20);
 		return;
 	}
-
-	update_keyboard();
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
