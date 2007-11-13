@@ -890,6 +890,16 @@ void Hotspot::startTalkDialog() {
 
 	if (room.roomNumber() != roomNumber())
 		return;
+
+	if (room.isDialogActive()) {
+		// There's already an active dialog, so need to wait until it's finished
+		++_data->talkCountdown;
+		if (delayCtr() > 0)
+			setDelayCtr(delayCtr() + 1);
+
+		return;	
+	}
+
 	room.setTalkDialog(hotspotId(), _data->talkDestCharacterId, _data->useHotspotId, 
 		_data->talkMessageId);
 }
@@ -3225,6 +3235,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 	Resources &res = Resources::getReference();
 	StringData &strings = StringData::getReference();
 	Screen &screen = Screen::getReference();
+	Room &room = Room::getReference();
 	Mouse &mouse = Mouse::getReference();
 	TalkSelections &talkSelections = res.getTalkSelections();
 	TalkData *data = res.getTalkData();
@@ -3244,6 +3255,11 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 	case TALK_NONE:
 		talkDestCharacter = h.resource()->talkDestCharacterId;
 		assert(talkDestCharacter != 0);
+
+		// Make sure any other dialog is finished before we start talking
+		if (room.isDialogActive())
+			return;
+
 		// Fall through to TALK_START
 
 	case TALK_START:
