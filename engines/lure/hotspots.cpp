@@ -1071,11 +1071,9 @@ bool Hotspot::characterWalkingCheck(HotspotData *hotspot) {
 		_walkFlag = true;
 
 		if ((hotspot->walkY & 0x8000) != 0) {
-			// Special handling for walking
-//			if (((xp >> 3) != (x() >> 3)) ||
-//				((((y() + heightCopy()) >> 3) - 1) != (yp >> 3))) {
-			if ((ABS(xp - x()) > 8) || 
-				(ABS(yp - (y() + heightCopy())) > 8)) {
+			if (((x() >> 3) != (xp >> 3)) || 
+				((((y() + heightCopy()) >> 3) - 1) != (yp >> 3))) {
+				// Walk to the specified destination
 				walkTo(xp, yp);
 				return true;
 			} else {
