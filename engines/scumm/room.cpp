@@ -24,7 +24,7 @@
  */
 
 
-
+#include "common/system.h"
 #include "scumm/actor.h"
 #include "scumm/boxes.h"
 #include "scumm/intern.h"
@@ -213,6 +213,22 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	}
 
 	_doEffect = true;
+
+	// Hint the backend about the virtual keyboard during copy protection screens
+	if (_game.id == GID_MONKEY2) {
+		if (_system->getFeatureState(OSystem::kFeatureVirtualKeyboard)) {
+			if (room != 108)
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		} else if (room == 108)
+			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+	} else if (_game.id == GID_MONKEY_EGA) {	// this is my estimation that the room code is 90 (untested)
+		if (_system->getFeatureState(OSystem::kFeatureVirtualKeyboard)) {
+			if (room != 90)
+				_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		} else if (room == 90)
+			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+	}
+
 }
 
 /**
