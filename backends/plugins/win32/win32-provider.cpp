@@ -60,7 +60,7 @@ protected:
 		void *func = (void *)GetProcAddress((HMODULE)_dlHandle, toUnicode(symbol));
 		#endif
 		if (!func)
-			warning("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
+			debug("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
 	
 		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 		// standard and POSIX: ISO C++ disallows casting between function pointers
@@ -81,12 +81,15 @@ public:
 		#ifndef _WIN32_WCE
 		_dlHandle = LoadLibrary(_filename.c_str());
 		#else
-		_dlHandle = LoadLibrary(toUnicode(_filename.c_str()));
+		if (!_filename.hasSuffix("scummvm.dll"))	// skip loading the core scummvm module
+			_dlHandle = LoadLibrary(toUnicode(_filename.c_str()));
 		#endif
 	
 		if (!_dlHandle) {
-			warning("Failed loading plugin '%s' (error code %d)", _filename.c_str(), GetLastError());
+			debug("Failed loading plugin '%s' (error code %d)", _filename.c_str(), GetLastError());
 			return false;
+		} else {
+			debug(1, "Success loading plugin '%s', handle %08X", _filename.c_str(), _dlHandle);
 		}
 
 		return DynamicPlugin::loadPlugin();
@@ -94,7 +97,9 @@ public:
 	void unloadPlugin() {
 		if (_dlHandle) {
 			if (!FreeLibrary((HMODULE)_dlHandle))
-				warning("Failed unloading plugin '%s'", _filename.c_str());
+				debug("Failed unloading plugin '%s'", _filename.c_str());
+			else
+				debug(1, "Success unloading plugin '%s'", _filename.c_str());
 			_dlHandle = 0;
 		}
 	}
