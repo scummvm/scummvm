@@ -27,24 +27,28 @@
 
 #include "graphics/surface.h"
 
-// #include <AudioToolbox/AudioQueue.h>
-// 
-// /* Audio Resources */
-// #define AUDIO_BUFFERS 3
-// #define AUDIO_PRECACHE 4
-// #define WAVE_BUFFER_SIZE 735
-// #define WAVE_BUFFER_BANKS 25
-// 
-// typedef struct AQCallbackStruct {
-//     AudioQueueRef queue;
-//     UInt32 frameCount;
-//     AudioQueueBufferRef mBuffers[AUDIO_BUFFERS];
-//     AudioStreamBasicDescription mDataFormat;
-// } AQCallbackStruct;
+#include <AudioToolbox/AudioQueue.h>
+
+#define AUDIO_BUFFERS 3
+#define WAVE_BUFFER_SIZE 735
+#define AUDIO_SAMPLE_RATE 44100
+
+typedef void (*SoundProc)(void *param, byte *buf, int len);
+ 
+typedef struct AQCallbackStruct {
+    AudioQueueRef queue;
+    uint32 frameCount;
+    AudioQueueBufferRef buffers[AUDIO_BUFFERS];
+    AudioStreamBasicDescription dataFormat;
+} AQCallbackStruct;
 
 class OSystem_IPHONE : public OSystem {
 protected:
+
 	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
+	static AQCallbackStruct s_AudioQueue;
+	static SoundProc s_soundCallback;
+	static void *s_soundParam;
 	
 	Common::SaveFileManager *_savefile;
 	Audio::Mixer *_mixer;
@@ -127,7 +131,6 @@ public:
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
-	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	virtual bool setSoundCallback(SoundProc proc, void *param);
 	virtual void clearSoundCallback();
 	virtual int getOutputSampleRate() const;
@@ -139,6 +142,9 @@ public:
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
 	virtual Common::TimerManager *getTimerManager();
+	
+protected:
+	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 };
 
 #endif

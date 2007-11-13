@@ -50,6 +50,10 @@ const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
+AQCallbackStruct OSystem_IPHONE::s_AudioQueue;
+SoundProc OSystem_IPHONE::s_soundCallback = NULL;
+void *OSystem_IPHONE::s_soundParam = NULL;
+
 OSystem_IPHONE::OSystem_IPHONE() :
 	_savefile(NULL), _mixer(NULL), _timer(NULL), _offscreen(NULL),
 	_overlayVisible(false), _overlayBuffer(NULL), _fullscreen(NULL),
@@ -572,7 +576,54 @@ void OSystem_IPHONE::deleteMutex(MutexRef mutex) {
 	free(mutex);
 }
 
+void OSystem_IPHONE::AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB) {
+	//printf("AQBufferCallback()\n");
+	if (s_AudioQueue.frameCount > 0 && s_soundCallback != NULL) {
+		outQB->mAudioDataByteSize = 4 * s_AudioQueue.frameCount;
+		s_soundCallback(s_soundParam, (byte *)outQB->mAudioData, outQB->mAudioDataByteSize);
+		AudioQueueEnqueueBuffer(inQ, outQB, 0, NULL);
+	} else {
+		AudioQueueStop(s_AudioQueue.queue, false);
+	}
+}
+
 bool OSystem_IPHONE::setSoundCallback(SoundProc proc, void *param) {
+	//printf("setSoundCallback()\n");
+	s_soundCallback = proc;
+	s_soundParam = param;
+
+	s_AudioQueue.dataFormat.mSampleRate = AUDIO_SAMPLE_RATE;
+	s_AudioQueue.dataFormat.mFormatID = kAudioFormatLinearPCM;
+	s_AudioQueue.dataFormat.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked;
+	s_AudioQueue.dataFormat.mBytesPerPacket = 4;
+	s_AudioQueue.dataFormat.mFramesPerPacket = 1;
+	s_AudioQueue.dataFormat.mBytesPerFrame = 4;
+	s_AudioQueue.dataFormat.mChannelsPerFrame = 2;
+	s_AudioQueue.dataFormat.mBitsPerChannel = 16;
+	s_AudioQueue.frameCount = WAVE_BUFFER_SIZE;
+
+	if (AudioQueueNewOutput(&s_AudioQueue.dataFormat, AQBufferCallback, &s_AudioQueue, 0, kCFRunLoopCommonModes, 0, &s_AudioQueue.queue)) {
+		printf("Couldn't set the AudioQueue callback!\n");
+		return false;
+	}
+
+	uint32 bufferBytes = s_AudioQueue.frameCount * s_AudioQueue.dataFormat.mBytesPerFrame;
+
+	for (int i = 0; i < AUDIO_BUFFERS; i++) {
+		if (AudioQueueAllocateBuffer(s_AudioQueue.queue, bufferBytes, &s_AudioQueue.buffers[i])) {
+			printf("Error allocating AudioQueue buffer!\n");
+			return false;
+		}
+
+		AQBufferCallback(&s_AudioQueue, s_AudioQueue.queue, s_AudioQueue.buffers[i]);
+	}	
+
+	AudioQueueSetParameter(s_AudioQueue.queue, kAudioQueueParam_Volume, 1.0);
+	if (AudioQueueStart(s_AudioQueue.queue, NULL)) {
+		printf("Error starting the AudioQueue!\n");
+		return false;
+	}
+
 	return true;
 }
 
@@ -580,11 +631,11 @@ void OSystem_IPHONE::clearSoundCallback() {
 }
 
 int OSystem_IPHONE::getOutputSampleRate() const {
-	return 22050;
+	return AUDIO_SAMPLE_RATE;
 }
 
 void OSystem_IPHONE::quit() {
-	//exit(0);
+	AudioQueueDispose(s_AudioQueue.queue, true);
 }
 
 void OSystem_IPHONE::setWindowCaption(const char *caption) {
