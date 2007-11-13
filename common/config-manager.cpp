@@ -82,7 +82,9 @@ ConfigManager::ConfigManager()
 
 void ConfigManager::loadDefaultConfigFile() {
 	char configFile[MAXPATHLEN];
-#if defined(UNIX) && !defined(GP2X)  // GP2X is Linux based but Home dir can be read only so do not use it and put the config in the executable dir.
+	// GP2X is Linux based but Home dir can be read only so do not use it and put the config in the executable dir.
+	// On the iPhone, the home dir of the user when you launch the app from the Springboard, is /. Which we don't want.
+#if defined(UNIX) && !defined(GP2X) && !defined(IPHONE)
 	const char *home = getenv("HOME");
 	if (home != NULL && strlen(home) < MAXPATHLEN)
 		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
@@ -135,6 +137,8 @@ void ConfigManager::loadDefaultConfigFile() {
 
 	#elif defined(PALMOS_MODE)
 		strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
+	#elif defined(IPHONE)
+		strcpy(configFile,"/var/root/" DEFAULT_CONFIG_FILE);	
 	#elif defined(__PLAYSTATION2__)
 		((OSystem_PS2*)g_system)->makeConfigPath(configFile);
 	#elif defined(__PSP__)

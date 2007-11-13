@@ -207,7 +207,7 @@ EOF
 
 if test -n "$_host"; then
 	# In cross-compiling mode, we cannot run the result
-	eval "$1 -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	eval "$1 $CXXFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 else
 	eval "$1 $CXXFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 fi
@@ -732,6 +732,10 @@ i586-mingw32msvc)
 	_host_os=mingw32msvc
 	_host_cpu=i586
 	;;
+iphone)
+	_host_os=iphone
+	_host_cpu=arm
+	;;
 *)
 	if test -z "$_host"; then
 		guessed_host=`$_srcdir/config.guess`
@@ -977,6 +981,12 @@ case $_host_os in
 	mint*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
+	iphone*)
+		DEFINES="$DEFINES -DUNIX -DIPHONE"
+		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework CoreSurface \
+                      -framework LayerKit -framework GraphicsServices -framework CoreFoundation \
+                      -framework Foundation -framework AudioToolbox -framework CoreAudio"
+		;;
 	amigaos*)
 		# TODO: anything to be added here?
 		;;
@@ -1064,7 +1074,15 @@ if test -n "$_host"; then
 			_ranlib=i586-mingw32msvc-ranlib
 			LIBS="$LIBS -lmingw32 -lwinmm"
 			OBJS="$OBJS scummvmico.o"
-		;;
+			;;
+		arm-iphone)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			;;
 		*)
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
 			;;
@@ -1545,6 +1563,10 @@ case $_backend in
 		LDFLAGS="$LDFLAGS -L/usr/X11R6/lib -L/usr/local/lib"
 		DEFINES="$DEFINES -DX11_BACKEND"
 		MODULES="$MODULES backends/platform/x11"
+		;;
+	iphone)
+		DEFINES="$DEFINES -DIPHONE_BACKEND"
+		MODULES="$MODULES backends/platform/iphone"
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"

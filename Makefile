@@ -103,6 +103,15 @@ bundle: scummvm-static
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	strip $(bundle_name)/Contents/MacOS/scummvm
 
+iphonebundle:
+	mkdir -p $(bundle_name)
+	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
+	cp $(srcdir)/gui/themes/modern.ini $(bundle_name)/
+	cp $(srcdir)/gui/themes/modern.zip $(bundle_name)/
+	cp scummvm $(bundle_name)/ScummVM
+	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
+	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
+
 # location of additional libs for OS X usually /sw/ for fink or
 # /opt/local/ for darwinports
 OSXOPT=/sw

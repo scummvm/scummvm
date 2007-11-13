@@ -30,7 +30,7 @@
 #include "common/hash-str.h"
 #include <errno.h>
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(IPHONE)
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
@@ -329,7 +329,7 @@ bool File::open(const String &filename, AccessMode mode) {
 			_handle = fopenNoCase(filename, "", modeStr);
 
 		// Last last (really) resort: try looking inside the application bundle on Mac OS X for the lowercase file.
-#ifdef MACOSX
+#if defined(MACOSX) || defined(IPHONE)
 		if (!_handle) {
 			CFStringRef cfFileName = CFStringCreateWithBytes(NULL, (const UInt8 *)filename.c_str(), filename.size(), kCFStringEncodingASCII, false);
 			CFURLRef fileUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), cfFileName, NULL, NULL);

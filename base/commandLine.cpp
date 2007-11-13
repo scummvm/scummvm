@@ -214,7 +214,7 @@ void registerDefaults() {
 	// Register default savepath
 #ifdef DEFAULT_SAVE_PATH
 	char savePath[MAXPATHLEN];
-#ifdef UNIX
+#if defined(UNIX) && !defined(IPHONE)
 	const char *home = getenv("HOME");
 	if (home && *home && strlen(home) < MAXPATHLEN) {
 		snprintf(savePath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
@@ -222,6 +222,10 @@ void registerDefaults() {
 	}
 #elif defined(__SYMBIAN32__)
 	strcpy(savePath, Symbian::GetExecutablePath());
+	strcat(savePath, DEFAULT_SAVE_PATH);
+	ConfMan.registerDefault("savepath", savePath);
+#elif defined (IPHONE) // The iphone has / set as home dir when launching from the Springboard.
+	strcpy(savePath, "/var/root/");
 	strcat(savePath, DEFAULT_SAVE_PATH);
 	ConfMan.registerDefault("savepath", savePath);
 #endif
@@ -527,6 +531,11 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			DO_LONG_OPTION("record-time-file-name")
 			END_OPTION
 
+#ifdef IPHONE
+			// This is automatically set when launched from the Springboard.
+			DO_LONG_OPTION_OPT("launchedFromSB", 0)
+			END_OPTION
+#endif
 
 unknownOption:
 			// If we get till here, the option is unhandled and hence unknown.
