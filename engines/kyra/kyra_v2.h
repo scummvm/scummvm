@@ -494,6 +494,8 @@ protected:
 	};
 	Item *_itemList;
 
+	uint16 _hiddenItems[20];
+
 	int findFreeItem();
 	int countAllItems();
 	int findItem(uint16 sceneId, uint16 id);
@@ -513,10 +515,6 @@ protected:
 
 	static const byte _itemStringMap[];
 	static const int _itemStringMapSize;
-
-	// Just used in French version
-	int getItemCommandStringDrop(uint16 item);
-	int getItemCommandStringPickUp(uint16 item);
 
 	void setMouseCursor(uint16 item);
 	void setHandItem(uint16 item);
@@ -544,6 +542,11 @@ protected:
 	void decodeString2(const char *src, char *dst);
 
 	void changeFileExtension(char *buffer);
+
+	// - Just used in French version
+	int getItemCommandStringDrop(uint16 item);
+	int getItemCommandStringPickUp(uint16 item);
+	// -
 
 	char _internStringBuf[200];
 	static const char *_languageExtension[];
@@ -777,6 +780,8 @@ protected:
 	int o2_setSpecialSceneScriptState(ScriptState *script);
 	int o2_clearSpecialSceneScriptState(ScriptState *script);
 	int o2_querySpecialSceneScriptState(ScriptState *script);
+	int o2_setHiddenItemsEntry(ScriptState *script);
+	int o2_getHiddenItemsEntry(ScriptState *script);
 	int o2_customChat(ScriptState *script);
 	int o2_customChatFinish(ScriptState *script);
 	int o2_setVocHigh(ScriptState *script);
@@ -793,6 +798,7 @@ protected:
 	int o2t_defineNewShapes(ScriptState *script);
 	int o2t_setCurrentFrame(ScriptState *script);
 	int o2t_playSoundEffect(ScriptState *script);
+	int o2t_fadeScenePal(ScriptState *script);
 	int o2t_setShapeFlag(ScriptState *script);
 
 	// script

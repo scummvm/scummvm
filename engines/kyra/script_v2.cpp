@@ -658,17 +658,16 @@ int KyraEngine_v2::o2_countItemInstances(ScriptState *script) {
 			++count;
 	}
 	
-	/*XXX
-	if (_unkTable3[0] == item && _newChapterFile == 1)
+	if (_hiddenItems[0] == item && _newChapterFile == 1)
 		++count;
-	if (_unkTable3[1] == item && _newChapterFile == 1)
+	if (_hiddenItems[1] == item && _newChapterFile == 1)
 		++count;
-	if (_unkTable3[2] == item && _newChapterFile == 2)
+	if (_hiddenItems[2] == item && _newChapterFile == 2)
 		++count;
-	if (_unkTable3[3] == item && _newChapterFile == 2)
+	if (_hiddenItems[3] == item && _newChapterFile == 2)
 		++count;
-	if (_unkTable3[4] == item && _newChapterFile == 1)
-		++count;*/
+	if (_hiddenItems[4] == item && _newChapterFile == 1)
+		++count;
 
 	return count;
 }
@@ -706,6 +705,18 @@ int KyraEngine_v2::o2_clearSpecialSceneScriptState(ScriptState *script) {
 int KyraEngine_v2::o2_querySpecialSceneScriptState(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_querySpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
 	return _specialSceneScriptState[stackPos(0)];
+}
+
+int KyraEngine_v2::o2_setHiddenItemsEntry(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setHiddenItemsEntry(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	int item = stackPos(1);
+	_hiddenItems[stackPos(0)] = item;
+	return item;
+}
+
+int KyraEngine_v2::o2_getHiddenItemsEntry(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getHiddenItemsEntry(%p) (%d)", (const void *)script, stackPos(0));
+	return _hiddenItems[stackPos(0)];
 }
 
 int KyraEngine_v2::o2_customChat(ScriptState *script) {
@@ -799,6 +810,12 @@ int KyraEngine_v2::o2t_setCurrentFrame(ScriptState *script) {
 int KyraEngine_v2::o2t_playSoundEffect(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2t_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
 	snd_playSoundEffect(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2t_fadeScenePal(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2t_fadeScenePal(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	fadeScenePal(stackPos(0), stackPos(1));
 	return 0;
 }
 

@@ -274,6 +274,8 @@ void KyraEngine_v2::startup() {
 	clearAnimObjects();
 
 	// XXX
+	memset(_hiddenItems, -1, sizeof(_hiddenItems));
+	// XXX
 
 	_sceneList = new SceneDesc[86];
 	memset(_sceneList, 0, sizeof(SceneDesc)*86);
@@ -1846,9 +1848,9 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_clearSpecialSceneScriptState),
 		Opcode(o2_querySpecialSceneScriptState),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_setHiddenItemsEntry),
 		// 0x94
-		OpcodeUnImpl(),
+		Opcode(o2_getHiddenItemsEntry),
 		OpcodeUnImpl(),
 		Opcode(o2_wsaClose),
 		OpcodeUnImpl(),
@@ -1890,8 +1892,8 @@ void KyraEngine_v2::setupOpcodeTable() {
 	static const OpcodeV2 opcodeTemporaryTable[] = {
 		Opcode(o2t_defineNewShapes),
 		Opcode(o2t_setCurrentFrame),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2t_playSoundEffect),
+		Opcode(o2t_fadeScenePal),
 		Opcode(o2t_setShapeFlag),
 		Opcode(o2_dummy)
 	};
