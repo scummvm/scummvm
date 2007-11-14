@@ -206,22 +206,28 @@ endif
 
 dist: ARMscaler.o PocketSCUMM.o $(EXECUTABLE)
 
+dist-plugins: $(EXECUTABLE) plugins PocketSCUMM.o plugins-stub
+
 plugins-stub: stub.o
 	$(CXX) stub.o PocketSCUMM.o -L. -lscummvm -o scummvm.exe
 
-dist-plugins: $(EXECUTABLE) plugins PocketSCUMM.o plugins-stub
-
-PocketSCUMM.o:
+PocketSCUMM.o: PocketSCUMM.rc
 	$(WINDRES) $*.rc $@
 
-deploy-plugins: plugins PocketSCUMM.o plugins-stub
+ARMscaler.o: ARMscaler.s
+	$(AS) $*.s -o $@
+
+clean:
+	$(RM) ARMscaler.o PocketSCUMM.o stub.o
+
+deploy-plugins: dist-plugins
 	@echo Deploying DLLs
 	-$(REMOTE_MKDIR) "$(REMOTE_DIRECTORY)"
 	-$(REMOTE_DELETE) "$(REMOTE_DIRECTORY)\*.dll"
 	$(REMOTE_COPY) plugins/*.dll "$(REMOTE_DIRECTORY)"
 	$(REMOTE_COPY) scummvm.dll "$(REMOTE_DIRECTORY)"
 
-deploy-exe: $(EXECUTABLE) 
+deploy-exe: dist
 	@echo Deploying modern theme - errors are normal here!
 	-$(REMOTE_MKDIR) "$(REMOTE_DIRECTORY)"
 	@-$(REMOTE_COPY) ../../../gui/themes/modern.ini "$(REMOTE_DIRECTORY)"
@@ -229,6 +235,3 @@ deploy-exe: $(EXECUTABLE)
 	@echo Deploying EXE
 	-$(REMOTE_DELETE) "$(REMOTE_DIRECTORY)\scummvm.exe"
 	$(REMOTE_COPY) scummvm.exe "$(REMOTE_DIRECTORY)"
-
-ARMscaler.o:
-	$(AS) $*.s -o $@
