@@ -64,6 +64,8 @@ OSystem_IPHONE::OSystem_IPHONE() :
 }
 
 OSystem_IPHONE::~OSystem_IPHONE() {
+	AudioQueueDispose(s_AudioQueue.queue, true);
+
 	delete _savefile;
 	delete _mixer;
 	delete _timer;
@@ -71,14 +73,22 @@ OSystem_IPHONE::~OSystem_IPHONE() {
 	delete _fullscreen;
 }
 
+int OSystem_IPHONE::timerHandler(int t)
+{
+	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
+	tm->handler();
+	return t;
+}
+
 void OSystem_IPHONE::initBackend() {
 	_savefile = new DefaultSaveFileManager();
 	_mixer = new Audio::Mixer();
 	_timer = new DefaultTimerManager();
 
-	setSoundCallback(Audio::Mixer::mixCallback, _mixer);
-	
 	gettimeofday(&_startTime, NULL);
+
+	setSoundCallback(Audio::Mixer::mixCallback, _mixer);
+	setTimerCallback(&OSystem_IPHONE::timerHandler, 10);
 
 	OSystem::initBackend();
 }	
@@ -395,6 +405,14 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	//printf("pollEvent()\n");
 	
+	long curTime = getMillis();
+	
+	if (_timerCallback && (curTime >= _timerCallbackNext)) {
+		//printf("Time for a callback\n");
+		//_timerCallbackTimer = _timerCallback(_timerCallbackTimer);
+		_timerCallbackNext = curTime + _timerCallbackTimer;
+	}
+	
 	if (_queuedInputEvent.type != (Common::EventType)0) {
 		event = _queuedInputEvent;
 		_queuedInputEvent.type = (Common::EventType)0;
@@ -407,8 +425,6 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	if (iPhone_fetchEvent(&eventType, &xUnit, &yUnit)) {
 		int x = (int)((1.0 - yUnit) * _screenWidth);
 		int y = (int)(xUnit * _screenHeight);
-
-		long curTime = getMillis();
 
 		switch ((InputEvent)eventType) {
 			case kInputMouseDown:
@@ -482,7 +498,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 
 							event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
 							event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_1;
-							event.kbd.ascii = _queuedInputEvent.kbd.ascii = 27;
+							event.kbd.ascii = _queuedInputEvent.kbd.ascii = '1';
 						} else if (vecXNorm > 0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
 							// Swipe right
 							return false;
@@ -553,27 +569,28 @@ uint32 OSystem_IPHONE::getMillis() {
 }
 
 void OSystem_IPHONE::delayMillis(uint msecs) {
-	//printf("delayMillis(%d)\n", msecs);
+	printf("delayMillis(%d)\n", msecs);
 	usleep(msecs * 1000);
 }
 
 OSystem::MutexRef OSystem_IPHONE::createMutex(void) {
-	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
-	pthread_mutex_init(mutex, NULL);
-	return (MutexRef)mutex;
+	//pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+	//pthread_mutex_init(mutex, NULL);
+	//return (MutexRef)mutex;
+	return NULL;
 }
 
 void OSystem_IPHONE::lockMutex(MutexRef mutex) {
-	pthread_mutex_lock((pthread_mutex_t *) mutex);
+	//pthread_mutex_lock((pthread_mutex_t *) mutex);
 }
 
 void OSystem_IPHONE::unlockMutex(MutexRef mutex) {
-	pthread_mutex_unlock((pthread_mutex_t *) mutex);
+	//pthread_mutex_unlock((pthread_mutex_t *) mutex);
 }
 
 void OSystem_IPHONE::deleteMutex(MutexRef mutex) {
-	pthread_mutex_destroy((pthread_mutex_t *) mutex);
-	free(mutex);
+	//pthread_mutex_destroy((pthread_mutex_t *) mutex);
+	//free(mutex);
 }
 
 void OSystem_IPHONE::AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB) {
@@ -634,8 +651,20 @@ int OSystem_IPHONE::getOutputSampleRate() const {
 	return AUDIO_SAMPLE_RATE;
 }
 
+void OSystem_IPHONE::setTimerCallback(TimerProc callback, int interval) {
+	//printf("setTimerCallback()\n");	
+	
+	if (callback != NULL) {
+		_timerCallbackTimer = interval;
+		_timerCallbackNext = getMillis() + interval;
+		_timerCallback = callback;
+	} else {
+		_timerCallback = NULL;
+	}
+}
+
 void OSystem_IPHONE::quit() {
-	AudioQueueDispose(s_AudioQueue.queue, true);
+
 }
 
 void OSystem_IPHONE::setWindowCaption(const char *caption) {

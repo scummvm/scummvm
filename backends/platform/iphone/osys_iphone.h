@@ -34,6 +34,7 @@
 #define AUDIO_SAMPLE_RATE 44100
 
 typedef void (*SoundProc)(void *param, byte *buf, int len);
+typedef int (*TimerProc)(int interval);
  
 typedef struct AQCallbackStruct {
     AudioQueueRef queue;
@@ -79,6 +80,10 @@ protected:
 	long _lastSecondaryDown;
 	long _lastSecondaryTap;
 	int _gestureStartX, _gestureStartY;
+
+	int _timerCallbackNext;
+	int _timerCallbackTimer;
+	TimerProc _timerCallback;
 
 public:
 
@@ -134,6 +139,7 @@ public:
 	virtual bool setSoundCallback(SoundProc proc, void *param);
 	virtual void clearSoundCallback();
 	virtual int getOutputSampleRate() const;
+	virtual void setTimerCallback(TimerProc callback, int interval);
 
 	virtual void quit();
 
@@ -145,6 +151,7 @@ public:
 	
 protected:
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
+	static int timerHandler(int t);
 };
 
 #endif

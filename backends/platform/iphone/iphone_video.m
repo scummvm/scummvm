@@ -242,6 +242,7 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY)
 
 - (void)mouseDragged:(GSEvent*)event
 {
+	//printf("mouseDragged()\n");
 	struct CGPoint point = GSEventGetLocationInWindow(event);
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
