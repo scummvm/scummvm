@@ -61,8 +61,7 @@ uint16 DrasculaEngine::getVersion() const {
 }
 
 static const PlainGameDescriptor drasculaGames[] = {
-	{"drascula", "Drascula game"},
-
+	{"drascula", "Drascula: The Vampire Strikes Back"},
 	{0, 0}
 };
 
@@ -75,7 +74,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		// Drascula English version
 		{
 			"drascula",
-			"English",
+			0,
 			AD_ENTRY1("14.ald", "09b2735953edcd43af115c65ae00b10e"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -91,7 +90,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		// Drascula Spanish version
 		{
 			"drascula",
-			"Spanish",
+			0,
 			AD_ENTRY1("14.ald", "0746ed1a5cc8d9728f790c29813f4b43"),
 			Common::ES_ESP,
 			Common::kPlatformPC,
