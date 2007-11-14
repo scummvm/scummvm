@@ -47,11 +47,17 @@ namespace Lure {
 
 class RoomLayer: public Surface {
 private:
-	bool _cells[FULL_VERT_RECTS][FULL_HORIZ_RECTS];
+	byte _cells[FULL_VERT_RECTS][FULL_HORIZ_RECTS];
 public:
 	RoomLayer(uint16 screenId, bool backgroundLayer);
 	bool isOccupied(byte cellX, byte cellY) {
+		return _cells[cellY][cellX] < 0xfe;
+	}
+	uint8 getCell(byte cellX, byte cellY) {
 		return _cells[cellY][cellX];
+	}
+	void setCell(byte cellX, byte cellY, byte value) {
+		_cells[cellY][cellX] = value;
 	}
 };
 
@@ -84,6 +90,7 @@ private:
 	void addLayers(Hotspot &h);
 	void addCell(int16 xp, int16 yp, int layerNum);
 	void blockMerge();
+	void layersPostProcess();
 public:
 	RoomPathsDecompressedData tempLayer;
 	Room();

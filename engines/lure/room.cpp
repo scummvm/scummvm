@@ -39,9 +39,10 @@ RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer):
 	loadScreen(screenId);	
 	byte *screenData = data().data();
 	int cellY;
+	int cellIndex = 0;
 
 	// Reset all the cells to unused
-	Common::set_to((bool *) _cells, (bool *) _cells + GRID_SIZE, false);
+	Common::set_to((uint8 *) _cells, (uint8 *) _cells + GRID_SIZE, 0xff);
 
 	// Loop through each cell of the screen
 	for (cellY = 0; cellY < NUM_VERT_RECTS; ++cellY) {
@@ -64,7 +65,8 @@ RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer):
 				}
 			}
 
-			_cells[cellY + NUM_EDGE_RECTS][cellX + NUM_EDGE_RECTS] = hasPixels;
+			_cells[cellY + NUM_EDGE_RECTS][cellX + NUM_EDGE_RECTS] = 
+				hasPixels ? cellIndex++ : 0xff;
 		}
 	}
 }
@@ -302,7 +304,7 @@ void Room::addLayers(Hotspot &h) {
 
 		int layerNum = 1;
 		while ((layerNum < 4) && (_layers[layerNum] != NULL) &&
-				!_layers[layerNum]->isOccupied(xStart, yEnd)) 
+				(_layers[layerNum]->getCell(xStart, yEnd) == 0xff))
 			++layerNum;
 		if ((layerNum == 4) || (_layers[layerNum] == NULL)) continue;
 
@@ -318,7 +320,7 @@ void Room::addCell(int16 xp, int16 yp, int layerNum) {
 	Surface &s = _screen.screen();
 
 	while ((layerNum < 4) && (_layers[layerNum] != NULL) &&
-			!_layers[layerNum]->isOccupied(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS))
+			(_layers[layerNum]->getCell(xp + NUM_EDGE_RECTS, yp + NUM_EDGE_RECTS) >= 0xfe))
 		++layerNum;
 	if ((layerNum == 4) || (_layers[layerNum] == NULL)) return;
 
@@ -368,6 +370,43 @@ void Room::blockMerge() {
 			}
 		}			
 	}					
+}
+
+void Room::layersPostProcess() {
+	for (int layerNum = 1; layerNum < 4; ++layerNum) {
+		if (_layers[layerNum] == NULL)
+			continue;
+
+		// Layer optimisation
+		for (int xp = NUM_EDGE_RECTS; xp < NUM_HORIZ_RECTS + NUM_EDGE_RECTS; ++xp) {
+			bool priorFlag = false, nextFlag = false;
+
+			for (int yp = NUM_EDGE_RECTS; yp < NUM_VERT_RECTS + NUM_EDGE_RECTS; ++yp) {
+				if (_layers[layerNum]->getCell(xp, yp) == 0xff) {
+					priorFlag = false;
+					nextFlag = false;
+					continue;
+				}
+
+				if (priorFlag && (_layers[layerNum]->getCell(xp - 1, yp) == 0xff))
+					_layers[layerNum]->setCell(xp - 1, yp, 0xfe);
+				if (nextFlag && (_layers[layerNum]->getCell(xp + 1, yp) == 0xff))
+					_layers[layerNum]->setCell(xp + 1, yp, 0xfe);
+
+				priorFlag = _layers[layerNum]->getCell(xp - 1, yp) != 0xff;
+				nextFlag = _layers[layerNum]->getCell(xp + 1, yp) != 0xff;
+			}
+		}
+
+		// Layer extension of final row to off-screen edge rows below
+
+		for (int xp = NUM_EDGE_RECTS + NUM_HORIZ_RECTS - 1; xp >= NUM_EDGE_RECTS; --xp) {
+			if (_layers[layerNum]->getCell(xp, NUM_EDGE_RECTS + NUM_VERT_RECTS - 1) != 0xff) {
+				for (int yp = NUM_VERT_RECTS + NUM_EDGE_RECTS; yp < FULL_VERT_RECTS; ++yp)
+					_layers[layerNum]->setCell(xp, yp, 0xfe);
+			}
+		}
+	}
 }
 
 void Room::update() {
@@ -519,6 +558,7 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 			layerNum == 0);
 
 	blockMerge();
+	layersPostProcess();
 
 	// Generate the palette for the room that will be faded in
 	//Palette p(MAIN_PALETTE_SIZE, NULL, RGB64);
