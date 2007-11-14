@@ -288,7 +288,6 @@ void Parallaction::runGame() {
 
 		if (_engineFlags & kEngineChangeLocation) {
 			changeLocation(_location._name);
-			continue;
 		}
 
 		runJobs();
