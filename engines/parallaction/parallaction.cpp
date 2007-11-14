@@ -274,23 +274,9 @@ void Parallaction::runGame() {
 
 	while ((_engineFlags & kEngineQuit) == 0) {
 		_keyDown = updateInput();
-
-		debugC(3, kDebugInput, "runGame: input flags (%i, %i, %i, %i)",
-			!_mouseHidden,
-			(_engineFlags & kEngineBlockInput) == 0,
-			(_engineFlags & kEngineWalking) == 0,
-			(_engineFlags & kEngineChangeLocation) == 0
-		);
-
-		// WORKAROUND: the engine doesn't check for displayed labels before performing a location
-		// switch, thus crashing whenever a jobDisplayLabel/jEraseLabel pair is left into the
-		// queue after the character enters a door.
-		// Skipping input processing when kEngineChangeLocation is set solves the issue. It's
-		// noteworthy that the programmers added this very check in Big Red Adventure's engine,
-		// so it should be ok here in Nippon Safes too.
-		if ((!_mouseHidden) && ((_engineFlags & kEngineBlockInput) == 0) && ((_engineFlags & kEngineWalking) == 0) && ((_engineFlags & kEngineChangeLocation) == 0)) {
-			InputData *v8 = translateInput();
-			if (v8) processInput(v8);
+		InputData *v8 = translateInput();
+		if (v8) {
+			processInput(v8);
 		}
 
 		if (_activeZone) {
@@ -305,18 +291,23 @@ void Parallaction::runGame() {
 			continue;
 		}
 
-		g_system->delayMillis(30);
-
 		runJobs();
 
-		if ((_engineFlags & kEnginePauseJobs) == 0 || (_engineFlags & kEngineInventory)) {
-			_gfx->swapBuffers();
-			_gfx->animatePalette();
-		}
+		updateView();
 
 	}
 
-	return;
+}
+
+void Parallaction::updateView() {
+
+	if ((_engineFlags & kEnginePauseJobs) && (_engineFlags & kEngineInventory) == 0) {
+		return;
+	}
+
+	_gfx->animatePalette();
+	_gfx->swapBuffers();
+	g_system->delayMillis(30);
 }
 
 void Parallaction::showLabel(Label &label) {
@@ -428,6 +419,22 @@ void Parallaction::processInput(InputData *data) {
 
 
 Parallaction::InputData *Parallaction::translateInput() {
+
+	debugC(3, kDebugInput, "translateInput: input flags (%i, %i, %i, %i)",
+		!_mouseHidden,
+		(_engineFlags & kEngineBlockInput) == 0,
+		(_engineFlags & kEngineWalking) == 0,
+		(_engineFlags & kEngineChangeLocation) == 0
+	);
+
+	if ((_mouseHidden) ||
+		(_engineFlags & kEngineBlockInput) ||
+		(_engineFlags & kEngineWalking) ||
+		(_engineFlags & kEngineChangeLocation)) {
+
+		return NULL;
+	}
+
 
 	if (_keyDown == kEvQuitGame) {
 		_input._event = kEvQuitGame;
@@ -1047,6 +1054,10 @@ void Parallaction::beep() {
 	_soundMan->playSfx("beep", 3, false);
 }
 
+void Parallaction::scheduleLocationSwitch(const char *location) {
+	strcpy(_location._name, location);
+	_engineFlags |= kEngineChangeLocation;
+}
 
 
 } // namespace Parallaction

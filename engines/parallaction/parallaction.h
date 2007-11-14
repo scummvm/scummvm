@@ -536,12 +536,15 @@ protected:		// members
 
 	void		initGlobals();
 	void		runGame();
+	void		updateView();
 	uint32		getElapsedTime();
 	void		resetTimer();
 
 	InputData 	*translateInput();
 	void		processInput(InputData*);
 
+
+	void		scheduleLocationSwitch(const char *location);
 	void		doLocationEnterTransition();
 	virtual void changeLocation(char *location) = 0;
 	virtual void changeCharacter(const char *name) = 0;
@@ -904,7 +907,7 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(move);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
 
-	void		selectCharacterForNewLocation();
+	void		selectStartLocation();
 
 	void		guiStart();
 	int			guiSelectCharacter();
@@ -977,7 +980,6 @@ private:
 	typedef void (Parallaction_br::*JobFn)(void*, Job*);
 	const JobFn 	*_jobsFn;
 	JobOpcode* 		createJobOpcode(uint functionId, Job *job);
-
 
 	void 		changeLocation(char *location);
 	void		changeCharacter(const char *name);

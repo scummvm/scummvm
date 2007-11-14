@@ -159,8 +159,9 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	// bugs, but it's a good maneuver anyway
 	strcpy(_characterName1, "null");
 
-	sprintf(_location._name, "%s.%s" , l, n);
-	_engineFlags |= kEngineChangeLocation;
+	char tmp[PATH_LEN];
+	sprintf(tmp, "%s.%s" , l, n);
+	scheduleLocationSwitch(tmp);
 
 	return;
 }

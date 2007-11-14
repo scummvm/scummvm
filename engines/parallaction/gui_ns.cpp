@@ -155,7 +155,7 @@ void Parallaction_ns::guiStart() {
 		return;
 
 	case SELECT_CHARACTER:
-		selectCharacterForNewLocation();
+		selectStartLocation();
 		break;
 
 	}
@@ -163,12 +163,12 @@ void Parallaction_ns::guiStart() {
 	return;
 }
 
-void Parallaction_ns::selectCharacterForNewLocation() {
+void Parallaction_ns::selectStartLocation() {
 	int character = guiSelectCharacter();
 	if (character == -1)
 		error("invalid character selected from menu screen");
 
-	strcpy(_location._name, _charStartLocation[character]);
+	scheduleLocationSwitch(_charStartLocation[character]);
 }
 
 

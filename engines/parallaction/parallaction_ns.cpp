@@ -410,6 +410,7 @@ void Parallaction_ns::changeLocation(char *location) {
 
 }
 
+
 void Parallaction_ns::changeCharacter(const char *name) {
 	debugC(1, kDebugExec, "changeCharacter(%s)", name);
 

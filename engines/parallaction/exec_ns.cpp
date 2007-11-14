@@ -248,8 +248,7 @@ DECLARE_COMMAND_OPCODE(get) {
 
 
 DECLARE_COMMAND_OPCODE(location) {
-	strcpy(_location._name, _cmdRunCtxt.cmd->u._string);
-	_engineFlags |= kEngineChangeLocation;
+	scheduleLocationSwitch(_cmdRunCtxt.cmd->u._string);
 }
 
 

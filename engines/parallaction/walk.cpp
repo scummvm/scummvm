@@ -344,9 +344,8 @@ uint16 Parallaction::checkDoor() {
 		if ((z->_flags & kFlagsClosed) == 0) {
 			_location._startPosition = z->u.door->_startPos;
 			_location._startFrame = z->u.door->_startFrame;
-			strcpy(_location._name, z->u.door->_location);
 
-			_engineFlags |= kEngineChangeLocation;
+			scheduleLocationSwitch(z->u.door->_location);
 			_zoneTrap = NULL;
 
 		} else {

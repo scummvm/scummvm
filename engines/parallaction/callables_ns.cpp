@@ -424,9 +424,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 		_gfx->updateScreen();
 		waitUntilLeftClick();
 
-		strcpy(_location._name, "estgrotta.drki");
-
-		_engineFlags |= kEngineChangeLocation;
+		scheduleLocationSwitch("estgrotta.drki");
 	} else {
 		_gfx->setFont(_menuFont);
 		_gfx->displayCenteredString(70, v8C[_language]);
@@ -437,8 +435,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 		_gfx->updateScreen();
 		waitUntilLeftClick();
 
-		selectCharacterForNewLocation();
-		_engineFlags |= kEngineChangeLocation;
+		selectStartLocation();
 	}
 
 	cleanupGame();
@@ -534,8 +531,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 		waitUntilLeftClick();
 
 		_engineFlags &= ~kEngineBlockInput;
-		selectCharacterForNewLocation();
-		_engineFlags |= kEngineChangeLocation;
+		selectStartLocation();
 
 		cleanupGame();
 

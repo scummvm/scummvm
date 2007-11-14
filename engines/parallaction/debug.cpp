@@ -83,22 +83,21 @@ void Debugger::postEnter() {
 bool Debugger::Cmd_Location(int argc, const char **argv) {
 
 	const char *character = _vm->_char.getName();
-	char *location = _vm->_location._name;
+	const char *location = _vm->_location._name;
+
+	char tmp[PATH_LEN];
 
 	switch (argc) {
 	case 3:
 		character = const_cast<char*>(argv[2]);
 		location = const_cast<char*>(argv[1]);
-		sprintf(_vm->_location._name, "%s.%s", location, character);
-		// TODO: check if location exists
-		_engineFlags |= kEngineChangeLocation;
+		sprintf(tmp, "%s.%s", location, character);
+		_vm->scheduleLocationSwitch(tmp);
 		break;
 
 	case 2:
 		location = const_cast<char*>(argv[1]);
-		sprintf(_vm->_location._name, "%s", location);
-		// TODO: check if location exists
-		_engineFlags |= kEngineChangeLocation;
+		_vm->scheduleLocationSwitch(location);
 		break;
 
 	case 1:
