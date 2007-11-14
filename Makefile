@@ -47,7 +47,7 @@ config.mk: $(srcdir)/configure
 ifdef CONFIG_MK_IS_PRESENT
 	@echo "Running $(srcdir)/configure with the last specified parameters"
 	@sleep 2s
-	LDFLAGS=$(SAVED_LDFLAGS) CXX=$(SAVED_CXX) CXXFLAGS=$(SAVED_CXXFLAGS) CPPFLAGS=$(SAVED_CPPFLAGS) \
+	LDFLAGS="$(SAVED_LDFLAGS)" CXX="$(SAVED_CXX)" CXXFLAGS="$(SAVED_CXXFLAGS)" CPPFLAGS="$(SAVED_CPPFLAGS)" \
 		$(srcdir)/configure $(SAVED_CONFIGFLAGS)
 else
 	$(error You need to run $(srcdir)/configure before you can run make. Check $(srcdir)/configure --help for a list of parameters)
