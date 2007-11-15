@@ -213,6 +213,13 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY)
 	[self unlock];
 }
 
+- (void)deviceOrientationChanged:(GSEvent *)event {
+	int screenOrientation = GSEventDeviceOrientation(event);    
+	//[self setUIOrientation: screenOrientation]; // ??? does this do anything?
+	printf("deviceOrientationChanged: %i\n", screenOrientation);
+}
+
+
 - (void)mouseDown:(GSEvent*)event
 {
 	struct CGPoint point = GSEventGetLocationInWindow(event);

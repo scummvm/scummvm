@@ -27,8 +27,6 @@
 
 #include "graphics/surface.h"
 
-#include <AudioToolbox/AudioQueue.h>
-
 #define AUDIO_BUFFERS 3
 #define WAVE_BUFFER_SIZE 735
 #define AUDIO_SAMPLE_RATE 44100
@@ -71,8 +69,8 @@ protected:
 	byte *_mouseBuf;
 	byte _mouseKeyColour;
 	uint _mouseWidth, _mouseHeight;
-	int	_mouseX, _mouseY;
-	int	_mouseHotspotX, _mouseHotspotY;
+	uint _mouseX, _mouseY;
+	int _mouseHotspotX, _mouseHotspotY;
 	long _lastMouseDown;
 	long _lastMouseTap;
 	Common::Event _queuedInputEvent;
@@ -84,6 +82,8 @@ protected:
 	int _timerCallbackNext;
 	int _timerCallbackTimer;
 	TimerProc _timerCallback;
+
+	Common::Array<Common::Rect> _dirtyRects;
 
 public:
 
@@ -119,9 +119,6 @@ public:
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
 
-	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b);
-	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
-
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
@@ -150,6 +147,7 @@ public:
 	virtual Common::TimerManager *getTimerManager();
 	
 protected:
+	inline void addDirtyRect(int16 x1, int16 y1, int16 w, int16 h);
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
 };

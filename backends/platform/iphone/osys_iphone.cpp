@@ -27,6 +27,7 @@
 
 #include <CoreGraphics/CGDirectDisplay.h>
 #include <CoreSurface/CoreSurface.h>
+#include <AudioToolbox/AudioQueue.h>
 #include <unistd.h>
 #include <pthread.h>
 
@@ -151,7 +152,7 @@ void OSystem_IPHONE::initSize(uint width, uint height) {
 	bzero(_fullscreen, fullSize);
 	
 	iPhone_initSurface(height, width);
-	
+	_dirtyRects.push_back(Common::Rect(0, 0, width, height));
 	_mouseVisible = false;
 }
 
@@ -171,6 +172,8 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 		_palette[i] = RGBToColor(b[0], b[1], b[2]);
 		b += 4;
 	}
+	
+	_dirtyRects.push_back(Common::Rect(0, 0, _screenWidth, _screenHeight));
 }
 
 void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
@@ -178,7 +181,7 @@ void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-	//printf("copyRectToScreen()\n");
+	//printf("copyRectToScreen(%i, %i, %i, %i)\n", x, y, w, h);
 	//Clip the coordinates
 	if (x < 0) {
 		w += x;
@@ -203,7 +206,8 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 	if (w <= 0 || h <= 0)
 		return;
 	
-	
+	_dirtyRects.push_back(Common::Rect(x, y, x + w + 1, y + h + 1));
+		
 	byte *dst = _offscreen + y * _screenWidth + x;
 	if (_screenWidth == pitch && pitch == w) {
 		memcpy(dst, buf, h * w);
@@ -216,47 +220,93 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 	}
 }
 
+void OSystem_IPHONE::addDirtyRect(int16 x, int16 y, int16 w, int16 h) {
+	if (x < 0) {
+		w += x;
+		x = 0;
+	}
+
+	if (y < 0) {
+		h += y;
+		y = 0;
+	}
+
+	if (w > _screenWidth - x)
+		w = _screenWidth - x;
+
+	if (h > _screenHeight - y)
+		h = _screenHeight - y;
+
+	if (w <= 0 || h <= 0)
+		return;
+	
+	_dirtyRects.push_back(Common::Rect(x, y, x + w, y + h));
+}
+	
 void OSystem_IPHONE::updateScreen() {
 	//printf("updateScreen()\n");
 
-	//uint16* screen = iPhone_getSurface();
-
-	int row;	
-	if (_overlayVisible) {
-		for (int x = _screenWidth; x >= 1; x--) {
-			row = (_screenWidth - x) * _screenHeight;
-			for (int y = 0; y < _screenHeight; y++) {	
-				_fullscreen[row + y] = _overlayBuffer[y * _screenWidth + x];
-			}
-		}
-	} else {
-		for (int x = _screenWidth; x >= 1; x--) {
-			row = (_screenWidth - x) * _screenHeight;
-			for (int y = 0; y < _screenHeight; y++) {
-				_fullscreen[row + y] = _palette[_offscreen[y * _screenWidth + x]];
-			}
-		}		
+	if (_dirtyRects.size() == 0) {
+		return;
 	}
 
-	//draw mouse on top
-	if (_mouseVisible) {
-		for (uint x = _mouseWidth; x >= 1; x--) {
-			int mx = _mouseX + x; // + _mouseHotspotX;
-			row = (_screenWidth - mx) * _screenHeight;
-			if (mx >= 0 && mx < _screenWidth) {
-				for (uint y = 0; y < _mouseHeight; ++y) {
-					if (_mouseBuf[y * _mouseWidth + x] != _mouseKeyColour) {
-						int my = _mouseY + y; // + _mouseHotspotY;
+	Common::Rect mouseRect(_mouseX, _mouseY, _mouseX + _mouseWidth, _mouseY + _mouseHeight);
 
-						if ( my >= 0 && my < _screenHeight)
-							_fullscreen[row + my] = _palette[_mouseBuf[y * _mouseWidth + x]];
-					}
-				}				
+	while (_dirtyRects.size()) {
+		Common::Rect dirtyRect = _dirtyRects.remove_at(_dirtyRects.size()-1);
+		//printf("Drawing: (%i, %i) -> (%i, %i)\n", dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
+		int row;	
+		if (_overlayVisible) {
+			for (int x = dirtyRect.left; x < dirtyRect.right - 1; x++) {
+				row = (_screenWidth - x - 1) * _screenHeight;
+				for (int y = dirtyRect.top; y < dirtyRect.bottom; y++) {	
+					_fullscreen[row + y] = _overlayBuffer[y * _screenWidth + x];
+				}
+			}
+		} else {
+			for (int x = dirtyRect.left; x < dirtyRect.right - 1; x++) {
+				row = (_screenWidth - x - 1) * _screenHeight;
+				for (int y = dirtyRect.top; y < dirtyRect.bottom; y++) {
+					_fullscreen[row + y] = _palette[_offscreen[y * _screenWidth + x]];
+				}
+			}		
+		}
+
+		//draw mouse on top
+		int mx, my;
+		if (_mouseVisible && dirtyRect.intersects(mouseRect)) {
+			for (uint x = 0; x < _mouseWidth - 1; x++) {
+				mx = _mouseX + x; // + _mouseHotspotX;
+				row = (_screenWidth - mx - 1) * _screenHeight;
+				if (mx >= 0 && mx < _screenWidth) {
+
+					for (uint y = 0; y < _mouseHeight; ++y) {
+						if (_mouseBuf[y * _mouseWidth + x] != _mouseKeyColour) {
+							my = _mouseY + y; // + _mouseHotspotY;
+
+							if ( my >= 0 && my < _screenHeight)
+								_fullscreen[row + my] = _palette[_mouseBuf[y * _mouseWidth + x]];
+						}
+					}				
+				}
 			}
 		}
+
+		uint16 *surface = iPhone_getSurface();
+		if (dirtyRect.right == _screenWidth && dirtyRect.bottom == _screenHeight) {
+			memcpy(surface, _fullscreen, _screenWidth * _screenHeight * 2);
+		} else {
+			for (int x = dirtyRect.left; x < dirtyRect.right - 1; x++) {
+				row = (_screenWidth - x - 1) * _screenHeight;
+				for (int y = dirtyRect.top; y < dirtyRect.bottom; y++) {
+					surface[row + y] = _fullscreen[row + y];
+				}
+			}		
+		}
+		
+		//memcpy(iPhone_getSurface(), _fullscreen, (_screenWidth * _screenHeight) * 2);	
 	}
 
-	memcpy(iPhone_getSurface(), _fullscreen, (_screenWidth * _screenHeight) * 2);
 	iPhone_updateScreen();
 }
 
@@ -274,10 +324,12 @@ Graphics::Surface *OSystem_IPHONE::lockScreen() {
 
 void OSystem_IPHONE::unlockScreen() {
 	//printf("unlockScreen()\n");
+	_dirtyRects.push_back(Common::Rect(0, 0, _screenWidth, _screenHeight));
 	updateScreen();
 }
 
 void OSystem_IPHONE::setShakePos(int shakeOffset) {
+	printf("setShakePos(%i)\n", shakeOffset);
 }
 
 void OSystem_IPHONE::showOverlay() {
@@ -334,7 +386,8 @@ void OSystem_IPHONE::copyRectToOverlay(const OverlayColor *buf, int pitch, int x
 	if (w <= 0 || h <= 0)
 		return;
 
-	
+	_dirtyRects.push_back(Common::Rect(x, y, x + w + 1, y + h + 1));
+		
 	OverlayColor *dst = _overlayBuffer + (y * _screenWidth + x);
 	if (_screenWidth == pitch && pitch == w) {
 		memcpy(dst, buf, h * w * sizeof(OverlayColor));
@@ -355,18 +408,6 @@ int16 OSystem_IPHONE::getOverlayWidth() {
 	return _screenWidth;
 }
 
-OverlayColor OSystem_IPHONE::RGBToColor(uint8 r, uint8 g, uint8 b)
-{
-	return (r & 0xF8) << 8 | (g & 0xFC) << 3 | (b >> 3);
-}	
-
-void OSystem_IPHONE::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b)
-{
-	r = ((color & 0xF800) >> 11) << 3;
-	g = ((color & 0x07e0) >> 5) << 2;
-	b = (color & 0x001F) << 3;
-}
-
 bool OSystem_IPHONE::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
@@ -375,8 +416,11 @@ bool OSystem_IPHONE::showMouse(bool visible) {
 
 void OSystem_IPHONE::warpMouse(int x, int y) {
 	//printf("warpMouse()\n");
+	
+	addDirtyRect(_mouseX, _mouseY, _mouseX + _mouseWidth + 1, _mouseY + _mouseHeight + 1);
 	_mouseX = x;
 	_mouseY = y;
+	addDirtyRect(_mouseX, _mouseY, _mouseX + _mouseWidth + 1, _mouseY + _mouseHeight + 1);
 }
 
 void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
@@ -400,6 +444,8 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	_mouseKeyColour = keycolor;
 	
 	memcpy(_mouseBuf, buf, w * h);
+	
+	addDirtyRect(_mouseX, _mouseY, _mouseX + _mouseWidth + 1, _mouseY + _mouseHeight + 1);
 }
 
 bool OSystem_IPHONE::pollEvent(Common::Event &event) {
@@ -408,8 +454,6 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	long curTime = getMillis();
 	
 	if (_timerCallback && (curTime >= _timerCallbackNext)) {
-		//printf("Time for a callback\n");
-		//_timerCallbackTimer = _timerCallback(_timerCallbackTimer);
 		_timerCallbackNext = curTime + _timerCallbackTimer;
 	}
 	
@@ -430,8 +474,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 			case kInputMouseDown:
 				//printf("Mouse down at (%u, %u)\n", x, y);
 				_lastMouseDown = curTime;
-				_mouseX = x;
-				_mouseY = y;
+				warpMouse(x, y);
 				return false;
 
 				break;
@@ -515,9 +558,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					event.type = Common::EVENT_MOUSEMOVE;
 					event.mouse.x = x;
 					event.mouse.y = y;
-					_mouseX = x;
-					_mouseY = y;					
-				}
+					warpMouse(x, y);				}
 				break;
 			case kInputMouseSecondToggled:
 				_secondaryTapped = !_secondaryTapped;
@@ -569,7 +610,7 @@ uint32 OSystem_IPHONE::getMillis() {
 }
 
 void OSystem_IPHONE::delayMillis(uint msecs) {
-	printf("delayMillis(%d)\n", msecs);
+	//printf("delayMillis(%d)\n", msecs);
 	usleep(msecs * 1000);
 }
 
