@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/events.h"
 
 #include "queen/music.h"
@@ -34,28 +35,64 @@
 
 namespace Queen {
 
-MidiMusic::MidiMusic(MidiDriver *driver, QueenEngine *vm)
-	: _driver(driver), _isPlaying(false), _looping(false), _randomLoop(false), _masterVolume(192), _queuePos(0), _passThrough(false), _buf(0) {
+extern MidiDriver *C_Player_CreateAdlibMidiDriver(Audio::Mixer *);
+
+MidiMusic::MidiMusic(QueenEngine *vm)
+	: _isPlaying(false), _looping(false), _randomLoop(false), _masterVolume(192), _buf(0) {
+
 	memset(_channel, 0, sizeof(_channel));
+	_queuePos = _lastSong = _currentSong = 0;
 	queueClear();
-	_lastSong = _currentSong = 0;
+
+	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	_adlib = (midiDriver == MD_ADLIB);
+	_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+
+	const char *musicDataFile;
+	if (vm->resource()->isDemo()) {
+		_tune = Sound::_tuneDemo;
+		musicDataFile = "AQ8.RL";
+	} else {
+		_tune = Sound::_tune;
+		musicDataFile = "AQ.RL";
+	}
+	if (_adlib) {
+		musicDataFile = "AQBANK.MUS";
+	}
+	_musicData = vm->resource()->loadFile(musicDataFile, 0, &_musicDataSize);
+	_numSongs = READ_LE_UINT16(_musicData);
+
+	_tune = vm->resource()->isDemo() ? Sound::_tuneDemo : Sound::_tune;
+
+	if (_adlib) {
+//		int infoOffset = _numSongs * 4 + 2;
+//		if (READ_LE_UINT16(_musicData + 2) != infoOffset) {
+//			defaultAdlibVolume = _musicData[infoOffset];
+//		}
+		_driver = C_Player_CreateAdlibMidiDriver(vm->_mixer);
+	} else {
+		_driver = MidiDriver::createMidi(midiDriver);
+		if (_nativeMT32) {
+			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		}
+	}
+
+	_driver->open();
+	_driver->setTimerCallback(this, &onTimer);
+
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());
 
-	const char *filename = vm->resource()->isDemo() ? "AQ8.RL" : "AQ.RL";
-	_musicData = vm->resource()->loadFile(filename, 0, &_musicDataSize);
-	_numSongs = READ_LE_UINT16(_musicData);
-	this->open();
-
-	_tune = vm->resource()->isDemo() ? Sound::_tuneDemo : Sound::_tune;
 	vm->_system->getEventManager()->registerRandomSource(_rnd, "queenMusic");
 }
 
 MidiMusic::~MidiMusic() {
+	_driver->setTimerCallback(0, 0);
+	_driver->close();
+	delete _driver;
 	_parser->unloadMusic();
 	delete _parser;
-	this->close();
 	delete[] _buf;
 	delete[] _musicData;
 }
@@ -100,7 +137,7 @@ bool MidiMusic::queueSong(uint16 songNum) {
 
 	// Work around bug in Roland music, note that these numbers are 'one-off'
 	// from the original code
-	if (/*isRoland && */ songNum == 88 || songNum == 89)
+	if (!_adlib && (songNum == 88 || songNum == 89))
 		songNum = 62;
 
 	_songQueue[MUSIC_QUEUE_SIZE - emptySlots] = songNum;
@@ -114,27 +151,8 @@ void MidiMusic::queueClear() {
 	memset(_songQueue, 0, sizeof(_songQueue));
 }
 
-int MidiMusic::open() {
-	// Don't ever call open without first setting the output driver!
-	if (!_driver)
-		return 255;
-
-	int ret = _driver->open();
-	if (ret)
-		return ret;
-	_driver->setTimerCallback(this, &onTimer);
-	return 0;
-}
-
-void MidiMusic::close() {
-	_driver->setTimerCallback(NULL, NULL);
-	if (_driver)
-		_driver->close();
-	_driver = 0;
-}
-
 void MidiMusic::send(uint32 b) {
-	if (_passThrough) {
+	if (_adlib) {
 		_driver->send(b);
 		return;
 	}
@@ -146,13 +164,12 @@ void MidiMusic::send(uint32 b) {
 		_channelVolume[channel] = volume;
 		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && !_nativeMT32) {
+	} else if ((b & 0xF0) == 0xC0 && !_adlib && !_nativeMT32) {
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
-	}
-	else if ((b & 0xFFF0) == 0x007BB0) {
+	} else if ((b & 0xFFF0) == 0x007BB0) {
 		//Only respond to All Notes Off if this channel
 		//has currently been allocated
-		if (_channel[b & 0x0F])
+		if (_channel[channel])
 			return;
 	}
 
@@ -172,14 +189,23 @@ void MidiMusic::send(uint32 b) {
 }
 
 void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
-	//Only thing we care about is End of Track.
-	if (type != 0x2F)
-		return;
-
-	if (_looping || _songQueue[1])
-		playMusic();
-	else
-		stopMusic();
+	switch (type) {
+	case 0x2F: // End of Track
+		if (_looping || _songQueue[1]) {
+			playMusic();
+		} else {
+			stopMusic();
+		}
+		break;
+	case 0x7F: // Specific
+		if (_adlib) {
+			_driver->metaEvent(type, data, length);
+		}
+		break;
+	default:
+//		warning("Unhandled meta event: %02x", type);
+		break;
+	}
 }
 
 void MidiMusic::onTimer(void *refCon) {
@@ -248,7 +274,7 @@ void MidiMusic::playMusic() {
 	}
 
 	byte *prevSong = _musicData + songOffset(_currentSong);
-	if (*prevSong == 0x43 || *prevSong == 0x63) {
+	if (*prevSong == 'C' || *prevSong == 'c') {
 		if (_buf) {
 			delete[] _buf;
 			_buf = 0;
@@ -263,7 +289,7 @@ void MidiMusic::playMusic() {
 
 	byte *musicPtr = _musicData + songOffset(songNum);
 	uint32 size = songLength(songNum);
-	if (*musicPtr == 0x43 || *musicPtr == 0x63) {
+	if (*musicPtr == 'C' || *musicPtr == 'c') {
 		uint32 packedSize = songLength(songNum) - 0x200;
 		_buf = new uint16[packedSize];
 
@@ -277,7 +303,7 @@ void MidiMusic::playMusic() {
 			_buf[i] = data[*(idx + i)];
 #endif
 
-		musicPtr = ((byte *)_buf) + ((*musicPtr == 0x63) ? 1 : 0);
+		musicPtr = ((byte *)_buf) + ((*musicPtr == 'c') ? 1 : 0);
 		size = packedSize * 2;
 	}
 

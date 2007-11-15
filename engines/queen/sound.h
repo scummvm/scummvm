@@ -37,7 +37,7 @@ namespace Common {
 
 namespace Queen {
 
-struct songData {
+struct SongData {
 	int16 tuneList[5];
 	int16 volume;
 	int16 tempo;
@@ -46,7 +46,7 @@ struct songData {
 	int16 ignore;
 };
 
-struct tuneData {
+struct TuneData {
 	int16 tuneNum[9];
 	int16 sfx[2];
 	int16 mode;
@@ -103,10 +103,10 @@ public:
 	void saveState(byte *&ptr);
 	void loadState(uint32 ver, byte *&ptr);
 
-	static const songData _songDemo[];
-	static const songData _song[];
-	static const tuneData _tuneDemo[];
-	static const tuneData _tune[];
+	static const SongData _songDemo[];
+	static const SongData _song[];
+	static const TuneData _tuneDemo[];
+	static const TuneData _tune[];
 	static const char *_sfxName[];
 	static const int16 _jungleList[];
 

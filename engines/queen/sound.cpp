@@ -157,15 +157,7 @@ void Sound::loadState(uint32 ver, byte *&ptr) {
 PCSound::PCSound(Audio::Mixer *mixer, QueenEngine *vm)
 	: Sound(mixer, vm) {
 
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
-	if (native_mt32)
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_music = new MidiMusic(driver, vm);
-	_music->hasNativeMT32(native_mt32);
+	_music = new MidiMusic(vm);
 }
 
 PCSound::~PCSound() {

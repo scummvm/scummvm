@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	input.o \
 	journal.o \
 	logic.o \
+	midiadlib.o \
 	music.o \
 	musicdata.o \
 	queen.o \
@@ -27,5 +28,5 @@ ifdef BUILD_PLUGINS
 PLUGIN := 1
 endif
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk

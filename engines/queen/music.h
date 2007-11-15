@@ -33,18 +33,17 @@ class MidiParser;
 
 namespace Queen {
 
-struct tuneData;
+struct TuneData;
 
 class QueenEngine;
 
 class MidiMusic : public MidiDriver {
 public:
-	MidiMusic(MidiDriver *driver, QueenEngine *vm);
+	MidiMusic(QueenEngine *vm);
 	~MidiMusic();
 	void setVolume(int volume);
-	int getVolume()			{ return _masterVolume; }
+	int getVolume()	const { return _masterVolume; }
 
-	void hasNativeMT32(bool b)	{ _nativeMT32 = b; }
 	void playSong(uint16 songNum);
 	void stopSong() { stopMusic(); }
 	void playMusic();
@@ -53,12 +52,11 @@ public:
 	void queueTuneList(int16 tuneList);
 	bool queueSong(uint16 songNum);
 	void queueClear();
-	void setPassThrough(bool b)		{ _passThrough = b; }
 	void toggleVChange();
 
 	//MidiDriver interface implementation
-	int open();
-	void close();
+	int open() { return 0; }
+	void close() {}
 	void send(uint32 b);
 
 	void metaEvent(byte type, byte *data, uint16 length);
@@ -86,8 +84,8 @@ protected:
 	MidiParser *_parser;
 	MidiChannel *_channel[16];
 	byte _channelVolume[16];
+	bool _adlib;
 	bool _nativeMT32;
-	bool _passThrough;
 
 	Common::RandomSource _rnd;
 
@@ -105,7 +103,7 @@ protected:
 	uint32 _musicDataSize;
 	bool _vToggle;
 	byte *_musicData;
-	const tuneData *_tune;
+	const TuneData *_tune;
 };
 
 } // End of namespace Queen

@@ -28,7 +28,7 @@
 
 namespace Queen {
 
-const songData Sound::_songDemo[] = {
+const SongData Sound::_songDemo[] = {
 	/* 1 - Hotel Gangsters */
 	{ { 1, 0 }, 128, 128, 128, 1, 0 },
 
@@ -123,7 +123,7 @@ const songData Sound::_songDemo[] = {
 	{ { 34, 0 }, 128, 128, 128, 1, 1 },
 };
 
-const songData Sound::_song[] = {
+const SongData Sound::_song[] = {
 	/* 1 - Hotel Gangsters */
 	{ { 1, 0 }, 128, 180, 0, 1, 0 },
 
@@ -752,7 +752,7 @@ const songData Sound::_song[] = {
 	{ { 212, 0 }, 128, 128, 128, 1, 0 }
 };
 
-const tuneData Sound::_tuneDemo[] = {
+const TuneData Sound::_tuneDemo[] = {
 	/* 1 - Hotel Gangsters */
 	{ { 32, 0 }, { 0, 0 }, 1, 0 },
 
@@ -859,7 +859,7 @@ const tuneData Sound::_tuneDemo[] = {
 	{ { 46, 0 }, { 0, 0 }, 1, 0 },
 };
 
-const tuneData Sound::_tune[] = {
+const TuneData Sound::_tune[] = {
 	/* 1 - Hotel Gangsters */
 	{ { 32, 0 }, { 0, 0 }, 1, 0 },
 
