@@ -515,15 +515,15 @@ void Script::checkWakeBrenda(uint16 v1, uint16 v2, uint16 v3) {
 
 // Lookup the given message Id for the specified character and display in a dialog
 
-void Script::displayMessage(uint16 messageId, uint16 characterId, uint16 unknownVal) {
+void Script::displayMessage(uint16 messageId, uint16 characterId, uint16 destCharacterId) {
 	Hotspot *hotspot = Resources::getReference().getActiveHotspot(characterId);
 	if (hotspot != NULL)
-		hotspot->showMessage(messageId);
+		hotspot->showMessage(messageId, destCharacterId);
 }
 
 // Creates a new dispatch action with the given support data entry
 
-void Script::setNewSupportData(uint16 hotspotId, uint16 index, uint16 v3) {
+void Script::setNewSupportData(uint16 index, uint16 hotspotId, uint16 v3) {
 	Resources &res = Resources::getReference();
 	uint16 dataId = res.getCharOffset(index);
 	CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
