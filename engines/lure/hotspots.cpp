@@ -820,6 +820,23 @@ void Hotspot::handleTalkDialog() {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Talk countdown = %d", _data->talkCountdown);
 
 	if (_data->talkCountdown == CONVERSE_COUNTDOWN_SIZE) {
+		// Check if there's already an active dialog - if so, wait until it's finished
+		if (room.isDialogActive() && (res.getTalkingCharacter() != _hotspotId)) {
+			++_data->talkCountdown;
+			if (delayCtr() > 0)
+				setDelayCtr(delayCtr() + 2);
+
+			if ((_data->talkDestCharacterId != 0) && (_data->talkDestCharacterId != NOONE_ID)) {
+				Hotspot *destCharacter = res.getActiveHotspot(_data->talkDestCharacterId);
+				if (destCharacter->resource()->talkCountdown > CONVERSE_COUNTDOWN_SIZE) {
+					destCharacter->resource()->talkCountdown += 2;
+					if (destCharacter->delayCtr() > 0)
+						destCharacter->setDelayCtr(destCharacter->delayCtr() + 2);
+				}
+			}
+			return;	
+		}
+
 		// Time to set up the dialog for the character
 		--_data->talkCountdown;
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Talk dialog opening");
@@ -890,15 +907,6 @@ void Hotspot::startTalkDialog() {
 
 	if (room.roomNumber() != roomNumber())
 		return;
-
-	if (room.isDialogActive()) {
-		// There's already an active dialog, so need to wait until it's finished
-		++_data->talkCountdown;
-		if (delayCtr() > 0)
-			setDelayCtr(delayCtr() + 1);
-
-		return;	
-	}
 
 	room.setTalkDialog(hotspotId(), _data->talkDestCharacterId, _data->useHotspotId, 
 		_data->talkMessageId);
@@ -3420,6 +3428,8 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 
 	case TALK_RESPONSE_WAIT:
 		// Wait until the character's response has finished being displayed
+		h.handleTalkDialog();
+
 		charHotspot = res.getActiveHotspot(talkDestCharacter);
 		assert(charHotspot);
 		debugC(ERROR_DETAILED, kLureDebugAnimations, "Player talk dialog countdown %d", 
