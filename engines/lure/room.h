@@ -118,6 +118,11 @@ public:
 	TalkDialog *talkDialog() { return _talkDialog; }
 	void setCursorState(CursorState state) { _cursorState = state; }
 	bool isDialogActive() { return _talkDialog != NULL; }
+	bool isDialogShowing() {
+		Resources &res = Resources::getReference();
+		Hotspot *talkCharacter = res.getActiveHotspot(res.getTalkingCharacter());
+		return isDialogActive() && (talkCharacter != NULL) && (talkCharacter->roomNumber() == _roomNumber);
+	}
 	bool checkInTalkDialog();
 	char *statusLine() { return _statusLine; }
 	void saveToStream(Common::WriteStream *stream);

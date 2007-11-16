@@ -3265,7 +3265,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 		assert(talkDestCharacter != 0);
 
 		// Make sure any other dialog is finished before we start talking
-		if (room.isDialogActive())
+		if (room.isDialogShowing())
 			return;
 
 		// Fall through to TALK_START
