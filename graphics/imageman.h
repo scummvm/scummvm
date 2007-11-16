@@ -111,7 +111,7 @@ private:
 
 } // end of namespace Graphics
 
-/** Shortcut for accessing the font manager. */
+/** Shortcut for accessing the image manager. */
 #define ImageMan		(Graphics::ImageManager::instance())
 
 #endif
