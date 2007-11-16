@@ -41,7 +41,13 @@ class AudioStream;
  * necessary for playback. Currently this function only supports uncompressed
  * raw PCM data as well as IMA ADPCM.
  */
-extern bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType = 0, int *blockAlign = 0);
+extern bool loadWAVFromStream(
+	Common::SeekableReadStream &stream,
+	int &size,
+	int &rate,
+	byte &flags,
+	uint16 *wavType = 0,
+	int *blockAlign = 0);
 
 /**
  * Try to load a WAVE from the given seekable stream and create an AudioStream

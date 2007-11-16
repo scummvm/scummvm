@@ -37,6 +37,7 @@ namespace Audio {
 class ADPCMInputStream : public AudioStream {
 private:
 	Common::SeekableReadStream *_stream;
+	bool _disposeAfterUse;
 	uint32 _endpos;
 	int _channels;
 	typesADPCM _type;
@@ -69,8 +70,8 @@ private:
 	int16 decodeMS(ADPCMChannelStatus *c, byte);
 
 public:
-	ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int rate, int channels = 2, uint32 blockAlign = 0);
-	~ADPCMInputStream() {}
+	ADPCMInputStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels = 2, uint32 blockAlign = 0);
+	~ADPCMInputStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	int readBufferOKI(int16 *buffer, const int numSamples);
@@ -90,8 +91,8 @@ public:
 // In addition, also MS IMA ADPCM is supported. See
 //   <http://wiki.multimedia.cx/index.php?title=Microsoft_IMA_ADPCM>.
 
-ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign)
-	: _stream(stream), _channels(channels), _type(type), _blockAlign(blockAlign), _rate(rate) {
+ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign)
+	: _stream(stream), _disposeAfterUse(disposeAfterUse), _channels(channels), _type(type), _blockAlign(blockAlign), _rate(rate) {
 
 	_status.last = 0;
 	_status.stepIndex = 0;
@@ -104,6 +105,11 @@ ADPCMInputStream::ADPCMInputStream(Common::SeekableReadStream *stream, uint32 si
 		error("ADPCMInputStream(): blockAlign isn't specifiled for MS IMA ADPCM");
 	if (type == kADPCMMS && blockAlign == 0)
 		error("ADPCMInputStream(): blockAlign isn't specifiled for MS ADPCM");
+}
+
+ADPCMInputStream::~ADPCMInputStream() {
+	if (_disposeAfterUse)
+		delete _stream;
 }
 
 int ADPCMInputStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -355,8 +361,8 @@ int16 ADPCMInputStream::decodeMSIMA(byte code) {
 	return samp;
 }
 
-AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
-	return new ADPCMInputStream(stream, size, type, rate, channels, blockAlign);
+AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 size, typesADPCM type, int rate, int channels, uint32 blockAlign) {
+	return new ADPCMInputStream(stream, disposeAfterUse, size, type, rate, channels, blockAlign);
 }
 
 } // End of namespace Audio

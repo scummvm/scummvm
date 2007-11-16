@@ -741,7 +741,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 		flags |= Audio::Mixer::FLAG_LOOP;
 
 	if (compType == 2) {
-		Audio::AudioStream *sndStream = Audio::makeADPCMStream(&stream, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+		Audio::AudioStream *sndStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 		buffer = (byte *)malloc(size * 4);
 		size = sndStream->readBuffer((int16*)buffer, size * 2);
 		size *= 2; // 16bits.
