@@ -217,63 +217,58 @@ int Parallaction_ns::guiNewGame() {
 	return SELECT_CHARACTER;
 }
 
+static Common::Rect _dosLanguageSelectBlocks[4] = {
+	Common::Rect(  80, 110, 128, 180 ),	// Italian
+	Common::Rect( 129,  85, 177, 155 ),	// French
+	Common::Rect( 178,  60, 226, 130 ),	// English
+	Common::Rect( 227,  35, 275, 105 )	// German
+};
+
+static Common::Rect _amigaLanguageSelectBlocks[4] = {
+	Common::Rect(  -1,  -1,  -1,  -1 ),	// Italian: not supported by Amiga multi-lingual version
+	Common::Rect( 129,  85, 177, 155 ),	// French
+	Common::Rect( 178,  60, 226, 130 ),	// English
+	Common::Rect( 227,  35, 275, 105 )	// German
+};
+
+
 uint16 Parallaction_ns::guiChooseLanguage() {
+
+	Common::Rect *blocks;
 
 	if (getPlatform() == Common::kPlatformAmiga) {
 		if (!(getFeatures() & GF_LANG_MULT)) {
-			if (getFeatures() & GF_DEMO)
+			if (getFeatures() & GF_DEMO) {
 				return 1;		// Amiga Demo supports English
-			else
+			} else {
 				return 0;		// The only other non multi-lingual version just supports Italian
+			}
 		}
+
+		blocks = _amigaLanguageSelectBlocks;
+	} else {
+		blocks = _dosLanguageSelectBlocks;
 	}
 
 	// user can choose language in dos version
 	showSlide("lingua");
 	_gfx->displayString(60, 30, "SELECT LANGUAGE", 1);
-
 	setArrowCursor();
 
-	do {
-		updateInput();
-
-		if (_mouseButtons == kMouseLeftUp) {
-			for (uint16 _si = 0; _si < 4; _si++) {
-
-				if (80 + _si * 49 >= _mousePos.x) continue;
-				if (110 - _si * 25 >= _mousePos.y) continue;
-
-				if (128 + _si * 49 <= _mousePos.x) continue;
-				if (180 - _si * 25 <= _mousePos.y) continue;
-
-				beep();
-
-				switch (_si) {
-				case 0:
-					if (!(getFeatures() & GF_LANG_IT))
-						continue;
-				case 1:
-					if (!(getFeatures() & GF_LANG_FR))
-						continue;
-				case 2:
-					if (!(getFeatures() & GF_LANG_EN))
-						continue;
-				case 3:
-					if (!(getFeatures() & GF_LANG_DE))
-						continue;
-				}
-
-				return _si;
+	int selection = -1;
+	while (selection == -1) {
+		waitUntilLeftClick();
+		for (uint16 i = 0; i < 4; i++) {
+			if (blocks[i].contains(_mousePos)) {
+				selection = i;
+				break;
 			}
 		}
+	}
 
-		_gfx->updateScreen();
-		g_system->delayMillis(30);
+	beep();
 
-	} while (true);
-
-	// never reached !!!
-	return 0;
+	return selection;
 }
 
 
