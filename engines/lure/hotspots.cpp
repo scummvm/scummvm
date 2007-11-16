@@ -526,7 +526,7 @@ void Hotspot::endAction() {
 }
 
 void Hotspot::setDirection(Direction dir) {
-	if (_numFrames == 0) return;
+	if ((_numFrames == 0) || (_direction == dir)) return;
 	uint8 newFrameNumber = 0;
 
 	switch (dir) {
