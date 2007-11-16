@@ -3725,7 +3725,7 @@ void HotspotTickHandlers::goewinShopAnimHandler(Hotspot &h) {
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
 
-	h.setDirection(UP);
+	h.resource()->actionHotspotId = 0;
 	h.setCharacterMode(CHARMODE_WAIT_FOR_INTERACT);
 
 	h.handleTalkDialog();
