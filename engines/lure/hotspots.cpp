@@ -804,8 +804,8 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 		Dialog::show(idVal, itemName, this->getName());
 		
 	} else if (idVal != 0) {
-		// Handle message as a talking dialog (the character talking to themselves)
-		converse(destCharacterId, idVal);
+		// Handle message as a talking dialog 
+		converse(destCharacterId, idVal, true, false);
 	}
 }
 
