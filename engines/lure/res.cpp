@@ -486,15 +486,10 @@ void Resources::setTalkingCharacter(uint16 id) {
 		deactivateHotspot(_talkingCharacter, true);
 		HotspotData *charHotspot = res.getHotspot(_talkingCharacter);
 		assert(charHotspot);
-		charHotspot->talkCountdown = 0;
-/*
-		if (charHotspot->talkDestCharacterId != 0) {
-			HotspotData *destHotspot = res.getHotspot(charHotspot->talkDestCharacterId);
-			if (destHotspot != NULL)
-				destHotspot->talkDestCharacterId = 0;
-		}
-*/
 		charHotspot->talkDestCharacterId = 0;
+
+		if (_talkingCharacter != id) 
+			charHotspot->talkCountdown = 0;
 	}
 
 	_talkingCharacter = id; 
