@@ -372,7 +372,7 @@ void Hotspot::setAnimation(HotspotAnimData *newRecord) {
 		}
 
 		if ((newRecord->flags & PIXELFLAG_HAS_TABLE) != 0) 
-			frameOffset += (*++offsetPtr >> 1);
+			frameOffset += (READ_LE_UINT16(++offsetPtr) >> 1);
 	}
 
 	delete src;
