@@ -163,6 +163,9 @@ void Surface::frameRect(const Common::Rect &r, uint32 color) {
 // to support 16bpp (or marked as just working for 8bpp
 // surfaces).
 void Surface::move(int dx, int dy, int height) {
+	// This function currently just works with 8bpp surfaces
+	assert(bytesPerPixel == 1);
+
 	// Short circuit check - do we have to do anything anyway?
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;
