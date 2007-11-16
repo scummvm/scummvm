@@ -88,13 +88,13 @@ const char *loadGameMsg[] = {
 #define PASSWORD_LEN	6
 
 
-static uint16 _amigaKeys[][PASSWORD_LEN] = {
+static const uint16 _amigaKeys[][PASSWORD_LEN] = {
 	{ 1, 3 ,7, 2, 4, 6 },		// dough
 	{ 5, 3, 6, 2, 2, 7 },		// dino
 	{ 0, 3, 6, 2, 2, 6 }		// donna
 };
 
-static uint16 _pcKeys[][PASSWORD_LEN] = {
+static const uint16 _pcKeys[][PASSWORD_LEN] = {
 	{ 1, 7 ,7, 2, 2, 6 },		// dough
 	{ 5, 3, 6, 1, 4, 7 },		// dino
 	{ 0, 2, 8, 5, 5, 1 }		// donna
@@ -217,14 +217,14 @@ int Parallaction_ns::guiNewGame() {
 	return SELECT_CHARACTER;
 }
 
-static Common::Rect _dosLanguageSelectBlocks[4] = {
+static const Common::Rect _dosLanguageSelectBlocks[4] = {
 	Common::Rect(  80, 110, 128, 180 ),	// Italian
 	Common::Rect( 129,  85, 177, 155 ),	// French
 	Common::Rect( 178,  60, 226, 130 ),	// English
 	Common::Rect( 227,  35, 275, 105 )	// German
 };
 
-static Common::Rect _amigaLanguageSelectBlocks[4] = {
+static const Common::Rect _amigaLanguageSelectBlocks[4] = {
 	Common::Rect(  -1,  -1,  -1,  -1 ),	// Italian: not supported by Amiga multi-lingual version
 	Common::Rect( 129,  85, 177, 155 ),	// French
 	Common::Rect( 178,  60, 226, 130 ),	// English
@@ -234,7 +234,7 @@ static Common::Rect _amigaLanguageSelectBlocks[4] = {
 
 uint16 Parallaction_ns::guiChooseLanguage() {
 
-	Common::Rect *blocks;
+	const Common::Rect *blocks;
 
 	if (getPlatform() == Common::kPlatformAmiga) {
 		if (!(getFeatures() & GF_LANG_MULT)) {
@@ -309,7 +309,7 @@ uint16 Parallaction_ns::guiSelectGame() {
 	return _si ? LOAD_GAME : NEW_GAME;
 }
 
-static Common::Rect codeSelectBlocks[9] = {
+static const Common::Rect codeSelectBlocks[9] = {
 	Common::Rect( 111, 129, 127, 153 ),		// na
 	Common::Rect( 128, 120, 144, 144 ),		// wa
 	Common::Rect( 145, 111, 161, 135 ),		// ra
@@ -321,7 +321,7 @@ static Common::Rect codeSelectBlocks[9] = {
 	Common::Rect( 247, 57, 263, 81 )		// ka
 };
 
-static Common::Rect codeTrueBlocks[9] = {
+static const Common::Rect codeTrueBlocks[9] = {
 	Common::Rect( 112, 130, 128, 154 ),
 	Common::Rect( 129, 121, 145, 145 ),
 	Common::Rect( 146, 112, 162, 136 ),
@@ -377,7 +377,7 @@ int Parallaction_ns::guiSelectCharacter() {
 	showSlide("password");	// loads background into kBitBack buffer
 
 
-	uint16 (*keys)[PASSWORD_LEN] = (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;
+	const uint16 (*keys)[PASSWORD_LEN] = (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;
 	int character = -1;
 	uint16 _di = 0;
 
