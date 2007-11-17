@@ -142,6 +142,7 @@ void Game::execute() {
 		
 		if ((_state & GS_RESTART) != 0) {
 			res.reset();
+			Fights.reset();
 			if (!initialRestart) room.reset();
 
 			setState(0);

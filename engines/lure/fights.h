@@ -67,6 +67,7 @@ private:
 	MemoryBlock *_fightData;
 	Common::RandomSource _rnd;
 	uint8 _mouseFlags;
+	FighterRecord _fighterList[3];
 
 	FighterRecord &getDetails(uint16 hotspotId);
 	uint16 fetchFighterDistance(FighterRecord &f1, FighterRecord &f2);
@@ -99,6 +100,7 @@ public:
 	void fightLoop();
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);
+	void reset();
 
 	void fighterAnimHandler(Hotspot &h);
 	void playerAnimHandler(Hotspot &h);

@@ -533,18 +533,22 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	_roomData = res.getRoom(newRoomNumber);
 	if (!_roomData)
 		error("Tried to change to non-existant room: %d", newRoomNumber);
-	bool leaveFlag = (newRoomNumber != _roomNumber) && (_roomNumber != 0);
+
+	bool fadeFlag = (newRoomNumber != _roomNumber) && (_roomNumber != 0);
+	bool leaveFlag = _roomNumber != 999;
 
 	_roomNumber = _roomData->roomNumber;
 	_descId = _roomData->descId;
 
-	if (leaveFlag) {
+	if (fadeFlag) {
 		// Fade out all the colours except the high index 0FFh, which is used to show the
 		// disk cursor as a room changes
 		_screen.paletteFadeOut(GAME_COLOURS - 1);
-		leaveRoom();
 
-		Sound.removeSounds();
+		if (leaveFlag) {
+			leaveRoom();
+			Sound.removeSounds();
+		}
 	}
 
 	_screen.empty();

@@ -80,6 +80,7 @@ public:
 	bool &preloadFlag() { return _preloadFlag; }
 	bool fastTextFlag() { return _fastTextFlag; }
 	bool soundFlag() { return _soundFlag; }
+	Debugger &debugger() { return *_debugger; }
 
 	// Menu item support methods
 	void doDebugMenu();

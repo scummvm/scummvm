@@ -30,7 +30,7 @@
 namespace Lure {
 
 // Three records containing initial states for player, pig, and Skorl
-FighterRecord fighterList[3] = {
+const FighterRecord initialFighterList[3] = {
 	{0x23C, 0x440, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
 	{0, 0x441, 0x1092, 0, 3, 0, 0, 0, 0xB94, 8, 0xA34, 0x8D4, 0xD06, 0,
 	0, 0, 0, 0, 0xDDC, PLAYER_ID},
@@ -44,6 +44,7 @@ FightsManager::FightsManager() {
 	int_fights = this;
 	_fightData = NULL;
 	_mouseFlags = 0;
+	reset();
 }
 
 FightsManager::~FightsManager() {	
@@ -57,9 +58,9 @@ FightsManager &FightsManager::getReference() {
 }
 
 FighterRecord &FightsManager::getDetails(uint16 hotspotId) {
-	if (hotspotId == PLAYER_ID) return fighterList[0];
-	else if (hotspotId == PIG_ID) return fighterList[1];
-	else if (hotspotId == SKORL_FIGHTER_ID) return fighterList[2];
+	if (hotspotId == PLAYER_ID) return _fighterList[0];
+	else if (hotspotId == PIG_ID) return _fighterList[1];
+	else if (hotspotId == SKORL_FIGHTER_ID) return _fighterList[2];
 	error("Unknown NPC %d attempted to fight", hotspotId);
 }
 
@@ -108,6 +109,7 @@ bool FightsManager::isFighting() {
 
 void FightsManager::fightLoop() {
 	Resources &res = Resources::getReference();
+	Game &game = Game::getReference();
 	Events &events = Events::getReference();
 	FighterRecord &playerFight = getDetails(PLAYER_ID);
 
@@ -120,13 +122,16 @@ void FightsManager::fightLoop() {
 		res.delayList().tick();
 		Screen::getReference().update();
 
+		if (game.debugger().isAttached())
+			game.debugger().onFrame();
+
 		g_system->delayMillis(20);		
 	}
 }
 
 void FightsManager::saveToStream(Common::WriteStream *stream) {
 	for (int fighterCtr = 0; fighterCtr < 3; ++fighterCtr) {
-		FighterRecord &rec = fighterList[fighterCtr];
+		FighterRecord &rec = _fighterList[fighterCtr];
 
 		stream->writeUint16LE(rec.fwseq_no);
 		stream->writeUint16LE(rec.fwseq_ad);
@@ -138,8 +143,10 @@ void FightsManager::saveToStream(Common::WriteStream *stream) {
 }
 
 void FightsManager::loadFromStream(Common::ReadStream *stream) {
+	reset();
+
 	for (int fighterCtr = 0; fighterCtr < 3; ++fighterCtr) {
-		FighterRecord &rec = fighterList[fighterCtr];
+		FighterRecord &rec = _fighterList[fighterCtr];
 
 		rec.fwseq_no = stream->readUint16LE();
 		rec.fwseq_ad = stream->readUint16LE();
@@ -148,6 +155,12 @@ void FightsManager::loadFromStream(Common::ReadStream *stream) {
 		rec.fwmove_number = stream->readUint16LE();
 		rec.fwhits = stream->readUint16LE();
 	}
+}
+
+void FightsManager::reset() {
+	_fighterList[0] = initialFighterList[0];
+	_fighterList[1] = initialFighterList[1];
+	_fighterList[2] = initialFighterList[2];
 }
 
 const CursorType moveList[] = {CURSOR_LEFT_ARROW, CURSOR_FIGHT_UPPER, 
@@ -165,6 +178,7 @@ const KeyMapping keyList[] = {
 	{Common::KEYCODE_INVALID, 0}};
 
 void FightsManager::checkEvents() {
+	Game &game = Game::getReference();
 	Events &events = Events::getReference();
 	if (!events.pollEvent()) return;
 	FighterRecord &rec = getDetails(PLAYER_ID);
@@ -177,6 +191,12 @@ void FightsManager::checkEvents() {
 		switch (events.event().kbd.keycode) {
 		case Common::KEYCODE_ESCAPE:
 			events.quitFlag = true;
+			break;
+
+		case Common::KEYCODE_d:
+			if (events.event().kbd.flags == Common::KBD_CTRL)
+				// Activate the debugger
+				game.debugger().attach();
 			break;
 
 		default:
@@ -326,10 +346,13 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 			if (fighter.fwweapon != 0) {
 				Hotspot *weaponHotspot = res.getActiveHotspot(fighter.fwweapon);
 				assert(weaponHotspot);
-				weaponHotspot->setFrameNumber(getWord(moveOffset + 4));
-				weaponHotspot->setPosition(weaponHotspot->x() +
-					(int16)getWord(moveOffset + 6),
-					weaponHotspot->y() + getWord(moveOffset + 8));
+				
+				uint16 newFrameNumber = getWord(moveOffset + 4);
+				int16 xChange = (int16)getWord(moveOffset + 6);
+				int16 yChange = (int16)getWord(moveOffset + 8);
+
+				weaponHotspot->setFrameNumber(newFrameNumber);
+				weaponHotspot->setPosition(h.x() + xChange, h.y() + yChange);
 			}
 
 			moveOffset += 5 * sizeof(uint16);
