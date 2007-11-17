@@ -236,7 +236,7 @@ int Parallaction_br::showMenu() {
 		if ((_mouseButtons == kMouseLeftUp) && selectedItem >= 0)
 			break;
 
-		updateInput();
+		readInput();
 
 		if ((_mousePos.x > MENUITEMS_X) && (_mousePos.x < (MENUITEMS_X+MENUITEM_WIDTH)) && (_mousePos.y > MENUITEMS_Y)) {
 			selectedItem = (_mousePos.y - MENUITEMS_Y) / MENUITEM_HEIGHT;

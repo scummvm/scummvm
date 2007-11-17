@@ -371,7 +371,8 @@ public:
 	virtual bool loadGame() = 0;
 	virtual bool saveGame() = 0;
 
-	uint16 		updateInput();
+	uint16 		readInput();
+	void		updateInput();
 
 	void 		waitTime(uint32 t);
 
@@ -541,6 +542,8 @@ protected:		// members
 	void		resetTimer();
 
 	InputData 	*translateInput();
+	bool 		translateGameInput();
+	bool 		translateInventoryInput();
 	void		processInput(InputData*);
 
 

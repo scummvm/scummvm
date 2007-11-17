@@ -197,7 +197,7 @@ int Parallaction::init() {
 // loops which could possibly be merged into this one with some effort in changing
 // caller code, i.e. adding condition checks.
 //
-uint16 Parallaction::updateInput() {
+uint16 Parallaction::readInput() {
 
 	Common::Event e;
 	uint16 KeyDown = 0;
@@ -257,11 +257,11 @@ uint16 Parallaction::updateInput() {
 
 }
 
-// FIXME: see comment for updateInput()
+// FIXME: see comment for readInput()
 void waitUntilLeftClick() {
 
 	do {
-		_vm->updateInput();
+		_vm->readInput();
 		_vm->_gfx->updateScreen();
 		g_system->delayMillis(30);
 	} while (_mouseButtons != kMouseLeftUp);
@@ -273,11 +273,7 @@ void waitUntilLeftClick() {
 void Parallaction::runGame() {
 
 	while ((_engineFlags & kEngineQuit) == 0) {
-		_keyDown = updateInput();
-		InputData *v8 = translateInput();
-		if (v8) {
-			processInput(v8);
-		}
+		updateInput();
 
 		if (_activeZone) {
 			Zone *z = _activeZone;	// speak Zone or sound
@@ -417,7 +413,15 @@ void Parallaction::processInput(InputData *data) {
 
 
 
-Parallaction::InputData *Parallaction::translateInput() {
+
+
+
+
+
+
+void Parallaction::updateInput() {
+
+	_keyDown = readInput();
 
 	debugC(3, kDebugInput, "translateInput: input flags (%i, %i, %i, %i)",
 		!_mouseHidden,
@@ -431,99 +435,114 @@ Parallaction::InputData *Parallaction::translateInput() {
 		(_engineFlags & kEngineWalking) ||
 		(_engineFlags & kEngineChangeLocation)) {
 
-		return NULL;
+		return;
 	}
-
 
 	if (_keyDown == kEvQuitGame) {
 		_input._event = kEvQuitGame;
-		return &_input;
-	}
-
+	} else
 	if (_keyDown == kEvSaveGame) {
 		_input._event = kEvSaveGame;
-		return &_input;
-	}
-
+	} else
 	if (_keyDown == kEvLoadGame) {
 		_input._event = kEvLoadGame;
-		return &_input;
+	} else {
+		_input._mousePos = _mousePos;
+		_input._event = kEvNone;
+		if (!translateGameInput()) {
+			translateInventoryInput();
+		}
 	}
 
-	_input._mousePos = _mousePos;
+	if (_input._event != kEvNone)
+		processInput(&_input);
 
-	if (((_engineFlags & kEnginePauseJobs) == 0) && ((_engineFlags & kEngineInventory) == 0)) {
+	return;
+}
 
-		if (_actionAfterWalk == true) {
-			// if walking is over, then take programmed action
+bool Parallaction::translateGameInput() {
+
+	if ((_engineFlags & kEnginePauseJobs) || (_engineFlags & kEngineInventory)) {
+		return false;
+	}
+
+	if (_actionAfterWalk) {
+		// if walking is over, then take programmed action
+		_input._event = kEvAction;
+		_actionAfterWalk = false;
+		return true;
+	}
+
+	if (_mouseButtons == kMouseRightDown) {
+		// right button down shows inventory
+
+		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) && (_activeItem._id != 0)) {
+			_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
+			_engineFlags |= kEngineDragging;
+		}
+
+		_input._event = kEvOpenInventory;
+		_transCurrentHoverItem = -1;
+		return true;
+	}
+
+	// test if mouse is hovering on an interactive zone for the currently selected inventory item
+	Zone *z = hitZone(_activeItem._id, _mousePos.x, _mousePos.y);
+
+	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((z == NULL) || ((z->_type & 0xFFFF) != kZoneCommand))) {
+		_input._event = kEvWalk;
+		return true;
+	}
+
+	if ((z != _hoverZone) && (_hoverZone != NULL)) {
+		_hoverZone = NULL;
+		_input._event = kEvExitZone;
+		return true;
+	}
+
+	if (z == NULL) {
+		_input._event = kEvNone;
+		return true;
+	}
+
+	if ((_hoverZone == NULL) && ((z->_flags & kFlagsNoName) == 0)) {
+		_hoverZone = z;
+		_input._event = kEvEnterZone;
+		_input._label = &z->_label;
+		return true;
+	}
+
+	if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || ((z->_type & 0xFFFF) == kZoneCommand))) {
+
+		_input._zone = z;
+		if (z->_flags & kFlagsNoWalk) {
+			// character doesn't need to walk to take specified action
 			_input._event = kEvAction;
-			_actionAfterWalk = false;
-			return &_input;
-		}
 
-		Zone *z = hitZone(_activeItem._id, _mousePos.x, _mousePos.y);
-
-		if (_mouseButtons == kMouseRightDown) {
-			// right button down shows inventory
-
-			if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) && (_activeItem._id != 0)) {
-				_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
-				_engineFlags |= kEngineDragging;
-			}
-
-			_input._event = kEvOpenInventory;
-			_transCurrentHoverItem = -1;
-			return &_input;
-		}
-
-		if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((z == NULL) || ((z->_type & 0xFFFF) != kZoneCommand))) {
+		} else {
+			// action delayed: if Zone defined a moveto position the character is programmed to move there,
+			// else it will move to the mouse position
 			_input._event = kEvWalk;
-			return &_input;
-		}
-
-		if ((z != _hoverZone) && (_hoverZone != NULL)) {
-			_hoverZone = NULL;
-			_input._event = kEvExitZone;
-//			_input._data= &z->_name;
-			return &_input;
-		}
-
-		if (z == NULL) {
-			return NULL;
-		}
-
-		if ((_hoverZone == NULL) && ((z->_flags & kFlagsNoName) == 0)) {
-			_hoverZone = z;
-			_input._event = kEvEnterZone;
-			_input._label = &z->_label;
-			return &_input;
-		}
-
-		if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || ((z->_type & 0xFFFF) == kZoneCommand))) {
-
-			_input._zone = z;
-			if (z->_flags & kFlagsNoWalk) {
-				// character doesn't need to walk to take specified action
-				_input._event = kEvAction;
-
-			} else {
-				// action delayed: if Zone defined a moveto position the character is programmed to move there,
-				// else it will move to the mouse position
-				_input._event = kEvWalk;
-				_actionAfterWalk = true;
-				if (z->_moveTo.y != 0) {
-					_input._mousePos = z->_moveTo;
-				}
+			_actionAfterWalk = true;
+			if (z->_moveTo.y != 0) {
+				_input._mousePos = z->_moveTo;
 			}
-
-			beep();
-			setArrowCursor();
-			return &_input;
 		}
 
+		beep();
+		setArrowCursor();
+		return true;
 	}
 
-	if ((_engineFlags & kEngineInventory) == 0) return NULL;
+	return true;
+
+}
+
+bool Parallaction::translateInventoryInput() {
+
+	if ((_engineFlags & kEngineInventory) == 0) {
+		return false;
+	}
 
 	// in inventory
 	int16 _si = getHoverInventoryItem(_mousePos.x, _mousePos.y);
@@ -535,7 +554,9 @@ Parallaction::InputData *Parallaction::translateInput() {
 		_input._inventoryIndex = getHoverInventoryItem(_mousePos.x, _mousePos.y);
 		highlightInventoryItem(_transCurrentHoverItem, 12); 		// disable
 
-		if ((_engineFlags & kEngineDragging) == 0) return &_input;
+		if ((_engineFlags & kEngineDragging) == 0) {
+			return true;
+		}
 
 		_engineFlags &= ~kEngineDragging;
 		Zone *z = hitZone(kZoneMerge, _activeItem._index, getInventoryItemIndex(_input._inventoryIndex));
@@ -547,17 +568,21 @@ Parallaction::InputData *Parallaction::translateInput() {
 			runCommands(z->_commands);
 		}
 
-		return &_input;
+		return true;
 	}
 
-	if (_si == _transCurrentHoverItem) return NULL;
+	if (_si == _transCurrentHoverItem) {
+		_input._event = kEvNone;
+		return true;
+	}
 
 	_transCurrentHoverItem = _si;
 	_input._event = kEvHoverInventory;
 	_input._inventoryIndex = _si;
-	return &_input;
+	return true;
 
 }
+
 
 uint32 Parallaction::getElapsedTime() {
 	return g_system->getMillis() - _baseTime;

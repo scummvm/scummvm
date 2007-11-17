@@ -122,7 +122,7 @@ uint16 DialogueManager::askPassword() {
 		Common::Event e;
 		while (e.kbd.ascii != Common::KEYCODE_RETURN && passwordLen < MAX_PASSWORD_LENGTH) {
 
-			// FIXME: see comment for updateInput()
+			// FIXME: see comment for readInput()
 			if (!g_system->getEventManager()->pollEvent(e)) continue;
 			if (e.type == Common::EVENT_QUIT) {
 				// TODO: don't quit() here, just have caller routines to check
@@ -311,7 +311,7 @@ int16 DialogueManager::selectAnswer() {
 	_mouseButtons = kMouseNone;
 	while (_mouseButtons != kMouseLeftUp) {
 
-		_vm->updateInput();
+		_vm->readInput();
 		_si = getHoverAnswer(_vm->_mousePos.x, _vm->_mousePos.y);
 
 		if (_si != v2) {

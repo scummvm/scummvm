@@ -511,7 +511,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 		for (uint16 v2 = 0; v2 < 100; v2++) {
 			_mouseButtons = kMouseNone;
-			updateInput();
+			readInput();
 			if (_mouseButtons == kMouseLeftUp)
 				break;
 

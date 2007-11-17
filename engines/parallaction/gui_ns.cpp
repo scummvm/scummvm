@@ -205,7 +205,7 @@ int Parallaction_ns::guiNewGame() {
 
 	_mouseButtons = kMouseNone;
 	do {
-		updateInput();
+		readInput();
 	} while (_mouseButtons != kMouseLeftUp && _mouseButtons != kMouseRightUp);
 
 	showCursor(true);
@@ -284,7 +284,7 @@ uint16 Parallaction_ns::guiSelectGame() {
 	_mouseButtons = kMouseNone;
 	while (_mouseButtons != kMouseLeftUp) {
 
-		updateInput();
+		readInput();
 
 		_si = (_mousePos.x > 160) ? 1 : 0;
 
