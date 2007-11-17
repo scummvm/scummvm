@@ -115,9 +115,7 @@ void Resources::reloadData() {
 	paths = d.getEntry(ROOM_PATHS_RESOURCE_ID);
 
 	offset = (uint16 *) mb->data();
-	for (ctr = 0; READ_LE_UINT16(offset) != 0xffff; ++ctr, ++offset) {
-		offsetVal = READ_LE_UINT16(offset);
-
+	while ((offsetVal = READ_LE_UINT16(offset++)) != 0xffff) {
 		if (offsetVal != 0) {
 			// Get room resource
 			RoomResource *rec = (RoomResource *) (mb->data() + offsetVal);
@@ -125,11 +123,12 @@ void Resources::reloadData() {
 			RoomData *newEntry = new RoomData(rec, paths);
 			_roomData.push_back(newEntry);
 
-			if (rec->numExits > 0) {
+			uint16 numExits = READ_LE_UINT16(&rec->numExits);
+			if (numExits > 0) {
 				RoomExitResource *exitRes = (RoomExitResource *)
 					(mb->data() + offsetVal + sizeof(RoomResource));
 
-				for (uint16 exitCtr = 0; exitCtr < rec->numExits; ++exitCtr, ++exitRes) {
+				for (uint16 exitCtr = 0; exitCtr < numExits; ++exitCtr, ++exitRes) {
 					RoomExitData *exit = new RoomExitData(exitRes);
 					newEntry->exits.push_back(exit);
 				}

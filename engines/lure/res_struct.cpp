@@ -113,14 +113,14 @@ RoomExitHotspotData::RoomExitHotspotData(RoomExitHotspotResource *rec) {
 //  Room exit class
 
 RoomExitData::RoomExitData(RoomExitResource *rec) {
-	xs = READ_LE_UINT16(&rec->xs); 
-	ys = READ_LE_UINT16(&rec->ys);
-	xe = READ_LE_UINT16(&rec->xe);
-	ye = READ_LE_UINT16(&rec->ye);
+	xs = READ_LE_INT16(&rec->xs); 
+	ys = READ_LE_INT16(&rec->ys);
+	xe = READ_LE_INT16(&rec->xe);
+	ye = READ_LE_INT16(&rec->ye);
 	sequenceOffset = READ_LE_UINT16(&rec->sequenceOffset);
 	roomNumber = rec->newRoom;
-	x = rec->newRoomX;
-	y = rec->newRoomY;
+	x = READ_LE_INT16(&rec->newRoomX);
+	y = READ_LE_INT16(&rec->newRoomY);
 
 	switch (rec->direction) {
 	case 0x80: 
