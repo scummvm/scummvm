@@ -26,7 +26,7 @@
 #ifndef CINE_UNPACK_H
 #define CINE_UNPACK_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 
 namespace Cine {

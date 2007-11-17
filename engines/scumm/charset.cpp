@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/charset.h"
 #include "scumm/scumm.h"
 #include "scumm/nut_renderer.h"
@@ -36,11 +36,11 @@ namespace Scumm {
 TODO:
 Right now our charset renderers directly access _textSurface, as well as the
 virtual screens of ScummEngine. Ideally, this would not be the case. Instead,
-ScummVM would simply pass the appropriate Surface to the resp. methods. 
+ScummVM would simply pass the appropriate Surface to the resp. methods.
 Of course it is not quite as simple, various flags and offsets have to
 be taken into account for that.
 
-The advantage will be cleaner coder (easier to debug, in particular), and a 
+The advantage will be cleaner coder (easier to debug, in particular), and a
 better separation of the various modules.
 */
 
@@ -74,7 +74,7 @@ void ScummEngine::loadCJKFont() {
 			break;
 		case Common::JA_JPN:
 			fontFile = (_game.id == GID_DIG) ? "kanji16.fnt" : "japanese.fnt";
-			numChar = 1024; //FIXME
+			numChar = 1024; //FIXME: sev needs japanese font files to clarify font size
 			break;
 		case Common::ZH_TWN:
 			if (_game.id == GID_CMI) {
@@ -89,7 +89,7 @@ void ScummEngine::loadCJKFont() {
 			debug(2, "Loading CJK Font");
 			_useCJKMode = true;
 			_textSurfaceMultiplier = 1; // No multiplication here
-			
+
 			switch (_language) {
 			case Common::KO_KOR:
 				fp.seek(2, SEEK_CUR);
@@ -203,7 +203,7 @@ static int SJIStoFMTChunk(int f, int s) { //converts sjis code to fmt font offse
 }
 
 byte *ScummEngine::get2byteCharPtr(int idx) {
-	switch (_language) {	
+	switch (_language) {
 	case Common::KO_KOR:
 		idx = ((idx % 256) - 0xb0) * 94 + (idx / 256) - 0xa1;
 		break;
@@ -394,7 +394,7 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 					continue;
 				}
 			}
-			
+
 			// Some localizations may override colors
 			// See credits in Chinese COMI
 			if (chr == '^' && pos == 1) {
@@ -1226,8 +1226,7 @@ int CharsetRendererV3::getCharWidth(byte chr) {
 	return spacing;
 }
 
-void CharsetRendererV3::setColor(byte color)
-{
+void CharsetRendererV3::setColor(byte color) {
 	bool useShadow = false;
 	_color = color;
 
@@ -1758,7 +1757,7 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 
 	int drawTop = _top;
 	if (ignoreCharsetMask) {
-		VirtScreen *vs = &_vm->virtscr[kMainVirtScreen];
+		VirtScreen *vs = &_vm->_virtscr[kMainVirtScreen];
 		s = *vs;
 		s.pixels = vs->getPixels(0, 0);
 	} else {

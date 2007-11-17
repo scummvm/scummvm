@@ -26,7 +26,7 @@
 #ifndef GOB_GOB_H
 #define GOB_GOB_H
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "common/savefile.h"
 
@@ -63,8 +63,8 @@ class Adlib;
 #define WRITE_VAR_UINT16(var, val)	WRITE_VARO_UINT16((var) << 2, (val))
 #define WRITE_VAR_UINT8(var, val)	WRITE_VARO_UINT8((var) << 2, (val))
 #define WRITE_VAR_STR(var, str)		WRITE_VARO_STR((var) << 2, (str))
-#define READ_VARO_UINT32(offs)		(*((uint32 *) VARP(offs)))
-#define READ_VARO_UINT16(offs)		(*((uint16 *) VARP(offs)))
+#define READ_VARO_UINT32(offs)		READ_UINT32(VARP(offs))
+#define READ_VARO_UINT16(offs)		READ_UINT16(VARP(offs))
 #define READ_VARO_UINT8(offs)		(*((uint8 *) VARP(offs)))
 #define READ_VAR_UINT32(var)		READ_VARO_UINT32((var) << 2)
 #define READ_VAR_UINT16(var)		READ_VARO_UINT16((var) << 2)
@@ -167,6 +167,8 @@ private:
 	friend class Ptr;
 };
 
+struct GOBGameDescription;
+
 class GobEngine : public Engine {
 protected:
 	GobEngine *_vm;
@@ -176,8 +178,6 @@ protected:
 
 	bool initGameParts();
 	void deinitGameParts();
-
-	bool detectGame();
 
 public:
 	static const Common::Language _gobToScummVMLang[];
@@ -237,6 +237,8 @@ public:
 
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();
+
+	void initGame(const GOBGameDescription *gd);
 };
 
 } // End of namespace Gob

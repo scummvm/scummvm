@@ -88,6 +88,11 @@ KyraEngine_v3::~KyraEngine_v3() {
 }
 
 int KyraEngine_v3::init() {
+	_screen = new Screen_v2(this, _system);
+	assert(_screen);
+	if (!_screen->init())
+		error("_screen->init() failed");
+
 	KyraEngine::init();
 
 	gui_initMainMenu();
@@ -690,6 +695,13 @@ bool KyraEngine_v3::loadLanguageFile(const char *file, uint8 *&buffer) {
 	buffer = _res->fileData(appendLanguage(nBuf, _lang, sizeof(nBuf)), &size);
 
 	return size != 0 && buffer != 0;
+}
+
+Movie *KyraEngine_v3::createWSAMovie() {
+	WSAMovieV2 *movie = new WSAMovieV2(this);
+	assert(movie);
+	movie->flagOldOff(true);
+	return movie;
 }
 
 } // end of namespace Kyra

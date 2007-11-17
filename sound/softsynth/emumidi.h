@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"

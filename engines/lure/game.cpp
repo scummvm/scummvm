@@ -23,6 +23,7 @@
  *
  */
 
+#include "lure/lure.h"
 #include "lure/game.h"
 #include "lure/animseq.h"
 #include "lure/fights.h"
@@ -33,6 +34,7 @@
 #include "lure/strings.h"
 
 #include "common/config-manager.h"
+#include "common/system.h"
 
 namespace Lure {
 
@@ -45,7 +47,7 @@ Game &Game::getReference() {
 Game::Game() {
 	int_game = this;
 	_debugger = new Debugger();
-	_slowSpeedFlag = true;
+	_fastTextFlag = false;
 	_preloadFlag = false;
 	_soundFlag = true;
 }
@@ -133,23 +135,23 @@ void Game::execute() {
 	screen.setPaletteEmpty();
 
 	// Flag for starting game
-	setState(GS_RESTART);       
+	setState(GS_RESTART); 
+	bool initialRestart = true;
 
 	while (!events.quitFlag) {
 		
 		if ((_state & GS_RESTART) != 0) {
 			res.reset();
+			Fights.reset();
+			if (!initialRestart) room.reset();
 
 			setState(0);
 			Script::execute(STARTUP_SCRIPT);
 
-			int bootParam = ConfMan.getInt("boot_param");
+			int bootParam = initialRestart ? ConfMan.getInt("boot_param") : 0;
 			handleBootParam(bootParam);
-if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
+			initialRestart = false;
 		}
-
-		// Set the player direction
-//		res.getActiveHotspot(PLAYER_ID)->setDirection(UP);
 
 		room.update();
 		mouse.setCursorNum(CURSOR_ARROW);
@@ -187,51 +189,47 @@ if (bootParam == 1) _state = GS_RESTORE_RESTART; //******DEBUG******
 					// Handle special keys
 					bool handled = true;
 					switch (events.event().kbd.keycode) {
-						case Common::KEYCODE_F5:
-							SaveRestoreDialog::show(true);
-							break;
+					case Common::KEYCODE_F5:
+						SaveRestoreDialog::show(true);
+						break;
 
-						case Common::KEYCODE_F7:
-							SaveRestoreDialog::show(false);
-							break;
+					case Common::KEYCODE_F7:
+						SaveRestoreDialog::show(false);
+						break;
 
-						case Common::KEYCODE_F9:
-							doRestart();
-							break;
+					case Common::KEYCODE_F9:
+						doRestart();
+						break;
 
-						case Common::KEYCODE_KP_PLUS:
-							while (++roomNum <= 51) 
-								if (res.getRoom(roomNum) != NULL) break; 
-							if (roomNum == 52) roomNum = 1;
+					case Common::KEYCODE_KP_PLUS:
+						while (++roomNum <= 51) 
+							if (res.getRoom(roomNum) != NULL) break; 
+						if (roomNum == 52) roomNum = 1;
+						room.setRoomNumber(roomNum);
+						break;
 
-							room.leaveRoom();
-							room.setRoomNumber(roomNum);
-							break;
+					case Common::KEYCODE_KP_MINUS:
+						if (roomNum == 1) roomNum = 55;
+						while (res.getRoom(--roomNum) == NULL) ;
+						room.setRoomNumber(roomNum);
+						break;
 
-						case Common::KEYCODE_KP_MINUS:
-							if (roomNum == 1) roomNum = 55;
-							while (res.getRoom(--roomNum) == NULL) ;
+					case Common::KEYCODE_KP_MULTIPLY:
+						res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
+							room.roomNumber());
+						break;
 
-							room.leaveRoom();
-							room.setRoomNumber(roomNum);
-							break;
+					case Common::KEYCODE_KP_DIVIDE:
+					case Common::KEYCODE_SLASH:
+						room.setShowInfo(!room.showInfo());
+						break;
 
-						case Common::KEYCODE_KP_MULTIPLY:
-							res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
-								room.roomNumber());
-							break;
+					case Common::KEYCODE_ESCAPE:
+						doQuit();
+						break;
 
-						case Common::KEYCODE_KP_DIVIDE:
-						case Common::KEYCODE_SLASH:
-							room.setShowInfo(!room.showInfo());
-							break;
-
-						case Common::KEYCODE_ESCAPE:
-							doQuit();
-							break;
-
-						default:
-							handled = false;
+					default:
+						handled = false;
 					}
 					if (handled)
 						continue;
@@ -300,7 +298,7 @@ void Game::handleMenuResponse(uint8 selection) {
 		break;
 
 	case MENUITEM_RESTART_GAME: 
-		doQuit();
+		doRestart();
 		break;
 
 	case MENUITEM_SAVE_GAME:
@@ -335,8 +333,6 @@ void Game::playerChangeRoom() {
 	Point &newPos = fields.playerNewPos().position;
 
 	delayList.clear();
-
-	Sound.removeSounds();
 
 	RoomData *roomData = res.getRoom(roomNum);
 	assert(roomData);
@@ -374,8 +370,7 @@ void Game::playerChangeRoom() {
 	}
 }
 
-void Game::displayChuteAnimation()
-{
+void Game::displayChuteAnimation() {
 	OSystem &system = *g_system;
 	Resources &res = Resources::getReference();
 	Screen &screen = Screen::getReference();
@@ -386,6 +381,9 @@ void Game::displayChuteAnimation()
 
 	debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Starting chute animation");
 	mouse.cursorOff();
+
+	Sound.killSounds();
+	Sound.musicInterface_Play(0x40, 0);
 
 	AnimationSequence *anim = new AnimationSequence(screen, system, 
 		CHUTE_ANIM_ID, palette, false);
@@ -402,12 +400,12 @@ void Game::displayChuteAnimation()
 	anim->show();
 	delete anim;
 
+	Sound.killSounds();
 	mouse.cursorOn();
 	fields.setField(AREA_FLAG, 1);
 }
 
-void Game::displayBarrelAnimation()
-{
+void Game::displayBarrelAnimation() {
 	OSystem &system = *g_system;
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
@@ -417,7 +415,15 @@ void Game::displayBarrelAnimation()
 	AnimationSequence *anim = new AnimationSequence(screen, system, 
 		BARREL_ANIM_ID, palette, false);
 	mouse.cursorOff();
+
+	Sound.killSounds();
+	Sound.musicInterface_Play(0x3B, 0);
+
 	anim->show();
+
+	delete anim;
+
+	Sound.killSounds();
 	mouse.cursorOn();
 }
 
@@ -537,7 +543,7 @@ void Game::handleRightClickMenu() {
 		case DRINK:
 			hasItems = (res.numInventoryItems() != 0);
 			if (!hasItems)
-				strcat(statusLine, stringList.getString(S_NOTHING));
+				strcat(statusLine, stringList.getString(S_ACTION_NOTHING));
 			statusLine += strlen(statusLine);
 
 			room.update();
@@ -673,8 +679,7 @@ bool Game::GetTellActions() {
 					--_numTellCommands;
 					if (_numTellCommands < 0) 
 						paramIndex = -1;
-					else
-					{
+					else {
 						paramIndex = 3;
 						statusLine = statusLinePos[_numTellCommands][paramIndex];
 						*statusLine = '\0';
@@ -732,11 +737,11 @@ bool Game::GetTellActions() {
 				// Second parameter
 				action = (Action) commands[_numTellCommands * 3]; 
 				if (action == ASK)
-					strcat(statusLine, " for ");
+					strcat(statusLine, stringList.getString(S_FOR));
 				else if (action == GIVE)
-					strcat(statusLine, " to ");
+					strcat(statusLine, stringList.getString(S_TO));
 				else if (action == USE)
-					strcat(statusLine, " on ");
+					strcat(statusLine, stringList.getString(S_ON));
 				else {
 					// All other commads don't need a second parameter
 					++paramIndex;
@@ -833,14 +838,12 @@ void Game::doAction(Action action, uint16 hotspotId, uint16 usedId) {
 	room.setCursorState(CS_ACTION);
 
 	// Set the action
-	if (action == TELL)
-	{
+	if (action == TELL) {
 		// Tell action needs special handling because of the variable length parameter list - add in a
 		// placeholder entry, and then replace it's details with the TELL command data
 		player->currentActions().addFront(NONE, player->roomNumber(), 0, 0);
 		player->currentActions().top().supportData().setDetails2(TELL, _numTellCommands * 3 + 1, &_tellCommands[0]);
-	}
-	else
+	} else
 		// All other action types
 		player->currentActions().addFront(action, player->roomNumber(), hotspotId, usedId);
 }
@@ -849,7 +852,9 @@ void Game::doShowCredits() {
 	Events &events = Events::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Screen &screen = Screen::getReference();
+	Room &room = Room::getReference();
 
+	Sound.pause();
 	mouse.cursorOff();
 	Palette p(CREDITS_RESOURCE_ID - 1);
 	Surface *s = Surface::getScreen(CREDITS_RESOURCE_ID);
@@ -859,27 +864,31 @@ void Game::doShowCredits() {
 
 	events.waitForPress();
 
-	screen.resetPalette();
-	screen.update();
+	room.setRoomNumber(room.roomNumber());
 	mouse.cursorOn();
+	Sound.resume();
 }
 
 void Game::doQuit() {
+	Sound.pause();
 	if (getYN()) 
 		Events::getReference().quitFlag = true;
+	Sound.resume();
 }
 
 void Game::doRestart() {
+	Sound.pause();
 	if (getYN())
 		setState(GS_RESTART);
+	Sound.resume();
 }
 
 void Game::doTextSpeed() {
 	Menu &menu = Menu::getReference();
 	StringList &sl = Resources::getReference().stringList();
 
-	_slowSpeedFlag = !_slowSpeedFlag;
-	menu.getMenu(2).entries()[1] = sl.getString(_slowSpeedFlag ? S_SLOW_TEXT : S_FAST_TEXT);
+	_fastTextFlag = !_fastTextFlag;
+	menu.getMenu(2).entries()[1] = sl.getString(_fastTextFlag ? S_FAST_TEXT : S_SLOW_TEXT);
 }
 
 void Game::doSound() {
@@ -888,6 +897,10 @@ void Game::doSound() {
 
 	_soundFlag = !_soundFlag;
 	menu.getMenu(2).entries()[2] = sl.getString(_soundFlag ? S_SOUND_ON : S_SOUND_OFF);
+
+	if (!_soundFlag)
+		// Stop all currently playing sounds
+		Sound.killSounds();
 }
 
 void Game::handleBootParam(int value) {
@@ -943,9 +956,16 @@ bool Game::getYN() {
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
+	Resources &res = Resources::getReference();
+	
+	Common::Language l = LureEngine::getReference().getLanguage();
+	Common::KeyCode y = Common::KEYCODE_y;
+	if (l == FR_FRA) y = Common::KEYCODE_o;
+	else if ((l == DE_DEU) || (l == NL_NLD)) y = Common::KEYCODE_j;
+	else if ((l == ES_ESP) || (l == IT_ITA)) y = Common::KEYCODE_s;
 
 	mouse.cursorOff();
-	Surface *s = Surface::newDialog(190, "Are you sure (y/n)?");
+	Surface *s = Surface::newDialog(190, res.stringList().getString(S_CONFIRM_YN));
 	s->centerOnScreen();
 	delete s;
 
@@ -956,10 +976,10 @@ bool Game::getYN() {
 		if (events.pollEvent()) {
 			if (events.event().type == Common::EVENT_KEYDOWN) {
 				Common::KeyCode key = events.event().kbd.keycode;
-				if ((key == Common::KEYCODE_y) || (key == Common::KEYCODE_n) ||
+				if ((key == y) || (key == Common::KEYCODE_n) ||
 					(key == Common::KEYCODE_ESCAPE)) {
 					breakFlag = true;
-					result = key == Common::KEYCODE_y;
+					result = key == y;
 				}
 			}
 			if (events.event().type == Common::EVENT_LBUTTONUP) {
@@ -980,5 +1000,25 @@ bool Game::getYN() {
 
 	return result;
 }
+
+void Game::saveToStream(WriteStream *stream) {
+	stream->writeByte(_fastTextFlag);
+	stream->writeByte(_soundFlag);
+}
+
+void Game::loadFromStream(ReadStream *stream) {
+	Menu &menu = Menu::getReference();
+	StringList &sl = Resources::getReference().stringList();
+
+	_fastTextFlag = stream->readByte() != 0;
+	menu.getMenu(2).entries()[1] = sl.getString(_fastTextFlag ? S_FAST_TEXT : S_SLOW_TEXT);
+
+	_soundFlag = stream->readByte() != 0;
+	menu.getMenu(2).entries()[2] = sl.getString(_soundFlag ? S_SOUND_ON : S_SOUND_OFF);
+
+	// Reset game state flags
+	setState(0);
+}
+
 
 } // end of namespace Lure

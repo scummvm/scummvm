@@ -28,8 +28,6 @@
 #ifndef SAGA_ANIMATION_H
 #define SAGA_ANIMATION_H
 
-#include "saga/stream.h"
-
 namespace Saga {
 
 #define MAX_ANIMATIONS 10
@@ -119,6 +117,7 @@ public:
 	void endCutaway(void);
 	void returnFromCutaway(void);
 	void clearCutaway(void);
+	void showCutawayBg(int bg);
 
 	void startVideo(int vid, bool fade);
 	void endVideo(void);
@@ -142,6 +141,7 @@ public:
 	int16 getCurrentFrame(uint16 animId);
 	int getFrameTime(uint16 animId);
 	int getCycles(uint16 animId);
+	bool isPlaying(uint16 animId);
 
 	bool hasAnimation(uint16 animId) {
 		if (animId >= MAX_ANIMATIONS) {

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -59,7 +59,7 @@ char* SagaEngine::calcSaveFileName(uint slotNumber) {
 }
 
 SaveFileData *SagaEngine::getSaveFile(uint idx) {
-	if (idx >= _saveFilesMaxCount) {
+	if (idx >= MAX_SAVES) {
 		error("getSaveFileName wrong idx");
 	}
 	if (isSaveListFull()) {
@@ -90,21 +90,16 @@ bool SagaEngine::locateSaveFile(char *saveName, uint &titleNumber) {
 uint SagaEngine::getNewSaveSlotNumber() {
 	uint i, j;
 	bool found;
-	if (isSaveListFull()) {
-		error("getNewSaveSlotNumber save list is full");
-	}
 	for (i = 0; i < MAX_SAVES; i++) {
-		if (_saveMarks[i]) {
-			found = false;
-			for (j = 0; j < _saveFilesCount; j++) {
-				if (_saveFiles[j].slotNumber == i) {
-					found = true;
-					break;
-				}
+		found = false;
+		for (j = 0; j < _saveFilesCount; j++) {
+			if (_saveFiles[j].slotNumber == i) {
+				found = true;
+				break;
 			}
-			if (!found) {
-				return i;
-			}
+		}
+		if (!found) {
+			return i;
 		}
 	}
 
@@ -112,29 +107,36 @@ uint SagaEngine::getNewSaveSlotNumber() {
 }
 
 void SagaEngine::fillSaveList() {
+
 	int i;
 	Common::InSaveFile *in;
+	Common::StringList filenames;
+	char slot[3];
+	int slotNumber;
 	char *name;
 
 	name = calcSaveFileName(MAX_SAVES);
-	name[strlen(name) - 2] = 0;
-	_saveFileMan->listSavefiles(name, _saveMarks, MAX_SAVES);
+	name[strlen(name) - 2] = '*';
+	name[strlen(name) - 1] = 0;
 
-	_saveFilesMaxCount = 0;
+	filenames = _saveFileMan->listSavefiles(name);
+
 	for (i = 0; i < MAX_SAVES; i++) {
-		if (_saveMarks[i]) {
-			_saveFilesMaxCount++;
-		}
 		_saveFiles[i].name[0] = 0;
 		_saveFiles[i].slotNumber = (uint)-1;
 	}
 
 	_saveFilesCount = 0;
 
-	i = 0;
-	while (i < MAX_SAVES) {
-		if (_saveMarks[i]) {
-			name = calcSaveFileName(i);
+	for (Common::StringList::iterator file = filenames.begin(); file != filenames.end(); file++){
+		//Obtain the last 2 digits of the filename, since they correspond to the save slot
+		slot[0] = file->c_str()[file->size()-2];
+		slot[1] = file->c_str()[file->size()-1];
+		slot[2] = 0;
+
+		slotNumber = atoi(slot);
+		if (slotNumber >= 0 && slotNumber < MAX_SAVES) {
+			name = calcSaveFileName(slotNumber);
 			if ((in = _saveFileMan->openForLoading(name)) != NULL) {
 				_saveHeader.type = in->readUint32BE();
 				_saveHeader.size = in->readUint32LE();
@@ -147,12 +149,11 @@ void SagaEngine::fillSaveList() {
 					continue;
 				}
 				strcpy(_saveFiles[_saveFilesCount].name, _saveHeader.name);
-				_saveFiles[_saveFilesCount].slotNumber = i;
+				_saveFiles[_saveFilesCount].slotNumber = slotNumber;
 				delete in;
 				_saveFilesCount++;
 			}
 		}
-		i++;
 	}
 }
 
@@ -273,7 +274,7 @@ void SagaEngine::load(const char *fileName) {
 		if (_scene->currentChapterNumber() == 8)
 			_interface->setMode(kPanelChapterSelection);
 		if (getGameId() != GID_IHNM_DEMO) {
-			_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);			
+			_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);
 		} else {
 			_music->play(3, MUSIC_LOOP);
 		}
@@ -335,6 +336,7 @@ void SagaEngine::load(const char *fileName) {
 
 	if (insetSceneNumber != sceneNumber) {
 		_render->setFlag(RF_DISABLE_ACTORS);
+		_scene->draw();
 		_render->drawScene();
 		_render->clearFlag(RF_DISABLE_ACTORS);
 		_scene->changeScene(insetSceneNumber, ACTOR_NO_ENTRANCE, kTransitionNoFade);

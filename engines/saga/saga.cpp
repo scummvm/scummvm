@@ -22,12 +22,13 @@
  * $Id$
  *
  */
-#include "common/stdafx.h"
+
 
 
 #include "common/file.h"
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "sound/mixer.h"
 
@@ -58,8 +59,8 @@ namespace Saga {
 
 #define MAX_TIME_DELTA 100
 
-SagaEngine::SagaEngine(OSystem *syst)
-	: Engine(syst) {
+SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
+	: Engine(syst), _gameDescription(gameDesc) {
 
 	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
 
@@ -113,6 +114,7 @@ SagaEngine::SagaEngine(OSystem *syst)
 	}
 
 	_displayClip.left = _displayClip.top = 0;
+	syst->getEventManager()->registerRandomSource(_rnd, "saga");
 }
 
 SagaEngine::~SagaEngine() {
@@ -259,10 +261,10 @@ int SagaEngine::go() {
 		_scene->changeScene(getStartSceneNumber(), 0, kTransitionNoFade);
 		_events->handleEvents(0); // Process immediate events
 
+		_interface->setMode(kPanelMain);
 		char *fileName;
 		fileName = calcSaveFileName(ConfMan.getInt("save_slot"));
 		load(fileName);
-		_interface->setMode(kPanelMain);
 	} else {
 		_framesEsc = 0;
 		_scene->startScene();
@@ -341,7 +343,12 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 			break;
 		}
 		if (offset > stringsLength) {
-			error("SagaEngine::loadStrings wrong strings table");
+			// This case should never occur, but apparently it does in the Italian fan
+			// translation of IHNM
+			warning("SagaEngine::loadStrings wrong strings table");
+			stringsCount = i;
+			stringsTable.strings = (const char **)realloc(stringsTable.strings, stringsCount * sizeof(*stringsTable.strings));
+			break;
 		}
 		stringsTable.strings[i] = (const char *)stringsTable.stringsPointer + offset;
 		debug(9, "string[%i]=%s", i, stringsTable.strings[i]);
@@ -382,7 +389,22 @@ const char *SagaEngine::getObjectName(uint16 objectId) {
 
 const char *SagaEngine::getTextString(int textStringId) {
 	const char *string;
-	int lang = (getLanguage() == Common::DE_DEU) ? 1 : 0;
+	int lang = 0;
+
+	switch (getLanguage()) {
+		case Common::DE_DEU:
+			lang = 1;
+			break;
+		case Common::ES_ESP:
+			lang = 2;
+			break;
+		case Common::IT_ITA:
+			lang = 3;
+			break;
+		default:
+			lang = 0;
+			break;
+	}
 
 	string = ITEinterfaceTextStrings[lang][textStringId];
 	if (!string)
@@ -397,7 +419,7 @@ void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundReso
 	if (verb == _script->getVerbType(kVerbPickUp)) {
 		textString = getTextString(kTextICantPickup);
 		soundResourceId = RID_BOAR_VOICE_007;
-	} else 
+	} else
 		if (verb == _script->getVerbType(kVerbLookAt)) {
 		textString = getTextString(kTextNothingSpecial);
 		soundResourceId = RID_BOAR_VOICE_006;
@@ -452,8 +474,7 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 			error("SagaEngine::KnownColor2ColorId unknown color %i", knownColor);
 		}
 	} else if (getGameType() == GType_IHNM) {
-		switch (knownColor)
-		{
+		switch (knownColor) {
 		case(kKnownColorTransparent):
 			colorId = kITEColorTransBlack;
 			break;
@@ -463,7 +484,7 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 			break;
 		case (kKnownColorWhite):
 			colorId = kITEColorBrightWhite;
-			break;			
+			break;
 		case (kKnownColorBlack):
 			colorId = kIHNMColorBlack;
 			break;

@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "base/internal_version.h"
 #include "base/version.h"
@@ -69,7 +68,7 @@ const char *gScummVMFeatures = ""
 	"Vorbis "
 #endif
 #endif
-	
+
 #ifdef USE_FLAC
 	"FLAC "
 #endif

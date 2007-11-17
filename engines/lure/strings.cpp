@@ -25,6 +25,7 @@
 
 #include "lure/strings.h"
 #include "lure/disk.h"
+#include "lure/lure.h"
 #include "lure/res.h"
 #include "lure/room.h"
 #include "common/endian.h"
@@ -35,109 +36,26 @@ StringData *int_strings = NULL;
 
 StringData::StringData() {
 	int_strings = this;
+	Disk &disk = Disk::getReference();
 
 	for (uint8 ctr = 0; ctr < MAX_NUM_CHARS; ++ctr) _chars[ctr] = NULL;
 	_numChars = 0;
 	_names = Disk::getReference().getEntry(NAMES_RESOURCE_ID);
-	_strings[0] = Disk::getReference().getEntry(STRINGS_RESOURCE_ID);
-	_strings[1] = Disk::getReference().getEntry(STRINGS_2_RESOURCE_ID);
-	_strings[2] = Disk::getReference().getEntry(STRINGS_3_RESOURCE_ID);
+	_strings[0] = disk.getEntry(STRINGS_RESOURCE_ID);
+	_strings[1] = disk.getEntry(STRINGS_2_RESOURCE_ID);
+	_strings[2] = disk.getEntry(STRINGS_3_RESOURCE_ID);
 
 	// Add in the list of bit sequences, and what characters they represent
-	add("00", ' ');
-	add("0100", 'e');
-	add("0101", 'o');
-	add("0110", 't');
-	add("01110", 'a');
-	add("01111", 'n');
-	add("1000", 's');
-	add("1001", 'i');
-	add("1010", 'r');
-	add("10110", 'h');
-	add("101110", 'u');
-	add("1011110", 'l');
-	add("1011111", 'd');
-	add("11000", 'y');
-	add("110010", 'g');
-	add("110011", '\0');
-	add("110100", 'w');
-	add("110101", 'c');
-	add("110110", 'f');
-	add("1101110", '.');
-	add("1101111", 'm');
-	add("111000", 'p');
-	add("111001", 'b');
-	add("1110100", ',');
-	add("1110101", 'k');
-	add("1110110", '\'');
-	add("11101110", 'I');
-	add("11101111", 'v');
-	add("1111000", '!');
-	add("1111001", '\xb4');
-	add("11110100", 'T');
-	add("11110101", '\xb5');
-	add("11110110", '?');
-	add("111101110", '\xb2');
-	add("111101111", '\xb3');
-	add("11111000", 'W');
-	add("111110010", 'H');
-	add("111110011", 'A');
-	add("111110100", '\xb1');
-	add("111110101", 'S');
-	add("111110110", 'Y');
-	add("1111101110", 'G');
-	add("11111011110", 'M');
-	add("11111011111", 'N');
-	add("111111000", 'O');
-	add("1111110010", 'E');
-	add("1111110011", 'L');
-	add("1111110100", '-');
-	add("1111110101", 'R');
-	add("1111110110", 'B');
-	add("11111101110", 'D');
-	add("11111101111", '\xa6');
-	add("1111111000", 'C');
-	add("11111110010", 'x');
-	add("11111110011", 'j');
-	add("1111111010", '\xac');
-	add("11111110110", '\xa3');
-	add("111111101110", 'P');
-	add("111111101111", 'U');
-	add("11111111000", 'q');
-	add("11111111001", '\xad');
-	add("111111110100", 'F');
-	add("111111110101", '1');
-	add("111111110110", '\xaf');
-	add("1111111101110", ';');
-	add("1111111101111", 'z');
-	add("111111111000", '\xa5');
-	add("1111111110010", '2');
-	add("1111111110011", '\xb0');
-	add("111111111010", 'K');
-	add("1111111110110", '%');
-	add("11111111101110", '\xa2');
-	add("11111111101111", '5');
-	add("1111111111000", ':');
-	add("1111111111001", 'J');
-	add("1111111111010", 'V');
-	add("11111111110110", '6');
-	add("11111111110111", '3');
-	add("1111111111100", '\xab');
-	add("11111111111010", '\xae');
-	add("111111111110110", '0');
-	add("111111111110111", '4');
-	add("11111111111100", '7');
-	add("111111111111010", '9');
-	add("111111111111011", '"');
-	add("111111111111100", '8');
-	add("111111111111101", '\xa7');
-	add("1111111111111100", '/');
-	add("1111111111111101", 'Q');
-	add("11111111111111100", '\xa8');
-	add("11111111111111101", '(');
-	add("111111111111111100", ')');
-	add("111111111111111101", '\x99');
-	add("11111111111111111", '\xa9');
+	MemoryBlock *decoderList = disk.getEntry(STRING_DECODER_RESOURCE_ID);
+
+	const char *p = (const char *) decoderList->data();
+	while ((byte)*p != 0xff) {
+		char ascii = *p++;
+		add(p, ascii);
+		p += strlen(p) + 1;
+	}
+
+	delete decoderList;
 }
 
 StringData::~StringData() {
@@ -266,7 +184,7 @@ char StringData::readCharacter() {
 
 void StringData::getString(uint16 stringId, char *dest, const char *hotspotName, 
 		const char *characterName, int hotspotArticle, int characterArticle) {
-	const char *articles[4] = {"the ", "a ", "an ", ""};
+	StringList &stringList = Resources::getReference().stringList();
 	char ch;
 	strcpy(dest, "");
 	char *destPos = dest;
@@ -281,11 +199,15 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 			// Copy over hotspot or action 
 			ch = readCharacter();
 			const char *p = (ch == '1') ? hotspotName : characterName;
-			int article = !includeArticles ? 3 : ((ch == 1) ? hotspotArticle : characterArticle);
+			int article = !includeArticles ? 0 : ((ch == 1) ? hotspotArticle : characterArticle);
 
 			if (p != NULL) {
-				strcpy(destPos, articles[article]);
-				strcat(destPos, p);
+				if (article > 0) {
+					strcpy(destPos, stringList.getString(S_ARTICLE_LIST + article - 1));
+					strcat(destPos, p);
+				} else {
+					strcpy(destPos, p);
+				}
 				destPos += strlen(destPos);
 			}
 		} else if ((uint8) ch >= 0xa0) {

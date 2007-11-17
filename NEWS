@@ -2,27 +2,43 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
 0.11.0 (????-??-??)
+ New Games:
+   - Added support for Elvira: Mistress of the Dark.
+   - Added support for Elvira 2: The Jaws of Cerberus.
+   - Added support for I Have no Mouth, and I Must Scream.
+   - Added support for preAGI game Troll's Tale.
+ 
  General:
    - Added ARM assembly routines for code in the sound mixer and SCUMM
      video playback, resulting in some nice speedups on several ports.
    - Improved the way keyboard input is handled internally, resolving
      some odd quirks in some game / port combinations.
    - Added optional 'confirm exit' dialog to the SDL backend.
+   - Added support for TiMidity++ MIDI server.
 
  AGOS:
    - Fixed crashes related to OmniTV playback in The Feeble Files.
 
  Broken Sword 1:
    - Added support for FLAC encoded music.
+ 
+ IRIX:
+   - Added DMedia MIDI driver for IRIX.
 
  SCUMM:
    - Added subtitle skipping (via '.' key) in older games which didn't have
      this feature so far (e.g. Zak, MM, Indy3, Loom).
-   - Added support for Chinese COMI
+   - Added support for Chinese COMI.
 
  SAGA:
-   - Added support for compressed sound effects, voices and music
+   - Added support for compressed sound effects, voices and music.
 
+ Kyrandia:
+   - Added support for Macintosh version.
+
+ WinCE Port:
+   - Switched compilers again. Now using cegcc (http://cegcc.sourceforge.net/).
+   - Plugins now supported for WinCE.
 
 0.10.0 (2007-06-20)
  New Games:

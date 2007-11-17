@@ -28,8 +28,6 @@
 #ifndef SAGA_OBJECTMAP_H
 #define SAGA_OBJECTMAP_H
 
-#include "saga/stream.h"
-
 namespace Saga {
 
 

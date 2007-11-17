@@ -24,8 +24,6 @@
  */
  
 /* Filter coefficient generation using Kaiser filter design */
- 
-#include "common/stdafx.h"
 
 #include "sound/filter.h"
 

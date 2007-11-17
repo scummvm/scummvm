@@ -41,7 +41,7 @@ void PSPDebugTrace (const char *format, ...) {
 
 	fd = sceIoOpen("MS0:/DTRACE.TXT", PSP_O_RDWR | PSP_O_CREAT | PSP_O_APPEND, 0777);
 
-	if(fd <= 0)
+	if (fd <= 0)
 	{
 		return;
 	}
@@ -63,7 +63,7 @@ void PSPDebugTrace (const char * filename, const char *format, ...) {
 
 	fd = sceIoOpen(filename, PSP_O_RDWR | PSP_O_CREAT | PSP_O_APPEND, 0777);
 
-	if(fd <= 0)
+	if (fd <= 0)
 	{
 		return;
 	}

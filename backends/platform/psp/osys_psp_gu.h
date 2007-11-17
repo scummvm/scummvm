@@ -22,7 +22,6 @@
  */
 
 #include <pspgu.h>
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 #include "common/rect.h"

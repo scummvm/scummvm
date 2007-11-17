@@ -44,7 +44,6 @@
  * other improvments over the original code were made.
  */
 
-#include "common/stdafx.h"
 #include "sound/audiostream.h"
 #include "sound/rate.h"
 #include "sound/mixer.h"

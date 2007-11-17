@@ -26,7 +26,6 @@
 #ifndef SOUND_AUDIOCD_H
 #define SOUND_AUDIOCD_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/singleton.h"
 #include "sound/mixer.h"

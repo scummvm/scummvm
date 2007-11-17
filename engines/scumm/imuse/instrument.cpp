@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/scumm.h"
 #include "scumm/saveload.h"
 #include "scumm/imuse/instrument.h"

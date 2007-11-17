@@ -26,7 +26,6 @@
 #ifndef __GP32_LAUNCHER_H
 #define __GP32_LAUNCHER_H
 
-#include "stdafx.h"
 #include "common/scummsys.h"
 
 extern void readConfigVars();

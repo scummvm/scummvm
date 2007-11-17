@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -482,14 +482,14 @@ void AGOSEngine_Feeble::printInteractText(uint16 num, const char *string) {
 	}
 
 	// ScrollX
-	x = _variableArray[251];		
+	x = _variableArray[251];
 	x += 20;
 
 	if (num == 1)
 		_interactY = 385;
 
 	// Returned values for box definition
-	_variableArray[51] = x;			
+	_variableArray[51] = x;
 	_variableArray[52] = _interactY;
 	_variableArray[53] = w;
 	_variableArray[54] = height;

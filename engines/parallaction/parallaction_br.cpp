@@ -23,8 +23,8 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/system.h"
+#include "common/util.h"
 
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
@@ -59,12 +59,6 @@ const char *partFirstLocation[] = {
 
 int Parallaction_br::init() {
 
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	_screenWidth = 640;
 	_screenHeight = 400;
 
@@ -81,6 +75,7 @@ int Parallaction_br::init() {
 
 	_activeZone2 = 0;
 
+	initJobs();
 	initResources();
 	initFonts();
 	initCursors();
@@ -241,7 +236,7 @@ int Parallaction_br::showMenu() {
 		if ((_mouseButtons == kMouseLeftUp) && selectedItem >= 0)
 			break;
 
-		updateInput();
+		readInput();
 
 		if ((_mousePos.x > MENUITEMS_X) && (_mousePos.x < (MENUITEMS_X+MENUITEM_WIDTH)) && (_mousePos.y > MENUITEMS_Y)) {
 			selectedItem = (_mousePos.y - MENUITEMS_Y) / MENUITEM_HEIGHT;
@@ -357,5 +352,45 @@ void Parallaction_br::changeCharacter(const char *name) {
 
 }
 
+void Parallaction_br::initJobs() {
+
+	static const JobFn jobs[] = {
+		&Parallaction_br::jobDisplayAnimations,
+		&Parallaction_br::jobEraseAnimations,
+		&Parallaction_br::jobDisplayDroppedItem,
+		&Parallaction_br::jobRemovePickedItem,
+		&Parallaction_br::jobRunScripts,
+		&Parallaction_br::jobWalk,
+		&Parallaction_br::jobDisplayLabel,
+		&Parallaction_br::jobEraseLabel,
+		&Parallaction_br::jobWaitRemoveLabelJob,
+		&Parallaction_br::jobToggleDoor,
+		&Parallaction_br::jobEraseSubtitle,
+		&Parallaction_br::jobDisplaySubtitle,
+		&Parallaction_br::jobWaitRemoveSubtitleJob,
+		&Parallaction_br::jobPauseSfx,
+		&Parallaction_br::jobStopFollower,
+		&Parallaction_br::jobScroll
+	};
+
+	_jobsFn = jobs;
+}
+
+JobOpcode* Parallaction_br::createJobOpcode(uint functionId, Job *job) {
+	return new OpcodeImpl2<Parallaction_br>(this, _jobsFn[functionId], job);
+}
+
+
+void Parallaction_br::setArrowCursor() {
+
+
+
+}
+
+void Parallaction_br::setInventoryCursor(int pos) {
+
+
+
+}
 
 } // namespace Parallaction

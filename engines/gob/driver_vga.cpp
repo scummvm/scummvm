@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "graphics/primitives.h"
 
@@ -53,7 +53,7 @@ void VGAVideoDriver::drawLine(SurfaceDesc *dest, int16 x0, int16 y0, int16 x1,
 
 void VGAVideoDriver::fillRect(SurfaceDesc *dest, int16 left, int16 top,
 		int16 right, int16 bottom, byte color) {
-	
+
 	if ((left >= dest->getWidth()) || (right >= dest->getWidth()) ||
 	    (top >= dest->getHeight()) || (bottom >= dest->getHeight()))
 		return;
@@ -114,11 +114,11 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 	byte *destPos = dest->getVidMem() + (y * dest->getWidth()) + x;
 
 	if (transp) {
-		while (height--) {  		
+		while (height--) {
 			for (int16 i = 0; i < width; ++i) {
 				if (srcPos[i])
 					destPos[i] = srcPos[i];
-			} 	
+			}
 
 			srcPos += source->getWidth();
 			destPos += dest->getWidth();
@@ -129,7 +129,7 @@ void VGAVideoDriver::drawSprite(SurfaceDesc *source, SurfaceDesc *dest,
 
 			srcPos += source->getWidth();
 			destPos += dest->getWidth();
-		}  
+		}
 	}
 }
 

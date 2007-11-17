@@ -235,10 +235,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 	},
 
 
-	// Note: This version is NOT supported yet
-	// Exiting the faire leads to a crash
-
 	// Inherit the earth - MAC Demo version 1
+	// Non-interactive demo
 	{
 		{
 			"ite",
@@ -257,7 +255,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		},
 		GType_ITE,
 		GID_ITE_MACDEMO1,
-		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX,
+		GF_BIG_ENDIAN_DATA | GF_WYRMKEEP | GF_CD_FX | GF_NON_INTERACTIVE,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -301,10 +299,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 	},
 
 
-	// Note: This version is NOT supported yet
-	// Exiting the faire leads to a crash
-
 	// Inherit the earth - Win32 Demo version 1
+	// Non-interactive demo
 	{
 		{
 			"ite",
@@ -322,7 +318,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		},
 		GType_ITE,
 		GID_ITE_WINDEMO1,
-		GF_WYRMKEEP | GF_CD_FX,
+		GF_WYRMKEEP | GF_CD_FX | GF_NON_INTERACTIVE,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -623,7 +619,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
-	// I Have No Mouth And I Must Scream - CD version
+	// I Have No Mouth And I Must Scream - English CD version
 	{
 		{
 			"ihnm",
@@ -634,7 +630,11 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", -1},
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
-	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
+	//{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
+	// There are two English versions of the game, each one with a different sfx.res file
+	// Known MD5 checksums for sfx.res in the English version of the game are 
+	// 1c610d543f32ec8b525e3f652536f269 and 45a9a9f5d37740be24fd2ae2edf36573
+	{"sfx.res",		GAME_SOUNDFILE,						NULL, -1},
 	//{"voicess.res",	GAME_VOICEFILE,						"54b1f2013a075338ceb0e258d97808bd", -1}, //order of voice bank file is important
 	//{"voices1.res",	GAME_VOICEFILE,						"fc6440b38025f4b2cc3ff55c3da5c3eb", -1},
 	//{"voices2.res",	GAME_VOICEFILE,						"b37f10fd1696ade7d58704ccaaebceeb", -1},
@@ -803,6 +803,44 @@ static const SAGAGameDescription gameDescriptions[] = {
 		},
 		GType_IHNM,
 		GID_IHNM_CD_FR,
+		0,
+		IHNM_DEFAULT_SCENE,
+		&IHNM_Resources,
+		ARRAYSIZE(IHNMCD_GameFonts),
+		IHNMCD_GameFonts,
+		&IHNM_GameSound,
+		&IHNM_GameSound,
+		0,
+		NULL,
+	},
+
+	// I Have No Mouth And I Must Scream - Italian fan CD translation
+	{
+		{
+			"ihnm",
+			"",
+			{
+	{"musicfm.res",	GAME_MUSICFILE_FM,					"0439083e3dfdc51b486071d45872ae52", -1},
+	{"musicgm.res",	GAME_MUSICFILE_GM,					"80f875a1fb384160d1f4b27166eef583", -1},
+	{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", -1},
+	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
+	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
+	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
+	//{"voicess.res",	GAME_VOICEFILE,						"9df7cd3b18ddaa16b5291b3432567036", -1}, //order of voice bank file is important
+	//{"voices1.res",	GAME_VOICEFILE,						"d6100d2dc3b2b9f2e1ad247f613dce9b", -1},
+	//{"voices2.res",	GAME_VOICEFILE,						"84f6f48ecc2832841ea6417a9a379430", -1},
+	//{"voices3.res",	GAME_VOICEFILE,						"ebb9501283047f27a0f54e27b3c8ba1e", -1},
+	//{"voices4.res",	GAME_VOICEFILE,						"4c145da5fa6d1306162a7ca8ce5a4f2e", -1},
+	//{"voices5.res",	GAME_VOICEFILE,						"871a559644281917677eca4af1b05620", -1},
+	//{"voices6.res",	GAME_VOICEFILE,						"211be5c24f066d69a2f6cfa953acfba6", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_IHNM,
+		GID_IHNM_CD_ITA,
 		0,
 		IHNM_DEFAULT_SCENE,
 		&IHNM_Resources,

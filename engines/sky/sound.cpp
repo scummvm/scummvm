@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "sky/disk.h"
@@ -1110,7 +1110,7 @@ void Sound::playSound(uint16 sound, uint16 volume, uint8 channel) {
 	uint32 dataSize = READ_BE_UINT16(_sfxInfo + (sound << 3) + 2);
 	uint32 dataLoop = READ_BE_UINT16(_sfxInfo + (sound << 3) + 6);
 	dataOfs += _sfxBaseOfs;
-	
+
 	byte flags = Audio::Mixer::FLAG_UNSIGNED;
 
 	uint32 loopSta = 0, loopEnd = 0;

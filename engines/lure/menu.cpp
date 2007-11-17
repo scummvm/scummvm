@@ -32,11 +32,11 @@
 #include "lure/strings.h"
 #include "lure/room.h"
 #include "lure/events.h"
+#include "lure/lure.h"
 
 namespace Lure {
 
-MenuRecord::MenuRecord(uint16 hsxstartVal, uint16 hsxendVal, uint16 xstartVal, 
-					   uint16 widthVal, int numParams, ...) {
+MenuRecord::MenuRecord(const MenuRecordBounds *bounds, int numParams, ...) {
 	// Store list of pointers to strings
 	va_list params;
 
@@ -48,8 +48,9 @@ MenuRecord::MenuRecord(uint16 hsxstartVal, uint16 hsxendVal, uint16 xstartVal,
 		_entries[index] = va_arg(params, const char *);
 
 	// Store position data
-	_xstart = xstartVal; _width = widthVal;
-	_hsxstart = hsxstartVal; _hsxend = hsxendVal;
+	_hsxstart = bounds->left; _hsxend = bounds->right;
+	_xstart = bounds->contentsX << 3;
+	_width = (bounds->contentsWidth + 3) << 3;
 }
 
 const char *MenuRecord::getEntry(uint8 index) {
@@ -61,19 +62,33 @@ const char *MenuRecord::getEntry(uint8 index) {
 
 static Menu *int_menu = NULL;
 
+const MenuRecordLanguage menuList[] = {
+//	{EN_ANY, {{40, 87, 20, 80}, {127, 179, 100, 120}, {224, 281, 210, 105}}},
+	{EN_ANY, {{40, 87, 3, 7}, {127, 179, 13, 12}, {224, 281, 27, 10}}},
+	{IT_ITA, {{40, 98, 4, 6}, {120, 195, 14, 11}, {208, 281, 24, 13}}},
+	{UNK_LANG, {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}}
+};
+
 Menu::Menu() {
 	int_menu = this;
 	StringList &sl = Resources::getReference().stringList();
+	Common::Language language = LureEngine::getReference().getLanguage();
 
 	MemoryBlock *data = Disk::getReference().getEntry(MENU_RESOURCE_ID);
 	PictureDecoder decoder;
 	_menu = decoder.decode(data, SCREEN_SIZE);
 	delete data;
 
-	_menus[0] = new MenuRecord(40, 87, 20, 80, 1, sl.getString(S_CREDITS));
-	_menus[1] = new MenuRecord(127, 179, 100, 120, 3, 
+	const MenuRecordLanguage *rec = &menuList[0];
+	while ((rec->language != UNK_LANG) && (rec->language != language)) 
+		++rec;
+	if (rec->language == UNK_LANG)
+		error("Unknown language encountered in top line handler");
+
+	_menus[0] = new MenuRecord(&rec->menus[0], 1, sl.getString(S_CREDITS));
+	_menus[1] = new MenuRecord(&rec->menus[1], 3, 
 		sl.getString(S_RESTART_GAME), sl.getString(S_SAVE_GAME), sl.getString(S_RESTORE_GAME));
-	_menus[2] = new MenuRecord(224, 281, 210, 105, 3,
+	_menus[2] = new MenuRecord(&rec->menus[2], 3,
 		sl.getString(S_QUIT), sl.getString(S_SLOW_TEXT), sl.getString(S_SOUND_ON));
 
 	_selectedMenu = NULL;
@@ -106,8 +121,7 @@ uint8 Menu::execute() {
 		while (events.pollEvent()) {
 			if (events.quitFlag) return MENUITEM_NONE;
 
-			if (mouse.y() < MENUBAR_Y_SIZE)
-			{
+			if (mouse.y() < MENUBAR_Y_SIZE) {
 				MenuRecord *p = getMenuAt(mouse.x());
 
 				if (_selectedMenu != p) {
@@ -159,18 +173,25 @@ uint8 Menu::execute() {
 	screen.update();
 	
 	if ((_selectedMenu == NULL) || (_selectedIndex == 0)) return MENUITEM_NONE;
-	else if (_selectedMenu == _menus[0]) return MENUITEM_CREDITS;
+	else if (_selectedMenu == _menus[0])
+		return MENUITEM_CREDITS;
 	else if (_selectedMenu == _menus[1]) {
 		switch (_selectedIndex) {
-			case 1: return MENUITEM_RESTART_GAME;
-			case 2: return MENUITEM_SAVE_GAME;
-			case 3: return MENUITEM_RESTORE_GAME;
+		case 1:
+			return MENUITEM_RESTART_GAME;
+		case 2:
+			return MENUITEM_SAVE_GAME;
+		case 3:
+			return MENUITEM_RESTORE_GAME;
 		}
 	} else {
 		switch (_selectedIndex) {
-			case 1: return MENUITEM_QUIT;
-			case 2: return MENUITEM_TEXT_SPEED;
-			case 3: return MENUITEM_SOUND;
+		case 1:
+			return MENUITEM_QUIT;
+		case 2:
+			return MENUITEM_TEXT_SPEED;
+		case 3:
+			return MENUITEM_SOUND;
 		}
 	}
 	return MENUITEM_NONE;
@@ -360,12 +381,18 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 	return result;
 }
 
+static int entryCompare(const char **p1, const char **p2) {
+	return strcmp(*p1, *p2);
+}
+
+typedef int (*CompareMethod)(const void*, const void*);
+
 Action PopupMenu::Show(uint32 actionMask) {
 	StringList &stringList = Resources::getReference().stringList();
 	int numEntries = 0;
 	uint32 v = actionMask;
 	int index;
-	const Action *currentAction;
+	int currentAction;
 	uint16 resultIndex;
 	Action resultAction;
 
@@ -374,26 +401,33 @@ Action PopupMenu::Show(uint32 actionMask) {
 	}
 
 	const char **strList = (const char **) Memory::alloc(sizeof(char *) * numEntries);
-	Action *actionSet = (Action *) Memory::alloc(sizeof(Action) * numEntries);
 
 	int strIndex = 0;
-	for (currentAction = &sortedActions[0]; *currentAction != NONE; ++currentAction) {
-		if ((actionMask & (1 << (*currentAction - 1))) != 0) {
-			strList[strIndex] = stringList.getString(*currentAction);
-			actionSet[strIndex] = *currentAction;
+	for (currentAction = 0; currentAction < (int)EXAMINE; ++currentAction) {
+		if ((actionMask & (1 << currentAction)) != 0) {
+			strList[strIndex] = stringList.getString(currentAction);
 			++strIndex;
 		}
 	}
 
+	// Sort the list
+	qsort(strList, numEntries, sizeof(const char *), (CompareMethod) entryCompare);
+
+	// Show the entries
 	resultIndex = Show(numEntries, strList);
 
-	if (resultIndex == 0xffff) 
-		resultAction = NONE;
-	else 
-		resultAction = actionSet[resultIndex];
+	resultAction = NONE;
+	if (resultIndex != 0xffff) {
+		// Scan through the list of actions to find the selected entry
+		for (currentAction = 0; currentAction < (int)EXAMINE; ++currentAction) {
+			if (strList[resultIndex] == stringList.getString(currentAction)) {
+				resultAction = (Action) (currentAction + 1);
+				break;
+			}
+		}
+	}
 
 	Memory::dealloc(strList);
-	Memory::dealloc(actionSet);
 	return resultAction;
 }
 

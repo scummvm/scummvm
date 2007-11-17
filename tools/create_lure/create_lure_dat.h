@@ -23,48 +23,36 @@
  *
  */
 
-#ifndef __createlure_dat__
-#define __createlure_dat__
+#ifndef __CREATELURE_DAT__
+#define __CREATELURE_DAT__
 
-#include "common/stdafx.h"
 #include "common/endian.h"
+#include "common/util.h"
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 21
-#define ENGLISH_LURE 
+#define VERSION_MINOR 24
 
-#define DATA_SEGMENT 0xac50
-
-#define DIALOG_OFFSET 0x1dcb0
 #define DIALOG_SIZE 0x150
 
-#define TALK_DIALOG_OFFSET 0x1de00
 #define TALK_DIALOG_SIZE 0x30
 
 #define PALETTE_OFFSET 0xc0a7
 #define PALETTE_SIZE 0x300
 
-#define ROOM_TABLE 0xbf40
 #define ROOM_NUM_ENTRIES 51
 
 #define HOTSPOT_OVERRIDE_OFFSET 0x2A01
 
-#define SCRIPT_SEGMENT 0x1df00
 #define SCRIPT_SEGMENT_SIZE 0x2c57
-#define SCRIPT2_SEGMENT 0x19c70
 #define SCRIPT2_SEGMENT_SIZE 0x2800
-#define FIGHT_SEGMENT 0x1C400
 #define FIGHT_SEGMENT_SIZE 0x1850
 
-#define HOTSPOT_SCRIPT_LIST 0x57e0
 #define HOTSPOT_SCRIPT_SIZE 0x30
 
 #define MAX_NUM_ANIM_RECORDS 0x200
 #define MAX_NUM_ACTION_RECORDS 0x100
 
-#define ROOM_EXITS_OFFSET 0x2f61
 #define NUM_ROOM_EXITS 50
-#define ROOM_EXIT_JOINS_OFFSET 0xce30
 
 #define MESSAGES_SEGMENT 0x20b60
 #define MESSAGES_SEGMENT_SIZE 0x490
@@ -72,26 +60,21 @@
 #define MAX_HOTSPOTS 0x100
 #define MAX_DATA_SIZE 0x4000
 
-#define PATHFIND_OFFSET 0x984A
 #define PATHFIND_SIZE (120 * ROOM_NUM_ENTRIES) 
 
-#define HOTSPOT_WALK_TO_OFFSET 0xBC4B
 #define EXIT_COORDINATES_OFFSET 0x1929
 #define EXIT_COORDINATES_NUM_ROOMS 49
 
 #define TABLED_ACTIONS_OFFSET 0x1380
 #define NUM_TABLED_ACTION_BLOCKS 33
-#define RANDOM_ACTIONS_OFFSET 0x4D10
 #define RANDOM_ROOM_NUM_ENTRIES 41
 
-#define WALK_AREAS_OFFSET 0x2EB1
+#define SOUND_DESCS_SIZE 265
 
-#define EXIT_HOTSPOTS_OFFSET 0x2E57
+#include "common/pack-start.h"	// START STRUCT PACKING
 
-#define SOUND_1_OFFSET 0x5671
-#define SOUND_1_SIZE 265
-
-#pragma pack(1)
+// FIXME: Add PACKED_STRUCT to all structs which actually need packing,
+// for increased portability
 
 // Rect currently copied from common/rect.h - if I try directly including it,
 // the link complains about an unresolved external token Common.String.__dtor
@@ -188,7 +171,7 @@ struct HotspotResourceOutput {
 	uint16 animRecordId;
 	uint16 hotspotScriptOffset;
 	uint16 talkScriptOffset;
-	uint16 tickProcOffset;
+	uint16 tickProcId;
 	uint16 tickTimeout;
 	uint16 tickSequenceOffset;
 	uint16 npcSchedule;
@@ -369,6 +352,10 @@ extern void read_action_sequence(byte *&data, uint16 &totalSize);
 
 extern uint16 get_sequence_index(uint16 offset, int supportIndex = -1);
 
+#include "common/pack-end.h"	// END STRUCT PACKING
+
+
+
 enum AccessMode {
 	kFileReadMode = 1,
 	kFileWriteMode = 2
@@ -421,9 +408,15 @@ public:
 		uint32 vTemp = TO_LE_32(v);
 		write(&vTemp, sizeof(uint32));
 	}
+	uint32 pos() {
+		return ftell(f);
+	}
 };
 
-extern File lure_exe;
+extern File lureExe;
 extern void add_talk_offset(uint16 offset);
+
+extern Common::Language language;
+extern uint16 dataSegment;
 
 #endif

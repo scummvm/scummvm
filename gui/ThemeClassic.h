@@ -46,10 +46,10 @@ public:
 	void disable();
 
 	void openDialog(bool topDialog);
-	void closeDialog();
+	void closeAllDialogs();
 
 	void clearAll();
-	void drawAll();
+	void updateScreen();
 	
 	void resetDrawArea();
 
@@ -58,20 +58,20 @@ public:
 	int getStringWidth(const Common::String &str, FontStyle font) const { if (_initOk) return _font->getStringWidth(str); return 0; }
 	int getCharWidth(byte c, FontStyle font) const { if (_initOk) return _font->getCharWidth(c); return 0; }
 
-	void drawDialogBackground(const Common::Rect &r, uint16 hints, State state);
-	void drawText(const Common::Rect &r, const Common::String &str, State state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
-	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, State state);
+	void drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state);
+	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font);
+	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state);
 
-	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, State state);
-	void drawButton(const Common::Rect &r, const Common::String &str, State state, uint16 hints);
-	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, State state, int alpha, bool themeTrans);
-	void drawSlider(const Common::Rect &r, int width, State state);
-	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, State state);
-	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, State state);
-	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, State state);
-	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, State state, TextAlign align);
-	void drawCaret(const Common::Rect &r, bool erase, State state);
-	void drawLineSeparator(const Common::Rect &r, State state);
+	void drawWidgetBackground(const Common::Rect &r, uint16 hints, WidgetBackground background, WidgetStateInfo state);
+	void drawButton(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, uint16 hints);
+	void drawSurface(const Common::Rect &r, const Graphics::Surface &surface, WidgetStateInfo state, int alpha, bool themeTrans);
+	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state);
+	void drawCheckbox(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state);
+	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth, const Common::Array<Common::String> &tabs, int active, uint16 hints, int titleVPad, WidgetStateInfo state);
+	void drawScrollbar(const Common::Rect &r, int sliderY, int sliderHeight, ScrollbarState, WidgetStateInfo state);
+	void drawPopUpWidget(const Common::Rect &r, const Common::String &sel, int deltax, WidgetStateInfo state, TextAlign align);
+	void drawCaret(const Common::Rect &r, bool erase, WidgetStateInfo state);
+	void drawLineSeparator(const Common::Rect &r, WidgetStateInfo state);
 	void restoreBackground(Common::Rect r, bool special = false);
 	bool addDirtyRect(Common::Rect r, bool save = false, bool special = false);
 

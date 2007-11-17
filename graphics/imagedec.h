@@ -25,7 +25,6 @@
 #ifndef GRAPHICS_IMAGEDEC_H
 #define GRAPHICS_IMAGEDEC_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"

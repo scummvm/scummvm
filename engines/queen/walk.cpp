@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "queen/walk.h"
 
 #include "queen/bankman.h"
@@ -431,7 +431,7 @@ int16 Walk::calcC(int16 c1, int16 c2, int16 c3, int16 c4, int16 lastc) {
 }
 
 int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
-	// In order to locate the nearest available area, the original algorithm 
+	// In order to locate the nearest available area, the original algorithm
 	// computes the horizontal and vertical distances for each available area.
 	// Unlike the original, we also compute the diagonal distance.
 	// To get an example of this in action, in the room D1, make Joe walking

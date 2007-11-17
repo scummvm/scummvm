@@ -22,11 +22,11 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "gui/browser.h"
 #include "gui/themebrowser.h"
 #include "gui/chooser.h"
 #include "gui/eval.h"
+#include "gui/message.h"
 #include "gui/newgui.h"
 #include "gui/options.h"
 #include "gui/PopUpWidget.h"
@@ -389,7 +389,7 @@ void OptionsDialog::close() {
 					break;
 				}
 
-				ConfMan.setBool("subtitles", subtitles, _domain); 
+				ConfMan.setBool("subtitles", subtitles, _domain);
 				ConfMan.setBool("speech_mute", speech_mute, _domain);
 
 				// Engines that reuse the subtitle speed widget set their own max value.
@@ -436,7 +436,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		if (_subMode < 2)
 			_subMode++;
 		else
-			_subMode = 0;	
+			_subMode = 0;
 
 		_subToggleButton->setLabel(_subModeDesc[_subMode]);
 		_subToggleButton->draw();
@@ -663,7 +663,7 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 		return 1;
 	else if (subtitles && speech_mute) // Subtitles only
 		return 2;
-	else 
+	else
 		warning("Wrong configuration: Both subtitles and speech are off. Assuming subtitles only");
 	return 2;
 }
@@ -844,9 +844,14 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(browser.getResult());
-			_savePath->setLabel(dir.path());
+			if (dir.isWritable()) {
+				_savePath->setLabel(dir.getPath());
+			} else {
+				MessageDialog error("The chosen directory cannot be written to. Please select another one.");
+				error.runModal();
+				return;
+			}
 			draw();
-			// TODO - we should check if the directory is writeable before accepting it
 		}
 		break;
 	}
@@ -855,7 +860,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(browser.getResult());
-			_themePath->setLabel(dir.path());
+			_themePath->setLabel(dir.getPath());
 			draw();
 		}
 		break;
@@ -865,7 +870,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode dir(browser.getResult());
-			_extraPath->setLabel(dir.path());
+			_extraPath->setLabel(dir.getPath());
 			draw();
 		}
 		break;
@@ -875,9 +880,9 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			FilesystemNode file(browser.getResult());
-			_soundFont->setLabel(file.path());
+			_soundFont->setLabel(file.getPath());
 
-			if (!file.path().empty() && (file.path() != "None"))
+			if (!file.getPath().empty() && (file.getPath() != "None"))
 				_soundFontClearButton->setEnabled(true);
 			else
 				_soundFontClearButton->setEnabled(false);

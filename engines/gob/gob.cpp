@@ -23,8 +23,9 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
+#include "common/events.h"
 
 #include "base/plugins.h"
 #include "common/config-manager.h"
@@ -98,6 +99,8 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addSpecialDebugLevel(kDebugFileIO, "FileIO", "File Input/Output debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
 	Common::addSpecialDebugLevel(kDebugCollisions, "Collisions", "Collisions debug level");
+
+	syst->getEventManager()->registerRandomSource(_rnd, "gob");
 }
 
 GobEngine::~GobEngine() {
@@ -142,12 +145,6 @@ void GobEngine::validateVideoMode(int16 videoMode) {
 }
 
 int GobEngine::init() {
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	if (!initGameParts()) {
 		GUIErrorMessage("GobEngine::init(): Unknown version of game engine");
 		return -1;

@@ -45,7 +45,7 @@ void A8SVXDecoder::readBODY(Common::IFFChunk &chunk) {
 	switch (_header.compression) {
 	case 0:
 		_dataSize = chunk.size;
-		_data = (byte*)malloc(_dataSize);
+		_data = (int8*)malloc(_dataSize);
 		chunk.read(_data, _dataSize);
 		break;
 
@@ -57,7 +57,7 @@ void A8SVXDecoder::readBODY(Common::IFFChunk &chunk) {
 }
 
 
-A8SVXDecoder::A8SVXDecoder(Common::ReadStream &input, Voice8Header &header, byte *&data, uint32 &dataSize) :
+A8SVXDecoder::A8SVXDecoder(Common::ReadStream &input, Voice8Header &header, int8 *&data, uint32 &dataSize) :
 	IFFParser(input), _header(header), _data(data), _dataSize(dataSize) {
 	if (_typeId != ID_8SVX)
 		error("unknown audio format");

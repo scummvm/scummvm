@@ -75,8 +75,14 @@ char *strpbrk(const char *s, const char *accept);
 #include <assert.h>
 #include <mmsystem.h>
 #include <ctype.h>
-#include <direct.h>
+//#include <direct.h>
 #include <time.h>
+
+#ifdef __MINGW32CE__
+	void *bsearch(const void *, const void *, size_t, size_t, int (*x) (const void *, const void *));
+#endif
+int remove(const char *path);
+int _access(const char *path, int mode);
 
 void drawError(char*);
 

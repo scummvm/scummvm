@@ -119,6 +119,22 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\scumm\detection.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\scumm\detection.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\scumm\detection_tables.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\scumm\dialogs.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -137,6 +153,10 @@
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\scumm\file_nes.cpp">
+			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\scumm\gfx.cpp">

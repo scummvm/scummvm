@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/system.h"
 
@@ -368,7 +368,7 @@ void AGOSEngine_Simon1::os1_screenTextBox() {
 	tl->y = getVarOrByte();
 	tl->width = getVarOrWord();
 }
-	
+
 void AGOSEngine_Simon1::os1_screenTextMsg() {
 	// 162: print string
 	uint vgaSpriteId = getVarOrByte();

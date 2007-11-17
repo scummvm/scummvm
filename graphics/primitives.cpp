@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/util.h"
 
 namespace Graphics {

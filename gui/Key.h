@@ -26,7 +26,6 @@
 #ifndef GUI_KEY_H
 #define GUI_KEY_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 

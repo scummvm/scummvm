@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/config-manager.h"
 #include "queen/resource.h"
@@ -179,15 +179,20 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 	case 'E':
 		if (Common::parseLanguage(ConfMan.get("language")) == Common::RU_RUS) {
 			ver->language = Common::RU_RUS;
+		} else if (Common::parseLanguage(ConfMan.get("language")) == Common::GR_GRE) {
+			ver->language = Common::GR_GRE;
 		} else {
 			ver->language = Common::EN_ANY;
 		}
 		break;
+	case 'F':
+		ver->language = Common::FR_FRA;
+		break;
 	case 'G':
 		ver->language = Common::DE_DEU;
 		break;
-	case 'F':
-		ver->language = Common::FR_FRA;
+	case 'H':
+		ver->language = Common::HB_ISR;
 		break;
 	case 'I':
 		ver->language = Common::IT_ITA;
@@ -195,8 +200,11 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 	case 'S':
 		ver->language = Common::ES_ESP;
 		break;
-	case 'H':
-		ver->language = Common::HB_ISR;
+	case 'g':
+		ver->language = Common::GR_GRE;
+		break;
+	case 'R':
+		ver->language = Common::RU_RUS;
 		break;
 	default:
 		error("Invalid language id '%c'", ver->str[1]);

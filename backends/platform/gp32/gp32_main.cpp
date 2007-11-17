@@ -23,7 +23,6 @@
  *
  */
 
-#include "stdafx.h"
 #include "common/scummsys.h"
 
 #include "common/config-manager.h"

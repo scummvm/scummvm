@@ -23,9 +23,11 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
+#include "common/util.h"
 #include "create_lure_dat.h"
+
+using namespace Common;
 
 enum Action {
 	GET = 1, PUSH = 3, PULL = 4, OPERATE = 5, OPEN = 6,	CLOSE = 7, LOCK = 8,
@@ -52,10 +54,18 @@ int numParams[NPC_JUMP_ADDRESS+1] = {0,
 	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
 	0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
 
-#ifdef ENGLISH_LURE
 #define NUM_JUMP_OFFSETS 2
-uint16 jumpOffsets[2] = {0x87be, 0x881c};
-#endif
+
+struct JumpOffsetsRecord {
+	Common::Language language;
+	uint16 jumpOffsets[2];
+};
+
+JumpOffsetsRecord jumpOffsets[] = {
+	{EN_ANY, {0x87be, 0x881c}},
+	{IT_ITA, {0x881c, 0x887a}},
+	{UNK_LANG, {0, 0}}
+};
 
 #define MAX_BUFFER_ENTRIES 63
 #define MAX_INSTRUCTION_ENTRIES 300
@@ -84,7 +94,7 @@ uint16 get_sequence_index(uint16 offset, int supportIndex) {
 		}
 	}
 
-	for (int index = 0; index <= numSupportEntries; ++index) {
+	for (index = 0; index < numSupportEntries; ++index) {
 		SupportStructure &rec = supportList[index];
 
 		if ((rec.numInstructions > 0) &&
@@ -111,13 +121,29 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 	SupportStructure &rec = supportList[supportIndex];
 	uint16 startOffset = rec.offset;
 	uint16 maxOffset = 0;
-#ifdef ENGLISH_LURE
-	if (startOffset == 0x7dcb) { startOffset = 0x7d9d; maxOffset = 0x7dcb; }
-	if (startOffset == 0x7248) { startOffset = 0x71ce; maxOffset = 0x7248; }
-	if (startOffset == 0x79a8) { startOffset = 0x785c; maxOffset = 0x79a8; }
-	if (startOffset == 0x6f4f) { startOffset = 0x6e5d; maxOffset = 0x6fe5; }
-	if (startOffset == 0x76ec) { startOffset = 0x734a; maxOffset = 0x77a2; }
-#endif
+
+	switch (language) {
+	case EN_ANY:
+		if (startOffset == 0x7dcb) { startOffset = 0x7d9d; maxOffset = 0x7dcb; }
+		if (startOffset == 0x7248) { startOffset = 0x71ce; maxOffset = 0x7248; }
+		if (startOffset == 0x79a8) { startOffset = 0x785c; maxOffset = 0x79a8; }
+		if (startOffset == 0x6f4f) { startOffset = 0x6e5d; maxOffset = 0x6fe5; }
+		if (startOffset == 0x76ec) { startOffset = 0x734a; maxOffset = 0x77a2; }
+		break;
+	case IT_ITA:
+		if (startOffset == 0x7e8b) { startOffset = 0x7e5d; maxOffset = 0x7eb5; }
+		if (startOffset == 0x7a68) { startOffset = 0x791c; maxOffset = 0x7a92; }
+		if (startOffset == 0x7308) { startOffset = 0x7308; maxOffset = 0x7362; }
+		if (startOffset == 0x7308) { startOffset = 0x728e; maxOffset = 0x7362; }
+		if (startOffset == 0x700f) { startOffset = 0x700f; maxOffset = 0x7083; }
+		if (startOffset == 0x700f) { startOffset = 0x6f1d; maxOffset = 0x70a5; }
+		if (startOffset == 0x7866) { startOffset = 0x740a; maxOffset = 0x7876; }
+		if (startOffset == 0x3600) { startOffset = 0x35c6; maxOffset = 0x3622; }
+		break;
+	default:
+		break;
+	}
+
 //printf("Start=%xh max=%xh\n", startOffset, maxOffset);
 	SymbolTableEntry symbolTable[MAX_INSTRUCTION_ENTRIES];
 	uint16 numSymbols = 0;
@@ -128,8 +154,9 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 	uint16 params[5];
 	uint16 index;
 	uint16 *pOut = (uint16 *) data;
+	JumpOffsetsRecord *jmpOffset;
 
-	lure_exe.seek(DATA_SEGMENT + startOffset);
+	lureExe.seek(dataSegment + startOffset);
 	rec.numInstructions = 0;
 
 	for (;;) {
@@ -151,13 +178,13 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 		}
 
 		// Get in the next action
-		actionNum = lure_exe.readWord();
+		actionNum = lureExe.readWord();
 
-//		printf("%xh - action=%d", offset, actionNum);
+//printf("%xh - action=%d", offset, actionNum);
 
 		if (actionNum == 0) {
 			// At end of script block
-//			printf("\n");
+//printf("\n");
 			break;
 		}
 		else if (actionNum > NPC_JUMP_ADDRESS) {
@@ -170,7 +197,7 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 
 		// Read in any action parameters
 		for (int paramCtr = 0; paramCtr < numParams[actionNum]; ++paramCtr)
-			params[paramCtr] = lure_exe.readWord();
+			params[paramCtr] = lureExe.readWord();
 
 		switch(actionNum) {
 		case NPC_SET_ROOM_AND_BLOCKED_OFFSET:
@@ -196,15 +223,17 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 
 		case NPC_JUMP_ADDRESS:
 			// Make sure the address is in the known list
+			jmpOffset = &jumpOffsets[0];
+			while (jmpOffset->language != language) ++jmpOffset;
 			index = 0;
-			while ((index < NUM_JUMP_OFFSETS) && (jumpOffsets[index] != params[0]))
+			while ((index < NUM_JUMP_OFFSETS) && (jmpOffset->jumpOffsets[index] != params[0]))
 				++index;
 			
 			if (index != NUM_JUMP_OFFSETS)
 				// Replace code offset with an index			
 				params[0] = index;
 			else {
-				printf("Encountered unrecognised NPC code jump point: %xh\n", params[0]);
+				printf("\nEncountered unrecognised NPC code jump point: %xh\n", params[0]);
 				exit(1);
 			}
 			break;
@@ -224,9 +253,9 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 		for (paramIndex = 0; paramIndex < numParams[actionNum]; ++paramIndex)
 		{
 			*pOut++ = TO_LE_16(params[paramIndex]);
-//			printf(" %xh", TO_LE_16(params[paramIndex]));
+//printf(" %xh", TO_LE_16(params[paramIndex]));
 		}
-//		printf("\n");
+//printf("\n");
 
 		// Increase size
 		totalSize += (numParams[actionNum] + 1) * sizeof(uint16); 
@@ -269,15 +298,16 @@ void process_entry(uint16 offset, byte *data, uint16 &totalSize) {
 		supportList[numSupportEntries].offset = offset;
 		supportList[numSupportEntries].numInstructions = 0;
 		supportList[numSupportEntries].resourceOffset = totalSize;
-//printf("process_entry index=%d, offset=%xh\n", numSupportEntries + 1, offset);
-		totalSize += process_action_sequence_entry(numSupportEntries, 
-			data + totalSize,  MAX_DATA_SIZE - totalSize);
 
 		++numSupportEntries;
 		if (numSupportEntries == MAX_BUFFER_ENTRIES) {
 			printf("Ran out of buffer space in processing NPC schedules\n");
 			exit(1);
 		}
+
+//printf("process_entry index=%d, offset=%xh\n", numSupportEntries, offset);
+		totalSize += process_action_sequence_entry(numSupportEntries - 1, 
+			data + totalSize,  MAX_DATA_SIZE - totalSize);
 	}
 }
 
@@ -294,8 +324,6 @@ struct RoomRandomActionSet {
 
 void read_action_sequence(byte *&data, uint16 &totalSize) 
 {
-	const uint16 hsOffset = 0x5d98;
-	const uint16 hsStartId = 0x3e8;
 	uint16 hotspotIndex;
 	HotspotHeaderEntry entryHeader;
 	CurrentActionInput action;
@@ -307,19 +335,20 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 
 	// Get a list of offsets used in the script engine
 	uint16 offsetList[NUM_TABLED_ACTION_BLOCKS];
-	lure_exe.seek(DATA_SEGMENT + TABLED_ACTIONS_OFFSET, SEEK_SET);
+	lureExe.seek(dataSegment + TABLED_ACTIONS_OFFSET, SEEK_SET);
 	for (index = 0; index < NUM_TABLED_ACTION_BLOCKS; ++index)
-		offsetList[index] = lure_exe.readWord();
+		offsetList[index] = lureExe.readWord();
 	totalSize = sizeof(uint16) * (NUM_TABLED_ACTION_BLOCKS + 1);
 
 	/* Process the list of random actions that your follower can do in each room */
 	RoomRandomActionSet *randomActions = new RoomRandomActionSet[RANDOM_ROOM_NUM_ENTRIES];
-
+	
 	// Get a list of the offsets for each room
-	lure_exe.seek(DATA_SEGMENT + RANDOM_ACTIONS_OFFSET, SEEK_SET);
-	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex)
-	{
-		randomActions[roomIndex].offset = lure_exe.readWord();
+	uint16 raOffset = 0x4D10;
+	if (language == IT_ITA) raOffset = 0x4dc0;
+	lureExe.seek(dataSegment + raOffset, SEEK_SET);
+	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex) {
+		randomActions[roomIndex].offset = lureExe.readWord();
 		randomActions[roomIndex].numEntries = 0;
 		randomActions[roomIndex].entries = NULL;
 	}
@@ -330,25 +359,24 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 		if (randomActions[roomIndex].offset == 0)
 			continue;
 
-		lure_exe.seek(DATA_SEGMENT + randomActions[roomIndex].offset, SEEK_SET);
-		randomActions[roomIndex].numEntries = lure_exe.readByte();
+		lureExe.seek(dataSegment + randomActions[roomIndex].offset, SEEK_SET);
+		randomActions[roomIndex].numEntries = lureExe.readByte();
 		assert(randomActions[roomIndex].numEntries <= 8);
 		randomActions[roomIndex].entries = new RoomRandomActionEntry[randomActions[roomIndex].numEntries];
 
 		// Loop through the entries
-		uint16 sequenceVal;
 		uint16 offset = randomActions[roomIndex].offset + 1;
 		for (uint8 entryCtr = 0; entryCtr < randomActions[roomIndex].numEntries; ++entryCtr)
 		{
-			randomActions[roomIndex].entries[entryCtr].repeatable = lure_exe.readWord() == 1;
+			randomActions[roomIndex].entries[entryCtr].repeatable = lureExe.readWord() == 1;
 			offset += 2;
 
-			uint16 firstCommand = lure_exe.readWord();
+			uint16 firstCommand = lureExe.readWord();
 			randomActions[roomIndex].entries[entryCtr].offset = 
 				(firstCommand == 0xfffe) ? 0 : offset;
 			
 			offset += sizeof(uint16);
-			while (lure_exe.readWord() != 0xffff) 
+			while (lureExe.readWord() != 0xffff) 
 				offset += sizeof(uint16);
 			offset += sizeof(uint16);
 		}
@@ -364,15 +392,25 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 
 	// Handle required initial entries - the Lure engine refers to them directly by
 	// index, so they need to be first, and in that order
-#ifdef ENGLISH_LURE
-	process_entry(0x13c2, data, totalSize);	  // RETURN sequence
-	process_entry(0xbb95, data, totalSize);	  // Exit blocked sequence
-	process_entry(0x7060, data, totalSize);   // Jump proc #2 - go to castle basement
-	process_entry(0x728a, data, totalSize);		
-	process_entry(0x76ec, data, totalSize);   
-	process_entry(0x4ebb, data, totalSize);	  // Goewin as a follower in cave
-	process_entry(0x7D9D, data, totalSize);	  // Goewin standard handler
-#endif
+	switch (language) {
+	case EN_ANY:
+		process_entry(0x13c2, data, totalSize);	  // RETURN sequence
+		process_entry(0xbb95, data, totalSize);	  // Exit blocked sequence
+		process_entry(0x706c, data, totalSize);   // Jump proc #2 - go to castle basement
+		process_entry(0x728a, data, totalSize);		
+		process_entry(0x76ec, data, totalSize);   
+		process_entry(0x4ebb, data, totalSize);	  // Goewin as a follower in cave
+		process_entry(0x7D9D, data, totalSize);	  // Goewin standard handler
+		break;
+	case IT_ITA:
+		process_entry(0x13c2, data, totalSize);
+		process_entry(0xbc55, data, totalSize);
+		process_entry(0x712c, data, totalSize);
+		break;
+	default:
+		printf("Unknown language\n");
+		exit(1);
+	}
 
 	// Process the script engine list 
 	
@@ -382,17 +420,20 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 
 	// Next process each of the character hotspots
 
+	uint16 hsOffset = 0x5d98;
+	if (language == IT_ITA) hsOffset = 0x5e58;
+
 	hotspotIndex = 0;
 	for (;;) {
-		lure_exe.seek(DATA_SEGMENT + hsOffset + 
+		lureExe.seek(dataSegment + hsOffset + 
 			hotspotIndex * sizeof(HotspotHeaderEntry));
-		lure_exe.read(&entryHeader, sizeof(HotspotHeaderEntry));
+		lureExe.read(&entryHeader, sizeof(HotspotHeaderEntry));
 		if (FROM_LE_16(entryHeader.offset) == 0xffff) break;
 		++hotspotIndex;
 
 		// Move to the action sequence area of the hotspot
-		lure_exe.seek(DATA_SEGMENT + entryHeader.offset + 0x63);
-		lure_exe.read(&action, sizeof(CurrentActionInput));
+		lureExe.seek(dataSegment + entryHeader.offset + 0x63);
+		lureExe.read(&action, sizeof(CurrentActionInput));
 		if (FROM_LE_16(action.action) == 2) 
 			process_entry(FROM_LE_16(action.dataOffset), data, totalSize);
 	}

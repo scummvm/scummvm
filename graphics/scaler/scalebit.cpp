@@ -33,7 +33,6 @@
  * - derivative works of the program are allowed.
  */
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 #include "graphics/scaler/intern.h"

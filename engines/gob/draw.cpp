@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -62,7 +62,7 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 
 	for (int i = 0; i < 8; i++)
 		_fonts[i] = 0;
-	
+
 	for (int i = 0; i < SPRITES_COUNT; i++)
 		_spritesArray[i] = 0;
 
@@ -357,7 +357,7 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 
 		_vm->_global->_inter_execPtr = storedIP;
 	}
-	
+
 	if (str[0] == '\0')
 		return;
 

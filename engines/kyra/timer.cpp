@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/branches/gsoc2007-mixer/engines/kyra/timer.cpp $
+ * $Id: timer.cpp 28297 2007-07-29 16:33:11Z lordhoto $
  *
  */
 
@@ -72,6 +72,12 @@ void TimerManager::reset() {
 
 void TimerManager::addTimer(uint8 id, TimerFunc *func, int countdown, bool enabled) {
 	debugC(9, kDebugLevelTimer, "TimerManager::addTimer(%d, %p, %d, %d)", id, (const void*)func, countdown, enabled);
+
+	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
+	if (timer != _timers.end()) {
+		warning("Adding allready existing timer %d", id);
+		return;
+	}
 
 	TimerEntry newTimer;
 	

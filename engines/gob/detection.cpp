@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "base/plugins.h"
 #include "common/advancedDetector.h"
 
@@ -1701,20 +1701,22 @@ static const ADParams detectionParams = {
 	kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(GOB, Gob::GobEngine, detectionParams);
+static bool Engine_GOB_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Gob::GOBGameDescription *gd = (const Gob::GOBGameDescription *)(encapsulatedDesc.realDesc);
+	if (gd) {
+		*engine = new Gob::GobEngine(syst);
+		((Gob::GobEngine *)*engine)->initGame(gd);
+	}
+	return gd != 0;
+}
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN(GOB, Engine_GOB_createInstance, detectionParams);
 
 REGISTER_PLUGIN(GOB, "Gob Engine", "Goblins Games (C) Coktel Vision");
 
-
 namespace Gob {
 
-bool GobEngine::detectGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	const GOBGameDescription *gd = (const GOBGameDescription *)(encapsulatedDesc.realDesc);
-
-	if (gd == 0)
-		return false;
-
+void GobEngine::initGame(const GOBGameDescription *gd) {
 	if (gd->startTotBase == 0) {
 		_startTot = new char[10];
 		_startTot0 = new char[11];
@@ -1733,8 +1735,6 @@ bool GobEngine::detectGame() {
 	_features = gd->features;
 	_language = gd->desc.language;
 	_platform = gd->desc.platform;
-
-	return true;
 }
 
 } // End of namespace Gob

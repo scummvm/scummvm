@@ -23,11 +23,12 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "agos/debugger.h"
 #include "agos/intern.h"
@@ -187,7 +188,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_inCallBack = 0;
 	_cepeFlag = 0;
 	_fastMode = 0;
-	
+
 	_backFlag = 0;
 
 	_debugMode = 0;
@@ -336,7 +337,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
  	_iconToggleCount = 0;
  	_voiceCount = 0;
- 
+
 	_lastTickCount = 0;
 	_thisTickCount = 0;
 	_startSecondCount = 0;
@@ -519,15 +520,11 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	File::addDefaultDirectory(_gameDataPath + "SFX");
 	File::addDefaultDirectory(_gameDataPath + "speech");
 	File::addDefaultDirectory(_gameDataPath + "SPEECH");
+	
+	syst->getEventManager()->registerRandomSource(_rnd, "agos");
 }
 
 int AGOSEngine::init() {
-	// Detect game
-	if (!initGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	if (getGameId() == GID_DIMP) {
 		_screenWidth = 496;
 		_screenHeight = 400;
@@ -969,7 +966,7 @@ int AGOSEngine::go() {
 		(getFeatures() & GF_DEMO)) {
 		int i;
 
-		while(1) {
+		while (1) {
 			for (i = 0; i < 4; i++) {
 				setWindowImage(3, 9902 + i);
 				debug(0, "Displaying image %d", 9902 + i);

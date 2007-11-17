@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "base/plugins.h"
 
@@ -64,7 +64,7 @@ static const CRUISEGameDescription gameDescriptions[] = {
 	{
 	    {
 			"cruise",
-			"",
+			"16 colors",
 			AD_ENTRY1("D1", "41a7a4d426dbd048eb369cfee4bb2717"),
 			Common::FR_FRA,
 			Common::kPlatformPC,
@@ -73,6 +73,18 @@ static const CRUISEGameDescription gameDescriptions[] = {
 		GType_CRUISE,
 		0,
     },
+	{
+		{
+			"cruise",
+			"256 colors",
+			AD_ENTRY1("D1", "e258865807ea31b2d523340e6f0a606b"),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_CRUISE,
+		0,
+	},
 	{
 	    {
 			"cruise",
@@ -111,17 +123,14 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(CRUISE, Cruise::CruiseEngine, detectionParams);
-
-REGISTER_PLUGIN(CRUISE, "Cinematique evo 2 engine", "Cruise for a Corpse (C) Delphine Software");
-
-namespace Cruise {
-
-bool CruiseEngine::initGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	_gameDescription = (const CRUISEGameDescription *)(encapsulatedDesc.realDesc);
-
-	return (_gameDescription != 0);
+static bool Engine_CRUISE_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Cruise::CRUISEGameDescription *gd = (const Cruise::CRUISEGameDescription *)(encapsulatedDesc.realDesc);
+	if (gd) {
+		*engine = new Cruise::CruiseEngine(syst, gd);
+	}
+	return gd != 0;
 }
 
-} // End of namespace Cruise
+ADVANCED_DETECTOR_DEFINE_PLUGIN(CRUISE, Engine_CRUISE_createInstance, detectionParams);
+
+REGISTER_PLUGIN(CRUISE, "Cinematique evo 2 engine", "Cruise for a Corpse (C) Delphine Software");

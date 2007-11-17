@@ -26,7 +26,6 @@
 #ifndef SOUND_AIFF_H
 #define SOUND_AIFF_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 namespace Common { class SeekableReadStream; }

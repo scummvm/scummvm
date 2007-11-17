@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "parallaction/parallaction.h"
 
 
@@ -32,7 +30,7 @@ namespace Parallaction {
 
 char			_tokens[20][40];
 
-Script::Script(Common::SeekableReadStream *input, bool disposeSource) : _input(input), _disposeSource(disposeSource) {
+Script::Script(Common::ReadStream *input, bool disposeSource) : _input(input), _disposeSource(disposeSource), _line(0) {
 }
 
 Script::~Script() {
@@ -52,6 +50,8 @@ char *Script::readLine(char *buf, size_t bufSize) {
 		if (!_input->eos() && _si < bufSize) buf[_si] = v2;
 	}
 
+	_line++;
+
 	if (_si == 0 && _input->eos())
 		return 0;
 
@@ -62,27 +62,9 @@ char *Script::readLine(char *buf, size_t bufSize) {
 
 }
 
-uint32 Script::read(void *dataPtr, uint32 dataSize) {
-	error("binary read not supported on Script streams");
-}
 
-bool Script::eos() const {
-	error("EoS not supported on Script streams");
-}
 
-uint32 Script::pos() const {
-	error("position not supported on Script streams");
-}
-
-uint32 Script::size() const {
-	error("can't get size of Script streams");
-}
-
-void Script::seek(int32 offset, int whence) {
-	error("seek not supported on Script streams");
-}
-
-void clearTokens() {
+void Script::clearTokens() {
 
 	for (uint16 i = 0; i < 20; i++)
 		_tokens[i][0] = '\0';
@@ -91,10 +73,10 @@ void clearTokens() {
 
 }
 
-void skip(Script* script, const char* endToken) {
+void Script::skip(const char* endToken) {
 
 	while (scumm_stricmp(_tokens[0], endToken)) {
-		fillBuffers(*script, true);
+		readLineToken(true);
 	}
 
 }
@@ -167,7 +149,7 @@ char *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ign
 
 }
 
-uint16 fillTokens(char* line) {
+uint16 Script::fillTokens(char* line) {
 
 	uint16 i = 0;
 	while (strlen(line) > 0 && i < 20) {
@@ -179,14 +161,14 @@ uint16 fillTokens(char* line) {
 	return i;
 }
 
-uint16 fillBuffers(Common::SeekableReadStream &stream, bool errorOnEOF) {
+uint16 Script::readLineToken(bool errorOnEOF) {
 
 	clearTokens();
 
 	char buf[200];
 	char *line = NULL;
 	do {
-		line = stream.readLine(buf, 200);
+		line = readLine(buf, 200);
 		if (line == NULL) {
 			if (errorOnEOF)
 				error("unexpected end of file while parsing");

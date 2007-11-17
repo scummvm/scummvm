@@ -26,8 +26,6 @@
 #ifndef SCUMM_DETECTION_TABLES_H
 #define SCUMM_DETECTION_TABLES_H
 
-#include "common/stdafx.h"
-
 #include "common/advancedDetector.h"
 #include "common/rect.h"
 #include "common/util.h"
@@ -250,7 +248,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"fbear", "HE 70", 0, GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY, Common::kPlatformWindows},
 
 	{"puttmoon", "", 0, GID_HEGAME,  6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
- 
+
 	{"puttputt", "HE 61", 0, GID_HEGAME,   6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 	{"puttputt", "HE 60", 0, GID_HEGAME,   6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
 	{"puttputt", "Demo",  0, GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
@@ -648,7 +646,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama2", "PajamaTAL", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "pajama2", "PyjamaDBMN", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama2", "PyjamaDBMN", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
-	{ "pajama2", "PyjamaHM", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 }, 
+	{ "pajama2", "PyjamaHM", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 	{ "pajama2", "PYJAMA2", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama2", "Pyjama Pit 2", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "pajama2", "Pyjama Pit 2 Demo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
@@ -736,7 +734,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttzoo", "Putt-Putt Redt De Zoo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "puttzoo", "puttzoo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttzoo", "Puttzoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "puttzoo", "PuttZoo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 }, 
+	{ "puttzoo", "PuttZoo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttzoo", "T\xC3\xB6""ff-T\xC3\xB6""ff\xE2\x84\xA2 Zoo Demo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },	// UTF-8 encoding
 	{ "puttzoo", "T\xF6""ff-T""\xF6""ff\x99 Zoo Demo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },	// Windows encoding
 	{ "puttzoo", "zoodemo", kGenHEPC, UNK_LANG, UNK, 0 },

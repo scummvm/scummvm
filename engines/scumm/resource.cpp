@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/str.h"
 
 #include "scumm/charset.h"
@@ -101,7 +101,7 @@ void ScummEngine::openRoom(const int room) {
 			_fileOffset = _res->roomoffs[rtRoom][room];
 			return;
 		}
-		
+
 		Common::String filename(generateFilename(room));
 
 		// Determine the encryption, if any.
@@ -327,7 +327,7 @@ void ScummEngine::readIndexFile() {
 bool checkTryMedia(BaseScummFile *handle) {
 	byte buf[TRYMEDIA_MARK_LEN];
 	bool matched = true;
-	const byte magic[2][TRYMEDIA_MARK_LEN] = 
+	const byte magic[2][TRYMEDIA_MARK_LEN] =
 		{{ 0x00,  'T', 'M', 'S', 'A', 'M' },
 		 { 'i',   '=', '$', ':', '(', '$' }};  // Same but 0x69 xored
 
@@ -597,7 +597,7 @@ void ScummEngine::ensureResourceLoaded(int type, int i) {
 		i = _resourceMapper[i & 0x7F];
 	}
 
-	// FIXME - TODO: This check used to be "i==0". However, that causes
+	// FIXME: This check used to be "i==0". However, that causes
 	// problems when using this function to ensure charset 0 is loaded.
 	// This is done for many games, e.g. Zak256 or Indy3 (EGA and VGA).
 	// For now we restrict the check to anything which is not a charset.

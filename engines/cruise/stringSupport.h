@@ -28,12 +28,6 @@
 
 namespace Cruise {
 
-// TODO: Get rid of these and this file (either use strcpy directly, or switch to Common::String)
-
-void strcpyuint8(void *dest, const void *source);
-void strcatuint8(void *dest, const void *source);
-uint8 strcmpuint8(const void *string1, const void *string2);
-
 } // End of namespace Cruise
 
 #endif

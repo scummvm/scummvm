@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "engines/engine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
@@ -32,6 +30,7 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/fs.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -47,10 +46,6 @@
 #endif
 
 #define DETECTOR_TESTING_HACK
-
-#ifdef DETECTOR_TESTING_HACK
-#include "common/fs.h"
-#endif
 
 namespace Base {
 
@@ -107,6 +102,7 @@ static const char HELP_STRING[] =
 	"                           acorn, amiga, atari, c64, fmtowns, nes, mac, pc,\n"
 	"                           pce, segacd, windows)\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"
+	"  --extrapath=PATH         Extra path to additional game data\n"
 	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
 	"                           supported by some MIDI drivers)\n"
 	"  --multi-midi             Enable combination Adlib and native MIDI\n"
@@ -218,7 +214,7 @@ void registerDefaults() {
 	// Register default savepath
 #ifdef DEFAULT_SAVE_PATH
 	char savePath[MAXPATHLEN];
-#ifdef UNIX
+#if defined(UNIX) && !defined(IPHONE)
 	const char *home = getenv("HOME");
 	if (home && *home && strlen(home) < MAXPATHLEN) {
 		snprintf(savePath, MAXPATHLEN, "%s/%s", home, DEFAULT_SAVE_PATH);
@@ -228,8 +224,17 @@ void registerDefaults() {
 	strcpy(savePath, Symbian::GetExecutablePath());
 	strcat(savePath, DEFAULT_SAVE_PATH);
 	ConfMan.registerDefault("savepath", savePath);
+#elif defined (IPHONE) // The iphone has / set as home dir when launching from the Springboard.
+	strcpy(savePath, "/var/root/");
+	strcat(savePath, DEFAULT_SAVE_PATH);
+	ConfMan.registerDefault("savepath", savePath);
 #endif
 #endif // #ifdef DEFAULT_SAVE_PATH
+
+	ConfMan.registerDefault("record_mode", "none");
+	ConfMan.registerDefault("record_file_name", "record.bin");
+	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
+	ConfMan.registerDefault("record_time_file_name", "record.time");
 }
 
 //
@@ -300,7 +305,7 @@ void registerDefaults() {
 
 Common::String parseCommandLine(Common::StringMap &settings, int argc, char **argv) {
 	const char *s, *s2;
-	
+
 	// argv[0] contains the name of the executable.
 	if (argv && argv[0]) {
 		s = strrchr(argv[0], '/');
@@ -390,7 +395,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_OPTION('p', "path")
-				// TODO: Verify whether the path is valid
+				FilesystemNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent game path '%s'", option);
+				} else if (!path.isReadable()) {
+					usage("Non-readable game path '%s'", option);
+				}
 			END_OPTION
 
 			DO_OPTION('q', "language")
@@ -428,7 +438,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("soundfont")
-				// TODO: Verify whether the path is valid
+				FilesystemNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent soundfont path '%s'", option);
+				} else if (!path.isReadable()) {
+					usage("Non-readable soundfont path '%s'", option);
+				}
 			END_OPTION
 
 			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
@@ -453,7 +468,21 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")
-				// TODO: Verify whether the path is valid
+				FilesystemNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent savegames path '%s'", option);
+				} else if (!path.isWritable()) {
+					usage("Non-writable savegames path '%s'", option);
+				}
+			END_OPTION
+
+			DO_LONG_OPTION("extrapath")
+				FilesystemNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent extra path '%s'", option);
+				} else if (!path.isReadable()) {
+					usage("Non-readable extra path '%s'", option);
+				}
 			END_OPTION
 
 			DO_LONG_OPTION_INT("talkspeed")
@@ -466,7 +495,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			END_OPTION
 
 			DO_LONG_OPTION("themepath")
-				// TODO: Verify whether the path is valid
+				FilesystemNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent theme path '%s'", option);
+				} else if (!path.isReadable()) {
+					usage("Non-readable theme path '%s'", option);
+				}
 			END_OPTION
 
 			DO_LONG_OPTION("target-md5")
@@ -482,6 +516,24 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 
 #if !defined(DISABLE_SKY) || !defined(DISABLE_QUEEN)
 			DO_LONG_OPTION_BOOL("alt-intro")
+			END_OPTION
+#endif
+
+			DO_LONG_OPTION("record-mode")
+			END_OPTION
+
+			DO_LONG_OPTION("record-file-name")
+			END_OPTION
+
+			DO_LONG_OPTION("record-temp-file-name")
+			END_OPTION
+
+			DO_LONG_OPTION("record-time-file-name")
+			END_OPTION
+
+#ifdef IPHONE
+			// This is automatically set when launched from the Springboard.
+			DO_LONG_OPTION_OPT("launchedFromSB", 0)
 			END_OPTION
 #endif
 
@@ -542,7 +594,7 @@ static void runDetectorTest() {
 	// engines. Basically, it loops over all targets, and calls the detector
 	// for the given path. It then prints out the result and also checks
 	// whether the result agrees with the settings of the target.
-	
+
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	Common::ConfigManager::DomainMap::const_iterator iter = domains.begin();
 	int success = 0, failure = 0;
@@ -559,10 +611,10 @@ static void runDetectorTest() {
 		if (gameid.empty()) {
 			gameid = name;
 		}
-		
+
 		FilesystemNode dir(path);
 		FSList files;
-		if (!dir.listDir(files, FilesystemNode::kListAll)) {
+		if (!dir.getChildren(files, FilesystemNode::kListAll)) {
 			printf(" ... invalid path, skipping\n");
 			continue;
 		}
@@ -573,7 +625,7 @@ static void runDetectorTest() {
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
 			gameidDiffers |= (scumm_stricmp(gameid.c_str(), x->gameid().c_str()) != 0);
 		}
-		
+
 		if (candidates.empty()) {
 			printf(" FAILURE: No games detected\n");
 			failure++;
@@ -591,7 +643,7 @@ static void runDetectorTest() {
 			printf(" SUCCESS: Game was detected correctly\n");
 			success++;
 		}
-		
+
 		for (x = candidates.begin(); x != candidates.end(); ++x) {
 			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
 				   x->gameid().c_str(),
@@ -663,7 +715,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 			usage("Unrecognized game target '%s'", command.c_str());
 		}
 	}
-	
+
 
 	// The user can override the savepath with the SCUMMVM_SAVEPATH
 	// environment variable. This is weaker than a --savepath on the
@@ -673,12 +725,17 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	if (!settings.contains("savepath")) {
 		const char *dir = getenv("SCUMMVM_SAVEPATH");
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {
-			// TODO: Verify whether the path is valid
-			settings["savepath"] = dir;
+			FilesystemNode saveDir(dir);
+			if (!saveDir.exists()) {
+				warning("Non-existent SCUMMVM_SAVEPATH save path. It will be ignored.");
+			} else if (!saveDir.isWritable()) {
+				warning("Non-writable SCUMMVM_SAVEPATH save path. It will be ignored.");
+			} else {
+				settings["savepath"] = dir;
+			}
 		}
 	}
 #endif
-
 
 	// Finally, store the command line settings into the config manager.
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
@@ -689,7 +746,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		for (Common::String::iterator c = key.begin(); c != key.end(); ++c)
 			if (*c == '-')
 				*c = '_';
-		
+
 		// Store it into ConfMan.
 		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
 	}

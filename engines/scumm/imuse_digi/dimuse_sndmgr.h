@@ -25,7 +25,7 @@
 #ifndef SCUMM_IMUSE_DIGI_SNDMGR_H
 #define SCUMM_IMUSE_DIGI_SNDMGR_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "sound/audiostream.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"

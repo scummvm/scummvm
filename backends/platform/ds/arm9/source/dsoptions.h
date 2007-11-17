@@ -23,7 +23,6 @@
 #ifndef _DSOPTIONS_H_
 #define _DSOPTIONS_H_
 
-#include "stdafx.h"
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -55,6 +54,7 @@ protected:
 	GUI::CheckboxWidget* _disablePowerOff;
 	GUI::CheckboxWidget* _cpuScaler;
 	GUI::CheckboxWidget* _showCursorCheckbox;
+	GUI::CheckboxWidget* _snapToBorderCheckbox;
 	
 #ifdef DS_SCUMM_BUILD
 	Scumm::SaveLoadChooser* _delDialog;

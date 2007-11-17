@@ -65,6 +65,11 @@ private:
 	static const int _spaFontSize;
 	static const uint8 _spaFontData[];
 
+	/* font data for polish version */
+	static const uint16 _polFontOffs[];
+	static const int _polFontSize;
+	static const uint8 _polFontData[];
+
 	static const uint16 *_fontOffs;
 	static int _fontSize;
 	static const uint8 *_fontData;

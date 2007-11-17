@@ -43,24 +43,24 @@ struct backgroundIncrustStruct {
 	uint16 scriptNumber;
 	uint16 scriptOverlayIdx;
 	uint8 *ptr;
-	int32 field_1C;
-	int16 size;
-	uint16 field_22;
-	uint16 field_24;
-	char name[14];
-	uint16 var34;
+	int16 saveWidth;
+	int16 saveHeight;
+	uint16 saveSize;
+	int16 savedX;
+	int16 savedY;
+	char name[13];
+	uint16 spriteId;
 };
 
 extern backgroundIncrustStruct backgroundIncrustHead;
 
 void resetBackgroundIncrustList(backgroundIncrustStruct * pHead);
-backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx, int16 param2,
-    backgroundIncrustStruct * pHead, int16 scriptNumber, int16 scriptOverlay,
-    int16 backgroundIdx, int16 param4);
-void loadBackgroundIncrustFromSave(FILE * fileHandle);
+backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx, int16 param2, backgroundIncrustStruct * pHead, int16 scriptNumber, int16 scriptOverlay, int16 backgroundIdx, int16 param4);
+void loadBackgroundIncrustFromSave(Common::File& currentSaveFile);
 void regenerateBackgroundIncrust(backgroundIncrustStruct * pHead);
 void freeBackgroundIncrustList(backgroundIncrustStruct * pHead);
 void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct * pHead);
+void unmergeBackgroundIncrust(backgroundIncrustStruct * pHead, int ovl, int idx);
 
 } // End of namespace Cruise
 

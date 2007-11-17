@@ -36,7 +36,6 @@
 //#include <AdnDebugMgr.h>
 //#define DEBUG_ARM
 
-#include "stdafx.h"
 #include "base/main.h"
 #ifdef COMPILE_ZODIAC
 #	include "be_zodiac.h"

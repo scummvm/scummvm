@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -55,6 +53,7 @@ char		_slideText[2][40];
 uint32		_engineFlags = 0;
 
 uint16		_score = 1;
+char		_password[8];
 
 Command *	_forwardedCommands[20] = {
 	NULL,
@@ -88,13 +87,12 @@ uint16		_introSarcData2 = 1;
 
 // private stuff
 
-static Job	   *_jDrawInventory = NULL;
-static Job	   *_jRunScripts = NULL;
 
+Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) :
+	Engine(syst), _gameDescription(gameDesc), _char(this) {
 
-Parallaction::Parallaction(OSystem *syst) :
-	Engine(syst) {
-
+	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+	// needs fixing, or remove it!
 	// FIXME
 	_vm = this;
 
@@ -103,14 +101,17 @@ Parallaction::Parallaction(OSystem *syst) :
 	Common::File::addDefaultDirectory( _gameDataPath );
 
 	Common::addSpecialDebugLevel(kDebugDialogue, "dialogue", "Dialogues debug level");
-	Common::addSpecialDebugLevel(kDebugLocation, "location", "Location debug level");
+	Common::addSpecialDebugLevel(kDebugParser, "parser", "Parser debug level");
 	Common::addSpecialDebugLevel(kDebugDisk, "disk", "Disk debug level");
 	Common::addSpecialDebugLevel(kDebugWalk, "walk", "Walk debug level");
 	Common::addSpecialDebugLevel(kDebugGraphics, "gfx", "Gfx debug level");
-	Common::addSpecialDebugLevel(kDebugJobs, "jobs", "Jobs debug level");
+	Common::addSpecialDebugLevel(kDebugExec, "exec", "Execution debug level");
 	Common::addSpecialDebugLevel(kDebugInput, "input", "Input debug level");
 	Common::addSpecialDebugLevel(kDebugAudio, "audio", "Audio debug level");
 	Common::addSpecialDebugLevel(kDebugMenu, "menu", "Menu debug level");
+	Common::addSpecialDebugLevel(kDebugInventory, "inventory", "Inventory debug level");
+
+	syst->getEventManager()->registerRandomSource(_rnd, "parallaction");
 }
 
 
@@ -168,7 +169,6 @@ int Parallaction::init() {
 	_backgroundInfo = new BackgroundInfo;
 
 	strcpy(_characterName1, "null");
-	strcpy(_characterName, "dough");
 
 	memset(_locationNames, 0, NUM_LOCATIONS * 32);
 
@@ -197,7 +197,7 @@ int Parallaction::init() {
 // loops which could possibly be merged into this one with some effort in changing
 // caller code, i.e. adding condition checks.
 //
-uint16 Parallaction::updateInput() {
+uint16 Parallaction::readInput() {
 
 	Common::Event e;
 	uint16 KeyDown = 0;
@@ -237,6 +237,8 @@ uint16 Parallaction::updateInput() {
 			break;
 
 		case Common::EVENT_QUIT:
+			// TODO: don't quit() here, just have caller routines to check
+			// on kEngineQuit and exit gracefully to allow the engine to shut down
 			_engineFlags |= kEngineQuit;
 			g_system->quit();
 			break;
@@ -255,27 +257,14 @@ uint16 Parallaction::updateInput() {
 
 }
 
-// FIXME: see comment for updateInput()
+// FIXME: see comment for readInput()
 void waitUntilLeftClick() {
 
-	Common::Event e;
-
-	Common::EventManager *eventMan = g_system->getEventManager();
-	for (;;) {
-		eventMan->pollEvent(e);
-
-		if (e.type == Common::EVENT_LBUTTONUP)
-			break;
-
-		if (e.type == Common::EVENT_QUIT) {
-			_engineFlags |= kEngineQuit;
-			break;
-		}
-
+	do {
+		_vm->readInput();
 		_vm->_gfx->updateScreen();
 		g_system->delayMillis(30);
-	}
-
+	} while (_mouseButtons != kMouseLeftUp);
 
 	return;
 }
@@ -283,48 +272,8 @@ void waitUntilLeftClick() {
 
 void Parallaction::runGame() {
 
-	addJob(&jobEraseAnimations, (void*)1, kPriority20);
-	_jRunScripts = addJob(&jobRunScripts, 0, kPriority15);
-	addJob(&jobDisplayAnimations, 0, kPriority3);
-
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
-
-	if (_location._commands.size() > 0)
-		runCommands(_location._commands);
-
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
-	if (_location._comment)
-		doLocationEnterTransition();
-
-	if (_hasLocationSound)
-		_soundMan->playSfx(_locationSound, 0, true);
-
-	changeCursor(kCursorArrow);
-
-	if (_location._aCommands.size() > 0)
-		runCommands(_location._aCommands);
-
 	while ((_engineFlags & kEngineQuit) == 0) {
-		_keyDown = updateInput();
-
-		debugC(3, kDebugInput, "runGame: input flags (%i, %i, %i, %i)",
-			!_mouseHidden,
-			(_engineFlags & kEngineBlockInput) == 0,
-			(_engineFlags & kEngineWalking) == 0,
-			(_engineFlags & kEngineChangeLocation) == 0
-		);
-
-		// WORKAROUND: the engine doesn't check for displayed labels before performing a location
-		// switch, thus crashing whenever a jobDisplayLabel/jEraseLabel pair is left into the
-		// queue after the character enters a door.
-		// Skipping input processing when kEngineChangeLocation is set solves the issue. It's
-		// noteworthy that the programmers added this very check in Big Red Adventure's engine,
-		// so it should be ok here in Nippon Safes too.
-		if ((!_mouseHidden) && ((_engineFlags & kEngineBlockInput) == 0) && ((_engineFlags & kEngineWalking) == 0) && ((_engineFlags & kEngineChangeLocation) == 0)) {
-			InputData *v8 = translateInput();
-			if (v8) processInput(v8);
-		}
+		updateInput();
 
 		if (_activeZone) {
 			Zone *z = _activeZone;	// speak Zone or sound
@@ -334,23 +283,51 @@ void Parallaction::runGame() {
 		}
 
 		if (_engineFlags & kEngineChangeLocation) {
-			_engineFlags &= ~kEngineChangeLocation;
 			changeLocation(_location._name);
-			continue;
 		}
-
-		g_system->delayMillis(30);
 
 		runJobs();
 
-		if ((_engineFlags & kEnginePauseJobs) == 0 || (_engineFlags & kEngineInventory)) {
-			_gfx->swapBuffers();
-			_gfx->animatePalette();
-		}
+		updateView();
 
 	}
 
-	return;
+}
+
+void Parallaction::updateView() {
+
+	if ((_engineFlags & kEnginePauseJobs) && (_engineFlags & kEngineInventory) == 0) {
+		return;
+	}
+
+	_gfx->animatePalette();
+	_gfx->swapBuffers();
+	g_system->delayMillis(30);
+}
+
+void Parallaction::showLabel(Label &label) {
+	label.resetPosition();
+	_jDrawLabel = addJob(kJobDisplayLabel, (void*)&label, kPriority0);
+	_jEraseLabel = addJob(kJobEraseLabel, (void*)&label, kPriority20);
+}
+
+void Parallaction::hideLabel(uint priority) {
+
+	if (!_jDrawLabel)
+		return;
+
+	removeJob(_jDrawLabel);
+	_jDrawLabel = 0;
+
+	if (priority == kPriority99) {
+		// remove job immediately
+		removeJob(_jEraseLabel);
+		_jEraseLabel = 0;
+	} else {
+		// schedule job for deletion
+		addJob(kJobWaitRemoveJob, _jEraseLabel, priority);
+	}
+
 }
 
 
@@ -360,19 +337,12 @@ void Parallaction::processInput(InputData *data) {
 	switch (data->_event) {
 	case kEvEnterZone:
 		debugC(2, kDebugInput, "processInput: kEvEnterZone");
-		_gfx->_labelPosition[1].x = -1000;
-		_gfx->_labelPosition[1].y = -1000;
-		_gfx->_labelPosition[0].x = -1000;
-		_gfx->_labelPosition[0].y = -1000;
-		_jDrawLabel = addJob(&jobDisplayLabel, (void*)data->_label, kPriority0);
-		_jEraseLabel = addJob(&jobEraseLabel, (void*)data->_label, kPriority20);
+		showLabel(*data->_label);
 		break;
 
 	case kEvExitZone:
 		debugC(2, kDebugInput, "processInput: kEvExitZone");
-		removeJob(_jDrawLabel);
-		addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority15);
-		_jDrawLabel = NULL;
+		hideLabel(kPriority15);
 		break;
 
 	case kEvAction:
@@ -390,26 +360,20 @@ void Parallaction::processInput(InputData *data) {
 	case kEvOpenInventory:
 		_procCurrentHoverItem = -1;
 		_hoverZone = NULL;
-		if (_jDrawLabel != 0) {
-			removeJob(_jDrawLabel);
-			_jDrawLabel = NULL;
-			addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority2);
+		hideLabel(kPriority2);
+		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) == 0) {
+			setArrowCursor();
 		}
-		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) == 0)
-		changeCursor(kCursorArrow);
 		removeJob(_jRunScripts);
-		_jDrawInventory = addJob(&jobShowInventory, 0, kPriority2);
+		_jDrawInventory = addJob(kJobShowInventory, 0, kPriority2);
 		openInventory();
 		break;
 
 	case kEvCloseInventory: // closes inventory and possibly select item
 		closeInventory();
-		if ((data->_inventoryIndex != -1) && (_inventory[data->_inventoryIndex]._id != 0)) {
-			// activates item
-			changeCursor(data->_inventoryIndex);
-		}
-		_jRunScripts = addJob(&jobRunScripts, 0, kPriority15);
-		addJob(&jobHideInventory, 0, kPriority20);
+		setInventoryCursor(data->_inventoryIndex);
+		_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
+		addJob(kJobHideInventory, 0, kPriority20);
 		removeJob(_jDrawInventory);
 		break;
 
@@ -419,16 +383,11 @@ void Parallaction::processInput(InputData *data) {
 		_procCurrentHoverItem = data->_inventoryIndex;
 		break;
 
-	case kEvWalk: {
+	case kEvWalk:
 		debugC(2, kDebugInput, "processInput: kEvWalk");
 		_hoverZone = NULL;
-		changeCursor(kCursorArrow);
-		if (_char._ani._flags & kFlagsRemove) break;
-		if ((_char._ani._flags & kFlagsActive) == 0) break;
-		WalkNodeList *v4 = _char._builder.buildPath(data->_mousePos.x, data->_mousePos.y);
-		addJob(&jobWalk, v4, kPriority19);
-		_engineFlags |= kEngineWalking; 								   // inhibits processing of input until walking is over
-		}
+		setArrowCursor();
+		_char.scheduleWalk(data->_mousePos.x, data->_mousePos.y);
 		break;
 
 	case kEvQuitGame:
@@ -438,13 +397,13 @@ void Parallaction::processInput(InputData *data) {
 	case kEvSaveGame:
 		_hoverZone = NULL;
 		saveGame();
-		changeCursor(kCursorArrow);
+		setArrowCursor();
 		break;
 
 	case kEvLoadGame:
 		_hoverZone = NULL;
 		loadGame();
-		changeCursor(kCursorArrow);
+		setArrowCursor();
 		break;
 
 	}
@@ -454,97 +413,136 @@ void Parallaction::processInput(InputData *data) {
 
 
 
-Parallaction::InputData *Parallaction::translateInput() {
+
+
+
+
+
+
+void Parallaction::updateInput() {
+
+	_keyDown = readInput();
+
+	debugC(3, kDebugInput, "translateInput: input flags (%i, %i, %i, %i)",
+		!_mouseHidden,
+		(_engineFlags & kEngineBlockInput) == 0,
+		(_engineFlags & kEngineWalking) == 0,
+		(_engineFlags & kEngineChangeLocation) == 0
+	);
+
+	if ((_mouseHidden) ||
+		(_engineFlags & kEngineBlockInput) ||
+		(_engineFlags & kEngineWalking) ||
+		(_engineFlags & kEngineChangeLocation)) {
+
+		return;
+	}
 
 	if (_keyDown == kEvQuitGame) {
 		_input._event = kEvQuitGame;
-		return &_input;
-	}
-
+	} else
 	if (_keyDown == kEvSaveGame) {
 		_input._event = kEvSaveGame;
-		return &_input;
-	}
-
+	} else
 	if (_keyDown == kEvLoadGame) {
 		_input._event = kEvLoadGame;
-		return &_input;
+	} else {
+		_input._mousePos = _mousePos;
+		_input._event = kEvNone;
+		if (!translateGameInput()) {
+			translateInventoryInput();
+		}
 	}
 
-	_input._mousePos = _mousePos;
+	if (_input._event != kEvNone)
+		processInput(&_input);
 
-	if (((_engineFlags & kEnginePauseJobs) == 0) && ((_engineFlags & kEngineInventory) == 0)) {
+	return;
+}
 
-		if (_actionAfterWalk == true) {
-			// if walking is over, then take programmed action
+bool Parallaction::translateGameInput() {
+
+	if ((_engineFlags & kEnginePauseJobs) || (_engineFlags & kEngineInventory)) {
+		return false;
+	}
+
+	if (_actionAfterWalk) {
+		// if walking is over, then take programmed action
+		_input._event = kEvAction;
+		_actionAfterWalk = false;
+		return true;
+	}
+
+	if (_mouseButtons == kMouseRightDown) {
+		// right button down shows inventory
+
+		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) && (_activeItem._id != 0)) {
+			_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
+			_engineFlags |= kEngineDragging;
+		}
+
+		_input._event = kEvOpenInventory;
+		_transCurrentHoverItem = -1;
+		return true;
+	}
+
+	// test if mouse is hovering on an interactive zone for the currently selected inventory item
+	Zone *z = hitZone(_activeItem._id, _mousePos.x, _mousePos.y);
+
+	if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((z == NULL) || ((z->_type & 0xFFFF) != kZoneCommand))) {
+		_input._event = kEvWalk;
+		return true;
+	}
+
+	if ((z != _hoverZone) && (_hoverZone != NULL)) {
+		_hoverZone = NULL;
+		_input._event = kEvExitZone;
+		return true;
+	}
+
+	if (z == NULL) {
+		_input._event = kEvNone;
+		return true;
+	}
+
+	if ((_hoverZone == NULL) && ((z->_flags & kFlagsNoName) == 0)) {
+		_hoverZone = z;
+		_input._event = kEvEnterZone;
+		_input._label = &z->_label;
+		return true;
+	}
+
+	if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || ((z->_type & 0xFFFF) == kZoneCommand))) {
+
+		_input._zone = z;
+		if (z->_flags & kFlagsNoWalk) {
+			// character doesn't need to walk to take specified action
 			_input._event = kEvAction;
-			_actionAfterWalk = false;
-			return &_input;
-		}
 
-		Zone *z = hitZone(_activeItem._id, _mousePos.x, _mousePos.y);
-
-		if (_mouseButtons == kMouseRightDown) {
-			// right button down shows inventory
-
-			if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) && (_activeItem._id != 0)) {
-				_activeItem._index = (_activeItem._id >> 16) & 0xFFFF;
-				_engineFlags |= kEngineDragging;
-			}
-
-			_input._event = kEvOpenInventory;
-			_transCurrentHoverItem = -1;
-			return &_input;
-		}
-
-		if (((_mouseButtons == kMouseLeftUp) && (_activeItem._id == 0) && ((_engineFlags & kEngineWalking) == 0)) && ((z == NULL) || ((z->_type & 0xFFFF) != kZoneCommand))) {
+		} else {
+			// action delayed: if Zone defined a moveto position the character is programmed to move there,
+			// else it will move to the mouse position
 			_input._event = kEvWalk;
-			return &_input;
-		}
-
-		if ((z != _hoverZone) && (_hoverZone != NULL)) {
-			_hoverZone = NULL;
-			_input._event = kEvExitZone;
-//			_input._data= &z->_name;
-			return &_input;
-		}
-
-		if (z == NULL) {
-			return NULL;
-		}
-
-		if ((_hoverZone == NULL) && ((z->_flags & kFlagsNoName) == 0)) {
-			_hoverZone = z;
-			_input._event = kEvEnterZone;
-			_input._label = &z->_label;
-			return &_input;
-		}
-
-		if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || ((z->_type & 0xFFFF) == kZoneCommand))) {
-
-			_input._zone = z;
-			if (z->_flags & kFlagsNoWalk) {
-				// character doesn't need to walk to take specified action
-				_input._event = kEvAction;
-
-			} else {
-				// action delayed: if Zone defined a moveto position the character is programmed to move there,
-				// else it will move to the mouse position
-				_input._event = kEvWalk;
-				_actionAfterWalk = true;
-				if (z->_moveTo.y != 0) {
-					_input._mousePos = z->_moveTo;
-				}
+			_actionAfterWalk = true;
+			if (z->_moveTo.y != 0) {
+				_input._mousePos = z->_moveTo;
 			}
-
-//			beep();
-			changeCursor(kCursorArrow);
-			return &_input;
 		}
 
+		beep();
+		setArrowCursor();
+		return true;
 	}
 
-	if ((_engineFlags & kEngineInventory) == 0) return NULL;
+	return true;
+
+}
+
+bool Parallaction::translateInventoryInput() {
+
+	if ((_engineFlags & kEngineInventory) == 0) {
+		return false;
+	}
 
 	// in inventory
 	int16 _si = getHoverInventoryItem(_mousePos.x, _mousePos.y);
@@ -556,29 +554,35 @@ Parallaction::InputData *Parallaction::translateInput() {
 		_input._inventoryIndex = getHoverInventoryItem(_mousePos.x, _mousePos.y);
 		highlightInventoryItem(_transCurrentHoverItem, 12); 		// disable
 
-		if ((_engineFlags & kEngineDragging) == 0) return &_input;
+		if ((_engineFlags & kEngineDragging) == 0) {
+			return true;
+		}
 
 		_engineFlags &= ~kEngineDragging;
-		Zone *z = hitZone(kZoneMerge, _activeItem._index, _inventory[_input._inventoryIndex]._index);
+		Zone *z = hitZone(kZoneMerge, _activeItem._index, getInventoryItemIndex(_input._inventoryIndex));
 
 		if (z != NULL) {
-			dropItem(z->u.merge->_obj1 - 4);
-			dropItem(z->u.merge->_obj2 - 4);
+			dropItem(z->u.merge->_obj1);
+			dropItem(z->u.merge->_obj2);
 			addInventoryItem(z->u.merge->_obj3);
 			runCommands(z->_commands);
 		}
 
-		return &_input;
+		return true;
 	}
 
-	if (_si == _transCurrentHoverItem) return NULL;
+	if (_si == _transCurrentHoverItem) {
+		_input._event = kEvNone;
+		return true;
+	}
 
 	_transCurrentHoverItem = _si;
 	_input._event = kEvHoverInventory;
 	_input._inventoryIndex = _si;
-	return &_input;
+	return true;
 
 }
+
 
 uint32 Parallaction::getElapsedTime() {
 	return g_system->getMillis() - _baseTime;
@@ -609,58 +613,16 @@ void Parallaction::showCursor(bool visible) {
 	g_system->showMouse(visible);
 }
 
-//	changes the mouse pointer
-//	index 0 means standard pointer (from pointer.cnv)
-//	index > 0 means inventory item
-//
-void Parallaction::changeCursor(int32 index) {
-
-	if (index == kCursorArrow) {		// standard mouse pointer
-
-		debugC(1, kDebugInput, "changeCursor(%i), label: %p", index, (const void*)_jDrawLabel);
-
-		if (_jDrawLabel != NULL) {
-			removeJob(_jDrawLabel);
-			addJob(&jobWaitRemoveJob, _jEraseLabel, kPriority15 );
-			_jDrawLabel = NULL;
-		}
-
-		_activeItem._id = 0;
-
-	} else {
-		_activeItem._id = _inventory[index]._id;
-	}
-
-	setMousePointer(index);
-
-	return;
-}
-
 
 
 void Parallaction::freeCharacter() {
-	debugC(3, kDebugLocation, "freeCharacter()");
+	debugC(1, kDebugExec, "freeCharacter()");
 
-	if (!IS_DUMMY_CHARACTER(_characterName)) {
-		if (_objectsNames)
-			delete _objectsNames;
-		_objectsNames = NULL;
+	if (_objectsNames)
+		delete _objectsNames;
+	_objectsNames = NULL;
 
-		if (_char._ani._cnv)
-			delete _char._ani._cnv;
-		_char._ani._cnv = NULL;
-
-		if (_char._talk)
-			delete _char._talk;
-		_char._talk = NULL;
-
-		delete _char._head;
-		_char._head = NULL;
-
-		if (_char._objs)
-			delete _char._objs;
-		_char._objs = NULL;
-	}
+	_char.free();
 
 	return;
 }
@@ -672,41 +634,42 @@ void Parallaction::freeCharacter() {
 	(higher priorities values comes first in the list)
 */
 int compareJobPriority(const JobPointer &j1, const JobPointer &j2) {
-	return (j1->_tag >= j2->_tag ? -1 : 1);
+	return (j1->_job->_tag >= j2->_job->_tag ? -1 : 1);
 }
 
-Job *Parallaction::addJob(JobFn fn, void *parm, uint16 tag) {
-	debugC(3, kDebugJobs, "addJob(%i)", tag);
+Job *Parallaction::addJob(uint functionId, void *parm, uint16 tag) {
+	debugC(9, kDebugExec, "addJob(%i)", tag);
 
 	Job *v8 = new Job;
 
 	v8->_parm = parm;
-	v8->_fn = fn;
 	v8->_tag = tag;
 	v8->_finished = 0;
 	v8->_count = 0;
 
-	_jobs.insertSorted(v8, compareJobPriority);
+	JobOpcode *op = createJobOpcode(functionId, v8);
+
+	_jobs.insertSorted(op, compareJobPriority);
 
 	return v8;
 }
 
 void Parallaction::removeJob(Job *j) {
-	debugC(3, kDebugJobs, "addJob(%i)", j->_tag);
+	debugC(9, kDebugExec, "addJob(%i)", j->_tag);
 
 	j->_finished = 1;
 	return;
 }
 
 void Parallaction::pauseJobs() {
-	debugC(3, kDebugJobs, "pausing jobs execution");
+	debugC(9, kDebugExec, "pausing jobs execution");
 
 	_engineFlags |= kEnginePauseJobs;
 	return;
 }
 
 void Parallaction::resumeJobs() {
-	debugC(3, kDebugJobs, "resuming jobs execution");
+	debugC(9, kDebugExec, "resuming jobs execution");
 
 	_engineFlags &= ~kEnginePauseJobs;
 	return;
@@ -718,7 +681,8 @@ void Parallaction::runJobs() {
 
 	JobList::iterator it = _jobs.begin();
 	while (it != _jobs.end()) {
-		if ((*it)->_finished == 1)
+		Job *job = (*it)->_job;
+		if (job->_finished == 1)
 			it = _jobs.erase(it);
 		else
 			it++;
@@ -726,8 +690,9 @@ void Parallaction::runJobs() {
 
 	it = _jobs.begin();
 	while (it != _jobs.end()) {
-		debugC(9, kDebugJobs, "runJobs: %i", (*it)->_tag);
-		(*(*it)->_fn)((*it)->_parm, (*it));
+		Job *job = (*it)->_job;
+		debugC(9, kDebugExec, "runJobs: %i", job->_tag);
+		(*(*it))();
 		it++;
 	}
 
@@ -735,87 +700,7 @@ void Parallaction::runJobs() {
 	return;
 }
 
-// this Job uses a static counter to delay removal
-// and is in fact only used to remove jEraseLabel jobs
-//
-void jobWaitRemoveJob(void *parm, Job *j) {
-	Job *arg = (Job*)parm;
 
-	static uint16 count = 0;
-
-	debugC(3, kDebugJobs, "jobWaitRemoveJob: count = %i", count);
-
-	_engineFlags |= kEngineBlockInput;
-
-	count++;
-	if (count == 2) {
-		count = 0;
-		_vm->removeJob(arg);
-		_engineFlags &= ~kEngineBlockInput;
-		j->_finished = 1;
-	}
-
-	return;
-}
-
-
-
-Table::Table(uint32 size) : _size(size), _used(0), _disposeMemory(true) {
-	_data = (char**)malloc(sizeof(char*)*size);
-}
-
-Table::Table(uint32 size, const char **data) : _size(size), _used(size), _disposeMemory(false) {
-	_data = const_cast<char**>(data);
-}
-
-Table::~Table() {
-
-	if (!_disposeMemory) return;
-
-	clear();
-
-	free(_data);
-
-}
-
-void Table::addData(const char* s) {
-
-	if (!(_used < _size))
-		error("Table overflow");
-
-	_data[_used++] = strdup(s);
-
-}
-
-uint16 Table::lookup(const char* s) {
-
-	for (uint16 i = 0; i < _used; i++) {
-		if (!scumm_stricmp(_data[i], s)) return i + 1;
-	}
-
-	return notFound;
-}
-
-void Table::clear() {
-	for (uint32 i = 0; i < _used; i++)
-		free(_data[i]);
-
-	_used = 0;
-}
-
-FixedTable::FixedTable(uint32 size, uint32 fixed) : Table(size), _numFixed(fixed) {
-}
-
-FixedTable::~FixedTable() {
-	_numFixed = 0;
-}
-
-void FixedTable::clear() {
-	for (uint32 i = _numFixed; i < _used; i++) {
-		free(_data[i]);
-		_used--;
-	}
-}
 
 
 void Parallaction::pushParserTables(OpcodeSet *opcodes, Table *statements) {
@@ -838,7 +723,7 @@ void Parallaction::parseStatement() {
 
 	_lookup = _currentStatements->lookup(_tokens[0]);
 
-	debugC(9, kDebugLocation, "parseStatement: %s (lookup = %i)", _tokens[0], _lookup);
+	debugC(9, kDebugParser, "parseStatement: %s (lookup = %i)", _tokens[0], _lookup);
 
 	(*(*_currentOpcodes)[_lookup])();
 }
@@ -904,7 +789,7 @@ void Parallaction::allocateLocationSlot(const char *name) {
 
 
 void Parallaction::freeLocation() {
-	debugC(7, kDebugLocation, "freeLocation");
+	debugC(2, kDebugExec, "freeLocation");
 
 	_soundMan->stopSfx(0);
 	_soundMan->stopSfx(1);
@@ -982,50 +867,7 @@ void Parallaction::showLocationComment(const char *text, bool end) {
 	return;
 }
 
-void Parallaction::switchBackground(const char* background, const char* mask) {
-//	printf("switchBackground(%s)", name);
 
-	Palette pal;
-
-	uint16 v2 = 0;
-	if (!scumm_stricmp(background, "final")) {
-		_gfx->clearScreen(Gfx::kBitBack);
-		for (uint16 _si = 0; _si <= 32; _si++) {
-			pal.setEntry(_si, v2, v2, v2);
-			v2 += 4;
-		}
-
-		g_system->delayMillis(20);
-		_gfx->setPalette(pal);
-		_gfx->updateScreen();
-	}
-
-	setBackground(background, mask, mask);
-
-	return;
-}
-
-
-void Parallaction::showSlide(const char *name) {
-
-	BackgroundInfo info;
-
-	_disk->loadSlide(info, name);
-
-	// TODO: avoid using screen buffers for displaying slides. Using a generic buffer
-	// allows for positioning of graphics as needed by Big Red Adventure.
-	// The main problem lies with menu, which relies on multiple buffers, mainly because
-	// it is crappy code.
-	_gfx->setBackground(&info.bg);
-	_gfx->setPalette(info.palette);
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
-	info.bg.free();
-	info.mask.free();
-	info.path.free();
-
-	return;
-}
 
 
 
@@ -1037,10 +879,10 @@ void Parallaction::showSlide(const char *name) {
 //	fades towards game palette
 //
 void Parallaction::doLocationEnterTransition() {
-	debugC(1, kDebugLocation, "doLocationEnterTransition");
+	debugC(2, kDebugExec, "doLocationEnterTransition");
 
     if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
-        debugC(3, kDebugLocation, "skipping location transition");
+        debugC(2, kDebugExec, "skipping location transition");
         return; // visited
     }
 
@@ -1068,7 +910,7 @@ void Parallaction::doLocationEnterTransition() {
 		_gfx->updateScreen();
 	}
 
-	debugC(1, kDebugLocation, "doLocationEnterTransition completed");
+	debugC(2, kDebugExec, "doLocationEnterTransition completed");
 
 	return;
 }
@@ -1086,46 +928,160 @@ Zone *Parallaction::findZone(const char *name) {
 
 
 void Parallaction::freeZones() {
-	debugC(1, kDebugLocation, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
+	debugC(2, kDebugExec, "freeZones: kEngineQuit = %i", _engineFlags & kEngineQuit);
 
 	ZoneList::iterator it = _zones.begin();
 
 	while ( it != _zones.end() ) {
 
+		// NOTE : this condition has been relaxed compared to the original, to allow the engine
+		// to retain special - needed - zones that were lost across location switches.
 		Zone* z = *it;
-
-		// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
-		// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
-		// but we need to check it separately here. The same workaround is applied in hitZone.
-		if (((z->_top == -1) ||
-			((z->_left == -2) && (
-				(((z->_type & 0xFFFF) == kZoneMerge) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj1)) != 0) || (isItemInInventory(MAKE_INVENTORY_ID(z->u.merge->_obj2)) != 0))) ||
-				(((z->_type & 0xFFFF) == kZoneGet) && ((isItemInInventory(MAKE_INVENTORY_ID(z->u.get->_icon)) != 0)))
-			))) &&
-			((_engineFlags & kEngineQuit) == 0)) {
-
-			debugC(1, kDebugLocation, "freeZones preserving zone '%s'", z->_label._text);
-
+		if (((z->_top == -1) || (z->_left == -2)) && ((_engineFlags & kEngineQuit) == 0)) {
+			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_label._text);
 			it++;
-
-		} else
-
+		} else {
 			it = _zones.erase(it);
-
+		}
 	}
 
 	return;
 }
 
 
+const char Character::_prefixMini[] = "mini";
+const char Character::_suffixTras[] = "tras";
+const char Character::_empty[] = "\0";
 
 
+Character::Character(Parallaction *vm) : _vm(vm), _builder(&_ani) {
+	_talk = NULL;
+	_head = NULL;
+	_objs = NULL;
+
+	_dummy = false;
+
+	_ani._left = 150;
+	_ani._top = 100;
+	_ani._z = 10;
+	_ani._oldPos.x = -1000;
+	_ani._oldPos.y = -1000;
+	_ani._frame = 0;
+	_ani._flags = kFlagsActive | kFlagsNoName;
+	_ani._type = kZoneYou;
+	_ani._label._cnv.pixels = NULL;
+	_ani._label._text = strdup("yourself");
+}
+
+void Character::getFoot(Common::Point &foot) {
+	foot.x = _ani._left + _ani.width() / 2;
+	foot.y = _ani._top + _ani.height();
+}
+
+void Character::setFoot(const Common::Point &foot) {
+	_ani._left = foot.x - _ani.width() / 2;
+	_ani._top = foot.y - _ani.height();
+}
+
+void Character::scheduleWalk(int16 x, int16 y) {
+	if ((_ani._flags & kFlagsRemove) || (_ani._flags & kFlagsActive) == 0) {
+		return;
+	}
+
+	WalkNodeList *list = _builder.buildPath(x, y);
+	_vm->addJob(kJobWalk, list, kPriority19 );
+
+	_engineFlags |= kEngineWalking;
+}
+
+void Character::free() {
+
+	if (_ani._cnv)
+		delete _ani._cnv;
+	if (_talk)
+		delete _talk;
+	if (_head)
+		delete _head;
+	if (_objs)
+		delete _objs;
+
+	_ani._cnv = NULL;
+	_talk = NULL;
+	_head = NULL;
+	_objs = NULL;
+
+	return;
+}
 
 
+// Various ways of detecting character modes used to exist
+// inside the engine, so they have been unified in the two
+// following macros.
+// Mini characters are those used in far away shots, like
+// the highway scenery, while Dummy characters are a mere
+// workaround to keep the engine happy when showing slides.
+// As a sidenote, standard sized characters' names start
+// with a lowercase 'd'.
+#define IS_MINI_CHARACTER(s) (((s)[0] == 'm'))
+#define IS_DUMMY_CHARACTER(s) (((s)[0] == 'D'))
 
+void Character::setName(const char *name) {
+	const char *begin = name;
+	const char *end = begin + strlen(name);
 
+	_prefix = _empty;
 
+	_dummy = IS_DUMMY_CHARACTER(name);
 
+	if (!_dummy) {
+		if (_engineFlags & kEngineTransformedDonna) {
+			_suffix = _suffixTras;
+		} else {
+			const char *s = strstr(name, "tras");
+			if (s) {
+				_engineFlags |= kEngineTransformedDonna;
+				_suffix = _suffixTras;
+				end = s;
+			} else {
+				_suffix = _empty;
+			}
+		}
+		if (IS_MINI_CHARACTER(name)) {
+			_prefix = _prefixMini;
+			begin = name+4;
+		}
+	}
+
+	memset(_baseName, 0, 30);
+	strncpy(_baseName, begin, end - begin);
+	sprintf(_name, "%s%s", _prefix, _baseName);
+	sprintf(_fullName, "%s%s%s", _prefix, _baseName, _suffix);
+}
+
+const char *Character::getName() const {
+	return _name;
+}
+
+const char *Character::getBaseName() const {
+	return _baseName;
+}
+
+const char *Character::getFullName() const {
+	return _fullName;
+}
+
+bool Character::dummy() const {
+	return _dummy;
+}
+
+void Parallaction::beep() {
+	_soundMan->playSfx("beep", 3, false);
+}
+
+void Parallaction::scheduleLocationSwitch(const char *location) {
+	strcpy(_location._name, location);
+	_engineFlags |= kEngineChangeLocation;
+}
 
 
 } // namespace Parallaction

@@ -26,7 +26,6 @@
 #ifndef CEGUI_SDL_IMAGERESOURCE
 #define CEGUI_SDL_IMAGERESOURCE
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 

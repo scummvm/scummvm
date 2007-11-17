@@ -66,16 +66,14 @@ void loadCtpSub2(short int coordCount, short int *ptr) {
 	short int *cur_ctp_routeCoords = (short int *)ctp_routeCoords;	// coordinates table
 	int8 *cur_ctp_routes = (int8 *) ctp_routes;
 
-	for (i = 0; i < coordCount; i++)	// for i < ctp_routeCoordCount
-	{
+	for (i = 0; i < coordCount; i++) {	// for i < ctp_routeCoordCount
 		int varX = cur_ctp_routeCoords[0];	// x
 		int varY = cur_ctp_routeCoords[1];	// y 
 
 		int di = 0;
 		int var4Offset = 2;
 
-		while (*(int16 *) cur_ctp_routes > di)	// while (coordCount > counter++)
-		{
+		while (*(int16 *) cur_ctp_routes > di) {	// while (coordCount > counter++)
 			int idx = *(int16 *) (cur_ctp_routes + var4Offset);
 			ptr[offset + idx] =
 			    ctpProc2(varX, varY, ctp_routeCoords[idx][0],
@@ -162,7 +160,7 @@ void renderCTPWalkBox(int X1, int Y1, int X2, int scale, int Y2,
 		walkboxTable[i] = i;
 	}
 
-	drawPolyMode2((char *)walkboxTable, numPoints);
+	drawPolyMode2((unsigned char *)walkboxTable, numPoints);
 }
 
 // this process the walkboxes
@@ -175,22 +173,21 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 
 	ctpVar19Struct *var_1C;
 	ctpVar19Struct *var_12;
-	int16 *var_18;
-	int16 *si;
+//	int16 *var_18;
+//	int16 *si;
 	//  int16* di;
 	//  uint8* cx;
 	//  int bx;
 	//  int ax;
 	//  int var_2;
-	int var_E;
+//	int var_E;
 	//int var_C = 1000;
 	//int var_A = 0;
 	ctpVar19SubStruct *subStruct;
 
 	ASSERT(boxIdx <= 15);
 
-	if (_walkboxTable[boxIdx * 40] > 0)	// is walkbox used ?
-	{
+	if (_walkboxTable[boxIdx * 40] > 0) {	// is walkbox used ?
 		getWalkBoxCenter(boxIdx, _walkboxTable);
 
 		currentWalkBoxCenterYBis = currentWalkBoxCenterY;
@@ -202,12 +199,12 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 
 		var_1C = param4;
 		var_12 = var_1C + 1;	// next
-
-		var_18 = polyBuffer3;
+/*
+		var_18 = XMIN_XMAX;
 		var_E = 0;
 
-		si = &polyBuffer3[1];
-		/* if(*si>=0)
+		si = &XMIN_XMAX[1];
+		 if (*si>=0)
 		 * {
 		 * di = si;
 		 * cx = var_12;
@@ -220,12 +217,12 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 		 * di++;
 		 * 
 		 * var_2 = ax;
-		 * if(var_C < bx)
+		 * if (var_C < bx)
 		 * {
 		 * var_C = bx;
 		 * }
 		 * 
-		 * if(var_2 < var_A)
+		 * if (var_2 < var_A)
 		 * {
 		 * var_A = var_2;
 		 * }
@@ -235,7 +232,7 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 		 * *cx = var_2;
 		 * cx++;
 		 * var_E ++;
-		 * }while(di);
+		 * } while (di);
 		 * 
 		 * var_12 = cx;
 		 * } */
@@ -282,13 +279,22 @@ void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
 	}
 }
 
-int loadCtp(uint8 *ctpName) {
+int getNode(int nodeResult[2], int nodeId){
+	if (nodeId < 0 || nodeId >= ctp_routeCoordCount)
+		return -1;
+	
+	nodeResult[0] = ctp_routeCoords[nodeId][0];
+	nodeResult[1] = ctp_routeCoords[nodeId][1];
+
+	return 0;
+}
+
+int loadCtp(const char *ctpName) {
 	int walkboxCounter;	// si
 	uint8 *ptr;
 	uint8 *dataPointer;	// ptr2
 	char fileType[5];	// string2
 	short int segementSizeTable[7];	// tempTable
-	char string[32];
 
 	if (ctpVar1 == 0) {
 		int i;
@@ -357,7 +363,7 @@ int loadCtp(uint8 *ctpName) {
 
 	free(ptr);
 
-	strcpyuint8(string, currentCtpName);
+	strcpy(currentCtpName, ctpName);
 
 	numberOfWalkboxes = segementSizeTable[6] / 2;	// get the number of walkboxes
 

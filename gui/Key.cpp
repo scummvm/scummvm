@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "gui/Key.h"
 
 namespace GUI {

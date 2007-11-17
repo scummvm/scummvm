@@ -13,7 +13,7 @@ MODULE_OBJS := \
 	font.o \
 	graphics.o \
 	inventory.o \
-	menu.o \
+	gui_ns.o \
 	objects.o \
 	parallaction.o \
 	parallaction_br.o \

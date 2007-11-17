@@ -135,7 +135,7 @@ class Parallaction;
 
 struct DoorData;
 struct GetData;
-
+struct Label;
 
 struct MaskBuffer {
 	// handles a 2-bit depth buffer used for z-buffering
@@ -219,6 +219,8 @@ public:
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 
+	void drawLabel(Label &label);
+
 	// cut/paste
 	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer);
 	void flatBlitCnv(Frames *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
@@ -236,6 +238,7 @@ public:
 	void copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch);
 	void grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch);
 	void floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color);
+	void invertRect(Gfx::Buffers buffer, const Common::Rect& r);
 
 	// palette
 	void setPalette(Palette palette);
@@ -259,7 +262,6 @@ public:
 
 
 public:
-	Common::Point		_labelPosition[2];
 	uint16				_bgLayers[4];
 	PaletteFxRange		_palettefx[6];
 	Palette				_palette;
@@ -292,6 +294,7 @@ protected:
 
 
 #endif
+
 
 
 

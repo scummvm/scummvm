@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/stream.h"
 #include "common/file.h"
 #include "common/endian.h"
@@ -130,7 +129,7 @@ struct NewFontData {
 	BBX*		bbx;	/* character bounding box or NULL if fixed */
 	int		defaultchar;	/* default char (not glyph index)*/
 	long	bits_size;	/* # words of bitmap_t bits*/
-	
+
 	/* unused by runtime system, read in by convbdf*/
 	char *	facename;	/* facename of font*/
 	char *	copyright;	/* copyright info for loadable fonts*/
@@ -169,7 +168,7 @@ void free_font(NewFontData* pf) {
 NewFontData* bdf_read_font(Common::SeekableReadStream &fp) {
 	NewFontData* pf;
 	uint32 pos = fp.pos();
-	
+
 	pf = (NewFontData*)calloc(1, sizeof(NewFontData));
 	if (!pf)
 		goto errout;
@@ -275,8 +274,8 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 				warning("Error: bad 'ENCODING'");
 				return 0;
 			}
-			if (encoding >= 0 && 
-				encoding <= limit_char && 
+			if (encoding >= 0 &&
+				encoding <= limit_char &&
 				encoding >= start_char) {
 
 				if (firstchar > encoding)
@@ -298,15 +297,15 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 	pf->height = pf->ascent + pf->descent;
 
 	/* calc default char*/
-	if (pf->defaultchar < 0 || 
-		pf->defaultchar < firstchar || 
+	if (pf->defaultchar < 0 ||
+		pf->defaultchar < firstchar ||
 		pf->defaultchar > limit_char )
 		pf->defaultchar = firstchar;
 
 	/* calc font size (offset/width entries)*/
 	pf->firstchar = firstchar;
 	pf->size = lastchar - firstchar + 1;
-	
+
 	/* use the font boundingbox to get initial maxwidth*/
 	/*maxwidth = pf->fbbw - pf->fbbx;*/
 	maxwidth = pf->fbbw;
@@ -320,7 +319,7 @@ int bdf_read_header(Common::SeekableReadStream &fp, NewFontData* pf) {
 	pf->offset = (unsigned long *)malloc(pf->size * sizeof(unsigned long));
 	pf->width = (unsigned char *)malloc(pf->size * sizeof(unsigned char));
 	pf->bbx = (BBX *)malloc(pf->size * sizeof(BBX));
-	
+
 	if (!pf->bits || !pf->offset || !pf->width) {
 		warning("Error: no memory for font load");
 		return 0;
@@ -420,7 +419,7 @@ int bdf_read_bitmaps(Common::SeekableReadStream &fp, NewFontData* pf) {
 
 				for (k = 0; k < ch_words; ++k) {
 					bitmap_t value;
-					
+
 					value = bdf_hexval((unsigned char *)buf);
 					if (bbw > 8) {
 						WRITE_UINT16(ch_bitmap, value);
@@ -551,7 +550,7 @@ bitmap_t bdf_hexval(unsigned char *buf) {
 			c = c - 'A' + 10;
 		else if (c >= 'a' && c <= 'f')
 			c = c - 'a' + 10;
-		else 
+		else
 			c = 0;
 		val = (val << 4) | c;
 	}

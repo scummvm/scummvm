@@ -24,7 +24,6 @@
  */
 
 
-#include "common/stdafx.h"
 #include "CEActionsPocket.h"
 #include "EventsBuffer.h"
 #include "gui/message.h"

@@ -1,6 +1,28 @@
+/* ScummVM Tools
+ * Copyright (C) 2007 The ScummVM project
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
 #include "stdafx.h"
 #include "cpthelp.h"
-#include "textfile.h"
+#include "TextFile.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -64,7 +86,7 @@ void processMainLists(FILE *inf, CptObj *destArr, uint16 *idList) {
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
-	} while(1);
+	} while (1);
 
 	free(resBuf);
 }
@@ -116,7 +138,7 @@ void processCpts(FILE *inf, CptObj *destArr) {
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
-	} while(1);
+	} while (1);
 
 	free(resBuf);
 }
@@ -158,12 +180,12 @@ void processTurntabs(FILE *inf, CptObj *destArr) {
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
-	} while(1);
+	} while (1);
 
 	free(resBuf);
 }
 
-void processBins(FILE *inf, CptObj *destArr, char *typeName, char *objName, uint8 cTypeId) {
+void processBins(FILE *inf, CptObj *destArr, const char *typeName, const char *objName, uint8 cTypeId) {
 	char line[1024];
 	dofgets(line, 1024, inf);
 	assert(lineMatchSection(line, typeName));
@@ -200,7 +222,7 @@ void processBins(FILE *inf, CptObj *destArr, char *typeName, char *objName, uint
 			memcpy(dest->data, resBuf, resPos * 2);
 		} else
 			break;
-	} while(1);
+	} while (1);
 
 	free(resBuf);
 }
@@ -239,7 +261,7 @@ void processSymlinks(FILE *inf, CptObj *destArr, uint16 *baseLists) {
 			assert(isEndOfObject(line, "SYMLINK", fromId));
 		} else
 			break;
-	} while(1);
+	} while (1);
 }
 
 void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *sve) {
@@ -478,9 +500,8 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 		fwrite(&tmp, 2, 1, debOutf);
 		tmp = 0;
 		fwrite(&tmp, 2, 1, debOutf);
-		printf("reset destination: %d\n", ftell(debOutf));
+		printf("reset destination: %ld\n", ftell(debOutf));
 		for (int cnt = 0; cnt < 6; cnt++) {
-			uint16 diff[8192];
 			uint16 diffPos = 0;
 			sprintf(inName, "reset.%03d", gameVers[cnt]);
 			FILE *resDiff = fopen(inName, "rb");
@@ -504,7 +525,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 			printf("diff v0.0%03d: 2 * 2 * %d\n", gameVers[cnt], diffPos);
 		}
 	} else {
-		printf("Creating CPT file with Dummy reset data @ %d\n", ftell(debOutf));
+		printf("Creating CPT file with Dummy reset data @ %ld\n", ftell(debOutf));
 		uint16 resetFields16 = 4;
 		fwrite(&resetFields16, 2, 1, debOutf);
 		uint32 blah = 8;
@@ -524,8 +545,8 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 	fwrite(cptSize + 1, 1, 4, resOutf);
 
 	printf("%d diffs\n", diffNo);
-	printf("%d Compacts in total\n", numCpts);
+	printf("%ld Compacts in total\n", numCpts);
 	printf("max strlen = %d\n", maxStrl);
-	printf("raw size = 2 * %d\n", binSize);
+	printf("raw size = 2 * %ld\n", binSize);
 	printf("max cptlen = %d\n", maxCptl);
 }

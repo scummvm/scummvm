@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agi/agi.h"
 #include "agi/keyboard.h"
@@ -177,14 +177,14 @@ static uint8 testSaid(uint8 nwords, uint8 *cc) {
 	 *      if (nwords != num_ego_words)
 	 *              return false;
 	 *
-	 * In the disco scene in Larry 1 when you type "examine blonde", 
+	 * In the disco scene in Larry 1 when you type "examine blonde",
 	 * inside the logic is expected ( said("examine", "blonde", "rol") )
 	 * where word("rol") = 9999
 	 *
 	 * According to the interpreter code 9999 means that whatever the
 	 * user typed should be correct, but it looks like code 9999 means that
 	 * if the string is empty at this point, the entry is also correct...
-	 * 
+	 *
 	 * With the removal of this code, the behaviour of the scene was
 	 * corrected
 	 */
@@ -335,6 +335,15 @@ int AgiEngine::testIfCode(int lognum) {
 		case 0x12:
 			ec = testObjRight(p[0], p[1], p[2], p[3], p[4]);
 			break;
+		case 0x13: // Unknown test command 19
+			// Used at least by the Amiga version of Gold Rush! in logic.001.
+			// Don't know what this actually does in the Amiga executable but
+			// evaluating this to false seems to fix the bug #1745950
+			// (GR: Birds stuck in opening screen (Amiga version)).
+			// FIXME: This hack was taken from NAGI. Need to check it with disassembly.
+			warning("op_test: Amiga-specific testcase 19 was triggered");
+			ec = false;
+			break;
 		default:
 			ec = false;
 			end_test = true;
@@ -368,7 +377,7 @@ int AgiEngine::testIfCode(int lognum) {
 				 *       goto Label1;
 				 *     }
 				 *
-				 *     The bytecode is: 
+				 *     The bytecode is:
 				 *     ff fc 07 04 fd 07 02 01 1e 02 01 1e 01 fc ff
 				 */
 

@@ -332,6 +332,7 @@ protected:
 	void setUserState(byte state);
 
 	virtual void handleMouseOver(bool updateInventory);
+	virtual void checkExecVerbs();
 	void initV2MouseOver();
 	void initNESMouseOver();
 

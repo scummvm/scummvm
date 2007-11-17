@@ -107,18 +107,21 @@ public:
 	void update(bool checkPlayerInput = false);
 
 	bool canLoadOrSave() const;
-	void saveGameState(uint16 slot, const char *desc);
-	void loadGameState(uint16 slot);
-	void makeGameStateName(uint16 slot, char *buf);
+	void saveGameState(int slot, const char *desc);
+	void loadGameState(int slot);
+	void makeGameStateName(int slot, char *buf) const;
+	int getGameStateSlot(const char *filename) const;
 	void findGameStateDescriptions(char descriptions[100][32]);
-	Common::InSaveFile *readGameStateHeader(uint16 slot, GameStateHeader *gsh);
+	Common::InSaveFile *readGameStateHeader(int slot, GameStateHeader *gsh);
 
 	enum {
 		SAVESTATE_CUR_VER  = 1,
 		SAVESTATE_MAX_NUM  = 100,
 		SAVESTATE_MAX_SIZE = 30000,
 
-		AUTOSAVE_SLOT      = 0xFF,
+		SLOT_LISTPREFIX    = -2,
+		SLOT_AUTOSAVE      = -1,
+		SLOT_QUICKSAVE     = 0,
 
 		MIN_TEXT_SPEED     = 4,
 		MAX_TEXT_SPEED     = 100

@@ -22,14 +22,18 @@
 				</Compiler>
 			</Target>
 		</Build>
-		<Unit filename="..\..\engines\kyra\animator.cpp">
+		<Unit filename="..\..\engines\kyra\animator_v1.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
-		<Unit filename="..\..\engines\kyra\animator.h">
+		<Unit filename="..\..\engines\kyra\animator_v1.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\animator_v2.cpp">
+			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\kyra\debugger.cpp">
@@ -42,11 +46,31 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\kyra\detection.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\kyra\gui.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\kyra\gui_v1.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\gui_v2.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\kyra\items.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\items_v1.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\items_v2.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
@@ -80,6 +104,36 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\kyra\kyra_v1.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\kyra_v1.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\kyra_v2.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\kyra_v2.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\kyra_v3.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\kyra_v3.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\kyra\plugin.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -98,7 +152,19 @@
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\kyra\saveload_v1.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\kyra\scene.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\scene_v1.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\scene_v2.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
@@ -107,6 +173,26 @@
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\kyra\screen.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\screen_v1.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\screen_v1.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\screen_v2.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\screen_v2.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
@@ -123,6 +209,10 @@
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\kyra\script_v1.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\script_v2.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
@@ -166,6 +256,10 @@
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\kyra\sound_v1.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\kyra\sprites.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -190,8 +284,32 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\kyra\text_v1.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\kyra\timer.cpp">
 			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\timer.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\timer_v1.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\timer_v2.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\kyra\util.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\kyra\vqa.cpp">

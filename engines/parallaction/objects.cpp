@@ -23,8 +23,9 @@
  *
  */
 
-#include "common/stdafx.h"
+#include "parallaction/parallaction.h"
 #include "parallaction/objects.h"
+#include "parallaction/parser.h"
 
 namespace Parallaction {
 
@@ -131,8 +132,6 @@ Zone::Zone() {
 Zone::~Zone() {
 //	printf("~Zone(%s)\n", _label._text);
 
-	_label._cnv.free();
-
 	switch (_type & 0xFFFF) {
 	case kZoneExamine:
 		free(u.examine->_filename);
@@ -198,15 +197,40 @@ uint16 Zone::height() const {
 }
 
 Label::Label() {
-	_text = NULL;
+	resetPosition();
+	_text = 0;
 }
 
 Label::~Label() {
-	_cnv.free();
-	if (_text)
-		free(_text);
+	free();
 }
 
+void Label::free() {
+	_cnv.free();
+	if (_text)
+		::free(_text);
+	_text = 0;
+
+	resetPosition();
+}
+
+void Label::resetPosition() {
+	_pos.x = -1000;
+	_pos.y = -1000;
+	_old.x = -1000;
+	_old.y = -1000;
+}
+
+void Label::getRect(Common::Rect &r, bool old) {
+	r.setWidth(_cnv.w);
+	r.setHeight(_cnv.h);
+
+	if (old) {
+		r.moveTo(_old);
+	} else {
+		r.moveTo(_pos);
+	}
+}
 
 Answer::Answer() {
 	_text = NULL;
@@ -264,7 +288,7 @@ int16 ScriptVar::getRValue() {
 	}
 
 	if (_flags & kParaRandom) {
-		return (rand() * _value) / 32767;
+		return (_vm->_rnd.getRandomNumber(65536) * _value) / 32767;
 	}
 
 	error("Parameter is not an r-value");
@@ -312,6 +336,84 @@ ScriptVar::ScriptVar() {
 	_local = 0;
 	_value = 0;
 	_pvalue = 0;
+}
+
+Table::Table(uint32 size) : _size(size), _used(0), _disposeMemory(true) {
+	_data = (char**)calloc(size, sizeof(char*));
+}
+
+Table::Table(uint32 size, const char **data) : _size(size), _used(size), _disposeMemory(false) {
+	_data = const_cast<char**>(data);
+}
+
+Table::~Table() {
+
+	if (!_disposeMemory) return;
+
+	clear();
+
+	free(_data);
+
+}
+
+void Table::addData(const char* s) {
+
+	if (!(_used < _size))
+		error("Table overflow");
+
+	_data[_used++] = strdup(s);
+
+}
+
+uint16 Table::lookup(const char* s) {
+
+	for (uint16 i = 0; i < _used; i++) {
+		if (!scumm_stricmp(_data[i], s)) return i + 1;
+	}
+
+	return notFound;
+}
+
+void Table::clear() {
+	for (uint32 i = 0; i < _used; i++)
+		free(_data[i]);
+
+	_used = 0;
+}
+
+const char *Table::item(uint index) const {
+	assert(index < _used);
+	return _data[index];
+}
+
+
+FixedTable::FixedTable(uint32 size, uint32 fixed) : Table(size), _numFixed(fixed) {
+}
+
+void FixedTable::clear() {
+	uint32 deleted = 0;
+	for (uint32 i = _numFixed; i < _used; i++) {
+		free(_data[i]);
+		_data[i] = 0;
+		deleted++;
+	}
+
+	_used -= deleted;
+}
+
+Table* createTableFromStream(uint32 size, Common::SeekableReadStream &stream) {
+
+	Table *t = new Table(size);
+
+	Script s(&stream, false);
+
+	s.readLineToken();
+	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
+		t->addData(_tokens[0]);
+		s.readLineToken();
+	}
+
+	return t;
 }
 
 

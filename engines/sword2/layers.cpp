@@ -33,7 +33,7 @@
 //	3 normal sorted layers
 //	up to 2 foreground parallax layers
 
-#include "common/stdafx.h"
+
 #include "common/rect.h"
 
 #include "sword2/sword2.h"

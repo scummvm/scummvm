@@ -84,7 +84,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 		_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer, buffer.size, buffer.frequency, flags, -1, volume);
 	} else {
 		Audio::AudioStream *stream = NULL;
-		Common::MemoryReadStream *tmp = NULL;
+		MemoryReadStream *tmp = NULL;
 
 		switch (buffer.soundType) {
 #ifdef USE_MAD

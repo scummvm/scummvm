@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "engines/engine.h"
 
@@ -1168,8 +1168,6 @@ int Insane::smlayer_loadCostume(int id, int phase) {
 
 	_vm->ensureResourceLoaded(rtCostume, resid);
 	_vm->_res->setResourceCounter(rtCostume, resid, 1);
-
-	// smlayer_lock(rtCostume, resid); // FIXME
 
 	if (phase == 1) {
 		_objArray1Idx2++;

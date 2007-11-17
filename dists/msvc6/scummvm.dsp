@@ -270,10 +270,6 @@ SOURCE=..\..\common\singleton.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\common\stdafx.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\common\str.cpp
 # End Source File
 # Begin Source File

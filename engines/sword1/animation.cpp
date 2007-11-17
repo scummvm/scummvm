@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/file.h"
 #include "sword1/sword1.h"
 #include "sword1/animation.h"

@@ -32,7 +32,6 @@
 #include "scumm_globals.h"
 #include "globals.h"
 
-#include "common/stdafx.h"
 #include "base/version.h"
 
 #include "formEditGame.h"

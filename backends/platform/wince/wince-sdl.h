@@ -26,12 +26,11 @@
 #ifndef WINCE_SDL_H
 #define WINCE_SDL_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
 #include "backends/intern.h"
-#include "backends/platform/sdl/sdl-common.h"
+#include "backends/platform/sdl/sdl.h"
 
 #include "CEGUI.h"
 #include "CEKeys.h"
@@ -167,7 +166,6 @@ private:
 	void create_toolbar();
 	void update_game_settings();
 	void check_mappings();
-	void update_keyboard();
 	void get_sample_rate();
 
 	void retrieve_mouse_location(int &x, int &y);
@@ -190,7 +188,6 @@ private:
 
 	bool _panelInitialized;		// only initialize the toolbar once
 
-	bool _monkeyKeyboard;		// forced keyboard for Monkey Island copy protection
 	bool _unfilteredkeys;		// discard key mapping temporarily (agi pred. dialog)
 	static bool _soundMaster;	// turn off sound after all calculations
 								// static since needed by the SDL callback

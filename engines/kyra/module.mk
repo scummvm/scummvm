@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	staticres.o \
 	text.o \
 	text_v1.o \
+	text_v2.o \
 	timer.o \
 	timer_v1.o \
 	timer_v2.o \

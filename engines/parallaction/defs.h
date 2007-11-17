@@ -26,7 +26,6 @@
 #ifndef PARALLACTION_DEFS_H
 #define PARALLACTION_DEFS_H
 
-#include "common/stdafx.h"
 #include "common/list.h"
 #include "common/rect.h"
 

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -90,6 +90,8 @@ void ScummEngine::parseEvents() {
 			}
 
 			if (_game.heversion >= 80) {
+				// FIXME: Move this code & VAR_KEY_STATE to class ScummEngine_v80he
+
 				// Keyboard is controlled via variable
 				int keyState = 0;
 
@@ -249,14 +251,15 @@ void ScummEngine::processInput() {
 	if (_mouse.y > _screenHeight-1)
 		_mouse.y = _screenHeight-1;
 
-	_virtualMouse.x = _mouse.x + virtscr[0].xstart;
-	_virtualMouse.y = _mouse.y - virtscr[0].topline;
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
+	_virtualMouse.x = _mouse.x + vs->xstart;
+	_virtualMouse.y = _mouse.y - vs->topline;
 	if (_game.version >= 7)
 		_virtualMouse.y += _screenTop;
 
 	if (_virtualMouse.y < 0)
 		_virtualMouse.y = -1;
-	if (_virtualMouse.y >= virtscr[0].h)
+	if (_virtualMouse.y >= vs->h)
 		_virtualMouse.y = -1;
 
 	//
@@ -321,7 +324,7 @@ void ScummEngine::processInput() {
 
 	if (!lastKeyHit.ascii)
 		return;
-	
+
 	processKeyboard(lastKeyHit);
 }
 
@@ -333,7 +336,7 @@ void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
 		if (lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.flags == 0) {
 			lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
 		}
-	
+
 		// Alt-F5 should bring up the original save/load dialog, so map it to F1.
 		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
 			lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
@@ -490,7 +493,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 	} else if (cutsceneExitKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_ESCAPE && lastKeyHit.flags == 0)) {
 		abortCutscene();
-		
+
 		// FIXME: Is the following line really necessary?
 		_mouseAndKeyboardStat = VAR(VAR_CUTSCENEEXIT_KEY);
 
@@ -521,7 +524,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		// Display the talk speed
 		ValueDisplayDialog dlg("Subtitle speed: ", 0, 9, 9 - _defaultTalkDelay, '+', '-');
 		_defaultTalkDelay = 9 - runDialog(dlg);
-		
+
 		// Save the new talkspeed value to ConfMan
 		setTalkspeed(_defaultTalkDelay);
 

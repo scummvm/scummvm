@@ -38,12 +38,12 @@ namespace Lure {
 
 // This list of hotspot Ids are used by sequence method #5 to deallocate a set 
 // of hotspot Ids at once
-uint16 dealloc_list_1[] = {0x13F2, 0x418, 0x2711, 0x2712, 0x40D, 0x3EA, 0x411, 0};
-uint16 dealloc_list_2[] = {0x2729, 0x272A, 0x272B, 0x272C, 0x272E, 0x272E, 0x272F, 0};
-uint16 dealloc_list_3[] = {0x3EF, 0x3E9, 0x3EB, 0x3EC, 0x3ED, 0x3EE, 0x3F0, 0x3F1, 
+static const uint16 dealloc_list_1[] = {0x13F2, 0x418, 0x2711, 0x2712, 0x40D, 0x3EA, 0x411, 0};
+static const uint16 dealloc_list_2[] = {0x2729, 0x272A, 0x272B, 0x272C, 0x272E, 0x272E, 0x272F, 0};
+static const uint16 dealloc_list_3[] = {0x3EF, 0x3E9, 0x3EB, 0x3EC, 0x3ED, 0x3EE, 0x3F0, 0x3F1, 
 	0x420, 0x429, 0x436, 0x2715, 0x2716, 0x2717, 0x2718, 0x2719, 0x271A, 0x271E, 
 	0x271F, 0x2720, 0x2721, 0x2722, 0x2725, 0x2726, 0};
-uint16 *hotspot_dealloc_set[4] = {&dealloc_list_1[0], &dealloc_list_2[0],
+static const uint16 *hotspot_dealloc_set[4] = {&dealloc_list_1[0], &dealloc_list_2[0],
 	&dealloc_list_3[1], &dealloc_list_3[0]};
 
 /*------------------------------------------------------------------------*/
@@ -99,7 +99,7 @@ void Script::deactivateHotspotSet(uint16 listIndex, uint16 v2, uint16 v3) {
 	if (listIndex > 3) 
 		error("Script::deactiveHotspotSet - Invalid list index");
 	Resources &res = Resources::getReference();
-	uint16 *hotspotId = hotspot_dealloc_set[listIndex];
+	const uint16 *hotspotId = hotspot_dealloc_set[listIndex];
 
 	while (*hotspotId != 0) {
 		res.deactivateHotspot(*hotspotId);
@@ -235,7 +235,7 @@ void Script::setupSkorlFight(uint16 v1, uint16 v2, uint16 v3) {
 void Script::remoteRoomViewSetup(uint16 v1, uint16 v2, uint16 v3) {
 	Hotspot *player = Resources::getReference().getActiveHotspot(PLAYER_ID);
 
-	player->setTickProc(0); // disable player actions
+	player->setTickProc(NULL_TICK_PROC_ID);
 	Resources::getReference().fieldList().setField(OLD_ROOM_NUMBER,
 		player->roomNumber());
 }
@@ -247,7 +247,7 @@ void Script::startSpeakingToNoone(uint16 characterId, uint16 stringId, uint16 v3
 	Hotspot *charHotspot = res.getActiveHotspot(characterId);
 	assert(charHotspot);
 
-	charHotspot->converse(NOONE_ID, stringId, false);
+	charHotspot->converse(NOONE_ID, stringId, true);
 }
 
 // Stops playing the specified sound index
@@ -276,8 +276,7 @@ void Script::isSkorlInCell(uint16 v1, uint16 v2, uint16 v3) {
 
 // Called by the script when Ratpouch is pushing the bricks in the Outer Cell
 
-void Script::ratpouchPushBricks(uint16 v1, uint16 v2, uint16 v3)
-{
+void Script::ratpouchPushBricks(uint16 v1, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
 
 	// Mark the bricks exit as now open
@@ -308,8 +307,7 @@ void Script::characterChangeRoom(uint16 y, uint16 x, uint16 roomNumber) {
 
 // Pauses Ratpouch for a long period (as good as idefinite)
 
-void Script::pauseRatpouch(uint16 v1, uint16 v2, uint16 v3)
-{
+void Script::pauseRatpouch(uint16 v1, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
 	Hotspot *ratpouch = res.getActiveHotspot(RATPOUCH_ID);
 	assert(ratpouch);
@@ -340,7 +338,7 @@ void Script::decrInventoryItems(uint16 v1, uint16 v2, uint16 v3) {
 void Script::setTalking(uint16 characterId, uint16 destHotspot, uint16 messageId) {
 	Hotspot *hotspot = Resources::getReference().getActiveHotspot(characterId);
 	if (hotspot)
-		hotspot->converse(destHotspot, messageId, false);	
+		hotspot->converse(destHotspot, messageId, true, false);	
 }
 
 // Sets the current action ctr value for the given hotspot
@@ -355,7 +353,7 @@ void Script::setActionCtr(uint16 hotspotId, uint16 value, uint16 v3) {
 
 void Script::startSpeaking(uint16 characterId, uint16 destHotspot, uint16 messageId) {
 	Hotspot *hotspot = Resources::getReference().getActiveHotspot(characterId);
-	hotspot->converse(destHotspot, messageId, false);
+	hotspot->converse(destHotspot, messageId, false, false);
 }
 
 // Disables the given hotspot from being highlighted by the cursor
@@ -517,15 +515,15 @@ void Script::checkWakeBrenda(uint16 v1, uint16 v2, uint16 v3) {
 
 // Lookup the given message Id for the specified character and display in a dialog
 
-void Script::displayMessage(uint16 messageId, uint16 characterId, uint16 unknownVal) {
+void Script::displayMessage(uint16 messageId, uint16 characterId, uint16 destCharacterId) {
 	Hotspot *hotspot = Resources::getReference().getActiveHotspot(characterId);
 	if (hotspot != NULL)
-		hotspot->showMessage(messageId);
+		hotspot->showMessage(messageId, destCharacterId);
 }
 
 // Creates a new dispatch action with the given support data entry
 
-void Script::setNewSupportData(uint16 hotspotId, uint16 index, uint16 v3) {
+void Script::setNewSupportData(uint16 index, uint16 hotspotId, uint16 v3) {
 	Resources &res = Resources::getReference();
 	uint16 dataId = res.getCharOffset(index);
 	CharacterScheduleEntry *entry = res.charSchedules().getEntry(dataId);
@@ -598,7 +596,7 @@ void Script::moveCharacterToPlayer(uint16 characterId, uint16 v2, uint16 v3) {
 		return;
 
 	uint16 destRoom = playerHotspot->roomNumber();
-	RoomTranslationRecord *rec; 
+	const RoomTranslationRecord *rec; 
 	for (rec = &roomTranslations[0]; rec->srcRoom != 0; ++rec) {
 		if (rec->srcRoom == destRoom) {
 			destRoom = rec->destRoom;
@@ -706,6 +704,7 @@ void Script::addActions(uint16 hotspotId, uint16 actions, uint16 v3) {
 
 void Script::randomToGeneral(uint16 maxVal, uint16 minVal, uint16 v3) {
 	Common::RandomSource rnd;
+	g_system->getEventManager()->registerRandomSource(rnd, "lureScripts");
 	uint16 v = minVal + rnd.getRandomNumber(maxVal - minVal);
 	Resources::getReference().fieldList().setField(GENERAL, v);
 }
@@ -722,14 +721,11 @@ void Script::checkCellDoor(uint16 v1, uint16 v2, uint16 v3) {
 
 // Checks if a sound is running
 
-void Script::checkSound(uint16 hotspotId, uint16 v2, uint16 v3) {
+void Script::checkSound(uint16 soundNumber, uint16 v2, uint16 v3) {
 	Sound.tidySounds();
 
-	// For now, simply set the general value field so that the Skorl schedule
-	// will work properly
-	Resources::getReference().fieldList().setField(GENERAL, 0);
-	
-	// TODO: Check whether active sound can be found or not
+	SoundDescResource *rec = Sound.findSound(soundNumber);
+	Resources::getReference().fieldList().setField(GENERAL, (rec != NULL) ? 1 : 0);
 }
 
 typedef void(*SequenceMethodPtr)(uint16, uint16, uint16);
@@ -739,7 +735,7 @@ struct SequenceMethodRecord {
 	SequenceMethodPtr proc;
 };
 
-SequenceMethodRecord scriptMethods[] = {
+static const SequenceMethodRecord scriptMethods[] = {
 	{0, Script::activateHotspot}, 
 	{1, Script::setHotspotScript},
 	{2, Script::addSound2},
@@ -809,14 +805,14 @@ SequenceMethodRecord scriptMethods[] = {
 	{66, Script::checkSound},
 	{0xff, NULL}};
 
-const char *scriptOpcodes[] = {
+static const char *scriptOpcodes[] = {
 	"ABORT", "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "EQUALS", "NOT_EQUALS",
 		"LT", "GT", "LTE", "GTE", "AND", "OR", "LOGICAL_AND", "LOGICAL_OR",
 		"GET_FIELD", "SET_FIELD", "PUSH", "SUBROUTINE", "EXEC", "END",
 		"COND_JUMP", "JUMP", "ABORT2", "ABORT3", "RANDOM"
 };
 
-const char *scriptMethodNames[67] = {
+static const char *scriptMethodNames[67] = {
 	"ACTIVATE HOTSPOT", "SET HOTSPOT SCRIPT", "ADD SOUND 2", "SET HOTSPOT FLAG MASK", 
 	"CLEAR SEQUENCE DELAY LIST", "DEACTIVATE HOTSPOT SET", "DEACTIVATE HOTSPOT", 
 	"RESET PATHFINDER",	"ADD DELAYED SCRIPT", "KILL SOUND",
@@ -865,7 +861,7 @@ uint16 Script::execute(uint16 startOffset) {
 	uint16 fieldNum;
 	uint32 tempVal;
 	SequenceMethodPtr ptr;
-	SequenceMethodRecord *rec;
+	const SequenceMethodRecord *rec;
 	char debugInfo[MAX_DESC_SIZE];
 
 	uint16 offset = startOffset;
@@ -1157,8 +1153,7 @@ int16 HotspotScript::nextVal(MemoryBlock *data, uint16 &offset) {
 	return value;
 }
 
-bool HotspotScript::execute(Hotspot *h)
-{
+bool HotspotScript::execute(Hotspot *h) {
 	Resources &r = Resources::getReference();
 	Room &room = Room::getReference();
 	MemoryBlock *scriptData = r.hotspotScriptData();
@@ -1179,7 +1174,7 @@ bool HotspotScript::execute(Hotspot *h)
 			param1 = nextVal(scriptData, offset);
 			debugC(ERROR_DETAILED, kLureDebugScripts, "SET FRAME_CTR = %d", param1);
 
-			h->setTickCtr(param1);
+			h->setFrameCtr(param1);
 			h->setHotspotScript(offset);
 			breakFlag = true;
 			break;

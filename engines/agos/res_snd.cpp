@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -308,7 +308,7 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 void AGOSEngine::stopMusic() {
 	if (_midiEnabled) {
 		_midi.stop();
-	} 
+	}
 	_mixer->stopHandle(_modHandle);
 }
 

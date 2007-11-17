@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "queen/cutaway.h"
 
 #include "queen/bankman.h"
@@ -181,8 +181,7 @@ void Cutaway::loadStrings(uint16 offset) {
 	debug(6, "_talkTo = %i", _talkTo);
 }
 
-const byte *Cutaway::getCutawayObject(const byte *ptr, CutawayObject &object)
-{
+const byte *Cutaway::getCutawayObject(const byte *ptr, CutawayObject &object) {
 	const byte *oldPtr = ptr;
 
 	object.objectNumber = (int16)READ_BE_INT16(ptr); ptr += 2;
@@ -216,8 +215,7 @@ const byte *Cutaway::getCutawayObject(const byte *ptr, CutawayObject &object)
 	return ptr;
 }
 
-void Cutaway::dumpCutawayObject(int index, CutawayObject &object)
-{
+void Cutaway::dumpCutawayObject(int index, CutawayObject &object) {
 	debug(6, "----- CutawayObject[%i] -----", index);
 
 	const char *objectNumberStr;
@@ -367,7 +365,7 @@ void Cutaway::changeRooms(CutawayObject &object) {
 
 	_vm->logic()->oldRoom(_initialRoom);
 
-	// FIXME - Cutaway c41f is played at the end of the command 0x178. This command
+	// FIXME: Cutaway c41f is played at the end of the command 0x178. This command
 	// setups some persons and associates bob slots to them. They should be hidden as
 	// their y coordinate is > 150, but they aren't ! As a workaround, we display the room
 	// with the panel area enabled. We do the same problem for cutaway c62c.

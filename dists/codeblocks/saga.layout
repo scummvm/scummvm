@@ -13,8 +13,11 @@
 	<File name="..\..\engines\saga\rscfile.h" open="0" top="0" tabpos="2">
 		<Cursor position="1398" topLine="19" />
 	</File>
-	<File name="..\..\engines\saga\sagagame.h" open="0" top="0" tabpos="1">
-		<Cursor position="4649" topLine="204" />
+	<File name="..\..\engines\saga\saga.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="8405" topLine="288" />
+	</File>
+	<File name="..\..\engines\saga\saveload.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1136" topLine="0" />
 	</File>
 	<File name="..\..\engines\saga\scene.h" open="0" top="0" tabpos="0">
 		<Cursor position="1262" topLine="72" />

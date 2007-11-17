@@ -26,6 +26,8 @@
 #ifndef AGOS_DEBUG_H
 #define AGOS_DEBUG_H
 
+#include "common/scummsys.h"
+
 namespace AGOS {
 
 static const char *const elvira1_opcodeNameTable[300] = {

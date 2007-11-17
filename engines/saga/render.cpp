@@ -85,11 +85,12 @@ void Render::drawScene() {
 	// Get mouse coordinates
 	mousePoint = _vm->mousePos();
 
-	if (!(_flags & (RF_DEMO_SUBST | RF_PLACARD | RF_MAP))) {
-		// Display scene background
-		_vm->_scene->draw();
-
+	if (!(_flags & (RF_DEMO_SUBST | RF_MAP) || _vm->_interface->getMode() == kPanelPlacard)) {
 		if (_vm->_interface->getFadeMode() != kFadeOut) {
+			// Display scene background
+			if (!(_flags & RF_DISABLE_ACTORS) || _vm->getGameType() == GType_ITE)
+				_vm->_scene->draw();
+
 			if (_vm->_puzzle->isActive()) {
 				_vm->_puzzle->movePiece(mousePoint);
 				_vm->_actor->drawSpeech();

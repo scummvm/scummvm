@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -50,7 +50,7 @@ Common::SaveFileManager *g_saveFileMan;
 
 CineEngine *g_cine;
 
-CineEngine::CineEngine(OSystem *syst) : Engine(syst) {
+CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	Common::addSpecialDebugLevel(kCineDebugScript, "Script", "Script debug level");
 
 	// Setup mixer
@@ -62,6 +62,8 @@ CineEngine::CineEngine(OSystem *syst) : Engine(syst) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	g_cine = this;
+
+	syst->getEventManager()->registerRandomSource(_rnd, "cine");
 }
 
 CineEngine::~CineEngine() {
@@ -72,12 +74,6 @@ CineEngine::~CineEngine() {
 }
 
 int CineEngine::init() {
-	// Detect game
-	if (!initGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);
@@ -120,7 +116,7 @@ void CineEngine::initialize() {
 	partBuffer = (PartBuffer *)malloc(NUM_MAX_PARTDATA * sizeof(PartBuffer));
 
 	animDataTable = (AnimData *)malloc(NUM_MAX_ANIMDATA * sizeof(AnimData));
-	
+
 	loadTextData("texte.dat", textDataPtr);
 
 	if (g_cine->getGameType() == Cine::GType_OS && !(g_cine->getFeatures() & GF_DEMO)) {
@@ -190,7 +186,7 @@ void CineEngine::initialize() {
 		if (res)
 			_preLoad = true;
 	}
-	
+
 	if (!_preLoad) {
 		loadPrc(BOOT_PRC_NAME);
 		strcpy(currentPrcName, BOOT_PRC_NAME);

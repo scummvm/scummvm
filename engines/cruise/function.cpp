@@ -23,43 +23,40 @@
  *
  */
 
+#include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
 #include "cruise/cell.h"
 #include "common/util.h"
 
 namespace Cruise {
 
+//#define FUNCTION_DEBUG
+
 opcodeFunction opcodeTablePtr[256];
 
 int16 Op_LoadOverlay(void) {
-	uint8 *originalScriptName;
-	uint8 scriptName[38];
-	int returnValue;
+	char *pOverlayName;
+	char overlayName[38] = "";
+	int overlayLoadResult;
 
-	scriptName[0] = 0;
+	pOverlayName = (char *) popPtr();
 
-	originalScriptName = (uint8 *) popPtr();
+	if(strlen(pOverlayName) == 0)
+		return 0;
 
-	if (originalScriptName) {
-		strcpyuint8(scriptName, originalScriptName);
-	}
-
-	if (!scriptName[0] || !originalScriptName) {
-		return (0);
-	}
-
-	strToUpper(scriptName);
+	strcpy(overlayName, pOverlayName);
+	strToUpper(overlayName);
 
 	//gfxModuleData.field_84();
 	//gfxModuleData.field_84();
 
-	returnValue = loadOverlay(scriptName);
+	overlayLoadResult = loadOverlay(overlayName);
 
 	updateAllScriptsImports();
 
-	strcpyuint8(scriptNameBuffer, scriptName);
+	strcpy(currentOverlay, overlayName);
 
-	return (returnValue);
+	return(overlayLoadResult);
 }
 
 int16 Op_strcpy(void) {
@@ -103,7 +100,7 @@ int16 Op_startScript(void) {
 		ovlIdx = currentScriptPtr->overlayNumber;
 	}
 
-	ptr = attacheNewScriptToTail(ovlIdx, &procHead, scriptIdx, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_MinusPROC);
+	ptr = attacheNewScriptToTail(&procHead, ovlIdx, scriptIdx, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_MinusPROC);
 
 	if (!ptr)
 		return (0);
@@ -141,7 +138,7 @@ int16 Op_AddProc(void) {
 	if (!overlay)
 		return (0);
 
-	attacheNewScriptToTail(overlay, &procHead, pop2, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_PROC);
+	attacheNewScriptToTail(&procHead, overlay, pop2, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_PROC);
 
 	if (pop1 > 0) {
 		printf("Unsupported art send in op6!\n");
@@ -158,8 +155,8 @@ int16 Op_37(void) {
 	if (!pop2)
 		pop2 = currentScriptPtr->overlayNumber;
 
-	var30 = pop2;
-	var31 = pop1;
+	narratorOvl = pop2;
+	narratorIdx = pop1;
 
 	return (0);
 }
@@ -193,7 +190,7 @@ int16 Op_rand(void) {		// TODO: implement
 		return (0);
 	}
 
-	return (rand() % var);
+	return (g_cruise->_rnd.getRandomNumber(var - 1));
 }
 
 int16 Op_PlayFX(void) {		// TODO: implement
@@ -244,12 +241,17 @@ int16 Op_freeBackgroundInscrustList(void) {
 	return (0);
 }
 
-int16 Op_removeBackground(void) {
-	int backgroundIdx;
 
-	backgroundIdx = popVar();
+int16 Op_UnmergeBackgroundIncrust(void) {
+	int obj = popVar();
+	int ovl = popVar();
 
-	printf("Op_removeBackground: remove background %d\n", backgroundIdx);
+	if (!ovl) {
+		ovl = currentScriptPtr->overlayNumber;
+	}
+
+	unmergeBackgroundIncrust(&backgroundIncrustHead, ovl, obj);
+
 	return (0);
 }
 
@@ -277,20 +279,20 @@ int16 Op_RemoveMessage(void) {
 
 int16 Op_isFileLoaded(void) {
 	int16 i;
-	uint8 name[36] = "";
-	uint8 *ptr;
+	char name[36] = "";
+	char *ptr;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *) popPtr();
 
 	if (!ptr) {
 		return -1;
 	}
 
-	strcpyuint8(name, ptr);
+	strcpy(name, ptr);
 	strToUpper(name);
 
 	for (i = 0; i < 257; i++) {
-		if (!strcmpuint8(name, filesDatabase[i].subData.name)) {
+		if (!strcmp(name, filesDatabase[i].subData.name)) {
 			return (i);
 		}
 	}
@@ -337,12 +339,12 @@ int16 Op_RemoveProc(void) {
 }
 
 int16 Op_FreeOverlay(void) {
-	uint8 localName[36] = "";
-	uint8 *namePtr;
+	char localName[36] = "";
+	char *namePtr;
 
-	namePtr = (uint8 *) popPtr();
+	namePtr = (char *) popPtr();
 
-	strcpyuint8(localName, namePtr);
+	strcpy(localName, namePtr);
 
 	if (localName[0]) {
 		strToUpper(localName);
@@ -353,13 +355,13 @@ int16 Op_FreeOverlay(void) {
 }
 
 int16 Op_2B(void) {
-	uint8 name[36] = "";
-	uint8 *ptr;
+	char name[36] = "";
+	char *ptr;
 	int param;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *)popPtr();
 
-	strcpyuint8(name, ptr);
+	strcpy(name, ptr);
 
 	param = getProcParam(popVar(), 20, name);
 
@@ -404,11 +406,9 @@ int16 Op_changeCutSceneState(void) {
 
 int16 Op_62(void) {
 	if (currentScriptPtr->var1A == 20) {
-		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &procHead, 9997, -1);
+		changeScriptParamInList(currentScriptPtr->var18, currentScriptPtr->var16, &procHead, -1, 9997);
 	} else if (currentScriptPtr->var1A == 30) {
-		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &relHead, 9997, -1);
+		changeScriptParamInList(currentScriptPtr->var18, currentScriptPtr->var16, &relHead, -1, 9997);
 	}
 
 	return 0;
@@ -416,13 +416,13 @@ int16 Op_62(void) {
 
 int16 Op_LoadBackground(void) {
 	int result = 0;
-	uint8 bgName[36] = "";
-	uint8 *ptr;
+	char bgName[36] = "";
+	char *ptr;
 	int bgIdx;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *) popPtr();
 
-	strcpyuint8(bgName, ptr);
+	strcpy(bgName, ptr);
 
 	bgIdx = popVar();
 
@@ -432,10 +432,10 @@ int16 Op_LoadBackground(void) {
 		gfxModuleData_gfxWaitVSync();
 		gfxModuleData_gfxWaitVSync();
 
-		result = loadBackground((char *)bgName, bgIdx);
+		result = loadBackground(bgName, bgIdx);
 	}
 
-	changeCursor(0);
+	changeCursor(CURSOR_NORMAL);
 
 	return result;
 }
@@ -460,12 +460,12 @@ int16 Op_loadFile(void) {
 	int param1;
 	int param2;
 	int param3;
-	uint8 name[36] = "";
-	uint8 *ptr;
+	char name[36] = "";
+	char *ptr;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *) popPtr();
 
-	strcpyuint8(name, ptr);
+	strcpy(name, ptr);
 
 	param1 = popVar();
 	param2 = popVar();
@@ -477,14 +477,14 @@ int16 Op_loadFile(void) {
 		gfxModuleData_gfxWaitVSync();
 		gfxModuleData_gfxWaitVSync();
 
-		saveVar6[0] = 0;
+		lastAni[0] = 0;
 
-		loadFileMode2(name, param3, param2, param1);
+		loadFileRange(name, param2, param3, param1);
 
-		saveVar6[0] = 0;
+		lastAni[0] = 0;
 	}
 
-	changeCursor(0);
+	changeCursor(CURSOR_NORMAL);
 	return 0;
 }
 
@@ -492,13 +492,13 @@ int16 Op_LoadAbs(void) {
 	int param1;
 //  int param2;
 //  int param3;
-	uint8 name[36] = "";
-	uint8 *ptr;
+	char name[36] = "";
+	char *ptr;
 	int result = 0;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *) popPtr();
 
-	strcpyuint8(name, ptr);
+	strcpy(name, ptr);
 
 	param1 = popVar();
 
@@ -511,7 +511,7 @@ int16 Op_LoadAbs(void) {
 		result = loadFullBundle(name, param1);
 	}
 
-	changeCursor(0);
+	changeCursor(CURSOR_NORMAL);
 	return result;
 }
 
@@ -522,6 +522,10 @@ int16 Op_InitializeState(void) {
 
 	if (!ovlIdx)
 		ovlIdx = currentScriptPtr->overlayNumber;
+
+#ifdef FUNCTION_DEBUG
+	printf("Init %s state to %d\n", getObjectName(objIdx, overlayTable[ovlIdx].ovlData->arrayNameObj), param1);
+#endif
 
 	objInit(ovlIdx, objIdx, param1);
 
@@ -537,12 +541,11 @@ int16 Op_FadeOut(void) {
 	return 0;
 }
 
-int16 isOverlayLoaded(uint8 * name) {
+int16 isOverlayLoaded(const char * name) {
 	int16 i;
 
 	for (i = 1; i < numOfLoadedOverlay; i++) {
-		if (!strcmpuint8(overlayTable[i].overlayName, name)
-		    && overlayTable[i].alreadyLoaded) {
+		if (!strcmp(overlayTable[i].overlayName, name) && overlayTable[i].alreadyLoaded) {
 			return i;
 		}
 	}
@@ -551,12 +554,12 @@ int16 isOverlayLoaded(uint8 * name) {
 }
 
 int16 Op_FindOverlay(void) {
-	uint8 name[36] = "";
-	uint8 *ptr;
+	char name[36] = "";
+	char *ptr;
 
-	ptr = (uint8 *) popPtr();
+	ptr = (char *) popPtr();
 
-	strcpyuint8(name, ptr);
+	strcpy(name, ptr);
 	strToUpper(name);
 
 	return (isOverlayLoaded(name));
@@ -645,11 +648,9 @@ int16 Op_SetFontFileIndex(void) {
 
 int16 Op_63(void) {
 	if (currentScriptPtr->var1A == 0x14) {
-		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &procHead, 0, -1);
+		changeScriptParamInList(currentScriptPtr->var18, currentScriptPtr->var16, &procHead, -1, 0);
 	} else if (currentScriptPtr->var1A == 0x1E) {
-		changeScriptParamInList(currentScriptPtr->var18,
-		    currentScriptPtr->var16, &relHead, 0, -1);
+		changeScriptParamInList(currentScriptPtr->var18, currentScriptPtr->var16, &relHead, -1, 0);
 	}
 
 	return 0;
@@ -680,18 +681,14 @@ int16 Op_AddMessage(void) {
 		overlayIdx = currentScriptPtr->overlayNumber;
 
 	if (color == -1) {
-		color = 0;
-		ASSERT(0);
-		//color = calcTabSomething();
+		color = findHighColor();
 	} else {
 		if (CVTLoaded) {
 			color = cvtPalette[color];
 		}
 	}
 
-	createTextObject(overlayIdx, var_8, &cellHead,
-	    currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber,
-	    currentActiveBackgroundPlane, color, var_2, var_4, var_6);
+	createTextObject(&cellHead, overlayIdx, var_8, var_6, var_4, var_2, color, currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
 
 	return 0;
 }
@@ -704,7 +701,7 @@ int16 Op_loadAudioResource(void) {
 }
 
 int16 Op_LoadCt(void) {
-	return loadCtp((uint8 *) popPtr());
+	return loadCtp((char*)popPtr());
 }
 
 int16 Op_loadMusic(void) {
@@ -763,9 +760,9 @@ int16 Op_AutoCell(void) {
 
 	if (type) {
 		if (currentScriptPtr->type == scriptType_PROC) {
-			changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &procHead, 9996, -1);
+			changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &procHead, -1, 9996);
 		} else if (currentScriptPtr->type == scriptType_REL) {
-			changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &relHead, 9996, -1);
+			changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &relHead, -1, 9996);
 		}
 	}
 
@@ -805,11 +802,31 @@ int16 Op_SetActiveBackgroundPlane(void) {
 	if (newPlane >= 0 && newPlane < 8) {
 		if (backgroundPtrtable[newPlane]) {
 			currentActiveBackgroundPlane = newPlane;
-			initVar3 = 1;
+			switchPal = 1;
 		}
 	}
 
 	return currentPlane;
+}
+
+int16 Op_removeBackground(void) {
+	int backgroundIdx = popVar();
+
+	if(backgroundIdx > 0 && backgroundIdx < 8) {
+		if(backgroundPtrtable[backgroundIdx])
+			free(backgroundPtrtable[backgroundIdx]);
+
+		if(currentActiveBackgroundPlane == backgroundIdx)
+			currentActiveBackgroundPlane = 0;
+
+		strcpy(backgroundTable[backgroundIdx].name, "");
+	}
+	else
+	{
+		strcpy(backgroundTable[0].name, "");
+	}
+
+	return (0);
 }
 
 int op6AVar;
@@ -863,7 +880,7 @@ int16 Op_SetColor(void)	{
 
 #define convertRatio 36.571428571428571428571428571429
 
-	for(i=startIdx; i<=endIdx; i++) {
+	for (i=startIdx; i<=endIdx; i++) {
 		R = (int)(colorR*convertRatio);
 		G = (int)(colorG*convertRatio);
 		B = (int)(colorB*convertRatio);
@@ -951,14 +968,14 @@ int16 subOp23(int param1, int param2) {
 	return (param1 * param2) >> 8;
 }
 
-int16 Op_23(void) {
+int16 Op_GetStep(void) {
 	int si = popVar();
 	int dx = popVar();
 
 	return subOp23(dx, si);
 }
 
-int16 Op_22(void) {
+int16 Op_GetZoom(void) {
 	return (computeZoom(popVar()));
 }
 
@@ -1006,8 +1023,7 @@ actorStruct *addAnimation(actorStruct * pHead, int overlay, int objIdx, int para
 	return pNewElement;
 }
 
-int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType)
-{
+int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType) {
 	actorStruct* pl;
 	actorStruct* pl2;
 	actorStruct* pl3;
@@ -1019,14 +1035,12 @@ int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType)
 	pl2 = pl;
 	pl = pl2->next;
 
-	while(pl)
-	{
+	while (pl) {
 		pl2 = pl;
 
-		if(((pl->overlayNumber == overlay) || (overlay == -1)) &&
+		if (((pl->overlayNumber == overlay) || (overlay == -1)) &&
 			((pl->idx == objIdx) || (objIdx == -1)) &&
-			((pl->type == objType) || (objType == -1)))
-		{
+			((pl->type == objType) || (objType == -1))) {
 			pl->type = -1;
 		}
 
@@ -1037,29 +1051,25 @@ int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType)
 	pl2 = pl;
 	pl = pl2->next;
 
-	while(pl)
-	{
-		if(pl->type == -1)
-		{
+	while (pl) {
+		if (pl->type == -1) {
 			pl4 = pl->next;
 			pl2->next = pl4;
 			pl3 = pl4;
 
-			if(pl3 == NULL)
+			if (pl3 == NULL)
 				pl3 = pHead;
 
 			pl3->prev = pl->prev;
 
 			dir = pl->startDirection;
 
-			if(pl->idx >= 0)
+			if (pl->idx >= 0)
 				freePerso(pl->idx);
 
 			free(pl);
 			pl = pl4;
-		}
-		else
-		{
+		} else {
 			pl2 = pl;
 			pl = pl2->next;
 		}
@@ -1206,7 +1216,7 @@ int16 Op_1E(void) {		// setup actor position
 		overlay = currentScriptPtr->overlayNumber;
 	}
 
-	pActor = findActor(overlay, var2, &actorHead, var1);
+	pActor = findActor(&actorHead, overlay, var2, var1);
 
 	if (!pActor) {
 		return 1;
@@ -1315,9 +1325,8 @@ int16 Op_FreezeCell(void) {
 	return 0;
 }
 
-void Op_60Sub(int overlayIdx, actorStruct * pActorHead, int _var0, int _var1,
-	    int _var2, int _var3) {
-	actorStruct *pActor = findActor(overlayIdx, _var0, pActorHead, _var3);
+void Op_60Sub(int overlayIdx, actorStruct * pActorHead, int _var0, int _var1, int _var2, int _var3) {
+	actorStruct *pActor = findActor(pActorHead, overlayIdx, _var0, _var3);
 
 	if (pActor) {
 		if ((pActor->freeze == _var2) || (_var2 == -1)) {
@@ -1351,26 +1360,47 @@ int16 Op_60(void) {
 }
 
 int16 Op_6F(void) {
-	int numArgs = popVar();
+	int nbp = popVar();
+	int param[160];
+	char txt[40];
+	char format[30];
+	char nbf[20];
 
-	assert(numArgs == 0);
+	for(int i=nbp-1; i>= 0; i--)
+		param[i] = popVar();
 
+	int val = popVar();
+	char* pDest = (char*)popPtr();
+
+	if(!nbp)
+		sprintf(txt, "%d", val);
+	else
 	{
-		popVar();
-		char *string = (char *)popPtr();
-
-		printf("partial opcode 6F sprintf (%s)\n", string);
+		strcpy(format, "%");
+		sprintf(nbf, "%d", param[0]);
+		strcat(format, nbf );
+		strcat(format, "d");
+		sprintf(txt, format, val);
 	}
+
+	for(int i=0; txt[i]; i++)
+		*(pDest++) = txt[i];
+	*(pDest++) = '\0';
 
 	return 0;
 }
 
 int16 Op_6E(void) {
-	char *ptr0 = (char *)popPtr();
-	char *ptr1 = (char *)popPtr();
+	char *pSource = (char *)popPtr();
+	char *pDest = (char *)popPtr();
 
-	printf("partial opcode 6E (%s)(%s)\n", ptr0, ptr1);
+	while(*pDest)
+		pDest++;
 
+	while(*pSource)
+		*(pDest++) = *(pSource++);
+	*(pDest++) = '\0';
+	
 	return 0;
 }
 
@@ -1382,7 +1412,7 @@ int16 Op_InitializeState2(void) {
 	if (!var1)
 		var1 = currentScriptPtr->overlayNumber;
 
-	return getProcParam(var1, var0, (uint8 *) ptr);
+	return getProcParam(var1, var0, ptr);
 }
 
 int16 Op_2A(void) {
@@ -1401,7 +1431,123 @@ int16 Op_2A(void) {
 	if (!overlayIdx)
 		overlayIdx = currentScriptPtr->overlayNumber;
 
-	return getProcParam(overlayIdx, 40, (uint8 *) var_26);
+	return getProcParam(overlayIdx, 40, var_26);
+}
+
+int16 Op_SetObjectAtNode(void) {
+	int16 node = popVar();
+	int16 obj = popVar();
+	int16 ovl = popVar();
+
+	if (!ovl)
+		ovl = currentScriptPtr->overlayNumber;
+
+	int nodeInfo[2];
+
+	if (!getNode(nodeInfo, node)) {
+		setObjectPosition(ovl, obj, 0, nodeInfo[0]);
+		setObjectPosition(ovl, obj, 1, nodeInfo[1]);
+		setObjectPosition(ovl, obj, 2, nodeInfo[1]);
+		setObjectPosition(ovl, obj, 4, computeZoom(nodeInfo[1]));
+	}
+
+	return 0;
+}
+
+int16 Op_GetNodeX(void) {
+	int16 node = popVar();
+
+	int nodeInfo[2];
+
+	int result = getNode(nodeInfo, node);
+
+	ASSERT(result == 0);
+
+	return nodeInfo[0];
+}
+
+int16 Op_GetNodeY(void) {
+	int16 node = popVar();
+
+	int nodeInfo[2];
+
+	int result = getNode(nodeInfo, node);
+
+	ASSERT(result == 0);
+
+	return nodeInfo[1];
+}
+
+int16 Op_songExist(void) {
+	char* songName = (char*)popPtr();
+
+	printf("Unimplemented \"Op_songExist\": %s\n", songName);
+
+	return 0;
+}
+
+int16 Op_SetNodeColor(void) {
+	int16 color;
+	int16 node;
+
+	color = popVar();
+	node = popVar();
+	printf("Unimplemented \"Op_SetNodeColor\"\n");
+
+	return 0;
+}
+
+int16 Op_SetXDial(void) {
+	int16 old;
+
+	old = xdial;
+	xdial = popVar();
+
+	return old;
+}
+
+int16 Op_DialogOn(void) {
+	dialogueObj = popVar();
+	dialogueOvl = popVar();
+
+	if(dialogueOvl == 0)
+		dialogueOvl = currentScriptPtr->overlayNumber;
+
+	dialogueEnabled = true;
+
+	return 0;
+}
+
+int16 Op_DialogOff(void) {
+	dialogueEnabled = false;
+
+	objectReset();
+
+	if(menuTable[0]) {
+		freeMenu(menuTable[0]);
+		menuTable[0] = NULL;
+		changeCursor(CURSOR_NORMAL);
+		currentActiveMenu = -1;
+	}
+
+	return 0;
+}
+
+int16 Op_LinkObjects(void) {
+	int type = popVar();
+	int obj2 = popVar();
+	int ovl2 = popVar();
+	int obj = popVar();
+	int ovl = popVar();
+
+	if(!ovl)
+		ovl = currentScriptPtr->overlayNumber;
+	if(!ovl2)
+		ovl2 = currentScriptPtr->overlayNumber;
+
+	linkCell(&cellHead, ovl, obj, type, ovl2, obj2);
+
+	return 0;
 }
 
 void setupOpcodeTable(void) {
@@ -1437,9 +1583,14 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x18] = Op_AddAnimation;
 	opcodeTablePtr[0x19] = Op_RemoveAnimation;
 	opcodeTablePtr[0x1A] = Op_SetZoom;
+	opcodeTablePtr[0x1B] = Op_SetObjectAtNode;
+	opcodeTablePtr[0x1D] = Op_SetNodeColor;
 	opcodeTablePtr[0x1E] = Op_1E;
+	opcodeTablePtr[0x1F] = Op_GetNodeX;
+	opcodeTablePtr[0x20] = Op_GetNodeY;
 	opcodeTablePtr[0x21] = Op_21;
-	opcodeTablePtr[0x22] = Op_22;
+	opcodeTablePtr[0x22] = Op_GetZoom;
+	opcodeTablePtr[0x23] = Op_GetStep;
 	opcodeTablePtr[0x24] = Op_SetStringColors;
 	opcodeTablePtr[0x28] = Op_ChangeSaveAllowedState;
 	opcodeTablePtr[0x29] = Op_freeAllPerso;
@@ -1449,7 +1600,10 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x2E] = Op_releaseOverlay;
 	opcodeTablePtr[0x2F] = Op_AddBackgroundIncrust;
 	opcodeTablePtr[0x30] = Op_RemoveBackgroundIncrust;
+	opcodeTablePtr[0x31] = Op_UnmergeBackgroundIncrust;
 	opcodeTablePtr[0x32] = Op_freeBackgroundInscrustList;
+	opcodeTablePtr[0x33] = Op_DialogOn;
+	opcodeTablePtr[0x34] = Op_DialogOff;
 	opcodeTablePtr[0x37] = Op_37;
 	opcodeTablePtr[0x38] = Op_removeBackground;
 	opcodeTablePtr[0x39] = Op_SetActiveBackgroundPlane;
@@ -1461,7 +1615,9 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x3F] = Op_3F;
 	opcodeTablePtr[0x40] = Op_40;
 	opcodeTablePtr[0x41] = Op_isFileLoaded2;
+	opcodeTablePtr[0x43] = Op_songExist;
 	opcodeTablePtr[0x45] = Op_45;
+	opcodeTablePtr[0x4B] = Op_LinkObjects;
 	opcodeTablePtr[0x54] = Op_SetFontFileIndex;
 	opcodeTablePtr[0x56] = Op_changeCutSceneState;
 	opcodeTablePtr[0x57] = Op_GetMouseX;
@@ -1489,6 +1645,7 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x70] = Op_comment;
 	opcodeTablePtr[0x71] = Op_SetColorrawLine;
 	opcodeTablePtr[0x72] = Op_InitializeState2;
+	opcodeTablePtr[0x73] = Op_SetXDial;
 	opcodeTablePtr[0x74] = Op_GetInitVar1;
 	opcodeTablePtr[0x76] = Op_InitializeState6;
 	opcodeTablePtr[0x79] = Op_PlayFXnterPlayerMenu;
@@ -1509,11 +1666,11 @@ int32 opcodeType8(void) {
 		return (-21);
 
 	if (opcodeTablePtr[opcode]) {
-		//printf("Function: %X\n",opcode);
+	//	printf("Function: %d\n",opcode);
 		pushVar(opcodeTablePtr[opcode] ());
 		return (0);
 	} else {
-		printf("Unsupported opcode %X in opcode type 8\n", opcode);
+		printf("Unsupported opcode %d in opcode type 8\n", opcode);
 		// exit(1);
 	}
 

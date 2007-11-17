@@ -103,6 +103,14 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\agi\loader_v2.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\loader_v3.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\agi\logic.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -173,6 +181,56 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\agi\preagi.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\preagi.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\preagi_common.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\preagi_common.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\preagi_mickey.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\preagi_mickey.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\preagi_troll.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\preagi_troll.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\preagi_winnie.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\preagi_winnie.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\agi\predictive.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -210,6 +268,16 @@
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\agi\view.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\wagparser.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\agi\wagparser.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />

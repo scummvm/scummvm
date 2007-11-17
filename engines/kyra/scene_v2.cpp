@@ -25,6 +25,7 @@
  
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_v2.h"
+#include "kyra/sound.h"
 #include "kyra/wsamovie.h"
 
 #include "common/func.h"
@@ -32,7 +33,15 @@
 namespace Kyra {
 
 void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk2, int unk3) {
-	// XXX
+	if (_newChapterFile != _currentTalkFile) {
+		_currentTalkFile = _newChapterFile;
+		showMessageFromCCode(265, 150, 0);
+		_screen->updateScreen();
+		openTalkFile(_currentTalkFile);
+		showMessage(0, 207);
+		_screen->updateScreen();
+	}
+
 	_screen->hideMouse();
 	
 	if (!unk3) {
@@ -68,7 +77,12 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 		moveCharacter(facing, x, y);
 	}
 	
-	//XXX sound
+	bool newSoundFile = false;
+	if (_sceneList[newScene].sound != _lastMusicCommand) {
+		newSoundFile = true;
+		//XXX
+		_sound->beginFadeOut();
+	}
 	
 	_unkFlag1 = false;
 	
@@ -95,7 +109,10 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 	_sceneExit3 = scene.exit3;
 	_sceneExit4 = scene.exit4;
 	
-	//XXX sound
+	if (newSoundFile) {
+		//XXX while (snd_isPlaying()) ;
+		snd_loadSoundFile(_sceneList[newScene].sound);
+	}
 	
 	startSceneScript(unk3);
 	
@@ -111,7 +128,9 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 	enterNewSceneUnk2(unk3);
 	_screen->showMouse();
 	_unk5 = 0;
-	//setNextIdleAnimTimer();
+	setNextIdleAnimTimer();
+
+	_currentScene = newScene;
 }
 
 void KyraEngine_v2::enterNewSceneUnk1(int facing, int unk1, int unk2) {
@@ -202,9 +221,8 @@ void KyraEngine_v2::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 	_mainCharacter.y1 = _mainCharacter.y2 = y2;
 	initSceneAnims(unk2);
 	
-	if (!unk2) {
-		//XXX sound
-	}
+	if (!unk2)
+		snd_playWanderScoreViaMap(_sceneList[_mainCharacter.sceneId].sound, 0);
 	
 	if (unk1 && !unk2 && _mainCharacter.animFrame != 32)
 		moveCharacter(facing, x, y);
@@ -237,7 +255,7 @@ int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
 	int changedScene = 0;
 	const int *moveTableStart = moveTable;
 	_unk4 = 0;
-	while (running) {
+	while (running && !_quitFlag) {
 		if (*moveTable >= 0 && *moveTable <= 7) {
 			_mainCharacter.facing = getOppositeFacingDirection(*moveTable);
 			unkFlag = true;
@@ -256,7 +274,12 @@ int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
 		}
 		
 		if (unk1) {
-			//XXX
+			// TODO: check this again
+			int inputFlag = checkInput(0/*dword_324C5*/);
+			if (inputFlag == 198 || inputFlag == 199) {
+				running = false;
+				_unk4 = 1;
+			}
 		}
 		
 		if (!unkFlag || !running)
@@ -385,7 +408,7 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 	resetScaleTable();
 	_useCharPal = false;
 	memset(_charPalTable, 0, sizeof(_charPalTable));
-	//XXX _unkTable33
+	memset(_layerFlagTable, 0, sizeof(_layerFlagTable));
 	memset(_specialSceneScriptState, 0, sizeof(_specialSceneScriptState));
 
 	_sceneEnterX1 = 160;
@@ -446,6 +469,19 @@ void KyraEngine_v2::runSceneScript4(int unk1) {
 	_sceneScriptState.regs[5] = unk1;
 
 	_scriptInterpreter->startScript(&_sceneScriptState, 4);
+	while (_scriptInterpreter->validScript(&_sceneScriptState))
+		_scriptInterpreter->runScript(&_sceneScriptState);
+}
+
+void KyraEngine_v2::runSceneScript6() {
+	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
+
+	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
+	_sceneScriptState.regs[1] = _mouseX;
+	_sceneScriptState.regs[2] = _mouseY;
+	_sceneScriptState.regs[4] = _itemInHand;
+
+	_scriptInterpreter->startScript(&_sceneScriptState, 6);
 	while (_scriptInterpreter->validScript(&_sceneScriptState))
 		_scriptInterpreter->runScript(&_sceneScriptState);
 }
@@ -862,6 +898,14 @@ void KyraEngine_v2::pathfinderUnk5(int *moveTable, int tableLen, int x, int y, i
 		sizeLeft -= wayLen;	// unlike the original we want to be sure that the size left is correct
 		index1 = index2;
 	}
+}
+
+void KyraEngine_v2::fadeScenePal(int srcIndex, int delayTime) {
+	uint8 *dst = _screen->getPalette(0) + 336;
+	const uint8 *src = _scenePal + (srcIndex << 4)*3;
+	memcpy(dst, src, 48);
+
+	_screen->fadePalette(_screen->getPalette(0), delayTime, &_updateFunctor);
 }
 
 } // end of namespace Kyra

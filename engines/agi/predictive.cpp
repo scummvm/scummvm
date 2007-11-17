@@ -199,7 +199,8 @@ bool AgiEngine::predictiveDialog(void) {
 					color2 = 7;
 				}
 				
-				bool _addIsActive = false; // FIXME
+				// needs fixing, or remove it!
+				bool _addIsActive = false; // FIXME: word adding is not implemented
 				if (i == 10 && !_addIsActive) { // Add
 					color2 = 7;
 				}

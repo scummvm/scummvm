@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/util.h"
@@ -1141,7 +1141,7 @@ void ScummEngine::checkAndRunSentenceScript() {
 			//
 			// For now we assume that if there are more than 460 scripts, then
 			// the pair 29/104 is used, else the pair 28/103.
-			
+
 			if (_res->num[rtScript] > 460) {
 				if (sentenceScript == 104)
 					sentenceScript = 29;

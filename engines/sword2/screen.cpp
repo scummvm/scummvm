@@ -29,7 +29,7 @@
 // BUILD_DISPLAY.CPP	like the old spr_engi but slightly more aptly named
 // ---------------------------------------------------------------------------
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "common/events.h"
 

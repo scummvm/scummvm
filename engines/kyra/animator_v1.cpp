@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 
 #include "kyra/kyra_v1.h"
@@ -88,7 +87,7 @@ void ScreenAnimator::initAnimStateList() {
 	animStates[0].height = 48;
 	animStates[0].width2 = 4;
 	animStates[0].height2 = 3;
-	
+
 	for (int i = 1; i <= 4; ++i) {
 		animStates[i].index = i;
 		animStates[i].active = 0;
@@ -100,13 +99,13 @@ void ScreenAnimator::initAnimStateList() {
 		animStates[i].width2 = 4;
 		animStates[i].height2 = 3;
 	}
-	
+
 	for (int i = 5; i < 16; ++i) {
 		animStates[i].index = i;
 		animStates[i].active = 0;
 		animStates[i].flags = 0;
 	}
-	
+
 	for (int i = 16; i < 28; ++i) {
 		animStates[i].index = i;
 		animStates[i].flags = 0;
@@ -157,7 +156,7 @@ void ScreenAnimator::restoreAllObjectBackgrounds() {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::restoreAllObjectBackground()");
 	AnimObject *curObject = _objectQueue;
 	_screen->_curPage = 2;
-	
+
 	while (curObject) {
 		if (curObject->active && !curObject->disable) {
 			preserveOrRestoreBackground(curObject, true);
@@ -166,7 +165,7 @@ void ScreenAnimator::restoreAllObjectBackgrounds() {
 		}
 		curObject = curObject->nextAnimObject;
 	}
-	
+
 	_screen->_curPage = 0;
 }
 
@@ -174,7 +173,7 @@ void ScreenAnimator::preserveAnyChangedBackgrounds() {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::preserveAnyChangedBackgrounds()");
 	AnimObject *curObject = _objectQueue;
 	_screen->_curPage = 2;
-	
+
 	while (curObject) {
 		if (curObject->active && !curObject->disable && curObject->bkgdChangeFlag) {
 			preserveOrRestoreBackground(curObject, false);
@@ -182,14 +181,14 @@ void ScreenAnimator::preserveAnyChangedBackgrounds() {
 		}
 		curObject = curObject->nextAnimObject;
 	}
-	
+
 	_screen->_curPage = 0;
 }
 
 void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::preserveOrRestoreBackground(%p, %d)", (const void *)obj, restore);
 	int x = 0, y = 0, width = obj->width, height = obj->height;
-	
+
 	if (restore) {
 		x = obj->x2 >> 3;
 		y = obj->y2;
@@ -197,14 +196,14 @@ void ScreenAnimator::preserveOrRestoreBackground(AnimObject *obj, bool restore) 
 		x = obj->x1 >> 3;
 		y = obj->y1;
 	}
-	
+
 	if (x < 0)
 		x = 0;
 	if (y < 0)
 		y = 0;
-	
+
 	int temp;
-	
+
 	temp = x + width;
 	if (temp >= 39)
 		x = 39 - width;
@@ -234,7 +233,7 @@ void ScreenAnimator::prepDrawAllObjects() {
 		if (curObject->active) {
 			int xpos = curObject->x1;
 			int ypos = curObject->y1;
-			
+
 			int drawLayer = 0;
 			if (!(curObject->flags & 0x800))
 				drawLayer = 7;
@@ -242,7 +241,7 @@ void ScreenAnimator::prepDrawAllObjects() {
 				drawLayer = 0;
 			else
 				drawLayer = _vm->_sprites->getDrawLayer(curObject->drawY);
-			
+
 			// talking head functionallity
 			if (_vm->_talkingCharNum != -1 && (_vm->_currentCharacter->currentAnimFrame != 88 || curObject->index != 0)) {
 				const int16 baseAnimFrameTable1[] = { 0x11, 0x35, 0x59, 0x00, 0x00, 0x00 };
@@ -266,14 +265,14 @@ void ScreenAnimator::prepDrawAllObjects() {
 						} else {
 							temp2 = 1;
 						}
-						
+
 						if (!temp2)
 							shapesIndex = -1;
 					}
-						
+
 					xpos = curObject->x1;
 					ypos = curObject->y1;
-						
+
 					int tempX = 0, tempY = 0;
 					if (curObject->flags & 0x1) {
 						tempX = (xOffsetTable1[curObject->index] * _brandonScaleX) >> 8;
@@ -285,22 +284,22 @@ void ScreenAnimator::prepDrawAllObjects() {
 					tempY = (tempY * _brandonScaleY) >> 8;
 					xpos += tempX;
 					ypos += tempY;
-					
+
 					if (_vm->_scaleMode && _brandonScaleX != 256)
 						++xpos;
-					
+
 					if (curObject->index == 0 && shapesIndex != -1) {
 						if (!(_vm->_brandonStatusBit & 2)) {
 							flagUnk3 = 0x100;
 							if ((flagUnk1 & 0x200) || (flagUnk2 & 0x4000))
 								flagUnk3 = 0;
-							
+
 							int tempFlags = 0;
 							if (flagUnk3 & 0x100) {
 								tempFlags = curObject->flags & 1;
 								tempFlags |= 0x800 | flagUnk1 | 0x100;
 							}
-							
+
 							if (!(flagUnk3 & 0x100) && (flagUnk2 & 0x4000)) {
 								tempFlags = curObject->flags & 1;
 								tempFlags |= 0x900 | flagUnk1 | 0x4000;
@@ -310,7 +309,7 @@ void ScreenAnimator::prepDrawAllObjects() {
 									tempFlags = curObject->flags & 1;
 									tempFlags |= 0x900 | flagUnk1;
 								}
-								
+
 								_screen->drawShape(drawPage, _vm->_shapes[shapesIndex], xpos, ypos, 2, tempFlags | 4, _vm->_brandonPoisonFlagsGFX, int(1), drawLayer, _brandonScaleX, _brandonScaleY);
 							}
 						}
@@ -319,25 +318,25 @@ void ScreenAnimator::prepDrawAllObjects() {
 							int tempFlags = 0;
 							if (curObject->flags & 1)
 								tempFlags = 1;
-							_screen->drawShape(drawPage, _vm->_shapes[shapesIndex], xpos, ypos, 2, tempFlags | 0x800, drawLayer); 							
+							_screen->drawShape(drawPage, _vm->_shapes[shapesIndex], xpos, ypos, 2, tempFlags | 0x800, drawLayer);
 						}
 					}
 				}
 			}
-			
+
 			xpos = curObject->x1;
 			ypos = curObject->y1;
-			
+
 			curObject->flags |= 0x800;
 			if (curObject->index == 0) {
 				flagUnk3 = 0x100;
-				
+
 				if (flagUnk1 & 0x200 || flagUnk2 & 0x4000)
 					flagUnk3 = 0;
-				
+
 				if (_vm->_brandonStatusBit & 2)
 					curObject->flags &= 0xFFFFFFFE;
-				
+
 				if (!_vm->_scaleMode) {
 					if (flagUnk3 & 0x100)
 						_screen->drawShape(drawPage, curObject->sceneAnimPtr, xpos, ypos, 2, curObject->flags | flagUnk1 | 0x100, (uint8*)_vm->_brandonPoisonFlagsGFX, int(1), drawLayer);
@@ -375,7 +374,7 @@ void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 				ypos = curObject->y1 - curObject->height2;
 				width = curObject->width + (curObject->width2>>3) + 2;
 				height = curObject->height + curObject->height2*2;
-				
+
 				if (xpos < 1)
 					xpos = 1;
 				else if (xpos > 39)
@@ -383,7 +382,7 @@ void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 
 				if (xpos + width > 39)
 					width = 39 - xpos;
-				
+
 				if (ypos < 8)
 					ypos = 8;
 				else if (ypos > 136)
@@ -391,7 +390,7 @@ void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 
 				if (ypos + height > 136)
 					height = 136 - ypos;
-				
+
 				_screen->copyRegion(xpos << 3, ypos, xpos << 3, ypos, width << 3, height, 2, 0, Screen::CR_CLIPPED);
 				curObject->refreshFlag = 0;
 				_updateScreen = true;
@@ -416,15 +415,15 @@ void ScreenAnimator::updateAllObjectShapes() {
 void ScreenAnimator::animRemoveGameItem(int index) {
 	debugC(9, kDebugLevelAnimator, "ScreenAnimator::animRemoveGameItem(%d)", index);
 	restoreAllObjectBackgrounds();
-	
+
 	AnimObject *animObj = &_items[index];
 	animObj->sceneAnimPtr = 0;
 	animObj->animFrameNumber = -1;
 	animObj->refreshFlag = 1;
-	animObj->bkgdChangeFlag = 1;	
+	animObj->bkgdChangeFlag = 1;
 	updateAllObjectShapes();
 	animObj->active = 0;
-	
+
 	objectRemoveQueue(_objectQueue, animObj);
 }
 
@@ -459,7 +458,7 @@ void ScreenAnimator::animAddNPC(int character) {
 	restoreAllObjectBackgrounds();
 	AnimObject *animObj = &_actors[character];
 	const Character *ch = &_vm->_characterList[character];
-	
+
 	animObj->active = 1;
 	animObj->refreshFlag = 1;
 	animObj->bkgdChangeFlag = 1;
@@ -491,13 +490,13 @@ AnimObject *ScreenAnimator::objectRemoveQueue(AnimObject *queue, AnimObject *rem
 		prev = cur;
 		cur = temp;
 	}
-	
+
 	if (cur == queue) {
 		if (!cur)
 			return 0;
 		return cur->nextAnimObject;
 	}
-	
+
 	if (!cur->nextAnimObject) {
 		if (cur == rem) {
 			if (!prev)
@@ -509,7 +508,7 @@ AnimObject *ScreenAnimator::objectRemoveQueue(AnimObject *queue, AnimObject *rem
 		if (cur == rem)
 			prev->nextAnimObject = rem->nextAnimObject;
 	}
-	
+
 	return queue;
 }
 
@@ -534,7 +533,7 @@ AnimObject *ScreenAnimator::objectQueue(AnimObject *queue, AnimObject *add) {
 		prev = cur;
 		cur = temp;
 	}
-	
+
 	if (add->drawY <= cur->drawY) {
 		prev->nextAnimObject = add;
 		add->nextAnimObject = cur;
@@ -617,7 +616,7 @@ void ScreenAnimator::animRefreshNPC(int character) {
 		animObj->flags |= 1;
 	else if (facing >= 5 && facing <= 7)
 		animObj->flags &= 0xFFFFFFFE;
-	
+
 	animObj->drawY = ch->y1;
 	animObj->sceneAnimPtr = _vm->shapes()[ch->currentAnimFrame];
 	animObj->animFrameNumber = ch->currentAnimFrame;
@@ -640,14 +639,14 @@ void ScreenAnimator::animRefreshNPC(int character) {
 			}
 		}
 	}
-	
+
 	int xOffset = _vm->_defaultShapeTable[ch->currentAnimFrame-7].xOffset;
 	int yOffset = _vm->_defaultShapeTable[ch->currentAnimFrame-7].yOffset;
-	
+
 	if (_vm->_scaleMode) {
 		animObj->x1 = ch->x1;
 		animObj->y1 = ch->y1;
-		
+
 		int newScale = _vm->_scaleTable[ch->y1];
 		_brandonScaleX = newScale;
 		_brandonScaleY = newScale;

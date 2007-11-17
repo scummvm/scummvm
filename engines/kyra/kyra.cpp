@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 
@@ -48,15 +48,20 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	_staticres = 0;
 	_timer = 0;
 	_scriptInterpreter = 0;
-	
+
 	_flags = flags;
 	_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);
-	
+
 	_quitFlag = false;
-	
+
 	_skipFlag = false;
-	
+
+	_trackMap = 0;
+	_trackMapSize = 0;
+	_lastMusicCommand = -1;
+	_curSfxFile = _curMusicTheme = -1;
+
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	// sets up all engine specific debug levels
@@ -71,6 +76,8 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	Common::addSpecialDebugLevel(kDebugLevelSequence, "Sequence", "Sequence debug level");
 	Common::addSpecialDebugLevel(kDebugLevelMovie, "Movie", "Movie debug level");
 	Common::addSpecialDebugLevel(kDebugLevelTimer, "Timer", "Timer debug level");
+
+	system->getEventManager()->registerRandomSource(_rnd, "kyra");
 }
 
 int KyraEngine::init() {
@@ -81,13 +88,18 @@ int KyraEngine::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-	
+
 		// for now we prefer Adlib over native MIDI
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
 
 	if (_flags.platform == Common::kPlatformFMTowns) {
-		// no sfx enabled for CD audio music atm
-		// later on here should be a usage of MixedSoundDriver
+		// TODO: later on here should be a usage of MixedSoundDriver
+		_sound = new SoundTowns(this, _mixer);
+	} else if (_flags.platform == Common::kPlatformPC98) {
+		// TODO: currently we don't support the PC98 sound data,
+		// but since it has the FM-Towns data files, we just use the
+		// FM-Towns driver
+		// TODO: later on here should be a usage of MixedSoundDriver
 		_sound = new SoundTowns(this, _mixer);
 	} else if (midiDriver == MD_ADLIB) {
 		_sound = new SoundAdlibPC(this, _mixer);
@@ -107,7 +119,7 @@ int KyraEngine::init() {
 
 		// C55 appears to be XMIDI for General MIDI instruments
 		soundMidiPc->setUseC55(_flags.gameID == GI_KYRA2 && !native_mt32);
-		
+
 		// Unlike some SCUMM games, it's not that the MIDI sounds are
 		// missing. It's just that at least at the time of writing they
 		// are decidedly inferior to the Adlib ones.
@@ -115,7 +127,7 @@ int KyraEngine::init() {
 		if (midiDriver != MD_ADLIB && ConfMan.getBool("multi_midi")) {
 			SoundAdlibPC *adlib = new SoundAdlibPC(this, _mixer);
 			assert(adlib);
-			
+
 			_sound = new MixedSoundDriver(this, _mixer, soundMidiPc, adlib);
 			assert(_sound);
 		}
@@ -123,8 +135,7 @@ int KyraEngine::init() {
 
 	_res = new Resource(this);
 	assert(_res);
-	_text = new TextDisplayer(this, this->screen());
-	assert(_text);
+	_res->reset();
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	if (!_staticres->init())
@@ -133,7 +144,7 @@ int KyraEngine::init() {
 	assert(_timer);
 	_scriptInterpreter = new ScriptHelper(this);
 	assert(_scriptInterpreter);
-	
+
 	setupOpcodeTable();
 
 	_lang = 0;

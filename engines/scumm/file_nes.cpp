@@ -948,8 +948,7 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 		for (i = 1; i < 8; i++)
 			reslen += write_byte(output, 0);
 
-		for (j = 0; j < 4; j++)
-		{
+		for (j = 0; j < 4; j++) {
 			reslen += write_byte(output,' ');
 			for (i = 1; (val = fileReadByte()); i++)
 				reslen += write_byte(output, val);

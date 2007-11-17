@@ -149,16 +149,6 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
-		<Unit filename="..\..\engines\cine\resource.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\cine\resource.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="default" />
-		</Unit>
 		<Unit filename="..\..\engines\cine\script.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -169,24 +159,8 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
-		<Unit filename="..\..\engines\cine\sfx_player.cpp">
+		<Unit filename="..\..\engines\cine\sound.cpp">
 			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\cine\sfx_player.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\cine\sound_driver.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
-		<Unit filename="..\..\engines\cine\sound_driver.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\cine\texte.cpp">

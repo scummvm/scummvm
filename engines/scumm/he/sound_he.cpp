@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/actor.h"
 #include "scumm/file.h"
 #include "scumm/imuse/imuse.h"
@@ -57,7 +57,7 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer)
 	_heMusicTracks(0) {
 
 	memset(_heChannel, 0, sizeof(_heChannel));
-}	
+}
 
 SoundHE::~SoundHE() {
 	free(_heMusic);
@@ -81,7 +81,7 @@ void SoundHE::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFla
 		if (_soundQue2[i].sound == sound && !(heFlags & 2))
 			return;
 	}
-	
+
 	Sound::addSoundToQueue2(sound, heOffset, heChannel, heFlags);
 }
 
@@ -569,7 +569,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		}
 
 		if (compType == 17) {
-			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&stream, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 
 			sound = (char *)malloc(size * 4);
 			size = voxStream->readBuffer((int16*)sound, size * 2);

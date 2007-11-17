@@ -25,8 +25,6 @@
  * Tatsuyuki Satoh. Included from LGPL'ed AdPlug.
  */
 
-#include "common/stdafx.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

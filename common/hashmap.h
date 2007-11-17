@@ -26,40 +26,39 @@
 // The hash map (associative array) implementation in this file is
 // based on code by Andrew Y. Ng, 1996:
 
-/* 
- * Copyright (c) 1998-2003 Massachusetts Institute of Technology. 
- * This code was developed as part of the Haystack research project 
- * (http://haystack.lcs.mit.edu/). Permission is hereby granted, 
- * free of charge, to any person obtaining a copy of this software 
- * and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation 
- * the rights to use, copy, modify, merge, publish, distribute, 
- * sublicense, and/or sell copies of the Software, and to permit 
- * persons to whom the Software is furnished to do so, subject to 
- * the following conditions: 
- * 
- * The above copyright notice and this permission notice shall be 
- * included in all copies or substantial portions of the Software. 
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
- * OTHER DEALINGS IN THE SOFTWARE. 
+/*
+ * Copyright (c) 1998-2003 Massachusetts Institute of Technology.
+ * This code was developed as part of the Haystack research project
+ * (http://haystack.lcs.mit.edu/). Permission is hereby granted,
+ * free of charge, to any person obtaining a copy of this software
+ * and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef COMMON_HASHMAP_H
 #define COMMON_HASHMAP_H
 
-#include "common/stdafx.h"
 #include "common/func.h"
 #include "common/str.h"
 #include "common/util.h"
 
-namespace Common { 
+namespace Common {
 
 // The table sizes ideally are primes. We use a helper function to find
 // suitable table sizes.
@@ -83,7 +82,7 @@ uint nextTableSize(uint x);
  * referenced, for a new key. If the object is const, then an assertion is
  * triggered instead. Hence if you are not sure whether a key is contained in
  * the map, use contains() first to check for its presence.
- */ 
+ */
 template <class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key> >
 class HashMap {
 	friend class const_iterator;
@@ -102,13 +101,13 @@ public:
 
 	Node **_arr;	// hashtable of size arrsize.
 	uint _arrsize, _nele;
-	
+
 	HashFunc _hash;
 	EqualFunc _equal;
-	
+
 	// Default value, returned by the const getVal.
 	const Val _defaultVal;
-	
+
 #ifdef DEBUG_HASH_COLLISIONS
 	mutable int _collisions, _lookups;
 #endif
@@ -148,11 +147,11 @@ public:
 			} while (_idx < _hashmap->_arrsize && _hashmap->_arr[_idx] == 0);
 			if (_idx >= _hashmap->_arrsize)
 				_idx = (uint)-1;
-			
+
 			return *this;
 		}
 	};
-	
+
 	HashMap();
 	HashMap(const HM_t& map);
 	~HashMap();
@@ -195,14 +194,14 @@ public:
 	const_iterator	end() const {
 		return const_iterator((uint)-1, this);
 	}
-	
+
 	const_iterator	find(const Key &key) const {
 		uint ctr = lookup(key);
 		if (_arr[ctr])
 			return const_iterator(ctr, this);
 		return end();
 	}
-	
+
 	// TODO: insert() method?
 
 	bool empty() const {
@@ -225,7 +224,7 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap()
 	memset(_arr, 0, _arrsize * sizeof(Node *));
 
 	_nele = 0;
-	
+
 #ifdef DEBUG_HASH_COLLISIONS
 	_collisions = 0;
 	_lookups = 0;
@@ -312,7 +311,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expand_array(uint newsize) {
 	const uint old_arrsize = _arrsize;
 	Node **old_arr = _arr;
 
-	// allocate a new array 
+	// allocate a new array
 	_nele = 0;
 	_arrsize = newsize;
 	_arr = new Node *[_arrsize];
@@ -357,7 +356,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 		_collisions++;
 #endif
 	}
-	
+
 #ifdef DEBUG_HASH_COLLISIONS
 	_lookups++;
 	fprintf(stderr, "collisions %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d\n",

@@ -400,9 +400,8 @@ void Interface::setMode(int mode) {
 			_saveReminderState = 1;
 		}
 	} else if (mode == kPanelOption) {
-		// Show the cursor in the IHNM demo
-		if (_vm->getGameId() == GID_IHNM_DEMO)
-			_vm->_gfx->showCursor(true);
+		// Show the cursor if it's hidden
+		_vm->_gfx->showCursor(true);
 	} else {
 		if (mode == kPanelConverse) {
 			_inMainMode = false;
@@ -476,22 +475,22 @@ void Interface::setMode(int mode) {
 	draw();
 }
 
-bool Interface::processAscii(uint16 ascii) {
+bool Interface::processAscii(Common::KeyState keystate) {
 	// TODO: Checking for Esc and Enter below is a bit hackish, and
 	// and probably only works with the English version. Maybe we should
 	// add a flag to the button so it can indicate if it's the default or
 	// cancel button?
-
+	uint16 ascii = keystate.ascii;
 	int i;
 	PanelButton *panelButton;
 	if (_statusTextInput) {
-		processStatusTextInput(ascii);
+		processStatusTextInput(keystate);
 		return true;
 	}
 
 	switch (_panelMode) {
 	case kPanelNull:
-		if (ascii == 27) { // Esc
+		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
 			if (_vm->_scene->isInIntro()) {
 				_vm->_scene->skipScene();
 			} else {
@@ -505,7 +504,7 @@ bool Interface::processAscii(uint16 ascii) {
 			_vm->_scene->showIHNMDemoSpecialScreen();
 		break;
 	case kPanelCutaway:
-		if (ascii == 27) { // Esc
+		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
 			if (!_disableAbortSpeeches)
 				_vm->_actor->abortAllSpeeches();
 			_vm->_scene->cutawaySkip();
@@ -516,7 +515,7 @@ bool Interface::processAscii(uint16 ascii) {
 			_vm->_scene->showIHNMDemoSpecialScreen();
 		break;
 	case kPanelVideo:
-		if (ascii == 27) { // Esc
+		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
 			if (_vm->_scene->isInIntro()) {
 				_vm->_scene->skipScene();
 			} else {
@@ -532,7 +531,7 @@ bool Interface::processAscii(uint16 ascii) {
 		break;
 	case kPanelOption:
 		// TODO: check input dialog keys
-		if (ascii == 27 || ascii == 13) { // Esc or Enter
+		if (keystate.keycode == Common::KEYCODE_ESCAPE || keystate.keycode == Common::KEYCODE_RETURN) { // Esc or Enter
 			ascii = 'c'; //continue
 		}
 
@@ -547,13 +546,13 @@ bool Interface::processAscii(uint16 ascii) {
 		}
 		break;
 	case kPanelSave:
-		if (_textInput && processTextInput(ascii)) {
+		if (_textInput && processTextInput(keystate)) {
 			return true;
 		}
 
-		if (ascii == 27) { // Esc
+		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
 			ascii = 'c'; // cancel
-		} else if (ascii == 13) { // Enter
+		} else if (keystate.keycode == Common::KEYCODE_RETURN) { // Enter
 			ascii = 's'; // save
 		}
 
@@ -568,9 +567,9 @@ bool Interface::processAscii(uint16 ascii) {
 		}
 		break;
 	case kPanelQuit:
-		if (ascii == 27) { // Esc
+		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
 			ascii = 'c'; // cancel
-		} else if (ascii == 13) { // Enter
+		} else if (keystate.keycode == Common::KEYCODE_RETURN) { // Enter
 			ascii = 'q'; // quit
 		}
 
@@ -608,8 +607,7 @@ bool Interface::processAscii(uint16 ascii) {
 				return true;
 			}
 		}
-		if (ascii == 15) // ctrl-o
-		{
+		if (keystate.keycode == Common::KEYCODE_o && keystate.flags == Common::KBD_CTRL) { // ctrl-o
 			if (_saveReminderState > 0) {
 				setMode(kPanelOption);
 				return true;
@@ -652,7 +650,7 @@ bool Interface::processAscii(uint16 ascii) {
 		mapPanelClean();
 		break;
 	case kPanelSceneSubstitute:
-		if (ascii == 13) {
+		if (keystate.keycode == Common::KEYCODE_RETURN) {
 			_vm->_render->clearFlag(RF_DEMO_SUBST);
 			_vm->_gfx->setPalette(_mapSavedPal);
 			setMode(kPanelMain);
@@ -667,11 +665,11 @@ bool Interface::processAscii(uint16 ascii) {
 		break;
 	case kPanelProtect:
 		if (_vm->getGameType() == GType_ITE) {
-			if (_textInput && processTextInput(ascii)) {
+			if (_textInput && processTextInput(keystate)) {
 				return true;
 			}
 
-			if (ascii == 27 || ascii == 13) { // Esc or Enter
+			if (keystate.keycode == Common::KEYCODE_ESCAPE || keystate.keycode == Common::KEYCODE_RETURN) {
 				_vm->_script->wakeUpThreads(kWaitTypeRequest);
 				_vm->_interface->setMode(kPanelMain);
 				
@@ -714,7 +712,7 @@ void Interface::setStatusText(const char *text, int statusColor) {
 	assert(text != NULL);
 	assert(strlen(text) < STATUS_TEXT_LEN);
 
-	if (_vm->_render->getFlags() & (RF_PLACARD | RF_MAP))
+	if (_vm->_render->getFlags() & RF_MAP || _vm->_interface->getMode() == kPanelPlacard)
 		return;
 
 	strncpy(_statusText, text, STATUS_TEXT_LEN);
@@ -1048,7 +1046,10 @@ void Interface::setQuit(PanelButton *panelButton) {
 			setMode(kPanelOption);
 			break;
 		case kTextQuit:
-			_vm->shutDown();
+			if (_vm->getGameId() == GID_IHNM_DEMO)
+				_vm->_scene->creditsScene();	// display sales info for IHNM demo
+			else
+				_vm->shutDown();
 			break;
 	}
 }
@@ -1114,20 +1115,20 @@ void Interface::setLoad(PanelButton *panelButton) {
 	}
 }
 
-void Interface::processStatusTextInput(uint16 ascii) {
+void Interface::processStatusTextInput(Common::KeyState keystate) {
 
-	switch (ascii) {
-	case 27: // esc
+	switch (keystate.keycode) {
+	case Common::KEYCODE_ESCAPE:
 		_statusTextInputState = kStatusTextInputAborted;
 		_statusTextInput = false;
 		_vm->_script->wakeUpThreads(kWaitTypeStatusTextInput);
 		break;
-	case 13: // return
+	case Common::KEYCODE_RETURN:
 		_statusTextInputState = kStatusTextInputEntered;
 		_statusTextInput = false;
 		_vm->_script->wakeUpThreads(kWaitTypeStatusTextInput);
 		break;
-	case 8: // backspace
+	case Common::KEYCODE_BACKSPACE:
 		if (_statusTextInputPos == 0) {
 			break;
 		}
@@ -1137,18 +1138,15 @@ void Interface::processStatusTextInput(uint16 ascii) {
 		if (_statusTextInputPos >= STATUS_TEXT_INPUT_MAX) {
 			break;
 		}
-		if (((ascii >= 'a') && (ascii <='z')) ||
-			((ascii >= '0') && (ascii <='9')) ||
-			((ascii >= 'A') && (ascii <='Z')) ||
-			(ascii == ' ')) {
-			_statusTextInputString[_statusTextInputPos++] = ascii;
+		if (isalnum(keystate.ascii) || (keystate.ascii == ' ')) {
+			_statusTextInputString[_statusTextInputPos++] = keystate.ascii;
 			_statusTextInputString[_statusTextInputPos] = 0;
 		}
 	}
 	setStatusText(_statusTextInputString);
 }
 
-bool Interface::processTextInput(uint16 ascii) {
+bool Interface::processTextInput(Common::KeyState keystate) {
 	char ch[2];
 	char tempString[SAVE_TITLE_SIZE];
 	uint tempWidth;
@@ -1158,18 +1156,18 @@ bool Interface::processTextInput(uint16 ascii) {
 	// in IHNM, to preserve backwards compatibility with older save games
 	uint save_title_size = _vm->getGameType() == GType_ITE ? SAVE_TITLE_SIZE : IHNM_SAVE_TITLE_SIZE;
 
-	switch (ascii) {
-	case 13:
+	switch (keystate.keycode) {
+	case Common::KEYCODE_RETURN:
 		return false;
-	case 27: // esc
+	case Common::KEYCODE_ESCAPE:
 		_textInput = false;
 		break;
-	case 8: // backspace
+	case Common::KEYCODE_BACKSPACE:
 		if (_textInputPos <= 1) {
 			break;
 		}
 		_textInputPos--;
-	case 127: // del
+	case Common::KEYCODE_DELETE:
 		if (_textInputPos <= _textInputStringLength) {
 			if (_textInputPos != 1) {
 				strncpy(tempString, _textInputString, _textInputPos - 1);
@@ -1181,27 +1179,25 @@ bool Interface::processTextInput(uint16 ascii) {
 			_textInputStringLength = strlen(_textInputString);
 		}
 		break;
-	case 276: // left
+	case Common::KEYCODE_LEFT:
 		if (_textInputPos > 1) {
 			_textInputPos--;
 		}
 		break;
-	case 275: // right
+	case Common::KEYCODE_RIGHT:
 		if (_textInputPos <= _textInputStringLength) {
 			_textInputPos++;
 		}
 		break;
 	default:
-		if (((ascii >= 'a') && (ascii <='z')) ||
-			((ascii >= '0') && (ascii <='9')) ||
-			((ascii >= 'A') && (ascii <='Z')) ||
-			 (ascii == ' ') || (ascii == '-') || (ascii == '_')) {
+		if (isalnum(keystate.ascii) || (keystate.ascii == ' ') ||
+		    (keystate.ascii == '-') || (keystate.ascii == '_')) {
 			if (_textInputStringLength < save_title_size - 1) {
-				ch[0] = ascii;
+				ch[0] = keystate.ascii;
 				tempWidth = _vm->_font->getStringWidth(kKnownFontSmall, ch, 0, kFontNormal);
 				tempWidth += _vm->_font->getStringWidth(kKnownFontSmall, _textInputString, 0, kFontNormal);
 				if (tempWidth > _textInputMaxWidth) {
-									break;
+					break;
 				}
 				if (_textInputPos != 1) {
 					strncpy(tempString, _textInputString, _textInputPos - 1);
@@ -1533,7 +1529,6 @@ void Interface::handleChapterSelectionClick(const Point& mousePoint) {
 			event.param4 = obj;	// Object
 			event.param5 = 0;	// With Object
 			event.param6 = obj;		// Actor
-
 			_vm->_events->queue(&event);
 		}
 	}
@@ -1628,9 +1623,19 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		// When opening the psychic profile, or the options screen in the non-interactive part of the IHNM demo,
 		// the interface is locked (_active is false)
 		// Don't return in those cases, so that mouse actions can be processed
-		if (!(_vm->getGameType() == GType_IHNM && _panelMode == kPanelPlacard && (updateFlag & UPDATE_MOUSECLICK)) &&
-			!(_vm->getGameId() == GID_IHNM_DEMO && (_panelMode == kPanelOption || _panelMode == kPanelQuit)))
+		if (_vm->getGameType() == GType_ITE) {
 			return;
+		} else {
+			if (_panelMode == kPanelPlacard && (updateFlag & UPDATE_MOUSECLICK)) {
+				// the psychic profile or the special screen in IHNM demo is open, don't return
+			} else if (_panelMode == kPanelOption || _panelMode == kPanelQuit) {
+				// options/quit panel is open, set interface to active and don't return
+				_vm->_actor->abortSpeech();	// abort any speech being played
+				_active = true;
+			} else {
+				return;
+			}
+		}
 	}
 
 	if (_statusTextInput) {
@@ -2785,10 +2790,14 @@ void Interface::keyBoss() {
 	_vm->_gfx->getCurrentPal(_mapSavedPal);
 	pal = _vm->getImagePal(resource, resourceLength);
 
-	for (i = 0; i < PAL_ENTRIES; i++) {
-		cPal[i].red = *pal++;
-		cPal[i].green = *pal++;
-		cPal[i].blue = *pal++;
+	cPal[0].red = 0;
+	cPal[0].green = 0;
+	cPal[0].blue = 0;
+
+	for (i = 1; i < PAL_ENTRIES; i++) {
+		cPal[i].red = 128;
+		cPal[i].green = 128;
+		cPal[i].blue = 128;
 	}
 
 	backBuffer->blit(rect, image);

@@ -26,7 +26,6 @@
 #ifndef SOUND_VOC_H
 #define SOUND_VOC_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 namespace Common { class ReadStream; }

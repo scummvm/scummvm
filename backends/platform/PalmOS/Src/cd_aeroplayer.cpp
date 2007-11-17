@@ -23,7 +23,6 @@
  *
  */
 
-#include "stdafx.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 

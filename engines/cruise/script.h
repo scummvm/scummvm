@@ -37,6 +37,7 @@ enum scriptTypeEnum {
 
 struct scriptInstanceStruct {
 	struct scriptInstanceStruct *nextScriptPtr;
+	int16 ccr;
 	int16 var4;
 	uint8 *var6;
 	int16 varA;
@@ -48,8 +49,6 @@ struct scriptInstanceStruct {
 	int16 var16;
 	int16 var18;
 	int16 var1A;
-////// EXTRA ! not in original code. Needed for cross platform.
-	int16 bitMask;
 };
 
 extern scriptInstanceStruct relHead;
@@ -57,12 +56,10 @@ extern scriptInstanceStruct procHead;
 extern scriptInstanceStruct *currentScriptPtr;
 
 void setupFuncArray(void);
-uint8 getByteFromScript(void);
+int8 getByteFromScript(void);
 
 int removeScript(int overlay, int idx, scriptInstanceStruct * headPtr);
-uint8 *attacheNewScriptToTail(int16 overlayNumber,
-    scriptInstanceStruct * scriptHandlePtr, int16 param, int16 arg0,
-    int16 arg1, int16 arg2, scriptTypeEnum scriptType);
+uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overlayNumber, int16 param, int16 arg0, int16 arg1, int16 arg2, scriptTypeEnum scriptType);
 void manageScripts(scriptInstanceStruct * scriptHandle);
 
 } // End of namespace Cruise

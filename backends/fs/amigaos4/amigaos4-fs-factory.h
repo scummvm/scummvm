@@ -8,53 +8,44 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
- *
  */
 
-#ifndef SAGA_STREAM_H
-#define SAGA_STREAM_H
+#ifndef AMIGAOS_FILESYSTEM_FACTORY_H
+#define AMIGAOS_FILESYSTEM_FACTORY_H
 
-#include "common/stream.h"
+#include "common/singleton.h"
+#include "backends/fs/abstract-fs-factory.h"
 
-namespace Saga {
-
-using Common::MemoryReadStream;
-
-class MemoryReadStreamEndian : public Common::MemoryReadStream {
-private:
+/**
+ * Creates AmigaOSFilesystemNode objects.
+ * 
+ * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ */
+class AmigaOSFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<AmigaOSFilesystemFactory> {	
 public:
-	bool _bigEndian;
-	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian = false) : MemoryReadStream(buf, len), _bigEndian(bigEndian) {}
-
-	uint16 readUint16() {
-		return (_bigEndian) ? readUint16BE(): readUint16LE();
-	}
-
-	uint32 readUint32() {
-		return (_bigEndian) ? readUint32BE(): readUint32LE();
-	}
-
-	inline int16 readSint16() {
-		return (int16)readUint16();
-	}
-
-
-	inline int32 readSint32() {
-		return (int32)readUint32();
-	}
+	typedef Common::String String;
+		
+	virtual AbstractFilesystemNode *makeRootFileNode() const;
+	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
+	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const;
+	
+protected:
+	AmigaOSFilesystemFactory() {};
+		
+private:
+	friend class Common::Singleton<SingletonBaseType>;
 };
 
-} // End of namespace Saga
-#endif
+#endif /*AMIGAOS_FILESYSTEM_FACTORY_H*/

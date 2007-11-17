@@ -26,7 +26,7 @@
 #ifndef CINE_H
 #define CINE_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "common/file.h"
 #include "common/util.h"
@@ -67,11 +67,11 @@ protected:
 	int init();
 	int go();
 	void shutdown();
-	
+
 	bool initGame();
 
 public:
-	CineEngine(OSystem *syst);
+	CineEngine(OSystem *syst, const CINEGameDescription *gameDesc);
 	virtual ~CineEngine();
 
 	int getGameType() const;
@@ -84,6 +84,8 @@ public:
 
 	const CINEGameDescription *_gameDescription;
 	Common::File _partFileHandle;
+
+	Common::RandomSource _rnd;
 
 private:
 	void initialize(void);

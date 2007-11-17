@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 
 #include "touche/graphics.h"
@@ -42,6 +41,11 @@ void Graphics::setupFont(Common::Language language) {
 		_fontOffs = _spaFontOffs;
 		_fontSize = _spaFontSize;
 		_fontData = _spaFontData;
+		break;
+	case Common::PL_POL:
+		_fontOffs = _polFontOffs;
+		_fontSize = _polFontSize;
+		_fontData = _polFontData;
 		break;
 	case Common::IT_ITA:
 	case Common::EN_ANY:

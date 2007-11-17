@@ -29,7 +29,7 @@
 
 // Functions for moving megas about the place & also for keeping tabs on them
 
-#include "common/stdafx.h"
+
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"

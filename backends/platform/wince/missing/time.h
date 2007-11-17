@@ -5,6 +5,7 @@
 
 #include <stdlib.h>
 
+#ifndef __MINGW32CE__
 struct tm
 {
 	short tm_year;
@@ -27,4 +28,5 @@ EXT_C struct tm* localtime(time_t* dummy);
 
 unsigned int clock();
 
+#endif
 #endif

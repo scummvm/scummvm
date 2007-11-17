@@ -26,7 +26,7 @@
 #ifndef SKY_DEFS_H
 #define SKY_DEFS_H
 
-#include "common/stdafx.h"
+
 
 namespace Sky {
 

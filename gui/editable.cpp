@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/events.h"
 #include "gui/editable.h"
 #include "gui/newgui.h"
@@ -42,7 +41,7 @@ EditableWidget::EditableWidget(GuiObject *boss, const String &name)
 void EditableWidget::init() {
 	_caretVisible = false;
 	_caretTime = 0;
-	_caretPos = 0;	// FIXME
+	_caretPos = 0;
 
 	_caretInverse = false;
 
@@ -190,7 +189,7 @@ void EditableWidget::drawCaret(bool erase) {
 	y += getAbsY();
 
 	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height() - 2), erase);
-	
+
 	_caretVisible = !erase;
 }
 

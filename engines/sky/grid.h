@@ -26,7 +26,7 @@
 #ifndef SKY_GRID_H
 #define SKY_GRID_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "skydefs.h"
 

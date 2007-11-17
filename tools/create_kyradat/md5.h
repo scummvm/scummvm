@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/tools/trunk/utils/md5.h $
- * $Id: md5.h 23138 2006-06-15 15:44:06Z h00ligan $
+ * $URL$
+ * $Id$
  *
  */
 

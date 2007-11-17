@@ -275,13 +275,10 @@ public:
 	void readSettings();
 	void writeSettings();
 
-	void snd_playTheme(int file, int track = 0);
-	void snd_playVoiceFile(int id);
-	void snd_voiceWaitForFinish(bool ingame = true);
-	bool snd_voiceIsPlaying();
-	void snd_stopVoice();
 	void snd_playSoundEffect(int track);
 	void snd_playWanderScoreViaMap(int command, int restart);
+	virtual void snd_playVoiceFile(int id);
+	void snd_voiceWaitForFinish(bool ingame = true);
 
 	bool speechEnabled();
 	bool textEnabled();
@@ -602,10 +599,6 @@ protected:
 	bool _configSounds;
 	uint8 _configVoice;
 
-	int _curMusicTheme;
-	int _curSfxFile;
-	int16 _lastMusicCommand;
-
 	ScreenAnimator *_animator;
 	SeqPlayer *_seq;
 	Sprites *_sprites;
@@ -643,6 +636,9 @@ protected:
 		uint16 bOffset;
 		uint32 timerCount;
 	} _kyragemFadingState;
+
+	static const int8 _dosTrackMap[];
+	static const int _dosTrackMapSize;
 
 	// TODO: get rid of all variables having pointers to the static resources if possible
 	// i.e. let them directly use the _staticres functions

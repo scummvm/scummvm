@@ -26,7 +26,7 @@
 #ifndef KYRA_RESOURCE_H
 #define KYRA_RESOURCE_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/file.h"
@@ -65,7 +65,7 @@ class PAKFile : public ResourceFile {
 		uint _name;
 		uint32 _start;
 		uint32 _size;
-		
+
 		operator uint() const { return _name; }
 	};
 
@@ -93,7 +93,7 @@ class INSFile : public ResourceFile {
 		uint _name;
 		uint32 _start;
 		uint32 _size;
-		
+
 		operator uint() const { return _name; }
 	};
 public:
@@ -115,10 +115,16 @@ class Resource {
 public:
 	Resource(KyraEngine *vm);
 	~Resource();
-	
+
+	bool reset();
+
 	bool loadPakFile(const Common::String &filename);
 	void unloadPakFile(const Common::String &filename);
 	bool isInPakList(const Common::String &filename) const;
+
+	bool loadFileList(const Common::String &filedata);
+	// This unloads *all* pakfiles, even kyra.dat and protected ones
+	void unloadAllPakFiles();
 
 	uint32 getFileSize(const char *file) const;
 	uint8* fileData(const char *file, uint32 *size) const;
@@ -126,7 +132,7 @@ public:
 	// it is possible that the needed file is embedded in the returned handle
 	bool getFileHandle(const char *file, uint32 *size, Common::File &filehandle);
 
-	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize); 
+	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize);
 
 protected:
 	typedef Common::List<ResourceFile*>::iterator ResIterator;
@@ -167,7 +173,7 @@ enum kKyraResources {
 	kRoomList,
 
 	kCharacterImageFilenames,
-	
+
 	kItemNames,
 	kTakenStrings,
 	kPlacedStrings,
@@ -190,7 +196,7 @@ enum kKyraResources {
 
 	kVeryCleverString,
 	kNewGameString,
-	
+
 	kDefaultShapes,
 	kHealing1Shapes,
 	kHealing2Shapes,
@@ -208,10 +214,10 @@ enum kKyraResources {
 
 	kGUIStrings,
 	kConfigStrings,
-	
+
 	kKyra1TownsSFXTable,
 	kCreditsStrings,
-	
+
 	kMaxResIDs
 };
 
@@ -222,7 +228,7 @@ class StaticResource {
 public:
 	StaticResource(KyraEngine *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
 	~StaticResource() { deinit(); }
-	
+
 	static bool checkKyraDat();
 
 	bool init();
@@ -259,7 +265,7 @@ private:
 	bool loadShapeTable(const char *filename, void *&ptr, int &size);
 	bool loadRoomTable(const char *filename, void *&ptr, int &size);
 	bool loadPaletteTable(const char *filename, void *&ptr, int &size);
-	
+
 	void freeRawData(void *&ptr, int &size);
 	void freeStringTable(void *&ptr, int &size);
 	void freeShapeTable(void *&ptr, int &size);

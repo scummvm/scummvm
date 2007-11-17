@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -114,7 +114,7 @@ static const ResString string_map_table_v7[] = {
 	{70, "/BOOT.008/Save"},
 	{71, "/BOOT.009/Load"},
 	{72, "/BOOT.010/Play"},
-	{73, "/BOOT.011/Cancel"}, 
+	{73, "/BOOT.011/Cancel"},
 	{74, "/BOOT.012/Quit"},
 	{75, "/BOOT.013/OK"},
 	{0, ""},
@@ -250,7 +250,7 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel,
 	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
 
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
-	
+
 	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
 	_time = new StaticTextWidget(this, 0, 0, 10, 10, "No time saved", kTextAlignCenter);
 	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", kTextAlignCenter);
@@ -327,22 +327,22 @@ void SaveLoadChooser::reflowLayout() {
 		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
 
 		_container->resize(thumbX - hPad, thumbY - vPad, kThumbnailWidth + hPad * 2, thumbH + vPad * 2 + kLineHeight * 4);
-	
+
 		// Add the thumbnail display
 		_gfxWidget->resize(thumbX, thumbY, kThumbnailWidth, thumbH);
-	
+
 		int height = thumbY + thumbH + kLineHeight;
 
 		_date->resize(thumbX, height, kThumbnailWidth, kLineHeight);
-	
+
 		height += kLineHeight;
 
 		_time->resize(thumbX, height, kThumbnailWidth, kLineHeight);
-	
+
 		height += kLineHeight;
 
 		_playtime->resize(thumbX, height, kThumbnailWidth, kLineHeight);
-	
+
 		_container->clearFlags(GUI::WIDGET_INVISIBLE);
 		_gfxWidget->clearFlags(GUI::WIDGET_INVISIBLE);
 		_date->clearFlags(GUI::WIDGET_INVISIBLE);
@@ -421,10 +421,10 @@ void SaveLoadChooser::updateInfos() {
 #pragma mark -
 
 Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
-	// Get savegame names
-	Common::StringList l;
+	// Get savegame descriptions
+	Common::StringList descriptions;
 	char name[32];
-	uint i = saveMode ? 1 : 0;
+	uint i = saveMode ? 1 : 0;		//the autosave is on slot #0
 	bool avail_saves[81];
 
 	scumm->listSavegames(avail_saves, ARRAYSIZE(avail_saves));
@@ -433,10 +433,10 @@ Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 			scumm->getSavegameName(i, name);
 		else
 			name[0] = 0;
-		l.push_back(name);
+		descriptions.push_back(name);
 	}
 
-	return l;
+	return descriptions;
 }
 
 MainMenuDialog::MainMenuDialog(ScummEngine *scumm)
@@ -570,7 +570,7 @@ enum {
 //    If OTOH the dialog is closed with "Cancel" we do no such thing.
 //
 // These changes will achieve two things at once: Allow us to get rid of using
-//  "" as value for the domain, and in fact provide a somewhat better user 
+//  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
 ConfigDialog::ConfigDialog()
 	: GUI::OptionsDialog("", "scummconfig") {
@@ -907,7 +907,7 @@ void ValueDisplayDialog::open() {
 	_timer = getMillis() + kDisplayDelay;
 }
 
-SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value) 
+SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value)
 	: InfoDialog(scumm, ""), _value(value) {
 
 }
@@ -940,7 +940,7 @@ void SubtitleSettingsDialog::cycleValue() {
 		"Speech and Subtitles",
 		"Subtitles Only"
 	};
-	
+
 	_value = (_value + 1) % 3;
 
 	setInfoText(subtitleDesc[_value]);
@@ -954,10 +954,36 @@ Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)
 }
 
 void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {
-	if (state.ascii == 'i') 
+	if (state.ascii == 'i')
 		close();
 	else
 		ScummDialog::handleKeyDown(state);
+}
+
+DebugInputDialog::DebugInputDialog(ScummEngine *scumm, char* text)
+	: InfoDialog(scumm, text) {
+	mainText = text;
+	done = 0;
+}
+
+void DebugInputDialog::handleKeyDown(Common::KeyState state) {
+	if (state.keycode == Common::KEYCODE_BACKSPACE && buffer.size() > 0) {
+		buffer.deleteLastChar();
+		Common::String total = mainText + ' ' + buffer;
+		setInfoText(total);
+		draw();
+		reflowLayout();
+	} else if (state.keycode == Common::KEYCODE_RETURN) {
+		done = 1;
+		close();
+		return;
+	} else if ((state.ascii >= '0' && state.ascii <= '9') || (state.ascii >= 'A' && state.ascii <= 'Z') || (state.ascii >= 'a' && state.ascii <= 'z') || state.ascii == '.' || state.ascii == ' ') {
+		buffer += state.ascii;
+		Common::String total = mainText + ' ' + buffer;
+		draw();
+		reflowLayout();
+		setInfoText(total);
+	} 
 }
 
 } // End of namespace Scumm

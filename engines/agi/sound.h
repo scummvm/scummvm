@@ -336,12 +336,13 @@ struct IIgsExeInfo {
 };
 
 class AgiEngine;
+class AgiBase;
 
 class SoundMgr : public Audio::AudioStream {
-	AgiEngine *_vm;
+	AgiBase *_vm;
 
 public:
-	SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer);
+	SoundMgr(AgiBase *agi, Audio::Mixer *pMixer);
 	~SoundMgr();
 	virtual void setVolume(uint8 volume);
 

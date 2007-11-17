@@ -139,41 +139,23 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(SAGA, Saga::SagaEngine, detectionParams);
+static bool Engine_SAGA_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Saga::SAGAGameDescription *gd = (const Saga::SAGAGameDescription *)(encapsulatedDesc.realDesc);
+	if (gd) {
+		*engine = new Saga::SagaEngine(syst, gd);
+	}
+	return gd != 0;
+}
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN(SAGA, Engine_SAGA_createInstance, detectionParams);
 
 REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainment");
 
 namespace Saga {
 
 bool SagaEngine::initGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	_gameDescription = (const SAGAGameDescription *)(encapsulatedDesc.realDesc);
-
-	if (_gameDescription == 0)
-		return false;
-
 	_displayClip.right = getDisplayInfo().logicalWidth;
 	_displayClip.bottom = getDisplayInfo().logicalHeight;
-
-	if (Common::File::exists("graphics/credit3n.dlt")) {
-		_gf_wyrmkeep = true;
-	}
-
-	// If a compressed sound file is found in the game's directory, set the compressed flag to true
-	if (_gameDescription->gameType == GType_ITE) {
-		if (Common::File::exists("sounds.cmp") || Common::File::exists("soundsd.cmp") ||
-			Common::File::exists("voices.cmp") || Common::File::exists("voicesd.cmp") ||
-			Common::File::exists("inherit the earth voices.cmp")) {
-			_gf_compressed_sounds = true;
-		}	
-	} else {
-		if (Common::File::exists("voicess.cmp") || Common::File::exists("voices1.cmp") ||
-			Common::File::exists("voices2.cmp") || Common::File::exists("voices3.cmp") ||
-			Common::File::exists("voices4.cmp") || Common::File::exists("voices5.cmp") ||
-			Common::File::exists("voices6.cmp") || Common::File::exists("voicesd.cmp")) {
-			_gf_compressed_sounds = true;
-		}	
-	}
 
 	return _resource->createContexts();
 }

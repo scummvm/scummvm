@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/file.h"
 
 #include "agi/agi.h"
@@ -173,12 +172,6 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 				abort();
 			}
 		} else {
-#if 0
-			/* FIXME: call some panic handler instead of
-			 *        deiniting directly
-			 */
-			deinitVideoMode();
-#endif
 			report("Error: bad signature %04x\n", sig);
 			// fprintf (stderr, "ACK! BAD RESOURCE!!!\n");
 			return 0;

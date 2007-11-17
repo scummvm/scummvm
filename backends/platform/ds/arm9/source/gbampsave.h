@@ -23,13 +23,14 @@
 #ifndef _GBAMPSAVE_H_
 #define _GBAMPSAVE_H_
 
-#include "stdafx.h"
 #include "system.h"
+#include "common/savefile.h"
+#include "ds-fs.h"
 
 #define SAVE_BUFFER_SIZE 100000
 
 class GBAMPSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
-	FILE* handle;
+	DS::fileHandle* handle;
 	char buffer[SAVE_BUFFER_SIZE];
 	int bufferPos;
 	int saveSize;
@@ -71,6 +72,8 @@ public:
 	virtual Common::OutSaveFile* openForSaving(const char* filename) { return openSavefile(filename, true); }
 	virtual Common::InSaveFile* openForLoading(const char* filename) { return openSavefile(filename, false); }
 	
+	virtual bool removeSavefile(const char *filename) { return false; } // TODO: Implement this
+	virtual Common::StringList listSavefiles(const char *regex);
 	
 	void listSavefiles(const char *prefix, bool *marks, int num);
 	

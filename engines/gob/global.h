@@ -27,6 +27,7 @@
 #define GOB_GLOBAL_H
 
 #include "common/file.h"
+#include "common/endian.h"
 
 #include "gob/video.h"
 
@@ -156,11 +157,11 @@ public:
 	}
 
 	void writeVar(uint32 offset, uint32 val) {
-		(*(uint32 *)(_inter_variables + offset)) = val;
+		WRITE_UINT32(_inter_variables + offset, val);
 		writeVarSize(offset, 3);
 	}
 	void writeVar(uint32 offset, uint16 val) {
-		(*(uint16 *)(_inter_variables + offset)) = val;
+		WRITE_UINT16(_inter_variables + offset, val);
 		writeVarSize(offset, 1);
 	}
 	void writeVar(uint32 offset, uint8 val) {

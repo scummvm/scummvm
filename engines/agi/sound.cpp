@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/md5.h"
 #include "common/config-manager.h"
@@ -45,13 +45,13 @@ static bool g_useChorus = true;
 AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, SoundMgr &manager) {
 	if (data == NULL || len < 2) return NULL; // Check for too small resource or no resource at all
 	uint16 type = READ_LE_UINT16(data);
-	
+
 	switch (type) { // Create a sound object based on the type
 	case AGI_SOUND_SAMPLE : return new IIgsSample(data, len, resnum, manager);
 	case AGI_SOUND_MIDI   : return new IIgsMidi  (data, len, resnum, manager);
 	case AGI_SOUND_4CHN   : return new PCjrSound (data, len, resnum, manager);
 	}
-	
+
 	warning("Sound resource (%d) has unknown type (0x%04x). Not using the sound", resnum, type);
 	return NULL;
 }
@@ -103,7 +103,7 @@ IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager) :
 			warning("Apple IIGS sample (%d) has too high pitch (0x%02x)", resnum, _header.pitch);
 			_header.pitch &= 0x7F; // Apple IIGS AGI probably did it this way too
 		}
-		
+
 		// Finalize the header info using the 8-bit unsigned sample data
 		_header.finalize(stream);
 
@@ -165,7 +165,7 @@ bool IIgsWaveInfo::finalize(Common::SeekableReadStream &uint8Wave) {
 		}
 	}
 	size = trueSize; // Set the true sample size
-	
+
 	uint8Wave.seek(startPos); // Seek back to the stream's starting position
 	return true;
 }
@@ -309,15 +309,17 @@ static const uint16 period[] = {
 	1448, 1534, 1625, 1722, 1825, 1933
 };
 
+#if 0
 static int noteToPeriod(int note) {
 	return 10 * (period[note % 12] >> (note / 12 - 3));
 }
+#endif
 
 void SoundMgr::unloadSound(int resnum) {
 	if (_vm->_game.dirSound[resnum].flags & RES_LOADED) {
 		if (_vm->_game.sounds[resnum]->isPlaying()) {
 			_vm->_game.sounds[resnum]->stop();
-		}	
+		}
 
 		// Release the sound resource's data
 		delete _vm->_game.sounds[resnum];
@@ -426,7 +428,7 @@ void SoundMgr::stopSound() {
 
 	if (_playingSound != -1) {
 		_vm->_game.sounds[_playingSound]->stop();
-		
+
 		if (_vm->_soundemu == SOUND_EMU_APPLE2GS) {
 			_IIgsChannel.end     = true;
 			_IIgsChannel.chanVol = intToFrac(0);
@@ -747,7 +749,7 @@ uint32 SoundMgr::mixSound(void) {
 		//double hertz = 8.175798915644 * pow(SEMITONE, fracToDouble(_IIgsChannel.note));
 		// double step = getRate() / hertz;
 		// _IIgsChannel.posAdd = doubleToFrac(step);
-		
+
 		// Frequency multiplier was 1076.0 based on tests made with MESS 0.117.
 		// Tests made with KEGS32 averaged the multiplier to around 1045.
 		// So this is a guess but maybe it's 1046.5... i.e. C6's frequency?
@@ -821,6 +823,8 @@ uint32 SoundMgr::mixSound(void) {
 
 				p += (uint32) 118600 *4 / _chn[c].freq;
 
+				// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+				// needs fixing, or remove it!
 				/* FIXME */
 				if (_chn[c].flags & AGI_SOUND_LOOP) {
 					p %= _chn[c].size << 8;
@@ -985,7 +989,7 @@ struct fsnodeNameEqualsIgnoreCase : public Common::UnaryFunction<const Filesyste
 	fsnodeNameEqualsIgnoreCase(const Common::String str) { _str.push_back(str); }
 	bool operator()(const FilesystemNode &param) const {
 		for (Common::StringList::const_iterator iter = _str.begin(); iter != _str.end(); iter++)
-			if (param.name().equalsIgnoreCase(*iter))
+			if (param.getName().equalsIgnoreCase(*iter))
 				return true;
 		return false;
 	}
@@ -999,19 +1003,19 @@ bool SoundMgr::loadInstruments() {
 		debugC(3, kDebugLevelSound, "Platform isn't Apple IIGS so not loading any instruments");
 		return true;
 	}
-	
+
 	// Get info on the particular Apple IIGS AGI game's executable
 	const IIgsExeInfo *exeInfo = getIIgsExeInfo((enum AgiGameID) _vm->getGameID());
 	if (exeInfo == NULL) {
 		warning("Unsupported Apple IIGS game, not loading instruments");
 		return false;
 	}
-	
+
 	// List files in the game path
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("Invalid game path (\"%s\"), not loading Apple IIGS instruments", dir.path().c_str());
+	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("Invalid game path (\"%s\"), not loading Apple IIGS instruments", dir.getPath().c_str());
 		return false;
 	}
 
@@ -1019,7 +1023,7 @@ bool SoundMgr::loadInstruments() {
 	Common::StringList exeNames;
 	exeNames.push_back(Common::String(exeInfo->exePrefix) + ".SYS16");
 	exeNames.push_back(Common::String(exeInfo->exePrefix) + ".SYS");
-	
+
 	// Populate wave filenames list (Long filename and short filename) for searching
 	Common::StringList waveNames;
 	waveNames.push_back("SIERRASTANDARD");
@@ -1046,12 +1050,12 @@ bool SoundMgr::loadInstruments() {
 	// Finally fix the instruments' lengths using the wave file data
 	// (A zero in the wave file data can end the sample prematurely)
 	// and convert the wave file from 8-bit unsigned to 16-bit signed format.
-	Common::MemoryReadStream *uint8Wave = loadWaveFile(waveFsnode->path(), *exeInfo);
+	Common::MemoryReadStream *uint8Wave = loadWaveFile(waveFsnode->getPath(), *exeInfo);
 	// Seek the wave to its
 	if (uint8Wave != NULL)
 		uint8Wave->seek(0);
 
-	bool result = uint8Wave != NULL && loadInstrumentHeaders(exeFsnode->path(), *exeInfo) &&
+	bool result = uint8Wave != NULL && loadInstrumentHeaders(exeFsnode->getPath(), *exeInfo) &&
 		finalizeInstruments(*uint8Wave) && convertWave(*uint8Wave, g_wave, uint8Wave->size());
 
 	delete uint8Wave; // Free the 8-bit unsigned wave file buffer
@@ -1085,7 +1089,7 @@ static void fillAudio(void *udata, int16 *stream, uint len) {
 	n -= s;
 }
 
-SoundMgr::SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer) {
+SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
 	_vm = agi;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();

@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/tools/trunk/util.h $
- * $Id: util.h 23139 2006-06-15 16:58:09Z eriktorbjorn $
+ * $URL$
+ * $Id$
  *
  */
 

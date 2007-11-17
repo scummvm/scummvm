@@ -26,7 +26,7 @@ About ScummVM
 
 Games supported
 ---------------
-	The Symbian port of ScumVM supports all but Sword1 & 2 games. Some games might not run properly due to screenresolution or memory constraints.
+	The Symbian port of ScummVM supports all but Sword1 & 2 games. Some games might not run properly due to screenresolution or memory constraints.
 
 
 Building ScummVM
@@ -76,25 +76,20 @@ Building ScummVM
 
 	Compiling ScummVM
 	-----------------
-	ECompXL: this is a tool that will compress your executable with GZIP and glue
+	
+	ECompXL (Only needed for UIQ2): 
+	this is a tool that will compress your executable with GZIP and glue
 	it to a predefined loader app. The app will uncompress your application at
 	runtime and run it without you even knowing it. A really interesting byproduct
 	of this method is that the general restriction of not having any writeable 
 	static data (WSD) for Symbian APP executables no longer applies. This makes
 	the life of an EPOC porter a lot easier! To install this tool you need to add
 	its \bin path to your PATH above the sybmian epocs32\tools path, so that ECompXL's
-	PETRAN.EXE will be the executable that is started.
+	PETRAN.EXE will be the executable that is started. 
+
 	
-	SDL: the latest varsion of SDL at this point in time is 1.2.8. This version 
-	works great for compiling on other platforms, but for EPOC it lacks some 
-	features. There are two distributions that have the nescessary goods: The one 
-	made for SuperWaba (http://www.newlc.com/article.php3?id_article=574 and 
-	http://www.superwaba.com/) and ESDL, the one that Sprawl made for the P800/P900. I've 
-	used Sprawl's version uptil now. If Sprawl feels ESDL is in such a state that
-	it can be released, he will post a source download on his site and I will
-	make it know through the scummvm.org site. In <DevRoot>/sdl/epoc/ go:
-	> bldmake bldfiles
-	> abld build
+	SDL: the latest version of SDL at this point in time is 1.2.12. This version 
+	works great for compiling on other platforms.
 	
 	zlib: the zlib-x.x.x.tar.gz does not come with UIQ .mpp build files, that's why 
 	I added them for you in epoc-zlib.zip. Extract in <DevRoot>/zlib/ which will 
@@ -108,25 +103,19 @@ Building ScummVM
 	> bldmake bldfiles
 	> abld build
 
-	ScummVM: make sure the SYSTEMINCLUDE dirs in ScumVM.mmp are correct. For the 
-	'wins' platform also check the LIBRARY entries for the correct path to your MSVC 
-	installation. Please note that you can only specify relative paths here, so every-
-	thing needs to be on the same physical drive! Another weird demand of the UIQ
-	platform...	In <DevRoot>/scummvm/backends/epoc/ go:
-
-	> run 'unzip mmp\initial_mmps.zip'
-	> edit the scummvm_base.mmp to fit your needs (for supported target games and features, check the MACRO statements)
-	> run 'perl AdaptAllMMPs.pl' from the commandline, this will update all mmp and bld.inf files
-	> change to the directory for your designated target (uiq2 for UIQ 2.X, S60 for S60 v1 & V2 etc)
-	> 'bldmake bldfiles' to update and create the symbian build structure
-	> 'abld build armi urel' to build the target binaries
-	> makesis -d\sdkpath ScummVM_xxx.pkg to build the sis file for your target.
+	ScummVM:	
+	In <DevRoot>\scummvm\backends\platform\symbian\ go:
+	a) Edit and update the BuildPackageUpload_LocalSettings.pl for the kind of build (SDK installed etc) and variants 
+	   you want to build.
+      b) Run BuildPackageUpload_AllVersions.pl to build all the targets/variants that you have configured. 
+	   A detailed log will be placed in the symbian folder with Build.err.log and Build.out.log but it also depends on
+	   the configuration you select.
 	
-	Now you should have yourself a nice ScummVM_xxx.sis installer package for use 
+	Now you should have yourself a nice ScummVM_xxx.sis installer package in the packages folder for use 
 	on your phone. Please note that for development it will be a lot faster if you
 	transfer the SCUMMVM.APP/Scummvm.EXE file directly to your !:\system\apps\ScummVM\ dir!
 
-	Platforms can be one of: ARMi, ARM4, THUMB, WINS. The SE P900 uses the ARMi platform,
+	Platforms can be one of: ARMi, ARM4, THUMB, WINS, WINSCW, GCCE. The SE P900 uses the ARMi platform,
 	which is a combined ARM4/THUMB programming mode. Configurations can be one of: 
 	UREL or UDEB.
 

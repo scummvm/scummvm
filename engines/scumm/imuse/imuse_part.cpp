@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/util.h"
 #include "scumm/imuse/imuse_internal.h"
@@ -232,7 +232,7 @@ void Part::noteOn(byte note, byte velocity) {
 		mc = _player->getMidiDriver()->getPercussionChannel();
 		if (!mc)
 			return;
-		
+
 		// FIXME: The following is evil, EVIL!!! Either prev_vol_eff is
 		// actually meant to be a member of the Part class (i.e. each
 		// instance of Part keeps a separate copy of it); or it really

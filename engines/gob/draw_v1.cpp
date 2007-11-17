@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "graphics/cursorman.h"
 
@@ -50,7 +50,7 @@ void Draw_v1::closeScreen() {
 void Draw_v1::blitCursor() {
 	if (_cursorIndex == -1)
 		return;
-	
+
 	if (_showCursor == 2)
 		_showCursor = 0;
 }

@@ -23,14 +23,15 @@
  *
  */
 
-#include "lure/surface.h"
 #include "lure/decode.h"
 #include "lure/events.h"
-#include "lure/screen.h"
+#include "lure/game.h"
 #include "lure/lure.h"
 #include "lure/room.h"
+#include "lure/screen.h"
 #include "lure/sound.h"
 #include "lure/strings.h"
+#include "lure/surface.h"
 #include "common/endian.h"
 
 namespace Lure {
@@ -40,19 +41,23 @@ namespace Lure {
 
 static MemoryBlock *int_font = NULL;
 static MemoryBlock *int_dialog_frame = NULL;
-static uint8 fontSize[NUM_CHARS_IN_FONT];
+static uint8 fontSize[256];
+static int numFontChars;
 
 void Surface::initialise() {
 	int_font = Disk::getReference().getEntry(FONT_RESOURCE_ID);
 	int_dialog_frame = Disk::getReference().getEntry(DIALOG_RESOURCE_ID);
 
+	numFontChars = int_font->size() / 8;
+	if (numFontChars > 256)
+		error("Font data exceeded maximum allowable size");
+
 	// Calculate the size of each font character
-	for (int ctr = 0; ctr < NUM_CHARS_IN_FONT; ++ctr) {
+	for (int ctr = 0; ctr < numFontChars; ++ctr) {
 		byte *pChar = int_font->data() + (ctr * 8);
 		fontSize[ctr] = 0;
 
-		for (int yp = 0; yp < FONT_HEIGHT; ++yp) 
-		{
+		for (int yp = 0; yp < FONT_HEIGHT; ++yp)  {
 			byte v = *pChar++;
 
 			for (int xp = 0; xp < FONT_WIDTH; ++xp) {
@@ -99,10 +104,10 @@ void Surface::loadScreen(uint16 resourceId) {
 	delete tmpScreen;
 }
 
-void Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour) {
+int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour) {
 	byte *const addr = _data->data() + (y * _width) + x;
 
-	if ((ascii < 32) || (ascii >= 32 + NUM_CHARS_IN_FONT))
+	if ((ascii < 32) || (ascii >= 32 + numFontChars))
 		error("Invalid ascii character passed for display '%d'", ascii);
 	
 	uint8 v;
@@ -123,20 +128,26 @@ void Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8
 			v = (v << 1) & 0xff;
 		}
 	}
+
+	return charWidth;
 }
 
 void Surface::writeString(uint16 x, uint16 y, Common::String line, bool transparent, 
 						  uint8 colour, bool varLength) {
+	writeSubstring(x, y, line, line.size(), transparent, colour, varLength);
+}
+
+void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len, 
+		  bool transparent, uint8 colour, bool varLength) {
+
 	const char *sPtr = line.c_str();
 
-	while (*sPtr) {
+	for (int index = 0; (index < len) && (*sPtr != '\0'); ++index, ++sPtr) {
 		writeChar(x, y, (uint8) *sPtr, transparent, colour);
 
 		// Move to after the character in preparation for the next character
 		if (!varLength) x += FONT_WIDTH;
-		else x += fontSize[*sPtr - ' '] + 2;
-
-		++sPtr;		// Move to next character
+		else x += fontSize[(uint8)*sPtr - 32] + 2;
 	}
 }
 
@@ -156,13 +167,11 @@ void Surface::transparentCopyTo(Surface *dest) {
 	}
 }
 
-void Surface::copyTo(Surface *dest)
-{
+void Surface::copyTo(Surface *dest) {
 	copyTo(dest, 0, 0);
 }
 
-void Surface::copyTo(Surface *dest, uint16 x, uint16 y)
-{
+void Surface::copyTo(Surface *dest, uint16 x, uint16 y) {
 	if ((x == 0) && (dest->width() == _width)) {
 		// Use fast data transfer
 		uint32 dataSize = dest->data().size() - (y * _width);
@@ -333,7 +342,7 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 			*(wordStart - 1) = '\0';
 			++numLines;
 			lineWidth = 0;
-			wordEnd = wordStart;
+			wordEnd = wordStart - 1;
 		} else if (newLine) {
 			// Break on newline
 			++numLines;
@@ -518,7 +527,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	assert(talkingChar);
 
 	strings.getString(talkingChar->nameId & 0x1fff, srcCharName);
-	characterArticle = talkingChar->nameId >> 14;
+	characterArticle = (talkingChar->nameId >> 13) + 1;
 
 	strcpy(destCharName, "");
 	if (destCharacter != NULL)
@@ -526,7 +535,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	strcpy(itemName, "");
 	if (itemHotspot != NULL) {
 		strings.getString(itemHotspot->nameId & 0x1fff, itemName);
-		hotspotArticle = itemHotspot->nameId >> 14;
+		hotspotArticle = (itemHotspot->nameId >> 13) - 1;
 	}
 
 	strings.getString(descId, _desc, itemName, destCharName, hotspotArticle, characterArticle);
@@ -534,6 +543,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	// Apply word wrapping to figure out the needed size of the dialog
 	Surface::wordWrap(_desc, TALK_DIALOG_WIDTH - (TALK_DIALOG_EDGE_SIZE + 3) * 2,
 		_lines, _numLines);
+	_endLine = 0; _endIndex = 0;
 
 	_surface = new Surface(TALK_DIALOG_WIDTH, 
 		(_numLines + 1) * FONT_HEIGHT + TALK_DIALOG_EDGE_SIZE * 4);
@@ -588,22 +598,53 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 		*pDest++ = *pSrc++;
 	}
 
+	_wordCountdown = 0;
+
 	// Write out the character name
 	uint16 charWidth = Surface::textWidth(srcCharName);
 	_surface->writeString((TALK_DIALOG_WIDTH-charWidth)/2, TALK_DIALOG_EDGE_SIZE + 2,
 		srcCharName, true, DIALOG_WHITE_COLOUR);
-
-	// TEMPORARY CODE - write out description. More properly, the text is meant to
-	// be displayed slowly, word by word
-	for (int lineCtr = 0; lineCtr < _numLines; ++lineCtr) 
-		_surface->writeString(TALK_DIALOG_EDGE_SIZE + 2, 
-			TALK_DIALOG_EDGE_SIZE + 4 + (lineCtr + 1) * FONT_HEIGHT,
-			_lines[lineCtr], true);
 }
 
 TalkDialog::~TalkDialog() {
 	delete _lines;
 	delete _surface;
+}
+
+void TalkDialog::copyTo(Surface *dest, uint16 x, uint16 y) {
+	if (_endLine < _numLines) {
+		if (_wordCountdown > 0) {
+			// Handle delay between words
+			--_wordCountdown;
+
+		} else {
+			// Set a delay before the next word is displayed
+			Game &game = Game::getReference();
+			_wordCountdown = game.fastTextFlag() ? 0 : 1;
+
+			// Scan forward to find the next word break
+			char ch = '\0';
+			bool wordFlag = false;
+
+			while (!wordFlag) {
+				ch = _lines[_endLine][++_endIndex];
+				wordFlag = (ch == ' ') || (ch == '\0');
+			}
+
+			// Write out the completed portion of the current line
+			_surface->writeSubstring(TALK_DIALOG_EDGE_SIZE + 2, 
+				TALK_DIALOG_EDGE_SIZE + 4 + (_endLine + 1) * FONT_HEIGHT,
+				_lines[_endLine], _endIndex, true);
+
+			// If at end of line, move to next line for next time
+			if (ch == '\0') {
+				++_endLine;
+				_endIndex = -1;
+			}
+		}
+	}
+
+	_surface->copyTo(dest, x, y);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -678,6 +719,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	s->copyTo(&screen.screen(), SAVE_DIALOG_X, SAVE_DIALOG_Y);
 	screen.update();
 	mouse.pushCursorNum(CURSOR_ARROW);
+	Sound.pause();
 
 	bool abortFlag = false;
 	bool doneFlag = false;
@@ -760,6 +802,8 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 		doneFlag = true;
 	}
 
+	Sound.resume();
+
 	if (doneFlag) {
 		// Handle save or restore
 		if (saveDialog)
@@ -790,7 +834,7 @@ struct RestartRecord {
 	RestartRecordPos BtnRestore;
 };
 
-RestartRecord buttonBounds[] = {
+static const RestartRecord buttonBounds[] = {
 	{ EN_ANY, 48, 14, { 118, 152 }, { 168, 152 } },
 	{ DE_DEU, 48, 14, { 106, 152 }, { 168, 152 } },
 	{ UNK_LANG, 48, 14, { 112, 152 }, { 168, 152 } }
@@ -805,7 +849,7 @@ bool RestartRestoreDialog::show() {
 	LureEngine &engine = LureEngine::getReference();
 
 	Sound.killSounds();
-	Sound.musicInterface_Play(60, true, 0);
+	Sound.musicInterface_Play(60, 0);
 	mouse.setCursorNum(CURSOR_ARROW);
 
 	// See if there are any savegames that can be restored
@@ -817,7 +861,7 @@ bool RestartRestoreDialog::show() {
 		Memory::dealloc(firstSave);
 
 		// Get the correct button bounds record to use
-		RestartRecord *btnRecord = &buttonBounds[0];
+		const RestartRecord *btnRecord = &buttonBounds[0];
 		while ((btnRecord->Language != engine.getLanguage()) && 
 			   (btnRecord->Language != UNK_LANG))
 			++btnRecord;
@@ -910,6 +954,151 @@ bool RestartRestoreDialog::show() {
 	}
 
 	return restartFlag;
+}
+
+/*--------------------------------------------------------------------------*/
+
+struct ItemDesc {
+	Common::Language language;
+	int16 x, y;
+	uint16 width, height;
+	uint16 animId;
+	uint8 startColour;
+};
+
+#define PROT_SPR_HEADER 0x1830
+#define WORDING_HEADER 0x1839
+#define NUMBER_HEADER 0x1842
+
+static const ItemDesc copyProtectElements[] = {
+	{UNK_LANG, 104, 96, 32, 48, PROT_SPR_HEADER, 0},
+	{UNK_LANG, 179, 96, 32, 48, PROT_SPR_HEADER, 0},
+	
+	{EN_ANY, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{FR_FRA, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{DE_DEU, 39, 40, 208, 40, WORDING_HEADER, 32},
+	{NL_NLD, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{ES_ESP, 57, 40, 208, 40, WORDING_HEADER, 32},
+	{IT_ITA, 57, 40, 208, 40, WORDING_HEADER, 32},
+
+	{UNK_LANG, 138, 168, 16, 8, NUMBER_HEADER, 32},
+	{UNK_LANG, 145, 168, 16, 8, NUMBER_HEADER, 32},
+	{UNK_LANG, 164, 168, 16, 8, NUMBER_HEADER, 32},
+	{UNK_LANG, 171, 168, 16, 8, NUMBER_HEADER, 32},
+	{UNK_LANG, 0, 0, 0, 0, 0, 0}
+};
+
+int pageNumbers[20] = {
+	4, 10, 16, 22, 5, 11, 17, 23, 6, 12, 18, 7, 13, 19, 8, 14, 20, 9, 15, 21};
+
+CopyProtectionDialog::CopyProtectionDialog() {
+	// Get objects for the screen
+	LureEngine &engine = LureEngine::getReference();
+
+	const ItemDesc *ptr = &copyProtectElements[0];
+	while ((ptr->width != 0) || (ptr->height != 0)) {
+		if ((ptr->language == UNK_LANG) || (ptr->language == engine.getLanguage())) {
+			if (ptr->animId == 0) break; //***DEBUG***
+			Hotspot *h = new Hotspot();
+			h->setPosition(ptr->x, ptr->y);
+			h->setSize(ptr->width, ptr->height);
+			h->setColourOffset(ptr->startColour);
+			h->setAnimation(ptr->animId);
+
+			_hotspots.push_back(h);
+		}
+
+		++ptr;
+	}
+}
+
+bool CopyProtectionDialog::show() {
+	Screen &screen = Screen::getReference();
+	Events &events = Events::getReference();
+	Common::RandomSource rnd;
+
+	screen.setPaletteEmpty();
+	Palette p(COPY_PROTECTION_RESOURCE_ID - 1);
+
+	for (int tryCounter = 0; tryCounter < 3; ++tryCounter) {
+		// Copy the base screen to the output screen
+		Surface *s = Surface::getScreen(COPY_PROTECTION_RESOURCE_ID);
+		s->copyTo(&screen.screen(), 0, MENUBAR_Y_SIZE);
+		delete s;
+
+		// Add wording header and display screen
+		_hotspots[2]->setFrameNumber(1);
+		_hotspots[2]->copyTo(&screen.screen());
+		screen.update();
+		screen.setPalette(&p);
+
+		// Cycle through displaying different characters until a key or mouse button is pressed
+		do {
+			chooseCharacters();
+		} while (!events.interruptableDelay(100));
+
+		// Change title text to selection
+		_hotspots[2]->setFrameNumber(0);
+		_hotspots[2]->copyTo(&screen.screen());
+		screen.update();
+
+		// Clear any prior try
+		_charIndex = 0;
+
+		while (!events.quitFlag) {
+			if (events.pollEvent()) {
+				if (events.type() == Common::EVENT_KEYDOWN) { 
+					if ((events.event().kbd.keycode == Common::KEYCODE_BACKSPACE) && (_charIndex > 0)) {
+						// Remove the last number typed
+						--_charIndex;
+						_hotspots[_charIndex + 3]->setFrameNumber(10);   // Blank space
+						_hotspots[_charIndex + 3]->copyTo(&screen.screen());
+
+						screen.update();
+					} else if ((events.event().kbd.keycode >= Common::KEYCODE_0) &&
+								(events.event().kbd.keycode <= Common::KEYCODE_9)) {
+						// Number pressed
+						_hotspots[_charIndex + 3]->setFrameNumber(events.event().kbd.ascii - '0');
+						_hotspots[_charIndex + 3]->copyTo(&screen.screen());
+						
+						if (++_charIndex == 4)
+							break;
+					}
+
+					screen.update();
+				}
+			}
+
+			g_system->delayMillis(10);
+		}
+
+		if (events.quitFlag)
+			return false;
+
+		// At this point, two page numbers have been entered - validate them
+		int page1 = (_hotspots[3]->frameNumber() * 10) + _hotspots[4]->frameNumber();
+		int page2 = (_hotspots[5]->frameNumber() * 10) + _hotspots[6]->frameNumber();
+		
+		if ((page1 == pageNumbers[_hotspots[0]->frameNumber()]) &&
+			(page2 == pageNumbers[_hotspots[1]->frameNumber()]))
+			return true;
+	}
+
+	// Copy protection failed
+	return false;
+}
+
+void CopyProtectionDialog::chooseCharacters() {
+	Screen &screen = Screen::getReference();
+	int char1 = _rnd.getRandomNumber(19);
+	int char2 = _rnd.getRandomNumber(19);
+
+	_hotspots[0]->setFrameNumber(char1);
+	_hotspots[0]->copyTo(&screen.screen());
+	_hotspots[1]->setFrameNumber(char2);
+	_hotspots[1]->copyTo(&screen.screen());
+
+	screen.update();
 }
 
 } // end of namespace Lure

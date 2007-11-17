@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "sword1/sword1.h"
 
 #include "base/plugins.h"
@@ -107,15 +107,15 @@ GameDescriptor Engine_SWORD1_findGameID(const char *gameid) {
 void Sword1CheckDirectory(const FSList &fslist, bool *filesFound) {
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
-			const char *fileName = file->name().c_str();
+			const char *fileName = file->getName().c_str();
 			for (int cnt = 0; cnt < NUM_FILES_TO_CHECK; cnt++)
 				if (scumm_stricmp(fileName, g_filesToCheck[cnt]) == 0)
 					filesFound[cnt] = true;
 		} else {
 			for (int cnt = 0; cnt < ARRAYSIZE(g_dirNames); cnt++)
-				if (scumm_stricmp(file->name().c_str(), g_dirNames[cnt]) == 0) {
+				if (scumm_stricmp(file->getName().c_str(), g_dirNames[cnt]) == 0) {
 					FSList fslist2;
-					if (file->listDir(fslist2, FilesystemNode::kListFilesOnly))
+					if (file->getChildren(fslist2, FilesystemNode::kListFilesOnly))
 						Sword1CheckDirectory(fslist2, filesFound);
 				}
 		}
@@ -128,7 +128,7 @@ GameList Engine_SWORD1_detectGames(const FSList &fslist) {
 	bool filesFound[NUM_FILES_TO_CHECK];
 	for (i = 0; i < NUM_FILES_TO_CHECK; i++)
 		filesFound[i] = false;
-		
+
 	Sword1CheckDirectory(fslist, filesFound);
 	bool mainFilesFound = true;
 	bool pcFilesFound = true;
@@ -181,7 +181,7 @@ SwordEngine::SwordEngine(OSystem *syst)
 	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1demo"))
 		_features = GF_DEMO;
 	else
-		_features = 0;	
+		_features = 0;
 
 	if (!_mixer->isReady())
 		warning("Sound initialization failed");
@@ -215,12 +215,12 @@ int SwordEngine::init() {
 		initCommonGFX(true);
 		_system->initSize(640, 480);
 	_system->endGFXTransaction();
-	
+
 	if ( 0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") ||
 	     0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo") )
 		_systemVars.isMac = true;
 	else
-		_systemVars.isMac = false;	
+		_systemVars.isMac = false;
 
 	checkCdFiles();
 

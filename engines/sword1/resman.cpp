@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "common/str.h"
@@ -421,7 +421,7 @@ void ResMan::openScriptResourceBigEndian(uint32 id) {
 		needByteSwap = (memHandle->cond == MEM_FREED);
 	}
 	resOpen(id);
-	if (needByteSwap) {	
+	if (needByteSwap) {
 		MemHandle *handle = resHandle(id);
 		// uint32 totSize = handle->size;
 		Header *head = (Header*)handle->data;
@@ -450,7 +450,7 @@ void ResMan::openScriptResourceLittleEndian(uint32 id) {
 		needByteSwap = (memHandle->cond == MEM_FREED);
 	}
 	resOpen(id);
-	if (needByteSwap) {	
+	if (needByteSwap) {
 		MemHandle *handle = resHandle(id);
 		// uint32 totSize = handle->size;
 		Header *head = (Header*)handle->data;

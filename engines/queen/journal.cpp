@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/events.h"
 #include "common/system.h"
 #include "queen/journal.h"
@@ -382,21 +382,31 @@ void Journal::handleMouseDown(int x, int y) {
 
 void Journal::drawPanelText(int y, const char *text) {
 	debug(7, "Journal::drawPanelText(%d, '%s')", y, text);
-	char s[80];
-	strcpy(s, text);
-	char *p = strchr(s, ' ');
-	if (p == NULL) {
-		int x = (128 - _vm->display()->textWidth(s)) / 2;
-		_vm->display()->setText(x, y, s, false);
+	char s[128];
+	strncpy(s, text, 127);
+	s[127] = 0;
+	// remove leading and trailing spaces (necessary for spanish version)
+	for (char *p = s + strlen(s) - 1; p >= s && *p == ' '; --p) {
+		*p = 0;
+	}
+	text = s;
+	for (char *p = s; *p == ' '; ++p) {
+		text = p + 1;
+	}
+	// draw the substrings
+	char *p = (char *)strchr(text, ' ');
+	if (!p) {
+		int x = (128 - _vm->display()->textWidth(text)) / 2;
+		_vm->display()->setText(x, y, text, false);
 		assert(_panelTextCount < MAX_PANEL_TEXTS);
 		_panelTextY[_panelTextCount++] = y;
 	} else {
 		*p++ = '\0';
 		if (_vm->resource()->getLanguage() == Common::HB_ISR) {
 			drawPanelText(y - 5, p);
-			drawPanelText(y + 5, s);
+			drawPanelText(y + 5, text);
 		} else {
-			drawPanelText(y - 5, s);
+			drawPanelText(y - 5, text);
 			drawPanelText(y + 5, p);
 		}
 	}
@@ -423,11 +433,7 @@ void Journal::drawPanel(const int *frames, const int *titles, int n) {
 	int y = 8;
 	while (n--) {
 		showBob(bobNum++, 32, y, *frames++);
-		// trim panel texts for spanish version
-		char buf[128];
-		strncpy(buf, _vm->logic()->joeResponse(*titles++), 128);
-		buf[127] = 0;
-		drawPanelText(y + 12, Common::trim(buf));
+		drawPanelText(y + 12, _vm->logic()->joeResponse(*titles++));
 		y += 48;
 	}
 }

@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "gui/console.h"
 #include "gui/ScrollBarWidget.h"
 #include "gui/eval.h"
@@ -143,10 +142,10 @@ void ConsoleDialog::open() {
 	// this effect: we simply move the console dialog just above (outside) the
 	// visible screen area, then shift it down in handleTickle() over a
 	// certain period of time.
-	
+
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
-	
+
 	// Calculate the real width/height (rounded to char/line multiples)
 	uint16 w = (uint16)(_widthPercent * screenW);
 	uint16 h = (uint16)((_heightPercent * screenH - 2) / kConsoleLineHeight);

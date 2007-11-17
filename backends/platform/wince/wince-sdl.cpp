@@ -23,9 +23,6 @@
  *
  */
 
-// NOTE: formatted for tabstop=4
-
-#include "common/stdafx.h"
 #include "backends/platform/wince/wince-sdl.h"
 
 #include "common/config-manager.h"
@@ -43,18 +40,11 @@
 
 #include "backends/timer/default/default-timer.h"
 
-// FIXME: The following #include is necessary for the evil _monkeyKeyboard hack.
-// Fingolfin says: It would be a lot better to get this resolved in a cleaner way.
-// E.g. by using setFeatureState in the SCUMM engine in the appropriate place.
-// Even an "#ifdef WINCE" in the SCUMM engine would probably be nicer than this :/
-#include "engines/scumm/scumm.h"
-
-#include "backends/platform/wince/resource.h"
-
 #include "gui/Actions.h"
 #include "gui/KeysDialog.h"
 #include "gui/message.h"
 
+#include "backends/platform/wince/resource.h"
 #include "backends/platform/wince/CEActionsPocket.h"
 #include "backends/platform/wince/CEActionsSmartphone.h"
 #include "backends/platform/wince/CEgui/ItemAction.h"
@@ -68,6 +58,10 @@
 #else
 #include <tremor/ivorbisfile.h>
 #endif
+#endif
+
+#ifdef DYNAMIC_MODULES
+#include "backends/plugins/win32/win32-provider.h"
 #endif
 
 #ifdef __GNUC__
@@ -163,6 +157,7 @@ OSystem *OSystem_WINCE3_create() {
 	return new OSystem_WINCE3();
 }
 
+extern "C" char *getcwd(char *buf, int size);
 int SDL_main(int argc, char **argv) {
 	FILE *newfp = NULL;
 #ifdef __GNUC__
@@ -172,7 +167,7 @@ int SDL_main(int argc, char **argv) {
 	extern void (*__CTOR_LIST__)() ;
 	void (**constructor)() = &__CTOR_LIST__ ;
 	constructor++ ;
-	while(*constructor) { 
+	while (*constructor) { 
             (*constructor)() ;
             constructor++ ;
         }
@@ -197,7 +192,7 @@ int SDL_main(int argc, char **argv) {
 #else
 		newfp = fopen(stdout_fname, "w");
 		if (newfp) {
-			*stdout = *newfp;
+			//*stdout = *newfp;
 			stdout_file = stdout;
 		}
 #endif
@@ -210,15 +205,19 @@ int SDL_main(int argc, char **argv) {
 #else
 		newfp = fopen(stderr_fname, "w");
 		if (newfp) {
-			*stderr = *newfp;
+			//*stderr = *newfp;
 			stderr_file = stderr;
 		}
 #endif
 	}
 #endif
 
-	int res = 0;
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new Win32PluginProvider());
+#endif
 
+
+	int res = 0;
 #if !defined(DEBUG) && !defined(__GNUC__)
 	__try {
 #endif
@@ -236,6 +235,138 @@ int SDL_main(int argc, char **argv) {
 
 	return res;
 }
+
+#ifdef DYNAMIC_MODULES
+
+/* This is the OS startup code in the case of a plugin-enabled build.
+ * It contains copied and slightly modified parts of SDL's win32/ce startup functions.
+ * We copy these here because the calling stub already has a WinMain procedure
+ * which overrides SDL's one and hence we essentially re-implement the startup procedure.
+ * Note also that this has to be here and not in the stub because SDL is statically
+ * linked in the scummvm.dll archive.
+ * Take a look at the comments in stub.cpp as well.
+ */
+
+int console_main(int argc, char *argv[])
+{
+	int n;
+	char *bufp, *appname;
+
+	appname = argv[0];
+	if ( (bufp=strrchr(argv[0], '\\')) != NULL )
+		appname = bufp + 1;
+	else if ( (bufp=strrchr(argv[0], '/')) != NULL )
+		appname = bufp + 1;
+
+	if ( (bufp=strrchr(appname, '.')) == NULL )
+		n = strlen(appname);
+	else
+		n = (bufp-appname);
+
+	bufp = (char *) alloca(n + 1);
+	strncpy(bufp, appname, n);
+	bufp[n] = '\0';
+	appname = bufp;
+
+	if ( SDL_Init(SDL_INIT_NOPARACHUTE) < 0 ) {
+		error("WinMain() error: %d", SDL_GetError());
+		return(FALSE);
+	}
+
+	SDL_SetModuleHandle(GetModuleHandle(NULL));
+
+	// Run the application main() code
+	SDL_main(argc, argv);
+
+	return(0);
+}
+
+static int ParseCommandLine(char *cmdline, char **argv)
+{
+	char *bufp;
+	int argc;
+
+	argc = 0;
+	for (bufp = cmdline; *bufp;) {
+		// Skip leading whitespace 
+		while (isspace(*bufp))
+			++bufp;
+
+		// Skip over argument
+		if (*bufp == '"') {
+			++bufp;
+			if (*bufp) {
+				if (argv)
+					argv[argc] = bufp;
+				++argc;
+			}
+			// Skip over word
+			while (*bufp && (*bufp != '"'))
+				++bufp;
+		} else {
+			if (*bufp) {
+				if (argv)
+					argv[argc] = bufp;
+				++argc;
+			}
+			// Skip over word
+			while (*bufp && ! isspace(*bufp))
+				++bufp;
+		}
+		if (*bufp) {
+			if (argv)
+				*bufp = '\0';
+			++bufp;
+		}
+	}
+	if (argv)
+		argv[argc] = NULL;
+
+	return(argc);
+}
+
+int dynamic_modules_main(HINSTANCE hInst, HINSTANCE hPrev, LPWSTR szCmdLine, int sw) {
+	HINSTANCE handle;
+	char **argv;
+	int argc;
+	char *cmdline;
+	wchar_t *bufp;
+	int nLen;
+
+	if (wcsncmp(szCmdLine, TEXT("\\"), 1)) {
+		nLen = wcslen(szCmdLine)+128+1;
+		bufp = (wchar_t *) alloca(nLen*2);
+		wcscpy (bufp, TEXT("\""));
+		GetModuleFileName(NULL, bufp+1, 128-3);
+		wcscpy (bufp+wcslen(bufp), TEXT("\" "));
+		wcsncpy(bufp+wcslen(bufp), szCmdLine,nLen-wcslen(bufp));
+	} else
+		bufp = szCmdLine;
+
+	nLen = wcslen(bufp)+1;
+	cmdline = (char *) alloca(nLen);
+	WideCharToMultiByte(CP_ACP, 0, bufp, -1, cmdline, nLen, NULL, NULL);
+
+	// Parse command line into argv and argc
+	argc = ParseCommandLine(cmdline, NULL);
+	argv = (char **) alloca((argc+1)*(sizeof *argv));
+	ParseCommandLine(cmdline, argv);
+
+	/* fix gdb-emulator combo */
+	while (argc > 1 && !strstr(argv[0], ".exe")) {
+		OutputDebugString(TEXT("SDL: gdb argv[0] fixup\n"));
+		*(argv[1]-1) = ' ';
+		int i;
+		for (i=1; i<argc; i++)
+			argv[i] = argv[i+1];
+		argc--;
+	}
+
+	// Run the main program (after a little SDL initialization)
+	return(console_main(argc, argv));
+
+}
+#endif
 
 // ********************************************************************************************
 
@@ -329,7 +460,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_orientationLandscape(0), _newOrientation(0), _panelInitialized(false),
 	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false), _unfilteredkeys(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
-	_scalersChanged(false), _monkeyKeyboard(false), _lastKeyPressed(0), _tapTime(0),
+	_scalersChanged(false), _lastKeyPressed(0), _tapTime(0),
 	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false), _hasfocus(true),
 	_usesEmulatedMouse(false), _mouseBackupOld(NULL), _mouseBackupToolbar(NULL), _mouseBackupDim(0)
 {
@@ -810,58 +941,58 @@ bool OSystem_WINCE3::getFeatureState(Feature f) {
 }
 
 void OSystem_WINCE3::check_mappings() {
-		CEActionsPocket *instance;
+	CEActionsPocket *instance;
 
-		Common::String gameid(ConfMan.get("gameid"));
+	Common::String gameid(ConfMan.get("gameid"));
 
-		if (gameid.empty() || GUI_Actions::Instance()->initialized())
-			return;
+	if (gameid.empty() || GUI_Actions::Instance()->initialized())
+		return;
 
-		GUI_Actions::Instance()->initInstanceGame();
-		instance = (CEActionsPocket*)GUI_Actions::Instance();
+	GUI_Actions::Instance()->initInstanceGame();
+	instance = (CEActionsPocket*)GUI_Actions::Instance();
 
-		// Some games need to map the right click button, signal it here if it wasn't done
-		if (instance->needsRightClickMapping()) {
-			GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map right click action");
-			while (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
-				keysDialog->runModal();
-				if (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
-					GUI::MessageDialog alert("You must map a key to the 'Right Click' action to play this game");
-					alert.runModal();
-				}
-			}
-			delete keysDialog;
-		}
-
-		// Map the "hide toolbar" action if needed
-		if (instance->needsHideToolbarMapping()) {
-			GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map hide toolbar action");
-			while (!instance->getMapping(POCKET_ACTION_HIDE)) {
-				keysDialog->runModal();
-				if (!instance->getMapping(POCKET_ACTION_HIDE)) {
-					GUI::MessageDialog alert("You must map a key to the 'Hide toolbar' action to play this game");
-					alert.runModal();
-				}
-			}
-			delete keysDialog;
-		}
-
-		// Map the "zoom" actions if needed
-		if (instance->needsZoomMapping()) {
-			GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map Zoom Up action (optional)");
+	// Some games need to map the right click button, signal it here if it wasn't done
+	if (instance->needsRightClickMapping()) {
+		GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map right click action");
+		while (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
 			keysDialog->runModal();
-			delete keysDialog;
-			keysDialog = new GUI::KeysDialog("Map Zoom Down action (optional)");
-			keysDialog->runModal();
-			delete keysDialog;
+			if (!instance->getMapping(POCKET_ACTION_RIGHTCLICK)) {
+				GUI::MessageDialog alert("You must map a key to the 'Right Click' action to play this game");
+				alert.runModal();
+			}
 		}
+		delete keysDialog;
+	}
 
-		// Extra warning for Zak Mc Kracken
-		if (strncmp(gameid.c_str(), "zak", 3) == 0 &&
-			!GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
-			GUI::MessageDialog alert("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory");
-			alert.runModal();
+	// Map the "hide toolbar" action if needed
+	if (instance->needsHideToolbarMapping()) {
+		GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map hide toolbar action");
+		while (!instance->getMapping(POCKET_ACTION_HIDE)) {
+			keysDialog->runModal();
+			if (!instance->getMapping(POCKET_ACTION_HIDE)) {
+				GUI::MessageDialog alert("You must map a key to the 'Hide toolbar' action to play this game");
+				alert.runModal();
+			}
 		}
+		delete keysDialog;
+	}
+
+	// Map the "zoom" actions if needed
+	if (instance->needsZoomMapping()) {
+		GUI::KeysDialog *keysDialog = new GUI::KeysDialog("Map Zoom Up action (optional)");
+		keysDialog->runModal();
+		delete keysDialog;
+		keysDialog = new GUI::KeysDialog("Map Zoom Down action (optional)");
+		keysDialog->runModal();
+		delete keysDialog;
+	}
+
+	// Extra warning for Zak Mc Kracken
+	if (strncmp(gameid.c_str(), "zak", 3) == 0 &&
+		!GUI_Actions::Instance()->getMapping(POCKET_ACTION_HIDE)) {
+		GUI::MessageDialog alert("Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory");
+		alert.runModal();
+	}
 
 }
 
@@ -898,12 +1029,6 @@ void OSystem_WINCE3::update_game_settings() {
 		_toolbarHandler.add(NAME_MAIN_PANEL, *panel);
 		_toolbarHandler.setActive(NAME_MAIN_PANEL);
 		_toolbarHandler.setVisible(true);
-
-		// Keyboard is active for Monkey 1 or 2 initial copy-protection
-		if (strncmp(gameid.c_str(), "monkey", 6) == 0) {
-			_monkeyKeyboard = true;
-			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
-		}
 
 		if (_mode == GFX_NORMAL && ConfMan.hasKey("landscape") && ConfMan.getInt("landscape")) {
 			setGraphicsMode(GFX_NORMAL);
@@ -1099,6 +1224,8 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 
 	update_scalers();
 
+	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+	// needs fixing, or remove it!
 	// FIXME
 	if (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640) && mode)
 		_scaleFactorXm = -1;
@@ -1205,7 +1332,6 @@ void OSystem_WINCE3::loadGFXMode() {
 
 	_fullscreen = true; // forced
 	_forceFull = true;
-	_modeFlags |= DF_UPDATE_EXPAND_1_PIXEL;
 
 	_tmpscreen = NULL;
 
@@ -1375,26 +1501,11 @@ void OSystem_WINCE3::hotswapGFXMode() {
 //	_modeChanged = true;
 }
 
-void OSystem_WINCE3::update_keyboard() {
-	// Update the forced keyboard for Monkey Island copy protection
-	if (_monkeyKeyboard && !_isSmartphone)
-		if (!_panelVisible || _toolbarHandler.activeName() != NAME_PANEL_KEYBOARD)
-			swap_panel();
-#ifndef DISABLE_SCUMM
-	if (_monkeyKeyboard && Scumm::g_scumm->VAR_ROOM != 0xff && Scumm::g_scumm && Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 108 &&
-		Scumm::g_scumm->VAR(Scumm::g_scumm->VAR_ROOM) != 90) {
-			// Switch back to the normal panel now that the keyboard is not used anymore
-			_monkeyKeyboard = false;
-			_toolbarHandler.setActive(NAME_MAIN_PANEL);
-	}
-#endif
-}
-
 void OSystem_WINCE3::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	static bool old_overlayVisible = false;
 	int numRectsOut = 0;
-	int16 routx, routy, routw, routh;
+	int16 routx, routy, routw, routh, stretch;
 
 	assert(_hwscreen != NULL);
 
@@ -1403,8 +1514,6 @@ void OSystem_WINCE3::internUpdateScreen() {
 		Sleep(20);
 		return;
 	}
-
-	update_keyboard();
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos) {
@@ -1430,8 +1539,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 	if (!_overlayVisible) {
 		origSurf = _screen;
 		srcSurf = _tmpscreen;
-	}
-	else {
+	} else {
 		origSurf = _overlayscreen;
 		srcSurf = _tmpscreen2;
 	}
@@ -1485,6 +1593,21 @@ void OSystem_WINCE3::internUpdateScreen() {
 		dstPitch = _hwscreen->pitch;
 
 		for (r = _dirtyRectList, rout = _dirtyRectOut; r != last_rect; ++r) {
+
+			// always clamp to enclosing, downsampled-grid-aligned rect in the downscaled image
+			if (_scaleFactorXd != 1) {
+				stretch = r->x % _scaleFactorXd;
+				r->x -= stretch;
+				r->w += stretch;
+				r->w = (r->x + r->w + _scaleFactorXd - 1) / _scaleFactorXd * _scaleFactorXd - r->x;
+			}
+			if (_scaleFactorYd != 1) {
+				stretch = r->y % _scaleFactorYd;
+				r->y -= stretch;
+				r->h += stretch;
+				r->h = (r->y + r->h + _scaleFactorYd - 1) / _scaleFactorYd * _scaleFactorYd - r->y;
+			}
+
 			// transform
 			routx = r->x * _scaleFactorXm / _scaleFactorXd;				// locate position in scaled screen
 			routy = (r->y + _currentShakePos) * _scaleFactorYm / _scaleFactorYd;	// adjust for shake offset
@@ -1588,7 +1711,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 }
 
 Graphics::Surface *OSystem_WINCE3::lockScreen() {
-	// FIXME: Fingolfing asks: Why is undrawMouse() needed here?
+	// FIXME: Fingolfin asks: Why is undrawMouse() needed here?
 	// Please document this.
 	undrawMouse();
 	return OSystem_SDL::lockScreen();
@@ -1992,6 +2115,8 @@ void OSystem_WINCE3::hideOverlay() {
 }
 
 void OSystem_WINCE3::drawMouse() {
+	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+	// needs fixing, or remove it!
 	// FIXME
 	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset() && !_usesEmulatedMouse) && !_forceHideMouse)
 		internDrawMouse();		
@@ -2041,43 +2166,7 @@ void OSystem_WINCE3::warpMouse(int x, int y) {
 
 void OSystem_WINCE3::addDirtyRect(int x, int y, int w, int h, bool mouseRect) {
 
-	// Align on boundaries
-	if (_scaleFactorXd > 1) {
-		while (x % _scaleFactorXd) {
-			x--;
-			w++;
-		}
-		while (w % _scaleFactorXd) w++;
-	}
-
-	if (_scaleFactorYd > 1) {
-		while (y % _scaleFactorYd) {
-			y--;
-			h++;
-		}
-		while (h % _scaleFactorYd) h++;
-	}
-
-	if (_scalerProc == PocketPCHalfZoom) {
-		// Restrict rect if we're zooming
-		if (_zoomUp) {
-			if (y + h >= 240) {
-				if (y >= 240)
-					return;
-				else
-					h = 240 - y;
-			}
-		} else if (_zoomDown) {
-			if (y + h >= 240) {
-				if (y < 240) {
-					h = 240 - y;
-					y = 240;
-				}
-			}
-			else
-				return;
-		}
-	}
+	if (_forceFull || _paletteDirtyEnd) return;
 
 	OSystem_SDL::addDirtyRect(x, y, w, h, false);
 }
@@ -2137,7 +2226,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 
 	currentTime = GetTickCount();
 
-	while(SDL_PollEvent(&ev)) {
+	while (SDL_PollEvent(&ev)) {
 		switch(ev.type) {
 		case SDL_KEYDOWN:
 			debug(1, "Key down %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));

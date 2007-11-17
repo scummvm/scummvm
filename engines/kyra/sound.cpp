@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "kyra/resource.h"
 #include "kyra/sound.h"
@@ -60,7 +60,7 @@ void Sound::voicePlay(const char *file) {
 		_vm->resource()->getFileHandle(filenamebuffer, &fileSize, _compressHandle);
 		if (!_compressHandle.isOpen())
 			continue;
-		
+
 		Common::MemoryReadStream *tmp = _compressHandle.readStream(fileSize);
 		assert(tmp);
 		_currentVocFile = _supportedCodes[i].streamFunc(tmp, true, 0, 0, 1);
@@ -71,7 +71,7 @@ void Sound::voicePlay(const char *file) {
 	if (!found) {
 		strcpy(filenamebuffer, file);
 		strcat(filenamebuffer, ".VOC");
-		
+
 		fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
 		if (!fileData)
 			return;
@@ -81,7 +81,7 @@ void Sound::voicePlay(const char *file) {
 	}
 
 	if (_currentVocFile) {
-		_mixer->stopHandle(_vocHandle);
+		//_mixer->stopHandle(_vocHandle);
 		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandle, _currentVocFile);
 	}
 	delete [] fileData;
@@ -332,7 +332,7 @@ void SoundMidiPC::stopMusic() {
 		_parser = 0;
 		delete [] _parserSource;
 		_parserSource = 0;
-		
+
 		_fadeStartTime = 0;
 		_fadeMusicOut = false;
 		setVolume(255);
@@ -366,7 +366,7 @@ void SoundMidiPC::onTimer(void *refCon) {
 		music->_fadeStartTime = 0;
 		music->_fadeMusicOut = false;
 		music->_isPlaying = false;
-		
+
 		music->_eventFromMusic = true;
 		// from sound/midiparser.cpp
 		for (int i = 0; i < 128; ++i) {
@@ -432,6 +432,60 @@ void SoundMidiPC::playSoundEffect(uint8 track) {
 void SoundMidiPC::beginFadeOut() {
 	_fadeMusicOut = true;
 	_fadeStartTime = _vm->_system->getMillis();
+}
+
+void KyraEngine::snd_playTheme(int file, int track) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d)", file);
+	_curSfxFile = _curMusicTheme = file;
+	_sound->loadSoundFile(_curMusicTheme);
+	_sound->playTrack(track);
+}
+
+void KyraEngine::snd_playSoundEffect(int track) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playSoundEffect(%d)", track);
+	_sound->playSoundEffect(track);
+}
+
+void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playWanderScoreViaMap(%d, %d)", command, restart);
+	if (restart)
+		_lastMusicCommand = -1;
+
+	// no track mapping given
+	// so don't do anything here
+	if (!_trackMap || !_trackMapSize)
+		return;
+
+	//if (!_disableSound) {
+	//	XXX
+	//}
+	
+	assert(command*2+1 < _trackMapSize);
+	if (_curMusicTheme != _trackMap[command*2]) {
+		if (_trackMap[command*2] != -1 && _trackMap[command*2] != -2)
+			snd_playTheme(_trackMap[command*2]);
+	}
+
+	if (command != 1) {
+		if (_lastMusicCommand != command) {
+			_sound->haltTrack();
+			_sound->playTrack(_trackMap[command*2+1]);
+		}
+	} else {
+		_sound->beginFadeOut();
+	}
+
+	_lastMusicCommand = command;
+}
+
+void KyraEngine::snd_stopVoice() {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_stopVoice()");
+	_sound->voiceStop();
+}
+
+bool KyraEngine::snd_voiceIsPlaying() {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_voiceIsPlaying()");
+	return _sound->voiceIsPlaying();
 }
 
 // static res

@@ -47,6 +47,8 @@ struct TalkDialogDetails {
 	bool active;
 };
 
+#define NUM_GIVE_TALK_IDS 7
+
 class Resources {
 private:
 	Common::RandomSource _rnd;
@@ -66,6 +68,7 @@ private:
 	HotspotActionSet _actionsList;
 	TalkHeaderList _talkHeaders;
 	TalkDataList _talkData;
+	Common::Array<uint16> _giveTalkIds;
 	SequenceDelayList _delayList;
 	Action _currentAction;
 	MemoryBlock *_talkDialogData;
@@ -118,6 +121,7 @@ public:
 	Hotspot *getActiveHotspot(uint16 hotspotId);
 	HotspotOverrideData *getHotspotOverride(uint16 hotspotId);
 	HotspotAnimData *getAnimation(uint16 animRecordId);
+	int getAnimationIndex(HotspotAnimData *animData);
 	RoomExitJoinList &exitJoins() { return _exitJoins; }
 	RoomExitJoinData *getExitJoin(uint16 hotspotId);
 	uint16 getHotspotAction(uint16 actionsOffset, Action action);
@@ -154,8 +158,12 @@ public:
 	void setTalkStartEntry(int index) { _talkStartEntry = index; }
 	int getTalkStartEntry() { return _talkStartEntry; }
 	uint16 getTalkingCharacter() { return _talkingCharacter; }
-	void setTalkingCharacter(uint16 id);
-
+	void setTalkingCharacter(uint16 index);
+	uint16 getGiveTalkId(uint16 index) {
+		if (index >= _giveTalkIds.size())
+			error("Invalid give talk id specified");
+		return _giveTalkIds[index];
+	}
 	void setCurrentAction(Action action) { _currentAction = action; }
 	Action getCurrentAction() { return _currentAction; }
 	const char *getCurrentActionStr() { 

@@ -47,13 +47,14 @@ namespace Parallaction {
 enum {
 	kDebugDisk = 1 << 0,
 	kDebugWalk = 1 << 1,
-	kDebugLocation = 1 << 2,
+	kDebugParser = 1 << 2,
 	kDebugDialogue = 1 << 3,
 	kDebugGraphics = 1 << 4,
-	kDebugJobs = 1 << 5,
+	kDebugExec = 1 << 5,
 	kDebugInput = 1 << 6,
 	kDebugAudio = 1 << 7,
-	kDebugMenu = 1 << 8
+	kDebugMenu = 1 << 8,
+	kDebugInventory = 1 << 9
 };
 
 enum {
@@ -90,7 +91,8 @@ enum {
 	kPriority18 = 18,
 	kPriority19 = 19,
 	kPriority20 = 20,
-	kPriority21 = 21
+	kPriority21 = 21,
+	kPriority99 = 99			// fictitious priority value used as a flag to handle quick label deletion
 };
 
 enum {
@@ -140,24 +142,21 @@ struct PARALLACTIONGameDescription;
 
 
 struct Job;
-typedef void (*JobFn)(void*, Job*);
 
 struct Job {
 	uint16		_count; 		// # of executions left
 	uint16		_tag;			// used for ordering
 	uint16		_finished;
 	void *		_parm;
-	JobFn		_fn;
 
 public:
-	Job() : _count(0), _tag(0), _finished(0), _parm(NULL), _fn(NULL) {
+	Job() : _count(0), _tag(0), _finished(0), _parm(NULL) {
 	}
 };
 
-typedef Job* JobPointer;
-typedef ManagedList<JobPointer> JobList;
 
 extern uint16 		_mouseButtons;
+extern char			_password[8];
 extern uint16 		_score;
 extern uint16 		_language;
 extern uint32 		_engineFlags;
@@ -178,38 +177,14 @@ extern const char 	*_minidonnaName;
 extern const char 	*_minidoughName;
 extern const char 	*_minidrkiName;
 
-// Various ways of detecting character modes used to exist
-// inside the engine, so they have been unified in the two
-// following macros.
-// Mini characters are those used in far away shots, like
-// the highway scenery, while Dummy characters are a mere
-// workaround to keep the engine happy when showing slides.
-// As a sidenote, standard sized characters' names start
-// with a lowercase 'd'.
-#define IS_MINI_CHARACTER(s) (((s)[0] == 'm'))
-#define IS_DUMMY_CHARACTER(s) (((s)[0] == 'D'))
 
 void waitUntilLeftClick();
 
-
-void jobRemovePickedItem(void*, Job *j);
-void jobDisplayDroppedItem(void*, Job *j);
-void jobToggleDoor(void*, Job *j);
-void jobEraseAnimations(void *arg_0, Job *j);
-void jobWalk(void*, Job *j);
-void jobRunScripts(void*, Job *j);
-void jobDisplayAnimations(void*, Job *j);
-void jobDisplayLabel(void *parm, Job *j);
-void jobWaitRemoveJob(void *parm, Job *j);
-void jobShowInventory(void *parm, Job *j);
-void jobHideInventory(void *parm, Job *j);
-void jobEraseLabel(void *parm, Job *j);
 
 
 
 class Debugger;
 class Gfx;
-class Menu;
 class SoundMan;
 
 
@@ -231,76 +206,49 @@ struct Location {
 	CommandList		_escapeCommands;
 };
 
+
+
+
 struct Character {
+	Parallaction	*_vm;
+
+
 	Animation		_ani;
 	Graphics::Surface		*_head;
 	Frames		    *_talk;
 	Frames 			*_objs;
 	PathBuilder		_builder;
 
-	Character() : _builder(&_ani) {
-		_talk = NULL;
-		_head = NULL;
-		_objs = NULL;
+	Character(Parallaction *vm);
+	void getFoot(Common::Point &foot);
+	void setFoot(const Common::Point &foot);
+	void scheduleWalk(int16 x, int16 y);
 
-		_ani._left = 150;
-		_ani._top = 100;
-		_ani._z = 10;
-		_ani._oldPos.x = -1000;
-		_ani._oldPos.y = -1000;
-		_ani._frame = 0;
-		_ani._flags = kFlagsActive | kFlagsNoName;
-		_ani._type = kZoneYou;
-		_ani._label._cnv.pixels = NULL;
-		_ani._label._text = strdup("yourself");
-	}
-
-	void getFoot(Common::Point &foot) {
-		foot.x = _ani._left + _ani.width() / 2;
-		foot.y = _ani._top + _ani.height();
-	}
-
-	void setFoot(const Common::Point &foot) {
-		_ani._left = foot.x - _ani.width() / 2;
-		_ani._top = foot.y - _ani.height();
-	}
-
-
-};
-
-
-class Table {
+	void free();
 
 protected:
-	char	**_data;
-	uint16	_size;
-	uint16	_used;
-	bool	_disposeMemory;
+	const char *_prefix;
+	const char *_suffix;
+
+	bool _dummy;
+
+	char _name[30];
+	char _baseName[30];
+	char _fullName[30];
+	static const char _prefixMini[];
+	static const char _suffixTras[];
+	static const char _empty[];
 
 public:
-	Table(uint32 size);
-	Table(uint32 size, const char** data);
-
-	virtual ~Table();
-
-	enum {
-		notFound = 0
-	};
-
-	virtual void addData(const char* s);
-	virtual void clear();
-	virtual uint16 lookup(const char* s);
+	void setName(const char *name);
+	const char *getName() const;
+	const char *getBaseName() const;
+	const char *getFullName() const;
+	bool dummy() const;
 };
 
-class FixedTable : public Table {
 
-	uint16	_numFixed;
 
-public:
-	FixedTable(uint32 size, uint32 fixed);
-	~FixedTable();
-	void clear();
-};
 
 struct BackgroundInfo {
 	uint width;
@@ -337,9 +285,65 @@ public:
 
 };
 
-
 typedef Common::Array<const Opcode*>	OpcodeSet;
 
+class JobOpcode {
+
+public:
+	Job *_job;
+
+	JobOpcode(Job *job) : _job(job) { }
+
+	virtual void operator()() const = 0;
+	virtual ~JobOpcode() {
+		delete _job;
+	}
+};
+
+template <class T>
+class OpcodeImpl2 : public JobOpcode {
+
+	typedef void (T::*Fn)(void *, Job*);
+
+	T*	_instance;
+	Fn	_fn;
+
+public:
+	OpcodeImpl2(T* instance, const Fn &fn, Job* job) : JobOpcode(job), _instance(instance), _fn(fn) { }
+
+	void operator()() const {
+		(_instance->*_fn)(_job->_parm, _job);
+	}
+
+};
+
+typedef JobOpcode* JobPointer;
+typedef ManagedList<JobPointer> JobList;
+
+enum Jobs {
+	kJobDisplayAnimations = 0,
+	kJobEraseAnimations = 1,
+	kJobDisplayDroppedItem = 2,
+	kJobRemovePickedItem = 3,
+	kJobRunScripts = 4,
+	kJobWalk = 5,
+	kJobDisplayLabel = 6,
+	kJobEraseLabel = 7,
+	kJobWaitRemoveJob = 8,
+	kJobToggleDoor = 9,
+
+	// NS specific
+	kJobShowInventory = 10,
+	kJobHideInventory,
+
+	// BRA specific
+	kJobEraseSubtitle = 10,
+	kJobDisplaySubtitle,
+	kJobWaitRemoveSubtitleJob,
+	kJobPauseSfx,
+	kJobStopFollower,
+	kJobScroll
+};
 
 
 #define DECLARE_UNQUALIFIED_ZONE_PARSER(sig) void locZoneParse_##sig()
@@ -359,15 +363,16 @@ class Parallaction : public Engine {
 
 public:
 
-	Parallaction(OSystem *syst);
+	Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc);
 	~Parallaction();
 
 	int init();
 
-	virtual void loadGame() = 0;
-	virtual void saveGame() = 0;
+	virtual bool loadGame() = 0;
+	virtual bool saveGame() = 0;
 
-	uint16 		updateInput();
+	uint16 		readInput();
+	void		updateInput();
 
 	void 		waitTime(uint32 t);
 
@@ -397,15 +402,14 @@ public:
 	} _instRunCtxt;
 
 
-	void 		changeCursor(int32 index);
 	void		showCursor(bool visible);
 
-
-	Job 		*addJob(JobFn fn, void *parm, uint16 tag);
+	Job 		*addJob(uint functionId, void *parm, uint16 tag);
 	void 		removeJob(Job *j);
 	void 		pauseJobs();
 	void 		resumeJobs();
 	void 		runJobs();
+	virtual		JobOpcode* createJobOpcode(uint functionId, Job *job) = 0;
 
 	void 		finalizeWalk(WalkNodeList *list);
 	int16 		selectWalkFrame(const Common::Point& pos, const WalkNode* from);
@@ -424,7 +428,6 @@ public:
 	void		sortAnimations();
 	void 		freeAnimations();
 
-	void 		showSlide(const char *name);
 	void 		setBackground(const char *background, const char *mask, const char *path);
 	void 		freeBackground();
 
@@ -435,6 +438,9 @@ public:
 	Table		*_callableNames;
 	Table		*_localFlagNames;
 
+
+	void showLabel(Label &label);
+	void hideLabel(uint priority);
 
 public:
 	int getGameType() const;
@@ -459,7 +465,6 @@ public:
 	Disk*			_disk;
 
 	Character		_char;
-	char			_characterName[30];
 
 	uint32			_localFlags[NUM_LOCATIONS];
 	char			_locationNames[NUM_LOCATIONS][32];
@@ -480,6 +485,7 @@ public:
 	Font		*_menuFont;
 	Font		*_dialogueFont;
 
+	Common::RandomSource _rnd;
 
 protected:		// data
 
@@ -522,23 +528,31 @@ protected:		// data
 	Job	   *_jEraseLabel;
 	Zone    *_hoverZone;
 
+	Job	   *_jDrawInventory;
+	Job	   *_jRunScripts;
+
+
 protected:		// members
 	bool detectGame(void);
 
 	void		initGlobals();
 	void		runGame();
+	void		updateView();
 	uint32		getElapsedTime();
 	void		resetTimer();
 
 	InputData 	*translateInput();
+	bool 		translateGameInput();
+	bool 		translateInventoryInput();
 	void		processInput(InputData*);
 
+
+	void		scheduleLocationSwitch(const char *location);
 	void		doLocationEnterTransition();
 	virtual void changeLocation(char *location) = 0;
 	virtual void changeCharacter(const char *name) = 0;
 	void		allocateLocationSlot(const char *name);
 	void 		finalizeLocationParsing();
-	void 		switchBackground(const char* background, const char* mask);
 	void 		freeLocation();
 	void 		showLocationComment(const char *text, bool end);
 
@@ -549,19 +563,35 @@ protected:		// members
 
 	void 		freeCharacter();
 
-	int 		addInventoryItem(uint16 item);
-	void 		dropItem(uint16 item);
+
+	int 		addInventoryItem(ItemName item, uint32 value);
+	int 		addInventoryItem(ItemName item);
+	void 		dropItem(ItemName item);
 	int16 		pickupItem(Zone *z);
-	int16 		isItemInInventory(int32 v);
+	bool 		isItemInInventory(int32 v);
 	int16		getHoverInventoryItem(int16 x, int16 y);
 
 public:
 	virtual	void callFunction(uint index, void* parm) { }
 	virtual void renderLabel(Graphics::Surface *cnv, char *text) { }
-	virtual void setMousePointer(int16 index) = 0;
 
+	virtual void setArrowCursor() = 0;
+	virtual void setInventoryCursor(int pos) = 0;
 
 	virtual void parseLocation(const char* name) = 0;
+
+	virtual void jobDisplayAnimations(void*, Job *j) = 0;
+	virtual void jobEraseAnimations(void *arg_0, Job *j) = 0;
+	virtual void jobRunScripts(void*, Job *j) = 0;
+	virtual void jobDisplayDroppedItem(void*, Job *j) = 0;
+	virtual void jobRemovePickedItem(void*, Job *j) = 0;
+	virtual void jobToggleDoor(void*, Job *j) = 0;
+	virtual void jobWalk(void*, Job *j) = 0;
+	virtual void jobDisplayLabel(void *parm, Job *j) = 0;
+	virtual void jobEraseLabel(void *parm, Job *j) = 0;
+	virtual void jobWaitRemoveJob(void *parm, Job *j) = 0;
+
+	void		beep();
 
 public:
 	const char **_zoneFlagNamesRes;
@@ -573,10 +603,52 @@ public:
 };
 
 
+class LocationName {
+
+	Common::String _slide;
+	Common::String _character;
+	Common::String _location;
+
+	bool _hasCharacter;
+	bool _hasSlide;
+	char *_buf;
+
+public:
+	LocationName();
+	~LocationName();
+
+	void bind(const char*);
+
+	const char *location() const {
+		return _location.c_str();
+	}
+
+	bool hasCharacter() const {
+		return _hasCharacter;
+	}
+
+	const char *character() const {
+		return _character.c_str();
+	}
+
+	bool hasSlide() const {
+		return _hasSlide;
+	}
+
+	const char *slide() const {
+		return _slide.c_str();
+	}
+
+	const char *c_str() const {
+		return _buf;
+	}
+};
+
+
 class Parallaction_ns : public Parallaction {
 
 public:
-	Parallaction_ns(OSystem* syst) : Parallaction(syst) { }
+	Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc) { }
 	~Parallaction_ns();
 
 	int init();
@@ -587,21 +659,31 @@ public:
 
 	virtual	void callFunction(uint index, void* parm);
 	void renderLabel(Graphics::Surface *cnv, char *text);
-	void setMousePointer(int16 index);
+	void setMousePointer(uint32 value);
 
-	void loadGame();
-	void saveGame();
+	void	initJobs();
+
+	typedef void (Parallaction_ns::*JobFn)(void*, Job*);
+
+	const JobFn 	*_jobsFn;
+	JobOpcode* 	createJobOpcode(uint functionId, Job *job);
+
+	bool loadGame();
+	bool saveGame();
 
 
 private:
-	Menu*			_menu;
-
 	void initFonts();
 	void freeFonts();
 
 private:
 	void changeLocation(char *location);
 	void changeCharacter(const char *name);
+	void cleanupGame();
+
+	void setArrowCursor();
+	void setInventoryCursor(int pos);
+
 
 	void doLoadGame(uint16 slot);
 	void doSaveGame(uint16 slot, const char* name);
@@ -653,6 +735,19 @@ private:
 	const Callable *_callables;
 
 protected:
+	void jobDisplayAnimations(void*, Job *j);
+	void jobEraseAnimations(void *arg_0, Job *j);
+	void jobRunScripts(void*, Job *j);
+	void jobDisplayDroppedItem(void*, Job *j);
+	void jobRemovePickedItem(void*, Job *j);
+	void jobToggleDoor(void*, Job *j);
+	void jobWalk(void*, Job *j);
+	void jobDisplayLabel(void *parm, Job *j);
+	void jobEraseLabel(void *parm, Job *j);
+	void jobWaitRemoveJob(void *parm, Job *j);
+	void jobShowInventory(void *parm, Job *j);
+	void jobHideInventory(void *parm, Job *j);
+
 	// location parser
 	OpcodeSet	_locationParsers;
 	OpcodeSet	_locationZoneParsers;
@@ -674,9 +769,13 @@ protected:
 		CommandList *list;
 		bool		endcommands;
 		Command		*cmd;
+
+		// BRA specific
+		int numZones;
 	} _locParseCtxt;
 
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(invalid);
+	void warning_unexpected();
+
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(endlocation);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(location);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(disk);
@@ -691,8 +790,6 @@ protected:
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(endcomment);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(sound);
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(music);
-	DECLARE_UNQUALIFIED_LOCATION_PARSER(redundant);
-	DECLARE_UNQUALIFIED_ZONE_PARSER(invalid);
 	DECLARE_UNQUALIFIED_ZONE_PARSER(limits);
 	DECLARE_UNQUALIFIED_ZONE_PARSER(moveto);
 	DECLARE_UNQUALIFIED_ZONE_PARSER(type);
@@ -700,7 +797,7 @@ protected:
 	DECLARE_UNQUALIFIED_ZONE_PARSER(label);
 	DECLARE_UNQUALIFIED_ZONE_PARSER(flags);
 	DECLARE_UNQUALIFIED_ZONE_PARSER(endzone);
-	DECLARE_UNQUALIFIED_ANIM_PARSER(invalid);
+	DECLARE_UNQUALIFIED_ZONE_PARSER(null);
 	DECLARE_UNQUALIFIED_ANIM_PARSER(script);
 	DECLARE_UNQUALIFIED_ANIM_PARSER(commands);
 	DECLARE_UNQUALIFIED_ANIM_PARSER(type);
@@ -710,7 +807,6 @@ protected:
 	DECLARE_UNQUALIFIED_ANIM_PARSER(position);
 	DECLARE_UNQUALIFIED_ANIM_PARSER(moveto);
 	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(invalid);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(flags);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(animation);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(zone);
@@ -720,6 +816,13 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(simple);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(move);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(endcommands);
+
+	virtual void parseGetData(Script &script, Zone *z);
+	virtual void parseExamineData(Script &script, Zone *z);
+	virtual void parseDoorData(Script &script, Zone *z);
+	virtual void parseMergeData(Script &script, Zone *z);
+	virtual void parseHearData(Script &script, Zone *z);
+	virtual void parseSpeakData(Script &script, Zone *z);
 
 	void 		parseLocation(const char *filename);
 	char   		*parseComment(Script &script);
@@ -735,7 +838,6 @@ protected:
 	void		addCommand();
 	void 		initOpcodes();
 	void 		initParsers();
-
 
 	// program parser
 	OpcodeSet	_instructionParsers;
@@ -806,8 +908,20 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(start);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(sound);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(move);
-	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(end);
+	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
 
+	void		selectStartLocation();
+
+	void		guiStart();
+	int			guiSelectCharacter();
+	void 		guiSplash();
+	int			guiNewGame();
+	uint16		guiChooseLanguage();
+	uint16		guiSelectGame();
+	int			guiGetSelectedBlock(const Common::Point &p);
+
+	void 		switchBackground(const char* background, const char* mask);
+	void 		showSlide(const char *name);
 };
 
 
@@ -819,7 +933,7 @@ class Parallaction_br : public Parallaction_ns {
 	typedef Parallaction_ns Super;
 
 public:
-	Parallaction_br(OSystem* syst) : Parallaction_ns(syst) { }
+	Parallaction_br(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction_ns(syst, gameDesc) { }
 	~Parallaction_br();
 
 	int init();
@@ -843,6 +957,10 @@ public:
 	int			_zeta2;
 
 	int16		_lipSyncVal;
+	uint 		_subtitleLipSync;
+
+	Label 		_subtitle0;
+	Label 		_subtitle1;
 
 	Zone		*_activeZone2;
 
@@ -850,16 +968,21 @@ public:
 
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
 
-	struct LocationParserContext_br : public LocationParserContext {
-		int numZones;
-	} _locParseCtxt;
-
 private:
 	void 		initResources();
 	void 		initFonts();
 	void 		freeFonts();
 	void 		initOpcodes();
 	void 		initParsers();
+	void		initJobs();
+
+	void setArrowCursor();
+	void setInventoryCursor(int pos);
+
+
+	typedef void (Parallaction_br::*JobFn)(void*, Job*);
+	const JobFn 	*_jobsFn;
+	JobOpcode* 		createJobOpcode(uint functionId, Job *job);
 
 	void 		changeLocation(char *location);
 	void		changeCharacter(const char *name);
@@ -1004,6 +1127,18 @@ private:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endif);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
+
+	Job *_jDisplaySubtitle;
+	Job *_jEraseSubtitle;
+	void setupSubtitles(char *s, char *s2, int y);
+
+	void jobWaitRemoveLabelJob(void *parm, Job *job);
+	void jobDisplaySubtitle(void *parm, Job *job);
+	void jobEraseSubtitle(void *parm, Job *job);
+	void jobWaitRemoveSubtitleJob(void *parm, Job *job);
+	void jobPauseSfx(void *parm, Job *job);
+	void jobStopFollower(void *parm, Job *job);
+	void jobScroll(void *parm, Job *job);
 
 };
 

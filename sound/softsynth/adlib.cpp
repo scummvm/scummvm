@@ -675,7 +675,9 @@ void AdlibPart::pitchBend(int16 bend) {
 
 void AdlibPart::controlChange(byte control, byte value) {
 	switch (control) {
-	case 0:   break; // Bank select. Not supported
+	case 0:   
+	case 32: 
+		break; // Bank select. Not supported
 	case 1:   modulationWheel(value); break;
 	case 7:   volume(value); break;
 	case 10:  break; // Pan position. Not supported.

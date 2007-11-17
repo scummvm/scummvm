@@ -21,6 +21,7 @@ chdir("../../../");
 	"mmp/scummvm_touche.mmp", 
 	"mmp/scummvm_parallaction.mmp", 
 	"mmp/scummvm_cruise.mmp", 
+	"mmp/scummvm_drascula.mmp", 
 	"S60/ScummVM_S60.mmp",  
 	"S60v3/ScummVM_S60v3.mmp", 
 	"S80/ScummVM_S80.mmp", 
@@ -62,12 +63,17 @@ my @excludes_snd = (
 	"partialmanager.cpp",
 	"synth.cpp",
 	"tables.cpp",
-	"freeverb.cpp"
+	"freeverb.cpp"        
 ); 
 
 my @excludes_graphics = ( 
 "iff.cpp"
 ); 
+
+my @excludes_scumm = (
+	"codec47ARM.cpp",
+	"gfxARM.cpp"
+);
 
 #arseModule(mmpStr,		dirStr,		ifdefArray,		[exclusionsArray])
 ParseModule("_base",	"base",		\@section_empty); # now in ./TRG/ScummVM_TRG.mmp, these never change anyways...
@@ -77,7 +83,7 @@ ParseModule("_base",	"graphics",	\@section_empty,		\@excludes_graphics);
 ParseModule("_base",	"sound",	\@section_empty,		\@excludes_snd);
 
 chdir("engines/");
-ParseModule("_scumm",	"scumm",	\@sections_scumm);
+ParseModule("_scumm",	"scumm",	\@sections_scumm,		\@excludes_scumm );
 ParseModule("_queen",	"queen",	\@section_empty);
 ParseModule("_agos",	"agos",		\@section_empty);
 ParseModule("_sky",		"sky",		\@section_empty);
@@ -92,6 +98,7 @@ ParseModule("_agi",	"agi",		\@section_empty);
 ParseModule("_touche",	"touche",	\@section_empty);
 ParseModule("_parallaction","parallaction",\@section_empty);
 ParseModule("_cruise",	"cruise",	\@section_empty);
+ParseModule("_drascula","drascula",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P

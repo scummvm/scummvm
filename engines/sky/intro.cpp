@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/events.h"
@@ -39,13 +39,6 @@
 #include "sky/text.h"
 
 namespace Sky {
-
-#ifdef MACOSX
-// FIXME: DELAY is already defined in sys/param.h !
-// Better fix would be to remove sys/param.h froms stdafx.h, or
-// to change the name DELAY here to something else.
-#undef DELAY
-#endif
 
 #define SHOWSCREEN		 0
 #define COMMANDEND		 0 // end of COMMANDFLIRT block

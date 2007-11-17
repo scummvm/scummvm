@@ -140,7 +140,11 @@ public:
 	 */
 	virtual bool pollEvent(Common::Event &event) = 0;
 
-
+	/** Register random source so it can be serialized in game test purposes **/
+	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name) = 0;
+	
+	virtual void processMillis(uint32 &millis) = 0;
+	
 	/** Return the current key state */
 	virtual Common::Point getMousePos() const = 0;
 	

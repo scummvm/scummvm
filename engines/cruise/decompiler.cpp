@@ -136,52 +136,47 @@ void pushDecomp(char *string, ...) {
 
 void resolveDecompShort(char *buffer) {
 	ovlData3Struct *data3Ptr = currentScript;
+	int i;
 
-	{
-		int i;
+	importScriptStruct *importEntry =
+		(importScriptStruct *) (data3Ptr->dataPtr +
+		data3Ptr->offsetToImportData);
 
-		importScriptStruct *importEntry =
-		    (importScriptStruct *) (data3Ptr->dataPtr +
-		    data3Ptr->offsetToImportData);
-
-		for (i = 0; i < data3Ptr->numImport; i++) {
-			switch (importEntry->type) {
-			case 20:	// script
-			case 30:
-			case 40:
-			case 50:
-				{
-					if (importEntry->offset == currentDecompScriptPtr->var4 - 3)	// param1
-					{
-						sprintf(buffer,
-						    data3Ptr->dataPtr +
-						    data3Ptr->
-						    offsetToImportName +
-						    importEntry->offsetToName);
-						return;
-					}
-					if (importEntry->offset == currentDecompScriptPtr->var4 - 6)	// param2
-					{
-						sprintf(buffer, "linkedIdx");
-						return;
-					}
-					break;
+	for (i = 0; i < data3Ptr->numRelocGlob; i++) {
+		switch (importEntry->type) {
+		case 20:	// script
+		case 30:
+		case 40:
+		case 50:
+			{
+				if (importEntry->offset == currentDecompScriptPtr->var4 - 3) {	// param1
+					sprintf(buffer,
+						data3Ptr->dataPtr +
+						data3Ptr->
+						offsetToImportName +
+						importEntry->offsetToName);
+					return;
 				}
-			default:
-				{
-					if (importEntry->offset ==
-					    currentDecompScriptPtr->var4 - 4) {
-						sprintf(buffer,
-						    data3Ptr->dataPtr +
-						    data3Ptr->
-						    offsetToImportName +
-						    importEntry->offsetToName);
-						return;
-					}
+				if (importEntry->offset == currentDecompScriptPtr->var4 - 6) {	// param2
+					sprintf(buffer, "linkedIdx");
+					return;
+				}
+				break;
+			}
+		default:
+			{
+				if (importEntry->offset ==
+					currentDecompScriptPtr->var4 - 4) {
+					sprintf(buffer,
+						data3Ptr->dataPtr +
+						data3Ptr->
+						offsetToImportName +
+						importEntry->offsetToName);
+					return;
 				}
 			}
-			importEntry++;
 		}
+		importEntry++;
 	}
 
 	buffer[0] = 0;
@@ -190,31 +185,28 @@ void resolveDecompShort(char *buffer) {
 
 void resolveDecompChar(char *buffer) {
 	ovlData3Struct *data3Ptr = currentScript;
+	int i;
 
-	{
-		int i;
+	importScriptStruct *importEntry =
+		(importScriptStruct *) (data3Ptr->dataPtr +
+		data3Ptr->offsetToImportData);
 
-		importScriptStruct *importEntry =
-		    (importScriptStruct *) (data3Ptr->dataPtr +
-		    data3Ptr->offsetToImportData);
-
-		for (i = 0; i < data3Ptr->numImport; i++) {
-			switch (importEntry->type) {
-			default:
-				{
-					if (importEntry->offset ==
-					    currentDecompScriptPtr->var4 - 2) {
-						sprintf(buffer,
-						    data3Ptr->dataPtr +
-						    data3Ptr->
-						    offsetToImportName +
-						    importEntry->offsetToName);
-						return;
-					}
+	for (i = 0; i < data3Ptr->numRelocGlob; i++) {
+		switch (importEntry->type) {
+		default:
+			{
+				if (importEntry->offset ==
+					currentDecompScriptPtr->var4 - 2) {
+					sprintf(buffer,
+						data3Ptr->dataPtr +
+						data3Ptr->
+						offsetToImportName +
+						importEntry->offsetToName);
+					return;
 				}
 			}
-			importEntry++;
 		}
+		importEntry++;
 	}
 
 	buffer[0] = 0;
@@ -340,21 +332,19 @@ void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
 	if (!strcmp(ovlIdxString, "0")) {
 		int i;
 
-		for (i = 0; i < currentDecompOvl->numExport; i++) {
-			if (varIdx == currentDecompOvl->exportDataPtr[i].idx) {
-				if (((currentDecompOvl->exportDataPtr[i].var4 & 0xF0) == 0) && varType != 0x20)	// var
-				{
+		for (i = 0; i < currentDecompOvl->numSymbGlob; i++) {
+			if (varIdx == currentDecompOvl->arraySymbGlob[i].idx) {
+				if (((currentDecompOvl->arraySymbGlob[i].var4 & 0xF0) == 0) && varType != 0x20) {	// var
 					strcpy(outputName,
-					    currentDecompOvl->exportNamesPtr +
-					    currentDecompOvl->exportDataPtr[i].
+					    currentDecompOvl->arrayNameSymbGlob +
+					    currentDecompOvl->arraySymbGlob[i].
 					    offsetToName);
 					return;
 				}
-				if ((currentDecompOvl->exportDataPtr[i].var4) == 20 && varType == 0x20)	// script
-				{
+				if ((currentDecompOvl->arraySymbGlob[i].var4) == 20 && varType == 0x20) {	// script
 					strcpy(outputName,
-					    currentDecompOvl->exportNamesPtr +
-					    currentDecompOvl->exportDataPtr[i].
+					    currentDecompOvl->arrayNameSymbGlob +
+					    currentDecompOvl->arraySymbGlob[i].
 					    offsetToName);
 					return;
 				}
@@ -719,16 +709,14 @@ int decompCompare(void) {
 	addDecomp("sign(%s)", param);
 
 /*
-  if(!pop)
+  if (!pop)
     si = 1;
 
-  if(pop<0)
-  {
+  if (pop<0) {
     si |= 4;
   }
 
-  if(pop>0)
-  {
+  if (pop>0) {
     si |= 2;
   }
 
@@ -747,8 +735,8 @@ int decompSwapStack(void) {
 	stack1 = popDecomp();
 	stack2 = popDecomp();
 
-	strcpyuint8(buffer1, stack1);
-	strcpyuint8(buffer2, stack2);
+	strcpy(buffer1, stack1);
+	strcpy(buffer2, stack2);
 
 	pushDecomp(buffer1);
 	pushDecomp(buffer2);
@@ -1435,7 +1423,7 @@ int decompBreak(void) {
 }
 
 void generateIndentation(void) {
-	int i;
+	int i, j;
 
 	for (i = 0; i < positionInDecompileLineTable; i++) {
 		if (decompileLineTable[i].type != 0) {
@@ -1449,37 +1437,25 @@ void generateIndentation(void) {
 			gotoStatement = strchr(gotoStatement, ' ') + 1;
 
 			destLine = atoi(gotoStatement);
+			destLineIdx = -1;
 
-			{
-				int j;
+			for (j = 0; j < positionInDecompileLineTable; j++) {
+				if (decompileLineTable[j].lineOffset == destLine) {
+					destLineIdx = j;
+					break;
+				}
+			}
 
-				destLineIdx = -1;
+			assert(destLineIdx != -1);
 
-				for (j = 0; j < positionInDecompileLineTable;
-				    j++) {
-					if (decompileLineTable[j].lineOffset ==
-					    destLine) {
-						destLineIdx = j;
-						break;
-					}
+			if (destLineIdx > i) {
+				for (j = i + 1; j < destLineIdx; j++) {
+					decompileLineTable[j].indent++;
 				}
 
-				assert(destLineIdx != -1);
-
-				if (destLineIdx > i) {
-					int j;
-
-					for (j = i + 1; j < destLineIdx; j++) {
-						decompileLineTable[j].indent++;
-					}
-
-					if (strstr(decompileLineTable
-						[destLineIdx - 1].line,
-						"goto") ==
-					    decompileLineTable[destLineIdx -
-						1].line) {
-						//decompileLineTable[destLineIdx-1].pendingElse = 1;
-					}
+				if (strstr(decompileLineTable[destLineIdx - 1].line, "goto") ==
+					decompileLineTable[destLineIdx - 1].line) {
+					//decompileLineTable[destLineIdx-1].pendingElse = 1;
 				}
 			}
 		}
@@ -1498,7 +1474,7 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 
 	failed = 0;
 
-	currentScript = &ovlData->data3Table[idx];
+	currentScript = &ovlData->arrayProc[idx];
 
 	currentDecompScript = currentScript->dataPtr;
 	currentDecompScriptPtr->var4 = 0;

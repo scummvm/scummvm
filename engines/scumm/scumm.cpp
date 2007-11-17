@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/md5.h"
@@ -121,7 +121,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_gdi = new Gdi(this);
 	}
 	_res = new ResourceManager(this);
-	
+
 	// Convert MD5 checksum back into a digest
 	for (int i = 0; i < 16; ++i) {
 		char tmpStr[3] = "00";
@@ -131,9 +131,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		sscanf(tmpStr, "%x", &tmpVal);
 		_gameMD5[i] = (byte)tmpVal;
 	}
-	
+
 	_fileHandle = 0;
-	
+
 
 	// Init all vars
 	_imuse = NULL;
@@ -200,6 +200,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_saveLoadSlot = 0;
 	_lastSaveTime = 0;
 	_saveTemporaryState = false;
+	memset(_saveLoadFileName, 0, sizeof(_saveLoadFileName));
 	memset(_saveLoadName, 0, sizeof(_saveLoadName));
 	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
 	_scriptPointer = NULL;
@@ -228,7 +229,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_roomWidth = 0;
 	_screenHeight = 0;
 	_screenWidth = 0;
-	memset(virtscr, 0, sizeof(virtscr));
+	memset(_virtscr, 0, sizeof(_virtscr));
 	memset(&camera, 0, sizeof(CameraData));
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 	memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
@@ -443,7 +444,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	VAR_NUM_GLOBAL_OBJS = 0xFF;
 	VAR_KEY_STATE = 0xFF;
-	VAR_MOUSE_STATE = 0xFF;
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
@@ -533,9 +533,11 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_herculesBuf = (byte *)malloc(Common::kHercW * Common::kHercH);
 	}
 
-	// Add debug levels	
+	// Add debug levels
 	for (int i = 0; i < ARRAYSIZE(debugChannels); ++i)
 		Common::addSpecialDebugLevel(debugChannels[i].flag,  debugChannels[i].channel, debugChannels[i].desc);
+
+	syst->getEventManager()->registerRandomSource(_rnd, "scumm");
 }
 
 
@@ -591,7 +593,7 @@ ScummEngine::~ScummEngine() {
 	free(_fmtownsBuf);
 
 	delete _debugger;
-	
+
 	delete _res;
 	delete _gdi;
 }
@@ -603,7 +605,7 @@ ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
 	// All "classic" games (V5 and older) encrypted their data files
 	// with exception of the GF_OLD256 games and the PC-Engine version
 	// of Loom.
-	if (!(_game.features & GF_OLD256) && _game.platform != Common::kPlatformPCEngine) 
+	if (!(_game.features & GF_OLD256) && _game.platform != Common::kPlatformPCEngine)
 		_game.features |= GF_USE_KEY;
 
 	static const uint16 default_cursor_images[4][16] = {
@@ -620,12 +622,12 @@ ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
 		{ 0x1e00, 0x1200, 0x1200, 0x1200, 0x1200, 0x13ff, 0x1249, 0x1249,
 		  0xf249, 0x9001, 0x9001, 0x9001, 0x8001, 0x8001, 0x8001, 0xffff },
 	};
-	
+
 	static const byte default_cursor_hotspots[10] = {
 		8, 7,   8, 7,   1, 1,   5, 0,
 		8, 7, //zak256
 	};
-	
+
 
 	for (int i = 0; i < 4; i++) {
 		memcpy(_cursorImages[i], default_cursor_images[i], 32);
@@ -778,6 +780,7 @@ ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const DetectorResult &dr)
 	VAR_NUM_IMAGES = 0xFF;
 	VAR_NUM_CHARSETS = 0xFF;
 	VAR_POLYGONS_ONLY = 0xFF;
+	VAR_MOUSE_STATE = 0xFF;
 }
 
 ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
@@ -829,7 +832,7 @@ ScummEngine_vCUPhe::ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr) 
 	_game = dr.game;
 	_filenamePattern = dr.fp,
 	_quit = false;
-	
+
 	_cupPlayer = new CUP_Player(syst, this, _mixer);
 }
 
@@ -856,7 +859,7 @@ int ScummEngine_vCUPhe::go() {
 
 void ScummEngine_vCUPhe::parseEvents() {
 	Common::Event event;
-	
+
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
@@ -985,7 +988,7 @@ int ScummEngine::init() {
 			assert(_game.id == GID_MANIAC);
 			_fileHandle = new ScummNESFile();
 			_containerFile = _filenamePattern.pattern;
-			
+
 			_filenamePattern.pattern = "%.2d.LFL";
 			_filenamePattern.genMethod = kGenRoomNum;
 		} else if (_game.platform == Common::kPlatformApple2GS) {
@@ -994,7 +997,7 @@ int ScummEngine::init() {
 			assert(_game.id == GID_MANIAC);
 			tmpBuf1 = "maniac1.dsk";
 			tmpBuf2 = "maniac2.dsk";
-	
+
 			_fileHandle = new ScummDiskImage(tmpBuf1, tmpBuf2, _game);
 			_containerFile = tmpBuf1;
 
@@ -1011,7 +1014,7 @@ int ScummEngine::init() {
 				tmpBuf1 = "zak1.d64";
 				tmpBuf2 = "zak2.d64";
 			}
-	
+
 			_fileHandle = new ScummDiskImage(tmpBuf1, tmpBuf2, _game);
 			_containerFile = tmpBuf1;
 
@@ -1020,19 +1023,19 @@ int ScummEngine::init() {
 		} else if (_game.platform == Common::kPlatformMacintosh) {
 			// The mac versions of Indy4, Sam&Max, DOTT, FT and The Dig used a
 			// special meta (container) file format to store the actual SCUMM data
-			// files. The rescumm utility used to be used to extract those files. 
-			// While that is still possible, we now support reading those files 
+			// files. The rescumm utility used to be used to extract those files.
+			// While that is still possible, we now support reading those files
 			// directly. The first step is to check whether one of them is present
-			// (we do that here); the rest is handled by the  ScummFile class and 
+			// (we do that here); the rest is handled by the  ScummFile class and
 			// code in openResourceFile() (and in the Sound class, for MONSTER.SOU
 			// handling).
 			assert(_game.version >= 5 && _game.heversion == 0);
 			_fileHandle = new ScummFile();
 			_containerFile = _filenamePattern.pattern;
-			
-			
+
+
 			// We now have to determine the correct _filenamePattern. To do this
-			// we simply hardcode the possibilites. 
+			// we simply hardcode the possibilites.
 			const char *p1 = 0, *p2 = 0;
 			switch (_game.id) {
 			case GID_INDY4:
@@ -1069,9 +1072,9 @@ int ScummEngine::init() {
 				_game.features |= GF_DEMO;
 			} else
 				error("Couldn't find known subfile inside container file '%s'", _containerFile.c_str());
-			
+
 			_fileHandle->close();
-			
+
 		} else {
 			error("kGenUnchanged used with unsupported platform");
 		}
@@ -1079,7 +1082,7 @@ int ScummEngine::init() {
 		// Regular access, no container file involved
 		_fileHandle = new ScummFile();
 	}
-	
+
 	// Load CJK font, if present
 	// Load it earlier so _useCJKMode variable could be set
 	loadCJKFont();
@@ -1126,7 +1129,7 @@ void ScummEngine::setupScumm() {
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (_game.features & GF_AUDIOTRACKS) {
 		checkCD();
-	
+
 		int cd_num = ConfMan.getInt("cdrom");
 		if (cd_num >= 0)
 			_system->openCD(cd_num);
@@ -1377,7 +1380,7 @@ void ScummEngine::resetScumm() {
 	}
 	camera._follows = 0;
 
-	virtscr[0].xstart = 0;
+	_virtscr[0].xstart = 0;
 
 	_mouse.x = 104;
 	_mouse.y = 56;
@@ -1465,7 +1468,7 @@ void ScummEngine_v4::resetScumm() {
 	ScummEngine::resetScumm();
 
 	// WORKAROUND for bug in boot script of Loom (CD)
-	// The boot script sets the characters of string 21, 
+	// The boot script sets the characters of string 21,
 	// before creating the string.resource.
 	if (_game.id == GID_LOOM) {
 		_res->createResource(rtString, 21, 12);
@@ -1546,7 +1549,7 @@ void ScummEngine_v99he::resetScumm() {
 void ScummEngine::setupMusic(int midi) {
 	int midiDriver = MidiDriver::detectMusicDriver(midi);
 	_native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-	
+
 	switch (midiDriver) {
 	case MD_NULL:
 		_musicType = MDT_NONE;
@@ -1598,7 +1601,7 @@ void ScummEngine::setupMusic(int midi) {
 			_musicType = MDT_ADLIB;
 		}
 	}
-	
+
 	// DOTT + SAM use General MIDI, so they shouldn't use GS settings
 	if ((_game.id == GID_TENTACLE) || (_game.id == GID_SAMNMAX))
 		_enable_gs = false;
@@ -1660,7 +1663,7 @@ void ScummEngine::setupMusic(int midi) {
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
 			// YM2162 driver can't handle midi->getPercussionChannel(), NULL shouldn't init MT-32/GM/GS
-			if ((midi != MDT_TOWNS) && (midi != MDT_NONE)) { 
+			if ((midi != MDT_TOWNS) && (midi != MDT_NONE)) {
 				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
 				if (midiDriver != MD_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
 					_imuse->property(IMuse::PROP_GS, _enable_gs);
@@ -1734,11 +1737,11 @@ int ScummEngine::go() {
 
 		if (_debugger->isAttached())
 			_debugger->onFrame();
-	
+
 		// Randomize the PRNG by calling it at regular intervals. This ensures
 		// that it will be in a different state each time you run the program.
 		_rnd.getRandomNumber(2);
-	
+
 		diff -= _system->getMillis();
 		waitForTimer(delta * 15 + diff);
 		diff = _system->getMillis();
@@ -1813,7 +1816,7 @@ int ScummEngine::scummLoop(int delta) {
 		CHARSET_1();
 
 	processInput();
-	
+
 	scummLoop_updateScummVars();
 
 	if (_game.features & GF_AUDIOTRACKS) {
@@ -1962,12 +1965,12 @@ int ScummEngine_v90he::scummLoop(int delta) {
 	}
 
 	int ret = ScummEngine::scummLoop(delta);
-	
+
 	_sprite->updateImages();
 	if (_game.heversion >= 98) {
 		_logicHE->endOfFrame();
 	}
-	
+
 	return ret;
 }
 #endif
@@ -2132,7 +2135,7 @@ void ScummEngine_v7::scummLoop_handleSound() {
 	ScummEngine_v6::scummLoop_handleSound();
 	if (_imuseDigital) {
 		_imuseDigital->flushTracks();
-		// In CoMI and the full (non-demo) version of The Dig, also invoke IMuseDigital::refreshScripts 
+		// In CoMI and the full (non-demo) version of The Dig, also invoke IMuseDigital::refreshScripts
 		if ( ((_game.id == GID_DIG) && (!(_game.features & GF_DEMO))) || (_game.id == GID_CMI) )
 			_imuseDigital->refreshScripts();
 	}
@@ -2257,7 +2260,7 @@ void ScummEngine::pauseEngineIntern(bool pause) {
 		// Pause sound & video
 		_oldSoundsPaused = _sound->_soundsPaused;
 		_sound->pauseSounds(true);
-	
+
 	} else {
 		// Update the screen to make it less likely that the player will see a
 		// brief cursor palette glitch when the GUI is disabled.

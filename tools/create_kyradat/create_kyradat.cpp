@@ -20,6 +20,12 @@
  *
  */
 
+// HACK to allow building with the SDL backend on MinGW
+// see bug #1800764 "TOOLS: MinGW tools building broken"
+#ifdef main
+#undef main
+#endif // main
+
 #include "create_kyradat.h"
 
 #include "md5.h"
@@ -40,7 +46,7 @@ enum {
 #include "amiga.h"
 
 const Game kyra1FanTranslations[] = {
-	{ kKyra1, IT_ITA, kTalkieVersion, "2bffb79bda6c3ce1f7241b4c4305ee2c", kyra1FreCD },
+	{ kKyra1, IT_ITA, kTalkieVersion, "d0f1752098236083d81b9497bd2b6989", kyra1FreCD },
 	GAME_DUMMY_ENTRY
 };
 
@@ -58,7 +64,7 @@ const ExtractType extractTypeTable[] = {
 	{ kTypeRoomList, extractRooms, createFilename },
 	{ kTypeShapeList, extractShapes, createFilename },
 	{ kTypeRawData, extractRaw, createFilename },
-	{ -1, 0 }
+	{ -1, 0, 0}
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -336,10 +342,16 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 					// We simply skip every other string
 					if (i == size)
 						continue;
-					uint32 size = strlen((const char*) data + i);
-					i += size; targetsize = --targetsize - size;
+					uint32 len = strlen((const char*) data + i);
+					i += len;
+#if 1
+					// FIXME: Not sure whether this correct; the original code was ambiguious, see below
+					targetsize = targetsize - 1 - len;
+#else
+					targetsize = --targetsize - len;	// FIXME: This operation is undefined
+#endif
 					while (!data[++i]) {
-						if (i == size)
+						if (i == len)
 							break;
 						targetsize--;
 					}
@@ -359,7 +371,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	uint8 *buffer = new uint8[targetsize];
 	assert(buffer);
 	uint8 *output = buffer;
-	uint8 *input = (uint8*) data;
+	const uint8 *input = (const uint8*) data;
 
 	WRITE_BE_UINT32(output, entries); output += 4;
 	if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
@@ -404,7 +416,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	} else if (g->special == kAmigaVersion) {
 		// we need to strip some aligment zeros out here
 		int dstPos = 0;
-		for (int i = 0; i < size; ++i) {
+		for (uint32 i = 0; i < size; ++i) {
 			if (!data[i] && ((i+1) & 0x1))
 				continue;
 			*output++ = data[i];

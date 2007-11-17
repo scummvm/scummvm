@@ -22,7 +22,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/scumm.h"
 #include "scumm/akos.h"
 #include "scumm/bomp.h"

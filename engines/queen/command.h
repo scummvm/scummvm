@@ -33,46 +33,49 @@ namespace Queen {
 
 class QueenEngine;
 
-struct CmdText {
+class CmdText {
+public:
+
+	static CmdText *makeCmdTextInstance(uint8 y, QueenEngine *vm);
 
 	CmdText(uint8 y, QueenEngine *vm);
+	virtual ~CmdText() {}
 
 	//! reset the command sentence
 	void clear();
 
 	//! display the command sentence using the specified color
-	void display(InkColor color);
+	void display(InkColor color, const char *command = 0, bool outlined = false);
 
 	//! display a temporary command sentence using the specified parameters
-	void displayTemp(InkColor color, Verb v, const char *name = NULL, bool outlined = false);
+	void displayTemp(InkColor color, Verb v);
 
 	//! display a temporary command sentence using the specified parameters
-	void displayTemp(InkColor color, const char *name, bool outlined = false);
+	virtual void displayTemp(InkColor color, const char *name, bool outlined);
 
 	//! set the verb for the command sentence
 	void setVerb(Verb v);
 
 	//! set the link word (between verb and object) for the command sentence
-	void addLinkWord(Verb v);
+	virtual void addLinkWord(Verb v);
 
 	//! add an object name to the command sentence
-	void addObject(const char *objName);
+	virtual void addObject(const char *objName);
 
 	//! returns true if the command sentence is empty
-	bool isEmpty() const;
+	bool isEmpty() const { return _command[0] == 0; }
 
 	enum {
 		MAX_COMMAND_LEN = 256,
 		COMMAND_Y_POS   = 151
 	};
 
-	uint8 _y;
-
-	//! flag indicating if the words in the sentence are reversed (hebrew version)
-	bool _isReversed;
+protected:
 
 	//! buffer containing the current command sentence
 	char _command[MAX_COMMAND_LEN];
+
+	uint8 _y;
 
 	QueenEngine *_vm;
 };
@@ -217,7 +220,7 @@ private:
 	uint16 _numCmdGameState;
 
 	//! textual form of the command (displayed between room and panel areas)
-	CmdText _cmdText;
+	CmdText *_cmdText;
 
 	//! flag indicating that the current command is fully constructed
 	bool _parse;

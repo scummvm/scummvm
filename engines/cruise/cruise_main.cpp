@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/events.h"
 
@@ -33,6 +33,8 @@
 namespace Cruise {
 
 unsigned int timer = 0;
+
+gfxEntryStruct* linkedMsgList = NULL;
 
 void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 color) {
 	int32 i;
@@ -71,15 +73,13 @@ void drawInfoStringSmallBlackBox(uint8 *string) {
 }
 
 void loadPakedFileToMem(int fileIdx, uint8 *buffer) {
-	//changeCursor(1);
+	changeCursor(CURSOR_DISK);
 
-	currentVolumeFile.seek(volumePtrToFileDescriptor[fileIdx].offset,
-	    SEEK_SET);
-	currentVolumeFile.read(buffer,
-	    volumePtrToFileDescriptor[fileIdx].size);
+	currentVolumeFile.seek(volumePtrToFileDescriptor[fileIdx].offset, SEEK_SET);
+	currentVolumeFile.read(buffer, volumePtrToFileDescriptor[fileIdx].size);
 }
 
-int loadScriptSub1(int scriptIdx, int param) {
+int getNumObjectsByClass(int scriptIdx, int param) {
 	objDataStruct *ptr2;
 	int counter;
 	int i;
@@ -87,18 +87,18 @@ int loadScriptSub1(int scriptIdx, int param) {
 	if (!overlayTable[scriptIdx].ovlData)
 		return (0);
 
-	ptr2 = overlayTable[scriptIdx].ovlData->objDataTable;
+	ptr2 = overlayTable[scriptIdx].ovlData->arrayObject;
 
 	if (!ptr2)
 		return (0);
 
-	if (overlayTable[scriptIdx].ovlData->numObjData == 0)
+	if (overlayTable[scriptIdx].ovlData->numObj == 0)
 		return (0);
 
 	counter = 0;
 
-	for (i = 0; i < overlayTable[scriptIdx].ovlData->numObjData; i++) {
-		if (ptr2[i].var0 == param) {
+	for (i = 0; i < overlayTable[scriptIdx].ovlData->numObj; i++) {
+		if (ptr2[i]._class == param) {
 			counter++;
 		}
 	}
@@ -130,12 +130,12 @@ void resetFileEntryRange(int param1, int param2) {
 	}
 }
 
-int getProcParam(int overlayIdx, int param2, uint8 *name) {
-	int numExport;
+int getProcParam(int overlayIdx, int param2, const char *name) {
+	int numSymbGlob;
 	int i;
-	exportEntryStruct *exportDataPtr;
-	uint8 *exportNamePtr;
-	uint8 exportName[80];
+	exportEntryStruct *arraySymbGlob;
+	char *exportNamePtr;
+	char exportName[80];
 
 	if (!overlayTable[overlayIdx].alreadyLoaded)
 		return 0;
@@ -143,20 +143,19 @@ int getProcParam(int overlayIdx, int param2, uint8 *name) {
 	if (!overlayTable[overlayIdx].ovlData)
 		return 0;
 
-	numExport = overlayTable[overlayIdx].ovlData->numExport;
-	exportDataPtr = overlayTable[overlayIdx].ovlData->exportDataPtr;
-	exportNamePtr = overlayTable[overlayIdx].ovlData->exportNamesPtr;
+	numSymbGlob = overlayTable[overlayIdx].ovlData->numSymbGlob;
+	arraySymbGlob = overlayTable[overlayIdx].ovlData->arraySymbGlob;
+	exportNamePtr = overlayTable[overlayIdx].ovlData->arrayNameSymbGlob;
 
 	if (!exportNamePtr)
 		return 0;
 
-	for (i = 0; i < numExport; i++) {
-		if (exportDataPtr[i].var4 == param2) {
-			strcpyuint8(exportName,
-			    exportDataPtr[i].offsetToName + exportNamePtr);
+	for (i = 0; i < numSymbGlob; i++) {
+		if (arraySymbGlob[i].var4 == param2) {
+			strcpy(exportName, arraySymbGlob[i].offsetToName + exportNamePtr);
 
-			if (!strcmpuint8(exportName, name)) {
-				return (exportDataPtr[i].idx);
+			if (!strcmp(exportName, name)) {
+				return (arraySymbGlob[i].idx);
 			}
 		}
 	}
@@ -164,12 +163,12 @@ int getProcParam(int overlayIdx, int param2, uint8 *name) {
 	return 0;
 }
 
-void changeScriptParamInList(int param1, int param2, scriptInstanceStruct *pScriptInstance, int newValue, int param3) {
+void changeScriptParamInList(int param1, int param2, scriptInstanceStruct *pScriptInstance, int oldFreeze, int newValue) {
 	pScriptInstance = pScriptInstance->nextScriptPtr;
 	while (pScriptInstance) {
 		if ((pScriptInstance->overlayNumber == param1) || (param1 == -1))
 		    if ((pScriptInstance->scriptNumber == param2) || (param2 == -1))
-				if ((pScriptInstance->freeze == param3) || (param3 == -1)) {
+				if ((pScriptInstance->freeze == oldFreeze) || (oldFreeze == -1)) {
 					pScriptInstance->freeze = newValue;
 		}
 
@@ -186,7 +185,7 @@ void initBigVar3() {
 		}
 
 		filesDatabase[i].subData.ptr = NULL;
-		filesDatabase[i].subData.ptr2 = NULL;
+		filesDatabase[i].subData.ptrMask = NULL;
 
 		filesDatabase[i].subData.index = -1;
 		filesDatabase[i].subData.resourceType = 0;
@@ -214,15 +213,15 @@ ovlData3Struct *getOvlData3Entry(int32 scriptNumber, int32 param) {
 		return NULL;
 	}
 
-	if (ovlData->numScripts1 <= param) {
+	if (ovlData->numProc <= param) {
 		return NULL;
 	}
 
-	if (!ovlData->data3Table) {
+	if (!ovlData->arrayProc) {
 		return NULL;
 	}
 
-	return (&ovlData->data3Table[param]);
+	return (&ovlData->arrayProc[param]);
 }
 
 ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param) {
@@ -236,7 +235,7 @@ ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param) {
 		return NULL;
 	}
 
-	if (ovlData->numScripts2 <= param) {
+	if (ovlData->numRel <= param) {
 		return NULL;
 	}
 
@@ -330,7 +329,7 @@ void removeExtention(const char *name, char *buffer) {	// not like in original
 
 int lastFileSize;
 
-int loadFileSub1(uint8 **ptr, uint8 *name, uint8 *ptr2) {
+int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 	int i;
 	char buffer[256];
 	int fileIdx;
@@ -339,36 +338,36 @@ int loadFileSub1(uint8 **ptr, uint8 *name, uint8 *ptr2) {
 
 	for (i = 0; i < 64; i++) {
 		if (mediumVar[i].ptr) {
-			if (!strcmpuint8(mediumVar[i].name, name)) {
+			if (!strcmp(mediumVar[i].name, name)) {
 				printf("Unsupported code in loadFIleSub1 !\n");
 				exit(1);
 			}
 		}
 	}
 
-	getFileExtention((char *)name, buffer);
+	getFileExtention(name, buffer);
 
 	if (!strcmp(buffer, ".SPL")) {
-		removeExtention((char *)name, buffer);
+		removeExtention(name, buffer);
 
-		// if(useH32)
+		// if (useH32)
 		{
-			strcatuint8(buffer, ".H32");
+			strcat(buffer, ".H32");
 		}
 		/* else
-		 * if(useAdlib)
+		 * if (useAdlib)
 		 * {
 		 * strcatuint8(buffer,".ADL");
 		 * }
 		 * else
-		 * { 
+		 * {
 		 * strcatuint8(buffer,".HP");
 		 * } */
 	} else {
-		strcpyuint8(buffer, name);
+		strcpy(buffer, name);
 	}
 
-	fileIdx = findFileInDisks((uint8 *) buffer);
+	fileIdx = findFileInDisks(buffer);
 
 	if (fileIdx < 0)
 		return (-18);
@@ -418,14 +417,14 @@ void resetFileEntry(int32 entryNumber) {
 	free(filesDatabase[entryNumber].subData.ptr);
 
 	filesDatabase[entryNumber].subData.ptr = NULL;
-	filesDatabase[entryNumber].subData.ptr2 = NULL;
+	filesDatabase[entryNumber].subData.ptrMask = NULL;
 	filesDatabase[entryNumber].widthInColumn = 0;
 	filesDatabase[entryNumber].width = 0;
 	filesDatabase[entryNumber].resType = 0;
 	filesDatabase[entryNumber].height = 0;
 	filesDatabase[entryNumber].subData.index = -1;
 	filesDatabase[entryNumber].subData.resourceType = 0;
-	filesDatabase[entryNumber].subData.field_1C = 0;
+	filesDatabase[entryNumber].subData.compression = 0;
 	filesDatabase[entryNumber].subData.name[0] = 0;
 
 }
@@ -443,7 +442,7 @@ int initAllData(void) {
 	setupOpcodeTable();
 	initOverlayTable();
 
-	setup1 = 0;
+	stateID = 0;
 	currentActiveBackgroundPlane = 0;
 
 	freeDisk();
@@ -465,7 +464,7 @@ int initAllData(void) {
 
 	for (i = 0; i < 257; i++) {
 		filesDatabase[i].subData.ptr = NULL;
-		filesDatabase[i].subData.ptr2 = NULL;
+		filesDatabase[i].subData.ptrMask = NULL;
 	}
 
 	initBigVar3();
@@ -478,7 +477,7 @@ int initAllData(void) {
 	resetActorPtr(&actorHead);
 	resetBackgroundIncrustList(&backgroundIncrustHead);
 
-	bootOverlayNumber = loadOverlay((const uint8 *) "AUTO00");
+	bootOverlayNumber = loadOverlay("AUTO00");
 
 #ifdef DUMP_SCRIPT
 	loadOverlay("TITRE");
@@ -569,11 +568,11 @@ int initAllData(void) {
 	if (bootOverlayNumber) {
 		positionInStack = 0;
 
-		attacheNewScriptToTail(bootOverlayNumber, &procHead, 0, 20, 0, 0, scriptType_PROC);
+		attacheNewScriptToTail(&procHead, bootOverlayNumber, 0, 20, 0, 0, scriptType_PROC);
 		scriptFunc2(bootOverlayNumber, &procHead, 1, 0);
 	}
 
-	strcpyuint8(systemStrings.bootScriptName, "AUTO00");
+	strcpy(systemStrings.bootScriptName, "AUTO00");
 
 	return (bootOverlayNumber);
 }
@@ -605,217 +604,135 @@ int removeFinishedScripts(scriptInstanceStruct *ptrHandle) {
 	return (0);
 }
 
-int nePasAffichierMenuDialogue;
-int var37 = 0;
-int var38 = 0;
+bool testMask(int x, int y, unsigned char* pData, int stride)
+{
+	unsigned char* ptr = y * stride + x/8 + pData;
 
-int getCursorFromObject(int mouseX, int mouseY, int *outX, int *outY) {
-	int16 var_2;
-	int16 var_4;
-	int16 var_14;
-	int16 var_16;
-	objectParamsQuery params;
-	int16 var_10;
-	int16 var_E;
-	int16 var_C;
-//  int16 var_42;
-	int16 var_A;
-	int16 var_6;
+	unsigned char bitToTest = 0x80 >> (x & 7);
 
+	if((*ptr) & bitToTest)
+		return true;
+	return false;
+}
+
+int buttonDown;
+int selectDown = 0;
+int menuDown = 0;
+
+int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 	char objectName[80];
 
 	cellStruct *currentObject = cellHead.prev;
 
 	while (currentObject) {
-		if (currentObject->overlay >= 0) {
-			if (overlayTable[currentObject->overlay].alreadyLoaded) {
-				if (currentObject->type == 4
-				    || currentObject->type == 1
-				    || currentObject->type == 9
-				    || currentObject->type == 3) {
-					strcpy(objectName,
-					    getObjectName(currentObject->idx,
-						overlayTable[currentObject->
-						    overlay].ovlData->
-						specialString2));
+		if (currentObject->overlay > 0 && overlayTable[currentObject->overlay].alreadyLoaded && (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT || currentObject->type == OBJ_TYPE_VIRTUEL)) {
+			const char* pObjectName = getObjectName(currentObject->idx, overlayTable[currentObject->overlay].ovlData->arrayNameObj);
 
-					if (strlen(objectName)) {
-						if (currentObject->freeze == 0) {
-							var_2 =
-							    currentObject->idx;
-							var_4 =
-							    currentObject->
-							    overlay;
-							var_14 =
-							    currentObject->
-							    followObjectIdx;
-							var_16 =
-							    currentObject->
-							    followObjectOverlayIdx;
+			strcpy(objectName, pObjectName);
 
-							getMultipleObjectParam
-							    (currentObject->
-							    overlay,
-							    currentObject->idx,
-							    &params);
+			if (strlen(objectName) && (currentObject->freeze == 0)) {
+				int objIdx = currentObject->idx;
+				int objOvl = currentObject->overlay;
+				int linkedObjIdx = currentObject->followObjectIdx;
+				int linkedObjOvl = currentObject->followObjectOverlayIdx;
 
-							var_10 = 0;
-							var_E = 0;
-							var_C = 0;
+				objectParamsQuery params;
+				getMultipleObjectParam(objOvl, objIdx, &params);
 
-							if ((var_4 != var_16)
-							    && (var_2 !=
-								var_14)) {
-								getMultipleObjectParam
-								    (var_16,
-								    var_14,
-								    &params);
+				int x2 = 0;
+				int y2 = 0;
+				int j2 = 0;
 
-								var_C =
-								    params.X;
-								var_E =
-								    params.Y;
-								var_10 =
-								    params.
-								    fileIdx;
-							}
+				if ((objOvl != linkedObjOvl) || (objIdx != linkedObjIdx)) {
+					objectParamsQuery params2;
+					getMultipleObjectParam(linkedObjOvl, linkedObjIdx, &params2);
 
-							if (params.var5 >= 0
-							    && params.
-							    fileIdx >= 0) {
-								if (currentObject->type == 3) {
-									assert
-									    (0);
+					x2 = params2.X;
+					y2 = params2.Y;
+					j2 = params2.fileIdx;
+				}
 
-									var_2 =
-									    params.
-									    scale;
-									var_A =
-									    params.
-									    X +
-									    var_C;
+				if (params.var5 >= 0 && params.fileIdx >= 0) {
+					if (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT) {
+						int x = params.X + x2;
+						int y = params.Y + y2;
+						int j = params.fileIdx;
 
-									// TODO: this var3 is stupid, investigate...
-									if ((var_A <= mouseX) && (var_A + params.fileIdx >= mouseX) && (mouseY >= params.Y + var_E) && (params.Y + var_E + var2 >= mouseY)) {
-										*outX
-										    =
-										    var_16;
-										*outY
-										    =
-										    var_14;
+						if (j >= 0) {
+							j += j2;
+						}
 
-										return
-										    (currentObject->
-										    type);
-									}
-								} else
-								    if
-								    (currentObject->
-								    type == 4
-								    ||
-								    currentObject->
-								    type == 1
-								    ||
-								    currentObject->
-								    type ==
-								    9) {
-									int si;
-									int var_8;
-									int di;
+						if ((filesDatabase[j].subData.resourceType == OBJ_TYPE_POLY) && (filesDatabase[j].subData.ptr)) {
+							int zoom = params.scale;
 
-									var_A =
-									    params.
-									    X +
-									    var_C;
-									var_6 =
-									    params.
-									    Y +
-									    var_E;
+							int16* dataPtr = (int16*)filesDatabase[j].subData.ptr;
 
-									di = params.fileIdx;
+							if (*dataPtr == 0) {
+								int16 offset;
+								int16 newX;
+								int16 newY;
 
-									if (di
-									    <
-									    0)
-									{
-										di += var_10;
-									}
+								dataPtr ++;
 
-/*                  if((filesDatabase[di].subData.resourceType == 8) && (filesDatabase[di].subData.ptr))
-                  {
-                    assert(0);
-                  }
-                  else */
-									{
-										var_4
-										    =
-										    filesDatabase
-										    [di].
-										    resType;
+								offset = *(dataPtr++);
+								flipShort(&offset);
 
-										if (var_4 == 1) {
-											var_C
-											    =
-											    filesDatabase
-											    [di].
-											    widthInColumn
-											    /
-											    2;
-										} else {
-											var_C
-											    =
-											    filesDatabase
-											    [di].
-											    width;
-										}
+								newX = *(dataPtr++);
+								flipShort(&newX);
 
-										var_8
-										    =
-										    filesDatabase
-										    [di].
-										    height;
+								newY = *(dataPtr++);
+								flipShort(&newY);
 
-										var_2
-										    =
-										    mouseX
-										    -
-										    var_A;
-										si = mouseY - var_6;
+								offset += j;
 
-										if (var_2 > 0) {
-											if (var_C > var_2) {
-												if (si > 0) {
-													if (var_8 >= si) {
-														if (filesDatabase[di].subData.ptr) {
-															if (var_4 == 1) {
-															} else {
-															}
-
-															printf
-															    ("should compare to mask in getCursorFromObject...\n");
-
-															*outX
-															    =
-															    var_16;
-															*outY
-															    =
-															    var_14;
-
-															printf
-															    ("Selected: %s\n",
-															    objectName);
-
-															return
-															    currentObject->
-															    type;
-														}
-													}
-												}
-											}
-										}
+								if (offset >= 0 ) {
+									if (filesDatabase[offset].resType == 0 && filesDatabase[offset].subData.ptr) {
+										dataPtr = (int16 *)filesDatabase[offset].subData.ptr;
 									}
 								}
+
+								zoom = -zoom;
+								x -= newX;
+								y -= newY;
 							}
+
+							if (dataPtr && findPoly((char*)dataPtr, x, y, zoom, mouseX, mouseY)) {
+								*outObjOvl = linkedObjOvl;
+								*outObjIdx = linkedObjIdx;
+
+								return (currentObject->type);
+							}
+						} else {
+							// int numBitPlanes = filesDatabase[j].resType;
+
+							int nWidth;
+							int nHeight;
+
+							nWidth = filesDatabase[j].width;
+							nHeight = filesDatabase[j].height;
+
+							int offsetX = mouseX - x;
+							int offsetY = mouseY - y;
+
+							if ((offsetX >= 0) && (offsetX < nWidth) && (offsetY >= 0) && (offsetY <= nHeight) && filesDatabase[j].subData.ptr) {
+								if(testMask(offsetX, offsetY, filesDatabase[j].subData.ptrMask, filesDatabase[j].width/8)) {
+									*outObjOvl = linkedObjOvl;
+									*outObjIdx = linkedObjIdx;
+									return currentObject->type;
+								}
+							}
+						}
+					} else if (currentObject->type == OBJ_TYPE_VIRTUEL) {
+						int x = params.X + x2;
+						int y = params.Y + y2;
+						int width = params.fileIdx;
+						int height = params.scale;
+
+						if ((mouseX >= x) && (mouseX <= x+width) && (mouseY >= y) && (mouseY <= y+height)) {
+							*outObjOvl = linkedObjOvl;
+							*outObjIdx = linkedObjIdx;
+
+							return (currentObject->type);
 						}
 					}
 				}
@@ -825,8 +742,8 @@ int getCursorFromObject(int mouseX, int mouseY, int *outX, int *outY) {
 		currentObject = currentObject->prev;
 	}
 
-	*outX = 0;
-	*outY = 0;
+	*outObjOvl = 0;
+	*outObjIdx = 0;
 
 	return -1;
 }
@@ -846,84 +763,57 @@ void *allocAndZero(int size) {
 	return ptr;
 }
 
-char *getObjectName(int index, uint8 *string) {
-	int i;
-	char *ptr = (char *)string;
+const char *getObjectName(int index, const char *string) {
+	const char *ptr = string;
 
 	if (!string)
 		return NULL;
 
-	for (i = 0; i < index; i++) {
-		while (*ptr) {
-			ptr++;
-		}
-		ptr++;
+	int i = 0;
+//	int j = 0;
+
+	while (i < index)
+	{
+		ptr += strlen(ptr)+1;
+		i++;
 	}
 	return ptr;
 }
 
-int buildInventorySub1(int overlayIdx, int objIdx) {
-	objDataStruct *pObjectData =
-	    getObjectDataFromOverlay(overlayIdx, objIdx);
+int getObjectClass(int overlayIdx, int objIdx) {
+	objDataStruct *pObjectData = getObjectDataFromOverlay(overlayIdx, objIdx);
 
 	if (pObjectData) {
-		return pObjectData->type;
+		return pObjectData->_class;
 	} else {
 		return -11;
 	}
 }
 
 void buildInventory(int X, int Y) {
-	int numObjectInInventory = 0;
 	menuStruct *pMenu;
 
 	pMenu = createMenu(X, Y, "Inventaire");
-
 	menuTable[1] = pMenu;
 
-	if (pMenu) {
-		numObjectInInventory = 0;
+	if(pMenu == NULL)
+		return;
 
-		if (numOfLoadedOverlay > 1) {
-			int i;
+	int numObjectInInventory = 0;
+	for (int i = 1; i < numOfLoadedOverlay; i++) {
+		ovlDataStruct *pOvlData = overlayTable[i].ovlData;
 
-			for (i = 1; i < numOfLoadedOverlay; i++) {
-				ovlDataStruct *pOvlData =
-				    overlayTable[i].ovlData;
+		if (overlayTable[i].alreadyLoaded) {
+			if(overlayTable[i].ovlData->arrayObject) {
+				for (int j = 0; j < pOvlData->numObj; j++) {
+					if (getObjectClass(i, j) != 3) {
+						int16 returnVar;
 
-				if (pOvlData && pOvlData->objDataTable) {
-					int var_2;
+						getSingleObjectParam(i, j, 5, &returnVar);
 
-					var_2 = 0;
-
-					if (pOvlData->numObjData) {
-						int j;
-
-						for (j = 0;
-						    j < pOvlData->numObjData;
-						    j++) {
-							if (buildInventorySub1
-							    (i, j) != 3) {
-								int16
-								    returnVar;
-
-								getSingleObjectParam
-								    (i, j, 5,
-								    &returnVar);
-
-								if (returnVar <
-								    -1) {
-									addSelectableMenuEntry
-									    (i,
-									    j,
-									    pMenu,
-									    1,
-									    -1,
-									    getObjectName
-									    (j, pOvlData->specialString2));
-									numObjectInInventory++;
-								}
-							}
+						if (returnVar < -1) {
+							addSelectableMenuEntry(i, j, pMenu, 1, -1, getObjectName(j, pOvlData->arrayNameObj));
+							numObjectInInventory++;
 						}
 					}
 				}
@@ -969,221 +859,104 @@ menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu) {
 	return NULL;
 }
 
-int callInventoryObject(int param0, int param1, int x, int y) {
-	int var_2C;
-	int var_30;
-	int var_28;
-	int var_1E;
-	int16 returnVar;
+bool createDialog(int objOvl, int objIdx, int x, int y) {
+	bool found = false;
+	int testState1 = -1;
+	int testState2 = -1;
+	int j;
+	int16 objectState;
+	int16 objectState2;
 
-	var_30 = -1;
+	getSingleObjectParam(objOvl, objIdx, 5, &objectState);
 
-	getSingleObjectParam(param0, param1, 5, &returnVar);
+	menuTable[0] = createMenu(x, y, "Parler de...");
 
-	var_2C = 0;
-	var_28 = 1;
+	for (j = 1; j < numOfLoadedOverlay; j++) {
+		if (overlayTable[j].alreadyLoaded) {
+			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
 
-	for (var_1E = 1; var_1E < numOfLoadedOverlay; var_1E++) {
-		ovlDataStruct *var_2A = overlayTable[var_1E].ovlData;
-		if (var_2A->ptr1) {
-			int var_18;
-			int var_14;
+			for (int i=0; i<idHeader; i++) {
+				linkDataStruct* ptrHead = &overlayTable[j].ovlData->arrayMsgRelHeader[i];
+				int thisOvl = ptrHead->obj1Overlay;
 
-			var_18 = var_2A->numLinkData;
+				if (!thisOvl) {
+					thisOvl = j;
+				}
 
-			if (var_18) {
-				int var_16;
+				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
 
-				var_16 = 0;
+				getSingleObjectParam(thisOvl, ptrHead->obj1Number, 5, &objectState2);
 
-				for (var_14 = 0; var_14 < var_18; var_14++) {
-					objDataStruct *pObject;
-					linkDataStruct *var_34;
-					int var_2;
+				if (pObject && (pObject->_class == THEME) && (objectState2 <-1)) {
 
-					var_34 = &var_2A->linkDataPtr[var_14];
-
-					var_2 = var_34->stringIdx;
-
-					if (!var_2) {
-						var_2 = var_1E;
+					thisOvl = ptrHead->obj2Overlay;
+					if (!thisOvl) {
+						thisOvl = j;
 					}
 
-					pObject =
-					    getObjectDataFromOverlay(var_2,
-					    var_34->stringNameOffset);
+					if((thisOvl==objOvl) && (ptrHead->obj2Number==objIdx)) {
+						int verbeOvl = ptrHead->verbOverlay;
+						int obj1Ovl = ptrHead->obj1Overlay;
+						int obj2Ovl = ptrHead->obj2Overlay;
 
-					if (var_2 == param0) {
-						if (param1 ==
-						    var_34->stringNameOffset) {
-							if (pObject) {
-								if (pObject->
-								    type !=
-								    3) {
-									char var_214[80];
-									char var_1C4[80];
-									char var_174[80];
-									char var_124[80];
-									char var_D4[80];
-									char var_84[80];
+						if (!verbeOvl) verbeOvl=j;
+						if (!obj1Ovl)  obj1Ovl=j;
+						if (!obj2Ovl)  obj2Ovl=j;
+						
+						char verbe_name[80];
+						char obj1_name[80];
+						char obj2_name[80];
+						char r_verbe_name[80];
+						char r_obj1_name[80];
+						char r_obj2_name[80];
 
-									ovlDataStruct
-									    *var_12;
-									ovlDataStruct
-									    *var_22;
+						verbe_name[0]	=0;
+						obj1_name[0]	=0;
+						obj2_name[0]	=0;
+						r_verbe_name[0] =0;
+						r_obj1_name[0]	=0;
+						r_obj2_name[0]	=0;
 
-									int var_E = var_34->varIdx;
-									int cx
-									    =
-									    var_34->
-									    stringIdx;
-									int var_C = var_34->procIdx;
+						ovlDataStruct *ovl2 = NULL;
+						ovlDataStruct *ovl3 = NULL;
+						ovlDataStruct *ovl4 = NULL;
 
-									int di
-									    =
-									    var_E;
-									if (var_E == 0)
-										di = var_1E;
+						if (verbeOvl > 0)
+							ovl2 = overlayTable[verbeOvl].ovlData;
 
-									var_2 =
-									    cx;
-									if (cx
-									    ==
-									    0)
-										var_2
-										    =
-										    var_1E;
+						if (obj1Ovl > 0)
+							ovl3 = overlayTable[obj1Ovl].ovlData;
 
-									if (var_C == 0)
-										var_C
-										    =
-										    var_1E;
+						if (obj2Ovl > 0)
+							ovl4 = overlayTable[obj2Ovl].ovlData;
 
-									var_12
-									    =
-									    NULL;
-									var_22
-									    =
-									    NULL;
+						if ((ovl3) && (ptrHead->obj1Number >= 0)) {
+							testState1 = ptrHead->obj1OldState;
+						}
+						if ((ovl4) && (ptrHead->obj2Number >= 0)) {
+							testState2 = ptrHead->obj2OldState;
+						}
 
-									var_214
-									    [0]
-									    =
-									    0;
-									var_1C4
-									    [0]
-									    =
-									    0;
-									var_174
-									    [0]
-									    =
-									    0;
-									var_124
-									    [0]
-									    =
-									    0;
-									var_D4
-									    [0]
-									    =
-									    0;
-									var_84
-									    [0]
-									    =
-									    0;
+						if ((ovl4) && (ptrHead->verbNumber>=0) &&
+							((testState1 == -1) || (testState1 == objectState2)) &&
+							((testState2 == -1) || (testState2 == objectState)) ) {
+							if (ovl2->nameVerbGlob) {
+								const char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
+								strcpy(verbe_name, ptr);
 
-									if (di
-									    >
-									    0)
-									{
-										var_22
-										    =
-										    overlayTable
-										    [di].
-										    ovlData;
-									}
+								if (!strlen(verbe_name))
+									attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+								else if (ovl2->nameVerbGlob) {
+									found = true;
+									int color;
 
-									if (var_2 > 0) {
-										var_12
-										    =
-										    overlayTable
-										    [var_2].
-										    ovlData;
-									}
+									if(objectState2==-2)
+										color = colorOfSelectedSaveDrive;
+									else
+										color = -1;
 
-									if (var_12) {
-										if (var_34->stringNameOffset) {
-											var_30
-											    =
-											    var_34->
-											    field_1A;
-											if (var_28) {
-												if (var_12->specialString2) {
-													if (var_30 == -1 || var_30 == returnVar) {
-														char *ptrName = getObjectName(var_34->stringNameOffset, var_12->specialString2);
-
-														menuTable
-														    [0]
-														    =
-														    createMenu
-														    (x,
-														    y,
-														    ptrName);
-														var_28
-														    =
-														    0;
-													}
-												}
-											}
-										}
-									}
-
-									if (var_22) {
-										if (true /*var_34->varNameOffset>=0 */ )	// FIXME: This check is always true since varNameOffset is unsigned
-										{
-											if (var_22->specialString1) {
-												char *ptr = getObjectName(var_34->varNameOffset, var_22->specialString1);
-
-												strcpy
-												    (var_214,
-												    ptr);
-
-												if (var_28 == 0) {
-													if (var_30 == -1 || var_30 == returnVar) {
-														if (strlen(var_214)) {
-															attacheNewScriptToTail
-															    (var_1E,
-															    &relHead,
-															    var_34->
-															    field_2,
-															    30,
-															    currentScriptPtr->
-															    scriptNumber,
-															    currentScriptPtr->
-															    overlayNumber,
-															    scriptType_REL);
-														} else {
-															if (var_22->specialString1) {
-																ptr = getObjectName(var_34->varNameOffset, var_22->specialString1);
-
-																var_2C
-																    =
-																    1;
-
-																addSelectableMenuEntry
-																    (var_1E,
-																    var_14,
-																    menuTable
-																    [0],
-																    1,
-																    -1,
-																    ptr);
-															}
-														}
-													}
-												}
-											}
-										}
-									}
+									ptr = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
+									addSelectableMenuEntry(j, i, menuTable[0], 1, color, ptr);
 								}
 							}
 						}
@@ -1193,26 +966,119 @@ int callInventoryObject(int param0, int param1, int x, int y) {
 		}
 	}
 
-	return var_2C;
+	return found;
+}
+
+bool findRelation(int objOvl, int objIdx, int x, int y) {
+	bool found = false;
+	bool first = true;
+	int testState = -1;
+	int j;
+	int16 objectState;
+
+	getSingleObjectParam(objOvl, objIdx, 5, &objectState);
+
+	for (j = 1; j < numOfLoadedOverlay; j++) {
+		if (overlayTable[j].alreadyLoaded) {
+			int idHeader = overlayTable[j].ovlData->numMsgRelHeader;
+
+			for (int i=0; i<idHeader; i++) {
+				linkDataStruct* ptrHead = &overlayTable[j].ovlData->arrayMsgRelHeader[i];
+				int thisOvl = ptrHead->obj1Overlay;
+
+				if (!thisOvl) {
+					thisOvl = j;
+				}
+
+				//const char* pName = getObjectName(ptrHead->obj1Number, overlayTable[thisOvl].ovlData->arrayNameObj);
+
+				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
+
+				if ((thisOvl == objOvl) && (objIdx == ptrHead->obj1Number) && pObject && (pObject->_class != THEME)) {
+					int verbeOvl = ptrHead->verbOverlay;
+					int obj1Ovl = ptrHead->obj1Overlay;
+					int obj2Ovl = ptrHead->obj2Overlay;
+
+					if (!verbeOvl) verbeOvl=j;
+					if (!obj1Ovl)  obj1Ovl=j;
+					if (!obj2Ovl)  obj2Ovl=j;
+					
+					char verbe_name[80];
+					char obj1_name[80];
+					char obj2_name[80];
+					char r_verbe_name[80];
+					char r_obj1_name[80];
+					char r_obj2_name[80];
+
+					verbe_name[0]	=0;
+					obj1_name[0]	=0;
+					obj2_name[0]	=0;
+					r_verbe_name[0] =0;
+					r_obj1_name[0]	=0;
+					r_obj2_name[0]	=0;
+
+					ovlDataStruct *ovl2 = NULL;
+					ovlDataStruct *ovl3 = NULL;
+					ovlDataStruct *ovl4 = NULL;
+
+					if (verbeOvl > 0)
+						ovl2 = overlayTable[verbeOvl].ovlData;
+
+					if (obj1Ovl > 0)
+						ovl3 = overlayTable[obj1Ovl].ovlData;
+
+					if (obj2Ovl > 0)
+						ovl4 = overlayTable[obj2Ovl].ovlData;
+
+					if ((ovl3) && (ptrHead->obj1Number >= 0)) {
+						testState = ptrHead->obj1OldState;
+
+						if ((first) && (ovl3->arrayNameObj) && ((testState == -1) || (testState == objectState))) {
+							const char *ptrName = getObjectName(ptrHead->obj1Number, ovl3->arrayNameObj);
+
+							menuTable[0] = createMenu(x, y, ptrName);
+							first = false;
+						}
+					}
+					if ((ovl2) && (ptrHead->verbNumber>=0)) {
+						if (ovl2->nameVerbGlob) {
+							const char *ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
+							strcpy(verbe_name, ptr);
+
+							if ( (!first) && ((testState==-1) || (testState==objectState))) {
+								if (!strlen(verbe_name))
+									attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+								else if (ovl2->nameVerbGlob) {
+									found = true;
+									ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
+									addSelectableMenuEntry(j, i, menuTable[0], 1, -1, ptr);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return found;
 }
 
 int processInventory(void) {
 	if (menuTable[1]) {
-		menuElementSubStruct *pMenuElementSub =
-		    getSelectedEntryInMenu(menuTable[1]);
+		menuElementSubStruct *pMenuElementSub = getSelectedEntryInMenu(menuTable[1]);
 
 		if (pMenuElementSub) {
 			//int var2;
 			//int var4;
 
-			var2 = pMenuElementSub->var2;
-			var4 = pMenuElementSub->var4;
+			var2 = pMenuElementSub->ovlIdx;
+			var4 = pMenuElementSub->header;
 
 			freeMenu(menuTable[1]);
 			menuTable[1] = NULL;
 
-			callInventoryObject(var2, var4,
-			    currentMenuElementX + 80, currentMenuElementY);
+			findRelation(var2, var4, currentMenuElementX + 80, currentMenuElementY);
 
 			return 1;
 		} else {
@@ -1224,14 +1090,235 @@ int processInventory(void) {
 	return 0;
 }
 
-int processInput(void) {
-	menuStruct *var_5C;
+void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
+	if (pMenuElement == NULL)
+		return;
 
+	menuElementSubStruct* pCurrent = pMenuElement;
+
+	while (pCurrent != NULL) {
+		int ovlIdx = pCurrent->ovlIdx;
+		int header = pCurrent->header;
+
+		linkDataStruct* pHeader = &overlayTable[ovlIdx].ovlData->arrayMsgRelHeader[header];
+
+		int obj2Ovl = pHeader->obj2Overlay;
+		if (obj2Ovl == 0) {
+			obj2Ovl = ovlIdx;
+		}
+
+		if ((obj2Ovl == nOvl) && (pHeader->obj2Number != -1) && (pHeader->obj2Number == nObj)) {
+//			int x = 60;
+//			int y = 60;
+
+			objectParamsQuery params;
+			memset(&params, 0, sizeof(objectParamsQuery)); // to remove warning
+
+			if (pHeader->obj2Number >= 0) {
+				getMultipleObjectParam(obj2Ovl, pHeader->obj2Number, &params);
+			}
+
+			if ((pHeader->obj2OldState == -1) || (params.scale == pHeader->obj2OldState)) {
+				if (pHeader->type == 30) { // REL
+				attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+
+				if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
+					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
+
+					if (pTrack) {
+						animationStart = false;
+
+						if (pHeader->trackDirection == 9999) {
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = direction(naratorParams.X, naratorParams.Y, pTrack->x_dest, pTrack->y_dest, 0, 0);
+						} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = pHeader->trackDirection;
+						} else {
+							pTrack->x_dest = pHeader->trackX;
+							pTrack->y_dest = pHeader->trackY;
+							pTrack->endDirection = pHeader->trackDirection;
+						}
+
+						pTrack->flag = 1;
+
+						autoTrack = true;
+						userEnabled = 0;
+						changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 0, 9998);
+					}
+				}
+				} else if (pHeader->type == 50) {
+					ASSERT(0);
+				}
+			}
+		}
+
+		pCurrent = pCurrent->pNext;
+	}
+}
+
+int findHighColor() {
+	printf("Unimplemented findHighColor\n");
+	return 1;
+}
+
+void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
+	if (pMenuElement == NULL)
+		return;
+
+	menuElementSubStruct* pCurrent = pMenuElement;
+
+	while (pCurrent != NULL) {
+		int ovlIdx = pCurrent->ovlIdx;
+		int header = pCurrent->header;
+
+		linkDataStruct* pHeader = &overlayTable[ovlIdx].ovlData->arrayMsgRelHeader[header];
+
+		if (pHeader->obj2Number == nObj2) {
+			// REL
+			if (pHeader->type == 30) {
+				attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+
+				if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
+					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
+
+					if (pTrack) {
+						animationStart = false;
+
+						if (pHeader->trackDirection == 9999) {
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = direction(naratorParams.X, naratorParams.Y, pTrack->x_dest, pTrack->y_dest, 0, 0);
+						} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = pHeader->trackDirection;
+						} else {
+							pTrack->x_dest = pHeader->trackX;
+							pTrack->y_dest = pHeader->trackY;
+							pTrack->endDirection = pHeader->trackDirection;
+						}
+
+						pTrack->flag = 1;
+
+						autoTrack = true;
+						userEnabled = 0;
+						changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 0, 9998);
+					}
+				}
+			} else if (pHeader->type == 50) { // MSG
+				int obj1Ovl = pHeader->obj1Overlay;
+				if (!obj1Ovl)
+					obj1Ovl = ovlIdx;
+
+				int x = 60;
+				int y = 40;
+
+				if (pHeader->obj1Number >= 0) {
+					objectParamsQuery params;
+					getMultipleObjectParam(obj1Ovl, pHeader->obj1Number, &params);
+
+					if (narratorOvl > 0) {
+						if ((pHeader->trackX !=-1) && (pHeader->trackY != -1) && (pHeader->trackX != 9999) && (pHeader->trackY != 9999)) {
+							x = pHeader->trackX - 100;
+							y = pHeader->trackY - 150;
+						} else {
+							getMultipleObjectParam(narratorOvl, narratorIdx, &params);
+							x = params.X - 100;
+							y = params.Y - 150;
+						}
+					} else if (params.scale >= 0) {
+						x = params.X - 100;
+						y = params.Y - 40;
+					}
+
+					if (pHeader->obj1NewState != -1) {
+						objInit(obj1Ovl, pHeader->obj1Number, pHeader->obj1NewState);
+					}
+				}
+
+				createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
+				
+				userWait = 1;
+				autoOvl = ovlIdx;
+				autoMsg = pHeader->id;
+
+				if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
+					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
+
+					if (pTrack) {
+						animationStart = false;
+
+						if (pHeader->trackDirection == 9999) {
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = direction(naratorParams.X, naratorParams.Y, pTrack->x_dest, pTrack->y_dest, 0, 0);
+						} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
+							objectParamsQuery naratorParams;
+							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+							pTrack->x_dest = naratorParams.X;
+							pTrack->y_dest = naratorParams.Y;
+							pTrack->endDirection = pHeader->trackDirection;
+						} else {
+							pTrack->x_dest = pHeader->trackX;
+							pTrack->y_dest = pHeader->trackY;
+							pTrack->endDirection = pHeader->trackDirection;
+						}
+
+						pTrack->flag = 1;
+
+						autoTrack = true;
+						userWait = 0;
+						userEnabled = 0;
+						freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
+					}
+				}
+			}
+		} else {
+			linkedRelation = pMenuElement;
+		}
+
+		pCurrent = pCurrent->pNext;
+	}
+}
+
+void closeAllMenu(void) {
+	if(menuTable[0]) {
+		freeMenu(menuTable[0]);
+		menuTable[0] = NULL;
+	}
+
+	if(menuTable[1]) {
+		freeMenu(menuTable[1]);
+		menuTable[1] = NULL;
+	}
+	if (linkedMsgList) {
+		ASSERT(0);
+//					freeMsgList(linkedMsgList);
+	}
+
+	linkedMsgList = NULL;
+	linkedRelation = NULL;
+}
+
+int processInput(void) {
 	int16 mouseX = 0;
 	int16 mouseY = 0;
 	int16 button = 0;
 
-	/*if(inputSub1keyboad())
+	/*if (inputSub1keyboad())
 	 * {
 	 * return 1;
 	 * } */
@@ -1240,27 +1327,25 @@ int processInput(void) {
 
 	if (sysKey != -1) {
 		button = sysKey;
-		mouseX = var11;
-		mouseY = var12;
+		mouseX = sysX;
+		mouseY = sysY;
 		sysKey = -1;
-	} else {
-		if (automaticMode == 0) {
-			getMouseStatus(&main10, &mouseX, &button, &mouseY);
-		}
+	} else if (automaticMode == 0) {
+		getMouseStatus(&main10, &mouseX, &button, &mouseY);
 	}
 
-	if (button) {
-		nePasAffichierMenuDialogue = 0;
+	if (!button) {
+		buttonDown = 0;
 	}
 
 	if (userDelay) {
 		userDelay--;
 		return 0;
 	}
-	// test both buttons
 
+	// test both buttons
 	if (((button & 3) == 3) || keyboardVar == 0x44 || keyboardVar == 0x53) {
-		changeCursor(0);
+		changeCursor(CURSOR_NORMAL);
 		keyboardVar = 0;
 		return (playerMenu(mouseX, mouseY));
 	}
@@ -1269,120 +1354,263 @@ int processInput(void) {
 		return 0;
 	}
 
-	if (currentActiveMenu != -1) {
-		var_5C = menuTable[currentActiveMenu];
+	if ((currentActiveMenu != -1) && menuTable[currentActiveMenu]) {
+		updateMenuMouse(mouseX, mouseY, menuTable[currentActiveMenu]);
+	}
 
-		if (var_5C) {
-			updateMenuMouse(mouseX, mouseY, var_5C);
+	if (dialogueEnabled) {
+		
+		if( menuDown || selectDown || linkedRelation ) {
+			closeAllMenu();
+			menuDown = 0;
+			selectDown = 0;
+			currentActiveMenu = -1;
+			changeCursor(CURSOR_NORMAL);
 		}
-	}
 
-	if (var6) {
-		ASSERT(0);
-	}
+		if((menuTable[0]==NULL) && (!buttonDown)) {
+			int dialogFound = createDialog(dialogueOvl, dialogueObj, xdial, 0);
 
-	if (button & 1) {
-		if (nePasAffichierMenuDialogue == 0) {
-			nePasAffichierMenuDialogue = 1;
-
-			if (mouseVar1) {
-				ASSERT(0);
-			}
-
-			if (var38 == 0)	// are we in inventory mode ?
-			{
-				if (menuTable[0] == 0) {
-					int X;
-					int Y;
-					int objIdx;
-
-					objIdx =
-					    getCursorFromObject(mouseX, mouseY,
-					    &X, &Y);
-
-					if (objIdx != -1) {
-						//ASSERT(0);
-						//moveActor(X,Y,mouseVar1);
-					} else {
-						var34 = mouseX;
-						var35 = mouseY;
-						animationStart = true;
-						var38 = 0;
-					}
-				}
-				//ASSERT(0);
-			} else {
-				if (processInventory()) {
-					var37 = 1;
+			if(menuTable[0]) {
+				if(dialogFound) {
 					currentActiveMenu = 0;
-					var38 = 0;
+				}
+				else {
+					freeMenu(menuTable[0]);
+					menuTable[0] = NULL;
+					currentActiveMenu = -1;
+				}
+			}
+			else {
+				menuDown = 0;
+			}
+		}
+		else {
+			if((button & 1) && (buttonDown == 0)) {
+				if(menuTable[0]) {
+					callRelation(getSelectedEntryInMenu(menuTable[0]), dialogueObj);
+
+					freeMenu(menuTable[0]);
+					menuTable[0] = NULL;
+
+					if (linkedMsgList) {
+						ASSERT(0);
+				//					freeMsgList(linkedMsgList);
+					}
+
+					linkedMsgList = NULL;
+					linkedRelation = NULL;
+
+					changeCursor(CURSOR_NORMAL);
+					currentActiveMenu = -1;
+				}
+				buttonDown = 1;
+			}
+		}
+
+	} else if ((button & 1) && (buttonDown == 0)) {
+		// left click
+		buttonDown = 1;
+
+		// is there a relation
+		if (linkedRelation) {
+			// call sub relation when clicking on an object
+			if (menuDown == 0) {
+				if (menuTable[0]) {
+					int objOvl;
+					int objIdx;
+					int objType;
+
+					objType = findObject(mouseX, mouseY, &objOvl, &objIdx);
+
+					if (objType != -1) {
+						callSubRelation(linkedRelation, objOvl, objIdx);
+					}
+					freeMenu(menuTable[0]);
+					menuTable[0] = NULL;
+				}
+
+				if (linkedMsgList) {
+//					freeMsgList(linkedMsgList);
+				}
+				linkedMsgList = NULL;
+				linkedRelation = NULL;
+				changeCursor(CURSOR_NORMAL);
+			} else { // call sub relation when clicking in inventory
+				if(menuTable[0] && menuTable[1]) {
+					menuElementSubStruct * p0 = getSelectedEntryInMenu(menuTable[1]);
+
+					if(p0)
+						callSubRelation(linkedRelation, p0->ovlIdx, p0->header);
+
+					closeAllMenu();
+					changeCursor(CURSOR_NORMAL);
+				}
+			}
+			selectDown = 0;
+			menuDown = 0;
+		} else {
+			// manage click on object menu
+			if (menuDown == 0) {
+				// Handle left click on an object
+				if (menuTable[0] == 0) {
+					int objOvl;
+					int objIdx;
+					int objType;
+
+					objType = findObject(mouseX, mouseY, &objOvl, &objIdx);
+
+					if (objType != -1) {
+						int relation = findRelation(objOvl, objIdx, mouseX, mouseY);
+						if (menuTable[0]) {
+							if (relation) {
+								currentActiveMenu = 0;
+								selectDown = 1;
+							} else {
+								// object has a name but no relation, just move the character
+								freeMenu(menuTable[0]);
+								menuTable[0] = NULL;
+
+								aniX = mouseX;
+								aniY = mouseY;
+								animationStart = true;
+								buttonDown = 0;
+							}
+						} else {
+							aniX = mouseX;
+							aniY = mouseY;
+							animationStart = true;
+							buttonDown = 0;
+						}
+					}else {
+						// No object found, we move the character to the cursor
+						aniX = mouseX;
+						aniY = mouseY;
+						animationStart = true;
+						buttonDown = 0;
+					}
+				} else {
+					// handle click in menu
+					if (menuTable[0]) {
+						menuElementSubStruct *pMenuElementSub = getSelectedEntryInMenu(menuTable[0]);
+
+						callRelation(pMenuElementSub, -1);
+
+						// if there is a linked relation, close menu
+						if (!linkedRelation) {
+							freeMenu(menuTable[0]);
+							menuTable[0] = NULL;
+							changeCursor(CURSOR_NORMAL);
+						} else { // else create the message for the linked relation
+							char text[80];
+							strcpy(text, menuTable[0]->stringPtr);
+							strcat(text, ":");
+							strcat(text, currentMenuElement->string);
+							linkedMsgList = renderText(320, (const uint8 *)text);
+							changeCursor(CURSOR_CROSS);
+						}
+					}
+
+					currentActiveMenu = -1;
+					selectDown = 0;
+				}
+			} else {
+				// Handle left click in inventory
+				if (processInventory()) {
+					currentActiveMenu = 0;
+					selectDown = 1;
+					menuDown = 0;
 				} else {
 					currentActiveMenu = -1;
-					var38 = 0;
+					menuDown = 0;
 				}
-
-				return 0;
 			}
-
-			//ASSERT(0);
 		}
-	}
-
-	if ((button & 2) || (keyboardVar == 0x43) || (keyboardVar == 0x52)) {
-		if (nePasAffichierMenuDialogue == 0) {
+	} else if ((button & 2) || (keyboardVar == 0x43) || (keyboardVar == 0x52)) { // test right button
+		if (buttonDown == 0) {
 			keyboardVar = 0;
 
-			if ((mouseVar1 == 0) && (menuTable[0])) {
-				ASSERT(0);
+			// close object menu if there is no linked relation
+			if ((linkedRelation == 0) && (menuTable[0])) {
 				freeMenu(menuTable[0]);
 				menuTable[0] = NULL;
-				var37 = 0;
-				var38 = 0;
+				selectDown = 0;
+				menuDown = 0;
 				currentActiveMenu = -1;
 			}
 
-			if (var37 || var38 || menuTable[1]) {
-				nePasAffichierMenuDialogue = 1;
-				return 0;
+			if ((!selectDown) && (!menuDown) && (menuTable[1] == NULL)) {
+				buildInventory(mouseX, mouseY);
+
+				if (menuTable[1]) {
+					currentActiveMenu = 1;
+					menuDown = 1;
+				} else {
+					menuDown = 1;
+				}
 			}
-
-			buildInventory(mouseX, mouseY);
-
-			if (menuTable[1]) {
-				currentActiveMenu = 1;
-				var38 = 1;
-			} else {
-				var38 = 1;
-			}
-
-			nePasAffichierMenuDialogue = 1;
-			return 0;
+			buttonDown = 1;
 		}
 	}
 	return 0;
 }
 
-int oldMouseX;
-int oldMouseY;
+int currentMouseX = 0;
+int currentMouseY = 0;
+int currentMouseButton = 0;
 
-void manageEvents(int count) {
+void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY) {
+	*pMouseX = currentMouseX;
+	*pMouseY = currentMouseY;
+	*pMouseButton = currentMouseButton;
+}
+
+bool bFastMode = false;
+
+void manageEvents() {
 	Common::Event event;
 
 	Common::EventManager * eventMan = g_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
-			/*      case Common::EVENT_LBUTTONDOWN:
-			 * mouseLeft = 1;
-			 * break;
-			 * case Common::EVENT_RBUTTONDOWN:
-			 * mouseRight = 1;
-			 * break;
-			 * case Common::EVENT_MOUSEMOVE:
-			 * break; */
+			case Common::EVENT_LBUTTONDOWN:
+				currentMouseButton |= 1;
+				break;
+			case Common::EVENT_LBUTTONUP:
+				currentMouseButton &= ~1;
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				currentMouseButton |= 2;
+				break;
+			case Common::EVENT_RBUTTONUP:
+				currentMouseButton &= ~2;
+				break;
+			case Common::EVENT_MOUSEMOVE:
+				currentMouseX = event.mouse.x;
+				currentMouseY = event.mouse.y;
+				break;
 		case Common::EVENT_QUIT:
 			g_system->quit();
 			break;
-			/*      case Common::EVENT_KEYDOWN:
+		case Common::EVENT_KEYUP:
+			switch (event.kbd.keycode) {
+				case 27: // ESC
+					currentMouseButton &= ~4;
+					break;
+				default:
+					break;
+			}
+			break;
+	    case Common::EVENT_KEYDOWN:
+			switch (event.kbd.keycode) {
+				case 27: // ESC
+					currentMouseButton |= 4;
+					break;
+				default:
+					break;
+			}
+
+			/*
 			 * switch (event.kbd.keycode) {
 			 * case '\n':
 			 * case '\r':
@@ -1442,12 +1670,20 @@ void manageEvents(int count) {
 			 * if (!disableSystemMenu && !inMenu) {
 			 * g_cine->makeSystemMenu();
 			 * }
-			 * break; 
+			 * break;
 			 * default:
 			 * //lastKeyStroke = event.kbd.keycode;
 			 * break;
 			 * }
 			 * break; */
+			if (event.kbd.flags == Common::KBD_CTRL) {
+				if (event.kbd.keycode == Common::KEYCODE_d) {
+					// enable debugging stuff ?
+				} else if (event.kbd.keycode == Common::KEYCODE_f) {
+					bFastMode = !bFastMode;
+				}
+			}
+
 		default:
 			break;
 		}
@@ -1460,49 +1696,39 @@ void manageEvents(int count) {
 	 * mouseRight = 0;
 	 * }
 	 */
-	int i;
+	g_system->updateScreen();
 
-	for (i = 0; i < count; i++) {
-		//FIXME(?): Maybe there's a better way to "fix" this?
-		//
-		//Since not all backends/ports can update the screen 
-		//100 times per second, only update the screen every
-		//other frame (1000 / 2 * 10 i.e. 50 times per second max.)
-		if (i % 2)
-			g_system->updateScreen();
-		g_system->delayMillis(10);
-		manageEvents(0);
+	if (!bFastMode) {
+		g_system->delayMillis(40);
 	}
 }
 
 void mainLoop(void) {
-#define SPEED 40		/* Ticks per Frame */
-#define SLEEP_MIN 20		/* Minimum time a sleep takes, usually 2*GRAN */
-#define SLEEP_GRAN 1		/* Granularity of sleep */
-
 	int frames = 0;		/* Number of frames displayed */
 	//int32 t_start,t_left;
 	//uint32 t_end;
 	//int32 q=0;                     /* Dummy */
 
 	int enableUser = 0;
-	//int16 mouseX;
-	//int16 mouseY;
-	//int16 mouseButton;
 
-	scriptNameBuffer[0] = 0;
+	strcpy(currentOverlay, "");
 	systemStrings.bootScriptName[0] = 0;
 	initVar4[0] = 0;
 	currentActiveMenu = -1;
-	main14 = -1;
-	mouseVar1 = 0;
+	autoMsg = -1;
+	linkedRelation = 0;
 	main21 = 0;
 	main22 = 0;
-	main7 = 0;
-	main8 = 0;
-	main15 = 0;
+	userWait = 0;
+	autoTrack = 0;
+	autoTrack = 0;
 
-	if (initAllData()) {
+	initAllData();
+
+	// debug code: automaticaly load savegame 0 at startup
+//	loadSavegameData(0);
+
+	{
 		int playerDontAskQuit = 1;
 		int quitValue2 = 1;
 		int quitValue = 0;
@@ -1514,8 +1740,7 @@ void mainLoop(void) {
 //      readKeyboard();
 			playerDontAskQuit = processInput();
 
-			//if(enableUser)
-			{
+			if (enableUser) {
 				userEnabled = 1;
 				enableUser = 0;
 			}
@@ -1533,7 +1758,7 @@ void mainLoop(void) {
 				/*    main3 = 0;
 				 * var24 = 0;
 				 * var23 = 0;
-				 * 
+				 *
 				 * freeStuff2(); */
 			}
 
@@ -1550,7 +1775,7 @@ void mainLoop(void) {
 				if (main5)
 					fadeVar = 0;
 
-				/*if(fadeVar)
+				/*if (fadeVar)
 				 * {
 				 * //  TODO!
 				 * } */
@@ -1558,63 +1783,99 @@ void mainLoop(void) {
 				mainDraw(0);
 				flipScreen();
 
-				/*     if(userEnabled && !main7 && !main15 && currentActiveMenu == -1)
-				 * {
-				 * getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
-				 * 
-				 * if(mouseX != oldMouseX && mouseY != oldMouseY)
-				 * {
-				 * int cursorType;
-				 * int newCursor1;
-				 * int newCursor2;
-				 * 
-				 * oldMouseX = mouseX;
-				 * oldMouseY = mouseY;
-				 * 
-				 * cursorType = getCursorFromObject(mouseX, mouseY, &newCursor1, &newCursor2);
-				 * 
-				 * if(cursorType == 9)
-				 * {
-				 * changeCursor(5);
-				 * }
-				 * else
-				 * if(cursorType == -1)
-				 * {
-				 * changeCursor(6);
-				 * }
-				 * else
-				 * {
-				 * changeCursor(4);
-				 * }
-				 * 
-				 * } 
-				 * }
-				 * else */
-				{
-					changeCursor(0);
+				if (userEnabled && !userWait && !autoTrack) {
+					if (currentActiveMenu == -1) {
+						int16 mouseX;
+						int16 mouseY;
+						int16 mouseButton;
+
+						static int16 oldMouseX = -1;
+						static int16 oldMouseY = -1;
+
+						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
+					 
+						if (mouseX != oldMouseX && mouseY != oldMouseY) {
+							int objectType;
+							int newCursor1;
+							int newCursor2;
+							
+							oldMouseX = mouseX;
+							oldMouseY = mouseY;
+							
+							objectType = findObject(mouseX, mouseY, &newCursor1, &newCursor2);
+							
+							if (objectType == 9) {
+								changeCursor(CURSOR_EXIT);
+							} else if (objectType != -1) {
+								changeCursor(CURSOR_MAGNIFYING_GLASS);
+							} else {
+								changeCursor(CURSOR_WALK);
+							}
+						}
+					} else {
+						changeCursor(CURSOR_NORMAL);
+					}
+				} else {
+					changeCursor(CURSOR_NORMAL);
 				}
 
-				if (main7) {
-					ASSERT(0);
+				if (userWait) {
+					int16 button = 0;
+					while (!button) {
+						manageScripts(&relHead);
+						manageScripts(&procHead);
+
+						removeFinishedScripts(&relHead);
+						removeFinishedScripts(&procHead);
+
+						processAnimation();
+
+						// not exactly this
+						manageEvents();
+
+						int16 mouseVar;
+						int16 mouseX;
+						int16 mouseY;
+						getMouseStatus(&mouseVar, &mouseX, &button, &mouseY);
+					}
+
+					changeScriptParamInList(-1, -1, &procHead, 9999, 0);
+					changeScriptParamInList(-1, -1, &relHead, 9999, 0);
+					userWait = 0;
 				}
 
-				if (main15) {
-					ASSERT(0);
-				}
+				// wait for character to finish auto track
+				if (autoTrack) {
+					if (mainProc13(narratorOvl, narratorIdx, &actorHead, 0)) {
+						if (autoMsg != -1) {
+							freezeCell(&cellHead, autoOvl, autoMsg, 5, -1, 9998, 0);
 
-				if (main14 != -1) {
-					ASSERT(0);
+							char* pText = getText(autoMsg, autoOvl);
+
+							if (strlen(pText))
+								userWait = 1;
+						}
+
+						changeScriptParamInList(-1, -1, &relHead, 9998, 0);
+						autoTrack = 0;
+						enableUser = 1;
+					} else {
+						userEnabled = false;
+					}
+				} else if (autoMsg != -1) {
+					removeCell(&cellHead, autoOvl, autoMsg, 5, currentActiveBackgroundPlane );
+					autoMsg = -1;
 				}
 			}
 			// t_end = t_start+SPEED;
 //      t_left=t_start-Osystem_GetTicks()+SPEED;
 #ifndef FASTDEBUG
-			/*    if(t_left>0)
-			 * if(t_left>SLEEP_MIN)
+			/*    if (t_left>0)
+			 * if (t_left>SLEEP_MIN)
 			 * Osystem_Delay(t_left-SLEEP_GRAN);
-			 * while(Osystem_GetTicks()<t_end){q++;}; */
+			 * while (Osystem_GetTicks()<t_end){q++;}; */
 #endif
-			manageEvents(4);
+			manageEvents();
 
 		} while (!playerDontAskQuit && quitValue2 && quitValue != 7);
 	}
@@ -1666,10 +1927,6 @@ int oldmain(int argc, char *argv[]) {
 	//freePtr(ptr_something);
 
 	return (0);
-}
-
-void changeCursor(uint16 cursorType) {
-	//printf("changeCursor %d\n", cursorType);
 }
 
 void *mallocAndZero(int32 size) {

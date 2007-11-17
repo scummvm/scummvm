@@ -32,8 +32,8 @@ scriptInstanceStruct procHead;
 
 scriptInstanceStruct *currentScriptPtr;
 
-uint8 getByteFromScript(void) {
-	uint8 var = currentData3DataPtr[currentScriptPtr->var4];
+int8 getByteFromScript(void) {
+	int8 var = *(int8*)(currentData3DataPtr+currentScriptPtr->var4);
 
 	currentScriptPtr->var4 = currentScriptPtr->var4 + 1;
 
@@ -73,8 +73,7 @@ int32 opcodeType0(void) {
 
 			if (!byte2) {
 				ptr = scriptDataPtrTable[var_E] + short1;
-			} else	// TODO: 
-			{
+			} else	{ // TODO:
 				if (!overlayTable[byte2].alreadyLoaded) {
 					return (-7);
 				}
@@ -145,8 +144,7 @@ int32 opcodeType0(void) {
 
 			if (!byte2) {
 				ptr = scriptDataPtrTable[var_E] + var_12;
-			} else	// TODO: 
-			{
+			} else	{ // TODO:
 				if (!overlayTable[byte2].alreadyLoaded) {
 					return (-7);
 				}
@@ -278,9 +276,9 @@ int32 opcodeType1(void)	{
 				di = currentScriptPtr->overlayNumber;
 			}
 
-			if (var == 0x85)	// Special case to handle...
+			if ((var == 0x85) && !strcmp((char*)currentCtpName, "S26.CTP") && !di && mode == 1) // patch in bar
 			{
-				ASSERT(0);
+				var= 0x87;
 			}
 
 			setObjectPosition(di, var_4, mode, var);
@@ -427,7 +425,7 @@ int32 opcodeType6(void) {
 		si |= 2;
 	}
 
-	currentScriptPtr->bitMask = si;
+	currentScriptPtr->ccr = si;
 
 	return (0);
 }
@@ -446,7 +444,7 @@ int32 opcodeType5(void) {
 	int offset = currentScriptPtr->var4;
 	int short1 = getShortFromScript();
 	int newSi = short1 + offset;
-	int bitMask = currentScriptPtr->bitMask;
+	int bitMask = currentScriptPtr->ccr;
 
 	switch (currentScriptOpcodeType) {
 	case 0:
@@ -597,9 +595,7 @@ int removeScript(int overlay, int idx, scriptInstanceStruct *headPtr) {
 	return (0);
 }
 
-uint8 *attacheNewScriptToTail(int16 overlayNumber,
-		  scriptInstanceStruct *scriptHandlePtr, int16 param, int16 arg0,
-		  int16 arg1, int16 arg2, scriptTypeEnum scriptType) {
+uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overlayNumber, int16 param, int16 arg0, int16 arg1, int16 arg2, scriptTypeEnum scriptType) {
 	int useArg3Neg = 0;
 	ovlData3Struct *data3Ptr;
 	scriptInstanceStruct *tempPtr;
@@ -635,8 +631,7 @@ uint8 *attacheNewScriptToTail(int16 overlayNumber,
 
 	oldTail = scriptHandlePtr;
 
-	while (oldTail->nextScriptPtr)	// go to the end of the list
-	{
+	while (oldTail->nextScriptPtr) {	// go to the end of the list
 		oldTail = oldTail->nextScriptPtr;
 	}
 
@@ -660,8 +655,7 @@ uint8 *attacheNewScriptToTail(int16 overlayNumber,
 	tempPtr->scriptNumber = param;
 	tempPtr->overlayNumber = overlayNumber;
 
-	if (scriptType == 20)	// Obj or not ?
-	{
+	if (scriptType == 20) {	// Obj or not ?
 		tempPtr->sysKey = useArg3Neg;
 	} else {
 		tempPtr->sysKey = 1;
@@ -733,13 +727,12 @@ int executeScripts(scriptInstanceStruct *ptr) {
 		}
 		opcodeType = getByteFromScript();
 
-		//printf("opType: %d\n",(opcodeType&0xFB)>>3);
+	//	printf("opType: %d\n",(opcodeType&0xFB)>>3);
 
 		currentScriptOpcodeType = opcodeType & 7;
 
 		if (!opcodeTypeTable[(opcodeType & 0xFB) >> 3]) {
-			printf("Unsupported opcode type %d\n",
-			    (opcodeType & 0xFB) >> 3);
+			printf("Unsupported opcode type %d\n", (opcodeType & 0xFB) >> 3);
 			exit(1);
 			return (-21);
 		}

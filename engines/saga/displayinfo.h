@@ -374,7 +374,7 @@ static const GameDisplayInfo IHNM_DisplayInfo = {
 	8,			// status text y offset
 	253,		// status text color
 	250,		// status BG color
-	616, 303,	// save reminder pos
+	616, 304,	// save reminder pos
 	24, 24,		// save reminder w&h
 	0,1,		// save reminder sprite numbers
 

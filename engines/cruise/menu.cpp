@@ -35,7 +35,7 @@ menuStruct *createMenu(int X, int Y, const char *menuName) {
 	entry = (menuStruct *) malloc(sizeof(menuStruct));
 	ASSERT(entry);
 
-	entry->x = X - 80;
+	entry->x = X - 160/2;
 	entry->y = Y;
 	entry->stringPtr = menuName;
 	entry->numElements = 0;
@@ -46,8 +46,7 @@ menuStruct *createMenu(int X, int Y, const char *menuName) {
 }
 
 // TODO: rewrite to remove the goto
-void addSelectableMenuEntry(int param0, int param1, menuStruct *pMenu,
-	    int param2, int color, const char *menuText) {
+void addSelectableMenuEntry(int ovlIdx, int headerIdx, menuStruct *pMenu, int param2, int color, const char *menuText) {
 	menuElementStruct *di;
 	menuElementStruct *var_6;
 	menuElementStruct *pNewElement;
@@ -63,38 +62,27 @@ void addSelectableMenuEntry(int param0, int param1, menuStruct *pMenu,
 				if (param2) {
 					if (!strcmp(var_6->string, menuText)) {
 						pNewElement = var_6;
-						pSubStruct =
-						    (menuElementSubStruct *)
-						    allocAndZero(sizeof
-						    (menuElementSubStruct));
+						pSubStruct = (menuElementSubStruct *)allocAndZero(sizeof(menuElementSubStruct));
 						ASSERT(pSubStruct);
 
 						pSubStruct->pNext = NULL;
-						pSubStruct->var2 = param0;
-						pSubStruct->var4 = param1;
+						pSubStruct->ovlIdx = ovlIdx;
+						pSubStruct->header = headerIdx;
 
-						pSubStructCurrent =
-						    pNewElement->ptrSub;
+						pSubStructCurrent = pNewElement->ptrSub;
 
 						if (!pSubStructCurrent) {
-							pNewElement->ptrSub =
-							    pSubStruct;
+							pNewElement->ptrSub = pSubStruct;
 							return;
 						}
 
 						if (pSubStructCurrent->pNext) {
 							do {
-								pSubStructCurrent
-								    =
-								    pSubStructCurrent->
-								    pNext;
-							} while
-							    (pSubStructCurrent->
-							    pNext);
+								pSubStructCurrent = pSubStructCurrent->pNext;
+							} while(pSubStructCurrent->pNext);
 						}
 
-						pSubStructCurrent->pNext =
-						    pSubStruct;
+						pSubStructCurrent->pNext = pSubStruct;
 						return;
 					}
 				}
@@ -105,13 +93,9 @@ void addSelectableMenuEntry(int param0, int param1, menuStruct *pMenu,
 			var_6 = di;
 		}
 
-		pNewElement =
-		    (menuElementStruct *)
-		    allocAndZero(sizeof(menuElementStruct));
+		pNewElement = (menuElementStruct *)allocAndZero(sizeof(menuElementStruct));
 		ASSERT(pNewElement);
-		pSubStruct =
-		    (menuElementSubStruct *)
-		    allocAndZero(sizeof(menuElementSubStruct));
+		pSubStruct = (menuElementSubStruct *)allocAndZero(sizeof(menuElementSubStruct));
 		ASSERT(pSubStruct);
 
 		pNewElement->string = menuText;
@@ -129,8 +113,8 @@ void addSelectableMenuEntry(int param0, int param1, menuStruct *pMenu,
 		pNewElement->ptrSub = pSubStruct;
 
 		pSubStruct->pNext = NULL;
-		pSubStruct->var2 = param0;
-		pSubStruct->var4 = param1;
+		pSubStruct->ovlIdx = ovlIdx;
+		pSubStruct->header = headerIdx;
 
 		pMenu->numElements++;
 	}
@@ -168,6 +152,8 @@ void updateMenuMouse(int mouseX, int mouseY, menuStruct *pMenu) {
 	}
 }
 
+void manageEvents();
+
 int processMenu(menuStruct *pMenu) {
 	int16 mouseX;
 	int16 mouseY;
@@ -198,6 +184,8 @@ int processMenu(menuStruct *pMenu) {
 		mainDraw(1);
 		flipScreen();
 
+		manageEvents();
+
 //    readKeyboard();
 	} while (!si);
 
@@ -221,31 +209,28 @@ int playerMenu(int menuX, int menuY) {
 			freeStuff2();
 		}
 /*
-    if(currentMenu)
-    {
+    if (currentMenu) {
       freeMenu(currentMenu);
       currentMenu = 0;
-      var37 = 0;
-      var38 = 0;
+      selectDown = 0;
+      menuDown = 0;
       main9 = -1;
     }
 
-    if(inventoryMenu)
-    {
+    if (inventoryMenu) {
       freeMenu(inventoryMenu);
       inventoryMenu = 0;
-      var37 = 0;
-      var38 = 0;
+      selectDown = 0;
+      menuDown = 0;
       main9 = -1;
     }*/
 
-/*    if(mouseVar2)
-    {
+/*    if (mouseVar2) {
       free3(mouseVar2);
     } */
 
 /*    mouseVar2 = 0;
-    mouseVar1 = 0; */
+    linkedRelation = 0; */
 		freeDisk();
 
 		menuTable[0] = createMenu(menuX, menuY, "Menu Joueur");

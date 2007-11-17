@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-file.h"
 #include "common/config-manager.h"
@@ -410,16 +410,18 @@ void ScummEngine_v80he::o80_getFileSize() {
 	if (!f) {
 		Common::File *file = new Common::File();
 		file->open((const char *)filename, Common::File::kFileReadMode);
-		f = file;
+		if (!file->isOpen())
+			delete f;
+		else
+			f = file;
 	}
 
 	if (!f) {
 		push(-1);
 	} else {
 		push(f->size());
+		delete f;
 	}
-
-	delete f;
 }
 
 void ScummEngine_v80he::o80_stringToInt() {

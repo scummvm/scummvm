@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/mutex.h"
 #include "common/system.h"
 

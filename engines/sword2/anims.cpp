@@ -31,7 +31,7 @@
 // DON'T TOUCH!
 // ---------------------------------------------------------------------------
 
-#include "common/stdafx.h"
+
 #include "common/file.h"
 
 #include "sword2/sword2.h"

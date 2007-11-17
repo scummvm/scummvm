@@ -27,16 +27,16 @@
 
 namespace Cruise {
 
-int16 mainProc13(int overlayIdx, int param1, actorStruct *pStartEntry,
-	    int param2) {
+int16 mainProc13(int overlayIdx, int param1, actorStruct *pStartEntry, int param2) {
 	actorStruct *pCurrentEntry = pStartEntry->next;
 
 	while (pCurrentEntry) {
-		if ((pCurrentEntry->overlayNumber == overlayIdx
-			|| overlayIdx == -1) && (pCurrentEntry->idx == param1
-			|| param1 == -1) && (pCurrentEntry->type == param2
-			|| param2 == -1) && (pCurrentEntry->pathId != -2)) {
-			return 0;
+		if ((pCurrentEntry->overlayNumber == overlayIdx || overlayIdx == -1) &&
+			(pCurrentEntry->idx == param1 || param1 == -1) &&
+			(pCurrentEntry->type == param2 || param2 == -1)) {
+			if (pCurrentEntry->pathId != -2) {
+				return 0;
+			}
 		}
 
 		pCurrentEntry = pCurrentEntry->next;
@@ -45,15 +45,14 @@ int16 mainProc13(int overlayIdx, int param1, actorStruct *pStartEntry,
 	return 1;
 }
 
-actorStruct *findActor(int overlayIdx, int param1, actorStruct *pStartEntry,
-	    int param2) {
+actorStruct *findActor(actorStruct *pStartEntry, int overlayIdx, int objIdx, int type) {
 	actorStruct *pCurrentEntry = pStartEntry->next;
 
 	while (pCurrentEntry) {
 		if ((pCurrentEntry->overlayNumber == overlayIdx
-			|| overlayIdx == -1) && (pCurrentEntry->idx == param1
-			|| param1 == -1) && (pCurrentEntry->type == param2
-			|| param2 == -1)) {
+			|| overlayIdx == -1) && (pCurrentEntry->idx == objIdx
+			|| objIdx == -1) && (pCurrentEntry->type == type
+			|| type == -1)) {
 			return pCurrentEntry;
 		}
 
@@ -471,8 +470,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 	(*nclick)++;
 	ctpVar19 = ctpVar11;
 
-	if (*nclick == 2)	// second point
-	{
+	if (*nclick == 2) {	// second point
 		x1 = table_ptselect[0][0];
 		y1 = table_ptselect[0][1];
 		x2 = table_ptselect[1][0];
@@ -581,9 +579,8 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 	}
 }
 
-//computePathfinding(returnVar2, params.X, params.Y, var34, var35, currentActor->stepX, currentActor->stepY);
-int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX,
-	    int16 destY, int16 stepX, int16 stepY, int16 oldPathId) {
+//computePathfinding(returnVar2, params.X, params.Y, aniX, aniY, currentActor->stepX, currentActor->stepY);
+int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 destY, int16 stepX, int16 stepY, int16 oldPathId) {
 	persoStruct *perso;
 	int num;
 
@@ -600,7 +597,8 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX,
 		}
 	}
 
-	if (!flagCt) {
+	//if (!flagCt)
+	{
 		int i;
 		int16 *ptr;
 
@@ -763,22 +761,20 @@ int raoul_invstat[][13] = {
 void processAnimation(void) {
 	objectParamsQuery params;
 	int16 returnVar2[5];
-	actorStruct *currentActor = &actorHead;
+	actorStruct *currentActor = actorHead.next;
 	actorStruct *nextActor;
 
 	while (currentActor) {
 		nextActor = currentActor->next;
 
-		if (!currentActor->freeze && ((currentActor->type == 0)
-			|| (currentActor->type == 1))) {
-			getMultipleObjectParam(currentActor->overlayNumber,
-			    currentActor->idx, &params);
+		if (!currentActor->freeze && ((currentActor->type == 0)	|| (currentActor->type == 1))) {
+			getMultipleObjectParam(currentActor->overlayNumber, currentActor->idx, &params);
 
 			if (((animationStart && !currentActor->flag) || (!animationStart && currentActor->x_dest != -1 && currentActor->y_dest != -1)) && (currentActor->type == 0)) {
 				// mouse animation
 				if (!animationStart) {
-					var34 = currentActor->x_dest;
-					var35 = currentActor->y_dest;
+					aniX = currentActor->x_dest;
+					aniY = currentActor->y_dest;
 
 					currentActor->x_dest = -1;
 					currentActor->y_dest = -1;
@@ -786,7 +782,7 @@ void processAnimation(void) {
 					currentActor->flag = 1;
 				}
 
-				currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, var34, var35, currentActor->stepX, currentActor->stepY, currentActor->pathId);
+				currentActor->pathId = computePathfinding(returnVar2, params.X, params.Y, aniX, aniY, currentActor->stepX, currentActor->stepY, currentActor->pathId);
 
 				if (currentActor->pathId == -1) {
 					if ((currentActor->endDirection != -1) && (currentActor->endDirection != currentActor->startDirection)) {
@@ -858,26 +854,17 @@ void processAnimation(void) {
 								currentActor->phase = ANIM_PHASE_MOVE;
 						}
 
-						if ((currentActor->counter >=
-							0)
-						    && ((currentActor->phase ==
-							    ANIM_PHASE_STATIC_END)
-							|| (currentActor->
-							    phase ==
-							    ANIM_PHASE_STATIC)))
-						{
+						if ((currentActor->counter >= 0)
+						    && ((currentActor->phase == ANIM_PHASE_STATIC_END)
+							|| (currentActor->phase == ANIM_PHASE_STATIC))) {
 							int newA;
 							int inc = 1;
-							int t_inc =
-							    currentActor->
-							    startDirection - 1;
+							int t_inc = currentActor->startDirection - 1;
 
 							if (t_inc < 0)
 								t_inc = 3;
 
-							if (currentActor->
-							    nextDirection ==
-							    t_inc)
+							if (currentActor->nextDirection == t_inc)
 								inc = -1;
 
 							if (inc > 0)

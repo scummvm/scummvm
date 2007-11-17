@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "engines/engine.h"
 
@@ -171,7 +171,7 @@ void Insane::runScene(int arraynum) {
 		writeArray(339, _enemy[EN_VULTF2].isEmpty);
 		writeArray(340, _enemy[EN_VULTM2].isEmpty);
 	}
-	// insane_unlock(); // FIXME
+
 	_vm->_sound->stopAllSounds(); // IMUSE_StopAllSounds();
 }
 
@@ -328,8 +328,7 @@ int Insane::loadSceneData(int scene, int flag, int phase) {
 	int retvalue = 1;
 
 	debugC(DEBUG_INSANE, "Insane::loadSceneData(%d, %d, %d)", scene, flag, phase);
-	//if (phase == 1) /// FIXME
-	//	insane_unlock();
+
 	switch (scene) {
 	case 1:
 		smlayer_loadSound(88, flag, phase);
@@ -1227,7 +1226,7 @@ void Insane::postCase6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			flu = &_fluConf[7 + _iactSceneId2];
 		else
 			flu = &_fluConf[0 + _iactSceneId2];
-	
+
 		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
 			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 		else

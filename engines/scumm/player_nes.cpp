@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "engines/engine.h"
 #include "scumm/player_nes.h"
 #include "scumm/scumm.h"
@@ -95,12 +95,12 @@ protected:
 	byte wavehold;
 	uint32 freq;	// short
 	uint32 CurD;
- 
+
 public:
 	byte Timer;
 	int32 Pos;
 	uint32 Cycles;	// short
-	
+
 	inline byte GetTimer() const { return Timer; };
 };
 
@@ -364,7 +364,7 @@ void Noise::Reset(void) {
 	CurD = 1;
 	Cycles = 1;
 	EnvCtr = 1;
-	
+
 }
 
 void Noise::Write(int Reg, byte Val) {
@@ -450,7 +450,7 @@ protected:
 		uint32 Cycles;
 		int Num;
 	} Frame;
-	
+
 public:
 	APU(int rate) : SampleRate(rate) {
 		Reset();
@@ -499,7 +499,7 @@ byte APU::Read4015(void) {
 
 void APU::Reset (void) {
 	BufPos = 0;
-	
+
 	_square0.Reset();
 	_square1.Reset();
 	_triangle.Reset();
@@ -533,10 +533,10 @@ int step(T &obj, int sampcycles, uint frame_Cycles, int frame_Num) {
 
 		if (!frame_Cycles) {
 			frame_Cycles = 7457;
-		
+
 			if (frame_Num < 4) {
 				obj.QuarterFrame();
-		
+
 				if (frame_Num & 1)
 					frame_Cycles++;
 				else
@@ -546,19 +546,19 @@ int step(T &obj, int sampcycles, uint frame_Cycles, int frame_Num) {
 			} else
 				frame_Num = 0;
 		}
-	
+
 		if (!obj.Cycles)
 			obj.Run();
 
 		samppos += obj.Pos;
 	}
-	
+
 	return samppos;
 }
 
 int16 APU::GetSample(void) {
 	int samppos = 0;
-	
+
 	const int sampcycles = 1+(1789773-BufPos-1)/SampleRate;
 	BufPos = BufPos + sampcycles * SampleRate - 1789773;
 
@@ -581,7 +581,7 @@ int16 APU::GetSample(void) {
 	}
 
 	Frame.Cycles -= tmp;
-	
+
 	return (samppos << 6) / sampcycles;
 }
 

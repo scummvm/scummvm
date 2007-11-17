@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -119,10 +119,10 @@ void AGOSEngine::setDoorState(Item *i, uint16 d, uint16 n) {
 		y++;
 	}
 	/* Check are a complete exit pair */
-	if (derefItem(r1->roomExit[d1]) != i)	    
+	if (derefItem(r1->roomExit[d1]) != i)
 		return;
 	/* Change state of exit coming back */
-	changeDoorState(r1, d, n);    
+	changeDoorState(r1, d, n);
 }
 
 // Elvira 1 specific
@@ -265,13 +265,13 @@ int AGOSEngine_Elvira2::changeExitStates(SubSuperRoom *sr, int n, int d, uint16 
 				return(0);
 			else
 				break;
-		case 1: 
+		case 1:
 			b = 1; bd = 3;
 			if (((n % (sr->roomX * sr->roomY)) % sr->roomX) == 0)
 				return 0;
 			else
 				break;
-		case 2: 
+		case 2:
 			b = sr->roomX; bd = 0;
 			if (((n % (sr->roomX * sr->roomY)) / sr->roomX) == (sr->roomY - 1))
 				return 0;

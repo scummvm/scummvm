@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -799,12 +798,17 @@ void PaulaSound::loadMusic(const char *name) {
 void PaulaSound::playMusic() {
 	_mixer->stopHandle(_moduleHandle);
 	if (_moduleStream) {
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_moduleHandle, _moduleStream);
+		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_moduleHandle, _moduleStream, -1, 255, 0, false);
 	}
 }
 
 void PaulaSound::stopMusic() {
 	_mixer->stopHandle(_moduleHandle);
+
+	_mixer->pauseAll(true);
+
+	for(int i = 0;i < NUM_CHANNELS;i++)
+		_soundChannelsTable[i].data = 0;
 }
 
 void PaulaSound::fadeOutMusic() {

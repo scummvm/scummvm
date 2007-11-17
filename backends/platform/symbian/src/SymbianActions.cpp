@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "backends/platform/symbian/src/SymbianActions.h"
 
 #include "gui/message.h"
@@ -57,7 +56,7 @@ const Common::String actionNames[] = {
 };
 
 #ifdef UIQ
-static const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, SDLK_F1, SDLK_F2, SDLK_F5, SDLK_PAGEDOWN, 0, 0, 0, SDLK_PAGEUP, 0, 0, 0, 0};
+static const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, SDLK_F1, SDLK_F2, SDLK_F5, SDLK_PAGEDOWN, '9', 0, 0, SDLK_PAGEUP, 0, 0, 0, 0};
 #elif defined (S60)
 const int ACTIONS_DEFAULT[ACTION_LAST] = { 0, 0, 0, 0, 0, 0, '*', '#', '9', 0, 0, 0, 0, 0, 0, 0};
 #elif defined (S90)
@@ -128,6 +127,8 @@ void SymbianActions::initInstanceMain(OSystem *mainSystem) {
 void SymbianActions::initInstanceGame() {
 	Common::String gameid(ConfMan.get("gameid"));
 	bool is_simon = (strncmp(gameid.c_str(), "simon", 5) == 0);
+	bool is_sword1 = (gameid == "sword1");
+	bool is_sword2 = (strcmp(gameid.c_str(), "sword2") == 0);
 	bool is_sky = (strncmp(gameid.c_str(), "sky", 3) == 0);
 	bool is_saga = (gameid == "saga");
 	bool is_comi = (strncmp(gameid.c_str(), "comi", 4) == 0);
@@ -143,8 +144,13 @@ void SymbianActions::initInstanceGame() {
 	Actions::initInstanceGame();
 
 	// Initialize keys for different actions
+	// Pause
+	_key_action[ACTION_PAUSE].setKey(' ');
+	_action_enabled[ACTION_PAUSE] = true;
+
+
 	// Save
-	if (is_simon || is_gob || is_kyra || is_touche) 
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche)
 		_action_enabled[ACTION_SAVE] = false;
 	else {
 		_action_enabled[ACTION_SAVE] = true;
@@ -162,6 +168,17 @@ void SymbianActions::initInstanceGame() {
 		} else {		
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F5 key
 		}
+	}
+	// Quit
+	_action_enabled[ACTION_QUIT] = true;
+	
+	// Skip text
+	if (!is_cine && !is_parallaction)
+		_action_enabled[ACTION_SKIP_TEXT] = true;
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche)
+		_key_action[ACTION_SKIP_TEXT].setKey(Common::KEYCODE_ESCAPE, SDLK_ESCAPE); // Escape key
+	else {
+		_key_action[ACTION_SKIP_TEXT].setKey(SDLK_PERIOD);
 	}
 
 	// Enable fast mode
@@ -190,22 +207,8 @@ void SymbianActions::initInstanceGame() {
 	_action_enabled[ACTION_DEBUGGER] = true;
 	_key_action[ACTION_DEBUGGER].setKey('d', SDLK_d, KMOD_CTRL);
 
-	// Skip text
-	if (!is_cine)
-		_action_enabled[ACTION_SKIP_TEXT] = true;
 
-	if (is_queen) {
-		_key_action[ACTION_SKIP_TEXT].setKey(SDLK_SPACE);
-	} else {
-		_key_action[ACTION_SKIP_TEXT].setKey(SDLK_PERIOD);
-	}
 
-	// Pause
-	_key_action[ACTION_PAUSE].setKey(' ');
-	_action_enabled[ACTION_PAUSE] = true;
-
-	// Quit
-	_action_enabled[ACTION_QUIT] = true;
 }
 
 

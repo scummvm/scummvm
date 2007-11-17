@@ -183,17 +183,17 @@ void OSystem_GP2X::moveStick() {
 
 	memcpy(stickBtn, _stickBtn, sizeof(stickBtn));
 
-	if((stickBtn[0])||(stickBtn[2])||(stickBtn[4])||(stickBtn[6]))
+	if ((stickBtn[0])||(stickBtn[2])||(stickBtn[4])||(stickBtn[6]))
 		stickBtn[1] = stickBtn[3] = stickBtn[5] = stickBtn[7] = 0;
 
-	if((stickBtn[1])||(stickBtn[2])||(stickBtn[3])){
-		if(_km.x_down_count!=2){
+	if ((stickBtn[1])||(stickBtn[2])||(stickBtn[3])){
+		if (_km.x_down_count!=2){
 			_km.x_vel = -1;
 			_km.x_down_count = 1;
 		}else
 			_km.x_vel = -4;
-	} else if((stickBtn[5])||(stickBtn[6])||(stickBtn[7])){
-		if(_km.x_down_count!=2){
+	} else if ((stickBtn[5])||(stickBtn[6])||(stickBtn[7])){
+		if (_km.x_down_count!=2){
 			_km.x_vel = 1;
 			_km.x_down_count = 1;
 		}else
@@ -205,14 +205,14 @@ void OSystem_GP2X::moveStick() {
 	}
 
 
-	if((stickBtn[0])||(stickBtn[1])||(stickBtn[7])){
-		if(_km.y_down_count!=2){
+	if ((stickBtn[0])||(stickBtn[1])||(stickBtn[7])){
+		if (_km.y_down_count!=2){
 			_km.y_vel = -1;
 			_km.y_down_count = 1;
 		}else
 			_km.y_vel = -4;
-	} else if((stickBtn[3])||(stickBtn[4])||(stickBtn[5])){
-		if(_km.y_down_count!=2){
+	} else if ((stickBtn[3])||(stickBtn[4])||(stickBtn[5])){
+		if (_km.y_down_count!=2){
 			_km.y_vel = 1;
 		 	_km.y_down_count = 1;
 		}else
@@ -302,7 +302,7 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 	GP2X_BUTTON_L &	GP2X_BUTTON_A				Common::EVENT_PREDICTIVE_DIALOG for predictive text entry box (AGI games)
 	*/
 
-	while(SDL_PollEvent(&ev)) {
+	while (SDL_PollEvent(&ev)) {
 
 		switch(ev.type) {
 		case SDL_KEYDOWN:{

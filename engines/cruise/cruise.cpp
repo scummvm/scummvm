@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -44,7 +44,7 @@ Common::SaveFileManager * g_saveFileMan;
 
 CruiseEngine *g_cruise;
 
-CruiseEngine::CruiseEngine(OSystem * syst) : Engine(syst) {
+CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
 #ifdef PALMOS_MODE
 	_currentVolumeFile = new Common::File();
@@ -64,6 +64,8 @@ CruiseEngine::CruiseEngine(OSystem * syst) : Engine(syst) {
 	    ConfMan.getInt("music_volume"));
 
 	g_cruise = this;
+
+	syst->getEventManager()->registerRandomSource(_rnd, "cruise");
 }
 
 CruiseEngine::~CruiseEngine() {
@@ -73,12 +75,6 @@ CruiseEngine::~CruiseEngine() {
 }
 
 int CruiseEngine::init() {
-	// Detect game
-	if (!initGame()) {
-		GUIErrorMessage
-		    ("No valid games were found in the specified directory.");
-		return -1;
-	}
 	// Initialize backend
 	_system->beginGFXTransaction();
 	initCommonGFX(false);
@@ -91,6 +87,7 @@ int CruiseEngine::init() {
 }
 
 int CruiseEngine::go() {
+	Cruise::changeCursor(Cruise::CURSOR_NORMAL);
 	CursorMan.showMouse(true);
 
 	Cruise::mainLoop();

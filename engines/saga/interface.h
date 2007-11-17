@@ -28,6 +28,7 @@
 #ifndef SAGA_INTERFACE_H
 #define SAGA_INTERFACE_H
 
+#include "common/keyboard.h"
 #include "common/savefile.h"
 
 #include "saga/displayinfo.h"
@@ -225,7 +226,7 @@ public:
 	void drawStatusBar();
 	void setVerbState(int verb, int state);
 
-	bool processAscii(uint16 ascii);
+	bool processAscii(Common::KeyState keystate);
 
 	void keyBoss();
 	void keyBossExit();
@@ -341,8 +342,8 @@ private:
 	void drawVerbPanelText(Surface *ds, PanelButton *panelButton, KnownColor textKnownColor, KnownColor textShadowKnownColor);
 	void drawVerbPanel(Surface *backBuffer, PanelButton* panelButton);
 	void calcOptionSaveSlider();
-	bool processTextInput(uint16 ascii);
-	void processStatusTextInput(uint16 ascii);
+	bool processTextInput(Common::KeyState keystate);
+	void processStatusTextInput(Common::KeyState keystate);
 
 public:
 	void converseInit(void);

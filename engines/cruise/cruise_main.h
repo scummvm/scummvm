@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 
 #include "cruise/overlay.h"
@@ -67,8 +67,21 @@ namespace Cruise {
 #define ASSERT_PTR assert
 #define ASSERT assert
 
-bool delphineUnpack(byte *dst, const byte *src, int len);
+#define	OBJ_TYPE_LINE		  0
+#define	OBJ_TYPE_MASK		  1
+#define	OBJ_TYPE_BGMK		  2
+#define	OBJ_TYPE_VIRTUEL	  3
+#define	OBJ_TYPE_SPRITE		  4
+#define	OBJ_TYPE_MSG		  5
+#define	OBJ_TYPE_SOUND		  6
+#define	OBJ_TYPE_FONT		  7
+#define	OBJ_TYPE_POLY		  8
+#define	OBJ_TYPE_EXIT		  9
 
+extern gfxEntryStruct* linkedMsgList;
+
+bool delphineUnpack(byte *dst, const byte *src, int len);
+int findHighColor();
 ovlData3Struct *getOvlData3Entry(int32 scriptNumber, int32 param);
 ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param);
 int16 loadShort(void *ptr);
@@ -78,25 +91,24 @@ void *mallocAndZero(int32 size);
 uint8 *mainProc14(uint16 overlay, uint16 idx);
 void printInfoBlackBox(const char *string);
 void waitForPlayerInput(void);
-int loadCtp(uint8 * ctpName);
+int loadCtp(const char * ctpName);
 void loadPakedFileToMem(int fileIdx, uint8 * buffer);
-int loadScriptSub1(int scriptIdx, int param);
+int getNumObjectsByClass(int scriptIdx, int param);
 void resetFileEntryRange(int param1, int param2);
-int getProcParam(int overlayIdx, int param2, uint8 * name);
-void changeScriptParamInList(int param1, int param2,
-    scriptInstanceStruct * pScriptInstance, int newValue, int param3);
+int getProcParam(int overlayIdx, int param2, const char * name);
+void changeScriptParamInList(int param1, int param2, scriptInstanceStruct * pScriptInstance, int newValue, int param3);
 uint8 *getDataFromData3(ovlData3Struct * ptr, int param);
-int32 prepareWordRender(int32 param, int32 var1, int16 * out2, uint8 * ptr3,
-    const uint8 * string);
+int32 prepareWordRender(int32 param, int32 var1, int16 * out2, uint8 * ptr3, const uint8 * string);
 void removeExtention(const char *name, char *buffer);
 void resetRaster(uint8 * rasterPtr, int32 rasterSize);
-void changeCursor(uint16 cursorType);
 void resetPtr2(scriptInstanceStruct * ptr);
 void getFileExtention(const char *name, char *buffer);
 void *allocAndZero(int size);
 void freeStuff2(void);
-char *getObjectName(int index, uint8 * string);
+const char *getObjectName(int index, const char * string);
 void mainLoop(void);
+void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY);
+bool testMask(int x, int y, unsigned char* pData, int stride);
 
 } // End of namespace Cruise
 

@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 
 #include "wince-sdl.h"
 
@@ -43,10 +42,12 @@ using namespace Common;
 
 class CEAboutDialog : public Dialog {
 public:
-	CEAboutDialog::CEAboutDialog()
+	CEAboutDialog()
 	: Dialog(10, 60, 300, 77) {
 		char tempo[100];
 
+		// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+		// needs fixing, or remove it!
 		addButton(this,(_w - kButtonWidth) / 2, 45, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
 
 		Common::String videoDriver("Using SDL driver ");
@@ -74,18 +75,18 @@ void CELauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 d
 void CELauncherDialog::automaticScanDirectory(const FilesystemNode &node) {
 	// First check if we have a recognized game in the current directory
 	FSList files;
-	node.listDir(files, FilesystemNode::kListFilesOnly);
+	node.getChildren(files, FilesystemNode::kListFilesOnly);
 	// detect
 	GameList candidates(PluginManager::instance().detectGames(files));
 	// insert
 	if (candidates.size() >= 1) {
 		GameDescriptor result = candidates[0];
-		result["path"] = node.path();
+		result["path"] = node.getPath();
 		addGameToConf(result);
 	}
 	// Then recurse on the subdirectories
 	FSList dirs;
-	node.listDir(dirs, FilesystemNode::kListDirectoriesOnly);
+	node.getChildren(dirs, FilesystemNode::kListDirectoriesOnly);
 	for (FSList::const_iterator currentDir = dirs.begin(); currentDir != dirs.end(); ++currentDir)
 		automaticScanDirectory(*currentDir);
 

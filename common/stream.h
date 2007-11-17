@@ -26,7 +26,6 @@
 #ifndef COMMON_STREAM_H
 #define COMMON_STREAM_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 namespace Common {
@@ -273,7 +272,7 @@ public:
 	int32 readSint32BE() {
 		return (int32)readUint32BE();
 	}
-	
+
 	/**
 	 * Read the specified amount of data into a malloc'ed buffer
 	 * which then is wrapped into a MemoryReadStream.
@@ -401,6 +400,35 @@ public:
 	uint32 size() const { return _size; }
 
 	void seek(int32 offs, int whence = SEEK_SET);
+};
+
+
+/**
+ * This is a wrapper around MemoryReadStream, but it adds non-endian
+ * read methods whose endianness is set on the stream creation.
+ */
+class MemoryReadStreamEndian : public Common::MemoryReadStream {
+private:
+public:
+	bool _bigEndian;
+	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian = false) : MemoryReadStream(buf, len), _bigEndian(bigEndian) {}
+
+	uint16 readUint16() {
+		return (_bigEndian) ? readUint16BE(): readUint16LE();
+	}
+
+	uint32 readUint32() {
+		return (_bigEndian) ? readUint32BE(): readUint32LE();
+	}
+
+	inline int16 readSint16() {
+		return (int16)readUint16();
+	}
+
+
+	inline int32 readSint32() {
+		return (int32)readUint32();
+	}
 };
 
 /**

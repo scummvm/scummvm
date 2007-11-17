@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/system.h"
 
@@ -53,7 +53,7 @@ void AGOSEngine_Feeble::animateSpritesByY() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
 	int16 spriteTable[180][2];
-	
+
 	byte *src;
 	int height, slot, y;
 	uint i, numSprites = 0;
@@ -254,7 +254,7 @@ void AGOSEngine::animateSprites() {
 				*dst++ = color;
 			}
 			h--;
-		}			
+		}
 
 		_window4Flag = 1;
 		setMoveRect(0, 0, 224, 127);
@@ -288,7 +288,7 @@ void AGOSEngine::animateSprites() {
 			}
 			dst += 448;
 			h--;
-		}			
+		}
 
 		_window4Flag = 1;
 		setMoveRect(0, 0, 224, 127);
@@ -343,7 +343,7 @@ restart:
 
 	if (_newDirtyClip != 0)
 		goto restart;
-	
+
 }
 
 void AGOSEngine::dirtyClipCheck(int16 x, int16 y, int16 w, int16 h) {
@@ -446,7 +446,7 @@ void AGOSEngine::restoreBackGround() {
 			continue;
 		}
 
-		_windowNum = animTable->windowNum & 0x7FFF;	
+		_windowNum = animTable->windowNum & 0x7FFF;
 
 		VC10_state state;
 		state.srcPtr  = animTable->srcPtr;
@@ -785,7 +785,7 @@ void AGOSEngine::displayScreen() {
 			src += _moveXMin;
 
 			srcWidth = _videoWindows[18] * 16;
-		
+
 			width = _moveXMax - _moveXMin;
 			height = _moveYMax - _moveYMin;
 
@@ -800,7 +800,7 @@ void AGOSEngine::displayScreen() {
 			_moveXMax = 0;
 			_moveYMax = 0;
 		}
-		
+
 		if (_window6Flag == 2) {
 			_window6Flag = 0;
 

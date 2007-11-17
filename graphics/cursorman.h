@@ -25,7 +25,6 @@
 #ifndef GRAPHICS_CURSORMAN_H
 #define GRAPHICS_CURSORMAN_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/stack.h"
 #include "common/singleton.h"

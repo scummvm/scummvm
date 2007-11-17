@@ -42,6 +42,8 @@ public:
 	int go();
 
 	void playVQA(const char *name);
+
+	virtual Movie *createWSAMovie();
 private:
 	int init();
 

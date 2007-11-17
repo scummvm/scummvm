@@ -23,13 +23,14 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/util.h"
 #include "common/scummsys.h"
 
 #include "lure/disk.h"
+#include "lure/lure.h"
 #include "lure/luredefs.h"
 #include "lure/res.h"
 
@@ -64,9 +65,9 @@ uint8 Disk::indexOf(uint16 id, bool suppressError) {
 		if (_entries[entryIndex].id == HEADER_ENTRY_UNUSED_ID) break;
 		else if (_entries[entryIndex].id == id) return entryIndex;
 	}
-	
+
 	if (suppressError) return 0xff;
-	if (_fileNum == 0) 
+	if (_fileNum == 0)
 		error("Could not find entry Id #%d in file %s", id, SUPPORT_FILENAME);
 	else
 		error("Could not find entry Id #%d in file disk%d.vga", id, _fileNum);
@@ -79,16 +80,16 @@ void Disk::openFile(uint8 fileNum) {
 
 	// Only load up the new file if the current file number has changed
 	if (fileNum == _fileNum) return;
-	
+
 	// Delete any existing open file handle
-	if (_fileNum != 0xff) delete _fileHandle;		
+	if (_fileNum != 0xff) delete _fileHandle;
 	_fileNum = fileNum;
-	
+
 	// Open up the the new file
 	_fileHandle = new Common::File();
 
 	char sFilename[10];
-	if (_fileNum == 0) 
+	if (_fileNum == 0)
 		strcpy(sFilename, SUPPORT_FILENAME);
 	else
 		sprintf(sFilename, "disk%d.vga", _fileNum);
@@ -97,9 +98,38 @@ void Disk::openFile(uint8 fileNum) {
 	if (!_fileHandle->isOpen())
 		error("Could not open %s", sFilename);
 
-	// Validate the header
 	char buffer[7];
 	uint32 bytesRead;
+
+	// If it's the support file, then move to the correct language area
+
+	_dataOffset = 0;
+	if (_fileNum == 0) {
+		// Validate overall header
+		_fileHandle->read(buffer, 6);
+		buffer[4] = '\0';
+
+		if (strcmp(buffer, SUPPORT_IDENT_STRING) != 0)
+			error("The file %s is not a valid Lure support file", sFilename);
+
+		// Scan for the correct language block
+		Common::Language language = LureEngine::getReference().getLanguage();
+		bool foundFlag = false;
+
+		while (!foundFlag) {
+			_fileHandle->read(buffer, 5);
+			if ((byte)buffer[0] == 0xff)
+				error("Could not find language data in support file");
+
+			if ((language == (Common::Language)buffer[0]) || (language == UNK_LANG)) {
+				foundFlag = true;
+				_dataOffset = READ_LE_UINT32(&buffer[1]);
+				_fileHandle->seek(_dataOffset);
+			}
+		}
+	}
+
+	// Validate the header
 
 	bytesRead = _fileHandle->read(buffer, 6);
 	buffer[6] = '\0';
@@ -144,8 +174,7 @@ uint32 Disk::getEntrySize(uint16 id) {
 	return size;
 }
 
-MemoryBlock *Disk::getEntry(uint16 id)
-{
+MemoryBlock *Disk::getEntry(uint16 id) {
 	// Special room area check
 	uint16 tempId = id & 0x3fff;
 	if ((tempId == 0x120) || (tempId == 0x311) || (tempId == 8) || (tempId == 0x410)) {
@@ -156,11 +185,11 @@ MemoryBlock *Disk::getEntry(uint16 id)
 
 	// Get the index of the resource, if necessary opening the correct file
 	uint8 index = indexOf(id);
-		
+
 	// Calculate the offset and size of the entry
 	uint32 size = (uint32) _entries[index].size;
 	if (_entries[index].sizeExtension) size += 0x10000;
-	uint32 offset = (uint32) _entries[index].offset * 0x20;
+	uint32 offset = (uint32) _entries[index].offset * 0x20 + _dataOffset;
 
 	MemoryBlock *result = Memory::allocate(size);
 	_fileHandle->seek(offset, SEEK_SET);
@@ -181,7 +210,7 @@ uint8 Disk::numEntries() {
 	// Figure out how many entries there are by count until an unused entry is found
 	for (byte entryIndex = 0; entryIndex < NUM_ENTRIES_IN_HEADER; ++entryIndex)
 		if (_entries[entryIndex].id == HEADER_ENTRY_UNUSED_ID) return entryIndex;
-	
+
 	return NUM_ENTRIES_IN_HEADER;
 }
 

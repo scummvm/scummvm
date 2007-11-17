@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
@@ -131,23 +129,18 @@ bool engineCreateAgos(OSystem *syst, Engine **engine, Common::EncapsulatedADGame
 		res = false;
 		error("AGOS engine: unknown gameType");
 	}
+	if (res) {
+		((AGOS::AGOSEngine *)*engine)->_gameDescription = gd;
+	}
 
 	return res;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN_WITH_COMPLEX_CREATION(AGOS, engineCreateAgos, detectionParams);
+ADVANCED_DETECTOR_DEFINE_PLUGIN(AGOS, engineCreateAgos, detectionParams);
 
 REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 
 namespace AGOS {
-
-bool AGOSEngine::initGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	_gameDescription = (const AGOSGameDescription *)(encapsulatedDesc.realDesc);
-
-	return (_gameDescription != 0);
-}
-
 
 int AGOSEngine::getGameId() const {
 	return _gameDescription->gameId;
@@ -173,10 +166,10 @@ Common::Platform AGOSEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-const char *AGOSEngine::getFileName(int type) const { 
+const char *AGOSEngine::getFileName(int type) const {
 	for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileType; i++) {
 		if (_gameDescription->desc.filesDescriptions[i].fileType == type)
-			return _gameDescription->desc.filesDescriptions[i].fileName; 
+			return _gameDescription->desc.filesDescriptions[i].fileName;
 	}
 	return NULL;
 }

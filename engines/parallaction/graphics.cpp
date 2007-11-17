@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/system.h"
 #include "common/file.h"
 
@@ -240,6 +239,9 @@ void Gfx::setBlackPalette() {
 
 void Gfx::animatePalette() {
 
+	// avoid forcing setPalette when not needed
+	bool done = false;
+
 	for (uint16 i = 0; i < 4; i++) {
 
 		if ((_palettefx[i]._flags & 1) == 0) continue;		// animated palette
@@ -251,9 +253,13 @@ void Gfx::animatePalette() {
 		_palettefx[i]._timer = 0;							// reset timer
 
 		_palette.rotate(_palettefx[i]._first, _palettefx[i]._last, (_palettefx[i]._flags & 2) != 0);
+
+		done = true;
 	}
 
-	setPalette(_palette);
+	if (done) {
+		setPalette(_palette);
+	}
 
 	return;
 }
@@ -326,6 +332,21 @@ void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 	}
 
 	return;
+}
+
+void Gfx::invertRect(Gfx::Buffers buffer, const Common::Rect& r) {
+
+	byte *d = (byte*)_buffers[buffer]->getBasePtr(r.left, r.top);
+
+	for (int i = 0; i < r.height(); i++) {
+		for (int j = 0; j < r.width(); j++) {
+			*d ^= 0x1F;
+			d++;
+		}
+
+		d += (_buffers[buffer]->pitch - r.width());
+	}
+
 }
 
 void Gfx::screenClip(Common::Rect& r, Common::Point& p) {
@@ -409,55 +430,12 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 
 }
 
-
-void jobDisplayLabel(void *parm, Job *j) {
-
-	Label *label = (Label*)parm;
-	debugC(9, kDebugJobs, "jobDisplayLabel (%p)", (const void*) label);
-
-	if (label->_cnv.w == 0)
+void Gfx::drawLabel(Label &label) {
+	if (label._text == 0)
 		return;
-	_vm->_gfx->flatBlitCnv(&label->_cnv, _vm->_gfx->_labelPosition[0].x, _vm->_gfx->_labelPosition[0].y, Gfx::kBitBack);
 
-	return;
+	flatBlitCnv(&label._cnv, label._pos.x, label._pos.y, Gfx::kBitBack);
 }
-
-void jobEraseLabel(void *parm, Job *j) {
-	Label *label = (Label*)parm;
-
-	debugC(9, kDebugJobs, "jobEraseLabel (%p)", (const void*) label);
-
-	int16 _si, _di;
-
-	if (_vm->_activeItem._id != 0) {
-		_si = _vm->_mousePos.x + 16 - label->_cnv.w/2;
-		_di = _vm->_mousePos.y + 34;
-	} else {
-		_si = _vm->_mousePos.x + 8 - label->_cnv.w/2;
-		_di = _vm->_mousePos.y + 21;
-	}
-
-	if (_si < 0) _si = 0;
-	if (_di > 190) _di = 190;
-
-	if (label->_cnv.w + _si > _vm->_screenWidth)
-		_si = _vm->_screenWidth - label->_cnv.w;
-
-	Common::Rect r(label->_cnv.w, label->_cnv.h);
-	r.moveTo(_vm->_gfx->_labelPosition[1]);
-	_vm->_gfx->restoreBackground(r);
-
-	_vm->_gfx->_labelPosition[1] = _vm->_gfx->_labelPosition[0];
-	_vm->_gfx->_labelPosition[0].x = _si;
-	_vm->_gfx->_labelPosition[0].y = _di;
-
-	return;
-}
-
-
-
-
-
 
 
 //
@@ -600,23 +578,34 @@ bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16
 	while (strlen(text) > 0) {
 
 		text = parseNextToken(text, token, 40, "   ", true);
-		linewidth += getStringWidth(token);
 
-		if (linewidth > wrapwidth) {
-			// wrap line
-			lines++;
-			rx = x + 10;			// x
-			ry = y + 4 + lines*10;	// y
-			linewidth = getStringWidth(token);
-		}
-
-		if (!scumm_stricmp(token, "%s")) {
-			sprintf(token, "%d", _score);
-		}
 		if (!scumm_stricmp(token, "%p")) {
+			lines++;
+			rx = x + 10;
+			ry = y + 4 + lines*10;	// y
+
+			strcpy(token, "> .......");
+			strncpy(token+2, _password, strlen(_password));
 			rv = true;
-		} else
-			displayString(rx, ry, token, color);
+		} else {
+
+			linewidth += getStringWidth(token);
+
+			if (linewidth > wrapwidth) {
+				// wrap line
+				lines++;
+				rx = x + 10;			// x
+				ry = y + 4 + lines*10;	// y
+				linewidth = getStringWidth(token);
+			}
+
+			if (!scumm_stricmp(token, "%s")) {
+				sprintf(token, "%d", _score);
+			}
+
+		}
+
+		displayString(rx, ry, token, color);
 
 		rx += getStringWidth(token) + getStringWidth(" ");
 		linewidth += getStringWidth(" ");
@@ -645,13 +634,17 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 		text = parseNextToken(text, token, 40, "   ", true);
 		w += getStringWidth(token);
 
-		if (w > maxwidth) {
-			w -= getStringWidth(token);
+		if (!scumm_stricmp(token, "%p")) {
 			lines++;
-			if (w > *width)
-				*width = w;
+		} else {
+			if (w > maxwidth) {
+				w -= getStringWidth(token);
+				lines++;
+				if (w > *width)
+					*width = w;
 
-			w = getStringWidth(token);
+				w = getStringWidth(token);
+			}
 		}
 
 		w += getStringWidth(" ");

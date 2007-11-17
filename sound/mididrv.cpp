@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "engines/engine.h"
 #include "common/config-manager.h"
 #include "common/str.h"
@@ -48,8 +46,12 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	{"alsa", "ALSA", MD_ALSA, MDT_MIDI},
 #endif
 
-#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__) 
+#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__)
 	{"seq", "SEQ", MD_SEQ, MDT_MIDI},
+#endif
+
+#if defined(IRIX)
+	{"dmedia", "DMedia", MD_DMEDIA, MDT_MIDI},
 #endif
 
 #if defined(MACOSX)
@@ -82,6 +84,9 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	{"pcspk", "PC Speaker", MD_PCSPK, MDT_PCSPK},
 	{"pcjr", "IBM PCjr", MD_PCJR, MDT_PCSPK},
 	{"towns", "FM Towns", MD_TOWNS, MDT_TOWNS},
+#if defined(UNIX)
+	{"timidity", "TiMidity", MD_TIMIDITY, MDT_MIDI},
+#endif
 
 	{0, 0, MD_NULL, MDT_NONE}
 };
@@ -121,7 +126,7 @@ const MidiDriverDescription &MidiDriver::findMusicDriver(const Common::String &s
 	const char *s = str.c_str();
 	int len = 0;
 	const MidiDriverDescription *md = s_musicDrivers;
-	
+
 	// Scan for string end or a colon
 	while (s[len] != 0 && s[len] != ':')
 		len++;
@@ -240,7 +245,7 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #endif
 #endif
 
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) 
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	case MD_WINDOWS:   return MidiDriver_WIN_create();
 #endif
 #if defined(__MORPHOS__)
@@ -248,6 +253,12 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #endif
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__)
 	case MD_SEQ:       return MidiDriver_SEQ_create();
+#endif
+#if defined(UNIX)
+	case MD_TIMIDITY:  return MidiDriver_TIMIDITY_create();
+#endif
+#if defined(IRIX)
+	case MD_DMEDIA:    return MidiDriver_DMEDIA_create();
 #endif
 #if defined(MACOSX)
 	case MD_QTMUSIC:   return MidiDriver_QT_create();

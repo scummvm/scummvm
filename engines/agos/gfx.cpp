@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/system.h"
 
@@ -181,7 +181,7 @@ bool AGOSEngine::drawImage_clip(VC10_state *state) {
 
 	if (getGameType() != GType_FF && getGameType() != GType_PP) {
 		state->draw_width = state->width * 2;
-	} 
+	}
 
 	cur = state->x;
 	if (cur < 0) {
@@ -518,7 +518,7 @@ void AGOSEngine_Simon1::drawMaskedImage(VC10_state *state) {
 						dst[0] = src[0];
 					if ((mask[0] & 0x0F) && (dst[1] & 0x0F0) == 0x20)
 						dst[1] = src[1];
-				} else {	
+				} else {
 					/* no transparency */
 					if (mask[0] & 0xF0)
 						dst[0] = src[0];
@@ -878,7 +878,7 @@ void AGOSEngine::drawImage(VC10_state *state) {
 	} else {
 		if (_windowNum == 6) {
 			state->surf_addr = _window6BackScn;
-			state->surf_pitch = 48;	
+			state->surf_pitch = 48;
 
 			xoffs = state->x * 8;
 			yoffs = state->y;

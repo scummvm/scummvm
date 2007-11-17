@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "agi/agi.h"
 #include "agi/lzw.h"
 
@@ -52,14 +50,14 @@ int AgiLoader_v3::detectGame() {
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
 
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		warning("AgiEngine: invalid game path '%s'", dir.path().c_str());
+	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("AgiEngine: invalid game path '%s'", dir.getPath().c_str());
 		return errInvalidAGIFile;
 	}
 
 	for (FSList::const_iterator file = fslist.begin();
 	    file != fslist.end() && !found; ++file) {
-		Common::String f = file->name();
+		Common::String f = file->getName();
 		f.toLowercase();
 
 		if (f.hasSuffix("vol.0")) {
@@ -228,10 +226,6 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 		fp.read(&x, 7);
 
 		if (READ_BE_UINT16((uint8 *) x) != 0x1234) {
-#if 0
-			/* FIXME */
-			deinitVideoMode();
-#endif
 			debugC(3, kDebugLevelResources, "path = %s", path.c_str());
 			debugC(3, kDebugLevelResources, "offset = %d", agid->offset);
 			debugC(3, kDebugLevelResources, "x = %x %x", x[0], x[1]);

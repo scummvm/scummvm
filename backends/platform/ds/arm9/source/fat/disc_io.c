@@ -355,6 +355,8 @@ void disc_getDldiId(char* id) {
 // If an interface is found, it is set as the default interace
 // and it returns true. Otherwise the default interface is left
 // untouched and it returns false.
+
+
 bool disc_setDsSlotInterface (void)
 {
 #ifdef ARM9

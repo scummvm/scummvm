@@ -41,6 +41,11 @@
 //#define DISK_CACHE_DMA		// use DMA for cache copies. If this is enabled, the data buffers must be word aligned
 
 
+// This allows the code to build on an earlier version of libnds, before the register was renamed
+#ifndef REG_EXMEMCNT
+#define REG_EXMEMCNT REG_EXEMEMCNT 
+#endif
+
 //----------------------------------------------------------------------
 
 #if defined _CF_USE_DMA && defined _CF_ALLOW_UNALIGNED

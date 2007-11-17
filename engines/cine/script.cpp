@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "cine/cine.h"
@@ -909,7 +909,7 @@ void o1_loadVar() {
 			break;
 		case 5:
 			debugC(5, kCineDebugScript, "Line: %d: var[%d] = rand mod %d", _currentLine, varIdx, dataIdx);
-			_currentScriptElement->localVars[varIdx] = rand() % dataIdx;
+			_currentScriptElement->localVars[varIdx] = g_cine->_rnd.getRandomNumber(dataIdx - 1);
 			break;
 		case 8:
 			debugC(5, kCineDebugScript, "Line: %d: var[%d] = file[%d].packedSize", _currentLine, varIdx, dataIdx);
@@ -1434,6 +1434,8 @@ void o1_freePartRange() {
 
 	assert(startIdx + numIdx <= NUM_MAX_ANIMDATA);
 
+	g_sound->stopMusic();
+
 	debugC(5, kCineDebugScript, "Line: %d: freePartRange(%d,%d)", _currentLine, startIdx, numIdx);
 	freeAnimDataRange(startIdx, numIdx);
 }
@@ -1475,7 +1477,7 @@ void o1_setZoneDataEntry() {
 void o1_getZoneDataEntry() {
 	byte zoneIdx = getNextByte();
 	byte var = getNextByte();
-	
+
 	_currentScriptElement->localVars[var] = zoneData[zoneIdx];
 }
 
@@ -1574,7 +1576,7 @@ void o1_playSample() {
 				channel2 = 1;
 			} else {
 				channel1 = 2;
-				channel2 = 3;			
+				channel2 = 3;
 			}
 			g_sound->playSound(channel1, freq, animDataTable[anim].ptr1, size, -1, volume, 63, repeat);
 			g_sound->playSound(channel2, freq, animDataTable[anim].ptr1, size,  1, volume,  0, repeat);

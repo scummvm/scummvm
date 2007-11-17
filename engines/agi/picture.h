@@ -30,6 +30,9 @@
 
 namespace Agi {
 
+#define _DEFAULT_WIDTH		160
+#define _DEFAULT_HEIGHT		168
+
 /**
  * AGI picture resource.
  */
@@ -44,6 +47,15 @@ enum AgiPictureVersion {
 	AGIPIC_V1,
 	AGIPIC_V15,
 	AGIPIC_V2
+};
+
+enum AgiPictureFlags {
+	kPicFNone      = (1 << 0),
+	kPicFCircle    = (1 << 1),
+	kPicFStep      = (1 << 2),
+	kPicFf3Stop    = (1 << 3),
+	kPicFf3Cont    = (1 << 4),
+	kPicFTrollMode = (1 << 5)
 };
 
 class AgiBase;
@@ -62,27 +74,72 @@ private:
 	INLINE int isOkFillHere(int x, int y);
 	void fillScanline(int x, int y);
 	void agiFill(unsigned int x, unsigned int y);
-	void xCorner();
-	void yCorner();
+	void xCorner(bool skipOtherCoords = false);
+	void yCorner(bool skipOtherCoords = false);
 	void fill();
 	int plotPatternPoint(int x, int y, int bitpos);
-	void plotPattern(int x, int y);
 	void plotBrush();
-	void drawPicture();
 
-	// TODO: this is hardcoded for V2 pictures for now
-	static const int pictureType = AGIPIC_V2;
+	uint8 nextByte() { return _data[_foffs++]; }
 
 public:
-	PictureMgr(AgiBase *agi, GfxMgr *gfx) {
-		_vm = agi;
-		_gfx = gfx;
+	PictureMgr(AgiBase *agi, GfxMgr *gfx);
+
+	int decodePicture(int n, int clear, bool agi256 = false, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
+	int decodePicture(byte* data, uint32 length, int clear, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
+	int unloadPicture(int);
+	void drawPicture();
+	void showPic(int x = 0, int y = 0, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
+	uint8 *convertV3Pic(uint8 *src, uint32 len);
+
+	void plotPattern(int x, int y);		// public because it's used directly by preagi
+
+	void setPattern(uint8 code, uint8 num);
+
+	void setPictureVersion(AgiPictureVersion version);
+	void setPictureData(uint8 *data, int len = 4096);
+
+	void setPictureFlags(int flags) { _flags = flags; }
+
+	void clear();
+
+	void setOffset(int offX, int offY) {
+		_xOffset = offX;
+		_yOffset = offY;
 	}
 
-	int decodePicture(int n, int clear, bool agi256 = false);
-	int unloadPicture(int);
-	void showPic();
-	uint8 *convertV3Pic(uint8 *src, uint32 len);
+	void setDimensions(int w, int h) {
+		_width = w;
+		_height = h;
+	}
+
+	void putPixel(int x, int y, uint8 color) {
+		_scrColor = color;
+		_priOn = false;
+		_scrOn = true;
+		putVirtPixel(x, y);
+	}
+
+private:
+	uint8 *_data;
+	uint32 _flen;
+	uint32 _foffs;
+
+	uint8 _patCode;
+	uint8 _patNum;
+	uint8 _priOn;
+	uint8 _scrOn;
+	uint8 _scrColor;
+	uint8 _priColor;
+
+	uint8 _minCommand;
+
+	AgiPictureVersion _pictureVersion;
+	int _width, _height;
+	int _xOffset, _yOffset;
+
+	int _flags;
+	int _currentStep;
 };
 
 } // End of namespace Agi

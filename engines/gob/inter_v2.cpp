@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "sound/mixer.h"
 #include "sound/mods/infogrames.h"
@@ -747,7 +747,7 @@ void Inter_v2::checkSwitchTable(byte **ppExec) {
 	case 26:
 		value = READ_VARO_UINT32(value);
 		break;
-	
+
 	default:
 		value = (int16) READ_VARO_UINT16(value);
 		break;
@@ -841,7 +841,7 @@ void Inter_v2::o2_setRenderFlags() {
 	int16 expr;
 
 	expr = _vm->_parse->parseValExpr();
-	
+
 	if (expr & 0x8000) {
 		_vm->_draw->_renderFlags |= expr & 0x3FFF;
 	} else {
@@ -1084,7 +1084,7 @@ void Inter_v2::o2_stopCD() {
 
 void Inter_v2::o2_readLIC() {
 	char path[40];
-	
+
 	evalExpr(0);
 	strncpy0(path, _vm->_global->_inter_resStr, 35);
 	strcat(path, ".LIC");
@@ -1285,8 +1285,8 @@ void Inter_v2::o2_setGoblinState() {
 		objAnim.newCycle = animLayer->framesCount;
 		break;
 
-	case 1: 
-	case 4: 
+	case 1:
+	case 4:
 	case 6:
 		layer = obj.goblinStates[objAnim.state][0].layer;
 		animation = obj.goblinStates[objAnim.state][0].animation;
@@ -1414,7 +1414,7 @@ void Inter_v2::o2_initScreen() {
 		_vm->_video->_surfWidth = width;
 	if (height > 0)
 		_vm->_video->_surfHeight = height;
-	
+
 	_vm->_video->_splitHeight1 =
 		MIN<int16>(_vm->_height, _vm->_video->_surfHeight - offY);
 	_vm->_video->_splitHeight2 = offY;
@@ -1518,7 +1518,7 @@ void Inter_v2::o2_playImd() {
 	palStart = _vm->_parse->parseValExpr();
 	palEnd = _vm->_parse->parseValExpr();
 	palCmd = 1 << (flags & 0x3F);
-	
+
 	if ((imd[0] != 0) && !_vm->_vidPlayer->openVideo(imd, x, y, flags)) {
 		WRITE_VAR(11, -1);
 		return;
@@ -2124,7 +2124,7 @@ int16 Inter_v2::loadSound(int16 search) {
 			}
 		}
 	}
-	
+
 	_vm->_game->freeSoundSlot(slot);
 
 	if (id == -1) {
@@ -2155,7 +2155,7 @@ int16 Inter_v2::loadSound(int16 search) {
 		dataPtr = (byte *) _vm->_game->loadTotResource(id, &totSize);
 		dataSize = (uint32) ((int32) totSize);
 	}
-	
+
 	if (dataPtr) {
 		_vm->_game->_soundSamples[slot].load(type, source, dataPtr, dataSize);
 		_vm->_game->_soundSamples[slot]._id = id;

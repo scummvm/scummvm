@@ -26,7 +26,6 @@
 #ifndef DRASCULA_H
 #define DRASCULA_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/util.h"
@@ -338,10 +337,8 @@ protected:
 	int go();
 //	void shutdown();
 
-	bool initGame();
-
 public:
-	DrasculaEngine(OSystem *syst);
+	DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gameDesc);
 	virtual ~DrasculaEngine();
 	int getGameId() {
 		return _gameId;
@@ -411,7 +408,7 @@ public:
 	char fondo_y_menu[20];
 
 	char nombre_obj[30][20];
-	char nombre_icono[14][20];
+	char nombre_icono[44][13];
 
 	int num_obj[40], visible[40], espuerta[40];
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
@@ -419,7 +416,7 @@ public:
 	char alapantallakeva[40][20];
 	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
-	int lleva_objeto , objeto_que_lleva;
+	int lleva_objeto, objeto_que_lleva;
 	int con_voces;
 	int menu_bar, menu_scr, hay_nombre;
 	char texto_nombre[20];
@@ -442,7 +439,7 @@ public:
 	int cerca, lejos;
 	int sentido_final, anda_a_objeto;
 	int obj_saliendo;
-	float diff_vez, conta_vez;
+	int diff_vez, conta_vez;
 	int hay_respuesta;
 	int conta_ciego_vez;
 	int cambio_de_color;
@@ -462,7 +459,7 @@ public:
 	int cont_sv;
 	int term_int;
 	int num_ejec;
-	int cual_ejec, hay_que_load;
+	int hay_que_load;
 	char nom_partida[13];
 	int _color;
 	int corta_musica;
@@ -490,44 +487,47 @@ public:
 	void mapa();
 	void buffer_teclado() { }
 	void animacion_1_1();
-	bool animacion_2_1();
+	void animacion_2_1();
 	void animacion_1_2();
 	void animacion_2_2();
 	void animacion_3_1();
 	void animacion_4_1();
 	void animacion_3_2();
 	void animacion_4_2();
-	void animacion_8();
-	void animacion_9();
-	void animacion_10();
-	void animacion_11();
-	void animacion_12();
-	void animacion_13();
-	void animacion_14();
-	void animacion_15();
-	void animacion_16();
-	void animacion_17();
-	void animacion_18();
-	void animacion_19();
-	void animacion_20();
-	void animacion_21();
-	void animacion_22();
-	void animacion_23();
+	void animacion_5_2();
+	void animacion_6_2();
+	void animacion_7_2();
+	void animacion_8_2();
+	void animacion_9_2();
+	void animacion_10_2();
+	void animacion_11_2();
+	void animacion_12_2();
+	void animacion_13_2();
+	void animacion_14_2();
+	void animacion_15_2();
+	void animacion_16_2();
+	void animacion_17_2();
+	void animacion_18_2();
+	void animacion_19_2();
+	void animacion_20_2();
+	void animacion_21_2();
+	void animacion_22_2();
+	void animacion_23_2();
 	void animacion_23_anexo();
 	void animacion_23_anexo2();
-	void animacion_24();
-	void animacion_25();
-	void animacion_26();
-	void animacion_27();
-	void animacion_28();
-	void animacion_29();
-	void animacion_30();
-	void animacion_31();
-	void animacion_32();
-	void animacion_33();
-	void animacion_34();
-	void animacion_35();
-	void animacion_36();
+	void animacion_24_2();
+	void animacion_25_2();
+	void animacion_26_2();
+	void animacion_27_2();
+	void animacion_28_2();
+	void animacion_29_2();
+	void animacion_30_2();
+	void animacion_31_2();
+	void animacion_32_2();
+	void animacion_33_2();
+	void animacion_34_2();
+	void animacion_35_2();
+	void animacion_36_2();
 
 	void refresca_1_antes();
 	void refresca_2();
@@ -547,13 +547,29 @@ public:
 	void refresca_17();
 	void refresca_18_antes();
 	void refresca_18();
+	void refresca_21_antes();
+	void refresca_22_antes();
+	void refresca_23_antes();
+	void refresca_24_antes();
+	void refresca_26_antes();
+	void refresca_26();
+	void refresca_27();
+	void refresca_27_antes();
+	void refresca_29();
+	void refresca_29_antes();
+	void refresca_30_antes();
+	void refresca_31_antes();
+	void refresca_34_antes();
+	void refresca_35_antes();
+	void refresca_31();
+	void refresca_34();
+	void refresca_35();
 	void hare_oscuro();
 
 
 	void sin_verbo();
 	void para_cargar(char[]);
-	void carga_escoba_1(const char *);
-	void carga_escoba_2(const char *);
+	void carga_escoba(const char *);
 	void borra_pantalla();
 	void lleva_al_hare(int, int);
 	void mueve_cursor();
@@ -562,7 +578,7 @@ public:
 	void MirarRaton();
 	void elige_en_barra();
 	bool comprueba1();
-	void comprueba2();
+	bool comprueba2();
 	Common::KeyCode getscan();
 	void elige_verbo(int);
 	void mesa();
@@ -595,10 +611,15 @@ public:
 	void habla_solo(const char *, const char *);
 	void habla_igor_frente(const char *, const char *);
 	void habla_tabernero(const char *dicho, const char *filename);
+	void habla_igorpuerta(const char *dicho, const char *filename);
+	void habla_igor_peluca(const char *dicho, const char *filename);
 	void hipo(int);
 	void fin_sound();
 	void habla_bj(const char *, const char *);
+	void habla_baul(const char *dicho, const char *filename);
 	void hablar(const char *, const char *);
+	void hablar_sinc(const char *, const char *, const char *);
+	void cierra_puerta(int nflag, int n_puerta);
 	void playmusic(int p);
 	void stopmusic();
 	int music_status();
@@ -621,8 +642,8 @@ public:
 	void barra_menu();
 	void saca_objeto();
 	bool sal_de_la_habitacion(int);
-	void coge_objeto();
-	void banderas(int);
+	bool coge_objeto();
+	bool banderas(int);
 	void cursor_mesa();
 	void introduce_nombre();
 	void para_grabar(char[]);
@@ -651,12 +672,15 @@ public:
 	byte *mSesion;
 	int FrameSSN;
 	int GlobalSpeed;
-	int LastFrame;
+	uint32 LastFrame;
+
+	int frame_pen;
+	int flag_tv;
 
 	byte *carga_pcx(byte *NamePcc);
 	void set_dac(byte *dac);
 	void WaitForNext(int FPS);
-	float vez();
+	int vez();
 	void reduce_hare_chico(int, int, int, int, int, int, int, byte *, byte *);
 	char codifica(char);
 	void cuadrante_1();
@@ -669,8 +693,36 @@ public:
 	void graba_partida(char[]);
 	void aumenta_num_frame();
 	int sobre_que_objeto();
-	void comprueba_banderas_menu();
+	bool comprueba_banderas_menu();
 	void pantalla_0();
+	void pantalla_1(int);
+	void pantalla_2(int);
+	void pantalla_3(int);
+	void pantalla_4(int);
+	void pantalla_5(int);
+	void pantalla_6(int);
+	void pantalla_7(int);
+	void pantalla_8(int);
+	void pantalla_9(int);
+	void pantalla_12(int);
+	void pantalla_14(int);
+	void pantalla_15(int);
+	void pantalla_16(int);
+	void pantalla_17(int);
+	void pantalla_18(int);
+	void pantalla_19(int);
+	bool pantalla_21(int);
+	void pantalla_22(int);
+	void pantalla_23(int);
+	void pantalla_24(int);
+	void pantalla_26(int);
+	void pantalla_27(int);
+	void pantalla_29(int);
+	void pantalla_30(int);
+	void pantalla_31(int);
+	void pantalla_34(int);
+	void pantalla_35(int);
+	void pantalla_44(int);
 	void pantalla_62(int);
 	void pantalla_63(int);
 	void conversa(const char *);
@@ -687,21 +739,90 @@ public:
 	void ctvd_output(Common::File *file_handle);
 	void ctvd_init(int b);
 	void grr();
-	void pantalla_13(int fl);
+	bool pantalla_13(int fl);
 	void refresca_13();
 	void refresca_20();
 	void animacion_1_3();
 	void animacion_2_3();
 	void animacion_3_3();
 	void animacion_4_3();
-	void animacion_5();
-	void animacion_6();
-	void animacion_7_4();
+	void animacion_5_3();
+	void animacion_6_3();
 	void animacion_rayo();
+	void animacion_1_4();
 	void animacion_2_4();
 	void animacion_3_4();
 	void animacion_4_4();
+	void animacion_5_4();
+	void animacion_6_4();
+	void animacion_7_4();
+	void animacion_8_4();
+	void animacion_9_4();
+	void animacion_1_5();
+	void animacion_2_5();
+	void animacion_3_5();
+	void animacion_4_5();
+	void animacion_5_5();
+	void animacion_6_5();
+	void animacion_7_5();
+	void animacion_8_5();
+	void animacion_9_5();
+	void animacion_10_5();
+	void animacion_11_5();
+	void animacion_12_5();
+	void animacion_13_5();
+	void animacion_14_5();
+	void animacion_15_5();
+	void animacion_16_5();
+	void animacion_17_5();
+	void pantalla_49(int);
+	void pantalla_53(int);
+	void pantalla_54(int);
+	void pantalla_55(int);
+	bool pantalla_56(int);
+	void refresca_53_antes();
+	void refresca_54_antes();
+	void refresca_49_antes();
+	void refresca_56_antes();
+	void refresca_50();
+	void refresca_57();
 	void habla_igor_sentado(const char *, const char *);
+	void habla_lobo(const char *dicho, const char *filename);
+	void habla_mus(const char *dicho, const char *filename);
+	void pantalla_58(int);
+	void pantalla_59(int);
+	bool pantalla_60(int);
+	void pantalla_61(int);
+	void pantalla_pendulo(int);
+	void refresca_pendulo();
+	void refresca_58();
+	void refresca_58_antes();
+	void refresca_59_antes();
+	void refresca_60_antes();
+	void refresca_60();
+	void refresca_61();
+	void animacion_1_6();
+	void animacion_2_6();
+	void animacion_3_6();
+	void animacion_4_6();
+	void animacion_5_6();
+	void animacion_6_6();
+	void animacion_7_6();
+	void animacion_9_6();
+	void animacion_10_6();
+	void animacion_11_6();
+	void animacion_12_6();
+	void animacion_13_6();
+	void animacion_14_6();
+	void animacion_15_6();
+	void animacion_18_6();
+	void animacion_19_6();
+	void activa_pendulo();
+	void habla_pen(const char *, const char *);
+	void habla_pen2(const char *, const char *);
+	void habla_taber2(const char *, const char *);
+	void habla_bj_cama(const char *dicho, const char * filename);
+	void habla_htel(const char *dicho, const char *filename);
 
 private:
 

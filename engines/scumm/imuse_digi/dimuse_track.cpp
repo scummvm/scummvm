@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 #include "common/timer.h"
 
 #include "scumm/actor.h"
@@ -321,7 +321,7 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(const Track *track, int f
 	}
 
 	fadeTrack = _track[track->trackId + MAX_DIGITAL_TRACKS];
-	
+
 	// Clone the settings of the given track
 	memcpy(fadeTrack, track, sizeof(Track));
 

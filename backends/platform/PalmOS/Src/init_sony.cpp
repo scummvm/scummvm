@@ -46,7 +46,7 @@ UInt16 SilkInit(UInt32 *retVersion) {
 				if (e) {
 					// v1 = NR
 				 	e = SilkLibOpen(slkRefNum);
-					if(!e) version = vskVersionNum1;
+					if (!e) version = vskVersionNum1;
 
 				} else {
 					// v2 = NX/NZ

@@ -214,9 +214,9 @@ public:
 	 * game layer. Let W and H denote the width and height of the
 	 * game graphics.
 	 *
-	 * Before the user sees these graphics, they may undergo certain
-	 * transformations; for example, the may be scaled to better fit
-	 * on the visible screen; or aspect ratio correction may be
+	 * Before the user sees these graphics, the backend may apply some
+	 * transformations to it; for example, the may be scaled to better
+	 * fit on the visible screen; or aspect ratio correction may be
 	 * performed (see kFeatureAspectRatioCorrection). As a result of
 	 * this, a pixel of the game graphics may occupy a region bigger
 	 * than a single pixel on the screen. We define p_w and p_h to be
@@ -229,7 +229,7 @@ public:
 	 * by S.
 	 *
 	 * Putting this together, a pixel (x,y) of the game graphics is
-	 * transformed to a rectangle of height p_h and widht p_w
+	 * transformed to a rectangle of height p_h and width p_w
 	 * appearing at position (p_w * x, p_hw * (y + S)) on the real
 	 * screen (in addition, a backend may choose to offset
 	 * everything, e.g. to center the graphics on the screen).
@@ -245,6 +245,9 @@ public:
 	 * graphics have a resolution of 320x200; then the overlay shall
 	 * have a resolution of 640x400, but it still has the same
 	 * physical size as the game graphics.
+	 * The overlay usually uses 16bpp, but on some ports, only 8bpp
+	 * are availble, so that is supported, too, via a compile time
+	 * switch (see also the OverlayColor typedef in scummsys.h).
 	 *
 	 *
 	 * Finally, there is the mouse layer. This layer doesn't have to
@@ -432,7 +435,8 @@ public:
 	 * Grabs a specified part of the currently active palette.
 	 * The format is the same as for setPalette.
 	 *
-	 * @param colors	the palette data, in interleaved RGB format
+	 * @see setPalette
+	 * @param colors	the palette data, in interleaved RGBA format
 	 * @param start		the first platte entry to be read
 	 * @param num		the number of palette entries to be read
 	 */
@@ -885,6 +889,17 @@ public:
 	 */
 	virtual Common::SaveFileManager *getSavefileManager() = 0;
 
+
+	/**
+	 * Return String which is used for backend-specific addition to theme
+	 * config.
+	 * 
+	 * Typical usage is to disable unneeded GUI widgets or defining
+	 * theme-specific tab.
+	 */
+	virtual Common::String getExtraThemeConfig() {
+		return "";
+	}
 	//@}
 };
 

@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "graphics/iff.h"
 #include "graphics/surface.h"
 
@@ -402,17 +400,11 @@ Frames* DosDisk_ns::loadTalk(const char *name) {
 
 	}
 
-	// character talk
-	char v20[PATH_LEN];
-	char *v24 = const_cast<char*>(name);
-	if (IS_MINI_CHARACTER(v24)) {
-		v24+=4;
-	}
-
+	char v20[30];
 	if (_engineFlags & kEngineTransformedDonna) {
-		sprintf(v20, "%stta", v24);
+		sprintf(v20, "%stta", name);
 	} else {
-		sprintf(v20, "%stal", v24);
+		sprintf(v20, "%stal", name);
 	}
 
 	return loadExternalCnv(v20);
@@ -421,19 +413,7 @@ Frames* DosDisk_ns::loadTalk(const char *name) {
 Script* DosDisk_ns::loadLocation(const char *name) {
 
 	char archivefile[PATH_LEN];
-
-	if (IS_MINI_CHARACTER(_vm->_characterName)) {
-		sprintf(archivefile, "%s%s", _vm->_characterName+4, _languageDir);
-	} else {
-		if (IS_DUMMY_CHARACTER(_vm->_characterName)) {
-			strcpy(archivefile, _languageDir);
-		} else {
-			sprintf(archivefile, "%s%s", _vm->_characterName, _languageDir);
-		}
-	}
-
-	strcat(archivefile, name);
-	strcat(archivefile, ".loc");
+	sprintf(archivefile, "%s%s%s.loc", _vm->_char.getBaseName(), _languageDir, name);
 
 	debugC(3, kDebugDisk, "DosDisk_ns::loadLocation(%s): trying '%s'", name, archivefile);
 
@@ -464,10 +444,6 @@ Graphics::Surface* DosDisk_ns::loadHead(const char* name) {
 
 	char path[PATH_LEN];
 
-	if (IS_MINI_CHARACTER(name)) {
-		name += 4;
-	}
-
 	sprintf(path, "%shead", name);
 	path[8] = '\0';
 
@@ -488,10 +464,6 @@ Font* DosDisk_ns::loadFont(const char* name) {
 
 
 Frames* DosDisk_ns::loadObjects(const char *name) {
-
-	if (IS_MINI_CHARACTER(name)) {
-		name += 4;
-	}
 
 	char path[PATH_LEN];
 	sprintf(path, "%sobj", name);
@@ -659,13 +631,7 @@ Table* DosDisk_ns::loadTable(const char* name) {
 	if (!stream.open(path))
 		errorFileNotFound(path);
 
-	Table *t = new Table(100);
-
-	fillBuffers(stream);
-	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
-		t->addData(_tokens[0]);
-		fillBuffers(stream);
-	}
+	Table *t = createTableFromStream(100, stream);
 
 	stream.close();
 
@@ -1025,10 +991,7 @@ Script* AmigaDisk_ns::loadLocation(const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns()::loadLocation '%s'", name);
 
 	char path[PATH_LEN];
-	if (IS_MINI_CHARACTER(_vm->_characterName)) {
-		sprintf(path, "%s%s%s.loc.pp", _vm->_characterName+4, _languageDir, name);
-	} else
-		sprintf(path, "%s%s%s.loc.pp", _vm->_characterName, _languageDir, name);
+	sprintf(path, "%s%s%s.loc.pp", _vm->_char.getBaseName(), _languageDir, name);
 
 	if (!_locArchive.openArchivedFile(path)) {
 		sprintf(path, "%s%s.loc.pp", _languageDir, name);
@@ -1404,13 +1367,7 @@ Table* AmigaDisk_ns::loadTable(const char* name) {
 		stream = &_resArchive;
 	}
 
-	Table *t = new Table(100);
-
-	fillBuffers(*stream);
-	while (scumm_stricmp(_tokens[0], "ENDTABLE")) {
-		t->addData(_tokens[0]);
-		fillBuffers(*stream);
-	}
+	Table *t = createTableFromStream(100, *stream);
 
 	if (dispose)
 		delete stream;

@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/util.h"
 #include "gui/TabWidget.h"
 #include "gui/dialog.h"
@@ -51,7 +50,7 @@ void TabWidget::init() {
 	_tabSpacing = g_gui.theme()->getTabSpacing();
 	_tabPadding = g_gui.theme()->getTabPadding();
 
-	_flags = WIDGET_ENABLED;
+	setFlags(WIDGET_ENABLED);
  	_type = kTabWidget;
 	_activeTab = -1;
 	_firstVisibleTab = 0;
@@ -80,6 +79,7 @@ TabWidget::~TabWidget() {
 		_tabs[i].firstWidget = 0;
 	}
 	_tabs.clear();
+	delete _navRight;
 }
 
 int16 TabWidget::getChildY() const {
@@ -123,16 +123,16 @@ void TabWidget::removeTab(int tabID) {
 		releaseFocus();
 		_firstWidget = 0;
 	}
-	
+
 	// Dispose the widgets in that tab and then the tab itself
 	delete _tabs[tabID].firstWidget;
 	_tabs.remove_at(tabID);
-	
+
 	// Adjust _firstVisibleTab if necessary
 	if (_firstVisibleTab >= (int)_tabs.size()) {
 		_firstVisibleTab = MAX(0, (int)_tabs.size() - 1);
 	}
-	
+
 	// The active tab was removed, so select a new active one (if any remains)
 	if (tabID == _activeTab) {
 		_activeTab = -1;
@@ -249,7 +249,7 @@ void TabWidget::reflowLayout() {
 	_tabPadding = g_gui.theme()->getTabPadding();
 }
 
-void TabWidget::drawWidget(bool hilite) {
+void TabWidget::drawWidget() {
 	Common::Array<Common::String> tabs;
 	for (int i = _firstVisibleTab; i < (int)_tabs.size(); ++i) {
 		tabs.push_back(_tabs[i].title);

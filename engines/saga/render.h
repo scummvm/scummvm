@@ -39,11 +39,10 @@ enum RENDER_FLAGS {
 	RF_OBJECTMAP_TEST = (1 << 3),
 	RF_RENDERPAUSE = (1 << 4),
 	RF_GAMEPAUSE = (1 << 5),
-	RF_PLACARD = (1 << 6),
-	RF_ACTOR_PATH_TEST = (1 << 7),
-	RF_MAP = (1 << 8),
-	RF_DISABLE_ACTORS = (1 << 9),
-	RF_DEMO_SUBST = (1 << 10)
+	RF_ACTOR_PATH_TEST = (1 << 6),
+	RF_MAP = (1 << 7),
+	RF_DISABLE_ACTORS = (1 << 8),
+	RF_DEMO_SUBST = (1 << 9)
 };
 
 class Render {

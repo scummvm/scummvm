@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "sound/mods/module.h"
 
 #include "common/util.h"
@@ -114,8 +112,12 @@ const int16 Module::periods[16][60] = {
 	 108 , 101 , 96  , 90  , 85  , 80  , 76  , 72  , 68  , 64  , 60  , 57 }};
 
 bool Module::load(Common::SeekableReadStream &st, int offs) {
-	st.seek(offs);
+	if (offs) {
+		// Load the module with the common sample data
+		load(st, 0);
+	}
 
+	st.seek(offs);
 	st.read(songname, 20);
 	songname[20] = '\0';
 
@@ -162,8 +164,17 @@ bool Module::load(Common::SeekableReadStream &st, int offs) {
 	}
 
 	for (int i = 0; i < NUM_SAMPLES; ++i) {
-		if (offs == 0) {
-			// Store locations for modules that use common samples
+		if (offs) {
+			// Restore information for modules that use common sample data
+			for (int j = 0; j < NUM_SAMPLES; ++j) {
+				if (!scumm_stricmp((const char *)commonSamples[j].name, (const char *)sample[i].name)) {
+					sample[i].len = commonSamples[j].len;
+					st.seek(commonSamples[j].offs);
+					break;
+				}
+			}
+		} else {
+			// Store information for modules that use common sample data
 			memcpy(commonSamples[i].name, sample[i].name, 22);
 			commonSamples[i].len = sample[i].len;
 			commonSamples[i].offs = st.pos();
@@ -173,17 +184,6 @@ bool Module::load(Common::SeekableReadStream &st, int offs) {
 		if (!sample[i].len) {
 			sample[i].data = 0;
 		} else {
-			if (offs != 0) {		
-				// For modules that use common samples
-				for (int j = 0; j < NUM_SAMPLES; ++j) {
-					if (!scumm_stricmp((const char *)commonSamples[j].name, (const char *)sample[i].name)) {
-						sample[i].len = commonSamples[j].len;
-						st.seek(commonSamples[j].offs);
-						break;
-					}
-				}
-			}
-
 			sample[i].data = new int8[sample[i].len];
 			st.read((byte *)sample[i].data, sample[i].len);
 		}

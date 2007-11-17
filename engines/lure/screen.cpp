@@ -56,10 +56,15 @@ Screen::~Screen() {
 // Defaults the palette to an empty set
 
 void Screen::setPaletteEmpty(int numEntries) {
+	Palette emptyPalette(numEntries, NULL, RGB64);
+	_system.setPalette(emptyPalette.data(), 0, numEntries);
+	_palette->copyFrom(&emptyPalette);
+/*
 	delete _palette;
 	_palette = new Palette();
 
 	_system.setPalette(_palette->data(), 0, numEntries);
+*/
 	_system.updateScreen();
 }
 
@@ -95,8 +100,7 @@ void Screen::paletteFadeIn(Palette *p) {
 		byte *pFinal = p->data();
 		byte *pCurrent = _palette->data();
 
-		for (int palCtr = 0; palCtr < p->numEntries() * PALETTE_FADE_INC_SIZE; ++palCtr, ++pCurrent, ++pFinal)
-		{
+		for (int palCtr = 0; palCtr < p->numEntries() * PALETTE_FADE_INC_SIZE; ++palCtr, ++pCurrent, ++pFinal) {
 			if (palCtr % PALETTE_FADE_INC_SIZE == (PALETTE_FADE_INC_SIZE - 1)) continue;
 			bool isDifferent = *pCurrent < *pFinal;
 
@@ -113,7 +117,8 @@ void Screen::paletteFadeIn(Palette *p) {
 			_system.setPalette(_palette->data(), 0, p->numEntries());
 			_system.updateScreen();
 			_system.delayMillis(20);
-			events.pollEvent();
+			while (events.pollEvent())
+				;
 		}
 	} while (changed);
 }
@@ -145,7 +150,8 @@ void Screen::paletteFadeOut(int numEntries) {
 			_system.setPalette(_palette->data(), 0, numEntries);
 			_system.updateScreen();
 			_system.delayMillis(20);
-			events.pollEvent();
+			while (events.pollEvent())
+				;
 		}
 	} while (changed);
 }

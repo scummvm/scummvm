@@ -3,13 +3,13 @@ MODULE := engines/touche
 MODULE_OBJS := \
 	detection.o \
 	graphics.o \
+	menu.o \
 	midi.o \
 	opcodes.o \
 	resource.o \
 	saveload.o \
 	staticres.o \
-	touche.o \
-	ui.o
+	touche.o
 
 # This module can be built as a plugin
 ifdef BUILD_PLUGINS

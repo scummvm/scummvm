@@ -149,7 +149,7 @@ void OSystem_PSP_GU::initSize(uint width, uint height) {
 	_kbdClut[0] = 0xffff;
 	_kbdClut[246] = 0x4ccc;
 	_kbdClut[247] = 0x0000;
-	for(int i=1;i<31;i++)
+	for (int i=1;i<31;i++)
 		_kbdClut[i] = 0xf888;
 	_mouseVisible = false;
 	sceKernelDcacheWritebackAll();
@@ -167,8 +167,8 @@ bool OSystem_PSP_GU::setGraphicsMode(int mode) {
 bool OSystem_PSP_GU::setGraphicsMode(const char *name) {
 	int i = 0;
 
-	while(s_supportedGraphicsModes[i].name) {
-		if(!strcmpi(s_supportedGraphicsModes[i].name, name)) {
+	while (s_supportedGraphicsModes[i].name) {
+		if (!strcmpi(s_supportedGraphicsModes[i].name, name)) {
 			_graphicMode = s_supportedGraphicsModes[i].id;
 			return true;
 		}
@@ -196,7 +196,7 @@ void OSystem_PSP_GU::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	mouseClut[_mouseKeyColour] = 0;
 	sceKernelDcacheWritebackAll();
 	
-	for(unsigned int i=0;i<h;i++)
+	for (unsigned int i=0;i<h;i++)
 		memcpy(_mouseBuf+i*MOUSE_SIZE, buf+i*w, w);
 }
 
@@ -277,7 +277,7 @@ void OSystem_PSP_GU::updateScreen() {
 	sceGuClutMode(GU_PSM_5551, 0, 0xff, 0);
 	sceGuClutLoad(32, clut256); // upload 32*8 entries (256)
 	sceGuTexMode(GU_PSM_T8, 0, 0, 0); // 8-bit image
-	if(_screenWidth == 320)
+	if (_screenWidth == 320)
 	    	sceGuTexImage(0, 512, 256, _screenWidth, _offscreen);
 	else
 	    	sceGuTexImage(0, 512, 512, _screenWidth, _offscreen);
@@ -315,7 +315,7 @@ void OSystem_PSP_GU::updateScreen() {
 	}
 
 	sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertices);
-	if(_screenWidth == 640) {
+	if (_screenWidth == 640) {
 		sceGuTexImage(0, 512, 512, _screenWidth, _offscreen+512);
 		vertices[0].u = 512 + 0.5; vertices[1].v = _screenHeight - 0.5;
 		vertices[0].x += (vertices[1].x - vertices[0].x) * 511 / 640; vertices[0].y = 0; vertices[0].z = 0;
@@ -324,7 +324,7 @@ void OSystem_PSP_GU::updateScreen() {
 			
 	
 	// draw overlay
-	if(_overlayVisible) {
+	if (_overlayVisible) {
 		vertices[0].x = 0; vertices[0].y = 0; vertices[0].z = 0;
 		vertices[1].x = PSP_SCREEN_WIDTH; vertices[1].y = PSP_SCREEN_HEIGHT; vertices[1].z = 0;
 		vertices[0].u = 0.5; vertices[0].v = 0.5;
@@ -340,7 +340,7 @@ void OSystem_PSP_GU::updateScreen() {
 		sceGuTexFunc(GU_TFX_MODULATE, GU_TCC_RGBA); 
 		sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertices);
 		// need to render twice for textures > 512
-		if( _overlayWidth > 512) {
+		if ( _overlayWidth > 512) {
 			sceGuTexImage(0, 512, 512, _overlayWidth, _overlayBuffer + 512);
 			vertices[0].u = 512 + 0.5; vertices[1].v = _overlayHeight - 0.5;
 			vertices[0].x = PSP_SCREEN_WIDTH * 512 / 640; vertices[0].y = 0; vertices[0].z = 0;
@@ -365,7 +365,7 @@ void OSystem_PSP_GU::updateScreen() {
 		int mX = _mouseX - _mouseHotspotX;
 		int mY = _mouseY - _mouseHotspotY;
 		
-		if(_overlayVisible) {
+		if (_overlayVisible) {
 			float scalex, scaley;
 
 			scalex = (float)PSP_SCREEN_WIDTH /_overlayWidth;
@@ -417,7 +417,7 @@ void OSystem_PSP_GU::updateScreen() {
 		sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertices);
 	}
 
-	if(_keyboardVisible) {
+	if (_keyboardVisible) {
 		sceGuTexMode(GU_PSM_T8, 0, 0, 0); // 8-bit image
 		sceGuClutMode(GU_PSM_4444, 0, 0xff, 0);
 		sceGuClutLoad(32, kbClut); // upload 32*8 entries (256)
@@ -469,13 +469,13 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 	uint32 buttonsChanged = pad.Buttons ^ _prevButtons;
 
 	if  ((buttonsChanged & PSP_CTRL_SELECT) || (pad.Buttons & PSP_CTRL_SELECT)) {
-		if( !(pad.Buttons & PSP_CTRL_SELECT) )
+		if ( !(pad.Buttons & PSP_CTRL_SELECT) )
 			_keyboardVisible = !_keyboardVisible;
 		_prevButtons = pad.Buttons;
 		return false;
 	}
 
-	if(!_keyboardVisible)
+	if (!_keyboardVisible)
 		return OSystem_PSP::pollEvent(event);
 
 	if ( (buttonsChanged & PSP_CTRL_RTRIGGER) && !(pad.Buttons & PSP_CTRL_RTRIGGER))
@@ -520,17 +520,17 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 	x = pad.Lx-128;
 	y = pad.Ly-128;
 	_kbdClut[_keySelected] = 0xf888;
-	if(x*x + y*y > 10000) {
+	if (x*x + y*y > 10000) {
 		nub_angle = atan2(y, x);
 		_keySelected = (int)(1 + (M_PI + nub_angle) * 30 / (2 * M_PI));
 		_keySelected -= 2;
-		if(_keySelected < 1)
+		if (_keySelected < 1)
 			_keySelected += 30;
 		_kbdClut[_keySelected] = 0xffff;
 	
 		if  (buttonsChanged & PSP_CTRL_CROSS) {
 			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
-			if(_keySelected > 26) {
+			if (_keySelected > 26) {
 				event.kbd.flags = 0;
 				switch(_keySelected) {
 					case 27:
@@ -570,7 +570,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 						}
 						break;
 					case (SYMBOLS|CAPS_LOCK):
-						if(_keySelected < 21) {
+						if (_keySelected < 21) {
 							event.kbd.flags = 0;
 							event.kbd.ascii = kbd_ascii_cl[_keySelected-1];
 							event.kbd.keycode = kbd_code_cl[ _keySelected-1];

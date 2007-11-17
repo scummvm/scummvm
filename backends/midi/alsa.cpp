@@ -22,14 +22,12 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 #if defined(UNIX) && defined(USE_ALSA)
 
 #include "sound/mpu401.h"
 
-#include "common/stdafx.h"
 #include "common/util.h"
 #include "common/config-manager.h"
 

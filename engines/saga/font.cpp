@@ -30,7 +30,6 @@
 #include "saga/rscfile.h"
 
 #include "saga/font.h"
-#include "saga/stream.h"
 
 namespace Saga {
 
@@ -49,6 +48,7 @@ Font::Font(SagaEngine *vm) : _vm(vm), _initialized(false) {
 	}
 
 	_initialized = true;
+	_fontMapping = 0;
 }
 
 Font::~Font(void) {
@@ -325,14 +325,29 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 		c_code = *textPointer & 0xFFU;
 
 		// Translate character
-		if (!(flags & kFontDontmap))
+		if (_fontMapping == 0) {	// Check font mapping debug flag
+			// Default game behavior
+
+			// It seems that this font mapping causes problems with non-english
+			// versions of IHNM, so it has been changed to apply for ITE only.
+			// It doesn't make any difference for the English version of IHNM.
+			// Fixes bug #1796045: "IHNM: Spanish font wrong".
+			if (!(flags & kFontDontmap) && _vm->getGameType() == GType_ITE)
+				c_code = _charMap[c_code];
+		} else if (_fontMapping == 1) {
+			// Force font mapping
 			c_code = _charMap[c_code];
+		} else {
+			// In all other cases, ignore font mapping
+		}
 		assert(c_code < FONT_CHARCOUNT);
 
 		// Check if character is defined
 		if ((drawFont.fontCharEntry[c_code].index == 0) && (c_code != FONT_FIRSTCHAR)) {
 #if FONT_SHOWUNDEFINED
-			if (c_code == FONT_CH_SPACE || c_code == 9) {
+			// A tab character appears in the IHNM demo instructions screen, so filter
+			// it out here
+			if (c_code == FONT_CH_SPACE || c_code == FONT_CH_TAB) {
 				textPoint.x += drawFont.fontCharEntry[c_code].tracking;
 				continue;
 			}
@@ -632,8 +647,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 
 	// The demo version of IHNM has 3 font types (like ITE), not 6 (like the full version of IHNM)
 	if (_vm->getGameType() == GType_ITE || _vm->getGameId() == GID_IHNM_DEMO) {
-		switch (font)
-		{
+		switch (font) {
 		case (kKnownFontSmall):
 			fontId = kSmallFont;
 			break;
@@ -655,8 +669,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 			break;
 		}
 	} else if (_vm->getGameType() == GType_IHNM && _vm->getGameId() != GID_IHNM_DEMO) {
-		switch (font)
-		{
+		switch (font) {
 		case (kKnownFontSmall):
 			fontId = kSmallFont;
 			break;

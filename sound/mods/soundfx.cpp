@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 
 #include "sound/mods/paula.h"
@@ -63,7 +62,6 @@ protected:
 	void updateEffects(int ch);
 	void handleTick();
 
-	void enablePaulaChannel(uint8 channel);
 	void disablePaulaChannel(uint8 channel);
 	void setupPaulaChannel(uint8 channel, const int8 *data, uint16 len, uint16 repeatPos, uint16 repeatLen);
 
@@ -177,38 +175,39 @@ void SoundFx::play() {
 void SoundFx::handlePattern(int ch, uint32 pat) {
 	uint16 note1 = pat >> 16;
 	uint16 note2 = pat & 0xFFFF;
-	if (note1 != 0xFFFD) {
-		int ins = (note2 & 0xF000) >> 12;
-		if (ins != 0) {
-			SoundFxInstrument *i = &_instruments[ins - 1];
-			setupPaulaChannel(ch, i->data, i->len, i->repeatPos, i->repeatLen);
-			int effect = (note2 & 0xF00) >> 8;
-			int volume = i->volume;
-			switch (effect) {
-			case 5: // volume up
-				volume += (note2 & 0xFF);
-				if (volume > 63) {
-					volume = 63;
-				}
-				break;
-			case 6: // volume down
-				volume -= (note2 & 0xFF);
-				if (volume < 0) {
-					volume = 0;
-				}
-				break;
-			}
-			setChannelVolume(ch, volume);
-		}
-	}
-	_effects[ch] = note2;
 	if (note1 == 0xFFFD) { // PIC
 		_effects[ch] = 0;
-	} else if (note1 == 0xFFFE) { // STP
+		return;
+	}
+	_effects[ch] = note2;
+	if (note1 == 0xFFFE) { // STP
 		disablePaulaChannel(ch);
-	} else if (note1 != 0) {
+		return;
+	}
+	int ins = (note2 & 0xF000) >> 12;
+	if (ins != 0) {
+		SoundFxInstrument *i = &_instruments[ins - 1];
+		setupPaulaChannel(ch, i->data, i->len, i->repeatPos, i->repeatLen);
+		int effect = (note2 & 0xF00) >> 8;
+		int volume = i->volume;
+		switch (effect) {
+		case 5: // volume up
+			volume += (note2 & 0xFF);
+			if (volume > 63) {
+				volume = 63;
+			}
+			break;
+		case 6: // volume down
+			volume -= (note2 & 0xFF);
+			if (volume < 0) {
+				volume = 0;
+			}
+			break;
+		}
+		setChannelVolume(ch, volume);
+	}
+	if (note1 != 0) {
 		setChannelPeriod(ch, note1);
-		enablePaulaChannel(ch);
 	}
 }
 
@@ -250,10 +249,6 @@ void SoundFx::handleTick() {
 			}
 		}
 	}
-}
-
-void SoundFx::enablePaulaChannel(uint8 channel) {
-	// FIXME: Is this empty on purpose?!?
 }
 
 void SoundFx::disablePaulaChannel(uint8 channel) {

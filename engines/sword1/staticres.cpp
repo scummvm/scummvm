@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "sword1/sworddefs.h"
 #include "sword1/swordres.h"
 #include "sword1/screen.h"

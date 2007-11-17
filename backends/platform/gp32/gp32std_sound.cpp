@@ -23,7 +23,6 @@
  *
  */
 
-#include "stdafx.h"
 #include "common/scummsys.h"
 
 #include "gp32std.h"

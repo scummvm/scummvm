@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/events.h"
 #include "common/system.h"
 #include "common/savefile.h"
@@ -92,8 +92,7 @@ struct MenuData {
 	uint buttonsCount;
 	bool quit;
 	bool exit;
-	bool saveLoadMarks[100];
-	char saveLoadDescriptionsTable[100][33];
+	char saveLoadDescriptionsTable[kMaxSaveStates][33];
 
 	void removeLastCharFromDescription(int slot) {
 		char *description = saveLoadDescriptionsTable[slot];
@@ -370,12 +369,15 @@ void ToucheEngine::handleOptions(int forceDisplay) {
 				setupMenu(menuData.mode, &menuData);
 				curMode = menuData.mode;
 				if (menuData.mode == kMenuLoadStateMode || menuData.mode == kMenuSaveStateMode) {
+					for (int i = 0; i < kMaxSaveStates; ++i) {
+						menuData.saveLoadDescriptionsTable[i][0] = 0;
+					}
 					char gameStateFileName[16];
 					generateGameStateFileName(999, gameStateFileName, 15, true);
-					_saveFileMan->listSavefiles(gameStateFileName, menuData.saveLoadMarks, 100);
-					for (int i = 0; i < 100; ++i) {
-						menuData.saveLoadDescriptionsTable[i][0] = 0;
-						if (menuData.saveLoadMarks[i]) {
+					Common::StringList filenames = _saveFileMan->listSavefiles(gameStateFileName);
+					for (Common::StringList::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
+						int i = getGameStateFileSlot(it->c_str());
+						if (i >= 0 && i < kMaxSaveStates) {
 							readGameStateDescription(i, menuData.saveLoadDescriptionsTable[i], 32);
 						}
 					}
@@ -542,7 +544,7 @@ void ToucheEngine::clearStatusString() {
 }
 
 int ToucheEngine::displayQuitDialog() {
-	debug(kDebugUserIntf, "ToucheEngine::displayQuitDialog()");
+	debug(kDebugMenu, "ToucheEngine::displayQuitDialog()");
 	printStatusString(getString(-85));
 	int ret = 0;
 	bool quitLoop = false;
@@ -572,6 +574,11 @@ int ToucheEngine::displayQuitDialog() {
 						ret = 1;
 					}
 					break;
+				case Common::PL_POL:
+					if (event.kbd.ascii == 's' || event.kbd.ascii == 'S' || event.kbd.ascii == 't' || event.kbd.ascii == 'T') {
+						ret = 1;
+					}
+					break;
 				default:
 					// According to cyx, the Italian version uses the same
 					// keys as the English one.
@@ -593,7 +600,7 @@ int ToucheEngine::displayQuitDialog() {
 }
 
 void ToucheEngine::displayTextMode(int str) {
-	debug(kDebugUserIntf, "ToucheEngine::displayTextMode(%d)", str);
+	debug(kDebugMenu, "ToucheEngine::displayTextMode(%d)", str);
 	printStatusString(getString(str));
 	_system->delayMillis(1000);
 	clearStatusString();

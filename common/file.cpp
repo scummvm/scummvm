@@ -28,8 +28,9 @@
 #include "common/hashmap.h"
 #include "common/util.h"
 #include "common/hash-str.h"
+#include <errno.h>
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(IPHONE)
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
@@ -72,6 +73,8 @@
 	#undef clearerr
 	//#undef getc
 	//#undef ferror
+
+	#include "ds-fs.h"
 	
 
 	//void 	std_fprintf(FILE* handle, const char* fmt, ...);	// used in common/util.cpp
@@ -226,7 +229,7 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 		return;
 
 	FSList fslist;
-	if (!dir.listDir(fslist, FilesystemNode::kListAll)) {
+	if (!dir.getChildren(fslist, FilesystemNode::kListAll)) {
 		// Failed listing the contents of this node, so it is either not a 
 		// directory, or just doesn't exist at all.
 		return;
@@ -237,7 +240,7 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 
 	// Do not add directories multiple times, unless this time they are added
 	// with a bigger depth.
-	const String &directory(dir.path());
+	const String &directory(dir.getPath());
 	if (_defaultDirectories->contains(directory) && (*_defaultDirectories)[directory] >= level)
 		return;
 	(*_defaultDirectories)[directory] = level;
@@ -247,13 +250,13 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory()) {
-			addDefaultDirectoryRecursive(file->path(), level - 1, prefix + file->name() + "/");
+			addDefaultDirectoryRecursive(file->getPath(), level - 1, prefix + file->getName() + "/");
 		} else {
 			String lfn(prefix);
-			lfn += file->name();
+			lfn += file->getName();
 			lfn.toLowercase();
 			if (!_filesMap->contains(lfn)) {
-				(*_filesMap)[lfn] = file->path();
+				(*_filesMap)[lfn] = file->getPath();
 			}
 		}
 	}
@@ -326,7 +329,7 @@ bool File::open(const String &filename, AccessMode mode) {
 			_handle = fopenNoCase(filename, "", modeStr);
 
 		// Last last (really) resort: try looking inside the application bundle on Mac OS X for the lowercase file.
-#ifdef MACOSX
+#if defined(MACOSX) || defined(IPHONE)
 		if (!_handle) {
 			CFStringRef cfFileName = CFStringCreateWithBytes(NULL, (const UInt8 *)filename.c_str(), filename.size(), kCFStringEncodingASCII, false);
 			CFURLRef fileUrl = CFBundleCopyResourceURL(CFBundleGetMainBundle(), cfFileName, NULL, NULL);
@@ -364,15 +367,21 @@ bool File::open(const String &filename, AccessMode mode) {
 bool File::open(const FilesystemNode &node, AccessMode mode) {
 	assert(mode == kFileReadMode || mode == kFileWriteMode);
 
-	if (!node.isValid()) {
-		warning("File::open: Trying to open an invalid FilesystemNode object");
+	if (!node.exists()) {
+		warning("File::open: Trying to open a FilesystemNode which does not exist");
 		return false;
 	} else if (node.isDirectory()) {
 		warning("File::open: Trying to open a FilesystemNode which is a directory");
 		return false;
-	}
+	} /*else if (!node.isReadable() && mode == kFileReadMode) {
+		warning("File::open: Trying to open an unreadable FilesystemNode object for reading");
+		return false;
+	} else if (!node.isWritable() && mode == kFileWriteMode) {
+		warning("File::open: Trying to open an unwritable FilesystemNode object for writing");
+		return false;
+	}*/
 
-	String filename(node.name());
+	String filename(node.getName());
 
 	if (_handle) {
 		error("File::open: This file object already is opened (%s), won't open '%s'", _name.c_str(), filename.c_str());
@@ -383,7 +392,7 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 
 	const char *modeStr = (mode == kFileReadMode) ? "rb" : "wb";
 
-	_handle = fopen(node.path().c_str(), modeStr);
+	_handle = fopen(node.getPath().c_str(), modeStr);
 
 	if (_handle == NULL) {
 		if (mode == kFileReadMode)
@@ -403,35 +412,32 @@ bool File::open(const FilesystemNode &node, AccessMode mode) {
 }
 
 bool File::exists(const String &filename) {
-	// First try to find the file it via a FilesystemNode (in case an absolute
-	// path was passed). But we only use this to filter out directories.
+	// First try to find the file via a FilesystemNode (in case an absolute
+	// path was passed). This is only used to filter out directories.
 	FilesystemNode file(filename);
-	// FIXME: can't use isValid() here since at the time of writing
-	// FilesystemNode is to be unable to find for example files
-	// added in extrapath
-	if (file.isDirectory())
-		return false;
-
-	// Next, try to locate the file by *opening* it in read mode. This has
-	// multiple effects:
-	// 1) It takes _filesMap and _defaultDirectories into consideration -> good
-	// 2) It returns true if and only if File::open is possible on the file -> good
-	// 3) If this method is misused, it could lead to an fopen call on a directory
-	//    -> bad!
-	// 4) It also checks whether we can read the file. This is not 100%
-	//    desirable; after all, even when we can't read it, the file is present.
-	//    Since this method is often used to check whether a file should be
-	//    re-created, that's not nice.
-	//
-	// TODO/FIXME: We should clarify the semantics of this method, and then
-	// maybe should introduce several new methods:
-	//   fileExistsAndReadable
-	//   fileExists
-	//   fileExistsAtPath
-	//   dirExists
-	//   dirExistsAtPath
-	// or maybe only 1-2 methods which take some params :-).
+	if (file.exists())
+		return !file.isDirectory();
 	
+	// See if the file is already mapped
+	if (_filesMap && _filesMap->contains(filename)) {
+		FilesystemNode file2((*_filesMap)[filename]);
+		
+		if (file2.exists())
+			return !file2.isDirectory();
+	}
+	
+	// Try all default directories
+	if (_defaultDirectories) {
+		StringIntMap::const_iterator i(_defaultDirectories->begin());
+		for (; i != _defaultDirectories->end(); ++i) {
+			FilesystemNode file2(i->_key + filename);
+			
+			if(file2.exists())
+				return !file2.isDirectory();
+		}
+	}
+	
+	//Try opening the file inside the local directory as a last resort	
 	File tmp;
 	return tmp.open(filename, kFileReadMode);
 }

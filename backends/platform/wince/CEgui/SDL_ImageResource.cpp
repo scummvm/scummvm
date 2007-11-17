@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "SDL_ImageResource.h"
 
 namespace CEGUI {

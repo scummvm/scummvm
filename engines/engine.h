@@ -25,7 +25,6 @@
 #ifndef BASE_ENGINE_H
 #define BASE_ENGINE_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -60,7 +59,7 @@ private:
 	 * The autosave interval, given in second. Used by shouldPerformAutoSave.
 	 */
 	int _autosavePeriod;
-	
+
 	/**
 	 * The pause level, 0 means 'running', a positive value indicates
 	 * how often the engine has been paused (and hence how often it has
@@ -95,7 +94,7 @@ public:
 	 * invoke the debugger when a severe error is reported.
 	 */
 	virtual GUI::Debugger *getDebugger() { return 0; }
-	
+
 	/**
 	 * Pause or resume the engine. This should stop/resume any audio playback
 	 * and other stuff. Called right before the system runs a global dialog
@@ -108,7 +107,7 @@ public:
 	 * @param pause		true to pause the engine, false to resume it
 	 */
 	void pauseEngine(bool pause);
-	
+
 	/**
 	 * Return whether the engine is currently paused or not.
 	 */
@@ -127,7 +126,7 @@ public:
 
 	/** Initialized graphics and shows error message. */
 	void GUIErrorMessage(const Common::String msg);
-	
+
 	/**
 	 * Actual implementation of pauseEngine by subclasses. See there
 	 * for details.

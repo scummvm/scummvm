@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -64,7 +63,7 @@ void GuiObject::reflowLayout() {
 			error("Undefined variable %s.y", _name.c_str());
 		_w = g_gui.evaluator()->getVar(_name + ".w");
 		_h = g_gui.evaluator()->getVar(_name + ".h");
-	
+
 		if (_x < 0)
 			error("Widget <%s> has x < 0", _name.c_str());
 		if (_x >= g_system->getOverlayWidth())
@@ -109,7 +108,7 @@ NewGui::NewGui() : _needRedraw(false),
 	   warning("falling back to classic style");
 	}
 #endif
-	
+
 	if (loadClassicTheme) {
 		_theme = new ThemeClassic(_system);
 		assert(_theme);
@@ -142,7 +141,7 @@ bool NewGui::loadNewTheme(const Common::String &style) {
 	if (style.compareToIgnoreCase("classic (builtin)") == 0 ||
 		style.compareToIgnoreCase("classic") == 0) {
 		_theme = new ThemeClassic(_system, style);
-	} else {	
+	} else {
 		if (Theme::themeConfigUseable(style, "", &styleType, &cfg)) {
 			if (0 == styleType.compareToIgnoreCase("classic"))
 				_theme = new ThemeClassic(_system, style, &cfg);
@@ -185,9 +184,10 @@ void NewGui::redraw() {
 	// This is necessary to get the blending right.
 	_theme->clearAll();
 
-	for (i = 0; i < _dialogStack.size(); ++i) {
-		_theme->closeDialog();
-	}
+	_theme->closeAllDialogs();
+	//for (i = 0; i < _dialogStack.size(); ++i)
+	//	_theme->closeDialog();
+
 	for (i = 0; i < _dialogStack.size(); i++) {
 		// Special treatment when topmost dialog has dimsInactive() set to false
 		// This is the case for PopUpWidget which should not dim a dialog
@@ -202,7 +202,7 @@ void NewGui::redraw() {
 		_dialogStack[i]->drawDialog();
 	}
 
-	_theme->drawAll();
+	_theme->updateScreen();
 }
 
 Dialog *NewGui::getTopDialog() const {
@@ -228,7 +228,7 @@ void NewGui::runLoop() {
 		if (_useStdCursor)
 			setupCursor();
 	}
-	
+
 	Common::EventManager *eventMan = _system->getEventManager();
 
 	while (!_dialogStack.empty() && activeDialog == getTopDialog()) {
@@ -244,7 +244,7 @@ void NewGui::runLoop() {
 
 		if (_useStdCursor)
 			animateCursor();
-		_theme->drawAll();
+		_theme->updateScreen();
 		_system->updateScreen();
 
 		Common::Event event;
@@ -269,7 +269,7 @@ void NewGui::runLoop() {
 				_themeChange = false;
 				redraw();
 			}
-			
+
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				activeDialog->handleKeyDown(event.kbd);
@@ -322,7 +322,10 @@ void NewGui::runLoop() {
 		_system->delayMillis(10);
 	}
 
-	_theme->closeDialog();
+	// HACK: since we reopen all dialogs anyway on redraw
+	// we for now use Theme::closeAllDialogs here, until
+	// we properly add (and implement) Theme::closeDialog
+	_theme->closeAllDialogs();
 
 	if (didSaveState) {
 		_theme->disable();

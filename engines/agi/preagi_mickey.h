@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef AGI_PREAGI_MICKEY_H
+#define AGI_PREAGI_MICKEY_H
+
 #include "agi/agi.h"
 
 namespace Agi {
@@ -72,7 +75,6 @@ const char IDS_MSA_INSERT_DISK[][40] = {
 #define IDI_MSA_MAX_PIC_ROOM			224
 #define IDI_MSA_MAX_SOUND				8
 #define IDI_MSA_MAX_ROOM				160
-#define IDI_MSA_MAX_STR					160
 
 #define IDI_MSA_MAX_BUTTON				6
 #define IDI_MSA_MAX_ITEM				11
@@ -115,6 +117,7 @@ const char IDS_MSA_INSERT_DISK[][40] = {
 #define IDI_MSA_MSG_SPACESUIT_CANT_WEAR_ON_EARTH	12
 #define IDI_MSA_MSG_SHIP_LAUNCH						16
 #define IDI_MSA_MSG_SHIP_LAND						22
+#define IDI_MSA_MSG_MICKEY_ALREADY_HAS_ITEM			90
 
 // screen
 
@@ -463,7 +466,7 @@ struct MSA_DAT_HEADER {
 	uint16	filelen;
 	uint16	ofsRoom[IDI_MSA_MAX_ROOM];
 	uint16	ofsDesc[IDI_MSA_MAX_ROOM];
-	uint16	ofsStr[IDI_MSA_MAX_STR];
+	uint16	ofsStr[IDI_MSA_MAX_ROOM];
 };
 
 struct MSA_SND_NOTE {
@@ -705,6 +708,7 @@ struct MSA_GAME {
 	bool fShipDoorOpen;
 	bool fFlying;
 	bool fStoryShown;
+	bool fPlanetsInitialized;
 	bool fTempleDoorOpen;
 
 	bool fItem[IDI_MSA_MAX_ITEM];
@@ -712,7 +716,7 @@ struct MSA_GAME {
 	int iItem[IDI_MSA_MAX_ITEM];
 	int nItems;
 
-	int8 fRmTxt[IDI_MSA_MAX_ROOM];
+	//int8 fRmTxt[IDI_MSA_MAX_ROOM];
 	int8 iRmObj[IDI_MSA_MAX_ROOM];
 	uint8 iRmPic[IDI_MSA_MAX_ROOM];
 	uint16 oRmTxt[IDI_MSA_MAX_ROOM];
@@ -728,7 +732,6 @@ struct MSA_GAME {
 class Mickey {
 	friend class PreAgiEngine;
 public:
-
 	Mickey(PreAgiEngine *vm);
 	~Mickey();
 
@@ -736,22 +739,19 @@ public:
 	void run();
 protected:
 	PreAgiEngine *_vm;
-	MSA_GAME game;
+	MSA_GAME _game;
+	bool _clickToMove;
 
 	int getDat(int);
 	void readExe(int, uint8*, long);
 	void getDatFileName(int, char*);
 	void readDatHdr(char*, MSA_DAT_HEADER*);
-	void readDesc(int, char*, long);
-	void readMenu(int, char*);
-	void readDatStr(int, int, char*, long);
 	void readOfsData(int, int, uint8*, long);
 	bool chooseY_N(int, bool);
 	int choose1to9(int);
 	void printStr(char*);
 	void printExeStr(int);
 	void printExeMsg(int);
-	void printDatStr(int, int);
 	void printDesc(int);
 	void drawMenu(MSA_MENU, int, int);
 	void getMouseMenuSelRow(MSA_MENU, int*, int*, int, int, int);
@@ -761,13 +761,11 @@ protected:
 	void patchMenu(MSA_MENU*);
 	void printDatString(int);
 	void printDatMessage(int);
-	void _playNote(MSA_SND_NOTE);
+	void playNote(MSA_SND_NOTE);
 	void playSound(ENUM_MSA_SOUND);
 	void debug();
 	void drawObj(ENUM_MSA_OBJECT, int, int);
 	void drawPic(int);
-	void drawRoomPicture();
-	void drawRoomObjects();
 	void drawRoomAnimation();
 	void drawRoom();
 	void drawLogo();
@@ -777,25 +775,39 @@ protected:
 	void saveGame();
 	void showPlanetInfo();
 	void printStory();
-	void hidden();
 	int getPlanet();
 	void pressOB(int);
-	void checkAirSupply(bool, int*);
 	void insertDisk(int);
 	void gameOver();
 	void inventory();
-	void randomize();
-	void flashScreen();
 	void intro();
 	void getItem(ENUM_MSA_ITEM);
 	void getXtal(int);
 	bool parse(int, int);
-	void gameLoop();
 	void debug_DrawObjs();
 	void debug_DrawPics();
-	void initVars();
-	void initEngine();
 	void flipSwitch();
+	void waitAnyKeyAnim();
+	void waitAnyKey(bool anim = false);
+
+	bool planetIsAlreadyAssigned(int planet) {
+		for (int j = 0; j < IDI_MSA_MAX_PLANET; j++) {
+			if (_game.iPlanetXtal[j] == planet)
+				return true;
+		}
+		return false;
+	}
+
+	bool mickeyHasItem(int item) {
+		if (_game.fItem[item]) {
+			printDatMessage(IDI_MSA_MSG_MICKEY_ALREADY_HAS_ITEM);
+			return true;
+		} else {
+			return false;
+		}
+	}
 };
 
-}
+} // End of namespace Agi
+
+#endif

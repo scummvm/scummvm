@@ -22,7 +22,7 @@
  * $Id$
  *
  */
-
+#include "common/file.h"
 #include "cruise/cell.h"
 #include "cruise/cruise_main.h"
 
@@ -37,14 +37,14 @@ void resetPtr(cellStruct *ptr) {
 
 void freeMessageList(cellStruct *objPtr) {
 /*	if (objPtr) {
-		 if(objPtr->next)
+		 if (objPtr->next)
 		 free(objPtr->next);
 
 		free(objPtr);
 	} */
 }
 
-void loadSavegameDataSub2(FILE *f) {
+void loadSavegameDataSub2(Common::File& currentSaveFile) {
 	unsigned short int n_chunks;
 	int i;
 	cellStruct *p;
@@ -53,17 +53,41 @@ void loadSavegameDataSub2(FILE *f) {
 	cellHead.next = NULL;	// Not in ASM code, but I guess the variable is defaulted
 	// to this value in the .exe
 
-	fread(&n_chunks, 2, 1, f);
-	// BIG ENDIAN MACHINES, PLEASE SWAP IT
+	n_chunks = currentSaveFile.readSint16LE();
 
 	p = &cellHead;
 
 	for (i = 0; i < n_chunks; i++) {
 		t = (cellStruct *) mallocAndZero(sizeof(cellStruct));
 
-		fseek(f, 4, SEEK_CUR);
-		fread(&t->idx, 1, 0x30, f);
+		currentSaveFile.skip(2);
+		currentSaveFile.skip(2);
 
+		t->idx = currentSaveFile.readSint16LE();
+		t->type = currentSaveFile.readSint16LE();
+		t->overlay = currentSaveFile.readSint16LE();
+		t->x = currentSaveFile.readSint16LE();
+		t->field_C = currentSaveFile.readSint16LE();
+		t->spriteIdx = currentSaveFile.readSint16LE();
+		t->color = currentSaveFile.readSint16LE();
+		t->backgroundPlane = currentSaveFile.readSint16LE();
+		t->freeze = currentSaveFile.readSint16LE();
+		t->parent = currentSaveFile.readSint16LE();
+		t->parentOverlay = currentSaveFile.readSint16LE();
+		t->parentType = currentSaveFile.readSint16LE();
+		t->followObjectOverlayIdx = currentSaveFile.readSint16LE();
+		t->followObjectIdx = currentSaveFile.readSint16LE();
+		t->animStart = currentSaveFile.readSint16LE();
+		t->animEnd = currentSaveFile.readSint16LE();
+		t->animWait = currentSaveFile.readSint16LE();
+		t->animStep = currentSaveFile.readSint16LE();
+		t->animChange = currentSaveFile.readSint16LE();
+		t->animType = currentSaveFile.readSint16LE();
+		t->animSignal = currentSaveFile.readSint16LE();
+		t->animCounter = currentSaveFile.readSint16LE();
+		t->animLoop = currentSaveFile.readSint16LE();
+		currentSaveFile.skip(2);
+		
 		t->next = NULL;
 		p->next = t;
 		t->prev = cellHead.prev;
@@ -156,7 +180,7 @@ cellStruct *addCell(cellStruct *pHead, int16 overlayIdx, int16 objIdx, int16 typ
 	return newElement;
 }
 
-void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject, int scriptNumber, int scriptOverlayNumber, int backgroundPlane, int16 color, int oldVar2, int oldVar4, int oldVar6) {
+void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x, int y, int width, int16 color, int backgroundPlane, int parentOvl, int parentIdx) {
 
 	char *ax;
 	cellStruct *savePObject = pObject;
@@ -178,17 +202,17 @@ void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject, int scri
 	pNewElement->next = pObject->next;
 	pObject->next = pNewElement;
 
-	pNewElement->idx = oldVar8;
+	pNewElement->idx = messageIdx;
 	pNewElement->type = 5;
 	pNewElement->backgroundPlane = backgroundPlane;
 	pNewElement->overlay = overlayIdx;
-	pNewElement->x = oldVar6;
-	pNewElement->field_C = oldVar4;
-	pNewElement->spriteIdx = oldVar2;
+	pNewElement->x = x;
+	pNewElement->field_C = y;
+	pNewElement->spriteIdx = width;
 	pNewElement->color = color;
 	pNewElement->freeze = 0;
-	pNewElement->parent = scriptNumber;
-	pNewElement->parentOverlay = scriptOverlayNumber;
+	pNewElement->parent = parentIdx;
+	pNewElement->parentOverlay = parentOvl;
 	pNewElement->gfxPtr = NULL;
 
 	if (var_2) {
@@ -200,10 +224,10 @@ void createTextObject(int overlayIdx, int oldVar8, cellStruct *pObject, int scri
 	pNewElement->prev = cx->prev;
 	cx->prev = pNewElement;
 
-	ax = getText(oldVar8, overlayIdx);
+	ax = getText(messageIdx, overlayIdx);
 
 	if (ax) {
-		pNewElement->gfxPtr = renderText(oldVar2, (uint8 *) ax);
+		pNewElement->gfxPtr = renderText(width, (uint8 *) ax);
 	}
 }
 
@@ -255,6 +279,21 @@ void removeCell(cellStruct *objPtr, int ovlNumber, int objectIdx, int objType, i
 	}
 }
 
+void linkCell(cellStruct *pHead, int ovl, int obj, int type, int ovl2, int obj2) {
+	while (pHead) {
+		if ((pHead->overlay == ovl) || (ovl == -1)) {
+			if ((pHead->idx == obj) || (obj == -1)) {
+				if ((pHead->type == type) || (type == -1)) {
+					pHead->followObjectIdx = obj2;
+					pHead->followObjectOverlayIdx = ovl2;
+				}
+			}
+		}
+
+		pHead = pHead->next;
+	}
+}
+
 void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, int backgroundPlane, int oldFreeze, int newFreeze ) {
 	while (pObject) {
 		if ((pObject->overlay == overlayIdx) || (overlayIdx == -1)) {
@@ -274,89 +313,75 @@ void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, i
 }
 
 void sortCells(int16 param1, int16 param2, cellStruct *objPtr) {
-	int16 var;
-	cellStruct *var8_;
-	cellStruct *var40;
-	cellStruct *var3E;
-	cellStruct *currentObjPtrPrevious;
-	cellStruct *currentObjPtr2;
-	cellStruct *match;
+	cellStruct *pl,*pl2,*pl3,*pl4,*plz,*pllast;
+	cellStruct prov;
+	int16 newz, objz, sobjz;
 
-	getSingleObjectParam(param1, param2, 2, &var);
+	pl4 = NULL;
 
-	currentObjPtrPrevious = objPtr;
-	currentObjPtr2 = objPtr->next;
+	getSingleObjectParam(param1, param2, 2, &sobjz);
+	pl = objPtr;
+	prov.next = NULL;
+	prov.prev = NULL;
 
-	match = NULL;
-	var40 = NULL;
-	var3E = NULL;
-	var8_ = objPtr;
+	pl2 = pl->next;
+	pllast = NULL;
+	plz = objPtr;
 
-	while (currentObjPtr2) {
-		if ((currentObjPtr2->overlay == param1) && (currentObjPtr2->idx == param2)) {// found
-			currentObjPtrPrevious->next = currentObjPtr2->next;
+	while (pl2) {
+		pl3 = pl2->next;
+		if ((pl2->overlay == param1) && (pl2->idx == param2)) {// found
+			pl->next = pl3;
 
-			if (currentObjPtr2->next) {
-				currentObjPtr2->next->prev =
-				    currentObjPtr2->prev;
+			if (pl3) {
+				pl3->prev = pl2->prev;
 			} else {
-				objPtr->prev = currentObjPtr2->prev;
+				objPtr->prev = pl2->prev;
 			}
 
-			if (var40) {
-				var40->prev = currentObjPtr2;
+			if (pl4) {
+				pl4->prev = pl2;
 			} else {
-				var3E = currentObjPtr2;
+				prov.prev = pl2;
 			}
 
-			currentObjPtr2->prev = NULL;
+			pl2->prev = NULL;
+			pl2->next = prov.next;
+			prov.next = pl2;
 
-			currentObjPtr2->next = var40;
-
-			var40 = currentObjPtr2;
-
-			if (match == NULL) {
-				match = currentObjPtr2;
+			if (pllast == NULL) {
+				pllast = pl2;
 			}
 		} else {
-			if (currentObjPtr2->type == 5) {
-				var2 = 32000;
+			if (pl2->type == 5) {
+				newz = 32000;
 			} else {
-				int16 varC;
-
-				getSingleObjectParam(currentObjPtr2->overlay,
-				    currentObjPtr2->idx, 2, &varC);
-
-				var2 = varC;
+				getSingleObjectParam(pl2->overlay, pl2->idx, 2, &objz);
+				newz = objz;
 			}
 
-			if (var > var2) {
-				var8_ = currentObjPtr2;
+			if (newz < sobjz) {
+				plz = pl2;
 			}
 
-			currentObjPtrPrevious = currentObjPtrPrevious->next;
+			pl = pl->next;
 		}
 
-		currentObjPtr2 = currentObjPtr2->next;
+		pl2 = pl3;
 	}
 
-	if (match) {
-		cellStruct *temp;
+	if (pllast) {
+		pl2 = prov.next;
+		pl4 = plz->next;
+		plz->next = pl2;
+		pllast->next = pl4;
 
-		temp = var8_->next;
-
-		var8_->next = var40;
-		match->next = temp;
-
-		if (objPtr != var8_) {
-			var40->prev = var8_;
-		}
-
-		if (!temp) {
-			temp = match;
-		}
-
-		temp->prev = match;
+		if(plz != objPtr)
+			pl2->prev = plz;
+		if(!pl4)
+			objPtr->prev = pllast;
+		else
+			pl4->prev = pllast;
 	}
 }
 

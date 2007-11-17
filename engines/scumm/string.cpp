@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 
@@ -163,7 +163,7 @@ void ScummEngine_v6::drawBlastTexts() {
 
 			do {
 				c = *buf++;
-				
+
 				// FIXME: This is a workaround for bugs #864030 and #1399843:
 				// In COMI, some text contains ASCII character 11 = 0xB. It's
 				// not quite clear what it is good for; so for now we just ignore
@@ -171,7 +171,7 @@ void ScummEngine_v6::drawBlastTexts() {
 				// this is a 'vertical tab').
 				if (c == 0x0B)
 					continue;
-				
+
 				// Some localizations may override colors
 				// See credits in Chinese COMI
 				if (c == '^' && (buf == _blastTextQueue[i].text + 1)) {
@@ -456,7 +456,7 @@ void ScummEngine::CHARSET_1() {
 	if (a && _string[0].overhead) {
 		int s;
 
-		_string[0].xpos = a->getPos().x - virtscr[0].xstart;
+		_string[0].xpos = a->getPos().x - _virtscr[kMainVirtScreen].xstart;
 		_string[0].ypos = a->getPos().y - a->getElevation() - _screenTop;
 
 		if (_game.version <= 5) {
@@ -568,7 +568,7 @@ void ScummEngine::CHARSET_1() {
 		if (c == 13) {
 		newLine:;
 			_nextLeft = _string[0].xpos;
-#ifndef DISABLE_SCUMM_7_8			
+#ifndef DISABLE_SCUMM_7_8
 			if (_game.version >= 7 && subtitleLine != subtitleBuffer) {
 				((ScummEngine_v7 *)this)->addSubtitleToQueue(subtitleBuffer, subtitlePos, _charsetColor, _charset->getCurID());
 				subtitleLine = subtitleBuffer;
@@ -586,7 +586,7 @@ void ScummEngine::CHARSET_1() {
 				_nextTop += _charset->getFontHeight();
 			}
 			if (_game.version > 3) {
-				// FIXME - is this really needed?
+				// FIXME: is this really needed?
 				_charset->_disableOffsX = true;
 			}
 			continue;
@@ -678,7 +678,7 @@ void ScummEngine_v8::CHARSET_1() {
 	if (a && _string[0].overhead) {
 		int s;
 
-		_string[0].xpos = a->getPos().x - virtscr[0].xstart;
+		_string[0].xpos = a->getPos().x - _virtscr[kMainVirtScreen].xstart;
 		s = a->_scalex * a->_talkPosX / 255;
 		_string[0].xpos += (a->_talkPosX - s) / 2 + s;
 
@@ -1023,7 +1023,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				*dst++ = 0xE1;
 				continue;
 			}
-			
+
 			// WORKAROUND for bug #1514457: Yet another script bug in Indy3.
 			// Once more a german 'sz' was encoded incorrectly, but this time
 			// they simply encoded it as 0xFF instead of 0xE1. Happens twice

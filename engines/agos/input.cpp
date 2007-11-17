@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -225,15 +225,15 @@ void AGOSEngine::waitForInput() {
 				_dragEnd = 0;
 				continue;
 			}
-		
+
 			_hitAreaSubjectItem = ha->item_ptr;
 			_verbHitArea = 500;
-		
+
 			do {
 				processSpecialKeys();
 				hitarea_stuff_helper();
 				delay(100);
-		
+
 				if (_dragFlag == 0) {
 					_dragFlag = 0;
 					_dragMode = 0;
@@ -241,19 +241,19 @@ void AGOSEngine::waitForInput() {
 					_dragEnd = 0;
 				}
 			} while (!_dragEnd);
-		
+
 			_dragFlag = 0;
 			_dragMode = 0;
 			_dragCount = 0;
 			_dragEnd = 0;
-		
+
 			boxController(_mouse.x, _mouse.y, 1);
-		
+
 			if (_currentBox != NULL) {
 				_hitAreaObjectItem = _currentBox->item_ptr;
 				setVerbText(ha);
 			}
-		
+
 			break;
 		}
 
@@ -369,7 +369,7 @@ void AGOSEngine::hitarea_stuff_helper() {
 		if (_variableArray[254] || _variableArray[249]) {
 			hitarea_stuff_helper_2();
 		}
-	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW || 
+	} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW ||
 		getGameType() == GType_SIMON1) {
 		uint subr_id = (uint16)_variableArray[254];
 		if (subr_id) {

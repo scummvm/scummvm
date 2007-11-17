@@ -43,7 +43,7 @@
 //		  for new system by JEL on 9oct96 and updated again (for font
 //		  as a resource) on 5dec96.
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 
 #include "sword2/sword2.h"

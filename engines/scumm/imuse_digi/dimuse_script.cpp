@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"
 #include "common/timer.h"
 
@@ -403,7 +403,7 @@ void IMuseDigital::stopAllSounds() {
 				delete track->streamSou;
 				track->streamSou = NULL;
 			}
-			
+
 			// Mark the track as unused
 			track->used = false;
 		}

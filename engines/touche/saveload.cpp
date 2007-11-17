@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/savefile.h"
 
 #include "touche/graphics.h"
@@ -36,39 +36,27 @@ enum {
 	kGameStateDescriptionLen = 32
 };
 
-template <class S, class T>
-static void saveOrLoad(S &s, T &t);
-
-template <>
 static void saveOrLoad(Common::WriteStream &stream, uint16 &i) {
 	stream.writeUint16LE(i);
 }
 
-template <>
 static void saveOrLoad(Common::ReadStream &stream, uint16 &i) {
 	i = stream.readUint16LE();
 }
 
-template <>
 static void saveOrLoad(Common::WriteStream &stream, int16 &i) {
 	stream.writeSint16LE(i);
 }
 
-template <>
 static void saveOrLoad(Common::ReadStream &stream, int16 &i) {
 	i = stream.readSint16LE();
 }
 
-template <class S, class T>
-static void saveOrLoadPtr(S &s, T *&t, T *base);
-
-template <>
 static void saveOrLoadPtr(Common::WriteStream &stream, int16 *&p, int16 *base) {
 	int32 offset = (int32)(p - base);
 	stream.writeSint32LE(offset);
 }
 
-template <>
 static void saveOrLoadPtr(Common::ReadStream &stream, int16 *&p, int16 *base) {
 	int32 offset = stream.readSint32LE();
 	p = base + offset;
@@ -328,7 +316,7 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 	  _backdropBuffer, _currentBitmapWidth, _flagsTable[614], _flagsTable[615],
 	  kScreenWidth, kRoomHeight);
 	updateRoomRegions();
-	updateEntireScreen();
+	_fullRedrawCounter = 1;
 	_roomNeedRedraw = false;
 	if (_flagsTable[617] != 0) {
 		res_loadSpeech(_flagsTable[617]);
@@ -338,8 +326,8 @@ void ToucheEngine::loadGameStateData(Common::ReadStream *stream) {
 
 bool ToucheEngine::saveGameState(int num, const char *description) {
 	bool saveOk = false;
-	char gameStateFileName[16];
-	generateGameStateFileName(num, gameStateFileName, 15);
+	char gameStateFileName[64];
+	generateGameStateFileName(num, gameStateFileName, 63);
 	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName);
 	if (f) {
 		f->writeUint16LE(kCurrentGameStateVersion);
@@ -362,8 +350,8 @@ bool ToucheEngine::saveGameState(int num, const char *description) {
 
 bool ToucheEngine::loadGameState(int num) {
 	bool loadOk = false;
-	char gameStateFileName[16];
-	generateGameStateFileName(num, gameStateFileName, 15);
+	char gameStateFileName[64];
+	generateGameStateFileName(num, gameStateFileName, 63);
 	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName);
 	if (f) {
 		uint16 version = f->readUint16LE();
@@ -384,8 +372,8 @@ bool ToucheEngine::loadGameState(int num) {
 }
 
 void ToucheEngine::readGameStateDescription(int num, char *description, int len) {
-	char gameStateFileName[16];
-	generateGameStateFileName(num, gameStateFileName, 15);
+	char gameStateFileName[64];
+	generateGameStateFileName(num, gameStateFileName, 63);
 	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName);
 	if (f) {
 		uint16 version = f->readUint16LE();
@@ -400,11 +388,20 @@ void ToucheEngine::readGameStateDescription(int num, char *description, int len)
 
 void ToucheEngine::generateGameStateFileName(int num, char *dst, int len, bool prefixOnly) const {
 	if (prefixOnly) {
-		snprintf(dst, len, "%s.", _targetName.c_str());
+		snprintf(dst, len, "%s.*", _targetName.c_str());
 	} else {
 		snprintf(dst, len, "%s.%d", _targetName.c_str(), num);
 	}
 	dst[len] = 0;
+}
+
+int ToucheEngine::getGameStateFileSlot(const char *filename) const {
+	int i = -1;
+	const char *slot = strrchr(filename, '.');
+	if (slot) {
+		i = atoi(slot + 1);
+	}
+	return i;
 }
 
 } // namespace Touche

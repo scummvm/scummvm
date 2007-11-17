@@ -45,6 +45,16 @@
 			<Option link="0" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\gob\coktelvideo.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\gob\coktelvideo.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\gob\dataio.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -147,6 +157,10 @@
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\gob\goblin_v3.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\gob\init.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -162,6 +176,10 @@
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\gob\init_v2.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\gob\init_v3.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
@@ -187,6 +205,14 @@
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\gob\inter_v3.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\gob\inter_v4.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\gob\map.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -202,6 +228,10 @@
 			<Option target="default" />
 		</Unit>
 		<Unit filename="..\..\engines\gob\map_v2.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\gob\map_v4.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
@@ -271,6 +301,24 @@
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
+		<Unit filename="..\..\engines\gob\saveload.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\gob\saveload.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\gob\saveload_v2.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\gob\saveload_v3.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
 		<Unit filename="..\..\engines\gob\scenery.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />
@@ -335,6 +383,16 @@
 		</Unit>
 		<Unit filename="..\..\engines\gob\video_v2.cpp">
 			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\gob\videoplayer.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="..\..\engines\gob\videoplayer.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
 			<Option target="default" />
 		</Unit>
 		<Extensions />

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
@@ -239,6 +239,22 @@ bool Console::Cmd_Debug(int argc, const char **argv) {
 bool Console::Cmd_Cont(int argc, const char **argv) {
 	_vm->_debug.enabled = 0;
 	_vm->_debug.steps = 0;
+
+	return true;
+}
+
+PreAGI_Console::PreAGI_Console(PreAgiEngine *vm) {
+	_vm = vm;
+}
+
+Winnie_Console::Winnie_Console(PreAgiEngine *vm, Winnie *winnie) : PreAGI_Console(vm) {
+	_winnie = winnie;
+
+	DCmd_Register("curRoom",     WRAP_METHOD(Winnie_Console, Cmd_CurRoom));
+}
+
+bool Winnie_Console::Cmd_CurRoom(int argc, const char **argv) {
+	_winnie->debugCurRoom();
 
 	return true;
 }

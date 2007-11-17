@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
 
@@ -48,7 +47,7 @@ namespace Parallaction {
 #define INST_START						16
 #define INST_SOUND						17
 #define INST_MOVE						18
-#define INST_END						19
+#define INST_ENDSCRIPT					19
 
 
 typedef OpcodeImpl<Parallaction_ns> OpcodeV1;
@@ -180,12 +179,10 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 	int16 x = inst->_opA.getRValue();
 	int16 y = inst->_opB.getRValue();
 
-	WalkNodeList *v4 = _char._builder.buildPath(x, y);
-	addJob(&jobWalk, v4, kPriority19 );
-	_engineFlags |= kEngineWalking;
+	_char.scheduleWalk(x, y);
 }
 
-DECLARE_INSTRUCTION_OPCODE(end) {
+DECLARE_INSTRUCTION_OPCODE(endscript) {
 	if ((_instRunCtxt.a->_flags & kFlagsLooping) == 0) {
 		_instRunCtxt.a->_flags &= ~kFlagsActing;
 		runCommands(_instRunCtxt.a->_commands, _instRunCtxt.a);
@@ -251,15 +248,14 @@ DECLARE_COMMAND_OPCODE(get) {
 
 
 DECLARE_COMMAND_OPCODE(location) {
-	strcpy(_location._name, _cmdRunCtxt.cmd->u._string);
-	_engineFlags |= kEngineChangeLocation;
+	scheduleLocationSwitch(_cmdRunCtxt.cmd->u._string);
 }
 
 
 DECLARE_COMMAND_OPCODE(open) {
 	_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsClosed;
 	if (_cmdRunCtxt.cmd->u._zone->u.door->_cnv) {
-		addJob(&jobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
+		addJob(kJobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
 	}
 }
 
@@ -267,7 +263,7 @@ DECLARE_COMMAND_OPCODE(open) {
 DECLARE_COMMAND_OPCODE(close) {
 	_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsClosed;
 	if (_cmdRunCtxt.cmd->u._zone->u.door->_cnv) {
-		addJob(&jobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
+		addJob(kJobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
 	}
 }
 
@@ -283,7 +279,7 @@ DECLARE_COMMAND_OPCODE(on) {
 		_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsRemove;
 		_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsActive;
 		if ((_cmdRunCtxt.cmd->u._zone->_type & 0xFFFF) == kZoneGet) {
-			addJob(&jobDisplayDroppedItem, _cmdRunCtxt.cmd->u._zone, kPriority17 );
+			addJob(kJobDisplayDroppedItem, _cmdRunCtxt.cmd->u._zone, kPriority17 );
 		}
 	}
 }
@@ -320,14 +316,7 @@ DECLARE_COMMAND_OPCODE(quit) {
 
 
 DECLARE_COMMAND_OPCODE(move) {
-	if ((_char._ani._flags & kFlagsRemove) || (_char._ani._flags & kFlagsActive) == 0) {
-		return;
-	}
-
-	WalkNodeList *vC = _char._builder.buildPath(_cmdRunCtxt.cmd->u._move.x, _cmdRunCtxt.cmd->u._move.y);
-
-	addJob(&jobWalk, vC, kPriority19 );
-	_engineFlags |= kEngineWalking;
+	_char.scheduleWalk(_cmdRunCtxt.cmd->u._move.x, _cmdRunCtxt.cmd->u._move.y);
 }
 
 
@@ -336,13 +325,13 @@ DECLARE_COMMAND_OPCODE(stop) {
 }
 
 
-void jobDisplayAnimations(void *parm, Job *j) {
+void Parallaction_ns::jobDisplayAnimations(void *parm, Job *j) {
 
 	Graphics::Surface v14;
 
 	uint16 _si = 0;
 
-	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 
 		Animation *v18 = *it;
 
@@ -357,11 +346,11 @@ void jobDisplayAnimations(void *parm, Job *j) {
 			if (v18->_flags & kFlagsNoMasked)
 				_si = 3;
 			else
-				_si = _vm->_gfx->queryMask(v18->_top + v18->height());
+				_si = _gfx->queryMask(v18->_top + v18->height());
 
-			debugC(9, kDebugLocation, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, f:%i/%i, %p)", v18->_label._text, v18->_left, v18->_top, _si, v14.w, v14.h,
+			debugC(9, kDebugExec, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, f:%i/%i, %p)", v18->_label._text, v18->_left, v18->_top, _si, v14.w, v14.h,
 				frame, v18->getFrameNum(), v14.pixels);
-			_vm->_gfx->blitCnv(&v14, v18->_left, v18->_top, _si, Gfx::kBitBack);
+			_gfx->blitCnv(&v14, v18->_left, v18->_top, _si, Gfx::kBitBack);
 
 		}
 
@@ -380,10 +369,10 @@ void jobDisplayAnimations(void *parm, Job *j) {
 }
 
 
-void jobEraseAnimations(void *arg_0, Job *j) {
-	debugC(3, kDebugJobs, "jobEraseAnimations");
+void Parallaction_ns::jobEraseAnimations(void *arg_0, Job *j) {
+	debugC(9, kDebugExec, "jobEraseAnimations");
 
-	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 
 		Animation *a = *it;
 
@@ -391,7 +380,7 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 
 		Common::Rect r(a->width(), a->height());
 		r.moveTo(a->_oldPos);
-		_vm->_gfx->restoreBackground(r);
+		_gfx->restoreBackground(r);
 
 		if (arg_0) {
 			a->_oldPos.x = a->_left;
@@ -404,12 +393,12 @@ void jobEraseAnimations(void *arg_0, Job *j) {
 }
 
 
-void jobRunScripts(void *parm, Job *j) {
-	debugC(3, kDebugJobs, "jobRunScripts");
+void Parallaction_ns::jobRunScripts(void *parm, Job *j) {
+	debugC(9, kDebugExec, "jobRunScripts");
 
 	static uint16 modCounter = 0;
 
-	for (AnimationList::iterator it = _vm->_animations.begin(); it != _vm->_animations.end(); it++) {
+	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 
 		Animation *a = *it;
 
@@ -422,18 +411,18 @@ void jobRunScripts(void *parm, Job *j) {
 		InstructionList::iterator inst = a->_program->_ip;
 		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
 
-			debugC(9, kDebugJobs, "Animation: %s, instruction: %s", a->_label._text, _vm->_instructionNamesRes[(*inst)->_index - 1]);
+			debugC(9, kDebugExec, "Animation: %s, instruction: %s", a->_label._text, _instructionNamesRes[(*inst)->_index - 1]);
 
-			_vm->_instRunCtxt.inst = inst;
-			_vm->_instRunCtxt.a = a;
-			_vm->_instRunCtxt.modCounter = modCounter;
-			_vm->_instRunCtxt.suspend = false;
+			_instRunCtxt.inst = inst;
+			_instRunCtxt.a = a;
+			_instRunCtxt.modCounter = modCounter;
+			_instRunCtxt.suspend = false;
 
-			(*_vm->_instructionOpcodes[(*inst)->_index])();
+			(*_instructionOpcodes[(*inst)->_index])();
 
-			inst = _vm->_instRunCtxt.inst;		// handles endloop correctly
+			inst = _instRunCtxt.inst;		// handles endloop correctly
 
-			if (_vm->_instRunCtxt.suspend)
+			if (_instRunCtxt.suspend)
 				goto label1;
 
 			inst++;
@@ -446,7 +435,7 @@ label1:
 			a->_z = a->_top + a->height();
 	}
 
-	_vm->sortAnimations();
+	sortAnimations();
 	modCounter++;
 
 	return;
@@ -454,7 +443,7 @@ label1:
 
 
 void Parallaction::runCommands(CommandList& list, Zone *z) {
-	debugC(1, kDebugLocation, "runCommands");
+	debugC(3, kDebugExec, "runCommands");
 
 	CommandList::iterator it = list.begin();
 	for ( ; it != list.end(); it++) {
@@ -472,7 +461,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 		if ((cmd->_flagsOn & v8) != cmd->_flagsOn) continue;
 		if ((cmd->_flagsOff & ~v8) != cmd->_flagsOff) continue;
 
-		debugC(1, kDebugLocation, "runCommands[%i]: %s (on: %x, off: %x)", cmd->_id, _commandsNamesRes[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
+		debugC(3, kDebugExec, "runCommands[%i]: %s (on: %x, off: %x)", cmd->_id, _commandsNamesRes[cmd->_id-1], cmd->_flagsOn, cmd->_flagsOff);
 
 		_cmdRunCtxt.z = z;
 		_cmdRunCtxt.cmd = cmd;
@@ -480,7 +469,7 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 		(*_commandOpcodes[cmd->_id])();
 	}
 
-	debugC(1, kDebugLocation, "runCommands completed");
+	debugC(3, kDebugExec, "runCommands completed");
 
 	return;
 
@@ -567,11 +556,11 @@ void Parallaction::displayItemComment(ExamineData *data) {
 
 
 uint16 Parallaction::runZone(Zone *z) {
-	debugC(3, kDebugLocation, "runZone (%s)", z->_label._text);
+	debugC(3, kDebugExec, "runZone (%s)", z->_label._text);
 
 	uint16 subtype = z->_type & 0xFFFF;
 
-	debugC(3, kDebugLocation, "type = %x, object = %x", subtype, (z->_type & 0xFFFF0000) >> 16);
+	debugC(3, kDebugExec, "type = %x, object = %x", subtype, (z->_type & 0xFFFF0000) >> 16);
 	switch(subtype) {
 
 	case kZoneExamine:
@@ -594,7 +583,7 @@ uint16 Parallaction::runZone(Zone *z) {
 		if (z->_flags & kFlagsLocked) break;
 		z->_flags ^= kFlagsClosed;
 		if (z->u.door->_cnv == NULL) break;
-		addJob(&jobToggleDoor, z, kPriority18 );
+		addJob(kJobToggleDoor, z, kPriority18 );
 		break;
 
 	case kZoneHear:
@@ -607,7 +596,7 @@ uint16 Parallaction::runZone(Zone *z) {
 
 	}
 
-	debugC(3, kDebugLocation, "runZone completed");
+	debugC(3, kDebugExec, "runZone completed");
 
 	return 0;
 }
@@ -615,7 +604,7 @@ uint16 Parallaction::runZone(Zone *z) {
 //
 //	ZONE TYPE: DOOR
 //
-void jobToggleDoor(void *parm, Job *j) {
+void Parallaction_ns::jobToggleDoor(void *parm, Job *j) {
 
 	static byte count = 0;
 
@@ -627,11 +616,11 @@ void jobToggleDoor(void *parm, Job *j) {
 		r.moveTo(z->_left, z->_top);
 
 		uint16 _ax = (z->_flags & kFlagsClosed ? 1 : 0);
-		_vm->_gfx->restoreDoorBackground(r, z->u.door->_cnv->getData(_ax), z->u.door->_background);
+		_gfx->restoreDoorBackground(r, z->u.door->_cnv->getData(_ax), z->u.door->_background);
 
 		_ax = (z->_flags & kFlagsClosed ? 0 : 1);
-		_vm->_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
-		_vm->_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBit2);
+		_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
+		_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBit2);
 	}
 
 	count++;
@@ -651,13 +640,13 @@ void jobToggleDoor(void *parm, Job *j) {
 
 int16 Parallaction::pickupItem(Zone *z) {
 	int r = addInventoryItem(z->u.get->_icon);
-	if (r == 0)
-		addJob(&jobRemovePickedItem, z, kPriority17 );
+	if (r != -1)
+		addJob(kJobRemovePickedItem, z, kPriority17 );
 
-	return r;
+	return (r == -1);
 }
 
-void jobRemovePickedItem(void *parm, Job *j) {
+void Parallaction_ns::jobRemovePickedItem(void *parm, Job *j) {
 
 	Zone *z = (Zone*)parm;
 
@@ -666,7 +655,7 @@ void jobRemovePickedItem(void *parm, Job *j) {
 	if (z->u.get->_cnv) {
 		Common::Rect r(z->_left, z->_top, z->_left + z->u.get->_cnv->w, z->_top + z->u.get->_cnv->h);
 
-		_vm->_gfx->restoreGetBackground(r, z->u.get->_backup);
+		_gfx->restoreGetBackground(r, z->u.get->_backup);
 	}
 
 	count++;
@@ -678,18 +667,18 @@ void jobRemovePickedItem(void *parm, Job *j) {
 	return;
 }
 
-void jobDisplayDroppedItem(void *parm, Job *j) {
+void Parallaction_ns::jobDisplayDroppedItem(void *parm, Job *j) {
 //	printf("jobDisplayDroppedItem...");
 
 	Zone *z = (Zone*)parm;
 
 	if (z->u.get->_cnv) {
 		if (j->_count == 0) {
-			_vm->_gfx->backupGetBackground(z->u.get, z->_left, z->_top);
+			_gfx->backupGetBackground(z->u.get, z->_left, z->_top);
 		}
 
-		_vm->_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBitBack);
-		_vm->_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBit2);
+		_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBitBack);
+		_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBit2);
 	}
 
 	j->_count++;
@@ -819,7 +808,7 @@ void Parallaction_ns::initOpcodes() {
 		INSTRUCTION_OPCODE(start),
 		INSTRUCTION_OPCODE(sound),
 		INSTRUCTION_OPCODE(move),
-		INSTRUCTION_OPCODE(end)
+		INSTRUCTION_OPCODE(endscript)
 	};
 
 	uint i;
@@ -849,6 +838,75 @@ void Parallaction_ns::initOpcodes() {
 	for (i = 0; i < ARRAYSIZE(op3); i++)
 		_commandOpcodes.push_back(&op3[i]);
 
+}
+
+
+
+void Parallaction_ns::jobDisplayLabel(void *parm, Job *j) {
+
+	Label *label = (Label*)parm;
+	debugC(9, kDebugExec, "jobDisplayLabel (%p)", (const void*) label);
+
+	_gfx->drawLabel(*label);
+
+	return;
+}
+
+void Parallaction_ns::jobEraseLabel(void *parm, Job *j) {
+	Label *label = (Label*)parm;
+
+	debugC(9, kDebugExec, "jobEraseLabel (%p)", (const void*) label);
+
+	int16 _si, _di;
+
+	if (_activeItem._id != 0) {
+		_si = _mousePos.x + 16 - label->_cnv.w/2;
+		_di = _mousePos.y + 34;
+	} else {
+		_si = _mousePos.x + 8 - label->_cnv.w/2;
+		_di = _mousePos.y + 21;
+	}
+
+	if (_si < 0) _si = 0;
+	if (_di > 190) _di = 190;
+
+	if (label->_cnv.w + _si > _screenWidth)
+		_si = _screenWidth - label->_cnv.w;
+
+	Common::Rect r;
+	label->getRect(r, true);
+	_gfx->restoreBackground(r);
+
+	label->_old = label->_pos;
+	label->_pos.x = _si;
+	label->_pos.y = _di;
+
+	return;
+}
+
+
+
+// this Job uses a static counter to delay removal
+// and is in fact only used to remove jEraseLabel jobs
+//
+void Parallaction_ns::jobWaitRemoveJob(void *parm, Job *j) {
+	Job *arg = (Job*)parm;
+
+	static uint16 count = 0;
+
+	debugC(9, kDebugExec, "jobWaitRemoveJob: count = %i", count);
+
+	_engineFlags |= kEngineBlockInput;
+
+	count++;
+	if (count == 2) {
+		count = 0;
+		removeJob(arg);
+		_engineFlags &= ~kEngineBlockInput;
+		j->_finished = 1;
+	}
+
+	return;
 }
 
 

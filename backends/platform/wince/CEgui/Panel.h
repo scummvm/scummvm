@@ -26,7 +26,6 @@
 #ifndef CEGUI_PANEL
 #define CEGUI_PANEL
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/hashmap.h"

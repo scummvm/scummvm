@@ -23,9 +23,11 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/util.h"
+#include "common/system.h"
+#include "common/events.h"
 
 #include "sword1/logic.h"
 #include "sword1/text.h"
@@ -54,6 +56,8 @@ namespace Sword1 {
 uint32 Logic::_scriptVars[NUM_SCRIPT_VARS];
 
 Logic::Logic(ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer) {
+	g_system->getEventManager()->registerRandomSource(_rnd, "sword1");
+
 	_objMan = pObjMan;
 	_resMan = resMan;
 	_screen = pScreen;
@@ -67,7 +71,7 @@ Logic::Logic(ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse,
 	_eventMan = NULL;
 	_system = system;
 	_mixer = mixer;
-	
+
 	setupMcodeTable();
 }
 
@@ -317,8 +321,7 @@ int Logic::logicArAnimate(Object *compact, uint32 id) {
 	}
 	compact->o_walk_pc++;
 
-	if	(route[compact->o_walk_pc].frame == 512)					//end of sequence
-	{
+	if	(route[compact->o_walk_pc].frame == 512) {					//end of sequence
 		compact->o_logic = LOGIC_script;
 		if (((_scriptVars[GEORGE_WALKING] == 2) || (_scriptVars[GEORGE_WALKING] == 1)) &&
 			(id == PLAYER)) {
@@ -790,7 +793,7 @@ void Logic::setupMcodeTable() {
 		&Logic::fnPurple,
 		&Logic::fnBlack
 	};
-	
+
 	_mcodeTable = mcodeTable;
 }
 

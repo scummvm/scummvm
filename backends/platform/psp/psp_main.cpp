@@ -31,7 +31,6 @@
 #include <pspdebug.h>
 #endif
 
-#include <common/stdafx.h>
 #include <common/system.h>
 #include <engines/engine.h>
 #include <base/main.h>

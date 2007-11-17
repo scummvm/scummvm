@@ -34,7 +34,7 @@
 //
 // ---------------------------------------------------------------------------
 
-#include "common/stdafx.h"
+
 #include "common/savefile.h"
 
 #include "sword2/sword2.h"

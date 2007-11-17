@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/savefile.h"
 #include "common/system.h"
@@ -38,12 +38,28 @@ namespace AGOS {
 
 int AGOSEngine::countSaveGames() {
 	Common::InSaveFile *f;
+	Common::StringList filenames;
 	uint i = 1;
+	char slot[3];
+	int slotNum;
 	bool marks[256];
 
 	char *prefix = genSaveName(998);
-	prefix[strlen(prefix)-3] = '\0';
-	_saveFileMan->listSavefiles(prefix, marks, 256);
+	prefix[strlen(prefix)-3] = '*';
+	prefix[strlen(prefix)-2] = '\0';
+	memset(marks, false, 256 * sizeof(bool));	//assume no savegames for this title
+	filenames = _saveFileMan->listSavefiles(prefix);
+
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
+		//Obtain the last 3 digits of the filename, since they correspond to the save slot
+		slot[0] = file->c_str()[file->size()-3];
+		slot[1] = file->c_str()[file->size()-2];
+		slot[2] = file->c_str()[file->size()-1];
+
+		slotNum = atoi(slot);
+		if (slotNum >= 0 && slotNum < 256)
+			marks[slotNum] = true;	//mark this slot as valid
+	}
 
 	while (i < 256) {
 		if (marks[i] &&
@@ -53,6 +69,7 @@ int AGOSEngine::countSaveGames() {
 		} else
 			break;
 	}
+
 	return i;
 }
 
@@ -225,7 +242,7 @@ void AGOSEngine::userGame(bool load) {
 	char buf[8];
 
 	numSaveGames = countSaveGames();
-	
+
 	time_t saveTime = time(NULL);
 	haltAnimation();
 
@@ -1244,7 +1261,10 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 
 	// read the items in item store
 	for (i = 0; i != _numItemStore; i++) {
-		if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformPC) {
+		if ((getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) &&
+			(getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST)) {
+			_itemStore[i] = derefItem(f->readUint16BE() / 18);
+		} else if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformPC) {
 			_itemStore[i] = derefItem(readItemID(f));
 		} else {
 			_itemStore[i] = derefItem(f->readUint16BE());
@@ -1388,7 +1408,10 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 
 	// write the items in item store
 	for (i = 0; i != _numItemStore; i++) {
-		if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformPC) {
+		if ((getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) &&
+			(getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST)) {
+			f->writeUint16BE(itemPtrToID(_itemStore[i]) * 18);
+		} else if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformPC) {
 			writeItemID(f, itemPtrToID(_itemStore[i]));
 		} else {
 			f->writeUint16BE(itemPtrToID(_itemStore[i]));

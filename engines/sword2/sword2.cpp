@@ -25,7 +25,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 
 #include "base/plugins.h"
 
@@ -101,7 +101,7 @@ GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 		// Iterate over all files in the given directory
 		for (file = fslist.begin(); file != fslist.end(); ++file) {
 			if (!file->isDirectory()) {
-				const char *fileName = file->name().c_str();
+				const char *fileName = file->getName().c_str();
 
 				if (0 == scumm_stricmp(g->detectname, fileName)) {
 					// Match found, add to list of candidates, then abort inner loop.
@@ -112,17 +112,17 @@ GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 		}
 	}
 
-	
+
 	if (detectedGames.empty()) {
 		// Nothing found -- try to recurse into the 'clusters' subdirectory,
 		// present e.g. if the user copied the data straight from CD.
 		for (file = fslist.begin(); file != fslist.end(); ++file) {
 			if (file->isDirectory()) {
-				const char *fileName = file->name().c_str();
+				const char *fileName = file->getName().c_str();
 
 				if (0 == scumm_stricmp("clusters", fileName)) {
 					FSList recList;
-					if (file->listDir(recList, FilesystemNode::kListAll)) {
+					if (file->getChildren(recList, FilesystemNode::kListAll)) {
 						GameList recGames(Engine_SWORD2_detectGames(recList));
 						if (!recGames.empty()) {
 							detectedGames.push_back(recGames);
@@ -144,7 +144,7 @@ PluginError Engine_SWORD2_create(OSystem *syst, Engine **engine) {
 
 	FSList fslist;
 	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListAll)) {
+	if (!dir.getChildren(fslist, FilesystemNode::kListAll)) {
 		return kInvalidPathError;
 	}
 
@@ -179,7 +179,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 		_features = GF_DEMO;
 	else
 		_features = 0;
-	
+
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");
 
@@ -209,6 +209,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	_gameSpeed = 1;
 
 	_quit = false;
+	syst->getEventManager()->registerRandomSource(_rnd, "sword2");
 }
 
 Sword2Engine::~Sword2Engine() {

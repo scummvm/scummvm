@@ -26,10 +26,12 @@
 #ifndef KYRA_TEXT_H
 #define KYRA_TEXT_H
 
+#include "common/scummsys.h"
+
+#include "kyra/screen.h"
+
 namespace Kyra {
-class Screen;
 class KyraEngine;
-class FontId;
 
 class TextDisplayer {
 	struct TalkCoords {
@@ -38,21 +40,23 @@ class TextDisplayer {
 
 	enum {
 		TALK_SUBSTRING_LEN = 80,
-		TALK_SUBSTRING_NUM = 3
+		TALK_SUBSTRING_NUM = 5
 	};
 public:
 	TextDisplayer(KyraEngine *vm, Screen *screen);
-	~TextDisplayer() {}
+	virtual ~TextDisplayer() {}
+
+	int maxSubstringLen() const { return TALK_SUBSTRING_LEN; }
 
 	void setTalkCoords(uint16 y);
 	int getCenterStringX(const char *str, int x1, int x2);
 	int getCharLength(const char *str, int len);
 	int dropCRIntoString(char *str, int offs);
-	char *preprocessString(const char *str);
+	virtual char *preprocessString(const char *str);
 	int buildMessageSubstrings(const char *str);
 	int getWidestLineWidth(int linesCount);
-	void calcWidestLineBounds(int &x1, int &x2, int w, int cx);
-	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
+	virtual void calcWidestLineBounds(int &x1, int &x2, int w, int cx);
+	virtual void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
 	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
 	void printIntroTextMessage(const char *text, int x, int y, uint8 col1, uint8 col2, uint8 col3,
 			int dstPage, Screen::FontId font=Screen::FID_8_FNT);	
@@ -62,11 +66,11 @@ public:
 	uint16 _talkMessageY;
 	uint16 _talkMessageH;
 	bool printed() const { return _talkMessagePrinted; }
-private:
+protected:
 	Screen *_screen;
 	KyraEngine *_vm;
 
-	char _talkBuffer[300];
+	char _talkBuffer[1040];
 	char _talkSubstrings[TALK_SUBSTRING_LEN * TALK_SUBSTRING_NUM];
 	TalkCoords _talkCoords;
 	bool _talkMessagePrinted;

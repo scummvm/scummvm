@@ -26,7 +26,7 @@
 #ifndef SKY_CONTROL_H
 #define SKY_CONTROL_H
 
-#include "common/stdafx.h"
+
 #include "common/events.h"
 #include "common/scummsys.h"
 

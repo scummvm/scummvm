@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
@@ -26,10 +26,12 @@
 
 // *** Definitions
 
-TARGET          SCUMMVM.exe
-//TARGETPATH      sys\bin
+TARGET          ScummVM.exe
+TARGETPATH      sys\bin
 TARGETTYPE      exe
 						
+UID             0x100039ce 0xA0000657 
+
 START RESOURCE  ScummVM_reg.rss
 TARGETPATH              \private\10003a3f\apps
 END
@@ -62,7 +64,6 @@ SOURCE  8               ScummLargeMask.bmp
 SOURCE  c24             ScummxLarge.bmp
 SOURCE  8               ScummxLargeMask.bmp
 END
-UID             0x100039ce 0xA0000657 
 
 MACRO			UIQ
 MACRO			UIQ3
@@ -78,6 +79,10 @@ ALWAYS_BUILD_AS_ARM
 // *** Static Libraries
 
 STATICLIBRARY esdl.lib
+
+#if !defined(WINS)
+staticlibrary rate_arm_asm.o codec47ARM.o gfxARM.o
+#endif
 
 // *** Include paths
 
@@ -106,7 +111,7 @@ SOURCEPATH ..\..\..\..\
 SOURCE backends\platform\sdl\events.cpp
 SOURCE backends\platform\sdl\graphics.cpp
 SOURCE backends\platform\sdl\sdl.cpp
-SOURCE backends\fs\symbian\symbian-fs.cpp
+SOURCE backends\fs\abstract-fs-factory.cpp
 SOURCE backends\platform\symbian\src\SymbianOS.cpp 
 SOURCE backends\platform\symbian\src\SymbianActions.cpp 
 SOURCE backends\platform\symbian\src\ScummApp.cpp
@@ -119,7 +124,6 @@ SOURCE gui\Actions.cpp
 source graphics\iff.cpp
 
 // *** Dynamic Libraries
-
 LIBRARY cone.lib  eikcore.lib 
 LIBRARY euser.lib apparc.lib fbscli.lib  
 LIBRARY estlib.lib apgrfx.lib

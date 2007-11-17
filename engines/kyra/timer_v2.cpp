@@ -35,7 +35,7 @@ void KyraEngine_v2::setupTimers() {
 	
 	_timer->addTimer(0, 0, 5, 1);
 	_timer->addTimer(1, TimerV2(timerFunc2), -1, 1);
-	_timer->addTimer(2, TimerV2(timerFunc3), 1, 1);
+	_timer->addTimer(2, TimerV2(timerCauldronAnimation), 1, 1);
 	_timer->addTimer(3, TimerV2(timerFunc4), 1, 0);
 	_timer->addTimer(4, TimerV2(timerFunc5), 1, 0);
 	_timer->addTimer(5, TimerV2(timerFunc6), 1, 0);
@@ -47,9 +47,20 @@ void KyraEngine_v2::timerFunc2(int arg) {
 		_msgUnk1 = 1;
 }
 
-void KyraEngine_v2::timerFunc3(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerFunc3(%d)", arg);
-	// XXX
+void KyraEngine_v2::timerCauldronAnimation(int arg) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerCauldronAnimation(%d)", arg);
+	int animation = -1;
+
+	if (queryGameFlag(2) && _mainCharacter.sceneId != 34 && _mainCharacter.sceneId != 73 && !_invWsa.wsa && !_invWsa.running) {
+		if (animation == -1)
+			animation = _rnd.getRandomNumberRng(1, 6);
+
+		char filename[13];
+		strcpy(filename, "CAULD00.WSA");
+		filename[5] = (animation / 10) + '0';
+		filename[6] = (animation % 10) + '0';
+		loadInvWsa(filename, 0, 8, 0, -1, -1, 1);
+	}
 }
 
 void KyraEngine_v2::timerFunc4(int arg) {
@@ -60,12 +71,24 @@ void KyraEngine_v2::timerFunc4(int arg) {
 
 void KyraEngine_v2::timerFunc5(int arg) {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerFunc5(%d)", arg);
-	// XXX
+	_timer->disable(4);
+	_screen->hideMouse();
+	_specialSceneScriptState[5] = 1;
+	for (int i = 68; i <= 75; ++i) {
+		updateSceneAnim(4, i);
+		delay(6);
+	}
+	//_unk1 = 4;
 }
 
 void KyraEngine_v2::timerFunc6(int arg) {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerFunc6(%d)", arg);
-	// XXX
+	_timer->disable(5);
+	_screen->hideMouse();
+	snd_playSoundEffect(0x2D);
+	runTemporaryScript("_ZANBURN.EMC", 0, 1, 1, 0);
+	//_unk1 = 7;
+	snd_playWanderScoreViaMap(0x53, 1);
 }
 
 void KyraEngine_v2::setTimer1DelaySecs(int secs) {

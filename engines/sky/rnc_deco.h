@@ -26,7 +26,7 @@
 #ifndef SKY_RNC_DECO_H
 #define SKY_RNC_DECO_H
 
-#include "common/stdafx.h"
+
 
 #define RNC_SIGNATURE   0x524E4301 // "RNC\001"
 

@@ -26,7 +26,6 @@
 #ifndef CESCALER
 #define CESCALER
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/scaler.h"

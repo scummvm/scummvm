@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/system.h"	// for setFocusRectangle/clearFocusRectangle
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
@@ -71,7 +71,7 @@ void Actor::initActor(int mode) {
 	_heFlags = 0;
 	_heTalking = false;
 	// end HE specific
-	
+
 
 	if (mode == -1) {
 		_offsX = _offsY = 0;
@@ -385,7 +385,7 @@ void Actor::startWalkActor(int destX, int destY, int dir) {
 			if (_moving && _walkdata.destdir == dir && _walkdata.dest.x == abr.x && _walkdata.dest.y == abr.y)
 				return;
 		}
-	
+
 		if (_pos.x == abr.x && _pos.y == abr.y) {
 			if (dir != _facing)
 				turnToDirection(dir);
@@ -523,7 +523,7 @@ void Actor_v2::walkActor() {
 
 	if (_moving & MF_TURN) {
 		new_dir = updateActorDirection(false);
-		// FIXME -- is this correct?
+		// FIXME: is this correct?
 		if (_facing != new_dir)
 			setDirection(new_dir);
 		else
@@ -670,7 +670,7 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	bool flipX;
 	bool flipY;
 
-	// FIXME - It seems that at least in The Dig the original code does
+	// FIXME: It seems that at least in The Dig the original code does
 	// check _ignoreBoxes here. However, it breaks some animations in Loom,
 	// causing Bobbin to face towards the camera instead of away from it
 	// in some places: After the tree has been destroyed by lightning, and
@@ -937,7 +937,7 @@ static bool inBoxQuickReject(const BoxCoords &box, int x, int y, int threshold) 
 static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) {
 	BoxCoords box = g_scumm->getBoxCoordinates(boxnum);
 	int xmin, xmax;
-	
+
 	// We are supposed to determine the point (destX,destY) contained in
 	// the given box which is closest to the point (x,y), and then return
 	// some kind of "distance" between the two points.
@@ -981,7 +981,7 @@ static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) 
 			xmin = (ul + ll) / 2;
 			xmax = (ur + lr) / 2;
 			cury = (top + bottom) / 2;
-	
+
 			if (cury < y) {
 				top = cury;
 				ul = xmin;
@@ -993,7 +993,7 @@ static int checkXYInBoxBounds(int boxnum, int x, int y, int &destX, int &destY) 
 			}
 		} while (cury != y);
 	}
-	
+
 	// Now that we have limited the value of destX to a fixed
 	// interval, it's a trivial matter to finally determine it.
 	if (x < xmin) {
@@ -1446,8 +1446,8 @@ void Actor::drawActorCostume(bool hitTestMode) {
 		bcr->_actorX *= V12_X_MULTIPLIER;
 		bcr->_actorY *= V12_Y_MULTIPLIER;
 	}
-	bcr->_actorX -= _vm->virtscr[0].xstart;
-	
+	bcr->_actorX -= _vm->_virtscr[kMainVirtScreen].xstart;
+
 	if (_vm->_game.platform == Common::kPlatformNES) {
 		// In the NES version, when the actor is facing right,
 		// we need to shift it 8 pixels to the left
@@ -1532,7 +1532,7 @@ void Actor::drawActorCostume(bool hitTestMode) {
 	_heNoTalkAnimation = 0;
 
 	// If the actor is partially hidden, redraw it next frame.
-	if (bcr->drawCostume(_vm->virtscr[0], _vm->_gdi->_numStrips, this, _drawToBackBuf) & 1) {
+	if (bcr->drawCostume(_vm->_virtscr[kMainVirtScreen], _vm->_gdi->_numStrips, this, _drawToBackBuf) & 1) {
 		_needRedraw = (_vm->_game.version <= 6);
 	}
 
@@ -1902,7 +1902,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
-	// FIXME: Workaround for bugs #770039 and #770049
+	// WORKAROUND for bugs #770039 and #770049
 	if (_game.id == GID_LOOM) {
 		if (!*_charsetBuffer)
 			return;
@@ -2325,7 +2325,7 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 					int y = (int16)READ_LE_UINT16(axfd + 4) + dy;
 					int w = (int16)READ_LE_UINT16(axfd + 6);
 					int h = (int16)READ_LE_UINT16(axfd + 8);
-					VirtScreen *pvs = &virtscr[kMainVirtScreen];
+					VirtScreen *pvs = &_virtscr[kMainVirtScreen];
 					uint8 *dst1 = pvs->getPixels(0, pvs->topline);
 					uint8 *dst2 = pvs->getBackPixels(0, pvs->topline);
 					switch (comp) {
@@ -2497,7 +2497,7 @@ void Actor::saveLoadWithSerializer(Serializer *ser) {
 	}
 
 	ser->saveLoadEntries(this, actorEntries);
-	
+
 	if (ser->isLoading() && _vm->_game.version <= 2 && ser->getVersion() < VER(70)) {
 		_pos.x >>= V12_X_SHIFT;
 		_pos.y >>= V12_Y_SHIFT;

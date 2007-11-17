@@ -32,7 +32,6 @@
 #include "saga/rscfile.h"
 #include "saga/sndres.h"
 #include "saga/sound.h"
-#include "saga/stream.h"
 
 #include "common/file.h"
 
@@ -101,8 +100,7 @@ SndRes::~SndRes() {
 	}
 }
 
-void SndRes::setVoiceBank(int serial)
-{
+void SndRes::setVoiceBank(int serial) {
 	if (_voiceSerial == serial) return;
 
 	_voiceSerial = serial;
@@ -183,9 +181,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		} 
 		
 		bool uncompressedSound = false;
-		// If a patch file exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
-		if (_vm->getGameType() == GType_ITE && resourceId == 4 && 
-			(Common::File::exists("sound/p2_a.iaf") || Common::File::exists("sound/p2_a.voc")))
+		// If patch data exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
+		// Patch data for this resource is in file p2_a.iaf or p2_a.voc
+		if (_vm->getGameType() == GType_ITE && resourceId == 4 && context->table[resourceId].patchData != NULL)
 			uncompressedSound = true;
 
 		// FIXME: Currently, the SFX.RES file in IHNM cannot be compressed
@@ -248,7 +246,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			buffer.buffer = NULL;
 			free(soundResource);
 		} else {
-			voxStream = Audio::makeADPCMStream(&readS, soundResourceLength, Audio::kADPCMOki);
+			voxStream = Audio::makeADPCMStream(&readS, false, soundResourceLength, Audio::kADPCMOki);
 			buffer.buffer = (byte *)malloc(buffer.size);
 			voxSize = voxStream->readBuffer((int16*)buffer.buffer, soundResourceLength * 2);
 			if (voxSize != soundResourceLength * 2) {

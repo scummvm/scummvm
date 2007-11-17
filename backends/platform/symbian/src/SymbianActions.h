@@ -26,7 +26,6 @@
 #ifndef SYMBIANACTIONS_H
 #define SYMBIANACTIONS_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "gui/Key.h"

@@ -80,7 +80,7 @@ int Scene::IHNMStartProc() {
 	firstScene.loadFlag = kLoadBySceneNumber;
 	firstScene.sceneDescriptor = -1;
 	firstScene.sceneDescription = NULL;
-	firstScene.sceneSkipTarget = true;
+	firstScene.sceneSkipTarget = false;
 	firstScene.sceneProc = NULL;
 	firstScene.transitionType = kTransitionFade;
 	firstScene.actorsEntrance = 0;
@@ -141,10 +141,15 @@ bool Scene::checkKey() {
 	while (_vm->_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			_vm->shutDown();
-			// fallthrough
-		case Common::EVENT_KEYDOWN:
 			res = true;
+			_vm->shutDown();
+			break;
+		case Common::EVENT_KEYDOWN:
+			// Don't react to modifier keys alone. The original did
+			// non, and the user may want to change scaler without
+			// terminating the intro.
+			if (event.kbd.ascii)
+				res = true;
 			break;
 		default:
 			break;
@@ -225,8 +230,9 @@ bool Scene::playTitle(int title, int time, int mode) {
 			}
 			
 			if (checkKey()) {
+				_vm->_scene->cutawaySkip();
 				interrupted = true;
-				done = true;
+				phase = 6;	// end playback and fade out
 				break;
 			}
 

@@ -26,7 +26,6 @@
 #ifndef COMMON_FILE_H
 #define COMMON_FILE_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
@@ -52,7 +51,7 @@ private:
 	// code that accidentally copied File objects tended to break in strange
 	// ways.
 	File(const File &f);
-	File &operator  =(const File &f);
+	File &operator =(const File &f);
 
 public:
 	enum AccessMode {

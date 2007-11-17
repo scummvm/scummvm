@@ -26,7 +26,7 @@
 #ifndef AGI_H
 #define AGI_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/util.h"
@@ -103,8 +103,10 @@ enum AgiGameID {
 	GID_SQ1,
 	GID_SQ2,
 	GID_XMASCARD,
-	GID_FANMADE,		// TODO: Should this be extended to include all fanmade games?
-	GID_MICKEY			// PreAGI
+	GID_FANMADE,
+	GID_MICKEY,			// PreAGI
+	GID_WINNIE,			// PreAGI
+	GID_TROLL			// PreAGI
 };
 
 } // End of namespace Agi
@@ -350,7 +352,7 @@ public:
 		amigaBlack  = 0x00, ///< Accurate,                   is          #000000 (24-bit RGB)
 		amigaWhite  = 0x0F, ///< Practically accurate,       is close to #FFFFFF (24-bit RGB)
 		amigaGreen  = 0x02, ///< Quite accurate,             should be   #008A00 (24-bit RGB)
-		amigaOrange = 0x0C, ///< Inaccurate, too much blue,  should be   #FF7500 (24-bit RGB) 
+		amigaOrange = 0x0C, ///< Inaccurate, too much blue,  should be   #FF7500 (24-bit RGB)
 		amigaPurple = 0x0D, ///< Inaccurate, too much green, should be   #FF00FF (24-bit RGB)
 		amigaRed    = 0x04, ///< Quite accurate,             should be   #BD0000 (24-bit RGB)
 		amigaCyan   = 0x0B, ///< Inaccurate, too much red,   should be   #00FFDE (24-bit RGB)
@@ -503,10 +505,10 @@ struct AgiGame {
 #define SBUF256_OFFSET ((_WIDTH) * (_HEIGHT))
 #define FROM_SBUF16_TO_SBUF256_OFFSET ((SBUF256_OFFSET) - (SBUF16_OFFSET))
 #define FROM_SBUF256_TO_SBUF16_OFFSET ((SBUF16_OFFSET) - (SBUF256_OFFSET))
-	uint8 *sbufOrig;		/**< Pointer to the 160x336 AGI screen buffer that contains vertically two 160x168 screens (16 color and 256 color). */	
+	uint8 *sbufOrig;		/**< Pointer to the 160x336 AGI screen buffer that contains vertically two 160x168 screens (16 color and 256 color). */
 	uint8 *sbuf16c;			/**< 160x168 16 color (+control line & priority information) AGI screen buffer. Points at sbufOrig + SBUF16_OFFSET. */
 	uint8 *sbuf256c;		/**< 160x168 256 color AGI screen buffer (For AGI256 and AGI256-2 support). Points at sbufOrig + SBUF256_OFFSET. */
-	uint8 *sbuf;			/**< Currently chosen AGI screen buffer (sbuf256c if AGI256 or AGI256-2 is used, otherwise sbuf16c). */	
+	uint8 *sbuf;			/**< Currently chosen AGI screen buffer (sbuf256c if AGI256 or AGI256-2 is used, otherwise sbuf16c). */
 
 	/* player command line */
 	AgiWord egoWords[MAX_WORDS];
@@ -553,33 +555,6 @@ public:
 	virtual int version() = 0;
 	virtual void setIntVersion(int) = 0;
 	virtual int getIntVersion() = 0;
-};
-
-class AgiLoader_preagi : public AgiLoader {
-private:
-	int _intVersion;
-	PreAgiEngine *_vm;
-
-	int loadDir(AgiDir *agid, Common::File *fp, uint32 offs, uint32 len);
-	uint8 *loadVolRes(AgiDir *agid);
-
-public:
-
-	AgiLoader_preagi(PreAgiEngine *vm) {
-		_vm = vm;
-		_intVersion = 0;
-	}
-
-	virtual int init();
-	virtual int deinit();
-	virtual int detectGame();
-	virtual int loadResource(int, int);
-	virtual int unloadResource(int, int);
-	virtual int loadObjects(const char *);
-	virtual int loadWords(const char *);
-	virtual int version();
-	virtual void setIntVersion(int);
-	virtual int getIntVersion();
 };
 
 class AgiLoader_v2 : public AgiLoader {
@@ -675,14 +650,13 @@ public:
 	volatile uint32 _clockCount;
 	AgiDebug _debug;
 	AgiGame _game;
-	AgiLoader *_loader;	/* loader */
 	Common::RandomSource *_rnd;
 
 	virtual void agiTimerLow() = 0;
 	virtual int agiGetKeypressLow() = 0;
 	virtual int agiIsKeypressLow() = 0;
 
-	AgiBase(OSystem *syst);
+	AgiBase(OSystem *syst, const AGIGameDescription *gameDesc);
 
 	#define INITIAL_IMAGE_STACK_SIZE 32
 
@@ -697,11 +671,18 @@ public:
 		int16 p4, int16 p5, int16 p6, int16 p7) = 0;
 	virtual void releaseImageStack() = 0;
 
+	int _soundemu;
+
+	int getflag(int);
+	void setflag(int, int);
+	void flipflag(int);
+
 	const AGIGameDescription *_gameDescription;
 	uint32 getGameID() const;
 	uint32 getFeatures() const;
 	uint16 getVersion() const;
 	uint16 getGameType() const;
+	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 };
 
@@ -714,10 +695,8 @@ protected:
 	void shutdown();
 	void initialize();
 
-	bool initGame();
-
 public:
-	AgiEngine(OSystem *syst);
+	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	virtual ~AgiEngine();
 	int getGameId() {
 		return _gameId;
@@ -765,6 +744,7 @@ public:
 	GfxMgr *_gfx;
 	SoundMgr *_sound;
 	PictureMgr *_picture;
+	AgiLoader *_loader;	/* loader */
 
 	void clearImageStack();
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
@@ -772,8 +752,6 @@ public:
 	void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 		int16 p4, int16 p5, int16 p6, int16 p7);
 	void releaseImageStack();
-
-	int _soundemu;
 
 	int _keyControl;
 	int _keyAlt;
@@ -799,9 +777,6 @@ public:
 	void newInputMode(int);
 	void oldInputMode();
 
-	int getflag(int);
-	void setflag(int, int);
-	void flipflag(int);
 	int getvar(int);
 	void setvar(int, int);
 	void decrypt(uint8 * mem, int len);
@@ -834,6 +809,7 @@ public:
 
 	void allowSynthetic(bool);
 	void processEvents();
+	void checkQuickLoad();
 
 	// Objects
 	int showObjects();
@@ -953,60 +929,6 @@ private:
 	bool _predictiveDialogRunning;
 public:
 	char _predictiveResult[40];
-};
-
-
-class PreAgiEngine : public AgiBase {
-	int _gameId;
-
-protected:
-	int init();
-	int go();
-	void shutdown();
-	void initialize();
-
-	bool initGame();
-
-public:
-	void agiTimerLow() {}
-	int agiGetKeypressLow() { return 0; }
-	int agiIsKeypressLow() { return 0; }
-
-	int preAgiLoadResource(int r, int n);
-	int preAgiUnloadResource(int r, int n);
-
-	PreAgiEngine(OSystem *syst);
-	virtual ~PreAgiEngine();
-	int getGameId() {
-		return _gameId;
-	}
-
-private:
-
-public:
-	GfxMgr *_gfx;
-	SoundMgr *_sound;
-	PictureMgr *_picture;
-
-	void clearImageStack() {}
-	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7) {}
-	void replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7) {}
-	void releaseImageStack() {}
-
-	// Keyboard
-	void waitAnyKeyAnim();
-	int getSelection(int type);
-	bool waitAnyKeyChoice();
-	void waitAnyKey(bool anim = false);
-	int rnd(int hi) { return (rand() % hi + 1); }
-
-	// Text
-	void drawStr(int row, int col, int attr, char *buffer);
-	void drawStrMiddle(int row, int attr, char *buffer);
-	void clearTextArea();
-	void drawChar(int x, int y, int attr, int code, char *fontdata);
 };
 
 } // End of namespace Agi

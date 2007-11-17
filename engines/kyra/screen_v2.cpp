@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 
 #include "kyra/kyra_v2.h"
@@ -34,9 +33,11 @@ namespace Kyra {
 Screen_v2::Screen_v2(KyraEngine_v2 *vm, OSystem *system)
 	: Screen(vm, system) {
 	_vm = vm;
+	_wsaFrameAnimBuffer = new uint8[1024];
 }
 
 Screen_v2::~Screen_v2() {
+	delete [] _wsaFrameAnimBuffer;
 }
 
 void Screen_v2::setScreenDim(int dim) {
@@ -61,31 +62,214 @@ const ScreenDim *Screen_v2::getScreenDim(int dim) {
 	}
 }
 
-void Screen_v2::k2IntroFadeToGrey(int delay) {
-	debugC(9, kDebugLevelScreen, "Screen_v2::k2IntroFadeToGrey(%d)", delay);
+void Screen_v2::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag) {
+	uint8 tmpPal[768];
 
-	for (int i = 0; i <= 50; ++i) {
-		if (i <= 8 || i >= 30) {
-			_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] + 
-						      _currentPalette[3 * i + 1] + 
-						      _currentPalette[3 * i + 2]) / 3;
-			_currentPalette[3 * i + 1] =  _currentPalette[3 * i + 0];
-			_currentPalette[3 * i + 2] =  _currentPalette[3 * i + 0];
+	for (int i = 0; i != lastColor; i++) {
+		if (flag) {
+			int v = ((((srcPal[3 * i] & 0x3f) + (srcPal[3 * i + 1] & 0x3f)
+				+ (srcPal[3 * i + 2] & 0x3f)) / 3) * factor) / 0x40;
+			tmpPal[3 * i] = tmpPal[3 * i + 1] = tmpPal[3 * i + 2] = v & 0xff;
+		} else {
+			int v = (((srcPal[3 * i] & 0x3f) * factor) / 0x40) + addR;
+			tmpPal[3 * i] = (v > 0x3f) ? 0x3f : v & 0xff;
+			v = (((srcPal[3 * i + 1] & 0x3f) * factor) / 0x40) + addG;
+			tmpPal[3 * i + 1] = (v > 0x3f) ? 0x3f : v & 0xff;
+			v = (((srcPal[3 * i + 2] & 0x3f) * factor) / 0x40) + addB;
+			tmpPal[3 * i + 2] = (v > 0x3f) ? 0x3f : v & 0xff;
 		}
 	}
 
-	// color 71 is the same in both the overview and closeup scenes
-	// Converting it to greyscale makes the trees in the closeup look dull
-	for (int i = 71; i < 200; ++i) {
-		_currentPalette[3 * i + 0] = (_currentPalette[3 * i + 0] + 
-					      _currentPalette[3 * i + 1] + 
-					      _currentPalette[3 * i + 2]) / 3;
-		_currentPalette[3 * i + 1] =  _currentPalette[3 * i + 0];
-		_currentPalette[3 * i + 2] =  _currentPalette[3 * i + 0];
+	for (int i = 0; i < lastColor; i++)
+		grayOverlay[i] = findLeastDifferentColor(tmpPal + 3 * i, srcPal, lastColor);
+}
+
+void Screen_v2::applyGrayOverlay(int x, int y, int w, int h, int pageNum, const uint8 *grayOverlay) {
+	uint8 * dst = getPagePtr(pageNum) + y * 320 + x;
+	while (h--) {
+		for (int wi = 0; wi < 320; wi++)
+			dst[wi] = grayOverlay[dst[wi]];
+		dst += 320;
 	}
-	fadePalette(_currentPalette, delay);
-	// Make the font color white again
-	setPaletteIndex(254, 254, 254, 254);
+}
+
+int Screen_v2::findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors) {
+	int m = 0x7fff;
+	int r = 0x101;
+
+	for (int i = 0; i < numColors; i++) {
+		int v = paletteEntry[0] - *palette++;
+		int c = v * v;
+		v = paletteEntry[1] - *palette++;
+		c += (v * v);
+		v = paletteEntry[2] - *palette++;
+		c += (v * v);
+
+		if (c <= m) {
+			m = c;
+			r = i;
+		}
+	}
+
+	return r;
+}
+
+void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
+	int w1, int h1, int w2, int h2, int srcPage, int dstPage, int dim) {
+
+	if (!(w1 || h1 || w2 || h2))
+		return;
+
+	ScreenDim cdm = _screenDimTable[dim];
+	cdm.sx <<= 3;
+	cdm.w <<= 3;
+
+	int na = 0, nb = 0, nc = w2;
+	
+	if (!calcBounds(cdm.w, cdm.h, x2, y2, w2, h2, na, nb, nc))
+		return;
+
+	uint8 * src = getPagePtr(srcPage) + y1 * 320;
+	uint8 * dst = getPagePtr(dstPage) + (y2 + cdm.sy) * 320;
+
+	int u = -1;
+
+	do {
+		int t = (nb * h1) / h2;
+		if (t != u) {
+			u = t;
+			uint8 * s = src + (x1 + t) * 320;
+			uint8 * dt = (uint8*) _wsaFrameAnimBuffer;
+			
+			t = w2 - w1;
+			if (!t) {
+				memcpy(dt, s, w2);
+			} else if (t > 0) {
+				if (w1 == 1) {
+                    memset(dt, *s, w2);
+				} else {
+					t = ((((((w2 - w1 + 1) & 0xffff) << 8) / w1) + 0x100) & 0xffff) << 8;
+					int bp = 0;
+					for (int i = 0; i < w1; i++) {
+						int cnt = (t >> 16);
+						bp += (t & 0xffff);
+						if (bp > 0xffff) {
+							bp -= 0xffff;
+							cnt++;
+						}
+						memset(dt, *s++, cnt);
+						dt += cnt;						
+					}
+				}
+			} else {
+				if (w2 == 1) {
+					*dt = *s;
+				} else {
+					t = (((((w1 - w2) & 0xffff) << 8) / w2) & 0xffff) << 8;
+					int bp = 0;
+					for (int i = 0; i < w2; i++) {
+						*dt++ = *s++;
+						bp += (t & 0xffff);
+						if (bp > 0xffff) {
+							bp -= 0xffff;
+							s++;
+						}
+						s += (t >> 16);
+					}
+				}
+			}
+		}
+		memcpy(dst + x2 + cdm.sx, _wsaFrameAnimBuffer + na, w2);
+		dst += 320;
+	} while (++nb < h2);	
+}
+
+void Screen_v2::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage, int dstW,
+	int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage) {
+
+	if (!(cmpW || cmpH ))
+		return;
+
+	int r1, r2, r3, r4, r5, r6;
+
+	int X1 = srcX;
+	int Y1 = srcY;
+	int W1 = cmpW;
+	int H1 = cmpH;
+
+	if (!calcBounds(srcW, srcH, X1, Y1, W1, H1, r1, r2, r3))
+		return;
+
+	int X2 = dstX;
+	int Y2 = dstY;
+	int W2 = W1;
+	int H2 = H1;
+
+	if (!calcBounds(dstW, dstH, X2, Y2, W2, H2, r4, r5, r6))
+		return;
+
+	uint8 * src = getPagePtr(srcPage) + srcW * (Y1 + r5);
+	uint8 * dst = getPagePtr(dstPage) + dstW * (Y2 + r2);
+	uint8 * cmp = getPagePtr(cmpPage);
+
+	while (H2--) {		
+		uint8 * s = src + r4 + X1;
+		uint8 * d = dst + r1 + X2;
+
+		for (int i = 0; i < W2; i++) {
+			int ix = (*s++ << 8) + *d;
+			*d++ = cmp[ix];
+		}
+
+		src += W1;
+		dst += W2;
+	}
+}
+
+bool Screen_v2::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2) {
+	x2 = 0;
+	y2 = 0;
+	w2 = w1;
+	
+	int t = x1 + w1;
+	if (t < 1) {
+		w1 = h1 = -1;
+	} else {
+		if (t <= x1) {
+			x2 = w1 - t;
+			w1 = t;
+			x1 = 0;
+		}
+		t = w0 - x1;
+		if (t < 1) {
+			w1 = h1 = -1;
+		} else {
+			if (t <= w1) {
+				w1 = t;
+			}
+			w2 -= w1;
+			t = h1 + y1;
+			if (t < 1) {
+				w1 = h1 = -1;
+			} else {
+				if (t <= y1) {
+					y2 = h1 - t;
+					h1 = t;
+					y1 = 0;
+				}
+                t = h0 - y1;
+				if (t < 1) {
+					w1 = h1 = -1;
+				} else {
+					if (t <= h1) {
+						h1 = t;
+					}
+				}
+			}
+		}
+	}
+
+	return (w1 == -1) ? false : true;
 }
 
 void Screen_v2::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
@@ -143,17 +327,17 @@ void Screen_v2::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFu
 
 	dstPtr += y * SCREEN_W + x;
 	uint8 *dst = dstPtr;
-	
+
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x, y, w, h);
-	
+
 	clearOverlayRect(_curPage, x, y, w, h);
 
 	temp = h;
 	while (h--) {
 		src += srcOffset;
 		int cW = w;
-		
+
 		switch (plotFunc) {
 		case 0:
 			memcpy(dst, src, cW);
@@ -270,14 +454,14 @@ uint16 Screen_v2::getShapeSize(const uint8 *shp) {
 
 uint8 *Screen_v2::makeShapeCopy(const uint8 *src, int index) {
 	debugC(9, kDebugLevelScreen, "Screen_v2::makeShapeCopy(%p, %d)", (const void *)src, index);
-	
+
 	const uint8 *shape = getPtrToShape(src, index);
 	int size = getShapeSize(shape);
 
 	uint8 *copy = new uint8[size];
 	assert(copy);
 	memcpy(copy, shape, size);
-	
+
 	return copy;
 }
 
@@ -290,7 +474,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 
 	va_list args;
 	va_start(args, flags);
-	
+
 	static int drawShapeVar1 = 0;
 	static int drawShapeVar2[] = {
 		1, 3, 2, 5, 4, 3, 2, 1
@@ -298,14 +482,14 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 	static int drawShapeVar3 = 1;
 	static int drawShapeVar4 = 0;
 	static int drawShapeVar5 = 0;
-	
+
 	uint8 *table = 0;
 	int tableLoopCount = 0;
 	int drawLayer = 0;
 	const uint8 *table2 = 0;
 	uint8 *table3 = 0;
 	uint8 *table4 = 0;
-	
+
 	if (flags & 0x8000) {
 		table2 = va_arg(args, uint8*);
 	}
@@ -340,12 +524,12 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 		scale_w = 0x100;
 		scale_h = 0x100;
 	}
-	
+
 	int ppc = (flags >> 8) & 0x3F;
-	
+
 	const uint8 *src = shape;
 	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;
-	
+
 	int shapeHeight = *src++;
 	int scaledShapeHeight = (shapeHeight * scale_h) >> 8;
 	if (scaledShapeHeight == 0) {
@@ -364,9 +548,9 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 		x -= scaledShapeWidth >> 1;
 		y -= scaledShapeHeight >> 1;
 	}
-	
+
 	src += 3;
-	
+
 	uint16 frameSize = READ_LE_UINT16(src); src += 2;
 	int colorTableColors = 0x10;
 
@@ -383,7 +567,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 		decodeFrame4(src, _animBlockPtr, frameSize);
 		src = _animBlockPtr;
 	}
-	
+
 	int shapeSize = shapeWidth * shapeHeight;
 	if (_decodeShapeBufferSize < shapeSize) {
 		delete [] _decodeShapeBuffer;
@@ -397,7 +581,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 	}
 	memset(_decodeShapeBuffer, 0, _decodeShapeBufferSize);
 	uint8 *decodedShapeFrame = _decodeShapeBuffer;
-	
+
 	for (int j = 0; j < shapeHeight; ++j) {
 		uint8 *dsbNextLine = decodedShapeFrame + shapeWidth;
 		int count = shapeWidth;
@@ -414,7 +598,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 		}
 		decodedShapeFrame = dsbNextLine;
 	}
-	
+
 	uint16 sx1 = getScreenDim(sd)->sx << 3;
 	uint16 sy1 = getScreenDim(sd)->sy;
 	uint16 sx2 = sx1 + (getScreenDim(sd)->w << 3);
@@ -423,7 +607,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 		x += sx1;
 		y += sy1;
 	}
-	
+
 	int x1, x2;
 	if (x >= 0) {
 		x1 = 0;
@@ -440,7 +624,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 			x2 = sx2;
 		}
 	}
-	
+
 	int y1, y2;
 	if (y >= 0) {
 		y1 = 0;
@@ -460,7 +644,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 
 	uint8 *dst = getPagePtr(page) + y * 320 + x;
 	uint8 *dstStart = getPagePtr(page);
-	
+
 	int scaleYTable[200];
 	for (y = y1; y < y2; ++y) {
 		scaleYTable[y] = (y << 8) / scale_h;
@@ -469,7 +653,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 	for (x = x1; x < x2; ++x) {
 		scaleXTable[x] = (x << 8) / scale_w;
 	}
-	
+
 	const uint8 *shapeBuffer = _decodeShapeBuffer;
 	if (flags & 0x02) {
 		shapeBuffer += shapeWidth * (shapeHeight - 1);
@@ -477,7 +661,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 	if (flags & 0x01) {
 		shapeBuffer += shapeWidth - 1;
 	}
-	
+
 	for (y = y1; y < y2; ++y) {
 		uint8 *dstNextLine = dst + 320;
 		int j = scaleYTable[y];
@@ -501,7 +685,7 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 
 				case 8: {
 						int layer = _shapePages[0][dst - dstStart] & 7;
-						if (drawLayer > layer)
+						if (drawLayer < layer)
 							color = _shapePages[1][dst - dstStart];
 						*dst = color;
 					} break;
@@ -542,11 +726,11 @@ int Screen_v2::getLayer(int x, int y) {
 		y = 0;
 	else if (y >= 144)
 		y = 143;
-	
+
 	uint8 pixel = *(getCPagePtr(5) + y * 320 + x);
 	pixel &= 0x7F;
 	pixel >>= 3;
-	
+
 	if (pixel < 1)
 		pixel = 1;
 	else if (pixel > 15)
@@ -556,6 +740,11 @@ int Screen_v2::getLayer(int x, int y) {
 
 bool Screen_v2::isMouseVisible() const {
 	return _mouseLockCount == 0;
+}
+
+void Screen_v2::setTextColorMap(const uint8 *cmap) {
+	debugC(9, kDebugLevelScreen, "Screen_v2::setTextColorMap(%p)", (const void *)cmap);
+	setTextColor(cmap, 0, 15);
 }
 
 } // end of namespace Kyra

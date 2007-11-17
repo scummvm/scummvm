@@ -39,7 +39,7 @@ class KyraEngine_v2;
 
 class Movie {
 public:
-	Movie(KyraEngine *vm) : _x(-1), _y(-1), _drawPage(-1), _vm(vm), _opened(false) {}
+	Movie(KyraEngine *vm) : _vm(vm), _opened(false),  _x(-1), _y(-1), _drawPage(-1) {}
 	virtual ~Movie() {}
 
 	virtual bool opened() { return _opened; }
@@ -125,6 +125,9 @@ public:
 	
 	int width() const { return _width; }
 	int height() const { return _height; }
+
+	void setWidth(int w) { _width = w; }
+	void setHeight(int h) { _height = h; }
 	
 	// HACK for our intro code
 	void flagOldOff(bool enabled) { _oldOff = enabled; }
@@ -139,4 +142,5 @@ protected:
 } // end of namespace Kyra
 
 #endif
+
 

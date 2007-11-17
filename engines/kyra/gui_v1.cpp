@@ -41,7 +41,7 @@ void KyraEngine_v1::registerDefaultSettings() {
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the Kyra engine.
 	ConfMan.registerDefault("walkspeed", 2);
-	ConfMan.registerDefault("cdaudio", _flags.platform == Common::kPlatformFMTowns);
+	ConfMan.registerDefault("cdaudio", (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98));
 }
 
 void KyraEngine_v1::readSettings() {
@@ -59,7 +59,7 @@ void KyraEngine_v1::readSettings() {
 		_configTextspeed = 2;	// Fast
 
 	_configWalkspeed = ConfMan.getInt("walkspeed");
-	_configMusic = ConfMan.getBool("music_mute") ? 0 : ((ConfMan.getBool("cdaudio") && _flags.platform == Common::kPlatformFMTowns) ? 2 : 1);	
+	_configMusic = ConfMan.getBool("music_mute") ? 0 : ((ConfMan.getBool("cdaudio") && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) ? 2 : 1);	
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 
 	_sound->enableMusic(_configMusic);
@@ -494,7 +494,7 @@ void KyraEngine_v1::setGUILabels() {
 		menuLabelGarbageOffset = 72;
 	} else if (_flags.lang == Common::DE_DEU) {
 		offset = offsetMainMenu = offsetOn = offsetOptions = 24;
-	} else if (_flags.platform == Common::kPlatformFMTowns) {
+	} else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		offset = 1;
 		offsetOptions = 10;
 		offsetOn = 0;
@@ -1303,7 +1303,7 @@ int KyraEngine_v1::gui_controlsChangeMusic(Button *button) {
 	debugC(9, kDebugLevelGUI, "KyraEngine_v1::gui_controlsChangeMusic()");
 	processMenuButton(button);
 
-	_configMusic = ++_configMusic % (_flags.platform == Common::kPlatformFMTowns ? 3 : 2);
+	_configMusic = ++_configMusic % ((_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) ? 3 : 2);
 	gui_setupControls(_menu[5]);
 	return 0;
 }

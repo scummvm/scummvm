@@ -24,7 +24,6 @@
  */
 
 
-#include "common/stdafx.h"
 #include "common/system.h"
 
 #include "common/file.h"
@@ -32,7 +31,6 @@
 #include "graphics/primitives.h"			// for Graphics::drawLine
 
 #include "parallaction/parallaction.h"
-#include "parallaction/menu.h"
 #include "parallaction/sound.h"
 
 
@@ -310,6 +308,9 @@ void Parallaction_ns::_c_zeroFoglie(void *parm) {
 
 void Parallaction_ns::_c_trasformata(void *parm) {
 	_engineFlags ^= kEngineTransformedDonna;
+	// No need to invoke changeCharacter here, as
+	// transformation happens on a location switch
+	// and character change is automatically triggered.
 	return;
 }
 
@@ -360,7 +361,7 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 	Palette pal0(_gfx->_palette);
 	Palette pal1;
 
-	for (uint16 i = 0; i <= 32; i++) {
+	for (uint16 i = 0; i < 32; i++) {
 		pal0.setEntry(i, -1, 0, 0);			// leaves reds unchanged while zeroing other components
 	}
 
@@ -393,7 +394,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 
 	Common::File stream;
 
-	stream.open(_characterName, Common::File::kFileWriteMode);
+	stream.open(_char.getBaseName(), Common::File::kFileWriteMode);
 	if (stream.isOpen())
 		stream.close();
 
@@ -423,9 +424,7 @@ void Parallaction_ns::_c_finito(void *parm) {
 		_gfx->updateScreen();
 		waitUntilLeftClick();
 
-		strcpy(_location._name, "estgrotta.drki");
-
-		_engineFlags |= kEngineChangeLocation;
+		scheduleLocationSwitch("estgrotta.drki");
 	} else {
 		_gfx->setFont(_menuFont);
 		_gfx->displayCenteredString(70, v8C[_language]);
@@ -436,27 +435,10 @@ void Parallaction_ns::_c_finito(void *parm) {
 		_gfx->updateScreen();
 		waitUntilLeftClick();
 
-		_menu->selectCharacter();
+		selectStartLocation();
 	}
 
-	// this code saves main character animation from being removed from the following code
-	_animations.remove(&_char._ani);
-	_locationNames[0][0] = '\0';
-	_numLocations = 0;
-	_commandFlags = 0;
-
-	// this flag tells freeZones to unconditionally remove *all* Zones
-	_engineFlags |= kEngineQuit;
-
-	freeZones();
-	freeAnimations();
-
-	// this dangerous flag can now be cleared
-	_engineFlags &= ~kEngineQuit;
-
-	// main character animation is restored
-	_animations.push_front(&_char._ani);
-	_score = 0;
+	cleanupGame();
 
 	return;
 }
@@ -519,7 +501,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 	_gfx->setFont(_menuFont);
 
-	debugC(1, kDebugLocation, "endIntro()");
+	debugC(1, kDebugExec, "endIntro()");
 
 	for (uint16 _si = 0; _si < 6; _si++) {
 		_gfx->displayCenteredString(80, _credits[_si]._role);
@@ -529,7 +511,7 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 		for (uint16 v2 = 0; v2 < 100; v2++) {
 			_mouseButtons = kMouseNone;
-			updateInput();
+			readInput();
 			if (_mouseButtons == kMouseLeftUp)
 				break;
 
@@ -538,7 +520,9 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 
 		_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	}
-	debugC(1, kDebugLocation, "endIntro(): done showing credits");
+	debugC(1, kDebugExec, "endIntro(): done showing credits");
+
+	_soundMan->stopMusic();
 
 	if ((getFeatures() & GF_DEMO) == 0) {
 		_gfx->displayCenteredString(80, "CLICK MOUSE BUTTON TO START");
@@ -547,7 +531,10 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 		waitUntilLeftClick();
 
 		_engineFlags &= ~kEngineBlockInput;
-		_menu->selectCharacter();
+		selectStartLocation();
+
+		cleanupGame();
+
 	} else {
 		waitUntilLeftClick();
 	}

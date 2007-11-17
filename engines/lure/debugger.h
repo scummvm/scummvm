@@ -30,8 +30,6 @@
 
 namespace Lure {
 
-class KyraEngine;
-
 class Debugger : public GUI::Debugger {
 public:
 	Debugger();

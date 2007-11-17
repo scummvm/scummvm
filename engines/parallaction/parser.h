@@ -32,32 +32,31 @@
 
 namespace Parallaction {
 
-uint16 fillBuffers(Common::SeekableReadStream &stream, bool errorOnEOF = false);
 char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes = false);
 
 extern char _tokens[][40];
 
-class Script : public Common::SeekableReadStream {
+class Script {
 
-	Common::SeekableReadStream *_input;
+	Common::ReadStream *_input;
 	bool	_disposeSource;
+	uint	_line;				// for debug messages
+
+	void clearTokens();
+	uint16 fillTokens(char* line);
 
 public:
-	Script(Common::SeekableReadStream *, bool _disposeSource = false);
+	Script(Common::ReadStream *, bool _disposeSource = false);
 	~Script();
 
-	uint32 read(void *dataPtr, uint32 dataSize);
-
 	char *readLine(char *buf, size_t bufSize);
+	uint16 readLineToken(bool errorOnEOF = false);
 
-	bool eos() const;
-	uint32 pos() const;
-	uint32 size() const;
+	void skip(const char* endToken);
 
-	void seek(int32 offset, int whence = SEEK_SET);
+	uint	getLine() { return _line; }
 };
 
-void skip(Script* script, const char* endToken);
 
 
 } // namespace Parallaction

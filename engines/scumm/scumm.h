@@ -607,6 +607,7 @@ protected:
 	byte _saveLoadFlag, _saveLoadSlot;
 	uint32 _lastSaveTime;
 	bool _saveTemporaryState;
+	char _saveLoadFileName[32];
 	char _saveLoadName[32];
 
 	bool saveState(int slot, bool compat);
@@ -917,7 +918,7 @@ protected:
 public:
 	int _roomHeight, _roomWidth;
 	int _screenHeight, _screenWidth;
-	VirtScreen virtscr[4];		// Virtual screen areas
+	VirtScreen _virtscr[4];		// Virtual screen areas
 	CameraData camera;			// 'Camera' - viewport
 
 	int _screenStartStrip, _screenEndStrip;
@@ -1031,7 +1032,6 @@ protected:
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
-	void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
 
 public:
 	VirtScreen *findVirtScreen(int y);
@@ -1343,7 +1343,6 @@ public:
 	byte VAR_NUM_SCRIPT_CYCLES;		// Used in runAllScripts()
 
 	byte VAR_KEY_STATE;			// Used in parseEvents()
-	byte VAR_MOUSE_STATE;			// Used in checkExecVerbs();
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;

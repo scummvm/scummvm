@@ -87,7 +87,7 @@ clean:
 .PHONY: all clean dist distclean plugins
 
 # Old (dumb) compile & dependcy rules
-#INCS	= scumm/scumm.h common/scummsys.h common/stdafx.h
+#INCS	= scumm/scumm.h common/scummsys.h
 #.cpp.o:
 #	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 #$(OBJS): $(INCS)
@@ -109,6 +109,9 @@ else
 .cpp.o:
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+.m.o:
+	$(MKDIR) $(*D)/$(DEPDIR)
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(OBJCFLAGS) -c $(<) -o $*.o
 endif
 
 ifdef HAVE_NASM
@@ -118,6 +121,5 @@ ifdef HAVE_NASM
 	$(NASM) -O1 $(NASMFLAGS) -g -o $*.o $(<)
 endif
 
-# Include the dependency tracking files. We add /dev/null at the end
-# of the list to avoid a warning/error if no .d file exist
--include $(wildcard $(addsuffix /*.d,$(DEPDIRS))) /dev/null
+# Include the dependency tracking files.
+-include $(wildcard $(addsuffix /*.d,$(DEPDIRS)))

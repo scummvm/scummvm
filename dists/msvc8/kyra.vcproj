@@ -361,6 +361,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\text_v2.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\text_v2.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\timer.cpp"
 			>
 		</File>

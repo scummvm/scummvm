@@ -24,7 +24,6 @@
 
 #ifdef MACOSX
 
-#include "common/stdafx.h"
 #include "common/config-manager.h"
 #include "common/util.h"
 #include "sound/mpu401.h"
@@ -91,8 +90,8 @@ int MidiDriver_CoreMIDI::open() {
 	} else {
 		return MERR_DEVICE_NOT_AVAILABLE;
 	}
-	
-	if (err != noErr)	
+
+	if (err != noErr)
 		return MERR_CANNOT_CONNECT;
 
 	return 0;

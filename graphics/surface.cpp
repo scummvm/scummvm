@@ -22,34 +22,27 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+#include "common/algorithm.h"
 #include "common/util.h"
 #include "graphics/primitives.h"
 #include "graphics/surface.h"
 
 namespace Graphics {
 
-static void plotPoint1(int x, int y, int color, void *data) {
+template<typename T>
+static void plotPoint(int x, int y, int color, void *data) {
 	Surface *s = (Surface *)data;
 	if (x >= 0 && x < s->w && y >= 0 && y < s->h) {
-		byte *ptr = (byte *)s->getBasePtr(x, y);
-		*ptr = (byte)color;
-	}
-}
-
-static void plotPoint2(int x, int y, int color, void *data) {
-	Surface *s = (Surface *)data;
-	if (x >= 0 && x < s->w && y >= 0 && y < s->h) {
-		uint16 *ptr = (uint16 *)s->getBasePtr(x, y);
-		*ptr = (uint16)color;
+		T *ptr = (T *)s->getBasePtr(x, y);
+		*ptr = (T)color;
 	}
 }
 
 void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 	if (bytesPerPixel == 1)
-		Graphics::drawLine(x0, y0, x1, y1, color, &plotPoint1, this);
+		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<byte>, this);
 	else if (bytesPerPixel == 2)
-		Graphics::drawLine(x0, y0, x1, y1, color, &plotPoint2, this);
+		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<uint16>, this);
 	else
 		error("Surface::drawLine: bytesPerPixel must be 1 or 2");
 }
@@ -86,15 +79,15 @@ void Surface::hLine(int x, int y, int x2, uint32 color) {
 	if (x2 >= w)
 		x2 = w - 1;
 
+	if (x2 < x)
+		return;
+
 	if (bytesPerPixel == 1) {
 		byte *ptr = (byte *)getBasePtr(x, y);
-		if (x2 >= x)
-			memset(ptr, (byte)color, x2-x+1);
+		memset(ptr, (byte)color, x2-x+1);
 	} else if (bytesPerPixel == 2) {
 		uint16 *ptr = (uint16 *)getBasePtr(x, y);
-		while (x++ <= x2) {
-			*ptr++ = (uint16)color;
-		}
+		Common::set_to(ptr, ptr + (x2-x+1), (uint16)color);
 	} else {
 		error("Surface::hLine: bytesPerPixel must be 1 or 2");
 	}
@@ -130,8 +123,7 @@ void Surface::vLine(int x, int y, int y2, uint32 color) {
 	}
 }
 
-void Surface::fillRect(const Common::Rect &rOld, uint32 color) {
-	Common::Rect r(rOld);
+void Surface::fillRect(Common::Rect r, uint32 color) {
 	r.clip(w, h);
 
 	if (!r.isValidRect())
@@ -139,7 +131,7 @@ void Surface::fillRect(const Common::Rect &rOld, uint32 color) {
 
 	int width = r.width();
 	int height = r.height();
-	int i;
+//	int i;
 
 	if (bytesPerPixel == 1) {
 		byte *ptr = (byte *)getBasePtr(r.left, r.top);
@@ -150,9 +142,7 @@ void Surface::fillRect(const Common::Rect &rOld, uint32 color) {
 	} else if (bytesPerPixel == 2) {
 		uint16 *ptr = (uint16 *)getBasePtr(r.left, r.top);
 		while (height--) {
-			for (i = 0; i < width; i++) {
-				ptr[i] = (uint16)color;
-			}
+			Common::set_to(ptr, ptr + width, (uint16)color);
 			ptr += pitch/2;
 		}
 	} else {
@@ -167,7 +157,15 @@ void Surface::frameRect(const Common::Rect &r, uint32 color) {
 	vLine(r.right-1, r.top, r.bottom-1, color);
 }
 
+// FIXME: LordHoto asks why is this in Surface, since this
+// just supports 8bpp surfaces. Looks like someone wants
+// to subclass Surface to add this or it should be extended
+// to support 16bpp (or marked as just working for 8bpp
+// surfaces).
 void Surface::move(int dx, int dy, int height) {
+	// This function currently just works with 8bpp surfaces
+	assert(bytesPerPixel == 1);
+
 	// Short circuit check - do we have to do anything anyway?
 	if ((dx == 0 && dy == 0) || height <= 0)
 		return;

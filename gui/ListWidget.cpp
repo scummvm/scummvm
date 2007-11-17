@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/system.h"
 #include "common/events.h"
 #include "gui/ListWidget.h"
@@ -45,7 +44,7 @@ ListWidget::ListWidget(GuiObject *boss, const String &name)
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
-	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE;
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	setHints(THEME_HINT_SAVE_BACKGROUND | THEME_HINT_USE_SHADOW);
 	_type = kListWidget;
 	_editMode = false;
@@ -152,7 +151,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	// If this was a double click and the mouse is still over 
+	// If this was a double click and the mouse is still over
 	// the selected item, send the double click command
 	if (clickCount == 2 && (_selectedItem == findItem(x, y)) &&
 		_selectedItem >= 0) {
@@ -168,7 +167,7 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 int ListWidget::findItem(int x, int y) const {
 	if (y < _topPadding) return -1;
 	int item = (y - _topPadding) / kLineHeight + _currentPos;
-	if (item >= _currentPos && item < _currentPos + _entriesPerPage && 
+	if (item >= _currentPos && item < _currentPos + _entriesPerPage &&
 		item < (int)_list.size())
 		return item;
 	else
@@ -327,7 +326,7 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
-void ListWidget::drawWidget(bool hilite) {
+void ListWidget::drawWidget() {
 	int i, pos, len = _list.size();
 	Common::String buffer;
 
@@ -356,7 +355,7 @@ void ListWidget::drawWidget(bool hilite) {
 			char temp[10];
 			sprintf(temp, "%2d. ", (pos + _numberingMode));
 			buffer = temp;
-			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, _leftPadding);
+			g_gui.theme()->drawText(Common::Rect(_x, y, _x + r.left + _leftPadding, y + fontHeight - 2), buffer, _state, Theme::kTextAlignLeft, inverted, _leftPadding);
 			pad = 0;
 		}
 
@@ -366,7 +365,7 @@ void ListWidget::drawWidget(bool hilite) {
 			buffer = _editString;
 			adjustOffset();
 			width = _w - r.left - _hlRightPadding - _leftPadding;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, pad);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight-2), buffer, _state, Theme::kTextAlignLeft, inverted, pad);
 		} else {
 			int maxWidth = _textWidth[i];
 			buffer = _list[pos];
@@ -378,7 +377,7 @@ void ListWidget::drawWidget(bool hilite) {
 				width = _w - r.left - _hlRightPadding;
 			if (width > maxWidth)
 				maxWidth = width;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2), buffer, Theme::kStateEnabled, Theme::kTextAlignLeft, inverted, pad);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + maxWidth, y + fontHeight-2), buffer, _state, Theme::kTextAlignLeft, inverted, pad);
 		}
 
 		_textWidth[i] = width;

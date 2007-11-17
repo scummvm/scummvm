@@ -41,7 +41,6 @@
 #include "saga/music.h"
 
 #include "saga/scene.h"
-#include "saga/stream.h"
 #include "saga/actor.h"
 #include "saga/rscfile.h"
 #include "saga/sagaresnames.h"
@@ -281,6 +280,9 @@ void Scene::startScene() {
 		error("Scene::start(): Error: Can't start game... gametype not supported");
 		break;
 	}
+
+	// Stop the intro music
+	_vm->_music->stop();
 
 	// Load the head in scene queue
 	queueIterator = _sceneQueue.begin();
@@ -551,8 +553,8 @@ bool Scene::offscreenPath(Point &testPoint) {
 		return false;
 	}
 
-	point.x = clamp( 0, testPoint.x, _bgMask.w - 1 );
-	point.y = clamp( 0, testPoint.y, _bgMask.h - 1 );
+	point.x = clamp(0, testPoint.x, _vm->getDisplayWidth() - 1);
+	point.y = clamp(0, testPoint.y, _bgMask.h - 1);
 	if (point == testPoint) {
 		return false;
 	}
@@ -608,15 +610,7 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			_vm->_interface->setLeftPortrait(0);
 
 		_vm->_anim->freeCutawayList();
-		// FIXME: Freed script modules are not reloaded correctly when changing chapters.
-		// This is apparent when returning back to the character selection screen,
-		// where the scene script module is loaded incorrectly
-		// Don't free them for now, but free them on game exit, like ITE.
-		// This has no impact on the game itself (other than increased memory usage),
-		// as each chapter uses a different module slot
-		// TODO: Find out why the script modules are not loaded correctly when
-		// changing chapters and uncomment this again
-		//_vm->_script->freeModules();
+		_vm->_script->freeModules();
 
 		// deleteAllScenes();
 
@@ -739,15 +733,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 
 	q_event = NULL;
 
-	//fix placard bug
-	//i guess we should remove RF_PLACARD flag - and use _interface->getMode()
-	event.type = kEvTOneshot;
-	event.code = kGraphicsEvent;
-	event.op = kEventClearFlag;
-	event.param = RF_PLACARD;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
 	if (loadSceneParams->transitionType == kTransitionFade) {
 
 		_vm->_interface->setFadeMode(kFadeOut);
@@ -794,7 +779,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		event.param4 = _sceneNumber;	// Object
 		event.param5 = loadSceneParams->actorsEntrance;	// With Object
 		event.param6 = 0;		// Actor
-
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 
@@ -816,7 +800,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		event.time = 0;
 		event.duration = kNormalFadeDuration;
 		event.data = _bg.pal;
-
 		q_event = _vm->_events->chain(q_event, &event);
 
 		// set fade mode
@@ -845,14 +828,12 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 				event.param2 = MUSIC_DEFAULT;
 				event.op = kEventPlay;
 				event.time = 0;
-
 				_vm->_events->queue(&event);
 			} else {
 				event.type = kEvTOneshot;
 				event.code = kMusicEvent;
 				event.op = kEventStop;
 				event.time = 0;
-
 				_vm->_events->queue(&event);
 			}
 		}
@@ -863,7 +844,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		event.op = kEventDisplay;
 		event.param = kEvPSetPalette;
 		event.time = 0;
-
 		_vm->_events->queue(&event);
 
 		// Begin palette cycle animation if present
@@ -871,7 +851,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 		event.code = kPalAnimEvent;
 		event.op = kEventCycleStart;
 		event.time = 0;
-
 		q_event = _vm->_events->queue(&event);
 
 		// Start the scene main script
@@ -886,7 +865,6 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 			event.param4 = _sceneNumber;	// Object
 			event.param5 = loadSceneParams->actorsEntrance;		// With Object
 			event.param6 = 0;		// Actor
-
 			_vm->_events->queue(&event);
 		}
 
@@ -1331,59 +1309,103 @@ void Scene::loadSceneEntryList(const byte* resourcePointer, size_t resourceLengt
 
 void Scene::clearPlacard() {
 	static PalEntry cur_pal[PAL_ENTRIES];
-	PalEntry *pal;
 	Event event;
 	Event *q_event;
 
-	_vm->_interface->restoreMode();
+	_vm->_interface->setFadeMode(kFadeOut);
 
+	// Fade to black out
 	_vm->_gfx->getCurrentPal(cur_pal);
-
 	event.type = kEvTImmediate;
 	event.code = kPalEvent;
 	event.op = kEventPalToBlack;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
 	event.data = cur_pal;
-
 	q_event = _vm->_events->queue(&event);
 
-	event.type = kEvTOneshot;
-	event.code = kGraphicsEvent;
-	event.op = kEventClearFlag;
-	event.param = RF_PLACARD;
-
+	// set fade mode
+	event.type = kEvTImmediate;
+	event.code = kInterfaceEvent;
+	event.op = kEventSetFadeMode;
+	event.param = kNoFade;
+	event.time = 0;
+	event.duration = 0;
 	q_event = _vm->_events->chain(q_event, &event);
 
-	event.type = kEvTOneshot;
-	event.code = kTextEvent;
-	event.op = kEventRemove;
-	event.data = _vm->_script->getPlacardTextEntry();
+	if (_vm->getGameType() == GType_ITE) {
+		event.type = kEvTOneshot;
+		event.code = kTextEvent;
+		event.op = kEventRemove;
+		event.data = _vm->_script->getPlacardTextEntry();
+		q_event = _vm->_events->chain(q_event, &event);
+	} else {
+		_vm->_scene->_textList.clear();
+	}
 
+	event.type = kEvTImmediate;
+	event.code = kInterfaceEvent;
+	event.op = kEventRestoreMode;
+	event.time = 0;
+	event.duration = 0;
 	q_event = _vm->_events->chain(q_event, &event);
 
-	_vm->_scene->getBGPal(pal);
+	if (_vm->getGameType() == GType_IHNM) {
+		// set mode to main
+		event.type = kEvTImmediate;
+		event.code = kInterfaceEvent;
+		event.op = kEventSetMode;
+		event.param = kPanelMain;
+		event.time = 0;
+		event.duration = 0;
+		q_event = _vm->_events->chain(q_event, &event);
+	}
 
+	// Display scene background, but stay with black palette
+	event.type = kEvTImmediate;
+	event.code = kBgEvent;
+	event.op = kEventDisplay;
+	event.param = kEvPNoSetPalette;
+	event.time = 0;
+	event.duration = 0;
+	q_event = _vm->_events->chain(q_event, &event);
+
+	// set fade mode
+	event.type = kEvTImmediate;
+	event.code = kInterfaceEvent;
+	event.op = kEventSetFadeMode;
+	event.param = kFadeIn;
+	event.time = 0;
+	event.duration = 0;
+	q_event = _vm->_events->chain(q_event, &event);
+
+	// Fade in from black to the scene background palette
 	event.type = kEvTImmediate;
 	event.code = kPalEvent;
 	event.op = kEventBlackToPal;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
-	event.data = pal;
+	event.data = _bg.pal;
+	q_event = _vm->_events->chain(q_event, &event);
 
+	// set fade mode
+	event.type = kEvTImmediate;
+	event.code = kInterfaceEvent;
+	event.op = kEventSetFadeMode;
+	event.param = kNoFade;
+	event.time = 0;
+	event.duration = 0;
 	q_event = _vm->_events->chain(q_event, &event);
 
 	event.type = kEvTOneshot;
 	event.code = kCursorEvent;
 	event.op = kEventShow;
-
 	q_event = _vm->_events->chain(q_event, &event);
 
 	event.type = kEvTOneshot;
 	event.code = kScriptEvent;
 	event.op = kEventThreadWake;
 	event.param = kWaitTypePlacard;
-
 	q_event = _vm->_events->chain(q_event, &event);
 }
 
@@ -1405,37 +1427,37 @@ void Scene::showPsychicProfile(const char *text) {
 	event.type = kEvTOneshot;
 	event.code = kCursorEvent;
 	event.op = kEventHide;
-
 	q_event = _vm->_events->queue(&event);
 
-	_vm->_gfx->getCurrentPal(cur_pal);
+	_vm->_interface->setFadeMode(kFadeOut);
 
+	// Fade to black out
+	_vm->_gfx->getCurrentPal(cur_pal);
 	event.type = kEvTImmediate;
 	event.code = kPalEvent;
 	event.op = kEventPalToBlack;
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
 	event.data = cur_pal;
+	q_event = _vm->_events->chain(q_event, &event);
 
+	// set fade mode
+	event.type = kEvTImmediate;
+	event.code = kInterfaceEvent;
+	event.op = kEventSetFadeMode;
+	event.param = kNoFade;
+	event.time = 0;
+	event.duration = 0;
 	q_event = _vm->_events->chain(q_event, &event);
 
 	event.type = kEvTOneshot;
 	event.code = kInterfaceEvent;
 	event.op = kEventClearStatus;
-
-	q_event = _vm->_events->chain(q_event, &event);
-
-	event.type = kEvTOneshot;
-	event.code = kGraphicsEvent;
-	event.op = kEventSetFlag;
-	event.param = RF_PLACARD;
-
 	q_event = _vm->_events->chain(q_event, &event);
 
 	// Set the background and palette for the psychic profile
 	event.type = kEvTOneshot;
 	event.code = kPsychicProfileBgEvent;
-
 	q_event = _vm->_events->chain(q_event, &event);
 
 	_vm->_scene->_textList.clear();
@@ -1459,7 +1481,6 @@ void Scene::showPsychicProfile(const char *text) {
 		event.code = kTextEvent;
 		event.op = kEventDisplay;
 		event.data = _psychicProfileTextEntry;
-
 		q_event = _vm->_events->chain(q_event, &event);
 	}
 
@@ -1471,24 +1492,19 @@ void Scene::showPsychicProfile(const char *text) {
 	event.time = 0;
 	event.duration = kNormalFadeDuration;
 	event.data = pal;
-
 	q_event = _vm->_events->chain(q_event, &event);
 
 	event.type = kEvTOneshot;
 	event.code = kScriptEvent;
 	event.op = kEventThreadWake;
 	event.param = kWaitTypePlacard;
-
 	q_event = _vm->_events->chain(q_event, &event);
 }
 
 void Scene::clearPsychicProfile() {
 	if (_vm->_interface->getMode() == kPanelPlacard || _vm->getGameId() == GID_IHNM_DEMO) {
-		_vm->_scene->clearPlacard();
-		_vm->_scene->_textList.clear();
 		_vm->_render->setFlag(RF_DISABLE_ACTORS);
-		_vm->_gfx->restorePalette();
-		_vm->_scene->restoreScene();
+		_vm->_scene->clearPlacard();
 		_vm->_interface->activate();
 	}
 }

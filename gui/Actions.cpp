@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "gui/Actions.h"
 #include "gui/message.h"
 #include "scumm/scumm.h"

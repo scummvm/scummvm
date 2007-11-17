@@ -135,7 +135,7 @@ AnimAbortType AnimationSequence::show() {
 	while ((_pPixels < _pPixelsEnd) && (_pLines < _pLinesEnd)) {
 		decodeFrame(_pPixels, _pLines);
 
-		result = delay(130);
+		result = delay(7 * 1000 / 50);
 		if (result != ABORT_NONE) return result;
 	}
 

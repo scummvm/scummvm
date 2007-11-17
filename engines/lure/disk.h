@@ -26,7 +26,7 @@
 #ifndef LURE_DISK_H
 #define LURE_DISK_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "lure/memory.h"
@@ -40,11 +40,13 @@ namespace Lure {
 
 #define NUM_ENTRIES_IN_HEADER 0xBF
 #define HEADER_IDENT_STRING "heywow"
+#define SUPPORT_IDENT_STRING "lure"
 #define HEADER_ENTRY_UNUSED_ID 0xffff
 
 class Disk {
 private:
 	uint8 _fileNum;
+	uint32 _dataOffset;
 	Common::File *_fileHandle;
 	FileEntry _entries[NUM_ENTRIES_IN_HEADER];
 

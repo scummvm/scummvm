@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/system.h"
 
@@ -216,7 +216,7 @@ void AGOSEngine::restoreWindow(WindowBlock *window) {
 				w++;
 			}
 		}
-			
+
 		restoreBlock(window->y + window->height * 8, (x + w) * 8, window->y, x * 8);
 	}
 
@@ -287,7 +287,7 @@ void AGOSEngine::waitWindow(WindowBlock *window) {
 		windowPutChar(window, *message);
 
 	ha = findEmptyHitArea();
-	ha->x = (window->width / 2 + window->x - 3) * 8; 
+	ha->x = (window->width / 2 + window->x - 3) * 8;
 	ha->y = window->height * 8 + window->y - 8;
 	ha->width = 48;
 	ha->height = 8;

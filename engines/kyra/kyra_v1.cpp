@@ -98,8 +98,6 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
 	_currHeadShape = 0;
 
-	_curSfxFile = _curMusicTheme = 0;
-
 	memset(&_itemBkgBackUp, 0, sizeof(_itemBkgBackUp));
 }
 
@@ -177,19 +175,25 @@ int KyraEngine_v1::init() {
 	assert(_animator);
 	_animator->init(5, 11, 12);
 	assert(*_animator);
+	_text = new TextDisplayer(this, screen());
+	assert(_text);
 
 	initStaticResource();
 	
-	if (_flags.platform == Common::kPlatformFMTowns)
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 		_sound->setSoundFileList(_soundFilesTowns, _soundFilesTownsCount);
 	else
 		_sound->setSoundFileList(_soundFiles, _soundFilesCount);
+
+	_trackMap = _dosTrackMap;
+	_trackMapSize = _dosTrackMapSize;
 	
 	if (!_sound->init())
 		error("Couldn't init sound");
 
 	_sound->setVolume(255);
-	_sound->loadSoundFile(0);
+	_sound->loadSoundFile((_flags.platform == Common::kPlatformFMTowns
+		|| _flags.platform == Common::kPlatformPC98) ? 0 : 9);
 
 	setupTimers();
 	setupButtonData();
@@ -377,7 +381,6 @@ void KyraEngine_v1::startup() {
 	loadButtonShapes();
 	initMainButtonList();
 	loadMainScreen();
-	setupTimers();
 	_screen->loadPalette("PALETTE.COL", _screen->_currentPalette);
 
 	// XXX
@@ -471,8 +474,6 @@ void KyraEngine_v1::delayUntil(uint32 timestamp, bool updateTimers, bool update,
 
 void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
 	Common::Event event;
-	char saveLoadSlot[20];
-	char savegameName[14];
 
 	uint32 start = _system->getMillis();
 	do {
@@ -481,10 +482,12 @@ void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' && 
 						(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && isMainLoop) {
-					sprintf(saveLoadSlot, "%s.00%d", _targetName.c_str(), event.kbd.keycode - '0');
+					const char *saveLoadSlot = getSavegameFilename(event.kbd.keycode - '0');
+
 					if (event.kbd.flags == Common::KBD_CTRL)
 						loadGame(saveLoadSlot);
 					else {
+						char savegameName[14];
 						sprintf(savegameName, "Quicksave %d",  event.kbd.keycode - '0');
 						saveGame(saveLoadSlot, savegameName);
 					}
@@ -1218,4 +1221,5 @@ void KyraEngine_v1::setupOpcodeTable() {
 #undef Opcode
 
 } // end of namespace Kyra
+
 

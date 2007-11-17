@@ -30,7 +30,6 @@
 #include "saga/events.h"
 
 #include "saga/palanim.h"
-#include "saga/stream.h"
 
 namespace Saga {
 
@@ -131,7 +130,6 @@ int PalAnim::cycleStart() {
 	event.code = kPalAnimEvent;
 	event.op = kEventCycleStep;
 	event.time = PALANIM_CYCLETIME;
-
 	_vm->_events->queue(&event);
 
 	return SUCCESS;
@@ -178,7 +176,6 @@ int PalAnim::cycleStep(int vectortime) {
 	event.code = kPalAnimEvent;
 	event.op = kEventCycleStep;
 	event.time = vectortime + PALANIM_CYCLETIME;
-
 	_vm->_events->queue(&event);
 
 	return SUCCESS;

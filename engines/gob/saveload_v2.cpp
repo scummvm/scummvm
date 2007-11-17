@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/file.h"
 
@@ -215,7 +214,7 @@ bool SaveLoad_v2::saveGame(int16 dataVar, int32 size, int32 offset) {
 
 		Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 		Common::OutSaveFile *out;
-		
+
 		out = saveMan->openForSaving(setCurSlot(slot));
 		if (!out) {
 			warning("Can't open file for slot %d for writing", slot);

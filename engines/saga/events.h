@@ -92,6 +92,8 @@ enum EventOps {
 	kEventSetStatus = 3,
 	kEventClearStatus = 4,
 	kEventSetFadeMode = 5,
+	kEventRestoreMode = 6,
+	kEventSetMode = 7,
 	// ACTOR events
 	kEventMove = 1,
 	// SCRIPT events
@@ -116,7 +118,8 @@ enum EventOps {
 	kEventDissolve = 1,
 	kEventDissolveBGMask = 2,
 	// CUTAWAY events
-	kEventClear = 1
+	kEventClear = 1,
+	kEventShowCutawayBg = 2
 };
 
 enum EventParams {

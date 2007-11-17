@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/file.h"
 
@@ -735,7 +734,7 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 		_vm->_game->_totTextData->items[totTextItem].offset;
 
 	// Skip background rectangles
-	while(((int16) READ_LE_UINT16(totData)) != -1)
+	while (((int16) READ_LE_UINT16(totData)) != -1)
 		totData += 9;
 	totData += 2;
 

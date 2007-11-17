@@ -24,7 +24,6 @@
  */
 
 
-#include "common/stdafx.h"
 #include "common/system.h"
 
 #include "parallaction/parallaction.h"
@@ -68,7 +67,8 @@ Debugger::Debugger(Parallaction *vm)
 	DCmd_Register("jobs",     WRAP_METHOD(Debugger, Cmd_Jobs));
 	DCmd_Register("zones",     WRAP_METHOD(Debugger, Cmd_Zones));
 	DCmd_Register("animations",     WRAP_METHOD(Debugger, Cmd_Animations));
-
+	DCmd_Register("localflags", WRAP_METHOD(Debugger, Cmd_LocalFlags));
+	DCmd_Register("locations", WRAP_METHOD(Debugger, Cmd_Locations));
 
 }
 
@@ -82,23 +82,22 @@ void Debugger::postEnter() {
 
 bool Debugger::Cmd_Location(int argc, const char **argv) {
 
-	char *character = _vm->_characterName;
-	char *location = _vm->_location._name;
+	const char *character = _vm->_char.getName();
+	const char *location = _vm->_location._name;
+
+	char tmp[PATH_LEN];
 
 	switch (argc) {
 	case 3:
 		character = const_cast<char*>(argv[2]);
 		location = const_cast<char*>(argv[1]);
-		sprintf(_vm->_location._name, "%s.%s", location, character);
-		// TODO: check if location exists
-		_engineFlags |= kEngineChangeLocation;
+		sprintf(tmp, "%s.%s", location, character);
+		_vm->scheduleLocationSwitch(tmp);
 		break;
 
 	case 2:
 		location = const_cast<char*>(argv[1]);
-		sprintf(_vm->_location._name, "%s", location);
-		// TODO: check if location exists
-		_engineFlags |= kEngineChangeLocation;
+		_vm->scheduleLocationSwitch(location);
 		break;
 
 	case 1:
@@ -109,6 +108,37 @@ bool Debugger::Cmd_Location(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::Cmd_Locations(int argc, const char **argv) {
+
+	DebugPrintf("+------------------------------+---------+\n"
+				"| location name                |  flags  |\n"
+				"+------------------------------+---------+\n");
+	for (uint i = 0; i < _vm->_numLocations; i++) {
+		DebugPrintf("|%-30s| %08x|\n", _vm->_locationNames[i], _vm->_localFlags[i]);
+	}
+	DebugPrintf("+------------------------------+---------+\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_LocalFlags(int argc, const char **argv) {
+
+	JobList::iterator b = _vm->_jobs.begin();
+	JobList::iterator e = _vm->_jobs.end();
+
+	uint32 flags = _vm->_localFlags[_vm->_currentLocationIndex];
+
+	DebugPrintf("+------------------------------+---------+\n"
+				"| flag name                    |  value  |\n"
+				"+------------------------------+---------+\n");
+	for (uint i = 0; i < _vm->_localFlagNames->count(); i++) {
+		const char *value = ((flags & (1 << i)) == 0) ? "OFF" : "ON";
+		DebugPrintf("|%-30s|   %-6s|\n", _vm->_localFlagNames->item(i),  value);
+	}
+	DebugPrintf("+------------------------------+---------+\n");
+
+	return true;
+}
 
 bool Debugger::Cmd_Give(int argc, const char **argv) {
 
@@ -135,7 +165,7 @@ bool Debugger::Cmd_Jobs(int argc, const char **argv) {
 				"|tag| description                                                 |\n"
 				"+---+-------------------------------------------------------------+\n");
 	for ( ; b != e; b++) {
-		DebugPrintf("|%3i| %-60s|\n", (*b)->_tag, _jobDescriptions[(*b)->_tag] );
+		DebugPrintf("|%3i| %-60s|\n", (*b)->_job->_tag, _jobDescriptions[(*b)->_job->_tag] );
 	}
 	DebugPrintf("+---+-------------------------------------------------------------+\n");
 

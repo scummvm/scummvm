@@ -28,7 +28,6 @@
 
 #include <SDL.h>
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
@@ -161,11 +160,11 @@ public:
 	void deleteMutex(MutexRef mutex);
 
 	// Overlay
-	virtual void showOverlay(); // WinCE FIXME
-	virtual void hideOverlay(); // WinCE FIXME
+	virtual void showOverlay();
+	virtual void hideOverlay();
 	virtual void clearOverlay();
 	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h); // WinCE FIXME
+	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 	virtual int16 getOverlayHeight()  { return _overlayHeight; }
@@ -215,7 +214,7 @@ protected:
 
 	// unseen game screen
 	SDL_Surface *_screen;
-	
+
 	// TODO: We could get rid of the following two vars and just use _screen instead
 	int _screenWidth, _screenHeight;
 
@@ -272,7 +271,7 @@ protected:
 	int _mode;
 	int _transactionMode;
 	bool _fullscreen;
-	
+
 	bool _screenIsLocked;
 	Graphics::Surface _framebuffer;
 
@@ -368,7 +367,7 @@ protected:
 
 	Common::SaveFileManager *_savefile;
 	Audio::Mixer *_mixer;
-	
+
 	SDL_TimerID _timerID;
 	Common::TimerManager *_timer;
 
@@ -382,7 +381,7 @@ protected:
 	virtual void drawMouse(); // overloaded by CE backend
 	virtual void undrawMouse(); // overloaded by CE backend (FIXME)
 	virtual void blitCursor(); // overloaded by CE backend (FIXME)
- 
+
 	/** Set the position of the virtual mouse cursor. */
 	void setMousePos(int x, int y);
 	virtual void fillMouseEvent(Common::Event &event, int x, int y); // overloaded by CE backend
@@ -400,8 +399,8 @@ protected:
 	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
 
 	int effectiveScreenHeight() const {
-		return (_adjustAspectRatio ? real2Aspect(_screenHeight) : _screenHeight) 
-			* _scaleFactor; 
+		return (_adjustAspectRatio ? real2Aspect(_screenHeight) : _screenHeight)
+			* _scaleFactor;
 	}
 
 	void setupIcon();

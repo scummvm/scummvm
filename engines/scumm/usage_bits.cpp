@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/scumm.h"
 #include "scumm/usage_bits.h"
 

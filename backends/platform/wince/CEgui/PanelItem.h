@@ -26,7 +26,6 @@
 #ifndef CEGUI_PANELITEM
 #define CEGUI_PANELITEM
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 

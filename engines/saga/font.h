@@ -39,6 +39,7 @@ namespace Saga {
 // have a valid offset of '0'
 #define FONT_FIRSTCHAR 33
 
+#define FONT_CH_TAB 9
 #define FONT_CH_SPACE 32
 #define FONT_CH_QMARK 63
 
@@ -140,8 +141,11 @@ class Font {
 	}
 	void textDrawRect(KnownFont font, Surface *ds, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
 		textDrawRect(knownFont2FontIdx(font), ds, text, rect, color, effectColor, flags);
+	}	
+	void setFontMapping(int mapping) {
+		_fontMapping = mapping;
 	}
-	
+
  private:
 	 enum FontId {
 		 kSmallFont,
@@ -196,6 +200,7 @@ class Font {
 	SagaEngine *_vm;
 
 	bool _initialized;
+	int _fontMapping;
 
 	int _loadedFonts;
 	FontData **_fonts;

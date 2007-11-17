@@ -26,7 +26,8 @@
 #ifndef AGI_GRAPHICS_H
 #define AGI_GRAPHICS_H
 
-#include "common/stdafx.h"
+
+#include "agi/font.h"
 
 namespace Agi {
 
@@ -49,6 +50,7 @@ private:
 
 	uint8 _agipalPalette[16 * 3];
 	int _agipalFileNum;
+	int _currentCursorPalette;	// 0 - palette not set, 1 - PC, 2 - Amiga
 
 private:
 	void rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor, bool border, int textOffset);
@@ -58,7 +60,7 @@ public:
 
 	void gfxPutBlock(int x1, int y1, int x2, int y2);
 
-	void putTextCharacter(int, int, int, unsigned int, int, int, bool checkerboard = false);
+	void putTextCharacter(int, int, int, unsigned char, int, int, bool checkerboard = false, const uint8 *font = curFont);
 	void shakeScreen(int);
 	void shakeStart();
 	void shakeEnd();
@@ -88,10 +90,10 @@ public:
 	int getAGIPalFileNum();
 	void drawFrame(int x1, int y1, int x2, int y2, int c1, int c2);
 
-	void putPixel(int, int, int);
 	void putBlock(int x1, int y1, int x2, int y2);
 	void gfxSetPalette();
 	void setCursor(bool amigaStyleCursor = false);
+	void setCursorPalette(bool amigaStylePalette = false);
 
 	int keypress();
 	int getKey();

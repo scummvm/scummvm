@@ -28,6 +28,7 @@
 #include "lure/scripts.h"
 #include "lure/screen.h"
 #include "common/endian.h"
+#include "common/events.h"
 
 namespace Lure {
 
@@ -40,13 +41,22 @@ Resources &Resources::getReference() {
 }
 
 Resources::Resources() {
+	g_system->getEventManager()->registerRandomSource(_rnd, "lureResources");
 	int_resources = this;
 	reloadData();
+
+	// Load the string list
+	MemoryBlock *mb = Disk::getReference().getEntry(STRING_LIST_RESOURCE_ID);
+	_stringList.load(mb);
+	delete mb;
 }
 
 Resources::~Resources() {
 	// Free up any loaded data
 	freeData();
+
+	// Free up constant data
+	_stringList.clear();
 }
 
 void Resources::freeData() {
@@ -61,11 +71,11 @@ void Resources::freeData() {
 	_randomActions.clear();
 	_indexedRoomExitHospots.clear();
 	_pausedList.clear();
-	_stringList.clear();
 	_actionsList.clear();
 	_coordinateList.clear();
 	_talkHeaders.clear();
 	_talkData.clear();
+	_giveTalkIds.clear();
 
 	free(_hotspotScriptData);
 	delete _paletteSubset;
@@ -95,6 +105,7 @@ void Resources::reloadData() {
 	uint16 *offset, offsetVal;
 	uint16 recordId, startOffset;
 	int ctr;
+	uint16 *v;
 
 	// Get the palette subset data
 	_paletteSubset = new Palette(ALT_PALETTE_RESOURCE_ID);
@@ -104,9 +115,7 @@ void Resources::reloadData() {
 	paths = d.getEntry(ROOM_PATHS_RESOURCE_ID);
 
 	offset = (uint16 *) mb->data();
-	for (ctr = 0; READ_LE_UINT16(offset) != 0xffff; ++ctr, ++offset) {
-		offsetVal = READ_LE_UINT16(offset);
-
+	while ((offsetVal = READ_LE_UINT16(offset++)) != 0xffff) {
 		if (offsetVal != 0) {
 			// Get room resource
 			RoomResource *rec = (RoomResource *) (mb->data() + offsetVal);
@@ -114,11 +123,12 @@ void Resources::reloadData() {
 			RoomData *newEntry = new RoomData(rec, paths);
 			_roomData.push_back(newEntry);
 
-			if (rec->numExits > 0) {
+			uint16 numExits = READ_LE_UINT16(&rec->numExits);
+			if (numExits > 0) {
 				RoomExitResource *exitRes = (RoomExitResource *)
 					(mb->data() + offsetVal + sizeof(RoomResource));
 
-				for (uint16 exitCtr = 0; exitCtr < rec->numExits; ++exitCtr, ++exitRes) {
+				for (uint16 exitCtr = 0; exitCtr < numExits; ++exitCtr, ++exitRes) {
 					RoomExitData *exit = new RoomExitData(exitRes);
 					newEntry->exits.push_back(exit);
 				}
@@ -224,7 +234,7 @@ void Resources::reloadData() {
 
 	// Handle the hotspot action lists
 	mb = d.getEntry(ACTION_LIST_RESOURCE_ID);
-	uint16 *v = (uint16 *) mb->data();
+	v = (uint16 *) mb->data();
 	while ((recordId = READ_LE_UINT16(v)) != 0xffff) {
 		++v;
 		offsetVal = READ_LE_UINT16(v);
@@ -240,8 +250,8 @@ void Resources::reloadData() {
 	mb = d.getEntry(TALK_HEADER_RESOURCE_ID);
 	TalkHeaderResource *thHeader = (TalkHeaderResource *) mb->data();
 	uint16 hotspotId;
-	while ((hotspotId = FROM_LE_16(thHeader->hotspotId)) != 0xffff) {
-		uint16 *offsets = (uint16 *) (mb->data() + FROM_LE_16(thHeader->offset));
+	while ((hotspotId = READ_LE_UINT16(&thHeader->hotspotId)) != 0xffff) {
+		uint16 *offsets = (uint16 *) (mb->data() + READ_LE_UINT16(&thHeader->offset));
 		TalkHeaderData *newEntry = new TalkHeaderData(hotspotId, offsets);
 
 		_talkHeaders.push_back(newEntry);
@@ -251,22 +261,30 @@ void Resources::reloadData() {
 
 	// Read in the talk data entries
 	mb = d.getEntry(TALK_DATA_RESOURCE_ID);
-	TalkDataHeaderResource *tdHeader = (TalkDataHeaderResource *) mb->data();
+	
+	// First get the list of give talk Ids
+	v = (uint16 *) mb->data();
 
-	while ((recordId = FROM_LE_16(tdHeader->recordId)) != 0xffff) {
+	for (int talkIndex = 0; talkIndex < NUM_GIVE_TALK_IDS; ++talkIndex)
+		_giveTalkIds.push_back(READ_LE_UINT16(v++));
+
+	// Get the following talk ata
+
+	byte *dataStart = (byte *) v;
+	TalkDataHeaderResource *tdHeader = (TalkDataHeaderResource *) dataStart;
+
+	while ((recordId = READ_LE_UINT16(&tdHeader->recordId)) != 0xffff) {
 		TalkData *data = new TalkData(recordId);
 
-		TalkDataResource *entry = (TalkDataResource *) (mb->data() +
-			FROM_LE_16(tdHeader->listOffset));
-		while (FROM_LE_16(entry->preSequenceId) != 0xffff) {
+		TalkDataResource *entry = (TalkDataResource *) (dataStart + READ_LE_UINT16(&tdHeader->listOffset));
+		while (READ_LE_UINT16(&entry->preSequenceId) != 0xffff) {
 			TalkEntryData *newEntry = new TalkEntryData(entry);
 			data->entries.push_back(newEntry);
 			++entry;
 		}
 
-		entry = (TalkDataResource *) (mb->data() +
-			FROM_LE_16(tdHeader->responsesOffset));
-		while (FROM_LE_16(entry->preSequenceId) != 0xffff) {
+		entry = (TalkDataResource *) (dataStart + READ_LE_UINT16(&tdHeader->responsesOffset));
+		while (READ_LE_UINT16(&entry->preSequenceId) != 0xffff) {
 			TalkEntryData *newEntry = new TalkEntryData(entry);
 			data->responses.push_back(newEntry);
 			++entry;
@@ -323,11 +341,6 @@ void Resources::reloadData() {
 		_indexedRoomExitHospots.push_back(new RoomExitIndexedHotspotData(indexedRec));
 		indexedRec++;
 	}
-
-	// Load the string list
-	mb = d.getEntry(STRING_LIST_RESOURCE_ID);
-	_stringList.load(mb);
-	delete mb;
 
 	// Initialise delay list
 	_delayList.clear(true);
@@ -433,6 +446,19 @@ HotspotAnimData *Resources::getAnimation(uint16 animRecordId) {
 	return NULL;
 }
 
+int Resources::getAnimationIndex(HotspotAnimData *animData) {
+	HotspotAnimList::iterator i;
+	int index = 0;
+
+	for (i = _animData.begin(); i != _animData.end(); ++i, ++index) {
+		HotspotAnimData *rec = *i;
+		if (rec == animData)
+			return index;
+	}
+
+	return -1;
+}
+
 uint16 Resources::getHotspotAction(uint16 actionsOffset, Action action) {
 	HotspotActionList *list = _actionsList.getActions(actionsOffset);
 	if (!list) return 0;
@@ -459,14 +485,10 @@ void Resources::setTalkingCharacter(uint16 id) {
 		deactivateHotspot(_talkingCharacter, true);
 		HotspotData *charHotspot = res.getHotspot(_talkingCharacter);
 		assert(charHotspot);
-		charHotspot->talkCountdown = 0;
-
-		if (charHotspot->talkDestCharacterId != 0) {
-			HotspotData *destHotspot = res.getHotspot(charHotspot->talkDestCharacterId);
-			if (destHotspot != NULL)
-				destHotspot->talkDestCharacterId = 0;
-		}
 		charHotspot->talkDestCharacterId = 0;
+
+		if (_talkingCharacter != id) 
+			charHotspot->talkCountdown = 0;
 	}
 
 	_talkingCharacter = id; 
@@ -476,10 +498,11 @@ void Resources::setTalkingCharacter(uint16 id) {
 		assert(character);
 
 		// Add the special "voice" animation above the character
-		Hotspot *hotspot = new Hotspot(character, VOICE_ANIM_ID);
+		Hotspot *hotspot = new Hotspot(character, VOICE_ANIM_INDEX);
 		addHotspot(hotspot);
 	}
 }
+uint16 englishLoadOffsets[] = {0x3afe, 0x41BD, 0x7167, 0x7172, 0x8617, 0x88ac, 0};
 
 Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 	HotspotData *res = getHotspot(hotspotId);
@@ -487,12 +510,9 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 	res->roomNumber &= 0x7fff; // clear any suppression bit in room #
 
 	// Make sure that the hotspot isn't already active
-	HotspotList::iterator i = _activeHotspots.begin();
-	for (; i != _activeHotspots.end(); ++i) {
-		Hotspot *h = *i;
-		if (h->hotspotId() == res->hotspotId) 
-			return h;
-	}
+	Hotspot *h = getActiveHotspot(hotspotId);
+	if (h != NULL)
+		return h;
 
 	// Check the script load flag
 	if (res->scriptLoadFlag) {
@@ -504,24 +524,23 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 		uint16 talkIndex;
 
 		switch (res->loadOffset) {
-		case 0x3afe:
-			// Copy protection check - since the game is freeware now,
-			// don't bother with it
+		case 1:
+			// Copy protection check - since the game is freeware now, ignore it
 			loadFlag = false;
 			break;
 
-		case 0x41BD:
+		case 2:
 			// Empty handler used to prevent loading hotspots that
 			// are yet to be active (such as the straw fire)
 			loadFlag = false;
 			break;
 
-		case 0x7172:
-		case 0x7167:
+		case 3:
+		case 4:
 			// Standard animation load
 			break;
 
-		case 0x8617:
+		case 5:
 			// Custom loader used by the notice hotspot 42ah in room #20
 			talkIndex = _fieldList.getField(TALK_INDEX);
 			if ((talkIndex < 8) || (talkIndex >= 14))
@@ -532,14 +551,14 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 				res->startY = 85;    
 			break;
 
-		case 0x88ac:
+		case 6:
 			// Torch in room #1
 			loadFlag = _fieldList.getField(TORCH_HIDE) == 0;
 			break;
 
 		default:
 			// All others simply activate the hotspot
-			warning("Hotspot %d uses unknown load offset proc %d",
+			warning("Hotspot %d uses unknown load offset index %d",
 				res->hotspotId, res->loadOffset);
 		}
 
@@ -548,8 +567,8 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 			assert(hotspot);
 
 			// Special post-load handling
-			if (res->loadOffset == 0x7167) hotspot->setPersistant(true);
-			if (res->loadOffset == 0x8617) hotspot->handleTalkDialog();
+			if (res->loadOffset == 3) hotspot->setPersistant(true);
+			if (res->loadOffset == 5) hotspot->handleTalkDialog();
 			
 			// TODO: Figure out why there's a room set in the animation decode for a range of characters,
 			// particularly since it doesn't seem to match what happens in-game
@@ -657,8 +676,7 @@ void Resources::setTalkData(uint16 offset) {
 	error("Unknown talk entry offset %d requested", offset);
 }
 
-void Resources::saveToStream(Common::WriteStream *stream)
-{
+void Resources::saveToStream(Common::WriteStream *stream) {
 	_hotspotData.saveToStream(stream);
 	_activeHotspots.saveToStream(stream);
 	_fieldList.saveToStream(stream);

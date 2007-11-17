@@ -65,7 +65,6 @@
 #ifndef _unz_H
 #define _unz_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 
 #ifdef USE_ZLIB

@@ -34,7 +34,6 @@
 #include "saga/rscfile.h"
 #include "saga/scene.h"
 #include "saga/sndres.h"
-#include "saga/stream.h"
 
 #include "common/advancedDetector.h"
 
@@ -361,6 +360,11 @@ bool Resource::createContexts() {
 	bool censoredVersion = false;
 	uint16 voiceFileType = GAME_VOICEFILE;
 
+	// If the Wyrmkeep credits file is found, set the Wyrmkeep version flag to true
+	if (Common::File::exists("graphics/credit3n.dlt")) {
+		_vm->_gf_wyrmkeep = true;
+	}
+
 	_contextsCount = 0;
 	for (i = 0; _vm->getFilesDescriptions()[i].fileName; i++) {
 		_contextsCount++;
@@ -376,17 +380,21 @@ bool Resource::createContexts() {
 			if (Common::File::exists("sounds.rsc") || Common::File::exists("sounds.cmp")) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-					sprintf(soundFileName, "sounds.cmp");
-				else
+				if (Common::File::exists("sounds.rsc")) {
 					sprintf(soundFileName, "sounds.rsc");
+				} else {
+					sprintf(soundFileName, "sounds.cmp");
+					_vm->_gf_compressed_sounds = true;
+				}
 			} else if (Common::File::exists("soundsd.rsc") || Common::File::exists("soundsd.cmp")) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-					sprintf(soundFileName, "soundsd.cmp");
-				else
+				if (Common::File::exists("soundsd.rsc")) {
 					sprintf(soundFileName, "soundsd.rsc");
+				} else {
+					sprintf(soundFileName, "soundsd.cmp");
+					_vm->_gf_compressed_sounds = true;
+				}
 			} else {
 				// No sound file found, don't add any file to the array
 				soundFileInArray = true;
@@ -398,10 +406,12 @@ bool Resource::createContexts() {
 			if (Common::File::exists("sfx.res") || Common::File::exists("sfx.cmp")) {
 				_contextsCount++;
 				soundFileIndex = _contextsCount - 1;
-				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-					sprintf(soundFileName, "sfx.cmp");
-				else
+				if (Common::File::exists("sfx.res")) {
 					sprintf(soundFileName, "sfx.res");
+				} else {
+					sprintf(soundFileName, "sfx.cmp");
+					_vm->_gf_compressed_sounds = true;
+				}
 			} else {
 				// No sound file found, don't add any file to the array
 				soundFileInArray = true;
@@ -415,30 +425,37 @@ bool Resource::createContexts() {
 			if (Common::File::exists("voices.rsc") || Common::File::exists("voices.cmp")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
-				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-					sprintf(voicesFileName, "voices.cmp");
-				else
+				if (Common::File::exists("voices.rsc")) {
 					sprintf(voicesFileName, "voices.rsc");
+				} else {
+					sprintf(voicesFileName, "voices.cmp");
+					_vm->_gf_compressed_sounds = true;
+				}
 			} else if (Common::File::exists("voicesd.rsc") || Common::File::exists("voicesd.cmp")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
-				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-					sprintf(voicesFileName, "voicesd.cmp");
-				else
+				if (Common::File::exists("voicesd.rsc")) {
 					sprintf(voicesFileName, "voicesd.rsc");
+				} else {
+					sprintf(voicesFileName, "voicesd.cmp");
+					_vm->_gf_compressed_sounds = true;
+				}
 			} else if (Common::File::exists("inherit the earth voices") || 
 					   Common::File::exists("inherit the earth voices.cmp")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
-				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-					sprintf(voicesFileName, "inherit the earth voices.cmp");
-				else
+				if (Common::File::exists("inherit the earth voices")) {
 					sprintf(voicesFileName, "inherit the earth voices");
-					// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
-					// the voice file is big endian. If we got such a version with mixed files, mark this voice file
-					// as big endian
-					if (!_vm->isBigEndian())
-						voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
+				} else {
+					sprintf(voicesFileName, "inherit the earth voices.cmp");
+					_vm->_gf_compressed_sounds = true;
+				}
+
+				// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
+				// the voice file is big endian. If we got such a version with mixed files, mark this voice file
+				// as big endian
+				if (!_vm->isBigEndian())
+					voiceFileType = GAME_VOICEFILE | GAME_SWAPENDIAN;	// This file is big endian
 			} else {
 				// No voice file found, don't add any file to the array
 				voicesFileInArray = true;
@@ -459,17 +476,21 @@ bool Resource::createContexts() {
 					_contextsCount += 5;	// voices1-voices3, voices4-voices5
 					censoredVersion = true;
 				}
-				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-					sprintf(voicesFileName, "voicess.cmp");
-				else
+				if (Common::File::exists("voicess.res")) {
 					sprintf(voicesFileName, "voicess.res");
+				} else {
+					sprintf(voicesFileName, "voicess.cmp");
+					_vm->_gf_compressed_sounds = true;
+				}
 			} else if (Common::File::exists("voicesd.res") || Common::File::exists("voicesd.cmp")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
-				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-					sprintf(voicesFileName, "voicesd.cmp");
-				else
+				if (Common::File::exists("voicesd.res")) {
 					sprintf(voicesFileName, "voicesd.res");
+				} else {
+					sprintf(voicesFileName, "voicesd.cmp");
+					_vm->_gf_compressed_sounds = true;
+				}
 			} else {
 				// No voice file found, don't add any file to the array
 				voicesFileInArray = true;

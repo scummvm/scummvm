@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/file.h"
 
@@ -736,7 +735,7 @@ void Inter_v4::o4_playVmdOrMusic() {
 	palStart = _vm->_parse->parseValExpr();
 	palEnd = _vm->_parse->parseValExpr();
 	palCmd = 1 << (flags & 0x3F);
-	
+
 	close = false;
 	if (lastFrame == -1) {
 		close = true;

@@ -91,7 +91,7 @@ private:
 	static void fighterAnimHandler(Hotspot &h);
 	static void playerFightAnimHandler(Hotspot &h);
 public:
-	static HandlerMethodPtr getHandler(uint16 procOffset);
+	static HandlerMethodPtr getHandler(uint16 procIndex);
 };
 
 enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRIPT, 
@@ -271,7 +271,6 @@ private:
 	Direction _direction;
 	uint8 _layer;
 	uint16 _hotspotScriptOffset;
-	uint16 _tickCtr;
 	uint8 _colourOffset;
 	bool _persistant;
 	HotspotOverrideData *_override;
@@ -342,6 +341,9 @@ private:
 	void npcPause(HotspotData *hotspot); 
 	void npcStartTalking(HotspotData *hotspot);
 	void npcJumpAddress(HotspotData *hotspot);
+	
+	// Auxillaries
+	void doLookAction(HotspotData *hotspot, Action action);
 public:
 	Hotspot(HotspotData *res);
 	Hotspot(Hotspot *character, uint16 objType);
@@ -349,6 +351,7 @@ public:
 	~Hotspot();
 
 	void setAnimation(uint16 newAnimId);
+	void setAnimationIndex(int animIndex);
 	void setAnimation(HotspotAnimData *newRecord);
 	uint16 hotspotId() { return _hotspotId; }
 	uint16 originalId() { return _originalId; }
@@ -388,9 +391,7 @@ public:
 	}
 	uint16 hotspotScript() { return _hotspotScriptOffset; }
 	uint8 layer() { return _layer; }
-	uint16 tickCtr() { return _tickCtr; }
 	bool skipFlag() { return _skipFlag; }
-	void setTickCtr(uint16 newVal) { _tickCtr = newVal; }
 	void setTickProc(uint16 newVal);
 	bool persistant() { return _persistant; }
 	void setPersistant(bool value) { _persistant = value; }
@@ -539,10 +540,8 @@ public:
 	void setVoiceCtr(uint8 v) { _voiceCtr = v; }
 
 	// Miscellaneous
-	void converse(uint16 destCharacterId, uint16 messageId, bool standStill);
-	void converse(uint16 destCharacterId, uint16 messageId) {
-		converse(destCharacterId, messageId, false);
-	}
+	void converse(uint16 destCharacterId, uint16 messageId, bool srcStandStill = false, 
+					   bool destStandStill = false);
 	void showMessage(uint16 messageId, uint16 destCharacterId = NOONE_ID);
 	void scheduleConverse(uint16 destHotspot, uint16 messageId);
 	void handleTalkDialog();

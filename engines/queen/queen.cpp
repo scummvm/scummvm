@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "base/plugins.h"
 
@@ -32,6 +32,7 @@
 #include "common/fs.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/events.h"
 
 #include "queen/queen.h"
 #include "queen/bankman.h"
@@ -73,7 +74,7 @@ GameList Engine_QUEEN_detectGames(const FSList &fslist) {
 		if (file->isDirectory()) {
 			continue;
 		}
-		if (file->name().equalsIgnoreCase("queen.1") || file->name().equalsIgnoreCase("queen.1c")) {
+		if (file->getName().equalsIgnoreCase("queen.1") || file->getName().equalsIgnoreCase("queen.1c")) {
 			Common::File dataFile;
 			if (!dataFile.open(*file)) {
 				continue;
@@ -110,6 +111,7 @@ namespace Queen {
 
 QueenEngine::QueenEngine(OSystem *syst)
 	: Engine(syst), _debugger(0) {
+	syst->getEventManager()->registerRandomSource(randomizer, "queen");
 }
 
 QueenEngine::~QueenEngine() {
@@ -201,14 +203,14 @@ void QueenEngine::update(bool checkPlayerInput) {
 	if (canLoadOrSave()) {
 		if (_input->quickSave()) {
 			_input->quickSaveReset();
-			saveGameState(0, "Quicksave");
+			saveGameState(SLOT_QUICKSAVE, "Quicksave");
 		}
 		if (_input->quickLoad()) {
 			_input->quickLoadReset();
-			loadGameState(0);
+			loadGameState(SLOT_QUICKSAVE);
 		}
 		if (shouldPerformAutoSave(_lastSaveTime)) {
-			saveGameState(AUTOSAVE_SLOT, "Autosave");
+			saveGameState(SLOT_AUTOSAVE, "Autosave");
 			_lastSaveTime = _system->getMillis();
 		}
 	}
@@ -227,7 +229,7 @@ bool QueenEngine::canLoadOrSave() const {
 	return !_input->cutawayRunning() && !(_resource->isDemo() || _resource->isInterview());
 }
 
-void QueenEngine::saveGameState(uint16 slot, const char *desc) {
+void QueenEngine::saveGameState(int slot, const char *desc) {
 	debug(3, "Saving game to slot %d", slot);
 	char name[20];
 	makeGameStateName(slot, name);
@@ -268,7 +270,7 @@ void QueenEngine::saveGameState(uint16 slot, const char *desc) {
 	}
 }
 
-void QueenEngine::loadGameState(uint16 slot) {
+void QueenEngine::loadGameState(int slot) {
 	debug(3, "Loading game from slot %d", slot);
 	GameStateHeader header;
 	Common::InSaveFile *file = readGameStateHeader(slot, &header);
@@ -293,7 +295,7 @@ void QueenEngine::loadGameState(uint16 slot) {
 	}
 }
 
-Common::InSaveFile *QueenEngine::readGameStateHeader(uint16 slot, GameStateHeader *gsh) {
+Common::InSaveFile *QueenEngine::readGameStateHeader(int slot, GameStateHeader *gsh) {
 	char name[20];
 	makeGameStateName(slot, name);
 	Common::InSaveFile *file = _saveFileMan->openForLoading(name);
@@ -308,22 +310,33 @@ Common::InSaveFile *QueenEngine::readGameStateHeader(uint16 slot, GameStateHeade
 	return file;
 }
 
-void QueenEngine::makeGameStateName(uint16 slot, char *buf) {
-	if (slot == AUTOSAVE_SLOT) {
+void QueenEngine::makeGameStateName(int slot, char *buf) const {
+	if (slot == SLOT_LISTPREFIX) {
+		strcpy(buf, "queen.s*");
+	} else if (slot == SLOT_AUTOSAVE) {
 		strcpy(buf, "queen.asd");
 	} else {
+		assert(slot >= 0);
 		sprintf(buf, "queen.s%02d", slot);
 	}
 }
 
+int QueenEngine::getGameStateSlot(const char *filename) const {
+	int i = -1;
+	const char *slot = strrchr(filename, '.');
+	if (slot && slot[1] == 's') {
+		i = atoi(slot + 2);
+	}
+	return i;
+}
+
 void QueenEngine::findGameStateDescriptions(char descriptions[100][32]) {
-	char filename[20];
-	makeGameStateName(0, filename);
-	filename[strlen(filename) - 2] = 0;
-	bool marks[SAVESTATE_MAX_NUM];
-	_saveFileMan->listSavefiles(filename, marks, SAVESTATE_MAX_NUM);
-	for (int i = 0; i < SAVESTATE_MAX_NUM; ++i) {
-		if (marks[i]) {
+	char prefix[20];
+	makeGameStateName(SLOT_LISTPREFIX, prefix);
+	Common::StringList filenames = _saveFileMan->listSavefiles(prefix);
+	for (Common::StringList::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
+		int i = getGameStateSlot(it->c_str());
+		if (i >= 0 && i < SAVESTATE_MAX_NUM) {
 			GameStateHeader header;
 			Common::InSaveFile *f = readGameStateHeader(i, &header);
 			strcpy(descriptions[i], header.description);

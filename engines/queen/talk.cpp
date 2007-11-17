@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/events.h"
 #include "common/system.h"
 #include "common/rect.h"

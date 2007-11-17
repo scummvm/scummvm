@@ -54,7 +54,7 @@ struct ovlData3Struct {
 	short int offsetToSubData5;
 	short int sysKey;
 	short int var12;
-	short int numImport;
+	short int numRelocGlob;
 	short int subData2Size;
 	short int var18;
 	short int var1A;
@@ -67,24 +67,28 @@ struct stringEntryStruct {
 };
 
 struct linkDataStruct {
-	uint16 field_0;
-	uint16 field_2;
-	uint16 field_4;
-	uint16 varIdx;
-	uint16 varNameOffset;
-	uint16 stringIdx;
-	uint16 stringNameOffset;
-	uint16 procIdx;
-	uint16 procNameOffset;
+	int16 type;
+	int16 id;
+	int16 offsetVerbeName;
+	int16 verbOverlay;
+	int16 verbNumber;
 
-	int16 field_12;
-	int16 field_14;
-	int16 field_16;
-	int16 field_18;
-	int16 field_1A;
-	int16 field_1C;
-	int16 field_1E;
-	int16 field_20;
+	int16 obj1Overlay;
+	int16 obj1Number;
+	int16 obj2Overlay;
+	int16 obj2Number;
+
+	int16 trackX;
+	int16 trackY;
+
+	int16 obj1NewState;
+	int16 obj2NewState;
+
+	int16 obj1OldState;
+	int16 obj2OldState;
+
+	int16 trackDirection;
+	int16 dialog;
 };
 
 struct importDataStruct {
@@ -95,19 +99,22 @@ struct importDataStruct {
 	uint16 nameOffset;
 };
 
-#define MULTIPLE 0
-#define VARIABLE 1
-#define UNIQUE   2
-#define THEME    3
+enum eClass
+{
+	MULTIPLE = 0,
+	VARIABLE = 1,
+	UNIQUE = 2,
+	THEME = 3
+};
 
 struct objDataStruct {
-	int16 var0;
-	int16 type;
-	int16 var2;
-	int16 var3;
-	int16 var4;
-	int16 var5;
-	int16 stateTableIdx;
+	int16 _type;
+	eClass _class;
+	int16 _nameOffset;
+	int16 _numStates;
+	int16 _varTableIdx;
+	int16 _firstStateIdx;
+	int16 _stateTableIdx;
 };
 
 struct objectParams {
@@ -120,30 +127,35 @@ struct objectParams {
 };
 
 struct ovlDataStruct {
-	ovlData3Struct *data3Table;
+
+	ovlData3Struct *arrayProc;
 	uint8 *ptr1;
-	objDataStruct *objDataTable;
-	objectParams *objData2SourceTable;
-	objectParams *objData2WorkTable;
+	objDataStruct *arrayObject;
+	objectParams *arrayStates;
+	objectParams *arrayObjVar;
 	stringEntryStruct *stringTable;
-	exportEntryStruct *exportDataPtr;
-	importDataStruct *importDataPtr;
-	linkDataStruct *linkDataPtr;
-	uint8 *specialString1;
-	uint8 *specialString2;
-	uint8 *importNamePtr;
-	uint8 *exportNamesPtr;
+	exportEntryStruct *arraySymbGlob;
+	importDataStruct *arrayRelocGlob;
+	linkDataStruct *arrayMsgRelHeader;
+
+	char *nameVerbGlob;
+	char *arrayNameObj;
+	char *arrayNameRelocGlob;
+	char *arrayNameSymbGlob;
+
 	uint8 *data4Ptr;
 	uint8 *ptr8;
-	unsigned short int numScripts1;
-	unsigned short int numScripts2;
-	unsigned short int numExport;
-	unsigned short int numImport;
-	unsigned short int numLinkData;
-	unsigned short int numObjData;
+
+	unsigned short int numProc;
+	unsigned short int numRel;
+	unsigned short int numSymbGlob;
+	unsigned short int numRelocGlob;
+	unsigned short int numMsgRelHeader;
+	unsigned short int numObj;
 	unsigned short int numStrings;
 	unsigned short int size8;
 	unsigned short int size9;
+
 	unsigned short int nameExportSize;
 	unsigned short int exportNamesSize;
 	unsigned short int specialString2Length;
@@ -154,27 +166,14 @@ struct ovlDataStruct {
 };
 
 struct overlayStruct {
-	char overlayName[14];
+	char overlayName[13];
 	ovlDataStruct *ovlData;
 	short int alreadyLoaded;
-	char state;
-	char field_15;
-	char field_16;
-	char field_17;
-	char field_18;
-	char field_19;
-	char field_1A;
-	char field_1B;
-	char field_1C;
-	char field_1D;
-	char field_1E;
-	char field_1F;
-	char field_20;
-	char field_21;
-	char field_22;
-	char field_23;
-	char field_24;
-	char field_25;
+	short int state;
+	char* pDebug;
+	long int debugSize;
+	char* pSource;
+	long int sourceSize;
 	short int executeScripts;
 };
 
@@ -182,8 +181,8 @@ extern overlayStruct overlayTable[90];
 extern int numOfLoadedOverlay;
 
 void initOverlayTable(void);
-int loadOverlay(const uint8 * scriptName);
-int32 findOverlayByName2(const uint8 * name);
+int loadOverlay(const char * scriptName);
+int32 findOverlayByName2(const char * name);
 int findOverlayByName(const char *overlayName);
 int releaseOverlay(const char *name);
 

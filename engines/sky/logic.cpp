@@ -23,9 +23,10 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/rect.h"
+#include "common/events.h"
 
 #include "sky/autoroute.h"
 #include "sky/compact.h"
@@ -66,11 +67,13 @@ void Logic::setupLogicTable() {
 		&Logic::waitSync,	 // 15 Set to l_script when sync!=0
 		&Logic::simpleAnim,	 // 16 Module anim without x,y's
 	};
-	
+
 	_logicTable = logicTable;
 }
 
 Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound) {
+	g_system->getEventManager()->registerRandomSource(_rnd, "sky");
+
 	_skyCompact = skyCompact;
 	_skyScreen = skyScreen;
 	_skyDisk = skyDisk;
@@ -960,7 +963,7 @@ void Logic::setupMcodeTable() {
 		&Logic::fnUnPauseFx,
 		&Logic::fnPrintf
 	};
-	
+
 	_mcodeTable = mcodeTable;
 }
 

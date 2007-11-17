@@ -27,10 +27,6 @@
 
 namespace Cruise {
 
-void loadSetEntry(uint8 * name, uint8 * ptr, int currentEntryIdx,
-    int currentDestEntry);
-void loadFNTSub(uint8 * ptr, int destIdx);
-
 enum fileTypeEnum {
 	type_UNK,
 	type_SPL,
@@ -47,7 +43,7 @@ void decodeGfxFormat1(dataFileEntry *pCurrentFileEntry) {
 	uint8 *dataPtr = pCurrentFileEntry->subData.ptr;
 
 	int spriteSize =
-	    pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn * 8;
+	    pCurrentFileEntry->height * pCurrentFileEntry->width;
 	int x = 0;
 
 	buffer = (uint8 *) malloc(spriteSize);
@@ -77,8 +73,7 @@ void decodeGfxFormat4(dataFileEntry *pCurrentFileEntry) {
 	uint8 *buffer;
 	uint8 *dataPtr = pCurrentFileEntry->subData.ptr;
 
-	int spriteSize =
-	    pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn * 2;
+	int spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->width;
 	int x = 0;
 
 	buffer = (uint8 *) malloc(spriteSize);
@@ -98,8 +93,7 @@ void decodeGfxFormat4(dataFileEntry *pCurrentFileEntry) {
 		/* decode planes */
 		for (c = 0; c < 16; c++) {
 			buffer[x + c] =
-			    ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) &
-			    4) | ((p3 >> 12) & 8);
+			    ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) & 4) | ((p3 >> 12) & 8);
 
 			p0 <<= 1;
 			p1 <<= 1;
@@ -119,8 +113,7 @@ void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
 	uint8 *buffer;
 	uint8 *dataPtr = pCurrentFileEntry->subData.ptr;
 
-	int spriteSize =
-	    pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn;
+	int spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn;
 	int x = 0;
 	int range = pCurrentFileEntry->height * pCurrentFileEntry->width;
 
@@ -142,9 +135,7 @@ void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
 
 		/* decode planes */
 		for (c = 0; c < 16; c++) {
-			buffer[x + c] =
-			    ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) &
-			    4) | ((p3 >> 12) & 8) | ((p4 >> 11) & 16);
+			buffer[x + c] = ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) & 4) | ((p3 >> 12) & 8) | ((p4 >> 11) & 16);
 
 			p0 <<= 1;
 			p1 <<= 1;
@@ -163,28 +154,26 @@ void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
 
 int updateResFileEntry(int height, int width, int entryNumber, int resType) {
 	int div = 0;
-	int size;
 
 	resetFileEntry(entryNumber);
 
-	filesDatabase[entryNumber].subData.field_1C = 0;
+	filesDatabase[entryNumber].subData.compression = 0;
 
-	size = height * width;	// for sprites: width * height
+	int maskSize = height * width;	// for sprites: width * height
 
 	if (resType == 4) {
-		div = size / 4;
+		div = maskSize / 4;
 	} else if (resType == 5) {
 		width = (width * 8) / 5;
 	}
 
-	filesDatabase[entryNumber].subData.ptr =
-	    (uint8 *) mallocAndZero(size + div);
+	filesDatabase[entryNumber].subData.ptr = (uint8 *) mallocAndZero(maskSize + div);
 
 	if (!filesDatabase[entryNumber].subData.ptr)
 		return (-2);
 
 	filesDatabase[entryNumber].widthInColumn = width;
-	filesDatabase[entryNumber].subData.ptr2 = filesDatabase[entryNumber].subData.ptr + size;
+	filesDatabase[entryNumber].subData.ptrMask = (uint8 *) mallocAndZero(maskSize);
 	filesDatabase[entryNumber].width = width / 8;
 	filesDatabase[entryNumber].resType = resType;
 	filesDatabase[entryNumber].height = height;
@@ -213,7 +202,7 @@ int createResFileEntry(int width, int height, int resType) {
 
 	entryNumber = i;
 
-	filesDatabase[entryNumber].subData.field_1C = 0;
+	filesDatabase[entryNumber].subData.compression = 0;
 
 	size = width * height;	// for sprites: width * height
 
@@ -230,7 +219,7 @@ int createResFileEntry(int width, int height, int resType) {
 	}
 
 	filesDatabase[entryNumber].widthInColumn = width;
-	filesDatabase[entryNumber].subData.ptr2 = filesDatabase[entryNumber].subData.ptr + size;
+	filesDatabase[entryNumber].subData.ptrMask = filesDatabase[entryNumber].subData.ptr + size;
 	filesDatabase[entryNumber].width = width / 8;
 	filesDatabase[entryNumber].resType = resType;
 	filesDatabase[entryNumber].height = height;
@@ -239,12 +228,12 @@ int createResFileEntry(int width, int height, int resType) {
 	return entryNumber;
 }
 
-fileTypeEnum getFileType(uint8 *name) {
+fileTypeEnum getFileType(const char *name) {
 	char extentionBuffer[16];
 
 	fileTypeEnum newFileType = type_UNK;
 
-	getFileExtention((char *)name, extentionBuffer);
+	getFileExtention(name, extentionBuffer);
 
 	if (!strcmp(extentionBuffer, ".SPL")) {
 		newFileType = type_SPL;
@@ -266,7 +255,46 @@ int getNumMaxEntiresInSet(uint8 *ptr) {
 	return numEntries;
 }
 
-int loadFileMode2(uint8 *name, int startIdx, int currentEntryIdx, int numIdx) {
+int loadFile(const char* name, int idx, int destIdx)
+{
+	uint8 *ptr = NULL;
+	fileTypeEnum fileType;
+
+	fileType = getFileType(name);
+
+	loadFileSub1(&ptr, name, NULL);
+
+	switch (fileType) {
+	case type_SET:
+		{
+
+			int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);
+
+			if (idx > numMaxEntriesInSet) {
+				return 0;	// exit if limit is reached 
+			}
+			return loadSetEntry(name, ptr, idx, destIdx );
+
+			break;
+		}
+	case type_FNT:
+		{
+			return loadFNTSub(ptr, idx);
+			break;
+		}
+	case type_UNK:
+		{
+			break;
+		}
+	case type_SPL:
+		{
+			break;
+		}
+	}
+	return -1;
+}
+
+int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numIdx) {
 	uint8 *ptr = NULL;
 	fileTypeEnum fileType;
 
@@ -281,11 +309,10 @@ int loadFileMode2(uint8 *name, int startIdx, int currentEntryIdx, int numIdx) {
 			int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);
 
 			for (i = 0; i < numIdx; i++) {
-				if ((currentEntryIdx + i) > numMaxEntriesInSet) {
+				if ((startIdx + i) > numMaxEntriesInSet) {
 					return 0;	// exit if limit is reached 
 				}
-				loadSetEntry(name, ptr, currentEntryIdx + i,
-				    startIdx + i);
+				loadSetEntry(name, ptr, startIdx + i, currentEntryIdx + i );
 			}
 
 			break;
@@ -307,7 +334,7 @@ int loadFileMode2(uint8 *name, int startIdx, int currentEntryIdx, int numIdx) {
 	return 0;
 }
 
-int loadFullBundle(uint8 *name, int startIdx) {
+int loadFullBundle(const char *name, int startIdx) {
 	uint8 *ptr = NULL;
 	fileTypeEnum fileType;
 
@@ -347,7 +374,7 @@ int loadFullBundle(uint8 *name, int startIdx) {
 	return 0;
 }
 
-void loadFNTSub(uint8 *ptr, int destIdx) {
+int loadFNTSub(uint8 *ptr, int destIdx) {
 	uint8 *ptr2 = ptr;
 	uint8 *destPtr;
 	int fileIndex;
@@ -391,17 +418,18 @@ void loadFNTSub(uint8 *ptr, int destIdx) {
 			currentPtr += 8;
 		}
 	}
+
+	return 1;
 }
 
-void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx,
-	    int currentDestEntry) {
+int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentDestEntry) {
 	uint8 *ptr2;
 	uint8 *ptr3;
 	int offset;
 	int sec = 0;
 	uint16 numIdx;
 
-	if (!strcmpuint8(ptr, "SEC")) {
+	if (!strcmp((char*)ptr, "SEC")) {
 		sec = 1;
 	}
 
@@ -435,82 +463,110 @@ void loadSetEntry(uint8 *name, uint8 *ptr, int currentEntryIdx,
 		resourceSize = localBuffer.width * localBuffer.height;
 
 		if (currentDestEntry == -1) {
-			fileIndex =
-			    createResFileEntry(localBuffer.width,
-			    localBuffer.height, localBuffer.type);
+			fileIndex = createResFileEntry(localBuffer.width, localBuffer.height, localBuffer.type);
 		} else {
-			fileIndex =
-			    updateResFileEntry(localBuffer.height,
-			    localBuffer.width, currentDestEntry,
-			    localBuffer.type);
+			fileIndex = updateResFileEntry(localBuffer.height, localBuffer.width, currentDestEntry, localBuffer.type);
 		}
 
 		if (fileIndex < 0) {
-			return;	// TODO: buffer is not freed
+			return -1;	// TODO: buffer is not freed
 		}
 
 		ptr5 = ptr3 + localBuffer.field_0 + numIdx * 16;
 
-		memcpy(filesDatabase[fileIndex].subData.ptr, ptr5,
-		    resourceSize);
+		memcpy(filesDatabase[fileIndex].subData.ptr, ptr5, resourceSize);
 		ptr5 += resourceSize;
 
 		switch (localBuffer.type) {
 		case 0:
 			{
-				filesDatabase[fileIndex].subData.resourceType =
-				    8;
+				filesDatabase[fileIndex].subData.resourceType = 8;
 				break;
 			}
 		case 1:
 			{
-				filesDatabase[fileIndex].subData.resourceType =
-				    2;
+				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 8;
+				filesDatabase[fileIndex].subData.resourceType = 2;
 				decodeGfxFormat1(&filesDatabase[fileIndex]);
+				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
 				break;
 			}
 		case 4:
 			{
-				filesDatabase[fileIndex].width *= 2;
-				filesDatabase[fileIndex].subData.resourceType =
-				    4;
+				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 2;
+				filesDatabase[fileIndex].subData.resourceType = 4;
 				decodeGfxFormat4(&filesDatabase[fileIndex]);
+				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
 				break;
 			}
 		case 5:
 			{
 				if (sec == 0) {
 					// TODO sec type 5 needs special conversion. cut out 2 bytes at every width/5 position.
-					return;
+//					ASSERT(0);
+//					return -1;
 				}
-				filesDatabase[fileIndex].subData.resourceType =
-				    4;
+				
+				filesDatabase[fileIndex].subData.resourceType = 4;
 				decodeGfxFormat5(&filesDatabase[fileIndex]);
+				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
+				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
 				break;
 			}
 		case 8:
 			{
-				filesDatabase[fileIndex].subData.resourceType = 4;	// dummy !
+				filesDatabase[fileIndex].subData.resourceType = 4;
+				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
+				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
 				break;
 			}
 		default:
 			{
-				printf("Unsuported gfx loading type: %d\n",
-				    localBuffer.type);
+				printf("Unsuported gfx loading type: %d\n", localBuffer.type);
 				break;
 			}
 		}
 
-		filesDatabase[fileIndex].subData.index = currentDestEntry;
-		filesDatabase[fileIndex].subData.transparency =
-		    localBuffer.transparency; /*% 0x10 */ ;
+		strcpy(filesDatabase[fileIndex].subData.name, name);
 
-		strcpyuint8(filesDatabase[fileIndex].subData.name, name);
+		// create the mask
+		switch(localBuffer.type)
+		{
+		case 1:
+		case 4:
+		case 5:
+		case 8:
+			{
+				int maskX;
+				int maskY;
+
+				memset(filesDatabase[fileIndex].subData.ptrMask, 0, filesDatabase[fileIndex].width/8 * filesDatabase[fileIndex].height);
+
+				for(maskY=0; maskY<filesDatabase[fileIndex].height; maskY++)
+				{
+					for(maskX=0; maskX<filesDatabase[fileIndex].width; maskX++)
+					{
+						if(*(filesDatabase[fileIndex].subData.ptr + filesDatabase[fileIndex].width * maskY + maskX) != filesDatabase[fileIndex].subData.transparency)
+						{
+							*(filesDatabase[fileIndex].subData.ptrMask + filesDatabase[fileIndex].width/8 * maskY + maskX / 8) |= 0x80 >> (maskX&7);
+						}
+					}
+				}
+				break;
+			}
+		default:
+			{
+			}
+		}
 	}
 
 	// TODO: free
 
-	return;
+	return 1;
 }
 
 } // End of namespace Cruise

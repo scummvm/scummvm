@@ -26,7 +26,6 @@
 #ifndef SOUND_ADPCM_H
 #define SOUND_ADPCM_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
 
@@ -41,7 +40,27 @@ enum typesADPCM {
 	kADPCMMS
 };
 
-AudioStream *makeADPCMStream(Common::SeekableReadStream *stream, uint32 size, typesADPCM type, int rate = 22050, int channels = 2, uint32 blockAlign = 0);
+/**
+ * Takes an input stream containing ADPCM compressed sound data and creates
+ * an AudioStream from that.
+ *
+ * @param stream			the SeekableReadStream from which to read the ADPCM data
+ * @param disposeAfterUse	whether to delete the stream after use
+ * @param size				how many bytes to read from the stream (0 = all)
+ * @param type				the compression type used
+ * @param rate				the sampling rate (default = 22050)
+ * @param channels			the number of channels (default = 2)
+ * @param blockAlign		block alignment ??? (default = 0)
+ * @return	a new AudioStream, or NULL, if an error occured
+ */
+AudioStream *makeADPCMStream(
+	Common::SeekableReadStream *stream,
+	bool disposeAfterUse,
+	uint32 size,
+	typesADPCM type,
+	int rate = 22050,
+	int channels = 2,
+	uint32 blockAlign = 0);
 
 } // End of namespace Audio
 

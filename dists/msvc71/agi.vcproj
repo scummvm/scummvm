@@ -117,12 +117,6 @@
 			RelativePath="..\..\engines\agi\agi.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agi\agi_v2.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\agi_v3.cpp">
-		</File>
-		<File
 			RelativePath="..\..\engines\agi\checks.cpp">
 		</File>
 		<File
@@ -160,6 +154,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\keyboard.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\loader_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\loader_v3.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\logic.cpp">
@@ -202,6 +202,36 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\picture.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_common.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_common.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_mickey.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_mickey.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_troll.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_troll.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_winnie.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agi\preagi_winnie.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\agi\predictive.cpp">

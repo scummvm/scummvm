@@ -26,7 +26,7 @@
 #ifndef SKY_LOGIC_H
 #define SKY_LOGIC_H
 
-#include "common/stdafx.h"
+
 #include "common/util.h"
 
 namespace Sky {
@@ -162,7 +162,7 @@ private:
 	void setupMcodeTable();
 	const LogicTable *_logicTable;
 	const McodeTable *_mcodeTable;
-	
+
 protected:
 	void push(uint32);
 	uint32 pop();

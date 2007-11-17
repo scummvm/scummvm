@@ -28,7 +28,8 @@
 #include "kyra/screen.h"
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
-#include "kyra/text.h"
+#include "kyra/text_v2.h"
+#include "kyra/timer.h"
 
 #include "common/system.h"
 
@@ -36,560 +37,2350 @@ namespace Kyra {
 
 void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_playSequences(%i, %i)", startSeq, endSeq);
+	seq_init();
 
-	_skipFlag = false;
+	bool allowSkip = (startSeq == kSequenceTitle) ? false : true;
 
 	if (endSeq == -1)
 		endSeq = startSeq;
-	
-	static const Sequence sequences[] = { 
-		// type, filename, callback, framedelay, duration, numframes, timeOut, fadeOut
-		{2, "virgin.cps",   0,                                 100, 0,   1,  true,  true},
-		{1, "westwood.wsa", &KyraEngine_v2::seq_introWestwood, 6,   160, 18, true,  true},
-		{1, "title.wsa",    &KyraEngine_v2::seq_introTitle,    6,   10,  26, false, false},
-		{2, "over.cps",     &KyraEngine_v2::seq_introOverview, 16,  30,  1,  false, true},
-		{2, "library.cps",  &KyraEngine_v2::seq_introLibrary,  16,  30,  1,  false, true},
-		{2, "hand.cps",     &KyraEngine_v2::seq_introHand,     16,  90,  1,  false, true},
-		{1, "point.wsa",    &KyraEngine_v2::seq_introPoint,    16,  30,  1,  false, true},
-		{1, "zanfaun.wsa",  &KyraEngine_v2::seq_introZanFaun,  16,  90,  1,  false, true}
-	};
 
-	assert(startSeq >= 0 && endSeq < ARRAYSIZE(sequences) && startSeq <= endSeq);
+	assert(startSeq >= 0 && endSeq < kSequenceArraySize && startSeq <= endSeq);
 
-	_activeWSA = new ActiveWSA[8];
-	assert(_activeWSA);	
+	if (_flags.isDemo) {
+		static const char *soundFileList[] = {
+			"K2_DEMO",
+			"LOLSYSEX"
+		};
+		_sound->setSoundFileList(soundFileList, 2);
+	} else {
+		const char *const *soundFileList =
+			(startSeq > kSequenceZanfaun) ?	_dosSoundFileListFinale : _dosSoundFileListIntro;
+		_sound->setSoundFileList(soundFileList, 1);
+	}
+	_sound->loadSoundFile(0);
+
+	_screen->_charWidth = -2;
+
 	memset(_activeWSA, 0, sizeof(ActiveWSA) * 8);
+	for (int i = 0; i < 8; i++)
+		_activeWSA[i].flags = -1;
 
-	_activeChat = new ActiveChat[10];
-	assert(_activeChat);	
-	memset(_activeChat, 0, sizeof(ActiveChat) * 10);
 
-	seq_resetAllChatEntries();
+	memset(_activeText, 0, sizeof(ActiveText) * 10);
+	seq_resetAllTextEntries();
 
 	_screen->hideMouse();
 	int oldPage = _screen->setCurPage(2);
-	
-	uint8 pal[768];
-	memset(pal, 0, sizeof(pal));
-	
-	for (int i = startSeq; i <= endSeq && !_skipFlag; i++) {
-		uint32 seqDelay = 0;
-		int seqNum = 0;
 
-		_screen->setScreenPalette(pal);
+	for (int i = 0; i < 4; i++)
+		memset(_screen->getPalette(i), 0, 0x300);
+
+	_screen->clearPage(10);
+	_screen->clearPage(12);
+
+	_seqSubframePlaying = false;
+
+	_seqWsaCurrentFrame = 0;
+	_seqTextColor[0] = _seqTextColor[1] = 0;
+	_seqEndTime = 0;
+	_menuChoice = 0;
+
+	for (int seqNum = startSeq; seqNum <= endSeq && !((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice); seqNum++) {
 		_screen->clearPage(0);
+		_screen->clearPage(8);
+		memcpy(_screen->getPalette(1), _screen->getPalette(0), 0x300);
+		_seqFrameCounter = 0;
 
-		if (sequences[i].type == 2) {
-			_screen->loadBitmap(sequences[i].filename, 2, 2, _screen->_currentPalette);
-			_screen->updateScreen();
-			seqDelay = sequences[i].frameDelay * _tickLength;
-		} else if(sequences[i].type == 1) {
-			seq_loadWSA(0, sequences[i].filename, sequences[i].frameDelay);
-			seqDelay = sequences[i].duration * _tickLength;
+		allowSkip = (seqNum == 2) ? false : true;
+
+		if (_sequences[seqNum].flags & 2) {
+			_screen->loadBitmap(_sequences[seqNum].cpsFile, 2, 2, _screen->getPalette(0));
+		} else {
+			_screen->setCurPage(2);
+			_screen->clearPage(2);
+			_screen->loadPalette("goldfont.col", _screen->getPalette(0));
 		}
 
-		if (sequences[i].callback)
-			(*this.*sequences[i].callback)(seqNum++);
+		if (_sequences[seqNum].callback)
+			(this->*_sequences[seqNum].callback)(0, 0, 0, -1);
 
-		seq_playWSAs();
-		_screen->copyPage(2, 0);
-		_screen->updateScreen();
-		_screen->fadeFromBlack(40);
+		if (_sequences[seqNum].flags & 1) {
+			if (_seqWsa->opened())
+				_seqWsa->close();
+			_seqWsa->open(_sequences[seqNum].wsaFile, 0, _screen->getPalette(0));
+			_seqWsa->setX(_sequences[seqNum].xPos);
+			_seqWsa->setY(_sequences[seqNum].yPos);
+			_seqWsa->setDrawPage(2);
+			_seqWsa->displayFrame(0, 0);
+		}
 
-		seqDelay += _system->getMillis();
-		bool mayEndLoop = sequences[i].timeOut;
-		
-		// Skip the movie if esc is pressed or the mouse is clicked
-		// However, don't skip the menu movie, to match the behavior of the original interpreter
-		while ((!_quitFlag && !_skipFlag) || i == kSequenceTitle) {
-			uint32 startTime = _system->getMillis();
-			
-			if (sequences[i].callback) {
-				int newTime = (*this.*sequences[i].callback)(seqNum++);
-				if (newTime != -1) {
-					seqDelay = newTime * _tickLength + _system->getMillis();
-					mayEndLoop = true;
+		if (_sequences[seqNum].flags & 4) {
+			int cp = _screen->setCurPage(2);
+			Screen::FontId cf =	_screen->setFont(Screen::FID_GOLDFONT_FNT);
+			int sX = (320 - _screen->getTextWidth(_sequenceStrings[_sequences[seqNum].stringIndex1])) / 2;
+			_screen->printText(_sequenceStrings[_sequences[seqNum].stringIndex1], sX, 100 - _screen->getFontHeight(), 1, 0);
+			sX = (320 - _screen->getTextWidth(_sequenceStrings[_sequences[seqNum].stringIndex2])) / 2;
+			_screen->printText(_sequenceStrings[_sequences[seqNum].stringIndex2], sX, 100, 1, 0);
+
+			_screen->setFont(cf);
+			_screen->setCurPage(cp);
+		}
+
+		_screen->copyPage(2, 12);
+		_screen->copyPage(0, 2);
+		_screen->copyPage(2, 10);
+		_screen->copyPage(12, 2);
+
+		_screen->copyPage(2, 6);
+
+		seq_sequenceCommand(_sequences[seqNum].startupCommand);
+
+		if (!((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+			_screen->copyPage(2, 0);
+			_screen->updateScreen();
+		}
+
+		if (_sequences[seqNum].flags & 1) {
+			int w2 = _seqWsa->width();
+			int h2 = _seqWsa->height();
+			int x = _sequences[seqNum].xPos;
+			int y = _sequences[seqNum].yPos;
+
+			_seqFrameDelay = _sequences[seqNum].frameDelay;
+
+			if (_seqWsa) {
+				if (x < 0) {
+					x = 0;
+					w2 = 0;
+				}
+
+				if (y < 0) {
+					y = 0;
+					h2 = 0;
+				}
+
+				if (_sequences[seqNum].xPos + _seqWsa->width() > 319)
+					_seqWsa->setWidth(320 - _sequences[seqNum].xPos);
+
+				if (_sequences[seqNum].yPos + _seqWsa->height() > 199)
+					_seqWsa->setHeight(199 - _sequences[seqNum].yPos);
+			}
+			uint8 dir = (_sequences[seqNum].startFrame > _sequences[seqNum].numFrames) ? 0 : 1;
+			_seqWsaCurrentFrame = _sequences[seqNum].startFrame;
+
+			bool loop = true;
+			while (loop && !((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+				_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
+
+				if (_seqWsa || !_sequences[seqNum].callback)
+					_screen->copyPage(12, 2);
+
+				if (_sequences[seqNum].callback) {
+					int f = _seqWsaCurrentFrame % _seqWsa->frames();
+					(this->*_sequences[seqNum].callback)(_seqWsa, _sequences[seqNum].xPos, _sequences[seqNum].yPos, f);
+				}
+
+				if (_seqWsa) {
+					int f = _seqWsaCurrentFrame % _seqWsa->frames();
+					_seqWsa->setX(_sequences[seqNum].xPos);
+					_seqWsa->setY(_sequences[seqNum].yPos);
+					_seqWsa->setDrawPage(2);
+					_seqWsa->displayFrame(f, 0);
+				}
+
+				_screen->copyPage(2, 12);
+
+				seq_processWSAs();
+				seq_processText();
+
+				if ((_seqWsa || !_sequences[seqNum].callback) && !((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+					_screen->copyPage(2, 0);
+					_screen->copyPage(2, 6);
+					_screen->updateScreen();
+				}
+
+				bool loop2 = true;
+				while (loop2 && !((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+					if (_seqWsa) {
+						seq_processText();
+						if (!((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+							_screen->copyPage(2, 0);
+							_screen->copyPage(2, 6);
+							_screen->updateScreen();
+						}
+
+
+						uint32 now = _system->getMillis();
+						if (now >= _seqEndTime) {
+							loop2 = false;
+						} else {
+							uint32 tdiff = _seqEndTime - now;
+							uint32 dly = tdiff < _tickLength ? tdiff : _tickLength;
+							delay(dly);
+							//_seqEndTime -= dly;
+						}
+					} else {
+						loop = loop2 = false;
+					}
+				}
+
+				if (loop) {
+					if (dir == 1) {
+						if (++_seqWsaCurrentFrame >= _sequences[seqNum].numFrames)
+							loop = false;
+					} else {
+						if (--_seqWsaCurrentFrame < _sequences[seqNum].numFrames)
+							loop = false;
+					}
 				}
 			}
-		
-			seq_playWSAs();
-			_screen->copyPage(2, 0);
-			seq_showChats();
-			_screen->updateScreen();
-			
-			uint32 currTime = _system->getMillis();
-			if (seqDelay <= currTime && mayEndLoop) {
-				break;
-			} else {
-				uint32 loopTime = currTime - startTime;
-				delay(loopTime < _tickLength ? loopTime : _tickLength);
+			_seqWsa->close();
+
+
+		} else {
+			_seqFrameDelay = _sequences[seqNum].frameDelay;
+			_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
+			while (!((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+				uint32 starttime = _system->getMillis();
+				seq_processWSAs();
+				if (_sequences[seqNum].callback)
+					(this->*_sequences[seqNum].callback)(0, 0, 0, 0);
+
+				seq_processText();
+
+				_screen->copyPage(2, 6);
+				_screen->copyPage(2, 0);
+				_screen->updateScreen();
+				_screen->copyPage(12, 2);
+
+				uint32 now = _system->getMillis();
+				if (now >= _seqEndTime && !_seqSubframePlaying)
+					break;
+
+				uint32 tdiff = _seqEndTime - starttime;
+				int32 dly = _tickLength - (now - starttime);
+				if (dly > 0)
+					delay(MIN<uint32>(dly, tdiff));
 			}
 		}
 
-		if (sequences[i].fadeOut)
-			_screen->fadeToBlack(40);
-		
-		if (sequences[i].type == 1)
-			seq_unloadWSA(0);
-		
-		_screen->clearPage(2);
-		
+		if (_sequences[seqNum].callback)
+			(this->*_sequences[seqNum].callback)(0, 0, 0, -2);
+
+		uint32 ct = seq_activeTextsTimeLeft();
+		uint32 dl = _sequences[seqNum].duration * _tickLength;
+		if (dl < ct)
+			dl = ct;
+		_seqEndTime = _system->getMillis() + dl;
+
+		while (!((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+			uint32 starttime = _system->getMillis();
+			seq_processWSAs();
+
+			_screen->copyPage(2, 6);
+			_screen->copyPage(2, 0);
+			_screen->updateScreen();
+			_screen->copyPage(12, 2);
+
+			uint32 now = _system->getMillis();
+			if (now >= _seqEndTime && !_seqSubframePlaying) {
+				break;
+			}
+
+			uint32 tdiff = _seqEndTime - starttime;
+			int32 dly = _tickLength - (now - starttime);
+			if (dly > 0)
+				delay(MIN<uint32>(dly, tdiff));
+		}
+
+		seq_sequenceCommand(_sequences[seqNum].finalCommand);
+		seq_resetAllTextEntries();
+
+		if ((seqNum != kSequenceTitle && seqNum < kSequenceZanfaun &&
+			(_abortIntroFlag || _skipFlag)) || seqNum == kSequenceZanfaun) {
+			_abortIntroFlag = _skipFlag = false;
+			seqNum = kSequenceWestwood;
+		}
+
+		if (_menuChoice) {
+			_abortIntroFlag = _skipFlag = false;
+			if (_menuChoice == 2)
+				_menuChoice = 0;
+		}
 	}
+
+	if (!_menuChoice)
+		delay(1000);
+
 	_screen->setCurPage(oldPage);
 	_screen->showMouse();
 
 	for (int i = 0; i < 8; i++)
 		seq_unloadWSA(i);
-	delete[] _activeWSA;
-	delete[] _activeChat;
+
+	if (_seqWsa->opened())
+		_seqWsa->close();
+
+	_screen->_charWidth = 0;
+
+	seq_uninit();
 }
 
-// FIXME: This part needs game dialogs, as it's not part of the intro, but
-// rather a game video. It has speech only in the CD version
-int KyraEngine_v2::seq_introZanFaun(int seqNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introZanFaun(%i)", seqNum);
+int KyraEngine_v2::seq_introWestwood(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introWestwood(%p, %i, %i, %i)", (const void*)wsaObj, x, y, frm);
 
-	static const SequenceControl zanFaunWSAControl[] = {
-		{0, 6}, {1, 6}, {2, 6}, {3, 6},
-		{4, 6}, {5, 6}, {6, 6}, {7, 6}, 
-		{8, 6}, {9, 6}, {10, 6}, {11, 6}, 
-		{12, 6}, {13, 6}, {14, 6}, {15, 6}, 
-		{16, 6}, {17, 6}, {18, 6}, {19, 6}, 
-		{20, 6}, {21, 6}, {22, 6}, {23, 6}, 
-		{23, 6}, {22, 6}, {21, 6}, {20, 6}, 
-		{19, 6}, {18, 6}, {17, 6}, {16, 6}, 
-		{15, 6}, {14, 6}, {13, 6}, {12, 6}, 
-		{11, 6}, {10, 6}, {9, 6}, {8, 6}, 
-		{7, 6}, {6, 6}, {5, 6}, {4, 6},
-		{3, 6}, {2, 6}, {1, 6}, {0, 6},
-		{8, 6}, {9, 6}, {10, 6}, {-1, -1} };
+	if (frm == -2) {
+		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+			delay(300 * _tickLength);
+	} else if (!frm) {
+		_sound->playTrack(2);
+	}
 
-	switch (seqNum) {
+	return 0;
+}
+
+int KyraEngine_v2::seq_introTitle(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introTitle(%p, %i, %i, %i)", (const void*)wsaObj, x, y, frm);
+
+	if (frm == 1) {
+		_sound->playTrack(3);
+	} else if (frm == 25) {
+		int cp = _screen->setCurPage(0);
+		_screen->showMouse();
+		_system->updateScreen();
+		_menuChoice = gui_handleMainMenu() + 1;
+		_seqEndTime = 0;
+		_seqSubframePlaying = false;
+		if (_menuChoice == 4)
+			quitGame();
+
+		_screen->hideMouse();
+		_screen->setCurPage(cp);
+	}
+
+	return 0;
+}
+
+int KyraEngine_v2::seq_introOverview(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introOverview(%p, %i, %i, %i)", (const void*)wsaObj, x, y, frm);
+
+	uint8 * tmpPal = &(_screen->getPalette(3)[0x101]);
+	memset(tmpPal, 0, 256);
+	uint32 endtime = 0, now = 0;
+
+	switch (_seqFrameCounter) {
 		case 0:
-			_sound->playTrack(8);
-			//XXX: palette stuff
-			//XXX: load dialogs
+			_seqSubframePlaying = true;
+			_sound->playTrack(4);
+			endtime = _system->getMillis() + 60 * _tickLength;
+
+			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
+
+			_screen->setTextColorMap(_seqTextColorMap);
+
+			now = _system->getMillis();
+			if (endtime > now)
+				delay(endtime - now);
 			break;
+
 		case 1:
-			seq_loadWSA(1, "zanfaun.wsa", 9, 0, zanFaunWSAControl);
+			_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x40, 0, 0, 0, 0x100, true);
+			for (int i = 0; i < 256; i++)
+				tmpPal[_screen->getPalette(3)[i]] = 1;
+
+			for (int i = 0; i < 256; i++) {
+				int v = (tmpPal[i] == 1) ? i : _screen->getPalette(3)[i];
+				v *= 3;
+				_screen->getPalette(2)[3 * i] = _screen->getPalette(0)[v];
+				_screen->getPalette(2)[3 * i + 1] = _screen->getPalette(0)[v + 1];
+				_screen->getPalette(2)[3 * i + 2] = _screen->getPalette(0)[v + 2];
+			}
 			break;
-		case 0x294:
-			seq_waitForChatsToFinish();
-			seq_unloadWSA(1);
-			return 0;
+
+		case 40:
+			seq_loadNestedSequence(0, kSequenceOver1);
+			break;
+
+		case 60:
+			seq_loadNestedSequence(1, kSequenceOver2);
+			break;
+
+		case 120:
+			seq_playTalkText(0);
+			break;
+
+		case 200:
+			seq_waitForTextsTimeout();
+			_screen->fadePalette(_screen->getPalette(2), 64);
+			break;
+
+		case 201:
+			_screen->setScreenPalette(_screen->getPalette(2));
+			_screen->updateScreen();
+			_screen->applyGrayOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+			_screen->copyPage(2, 12);
+			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+			_screen->setScreenPalette(_screen->getPalette(0));
+			_screen->updateScreen();
+			seq_resetActiveWSA(0);
+			seq_resetActiveWSA(1);
+			break;
+
+		case 282:
+			seq_loadNestedSequence(0, kSequenceForest);
+			seq_playTalkText(1);
+			break;
+
+		case 354:
+		case 434:
+			if (!((_seqFrameCounter == 354 && !_flags.isTalkie) || (_seqFrameCounter == 434 && _flags.isTalkie)))
+				break;
+
+			seq_resetActiveWSA(0);
+			seq_loadNestedSequence(0, kSequenceDragon);
+			break;
+
+		case 400:
+		case 540:
+			if (!((_seqFrameCounter == 400 && !_flags.isTalkie) || (_seqFrameCounter == 540 && _flags.isTalkie)))
+				break;
+
+			seq_waitForTextsTimeout();
+			seq_resetActiveWSA(0);
+			_seqEndTime = 0;
+			_seqSubframePlaying = false;
+			break;
+
 		default:
 			break;
 	}
 
-	return -1;
+	_seqFrameCounter++;
+	return 0;
 }
 
-int KyraEngine_v2::seq_introPoint(int seqNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introPoint(%i)", seqNum);
+int KyraEngine_v2::seq_introLibrary(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introLibrary(%p, %i, %i, %i)", (const void*)wsaObj, x, y, frm);
 
-	switch (seqNum) {
+	switch (_seqFrameCounter) {
+		case 0:
+			_seqSubframePlaying = true;
+			_sound->playTrack(5);
+
+			_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x24, 0, 0, 0, 0x100, false);
+			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
+
+			_screen->setTextColorMap(_seqTextColorMap);
+			break;
+
+		case 1:
+			seq_loadNestedSequence(0, kSequenceLibrary3);
+			seq_playTalkText(4);
+			break;
+
+		case 100:
+			seq_waitForTextsTimeout();
+
+			_screen->copyPage(12, 2);
+			_screen->applyGrayOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+			_screen->updateScreen();
+			_screen->copyPage(2, 12);
+
+			seq_resetActiveWSA(0);
+			seq_loadNestedSequence(0, kSequenceDarm);
+
+			break;
+
+		case 104:
+			seq_playTalkText(5);
+			break;
+
+		case 240:
+			seq_waitForTextsTimeout();
+			seq_resetActiveWSA(0);
+			seq_loadNestedSequence(0, kSequenceLibrary2);
+			break;
+
+		case 340:
+			seq_resetActiveWSA(0);
+			_screen->applyGrayOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+			_screen->copyPage(2, 12);
+			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+			_screen->updateScreen();
+
+			seq_loadNestedSequence(0, kSequenceMarco);
+			seq_playTalkText(6);
+			break;
+
+		case 480:
+		case 660:
+			if (!((_seqFrameCounter == 480 && !_flags.isTalkie) || (_seqFrameCounter == 660 && _flags.isTalkie)))
+				break;
+
+			_screen->copyPage(2, 12);
+			seq_waitForTextsTimeout();
+			seq_resetActiveWSA(0);
+			_seqEndTime = 0;
+			_seqSubframePlaying = false;
+			break;
+
+		default:
+			break;
+	}
+
+	_seqFrameCounter++;
+	return 0;
+}
+
+
+int KyraEngine_v2::seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introHand(%p, %i, %i, %i)", (const void*)wsaObj, x, y, frm);
+
+	switch (_seqFrameCounter) {
+		case 0:
+			_seqSubframePlaying = true;
+			_sound->playTrack(6);
+
+			_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x24, 0, 0, 0, 0x100, false);
+			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
+
+			_screen->setTextColorMap(_seqTextColorMap);
+			break;
+
+		case 1:
+			seq_loadNestedSequence(0, kSequenceHand1a);
+			seq_loadNestedSequence(1, kSequenceHand1b);
+			seq_loadNestedSequence(2, kSequenceHand1c);
+			seq_playTalkText(7);
+			break;
+
+		case 201:
+			seq_waitForTextsTimeout();
+			_screen->applyGrayOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+			_screen->copyPage(2, 12);
+			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+			_screen->updateScreen();
+			seq_resetActiveWSA(0);
+			seq_resetActiveWSA(1);
+			seq_resetActiveWSA(2);
+			seq_loadNestedSequence(0, kSequenceHand2);
+			seq_playTalkText(8);
+			break;
+
+		case 260:
+		case 395:
+			if (!((_seqFrameCounter == 260 && !_flags.isTalkie) || (_seqFrameCounter == 395 && _flags.isTalkie)))
+				break;
+
+
+			seq_waitForTextsTimeout();
+			seq_resetActiveWSA(0);
+			seq_loadNestedSequence(1, kSequenceHand3);
+			seq_playTalkText(9);
+			break;
+
+		case 365:
+		case 500:
+			if (!((_seqFrameCounter == 365 && !_flags.isTalkie) || (_seqFrameCounter == 500 && _flags.isTalkie)))
+				break;
+
+			seq_waitForTextsTimeout();
+			seq_resetActiveWSA(1);
+			seq_loadNestedSequence(0, kSequenceHand4);
+			break;
+
+		case 405:
+		case 540:
+			if (!((_seqFrameCounter == 405 && !_flags.isTalkie) || (_seqFrameCounter == 540 && _flags.isTalkie)))
+				break;
+
+
+			seq_playTalkText(10);
+			break;
+
+		case 484:
+		case 630:
+			if (!((_seqFrameCounter == 484 && !_flags.isTalkie) || (_seqFrameCounter == 630 && _flags.isTalkie)))
+				break;
+
+			seq_waitForTextsTimeout();
+			seq_resetActiveWSA(0);
+			_seqEndTime = 0;
+			_seqSubframePlaying = false;
+			break;
+
+		default:
+			break;
+	}
+
+	_seqFrameCounter++;
+	return 0;
+}
+
+int KyraEngine_v2::seq_introPoint(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	if (frm == -2) {
+		seq_waitForTextsTimeout();
+		_seqEndTime = 0;
+	}
+
+	switch (_seqFrameCounter) {
+		case -2:
+			seq_waitForTextsTimeout();
+			break;
+
 		case 0:
 			_sound->playTrack(7);
+
+			_seqTextColor[1] = 0xf7;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
+			_screen->setTextColorMap(_seqTextColorMap);
+			_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x24, 0, 0, 0, 0x100, false);
 			break;
+
 		case 1:
-			seq_loadWSA(1, "point.wsa", 9);
-			seq_playIntroChat(11); // "Zanthia, youngest of the royal mystics has been selected"
+			seq_playTalkText(11);
 			break;
-		case 0x96:
-			seq_waitForChatsToFinish();
-			seq_unloadWSA(1);
-			return 0;
+
 		default:
 			break;
 	}
 
-	return -1;
+	_seqFrameCounter++;
+	return 0;
 }
 
-int KyraEngine_v2::seq_introHand(int seqNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introHand(%i)", seqNum);
-	// XXX: commented out to prevent compiler warnings
-	/*static const SequenceControl hand1bWSAControl[] = {
-		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}, {5, 6}, {6, 6}, {7, 6},
-		{8, 6}, {9, 6}, {10, 6}, {11, 6}, {11, 12}, {12, 12}, {13, 12}, 
-		{12, 12}, {11, 12}, {-1, -1} };
-	
-	static const SequenceControl hand1cWSAControl[] = {
-		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}, {3, 6},
-		{4, 6}, {5, 64}, {5, 6}, {-1, -1} };*/
-	
-	static const SequenceControl hand2WSAControl[] = {
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6},
-		{0, 6}, {1, 6}, {0, 6}, {1, 6}, {0, 6}, {1, 6}, {-1, -1} };
-
-	static const SequenceControl hand3WSAControl[] = {
-		{0, 6}, {1, 6}, {2, 6}, {1, 6},
-		{0, 6}, {1, 6}, {2, 6}, {1, 6}, 
-		{0, 6}, {1, 6}, {2, 6}, {1, 6},
-		{0, 6}, {1, 6}, {2, 6}, {1, 6},
-		{0, 6}, {1, 6}, {2, 6}, {1, 6},
-		{0, 6}, {1, 6}, {2, 6}, {1, 6},
-		{0, 6}, {1, 6}, {2, 6}, {1, 6},
-		{0, 6}, {1, 6}, {2, 6}, {1, 6},
-		{0, 6}, {1, 6}, {2, 6}, {1, 6},
-		{0, 6}, {1, 6}, {2, 6}, {1, 6},
-		{0, 6}, {1, 6}, {2, 6}, {1, 6},
-		{0, 6}, {1, 6}, {2, 6}, {1, 6},
-		{0, 6}, {-1, -1} };
-
-	static const SequenceControl hand4WSAControl[] = {
-		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
-		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
-		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
-		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
-		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
-		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
-		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
-		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
-		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
-		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
-		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
-		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
-		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
-		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
-		{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6},
-		{3, 6}, {2, 6}, {1, 6}, {0, 6}, 
-		{-1, -1} };
-	
-	switch (seqNum) {
-		case 0:
-			_sound->playTrack(6);
-			//palette stuff
-			break;
-		case 1:
-			// XXX: these show as garbage. New frame encode?
-			/*seq_loadWSA(1, "hand1a.wsa", 9);
-			seq_loadWSA(2, "hand1b.wsa", 9, 0, hand1bWSAControl);
-			seq_loadWSA(3, "hand1c.wsa", 9, 0, hand1cWSAControl);*/
-			seq_playIntroChat(7); // "Luckily, the Hand was experienced in these matters"
-			break;
-		case 0xc9:
-			// palette stuff
-			seq_loadWSA(4, "hand2.wsa", 9, 0, hand2WSAControl);
-			seq_waitForChatsToFinish();
-			seq_playIntroChat(8); // "and finally, a plan was approved"
-			break;
-		case 0x18b:
-			seq_loadWSA(5, "hand3.wsa", 9, 0, hand3WSAControl);
-			seq_waitForChatsToFinish();
-			seq_playIntroChat(9); // "which required a magic anchorstone"
-			break;
-		case 0x1f4:
-			seq_loadWSA(6, "hand4.wsa", 9, 0, hand4WSAControl);
-			seq_waitForChatsToFinish();
-			seq_playIntroChat(10); // "to be retrieved from the center of the world"
-			break;
-		case 0x320:
-			seq_waitForChatsToFinish();
-			/*seq_unloadWSA(1);
-			seq_unloadWSA(2);	
-			seq_unloadWSA(3);*/
-			seq_unloadWSA(4);
-			seq_unloadWSA(5);
-			seq_unloadWSA(6);						
-			return 0;
+int KyraEngine_v2::seq_introZanfaun(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	if (frm == -2) {
+		seq_waitForTextsTimeout();
+		_seqEndTime = 0;
+		return 0;
 	}
-	
-	return -1;
-}
 
-int KyraEngine_v2::seq_introLibrary(int seqNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introLibrary(%i)", seqNum);
-	
-	static const SequenceControl libraryWSAControl[] = {
-		{0, 10}, {1, 10}, {2, 10}, {3, 10}, {4, 10}, {5, 10}, {6, 10}, {7, 10},
-		{8, 10}, {9, 10}, {8, 10}, {7, 10}, {6, 10}, {5, 40}, {4, 10}, {3, 10},
-		{2, 10}, {1, 10}, {-1, -1} };
-	
-	switch (seqNum) {
+	switch (_seqFrameCounter) {
 		case 0:
-			_sound->playTrack(5);
-			seq_playIntroChat(4); // "The royal mystics are baffled"
-			//XXX: palette stuff
+			_sound->playTrack(8);
+
+			_seqTextColor[1] = 0xfd;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
+			_screen->setTextColorMap(_seqTextColorMap);
 			break;
+
 		case 1:
-			seq_loadWSA(1, "library.wsa", 9, 0, libraryWSAControl);
+			if (_flags.isTalkie) {
+				seq_playWsaSyncDialogue(21, 13, -1, 140, 70, 160, wsaObj, 0, 8, x, y);
+			} else {
+				seq_setTextEntry(21, 140, 70, 20, 160);
+				_seqFrameDelay = 200;
+			}
 			break;
-		case 0x64:
-			seq_waitForChatsToFinish();
-			// unk1 = 7;
-			// palette/screen stuff
-			seq_loadWSA(2, "darm.wsa", 9);
+
+		case 2:
+		case 11:
+		case 21:
+			if (!_flags.isTalkie)
+				_seqFrameDelay = 12;
 			break;
-		case 0x68:
-			seq_waitForChatsToFinish();
-			seq_playIntroChat(5);  // "Every reference has been consulted"
+
+		case 9:
+			if (_flags.isTalkie)
+				seq_playWsaSyncDialogue(13, 14, -1, 140, (_flags.lang == Common::FR_FRA
+					|| _flags.lang == Common::DE_DEU) ? 50 : 70, 160, wsaObj, 9, 15, x, y);
 			break;
-		case 0xF0:
-			seq_waitForChatsToFinish();
-			seq_loadWSA(3, "library.wsa", 9);
+
+		case 10:
+			if (!_flags.isTalkie) {
+				seq_waitForTextsTimeout();
+				seq_setTextEntry(13, 140, 50, _sequenceStringsDuration[13], 160);
+				_seqFrameDelay = 300;
+			}
 			break;
-		case 0x154:
-			seq_waitForChatsToFinish();
-			// palette stuff
-			seq_loadWSA(4, "marco.wsa", 9);
-			seq_playIntroChat(6); // "Even Marko and his new valet have been allowed"
+
+		case 16:
+			if (_flags.isTalkie)
+				seq_playWsaSyncDialogue(18, 15, -1, 140, (_flags.lang == Common::FR_FRA) ? 50 :
+					(_flags.lang == Common::DE_DEU ? 40 : 70), 160, wsaObj, 10, 16, x, y);
 			break;
-		case 0x294:
-			seq_waitForChatsToFinish();
-			seq_unloadWSA(1);
-			seq_unloadWSA(2);
-			seq_unloadWSA(3);
-			seq_unloadWSA(4);
-			return 0;
+
+		case 17:
+			if (_flags.isTalkie)
+				_seqFrameDelay = 12;
+			break;
+
+		case 20:
+			if (!_flags.isTalkie) {
+				seq_setTextEntry(18, 160, 50, _sequenceStringsDuration[17], 160);
+				_seqFrameDelay = 200;
+			}
+			break;
+
+		case 19:
+		case 26:
+			seq_waitForTextsTimeout();
+			break;
+
+		case 46:
+			if (_flags.isTalkie) {
+				seq_playWsaSyncDialogue(16, 16, -1, 200, 50, 120, wsaObj, 46, 46, x, y);
+			} else {
+				seq_waitForTextsTimeout();
+				seq_setTextEntry(16, 200, 50, _sequenceStringsDuration[16], 120);
+			}
+
+			_seqEndTime = _system->getMillis() + 120 * _tickLength;
+			break;
+
 		default:
 			break;
 	}
 
-	return -1;
+	_seqFrameCounter++;
+	return 0;
 }
 
-int KyraEngine_v2::seq_introOverview(int seqNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introOverview(%i)", seqNum);
-	
-	switch (seqNum) {
+int KyraEngine_v2::seq_introOver1(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	if (frm == 2)
+		seq_waitForTextsTimeout();
+	else if (frm == 3)
+		seq_playTalkText(12);
+	return frm;
+}
+
+
+int KyraEngine_v2::seq_introOver2(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	if (frm == 1)
+		seq_playTalkText(12);
+	return frm;
+}
+
+int KyraEngine_v2::seq_introForest(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	if (frm == 11) {
+		seq_waitForTextsTimeout();
+	} else if (frm == 12) {
+		if (_flags.lang == Common::FR_FRA)
+			{}//// TODO
+		seq_playTalkText(2);
+	}
+	return frm;
+}
+
+int KyraEngine_v2::seq_introDragon(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	if (frm == 11)
+		seq_waitForTextsTimeout();
+	else if (frm == 3)
+		seq_playTalkText(3);
+	return frm;
+}
+
+int KyraEngine_v2::seq_introDarm(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	//NULLSUB (at least in fm-towns version)
+	return frm;
+}
+
+int KyraEngine_v2::seq_introLibrary2(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	//NULLSUB (at least in fm-towns version)
+	return frm;
+}
+
+int KyraEngine_v2::seq_introMarco(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	if (frm == 36) {
+		seq_waitForTextsTimeout();
+		_seqEndTime = 0;
+	}
+	return frm;
+}
+
+int KyraEngine_v2::seq_introHand1a(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	//NULLSUB (at least in fm-towns version)
+	return frm;
+}
+
+int KyraEngine_v2::seq_introHand1b(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	if (frm == 15)
+		frm = 12;
+	return frm;
+}
+
+int KyraEngine_v2::seq_introHand1c(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	if (frm == 8)
+		frm = 4;
+	return frm;
+}
+
+int KyraEngine_v2::seq_introHand2(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	//NULLSUB (at least in fm-towns version)
+	return frm;
+}
+
+int KyraEngine_v2::seq_introHand3(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	//NULLSUB (at least in fm-towns version)
+	return frm;
+}
+
+int KyraEngine_v2::seq_finaleFunters(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	uint32 endtime = 0;
+	int chatX = 0;
+	int chatY = 0;
+	int chatW = 0;
+	int chatFirstFrame = 0;
+	int chatLastFrame = 0;
+	uint16 voiceIndex = 0;
+
+	switch (frm) {
+		case -2:
+			seq_sequenceCommand(9);
+			break;
+
 		case 0:
-			_sound->playTrack(4);
+			_sound->playTrack(3);
+
+			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
+			_screen->setTextColorMap(_seqTextColorMap);
+
+			endtime = _system->getMillis() + 480 * _tickLength;
+			seq_printCreditsString(81, 240, 70, _seqTextColorMap, 252);
+			seq_printCreditsString(82, 240, 90, _seqTextColorMap, _seqTextColor[0]);
+			_screen->copyPage(2, 12);
+			delay(endtime - _system->getMillis());
+			seq_playTalkText(_flags.isTalkie ? 28 : 24);
+			_seqTextColor[0] = 1;
+
+			if (_flags.isTalkie) {
+				if (_flags.lang == Common::FR_FRA) {
+					chatX = 84;
+					chatY = 70;
+				} else {
+					chatX = 88;
+					chatY = 78;
+				}
+				chatFirstFrame = 9;
+				chatLastFrame = 15;
+				voiceIndex = 34;
+			} else {
+				chatX = 88;
+				chatY = 70;
+				chatFirstFrame = 0;
+				chatLastFrame = 8;
+			}
+			chatW = 100;
+
+			seq_playWsaSyncDialogue(22, voiceIndex, 187, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
 			break;
-		case 40:
-			seq_loadWSA(1, "over1.wsa", 10, &KyraEngine_v2::seq_introOverviewOver1);
+
+		case 9:
+		case 16:
+			if (!((frm == 9 && !_flags.isTalkie) || (frm == 16 && _flags.isTalkie)))
+				break;
+
+			_seqFrameDelay = 12;
+
+			if (_flags.isTalkie) {
+				if (_flags.lang == Common::FR_FRA) {
+					chatW = 112;
+					chatX = 80;
+				} else {
+					chatW = 100;
+					chatX = (_flags.lang == Common::DE_DEU) ? 84 : 96;
+				}
+				chatFirstFrame = 0;
+				chatLastFrame = 8;
+				voiceIndex = 35;
+			} else {
+				chatX = 96;
+				chatW = 100;
+				chatFirstFrame = 9;
+				chatLastFrame = 15;
+			}
+			chatY = 70;
+
+			seq_playWsaSyncDialogue(23, voiceIndex, 137, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+			if (_flags.isTalkie)
+				_seqWsaCurrentFrame = 17;
+
 			break;
-		case 60:
-			seq_loadWSA(2, "over2.wsa", 9);
+
+		default:
 			break;
-		case 120:
-			seq_playIntroChat(0); // "Kyrandia is disappearing!"
-			break;
-		case 200:
-			seq_waitForChatsToFinish();
-			// XXX: fade to grey
-			_screen->k2IntroFadeToGrey(40);
-			break;
-		case 201:
-			// XXX
-			break;
-		case 282:
-			seq_waitForChatsToFinish();
-			seq_loadWSA(3, "forest.wsa", 6,  &KyraEngine_v2::seq_introOverviewForest);
-			seq_playIntroChat(1); // "Rock by rock..."
-			break;
-		case 434:
-			seq_waitForChatsToFinish();
-			seq_loadWSA(4, "dragon.wsa", 6,  &KyraEngine_v2::seq_introOverviewDragon);
-			break;
-		case 540:
-			seq_waitForChatsToFinish();
-			seq_unloadWSA(1);
-			seq_unloadWSA(2);
-			seq_unloadWSA(3);
-			seq_unloadWSA(4);
-			return 0;
-			break;	
 	}
 
-	return -1;
+	_seqFrameCounter++;
+	return 0;
 }
 
-void KyraEngine_v2::seq_introOverviewOver1(int currentFrame) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introOverviewOver1(%i)", currentFrame);
-	
-	if (currentFrame == 2)
-		seq_waitForChatsToFinish();
-	else if(currentFrame == 3)
-		seq_playIntroChat(12);
-}
+int KyraEngine_v2::seq_finaleFerb(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	uint32 endtime = 0;
+	int chatX = 0;
+	int chatY = 0;
+	int chatW = 0;
+	int chatFirstFrame = 0;
+	int chatLastFrame = 0;
+	uint16 voiceIndex = 0;
 
-void KyraEngine_v2::seq_introOverviewForest(int currentFrame) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introOverviewForest(%i)", currentFrame);
-	
-	if (currentFrame == 11) {
-		seq_waitForChatsToFinish();
-	} else if(currentFrame == 12) {
-		delay(25);
-		seq_playIntroChat(2); // "...and tree by tree..."
+	switch (frm) {
+		case -2:
+			seq_sequenceCommand(9);
+			endtime = _system->getMillis() + 480 * _tickLength;
+			seq_printCreditsString(34, 240, _flags.isTalkie ? 60 : 40, _seqTextColorMap, 252);
+			seq_printCreditsString(35, 240, _flags.isTalkie ? 70 : 50, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(36, 240, _flags.isTalkie ? 90 : 70, _seqTextColorMap, 252);
+			seq_printCreditsString(37, 240, _flags.isTalkie ? 100 : 90, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(38, 240, _flags.isTalkie ? 120 : 110, _seqTextColorMap, 252);
+			seq_printCreditsString(39, 240, _flags.isTalkie ? 130 : 120, _seqTextColorMap, _seqTextColor[0]);
+			if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+				seq_printCreditsString(103, 240, 130, _seqTextColorMap, _seqTextColor[0]);
+			delay(endtime - _system->getMillis());
+			_seqEndTime = 0;
+			break;
+
+		case 0:
+			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColor[0] = _seqTextColorMap[1] = 255;
+			_screen->setTextColorMap(_seqTextColorMap);
+
+			break;
+
+		case 5:
+			if (!_flags.isTalkie)
+				seq_playTalkText(18);
+			_seqFrameDelay = 16;
+
+			if (_flags.isTalkie) {
+				chatFirstFrame = 5;
+				chatLastFrame = 8;
+				voiceIndex = 22;
+			} else {
+				chatLastFrame = 14;
+			}
+			chatX = 116;
+			chatY = 90;
+			chatW = 60;
+
+			seq_playWsaSyncDialogue(24, voiceIndex, 149, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+			break;
+
+		case 11:
+			if (_flags.isTalkie)
+				seq_playWsaSyncDialogue(24, 22, 149, 116, 90, 60, wsaObj, 11, 14, x, y);
+
+			break;
+
+		case 16:
+			seq_playTalkText(_flags.isTalkie ? 23 : 19);
+			_seqFrameDelay = _flags.isTalkie ? 20 : 16;
+
+			if (_flags.isTalkie) {
+				if (_flags.lang == Common::FR_FRA) {
+					chatY = 48;
+					chatW = 88;
+				} else {
+					chatY = 60;
+					chatW = 100;
+				}
+				voiceIndex = 36;
+			} else {
+				chatY = 60;
+				chatW = 100;
+			}
+			chatX = 60;
+
+			seq_playWsaSyncDialogue(25, voiceIndex, 143, chatX, chatY, chatW, wsaObj, 16, 25, x, y);
+			_seqFrameDelay = 16;
+			break;
+
+		default:
+			break;
 	}
+
+	_seqFrameCounter++;
+	return 0;
 }
 
-void KyraEngine_v2::seq_introOverviewDragon(int currentFrame) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introOverviewDragon(%i)", currentFrame);
-	
-	if (currentFrame == 3)
-		seq_playIntroChat(3); // "Kyrandia ceases to exist!"
-	else if(currentFrame == 11)
-		seq_waitForChatsToFinish();
-}
+int KyraEngine_v2::seq_finaleFish(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	uint32 endtime = 0;
+	int chatX = 0;
+	int chatY = 0;
+	int chatW = 0;
+	uint16 voiceIndex = 0;
 
-int KyraEngine_v2::seq_introTitle(int seqNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introtitle(%i)", seqNum);
-	
-	if (seqNum == 1) {
-		_sound->playTrack(3);
-	} else if (seqNum == 25) {
-		// XXX: handle menu
-		return 200;
+	switch (frm) {
+		case -2:
+			seq_sequenceCommand(9);
+			endtime = _system->getMillis() + 480 * _tickLength;
+
+			seq_printCreditsString(40, 240, _flags.isTalkie ? 55 : 40, _seqTextColorMap, 252);
+			seq_printCreditsString(41, 240, _flags.isTalkie ? 65 : 50, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(42, 240, _flags.isTalkie ? 75 : 60, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(43, 240, _flags.isTalkie ? 95 : 80, _seqTextColorMap, 252);
+			seq_printCreditsString(44, 240, _flags.isTalkie ? 105 : 90, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(93, 240, _flags.isTalkie ? 125 : 110, _seqTextColorMap, 252);
+			seq_printCreditsString(94, 240, _flags.isTalkie ? 135 : 120, _seqTextColorMap, _seqTextColor[0]);
+			delay(endtime - _system->getMillis());
+			_seqEndTime = 0;
+			break;
+
+		case 0:
+			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
+			_screen->setTextColorMap(_seqTextColorMap);
+			break;
+
+		case 4:
+			chatX = 94;
+			chatY = 42;
+			chatW = 100;
+			if (_flags.isTalkie)
+				voiceIndex = 37;
+			seq_playWsaSyncDialogue(26, voiceIndex, 149, chatX, chatY, chatW, wsaObj, 3, 12, x, y);
+			break;
+
+		case 14:
+			seq_playTalkText(_flags.isTalkie ? 19 : 15);
+			break;
+
+		case 23:
+			seq_playTalkText(_flags.isTalkie ? 20 : 16);
+			break;
+
+		case 29:
+			if (_flags.isTalkie) {
+				if (_flags.lang == Common::DE_DEU) {
+					chatX = 82;
+					chatY = 35;
+				} else {
+					chatX = (_flags.lang == Common::FR_FRA) ? 92 : 88;
+					chatY = 40;
+				}
+				voiceIndex = 38;
+			} else {
+				chatX = 88;
+				chatY = 40;
+			}
+			chatW = 100;
+
+			seq_playWsaSyncDialogue(27, voiceIndex, 187, chatX, chatY, chatW, wsaObj, 28, 34, x, y);
+			break;
+
+		case 45:
+			seq_playTalkText(_flags.isTalkie ? 21 : 17);
+			break;
+
+		case 50:
+			seq_playTalkText(_flags.isTalkie ? 29 : 25);
+			break;
+
+		default:
+			break;
 	}
 
-	return -1;
+	_seqFrameCounter++;
+	return 0;
 }
 
-int KyraEngine_v2::seq_introWestwood(int seqNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introWestwood(%i)", seqNum);
-	
-	if (seqNum == 0)
-		_sound->playTrack(2);
+int KyraEngine_v2::seq_finaleFheep(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	uint32 endtime = 0;
+	int chatX = 0;
+	int chatY = 0;
+	int chatW = 0;
+	int chatFirstFrame = 0;
+	int chatLastFrame = 0;
+	uint16 voiceIndex = 0;
 
-	return -1;
+	switch (frm) {
+		case -2:
+			_screen->copyPage(12, 2);
+			_screen->copyPage(2, 0);
+			_screen->updateScreen();
+			seq_sequenceCommand(9);
+			endtime = _system->getMillis() + 480 * _tickLength;
+			seq_printCreditsString(49, 240, 20, _seqTextColorMap, 252);
+			seq_printCreditsString(50, 240, 30, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(51, 240, 40, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(52, 240, 50, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(53, 240, 60, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(54, 240, 70, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(55, 240, 80, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(56, 240, 90, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(57, 240, 100, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(58, 240, 110, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(60, 240, 120, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(61, 240, 130, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(62, 240, 140, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(63, 240, 150, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(64, 240, 160, _seqTextColorMap, _seqTextColor[0]);
+
+			delay(endtime - _system->getMillis());
+			_seqEndTime = 0;
+			break;
+
+		case 0:
+			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
+			_screen->setTextColorMap(_seqTextColorMap);
+			break;
+
+		case 2:
+			seq_playTalkText(_flags.isTalkie ? 25 : 21);
+
+			if (_flags.isTalkie) {
+				if (_flags.lang == Common::FR_FRA) {
+					chatX = 92;
+					chatY = 72;
+				} else {
+					chatX = (_flags.lang == Common::DE_DEU) ? 90 : 98;
+					chatY = 84;
+				}
+				chatFirstFrame = 8;
+				chatLastFrame = 9;
+				voiceIndex = 39;
+			} else {
+				chatX = 98;
+				chatY = 84;
+				chatFirstFrame = 2;
+				chatLastFrame = -8;
+			}
+			chatW = 100;
+
+			seq_playWsaSyncDialogue(28, voiceIndex, -1, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+			if (_flags.isTalkie)
+				_seqWsaCurrentFrame = 4;
+			break;
+
+		case 9:
+			seq_playTalkText(_flags.isTalkie ? 24 : 20);
+			_seqFrameDelay = 100;
+			break;
+
+		default:
+			break;
+	}
+
+	_seqFrameCounter++;
+	return 0;
 }
 
-void KyraEngine_v2::seq_playIntroChat(uint8 chatNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_playIntroChat(%i)", chatNum);
-	
-	assert(chatNum < _introSoundListSize);
-	
-	if (chatNum < 12)
-		seq_setChatEntry(chatNum, 160, 168, _introStringsDuration[chatNum], 160);
-	_sound->voicePlay(_introSoundList[chatNum]);
+int KyraEngine_v2::seq_finaleFarmer(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	uint32 endtime = 0;
+	int chatX = 0;
+	int chatY = 0;
+	int chatW = 0;
+	uint16 voiceIndex = 0;
+
+	switch (frm) {
+		case -2:
+			_screen->copyPage(12, 2);
+			_screen->copyPage(2, 0);
+			_screen->updateScreen();
+			seq_sequenceCommand(9);
+			endtime = _system->getMillis() + 480 * _tickLength;
+			seq_printCreditsString(45, 240, 40, _seqTextColorMap, 252);
+			seq_printCreditsString(46, 240, 50, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(47, 240, 60, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(83, 240, 80, _seqTextColorMap, 252);
+			seq_printCreditsString(48, 240, 90, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(65, 240, 110, _seqTextColorMap, 252);
+			seq_printCreditsString(66, 240, 120, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(67, 240, 130, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(68, 240, 140, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(69, 240, 150, _seqTextColorMap, _seqTextColor[0]);
+			if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+				seq_printCreditsString(104, 240, 160, _seqTextColorMap, _seqTextColor[0]);
+			delay(endtime - _system->getMillis());
+			_seqEndTime = 0;
+			break;
+
+		case 0:
+			_seqTextColor[1] = 1 + (_screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 254) & 0xff);
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColorMap[1] = _seqTextColor[0] = 1 + (_screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 254) & 0xff);
+			_screen->setTextColorMap(_seqTextColorMap);
+			seq_playTalkText(_flags.isTalkie ? 30 : 26);
+			break;
+
+		case 6:
+			if (_flags.isTalkie)
+				seq_playTalkText(18);
+			break;
+
+		case 12:
+			if (!_flags.isTalkie)
+				seq_playTalkText(14);
+
+			if (_flags.isTalkie) {
+				if (_flags.lang == Common::FR_FRA || _flags.lang == Common::DE_DEU) {
+					chatX = 75;
+					chatY = 25;
+				} else {
+					chatX = 90;
+					chatY = 30;
+				}
+				voiceIndex = 40;
+			} else {
+				chatX = 90;
+				chatY = 30;
+			}
+			chatW = 100;
+
+			seq_playWsaSyncDialogue(29, voiceIndex, 150, chatX, chatY, chatW, wsaObj, 12, -21, x, y);
+
+			break;
+
+		default:
+			break;
+	}
+
+	_seqFrameCounter++;
+	return 0;
 }
 
-void KyraEngine_v2::seq_waitForChatsToFinish() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_waitForChatsToFinish()");
-	
-	uint32 longest = 0;
-	
+int KyraEngine_v2::seq_finaleFuards(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	uint32 endtime = 0;
+	int chatX = 0;
+	int chatY = 0;
+	int chatW = 0;
+	int chatFirstFrame = 0;
+	int chatLastFrame = 0;
+	int textCol = 0;
+
+	uint16 voiceIndex = 0;
+
+	switch (frm) {
+		case -2:
+			seq_sequenceCommand(9);
+			endtime = _system->getMillis() + 480 * _tickLength;
+			seq_printCreditsString(70, 240, 20, _seqTextColorMap, 252);
+			seq_printCreditsString(71, 240, 30, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(72, 240, 40, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(73, 240, 50, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(74, 240, 60, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(75, 240, 70, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(101, 240, 80, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(102, 240, 90, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(87, 240, 100, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(88, 240, 110, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(89, 240, 120, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(90, 240, 130, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(91, 240, 140, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(92, 240, 150, _seqTextColorMap, _seqTextColor[0]);
+			delay(endtime - _system->getMillis());
+			_seqEndTime = 0;
+			break;
+
+		case 0:
+			for (int i = 0; i < 0x300; i++)
+				_screen->getPalette(0)[i] &= 0x3f;
+			_seqTextColor[1] = 0xCf;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColor[0] = _seqTextColorMap[1] = 0xfe;
+
+			_screen->setTextColorMap(_seqTextColorMap);
+			break;
+
+		case 6:
+			_seqFrameDelay = 20;
+
+			if (_flags.isTalkie) {
+				chatX = 82;
+				chatY = (_flags.lang == Common::FR_FRA || _flags.lang == Common::DE_DEU) ? 88 :100;
+				textCol = 143;
+				chatFirstFrame = 16;
+				chatLastFrame = 21;
+				voiceIndex = 41;
+			} else {
+				chatX = 62;
+				chatY = 100;
+				textCol = 137;
+				chatFirstFrame = 9;
+				chatLastFrame = 13;
+			}
+			chatW = 80;
+
+			seq_playWsaSyncDialogue(30, voiceIndex, 137, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+			if (_flags.isTalkie)
+				_seqWsaCurrentFrame = 8;
+			break;
+
+		case 9:
+		case 16:
+			if (_flags.isTalkie) {
+				if (frm == 16)
+					break;
+				chatX = 64;
+				textCol = 137;
+				chatFirstFrame = 9;
+				chatLastFrame = 13;
+				voiceIndex = 42;
+			} else {
+				if (frm == 9)
+					break;
+				chatX = 80;
+				textCol = 143;
+				chatFirstFrame = 16;
+				chatLastFrame = 21;
+			}
+			chatY = 100;
+			chatW = 100;
+
+			seq_playWsaSyncDialogue(31, voiceIndex, 143, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+			if (_flags.isTalkie)
+				_seqWsaCurrentFrame = 21;
+			break;
+
+		default:
+			break;
+	}
+
+	_seqFrameCounter++;
+	return 0;
+}
+
+int KyraEngine_v2::seq_finaleFirates(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	uint32 endtime = 0;
+	int chatX = 0;
+	int chatY = 0;
+	int chatW = 0;
+	uint16 voiceIndex = 0;
+
+	switch (frm) {
+		case -2:
+			_screen->copyPage(12, 2);
+			_screen->copyPage(2, 0);
+			_screen->updateScreen();
+			seq_sequenceCommand(9);
+			endtime = _system->getMillis() + 480 * _tickLength;
+			seq_printCreditsString(76, 240, 40, _seqTextColorMap, 252);
+			seq_printCreditsString(77, 240, 50, _seqTextColorMap, 252);
+			seq_printCreditsString(78, 240, 60, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(79, 240, 70, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(80, 240, 80, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(84, 240, 100, _seqTextColorMap, 252);
+			seq_printCreditsString(85, 240, 110, _seqTextColorMap, _seqTextColor[0]);
+			seq_printCreditsString(99, 240, 130, _seqTextColorMap, 252);
+			seq_printCreditsString(100, 240, 140, _seqTextColorMap, _seqTextColor[0]);
+			delay(endtime - _system->getMillis());
+			_seqEndTime = 0;
+			break;
+
+		case 0:
+			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
+			_screen->setTextColorMap(_seqTextColorMap);
+			break;
+
+		case 6:
+			seq_playTalkText(_flags.isTalkie ? 31 : 27);
+			break;
+
+		case 14:
+		case 15:
+			if (!((frm == 15 && !_flags.isTalkie) || (frm == 14 && _flags.isTalkie)))
+				break;
+
+			seq_playTalkText(_flags.isTalkie ? 31 : 27);
+
+			if (_flags.isTalkie) {
+				if (_flags.lang == Common::DE_DEU) {
+					chatX = 82;
+					chatY = 84;
+					chatW = 140;
+				} else {
+					chatX = 74;
+					chatY = (_flags.lang == Common::FR_FRA) ? 96: 108;
+					chatW = 80;
+				}
+				voiceIndex = 43;
+			} else {
+				chatX = 74;
+				chatY = 108;
+				chatW = 80;
+			}
+
+			seq_playWsaSyncDialogue(32, voiceIndex, 137, chatX, chatY, chatW, wsaObj, 14, 16, x, y);
+			break;
+
+		case 28:
+			seq_playTalkText(_flags.isTalkie ? 32 : 28);
+			break;
+
+		case 29:
+			seq_playTalkText(_flags.isTalkie ? 33 : 29);
+			break;
+
+		case 31:
+			if (_flags.isTalkie) {
+				chatY = (_flags.lang == Common::DE_DEU) ? 60 : 76;
+				voiceIndex = 44;
+			} else {
+				chatY = 76;
+			}
+			chatX = 90;
+			chatW = 80;
+
+			seq_playWsaSyncDialogue(33, voiceIndex, 143, chatX, chatY, chatW, wsaObj, 31, 34, x, y);
+			break;
+
+		case 35:
+			_seqFrameDelay = 300;
+			break;
+
+		default:
+			break;
+	}
+
+	_seqFrameCounter++;
+	return 0;
+}
+
+int KyraEngine_v2::seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	//uint32 endtime = 0;
+	int tmp = 0;
+
+	switch (frm) {
+		case -2:
+			_screen->setCurPage(2);
+			_screen->clearCurPage();
+			_screen->copyPage(2, 12);
+			_screen->copyPage(2, 0);
+			_screen->updateScreen();
+			_seqFrameCounter = 0;
+			seq_loadNestedSequence(0, kSequenceFiggle);
+			break;
+
+		case -1:
+			// if (_flags.isTalkie)
+			//	 seq_finaleActorScreen();
+			_seqSpecialFlag = true;
+			break;
+
+		case 0:
+			if (_seqFrameCounter == 1) {
+				_sound->playTrack(4);
+				_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+				memset(_seqTextColorMap, _seqTextColor[1], 16);
+				_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
+				_screen->setTextColorMap(_seqTextColorMap);
+			}
+			_seqFrameDelay = 10;
+			break;
+
+		case 1:
+			if (_seqFrameCounter < 20 && _seqSpecialFlag) {
+				_seqWsaCurrentFrame = 0;
+			} else {
+				_seqFrameDelay = 500;
+				seq_playTalkText(_flags.isTalkie ? 26 : 22);
+				if (_seqSpecialFlag) {
+					_seqFrameCounter = 3;
+					_seqSpecialFlag = false;
+				}
+			}
+			break;
+
+		case 2:
+			_seqFrameDelay = 20;
+			break;
+
+		case 3:
+			seq_playTalkText(_flags.isTalkie ? 27 : 23);
+			_seqFrameDelay = 500;
+			break;
+
+		case 4:
+			_seqFrameDelay = 10;
+			break;
+
+		case 5:
+			seq_playTalkText(_flags.isTalkie ? 27 : 23);
+			tmp = _seqFrameCounter / 6;
+			if (tmp == 2)
+				_seqFrameDelay = 7;
+			else if (tmp < 2)
+				_seqFrameDelay = 500;
+			break;
+
+		case 6:
+			_seqFrameDelay = 10;
+			tmp = _seqFrameCounter / 6;
+			if (tmp == 2)
+				_seqWsaCurrentFrame = 4;
+			else if (tmp < 2)
+				_seqWsaCurrentFrame = 0;
+			break;
+
+		case 7:
+			_seqFrameCounter = 0;
+			_seqFrameDelay = 5;
+			seq_playTalkText(_flags.isTalkie ? 26 : 22);
+			break;
+
+		case 11:
+			if (_seqFrameCounter < 8)
+				_seqWsaCurrentFrame = 8;
+			break;
+
+		default:
+			break;
+	}
+
+	_seqFrameCounter++;
+	return 0;
+}
+
+void KyraEngine_v2::seq_finaleActorScreen() {
+	_screen->loadBitmap("finale.cps", 3, 3, _screen->_currentPalette);
+	_screen->setFont(Screen::FID_GOLDFONT_FNT);
+
+	_sound->setSoundFileList(_dosSoundFileList, _dosSoundFileListSize);
+	_sound->loadSoundFile(3);
+	_sound->playTrack(3);
+
+	static const uint8 colormap[] = {0, 0, 102, 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	_screen->setTextColorMap(colormap);
+
+	// TODO
+
+	_sound->setSoundFileList(_dosSoundFileListFinale, 1);
+	_sound->loadSoundFile(0);
+}
+
+int KyraEngine_v2::seq_finaleFiggle(WSAMovieV2 *wsaObj, int x, int y, int frm) {
+	if (_seqFrameCounter == 10)
+		_seqEndTime = 0;
+	if (_seqFrameCounter == 10 || _seqFrameCounter == 5 || _seqFrameCounter == 7)
+		seq_playTalkText(_flags.isTalkie ? 45 : 30);
+
+	_seqFrameCounter++;
+	return frm;
+}
+
+uint32 KyraEngine_v2::seq_activeTextsTimeLeft() {
+	uint32 res = 0;
+
 	for (int i = 0; i < 10; i++) {
-		if (_activeChat[i].duration != -1) {
-			uint32 currChatTime = _activeChat[i].duration + _activeChat[i].startTime;
-			if ( currChatTime > longest)
-				longest = currChatTime;
+		uint32 chatend = (_activeText[i].duration + _activeText[i].startTime);
+		uint32 curtime = _system->getMillis();
+		if (_activeText[i].duration != -1 && chatend > curtime) {
+			chatend -= curtime;
+			if (res < chatend)
+				res = chatend;
 		}
 	}
 
+	return res;
+}
+
+void KyraEngine_v2::seq_processWSAs() {
+	for (int i = 0; i <  8; i++) {
+		if (_activeWSA[i].flags != -1) {
+			if (seq_processNextSubFrame(i))
+				seq_resetActiveWSA(i);
+		}
+	}
+}
+
+void KyraEngine_v2::seq_processText() {
+	Screen::FontId curFont = _screen->setFont(Screen::FID_GOLDFONT_FNT);
+	int curPage = _screen->setCurPage(2);
+	char outputStr[60];
+
+	for (int i = 0; i < 10; i++) {
+		if (_activeText[i].startTime + _activeText[i].duration > _system->getMillis() && _activeText[i].duration != -1) {
+
+			char *srcStr = seq_preprocessString(_sequenceStrings[_activeText[i].strIndex], _activeText[i].width);
+			int yPos = _activeText[i].y;
+
+			while (*srcStr) {
+				uint32 linePos = 0;
+				for (; *srcStr; linePos++) {
+					if (*srcStr == 0x0d) // Carriage return
+						break;
+					outputStr[linePos] = *srcStr;
+					srcStr++;
+				}
+                outputStr[linePos] = 0;
+				if (*srcStr == 0x0d)
+					srcStr++;
+
+				uint8 textColor = (_activeText[i].textcolor >= 0) ? _activeText[i].textcolor : _seqTextColor[0];
+				_screen->printText(outputStr, _activeText[i].x - (_screen->getTextWidth(outputStr) / 2), yPos, textColor, 0);
+				yPos += 10;
+			}
+		} else {
+			_activeText[i].duration = -1;
+		}
+	}
+
+	_screen->setCurPage(curPage);
+	_screen->setFont(curFont);
+}
+
+char *KyraEngine_v2::seq_preprocessString(const char *srcStr, int width) {
+	char *dstStr = _seqProcessedString;
+	int lineStart = 0;
+	int linePos = 0;
+
+	while (*srcStr) {
+		while (*srcStr && *srcStr != 0x20) // Space
+			dstStr[lineStart + linePos++] = *srcStr++;
+		dstStr[lineStart + linePos] = 0;
+
+		int len = _screen->getTextWidth(&dstStr[lineStart]);
+		if (width >= len && *srcStr) {
+			dstStr[lineStart + linePos++] = *srcStr++;
+		} else {
+			dstStr[lineStart + linePos] = 0x0d; // Carriage return
+			lineStart += linePos + 1;
+			linePos = 0;
+			if (*srcStr)
+				srcStr++;
+		}
+	}
+	dstStr[lineStart + linePos] = 0;
+
+	return strlen(_seqProcessedString) ? dstStr : 0;
+}
+
+void KyraEngine_v2::seq_sequenceCommand(int command) {
+	uint8 pal[768];
+
+	for (int i = 0; i < 8; i++)
+		seq_resetActiveWSA(i);
+
+	switch (command) {
+		case 0:
+			memset(pal, 0, 0x300);
+			_screen->fadePalette(pal, 16);
+			memcpy (_screen->getPalette(0), pal, 0x300);
+			memcpy (_screen->getPalette(1), pal, 0x300);
+			break;
+
+		case 1:
+			memset(pal, 0x3F, 0x300);
+			//////////TODO
+			//////////Unused anyway (at least by fm-towns intro/outro)
+
+			_screen->fadePalette(pal, 16);
+			memcpy (_screen->getPalette(0), pal, 0x300);
+			memcpy (_screen->getPalette(1), pal, 0x300);
+			break;
+
+		case 3:
+			_screen->copyPage(2, 0);
+			_screen->fadePalette(_screen->getPalette(0), 16);
+			memcpy (_screen->getPalette(1), _screen->getPalette(0), 0x300);
+			break;
+
+		case 4:
+			_screen->copyPage(2, 0);
+			_screen->fadePalette(_screen->getPalette(0), 36);
+			memcpy (_screen->getPalette(1), _screen->getPalette(0), 0x300);
+			break;
+
+		case 5:
+			_screen->copyPage(2, 0);
+			break;
+
+		case 6:
+			// UNUSED
+			// seq_loadBLD("library.bld");
+			break;
+
+		case 7:
+			// UNUSED
+			// seq_loadBLD("marco.bld");
+			break;
+
+		case 8:
+			memset(pal, 0, 0x300);
+			_screen->fadePalette(pal, 16);
+			memcpy (_screen->getPalette(0), pal, 0x300);
+			memcpy (_screen->getPalette(1), pal, 0x300);
+
+			delay(120 * _tickLength);
+			break;
+
+		case 9:
+			for (int i = 0; i < 0x100; i++) {
+				int pv = (_screen->getPalette(0)[3 * i] + _screen->getPalette(0)[3 * i + 1] + _screen->getPalette(0)[3 * i + 2]) / 3;
+				pal[3 * i] = pal[3 * i + 1] = pal[3 * i + 2] = pv & 0xff;
+			}
+
+			//int a = 0x100;
+			//int d = (0x800 << 5) - 0x100;
+			//pal[3 * i] = pal[3 * i + 1] = pal[3 * i + 2] = 0x3f;
+
+			_screen->fadePalette(pal, 64);
+			memcpy (_screen->getPalette(0), pal, 0x300);
+			memcpy (_screen->getPalette(1), pal, 0x300);
+			break;
+
+		default:
+			break;
+	}
+}
+
+void KyraEngine_v2::seq_cmpFadeFrame(const char * cmpFile) {
+	_screen->copyPage(10, 2);
+	_screen->copyPage(4, 10);
+	_screen->clearPage(6);
+	_screen->loadBitmap(cmpFile, 6, 6, 0);
+	_screen->copyPage(12, 4);
+
+	for (int i = 0; i < 3; i++) {
+		uint32 endtime = _system->getMillis() + 4 * _tickLength;
+		_screen->cmpFadeFrameStep(4, 320, 200, 0, 0, 2, 320, 200, 0, 0, 320, 200, 6);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+		_screen->updateScreen();
+        delayUntil(endtime);
+	}
+
+	_screen->copyPage(4, 0);
+	_screen->updateScreen();
+	_screen->copyPage(4, 2);
+	_screen->copyPage(4, 6);
+	_screen->copyPage(10, 4);
+}
+
+void KyraEngine_v2::seq_playTalkText(uint8 chatNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_playIntroChat(%i)", chatNum);
+
+	assert(chatNum < _sequenceSoundListSize);
+
+	if (chatNum < 12)
+		seq_setTextEntry(chatNum, 160, 168, _sequenceStringsDuration[chatNum], 160);
+
+	_sound->voicePlay(_sequenceSoundList[chatNum]);
+}
+
+void KyraEngine_v2::seq_waitForTextsTimeout() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_waitForTextsTimeout()");
+
+	uint32 longest = seq_activeTextsTimeLeft() + _system->getMillis();
 	uint32 now = _system->getMillis();
 	if (longest > now)
 		delay(longest - now);
+
+	seq_resetAllTextEntries();
 }
 
-void KyraEngine_v2::seq_resetAllChatEntries() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_resetAllChatEntries()");
-	
+void KyraEngine_v2::seq_resetAllTextEntries() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_resetAllTextEntries()");
 	for (int i = 0; i < 10; i++)
-		_activeChat[i].duration = -1;
+		_activeText[i].duration = -1;
 }
 
-void KyraEngine_v2::seq_setChatEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 unk1) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_setChatEntry(%i, %i, %i, %i, %i)", strIndex, posX, posY, duration, unk1);
-	
+int KyraEngine_v2::seq_setTextEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 width) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_setTextEntry(%i, %i, %i, %i, %i)", strIndex, posX, posY, duration, width);
+
 	for (int i = 0; i < 10; i++) {
-		if (_activeChat[i].duration != -1)
-			continue;
+		if (_activeText[i].duration != -1) {
+			if (i < 9)
+				continue;
+			else
+				return -1;
+		}
 
-		_activeChat[i].strIndex = strIndex;
-		_activeChat[i].x = posX;
-		_activeChat[i].y = posY;
-		_activeChat[i].duration = duration * _tickLength;
-		_activeChat[i].field_8 = unk1;
-		_activeChat[i].startTime = _system->getMillis();
+		_activeText[i].strIndex = strIndex;
+		_activeText[i].x = posX;
+		_activeText[i].y = posY;
+		_activeText[i].duration = duration * _tickLength;
+		_activeText[i].width = width;
+		_activeText[i].startTime = _system->getMillis();
+		_activeText[i].textcolor = -1;
 
+		return i;
+	}
+	return -1;
+}
+
+void KyraEngine_v2::seq_loadNestedSequence(int wsaNum, int seqNum) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_loadNestedSequence(%i, %i)", wsaNum, seqNum);
+
+	if (_activeWSA[wsaNum].flags != -1)
 		return;
+
+	NestedSequence s = _nSequences[seqNum];
+
+	if (!_activeWSA[wsaNum].movie) {
+		_activeWSA[wsaNum].movie = new WSAMovieV2(this);
+		assert(_activeWSA[wsaNum].movie);
+	}
+
+	if (_activeWSA[wsaNum].movie->opened())
+		_activeWSA[wsaNum].movie->close();
+
+	_activeWSA[wsaNum].movie->open(s.wsaFile, 0, 0);
+
+	if (!_activeWSA[wsaNum].movie->opened()) {
+		delete _activeWSA[wsaNum].movie;
+		_activeWSA[wsaNum].movie = 0;
+		return;
+	}
+
+	_activeWSA[wsaNum].endFrame = s.endFrame;
+	_activeWSA[wsaNum].startFrame = _activeWSA[wsaNum].currentFrame = s.startframe;
+	_activeWSA[wsaNum].frameDelay = s.frameDelay;
+	_activeWSA[wsaNum].movie->setX(0);
+	_activeWSA[wsaNum].movie->setY(0);
+	_activeWSA[wsaNum].movie->setDrawPage(_screen->_curPage);
+	_activeWSA[wsaNum].callback = s.callback;
+	_activeWSA[wsaNum].control = s.wsaControl;
+
+	_activeWSA[wsaNum].flags = s.flags | 1;
+	_activeWSA[wsaNum].x = s.x;
+	_activeWSA[wsaNum].y = s.y;
+	_activeWSA[wsaNum].startupCommand = s.startupCommand;
+	_activeWSA[wsaNum].finalCommand = s.finalCommand;
+	_activeWSA[wsaNum].lastFrame = 0xffff;
+
+	seq_nestedSequenceFrame(s.startupCommand, wsaNum);
+
+	if (!s.startupCommand)
+		seq_processNextSubFrame(wsaNum);
+
+	_activeWSA[wsaNum].nextFrame = _system->getMillis();
+}
+
+void KyraEngine_v2::seq_nestedSequenceFrame(int command, int wsaNum) {
+	int xa = 0, ya = 0;
+	command--;
+	if (!_activeWSA[wsaNum].movie)
+		return;
+
+	switch (command) {
+		case 0:
+			_activeWSA[wsaNum].movie->setDrawPage(8);
+			xa = -_activeWSA[wsaNum].movie->xAdd();
+			ya = -_activeWSA[wsaNum].movie->yAdd();
+			_activeWSA[wsaNum].movie->setX(xa);
+			_activeWSA[wsaNum].movie->setY(ya);
+			_activeWSA[wsaNum].movie->displayFrame(0, 0);
+			_activeWSA[wsaNum].movie->setX(0);
+			_activeWSA[wsaNum].movie->setY(0);
+			seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
+								_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 1, 2);
+			break;
+
+		case 1:
+			_activeWSA[wsaNum].movie->setDrawPage(8);
+			xa = -_activeWSA[wsaNum].movie->xAdd();
+			ya = -_activeWSA[wsaNum].movie->yAdd();
+			_activeWSA[wsaNum].movie->setX(xa);
+			_activeWSA[wsaNum].movie->setY(ya);
+			_activeWSA[wsaNum].movie->displayFrame(0, 0);
+			_activeWSA[wsaNum].movie->setX(0);
+			_activeWSA[wsaNum].movie->setY(0);
+			seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
+								_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 1, 1);
+			break;
+
+		case 2:
+			seq_waitForTextsTimeout();
+			_activeWSA[wsaNum].movie->setDrawPage(8);
+			xa = -_activeWSA[wsaNum].movie->xAdd();
+			ya = -_activeWSA[wsaNum].movie->yAdd();
+			_activeWSA[wsaNum].movie->setX(xa);
+			_activeWSA[wsaNum].movie->setY(ya);
+			_activeWSA[wsaNum].movie->displayFrame(0x15, 0);
+			_activeWSA[wsaNum].movie->setX(0);
+			_activeWSA[wsaNum].movie->setY(0);
+			seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
+						     	_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 0, 2);
+			break;
+
+		case 3:
+			_screen->copyPage(2, 10);
+			_activeWSA[wsaNum].movie->setDrawPage(2);
+			_activeWSA[wsaNum].movie->setX(0);
+			_activeWSA[wsaNum].movie->setY(0);
+			_activeWSA[wsaNum].movie->displayFrame(0, 0);
+			_screen->copyPage(2, 12);
+			seq_cmpFadeFrame("scene2.cmp");
+			break;
+
+		case 4:
+			_screen->copyPage(2, 10);
+			_activeWSA[wsaNum].movie->setDrawPage(2);
+			_activeWSA[wsaNum].movie->setX(0);
+			_activeWSA[wsaNum].movie->setY(0);
+			_activeWSA[wsaNum].movie->displayFrame(0, 0);
+			_screen->copyPage(2, 12);
+			seq_cmpFadeFrame("scene3.cmp");
+			break;
+
+		default:
+			break;
 	}
 }
 
-void KyraEngine_v2::seq_showChats() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_showChats()");
-	
-	uint32 now = _system->getMillis();
+void KyraEngine_v2::seq_animatedSubFrame(int srcPage, int dstPage, int delaytime, int steps,
+                                         int x, int y, int w, int h, int openClose, int directionFlags) {
 
-	for (int i = 0; i < 10; i++) {
-		if (_activeChat[i].duration != -1) {
-			if ((_activeChat[i].startTime + (uint32)_activeChat[i].duration) > now) {
-				assert(_activeChat[i].strIndex < _introStringsSize);
-				
-				_text->printIntroTextMessage(_introStrings[_activeChat[i].strIndex], _activeChat[i].x, _activeChat[i].y + 12,
-					0xfe, 150 /*_activeChat[i].field_8*/, 0x0, 0, Screen::FID_GOLDFONT_FNT);
-			} else
-				_activeChat[i].duration = -1;
+	if (openClose) {
+		for (int i = 1; i < steps; i++) {
+			uint32 endtime = _system->getMillis() + delaytime * _tickLength;
+
+			int w2 = (((w * 256) / steps) * i) / 256;
+			int h2 = (((h * 256) / steps) * i) / 256;
+
+			int ym = (directionFlags & 2) ? (h - h2) : 0;
+			int xm = (directionFlags & 1) ? (w - w2) : 0;
+
+			_screen->wsaFrameAnimationStep(0, 0, x + xm, y + ym, w, h, w2, h2, srcPage, dstPage, 0);
+
+			_screen->copyPage(dstPage, 6);
+			_screen->copyPage(dstPage, 0);
+			_screen->updateScreen();
+
+			_screen->copyPage(12, dstPage);
+			delayUntil(endtime);
+		}
+
+		_screen->wsaFrameAnimationStep(0, 0, x, y, w, h, w, h, srcPage, dstPage, 0);
+		_screen->copyPage(dstPage, 6);
+		_screen->copyPage(dstPage, 0);
+		_screen->updateScreen();
+	} else {
+		_screen->copyPage(12, dstPage);
+		for (int i = steps; i; i--) {
+			uint32 endtime = _system->getMillis() + delaytime * _tickLength;
+
+			int w2 = (((w * 256) / steps) * i) / 256;
+			int h2 = (((h * 256) / steps) * i) / 256;
+
+			int ym = (directionFlags & 2) ? (h - h2) : 0;
+			int xm = (directionFlags & 1) ? (w - w2) : 0;
+
+			_screen->wsaFrameAnimationStep(0, 0, x + xm, y + ym, w, h, w2, h2, srcPage, dstPage, 0);
+
+			_screen->copyPage(dstPage, 6);
+			_screen->copyPage(dstPage, 0);
+			_screen->updateScreen();
+
+			_screen->copyPage(12, dstPage);
+			delayUntil(endtime);
 		}
 	}
 }
 
-void KyraEngine_v2::seq_playWSAs() {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_playWSAs()");
-	
-	uint32 currTime = _system->getMillis();
+void KyraEngine_v2::seq_resetActiveWSA(int wsaNum) {
+	if (_activeWSA[wsaNum].flags == -1)
+		return;
 
-	for (int i = 0; i < 8; i++) {
-			int currentFrame, frameDelay;
-
-			if (_activeWSA[i].control) {
-				int8 nextFrame = _activeWSA[i].control[_activeWSA[i].currentFrame].frameIndex;
-				if (nextFrame == -1)
-					continue;
-				
-				currentFrame = nextFrame;
-				frameDelay = _activeWSA[i].control[_activeWSA[i].currentFrame].frameDelay;				
-			} else {
-				if (_activeWSA[i].currentFrame >= _activeWSA[i].endFrame)
-					continue;				
-
-				currentFrame = _activeWSA[i].currentFrame;
-				frameDelay = _activeWSA[i].frameDelay;
-			}
-
-			_activeWSA[i].movie->displayFrame(currentFrame);
-
-			if (_activeWSA[i].movie && currTime >= _activeWSA[i].nextFrame) {
-				if (_activeWSA[i].callback != 0)
-					(*this.*_activeWSA[i].callback)(currentFrame);
-				_activeWSA[i].currentFrame++;
-				_activeWSA[i].nextFrame = currTime + frameDelay * _tickLength;
-			}
-	}
-}
-
-void KyraEngine_v2::seq_loadWSA(int wsaNum, const char *filename, int frameDelay,
-								void (KyraEngine_v2::*callback)(int), const SequenceControl *control) {
-
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_loadWSA(%i, %s, %i, %i)", wsaNum, filename, frameDelay, callback ? true : false);
-	
-	_activeWSA[wsaNum].movie = new WSAMovieV2(this);
-	assert(_activeWSA[wsaNum].movie);
-	_activeWSA[wsaNum].endFrame = _activeWSA[wsaNum].movie->open(filename, 0, _screen->_currentPalette);
-	_activeWSA[wsaNum].movie->flagOldOff(true);
-	assert(_activeWSA[wsaNum].movie->opened());
-	_activeWSA[wsaNum].currentFrame = 0;
-	_activeWSA[wsaNum].frameDelay = frameDelay;
-	_activeWSA[wsaNum].nextFrame = _system->getMillis();
-	_activeWSA[wsaNum].movie->setX(0);
-	_activeWSA[wsaNum].movie->setY(0);	
-	_activeWSA[wsaNum].movie->setDrawPage(_screen->_curPage);
-	_activeWSA[wsaNum].callback = callback;	
-	_activeWSA[wsaNum].control = control;
+	_activeWSA[wsaNum].flags = -1;
+	seq_nestedSequenceFrame(_activeWSA[wsaNum].finalCommand, wsaNum);
+	_activeWSA[wsaNum].movie->close();
 }
 
 void KyraEngine_v2::seq_unloadWSA(int wsaNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_unloadWSA(%i)", wsaNum);
-	
 	if (_activeWSA[wsaNum].movie) {
 		_activeWSA[wsaNum].movie->close();
 		delete _activeWSA[wsaNum].movie;
 		_activeWSA[wsaNum].movie = 0;
 	}
 }
+
+bool KyraEngine_v2::seq_processNextSubFrame(int wsaNum) {
+	uint32 currentFrame = _activeWSA[wsaNum].currentFrame;
+	uint32 currentTime = _system->getMillis();
+
+	if (_activeWSA[wsaNum].callback && currentFrame != _activeWSA[wsaNum].lastFrame) {
+		_activeWSA[wsaNum].lastFrame = currentFrame;
+		currentFrame = (this->*_activeWSA[wsaNum].callback)(_activeWSA[wsaNum].movie, _activeWSA[wsaNum].x, _activeWSA[wsaNum].y, currentFrame);
+	}
+
+	if (_activeWSA[wsaNum].movie) {
+		_activeWSA[wsaNum].movie->setDrawPage(2);
+		_activeWSA[wsaNum].movie->setX(_activeWSA[wsaNum].x);
+		_activeWSA[wsaNum].movie->setY(_activeWSA[wsaNum].y);
+
+		if (_activeWSA[wsaNum].flags & 0x20) {
+			_activeWSA[wsaNum].movie->displayFrame(_activeWSA[wsaNum].control[currentFrame].frameIndex, 0x4000);
+			_activeWSA[wsaNum].frameDelay = _activeWSA[wsaNum].control[currentFrame].frameDelay;
+		} else {
+			_activeWSA[wsaNum].movie->displayFrame(currentFrame % _activeWSA[wsaNum].movie->frames(), 0x4000);
+		}
+	}
+
+	if (_activeWSA[wsaNum].flags & 0x10) {
+		currentFrame = (currentTime - _activeWSA[wsaNum].nextFrame) / (_activeWSA[wsaNum].frameDelay * _tickLength);
+	} else {
+		if (((int32)(currentTime - _activeWSA[wsaNum].nextFrame) / (int32)(_activeWSA[wsaNum].frameDelay * _tickLength)) > 0) {
+			currentFrame++;
+			_activeWSA[wsaNum].nextFrame = currentTime;
+		}
+	}
+
+	bool res = false;
+
+	if (currentFrame >= _activeWSA[wsaNum].endFrame) {
+		int sw = ((_activeWSA[wsaNum].flags & 0x1e) - 2);
+		switch (sw) {
+			case 0:
+				res = true;
+				currentFrame = _activeWSA[wsaNum].endFrame;
+				_screen->copyPage(2, 12);
+				break;
+
+			case 6:
+			case 8:
+				currentFrame = _activeWSA[wsaNum].endFrame - 1;
+				break;
+
+			case 2:
+			case 10:
+				currentFrame = _activeWSA[wsaNum].startFrame;
+				break;
+
+			default:
+				currentFrame = _activeWSA[wsaNum].endFrame - 1;
+				res = true;
+				break;
+		}
+	}
+
+	_activeWSA[wsaNum].currentFrame = currentFrame & 0xffff;
+	return res;
+}
+
+void KyraEngine_v2::seq_printCreditsString(uint16 strIndex, int x, int y, uint8 * colorMap, uint8 textcolor) {
+	uint8 colormap[16];
+
+	memset(&_screen->getPalette(0)[0x2fa], 0x3f, 6);
+	_screen->getPalette(0)[0x2f6] = 0x3f;
+	_screen->getPalette(0)[0x2f5] = 0x20;
+	_screen->getPalette(0)[0x2f4] = 0x30;
+	colormap[0] = colorMap[0];
+	colormap[1] = 0xfd;
+	memcpy(&colormap[2], &colorMap[2], 14);
+	uint8 seqTextColor0 = _seqTextColor[0];
+
+	_seqTextColor[0] = 0xfd;
+	_screen->setTextColorMap(colormap);
+	seq_resetAllTextEntries();
+	seq_setTextEntry(strIndex, x, y, 0x80, 0x78);
+	seq_processText();
+	_screen->copyPage(2, 6);
+	_screen->copyPage(2, 0);
+	_screen->updateScreen();
+	_screen->getPalette(0)[0x2f7] = _screen->getPalette(0)[textcolor * 3];
+	_screen->getPalette(0)[0x2f8] = _screen->getPalette(0)[textcolor * 3 + 1];
+	_screen->getPalette(0)[0x2f9] = _screen->getPalette(0)[textcolor * 3 + 2];
+	_screen->fadePalette(_screen->getPalette(0), 0x18);
+
+	_seqTextColor[0] = textcolor;
+	_screen->setTextColorMap(colorMap);
+	seq_resetAllTextEntries();
+	seq_setTextEntry(strIndex, x, y, 0x80, 0x78);
+	seq_processText();
+	_screen->copyPage(2, 6);
+	_screen->copyPage(2, 0);
+	_screen->updateScreen();
+	_screen->getPalette(0)[0x2f7] = _screen->getPalette(0)[0x2f8] = _screen->getPalette(0)[0x2f9] = 0;
+	_screen->fadePalette(_screen->getPalette(0), 1);
+	_screen->copyPage(2, 12);
+	seq_resetAllTextEntries();
+
+	_seqTextColor[0] = seqTextColor0;
+}
+
+void KyraEngine_v2::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width, WSAMovieV2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos) {
+	int dur = strlen(_sequenceStrings[strIndex]) * (_flags.isTalkie ? 7 : 15);
+	int entry = seq_setTextEntry(strIndex, x, y, dur, width);
+	_activeText[entry].textcolor = textColor;
+	uint32 chatTimeout = _system->getMillis() + dur * _tickLength;
+	int curframe = firstframe;
+
+	if (vocIndex)
+		seq_playTalkText(vocIndex);
+
+	while (_system->getMillis() < chatTimeout) {
+		if (lastframe < 0) {
+			int t = ABS(lastframe);
+			if (t < curframe)
+				curframe = t;
+		}
+
+		if (ABS(lastframe) < curframe)
+			curframe = firstframe;
+
+		uint32 frameTimeout = _seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
+		if (wsa) {
+			wsa->setDrawPage(2);
+			wsa->setX(wsaXpos);
+			wsa->setY(wsaYpos);
+			wsa->displayFrame(curframe % wsa->frames(), 0);
+		}
+
+		_screen->copyPage(2, 12);
+
+		seq_processText();
+
+		uint32 tm = _system->getMillis();
+		if (frameTimeout > tm && chatTimeout > tm)
+			delay(MIN(frameTimeout - tm, chatTimeout - tm));
+
+        _screen->copyPage(2, 6);
+		_screen->copyPage(2, 0);
+		_screen->updateScreen();
+		curframe++;
+	}
+
+
+
+	if (lastframe < 0) {
+		int t = ABS(lastframe);
+		if (t < curframe)
+			curframe = t;
+	}
+
+	if (curframe == firstframe)
+		curframe++;
+
+	_seqWsaCurrentFrame = curframe;
+}
+
+void KyraEngine_v2::seq_init() {
+	_seqProcessedString = new char[200];
+	_seqWsa = new WSAMovieV2(this);
+	_activeWSA = new ActiveWSA[8];
+	_activeText = new ActiveText[10];
+}
+
+void KyraEngine_v2::seq_uninit() {
+	delete [] _seqProcessedString;
+	_seqProcessedString = NULL;
+
+	delete [] _activeWSA;
+	_activeWSA = NULL;
+
+	delete [] _activeText;
+	_activeText = NULL;
+
+	delete _seqWsa;
+	_seqWsa = NULL;
+}
+
+#pragma mark -
+#pragma mark - Ingame sequences
+#pragma mark -
+
+void KyraEngine_v2::seq_makeBookOrCauldronAppear(int type) {
+	_screen->hideMouse();
+	showMessage(0, 0xCF);
+	
+	if (type == 1) {
+		seq_makeBookAppear();
+	} else if (type == 2) {
+		loadInvWsa("CAULDRON.WSA", 1, 6, 0, -2, -2, 1);
+	}
+
+	_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _screenBuffer);
+	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
+	
+	static int16 bookCauldronRects[] = {
+		0x46, 0x90, 0x7F, 0x2B,	// unknown rect (maybe unused?)
+		0xCE, 0x90, 0x2C, 0x2C,	// book rect
+		0xFA, 0x90, 0x46, 0x2C	// cauldron rect
+	};
+
+	int x = bookCauldronRects[type*4+0];
+	int y = bookCauldronRects[type*4+1];
+	int w = bookCauldronRects[type*4+2];
+	int h = bookCauldronRects[type*4+3];
+	_screen->copyRegion(x, y, x, y, w, h, 2, 0, Screen::CR_NO_P_CHECK);
+
+	_screen->copyBlockToPage(2, 0, 0, 320, 200, _screenBuffer);
+
+	if (type == 2) {
+		int32 countdown = _rnd.getRandomNumberRng(45, 80);
+		_timer->setCountdown(2, countdown * 60);
+	}
+
+	_screen->showMouse();
+}
+
+void KyraEngine_v2::seq_makeBookAppear() {
+	_screen->hideMouse();
+	
+	displayInvWsaLastFrame();
+	
+	showMessage(0, 0xCF);
+
+	loadInvWsa("BOOK2.WSA", 0, 4, 2, -1, -1, 0);
+	
+	uint8 *rect = new uint8[_screen->getRectSize(_invWsa.w, _invWsa.h)];
+	assert(rect);
+	
+	_screen->copyRegionToBuffer(_invWsa.page, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
+
+	_invWsa.running = false;
+	snd_playSoundEffect(0xAF);
+
+	_invWsa.wsa->setX(0);
+	_invWsa.wsa->setY(0);
+	_invWsa.wsa->setDrawPage(_invWsa.page);
+
+	while (true) {
+		_invWsa.timer = _system->getMillis() + _invWsa.delay * _tickLength;
+		
+		_screen->copyBlockToPage(_invWsa.page, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
+
+		_invWsa.wsa->displayFrame(_invWsa.curFrame, 0x4000, 0, 0);
+
+		if (_invWsa.page)
+			_screen->copyRegion(_invWsa.x, _invWsa.y, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, _invWsa.page, 0, Screen::CR_NO_P_CHECK);
+		
+		++_invWsa.curFrame;
+
+		if (_invWsa.curFrame >= _invWsa.lastFrame && !_quitFlag)
+			break;
+		
+		switch (_invWsa.curFrame) {
+		case 39:
+			snd_playSoundEffect(0xCA);
+			break;
+
+		case 50:
+			snd_playSoundEffect(0x6A);
+			break;
+
+		case 72:
+			snd_playSoundEffect(0xCB);
+			break;
+
+		case 85:
+			snd_playSoundEffect(0x38);
+			break;
+
+		default:
+			break;
+		}
+
+		do {
+			update();
+		} while (_invWsa.timer > _system->getMillis() && !_skipFlag);
+	}
+
+	closeInvWsa();
+	delete [] rect;
+	_invWsa.running = false;
+
+	_screen->showMouse();
+}
+
+// static res
+// TODO: move to staticres.cpp
+
+const Sequence KyraEngine_v2::_sequences_PC[] = {
+	// flags, wsaFile, cpsFile, startupCommand, finalCommand, stringIndex1, stringIndex2,
+	// startFrame, numFrames, frameDelay, xPos, yPos, callback, duration
+	{ 2, 0, "virgin.cps",   4, 0, -1, -1, 0, 1,  100,  0, 0, 0,                                 30 },
+	{ 1, "westwood.wsa", 0, 4, 0, -1, -1, 0, 18, 6,   0, 0, &KyraEngine_v2::seq_introWestwood, 160 },
+	{ 1, "title.wsa", 0,    4, 0, -1, -1, 0, 26, 6,   0, 0, &KyraEngine_v2::seq_introTitle,    10 },
+	{ 2, 0, "over.cps",     4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introOverview, 30 },
+	{ 2, 0, "library.cps",  4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introLibrary,  30 },
+	{ 2, 0, "hand.cps",     4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introHand,     90 },
+	{ 1, "point.wsa", 0,    4, 8, -1, -1, 0, 38, 7,    0, 0, &KyraEngine_v2::seq_introPoint,    200 },
+	{ 1, "zanfaun.wsa", 0,  4, 0, -1, -1, 0, 51, 16,   0, 0, &KyraEngine_v2::seq_introZanfaun,  240 },
+
+	{ 1, "funters.wsa", 0,	4, 0, -1, -1, 0, 27, 12,   0, 0, &KyraEngine_v2::seq_finaleFunters, 30 },
+	{ 1, "ferb.wsa", 0,		4, 0, -1, -1, 0, 27, 16,   0, 0, &KyraEngine_v2::seq_finaleFerb,	30 },
+	{ 1, "fish.wsa", 0,		4, 0, -1, -1, 0, 56, 12,   0, 0, &KyraEngine_v2::seq_finaleFish,	30 },
+	{ 1, "fheep.wsa", 0,	4, 0, -1, -1, 0, 11, 12,   0, 0, &KyraEngine_v2::seq_finaleFheep,	30 },
+	{ 1, "farmer.wsa", 0,	4, 0, -1, -1, 0, 22, 12,   0, 0, &KyraEngine_v2::seq_finaleFarmer,	100 },
+	{ 1, "fuards.wsa", 0,	4, 0, -1, -1, 0, 24, 14,   0, 0, &KyraEngine_v2::seq_finaleFuards,	30 },
+	{ 1, "firates.wsa", 0,	4, 0, -1, -1, 0, 37, 12,   0, 0, &KyraEngine_v2::seq_finaleFirates,	30 },
+	{ 1, "frash.wsa", 0,	4, 0, -1, -1, 0, 12, 10,   0, 0, &KyraEngine_v2::seq_finaleFrash,	340 }
+};
+
+const Sequence KyraEngine_v2::_sequences_TOWNS[] = {
+	// flags, wsaFile, cpsFile, startupCommand, finalCommand, stringIndex1, stringIndex2,
+	// startFrame, numFrames, frameDelay, xPos, yPos, callback, duration
+	{ 2, 0, "virgin.cps",   4, 0, -1, -1, 0, 1,  100,  0, 0, 0,                                 30 },
+	{ 1, "westwood.wsa", 0, 4, 0, -1, -1, 0, 18, 12,   0, 0, &KyraEngine_v2::seq_introWestwood, 160 },
+	{ 1, "title.wsa", 0,    4, 0, -1, -1, 0, 26, 12,   0, 0, &KyraEngine_v2::seq_introTitle,    10 },
+	{ 2, 0, "over.cps",     4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introOverview, 30 },
+	{ 2, 0, "library.cps",  4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introLibrary,  30 },
+	{ 2, 0, "hand.cps",     4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introHand,     90 },
+	{ 1, "point.wsa", 0,    4, 8, -1, -1, 0, 38, 7,    0, 0, &KyraEngine_v2::seq_introPoint,    200 },
+	{ 1, "zanfaun.wsa", 0,  4, 0, -1, -1, 0, 51, 16,   0, 0, &KyraEngine_v2::seq_introZanfaun,  240 },
+
+	{ 1, "funters.wsa", 0,	4, 0, -1, -1, 0, 27, 12,   0, 0, &KyraEngine_v2::seq_finaleFunters, 30 },
+	{ 1, "ferb.wsa", 0,		4, 0, -1, -1, 0, 27, 16,   0, 0, &KyraEngine_v2::seq_finaleFerb,	30 },
+	{ 1, "fish.wsa", 0,		4, 0, -1, -1, 0, 56, 12,   0, 0, &KyraEngine_v2::seq_finaleFish,	30 },
+	{ 1, "fheep.wsa", 0,	4, 0, -1, -1, 0, 11, 12,   0, 0, &KyraEngine_v2::seq_finaleFheep,	30 },
+	{ 1, "farmer.wsa", 0,	4, 0, -1, -1, 0, 22, 12,   0, 0, &KyraEngine_v2::seq_finaleFarmer,	100 },
+	{ 1, "fuards.wsa", 0,	4, 0, -1, -1, 0, 24, 14,   0, 0, &KyraEngine_v2::seq_finaleFuards,	30 },
+	{ 1, "firates.wsa", 0,	4, 0, -1, -1, 0, 37, 12,   0, 0, &KyraEngine_v2::seq_finaleFirates,	30 },
+	{ 1, "frash.wsa", 0,	4, 0, -1, -1, 0, 12, 10,   0, 0, &KyraEngine_v2::seq_finaleFrash,	340 }
+};
+
+const NestedSequence KyraEngine_v2::_nSequences[] = {
+	// flags, wsaFile, startframe, endFrame, frameDelay, callback, x, y, wsaControl, startupCommand, finalCommand, unk1;
+	{ 0x0C, "figgle.wsa",  0, 3,   60, &KyraEngine_v2::seq_finaleFiggle,  0, 0, 0,                  0, 0, 0 },
+
+	{ 8,    "over1.wsa",   0, 10,  10, &KyraEngine_v2::seq_introOver1,    0, 0, 0,                  0, 0, 0 },
+	{ 8,    "over2.wsa",   0, 11,  9,  &KyraEngine_v2::seq_introOver2,    0, 0, 0,                  0, 0, 0 },
+	{ 8,    "forest.wsa",  0, 22,  6,  &KyraEngine_v2::seq_introForest,   0, 0, 0,                  1, 3, 0 },
+	{ 8,    "dragon.wsa",  0, 11,  6,  &KyraEngine_v2::seq_introDragon,   0, 0, 0,                  2, 0, 0 },
+	{ 2,    "darm.wsa",    0, 19,  9,  &KyraEngine_v2::seq_introDarm,     0, 0, 0,                  4, 0, 0 },
+	{ 2,    "library.wsa", 0, 33,  9,  &KyraEngine_v2::seq_introLibrary2, 0, 0, 0,                  4, 0, 0 },
+	{ 0x2A, "library.wsa", 0, 19,  9,  &KyraEngine_v2::seq_introLibrary2, 0, 0, _wsaControlLibrary, 0, 0, 0 },
+	{ 0x0A, "marco.wsa",   0, 37,  9,  &KyraEngine_v2::seq_introMarco,    0, 0, 0,                  4, 0, 0 },
+	{ 2,    "hand1a.wsa",  0, 34,  9,  &KyraEngine_v2::seq_introHand1a,   0, 0, 0,                  0, 0, 0 },
+	{ 0x2A, "hand1b.wsa",  0, 16,  9,  &KyraEngine_v2::seq_introHand1b,   0, 0, _wsaControlHand1b,  0, 0, 0 },
+	{ 0x2A, "hand1c.wsa",  0, 9,   9,  &KyraEngine_v2::seq_introHand1c,   0, 0, _wsaControlHand1c,  0, 0, 0 },
+	{ 0x2C, "hand2.wsa",   0, 2,   9,  &KyraEngine_v2::seq_introHand2,    0, 0, _wsaControlHand2,   5, 0, 0 },
+	{ 0x2C, "hand3.wsa",   0, 4,   9,  &KyraEngine_v2::seq_introHand3,    0, 0, _wsaControlHand3,   5, 0, 0 },
+	{ 0x2C, "hand4.wsa",   0, 8,   9,  0,                                 0, 0, _wsaControlHand4,   5, 0, 0 }
+};
+
+
+const SequenceControl KyraEngine_v2::_wsaControlLibrary[] = {
+	{0x00, 0x0A}, {0x01, 0x0A}, {0x02, 0x0A}, {0x03, 0x0A}, {0x04, 0x0A}, {0x05, 0x0A},
+	{0x06, 0x0A}, {0x07, 0x0A}, {0x08, 0x0A}, {0x09, 0x0A}, {0x08, 0x0A}, {0x07, 0x0A},
+	{0x06, 0x0A}, {0x05, 0x28}, {0x04, 0x0A}, {0x03, 0x0A}, {0x02, 0x0A}, {0x01, 0x0A}
+};
+
+const SequenceControl KyraEngine_v2::_wsaControlHand1b[] = {
+	{0x00, 0x06}, {0x01, 0x06}, {0x02, 0x06}, {0x03, 0x06}, {0x04, 0x06}, {0x05, 0x06},
+	{0x06, 0x06}, {0x07, 0x06}, {0x08, 0x06}, {0x09, 0x06}, {0x0A, 0x06}, {0x0B, 0x06},
+	{0x0B, 0x0C}, {0x0C, 0x0C}, {0x0D, 0x0C}, {0x0C, 0x0C}, {0x0B, 0x0C}
+};
+
+const SequenceControl KyraEngine_v2::_wsaControlHand1c[] = {
+	{0x00, 0x06}, {0x01, 0x06}, {0x02, 0x06}, {0x03, 0x06}, {0x04, 0x06}, {0x03, 0x06},
+	{0x04, 0x06}, {0x05, 0x40}, {0x05, 0x06}
+};
+
+const SequenceControl KyraEngine_v2::_wsaControlHand2[] = {
+	{0x00, 0x06}, {0x01, 0x06}, {0x00, 0x06}, {0x01, 0x06}, {0x00, 0x06}, {0x01, 0x06},
+	{0x00, 0x06}, {0x01, 0x06}, {0x00, 0x06}, {0x01, 0x06}, {0x00, 0x06}, {0x01, 0x06},
+	{0x00, 0x06}, {0x01, 0x06}, {0x00, 0x06}, {0x01, 0x06}
+};
+
+const SequenceControl KyraEngine_v2::_wsaControlHand3[] = {
+	{0x00, 0x06}, {0x01, 0x06}, {0x02, 0x06}, {0x01, 0x06}, {0x00, 0x01}
+};
+
+const SequenceControl KyraEngine_v2::_wsaControlHand4[] = {
+	{0x00, 0x06}, {0x01, 0x06}, {0x02, 0x06}, {0x03, 0x06}, {0x04, 0x06},
+	{0x03, 0x06}, {0x02, 0x06}, {0x01, 0x06}
+};
 
 } // end of namespace Kyra
 

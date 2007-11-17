@@ -30,7 +30,6 @@
 #include "saga/console.h"
 
 #include "saga/script.h"
-#include "saga/stream.h"
 #include "saga/interface.h"
 #include "saga/itedata.h"
 #include "saga/scene.h"
@@ -204,6 +203,7 @@ void Script::freeModules() {
 	for (i = 0; i < _modulesCount; i++) {
 		if (_modules[i].loaded) {
 			_modules[i].freeMem();
+			_modules[i].loaded = false;
 		}
 	}
 	_staticSize = 0;
@@ -493,6 +493,26 @@ void Script::doVerb() {
 		}
 	}
 
+	// WORKAROUND for a bug in the original game scripts of IHNM. Edna's script (actor 8197) is problematic, so
+	// when the knife (object 16385) is used with her, the expected result is not correct. The first time that
+	// the knife is used, Edna's heart is cut out (which is correct). But on subsequent use, the object's script
+	// is buggy, therefore it's possible to talk to a dead Edna by using the knife on her, or to incorrectly get her
+	// heart again, which remove's Gorrister's heart from the inventory. The solution is to disable the "use knife with
+	// Edna" action altogether, because if the player wants to kill Edna, he can do that by talking to her and
+	// choosing "[Cut out Edna's heart]", which works correctly. To disable this action, if the knife is used on Edna, we
+	// change the action here to "use knife with the knife", which yields a better reply ("I'd just dull my knife").
+	// Fixes bug #1826871 - "IHNM: Edna's got two hearts but loves to be on the hook"
+	if (_vm->getGameType() == GType_IHNM && _pendingObject[0] == 16385 && _pendingObject[1] == 8197 && _pendingVerb == 4)
+		_pendingObject[1] = 16385;
+
+	// WORKAROUND for a bug in the original game scripts of IHNM. Gorrister's heart is not supposed to have a
+	// "use" phrase attached to it (it's not used anywhere, it's only given), but when "used", an incorrect
+	// reply is given to the player ("It's too narrow for me to pass", said when Gorrister tries to pick up the
+	// heart without a rope). Therefore, for object number 16397 (Gorrister's heart), when the active verb is
+	// "Use", set it to "Push", which gives a more appropriate reply ("What good will that do me?")
+	if (_vm->getGameType() == GType_IHNM && _pendingObject[0] == 16397 && _pendingVerb == 4)
+		_pendingVerb = 8;
+
 	if (scriptEntrypointNumber > 0) {
 
 		event.type = kEvTOneshot;
@@ -505,17 +525,19 @@ void Script::doVerb() {
 		event.param4 = _pendingObject[0];	// Object
 		event.param5 = _pendingObject[1];	// With Object
 		event.param6 = (objectType == kGameObjectActor) ? _pendingObject[0] : ID_PROTAG;		// Actor
-
 		_vm->_events->queue(&event);
 
 	} else {
-		_vm->getExcuseInfo(_pendingVerb, excuseText, excuseSampleResourceId);
-		if (excuseText) {
-			// In Floppy versions we don't have excuse texts
-			if (!(_vm->getFeatures() & GF_CD_FX))
-				excuseSampleResourceId = -1;
+		// Show excuse text in ITE CD Versions
+		if (_vm->getGameType() == GType_ITE) {
+			_vm->getExcuseInfo(_pendingVerb, excuseText, excuseSampleResourceId);
+			if (excuseText) {
+				// In Floppy versions we don't have excuse texts
+				if (!(_vm->getFeatures() & GF_CD_FX))
+					excuseSampleResourceId = -1;
 
-			_vm->_actor->actorSpeech(ID_PROTAG, &excuseText, 1, excuseSampleResourceId, 0);
+				_vm->_actor->actorSpeech(ID_PROTAG, &excuseText, 1, excuseSampleResourceId, 0);
+			}
 		}
 	}
 
@@ -711,6 +733,23 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 						doVerb();
 					}
 				}
+
+				// Auto-use hitzone with id 24576 (the exit to the left) in screens 16 - 19
+				// (screens with Gorrister's heart) in IHNM. For some reason, this zone does
+				// not have a corresponding action zone, so we auto-use it here, like the exits
+				// in Benny's chapter
+				if (_vm->_scene->currentChapterNumber() == 1 && 
+					_vm->_scene->currentSceneNumber() >= 16 && 
+					_vm->_scene->currentSceneNumber() <= 19 &&
+					_pendingVerb == getVerbType(kVerbWalkTo) &&
+					hitZone != NULL && hitZone->getHitZoneId() == 24576) {
+					_pendingVerb = getVerbType(kVerbUse);
+					if (objectTypeId(_pendingObject[0]) == kGameObjectActor) {
+						_vm->_actor->actorFaceTowardsObject(ID_PROTAG, _pendingObject[0]);
+						doVerb();
+					}
+				}
+
 		} else {
 			if (_pendingVerb == getVerbType(kVerbLookAt)) {
 				if (objectTypeId(_pendingObject[0]) != kGameObjectActor) {
@@ -804,11 +843,36 @@ void Script::whichObject(const Point& mousePoint) {
 
 				hitZoneIndex = _vm->_scene->_objectMap->hitTest(pickPoint);
 
+				// WORKAROUND for an incorrect hitzone which exists in IHNM
+				// In Gorrister's chapter, in the toilet screen, the hitzone of the exit is
+				// placed over the place where Gorrister sits to examine the graffiti on the wall
+				// to the left, which makes him exit the screen when the graffiti is examined.
+				// We effectively change the left side of the hitzone here so that it starts from
+				// pixel 301 onwards. The same workaround is applied in Actor::handleActions
+				if (_vm->getGameType() == GType_IHNM) {
+					if (_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 22)
+						if (hitZoneIndex == 8 && pickPoint.x <= 300)
+							hitZoneIndex = -1;
+				}
+
 				if ((hitZoneIndex != -1)) {
 					hitZone = _vm->_scene->_objectMap->getHitZone(hitZoneIndex);
 					objectId = hitZone->getHitZoneId();
 					objectFlags = 0;
 					newRightButtonVerb = hitZone->getRightButtonVerb() & 0x7f;
+
+					// WORKAROUND for a problematic object in IHNM
+					// In the freezer room, the key that drops is made of a hitzone which
+					// contains the key object itself. We change the object ID that the
+					// hitzone contains (object ID 24578 - "The key") to the ID of the key
+					// object itself (object ID 16402 - "Edna's key"), as the user can keep
+					// hovering the cursor to both items, but can only pick up one
+					if (_vm->getGameType() == GType_IHNM) {
+						if (_vm->_scene->currentChapterNumber() == 1 && _vm->_scene->currentSceneNumber() == 24) {
+							if (objectId == 24578)
+								objectId = 16402;
+						}
+					}
 
 					if (_vm->getGameType() == GType_ITE) {
 
@@ -830,6 +894,10 @@ void Script::whichObject(const Point& mousePoint) {
 
 						if (newRightButtonVerb >= getVerbType(kVerbOptions)) {
 							newRightButtonVerb = getVerbType(kVerbNone);
+						}
+					} else {
+						if (newRightButtonVerb >= getVerbType(kVerbOptions)) {
+							newRightButtonVerb = getVerbType(kVerbWalkTo);
 						}
 					}
 

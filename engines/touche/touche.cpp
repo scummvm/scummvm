@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/system.h"
@@ -37,8 +37,8 @@
 
 namespace Touche {
 
-ToucheEngine::ToucheEngine(OSystem *system)
-	: Engine(system), _midiPlayer(0) {
+ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
+	: Engine(system), _midiPlayer(0), _language(language) {
 
 	_saveLoadCurrentPage = 0;
 	_saveLoadCurrentSlot = 0;
@@ -55,7 +55,6 @@ ToucheEngine::ToucheEngine(OSystem *system)
 
 	_processRandomPaletteCounter = 0;
 
-	_roomNeedRedraw = false;
 	_fastWalkMode = false;
 	_fastMode = false;
 
@@ -63,7 +62,7 @@ ToucheEngine::ToucheEngine(OSystem *system)
 	_objectDescriptionNum = 0;
 	_speechPlaying = false;
 
-	_roomNeedRedraw	= false;
+	_roomNeedRedraw = false;
 	_fullRedrawCounter = 0;
 	_menuRedrawCounter = 0;
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
@@ -72,7 +71,9 @@ ToucheEngine::ToucheEngine(OSystem *system)
 	Common::addSpecialDebugLevel(kDebugGraphics, "Graphics", "Graphics debug level");
 	Common::addSpecialDebugLevel(kDebugResource, "Resource", "Resource debug level");
 	Common::addSpecialDebugLevel(kDebugOpcodes,  "Opcodes",  "Opcodes debug level");
-	Common::addSpecialDebugLevel(kDebugUserIntf, "UserIntf", "UserInterface debug level");
+	Common::addSpecialDebugLevel(kDebugMenu,     "Menu",     "Menu debug level");
+
+	_eventMan->registerRandomSource(_rnd, "touche");
 }
 
 ToucheEngine::~ToucheEngine() {
@@ -85,12 +86,6 @@ int ToucheEngine::init() {
 		initCommonGFX(true);
 		_system->initSize(kScreenWidth, kScreenHeight);
 	_system->endGFXTransaction();
-
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
 
 	Graphics::setupFont(_language);
 
@@ -540,7 +535,7 @@ void ToucheEngine::sortKeyChars() {
 }
 
 void ToucheEngine::runKeyCharScript(KeyChar *key) {
-	debugC(9, kDebugEngine, "ToucheEngine::runKeyCharScript() keyChar=%d", key - _keyCharsTable);
+	debugC(9, kDebugEngine, "ToucheEngine::runKeyCharScript() keyChar=%d", (int)(key - _keyCharsTable));
 	if (key->scriptDataOffset != 0 && (key->flags & (kScriptStopped | kScriptPaused)) == 0) {
 		int16 scriptParam = key->num - 1;
 		int16 *prevStackDataPtr = _script.stackDataPtr;
@@ -1912,6 +1907,12 @@ void ToucheEngine::updateRoomAreas(int num, int flags) {
 	for (uint i = 0; i < _programAreaTable.size(); ++i) {
 		if (_programAreaTable[i].id == num) {
 			Area area = _programAreaTable[i].area;
+			if (i == 14 && _currentRoomNum == 8 && area.r.left == 715) {
+				// Workaround for bug #1751170. area[14].r.left (update rect) should
+				// be equal to area[7].r.left (redraw rect) but it's one off, which
+				// leads to a glitch when that room area needs to be redrawn.
+				area.r.left = 714;
+			}
 			Graphics::copyRect(_backdropBuffer, _currentBitmapWidth, area.r.left, area.r.top,
 			  _backdropBuffer, _currentBitmapWidth, area.srcX, area.srcY,
 			  area.r.width(), area.r.height(),
@@ -2193,23 +2194,15 @@ int ToucheEngine::updateKeyCharTalk(int skipFlag) {
 	if (_keyCharTalkCounter) {
 		--_keyCharTalkCounter;
 	}
+	_currentObjectNum = talkingKeyChar;
 	if (_speechPlaying) {
 		_flagsTable[297] = 0;
+		_keyCharTalkCounter = 1;
 		if (_talkTextMode == kTalkModeVoiceOnly) {
-			_keyCharTalkCounter = 0;
-		}
-		_currentObjectNum = talkingKeyChar;
-		if (_keyCharTalkCounter == 0) {
-			_keyCharTalkCounter = 1;
-		}
-	}
-	if (_talkTextMode == kTalkModeVoiceOnly) {
-		if (_speechPlaying) {
 			return 1;
 		}
 	}
 	if (_keyCharTalkCounter != 0) {
-		_currentObjectNum = talkingKeyChar;
 		_talkTextDisplayed = true;
 		int textHeight = kTextHeight;
 		y -= kTextHeight;
@@ -2358,7 +2351,7 @@ void ToucheEngine::removeConversationChoice(int16 num) {
 	for (int i = 0; i < NUM_CONVERSATION_CHOICES; ++i) {
 		if (_conversationChoicesTable[i].num == num) {
 			_conversationChoicesUpdated = true;
-			for(; i < NUM_CONVERSATION_CHOICES - 1; ++i) {
+			for (; i < NUM_CONVERSATION_CHOICES - 1; ++i) {
 				_conversationChoicesTable[i].num = _conversationChoicesTable[i + 1].num;
 				_conversationChoicesTable[i].msg = _conversationChoicesTable[i + 1].msg;
 			}
@@ -2726,7 +2719,7 @@ bool ToucheEngine::sortPointsData(int num1, int num2) {
 }
 
 void ToucheEngine::updateKeyCharWalkPath(KeyChar *key, int16 dx, int16 dy, int16 dz) {
-	debugC(9, kDebugEngine, "ToucheEngine::updateKeyCharWalkPath(key=%d, dx=%d, dy=%d, dz=%d)", key - _keyCharsTable, dx, dy, dz);
+	debugC(9, kDebugEngine, "ToucheEngine::updateKeyCharWalkPath(key=%d, dx=%d, dy=%d, dz=%d)", (int)(key - _keyCharsTable), dx, dy, dz);
 	if (key->walkDataNum == -1) {
 		return;
 	}

@@ -1,5 +1,29 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
 
-#include "common/stdafx.h"
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+
 #include "parallaction/parallaction.h"
 
 namespace Parallaction {
@@ -29,12 +53,13 @@ namespace Parallaction {
 #define INST_TEXT		23
 #define INST_MUL		24
 #define INST_DIV		25
-#define INST_IF			26
-#define INST_IFEQ		27
-#define INST_IFLT		28
-#define INST_IFGT		29
-#define INST_ENDIF		30
-#define INST_STOP		31
+#define INST_IFEQ		26
+#define INST_IFLT		27
+#define INST_IFGT		28
+#define INST_ENDIF		29
+#define INST_STOP		30
+#define INST_ENDSCRIPT	31
+
 
 
 typedef OpcodeImpl<Parallaction_br> OpcodeV2;
@@ -43,6 +68,51 @@ typedef OpcodeImpl<Parallaction_br> OpcodeV2;
 
 #define INSTRUCTION_OPCODE(op) OpcodeV2(this, &Parallaction_br::instOp_##op)
 #define DECLARE_INSTRUCTION_OPCODE(op) void Parallaction_br::instOp_##op()
+
+void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
+	debugC(5, kDebugExec, "setupSubtitles(%s, %s, %i)", s, s2, y);
+
+	if (!scumm_stricmp("clear", s)) {
+
+		removeJob(_jDisplaySubtitle);
+		addJob(kJobWaitRemoveSubtitleJob, _jEraseSubtitle, 15);
+		_jDisplaySubtitle = 0;
+
+		_subtitle0.free();
+		_subtitle1.free();
+		return;
+	}
+
+	_subtitle0.free();
+	_subtitle1.free();
+
+	renderLabel(&_subtitle0._cnv, s);
+	_subtitle0._text = strdup(s);
+
+	if (s2) {
+		renderLabel(&_subtitle1._cnv, s2);
+		_subtitle1._text = strdup(s2);
+	}
+
+	_subtitleLipSync = 0;
+
+	if (y != -1) {
+		_subtitle0._pos.y = y;
+		_subtitle1._pos.y = y + 5 + _labelFont->height();
+	}
+
+	_subtitle0._pos.x = (_gfx->_screenX << 2) + ((640 - _subtitle0._cnv.w) >> 1);
+	if (_subtitle1._text)
+		_subtitle1._pos.x = (_gfx->_screenX << 2) + ((640 - _subtitle1._cnv.w) >> 1);
+
+	if (_jDisplaySubtitle == 0) {
+		_subtitle0._old.x = -1000;
+		_subtitle0._old.y = -1000;
+		_jDisplaySubtitle = addJob(kJobDisplaySubtitle, 0, 1);
+		_jEraseSubtitle = addJob(kJobEraseSubtitle, 0, 20);
+	}
+}
+
 
 
 DECLARE_COMMAND_OPCODE(location) {
@@ -201,7 +271,8 @@ DECLARE_COMMAND_OPCODE(give) {
 
 
 DECLARE_COMMAND_OPCODE(text) {
-	warning("Parallaction_br::cmdOp_text not yet implemented");
+	CommandData *data = &_cmdRunCtxt.cmd->u;
+	setupSubtitles(data->_string, data->_string2, data->_zeta0);
 }
 
 
@@ -354,8 +425,37 @@ DECLARE_INSTRUCTION_OPCODE(print) {
 }
 
 
+
+void Parallaction_br::jobDisplaySubtitle(void *parm, Job *job) {
+	_gfx->drawLabel(_subtitle0);
+	_gfx->drawLabel(_subtitle1);
+}
+
+void Parallaction_br::jobEraseSubtitle(void *parm, Job *job) {
+	Common::Rect r;
+
+	if (_subtitle0._old.x != -1000) {
+		_subtitle0.getRect(r);
+
+//		printf("sub0: (%i, %i, %i, %i)\n", r.left, r.top, r.right, r.bottom);
+
+		_gfx->restoreBackground(r);
+	}
+	_subtitle0._old = _subtitle0._pos;
+
+	if (_subtitle1._old.x != -1000) {
+		_subtitle0.getRect(r);
+
+//		printf("sub1: (%i, %i, %i, %i)\n", r.left, r.top, r.right, r.bottom);
+
+		_gfx->restoreBackground(r);
+	}
+	_subtitle1._old = _subtitle1._pos;
+}
+
 DECLARE_INSTRUCTION_OPCODE(text) {
-	warning("Parallaction_br::instOp_text not yet implemented");
+	Instruction *inst = (*_instRunCtxt.inst);
+	setupSubtitles(inst->_text, inst->_text2, inst->_y);
 }
 
 
@@ -479,6 +579,34 @@ void Parallaction_br::initOpcodes() {
 
 
 }
+
+
+void Parallaction_br::jobWaitRemoveLabelJob(void *parm, Job *job) {
+
+}
+
+
+void Parallaction_br::jobWaitRemoveSubtitleJob(void *parm, Job *job) {
+
+}
+
+
+void Parallaction_br::jobPauseSfx(void *parm, Job *job) {
+
+}
+
+
+void Parallaction_br::jobStopFollower(void *parm, Job *job) {
+
+}
+
+
+void Parallaction_br::jobScroll(void *parm, Job *job) {
+
+}
+
+
+
 
 
 } // namespace Parallaction

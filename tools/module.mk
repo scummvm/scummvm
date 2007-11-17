@@ -8,11 +8,14 @@ MODULE_DIRS += \
 # Tools directory
 #######################################################################
 
-TOOLS := tools/convbdf$(EXEEXT) tools/md5table$(EXEEXT)
+TOOLS := \
+	tools/convbdf$(EXEEXT) \
+	tools/md5table$(EXEEXT)
 
+include $(srcdir)/tools/*/module.mk
 
 # Make sure the 'all' / 'clean' targets build/clean the tools, too
-all: tools
+all:
 clean: clean-tools
 
 # Main target
@@ -70,7 +73,6 @@ md5scumm: tools/md5table$(EXEEXT)
 
 #gui/credits.h: $(srcdir)/tools/credits.pl
 #	$(srcdir)/tools/credits.pl --cpp > $@
-
 
 
 .PHONY: clean-tools tools credits md5scumm md5simon

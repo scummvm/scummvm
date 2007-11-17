@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "backends/timer/default/default-timer.h"
 #include "common/util.h"
@@ -36,14 +35,14 @@ struct TimerSlot {
 
 	uint32 nextFireTime;	// in milliseconds
 	uint32 nextFireTimeMicro;	// mircoseconds part of nextFire
-	
+
 	TimerSlot *next;
 };
 
 void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 	// The head points to a fake anchor TimerSlot; this common
 	// trick allows us to get rid of many special cases.
-	
+
 	const uint32 nextFireTime = newSlot->nextFireTime;
 	TimerSlot *slot = head;
 	newSlot->next = 0;
@@ -65,14 +64,14 @@ void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 DefaultTimerManager::DefaultTimerManager() :
 	_timerHandler(0),
 	_head(0) {
-	
+
 	_head = new TimerSlot();
 	memset(_head, 0, sizeof(TimerSlot));
 }
 
 DefaultTimerManager::~DefaultTimerManager() {
 	Common::StackLock lock(_mutex);
-	
+
 	TimerSlot *slot = _head;
 	while (slot) {
 		TimerSlot *next = slot->next;
@@ -86,13 +85,13 @@ void DefaultTimerManager::handler() {
 	Common::StackLock lock(_mutex);
 
 	const uint32 curTime = g_system->getMillis();
-	
+
 	// Repeat as long as there is a TimerSlot that is scheduled to fire.
 	TimerSlot *slot = _head->next;
 	while (slot && slot->nextFireTime < curTime) {
 		// Remove the slot from the priority queue
 		_head->next = slot->next;
-		
+
 		// Update the fire time and reinsert the TimerSlot into the priority
 		// queue. Has to be done before the timer callback is invoked, in case
 		// the callback wants to remove itself.
@@ -108,7 +107,7 @@ void DefaultTimerManager::handler() {
 		// Invoke the timer callback
 		assert(slot->callback);
 		slot->callback(slot->refCon);
-		
+
 		// Look at the next scheduled timer
 		slot = _head->next;
 	}
@@ -117,7 +116,7 @@ void DefaultTimerManager::handler() {
 bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, void *refCon) {
 	assert(interval > 0);
 	Common::StackLock lock(_mutex);
-	
+
 	TimerSlot *slot = new TimerSlot;
 	slot->callback = callback;
 	slot->refCon = refCon;
@@ -125,7 +124,7 @@ bool DefaultTimerManager::installTimerProc(TimerProc callback, int32 interval, v
 	slot->nextFireTime = g_system->getMillis() + interval / 1000;
 	slot->nextFireTimeMicro = interval % 1000;
 	slot->next = 0;
-	
+
 	insertPrioQueue(_head, slot);
 
 	return true;
@@ -135,7 +134,7 @@ void DefaultTimerManager::removeTimerProc(TimerProc callback) {
 	Common::StackLock lock(_mutex);
 
 	TimerSlot *slot = _head;
-	
+
 	while (slot->next) {
 		if (slot->next->callback == callback) {
 			TimerSlot *next = slot->next->next;

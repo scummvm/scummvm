@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/file.h"
@@ -34,8 +34,8 @@ extern int gDebugLevel;
 
 namespace Sky {
 
-#define	SKY_CPT_SIZE	419427	
-	
+#define	SKY_CPT_SIZE	419427
+
 #define OFFS(type,item) (((long)(&((type*)0)->item)))
 #define MK32(type,item) OFFS(type, item),0,0,0
 #define MK16(type,item) OFFS(type, item),0
@@ -144,7 +144,7 @@ SkyCompact::SkyCompact(void) {
 		dialog.runModal();
 		error("Incorrect sky.cpt size (%d, expected: %d)", _cptFile->size(), SKY_CPT_SIZE);
 	}
-	
+
 	// set the necessary data structs up...
 	_numDataLists = _cptFile->readUint16LE();
 	_cptNames	  = (char***)malloc(_numDataLists * sizeof(char**));
@@ -268,10 +268,10 @@ Compact *SkyCompact::fetchCpt(uint16 cptId) {
 	if (cptId == 0xFFFF) // is this really still necessary?
 		return NULL;
 	assert(((cptId >> 12) < _numDataLists) && ((cptId & 0xFFF) < _dataListLen[cptId >> 12]));
-	
+
 	if (gDebugLevel >= 8) {
 		debug(8, "Loading Compact %s [%s] (%04X=%d,%d)", _cptNames[cptId >> 12][cptId & 0xFFF], nameForType(_cptTypes[cptId >> 12][cptId & 0xFFF]), cptId, cptId >> 12, cptId & 0xFFF);
-	}		
+	}
 
 	return _compacts[cptId >> 12][cptId & 0xFFF];
 }

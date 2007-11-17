@@ -179,7 +179,6 @@ public:
 
 	const AGOSGameDescription *_gameDescription;
 
-	bool initGame(void);
 	virtual void setupGame();
 
 	int getGameId() const;

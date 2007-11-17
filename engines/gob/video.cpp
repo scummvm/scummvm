@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "graphics/cursorman.h"
 
@@ -145,7 +145,7 @@ SurfaceDesc *Video::initSurfDesc(int16 vidMode, int16 width, int16 height,
 		_vm->_global->_mouseMaxCol = width;
 		_vm->_global->_primaryHeight = height;
 		_vm->_global->_mouseMaxRow = height;
-		
+
 		descPtr = _vm->_global->_primarySurfDesc;
 		descPtr->resize(width, height);
 		descPtr->_vidMode = vidMode;
@@ -258,7 +258,7 @@ void Video::drawCircle(SurfaceDesc *dest, int16 x0, int16 y0,
 		}
 		x++;
 		ddFx += 2;
-		f += ddFx + 1;    
+		f += ddFx + 1;
 		putPixel(x0 + x, y0 + y, color, dest);
 		putPixel(x0 - x, y0 + y, color, dest);
 		putPixel(x0 + x, y0 - y, color, dest);

@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "sound/midiparser.h"
 #include "sound/mididrv.h"
 #include "common/util.h"
@@ -127,7 +126,7 @@ void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			break;
-		
+
 		default:
 			warning("MidiParser_SMF::parseNextEvent: Unsupported event code %x", info.event);
 		}

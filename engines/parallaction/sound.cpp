@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/file.h"
 
 #include "common/stream.h"
@@ -258,9 +257,6 @@ void DosSoundMan::playCharacterMusic(const char *character) {
 
 	char *name = const_cast<char*>(character);
 
-	if (IS_MINI_CHARACTER(name))
-		name+=4;
-
 	if (!scumm_stricmp(name, _dinoName)) {
 		setMusicFile("dino");
 	} else
@@ -279,16 +275,16 @@ void DosSoundMan::playCharacterMusic(const char *character) {
 
 void DosSoundMan::playLocationMusic(const char *location) {
 	if (_musicData1 != 0) {
-		playCharacterMusic(_vm->_characterName);
+		playCharacterMusic(_vm->_char.getBaseName());
 		_musicData1 = 0;
-		debugC(2, kDebugLocation, "changeLocation: started character specific music");
+		debugC(2, kDebugExec, "changeLocation: started character specific music");
 	}
 
 	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
 		setMusicFile("nuts");
 		playMusic();
 
-		debugC(2, kDebugLocation, "changeLocation: started music 'soft'");
+		debugC(2, kDebugExec, "changeLocation: started music 'soft'");
 	}
 
 	if (!scumm_stricmp(location, "museo") ||
@@ -302,7 +298,7 @@ void DosSoundMan::playLocationMusic(const char *location) {
 		stopMusic();
 		_musicData1 = 1;
 
-		debugC(2, kDebugLocation, "changeLocation: music stopped");
+		debugC(2, kDebugExec, "changeLocation: music stopped");
 	}
 }
 
@@ -322,6 +318,39 @@ AmigaSoundMan::~AmigaSoundMan() {
 	stopSfx(3);
 }
 
+#define AMIGABEEP_SIZE	16
+#define NUM_REPEATS		60
+
+static int8 res_amigaBeep[AMIGABEEP_SIZE] = {
+	0, 20, 40, 60, 80, 60, 40, 20, 0, -20, -40, -60, -80, -60, -40, -20
+};
+
+
+void AmigaSoundMan::loadChannelData(const char *filename, Channel *ch) {
+	if (!scumm_stricmp("beep", filename)) {
+		ch->header.oneShotHiSamples = 0;
+		ch->header.repeatHiSamples = 0;
+		ch->header.samplesPerHiCycle = 0;
+		ch->header.samplesPerSec = 11934;
+		ch->header.volume = 160;
+		ch->data = new int8[AMIGABEEP_SIZE * NUM_REPEATS];
+		int8* odata = ch->data;
+		for (uint i = 0; i < NUM_REPEATS; i++) {
+			memcpy(odata, res_amigaBeep, AMIGABEEP_SIZE);
+			odata += AMIGABEEP_SIZE;
+		}
+		ch->dataSize = AMIGABEEP_SIZE * NUM_REPEATS;
+		ch->dispose = true;
+		return;
+	}
+
+	Common::ReadStream *stream = _vm->_disk->loadSound(filename);
+	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
+	decoder.decode();
+	ch->dispose = true;
+	delete stream;
+}
+
 void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, int volume, int rate) {
 	if (channel >= NUM_AMIGA_CHANNELS) {
 		warning("unknown sfx channel");
@@ -331,10 +360,7 @@ void AmigaSoundMan::playSfx(const char *filename, uint channel, bool looping, in
 	debugC(1, kDebugAudio, "AmigaSoundMan::playSfx(%s, %i)", filename, channel);
 
 	Channel *ch = &_channels[channel];
-	Common::ReadStream *stream = _vm->_disk->loadSound(filename);
-	Audio::A8SVXDecoder decoder(*stream, ch->header, ch->data, ch->dataSize);
-	decoder.decode();
-	delete stream;
+	loadChannelData(filename, ch);
 
 	uint32 loopStart, loopEnd, flags;
 	if (looping) {
@@ -366,7 +392,7 @@ void AmigaSoundMan::stopSfx(uint channel) {
 		return;
 	}
 
-    if (_channels[channel].data) {
+    if (_channels[channel].dispose) {
         debugC(1, kDebugAudio, "AmigaSoundMan::stopSfx(%i)", channel);
         _mixer->stopHandle(_channels[channel].handle);
         free(_channels[channel].data);

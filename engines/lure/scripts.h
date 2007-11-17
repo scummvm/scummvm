@@ -120,11 +120,11 @@ public:
 	static void makeGoewinFollow(uint16 v1, uint16 v2, uint16 v3);
 	static void doorClose(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void fixGoewin(uint16 v1, uint16 v2, uint16 v3);
-	static void displayMessage(uint16 messageId, uint16 characterId, uint16 unknownVal);
+	static void displayMessage(uint16 messageId, uint16 characterId, uint16 destCharacterId);
 	static void doorOpen(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void npcWait(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void checkWakeBrenda(uint16 v1, uint16 v2, uint16 v3);
-	static void setNewSupportData(uint16 hotspotId, uint16 index, uint16 v3);
+	static void setNewSupportData(uint16 index, uint16 hotspotId, uint16 v3);
 	static void setSupportData(uint16 hotspotId, uint16 index, uint16 v3);
 	static void givePlayerItem(uint16 hotspotId, uint16 v2, uint16 v3);
 	static void decreaseNumGroats(uint16 characterId, uint16 numGroats, uint16 v3);
@@ -142,7 +142,7 @@ public:
 	static void addActions(uint16 hotspotId, uint16 actions, uint16 v3);
 	static void randomToGeneral(uint16 maxVal, uint16 minVal, uint16 v3);
 	static void checkCellDoor(uint16 v1, uint16 v2, uint16 v3);
-	static void checkSound(uint16 v1, uint16 v2, uint16 v3);
+	static void checkSound(uint16 soundNumber, uint16 v2, uint16 v3);
 };
 
 class HotspotScript {

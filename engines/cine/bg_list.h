@@ -26,7 +26,7 @@
 #ifndef CINE_BGLIST_H
 #define CINE_BGLIST_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "common/savefile.h"
 

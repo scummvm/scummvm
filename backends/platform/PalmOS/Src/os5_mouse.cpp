@@ -26,7 +26,7 @@
 #include "be_os5.h"
 
 void OSystem_PalmOS5::setCursorPalette(const byte *colors, uint start, uint num) {
-	for(uint i = 0; i < num; i++) {
+	for (uint i = 0; i < num; i++) {
 		_mousePal[i + start] = gfxMakeDisplayRGB(colors[0], colors[1], colors[2]);
 		colors += 4;
 	}

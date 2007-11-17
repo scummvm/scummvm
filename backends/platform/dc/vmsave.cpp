@@ -23,7 +23,6 @@
  *
  */
 
-#include <common/stdafx.h>
 #include <common/scummsys.h>
 #include "engines/engine.h"
 #include "dc.h"
@@ -87,14 +86,14 @@ static vmsaveResult trySave(const char *gamename, const char *data, int size,
   time_t t;
   unsigned char iconbuffer[512+32];
 
-  if(!vmsfs_check_unit(vm, 0, &info))
+  if (!vmsfs_check_unit(vm, 0, &info))
     return VMSAVE_NOVM;
-  if(!vmsfs_get_superblock(&info, &super))
+  if (!vmsfs_get_superblock(&info, &super))
     return VMSAVE_NOVM;
   int free_cnt = vmsfs_count_free(&super);
-  if(vmsfs_open_file(&super, filename, &file))
+  if (vmsfs_open_file(&super, filename, &file))
     free_cnt += file.blks;
-  if(((128+512+size+511)>>9) > free_cnt)
+  if (((128+512+size+511)>>9) > free_cnt)
     return VMSAVE_NOSPACE;
 
   memset(&header, 0, sizeof(header));
@@ -117,7 +116,7 @@ static vmsaveResult trySave(const char *gamename, const char *data, int size,
   vmsfs_beep(&info, 1);
 
   vmsfs_errno = 0;
-  if(!vmsfs_create_file(&super, filename, &header,
+  if (!vmsfs_create_file(&super, filename, &header,
 			iconbuffer+sizeof(header.palette), NULL,
 			data, size, &tstamp)) {
     fprintf(stderr, "%s\n", vmsfs_describe_error());
@@ -140,16 +139,16 @@ static bool tryLoad(char *&buffer, int &size, const char *filename, int vm)
   time_t t;
   unsigned char iconbuffer[512+32];
 
-  if(!vmsfs_check_unit(vm, 0, &info))
+  if (!vmsfs_check_unit(vm, 0, &info))
     return false;
-  if(!vmsfs_get_superblock(&info, &super))
+  if (!vmsfs_get_superblock(&info, &super))
     return false;
-  if(!vmsfs_open_file(&super, filename, &file))
+  if (!vmsfs_open_file(&super, filename, &file))
     return false;
 
   buffer = new char[size = file.size];
 
-  if(vmsfs_read_file(&file, (unsigned char *)buffer, size))
+  if (vmsfs_read_file(&file, (unsigned char *)buffer, size))
     return true;
 
   delete[] buffer;
@@ -157,30 +156,67 @@ static bool tryLoad(char *&buffer, int &size, const char *filename, int vm)
   return false;
 }
 
-static void tryList(const char *prefix, bool *marks, int num, int vm)
+static bool tryDelete(const char *filename, int vm)
+{
+  struct vmsinfo info;
+  struct superblock super;
+
+  if (!vmsfs_check_unit(vm, 0, &info))
+    return false;
+  if (!vmsfs_get_superblock(&info, &super))
+    return false;
+
+#if 0
+  // FIXME: implement this function in vmsfs...
+  if (!vmsfs_delete_file(&super, filename))
+    return false;
+#else
+  return false;
+#endif
+
+  return true;
+}
+
+static bool matches(const char *glob, const char *name)
+{
+  while(*glob)
+    if(*glob == '*') {
+      while(*glob == '*')
+	glob++;
+      do {
+	if((*name == *glob || *glob == '?') &&
+	   matches(glob, name))
+	  return true;
+      } while(*name++);
+      return false;
+    } else if(!*name)
+      return false;
+    else if(*glob == '?' || *glob == *name) {
+      glob++;
+      name++;
+    }
+  return !*name;
+}
+
+static void tryList(const char *glob, int vm, Common::StringList &list)
 {
   struct vmsinfo info;
   struct superblock super;
   struct dir_iterator iter;
   struct dir_entry de;
-  int pl = strlen(prefix);
 
-  if(!vmsfs_check_unit(vm, 0, &info))
+  if (!vmsfs_check_unit(vm, 0, &info))
     return;
-  if(!vmsfs_get_superblock(&info, &super))
+  if (!vmsfs_get_superblock(&info, &super))
     return;
   vmsfs_open_dir(&super, &iter);
-  while(vmsfs_next_dir_entry(&iter, &de))
-    if(de.entry[0]) {
-      char buf[16], *endp = NULL;
+  while (vmsfs_next_dir_entry(&iter, &de))
+    if (de.entry[0]) {
+      char buf[16];
       strncpy(buf, (char *)de.entry+4, 12);
       buf[12] = 0;
-      int l = strlen(buf);
-      long i = 42;
-      if(l > pl && !strncmp(buf, prefix, pl) &&
-	 (i = strtol(buf+pl, &endp, 10))>=0 && i<num &&
-	 (endp - buf) == l)
-	marks[i] = true;
+      if (matches(glob, buf))
+	list.push_back(buf);
     }
 }
 
@@ -189,15 +225,15 @@ vmsaveResult writeSaveGame(const char *gamename, const char *data, int size,
 {
   vmsaveResult r, res = VMSAVE_NOVM;
 
-  if(lastvm >= 0 &&
+  if (lastvm >= 0 &&
      (res = trySave(gamename, data, size, filename, icon, lastvm)) == VMSAVE_OK)
     return res;
 
-  for(int i=0; i<24; i++)
-    if((r = trySave(gamename, data, size, filename, icon, i)) == VMSAVE_OK) {
+  for (int i=0; i<24; i++)
+    if ((r = trySave(gamename, data, size, filename, icon, i)) == VMSAVE_OK) {
       lastvm = i;
       return r;
-    } else if(r > res)
+    } else if (r > res)
       res = r;
 
   return res;
@@ -205,12 +241,27 @@ vmsaveResult writeSaveGame(const char *gamename, const char *data, int size,
 
 bool readSaveGame(char *&buffer, int &size, const char *filename)
 {
-  if(lastvm >= 0 &&
+  if (lastvm >= 0 &&
      tryLoad(buffer, size, filename, lastvm))
     return true;
 
-  for(int i=0; i<24; i++)
-    if(tryLoad(buffer, size, filename, i)) {
+  for (int i=0; i<24; i++)
+    if (tryLoad(buffer, size, filename, i)) {
+      lastvm = i;
+      return true;
+    }
+
+  return false;
+}
+
+bool deleteSaveGame(const char *filename)
+{
+  if (lastvm >= 0 &&
+     tryDelete(filename, lastvm))
+    return true;
+
+  for (int i=0; i<24; i++)
+    if (tryDelete(filename, i)) {
       lastvm = i;
       return true;
     }
@@ -235,7 +286,7 @@ public:
 
   ~InVMSave()
   {
-    if(buffer != NULL)
+    if (buffer != NULL)
       delete[] buffer;
   }
 
@@ -248,11 +299,11 @@ public:
 
   void tryUncompress()
   {
-    if(_size > 0 && buffer[0] != 'S') {
+    if (_size > 0 && buffer[0] != 'S') {
       // Data does not start with "SCVM".  Maybe compressed?
       char *expbuf = new char[MAX_SAVE_SIZE];
       unsigned long destlen = MAX_SAVE_SIZE;
-      if(!uncompress((Bytef*)expbuf, &destlen, (Bytef*)buffer, _size)) {
+      if (!uncompress((Bytef*)expbuf, &destlen, (Bytef*)buffer, _size)) {
 	delete[] buffer;
 	buffer = expbuf;
 	_size = destlen;
@@ -294,7 +345,7 @@ public:
 
   virtual Common::InSaveFile *openForLoading(const char *filename) {
 	InVMSave *s = new InVMSave();
-	if(s->readSaveGame(filename)) {
+	if (s->readSaveGame(filename)) {
 	  s->tryUncompress();
 	  return s;
 	} else {
@@ -303,7 +354,11 @@ public:
 	}
   }
 
-  virtual void listSavefiles(const char *prefix, bool *marks, int num);
+  virtual bool removeSavefile(const char *filename) {
+	return ::deleteSaveGame(filename);
+  }
+
+  virtual Common::StringList VMSaveManager::listSavefiles(const char *glob);
 };
 
 void OutVMSave::finalize()
@@ -311,26 +366,26 @@ void OutVMSave::finalize()
   extern const char *gGameName;
   extern Icon icon;
 
-  if(committed >= pos)
+  if (committed >= pos)
     return;
 
   char *data = buffer, *compbuf = NULL;
   int len = pos;
 
-  if(pos) {
+  if (pos) {
     // Try compression
     compbuf = new char[pos];
     unsigned long destlen = pos;
-    if(!compress((Bytef*)compbuf, &destlen, (Bytef*)buffer, pos)) {
+    if (!compress((Bytef*)compbuf, &destlen, (Bytef*)buffer, pos)) {
       data = compbuf;
       len = destlen;
     }
   }
   vmsaveResult r = writeSaveGame(gGameName, data, len, filename, icon);
   committed = pos;
-  if(compbuf != NULL)
+  if (compbuf != NULL)
     delete[] compbuf;
-  if(r != VMSAVE_OK)
+  if (r != VMSAVE_OK)
     iofailed = true;
   displaySaveResult(r);
 }
@@ -375,9 +430,9 @@ void InVMSave::seek(int32 offs, int whence)
     _pos = _size + offs;
     break;
   }
-  if(_pos < 0)
+  if (_pos < 0)
     _pos = 0;
-  else if(_pos > _size)
+  else if (_pos > _size)
     _pos = _size;
 }
 
@@ -395,12 +450,14 @@ uint32 OutVMSave::write(const void *buf, uint32 cnt)
 }
 
 
-void VMSaveManager::listSavefiles(const char *prefix, bool *marks, int num)
+Common::StringList VMSaveManager::listSavefiles(const char *glob)
 {
-  memset(marks, false, num*sizeof(bool));
+  Common::StringList list;
 
-  for(int i=0; i<24; i++)
-    tryList(prefix, marks, num, i);
+  for (int i=0; i<24; i++)
+    tryList(glob, i, list);
+
+  return list;
 }
 
 Common::SaveFileManager *OSystem_Dreamcast::createSavefileManager()

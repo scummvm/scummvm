@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agos/agos.h"
 #include "agos/vga.h"
@@ -505,7 +505,7 @@ void AGOSEngine_Elvira1::oe1_copyfo() {
 
 void AGOSEngine_Elvira1::oe1_whatO() {
 	// 57: what o
-	int a = getVarOrWord();	
+	int a = getVarOrWord();
 
 	if (a == 1)
 		_subjectItem = findMaster(_scriptAdj1,_scriptNoun1);
@@ -896,7 +896,7 @@ void AGOSEngine_Elvira1::oe1_pauseGame() {
 	// 274: pause game
 	WindowBlock *window = _windowArray[4];
 	const char *message1, *message2;
-	
+
 	time_t pauseTime = time(NULL);
 	haltAnimation();
 
@@ -933,7 +933,7 @@ restart:
 		window->textRow = 0;
 		window->textColumnOffset = 0;
 		window->textLength = 0;		// Difference
-		
+
 		switch (_language) {
 		case Common::FR_FRA:
 			message1 = "    Etes-vous s<r ?\r\r\r";
@@ -1163,7 +1163,7 @@ void AGOSEngine::printStats() {
 	if (val < -99)
 		val = -99;
 	if (val > 99)
-		val = 99;	
+		val = 99;
 	writeChar(window, 5, 133, 6, val);
 
 	// Resolution
@@ -1171,7 +1171,7 @@ void AGOSEngine::printStats() {
 	if (val < -99)
 		val = -99;
 	if (val > 99)
-		val = 99;	
+		val = 99;
 	writeChar(window, 11, 133, 6, val);
 
 	// Dexterity
@@ -1179,7 +1179,7 @@ void AGOSEngine::printStats() {
 	if (val < -99)
 		val = -99;
 	if (val > 99)
-		val = 99;	
+		val = 99;
 	writeChar(window, 18, 133, 0, val);
 
 	// Skill
@@ -1187,7 +1187,7 @@ void AGOSEngine::printStats() {
 	if (val < -99)
 		val = -99;
 	if (val > 99)
-		val = 99;	
+		val = 99;
 	writeChar(window, 24, 133, 0, val);
 
 	// Life
@@ -1195,7 +1195,7 @@ void AGOSEngine::printStats() {
 	if (val < -99)
 		val = -99;
 	if (val > 99)
-		val = 99;	
+		val = 99;
 	writeChar(window, 30, 133, 2, val);
 
 	// Experience
@@ -1203,7 +1203,7 @@ void AGOSEngine::printStats() {
 	if (val < -99)
 		val = -99;
 	if (val > 99)
-		val = 99;	
+		val = 99;
 	writeChar(window, 36, 133, 4, val);
 
 	mouseOn();

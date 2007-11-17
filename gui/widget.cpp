@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/util.h"
 #include "graphics/fontman.h"
 #include "gui/widget.h"
@@ -34,13 +33,15 @@ namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
 	: GuiObject(x, y, w, h), _type(0), _boss(boss),
-	  _id(0), _flags(0), _hints(THEME_HINT_FIRST_DRAW), _hasFocus(false) {
+	  _id(0), _flags(0), _hints(THEME_HINT_FIRST_DRAW),
+	  _hasFocus(false), _state(Theme::kStateEnabled) {
 	init();
 }
 
 Widget::Widget(GuiObject *boss, const Common::String &name)
 	: GuiObject(name), _type(0), _boss(boss),
-	  _id(0), _flags(0), _hints(THEME_HINT_FIRST_DRAW), _hasFocus(false) {
+	  _id(0), _flags(0), _hints(THEME_HINT_FIRST_DRAW),
+	  _hasFocus(false), _state(Theme::kStateDisabled) {
 	init();
 }
 
@@ -52,6 +53,11 @@ void Widget::init() {
 	_hints = THEME_HINT_FIRST_DRAW | THEME_HINT_SAVE_BACKGROUND;
 }
 
+Widget::~Widget() {
+	delete _next;
+	_next = 0;
+}
+
 void Widget::resize(int x, int y, int w, int h) {
 	_x = x;
 	_y = y;
@@ -59,9 +65,24 @@ void Widget::resize(int x, int y, int w, int h) {
 	_h = h;
 }
 
-Widget::~Widget() {
-	delete _next;
-	_next = 0;
+void Widget::setFlags(int flags) {
+	updateState(_flags, _flags | flags);
+	_flags |= flags;
+}
+
+void Widget::clearFlags(int flags) {
+	updateState(_flags, _flags & ~flags);
+	_flags &= ~flags;
+}
+
+void Widget::updateState(int oldFlags, int newFlags) {
+	if (newFlags & WIDGET_ENABLED) {
+		_state = Theme::kStateEnabled;
+		if (newFlags & WIDGET_HILITED)
+			_state = Theme::kStateHighlight;
+	} else {
+		_state = Theme::kStateDisabled;
+	}
 }
 
 void Widget::draw() {
@@ -76,10 +97,6 @@ void Widget::draw() {
 	_x = getAbsX();
 	_y = getAbsY();
 
-	// Clear background (unless alpha blending is enabled)
-	//if (_flags & WIDGET_CLEARBG)
-	//	gui->fillRect(_x, _y, _w, _h, gui->_bgcolor);
-
 	// Draw border
 	if (_flags & WIDGET_BORDER) {
 		gui->theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _hints, Theme::kWidgetBackgroundBorder);
@@ -90,7 +107,7 @@ void Widget::draw() {
 	}
 
 	// Now perform the actual widget draw
-	drawWidget((_flags & WIDGET_HILITED) ? true : false);
+	drawWidget();
 
 	// Restore x/y
 	if (_flags & WIDGET_BORDER) {
@@ -135,6 +152,13 @@ Widget *Widget::findWidgetInChain(Widget *w, const char *name) {
 	return 0;
 }
 
+bool Widget::isEnabled() const {
+	if (g_gui.evaluator()->getVar(_name + ".enabled") == 0) {
+		return false;
+	}
+	return ((_flags & WIDGET_ENABLED) != 0);
+}
+
 bool Widget::isVisible() const {
 	if (g_gui.evaluator()->getVar(_name + ".visible") == 0)
 		return false;
@@ -142,19 +166,18 @@ bool Widget::isVisible() const {
 	return !(_flags & WIDGET_INVISIBLE);
 }
 
-
 #pragma mark -
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, TextAlignment align)
 	: Widget(boss, x, y, w, h), _align(align) {
-	_flags = WIDGET_ENABLED;
+	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;
 }
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text)
 	: Widget(boss, name) {
-	_flags = WIDGET_ENABLED;
+	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;
 
@@ -186,10 +209,8 @@ void StaticTextWidget::setAlign(TextAlignment align) {
 }
 
 
-void StaticTextWidget::drawWidget(bool hilite) {
-	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label,
-							isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled,
-							g_gui.theme()->convertAligment(_align));
+void StaticTextWidget::drawWidget() {
+	g_gui.theme()->drawText(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, g_gui.theme()->convertAligment(_align));
 }
 
 #pragma mark -
@@ -197,14 +218,14 @@ void StaticTextWidget::drawWidget(bool hilite) {
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, x, y, w, h, label, kTextAlignCenter), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
-	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
+	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, uint32 cmd, uint8 hotkey)
 	: StaticTextWidget(boss, name, label), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey) {
-	_flags = WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG;
+	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_hints = THEME_HINT_USE_SHADOW;
 	_type = kButtonWidget;
 }
@@ -214,21 +235,21 @@ void ButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 		sendCommand(_cmd, 0);
 }
 
-void ButtonWidget::drawWidget(bool hilite) {
-	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled, _hints);
+void ButtonWidget::drawWidget() {
+	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, _hints);
 }
 
 #pragma mark -
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false) {
-	_flags = WIDGET_ENABLED;
+	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
 }
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, name, label, cmd, hotkey), _state(false) {
-	_flags = WIDGET_ENABLED;
+	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
 }
 
@@ -241,15 +262,14 @@ void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 void CheckboxWidget::setState(bool state) {
 	if (_state != state) {
 		_state = state;
-		_flags ^= WIDGET_INV_BORDER;
+		//_flags ^= WIDGET_INV_BORDER;
 		draw();
 	}
 	sendCommand(_cmd, _state);
 }
 
-void CheckboxWidget::drawWidget(bool hilite) {
-	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state,
-								isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled);
+void CheckboxWidget::drawWidget() {
+	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, Widget::_state);
 }
 
 #pragma mark -
@@ -257,14 +277,14 @@ void CheckboxWidget::drawWidget(bool hilite) {
 SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
 	: Widget(boss, x, y, w, h), CommandSender(boss),
 	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false) {
-	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_type = kSliderWidget;
 }
 
 SliderWidget::SliderWidget(GuiObject *boss, const Common::String &name, uint32 cmd)
 	: Widget(boss, name), CommandSender(boss),
 	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false) {
-	_flags = WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG;
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_type = kSliderWidget;
 }
 
@@ -298,9 +318,8 @@ void SliderWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	_isDragging = false;
 }
 
-void SliderWidget::drawWidget(bool hilite) {
-	g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x+_w, _y+_h), valueToPos(_value),
-							isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled);
+void SliderWidget::drawWidget() {
+	g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x+_w, _y+_h), valueToPos(_value), _state);
 }
 
 int SliderWidget::valueToPos(int value) {
@@ -315,7 +334,7 @@ int SliderWidget::posToValue(int pos) {
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w, h), _gfx(), _alpha(256), _transparency(false) {
-	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 	// HACK: Don't save the background. We want to be sure that redrawing
 	//       the widget updates the screen, even when there isn't any image
@@ -325,7 +344,7 @@ GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h)
 
 GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name)
 	: Widget(boss, name), _gfx(), _alpha(256), _transparency(false) {
-	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 	// HACK: Don't save the background. We want to be sure that redrawing
 	//       the widget updates the screen, even when there isn't any image
@@ -367,25 +386,24 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 	}
 }
 
-void GraphicsWidget::drawWidget(bool hilite) {
-	if (sizeof(OverlayColor) == _gfx.bytesPerPixel && _gfx.pixels) {
-		g_gui.theme()->drawSurface(Common::Rect(_x, _y, _x+_w, _y+_h), _gfx, Theme::kStateEnabled, _alpha, _transparency);
-	}
+void GraphicsWidget::drawWidget() {
+	if (sizeof(OverlayColor) == _gfx.bytesPerPixel && _gfx.pixels)
+		g_gui.theme()->drawSurface(Common::Rect(_x, _y, _x+_w, _y+_h), _gfx, _state, _alpha, _transparency);
 }
 
 #pragma mark -
 
 ContainerWidget::ContainerWidget(GuiObject *boss, int x, int y, int w, int h) : Widget(boss, x, y, w, h) {
-	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kContainerWidget;
 }
 
 ContainerWidget::ContainerWidget(GuiObject *boss, const Common::String &name) : Widget(boss, name) {
-	_flags = WIDGET_ENABLED | WIDGET_CLEARBG;
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kContainerWidget;
 }
 
-void ContainerWidget::drawWidget(bool hilite) {
+void ContainerWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _hints, Theme::kWidgetBackgroundBorder);
 }
 

@@ -26,7 +26,7 @@
 #ifndef LURE_ROOM_H
 #define LURE_ROOM_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "lure/disk.h"
 #include "lure/res.h"
@@ -43,14 +43,21 @@ namespace Lure {
 #define FULL_HORIZ_RECTS 18
 #define FULL_VERT_RECTS 14
 #define NUM_EDGE_RECTS 4
+#define GRID_SIZE (FULL_VERT_RECTS * FULL_HORIZ_RECTS)
 
 class RoomLayer: public Surface {
 private:
-	bool _cells[FULL_VERT_RECTS][FULL_HORIZ_RECTS];
+	byte _cells[FULL_VERT_RECTS][FULL_HORIZ_RECTS];
 public:
 	RoomLayer(uint16 screenId, bool backgroundLayer);
-	bool isOccupied(byte cellX, byte cellY) { 
+	bool isOccupied(byte cellX, byte cellY) {
+		return _cells[cellY][cellX] < 0xfe;
+	}
+	uint8 getCell(byte cellX, byte cellY) {
 		return _cells[cellY][cellX];
+	}
+	void setCell(byte cellX, byte cellY, byte value) {
+		_cells[cellY][cellX] = value;
 	}
 };
 
@@ -72,7 +79,6 @@ private:
 	bool _showInfo;
 	uint8 _numLayers;
 	RoomLayer *_layers[MAX_NUM_LAYERS];
-	bool _cells[NUM_HORIZ_RECTS*NUM_VERT_RECTS];
 	TalkDialog *_talkDialog;
 	int16 _talkDialogX, _talkDialogY;
 	CursorState _cursorState;
@@ -80,23 +86,24 @@ private:
 	void checkRoomHotspots();
 	CursorType checkRoomExits();
 	void loadRoomHotspots();
-	bool sub_112() { return false; } // not yet implemented
-	void flagCoveredCells(Hotspot &h);
 	void addAnimation(Hotspot &h);
 	void addLayers(Hotspot &h);
 	void addCell(int16 xp, int16 yp, int layerNum);
+	void blockMerge();
+	void layersPostProcess();
 public:
 	RoomPathsDecompressedData tempLayer;
 	Room();
 	~Room();
 	static Room &getReference();
-	
+
 	void update();
 	void nextFrame();
 	void checkCursor();
 	uint16 roomNumber() { return _roomNumber; }
 	void setRoomNumber(uint16 newRoomNumber, bool showOverlay = false);
 	void leaveRoom();
+	uint8 numLayers() { return _numLayers; }
 	uint16 hotspotId() { return _hotspotId; }
 	uint16 destRoomNumber() { return _destRoomNumber; }
 	uint16 isExit() { return _isExit; }
@@ -108,12 +115,19 @@ public:
 	CursorState cursorState() { return _cursorState; }
 	void setShowInfo(bool value) { _showInfo = value; }
 	void setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 usedId, uint16 stringId);
+	TalkDialog *talkDialog() { return _talkDialog; }
 	void setCursorState(CursorState state) { _cursorState = state; }
 	bool isDialogActive() { return _talkDialog != NULL; }
+	bool isDialogShowing() {
+		Resources &res = Resources::getReference();
+		Hotspot *talkCharacter = res.getActiveHotspot(res.getTalkingCharacter());
+		return isDialogActive() && (talkCharacter != NULL) && (talkCharacter->roomNumber() == _roomNumber);
+	}
 	bool checkInTalkDialog();
 	char *statusLine() { return _statusLine; }
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);
+	void reset() { _roomNumber = 999; }
 };
 
 } // end of namespace Lure

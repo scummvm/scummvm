@@ -26,7 +26,7 @@
 #ifndef AGI_KEYBOARD_H
 #define AGI_KEYBOARD_H
 
-#include "common/stdafx.h"
+
 
 namespace Agi {
 

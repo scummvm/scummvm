@@ -11,7 +11,6 @@ MODULE_OBJS = \
 	id.o \
 	inv.o \
 	keyboard.o \
-	loader_preagi.o \
 	loader_v2.o \
 	loader_v3.o \
 	logic.o \
@@ -24,8 +23,10 @@ MODULE_OBJS = \
 	op_test.o \
 	picture.o \
 	preagi.o \
-	preagi_input.o \
+	preagi_common.o \
 	preagi_mickey.o \
+	preagi_troll.o \
+	preagi_winnie.o \
 	predictive.o \
 	saveload.o \
 	sound.o \

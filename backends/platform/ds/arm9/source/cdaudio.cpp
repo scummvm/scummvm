@@ -20,7 +20,6 @@
  *
  */
  
-#include "stdafx.h"
 #include "cdaudio.h"
 #include "ds-fs.h"
 #include "config-manager.h"
@@ -168,6 +167,7 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 	
 	if ((waveHeader.fmtFormatTag != 17) && (waveHeader.fmtFormatTag != 20)) {
 		consolePrintf("Wave file is in the wrong format!  You must use IMA-ADPCM 4-bit mono.\n");
+		DS::std_fclose(file);
 		return;
 	}
 	

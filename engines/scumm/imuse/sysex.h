@@ -25,7 +25,7 @@
 #ifndef SCUMM_IMUSE_SYSEX_H
 #define SCUMM_IMUSE_SYSEX_H
 
-#include "common/stdafx.h"
+
 #include "common/util.h"
 
 namespace Scumm {

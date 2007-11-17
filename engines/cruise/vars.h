@@ -32,8 +32,8 @@ namespace Cruise {
 
 struct menuElementSubStruct {
 	struct menuElementSubStruct *pNext;
-	int16 var2;
-	int16 var4;
+	int16 ovlIdx;
+	int16 header;
 };
 
 struct menuElementStruct {
@@ -61,7 +61,7 @@ extern uint8 colorOfSelectedSaveDrive;
 
 extern int16 initVar1;
 extern int16 initVar2;
-extern int16 initVar3;
+extern int16 switchPal;
 extern uint8 initVar4[90];
 
 extern int16 currentActiveBackgroundPlane;
@@ -69,20 +69,13 @@ extern int16 main5;
 extern int16 var22;
 
 struct mediumVarStruct {
-	uint8 name[16];
-	int16 field_10;
-	int16 field_12;
-	int16 field_14;
-	int16 field_16;
+	char name[15];
+	int32 size;
+	int32 sourceSize;
 	uint8 *ptr;
-	int16 field_1C;
-	int16 field_1E;
-	int16 field_20;
-};
-
-struct filesDataStruct {
-	uint8 *field_0;
-	uint8 *field_4;
+	int16 nofree;
+	int16 protect;
+	int16 ovl;
 };
 
 struct filesData2Struct {
@@ -91,7 +84,7 @@ struct filesData2Struct {
 };
 
 struct fileName {
-	uint8 name[13];
+	char name[13];
 };
 
 struct setHeaderEntry {
@@ -113,7 +106,7 @@ struct volumeDataStruct {
 };
 
 struct fileEntry {
-	uint8 name[14];
+	char name[14];
 	int32 offset;
 	int32 size;
 	int32 extSize;
@@ -123,30 +116,26 @@ struct fileEntry {
 struct dataFileEntrySub {
 	uint8 *ptr;
 	int16 index;		// sprite index
-	char name[14];
+	char name[13];
 	int16 transparency;	// sprite transparency
-	uint8 *ptr2;
+	uint8 *ptrMask;
 	uint8 resourceType;	// sprite and image type 2,4,8 , fnt = 7, spl = 6
-	uint8 field_1B;
-	int16 field_1C;
+	int16 compression;
 };
 
 struct dataFileEntry {
-	int16 widthInColumn;
-	int16 width;
-	int16 resType;
-	int16 height;
+	uint16 widthInColumn;
+	uint16 width;
+	uint16 resType;
+	uint16 height;
 	dataFileEntrySub subData;
 };
 
 struct systemStringsStruct {
 	int8 param;
-	uint8 string[12];
-	uint8 bootScriptName[8];
+	char string[12];
+	char bootScriptName[8];
 };
-
-extern filesDataStruct filesData[90];
-extern filesData2Struct filesData2[90];
 
 extern mediumVarStruct mediumVar[64];
 
@@ -156,14 +145,14 @@ extern int32 volumeDataLoaded;
 
 extern int16 numOfDisks;
 
-extern uint8 scriptNameBuffer[15];
+extern char currentOverlay[15];
 extern int16 currentActiveMenu;
-extern int16 main14;
-extern int16 mouseVar1;
+extern int16 autoMsg;
+extern menuElementSubStruct* linkedRelation;
 extern int16 main21;
 extern int16 main22;
-extern int16 main7;
-extern int16 main8;
+extern int16 userWait;
+extern int16 autoTrack;
 
 extern int16 currentDiskNumber;
 
@@ -173,8 +162,6 @@ extern Common::File *_currentVolumeFile;
 #else
 extern Common::File currentVolumeFile;
 #endif
-
-extern int16 currentCursor;
 
 extern int16 volumeNumEntry;
 extern fileEntry *volumePtrToFileDescriptor;
@@ -197,7 +184,8 @@ extern opcodeTypeFunction opcodeTypeTable[64];
 extern int16 positionInStack;
 extern actorStruct actorHead;
 
-extern int16 setup1;
+extern int16 stateID;
+extern int16 xdial;
 
 extern uint8 *currentData3DataPtr;
 extern uint8 *scriptDataPtrTable[7];
@@ -206,8 +194,8 @@ extern int16 currentScriptOpcodeType;
 
 extern int16 saveOpcodeVar;
 
-extern int16 var30;
-extern int16 var31;
+extern int16 narratorOvl;
+extern int16 narratorIdx;
 
 extern int16 var1;
 extern int16 var2;
@@ -215,24 +203,24 @@ extern int16 var3;
 extern int16 var4;
 extern int16 userEnabled;
 extern int16 var5;
-extern int16 var6;
-extern int16 var7;
-extern int16 var8;
+extern int16 dialogueEnabled;
+extern int16 dialogueOvl;
+extern int16 dialogueObj;
 extern int16 userDelay;
 extern int16 sysKey;
-extern int16 var11;
-extern int16 var12;
+extern int16 sysX;
+extern int16 sysY;
 extern int16 var13;
 extern int16 var14;
 extern int16 var20;
 extern int16 var23;
 extern int16 var24;
 extern int16 automaticMode;
-extern int16 var34;
-extern int16 var35;
+extern int16 aniX;
+extern int16 aniY;
 extern bool animationStart;
 
-extern int16 main17;
+extern int16 autoOvl;
 extern int16 var39;
 extern int16 entrerMenuJoueur;
 extern int16 var39;
@@ -249,7 +237,7 @@ extern int16 palette[256 * 3];
 
 extern systemStringsStruct systemStrings;
 
-extern uint8 currentCtpName[40];
+extern char currentCtpName[40];
 
 extern int16 saveVar1;
 extern uint8 saveVar2[97];	// recheck size
@@ -258,7 +246,7 @@ extern int16 numberOfWalkboxes;	// saveVar3
 extern int16 walkboxType[15];	// saveVar4     // Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
 extern int16 walkboxChange[15];	// saveVar5 // walkbox can change its type: 0x00 - not changeable, 0x01 - changeable
 												// Assumption: To change the type: walkboxType[i] -= walkboxChane[i] and vice versa
-extern uint8 saveVar6[16];
+extern uint8 lastAni[16];
 
 extern int32 loadFileVar1;
 

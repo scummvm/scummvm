@@ -55,7 +55,7 @@ CEikAppUi *CScummVMDoc::CreateAppUiL() {
 }
 
 void CScummVMUi::HandleForegroundEventL(TBool aForeground) {
-	if(aForeground) {
+	if (aForeground) {
 		BringUpEmulatorL();
 	}
 }
@@ -64,7 +64,7 @@ CScummVMUi::CScummVMUi() {
 }
 
 CScummVMUi::~CScummVMUi() {
-	if(iWatcher) {
+	if (iWatcher) {
 		iThreadWatch.LogonCancel(iWatcher->iStatus);
 		iWatcher->Cancel();
 	}
@@ -109,10 +109,10 @@ void CScummVMUi::ConstructL() {
 	iExeWgId=exeTask.WgId();
 	exeTask.BringToForeground();
 
-	if(iExeWgId == myTask.WgId()) { // Should n't be the same
+	if (iExeWgId == myTask.WgId()) { // Should n't be the same
 		Exit();
 	}
-	if(iThreadWatch.Open(iThreadId) == KErrNone) {
+	if (iThreadWatch.Open(iThreadId) == KErrNone) {
 		iWatcher = new (ELeave)CScummWatcher;
 		iWatcher->iAppUi = this;
 		iThreadWatch.Logon(iWatcher->iStatus);
@@ -139,7 +139,7 @@ void CScummWatcher::RunL() {
 void CScummVMUi::BringUpEmulatorL() {
 	RThread thread;
 
-	if(thread.Open(iThreadId) == KErrNone) {
+	if (thread.Open(iThreadId) == KErrNone) {
 		thread.Close();
 		TApaTask apaTask(iEikonEnv->WsSession());
 		apaTask.SetWgId(iExeWgId);
@@ -155,7 +155,7 @@ void CScummVMUi::HandleCommandL(TInt aCommand) {
 	case EEikCmdExit:
 		{
 			RThread thread;
-			if(thread.Open(iThreadId) == KErrNone) {
+			if (thread.Open(iThreadId) == KErrNone) {
 				thread.Terminate(0);
 				thread.Close();
 			}

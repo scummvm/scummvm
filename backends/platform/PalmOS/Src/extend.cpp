@@ -52,8 +52,8 @@ void DrawStatus(Boolean show) {
 	if (depth == 8) {
 		UInt8 *src = (UInt8 *)BmpGetBits(WinGetBitmap(WinGetDisplayWindow()));
 		src += gVars->screenPitch + 1;
-		for(y=0; y < 4; y++) {
-			for(x=0; x < 4; x++)
+		for (y=0; y < 4; y++) {
+			for (x=0; x < 4; x++)
 				src[x] = color;
 
 			src += gVars->screenPitch;
@@ -62,8 +62,8 @@ void DrawStatus(Boolean show) {
 	} else if (depth == 16) {
 		Int16 *src = (Int16 *)BmpGetBits(WinGetBitmap(WinGetDisplayWindow()));
 		src += gVars->screenPitch + 1;
-		for(y=0; y < 4; y++) {
-			for(x=0; x < 4; x++)
+		for (y=0; y < 4; y++) {
+			for (x=0; x < 4; x++)
 				src[x] = color;
 
 			src += gVars->screenPitch;

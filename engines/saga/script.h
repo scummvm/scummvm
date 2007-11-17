@@ -237,7 +237,6 @@ struct ModuleData {
 		voiceLUT.freeMem();
 		free(moduleBase);
 		free(entryPoints);
-		memset(this, 0x0, sizeof(*this));
 	}
 };
 

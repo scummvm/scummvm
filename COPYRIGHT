@@ -13,7 +13,6 @@ Jurgen Braam
 Ralph Brorsen
 James Brown
 Stuart Caie
-Filippos Karapetis
 Jamieson Christian
 Marcus Comstedt
 Paolo Costabel
@@ -32,6 +31,7 @@ Benjamin Haisch
 Vincent Hamm
 Sven Hesse
 Jochen Hoenicke
+Matthew Hoops
 Max Horn
 Travis Howell
 Janne Huttunen
@@ -83,7 +83,7 @@ Andreas Bierfert "awjb"
 Elio Blanca "eblanca76"
 David Breakey "dbreakey"
 Robert Buchholz "prendi"
-Filippos Karapetis "thebluegr"
+Rainer Canavan
 Mathieu Carot "yokna"
 Stefano Ceccherini "jackburton"
 Travis S Coady "theealien"
@@ -108,7 +108,6 @@ Matti Hamalainen "ccrtnsp"
 Matt Hargett "matt_hargett"
 Stefan Haubenthal "polluks"
 Alexander Holler "holler"
-Matthew Hoops "clone2727"
 Falk Hueffner "mellum"
 Casey Hutchinson "nnooiissee"
 Gregor Jasny "gjasny"
@@ -116,6 +115,7 @@ Jellby "jellby"
 Joerg "macdrega"
 Matt Johnson "mattjon"
 Nicolas Joly "njoly"
+Filippos Karapetis "thebluegr"
 KeithS "keithscr"
 Sam Kenny "sam_k"
 Koen Kooi "koenkooi"
@@ -128,6 +128,7 @@ Duncan Lock "dflock"
 Mark Lodato "itsr0y"
 Fridvin Logi "phillip_j_fry"
 Georg Lukas "ge0rg"
+Dmitry Marakasov "amdmi3"
 Markus "meist3r"
 Connor McLeod "mcleod2032"
 Mickey McMurray "metafox"
@@ -188,3 +189,4 @@ ole
 phi1
 spookypeanut "spookypeanut"
 tbcarey
+Tim "tipabu"

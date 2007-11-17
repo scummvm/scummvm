@@ -36,15 +36,12 @@ uint8 colorOfSelectedSaveDrive = 5;
 
 int16 initVar1;
 int16 initVar2;
-int16 initVar3;
+int16 switchPal;
 uint8 initVar4[90];
 
 int16 currentActiveBackgroundPlane;
 int16 main5;
 int16 var22 = 0;
-
-filesDataStruct filesData[90];
-filesData2Struct filesData2[90];
 
 mediumVarStruct mediumVar[64];
 
@@ -54,14 +51,14 @@ int32 volumeDataLoaded = 0;
 
 int16 numOfDisks;
 
-uint8 scriptNameBuffer[15];
+char currentOverlay[15];
 int16 currentActiveMenu;
-int16 main14;
-int16 mouseVar1;
+int16 autoMsg;
+menuElementSubStruct* linkedRelation;
 int16 main21;
 int16 main22;
-int16 main7;
-int16 main8;
+int16 userWait;
+int16 autoTrack;
 
 int16 currentDiskNumber = 1;
 
@@ -70,8 +67,6 @@ Common::File *_currentVolumeFile;
 #else
 Common::File currentVolumeFile;
 #endif
-
-int16 currentCursor;
 
 int16 volumeNumEntry;
 fileEntry *volumePtrToFileDescriptor = NULL;
@@ -96,7 +91,8 @@ int16 positionInStack;
 
 actorStruct actorHead;
 
-int16 setup1;
+int16 stateID;
+int16 xdial = 0;
 
 uint8 *currentData3DataPtr;
 uint8 *scriptDataPtrTable[7];
@@ -105,8 +101,8 @@ int16 currentScriptOpcodeType;
 
 int16 saveOpcodeVar;
 
-int16 var30 = 0;
-int16 var31 = 0;
+int16 narratorOvl = 0;
+int16 narratorIdx = 0;
 
 int16 var1;
 int16 var2;
@@ -114,24 +110,26 @@ int16 var3;
 int16 var4;
 int16 userEnabled;
 int16 var5;
-int16 var6;
-int16 var7;
-int16 var8;
+int16 dialogueEnabled;
+int16 dialogueOvl;
+int16 dialogueObj;
 int16 userDelay;
+
 int16 sysKey = -1;
-int16 var11 = 0;
-int16 var12;
+int16 sysX = 0;
+int16 sysY = 0;
+
 int16 var13;
 int16 var14;
 int16 var20;
 int16 var23;
 int16 var24;
 int16 automaticMode;
-int16 var34;
-int16 var35;
+int16 aniX;
+int16 aniY;
 bool animationStart;
 
-int16 main17;
+int16 autoOvl;
 int16 var39;
 int16 entrerMenuJoueur;
 int16 var41;
@@ -147,7 +145,7 @@ int16 palette[256 * 3];
 
 systemStringsStruct systemStrings;
 
-uint8 currentCtpName[40];
+char currentCtpName[40];
 
 int16 saveVar1;
 uint8 saveVar2[97];		// recheck size
@@ -156,7 +154,7 @@ int16 numberOfWalkboxes;	// saveVar3
 int16 walkboxType[15];		// saveVar4
 int16 walkboxChange[15];	// saveVar5
 
-uint8 saveVar6[16];
+uint8 lastAni[16];
 
 int32 loadFileVar1;
 

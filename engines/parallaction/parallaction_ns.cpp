@@ -23,14 +23,12 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/system.h"
 
 #include "common/config-manager.h"
 
 #include "parallaction/parallaction.h"
 #include "parallaction/sound.h"
-#include "parallaction/menu.h"
 
 
 namespace Parallaction {
@@ -41,13 +39,77 @@ namespace Parallaction {
 #define MOUSECOMBO_WIDTH		32	// sizes for cursor + selected inventory item
 #define MOUSECOMBO_HEIGHT		32
 
-int Parallaction_ns::init() {
+LocationName::LocationName() {
+	_buf = 0;
+	_hasSlide = false;
+	_hasCharacter = false;
+}
 
-	// Detect game
-	if (!detectGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
+LocationName::~LocationName() {
+	if (_buf)
+		free(_buf);
+}
+
+
+/*
+	bind accept the following input formats:
+
+    1 - [S].slide.[L]{.[C]}
+	2 - [L]{.[C]}
+
+    where:
+
+	[S] is the slide to be shown
+    [L] is the location to switch to (immediately in case 2, or right after slide [S] in case 1)
+    [C] is the character to be selected, and is optional
+
+    The routine tells one form from the other by searching for the '.slide.'
+
+    NOTE: there exists one script in which [L] is not used in the case 1, but its use
+		  is commented out, and would definitely crash the current implementation.
+*/
+void LocationName::bind(const char *s) {
+
+	if (_buf)
+		free(_buf);
+
+	_buf = strdup(s);
+	_hasSlide = false;
+	_hasCharacter = false;
+
+	Common::StringList list;
+	char *tok = strtok(_buf, ".");
+	while (tok) {
+		list.push_back(tok);
+		tok = strtok(NULL, ".");
 	}
+
+	if (list.size() < 1 || list.size() > 4)
+		error("changeLocation: ill-formed location name '%s'", s);
+
+	if (list.size() > 1) {
+		if (list[1] == "slide") {
+			_hasSlide = true;
+			_slide = list[0];
+
+			list.remove_at(0);		// removes slide name
+			list.remove_at(0);		// removes 'slide'
+		}
+
+		if (list.size() == 2) {
+			_hasCharacter = true;
+			_character = list[1];
+		}
+	}
+
+	_location = list[0];
+
+	strcpy(_buf, s);		// kept as reference
+}
+
+
+
+int Parallaction_ns::init() {
 
 	_screenWidth = 320;
 	_screenHeight = 200;
@@ -71,6 +133,7 @@ int Parallaction_ns::init() {
 		_soundMan = new AmigaSoundMan(this);
 	}
 
+	initJobs();
 	initResources();
 	initFonts();
 	initCursors();
@@ -107,7 +170,7 @@ void Parallaction_ns::freeFonts() {
 
 void Parallaction_ns::renderLabel(Graphics::Surface *cnv, char *text) {
 
-	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+	if (getPlatform() == Common::kPlatformAmiga) {
 		cnv->create(_labelFont->getStringWidth(text) + 16, 10, 1);
 
 		_labelFont->setColor(7);
@@ -139,33 +202,47 @@ void Parallaction_ns::initCursors() {
 	return;
 }
 
-void Parallaction_ns::setMousePointer(int16 index) {
+void Parallaction_ns::setArrowCursor() {
 
-	if (index == kCursorArrow) {		// standard mouse pointer
+	debugC(1, kDebugInput, "setting mouse cursor to arrow");
 
-		_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
-		_system->showMouse(true);
+	// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
+	hideLabel(kPriority15);
+	_activeItem._id = 0;
 
-	} else {
-		// inventory item pointer
-		byte *v8 = (byte*)_mouseComposedArrow->pixels;
+	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
+	_system->showMouse(true);
 
-		// FIXME: destination offseting is not clear
-		byte* s = _char._objs->getData(getInventoryItemIndex(index));
-		byte* d = v8 + 7 + MOUSECOMBO_WIDTH * 7;
+}
 
-		for (uint i = 0; i < INVENTORYITEM_HEIGHT; i++) {
-			memcpy(d, s, INVENTORYITEM_WIDTH);
+void Parallaction_ns::setInventoryCursor(int pos) {
 
-			s += INVENTORYITEM_PITCH;
-			d += MOUSECOMBO_WIDTH;
-		}
+	if (pos == -1)
+		return;
 
-		_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
+	const InventoryItem *item = getInventoryItem(pos);
+	if (item->_index == 0)
+		return;
+
+	_activeItem._id = item->_id;
+
+	byte *v8 = (byte*)_mouseComposedArrow->pixels;
+
+	// FIXME: destination offseting is not clear
+	byte* s = _char._objs->getData(item->_index);
+	byte* d = v8 + 7 + MOUSECOMBO_WIDTH * 7;
+
+	for (uint i = 0; i < INVENTORYITEM_HEIGHT; i++) {
+		memcpy(d, s, INVENTORYITEM_WIDTH);
+
+		s += INVENTORYITEM_PITCH;
+		d += MOUSECOMBO_WIDTH;
 	}
 
-	return;
+	_system->setMouseCursor(v8, MOUSECOMBO_WIDTH, MOUSECOMBO_HEIGHT, 0, 0, 0);
+
 }
+
 
 void Parallaction_ns::callFunction(uint index, void* parm) {
 	assert(index < 25);	// magic value 25 is maximum # of callables for Nippon Safes
@@ -176,116 +253,113 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 
 int Parallaction_ns::go() {
 
-	_menu = new Menu(this);
-	_menu->start();
-
-	char *v4 = strchr(_location._name, '.');
-	if (v4) {
-		*v4 = '\0';
-	}
-
 	_globalTable = _disk->loadTable("global");
 
-	_engineFlags &= ~kEngineChangeLocation;
-	changeCharacter(_characterName);
+	guiStart();
 
-	strcpy(_saveData1, _location._name);
-	parseLocation(_location._name);
+	changeLocation(_location._name);
 
-	if (_location._startPosition.x != -1000) {
-		_char._ani._left = _location._startPosition.x;
-		_char._ani._top = _location._startPosition.y;
-		_char._ani._frame = _location._startFrame;
-		_location._startPosition.y = -1000;
-		_location._startPosition.x = -1000;
-	};
+	addJob(kJobEraseAnimations, (void*)1, kPriority20);
+	_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
+	addJob(kJobDisplayAnimations, 0, kPriority3);
 
 	runGame();
-
-	delete _menu;
 
 	return 0;
 }
 
+void Parallaction_ns::switchBackground(const char* background, const char* mask) {
+//	printf("switchBackground(%s)", name);
 
-/*
-	changeLocation handles transitions between locations, and is able to display slides
-	between one and the other. The input parameter 'location' exists in some flavours:
+	Palette pal;
 
-    1 - [S].slide.[L]{.[C]}
-	2 - [L]{.[C]}
+	uint16 v2 = 0;
+	if (!scumm_stricmp(background, "final")) {
+		_gfx->clearScreen(Gfx::kBitBack);
+		for (uint16 _si = 0; _si < 32; _si++) {
+			pal.setEntry(_si, v2, v2, v2);
+			v2 += 4;
+		}
 
-    where:
+		g_system->delayMillis(20);
+		_gfx->setPalette(pal);
+		_gfx->updateScreen();
+	}
 
-	[S] is the slide to be shown
-    [L] is the location to switch to (immediately in case 2, or right after slide [S] in case 1)
-    [C] is the character to be selected, and is optional
+	setBackground(background, mask, mask);
 
-    The routine tells one form from the other by searching for the '.slide.'
+	return;
+}
 
-    NOTE: there exists one script in which [L] is not used in the case 1, but its use
-		  is commented out, and would definitely crash the current implementation.
-*/
+
+void Parallaction_ns::showSlide(const char *name) {
+
+	BackgroundInfo info;
+
+	_disk->loadSlide(info, name);
+
+	// TODO: avoid using screen buffers for displaying slides. Using a generic buffer
+	// allows for positioning of graphics as needed by Big Red Adventure.
+	// The main problem lies with menu, which relies on multiple buffers, mainly because
+	// it is crappy code.
+	_gfx->setBackground(&info.bg);
+	_gfx->setPalette(info.palette);
+	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+
+	info.bg.free();
+	info.mask.free();
+	info.path.free();
+
+	return;
+}
+
+//	changeLocation handles transitions between locations, and is able to display slides
+//	between one and the other.
+//
 void Parallaction_ns::changeLocation(char *location) {
-	debugC(1, kDebugLocation, "changeLocation(%s)", location);
+	debugC(1, kDebugExec, "changeLocation(%s)", location);
 
 	_soundMan->playLocationMusic(location);
 
-	// WORKAROUND: this if-statement has been added to avoid crashes caused by
+	// WORKAROUND: this hideLabel has been added to avoid crashes caused by
 	// execution of label jobs after a location switch. The other workaround in
 	// Parallaction::runGame should have been rendered useless by this one.
-	if (_jDrawLabel != NULL) {
-		removeJob(_jDrawLabel);
-		removeJob(_jEraseLabel);
-		_jDrawLabel = NULL;
-		_jEraseLabel = NULL;
-	}
-
+	hideLabel(kPriority99);
 
 	_hoverZone = NULL;
 	if (_engineFlags & kEngineBlockInput) {
-		changeCursor( kCursorArrow );
+		setArrowCursor();
 	}
 
 	_animations.remove(&_char._ani);
 
-	freeLocation();
-	char buf[100];
-	strcpy(buf, location);
+	// WORKAROUND: eat up any pending short-lived job that may be referring to the
+	// current location before the actual switch is performed, or engine may
+	// segfault because of invalid pointers.
+	runJobs();
+	runJobs();
 
-	Common::StringList list;
-	char *tok = strtok(location, ".");
-	while (tok) {
-		list.push_back(tok);
-		tok = strtok(NULL, ".");
+	freeLocation();
+
+	LocationName locname;
+	locname.bind(location);
+
+	if (locname.hasSlide()) {
+		showSlide(locname.slide());
+		_gfx->setFont(_menuFont);
+		_gfx->displayCenteredString(14, _slideText[0]); // displays text on screen
+		_gfx->updateScreen();
+		waitUntilLeftClick();
 	}
 
-	if (list.size() < 1 || list.size() > 4)
-		error("changeLocation: ill-formed location string '%s'", location);
-
-	if (list.size() > 1) {
-		if (list[1] == "slide") {
-			showSlide(list[0].c_str());
-			_gfx->setFont(_menuFont);
-			_gfx->displayCenteredString(14, _slideText[0]); // displays text on screen
-			_gfx->updateScreen();
-			waitUntilLeftClick();
-
-			list.remove_at(0);		// removes slide name
-			list.remove_at(0);		// removes 'slide'
-		}
-
-		// list is now only [L].{[C]} (see above comment)
-		if (list.size() == 2) {
-			changeCharacter(list[1].c_str());
-			strcpy(_characterName, list[1].c_str());
-		}
+	if (locname.hasCharacter()) {
+		changeCharacter(locname.character());
 	}
 
 	_animations.push_front(&_char._ani);
 
-	strcpy(_saveData1, list[0].c_str());
-	parseLocation(list[0].c_str());
+	strcpy(_saveData1, locname.location());
+	parseLocation(_saveData1);
 
 	_char._ani._oldPos.x = -1000;
 	_char._ani._oldPos.y = -1000;
@@ -328,58 +402,113 @@ void Parallaction_ns::changeLocation(char *location) {
 	if (_hasLocationSound)
 		_soundMan->playSfx(_locationSound, 0, true);
 
-	debugC(1, kDebugLocation, "changeLocation() done");
+	debugC(1, kDebugExec, "changeLocation() done");
+
+	_engineFlags &= ~kEngineChangeLocation;
 
 	return;
 
 }
 
+
 void Parallaction_ns::changeCharacter(const char *name) {
-	debugC(1, kDebugLocation, "changeCharacter(%s)", name);
+	debugC(1, kDebugExec, "changeCharacter(%s)", name);
 
-	char baseName[20];
-	if (IS_MINI_CHARACTER(name)) {
-		strcpy(baseName, name+4);
-	} else {
-		strcpy(baseName, name);
+	_char.setName(name);
+
+	if (!scumm_stricmp(_char.getFullName(), _characterName1)) {
+		debugC(3, kDebugExec, "changeCharacter: nothing done");
+		return;
 	}
 
-	char fullName[20];
-	strcpy(fullName, name);
-	if (_engineFlags & kEngineTransformedDonna)
-		strcat(fullName, "tras");
+	// freeCharacter takes responsibility for checking
+	// character for sanity before memory is freed
+	freeCharacter();
 
-	if (scumm_stricmp(fullName, _characterName1)) {
+	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
+	_char._ani._cnv = _disk->loadFrames(_char.getFullName());
 
-		// freeCharacter takes responsibility for checking
-		// character for sanity before memory is freed
-		freeCharacter();
+	if (!_char.dummy()) {
+		if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT))
+			_disk->selectArchive("disk0");
 
-		Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
-		_char._ani._cnv = _disk->loadFrames(fullName);
+		_char._head = _disk->loadHead(_char.getBaseName());
+		_char._talk = _disk->loadTalk(_char.getBaseName());
+		_char._objs = _disk->loadObjects(_char.getBaseName());
+		_objectsNames = _disk->loadTable(_char.getBaseName());
 
-		if (!IS_DUMMY_CHARACTER(name)) {
-			if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT))
-				_disk->selectArchive("disk0");
+		_soundMan->playCharacterMusic(_char.getBaseName());
 
-			_char._head = _disk->loadHead(baseName);
-			_char._talk = _disk->loadTalk(baseName);
-			_char._objs = _disk->loadObjects(baseName);
-			_objectsNames = _disk->loadTable(baseName);
-
-			_soundMan->playCharacterMusic(name);
-
-			if (!(getFeatures() & GF_DEMO))
-				parseLocation("common");
-		}
-
-		if (!oldArchive.empty())
-			_disk->selectArchive(oldArchive);
+		// The original engine used to reload 'common' only on loadgames. We are reloading here since 'common'
+		// contains character specific stuff. This causes crashes like bug #1816899, because parseLocation tries
+		// to reload scripts but the data archive selected is occasionally wrong. This has been solved by having
+		// parseLocation only load scripts when they aren't already loaded - which it should have done since the
+		// beginning nevertheless.
+		if (!(getFeatures() & GF_DEMO))
+			parseLocation("common");
 	}
 
-	strcpy(_characterName1, fullName);
+	if (!oldArchive.empty())
+		_disk->selectArchive(oldArchive);
 
-	debugC(1, kDebugLocation, "changeCharacter() done");
+	strcpy(_characterName1, _char.getFullName());
+
+	debugC(3, kDebugExec, "changeCharacter: switch completed");
+
+	return;
+}
+
+void Parallaction_ns::initJobs() {
+
+	static const JobFn jobs[] = {
+		&Parallaction_ns::jobDisplayAnimations,
+		&Parallaction_ns::jobEraseAnimations,
+		&Parallaction_ns::jobDisplayDroppedItem,
+		&Parallaction_ns::jobRemovePickedItem,
+		&Parallaction_ns::jobRunScripts,
+		&Parallaction_ns::jobWalk,
+		&Parallaction_ns::jobDisplayLabel,
+		&Parallaction_ns::jobEraseLabel,
+		&Parallaction_ns::jobWaitRemoveJob,
+		&Parallaction_ns::jobToggleDoor,
+		&Parallaction_ns::jobShowInventory,
+		&Parallaction_ns::jobHideInventory
+	};
+
+	_jobsFn = jobs;
+
+	_jDrawInventory = 0;
+	_jRunScripts = 0;
+}
+
+JobOpcode* Parallaction_ns::createJobOpcode(uint functionId, Job *job) {
+	return new OpcodeImpl2<Parallaction_ns>(this, _jobsFn[functionId], job);
+}
+
+void Parallaction_ns::cleanupGame() {
+
+	_engineFlags &= ~kEngineTransformedDonna;
+
+	// this code saves main character animation from being removed from the following code
+	_animations.remove(&_char._ani);
+	_numLocations = 0;
+	_commandFlags = 0;
+
+	memset(_localFlags, 0, sizeof(_localFlags));
+	memset(_locationNames, 0, sizeof(_locationNames));
+
+	// this flag tells freeZones to unconditionally remove *all* Zones
+	_engineFlags |= kEngineQuit;
+
+	freeZones();
+	freeAnimations();
+
+	// this dangerous flag can now be cleared
+	_engineFlags &= ~kEngineQuit;
+
+	// main character animation is restored
+	_animations.push_front(&_char._ani);
+	_score = 0;
 
 	return;
 }

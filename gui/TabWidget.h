@@ -99,7 +99,7 @@ protected:
 	// Essentially this compensates for the space taken up by the tab title header.
 	virtual int16	getChildY() const;
 
-	virtual void drawWidget(bool hilite);
+	virtual void drawWidget();
 
 	virtual Widget *findWidget(int x, int y);
 };

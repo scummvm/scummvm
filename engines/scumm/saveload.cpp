@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -59,10 +59,10 @@ struct SaveInfoSection {
 	uint32 type;
 	uint32 version;
 	uint32 size;
-	
+
 	uint32 timeTValue;  // Obsolete since version 2, but kept for compatibility
 	uint32 playtime;
-	
+
 	uint32 date;
 	uint16 time;
 };
@@ -86,18 +86,7 @@ void ScummEngine::requestLoad(int slot) {
 	_saveLoadFlag = 2;		// 2 for load
 }
 
-bool ScummEngine::saveState(int slot, bool compat) {
-	char filename[256];
-	Common::OutSaveFile *out;
-	SaveGameHeader hdr;
-
-	makeSavegameName(filename, slot, compat);
-
-	if (!(out = _saveFileMan->openForSaving(filename)))
-		return false;
-
-	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
-
+static bool saveSaveGameHeader(Common::OutSaveFile *out, SaveGameHeader &hdr) {
 	hdr.type = MKID_BE('SCVM');
 	hdr.size = 0;
 	hdr.ver = CURRENT_VER;
@@ -106,6 +95,25 @@ bool ScummEngine::saveState(int slot, bool compat) {
 	out->writeUint32LE(hdr.size);
 	out->writeUint32LE(hdr.ver);
 	out->write(hdr.name, sizeof(hdr.name));
+	return true;
+}
+
+bool ScummEngine::saveState(int slot, bool compat) {
+	char filename[256];
+	Common::OutSaveFile *out;
+	SaveGameHeader hdr;
+
+	if (_saveLoadSlot == 255) {
+		// Allow custom filenames for save game system in HE Games
+		memcpy(filename, _saveLoadFileName, sizeof(_saveLoadFileName));
+	} else {
+		makeSavegameName(filename, slot, compat);
+	}
+	if (!(out = _saveFileMan->openForSaving(filename)))
+		return false;
+
+	memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
+	saveSaveGameHeader(out, hdr);
 	saveThumbnail(out);
 	saveInfos(out);
 
@@ -137,7 +145,12 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	SaveGameHeader hdr;
 	int sb, sh;
 
-	makeSavegameName(filename, slot, compat);
+	if (_saveLoadSlot == 255) {
+		// Allow custom filenames for save game system in HE Games
+		memcpy(filename, _saveLoadFileName, sizeof(_saveLoadFileName));
+	} else {
+		makeSavegameName(filename, slot, compat);
+	}
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return false;
 
@@ -152,7 +165,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// we see a version that is higher than anything we'd expect...
 	if (hdr.ver > 0xFFFFFF)
 		hdr.ver = SWAP_BYTES_32(hdr.ver);
-		
+
 	// Reject save games which are too old or too new. Note that
 	// We do not really support V7 games, but still accept them here
 	// to work around a bug from the stone age (see below for more
@@ -344,7 +357,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// Restore the virtual screens and force a fade to black.
 	initScreens(0, _screenHeight);
 
-	VirtScreen *vs = &virtscr[kMainVirtScreen];
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 	memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
 	vs->setDirtyRange(0, vs->h);
 	updateDirtyScreen(kMainVirtScreen);
@@ -384,10 +397,28 @@ void ScummEngine::makeSavegameName(char *out, int slot, bool temporary) {
 }
 
 void ScummEngine::listSavegames(bool *marks, int num) {
+	assert(marks);
+
 	char prefix[256];
+	char slot[2];
+	int slotNum;
+	Common::StringList filenames;
+
 	makeSavegameName(prefix, 99, false);
-	prefix[strlen(prefix)-2] = 0;
-	_saveFileMan->listSavefiles(prefix, marks, num);
+	prefix[strlen(prefix)-2] = '*';
+	prefix[strlen(prefix)-1] = 0;
+	memset(marks, false, num * sizeof(bool));	//assume no savegames for this title
+	filenames = _saveFileMan->listSavefiles(prefix);
+
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
+		//Obtain the last 2 digits of the filename, since they correspond to the save slot
+		slot[0] = file->c_str()[file->size()-2];
+		slot[1] = file->c_str()[file->size()-1];
+
+		slotNum = atoi(slot);
+		if (slotNum >= 0 && slotNum < num)
+			marks[slotNum] = true;	//mark this slot as valid
+	}
 }
 
 bool ScummEngine::getSavegameName(int slot, char *desc) {
@@ -491,8 +522,8 @@ bool ScummEngine::loadInfosFromSlot(int slot, InfoStuff *stuff) {
 		delete in;
 		return false;
 	}
-	
-	delete in;	
+
+	delete in;
 	return true;
 }
 
@@ -522,11 +553,11 @@ bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
 	// For header version 1, we load the data in with our old method
 	if (section.version == 1) {
 		time_t tmp = section.timeTValue;
-		tm *curTime = localtime(&tmp);	
+		tm *curTime = localtime(&tmp);
 		stuff->date = (curTime->tm_mday & 0xFF) << 24 | ((curTime->tm_mon + 1) & 0xFF) << 16 | (curTime->tm_year + 1900) & 0xFFFF;
 		stuff->time = (curTime->tm_hour & 0xFF) << 8 | (curTime->tm_min) & 0xFF;
 	}
-	
+
 	if (section.version >= 2) {
 		section.date = file->readUint32BE();
 		section.time = file->readUint16BE();
@@ -534,7 +565,7 @@ bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
 		stuff->date = section.date;
 		stuff->time = section.time;
 	}
-	
+
 	stuff->playtime = section.playtime;
 
 	// Skip over the remaining (unsupported) data
@@ -554,9 +585,9 @@ void ScummEngine::saveInfos(Common::OutSaveFile* file) {
 	// still save old format for older versions
 	section.timeTValue = time(0);
 	section.playtime = _system->getMillis() / 1000 - _engineStartTime;
-	
+
 	time_t curTime_ = time(0);
-	tm *curTime = localtime(&curTime_);	
+	tm *curTime = localtime(&curTime_);
 	section.date = (curTime->tm_mday & 0xFF) << 24 | ((curTime->tm_mon + 1) & 0xFF) << 16 | (curTime->tm_year + 1900) & 0xFFFF;
 	section.time = (curTime->tm_hour & 0xFF) << 8 | (curTime->tm_min) & 0xFF;
 

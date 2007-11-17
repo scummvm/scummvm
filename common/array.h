@@ -53,8 +53,7 @@ public:
 	}
 
 	~Array() {
-		if (_data)
-			delete [] _data;
+		delete [] _data;
 	}
 
 	void push_back(const T& element) {
@@ -100,8 +99,7 @@ public:
 		if (this == &array)
 			return *this;
 
-		if (_data)
-			delete [] _data;
+		delete [] _data;
 		_size = array._size;
 		_capacity = _size + 32;
 		_data = new T[_capacity];
@@ -115,10 +113,8 @@ public:
 	}
 
 	void clear() {
-		if (_data) {
-			delete [] _data;
-			_data = 0;
-		}
+		delete [] _data;
+		_data = 0;
 		_size = 0;
 		_capacity = 0;
 	}

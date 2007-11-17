@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/md5.h"
 #include "kyra/kyra.h"
@@ -41,14 +41,14 @@ bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
 	if (!kyraDat.open("KYRA.DAT"))
 		return false;
-	
+
 	uint32 size = kyraDat.size() - 16;
 	uint8 digest[16];
 	kyraDat.seek(size, SEEK_SET);
 	if (kyraDat.read(digest, 16) != 16)
 		return false;
 	kyraDat.close();
-	
+
 	uint8 digestCalc[16];
 	if (!Common::md5_file("KYRA.DAT", digestCalc, size))
 		return false;
@@ -86,7 +86,7 @@ uint32 createFeatures(const GameFlags &flags) {
 		return GF_TALKIE;
 	if (flags.isDemo)
 		return GF_DEMO;
-	if (flags.platform == Common::kPlatformFMTowns)
+	if (flags.platform == Common::kPlatformFMTowns || flags.platform == Common::kPlatformPC98)
 		return GF_FMTOWNS;
 	if (flags.platform == Common::kPlatformAmiga)
 		return GF_AMIGA;
@@ -183,7 +183,7 @@ bool StaticResource::init() {
 		// GUI strings table
 		{ kGUIStrings, kLanguageList, "GUISTRINGS." },
 		{ kConfigStrings, kLanguageList, "CONFIGSTRINGS." },
-		
+
 		// ROOM table/filenames
 		{ Kyra::kRoomList, StaticResource::kRoomList, "ROOM-TABLE.ROOM" },
 		{ kRoomFilenames, kStringList, "ROOM-FILENAMES.TXT" },
@@ -210,7 +210,7 @@ bool StaticResource::init() {
 
 		// PALETTE table
 		{ kPaletteList, kPaletteTable, "1 33 PALTABLE" },
-		
+
 		// FM-TOWNS specific
 		{ kKyra1TownsSFXTable, kRawData, "SFXTABLE" },
 		{ kCreditsStrings, kRawData, "CREDITS" },
@@ -233,14 +233,14 @@ bool StaticResource::init() {
 		warning("no matching INDEX file found");
 		return false;
 	}
-	
+
 	uint32 version = READ_BE_UINT32(temp);
 	uint32 gameID = READ_BE_UINT32((temp+4));
 	uint32 featuresValue = READ_BE_UINT32((temp+8));
-	
+
 	delete [] temp;
 	temp = 0;
-	
+
 	if (version != RESFILE_VERSION)
 		error("invalid KYRA.DAT file version (%d, required %d)", version, RESFILE_VERSION);
 	if (gameID != _vm->game())
@@ -381,7 +381,7 @@ const StaticResource::FileType *StaticResource::getFiletype(int type) {
 
 const void *StaticResource::getData(int id, int requesttype, int &size) {
 	const void *ptr = 0;
-	int type = -1;	
+	int type = -1;
 	size = 0;
 
 	if (checkResList(id, type, ptr, size)) {
@@ -413,7 +413,7 @@ bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &si
 	for (int i = 0; languages[i].ext; ++i) {
 		if (languages[i].flags != createLanguage(_vm->gameFlags()))
 			continue;
-			
+
 		strcpy(file, filename);
 		strcat(file, languages[i].ext);
 		if (loadStringTable(file, ptr, size))
@@ -444,7 +444,7 @@ bool StaticResource::loadStringTable(const char *filename, void *&ptr, int &size
 	size = count;
 	char **output = new char*[count];
 	assert(output);
-		
+
 	const char *curPos = (const char*)src;
 	for (uint32 i = 0; i < count; ++i) {
 		int strLen = strlen(curPos);
@@ -477,7 +477,7 @@ bool StaticResource::loadShapeTable(const char *filename, void *&ptr, int &size)
 	size = count;
 	Shape *loadTo = new Shape[count];
 	assert(loadTo);
-	
+
 	for (uint32 i = 0; i < count; ++i) {
 		loadTo[i].imageIndex = *src++;
 		loadTo[i].x = *src++;
@@ -504,7 +504,7 @@ bool StaticResource::loadRoomTable(const char *filename, void *&ptr, int &size) 
 	size = count;
 	Room *loadTo = new Room[count];
 	assert(loadTo);
-	
+
 	for (uint32 i = 0; i < count; ++i) {
 		loadTo[i].nameIndex = *src++;
 		loadTo[i].northExit = READ_BE_UINT16(src); src += 2;
@@ -605,7 +605,7 @@ uint8 *StaticResource::getFile(const char *name, int &size) {
 		ext = ".CD";
 	else if (_vm->gameFlags().isDemo)
 		ext = ".DEM";
-	else if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+	else if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
 		ext = ".TNS";
 	else if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		ext = ".AMG";
@@ -656,9 +656,9 @@ void KyraEngine_v1::initStaticResource() {
 	_veryClever = _staticres->loadStrings(kVeryCleverString, _veryClever_Size);
 	_homeString = _staticres->loadStrings(kOutroHomeString, _homeString_Size);
 	_newGameString = _staticres->loadStrings(kNewGameString, _newGameString_Size);
-	
+
 	_healingShapeTable = _staticres->loadShapeTable(kHealing1Shapes, _healingShapeTableSize);
-	_healingShape2Table = _staticres->loadShapeTable(kHealing2Shapes, _healingShape2TableSize);	
+	_healingShape2Table = _staticres->loadShapeTable(kHealing2Shapes, _healingShape2TableSize);
 	_posionDeathShapeTable = _staticres->loadShapeTable(kPoisonDeathShapes, _posionDeathShapeTableSize);
 	_fluteAnimShapeTable = _staticres->loadShapeTable(kFluteShapes, _fluteAnimShapeTableSize);
 	_winterScrollTable = _staticres->loadShapeTable(kWinter1Shapes, _winterScrollTableSize);
@@ -672,14 +672,14 @@ void KyraEngine_v1::initStaticResource() {
 	_characterImageTable = _staticres->loadStrings(kCharacterImageFilenames, _characterImageTableSize);
 
 	_roomFilenameTable = _staticres->loadStrings(kRoomFilenames, _roomFilenameTableSize);
-	
+
 	_amuleteAnim = _staticres->loadRawData(kAmuleteAnimSeq, temp);
-	
+
 	_specialPalettes = _staticres->loadPaletteTable(kPaletteList, temp);
 
 	_guiStrings = _staticres->loadStrings(kGUIStrings, _guiStringsSize);
 	_configStrings = _staticres->loadStrings(kConfigStrings, _configStringsSize);
-	
+
 	// copied static res
 
 	// room list
@@ -729,7 +729,7 @@ void KyraEngine_v1::loadCharacterShapes() {
 	int curImage = 0xFF;
 	int videoPage = _screen->_curPage;
 	_screen->_curPage = 2;
-	for (int i = 0; i < 115; ++i) {	
+	for (int i = 0; i < 115; ++i) {
 		assert(i < _defaultShapeTableSize);
 		Shape *shape = &_defaultShapeTable[i];
 		if (shape->imageIndex == 0xFF) {
@@ -749,17 +749,17 @@ void KyraEngine_v1::loadCharacterShapes() {
 void KyraEngine_v1::loadSpecialEffectShapes() {
 	_screen->loadBitmap("EFFECTS.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
- 
-	int currShape; 
+
+	int currShape;
 	for (currShape = 173; currShape < 183; currShape++)
 		_shapes[currShape] = _screen->encodeShape((currShape-173) * 24, 0, 24, 24, 1);
- 
+
 	for (currShape = 183; currShape < 190; currShape++)
 		_shapes[currShape] = _screen->encodeShape((currShape-183) * 24, 24, 24, 24, 1);
- 
+
 	for (currShape = 190; currShape < 201; currShape++)
 		_shapes[currShape] = _screen->encodeShape((currShape-190) * 24, 48, 24, 24, 1);
- 
+
 	for (currShape = 201; currShape < 206; currShape++)
 		_shapes[currShape] = _screen->encodeShape((currShape-201) * 16, 106, 16, 16, 1);
 }
@@ -835,7 +835,7 @@ void KyraEngine_v1::loadMainScreen(int page) {
 
 	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
 		_screen->loadBitmap("MAIN15.CPS", page, page, _screen->getPalette(0));
-	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN || (_flags.isTalkie && _flags.lang == Common::IT_ITA)) 
+	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN || (_flags.isTalkie && _flags.lang == Common::IT_ITA))
 		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
 	else if (_flags.lang == Common::FR_FRA)
 		_screen->loadBitmap("MAIN_FRE.CPS", page, page, 0);
@@ -905,7 +905,6 @@ const int8 KyraEngine::_addYPosTable[] = {
 };
 
 const char *KyraEngine_v1::_soundFiles[] = {
-	"INTRO",
 	"KYRA1A",
 	"KYRA1B",
 	"KYRA2A",
@@ -914,7 +913,8 @@ const char *KyraEngine_v1::_soundFiles[] = {
 	"KYRA4B",
 	"KYRA5A",
 	"KYRA5B",
-	"KYRAMISC"
+	"KYRAMISC",
+	"INTRO"
 };
 
 const int KyraEngine_v1::_soundFilesCount = ARRAYSIZE(KyraEngine_v1::_soundFiles);
@@ -925,7 +925,7 @@ const char *KyraEngine_v1::_soundFilesTowns[] = {
 	"TW_SCEN2.SFX",
 	"TW_SCEN3.SFX",
 	"TW_SCEN4.SFX",
-	"TW_SCEN5.SFX",
+	"TW_SCEN5.SFX"
 };
 
 const int KyraEngine_v1::_soundFilesTownsCount = ARRAYSIZE(KyraEngine_v1::_soundFilesTowns);
@@ -982,7 +982,7 @@ void KyraEngine_v1::setupButtonData() {
 		&buttonData[14],
 		0
 	};
-	
+
 	_buttonData = buttonData;
 	_buttonDataListPtr = buttonDataListPtr;
 }
@@ -1001,7 +1001,7 @@ Button KyraEngine_v1::_menuButtonData[] = {
 
 void KyraEngine_v1::setupMenu() {
 	static Menu menu[] = {
-		{ -1, -1, 208, 136, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1, 
+		{ -1, -1, 208, 136, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1,
 			{
 				{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
 				248, 249, 250, &KyraEngine_v1::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
@@ -1030,16 +1030,16 @@ void KyraEngine_v1::setupMenu() {
 		},
 		{ -1, -1, 288, 160, 248, 249, 250, 0, 251, -1, 8, 0, 6, 132, 22, 132, 124,
 			{
-				{1, 0, 0, 0, -1, 255, 39, 256, 15, 252, 253, 5, 0, 
+				{1, 0, 0, 0, -1, 255, 39, 256, 15, 252, 253, 5, 0,
 				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
 
-				{1, 0, 0, 0, -1, 255, 56, 256, 15, 252, 253, 5, 0, 
+				{1, 0, 0, 0, -1, 255, 56, 256, 15, 252, 253, 5, 0,
 				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
 
-				{1, 0, 0, 0, -1, 255, 73, 256, 15, 252, 253, 5, 0, 
+				{1, 0, 0, 0, -1, 255, 73, 256, 15, 252, 253, 5, 0,
 				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
 
-				{1, 0, 0, 0, -1, 255, 90, 256, 15, 252, 253, 5, 0, 
+				{1, 0, 0, 0, -1, 255, 90, 256, 15, 252, 253, 5, 0,
 				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
 
 				{1, 0, 0, 0, -1, 255, 107, 256, 15, 252, 253, 5, 0,
@@ -1058,7 +1058,7 @@ void KyraEngine_v1::setupMenu() {
 				248, 249, 250, &KyraEngine_v1::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0}
 			}
 		},
-		{ -1, -1, 208, 76, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1, 
+		{ -1, -1, 208, 76, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1,
 			{
 				{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
 				248, 249, 250, &KyraEngine_v1::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
@@ -1067,7 +1067,7 @@ void KyraEngine_v1::setupMenu() {
 				248, 249, 250, &KyraEngine_v1::gui_quitPlaying, -1, 0, 0, 0, 0, 0}
 			}
 		},
-		{ -1, -1, 208, 153, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1, 
+		{ -1, -1, 208, 153, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1,
 			{
 				{1, 0, 0, 0, 110, 0, 30, 64, 15, 252, 253, 5, 0,
 				248, 249, 250, &KyraEngine_v1::gui_controlsChangeMusic, -1, 0, 34, 32, 0, 0},
@@ -1089,7 +1089,7 @@ void KyraEngine_v1::setupMenu() {
 			}
 		}
 	};
-	
+
 	_menu = menu;
 }
 
@@ -1115,6 +1115,25 @@ const uint16 KyraEngine_v1::_amuletY[] = { 170, 170, 159, 181 };
 const uint16 KyraEngine_v1::_amuletX2[] = { 0x000, 0x0FD, 0x0E7, 0x0FD, 0x113, 0x000 };
 const uint16 KyraEngine_v1::_amuletY2[] = { 0x000, 0x09F, 0x0AA, 0x0B5, 0x0AA, 0x000 };
 
+const int8 KyraEngine_v1::_dosTrackMap[] = {
+	-1,   0,  -1,   1,   0,   3,   0,   2,
+	 0,   4,   1,   2,   1,   3,   1,   4,
+	 1,  92,   1,   6,   1,   7,   2,   2,
+	 2,   3,   2,   4,   2,   5,   2,   6,
+	 2,   7,   3,   3,   3,   4,   1,   8,
+	 1,   9,   4,   2,   4,   3,   4,   4,
+	 4,   5,   4,   6,   4,   7,   4,   8,
+	 1,  11,   1,  12,   1,  14,   1,  13,
+	 4,   9,   5,  12,   6,   2,   6,   6,
+	 6,   7,   6,   8,   6,   9,   6,   3,
+	 6,   4,   6,   5,   7,   2,   7,   3,
+	 7,   4,   7,   5,   7,   6,   7,   7,
+	 7,   8,   7,   9,   8,   2,   8,   3,
+	 8,   4,   8,   5,   6,  11,   5,  11
+};
+
+const int KyraEngine_v1::_dosTrackMapSize = ARRAYSIZE(KyraEngine_v1::_dosTrackMap);
+
 // Kyra 2 and 3 main menu
 
 const char *KyraEngine_v2::_mainMenuStrings[] = {
@@ -1135,7 +1154,7 @@ const char *KyraEngine_v2::_mainMenuStrings[] = {
 
 // kyra 2 static res
 
-const char *KyraEngine_v2::_introStrings[] = {
+const char *KyraEngine_v2::_sequenceStrings_PC_EN[] = {
 	"Kyrandia is disappearing!",
 	"Rock by rock...",
 	"...and tree by tree.",
@@ -1156,12 +1175,208 @@ const char *KyraEngine_v2::_introStrings[] = {
 	" DUMMY STRING... ",
 	"If they think I'm going to walk all the way down there, they're nuts!",
 	" DUMMY STRING... ",
-	"Hurry up faun!"
+	" DUMMY STRING... ",
+	"Hurry up Faun!",
+
+	"Boy, that was a close call!",
+	"You said it pal. I, for one, am never going hunting again!",
+	"Ribbit.",
+	"How many times do I have to tell you? You're a toad.",
+	"Oh no! We're out of cheese!",
+	"Let's try this earwax. It's orange.",
+	"Mommy, when do I get the ivy?",
+	"Get out of here, shoo!",
+	"You cut, and I'll choose.",
+	"No. You cut and I'll choose.",
+	"I still say it was derivative drivel.",
+	"Aw, you still wouldn't recognize iambic pentameter if it bit you on the butt!",
+
+	"Executive Producer",
+	"Brett W. Sperry",
+	"Direction & Design",
+	"Rick Gush",
+	"Lead Programmer",
+	"Michael Legg",
+	"Art Management",
+	"Louis Castle",
+	"Joseph B. Hewitt IV",
+	"Lead Artist",
+	"Rick Parks",
+	"Additional Coding by",
+	"Philip W. Gorrow",
+	"Mike Grayford",
+	"Mark McCubbin",
+	"Artists",
+	"Cameron Chun",
+	"Cary Averett",
+	"Cindy Chinn",
+	"Elie Arabian",
+	"Fei Cheng",
+	"Ferby Miguel",
+	"Frank Mendeola",
+	"Jack Martin",
+	"Jerry Moore",
+	"DUMMY STRING... ",
+	"Judith Peterson",
+	"Larry Miller",
+	"Lenny Lee",
+	"Louise Sandoval",
+	"Ren Olsen",
+	"Music & Sounds by",
+	"Paul Mudra",
+	"Frank Klepacki",
+	"Dwight Okahara",
+	"Pat Collins",
+	"Quality Assurance by",
+	"Glenn Sperry",
+	"Michael Lightner",
+	"William Foster",
+	"Jesse Clemit",
+	"Jeff Fillhaber",
+	"Manual, Package Design",
+	"& Fulfillment",
+	"Eydie Laramore",
+	"Lisa Marcinko",
+	"Lauren Rifkin",
+	"Congratulations!",
+	"Thank you for playing The Hand of Fate!",
+	"Guest Coding",
+	"Producer Liaison",
+	"Scott Duckett",
+	"Irvine Testers",
+	"Chris McFarland",
+	"Paul Moore",
+	"Chad Soares",
+	"Jared Brinkley",
+	"Jon Willliams",
+	"Chris Toft",
+	"Joe Kucan's Hair by",
+	"Theodore A. Morris",
+	"Load a game",
+	"Introduction",
+	"Start a new game",
+	"Exit the game",
+	"Special Thanks, to",
+	"Sake Joe Bostic-san",
+	"Tim Fritz",
+	"Kenny Dunne",
+	"Thank you for playing \"The Hand of Fate\"."
 };
 
-const int KyraEngine_v2::_introStringsSize = ARRAYSIZE(KyraEngine_v2::_introStrings);
+const char *KyraEngine_v2::_sequenceStrings_TOWNS_EN[] = {
+	"Kyrandia is disappearing!",
+	"Rock by rock...",
+	"...and tree by tree.",
+	"Kyrandia ceases to exist!",
+	"The Royal Mystics are baffled.",
+	"Every reference has been consulted.",
+	"Even Marko and his new valet have been allowed into the conference.",
+	"Luckily, the Hand was experienced in these matters.",
+	"And finally a plan was approved...",
+	"...that required a magic Anchor Stone...",
+	"...to be retrieved from the center of the world.",
+	"Zanthia, youngest of the Kyrandian Mystics, has been selected to retrieve the Stone.",
+	"Thank you for playing The Hand of Fate.",
+	"This should be enough blueberries to open a portal to the center of the world.",
+	" DUMMY STRING... ",
+	" DUMMY STRING... ",
+	"Hey! All my equipment has been stolen!",
+	" DUMMY STRING... ",
+	"If they think I'm going to walk all the way down there, they're nuts!",
+	" DUMMY STRING... ",
+	" DUMMY STRING... ",
+	"Hurry up Faun!",
 
-const char *KyraEngine_v2::_introSoundList[] = {
+	"Boy, that was a close call!",
+	"You said it pal. I, for one, am never going hunting again!",
+	"Ribbit.",
+	"How many times do I have to tell you? You're a toad.",
+	"Oh no! We're out of cheese!",
+	"Let's try this earwax. It's orange.",
+	"Mommy, when do I get the ivy?",
+	"Get out of here, shoo!",
+	"You cut, and I'll choose.",
+	"No. You cut and I'll choose.",
+	"I still say it was derivative drivel.",
+	"Aw, you still wouldn't recognize iambic pentameter if it bit you on the butt!",
+
+	"Executive Producer",
+	"Brett W. Sperry",
+	"Designed & Directed by",
+	"Rick Gush",
+	"Lead Programmer",
+	"Michael Legg",
+	"Art Management",
+	"Louis Castle",
+	"Joseph B. Hewitt IV",
+	"Lead Artist",
+	"Rick Parks",
+	"Additional Coding by",
+	"Philip W. Gorrow",
+	"Matt Collins",
+	"Mark McCubbin",
+	"Artists",
+	"Cameron Chun",
+	"Cary Averett",
+	"Cindy Chinn",
+	"Elie Arabian",
+	"Fei Cheng",
+	"Ferby Miguel",
+	"Frank Mendeola",
+	"Jack Martin",
+	"Jerry Moore",
+	"",
+	"Judith Peterson",
+	"Larry Miller",
+	"Lenny Lee",
+	"Louise Sandoval",
+	"Ren Olsen",
+	"Music & Sounds by",
+	"Paul Mudra",
+	"Frank Klepacki",
+	"Dwight Okahara",
+	"Pat Collins",
+	"Qualilty Assurance by",
+	"Glenn Sperry",
+	"Michael Lightner",
+	"William Foster",
+	"Jesse Clemit",
+	"Jeff Fillhaber",
+	"Manual, Package Design",
+	"& Fulfillment",
+	"Eydie Laramore",
+	"Lisa Marcinko",
+	"Lauren Rifkin",
+	"Congratulations!",
+	"Thank you for playing The Hand of Fate!",
+	"Guest Coding",
+	"Producer Liaison",
+	"Scott Duckett",
+	"Irvine Testers",
+	"Chris McFarland",
+	"Paul Moore",
+	"Chad Soares",
+	"Jared Brinkley",
+	"Jon Willliams",
+	"Chris Toft",
+	"Chris's Hair by",
+	"Cumulo Nimbus",
+	"Load a game",
+	"Introduction",
+	"Start a new game",
+	"Exit the game",
+	"Special Thanks to",
+	"Sake Joe Bostic-san",
+	"Tim Fritz",
+	"Kenny Dunne",
+	"Yukio Sekiguchi (Japan)",
+	"Takeshi Abo (Japan)"
+};
+
+const int KyraEngine_v2::_sequenceStringsSize_PC_EN = ARRAYSIZE(KyraEngine_v2::_sequenceStrings_PC_EN);
+const int KyraEngine_v2::_sequenceStringsSize_TOWNS_EN = ARRAYSIZE(KyraEngine_v2::_sequenceStrings_TOWNS_EN);
+
+const char *KyraEngine_v2::_sequenceSoundList_PC[] = {
 	"eintro1",
 	"eintro2",
 	"eintro3",
@@ -1179,6 +1394,7 @@ const char *KyraEngine_v2::_introSoundList[] = {
 	"0000130",
 	"0000180",
 	"0000160",
+
 	"asong",
 	"crowcaw",
 	"eyerub2",
@@ -1189,7 +1405,7 @@ const char *KyraEngine_v2::_introSoundList[] = {
 	"lambmom3",
 	"lambkid1",
 	"thunder2",
-	"tunder3",
+	"thunder3",
 	"wind6",
 	"h2odrop2",
 	"gasleak",
@@ -1211,7 +1427,46 @@ const char *KyraEngine_v2::_introSoundList[] = {
 	"theend"
 };
 
-const int KyraEngine_v2::_introSoundListSize = ARRAYSIZE(KyraEngine_v2::_introSoundList);
+const char *KyraEngine_v2::_sequenceSoundList_TOWNS[] = {
+	"intro1.pcm",
+	"intro2.pcm",
+	"intro3.pcm",
+	"intro4.pcm",
+	"intro5.pcm",
+	"intro6.pcm",
+	"intro7.pcm",
+	"intro8.pcm",
+	"intro9.pcm",
+	"intro10.pcm",
+	"intro11.pcm",
+	"intro12.pcm",
+	"glow.pcm",
+
+	"asong.pcm",
+	"crowcaw.pcm",
+	"eyerub2.pcm",
+	"pluck3.pcm",
+	"rodnreel.pcm",
+	"frog1.pcm",
+	"scavmov2.pcm",
+	"lambmom3.pcm",
+	"lambkid1.pcm",
+	"thunder2.pcm",
+	"thunder3.pcm",
+	"wind6.pcm",
+	"h2odrop2.pcm",
+	"gasleak.pcm",
+	"polgulp1.pcm",
+	"hndslap1.pcm",
+	"burp1.pcm",
+	"scream1.pcm",
+	"theend.pcm"
+};
+
+const int KyraEngine_v2::_sequenceSoundListSize_PC = ARRAYSIZE(KyraEngine_v2::_sequenceSoundList_PC);
+const int KyraEngine_v2::_sequenceSoundListSize_TOWNS = ARRAYSIZE(KyraEngine_v2::_sequenceSoundList_TOWNS);
+
+const uint8 KyraEngine_v2::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
 
 const char *KyraEngine_v2::_languageExtension[] = {
 	"ENG",
@@ -1229,17 +1484,94 @@ const char *KyraEngine_v2::_scriptLangExt[] = {
 	"SMC"*/
 };
 
-int KyraEngine_v2::_characterFrameTable[] = {
+const int KyraEngine_v2::_characterFrameTable[] = {
 	0x19, 0x09, 0x09, 0x12, 0x12, 0x12, 0x09, 0x09
 };
 
-int KyraEngine_v2::_inventoryX[] = {
+const int KyraEngine_v2::_inventoryX[] = {
 	0x4F, 0x63, 0x77, 0x8B, 0x9F, 0x4F, 0x63, 0x77, 0x8B, 0x9F
 };
 
-int KyraEngine_v2::_inventoryY[] = {
+const int KyraEngine_v2::_inventoryY[] = {
 	0x95, 0x95, 0x95, 0x95, 0x95, 0xAA, 0xAA, 0xAA, 0xAA, 0xAA
 };
+
+const byte KyraEngine_v2::_itemStringMap[] = {
+	2,    2,    0,    0,    2,    2,    2,    0,
+	2,    2,    0,    0,    0,    2,    0,    0,
+	0,    0,    0,    0,    2,    0,    0,    0,
+	0,    1,    0,    2,    2,    2,    2,    0,
+	3,    0,    3,    2,    2,    2,    3,    2,
+	2,    2,    0,    0,    0,    0,    0,    0,
+	0,    0,    0,    0,    2,    0,    0,    0,
+	0,    0,    0,    0,    0,    2,    0,    0,
+	2,    0,    0,    0,    0,    0,    0,    2,
+	2,    0,    0,    0,    2,    2,    2,    2,
+	2,    2,    2,    2,    2,    2,    2,    2,
+	2,    2,    2,    2,    2,    2,    2,    0,
+	2,    2,    2,    0,    0,    1,    3,    2,
+	2,    2,    2,    2,    2,    0,    0,    0,
+	0,    2,    2,    1,    0,    1,    2,    0,
+	0,    0,    0,    0,    0,    2,    2,    2,
+	2,    2,    2,    2,    0,    2,    2,    2,
+	2,    3,    2,    0,    0,    0,    0,    1,
+	2,    0,    0,    0,    0,    0,    0,    0,
+	0,    0,    0,    0,    0,    0,    0,    0,
+	2,    2,    0,    0,    0,    0,    0,    2,
+	0,    2,    0,    0,    0,    0,    0,    0
+};
+
+const char *KyraEngine_v2::_dosSoundFileListIntro[] = { "K2INTRO" };
+const char *KyraEngine_v2::_dosSoundFileListFinale[] = { "K2FINALE" };
+
+const char *KyraEngine_v2::_dosSoundFileList[] = {
+	"K2TEST1",
+	"K2TEST2",
+	"K2TEST3",
+	"K2TEST4",
+	"K2TEST5",
+	"K2TEST6",
+	"K2TEST7",
+	"K2TEST8",
+	"K2TEST9",
+	"K2TEST10",
+	"K2TEST11",
+	"K2TEST12",
+	"K2TEST13",
+	"K2TEST14",
+	"K2TEST15"
+};
+
+const int KyraEngine_v2::_dosSoundFileListSize = ARRAYSIZE(KyraEngine_v2::_dosSoundFileList);
+
+const int KyraEngine_v2::_itemStringMapSize = ARRAYSIZE(KyraEngine_v2::_itemStringMap);
+
+const int8 KyraEngine_v2::_dosTrackMap[] = {
+	-1,    0,   -1,    1,    9,    6,    5,    4,
+	 8,    3,   -2,    0,   -2,    0,    2,    3,
+	-2,    0,   -2,    0,   -2,    0,   -2,    0,
+	 0,    2,    0,    3,    1,    2,    1,    3,
+	 2,    2,    2,    0,    3,    2,    3,    3,
+	 3,    4,    4,    2,    5,    2,    5,    3,
+	 5,    4,    6,    2,    6,    3,    6,    4,
+	 6,    5,    6,    6,    6,    7,    6,    8,
+	 6,    0,    6,    9,    7,    2,    7,    3,
+	 7,    4,    7,    5,    8,    6,    7,    6,
+	 7,    7,    7,    8,    7,    9,    8,    2,
+	14,    2,    8,    4,    8,    7,    8,    8,
+	 8,    9,    9,    2,    9,    3,    9,    4,
+	 9,    5,    9,    7,    9,    8,    9,    9,
+	10,    2,   10,    3,   10,    4,   10,    5,
+	10,    6,   10,    7,   11,    2,   11,    3,
+	11,    4,   11,    5,   11,    6,   11,    7,
+	11,    8,   11,    9,   12,    2,   12,    3,
+	12,    4,   12,    5,   12,    6,   12,    7,
+	12,    8,   12,    9,   13,    2,    4,    7,
+	14,    3,   14,    4,   14,    5,    4,    2,
+	 4,    3,    4,    4,    4,    5,    4,    6
+};
+
+const int KyraEngine_v2::_dosTrackMapSize = ARRAYSIZE(KyraEngine_v2::_dosTrackMap);
 
 // kyra 3 static res
 
@@ -1301,4 +1633,5 @@ const char *KyraEngine_v3::_languageExtension[] = {
 const int KyraEngine_v3::_languageExtensionSize = ARRAYSIZE(KyraEngine_v3::_languageExtension);
 
 } // End of namespace Kyra
+
 

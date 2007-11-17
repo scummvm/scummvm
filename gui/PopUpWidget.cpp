@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/system.h"
 #include "common/events.h"
 #include "gui/dialog.h"
@@ -358,7 +357,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 
 PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const String &label, uint labelWidth)
 	: Widget(boss, name), CommandSender(boss), _label(label), _labelWidth(labelWidth) {
-	_flags = WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS;
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS);
 	setHints(THEME_HINT_SAVE_BACKGROUND);
 	_type = kPopUpWidget;
 
@@ -369,7 +368,6 @@ PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const String &labe
 }
 
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-
 	if (isEnabled()) {
 		PopUpDialog popupDialog(this, x + getAbsX(), y + getAbsY());
 		int newSel = popupDialog.runModal();
@@ -402,7 +400,6 @@ void PopUpWidget::clearEntries() {
 }
 
 void PopUpWidget::setSelected(int item) {
-	// FIXME
 	if (item != _selectedItem) {
 		if (item >= 0 && item < (int)_entries.size()) {
 			_selectedItem = item;
@@ -422,19 +419,18 @@ void PopUpWidget::setSelectedTag(uint32 tag) {
 	}
 }
 
-void PopUpWidget::drawWidget(bool hilite) {
+void PopUpWidget::drawWidget() {
 	int x = _x + _labelWidth + _labelSpacing;
 	int w = _w - _labelWidth - _labelSpacing;
 
 	// Draw the label, if any
 	if (_labelWidth > 0)
-		g_gui.theme()->drawText(Common::Rect(_x+2,_y+3,_x+2+_labelWidth, _y+3+g_gui.theme()->getFontHeight()), _label,
-								isEnabled() ? Theme::kStateEnabled : Theme::kStateDisabled, Theme::kTextAlignRight);
+		g_gui.theme()->drawText(Common::Rect(_x+2,_y+3,_x+2+_labelWidth, _y+3+g_gui.theme()->getFontHeight()), _label, _state, Theme::kTextAlignRight);
 
 	Common::String sel;
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
-	g_gui.theme()->drawPopUpWidget(Common::Rect(x, _y, x+w, _y+_h), sel, _leftPadding, isEnabled() ? (hilite ? Theme::kStateHighlight : Theme::kStateEnabled) : Theme::kStateDisabled, g_gui.theme()->convertAligment(kTextAlignLeft));
+	g_gui.theme()->drawPopUpWidget(Common::Rect(x, _y, x+w, _y+_h), sel, _leftPadding, _state, g_gui.theme()->convertAligment(kTextAlignLeft));
 }
 
 } // End of namespace GUI

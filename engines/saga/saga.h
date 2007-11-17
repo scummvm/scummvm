@@ -61,6 +61,9 @@ class Resource;
 struct ResourceContext;
 struct StringList;
 
+using Common::MemoryReadStream;
+using Common::MemoryReadStreamEndian;
+
 //#define MIN_IMG_RLECODE    3
 //#define MODEX_SCANLINE_LIMIT 200 //TODO: remove
 
@@ -136,7 +139,8 @@ enum GameIds {
 	GID_IHNM_CD_DE,   // reported by mld. German retail
 	GID_IHNM_CD_ES,
 	GID_IHNM_CD_RU,
-	GID_IHNM_CD_FR
+	GID_IHNM_CD_FR,
+	GID_IHNM_CD_ITA
 };
 
 enum GameFileTypes {
@@ -158,7 +162,8 @@ enum GameFeatures {
 	GF_WYRMKEEP          = 1 << 1,
 	GF_CD_FX             = 1 << 2,
 	GF_SCENE_SUBSTITUTES = 1 << 3,
-	GF_COMPRESSED_SOUNDS = 1 << 4
+	GF_COMPRESSED_SOUNDS = 1 << 4,
+	GF_NON_INTERACTIVE   = 1 << 5
 };
 
 enum VerbTypeIds {
@@ -499,7 +504,7 @@ protected:
 	int go();
 	int init();
 public:
-	SagaEngine(OSystem *syst);
+	SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc);
 	virtual ~SagaEngine();
 	void shutDown() { _quit = true; }
 
@@ -516,7 +521,7 @@ public:
 	uint getNewSaveSlotNumber();
 	bool locateSaveFile(char *saveName, uint &titleNumber);
 	bool isSaveListFull() const {
-		return _saveFilesMaxCount == _saveFilesCount;
+		return _saveFilesCount == MAX_SAVES;
 	}
 	uint getSaveFilesCount() const {
 		return isSaveListFull() ? _saveFilesCount : _saveFilesCount + 1;
@@ -610,10 +615,8 @@ public:
 	}
 
  private:
-	uint _saveFilesMaxCount;
 	uint _saveFilesCount;
 	SaveFileData _saveFiles[MAX_SAVES];
-	bool _saveMarks[MAX_SAVES];
 	SaveGameHeader _saveHeader;
 
 	bool _leftMouseButtonPressed;

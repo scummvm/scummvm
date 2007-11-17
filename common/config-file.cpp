@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "common/config-file.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -106,7 +104,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			// It would be nice if this hack could be restricted to that game,
 			// but the current design of this class doesn't allow to do that
 			// in a nice fashion (a "isMustard" parameter is *not* a nice
-			// solution). 
+			// solution).
 			comment += buf;
 			comment += "\n";
 		} else if (buf[0] == '[') {

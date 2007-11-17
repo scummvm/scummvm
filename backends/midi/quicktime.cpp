@@ -38,7 +38,7 @@
 #endif
 
 
-// FIXME - the following disables reverb support in the QuickTime / CoreAudio
+// FIXME: the following disables reverb support in the QuickTime / CoreAudio
 // midi backends. For some reasons, reverb will suck away a *lot* of CPU time.
 // Until we know for sure what is causing this and if there is a better way to
 // fix the problem, we just disable all reverb for these backends.

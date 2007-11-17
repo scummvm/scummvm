@@ -26,7 +26,7 @@
 #ifndef LURE_SURFACE_H
 #define LURE_SURFACE_H
 
-#include "common/stdafx.h"
+
 #include "common/str.h"
 #include "lure/disk.h"
 #include "lure/luredefs.h"
@@ -37,13 +37,13 @@ namespace Lure {
 
 class Surface {
 private:
-	MemoryBlock *_data;	
+	MemoryBlock *_data;
 	uint16 _width, _height;
 public:
 	Surface(MemoryBlock *src, uint16 width, uint16 height);
-	Surface(uint16 width, uint16 height);		
+	Surface(uint16 width, uint16 height);
 	~Surface();
-	
+
 	static void initialise();
 	static void deinitialise();
 
@@ -52,9 +52,11 @@ public:
 	MemoryBlock &data() { return *_data; }
 
 	void loadScreen(uint16 resourceId);
-	void writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour);
-	void writeString(uint16 x, uint16 y, Common::String line, bool transparent, 
+	int writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour);
+	void writeString(uint16 x, uint16 y, Common::String line, bool transparent,
 		uint8 colour = DIALOG_TEXT_COLOUR, bool varLength = true);
+	void writeSubstring(uint16 x, uint16 y, Common::String line, int len, 
+		bool transparent, uint8 colour = DIALOG_TEXT_COLOUR, bool varLength = true);
 	void transparentCopyTo(Surface *dest);
 	void copyTo(Surface *dest);
 	void copyTo(Surface *dest, uint16 x, uint16 y);
@@ -89,12 +91,16 @@ private:
 	char _desc[MAX_DESC_SIZE];
 	char **_lines;
 	uint8 _numLines;
+	int _endLine, _endIndex;
+	int _wordCountdown;
 public:
 	TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId);
 	~TalkDialog();
 
 	char *desc() { return _desc; }
 	Surface &surface() { return *_surface; }
+	void copyTo(Surface *dest, uint16 x, uint16 y);
+	bool isBuilding() { return _endLine < _numLines; }
 };
 
 class SaveRestoreDialog {
@@ -107,6 +113,18 @@ public:
 class RestartRestoreDialog {
 public:
 	static bool show();
+};
+
+class CopyProtectionDialog {
+private:
+	Common::RandomSource _rnd;
+	ManagedList<Hotspot *> _hotspots;
+	int _charIndex;
+
+	void chooseCharacters();
+public:
+	CopyProtectionDialog();
+	bool show();
 };
 
 } // End of namespace Lure

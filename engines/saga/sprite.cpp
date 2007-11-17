@@ -34,7 +34,6 @@
 #include "saga/font.h"
 
 #include "saga/sprite.h"
-#include "saga/stream.h"
 
 namespace Saga {
 

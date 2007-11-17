@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/savefile.h"
 
 #include "gui/dialog.h"
@@ -32,6 +31,7 @@
 #include "gui/message.h"
 
 #include "parallaction/parallaction.h"
+#include "parallaction/sound.h"
 
 
 /* Nippon Safes savefiles are called 'game.0' to 'game.9'. The game conventiently allows users to
@@ -80,6 +80,10 @@ public:
 
 void Parallaction_ns::doLoadGame(uint16 slot) {
 
+	_soundMan->stopMusic();
+
+	cleanupGame();
+
 	_introSarcData3 = 200;
 	_introSarcData2 = 1;
 
@@ -90,13 +94,14 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	if (!f) return;
 
 	char s[30];
+	char n[16];
+	char l[16];
 
 	f->readLine(s, 29);
 
-	f->readLine(_characterName, 15);
-	f->readLine(_location._name, 15);
+	f->readLine(n, 15);
 
-	strcat(_location._name, ".");
+	f->readLine(l, 15);
 
 	f->readLine(s, 15);
 	_location._startPosition.x = atoi(s);
@@ -133,45 +138,30 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 		f->readLine(s, 15);
 		_localFlags[_si] = atoi(s);
 	}
-	_locationNames[_si][0] = '\0';
+
+	cleanInventory(false);
+	ItemName name;
+	uint32 value;
 
 	for (_si = 0; _si < 30; _si++) {
 		f->readLine(s, 15);
-		_inventory[_si]._id = atoi(s);
+		value = atoi(s);
 
 		f->readLine(s, 15);
-		_inventory[_si]._index = atoi(s);
+		name = atoi(s);
+
+		addInventoryItem(name, value);
 	}
 
 	delete f;
-
-	_engineFlags &= ~kEngineTransformedDonna;
-	if (!scumm_stricmp(_characterName, "donnatras")) {
-		_engineFlags |= kEngineTransformedDonna;
-		strcpy(_characterName, "donna");
-	}
-	if (!scumm_stricmp(_characterName, "minidonnatras")) {
-		_engineFlags |= kEngineTransformedDonna;
-		strcpy(_characterName, _minidonnaName);
-	}
-
-	if (IS_MINI_CHARACTER(_characterName)) {
-		strcpy(filename, _characterName+4);
-	} else {
-		strcpy(filename, _characterName);
-	}
-//	strcat(filename, ".tab");
-//	freeTable(_objectsNames);
-//	initTable(filename, _objectsNames);
-
-//	parseLocation("common");
 
 	// force reload of character to solve inventory
 	// bugs, but it's a good maneuver anyway
 	strcpy(_characterName1, "null");
 
-	strcat(_location._name, _characterName);
-	_engineFlags |= kEngineChangeLocation;
+	char tmp[PATH_LEN];
+	sprintf(tmp, "%s.%s" , l, n);
+	scheduleLocationSwitch(tmp);
 
 	return;
 }
@@ -202,11 +192,7 @@ void Parallaction_ns::doSaveGame(uint16 slot, const char* name) {
 	f->writeString(s);
 	f->writeString("\n");
 
-	if (_engineFlags & kEngineTransformedDonna) {
-		sprintf(s, "%stras\n", _characterName);
-	} else {
-		sprintf(s, "%s\n", _characterName);
-	}
+	sprintf(s, "%s\n", _char.getFullName());
 	f->writeString(s);
 
 	sprintf(s, "%s\n", _saveData1);
@@ -227,8 +213,10 @@ void Parallaction_ns::doSaveGame(uint16 slot, const char* name) {
 		f->writeString(s);
 	}
 
+	const InventoryItem *item;
 	for (uint16 _si = 0; _si < 30; _si++) {
-		sprintf(s, "%u\n%d\n", _inventory[_si]._id, _inventory[_si]._index);
+		item = getInventoryItem(_si);
+		sprintf(s, "%u\n%d\n", item->_id, item->_index);
 		f->writeString(s);
 	}
 
@@ -385,11 +373,11 @@ int Parallaction_ns::selectSaveFile(uint16 arg_0, const char* caption, const cha
 
 
 
-void Parallaction_ns::loadGame() {
+bool Parallaction_ns::loadGame() {
 
 	int _di = selectSaveFile( 0, "Load file", "Load" );
 	if (_di == -1) {
-		return;
+		return false;
 	}
 
 	doLoadGame(_di);
@@ -397,20 +385,21 @@ void Parallaction_ns::loadGame() {
 	GUI::TimedMessageDialog dialog("Loading game...", 1500);
 	dialog.runModal();
 
-	changeCursor(kCursorArrow);
+	setArrowCursor();
 
-	return;
+	return true;
 }
 
 
-void Parallaction_ns::saveGame() {
+bool Parallaction_ns::saveGame() {
 
-	if (!scumm_stricmp(_location._name, "caveau"))
-		return;
+	if (!scumm_stricmp(_location._name, "caveau")) {
+		return false;
+	}
 
 	int slot = selectSaveFile( 1, "Save file", "Save" );
 	if (slot == -1) {
-		return;
+		return false;
 	}
 
 	doSaveGame(slot, _saveFileName.c_str());
@@ -418,9 +407,7 @@ void Parallaction_ns::saveGame() {
 	GUI::TimedMessageDialog dialog("Saving game...", 1500);
 	dialog.runModal();
 
-	return;
-
-
+	return true;
 }
 
 

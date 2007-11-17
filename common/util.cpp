@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "engines/engine.h"
 #include "common/util.h"
 #include "common/system.h"
@@ -44,6 +43,8 @@ extern bool isSmartphone(void);
 #endif
 
 #ifdef __DS__
+	#include "ds-fs.h"
+
 	#undef stderr
 	#undef stdout
 	#undef stdin
@@ -51,7 +52,7 @@ extern bool isSmartphone(void);
 	#define stdout ((DS::fileHandle*) -1)
 	#define stderr ((DS::fileHandle*) -2)
 	#define stdin ((DS::fileHandle*) -3)
-	
+
 	void 	std_fprintf(FILE* handle, const char* fmt, ...);
 	void 	std_fflush(FILE* handle);
 
@@ -61,6 +62,39 @@ extern bool isSmartphone(void);
 
 
 namespace Common {
+
+bool matchString(const char *str, const char *pat) {
+	const char *p = 0;
+	const char *q = 0;
+
+	for (;;) {
+		switch (*pat) {
+		case '*':
+			p = ++pat;
+			q = str;
+			break;
+
+		default:
+			if (*pat != *str) {
+				if (p) {
+					pat = p;
+					str = ++q;
+					if (!*str)
+						return !*pat;
+					break;
+				}
+				else
+					return false;
+			}
+			// fallthrough
+		case '?':
+			if (!*str)
+				return !*pat;
+			pat++;
+			str++;
+		}
+	}
+}
 
 //
 // Print hexdump of the data passed in
@@ -155,6 +189,7 @@ const LanguageDescription g_languages[] = {
 	{"us", "English (US)", EN_USA},
 	{"fr", "French", FR_FRA},
 	{"de", "German", DE_DEU},
+	{"gr", "Greek", GR_GRE},
 	{"hb", "Hebrew", HB_ISR},
 	{"it", "Italian", IT_ITA},
 	{"jp", "Japanese", JA_JPN},
@@ -212,6 +247,7 @@ const PlatformDescription g_platforms[] = {
 	{"atari", "atari-st", "st", "Atari ST", kPlatformAtariST},
 	{"c64", "c64", "c64", "Commodore 64", kPlatformC64},
 	{"pc", "dos", "ibm", "DOS", kPlatformPC},
+	{"pc98", "pc98", "pc98", "PC-98", kPlatformPC98},
 
 	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
 	// However, on the net many variations can be seen, like "FMTOWNS",
@@ -481,8 +517,9 @@ void CDECL debugC(int level, uint32 engine_level, const char *s, ...) {
 	char buf[STRINGBUFLEN];
 	va_list va;
 
-	if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & engine_level))
-		return;
+	if (gDebugLevel != 11)
+		if (level > gDebugLevel || !(Common::gDebugLevelsEnabled & engine_level))
+			return;
 
 	va_start(va, s);
 	vsnprintf(buf, STRINGBUFLEN, s, va);

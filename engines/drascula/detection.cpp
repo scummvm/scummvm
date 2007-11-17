@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
@@ -63,8 +61,7 @@ uint16 DrasculaEngine::getVersion() const {
 }
 
 static const PlainGameDescriptor drasculaGames[] = {
-	{"drascula", "Drascula game"},
-
+	{"drascula", "Drascula: The Vampire Strikes Back"},
 	{0, 0}
 };
 
@@ -77,7 +74,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		// Drascula English version
 		{
 			"drascula",
-			"English",
+			0,
 			AD_ENTRY1("14.ald", "09b2735953edcd43af115c65ae00b10e"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -88,12 +85,12 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		0,
 		0,
 	},
-
+/*
 	{
 		// Drascula Spanish version
 		{
 			"drascula",
-			"Spanish",
+			0,
 			AD_ENTRY1("14.ald", "0746ed1a5cc8d9728f790c29813f4b43"),
 			Common::ES_ESP,
 			Common::kPlatformPC,
@@ -103,14 +100,14 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		0,
 		0,
 		0,
-	},
+	},*/
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
 /**
  * The fallback game descriptor used by the Drascula engine's fallbackDetector.
- * Contents of this struct are to be overwritten by the fallbackDetector. 
+ * Contents of this struct are to be overwritten by the fallbackDetector.
  */
 static DrasculaGameDescription g_fallbackDesc = {
 	{
@@ -166,18 +163,15 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(DRASCULA, Drascula::DrasculaEngine, detectionParams);
-
-REGISTER_PLUGIN(DRASCULA, "Drascula Engine", "Drascula Engine (C) 2000 Alcachofa Soft, 1996 (C) Digital Dreams Multimedia, 1994 (C) Emilio de Paz");
-
-namespace Drascula {
-
-bool DrasculaEngine::initGame() {
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(detectionParams);
-	_gameDescription = (const DrasculaGameDescription *)(encapsulatedDesc.realDesc);
-
-	return (_gameDescription != 0);
+static bool Engine_DRASCULA_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Drascula::DrasculaGameDescription *gd = (const Drascula::DrasculaGameDescription *)(encapsulatedDesc.realDesc);
+	if (gd) {
+		*engine = new Drascula::DrasculaEngine(syst, gd);
+	}
+	return gd != 0;
 }
 
-} // End of namespace Drascula
+ADVANCED_DETECTOR_DEFINE_PLUGIN(DRASCULA, Engine_DRASCULA_createInstance, detectionParams);
+
+REGISTER_PLUGIN(DRASCULA, "Drascula Engine", "Drascula Engine (C) 2000 Alcachofa Soft, 1996 (C) Digital Dreams Multimedia, 1994 (C) Emilio de Paz");
 

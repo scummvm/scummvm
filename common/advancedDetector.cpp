@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "base/plugins.h"
 
 #include "common/util.h"
@@ -72,7 +70,7 @@ GameList gameIDList(const Common::ADParams &params) {
 	return GameList(params.list);
 }
 
-static void upgradeTargetIfNecessary(const Common::ADParams &params) {
+void upgradeTargetIfNecessary(const Common::ADParams &params) {
 	if (params.obsoleteList == 0)
 		return;
 
@@ -266,41 +264,43 @@ EncapsulatedADGameDesc detectBestMatchingGame(
 	return result;
 }
 
-PluginError detectGameForEngineCreation(
-	const Common::ADParams &params
-	) {
+void reportUnknown(StringMap &filesMD5, HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> &filesSize) {
+	// TODO: This message should be cleaned up / made more specific.
+	// For example, we should specify at least which engine triggered this.
+	//
+	// Might also be helpful to display the full path (for when this is used
+	// from the mass detector).
+	printf("Your game version appears to be unknown. Please, report the following\n");
+	printf("data to the ScummVM team along with name of the game you tried to add\n");
+	printf("and its version/language/etc.:\n");
 
-	upgradeTargetIfNecessary(params);
+	for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
+		printf("  \"%s\", \"%s\", %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
 
-	Common::String gameid = ConfMan.get("gameid");
+	printf("\n");
+}
 
-	FSList fslist;
-	FilesystemNode dir(ConfMan.get("path"));
-	if (!dir.listDir(fslist, FilesystemNode::kListFilesOnly)) {
-		return kInvalidPathError;
-	}
+void reportUnknown(StringList &files, int md5Bytes) {
+	StringMap filesMD5;
+	HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> filesSize;
 
-	ADGameDescList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
+	char md5str[32+1];
+	File testFile;
 
-	// We have single ID set, so we have a game if there are hits
-	if (params.singleid != NULL && matches.size())
-		return kNoError;
+	// Fill the data structures for the requested files
+	for (StringList::iterator file = files.begin(); file != files.end(); file++) {
 
-	for (uint i = 0; i < matches.size(); i++) {
-		if (matches[i]->gameid == gameid) {
-			return kNoError;
+		if (testFile.open(*file)) {
+			filesSize[*file] = (int32)testFile.size();
+
+			if (md5_file_string(testFile, md5str, md5Bytes))
+				filesMD5[*file] = md5str;
+
+			testFile.close();
 		}
 	}
 
-	// Use fallback detector if there were no matches by other means
-	if (params.fallbackDetectFunc != NULL) {
-		EncapsulatedADGameDesc fallbackDesc = (*params.fallbackDetectFunc)(&fslist);
-		if (fallbackDesc.realDesc != 0 && (params.singleid != NULL || fallbackDesc.getGameID() == gameid)) {
-			return kNoError;
-		}
-	}
-
-	return kNoGameDataFoundError;
+	reportUnknown(filesMD5, filesSize);
 }
 
 static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
@@ -316,7 +316,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	File testFile;
 
 	String tstr;
-	
+
 	uint i;
 	char md5str[32+1];
 
@@ -345,7 +345,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		// Get the information of the existing files
 		for (FSList::const_iterator file = fslist->begin(); file != fslist->end(); ++file) {
 			if (file->isDirectory()) continue;
-			tstr = file->name();
+			tstr = file->getName();
 			tstr.toLowercase();
 
 			// Strip any trailing dot
@@ -364,7 +364,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 
 			debug(3, "> %s: %s", tstr.c_str(), md5str);
 
-			if (testFile.open(file->path())) {
+			if (testFile.open(file->getPath())) {
 				filesSize[tstr] = (int32)testFile.size();
 				testFile.close();
 			}
@@ -458,25 +458,12 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 		}
 	}
 
-	// We've found a match 
+	// We've found a match
 	if (!matched.empty())
 		return matched;
 
-	if (!filesMD5.empty()) {
-		// TODO: This message should be cleaned up / made more specific.
-		// For example, we should specify at least which engine triggered this.
-		//
-		// Might also be helpful to display the full path (for when this is used
-		// from the mass detector).
-		printf("Your game version appears to be unknown. Please, report the following\n");
-		printf("data to the ScummVM team along with name of the game you tried to add\n");
-		printf("and its version/language/etc.:\n");
-
-		for (StringMap::const_iterator file = filesMD5.begin(); file != filesMD5.end(); ++file)
-			printf("  \"%s\", \"%s\", %d\n", file->_key.c_str(), file->_value.c_str(), filesSize[file->_key]);
-
-		printf("\n");
-	}
+	if (!filesMD5.empty())
+		reportUnknown(filesMD5, filesSize);
 
 	// Filename based fallback
 	if (params.fileBasedFallback != 0) {

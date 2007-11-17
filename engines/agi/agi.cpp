@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/events.h"
 #include "common/file.h"
@@ -247,6 +247,19 @@ void AgiEngine::processEvents() {
 	}
 }
 
+void AgiEngine::checkQuickLoad() {
+	if (ConfMan.hasKey("save_slot")) {
+		char saveNameBuffer[256];
+
+		snprintf (saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
+
+		if (loadGame(saveNameBuffer, false) == errOK) {	 // Do not check game id
+			_game.exitAllLogics = 1;
+			_menu->enableAll();
+		}
+	}
+}
+
 int AgiEngine::agiIsKeypressLow() {
 	processEvents();
 	return _keyQueueStart != _keyQueueEnd;
@@ -437,15 +450,6 @@ int AgiEngine::agiInit() {
 	if (ec == errOK)
 		ec = _loader->loadResource(rLOGIC, 0);
 
-
-	if (ConfMan.hasKey("save_slot")) {
-		char saveNameBuffer[256];
-
-		snprintf (saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
-
-		loadGame(saveNameBuffer, false); // Do not check game id
-	}
-
 #ifdef __DS__
 	// Normally, the engine loads the predictive text dictionary when the predictive dialog
 	// is shown.  On the DS version, the word completion feature needs the dictionary too.
@@ -601,11 +605,11 @@ AgiButtonStyle::AgiButtonStyle(Common::RenderMode renderMode) {
 	setAmigaStyle(renderMode == Common::kRenderAmiga);
 }
 
-AgiBase::AgiBase(OSystem *syst) : Engine(syst) {
+AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
 }
 
-AgiEngine::AgiEngine(OSystem *syst) : AgiBase(syst) {
+AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -623,6 +627,7 @@ AgiEngine::AgiEngine(OSystem *syst) : AgiBase(syst) {
 			_gameId = g->id;
 
 	_rnd = new Common::RandomSource();
+	syst->getEventManager()->registerRandomSource(*_rnd, "agi");
 
 	Common::addSpecialDebugLevel(kDebugLevelMain, "Main", "Generic debug level");
 	Common::addSpecialDebugLevel(kDebugLevelResources, "Resources", "Resources debugging");
@@ -667,7 +672,7 @@ AgiEngine::AgiEngine(OSystem *syst) : AgiBase(syst) {
 	_objects = NULL;
 
 	_oldMode = -1;
-	
+
 	_predictiveDialogRunning = false;
 	_predictiveDictText = NULL;
 	_predictiveDictLine = NULL;
@@ -777,13 +782,6 @@ AgiEngine::~AgiEngine() {
 }
 
 int AgiEngine::init() {
-
-	// Detect game
-	if (!initGame()) {
-		GUIErrorMessage("No valid games were found in the specified directory.");
-		return -1;
-	}
-
 
 	// Initialize backend
 	_system->beginGFXTransaction();

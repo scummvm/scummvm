@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "cine/cine.h"
@@ -95,7 +95,7 @@ void loadPrc(const char *pPrcName) {
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	numScripts = READ_BE_UINT16(scriptPtr);	
+	numScripts = READ_BE_UINT16(scriptPtr);
 	scriptPtr += 2;
 	assert(numScripts <= NUM_MAX_SCRIPT);
 

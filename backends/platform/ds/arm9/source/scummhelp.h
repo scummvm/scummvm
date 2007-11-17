@@ -24,6 +24,7 @@
 #define _SCUMMHELP_H_
 
 #include "common/str.h"
+#include "common/util.h"
 
 namespace DS {
 

@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/events.h"
 #include "common/str.h"
 #include "common/system.h"
@@ -87,8 +86,6 @@ MessageDialog::MessageDialog(const Common::String &message, const char *defaultB
 								lines[i], kTextAlignCenter);
 	}
 
-	// FIXME - allow for more than two buttons, and return in runModal() which one
-	// was selected.
 	if (defaultButton && altButton) {
 		okButtonPos = (_w - (buttonWidth * 2)) / 2;
 		cancelButtonPos = ((_w - (buttonWidth * 2)) / 2) + buttonWidth + 10;

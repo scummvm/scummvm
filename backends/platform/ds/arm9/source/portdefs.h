@@ -23,7 +23,7 @@
 #ifndef _PORTDEFS_H_
 #define _PORTDEFS_H_
 
-
+/*
 typedef unsigned char u8;
 typedef signed char s8;
 
@@ -32,8 +32,10 @@ typedef signed short s16;
 
 typedef unsigned int u32;
 typedef signed int s32;
+*/
 
-//#define double float
+#include "nds/jtypes.h"
+
 
 // Somebody removed these from scummsys.h, but they're still required, so I'm adding them here
 // in the hope that they'll stay.
@@ -45,11 +47,18 @@ typedef signed int s32;
 #include <math.h>
 #include <time.h>
 
+#define double float
 
 #define CT_NO_TRANSPARENCY
-#include "scummconsole.h"
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+void consolePrintf(const char* s, ...);
+#ifdef __cplusplus
+}
+#endif
 
 //#undef assert
 //#define assert(expr) consolePrintf("Asserted!")
@@ -61,7 +70,7 @@ typedef signed int s32;
 
 #define assert(s) if (!(s)) consolePrintf("Assertion failed: '##s##' at file %s, line %d\n", __FILE__, __LINE__)
 
-#include "ds-fs.h"
+//#include "ds-fs.h"
 
 //#define debug(fmt, ...) consolePrintf(fmt, ##__VA_ARGS__)
 //#define debug(fmt, ...) debug(0, fmt, ##__VA_ARGS__)
@@ -72,8 +81,8 @@ typedef signed int s32;
 
 
 
-#include "common/array.h"
-#include "common/str.h"
+//#include "common/array.h"
+//#include "common/str.h"
 
 time_t DS_time(time_t* t);
 time_t DS_time(long* t);

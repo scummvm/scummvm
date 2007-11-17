@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/stream.h"
@@ -110,7 +109,7 @@ static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate,
 					break;
 				}
 				packing = stream.readUint16LE();
-				stream.readUint32LE();		
+				stream.readUint32LE();
 				len -= 12;
 			}
 			debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);

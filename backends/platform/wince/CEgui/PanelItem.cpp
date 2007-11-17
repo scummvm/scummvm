@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "PanelItem.h"
 
 namespace CEGUI {

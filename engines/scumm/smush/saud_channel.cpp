@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "scumm/util.h"
@@ -168,7 +168,7 @@ byte *SaudChannel::getSoundData() {
 
 	_sbuffer = 0;
 	_sbufferSize = 0;
-	
+
 	return tmp;
 }
 

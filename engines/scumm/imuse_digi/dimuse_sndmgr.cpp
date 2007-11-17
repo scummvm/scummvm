@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "common/util.h"
 

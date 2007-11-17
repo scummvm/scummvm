@@ -34,8 +34,6 @@ namespace Lure {
 
 using namespace Common;
 
-extern const Action sortedActions[];
-
 /*-------------------------------------------------------------------------*/
 /* Structure definitions                                                   */
 /*                                                                         */
@@ -83,7 +81,7 @@ struct HotspotResource {
 	uint16 animRecordId;
 	uint16 hotspotScriptOffset;
 	uint16 talkScriptOffset;
-	uint16 tickProcOffset;
+	uint16 tickProcId;
 	uint16 tickTimeout;
 	uint16 tickScriptOffset;
 	uint16 npcSchedule;
@@ -254,23 +252,35 @@ public:
 	}
 
 	void clear() {
-		typename Common::List<T>::iterator i;
-		for (i = Common_List::begin(); i != Common_List::end(); ++i)
-			delete *i;
-		Common_List::clear();		
+		typename Common_List::iterator i = Common_List::begin();
+		while (i != Common_List::end()) {
+			T v = *i;
+			i = Common_List::erase(i);
+			delete v;
+		}
 	}
 
-	typename Common::List<T>::iterator erase(typename Common::List<T>::iterator pos) {
-		delete *pos;
-		return Common_List::erase(pos);
+	typename Common_List::iterator erase(typename Common_List::iterator pos) {
+		T obj = *pos;
+		typename Common_List::iterator result = Common_List::erase(pos);
+		delete obj;
+		return result;
 	}
 
-	typename Common::List<T>::iterator erase(typename Common::List<T>::iterator first, 
-			typename Common::List<T>::iterator last) {
-		typename Common::List<T>::iterator i;
-		for (i = first; i != last; ++i)
-			delete *i;
-		return Common_List::erase(first, last);
+	typename Common_List::iterator erase(typename Common_List::iterator first, 
+			typename Common_List::iterator last) {
+
+		while (first != last)
+			erase(first++);
+
+		return last;
+	}
+
+	T operator[](int index) {
+		typename Common_List::iterator i = Common_List::begin();
+		while (index-- > 0) 
+			++i;
+		return *i;
 	}
 };
 
@@ -447,7 +457,7 @@ public:
 	uint16 animRecordId;
 	uint16 hotspotScriptOffset;
 	uint16 talkScriptOffset;
-	uint16 tickProcOffset;
+	uint16 tickProcId;
 	uint16 tickTimeout;
 	uint16 tickScriptOffset;
 	uint16 npcSchedule;
@@ -462,6 +472,7 @@ public:
 	bool blockedFlag;
 	VariantBool coveredFlag;
 	uint16 talkMessageId;
+	uint16 talkerId;
 	uint16 talkDestCharacterId;
 	uint16 talkCountdown;
 	uint16 pauseCtr;
@@ -629,7 +640,7 @@ public:
 
 // The following classes holds the data for NPC schedules
 
-extern int actionNumParams[NPC_JUMP_ADDRESS+1];
+extern const int actionNumParams[NPC_JUMP_ADDRESS+1];
 
 class CharacterScheduleSet;
 
@@ -741,13 +752,16 @@ struct BarEntry {
 	uint16 roomNumber;
 	uint16 barmanId;
 	ServeEntry customers[NUM_SERVE_CUSTOMERS];
-	uint16 *graphics[4];
+	const uint16 *graphics[4];
 	uint16 gridLine;
 	ServeEntry *currentCustomer;
 };
 
 class BarmanLists {
+	BarEntry _barList[3];
 public:
+	BarmanLists();
+
 	BarEntry &getDetails(uint16 roomNumber);
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);
@@ -760,12 +774,13 @@ struct RoomTranslationRecord {
 	uint8 destRoom;
 };
 
-extern RoomTranslationRecord roomTranslations[];
+extern const RoomTranslationRecord roomTranslations[];
 
 enum StringEnum {S_CREDITS = 25, S_RESTART_GAME = 26, S_SAVE_GAME = 27, S_RESTORE_GAME = 28, 
 	S_QUIT = 29, S_FAST_TEXT = 30, S_SLOW_TEXT = 31, S_SOUND_ON = 32, S_SOUND_OFF = 33, 
-	S_NOTHING = 34, S_FOR = 35, S_TO = 36, S_ON = 37, S_AND_THEN = 38,
-	S_FINISH = 39};
+	S_ACTION_NOTHING = 34, S_FOR = 35, S_TO = 36, S_ON = 37, S_AND_THEN = 38, S_FINISH = 39, 
+	S_CONFIRM_YN = 40, S_ARTICLE_LIST = 41, 
+	S_YOU_ARE_CARRYING = 49, S_INV_NOTHING = 50, S_YOU_HAVE = 51, S_GROAT = 52, S_GROATS = 53};
 
 class StringList {
 private:
@@ -812,17 +827,6 @@ enum FieldName {
 	AREA_FLAG = 82
 };
 
-enum GameFlags {
-	GAMEFLAG_1 = 1,
-	GAMEFLAG_2 = 2,
-	GAMEFLAG_4 = 4,
-	GAMEFLAG_8 = 8,
-	GAMEFLAG_10 = 0x10,
-	GAMEFLAG_20 = 0x20,
-	GAMEFLAG_40 = 0x40,
-	GAMEFLAG_FAST_TEXTSPEED = 0x80
-};
-
 struct PlayerNewPosition {
 	Point position;
 	uint16 roomNumber;
@@ -832,7 +836,7 @@ class ValueTableData {
 private:
 	uint16 _numGroats;
 	PlayerNewPosition _playerNewPos;
-	uint8 _flags;
+	uint8 _textCtr1, _textCtr2; // originally 2 2-bit counters
 	uint8 _hdrFlagMask;
 
 	uint16 _fieldList[NUM_VALUE_FIELDS];
@@ -848,7 +852,8 @@ public:
 	int size() { return NUM_VALUE_FIELDS; }
 
 	uint16 &numGroats() { return _numGroats; }
-	uint8 &flags() { return _flags; }
+	uint8 &textCtr1() { return _textCtr1; }
+	uint8 &textCtr2() { return _textCtr2; }
 	uint8 &hdrFlagMask() { return _hdrFlagMask; }
 	PlayerNewPosition &playerNewPos() { return _playerNewPos; }
 

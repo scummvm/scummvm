@@ -53,6 +53,28 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 namespace Common {
 
 /**
+ * Simple DOS-style pattern matching function (understands * and ? like used in DOS).
+ * Taken from exult/files/listfiles.cc
+ * 
+ * Token meaning:
+ * 		"*": any character, any amount of times.
+ * 		"?": any character, only once.
+ * 
+ * Example strings/patterns:
+ * 		String: monkey.s??	 Pattern: monkey.s01 	=> true
+ *		String: monkey.s??	 Pattern: monkey.s101 	=> false
+ *		String: monkey.s?1	 Pattern: monkey.s99 	=> false
+ *		String: monkey.s*	 Pattern: monkey.s101 	=> true
+ *		String: monkey.s*1	 Pattern: monkey.s99 	=> false
+ * 
+ * @param str Text to be matched against the given pattern.
+ * @param pat Glob pattern.
+ * 
+ * @return true if str matches the pattern, false otherwise.
+ */
+bool matchString(const char *str, const char *pat);
+
+/**
  * Print a hexdump of the data passed in. The number of bytes per line is
  * customizable.
  * @param data	the data to be dumped
@@ -72,6 +94,10 @@ private:
 public:
 	RandomSource();
 	void setSeed(uint32 seed);
+	
+	uint32 getSeed() {
+		return _randSeed;
+	}
 
 	/**
 	 * Generates a random unsigned integer in the interval [0, max].
@@ -100,6 +126,7 @@ enum Language {
 	EN_USA,
 	FR_FRA,
 	DE_DEU,
+	GR_GRE,
 	HB_ISR,
 	IT_ITA,
 	JA_JPN,
@@ -150,6 +177,7 @@ enum Platform {
 	kPlatformPCEngine,
 
 	kPlatformApple2GS,
+	kPlatformPC98,
 
 	kPlatformUnknown = -1
 };

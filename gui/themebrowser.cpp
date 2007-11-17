@@ -22,12 +22,10 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "gui/themebrowser.h"
 #include "gui/ListWidget.h"
 #include "gui/widget.h"
 #include "gui/theme.h"
-#include "common/fs.h"
 
 #ifdef MACOSX
 #include "CoreFoundation/CoreFoundation.h"
@@ -90,7 +88,7 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 
 void ThemeBrowser::updateListing() {
 	_themes.clear();
-	
+
 	// classic is always build in
 	Entry th;
 	th.name = "Classic (Builtin)";
@@ -145,16 +143,16 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 
 	FilesystemNode node(dir);
 
-	if (!node.isValid())
+	if (!node.exists() || !node.isReadable())
 		return;
 
 	FSList fslist;
-	if (!node.listDir(fslist, FilesystemNode::kListAll))
+	if (!node.getChildren(fslist, FilesystemNode::kListAll))
 		return;
 
 	for (FSList::const_iterator i = fslist.begin(); i != fslist.end(); ++i) {
 		if (i->isDirectory()) {
-			addDir(list, i->path(), level-1);
+			addDir(list, i->getPath(), level-1);
 		} else {
 			Entry th;
 			if (isTheme(*i, th)) {
@@ -165,7 +163,7 @@ void ThemeBrowser::addDir(ThList &list, const Common::String &dir, int level) {
 						break;
 					}
 				}
-				
+
 				if (add)
 					list.push_back(th);
 			}
@@ -177,7 +175,7 @@ bool ThemeBrowser::isTheme(const FilesystemNode &node, Entry &out) {
 	Common::ConfigFile cfg;
 	Common::String type;
 
-	out.file = node.name();
+	out.file = node.getName();
 	for (int i = out.file.size()-1; out.file[i] != '.' && i > 0; --i) {
 		out.file.deleteLastChar();
 	}

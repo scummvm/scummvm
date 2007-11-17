@@ -26,7 +26,6 @@
 #ifndef CRUISE_CRUISE_H
 #define CRUISE_CRUISE_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/util.h"
 
@@ -44,28 +43,30 @@ struct CRUISEGameDescription;
 
 class CruiseEngine:public Engine {
 
-      protected:
+protected:
 	int init();
 	int go();
 	void shutdown();
 
 	bool initGame();
 
-      public:
-	     CruiseEngine(OSystem * syst);
-	     virtual ~ CruiseEngine();
+public:
+	CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc);
+	virtual ~ CruiseEngine();
 
 	int getGameType() const;
 	uint32 getFeatures() const;
-	      Common::Language getLanguage() const;
-	      Common::Platform getPlatform() const;
+	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
 
 	bool loadSaveDirectory(void);
 	void makeSystemMenu(void);
 
 	const CRUISEGameDescription *_gameDescription;
 
-      private:
+	Common::RandomSource _rnd;
+
+private:
 	void initialize(void);
 	bool makeLoad(char *saveName);
 	void mainLoop(int bootScriptIdx);

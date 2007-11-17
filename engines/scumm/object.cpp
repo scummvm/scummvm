@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/bomp.h"
@@ -113,7 +113,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 
 	if (owner == 0) {
 		clearOwnerOf(obj);
-		
+
 		// FIXME: See bug #1535358 and many others. Essentially, the following
 		// code, while matching disasm of various versions of the SCUMM engine,
 		// is total bullocks, and leads to odd crashes due to out-of-bounds
@@ -125,7 +125,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 		// The bad code:
 		//   if (ss->where == WIO_INVENTORY && _inventory[ss->number] == obj) {
 		// That check makes no sense at all: _inventory only contains 80 items,
-		// which are in the order the player picked up items. We can only 
+		// which are in the order the player picked up items. We can only
 		// guess that the SCUMM coders meant to write
 		//   if (ss->where == WIO_INVENTORY && ss->number == obj) {
 		// which would ensure that an object script that nukes itself gets
@@ -133,10 +133,10 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 		// lead to new regressions.
 		// Another fix would be to completely remove this check, which should
 		// not cause much problems, since it'll only succeed by pure chance.
-		// 
+		//
 		// For now we follow a more defensive route: We perform the check
 		// if ss->number is small enough.
-		
+
 		ss = &vm.slot[_currentScript];
 		if (ss->where == WIO_INVENTORY) {
 			if (ss->number < _numInventory && _inventory[ss->number] == obj) {
@@ -156,11 +156,14 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 }
 
 void ScummEngine::clearOwnerOf(int obj) {
-	int i, j;
+	int i;
 	uint16 *a;
 
+	// Stop the associated object script code (else crashes might occurs)
 	stopObjectScript(obj);
 
+	// If the object is "owned" by a the current room, we scan the
+	// object list and (only if it's a floating object) nuke it.
 	if (getOwner(obj) == OF_OWNER_ROOM) {
 		for (i = 0; i < _numLocalObjects; i++)  {
 			if (_objs[i].obj_nr == obj && _objs[i].fl_object_index) {
@@ -170,26 +173,28 @@ void ScummEngine::clearOwnerOf(int obj) {
 				_objs[i].fl_object_index = 0;
 			}
 		}
-		return;
-	}
+	} else {
 
-	for (i = 0; i < _numInventory; i++) {
-		if (_inventory[i] == obj) {
-			j = whereIsObject(obj);
-			if (j == WIO_INVENTORY) {
+		// Alternatively, scan the inventory to see if the object is in there...
+		for (i = 0; i < _numInventory; i++) {
+			if (_inventory[i] == obj) {
+				assert(WIO_INVENTORY == whereIsObject(obj));
+				// Found the object! Nuke it from the inventory.
 				_res->nukeResource(rtInventory, i);
 				_inventory[i] = 0;
-			}
-			a = _inventory;
-			for (i = 0; i < _numInventory - 1; i++, a++) {
-				if (!a[0] && a[1]) {
-					a[0] = a[1];
-					a[1] = 0;
-					_res->address[rtInventory][i] = _res->address[rtInventory][i + 1];
-					_res->address[rtInventory][i + 1] = NULL;
+
+				// Now fill up the gap removing the object from the inventory created.
+				a = _inventory;
+				for (i = 0; i < _numInventory - 1; i++, a++) {
+					if (!_inventory[i] && _inventory[i+1]) {
+						_inventory[i] = _inventory[i+1];
+						_inventory[i+1] = 0;
+						_res->address[rtInventory][i] = _res->address[rtInventory][i + 1];
+						_res->address[rtInventory][i + 1] = NULL;
+					}
 				}
+				break;
 			}
-			return;
 		}
 	}
 }
@@ -583,11 +588,7 @@ void ScummEngine::drawObject(int obj, int arg) {
 		return;
 
 	ptr = getOBIMFromObjectData(od);
-
-	if (_game.features & GF_OLD_BUNDLE)
-		ptr += 0;
-	else
-		ptr = getObjectImage(ptr, getState(od.obj_nr));
+	ptr = getObjectImage(ptr, getState(od.obj_nr));
 
 	if (!ptr)
 		return;
@@ -619,10 +620,10 @@ void ScummEngine::drawObject(int obj, int arg) {
 
 #ifndef DISABLE_HE
 		if (_game.heversion >= 70 && findResource(MKID_BE('SMAP'), ptr) == NULL)
-			_gdi->drawBMAPObject(ptr, &virtscr[0], obj, od.x_pos, od.y_pos, od.width, od.height);
+			_gdi->drawBMAPObject(ptr, &_virtscr[kMainVirtScreen], obj, od.x_pos, od.y_pos, od.width, od.height);
 		else
 #endif
-			_gdi->drawBitmap(ptr, &virtscr[0], x, ypos, width * 8, height, x - xpos, numstrip, flags);
+			_gdi->drawBitmap(ptr, &_virtscr[kMainVirtScreen], x, ypos, width * 8, height, x - xpos, numstrip, flags);
 	}
 }
 
@@ -1394,7 +1395,9 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 			if (id2 == (uint16)id) {
 				if (findWhat & foCodeHeader) {
 					fo->obcd = obcdptr;
-					fo->cdhd = (const CodeHeader *)(obcdptr + 10);	// TODO - FIXME
+					// We assume that the code header starts at a fixed offset.
+					// A bit hackish, but works reasonably well.
+					fo->cdhd = (const CodeHeader *)(obcdptr + 10);
 				}
 				if (findWhat & foImageHeader) {
 					fo->obim = obimptr;
@@ -1626,7 +1629,7 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 	int objnum;
 	BompDrawData bdd;
 
-	vs = &virtscr[0];
+	vs = &_virtscr[kMainVirtScreen];
 
 	assertRange(30, eo->number, _numGlobalObjects - 1, "blast object");
 
@@ -1704,7 +1707,7 @@ void ScummEngine_v6::removeBlastObjects() {
 }
 
 void ScummEngine_v6::removeBlastObject(BlastObject *eo) {
-	VirtScreen *vs = &virtscr[0];
+	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	Common::Rect r;
 	int left_strip, right_strip;

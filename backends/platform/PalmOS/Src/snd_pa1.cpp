@@ -108,6 +108,6 @@ void pcm2adpcm(Int16 *src, UInt8 *dst, UInt32 length) {
 
 		*dst++ = (UInt8)data;
 
-	} while(--length);
+	} while (--length);
 
 }

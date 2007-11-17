@@ -26,7 +26,6 @@
 #ifndef CEKEYS_EVENTSBUFFER
 #define CEKEYS_EVENTSBUFFER
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/list.h"

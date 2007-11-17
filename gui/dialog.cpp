@@ -22,7 +22,6 @@
  * $Id$
  */
 
-#include "common/stdafx.h"
 #include "common/events.h"
 
 #include "gui/newgui.h"
@@ -114,7 +113,7 @@ void Dialog::reflowLayout() {
 	// changed, so any cached image may be invalid. The subsequent redraw
 	// should be treated as the very first draw.
 
-	_drawingHints |= THEME_HINT_FIRST_DRAW; 
+	_drawingHints |= THEME_HINT_FIRST_DRAW;
 	Widget *w = _firstWidget;
 	while (w) {
 		w->reflowLayout();
@@ -297,9 +296,8 @@ void Dialog::handleMouseMoved(int x, int y, int button) {
 
 void Dialog::handleTickle() {
 	// Focused widget receives tickle notifications
-	if (_focusedWidget && _focusedWidget->getFlags() & WIDGET_WANT_TICKLE) {
+	if (_focusedWidget && _focusedWidget->getFlags() & WIDGET_WANT_TICKLE)
 		_focusedWidget->handleTickle();
-	}
 }
 
 void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

@@ -1,6 +1,5 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/stdafx.h"
 #include "common/list.h"
 
 class ListTestSuite : public CxxTest::TestSuite

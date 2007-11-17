@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "sound/flac.h"
 #include "sound/mixer.h"
@@ -663,8 +663,9 @@ void ToucheEngine::res_loadSpeechSegment(int num) {
 			}
 			_fSpeech[0].seek(offs);
 			Common::MemoryReadStream *tmp = _fSpeech[0].readStream(size);
-			assert(tmp);
-			stream = (compressedSpeechFilesTable[_compressedSpeechData].makeStream)(tmp, true, 0, 0, 1);
+			if (tmp) {
+				stream = (compressedSpeechFilesTable[_compressedSpeechData].makeStream)(tmp, true, 0, 0, 1);
+			}
 		}
 		if (stream) {
 			_speechPlaying = true;

@@ -30,6 +30,30 @@
 
 namespace Kyra {
 
+template<class Res>
+struct Functor0 {
+	virtual ~Functor0() {}
+
+	virtual operator bool() const = 0;
+	virtual Res operator()() const = 0;
+};
+
+template<class Res, class T>
+class Functor0Mem : public Functor0<Res> {
+public:
+	typedef Res (T::*FuncType)();
+	
+	Functor0Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
+	
+	operator bool() const { return _func != 0; }
+	Res operator()() const {
+		return (_t->*_func)();
+	}
+private:
+	mutable T *_t;
+	Res (T::*_func)();
+};
+
 template<class Arg, class Res>
 struct Functor1 : public Common::UnaryFunction<Arg, Res> {
 	virtual ~Functor1() {}

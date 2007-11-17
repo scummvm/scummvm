@@ -328,10 +328,6 @@ SoundDigital::~SoundDigital() {
 		stopSound(i);
 }
 
-bool SoundDigital::init() {
-	return true;
-}
-
 int SoundDigital::playSound(Common::File *fileHandle, bool loop, bool fadeIn, int channel) {
 	Sound *use = 0;
 	if (channel != -1 && channel < SOUND_STREAMS) {

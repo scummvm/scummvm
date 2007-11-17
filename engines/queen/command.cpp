@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/events.h"
 #include "common/system.h"
 #include "queen/command.h"
@@ -43,7 +43,6 @@ namespace Queen {
 
 CmdText::CmdText(uint8 y, QueenEngine *vm)
 	: _y(y), _vm(vm) {
-	_isReversed = (_vm->resource()->getLanguage() == Common::HB_ISR);
 	clear();
 }
 
@@ -51,36 +50,24 @@ void CmdText::clear() {
 	memset(_command, 0, sizeof(_command));
 }
 
-void CmdText::display(InkColor color) {
+void CmdText::display(InkColor color, const char *command, bool outlined) {
 	_vm->display()->textCurrentColor(_vm->display()->getInkColor(color));
-	_vm->display()->setTextCentered(_y, _command, false);
+	if (!command) {
+		command = _command;
+	}
+	_vm->display()->setTextCentered(_y, command, outlined);
 }
 
-void CmdText::displayTemp(InkColor color, Verb v, const char *name, bool outlined) {
-	char temp[MAX_COMMAND_LEN] = "";
-	if (_isReversed) {
-		if (name != NULL)
-			sprintf(temp, "%s ", name);
-		strcat(temp, _vm->logic()->verbName(v));
-	} else {
-		strcpy(temp, _vm->logic()->verbName(v));
-		if (name != NULL) {
-			strcat(temp, " ");
-			strcat(temp, name);
-		}
-	}
-	_vm->display()->textCurrentColor(_vm->display()->getInkColor(color));
-	_vm->display()->setTextCentered(_y, temp, outlined);
+void CmdText::displayTemp(InkColor color, Verb v) {
+	char temp[MAX_COMMAND_LEN];
+	strcpy(temp, _vm->logic()->verbName(v));
+	display(color, temp, false);
 }
 
 void CmdText::displayTemp(InkColor color, const char *name, bool outlined) {
 	char temp[MAX_COMMAND_LEN];
-	if (_isReversed)
-		sprintf(temp, "%s %s", name, _command);
-	else
-		sprintf(temp, "%s %s", _command, name);
-	_vm->display()->textCurrentColor(_vm->display()->getInkColor(color));
-	_vm->display()->setTextCentered(_y, temp, outlined);
+	sprintf(temp, "%s %s", _command, name);
+	display(color, temp, outlined);
 }
 
 void CmdText::setVerb(Verb v) {
@@ -88,35 +75,78 @@ void CmdText::setVerb(Verb v) {
 }
 
 void CmdText::addLinkWord(Verb v) {
-	if (_isReversed) {
+	strcat(_command, " ");
+	strcat(_command, _vm->logic()->verbName(v));
+}
+
+void CmdText::addObject(const char *objName) {
+	strcat(_command, " ");
+	strcat(_command, objName);
+}
+
+class CmdTextHebrew : public CmdText {
+public:
+
+	CmdTextHebrew(uint8 y, QueenEngine *vm) : CmdText(y, vm) {}
+
+	virtual void displayTemp(InkColor color, const char *name, bool outlined) {
+		char temp[MAX_COMMAND_LEN];
+
+		sprintf(temp, "%s %s", name, _command);
+		display(color, temp, outlined);
+	}
+
+	virtual void addLinkWord(Verb v) {
 		char temp[MAX_COMMAND_LEN];
 
 		strcpy(temp, _command);
 		strcpy(_command, _vm->logic()->verbName(v));
 		strcat(_command, " ");
 		strcat(_command, temp);
-	} else {
-		strcat(_command, " ");
-		strcat(_command, _vm->logic()->verbName(v));
 	}
-}
 
-void CmdText::addObject(const char *objName) {
-	if (_isReversed) {
+	virtual void addObject(const char *objName) {
 		char temp[MAX_COMMAND_LEN];
 
 		strcpy(temp, _command);
 		strcpy(_command, objName);
 		strcat(_command, " ");
 		strcat(_command, temp);
-	} else {
-		strcat(_command, " ");
+	}
+};
+
+class CmdTextGreek : public CmdText {
+public:
+
+	CmdTextGreek(uint8 y, QueenEngine *vm) : CmdText(y, vm) {}
+
+	virtual void displayTemp(InkColor color, const char *name, bool outlined) {
+		char temp[MAX_COMMAND_LEN];
+		// don't show a space after the goto and give commands in the Greek version
+		if (_command[1] != -34 && !(_command[1] == -2 && strlen(_command) > 5))
+			sprintf(temp, "%s %s", _command, name);
+		else
+			sprintf(temp, "%s%s", _command, name);
+		display(color, temp, outlined);
+	}
+
+	virtual void addObject(const char *objName) {
+		// don't show a space after the goto and give commands in the Greek version
+		if (_command[1] != -34 && !(_command[1] == -2 && strlen(_command) > 5))
+			strcat(_command, " ");
 		strcat(_command, objName);
 	}
-}
+};
 
-bool CmdText::isEmpty() const {
-	return _command[0] == 0;
+CmdText *CmdText::makeCmdTextInstance(uint8 y, QueenEngine *vm) {
+	switch (vm->resource()->getLanguage()) {
+	case Common::HB_ISR:
+		return new CmdTextHebrew(y, vm);
+	case Common::GR_GRE:
+		return new CmdTextGreek(y, vm);
+	default:
+		return new CmdText(y, vm);
+	}
 }
 
 void CmdState::init() {
@@ -129,11 +159,12 @@ void CmdState::init() {
 }
 
 Command::Command(QueenEngine *vm)
-	: _cmdList(NULL), _cmdArea(NULL), _cmdObject(NULL), _cmdInventory(NULL), _cmdGameState(NULL),
-	_cmdText(CmdText::COMMAND_Y_POS, vm), _vm(vm) {
+	: _cmdList(NULL), _cmdArea(NULL), _cmdObject(NULL), _cmdInventory(NULL), _cmdGameState(NULL), _vm(vm) {
+	_cmdText = CmdText::makeCmdTextInstance(CmdText::COMMAND_Y_POS, vm);
 }
 
 Command::~Command() {
+	delete _cmdText;
 	delete[] _cmdList;
 	delete[] _cmdArea;
 	delete[] _cmdObject;
@@ -143,7 +174,7 @@ Command::~Command() {
 
 void Command::clear(bool clearTexts) {
 	debug(6, "Command::clear(%d)", clearTexts);
-	_cmdText.clear();
+	_cmdText->clear();
 	if (clearTexts) {
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 	}
@@ -164,12 +195,12 @@ void Command::executeCurrentAction() {
 
 		_state.verb = State::findDefaultVerb(od->state);
 		_state.selAction = (_state.verb == VERB_NONE) ? VERB_WALK_TO : _state.verb;
-		_cmdText.setVerb(_state.selAction);
-		_cmdText.addObject(_vm->logic()->objectName(od->name));
+		_cmdText->setVerb(_state.selAction);
+		_cmdText->addObject(_vm->logic()->objectName(od->name));
 	}
 
 	// always highlight the current command when actioned
-	_cmdText.display(INK_CMD_SELECT);
+	_cmdText->display(INK_CMD_SELECT);
 
 	_state.selNoun = _state.noun;
 	_state.commandLevel = 1;
@@ -559,7 +590,7 @@ void Command::grabCurrentSelection() {
 
 void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) {
 	if (_state.action != VERB_NONE) {
-		_cmdText.addObject(_vm->logic()->objectName(objName));
+		_cmdText->addObject(_vm->logic()->objectName(objName));
 	}
 
 	_state.subject[_state.commandLevel - 1] = objNum;
@@ -569,8 +600,8 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 		if (State::findUse(objState) == STATE_USE_ON) {
 			// object supports 2 levels, command not fully constructed
 			_state.commandLevel = 2;
-			_cmdText.addLinkWord(VERB_PREP_WITH);
-			_cmdText.display(INK_CMD_NORMAL);
+			_cmdText->addLinkWord(VERB_PREP_WITH);
+			_cmdText->display(INK_CMD_NORMAL);
 			_parse = false;
 		} else {
 			_parse = true;
@@ -578,8 +609,8 @@ void Command::grabSelectedObject(int16 objNum, uint16 objState, uint16 objName) 
 	} else if (_state.action == VERB_GIVE && _state.commandLevel == 1) {
 		// command not fully constructed
 		_state.commandLevel = 2;
-		_cmdText.addLinkWord(VERB_PREP_TO);
-		_cmdText.display(INK_CMD_NORMAL);
+		_cmdText->addLinkWord(VERB_PREP_TO);
+		_cmdText->display(INK_CMD_NORMAL);
 		_parse = false;
 	} else {
 		_parse = true;
@@ -614,22 +645,22 @@ void Command::grabSelectedItem() {
 				if (_state.verb == VERB_NONE) {
 					// set to Look At
 					_state.verb = VERB_LOOK_AT;
-					_cmdText.setVerb(VERB_LOOK_AT);
+					_cmdText->setVerb(VERB_LOOK_AT);
 				}
 				_state.action = _state.verb;
 			} else {
 				// Action>0 ONLY if command has been constructed
 				// Left Mouse Button pressed just do Look At
 				_state.action = VERB_LOOK_AT;
-				_cmdText.setVerb(VERB_LOOK_AT);
+				_cmdText->setVerb(VERB_LOOK_AT);
 			}
 		}
 		_state.verb = VERB_NONE;
 	} else {
-		if (_cmdText.isEmpty()) {
+		if (_cmdText->isEmpty()) {
 			_state.verb = VERB_LOOK_AT;
 			_state.action = VERB_LOOK_AT;
-			_cmdText.setVerb(VERB_LOOK_AT);
+			_cmdText->setVerb(VERB_LOOK_AT);
 		} else {
 			if (_state.commandLevel == 2 && _parse)
 				_state.verb = _state.action;
@@ -638,7 +669,7 @@ void Command::grabSelectedItem() {
 			if (_state.verb == VERB_NONE) {
 				// No match made, so command not yet completed. Redefine as LOOK AT
 				_state.action = VERB_LOOK_AT;
-				_cmdText.setVerb(VERB_LOOK_AT);
+				_cmdText->setVerb(VERB_LOOK_AT);
 			} else {
 				_state.action = _state.verb;
 			}
@@ -665,14 +696,14 @@ void Command::grabSelectedNoun() {
 				(_state.commandLevel == 2 && _parse)) {
 					_state.verb = VERB_WALK_TO;
 					_state.action = VERB_WALK_TO;
-					_cmdText.setVerb(VERB_WALK_TO);
+					_cmdText->setVerb(VERB_WALK_TO);
 			}
 		} else if (_mouseKey == Input::MOUSE_RBUTTON) {
-			if (_cmdText.isEmpty()) {
+			if (_cmdText->isEmpty()) {
 				_state.verb = State::findDefaultVerb(od->state);
 				_state.selAction = (_state.verb == VERB_NONE) ? VERB_WALK_TO : _state.verb;
-				_cmdText.setVerb(_state.selAction);
-				_cmdText.addObject(_vm->logic()->objectName(od->name));
+				_cmdText->setVerb(_state.selAction);
+				_cmdText->addObject(_vm->logic()->objectName(od->name));
 			} else {
 				if ((_state.commandLevel == 2 && !_parse) || _state.action != VERB_NONE) {
 					_state.verb = _state.action;
@@ -706,8 +737,8 @@ void Command::grabSelectedVerb() {
 		_state.commandLevel = 1;
 		_state.oldVerb = VERB_NONE;
 		_state.oldNoun = 0;
-		_cmdText.setVerb(_state.verb);
-		_cmdText.display(INK_CMD_NORMAL);
+		_cmdText->setVerb(_state.verb);
+		_cmdText->display(INK_CMD_NORMAL);
 	}
 }
 
@@ -1236,7 +1267,7 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 		_state.oldNoun = _state.noun;
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 		if (_state.action != VERB_NONE) {
-			_cmdText.display(INK_CMD_NORMAL);
+			_cmdText->display(INK_CMD_NORMAL);
 		}
 		return;
 	}
@@ -1244,13 +1275,13 @@ void Command::lookForCurrentObject(int16 cx, int16 cy) {
 	// if no command yet selected, then use DEFAULT command, if any
 	if (_state.action == VERB_NONE) {
 		Verb v = State::findDefaultVerb(od->state);
-		_cmdText.setVerb((v == VERB_NONE) ? VERB_WALK_TO : v);
+		_cmdText->setVerb((v == VERB_NONE) ? VERB_WALK_TO : v);
 		if (_state.noun == 0) {
-			_cmdText.clear();
+			_cmdText->clear();
 		}
 	}
 	const char *name = _vm->logic()->objectName(od->name);
-	_cmdText.displayTemp(INK_CMD_NORMAL, name);
+	_cmdText->displayTemp(INK_CMD_NORMAL, name, false);
 	_state.oldNoun = _state.noun;
 }
 
@@ -1259,7 +1290,7 @@ void Command::lookForCurrentIcon(int16 cx, int16 cy) {
 	if (_state.oldVerb != _state.verb) {
 
 		if (_state.action == VERB_NONE) {
-			_cmdText.clear();
+			_cmdText->clear();
 		}
 		_vm->display()->clearTexts(CmdText::COMMAND_Y_POS, CmdText::COMMAND_Y_POS);
 
@@ -1268,15 +1299,15 @@ void Command::lookForCurrentIcon(int16 cx, int16 cy) {
 			if (id != NULL && id->name > 0) {
 				if (_state.action == VERB_NONE) {
 					Verb v = State::findDefaultVerb(id->state);
-					_cmdText.setVerb((v == VERB_NONE) ? VERB_LOOK_AT : v);
+					_cmdText->setVerb((v == VERB_NONE) ? VERB_LOOK_AT : v);
 				}
 				const char *name = _vm->logic()->objectName(id->name);
-				_cmdText.displayTemp(INK_CMD_NORMAL, name);
+				_cmdText->displayTemp(INK_CMD_NORMAL, name, false);
 			}
 		} else if (isVerbAction(_state.verb)) {
-			_cmdText.displayTemp(INK_CMD_NORMAL, _state.verb);
+			_cmdText->displayTemp(INK_CMD_NORMAL, _state.verb);
 		} else if (_state.verb == VERB_NONE) {
-			_cmdText.display(INK_CMD_NORMAL);
+			_cmdText->display(INK_CMD_NORMAL);
 		}
 		_state.oldVerb = _state.verb;
 	}

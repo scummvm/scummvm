@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/file.h"
 
@@ -753,7 +753,7 @@ void Inter_v1::checkSwitchTable(byte **ppExec) {
 			READ_LE_UINT16(_vm->_global->_inter_execPtr + 2) + 2;
 		found = false;
 		len = (int8) *_vm->_global->_inter_execPtr++;
-	} 
+	}
 
 	if ((*_vm->_global->_inter_execPtr >> 4) != 4)
 		return;
@@ -1290,7 +1290,7 @@ bool Inter_v1::o1_if(OpFuncParams &params) {
 	byte cmd;
 	bool boolRes;
 	byte *storedIP;
-	
+
 	boolRes = evalBoolResult();
 	if (boolRes) {
 		if ((params.counter == params.cmdCount) && (params.retFlag == 2))
@@ -1611,7 +1611,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		}
 		break;
 	}
-	
+
 	if (!_vm->_draw->_applyPal) {
 		_vm->_global->_pPaletteDesc->unused2 = _vm->_draw->_unusedPalette2;
 		_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;

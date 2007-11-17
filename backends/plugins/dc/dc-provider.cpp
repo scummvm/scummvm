@@ -114,14 +114,14 @@ PluginList DCPluginProvider::getPlugins() {
 	// Scan for all plugins in this directory
 	FilesystemNode dir(PLUGIN_DIRECTORY);
 	FSList files;
-	if (!dir.listDir(files, FilesystemNode::kListFilesOnly)) {
+	if (!dir.getChildren(files, FilesystemNode::kListFilesOnly)) {
 		error("Couldn't open plugin directory '%s'", PLUGIN_DIRECTORY);
 	}
 
 	for (FSList::const_iterator i = files.begin(); i != files.end(); ++i) {
-		Common::String name(i->name());
+		Common::String name(i->getName());
 		if (name.hasPrefix(PLUGIN_PREFIX) && name.hasSuffix(PLUGIN_SUFFIX)) {
-			pl.push_back(new DCPlugin(i->path()));
+			pl.push_back(new DCPlugin(i->getPath()));
 		}
 	}
 	

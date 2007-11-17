@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "common/system.h"
 
 #include "gui/debugger.h"
@@ -391,13 +389,13 @@ bool Debugger::Cmd_Help(int argc, const char **argv) {
 		width = 0;
 		for (i = 0; i < _dvar_count; i++) {
 			size = strlen(_dvars[i].name) + 1;
-	
+
 			if ((width + size) >= charsPerLine) {
 				DebugPrintf("\n");
 				width = size;
 			} else
 				width += size;
-	
+
 			DebugPrintf("%s ", _dvars[i].name);
 		}
 		DebugPrintf("\n");

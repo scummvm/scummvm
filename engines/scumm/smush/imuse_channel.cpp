@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 
 #include "scumm/scumm.h"	// For DEBUG_SMUSH
@@ -236,7 +236,7 @@ byte *ImuseChannel::getSoundData() {
 
 	_sbuffer = 0;
 	_sbufferSize = 0;
-	
+
 	return tmp;
 }
 

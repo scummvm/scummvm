@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
-
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
@@ -57,6 +55,8 @@ struct GameSettings {
 static const GameSettings lure_games[] = {
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::EN_ANY,
 										"b2a8aa6d7865813a17a3c636e063572e", "disk1.vga" },
+	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::IT_ITA,
+										"cf69d5ada228dd74f89046691c16aafb", "disk1.vga" },
 /*
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::DE_DEU,
 										"7aa19e444dab1ac7194d9f7a40ffe54a", "disk1.vga" },
@@ -97,7 +97,7 @@ GameList Engine_LURE_detectGames(const FSList &fslist) {
 			continue;
 
 		for (g = lure_games; g->gameid; g++) {
-			if (scumm_stricmp(file->name().c_str(), g->checkFile) == 0)
+			if (scumm_stricmp(file->getName().c_str(), g->checkFile) == 0)
 				isFound = true;
 		}
 		if (isFound)
@@ -121,7 +121,7 @@ GameList Engine_LURE_detectGames(const FSList &fslist) {
 			printf("Your game version appears to be unknown. Please, report the following\n");
 			printf("data to the ScummVM team along with name of the game you tried to add\n");
 			printf("and its version/language/etc.:\n");
-			
+
 			printf("  LURE MD5 '%s'\n\n", md5str);
 
 			const PlainGameDescriptor *g1 = lure_list;
@@ -149,11 +149,10 @@ void LureEngine::detectGame() {
 
 	if (!Common::File::exists(SUPPORT_FILENAME))
 		error("Missing %s - this is a custom file containing resources from the\n"
-			"Lure of the Temptress executable. See the documentation for creating it.",
+			"Lure of the Temptress executable. See the documentation for creating it",
 			SUPPORT_FILENAME);
 
-	for (uint8 fileNum = 1; fileNum <= 4; ++fileNum)
-	{
+	for (uint8 fileNum = 1; fileNum <= 4; ++fileNum) {
 		char sFilename[10];
 		sprintf(sFilename, "disk%d.vga", fileNum);
 
@@ -163,23 +162,22 @@ void LureEngine::detectGame() {
 
 	// Check the version of the lure.dat file
 	Common::File f;
-	if (!f.open(SUPPORT_FILENAME)) {
-		error("Error opening %s for validation", SUPPORT_FILENAME);
-	} else {
-		f.seek(0xbf * 8);
 		VersionStructure version;
-		f.read(&version, sizeof(VersionStructure));
-		f.close();
+	if (!f.open(SUPPORT_FILENAME)) 
+		error("Error opening %s for validation", SUPPORT_FILENAME);
+	
+	f.seek(0xbf * 8);
+	f.read(&version, sizeof(VersionStructure));
+	f.close();
 
-		if (READ_LE_UINT16(&version.id) != 0xffff)
-			error("Error validating %s - file is invalid or out of date", SUPPORT_FILENAME);
-		else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR))
-			error("Incorrect version of %s file - expected %d.%d but got %d.%d",
-				SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR, 
-				version.vMajor, version.vMinor);
-	}
+	if (READ_LE_UINT16(&version.id) != 0xffff)
+		error("Error validating %s - file is invalid or out of date", SUPPORT_FILENAME);
+	else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR))
+		error("Incorrect version of %s file - expected %d.%d but got %d.%d",
+			SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR, 
+			version.vMajor, version.vMinor);
 
-	// Do an md5 check 
+	// Do an md5 check
 
 	char md5str[32 + 1];
 	const GameSettings *g;
@@ -211,7 +209,8 @@ void LureEngine::detectGame() {
 		debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team", md5str);
 		_features = GF_LNGUNK || GF_FLOPPY;
 		_game = GI_LURE;
-	}
+
+	} 
 }
 
 } // End of namespace Lure

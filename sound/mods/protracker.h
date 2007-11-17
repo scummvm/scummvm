@@ -26,7 +26,6 @@
 #ifndef SOUND_MODS_PROTRACKER_H
 #define SOUND_MODS_PROTRACKER_H
 
-#include "common/stdafx.h"
 #include "common/stream.h"
 
 namespace Audio {
@@ -36,9 +35,9 @@ class AudioStream;
 /*
  * Factory function for ProTracker streams. Reads all data from the
  * given ReadStream and creates an AudioStream from this. No reference
- * to the 'stream' object is kept, so you can safely delete it after 
+ * to the 'stream' object is kept, so you can safely delete it after
  * invoking this factory.
- * 
+ *
  * @param stream	the ReadStream from which to read the ProTracker data
  * @param rate		TODO
  * @param stereo	TODO

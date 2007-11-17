@@ -29,7 +29,6 @@
 #undef ARRAYSIZE
 #endif
 
-#include "common/stdafx.h"
 #include "engines/engine.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -43,7 +42,7 @@
 extern bool isSmartphone(void);
 #endif
 
-// FIXME - BIG HACK for MidiEmu & error()
+// FIXME: HACK for MidiEmu & error()
 Engine *g_engine = 0;
 
 

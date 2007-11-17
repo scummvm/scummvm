@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "sword1/menu.h"
 #include "sword1/resman.h"
 #include "common/scummsys.h"

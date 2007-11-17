@@ -30,7 +30,7 @@
 #include "saga/rscfile.h"
 #include "saga/sagaresnames.h"
 #include "saga/music.h"
-#include "saga/stream.h"
+
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
@@ -57,7 +57,7 @@ private:
 	const int16 *_bufferEnd;
 	const int16 *_pos;
 	const GameSoundInfo *_musicInfo;
-	Common::MemoryReadStream *_memoryStream;
+	MemoryReadStream *_memoryStream;
 
 	void refill();
 	bool eosIntern() const {
@@ -105,13 +105,19 @@ DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext
 			soundType = kSoundFLAC;
 		}
 
+		_file->seek((long)resourceData->offset + 9, SEEK_SET);
 		createCompressedStream();
-		resourceData->offset += 9;	// Skip compressed header
 	}
 
 	// Determine the end position
 	_filePos = resourceData->offset;
 	_endPos = _filePos + resourceData->size;
+
+	if (_compressedStream != NULL) {
+		_filePos += 9;	// skip compressed header
+		_endPos -= 9;	// decrease size by the size of the compressed header
+	}
+
 	_startPos = _filePos + loopStart;
 	if (_startPos >= _endPos)
 		_startPos = _filePos;
@@ -126,7 +132,7 @@ DigitalMusicInputStream::~DigitalMusicInputStream() {
 
 void DigitalMusicInputStream::createCompressedStream() {
 	uint numLoops = _looping ? 0 : 1;
-	_memoryStream = _file->readStream(resourceData->size);
+	_memoryStream = _file->readStream(resourceData->size - 9);
 
 	switch (soundType) {
 #ifdef USE_MAD
@@ -159,8 +165,9 @@ int DigitalMusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		return _compressedStream->readBuffer(buffer, numSamples);
 
 	int samples = 0;
+	int len = 0;
+
 	while (samples < numSamples && !eosIntern()) {
-		int len = 0;
 		len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
 		memcpy(buffer, _pos, len * 2);
 		buffer += len;
@@ -566,7 +573,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
 	_player->_parser = parser;
-	_player->setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
+	setVolume(_vm->_musicVolume == 10 ? 255 : _vm->_musicVolume * 25);
 
 	if (flags & MUSIC_LOOP)
 		_player->setLoop(true);

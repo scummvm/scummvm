@@ -191,6 +191,22 @@ void KyraEngine_v2::refreshAnimObjectsIfNeed() {
 	}
 }
 
+void KyraEngine_v2::flagAnimObjsForRefresh() {
+	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject)
+		curEntry->needRefresh = 1;
+}
+
+void KyraEngine_v2::updateCharFacing() {
+	if (_mainCharacter.x1 > _mouseX)
+		_mainCharacter.facing = 5;
+	else
+		_mainCharacter.facing = 3;
+
+	_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.animFrame];
+	updateCharacterAnim(0);
+	refreshAnimObjectsIfNeed();
+}
+
 void KyraEngine_v2::updateCharacterAnim(int) {
 	Character *c = &_mainCharacter;
 	AnimObj *animState = _animObjects;
@@ -308,6 +324,71 @@ void KyraEngine_v2::drawCharacterAnimObject(AnimObj *obj, int x, int y, int laye
 	if (_drawNoShapeFlag || obj->shapeIndex1 == 0xFFFF)
 		return;
 	_screen->drawShape(2, getShapePtr(obj->shapeIndex1), x, y, 2, obj->flags | 4, layer, _charScaleX, _charScaleY);
+}
+
+void KyraEngine_v2::addItemToAnimList(int item) {
+	restorePage3();
+
+	AnimObj *animObj = &_animObjects[11+item];
+
+	animObj->enabled = 1;
+	animObj->needRefresh = 1;
+	animObj->unk8 = 1;
+
+	int itemId = _itemList[item].id;
+
+	animObj->xPos2 = animObj->xPos1 = _itemList[item].x;
+	animObj->yPos2 = animObj->yPos1 = _itemList[item].y;
+
+	animObj->shapePtr = _defaultShapeTable[64+itemId];
+	animObj->shapeIndex2 = animObj->shapeIndex1 = 64+itemId;
+
+	int scaleY, scaleX;
+	scaleY = scaleX = getScale(animObj->xPos1, animObj->yPos1);
+
+	uint8 *shapePtr = getShapePtr(64+itemId);
+	animObj->xPos3 = (animObj->xPos2 -= (_screen->getShapeScaledWidth(shapePtr, scaleX) >> 1));
+	animObj->yPos3 = (animObj->yPos2 -= _screen->getShapeScaledHeight(shapePtr, scaleY));
+
+	animObj->width2 = animObj->height2 = 0;
+
+	_animList = addToAnimListSorted(_animList, animObj);
+	animObj->needRefresh = 1;
+	animObj->unk8 = 1;
+}
+
+void KyraEngine_v2::deleteItemAnimEntry(int item) {
+	AnimObj *animObj = &_animObjects[11+item];
+
+	restorePage3();
+
+	animObj->shapePtr = 0;
+	animObj->shapeIndex1 = 0xFFFF;
+	animObj->shapeIndex2 = 0xFFFF;
+	animObj->needRefresh = 1;
+	animObj->unk8 = 1;
+
+	refreshAnimObjectsIfNeed();
+
+	animObj->enabled = 0;
+	_animList = deleteAnimListEntry(_animList, animObj);
+}
+
+void KyraEngine_v2::setCharacterAnimDim(int w, int h) {
+	restorePage3();
+
+	_animObj0Width = _animObjects[0].width;
+	_animObj0Height = _animObjects[0].height;
+
+	_animObjects[0].width = w;
+	_animObjects[0].height = h;
+}
+
+void KyraEngine_v2::resetCharacterAnimDim() {
+	restorePage3();
+
+	_animObjects[0].width = _animObj0Width;
+	_animObjects[0].height = _animObj0Height;
 }
 
 } // end of namespace Kyra

@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "scumm/smush/chunk.h"
 #include "scumm/scumm.h"
 #include "scumm/file.h"
@@ -133,7 +133,7 @@ uint32 FileChunk::read(void *buffer, uint32 dataSize) {
 
 	dataSize = _data->read(buffer, dataSize);
 	_curPos += dataSize;
-	
+
 	return dataSize;
 }
 

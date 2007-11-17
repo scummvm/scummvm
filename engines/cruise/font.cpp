@@ -107,17 +107,17 @@ int32 getTextLineCount(int32 rightBorder_X, int32 wordSpacingWidth,
 	}
 }
 
-void loadFNT(const void *fileNameChar) {
+void loadFNT(const char *fileName) {
 	uint8 header[6];
 	int32 fontSize;
 	int32 data2;
 	uint8 data3[6];
-	const uint8 *fileName = (const uint8 *)fileNameChar;
+
 	_systemFNT = NULL;
 
 	Common::File fontFileHandle;
 
-	if (!fontFileHandle.exists((const char *)fileName)) {
+	if (!fontFileHandle.exists(fileName)) {
 		return;
 	}
 
@@ -125,7 +125,7 @@ void loadFNT(const void *fileNameChar) {
 
 	fontFileHandle.read(header, 4);
 
-	if (strcmpuint8(header, "FNT") == 0) {
+	if (strcmp((char*)header, "FNT") == 0) {
 		fontFileHandle.read(&fontSize, 4);
 		flipLong(&fontSize);
 
@@ -174,15 +174,15 @@ void loadSystemFont(void) {
 	colorOfSelectedSaveDrive = 10;
 
 	for (i = 0; i < 64; i++) {
-		mediumVar[i].ptr = 0;
-		mediumVar[i].field_1C = 0;
+		mediumVar[i].ptr = NULL;
+		mediumVar[i].nofree = 0;
 	}
 
 	initVar1 = 0;
 	main5 = 0;
 	var22 = 0;
 	initVar2 = 0;
-	initVar3 = 0;
+	switchPal = 0;
 	currentActiveBackgroundPlane = 0;
 
 	//changeCursor();
@@ -253,8 +253,7 @@ void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
 	outBufferPtr += heightOff * width * 2;	// param2 = height , param6 = width
 	outBufferPtr += drawPosPixel_X;	// param1 = drawPosPixel_X
 
-	for (i = 0; i < height; i++)	// y++
-	{
+	for (i = 0; i < height; i++) {	// y++
 		uint16 currentColor1 =
 		    (*(fontPtr_Data) << 8) | *(fontPtr_Data + 1);
 		uint16 currentColor2 =

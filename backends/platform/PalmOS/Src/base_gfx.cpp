@@ -95,7 +95,7 @@ void OSystem_PalmBase::initSize(uint w, uint h) {
 void OSystem_PalmBase::setPalette(const byte *colors, uint start, uint num) {
 	RGBColorType *base = _currentPalette + start;
 
-	for(uint i = 0; i < num; i++) {
+	for (uint i = 0; i < num; i++) {
 		base[i].r = colors[0];
 		base[i].g = colors[1];
 		base[i].b = colors[2];

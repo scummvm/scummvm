@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/file.h"
 #include "common/system.h"
@@ -139,7 +139,7 @@ void AGOSEngine::lightMenuStrip(int a) {
 		}
 	}
 
-	mouseOn();	
+	mouseOn();
 }
 
 void AGOSEngine::unlightMenuStrip() {
@@ -198,7 +198,7 @@ void AGOSEngine::lightMenuBox(uint hitarea) {
 uint AGOSEngine::menuFor_e2(Item *item) {
 	if (item == NULL || item == _dummyItem2 || item == _dummyItem3)
 		return 0xFFFF;
- 
+
 	SubObject *subObject = (SubObject *)findChildOfType(item, kObjectType);
 	if (subObject != NULL && subObject->objectFlags & kOFMenu) {
 		uint offs = getOffsetOfChild2Param(subObject, kOFMenu);

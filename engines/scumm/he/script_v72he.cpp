@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -31,6 +31,7 @@
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
+#include "scumm/dialogs.h"
 #include "scumm/file.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/object.h"
@@ -977,7 +978,6 @@ void ScummEngine_v72he::o72_getNumFreeArrays() {
 
 void ScummEngine_v72he::o72_roomOps() {
 	int a, b, c, d, e;
-	byte filename[100];
 
 	byte subOp = fetchScriptByte();
 
@@ -1050,11 +1050,17 @@ void ScummEngine_v72he::o72_roomOps() {
 		break;
 
 	case 221:
-		copyScriptString(filename, sizeof(filename));
-		debug(1, "o72_roomOps: case 221: filename %s", filename);
+		byte buffer[256];
+		int r;
+
+		copyScriptString((byte *)buffer, sizeof(buffer));
+
+		r = convertFilePath(buffer);
+		memcpy(_saveLoadFileName, buffer + r, sizeof(buffer) - r);
+		debug(1, "o72_roomOps: case 221: filename %s", _saveLoadFileName);
 
 		_saveLoadFlag = pop();
-		_saveLoadSlot = 1;
+		_saveLoadSlot = 255;
 		_saveTemporaryState = true;
 		break;
 
@@ -1692,13 +1698,20 @@ void ScummEngine_v72he::o72_drawWizImage() {
 
 void ScummEngine_v72he::o72_debugInput() {
 	byte string[255];
+	byte *debugInputString;
 
 	copyScriptString(string, sizeof(string));
-	debug(0,"o72_debugInput: String %s", string);
 
-	// TODO: Request input and store string result in array
+	DebugInputDialog dialog(this, (char*)string);
+	runDialog(dialog);
+	while (!dialog.done) {
+		parseEvents();
+		dialog.handleKeyDown(_keyPressed);
+	}
+
 	writeVar(0, 0);
-	defineArray(0, kStringArray, 0, 0, 0, 0);
+	debugInputString = defineArray(0, kStringArray, 0, 0, 0, dialog.buffer.size());
+	memcpy(debugInputString, dialog.buffer.c_str(), dialog.buffer.size());
 	push(readVar(0));
 }
 
@@ -1863,18 +1876,26 @@ void ScummEngine_v72he::o72_findAllObjects() {
 }
 
 void ScummEngine_v72he::o72_deleteFile() {
-	byte filename[256];
+	byte buffer[256];
 
-	copyScriptString(filename, sizeof(filename));
+	copyScriptString(buffer, sizeof(buffer));
+	const char *filename = (char *)buffer + convertFilePath(buffer);
 
 	debug(1, "stub o72_deleteFile(%s)", filename);
+
+	_saveFileMan->removeSavefile(filename);
 }
 
 void ScummEngine_v72he::o72_rename() {
-	byte oldFilename[100],newFilename[100];
+	byte buffer1[100],buffer2[100];
 
-	copyScriptString(newFilename, sizeof(newFilename));
-	copyScriptString(oldFilename, sizeof(oldFilename));
+	copyScriptString(buffer1, sizeof(buffer1));
+	copyScriptString(buffer2, sizeof(buffer2));
+
+	const char *newFilename = (char *)buffer1 + convertFilePath(buffer1);
+	const char *oldFilename = (char *)buffer2 + convertFilePath(buffer2);
+
+	_saveFileMan->renameSavefile(oldFilename, newFilename);
 
 	debug(1, "stub o72_rename(%s to %s)", oldFilename, newFilename);
 }
@@ -2256,7 +2277,7 @@ void ScummEngine_v72he::o72_setSystemMessage() {
 		// behavior can occur, from strange wrong titles, up to crashes (happens
 		// under Mac OS X).
 		//
-		// Possible fixes/workarounds: 
+		// Possible fixes/workarounds:
 		// - Simply stop using this. It's a rather unimportant "feature" anyway.
 		// - Try to translate the text to ASCII.
 		// - Refine OSystem to accept window captions that are non-ASCII, e.g.

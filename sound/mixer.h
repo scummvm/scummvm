@@ -26,7 +26,6 @@
 #ifndef SOUND_MIXER_H
 #define SOUND_MIXER_H
 
-#include "common/stdafx.h"
 #include "common/scummsys.h"
 #include "common/mutex.h"
 
@@ -204,7 +203,7 @@ public:
 
 
 	/**
-	 * Pause/unpause all sounds, including all regular and permanent 
+	 * Pause/unpause all sounds, including all regular and permanent
 	 * channels
 	 *
 	 * @param paused true to pause everything, false to unpause
@@ -327,7 +326,7 @@ public:
 	 * This simply calls the mix() method.
 	 */
 	static void mixCallback(void *s, byte *samples, int len);
-	
+
 	void setReady(bool ready) { _mixerReady = ready; }
 };
 

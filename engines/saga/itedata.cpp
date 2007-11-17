@@ -338,6 +338,7 @@ FxTable ITE_SfxTable[ITE_SFXCOUNT] = {
 
 const char *ITEinterfaceTextStrings[][52] = {
 	{
+		// Note that the "Load Successful!" string is never used in ScummVM
 		"Walk to", "Look At", "Pick Up", "Talk to", "Open",
 		"Close", "Use", "Give", "Options", "Test",
 		"Demo", "Help", "Quit Game", "Fast", "Slow",
@@ -375,7 +376,50 @@ const char *ITEinterfaceTextStrings[][52] = {
 		"Ich wei$ nicht, wie ich das machen soll.",
 		"Text zeigen",
 		"Wie lautet die Antwort?"
-	}
+	},
+	// Spanish IHNM
+	{
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, "Salir del Programa?",
+		"Load Successful!", "Introduzca Nombre Partida", "Dar %s a %s", "Usar %s con %s",
+		// Original uses "Partida Grabada" here (saved game), but "nueva partida" (new save
+		// game) makes more sense (according to jvprat)
+		"[Nueva partida]",
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL
+	},
+	// Italian fan translation of IHNM
+	{
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, "Uscire?",
+		"Load Successful!", "Nome del salvataggio", "Dai %s a %s", "Usa %s con %s",
+		// This was left untouched in the Italian fan translation
+		"[New Save Game]",
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL
+	},
 };
 
 Point pieceOrigins[PUZZLE_PIECES] = {

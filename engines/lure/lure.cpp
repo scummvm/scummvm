@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -34,6 +34,7 @@
 #include "lure/lure.h"
 #include "lure/intro.h"
 #include "lure/game.h"
+#include "lure/sound.h"
 
 namespace Lure {
 
@@ -45,23 +46,24 @@ LureEngine::LureEngine(OSystem *system): Engine(system) {
 	Common::addSpecialDebugLevel(kLureDebugAnimations, "animations", "Animations debugging");
 	Common::addSpecialDebugLevel(kLureDebugHotspots, "hotspots", "Hotspots debugging");
 	Common::addSpecialDebugLevel(kLureDebugFights, "fights", "Fights debugging");
+	Common::addSpecialDebugLevel(kLureDebugSounds, "sounds", "Sounds debugging");
 
 	// Setup mixer
-/*
+
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
 	}
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
-*/
-	
+
 	_features = 0;
 	_game = 0;
 }
 
 int LureEngine::init() {
+	int_engine = this;
+
 	_system->beginGFXTransaction();
 		initCommonGFX(false);
 		_system->initSize(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
@@ -78,7 +80,6 @@ int LureEngine::init() {
 	Surface::initialise();
 	_room = new Room();
 	_fights = new FightsManager();
-	int_engine = this;
 	return 0;
 }
 
@@ -104,9 +105,25 @@ LureEngine &LureEngine::getReference() {
 }
 
 int LureEngine::go() {
+
+	if (ConfMan.getBool("copy_protection")) {
+		CopyProtectionDialog *dialog = new CopyProtectionDialog();
+		bool result = dialog->show();
+		delete dialog;
+		if (_events->quitFlag)
+			return 0;
+
+		if (!result)
+			error("Sorry - copy protection failed");
+	}
+
+	Game *gameInstance = new Game();
+
 	if (ConfMan.getInt("boot_param") == 0) {
 		// Show the introduction
+		Sound.loadSection(INTRO_SOUND_RESOURCE_ID);
 		Introduction *intro = new Introduction(*_screen, *_system);
+
 		intro->show();
 		delete intro;
 	}
@@ -114,12 +131,11 @@ int LureEngine::go() {
 	// Play the game
 	if (!_events->quitFlag) {
 		// Play the game
-		Game *gameInstance = new Game();
+		Sound.loadSection(MAIN_SOUND_RESOURCE_ID);
 		gameInstance->execute();
-		delete gameInstance;
 	}
 
-	//quitGame();
+	delete gameInstance;
 	return 0;
 }
 
@@ -149,6 +165,8 @@ bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 	f->writeByte(0); // End of string terminator
 
 	Resources::getReference().saveToStream(f);
+	Game::getReference().saveToStream(f);
+	Sound.saveToStream(f);
 	Room::getReference().saveToStream(f);
 	Fights.saveToStream(f);
 
@@ -169,18 +187,16 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 	// Check for header
 	char buffer[5];
 	f->read(buffer, 5);
-	if (memcmp(buffer, "lure", 5) != 0)
-	{
+	if (memcmp(buffer, "lure", 5) != 0) {
 		warning(FAILED_MSG, slotNumber);
 		delete f;
 		return false;
 	}
 
-	// Check language version 
+	// Check language version
 	uint8 language = f->readByte();
 	uint8 version = f->readByte();
-	if ((language != _language) || (version != LURE_DAT_MINOR))
-	{
+	if ((language != _language) || (version != LURE_DAT_MINOR)) {
 		warning("loadGame: Failed to load slot %d - incorrect version", slotNumber);
 		delete f;
 		return false;
@@ -191,6 +207,8 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 
 	// Load in the data
 	Resources::getReference().loadFromStream(f);
+	Game::getReference().loadFromStream(f);
+	Sound.loadFromStream(f);
 	Room::getReference().loadFromStream(f);
 	Fights.loadFromStream(f);
 
@@ -208,7 +226,7 @@ Common::String *LureEngine::detectSave(int slotNumber) {
 	char buffer[5];
 	f->read(&buffer[0], 5);
 	if (memcmp(&buffer[0], "lure", 5) == 0) {
-		// Check language version 
+		// Check language version
 		uint8 language = f->readByte();
 		uint8 version = f->readByte();
 		if ((language == _language) && (version == LURE_DAT_MINOR)) {

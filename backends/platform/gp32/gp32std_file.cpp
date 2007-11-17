@@ -24,7 +24,6 @@
  */
 
 
-#include "stdafx.h"
 #include "common/scummsys.h"
 //#include "graphics/scaler.h"
 #include "common/system.h"
@@ -224,6 +223,8 @@ size_t gp_fread(void *ptr, size_t size, size_t n, GPFILE *stream) {
 	stream->filePos += len;
 #endif
 
+	// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
+	// needs fixing, or remove it!
 	return 1; //readcount / size;	//FIXME
 }
 

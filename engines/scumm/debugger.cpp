@@ -22,7 +22,7 @@
  * $Id$
  *
  */
-#include "common/stdafx.h"
+
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -652,7 +652,7 @@ static int gfxPrimitivesCompareInt(const void *a, const void *b);
 
 
 static void hlineColor(ScummEngine *scumm, int x1, int x2, int y, byte color) {
-	VirtScreen *vs = &scumm->virtscr[0];
+	VirtScreen *vs = &scumm->_virtscr[kMainVirtScreen];
 	byte *ptr;
 
 	// Clip y
@@ -745,7 +745,7 @@ void ScummDebugger::drawBox(int box) {
 	r[1] = coords.ur;
 	r[2] = coords.lr;
 	r[3] = coords.ll;
-	
+
 	if (_vm->_game.version <= 2) {
 		for (int i = 0; i < 4; ++i) {
 			r[i].x *= V12_X_MULTIPLIER;

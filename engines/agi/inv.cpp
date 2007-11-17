@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 
 #include "agi/agi.h"
 #include "agi/sprite.h"
@@ -51,6 +51,22 @@ namespace Agi {
 #define SELECT_X	2
 #define SELECT_Y	24
 #define SELECT_MSG	"Press ENTER to select, ESC to cancel"
+
+#define NOTHING_X_RU	16
+#define NOTHING_Y_RU	3
+#define NOTHING_MSG_RU	"\xad\xa8\xe7\xa5\xa3\xae"
+
+#define ANY_KEY_X_RU	4
+#define ANY_KEY_Y_RU	24
+#define ANY_KEY_MSG_RU	"\x8b\xee\xa1\xa0\xef \xaa\xab\xa0\xa2\xa8\xe8\xa0 - \xa2\xae\xa7\xa2\xe0\xa0\xe2 \xa2 \xa8\xa3\xe0\xe3."
+
+#define YOUHAVE_X_RU	11
+#define YOUHAVE_Y_RU	0
+#define YOUHAVE_MSG_RU	"   \x93 \xa2\xa0\xe1 \xa5\xe1\xe2\xec:   "
+
+#define SELECT_X_RU	2
+#define SELECT_Y_RU	24
+#define SELECT_MSG_RU	"ENTER - \xa2\xeb\xa1\xe0\xa0\xe2\xec, ESC - \xae\xe2\xac\xa5\xad\xa8\xe2\xec."
 
 void AgiEngine::printItem(int n, int fg, int bg) {
 	printText(objectName(_intobj[n]), 0, n % 2 ? 39 - strlen(objectName(_intobj[n])) : 1,
@@ -84,7 +100,14 @@ int AgiEngine::showItems() {
 	}
 
 	if (i == 0) {
-		printText(NOTHING_MSG, 0, NOTHING_X, NOTHING_Y, 40, STATUS_FG, STATUS_BG);
+		switch (getLanguage()) {
+		case Common::RU_RUS:
+			printText(NOTHING_MSG_RU, 0, NOTHING_X_RU, NOTHING_Y_RU, 40, STATUS_FG, STATUS_BG);
+			break;
+		default:
+			printText(NOTHING_MSG, 0, NOTHING_X, NOTHING_Y, 40, STATUS_FG, STATUS_BG);
+			break;
+		}
 	}
 
 	return i;
@@ -138,7 +161,7 @@ void AgiEngine::selectItems(int n) {
 		default:
 			break;
 		}
-		
+
 		if (!exit_select) {
 			showItems();
 			_gfx->doUpdate();
@@ -166,7 +189,14 @@ void AgiEngine::inventory() {
 	_game.colorBg = 15;
 	_gfx->clearScreen(_game.colorBg);
 
-	printText(YOUHAVE_MSG, 0, YOUHAVE_X, YOUHAVE_Y, 40, STATUS_FG, STATUS_BG);
+	switch (getLanguage()) {
+	case Common::RU_RUS:
+		printText(YOUHAVE_MSG_RU, 0, YOUHAVE_X_RU, YOUHAVE_Y_RU, 40, STATUS_FG, STATUS_BG);
+		break;
+	default:
+		printText(YOUHAVE_MSG, 0, YOUHAVE_X, YOUHAVE_Y, 40, STATUS_FG, STATUS_BG);
+		break;
+	}
 
 	/* FIXME: doesn't check if objects overflow off screen... */
 
@@ -175,10 +205,21 @@ void AgiEngine::inventory() {
 
 	n = showItems();
 
-	if (getflag(fStatusSelectsItems)) {
-		printText(SELECT_MSG, 0, SELECT_X, SELECT_Y, 40, STATUS_FG, STATUS_BG);
-	} else {
-		printText(ANY_KEY_MSG, 0, ANY_KEY_X, ANY_KEY_Y, 40, STATUS_FG, STATUS_BG);
+	switch (getLanguage()) {
+	case Common::RU_RUS:
+		if (getflag(fStatusSelectsItems)) {
+			printText(SELECT_MSG_RU, 0, SELECT_X_RU, SELECT_Y_RU, 40, STATUS_FG, STATUS_BG);
+		} else {
+			printText(ANY_KEY_MSG_RU, 0, ANY_KEY_X_RU, ANY_KEY_Y_RU, 40, STATUS_FG, STATUS_BG);
+		}
+		break;
+	default:
+		if (getflag(fStatusSelectsItems)) {
+			printText(SELECT_MSG, 0, SELECT_X, SELECT_Y, 40, STATUS_FG, STATUS_BG);
+		} else {
+			printText(ANY_KEY_MSG, 0, ANY_KEY_X, ANY_KEY_Y, 40, STATUS_FG, STATUS_BG);
+		}
+		break;
 	}
 
 	_gfx->flushScreen();

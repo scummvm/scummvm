@@ -26,7 +26,7 @@
 #ifndef SKY_SCREEN_H
 #define SKY_SCREEN_H
 
-#include "common/stdafx.h"
+
 #include "common/scummsys.h"
 #include "sky/skydefs.h"
 

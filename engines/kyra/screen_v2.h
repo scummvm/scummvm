@@ -33,6 +33,7 @@ namespace Kyra {
 class KyraEngine_v2;
 
 class Screen_v2 : public Screen {
+friend class Debugger_v2;
 public:
 	Screen_v2(KyraEngine_v2 *vm, OSystem *system);
 	virtual ~Screen_v2();
@@ -40,8 +41,15 @@ public:
 	virtual void setScreenDim(int dim);
 	const ScreenDim *getScreenDim(int dim);
 	
-	// palette handling
-	void k2IntroFadeToGrey(int delay=0x54);
+	// sequence player
+	void generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag);
+	void applyGrayOverlay(int x, int y, int w, int h, int pageNum, const uint8 *grayOverlay);
+	int findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors);
+	bool calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2);
+	void wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
+		int w1, int h1, int w2, int h2,	int srcPage, int dstPage, int dim);
+	void cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage,
+		int dstW, int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage);
 	
 	// screen page handling
 	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
@@ -68,11 +76,16 @@ public:
 	
 	// mouse handling
 	bool isMouseVisible() const;
+
+	// text display
+	void setTextColorMap(const uint8 *cmap);
 private:
 	KyraEngine_v2 *_vm;
 	
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
+
+	uint8 *_wsaFrameAnimBuffer;
 	
 	// maybe subclass screen for kyra3
 	static const ScreenDim _screenDimTableK3[];

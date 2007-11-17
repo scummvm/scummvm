@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/stdafx.h"
 #include "common/util.h"
 #include "common/stream.h"
 
@@ -173,14 +172,14 @@ AudioStream *makeWAVStream(Common::SeekableReadStream &stream) {
 		return 0;
 
 	if (type == 17) { // MS IMA ADPCM
-		Audio::AudioStream *sndStream = Audio::makeADPCMStream(&stream, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+		Audio::AudioStream *sndStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 		data = (byte *)malloc(size * 4);
 		assert(data);
 		size = sndStream->readBuffer((int16*)data, size * 2);
 		size *= 2; // 16bits.
 		delete sndStream;
 	} else if (type == 2) { // MS ADPCM
-		Audio::AudioStream *sndStream = Audio::makeADPCMStream(&stream, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
+		Audio::AudioStream *sndStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 		data = (byte *)malloc(size * 4);
 		assert(data);
 		size = sndStream->readBuffer((int16*)data, size * 2);

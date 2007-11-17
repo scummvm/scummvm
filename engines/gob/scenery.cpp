@@ -23,7 +23,7 @@
  *
  */
 
-#include "common/stdafx.h"
+
 #include "common/endian.h"
 #include "common/stream.h"
 
@@ -392,11 +392,15 @@ void Scenery::updateStatic(int16 orderFrom) {
 	if (_curStatic == -1)
 		return;
 
-	updateStatic(orderFrom, _curStatic & 0xFF, _curStaticLayer & 0xFF);
+	if (_curStatic < 10000) {
+		updateStatic(orderFrom, _curStatic & 0xFF, _curStaticLayer & 0xFF);
 
-	if (_curStatic & 0xFF00)
-		updateStatic(orderFrom, ((_curStatic >> 8) & 0xFF) - 1,
-				(_curStaticLayer >> 8) & 0xFF);
+		if (_curStatic & 0xFF00)
+			updateStatic(orderFrom, ((_curStatic >> 8) & 0xFF) - 1,
+					(_curStaticLayer >> 8) & 0xFF);
+	} else
+		for (int i = 0; i < (_curStatic - 10000); i++)
+			updateStatic(orderFrom, i, 0);
 }
 
 int16 Scenery::loadAnim(char search) {
@@ -551,7 +555,7 @@ void Scenery::freeAnim(int16 index) {
 			_spriteResId[spr] = -1;
 		}
 	}
-	
+
 	for (int i = 0; i < _animations[index].layersCount; i++)
 		delete[] _animations[index].layers[i].frames;
 	delete[] _animations[index].layers;

@@ -27,8 +27,6 @@
 
 #include "saga/saga.h"
 
-#include "saga/stream.h"
-
 namespace Saga {
 
 static int granulate(int value, int granularity) {
