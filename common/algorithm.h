@@ -53,8 +53,29 @@ Out copy_if(In first, In last, Out dst, Op op) {
 	return dst;
 }
 
-// TODO: this is can be slower than memset for most normal data
-// maybe specialize the template for char, short, int, long, long long
+// Our 'specialized' 'set_to' template for char, signed char and unsigned char arrays.
+// Since C++ doesn't support partial specialized template functions (currently) we
+// are going this way...
+// With this we assure the usage of memset for those, which should be
+// faster than a simple loop like for the generic 'set_to'.
+template<class Value>
+signed char *set_to(signed char *first, signed char *last, Value val) {
+	memset(first, (val & 0xFF), last - first);
+	return last;
+}
+
+template<class Value>
+unsigned char *set_to(unsigned char *first, unsigned char *last, Value val) {
+	memset(first, (val & 0xFF), last - first);
+	return last;
+}
+
+template<class Value>
+char *set_to(char *first, char *last, Value val) {
+	memset(first, (val & 0xFF), last - first);
+	return last;
+}
+
 template<class In, class Value>
 In set_to(In first, In last, Value val) {
 	while (first != last)
