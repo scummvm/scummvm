@@ -59,7 +59,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_savefile(NULL), _mixer(NULL), _timer(NULL), _offscreen(NULL),
 	_overlayVisible(false), _overlayBuffer(NULL), _fullscreen(NULL),
 	_mouseHeight(0), _mouseWidth(0), _mouseBuf(NULL), _lastMouseTap(0),
-	_secondaryTapped(false), _lastSecondaryTap(0)
+	_secondaryTapped(false), _lastSecondaryTap(0), _landscapeMode(true)
 {	
 	_queuedInputEvent.type = (Common::EventType)0;
 }
@@ -151,7 +151,11 @@ void OSystem_IPHONE::initSize(uint width, uint height) {
 	_fullscreen = (uint16 *)malloc(fullSize);
 	bzero(_fullscreen, fullSize);
 	
-	iPhone_initSurface(height, width);
+	if (_landscapeMode)
+		iPhone_initSurface(height, width, true);
+	else
+		iPhone_initSurface(width, height, false);
+
 	_dirtyRects.push_back(Common::Rect(0, 0, width, height));
 	_mouseVisible = false;
 }
@@ -242,32 +246,51 @@ void OSystem_IPHONE::addDirtyRect(int16 x, int16 y, int16 w, int16 h) {
 	
 	_dirtyRects.push_back(Common::Rect(x, y, x + w, y + h));
 }
-	
+
 void OSystem_IPHONE::updateScreen() {
-	//printf("updateScreen()\n");
+	//printf("updateScreen(): %i dirty rects.\n", _dirtyRects.size());
 
 	if (_dirtyRects.size() == 0) {
 		return;
 	}
+	
+	if (_landscapeMode) {
+		internUpdateScreen<true>();
+	} else {
+		internUpdateScreen<false>();	
+	}
+	
+	iPhone_updateScreen();
+}
 
-	Common::Rect mouseRect(_mouseX, _mouseY, _mouseX + _mouseWidth, _mouseY + _mouseHeight);
+template <bool landscapeMode>
+void OSystem_IPHONE::internUpdateScreen() {
+	Common::Rect mouseRect(_mouseX - _mouseHotspotX, _mouseY - _mouseHotspotY, _mouseX + _mouseWidth - _mouseHotspotX, _mouseY + _mouseHeight - _mouseHotspotY);
 
 	while (_dirtyRects.size()) {
-		Common::Rect dirtyRect = _dirtyRects.remove_at(_dirtyRects.size()-1);
+		Common::Rect dirtyRect = _dirtyRects.remove_at(_dirtyRects.size() - 1);
 		//printf("Drawing: (%i, %i) -> (%i, %i)\n", dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
 		int row;	
 		if (_overlayVisible) {
 			for (int x = dirtyRect.left; x < dirtyRect.right - 1; x++) {
-				row = (_screenWidth - x - 1) * _screenHeight;
-				for (int y = dirtyRect.top; y < dirtyRect.bottom; y++) {	
-					_fullscreen[row + y] = _overlayBuffer[y * _screenWidth + x];
+				if (landscapeMode) {
+					row = (_screenWidth - x - 1) * _screenHeight;
+					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
+						_fullscreen[row + y] = _overlayBuffer[y * _screenWidth + x];						
+				} else {
+					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
+						_fullscreen[y * _screenWidth + x] = _overlayBuffer[y * _screenWidth + x];												
 				}
 			}
 		} else {
 			for (int x = dirtyRect.left; x < dirtyRect.right - 1; x++) {
-				row = (_screenWidth - x - 1) * _screenHeight;
-				for (int y = dirtyRect.top; y < dirtyRect.bottom; y++) {
-					_fullscreen[row + y] = _palette[_offscreen[y * _screenWidth + x]];
+				if (landscapeMode) {
+					row = (_screenWidth - x - 1) * _screenHeight;
+					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
+						_fullscreen[row + y] = _palette[_offscreen[y * _screenWidth + x]];												
+				} else {
+					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
+						_fullscreen[y * _screenWidth + x] = _palette[_offscreen[y * _screenWidth + x]];												
 				}
 			}		
 		}
@@ -276,16 +299,20 @@ void OSystem_IPHONE::updateScreen() {
 		int mx, my;
 		if (_mouseVisible && dirtyRect.intersects(mouseRect)) {
 			for (uint x = 0; x < _mouseWidth - 1; x++) {
-				mx = _mouseX + x; // + _mouseHotspotX;
+				mx = _mouseX + x - _mouseHotspotX;
 				row = (_screenWidth - mx - 1) * _screenHeight;
 				if (mx >= 0 && mx < _screenWidth) {
 
 					for (uint y = 0; y < _mouseHeight; ++y) {
 						if (_mouseBuf[y * _mouseWidth + x] != _mouseKeyColour) {
-							my = _mouseY + y; // + _mouseHotspotY;
+							my = _mouseY + y - _mouseHotspotY;
 
-							if ( my >= 0 && my < _screenHeight)
-								_fullscreen[row + my] = _palette[_mouseBuf[y * _mouseWidth + x]];
+							if (my >= 0 && my < _screenHeight) {
+								if (landscapeMode)
+									_fullscreen[row + my] = _palette[_mouseBuf[y * _mouseWidth + x]];								
+								else
+									_fullscreen[my * _screenWidth + mx] = _palette[_mouseBuf[y * _mouseWidth + x]];								
+							}
 						}
 					}				
 				}
@@ -297,17 +324,17 @@ void OSystem_IPHONE::updateScreen() {
 			memcpy(surface, _fullscreen, _screenWidth * _screenHeight * 2);
 		} else {
 			for (int x = dirtyRect.left; x < dirtyRect.right - 1; x++) {
-				row = (_screenWidth - x - 1) * _screenHeight;
-				for (int y = dirtyRect.top; y < dirtyRect.bottom; y++) {
-					surface[row + y] = _fullscreen[row + y];
+				if (landscapeMode) {
+					row = (_screenWidth - x - 1) * _screenHeight;
+					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
+						surface[row + y] = _fullscreen[row + y];
+				} else {
+					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
+						surface[y * _screenWidth + x] = _fullscreen[y * _screenWidth + x];
 				}
 			}		
 		}
-		
-		//memcpy(iPhone_getSurface(), _fullscreen, (_screenWidth * _screenHeight) * 2);	
 	}
-
-	iPhone_updateScreen();
 }
 
 Graphics::Surface *OSystem_IPHONE::lockScreen() {
@@ -335,16 +362,19 @@ void OSystem_IPHONE::setShakePos(int shakeOffset) {
 void OSystem_IPHONE::showOverlay() {
 	//printf("showOverlay()\n");
 	_overlayVisible = true;
+	_dirtyRects.push_back(Common::Rect(0, 0, _screenWidth, _screenHeight));
 }
 
 void OSystem_IPHONE::hideOverlay() {
 	//printf("hideOverlay()\n");
 	_overlayVisible = false;
+	_dirtyRects.push_back(Common::Rect(0, 0, _screenWidth, _screenHeight));
 }
 
 void OSystem_IPHONE::clearOverlay() {
 	//printf("clearOverlay()\n");
 	bzero(_overlayBuffer, _screenWidth * _screenHeight * sizeof(OverlayColor));
+	_dirtyRects.push_back(Common::Rect(0, 0, _screenWidth, _screenHeight));
 }
 
 void OSystem_IPHONE::grabOverlay(OverlayColor *buf, int pitch) {
@@ -411,20 +441,27 @@ int16 OSystem_IPHONE::getOverlayWidth() {
 bool OSystem_IPHONE::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
+	dirtyMouseCursor();
 	return last;
 }
 
 void OSystem_IPHONE::warpMouse(int x, int y) {
 	//printf("warpMouse()\n");
 	
-	addDirtyRect(_mouseX, _mouseY, _mouseX + _mouseWidth + 1, _mouseY + _mouseHeight + 1);
+	dirtyMouseCursor();
 	_mouseX = x;
 	_mouseY = y;
-	addDirtyRect(_mouseX, _mouseY, _mouseX + _mouseWidth + 1, _mouseY + _mouseHeight + 1);
+	dirtyMouseCursor();
+}
+
+void OSystem_IPHONE::dirtyMouseCursor() {
+	addDirtyRect(_mouseX - _mouseHotspotX, _mouseY - _mouseHotspotY, _mouseX + _mouseWidth - _mouseHotspotX + 1, _mouseY + _mouseHeight - _mouseHotspotY + 1);	
 }
 
 void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
-	//printf("setMouseCursor()\n");
+	//printf("setMouseCursor(%i, %i)\n", hotspotX, hotspotY);
+
+	dirtyMouseCursor();
 
 	if (_mouseBuf != NULL && (_mouseWidth != w || _mouseHeight != h)) {
 		free(_mouseBuf);
@@ -445,7 +482,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	
 	memcpy(_mouseBuf, buf, w * h);
 	
-	addDirtyRect(_mouseX, _mouseY, _mouseX + _mouseWidth + 1, _mouseY + _mouseHeight + 1);
+	dirtyMouseCursor();
 }
 
 bool OSystem_IPHONE::pollEvent(Common::Event &event) {
@@ -467,8 +504,15 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	float xUnit, yUnit;
 
 	if (iPhone_fetchEvent(&eventType, &xUnit, &yUnit)) {
-		int x = (int)((1.0 - yUnit) * _screenWidth);
-		int y = (int)(xUnit * _screenHeight);
+		int x;
+		int y;
+		if (_landscapeMode) {
+			x = (int)((1.0 - yUnit) * _screenWidth);
+			y = (int)(xUnit * _screenHeight);
+		} else {
+			x = (int)(xUnit * _screenWidth);
+			y = (int)(yUnit * _screenHeight);		
+		}
 
 		switch ((InputEvent)eventType) {
 			case kInputMouseDown:
@@ -591,6 +635,19 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					return false;
 				}
 				break;
+			case kInputOrientationChanged:
+				bool newModeIsLandscape = (int)xUnit != 1;
+				//printf("Orientation: %i", (int)xUnit);
+				if (_landscapeMode != newModeIsLandscape) {
+					_landscapeMode = newModeIsLandscape;
+					if (_landscapeMode) {
+						iPhone_initSurface(_screenHeight, _screenWidth, true);
+					} else {
+						iPhone_initSurface(_screenWidth, _screenHeight, false);
+					}
+					_dirtyRects.push_back(Common::Rect(0, 0, _screenWidth, _screenHeight));
+				}				
+				break;
 			default:
 				break;
 		}
@@ -686,6 +743,7 @@ bool OSystem_IPHONE::setSoundCallback(SoundProc proc, void *param) {
 }
 
 void OSystem_IPHONE::clearSoundCallback() {
+	debug("clearSoundCallback()\n");
 }
 
 int OSystem_IPHONE::getOutputSampleRate() const {
@@ -731,6 +789,23 @@ OSystem *OSystem_IPHONE_create() {
 }
 
 void iphone_main(int argc, char *argv[]) {
+	
+	// Redirect stdout and stderr if we're launching from the Springboard.
+	if (argc == 2 && strcmp(argv[1], "--launchedFromSB") == 0) {
+		FILE *newfp = fopen("/tmp/scummvm.log", "a");
+		if (newfp != NULL) {
+			fclose(stdout);
+			fclose(stderr);
+			*stdout = *newfp;
+			*stderr = *newfp;
+			setbuf(stdout, NULL);
+			setbuf(stderr, NULL);	
+
+			//extern int gDebugLevel;
+			//gDebugLevel = 10;
+		}		
+	}
+
 	g_system = OSystem_IPHONE_create();
 	assert(g_system);
 

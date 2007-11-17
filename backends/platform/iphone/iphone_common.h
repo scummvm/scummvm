@@ -28,7 +28,8 @@ enum InputEvent {
 	kInputMouseDown,
 	kInputMouseUp,
 	kInputMouseDragged,
-	kInputMouseSecondToggled
+	kInputMouseSecondToggled,
+	kInputOrientationChanged
 };
 
 // We need this to be able to call functions from/in Objective-C.
@@ -44,7 +45,7 @@ void iPhone_updateScreen();
 unsigned short* iPhone_getSurface();
 void iPhone_lockSurface();
 void iPhone_unlockSurface();
-void iPhone_initSurface(int width, int height);
+void iPhone_initSurface(int width, int height, bool landscape);
 bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY);
 
 #ifdef __cplusplus

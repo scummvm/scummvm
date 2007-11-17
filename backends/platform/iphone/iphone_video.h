@@ -39,6 +39,9 @@
 	CoreSurfaceBufferRef _screenSurface;
 	NSMutableArray* _events;
 	NSLock* _lock;
+	UIKeyboardImpl* _keyboard;
+	LKLayer* _screenLayer;
+
 	int _fullWidth;
 	int _fullHeight;
 	int _widthOffset;
@@ -56,6 +59,9 @@
 - (void)updateScreen;
 
 - (id)getEvent;
+
+- (void)deviceOrientationChanged:(int)orientation;
+
 @end
 
 #endif /* _IPHONE_VIDEO__H */

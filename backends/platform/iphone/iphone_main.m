@@ -88,6 +88,11 @@ int main(int argc, char** argv) {
 	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
 }
 
+- (void)deviceOrientationChanged:(GSEvent *)event {
+	int screenOrientation = GSEventDeviceOrientation(event);
+	[_view deviceOrientationChanged: screenOrientation];
+}
+
 - (UIWindow*) getWindow {
 	return _window;
 }

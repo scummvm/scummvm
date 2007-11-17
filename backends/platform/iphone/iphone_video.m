@@ -36,6 +36,9 @@
 static iPhoneView *sharedInstance = nil;
 static int _width = 0;
 static int _height = 0;
+static bool _landscape;
+static int _orientation = -1;
+static CGRect _screenRect;
 
 // static long lastTick = 0;
 // static int frames = 0;
@@ -56,15 +59,15 @@ void iPhone_unlockSurface() {
 	CoreSurfaceBufferUnlock([sharedInstance getSurface]);
 }
 
-void iPhone_initSurface(int width, int height) {
+void iPhone_initSurface(int width, int height, bool landscape) {
 	_width = width;
 	_height = height;
+	_landscape = landscape;
 	
  	[sharedInstance performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
 }
 
-bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY)
-{
+bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY) {
 	id event = [sharedInstance getEvent];
 	if (event == nil) {
 		return false;
@@ -83,6 +86,18 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY)
 	return true;
 }
 
+bool getLocalMouseCoords(CGPoint *point) {
+	if (point->x < _screenRect.origin.x || point->x > _screenRect.origin.x + _screenRect.size.width ||
+		point->y < _screenRect.origin.y || point->y > _screenRect.origin.y + _screenRect.size.height) {
+			return false;
+	}
+	
+	point->x = (point->x - _screenRect.origin.x) / _screenRect.size.width;
+	point->y = (point->y - _screenRect.origin.y) / _screenRect.size.height;
+	
+	return true;
+}
+
 @implementation iPhoneView
 
 - (id)initWithFrame:(struct CGRect)frame {
@@ -90,8 +105,12 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY)
 
 	_fullWidth = frame.size.width;
 	_fullHeight = frame.size.height;
-	
+	_screenLayer = nil;
+
 	sharedInstance = self;
+
+	_keyboard = [UIKeyboardImpl sharedInstance];
+	//[self addSubview:_keyboard];
 
 	return self;
 }
@@ -139,6 +158,10 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY)
 		nil
 	];
 
+	if (_screenSurface != nil) {
+		//[[sharedInstance _layer] removeSublayer: screenLayer];
+	}
+
 	//("Allocating surface: %d\n", allocSize);
 	_screenSurface = CoreSurfaceBufferCreate((CFDictionaryRef)dict);
 	//printf("Surface created.\n");
@@ -146,44 +169,54 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY)
 
 	LKLayer* screenLayer = [[LKLayer layer] retain];
 	
-	float ratioDifference = ((float)_width / (float)_height) / ((float)_fullWidth / (float)_fullHeight);
-	int rectWidth, rectHeight;
-	if (ratioDifference < 1.0f) {
-		rectWidth = _fullWidth * ratioDifference;
-		rectHeight = _fullHeight;
-		_widthOffset = (_fullWidth - rectWidth)/2;
-		_heightOffset = 0;
-	} else {
-		rectWidth = _fullWidth;
-		rectHeight = _fullHeight / ratioDifference;
-		_heightOffset = (_fullHeight - rectHeight)/2;
-		_widthOffset = 0;
-	}
+	if (_landscape) {
+		float ratioDifference = ((float)_width / (float)_height) / ((float)_fullWidth / (float)_fullHeight);
+		int rectWidth, rectHeight;
+		if (ratioDifference < 1.0f) {
+			rectWidth = _fullWidth * ratioDifference;
+			rectHeight = _fullHeight;
+			_widthOffset = (_fullWidth - rectWidth)/2;
+			_heightOffset = 0;
+		} else {
+			rectWidth = _fullWidth;
+			rectHeight = _fullHeight / ratioDifference;
+			_heightOffset = (_fullHeight - rectHeight)/2;
+			_widthOffset = 0;
+		}
 
-	//printf("Rect: %i, %i, %i, %i\n", _widthOffset, _heightOffset, rectWidth + _widthOffset, rectHeight + _heightOffset);
-	[screenLayer setFrame: CGRectMake(_widthOffset, _heightOffset, rectWidth + _widthOffset, rectHeight + _heightOffset)];
+		//printf("Rect: %i, %i, %i, %i\n", _widthOffset, _heightOffset, rectWidth + _widthOffset, rectHeight + _heightOffset);
+		_screenRect = CGRectMake(_widthOffset, _heightOffset, rectWidth + _widthOffset, rectHeight + _heightOffset);
+		[screenLayer setFrame: _screenRect];		
+	} else {
+		float ratio = (float)_height / (float)_width;
+		_screenRect = CGRectMake(0, 0, _fullWidth, _fullWidth * ratio);
+		[screenLayer setFrame: _screenRect];				
+	}
 
 	[screenLayer setContents: _screenSurface];
 	[screenLayer setOpaque: YES];
-	[[sharedInstance _layer] addSublayer: screenLayer];
+	
+	if (_screenLayer != nil) {
+		[[sharedInstance _layer] replaceSublayer: _screenLayer with: screenLayer];
+	} else {
+		[[sharedInstance _layer] addSublayer: screenLayer];
+	}
+	_screenLayer = screenLayer;
 	
 	CoreSurfaceBufferUnlock(_screenSurface);
 	[dict release];
 }
 
 
-- (void)lock
-{
+- (void)lock {
 	[_lock lock];
 }
 
-- (void)unlock
-{
+- (void)unlock {
 	[_lock unlock];
 }
 
-- (id)getEvent
-{	
+- (id)getEvent {
 	if (_events == nil || [_events count] == 0) {
 		return nil;
 	}
@@ -201,8 +234,7 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY)
 	return event;
 }
 
-- (void)addEvent:(NSDictionary*)event
-{
+- (void)addEvent:(NSDictionary*)event {
 	[self lock];
 	
 	if(_events == nil)
@@ -213,56 +245,67 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY)
 	[self unlock];
 }
 
-- (void)deviceOrientationChanged:(GSEvent *)event {
-	int screenOrientation = GSEventDeviceOrientation(event);    
-	//[self setUIOrientation: screenOrientation]; // ??? does this do anything?
-	printf("deviceOrientationChanged: %i\n", screenOrientation);
+- (void)deviceOrientationChanged:(int)orientation {
+	[self addEvent:
+		[[NSDictionary alloc] initWithObjectsAndKeys:
+		 [NSNumber numberWithInt:kInputOrientationChanged], @"type",
+		 [NSNumber numberWithFloat:(float)orientation], @"x",
+		 [NSNumber numberWithFloat:0], @"y",
+		 nil
+		]
+	];
 }
 
-
-- (void)mouseDown:(GSEvent*)event
-{
+- (void)mouseDown:(GSEvent*)event {
 	struct CGPoint point = GSEventGetLocationInWindow(event);
 	
+	if (!getLocalMouseCoords(&point))
+		return;
+
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputMouseDown], @"type",
-		 [NSNumber numberWithFloat:(point.x/_fullWidth)], @"x",
-		 [NSNumber numberWithFloat:(point.y/_fullHeight)], @"y",
+		 [NSNumber numberWithFloat:point.x], @"x",
+		 [NSNumber numberWithFloat:point.y], @"y",
 		 nil
 		]
 	];
 }
 
-- (void)mouseUp:(GSEvent*)event
-{
+- (void)mouseUp:(GSEvent*)event {
 	struct CGPoint point = GSEventGetLocationInWindow(event);
+	
+	if (!getLocalMouseCoords(&point))
+		return;
+	
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputMouseUp], @"type",
-		 [NSNumber numberWithFloat:(point.x/_fullWidth)], @"x",
-		 [NSNumber numberWithFloat:(point.y/_fullHeight)], @"y",
+		 [NSNumber numberWithFloat:point.x], @"x",
+		 [NSNumber numberWithFloat:point.y], @"y",
 		 nil
 		]
 	];
 }
 
-- (void)mouseDragged:(GSEvent*)event
-{
+- (void)mouseDragged:(GSEvent*)event {
 	//printf("mouseDragged()\n");
 	struct CGPoint point = GSEventGetLocationInWindow(event);
+	
+	if (!getLocalMouseCoords(&point))
+		return;
+	
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputMouseDragged], @"type",
-		 [NSNumber numberWithFloat:(point.x/_fullWidth)], @"x",
-		 [NSNumber numberWithFloat:(point.y/_fullHeight)], @"y",
+		 [NSNumber numberWithFloat:point.x], @"x",
+		 [NSNumber numberWithFloat:point.y], @"y",
 		 nil
 		]
 	];
 }
 
-- (void)mouseEntered:(GSEvent*)event
-{
+- (void)mouseEntered:(GSEvent*)event {
 	//printf("mouseEntered()\n");
 	// struct CGPoint point = GSEventGetLocationInWindow(event);
 	// [self addEvent:
@@ -275,8 +318,7 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY)
 	// ];
 }
 
-- (void)mouseExited:(GSEvent*)event
-{
+- (void)mouseExited:(GSEvent*)event {
 	//printf("mouseExited().\n");
 	// [self addEvent:
 	// 	[[NSDictionary alloc] initWithObjectsAndKeys:
@@ -290,11 +332,15 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY)
 {
 	//printf("mouseMoved()\n");
 	struct CGPoint point = GSEventGetLocationInWindow(event);
+	
+	if (!getLocalMouseCoords(&point))
+		return;
+
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputMouseSecondToggled], @"type",
-		 [NSNumber numberWithFloat:(point.x/_fullWidth)], @"x",
-		 [NSNumber numberWithFloat:(point.y/_fullHeight)], @"y",
+		 [NSNumber numberWithFloat:point.x], @"x",
+		 [NSNumber numberWithFloat:point.y], @"y",
 		 nil
 		]
 	];
