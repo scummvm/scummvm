@@ -112,13 +112,6 @@ Room &Room::getReference() {
 void Room::leaveRoom() {
 	Resources &r = Resources::getReference();
 
-	// Deallocate graphical layers from the room
-	for (int layerNum = 0; layerNum < _numLayers; ++layerNum)
-		if (_layers[layerNum]) {
-			delete _layers[layerNum];
-			_layers[layerNum] = NULL;
-		}
-
 	// Scan through the hotspot list and remove any uneeded entries 
 
 	HotspotList &list = r.activeHotspots();
@@ -545,6 +538,14 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 		// disk cursor as a room changes
 		_screen.paletteFadeOut(GAME_COLOURS - 1);
 
+		// Deallocate graphical layers from the room
+		for (int layerNum = 0; layerNum < _numLayers; ++layerNum) {
+			if (_layers[layerNum]) {
+				delete _layers[layerNum];
+				_layers[layerNum] = NULL;
+			}
+		}
+
 		if (leaveFlag) {
 			leaveRoom();
 			Sound.removeSounds();
@@ -595,7 +596,7 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	update();
 	_screen.update();
 
-	if (leaveFlag)
+	if (fadeFlag)
 		_screen.paletteFadeIn(&p);
 	else
 		_screen.setPalette(&p);
