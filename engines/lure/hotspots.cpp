@@ -89,7 +89,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_voiceCtr = 0;
 	_blockedOffset = 0;
 	_exitCtr = 0;
-	_walkFlag = true;
+	_walkFlag = false;
 	_startRoomNumber = 0;
 	_supportValue = 0;
 
@@ -4299,7 +4299,7 @@ void PathFinder::initVars() {
 		_xDestCurrent = xRight;
 	}
 
-	_yDestCurrent = _destY - 8;
+	_yDestCurrent = _destY - MENUBAR_Y_SIZE;
 	if (_yDestCurrent < 0)
 		_yDestCurrent = 0;
 	if (_yDestCurrent >= (FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE))
