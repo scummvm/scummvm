@@ -511,12 +511,9 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 	res->roomNumber &= 0x7fff; // clear any suppression bit in room #
 
 	// Make sure that the hotspot isn't already active
-	HotspotList::iterator i = _activeHotspots.begin();
-	for (; i != _activeHotspots.end(); ++i) {
-		Hotspot *h = *i;
-		if (h->hotspotId() == res->hotspotId) 
-			return h;
-	}
+	Hotspot *h = getActiveHotspot(hotspotId);
+	if (h != NULL)
+		return h;
 
 	// Check the script load flag
 	if (res->scriptLoadFlag) {
