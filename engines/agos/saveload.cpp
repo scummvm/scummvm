@@ -87,9 +87,15 @@ char *AGOSEngine::genSaveName(int slot) {
 	} else if (getGameType() == GType_SIMON1) {
 		sprintf(buf, "simon1.%.3d", slot);
 	} else if (getGameType() == GType_WW) {
-		sprintf(buf, "waxworks.%.3d", slot);
+		if (getPlatform() == Common::kPlatformPC)
+			sprintf(buf, "waxworks-pc.%.3d", slot);
+		else
+			sprintf(buf, "waxworks.%.3d", slot);
 	} else if (getGameType() == GType_ELVIRA2) {
-		sprintf(buf, "elvira2.%.3d", slot);
+		if (getPlatform() == Common::kPlatformPC)
+			sprintf(buf, "elvira2-pc.%.3d", slot);
+		else
+			sprintf(buf, "elvira2.%.3d", slot);
 	} else if (getGameType() == GType_ELVIRA1) {
 		sprintf(buf, "elvira1.%.3d", slot);
 	}
