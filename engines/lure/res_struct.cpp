@@ -456,6 +456,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	stream->writeUint16LE(tickScriptOffset);
 	stream->writeUint16LE(characterMode);
 	stream->writeUint16LE(delayCtr);
+	stream->writeUint16LE(animRecordId);
 
 	// Write out the runtime fields
 	stream->writeUint16LE(actionCtr);
@@ -498,6 +499,7 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	tickScriptOffset = stream->readUint16LE();
 	characterMode = (CharacterMode) stream->readUint16LE();
 	delayCtr = stream->readUint16LE();
+	animRecordId = stream->readUint16LE();
 
 	// Read in the runtime fields
 	actionCtr = stream->readUint16LE();
