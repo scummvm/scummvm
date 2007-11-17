@@ -127,6 +127,7 @@ public:
 	char *statusLine() { return _statusLine; }
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);
+	void reset() { _roomNumber = 999; }
 };
 
 } // end of namespace Lure

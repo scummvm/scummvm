@@ -85,6 +85,7 @@ Room::Room(): _screen(Screen::getReference()) {
 	_numLayers = 0;
 	_showInfo = false;
 	_isExit = false;
+	_roomNumber = 0;
 	_destRoomNumber = 0;
 	_cursorState = CS_NONE;
 
@@ -532,7 +533,7 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	_roomData = res.getRoom(newRoomNumber);
 	if (!_roomData)
 		error("Tried to change to non-existant room: %d", newRoomNumber);
-	bool leaveFlag = (_layers[0] && (newRoomNumber != _roomNumber) && (_roomNumber != 0));
+	bool leaveFlag = (newRoomNumber != _roomNumber) && (_roomNumber != 0);
 
 	_roomNumber = _roomData->roomNumber;
 	_descId = _roomData->descId;

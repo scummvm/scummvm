@@ -135,18 +135,21 @@ void Game::execute() {
 	screen.setPaletteEmpty();
 
 	// Flag for starting game
-	setState(GS_RESTART);       
+	setState(GS_RESTART); 
+	bool initialRestart = true;
 
 	while (!events.quitFlag) {
 		
 		if ((_state & GS_RESTART) != 0) {
 			res.reset();
+			if (!initialRestart) room.reset();
 
 			setState(0);
 			Script::execute(STARTUP_SCRIPT);
 
-			int bootParam = ConfMan.getInt("boot_param");
+			int bootParam = initialRestart ? ConfMan.getInt("boot_param") : 0;
 			handleBootParam(bootParam);
+			initialRestart = false;
 		}
 
 		room.update();
@@ -1003,6 +1006,9 @@ void Game::loadFromStream(ReadStream *stream) {
 
 	_soundFlag = stream->readByte() != 0;
 	menu.getMenu(2).entries()[2] = sl.getString(_soundFlag ? S_SOUND_ON : S_SOUND_OFF);
+
+	// Reset game state flags
+	setState(0);
 }
 
 
