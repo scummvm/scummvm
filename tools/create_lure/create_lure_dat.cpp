@@ -99,6 +99,7 @@ AnimListRecord animDataList[] = {
 	{{0x5A62, 0x5B22}},	// Minnow pulling lever in room #48
 	{{0x5AAA, 0x5B6A}},	// Goewin mixing potion
 	{{0x5C80, 0x5D40}}, // Player standard animation
+	{{0x5C95, 0x5D55}}, // Player operating rack
 	{{0x5CAA, 0x5D6A}},	// Selena animation
 	{{0x5CE9, 0x5DA9}},	// Blacksmith default
 	{{0x5D28, 0x5DE8}},	// Goewin animation
