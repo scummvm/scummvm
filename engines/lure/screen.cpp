@@ -117,7 +117,8 @@ void Screen::paletteFadeIn(Palette *p) {
 			_system.setPalette(_palette->data(), 0, p->numEntries());
 			_system.updateScreen();
 			_system.delayMillis(20);
-			events.pollEvent();
+			while (events.pollEvent())
+				;
 		}
 	} while (changed);
 }
@@ -149,7 +150,8 @@ void Screen::paletteFadeOut(int numEntries) {
 			_system.setPalette(_palette->data(), 0, numEntries);
 			_system.updateScreen();
 			_system.delayMillis(20);
-			events.pollEvent();
+			while (events.pollEvent())
+				;
 		}
 	} while (changed);
 }
