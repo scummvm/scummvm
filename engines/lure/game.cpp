@@ -415,7 +415,15 @@ void Game::displayBarrelAnimation() {
 	AnimationSequence *anim = new AnimationSequence(screen, system, 
 		BARREL_ANIM_ID, palette, false);
 	mouse.cursorOff();
+
+	Sound.killSounds();
+	Sound.musicInterface_Play(0x3B, 0);
+
 	anim->show();
+
+	delete anim;
+
+	Sound.killSounds();
 	mouse.cursorOn();
 }
 
