@@ -2321,10 +2321,18 @@ void HotspotTickHandlers::defaultHandler(Hotspot &h) {
 }
 
 void HotspotTickHandlers::standardAnimHandler(Hotspot &h) {
+	Resources &res = Resources::getReference();
+
 	if (h.frameCtr() > 0) 
 		h.decrFrameCtr();
-	else 
-		h.executeScript();
+	else {
+		if (h.executeScript()) {
+			// Script is finished - deactivate hotspot and move it to an out of range room
+			HotspotData *data = h.resource();
+			res.deactivateHotspot(&h);
+			data->roomNumber |= 0x8000;
+		}
+	}
 }
 
 void HotspotTickHandlers::standardAnimHandler2(Hotspot &h) {
