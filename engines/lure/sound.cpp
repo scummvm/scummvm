@@ -371,6 +371,7 @@ void SoundManager::fadeOut() {
 	{
 		inProgress = false;
 
+		g_system->lockMutex(_soundMutex);
 		ManagedList<MidiMusic *>::iterator i;
 		for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 			MidiMusic *music = *i;
@@ -380,6 +381,7 @@ void SoundManager::fadeOut() {
 			}
 		}
 
+		g_system->unlockMutex(_soundMutex);
 		g_system->delayMillis(10);
 	}
 
@@ -457,12 +459,14 @@ bool SoundManager::musicInterface_CheckPlaying(uint8 soundNumber) {
 	musicInterface_TidySounds();
 	uint8 soundNum = soundNumber & 0x7f;
 
+	g_system->lockMutex(_soundMutex);
 	ManagedList<MidiMusic *>::iterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		MidiMusic *music = *i;
 		if (music->soundNumber() == soundNum) 
 			return true;
 	}
+	g_system->unlockMutex(_soundMutex);
 
 	return false;
 }
@@ -475,12 +479,14 @@ void SoundManager::musicInterface_SetVolume(uint8 channelNum, uint8 volume) {
 		channelNum, volume);
 	musicInterface_TidySounds();
 
+	g_system->lockMutex(_soundMutex);
 	ManagedList<MidiMusic *>::iterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		MidiMusic *music = *i;
 		if (music->channelNumber() == channelNum)
 			music->setVolume(volume);
 	}
+	g_system->unlockMutex(_soundMutex);
 }
 
 // musicInterface_KillAll
