@@ -491,6 +491,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	long curTime = getMillis();
 	
 	if (_timerCallback && (curTime >= _timerCallbackNext)) {
+		_timerCallback(_timerCallbackTimer);
 		_timerCallbackNext = curTime + _timerCallbackTimer;
 	}
 	
@@ -606,7 +607,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				break;
 			case kInputMouseSecondToggled:
 				_secondaryTapped = !_secondaryTapped;
-				//printf("Mouse second at (%u, %u). State now %s.\n", x, y, _secondaryTapped ? "on" : "off");
+				printf("Mouse second at (%u, %u). State now %s.\n", x, y, _secondaryTapped ? "on" : "off");
 				if (_secondaryTapped) {
 					_lastSecondaryDown = curTime;
 					_gestureStartX = x;

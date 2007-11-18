@@ -28,7 +28,7 @@
 #include "graphics/surface.h"
 
 #define AUDIO_BUFFERS 3
-#define WAVE_BUFFER_SIZE 735
+#define WAVE_BUFFER_SIZE 2048
 #define AUDIO_SAMPLE_RATE 44100
 
 typedef void (*SoundProc)(void *param, byte *buf, int len);
