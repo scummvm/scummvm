@@ -170,13 +170,15 @@ public:
 protected:
 
 	void playSound(const char *base);
+	Audio::AudioStream *loadModule(const char *base, int song);
 	void playModule(const char *base, int song);
-	void playRandomPatternJungle();
+	void playPattern(const char *base, int pattern);
 	bool playSpecialSfx(int16 sfx);
 
 	int16 _fanfareRestore;
 	int _fanfareCount, _fluteCount;
 	Audio::SoundHandle _modHandle;
+	Audio::SoundHandle _patHandle;
 	Audio::SoundHandle _sfxHandle;
 };
 

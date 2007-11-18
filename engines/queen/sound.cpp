@@ -541,7 +541,7 @@ void AmigaSound::updateMusic() {
 	if (_fluteCount > 0 && (_lastOverride == 40 || _lastOverride == 3)) {
 		--_fluteCount;
 		if (_fluteCount == 0) {
-			playRandomPatternJungle();
+			playPattern("JUNG", 5 + _vm->randomizer.getRandomNumber(6));
 			_fluteCount = 100;
 		}
 	}
@@ -564,8 +564,8 @@ void AmigaSound::playSound(const char *base) {
 	}
 }
 
-void AmigaSound::playModule(const char *base, int song) {
-	debug(7, "AmigaSound::playModule(%s, %d)", base, song);
+Audio::AudioStream *AmigaSound::loadModule(const char *base, int num) {
+	debug(7, "AmigaSound::loadModule(%s, %d)", base, num);
 	char name[20];
 
 	// load song/pattern data
@@ -580,20 +580,29 @@ void AmigaSound::playModule(const char *base, int song) {
 	uint8 *insData = _vm->resource()->loadFile(name, 0, &insDataSize);
 	Common::MemoryReadStream insStr(insData, insDataSize);
 
-	_mixer->stopHandle(_modHandle);
-	Audio::AudioStream *stream = Audio::makeRjp1Stream(&sngStr, &insStr, song, _mixer->getOutputRate());
-	if (stream) {
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_modHandle, stream);
-	}
+	Audio::AudioStream *stream = Audio::makeRjp1Stream(&sngStr, &insStr, num, _mixer->getOutputRate());
 
 	delete[] sngData;
 	delete[] insData;
 
+	return stream;
+}
+
+void AmigaSound::playModule(const char *base, int song) {
+	_mixer->stopHandle(_modHandle);
+	Audio::AudioStream *stream = loadModule(base, song);
+	if (stream) {
+		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_modHandle, stream);
+	}
 	_fanfareCount = 0;
 }
 
-void AmigaSound::playRandomPatternJungle() {
-	// XXX pickup a pattern (songData[4],songData[6]) between 5 and 11 from JUNG.SNG and play it
+void AmigaSound::playPattern(const char *base, int pattern) {
+	_mixer->stopHandle(_patHandle);
+	Audio::AudioStream *stream = loadModule(base, -pattern);
+	if (stream) {
+		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_patHandle, stream);
+	}
 }
 
 bool AmigaSound::playSpecialSfx(int16 sfx) {

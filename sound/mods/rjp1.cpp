@@ -70,6 +70,7 @@ struct Rjp1Channel {
 	uint16 len;
 	uint16 repeatPos;
 	uint16 repeatLen;
+	bool isSfx;
 };
 
 class Rjp1 : public Paula {
@@ -90,6 +91,7 @@ public:
 	bool load(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData);
 	void unload();
 
+	void startPattern(int ch, int pat);
 	void startSong(int song);
 
 protected:
@@ -98,6 +100,8 @@ protected:
 	void turnOffChannel(Rjp1Channel *channel);
 	void playChannel(Rjp1Channel *channel);
 	void turnOnChannel(Rjp1Channel *channel);
+	bool executeSfxSequenceOp(Rjp1Channel *channel, uint8 code, const uint8 *&p);
+	bool executeSongSequenceOp(Rjp1Channel *channel, uint8 code, const uint8 *&p);
 	void playSongSequence(Rjp1Channel *channel);
 	void modulateVolume(Rjp1Channel *channel);
 	void modulatePeriod(Rjp1Channel *channel);
@@ -186,6 +190,18 @@ void Rjp1::unload() {
 	memset(_channelsTable, 0, sizeof(_channelsTable));
 }
 
+void Rjp1::startPattern(int ch, int pat) {
+	Rjp1Channel *channel = &_channelsTable[ch];
+	_vars.activeChannelsMask |= 1 << ch;
+	channel->sequenceData = READ_BE_UINT32(_vars.songData[4] + pat * 4) + _vars.songData[6];
+	channel->loopSeqCount = 6;
+	channel->loopSeqCur = channel->loopSeq2Cur = 1;
+	channel->active = true;
+	channel->isSfx = true;
+	// "start" Paula audiostream
+	startPaula();
+}
+
 void Rjp1::startSong(int song) {
 	if (song == 0 || song >= _vars.subsongsCount) {
 		warning("Invalid subsong number %d, defaulting to 1", song);
@@ -241,6 +257,98 @@ void Rjp1::turnOnChannel(Rjp1Channel *channel) {
 	}
 }
 
+bool Rjp1::executeSfxSequenceOp(Rjp1Channel *channel, uint8 code, const uint8 *&p) {
+	bool loop = true;
+	switch (code & 7) {
+	case 0:
+		_vars.activeChannelsMask &= ~(1 << _vars.currentChannel);
+		loop = false;
+		stopPaula();
+		break;
+	case 1:
+		setRelease(channel);
+		loop = false;
+		break;
+	case 2:
+		channel->loopSeqCount = *p++;
+		break;
+	case 3:
+		channel->loopSeq2Count = *p++;
+		break;
+	case 4:
+		code = *p++;
+		if (code != 0) {
+			setupInstrument(channel, code);
+		}
+		break;
+	case 7:
+		loop = false;
+		break;
+	}
+	return loop;
+}
+
+bool Rjp1::executeSongSequenceOp(Rjp1Channel *channel, uint8 code, const uint8 *&p) {
+	bool loop = true;
+	const uint8 *offs;
+	switch (code & 7) {
+	case 0:
+		offs = channel->sequenceOffsets;
+		channel->loopSeq2Count = 1;
+		while (1) {
+			code = *offs++;
+			if (code != 0) {
+				channel->sequenceOffsets = offs;
+				p = READ_BE_UINT32(_vars.songData[4] + code * 4) + _vars.songData[6];
+				break;
+			} else {
+				code = offs[0];
+				if (code == 0) {
+					p = 0;
+					channel->active = false;
+					_vars.activeChannelsMask &= ~(1 << _vars.currentChannel);
+					loop = false;
+					break;
+				} else if (code & 0x80) {
+					code = offs[1];
+					offs = READ_BE_UINT32(_vars.songData[3] + code * 4) + _vars.songData[5];
+				} else {
+					offs -= code;
+				}
+			}
+		}
+		break;
+	case 1:
+		setRelease(channel);
+		loop = false;
+		break;
+	case 2:
+		channel->loopSeqCount = *p++;
+		break;
+	case 3:
+		channel->loopSeq2Count = *p++;
+		break;
+	case 4:
+		code = *p++;
+		if (code != 0) {
+			setupInstrument(channel, code);
+		}
+		break;
+	case 5:
+		channel->volumeScale = *p++;
+		break;
+	case 6:
+		channel->freqStep = *p++;
+		channel->freqInc = READ_BE_UINT32(p); p += 4;
+		channel->freqInit = 0;
+		break;
+	case 7:
+		loop = false;
+		break;
+	}
+	return loop;
+}
+
 void Rjp1::playSongSequence(Rjp1Channel *channel) {
 	const uint8 *p = channel->sequenceData;
 	--channel->loopSeqCur;
@@ -251,61 +359,10 @@ void Rjp1::playSongSequence(Rjp1Channel *channel) {
 			do {
 				uint8 code = *p++;
 				if (code & 0x80) {
-					const uint8 *offs;
-					switch (code & 7) {
-					case 0:
-						offs = channel->sequenceOffsets;
-						channel->loopSeq2Count = 1;
-						while (1) {
-							code = *offs++;
-							if (code != 0) {
-								channel->sequenceOffsets = offs;
-								p = READ_BE_UINT32(_vars.songData[4] + code * 4) + _vars.songData[6];
-								break;
-							} else {
-								code = offs[0];
-								if (code == 0) {
-									p = 0;
-									channel->active = false;
-									_vars.activeChannelsMask &= ~(1 << _vars.currentChannel);
-									loop = false;
-									break;
-								} else if (code & 0x80) {
-									code = offs[1];
-									offs = READ_BE_UINT32(_vars.songData[3] + code * 4) + _vars.songData[5];
-								} else {
-									offs -= code;
-								}
-							}
-						}
-						break;
-					case 1:
-						setRelease(channel);
-						loop = false;
-						break;
-					case 2:
-						channel->loopSeqCount = *p++;
-						break;
-					case 3:
-						channel->loopSeq2Count = *p++;
-						break;
-					case 4:
-						code = *p++;
-						if (code != 0) {
-							setupInstrument(channel, code);
-						}
-						break;
-					case 5:
-						channel->volumeScale = *p++;
-						break;
-					case 6:
-						channel->freqStep = *p++;
-						channel->freqInc = READ_BE_UINT32(p); p += 4;
-						channel->freqInit = 0;
-						break;
-					case 7:
-						loop = false;
-						break;
+					if (channel->isSfx) {
+						loop = executeSfxSequenceOp(channel, code, p);
+					} else {
+						loop = executeSongSequenceOp(channel, code, p);
 					}
 				} else {
 					code >>= 1;
@@ -507,10 +564,14 @@ const int16 Rjp1::_periodsTable[] = {
 
 const int Rjp1::_periodsCount = ARRAYSIZE(_periodsTable);
 
-AudioStream *makeRjp1Stream(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData, int song, int rate, bool stereo) {
+AudioStream *makeRjp1Stream(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData, int num, int rate, bool stereo) {
 	Rjp1 *stream = new Rjp1(rate, stereo);
 	if (stream->load(songData, instrumentsData)) {
-		stream->startSong(song);
+		if (num < 0) {
+			stream->startPattern(3, -num);
+		} else {
+			stream->startSong(num);
+		}
 		return stream;
 	}
 	delete stream;
