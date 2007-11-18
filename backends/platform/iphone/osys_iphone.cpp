@@ -59,7 +59,8 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_savefile(NULL), _mixer(NULL), _timer(NULL), _offscreen(NULL),
 	_overlayVisible(false), _overlayBuffer(NULL), _fullscreen(NULL),
 	_mouseHeight(0), _mouseWidth(0), _mouseBuf(NULL), _lastMouseTap(0),
-	_secondaryTapped(false), _lastSecondaryTap(0), _landscapeMode(true)
+	_secondaryTapped(false), _lastSecondaryTap(0), _landscapeMode(true),
+	_needEventRestPeriod(false)
 {	
 	_queuedInputEvent.type = (Common::EventType)0;
 }
@@ -495,6 +496,13 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 		_timerCallbackNext = curTime + _timerCallbackTimer;
 	}
 	
+	if (_needEventRestPeriod) {
+		// Workaround: Some engines can't handle mouse-down and mouse-up events
+		// appearing right after each other, without a call returning no input in between.
+		_needEventRestPeriod = false;
+		return false;
+	}
+
 	if (_queuedInputEvent.type != (Common::EventType)0) {
 		event = _queuedInputEvent;
 		_queuedInputEvent.type = (Common::EventType)0;
@@ -535,7 +543,8 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					_queuedInputEvent.mouse.x = _mouseX;
 					_queuedInputEvent.mouse.y = _mouseY;
 					_lastMouseTap = curTime;
-					
+					_needEventRestPeriod = true;
+
 					// if (curTime - _lastMouseTap < 250 && !_overlayVisible) {
 					// 	event.type = Common::EVENT_KEYDOWN;
 					// 	_queuedInputEvent.type = Common::EVENT_KEYUP;
@@ -578,7 +587,8 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 
 							event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
 							event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_F5;
-							event.kbd.ascii = _queuedInputEvent.kbd.ascii = 27;
+							event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_F5;
+							_needEventRestPeriod = true;
 						} else if (vecXNorm > -0.50 && vecXNorm < 0.50 && vecYNorm < -0.75) {
 							// Swipe up
 							event.type = Common::EVENT_KEYDOWN;
@@ -587,6 +597,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 							event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
 							event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_1;
 							event.kbd.ascii = _queuedInputEvent.kbd.ascii = '1';
+							_needEventRestPeriod = true;
 						} else if (vecXNorm > 0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
 							// Swipe right
 							return false;
@@ -620,8 +631,8 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 
 						event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
 						event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
-						event.kbd.ascii = _queuedInputEvent.kbd.ascii = 27;		
-				
+						event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;	
+						_needEventRestPeriod = true;	
 						_lastSecondaryTap = 0;
 					} else {
 						event.type = Common::EVENT_RBUTTONDOWN;
@@ -631,6 +642,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 						_queuedInputEvent.mouse.x = _mouseX;
 						_queuedInputEvent.mouse.y = _mouseY;
 						_lastSecondaryTap = curTime;
+						_needEventRestPeriod = true;
 					}		
 				} else {
 					return false;
@@ -649,6 +661,68 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					_dirtyRects.push_back(Common::Rect(0, 0, _screenWidth, _screenHeight));
 				}				
 				break;
+			case kInputKeyPressed:
+				int keyPressed = (int)xUnit;
+				int ascii = keyPressed;
+				//printf("key: %i\n", keyPressed);
+
+				// We remap some of the iPhone keyboard keys.
+				// The first ten here are the row of symbols below the numeric keys.
+				switch (keyPressed) {
+					case 45:
+						keyPressed = Common::KEYCODE_F1;
+						ascii = Common::ASCII_F1;
+						break;
+					case 47:
+						keyPressed = Common::KEYCODE_F2;
+						ascii = Common::ASCII_F2;
+						break;
+					case 58:
+						keyPressed = Common::KEYCODE_F3;
+						ascii = Common::ASCII_F3;
+						break;
+					case 59:
+						keyPressed = Common::KEYCODE_F4;
+						ascii = Common::ASCII_F4;
+						break;
+					case 40:
+						keyPressed = Common::KEYCODE_F5;
+						ascii = Common::ASCII_F5;
+						break;
+					case 41:
+						keyPressed = Common::KEYCODE_F6;
+						ascii = Common::ASCII_F6;
+						break;
+					case 36:
+						keyPressed = Common::KEYCODE_F7;
+						ascii = Common::ASCII_F7;
+						break;
+					case 38:
+						keyPressed = Common::KEYCODE_F8;
+						ascii = Common::ASCII_F8;
+						break;
+					case 64:
+						keyPressed = Common::KEYCODE_F9;
+						ascii = Common::ASCII_F9;
+						break;
+					case 34:
+						keyPressed = Common::KEYCODE_F10;
+						ascii = Common::ASCII_F10;
+						break;
+					case 10:
+						keyPressed = Common::KEYCODE_RETURN;
+						ascii = Common::ASCII_RETURN;
+						break;
+				}
+				event.type = Common::EVENT_KEYDOWN;
+				_queuedInputEvent.type = Common::EVENT_KEYUP;
+
+				event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
+				event.kbd.keycode = _queuedInputEvent.kbd.keycode = (Common::KeyCode)keyPressed;
+				event.kbd.ascii = _queuedInputEvent.kbd.ascii = ascii;
+				_needEventRestPeriod = true;				
+				break;
+				
 			default:
 				break;
 		}

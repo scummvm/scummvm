@@ -33,13 +33,14 @@
 #import <CoreSurface/CoreSurface.h>
 #import <LayerKit/LKLayer.h>
 
+#import "iphone_keyboard.h"
 
 @interface iPhoneView : UIView
 {
 	CoreSurfaceBufferRef _screenSurface;
 	NSMutableArray* _events;
 	NSLock* _lock;
-	UIKeyboardImpl* _keyboard;
+	SoftKeyboard* _keyboardView;
 	LKLayer* _screenLayer;
 
 	int _fullWidth;
@@ -63,5 +64,7 @@
 - (void)deviceOrientationChanged:(int)orientation;
 
 @end
+
+
 
 #endif /* _IPHONE_VIDEO__H */

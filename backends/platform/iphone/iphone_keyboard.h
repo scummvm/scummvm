@@ -23,32 +23,29 @@
  *
  */
 
+#import <UIKit/UIKit.h>
+#import <UIKit/UITextView.h>
 
-enum InputEvent {
-	kInputMouseDown,
-	kInputMouseUp,
-	kInputMouseDragged,
-	kInputMouseSecondToggled,
-	kInputOrientationChanged,
-	kInputKeyPressed
-};
+@protocol KeyboardInputProtocol
+- (void)handleKeyPress:(unichar)c;
+@end
 
-// We need this to be able to call functions from/in Objective-C.
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
-// On the C++ side
-void iphone_main(int argc, char *argv[]);
-	
-// On the ObjC side
-void iPhone_updateScreen();
-unsigned short* iPhone_getSurface();
-void iPhone_lockSurface();
-void iPhone_unlockSurface();
-void iPhone_initSurface(int width, int height, bool landscape);
-bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY);
-
-#ifdef __cplusplus
+@interface SoftKeyboard : UIKeyboard<KeyboardInputProtocol> {
+	id inputDelegate;
+	UITextView* inputView;
 }
-#endif
+
+- (id)initWithFrame:(CGRect)frame;
+- (UITextView*)inputView;
+- (void)setInputDelegate:(id)delegate;
+- (void)handleKeyPress:(unichar)c;
+
+@end
+
+@interface TextInputHandler : UITextView {
+	SoftKeyboard* softKeyboard;
+}
+
+- (id)initWithKeyboard:(SoftKeyboard*)keyboard;
+
+@end
