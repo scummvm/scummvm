@@ -376,20 +376,10 @@ void Parallaction_ns::changeLocation(char *location) {
 	_gfx->setBlackPalette();
 	_gfx->updateScreen();
 
-	if (_location._commands.size() > 0) {
-		runCommands(_location._commands);
-		runJobs();
-		_gfx->swapBuffers();
-		runJobs();
-		_gfx->swapBuffers();
-	}
+	runCommands(_location._commands);
 
 	doLocationEnterTransition();
 
-	runJobs();
-	_gfx->swapBuffers();
-
-	_gfx->setPalette(_gfx->_palette);
 	runCommands(_location._aCommands);
 
 	if (_hasLocationSound)

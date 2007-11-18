@@ -906,6 +906,8 @@ void Parallaction::doLocationEnterTransition() {
 		_gfx->updateScreen();
 	}
 
+	_gfx->setPalette(_gfx->_palette);
+
 	debugC(2, kDebugExec, "doLocationEnterTransition completed");
 
 	return;
