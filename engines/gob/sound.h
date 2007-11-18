@@ -30,6 +30,7 @@
 #include "common/frac.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
+#include "sound/softsynth/pcspk.h"
 
 namespace Gob {
 
@@ -123,39 +124,8 @@ public:
 	int getRate() const { return _rate; }
 
 protected:
-	// TODO: This is a very primitive square wave generator. The only thing it
-	//       has in common with the PC speaker is that it sounds terrible.
-	// Note: The SCUMM code has a PC speaker implementations; maybe it could be
-	//       refactored to be reusable by all engines. And DosBox also has code
-	//       for emulating the PC speaker.
-	class SquareWaveStream : public Audio::AudioStream {
-	private:
-		uint _rate;
-		bool _beepForever;
-		uint32 _periodLength;
-		uint32 _periodSamples;
-		uint32 _remainingSamples;
-		uint32 _mixedSamples;
-		int16 _sampleValue;
-
-	public:
-		SquareWaveStream();
-
-		void playNote(int freq, int32 ms, uint rate);
-		void update(uint32 milis);
-		void stop(uint32 milis);
-
-		int readBuffer(int16 *buffer, const int numSamples);
-
-		bool isStereo() const	{ return false; }
-		bool endOfData() const	{ return false; }
-		bool endOfStream() const { return false; }
-		int getRate() const	{ return _rate; }
-	};
-
-	SquareWaveStream _speakerStream;
+	Audio::PCSpeaker *_speakerStream;
 	Audio::SoundHandle _speakerHandle;
-	uint32 _speakerStartTimeKey;
 
 	Audio::SoundHandle *_activeHandle;
 	Audio::SoundHandle _compositionHandle;

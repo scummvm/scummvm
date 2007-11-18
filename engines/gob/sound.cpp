@@ -93,73 +93,6 @@ void SoundDesc::loadADL(byte *data, uint32 dSize) {
 	_size = dSize;
 }
 
-Snd::SquareWaveStream::SquareWaveStream() {
-	_rate = 44100;
-	_beepForever = false;
-	_periodLength = 0;
-	_periodSamples = 0;
-	_remainingSamples = 0;
-	_sampleValue = 0;
-	_mixedSamples = 0;
-}
-
-void Snd::SquareWaveStream::playNote(int freq, int32 ms, uint rate) {
-	_rate = rate;
-	_periodLength = _rate / (2 * freq);
-	_periodSamples = 0;
-	_sampleValue = 6000;
-	if (ms == -1) {
-		_remainingSamples = 1;
-		_beepForever = true;
-	} else {
-		_remainingSamples = (_rate * ms) / 1000;
-		_beepForever = false;
-	}
-	_mixedSamples = 0;
-}
-
-void Snd::SquareWaveStream::stop(uint32 milis) {
-	if (!_beepForever)
-		return;
-
-	if (milis)
-		update(milis);
-	else
-		_remainingSamples = 0;
-}
-
-void Snd::SquareWaveStream::update(uint32 milis) {
-	uint32 neededSamples;
-
-	if (!_beepForever || !_remainingSamples)
-		return;
-
-	neededSamples = (_rate * milis) / 1000;
-	_remainingSamples =
-		neededSamples > _mixedSamples ? neededSamples - _mixedSamples : 0;
-	_beepForever = false;
-}
-
-int Snd::SquareWaveStream::readBuffer(int16 *buffer, const int numSamples) {
-	int i;
-	for (i = 0; _remainingSamples && i < numSamples; i++) {
-		buffer[i] = _sampleValue;
-		if (_periodSamples++ > _periodLength) {
-			_periodSamples = 0;
-			_sampleValue = -_sampleValue;
-		}
-		if (!_beepForever)
-			_remainingSamples--;
-		_mixedSamples++;
-	}
-
-	// Clear the rest of the buffer
-	if (i < numSamples)
-		memset(buffer + i, 0, (numSamples - i) * sizeof(int16));
-
-	return numSamples;
-}
-
 Snd::Snd(GobEngine *vm) : _vm(vm) {
 	_playingSound = 0;
 	_curSoundDesc = 0;
@@ -188,10 +121,12 @@ Snd::Snd(GobEngine *vm) : _vm(vm) {
 	_compositionSampleCount = 0;
 	_compositionPos = -1;
 
+	_speakerStream = new Audio::PCSpeaker(_vm->_mixer->getOutputRate());
+
 	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_handle,
 			this, -1, 255, 0, false, true);
 	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-			&_speakerStream, -1, 255, 0, false, true);
+			_speakerStream, -1, 50, 0, false, true);
 }
 
 Snd::~Snd() {
@@ -199,22 +134,22 @@ Snd::~Snd() {
 
 	// First the speaker stream
 	_vm->_mixer->stopHandle(_speakerHandle);
+	delete _speakerStream;
 
 	// Next, this stream (class Snd is an AudioStream, too)
 	_vm->_mixer->stopHandle(_handle);
 }
 
 void Snd::speakerOn(int16 frequency, int32 length) {
-	_speakerStream.playNote(frequency, length, _vm->_mixer->getOutputRate());
-	_speakerStartTimeKey = _vm->_util->getTimeKey();
+	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, frequency, length);
 }
 
 void Snd::speakerOff() {
-	_speakerStream.stop(_vm->_util->getTimeKey() - _speakerStartTimeKey);
+	_speakerStream->stop();
 }
 
 void Snd::speakerOnUpdate(uint32 milis) {
-	_speakerStream.update(milis);
+	_speakerStream->stop(milis);
 }
 
 void Snd::stopSound(int16 fadeLength, SoundDesc *sndDesc) {

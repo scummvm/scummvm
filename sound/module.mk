@@ -29,6 +29,7 @@ MODULE_OBJS := \
 	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
 	softsynth/mt32.o \
+	softsynth/pcspk.o
 
 ifndef USE_ARM_SOUND_ASM
 MODULE_OBJS += \
