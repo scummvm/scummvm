@@ -46,6 +46,13 @@ static const uint16 dealloc_list_3[] = {0x3EF, 0x3E9, 0x3EB, 0x3EC, 0x3ED, 0x3EE
 static const uint16 *hotspot_dealloc_set[4] = {&dealloc_list_1[0], &dealloc_list_2[0],
 	&dealloc_list_3[1], &dealloc_list_3[0]};
 
+// Details used for co-ordination of sounds during the endgame sequence
+static const AnimSoundSequence soundList[] = {
+	{9, 2, 0}, {27, 5, 0}, {24, 3, 0}, {24, 1, 0}, {3, 1, 1}, {3, 1, 2}, {3, 1, 3},
+	{3, 1, 4}, {4, 1, 5}, {7, 4, 6}, {31, 6, 0}, 
+	{0, 0, 0}
+};
+
 /*------------------------------------------------------------------------*/
 /*-  Script Method List                                                  -*/
 /*-                                                                      -*/
@@ -188,25 +195,36 @@ void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
 	Events &events = Events::getReference();
 	AnimationSequence *anim;
 
-//	screen.paletteFadeOut();
+	screen.paletteFadeOut();
 	Sound.killSounds();
+	Sound.loadSection(0xFF10);
 	mouse.cursorOff();
 
 	Palette p(ENDGAME_PALETTE_ID);
-	anim = new AnimationSequence(screen, *g_system, ENDGAME_ANIM_ID, p, false);
+	anim = new AnimationSequence(ENDGAME_ANIM_ID, p, true, 9, soundList);
 	anim->show();
 	delete anim;
 
-	anim = new AnimationSequence(screen, *g_system, ENDGAME_ANIM_ID + 2, p, false);
+	Sound.killSounds();
+	Sound.musicInterface_Play(6, 0);
+
+	anim = new AnimationSequence(ENDGAME_ANIM_ID + 2, p, false);
 	anim->show();
-	events.interruptableDelay(8000);
+	events.interruptableDelay(13000);
 	delete anim;
 
-	anim = new AnimationSequence(screen, *g_system, ENDGAME_ANIM_ID + 4, p, false);
+	anim = new AnimationSequence(ENDGAME_ANIM_ID + 4, p, false);
 	anim->show();
-	events.interruptableDelay(30000);
-	delete anim;	
-	
+	if (!events.interruptableDelay(30000)) {
+		// No key yet pressed, so keep waiting
+		while (Sound.musicInterface_CheckPlaying(6) && !events.quitFlag) {
+			if (events.interruptableDelay(20))
+				break;
+		}
+	}
+	delete anim;
+
+	screen.paletteFadeOut();
 	events.quitFlag = true;
 }
 
