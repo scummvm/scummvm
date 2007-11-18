@@ -933,8 +933,7 @@ void AmigaDisk_ns::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 b
 		}
 	}
 
-	if (tempBuffer)
-		free(tempBuffer);
+	free(tempBuffer);
 
 }
 

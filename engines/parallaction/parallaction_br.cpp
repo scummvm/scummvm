@@ -331,6 +331,9 @@ void Parallaction_br::freePart() {
 	delete _objectsNames;
 	delete _countersNames;
 
+	_globalTable = 0;
+	_objectsNames = 0;
+	_countersNames = 0;
 }
 
 void Parallaction_br::startPart() {

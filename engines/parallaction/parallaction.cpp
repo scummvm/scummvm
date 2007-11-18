@@ -278,8 +278,7 @@ void Parallaction::runGame() {
 		if (_activeZone) {
 			Zone *z = _activeZone;	// speak Zone or sound
 			_activeZone = NULL;
-			if (runZone( z ) == 0)
-				runCommands( z->_commands, z );
+			runZone(z);
 		}
 
 		if (_engineFlags & kEngineChangeLocation) {
@@ -332,7 +331,6 @@ void Parallaction::hideLabel(uint priority) {
 
 
 void Parallaction::processInput(InputData *data) {
-	Zone *z;
 
 	switch (data->_event) {
 	case kEvEnterZone:
@@ -350,10 +348,7 @@ void Parallaction::processInput(InputData *data) {
 		_procCurrentHoverItem = -1;
 		_hoverZone = NULL;
 		pauseJobs();
-		z = data->_zone;
-		if (runZone(z) == 0) {
-			runCommands( z->_commands, z );
-		}
+		runZone(data->_zone);
 		resumeJobs();
 		break;
 
@@ -421,7 +416,7 @@ void Parallaction::processInput(InputData *data) {
 
 void Parallaction::updateInput() {
 
-	_keyDown = readInput();
+	int16 keyDown = readInput();
 
 	debugC(3, kDebugInput, "translateInput: input flags (%i, %i, %i, %i)",
 		!_mouseHidden,
@@ -438,13 +433,13 @@ void Parallaction::updateInput() {
 		return;
 	}
 
-	if (_keyDown == kEvQuitGame) {
+	if (keyDown == kEvQuitGame) {
 		_input._event = kEvQuitGame;
 	} else
-	if (_keyDown == kEvSaveGame) {
+	if (keyDown == kEvSaveGame) {
 		_input._event = kEvSaveGame;
 	} else
-	if (_keyDown == kEvLoadGame) {
+	if (keyDown == kEvLoadGame) {
 		_input._event = kEvLoadGame;
 	} else {
 		_input._mousePos = _mousePos;
@@ -618,9 +613,8 @@ void Parallaction::showCursor(bool visible) {
 void Parallaction::freeCharacter() {
 	debugC(1, kDebugExec, "freeCharacter()");
 
-	if (_objectsNames)
-		delete _objectsNames;
-	_objectsNames = NULL;
+	delete _objectsNames;
+	_objectsNames = 0;
 
 	_char.free();
 
@@ -803,10 +797,8 @@ void Parallaction::freeLocation() {
 	freeZones();
 	freeAnimations();
 
-	if (_location._comment) {
-		free(_location._comment);
-	}
-	_location._comment = NULL;
+	free(_location._comment);
+	_location._comment = 0;
 
 	_location._commands.clear();
 	_location._aCommands.clear();
@@ -880,6 +872,10 @@ void Parallaction::showLocationComment(const char *text, bool end) {
 //
 void Parallaction::doLocationEnterTransition() {
 	debugC(2, kDebugExec, "doLocationEnterTransition");
+
+	if (!_location._comment) {
+		return;
+	}
 
     if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
         debugC(2, kDebugExec, "skipping location transition");
@@ -996,14 +992,10 @@ void Character::scheduleWalk(int16 x, int16 y) {
 
 void Character::free() {
 
-	if (_ani._cnv)
-		delete _ani._cnv;
-	if (_talk)
-		delete _talk;
-	if (_head)
-		delete _head;
-	if (_objs)
-		delete _objs;
+	delete _ani._cnv;
+	delete _talk;
+	delete _head;
+	delete _objs;
 
 	_ani._cnv = NULL;
 	_talk = NULL;

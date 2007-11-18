@@ -202,8 +202,7 @@ public:
 	}
 
 	~DosFont() {
-		if (_data)
-			delete _data;
+		delete _data;
 	}
 
 	void setData() {
@@ -455,8 +454,7 @@ AmigaFont::AmigaFont(Common::SeekableReadStream &stream) {
 }
 
 AmigaFont::~AmigaFont() {
-	if (_data)
-		free(_data);
+	free(_data);
 }
 
 uint16 AmigaFont::getSpacing(byte c) {

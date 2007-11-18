@@ -51,14 +51,9 @@ Animation::Animation() {
 }
 
 Animation::~Animation() {
-	if (_program)
-		delete _program;
-
-	if (_scriptName)
-		free(_scriptName);
-
-	if (_cnv)
-		delete _cnv;
+	delete _program;
+	free(_scriptName);
+	delete _cnv;
 }
 
 uint16 Animation::width() const {
@@ -142,8 +137,7 @@ Zone::~Zone() {
 	case kZoneDoor:
 		free(u.door->_location);
 		free(u.door->_background);
-		if (u.door->_cnv)
-			delete u.door->_cnv;
+		delete u.door->_cnv;
 		delete u.door;
 		break;
 
@@ -207,8 +201,7 @@ Label::~Label() {
 
 void Label::free() {
 	_cnv.free();
-	if (_text)
-		::free(_text);
+	::free(_text);
 	_text = 0;
 
 	resetPosition();
@@ -241,8 +234,7 @@ Answer::Answer() {
 }
 
 Answer::~Answer() {
-	if (_text)
-		free(_text);
+	free(_text);
 }
 
 Question::Question() {
@@ -256,8 +248,9 @@ Question::Question() {
 
 Question::~Question() {
 
-	for (uint32 i = 0; i < NUM_ANSWERS; i++)
-		if (_answers[i]) delete _answers[i];
+	for (uint32 i = 0; i < NUM_ANSWERS; i++) {
+		delete _answers[i];
+	}
 
 	free(_text);
 }
@@ -267,10 +260,8 @@ Instruction::Instruction() {
 }
 
 Instruction::~Instruction() {
-	if (_text)
-		free(_text);
-	if (_text2)
-		free(_text2);
+	free(_text);
+	free(_text2);
 }
 
 int16 ScriptVar::getRValue() {

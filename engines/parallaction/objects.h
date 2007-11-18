@@ -119,10 +119,8 @@ struct CommandData {
 	}
 
 	~CommandData() {
-		if (_string)
-			free(_string);
-		if (_string2)
-			free(_string2);
+		free(_string);
+		free(_string2);
 	}
 };
 

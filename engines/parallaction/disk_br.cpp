@@ -42,8 +42,7 @@ struct Sprite {
 	}
 
 	~Sprite() {
-		if (packedData)
-			free(packedData);
+		free(packedData);
 	}
 };
 

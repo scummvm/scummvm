@@ -102,7 +102,6 @@ public:
 	}
 
 	~Cnv() {
-		if (_count == 0 || _data == NULL) return;
 		free(_data);
 	}
 
@@ -159,8 +158,7 @@ public:
 	}
 
 	void free() {
-		if (data)
-			::free(data);
+		::free(data);
 		data = 0;
 		w = 0;
 		h = 0;

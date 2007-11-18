@@ -529,8 +529,7 @@ DECLARE_COMMAND_PARSER(location)  {
 
 	createCommand(_lookup);
 
-	_locParseCtxt.cmd->u._string = (char*)malloc(strlen(_tokens[_locParseCtxt.nextToken])+1);
-	strcpy(_locParseCtxt.cmd->u._string, _tokens[_locParseCtxt.nextToken]);
+	_locParseCtxt.cmd->u._string = strdup(_tokens[_locParseCtxt.nextToken]);
 	_locParseCtxt.nextToken++;
 
 	parseCommandFlags();
@@ -777,6 +776,7 @@ Dialogue *Parallaction_ns::parseDialogue(Script &script) {
 
 			int16 index = forwards.lookup(answer->_following._name);
 			free(answer->_following._name);
+			answer->_following._name = 0;
 
 			if (index == Table::notFound)
 				answer->_following._question = 0;

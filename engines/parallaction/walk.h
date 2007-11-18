@@ -72,8 +72,7 @@ public:
 	}
 
 	void free() {
-		if (data)
-			::free(data);
+		::free(data);
 		data = 0;
 		w = 0;
 		h = 0;

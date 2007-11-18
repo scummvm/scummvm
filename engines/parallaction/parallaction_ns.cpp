@@ -46,8 +46,7 @@ LocationName::LocationName() {
 }
 
 LocationName::~LocationName() {
-	if (_buf)
-		free(_buf);
+	free(_buf);
 }
 
 
@@ -70,8 +69,7 @@ LocationName::~LocationName() {
 */
 void LocationName::bind(const char *s) {
 
-	if (_buf)
-		free(_buf);
+	free(_buf);
 
 	_buf = strdup(s);
 	_hasSlide = false;
@@ -165,7 +163,6 @@ void Parallaction_ns::freeFonts() {
 	delete _labelFont;
 	delete _menuFont;
 
-	return;
 }
 
 void Parallaction_ns::renderLabel(Graphics::Surface *cnv, char *text) {
@@ -387,17 +384,13 @@ void Parallaction_ns::changeLocation(char *location) {
 		_gfx->swapBuffers();
 	}
 
-	if (_location._comment) {
-		doLocationEnterTransition();
-	}
+	doLocationEnterTransition();
 
 	runJobs();
 	_gfx->swapBuffers();
 
 	_gfx->setPalette(_gfx->_palette);
-	if (_location._aCommands.size() > 0) {
-		runCommands(_location._aCommands);
-	}
+	runCommands(_location._aCommands);
 
 	if (_hasLocationSound)
 		_soundMan->playSfx(_locationSound, 0, true);

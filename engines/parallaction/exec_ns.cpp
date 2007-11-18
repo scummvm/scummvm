@@ -241,9 +241,7 @@ DECLARE_COMMAND_OPCODE(speak) {
 
 DECLARE_COMMAND_OPCODE(get) {
 	_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsFixed;
-	if (!runZone(_cmdRunCtxt.cmd->u._zone)) {
-		runCommands(_cmdRunCtxt.cmd->u._zone->_commands);
-	}
+	runZone(_cmdRunCtxt.cmd->u._zone);
 }
 
 
@@ -443,6 +441,9 @@ label1:
 
 
 void Parallaction::runCommands(CommandList& list, Zone *z) {
+	if (list.size() == 0)
+		return;
+
 	debugC(3, kDebugExec, "runCommands");
 
 	CommandList::iterator it = list.begin();
@@ -597,6 +598,8 @@ uint16 Parallaction::runZone(Zone *z) {
 	}
 
 	debugC(3, kDebugExec, "runZone completed");
+
+	runCommands(z->_commands, z);
 
 	return 0;
 }

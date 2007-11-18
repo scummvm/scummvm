@@ -513,8 +513,6 @@ protected:		// data
 	uint32		_baseTime;
 	char		_characterName1[50]; 	// only used in changeCharacter
 
-	int16 _keyDown;
-
 	JobList		_jobs;
 
 	Common::String      _saveFileName;
