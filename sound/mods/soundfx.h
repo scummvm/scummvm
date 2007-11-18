@@ -32,6 +32,10 @@ class AudioStream;
 
 typedef byte *(*LoadSoundFxInstrumentCallback)(const char *name, uint32 *size);
 
+/*
+ * FIXME: Document this function. In particular, who is responsible for
+ * freeing the data passed in, resp. the AudioStream it returns?
+ */
 AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb, int rate = 44100, bool stereo = true);
 
 } // End of namespace Audio

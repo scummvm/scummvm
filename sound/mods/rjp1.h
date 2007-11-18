@@ -32,6 +32,10 @@ namespace Audio {
 
 class AudioStream;
 
+/*
+ * FIXME: Document this function. In particular, who is responsible for
+ * freeing the data passed in, resp. the AudioStream it returns?
+ */
 AudioStream *makeRjp1Stream(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData, int num, int rate = 44100, bool stereo = true);
 
 } // End of namespace Audio
