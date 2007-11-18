@@ -323,7 +323,7 @@ DECLARE_COMMAND_OPCODE(stop) {
 }
 
 
-void Parallaction_ns::jobDisplayAnimations(void *parm, Job *j) {
+void Parallaction_ns::drawAnimations() {
 
 	Graphics::Surface v14;
 
@@ -367,7 +367,7 @@ void Parallaction_ns::jobDisplayAnimations(void *parm, Job *j) {
 }
 
 
-void Parallaction_ns::jobEraseAnimations(void *arg_0, Job *j) {
+void Parallaction_ns::eraseAnimations() {
 	debugC(9, kDebugExec, "jobEraseAnimations");
 
 	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
@@ -380,11 +380,8 @@ void Parallaction_ns::jobEraseAnimations(void *arg_0, Job *j) {
 		r.moveTo(a->_oldPos);
 		_gfx->restoreBackground(r);
 
-		if (arg_0) {
-			a->_oldPos.x = a->_left;
-			a->_oldPos.y = a->_top;
-		}
-
+		a->_oldPos.x = a->_left;
+		a->_oldPos.y = a->_top;
 	}
 
 	return;
@@ -542,7 +539,6 @@ void Parallaction::displayItemComment(ExamineData *data) {
 	_gfx->flatBlitCnv(_char._head, 100, 152, Gfx::kBitFront);
 	_gfx->displayWrappedString(data->_description, 0, 90, 0, 130);
 
-	jobEraseAnimations((void*)1, NULL);
 	_gfx->updateScreen();
 
 	waitUntilLeftClick();
@@ -845,7 +841,7 @@ void Parallaction_ns::initOpcodes() {
 
 
 
-void Parallaction_ns::jobDisplayLabel(void *parm, Job *j) {
+void Parallaction_ns::drawLabel() {
 
 	if (!_label)
 		return;
@@ -860,7 +856,7 @@ void Parallaction_ns::jobDisplayLabel(void *parm, Job *j) {
 	return;
 }
 
-void Parallaction_ns::jobEraseLabel(void *parm, Job *j) {
+void Parallaction_ns::eraseLabel() {
 
 	static uint16 count = 0;
 

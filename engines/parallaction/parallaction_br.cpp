@@ -358,14 +358,14 @@ void Parallaction_br::changeCharacter(const char *name) {
 void Parallaction_br::initJobs() {
 
 	static const JobFn jobs[] = {
-		&Parallaction_br::jobDisplayAnimations,
-		&Parallaction_br::jobEraseAnimations,
+		0,
+		0,
 		&Parallaction_br::jobDisplayDroppedItem,
 		&Parallaction_br::jobRemovePickedItem,
 		&Parallaction_br::jobRunScripts,
 		&Parallaction_br::jobWalk,
-		&Parallaction_br::jobDisplayLabel,
-		&Parallaction_br::jobEraseLabel,
+		0,
+		0,
 		&Parallaction_br::jobWaitRemoveLabelJob,
 		&Parallaction_br::jobToggleDoor,
 		&Parallaction_br::jobEraseSubtitle,

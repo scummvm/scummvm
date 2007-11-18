@@ -256,9 +256,7 @@ int Parallaction_ns::go() {
 
 	changeLocation(_location._name);
 
-//	addJob(kJobEraseAnimations, (void*)1, kPriority20);
 	_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
-//	addJob(kJobDisplayAnimations, 0, kPriority3);
 
 	runGame();
 
@@ -460,7 +458,6 @@ void Parallaction_ns::initJobs() {
 
 	_jobsFn = jobs;
 
-	_jDrawInventory = 0;
 	_jRunScripts = 0;
 }
 

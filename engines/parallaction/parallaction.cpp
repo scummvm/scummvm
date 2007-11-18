@@ -176,8 +176,6 @@ int Parallaction::init() {
 
 	initInventory();	// needs to be pushed into subclass
 
-	_jDrawLabel = NULL;
-	_jEraseLabel = NULL;
 	_hoverZone = NULL;
 
 	_animations.push_front(&_char._ani);
@@ -287,16 +285,16 @@ void Parallaction::runGame() {
 			changeLocation(_location._name);
 		}
 
-		jobEraseLabel(0, 0);
-		jobEraseAnimations((void*)1, 0);
+		eraseLabel();
+		eraseAnimations();
 
 		runJobs();
 
-		jobDisplayAnimations(0, 0);
-		jobDisplayLabel(0, 0);
+		drawAnimations();
+		drawLabel();
 
 		if (_engineFlags & kEngineInventory) {
-			jobShowInventory(0, 0);
+			showInventory();
 		}
 
 		updateView();
@@ -893,8 +891,7 @@ void Parallaction::doLocationEnterTransition() {
 	_gfx->setPalette(pal);
 
 	jobRunScripts(NULL, NULL);
-	jobEraseAnimations(NULL, NULL);
-	jobDisplayAnimations(NULL, NULL);
+	drawAnimations();
 
 	_gfx->swapBuffers();
 	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);

@@ -488,7 +488,7 @@ public:
 
 	Common::RandomSource _rnd;
 
-	virtual void jobShowInventory(void*, Job*) = 0;
+	virtual void showInventory() = 0;
 	virtual void jobHideInventory(void*, Job*) = 0;
 
 
@@ -527,11 +527,7 @@ protected:		// data
 
 	BackgroundInfo	*_backgroundInfo;
 
-	Job	   *_jDrawLabel;
-	Job	   *_jEraseLabel;
 	Zone    *_hoverZone;
-
-	Job	   *_jDrawInventory;
 	Job	   *_jRunScripts;
 
 
@@ -583,15 +579,17 @@ public:
 
 	virtual void parseLocation(const char* name) = 0;
 
-	virtual void jobDisplayAnimations(void*, Job *j) = 0;
-	virtual void jobEraseAnimations(void *arg_0, Job *j) = 0;
 	virtual void jobRunScripts(void*, Job *j) = 0;
 	virtual void jobDisplayDroppedItem(void*, Job *j) = 0;
 	virtual void jobRemovePickedItem(void*, Job *j) = 0;
 	virtual void jobToggleDoor(void*, Job *j) = 0;
 	virtual void jobWalk(void*, Job *j) = 0;
-	virtual void jobDisplayLabel(void *parm, Job *j) = 0;
-	virtual void jobEraseLabel(void *parm, Job *j) = 0;
+
+
+	virtual void drawAnimations() = 0;
+	virtual void eraseAnimations() = 0;
+	virtual void drawLabel() = 0;
+	virtual void eraseLabel() = 0;
 
 	void		beep();
 
@@ -737,17 +735,19 @@ private:
 	const Callable *_callables;
 
 protected:
-	void jobDisplayAnimations(void*, Job *j);
-	void jobEraseAnimations(void *arg_0, Job *j);
 	void jobRunScripts(void*, Job *j);
 	void jobDisplayDroppedItem(void*, Job *j);
 	void jobRemovePickedItem(void*, Job *j);
 	void jobToggleDoor(void*, Job *j);
 	void jobWalk(void*, Job *j);
-	void jobDisplayLabel(void *parm, Job *j);
-	void jobEraseLabel(void *parm, Job *j);
-	void jobShowInventory(void *parm, Job *j);
 	void jobHideInventory(void *parm, Job *j);
+
+	void drawAnimations();
+	void eraseAnimations();
+	void drawLabel();
+	void eraseLabel();
+	void showInventory();
+
 
 	// location parser
 	OpcodeSet	_locationParsers;

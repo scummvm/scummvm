@@ -109,7 +109,7 @@ void closeInventory() {
 
 
 
-void Parallaction_ns::jobShowInventory(void *parm, Job *j) {
+void Parallaction_ns::showInventory() {
 	Common::Rect r;
 	_re->getRect(r);
 	_gfx->copyRect(Gfx::kBitBack, r, _re->getData(), INVENTORY_WIDTH);
