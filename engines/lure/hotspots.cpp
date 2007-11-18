@@ -821,7 +821,7 @@ void Hotspot::handleTalkDialog() {
 
 	if (_data->talkCountdown == CONVERSE_COUNTDOWN_SIZE) {
 		// Check if there's already an active dialog - if so, wait until it's finished
-		if (room.isDialogActive() && (res.getTalkingCharacter() != _hotspotId)) {
+		if (room.isDialogShowing() && (res.getTalkingCharacter() != _hotspotId)) {
 			++_data->talkCountdown;
 			if (delayCtr() > 0)
 				setDelayCtr(delayCtr() + 2);
