@@ -458,17 +458,20 @@ bool SoundManager::musicInterface_CheckPlaying(uint8 soundNumber) {
 	debugC(ERROR_DETAILED, kLureDebugSounds, "musicInterface_CheckPlaying soundNumber=%d", soundNumber);
 	musicInterface_TidySounds();
 	uint8 soundNum = soundNumber & 0x7f;
+	bool result = false;
 
 	g_system->lockMutex(_soundMutex);
 	ManagedList<MidiMusic *>::iterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		MidiMusic *music = *i;
-		if (music->soundNumber() == soundNum) 
-			return true;
+		if (music->soundNumber() == soundNum) {
+			result = true;
+			break;
+		}
 	}
 	g_system->unlockMutex(_soundMutex);
 
-	return false;
+	return result;
 }
 
 // musicInterface_SetVolume
@@ -571,7 +574,14 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS_INNE
 	_channels = channels;
 	_soundNumber = soundNum;
 	_channelNumber = channelNum;
+	
 	_numChannels = 8;
+	while ((_numChannels > 0) && ((_channelNumber + _numChannels > NUM_CHANNELS_INNER) ||
+			(_channels[_channelNumber + _numChannels - 1].midiChannel == NULL)))
+		--_numChannels;
+	if (_numChannels == 0)
+		error("Unable to set any channels for MidiMusic object");
+
 	_volume = _channels[channelNum].volume;
 
 	_passThrough = false;
