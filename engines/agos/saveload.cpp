@@ -1267,11 +1267,14 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 
 	// read the items in item store
 	for (i = 0; i != _numItemStore; i++) {
-		if ((getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) &&
-			(getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST)) {
-			_itemStore[i] = derefItem(f->readUint16BE() / 18);
-		} else if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformPC) {
-			_itemStore[i] = derefItem(readItemID(f));
+		if (getGameType() == GType_WW && getPlatform() == Common::kPlatformAmiga) {
+			_itemStore[i] = derefItem(f->readUint16BE() / 16);
+		} else if (getGameType() == GType_ELVIRA2) {
+			if (getPlatform() == Common::kPlatformPC) {
+				_itemStore[i] = derefItem(readItemID(f));
+			} else {
+				_itemStore[i] = derefItem(f->readUint16BE() / 18);
+			}
 		} else {
 			_itemStore[i] = derefItem(f->readUint16BE());
 		}
@@ -1414,11 +1417,14 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 
 	// write the items in item store
 	for (i = 0; i != _numItemStore; i++) {
-		if ((getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) &&
-			(getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST)) {
-			f->writeUint16BE(itemPtrToID(_itemStore[i]) * 18);
-		} else if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformPC) {
-			writeItemID(f, itemPtrToID(_itemStore[i]));
+		if (getGameType() == GType_WW && getPlatform() == Common::kPlatformAmiga) {
+			f->writeUint16BE(itemPtrToID(_itemStore[i]) * 16);
+		} else if (getGameType() == GType_ELVIRA2) {
+			if (getPlatform() == Common::kPlatformPC) {
+				writeItemID(f, itemPtrToID(_itemStore[i]));
+			} else {
+				f->writeUint16BE(itemPtrToID(_itemStore[i]) * 18);
+			}
 		} else {
 			f->writeUint16BE(itemPtrToID(_itemStore[i]));
 		}
