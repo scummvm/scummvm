@@ -849,7 +849,7 @@ void Parallaction_ns::drawLabel() {
 	if (_deletingLabel)
 		return;
 
-	debugC(9, kDebugExec, "jobDisplayLabel (%p)", _label);
+	debugC(9, kDebugExec, "jobDisplayLabel (%p)", (void *) _label);
 
 	_gfx->drawLabel(*_label);
 
@@ -863,7 +863,7 @@ void Parallaction_ns::eraseLabel() {
 	if (!_label)
 		return;
 
-	debugC(9, kDebugExec, "jobEraseLabel (%p)", _label);
+	debugC(9, kDebugExec, "jobEraseLabel (%p)", (void *) _label);
 
 	int16 _si, _di;
 
