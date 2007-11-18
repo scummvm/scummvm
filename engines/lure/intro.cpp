@@ -117,7 +117,7 @@ bool Introduction::show() {
 		}
 
 		bool fadeIn = curr_anim == anim_screens;
-		anim = new AnimationSequence(_screen, _system, curr_anim->resourceId, 
+		anim = new AnimationSequence(curr_anim->resourceId, 
 			coll.getPalette(curr_anim->paletteIndex), fadeIn);
 		if (curr_anim->initialPause != 0)  
 			if (interruptableDelay(curr_anim->initialPause * 1000 / 50)) return true;
@@ -148,7 +148,7 @@ bool Introduction::show() {
 	// Show battle pictures one frame at a time
 
 	result = false;
-	anim = new AnimationSequence(_screen, _system, 0x48, coll.getPalette(4), false);
+	anim = new AnimationSequence(0x48, coll.getPalette(4), false);
 	do {
 		result = interruptableDelay(2000);
 		_screen.paletteFadeOut();

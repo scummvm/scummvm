@@ -24,9 +24,10 @@
  */
 
 #include "lure/animseq.h"
-#include "lure/palette.h"
 #include "lure/decode.h"
 #include "lure/events.h"
+#include "lure/palette.h"
+#include "lure/sound.h"
 #include "common/endian.h"
 
 namespace Lure {
@@ -36,10 +37,10 @@ namespace Lure {
 // Escape has been pressed, and the introduction should be aborted.
 
 AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
-	uint32 delayCtr = _system.getMillis() + milliseconds;
 	Events &events = Events::getReference();
+	uint32 delayCtr = g_system->getMillis() + milliseconds;
 
-	while (_system.getMillis() < delayCtr) {
+	while (g_system->getMillis() < delayCtr) {
 		while (events.pollEvent()) {
 			if (events.type() == Common::EVENT_KEYDOWN) {
 				if (events.event().kbd.keycode == Common::KEYCODE_ESCAPE) return ABORT_END_INTRO;
@@ -50,9 +51,9 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 				return ABORT_END_INTRO;
 		}
 
-		uint32 delayAmount = delayCtr - _system.getMillis();
+		uint32 delayAmount = delayCtr - g_system->getMillis();
 		if (delayAmount > 10) delayAmount = 10;
-		_system.delayMillis(delayAmount);
+		g_system->delayMillis(delayAmount);
 	}
 	return ABORT_NONE;
 }
@@ -61,7 +62,8 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 // Decodes a single frame of the animation sequence
 
 void AnimationSequence::decodeFrame(byte *&pPixels, byte *&pLines) {
-	byte *screen = _screen.screen_raw();   
+	Screen &screen = Screen::getReference();
+	byte *screenData = screen.screen_raw();   
 	uint16 screenPos = 0;
 	uint16 len;
 
@@ -74,8 +76,8 @@ void AnimationSequence::decodeFrame(byte *&pPixels, byte *&pLines) {
 		}
 	
 		// Move the splice over
-		memcpy(screen, pPixels, len);
-		screen += len;
+		memcpy(screenData, pPixels, len);
+		screenData += len;
 		screenPos += len;
 		pPixels += len;
 
@@ -86,16 +88,18 @@ void AnimationSequence::decodeFrame(byte *&pPixels, byte *&pLines) {
 			pLines += 2;
 		}
 
-		screen += len;
+		screenData += len;
 		screenPos += len;
 	}
 
 	// Make the decoded frame visible
-	_screen.update();
+	screen.update();
 }
 
-AnimationSequence::AnimationSequence(Screen &screen, OSystem &system, uint16 screenId, Palette &palette, 
-					 bool fadeIn): _screen(screen), _system(system), _screenId(screenId), _palette(palette) {
+AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fadeIn, int frameDelay, 
+					 const AnimSoundSequence *soundList): _screenId(screenId), _palette(palette), 
+					 _frameDelay(frameDelay), _soundList(soundList) {
+	Screen &screen = Screen::getReference();
 	PictureDecoder decoder;
 	Disk &d = Disk::getReference();
 	MemoryBlock *data = d.getEntry(_screenId);
@@ -105,13 +109,13 @@ AnimationSequence::AnimationSequence(Screen &screen, OSystem &system, uint16 scr
 	_lineRefs = d.getEntry(_screenId + 1);
 
 	// Reset the palette and set the initial starting screen
-	_screen.setPaletteEmpty(RES_PALETTE_ENTRIES);
-	_screen.screen().data().copyFrom(_decodedData, 0, 0, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH);
-	_screen.update();
+	screen.setPaletteEmpty(RES_PALETTE_ENTRIES);
+	screen.screen().data().copyFrom(_decodedData, 0, 0, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH);
+	screen.update();
 
 	// Set the palette
-	if (fadeIn)	_screen.paletteFadeIn(&_palette);
-	else _screen.setPalette(&_palette, 0, _palette.numEntries());
+	if (fadeIn)	screen.paletteFadeIn(&_palette);
+	else screen.setPalette(&_palette, 0, _palette.numEntries());
 
 	// Set up frame poitners
 	_pPixels = _decodedData->data() + SCREEN_SIZE;
@@ -130,22 +134,34 @@ AnimationSequence::~AnimationSequence() {
 
 AnimAbortType AnimationSequence::show() {
 	AnimAbortType result;
+	const AnimSoundSequence *soundFrame = _soundList;
+	int frameCtr = 0;
 
 	// Loop through displaying the animations
 	while ((_pPixels < _pPixelsEnd) && (_pLines < _pLinesEnd)) {
+		if ((soundFrame != NULL) && (frameCtr == 0))
+			Sound.musicInterface_Play(soundFrame->soundId, soundFrame->channelNum);
+
 		decodeFrame(_pPixels, _pLines);
 
-		result = delay(7 * 1000 / 50);
+		result = delay(_frameDelay * 1000 / 50);
 		if (result != ABORT_NONE) return result;
+
+		if ((soundFrame != NULL) && (++frameCtr == soundFrame->numFrames)) {
+			frameCtr = 0;
+			++soundFrame;
+			if (soundFrame->numFrames == 0) soundFrame = NULL;
+		}
 	}
 
 	return ABORT_NONE;
 }
 
 bool AnimationSequence::step() {
+	Screen &screen = Screen::getReference();
 	if ((_pPixels >= _pPixelsEnd) || (_pLines >= _pLinesEnd)) return false;
 	decodeFrame(_pPixels, _pLines);
-	_screen.setPalette(&_palette);
+	screen.setPalette(&_palette);
 	return true;
 }
 

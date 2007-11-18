@@ -32,22 +32,28 @@ namespace Lure {
 
 enum AnimAbortType {ABORT_NONE, ABORT_END_INTRO, ABORT_NEXT_SCENE};
 
+struct AnimSoundSequence {
+	uint16 numFrames;
+	uint8 soundId;
+	uint8 channelNum;
+};
+
 class AnimationSequence {
 private:
-	Screen &_screen;
-	OSystem &_system;
 	uint16 _screenId;
 	Palette &_palette;
 	MemoryBlock *_decodedData;
 	MemoryBlock *_lineRefs;
 	byte *_pPixels, *_pLines;
 	byte *_pPixelsEnd, *_pLinesEnd;
+	const AnimSoundSequence *_soundList;
+	int _frameDelay;
 
 	AnimAbortType delay(uint32 milliseconds);
 	void decodeFrame(byte *&pPixels, byte *&pLines);
 public:
-	AnimationSequence(Screen &screen, OSystem &system, uint16 screenId, Palette &palette, 
-		bool fadeIn);
+	AnimationSequence(uint16 screenId, Palette &palette,  bool fadeIn, int frameDelay = 7, 
+		const AnimSoundSequence *soundList = NULL);
 	~AnimationSequence();
 
 	AnimAbortType show();

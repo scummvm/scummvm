@@ -267,8 +267,7 @@ void Game::execute() {
 		// If Skorl catches player, show the catching animation
 		if ((_state & GS_CAUGHT) != 0) {
 			Palette palette(SKORL_CATCH_PALETTE_ID);
-			AnimationSequence *anim = new AnimationSequence(screen, system, 
-				SKORL_CATCH_ANIM_ID, palette, false);
+			AnimationSequence *anim = new AnimationSequence(SKORL_CATCH_ANIM_ID, palette, false);
 			mouse.cursorOff();
 			Sound.addSound(0x33);
 			anim->show();
@@ -371,9 +370,7 @@ void Game::playerChangeRoom() {
 }
 
 void Game::displayChuteAnimation() {
-	OSystem &system = *g_system;
 	Resources &res = Resources::getReference();
-	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
 
 	ValueTableData &fields = res.fieldList();
@@ -385,18 +382,15 @@ void Game::displayChuteAnimation() {
 	Sound.killSounds();
 	Sound.musicInterface_Play(0x40, 0);
 
-	AnimationSequence *anim = new AnimationSequence(screen, system, 
-		CHUTE_ANIM_ID, palette, false);
+	AnimationSequence *anim = new AnimationSequence(CHUTE_ANIM_ID, palette, false);
 	anim->show();
 	delete anim;
 	
-	anim = new AnimationSequence(screen, system, CHUTE2_ANIM_ID, 
-		palette, false);	
+	anim = new AnimationSequence(CHUTE2_ANIM_ID, palette, false);	
 	anim->show();
 	delete anim;
 
-	anim = new AnimationSequence(screen, system, CHUTE3_ANIM_ID, 
-		palette, false);	
+	anim = new AnimationSequence(CHUTE3_ANIM_ID, palette, false);	
 	anim->show();
 	delete anim;
 
@@ -406,14 +400,11 @@ void Game::displayChuteAnimation() {
 }
 
 void Game::displayBarrelAnimation() {
-	OSystem &system = *g_system;
-	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
 
 	debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Starting barrel animation");
 	Palette palette(BARREL_PALETTE_ID);
-	AnimationSequence *anim = new AnimationSequence(screen, system, 
-		BARREL_ANIM_ID, palette, false);
+	AnimationSequence *anim = new AnimationSequence(BARREL_ANIM_ID, palette, false);
 	mouse.cursorOff();
 
 	Sound.killSounds();
