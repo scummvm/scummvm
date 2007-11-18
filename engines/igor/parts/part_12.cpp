@@ -32,6 +32,7 @@ static const uint8 PART_12_DATA_ANIM_1[10] = { 0, 1, 2, 1, 2, 1, 2, 1, 2, 3 };
 static const uint8 PART_12_DATA_ANIM_2[16] = { 0, 1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 5, 6, 7 };
 
 void IgorEngine::PART_12_EXEC_ACTION(int action) {
+	debugC(9, kDebugGame, "PART_12_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101:
 		PART_12_ACTION_101();
@@ -141,7 +142,7 @@ void IgorEngine::PART_12_ACTION_104() {
 	_walkData[0].dxPos = 10;
 	_walkData[0].yPosChanged = 1;
 	_walkData[0].dyPos = 3;
-	_walkData[0].scaleHeight = 1;
+	_walkData[0].scaleHeight = 50;
 	_walkDataCurrentIndex = 0;
 	_walkDataLastIndex = 1;
 	src = _animFramesBuffer + 0x395B + READ_LE_UINT16(_animFramesBuffer + 0xA448) - 1;
@@ -310,7 +311,7 @@ void IgorEngine::PART_12_UPDATE_ROOM_BACKGROUND() {
 	}
 }
 
-void IgorEngine::PART_12_UPDATE_DIALOGUE_TOBIAS(int action) {
+void IgorEngine::PART_12_UPDATE_DIALOGUE_CHURCHMAN(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
 		PART_12_HELPER_8();
@@ -326,7 +327,7 @@ void IgorEngine::PART_12_UPDATE_DIALOGUE_TOBIAS(int action) {
 
 void IgorEngine::PART_12_HANDLE_DIALOGUE_CHURCHMAN() {
 	loadDialogueData(DLG_OutsideChurch);
-	_updateDialogue = &IgorEngine::PART_12_UPDATE_DIALOGUE_TOBIAS;
+	_updateDialogue = &IgorEngine::PART_12_UPDATE_DIALOGUE_CHURCHMAN;
 	handleDialogue(95, 55, 51, 28, 63);
 	_updateDialogue = 0;
 }
@@ -403,7 +404,7 @@ void IgorEngine::PART_12_HELPER_4() {
 	ADD_DIALOGUE_TEXT(214, 1);
 	ADD_DIALOGUE_TEXT(215, 1);
 	SET_DIALOGUE_TEXT(1, 3);
-	_updateDialogue = &IgorEngine::PART_12_UPDATE_DIALOGUE_TOBIAS;
+	_updateDialogue = &IgorEngine::PART_12_UPDATE_DIALOGUE_CHURCHMAN;
 	startCutsceneDialogue(95, 55, 51, 28, 63);
 	waitForEndOfCutsceneDialogue(95, 55, 51, 28, 63);
 	_updateDialogue = 0;

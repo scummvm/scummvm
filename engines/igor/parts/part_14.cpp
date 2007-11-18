@@ -33,6 +33,7 @@ static int VAR_NEW_CHURCH_MOSAIC_STONE;
 static int VAR_CURRENT_CHURCH_MOSAIC_STONE;
 
 void IgorEngine::PART_14_EXEC_ACTION(int action) {
+	debugC(9, kDebugGame, "PART_14_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101:
 		PART_14_ACTION_101();

@@ -32,11 +32,14 @@
 #include "sound/voc.h"
 
 #include "igor/igor.h"
+#include "igor/midi.h"
 
 namespace Igor {
 
 IgorEngine::IgorEngine(OSystem *system, int gameVersion)
 	: Engine(system), _gameVersion(gameVersion) {
+
+	_midiPlayer = new MidiPlayer(this);
 
 	_screenVGA = (uint8 *)malloc(320 * 200);
 	for (int i = 0; i < 4; ++i) {
@@ -60,6 +63,7 @@ IgorEngine::IgorEngine(OSystem *system, int gameVersion)
 }
 
 IgorEngine::~IgorEngine() {
+	delete _midiPlayer;
 	Common::clearAllSpecialDebugLevels();
 	free(_screenVGA);
 	for (int i = 0; i < 4; ++i) {
@@ -332,14 +336,15 @@ void IgorEngine::playMusic(int num) {
 	}
 	if (seq) {
 		for (int i = 0; i < 5; ++i) {
-			free(_musicSequenceTable[i]);
+			free(_musicSequenceTable[i].data);
 		}
 		for (int i = 0; seq[i]; ++i) {
-			_musicSequenceTable[i] = loadData(seq[i]);
+			_musicSequenceTable[i].data = loadData(seq[i], 0, &_musicSequenceTable[i].dataSize);
 		}
 	}
 	_gameState.musicNum = num;
 	_gameState.musicSequenceIndex = 1;
+	_midiPlayer->playMusic(_musicSequenceTable[0].data, _musicSequenceTable[0].dataSize);
 }
 
 void IgorEngine::updateMusic() {
@@ -825,6 +830,8 @@ void IgorEngine::loadDialogueData(int dlg) {
 				decodeRoomString(src, _dialogueQuestions[i][n], len);
 				_dialogueQuestions[i][n][len] = '\0';
 				debugC(9, kDebugResource, "loadDialogueData() _dialogueQuestions[%d][%d] '%s'", i, n, _dialogueQuestions[i][n]);
+			} else {
+				_dialogueQuestions[i][n][0] = '\0';
 			}
 		}
 	}
@@ -836,6 +843,8 @@ void IgorEngine::loadDialogueData(int dlg) {
 			decodeRoomString(src, _dialogueReplies[i], len);
 			_dialogueReplies[i][len] = '\0';
 			debugC(9, kDebugResource, "loadDialogueData() _dialogueReplies[%d] '%s'", i, _dialogueReplies[i]);
+		} else {
+			_dialogueReplies[i][0] = '\0';
 		}
 	}
 	free(p);
@@ -1588,6 +1597,9 @@ void IgorEngine::handleRoomInput() {
 }
 
 void IgorEngine::animateIgorTalking(int frame) {
+	if (getPart() == 4) {
+		return;
+	}
 	if (getPart() == 85) {
 		PART_85_HELPER_6(frame);
 		return;
@@ -2792,12 +2804,13 @@ void IgorEngine::handleDialogue(int x, int y, int r, int g, int b) {
 	_gameState.dialogueChoiceStart = 1;
 	_gameState.dialogueChoiceCount = 1;
 	_dialogueEnded = false;
+	if (getPart() == 12 && _objectsState[44] == 0) {
+		_gameState.dialogueData[6] = 1;
+		dialogueReplyToQuestion(x, y, r, g, b, 40);
+	}
 	do {
 		if (getPart() == 15 && _objectsState[48] == 0) {
 			_gameState.dialogueData[6] = 0;
-		}
-		if (getPart() == 12 && _objectsState[44] == 0) {
-			_gameState.dialogueData[6] = 1;
 		}
 		drawDialogueChoices();
 		(this->*_updateDialogue)(kUpdateDialogueAnimStanding);
@@ -2922,14 +2935,16 @@ void IgorEngine::dialogueAskQuestion() {
 	waitForEndOfIgorDialogue();
 }
 
-void IgorEngine::dialogueReplyToQuestion(int x, int y, int r, int g, int b) {
-	int offset = (_dialogueInfo[_dialogueChoiceSelected] - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
-	int reply = _gameState.dialogueData[offset + 4];
-	debugC(9, kDebugEngine, "dialogueReplyToQuestion() dialogue choice %d reply %d", _dialogueChoiceSelected, reply);
+void IgorEngine::dialogueReplyToQuestion(int x, int y, int r, int g, int b, int reply) {
 	if (reply == 0) {
-		return;
+		int offset = (_dialogueInfo[_dialogueChoiceSelected] - 1) * 6 + (_gameState.dialogueChoiceCount - 1) * 30 + (_gameState.dialogueChoiceStart - 1) * _roomDataOffsets.dlg.matSize;
+		reply = _gameState.dialogueData[offset + 4];
+		debugC(9, kDebugEngine, "dialogueReplyToQuestion() dialogue choice %d reply %d", _dialogueChoiceSelected, reply);
+		if (reply == 0) {
+			return;
+		}
 	}
-	offset = _roomDataOffsets.dlg.matSize * 3 + reply;
+	int offset = 30 + _roomDataOffsets.dlg.matSize + reply;
 	int count = _gameState.dialogueData[offset - 1];
 	int dialogueIndex = 250;
 	for (int i = 0; i < count; ++i) {

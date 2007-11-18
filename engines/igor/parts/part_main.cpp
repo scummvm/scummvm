@@ -929,15 +929,6 @@ void IgorEngine::PART_MAIN() {
 		case 904:
 			PART_90();
 			break;
-		case 950:
-		case 951:
-		case 952:
-		case 953:
-		case 954:
-		case 955:
-		case 956:
-			PART_95();
-			break;
 		default:
 			warning("PART_MAIN() Unhandled part %d", _currentPart);
 			_currentPart = kInvalidPart;
@@ -974,7 +965,12 @@ void IgorEngine::PART_MAIN() {
 			}
 			_gameState.nextMusicCounter = 0;
 		}
-	} while (_currentPart != 255 && !_eventQuitGame);
+	} while (_currentPart != kInvalidPart && !_eventQuitGame);
+	if (_gameVersion == kIdEngDemo100 || _gameVersion == kIdEngDemo110) {
+		for (_currentPart = kSharewarePart; !_eventQuitGame && _currentPart <= kSharewarePart + 6; ++_currentPart) {
+			PART_95();
+		}
+	}
 }
 
 } // namespace Igor

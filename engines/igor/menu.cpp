@@ -333,11 +333,6 @@ void IgorEngine::handleOptionsMenu() {
 		_system->updateScreen();
 		_system->delayMillis(1000 / 60);
 	}
-	if (!_eventQuitGame && _currentPart == kInvalidPart) {
-		if (_gameVersion == kIdEngDemo100 || _gameVersion == kIdEngDemo110) {
-			_currentPart = kSharewarePart;
-		}
-	}
 	showCursor();
 }
 

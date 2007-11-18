@@ -265,6 +265,7 @@ struct Action {
 };
 
 class TypeSerializer;
+class MidiPlayer;
 
 class IgorEngine: public Engine {
 public:
@@ -390,12 +391,14 @@ protected:
 	void drawDialogueChoices();
 	int selectDialogue();
 	void dialogueAskQuestion();
-	void dialogueReplyToQuestion(int x, int y, int r, int g, int b);
+	void dialogueReplyToQuestion(int x, int y, int r, int g, int b, int reply = 0);
 
 	void saveOrLoadGameState(TypeSerializer &typeSerializer);
 	void loadGameState(int slot);
 	void saveGameState(int slot);
 	void generateGameStateFileName(int num, char *dst, int len) const;
+
+	MidiPlayer *_midiPlayer;
 
 	Common::File _ovlFile;
 	Common::File _sndFile;
@@ -465,7 +468,10 @@ protected:
 	ExecuteActionProc _executeMainAction;
 	ExecuteActionProc _executeRoomAction;
 	uint8 _previousMusic;
-	uint8 *_musicSequenceTable[5];
+	struct {
+		uint8 *data;
+		int dataSize;
+	} _musicSequenceTable[5];
 	Action _currentAction;
 	uint8 _actionCode;
 	uint8 _actionWalkPoint;
@@ -571,7 +577,7 @@ protected:
 	void PART_12_ACTION_105();
 	void PART_12_ACTION_108();
 	void PART_12_UPDATE_ROOM_BACKGROUND();
-	void PART_12_UPDATE_DIALOGUE_TOBIAS(int action);
+	void PART_12_UPDATE_DIALOGUE_CHURCHMAN(int action);
 	void PART_12_HANDLE_DIALOGUE_CHURCHMAN();
 	void PART_12_HELPER_1(int num);
 	void PART_12_HELPER_2();

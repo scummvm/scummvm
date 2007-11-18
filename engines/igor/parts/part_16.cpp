@@ -30,6 +30,7 @@ namespace Igor {
 static int VAR_CURRENT_TALKING_ACTOR;
 
 void IgorEngine::PART_16_EXEC_ACTION(int action) {
+	debugC(9, kDebugGame, "PART_16_EXEC_ACTION %d", action);
 	switch (action) {
 	case 101:
 		PART_16_ACTION_101();
