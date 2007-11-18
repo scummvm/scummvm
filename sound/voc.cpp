@@ -127,6 +127,14 @@ static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate,
 				warning("VOC file packing %d unsupported", packing);
 			}
 			} break;
+		case 3: // silence
+			// occur with a few Igor sounds, voc file starts with a silence block with a
+			// frequency different from the data block. Just ignore fow now (implementing
+			// it wouldn't make a big difference anyway...)
+			assert(len == 3);
+			stream.readUint16LE();
+			stream.readByte();
+			break;
 		case 6:	// begin of loop
 			assert(len == 2);
 			loops = stream.readUint16LE();
