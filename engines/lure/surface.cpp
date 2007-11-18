@@ -898,14 +898,20 @@ bool RestartRestoreDialog::show() {
 		screen.paletteFadeIn(&p);
 
 		// Event loop for making selection
+		bool buttonPressed = false;
+
 		while (!events.quitFlag) {
 			// Handle events
-			if (events.pollEvent()) {
+			while (events.pollEvent()) {
 				if ((events.type() == Common::EVENT_LBUTTONDOWN) && (highlightedButton != -1)) {
 					mouse.waitForRelease();
+					buttonPressed = true;
 					break;
 				}
 			}
+
+			if (buttonPressed)
+				break;
 
 			// Check if the pointer is over either button
 			int currentButton = -1;
