@@ -847,71 +847,64 @@ void Parallaction_ns::initOpcodes() {
 
 void Parallaction_ns::jobDisplayLabel(void *parm, Job *j) {
 
-	Label *label = (Label*)parm;
-	debugC(9, kDebugExec, "jobDisplayLabel (%p)", (const void*) label);
+	if (!_label)
+		return;
 
-	_gfx->drawLabel(*label);
+	if (_deletingLabel)
+		return;
+
+	debugC(9, kDebugExec, "jobDisplayLabel (%p)", _label);
+
+	_gfx->drawLabel(*_label);
 
 	return;
 }
 
 void Parallaction_ns::jobEraseLabel(void *parm, Job *j) {
-	Label *label = (Label*)parm;
 
-	debugC(9, kDebugExec, "jobEraseLabel (%p)", (const void*) label);
+	static uint16 count = 0;
+
+	if (!_label)
+		return;
+
+	debugC(9, kDebugExec, "jobEraseLabel (%p)", _label);
 
 	int16 _si, _di;
 
 	if (_activeItem._id != 0) {
-		_si = _mousePos.x + 16 - label->_cnv.w/2;
+		_si = _mousePos.x + 16 - _label->_cnv.w/2;
 		_di = _mousePos.y + 34;
 	} else {
-		_si = _mousePos.x + 8 - label->_cnv.w/2;
+		_si = _mousePos.x + 8 - _label->_cnv.w/2;
 		_di = _mousePos.y + 21;
 	}
 
 	if (_si < 0) _si = 0;
 	if (_di > 190) _di = 190;
 
-	if (label->_cnv.w + _si > _screenWidth)
-		_si = _screenWidth - label->_cnv.w;
+	if (_label->_cnv.w + _si > _screenWidth)
+		_si = _screenWidth - _label->_cnv.w;
 
 	Common::Rect r;
-	label->getRect(r, true);
+	_label->getRect(r, true);
 	_gfx->restoreBackground(r);
 
-	label->_old = label->_pos;
-	label->_pos.x = _si;
-	label->_pos.y = _di;
+	_label->_old = _label->_pos;
+	_label->_pos.x = _si;
+	_label->_pos.y = _di;
 
-	return;
-}
-
-
-
-// this Job uses a static counter to delay removal
-// and is in fact only used to remove jEraseLabel jobs
-//
-void Parallaction_ns::jobWaitRemoveJob(void *parm, Job *j) {
-	Job *arg = (Job*)parm;
-
-	static uint16 count = 0;
-
-	debugC(9, kDebugExec, "jobWaitRemoveJob: count = %i", count);
-
-	_engineFlags |= kEngineBlockInput;
-
-	count++;
-	if (count == 2) {
-		count = 0;
-		removeJob(arg);
-		_engineFlags &= ~kEngineBlockInput;
-		j->_finished = 1;
+	if (_deletingLabel) {
+		count++;
+		if (count == 2) {
+			count = 0;
+			_engineFlags &= ~kEngineBlockInput;
+			_deletingLabel = false;
+			_label = 0;
+		}
 	}
 
 	return;
 }
-
 
 
 }	// namespace Parallaction

@@ -159,6 +159,8 @@ int Parallaction::init() {
 	_location._startFrame = 0;
 	_location._comment = NULL;
 	_location._endComment = NULL;
+	_label = 0;
+	_deletingLabel = false;
 
 	_backgroundInfo = 0;
 	_pathBuffer = 0;
@@ -285,7 +287,17 @@ void Parallaction::runGame() {
 			changeLocation(_location._name);
 		}
 
+		jobEraseLabel(0, 0);
+		jobEraseAnimations((void*)1, 0);
+
 		runJobs();
+
+		jobDisplayAnimations(0, 0);
+		jobDisplayLabel(0, 0);
+
+		if (_engineFlags & kEngineInventory) {
+			jobShowInventory(0, 0);
+		}
 
 		updateView();
 
@@ -306,25 +318,20 @@ void Parallaction::updateView() {
 
 void Parallaction::showLabel(Label &label) {
 	label.resetPosition();
-	_jDrawLabel = addJob(kJobDisplayLabel, (void*)&label, kPriority0);
-	_jEraseLabel = addJob(kJobEraseLabel, (void*)&label, kPriority20);
+	_label = &label;
 }
 
 void Parallaction::hideLabel(uint priority) {
 
-	if (!_jDrawLabel)
+	if (!_label)
 		return;
 
-	removeJob(_jDrawLabel);
-	_jDrawLabel = 0;
-
 	if (priority == kPriority99) {
-		// remove job immediately
-		removeJob(_jEraseLabel);
-		_jEraseLabel = 0;
+		_label = 0;
 	} else {
 		// schedule job for deletion
-		addJob(kJobWaitRemoveJob, _jEraseLabel, priority);
+		_deletingLabel = true;
+		_engineFlags |= kEngineBlockInput;
 	}
 
 }
@@ -360,7 +367,7 @@ void Parallaction::processInput(InputData *data) {
 			setArrowCursor();
 		}
 		removeJob(_jRunScripts);
-		_jDrawInventory = addJob(kJobShowInventory, 0, kPriority2);
+//		_jDrawInventory = addJob(kJobShowInventory, 0, kPriority2);
 		openInventory();
 		break;
 
@@ -369,7 +376,6 @@ void Parallaction::processInput(InputData *data) {
 		setInventoryCursor(data->_inventoryIndex);
 		_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
 		addJob(kJobHideInventory, 0, kPriority20);
-		removeJob(_jDrawInventory);
 		break;
 
 	case kEvHoverInventory:

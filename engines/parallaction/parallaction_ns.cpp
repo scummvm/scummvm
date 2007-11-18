@@ -256,9 +256,9 @@ int Parallaction_ns::go() {
 
 	changeLocation(_location._name);
 
-	addJob(kJobEraseAnimations, (void*)1, kPriority20);
+//	addJob(kJobEraseAnimations, (void*)1, kPriority20);
 	_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
-	addJob(kJobDisplayAnimations, 0, kPriority3);
+//	addJob(kJobDisplayAnimations, 0, kPriority3);
 
 	runGame();
 
@@ -444,17 +444,17 @@ void Parallaction_ns::changeCharacter(const char *name) {
 void Parallaction_ns::initJobs() {
 
 	static const JobFn jobs[] = {
-		&Parallaction_ns::jobDisplayAnimations,
-		&Parallaction_ns::jobEraseAnimations,
+		0,
+		0,
 		&Parallaction_ns::jobDisplayDroppedItem,
 		&Parallaction_ns::jobRemovePickedItem,
 		&Parallaction_ns::jobRunScripts,
 		&Parallaction_ns::jobWalk,
-		&Parallaction_ns::jobDisplayLabel,
-		&Parallaction_ns::jobEraseLabel,
-		&Parallaction_ns::jobWaitRemoveJob,
+		0,
+		0,
+		0,
 		&Parallaction_ns::jobToggleDoor,
-		&Parallaction_ns::jobShowInventory,
+		0,
 		&Parallaction_ns::jobHideInventory
 	};
 

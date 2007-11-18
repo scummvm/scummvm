@@ -438,7 +438,8 @@ public:
 	Table		*_callableNames;
 	Table		*_localFlagNames;
 
-
+	bool		_deletingLabel;
+	Label		*_label;
 	void showLabel(Label &label);
 	void hideLabel(uint priority);
 
@@ -486,6 +487,10 @@ public:
 	Font		*_dialogueFont;
 
 	Common::RandomSource _rnd;
+
+	virtual void jobShowInventory(void*, Job*) = 0;
+	virtual void jobHideInventory(void*, Job*) = 0;
+
 
 protected:		// data
 
@@ -587,7 +592,6 @@ public:
 	virtual void jobWalk(void*, Job *j) = 0;
 	virtual void jobDisplayLabel(void *parm, Job *j) = 0;
 	virtual void jobEraseLabel(void *parm, Job *j) = 0;
-	virtual void jobWaitRemoveJob(void *parm, Job *j) = 0;
 
 	void		beep();
 
@@ -742,7 +746,6 @@ protected:
 	void jobWalk(void*, Job *j);
 	void jobDisplayLabel(void *parm, Job *j);
 	void jobEraseLabel(void *parm, Job *j);
-	void jobWaitRemoveJob(void *parm, Job *j);
 	void jobShowInventory(void *parm, Job *j);
 	void jobHideInventory(void *parm, Job *j);
 
