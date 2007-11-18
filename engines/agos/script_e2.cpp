@@ -654,9 +654,9 @@ void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 	int16 a = getNextWord(), b = getNextWord();
 
 	if (getGameType() == GType_ELVIRA2) {
-		// WORKAROUND: A NULL item can occur when interacting with Wine Bottles
+		// WORKAROUND bug #1745996: A NULL item can occur when 
+		// interacting with items in the dinning room
 		if (item == NULL) {
-			warning("Please report where exactly this occurs in Elvira 2");
 			setScriptCondition(false);
 			return;
 		}
