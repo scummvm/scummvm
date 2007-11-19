@@ -25,10 +25,6 @@
 
 #include "sound/softsynth/pcspk.h"
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 namespace Audio {
 
 const PCSpeaker::generatorFunc PCSpeaker::generateWave[] =
@@ -108,7 +104,7 @@ int8 PCSpeaker::generateSine(uint32 x, uint32 oscLength) {
 		return 0;
 
 	// TODO: Maybe using a look-up-table would be better?
-	return CLIP<int16>((int16) (128 * sin(2.0 * M_PI * x / oscLength)), -128, 127);
+	return CLIP<int16>((int16) (128 * sin(2.0 * PI * x / oscLength)), -128, 127);
 }
 
 int8 PCSpeaker::generateSaw(uint32 x, uint32 oscLength) {
