@@ -79,6 +79,7 @@ protected:
 	long _lastSecondaryDown;
 	long _lastSecondaryTap;
 	int _gestureStartX, _gestureStartY;
+	bool _mouseClickAndDragEnabled;
 
 	int _timerCallbackNext;
 	int _timerCallbackTimer;

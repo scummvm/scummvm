@@ -43,6 +43,7 @@
 #include "backends/timer/default/default-timer.h"
 #include "backends/intern.h"
 #include "sound/mixer.h"
+#include "gui/message.h"
 
 #include "osys_iphone.h"
 #include "iphone_common.h"
@@ -60,7 +61,8 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_overlayVisible(false), _overlayBuffer(NULL), _fullscreen(NULL),
 	_mouseHeight(0), _mouseWidth(0), _mouseBuf(NULL), _lastMouseTap(0),
 	_secondaryTapped(false), _lastSecondaryTap(0), _landscapeMode(true),
-	_needEventRestPeriod(false)
+	_needEventRestPeriod(false), _mouseClickAndDragEnabled(false),
+	_gestureStartX(-1), _gestureStartY(-1)
 {	
 	_queuedInputEvent.type = (Common::EventType)0;
 }
@@ -173,7 +175,7 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 	//printf("setPalette()\n");
 	const byte *b = colors;
 
-	for (uint i = start; i < num; ++i) {
+	for (uint i = start; i < start + num; ++i) {
 		_palette[i] = RGBToColor(b[0], b[1], b[2]);
 		b += 4;
 	}
@@ -526,51 +528,54 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 		switch ((InputEvent)eventType) {
 			case kInputMouseDown:
 				//printf("Mouse down at (%u, %u)\n", x, y);
-				_lastMouseDown = curTime;
+				
 				warpMouse(x, y);
-				return false;
-
+				if (_mouseClickAndDragEnabled) {
+					event.type = Common::EVENT_LBUTTONDOWN;
+					event.mouse.x = _mouseX;
+					event.mouse.y = _mouseY;					
+				} else {
+					_lastMouseDown = curTime;
+					return false;	
+				}
 				break;
 			case kInputMouseUp:
 				//printf("Mouse up at (%u, %u)\n", x, y);
 
-				if (curTime - _lastMouseDown < 250) {
-					event.type = Common::EVENT_LBUTTONDOWN;
+				if (_mouseClickAndDragEnabled) {
+					event.type = Common::EVENT_LBUTTONUP;
 					event.mouse.x = _mouseX;
 					event.mouse.y = _mouseY;
-
-					_queuedInputEvent.type = Common::EVENT_LBUTTONUP;
-					_queuedInputEvent.mouse.x = _mouseX;
-					_queuedInputEvent.mouse.y = _mouseY;
-					_lastMouseTap = curTime;
-					_needEventRestPeriod = true;
-
-					// if (curTime - _lastMouseTap < 250 && !_overlayVisible) {
-					// 	event.type = Common::EVENT_KEYDOWN;
-					// 	_queuedInputEvent.type = Common::EVENT_KEYUP;
-					// 
-					// 	event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
-					// 	event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
-					// 	event.kbd.ascii = _queuedInputEvent.kbd.ascii = 27;		
-					// 							
-					// 	_lastMouseTap = 0;
-					// } else {
-					// 
-					// }
 				} else {
-					return false;
+					if (curTime - _lastMouseDown < 250) {
+						event.type = Common::EVENT_LBUTTONDOWN;
+						event.mouse.x = _mouseX;
+						event.mouse.y = _mouseY;
+
+						_queuedInputEvent.type = Common::EVENT_LBUTTONUP;
+						_queuedInputEvent.mouse.x = _mouseX;
+						_queuedInputEvent.mouse.y = _mouseY;
+						_lastMouseTap = curTime;
+						_needEventRestPeriod = true;
+					} else {
+						return false;
+					}					
 				}
 
 				break;
 			case kInputMouseDragged:
 				//printf("Mouse dragged at (%u, %u)\n", x, y);
 				if (_secondaryTapped) {
+					// if (_gestureStartX == -1 || _gestureStartY == -1) {
+					// 	return false;
+					// }
+
 					int vecX = (x - _gestureStartX);
 					int vecY = (y - _gestureStartY);
 					int lengthSq =  vecX * vecX + vecY * vecY;
 					//printf("Lengthsq: %u\n", lengthSq);
 
-					if (lengthSq > 5000) { // Long enough gesture to react upon.
+					if (lengthSq > 15000) { // Long enough gesture to react upon.
 						_gestureStartX = x;
 						_gestureStartY = y;
 						
@@ -591,15 +596,17 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 							_needEventRestPeriod = true;
 						} else if (vecXNorm > -0.50 && vecXNorm < 0.50 && vecYNorm < -0.75) {
 							// Swipe up
-							event.type = Common::EVENT_KEYDOWN;
-							_queuedInputEvent.type = Common::EVENT_KEYUP;
-
-							event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
-							event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_1;
-							event.kbd.ascii = _queuedInputEvent.kbd.ascii = '1';
-							_needEventRestPeriod = true;
+							_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
+							GUI::TimedMessageDialog dialog("Toggling mouse-click-and-drag mode.", 1500);
+							dialog.runModal();
 						} else if (vecXNorm > 0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
 							// Swipe right
+							// _secondaryTapped = !_secondaryTapped;
+							// _gestureStartX = x;
+							// _gestureStartY = y;					
+							// 							
+							// GUI::TimedMessageDialog dialog("Forcing toggle of pressed state.", 1500);
+							// dialog.runModal();
 							return false;
 						} else if (vecXNorm < -0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
 							// Swipe left
@@ -614,7 +621,8 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					event.type = Common::EVENT_MOUSEMOVE;
 					event.mouse.x = x;
 					event.mouse.y = y;
-					warpMouse(x, y);				}
+					warpMouse(x, y);
+				}
 				break;
 			case kInputMouseSecondToggled:
 				_secondaryTapped = !_secondaryTapped;
