@@ -57,7 +57,6 @@ public:
 	SoundMgr *_sound;
 	PictureMgr *_picture;
 	PreAGI_Console *_console;
-	Audio::PCSpeaker *_speakerStream;
 
 	void clearImageStack() {}
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
@@ -96,6 +95,7 @@ public:
 private:
 	int _defaultColor;
 
+	Audio::PCSpeaker *_speakerStream;
 	Audio::SoundHandle _speakerHandle;
 };
 
