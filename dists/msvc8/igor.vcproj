@@ -297,6 +297,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\igor\midi.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\igor\midi.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\igor\resource_ids.h"
 			>
 		</File>
