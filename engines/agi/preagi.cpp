@@ -149,7 +149,7 @@ void PreAgiEngine::initialize() {
 	}
 
 	_gfx = new GfxMgr(this);
-	_sound = new SoundMgr(this, _mixer);
+	//_sound = new SoundMgr(this, _mixer);
 	_picture = new PictureMgr(this, _gfx);
 	//_sprites = new SpritesMgr(this, _gfx);
 
@@ -171,7 +171,12 @@ void PreAgiEngine::initialize() {
 	_game.lineMinPrint = 0; // hardcoded
 
 	_gfx->initVideo();
-	_sound->initSound();
+	//_sound->initSound();
+
+	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
+							_speakerStream, -1, 255, 0, false, true);
+
 
 	//_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);
 
@@ -191,7 +196,7 @@ void PreAgiEngine::initialize() {
 }
 
 PreAgiEngine::~PreAgiEngine() {
-
+	delete _speakerStream;
 }
 
 int PreAgiEngine::init() {

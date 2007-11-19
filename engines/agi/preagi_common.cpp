@@ -190,4 +190,9 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 	return 0;
 }
 
+void PreAgiEngine::playNote(int16 frequency, int32 length) {
+	_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, frequency, length);
+	_vm->_system->delayMillis(duration);
+}
+
 }

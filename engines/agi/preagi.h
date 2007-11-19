@@ -29,6 +29,8 @@
 #include "agi/agi.h"
 #include "agi/preagi_common.h"
 
+#include "sound/softsynth/pcspk.h"
+
 namespace Agi {
 
 class PreAgiEngine : public AgiBase {
@@ -88,8 +90,13 @@ public:
 	// Saved Games
 	Common::SaveFileManager* getSaveFileMan() { return _saveFileMan; }
 
+	void playNote(int16 frequency, int32 length);
+
 private:
 	int _defaultColor;
+
+	Audio::PCSpeaker *_speakerStream;
+	Audio::SoundHandle _speakerHandle;
 };
 
 } // End of namespace Agi

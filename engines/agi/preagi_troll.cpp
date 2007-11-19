@@ -483,7 +483,7 @@ void Troll::playTune(int tune, int len) {
 		duration = READ_LE_UINT16(_gameData + ptr);
 		ptr += 2;
 
-		// playNote(freq, duration);
+		_vm->playNote(freq, duration);
 	}
 }
 
