@@ -47,90 +47,64 @@ namespace Parallaction {
 #define INVENTORY_WIDTH 			(INVENTORY_ITEMS_PER_LINE*INVENTORYITEM_WIDTH)
 #define INVENTORY_HEIGHT			(INVENTORY_LINES*INVENTORYITEM_HEIGHT)
 
-Inventory *_inv = 0;
-InventoryRenderer *_re = 0;
-
 
 int16 Parallaction::getHoverInventoryItem(int16 x, int16 y) {
-	return _re->hitTest(Common::Point(x,y));
+	return _inventoryRenderer->hitTest(Common::Point(x,y));
 }
 
-void highlightInventoryItem(ItemPosition pos, byte color) {
-	_re->highlightItem(pos, color);
+void Parallaction::highlightInventoryItem(ItemPosition pos, byte color) {
+	_inventoryRenderer->highlightItem(pos, color);
 }
 
 int Parallaction::addInventoryItem(ItemName item) {
-	return _inv->addItem(item);
+	return _inventory->addItem(item);
 }
 
 int Parallaction::addInventoryItem(ItemName item, uint32 value) {
-	return _inv->addItem(item, value);
+	return _inventory->addItem(item, value);
 }
 
 void Parallaction::dropItem(uint16 v) {
-	_inv->removeItem(v);
+	_inventory->removeItem(v);
 }
 
 bool Parallaction::isItemInInventory(int32 v) {
-	return (_inv->findItem(v) != -1);
+	return (_inventory->findItem(v) != -1);
 }
 
-const InventoryItem* getInventoryItem(int16 pos) {
-	return _inv->getItem(pos);
+const InventoryItem* Parallaction::getInventoryItem(int16 pos) {
+	return _inventory->getItem(pos);
 }
 
-int16 getInventoryItemIndex(int16 pos) {
-	return _inv->getItemName(pos);
+int16 Parallaction::getInventoryItemIndex(int16 pos) {
+	return _inventory->getItemName(pos);
 }
 
-void initInventory() {
-	_inv = new Inventory(INVENTORY_MAX_ITEMS);
-	_re = new InventoryRenderer(_vm);
-	_re->bindInventory(_inv);
+void Parallaction::initInventory() {
+	_inventory = new Inventory(INVENTORY_MAX_ITEMS);
+	_inventoryRenderer = new InventoryRenderer(this);
+	_inventoryRenderer->bindInventory(_inventory);
 }
 
-void destroyInventory() {
-	delete _inv;
-	delete _re;
+void Parallaction::destroyInventory() {
+	delete _inventory;
+	delete _inventoryRenderer;
+
+	_inventory = 0;
+	_inventoryRenderer = 0;
 }
 
-void cleanInventory(bool keepVerbs) {
-	_inv->clear(keepVerbs);
+void Parallaction::cleanInventory(bool keepVerbs) {
+	_inventory->clear(keepVerbs);
 }
 
-void openInventory() {
-	_re->showInventory();
+void Parallaction::openInventory() {
+	_inventoryRenderer->showInventory();
 }
 
-void closeInventory() {
-	_re->hideInventory();
+void Parallaction::closeInventory() {
+	_inventoryRenderer->hideInventory();
 }
-
-
-
-
-void Parallaction_ns::showInventory() {
-	Common::Rect r;
-	_re->getRect(r);
-	_gfx->copyRect(Gfx::kBitBack, r, _re->getData(), INVENTORY_WIDTH);
-}
-
-void Parallaction_ns::jobHideInventory(void *parm, Job *j) {
-	static uint16 count = 0;
-	_engineFlags |= kEngineBlockInput;
-
-	count++;
-	if (count == 2) {
-		count = 0;
-		j->_finished = 1;
-		_engineFlags &= ~kEngineBlockInput;
-	}
-
-	Common::Rect r;
-	_re->getRect(r);
-	_gfx->restoreBackground(r);
-}
-
 
 
 
@@ -234,16 +208,6 @@ void InventoryRenderer::getItemRect(ItemPosition pos, Common::Rect &r) {
 	r.moveTo(col * INVENTORYITEM_WIDTH, line * INVENTORYITEM_HEIGHT);
 
 }
-
-
-
-
-
-
-
-
-
-
 
 
 

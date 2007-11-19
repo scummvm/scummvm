@@ -287,6 +287,15 @@ void Gfx::setHalfbriteMode(bool enable) {
 
 void Gfx::updateScreen() {
 	g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _buffers[kBitFront]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
+
+	if (_engineFlags & kEngineInventory) {
+		Common::Rect r;
+		_vm->_inventoryRenderer->getRect(r);
+		byte *data = _vm->_inventoryRenderer->getData();
+
+		g_system->copyRectToScreen(data, r.width(), r.left, r.top, r.width(), r.height());
+	}
+
 	g_system->updateScreen();
 	return;
 }

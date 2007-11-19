@@ -44,20 +44,6 @@ struct InventoryItem {
 
 #define MAKE_INVENTORY_ID(x) (((x) & 0xFFFF) << 16)
 
-void initInventory();
-void destroyInventory();
-
-
-
-void openInventory();
-void closeInventory();
-void highlightInventoryItem(int16 pos, byte color);
-
-
-void cleanInventory(bool keepVerbs = true);
-const InventoryItem* getInventoryItem(int16 pos);
-int16 getInventoryItemIndex(int16 pos);
-
 typedef int16 ItemPosition;
 typedef uint16 ItemName;
 

@@ -451,7 +451,7 @@ void Parallaction_ns::initJobs() {
 		0,
 		&Parallaction_ns::jobToggleDoor,
 		0,
-		&Parallaction_ns::jobHideInventory
+		0
 	};
 
 	_jobsFn = jobs;

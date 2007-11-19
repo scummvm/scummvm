@@ -296,10 +296,6 @@ void Parallaction::runGame() {
 		drawAnimations();
 		drawLabel();
 
-		if (_engineFlags & kEngineInventory) {
-			showInventory();
-		}
-
 		updateView();
 
 	}
@@ -375,7 +371,6 @@ void Parallaction::processInput(InputData *data) {
 		closeInventory();
 		setInventoryCursor(data->_inventoryIndex);
 		resumeJobs();
-		addJob(kJobHideInventory, 0, kPriority20);
 		break;
 
 	case kEvHoverInventory:

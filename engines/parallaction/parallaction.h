@@ -489,10 +489,6 @@ public:
 
 	Common::RandomSource _rnd;
 
-	virtual void showInventory() = 0;
-	virtual void jobHideInventory(void*, Job*) = 0;
-
-
 protected:		// data
 
 	Debugger	*_debugger;
@@ -562,13 +558,7 @@ protected:		// members
 
 	void 		freeCharacter();
 
-
-	int 		addInventoryItem(ItemName item, uint32 value);
-	int 		addInventoryItem(ItemName item);
-	void 		dropItem(ItemName item);
 	int16 		pickupItem(Zone *z);
-	bool 		isItemInInventory(int32 v);
-	int16		getHoverInventoryItem(int16 x, int16 y);
 
 public:
 	virtual	void callFunction(uint index, void* parm) { }
@@ -598,6 +588,23 @@ public:
 	const char **_commandsNamesRes;
 	const char **_callableNamesRes;
 	const char **_instructionNamesRes;
+
+	void highlightInventoryItem(ItemPosition pos, byte color);
+	int16 getHoverInventoryItem(int16 x, int16 y);
+	int addInventoryItem(ItemName item);
+	int addInventoryItem(ItemName item, uint32 value);
+	void dropItem(uint16 v);
+	bool isItemInInventory(int32 v);
+	const InventoryItem* getInventoryItem(int16 pos);
+	int16 getInventoryItemIndex(int16 pos);
+	void initInventory();
+	void destroyInventory();
+	void cleanInventory(bool keepVerbs = true);
+	void openInventory();
+	void closeInventory();
+
+	Inventory *_inventory;
+	InventoryRenderer *_inventoryRenderer;
 
 };
 
@@ -737,7 +744,6 @@ protected:
 	void jobDisplayDroppedItem(void*, Job *j);
 	void jobRemovePickedItem(void*, Job *j);
 	void jobToggleDoor(void*, Job *j);
-	void jobHideInventory(void *parm, Job *j);
 
 	void runScripts();
 	void walk();
@@ -745,7 +751,6 @@ protected:
 	void eraseAnimations();
 	void drawLabel();
 	void eraseLabel();
-	void showInventory();
 
 
 	// location parser
