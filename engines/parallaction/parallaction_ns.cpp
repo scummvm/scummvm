@@ -256,8 +256,6 @@ int Parallaction_ns::go() {
 
 	changeLocation(_location._name);
 
-	_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
-
 	runGame();
 
 	return 0;
@@ -446,8 +444,8 @@ void Parallaction_ns::initJobs() {
 		0,
 		&Parallaction_ns::jobDisplayDroppedItem,
 		&Parallaction_ns::jobRemovePickedItem,
-		&Parallaction_ns::jobRunScripts,
-		&Parallaction_ns::jobWalk,
+		0,
+		0,
 		0,
 		0,
 		0,
@@ -457,8 +455,6 @@ void Parallaction_ns::initJobs() {
 	};
 
 	_jobsFn = jobs;
-
-	_jRunScripts = 0;
 }
 
 JobOpcode* Parallaction_ns::createJobOpcode(uint functionId, Job *job) {

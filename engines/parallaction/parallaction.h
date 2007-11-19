@@ -218,6 +218,7 @@ struct Character {
 	Frames		    *_talk;
 	Frames 			*_objs;
 	PathBuilder		_builder;
+	WalkNodeList	*_walkPath;
 
 	Character(Parallaction *vm);
 	void getFoot(Common::Point &foot);
@@ -528,7 +529,6 @@ protected:		// data
 	BackgroundInfo	*_backgroundInfo;
 
 	Zone    *_hoverZone;
-	Job	   *_jRunScripts;
 
 
 protected:		// members
@@ -579,13 +579,12 @@ public:
 
 	virtual void parseLocation(const char* name) = 0;
 
-	virtual void jobRunScripts(void*, Job *j) = 0;
 	virtual void jobDisplayDroppedItem(void*, Job *j) = 0;
 	virtual void jobRemovePickedItem(void*, Job *j) = 0;
 	virtual void jobToggleDoor(void*, Job *j) = 0;
-	virtual void jobWalk(void*, Job *j) = 0;
 
-
+	virtual void runScripts() = 0;
+	virtual void walk() = 0;
 	virtual void drawAnimations() = 0;
 	virtual void eraseAnimations() = 0;
 	virtual void drawLabel() = 0;
@@ -735,13 +734,13 @@ private:
 	const Callable *_callables;
 
 protected:
-	void jobRunScripts(void*, Job *j);
 	void jobDisplayDroppedItem(void*, Job *j);
 	void jobRemovePickedItem(void*, Job *j);
 	void jobToggleDoor(void*, Job *j);
-	void jobWalk(void*, Job *j);
 	void jobHideInventory(void *parm, Job *j);
 
+	void runScripts();
+	void walk();
 	void drawAnimations();
 	void eraseAnimations();
 	void drawLabel();

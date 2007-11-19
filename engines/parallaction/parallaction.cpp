@@ -288,6 +288,9 @@ void Parallaction::runGame() {
 		eraseLabel();
 		eraseAnimations();
 
+		runScripts();
+		walk();
+
 		runJobs();
 
 		drawAnimations();
@@ -364,15 +367,14 @@ void Parallaction::processInput(InputData *data) {
 		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) == 0) {
 			setArrowCursor();
 		}
-		removeJob(_jRunScripts);
-//		_jDrawInventory = addJob(kJobShowInventory, 0, kPriority2);
+		pauseJobs();
 		openInventory();
 		break;
 
 	case kEvCloseInventory: // closes inventory and possibly select item
 		closeInventory();
 		setInventoryCursor(data->_inventoryIndex);
-		_jRunScripts = addJob(kJobRunScripts, 0, kPriority15);
+		resumeJobs();
 		addJob(kJobHideInventory, 0, kPriority20);
 		break;
 
@@ -890,7 +892,7 @@ void Parallaction::doLocationEnterTransition() {
 	pal.makeGrayscale();
 	_gfx->setPalette(pal);
 
-	jobRunScripts(NULL, NULL);
+	runScripts();
 	drawAnimations();
 
 	_gfx->swapBuffers();
@@ -989,8 +991,10 @@ void Character::scheduleWalk(int16 x, int16 y) {
 		return;
 	}
 
-	WalkNodeList *list = _builder.buildPath(x, y);
-	_vm->addJob(kJobWalk, list, kPriority19 );
+	_walkPath = _builder.buildPath(x, y);
+
+//	WalkNodeList *list = _builder.buildPath(x, y);
+//	_vm->addJob(kJobWalk, list, kPriority19 );
 
 	_engineFlags |= kEngineWalking;
 }

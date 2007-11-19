@@ -381,8 +381,12 @@ void Parallaction::finalizeWalk(WalkNodeList *list) {
 	delete list;
 }
 
-void Parallaction_ns::jobWalk(void *parm, Job *j) {
-	WalkNodeList *list = (WalkNodeList*)parm;
+void Parallaction_ns::walk() {
+	if ((_engineFlags & kEngineWalking) == 0) {
+		return;
+	}
+
+	WalkNodeList *list = _char._walkPath;
 
 	_char._ani._oldPos.x = _char._ani._left;
 	_char._ani._oldPos.y = _char._ani._top;
@@ -400,11 +404,11 @@ void Parallaction_ns::jobWalk(void *parm, Job *j) {
 	}
 	if (it == list->end()) {
 		debugC(1, kDebugWalk, "jobWalk reached last node");
-		j->_finished = 1;
+//		j->_finished = 1;
 		finalizeWalk(list);
 		return;
 	}
-	j->_parm = list;
+	_char._walkPath = list;
 
 	// selectWalkFrame must be performed before position is changed by clipMove
 	int16 v16 = selectWalkFrame(pos, *it);
@@ -416,7 +420,7 @@ void Parallaction_ns::jobWalk(void *parm, Job *j) {
 
 	if (newpos == _char._ani._oldPos) {
 		debugC(1, kDebugWalk, "jobWalk was blocked by an unforeseen obstacle");
-		j->_finished = 1;
+//		j->_finished = 1;
 		finalizeWalk(list);
 	} else {
 		_char._ani._frame = v16 + walkData2 + 1;
@@ -445,7 +449,3 @@ PathBuilder::PathBuilder(Animation *anim) : _anim(anim), _list(0) {
 
 
 } // namespace Parallaction
-
-
-
-

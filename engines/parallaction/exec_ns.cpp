@@ -388,8 +388,12 @@ void Parallaction_ns::eraseAnimations() {
 }
 
 
-void Parallaction_ns::jobRunScripts(void *parm, Job *j) {
+void Parallaction_ns::runScripts() {
 	debugC(9, kDebugExec, "jobRunScripts");
+
+	if (_engineFlags & kEnginePauseJobs) {
+		return;
+	}
 
 	static uint16 modCounter = 0;
 
