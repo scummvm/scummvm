@@ -196,6 +196,7 @@ void PreAgiEngine::initialize() {
 }
 
 PreAgiEngine::~PreAgiEngine() {
+	_mixer->stopHandle(_speakerHandle);
 	delete _speakerStream;
 }
 
