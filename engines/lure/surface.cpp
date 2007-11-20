@@ -1052,7 +1052,7 @@ bool CopyProtectionDialog::show() {
 		_charIndex = 0;
 
 		while (!events.quitFlag) {
-			while (events.pollEvent()) {
+			while (events.pollEvent() && (_charIndex < 4)) {
 				if (events.type() == Common::EVENT_KEYDOWN) { 
 					if ((events.event().kbd.keycode == Common::KEYCODE_BACKSPACE) && (_charIndex > 0)) {
 						// Remove the last number typed
@@ -1066,9 +1066,8 @@ bool CopyProtectionDialog::show() {
 						// Number pressed
 						_hotspots[_charIndex + 3]->setFrameNumber(events.event().kbd.ascii - '0');
 						_hotspots[_charIndex + 3]->copyTo(&screen.screen());
-						
-						if (++_charIndex == 4)
-							break;
+
+						++_charIndex;
 					}
 
 					screen.update();
@@ -1076,6 +1075,8 @@ bool CopyProtectionDialog::show() {
 			}
 
 			g_system->delayMillis(10);
+			if (_charIndex == 4)
+				break;
 		}
 
 		if (events.quitFlag)
