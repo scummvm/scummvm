@@ -85,9 +85,9 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 }
 
 OSystem_PSP::~OSystem_PSP() {
-	if (_offscreen) free(_offscreen);
-	if (_overlayBuffer) free(_overlayBuffer);
-	if (_mouseBuf)	free(_mouseBuf);
+	free(_offscreen);
+	free(_overlayBuffer);
+	free(_mouseBuf);
 }
 
 
@@ -138,13 +138,11 @@ void OSystem_PSP::initSize(uint width, uint height) {
 	_overlayWidth = _screenWidth = width;
 	_overlayHeight = _screenHeight = height;
 
-	if (_offscreen)
-		free(_offscreen);
+	free(_offscreen);
 	
 	_offscreen = (byte *)malloc(width * height);
 
-	if (_overlayBuffer)
-		free(_overlayBuffer);
+	free(_overlayBuffer);
 
 	_overlayBuffer = (OverlayColor *)malloc(_overlayWidth * _overlayHeight * sizeof(OverlayColor));
 	bzero(_offscreen, width * height);
@@ -411,8 +409,7 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 
 	_mouseKeyColour = keycolor;
 
-	if (_mouseBuf)
-		free(_mouseBuf);
+	free(_mouseBuf);
 
 	_mouseBuf = (byte *)malloc(w * h);
 	memcpy(_mouseBuf, buf, w * h);
