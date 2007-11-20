@@ -3049,7 +3049,7 @@ void ToucheEngine::buildWalkPath(int dstPosX, int dstPosY, int keyChar) {
 		}
 	}
 	key->prevWalkDataNum = minWalkDataNum;
-	if (key->walkDataNum == key->prevWalkDataNum && key->walkPointsList[1] == -1) {
+	if (key->walkDataNum == key->prevWalkDataNum && key->walkPointsList[1] == -1 && minWalkDataNum != -1) {
 		if (key->walkPointsList[0] == _programWalkTable[minWalkDataNum].point1 || key->walkPointsList[0] == _programWalkTable[minWalkDataNum].point2) {
 			++key->walkPointsListIndex;
 		}
