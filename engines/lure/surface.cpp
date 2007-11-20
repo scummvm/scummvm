@@ -425,7 +425,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 			abortFlag = events.quitFlag;
 			if (abortFlag) break;
 
-			if (events.pollEvent()) {
+			while (events.pollEvent()) {
 				if (events.type() == Common::EVENT_KEYDOWN) {
 					char ch = events.event().kbd.ascii;
 					uint16 keycode = events.event().kbd.keycode;
@@ -729,7 +729,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 			abortFlag = events.quitFlag;
 			if (abortFlag) break;
 
-			if (events.pollEvent()) {
+			while (events.pollEvent()) {
 				if ((events.type() == Common::EVENT_KEYDOWN) &&
 					(events.event().kbd.keycode == Common::KEYCODE_ESCAPE)) {
 					abortFlag = true;
@@ -1052,7 +1052,7 @@ bool CopyProtectionDialog::show() {
 		_charIndex = 0;
 
 		while (!events.quitFlag) {
-			if (events.pollEvent()) {
+			while (events.pollEvent()) {
 				if (events.type() == Common::EVENT_KEYDOWN) { 
 					if ((events.event().kbd.keycode == Common::KEYCODE_BACKSPACE) && (_charIndex > 0)) {
 						// Remove the last number typed

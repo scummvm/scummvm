@@ -132,7 +132,7 @@ void Mouse::waitForRelease() {
 	Events &e = Events::getReference();
 
 	do {
-		e.pollEvent();
+		while (e.pollEvent() && !e.quitFlag) ;
 		g_system->delayMillis(20);
 	} while (!e.quitFlag && (lButton() || rButton()));
 }
@@ -180,7 +180,7 @@ bool Events::pollEvent() {
 void Events::waitForPress() {
 	bool keyButton = false;
 	while (!keyButton) {
-		if (pollEvent()) {
+		while (pollEvent()) {
 			if (_event.type == Common::EVENT_QUIT) return;
 			else if (_event.type == Common::EVENT_KEYDOWN) keyButton = true;
 			else if ((_event.type == Common::EVENT_LBUTTONDOWN) ||

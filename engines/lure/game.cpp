@@ -964,7 +964,7 @@ bool Game::getYN() {
 	bool result = false; 
 
 	do {
-		if (events.pollEvent()) {
+		while (events.pollEvent()) {
 			if (events.event().type == Common::EVENT_KEYDOWN) {
 				Common::KeyCode key = events.event().kbd.keycode;
 				if ((key == y) || (key == Common::KEYCODE_n) ||
