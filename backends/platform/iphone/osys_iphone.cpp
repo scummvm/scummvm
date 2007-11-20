@@ -148,9 +148,9 @@ void OSystem_IPHONE::initSize(uint width, uint height) {
 	_overlayBuffer = (OverlayColor *)malloc(fullSize);
 	clearOverlay();
 	
-	if (_fullscreen) {
+	if (_fullscreen)
 		free(_fullscreen);
-	}
+
 	_fullscreen = (uint16 *)malloc(fullSize);
 	bzero(_fullscreen, fullSize);
 	
@@ -161,6 +161,7 @@ void OSystem_IPHONE::initSize(uint width, uint height) {
 
 	_dirtyRects.push_back(Common::Rect(0, 0, width, height));
 	_mouseVisible = false;
+	updateScreen();
 }
 
 int16 OSystem_IPHONE::getHeight() {
@@ -216,9 +217,9 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 	_dirtyRects.push_back(Common::Rect(x, y, x + w + 1, y + h + 1));
 		
 	byte *dst = _offscreen + y * _screenWidth + x;
-	if (_screenWidth == pitch && pitch == w) {
+	if (_screenWidth == pitch && pitch == w)
 		memcpy(dst, buf, h * w);
-	} else {
+	else {
 		do {
 			memcpy(dst, buf, w);
 			buf += pitch;
@@ -253,15 +254,13 @@ void OSystem_IPHONE::addDirtyRect(int16 x, int16 y, int16 w, int16 h) {
 void OSystem_IPHONE::updateScreen() {
 	//printf("updateScreen(): %i dirty rects.\n", _dirtyRects.size());
 
-	if (_dirtyRects.size() == 0) {
+	if (_dirtyRects.size() == 0)
 		return;
-	}
 	
-	if (_landscapeMode) {
+	if (_landscapeMode)
 		internUpdateScreen<true>();
-	} else {
-		internUpdateScreen<false>();	
-	}
+	else
+		internUpdateScreen<false>();
 	
 	iPhone_updateScreen();
 }
@@ -408,13 +407,11 @@ void OSystem_IPHONE::copyRectToOverlay(const OverlayColor *buf, int pitch, int x
 		y = 0;
 	}
 
-	if (w > _screenWidth - x) {
+	if (w > _screenWidth - x)
 		w = _screenWidth - x;
-	}
 
-	if (h > _screenHeight - y) {
+	if (h > _screenHeight - y)
 		h = _screenHeight - y;
-	}
 
 	if (w <= 0 || h <= 0)
 		return;
@@ -422,9 +419,9 @@ void OSystem_IPHONE::copyRectToOverlay(const OverlayColor *buf, int pitch, int x
 	_dirtyRects.push_back(Common::Rect(x, y, x + w + 1, y + h + 1));
 		
 	OverlayColor *dst = _overlayBuffer + (y * _screenWidth + x);
-	if (_screenWidth == pitch && pitch == w) {
+	if (_screenWidth == pitch && pitch == w)
 		memcpy(dst, buf, h * w * sizeof(OverlayColor));
-	} else {
+	else {
 		do {
 			memcpy(dst, buf, w * sizeof(OverlayColor));
 			buf += pitch;
@@ -471,9 +468,8 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 		_mouseBuf = NULL;
 	}
 	
-	if (_mouseBuf == NULL) {
+	if (_mouseBuf == NULL)
 		_mouseBuf = (byte *)malloc(w * h);
-	}
 
 	_mouseWidth = w;
 	_mouseHeight = h;
@@ -484,7 +480,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	_mouseKeyColour = keycolor;
 	
 	memcpy(_mouseBuf, buf, w * h);
-	
+
 	dirtyMouseCursor();
 }
 
@@ -557,9 +553,8 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 						_queuedInputEvent.mouse.y = _mouseY;
 						_lastMouseTap = curTime;
 						_needEventRestPeriod = true;
-					} else {
+					} else
 						return false;
-					}					
 				}
 
 				break;
@@ -611,12 +606,10 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 						} else if (vecXNorm < -0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
 							// Swipe left
 							return false;
-						} else {
+						} else
 							return false;
-						}				
-					} else {
-						return false;						
-					}
+					} else
+						return false;
 				} else {
 					event.type = Common::EVENT_MOUSEMOVE;
 					event.mouse.x = x;
@@ -652,20 +645,19 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 						_lastSecondaryTap = curTime;
 						_needEventRestPeriod = true;
 					}		
-				} else {
+				} else
 					return false;
-				}
 				break;
 			case kInputOrientationChanged:
 				bool newModeIsLandscape = (int)xUnit != 1;
 				//printf("Orientation: %i", (int)xUnit);
 				if (_landscapeMode != newModeIsLandscape) {
 					_landscapeMode = newModeIsLandscape;
-					if (_landscapeMode) {
+					if (_landscapeMode)
 						iPhone_initSurface(_screenHeight, _screenWidth, true);
-					} else {
+					else
 						iPhone_initSurface(_screenWidth, _screenHeight, false);
-					}
+
 					_dirtyRects.push_back(Common::Rect(0, 0, _screenWidth, _screenHeight));
 				}				
 				break;
@@ -780,9 +772,8 @@ void OSystem_IPHONE::AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBuf
 		outQB->mAudioDataByteSize = 4 * s_AudioQueue.frameCount;
 		s_soundCallback(s_soundParam, (byte *)outQB->mAudioData, outQB->mAudioDataByteSize);
 		AudioQueueEnqueueBuffer(inQ, outQB, 0, NULL);
-	} else {
+	} else
 		AudioQueueStop(s_AudioQueue.queue, false);
-	}
 }
 
 bool OSystem_IPHONE::setSoundCallback(SoundProc proc, void *param) {
@@ -840,13 +831,11 @@ void OSystem_IPHONE::setTimerCallback(TimerProc callback, int interval) {
 		_timerCallbackTimer = interval;
 		_timerCallbackNext = getMillis() + interval;
 		_timerCallback = callback;
-	} else {
+	} else
 		_timerCallback = NULL;
-	}
 }
 
 void OSystem_IPHONE::quit() {
-
 }
 
 void OSystem_IPHONE::setWindowCaption(const char *caption) {
