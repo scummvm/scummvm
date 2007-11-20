@@ -244,6 +244,8 @@ void Mickey::drawMenu(MSA_MENU menu, int sel0, int sel1) {
 							 attr, (char *)menu.row[iRow].entry[iWord].szText);
 		}
 	}
+	_vm->_gfx->doUpdate();
+	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 }
 
 void Mickey::getMouseMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow, int x, int y) {
