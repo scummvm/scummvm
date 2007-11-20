@@ -34,6 +34,8 @@
 #include "agi/graphics.h"
 
 #define IDI_SND_OSCILLATOR_FREQUENCY	1193180
+#define IDI_SND_TIMER_RESOLUTION		0.0182
+#define IDI_SND_PITCH					1.5
 
 namespace Agi {
 
@@ -579,14 +581,11 @@ void Mickey::printDatMessage(int iStr) {
 // Sound
 
 void Mickey::playNote(MSA_SND_NOTE note) {
-	// TODO
 	if (!note.counter) {
-		//_vm->_sound->playNote(1, 0, 160);												// ScummVM
-		//playNote(1, 0, note.length / IDI_SND_TIMER_RESOLUTION);						// TrollVM
+		// Pause
+		_vm->_system->delayMillis(note.length / IDI_SND_TIMER_RESOLUTION);
 	} else {
-		//_vm->_sound->playNote(1, IDI_SND_OSCILLATOR_FREQUENCY / note.counter, 160);	// ScummVM
-		//playNote(1, IDI_SND_OSCILLATOR_FREQUENCY / note.counter,
-		//	note.length / IDI_SND_TIMER_RESOLUTION / IDI_SND_PITCH);					// TrollVM
+		_vm->playNote(IDI_SND_OSCILLATOR_FREQUENCY / note.counter, note.length / IDI_SND_TIMER_RESOLUTION / IDI_SND_PITCH);
 	}
 }
 
