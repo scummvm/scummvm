@@ -77,8 +77,7 @@ OSystem_IPHONE::~OSystem_IPHONE() {
 	delete _fullscreen;
 }
 
-int OSystem_IPHONE::timerHandler(int t)
-{
+int OSystem_IPHONE::timerHandler(int t) {
 	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
 	tm->handler();
 	return t;
@@ -135,21 +134,18 @@ void OSystem_IPHONE::initSize(uint width, uint height) {
 	_screenWidth = width;
 	_screenHeight = height;
 
-	if (_offscreen)
-		free(_offscreen);
+	free(_offscreen);
 	
 	_offscreen = (byte *)malloc(width * height);
 	bzero(_offscreen, width * height);
 
-	if (_overlayBuffer)
-		free(_overlayBuffer);
+	free(_overlayBuffer);
 
 	int fullSize = _screenWidth * _screenHeight * sizeof(OverlayColor);
 	_overlayBuffer = (OverlayColor *)malloc(fullSize);
 	clearOverlay();
 	
-	if (_fullscreen)
-		free(_fullscreen);
+	free(_fullscreen);
 
 	_fullscreen = (uint16 *)malloc(fullSize);
 	bzero(_fullscreen, fullSize);
