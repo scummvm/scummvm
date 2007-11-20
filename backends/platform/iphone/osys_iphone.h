@@ -87,6 +87,7 @@ protected:
 
 	Common::Array<Common::Rect> _dirtyRects;
 	bool _landscapeMode;
+	bool _fullScreenIsDirty;
 
 public:
 
@@ -153,6 +154,7 @@ protected:
 	inline void addDirtyRect(int16 x1, int16 y1, int16 w, int16 h);
 	template <bool landscapeMode> void internUpdateScreen();
 	void dirtyMouseCursor();
+	void dirtyFullScreen();
 
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
