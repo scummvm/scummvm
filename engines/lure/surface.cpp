@@ -408,7 +408,9 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 	bool abortFlag = false;
 	bool refreshFlag = false;
 
-	mouse.cursorOff();
+	bool vKbdFlag = g_system->hasFeature(OSystem::kFeatureVirtualKeyboard);
+	if (!vKbdFlag)
+		mouse.cursorOff();
 
 	// Insert a cursor character at the end of the string
 	newLine.insertChar('_', newLine.size());
@@ -437,7 +439,8 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 						screen.update();
 						newLine.deleteLastChar();
 						line = newLine;
-						mouse.cursorOn();
+						if (!vKbdFlag)
+							mouse.cursorOn();
 						return true;
 					}
 					else if (keycode == Common::KEYCODE_ESCAPE) {
@@ -471,7 +474,9 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 		}
 	}
 
-	mouse.cursorOn();
+	if (!vKbdFlag)
+		mouse.cursorOn();
+
 	return false;
 }
 
