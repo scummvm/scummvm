@@ -787,7 +787,6 @@ protected:
 	void debug_DrawObjs();
 	void debug_DrawPics();
 	void flipSwitch();
-	void waitAnyKeyAnim();
 	void waitAnyKey(bool anim = false);
 
 	bool planetIsAlreadyAssigned(int planet) {
