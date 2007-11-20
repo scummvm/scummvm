@@ -582,9 +582,9 @@ void Mickey::printDatMessage(int iStr) {
 void Mickey::playNote(MSA_SND_NOTE note) {
 	if (!note.counter) {
 		// Pause
-		_vm->_system->delayMillis(note.length / IDI_SND_TIMER_RESOLUTION);
+		_vm->_system->delayMillis((uint) (note.length / IDI_SND_TIMER_RESOLUTION));
 	} else {
-		_vm->playNote(IDI_SND_OSCILLATOR_FREQUENCY / note.counter, note.length / IDI_SND_TIMER_RESOLUTION);
+		_vm->playNote(IDI_SND_OSCILLATOR_FREQUENCY / note.counter, (int32) (note.length / IDI_SND_TIMER_RESOLUTION));
 	}
 }
 
