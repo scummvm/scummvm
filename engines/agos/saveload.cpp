@@ -40,7 +40,7 @@ int AGOSEngine::countSaveGames() {
 	Common::InSaveFile *f;
 	Common::StringList filenames;
 	uint i = 1;
-	char slot[3];
+	char slot[4];
 	int slotNum;
 	bool marks[256];
 
@@ -55,6 +55,7 @@ int AGOSEngine::countSaveGames() {
 		slot[0] = file->c_str()[file->size()-3];
 		slot[1] = file->c_str()[file->size()-2];
 		slot[2] = file->c_str()[file->size()-1];
+		slot[3] = '\0';
 
 		slotNum = atoi(slot);
 		if (slotNum >= 0 && slotNum < 256)
