@@ -65,7 +65,7 @@ void PictureMgr::putVirtPixel(int x, int y) {
 // For the flood fill routines
 
 // MH2 needs stack size > 300
-Common::FixedStack<uint16> _stack[512];
+Common::Stack<uint16> _stack[512];
 
 /**
  * Draw an AGI line.
