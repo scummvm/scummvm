@@ -204,7 +204,7 @@ void Parallaction_ns::setArrowCursor() {
 	debugC(1, kDebugInput, "setting mouse cursor to arrow");
 
 	// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
-	hideLabel(kPriority15);
+	_gfx->setLabel(0);
 	_activeItem._id = 0;
 
 	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
@@ -317,7 +317,7 @@ void Parallaction_ns::changeLocation(char *location) {
 	// WORKAROUND: this hideLabel has been added to avoid crashes caused by
 	// execution of label jobs after a location switch. The other workaround in
 	// Parallaction::runGame should have been rendered useless by this one.
-	hideLabel(kPriority99);
+	_gfx->setLabel(0);
 
 	_hoverZone = NULL;
 	if (_engineFlags & kEngineBlockInput) {

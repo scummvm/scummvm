@@ -106,8 +106,6 @@ void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 		_subtitle1._pos.x = (_gfx->_screenX << 2) + ((640 - _subtitle1._cnv.w) >> 1);
 
 	if (_jDisplaySubtitle == 0) {
-		_subtitle0._old.x = -1000;
-		_subtitle0._old.y = -1000;
 		_jDisplaySubtitle = addJob(kJobDisplaySubtitle, 0, 1);
 		_jEraseSubtitle = addJob(kJobEraseSubtitle, 0, 20);
 	}
@@ -427,11 +425,12 @@ DECLARE_INSTRUCTION_OPCODE(print) {
 
 
 void Parallaction_br::jobDisplaySubtitle(void *parm, Job *job) {
-	_gfx->drawLabel(_subtitle0);
-	_gfx->drawLabel(_subtitle1);
+//	_gfx->drawLabel(_subtitle0);
+//	_gfx->drawLabel(_subtitle1);
 }
 
 void Parallaction_br::jobEraseSubtitle(void *parm, Job *job) {
+#if 0
 	Common::Rect r;
 
 	if (_subtitle0._old.x != -1000) {
@@ -451,6 +450,7 @@ void Parallaction_br::jobEraseSubtitle(void *parm, Job *job) {
 		_gfx->restoreBackground(r);
 	}
 	_subtitle1._old = _subtitle1._pos;
+#endif
 }
 
 DECLARE_INSTRUCTION_OPCODE(text) {

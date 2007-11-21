@@ -91,8 +91,7 @@ enum {
 	kPriority18 = 18,
 	kPriority19 = 19,
 	kPriority20 = 20,
-	kPriority21 = 21,
-	kPriority99 = 99			// fictitious priority value used as a flag to handle quick label deletion
+	kPriority21 = 21
 };
 
 enum {
@@ -439,11 +438,6 @@ public:
 	Table		*_callableNames;
 	Table		*_localFlagNames;
 
-	bool		_deletingLabel;
-	Label		*_label;
-	void showLabel(Label &label);
-	void hideLabel(uint priority);
-
 public:
 	int getGameType() const;
 	uint32 getFeatures() const;
@@ -477,6 +471,9 @@ public:
 	InventoryItem	_activeItem;
 
 	Common::Point	_mousePos;
+	void			getCursorPos(Common::Point& p) {
+		p = _mousePos;
+	}
 
 	Zone	   		*_activeZone;
 
@@ -577,8 +574,6 @@ public:
 	virtual void walk() = 0;
 	virtual void drawAnimations() = 0;
 	virtual void eraseAnimations() = 0;
-	virtual void drawLabel() = 0;
-	virtual void eraseLabel() = 0;
 
 	void		beep();
 
@@ -749,8 +744,6 @@ protected:
 	void walk();
 	void drawAnimations();
 	void eraseAnimations();
-	void drawLabel();
-	void eraseLabel();
 
 
 	// location parser

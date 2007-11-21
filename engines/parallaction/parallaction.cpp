@@ -159,8 +159,6 @@ int Parallaction::init() {
 	_location._startFrame = 0;
 	_location._comment = NULL;
 	_location._endComment = NULL;
-	_label = 0;
-	_deletingLabel = false;
 
 	_backgroundInfo = 0;
 	_pathBuffer = 0;
@@ -285,7 +283,6 @@ void Parallaction::runGame() {
 			changeLocation(_location._name);
 		}
 
-		eraseLabel();
 		eraseAnimations();
 
 		runScripts();
@@ -294,7 +291,6 @@ void Parallaction::runGame() {
 		runJobs();
 
 		drawAnimations();
-		drawLabel();
 
 		updateView();
 
@@ -313,38 +309,18 @@ void Parallaction::updateView() {
 	g_system->delayMillis(30);
 }
 
-void Parallaction::showLabel(Label &label) {
-	label.resetPosition();
-	_label = &label;
-}
-
-void Parallaction::hideLabel(uint priority) {
-
-	if (!_label)
-		return;
-
-	if (priority == kPriority99) {
-		_label = 0;
-	} else {
-		// schedule job for deletion
-		_deletingLabel = true;
-		_engineFlags |= kEngineBlockInput;
-	}
-
-}
-
 
 void Parallaction::processInput(InputData *data) {
 
 	switch (data->_event) {
 	case kEvEnterZone:
 		debugC(2, kDebugInput, "processInput: kEvEnterZone");
-		showLabel(*data->_label);
+		_gfx->setLabel(data->_label);
 		break;
 
 	case kEvExitZone:
 		debugC(2, kDebugInput, "processInput: kEvExitZone");
-		hideLabel(kPriority15);
+		_gfx->setLabel(0);
 		break;
 
 	case kEvAction:
@@ -359,7 +335,7 @@ void Parallaction::processInput(InputData *data) {
 	case kEvOpenInventory:
 		_procCurrentHoverItem = -1;
 		_hoverZone = NULL;
-		hideLabel(kPriority2);
+		_gfx->setLabel(0);
 		if (hitZone(kZoneYou, _mousePos.x, _mousePos.y) == 0) {
 			setArrowCursor();
 		}

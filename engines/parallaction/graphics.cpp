@@ -214,7 +214,7 @@ void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
 	winding = (winding == 0 ? 1 : 0);
 	Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
 	s.moveTo(r.left + (r.width()+5)/2 - 5, r.bottom - 1);
-	flatBlit(s, _resBalloonTail[winding], kBitFront, 2);
+	flatBlit(s, _resBalloonTail[winding], _buffers[kBitFront], 2);
 
 	return;
 }
@@ -285,16 +285,24 @@ void Gfx::setHalfbriteMode(bool enable) {
 #endif
 }
 
+void Gfx::drawInventory() {
+
+	if ((_engineFlags & kEngineInventory) == 0) {
+		return;
+	}
+
+	Common::Rect r;
+	_vm->_inventoryRenderer->getRect(r);
+	byte *data = _vm->_inventoryRenderer->getData();
+
+	g_system->copyRectToScreen(data, r.width(), r.left, r.top, r.width(), r.height());
+}
+
 void Gfx::updateScreen() {
 	g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _buffers[kBitFront]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
 
-	if (_engineFlags & kEngineInventory) {
-		Common::Rect r;
-		_vm->_inventoryRenderer->getRect(r);
-		byte *data = _vm->_inventoryRenderer->getData();
-
-		g_system->copyRectToScreen(data, r.width(), r.left, r.top, r.width(), r.height());
-	}
+	drawInventory();
+	drawLabel();
 
 	g_system->updateScreen();
 	return;
@@ -358,36 +366,26 @@ void Gfx::invertRect(Gfx::Buffers buffer, const Common::Rect& r) {
 
 }
 
-void Gfx::screenClip(Common::Rect& r, Common::Point& p) {
-
-	int32 x = r.left;
-	int32 y = r.top;
-
-	Common::Rect screen(0, 0, _vm->_screenWidth, _vm->_screenHeight);
-
-	r.clip(screen);
-
-	if (!r.isValidRect()) return;
-
-	p.x = r.left;
-	p.y = r.top;
-
-	r.translate(screen.left - x, screen.top - y);
-
-}
-
-void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer, byte transparentColor) {
+void Gfx::flatBlit(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor) {
 
 	Common::Point dp;
 	Common::Rect q(r);
 
-	screenClip(q, dp);
+	Common::Rect clipper(surf->w, surf->h);
+
+	q.clip(clipper);
+	if (!q.isValidRect()) return;
+
+	dp.x = q.left;
+	dp.y = q.top;
+
+	q.translate(-r.left, -r.top);
 
 	byte *s = data + q.left + q.top * r.width();
-	byte *d = (byte*)_buffers[buffer]->getBasePtr(dp.x, dp.y);
+	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
 
 	uint sPitch = r.width() - q.width();
-	uint dPitch = _backgroundWidth - q.width();
+	uint dPitch = surf->w - q.width();
 
 	for (uint16 i = q.top; i < q.bottom; i++) {
 		for (uint16 j = q.left; j < q.right; j++) {
@@ -404,20 +402,30 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer, byte 
 
 	return;
 
+
 }
 
-void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer) {
+void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Graphics::Surface *surf) {
 
 	Common::Point dp;
 	Common::Rect q(r);
 
-	screenClip(q, dp);
+	Common::Rect clipper(surf->w, surf->h);
+
+	q.clip(clipper);
+	if (!q.isValidRect()) return;
+
+	dp.x = q.left;
+	dp.y = q.top;
+
+	q.translate(-r.left, -r.top);
+
 
 	byte *s = data + q.left + q.top * r.width();
-	byte *d = (byte*)_buffers[buffer]->getBasePtr(dp.x, dp.y);
+	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
 
 	uint sPitch = r.width() - q.width();
-	uint dPitch = _backgroundWidth - q.width();
+	uint dPitch = surf->w - q.width();
 
 	for (uint16 i = 0; i < q.height(); i++) {
 
@@ -439,11 +447,47 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer)
 
 }
 
-void Gfx::drawLabel(Label &label) {
-	if (label._text == 0)
-		return;
+void Gfx::setLabel(Label *label) {
+	_label = label;
 
-	flatBlitCnv(&label._cnv, label._pos.x, label._pos.y, Gfx::kBitBack);
+	if (_label) {
+		_label->resetPosition();
+	}
+}
+
+void Gfx::drawLabel() {
+	if (!_label || !_label->_text) {
+		return;
+	}
+
+	int16 _si, _di;
+
+	Common::Point	cursor;
+	_vm->getCursorPos(cursor);
+
+	if (_vm->_activeItem._id != 0) {
+		_si = cursor.x + 16 - _label->_cnv.w/2;
+		_di = cursor.y + 34;
+	} else {
+		_si = cursor.x + 8 - _label->_cnv.w/2;
+		_di = cursor.y + 21;
+	}
+
+	if (_si < 0) _si = 0;
+	if (_di > 190) _di = 190;
+
+	if (_label->_cnv.w + _si > _vm->_screenWidth)
+		_si = _vm->_screenWidth - _label->_cnv.w;
+
+	_label->_pos.x = _si;
+	_label->_pos.y = _di;
+
+	Common::Rect r(_label->_cnv.w, _label->_cnv.h);
+	r.moveTo(_label->_pos);
+
+	Graphics::Surface* surf = g_system->lockScreen();
+	flatBlit(r, (byte*)_label->_cnv.getBasePtr(0, 0), surf, 0);
+	g_system->unlockScreen();
 }
 
 
@@ -468,7 +512,7 @@ void Gfx::flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buf
 	Common::Rect r(cnv->w, cnv->h);
 	r.moveTo(x, y);
 
-	flatBlit(r, (byte*)cnv->pixels, buffer, 0);
+	flatBlit(r, (byte*)cnv->pixels, _buffers[buffer], 0);
 	return;
 }
 
@@ -477,7 +521,7 @@ void Gfx::blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffe
 	Common::Rect r(cnv->w, cnv->h);
 	r.moveTo(x, y);
 
-	blit(r, z, (byte*)cnv->pixels,  buffer);
+	blit(r, z, (byte*)cnv->pixels, _buffers[buffer]);
 	return;
 }
 
@@ -551,8 +595,8 @@ void Gfx::restoreDoorBackground(const Common::Rect& r, byte *data, byte* backgro
 //
 void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
 
-	flatBlit(r, data, kBitBack, 0);
-	flatBlit(r, data, kBit2, 0);
+	flatBlit(r, data, _buffers[kBitBack], 0);
+	flatBlit(r, data, _buffers[kBit2], 0);
 
 	return;
 }
@@ -764,6 +808,8 @@ Gfx::Gfx(Parallaction* vm) :
 	initBuffers(_vm->_screenWidth, _vm->_screenHeight);
 
 	setPalette(_palette);
+
+	_label = 0;
 
 	_screenX = 0;
 	_screenY = 0;

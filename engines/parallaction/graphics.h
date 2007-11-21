@@ -217,7 +217,9 @@ public:
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 
-	void drawLabel(Label &label);
+	// labels
+	Label	*_label;
+	void setLabel(Label *label);
 
 	// cut/paste
 	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer);
@@ -278,13 +280,16 @@ protected:
 	bool				_halfbrite;
 
 protected:
+	void drawInventory();
+	void drawLabel();
+
 	void initBuffers(int w, int h);
 	void freeBuffers();
 
 	void copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch);
-	void flatBlit(const Common::Rect& r, byte *data, Gfx::Buffers buffer, byte transparentColor);
-	void blit(const Common::Rect& r, uint16 z, byte *data, Gfx::Buffers buffer);
-	void screenClip(Common::Rect& r, Common::Point& p);
+
+	void blit(const Common::Rect& r, uint16 z, byte *data, Graphics::Surface *surf);
+	void flatBlit(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor);
 };
 
 

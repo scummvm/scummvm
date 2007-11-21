@@ -210,19 +210,12 @@ void Label::free() {
 void Label::resetPosition() {
 	_pos.x = -1000;
 	_pos.y = -1000;
-	_old.x = -1000;
-	_old.y = -1000;
 }
 
-void Label::getRect(Common::Rect &r, bool old) {
+void Label::getRect(Common::Rect &r) {
 	r.setWidth(_cnv.w);
 	r.setHeight(_cnv.h);
-
-	if (old) {
-		r.moveTo(_old);
-	} else {
-		r.moveTo(_pos);
-	}
+	r.moveTo(_pos);
 }
 
 Answer::Answer() {
