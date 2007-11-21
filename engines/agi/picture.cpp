@@ -23,11 +23,9 @@
  *
  */
 
-
-
 #include "agi/agi.h"
 #include "agi/graphics.h"
-
+#include "common/stack.h"
 
 namespace Agi {
 
@@ -64,28 +62,10 @@ void PictureMgr::putVirtPixel(int x, int y) {
 		*p = _scrColor | (*p & 0xf0);
 }
 
-/* For the flood fill routines */
+// For the flood fill routines
 
-/* MH2 needs stack size > 300 */
-// FIXME: Consider using FixedStack<> or Stack<> from common/stack.h here
-#define STACK_SIZE 512
-static unsigned int stackPtr;
-static uint16 stack[STACK_SIZE];
-
-static INLINE void lpush(uint16 c) {
-	assert(stackPtr < STACK_SIZE);
-
-	stack[stackPtr] = c;
-	stackPtr++;
-}
-
-static INLINE uint16 lpop() {
-	if (stackPtr == 0)
-		return 0xffff;
-
-	stackPtr--;
-	return stack[stackPtr];
-}
+// MH2 needs stack size > 300
+Common::FixedStack<uint16> _stack[512];
 
 /**
  * Draw an AGI line.
@@ -291,7 +271,7 @@ void PictureMgr::fillScanline(int x, int y) {
 		putVirtPixel(c, y);
 		if (isOkFillHere(c, y - 1)) {
 			if (newspanUp) {
-				lpush(c + (_width * 2) * (y - 1));
+				_stack->push(c + (_width * 2) * (y - 1));
 				newspanUp = 0;
 			}
 		} else {
@@ -300,7 +280,7 @@ void PictureMgr::fillScanline(int x, int y) {
 
 		if (isOkFillHere(c, y + 1)) {
 			if (newspanDown) {
-				lpush(c + (_width * 2) * (y + 1));
+				_stack->push(c + (_width * 2) * (y + 1));
 				newspanDown = 0;
 			}
 		} else {
@@ -310,14 +290,15 @@ void PictureMgr::fillScanline(int x, int y) {
 }
 
 void PictureMgr::agiFill(unsigned int x, unsigned int y) {
-	lpush(x + (_width * 2) * y);
+	uint16 c;
+	_stack->push(x + (_width * 2) * y);
 
 	for (;;) {
-		uint16 c = lpop();
-
-		/* Exit if stack is empty */
-		if (c == 0xffff)
+		// Exit if stack is empty
+		if (_stack->empty())
 			break;
+
+		c = _stack->pop();
 
 		x = c % (_width * 2);
 		y = c / (_width * 2);
@@ -325,7 +306,7 @@ void PictureMgr::agiFill(unsigned int x, unsigned int y) {
 		fillScanline(x, y);
 	}
 
-	stackPtr = 0;
+	_stack->clear();
 }
 
 /**************************************************************************
