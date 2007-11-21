@@ -585,13 +585,13 @@ void IgorEngine::UPDATE_OBJECT_STATE(int num) {
 	if (num == 1 || num == 255) {
 		switch (_objectsState[0]) {
 		case 0:
-			memcpy(_globalObjectNames + 0x592 / 62, " bottle of whisky", 30);
+			strcpy(_globalObjectNames[23], " bottle of whisky");
 			break;
 		case 1:
-			memcpy(_globalObjectNames + 0x592 / 62, " empty bottle", 30);
+			strcpy(_globalObjectNames[23], " empty bottle");
 			break;
 		case 2:
-			memcpy(_globalObjectNames + 0x592 / 62, " bottle of water", 30);
+			strcpy(_globalObjectNames[23], " bottle of water");
 			break;
 		}
 	}
@@ -599,21 +599,21 @@ void IgorEngine::UPDATE_OBJECT_STATE(int num) {
 		switch (_objectsState[1]) {
 		case 0:
 			_inventoryImages[23] = 27;
-			memcpy(_globalObjectNames + 0x5D0 / 62, " lizard", 30);
+			strcpy(_globalObjectNames[24], " lizard");
 			break;
 		default:
 			_inventoryImages[23] = 35;
-			memcpy(_globalObjectNames + 0x5D0 / 62, " fat lizard", 30);
+			strcpy(_globalObjectNames[24], " fat lizard");
 			break;
 		}
 	}
 	if (num == 4 || num == 255) {
 		switch (_objectsState[3]) {
 		case 0:
-			memcpy(_globalObjectNames + 0x554 / 62, " Caroline%s folder", 30);
+			strcpy(_globalObjectNames[22], " Caroline%s folder");
 			break;
 		case 1:
-			memcpy(_globalObjectNames + 0x554 / 62, " Philip%s folder", 30);
+			strcpy(_globalObjectNames[22], " Philip%s folder");
 			break;
 		}
 	}
@@ -632,10 +632,10 @@ void IgorEngine::UPDATE_OBJECT_STATE(int num) {
 	}
 	if (num == 8 || num == 255) {
 		if (_objectsState[7] == 0) {
-			memcpy(_globalObjectNames + 0x60E / 62, " statuette", 30);
+			strcpy(_globalObjectNames[25], " statuette");
 			_inventoryImages[24] = 29;
 		} else {
-			memcpy(_globalObjectNames + 0x60E / 62, " reward", 30);
+			strcpy(_globalObjectNames[25], " reward");
 			_inventoryImages[24] = 39;
 		}
 	}

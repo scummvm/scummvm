@@ -64,6 +64,8 @@ IgorEngine::IgorEngine(OSystem *system, int gameVersion)
 
 IgorEngine::~IgorEngine() {
 	delete _midiPlayer;
+	free(_resourceEntries);
+	free(_soundOffsets);
 	Common::clearAllSpecialDebugLevels();
 	free(_screenVGA);
 	for (int i = 0; i < 4; ++i) {
@@ -110,7 +112,7 @@ void IgorEngine::restart() {
 	_actionCode = 0;
 	_actionWalkPoint = 0;
 	memset(_inputVars, 0, sizeof(_inputVars));
-	memset(_musicSequenceTable, 0, sizeof(_musicSequenceTable));
+	_musicData = 0;
 
 	_talkDelay = _talkSpeechCounter = _talkDelayCounter = 0;
 	memset(_dialogueTextsTable, 0, sizeof(_dialogueTextsTable));
@@ -140,7 +142,7 @@ void IgorEngine::restart() {
 	_executeMainAction = 0;
 	_executeRoomAction = 0;
 	_previousMusic = 0;
-	memset(_musicSequenceTable, 0, sizeof(_musicSequenceTable));
+	_musicData = 0;
 	_actionCode = 0;
 	_actionWalkPoint = 0;
 	memset(_inputVars, 0, sizeof(_inputVars));
@@ -150,6 +152,11 @@ void IgorEngine::restart() {
 	_dialogueCursorOn = true;
 	_updateDialogue = 0;
 	_updateRoomBackground = 0;
+
+	_resourceEntriesCount = 0;
+	_resourceEntries = 0;
+	_soundOffsetsCount = 0;
+	_soundOffsets = 0;
 
 	_gameTicks = 0;
 }
@@ -161,14 +168,17 @@ int IgorEngine::go() {
 	if (_currentPart == 0) {
 		_currentPart = kStartupPart;
 	}
-	if (!_ovlFile.open("IGOR.DAT")) {
-		error("Unable to open 'IGOR.DAT'");
+	const char *ovlFileName = "IGOR.DAT";
+	const char *fsdFileName = "IGOR.FSD";
+	if (_gameVersion == kIdSpaCD) {
+		ovlFileName = "IGOR.EXE";
+		fsdFileName = "IGOR.DAT";
 	}
-	if (!_sndFile.open("IGOR.FSD")) {
-		error("Unable to open 'IGOR.FSD'");
+	if (!_ovlFile.open(ovlFileName)) {
+		error("Unable to open '%s'", ovlFileName);
 	}
-	if (!_tblFile.open("IGOR.TBL")) {
-		error("Unable to open 'IGOR.TBL'");
+	if (!_sndFile.open(fsdFileName)) {
+		error("Unable to open '%s'", fsdFileName);
 	}
 	readResourceTableFile();
 	loadMainTexts();
@@ -180,24 +190,42 @@ int IgorEngine::go() {
 	PART_MAIN();
 	_ovlFile.close();
 	_sndFile.close();
-	_tblFile.close();
 	return 0;
 }
 
 void IgorEngine::readResourceTableFile() {
-	if (_tblFile.readUint32BE() == MKID_BE('ITBL') && _tblFile.readUint32BE() == 1) {
+	Common::File tblFile;
+	uint32 resourcesEntriesOffset = 0, soundEntriesOffset = 0;
+	if (tblFile.open("IGOR.TBL") && tblFile.readUint32BE() == MKID_BE('ITBL') && tblFile.readUint32BE() == 2) {
+		tblFile.skip(4);
 		uint32 borlandOverlaySize = _ovlFile.size();
-		int gameVersionsCount = _tblFile.readByte();
+		int gameVersionsCount = tblFile.readByte();
 		for (int i = 0; i < gameVersionsCount; ++i) {
-			uint32 size = _tblFile.readUint32BE();
-			uint32 offs = _tblFile.readUint32BE();
+			uint32 size = tblFile.readUint32BE();
 			if (size == borlandOverlaySize) {
-				_tblFile.seek(offs);
-				_resourceEntriesCount = _tblFile.readUint16BE();
-				_resourceEntriesOffset = offs + 2;
-				return;
+				resourcesEntriesOffset = tblFile.readUint32BE();
+				soundEntriesOffset = tblFile.readUint32BE();
+				break;
 			}
+			tblFile.skip(8);
 		}
+	}
+	if (resourcesEntriesOffset != 0 && soundEntriesOffset != 0) {
+		tblFile.seek(resourcesEntriesOffset);
+		_resourceEntriesCount = tblFile.readUint16BE();
+		_resourceEntries = (ResourceEntry *)malloc(sizeof(ResourceEntry) * _resourceEntriesCount);
+		for (int i = 0; i < _resourceEntriesCount; ++i) {
+			_resourceEntries[i].id = tblFile.readUint16BE();
+			_resourceEntries[i].offs = tblFile.readUint32BE();
+			_resourceEntries[i].size = tblFile.readUint32BE();
+		}
+		tblFile.seek(soundEntriesOffset);
+		_soundOffsetsCount = tblFile.readUint16BE();
+		_soundOffsets = (uint32 *)malloc(sizeof(uint32) * _soundOffsetsCount);
+		for (int i = 0; i < _soundOffsetsCount; ++i) {
+			_soundOffsets[i] = tblFile.readUint32BE();
+		}
+		return;
 	}
 	error("Unable to read 'IGOR.TBL'");
 }
@@ -255,11 +283,12 @@ void IgorEngine::waitForTimer(int ticks) {
 		return;
 	}
 	_gameTicks += kTimerTicksCount;
-	if (_gameTicks == 64) {
+	if (_gameTicks == 64) { // TODO: original switches cursors more often
 		_gameTicks = 0;
 		setCursor(_currentCursor);
 		_currentCursor = (_currentCursor + 1) & 3;
 	}
+	// TODO: updateMusic();
 }
 
 void IgorEngine::copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent) {
@@ -280,89 +309,60 @@ void IgorEngine::copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *
 }
 
 int IgorEngine::getRandomNumber(int m) {
-	assert(m != 0);
-	return rand() % m;
+	assert(m > 0);
+	return _rnd.getRandomNumber(m - 1);
+}
+
+void IgorEngine::startMusic(int cmf) {
+	_midiPlayer->stopMusic();
+	free(_musicData);
+	int musicDataSize;
+	_musicData = loadData(cmf, 0, &musicDataSize);
+	_midiPlayer->playMusic(_musicData, musicDataSize);
 }
 
 void IgorEngine::playMusic(int num) {
 	debugC(9, kDebugEngine, "playMusic() %d", num);
-	const int *seq = 0;
-	switch (num) {
-	case 2: {
-			static const int cmf[] = { CMF_2_1, CMF_2_2, CMF_2_3, CMF_2_4, 0 };
-			seq = cmf;
-		}
-		break;
-	case 3: {
-			static const int cmf[] = { CMF_3, 0 };
-			seq = cmf;
-		}
-		break;
-	case 4: {
-			static const int cmf[] = { CMF_4, 0 };
-			seq = cmf;
-		}
-		break;
-	case 7: {
-			static const int cmf[] = { CMF_7_1, CMF_7_2, CMF_7_3, CMF_7_4, 0 };
-			seq = cmf;
-		}
-		break;
-	case 8: {
-			static const int cmf[] = { CMF_8, 0 };
-			seq = cmf;
-		}
-		break;
-	case 9: {
-			static const int cmf[] = { CMF_9, 0 };
-			seq = cmf;
-		}
-		break;
-	case 10: {
-			static const int cmf[] = { CMF_10, 0 };
-			seq = cmf;
-		}
-		break;
-	case 11: {
-			static const int cmf[] = { CMF_11, 0 };
-			seq = cmf;
-		}
-		break;
-	case 12: {
-			static const int cmf[] = { CMF_12, 0 };
-			seq = cmf;
-		}
-		break;
-	}
-	if (seq) {
-		for (int i = 0; i < 5; ++i) {
-			free(_musicSequenceTable[i].data);
-		}
-		for (int i = 0; seq[i]; ++i) {
-			_musicSequenceTable[i].data = loadData(seq[i], 0, &_musicSequenceTable[i].dataSize);
-		}
-	}
+	static const int cmf[] = { 0, 0, CMF_2_1, CMF_3, CMF_4, 0, 0, CMF_7_1, CMF_8, CMF_9, CMF_10, CMF_11, CMF_12 };
+	assert(num < ARRAYSIZE(cmf) && cmf[num] != 0);
 	_gameState.musicNum = num;
 	_gameState.musicSequenceIndex = 1;
-	_midiPlayer->playMusic(_musicSequenceTable[0].data, _musicSequenceTable[0].dataSize);
+	if (_gameVersion == kIdSpaCD) {
+		// different file format
+		return;
+	}
+	startMusic(cmf[num]);
 }
 
 void IgorEngine::updateMusic() {
+	static const int cmf2Seq[] = { CMF_2_1, CMF_2_2, CMF_2_3, CMF_2_4 };
+	static const int cmf7Seq[] = { CMF_7_1, CMF_7_2, CMF_7_3, CMF_7_4 };
 	if (_gameState.jumpToNextMusic) {
-		if (_gameState.musicNum == 2) {
+		switch (_gameState.musicNum) {
+		case 2:
 			_gameState.musicSequenceIndex = getRandomNumber(4) + 1;
+			startMusic(cmf2Seq[_gameState.musicSequenceIndex - 1]);
 //			_timerHandler0x1CCounter = 5;
-		} else if (_gameState.musicNum == 3 || _gameState.musicNum == 4 || _gameState.musicNum == 8 || _gameState.musicNum == 9 || _gameState.musicNum == 10) {
-//			_timerHandler0x1CCounter = 50;
-		} else if (_gameState.musicNum == 7) {
+			break;
+		case 7:
 			if (_gameState.musicSequenceIndex == 4) {
 				_gameState.musicSequenceIndex = 1;
 			} else {
 				++_gameState.musicSequenceIndex;
 			}
+			startMusic(cmf7Seq[_gameState.musicSequenceIndex - 1]);
 //			_timerHandler0x1CCounter = 5;
-		} else if (_gameState.musicNum == 11) {
+			break;
+		case 3:
+		case 4:
+		case 8:
+		case 9:
+		case 10:
+//			_timerHandler0x1CCounter = 50;
+			break;
+		case 11:
 //			_timerHandler0x1CCounter = 5;
+			break;
 		}
 	}
 }
@@ -377,7 +377,8 @@ void IgorEngine::playSound(int num, int fl) {
 		return;
 	}
 	--num;
-	_sndFile.seek(_fdsOffsetsTable[num]);
+	assert(num >= 0 && num < _soundOffsetsCount);
+	_sndFile.seek(_soundOffsets[num]);
 	Audio::AudioStream *stream = Audio::makeVOCStream(_sndFile);
 	if (stream) {
 		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, stream);
@@ -633,30 +634,31 @@ int IgorEngine::getObjectFromInventory(int x) const {
 	return 0;
 }
 
-ResourceEntry IgorEngine::findData(int id) {
-	assert(id >= 1 && id <= _resourceEntriesCount);
-	_tblFile.seek(_resourceEntriesOffset + (id - 1) * 10);
-	ResourceEntry re;
-	re.id = _tblFile.readUint16BE();
-	re.offs = _tblFile.readUint32BE();
-	re.size = _tblFile.readUint32BE();
-	assert(re.id == id);
+static int compareResourceEntry(const void *a, const void *b) {
+	int id = *(const int *)a;
+	const ResourceEntry *entry = (const ResourceEntry *)b;
+	return id - entry->id;
+}
+
+ResourceEntry *IgorEngine::findData(int id) {
+	ResourceEntry *re = (ResourceEntry *)bsearch(&id, _resourceEntries, _resourceEntriesCount, sizeof(ResourceEntry), compareResourceEntry);
+	assert(re);
 	return re;
 }
 
 uint8 *IgorEngine::loadData(int id, uint8 *dst, int *size) {
-	ResourceEntry re = findData(id);
-	debugC(9, kDebugResource, "loadData() id %d offset %d size %d", id, re.offs, re.size);
+	debugC(9, kDebugResource, "loadData() id %d", id);
+	ResourceEntry *re = findData(id);
 	if (!dst) {
-		dst = (uint8 *)malloc(re.size);
+		dst = (uint8 *)malloc(re->size);
 		if (!dst) {
-			error("Unable to allocate %d bytes", re.size);
+			error("Unable to allocate %d bytes", re->size);
 		}
 	}
-	_ovlFile.seek(re.offs);
-	_ovlFile.read(dst, re.size);
+	_ovlFile.seek(re->offs);
+	_ovlFile.read(dst, re->size);
 	if (size) {
-		*size = re.size;
+		*size = re->size;
 	}
 	return dst;
 }
@@ -811,7 +813,7 @@ void IgorEngine::loadAnimData(const int *anm, int loadOffset) {
 
 void IgorEngine::loadActionData(int act) {
 	if (act != 0) {
-		assert(findData(act).size <= 0x2000);
+		assert(findData(act)->size <= 0x2000);
 		loadData(act, _roomActionsTable);
 	}
 }

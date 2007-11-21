@@ -40,7 +40,11 @@ static const IgorGameDescription igorGameDescriptions[] = {
 		{
 			"igor",
 			"Demo 1.00s",
-			AD_ENTRY1s("IGOR.DAT", 0, 4086790),
+			{
+				{ "IGOR.DAT", 0, 0, 4086790 },
+				{ "IGOR.FSD", 0, 0,  462564 },
+				{ 0, 0, 0, 0 }
+			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			Common::ADGF_DEMO
@@ -51,12 +55,31 @@ static const IgorGameDescription igorGameDescriptions[] = {
 		{
 			"igor",
 			"Demo 1.10s",
-			AD_ENTRY1s("IGOR.DAT", 0, 4094103),
+			{
+				{ "IGOR.DAT", 0, 0, 4094103 },
+				{ "IGOR.FSD", 0, 0,  462564 },
+				{ 0, 0, 0, 0 }
+			},
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			Common::ADGF_DEMO
 		},
 		Igor::kIdEngDemo110
+	},
+	{
+		{
+			"igor",
+			"Talkie",
+			{
+				{ "IGOR.EXE", 0, 0,  9115648 },
+				{ "IGOR.DAT", 0, 0, 61682719 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		Igor::kIdSpaCD
 	},
 	{ AD_TABLE_END_MARKER, 0 }
 };
@@ -69,7 +92,7 @@ static const PlainGameDescriptor igorGameDescriptors[] = {
 static const Common::ADParams igorDetectionParams = {
 	(const byte *)igorGameDescriptions,
 	sizeof(IgorGameDescription),
-	0, // no md5
+	1024, // number of md5 bytes
 	igorGameDescriptors,
 	0,
 	"igor",

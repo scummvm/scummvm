@@ -311,6 +311,7 @@ protected:
 	int getRandomNumber(int m);
 	void handleOptionsMenu();
 	void handlePause();
+	void startMusic(int cmf);
 	void playMusic(int num);
 	void updateMusic();
 	void playSound(int num, int fl);
@@ -323,7 +324,7 @@ protected:
 	void startIgorDialogue();
 	void waitForEndOfIgorDialogue();
 	int getObjectFromInventory(int x) const;
-	ResourceEntry findData(int num);
+	ResourceEntry *findData(int num);
 	uint8 *loadData(int num, uint8 *dst = 0, int *size = 0);
 	void decodeMainText(const uint8 *p);
 	void decodeRoomStrings(const uint8 *p, bool skipObjectNames = false);
@@ -400,9 +401,10 @@ protected:
 
 	MidiPlayer *_midiPlayer;
 
+	Common::RandomSource _rnd;
+
 	Common::File _ovlFile;
 	Common::File _sndFile;
-	Common::File _tblFile;
 
 	Audio::SoundHandle _sfxHandle;
 
@@ -468,10 +470,7 @@ protected:
 	ExecuteActionProc _executeMainAction;
 	ExecuteActionProc _executeRoomAction;
 	uint8 _previousMusic;
-	struct {
-		uint8 *data;
-		int dataSize;
-	} _musicSequenceTable[5];
+	uint8 *_musicData;
 	Action _currentAction;
 	uint8 _actionCode;
 	uint8 _actionWalkPoint;
@@ -487,7 +486,9 @@ protected:
 	UpdateRoomBackgroundProc _updateRoomBackground;
 	int _gameTicks;
 	int _resourceEntriesCount;
-	int _resourceEntriesOffset;
+	ResourceEntry *_resourceEntries;
+	int _soundOffsetsCount;
+	uint32 *_soundOffsets;
 	char _saveStateDescriptions[kMaxSaveStates][100];
 
 	static const uint8 _dialogueColor[];
@@ -504,7 +505,6 @@ protected:
 	static const uint8 _walkScaleTable[];
 	static const uint8 _mouseCursorMask[];
 	static const uint8 _mouseCursorData[];
-	static const uint32 _fdsOffsetsTable[];
 
 
 	//

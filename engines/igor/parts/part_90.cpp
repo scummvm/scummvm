@@ -69,10 +69,9 @@ void IgorEngine::PART_90() {
 	_inputVars[kInputEscape] = 0;
 	fadeOutPalette(768);
 	if (_currentPart != kInvalidPart) {
-		if (_currentPart == 904) {
+		++_currentPart;
+		if ((_gameVersion == kIdSpaCD && _currentPart == 904) || _currentPart == 905) {
 			_currentPart = 850;
-		} else {
-			++_currentPart;
 		}
 	}
 }
