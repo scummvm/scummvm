@@ -78,7 +78,7 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 	}
 
 	_driver->open();
-	_driver->setTimerCallback(this, &onTimer);
+	_driver->setTimerCallback(this, &timerCallback);
 
 	_parser = MidiParser::createParser_SMF();
 	_parser->setMidiDriver(this);
@@ -164,7 +164,7 @@ void MidiMusic::send(uint32 b) {
 		_channelVolume[channel] = volume;
 		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && !_adlib && !_nativeMT32) {
+	} else if ((b & 0xF0) == 0xC0 && !_nativeMT32) {
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
 	} else if ((b & 0xFFF0) == 0x007BB0) {
 		//Only respond to All Notes Off if this channel
@@ -208,10 +208,11 @@ void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
 	}
 }
 
-void MidiMusic::onTimer(void *refCon) {
-	MidiMusic *music = (MidiMusic *)refCon;
-	if (music->_isPlaying)
-		music->_parser->onTimer();
+void MidiMusic::onTimer() {
+	_mutex.lock();
+	if (_isPlaying)
+		_parser->onTimer();
+	_mutex.unlock();
 }
 
 void MidiMusic::queueTuneList(int16 tuneList) {
@@ -307,10 +308,13 @@ void MidiMusic::playMusic() {
 		size = packedSize * 2;
 	}
 
+	_mutex.lock();
 	_parser->loadMusic(musicPtr, size);
 	_parser->setTrack(0);
-	debug(8, "Playing song %d [queue position: %d]", songNum, _queuePos);
 	_isPlaying = true;
+	_mutex.unlock();
+
+	debug(8, "Playing song %d [queue position: %d]", songNum, _queuePos);
 	queueUpdatePos();
 }
 
@@ -338,8 +342,10 @@ uint8 MidiMusic::randomQueuePos() {
 }
 
 void MidiMusic::stopMusic() {
+	_mutex.lock();
 	_isPlaying = false;
 	_parser->unloadMusic();
+	_mutex.unlock();
 }
 
 uint32 MidiMusic::songOffset(uint16 songNum) const {

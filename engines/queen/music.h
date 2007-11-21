@@ -27,6 +27,7 @@
 #define QUEEN_MUSIC_H
 
 #include "common/util.h"
+#include "common/mutex.h"
 #include "sound/mididrv.h"
 
 class MidiParser;
@@ -76,9 +77,11 @@ protected:
 
 	void queueUpdatePos();
 	uint8 randomQueuePos();
-	static void onTimer(void *data);
+	void onTimer();
 	uint32 songOffset(uint16 songNum) const;
 	uint32 songLength(uint16 songNum) const;
+
+	static void timerCallback(void *refCon) { ((MidiMusic *)refCon)->onTimer(); }
 
 	MidiDriver *_driver;
 	MidiParser *_parser;
@@ -86,7 +89,7 @@ protected:
 	byte _channelVolume[16];
 	bool _adlib;
 	bool _nativeMT32;
-
+	Common::Mutex _mutex;
 	Common::RandomSource _rnd;
 
 	bool _isPlaying;
