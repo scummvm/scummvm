@@ -60,30 +60,30 @@ private:
 	void handleSequencerSpecificMetaEvent2(uint8 value);
 	void handleSequencerSpecificMetaEvent3(uint8 value);
 
-	void Adlib_Write(uint8 port, uint8 value);
-	void Adlib_SetupCard();
-	void Adlib_SetupChannels(int fl);
-	void Adlib_ResetAmpVibratoRhythm(int am, int vib, int kso);
-	void Adlib_ResetChannels();
-	void Adlib_SetAmpVibratoRhythm();
-	void Adlib_SetCSMKeyboardSplit();
-	void Adlib_SetNoteMul(int mul);
-	void Adlib_SetWaveformSelect(int fl);
-	void Adlib_SetPitchBend(int channel, int range);
-	void Adlib_PlayNote(int channel);
-	uint8 Adlib_PlayNoteHelper(int channel, int note1, int note2, int oct);
-	void Adlib_TurnNoteOff(int channel);
-	void Adlib_TurnNoteOn(int channel, int note);
-	void Adlib_SetupChannelFromSequence(int channel, const uint8 *src, int fl);
-	void Adlib_SetupChannel(int channel, const uint16 *src, int fl);
-	void Adlib_SetNoteVolume(int channel, int volume);
-	void Adlib_SetupChannelHelper(int channel);
-	void Adlib_SetChannel0x40(int channel);
-	void Adlib_SetChannel0xC0(int channel);
-	void Adlib_SetChannel0x60(int channel);
-	void Adlib_SetChannel0x80(int channel);
-	void Adlib_SetChannel0x20(int channel);
-	void Adlib_SetChannel0xE0(int channel);
+	void adlibWrite(uint8 port, uint8 value);
+	void adlibSetupCard();
+	void adlibSetupChannels(int fl);
+	void adlibResetAmpVibratoRhythm(int am, int vib, int kso);
+	void adlibResetChannels();
+	void adlibSetAmpVibratoRhythm();
+	void adlibSetCSMKeyboardSplit();
+	void adlibSetNoteMul(int mul);
+	void adlibSetWaveformSelect(int fl);
+	void adlibSetPitchBend(int channel, int range);
+	void adlibPlayNote(int channel);
+	uint8 adlibPlayNoteHelper(int channel, int note1, int note2, int oct);
+	void adlibTurnNoteOff(int channel);
+	void adlibTurnNoteOn(int channel, int note);
+	void adlibSetupChannelFromSequence(int channel, const uint8 *src, int fl);
+	void adlibSetupChannel(int channel, const uint16 *src, int fl);
+	void adlibSetNoteVolume(int channel, int volume);
+	void adlibSetupChannelHelper(int channel);
+	void adlibSetChannel0x40(int channel);
+	void adlibSetChannel0xC0(int channel);
+	void adlibSetChannel0x60(int channel);
+	void adlibSetChannel0x80(int channel);
+	void adlibSetChannel0x20(int channel);
+	void adlibSetChannel0xE0(int channel);
 
 	FM_OPL *_opl;
 	int _midiNumberOfChannels;
@@ -126,11 +126,11 @@ private:
 int AdlibMidiDriver::open() {
 	MidiDriver_Emulated::open();
 	_opl = makeAdlibOPL(getRate());
-	Adlib_SetupCard();
+	adlibSetupCard();
 	for (int i = 0; i < 11; ++i) {
 		_adlibChannelsVolume[i] = 0;
-		Adlib_SetNoteVolume(i, 0);
-		Adlib_TurnNoteOff(i);
+		adlibSetNoteVolume(i, 0);
+		adlibTurnNoteOff(i);
 	}
 	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
 	return 0;
@@ -148,7 +148,7 @@ void AdlibMidiDriver::send(uint32 b) {
 	int param2 = (b >> 16) & 255;
 	switch (cmd) {
 	case 0:
-		Adlib_TurnNoteOff(channel);
+		adlibTurnNoteOff(channel);
 		break;
 	case 1:
 		handleMidiEvent0x90_NoteOn(channel, param1, param2);
@@ -156,11 +156,11 @@ void AdlibMidiDriver::send(uint32 b) {
 	case 3:
 		break;
 	case 5:
-		Adlib_SetNoteVolume(channel, param1);
+		adlibSetNoteVolume(channel, param1);
 		_adlibChannelsVolume[channel] = param1;
 		break;
 	case 6:
-		Adlib_SetPitchBend(channel, param1 | (param2 << 7));
+		adlibSetPitchBend(channel, param1 | (param2 << 7));
 		break;
 	default:
 //		warning("Unhandled cmd %d channel %d (0x%X)\n", cmd, channel, b);
@@ -212,9 +212,9 @@ void AdlibMidiDriver::handleSequencerSpecificMetaEvent1(int channel, const uint8
 		} else {
 			p = &_adlibChannelsKeyScalingTable1[channel * 2];
 		}
-		Adlib_SetupChannel(p[0], _adlibMetaSequenceData, _adlibMetaSequenceData[26]);
+		adlibSetupChannel(p[0], _adlibMetaSequenceData, _adlibMetaSequenceData[26]);
 		if (p[1] != 255) {
-			Adlib_SetupChannel(p[1], _adlibMetaSequenceData + 13, _adlibMetaSequenceData[27]);
+			adlibSetupChannel(p[1], _adlibMetaSequenceData + 13, _adlibMetaSequenceData[27]);
 		}
 	}
 }
@@ -222,34 +222,34 @@ void AdlibMidiDriver::handleSequencerSpecificMetaEvent1(int channel, const uint8
 void AdlibMidiDriver::handleSequencerSpecificMetaEvent2(uint8 value) {
 	_adlibRhythmEnabled = value;
 	_midiNumberOfChannels = _adlibRhythmEnabled ? 11 : 9;
-	Adlib_SetAmpVibratoRhythm();
+	adlibSetAmpVibratoRhythm();
 }
 
 void AdlibMidiDriver::handleSequencerSpecificMetaEvent3(uint8 value) {
-	Adlib_SetNoteMul(value);
+	adlibSetNoteMul(value);
 }
 
 void AdlibMidiDriver::handleMidiEvent0x90_NoteOn(int channel, int param1, int param2) { // note, volume
 	if (param2 == 0) {
-		Adlib_TurnNoteOff(channel);
+		adlibTurnNoteOff(channel);
 		_adlibChannelsVolume[channel] = param2;
 	} else {
-		Adlib_SetNoteVolume(channel, param2);
+		adlibSetNoteVolume(channel, param2);
 		_adlibChannelsVolume[channel] = param2;
-		Adlib_TurnNoteOff(channel);
-		Adlib_TurnNoteOn(channel, param1);
+		adlibTurnNoteOff(channel);
+		adlibTurnNoteOn(channel, param1);
 	}
 }
 
-void AdlibMidiDriver::Adlib_Write(uint8 port, uint8 value) {
+void AdlibMidiDriver::adlibWrite(uint8 port, uint8 value) {
 	OPLWriteReg(_opl, port, value);
 }
 
-void AdlibMidiDriver::Adlib_SetupCard() {
+void AdlibMidiDriver::adlibSetupCard() {
 	for (int i = 1; i <= 0xF5; ++i) {
-		Adlib_Write(i, 0);
+		adlibWrite(i, 0);
 	}
-	Adlib_Write(4, 6);
+	adlibWrite(4, 6);
 	for (int i = 0; i < 9; ++i) {
 		_midiChannelsNote2Table[i] = 8192;
 		_midiChannelsOctTable[i] = 0;
@@ -257,20 +257,20 @@ void AdlibMidiDriver::Adlib_SetupCard() {
 		_midiChannelsFreqTable[i] = 0;
 	}
 	memset(_adlibChannelsLevelKeyScalingTable, 127, 11);
-	Adlib_SetupChannels(0);
-	Adlib_ResetAmpVibratoRhythm(0, 0, 0);
-	Adlib_SetNoteMul(1);
-	Adlib_SetWaveformSelect(1);
+	adlibSetupChannels(0);
+	adlibResetAmpVibratoRhythm(0, 0, 0);
+	adlibSetNoteMul(1);
+	adlibSetWaveformSelect(1);
 }
 
-void AdlibMidiDriver::Adlib_SetupChannels(int fl) {
+void AdlibMidiDriver::adlibSetupChannels(int fl) {
 	if (fl != 0) {
 		_midiChannelsNote1Table[8] = 24;
 		_midiChannelsNote2Table[8] = 8192;
-		Adlib_PlayNote(8);
+		adlibPlayNote(8);
 		_midiChannelsNote1Table[7] = 31;
 		_midiChannelsNote2Table[7] = 8192;
-		Adlib_PlayNote(7);
+		adlibPlayNote(7);
 	}
 	_adlibRhythmEnabled = fl;
 	_midiNumberOfChannels = fl ? 11 : 9;
@@ -278,33 +278,33 @@ void AdlibMidiDriver::Adlib_SetupChannels(int fl) {
 	_adlibAMDepthEq48 = 0;
 	_adlibVibratoDepthEq14 = 0;
 	_adlibKeyboardSplitOn = 0;
-	Adlib_ResetChannels();
-	Adlib_SetAmpVibratoRhythm();
+	adlibResetChannels();
+	adlibSetAmpVibratoRhythm();
 }
 
-void AdlibMidiDriver::Adlib_ResetAmpVibratoRhythm(int am, int vib, int kso) {
+void AdlibMidiDriver::adlibResetAmpVibratoRhythm(int am, int vib, int kso) {
 	_adlibAMDepthEq48 = am;
 	_adlibVibratoDepthEq14 = vib;
 	_adlibKeyboardSplitOn = kso;
-	Adlib_SetAmpVibratoRhythm();
-	Adlib_SetCSMKeyboardSplit();
+	adlibSetAmpVibratoRhythm();
+	adlibSetCSMKeyboardSplit();
 }
 
-void AdlibMidiDriver::Adlib_ResetChannels() {
+void AdlibMidiDriver::adlibResetChannels() {
 	for (int i = 0; i < 18; ++i) {
-		Adlib_SetupChannelFromSequence(i, _adlibChannelsNoFeedback[i] ? _adlibInitSequenceData2 : _adlibInitSequenceData1, 0);
+		adlibSetupChannelFromSequence(i, _adlibChannelsNoFeedback[i] ? _adlibInitSequenceData2 : _adlibInitSequenceData1, 0);
 	}
 	if (_adlibRhythmEnabled) {
-		Adlib_SetupChannelFromSequence(12, _adlibInitSequenceData3, 0);
-		Adlib_SetupChannelFromSequence(15, _adlibInitSequenceData4, 0);
-		Adlib_SetupChannelFromSequence(16, _adlibInitSequenceData5, 0);
-		Adlib_SetupChannelFromSequence(14, _adlibInitSequenceData6, 0);
-		Adlib_SetupChannelFromSequence(17, _adlibInitSequenceData7, 0);
-		Adlib_SetupChannelFromSequence(13, _adlibInitSequenceData8, 0);
+		adlibSetupChannelFromSequence(12, _adlibInitSequenceData3, 0);
+		adlibSetupChannelFromSequence(15, _adlibInitSequenceData4, 0);
+		adlibSetupChannelFromSequence(16, _adlibInitSequenceData5, 0);
+		adlibSetupChannelFromSequence(14, _adlibInitSequenceData6, 0);
+		adlibSetupChannelFromSequence(17, _adlibInitSequenceData7, 0);
+		adlibSetupChannelFromSequence(13, _adlibInitSequenceData8, 0);
 	}
 }
 
-void AdlibMidiDriver::Adlib_SetAmpVibratoRhythm() {
+void AdlibMidiDriver::adlibSetAmpVibratoRhythm() {
 	uint8 value = 0;
 	if (_adlibAMDepthEq48) {
 		value |= 0x80;
@@ -315,15 +315,15 @@ void AdlibMidiDriver::Adlib_SetAmpVibratoRhythm() {
 	if (_adlibRhythmEnabled) {
 		value |= 0x20;
 	}
-	Adlib_Write(0xBD, value | _adlibVibratoRhythm);
+	adlibWrite(0xBD, value | _adlibVibratoRhythm);
 }
 
-void AdlibMidiDriver::Adlib_SetCSMKeyboardSplit() {
+void AdlibMidiDriver::adlibSetCSMKeyboardSplit() {
 	uint8 value = _adlibKeyboardSplitOn ? 0x40 : 0;
-	Adlib_Write(8, value);
+	adlibWrite(8, value);
 }
 
-void AdlibMidiDriver::Adlib_SetNoteMul(int mul) {
+void AdlibMidiDriver::adlibSetNoteMul(int mul) {
 	if (mul > 12) {
 		mul = 12;
 	} else if (mul < 1) {
@@ -332,29 +332,29 @@ void AdlibMidiDriver::Adlib_SetNoteMul(int mul) {
 	_adlibNoteMul = mul;
 }
 
-void AdlibMidiDriver::Adlib_SetWaveformSelect(int fl) {
+void AdlibMidiDriver::adlibSetWaveformSelect(int fl) {
 	_adlibWaveformSelect = fl ? 0x20 : 0;
 	for (int i = 0; i < 18; ++i) {
-		Adlib_Write(0xE0 + _adlibChannelsMappingTable1[i], 0);
+		adlibWrite(0xE0 + _adlibChannelsMappingTable1[i], 0);
 	}
-	Adlib_Write(1, _adlibWaveformSelect);
+	adlibWrite(1, _adlibWaveformSelect);
 }
 
-void AdlibMidiDriver::Adlib_SetPitchBend(int channel, int range) {
+void AdlibMidiDriver::adlibSetPitchBend(int channel, int range) {
 	if ((_adlibRhythmEnabled && channel <= 6) || channel < 9) {
 		if (range > 16383) {
 			range = 16383;
 		}
 		_midiChannelsNote2Table[channel] = range;
-		Adlib_PlayNote(channel);
+		adlibPlayNote(channel);
 	}
 }
 
-void AdlibMidiDriver::Adlib_PlayNote(int channel) {
-	_midiChannelsFreqTable[channel] = Adlib_PlayNoteHelper(channel, _midiChannelsNote1Table[channel], _midiChannelsNote2Table[channel], _midiChannelsOctTable[channel]);
+void AdlibMidiDriver::adlibPlayNote(int channel) {
+	_midiChannelsFreqTable[channel] = adlibPlayNoteHelper(channel, _midiChannelsNote1Table[channel], _midiChannelsNote2Table[channel], _midiChannelsOctTable[channel]);
 }
 
-uint8 AdlibMidiDriver::Adlib_PlayNoteHelper(int channel, int note1, int note2, int oct) {
+uint8 AdlibMidiDriver::adlibPlayNoteHelper(int channel, int note1, int note2, int oct) {
 	int n = ((note2 * _midiChannelsNoteTable[channel]) >> 8) - 8192;
 	if (n != 0) {
 		n >>= 5;
@@ -377,24 +377,24 @@ uint8 AdlibMidiDriver::Adlib_PlayNoteHelper(int channel, int note1, int note2, i
 		++o;
 		f >>= 1;
 	}
-	Adlib_Write(0xA0 + channel, f & 0xFF);
+	adlibWrite(0xA0 + channel, f & 0xFF);
 	int value = ((f >> 8) & 3) | (o << 2) | oct;
-	Adlib_Write(0xB0 + channel, value);
+	adlibWrite(0xB0 + channel, value);
 	return value;
 }
 
-void AdlibMidiDriver::Adlib_TurnNoteOff(int channel) {
+void AdlibMidiDriver::adlibTurnNoteOff(int channel) {
 	if ((_adlibRhythmEnabled && channel <= 6) || channel < 9) {
 		_midiChannelsOctTable[channel] = 0;
 		_midiChannelsFreqTable[channel] &= ~0x20;
-		Adlib_Write(0xB0 + channel, _midiChannelsFreqTable[channel]);
+		adlibWrite(0xB0 + channel, _midiChannelsFreqTable[channel]);
 	} else if (_adlibRhythmEnabled && channel <= 10) {
 		_adlibVibratoRhythm &= ~(1 << (4 - (channel - 6)));
-		Adlib_SetAmpVibratoRhythm();
+		adlibSetAmpVibratoRhythm();
 	}
 }
 
-void AdlibMidiDriver::Adlib_TurnNoteOn(int channel, int note) {
+void AdlibMidiDriver::adlibTurnNoteOn(int channel, int note) {
 	note -= 12;
 	if (note < 0) {
 		note = 0;
@@ -402,38 +402,38 @@ void AdlibMidiDriver::Adlib_TurnNoteOn(int channel, int note) {
 	if ((_adlibRhythmEnabled && channel <= 6) || channel < 9) {
 		_midiChannelsNote1Table[channel] = note;
 		_midiChannelsOctTable[channel] = 0x20;
-		Adlib_PlayNote(channel);
+		adlibPlayNote(channel);
 	} else if (_adlibRhythmEnabled && channel <= 10) {
 		if (channel == 6) {
 			_midiChannelsNote1Table[6] = note;
-			Adlib_PlayNote(channel);
+			adlibPlayNote(channel);
 		} else if (channel == 8 && _midiChannelsNote1Table[8] == note) {
 			_midiChannelsNote1Table[8] = note;
 			_midiChannelsNote1Table[7] = note + 7;
-			Adlib_PlayNote(8);
-			Adlib_PlayNote(7);
+			adlibPlayNote(8);
+			adlibPlayNote(7);
 		}
 		_adlibVibratoRhythm = 1 << (4 - (channel - 6));
-		Adlib_SetAmpVibratoRhythm();
+		adlibSetAmpVibratoRhythm();
 	}
 }
 
-void AdlibMidiDriver::Adlib_SetupChannelFromSequence(int channel, const uint8 *src, int fl) {
+void AdlibMidiDriver::adlibSetupChannelFromSequence(int channel, const uint8 *src, int fl) {
 	for (int i = 0; i < 13; ++i) {
 		_adlibSetupChannelSequence2[i] = src[i];
 	}
-	Adlib_SetupChannel(channel, _adlibSetupChannelSequence2, fl);
+	adlibSetupChannel(channel, _adlibSetupChannelSequence2, fl);
 }
 
-void AdlibMidiDriver::Adlib_SetupChannel(int channel, const uint16 *src, int fl) {
+void AdlibMidiDriver::adlibSetupChannel(int channel, const uint16 *src, int fl) {
 	for (int i = 0; i < 13; ++i) {
 		_adlibSetupChannelSequence1[14 * channel + i] = src[i];
 	}
 	_adlibSetupChannelSequence1[14 * channel + 13] = fl & 3;
-	Adlib_SetupChannelHelper(channel);
+	adlibSetupChannelHelper(channel);
 }
 
-void AdlibMidiDriver::Adlib_SetNoteVolume(int channel, int volume) {
+void AdlibMidiDriver::adlibSetNoteVolume(int channel, int volume) {
 	if (_midiNumberOfChannels > channel) {
 		if (volume > 127) {
 			volume = 127;
@@ -445,25 +445,25 @@ void AdlibMidiDriver::Adlib_SetNoteVolume(int channel, int volume) {
 		} else {
 			p = &_adlibChannelsKeyScalingTable1[channel * 2];
 		}
-		Adlib_SetChannel0x40(p[0]);
+		adlibSetChannel0x40(p[0]);
 		if (p[1] != 255) {
-			Adlib_SetChannel0x40(p[1]);
+			adlibSetChannel0x40(p[1]);
 		}
 	}
 }
 
-void AdlibMidiDriver::Adlib_SetupChannelHelper(int channel) {
-	Adlib_SetAmpVibratoRhythm();
-	Adlib_SetCSMKeyboardSplit();
-	Adlib_SetChannel0x40(channel);
-	Adlib_SetChannel0xC0(channel);
-	Adlib_SetChannel0x60(channel);
-	Adlib_SetChannel0x80(channel);
-	Adlib_SetChannel0x20(channel);
-	Adlib_SetChannel0xE0(channel);
+void AdlibMidiDriver::adlibSetupChannelHelper(int channel) {
+	adlibSetAmpVibratoRhythm();
+	adlibSetCSMKeyboardSplit();
+	adlibSetChannel0x40(channel);
+	adlibSetChannel0xC0(channel);
+	adlibSetChannel0x60(channel);
+	adlibSetChannel0x80(channel);
+	adlibSetChannel0x20(channel);
+	adlibSetChannel0xE0(channel);
 }
 
-void AdlibMidiDriver::Adlib_SetChannel0x40(int channel) {
+void AdlibMidiDriver::adlibSetChannel0x40(int channel) {
 	int index, value, fl;
 
 	if (_adlibRhythmEnabled) {
@@ -485,33 +485,33 @@ void AdlibMidiDriver::Adlib_SetChannel0x40(int channel) {
 	}
 	value = 63 - value;
 	value |= _adlibSetupChannelSequence1[channel * 14] << 6;
-	Adlib_Write(0x40 + _adlibChannelsMappingTable1[channel], value);
+	adlibWrite(0x40 + _adlibChannelsMappingTable1[channel], value);
 }
 
-void AdlibMidiDriver::Adlib_SetChannel0xC0(int channel) {
+void AdlibMidiDriver::adlibSetChannel0xC0(int channel) {
 	if (_adlibChannelsNoFeedback[channel] == 0) {
 		const uint8 *p = &_adlibSetupChannelSequence1[channel * 14];
 		uint8 value = p[2] << 1;
 		if (p[12] == 0) {
 			value |= 1;
 		}
-		Adlib_Write(0xC0 + _adlibChannelsMappingTable2[channel], value);
+		adlibWrite(0xC0 + _adlibChannelsMappingTable2[channel], value);
 	}
 }
 
-void AdlibMidiDriver::Adlib_SetChannel0x60(int channel) {
+void AdlibMidiDriver::adlibSetChannel0x60(int channel) {
 	const uint8 *p = &_adlibSetupChannelSequence1[channel * 14];
 	uint8 value = (p[3] << 4) | (p[6] & 15);
-	Adlib_Write(0x60 + _adlibChannelsMappingTable1[channel], value);
+	adlibWrite(0x60 + _adlibChannelsMappingTable1[channel], value);
 }
 
-void AdlibMidiDriver::Adlib_SetChannel0x80(int channel) {
+void AdlibMidiDriver::adlibSetChannel0x80(int channel) {
 	const uint8 *p = &_adlibSetupChannelSequence1[channel * 14];
 	uint8 value = (p[4] << 4) | (p[7] & 15);
-	Adlib_Write(0x80 + _adlibChannelsMappingTable1[channel], value);
+	adlibWrite(0x80 + _adlibChannelsMappingTable1[channel], value);
 }
 
-void AdlibMidiDriver::Adlib_SetChannel0x20(int channel) {
+void AdlibMidiDriver::adlibSetChannel0x20(int channel) {
 	const uint8 *p = &_adlibSetupChannelSequence1[channel * 14];
 	uint8 value = p[1] & 15;
 	if (p[9]) {
@@ -526,16 +526,16 @@ void AdlibMidiDriver::Adlib_SetChannel0x20(int channel) {
 	if (p[11]) {
 		value |= 0x10;
 	}
-	Adlib_Write(0x20 + _adlibChannelsMappingTable1[channel], value);
+	adlibWrite(0x20 + _adlibChannelsMappingTable1[channel], value);
 }
 
-void AdlibMidiDriver::Adlib_SetChannel0xE0(int channel) {
+void AdlibMidiDriver::adlibSetChannel0xE0(int channel) {
 	uint8 value = 0;
 	if (_adlibWaveformSelect) {
 		const uint8 *p = &_adlibSetupChannelSequence1[channel * 14];
 		value = p[13] & 3;
 	}
-	Adlib_Write(0xE0 + _adlibChannelsMappingTable1[channel], value);
+	adlibWrite(0xE0 + _adlibChannelsMappingTable1[channel], value);
 }
 
 const uint8 AdlibMidiDriver::_adlibChannelsMappingTable1[] = {
