@@ -25,7 +25,6 @@
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
-#include "common/stack.h"
 
 namespace Agi {
 
@@ -61,11 +60,6 @@ void PictureMgr::putVirtPixel(int x, int y) {
 	if (_scrOn)
 		*p = _scrColor | (*p & 0xf0);
 }
-
-// For the flood fill routines
-
-// MH2 needs stack size > 300
-Common::Stack<uint16> _stack;
 
 /**
  * Draw an AGI line.

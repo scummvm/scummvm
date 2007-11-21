@@ -27,6 +27,7 @@
 #define AGI_PICTURE_H
 
 #include "agi/agi.h"
+#include "common/stack.h"
 
 namespace Agi {
 
@@ -140,6 +141,7 @@ private:
 
 	int _flags;
 	int _currentStep;
+	Common::Stack<uint16> _stack;	// For the flood fill routines
 };
 
 } // End of namespace Agi
