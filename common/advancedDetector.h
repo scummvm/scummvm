@@ -54,7 +54,7 @@ struct ADGameDescription {
 	ADGameFileDescription filesDescriptions[14];
 	Language language;
 	Platform platform;
-	
+
 	/**
 	 * A bitmask of extra flags. The top 8 bits are reserved for generic flags
 	 * defined in the ADGameFlags. This leaves 24 flags to be used by client
@@ -111,7 +111,7 @@ struct ADFileBasedFallback {
 	 * returned if there's a detection match.
 	 */
 	const void *desc;
-	
+
 	/**
 	 * A zero-terminated list of filenames used for matching. All files in
 	 * the list must be present to get a detection match.
@@ -181,15 +181,15 @@ struct ADParams {
 
 	/**
 	 * List of files for file-based fallback detection (optional).
-	 * This is used if the regular MD5 based detection failed to 
+	 * This is used if the regular MD5 based detection failed to
 	 * detect anything.
 	 * As usual this list is terminated by an all-zero entry.
 	 *
 	 * @todo Properly explain this
 	 */
 	const ADFileBasedFallback *fileBasedFallback;
-	
-	/** 
+
+	/**
 	 * A callback pointing to an (optional) generic fallback detect
 	 * function. If present, this callback is invoked if both the regular
 	 * MD5 based detection as well as the file based fallback failed
@@ -246,7 +246,7 @@ void reportUnknown(StringList &files, int md5Bytes);
 } // End of namespace AdvancedDetector
 
 
-#define _ADVANCED_DETECTOR_DEFINE_PLUGIN_HEAD(engine,params) \
+#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,factoryFunc,params) \
 	GameList Engine_##engine##_gameIDList() { \
 		return Common::AdvancedDetector::gameIDList(params); \
 	} \
@@ -256,10 +256,6 @@ void reportUnknown(StringList &files, int md5Bytes);
 	GameList Engine_##engine##_detectGames(const FSList &fslist) { \
 		return Common::AdvancedDetector::detectAllGames(fslist, params); \
 	} \
-	void dummyFuncToAllowTrailingSemicolon()
-
-#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,factoryFunc,params) \
-	_ADVANCED_DETECTOR_DEFINE_PLUGIN_HEAD(engine,params); \
 	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
 		assert(engine); \
 		Common::AdvancedDetector::upgradeTargetIfNecessary(params); \
