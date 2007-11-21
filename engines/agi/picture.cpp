@@ -65,7 +65,7 @@ void PictureMgr::putVirtPixel(int x, int y) {
 // For the flood fill routines
 
 // MH2 needs stack size > 300
-Common::Stack<uint16> _stack[512];
+Common::Stack<uint16> _stack;
 
 /**
  * Draw an AGI line.
@@ -271,7 +271,7 @@ void PictureMgr::fillScanline(int x, int y) {
 		putVirtPixel(c, y);
 		if (isOkFillHere(c, y - 1)) {
 			if (newspanUp) {
-				_stack->push(c + (_width * 2) * (y - 1));
+				_stack.push(c + (_width * 2) * (y - 1));
 				newspanUp = 0;
 			}
 		} else {
@@ -280,7 +280,7 @@ void PictureMgr::fillScanline(int x, int y) {
 
 		if (isOkFillHere(c, y + 1)) {
 			if (newspanDown) {
-				_stack->push(c + (_width * 2) * (y + 1));
+				_stack.push(c + (_width * 2) * (y + 1));
 				newspanDown = 0;
 			}
 		} else {
@@ -291,14 +291,14 @@ void PictureMgr::fillScanline(int x, int y) {
 
 void PictureMgr::agiFill(unsigned int x, unsigned int y) {
 	uint16 c;
-	_stack->push(x + (_width * 2) * y);
+	_stack.push(x + (_width * 2) * y);
 
 	for (;;) {
 		// Exit if stack is empty
-		if (_stack->empty())
+		if (_stack.empty())
 			break;
 
-		c = _stack->pop();
+		c = _stack.pop();
 
 		x = c % (_width * 2);
 		y = c / (_width * 2);
@@ -306,7 +306,7 @@ void PictureMgr::agiFill(unsigned int x, unsigned int y) {
 		fillScanline(x, y);
 	}
 
-	_stack->clear();
+	_stack.clear();
 }
 
 /**************************************************************************
