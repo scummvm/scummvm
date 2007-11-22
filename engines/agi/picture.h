@@ -27,7 +27,6 @@
 #define AGI_PICTURE_H
 
 #include "agi/agi.h"
-#include "common/stack.h"
 
 namespace Agi {
 
@@ -73,7 +72,6 @@ private:
 	void dynamicDrawLine();
 	void absoluteDrawLine();
 	INLINE int isOkFillHere(int x, int y);
-	void fillScanline(int x, int y);
 	void agiFill(unsigned int x, unsigned int y);
 	void xCorner(bool skipOtherCoords = false);
 	void yCorner(bool skipOtherCoords = false);
@@ -141,7 +139,6 @@ private:
 
 	int _flags;
 	int _currentStep;
-	Common::Stack<uint16> _stack;	// For the flood fill routines
 };
 
 } // End of namespace Agi

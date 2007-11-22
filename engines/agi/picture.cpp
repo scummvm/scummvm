@@ -25,6 +25,7 @@
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
+#include "common/stack.h"
 
 namespace Agi {
 
@@ -230,9 +231,6 @@ INLINE int PictureMgr::isOkFillHere(int x, int y) {
 	if (x < 0 || x >= _width || y < 0 || y >= _height)
 		return false;
 
-	if (!_scrOn && !_priOn)
-		return false;
-
 	p = _vm->_game.sbuf16c[y * _width + x];
 
 	if (_flags & kPicFTrollMode)
@@ -250,57 +248,49 @@ INLINE int PictureMgr::isOkFillHere(int x, int y) {
 /**************************************************************************
 ** agi_fill
 **************************************************************************/
-void PictureMgr::fillScanline(int x, int y) {
-	unsigned int c;
-	int newspanUp, newspanDown;
-
-	if (!isOkFillHere(x, y))
+void PictureMgr::agiFill(unsigned int x, unsigned int y) {
+	if (!_scrOn && !_priOn)
 		return;
 
-	/* Scan for left border */
-	for (c = x - 1; isOkFillHere(c, y); c--);
+	// Push initial pixel on the stack
+	Common::Stack<Common::Point> stack;
+	stack.push(Common::Point(x,y));
 
-	newspanUp = newspanDown = 1;
-	for (c++; isOkFillHere(c, y); c++) {
-		putVirtPixel(c, y);
-		if (isOkFillHere(c, y - 1)) {
-			if (newspanUp) {
-				_stack.push(c + (_width * 2) * (y - 1));
-				newspanUp = 0;
-			}
-		} else {
-			newspanUp = 1;
-		}
+	// Exit if stack is empty
+	while (!stack.empty()) {
+		Common::Point p = stack.pop();
+		unsigned int c;
+		int newspanUp, newspanDown;
 
-		if (isOkFillHere(c, y + 1)) {
-			if (newspanDown) {
-				_stack.push(c + (_width * 2) * (y + 1));
-				newspanDown = 0;
+		if (!isOkFillHere(p.x, p.y))
+			continue;
+
+		/* Scan for left border */
+		for (c = p.x - 1; isOkFillHere(c, p.y); c--)
+			;
+
+		newspanUp = newspanDown = 1;
+		for (c++; isOkFillHere(c, p.y); c++) {
+			putVirtPixel(c, p.y);
+			if (isOkFillHere(c, p.y - 1)) {
+				if (newspanUp) {
+					stack.push(Common::Point(c,p.y-1));
+					newspanUp = 0;
+				}
+			} else {
+				newspanUp = 1;
 			}
-		} else {
-			newspanDown = 1;
+
+			if (isOkFillHere(c, p.y + 1)) {
+				if (newspanDown) {
+					stack.push(Common::Point(c,p.y+1));
+					newspanDown = 0;
+				}
+			} else {
+				newspanDown = 1;
+			}
 		}
 	}
-}
-
-void PictureMgr::agiFill(unsigned int x, unsigned int y) {
-	uint16 c;
-	_stack.push(x + (_width * 2) * y);
-
-	for (;;) {
-		// Exit if stack is empty
-		if (_stack.empty())
-			break;
-
-		c = _stack.pop();
-
-		x = c % (_width * 2);
-		y = c / (_width * 2);
-
-		fillScanline(x, y);
-	}
-
-	_stack.clear();
 }
 
 /**************************************************************************
