@@ -19,7 +19,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.11.0svn</string>
+	<string>@VERSION@</string>
 	<key>CFBundleVersion</key>
 	<string>svn</string>
 </dict>

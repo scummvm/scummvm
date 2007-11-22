@@ -33,6 +33,7 @@ print "Setting version to '$VERSION'\n";
 my @subs_files = qw(
 	backends/platform/ds/arm9/makefile
 	base/internal_version.h
+	dists/iphone/Info.plist
 	dists/macosx/Info.plist
 	dists/redhat/scummvm.spec
 	dists/scummvm.rc
