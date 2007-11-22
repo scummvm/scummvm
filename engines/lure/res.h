@@ -47,7 +47,7 @@ struct TalkDialogDetails {
 	bool active;
 };
 
-#define NUM_GIVE_TALK_IDS 7
+#define NUM_GIVE_TALK_IDS 6
 
 class Resources {
 private:
