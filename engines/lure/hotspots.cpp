@@ -104,8 +104,6 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	assert(character);
 
-	Common::Language language = LureEngine::getReference().getLanguage();
-
 	_originalId = objType;
 	_data = NULL;
 	_anim = NULL;
