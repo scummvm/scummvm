@@ -730,7 +730,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	bool doneFlag = false;
 	while (!abortFlag && !doneFlag) {
 		// Provide highlighting of lines to select a save slot
-		while (!(mouse.lButton() && (selectedLine != -1)) && !mouse.rButton()) {
+		while (!abortFlag && !(mouse.lButton() && (selectedLine != -1)) && !mouse.rButton()) {
 			abortFlag = events.quitFlag;
 			if (abortFlag) break;
 
