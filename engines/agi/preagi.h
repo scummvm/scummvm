@@ -54,7 +54,7 @@ public:
 	}
 
 	GfxMgr *_gfx;
-	SoundMgr *_sound;
+	//SoundMgr *_sound;
 	PictureMgr *_picture;
 	PreAGI_Console *_console;
 

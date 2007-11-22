@@ -297,46 +297,27 @@ void AgiEngine::agiTimerFunctionLow(void *refCon) {
 }
 
 void AgiEngine::clearImageStack(void) {
-	_imageStackPointer = 0;
+	_imageStack.clear();
 }
 
 void AgiEngine::releaseImageStack(void) {
-	if (_imageStack)
-		free(_imageStack);
-	_imageStack = NULL;
-	_stackSize = 0;
-	_imageStackPointer = 0;
+	_imageStack.clear();
 }
 
 void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 		int16 p4, int16 p5, int16 p6, int16 p7) {
-	struct ImageStackElement *pnew;
+	ImageStackElement pnew;
 
-	if (_imageStackPointer == _stackSize) {
-		if (_stackSize == 0) {	/* first call */
-			_imageStack = (ImageStackElement *)malloc(INITIAL_IMAGE_STACK_SIZE * sizeof(ImageStackElement));
-			_stackSize = INITIAL_IMAGE_STACK_SIZE;
-		} else {	/* has to grow */
-			struct ImageStackElement *newStack;
-			newStack = (ImageStackElement *)malloc(2 * _stackSize * sizeof(ImageStackElement));
-			memcpy(newStack, _imageStack, _stackSize * sizeof(ImageStackElement));
-			free(_imageStack);
-			_imageStack = newStack;
-			_stackSize *= 2;
-		}
-	}
+	pnew.type = type;
+	pnew.parm1 = p1;
+	pnew.parm2 = p2;
+	pnew.parm3 = p3;
+	pnew.parm4 = p4;
+	pnew.parm5 = p5;
+	pnew.parm6 = p6;
+	pnew.parm7 = p7;
 
-	pnew = &_imageStack[_imageStackPointer];
-	_imageStackPointer++;
-
-	pnew->type = type;
-	pnew->parm1 = p1;
-	pnew->parm2 = p2;
-	pnew->parm3 = p3;
-	pnew->parm4 = p4;
-	pnew->parm5 = p5;
-	pnew->parm6 = p6;
-	pnew->parm7 = p7;
+	_imageStack.push(pnew);
 }
 
 void AgiEngine::replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
@@ -659,10 +640,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	g_tickTimer = 0;
 
 	_intobj = NULL;
-
-	_stackSize = 0;
-	_imageStack = NULL;
-	_imageStackPointer = 0;
 
 	_menu = NULL;
 

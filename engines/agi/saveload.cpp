@@ -53,7 +53,6 @@ static const uint32 AGIflag=MKID_BE('AGI:');
 int AgiEngine::saveGame(const char *fileName, const char *description) {
 	char gameIDstring[8]="gameIDX";
 	int i;
-	struct ImageStackElement *ptr = _imageStack;
 	Common::OutSaveFile *out;
 	int result = errOK;
 
@@ -190,16 +189,16 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 
 	/* Save image stack */
 
-	for (i = 0; i < _imageStackPointer; i++) {
-		ptr = &_imageStack[i];
-		out->writeByte(ptr->type);
-		out->writeSint16BE(ptr->parm1);
-		out->writeSint16BE(ptr->parm2);
-		out->writeSint16BE(ptr->parm3);
-		out->writeSint16BE(ptr->parm4);
-		out->writeSint16BE(ptr->parm5);
-		out->writeSint16BE(ptr->parm6);
-		out->writeSint16BE(ptr->parm7);
+	for (i = 0; i < _imageStack.size(); i++) {
+		ImageStackElement ise = _imageStack[i];
+		out->writeByte(ise.type);
+		out->writeSint16BE(ise.parm1);
+		out->writeSint16BE(ise.parm2);
+		out->writeSint16BE(ise.parm3);
+		out->writeSint16BE(ise.parm4);
+		out->writeSint16BE(ise.parm5);
+		out->writeSint16BE(ise.parm6);
+		out->writeSint16BE(ise.parm7);
 	}
 	out->writeByte(0);
 

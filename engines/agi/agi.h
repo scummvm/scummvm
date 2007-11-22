@@ -34,6 +34,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/hash-str.h"
+#include "common/stack.h"
 
 #include "engines/engine.h"
 
@@ -658,12 +659,6 @@ public:
 
 	AgiBase(OSystem *syst, const AGIGameDescription *gameDesc);
 
-	#define INITIAL_IMAGE_STACK_SIZE 32
-
-	int _stackSize;
-	ImageStackElement *_imageStack;
-	int _imageStackPointer;
-
 	virtual void clearImageStack() = 0;
 	virtual void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 		int16 p4, int16 p5, int16 p6, int16 p7) = 0;
@@ -745,6 +740,8 @@ public:
 	SoundMgr *_sound;
 	PictureMgr *_picture;
 	AgiLoader *_loader;	/* loader */
+
+	Common::Stack<ImageStackElement> _imageStack;
 
 	void clearImageStack();
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
