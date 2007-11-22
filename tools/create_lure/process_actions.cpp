@@ -64,6 +64,8 @@ struct JumpOffsetsRecord {
 JumpOffsetsRecord jumpOffsets[] = {
 	{EN_ANY, {0x87be, 0x881c}},
 	{IT_ITA, {0x881c, 0x887a}},
+	{FR_FRA, {0x8bbf, 0x8c18}},
+	{DE_DEU, {0x8c1c, 0x8c75}},
 	{UNK_LANG, {0, 0}}
 };
 
@@ -139,6 +141,19 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 		if (startOffset == 0x700f) { startOffset = 0x6f1d; maxOffset = 0x70a5; }
 		if (startOffset == 0x7866) { startOffset = 0x740a; maxOffset = 0x7876; }
 		if (startOffset == 0x3600) { startOffset = 0x35c6; maxOffset = 0x3622; }
+		break;
+	case FR_FRA:
+		if (startOffset == 0x7eab) { startOffset = 0x7e7d; maxOffset = 0x7ed5; }
+		if (startOffset == 0x7a88) { startOffset = 0x793c; maxOffset = 0x7ab2; }
+		if (startOffset == 0x7328) { startOffset = 0x72ae; maxOffset = 0x7382; }
+		if (startOffset == 0x702f) { startOffset = 0x6f3d; maxOffset = 0x70a3; }
+		if (startOffset == 0x7886) { startOffset = 0x742a; maxOffset = 0x7896; }
+	case DE_DEU:
+		if (startOffset == 0x7edb) { startOffset = 0x7ead; maxOffset = 0x7f05; }
+		if (startOffset == 0x7ab8) { startOffset = 0x796c; maxOffset = 0x7ae2; }
+		if (startOffset == 0x7358) { startOffset = 0x72de; maxOffset = 0x73b2; }
+		if (startOffset == 0x705f) { startOffset = 0x6f6d; maxOffset = 0x70d3; }
+		if (startOffset == 0x78b6) { startOffset = 0x745a; maxOffset = 0x78c6; }
 		break;
 	default:
 		break;
@@ -346,6 +361,10 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 	// Get a list of the offsets for each room
 	uint16 raOffset = 0x4D10;
 	if (language == IT_ITA) raOffset = 0x4dc0;
+	else if (language == FR_FRA) raOffset = 0x4df0;
+	else if (language == DE_DEU) raOffset = 0x4de0;
+	else if (language != EN_ANY) errorExit("read_action_sequence: Unknown language");
+
 	lureExe.seek(dataSegment + raOffset, SEEK_SET);
 	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex) {
 		randomActions[roomIndex].offset = lureExe.readWord();
@@ -407,9 +426,18 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 		process_entry(0xbc55, data, totalSize);
 		process_entry(0x712c, data, totalSize);
 		break;
+	case FR_FRA:
+		process_entry(0x13c2, data, totalSize);
+		process_entry(0xbc75, data, totalSize);
+		process_entry(0x714c, data, totalSize);
+		break;
+	case DE_DEU:
+		process_entry(0x13c2, data, totalSize);
+		process_entry(0xbca5, data, totalSize);
+		process_entry(0x717c, data, totalSize);
+		break;
 	default:
-		printf("Unknown language\n");
-		exit(1);
+		errorExit("read_action_sequence: Unknown language");
 	}
 
 	// Process the script engine list 
@@ -422,6 +450,9 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 
 	uint16 hsOffset = 0x5d98;
 	if (language == IT_ITA) hsOffset = 0x5e58;
+	else if (language == FR_FRA) hsOffset = 0x5e78;
+	else if (language == DE_DEU) hsOffset = 0x5ea8;
+	else if (language != EN_ANY) errorExit("read_action_sequence: Unknown language");
 
 	hotspotIndex = 0;
 	for (;;) {
@@ -446,7 +477,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 		{
 			if (randomActions[roomIndex].entries[index].offset != 0xfffe)
 			{
-//				printf("room=%d entry=%xh\n", roomIndex+1, randomActions[roomIndex].entries[index].offset);
+//printf("room=%d entry=%xh\n", roomIndex+1, randomActions[roomIndex].entries[index].offset);
 				process_entry(randomActions[roomIndex].entries[index].offset, data, totalSize);
 			}
 		}

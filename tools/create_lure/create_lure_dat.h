@@ -30,7 +30,7 @@
 #include "common/util.h"
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 24
+#define VERSION_MINOR 25
 
 #define DIALOG_SIZE 0x150
 
@@ -54,7 +54,6 @@
 
 #define NUM_ROOM_EXITS 50
 
-#define MESSAGES_SEGMENT 0x20b60
 #define MESSAGES_SEGMENT_SIZE 0x490
 
 #define MAX_HOTSPOTS 0x100
@@ -418,5 +417,7 @@ extern void add_talk_offset(uint16 offset);
 
 extern Common::Language language;
 extern uint16 dataSegment;
+
+extern void errorExit(const char *msg);
 
 #endif
