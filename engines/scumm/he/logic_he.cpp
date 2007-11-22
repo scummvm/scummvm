@@ -468,19 +468,19 @@ void LogicHEfunshop::op_1004(int32 *args) {
 		data[i + 1] = sin(at + a1) * sq;
 	}
 
-	int minx = 2;
-	int miny = 3;
+	double minx = data[0];
+	double miny = data[1];
 
 	for (i = 0; i <= 6; i += 2) {
-		if (data[i] < data[minx])
-			minx = i;
-		if (data[i + 1] < data[miny])
-			miny = i + 1;
+		if (data[i] < minx)
+			minx = data[i];
+		if (data[i + 1] < miny)
+			miny = data[i + 1];
 	}
 
 	for (i = 0; i <= 6; i += 2) {
-		data[i] -= data[minx];
-		data[i + 1] -= data[miny];
+		data[i] -= minx;
+		data[i + 1] -= miny;
 
 		putInArray(args[0], 0, 519 + i, scumm_round(data[i]));
 		putInArray(args[0], 0, 519 + i + 1, scumm_round(data[i + 1]));
@@ -496,8 +496,8 @@ void LogicHEfunshop::op_1005(int32 *args) {
 		data[i - 520 + 1] = getFromArray(args[0], 0, i);
 	}
 
-	args1 = args[1] / 100.0 + 1;
-	args2 = args[2] / 100.0 + 1;
+	args1 = (double)args[1] * 0.01 + 1;
+	args2 = (double)args[2] * 0.01 + 1;
 
 	for (i = 0; i < 4; i++) {
 		data[2 * i] *= args1;
