@@ -376,6 +376,16 @@ public:
 
 	void 		waitTime(uint32 t);
 
+	enum {
+		kInputModeGame = 0,
+		kInputModeComment = 1
+	};
+
+	int		_inputMode;
+
+	void updateGameInput();
+	void updateCommentInput();
+
 	uint	_lookup;
 	Common::Stack<OpcodeSet*>	_opcodes;
 	Common::Stack<Table*> 		_statements;

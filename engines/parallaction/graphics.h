@@ -231,6 +231,12 @@ public:
 	void backupGetBackground(GetData *data, int16 x, int16 y);
 	void restoreGetBackground(const Common::Rect& r, byte *data);
 
+	void setDialogueBalloon(char *text, uint16 x, uint16 y, uint16 maxwidth, uint16 winding, byte textColor);
+	void setItem(Frames* frames, uint16 x, uint16 y);
+	void setItemFrame(uint item, uint16 f);
+	void hideDialogueStuff();
+	void freeBalloons();
+	void freeItems();
 
 	// low level surfaces
 	void clearScreen(Gfx::Buffers buffer);
@@ -280,14 +286,41 @@ protected:
 	bool				_halfbrite;
 
 protected:
+	struct Balloon {
+		uint16 x;
+		uint16 y;
+		uint16 winding;
+		Graphics::Surface surface;
+	} _balloons[5];
+
+	uint	_numBalloons;
+
+	struct Item {
+		uint16 x;
+		uint16 y;
+		uint16 frame;
+		Frames *data;
+
+		Common::Rect rect;
+	} _items[2];
+
+	uint	_numItems;
+
 	void drawInventory();
 	void drawLabel();
+	void drawItems();
+	void drawBalloons();
+
 
 	void initBuffers(int w, int h);
 	void freeBuffers();
 
 	void copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch);
 
+	Balloon *createBalloon(char *text, uint16 maxwidth, uint16 winding);
+
+	void drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
+	bool drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
 	void blit(const Common::Rect& r, uint16 z, byte *data, Graphics::Surface *surf);
 	void flatBlit(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor);
 };

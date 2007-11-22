@@ -298,10 +298,40 @@ void Gfx::drawInventory() {
 	g_system->copyRectToScreen(data, r.width(), r.left, r.top, r.width(), r.height());
 }
 
+void Gfx::drawItems() {
+	if (_numItems == 0) {
+		return;
+	}
+
+	Graphics::Surface *surf = g_system->lockScreen();
+	for (uint i = 0; i < _numItems; i++) {
+		flatBlit(_items[i].rect, _items[i].data->getData(_items[i].frame), surf, 0);
+	}
+	g_system->unlockScreen();
+}
+
+void Gfx::drawBalloons() {
+	if (_numBalloons == 0) {
+		return;
+	}
+
+	Graphics::Surface *surf = g_system->lockScreen();
+	for (uint i = 0; i < _numBalloons; i++) {
+		Common::Rect r(_balloons[i].surface.w, _balloons[i].surface.h);
+		r.moveTo(_balloons[i].x, _balloons[i].y);
+		flatBlit(r, (byte*)_balloons[i].surface.getBasePtr(0, 0), surf, 2);
+	}
+	g_system->unlockScreen();
+}
+
 void Gfx::updateScreen() {
 	g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _buffers[kBitFront]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
 
 	drawInventory();
+
+	drawItems();
+	drawBalloons();
+
 	drawLabel();
 
 	g_system->updateScreen();
@@ -809,6 +839,8 @@ Gfx::Gfx(Parallaction* vm) :
 
 	setPalette(_palette);
 
+	_numBalloons = 0;
+	_numItems = 0;
 	_label = 0;
 
 	_screenX = 0;
@@ -871,5 +903,137 @@ void Gfx::freeBuffers() {
 	_buffers[kBitBack] = 0;
 }
 
+
+void Gfx::setItem(Frames* frames, uint16 x, uint16 y) {
+	_items[_numItems].data = frames;
+	_items[_numItems].x = x;
+	_items[_numItems].y = y;
+	_numItems++;
+}
+
+void Gfx::setItemFrame(uint item, uint16 f) {
+	assert(item < _numItems);
+	_items[item].frame = f;
+	_items[item].data->getRect(f, _items[item].rect);
+	_items[item].rect.moveTo(_items[item].x, _items[item].y);
+}
+
+Gfx::Balloon *Gfx::createBalloon(char *text, uint16 maxwidth, uint16 winding) {
+	assert(_numBalloons < 5);
+
+	Gfx::Balloon *balloon = &_balloons[_numBalloons];
+	_numBalloons++;
+
+	int16 w, h;
+	getStringExtent(text, maxwidth, &w, &h);
+
+	balloon->surface.create(w + 5, h + 9, 1);
+	balloon->surface.fillRect(Common::Rect(w + 5, h + 9), 2);
+
+	Common::Rect r(w + 5, h);
+	balloon->surface.fillRect(r, 0);
+	r.grow(-1);
+	balloon->surface.fillRect(r, 1);
+
+	// draws tail
+	// TODO: this bitmap tail should only be used for Dos games. Amiga should use a polygon fill.
+	winding = (winding == 0 ? 1 : 0);
+	Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
+	s.moveTo(r.width()/2 - 5, r.bottom - 1);
+	flatBlit(s, _resBalloonTail[winding], &balloon->surface, 2);
+
+	return balloon;
+}
+
+
+void Gfx::setDialogueBalloon(char *text, uint16 x, uint16 y, uint16 maxwidth, uint16 winding, byte textColor) {
+
+	Common::Rect rect;
+
+	setFont(_vm->_dialogueFont);
+	Gfx::Balloon *balloon = createBalloon(text, maxwidth, winding);
+	drawWrappedText(&balloon->surface, text, textColor, maxwidth);
+
+	balloon->x = x;
+	balloon->y = y;
+}
+
+void Gfx::freeBalloons() {
+	for (uint i = 0; i < _numBalloons; i++) {
+		_balloons[i].surface.free();
+	}
+	_numBalloons = 0;
+}
+
+void Gfx::freeItems() {
+	_numItems = 0;
+}
+
+void Gfx::hideDialogueStuff() {
+	freeItems();
+	freeBalloons();
+}
+
+void Gfx::drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color) {
+	byte *dst = (byte*)surf->getBasePtr(x, y);
+	_font->setColor(color);
+	_font->drawString(dst, surf->w, text);
+}
+
+bool Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth) {
+
+	uint16 lines = 0;
+	bool rv = false;
+	uint16 linewidth = 0;
+
+	uint16 rx = 10;
+	uint16 ry = 4;
+
+	char token[40];
+
+	if (wrapwidth == -1)
+		wrapwidth = _vm->_screenWidth;
+
+	while (strlen(text) > 0) {
+
+		text = parseNextToken(text, token, 40, "   ", true);
+
+		if (!scumm_stricmp(token, "%p")) {
+			lines++;
+			rx = 10;
+			ry = 4 + lines*10;	// y
+
+			strcpy(token, "> .......");
+			strncpy(token+2, _password, strlen(_password));
+			rv = true;
+		} else {
+
+			linewidth += getStringWidth(token);
+
+			if (linewidth > wrapwidth) {
+				// wrap line
+				lines++;
+				rx = 10;			// x
+				ry = 4 + lines*10;	// y
+				linewidth = getStringWidth(token);
+			}
+
+			if (!scumm_stricmp(token, "%s")) {
+				sprintf(token, "%d", _score);
+			}
+
+		}
+
+		drawText(surf, rx, ry, token, color);
+
+		rx += getStringWidth(token) + getStringWidth(" ");
+		linewidth += getStringWidth(" ");
+
+		text = Common::ltrim(text);
+	}
+
+	return rv;
+
+}
 
 } // namespace Parallaction

@@ -270,6 +270,8 @@ void waitUntilLeftClick() {
 
 void Parallaction::runGame() {
 
+	_inputMode = kInputModeGame;
+
 	while ((_engineFlags & kEngineQuit) == 0) {
 		updateInput();
 
@@ -283,14 +285,13 @@ void Parallaction::runGame() {
 			changeLocation(_location._name);
 		}
 
-		eraseAnimations();
-
-		runScripts();
-		walk();
-
-		runJobs();
-
-		drawAnimations();
+		if (_inputMode == kInputModeGame) {
+			eraseAnimations();
+			runScripts();
+			walk();
+			runJobs();
+			drawAnimations();
+		}
 
 		updateView();
 
@@ -387,11 +388,7 @@ void Parallaction::processInput(InputData *data) {
 
 
 
-
-
-
-
-void Parallaction::updateInput() {
+void Parallaction::updateGameInput() {
 
 	int16 keyDown = readInput();
 
@@ -428,6 +425,27 @@ void Parallaction::updateInput() {
 
 	if (_input._event != kEvNone)
 		processInput(&_input);
+
+}
+
+void Parallaction::updateCommentInput() {
+	waitUntilLeftClick();
+
+	_gfx->hideDialogueStuff();
+	_inputMode = kInputModeGame;
+}
+
+void Parallaction::updateInput() {
+
+	switch (_inputMode) {
+	case kInputModeComment:
+		updateCommentInput();
+		break;
+
+	case kInputModeGame:
+		updateGameInput();
+		break;
+	}
 
 	return;
 }
