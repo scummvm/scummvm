@@ -228,6 +228,9 @@ void PictureMgr::absoluteDrawLine() {
 INLINE int PictureMgr::isOkFillHere(int x, int y) {
 	uint8 p;
 
+	x += _xOffset;
+	y += _yOffset;
+
 	if (x < 0 || x >= _width || y < 0 || y >= _height)
 		return false;
 

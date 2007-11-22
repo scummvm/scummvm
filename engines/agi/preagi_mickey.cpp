@@ -664,14 +664,6 @@ void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 
 	if (iObj == IDI_MSA_OBJECT_CRYSTAL)
 		_vm->_picture->setPictureFlags(kPicFStep);
-
-	// HACK: attempting to draw the scale in Mickey's house causes a crash, so we don't draw it
-	if (iObj == IDI_MSA_OBJECT_SCALE)
-		return;
-
-	// HACK: attempting to draw the rock in Jupiter causes a crash, so we don't draw it
-	if (iObj == IDI_MSA_OBJECT_ROCK_1 || iObj == IDI_MSA_OBJECT_ROCK_2 || iObj == IDI_MSA_OBJECT_ROCK_3)
-		return;
 	
 	_vm->_picture->setOffset(x0, y0);
 	_vm->_picture->decodePicture(buffer, size, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
