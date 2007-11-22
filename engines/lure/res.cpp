@@ -498,7 +498,7 @@ void Resources::setTalkingCharacter(uint16 id) {
 		assert(character);
 
 		// Add the special "voice" animation above the character
-		Hotspot *hotspot = new Hotspot(character, VOICE_ANIM_INDEX);
+		Hotspot *hotspot = new Hotspot(character, VOICE_ANIM_IDX);
 		addHotspot(hotspot);
 	}
 }

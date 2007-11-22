@@ -105,8 +105,6 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	assert(character);
 
 	Common::Language language = LureEngine::getReference().getLanguage();
-	uint16 animId = 0x5810;
-	if (language == IT_ITA) animId = 0x58D0;
 
 	_originalId = objType;
 	_data = NULL;
@@ -125,7 +123,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 	_skipFlag = false;
 
 	switch (objType) {
-	case VOICE_ANIM_INDEX:
+	case VOICE_ANIM_IDX:
 		_roomNumber = character->roomNumber();
 		_destHotspotId = character->hotspotId();
 		_startX = character->x() + character->talkX() + 12;
@@ -143,11 +141,11 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 		_voiceCtr = 40;
 
 		_tickHandler = HotspotTickHandlers::getHandler(VOICE_TICK_PROC_ID);
-		setAnimation(animId);
+		setAnimationIndex(VOICE_ANIM_INDEX);
 		break;
 
-	case PUZZLED_ANIM_INDEX:
-	case EXCLAMATION_ANIM_INDEX:
+	case PUZZLED_ANIM_IDX:
+	case EXCLAMATION_ANIM_IDX:
 		_roomNumber = character->roomNumber();
 		_hotspotId = 0xfffe;
 		_startX = character->x() + character->talkX() + 12;
@@ -163,8 +161,8 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 
 		_destHotspotId = character->hotspotId();
 		_tickHandler = HotspotTickHandlers::getHandler(PUZZLED_TICK_PROC_ID);
-		setAnimation(animId);
-		setFrameNumber(objType == PUZZLED_ANIM_INDEX ? 1 : 2);
+		setAnimation(VOICE_ANIM_INDEX);
+		setFrameNumber(objType == PUZZLED_ANIM_IDX ? 1 : 2);
 		
 		character->setFrameCtr(_voiceCtr);
 		break;
@@ -787,12 +785,12 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 
 	if (idVal == 0x76) {
 		// Special code id for showing the puzzled talk bubble
-		hotspot = new Hotspot(this, PUZZLED_ANIM_INDEX);
+		hotspot = new Hotspot(this, PUZZLED_ANIM_IDX);
 		res.addHotspot(hotspot);
 
 	} else if (idVal == 0x120) {
 		// Special code id for showing the exclamation talk bubble
-		hotspot = new Hotspot(this, EXCLAMATION_ANIM_INDEX);
+		hotspot = new Hotspot(this, EXCLAMATION_ANIM_IDX);
 		res.addHotspot(hotspot);
 
 	} else if (idVal >= 0x8000) {

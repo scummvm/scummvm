@@ -34,7 +34,7 @@ namespace Lure {
 
 #define SUPPORT_FILENAME "lure.dat"
 #define LURE_DAT_MAJOR 1
-#define LURE_DAT_MINOR 24
+#define LURE_DAT_MINOR 25
 
 #define LURE_DEBUG 1
 
@@ -286,13 +286,14 @@ enum CursorType {CURSOR_ARROW = 0, CURSOR_DISK = 1, CURSOR_TIME_START = 2,
 
 // Misc constants
 #define GENERAL_MAGIC_ID 42
-#define VOICE_ANIM_INDEX 1
-#define PUZZLED_ANIM_INDEX 2
-#define EXCLAMATION_ANIM_INDEX 3
+#define VOICE_ANIM_IDX 1
+#define PUZZLED_ANIM_IDX 2
+#define EXCLAMATION_ANIM_IDX 3
 #define DEFAULT_VOLUME 192
 
 // Animation record indexes
 #define PLAYER_FIGHT_ANIM_INDEX 10
+#define VOICE_ANIM_INDEX 20
 #define BLACKSMITH_HAMMERING_ANIM_INDEX 21
 #define EWAN_ANIM_INDEX 22
 #define EWAN_ALT_ANIM_INDEX 23
