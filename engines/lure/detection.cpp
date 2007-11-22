@@ -57,12 +57,10 @@ static const GameSettings lure_games[] = {
 										"b2a8aa6d7865813a17a3c636e063572e", "disk1.vga" },
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::IT_ITA,
 										"cf69d5ada228dd74f89046691c16aafb", "disk1.vga" },
-/*
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::DE_DEU,
 										"7aa19e444dab1ac7194d9f7a40ffe54a", "disk1.vga" },
 	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::FR_FRA,
 										"1c94475c1bb7e0e88c1757d3b5377e94", "disk1.vga" },
-*/
 	{ 0, 0, 0, 0, Common::UNK_LANG, 0, 0 }
 };
 
