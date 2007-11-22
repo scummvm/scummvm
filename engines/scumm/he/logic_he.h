@@ -121,6 +121,7 @@ public:
 private:
 	int op_1001(int32 *args);
 	int op_1002(int32 *args);
+	int op_1003(int32 *args);
 	int op_1004(int32 *args);
 };
 

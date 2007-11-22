@@ -864,6 +864,25 @@ int LogicHEsoccer::op_1002(int32 *args) {
 	return _vm->VAR(2) * args[0];
 }
 
+int LogicHEsoccer::op_1003(int32 *args) {
+	double data[6], out[3];
+	int i;
+
+	for (i = 0; i < 6; i++) {
+		data[i] = getFromArray(args[0], 0, i);
+	}
+
+	out[0] = data[1] * data[5] - data[4] * data[2];
+	out[1] = data[5] * data[0] - data[3] * data[2];
+	out[2] = data[4] * data[0] - data[3] * data[1];
+
+	for (i = 0; i < 3; i++) {
+		putInArray(args[0], 0, i, scumm_round(out[i]));
+	}
+
+	return 1;
+}
+
 int LogicHEsoccer::op_1004(int32 *args) {
 	// Identical to LogicHEfootball::op_1004
 	double res, a2, a4, a5;
