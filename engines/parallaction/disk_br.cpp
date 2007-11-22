@@ -166,13 +166,13 @@ Script* DosDisk_br::loadScript(const char* name) {
 }
 
 //	there are no Head resources in Big Red Adventure
-Graphics::Surface* DosDisk_br::loadHead(const char* name) {
+Frames* DosDisk_br::loadHead(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadHead");
 	return 0;
 }
 
 
-Graphics::Surface* DosDisk_br::loadPointer(const char *name) {
+Frames* DosDisk_br::loadPointer(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadPointer");
 
 	char path[PATH_LEN];
@@ -193,7 +193,7 @@ Graphics::Surface* DosDisk_br::loadPointer(const char *name) {
 	surf->create(width, height, 1);
 	stream.read(surf->pixels, width * height);
 
-	return surf;
+	return new SurfaceToFrames(surf);
 }
 
 
@@ -220,7 +220,7 @@ void genSlidePath(char *path, const char* name) {
 	sprintf(path, "%s.bmp", name);
 }
 
-Graphics::Surface* DosDisk_br::loadStatic(const char* name) {
+Frames* DosDisk_br::loadStatic(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadStatic");
 	return 0;
 }

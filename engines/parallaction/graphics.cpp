@@ -565,14 +565,17 @@ void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
 
 void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 
-	byte *t = (byte*)data->_cnv->pixels;
+	byte *t = (byte*)data->_cnv->getData(0);
 	byte *s = (byte*)_buffers[kBitBack]->getBasePtr(x, y);
 	byte *d = data->_backup;
 
-	uint pitch = _backgroundWidth - data->_cnv->w;
+	Common::Rect r;
+	data->_cnv->getRect(0, r);
 
-	for (uint16 i = 0; i < data->_cnv->h ; i++) {
-		for (uint16 j = 0; j < data->_cnv->w ; j++) {
+	uint pitch = _backgroundWidth - r.width();
+
+	for (uint16 i = 0; i < r.height(); i++) {
+		for (uint16 j = 0; j < r.width(); j++) {
 			*d = (*t) ? *s : 0;
 
 			d++;

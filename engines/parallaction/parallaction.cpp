@@ -432,6 +432,8 @@ void Parallaction::updateCommentInput() {
 	waitUntilLeftClick();
 
 	_gfx->hideDialogueStuff();
+	_gfx->setHalfbriteMode(false);
+
 	_inputMode = kInputModeGame;
 }
 

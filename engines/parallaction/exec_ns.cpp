@@ -482,51 +482,27 @@ void Parallaction::runCommands(CommandList& list, Zone *z) {
 //	ZONE TYPE: EXAMINE
 //
 
-//	displays character head commenting an examined object
-//
-void Parallaction::displayCharacterComment(ExamineData *data) {
-	if (data->_description == NULL) return;
+void Parallaction::displayComment(ExamineData *data) {
+	if (!data->_description) {
+		return;
+	}
 
-	_gfx->setDialogueBalloon(data->_description, 140, 10, 130, 0, 0);
-	_gfx->setItem(_char._talk, 190, 80);
-	_gfx->setItemFrame(0, 0);
+	if (data->_filename) {
+		_gfx->setHalfbriteMode(true);
+		_gfx->setDialogueBalloon(data->_description, 0, 90, 130, 0, 0);
+		Common::Rect r;
+		data->_cnv->getRect(0, r);
+		_gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
+		_gfx->setItemFrame(0, 0);
+		_gfx->setItem(_char._head, 100, 152);
+		_gfx->setItemFrame(1, 0);
+	} else {
+		_gfx->setDialogueBalloon(data->_description, 140, 10, 130, 0, 0);
+		_gfx->setItem(_char._talk, 190, 80);
+		_gfx->setItemFrame(0, 0);
+	}
 
 	_inputMode = kInputModeComment;
-}
-
-//	display detail view of an item (and eventually comments)
-//
-void Parallaction::displayItemComment(ExamineData *data) {
-
-	if (data->_description == NULL) return;
-
-	_gfx->setHalfbriteMode(true);
-
-	char v68[PATH_LEN];
-	strcpy(v68, data->_filename);
-	data->_cnv = _disk->loadStatic(v68);
-	_gfx->flatBlitCnv(data->_cnv, 140, (_screenHeight - data->_cnv->h)/2, Gfx::kBitFront);
-	delete data->_cnv;
-
-	int16 v6A = 0, v6C = 0;
-
-	_gfx->setFont(_dialogueFont);
-	_gfx->getStringExtent(data->_description, 130, &v6C, &v6A);
-	Common::Rect r(v6C, v6A);
-	r.moveTo(0, 90);
-	_gfx->drawBalloon(r, 0);
-	_gfx->flatBlitCnv(_char._head, 100, 152, Gfx::kBitFront);
-	_gfx->displayWrappedString(data->_description, 0, 90, 0, 130);
-
-	_gfx->updateScreen();
-
-	waitUntilLeftClick();
-
-	_gfx->setHalfbriteMode(false);
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-	_gfx->updateScreen();
-
-	return;
 }
 
 
@@ -540,11 +516,7 @@ uint16 Parallaction::runZone(Zone *z) {
 	switch(subtype) {
 
 	case kZoneExamine:
-		if (z->u.examine->_filename) {
-			displayItemComment(z->u.examine);
-		} else {
-			displayCharacterComment(z->u.examine);
-		}
+		displayComment(z->u.examine);
 		break;
 
 	case kZoneGet:
@@ -631,7 +603,9 @@ void Parallaction_ns::jobRemovePickedItem(void *parm, Job *j) {
 	static uint16 count = 0;
 
 	if (z->u.get->_cnv) {
-		Common::Rect r(z->_left, z->_top, z->_left + z->u.get->_cnv->w, z->_top + z->u.get->_cnv->h);
+		Common::Rect r;
+		z->u.get->_cnv->getRect(0, r);
+		r.moveTo(z->_left, z->_top);
 
 		_gfx->restoreGetBackground(r, z->u.get->_backup);
 	}
@@ -655,8 +629,8 @@ void Parallaction_ns::jobDisplayDroppedItem(void *parm, Job *j) {
 			_gfx->backupGetBackground(z->u.get, z->_left, z->_top);
 		}
 
-		_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBitBack);
-		_gfx->flatBlitCnv(z->u.get->_cnv, z->_left, z->_top, Gfx::kBit2);
+		_gfx->flatBlitCnv(z->u.get->_cnv, 0, z->_left, z->_top, Gfx::kBitBack);
+		_gfx->flatBlitCnv(z->u.get->_cnv, 0, z->_left, z->_top, Gfx::kBit2);
 	}
 
 	j->_count++;

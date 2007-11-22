@@ -131,6 +131,7 @@ Zone::~Zone() {
 	case kZoneExamine:
 		free(u.examine->_filename);
 		free(u.examine->_description);
+		delete u.examine->_cnv;
 		delete u.examine;
 		break;
 
@@ -148,10 +149,7 @@ Zone::~Zone() {
 
 	case kZoneGet:
 		free(u.get->_backup);
-		if (u.get->_cnv) {
-			u.get->_cnv->free();
-			delete u.get->_cnv;
-		}
+		delete u.get->_cnv;
 		delete u.get;
 		break;
 

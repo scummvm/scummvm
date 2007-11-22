@@ -84,6 +84,36 @@ struct Frames {
 };
 
 
+struct SurfaceToFrames : public Frames {
+
+	Graphics::Surface	*_surf;
+
+public:
+	SurfaceToFrames(Graphics::Surface *surf) : _surf(surf) {
+	}
+
+	~SurfaceToFrames() {
+		delete _surf;
+	}
+
+	uint16	getNum() {
+		return 1;
+	}
+	byte*	getData(uint16 index) {
+		assert(index == 0);
+		return (byte*)_surf->getBasePtr(0,0);
+	}
+	void	getRect(uint16 index, Common::Rect &r) {
+		assert(index == 0);
+		r.left = 0;
+		r.top = 0;
+		r.setWidth(_surf->w);
+		r.setHeight(_surf->h);
+	}
+
+
+};
+
 struct Cnv : public Frames {
 	uint16	_count; 	// # of frames
 	uint16	_width; 	//

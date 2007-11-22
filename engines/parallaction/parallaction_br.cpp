@@ -92,10 +92,6 @@ int Parallaction_br::init() {
 Parallaction_br::~Parallaction_br() {
 	freeFonts();
 
-	_dinoCursor->free();
-	_dougCursor->free();
-	_donnaCursor->free();
-
 	delete _dinoCursor;
 	delete _dougCursor;
 	delete _donnaCursor;
@@ -308,7 +304,10 @@ void Parallaction_br::initCursors() {
 
 void Parallaction_br::setMousePointer(int16 index) {
 
-	_system->setMouseCursor((byte*)_mouseArrow->pixels, _mouseArrow->w, _mouseArrow->h, 0, 0, 0);
+	Common::Rect r;
+	_mouseArrow->getRect(0, r);
+
+	_system->setMouseCursor(_mouseArrow->getData(0), r.width(), r.height(), 0, 0, 0);
 	_system->showMouse(true);
 
 }

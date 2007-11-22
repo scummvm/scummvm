@@ -1275,11 +1275,15 @@ void Parallaction_ns::parseGetData(Script &script, Zone *z) {
 
 		if (!scumm_stricmp(_tokens[0], "file")) {
 			data->_cnv = _disk->loadStatic(_tokens[1]);
-			data->_backup = (byte*)malloc(data->_cnv->w*data->_cnv->h);
+
+			Common::Rect r;
+			data->_cnv->getRect(0, r);
+
+			data->_backup = (byte*)malloc(r.width() * r.height());
 
 			if ((z->_flags & kFlagsRemove) == 0) {
 				_gfx->backupGetBackground(data, z->_left, z->_top);
-				_gfx->flatBlitCnv(data->_cnv, z->_left, z->_top, Gfx::kBitBack);
+				_gfx->flatBlitCnv(data->_cnv, 0, z->_left, z->_top, Gfx::kBitBack);
 			}
 		}
 
@@ -1303,6 +1307,7 @@ void Parallaction_ns::parseExamineData(Script &script, Zone *z) {
 
 		if (!scumm_stricmp(_tokens[0], "file")) {
 			data->_filename = strdup(_tokens[1]);
+			data->_cnv = _disk->loadStatic(_tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "desc")) {
 			data->_description = parseComment(script);

@@ -213,7 +213,7 @@ struct Character {
 
 
 	Animation		_ani;
-	Graphics::Surface		*_head;
+	Frames			*_head;
 	Frames		    *_talk;
 	Frames 			*_objs;
 	PathBuilder		_builder;
@@ -558,8 +558,7 @@ protected:		// members
 	void 		freeLocation();
 	void 		showLocationComment(const char *text, bool end);
 
-	void 		displayCharacterComment(ExamineData *data);
-	void 		displayItemComment(ExamineData *data);
+	void 		displayComment(ExamineData *data);
 
 	uint16 		checkDoor();
 
@@ -705,7 +704,7 @@ private:
 	void initCursors();
 
 	static byte			_mouseArrow[256];
-	Graphics::Surface			*_mouseComposedArrow;
+	Frames			*_mouseComposedArrow;
 
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
@@ -1002,10 +1001,10 @@ private:
 	void setMousePointer(int16 index);
 	void initCursors();
 
-	Graphics::Surface 	*_dinoCursor;
-	Graphics::Surface 	*_dougCursor;
-	Graphics::Surface 	*_donnaCursor;
-	Graphics::Surface 	*_mouseArrow;
+	Frames 	*_dinoCursor;
+	Frames	*_dougCursor;
+	Frames	*_donnaCursor;
+	Frames 	*_mouseArrow;
 
 
 	int showMenu();

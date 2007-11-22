@@ -146,9 +146,7 @@ int Parallaction_ns::init() {
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
 
-	_mouseComposedArrow->free();
 	delete _mouseComposedArrow;
-
 
 	delete _commandsNames;
 	delete _instructionNames;
@@ -223,7 +221,7 @@ void Parallaction_ns::setInventoryCursor(int pos) {
 
 	_activeItem._id = item->_id;
 
-	byte *v8 = (byte*)_mouseComposedArrow->pixels;
+	byte *v8 = _mouseComposedArrow->getData(0);
 
 	// FIXME: destination offseting is not clear
 	byte* s = _char._objs->getData(item->_index);

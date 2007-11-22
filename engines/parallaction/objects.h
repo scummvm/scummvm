@@ -170,7 +170,7 @@ struct Dialogue {
 
 struct GetData {	// size = 24
 	uint32			_icon;
-	Graphics::Surface		*_cnv;
+	Frames			*_cnv;
 	byte		   *_backup;
 	uint16			field_14;		// unused
 	uint16			field_16;		// unused
@@ -191,7 +191,7 @@ struct SpeakData {	// size = 36
 	}
 };
 struct ExamineData {	// size = 28
-	Graphics::Surface	*_cnv;
+	Frames	*_cnv;
 	uint16		_opBase;		   // unused
 	uint16		field_12;			// unused
 	char*		_description;

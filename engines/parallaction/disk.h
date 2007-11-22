@@ -56,10 +56,10 @@ public:
 	virtual Script* loadScript(const char* name) = 0;
 	virtual Frames* loadTalk(const char *name) = 0;
 	virtual Frames* loadObjects(const char *name) = 0;
-	virtual Graphics::Surface* loadPointer(const char *name) = 0;
-	virtual Graphics::Surface* loadHead(const char* name) = 0;
+	virtual Frames* loadPointer(const char *name) = 0;
+	virtual Frames* loadHead(const char* name) = 0;
 	virtual Font* loadFont(const char* name) = 0;
-	virtual Graphics::Surface* loadStatic(const char* name) = 0;
+	virtual Frames* loadStatic(const char* name) = 0;
 	virtual Frames* loadFrames(const char* name) = 0;
 	virtual void loadSlide(BackgroundInfo& info, const char *filename) = 0;
 	virtual void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path) = 0;
@@ -130,7 +130,7 @@ private:
 	void unpackBackground(Common::ReadStream *stream, byte *screen, byte *mask, byte *path);
 	Cnv* loadExternalCnv(const char *filename);
 	Cnv* loadCnv(const char *filename);
-	Graphics::Surface *loadExternalStaticCnv(const char *filename);
+	Frames* loadExternalStaticCnv(const char *filename);
 	void loadBackground(BackgroundInfo& info, const char *filename);
 	void loadMaskAndPath(BackgroundInfo& info, const char *name);
 	void parseDepths(Common::SeekableReadStream &stream);
@@ -148,10 +148,10 @@ public:
 	Script* loadScript(const char* name);
 	Frames* loadTalk(const char *name);
 	Frames* loadObjects(const char *name);
-	Graphics::Surface* loadPointer(const char *name);
-	Graphics::Surface* loadHead(const char* name);
+	Frames* loadPointer(const char *name);
+	Frames* loadHead(const char* name);
 	Font* loadFont(const char* name);
-	Graphics::Surface* loadStatic(const char* name);
+	Frames* loadStatic(const char* name);
 	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
@@ -164,7 +164,7 @@ class AmigaDisk_ns : public Disk_ns {
 
 protected:
 	Cnv* makeCnv(Common::SeekableReadStream &stream);
-	Graphics::Surface* makeStaticCnv(Common::SeekableReadStream &stream);
+	Frames* makeStaticCnv(Common::SeekableReadStream &stream);
 	void patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint16 height);
 	void unpackFrame(byte *dst, byte *src, uint16 planeSize);
 	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
@@ -182,10 +182,10 @@ public:
 	Script* loadScript(const char* name);
 	Frames* loadTalk(const char *name);
 	Frames* loadObjects(const char *name);
-	Graphics::Surface* loadPointer(const char *name);
-	Graphics::Surface* loadHead(const char* name);
+	Frames* loadPointer(const char *name);
+	Frames* loadHead(const char* name);
 	Font* loadFont(const char* name);
-	Graphics::Surface* loadStatic(const char* name);
+	Frames* loadStatic(const char* name);
 	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
@@ -220,10 +220,10 @@ public:
 	Script* loadScript(const char* name);
 	Frames* loadTalk(const char *name);
 	Frames* loadObjects(const char *name);
-	Graphics::Surface* loadPointer(const char *name);
-	Graphics::Surface* loadHead(const char* name);
+	Frames* loadPointer(const char *name);
+	Frames* loadHead(const char* name);
 	Font* loadFont(const char* name);
-	Graphics::Surface* loadStatic(const char* name);
+	Frames* loadStatic(const char* name);
 	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
 	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
