@@ -659,10 +659,12 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		size = READ_BE_UINT32(ptr + 4) - 8;
 
 		flags = Audio::Mixer::FLAG_AUTOFREE;
+		byte *sound = (byte *)malloc(size);
+		memcpy(sound, ptr + 8, size);
 
 		_mixer->stopID(_currentMusic);
 		_currentMusic = soundID;
-		_mixer->playRaw(Audio::Mixer::kMusicSoundType, NULL, ptr + 8, size, rate, flags, soundID);
+		_mixer->playRaw(Audio::Mixer::kMusicSoundType, NULL, sound, size, rate, flags, soundID);
 	}
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {
 		if (_vm->_imuse) {
