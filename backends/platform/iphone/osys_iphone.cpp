@@ -62,9 +62,11 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_mouseHeight(0), _mouseWidth(0), _mouseBuf(NULL), _lastMouseTap(0),
 	_secondaryTapped(false), _lastSecondaryTap(0), _landscapeMode(true),
 	_needEventRestPeriod(false), _mouseClickAndDragEnabled(false),
-	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false)
+	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false),
+	_mouseDirty(false)
 {	
 	_queuedInputEvent.type = (Common::EventType)0;
+	_lastDrawnMouseRect = Common::Rect(0, 0, 0, 0);
 }
 
 OSystem_IPHONE::~OSystem_IPHONE() {
@@ -231,7 +233,12 @@ void OSystem_IPHONE::addDirtyRect(int16 x, int16 y, int16 w, int16 h) {
 	if (_fullScreenIsDirty) {
 		return;
 	}
-	
+
+	clipRectToScreen(x, y, w, h);	
+	_dirtyRects.push_back(Common::Rect(x, y, x + w, y + h));
+}
+
+void OSystem_IPHONE::clipRectToScreen(int16 &x, int16 &y, int16 &w, int16 &h) {
 	if (x < 0) {
 		w += x;
 		x = 0;
@@ -248,16 +255,19 @@ void OSystem_IPHONE::addDirtyRect(int16 x, int16 y, int16 w, int16 h) {
 	if (h > _screenHeight - y)
 		h = _screenHeight - y;
 
-	if (w <= 0 || h <= 0)
-		return;
+	if (w < 0) {
+		w = 0;
+	}
 	
-	_dirtyRects.push_back(Common::Rect(x, y, x + w, y + h));
+	if (h < 0) {
+		h = 0;
+	}
 }
 
 void OSystem_IPHONE::updateScreen() {
 	//printf("updateScreen(): %i dirty rects.\n", _dirtyRects.size());
 
-	if (_dirtyRects.size() == 0)
+	if (_dirtyRects.size() == 0 && !_mouseDirty)
 		return;
 	
 	_fullScreenIsDirty = false;
@@ -272,7 +282,19 @@ void OSystem_IPHONE::updateScreen() {
 
 template <bool landscapeMode>
 void OSystem_IPHONE::internUpdateScreen() {
-	Common::Rect mouseRect(_mouseX - _mouseHotspotX, _mouseY - _mouseHotspotY, _mouseX + _mouseWidth - _mouseHotspotX, _mouseY + _mouseHeight - _mouseHotspotY);
+	int16 mouseX = _mouseX - _mouseHotspotX;
+	int16 mouseY = _mouseY - _mouseHotspotY;
+	int16 mouseWidth = _mouseWidth;
+	int16 mouseHeight = _mouseHeight;
+
+	clipRectToScreen(mouseX, mouseY, mouseWidth, mouseHeight);
+	Common::Rect mouseRect(mouseX, mouseY, mouseX + mouseWidth, mouseY + mouseHeight);
+
+	if (_mouseDirty) {
+		_dirtyRects.push_back(mouseRect);
+		_dirtyRects.push_back(_lastDrawnMouseRect);
+		_lastDrawnMouseRect = mouseRect;
+	}
 
 	while (_dirtyRects.size()) {
 		Common::Rect dirtyRect = _dirtyRects.remove_at(_dirtyRects.size() - 1);
@@ -331,15 +353,15 @@ void OSystem_IPHONE::internUpdateScreen() {
 			memcpy(surface, _fullscreen, _screenWidth * _screenHeight * 2);
 		else {
 			if (landscapeMode) {
+				int height = (dirtyRect.bottom - dirtyRect.top) * 2 ;
 				for (int x = dirtyRect.left; x < dirtyRect.right; x++) {
-					row = (_screenWidth - x - 1) * _screenHeight;
-					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
-						surface[row + y] = _fullscreen[row + y];
+					int offset = ((_screenWidth - x - 1) * _screenHeight + dirtyRect.top);
+					memcpy(surface + offset, _fullscreen + offset, height);
 				}
 			} else {
-				int width = dirtyRect.right - dirtyRect.left;
+				int width = (dirtyRect.right - dirtyRect.left) * 2;
 				for (int y = dirtyRect.top; y < dirtyRect.bottom; y++) {
-					int offset = y * _screenWidth;
+					int offset = y * _screenWidth + dirtyRect.left;
 					memcpy(surface + offset, _fullscreen + offset, width);
 				}
 			}		
@@ -450,17 +472,17 @@ int16 OSystem_IPHONE::getOverlayWidth() {
 bool OSystem_IPHONE::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
-	dirtyMouseCursor();
+	_mouseDirty = true;
+
 	return last;
 }
 
 void OSystem_IPHONE::warpMouse(int x, int y) {
 	//printf("warpMouse()\n");
 	
-	dirtyMouseCursor();
 	_mouseX = x;
 	_mouseY = y;
-	dirtyMouseCursor();
+	_mouseDirty = true;
 }
 
 void OSystem_IPHONE::dirtyMouseCursor() {
@@ -476,8 +498,6 @@ void OSystem_IPHONE::dirtyFullScreen() {
 
 void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
 	//printf("setMouseCursor(%i, %i)\n", hotspotX, hotspotY);
-
-	dirtyMouseCursor();
 
 	if (_mouseBuf != NULL && (_mouseWidth != w || _mouseHeight != h)) {
 		free(_mouseBuf);
@@ -497,7 +517,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	
 	memcpy(_mouseBuf, buf, w * h);
 
-	dirtyMouseCursor();
+	_mouseDirty = true;
 }
 
 bool OSystem_IPHONE::pollEvent(Common::Event &event) {

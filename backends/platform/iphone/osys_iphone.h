@@ -71,8 +71,10 @@ protected:
 	uint _mouseWidth, _mouseHeight;
 	uint _mouseX, _mouseY;
 	int _mouseHotspotX, _mouseHotspotY;
+	bool _mouseDirty;
 	long _lastMouseDown;
 	long _lastMouseTap;
+	Common::Rect _lastDrawnMouseRect;
 	Common::Event _queuedInputEvent;
 	bool _needEventRestPeriod;
 	bool _secondaryTapped;
@@ -155,6 +157,7 @@ protected:
 	template <bool landscapeMode> void internUpdateScreen();
 	void dirtyMouseCursor();
 	void dirtyFullScreen();
+	void clipRectToScreen(int16 &x, int16 &y, int16 &w, int16 &h);
 
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
