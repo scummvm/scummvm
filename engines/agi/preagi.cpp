@@ -103,10 +103,6 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 
 	_intobj = NULL;
 
-	_stackSize = 0;
-	_imageStack = NULL;
-	_imageStackPointer = 0;
-
 	_lastSentence[0] = 0;
 	memset(&_stringdata, 0, sizeof(struct StringData));
 
@@ -200,22 +196,14 @@ PreAgiEngine::~PreAgiEngine() {
 	delete _speakerStream;
 }
 
-int PreAgiEngine::init() {
-	// Initialize backend
-	_system->beginGFXTransaction();
-	initCommonGFX(false);
-	_system->initSize(320, 200);
-	_system->endGFXTransaction();
-
-	initialize();
-
-	_gfx->gfxSetPalette();
-
-	return 0;
-}
 
 int PreAgiEngine::go() {
 	setflag(fSoundOn, true);	// enable sound
+
+/*
+FIXME (Fingolfin asks): Why are Mickey, Winnie and Troll standalone classes
+ instead of being subclasses of PreAgiEngine ?
+*/
 
 	// run preagi engine main loop
 	switch (getGameID()) {
@@ -224,6 +212,7 @@ int PreAgiEngine::go() {
 				Mickey *mickey = new Mickey(this);
 				mickey->init();
 				mickey->run();
+				delete mickey;
 			}
 			break;
 		case GID_WINNIE:
@@ -231,6 +220,7 @@ int PreAgiEngine::go() {
 				Winnie *winnie = new Winnie(this);
 				winnie->init();
 				winnie->run();
+				delete winnie;
 			}
 			break;
 		case GID_TROLL:
@@ -238,6 +228,7 @@ int PreAgiEngine::go() {
 				Troll *troll = new Troll(this);
 				troll->init();
 				troll->run();
+				delete troll;
 			}
 			break;
 		default:

@@ -163,7 +163,6 @@ struct Item {
 };
 
 class Troll {
-	friend class PreAgiEngine;
 public:
 	Troll(PreAgiEngine *vm);
 
@@ -171,6 +170,8 @@ public:
 	void run();
 
 private:
+	PreAgiEngine *_vm;
+
 	int _roomPicture;
 	int _treasuresLeft;
 	int _currentRoom;
@@ -183,8 +184,6 @@ private:
 	bool _soundOn;
 
 	byte *_gameData;
-
-	PreAgiEngine *_vm;
 
 	void intro();
 	void drawPic(int iPic, bool f3IsCont, bool clear, bool troll = false);

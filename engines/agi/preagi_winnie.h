@@ -298,10 +298,8 @@ struct WTP_SAVE_GAME {
 class PreAgiEngine;
 
 class Winnie {
-	friend class PreAgiEngine;
 public:
 	Winnie(PreAgiEngine *vm);
-	//~Winnie();
 
 	void init();
 	void run();
@@ -310,6 +308,7 @@ public:
 
 private:
 	PreAgiEngine *_vm;
+
 	WTP_SAVE_GAME _game;
 	int _room;
 	int	_mist;

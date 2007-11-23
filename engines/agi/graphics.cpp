@@ -48,7 +48,7 @@ namespace Agi {
  * This array contains the 6-bit RGB values of the EGA palette exported
  * to the console drivers.
  */
-uint8 egaPalette[16 * 3] = {
+static const uint8 egaPalette[16 * 3] = {
 	0x00, 0x00, 0x00,
 	0x00, 0x00, 0x2a,
 	0x00, 0x2a, 0x00,
@@ -73,7 +73,7 @@ uint8 egaPalette[16 * 3] = {
  * from Donald Duck's Playground (1986) to Manhunter II (1989).
  * 16 RGB colors. 3 bits per color component.
  */
-uint8 atariStAgiPalette[16 * 3] = {
+static const uint8 atariStAgiPalette[16 * 3] = {
 	0x0, 0x0, 0x0,
 	0x0, 0x0, 0x7,
 	0x0, 0x4, 0x0,
@@ -110,7 +110,7 @@ uint8 atariStAgiPalette[16 * 3] = {
  * 3.001 (Black Cauldron        v1.0O 1989-02-24 (CE))
  * 3.003 (Gold Rush!            v1.0M 1989-02-28 (CE))
  */
-uint8 appleIIgsAgiPaletteV2[16 * 3] = {
+static const uint8 appleIIgsAgiPaletteV2[16 * 3] = {
 	0x0, 0x0, 0x0,
 	0x0, 0x0, 0xF,
 	0x0, 0x8, 0x0,
@@ -144,7 +144,7 @@ uint8 appleIIgsAgiPaletteV2[16 * 3] = {
  * Also used by at least the following Apple IIGS AGI versions:
  * 1.002 (Space Quest I, intro says v2.2 1987)
  */
-uint8 amigaAgiPaletteV1[16 * 3] = {
+static const uint8 amigaAgiPaletteV1[16 * 3] = {
 	0x0, 0x0, 0x0,
 	0x0, 0x0, 0xF,
 	0x0, 0x8, 0x0,
@@ -170,7 +170,7 @@ uint8 amigaAgiPaletteV1[16 * 3] = {
  * Used by at least the following Amiga AGI versions:
  * 2.202 (Space Quest II v2.0F. Intro says 1988. ScummVM 0.10.0 detects as 1986-12-09)
  */
-uint8 amigaAgiPaletteV2[16 * 3] = {
+static const uint8 amigaAgiPaletteV2[16 * 3] = {
 	0x0, 0x0, 0x0,
 	0x0, 0x0, 0xF,
 	0x0, 0x8, 0x0,
@@ -200,7 +200,7 @@ uint8 amigaAgiPaletteV2[16 * 3] = {
  * 2.333 (Manhunter II     v3.06 1989-08-17)
  * 2.333 (King's Quest III v2.15 1989-11-15)
  */
-uint8 amigaAgiPaletteV3[16 * 3] = {
+static const uint8 amigaAgiPaletteV3[16 * 3] = {
 	0x0, 0x0, 0x0,
 	0x0, 0x0, 0xB,
 	0x0, 0xB, 0x0,
@@ -222,7 +222,7 @@ uint8 amigaAgiPaletteV3[16 * 3] = {
 /**
  * 16 color amiga-ish palette.
  */
-uint8 newPalette[16 * 3] = {
+static const uint8 newPalette[16 * 3] = {
 	0x00, 0x00, 0x00,
 	0x00, 0x00, 0x3f,
 	0x00, 0x2A, 0x00,
@@ -245,7 +245,7 @@ uint8 newPalette[16 * 3] = {
  * 256 color palette used with AGI256 and AGI256-2 games.
  * Uses full 8 bits per color component.
  */
-uint8 vgaPalette[256 * 3] = {
+static const uint8 vgaPalette[256 * 3] = {
 	0x00, 0x00, 0x00,
 	0x00, 0x00, 0xA8,
 	0x00, 0xA8, 0x00,
@@ -504,7 +504,7 @@ uint8 vgaPalette[256 * 3] = {
 	0x0C, 0x0C, 0x0C
 };
 
-static uint16 cgaMap[16] = {
+static const uint16 cgaMap[16] = {
 	0x0000,			/*  0 - black */
 	0x0d00,			/*  1 - blue */
 	0x0b00,			/*  2 - green */
@@ -816,7 +816,7 @@ int GfxMgr::keypress() {
  * @param fromBits    Bits per source color component.
  * @param toBits      Bits per destination color component.
  */
-void GfxMgr::initPalette(uint8 *p, uint colorCount, uint fromBits, uint toBits) {
+void GfxMgr::initPalette(const uint8 *p, uint colorCount, uint fromBits, uint toBits) {
 	const uint srcMax  = (1 << fromBits) - 1;
 	const uint destMax = (1 << toBits) - 1;
 	for (uint col = 0; col < colorCount; col++) {

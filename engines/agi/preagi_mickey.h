@@ -730,15 +730,16 @@ struct MSA_GAME {
 };
 
 class Mickey {
-	friend class PreAgiEngine;
 public:
 	Mickey(PreAgiEngine *vm);
 	~Mickey();
 
 	void init();
 	void run();
+
 protected:
 	PreAgiEngine *_vm;
+
 	MSA_GAME _game;
 	bool _clickToMove;
 

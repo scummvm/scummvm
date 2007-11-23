@@ -758,7 +758,7 @@ AgiEngine::~AgiEngine() {
 	free(_predictiveDictText);
 }
 
-int AgiEngine::init() {
+int AgiBase::init() {
 
 	// Initialize backend
 	_system->beginGFXTransaction();

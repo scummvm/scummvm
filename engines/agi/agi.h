@@ -644,7 +644,15 @@ struct StringData {
 #define KEY_QUEUE_SIZE 16
 
 class AgiBase : public ::Engine {
+protected:
+	// Engine API
+	int init();
+
+	virtual void initialize() = 0;
+
 public:
+	GfxMgr *_gfx;
+
 	AgiButtonStyle _defaultButtonStyle;
 	AgiButtonStyle _buttonStyle;
 	Common::RenderMode _renderMode;
@@ -685,9 +693,7 @@ class AgiEngine : public AgiBase {
 	int _gameId;
 
 protected:
-	int init();
 	int go();
-	void shutdown();
 	void initialize();
 
 public:
@@ -736,7 +742,6 @@ public:
 	char _lastSentence[40];
 
 	SpritesMgr *_sprites;
-	GfxMgr *_gfx;
 	SoundMgr *_sound;
 	PictureMgr *_picture;
 	AgiLoader *_loader;	/* loader */

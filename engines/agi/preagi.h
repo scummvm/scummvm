@@ -37,9 +37,7 @@ class PreAgiEngine : public AgiBase {
 	int _gameId;
 
 protected:
-	int init();
 	int go();
-	void shutdown();
 	void initialize();
 
 public:
@@ -53,7 +51,6 @@ public:
 		return _gameId;
 	}
 
-	GfxMgr *_gfx;
 	//SoundMgr *_sound;
 	PictureMgr *_picture;
 	PreAGI_Console *_console;
