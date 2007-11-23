@@ -244,8 +244,10 @@ void Mickey::drawMenu(MSA_MENU menu, int sel0, int sel1) {
 							 attr, (char *)menu.row[iRow].entry[iWord].szText);
 		}
 	}
+
+	// Menu created, show it on screen
 	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	_vm->_system->updateScreen();
 }
 
 void Mickey::getMouseMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow, int x, int y) {
@@ -686,8 +688,6 @@ void Mickey::drawPic(int iPic) {
 	// Note that decodePicture clears the screen
 	_vm->_picture->decodePicture(buffer, size, true, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_vm->_picture->showPic(10, 0, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
-	//_vm->_gfx->doUpdate();
-	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 }
 
 void Mickey::drawRoomAnimation() {
@@ -889,9 +889,6 @@ void Mickey::drawLogo() {
 
 	_vm->_picture->showPic(10, 10, w, h);
 	
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-
 	delete [] buffer;
 }
 
@@ -1017,12 +1014,9 @@ void Mickey::printStory() {
 
 	//Set back to black
 	_vm->_gfx->clearScreen(0);
-	//_vm->_gfx->doUpdate();
-	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+	_vm->_gfx->doUpdate();
 
 	drawRoom();
-	//_vm->_gfx->doUpdate();
-	//_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 
 	_game.fStoryShown = true;
 }
@@ -1107,11 +1101,15 @@ void Mickey::flipSwitch() {
 			_game.iPlanetXtal[0] = IDI_MSA_PLANET_EARTH;
 			_game.iPlanetXtal[8] = IDI_MSA_PLANET_URANUS;
 
-			for (int i = 1; i < 8; i++) {
-				do {
-					// Earth (planet 0) and Uranus (planet 8) are excluded
-					iPlanet = _vm->rnd(IDI_MSA_MAX_PLANET - 2);
-				} while (planetIsAlreadyAssigned(iPlanet));
+			for (int i = 1; i < 9; i++) {
+				if (i < 8) {
+					do {
+						// Earth (planet 0) and Uranus (planet 8) are excluded
+						iPlanet = _vm->rnd(IDI_MSA_MAX_PLANET - 2);
+					} while (planetIsAlreadyAssigned(iPlanet));
+				} else {
+					iPlanet = IDI_MSA_PLANET_URANUS;	// Uranus is always last
+				}
 
 				_game.iPlanetXtal[i] = iPlanet;
 				iHint = _vm->rnd(5) - 1;	// clues are 0-4
@@ -1190,8 +1188,8 @@ void Mickey::inventory() {
 }
 
 void Mickey::intro() {
-	// draw sierra logo
-	drawLogo();
+	// Draw Sierra logo
+	//drawLogo();		// Original does not even show this, so we skip it too
 	//waitAnyKey();		// Not in the original, but needed so that the logo is visible
 
 	// draw title picture
@@ -1229,19 +1227,17 @@ void Mickey::intro() {
 		//Set screen to white
 		_vm->_gfx->clearScreen(15);
 		_vm->_gfx->doUpdate();
-		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+		_vm->_system->updateScreen();
 
 		_vm->_system->delayMillis(IDI_MSA_ANIM_DELAY);
 
 		//Set back to black
 		_vm->_gfx->clearScreen(0);
 		_vm->_gfx->doUpdate();
-		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
+		_vm->_system->updateScreen();
 
 		drawRoom();
 		printDesc(_game.iRoom);
-		_vm->_gfx->doUpdate();
-		_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
 	}
 
 	printExeMsg(IDO_MSA_INTRO);
