@@ -211,7 +211,7 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 		return;
 	
 	if (!_fullScreenIsDirty) {
-		_dirtyRects.push_back(Common::Rect(x, y, x + w + 1, y + h + 1));
+		_dirtyRects.push_back(Common::Rect(x, y, x + w, y + h));
 	}
 	
 		
@@ -279,7 +279,7 @@ void OSystem_IPHONE::internUpdateScreen() {
 		//printf("Drawing: (%i, %i) -> (%i, %i)\n", dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
 		int row;	
 		if (_overlayVisible) {
-			for (int x = dirtyRect.left; x < dirtyRect.right - 1; x++) {
+			for (int x = dirtyRect.left; x < dirtyRect.right; x++) {
 				if (landscapeMode) {
 					row = (_screenWidth - x - 1) * _screenHeight;
 					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
@@ -290,7 +290,7 @@ void OSystem_IPHONE::internUpdateScreen() {
 				}
 			}
 		} else {
-			for (int x = dirtyRect.left; x < dirtyRect.right - 1; x++) {
+			for (int x = dirtyRect.left; x < dirtyRect.right; x++) {
 				if (landscapeMode) {
 					row = (_screenWidth - x - 1) * _screenHeight;
 					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
@@ -305,12 +305,12 @@ void OSystem_IPHONE::internUpdateScreen() {
 		//draw mouse on top
 		int mx, my;
 		if (_mouseVisible && dirtyRect.intersects(mouseRect)) {
-			for (uint x = 0; x < _mouseWidth - 1; x++) {
+			for (uint x = 0; x < _mouseWidth; x++) {
 				mx = _mouseX + x - _mouseHotspotX;
 				row = (_screenWidth - mx - 1) * _screenHeight;
 				if (mx >= 0 && mx < _screenWidth) {
 
-					for (uint y = 0; y < _mouseHeight; ++y) {
+					for (uint y = 0; y < _mouseHeight; y++) {
 						if (_mouseBuf[y * _mouseWidth + x] != _mouseKeyColour) {
 							my = _mouseY + y - _mouseHotspotY;
 
@@ -330,14 +330,17 @@ void OSystem_IPHONE::internUpdateScreen() {
 		if (dirtyRect.right == _screenWidth && dirtyRect.bottom == _screenHeight)
 			memcpy(surface, _fullscreen, _screenWidth * _screenHeight * 2);
 		else {
-			for (int x = dirtyRect.left; x < dirtyRect.right - 1; x++) {
-				if (landscapeMode) {
+			if (landscapeMode) {
+				for (int x = dirtyRect.left; x < dirtyRect.right; x++) {
 					row = (_screenWidth - x - 1) * _screenHeight;
 					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
 						surface[row + y] = _fullscreen[row + y];
-				} else {
-					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
-						surface[y * _screenWidth + x] = _fullscreen[y * _screenWidth + x];
+				}
+			} else {
+				int width = dirtyRect.right - dirtyRect.left;
+				for (int y = dirtyRect.top; y < dirtyRect.bottom; y++) {
+					int offset = y * _screenWidth;
+					memcpy(surface + offset, _fullscreen + offset, width);
 				}
 			}		
 		}
@@ -421,7 +424,7 @@ void OSystem_IPHONE::copyRectToOverlay(const OverlayColor *buf, int pitch, int x
 		return;
 
 	if (!_fullScreenIsDirty) {
-		_dirtyRects.push_back(Common::Rect(x, y, x + w + 1, y + h + 1));		
+		_dirtyRects.push_back(Common::Rect(x, y, x + w, y + h));		
 	}
 		
 	OverlayColor *dst = _overlayBuffer + (y * _screenWidth + x);
@@ -461,7 +464,7 @@ void OSystem_IPHONE::warpMouse(int x, int y) {
 }
 
 void OSystem_IPHONE::dirtyMouseCursor() {
-	addDirtyRect(_mouseX - _mouseHotspotX, _mouseY - _mouseHotspotY, _mouseX + _mouseWidth - _mouseHotspotX + 1, _mouseY + _mouseHeight - _mouseHotspotY + 1);	
+	addDirtyRect(_mouseX - _mouseHotspotX, _mouseY - _mouseHotspotY, _mouseX + _mouseWidth - _mouseHotspotX, _mouseY + _mouseHeight - _mouseHotspotY);	
 }
 
 void OSystem_IPHONE::dirtyFullScreen() {
