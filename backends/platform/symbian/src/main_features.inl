@@ -63,8 +63,15 @@
 #ifndef DISABLE_AGI
 	"AGI "
 #endif
-
 #ifndef DISABLE_TOUCHE
 	"Touche "
 #endif
+#ifndef DISABLE_DRASCULA
+	"Drascula "
+#endif
+#ifndef DISABLE_IGOR
+	"Igor "
+#endif
+
+
 
