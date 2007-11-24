@@ -923,4 +923,40 @@ int LogicHEsoccer::op_1006(int32 *args) {
 	return 1;
 }
 
+int LogicHEsoccer::op_1007(int32 *args) {
+	// TODO: Used when the HE logo is shown
+
+	return 1;
+}
+
+int LogicHEsoccer::op_1008(int32 *args) {
+	// TODO: Used during a match (kicking?)
+
+	return 1;
+}
+
+int LogicHEsoccer::op_1012(int32 *args) {
+	// TODO: Used after op_1019
+
+	return 1;
+}
+
+int LogicHEsoccer::op_1014(int32 *args) {
+	// TODO: Used many times during a match
+
+	return 1;
+}
+
+int LogicHEsoccer::op_1019(int32 *args) {
+	// TODO: Used at the beginning of a match
+
+	return 1;
+}
+
+int LogicHEsoccer::op_1021(int32 *args) {
+	// TODO: Used during a match (ball movement?)
+
+	return 1;
+}
+
 } // End of namespace Scumm

@@ -127,6 +127,12 @@ private:
 	int op_1003(int32 *args);
 	int op_1004(int32 *args);
 	int op_1006(int32 *args);
+	int op_1007(int32 *args);
+	int op_1008(int32 *args);
+	int op_1012(int32 *args);
+	int op_1014(int32 *args);
+	int op_1019(int32 *args);
+	int op_1021(int32 *args);
 };
 
 } // End of namespace Scumm
