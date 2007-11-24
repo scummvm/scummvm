@@ -159,7 +159,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 
 		_destHotspotId = character->hotspotId();
 		_tickHandler = HotspotTickHandlers::getHandler(PUZZLED_TICK_PROC_ID);
-		setAnimation(VOICE_ANIM_INDEX);
+		setAnimationIndex(VOICE_ANIM_INDEX);
 		setFrameNumber(objType == PUZZLED_ANIM_IDX ? 1 : 2);
 		
 		character->setFrameCtr(_voiceCtr);
@@ -517,8 +517,10 @@ void Hotspot::endAction() {
 		//Room::getReference().setCursorState(CS_NONE);  **DEBUG**
 		room.setCursorState((CursorState) ((int) room.cursorState() & 2));
 
-	if (_currentActions.top().hasSupportData()) 
-		_currentActions.top().setSupportData(_currentActions.top().supportData().next());
+	if (_currentActions.top().hasSupportData()) {
+		CharacterScheduleEntry *rec = _currentActions.top().supportData().next();
+		_currentActions.top().setSupportData(rec);
+	}
 }
 
 void Hotspot::setDirection(Direction dir) {
