@@ -35,6 +35,14 @@
 
 #import "iphone_keyboard.h"
 
+typedef enum
+{
+	kUIViewSwipeUp = 1,
+	kUIViewSwipeDown = 2,
+	kUIViewSwipeLeft = 4,
+	kUIViewSwipeRight = 8
+} UIViewSwipeDirection;
+
 @interface iPhoneView : UIView
 {
 	CoreSurfaceBufferRef _screenSurface;
@@ -57,7 +65,7 @@
 
 - (void)initSurface;
 
-- (void)updateScreen;
+- (void)updateScreenRect:(id)rect;
 
 - (id)getEvent;
 

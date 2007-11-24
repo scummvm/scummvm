@@ -43,6 +43,7 @@ void iphone_main(int argc, char *argv[]);
 	
 // On the ObjC side
 void iPhone_updateScreen();
+void iPhone_updateScreenRect(int x1, int y1, int x2, int y2);
 unsigned short* iPhone_getSurface();
 void iPhone_lockSurface();
 void iPhone_unlockSurface();

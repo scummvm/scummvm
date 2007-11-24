@@ -49,7 +49,12 @@ unsigned short* iPhone_getSurface() {
 }
 
 void iPhone_updateScreen() {
- 	[sharedInstance performSelectorOnMainThread:@selector(updateScreen) withObject:nil waitUntilDone: NO];
+	[sharedInstance performSelectorOnMainThread:@selector(setNeedsDisplay) withObject:nil waitUntilDone: NO];
+}
+
+void iPhone_updateScreenRect(int x1, int y1, int x2, int y2) {
+	NSRect rect = NSMakeRect(x1, y1, x2, y2);
+	[sharedInstance performSelectorOnMainThread:@selector(updateScreenRect:) withObject: [NSValue valueWithRect:rect] waitUntilDone: NO];
 }
 
 void iPhone_lockSurface() {
@@ -110,6 +115,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 	sharedInstance = self;
 	_keyboardView = nil;
+	//[super setTapDelegate: self];
 
 	return self;
 }
@@ -139,8 +145,10 @@ bool getLocalMouseCoords(CGPoint *point) {
 	// }
 }
 
-- (void)updateScreen {
-	[sharedInstance setNeedsDisplay];
+- (void)updateScreenRect:(id)rect {
+	NSRect nsRect = [rect rectValue];
+	CGRect cgRect = CGRectMake(nsRect.origin.x, nsRect.origin.y, nsRect.size.width, nsRect.size.height);
+	[sharedInstance setNeedsDisplayInRect: cgRect];	
 }
 
 - (void)initSurface {
@@ -324,7 +332,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 }
 
 - (void)mouseEntered:(GSEvent*)event {
-	printf("mouseEntered()\n");
+	//printf("mouseEntered()\n");
 	// struct CGPoint point = GSEventGetLocationInWindow(event);
 	// 
 	// if (!getLocalMouseCoords(&point))
@@ -341,7 +349,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 }
 
 - (void)mouseExited:(GSEvent*)event {
-	printf("mouseExited().\n");
+	//printf("mouseExited().\n");
 	// [self addEvent:
 	// 	[[NSDictionary alloc] initWithObjectsAndKeys:
 	// 	 @"mouseExited", @"type",
@@ -352,7 +360,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 - (void)mouseMoved:(GSEvent*)event
 {
-	printf("mouseMoved()\n");
+	//printf("mouseMoved()\n");
 	struct CGPoint point = GSEventGetLocationInWindow(event);
 	
 	if (!getLocalMouseCoords(&point))
@@ -377,6 +385,18 @@ bool getLocalMouseCoords(CGPoint *point) {
 		 nil
 		]
 	];
+}
+
+- (BOOL)canHandleSwipes {
+	return FALSE;
+}
+
+- (int)swipe:(UIViewSwipeDirection)num withEvent:(GSEvent*)event {
+	//printf("swipe: %i\n", num);
+}
+
+- (void)view:(UIView *)view handleTapWithCount:(int)count event:(GSEvent *)event fingerCount:(int)fingerCount{
+	//printf("handleTapWithCount(%i, %i)\n", count, fingerCount);
 }
 
 @end

@@ -366,6 +366,8 @@ void OSystem_IPHONE::internUpdateScreen() {
 				}
 			}		
 		}
+		
+		//iPhone_updateScreenRect(dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom );
 	}
 }
 
@@ -561,19 +563,25 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 			case kInputMouseDown:
 				//printf("Mouse down at (%u, %u)\n", x, y);
 				
+				// Workaround: kInputMouseSecondToggled isn't always sent when the
+				// secondary finger is lifted. Need to make sure we get out of that mode.
+				_secondaryTapped = false;
+
 				warpMouse(x, y);
+				event.type = Common::EVENT_MOUSEMOVE;
+				event.mouse.x = _mouseX;
+				event.mouse.y = _mouseY;
+
 				if (_mouseClickAndDragEnabled) {
-					event.type = Common::EVENT_LBUTTONDOWN;
-					event.mouse.x = _mouseX;
-					event.mouse.y = _mouseY;					
-				} else {
+					_queuedInputEvent.type = Common::EVENT_LBUTTONDOWN;
+					_queuedInputEvent.mouse.x = _mouseX;
+					_queuedInputEvent.mouse.y = _mouseY;
+				} else {					
 					_lastMouseDown = curTime;
-					return false;	
 				}
 				break;
 			case kInputMouseUp:
 				//printf("Mouse up at (%u, %u)\n", x, y);
-
 				if (_mouseClickAndDragEnabled) {
 					event.type = Common::EVENT_LBUTTONUP;
 					event.mouse.x = _mouseX;
@@ -628,8 +636,14 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 						} else if (vecXNorm > -0.50 && vecXNorm < 0.50 && vecYNorm < -0.75) {
 							// Swipe up
 							_mouseClickAndDragEnabled = !_mouseClickAndDragEnabled;
-							GUI::TimedMessageDialog dialog("Toggling mouse-click-and-drag mode.", 1500);
+							const char *dialogMsg;
+							if (_mouseClickAndDragEnabled)
+								dialogMsg = "Mouse-click-and-drag mode enabled.";
+							else
+								dialogMsg = "Mouse-click-and-drag mode disabled.";
+							GUI::TimedMessageDialog dialog(dialogMsg, 1500);
 							dialog.runModal();
+
 						} else if (vecXNorm > 0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
 							// Swipe right
 							// _secondaryTapped = !_secondaryTapped;
@@ -655,7 +669,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				break;
 			case kInputMouseSecondToggled:
 				_secondaryTapped = !_secondaryTapped;
-				printf("Mouse second at (%u, %u). State now %s.\n", x, y, _secondaryTapped ? "on" : "off");
+				//printf("Mouse second at (%u, %u). State now %s.\n", x, y, _secondaryTapped ? "on" : "off");
 				if (_secondaryTapped) {
 					_lastSecondaryDown = curTime;
 					_gestureStartX = x;
