@@ -13,6 +13,8 @@
 		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
 		MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib		
 		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
+		MACRO			DISABLE_DRASCULA	// LIB:scummvm_drascula.lib
+		MACRO			DISABLE_IGOR	// LIB:scummvm_igor.lib
 	";
 
 	##
@@ -20,20 +22,25 @@
 	##
 
 	# this way you can use the same LocalSettings.pl file on multiple machines!
-	if ($ENV{'COMPUTERNAME'} eq "MYCOMPUTER")
+	if ($ENV{'COMPUTERNAME'} eq "BRAAMBOOK")
 	{
 		# might use this string for file/dir naming in the future :)
-		$Producer = "BUILDERNAME";
+		$Producer = "SumthinWicked";
 		$RedirectSTDERR = 0;
 		$HaltOnError = 1;
 		$SkipExistingPackages = 0;
 		$ReallyQuiet = 0;
 		
 		# specify an optional FTP server to upload to after each Build+Package (can leave empty)
-		#$FTP_Host = "ftp.myftp.net";
-		#$FTP_User = "user";
-		#$FTP_Pass = "pass";
-		#$FTP_Dir  = "directory";
+		#$FTP_Host = "wicked.student.utwente.nl";
+		#$FTP_User = "upload";
+		#$FTP_Pass = "upload";
+		#$FTP_Dir  = "test_Wicked";
+
+		#$FTP_Host = "anotherguest.k0.se";
+		$FTP_User = "ag";
+		$FTP_Pass = "uiq05";
+		$FTP_Dir  = "cvsbuilds";
 	
 		# possible SDKs: ("UIQ2", UIQ3", "S60v1", "S60v2", "S60v3", "S80", "S90")
 		# Note1: the \epoc32 directory needs to be in these rootdirs
@@ -66,9 +73,74 @@
 		#m Files\WinSCP3\;"C:\Program Files\Common Files\Microsoft Shared\VSA\8.0\VsaEnv\";"c:\Program Files\Microsoft Visual Stu
 		#dio 8\VC\bin";"C:\Program Files\UltraEdit-32"		
 	}
-	elsif ($ENV{'COMPUTERNAME'} eq "OTHERCOMPUTER")
+	elsif ($ENV{'COMPUTERNAME'} eq "TSSLND0106")
 	{
-#see previous section						
+		$Producer = "AnotherGuest";
+		$RedirectSTDERR = 1;
+		$HaltOnError = 0;
+		$SkipExistingPackages = 0;
+		$ReallyQuiet = 0;
+		
+		#$FTP_Host = "anotherguest.k0.se";
+		#$FTP_User = "ag@anotherguest.k0.se";
+		#$FTP_Pass = "uiq05";
+		#$FTP_Dir  = "cvsbuilds";
+		
+		#$SDK_RootDirs{'UIQ2'}= "C:\\UIQ2";
+		$SDK_RootDirs{'UIQ3'}= "C:\\UIQ3";
+		#$SDK_RootDirs{'S60v1'}= "C:\\S60v1";
+		$SDK_RootDirs{'S60v2'}= "C:\\S60v2";
+		$SDK_RootDirs{'S60v3'}= "C:\\S60v3";
+		#$SDK_RootDirs{'S80'}= "C:\\S80";
+		#$SDK_RootDirs{'S90'}= "C:\\S90";
+		$ECompXL_BinDir= "C:\\ECompXL\\";
+if (0) # so we can turn them on/off easily
+		{
+#			$SDK_LibraryDirs{'ALL'}{'zlib.lib'}		= "C:\\S\\zlib-1.2.2\\epoc";
+#			$SDK_LibraryDirs{'ALL'}{'libmad.lib'}	= "C:\\S\\libmad-0.15.1b\\group";
+			$SDK_LibraryDirs{'ALL'}{'libtremor.lib'}= "C:\\tremor\\epoc";
+#			$SDK_LibraryDirs{'UIQ2'}{'esdl.lib'}	= $SDK_LibraryDirs{'UIQ3'}{'esdl.lib'} = "C:\\S\\ESDL\\epoc\\UIQ";
+#			$SDK_LibraryDirs{'S60v1'}{'esdl.lib'}	= $SDK_LibraryDirs{'S60v2'}{'esdl.lib'} = $SDK_LibraryDirs{'S60v3'}{'esdl.lib'} = "C:\\S\\ESDL\\epoc\\S60";
+#			$SDK_LibraryDirs{'S80'}{'esdl.lib'}		= "C:\\S\\ESDL\\epoc\\S80";
+#			$SDK_LibraryDirs{'S90'}{'esdl.lib'}		= "C:\\S\\ESDL\\epoc\\S90";
+			#$SDK_LibraryDirs{'ALL'}{'libmpeg2.lib'} = "C:\\S\\mpeg2dec-0.4.0\\epoc";
+		}
+		# now you can add $SDK_Variations only built on this PC here :)
+	}
+elsif ($ENV{'COMPUTERNAME'} eq "BIGMACHINE")
+	{
+		$Producer = "AnotherGuest";
+		$RedirectSTDERR = 1;
+		$HaltOnError = 0;
+		$SkipExistingPackages = 1;
+		$ReallyQuiet = 1;
+		
+		#$FTP_Host = "anotherguest.k0.se";
+		#$FTP_User = "ag@anotherguest.k0.se";
+		#$FTP_Pass = "uiq05";
+		#$FTP_Dir  = "cvsbuilds";
+		
+		#$SDK_RootDirs{'UIQ2'}= "E:\\UIQ2";
+		$SDK_RootDirs{'UIQ3'}= "E:\\UIQ3";
+		#$SDK_RootDirs{'S60v1'}= "E:\\S60v1";
+		#$SDK_RootDirs{'S60v2'}= "E:\\S60v2";
+		$SDK_RootDirs{'S60v3'}= "E:\\S60v3";
+		#$SDK_RootDirs{'S80'}= "E:\\S80";
+		#$SDK_RootDirs{'S90'}= "E:\\S90";
+		$ECompXL_BinDir= "E:\\ECompXL\\";
+if (0) # so we can turn them on/off easily
+		{
+#			$SDK_LibraryDirs{'ALL'}{'zlib.lib'}		= "C:\\S\\zlib-1.2.2\\epoc";
+#			$SDK_LibraryDirs{'ALL'}{'libmad.lib'}	= "C:\\S\\libmad-0.15.1b\\group";
+#			$SDK_LibraryDirs{'ALL'}{'libtremor.lib'}= "C:\\tremor\\epoc";
+			$SDK_LibraryDirs{'UIQ2'}{'esdl.lib'} = "E:\\WICKED\\ESDL\\epoc\\UIQ";
+			$SDK_LibraryDirs{'S60v1'}{'esdl.lib'}	= $SDK_LibraryDirs{'S60v2'}{'esdl.lib'} = "E:\\WICKED\\ESDL\\epoc\\S60";
+			$SDK_LibraryDirs{'S80'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\S80";
+			$SDK_LibraryDirs{'S90'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\S90";
+			$SDK_LibraryDirs{'S60v3'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\S60\\S60V3";
+			$SDK_LibraryDirs{'UIQ3'}{'esdl.lib'}		= "E:\\WICKED\\ESDL\\epoc\\UIQ\\UIQ3";
+			#$SDK_LibraryDirs{'ALL'}{'libmpeg2.lib'} = "C:\\S\\mpeg2dec-0.4.0\\epoc";
+		}
 		# now you can add $SDK_Variations only built on this PC here :)
 	}
 	else
@@ -128,6 +200,8 @@ if (1) # all regular combo's
 		//MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		//MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		//MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		//MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
+
 	$DefaultBottomMacros";
 
 	# now one for each ready-for-release engine
@@ -144,6 +218,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib	
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'agos'} = "$DefaultTopMacros
@@ -158,6 +233,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'sky'} = "$DefaultTopMacros
@@ -172,6 +248,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib	
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'queen'} = "$DefaultTopMacros
@@ -186,6 +263,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'gob'} = "$DefaultTopMacros
@@ -200,6 +278,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'saga'} = "$DefaultTopMacros
@@ -214,6 +293,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'kyra'} = "$DefaultTopMacros
@@ -228,6 +308,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib	
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
 	# below here you could specify weird & experimental combinations, non-ready engines
@@ -247,6 +328,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib		
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
 #	$SDK_Variations{'ALL'}{'scumm_no78he'} = "
@@ -294,6 +376,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_CINE		// LIB:scummvm_agi.lib
 		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib			
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
 	# empty $SDK_Variations{''} string instead of 'ALL' = package disabled
@@ -309,6 +392,7 @@ if (1) # all regular combo's
 		//MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib		
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
 	$SDK_Variations{'ALL'}{'test_agi'} = "$DefaultTopMacros
@@ -323,6 +407,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		//MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
 
@@ -341,7 +426,9 @@ if (1) # all regular combo's
 		//MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
 		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
 		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
-		MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib			
+		MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib	
+		MACRO			DISABLE_DRASCULA	// LIB:scummvm_drascula.lib		
+		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	";
 }
 

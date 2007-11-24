@@ -22,6 +22,7 @@ chdir("../../../");
 	"mmp/scummvm_parallaction.mmp", 
 	"mmp/scummvm_cruise.mmp", 
 	"mmp/scummvm_drascula.mmp", 
+	"mmp/scummvm_igor.mmp", 
 	"S60/ScummVM_S60.mmp",  
 	"S60v3/ScummVM_S60v3.mmp", 
 	"S80/ScummVM_S80.mmp", 
@@ -99,6 +100,7 @@ ParseModule("_touche",	"touche",	\@section_empty);
 ParseModule("_parallaction","parallaction",\@section_empty);
 ParseModule("_cruise",	"cruise",	\@section_empty);
 ParseModule("_drascula","drascula",	\@section_empty);
+ParseModule("_igor",	"igor",		\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P
