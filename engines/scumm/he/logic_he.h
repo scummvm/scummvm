@@ -112,8 +112,11 @@ private:
 };
 
 class LogicHEsoccer : public LogicHE {
+private:
+	double *_userDataD;
+
 public:
-	LogicHEsoccer(ScummEngine_v90he *vm) : LogicHE(vm) {}
+	LogicHEsoccer(ScummEngine_v90he *vm);
 
 	int versionID();
 	int32 dispatch(int op, int numArgs, int32 *args);
@@ -123,6 +126,7 @@ private:
 	int op_1002(int32 *args);
 	int op_1003(int32 *args);
 	int op_1004(int32 *args);
+	int op_1006(int32 *args);
 };
 
 } // End of namespace Scumm

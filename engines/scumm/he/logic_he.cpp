@@ -827,6 +827,11 @@ int LogicHEsoccer::versionID() {
 	return 1;
 }
 
+LogicHEsoccer::LogicHEsoccer(ScummEngine_v90he *vm) : LogicHE(vm) {
+	// Originally it used 0x1b0d bytes
+	_userDataD = (double *)calloc(1732, sizeof(double));
+}
+
 int32 LogicHEsoccer::dispatch(int op, int numArgs, int32 *args) {
 	int res = 0;
 
@@ -897,6 +902,23 @@ int LogicHEsoccer::op_1004(int32 *args) {
 	writeScummVar(109, (int32)a2);
 	writeScummVar(110, (int32)a5);
 	writeScummVar(111, (int32)a4);
+
+	return 1;
+}
+
+int LogicHEsoccer::op_1006(int32 *args) {
+	double a1 = args[1] * 0.01;
+	double a2 = args[2] * 0.01;
+	double a3 = args[3] * 0.01;
+	double var108, var109;
+
+	_userDataD[529] = args[4];
+
+	var108 = atan2(a1, a3) * _userDataD[523] - args[4];
+	var109 = _userDataD[526] - _userDataD[528] + (_userDataD[521] - atan2(_userDataD[524] - a2, a3)) * _userDataD[522];
+
+	writeScummVar(108, (int32)var108);
+	writeScummVar(109, (int32)var109);
 
 	return 1;
 }
