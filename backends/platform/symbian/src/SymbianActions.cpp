@@ -156,17 +156,17 @@ void SymbianActions::initInstanceGame() {
 		_action_enabled[ACTION_SAVE] = true;
 		
 		if (is_queen) {			
-			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F1 key for FOTAQ
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, Common::KEYCODE_F5); // F1 key for FOTAQ
 		} else if (is_sky) {		
-			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); 
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, Common::KEYCODE_F5); 
 		} else if (is_cine) {			
-			_key_action[ACTION_SAVE].setKey(Common::ASCII_F10, SDLK_F10); // F10
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F10, Common::KEYCODE_F10); // F10
 		} else if (is_agi) {		
-			_key_action[ACTION_SAVE].setKey(Common::ASCII_ESCAPE, SDLK_ESCAPE);
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_ESCAPE, Common::KEYCODE_ESCAPE);
 		} else if (is_parallaction) {
-			_key_action[ACTION_SAVE].setKey('s', SDLK_s);
+			_key_action[ACTION_SAVE].setKey('s', Common::KEYCODE_s);
 		} else {		
-			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5); // F5 key
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, Common::KEYCODE_F5); // F5 key
 		}
 	}
 	// Quit
@@ -176,14 +176,14 @@ void SymbianActions::initInstanceGame() {
 	if (!is_cine && !is_parallaction)
 		_action_enabled[ACTION_SKIP_TEXT] = true;
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche)
-		_key_action[ACTION_SKIP_TEXT].setKey(Common::KEYCODE_ESCAPE, SDLK_ESCAPE); // Escape key
+		_key_action[ACTION_SKIP_TEXT].setKey(Common::KEYCODE_ESCAPE, Common::KEYCODE_ESCAPE); // Escape key
 	else {
 		_key_action[ACTION_SKIP_TEXT].setKey(SDLK_PERIOD);
 	}
 
 	// Enable fast mode
 	_action_enabled[ACTION_FASTMODE] = true;
-	_key_action[ACTION_FASTMODE].setKey('f', SDLK_f, KMOD_CTRL);
+	_key_action[ACTION_FASTMODE].setKey('f', Common::KEYCODE_f, KMOD_CTRL);
 	
 	// Swap character
 	_action_enabled[ACTION_SWAPCHAR] = true;
@@ -197,15 +197,15 @@ void SymbianActions::initInstanceGame() {
 	if (is_agi)
 		_key_action[ACTION_MULTI].setKey(SDLK_PAUSE); // agi: show predictive dialog
 	else if (is_gob)
-		_key_action[ACTION_MULTI].setKey(Common::ASCII_F1, SDLK_F1); // bargon : F1 to start
+		_key_action[ACTION_MULTI].setKey(Common::ASCII_F1, Common::KEYCODE_F1); // bargon : F1 to start
 	else if (gameid == "atlantis")
-		_key_action[ACTION_MULTI].setKey(0, SDLK_KP0); // fate of atlantis : Ins to sucker-punch
+		_key_action[ACTION_MULTI].setKey('0', Common::KEYCODE_KP0); // fate of atlantis : Ins to sucker-punch
 	else
 		_key_action[ACTION_MULTI].setKey('V', SDLK_v, KMOD_SHIFT); // FT cheat : shift-V
 
 	// Enable debugger
 	_action_enabled[ACTION_DEBUGGER] = true;
-	_key_action[ACTION_DEBUGGER].setKey('d', SDLK_d, KMOD_CTRL);
+	_key_action[ACTION_DEBUGGER].setKey('d', Common::KEYCODE_d, KMOD_CTRL);
 
 
 

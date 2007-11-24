@@ -366,8 +366,8 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 			case GUI::ACTION_FASTMODE:
 			case GUI::ACTION_DEBUGGER: {
 					GUI::Key &key = GUI::Actions::Instance()->getKeyAction(loop);
-					ev.key.keysym.sym = (SDLKey) key.ascii();
-					ev.key.keysym.scancode= key.keycode();
+					ev.key.keysym.sym = (SDLKey) key.keycode();
+					ev.key.keysym.scancode = 0;
 					ev.key.keysym.mod = (SDLMod) key.flags();
 
 					// Translate from SDL keymod event to Scummvm Key Mod Common::Event. 
