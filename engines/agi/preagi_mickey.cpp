@@ -1618,15 +1618,6 @@ bool Mickey::parse(int cmd, int arg) {
 	// IO (JUPITER)
 
 	case IDI_MSA_ACTION_GET_ROCK_0:
-		if (_game.fItem[IDI_MSA_ITEM_ROCK]) {
-			printDatMessage(38);
-		} else {
-			_game.iRmMenu[_game.iRoom] = 1;
-			_game.iRmObj[_game.iRoom] = IDI_MSA_OBJECT_NONE;
-			getItem(IDI_MSA_ITEM_ROCK);
-			printDatMessage(arg);
-		}
-		break;
 	case IDI_MSA_ACTION_GET_ROCK_1:
 		if (_game.fItem[IDI_MSA_ITEM_ROCK]) {
 			printDatMessage(38);
