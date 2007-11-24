@@ -26,7 +26,11 @@
 #ifndef SDL_COMMON_H
 #define SDL_COMMON_H
 
+#if defined(__SYMBIAN32__)
+#include <esdl\SDL.h>
+#else
 #include <SDL.h>
+#endif
 
 #include "common/scummsys.h"
 #include "common/system.h"
