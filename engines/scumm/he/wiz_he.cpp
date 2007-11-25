@@ -27,6 +27,7 @@
 
 #include "common/system.h"
 #include "graphics/cursorman.h"
+#include "graphics/primitives.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -1742,6 +1743,20 @@ void Wiz::fillWizRect(const WizParameters *params) {
 	_vm->_res->setModified(rtImage, params->img.resNum);
 }
 
+struct drawProcP {
+	Common::Rect *imageRect;
+	uint8 *wizd;
+	int width;
+};
+
+static void drawProc(int x, int y, int c, void *data) {
+	drawProcP *param = (drawProcP *)data;
+
+	if (param->imageRect->contains(x, y)) {
+		*(param->wizd + y * param->width + x) = c;
+	}
+}
+
 void Wiz::fillWizLine(const WizParameters *params) {
 	if (params->processFlags & kWPFClipBox2) {
 		int state = 0;
@@ -1777,61 +1792,13 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			if (params->processFlags & kWPFThickLine) {
 				debug(0, "Unsupported ThickLine (%d, %d)", params->lineUnk1, params->lineUnk2);
 			} else {
-				int dx = x2 - x1;
-				int incx = 0;
-				if (dx > 0) {
-					incx = 1;
-				} else if (dx < 0) {
-					incx = -1;
-				}
-				int dy = y2 - y1;
-				int incy = 0;
-				if (dy > 0) {
-					incy = 1;
-				} else if (dy < 0) {
-					incy = -1;
-				}
+				drawProcP lineP;
 
-				dx = ABS(x2 - x1);
-				dy = ABS(y2 - y1);
+				lineP.imageRect = &imageRect;
+				lineP.wizd = wizd;
+				lineP.width = w;
 
-				if (imageRect.contains(x1, y1)) {
-					*(wizd + y1 * w + x1) = color;
-				}
-
-				if (dx >= dy) {
-					int step1_y = (dy - dx) * 2;
-					int step2_y = dy * 2;
-					int accum_y = dy * 2 - dx;
-					while (x1 != x2) {
-						if (accum_y <= 0) {
-							accum_y += step2_y;
-						} else {
-							accum_y += step1_y;
-							y1 += incy;
-						}
-						x1 += incx;
-						if (imageRect.contains(x1, y1)) {
-							*(wizd + y1 * w + x1) = color;
-						}
-					}
-				} else {
-					int step1_x = (dx - dy) * 2;
-					int step2_x = dx * 2;
-					int accum_x = dx * 2 - dy;
-					while (y1 != y2) {
-						if (accum_x <= 0) {
-							accum_x += step2_x;
-						} else {
-							accum_x += step1_x;
-							x1 += incx;
-						}
-						y1 += incy;
-						if (imageRect.contains(x1, y1)) {
-							*(wizd + y1 * w + x1) = color;
-						}
-					}
-				}
+				Graphics::drawLine(x1, y1, x2, y2, color, drawProc, &lineP);
 			}
 		}
 	}

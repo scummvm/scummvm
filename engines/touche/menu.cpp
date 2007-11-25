@@ -28,6 +28,8 @@
 #include "common/system.h"
 #include "common/savefile.h"
 
+#include "graphics/primitives.h"
+
 #include "touche/graphics.h"
 #include "touche/midi.h"
 #include "touche/touche.h"
@@ -134,12 +136,17 @@ static void drawArrow(uint8 *dst, int dstPitch, int x, int y, int delta, uint8 c
 		{ -9,  0,  0, -9 },
 		{  0, -9,  9,  0 }
 	};
+	drawProcP lineP;
+
+	lineP.dst = dst;
+	lineP.width = dstPitch;
+
 	for (uint i = 0; i < 7; ++i) {
 		const int x1 = x + arrowCoordsTable[i][0];
 		const int y1 = y + arrowCoordsTable[i][1] * delta;
 		const int x2 = x + arrowCoordsTable[i][2];
 		const int y2 = y + arrowCoordsTable[i][3] * delta;
-		Graphics::drawLine(dst, dstPitch, x1, y1, x2, y2, color);
+		::Graphics::drawLine(x1, y1, x2, y2, color, Graphics::drawProc, &lineP);
 	}
 }
 

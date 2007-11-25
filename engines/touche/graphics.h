@@ -30,6 +30,11 @@
 
 namespace Touche {
 
+struct drawProcP {
+	uint8 *dst;
+	int width;
+};
+
 class Graphics {
 public:
 
@@ -44,9 +49,14 @@ public:
 	static int drawChar16(uint8 *dst, int dstPitch, uint8 chr, int x, int y, uint16 color);
 	static void fillRect(uint8 *dst, int dstPitch, int x, int y, int w, int h, uint8 color);
 	static void drawRect(uint8 *dst, int dstPitch, int x, int y, int w, int h, uint8 color1, uint8 color2);
-	static void drawLine(uint8 *dst, int dstPitch, int x1, int y1, int x2, int y2, uint8 color);
 	static void copyRect(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, int flags = 0);
 	static void copyMask(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, uint8 fillColor);
+
+	static void drawProc(int x, int y, int c, void *data) {
+		drawProcP *param = (drawProcP *)data;
+
+		*(param->dst + y * param->width + x) = c;
+	}
 
 private:
 
