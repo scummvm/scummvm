@@ -399,5 +399,27 @@ bool getLocalMouseCoords(CGPoint *point) {
 	//printf("handleTapWithCount(%i, %i)\n", count, fingerCount);
 }
 
+- (void)applicationSuspend {
+	[self addEvent:
+		[[NSDictionary alloc] initWithObjectsAndKeys:
+		 [NSNumber numberWithInt:kInputApplicationSuspended], @"type",
+		 [NSNumber numberWithFloat:0], @"x",
+		 [NSNumber numberWithFloat:0], @"y",
+		 nil
+		]
+	];	
+}
+
+- (void)applicationResume {
+	[self addEvent:
+		[[NSDictionary alloc] initWithObjectsAndKeys:
+		 [NSNumber numberWithInt:kInputApplicationResumed], @"type",
+		 [NSNumber numberWithFloat:0], @"x",
+		 [NSNumber numberWithFloat:0], @"y",
+		 nil
+		]
+	];	
+}
+
 @end
 

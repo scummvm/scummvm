@@ -88,6 +88,18 @@ int main(int argc, char** argv) {
 	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
 }
 
+- (void)applicationSuspend:(GSEventRef)event {
+	[self setApplicationBadge:NSLocalizedString(@"ON", nil)];
+	[_view applicationSuspend];
+}
+
+- (void)applicationResume:(GSEventRef)event {
+	[self removeApplicationBadge];
+	[UIHardware _setStatusBarHeight:0.0f];
+	[self setStatusBarMode:2 orientation:0 duration:0.0f fenceID:0];
+	[_view applicationResume];
+}
+
 - (void)deviceOrientationChanged:(GSEvent *)event {
 	int screenOrientation = GSEventDeviceOrientation(event);
 	[_view deviceOrientationChanged: screenOrientation];

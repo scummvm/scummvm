@@ -30,7 +30,9 @@ enum InputEvent {
 	kInputMouseDragged,
 	kInputMouseSecondToggled,
 	kInputOrientationChanged,
-	kInputKeyPressed
+	kInputKeyPressed,
+	kInputApplicationSuspended,
+	kInputApplicationResumed
 };
 
 // We need this to be able to call functions from/in Objective-C.

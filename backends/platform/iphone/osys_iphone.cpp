@@ -63,7 +63,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_secondaryTapped(false), _lastSecondaryTap(0), _landscapeMode(true),
 	_needEventRestPeriod(false), _mouseClickAndDragEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false),
-	_mouseDirty(false)
+	_mouseDirty(false), _timeSuspended(0)
 {	
 	_queuedInputEvent.type = (Common::EventType)0;
 	_lastDrawnMouseRect = Common::Rect(0, 0, 0, 0);
@@ -711,6 +711,11 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					dirtyFullScreen();
 				}				
 				break;
+
+			case kInputApplicationSuspended:
+				suspendLoop();
+				break;
+
 			case kInputKeyPressed:
 				int keyPressed = (int)xUnit;
 				int ascii = keyPressed;
@@ -782,13 +787,32 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	return false;
 }
 
+void OSystem_IPHONE::suspendLoop() {
+	bool done = false;
+	int eventType;
+	float xUnit, yUnit;
+	uint32 startTime = getMillis();
+
+	AudioQueueStop(s_AudioQueue.queue, true);
+
+	while (!done) {
+		if (iPhone_fetchEvent(&eventType, &xUnit, &yUnit))
+			if ((InputEvent)eventType == kInputApplicationResumed)
+				done = true;
+		usleep(100000);		
+	}
+
+	AudioQueueStart(s_AudioQueue.queue, NULL);
+	_timeSuspended += getMillis() - startTime;
+}
+
 uint32 OSystem_IPHONE::getMillis() {
 	//printf("getMillis()\n");
 
 	struct timeval currentTime;
 	gettimeofday(&currentTime, NULL);
 	return (uint32)(((currentTime.tv_sec - _startTime.tv_sec) * 1000) +
-	                ((currentTime.tv_usec - _startTime.tv_usec) / 1000));
+	                ((currentTime.tv_usec - _startTime.tv_usec) / 1000)) - _timeSuspended;
 }
 
 void OSystem_IPHONE::delayMillis(uint msecs) {

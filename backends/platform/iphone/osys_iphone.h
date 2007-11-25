@@ -64,7 +64,8 @@ protected:
 	uint16 _screenHeight;
 
 	struct timeval _startTime;
-	
+	uint32 _timeSuspended;
+
 	bool _mouseVisible;
 	byte *_mouseBuf;
 	byte _mouseKeyColour;
@@ -158,7 +159,7 @@ protected:
 	void dirtyMouseCursor();
 	void dirtyFullScreen();
 	void clipRectToScreen(int16 &x, int16 &y, int16 &w, int16 &h);
-
+	void suspendLoop();
 	static void AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB);
 	static int timerHandler(int t);
 };

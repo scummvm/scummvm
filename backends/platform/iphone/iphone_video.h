@@ -71,6 +71,10 @@ typedef enum
 
 - (void)deviceOrientationChanged:(int)orientation;
 
+- (void)applicationSuspend;
+
+- (void)applicationResume;
+
 @end
 
 
