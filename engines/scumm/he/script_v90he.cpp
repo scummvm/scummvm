@@ -670,8 +670,8 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.processFlags = 0;
 		_wizParams.remapNum = 0;
 		_wizParams.img.flags = 0;
-		_wizParams.field_184 = 0;
-		_wizParams.field_180 = 0;
+		_wizParams.lineUnk2 = 0;
+		_wizParams.lineUnk1 = 0;
 		_wizParams.spriteId = 0;
 		_wizParams.spriteGroup = 0;
 		break;
@@ -763,9 +763,9 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.dstResNum = pop();
 		break;
 	case 93: // HE99+
-		_wizParams.processFlags |= 0x100000;
-		_wizParams.field_180 = pop();
-		_wizParams.field_184 = pop();
+		_wizParams.processFlags |= kWPFThickLine;
+		_wizParams.lineUnk1 = pop();
+		_wizParams.lineUnk2 = pop();
 		break;
 	case 95: // HE99+
 		_wizParams.processMode = 13;

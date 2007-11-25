@@ -73,8 +73,8 @@ struct WizParameters {
 	int resDefImgW;
 	int resDefImgH;
 	int sourceImage;
-	int field_180;
-	int field_184;
+	int lineUnk1;
+	int lineUnk2;
 	uint8 remapColor[256];
 	uint8 remapIndex[256];
 	int remapNum;
@@ -132,7 +132,8 @@ enum WizProcessFlags {
 	kWPFDstResNum = 0x10000,
 	kWPFFillColor = 0x20000,
 	kWPFClipBox2 = 0x40000,
-	kWPFMaskImg = 0x80000
+	kWPFMaskImg = 0x80000,
+	kWPFThickLine = 0x100000
 };
 
 enum {
