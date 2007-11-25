@@ -1776,13 +1776,12 @@ void ScummEngine_v72he::o72_openFile() {
 }
 
 int ScummEngine_v72he::readFileToArray(int slot, int32 size) {
-	assert(_hInFileTable[slot]);
-	if (size == 0)
-		size = _hInFileTable[slot]->size() - _hInFileTable[slot]->pos();
-
 	writeVar(0, 0);
 	byte *data = defineArray(0, kByteArray, 0, 0, 0, size);
-	_hInFileTable[slot]->read(data, size + 1);
+	
+	if (slot != -1) {
+		_hInFileTable[slot]->read(data, size + 1);
+	}
 
 	return readVar(0);
 }
@@ -1828,8 +1827,9 @@ void ScummEngine_v72he::writeFileFromArray(int slot, int32 resID) {
 	int32 size = (FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1) *
 		(FROM_LE_32(ah->dim2end) - FROM_LE_32(ah->dim2start) + 1);
 
-	assert(_hOutFileTable[slot]);
-	_hOutFileTable[slot]->write(ah->data, size);
+	if (slot != -1) {
+		_hOutFileTable[slot]->write(ah->data, size);
+	}
 }
 
 void ScummEngine_v72he::o72_writeFile() {
