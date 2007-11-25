@@ -271,27 +271,12 @@ void IgorEngine::PART_26() {
 	} else {
 		PART_26_HELPER_5();
 	}
-	showCursor();
-	_gameState.igorMoving = false;
+	enterPartLoop();
 	while (_currentPart >= 260 && _currentPart <= 261) {
-		handleRoomInput();
-		if (compareGameTick(1, 16)) {
-			handleRoomIgorWalk();
-		}
-		if (compareGameTick(19, 32)) {
-			handleRoomDialogue();
-		}
-		if (compareGameTick(4, 8)) {
-			handleRoomInventoryScroll();
-		}
-		if (compareGameTick(1)) {
-			handleRoomLight();
-		}
-		PART_26_UPDATE_ROOM_BACKGROUND();
-		waitForTimer();
+		runPartLoop();
 	}
+	leavePartLoop();
 	fadeOutPalette(624);
-	_updateRoomBackground = 0;
 }
 
 } // namespace Igor

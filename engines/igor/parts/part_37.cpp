@@ -82,6 +82,9 @@ void IgorEngine::PART_37_ACTION_102() {
 	addObjectToInventory(32, 67);
 	_objectsState[89] = 1;
 	PART_37_HELPER_1(255);
+	if (_gameVersion == kIdEngDemo110) {
+		++_demoActionsCounter;
+	}
 }
 
 void IgorEngine::PART_37_HELPER_1(int num) {
@@ -115,24 +118,11 @@ void IgorEngine::PART_37() {
 	_currentAction.verb = kVerbWalk;
 	fadeInPalette(768);
 	PART_37_HELPER_2();
-	showCursor();
-	_gameState.igorMoving = false;
+	enterPartLoop();
 	while (_currentPart == 370) {
-		handleRoomInput();
-		if (compareGameTick(1, 16)) {
-			handleRoomIgorWalk();
-		}
-		if (compareGameTick(19, 32)) {
-			handleRoomDialogue();
-		}
-		if (compareGameTick(4, 8)) {
-			handleRoomInventoryScroll();
-		}
-		if (compareGameTick(1)) {
-			handleRoomLight();
-		}
-		waitForTimer();
+		runPartLoop();
 	}
+	leavePartLoop();
 	fadeOutPalette(624);
 }
 

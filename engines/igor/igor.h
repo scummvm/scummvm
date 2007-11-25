@@ -26,9 +26,10 @@
 #ifndef IGOR_ENGINE_H
 #define IGOR_ENGINE_H
 
+#include "common/array.h"
 #include "common/endian.h"
 #include "common/file.h"
-#include "common/rect.h"
+#include "common/str.h"
 #include "common/util.h"
 
 #include "sound/mixer.h"
@@ -57,6 +58,12 @@ enum {
 };
 
 enum {
+	kFlagDemo   = 1 << 0,
+	kFlagFloppy = 1 << 1,
+	kFlagTalkie = 1 << 2
+};
+
+enum {
 	kStartupPart = 900,
 	kInvalidPart = 255,
 	kSharewarePart = 950,
@@ -65,7 +72,8 @@ enum {
 	kTickDelay = 1193180 / 4096,
 	kTimerTicksCount = 8,
 	kQuickSaveSlot = 0,
-	kMaxSaveStates = 10
+	kMaxSaveStates = 10,
+	kNoSpeechSound = 999
 };
 
 enum {
@@ -122,12 +130,21 @@ enum InputVar {
 struct DialogueText {
 	int num;
 	int count;
+	int sound;
 };
 
 struct ResourceEntry {
 	int id;
 	uint32 offs;
 	uint32 size;
+};
+
+struct StringEntry {
+	int id;
+	Common::String str;
+
+	StringEntry() : id(0) {}
+	StringEntry(int i, const char *s) : id(i), str(s) {}
 };
 
 struct RoomObjectArea {
@@ -284,7 +301,7 @@ public:
 	typedef void (IgorEngine::*UpdateDialogueProc)(int action);
 	typedef void (IgorEngine::*UpdateRoomBackgroundProc)();
 
-	IgorEngine(OSystem *system, int gameVersion);
+	IgorEngine(OSystem *system, int gameVersion, int gameFlags, Common::Language language);
 	virtual ~IgorEngine();
 
 	virtual int init();
@@ -304,7 +321,8 @@ protected:
 	bool compareGameTick(int add, int mod) const { return ((_gameTicks + (add & ~7)) % mod) == 0; } // { return ((_gameTicks + add) % mod) == 0; }
 	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); } // { return _gameTicks == eq; }
 	int getPart() const { return _currentPart / 10; }
-	void readResourceTableFile();
+	void readTableFile();
+	const char *getString(int id);
 	void restart();
 	void waitForTimer(int ticks = -1);
 	void copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent = false);
@@ -314,9 +332,10 @@ protected:
 	void startMusic(int cmf);
 	void playMusic(int num);
 	void updateMusic();
-	void playSound(int num, int fl);
+	void playSound(int num, int type);
 	void stopSound();
 	void loadIgorFrames();
+	void loadIgorFrames2();
 	void fixDialogueTextPosition(int num, int count, int *x, int *y);
 	void startCutsceneDialogue(int x, int y, int r, int g, int b);
 	void waitForEndOfCutsceneDialogue(int x, int y, int r, int g, int b);
@@ -357,6 +376,7 @@ protected:
 	void updateRoomLight(int fl);
 	void drawVerbsPanel();
 	void redrawVerb(uint8 verb, bool highlight);
+	int getVerbUnderCursor(int x) const { return ((x % 46) < 44) ? (kVerbTalk + x / 46) : 0; }
 	void drawInventory(int start, int mode);
 	void packInventory();
 	void scrollInventory();
@@ -370,6 +390,9 @@ protected:
 	void handleRoomIgorWalk();
 	void handleRoomInventoryScroll();
 	void handleRoomLight();
+	void enterPartLoop();
+	void leavePartLoop();
+	void runPartLoop();
 	int lookupScale(int xOffset, int yOffset, int h) const;
 	void moveIgor(int pos, int frame);
 	void buildWalkPathSimple(int srcX, int srcY, int dstX, int dstY);
@@ -407,6 +430,7 @@ protected:
 	Common::File _sndFile;
 
 	Audio::SoundHandle _sfxHandle;
+	Audio::SoundHandle _speechHandle;
 
 	uint8 *_screenVGA;
 	uint8 *_facingIgorFrames[4];
@@ -427,6 +451,8 @@ protected:
 	bool _fastMode;
 	int _language;
 	int _gameVersion;
+	int _gameFlags;
+	Common::Language _gameLanguage;
 
 	WalkData _walkData[100];
 	uint8 _walkCurrentPos;
@@ -484,20 +510,21 @@ protected:
 	RoomWalkBounds _roomWalkBounds;
 	UpdateDialogueProc _updateDialogue;
 	UpdateRoomBackgroundProc _updateRoomBackground;
+	int _demoActionsCounter;
 	int _gameTicks;
 	int _resourceEntriesCount;
 	ResourceEntry *_resourceEntries;
 	int _soundOffsetsCount;
 	uint32 *_soundOffsets;
+	Common::Array<StringEntry> _stringEntries;
 	char _saveStateDescriptions[kMaxSaveStates][100];
 
 	static const uint8 _dialogueColor[];
 	static const uint8 _sentenceColorIndex[];
 	static const uint8 _fontCharIndex[];
 	static const uint8 _fontCharWidth[];
-	static const uint8 _fontData[];
+	static const uint32 _fontData[];
 	static const uint8 _talkDelays[];
-	static const uint8 _verbAreasTable[];
 	static const uint8 _inventoryOffsetTable[];
 	static const uint8 _inventoryActionsTable[];
 	static const uint8 _walkWidthScaleTable[];
@@ -512,13 +539,14 @@ protected:
 	//
 
 	// main loop
-	void ADD_DIALOGUE_TEXT(int num, int count);
+	void ADD_DIALOGUE_TEXT(int num, int count, int sound = kNoSpeechSound);
 	void SET_DIALOGUE_TEXT(int start, int count);
 	void SET_EXEC_ACTION_FUNC(int i, ExecuteActionProc p);
 	void EXEC_MAIN_ACTION(int action);
 	void EXEC_MAIN_ACTION_38();
 	void EXEC_MAIN_ACTION_43();
 	void EXEC_MAIN_ACTION_54();
+	void CHECK_FOR_END_OF_DEMO();
 	void SET_PAL_208_96_1();
 	void SET_PAL_240_48_1();
 	void UPDATE_OBJECT_STATE(int num);
@@ -627,6 +655,7 @@ protected:
 	void PART_15_ACTION_107();
 	void PART_15_ACTION_115();
 	void PART_15_ACTION_116();
+	void PART_15_UPDATE_ROOM_BACKGROUND();
 	void PART_15_UPDATE_DIALOGUE_TOBIAS(int action);
 	void PART_15_HANDLE_DIALOGUE_TOBIAS();
 	void PART_15_HELPER_1(int num);

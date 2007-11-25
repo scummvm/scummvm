@@ -232,24 +232,11 @@ void IgorEngine::PART_25() {
 	} else if (_currentPart == 252) {
 		PART_25_HELPER_4();
 	}
-	showCursor();
-	_gameState.igorMoving = false;
+	enterPartLoop();
 	while (_currentPart >= 250 && _currentPart <= 252) {
-		handleRoomInput();
-		if (compareGameTick(1, 16)) {
-			handleRoomIgorWalk();
-		}
-		if (compareGameTick(19, 32)) {
-			handleRoomDialogue();
-		}
-		if (compareGameTick(4, 8)) {
-			handleRoomInventoryScroll();
-		}
-		if (compareGameTick(1)) {
-			handleRoomLight();
-		}
-		waitForTimer();
+		runPartLoop();
 	}
+	leavePartLoop();
 	fadeOutPalette(624);
 }
 

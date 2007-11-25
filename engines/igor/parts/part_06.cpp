@@ -389,9 +389,8 @@ void IgorEngine::PART_06() {
 	_roomDataOffsets = PART_06_ROOM_DATA_OFFSETS;
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
-	showCursor();
-	_gameState.igorMoving = false;
 	_gameState.unkF = (_objectsState[61] == 1);
+	enterPartLoop();
 	while (_currentPart >= 60 && _currentPart <= 61) {
 		setRoomWalkBounds(0, 0, _objectsState[61] == 0 ? 234 : 142, 143);
 		handleRoomInput();
@@ -413,7 +412,7 @@ void IgorEngine::PART_06() {
 		}
 		waitForTimer();
 	}
-	_updateRoomBackground = 0;
+	leavePartLoop();
 }
 
 } // namespace Igor

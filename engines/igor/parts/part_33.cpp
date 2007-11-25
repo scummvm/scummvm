@@ -265,6 +265,9 @@ void IgorEngine::PART_33_ACTION_115() {
 	}
 	removeObjectFromInventory(67);
 	PART_33_HELPER_1(255);
+	if (_gameVersion == kIdEngDemo110) {
+		++_demoActionsCounter;
+	}
 	ADD_DIALOGUE_TEXT(217, 2);
 	SET_DIALOGUE_TEXT(1, 1);
 	_updateDialogue = &IgorEngine::PART_33_UPDATE_DIALOGUE_HARRISON_2;
@@ -481,25 +484,11 @@ void IgorEngine::PART_33() {
 	_currentAction.verb = kVerbWalk;
 	fadeInPalette(768);
 	PART_33_HELPER_7();
-	showCursor();
-	_gameState.igorMoving = false;
+	enterPartLoop();
 	while (_currentPart == 330) {
-		handleRoomInput();
-		if (compareGameTick(1, 16)) {
-			handleRoomIgorWalk();
-		}
-		if (compareGameTick(19, 32)) {
-			handleRoomDialogue();
-		}
-		if (compareGameTick(4, 8)) {
-			handleRoomInventoryScroll();
-		}
-		if (compareGameTick(1)) {
-			handleRoomLight();
-		}
-		PART_33_UPDATE_ROOM_BACKGROUND();
-		waitForTimer();
+		runPartLoop();
 	}
+	leavePartLoop();
 	if (_objectsState[75] == 1) {
 		_objectsState[75] = 2;
 	}

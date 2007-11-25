@@ -29,11 +29,12 @@
 
 namespace Igor {
 
-void IgorEngine::ADD_DIALOGUE_TEXT(int num, int count) {
+void IgorEngine::ADD_DIALOGUE_TEXT(int num, int count, int sound) {
 	assert(_dialogueTextsCount < MAX_DIALOGUE_TEXTS);
 	DialogueText *dt = &_dialogueTextsTable[_dialogueTextsCount];
 	dt->num = num;
 	dt->count = count;
+	dt->sound = sound;
 	++_dialogueTextsCount;
 }
 
@@ -461,7 +462,6 @@ void IgorEngine::EXEC_MAIN_ACTION_38() {
 	loadData(IMG_NewsPaper, _screenVGA);
 	loadData(PAL_NewsPaper, _paletteBuffer);
 	fadeInPalette(624);
-//	mov _dialogueColor+3, 0
 	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
 	int _walkDataCurrentPosX2 = wd->x;
 	int _walkDataCurrentPosY2 = wd->y;
@@ -494,7 +494,6 @@ void IgorEngine::EXEC_MAIN_ACTION_38() {
 	}
 	fadeInPalette(624);
 	_objectsState[2] = 1;
-//	mov _dialogueColor+3, 63
 }
 
 void IgorEngine::EXEC_MAIN_ACTION_43() {
@@ -508,7 +507,6 @@ void IgorEngine::EXEC_MAIN_ACTION_43() {
 	loadData(IMG_PhotoHarrisonMargaret, _screenVGA);
 	loadData(PAL_PhotoHarrisonMargaret, _paletteBuffer);
 	fadeInPalette(624);
-//	mov _dialogueColor+3, 0
 	WalkData *wd = &_walkData[_walkDataLastIndex - 1];
 	int _walkDataCurrentPosX2 = wd->x;
 	int _walkDataCurrentPosY2 = wd->y;
@@ -531,7 +529,6 @@ void IgorEngine::EXEC_MAIN_ACTION_43() {
 		free(tmp);
 	}
 	fadeInPalette(624);
-//	mov _dialogueColor+3, 63
 }
 
 void IgorEngine::EXEC_MAIN_ACTION_54() {
@@ -571,6 +568,15 @@ void IgorEngine::EXEC_MAIN_ACTION_54() {
 		free(tmp);
 	}
 	fadeInPalette(624);
+}
+
+void IgorEngine::CHECK_FOR_END_OF_DEMO() {
+	if (_demoActionsCounter >= 10) {
+		ADD_DIALOGUE_TEXT(104, 2);
+		ADD_DIALOGUE_TEXT(106, 2);
+		SET_DIALOGUE_TEXT(1, 2);
+		startIgorDialogue();
+	}
 }
 
 void IgorEngine::SET_PAL_208_96_1() {
@@ -966,7 +972,7 @@ void IgorEngine::PART_MAIN() {
 			_gameState.nextMusicCounter = 0;
 		}
 	} while (_currentPart != kInvalidPart && !_eventQuitGame);
-	if (_gameVersion == kIdEngDemo100 || _gameVersion == kIdEngDemo110) {
+	if (_gameFlags & kFlagDemo) {
 		for (_currentPart = kSharewarePart; !_eventQuitGame && _currentPart <= kSharewarePart + 6; ++_currentPart) {
 			PART_95();
 		}

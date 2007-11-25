@@ -51,20 +51,20 @@ struct ResourceEntry {
 	uint32 size;
 };
 
-static const struct ResourceEntry _resourceEntriesEngDemo100[] = {
+static struct ResourceEntry _resourceEntriesEngDemo100[] = {
 #include "resource_en_demo100.h"
 };
 
-static const struct ResourceEntry _resourceEntriesEngDemo110[] = {
+static struct ResourceEntry _resourceEntriesEngDemo110[] = {
 #include "resource_en_demo110.h"
 };
 
-static const struct ResourceEntry _resourceEntriesSpaCd[] = {
+static struct ResourceEntry _resourceEntriesSpaCd[] = {
 #include "resource_sp_cdrom.h"
 };
 
-static const struct {
-	const struct ResourceEntry *p;
+static struct {
+	struct ResourceEntry *p;
 	int count;
 } _resourceEntriesList[] = {
 	{ _resourceEntriesEngDemo100, TABLE_SIZE(_resourceEntriesEngDemo100) },
@@ -81,7 +81,7 @@ static const uint32 _soundEntriesSpaCd[] = {
 #include "fsd_sp_cdrom.h"
 };
 
-static const struct {
+static struct {
 	const uint32 *p;
 	int count;
 } _soundEntriesList[] = {
@@ -97,18 +97,18 @@ enum {
 };
 
 struct StringEntry {
-	uint8 id;
+	int id;
 	uint8 language;
 	const char *str;
 };
 
-static const struct StringEntry _stringEntries[] = {
+static struct StringEntry _stringEntries[] = {
 #include "strings.h"
 };
 
 struct GameVersion {
 	uint32 borlandOverlaySize;
-	const struct ResourceEntry *resourceEntries;
+	struct ResourceEntry *resourceEntries;
 	const uint32 *soundEntries;
 };
 
@@ -119,7 +119,7 @@ static const struct GameVersion _gameVersions[] = {
 };
 
 static const uint32 ITBL_TAG = 0x4954424C;
-static const uint32 CURRENT_VERSION = 2;
+static const uint32 CURRENT_VERSION = 3;
 static const uint32 DEFAULT_OFFSET = 0x12345678;
 
 struct TablePtrOffset {
@@ -165,9 +165,14 @@ static void writeUint32BE(FILE *fp, uint32 value) {
 	writeUint16BE(fp, (uint16)(value & 0xFFFF));
 }
 
-static void writeResourceEntriesTable(FILE *fp, const struct ResourceEntry *re, int count) {
+int compareResourceEntry(const void *a, const void *b) {
+	return ((struct ResourceEntry *)a)->id - ((struct ResourceEntry *)b)->id;
+}
+
+static void writeResourceEntriesTable(FILE *fp, struct ResourceEntry *re, int count) {
 	int i;
 
+	qsort(re, count, sizeof(struct ResourceEntry), compareResourceEntry);
 	writeUint16BE(fp, count);
 	for (i = 0; i < count; ++i, ++re) {
 		writeUint16BE(fp, re->id);
@@ -185,15 +190,21 @@ static void writeSoundEntriesTable(FILE *fp, const uint32 *fsd, int count) {
 	}
 }
 
-static void writeStringEntriesTable(FILE *fp, const struct StringEntry *se, int count) {
+int compareStringEntry(const void *a, const void *b) {
+	return ((struct StringEntry *)a)->id - ((struct StringEntry *)b)->id;
+}
+
+static void writeStringEntriesTable(FILE *fp, struct StringEntry *se, int count) {
 	int i, len;
 
+	qsort(se, count, sizeof(struct StringEntry), compareStringEntry);
 	writeUint16BE(fp, count);
 	for (i = 0; i < count; ++i, ++se) {
-		writeByte(fp, se->id);
+		writeUint16BE(fp, se->id);
 		writeByte(fp, se->language);
 		len = strlen(se->str);
 		assert(len < 256);
+		writeByte(fp, len);
 		fwrite(se->str, 1, len, fp);
 	}
 }

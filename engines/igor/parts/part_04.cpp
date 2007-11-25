@@ -29,16 +29,26 @@ namespace Igor {
 
 void IgorEngine::PART_04_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_04_EXEC_ACTION %d", action);
+	if (_gameFlags & kFlagDemo) {
+		if (action == 102 || action == 103 || action == 104) {
+			ADD_DIALOGUE_TEXT(102, 2);
+			SET_DIALOGUE_TEXT(1, 1);
+			startIgorDialogue();
+			return;
+		}
+	}
 	switch (action) {
 	case 101:
 		_currentPart = 120;
 		break;
 	case 102:
+		_currentPart = 0;
+		break;
 	case 103:
+		_currentPart = 350;
+		break;
 	case 104:
-		ADD_DIALOGUE_TEXT(102, 2);
-		SET_DIALOGUE_TEXT(1, 1);
-		startIgorDialogue();
+		_currentPart = 100;
 		break;
 	case 105:
 		if (_objectsState[111] == 0) {
@@ -90,8 +100,7 @@ void IgorEngine::PART_04() {
 	_walkData[0].scaleHeight = 49;
 	_walkDataLastIndex = 1;
 	_walkDataCurrentIndex = 1;
-	showCursor();
-	_gameState.igorMoving = false;
+	enterPartLoop();
 	while (_currentPart == 40) {
 		handleRoomInput();
 		if (compareGameTick(19, 32)) {
@@ -109,7 +118,7 @@ void IgorEngine::PART_04() {
 		setPaletteRange(184, 199);
 		waitForTimer();
 	}
-	memcpy(_paletteBuffer, _currentPalette, 624);
+	leavePartLoop();
 	fadeOutPalette(624);
 }
 

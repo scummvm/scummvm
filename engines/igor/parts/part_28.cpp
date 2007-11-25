@@ -178,6 +178,9 @@ void IgorEngine::PART_28_ACTION_109() {
 	ADD_DIALOGUE_TEXT(230, 1);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
+	if (_gameVersion == kIdEngDemo110) {
+		++_demoActionsCounter;
+	}
 }
 
 void IgorEngine::PART_28_UPDATE_DIALOGUE_CAROLINE(int action) {
@@ -340,30 +343,15 @@ void IgorEngine::PART_28() {
 	} else if (_currentPart == 281) {
 		PART_28_HELPER_6();
 	}
-	showCursor();
-	_gameState.igorMoving = false;
+	enterPartLoop();
 	while (_currentPart == 280 || _currentPart == 281) {
-		handleRoomInput();
-		if (compareGameTick(1, 16)) {
-			handleRoomIgorWalk();
-		}
-		if (compareGameTick(19, 32)) {
-			handleRoomDialogue();
-		}
-		if (compareGameTick(4, 8)) {
-			handleRoomInventoryScroll();
-		}
-		if (compareGameTick(1)) {
-			handleRoomLight();
-		}
-		PART_28_UPDATE_ROOM_BACKGROUND();
-		waitForTimer();
+		runPartLoop();
 	}
 	if (_objectsState[87] == 1) {
 		_objectsState[87] = 2;
 	}
+	leavePartLoop();
 	fadeOutPalette(624);
-	_updateRoomBackground = 0;
 }
 
 } // namespace Igor

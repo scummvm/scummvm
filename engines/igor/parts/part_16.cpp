@@ -71,6 +71,9 @@ void IgorEngine::PART_16_ACTION_101() {
 	}
 	addObjectToInventory(20, 55);
 	_objectsState[52] = 1;
+	if (_gameVersion == kIdEngDemo110) {
+		++_demoActionsCounter;
+	}
 	ADD_DIALOGUE_TEXT(204, 3);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
@@ -271,25 +274,11 @@ void IgorEngine::PART_16() {
 	if (_objectsState[65] == 2 && _inventoryInfo[71] != 0 && _objectsState[76] == 1) {
 		PART_16_HELPER_3();
 	}
-	showCursor();
-	_gameState.igorMoving = false;
+	enterPartLoop();
 	while (_currentPart == 160) {
-		handleRoomInput();
-		if (compareGameTick(1, 16)) {
-			handleRoomIgorWalk();
-		}
-		if (compareGameTick(19, 32)) {
-			handleRoomDialogue();
-		}
-		if (compareGameTick(4, 8)) {
-			handleRoomInventoryScroll();
-		}
-		if (compareGameTick(1)) {
-			handleRoomLight();
-		}
-		waitForTimer();
+		runPartLoop();
 	}
-	hideCursor();
+	leavePartLoop();
 	fadeOutPalette(624);
 }
 

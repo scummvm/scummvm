@@ -299,26 +299,11 @@ void IgorEngine::PART_30() {
 			PART_30_HELPER_5();
 		}
 	}
-	if (!_gameState.dialogueTextRunning) {
-		showCursor();
-	}
-	_gameState.igorMoving = false;
+	enterPartLoop();
 	while (_currentPart >= 300 && _currentPart <= 303) {
-		handleRoomInput();
-		if (compareGameTick(1, 16)) {
-			handleRoomIgorWalk();
-		}
-		if (compareGameTick(19, 32)) {
-			handleRoomDialogue();
-		}
-		if (compareGameTick(4, 8)) {
-			handleRoomInventoryScroll();
-		}
-		if (compareGameTick(1)) {
-			handleRoomLight();
-		}
-		waitForTimer();
+		runPartLoop();
 	}
+	leavePartLoop();
 	fadeOutPalette(624);
 }
 

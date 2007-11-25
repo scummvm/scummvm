@@ -522,6 +522,7 @@ void IgorEngine::PART_12() {
 	_roomDataOffsets = PART_12_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(89, 0, 275, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_12_EXEC_ACTION);
+	_updateRoomBackground = &IgorEngine::PART_12_UPDATE_ROOM_BACKGROUND;
 	PART_12_HELPER_1(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	if (_objectsState[44] == 0) {
@@ -555,27 +556,12 @@ void IgorEngine::PART_12() {
 		}
 	}
 	PART_12_HELPER_2();
-	showCursor();
-	_gameState.igorMoving = false;
+	enterPartLoop();
 	while (_currentPart >= 120 && _currentPart <= 122) {
-		handleRoomInput();
-		if (compareGameTick(1, 16)) {
-			handleRoomIgorWalk();
-		}
-		if (compareGameTick(19, 32)) {
-			handleRoomDialogue();
-		}
-		if (compareGameTick(4, 8)) {
-			handleRoomInventoryScroll();
-		}
-		if (compareGameTick(1)) {
-			handleRoomLight();
-		}
-		PART_12_UPDATE_ROOM_BACKGROUND();
-		waitForTimer();
+		runPartLoop();
 	}
 PART_12_EXIT:
-	hideCursor();
+	leavePartLoop();
 	fadeOutPalette(624);
 }
 

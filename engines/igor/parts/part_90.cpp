@@ -27,10 +27,6 @@
 
 namespace Igor {
 
-static const char *STR_COPYRIGHT_1995 = "(C) 1995 Optik Software. All rights reserved.";
-
-static const char *STR_COPYRIGHT_1994 = "(C) 1994 PENDULO STUDIOS. All rights reserved.";
-
 void IgorEngine::PART_90() {
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
@@ -54,7 +50,7 @@ void IgorEngine::PART_90() {
 	case 904:
 		loadData(PAL_TitleScreen, _paletteBuffer);
 		loadData(IMG_TitleScreen, _screenVGA);
-		drawString(_screenVGA, (_gameVersion == kIdEngDemo110) ? STR_COPYRIGHT_1994 : STR_COPYRIGHT_1995, 2, 187, 0xF5, 0, 0);
+		drawString(_screenVGA, (_gameVersion == kIdEngDemo110) ? getString(STR_COPYRIGHT_1994) : getString(STR_COPYRIGHT_1995), 2, 187, 0xF5, 0, 0);
 		break;
 	}
 	fadeInPalette(768);

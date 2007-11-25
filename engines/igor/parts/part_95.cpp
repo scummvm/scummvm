@@ -30,73 +30,74 @@ namespace Igor {
 struct SharewareScreenString {
 	uint8 color;
 	int y;
-	const char *str;
+	int strId;
 };
 
 static const SharewareScreenString STR_SHAREWARE[] = {
 	// 950
-	{ 255,  30, "\"Igor. Objective Uikokahonia\"" },
-	{ 228,  70, "This is SHAREWARE!" },
-	{ 228,  81, "You can copy this version!" },
-	{ 228,  96, "Pass it around, give it to your friends, family," },
-	{ 228, 107, "colleagues and upload it to your favorite BBS." },
-	{ 228, 122, "Let everyone enjoy IGOR!" },
-	{ 228, 161, "To place an order: 1-800-OPTIK-99" },
+	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
+	{ 228,  70, STR_SHAREWARE_TEXT1 },
+	{ 228,  81, STR_SHAREWARE_TEXT2 },
+	{ 228,  96, STR_SHAREWARE_TEXT3 },
+	{ 228, 107, STR_SHAREWARE_TEXT4 },
+	{ 228, 122, STR_SHAREWARE_TEXT5 },
+	{ 228, 161, STR_SHAREWARE_PLACE_ORDER },
 	// 951
-	{ 255,  30, "\"Igor. Objective Uikokahonia\"" },
-	{ 228,  42, "Shareware version" },
-	{ 228,  85, "Order the full IGOR game for only $34.99 US." },
-	{ 228,  96, "$5.00 for shipping and handling (US & CANADA)." },
-	{ 228, 107, "Please add $3.00 for international shipping." },
-	{ 228, 161, "To place an order: 1-800-OPTIK-99" },
+	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
+	{ 228,  42, STR_SHAREWARE_VERSION },
+	{ 228,  85, STR_SHAREWARE_ORDER_1 },
+	{ 228,  96, STR_SHAREWARE_ORDER_2 },
+	{ 228, 107, STR_SHAREWARE_ORDER_3 },
+	{ 228, 161, STR_SHAREWARE_ORDER_4 },
 	// 952
-	{ 255,  30, "\"Igor. Objective Uikokahonia\"" },
-	{ 228,  42, "Shareware version" },
-	{ 228,  70, "90 day limited warranty." },
-	{ 228,  85, "Please allow 2-4 days for delivery (US only)." },
-	{ 228,  96, "Elsewhere, up to a week or two..." },
-	{ 228, 111, "Overnight/second day shipping available an" },
-	{ 228, 122, "aditional change. Please call for exact pricing." },
-	{ 228, 161, "To place an order: 1-800-OPTIK-99" },
+	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
+	{ 228,  42, STR_SHAREWARE_VERSION },
+	{ 228,  70, STR_SHAREWARE_SHIPPING_1 },
+	{ 228,  85, STR_SHAREWARE_SHIPPING_2 },
+	{ 228,  96, STR_SHAREWARE_SHIPPING_3 },
+	{ 228, 111, STR_SHAREWARE_SHIPPING_4 },
+	{ 228, 122, STR_SHAREWARE_SHIPPING_5 },
+	{ 228, 161, STR_SHAREWARE_PLACE_ORDER },
 	// 953
-	{ 255,  30, "\"Igor. Objective Uikokahonia\"" },
-	{ 228,  42, "Shareware version" },
-	{ 228,  70, "Three easy ways to order:" },
-	{ 228,  85, "- Call 1-800-678-4599 (orders only) and use" },
-	{ 228,  96, "Your Visa, Mastercard or Discover card." },
-	{ 228, 110, "- Fax your order (please include credit card" },
-	{ 228, 121, "information) to (412) 381-1031" },
-	{ 228, 161, "To place an order: 1-800-OPTIK-99" },
+	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
+	{ 228,  42, STR_SHAREWARE_VERSION },
+	{ 228,  70, STR_SHAREWARE_SHIPPING_6 },
+	{ 228,  85, STR_SHAREWARE_SHIPPING_7 },
+	{ 228,  96, STR_SHAREWARE_SHIPPING_8 },
+	{ 228, 110, STR_SHAREWARE_SHIPPING_9 },
+	{ 228, 121, STR_SHAREWARE_SHIPPING_10 },
+	{ 228, 161, STR_SHAREWARE_PLACE_ORDER },
 	// 954
-	{ 255,  30, "\"Igor. Objective Uikokahonia\"" },
-	{ 228,  42, "Shareware version" },
-	{ 228,  74, "- Mail a check or money order to:" },
-	{ 228,  85, "Optik Software Inc." },
-	{ 228,  96, "1000 Napor Boulevard" },
-	{ 228, 107, "Pittsburgh, PA. 15205" },
-	{ 228, 118, "USA" },
-	{ 228, 161, "To place an order: 1-800-OPTIK-99" },
+	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
+	{ 228,  42, STR_SHAREWARE_VERSION },
+	{ 228,  74, STR_SHAREWARE_OPTIK_ADDRESS_1 },
+	{ 228,  85, STR_SHAREWARE_OPTIK_ADDRESS_2 },
+	{ 228,  96, STR_SHAREWARE_OPTIK_ADDRESS_3 },
+	{ 228, 107, STR_SHAREWARE_OPTIK_ADDRESS_4 },
+	{ 228, 118, STR_SHAREWARE_OPTIK_ADDRESS_5 },
+	{ 228, 161, STR_SHAREWARE_PLACE_ORDER },
 	// 955
-	{ 255,  30, "\"Igor. Objective Uikokahonia\"" },
-	{ 240,  42, "Shareware version" },
-	{ 240,  79, "Optik Software Inc." },
-	{ 240,  90, "Orders only: 1-800-OPTIK-99 (67845-99)" },
-	{ 240, 101, "Fax: (412) 381-1031" },
-	{ 240, 112, "E-mail: optiksoft\xFA""aol.com" },
-	{ 240, 161, "To place an order: 1-800-OPTIK-99" },
+	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
+	{ 240,  42, STR_SHAREWARE_VERSION },
+	{ 240,  79, STR_SHAREWARE_OPTIK_ADDRESS_6 },
+	{ 240,  90, STR_SHAREWARE_OPTIK_ADDRESS_7 },
+	{ 240, 101, STR_SHAREWARE_OPTIK_ADDRESS_8 },
+	{ 240, 112, STR_SHAREWARE_OPTIK_ADDRESS_9 },
+	{ 240, 161, STR_SHAREWARE_PLACE_ORDER },
 	// 956
-	{ 255,  30, "\"Igor. Objective Uikokahonia\"" },
-	{ 228,  42, "Shareware version" },
-	{ 228,  64, "A game by" },
-	{ 228,  80, "PENDULO STUDIOS" },
-	{ 228,  91, "P.O. Box 21091" },
-	{ 228, 102, "28009 Madrid" },
-	{ 228, 113, "Spain" },
-	{ 228, 128, "E-mail: 100641.1737\xFA""compuserve.com" },
-	{ 228, 161, "To place an order: 1-800-OPTIK-99" }
+	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
+	{ 228,  42, STR_SHAREWARE_VERSION },
+	{ 228,  64, STR_SHAREWARE_PENDULO_ADDRESS_1 },
+	{ 228,  80, STR_SHAREWARE_PENDULO_ADDRESS_2 },
+	{ 228,  91, STR_SHAREWARE_PENDULO_ADDRESS_3 },
+	{ 228, 102, STR_SHAREWARE_PENDULO_ADDRESS_4 },
+	{ 228, 113, STR_SHAREWARE_PENDULO_ADDRESS_5 },
+	{ 228, 128, STR_SHAREWARE_PENDULO_ADDRESS_6 },
+	{ 228, 161, STR_SHAREWARE_PLACE_ORDER }
 };
 
 void IgorEngine::PART_95() {
+	hideCursor();
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
 	memset(_screenVGA, 0, 64000);
@@ -159,9 +160,12 @@ void IgorEngine::PART_95() {
 		}
 		break;
 	}
-	for (int i = startStr; i <= endStr; ++i) {
-		const SharewareScreenString *s = &STR_SHAREWARE[i];
-		drawString(_screenVGA, s->str, (320 - getStringWidth(s->str)) / 2, s->y, s->color, 0, 0);
+	if (startStr != -1) {
+		for (int i = startStr; i <= endStr; ++i) {
+			const SharewareScreenString *s = &STR_SHAREWARE[i];
+			const char *str = getString(s->strId);
+			drawString(_screenVGA, str, (320 - getStringWidth(str)) / 2, s->y, s->color, 0, 0);
+		}
 	}
 	fadeInPalette(768);
 	for (int i = 0; !_inputVars[kInputEscape] && i < 3000; ++i) {

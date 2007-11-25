@@ -311,24 +311,11 @@ void IgorEngine::PART_19() {
 	if (_objectsState[59] == 0) {
 		PART_19_HELPER_4();
 	} else {
-		showCursor();
-		_gameState.igorMoving = false;
+		enterPartLoop();
 		while (_currentPart == 190) {
-			handleRoomInput();
-			if (compareGameTick(1, 16)) {
-				handleRoomIgorWalk();
-			}
-			if (compareGameTick(19, 32)) {
-				handleRoomDialogue();
-			}
-			if (compareGameTick(4, 8)) {
-				handleRoomInventoryScroll();
-			}
-			if (compareGameTick(1)) {
-				handleRoomLight();
-			}
-			waitForTimer();
+			runPartLoop();
 		}
+		leavePartLoop();
 	}
 	fadeOutPalette(624);
 }

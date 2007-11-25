@@ -65,9 +65,9 @@ void IgorEngine::PART_75() {
 	memset(_currentPalette, 0, 768);
 	fadeInPalette(768);
 	_gameState.igorMoving = false;
-	ADD_DIALOGUE_TEXT(201, 1);
-	ADD_DIALOGUE_TEXT(202, 2);
-	ADD_DIALOGUE_TEXT(204, 1);
+	ADD_DIALOGUE_TEXT(201, 1, 1156);
+	ADD_DIALOGUE_TEXT(202, 2, 1157);
+	ADD_DIALOGUE_TEXT(204, 1, 1158);
 	SET_DIALOGUE_TEXT(1, 3);
 	startCutsceneDialogue(187, 82, 63, 63, 0);
 	waitForEndOfCutsceneDialogue(187, 82, 63, 63, 0);
@@ -75,8 +75,8 @@ void IgorEngine::PART_75() {
 		PART_75_HELPER_1(PART_75_ANIM_DATA_1[i]);
 		waitForTimer(30);
 	}
-	ADD_DIALOGUE_TEXT(205, 1);
-	ADD_DIALOGUE_TEXT(206, 1);
+	ADD_DIALOGUE_TEXT(205, 1, 1159);
+	ADD_DIALOGUE_TEXT(206, 1, 1160);
 	SET_DIALOGUE_TEXT(1, 2);
 	startCutsceneDialogue(187, 82, 63, 63, 0);
 	waitForEndOfCutsceneDialogue(187, 82, 63, 63, 0);

@@ -33,6 +33,7 @@
 struct IgorGameDescription {
 	Common::ADGameDescription desc;
 	int gameVersion;
+	int gameFlags;
 };
 
 static const IgorGameDescription igorGameDescriptions[] = {
@@ -49,7 +50,8 @@ static const IgorGameDescription igorGameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		Igor::kIdEngDemo100
+		Igor::kIdEngDemo100,
+		Igor::kFlagDemo | Igor::kFlagFloppy
 	},
 	{
 		{
@@ -64,7 +66,8 @@ static const IgorGameDescription igorGameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_DEMO
 		},
-		Igor::kIdEngDemo110
+		Igor::kIdEngDemo110,
+		Igor::kFlagDemo | Igor::kFlagFloppy
 	},
 	{
 		{
@@ -79,9 +82,10 @@ static const IgorGameDescription igorGameDescriptions[] = {
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		Igor::kIdSpaCD
+		Igor::kIdSpaCD,
+		Igor::kFlagTalkie
 	},
-	{ AD_TABLE_END_MARKER, 0 }
+	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
 static const PlainGameDescriptor igorGameDescriptors[] = {
@@ -104,7 +108,7 @@ static const Common::ADParams igorDetectionParams = {
 static bool Engine_IGOR_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
 	const IgorGameDescription *gd = (const IgorGameDescription *)(encapsulatedDesc.realDesc);
 	if (gd) {
-		*engine = new Igor::IgorEngine(syst, gd->gameVersion);
+		*engine = new Igor::IgorEngine(syst, gd->gameVersion, gd->gameFlags, gd->desc.language);
 	}
 	return gd != 0;
 }

@@ -317,6 +317,16 @@ void IgorEngine::PART_15_ACTION_116() {
 	_currentPart = 780;
 }
 
+void IgorEngine::PART_15_UPDATE_ROOM_BACKGROUND() {
+	PART_15_HELPER_5();
+	if (_gameTicks == 38 || _gameTicks == 60) {
+		if (_objectsState[48] != 1 && getRandomNumber(200) == 0 && _gameState.counter[3] == 0) {
+			_gameState.counter[3] = 1;
+		}
+	}
+	PART_15_HELPER_3();
+}
+
 void IgorEngine::PART_15_UPDATE_DIALOGUE_TOBIAS(int action) {
 	switch (action) {
 	case kUpdateDialogueAnimEndOfSentence:
@@ -477,7 +487,7 @@ void IgorEngine::PART_15() {
 	_roomDataOffsets = PART_15_ROOM_DATA_OFFSETS;
 	setRoomWalkBounds(28, 0, 96, 143);
 	SET_EXEC_ACTION_FUNC(1, &IgorEngine::PART_15_EXEC_ACTION);
-	_updateRoomBackground = 0;
+	_updateRoomBackground = &IgorEngine::PART_15_UPDATE_ROOM_BACKGROUND;
 	PART_15_HELPER_1(255);
 	memcpy(_screenVGA, _screenLayer1, 46080);
 	_currentAction.verb = kVerbWalk;
@@ -487,31 +497,11 @@ void IgorEngine::PART_15() {
 	_gameState.counter[3] = 0;
 	_gameState.counter[4] = 0;
 	PART_15_HELPER_2();
-	showCursor();
-	_gameState.igorMoving = false;
+	enterPartLoop();
 	while (_currentPart == 150) {
-		handleRoomInput();
-		if (compareGameTick(1, 16)) {
-			handleRoomIgorWalk();
-		}
-		if (compareGameTick(19, 32)) {
-			handleRoomDialogue();
-		}
-		if (compareGameTick(4, 8)) {
-			handleRoomInventoryScroll();
-		}
-		if (compareGameTick(1)) {
-			handleRoomLight();
-		}
-		PART_15_HELPER_5();
-		if (_gameTicks == 38 || _gameTicks == 60) {
-			if (_objectsState[48] != 1 && getRandomNumber(200) == 0 && _gameState.counter[3] == 0) {
-				_gameState.counter[3] = 1;
-			}
-		}
-		PART_15_HELPER_3();
-		waitForTimer();
+		runPartLoop();
 	}
+	leavePartLoop();
 	if (_objectsState[48] == 1) {
 		_objectsState[48] = 2;
 	}

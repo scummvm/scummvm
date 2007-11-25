@@ -173,6 +173,9 @@ void IgorEngine::PART_27_ACTION_108() {
 	}
 	addObjectToInventory(23, 58);
 	PART_27_HELPER_1(1);
+	if (_gameVersion == kIdEngDemo110) {
+		++_demoActionsCounter;
+	}
 }
 
 void IgorEngine::PART_27_ACTION_110() {
@@ -193,6 +196,9 @@ void IgorEngine::PART_27_ACTION_110() {
 	removeObjectFromInventory(55);
 	PART_27_HELPER_1(255);
 	_objectsState[107] = 1;
+	if (_gameVersion == kIdEngDemo110) {
+		++_demoActionsCounter;
+	}
 }
 
 void IgorEngine::PART_27_HELPER_1(int num) {
@@ -272,24 +278,11 @@ void IgorEngine::PART_27() {
 	} else {
 		PART_27_HELPER_5();
 	}
-	showCursor();
-	_gameState.igorMoving = false;
+	enterPartLoop();
 	while (_currentPart == 270 || _currentPart == 271) {
-		handleRoomInput();
-		if (compareGameTick(1, 16)) {
-			handleRoomIgorWalk();
-		}
-		if (compareGameTick(19, 32)) {
-			handleRoomDialogue();
-		}
-		if (compareGameTick(4, 8)) {
-			handleRoomInventoryScroll();
-		}
-		if (compareGameTick(1)) {
-			handleRoomLight();
-		}
-		waitForTimer();
+		runPartLoop();
 	}
+	leavePartLoop();
 	fadeOutPalette(624);
 }
 

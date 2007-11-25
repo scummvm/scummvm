@@ -36,10 +36,8 @@
 
 namespace Igor {
 
-IgorEngine::IgorEngine(OSystem *system, int gameVersion)
-	: Engine(system), _gameVersion(gameVersion) {
-
-	_midiPlayer = new MidiPlayer(this);
+IgorEngine::IgorEngine(OSystem *system, int gameVersion, int gameFlags, Common::Language language)
+	: Engine(system), _gameVersion(gameVersion), _gameFlags(gameFlags), _gameLanguage(language) {
 
 	_screenVGA = (uint8 *)malloc(320 * 200);
 	for (int i = 0; i < 4; ++i) {
@@ -60,13 +58,17 @@ IgorEngine::IgorEngine(OSystem *system, int gameVersion)
 	Common::addSpecialDebugLevel(kDebugScreen,   "Screen",   "Screen debug level");
 	Common::addSpecialDebugLevel(kDebugWalk,     "Walk",     "Walk debug level");
 	Common::addSpecialDebugLevel(kDebugGame,     "Game",     "Game debug level");
+
+	if (gameFlags & kFlagFloppy) {
+		_midiPlayer = new MidiPlayer(this);
+	} else {
+		_midiPlayer = 0;
+	}
 }
 
 IgorEngine::~IgorEngine() {
-	delete _midiPlayer;
 	free(_resourceEntries);
 	free(_soundOffsets);
-	Common::clearAllSpecialDebugLevels();
 	free(_screenVGA);
 	for (int i = 0; i < 4; ++i) {
 		free(_facingIgorFrames[i]);
@@ -80,6 +82,10 @@ IgorEngine::~IgorEngine() {
 	free(_inventoryPanelBuffer);
 	free(_inventoryImagesBuffer);
 	free(_verbsPanelBuffer);
+
+	Common::clearAllSpecialDebugLevels();
+
+	delete _midiPlayer;
 }
 
 int IgorEngine::init() {
@@ -98,7 +104,7 @@ void IgorEngine::restart() {
 	memset(&_gameState, 0, sizeof(_gameState));
 	_nextTimer = 0;
 	_fastMode = false;
-	_language = kLanguageEnglish;
+	_language = 0;
 
 	memset(_walkData, 0, sizeof(_walkData));
 	_walkCurrentPos = 0;
@@ -158,6 +164,8 @@ void IgorEngine::restart() {
 	_soundOffsetsCount = 0;
 	_soundOffsets = 0;
 
+	_demoActionsCounter = 0;
+
 	_gameTicks = 0;
 }
 
@@ -170,7 +178,7 @@ int IgorEngine::go() {
 	}
 	const char *ovlFileName = "IGOR.DAT";
 	const char *fsdFileName = "IGOR.FSD";
-	if (_gameVersion == kIdSpaCD) {
+	if (_gameFlags & kFlagTalkie) {
 		ovlFileName = "IGOR.EXE";
 		fsdFileName = "IGOR.DAT";
 	}
@@ -180,7 +188,7 @@ int IgorEngine::go() {
 	if (!_sndFile.open(fsdFileName)) {
 		error("Unable to open '%s'", fsdFileName);
 	}
-	readResourceTableFile();
+	readTableFile();
 	loadMainTexts();
 	loadIgorFrames();
 	_gameState.talkMode = kTalkModeTextOnly;
@@ -193,11 +201,11 @@ int IgorEngine::go() {
 	return 0;
 }
 
-void IgorEngine::readResourceTableFile() {
+void IgorEngine::readTableFile() {
 	Common::File tblFile;
-	uint32 resourcesEntriesOffset = 0, soundEntriesOffset = 0;
-	if (tblFile.open("IGOR.TBL") && tblFile.readUint32BE() == MKID_BE('ITBL') && tblFile.readUint32BE() == 2) {
-		tblFile.skip(4);
+	uint32 stringsEntriesOffset = 0, resourcesEntriesOffset = 0, soundEntriesOffset = 0;
+	if (tblFile.open("IGOR.TBL") && tblFile.readUint32BE() == MKID_BE('ITBL') && tblFile.readUint32BE() == 3) {
+		stringsEntriesOffset = tblFile.readUint32BE();
 		uint32 borlandOverlaySize = _ovlFile.size();
 		int gameVersionsCount = tblFile.readByte();
 		for (int i = 0; i < gameVersionsCount; ++i) {
@@ -225,9 +233,36 @@ void IgorEngine::readResourceTableFile() {
 		for (int i = 0; i < _soundOffsetsCount; ++i) {
 			_soundOffsets[i] = tblFile.readUint32BE();
 		}
+		tblFile.seek(stringsEntriesOffset);
+		int stringsCount = tblFile.readUint16BE();
+		for (int i = 0; i < stringsCount; ++i) {
+			int id = tblFile.readUint16BE();
+			int lang = tblFile.readByte();
+			int len = tblFile.readByte();
+			bool skipString = (lang == 1 && _gameLanguage != Common::EN_ANY) || (lang == 2 && _gameLanguage != Common::ES_ESP);
+			if (skipString) {
+				tblFile.skip(len);
+			} else {
+				char buf[256];
+				tblFile.read(buf, len);
+				buf[len] = 0;
+				_stringEntries.push_back(StringEntry(id, buf));
+			}
+		}
 		return;
 	}
 	error("Unable to read 'IGOR.TBL'");
+}
+
+const char *IgorEngine::getString(int id) {
+	const char *str = 0;
+	for (Common::Array<StringEntry>::const_iterator it = _stringEntries.begin(); it != _stringEntries.end(); ++it) {
+		if ((*it).id == id) {
+			str = (*it).str.c_str();
+			break;
+		}
+	}
+	return str;
 }
 
 void IgorEngine::waitForTimer(int ticks) {
@@ -283,12 +318,16 @@ void IgorEngine::waitForTimer(int ticks) {
 		return;
 	}
 	_gameTicks += kTimerTicksCount;
-	if (_gameTicks == 64) { // TODO: original switches cursors more often
-		_gameTicks = 0;
+	if ((_gameTicks & 31) == 0) {
 		setCursor(_currentCursor);
 		_currentCursor = (_currentCursor + 1) & 3;
 	}
-	// TODO: updateMusic();
+	if (_gameFlags & kFlagFloppy) {
+		updateMusic();
+	}
+	if (_gameTicks == 64) {
+		_gameTicks = 0;
+	}
 }
 
 void IgorEngine::copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent) {
@@ -323,21 +362,21 @@ void IgorEngine::startMusic(int cmf) {
 
 void IgorEngine::playMusic(int num) {
 	debugC(9, kDebugEngine, "playMusic() %d", num);
-	static const int cmf[] = { 0, 0, CMF_2_1, CMF_3, CMF_4, 0, 0, CMF_7_1, CMF_8, CMF_9, CMF_10, CMF_11, CMF_12 };
-	assert(num < ARRAYSIZE(cmf) && cmf[num] != 0);
-	_gameState.musicNum = num;
-	_gameState.musicSequenceIndex = 1;
-	if (_gameVersion == kIdSpaCD) {
-		// different file format
-		return;
+	if (_gameFlags & kFlagFloppy) {
+		static const int cmf[] = { 0, 0, CMF_2_1, CMF_3, CMF_4, 0, 0, CMF_7_1, CMF_8, CMF_9, CMF_10, CMF_11, CMF_12 };
+		assert(num < ARRAYSIZE(cmf) && cmf[num] != 0);
+		_gameState.musicNum = num;
+		_gameState.musicSequenceIndex = 1;
+		startMusic(cmf[num]);
+	} else {
+		// TODO: play CD track
 	}
-	startMusic(cmf[num]);
 }
 
 void IgorEngine::updateMusic() {
 	static const int cmf2Seq[] = { CMF_2_1, CMF_2_2, CMF_2_3, CMF_2_4 };
 	static const int cmf7Seq[] = { CMF_7_1, CMF_7_2, CMF_7_3, CMF_7_4 };
-	if (_gameState.jumpToNextMusic) {
+	if (_gameState.jumpToNextMusic && 0) { // TODO: enable
 		switch (_gameState.musicNum) {
 		case 2:
 			_gameState.musicSequenceIndex = getRandomNumber(4) + 1;
@@ -367,21 +406,36 @@ void IgorEngine::updateMusic() {
 	}
 }
 
-void IgorEngine::playSound(int num, int fl) {
+void IgorEngine::playSound(int num, int type) {
 	debugC(9, kDebugEngine, "playSound() %d", num);
-	if (fl && _mixer->isSoundHandleActive(_sfxHandle)) {
-		return;
-	}
-	if (!fl) {
-//		num = 20; // "Speech not recorded"
-		return;
-	}
 	--num;
-	assert(num >= 0 && num < _soundOffsetsCount);
-	_sndFile.seek(_soundOffsets[num]);
+	int soundOffset = -1;
+	Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType;
+	Audio::SoundHandle *soundHandle = 0;
+	if (type == 1) {
+		if (_mixer->isSoundHandleActive(_sfxHandle)) {
+			return;
+		}
+		assert(num >= 0 && num < _soundOffsetsCount);
+		soundOffset = _soundOffsets[num];
+		soundType = Audio::Mixer::kSFXSoundType;
+		soundHandle = &_sfxHandle;
+	} else if (type == 0 && (_gameFlags & kFlagTalkie) != 0 && num != kNoSpeechSound) {
+		if (_mixer->isSoundHandleActive(_speechHandle)) {
+			_mixer->stopHandle(_speechHandle);
+		}
+		num += 100;
+		assert(num >= 0 && num < _soundOffsetsCount);
+		soundOffset = _soundOffsets[num];
+		soundType = Audio::Mixer::kSpeechSoundType;
+		soundHandle = &_speechHandle;
+	} else {
+		return;
+	}
+	_sndFile.seek(soundOffset);
 	Audio::AudioStream *stream = Audio::makeVOCStream(_sndFile);
 	if (stream) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, stream);
+		_mixer->playInputStream(soundType, soundHandle, stream);
 	}
 }
 
@@ -396,6 +450,15 @@ void IgorEngine::loadIgorFrames() {
 	loadData(FRM_IgorDirLeft, _facingIgorFrames[3]);
 	loadData(FRM_IgorHead, _igorHeadFrames);
 	memcpy(_igorPalette, PAL_IGOR_1, 48);
+}
+
+void IgorEngine::loadIgorFrames2() {
+	loadData(FRM_IgorDirBack2, _facingIgorFrames[0]);
+	loadData(FRM_IgorDirRight2, _facingIgorFrames[1]);
+	loadData(FRM_IgorDirFront2, _facingIgorFrames[2]);
+	loadData(FRM_IgorDirLeft2, _facingIgorFrames[3]);
+	loadData(FRM_IgorHead2, _igorHeadFrames);
+	memcpy(_igorPalette, PAL_IGOR_2, 48);
 }
 
 void IgorEngine::fixDialogueTextPosition(int num, int count, int *x, int *y) {
@@ -527,9 +590,6 @@ void IgorEngine::fixIgorDialogueTextPosition(int num, int count, int *x, int *y)
 
 void IgorEngine::startIgorDialogue() {
 	debugC(9, kDebugEngine, "startIgorDialogue()");
-//	if (_dialogueCursorOn) {
-//		clearCursor();
-//	}
 	--_dialogueTextsCount;
 	int talkX, talkY;
 	const DialogueText *dt = &_dialogueTextsTable[_dialogueTextsStart];
@@ -997,8 +1057,10 @@ void IgorEngine::drawString(uint8 *dst, const char *s, int x, int y, int color1,
 			}
 			for (int j = 0; j < 11; ++j) {
 				uint8 *p = dst + (j + y) * 320 + x + dx;
-				for (int i = 0; i < 9; ++i) {
-					uint8 code = _fontData[(chr * 11 + j) * 9 + i];
+				uint32 chrMask = _fontData[chr * 11 + j];
+				for (int i = 0; i < 9; ++i, chrMask >>= 2) {
+//					uint8 code = _fontData[(chr * 11 + j) * 9 + i];
+					uint8 code = chrMask & 3;
 					if (code == 1) {
 						p[i] = color1;
 					} else if (code == 2 && color2 != -1) {
@@ -1393,7 +1455,7 @@ void IgorEngine::handleRoomInput() {
 	}
 	if (_inputVars[kInputCursorYPos] >= 156 && _inputVars[kInputCursorYPos] <= 167) {
 		if (_inputVars[kInputClick]) {
-			int verb = _verbAreasTable[_inputVars[kInputCursorXPos]];
+			int verb = getVerbUnderCursor(_inputVars[kInputCursorXPos]);
 			if (verb != _currentAction.verb) {
 				redrawVerb(_currentAction.verb, false);
 				_currentAction.verb = verb;
@@ -1700,6 +1762,42 @@ void IgorEngine::handleRoomLight() {
 		updateRoomLight(1);
 		_gameState.updateLight = true;
 	}
+}
+
+void IgorEngine::enterPartLoop() {
+	if (!_gameState.dialogueTextRunning) {
+		showCursor();
+	}
+	_gameState.igorMoving = false;
+	if (_gameVersion == kIdEngDemo110) {
+		CHECK_FOR_END_OF_DEMO();
+	}
+}
+
+void IgorEngine::leavePartLoop() {
+	hideCursor();
+	SET_EXEC_ACTION_FUNC(1, 0);
+	_updateRoomBackground = 0;
+}
+
+void IgorEngine::runPartLoop() {
+	handleRoomInput();
+	if (compareGameTick(1, 16)) {
+		handleRoomIgorWalk();
+	}
+	if (compareGameTick(19, 32)) {
+		handleRoomDialogue();
+	}
+	if (compareGameTick(4, 8)) {
+		handleRoomInventoryScroll();
+	}
+	if (compareGameTick(1)) {
+		handleRoomLight();
+	}
+	if (_updateRoomBackground) {
+		(this->*_updateRoomBackground)();
+	}
+	waitForTimer();
 }
 
 int IgorEngine::lookupScale(int xOffset, int yOffset, int h) const {
