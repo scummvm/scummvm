@@ -416,6 +416,9 @@ BluesABCTime	Blue's ABC Time
 	810a9da887aefa597b0cf3c77d262897	-1	en	All	-	Demo	-	sev
 	356fb5f680b68251333016175935d126	4133436	All	All	HE CUP	Demo	-	sev
 
+arttime	Blue's Art Time Activities
+	6269b8fbf51a353e5b501e4ad98cdc67	-1	en	Windows	-	-	-	killiandor
+
 BluesBirthday	Blue's Birthday Adventure
 	99128b6a5bdd9831d9682fb8b5cbf8d4	-1	en	All	-	-	-	
 
