@@ -129,15 +129,30 @@ void Graphics::drawRect(uint8 *dst, int dstPitch, int x, int y, int w, int h, ui
 	const int y1 = y;
 	const int x2 = x + w - 1;
 	const int y2 = y + h - 1;
-	drawProcP lineP;
+	drawLine(dst, dstPitch, x1, y1, x2, y1, color1);
+	drawLine(dst, dstPitch, x1, y1, x1, y2, color1);
+	drawLine(dst, dstPitch, x2, y1 + 1, x2, y2, color2);
+	drawLine(dst, dstPitch, x1 + 1, y2, x2, y2, color2);
+}
 
-	lineP.dst = dst;
-	lineP.width = dstPitch;
+struct drawLineHelperData {
+	uint8 *dst;
+	int width;
+};
 
-	::Graphics::drawLine(x1, y1, x2, y1, color1, drawProc, &lineP);
-	::Graphics::drawLine(x1, y1, x1, y2, color1, drawProc, &lineP);
-	::Graphics::drawLine(x2, y1 + 1, x2, y2, color2, drawProc, &lineP);
-	::Graphics::drawLine(x1 + 1, y2, x2, y2, color2, drawProc, &lineP);
+static void drawLineHelper(int x, int y, int c, void *data) {
+	drawLineHelperData *param = (drawLineHelperData *)data;
+	*(param->dst + y * param->width + x) = c;
+}
+
+void Graphics::drawLine(uint8 *dst, int dstPitch, int x1, int y1, int x2, int y2, uint8 color) {
+	assert(x1 >= 0 && y1 >= 0 && x2 >= 0 && y2 >= 0);
+
+	drawLineHelperData d;
+	d.dst = dst;
+	d.width = dstPitch;
+
+	::Graphics::drawLine(x1, y1, x2, y2, color, drawLineHelper, &d);
 }
 
 void Graphics::copyRect(uint8 *dst, int dstPitch, int dstX, int dstY, const uint8 *src, int srcPitch, int srcX, int srcY, int w, int h, int flags) {
