@@ -1789,14 +1789,16 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			int x2 = params->box2.right;
 			int y2 = params->box2.bottom;
 
-			if (params->processFlags & kWPFThickLine) {
-				debug(0, "Unsupported ThickLine (%d, %d)", params->lineUnk1, params->lineUnk2);
-			} else {
-				drawProcP lineP;
+			drawProcP lineP;
 
-				lineP.imageRect = &imageRect;
-				lineP.wizd = wizd;
-				lineP.width = w;
+			lineP.imageRect = &imageRect;
+			lineP.wizd = wizd;
+			lineP.width = w;
+
+			if (params->processFlags & kWPFThickLine) {
+				assert (params->lineUnk2 == 1); // Catch untested usage
+				Graphics::drawThickLine(x1, y1, x2, y2, params->lineUnk1, color, drawProc, &lineP);
+			} else {
 
 				Graphics::drawLine(x1, y1, x2, y2, color, drawProc, &lineP);
 			}
