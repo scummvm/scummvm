@@ -68,7 +68,6 @@ class PictureMgr {
 private:
 
 	void drawLine(int x1, int y1, int x2, int y2);
-	void putVirtPixel(int x, int y);
 	void dynamicDrawLine();
 	void absoluteDrawLine();
 	INLINE int isOkFillHere(int x, int y);
@@ -83,6 +82,8 @@ private:
 
 public:
 	PictureMgr(AgiBase *agi, GfxMgr *gfx);
+
+	void putVirtPixel(int x, int y);
 
 	int decodePicture(int n, int clear, bool agi256 = false, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);
 	int decodePicture(byte* data, uint32 length, int clear, int pic_width = _DEFAULT_WIDTH, int pic_height = _DEFAULT_HEIGHT);

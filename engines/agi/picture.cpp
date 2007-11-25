@@ -27,6 +27,8 @@
 #include "agi/graphics.h"
 #include "common/stack.h"
 
+#include "graphics/primitives.h"
+
 namespace Agi {
 
 PictureMgr::PictureMgr(AgiBase *agi, GfxMgr *gfx) {
@@ -62,6 +64,10 @@ void PictureMgr::putVirtPixel(int x, int y) {
 		*p = _scrColor | (*p & 0xf0);
 }
 
+static void drawProc(int x, int y, int c, void *data) {
+	((PictureMgr *)data)->putVirtPixel(x, y);
+}
+
 /**
  * Draw an AGI line.
  * A line drawing routine sent by Joshua Neal, modified by Stuart George
@@ -72,8 +78,6 @@ void PictureMgr::putVirtPixel(int x, int y) {
  * @param y2  y coordinate of end point
  */
 void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
-	int i, x, y, deltaX, deltaY, stepX, stepY, errorX, errorY, detdelta;
-
 	/* CM: Do clipping */
 #define clip(x, y) if ((x)>=(y)) (x)=(y)
 	clip(x1, _width - 1);
@@ -81,81 +85,7 @@ void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 	clip(y1, _height - 1);
 	clip(y2, _height - 1);
 
-	/* Vertical line */
-
-	if (x1 == x2) {
-		if (y1 > y2) {
-			y = y1;
-			y1 = y2;
-			y2 = y;
-		}
-
-		for (; y1 <= y2; y1++)
-			putVirtPixel(x1, y1);
-
-		return;
-	}
-
-	/* Horizontal line */
-
-	if (y1 == y2) {
-		if (x1 > x2) {
-			x = x1;
-			x1 = x2;
-			x2 = x;
-		}
-		for (; x1 <= x2; x1++)
-			putVirtPixel(x1, y1);
-		return;
-	}
-
-	y = y1;
-	x = x1;
-
-	stepY = 1;
-	deltaY = y2 - y1;
-	if (deltaY < 0) {
-		stepY = -1;
-		deltaY = -deltaY;
-	}
-
-	stepX = 1;
-	deltaX = x2 - x1;
-	if (deltaX < 0) {
-		stepX = -1;
-		deltaX = -deltaX;
-	}
-
-	if (deltaY > deltaX) {
-		i = deltaY;
-		detdelta = deltaY;
-		errorX = deltaY / 2;
-		errorY = 0;
-	} else {
-		i = deltaX;
-		detdelta = deltaX;
-		errorX = 0;
-		errorY = deltaX / 2;
-	}
-
-	putVirtPixel(x, y);
-
-	do {
-		errorY += deltaY;
-		if (errorY >= detdelta) {
-			errorY -= detdelta;
-			y += stepY;
-		}
-
-		errorX += deltaX;
-		if (errorX >= detdelta) {
-			errorX -= detdelta;
-			x += stepX;
-		}
-
-		putVirtPixel(x, y);
-		i--;
-	} while (i > 0);
+	Graphics::drawLine(x1, y1, x2, y2, 0, drawProc, this);
 }
 
 /**
