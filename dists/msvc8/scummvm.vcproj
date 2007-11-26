@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="scummvm"
 	ProjectGUID="{8434CB15-D08F-427D-9E6D-581AE5B28440}"
 	RootNamespace="scummvm"
@@ -650,6 +650,14 @@
 							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\pcspk.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\pcspk.h"
+					>
 				</File>
 				<File
 					RelativePath="..\..\sound\softsynth\ym2612.cpp"
