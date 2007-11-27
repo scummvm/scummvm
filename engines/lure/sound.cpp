@@ -35,6 +35,8 @@ DECLARE_SINGLETON(Lure::SoundManager);
 
 namespace Lure {
 
+//#define SOUND_CROP_CHANNELS
+
 SoundManager::SoundManager() {
 	_soundMutex = g_system->createMutex();
 
@@ -183,7 +185,7 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 		return;
 
 	SoundDescResource &rec = soundDescs()[soundIndex];
-	int numChannels = (rec.numChannels >> 2) & 3;
+	int numChannels = 2; //(rec.numChannels >> 2) & 3;
 
 	int channelCtr = 0;
 	while (channelCtr <= (NUM_CHANNELS_OUTER - numChannels)) {
@@ -221,12 +223,8 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 	newEntry->volume = rec.volume;
 	_activeSounds.push_back(newEntry);
 
-	// TODO: Figure a better way of sharing channels between multiple parsers - currently
-	// each parser seems to use 8 channels of a maximum 16 available, but here I'm 
-	// overlapping channels 4 - 7 (3rd & 4th parser) across the other two
-	byte innerChannel = (channelCtr < 4) ? ((channelCtr / 2) * 8) :
-		(4 + (channelCtr / 2) * 8);
-
+	// Map each two channels to four of the 16 available channels
+	byte innerChannel = (channelCtr / 2) * 4;
 	musicInterface_Play(rec.soundNumber, innerChannel);
 	setVolume(rec.soundNumber, rec.volume);	
 }
@@ -377,7 +375,7 @@ void SoundManager::fadeOut() {
 			MidiMusic *music = *i;
 			if (music->getVolume() > 0) {
 				inProgress = true;
-				music->setVolume(music->getVolume() > 4 ? (music->getVolume() - 10) : 0);
+				music->setVolume(music->getVolume() >= 10 ? (music->getVolume() - 10) : 0);
 			}
 		}
 
@@ -427,6 +425,7 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber) {
 	g_system->lockMutex(_soundMutex);
 	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNumber, 
 		soundStart, dataSize);
+	sound->setVolume(DEFAULT_VOLUME);
 	_playingSounds.push_back(sound);		
 	g_system->unlockMutex(_soundMutex);
 }
@@ -574,15 +573,10 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS_INNE
 	_channels = channels;
 	_soundNumber = soundNum;
 	_channelNumber = channelNum;
-	
-	_numChannels = 8;
-	while ((_numChannels > 0) && ((_channelNumber + _numChannels > NUM_CHANNELS_INNER) ||
-			(_channels[_channelNumber + _numChannels - 1].midiChannel == NULL)))
-		--_numChannels;
-	if (_numChannels == 0)
-		error("Unable to set any channels for MidiMusic object");
 
-	_volume = _channels[channelNum].volume;
+	_numChannels = 4;
+	_volume = 0xff;
+	setVolume(DEFAULT_VOLUME);
 
 	_passThrough = false;
 
@@ -640,9 +634,11 @@ void MidiMusic::setVolume(int volume) {
 
 	_volume = volume;
 
-	for (int i = 0; i < _numChannels; ++i) 
-		_channels[_channelNumber + i].midiChannel->volume(
-			_channels[_channelNumber + i].volume * _volume / 255);
+	for (int i = 0; i < _numChannels; ++i) {
+		if (_channels[_channelNumber + i].midiChannel != NULL)
+			_channels[_channelNumber + i].midiChannel->volume(
+				_channels[_channelNumber + i].volume * _volume / 255);
+	}
 }
 
 void MidiMusic::playMusic() {
@@ -669,7 +665,13 @@ void MidiMusic::send(uint32 b) {
 		return;
 	}
 
+#ifdef SOUND_CROP_CHANNELS
+	if ((b & 0xF) >= _numChannels) return;
 	byte channel = _channelNumber + (byte)(b & 0x0F);
+#else
+	byte channel = _channelNumber + ((byte)(b & 0x0F) % _numChannels);
+#endif
+
 	if ((channel >= NUM_CHANNELS_INNER) || (_channels[channel].midiChannel == NULL))
 		return;
 
