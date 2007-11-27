@@ -1665,7 +1665,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
-			"lostintine",
+			"lostintime",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
@@ -1678,7 +1678,7 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
-			"lostintine",
+			"lostintime",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
