@@ -1663,6 +1663,32 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		"intro"
 	},
+	{
+		{
+			"lostintine",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{
+		{
+			"lostintine",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesCD,
+		"intro"
+	}
 };
 
 static const ADFileBasedFallback fileBased[] = {
@@ -1675,6 +1701,8 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[5], { "intro.stk", "imd.itk", 0 } },
 	{ &fallbackDescs[6], { "intro.stk", "mus_gob3.lic", 0 } },
 	{ &fallbackDescs[7], { "intro.stk", "woodruff.itk", 0 } },
+	{ &fallbackDescs[8], { "intro.stk", "commun1.itk", 0 } },
+	{ &fallbackDescs[9], { "intro.stk", "commun1.itk", "lost.lic", 0 } },
 	{ 0, { 0 } }
 };
 
