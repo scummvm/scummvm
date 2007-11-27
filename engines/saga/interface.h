@@ -46,8 +46,8 @@ enum InterfaceUpdateFlags {
 	UPDATE_WHEELDOWN = 16
 };
 
-#define CONVERSE_MAX_TEXTS      64
-#define CONVERSE_MAX_WORK_STRING      128
+#define CONVERSE_MAX_TEXTS 64
+#define CONVERSE_MAX_WORK_STRING 256
 
 #define ITE_INVENTORY_SIZE 24
 
