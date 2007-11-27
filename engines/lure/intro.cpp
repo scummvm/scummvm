@@ -111,9 +111,6 @@ bool Introduction::show() {
 		
 			currentSound = curr_anim->soundNumber;
 			Sound.musicInterface_Play(currentSound, 0);
-			// DEBUG TEST
-//			g_system->delayMillis(1000);
-//			Sound.musicInterface_Play(1, 1);
 		}
 
 		bool fadeIn = curr_anim == anim_screens;
