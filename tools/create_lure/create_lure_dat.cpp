@@ -49,6 +49,7 @@ uint16 dataSegment;
 #define ITALIAN_FILE_CHECKSUM 0x109AD
 #define FRENCH_FILE_CHECKSUM 0xD38C
 #define GERMAN_FILE_CHECKSUM 0xD143
+#define SPANISH_FILE_CHECKSUM 0xFFDA
 
 Common::Language processedLanguages[100];
 int langIndex = 0;
@@ -63,48 +64,48 @@ int actionIndex = 0;
 uint16 talkOffsets[MAX_TALK_LISTS];
 int talkOffsetIndex = 0;
 
-#define NUM_LANGUAGES 4
+#define NUM_LANGUAGES 5
 struct AnimListRecord {
 	uint16 languages[NUM_LANGUAGES];
 };
 
 AnimListRecord animDataList[] = {
-	{{0x1830, 0x1830, 0x1830, 0x1830}},	// Copy protection header
-	{{0x1839, 0x1839, 0x1839, 0x1839}},	// Copy protection wording header
-	{{0x1842, 0x1842, 0x1842, 0x1842}},	// Copy protection numbers
-	{{0x184B, 0x184B, 0x184B, 0x184B}},	// Restart/Restore buttons
-	{{0x55C0, 0x5680, 0x56A0, 0x56C0}},	// Player midswing animation
-	{{0x55C9, 0x5689, 0x56A9, 0x56C9}},	// Player mid-level defend
-	{{0x55D2, 0x5692, 0x56B2, 0x56D2}},	// Player high-level strike
-	{{0x55DB, 0x569B, 0x56BB, 0x56DB}},	// Player high-level defend
-	{{0x55E4, 0x56A4, 0x56C4, 0x56E4}},	// Player low-level strike
-	{{0x55ED, 0x56AD, 0x56CD, 0x56ED}},	// Player low-level defend
-	{{0x55F6, 0x56B6, 0x56D6, 0x56F6}},	// Player fight animation
-	{{0x55FF, 0x56BF, 0x56DF, 0x56FF}},	// Pig fight animation
-	{{0x5608, 0x56C8, 0x56E8, 0x5708}}, // Pig fight animation
-	{{0x5611, 0x56D1, 0x56F1, 0x5711}},	// Player mid-level strike
-	{{0x5623, 0x56E3, 0x5703, 0x5723}},	// Pig fight animation
-	{{0x562C, 0x56EC, 0x570C, 0x572C}},	// Misc fight animation
-	{{0x5635, 0x56F5, 0x5705, 0x5735}},	// Pig fight animation
-	{{0x563E, 0x56FE, 0x571E, 0x573E}},	// Player recoiling from hit
-	{{0x5647, 0x5707, 0x5727, 0x5747}},	// Pig recoiling from hit
-	{{0x5650, 0x5710, 0x5730, 0x5750}},	// Pig dies
-	{{0x5810, 0x58D0, 0x58F0, 0x5910}},	// Voice bubble
-	{{0x5915, 0x59D5, 0x59F5, 0x5a15}},	// Blacksmith hammering
-	{{0x59E4, 0x5AA4, 0x5AC4, 0x5ae4}}, // Ewan's standard animation
-	{{0x59ED, 0x5AAD, 0x5ACD, 0x5aed}},	// Ewan's alternate animation
-	{{0x59FF, 0x5ABF, 0x5ADF, 0x5aff}},	// Dragon breathing fire
-	{{0x5A08, 0x5AC8, 0x5AE8, 0x5b08}},	// Dragon breathing fire 2
-	{{0x5A11, 0x5AD1, 0x5AF1, 0x5b11}},	// Dragon breathing fire 3
-	{{0x5A1A, 0x5ADA, 0x5AFA, 0x5b1a}},	// Player turning winch in room #48
-	{{0x5A59, 0x5B19, 0x5B39, 0x5b59}},	// Player pulling lever in room #48
-	{{0x5A62, 0x5B22, 0x5B42, 0x5b62}},	// Minnow pulling lever in room #48
-	{{0x5AAA, 0x5B6A, 0x5B8A, 0x5baa}},	// Goewin mixing potion
-	{{0x5C80, 0x5D40, 0x5D60, 0x5d80}}, // Player standard animation
-	{{0x5C95, 0x5D55, 0x5D75, 0x5d95}}, // Player operating rack
-	{{0x5CAA, 0x5D6A, 0x5D8A, 0x5daa}},	// Selena animation
-	{{0x5CE9, 0x5DA9, 0x5DC9, 0x5de9}},	// Blacksmith default
-	{{0x5D28, 0x5DE8, 0x5E08, 0x5e28}},	// Goewin animation
+	{{0x1830, 0x1830, 0x1830, 0x1830, 0x1830}},	// Copy protection header
+	{{0x1839, 0x1839, 0x1839, 0x1839, 0x1839}},	// Copy protection wording header
+	{{0x1842, 0x1842, 0x1842, 0x1842, 0x1842}},	// Copy protection numbers
+	{{0x184B, 0x184B, 0x184B, 0x184B, 0x184B}},	// Restart/Restore buttons
+	{{0x55C0, 0x5680, 0x56A0, 0x56C0, 0x56e0}},	// Player midswing animation
+	{{0x55C9, 0x5689, 0x56A9, 0x56C9, 0x56e9}},	// Player mid-level defend
+	{{0x55D2, 0x5692, 0x56B2, 0x56D2, 0x56f2}},	// Player high-level strike
+	{{0x55DB, 0x569B, 0x56BB, 0x56DB, 0x56fb}},	// Player high-level defend
+	{{0x55E4, 0x56A4, 0x56C4, 0x56E4, 0x5704}},	// Player low-level strike
+	{{0x55ED, 0x56AD, 0x56CD, 0x56ED, 0x570d}},	// Player low-level defend
+	{{0x55F6, 0x56B6, 0x56D6, 0x56F6, 0x5716}},	// Player fight animation
+	{{0x55FF, 0x56BF, 0x56DF, 0x56FF, 0x571f}},	// Pig fight animation
+	{{0x5608, 0x56C8, 0x56E8, 0x5708, 0x5728}}, // Pig fight animation
+	{{0x5611, 0x56D1, 0x56F1, 0x5711, 0x5731}},	// Player mid-level strike
+	{{0x5623, 0x56E3, 0x5703, 0x5723, 0x5743}},	// Pig fight animation
+	{{0x562C, 0x56EC, 0x570C, 0x572C, 0x574c}},	// Misc fight animation
+	{{0x5635, 0x56F5, 0x5705, 0x5735, 0x5755}},	// Pig fight animation
+	{{0x563E, 0x56FE, 0x571E, 0x573E, 0x575e}},	// Player recoiling from hit
+	{{0x5647, 0x5707, 0x5727, 0x5747, 0x5767}},	// Pig recoiling from hit
+	{{0x5650, 0x5710, 0x5730, 0x5750, 0x5770}},	// Pig dies
+	{{0x5810, 0x58D0, 0x58F0, 0x5910, 0x58f0}},	// Voice bubble
+	{{0x5915, 0x59D5, 0x59F5, 0x5a15, 0x5a35}},	// Blacksmith hammering
+	{{0x59E4, 0x5AA4, 0x5AC4, 0x5ae4, 0x5ac4}}, // Ewan's standard animation
+	{{0x59ED, 0x5AAD, 0x5ACD, 0x5aed, 0x5acd}},	// Ewan's alternate animation
+	{{0x59FF, 0x5ABF, 0x5ADF, 0x5aff, 0x5b1f}},	// Dragon breathing fire
+	{{0x5A08, 0x5AC8, 0x5AE8, 0x5b08, 0x5b28}},	// Dragon breathing fire 2
+	{{0x5A11, 0x5AD1, 0x5AF1, 0x5b11, 0x5b38}},	// Dragon breathing fire 3
+	{{0x5A1A, 0x5ADA, 0x5AFA, 0x5b1a, 0x5b3a}},	// Player turning winch in room #48
+	{{0x5A59, 0x5B19, 0x5B39, 0x5b59, 0x5b79}},	// Player pulling lever in room #48
+	{{0x5A62, 0x5B22, 0x5B42, 0x5b62, 0x5b82}},	// Minnow pulling lever in room #48
+	{{0x5AAA, 0x5B6A, 0x5B8A, 0x5baa, 0x5bca}},	// Goewin mixing potion
+	{{0x5C80, 0x5D40, 0x5D60, 0x5d80, 0x5d60}}, // Player standard animation
+	{{0x5C95, 0x5D55, 0x5D75, 0x5d95, 0x5d75}}, // Player operating rack
+	{{0x5CAA, 0x5D6A, 0x5D8A, 0x5daa, 0x5d8a}},	// Selena animation
+	{{0x5CE9, 0x5DA9, 0x5DC9, 0x5de9, 0x5dc9}},	// Blacksmith default
+	{{0x5D28, 0x5DE8, 0x5E08, 0x5e28, 0x7e01}},	// Goewin animation
 	{{0, 0, 0, 0}}
 };
 
@@ -128,6 +129,7 @@ void add_anim_record(uint16 offset) {
 		if (language == IT_ITA) index = 1;
 		else if (language == FR_FRA) index = 2;
 		else if (language == DE_DEU) index = 3;
+		else if (language == ES_ESP) index = 4;
 		else if (language != EN_ANY) errorExit("add_anim_record: Unknown language");
 
 		AnimListRecord *p = &animDataList[0];
@@ -152,13 +154,14 @@ void add_action_list(uint16 offset) {
 
 void read_basic_palette(byte *&data, uint16 &totalSize) {
 	totalSize = PALETTE_SIZE;
-	uint16 dataStart = 0xC0A7;
-	if (language == IT_ITA) dataStart = 0xC107;
-	else if (language == FR_FRA) dataStart = 0xC4B7;
-	else if (language == DE_DEU) dataStart = 0xC517;
+	uint32 segmentStart = 0xC0A7;
+	if (language == IT_ITA) segmentStart = 0xC107;
+	else if (language == FR_FRA) segmentStart = 0xC4B7;
+	else if (language == DE_DEU) segmentStart = 0xC517;
+	else if (language == ES_ESP) segmentStart = 0xC177;
 	else if (language != EN_ANY) errorExit("read_basic_palette: Unknown language");
 
-	lureExe.seek(dataStart);
+	lureExe.seek(segmentStart);
 	data = (byte *) malloc(totalSize);
 	lureExe.read(data, totalSize);
 }
@@ -183,6 +186,7 @@ void read_dialog_data(byte *&data, uint16 &totalSize) {
 	if (language == IT_ITA) segmentStart = 0x1ddd0;
 	else if (language == FR_FRA) segmentStart = 0x1e1a0;
 	else if (language == DE_DEU) segmentStart = 0x1e230;
+	else if (language == ES_ESP) segmentStart = 0x1de60;
 	else if (language != EN_ANY) errorExit("read_dialog_data: Unknown language");
 
 	totalSize = DIALOG_SIZE;
@@ -196,6 +200,7 @@ void read_talk_dialog_data(byte *&data, uint16 &totalSize) {
 	if (language == IT_ITA) segmentStart = 0x1df20;
 	else if (language == FR_FRA) segmentStart = 0x1e2f0;
 	else if (language == DE_DEU) segmentStart = 0x1e380;
+	else if (language == ES_ESP) segmentStart = 0x1dfb0;
 	else if (language != EN_ANY) errorExit("read_talk_dialog_data: Unknown language");
 
 	totalSize = TALK_DIALOG_SIZE;
@@ -231,6 +236,10 @@ void read_room_data(byte *&data, uint16 &totalSize)  {
 	case DE_DEU:
 		dataStart = 0xc050;
 		walkAreaOffset = 0x2edf;
+		break;
+	case ES_ESP:
+		dataStart = 0xc020;
+		walkAreaOffset = 0x2ecb;
 		break;
 	default:
 		errorExit("read_room_data: Unknown language");
@@ -354,15 +363,26 @@ uint16 germanTickProcOffsets[] = {
 	0xffff
 };
 
+uint16 spanishTickProcOffsets[] = {
+	0x4247, 0x500c, 0x5ece,	0x62e8, 0x65fb, 0x7291, 0x7c9e, 0x7cae, 0x7fbe, 0x7fc6, 
+	0x7ffb, 0x7ffe, 0x8018, 0x802d, 0x8065, 0x80cd, 0x818a, 0x8203, 0x8244, 0x8277, 
+	0x82b7, 0x82d2, 0x8305, 0x8364, 0x8692, 0x86f1, 0x871e, 0x87be, 0x87c3, 0x87e2, 
+	0x8801, 0x8806, 0x880b, 0x8877, 0x88b0, 0x88ee, 0x8b86, 0x98f5, 0x997e,
+	0xffff
+};
+
+
 uint16 englishOffsets[4] = {0x5d98, 0x5eb8, 0x623e, 0x63b1};
 uint16 italianOffsets[4] = {0x5e58, 0x5f78, 0x62fe, 0x6471};
 uint16 frenchOffsets[4]  = {0x5e78, 0x5f98, 0x631e, 0x6491};
-uint16 germanOffsets[4]   = {0x5ea8, 0x5fc8, 0x634e, 0x64c1};
+uint16 germanOffsets[4]  = {0x5ea8, 0x5fc8, 0x634e, 0x64c1};
+uint16 spanishOffsets[4] = {0x5e78, 0x5f98, 0x631e, 0x6491};
 
 uint16 englishLoadOffsets[] = {0x3afe, 0x41BD, 0x7167, 0x7172, 0x8617, 0x88ac, 0};
 uint16 italianLoadOffsets[] = {0x3b46, 0x4205, 0x71af, 0x71ba, 0x8675, 0x890a, 0};
 uint16 frenchLoadOffsets[]  = {0x3ebc, 0x457B, 0x755b, 0x7566, 0x8a18, 0x8ca8, 0};
-uint16 germanLoadOffsets[]   = {0x3e84, 0x4543, 0x74f1, 0x74fc, 0x8a75, 0x8d05, 0};
+uint16 germanLoadOffsets[]  = {0x3e84, 0x4543, 0x74f1, 0x74fc, 0x8a75, 0x8d05, 0};
+uint16 spanishLoadOffsets[] = {0x3b88, 0x4247, 0x71f1, 0x71fc, 0x86db, 0x8970, 0};
 
 void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 	uint16 startId[4] = {0x3e8, 0x408, 0x2710, 0x7530};
@@ -403,6 +423,12 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 		walkToOffset = 0xBD5B;
 		loadOffsets = &germanLoadOffsets[0];
 		break;	
+	case ES_ESP:
+		offsets = &spanishOffsets[0];
+		procList = &spanishTickProcOffsets[0];
+		walkToOffset = 0xBD2B;
+		loadOffsets = &spanishLoadOffsets[0];
+		break;
 	default:
 		errorExit("read_hotspot_data: Unknown language");
 		break;
@@ -509,8 +535,9 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 				if (procList[procIndex] == 0xffff) {
 					if ((FROM_LE_16(entry.tickProcOffset) != 0xe00) &&
 						(FROM_LE_16(entry.tickProcOffset) != 2))
-						printf("Could not find a tick proc handler for hotspot %xh offset %xh\n", 
-							startId[tableNum] + hotspotIndex,
+//						printf("Could not find a tick proc handler for hotspot %xh offset %xh\n", 
+//							startId[tableNum] + hotspotIndex,
+printf("%xh,\n",
 							FROM_LE_16(entry.tickProcOffset));
 					r->tickProcId = 0;
 				}
@@ -627,6 +654,7 @@ void read_room_exits(byte *&data, uint16 &totalSize) {
 	if (language == IT_ITA) dataStart = 0x2f70;
 	else if (language == FR_FRA) dataStart = 0x2f80;
 	else if (language == DE_DEU) dataStart = 0x2f8f;
+	else if (language == ES_ESP) dataStart = 0x2f7b;
 	else if (language != EN_ANY) errorExit("read_room_exits: Unknown language");
 
 	lureExe.seek(dataSegment + dataStart);
@@ -699,6 +727,7 @@ void read_room_exit_joins(byte *&data, uint16 &totalSize) {
 	if (language == IT_ITA) dataStart = 0xcef0;
 	else if (language == FR_FRA) dataStart = 0xcf10; 
 	else if (language == DE_DEU) dataStart = 0xcf40;
+	else if (language == ES_ESP) dataStart = 0xcf10;
 	else if (language != EN_ANY) errorExit("read_room_exit_joins: Unknown language");
 
 	lureExe.seek(dataSegment + dataStart);
@@ -848,12 +877,13 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 }
 
 void read_script_data(byte *&data, uint16 &totalSize) {
-	uint32 scriptSegment = 0x1df00;
-	if (language == IT_ITA) scriptSegment = 0x1e020;
-	else if (language == FR_FRA) scriptSegment = 0x1e3f0;
-	else if (language == DE_DEU) scriptSegment = 0x1e480;
+	uint32 segmentOffset = 0x1df00;
+	if (language == IT_ITA) segmentOffset = 0x1e020;
+	else if (language == FR_FRA) segmentOffset = 0x1e3f0;
+	else if (language == DE_DEU) segmentOffset = 0x1e480;
+	else if (language == ES_ESP) segmentOffset = 0x1e0b0;
 	else if (language != EN_ANY) errorExit("read_script_data: Unknown language");
-	lureExe.seek(scriptSegment);
+	lureExe.seek(segmentOffset);
 	
 	totalSize = SCRIPT_SEGMENT_SIZE;
 	data = (byte *) malloc(totalSize);
@@ -861,12 +891,13 @@ void read_script_data(byte *&data, uint16 &totalSize) {
 }
 
 void read_script2_data(byte *&data, uint16 &totalSize) {
-	uint32 scriptSegment = 0x19c70;
-	if (language == IT_ITA) scriptSegment = 0x19D90;
-	else if (language == FR_FRA) scriptSegment = 0x1a160;
-	else if (language == DE_DEU) scriptSegment = 0x1a1f0;
+	uint32 segmentOffset = 0x19c70;
+	if (language == IT_ITA) segmentOffset = 0x19D90;
+	else if (language == FR_FRA) segmentOffset = 0x1a160;
+	else if (language == DE_DEU) segmentOffset = 0x1a1f0;
+	else if (language == ES_ESP) segmentOffset = 0x19e20;
 	else if (language != EN_ANY) errorExit("read_script2_data: Unknown language");
-	lureExe.seek(scriptSegment);
+	lureExe.seek(segmentOffset);
 	
 	totalSize = SCRIPT2_SEGMENT_SIZE;
 	data = (byte *) malloc(totalSize);
@@ -878,6 +909,7 @@ void read_hotspot_script_offsets(byte *&data, uint16 &totalSize) {
 	if (language == IT_ITA) dataStart = 0x58a0;
 	else if (language == FR_FRA) dataStart = 0x58c0;
 	else if (language == DE_DEU) dataStart = 0x58f0;
+	else if (language == ES_ESP) dataStart = 0x58c0;
 	else if (language != EN_ANY) errorExit("read_hotspot_script_offsets: Unknown language");
 
 	lureExe.seek(dataSegment + dataStart);
@@ -887,13 +919,14 @@ void read_hotspot_script_offsets(byte *&data, uint16 &totalSize) {
 }
 
 void read_messages_segment(byte *&data, uint16 &totalSize) {
-	uint32 scriptSegment = 0x20b60;
-	if (language == IT_ITA) scriptSegment = 0x20c80;
-	else if (language == FR_FRA) scriptSegment = 0x21050;
-	else if (language == DE_DEU) scriptSegment = 0x210E0;
+	uint32 segmentOffset = 0x20b60;
+	if (language == IT_ITA) segmentOffset = 0x20c80;
+	else if (language == FR_FRA) segmentOffset = 0x21050;
+	else if (language == DE_DEU) segmentOffset = 0x210E0;
+	else if (language == ES_ESP) segmentOffset = 0x20d10;
 	else if (language != EN_ANY) errorExit("read_messages_segment: Unknown language");
 
-	lureExe.seek(scriptSegment);
+	lureExe.seek(segmentOffset);
 	totalSize = MESSAGES_SEGMENT_SIZE;
 	data = (byte *) malloc(totalSize);
 	lureExe.read(data, totalSize);
@@ -952,7 +985,9 @@ void read_talk_headers(byte *&data, uint16 &totalSize) {
 	if (language == IT_ITA) dataStart = 0x511C;
 	else if (language == FR_FRA) dataStart = 0x513c;
 	else if (language == DE_DEU) dataStart = 0x515c;
+	else if (language == ES_ESP) dataStart = 0x512c;
 	else if (language != EN_ANY) errorExit("read_talk_headers: Unknown language");
+
 	lureExe.seek(dataSegment + dataStart);
 	lureExe.read(&entries[0], sizeof(TalkEntry) * TALK_NUM_ENTRIES);
 
@@ -1028,7 +1063,8 @@ struct TalkRecord {
 uint16 englishGiveTalkIds[7] = {0xCF5E, 0xCF14, 0xCF90, 0xCFAA, 0xCFD0, 0xCFF6, 0xf010};
 uint16 italianGiveTalkIds[7] = {0xD01E, 0xCFD4, 0xD050, 0xD06A, 0xD090, 0xD0B6, 0xf0d0};
 uint16 frenchGiveTalkIds[7]  = {0xD03E, 0xCFF4, 0xD070, 0xD08A, 0xD0B0, 0xD0D6, 0xf0f0};
-uint16 germanGiveTalkIds[7]   = {0xD06E, 0xD024, 0xD0A0, 0xD0BA, 0xD0E0, 0xD106, 0xf120};
+uint16 germanGiveTalkIds[7]  = {0xD06E, 0xD024, 0xD0A0, 0xD0BA, 0xD0E0, 0xD106, 0xf120};
+uint16 spanishGiveTalkIds[7] = {0xD03E, 0xCFF4, 0xD070, 0xD08A, 0xD0B0, 0xD0D6, 0xf0f0};
 
 void read_talk_data(byte *&data, uint16 &totalSize) {
 	uint16 responseOffset;
@@ -1039,6 +1075,7 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 	if (language == IT_ITA) giveTalkIds = &italianGiveTalkIds[0];
 	else if (language == FR_FRA) giveTalkIds = &frenchGiveTalkIds[0];
 	else if (language == DE_DEU) giveTalkIds = &germanGiveTalkIds[0];
+	else if (language == ES_ESP) giveTalkIds = &spanishGiveTalkIds[0];
 	else if (language != EN_ANY) errorExit("read_talk_data: Unknown language");
 
 	data = (byte *) malloc(MAX_DATA_SIZE);
@@ -1155,7 +1192,8 @@ void read_room_pathfinding_data(byte *&data, uint16 &totalSize) {
 	uint16 dataStart = 0x984A;
 	if (language == IT_ITA) dataStart = 0x990A;
 	else if (language == FR_FRA) dataStart = 0x992A;
-	else if (language == DE_DEU) dataStart = 0x995a;
+	else if (language == DE_DEU) dataStart = 0x995A;
+	else if (language == ES_ESP) dataStart = 0x992A;
 	else if (language != EN_ANY) errorExit("read_room_pathfinding_data: Unknown language");
 	lureExe.seek(dataSegment + dataStart);
 	
@@ -1215,6 +1253,7 @@ void read_room_exit_hotspots_data(byte *&data, uint16 &totalSize) {
 	if (language == IT_ITA) dataStart = 0x2E66;
 	else if (language == FR_FRA) dataStart = 0x2e76;
 	else if (language == DE_DEU) dataStart = 0x2e85;
+	else if (language == ES_ESP) dataStart = 0x2e71;
 	else if (language != EN_ANY) errorExit("read_room_exit_hotspots_data: Unknown language");
 	lureExe.seek(dataSegment + dataStart);
 	
@@ -1234,6 +1273,7 @@ void save_fight_segment(byte *&data, uint16 &totalSize) {
 	if (language == IT_ITA) fightSegment = 0x1c520;
 	else if (language == FR_FRA) fightSegment = 0x1c8f0;
 	else if (language == DE_DEU) fightSegment = 0x1c980;
+	else if (language == ES_ESP) fightSegment = 0x1c5b0;
 	else if (language != EN_ANY) errorExit("save_fight_segment: Unknown language");
 	lureExe.seek(fightSegment);
 	
@@ -1296,11 +1336,18 @@ const char *germanTextStrings[NUM_TEXT_ENTRIES] = {
 	"Du tr\x8dgst", "niets", "und du hast ", "silberm\x8cnzen", "silberm\x8cnzen"
 };
 
-int slen(const char *s) {
-	int total = 0;
-	while (*s++ != '\0') ++total;
-	return total;
-}
+const char spanishUnlockStr[] = {'C', 'r', '\x7f', 'd', 'i', 't', 'o', 's', '\0'};
+
+const char *spanishTextStrings[NUM_TEXT_ENTRIES] = {
+	"Coge", NULL, "Empuja", "Tira de", "Opera", "Abre", "Cierra", "Atranca", "Desatranca", "Usa",
+	"Dale", "Habla con", "Dile a", "Buy", "Obsevar", "Observe", "Mirar por", "P\x97" "dele", NULL,
+	"Bebe", "Status", "Ve a", "Regresa", "Sobornar", "Examinar",
+	spanishUnlockStr, "Reiniciar", "Salvar juego", "Recuperar jue", "Abandonar", "Texto rapido\x8b",
+	"Texto lento \x8b", "Sonido activido   ", "Sonido desactivido ", "(nada)", " con ", " a ", " con ",
+	"y luego", "eso es todo", "\x94" "Est\x98s seguro? (S/N)",
+	"el ", "la ", "los ", "las ", "este ", "esta ", "estos ", "estas ",
+	"Stai portando ", "niente.", "y tienes ", "moneda", "monedas"
+};
 
 void save_text_strings(byte *&data, uint16 &totalSize) {
 	int index;
@@ -1309,6 +1356,7 @@ void save_text_strings(byte *&data, uint16 &totalSize) {
 	if (language == IT_ITA) textStrings = &italianTextStrings[0];
 	else if (language == FR_FRA) textStrings = &frenchTextStrings[0];
 	else if (language == DE_DEU) textStrings = &germanTextStrings[0];
+	else if (language == ES_ESP) textStrings = &spanishTextStrings[0];
 	else if (language != EN_ANY) errorExit("save_text_strings: Unknown language");
 
 	// Calculate the total needed space
@@ -1339,6 +1387,7 @@ void save_sound_desc_data(byte *&data, uint16 &totalSize) {
 	if (language == IT_ITA) dataStart = 0x5731;
 	else if (language == FR_FRA) dataStart = 0x5751;
 	else if (language == DE_DEU) dataStart = 0x5781;
+	else if (language == ES_ESP) dataStart = 0x5751;
 	else if (language != EN_ANY) errorExit("save_sound_desc_data: Unknown language");
 	lureExe.seek(dataSegment + dataStart);
 	
@@ -1505,11 +1554,47 @@ const DecoderEntry germanDecoders[] = {
 	{NULL, '\0'}
 };
 
+const DecoderEntry spanishDecoders[] = {
+	{"00", (char) 0x20}, {"010", (char) 0x61}, {"0110", (char) 0x6F}, {"01110", (char) 0x65}, 
+	{"01111", (char) 0x72}, {"1000", (char) 0x73}, {"1001", (char) 0x6E}, {"10100", (char) 0x69}, 
+	{"10101", (char) 0x75}, {"10110", (char) 0x63}, {"101110", (char) 0x74}, {"1011110", (char) 0x6C}, 
+	{"1011111", (char) 0x64}, {"11000", (char) 0x70}, {"110010", (char) 0x2E}, {"110011", (char) 0x6D}, 
+	{"110100", (char) 0x00}, {"110101", (char) 0xB3}, {"1101100", (char) 0x62}, {"1101101", (char) 0x2C}, 
+	{"1101110", (char) 0x68}, {"11011110", (char) 0x67}, {"11011111", (char) 0xB1}, {"1110000", (char) 0x76}, 
+	{"1110001", (char) 0xB5}, {"1110010", (char) 0x79}, {"11100110", (char) 0xAB}, {"11100111", (char) 0xB4}, 
+	{"1110100", (char) 0x97}, {"11101010", (char) 0xB2}, {"11101011", (char) 0x98}, {"11101100", (char) 0x45}, 
+	{"11101101", (char) 0x66}, {"11101110", (char) 0x95}, {"111011110", (char) 0x21}, {"111011111", (char) 0x6A}, 
+	{"11110000", (char) 0x4C}, {"11110001", (char) 0x4E}, {"11110010", (char) 0x7F}, {"111100110", (char) 0x96}, 
+	{"111100111", (char) 0x3F}, {"11110100", (char) 0xAC}, {"11110101", (char) 0x94}, {"11110110", (char) 0x7A}, 
+	{"111101110", (char) 0x41}, {"1111011110", (char) 0x53}, {"1111011111", (char) 0x71}, {"11111000", (char) 0x54}, 
+	{"111110010", (char) 0x93}, {"1111100110", (char) 0xAF}, {"1111100111", (char) 0x43}, {"111110100", (char) 0x50}, 
+	{"111110101", (char) 0x4D}, {"111110110", (char) 0x44}, {"1111101110", (char) 0xAE}, {"11111011110", (char) 0xAD},
+	{"11111011111", (char) 0xB0}, {"111111000", (char) 0x48}, {"1111110010", (char) 0x51}, {"1111110011", (char) 0x55}, 
+	{"1111110100", (char) 0x4F}, {"1111110101", (char) 0x47}, {"1111110110", (char) 0x99}, 
+	{"11111101110", (char) 0xA8}, {"11111101111", (char) 0x22}, {"1111111000", (char) 0xA9}, 
+	{"11111110010", (char) 0xA6}, {"11111110011", (char) 0x52}, {"1111111010", (char) 0x59}, 
+	{"11111110110", (char) 0xA3}, {"111111101110", (char) 0x78}, {"111111101111", (char) 0x56}, 
+	{"11111111000", (char) 0x77}, {"11111111001", (char) 0x42}, {"111111110100", (char) 0x6B}, 
+	{"111111110101", (char) 0x49}, {"111111110110", (char) 0x31}, {"1111111101110", (char) 0xAA}, 
+	{"1111111101111", (char) 0x2D}, {"111111111000", (char) 0x46}, {"111111111001", (char) 0xA5}, 
+	{"1111111110100", (char) 0x32}, {"1111111110101", (char) 0x3B}, {"1111111110110", (char) 0xA7}, 
+	{"11111111101110", (char) 0x35}, {"11111111101111", (char) 0x25}, {"1111111111000", (char) 0x3A}, 
+	{"1111111111001", (char) 0xA2}, {"1111111111010", (char) 0x57}, {"11111111110110", (char) 0x36}, 
+	{"11111111110111", (char) 0x33}, {"1111111111100", (char) 0x4A}, {"11111111111010", (char) 0x30}, 
+	{"11111111111011", (char) 0x34}, {"11111111111100", (char) 0x37}, {"111111111111010", (char) 0x39}, 
+	{"111111111111011", (char) 0x38}, {"111111111111100", (char) 0xA4}, {"111111111111101", (char) 0x2F}, 
+	{"1111111111111100", (char) 0x5A}, {"1111111111111101", (char) 0x8C}, {"11111111111111100", (char) 0x28}, 
+	{"11111111111111101", (char) 0x29}, {"11111111111111110", (char) 0x4B}, {"111111111111111110", (char) 0x58}, 
+	{"111111111111111111", (char) 0x91},
+	{NULL, '\0'}
+};
+
 void save_string_decoder_data(byte *&data, uint16 &totalSize) {
 	const DecoderEntry *list = &englishDecoders[0];
 	if (language == IT_ITA) list = &italianDecoders[0];
 	else if (language == FR_FRA) list = &frenchDecoders[0];
 	else if (language == DE_DEU) list = &germanDecoders[0];
+	else if (language == ES_ESP) list = &spanishDecoders[0];
 	else if (language != EN_ANY) errorExit("save_string_decoder_data: Unknown language");
 
 	totalSize = 1;
@@ -1794,7 +1879,11 @@ bool validate_executable() {
 	} else if (sumTotal == GERMAN_FILE_CHECKSUM) {
 		language = DE_DEU;
 		dataSegment = 0xB0C0;
-		printf("Detected german version\n");
+		printf("Detected German version\n");
+	} else if (sumTotal == SPANISH_FILE_CHECKSUM) {
+		language = ES_ESP;
+		dataSegment = 0xAD20;
+		printf("Detected Spanish version\n");
 	} else {
 		printf("Lure executable version not recognised. Checksum = %xh\n", sumTotal);
 		return false;
