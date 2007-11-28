@@ -344,7 +344,7 @@ uint8 Control::getClicks(uint8 mode, uint8 *retVal) {
 		return 0;
 	if (_mouseState & BS1L_BUTTON_DOWN)
 		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
-			if (_buttons[cnt]->wasClicked(_mouseX, _mouseY)) {
+			if (_buttons[cnt]->wasClicked(_mouseCoord.x, _mouseCoord.y)) {
 				_selectedButton = cnt;
 				_buttons[cnt]->setSelected(1);
 				if (_buttons[cnt]->isSaveslot())
@@ -352,7 +352,7 @@ uint8 Control::getClicks(uint8 mode, uint8 *retVal) {
 			}
 	if (_mouseState & BS1L_BUTTON_UP) {
 		for (uint8 cnt = 0; cnt < checkButtons; cnt++)
-			if (_buttons[cnt]->wasClicked(_mouseX, _mouseY))
+			if (_buttons[cnt]->wasClicked(_mouseCoord.x, _mouseCoord.y))
 				if (_selectedButton == cnt) {
 					// saveslots stay selected after clicking
 					if (!_buttons[cnt]->isSaveslot())
@@ -525,12 +525,12 @@ void Control::handleVolumeClicks(void) {
 	if (_mouseDown) {
 		uint8 clickedId = 0;
 		for (uint8 cnt = 1; cnt < 4; cnt++)
-			if (_buttons[cnt]->wasClicked(_mouseX, _mouseY))
+			if (_buttons[cnt]->wasClicked(_mouseCoord.x, _mouseCoord.y))
 				clickedId = cnt;
 		if (clickedId) { // these are circle shaped, so check again if it was clicked.
 			uint8 clickDest = 0;
-			int16 mouseDiffX = _mouseX - (_volumeButtons[clickedId].x + 48);
-			int16 mouseDiffY = _mouseY - (_volumeButtons[clickedId].y + 48);
+			int16 mouseDiffX = _mouseCoord.x - (_volumeButtons[clickedId].x + 48);
+			int16 mouseDiffY = _mouseCoord.y - (_volumeButtons[clickedId].y + 48);
 			int16 mouseOffs = (int16)sqrt((double)(mouseDiffX * mouseDiffX + mouseDiffY * mouseDiffY));
 			// check if the player really hit the button (but not the center).
 			if ((mouseOffs <= 42) && (mouseOffs >= 8)) {
@@ -627,9 +627,9 @@ bool Control::getConfirm(const uint8 *title) {
 		else if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER)
 			retVal = 1;
 		if (_mouseState & BS1L_BUTTON_DOWN) {
-			if (buttons[0]->wasClicked(_mouseX, _mouseY))
+			if (buttons[0]->wasClicked(_mouseCoord.x, _mouseCoord.y))
 				clickVal = 1;
-			else if (buttons[1]->wasClicked(_mouseX, _mouseY))
+			else if (buttons[1]->wasClicked(_mouseCoord.x, _mouseCoord.y))
 				clickVal = 2;
 			else
 				clickVal = 0;
@@ -637,7 +637,7 @@ bool Control::getConfirm(const uint8 *title) {
 				buttons[clickVal - 1]->setSelected(1);
 		}
 		if ((_mouseState & BS1L_BUTTON_UP) && (clickVal)) {
-			if (buttons[clickVal - 1]->wasClicked(_mouseX, _mouseY))
+			if (buttons[clickVal - 1]->wasClicked(_mouseCoord.x, _mouseCoord.y))
 				retVal = clickVal;
 			else
 				buttons[clickVal - 1]->setSelected(0);
@@ -1043,24 +1043,22 @@ void Control::delay(uint32 msecs) {
 				// to handle keyboard input
 				return;
 			case Common::EVENT_MOUSEMOVE:
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
+				_mouseCoord = event.mouse;
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_mouseDown = true;
 				_mouseState |= BS1L_BUTTON_DOWN;
-#if defined(_WIN32_WCE) || defined(PALMOS_MODE)
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
-#endif
+				_mouseCoord = event.mouse;
 				break;
 			case Common::EVENT_LBUTTONUP:
 				_mouseDown = false;
 				_mouseState |= BS1L_BUTTON_UP;
+				_mouseCoord = event.mouse;
 				break;
 			case Common::EVENT_WHEELUP:
 				_mouseDown = false;
 				_mouseState |= BS1_WHEEL_UP;
+				_mouseCoord = event.mouse;
 				break;
 			case Common::EVENT_WHEELDOWN:
 				_mouseDown = false;

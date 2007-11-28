@@ -679,7 +679,7 @@ uint8 SwordEngine::mainLoop(void) {
 				_screen->updateScreen();
 			delay((1000 / FRAME_RATE) - (_system->getMillis() - frameTime));
 
-			_mouse->engine( _mouseX, _mouseY, _mouseState);
+			_mouse->engine(_mouseCoord.x, _mouseCoord.y, _mouseState);
 
 			if (_systemVars.forceRestart)
 				retCode = CONTROL_RESTART_GAME;
@@ -725,28 +725,23 @@ void SwordEngine::delay(int32 amount) { //copied and mutilated from sky.cpp
 				_keyPressed = event.kbd;
 				break;
 			case Common::EVENT_MOUSEMOVE:
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
+				_mouseCoord = event.mouse;
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				_mouseState |= BS1L_BUTTON_DOWN;
-#if defined(_WIN32_WCE) || defined(PALMOS_MODE)
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
-#endif
+				_mouseCoord = event.mouse;
 				break;
 			case Common::EVENT_RBUTTONDOWN:
 				_mouseState |= BS1R_BUTTON_DOWN;
-#if defined(_WIN32_WCE) || defined(PALMOS_MODE)
-				_mouseX = event.mouse.x;
-				_mouseY = event.mouse.y;
-#endif
+				_mouseCoord = event.mouse;
 				break;
 			case Common::EVENT_LBUTTONUP:
 				_mouseState |= BS1L_BUTTON_UP;
+				_mouseCoord = event.mouse;
 				break;
 			case Common::EVENT_RBUTTONUP:
 				_mouseState |= BS1R_BUTTON_UP;
+				_mouseCoord = event.mouse;
 				break;
 			case Common::EVENT_QUIT:
 				_systemVars.engineQuit = true;

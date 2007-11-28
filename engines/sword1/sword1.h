@@ -92,7 +92,8 @@ private:
 	void flagsToBool(bool *dest, uint8 flags);
 	uint8 mainLoop(void);
 
-	uint16 _mouseX, _mouseY, _mouseState;
+	Common::Point _mouseCoord;
+	uint16 _mouseState;
 	Common::KeyState _keyPressed;
 
 	ResMan		*_resMan;

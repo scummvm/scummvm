@@ -97,7 +97,7 @@ private:
 	MouseObj _objList[MAX_MOUSE];
 	ResMan *_resMan;
 	ObjectMan *_objMan;
-	uint16 _mouseX, _mouseY;
+	Common::Point _mouse;
 
 	uint32 _currentPtrId, _currentLuggageId, _frame;
 	MousePtr *_currentPtr;

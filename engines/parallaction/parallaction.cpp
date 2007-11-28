@@ -216,18 +216,22 @@ uint16 Parallaction::readInput() {
 
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButtons = kMouseLeftDown;
+			_mousePos = e.mouse;
 			break;
 
 		case Common::EVENT_LBUTTONUP:
 			_mouseButtons = kMouseLeftUp;
+			_mousePos = e.mouse;
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseButtons = kMouseRightDown;
+			_mousePos = e.mouse;
 			break;
 
 		case Common::EVENT_RBUTTONUP:
 			_mouseButtons = kMouseRightUp;
+			_mousePos = e.mouse;
 			break;
 
 		case Common::EVENT_MOUSEMOVE:

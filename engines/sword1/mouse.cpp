@@ -112,8 +112,8 @@ void Mouse::engine(uint16 x, uint16 y, uint16 eventFlags) {
 		_state &= MOUSE_DOWN_MASK;
 	}
 
-	_mouseX = x;
-	_mouseY = y;
+	_mouse.x = x;
+	_mouse.y = y;
 	if (!(Logic::_scriptVars[MOUSE_STATUS] & 1)) {  // no human?
 		_numObjs = 0;
 		return;	// no human, so we don't want the mouse engine
@@ -311,8 +311,8 @@ void Mouse::fnUnlockMouse(void) {
 }
 
 void Mouse::giveCoords(uint16 *x, uint16 *y) {
-	*x = _mouseX;
-	*y = _mouseY;
+	*x = _mouse.x;
+	*y = _mouse.y;
 }
 
 } // End of namespace Sword1

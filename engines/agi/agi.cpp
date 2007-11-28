@@ -110,6 +110,8 @@ void AgiEngine::processEvents() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			g_mouse.button = 0;
+			g_mouse.x = event.mouse.x;
+			g_mouse.y = event.mouse.y;
 			break;
 		case Common::EVENT_KEYDOWN:
 			_keyControl = 0;

@@ -144,7 +144,8 @@ private:
 	uint8 *_screenBuf;
 	Common::KeyState _keyPressed;
 	void delay(uint32 msecs);
-	uint16 _mouseX, _mouseY, _mouseState;
+	Common::Point _mouseCoord;
+	uint16 _mouseState;
 	bool _mouseDown;
 };
 
