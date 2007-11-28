@@ -341,9 +341,9 @@ void PictureMgr::plotPattern(int x, int y) {
 
 	static const uint8 circle_list[] = {0, 1, 4, 9, 16, 25, 37, 50};
 
-	static const uint16 circle_data[] =
+	static uint16 circle_data[] =
 		{0x8000,
-		0x0000, 0xE000, 0x0000,
+		0xE000, 0xE000, 0xE000,
 		0x7000, 0xF800, 0x0F800, 0x0F800, 0x7000,
 		0x3800, 0x7C00, 0x0FE00, 0x0FE00, 0x0FE00, 0x7C00, 0x3800,
 		0x1C00, 0x7F00, 0x0FF80, 0x0FF80, 0x0FF80, 0x0FF80, 0x0FF80, 0x7F00, 0x1C00,
@@ -368,6 +368,13 @@ void PictureMgr::plotPattern(int x, int y) {
 	uint16	pen_size = (_patCode & 0x07);
 
 	circle_ptr = &circle_data[circle_list[pen_size]];
+
+	// SGEORGE : Fix v3 picture data for drawing circles. Manifests in goldrush
+	if(_pictureVersion == 3)
+	{
+		circle_data[1] = 0;
+		circle_data[3] = 0;
+	}
 
 	// setup the X position
 	// = pen_x - pen.size/2
