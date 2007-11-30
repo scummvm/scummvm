@@ -1675,6 +1675,7 @@ cat > Makefile << EOF
 srcdir = $_srcdir
 vpath %.cpp \$(srcdir)
 vpath %.h \$(srcdir)
+vpath %.asm \$(srcdir)
 include \$(srcdir)/Makefile
 EOF
 
