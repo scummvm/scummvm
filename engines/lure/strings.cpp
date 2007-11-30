@@ -228,11 +228,11 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 // Returns the name or fragment of word at the specified index in the names resource
 
 char *StringData::getName(uint8 nameIndex) {
-	uint16 numNames = *((uint16 *) _names->data()) / 2;
+	uint16 numNames = READ_LE_UINT16(_names->data()) / 2;
 	if (nameIndex >= numNames) 
 		error("Invalid name index was passed to getCharacterName");
 
-	uint16 nameStart = *((uint16 *) (_names->data() + (nameIndex * 2)));
+	uint16 nameStart = READ_LE_UINT16(_names->data() + (nameIndex * 2));
 	return (char *) (_names->data() + nameStart);
 }
 
