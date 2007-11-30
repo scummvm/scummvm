@@ -318,10 +318,10 @@ void AmigaSound::playSong(int16 song) {
 	case 158:
 		song = 117;
 		break;
-    case 71:
-    case 72:
-    case 73:
-    case 75:
+	case 71:
+	case 72:
+	case 73:
+	case 75:
 		song = 133;
 		break;
 	case 203:
