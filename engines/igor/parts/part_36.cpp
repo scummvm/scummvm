@@ -105,7 +105,7 @@ void IgorEngine::PART_36_ACTION_102() {
 	addObjectToInventory(30, 65);
 	_objectsState[88] = 1;
 	PART_36_HELPER_1(255);
-	if (_gameVersion == kIdEngDemo110) {
+	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }

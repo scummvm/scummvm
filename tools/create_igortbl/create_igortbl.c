@@ -119,7 +119,7 @@ static const struct GameVersion _gameVersions[] = {
 };
 
 static const uint32 ITBL_TAG = 0x4954424C;
-static const uint32 CURRENT_VERSION = 3;
+static const uint32 CURRENT_VERSION = 4;
 static const uint32 DEFAULT_OFFSET = 0x12345678;
 
 struct TablePtrOffset {

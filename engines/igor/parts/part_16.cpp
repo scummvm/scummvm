@@ -71,7 +71,7 @@ void IgorEngine::PART_16_ACTION_101() {
 	}
 	addObjectToInventory(20, 55);
 	_objectsState[52] = 1;
-	if (_gameVersion == kIdEngDemo110) {
+	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 	ADD_DIALOGUE_TEXT(204, 3);

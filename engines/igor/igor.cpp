@@ -36,8 +36,8 @@
 
 namespace Igor {
 
-IgorEngine::IgorEngine(OSystem *system, int gameVersion, int gameFlags, Common::Language language)
-	: Engine(system), _gameVersion(gameVersion), _gameFlags(gameFlags), _gameLanguage(language) {
+IgorEngine::IgorEngine(OSystem *system, const DetectedGameVersion *dgv)
+	: Engine(system), _game(*dgv) {
 
 	_screenVGA = (uint8 *)malloc(320 * 200);
 	for (int i = 0; i < 4; ++i) {
@@ -59,7 +59,7 @@ IgorEngine::IgorEngine(OSystem *system, int gameVersion, int gameFlags, Common::
 	Common::addSpecialDebugLevel(kDebugWalk,     "Walk",     "Walk debug level");
 	Common::addSpecialDebugLevel(kDebugGame,     "Game",     "Game debug level");
 
-	if (gameFlags & kFlagFloppy) {
+	if (_game.flags & kFlagFloppy) {
 		_midiPlayer = new MidiPlayer(this);
 	} else {
 		_midiPlayer = 0;
@@ -176,17 +176,11 @@ int IgorEngine::go() {
 	if (_currentPart == 0) {
 		_currentPart = kStartupPart;
 	}
-	const char *ovlFileName = "IGOR.DAT";
-	const char *fsdFileName = "IGOR.FSD";
-	if (_gameFlags & kFlagTalkie) {
-		ovlFileName = "IGOR.EXE";
-		fsdFileName = "IGOR.DAT";
+	if (!_ovlFile.open(_game.ovlFileName)) {
+		error("Unable to open '%s'", _game.ovlFileName);
 	}
-	if (!_ovlFile.open(ovlFileName)) {
-		error("Unable to open '%s'", ovlFileName);
-	}
-	if (!_sndFile.open(fsdFileName)) {
-		error("Unable to open '%s'", fsdFileName);
+	if (!_sndFile.open(_game.sfxFileName)) {
+		error("Unable to open '%s'", _game.sfxFileName);
 	}
 	readTableFile();
 	loadMainTexts();
@@ -204,7 +198,7 @@ int IgorEngine::go() {
 void IgorEngine::readTableFile() {
 	Common::File tblFile;
 	uint32 stringsEntriesOffset = 0, resourcesEntriesOffset = 0, soundEntriesOffset = 0;
-	if (tblFile.open("IGOR.TBL") && tblFile.readUint32BE() == MKID_BE('ITBL') && tblFile.readUint32BE() == 3) {
+	if (tblFile.open("IGOR.TBL") && tblFile.readUint32BE() == MKID_BE('ITBL') && tblFile.readUint32BE() == 4) {
 		stringsEntriesOffset = tblFile.readUint32BE();
 		uint32 borlandOverlaySize = _ovlFile.size();
 		int gameVersionsCount = tblFile.readByte();
@@ -239,7 +233,7 @@ void IgorEngine::readTableFile() {
 			int id = tblFile.readUint16BE();
 			int lang = tblFile.readByte();
 			int len = tblFile.readByte();
-			bool skipString = (lang == 1 && _gameLanguage != Common::EN_ANY) || (lang == 2 && _gameLanguage != Common::ES_ESP);
+			bool skipString = (lang == 1 && _game.language != Common::EN_ANY) || (lang == 2 && _game.language != Common::ES_ESP);
 			if (skipString) {
 				tblFile.skip(len);
 			} else {
@@ -254,7 +248,7 @@ void IgorEngine::readTableFile() {
 	error("Unable to read 'IGOR.TBL'");
 }
 
-const char *IgorEngine::getString(int id) {
+const char *IgorEngine::getString(int id) const {
 	const char *str = 0;
 	for (Common::Array<StringEntry>::const_iterator it = _stringEntries.begin(); it != _stringEntries.end(); ++it) {
 		if ((*it).id == id) {
@@ -322,7 +316,7 @@ void IgorEngine::waitForTimer(int ticks) {
 		setCursor(_currentCursor);
 		_currentCursor = (_currentCursor + 1) & 3;
 	}
-	if (_gameFlags & kFlagFloppy) {
+	if (_game.flags & kFlagFloppy) {
 		updateMusic();
 	}
 	if (_gameTicks == 64) {
@@ -362,7 +356,7 @@ void IgorEngine::startMusic(int cmf) {
 
 void IgorEngine::playMusic(int num) {
 	debugC(9, kDebugEngine, "playMusic() %d", num);
-	if (_gameFlags & kFlagFloppy) {
+	if (_game.flags & kFlagFloppy) {
 		static const int cmf[] = { 0, 0, CMF_2_1, CMF_3, CMF_4, 0, 0, CMF_7_1, CMF_8, CMF_9, CMF_10, CMF_11, CMF_12 };
 		assert(num < ARRAYSIZE(cmf) && cmf[num] != 0);
 		_gameState.musicNum = num;
@@ -420,7 +414,7 @@ void IgorEngine::playSound(int num, int type) {
 		soundOffset = _soundOffsets[num];
 		soundType = Audio::Mixer::kSFXSoundType;
 		soundHandle = &_sfxHandle;
-	} else if (type == 0 && (_gameFlags & kFlagTalkie) != 0 && num != kNoSpeechSound) {
+	} else if (type == 0 && (_game.flags & kFlagTalkie) != 0 && num != kNoSpeechSound) {
 		if (_mixer->isSoundHandleActive(_speechHandle)) {
 			_mixer->stopHandle(_speechHandle);
 		}
@@ -926,6 +920,25 @@ static void decodeMainString(const uint8 *src, char *dst) {
 
 void IgorEngine::loadMainTexts() {
 	loadData(IMG_VerbsPanel, _verbsPanelBuffer);
+	if (_game.version == kIdSpaCD) {
+		const struct {
+			int strId;
+			int x;
+		} verbTexts[] = {
+			{ STR_Talk,   21 },
+			{ STR_Take,   67 },
+			{ STR_Look,  113 },
+			{ STR_Use,   159 },
+			{ STR_Open,  205 },
+			{ STR_Close, 251 },
+			{ STR_Give,  297 }
+		};
+		for (int i = 0; i < 7; ++i) {
+			const char *s = getString(verbTexts[i].strId);
+			int x = verbTexts[i].x - getStringWidth(s) / 2;
+			drawString(_verbsPanelBuffer, s, x, 0, 0xF2, -1, 0);
+		}
+	}
 	int dataSize;
 	uint8 *p = loadData(TXT_MainTable, 0, &dataSize);
 	const uint8 *src = &p[0] + _language * 7;
@@ -1044,47 +1057,60 @@ void IgorEngine::scrollPalette(int startColor, int endColor) {
 	memcpy(&_currentPalette[endColor * 3], c, 3);
 }
 
-void IgorEngine::drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2, int color3) {
-	int dx = 0;
-	while (*s) {
-		if (*s == ' ') {
-			dx += 5;
-		} else {
-			const int chr = _fontCharIndex[(uint8)*s];
-			const int chrWidth = _fontCharWidth[chr];
-			if (x + chrWidth > 320) {
+void IgorEngine::drawChar(uint8 *dst, int chr, int x, int y, int color1, int color2, int color3) {
+	dst += y * 320 + x;
+	for (int j = 0; j < 11; ++j, dst += 320) {
+		uint32 chrLineMask = _fontData[chr * 11 + j];
+		for (int i = 0; i < 9; ++i, chrLineMask >>= 2) {
+			switch (chrLineMask & 3) {
+			case 1:
+				dst[i] = color1;
+				break;
+			case 2:
+				if (color2 != -1) {
+					dst[i] = color2;
+				}
+				break;
+			case 3:
+				if (color3 != -1) {
+					dst[i] = color3;
+				}
 				break;
 			}
-			for (int j = 0; j < 11; ++j) {
-				uint8 *p = dst + (j + y) * 320 + x + dx;
-				uint32 chrMask = _fontData[chr * 11 + j];
-				for (int i = 0; i < 9; ++i, chrMask >>= 2) {
-//					uint8 code = _fontData[(chr * 11 + j) * 9 + i];
-					uint8 code = chrMask & 3;
-					if (code == 1) {
-						p[i] = color1;
-					} else if (code == 2 && color2 != -1) {
-						p[i] = color2;
-					} else if (code == 3 && color3 != -1) {
-						p[i] = color3;
-					}
-				}
-			}
-			dx += chrWidth;
 		}
-		++s;
+	}
+}
+
+void IgorEngine::drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2, int color3) {
+	for (; *s; ++s) {
+		if (*s == ' ') {
+			x += 5;
+		} else {
+			int chr = _fontCharIndex[(uint8)*s];
+			if (chr == 99) {
+				continue;
+			}
+			if (x + _fontCharWidth[chr] > 320) {
+				break;
+			}
+			drawChar(dst, chr, x, y, color1, color2, color3);
+			x += _fontCharWidth[chr];
+		}
 	}
 }
 
 int IgorEngine::getStringWidth(const char *s) const {
 	int w = 0;
-	while (*s) {
+	for (; *s; ++s) {
 		if (*s == ' ') {
 			w += 5;
 		} else {
-			w += _fontCharWidth[_fontCharIndex[(uint8)*s]];
+			int chr = _fontCharIndex[(uint8)*s];
+			if (chr == 99) {
+				continue;
+			}
+			w += _fontCharWidth[chr];
 		}
-		++s;
 	}
 	return w;
 }
@@ -1769,7 +1795,7 @@ void IgorEngine::enterPartLoop() {
 		showCursor();
 	}
 	_gameState.igorMoving = false;
-	if (_gameVersion == kIdEngDemo110) {
+	if (_game.version == kIdEngDemo110) {
 		CHECK_FOR_END_OF_DEMO();
 	}
 }

@@ -203,7 +203,7 @@ void IgorEngine::PART_21_ACTION_111() {
 	removeObjectFromInventory(56);
 	_objectsState[65] = 1;
 	PART_21_HELPER_1(255);
-	if (_gameVersion == kIdEngDemo110) {
+	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}	
 	ADD_DIALOGUE_TEXT(210, 2);

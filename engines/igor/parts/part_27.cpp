@@ -173,7 +173,7 @@ void IgorEngine::PART_27_ACTION_108() {
 	}
 	addObjectToInventory(23, 58);
 	PART_27_HELPER_1(1);
-	if (_gameVersion == kIdEngDemo110) {
+	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }
@@ -196,7 +196,7 @@ void IgorEngine::PART_27_ACTION_110() {
 	removeObjectFromInventory(55);
 	PART_27_HELPER_1(255);
 	_objectsState[107] = 1;
-	if (_gameVersion == kIdEngDemo110) {
+	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }

@@ -453,10 +453,10 @@ void IgorEngine::PART_14_HELPER_9() {
 				drawActionSentence("", 253);
 				break;
 			case 2:
-				drawActionSentence("Push stone", 253);
+				drawActionSentence(getString(STR_PushStone), 253);
 				break;
 			case 3:
-				drawActionSentence("Exit", 253);
+				drawActionSentence(getString(STR_Exit), 253);
 				break;
 			}
 			VAR_CURRENT_CHURCH_MOSAIC_STONE = VAR_NEW_CHURCH_MOSAIC_STONE;
@@ -468,7 +468,7 @@ void IgorEngine::PART_14_HELPER_9() {
 				_currentPart = 146;
 			}
 			if (area >= 1 && area <= 8) {
-				drawActionSentence("Push stone", 251);
+				drawActionSentence(getString(STR_PushStone), 251);
 				hideCursor();
 				playSound(34, 1);
 				switch (area) {

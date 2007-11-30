@@ -35,65 +35,65 @@ struct SharewareScreenString {
 
 static const SharewareScreenString STR_SHAREWARE[] = {
 	// 950
-	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
-	{ 228,  70, STR_SHAREWARE_TEXT1 },
-	{ 228,  81, STR_SHAREWARE_TEXT2 },
-	{ 228,  96, STR_SHAREWARE_TEXT3 },
-	{ 228, 107, STR_SHAREWARE_TEXT4 },
-	{ 228, 122, STR_SHAREWARE_TEXT5 },
-	{ 228, 161, STR_SHAREWARE_PLACE_ORDER },
+	{ 255,  30, STR_IgorObjectiveUikokahonia },
+	{ 228,  70, STR_SharewareText1 },
+	{ 228,  81, STR_SharewareText2 },
+	{ 228,  96, STR_SharewareText3 },
+	{ 228, 107, STR_SharewareText4 },
+	{ 228, 122, STR_SharewareText5 },
+	{ 228, 161, STR_SharewarePlaceOrder },
 	// 951
-	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
-	{ 228,  42, STR_SHAREWARE_VERSION },
-	{ 228,  85, STR_SHAREWARE_ORDER_1 },
-	{ 228,  96, STR_SHAREWARE_ORDER_2 },
-	{ 228, 107, STR_SHAREWARE_ORDER_3 },
-	{ 228, 161, STR_SHAREWARE_ORDER_4 },
+	{ 255,  30, STR_IgorObjectiveUikokahonia },
+	{ 228,  42, STR_SharewareVersion },
+	{ 228,  85, STR_SharewareOrder1 },
+	{ 228,  96, STR_SharewareOrder2 },
+	{ 228, 107, STR_SharewareOrder3 },
+	{ 228, 161, STR_SharewareOrder4 },
 	// 952
-	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
-	{ 228,  42, STR_SHAREWARE_VERSION },
-	{ 228,  70, STR_SHAREWARE_SHIPPING_1 },
-	{ 228,  85, STR_SHAREWARE_SHIPPING_2 },
-	{ 228,  96, STR_SHAREWARE_SHIPPING_3 },
-	{ 228, 111, STR_SHAREWARE_SHIPPING_4 },
-	{ 228, 122, STR_SHAREWARE_SHIPPING_5 },
-	{ 228, 161, STR_SHAREWARE_PLACE_ORDER },
+	{ 255,  30, STR_IgorObjectiveUikokahonia },
+	{ 228,  42, STR_SharewareVersion },
+	{ 228,  70, STR_SharewareShipping1 },
+	{ 228,  85, STR_SharewareShipping2 },
+	{ 228,  96, STR_SharewareShipping3 },
+	{ 228, 111, STR_SharewareShipping4 },
+	{ 228, 122, STR_SharewareShipping5 },
+	{ 228, 161, STR_SharewarePlaceOrder },
 	// 953
-	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
-	{ 228,  42, STR_SHAREWARE_VERSION },
-	{ 228,  70, STR_SHAREWARE_SHIPPING_6 },
-	{ 228,  85, STR_SHAREWARE_SHIPPING_7 },
-	{ 228,  96, STR_SHAREWARE_SHIPPING_8 },
-	{ 228, 110, STR_SHAREWARE_SHIPPING_9 },
-	{ 228, 121, STR_SHAREWARE_SHIPPING_10 },
-	{ 228, 161, STR_SHAREWARE_PLACE_ORDER },
+	{ 255,  30, STR_IgorObjectiveUikokahonia },
+	{ 228,  42, STR_SharewareVersion },
+	{ 228,  70, STR_SharewareShipping6 },
+	{ 228,  85, STR_SharewareShipping7 },
+	{ 228,  96, STR_SharewareShipping8 },
+	{ 228, 110, STR_SharewareShipping9 },
+	{ 228, 121, STR_SharewareShipping10 },
+	{ 228, 161, STR_SharewarePlaceOrder },
 	// 954
-	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
-	{ 228,  42, STR_SHAREWARE_VERSION },
-	{ 228,  74, STR_SHAREWARE_OPTIK_ADDRESS_1 },
-	{ 228,  85, STR_SHAREWARE_OPTIK_ADDRESS_2 },
-	{ 228,  96, STR_SHAREWARE_OPTIK_ADDRESS_3 },
-	{ 228, 107, STR_SHAREWARE_OPTIK_ADDRESS_4 },
-	{ 228, 118, STR_SHAREWARE_OPTIK_ADDRESS_5 },
-	{ 228, 161, STR_SHAREWARE_PLACE_ORDER },
+	{ 255,  30, STR_IgorObjectiveUikokahonia },
+	{ 228,  42, STR_SharewareVersion },
+	{ 228,  74, STR_SharewareOptikAddress1 },
+	{ 228,  85, STR_SharewareOptikAddress2 },
+	{ 228,  96, STR_SharewareOptikAddress3 },
+	{ 228, 107, STR_SharewareOptikAddress4 },
+	{ 228, 118, STR_SharewareOptikAddress5 },
+	{ 228, 161, STR_SharewarePlaceOrder },
 	// 955
-	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
-	{ 240,  42, STR_SHAREWARE_VERSION },
-	{ 240,  79, STR_SHAREWARE_OPTIK_ADDRESS_6 },
-	{ 240,  90, STR_SHAREWARE_OPTIK_ADDRESS_7 },
-	{ 240, 101, STR_SHAREWARE_OPTIK_ADDRESS_8 },
-	{ 240, 112, STR_SHAREWARE_OPTIK_ADDRESS_9 },
-	{ 240, 161, STR_SHAREWARE_PLACE_ORDER },
+	{ 255,  30, STR_IgorObjectiveUikokahonia },
+	{ 240,  42, STR_SharewareVersion },
+	{ 240,  79, STR_SharewareOptikAddress6 },
+	{ 240,  90, STR_SharewareOptikAddress7 },
+	{ 240, 101, STR_SharewareOptikAddress8 },
+	{ 240, 112, STR_SharewareOptikAddress9 },
+	{ 240, 161, STR_SharewarePlaceOrder },
 	// 956
-	{ 255,  30, STR_IGOR_OBJECTIVE_UIKOKAHONIA },
-	{ 228,  42, STR_SHAREWARE_VERSION },
-	{ 228,  64, STR_SHAREWARE_PENDULO_ADDRESS_1 },
-	{ 228,  80, STR_SHAREWARE_PENDULO_ADDRESS_2 },
-	{ 228,  91, STR_SHAREWARE_PENDULO_ADDRESS_3 },
-	{ 228, 102, STR_SHAREWARE_PENDULO_ADDRESS_4 },
-	{ 228, 113, STR_SHAREWARE_PENDULO_ADDRESS_5 },
-	{ 228, 128, STR_SHAREWARE_PENDULO_ADDRESS_6 },
-	{ 228, 161, STR_SHAREWARE_PLACE_ORDER }
+	{ 255,  30, STR_IgorObjectiveUikokahonia },
+	{ 228,  42, STR_SharewareVersion },
+	{ 228,  64, STR_SharewarePenduloAddress1 },
+	{ 228,  80, STR_SharewarePenduloAddress2 },
+	{ 228,  91, STR_SharewarePenduloAddress3 },
+	{ 228, 102, STR_SharewarePenduloAddress4 },
+	{ 228, 113, STR_SharewarePenduloAddress5 },
+	{ 228, 128, STR_SharewarePenduloAddress6 },
+	{ 228, 161, STR_SharewarePlaceOrder },
 };
 
 void IgorEngine::PART_95() {
@@ -106,7 +106,7 @@ void IgorEngine::PART_95() {
 	case 950:
 		loadData(PAL_Shareware1, _paletteBuffer);
 		loadData(IMG_Shareware1, _screenVGA);
-		if (_gameVersion == kIdEngDemo110) {
+		if (_game.version == kIdEngDemo110) {
 			startStr = 0;
 			endStr = 6;
 		}
@@ -114,7 +114,7 @@ void IgorEngine::PART_95() {
 	case 951:
 		loadData(PAL_Shareware2, _paletteBuffer);
 		loadData(IMG_Shareware2, _screenVGA);
-		if (_gameVersion == kIdEngDemo110) {
+		if (_game.version == kIdEngDemo110) {
 			startStr = 7;
 			endStr = 12;
 		}
@@ -122,7 +122,7 @@ void IgorEngine::PART_95() {
 	case 952:
 		loadData(PAL_Shareware3, _paletteBuffer);
 		loadData(IMG_Shareware3, _screenVGA);
-		if (_gameVersion == kIdEngDemo110) {
+		if (_game.version == kIdEngDemo110) {
 			startStr = 13;
 			endStr = 19;
 		}
@@ -130,7 +130,7 @@ void IgorEngine::PART_95() {
 	case 953:
 		loadData(PAL_Shareware4, _paletteBuffer);
 		loadData(IMG_Shareware4, _screenVGA);
-		if (_gameVersion == kIdEngDemo110) {
+		if (_game.version == kIdEngDemo110) {
 			startStr = 20;
 			endStr = 27;
 		}
@@ -138,7 +138,7 @@ void IgorEngine::PART_95() {
 	case 954:
 		loadData(PAL_Shareware5, _paletteBuffer);
 		loadData(IMG_Shareware5, _screenVGA);
-		if (_gameVersion == kIdEngDemo110) {
+		if (_game.version == kIdEngDemo110) {
 			startStr = 28;
 			endStr = 35;
 		}
@@ -146,7 +146,7 @@ void IgorEngine::PART_95() {
 	case 955:
 		loadData(PAL_Shareware6, _paletteBuffer);
 		loadData(IMG_Shareware6, _screenVGA);
-		if (_gameVersion == kIdEngDemo110) {
+		if (_game.version == kIdEngDemo110) {
 			startStr = 36;
 			endStr = 42;
 		}
@@ -154,7 +154,7 @@ void IgorEngine::PART_95() {
 	case 956:
 		loadData(PAL_Shareware7, _paletteBuffer);
 		loadData(IMG_Shareware7, _screenVGA);
-		if (_gameVersion == kIdEngDemo110) {
+		if (_game.version == kIdEngDemo110) {
 			startStr = 43;
 			endStr = 51;
 		}

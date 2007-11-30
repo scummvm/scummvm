@@ -123,7 +123,7 @@ void IgorEngine::PART_05_ACTION_103() {
 	} while (i != 3);
 	addObjectToInventory(21, 56);
 	_objectsState[60] = 1;
-	if (_gameVersion == kIdEngDemo110) {
+	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}	
 	PART_05_HELPER_4(255);

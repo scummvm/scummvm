@@ -29,7 +29,7 @@ namespace Igor {
 
 void IgorEngine::PART_04_EXEC_ACTION(int action) {
 	debugC(9, kDebugGame, "PART_04_EXEC_ACTION %d", action);
-	if (_gameFlags & kFlagDemo) {
+	if (_game.flags & kFlagDemo) {
 		if (action == 102 || action == 103 || action == 104) {
 			ADD_DIALOGUE_TEXT(102, 2);
 			SET_DIALOGUE_TEXT(1, 1);

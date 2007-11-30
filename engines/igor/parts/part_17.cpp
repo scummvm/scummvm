@@ -205,7 +205,7 @@ void IgorEngine::PART_17_ACTION_106() {
 	_objectsState[3] = 1;
 	PART_17_HELPER_1(255);
 	UPDATE_OBJECT_STATE(4);
-	if (_gameVersion == kIdEngDemo110) {
+	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 	--_walkDataLastIndex;

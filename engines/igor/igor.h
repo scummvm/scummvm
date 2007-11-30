@@ -127,6 +127,14 @@ enum InputVar {
 	kInputVarCount
 };
 
+struct DetectedGameVersion {
+	int version;
+	int flags;
+	Common::Language language;
+	const char *ovlFileName;
+	const char *sfxFileName;
+};
+
 struct DialogueText {
 	int num;
 	int count;
@@ -301,7 +309,7 @@ public:
 	typedef void (IgorEngine::*UpdateDialogueProc)(int action);
 	typedef void (IgorEngine::*UpdateRoomBackgroundProc)();
 
-	IgorEngine(OSystem *system, int gameVersion, int gameFlags, Common::Language language);
+	IgorEngine(OSystem *system, const DetectedGameVersion *dgv);
 	virtual ~IgorEngine();
 
 	virtual int init();
@@ -322,7 +330,7 @@ protected:
 	bool compareGameTick(int eq) const { return _gameTicks == (eq & ~7); } // { return _gameTicks == eq; }
 	int getPart() const { return _currentPart / 10; }
 	void readTableFile();
-	const char *getString(int id);
+	const char *getString(int id) const;
 	void restart();
 	void waitForTimer(int ticks = -1);
 	void copyArea(uint8 *dst, int dstOffset, int dstPitch, const uint8 *src, int srcPitch, int w, int h, bool transparent = false);
@@ -363,6 +371,7 @@ protected:
 	void fadeInPalette(int count);
 	void fadeOutPalette(int count);
 	void scrollPalette(int startColor, int endColor);
+	void drawChar(uint8 *dst, int chr, int x, int y, int color1, int color2, int color3);
 	void drawString(uint8 *dst, const char *s, int x, int y, int color1, int color2 = -1, int color3 = -1);
 	int getStringWidth(const char *s) const;
 	void drawActionSentence(const char *sentence, uint8 color);
@@ -450,9 +459,7 @@ protected:
 	uint32 _nextTimer;
 	bool _fastMode;
 	int _language;
-	int _gameVersion;
-	int _gameFlags;
-	Common::Language _gameLanguage;
+	DetectedGameVersion _game;
 
 	WalkData _walkData[100];
 	uint8 _walkCurrentPos;

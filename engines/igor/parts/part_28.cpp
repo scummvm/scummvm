@@ -178,7 +178,7 @@ void IgorEngine::PART_28_ACTION_109() {
 	ADD_DIALOGUE_TEXT(230, 1);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
-	if (_gameVersion == kIdEngDemo110) {
+	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
 	}
 }

@@ -28,6 +28,8 @@
 namespace Igor {
 
 void IgorEngine::PART_90() {
+	const char *str;
+
 	memset(_currentPalette, 0, 768);
 	setPaletteRange(0, 255);
 	switch (_currentPart) {
@@ -50,7 +52,8 @@ void IgorEngine::PART_90() {
 	case 904:
 		loadData(PAL_TitleScreen, _paletteBuffer);
 		loadData(IMG_TitleScreen, _screenVGA);
-		drawString(_screenVGA, (_gameVersion == kIdEngDemo110) ? getString(STR_COPYRIGHT_1994) : getString(STR_COPYRIGHT_1995), 2, 187, 0xF5, 0, 0);
+		str = (_game.version == kIdEngDemo110) ? getString(STR_Copyright1994) : getString(STR_Copyright1995);
+		drawString(_screenVGA, str, 2, 187, 0xF5, 0, 0);
 		break;
 	}
 	fadeInPalette(768);
@@ -66,7 +69,7 @@ void IgorEngine::PART_90() {
 	fadeOutPalette(768);
 	if (_currentPart != kInvalidPart) {
 		++_currentPart;
-		if ((_gameVersion == kIdSpaCD && _currentPart == 904) || _currentPart == 905) {
+		if ((_game.version == kIdSpaCD && _currentPart == 904) || _currentPart == 905) {
 			_currentPart = 850;
 		}
 	}

@@ -337,7 +337,7 @@ void IgorEngine::handleOptionsMenu() {
 }
 
 void IgorEngine::handlePause() {
-	drawActionSentence("GAME PAUSED", 0xFB);
+	drawActionSentence(getString(STR_GamePaused), 0xFB);
 	do {
 		waitForTimer();
 	} while (!_inputVars[kInputPause]);

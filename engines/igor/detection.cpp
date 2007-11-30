@@ -108,7 +108,13 @@ static const Common::ADParams igorDetectionParams = {
 static bool Engine_IGOR_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
 	const IgorGameDescription *gd = (const IgorGameDescription *)(encapsulatedDesc.realDesc);
 	if (gd) {
-		*engine = new Igor::IgorEngine(syst, gd->gameVersion, gd->gameFlags, gd->desc.language);
+		Igor::DetectedGameVersion dgv;
+		dgv.version = gd->gameVersion;
+		dgv.flags = gd->gameFlags;
+		dgv.language = gd->desc.language;
+		dgv.ovlFileName = gd->desc.filesDescriptions[0].fileName;
+		dgv.sfxFileName = gd->desc.filesDescriptions[1].fileName;
+		*engine = new Igor::IgorEngine(syst, &dgv);
 	}
 	return gd != 0;
 }
