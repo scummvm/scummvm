@@ -332,78 +332,78 @@ void AmigaSound::playSong(int16 song) {
 		break;
 	case 53:
 	case 204:
-	    song = 44;
-	    break;
+		song = 44;
+		break;
 	case 136:
 	case 142:
 	case 179:
-	    song = 86;
-	    break;
+		song = 86;
+		break;
 	case 101:
 	case 102:
 	case 143:
-	    song = 188;
-	    break;
+		song = 188;
+		break;
 	case 65:
 	case 62:
-	    song = 69;
-	    break;
+		song = 69;
+		break;
 	case 118:
 	case 119:
-	    song = 137;
-	    break;
+		song = 137;
+		break;
 	case 130:
 	case 131:
-	    song = 59;
-	    break;
+		song = 59;
+		break;
 	case 174:
 	case 175:
-	    song = 57;
-	    break;
+		song = 57;
+		break;
 	case 171:
 	case 121:
-	    song = 137;
-	    break;
+		song = 137;
+		break;
 	case 138:
 	case 170:
 	case 149:
-	    song = 28;
-	    break;
+		song = 28;
+		break;
 	case 122:
 	case 180:
 	case 83:
 	case 98:
-	    song = 83;
-	    break;
+		song = 83;
+		break;
 	case 20:
 	case 33:
-	    song = 34;
-	    break;
+		song = 34;
+		break;
 	case 29:
 	case 35:
-	    song = 36;
-	    break;
+		song = 36;
+		break;
 	case 7:
 	case 9:
 	case 10:
-	    song = 11;
-	    break;
+		song = 11;
+		break;
 	case 110:
-	    song = 94;
-	    break;
+		song = 94;
+		break;
 	case 111:
-	    song = 95;
-	    break;
+		song = 95;
+		break;
 	case 30:
-	    song = 43;
-	    break;
+		song = 43;
+		break;
 	case 76:
-	    song = 27;
-	    break;
+		song = 27;
+		break;
 	case 194:
 	case 195:
-	    song = 32;
-	    break;
+		song = 32;
+		break;
 	}
 
 	if (_lastOverride != 32 && _lastOverride != 44) {
