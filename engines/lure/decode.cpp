@@ -175,14 +175,19 @@ void AnimationDecoder::rcl(uint16 &value, bool &carry) {
 #define SET_HI_BYTE(x,v) x = (x & 0xff) | ((v) << 8);
 #define SET_LO_BYTE(x,v) x = (x & 0xff00) | (v);
 
-void AnimationDecoder::decode_data_2(byte *&pSrc, uint16 &currData, uint16 &bitCtr, 
-									 uint16 &dx, bool &carry) {
+void AnimationDecoder::decode_data_2(MemoryBlock *src, byte *&pSrc, uint16 &currData, 
+									 uint16 &bitCtr, uint16 &dx, bool &carry) {
 	SET_HI_BYTE(dx, currData >> 8);
 	
 	for (int v = 0; v < 8; ++v) {
 		rcl(currData, carry);
 		if (--bitCtr == 0) {
-			GET_BYTE;
+			uint32 offset = (uint32) (pSrc - src->data());
+			if (offset >= src->size()) 
+				// Beyond end of source, so read in a 0 value
+				currData &= 0xff00;
+			else
+				GET_BYTE;
 			bitCtr = 8;
 		}
 	}
@@ -285,10 +290,10 @@ loc_1441:
 		if (dxHigh == BX_VAL(0)) {
 			tempReg1 = bitCtr;
 			tempReg2 = dx;
-			decode_data_2(pSrc, currData, bitCtr, dx, carry);
+			decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
 		
 			SET_LO_BYTE(dx, dx >> 8);
-			decode_data_2(pSrc, currData, bitCtr, dx, carry);
+			decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
 			SET_HI_BYTE(bitCtr, dx & 0xff);
 			SET_LO_BYTE(bitCtr, dx >> 8);
 			dx = tempReg2;
@@ -299,7 +304,7 @@ loc_1441:
 
 		} else if (dxHigh == BX_VAL(0x10)) {
 			tempReg1 = bitCtr;
-			decode_data_2(pSrc, currData, bitCtr, dx, carry);
+			decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
 			bitCtr = dx >> 8;
 
 		} else if (dxHigh == BX_VAL(0x20)) {

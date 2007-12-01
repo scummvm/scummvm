@@ -56,8 +56,8 @@ class AnimationDecoder {
 public:
 	static void rcl(uint16 &value, bool &carry);
 	static uint32 decode_data(MemoryBlock *src, MemoryBlock *dest, uint32 srcPos);
-	static void decode_data_2(byte *&pSrc, uint16 &currData, uint16 &bitCtr,
-					   uint16 &dx, bool &carry);
+	static void decode_data_2(MemoryBlock *src, byte *&pSrc, uint16 &currData, 
+						uint16 &bitCtr, uint16 &dx, bool &carry);
 };
 
 } // End of namespace Lure
