@@ -920,6 +920,15 @@ int32 Logic::fnISpeak(int32 *params) {
 
 		locateTalker(params);
 
+		// If the speech is associated with a specific animation, and
+		// not just a voice-over, set the focus area to the calculated
+		// position.
+
+		if (_animId) {
+			Common::Rect rect(_textX - 96, _textY - 64, _textX + 96, _textY + 64);
+			_vm->_system->setFocusRectangle(rect);
+		}
+
 		// Is it to be speech or subtitles or both?
 
 		// Assume not running until know otherwise
@@ -1075,6 +1084,8 @@ int32 Logic::fnISpeak(int32 *params) {
 	// finished.
 
 	if (speechFinished && !_speechAnimType) {
+		_vm->_system->clearFocusRectangle();
+
 		// If there is text, kill it
 		if (_speechTextBlocNo) {
 			_vm->_fontRenderer->killTextBloc(_speechTextBlocNo);
