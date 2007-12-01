@@ -223,7 +223,8 @@ void Hotspot::setAnimation(uint16 newAnimId) {
 		tempAnim = NULL;
 	else {
 		tempAnim = r.getAnimation(newAnimId); 
-		assert(tempAnim != NULL);
+		if (tempAnim == NULL)
+			error("Hotspot %xh tried to set non-existant Animation Id: %xh", _hotspotId, newAnimId);
 	}
 	
 	setAnimation(tempAnim);
