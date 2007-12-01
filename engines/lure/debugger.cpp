@@ -215,7 +215,7 @@ bool Debugger::cmd_giveItem(int argc, const char **argv) {
 
 		if (itemHotspot == NULL) {
 			DebugPrintf("The specified item does not exist\n");
-		} else if ((itemNum < 0x408) || (itemNum >= 0x2710)) {
+		} else if (itemNum < 0x408) {
 			DebugPrintf("The specified item number is not an object\n");
 		} else if ((charNum < PLAYER_ID) || (charNum >= 0x408) ||
 				   (charHotspot == NULL)) {
