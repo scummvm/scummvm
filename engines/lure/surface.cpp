@@ -612,7 +612,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 }
 
 TalkDialog::~TalkDialog() {
-	delete _lines;
+	Memory::dealloc(_lines);
 	delete _surface;
 }
 
