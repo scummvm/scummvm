@@ -265,10 +265,10 @@ int16 ADPCMInputStream::decodeMS(ADPCMChannelStatus *c, byte code) {
 	predictor = (((c->sample1) * (c->coeff1)) + ((c->sample2) * (c->coeff2))) / 256;
 	predictor += (signed)((code & 0x08) ? (code - 0x10) : (code)) * c->delta;
 
-	if (predictor < -0x8000)
-		predictor = -0x8000;
-	else if (predictor > 0x7fff)
-		predictor = 0x7fff;
+	if (predictor < -32768)
+		predictor = -32768;
+	else if (predictor > 32767)
+		predictor = 32767;
 
 	c->sample2 = c->sample1;
 	c->sample1 = predictor;
@@ -345,13 +345,12 @@ int16 ADPCMInputStream::decodeMSIMA(byte code) {
 	diff = (code & 0x08) ? -E : E;
 	samp = _status.last + diff;
 
-	if (samp < -0x8000)
-		samp = -0x8000;
-	else if (samp > 0x7fff)
-		samp = 0x7fff;
+	if (samp < -32768)
+		samp = -32768;
+	else if (samp > 32767)
+		samp = 32767;
 
 	_status.last = samp;
-
 	_status.stepIndex += stepAdjust(code);
 	if (_status.stepIndex < 0)
 		_status.stepIndex = 0;
