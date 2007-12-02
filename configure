@@ -207,9 +207,9 @@ EOF
 
 if test -n "$_host"; then
 	# In cross-compiling mode, we cannot run the result
-	eval "$1 $CXXFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 else
-	eval "$1 $CXXFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
+	eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler 2> /dev/null" && rm -f tmp_cxx_compiler$EXEEXT tmp_cxx_compiler.cpp
 fi
 }
 
@@ -268,7 +268,7 @@ int main() {
 	return 0;
 }
 EOF
-if $CXX $CXXFLAGS -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
+if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$EXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
 	break
 else
 	if test "$datatype" = "unknown"; then
@@ -819,7 +819,6 @@ case $_host_os in
 esac
 
 
-cxx_name=`( $cc -v ) 2>&1 | $tail -n 1 | cut -d ' ' -f 1`
 cxx_version=`( $CXX -dumpversion ) 2>&1`
 if test "$?" -gt 0; then
 	cxx_version="not found"
@@ -919,15 +918,21 @@ rm -f tmp_endianness_check.o tmp_endianness_check.cpp
 #
 echo_n "Type with 1 byte... "
 type_1_byte=`find_type_with_size 1`
+TMP="$?"
 echo "$type_1_byte"
+test $TMP -eq 0 || exit 1	# check exit code of subshell
 	
 echo_n "Type with 2 bytes... "
 type_2_byte=`find_type_with_size 2`
+TMP="$?"
 echo "$type_2_byte"
+test $TMP -eq 0 || exit 1	# check exit code of subshell
 	
 echo_n "Type with 4 bytes... "
 type_4_byte=`find_type_with_size 4`
+TMP="$?"
 echo "$type_4_byte"
+test $TMP -eq 0 || exit 1	# check exit code of subshell
 	
 #
 # Check whether we can use x86 asm routines
