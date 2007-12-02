@@ -80,12 +80,17 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	}
 
 	Track *track = _track[l];
-	while (track->used) {
+	while (1) {
+		_mutex.lock();
+		if (!track->used) {
+			break;
+		}
 		// The designated track is not yet available. So, we call flushTracks()
 		// to get it processed (and thus made ready for us). Since the actual
 		// processing is done by another thread, we also call parseEvents to
 		// give it some time (and to avoid busy waiting/looping).
 		flushTracks();
+		_mutex.unlock();
 #ifndef __PLAYSTATION2__
 		_vm->parseEvents();
 #endif
@@ -186,6 +191,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	}
 
 	track->used = true;
+	_mutex.unlock();
 }
 
 void IMuseDigital::setPriority(int soundId, int priority) {
@@ -309,7 +315,6 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 }
 
 IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(const Track *track, int fadeDelay) {
-	Common::StackLock lock(_mutex, "IMuseDigital::cloneToFadeOutTrack()");
 	assert(track);
 	Track *fadeTrack = 0;
 
