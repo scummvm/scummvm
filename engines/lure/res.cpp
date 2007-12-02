@@ -27,6 +27,7 @@
 #include "lure/disk.h"
 #include "lure/scripts.h"
 #include "lure/screen.h"
+#include "lure/lure.h"
 #include "common/endian.h"
 #include "common/events.h"
 
@@ -696,8 +697,14 @@ void Resources::saveToStream(Common::WriteStream *stream) {
 }
 
 void Resources::loadFromStream(Common::ReadStream *stream) {
-	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading resource data");
-	_talkingCharacter = stream->readUint16LE();
+	uint8 saveVersion = LureEngine::getReference().saveVersion();
+
+	if (saveVersion >= 26) {
+		debugC(ERROR_DETAILED, kLureDebugScripts, "Loading resource data");
+		_talkingCharacter = stream->readUint16LE();
+	} else {
+		_talkingCharacter = 0;
+	}
 
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading hotspot data");
 	_hotspotData.loadFromStream(stream);

@@ -46,6 +46,7 @@ class LureEngine : public Engine {
 private:
 	uint32 _features;
 	uint8 _game;
+	uint8 _saveVersion;
 	Common::Language _language;
 	Disk *_disk;
 	Resources *_resources;
@@ -76,6 +77,7 @@ public:
 	bool loadGame(uint8 slotNumber);
 	bool saveGame(uint8 slotNumber, Common::String &caption);
 	Common::String *detectSave(int slotNumber);
+	uint8 saveVersion() { return _saveVersion; }
 };
 
 } // End of namespace Lure

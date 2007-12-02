@@ -195,8 +195,8 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 
 	// Check language version
 	uint8 language = f->readByte();
-	uint8 version = f->readByte();
-	if ((language != _language) || (version != LURE_DAT_MINOR)) {
+	_saveVersion = f->readByte();
+	if ((language != _language) || (_saveVersion < LURE_MIN_SAVEGAME_MINOR)) {
 		warning("loadGame: Failed to load slot %d - incorrect version", slotNumber);
 		delete f;
 		return false;
@@ -229,7 +229,7 @@ Common::String *LureEngine::detectSave(int slotNumber) {
 		// Check language version
 		uint8 language = f->readByte();
 		uint8 version = f->readByte();
-		if ((language == _language) && (version == LURE_DAT_MINOR)) {
+		if ((language == _language) && (version >= LURE_MIN_SAVEGAME_MINOR)) {
 			// Read in the savegame title
 			char saveName[MAX_DESC_SIZE];
 			char *p = saveName;

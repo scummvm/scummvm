@@ -25,6 +25,7 @@
 #include "lure/res.h"
 #include "lure/screen.h"
 #include "lure/game.h"
+#include "lure/lure.h"
 #include "lure/events.h"
 #include "lure/strings.h"
 #include "lure/scripts.h"
@@ -739,10 +740,16 @@ void Room::saveToStream(Common::WriteStream *stream) {
 }
 
 void Room::loadFromStream(Common::ReadStream *stream) {
-	if (_talkDialog) 
-		delete _talkDialog;
+	uint8 saveVersion = LureEngine::getReference().saveVersion();
 
-	_talkDialog = TalkDialog::loadFromStream(stream);
+	if (_talkDialog) {
+		delete _talkDialog;
+		_talkDialog = NULL;
+	}
+
+	if (saveVersion >= 26)
+		_talkDialog = TalkDialog::loadFromStream(stream);
+
 	uint16 roomNum = stream->readUint16LE();
 	_roomNumber = 999; // Dummy room number so current room is faded out
 	setRoomNumber(roomNum, false);
