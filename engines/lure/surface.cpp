@@ -96,10 +96,12 @@ Surface::~Surface() {
 void Surface::loadScreen(uint16 resourceId) {
 	MemoryBlock *rawData = Disk::getReference().getEntry(resourceId);
 	PictureDecoder decoder;
-	MemoryBlock *tmpScreen = decoder.decode(rawData, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH);
+	MemoryBlock *tmpScreen = decoder.decode(rawData, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH + 1);
 	delete rawData;
 	empty();
-	copyFrom(tmpScreen, MENUBAR_Y_SIZE * FULL_SCREEN_WIDTH);
+
+	_data->copyFrom(tmpScreen, 0, MENUBAR_Y_SIZE * FULL_SCREEN_WIDTH, 
+		(FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE) * FULL_SCREEN_WIDTH);
 	
 	delete tmpScreen;
 }
