@@ -86,10 +86,10 @@ public:
 		#endif
 	
 		if (!_dlHandle) {
-			debug("Failed loading plugin '%s' (error code %d)", _filename.c_str(), GetLastError());
+			debug("Failed loading plugin '%s' (error code %d)", _filename.c_str(), (int32) GetLastError());
 			return false;
 		} else {
-			debug(1, "Success loading plugin '%s', handle %08X", _filename.c_str(), _dlHandle);
+			debug(1, "Success loading plugin '%s', handle %08X", _filename.c_str(), (uint32) _dlHandle);
 		}
 
 		return DynamicPlugin::loadPlugin();
