@@ -69,7 +69,7 @@ OSXOPT=/sw
 ifeq ($(BACKEND), iphone)
 OSXOPT=/usr/local/arm-apple-darwin
 else
-# Static libaries, used for the scummvm-static target
+# Static libaries, used for the scummvm-static and iphone targets
 OSX_STATIC_LIBS := `sdl-config --static-libs`
 endif
 
