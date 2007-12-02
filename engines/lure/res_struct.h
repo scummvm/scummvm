@@ -127,10 +127,10 @@ struct RoomResource {
 	uint16 sequenceOffset;
 	int16 clippingXStart;
 	int16 clippingXEnd;
-	uint32 exitTime;
 	uint8 areaFlag;
+	uint8 numExits;
+	uint32 exitTime;
 	RoomRect walkBounds;
-	uint16 numExits;
 } PACKED_STRUCT;
 
 struct RoomExitResource {

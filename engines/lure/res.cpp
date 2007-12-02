@@ -123,7 +123,7 @@ void Resources::reloadData() {
 			RoomData *newEntry = new RoomData(rec, paths);
 			_roomData.push_back(newEntry);
 
-			uint16 numExits = READ_LE_UINT16(&rec->numExits);
+			uint8 numExits = rec->numExits;
 			if (numExits > 0) {
 				RoomExitResource *exitRes = (RoomExitResource *)
 					(mb->data() + offsetVal + sizeof(RoomResource));
