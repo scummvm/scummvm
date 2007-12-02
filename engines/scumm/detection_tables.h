@@ -730,6 +730,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "putttime", "ZeitDemo", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "putttime", "ZEITDEMO", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "putttime", "PuttMini", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "putttime", "PouceVDT", kGenHEPC, Common::FR_FRA, UNK, 0 },
 
 	{ "puttzoo", "Putt-Putt Redt De Zoo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "puttzoo", "puttzoo", kGenHEPC, UNK_LANG, UNK, 0 },

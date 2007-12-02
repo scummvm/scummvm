@@ -707,6 +707,7 @@ PuttTime	Putt-Putt Travels Through Time
 	2108d83dcf09f8adb4bc524669c8cf51	-1	us	All	HE 99	Updated	-	Kirben
 	7c980a1b1596a93f26917318884f48f7	-1	de	All	HE 99	Updated	-	Joachim Eberhard
 	d4aac997e2f4e15341f0bfbf905419bd	62698	gb	Windows	HE 99	-	-	eriktorbjorn
+	57a17febe2183f521250e55d55b83e60	-1	fr	Windows	HE 99	-	-	jp
 	defb8cb9ec4b0f91acfb6b61c6129ad9	-1	ru	Windows	HE 99	-	-	sev
 	a525c1753c1db5011c00417da37887ef	-1	us	All	HE 100	Updated	-	Kirben
 
