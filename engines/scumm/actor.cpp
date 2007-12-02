@@ -225,6 +225,8 @@ void Actor::setActorWalkSpeed(uint newSpeedX, uint newSpeedY) {
 	_speedy = newSpeedY;
 
 	if (_moving) {
+		if (_vm->_game.version == 8 && (_moving & MF_IN_LEG) == 0)
+			return;
 		calcMovementFactor(_walkdata.next);
 	}
 }
