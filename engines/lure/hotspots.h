@@ -308,7 +308,6 @@ private:
 	void resetDirection();
 
 	// Action set
-	void doNothing(HotspotData *hotspot);
 	void doGet(HotspotData *hotspot);
 	void doOperate(HotspotData *hotspot);
 	void doOpen(HotspotData *hotspot);
@@ -540,6 +539,7 @@ public:
 	void setVoiceCtr(uint8 v) { _voiceCtr = v; }
 
 	// Miscellaneous
+	void doNothing(HotspotData *hotspot);
 	void converse(uint16 destCharacterId, uint16 messageId, bool srcStandStill = false, 
 					   bool destStandStill = false);
 	void showMessage(uint16 messageId, uint16 destCharacterId = NOONE_ID);

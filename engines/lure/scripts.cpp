@@ -340,6 +340,9 @@ void Script::setBlockingHotspotScript(uint16 charId, uint16 scriptIndex, uint16 
 	Resources &r = Resources::getReference();
 	uint16 offset = r.getHotspotScript(scriptIndex);
 
+	if (charId == PLAYER_ID)
+		Room::getReference().setCursorState(CS_SEQUENCE);
+
 	Hotspot *hs = r.getActiveHotspot(charId);
 	hs->setHotspotScript(offset);
 	hs->currentActions().top().setAction(EXEC_HOTSPOT_SCRIPT);

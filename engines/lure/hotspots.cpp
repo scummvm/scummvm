@@ -78,12 +78,6 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_tickHandler = HotspotTickHandlers::getHandler(_data->tickProcId);
 	_nameBuffer[0] = '\0';
 
-	if (_hotspotId < FIRST_NONCHARACTER_ID) {
-		// Default characters to facing upwards until they start moving
-		_direction = UP;
-		setFrameNumber(_anim->upFrame);
-	}
-
 	_skipFlag = false;
 	_charRectY = 0;
 	_voiceCtr = 0;
@@ -515,7 +509,6 @@ void Hotspot::endAction() {
 	_voiceCtr = 0;
 	setActionCtr(0);
 	if (_hotspotId == PLAYER_ID)
-		//Room::getReference().setCursorState(CS_NONE);  **DEBUG**
 		room.setCursorState((CursorState) ((int) room.cursorState() & 2));
 
 	if (_currentActions.top().hasSupportData()) {
@@ -1247,13 +1240,17 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 }
 
 void Hotspot::doNothing(HotspotData *hotspot) {
-	_currentActions.pop();
 	if (!_currentActions.isEmpty()) {
-		setBlockedFlag(false);
-		currentActions().top().setAction(DISPATCH_ACTION);
-	} else if (hotspotId() == PLAYER_ID) {
-		Room::getReference().setCursorState(CS_NONE);
+		_currentActions.pop();
+		if (!_currentActions.isEmpty()) {
+			setBlockedFlag(false);
+			currentActions().top().setAction(DISPATCH_ACTION);
+			return;
+		}
 	}
+
+	if (hotspotId() == PLAYER_ID) 
+		Room::getReference().setCursorState(CS_NONE);
 }
 
 void Hotspot::doGet(HotspotData *hotspot) {
@@ -2825,6 +2822,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		// Make sure there is no longer any destination
 		h.setDestHotspot(0);
 		h.updateMovement2(CHARMODE_IDLE);
+		h.doNothing(NULL);
 		strcpy(room.statusLine(), "");
 		break;
 
