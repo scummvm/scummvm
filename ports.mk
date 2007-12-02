@@ -65,14 +65,23 @@ iphonebundle:
 # /opt/local/ for darwinports
 OSXOPT=/sw
 
+# Location of static libs for the iPhone
+ifeq ($(BACKEND), iphone)
+OSXOPT=/usr/local/arm-apple-darwin
+else
 # Static libaries, used for the scummvm-static target
 OSX_STATIC_LIBS := `sdl-config --static-libs`
+endif
 
 ifdef USE_VORBIS
 OSX_STATIC_LIBS += \
 		$(OSXOPT)/lib/libvorbisfile.a \
 		$(OSXOPT)/lib/libvorbis.a \
 		$(OSXOPT)/lib/libogg.a
+endif
+
+ifdef USE_TREMOR
+OSX_STATIC_LIBS += $(OSXOPT)/lib/libvorbisidec.a
 endif
 
 ifdef USE_FLAC
@@ -96,6 +105,15 @@ scummvm-static: $(OBJS)
 		$(OSX_STATIC_LIBS) \
 		-lSystemStubs \
 		-lz
+
+# Special target to create a static linked binary for the iPhone
+iphone: $(OBJS)
+	$(CXX) $(LDFLAGS) -o scummvm $(OBJS) \
+		$(OSX_STATIC_LIBS) \
+		-framework UIKit -framework CoreGraphics -framework CoreSurface \
+		-framework LayerKit -framework GraphicsServices -framework CoreFoundation \
+		-framework Foundation -framework AudioToolbox -framework CoreAudio \
+		-lobjc -lz
 
 # Special target to create a snapshot disk image for Mac OS X
 # TODO: Replace AUTHORS by Credits.rtf

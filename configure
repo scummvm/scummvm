@@ -517,7 +517,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp32, gp2x, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, x11, morphos, dc, gp32, gp2x, iphone, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -981,12 +981,6 @@ case $_host_os in
 	mint*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
-	iphone*)
-		DEFINES="$DEFINES -DUNIX -DIPHONE"
-		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework CoreSurface \
-                      -framework LayerKit -framework GraphicsServices -framework CoreFoundation \
-                      -framework Foundation -framework AudioToolbox -framework CoreAudio"
-		;;
 	amigaos*)
 		# TODO: anything to be added here?
 		;;
@@ -1075,13 +1069,17 @@ if test -n "$_host"; then
 			LIBS="$LIBS -lmingw32 -lwinmm"
 			OBJS="$OBJS scummvmico.o"
 			;;
-		arm-iphone)
+		iphone)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DIPHONE -DUNIX"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
+			_backend="iphone"
+			_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
+			_build_hq_scalers="no"
 			;;
 		*)
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
@@ -1565,6 +1563,8 @@ case $_backend in
 		MODULES="$MODULES backends/platform/x11"
 		;;
 	iphone)
+		OBJCFLAGS="$OBJCFLAGS --std=c99"
+		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework CoreSurface -framework LayerKit -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
 		DEFINES="$DEFINES -DIPHONE_BACKEND"
 		MODULES="$MODULES backends/platform/iphone"
 		;;
