@@ -17,15 +17,17 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      some odd quirks in some game / port combinations.
    - Added optional 'confirm exit' dialog to the SDL backend.
    - Added support for TiMidity++ MIDI server.
+   - Added DMedia MIDI driver for IRIX.
 
  AGOS:
    - Fixed crashes related to OmniTV playback in The Feeble Files.
 
  Broken Sword 1:
    - Added support for FLAC encoded music.
- 
- IRIX:
-   - Added DMedia MIDI driver for IRIX.
+
+ Queen:
+   - Added support for Adlib music.
+   - Added missing music patterns playback in Amiga version.
 
  SCUMM:
    - Added subtitle skipping (via '.' key) in older games which didn't have
