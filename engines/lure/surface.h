@@ -93,6 +93,11 @@ private:
 	uint8 _numLines;
 	int _endLine, _endIndex;
 	int _wordCountdown;
+
+	uint16 _characterId;
+	uint16 _destCharacterId;
+	uint16 _activeItemId;
+	uint16 _descId;
 public:
 	TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId);
 	~TalkDialog();
@@ -101,6 +106,9 @@ public:
 	Surface &surface() { return *_surface; }
 	void copyTo(Surface *dest, uint16 x, uint16 y);
 	bool isBuilding() { return _endLine < _numLines; }
+
+	void saveToStream(Common::WriteStream *stream);
+	static TalkDialog *loadFromStream(Common::ReadStream *stream);
 };
 
 class SaveRestoreDialog {

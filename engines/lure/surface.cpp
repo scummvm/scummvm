@@ -524,6 +524,11 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	char itemName[MAX_DESC_SIZE];
 	int characterArticle, hotspotArticle = 3;
 
+	_characterId = characterId;
+	_destCharacterId = destCharacterId;
+	_activeItemId = activeItemId;
+	_descId = descId;
+
 	HotspotData *talkingChar = res.getHotspot(characterId);
 	HotspotData *destCharacter = (destCharacterId == 0) ? NULL : 
 		res.getHotspot(destCharacterId);
@@ -650,6 +655,33 @@ void TalkDialog::copyTo(Surface *dest, uint16 x, uint16 y) {
 	}
 
 	_surface->copyTo(dest, x, y);
+}
+
+void TalkDialog::saveToStream(Common::WriteStream *stream) {
+	stream->writeUint16LE(_characterId);
+	stream->writeUint16LE(_destCharacterId);
+	stream->writeUint16LE(_activeItemId);
+	stream->writeUint16LE(_descId);
+	stream->writeSint16LE(_endLine);
+	stream->writeSint16LE(_endIndex);
+	stream->writeSint16LE(_wordCountdown);
+
+}
+
+TalkDialog *TalkDialog::loadFromStream(Common::ReadStream *stream) {
+	uint16 characterId = stream->readUint16LE();
+	if (characterId == 0)
+		return NULL;
+
+	uint16 destCharacterId = stream->readUint16LE();
+	uint16 activeItemId = stream->readUint16LE();
+	uint16 descId = stream->readUint16LE(); 
+
+	TalkDialog *dialog = new TalkDialog(characterId, destCharacterId, activeItemId, descId);
+	dialog->_endLine = stream->readSint16LE();
+	dialog->_endIndex = stream->readSint16LE();
+	dialog->_wordCountdown = stream->readSint16LE();
+	return dialog;
 }
 
 /*--------------------------------------------------------------------------*/

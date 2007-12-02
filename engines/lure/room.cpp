@@ -727,6 +727,11 @@ bool Room::checkInTalkDialog() {
 }
 
 void Room::saveToStream(Common::WriteStream *stream) {
+	if (_talkDialog == NULL) 
+		stream->writeUint16LE(0);
+	else 
+		_talkDialog->saveToStream(stream);
+
 	stream->writeUint16LE(_roomNumber);
 	stream->writeUint16LE(_destRoomNumber);
 	stream->writeByte(_showInfo);
@@ -734,6 +739,10 @@ void Room::saveToStream(Common::WriteStream *stream) {
 }
 
 void Room::loadFromStream(Common::ReadStream *stream) {
+	if (_talkDialog) 
+		delete _talkDialog;
+
+	_talkDialog = TalkDialog::loadFromStream(stream);
 	uint16 roomNum = stream->readUint16LE();
 	_roomNumber = 999; // Dummy room number so current room is faded out
 	setRoomNumber(roomNum, false);

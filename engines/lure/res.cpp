@@ -596,6 +596,10 @@ Hotspot *Resources::addHotspot(uint16 hotspotId) {
 	Hotspot *hotspot = new Hotspot(hData);
 	_activeHotspots.push_back(hotspot);
 
+	if (hotspotId < FIRST_NONCHARACTER_ID) 
+		// Default characters to facing upwards until they start moving
+		hotspot->setDirection(UP);
+
 	return hotspot;
 }
 
@@ -677,6 +681,10 @@ void Resources::setTalkData(uint16 offset) {
 }
 
 void Resources::saveToStream(Common::WriteStream *stream) {
+	// Save basic fields
+	stream->writeUint16LE(_talkingCharacter);
+
+	// Save sublist data
 	_hotspotData.saveToStream(stream);
 	_activeHotspots.saveToStream(stream);
 	_fieldList.saveToStream(stream);
@@ -688,6 +696,9 @@ void Resources::saveToStream(Common::WriteStream *stream) {
 }
 
 void Resources::loadFromStream(Common::ReadStream *stream) {
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading resource data");
+	_talkingCharacter = stream->readUint16LE();
+
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading hotspot data");
 	_hotspotData.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading active hotspots");
