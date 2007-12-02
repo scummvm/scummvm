@@ -30,7 +30,7 @@
 #include "common/util.h"
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 25
+#define VERSION_MINOR 26
 
 #define DIALOG_SIZE 0x150
 
@@ -215,10 +215,10 @@ struct RoomResourceOutput {
 	uint16 sequenceOffset;
 	int16 clippingXStart;
 	int16 clippingXEnd;
-	uint32 exitTime;
 	uint8 areaFlag;
+	uint8 numExits;
+	uint32 exitTime;
 	RoomRectOut walkBounds;
-	uint16 numExits;
 };
 
 struct RoomResourceExit1 {

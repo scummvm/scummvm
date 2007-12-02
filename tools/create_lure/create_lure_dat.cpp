@@ -282,7 +282,9 @@ void read_room_data(byte *&data, uint16 &totalSize)  {
 				lureExe.read(p, sizeof(RoomResourceExit1));
 				if (FROM_LE_16(p->xs) == 0xffff) break;
 
-				rec->numExits = TO_LE_16(FROM_LE_16(rec->numExits) + 1);
+				if (++rec->numExits == 255) 
+					errorExit("Too many rooms read in");
+
 				p->xs = TO_LE_16(FROM_LE_16(p->xs) - 0x80);
 				p->ys = TO_LE_16(FROM_LE_16(p->ys) - 0x80);
 				p->xe = TO_LE_16(FROM_LE_16(p->xe) - 0x80);
