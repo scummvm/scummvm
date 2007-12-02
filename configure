@@ -308,7 +308,7 @@ CheckNASM()
 	else
 		case $_host_os in
 			mingw* | cygwin*)
-				NASMFLAGS="-f win32"
+				NASMFLAGS="-f win32 -w-orphan-labels"
 			;;
 			darwin*)
 				NASMFLAGS="-f macho"
@@ -1220,7 +1220,7 @@ POST_OBJS_FLAGS :=
 LIBS            += -ldl
 '
 		;;
-	*mingw32*)
+	*mingw32* | cygwin*)
 _def_plugin='
 #define PLUGIN_PREFIX	""
 #define PLUGIN_SUFFIX	".dll"
@@ -1231,7 +1231,7 @@ PLUGIN_PREFIX		:=
 PLUGIN_SUFFIX		:= .dll
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
 CXXFLAGS			+= -DDYNAMIC_MODULES
-PLUGIN_LDFLAGS		:= -shared ./libscummvm.a $(LIBS)
+PLUGIN_LDFLAGS		:= -shared ./libscummvm.a $(LIBS) $(LDFLAGS)
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
 '
@@ -1645,14 +1645,14 @@ BINDIR := $_bindir
 MANDIR := $_mandir
 DATADIR := $_datadir
 
-$_mak_plugins
-
 $_config_mk_data
 
 INCLUDES += $INCLUDES
 OBJS += $OBJS
 DEFINES += $DEFINES
 LDFLAGS += $LDFLAGS
+
+$_mak_plugins
 
 SAVED_CONFIGFLAGS := $SAVED_CONFIGFLAGS
 SAVED_LDFLAGS     := $SAVED_LDFLAGS
