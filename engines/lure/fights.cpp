@@ -44,6 +44,7 @@ FightsManager::FightsManager() {
 	int_fights = this;
 	_fightData = NULL;
 	_mouseFlags = 0;
+	_keyDown = KS_UP;
 	reset();
 }
 
@@ -110,22 +111,28 @@ bool FightsManager::isFighting() {
 void FightsManager::fightLoop() {
 	Resources &res = Resources::getReference();
 	Game &game = Game::getReference();
+	Room &room = Room::getReference();
 	Events &events = Events::getReference();
 	FighterRecord &playerFight = getDetails(PLAYER_ID);
+	uint32 timerVal = g_system->getMillis();
 
 	// Loop for the duration of the battle
 	while (!events.quitFlag && (playerFight.fwhits != GENERAL_MAGIC_ID)) {
 		checkEvents();
-		
-		Game::getReference().tick();
-		Room::getReference().update();
-		res.delayList().tick();
-		Screen::getReference().update();
 
+		if (g_system->getMillis() > timerVal + GAME_FRAME_DELAY) {
+			timerVal = g_system->getMillis();
+
+			game.tick();
+			room.update();
+			res.delayList().tick();
+		}
+
+		Screen::getReference().update();
 		if (game.debugger().isAttached())
 			game.debugger().onFrame();
 
-		g_system->delayMillis(20);		
+		g_system->delayMillis(10);		
 	}
 }
 
@@ -180,58 +187,66 @@ const KeyMapping keyList[] = {
 void FightsManager::checkEvents() {
 	Game &game = Game::getReference();
 	Events &events = Events::getReference();
-	if (!events.pollEvent()) return;
+	Mouse &mouse = Mouse::getReference();
 	FighterRecord &rec = getDetails(PLAYER_ID);
 	Hotspot *player = Resources::getReference().getActiveHotspot(PLAYER_ID);
-	Mouse &mouse = Mouse::getReference();
-
 	int moveNumber = 0;
 
-	if (events.type() == Common::EVENT_KEYDOWN) {
-		switch (events.event().kbd.keycode) {
-		case Common::KEYCODE_ESCAPE:
-			events.quitFlag = true;
-			break;
+	while ((moveNumber == 0) && events.pollEvent()) {
 
-		case Common::KEYCODE_d:
-			if (events.event().kbd.flags == Common::KBD_CTRL)
-				// Activate the debugger
-				game.debugger().attach();
-			break;
+		if (events.type() == Common::EVENT_KEYDOWN) {
+			switch (events.event().kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
+				events.quitFlag = true;
+				return;
 
-		default:
-			// Scan through the mapping list for a move for the keypress
-			const KeyMapping *keyPtr = &keyList[0];
-			while ((keyPtr->keycode != Common::KEYCODE_INVALID) &&
-				(keyPtr->keycode != events.event().kbd.keycode))
-				++keyPtr;
-			if (keyPtr->keycode != Common::KEYCODE_INVALID)
-				moveNumber = keyPtr->moveNumber;
+			case Common::KEYCODE_d:
+				if (events.event().kbd.flags == Common::KBD_CTRL) {
+					// Activate the debugger
+					game.debugger().attach();
+					return;
+				}
+				break;
+
+			default:
+				// Scan through the mapping list for a move for the keypress
+				const KeyMapping *keyPtr = &keyList[0];
+				while ((keyPtr->keycode != Common::KEYCODE_INVALID) &&
+					(keyPtr->keycode != events.event().kbd.keycode))
+					++keyPtr;
+				if (keyPtr->keycode != Common::KEYCODE_INVALID) {
+					moveNumber = keyPtr->moveNumber;
+					_keyDown = KS_KEYDOWN_1;
+				}
+			}
+
+		} else if (events.type() == Common::EVENT_KEYUP) {
+			_keyDown = KS_UP;
+
+		} else if (events.type() == Common::EVENT_MOUSEMOVE) {
+			Point mPos = events.event().mouse;
+			if (mPos.x < rec.fwtrue_x - 12) 
+				mouse.setCursorNum(CURSOR_LEFT_ARROW);
+			else if (mPos.x > rec.fwtrue_x + player->width())
+				mouse.setCursorNum(CURSOR_RIGHT_ARROW);
+			else if (mPos.y < player->y() + 4)
+				mouse.setCursorNum(CURSOR_FIGHT_UPPER);
+			else if (mPos.y < player->y() + 38)
+				mouse.setCursorNum(CURSOR_FIGHT_MIDDLE);
+			else 
+				mouse.setCursorNum(CURSOR_FIGHT_LOWER);
+		
+		} else if ((events.type() == Common::EVENT_LBUTTONDOWN) ||
+				(events.type() == Common::EVENT_RBUTTONDOWN) ||
+				(events.type() == Common::EVENT_LBUTTONUP) ||
+				(events.type() == Common::EVENT_RBUTTONUP)) {
+			_mouseFlags = 0;
+			if (events.type() == Common::EVENT_LBUTTONDOWN) ++_mouseFlags;
+			if (events.type() == Common::EVENT_RBUTTONDOWN) _mouseFlags += 2;
 		}
 	}
 
-	if (events.type() == Common::EVENT_MOUSEMOVE) {
-		Point mPos = events.event().mouse;
-		if (mPos.x < rec.fwtrue_x - 12) 
-			mouse.setCursorNum(CURSOR_LEFT_ARROW);
-		else if (mPos.x > rec.fwtrue_x + player->width())
-			mouse.setCursorNum(CURSOR_RIGHT_ARROW);
-		else if (mPos.y < player->y() + 4)
-			mouse.setCursorNum(CURSOR_FIGHT_UPPER);
-		else if (mPos.y < player->y() + 38)
-			mouse.setCursorNum(CURSOR_FIGHT_MIDDLE);
-		else 
-			mouse.setCursorNum(CURSOR_FIGHT_LOWER);
-	}
-
-	if ((events.type() == Common::EVENT_LBUTTONDOWN) ||
-		(events.type() == Common::EVENT_RBUTTONDOWN) ||
-		(events.type() == Common::EVENT_LBUTTONUP) ||
-		(events.type() == Common::EVENT_RBUTTONUP)) {
-		_mouseFlags = 0;
-		if (events.type() == Common::EVENT_LBUTTONDOWN) ++_mouseFlags;
-		if (events.type() == Common::EVENT_RBUTTONDOWN) _mouseFlags += 2;
-	}
+	if (_keyDown == KS_KEYDOWN_2) return;
 
 	// Get the correct base index for the move
 	while ((moveNumber < 5) && (moveList[moveNumber] != mouse.getCursorNum()))
@@ -246,6 +261,9 @@ void FightsManager::checkEvents() {
 	}
 
 	rec.fwmove_number = moveNumber;
+
+	if (_keyDown == KS_KEYDOWN_1) 
+		_keyDown = KS_KEYDOWN_2;
 
 	if (rec.fwmove_number >= 5)
 		debugC(ERROR_INTERMEDIATE, kLureDebugFights, 

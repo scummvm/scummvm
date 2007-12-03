@@ -62,11 +62,14 @@ struct FighterRecord {
 
 #define FIGHT_DISTANCE 32
 
+enum KeyStatus {KS_UP, KS_KEYDOWN_1, KS_KEYDOWN_2};
+
 class FightsManager {
 private:
 	MemoryBlock *_fightData;
 	Common::RandomSource _rnd;
 	uint8 _mouseFlags;
+	KeyStatus _keyDown;
 	FighterRecord _fighterList[3];
 
 	FighterRecord &getDetails(uint16 hotspotId);
