@@ -105,19 +105,14 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 		return;
 
 	if (num != 0) {
-		if (_curMusicSeq == 0) {
+		if (_curMusicSeq &&	(_digSeqMusicTable[_curMusicSeq].transitionType == 4)
+				|| (_digSeqMusicTable[_curMusicSeq].transitionType == 6)) {
+			_nextSeqToPlay = num;
+			return;
+		} else {
 			playDigMusic(_digSeqMusicTable[num].name, &_digSeqMusicTable[num], 0, true);
 			_nextSeqToPlay = 0;
 			_attributes[DIG_SEQ_OFFSET + num] = 1;
-		} else {
-			if ((_digSeqMusicTable[_curMusicSeq].transitionType == 4) || (_digSeqMusicTable[_curMusicSeq].transitionType == 6)) {
-				_nextSeqToPlay = num;
-				return;
-			} else {
-				playDigMusic(_digSeqMusicTable[num].name, &_digSeqMusicTable[num], 0, true);
-				_nextSeqToPlay = 0;
-				_attributes[DIG_SEQ_OFFSET + num] = 1;
-			}
 		}
 	} else {
 		if (_nextSeqToPlay != 0) {
