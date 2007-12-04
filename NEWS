@@ -5,10 +5,13 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  New Games:
    - Added support for Elvira: Mistress of the Dark.
    - Added support for Elvira 2: The Jaws of Cerberus.
-   - Added support for I Have no Mouth, and I Must Scream.
+   - Added support for I Have no Mouth, and I Must Scream (demo and full game).
    - Added support for preAGI game Troll's Tale.
    - Added support for Amiga version of Waxworks.
    - Added support for Lure of the Temptress.
+
+ New Ports:
+   - Added iPhone port.
  
  General:
    - Added ARM assembly routines for code in the sound mixer and SCUMM
@@ -18,12 +21,27 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added optional 'confirm exit' dialog to the SDL backend.
    - Added support for TiMidity++ MIDI server.
    - Added DMedia MIDI driver for IRIX.
+   - Improved detection of new game variants and localized versions.
+   - Completely reworked internal access to files. (GSoC Task)
+   - Added option to delete games from the list with Del key.
+
+ AGI:
+   - Added support for AGI256 and AGI256-2 hacks (GSoC Task)
+   - Added support for Amiga menus and palettes (GSoC Task)
+   - Better support for early Sierra AGI titles
 
  AGOS:
    - Fixed crashes related to OmniTV playback in The Feeble Files.
+   - Improved work on 64-bit systems.
 
  Broken Sword 1:
    - Added support for FLAC encoded music.
+
+ Kyrandia:
+   - Added support for Macintosh version.
+
+ Parallaction:
+   - Many bugfixes
 
  Queen:
    - Added support for Adlib music.
@@ -33,13 +51,14 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added subtitle skipping (via '.' key) in older games which didn't have
      this feature so far (e.g. Zak, MM, Indy3, Loom).
    - Added support for Chinese COMI.
+   - Better support for eastern versions of games.
    - Various fixes for COMI and other games.
+   - Added support for original save menus (browse only). Use Alt-F5 to
+     activate.
+   - Added support for Spanish version of NES Maniac Mansion.
 
  SAGA:
    - Added support for compressed sound effects, voices and music.
-
- Kyrandia:
-   - Added support for Macintosh version.
 
  WinCE Port:
    - Switched compilers again. Now using cegcc (http://cegcc.sourceforge.net/).
