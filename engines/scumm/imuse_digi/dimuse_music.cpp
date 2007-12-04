@@ -243,17 +243,11 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 		return;
 
 	if (num != 0) {
-		if (_curMusicSeq == 0) {
+		if (_curMusicSeq && ((_comiSeqMusicTable[_curMusicSeq].transitionType == 4) || (_comiSeqMusicTable[_curMusicSeq].transitionType == 6))) {
+			_nextSeqToPlay = num;
+		} else {
 			playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[num], 0, true);
 			_nextSeqToPlay = 0;
-		} else {
-			if ((_comiSeqMusicTable[_curMusicSeq].transitionType == 4) || (_comiSeqMusicTable[_curMusicSeq].transitionType == 6)) {
-				_nextSeqToPlay = num;
-				return;
-			} else {
-				playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[num], 0, true);
-				_nextSeqToPlay = 0;
-			}
 		}
 	} else {
 		if (_nextSeqToPlay != 0) {
