@@ -136,7 +136,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 	int hookId = 0;
 
 	if (songName != NULL) {
-		if ((_attributes[DIG_SEQ_OFFSET + 38] != 0) && (_attributes[DIG_SEQ_OFFSET + 41] == _attributes[DIG_SEQ_OFFSET + 38])) {
+		if ((_attributes[DIG_SEQ_OFFSET + 38]) && (!_attributes[DIG_SEQ_OFFSET + 41])) {
 			if ((atribPos == 43) || (atribPos == 44))
 				hookId = 3;
 		}
