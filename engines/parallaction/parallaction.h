@@ -835,6 +835,10 @@ protected:
 	char   		*parseComment(Script &script);
 	char   		*parseDialogueString(Script &script);
 	Dialogue	*parseDialogue(Script &script);
+    void        resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards);
+    Answer      *parseAnswer(Script &script);
+    Question    *parseQuestion(Script &script);
+
 	void		parseZone(Script &script, ZoneList &list, char *name);
 	void		parseZoneTypeBlock(Script &script, Zone *z);
 	void 		parseWalkNodes(Script& script, WalkNodeList &list);
