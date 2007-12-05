@@ -68,15 +68,6 @@ static void drawProc(int x, int y, int c, void *data) {
 	((PictureMgr *)data)->putVirtPixel(x, y);
 }
 
-/**
- * Draw an AGI line.
- * A line drawing routine sent by Joshua Neal, modified by Stuart George
- * (fixed >>2 to >>1 and some other bugs like x1 instead of y1, etc.)
- * @param x1  x coordinate of start point
- * @param y1  y coordinate of start point
- * @param x2  x coordinate of end point
- * @param y2  y coordinate of end point
- */
 void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 	/* CM: Do clipping */
 #define clip(x, y) if ((x)>=(y)) (x)=(y)
