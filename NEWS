@@ -60,6 +60,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  SAGA:
    - Added support for compressed sound effects, voices and music.
 
+ Touche:
+   - Added workarounds for some glitches/issues present in the original game.
+
  WinCE Port:
    - Switched compilers again. Now using cegcc (http://cegcc.sourceforge.net/).
    - Plugins now supported for WinCE.
