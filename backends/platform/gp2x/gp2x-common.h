@@ -265,7 +265,7 @@ protected:
 	int _mode;
 	int _transactionMode;
 	bool _fullscreen;
-	
+
 	bool _screenIsLocked;
 	Graphics::Surface _framebuffer;
 
@@ -408,6 +408,7 @@ protected:
 	void handleScalerHotkeys(const SDL_KeyboardEvent &key);
 
 	void moveStick();
+	int _gp2xInputType;
 };
 
 #endif // GP2X_COMMON_H

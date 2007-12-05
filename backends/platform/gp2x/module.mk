@@ -5,7 +5,8 @@ MODULE_OBJS := \
 	gp2x-mem.o  \
 	events.o \
 	graphics.o \
-	gp2x.o 
+	gp2x.o
+	# gp2x-options.o
 	# overload_help.o 
 
 MODULE_DIRS += \

@@ -48,9 +48,6 @@ extern void unpatchMMU (void);
 
 #define SYS_CLK_FREQ 7372800
 
-//unsigned long gp2x_dev;
-//volatile unsigned short *gp2x_ram, *gp2x_memregs;
-
 static          unsigned long   gp2x_dev[8]={0,0,0,0,0,0,0,0};//, gp2x_ticks_per_second;
 static volatile unsigned short *gp2x_ram, *gp2x_memregs;
 
