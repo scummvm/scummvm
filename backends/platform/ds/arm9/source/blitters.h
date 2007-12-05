@@ -23,7 +23,7 @@
  #ifndef _BLITTERS_H_
  #define _BLITTERS_H_
 
-#define USING_ARM_BLITTERS
+//#define USING_ARM_BLITTERS
 
 #ifndef USING_ARM_BLITTERS
 

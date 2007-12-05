@@ -266,7 +266,7 @@ PRE_OBJS_FLAGS = -Wl,--whole-archive
 POST_OBJS_FLAGS = -Wl,--no-whole-archive
 endif
 
-PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
+PORT_OBJS :=	$(portdir)/source/blitters.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
 		$(portdir)/../../../fs/ds/ds-fs.o $(portdir)/source/gbampsave.o $(portdir)/source/scummhelp.o\
 		$(portdir)/source/osystem_ds.o $(portdir)/source/portdefs.o $(portdir)/source/ramsave.o\
 		$(portdir)/source/scummconsole.o $(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
