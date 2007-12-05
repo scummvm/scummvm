@@ -47,6 +47,7 @@
 
 #include "osys_iphone.h"
 #include "iphone_common.h"
+#include "blit_arm.h"
 
 const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {
 	{0, 0, 0}
@@ -298,32 +299,61 @@ void OSystem_IPHONE::internUpdateScreen() {
 
 	while (_dirtyRects.size()) {
 		Common::Rect dirtyRect = _dirtyRects.remove_at(_dirtyRects.size() - 1);
+
 		//printf("Drawing: (%i, %i) -> (%i, %i)\n", dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom);
-		int row;	
+		int row;
 		if (_overlayVisible) {
-			for (int x = dirtyRect.left; x < dirtyRect.right; x++) {
-				if (landscapeMode) {
-					row = (_screenWidth - x - 1) * _screenHeight;
-					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
-						_fullscreen[row + y] = _overlayBuffer[y * _screenWidth + x];						
-				} else {
-					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
-						_fullscreen[y * _screenWidth + x] = _overlayBuffer[y * _screenWidth + x];												
+			if (landscapeMode) {
+				uint16 *src = (uint16 *)&_overlayBuffer[dirtyRect.top * _screenWidth + dirtyRect.left];
+				uint16 *dst = &_fullscreen[(_screenWidth - dirtyRect.left - 1) * _screenHeight + dirtyRect.top];
+				int h = dirtyRect.bottom - dirtyRect.top;
+				// for (int x = dirtyRect.right-dirtyRect.left; x > 0; x--) {
+				// 	for (int y = h; y > 0; y--) {
+				// 		*dst++ = *src;
+				// 		src += _screenWidth;
+				// 	}
+				// 	dst -= _screenHeight + h;
+				// 	src += 1 - h * _screenWidth;
+				// }
+				blitLandscapeScreenRect16bpp(dst, src, dirtyRect.right - dirtyRect.left, h, _screenWidth, _screenHeight);
+			} else {
+				uint16 *src = (uint16 *)&_overlayBuffer[dirtyRect.top * _screenWidth + dirtyRect.left];
+				uint16 *dst = &_fullscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
+				int x = (dirtyRect.right - dirtyRect.left) * 2;
+				for (int y = dirtyRect.bottom - dirtyRect.top; y > 0; y--) {
+					memcpy(dst, src, x);
+					src += _screenWidth;
+					dst += _screenWidth;
 				}
 			}
 		} else {
-			for (int x = dirtyRect.left; x < dirtyRect.right; x++) {
-				if (landscapeMode) {
-					row = (_screenWidth - x - 1) * _screenHeight;
-					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
-						_fullscreen[row + y] = _palette[_offscreen[y * _screenWidth + x]];												
-				} else {
-					for (int y = dirtyRect.top; y < dirtyRect.bottom; y++)
-						_fullscreen[y * _screenWidth + x] = _palette[_offscreen[y * _screenWidth + x]];												
+			if (landscapeMode) {
+				byte *src = &_offscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
+				uint16 *dst = &_fullscreen[(_screenWidth - dirtyRect.left - 1) * _screenHeight + dirtyRect.top];
+				int h = dirtyRect.bottom - dirtyRect.top;
+				// for (int x = dirtyRect.right - dirtyRect.left; x > 0; x--) {
+				// 	for (int y = h; y > 0; y--) {
+				// 		*dst++ = _palette[*src];
+				// 		src += _screenWidth;
+				// 	}
+				// 	dst -= _screenHeight + h;
+				// 	src += 1 - h * _screenWidth;
+				// }
+				blitLandscapeScreenRect8bpp(dst, src, dirtyRect.right - dirtyRect.left, h, _palette, _screenWidth, _screenHeight);
+			} else {
+				byte  *src = &_offscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
+				uint16 *dst = &_fullscreen[dirtyRect.top * _screenWidth + dirtyRect.left];
+				int width = dirtyRect.right - dirtyRect.left;
+				for (int y = dirtyRect.bottom - dirtyRect.top; y > 0; y--) {
+					for (int x = width; x > 0; x--) {
+						*dst++ = _palette[*src++];
+					}
+					dst += _screenWidth - width;
+					src += _screenWidth - width;
 				}
 			}		
 		}
-
+		
 		//draw mouse on top
 		int mx, my;
 		if (_mouseVisible && dirtyRect.intersects(mouseRect)) {
@@ -354,15 +384,23 @@ void OSystem_IPHONE::internUpdateScreen() {
 		else {
 			if (landscapeMode) {
 				int height = (dirtyRect.bottom - dirtyRect.top) * 2 ;
-				for (int x = dirtyRect.left; x < dirtyRect.right; x++) {
-					int offset = ((_screenWidth - x - 1) * _screenHeight + dirtyRect.top);
-					memcpy(surface + offset, _fullscreen + offset, height);
+				int offset = ((_screenWidth - dirtyRect.left - 1) * _screenHeight + dirtyRect.top);
+				uint16 *fs = _fullscreen + offset;
+				surface += offset;
+				for (int x = dirtyRect.right - dirtyRect.left; x > 0; x--) {
+					memcpy(surface, fs, height);
+					surface -= _screenHeight;
+					fs -= _screenHeight;
 				}
 			} else {
 				int width = (dirtyRect.right - dirtyRect.left) * 2;
-				for (int y = dirtyRect.top; y < dirtyRect.bottom; y++) {
-					int offset = y * _screenWidth + dirtyRect.left;
-					memcpy(surface + offset, _fullscreen + offset, width);
+				int offset = dirtyRect.top * _screenWidth + dirtyRect.left;
+				uint16 *fs = _fullscreen + offset;
+				surface += offset;
+				for (int y = dirtyRect.bottom - dirtyRect.top; y > 0; y--) {
+					memcpy(surface, fs, width);
+					surface += _screenWidth;
+					fs += _screenWidth;
 				}
 			}		
 		}
@@ -709,6 +747,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 						iPhone_initSurface(_screenWidth, _screenHeight, false);
 
 					dirtyFullScreen();
+					updateScreen();
 				}				
 				break;
 
@@ -961,3 +1000,4 @@ void iphone_main(int argc, char *argv[]) {
 }
 
 #endif
+
