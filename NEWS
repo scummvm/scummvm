@@ -63,6 +63,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  WinCE Port:
    - Switched compilers again. Now using cegcc (http://cegcc.sourceforge.net/).
    - Plugins now supported for WinCE.
+   
+ GP2X Port:
+   - Support F200 Touchscreen
+   - Various fixes to input code
 
 0.10.0 (2007-06-20)
  New Games:
