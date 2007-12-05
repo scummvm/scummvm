@@ -29,6 +29,8 @@
 #include "engines/scumm/scumm.h"
 #include "touchkeyboard.h"
 
+#define ALLOW_CPU_SCALER
+
 #ifdef DS_SCUMM_BUILD
 namespace Scumm {
 	extern Common::StringList generateSavegameList(Scumm::ScummEngine *scumm, bool saveMode);
@@ -55,8 +57,10 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 230 - 20) {
 	_twoHundredPercentCheckbox = new GUI::CheckboxWidget(this, 20, 70, 230, 20, "Zoomed screen at fixed 200% zoom", 0, 'T');
 	_highQualityAudioCheckbox = new GUI::CheckboxWidget(this, 20, 85, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
 	_disablePowerOff = new GUI::CheckboxWidget(this, 20, 100, 250, 20, "Disable power off on quit", 0, 'T');
-//	_cpuScaler = new GUI::CheckboxWidget(this, 20, 115, 250, 20, "CPU scaler", 0, 'T');
-	_showCursorCheckbox = new GUI::CheckboxWidget(this, 20, 115, 250, 20, "Show mouse cursor", 0, 'T');
+	_showCursorCheckbox = new GUI::CheckboxWidget(this, 20, 115, 130, 20, "Show mouse cursor", 0, 'T');
+    #ifdef ALLOW_CPU_SCALER
+	_cpuScaler = new GUI::CheckboxWidget(this, 160, 115, 90, 20, "CPU scaler", 0, 'T');
+    #endif
 	_snapToBorderCheckbox = new GUI::CheckboxWidget(this, 20, 130, 250, 20, "Snap to border", 0, 'T');
 
 	new GUI::StaticTextWidget(this, 20, 145, 110, 15, "Touch X Offset", GUI::kTextAlignLeft);
@@ -126,13 +130,15 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 230 - 20) {
 	} else {
 		_disablePowerOff->setState(false);
 	}
-/*
+
+    #ifdef ALLOW_CPU_SCALER
 	if (ConfMan.hasKey("cpu_scaler", "ds")) {
 		_cpuScaler->setState(ConfMan.getBool("cpu_scaler", "ds"));
 	} else {
 		_cpuScaler->setState(false);
 	}
-*/
+    #endif
+
 	_indyFightCheckbox->setState(DS::getIndyFightState());
 
 	if (ConfMan.hasKey("xoffset", "ds")) {
@@ -155,7 +161,9 @@ DSOptionsDialog::~DSOptionsDialog() {
 	ConfMan.setBool("twohundredpercent", _twoHundredPercentCheckbox->getState(), "ds");
 	ConfMan.setBool("22khzaudio", _highQualityAudioCheckbox->getState(), "ds");
 	ConfMan.setBool("disablepoweroff", _disablePowerOff->getState(), "ds");
-//	ConfMan.setBool("cpu_scaler", _cpuScaler->getState(), "ds");	
+    #ifdef ALLOW_CPU_SCALER
+	ConfMan.setBool("cpu_scaler", _cpuScaler->getState(), "ds");
+    #endif
 	ConfMan.setInt("xoffset", _touchX->getValue(), "ds");
 	ConfMan.setInt("yoffset", _touchY->getValue(), "ds");
 	ConfMan.setBool("showcursor", _showCursorCheckbox->getState(), "ds");
