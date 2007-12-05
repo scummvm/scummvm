@@ -232,38 +232,49 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
 static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
                                                     u16* dest)
 {
-    u32 ar0bs0 = s0 & 0x7C1F;
-    u32 ar0bs1 = s1 & 0x7C1F;
-    u32 ar0bs2 = s2 & 0x7C1F;
-    u32 ar0bs3 = s3 & 0x7C1F;
-    u32 ar0bs4 = s4 & 0x7C1F;
+    static const u32 MASK = 0x03E07C1F;
+    
+    u32 argbargbs0 = u32(s0) | (u32(s0) << 16);
+    u32 argbargbs1 = u32(s1) | (u32(s1) << 16);
+    u32 argbargbs2 = u32(s2) | (u32(s2) << 16);
+    u32 argbargbs3 = u32(s3) | (u32(s3) << 16);
+    u32 argbargbs4 = u32(s4) | (u32(s4) << 16);
 
-    u32 gs0 = s0 & 0x03E0;
-    u32 gs1 = s1 & 0x03E0;
-    u32 gs2 = s2 & 0x03E0;
-    u32 gs3 = s3 & 0x03E0;
-    u32 gs4 = s4 & 0x03E0;
-        
-    u32 ar0bd0 = (3*ar0bs0 +   ar0bs1) >> 2;
-    u32 ar0bd1 = (  ar0bs1 +   ar0bs2) >> 1;
-    u32 ar0bd2 = (  ar0bs2 +   ar0bs3) >> 1;
-    u32 ar0bd3 = (  ar0bs3 + 3*ar0bs4) >> 2;
+    u32 grbs0 = argbargbs0 & MASK;
+    u32 grbs1 = argbargbs1 & MASK;
+    u32 grbs2 = argbargbs2 & MASK;
+    u32 grbs3 = argbargbs3 & MASK;
+    u32 grbs4 = argbargbs4 & MASK;
     
-    u32 gd0 = (3*gs0 +   gs1) >> 2;
-    u32 gd1 = (  gs1 +   gs2) >> 1;
-    u32 gd2 = (  gs2 +   gs3) >> 1;
-    u32 gd3 = (  gs3 + 3*gs4) >> 2;
-
-    u32 d0 = (ar0bd0 & 0xFC1F) | (gd0 & 0x03E0);
-    u32 d1 = (ar0bd1 & 0xFC1F) | (gd1 & 0x03E0);
-    u32 d2 = (ar0bd2 & 0xFC1F) | (gd2 & 0x03E0);
-    u32 d3 = (ar0bd3 & 0xFC1F) | (gd3 & 0x03E0);
+    u32 grbd0 = (3*grbs0 +   grbs1) >> 2;
+    u32 grbd1 = (  grbs1 +   grbs2) >> 1;
+    u32 grbd2 = (  grbs2 +   grbs3) >> 1;
+    u32 grbd3 = (  grbs3 + 3*grbs4) >> 2;
     
-    u32 d10 = 0x80008000 | (d1 << 16) | d0;
-    u32 d32 = 0x80008000 | (d3 << 16) | d2;
+    grbd0 &= MASK;
+    grbd1 &= MASK;
+    grbd2 &= MASK;
+    grbd3 &= MASK;
     
-    ((u32*)dest)[0] = d10;
-    ((u32*)dest)[1] = d32;
+    u32 d0 = grbd0 | (grbd0 >> 16);
+    u32 d1 = grbd1 | (grbd1 >> 16);
+    u32 d2 = grbd2 | (grbd2 >> 16);
+    u32 d3 = grbd3 | (grbd3 >> 16);
+    
+    d0 &= 0xFFFF; 
+    d1 &= 0xFFFF; 
+    d2 &= 0xFFFF; 
+    d3 &= 0xFFFF; 
+    
+    d0 |= 0x8000; 
+    d1 |= 0x8000; 
+    d2 |= 0x8000; 
+    d3 |= 0x8000; 
+    
+    dest[0] = d0;
+    dest[1] = d1;
+    dest[2] = d2;
+    dest[3] = d3;
 }
 #endif
 
