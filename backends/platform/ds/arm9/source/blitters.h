@@ -32,7 +32,7 @@ namespace DS {
 void asmDrawStripToScreen(int height, int width, byte const* text, byte const* src, byte* dst, 
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
 void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height);
-void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride);
+void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, int destStride, int srcStride, const u16* palette);
 void Rescale_320x256x1555_To_256x256x1555(u16* dest, const u16* src, int destStride, int srcStride);
 
 }
@@ -44,7 +44,7 @@ extern "C" {
 void asmDrawStripToScreen(int height, int width, byte const* text, byte const* src, byte* dst, 
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
 void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height);
-void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride);
+void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, int destStride, int srcStride, const u16* palette);
 void Rescale_320x256x1555_To_256x256x1555(u16* dest, const u16* src, int destStride, int srcStride);
 
 }

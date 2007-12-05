@@ -254,8 +254,6 @@ xLoop3:
 	@                                      int         srcStride,
 	@                                      const u16  *pal);
 	@
-	@ This is a slight reordering of the params from the existing C one.
-	@ Sorry, but it makes the code easier.
 Rescale_320x256xPAL8_To_256x256x1555:
 	@ r0 = dst
 	@ r1 = src

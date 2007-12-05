@@ -356,7 +356,7 @@ static inline void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const
 }
 
 #ifdef PERFECT_5_TO_4_RESCALING
-void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
+void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, int destStride, int srcStride, const u16* palette)
 {
 	u32 fastRam[768];
 
@@ -377,7 +377,7 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* p
 	}
 }
 #else
-void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, const u16* palette, int destStride, int srcStride)
+void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, int destStride, int srcStride, const u16* palette)
 {
 	u16 fastRam[256];
     for (size_t i=0; i<128; ++i)

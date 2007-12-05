@@ -811,10 +811,10 @@ void displayMode16BitFlipBuffer() {
 		const u8* back = (const u8*)get8BitBackBuffer();
 		u16* base = BG_GFX + 0x10000;
 		Rescale_320x256xPAL8_To_256x256x1555( base,
-											      back,
-											      BG_PALETTE,
-											      256,
-											      512);
+											  back,											  
+                                              256,
+											  512,
+                                              BG_PALETTE );
         
         #ifdef SCALER_PROFILE
         u16 t1 = TIMER1_DATA;
