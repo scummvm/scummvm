@@ -163,9 +163,9 @@ void OSystem_GP2X::initBackend() {
 	// Setup other defaults.
 
 	ConfMan.registerDefault("aspect_ratio", true);
-	ConfMan.registerDefault("music_volume", 250); // Up default volume as we use a seperate volume system anyway.
-	ConfMan.registerDefault("sfx_volume", 250);
-	ConfMan.registerDefault("speech_volume", 250);
+	ConfMan.registerDefault("music_volume", 220); // Up default volume as we use a seperate volume system anyway.
+	ConfMan.registerDefault("sfx_volume", 220);
+	ConfMan.registerDefault("speech_volume", 220);
 	ConfMan.registerDefault("autosave_period", 3 * 60);	// Trigger autosave every 3 minutes - On low batts 4 mins is about your warning time.
 
 	_graphicsMutex = createMutex();
@@ -221,6 +221,24 @@ void OSystem_GP2X::initBackend() {
 	GP2X_mixer_set_volume(70, 70);
 
 	}
+
+	//if (SDL_GP2X_MouseType() == 0) {
+	//	// No mouse, F100 default state.
+	//	_gp2xInputType = 0;
+	//	displayMessageOnOSD("F100 GP2X Found");
+	//}
+
+	//if (SDL_GP2X_MouseType() == 1) {
+	//	// USB mouse found.
+	//	_gp2xInputType = 1;
+	//	displayMessageOnOSD("USB Mouse Found");
+	//}
+
+	//if (SDL_GP2X_MouseType() == 2) {
+	//	// F200 touch screen found. - F200 default state.
+	//	_gp2xInputType = 2;
+	//	displayMessageOnOSD("Touch Screen Found");
+	//}
 
 	OSystem::initBackend();
 
