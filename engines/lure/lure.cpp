@@ -40,7 +40,7 @@ namespace Lure {
 
 static LureEngine *int_engine = NULL;
 
-LureEngine::LureEngine(OSystem *system): Engine(system) {
+LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): Engine(system), _gameDescription(gameDesc) {
 
 	Common::addSpecialDebugLevel(kLureDebugScripts, "scripts", "Scripts debugging");
 	Common::addSpecialDebugLevel(kLureDebugAnimations, "animations", "Animations debugging");
@@ -56,9 +56,6 @@ LureEngine::LureEngine(OSystem *system): Engine(system) {
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-
-	_features = 0;
-	_game = 0;
 }
 
 int LureEngine::init() {
@@ -69,7 +66,23 @@ int LureEngine::init() {
 		_system->initSize(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT);
 	_system->endGFXTransaction();
 
-	detectGame();
+	// Check the version of the lure.dat file
+	Common::File f;
+		VersionStructure version;
+	if (!f.open(SUPPORT_FILENAME)) 
+		error("Error opening %s for validation", SUPPORT_FILENAME);
+	
+	f.seek(0xbf * 8);
+	f.read(&version, sizeof(VersionStructure));
+	f.close();
+
+	if (READ_LE_UINT16(&version.id) != 0xffff)
+		error("Error validating %s - file is invalid or out of date", SUPPORT_FILENAME);
+	else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR))
+		error("Incorrect version of %s file - expected %d.%d but got %d.%d",
+			SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR, 
+			version.vMajor, version.vMinor);
+
 	_disk = new Disk();
 	_resources = new Resources();
 	_strings = new StringData();
@@ -159,7 +172,7 @@ bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 	}
 
 	f->write("lure", 5);
-	f->writeByte(_language);
+	f->writeByte(getLanguage());
 	f->writeByte(LURE_DAT_MINOR);
 	f->writeString(caption);
 	f->writeByte(0); // End of string terminator
@@ -196,7 +209,7 @@ bool LureEngine::loadGame(uint8 slotNumber) {
 	// Check language version
 	uint8 language = f->readByte();
 	_saveVersion = f->readByte();
-	if ((language != _language) || (_saveVersion < LURE_MIN_SAVEGAME_MINOR)) {
+	if ((language != getLanguage()) || (_saveVersion < LURE_MIN_SAVEGAME_MINOR)) {
 		warning("loadGame: Failed to load slot %d - incorrect version", slotNumber);
 		delete f;
 		return false;
@@ -229,7 +242,7 @@ Common::String *LureEngine::detectSave(int slotNumber) {
 		// Check language version
 		uint8 language = f->readByte();
 		uint8 version = f->readByte();
-		if ((language == _language) && (version >= LURE_MIN_SAVEGAME_MINOR)) {
+		if ((language == getLanguage()) && (version >= LURE_MIN_SAVEGAME_MINOR)) {
 			// Read in the savegame title
 			char saveName[MAX_DESC_SIZE];
 			char *p = saveName;

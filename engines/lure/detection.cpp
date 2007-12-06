@@ -26,193 +26,138 @@
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
-#include "common/endian.h"
-#include "common/file.h"
-#include "common/fs.h"
-#include "common/md5.h"
 
-#include "lure/luredefs.h"
 #include "lure/lure.h"
 
 namespace Lure {
 
-enum {
-	// We only compute MD5 of the first kilobyte of our data files.
-	kMD5FileSizeLimit = 1024
-};
+struct LureGameDescription {
+	Common::ADGameDescription desc;
 
-struct GameSettings {
-	const char *gameid;
-	const char *description;
-	byte id;
 	uint32 features;
-	Common::Language language;
-	const char *md5sum;
-	const char *checkFile;
 };
 
-//
-static const GameSettings lure_games[] = {
-	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::EN_ANY,
-										"b2a8aa6d7865813a17a3c636e063572e", "disk1.vga" },
-	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::IT_ITA,
-										"cf69d5ada228dd74f89046691c16aafb", "disk1.vga" },
-	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::DE_DEU,
-										"7aa19e444dab1ac7194d9f7a40ffe54a", "disk1.vga" },
-	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::DE_DEU,
-										"894a2c2caeccbad2fc2f4a79a8ee47b0", "disk1.vga" },
-	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::FR_FRA,
-										"1c94475c1bb7e0e88c1757d3b5377e94", "disk1.vga" },
-	{ "lure", "Lure of the Temptress", GI_LURE, GF_FLOPPY, Common::ES_ESP,
-										"1751145b653959f7a64fe1618d6b97ac", "disk1.vga" },
-	{ 0, 0, 0, 0, Common::UNK_LANG, 0, 0 }
-};
-
-// Keep list of different supported games
-
-static const PlainGameDescriptor lure_list[] = {
-	{ "lure", "Lure of the Temptress" },
-	{ 0, 0 }
-};
+uint32 LureEngine::getFeatures() const { return _gameDescription->features; }
+Common::Language LureEngine::getLanguage() const { return _gameDescription->desc.language; }
+Common::Platform LureEngine::getPlatform() const { return _gameDescription->desc.platform; }
 
 } // End of namespace Lure
 
-using namespace Lure;
+static const PlainGameDescriptor lureGames[] = {
+	{"lure", "Lure of the Temptress"},
+	{0, 0}
+};
 
-GameList Engine_LURE_gameIDList() {
-	return GameList(lure_list);
-}
-
-GameDescriptor Engine_LURE_findGameID(const char *gameid) {
-	return Common::AdvancedDetector::findGameID(gameid, lure_list);
-}
-
-GameList Engine_LURE_detectGames(const FSList &fslist) {
-	GameList detectedGames;
-	const GameSettings *g;
-	FSList::const_iterator file;
-
-	// Iterate over all files in the given directory
-	bool isFound = false;
-	for (file = fslist.begin(); file != fslist.end(); file++) {
-		if (file->isDirectory())
-			continue;
-
-		for (g = lure_games; g->gameid; g++) {
-			if (scumm_stricmp(file->getName().c_str(), g->checkFile) == 0)
-				isFound = true;
-		}
-		if (isFound)
-			break;
-	}
-
-	if (file == fslist.end())
-		return detectedGames;
-
-	char md5str[32 + 1];
-
-	if (Common::md5_file_string(*file, md5str, kMD5FileSizeLimit)) {
-		for (g = lure_games; g->gameid; g++) {
-			if (strcmp(g->md5sum, (char *)md5str) == 0) {
-				GameDescriptor dg(g->gameid, g->description, g->language);
-				dg.updateDesc((g->features & GF_FLOPPY) ? "Floppy" : 0);
-				detectedGames.push_back(dg);
-			}
-		}
-		if (detectedGames.empty()) {
-			printf("Your game version appears to be unknown. Please, report the following\n");
-			printf("data to the ScummVM team along with name of the game you tried to add\n");
-			printf("and its version/language/etc.:\n");
-
-			printf("  LURE MD5 '%s'\n\n", md5str);
-
-			const PlainGameDescriptor *g1 = lure_list;
-			while (g1->gameid) {
-				detectedGames.push_back(*g1);
-				g1++;
-			}
-		}
-	}
-	return detectedGames;
-}
-
-PluginError Engine_LURE_create(OSystem *syst, Engine **engine) {
-	assert(engine);
-	*engine = new LureEngine(syst);
-	return kNoError;
-}
-
-REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine", "Lure of the Temptress (C) Revolution");
 
 namespace Lure {
 
-void LureEngine::detectGame() {
-	// Make sure all the needed files are present
+static const LureGameDescription gameDescriptions[] = {
+	{
+		{
+			"lure",
+			"",
+			AD_ENTRY1("disk1.vga", "b2a8aa6d7865813a17a3c636e063572e"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_FLOPPY,
+	},
 
-	if (!Common::File::exists(SUPPORT_FILENAME))
-		error("Missing %s - this is a custom file containing resources from the\n"
-			"Lure of the Temptress executable. See the documentation for creating it",
-			SUPPORT_FILENAME);
+	{
+		{
+			"lure",
+			"",
+			AD_ENTRY1("disk1.vga", "cf69d5ada228dd74f89046691c16aafb"),
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_FLOPPY,
+	},
 
-	for (uint8 fileNum = 1; fileNum <= 4; ++fileNum) {
-		char sFilename[10];
-		sprintf(sFilename, "disk%d.vga", fileNum);
+	{
+		{
+			"lure",
+			"",
+			AD_ENTRY1("disk1.vga", "7aa19e444dab1ac7194d9f7a40ffe54a"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_FLOPPY,
+	},
 
-		if (!Common::File::exists(sFilename))
-			error("Missing disk%d.vga", fileNum);
-	}
+	{
+		{
+			"lure",
+			"",
+			AD_ENTRY1("disk1.vga", "894a2c2caeccbad2fc2f4a79a8ee47b0"),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_FLOPPY,
+	},
 
-	// Check the version of the lure.dat file
-	Common::File f;
-		VersionStructure version;
-	if (!f.open(SUPPORT_FILENAME)) 
-		error("Error opening %s for validation", SUPPORT_FILENAME);
-	
-	f.seek(0xbf * 8);
-	f.read(&version, sizeof(VersionStructure));
-	f.close();
+	{
+		{
+			"lure",
+			"",
+			AD_ENTRY1("disk1.vga", "1c94475c1bb7e0e88c1757d3b5377e94"),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_FLOPPY,
+	},
 
-	if (READ_LE_UINT16(&version.id) != 0xffff)
-		error("Error validating %s - file is invalid or out of date", SUPPORT_FILENAME);
-	else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR))
-		error("Incorrect version of %s file - expected %d.%d but got %d.%d",
-			SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR, 
-			version.vMajor, version.vMinor);
+	{
+		{
+			"lure",
+			"",
+			AD_ENTRY1("disk1.vga", "1751145b653959f7a64fe1618d6b97ac"),
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_FLOPPY,
+	},
 
-	// Do an md5 check
-
-	char md5str[32 + 1];
-	const GameSettings *g;
-	bool found = false;
-
-	*md5str = 0;
-
-	for (g = lure_games; g->gameid; g++) {
-		if (!Common::File::exists(g->checkFile))
-			continue;
-
-		if (!Common::md5_file_string(g->checkFile, md5str, kMD5FileSizeLimit))
-			continue;
-
-		if (strcmp(g->md5sum, (char *)md5str) == 0) {
-			_features = g->features;
-			_game = g->id;
-			_language = g->language;
-
-			if (g->description)
-				g_system->setWindowCaption(g->description);
-
-			found = true;
-			break;
-		}
-	}
-
-	if (!found) {
-		debug("Unknown MD5 (%s)! Please report the details (language, platform, etc.) of this game to the ScummVM team", md5str);
-		_features = GF_LNGUNK || GF_FLOPPY;
-		_game = GI_LURE;
-
-	} 
-}
+	{ AD_TABLE_END_MARKER, 0 }
+};
 
 } // End of namespace Lure
+
+static const Common::ADParams detectionParams = {
+	// Pointer to ADGameDescription or its superset structure
+	(const byte *)Lure::gameDescriptions,
+	// Size of that superset structure
+	sizeof(Lure::LureGameDescription),
+	// Number of bytes to compute MD5 sum for
+	1024,
+	// List of all engine targets
+	lureGames,
+	// Structure for autoupgrading obsolete targets
+	0,
+	// Name of single gameid (optional)
+	"lure",
+	// List of files for file-based fallback detection (optional)
+	0,
+	// Fallback callback
+	0,
+	// Flags
+	Common::kADFlagAugmentPreferredTarget
+};
+
+static bool Engine_LURE_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+	const Lure::LureGameDescription *gd = (const Lure::LureGameDescription *)(encapsulatedDesc.realDesc);
+	if (gd) {
+		*engine = new Lure::LureEngine(syst, gd);
+	}
+	return gd != 0;
+}
+
+ADVANCED_DETECTOR_DEFINE_PLUGIN(LURE, Engine_LURE_createInstance, detectionParams);
+
+REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine", "Lure of the Temptress (C) Revolution");

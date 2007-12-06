@@ -42,12 +42,11 @@
 
 namespace Lure {
 
+struct LureGameDescription;
+
 class LureEngine : public Engine {
 private:
-	uint32 _features;
-	uint8 _game;
 	uint8 _saveVersion;
-	Common::Language _language;
 	Disk *_disk;
 	Resources *_resources;
 	Screen *_screen;
@@ -58,10 +57,12 @@ private:
 	Room *_room;
 	FightsManager *_fights;
 
-	void detectGame();
 	const char *generateSaveName(int slotNumber);
+
+	const LureGameDescription *_gameDescription;
+
 public:
-	LureEngine(OSystem *system);
+	LureEngine(OSystem *system, const LureGameDescription *gameDesc);
 	~LureEngine();
 	static LureEngine &getReference();
 	
@@ -69,15 +70,17 @@ public:
 	virtual int go();
 	void quitGame();
 
-	uint32 features() { return _features; }
-	uint8 game() { return _game; }
 	Disk &disk() { return *_disk; }
-	Common::Language getLanguage() { return _language; }
 
 	bool loadGame(uint8 slotNumber);
 	bool saveGame(uint8 slotNumber, Common::String &caption);
 	Common::String *detectSave(int slotNumber);
 	uint8 saveVersion() { return _saveVersion; }
+
+	uint32 getFeatures() const;
+	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
+
 };
 
 } // End of namespace Lure
