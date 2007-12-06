@@ -237,7 +237,7 @@ xLoop3:
 	BGT	xLoop3
 
 	ADD	r0,r0,r2,LSL #1
-	ADD	r1,r2,r3,LSL #1
+	ADD	r1,r1,r3,LSL #1
 	SUBS	r5,r5,#1
 	BGT	yLoop3
 
@@ -326,7 +326,7 @@ xLoop4:
 	BGT	xLoop4
 
 	ADD	r0,r0,r2,LSL #1
-	ADD	r1,r2,r3
+	ADD	r1,r1,r3
 	SUBS	r5,r5,#1
 	BGT	yLoop4
 
