@@ -154,8 +154,11 @@ void hexdump(const byte * data, int len, int bytesPerLine) {
 RandomSource::RandomSource() {
 	// Use system time as RNG seed. Normally not a good idea, if you are using
 	// a RNG for security purposes, but good enough for our purposes.
-	assert(g_system);
-	uint32 seed = g_system->getMillis();
+#if defined (__SYMBIAN32__) && defined (__WINS__)
+	uint32 seed = 0; // Symbian produces RT crash on time(0)
+#else
+	uint32 seed = time(0);
+#endif
 	setSeed(seed);
 }
 
