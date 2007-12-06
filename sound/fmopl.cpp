@@ -33,13 +33,9 @@
 
 #include "sound/fmopl.h"
 
-#include "common/util.h"
-
 #if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined(GP2X) || defined (__MAEMO__) || defined(__DS__)
 #include "common/config-manager.h"
 #endif
-
-static Common::RandomSource oplRnd;			/* OPL random number generator */
 
 /* -------------------- preliminary define section --------------------- */
 /* attack/decay rate time rate */
@@ -511,9 +507,9 @@ inline void OPL_CALC_CH(OPL_CH *CH) {
 
 /* ---------- calcrate rythm block ---------- */
 #define WHITE_NOISE_db 6.0
-inline void OPL_CALC_RH(OPL_CH *CH) {
+inline void OPL_CALC_RH(FM_OPL *OPL, OPL_CH *CH) {
 	uint env_tam, env_sd, env_top, env_hh;
-	int whitenoise = int(oplRnd.getRandomNumber(1) * (WHITE_NOISE_db / EG_STEP));
+	int whitenoise = int(OPL->rnd.getRandomNumber(1) * (WHITE_NOISE_db / EG_STEP));
 
 	int tone8;
 
@@ -1018,7 +1014,7 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
 			OPL_CALC_CH(CH);
 		/* Rythn part */
 		if(rythm)
-			OPL_CALC_RH(S_CH);
+			OPL_CALC_RH(OPL, S_CH);
 		/* limit check */
 		data = Limit(outd[0], OPL_MAXOUT, OPL_MINOUT);
 		/* store to sound buffer */

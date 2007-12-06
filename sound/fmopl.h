@@ -30,6 +30,7 @@
 #define SOUND_FMOPL_H
 
 #include "common/scummsys.h"
+#include "common/util.h"
 
 enum {
 	FMOPL_ENV_BITS_HQ = 16,
@@ -143,6 +144,8 @@ typedef struct fm_opl_f {
 	int IRQParam;						/* IRQ parameter  */
 	OPL_UPDATEHANDLER UpdateHandler;	/* stream update handler   */
 	int UpdateParam;					/* stream update parameter */
+
+	Common::RandomSource rnd;
 } FM_OPL;
 
 /* ---------- Generic interface section ---------- */
