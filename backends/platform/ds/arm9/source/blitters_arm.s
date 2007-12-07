@@ -261,7 +261,7 @@ Rescale_320x256xPAL8_To_256x256x1555:
 	@ r3 = srcStride
 	STMFD	r13!,{r4-r5,r8-r11,r14}
 	MOV	r8,    #0x0000001F
-	ORR	r8, r8,#0x00007C00
+	ORR	r8, r8,#0x0000FC00
 	ORR	r8, r8,#0x03E00000	@ r8 = mask
 	LDR	r9, [r13,#7*4]		@ r9 = palette
 
@@ -273,6 +273,7 @@ palLoop:
 	SUBS	r14,r14,#1
 	ORR	r10,r10,r10,LSL #16
 	AND	r10,r10,r8		@ r10 = separated palette entry
+	ORR	r10,r10,#0x00008000
 	STR	r10,[r5], #4
 	BGT	palLoop
 
@@ -312,10 +313,10 @@ xLoop4:
 	ORR	r11,r11,r11,LSR #16	@ r11= dst2
 	ORR	r12,r12,r12,LSR #16	@ r12= dst3
 
-	ORR	r9, r9, #0x8000
-	ORR	r10,r10,#0x8000
-	ORR	r11,r11,#0x8000
-	ORR	r12,r12,#0x8000
+	@ORR	r9, r9, #0x8000
+	@ORR	r10,r10,#0x8000
+	@ORR	r11,r11,#0x8000
+	@ORR	r12,r12,#0x8000
 
 	STRH	r9, [r0],#2
 	STRH	r10,[r0],#2
