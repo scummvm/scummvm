@@ -986,6 +986,11 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 		hotspot->delayCtr = 30;
 		hotspot->actionHotspotId = _hotspotId;
 	}
+	
+	// If the player had called out to someone to wait, close down that talk dialog
+	if ((_hotspotId == PLAYER_ID) && (res.getTalkingCharacter() == PLAYER_ID)) 
+		Room::getReference().setTalkDialog(0, 0, 0, 0);
+
 	return PC_EXECUTE;
 }
 
