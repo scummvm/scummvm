@@ -925,8 +925,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// position.
 
 		if (_animId) {
-			Common::Rect rect(_textX - 96, _textY - 64, _textX + 96, _textY + 64);
-			_vm->_system->setFocusRectangle(rect);
+			_vm->_system->setFocusRectangle(Common::Rect::center(_textX, _textY, 192, 128));
 		}
 
 		// Is it to be speech or subtitles or both?

@@ -1827,8 +1827,7 @@ void ScummEngine::setTalkingActor(int i) {
 
 		// Set the focus area to the calculated position
 		// TODO: Make the size adjust depending on what it's focusing on.
-		Common::Rect rect(x - 96, y - 64, x + 96, y + 64);
-		_system->setFocusRectangle(rect);
+		_system->setFocusRectangle(Common::Rect::center(x, y, 192, 128));
 	}
 
 	if (_game.id == GID_MANIAC && _game.version <= 1 && !(_game.platform == Common::kPlatformNES))

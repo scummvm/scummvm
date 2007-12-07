@@ -2525,8 +2525,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 	int x = target->xcood - TOP_LEFT_X;
 	int y = target->ycood - TOP_LEFT_Y;
 	// TODO: Make the box size change based on the object that has the focus
-	Common::Rect rect(x - 96, y - 64, x + 96, y + 64);
-	_skyScreen->setFocusRectangle(rect);
+	_skyScreen->setFocusRectangle(Common::Rect::center(x, y, 192, 128));
 
 
 	if ((SkyEngine::_systemVars.systemFlags & SF_ALLOW_TEXT) || !speechFileFound) {

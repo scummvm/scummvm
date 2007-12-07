@@ -189,7 +189,7 @@ struct Rect {
 	}
 
 	void translate(int16 dx, int16 dy) {
-		left += dx;	right += dx;
+		left += dx; right += dx;
 		top += dy; bottom += dy;
 	}
 
@@ -199,6 +199,13 @@ struct Rect {
 
 	void debugPrint(int debuglevel = 0, const char *caption = "Rect:") const {
 		debug(debuglevel, "%s %d, %d, %d, %d", caption, left, top, right, bottom);
+	}
+
+	/*! @brief create a rectangle around the given center */
+	static Rect center(int16 cx, int16 cy, int16 w, int16 h) {
+		w /= 2;
+		h /= 2;
+		return Rect(cx - w, cy - h, cx + w, cy + h);
 	}
 };
 
