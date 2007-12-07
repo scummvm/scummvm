@@ -1223,13 +1223,15 @@ int ScummEngine::readSoundResource(int type, int idx) {
 		tmpsize = _fileHandle->readUint32BE();
 
 		// SDAT contains name of file we want
-		_fileHandle->read(buffer, tmpsize - 8);
-		// files seem to be 11 chars (8.3) unused space is replaced by spaces
-		*(strstr(buffer, " ")) = '\0';
-
+		_fileHandle->read(buffer, MIN(128, tmpsize - 8));
+		// files seem to be 11 chars (8.3)
+		char *p = (char *)memchr(buffer, '.', 12);
+		if (!p) p = &buffer[8];
+		strcpy(p, ".dmu");
 		debugC(DEBUG_SOUND, "FMUS file %s", buffer);
-		if (dmuFile.open(buffer) == false) {
-			error("Can't open music file %s*", buffer);
+
+		if (!dmuFile.open(buffer)) {
+			error("Can't open music file %s", buffer);
 			_res->roomoffs[type][idx] = (uint32)RES_INVALID_OFFSET;
 			return 0;
 		}
