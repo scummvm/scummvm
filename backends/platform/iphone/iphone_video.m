@@ -93,8 +93,8 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY) {
 }
 
 bool getLocalMouseCoords(CGPoint *point) {
-	if (point->x < _screenRect.origin.x || point->x > _screenRect.origin.x + _screenRect.size.width ||
-		point->y < _screenRect.origin.y || point->y > _screenRect.origin.y + _screenRect.size.height) {
+	if (point->x < _screenRect.origin.x || point->x >= _screenRect.origin.x + _screenRect.size.width ||
+		point->y < _screenRect.origin.y || point->y >= _screenRect.origin.y + _screenRect.size.height) {
 			return false;
 	}
 	
@@ -208,7 +208,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 		_screenRect = CGRectMake(0, 0, _fullWidth, _fullWidth * ratio);
 		[screenLayer setFrame: _screenRect];
 
-		CGRect keyFrame = CGRectMake(0.0f, _screenRect.size.height, _fullWidth, _fullHeight);
+		CGRect keyFrame = CGRectMake(0.0f, _screenRect.size.height, _fullWidth, _fullHeight - _screenRect.size.height);
 		if (_keyboardView == nil) {
 			_keyboardView = [[SoftKeyboard alloc] initWithFrame:keyFrame];
 			[_keyboardView setInputDelegate:self];			

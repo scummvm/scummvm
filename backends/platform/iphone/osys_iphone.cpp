@@ -712,29 +712,45 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					_lastSecondaryDown = curTime;
 					_gestureStartX = x;
 					_gestureStartY = y;
-					return false;
-				} else if (curTime - _lastSecondaryDown < 250 ) {
-					if (curTime - _lastSecondaryTap < 250 && !_overlayVisible) {
-						event.type = Common::EVENT_KEYDOWN;
-						_queuedInputEvent.type = Common::EVENT_KEYUP;
-
-						event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
-						event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
-						event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;	
-						_needEventRestPeriod = true;	
-						_lastSecondaryTap = 0;
-					} else {
-						event.type = Common::EVENT_RBUTTONDOWN;
+					if (_mouseClickAndDragEnabled) {
+						event.type = Common::EVENT_LBUTTONUP;
 						event.mouse.x = _mouseX;
 						event.mouse.y = _mouseY;
-						_queuedInputEvent.type = Common::EVENT_RBUTTONUP;
+						
+						_queuedInputEvent.type = Common::EVENT_RBUTTONDOWN;
 						_queuedInputEvent.mouse.x = _mouseX;
 						_queuedInputEvent.mouse.y = _mouseY;
-						_lastSecondaryTap = curTime;
-						_needEventRestPeriod = true;
-					}		
-				} else
-					return false;
+					}
+					else
+						return false;
+				} else {
+					if (curTime - _lastSecondaryDown < 250 ) {
+						if (curTime - _lastSecondaryTap < 250 && !_overlayVisible) {
+							event.type = Common::EVENT_KEYDOWN;
+							_queuedInputEvent.type = Common::EVENT_KEYUP;
+					
+							event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
+							event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
+							event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;	
+							_needEventRestPeriod = true;	
+							_lastSecondaryTap = 0;
+						} else if (!_mouseClickAndDragEnabled) {
+							event.type = Common::EVENT_RBUTTONDOWN;
+							event.mouse.x = _mouseX;
+							event.mouse.y = _mouseY;
+							_queuedInputEvent.type = Common::EVENT_RBUTTONUP;
+							_queuedInputEvent.mouse.x = _mouseX;
+							_queuedInputEvent.mouse.y = _mouseY;
+							_lastSecondaryTap = curTime;
+							_needEventRestPeriod = true;
+						}
+					}
+					if (_mouseClickAndDragEnabled) {
+						event.type = Common::EVENT_RBUTTONUP;
+						event.mouse.x = _mouseX;
+						event.mouse.y = _mouseY;
+					} 
+				} 
 				break;
 			case kInputOrientationChanged:
 				bool newModeIsLandscape = (int)xUnit != 1;
