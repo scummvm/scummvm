@@ -230,6 +230,10 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		globalVars[VAR_MOUSE_X_POS] = 0;
 		globalVars[VAR_MOUSE_Y_POS] = 0;
+		if (g_cine->getGameType() == Cine::GType_OS) {
+			globalVars[VAR_BYPASS_PROTECTION] = 0; // set to 1 to bypass the copy protection
+			globalVars[VAR_LOW_MEMORY] = 0; // set to 1 to disable some animations, sounds etc.
+		}
 
 		for (i = 0; i < 16; i++) {
 			c_palette[i] = 0;

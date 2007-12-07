@@ -34,6 +34,7 @@ struct RelObjectScript {
 	uint16 obj1Param1;
 	uint16 obj1Param2;
 	uint16 obj2Param;
+	uint16 runCount;
 };
 
 #define NUM_MAX_REL 255

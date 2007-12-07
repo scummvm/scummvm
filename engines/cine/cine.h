@@ -30,6 +30,9 @@
 #include "common/scummsys.h"
 #include "common/file.h"
 #include "common/util.h"
+#include "common/str.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 #include "engines/engine.h"
 
@@ -61,6 +64,8 @@ enum CineGameFeatures {
 
 struct CINEGameDescription;
 
+typedef Common::HashMap<Common::String, const char *, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> StringPtrHashMap;
+
 class CineEngine : public Engine {
 
 protected:
@@ -87,10 +92,14 @@ public:
 
 	Common::RandomSource _rnd;
 
+	Common::StringList _volumeResourceFiles;
+	StringPtrHashMap _volumeEntriesMap;
+
 private:
 	void initialize(void);
 	bool makeLoad(char *saveName);
 	void mainLoop(int bootScriptIdx);
+	void readVolCnf();
 
 	bool _preLoad;
 };
@@ -103,7 +112,10 @@ enum {
 	VAR_MOUSE_X_MODE = 253,
 	VAR_MOUSE_X_POS = 249,
 	VAR_MOUSE_Y_MODE = 251,
-	VAR_MOUSE_Y_POS = 250
+	VAR_MOUSE_Y_POS = 250,
+	// OS only
+	VAR_BYPASS_PROTECTION = 255,
+	VAR_LOW_MEMORY = 0
 };
 
 enum {
@@ -113,7 +125,8 @@ enum {
 };
 
 enum {
-	kCineDebugScript = 1 << 0
+	kCineDebugScript = 1 << 0,
+	kCineDebugPart   = 1 << 1
 };
 
 enum {

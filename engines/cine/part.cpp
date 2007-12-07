@@ -23,6 +23,8 @@
  *
  */
 
+#include "common/endian.h"
+
 #include "cine/cine.h"
 #include "cine/unpack.h"
 #include "cine/various.h"
@@ -70,187 +72,6 @@ void loadPart(const char *partName) {
 void closePart(void) {
 	// TODO
 }
-
-static const char *bundleNamesDOSEN[] = {
-	"EGOUBASE",
-	"LABYBASE",
-	"PROCEGOU",
-	"PROCLABY",
-	"PROCS00",
-	"PROCS01",
-	"PROCS02",
-	"PROCS03",
-	"PROCS04",
-	"PROCS06",
-	"PROCS07",
-	"PROCS08",
-	"PROCS10",
-	"PROCS12",
-	"PROCS13",
-	"PROCS15",
-	"PROCS16",
-	"RSC00",
-	"RSC01",
-	"RSC02",
-	"RSC03",
-	"RSC04",
-	"RSC05",
-	"RSC06",
-	"RSC07",
-	"RSC08",
-	"RSC09",
-	"RSC10",
-	"RSC11",
-	"RSC12",
-	"RSC13",
-	"RSC14",
-	"RSC15",
-	"RSC16",
-	"RSC17",
-	"SONS1",
-	"SONS2",
-	"SONS3",
-	"SONS4",
-	"SONS5",
-	"SONS6",
-	"SONS7",
-	"SONS8",
-	"SONS9",
-	NULL
-};
-
-static const char *bundleNamesDOSUS[] = {
-	"EGOUBASE",
-	"LABYBASE",
-	"PROCEGOU",
-	"PROCLABY",
-	"PROCS00",
-	"PROCS01",
-	"PROCS02",
-	"PROCS03",
-	"PROCS04",
-	"PROCS06",
-	"PROCS07",
-	"PROCS08",
-	"PROCS12",
-	"PROCS13",
-	"PROCS15",
-	"PROCS16",
-	"RSC00",
-	"RSC02",
-	"RSC03",
-	"RSC04",
-	"RSC05",
-	"RSC06",
-	"RSC07",
-	"RSC08",
-	"RSC09",
-	"RSC10",
-	"RSC11",
-	"RSC12",
-	"RSC13",
-	"RSC14",
-	"RSC15",
-	"RSC16",
-	"RSC17",
-	"SONS31",
-	"SONS32",
-	"SONS33",
-	"SONS34",
-	NULL
-};
-
-static const char *bundleNamesDOSFR[] = {
-	"EGOUBASE",
-	"LABYBASE",
-	"PROCEGOU",
-	"PROCLABY",
-	"PROCS00",
-	"PROCS01",
-	"PROCS02",
-	"PROCS03",
-	"PROCS04",
-	"PROCS06",
-	"PROCS07",
-	"PROCS08",
-	"PROCS10",
-	"PROCS12",
-	"PROCS13",
-	"PROCS15",
-	"PROCS16",
-	"RSC00",
-	"RSC01",
-	"RSC02",
-	"RSC03",
-	"RSC04",
-	"RSC05",
-	"RSC06",
-	"RSC07",
-	"RSC08",
-	"RSC09",
-	"RSC10",
-	"RSC11",
-	"RSC12",
-	"RSC13",
-	"RSC14",
-	"RSC15",
-	"RSC16",
-	"RSC17",
-	"SONS31",
-	"SONS32",
-	"SONS33",
-	"SONS34",
-	NULL
-};
-
-static const char *bundleNamesDOSES[] = {
-	"EGOUBASE",
-	"LABYBASE",
-	"PROCS1",
-	"PROCS2",
-	"PROCS3",
-	"PROCS4",
-	"PROCS5",
-	"PROCS6",
-	"SD01A",
-	"SD01B",
-	"SD01C",
-	"SD01D",
-	"SD021",
-	"SD022",
-	"SD03",
-	"SDSONS",
-	"SDSONS2",
-	"SDSONS3",
-	"SINTRO2",
-	NULL
-};
-
-static const char *bundleNamesDOSInt[] = {
-	"EGOUBASE",
-	"LABYBASE",
-	"PROCS1",
-	"PROCS2",
-	"PROCS3",
-	"PROCS4",
-	"PROCS5",
-	"PROCS6",
-	"SD01A",
-	"SD01B",
-	"SD01C",
-	"SD01D",
-	"SD021",
-	"SD022",
-	"SD03",
-	"SDS1",
-	"SDS2",
-	"SDS3",
-	"SDS4",
-	"SDS5",
-	"SDS6",
-	"SINTRO2",
-	NULL
-};
 
 static const char *bundleNamesAmiga[] = {
 	"EGOUBASE",
@@ -300,69 +121,120 @@ static const char *bundleNamesAtari[] = {
 	NULL
 };
 
-int16 findFileInBundle(const char *fileName) {
-	uint16 i;
-
-	if (g_cine->getGameType() == Cine::GType_OS) {
-		for (i = 0; i < numElementInPart; i++) {
-			if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
-				return i;
-			}
-		}
-
-		const char **bPtr = 0;
-
-		if (g_cine->getPlatform() == Common::kPlatformPC) {
-			switch (g_cine->getLanguage()) {
-			case Common::EN_GRB:
-				bPtr = bundleNamesDOSEN;
-				break;
-			case Common::EN_USA:
-				if (g_cine->getFeatures() & GF_CD)
-					bPtr = bundleNamesDOSUS;
-				else
-					bPtr = bundleNamesDOSInt;
-				break;
-			case Common::DE_DEU:
-			case Common::IT_ITA:
-				bPtr = bundleNamesDOSInt;
-				break;
-			case Common::ES_ESP:
-				if (g_cine->getFeatures() & GF_CD)
-					bPtr = bundleNamesDOSInt;
-				else
-					bPtr = bundleNamesDOSES;
-				break;
-			case Common::FR_FRA:
-				bPtr = bundleNamesDOSFR;
-				break;
-			default:
-				break;
-			}
-		} else if (g_cine->getPlatform() == Common::kPlatformAmiga) {
-			if (g_cine->getFeatures() & GF_DEMO)
-				bPtr = bundleNamesAmigaDemo;
-			else
-				bPtr = bundleNamesAmiga;
-		} else if (g_cine->getPlatform() == Common::kPlatformAtariST) {
-				bPtr = bundleNamesAtari;
-		}
-
-		while (*bPtr) {
-			loadPart(*bPtr);
-
-			for (i = 0; i < numElementInPart; i++) {
-				if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
-					return i;
-				}
-			}
-			bPtr++;
-		}
+static void fixVolCnfFileName(char *dst, const uint8 *src) {
+	memcpy(dst, src, 8); src += 8;
+	dst[8] = 0;
+	char *ext = strchr(dst, ' ');
+	if (!ext) {
+		ext = &dst[8];
+	}
+	if (*src == ' ') {
+		*ext = 0;
 	} else {
-		for (i = 0; i < numElementInPart; i++) {
+		*ext++ = '.';
+		memcpy(ext, src, 3);
+		char *end = strchr(ext, ' ');
+		if (!end) {
+			end = &ext[3];
+		}
+		*end = 0;
+	}
+}
+
+void CineEngine::readVolCnf() {
+	Common::File f;
+	if (!f.open("vol.cnf")) {
+		error("Unable to open 'vol.cnf'");
+	}
+	f.seek(8, SEEK_SET);
+	uint32 unpackedSize = f.readUint32BE();
+	uint32 packedSize = f.readUint32BE();
+	uint8 *buf = (uint8 *)malloc(unpackedSize);
+	if (!buf) {
+		error("Unable to allocate %d bytes", unpackedSize);
+	}
+	f.read(buf, packedSize);
+	if (packedSize != unpackedSize) {
+		bool b = delphineUnpack(buf, buf, packedSize);
+		if (!b) {
+			error("Error while unpacking 'vol.cnf' data");
+		}
+	}
+	uint8 *p = buf;
+	int resourceFilesCount = READ_BE_UINT16(p); p += 2;
+	int entrySize = READ_BE_UINT16(p); p += 2;
+	for (int i = 0; i < resourceFilesCount; ++i) {
+		char volumeResourceFile[9];
+		memcpy(volumeResourceFile, p, 8);
+		volumeResourceFile[8] = 0;
+		_volumeResourceFiles.push_back(volumeResourceFile);
+		p += entrySize;
+	}
+
+	int volumeEntriesCount = 0;
+	for (int i = 0; i < resourceFilesCount; ++i) {
+		int size = READ_BE_UINT32(p); p += 4;
+		assert((size % 11) == 0);
+		volumeEntriesCount += size / 11;
+		p += size;
+	}
+
+	p = buf + 4 + resourceFilesCount * entrySize;
+	for (int i = 0; i < resourceFilesCount; ++i) {
+		int count = READ_BE_UINT32(p) / 11; p += 4;
+		while (count--) {
+			char volumeEntryName[12];
+			fixVolCnfFileName(volumeEntryName, p);
+			_volumeEntriesMap.setVal(volumeEntryName, _volumeResourceFiles[i].c_str());
+			debugC(5, kCineDebugPart, "Added volume entry name '%s' resource file '%s'\n", volumeEntryName, _volumeResourceFiles[i].c_str());
+			p += 11;
+		}
+	}
+
+	free(buf);
+}
+
+int16 findFileInBundle(const char *fileName) {
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		// look first in currently loaded resource file
+		for (int i = 0; i < numElementInPart; i++) {
 			if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
 				return i;
 			}
+		}
+		// not found, open the required resource file
+		if (g_cine->getPlatform() == Common::kPlatformPC) {
+			StringPtrHashMap::const_iterator it = g_cine->_volumeEntriesMap.find(fileName);
+			if (it == g_cine->_volumeEntriesMap.end()) {
+				warning("Unable to find part file for filename '%s'", fileName);
+				return -1;
+			}
+			const char *part = (*it)._value;
+			loadPart(part);
+		} else {
+			// special case for Amiga & Atari versions
+			// TODO: handle it like the original interpreter does
+			const char **bPtr = 0;
+			if (g_cine->getPlatform() == Common::kPlatformAmiga) {
+				bPtr = (g_cine->getFeatures() & GF_DEMO) ? bundleNamesAmigaDemo : bundleNamesAmiga;
+			} else if (g_cine->getPlatform() == Common::kPlatformAtariST) {
+				bPtr = bundleNamesAtari;
+			}
+			while (*bPtr) {
+				loadPart(*bPtr);
+				for (int i = 0; i < numElementInPart; i++) {
+					if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
+						return i;
+					}
+				}
+				bPtr++;
+			}
+			return -1;
+		}
+	}
+	for (int i = 0; i < numElementInPart; i++) {
+		if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
+			return i;
 		}
 	}
 	return -1;
@@ -376,17 +248,11 @@ void readFromPart(int16 idx, byte *dataPtr) {
 }
 
 byte *readBundleFile(int16 foundFileIdx) {
-	byte *dataPtr;
-
-	dataPtr = (byte *)calloc(partBuffer[foundFileIdx].unpackedSize, 1);
-
+	assert(foundFileIdx >= 0 && foundFileIdx < numElementInPart);
+	byte *dataPtr = (byte *)calloc(partBuffer[foundFileIdx].unpackedSize, 1);
 	if (partBuffer[foundFileIdx].unpackedSize != partBuffer[foundFileIdx].packedSize) {
-		byte *unpackBuffer;
-
-		unpackBuffer = (byte *)malloc(partBuffer[foundFileIdx].packedSize);
-		readFromPart(foundFileIdx, unpackBuffer);
-		delphineUnpack(dataPtr, unpackBuffer, partBuffer[foundFileIdx].packedSize);
-		free(unpackBuffer);
+		readFromPart(foundFileIdx, dataPtr);
+		delphineUnpack(dataPtr, dataPtr, partBuffer[foundFileIdx].packedSize);
 	} else {
 		readFromPart(foundFileIdx, dataPtr);
 	}

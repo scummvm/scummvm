@@ -171,6 +171,11 @@ void runObjectScript(int16 entryIdx) {
 	pNewElement->scriptPtr = (byte *)relTable[entryIdx].data;
 	pNewElement->scriptIdx = entryIdx;
 
+	if (g_cine->getGameType() == Cine::GType_OS) {
+		pNewElement->localVars[0] = relTable[entryIdx].runCount;
+		++relTable[entryIdx].runCount;
+	}
+
 	computeScriptStack(pNewElement->scriptPtr, pNewElement->stack, relTable[entryIdx].size);
 }
 

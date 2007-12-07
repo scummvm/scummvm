@@ -52,6 +52,7 @@ CineEngine *g_cine;
 
 CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	Common::addSpecialDebugLevel(kCineDebugScript, "Script", "Script debug level");
+	Common::addSpecialDebugLevel(kCineDebugPart,   "Part",   "Part debug level");
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -117,6 +118,10 @@ void CineEngine::initialize() {
 
 	animDataTable = (AnimData *)malloc(NUM_MAX_ANIMDATA * sizeof(AnimData));
 
+	if (g_cine->getGameType() == Cine::GType_OS && g_cine->getPlatform() == Common::kPlatformPC) {
+		readVolCnf();
+	}
+
 	loadTextData("texte.dat", textDataPtr);
 
 	if (g_cine->getGameType() == Cine::GType_OS && !(g_cine->getFeatures() & GF_DEMO)) {
@@ -149,6 +154,7 @@ void CineEngine::initialize() {
 		relTable[i].obj1Param1 = 0;
 		relTable[i].obj1Param2 = 0;
 		relTable[i].obj2Param = 0;
+		relTable[i].runCount = 0;
 	}
 
 	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {

@@ -84,6 +84,7 @@ void loadRel(char *pRelName) {
 		relTable[i].obj1Param1 = READ_BE_UINT16(ptr); ptr += 2;
 		relTable[i].obj1Param2 = READ_BE_UINT16(ptr); ptr += 2;
 		relTable[i].obj2Param = READ_BE_UINT16(ptr); ptr += 2;
+		relTable[i].runCount = 0;
 	}
 
 	for (i = 0; i < numEntry; i++) {
