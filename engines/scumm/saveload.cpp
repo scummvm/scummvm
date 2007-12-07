@@ -400,7 +400,7 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 	assert(marks);
 
 	char prefix[256];
-	char slot[2];
+	char slot[3];
 	int slotNum;
 	Common::StringList filenames;
 
@@ -414,6 +414,7 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 		//Obtain the last 2 digits of the filename, since they correspond to the save slot
 		slot[0] = file->c_str()[file->size()-2];
 		slot[1] = file->c_str()[file->size()-1];
+		slot[2] = 0;
 
 		slotNum = atoi(slot);
 		if (slotNum >= 0 && slotNum < num)
