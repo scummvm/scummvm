@@ -191,17 +191,17 @@ bool getLocalMouseCoords(CGPoint *point) {
 		if (ratioDifference < 1.0f) {
 			rectWidth = _fullWidth * ratioDifference;
 			rectHeight = _fullHeight;
-			_widthOffset = (_fullWidth - rectWidth)/2;
+			_widthOffset = (_fullWidth - rectWidth) / 2;
 			_heightOffset = 0;
 		} else {
 			rectWidth = _fullWidth;
 			rectHeight = _fullHeight / ratioDifference;
-			_heightOffset = (_fullHeight - rectHeight)/2;
+			_heightOffset = (_fullHeight - rectHeight) / 2;
 			_widthOffset = 0;
 		}
 
-		//printf("Rect: %i, %i, %i, %i\n", _widthOffset, _heightOffset, rectWidth + _widthOffset, rectHeight + _heightOffset);
-		_screenRect = CGRectMake(_widthOffset, _heightOffset, rectWidth + _widthOffset, rectHeight + _heightOffset);
+		//printf("Rect: %i, %i, %i, %i\n", _widthOffset, _heightOffset, rectWidth, rectHeight);
+		_screenRect = CGRectMake(_widthOffset, _heightOffset, rectWidth, rectHeight);
 		[screenLayer setFrame: _screenRect];		
 	} else {			
 		float ratio = (float)_height / (float)_width;
