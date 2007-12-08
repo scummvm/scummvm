@@ -195,6 +195,8 @@ static bool matches(const char *glob, const char *name)
       glob++;
       name++;
     }
+    else
+      return false;
   return !*name;
 }
 
