@@ -27,6 +27,7 @@
 #include "cine/bg.h"
 #include "cine/various.h"
 
+#include "common/endian.h"
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
@@ -99,7 +100,7 @@ void gfxInit() {
 	memset(page1Raw, 0, 320 * 200);
 	memset(page2Raw, 0, 320 * 200);
 	memset(page3Raw, 0, 320 * 200);
-	
+
 	memset(additionalBgTable, 0, sizeof(additionalBgTable));
 	additionalBgTable[0] = page2Raw;
 	additionalBgTable[8] = page3Raw;
@@ -192,8 +193,7 @@ void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int
 	}
 }
 
-// gfxDrawMaskedSprite
-void gfxSpriteFunc1(byte *spritePtr, byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
+void gfxDrawMaskedSprite(byte *spritePtr, byte *maskPtr, uint16 width, uint16 height, byte *page, int16 x, int16 y) {
 	int16 i, j;
 
 	for (i = 0; i < height; i++) {
@@ -211,11 +211,10 @@ void gfxSpriteFunc1(byte *spritePtr, byte *maskPtr, uint16 width, uint16 height,
 	}
 }
 
-// gfxUpdateSpriteMask
-void gfxSpriteFunc2(byte *spritePtr, byte *spriteMskPtr, int16 width, int16 height, byte *maskPtr,
+void gfxUpdateSpriteMask(byte *spritePtr, byte *spriteMskPtr, int16 width, int16 height, byte *maskPtr,
 	int16 maskWidth, int16 maskHeight, byte *bufferSprPtr, byte *bufferMskPtr, int16 xs, int16 ys, int16 xm, int16 ym, byte maskIdx) {
 	int16 i, j, d, spritePitch, maskPitch;
-        
+
 	width *= 8;
 	maskWidth *= 8;
 
@@ -226,7 +225,7 @@ void gfxSpriteFunc2(byte *spritePtr, byte *spriteMskPtr, int16 width, int16 heig
 		memcpy(bufferSprPtr, spritePtr, spritePitch * height);
 		memcpy(bufferMskPtr, spriteMskPtr, spritePitch * height);
 	}
-    
+
 	if (ys > ym) {
 		d = ys - ym;
 		maskPtr += d * maskPitch;
@@ -331,32 +330,19 @@ void gfxResetRawPage(byte *pageRaw) {
 	memset(pageRaw, 0, 320 * 200);
 }
 
-void gfxConvertSpriteToRaw(byte *dst, byte *src, uint16 width, uint16 height) {
-	int x, y, d, bit, plane;
-
-	width >>= 3;
-	for (y = 0; y < height; y++) {
-		for (x = 0; x < width; x++) {
-			byte data[2][4];
-			data[0][0] = *src++;
-			data[1][0] = *src++;
-			data[0][1] = *src++;
-			data[1][1] = *src++;
-			data[0][2] = *src++;
-			data[1][2] = *src++;
-			data[0][3] = *src++;
-			data[1][3] = *src++;
-			for (d = 0; d < 2; ++d) {
-				for (bit = 0; bit < 8; ++bit) {
-					byte color = 0;
-					for (plane = 0; plane < 4; ++plane) {
-						if (data[d][plane] & (1 << (7 - bit))) {
-							color |= 1 << plane;
-						}
+void gfxConvertSpriteToRaw(byte *dst, const byte *src, uint16 w, uint16 h) {
+	for (int y = 0; y < h; ++y) {
+		for (int x = 0; x < w / 8; ++x) {
+			for (int bit = 0; bit < 16; ++bit) {
+				uint8 color = 0;
+				for (int p = 0; p < 4; ++p) {
+					if (READ_BE_UINT16(src + p * 2) & (1 << (15 - bit))) {
+						color |= 1 << p;
 					}
-					*dst++ = color;
 				}
+				*dst++ = color;
 			}
+			src += 8;
 		}
 	}
 }
