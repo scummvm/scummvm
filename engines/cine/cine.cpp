@@ -118,7 +118,7 @@ void CineEngine::initialize() {
 
 	animDataTable = (AnimData *)malloc(NUM_MAX_ANIMDATA * sizeof(AnimData));
 
-	if (g_cine->getGameType() == Cine::GType_OS && g_cine->getPlatform() == Common::kPlatformPC) {
+	if (g_cine->getGameType() == Cine::GType_OS) {
 		readVolCnf();
 	}
 

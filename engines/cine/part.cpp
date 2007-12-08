@@ -73,54 +73,6 @@ void closePart(void) {
 	// TODO
 }
 
-static const char *bundleNamesAmiga[] = {
-	"EGOUBASE",
-	"LABYBASE",
-	"PROCS0",
-	"PROCS1",
-	"PROCS2",
-	"SAMPLES",
-	"SAMPLES2",
-	"SAMPLES3",
-	"SD01A",
-	"SD01B",
-	"SD01C",
-	"SD01D",
-	"SD02",
-	"SD03",
-	"SDSONS",
-	"SDSONS2",
-	"SDSONS3",
-	"SINTRO2",
-	NULL
-};
-
-static const char *bundleNamesAmigaDemo[] = {
-	"DEMO_OS",
-	"SDSONS",
-	NULL
-};
-
-static const char *bundleNamesAtari[] = {
-	"EGOUBASE",
-	"LABYBASE",
-	"PROCS0",
-	"PROCS1",
-	"PROCS2",
-	"SAMPLES",
-	"SD01A",
-	"SD01B",
-	"SD01C",
-	"SD01D",
-	"SD02",
-	"SD03",
-	"SDSONS",
-	"SDSONS2",
-	"SDSONS3",
-	"SINTRO2",
-	NULL
-};
-
 static void fixVolCnfFileName(char *dst, const uint8 *src) {
 	memcpy(dst, src, 8); src += 8;
 	dst[8] = 0;
@@ -146,9 +98,18 @@ void CineEngine::readVolCnf() {
 	if (!f.open("vol.cnf")) {
 		error("Unable to open 'vol.cnf'");
 	}
-	f.seek(8, SEEK_SET);
-	uint32 unpackedSize = f.readUint32BE();
-	uint32 packedSize = f.readUint32BE();
+	bool abaseHeader = false;
+	uint32 unpackedSize, packedSize;
+	char hdr[8];
+	f.read(hdr, 8);
+	if (memcmp(hdr, "ABASECP", 7) == 0) {
+		abaseHeader = true;
+		unpackedSize = f.readUint32BE();
+		packedSize = f.readUint32BE();
+	} else {
+		f.seek(0);
+		unpackedSize = packedSize = f.size();
+	}
 	uint8 *buf = (uint8 *)malloc(unpackedSize);
 	if (!buf) {
 		error("Unable to allocate %d bytes", unpackedSize);
@@ -160,6 +121,7 @@ void CineEngine::readVolCnf() {
 			error("Error while unpacking 'vol.cnf' data");
 		}
 	}
+	const int fileNameLength = abaseHeader ? 11 : 13;
 	uint8 *p = buf;
 	int resourceFilesCount = READ_BE_UINT16(p); p += 2;
 	int entrySize = READ_BE_UINT16(p); p += 2;
@@ -174,20 +136,24 @@ void CineEngine::readVolCnf() {
 	int volumeEntriesCount = 0;
 	for (int i = 0; i < resourceFilesCount; ++i) {
 		int size = READ_BE_UINT32(p); p += 4;
-		assert((size % 11) == 0);
-		volumeEntriesCount += size / 11;
+		assert((size % fileNameLength) == 0);
+		volumeEntriesCount += size / fileNameLength;
 		p += size;
 	}
 
 	p = buf + 4 + resourceFilesCount * entrySize;
 	for (int i = 0; i < resourceFilesCount; ++i) {
-		int count = READ_BE_UINT32(p) / 11; p += 4;
+		int count = READ_BE_UINT32(p) / fileNameLength; p += 4;
 		while (count--) {
-			char volumeEntryName[12];
-			fixVolCnfFileName(volumeEntryName, p);
+			char volumeEntryName[13];
+			if (abaseHeader) {
+				fixVolCnfFileName(volumeEntryName, p);
+			} else {
+				memcpy(volumeEntryName, p, fileNameLength);
+			}
 			_volumeEntriesMap.setVal(volumeEntryName, _volumeResourceFiles[i].c_str());
-			debugC(5, kCineDebugPart, "Added volume entry name '%s' resource file '%s'\n", volumeEntryName, _volumeResourceFiles[i].c_str());
-			p += 11;
+			debugC(5, kCineDebugPart, "Added volume entry name '%s' resource file '%s'", volumeEntryName, _volumeResourceFiles[i].c_str());
+			p += fileNameLength;
 		}
 	}
 
@@ -203,34 +169,13 @@ int16 findFileInBundle(const char *fileName) {
 			}
 		}
 		// not found, open the required resource file
-		if (g_cine->getPlatform() == Common::kPlatformPC) {
-			StringPtrHashMap::const_iterator it = g_cine->_volumeEntriesMap.find(fileName);
-			if (it == g_cine->_volumeEntriesMap.end()) {
-				warning("Unable to find part file for filename '%s'", fileName);
-				return -1;
-			}
-			const char *part = (*it)._value;
-			loadPart(part);
-		} else {
-			// special case for Amiga & Atari versions
-			// TODO: handle it like the original interpreter does
-			const char **bPtr = 0;
-			if (g_cine->getPlatform() == Common::kPlatformAmiga) {
-				bPtr = (g_cine->getFeatures() & GF_DEMO) ? bundleNamesAmigaDemo : bundleNamesAmiga;
-			} else if (g_cine->getPlatform() == Common::kPlatformAtariST) {
-				bPtr = bundleNamesAtari;
-			}
-			while (*bPtr) {
-				loadPart(*bPtr);
-				for (int i = 0; i < numElementInPart; i++) {
-					if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
-						return i;
-					}
-				}
-				bPtr++;
-			}
+		StringPtrHashMap::const_iterator it = g_cine->_volumeEntriesMap.find(fileName);
+		if (it == g_cine->_volumeEntriesMap.end()) {
+			warning("Unable to find part file for filename '%s'", fileName);
 			return -1;
 		}
+		const char *part = (*it)._value;
+		loadPart(part);
 	}
 	for (int i = 0; i < numElementInPart; i++) {
 		if (!scumm_stricmp(fileName, partBuffer[i].partName)) {
