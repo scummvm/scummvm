@@ -28,8 +28,13 @@
 
 namespace Cine {
 
+enum {
+	kGameTimerDelay = 1000 / (1193180 / 10923),
+	kGameSpeed = 12
+};
+
 void mainLoop(int bootScriptIdx);
-void manageEvents(int count = 7);
+void manageEvents();
 
 } // End of namespace Cine
 

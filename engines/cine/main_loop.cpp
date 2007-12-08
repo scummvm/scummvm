@@ -51,114 +51,108 @@ int lastKeyStroke = 0;
 uint16 mouseUpdateStatus;
 uint16 dummyU16;
 
-void manageEvents(int count) {
-	Common::Event event;
-
-	Common::EventManager *eventMan = g_system->getEventManager();
-	while (eventMan->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_LBUTTONDOWN:
-			mouseLeft = 1;
+static void processEvent(Common::Event &event) {
+	switch (event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+		mouseLeft = 1;
+		break;
+	case Common::EVENT_RBUTTONDOWN:
+		mouseRight = 1;
+		break;
+	case Common::EVENT_MOUSEMOVE:
+		break;
+	case Common::EVENT_QUIT:
+		g_system->quit();
+		break;
+	case Common::EVENT_KEYDOWN:
+		switch (event.kbd.keycode) {
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_KP_ENTER:
+		case Common::KEYCODE_KP5:
+			if (allowPlayerInput) {
+				mouseLeft = 1;
+			}
 			break;
-		case Common::EVENT_RBUTTONDOWN:
-			mouseRight = 1;
+		case Common::KEYCODE_ESCAPE:
+			if (allowPlayerInput) {
+				mouseRight = 1;
+			}
 			break;
-		case Common::EVENT_MOUSEMOVE:
+		case Common::KEYCODE_F1:
+			if (allowPlayerInput) {
+				playerCommand = 0; // EXAMINE
+				makeCommandLine();
+			}
 			break;
-		case Common::EVENT_QUIT:
-			g_system->quit();
+		case Common::KEYCODE_F2:
+			if (allowPlayerInput) {
+				playerCommand = 1; // TAKE
+				makeCommandLine();
+			}
 			break;
-		case Common::EVENT_KEYDOWN:
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_RETURN:
-			case Common::KEYCODE_KP_ENTER:
-			case Common::KEYCODE_KP5:
-				if (allowPlayerInput) {
-					mouseLeft = 1;
-				}
-				break;
-			case Common::KEYCODE_ESCAPE:
-				if (allowPlayerInput) {
-					mouseRight = 1;
-				}
-				break;
-			case Common::KEYCODE_F1:
-				if (allowPlayerInput) {
-					playerCommand = 0; // EXAMINE
-					makeCommandLine();
-				}
-				break;
-			case Common::KEYCODE_F2:
-				if (allowPlayerInput) {
-					playerCommand = 1; // TAKE
-					makeCommandLine();
-				}
-				break;
-			case Common::KEYCODE_F3:
-				if (allowPlayerInput) {
-					playerCommand = 2; // INVENTORY
-					makeCommandLine();
-				}
-				break;
-			case Common::KEYCODE_F4:
-				if (allowPlayerInput) {
-					playerCommand = 3; // USE
-					makeCommandLine();
-				}
-				break;
-			case Common::KEYCODE_F5:
-				if (allowPlayerInput) {
-					playerCommand = 4; // ACTIVATE
-					makeCommandLine();
-				}
-				break;
-			case Common::KEYCODE_F6:
-				if (allowPlayerInput) {
-					playerCommand = 5; // SPEAK
-					makeCommandLine();
-				}
-				break;
-			case Common::KEYCODE_F9:
-				if (allowPlayerInput && !inMenu) {
-					makeActionMenu();
-					makeCommandLine();
-				}
-				break;
-			case Common::KEYCODE_F10:
-				if (!disableSystemMenu && !inMenu) {
-					g_cine->makeSystemMenu();
-				}
-				break;
-			default:
-				lastKeyStroke = event.kbd.keycode;
-				break;
+		case Common::KEYCODE_F3:
+			if (allowPlayerInput) {
+				playerCommand = 2; // INVENTORY
+				makeCommandLine();
+			}
+			break;
+		case Common::KEYCODE_F4:
+			if (allowPlayerInput) {
+				playerCommand = 3; // USE
+				makeCommandLine();
+			}
+			break;
+		case Common::KEYCODE_F5:
+			if (allowPlayerInput) {
+				playerCommand = 4; // ACTIVATE
+				makeCommandLine();
+			}
+			break;
+		case Common::KEYCODE_F6:
+			if (allowPlayerInput) {
+				playerCommand = 5; // SPEAK
+				makeCommandLine();
+			}
+			break;
+		case Common::KEYCODE_F9:
+			if (allowPlayerInput && !inMenu) {
+				makeActionMenu();
+				makeCommandLine();
+			}
+			break;
+		case Common::KEYCODE_F10:
+			if (!disableSystemMenu && !inMenu) {
+				g_cine->makeSystemMenu();
 			}
 			break;
 		default:
+			lastKeyStroke = event.kbd.keycode;
 			break;
 		}
+		break;
+	default:
+		break;
 	}
+}
 
-	if (count) {
-		mouseData.left = mouseLeft;
-		mouseData.right = mouseRight;
-		mouseLeft = 0;
-		mouseRight = 0;
-	}
+void manageEvents() {
+	Common::EventManager *eventMan = g_system->getEventManager();
 
-	int i;
-	for (i = 0; i < count; i++) {
-		//FIXME(?): Maybe there's a better way to "fix" this?
-		//
-		//Since not all backends/ports can update the screen
-		//100 times per second, only update the screen every
-		//other frame (1000 / 2 * 10 i.e. 50 times per second max.)
-		if (i % 2)
-			g_system->updateScreen();
-		g_system->delayMillis(10);
-		g_sound->update();
-		manageEvents(0);
-	}
+	uint32 nextFrame = g_system->getMillis() + kGameTimerDelay * kGameSpeed;
+	do {
+		Common::Event event;
+		while (eventMan->pollEvent(event)) {
+			processEvent(event);
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(20);
+	} while (g_system->getMillis() < nextFrame);
+
+	g_sound->update();
+	mouseData.left = mouseLeft;
+	mouseData.right = mouseRight;
+	mouseLeft = 0;
+	mouseRight = 0;
 }
 
 void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY) {
