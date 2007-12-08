@@ -25,6 +25,7 @@
 
 #include "common/events.h"
 #include "common/savefile.h"
+#include "common/stream.h"
 
 #include "graphics/cursorman.h"
 
@@ -35,6 +36,7 @@
 
 #define IDI_SND_OSCILLATOR_FREQUENCY	1193180
 #define IDI_SND_TIMER_RESOLUTION		0.0182
+#define SAVEGAME_VERSION				1
 
 namespace Agi {
 
@@ -913,6 +915,8 @@ bool Mickey::loadGame() {
 	char szFile[256] = {0};
 	bool diskerror = true;
 	int sel;
+	int saveVersion = 0;
+	int i = 0;
 
 	while (diskerror) {
 		sel = choose1to9(IDO_MSA_LOAD_GAME[1]);
@@ -926,7 +930,69 @@ bool Mickey::loadGame() {
 			if (_vm->getSelection(kSelAnyKey) == 0)
 				return false;
 		} else {
-			infile->read(&_game, sizeof(MSA_GAME));
+			if (infile->readUint32BE() != MKID_BE('MICK'))
+				error("Mickey::loadGame wrong save game format");
+
+			saveVersion = infile->readByte();
+			if (saveVersion != SAVEGAME_VERSION)
+				warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, SAVEGAME_VERSION);
+
+			_game.iRoom = infile->readByte();
+			_game.iPlanet = infile->readByte();
+			_game.iDisk = infile->readByte();
+
+			_game.nAir = infile->readByte();
+			_game.nButtons = infile->readByte();
+			_game.nRocks = infile->readByte();
+
+			_game.nXtals = infile->readByte();
+
+			for(i = 0; i < IDI_MSA_MAX_DAT; i++)
+				_game.iPlanetXtal[i] = infile->readByte();
+
+			for(i = 0; i < IDI_MSA_MAX_PLANET; i++)
+				_game.iClue[i] = infile->readByte();
+
+			infile->read(_game.szAddr, IDI_MSA_MAX_BUTTON + 1);
+
+			_game.fHasXtal = infile->readByte() == 1;
+			_game.fIntro = infile->readByte() == 1;
+			_game.fSuit = infile->readByte() == 1;
+			_game.fShipDoorOpen = infile->readByte() == 1;
+			_game.fFlying = infile->readByte() == 1;
+			_game.fStoryShown = infile->readByte() == 1;
+			_game.fPlanetsInitialized = infile->readByte() == 1;
+			_game.fTempleDoorOpen = infile->readByte() == 1;
+			_game.fAnimXL30 = infile->readByte() == 1;
+
+			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+				_game.fItem[i] = infile->readByte() == 1;
+
+			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+				_game.fItemUsed[i] = infile->readByte() == 1;
+
+			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+				_game.iItem[i] = infile->readByte();
+
+			_game.nItems = infile->readByte();
+
+			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+				_game.iRmObj[i] = infile->readSByte();
+
+			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+				_game.iRmPic[i] = infile->readByte();
+
+			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+				_game.oRmTxt[i] = infile->readUint16LE();
+
+			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+				_game.iRmMenu[i] = infile->readByte();
+
+			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+				_game.nRmMenu[i] = infile->readByte();
+
+			_game.nFrame = infile->readByte();
+
 			diskerror = false;
 			delete infile;
 		}
@@ -941,6 +1007,7 @@ void Mickey::saveGame() {
 	char szFile[256] = {0};
 	bool diskerror = true;
 	int sel;
+	int i = 0;
 
 	bool fOldDisk = chooseY_N(IDO_MSA_SAVE_GAME[0], false);
 
@@ -972,7 +1039,70 @@ void Mickey::saveGame() {
 			if (_vm->getSelection(kSelAnyKey) == 0)
 				return;
 		} else {
-			outfile->write(&_game, sizeof(MSA_GAME));
+			outfile->writeUint32BE(MKID_BE('MICK'));	// header
+			outfile->writeByte(SAVEGAME_VERSION);
+
+			outfile->writeByte(_game.iRoom);
+			outfile->writeByte(_game.iPlanet);
+			outfile->writeByte(_game.iDisk);
+
+			outfile->writeByte(_game.nAir);
+			outfile->writeByte(_game.nButtons);
+			outfile->writeByte(_game.nRocks);
+
+			outfile->writeByte(_game.nXtals);
+
+			for(i = 0; i < IDI_MSA_MAX_DAT; i++)
+				outfile->writeByte(_game.iPlanetXtal[i]);
+
+			for(i = 0; i < IDI_MSA_MAX_PLANET; i++)
+				outfile->writeByte(_game.iClue[i]);
+
+			outfile->write(_game.szAddr, IDI_MSA_MAX_BUTTON + 1);
+
+			outfile->writeByte(_game.fHasXtal ? 1 : 0);
+			outfile->writeByte(_game.fIntro ? 1 : 0);
+			outfile->writeByte(_game.fSuit ? 1 : 0);
+			outfile->writeByte(_game.fShipDoorOpen ? 1 : 0);
+			outfile->writeByte(_game.fFlying ? 1 : 0);
+			outfile->writeByte(_game.fStoryShown ? 1 : 0);
+			outfile->writeByte(_game.fPlanetsInitialized ? 1 : 0);
+			outfile->writeByte(_game.fTempleDoorOpen ? 1 : 0);
+			outfile->writeByte(_game.fAnimXL30 ? 1 : 0);
+
+			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+				outfile->writeByte(_game.fItem[i] ? 1 : 0);
+
+			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+				outfile->writeByte(_game.fItemUsed[i] ? 1 : 0);
+
+			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
+				outfile->writeByte(_game.iItem[i]);
+
+			outfile->writeByte(_game.nItems);
+
+			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+				outfile->writeSByte(_game.iRmObj[i]);
+
+			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+				outfile->writeByte(_game.iRmPic[i]);
+
+			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+				outfile->writeUint16LE(_game.oRmTxt[i]);
+
+			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+				outfile->writeByte(_game.iRmMenu[i]);
+
+			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
+				outfile->writeByte(_game.nRmMenu[i]);
+
+			outfile->writeByte(_game.nFrame);
+
+			outfile->finalize();
+
+			if (outfile->ioFailed())
+				warning("Can't write file '%s'. (Disk full?)", szFile);
+
 			diskerror = false;
 			delete outfile;
 		}

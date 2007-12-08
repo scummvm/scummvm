@@ -689,20 +689,21 @@ const int IDO_MSA_NEXT_PIECE[IDI_MSA_MAX_PLANET][5] = {
 // game structure
 
 struct MSA_GAME {
-	int	iRoom;
-	int iPlanet;
-	int iDisk;
+	uint8 iRoom;
+	uint8 iPlanet;
+	uint8 iDisk;
 
-	int nAir;
-	int nButtons;
-	int nRocks;
+	uint8 nAir;
+	uint8 nButtons;
+	uint8 nRocks;
 
-	bool fHasXtal;
-	int nXtals;
-	int iPlanetXtal[IDI_MSA_MAX_DAT];
-	int iClue[IDI_MSA_MAX_PLANET];
+	uint8 nXtals;
+	uint8 iPlanetXtal[IDI_MSA_MAX_DAT];
+	uint8 iClue[IDI_MSA_MAX_PLANET];
 	char szAddr[IDI_MSA_MAX_BUTTON + 1];
 
+	// Flags
+	bool fHasXtal;
 	bool fIntro;
 	bool fSuit;
 	bool fShipDoorOpen;
@@ -710,13 +711,14 @@ struct MSA_GAME {
 	bool fStoryShown;
 	bool fPlanetsInitialized;
 	bool fTempleDoorOpen;
-
+	bool fAnimXL30;
 	bool fItem[IDI_MSA_MAX_ITEM];
 	bool fItemUsed[IDI_MSA_MAX_ITEM];
-	int iItem[IDI_MSA_MAX_ITEM];
-	int nItems;
 
-	//int8 fRmTxt[IDI_MSA_MAX_ROOM];
+	uint8 iItem[IDI_MSA_MAX_ITEM];
+	uint8 nItems;
+
+	//uint8 fRmTxt[IDI_MSA_MAX_ROOM];
 	int8 iRmObj[IDI_MSA_MAX_ROOM];
 	uint8 iRmPic[IDI_MSA_MAX_ROOM];
 	uint16 oRmTxt[IDI_MSA_MAX_ROOM];
@@ -724,9 +726,7 @@ struct MSA_GAME {
 	uint8 iRmMenu[IDI_MSA_MAX_ROOM];
 	uint8 nRmMenu[IDI_MSA_MAX_ROOM];
 
-	int nFrame;		// 0.1.4
-	bool fAnimXL30;	// 0.1.4
-	int nTicks;		// 0.1.4
+	uint8 nFrame;
 };
 
 class Mickey {
