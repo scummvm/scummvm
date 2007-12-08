@@ -251,8 +251,10 @@ byte *readBundleFile(int16 foundFileIdx) {
 	assert(foundFileIdx >= 0 && foundFileIdx < numElementInPart);
 	byte *dataPtr = (byte *)calloc(partBuffer[foundFileIdx].unpackedSize, 1);
 	if (partBuffer[foundFileIdx].unpackedSize != partBuffer[foundFileIdx].packedSize) {
-		readFromPart(foundFileIdx, dataPtr);
-		delphineUnpack(dataPtr, dataPtr, partBuffer[foundFileIdx].packedSize);
+		byte *unpackBuffer = (byte *)malloc(partBuffer[foundFileIdx].packedSize);
+		readFromPart(foundFileIdx, unpackBuffer);
+		delphineUnpack(dataPtr, unpackBuffer, partBuffer[foundFileIdx].packedSize);
+		free(unpackBuffer);
 	} else {
 		readFromPart(foundFileIdx, dataPtr);
 	}
