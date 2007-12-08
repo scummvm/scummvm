@@ -500,6 +500,8 @@ void Dialog::show(const char *text) {
 
 	screen.update();
 	mouse.cursorOn();
+
+	delete s;
 }
 
 void Dialog::show(uint16 stringId, const char *hotspotName, const char *characterName) {
@@ -841,6 +843,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 		doneFlag = true;
 	}
 
+	delete s;
 	Sound.resume();
 
 	if (doneFlag) {
