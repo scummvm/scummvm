@@ -33,8 +33,9 @@ namespace Audio {
 class AudioStream;
 
 /*
- * FIXME: Document this function. In particular, who is responsible for
- * freeing the data passed in, resp. the AudioStream it returns?
+ * Factory function for RichardJoseph1 modules. Reads all data from the
+ * given songData and instrumentsData streams and creates an AudioStream
+ * from this. No references to these stream objects are kept.
  */
 AudioStream *makeRjp1Stream(Common::SeekableReadStream *songData, Common::SeekableReadStream *instrumentsData, int num, int rate = 44100, bool stereo = true);
 

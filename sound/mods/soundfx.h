@@ -33,8 +33,10 @@ class AudioStream;
 typedef byte *(*LoadSoundFxInstrumentCallback)(const char *name, uint32 *size);
 
 /*
- * FIXME: Document this function. In particular, who is responsible for
- * freeing the data passed in, resp. the AudioStream it returns?
+ * Factory function for SoundFX modules. Reads all data from the
+ * given data stream and creates an AudioStream from this (no references to the
+ * stream object is kept). If loadCb is non 0, then instruments are loaded using
+ * it, buffers returned are free'd at the end of playback.
  */
 AudioStream *makeSoundFxStream(Common::SeekableReadStream *data, LoadSoundFxInstrumentCallback loadCb, int rate = 44100, bool stereo = true);
 
