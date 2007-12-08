@@ -30,11 +30,10 @@
 #include <common/savefile.h>
 #include <gui/newgui.h>
 #include <gui/message.h>
+#include <backends/saves/compressed/compressed-saves.h>
 
-#include <zlib.h>
 
-
-// Savegame can not be bigger than this, even before compression
+// Savegame can not be bigger than this
 #define MAX_SAVE_SIZE (128*1024)
 
 
@@ -137,7 +136,6 @@ static bool tryLoad(char *&buffer, int &size, const char *filename, int vm)
   struct timestamp tstamp;
   struct tm tm;
   time_t t;
-  unsigned char iconbuffer[512+32];
 
   if (!vmsfs_check_unit(vm, 0, &info))
     return false;
@@ -298,20 +296,6 @@ public:
 
   bool readSaveGame(const char *filename)
   { return ::readSaveGame(buffer, _size, filename); }
-
-  void tryUncompress()
-  {
-    if (_size > 0 && buffer[0] != 'S') {
-      // Data does not start with "SCVM".  Maybe compressed?
-      char *expbuf = new char[MAX_SAVE_SIZE];
-      unsigned long destlen = MAX_SAVE_SIZE;
-      if (!uncompress((Bytef*)expbuf, &destlen, (Bytef*)buffer, _size)) {
-	delete[] buffer;
-	buffer = expbuf;
-	_size = destlen;
-      } else delete[] expbuf;
-    }
-  }
 };
 
 class OutVMSave : public Common::OutSaveFile {
@@ -342,14 +326,13 @@ class VMSaveManager : public Common::SaveFileManager {
 public:
 
   virtual Common::OutSaveFile *openForSaving(const char *filename) {
-	return new OutVMSave(filename);
+	return wrapOutSaveFile(new OutVMSave(filename));
   }
 
   virtual Common::InSaveFile *openForLoading(const char *filename) {
 	InVMSave *s = new InVMSave();
 	if (s->readSaveGame(filename)) {
-	  s->tryUncompress();
-	  return s;
+	  return wrapInSaveFile(s);
 	} else {
 	  delete s;
 	  return NULL;
@@ -371,22 +354,11 @@ void OutVMSave::finalize()
   if (committed >= pos)
     return;
 
-  char *data = buffer, *compbuf = NULL;
+  char *data = buffer;
   int len = pos;
 
-  if (pos) {
-    // Try compression
-    compbuf = new char[pos];
-    unsigned long destlen = pos;
-    if (!compress((Bytef*)compbuf, &destlen, (Bytef*)buffer, pos)) {
-      data = compbuf;
-      len = destlen;
-    }
-  }
   vmsaveResult r = writeSaveGame(gGameName, data, len, filename, icon);
   committed = pos;
-  if (compbuf != NULL)
-    delete[] compbuf;
   if (r != VMSAVE_OK)
     iofailed = true;
   displaySaveResult(r);
