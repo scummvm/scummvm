@@ -274,23 +274,14 @@ struct WTP_OBJ_HDR {
 // savegame
 
 struct WTP_SAVE_GAME {
-	uint16	reserved0;	// 10c2			unused
-	uint16	fSound;		// 10c4
-	uint16	nMoves;		// 10c6
-	uint16	nObjMiss;	// 10c8
-	uint16	nObjRet;	// 10ca
-	uint16	reserved1;	// 10ce			unused
-	uint16	reserved2;	// 10cf			unused
-	uint16	reserved3;	// 10d0			unused
-	uint16	iObjHave;	// 10d2
-	uint16	o10d4;		// 10d4		can be ignored
-	uint16	o10d6;		// 10d6		can be ignored
-	uint16	o10d8;		// 10d8		can be ignored
-	uint8	fGame[IDI_WTP_MAX_FLAG];			// 10da
-	uint8	iUsedObj[IDI_WTP_MAX_OBJ_MISSING];	// 1102
-	uint8	iObjRoom[IDI_WTP_MAX_ROOM_OBJ];		// 110c
-	uint16	o1136;		// 1136		can be ignored
-	uint16	o1138;		// 1138		can be ignored
+	uint8	fSound;
+	uint8	nMoves;
+	uint8	nObjMiss;
+	uint8	nObjRet;
+	uint8	iObjHave;
+	uint8	fGame[IDI_WTP_MAX_FLAG];
+	uint8	iUsedObj[IDI_WTP_MAX_OBJ_MISSING];
+	uint8	iObjRoom[IDI_WTP_MAX_ROOM_OBJ];
 };
 
 #define IDI_XOR_KEY			0x80

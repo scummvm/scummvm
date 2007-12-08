@@ -31,12 +31,14 @@
 
 #include "common/events.h"
 #include "common/savefile.h"
+#include "common/stream.h"
 
 namespace Agi {
 
 // default attributes
-#define IDA_DEFAULT		0x0F
-#define IDA_DEFAULT_REV	0xF0
+#define IDA_DEFAULT				0x0F
+#define IDA_DEFAULT_REV			0xF0
+#define WTP_SAVEGAME_VERSION	1
 
 void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
 	bool isBigEndian = (_vm->getPlatform() == Common::kPlatformAmiga);
@@ -1192,33 +1194,73 @@ void Winnie::gameOver() {
 }
 
 void Winnie::saveGame() {
-	uint8 *buffer = (uint8 *)malloc(sizeof(WTP_SAVE_GAME));
-	memcpy(buffer, &_game, sizeof(WTP_SAVE_GAME));
 	Common::OutSaveFile* outfile;
 	char szFile[256] = {0};
+	int i = 0;
 
 	sprintf(szFile, IDS_WTP_FILE_SAVEGAME);
 	if (!(outfile = _vm->getSaveFileMan()->openForSaving(szFile)))
 		return;
-	outfile->write(buffer, sizeof(WTP_SAVE_GAME));
-	delete outfile;
 
-	free(buffer);
+	outfile->writeUint32BE(MKID_BE('WINN'));	// header
+	outfile->writeByte(WTP_SAVEGAME_VERSION);
+
+	outfile->writeByte(_game.fSound);
+	outfile->writeByte(_game.nMoves);
+	outfile->writeByte(_game.nObjMiss);
+	outfile->writeByte(_game.nObjRet);
+	outfile->writeByte(_game.iObjHave);
+
+	for(i = 0; i < IDI_WTP_MAX_FLAG; i++)
+		outfile->writeByte(_game.fGame[i]);
+
+	for(i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++)
+		outfile->writeByte(_game.iUsedObj[i]);
+
+	for(i = 0; i < IDI_WTP_MAX_ROOM_OBJ; i++)
+		outfile->writeByte(_game.iObjRoom[i]);
+
+	outfile->finalize();
+
+	if (outfile->ioFailed())
+		warning("Can't write file '%s'. (Disk full?)", szFile);
+
+	delete outfile;
 }
 
 void Winnie::loadGame() {
-	uint8 *buffer = (uint8 *)malloc(sizeof(WTP_SAVE_GAME));
 	Common::InSaveFile* infile;
 	char szFile[256] = {0};
+	int saveVersion = 0;
+	int i = 0;
 
 	sprintf(szFile, IDS_WTP_FILE_SAVEGAME);
 	if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile)))
 		return;
-	infile->read(buffer, sizeof(WTP_SAVE_GAME));
-	delete infile;
 
-	memcpy(&_game, buffer, sizeof(WTP_SAVE_GAME));
-	free(buffer);
+	if (infile->readUint32BE() != MKID_BE('WINN'))
+		error("Winnie::loadGame wrong save game format");
+
+	saveVersion = infile->readByte();
+	if (saveVersion != WTP_SAVEGAME_VERSION)
+		warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, WTP_SAVEGAME_VERSION);
+
+	_game.fSound = infile->readByte();
+	_game.nMoves = infile->readByte();
+	_game.nObjMiss = infile->readByte();
+	_game.nObjRet = infile->readByte();
+	_game.iObjHave = infile->readByte();
+
+	for(i = 0; i < IDI_WTP_MAX_FLAG; i++)
+		_game.fGame[i] = infile->readByte();
+
+	for(i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++)
+		_game.iUsedObj[i] = infile->readByte();
+
+	for(i = 0; i < IDI_WTP_MAX_ROOM_OBJ; i++)
+		_game.iObjRoom[i] = infile->readByte();
+
+	delete infile;
 }
 
 // Console-related functions
