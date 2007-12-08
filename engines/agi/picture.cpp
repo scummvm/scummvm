@@ -64,9 +64,11 @@ void PictureMgr::putVirtPixel(int x, int y) {
 		*p = _scrColor | (*p & 0xf0);
 }
 
+#if 0
 static void drawProc(int x, int y, int c, void *data) {
 	((PictureMgr *)data)->putVirtPixel(x, y);
 }
+#endif
 
 /**
  * Draw an AGI line.
