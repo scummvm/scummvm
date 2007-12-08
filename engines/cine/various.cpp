@@ -2119,38 +2119,13 @@ uint16 executePlayerInput(void) {
 
 		switch (var_2 - 59) {
 		case 0:
-			if (allowPlayerInput) {
-				playerCommand = 0;
-				makeCommandLine();
-			}
-			break;
 		case 1:
-			if (allowPlayerInput) {
-				playerCommand = 1;
-				makeCommandLine();
-			}
-			break;
 		case 2:
-			if (allowPlayerInput) {
-				playerCommand = 2;
-				makeCommandLine();
-			}
-			break;
 		case 3:
-			if (allowPlayerInput) {
-				playerCommand = 3;
-				makeCommandLine();
-			}
-			break;
 		case 4:
-			if (allowPlayerInput) {
-				playerCommand = 4;
-				makeCommandLine();
-			}
-			break;
 		case 5:
 			if (allowPlayerInput) {
-				playerCommand = 5;
+				playerCommand = var_2 - 59;
 				makeCommandLine();
 			}
 			break;
