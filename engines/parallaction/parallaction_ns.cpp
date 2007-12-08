@@ -370,6 +370,10 @@ void Parallaction_ns::changeLocation(char *location) {
 	_gfx->setBlackPalette();
 	_gfx->updateScreen();
 
+    // BUG #1837503: kEngineChangeLocation flag must be cleared *before* commands
+    // and acommands are executed, so that it can be set again if needed.
+	_engineFlags &= ~kEngineChangeLocation;
+
 	runCommands(_location._commands);
 
 	doLocationEnterTransition();
@@ -380,8 +384,6 @@ void Parallaction_ns::changeLocation(char *location) {
 		_soundMan->playSfx(_locationSound, 0, true);
 
 	debugC(1, kDebugExec, "changeLocation() done");
-
-	_engineFlags &= ~kEngineChangeLocation;
 
 	return;
 
