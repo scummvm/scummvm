@@ -774,6 +774,10 @@ PaulaSound::PaulaSound(Audio::Mixer *mixer, CineEngine *vm)
 }
 
 PaulaSound::~PaulaSound() {
+	for (int i = 0; i < NUM_CHANNELS; ++i) {
+		stopSound(i);
+	}
+	stopMusic();
 }
 
 void PaulaSound::loadMusic(const char *name) {
@@ -798,17 +802,12 @@ void PaulaSound::loadMusic(const char *name) {
 void PaulaSound::playMusic() {
 	_mixer->stopHandle(_moduleHandle);
 	if (_moduleStream) {
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_moduleHandle, _moduleStream, -1, 255, 0, false);
+		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_moduleHandle, _moduleStream);
 	}
 }
 
 void PaulaSound::stopMusic() {
 	_mixer->stopHandle(_moduleHandle);
-
-	_mixer->pauseAll(true);
-
-	for(int i = 0;i < NUM_CHANNELS;i++)
-		_soundChannelsTable[i].data = 0;
 }
 
 void PaulaSound::fadeOutMusic() {
@@ -817,19 +816,28 @@ void PaulaSound::fadeOutMusic() {
 }
 
 void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) {
+	stopSound(channel);
 	SoundChannel *ch = &_soundChannelsTable[channel];
-	ch->frequency = frequency;
-	ch->data = data;
-	ch->size = size;
-	ch->volumeStep = volumeStep;
-	ch->stepCount = stepCount;
-	ch->step = stepCount;
-	ch->repeat = repeat != 0;
-	ch->volume = volume;
+	size = MIN<int>(size - SPL_HDR_SIZE, READ_BE_UINT16(data + 4));
+	if (size > 0) {
+		ch->data = (byte *)malloc(size);
+		if (ch->data) {
+			memcpy(ch->data, data + SPL_HDR_SIZE, size);
+			ch->frequency = frequency;
+			ch->size = size;
+			ch->volumeStep = volumeStep;
+			ch->stepCount = stepCount;
+			ch->step = stepCount;
+			ch->repeat = repeat != 0;
+			ch->volume = volume;
+		}
+	}
 }
 
 void PaulaSound::stopSound(int channel) {
 	_mixer->stopHandle(_channelsTable[channel]);
+	free(_soundChannelsTable[channel].data);
+	_soundChannelsTable[channel].data = 0;
 }
 
 void PaulaSound::update() {
@@ -844,23 +852,16 @@ void PaulaSound::update() {
 			ch->step = ch->stepCount;
 			ch->volume = CLIP(ch->volume + ch->volumeStep, 0, 63);
 			playSoundChannel(i, ch->frequency, ch->data, ch->size, ch->volume);
-			if (!ch->repeat) {
-				ch->data = 0;
-			}
+			ch->data = 0;
 		}
 	}
 }
 
-void PaulaSound::playSoundChannel(int channel, int frequency, const uint8 *data, int size, int volume) {
-	stopSound(channel);
+void PaulaSound::playSoundChannel(int channel, int frequency, uint8 *data, int size, int volume) {
 	assert(frequency > 0);
 	frequency = PAULA_FREQ / frequency;
-	size = MIN<int>(size - SPL_HDR_SIZE, READ_BE_UINT16(data + 4));
-	data += SPL_HDR_SIZE;
-	if (size > 0) {
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], const_cast<byte *>(data), size, frequency, 0);
-		_mixer->setChannelVolume(_channelsTable[channel], volume * Audio::Mixer::kMaxChannelVolume / 63);
-	}
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], data, size, frequency, 0);
+	_mixer->setChannelVolume(_channelsTable[channel], volume * Audio::Mixer::kMaxChannelVolume / 63);
 }
 
 } // End of namespace Cine
