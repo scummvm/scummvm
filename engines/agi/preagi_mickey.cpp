@@ -36,7 +36,7 @@
 
 #define IDI_SND_OSCILLATOR_FREQUENCY	1193180
 #define IDI_SND_TIMER_RESOLUTION		0.0182
-#define SAVEGAME_VERSION				1
+#define MSA_SAVEGAME_VERSION			1
 
 namespace Agi {
 
@@ -934,8 +934,8 @@ bool Mickey::loadGame() {
 				error("Mickey::loadGame wrong save game format");
 
 			saveVersion = infile->readByte();
-			if (saveVersion != SAVEGAME_VERSION)
-				warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, SAVEGAME_VERSION);
+			if (saveVersion != MSA_SAVEGAME_VERSION)
+				warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, MSA_SAVEGAME_VERSION);
 
 			_game.iRoom = infile->readByte();
 			_game.iPlanet = infile->readByte();
@@ -1040,7 +1040,7 @@ void Mickey::saveGame() {
 				return;
 		} else {
 			outfile->writeUint32BE(MKID_BE('MICK'));	// header
-			outfile->writeByte(SAVEGAME_VERSION);
+			outfile->writeByte(MSA_SAVEGAME_VERSION);
 
 			outfile->writeByte(_game.iRoom);
 			outfile->writeByte(_game.iPlanet);
