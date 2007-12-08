@@ -972,7 +972,7 @@ bool Mickey::loadGame() {
 				_game.fItemUsed[i] = infile->readByte() == 1;
 
 			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
-				_game.iItem[i] = infile->readByte();
+				_game.iItem[i] = infile->readSByte();
 
 			_game.nItems = infile->readByte();
 
@@ -991,7 +991,7 @@ bool Mickey::loadGame() {
 			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				_game.nRmMenu[i] = infile->readByte();
 
-			_game.nFrame = infile->readByte();
+			_game.nFrame = infile->readSByte();
 
 			diskerror = false;
 			delete infile;
@@ -1077,7 +1077,7 @@ void Mickey::saveGame() {
 				outfile->writeByte(_game.fItemUsed[i] ? 1 : 0);
 
 			for(i = 0; i < IDI_MSA_MAX_ITEM; i++)
-				outfile->writeByte(_game.iItem[i]);
+				outfile->writeSByte(_game.iItem[i]);
 
 			outfile->writeByte(_game.nItems);
 
@@ -1096,7 +1096,7 @@ void Mickey::saveGame() {
 			for(i = 0; i < IDI_MSA_MAX_ROOM; i++)
 				outfile->writeByte(_game.nRmMenu[i]);
 
-			outfile->writeByte(_game.nFrame);
+			outfile->writeSByte(_game.nFrame);
 
 			outfile->finalize();
 

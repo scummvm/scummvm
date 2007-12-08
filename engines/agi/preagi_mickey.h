@@ -715,7 +715,7 @@ struct MSA_GAME {
 	bool fItem[IDI_MSA_MAX_ITEM];
 	bool fItemUsed[IDI_MSA_MAX_ITEM];
 
-	uint8 iItem[IDI_MSA_MAX_ITEM];
+	int8 iItem[IDI_MSA_MAX_ITEM];
 	uint8 nItems;
 
 	//uint8 fRmTxt[IDI_MSA_MAX_ROOM];
@@ -726,7 +726,7 @@ struct MSA_GAME {
 	uint8 iRmMenu[IDI_MSA_MAX_ROOM];
 	uint8 nRmMenu[IDI_MSA_MAX_ROOM];
 
-	uint8 nFrame;
+	int8 nFrame;
 };
 
 class Mickey {
