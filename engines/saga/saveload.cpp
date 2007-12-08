@@ -217,7 +217,8 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 
 	out->finalize();
 
-	// TODO: Check out->ioFailed()
+	if (out->ioFailed())
+		warning("Can't write file '%s'. (Disk full?)", fileName);
 
 	delete out;
 }
@@ -252,7 +253,7 @@ void SagaEngine::load(const char *fileName) {
 		warning("This savegame is not endian-safe. There may be problems");
 
 	if (_saveHeader.type != MKID_BE('SAGA')) {
-		error("SagaEngine::load wrong format");
+		error("SagaEngine::load wrong save game format");
 	}
 
 	if (_saveHeader.version > 4) {
