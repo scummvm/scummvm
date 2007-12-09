@@ -96,9 +96,7 @@ void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 
 	if (x1 == x2) {
 		if (y1 > y2) {
-			y = y1;
-			y1 = y2;
-			y2 = y;
+			SWAP(y1, y2);
 		}
 
 		for (; y1 <= y2; y1++)
@@ -111,9 +109,7 @@ void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
 
 	if (y1 == y2) {
 		if (x1 > x2) {
-			x = x1;
-			x1 = x2;
-			x2 = x;
+			SWAP(x1, x2);
 		}
 		for (; x1 <= x2; x1++)
 			putVirtPixel(x1, y1);
