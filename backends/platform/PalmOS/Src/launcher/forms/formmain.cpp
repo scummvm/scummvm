@@ -29,7 +29,6 @@
 #include "start.h"
 #include "skin.h"
 #include "games.h"
-#include "scumm_globals.h"
 #include "globals.h"
 
 #include "base/version.h"
