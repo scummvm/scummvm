@@ -378,13 +378,6 @@ Boolean StartScummVM(Int16 engine) {
 		// game name
 		ArgsAdd(&argvP[argc], gameInfoP->gameP, NULL, &argc);
 
-		// others globals data
-		gVars->CD.enable = gameInfoP->musicInfo.sound.CD;
-		gVars->CD.driver = gameInfoP->musicInfo.sound.drvCD;
-		gVars->CD.format = gameInfoP->musicInfo.sound.frtCD;
-		gVars->CD.volume = gameInfoP->musicInfo.volume.audiocd;
-		gVars->CD.defaultTrackLength = gameInfoP->musicInfo.sound.defaultTrackLength;
-		gVars->CD.firstTrack = gameInfoP->musicInfo.sound.firstTrack;
 		gVars->palmVolume = gameInfoP->musicInfo.sound.music ? gameInfoP->musicInfo.volume.palm : 0;
 
 		MemHandleUnlock(recordH);
