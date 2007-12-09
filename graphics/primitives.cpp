@@ -28,7 +28,7 @@ namespace Graphics {
 
 #ifdef MACOSX
 // Older versions of Mac OS X didn't supply a sqrtf function. To ensure
-// binary compatibiity, we force using pow instead of sqrtf (the only
+// binary compatibility, we force using sqrt instead of sqrtf (the only
 // potential drawback is that it might be a little bit slower).
 #define sqrtf sqrt
 #endif

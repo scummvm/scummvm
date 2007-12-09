@@ -27,7 +27,7 @@
 
 #ifdef MACOSX
 // Older versions of Mac OS X didn't supply a powf function. To ensure
-// binary compatibiity, we force using pow instead of powf (the only
+// binary compatibility, we force using pow instead of powf (the only
 // potential drawback is that it might be a little bit slower).
 #define powf pow
 #endif
