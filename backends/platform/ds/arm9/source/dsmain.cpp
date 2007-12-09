@@ -817,12 +817,17 @@ void displayMode16BitFlipBuffer() {
                                               BG_PALETTE );
         
         #ifdef SCALER_PROFILE
+        // 10 pixels : 1ms
         u16 t1 = TIMER1_DATA;
 	    TIMER1_CR &= ~TIMER_ENABLE;
         u32 dt = t1 - t0;
         u32 dt_us = (dt * 10240) / 334;
-        u32 dt_ms = dt_us / 1000;
-        memset(base, 0xFF, dt_ms*2);
+        u32 dt_10ms = dt_us / 100;
+        int i;
+        for(i=0; i<dt_10ms; ++i)
+            base[i] = ((i/10)&1) ? 0xFFFF : 0x801F;
+        for(; i<256; ++i)
+            base[i] = 0x8000;
         #endif
 	}
 	#ifdef HEAVY_LOGGING
