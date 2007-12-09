@@ -200,6 +200,8 @@ Boolean StartScummVM(Int16 engine) {
 
 	// start command line (exec name)
 	ArgsAdd(&argvP[argc], "-", NULL, &argc);
+	// standard path
+	ArgsAdd(&argvP[argc], "--themepath=", "/PALM/Programs/ScummVM/Themes", &argc);
 
 	UInt16 index = GamGetSelected();
 	// no game selected
