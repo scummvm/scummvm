@@ -754,6 +754,8 @@ void Hotspot::converse(uint16 destCharacterId, uint16 messageId, bool srcStandSt
 }
 
 void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
+	debugC(ERROR_DETAILED, kLureDebugStrings, "Hotspot::showMessage messageId=%xh srcChar=%xh, destChar=%xh",
+		messageId, _hotspotId, destCharacterId);
 	Resources &res = Resources::getReference();
 	MemoryBlock *data = res.messagesData();
 	Hotspot *hotspot;
@@ -775,7 +777,9 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 	}
 
 	// default response if a specific response not found
+
 	if (idVal == 0xffff) idVal = 0x8c4; 
+	debugC(ERROR_DETAILED, kLureDebugStrings, "Hotspot::showMessage idVal=%xh", idVal);
 
 	if (idVal == 0x76) {
 		// Special code id for showing the puzzled talk bubble
@@ -1199,6 +1203,10 @@ void Hotspot::doAction() {
 }
 
 void Hotspot::doAction(Action action, HotspotData *hotspot) {
+	StringList &stringList = Resources::getReference().stringList();
+	debugC(ERROR_INTERMEDIATE, kLureDebugHotspots,  "Action charId=%xh Action=%d/%s", 
+		_hotspotId, (int)action, stringList.getString((int)action));
+
 	ActionProcPtr actionProcList[NPC_JUMP_ADDRESS + 1] = {
 		&Hotspot::doNothing, 
 		&Hotspot::doGet, 

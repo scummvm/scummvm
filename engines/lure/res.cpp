@@ -462,8 +462,10 @@ int Resources::getAnimationIndex(HotspotAnimData *animData) {
 
 uint16 Resources::getHotspotAction(uint16 actionsOffset, Action action) {
 	HotspotActionList *list = _actionsList.getActions(actionsOffset);
-	if (!list) return 0;
-	return list->getActionOffset(action);
+	uint16 offset = (!list) ? 0 : list->getActionOffset(action);
+	debugC(ERROR_DETAILED, kLureDebugHotspots, 
+		"Resources::getHotspotAction actionsOffset=%xh result=%xh", actionsOffset, offset);
+	return offset;
 }
 
 TalkHeaderData *Resources::getTalkHeader(uint16 hotspotId) {
