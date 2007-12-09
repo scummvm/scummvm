@@ -822,12 +822,12 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 			obj->_sceneNumber = -1;
 
 	if (_vm->getGameType() == GType_IHNM) {
-		if (_vm->getGameId() != GID_IHNM_DEMO) {
+		// Don't update _spriteListResourceId if spriteId is 0 and the object is not the
+		// psychic profile. If spriteId == 0, the object's sprite is incorrectly reset.
+		// This occurs in the IHNM demo and with some incorrect scripts in the retail version
+		// of the game
+		if (spriteId > 0 || (spriteId == 0 && objectId == IHNM_OBJ_PROFILE))
 			obj->_spriteListResourceId = spriteId;
-		} else {
-			// Don't update the object's _spriteListResourceId in the IHNM demo, as this function is
-			// called incorrectly there (with spriteId == 0, which resets the object sprites)
-		}
 	} else {
 		obj->_spriteListResourceId = OBJ_SPRITE_BASE + spriteId;
 	}
