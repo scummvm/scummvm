@@ -176,7 +176,7 @@ Rescale_320x256x1555_To_256x256x1555:
 	@ r1 = src
 	@ r2 = dstStride
 	@ r3 = srcStride
-	STMFD	r13!,{r4-r5,r8-r11,r14}
+	STMFD	r13!,{r4-r6,r8-r11,r14}
 
 	SUB	r2,r2,#64*4		@ srcStride -= line length
 	SUB	r3,r3,#64*5		@ dstStride -= line length
@@ -184,6 +184,8 @@ Rescale_320x256x1555_To_256x256x1555:
 	MOV	r8,    #0x0000001F
 	ORR	r8, r8,#0x00007C00
 	ORR	r8, r8,#0x03E00000	@ r8 = mask
+	MOV	r6, #0x8000
+	ORR	r6, r6, r6, LSL #16
 	MOV	r5, #200		@ r5 = y
 yLoop3:
 	MOV	r4, #64			@ r4 = x
@@ -218,20 +220,16 @@ xLoop3:
 	AND	r11,r8, r11,LSR #1	@ r11= dst2 (split)
 	AND	r12,r8, r12,LSR #2	@ r12= dst3 (split)
 
-	ORR	r9, r9, r9, LSR #16	@ r9 = dst0
-	ORR	r10,r10,r10,LSR #16	@ r10= dst1
-	ORR	r11,r11,r11,LSR #16	@ r11= dst2
-	ORR	r12,r12,r12,LSR #16	@ r12= dst3
+	ORR	r9, r9, r9, ROR #16	@ r9 = dst0
+	ORR	r10,r10,r10,ROR #16	@ r10= dst1
+	ORR	r11,r11,r11,ROR #16	@ r11= dst2
+	ORR	r12,r12,r12,ROR #16	@ r12= dst3
 
-	ORR	r9, r9, #0x8000
-	ORR	r10,r10,#0x8000
-	ORR	r11,r11,#0x8000
-	ORR	r12,r12,#0x8000
-
-	STRH	r9, [r0],#2
-	STRH	r10,[r0],#2
-	STRH	r11,[r0],#2
-	STRH	r12,[r0],#2
+	ORR	r10,r6, r10,LSL #16
+	ORR	r9, r10,r9, LSR #16
+	ORR	r12,r6, r12,LSL #16
+	ORR	r11,r12,r11,LSR #16
+	STMIA	r0!,{r9,r11}
 
 	SUBS	r4,r4,#1
 	BGT	xLoop3
@@ -241,7 +239,7 @@ xLoop3:
 	SUBS	r5,r5,#1
 	BGT	yLoop3
 
-	LDMFD	r13!,{r4-r5,r8-r11,PC}
+	LDMFD	r13!,{r4-r6,r8-r11,PC}
 
 	@ ARM implementation of Rescale_320x256xPAL8_To_256x256x1555
 	@
@@ -308,20 +306,16 @@ xLoop4:
 	AND	r11,r8, r11,LSR #1	@ r11= dst2 (split)
 	AND	r12,r8, r12,LSR #2	@ r12= dst3 (split)
 
-	ORR	r9, r9, r9, LSR #16	@ r9 = dst0
-	ORR	r10,r10,r10,LSR #16	@ r10= dst1
-	ORR	r11,r11,r11,LSR #16	@ r11= dst2
-	ORR	r12,r12,r12,LSR #16	@ r12= dst3
+	ORR	r9, r9, r9, ROR #16	@ r9 = dst0
+	ORR	r10,r10,r10,ROR #16	@ r10= dst1
+	ORR	r11,r11,r11,ROR #16	@ r11= dst2
+	ORR	r12,r12,r12,ROR #16	@ r12= dst3
 
-	@ORR	r9, r9, #0x8000
-	@ORR	r10,r10,#0x8000
-	@ORR	r11,r11,#0x8000
-	@ORR	r12,r12,#0x8000
-
-	STRH	r9, [r0],#2
-	STRH	r10,[r0],#2
-	STRH	r11,[r0],#2
-	STRH	r12,[r0],#2
+	MOV	r10,r10,LSL #16
+	ORR	r9, r10,r9, LSR #16
+	MOV	r12,r12,LSL #16
+	ORR	r11,r12,r11,LSR #16
+	STMIA	r0!,{r9,r11}
 
 	SUBS	r4,r4,#1
 	BGT	xLoop4
