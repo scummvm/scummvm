@@ -144,7 +144,7 @@ private:
 	void clearSoundCallback();
 
 protected:
-	UInt16 _sysOldCoord, _sysOldOrientation;
+	UInt16 _sysOldCoord, _sysOldOrientation, _sysOldTriggerState;
 	Boolean _stretched, _cursorPaletteDisabled;
 
 	enum {

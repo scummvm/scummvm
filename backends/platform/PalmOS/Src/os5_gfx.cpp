@@ -71,8 +71,10 @@ void OSystem_PalmOS5::load_gfx_mode() {
 
 	if (OPTIONS_TST(kOptModeRotatable)) {
 		_sysOldOrientation = __68K(SysGetOrientation());
+		_sysOldTriggerState = __68K(PINGetInputTriggerState());
 		__68K(SysSetOrientation(sysOrientationLandscape));
 		__68K(SysSetOrientationTriggerState(sysOrientationTriggerDisabled));
+		__68K(PINSetInputTriggerState(pinInputTriggerDisabled));
 	}
 
 	gVars->indicator.on = RGBToColor(0,255,0);
@@ -178,8 +180,10 @@ void OSystem_PalmOS5::unload_gfx_mode() {
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
 	clearScreen();
 
-	if (OPTIONS_TST(kOptModeRotatable))
+	if (OPTIONS_TST(kOptModeRotatable)) {
+		__68K(PINSetInputTriggerState(_sysOldTriggerState));
 		__68K(SysSetOrientation(_sysOldOrientation));
+	}
 
 	WinSetCoordinateSystem(_sysOldCoord);
 }

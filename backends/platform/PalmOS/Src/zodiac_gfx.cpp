@@ -66,8 +66,10 @@ void OSystem_PalmZodiac::load_gfx_mode() {
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
 
 	_sysOldOrientation = SysGetOrientation();
+	_sysOldTriggerState = PINGetInputTriggerState();
 	SysSetOrientation(sysOrientationLandscape);
 	SysSetOrientationTriggerState(sysOrientationTriggerDisabled);
+	PINSetInputTriggerState(pinInputTriggerDisabled);
 
 	gVars->indicator.on = RGBToColor(0,255,0);
 	gVars->indicator.off = RGBToColor(0,0,0);
@@ -190,6 +192,7 @@ void OSystem_PalmZodiac::unload_gfx_mode() {
 
 	MemPtrFree(_offScreenP);
 
+	PINSetInputTriggerState(_sysOldTriggerState);
 	SysSetOrientation(_sysOldOrientation);
 	StatShow();
 	PINSetInputAreaState(pinInputAreaOpen);
