@@ -47,7 +47,8 @@ enum {
 	kLureDebugAnimations = 1 << 1,
 	kLureDebugHotspots = 1 << 2,
 	kLureDebugFights = 1 << 3,
-	kLureDebugSounds = 1 << 4
+	kLureDebugSounds = 1 << 4,
+	kLureDebugStrings = 1 << 5
 };
 
 #define ERROR_BASIC 1

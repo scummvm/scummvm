@@ -50,6 +50,7 @@ private:
 	CharacterEntry *_chars[MAX_NUM_CHARS];
 	uint8 _numChars;
 	byte *_srcPos;
+	byte *_stringTable;
 	byte _bitMask;
 
 	void add(const char *sequence, char ascii);

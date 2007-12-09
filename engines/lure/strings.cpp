@@ -103,7 +103,6 @@ byte StringData::readBit() {
 
 bool StringData::initPosition(uint16 stringId) {
 	uint16 roomNumber = Room::getReference().roomNumber();
-	byte *stringTable;
 	
 	if ((roomNumber >= 0x2A) && (stringId >= STRING_ID_RANGE) && (stringId < STRING_ID_UPPER)) 
 		stringId = 0x76;
@@ -111,16 +110,16 @@ bool StringData::initPosition(uint16 stringId) {
 		stringId = 0x76;
 
 	if (stringId < STRING_ID_RANGE)
-		stringTable = _strings[0]->data();
+		_stringTable = _strings[0]->data();
 	else if (stringId < STRING_ID_RANGE*2) {
 		stringId -= STRING_ID_RANGE;
-		stringTable = _strings[1]->data();
+		_stringTable = _strings[1]->data();
 	} else {
 		stringId -= STRING_ID_RANGE * 2;
-		stringTable = _strings[2]->data();
+		_stringTable = _strings[2]->data();
 	}
 
-	_srcPos = stringTable + 4;
+	_srcPos = _stringTable + 4;
 	
 	uint32 total = 0;
 	int numLoops = stringId >> 5;
@@ -131,7 +130,7 @@ bool StringData::initPosition(uint16 stringId) {
 
 	numLoops = stringId & 0x1f;
 	if (numLoops!= 0) {
-		byte *tempPtr = stringTable + (stringId & 0xffe0) + READ_LE_UINT16(stringTable);
+		byte *tempPtr = _stringTable + (stringId & 0xffe0) + READ_LE_UINT16(_stringTable);
 		
 		for (int ctr = 0; ctr < numLoops; ++ctr) {
 			byte v = *tempPtr++;
@@ -148,7 +147,7 @@ bool StringData::initPosition(uint16 stringId) {
 	if ((total & 3) != 0)
 		_bitMask >>= (total & 3) * 2;
 
-	_srcPos = stringTable + (total >> 2) + READ_LE_UINT16(stringTable + 2);
+	_srcPos = _stringTable + (total >> 2) + READ_LE_UINT16(_stringTable + 2);
 
 	// Final positioning to start of string
 	for (;;) {
@@ -172,7 +171,7 @@ char StringData::readCharacter() {
 		// Scan through list for a match
 		for (int index = 0; _chars[index] != NULL; ++index) {
 			if ((_chars[index]->_numBits == numBits) && 
-				(_chars[index]->_sequence == searchValue))
+				(_chars[index]->_sequence == searchValue)) 
 				return _chars[index]->_ascii;
 		}
 	}
@@ -184,6 +183,9 @@ char StringData::readCharacter() {
 
 void StringData::getString(uint16 stringId, char *dest, const char *hotspotName, 
 		const char *characterName, int hotspotArticle, int characterArticle) {
+	debugC(ERROR_INTERMEDIATE, kLureDebugStrings, 
+		"StringData::getString stringId=%xh hotspot=%d,%s character=%d,%s",
+		stringId, hotspotArticle, hotspotName, characterArticle, characterName);
 	StringList &stringList = Resources::getReference().stringList();
 	char ch;
 	strcpy(dest, "");
@@ -192,8 +194,11 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 	if (stringId == 0) return;
 
 	bool includeArticles = initPosition(stringId);
+	uint32 charOffset = _srcPos - _stringTable;
+	uint8 charBitMask = _bitMask;
 
 	ch = readCharacter();
+
 	while (ch != '\0') {
 		if (ch == '%') {
 			// Copy over hotspot or action 
@@ -209,18 +214,29 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 					strcpy(destPos, p);
 				}
 				destPos += strlen(destPos);
+
+				debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh name=%s",
+					charOffset, charBitMask, ch, p);
 			}
 		} else if ((uint8) ch >= 0xa0) {
 			const char *p = getName((uint8) ch - 0xa0);
 			strcpy(destPos, p);
 			destPos += strlen(p);
+			debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh sequence='%s'",
+				charOffset, charBitMask, (uint8)ch, p);
 		} else {
 			*destPos++ = ch;
+			debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh char=%c",
+				charOffset, charBitMask, ch, ch);
 		}
 
+		charOffset = _srcPos - _stringTable;
+		charBitMask = _bitMask;
 		ch = readCharacter();
 	}
 
+	debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh EOS", 
+		charOffset, charBitMask, ch);
 	*destPos = '\0';
 }
 

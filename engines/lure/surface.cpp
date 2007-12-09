@@ -42,7 +42,7 @@ namespace Lure {
 static MemoryBlock *int_font = NULL;
 static MemoryBlock *int_dialog_frame = NULL;
 static uint8 fontSize[256];
-static int numFontChars;
+int numFontChars;
 
 void Surface::initialise() {
 	int_font = Disk::getReference().getEntry(FONT_RESOURCE_ID);
@@ -486,6 +486,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 /*--------------------------------------------------------------------------*/
 
 void Dialog::show(const char *text) {
+	debugC(ERROR_BASIC, kLureDebugStrings, "Dialog::show text=%s", text);
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Room &room = Room::getReference();
@@ -505,6 +506,8 @@ void Dialog::show(const char *text) {
 }
 
 void Dialog::show(uint16 stringId, const char *hotspotName, const char *characterName) {
+	debugC(ERROR_BASIC, kLureDebugStrings, "Hotspot::showMessage stringId=%xh hotspot=%s, character=%s",
+		stringId, hotspotName, characterName);
 	char buffer[MAX_DESC_SIZE];
 	StringData &sl = StringData::getReference();
 
