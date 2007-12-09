@@ -1250,6 +1250,8 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 		&Hotspot::npcJumpAddress};
 
 	(this->*actionProcList[action])(hotspot);
+	debugC(ERROR_DETAILED, kLureDebugHotspots,  "Action charId=%xh Action=%d/%s Complete", 
+		_hotspotId, (int)action, stringList.getString((int)action));
 }
 
 void Hotspot::doNothing(HotspotData *hotspot) {

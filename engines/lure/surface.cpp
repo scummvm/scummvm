@@ -493,8 +493,11 @@ void Dialog::show(const char *text) {
 	mouse.cursorOff();
 
 	room.update();
+	debugC(ERROR_DETAILED, kLureDebugStrings, "Dialog::show creating dialog");
 	Surface *s = Surface::newDialog(INFO_DIALOG_WIDTH, text);
+	debugC(ERROR_DETAILED, kLureDebugStrings, "Dialog::show created dialog");
 	s->copyToScreen(INFO_DIALOG_X, INFO_DIALOG_Y);
+	debugC(ERROR_DETAILED, kLureDebugStrings, "Dialog::show copied to screen");
 
 	// Wait for a keypress or mouse button
 	Events::getReference().waitForPress();
