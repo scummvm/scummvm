@@ -2080,7 +2080,7 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 
 	// Use the current directory for searching if fslist == NULL
 	if (fslist == NULL) {
-		Common::String path = ConfMan.get("path").c_str();
+		Common::String path = ConfMan.get("path");
 
 		if (path.empty())
 			path = ".";
