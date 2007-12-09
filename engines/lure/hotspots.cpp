@@ -757,6 +757,7 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 	debugC(ERROR_DETAILED, kLureDebugStrings, "Hotspot::showMessage messageId=%xh srcChar=%xh, destChar=%xh",
 		messageId, _hotspotId, destCharacterId);
 	Resources &res = Resources::getReference();
+	char nameBuffer[MAX_HOTSPOT_NAME_SIZE];
 	MemoryBlock *data = res.messagesData();
 	Hotspot *hotspot;
 	uint16 *v = (uint16 *) data->data();
@@ -794,9 +795,13 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 	} else if (idVal >= 0x8000) {
 		// Handle string display
 		idVal &= 0x7fff;
-		hotspot = res.getActiveHotspot(res.fieldList().getField(ACTIVE_HOTSPOT_ID));
-		const char *itemName = (hotspot == NULL) ? NULL : hotspot->getName();
-
+		HotspotData *hotspotData = res.getHotspot(res.fieldList().getField(ACTIVE_HOTSPOT_ID));
+		const char *itemName = NULL;
+		if (hotspotData != NULL) {
+			StringData::getReference().getString(hotspotData->nameId, nameBuffer);
+			itemName = nameBuffer;
+		}
+			
 		Dialog::show(idVal, itemName, this->getName());
 		
 	} else if (idVal != 0) {
