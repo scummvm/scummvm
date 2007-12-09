@@ -38,9 +38,16 @@ extern "C" {
 
 Err __68k_StatShow();
 Err __68k_StatHide();
+
 Err __68k_PINSetInputAreaState(UInt16 state);
+UInt16 __68k_PINGetInputAreaState(void);
+
+Err __68k_PINSetInputTriggerState(UInt16 state);
+UInt16 __68k_PINGetInputTriggerState(void);
+
 Err __68k_SysSetOrientation(UInt16 orientation);
 UInt16 __68k_SysGetOrientation(void);
+
 Err __68k_SysSetOrientationTriggerState(UInt16 triggerState);
 UInt16 __68k_SysGetOrientationTriggerState(void);
 

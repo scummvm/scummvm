@@ -47,6 +47,24 @@ PACE_CLASS_WRAPPER(Err)
 	PACE_PIN_EXEC(pinPINSetInputAreaState, Err)
 }
 
+PACE_CLASS_WRAPPER(UInt16)
+	__68k_PINGetInputAreaState(void) {
+	PACE_PIN_EXEC_NP(pinPINGetInputAreaState, UInt16)
+}
+
+PACE_CLASS_WRAPPER(Err)
+	__68k_PINSetInputTriggerState(UInt16 state) {
+	PACE_PARAMS_INIT()
+	PACE_PARAMS_ADD16(state)
+	PACE_PARAMS_END()
+	PACE_PIN_EXEC(pinPINSetInputTriggerState, Err)
+}
+
+PACE_CLASS_WRAPPER(UInt16)
+	__68k_PINGetInputTriggerState(void) {
+	PACE_PIN_EXEC_NP(pinPINGetInputTriggerState, UInt16)
+}
+
 PACE_CLASS_WRAPPER(Err)
 	__68k_SysSetOrientation(UInt16 orientation) {
 	PACE_PARAMS_INIT()
