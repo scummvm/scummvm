@@ -39,6 +39,18 @@ using namespace Common;
 /*                                                                         */
 /*-------------------------------------------------------------------------*/
 
+/* HACK/FIXME: three structs are misaligned (at least on 4-byte aligned system,
+   should have more troubles with coming 64bit systems), GET_NEXT let us read
+   properly sequence of struct in lure.dat hardcoding size of struct.
+*/
+
+#define GET_NEXT(v, sc)		v = (sc *)(((byte *)v) + kSizeOf##sc)
+
+#define kSizeOfRoomExitJoinResource			13
+#define kSizeOfHotspotResource				62
+#define kSizeOfHotspotActionResource		3
+
+
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 struct VersionStructure {

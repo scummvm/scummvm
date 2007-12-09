@@ -77,8 +77,9 @@ extern const RoomTranslationRecord roomTranslations[] = {
 RoomData::RoomData(RoomResource *rec, MemoryBlock *pathData) { 
 	roomNumber = READ_LE_UINT16(&rec->roomNumber);
 	hdrFlags = rec->hdrFlags;
-	actions = FROM_LE_32(rec->actions) & 0xfffffff;
-	flags = (FROM_LE_32(rec->actions) >> 24) & 0xf0;
+
+	actions = READ_LE_UINT32(&rec->actions) & 0xfffffff;
+	flags = (READ_LE_UINT32(&rec->actions) >> 24) & 0xf0;
 	descId = READ_LE_UINT16(&rec->descId);
 	sequenceOffset = READ_LE_UINT16(&rec->sequenceOffset);
 	numLayers = READ_LE_UINT16(&rec->numLayers);
@@ -90,7 +91,7 @@ RoomData::RoomData(RoomResource *rec, MemoryBlock *pathData) {
 
 	clippingXStart = READ_LE_UINT16(&rec->clippingXStart);
 	clippingXEnd = READ_LE_UINT16(&rec->clippingXEnd);
-	exitTime = FROM_LE_32(rec->exitTime);
+	exitTime = READ_LE_UINT32(&rec->exitTime);
 	areaFlag = rec->areaFlag;
 	walkBounds.left = READ_LE_UINT16(&rec->walkBounds.xs);
 	walkBounds.right = READ_LE_UINT16(&rec->walkBounds.xe);
@@ -361,7 +362,8 @@ void RoomExitJoinList::loadFromStream(ReadStream *stream) {
 
 HotspotActionData::HotspotActionData(HotspotActionResource *rec) {
 	action = (Action) rec->action;
-	sequenceOffset = READ_LE_UINT16(&rec->sequenceOffset);
+	// FIXME: some compilers may add padding to properly align the second member
+	sequenceOffset = READ_LE_UINT16(((byte *)rec) + 1);
 }
 
 uint16 HotspotActionList::getActionOffset(Action action) {
@@ -604,7 +606,9 @@ HotspotActionList::HotspotActionList(uint16 id, byte *data) {
 
 	HotspotActionResource *actionRec = (HotspotActionResource *) data;
 	
-	for (int actionCtr = 0; actionCtr < numItems; ++actionCtr, ++actionRec) {
+	for (int actionCtr = 0; actionCtr < numItems; ++actionCtr, 
+		GET_NEXT(actionRec, HotspotActionResource)) {
+
 		HotspotActionData *actionEntry = new HotspotActionData(actionRec);
 		push_back(actionEntry);
 	}

@@ -168,7 +168,8 @@ void Resources::reloadData() {
 	while (READ_LE_UINT16(&joinRec->hotspot1Id) != 0xffff) {
 		RoomExitJoinData *newEntry = new RoomExitJoinData(joinRec);
 		_exitJoins.push_back(newEntry);
-		++joinRec;
+
+		GET_NEXT(joinRec, RoomExitJoinResource);
 	}
 	delete mb;
 
@@ -178,7 +179,8 @@ void Resources::reloadData() {
 	while (READ_LE_UINT16(&hsRec->hotspotId) != 0xffff) {
 		HotspotData *newEntry = new HotspotData(hsRec);
 		_hotspotData.push_back(newEntry);
-		++hsRec;
+
+		GET_NEXT(hsRec, HotspotResource);
 	}
 	delete mb;
 
