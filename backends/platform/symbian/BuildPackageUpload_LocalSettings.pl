@@ -32,14 +32,14 @@
 		$ReallyQuiet = 0;
 		
 		# specify an optional FTP server to upload to after each Build+Package (can leave empty)
-		#$FTP_Host = "wicked.student.utwente.nl";
-		#$FTP_User = "upload";
-		#$FTP_Pass = "upload";
-		#$FTP_Dir  = "test_Wicked";
+		#$FTP_Host = "host.domain";
+		#$FTP_User = "test";
+		#$FTP_Pass = "test";
+		#$FTP_Dir  = "test";
 
-		#$FTP_Host = "anotherguest.k0.se";
-		$FTP_User = "ag";
-		$FTP_Pass = "uiq05";
+		#$FTP_Host = "host.com";
+		$FTP_User = "something";
+		$FTP_Pass = "password";
 		$FTP_Dir  = "cvsbuilds";
 	
 		# possible SDKs: ("UIQ2", UIQ3", "S60v1", "S60v2", "S60v3", "S80", "S90")
@@ -81,9 +81,9 @@
 		$SkipExistingPackages = 0;
 		$ReallyQuiet = 0;
 		
-		#$FTP_Host = "anotherguest.k0.se";
-		#$FTP_User = "ag@anotherguest.k0.se";
-		#$FTP_Pass = "uiq05";
+		#$FTP_Host = "host.com";
+		#$FTP_User = "ag@host.com";
+		#$FTP_Pass = "password";
 		#$FTP_Dir  = "cvsbuilds";
 		
 		#$SDK_RootDirs{'UIQ2'}= "C:\\UIQ2";
@@ -115,9 +115,9 @@ elsif ($ENV{'COMPUTERNAME'} eq "BIGMACHINE")
 		$SkipExistingPackages = 1;
 		$ReallyQuiet = 1;
 		
-		#$FTP_Host = "anotherguest.k0.se";
-		#$FTP_User = "ag@anotherguest.k0.se";
-		#$FTP_Pass = "uiq05";
+		#$FTP_Host = "host.com";
+		#$FTP_User = "ag@host.com";
+		#$FTP_Pass = "password";
 		#$FTP_Dir  = "cvsbuilds";
 		
 		#$SDK_RootDirs{'UIQ2'}= "E:\\UIQ2";
