@@ -172,6 +172,8 @@ enum {
 	ENGINE_AGI,
 	ENGINE_TOUCHE,
 	ENGINE_CRUISE,
+	ENGINE_DRASCULA,
+	ENGINE_IGOR,
 	ENGINE_COUNT
 };
 
@@ -194,6 +196,8 @@ static const struct {
 	{ "agi",			"Sierra AGI" },
 	{ "touche",			"Touche: The Adventures of the Fifth Musketeer" },
 	{ "cruise",			"Beta -> Cruise for a Corpse" },
+	{ "drascula",		"Beta -> Drascula" },
+	{ "igor",			"Beta -> Igor" },
 };
 
 // protos
