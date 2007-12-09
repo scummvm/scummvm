@@ -1318,7 +1318,6 @@ void Parallaction_ns::parseExamineData(Script &script, Zone *z) {
 
 		if (!scumm_stricmp(_tokens[0], "file")) {
 			data->_filename = strdup(_tokens[1]);
-			data->_cnv = _disk->loadStatic(_tokens[1]);
 		}
 		if (!scumm_stricmp(_tokens[0], "desc")) {
 			data->_description = parseComment(script);

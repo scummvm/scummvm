@@ -488,6 +488,10 @@ void Parallaction::displayComment(ExamineData *data) {
 	}
 
 	if (data->_filename) {
+        if (data->_cnv == 0) {
+            data->_cnv = _disk->loadStatic(data->_filename);
+        }
+
 		_gfx->setHalfbriteMode(true);
 		_gfx->setDialogueBalloon(data->_description, 0, 90, 130, 0, 0);
 		Common::Rect r;
