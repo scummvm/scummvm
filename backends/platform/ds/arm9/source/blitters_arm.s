@@ -280,13 +280,52 @@ palLoop:
 
 	MOV	r5,#200			@ r5 = y
 yLoop4:
-	MOV	r4,#64			@ r4 = x
+	MOV	r4,#32			@ r4 = x
 xLoop4:
-	LDRB	r9, [r1],#1		@ r9 = src0
-	LDRB	r10,[r1],#1		@ r10= src1
-	LDRB	r11,[r1],#1		@ r11= src2
-	LDRB	r12,[r1],#1		@ r12= src3
-	LDRB	r14,[r1],#1		@ r14= src4
+	LDRH	r9, [r1],#2
+	MOV     r10, r9, LSR #8
+    AND     r9, r9, #0xFF
+	LDRH	r11,[r1],#2
+	MOV     r12, r11, LSR #8
+    AND     r11, r11, #0xFF
+	LDRB	r14,[r1],#1
+
+	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src0]
+	LDR	r10,[r13,r10,LSL #2]	@ r10= pal[src1]
+	LDR	r11,[r13,r11,LSL #2]	@ r11= pal[src2]
+	LDR	r12,[r13,r12,LSL #2]	@ r12= pal[src3]
+	LDR	r14,[r13,r14,LSL #2]	@ r13= pal[src4]
+
+	ADD	r9, r9, r9, LSL #1	@ r9 = 3*src0
+	ADD	r9, r9, r10		@ r9 = dst0<<2
+	ADD	r10,r10,r11		@ r10= dst1
+	ADD	r11,r11,r12		@ r11= dst2
+	ADD	r12,r12,r14		@ r12= src3 + src4
+	ADD	r12,r12,r14,LSL #1	@ r12= src3 + src4*3 = dst3<<2
+
+	AND	r9, r8, r9, LSR #2	@ r9 = dst0 (split)
+	AND	r10,r8, r10,LSR #1	@ r10= dst1 (split)
+	AND	r11,r8, r11,LSR #1	@ r11= dst2 (split)
+	AND	r12,r8, r12,LSR #2	@ r12= dst3 (split)
+
+	ORR	r9, r9, r9, ROR #16	@ r9 = dst0
+	ORR	r10,r10,r10,ROR #16	@ r10= dst1
+	ORR	r11,r11,r11,ROR #16	@ r11= dst2
+	ORR	r12,r12,r12,ROR #16	@ r12= dst3
+
+	MOV	r10,r10,LSL #16
+	ORR	r9, r10,r9, LSR #16
+	MOV	r12,r12,LSL #16
+	ORR	r11,r12,r11,LSR #16
+	STMIA	r0!,{r9,r11}
+
+	LDRB	r9, [r1],#1
+	LDRH	r10,[r1],#2
+    MOV     r11, r10, LSR #8
+    AND     r10, r10, #0xFF
+	LDRH	r12,[r1],#2
+    MOV     r14, r12, LSR #8
+    AND     r12, r12, #0xFF
 
 	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src0]
 	LDR	r10,[r13,r10,LSL #2]	@ r10= pal[src1]
