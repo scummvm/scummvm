@@ -87,23 +87,26 @@ const char *loadGameMsg[] = {
 
 #define PASSWORD_LEN	6
 
+#define CHAR_DINO       0
+#define CHAR_DONNA      1
+#define CHAR_DOUGH      2
 
 static const uint16 _amigaKeys[][PASSWORD_LEN] = {
-	{ 1, 3 ,7, 2, 4, 6 },		// dough
 	{ 5, 3, 6, 2, 2, 7 },		// dino
-	{ 0, 3, 6, 2, 2, 6 }		// donna
+	{ 0, 3, 6, 2, 2, 6 },		// donna
+	{ 1, 3 ,7, 2, 4, 6 }		// dough
 };
 
 static const uint16 _pcKeys[][PASSWORD_LEN] = {
-	{ 1, 7 ,7, 2, 2, 6 },		// dough
 	{ 5, 3, 6, 1, 4, 7 },		// dino
-	{ 0, 2, 8, 5, 5, 1 }		// donna
+	{ 0, 2, 8, 5, 5, 1 },		// donna
+	{ 1, 7 ,7, 2, 2, 6 }		// dough
 };
 
 static const char *_charStartLocation[] = {
-	"test.dough",
 	"test.dino",
-	"test.donna"
+	"test.donna",
+	"test.dough"
 };
 
 enum {
@@ -378,12 +381,17 @@ int Parallaction_ns::guiSelectCharacter() {
 
 
 	const uint16 (*keys)[PASSWORD_LEN] = (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;
-	int character = -1;
 	uint16 _di = 0;
+    byte points[3] = { 0, 0, 0 };
 
-	uint16 key[PASSWORD_LEN];
+    bool fail;
 
 	while (true) {
+
+        points[0] = 0;
+        points[1] = 0;
+        points[2] = 0;
+        fail = false;
 
 		_gfx->displayString(60, 30, introMsg1[_language], 1);			// displays message
 
@@ -397,20 +405,31 @@ int Parallaction_ns::guiSelectCharacter() {
 				_gfx->grabRect((byte*)v14.pixels, codeTrueBlocks[_si], Gfx::kBitFront, BLOCK_WIDTH);
 				_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitFront);
 
-				key[_di++] = _si;
+                if (keys[0][_di] == _si) {
+                    points[0]++;
+                } else
+                if (keys[1][_di] == _si) {
+                    points[1]++;
+                } else
+                if (keys[2][_di] == _si) {
+                    points[2]++;
+                } else {
+                    fail = true;
+                }
+
+                // build user preference
+                points[0] += (keys[0][_di] == _si);
+                points[1] += (keys[1][_di] == _si);
+                points[2] += (keys[2][_di] == _si);
+
+                _di++;
 			}
+
 		}
 
-		for (int i = 0; i < 3; i++) {
-			if (!memcmp(key, keys[i], sizeof(key))) {
-				character = i;
-				break;
-			}
-		}
-
-		if (character != -1) {
-			break;
-		}
+        if (!fail) {
+            break;
+        }
 
 		_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 		_gfx->displayString(60, 30, introMsg2[_language], 1);
@@ -426,8 +445,23 @@ int Parallaction_ns::guiSelectCharacter() {
 
 	v14.free();
 
-	return character;
 
+    // actually select character
+
+	int character = -1;
+	if (points[0] >= points[1] && points[0] >= points[2]) {
+        character = CHAR_DINO;
+	} else
+	if (points[1] >= points[0] && points[1] >= points[2]) {
+        character = CHAR_DONNA;
+	} else
+	if (points[2] >= points[0] && points[2] >= points[1]) {
+        character = CHAR_DOUGH;
+	} else {
+        error("If you read this, either your CPU or transivity is broken (we believe the former).");
+	}
+
+    return character;
 }
 
 
