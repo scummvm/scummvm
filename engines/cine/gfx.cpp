@@ -474,6 +474,10 @@ void blitRawScreen(byte *frontBuffer) {
 
 void flip(void) {
 	blitRawScreen(page1Raw);
+	if (fadeRequired) {
+		memcpy(c_palette, tempPalette, sizeof(uint16) * 16);
+		fadeRequired = false;
+	}
 }
 
 } // End of namespace Cine

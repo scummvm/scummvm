@@ -90,7 +90,7 @@ extern uint16 allowPlayerInput;
 
 extern uint16 checkForPendingDataLoadSwitch;
 
-extern uint16 fadeRequired;
+extern bool fadeRequired;
 extern uint16 isDrawCommandEnabled;
 extern uint16 waitForPlayerClick;
 extern uint16 menuCommandLen;

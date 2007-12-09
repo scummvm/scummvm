@@ -53,6 +53,7 @@ CineEngine *g_cine;
 CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	Common::addSpecialDebugLevel(kCineDebugScript, "Script", "Script debug level");
 	Common::addSpecialDebugLevel(kCineDebugPart,   "Part",   "Part debug level");
+	Common::addSpecialDebugLevel(kCineDebugSound,  "Sound",  "Sound debug level");
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
@@ -72,6 +73,7 @@ CineEngine::~CineEngine() {
 		freePoldatDat();
 		freeErrmessDat();
 	}
+	Common::clearAllSpecialDebugLevels();
 }
 
 int CineEngine::init() {

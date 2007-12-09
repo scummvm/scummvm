@@ -126,7 +126,8 @@ enum {
 
 enum {
 	kCineDebugScript = 1 << 0,
-	kCineDebugPart   = 1 << 1
+	kCineDebugPart   = 1 << 1,
+	kCineDebugSound  = 1 << 2
 };
 
 enum {

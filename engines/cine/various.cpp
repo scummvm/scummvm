@@ -71,7 +71,7 @@ uint16 allowPlayerInput;
 
 uint16 checkForPendingDataLoadSwitch;
 
-uint16 fadeRequired;
+bool fadeRequired;
 uint16 isDrawCommandEnabled;
 uint16 waitForPlayerClick;
 uint16 menuCommandLen;
@@ -513,7 +513,7 @@ bool CineEngine::makeLoad(char *saveName) {
 	globalVars[VAR_MOUSE_X_POS] = 0;
 	globalVars[VAR_MOUSE_Y_POS] = 0;
 
-	fadeRequired = 0;
+	fadeRequired = false;
 
 	for (i = 0; i < 16; i++) {
 		c_palette[i] = 0;

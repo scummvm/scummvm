@@ -102,23 +102,11 @@ public:
 		SPL_HDR_SIZE = 22
 	};
 
-	struct SoundChannel {
-		int frequency;
-		uint8 *data;
-		int size;
-		int volumeStep;
-		int stepCount;
-		int step;
-		bool repeat;
-		int volume;
-	};
-
 protected:
 
 	void playSoundChannel(int channel, int frequency, uint8 *data, int size, int volume);
 
 	Audio::SoundHandle _channelsTable[NUM_CHANNELS];
-	SoundChannel _soundChannelsTable[NUM_CHANNELS];
 	Audio::SoundHandle _moduleHandle;
 	Audio::AudioStream *_moduleStream;
 };

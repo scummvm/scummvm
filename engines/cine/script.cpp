@@ -292,7 +292,7 @@ void setupOpcodes() {
 		{ 0, 0 },
 		{ o2_loadPart, "s" },
 		/* 40 */
-		{ 0, 0 },
+		{ 0, 0 }, /* o1_closePart, triggered by some scripts (STARTA.PRC 4 for ex.) */
 		{ o1_loadNewPrcName, "bs" },
 		{ o1_requestCheckPendingDataLoad, "" },
 		{ 0, 0 },
@@ -1306,11 +1306,9 @@ void o1_blitAndFade() {
 	debugC(5, kCineDebugScript, "Line: %d: request fadein", _currentLine);
 	// TODO: use real code
 
-	memcpy(c_palette, tempPalette, sizeof(uint16) * 16);
 	drawOverlays();
+	fadeRequired = true;
 	flip();
-
-	fadeRequired = 1;
 }
 
 void o1_fadeToBlack() {
@@ -1595,6 +1593,9 @@ void o1_playSample() {
 		if (volume < 50) {
 			volume = 50;
 		}
+		if (g_cine->getGameType() == Cine::GType_OS && size == 0) {
+			return;
+		}
 		g_sound->stopMusic();
 		if (size == 0xFFFF) {
 			g_sound->playSound(channel, 0, animDataTable[anim].ptr1, 0, 0, 0, volume, 0);
@@ -1662,8 +1663,10 @@ void o2_playSampleAlt() {
 	}
 	if (animDataTable[num].ptr1) {
 		if (g_cine->getPlatform() == Common::kPlatformPC) {
-			// if speaker output is enabled, play sound on it
+			// if speaker output is available, play sound on it
 			// if it's another device, don't play anything
+			// TODO: implement this, it's used in the introduction for example
+			// on each letter displayed
 		} else {
 			g_sound->playSound(channel, frequency, animDataTable[num].ptr1, size, 0, 0, 63, 0);
 		}
@@ -1869,9 +1872,10 @@ void o2_loadBg() {
 
 	if (additionalBgTable[param]) {
 		currentAdditionalBgIdx = param;
-		//if (adBgVar0 == 0) {
+		//if (_screenNeedFadeOut == 0) {
 		//	adBgVar1 = 1;
 		//}
+		fadeRequired = true;
 	}
 }
 

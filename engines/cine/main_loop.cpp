@@ -214,7 +214,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		allowPlayerInput = 0;
 		checkForPendingDataLoadSwitch = 0;
 
-		fadeRequired = 0;
+		fadeRequired = false;
 		isDrawCommandEnabled = 0;
 		waitForPlayerClick = 0;
 		menuCommandLen = 0;

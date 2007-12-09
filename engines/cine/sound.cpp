@@ -744,32 +744,37 @@ PCSound::~PCSound() {
 }
 
 void PCSound::loadMusic(const char *name) {
+	debugC(5, kCineDebugSound, "PCSound::loadMusic('%s')", name);
 	_player->load(name);
 }
 
 void PCSound::playMusic() {
+	debugC(5, kCineDebugSound, "PCSound::playMusic()");
 	_player->play();
 }
 
 void PCSound::stopMusic() {
+	debugC(5, kCineDebugSound, "PCSound::stopMusic()");
 	_player->stop();
 }
 
 void PCSound::fadeOutMusic() {
+	debugC(5, kCineDebugSound, "PCSound::fadeOutMusic()");
 	_player->fadeOut();
 }
 
 void PCSound::playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) {
+	debugC(5, kCineDebugSound, "PCSound::playSound() channel %d size %d", channel, size);
 	_soundDriver->playSample(data, size, channel, volume);
 }
 
 void PCSound::stopSound(int channel) {
+	debugC(5, kCineDebugSound, "PCSound::stopSound() channel %d", channel);
 	_soundDriver->resetChannel(channel);
 }
 
 PaulaSound::PaulaSound(Audio::Mixer *mixer, CineEngine *vm)
 	: Sound(mixer, vm) {
-	memset(_soundChannelsTable, 0, sizeof(_soundChannelsTable));
 	_moduleStream = 0;
 }
 
@@ -781,6 +786,7 @@ PaulaSound::~PaulaSound() {
 }
 
 void PaulaSound::loadMusic(const char *name) {
+	debugC(5, kCineDebugSound, "PaulaSound::loadMusic('%s')", name);
 	if (_vm->getGameType() == GType_FW) {
 		// look for separate files
 		Common::File f;
@@ -800,6 +806,7 @@ void PaulaSound::loadMusic(const char *name) {
 }
 
 void PaulaSound::playMusic() {
+	debugC(5, kCineDebugSound, "PaulaSound::playMusic()");
 	_mixer->stopHandle(_moduleHandle);
 	if (_moduleStream) {
 		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_moduleHandle, _moduleStream);
@@ -807,60 +814,45 @@ void PaulaSound::playMusic() {
 }
 
 void PaulaSound::stopMusic() {
+	debugC(5, kCineDebugSound, "PaulaSound::stopMusic()");
 	_mixer->stopHandle(_moduleHandle);
 }
 
 void PaulaSound::fadeOutMusic() {
+	debugC(5, kCineDebugSound, "PaulaSound::fadeOutMusic()");
 	// TODO
 	stopMusic();
 }
 
 void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) {
+	// TODO: handle volume slides and repeat
+	debugC(5, kCineDebugSound, "PaulaSound::playSound() channel %d size %d", channel, size);
 	stopSound(channel);
-	SoundChannel *ch = &_soundChannelsTable[channel];
 	size = MIN<int>(size - SPL_HDR_SIZE, READ_BE_UINT16(data + 4));
+	// TODO: consider skipping the header in loadSpl directly
 	if (size > 0) {
-		ch->data = (byte *)malloc(size);
-		if (ch->data) {
-			memcpy(ch->data, data + SPL_HDR_SIZE, size);
-			ch->frequency = frequency;
-			ch->size = size;
-			ch->volumeStep = volumeStep;
-			ch->stepCount = stepCount;
-			ch->step = stepCount;
-			ch->repeat = repeat != 0;
-			ch->volume = volume;
+		byte *sound = (byte *)malloc(size);
+		if (sound) {
+			memcpy(sound, data + SPL_HDR_SIZE, size);
+			playSoundChannel(channel, frequency, sound, size, volume);
 		}
 	}
 }
 
 void PaulaSound::stopSound(int channel) {
+	debugC(5, kCineDebugSound, "PaulaSound::stopSound() channel %d", channel);
 	_mixer->stopHandle(_channelsTable[channel]);
-	free(_soundChannelsTable[channel].data);
-	_soundChannelsTable[channel].data = 0;
 }
 
 void PaulaSound::update() {
 	// process volume slides and start sound playback
-	for (int i = 0; i < NUM_CHANNELS; ++i) {
-		SoundChannel *ch = &_soundChannelsTable[i];
-		if (ch->data) {
-			if (ch->step) {
-				--ch->step;
-				continue;
-			}
-			ch->step = ch->stepCount;
-			ch->volume = CLIP(ch->volume + ch->volumeStep, 0, 63);
-			playSoundChannel(i, ch->frequency, ch->data, ch->size, ch->volume);
-			ch->data = 0;
-		}
-	}
+	// TODO
 }
 
 void PaulaSound::playSoundChannel(int channel, int frequency, uint8 *data, int size, int volume) {
 	assert(frequency > 0);
 	frequency = PAULA_FREQ / frequency;
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], data, size, frequency, 0);
+	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], data, size, frequency, Audio::Mixer::FLAG_AUTOFREE);
 	_mixer->setChannelVolume(_channelsTable[channel], volume * Audio::Mixer::kMaxChannelVolume / 63);
 }
 

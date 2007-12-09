@@ -104,7 +104,9 @@ byte loadBg(const char *bgName) {
 			ptr += 2;
 		}
 
-		loadRelatedPalette(bgName);
+		if (g_cine->getGameType() == Cine::GType_FW) {
+			loadRelatedPalette(bgName);
+		}
 
 		gfxResetRawPage(page2Raw);
 		gfxConvertSpriteToRaw(page2Raw, ptr, 160, 200);
