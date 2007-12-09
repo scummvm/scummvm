@@ -209,25 +209,6 @@ static void AppStartSetMemory() {
 	PalmGetMemory(0,0,0,&mem);
 	def = (mem > threshold) ? (mem - threshold) * 1024 : 0;
 	gVars->startupMemory = mem;
-
-	// default values
-	gVars->memory[kMemScummOldCostGames] = (mem >= 550 + threshold) ? 550000 : def;
-	gVars->memory[kMemScummNewCostGames] = (mem >= 2500 + threshold) ? 2500000 : def;
-	gVars->memory[kMemSimon1Games] = (mem >= 1000 + threshold) ? 1000000 : def;
-	gVars->memory[kMemSimon2Games] = (mem >= 2000 + threshold) ? 2000000 : def;
-
-	// set min required values
-	max(kMemScummOldCostGames, 450000);
-	max(kMemScummNewCostGames, 450000);
-	max(kMemSimon1Games, 500000);
-	max(kMemSimon2Games, 500000);
-
-	// set max required values
-	min(kMemScummOldCostGames, 550000);
-	min(kMemScummNewCostGames, 2500000);
-	min(kMemSimon1Games, 1000000);
-	min(kMemSimon2Games, 2000000);
-	
 }
 
 #undef threshold
