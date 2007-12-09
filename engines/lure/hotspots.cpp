@@ -1207,6 +1207,17 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 	debugC(ERROR_INTERMEDIATE, kLureDebugHotspots,  "Action charId=%xh Action=%d/%s", 
 		_hotspotId, (int)action, stringList.getString((int)action));
 
+	// Set the ACTIVE_HOTSPOT_ID and USE_HOTSPOT_ID fields
+	if (hotspot != NULL) {
+		ValueTableData &fields = Resources::getReference().fieldList();
+		fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
+		if ((action == USE) || (action == GIVE) || (action == ASK)) {
+			fields.setField(USE_HOTSPOT_ID, _currentActions.top().supportData().param(1));
+		} else {
+			fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
+		}
+	}
+
 	ActionProcPtr actionProcList[NPC_JUMP_ADDRESS + 1] = {
 		&Hotspot::doNothing, 
 		&Hotspot::doGet, 
@@ -1446,9 +1457,6 @@ void Hotspot::doUse(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	uint16 usedId = _currentActions.top().supportData().param(1);
 	HotspotData *usedHotspot = res.getHotspot(usedId);
-	ValueTableData &fields = res.fieldList();
-	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
-	fields.setField(USE_HOTSPOT_ID, usedHotspot->hotspotId);
 	_data->useHotspotId = usedId;
 
 	if (usedHotspot->roomNumber != hotspotId()) {
@@ -1490,9 +1498,6 @@ void Hotspot::doGive(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	uint16 usedId = _currentActions.top().supportData().param(1);
 	HotspotData *usedHotspot = res.getHotspot(usedId);
-	ValueTableData &fields = res.fieldList();
-	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
-	fields.setField(USE_HOTSPOT_ID, usedId);
 	_data->useHotspotId = usedId;
 
 	if (usedHotspot->roomNumber != hotspotId()) {
@@ -1523,7 +1528,7 @@ void Hotspot::doGive(HotspotData *hotspot) {
 		sequenceOffset = Script::execute(sequenceOffset);
 		if (sequenceOffset == NOONE_ID) {
 			// Start a conversation based on the index of field #6
-			uint16 index = fields.getField(GIVE_TALK_INDEX);
+			uint16 index = res.fieldList().getField(GIVE_TALK_INDEX);
 			uint16 id = res.getGiveTalkId(index);
 			startTalk(hotspot, id);
 
@@ -1673,13 +1678,10 @@ void Hotspot::doLookAction(HotspotData *hotspot, Action action) {
 
 void Hotspot::doAsk(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
-	ValueTableData &fields = res.fieldList();
 	uint16 usedId = _currentActions.top().supportData().param(1);
 	Hotspot *destCharacter = res.getActiveHotspot(hotspot->hotspotId);
 	assert(destCharacter);
 	HotspotData *usedHotspot = res.getHotspot(usedId);
-	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
-	fields.setField(USE_HOTSPOT_ID, usedId);
 	_data->useHotspotId = usedId;
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
