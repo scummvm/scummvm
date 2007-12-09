@@ -26,6 +26,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Improved detection of new game variants and localized versions.
    - Completely reworked internal access to files. (GSoC Task)
    - Added option to delete games from the list with Del key.
+   - Added support for "~/" prefix being substituted by $HOME in paths
+     on POSIX systems (Linux, Mac OS X etc.).
 
  AGI:
    - Added support for AGI256 and AGI256-2 hacks (GSoC Task)

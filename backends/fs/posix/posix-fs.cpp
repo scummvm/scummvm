@@ -143,7 +143,19 @@ POSIXFilesystemNode::POSIXFilesystemNode() {
 POSIXFilesystemNode::POSIXFilesystemNode(const String &p, bool verify) {
 	assert(p.size() > 0);
 
-	_path = p;
+	// Expand "~/" to the value of the HOME env variable
+	if (p.hasPrefix("~/")) {
+		const char *home = getenv("HOME");
+		if (home != NULL && strlen(home) < MAXPATHLEN) {
+			_path = home;
+			// Skip over the tilda.  We know that p contains at least
+			// two chars, so this is safe:
+			_path += p.c_str() + 1;
+		}
+	} else {
+		_path = p;
+	}
+
 	_displayName = lastPathComponent(_path);
 
 	if (verify) {
