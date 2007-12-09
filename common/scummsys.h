@@ -291,7 +291,9 @@
 
 #elif defined(__PALMOS_TRAPS__)	|| defined (__PALMOS_ARMLET__)
 
+#ifdef __PALMOS_ARMLET__
 	#include <extras_string.h>
+#endif
 	#define SCUMM_LITTLE_ENDIAN
 
 	#define scumm_stricmp stricmp
