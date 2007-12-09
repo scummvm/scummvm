@@ -26,6 +26,13 @@
 
 namespace Graphics {
 
+#ifdef MACOSX
+// Older versions of Mac OS X didn't supply a sqrtf function. To ensure
+// binary compatibiity, we force using pow instead of sqrtf (the only
+// potential drawback is that it might be a little bit slower).
+#define sqrtf sqrt
+#endif
+
 void drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, int, int, void *), void *data) {
 	// Bresenham's line algorithm, as described by Wikipedia
 	const bool steep = ABS(y1 - y0) > ABS(x1 - x0);
