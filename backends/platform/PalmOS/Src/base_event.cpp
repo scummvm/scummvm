@@ -293,6 +293,12 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 				k = Common::KEYCODE_RIGHT; break;
 			case chrLeftArrow:
 				k = Common::KEYCODE_LEFT; break;
+			
+			// return
+			case chrLineFeed:
+			case chrCarriageReturn:
+				k = Common::KEYCODE_RETURN; break;
+
 			}
 
 			if (k) {
