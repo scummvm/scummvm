@@ -1338,17 +1338,12 @@ const char *germanTextStrings[NUM_TEXT_ENTRIES] = {
 	"Du tr\x8dgst", "niets", "und du hast ", "silberm\x8cnzen", "silberm\x8cnzen"
 };
 
-const char spanishUnlockStr[] = {'C', 'r', '\x7f', 'd', 'i', 't', 'o', 's', '\0'};
-
 const char *spanishTextStrings[NUM_TEXT_ENTRIES] = {
 	"Coge", NULL, "Empuja", "Tira de", "Opera", "Abre", "Cierra", "Atranca", "Desatranca", "Usa",
-	"Dale", "Habla con", "Dile a", "Buy", "Obsevar", "Observe", "Mirar por", "P\x97" "dele", NULL,
-	"Bebe", "Status", "Ve a", "Regresa", "Sobornar", "Examinar",
-	spanishUnlockStr, "Reiniciar", "Salvar juego", "Recuperar jue", "Abandonar", "Texto rapido\x8b",
-	"Texto lento \x8b", "Sonido activado   ", "Sonido desactivado ", "(nada)", " con ", " a ", " con ",
-	"y luego", "eso es todo", "\x94" "Est\x98s seguro? (S/N)",
-	"el ", "la ", "los ", "las ", "este ", "esta ", "estos ", "estas ",
-	"Stai portando ", "niente.", "y tienes ", "moneda", "monedas"
+	"Dale", "Habla con", "Dile a", "Compra", "Obsevar", "Observe", "Mirar por", "P\x97" "dele", NULL,
+	"Bebe", "Estado", "Ve a", "Regresa", "Sobornar", "Examinar",
+	"Cr\x7f" "ditos", "Reiniciar", "Salvar juego", "Recuperar jue", "Abandonar", "Texto r\x98pido\x8b",
+	"Llevas ", "nada", "y tienes ", "moneda", "monedas"
 };
 
 void save_text_strings(byte *&data, uint16 &totalSize) {
