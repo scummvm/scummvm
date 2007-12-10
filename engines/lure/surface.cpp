@@ -852,12 +852,18 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	delete s;
 	Sound.resume();
 
+	int errorFlag = 0;
 	if (doneFlag) {
 		// Handle save or restore
-		if (saveDialog)
+		if (saveDialog) {
 			doneFlag = engine.saveGame(selectedLine + 1, *saveNames[selectedLine]);
-		else
+			if (!doneFlag)
+				errorFlag = 1;
+		} else {
 			doneFlag = engine.loadGame(selectedLine + 1);
+			if (!doneFlag)
+				errorFlag = 2;
+		}
 	}
 
 	mouse.popCursor();
@@ -865,6 +871,16 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	// Free savegame caption list
 	for (index = 0; index < numSaves; ++index) delete saveNames[index];
 	Memory::dealloc(saveNames);
+
+	if (errorFlag != 0) {
+		Room::getReference().update();
+		screen.update();
+
+		if (errorFlag == 1)
+			Dialog::show("Error occurred saving the game");
+		else if (errorFlag == 2)
+			Dialog::show("Error occurred loading the savegame");
+	}
 
 	return doneFlag;
 }

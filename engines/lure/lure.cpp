@@ -167,10 +167,8 @@ const char *LureEngine::generateSaveName(int slotNumber) {
 bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 	Common::WriteStream *f = this->_saveFileMan->openForSaving(
 		generateSaveName(slotNumber));
-	if (f == NULL) {
-		warning("saveGame: Failed to save slot %d", slotNumber);
+	if (f == NULL) 
 		return false;
-	}
 
 	f->write("lure", 5);
 	f->writeByte(getLanguage());
@@ -193,10 +191,8 @@ bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 bool LureEngine::loadGame(uint8 slotNumber) {
 	Common::ReadStream *f = this->_saveFileMan->openForLoading(
 		generateSaveName(slotNumber));
-	if (f == NULL) {
-		warning(FAILED_MSG, slotNumber);
+	if (f == NULL) 
 		return false;
-	}
 
 	// Check for header
 	char buffer[5];
