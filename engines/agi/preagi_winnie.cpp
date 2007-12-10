@@ -1238,18 +1238,43 @@ void Winnie::loadGame() {
 	if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile)))
 		return;
 
-	if (infile->readUint32BE() != MKID_BE('WINN'))
+	if (infile->readUint32BE() != MKID_BE('WINN')) {
 		error("Winnie::loadGame wrong save game format");
 
-	saveVersion = infile->readByte();
-	if (saveVersion != WTP_SAVEGAME_VERSION)
-		warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, WTP_SAVEGAME_VERSION);
+		saveVersion = infile->readByte();
+		if (saveVersion != WTP_SAVEGAME_VERSION)
+			warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, WTP_SAVEGAME_VERSION);
 
-	_game.fSound = infile->readByte();
-	_game.nMoves = infile->readByte();
-	_game.nObjMiss = infile->readByte();
-	_game.nObjRet = infile->readByte();
-	_game.iObjHave = infile->readByte();
+		_game.fSound = infile->readByte();
+		_game.nMoves = infile->readByte();
+		_game.nObjMiss = infile->readByte();
+		_game.nObjRet = infile->readByte();
+		_game.iObjHave = infile->readByte();
+	} else {
+		// This is probably a save from the original interpreter, throw a warning and attempt
+		// to read it as LE
+		warning("No header found in save game, assuming it came from the original interpreter");
+		// Note that the original saves variables as 16-bit integers, but only 8 bits are used.
+		// Since we read the save file data as little-endian, we skip the first byte of each
+		// variable
+		infile->readUint16LE();				// skip unused field
+		infile->readByte();					// first 8 bits of fSound
+		_game.fSound = infile->readByte();
+		infile->readByte();					// first 8 bits of nMoves
+		_game.nMoves = infile->readByte();
+		infile->readByte();					// first 8 bits of nObjMiss
+		_game.nObjMiss = infile->readByte();
+		infile->readByte();					// first 8 bits of nObjRet
+		_game.nObjRet = infile->readByte();
+		infile->readUint16LE();				// skip unused field
+		infile->readUint16LE();				// skip unused field
+		infile->readUint16LE();				// skip unused field
+		infile->readByte();					// first 8 bits of iObjHave
+		_game.iObjHave = infile->readByte();
+		infile->readUint16LE();				// skip unused field
+		infile->readUint16LE();				// skip unused field
+		infile->readUint16LE();				// skip unused field
+	}
 
 	for(i = 0; i < IDI_WTP_MAX_FLAG; i++)
 		_game.fGame[i] = infile->readByte();
@@ -1260,6 +1285,8 @@ void Winnie::loadGame() {
 	for(i = 0; i < IDI_WTP_MAX_ROOM_OBJ; i++)
 		_game.iObjRoom[i] = infile->readByte();
 
+	// Note that saved games from the original interpreter have 2 more fields here which are
+	// ignored
 	delete infile;
 }
 
