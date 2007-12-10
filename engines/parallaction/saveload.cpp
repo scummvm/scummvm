@@ -43,7 +43,7 @@
  * itself, thus breaking compatibility with the original version. Who cares anyway?
  */
 
-#define NUM_SAVESLOTS       10
+#define NUM_SAVESLOTS       100
 #define SPECIAL_SAVESLOT    999
 
 namespace Parallaction {
