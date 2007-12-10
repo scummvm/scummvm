@@ -392,29 +392,12 @@ void Parallaction_ns::_c_finito(void *parm) {
 	const char **v2C = endMsg6;
 	const char **v1C = endMsg7;
 
-	Common::File stream;
-
-	stream.open(_char.getBaseName(), Common::File::kFileWriteMode);
-	if (stream.isOpen())
-		stream.close();
-
-	Common::File streamDino, streamDough, streamDonna;
-
-	streamDino.open("dino");
-	streamDough.open("dough");
-	streamDonna.open("donna");
-
-	bool gameCompleted = streamDino.isOpen() && streamDough.isOpen() && streamDonna.isOpen();
-
-	streamDino.close();
-	streamDough.close();
-	streamDonna.close();
+    setPartComplete(_char);
 
 	cleanInventory();
-
 	_gfx->setPalette(_gfx->_palette);
 
-	if (gameCompleted) {
+	if (allPartsComplete()) {
 		_gfx->setFont(_menuFont);
 		_gfx->displayCenteredString(70, v4C[_language]);
 		_gfx->displayCenteredString(100, v3C[_language]);

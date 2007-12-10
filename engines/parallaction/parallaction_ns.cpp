@@ -247,6 +247,7 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 
 
 int Parallaction_ns::go() {
+    renameOldSavefiles();
 
 	_globalTable = _disk->loadTable("global");
 

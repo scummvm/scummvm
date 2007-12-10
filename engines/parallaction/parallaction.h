@@ -29,6 +29,7 @@
 #include "common/str.h"
 #include "common/stack.h"
 #include "common/array.h"
+#include "common/savefile.h"
 
 #include "engines/engine.h"
 
@@ -685,6 +686,12 @@ public:
 private:
 	void initFonts();
 	void freeFonts();
+    void renameOldSavefiles();
+    Common::String genSaveFileName(uint slot, bool oldStyle = false);
+    Common::InSaveFile *getInSaveFile(uint slot);
+    Common::OutSaveFile *getOutSaveFile(uint slot);
+    bool allPartsComplete();
+    void setPartComplete(const Character& character);
 
 private:
 	void changeLocation(char *location);
