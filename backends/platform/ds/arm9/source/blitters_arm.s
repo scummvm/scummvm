@@ -257,11 +257,11 @@ Rescale_320x256xPAL8_To_256x256x1555:
 	@ r1 = src
 	@ r2 = dstStride
 	@ r3 = srcStride
-	STMFD	r13!,{r4-r5,r8-r11,r14}
+	STMFD	r13!,{r4-r6,r8-r11,r14}
 	MOV	r8,    #0x0000001F
 	ORR	r8, r8,#0x0000FC00
 	ORR	r8, r8,#0x03E00000	@ r8 = mask
-	LDR	r9, [r13,#7*4]		@ r9 = palette
+	LDR	r9, [r13,#8*4]		@ r9 = palette
 
 	SUB	r13,r13,#256*4		@ r13 = 1K of space on the stack.
 	MOV	r5, r13			@ r5 points to this space
@@ -283,12 +283,13 @@ yLoop4:
 	MOV	r4,#32			@ r4 = x
 xLoop4:
 	LDRH	r9, [r1],#2
-	MOV     r10, r9, LSR #8
-    AND     r9, r9, #0xFF
 	LDRH	r11,[r1],#2
-	MOV     r12, r11, LSR #8
-    AND     r11, r11, #0xFF
-	LDRB	r14,[r1],#1
+	LDRH	r6,[r1],#2
+	MOV     r10,r9, LSR #8
+	AND     r9, r9, #0xFF
+	MOV     r12,r11,LSR #8
+	AND     r11,r11,#0xFF
+    AND     r14,r6,#0xFF
 
 	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src0]
 	LDR	r10,[r13,r10,LSL #2]	@ r10= pal[src1]
@@ -319,13 +320,13 @@ xLoop4:
 	ORR	r11,r12,r11,LSR #16
 	STMIA	r0!,{r9,r11}
 
-	LDRB	r9, [r1],#1
 	LDRH	r10,[r1],#2
-    MOV     r11, r10, LSR #8
-    AND     r10, r10, #0xFF
 	LDRH	r12,[r1],#2
-    MOV     r14, r12, LSR #8
-    AND     r12, r12, #0xFF
+	MOV	    r9,r6,LSR #8
+	MOV     r11,r10,LSR #8
+	AND     r10,r10,#0xFF
+	MOV     r14,r12,LSR #8
+	AND     r12,r12,#0xFF
 
 	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src0]
 	LDR	r10,[r13,r10,LSL #2]	@ r10= pal[src1]
@@ -366,6 +367,6 @@ xLoop4:
 
 	ADD	r13,r13,#256*4
 
-	LDMFD	r13!,{r4-r5,r8-r11,PC}
+	LDMFD	r13!,{r4-r6,r8-r11,PC}
 
 
