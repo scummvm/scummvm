@@ -1255,10 +1255,10 @@ void Winnie::loadGame() {
 		// Note that the original saves variables as 16-bit integers, but only 8 bits are used.
 		// Since we read the save file data as little-endian, we skip the first byte of each
 		// variable
+		
+		infile->seek(0);					// Jump back to the beginning of the file
 
-		// First 16 bits are an unused field, and they have already been read from the 
-		// header check above
-
+		infile->readUint16LE();				// skip unused field
 		infile->readByte();					// first 8 bits of fSound
 		_game.fSound = infile->readByte();
 		infile->readByte();					// first 8 bits of nMoves
