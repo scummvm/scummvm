@@ -34,13 +34,9 @@
 #include "parallaction/sound.h"
 
 
-/* Nippon Safes savefiles are called 'game.0' to 'game.9'. The game conventiently allows users to
- * give meanigful name to savegames, and it uses an extra file 'savegame' to keep track of these
- * names.
+/* Nippon Safes savefiles are called 'nippon.000' to 'nippon.099'.
  *
- * This re-implementation disposes of the extra file to make moving of savefiles easier. Debugging
- * will benefit from this, too. The savegame name is written as the first line of the savefile
- * itself, thus breaking compatibility with the original version. Who cares anyway?
+ * A special savefile named 'nippon.999' holds information on whether the user completed one or more parts of the game.
  */
 
 #define NUM_SAVESLOTS       100
