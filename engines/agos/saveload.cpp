@@ -1076,7 +1076,6 @@ bool AGOSEngine::saveGame(uint slot, const char *caption) {
 
 	f = _saveFileMan->openForSaving(genSaveName(slot));
 	if (f == NULL) {
-		warning("saveGame: Failed to save slot %d", slot);
 		_lockWord &= ~0x100;
 		return false;
 	}
@@ -1162,7 +1161,6 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 	}
 
 	if (f == NULL) {
-		warning("loadGame: Failed to load %s", filename);
 		_lockWord &= ~0x100;
 		return false;
 	}
@@ -1324,7 +1322,6 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 
 	f = _saveFileMan->openForSaving(genSaveName(slot));
 	if (f == NULL) {
-		warning("saveGame: Failed to save slot %d", slot);
 		_lockWord &= ~0x100;
 		return false;
 	}
