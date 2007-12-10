@@ -30,7 +30,10 @@ Table of Contents:
  * 3.13 The Feeble Files notes
  * 3.14 The Legend of Kyrandia notes
  * 3.15 Sierra AGI games Predictive Input Dialog notes
- * 3.16 Known Problems
+ * 3.16 Mickey's Space Adventure notes
+ * 3.17 Winnie the Pooh notes
+ * 3.18 Troll's Tale notes
+ * 3.19 Known Problems
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -580,7 +583,44 @@ functionality to the numeric keypad. Also, the dialog's buttons can be
 navigated with the arrow and the enter keys.
 
 
-3.16) Known Problems:
+3.16) Mickey's Space Adventure notes:
+----- -------------------------------
+To run Mickey's Space Adventure under ScummVM, the original executable of the
+game (mickey.exe) is needed together with the game's data files.
+
+There is extensive mouse support for the game under ScummVM, even though there
+wasn't any mouse support in the original game. Menu items can be selected using
+the mouse, and it's possible to move to other locations using the mouse as well.
+When the mouse cursor is hovered on the edges of the screen, it changes color to
+red if it's possible to walk towards that direction. The player can then simply
+click on the edges of the game's screen to change location, similar to many
+adventure games, which is simpler and more straightforward than moving around
+using the menu.
+
+
+3.17) Winnie the Pooh notes:
+----- ----------------------
+It's possible to import saved games from the original intepreter of the game in
+ScummVM.
+
+There is extensive mouse support for the game under ScummVM, even though there
+wasn't any mouse support in the original game. Menu items can be selected using
+the mouse, and it's possible to move to other locations using the mouse as well.
+When the mouse cursor is hovered on the edges of the screen, it changes color to
+red if it's possible to walk towards that direction. The player can then simply
+click on the edges of the game's screen to change location, similar to many
+adventure games, which is simpler and more straightforward than moving around
+using the menu.
+
+
+3.18) Troll's Tale notes:
+----- -------------------
+The original game came in a PC booter disk, therefore it's necessary to dump
+the contents of that disk in an image file and name it "troll.img" to be able
+to play the game under ScummVM.
+
+
+3.19) Known Problems:
 ----- ---------------
 This release has the following known problems. There is no need to report them,
 although patches to fix them are welcome. If you discover a bug that is not
