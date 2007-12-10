@@ -1238,9 +1238,7 @@ void Winnie::loadGame() {
 	if (!(infile = _vm->getSaveFileMan()->openForLoading(szFile)))
 		return;
 
-	if (infile->readUint32BE() != MKID_BE('WINN')) {
-		error("Winnie::loadGame wrong save game format");
-
+	if (infile->readUint32BE() == MKID_BE('WINN')) {
 		saveVersion = infile->readByte();
 		if (saveVersion != WTP_SAVEGAME_VERSION)
 			warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, WTP_SAVEGAME_VERSION);
@@ -1257,7 +1255,10 @@ void Winnie::loadGame() {
 		// Note that the original saves variables as 16-bit integers, but only 8 bits are used.
 		// Since we read the save file data as little-endian, we skip the first byte of each
 		// variable
-		infile->readUint16LE();				// skip unused field
+
+		// First 16 bits are an unused field, and they have already been read from the 
+		// header check above
+
 		infile->readByte();					// first 8 bits of fSound
 		_game.fSound = infile->readByte();
 		infile->readByte();					// first 8 bits of nMoves
@@ -1285,8 +1286,9 @@ void Winnie::loadGame() {
 	for(i = 0; i < IDI_WTP_MAX_ROOM_OBJ; i++)
 		_game.iObjRoom[i] = infile->readByte();
 
-	// Note that saved games from the original interpreter have 2 more fields here which are
-	// ignored
+	// Note that saved games from the original interpreter have 2 more 16-bit fields here 
+	// which are ignored
+
 	delete infile;
 }
 
