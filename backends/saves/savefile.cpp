@@ -51,7 +51,11 @@ bool SaveFileManager::renameSavefile(const char *oldFilename, const char *newFil
 
 		if (buffer && outFile) {
 			inFile->read(buffer, size);
-			if (!inFile->ioFailed()) {
+			bool error = inFile->ioFailed();
+			delete inFile;
+			inFile = 0;
+
+			if (!error) {
 				outFile->write(buffer, size);
 				outFile->finalize();
 				if (!outFile->ioFailed()) {
@@ -59,7 +63,7 @@ bool SaveFileManager::renameSavefile(const char *oldFilename, const char *newFil
 				}
 			}
 		}
-	
+
 		free(buffer);
 		delete outFile;
 		delete inFile;
