@@ -20,13 +20,14 @@
 @
 @ @author Robin Watts (robin@wss.co.uk)
 
-	.text
-
 	.global	asmDrawStripToScreen
 	.global	asmCopy8Col
 	.global	Rescale_320x256xPAL8_To_256x256x1555
 	.global	Rescale_320x256x1555_To_256x256x1555
-
+    .section .itcm,"ax", %progbits 
+    .align 2 
+    .code 32
+    
 	@ ARM implementation of asmDrawStripToScreen.
 	@
 	@ C prototype would be:
