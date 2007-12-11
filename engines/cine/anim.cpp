@@ -237,29 +237,21 @@ int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 
 		animDataTable[i].ptr1 = (byte *)malloc(frameSize);
 		animDataTable[i].ptr2 = (byte *)malloc(frameSize);
-
-		animDataTable[i].width = width;
-		animDataTable[i].var1 = width >> 3;
-		animDataTable[i].bpp = 4;
-		animDataTable[i].height = height;
-
-		animDataTable[i].fileIdx = -1;
-		animDataTable[i].frameIdx = -1;
 	} else {
 		// mask
 		frameSize = width * height * 8;
 
 		animDataTable[i].ptr1 = (byte *)malloc(frameSize);
 		animDataTable[i].ptr2 = NULL;
-
-		animDataTable[i].width = width;
-		animDataTable[i].var1 = width >> 3;
-		animDataTable[i].bpp = 4;
-		animDataTable[i].height = height;
-
-		animDataTable[i].fileIdx = -1;
-		animDataTable[i].frameIdx = -1;
 	}
+
+	animDataTable[i].width = width;
+	animDataTable[i].var1 = width >> 3;
+	animDataTable[i].bpp = 4;
+	animDataTable[i].height = height;
+
+	animDataTable[i].fileIdx = -1;
+	animDataTable[i].frameIdx = -1;
 
 	animDataCount++;
 
