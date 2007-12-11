@@ -578,8 +578,17 @@ void Game::handleRightClickMenu() {
 		if (hotspot == NULL) {
 			doAction(action, 0, itemId);
 		} else {
-			// Add the hotspot name to the status line and then go do the action
-			strings.getString(hotspot->nameId, statusLine);
+			if (action != TELL) {
+				// Add the hotspot name to the status line and then go do the action
+				if ((itemId != 0xffff) && (action != GIVE)) {
+					HotspotData *itemHotspot = res.getHotspot(itemId);
+					if (itemHotspot != NULL)
+						strings.getString(itemHotspot->nameId, statusLine);
+				}
+				else
+					strings.getString(hotspot->nameId, statusLine);
+			}
+
 			doAction(action, hotspot->hotspotId, itemId);
 		}
 	} else {
