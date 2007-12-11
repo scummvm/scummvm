@@ -232,9 +232,8 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				break;
 			}
 
-#if defined(MACOSX) || defined(__AMIGA__)
+#if defined(MACOSX)
 			// On Macintosh', Cmd-Q quits
-			// On Amigas, Amiga-Q quits
 			if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
 				event.type = Common::EVENT_QUIT;
 				return true;
