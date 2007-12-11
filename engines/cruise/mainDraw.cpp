@@ -82,11 +82,7 @@ void freeAutoCell(void) {
 }
 
 void flipScreen(void) {
-	uint8 *swapPtr;
-
-	swapPtr = gfxModuleData.pPage00;
-	gfxModuleData.pPage00 = gfxModuleData.pPage10;
-	gfxModuleData.pPage10 = swapPtr;
+	SWAP(gfxModuleData.pPage00, gfxModuleData.pPage10);
 
 	gfxModuleData_flipScreen();
 

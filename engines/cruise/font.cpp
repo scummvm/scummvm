@@ -24,6 +24,7 @@
  */
 
 #include "common/file.h"
+#include "common/util.h"
 
 #include "cruise/cruise_main.h"
 
@@ -194,44 +195,26 @@ void loadSystemFont(void) {
 
 void flipShort(int16 *var) {
 	uint8 *varPtr = (uint8 *) var;
-	uint8 temp = varPtr[0];
-	varPtr[0] = varPtr[1];
-	varPtr[1] = temp;
+	SWAP(varPtr[0], varPtr[1]);
 }
 
 void flipShort(uint16 *var) {
 	uint8 *varPtr = (uint8 *) var;
-	uint8 temp = varPtr[0];
-	varPtr[0] = varPtr[1];
-	varPtr[1] = temp;
+	SWAP(varPtr[0], varPtr[1]);
 }
 
 void flipLong(int32 *var) {
-	char swap1;
-	char swap2;
 	char *varPtr = (char *)var;
 
-	swap1 = varPtr[0];
-	varPtr[0] = varPtr[3];
-	varPtr[3] = swap1;
-
-	swap2 = varPtr[1];
-	varPtr[1] = varPtr[2];
-	varPtr[2] = swap2;
+	SWAP(varPtr[0], varPtr[3]);
+	SWAP(varPtr[1], varPtr[2]);
 }
 
 void flipLong(uint32 *var) {
-	char swap1;
-	char swap2;
 	char *varPtr = (char *)var;
 
-	swap1 = varPtr[0];
-	varPtr[0] = varPtr[3];
-	varPtr[3] = swap1;
-
-	swap2 = varPtr[1];
-	varPtr[1] = varPtr[2];
-	varPtr[2] = swap2;
+	SWAP(varPtr[0], varPtr[3]);
+	SWAP(varPtr[1], varPtr[2]);
 }
 
 void flipGen(void *var, int32 length) {
