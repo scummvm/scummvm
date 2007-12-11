@@ -1202,7 +1202,8 @@ void Hotspot::doAction() {
 		doAction(NONE, NULL);
 	} else {
 		if (entry.supportData().numParams() > 0)
-			hotspot = Resources::getReference().getHotspot(entry.supportData().param(0));
+			hotspot = Resources::getReference().getHotspot(entry.supportData().param(
+				(entry.supportData().action() == USE) ? 1 : 0));
 		doAction(entry.supportData().action(), hotspot);
 	}
 }
@@ -1216,11 +1217,13 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 	if (hotspot != NULL) {
 		ValueTableData &fields = Resources::getReference().fieldList();
 		fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
-		if ((action == USE) || (action == GIVE) || (action == ASK)) {
+
+		if (action == USE) 
+			fields.setField(USE_HOTSPOT_ID, _currentActions.top().supportData().param(0));
+		else if ((action == GIVE) || (action == ASK)) 
 			fields.setField(USE_HOTSPOT_ID, _currentActions.top().supportData().param(1));
-		} else {
+		 else 
 			fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
-		}
 	}
 
 	ActionProcPtr actionProcList[NPC_JUMP_ADDRESS + 1] = {
@@ -1460,7 +1463,7 @@ void Hotspot::doClose(HotspotData *hotspot) {
 
 void Hotspot::doUse(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
-	uint16 usedId = _currentActions.top().supportData().param(1);
+	uint16 usedId = _currentActions.top().supportData().param(0);
 	HotspotData *usedHotspot = res.getHotspot(usedId);
 	_data->useHotspotId = usedId;
 
@@ -2009,8 +2012,8 @@ void Hotspot::npcSupportOffsetConditional(HotspotData *hotspot) {
 	}
 
 	_currentActions.top().setSupportData(newEntry);
-	HotspotData *hotspotData = (newEntry->numParams() == 0) ? NULL : 
-		res.getHotspot(newEntry->param(0));
+	HotspotData *hotspotData = (newEntry->numParams() == 0) ? NULL : res.getHotspot(
+		(newEntry->action() == USE) ? 1 : 0);
 	doAction(newEntry->action(), hotspotData);
 }
 
@@ -2031,7 +2034,7 @@ void Hotspot::npcDispatchAction(HotspotData *hotspot) {
 		_currentActions.top().setSupportData(newEntry);
 		
 		HotspotData *hotspotData = (newEntry->numParams() == 0) ? NULL : 
-			res.getHotspot(newEntry->param(0));
+			res.getHotspot(newEntry->param((newEntry->action() == USE) ? 1 : 0));
 		doAction(newEntry->action(), hotspotData);
 	}
 }
@@ -2858,7 +2861,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 			hsAction = actions.top().supportData().action();
 
 			if (actions.top().supportData().numParams() > 0) {
-				hotspotId = actions.top().supportData().param(0);
+				hotspotId = actions.top().supportData().param((hsAction == USE) ? 1 : 0);
 				hotspot = res.getHotspot(hotspotId);
 			} 
 		} else {
