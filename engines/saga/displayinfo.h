@@ -235,7 +235,7 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 	5, 4,			// left portrait x, y offset
 	274, 4,			// right portrait x, y offset
 
-	8, 9,			// inventory Up & Down button indexies
+	8, 9,			// inventory Up & Down button indexes
 	2, 4,			// inventory rows, columns
 
 	0, 148,			// main panel offsets
@@ -245,7 +245,7 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 	ITE_CONVERSE_MAX_TEXT_WIDTH,
 	ITE_CONVERSE_TEXT_HEIGHT,
 	ITE_CONVERSE_TEXT_LINES,
-	4, 5,			// converse Up & Down button indexies
+	4, 5,			// converse Up & Down button indexes
 	0, 148,			// converse panel offsets
 	ARRAYSIZE(ITE_ConversePanelButtons),
 	ITE_ConversePanelButtons,
@@ -344,7 +344,7 @@ static PanelButton IHNM_OptionPanelButtons[] = {
 static PanelButton IHNM_QuitPanelButtons[] = {
 	{kPanelButtonQuit,		26,80,	80,25,	kTextQuit,'q',0, 0,0,0},
 	{kPanelButtonQuit,		156,80,	80,25,	kTextCancel,'c',0, 0,0,0},
-	{kPanelButtonQuitText,	75,30,	0,0,	kTextQuitTheGameQuestion,'-',0, 0,0,0},
+	{kPanelButtonQuitText,	-1,30,	0,0,	kTextQuitTheGameQuestion,'-',0, 0,0,0},
 };
 
 static PanelButton IHNM_LoadPanelButtons[] = {
@@ -357,7 +357,7 @@ static PanelButton IHNM_SavePanelButtons[] = {
 	{kPanelButtonSave, 25,79, 80,25, kTextSave,'s',0, 0,0,0},
 	{kPanelButtonSave, 155,79, 80,25, kTextCancel,'c',0, 0,0,0},
 	{kPanelButtonSaveEdit, 22,56, 216,17, 0,'-',0, 0,0,0},
-	{kPanelButtonSaveText, 74,30, 0,0, kTextEnterSaveGameName,'-',0, 0,0,0},
+	{kPanelButtonSaveText, -1,30, 0,0, kTextEnterSaveGameName,'-',0, 0,0,0},
 };
 
 
@@ -381,7 +381,7 @@ static const GameDisplayInfo IHNM_DisplayInfo = {
 	11, 12,		// left portrait x, y offset
 	-1, -1,		// right portrait x, y offset
 
-	8, 9,		// inventory Up & Down button indexies
+	8, 9,		// inventory Up & Down button indexes
 	2, 4,		// inventory rows, columns
 
 	0, 328,		// main panel offsets
@@ -391,7 +391,7 @@ static const GameDisplayInfo IHNM_DisplayInfo = {
 	IHNM_CONVERSE_MAX_TEXT_WIDTH,
 	IHNM_CONVERSE_TEXT_HEIGHT,
 	IHNM_CONVERSE_TEXT_LINES,
-	11, 12,		// converse Up & Down button indexies
+	11, 12,		// converse Up & Down button indexes
 	0, 328,		// converse panel offsets
 	ARRAYSIZE(IHNM_ConversePanelButtons),
 	IHNM_ConversePanelButtons,
