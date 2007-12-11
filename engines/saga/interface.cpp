@@ -964,7 +964,7 @@ void Interface::drawOption() {
 		if (_vm->getGameType() == GType_ITE)
 			bgColor = kITEColorDarkGrey0C;
 		else
-			bgColor = kIHNMColorBlack;
+			bgColor = _vm->KnownColor2ColorId(kKnownColorBlack);
 		fgColor = kITEColorBrightWhite;
 
 		idx = j + _optionSaveFileTop;
@@ -1811,6 +1811,9 @@ void Interface::drawStatusBar() {
 	Point textPoint;
 	int stringWidth;
 	int color;
+	// The default colors in the Spanish version of IHNM are shifted by one
+	// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)"
+	int offset = (_vm->getGameId() == GID_IHNM_CD_ES) ? 1 : 0;
 
 	// Disable the status text in IHNM when the chapter is 8
 	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 8)
@@ -1828,12 +1831,12 @@ void Interface::drawStatusBar() {
 	rect.right = rect.left + _vm->getDisplayWidth();
 	rect.bottom = rect.top + _vm->getDisplayInfo().statusHeight;
 
-	backBuffer->drawRect(rect, _vm->getDisplayInfo().statusBGColor);
+	backBuffer->drawRect(rect, _vm->getDisplayInfo().statusBGColor - offset);
 
 	stringWidth = _vm->_font->getStringWidth(kKnownFontSmall, _statusText, 0, kFontNormal);
 
 	if (_statusOnceColor == -1)
-		color = _vm->getDisplayInfo().statusTextColor;
+		color = _vm->getDisplayInfo().statusTextColor - offset;
 	else
 		color = _statusOnceColor;
 
@@ -2061,7 +2064,7 @@ void Interface::drawInventory(Surface *backBuffer) {
 		if (_vm->getGameType() == GType_ITE)
 			backBuffer->drawRect(rect, kITEColorDarkGrey);
 		else
-			backBuffer->drawRect(rect, kIHNMColorBlack);
+			backBuffer->drawRect(rect, _vm->KnownColor2ColorId(kKnownColorBlack));
 
 		if (ci < _inventoryCount) {
 			obj = _vm->_actor->getObj(_inventory[ci]);
@@ -2107,10 +2110,8 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 				odl = kITEColorLightBlue94;
 				solidColor = down ? kITEColorBlue : kITEColorDarkGrey0C;
 			} else {
-				cornerColor = frameColor = fillColor = kIHNMColorBlack;
-				our = kIHNMColorBlack;
-				odl = kIHNMColorBlack;
-				solidColor = kIHNMColorBlack;
+				cornerColor = frameColor = fillColor = _vm->KnownColor2ColorId(kKnownColorBlack);
+				our = odl = solidColor = _vm->KnownColor2ColorId(kKnownColorBlack);
 			}
 			iur = 0x97;
 			idl = 0x95;

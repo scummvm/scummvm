@@ -446,7 +446,6 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		case(kKnownColorTransparent):
 			colorId = kITEColorTransBlack;
 			break;
-
 		case (kKnownColorBrightWhite):
 			colorId = kITEColorBrightWhite;
 			break;
@@ -456,7 +455,6 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		case (kKnownColorBlack):
 			colorId = kITEColorBlack;
 			break;
-
 		case (kKnownColorSubtitleTextColor):
 			colorId = (ColorId)255;
 			break;
@@ -474,29 +472,31 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 			error("SagaEngine::KnownColor2ColorId unknown color %i", knownColor);
 		}
 	} else if (getGameType() == GType_IHNM) {
+		// The default colors in the Spanish version of IHNM are shifted by one
+		// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)"
+		int offset = (getGameId() == GID_IHNM_CD_ES) ? 1 : 0;
+
 		switch (knownColor) {
 		case(kKnownColorTransparent):
-			colorId = kITEColorTransBlack;
+			colorId = (ColorId)(249 - offset);
 			break;
-
 		case (kKnownColorBrightWhite):
-			colorId = kITEColorBrightWhite;
+			colorId = (ColorId)(251 - offset);
 			break;
 		case (kKnownColorWhite):
-			colorId = kITEColorBrightWhite;
+			colorId = (ColorId)(251 - offset);
 			break;
 		case (kKnownColorBlack):
-			colorId = kIHNMColorBlack;
+			colorId = (ColorId)(249 - offset);
 			break;
-
 		case (kKnownColorVerbText):
-			colorId = (ColorId)253;
+			colorId = (ColorId)(253 - offset);
 			break;
 		case (kKnownColorVerbTextShadow):
-			colorId = (ColorId)15;
+			colorId = (ColorId)(15 - offset);
 			break;
 		case (kKnownColorVerbTextActive):
-			colorId = (ColorId)252;
+			colorId = (ColorId)(252 - offset);
 			break;
 
 		default:
