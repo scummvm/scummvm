@@ -524,6 +524,78 @@ void Dialog::show(uint16 stringId) {
 
 /*--------------------------------------------------------------------------*/
 
+const uint16 spanish_pre_e1_type_tl[] = {0x8000, 4, 0x4000, 5, 0x2000, 6, 0xc000, 7, 0, 0};
+const uint16 spanish_others_tl[]      = {0x8000, 0, 0x4000, 1, 0x2000, 2, 0xc000, 3, 0, 0};
+
+const uint16 german_pre_k_type[]    = {106, 0};
+const uint16 german_pre_k_type_tl[] = {0x8000, 0, 0xc000, 0, 0x4000, 1, 0xa000, 1, 0x2000, 2, 0, 0};
+const uint16 german_pre_d[]         = {128, 0};
+const uint16 german_pre_d_tl[]		= {0x8000, 6, 0x4000, 4, 0xa000, 4, 0x2000, 5, 0xc000, 6, 0, 0};
+const uint16 german_pre_d_type[]    = {158, 236, 161, 266, 280, 287, 286, 294, 264, 0};
+const uint16 german_pre_d_type_tl[] = {0x8000, 3, 0x4000, 4, 0xa000, 4, 0x2000, 5, 0xc000, 6, 0, 0};
+const uint16 german_pre_e_type[]    = {160, 0};
+const uint16 german_pre_e_type_tl[] = {0x8000, 7, 0xc000, 7, 0x4000, 8, 0xa000, 8, 0x2000, 9, 0, 0};
+
+struct GermanLanguageArticle {
+	const uint16 *messageList;
+	const uint16 *translations;
+};
+
+const GermanLanguageArticle germanArticles[] = {
+	{&german_pre_k_type[0], &german_pre_k_type_tl[0]}, 
+	{&german_pre_d[0], &german_pre_d_tl[0]},
+	{&german_pre_d_type[0], &german_pre_d_type_tl[0]}, 
+	{&german_pre_e_type[0], &german_pre_e_type_tl[0]}
+};
+
+
+int TalkDialog::getArticle(uint16 msgId, uint16 objId) {
+	Common::Language language = LureEngine::getReference().getLanguage();
+	int id = objId & 0xe000;
+
+	if (language == DE_DEU) {
+		// Special handling for German language
+
+		for (int sectionIndex = 0; sectionIndex < 4; ++sectionIndex) {
+			// Scan through the list of messages for this section
+			bool msgFound = false;
+			for (const uint16 *msgPtr = germanArticles[sectionIndex].messageList; *msgPtr != 0; ++msgPtr) {
+				msgFound = *msgPtr == msgId;
+				if (msgFound) break;
+			}
+
+			if (msgFound) {
+				// Scan against possible bit combinations
+				for (const uint16 *p = germanArticles[sectionIndex].translations; *p != 0; p += 2) {
+					if (*p == id) 
+						// Return the article index to use
+						return *++p;
+				}
+
+				return 0;
+			}
+		}
+		
+
+		return 0;
+
+	} else if (language == ES_ESP) {
+		// Special handling for Spanish langugae
+		const uint16 *tlData = (msgId == 158) ? spanish_pre_e1_type_tl : spanish_others_tl;
+		
+		// Scan through the list of article bitflag mappings
+		for (const uint16 *p = tlData; *p != 0; p += 2) {
+			if (*p == id) 
+				// Return the article index to use
+				return *++p;
+		}
+
+		return 0;
+	}
+
+	return (id >> 13) + 1;
+}
+
 TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId) {
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "TalkDialog(chars=%xh/%xh, item=%d, str=%d", 
 		characterId, destCharacterId, activeItemId, descId);
@@ -532,7 +604,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	char srcCharName[MAX_DESC_SIZE];
 	char destCharName[MAX_DESC_SIZE];
 	char itemName[MAX_DESC_SIZE];
-	int characterArticle, hotspotArticle = 3;
+	int characterArticle, hotspotArticle = 0;
 
 	_characterId = characterId;
 	_destCharacterId = destCharacterId;
@@ -547,7 +619,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	assert(talkingChar);
 
 	strings.getString(talkingChar->nameId & 0x1fff, srcCharName);
-	characterArticle = (talkingChar->nameId >> 13) + 1;
+	characterArticle = getArticle(descId, talkingChar->nameId);
 
 	strcpy(destCharName, "");
 	if (destCharacter != NULL)
@@ -555,7 +627,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	strcpy(itemName, "");
 	if (itemHotspot != NULL) {
 		strings.getString(itemHotspot->nameId & 0x1fff, itemName);
-		hotspotArticle = (itemHotspot->nameId >> 13) - 1;
+		hotspotArticle = getArticle(descId, itemHotspot->nameId);
 	}
 
 	strings.getString(descId, _desc, itemName, destCharName, hotspotArticle, characterArticle);

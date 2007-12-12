@@ -204,7 +204,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 			// Copy over hotspot or action 
 			ch = readCharacter();
 			const char *p = (ch == '1') ? hotspotName : characterName;
-			int article = !includeArticles ? 0 : ((ch == 1) ? hotspotArticle : characterArticle);
+			int article = !includeArticles ? 0 : ((ch == '1') ? hotspotArticle : characterArticle);
 
 			if (p != NULL) {
 				if (article > 0) {
