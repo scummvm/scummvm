@@ -569,7 +569,7 @@ int TalkDialog::getArticle(uint16 msgId, uint16 objId) {
 				for (const uint16 *p = germanArticles[sectionIndex].translations; *p != 0; p += 2) {
 					if (*p == id) 
 						// Return the article index to use
-						return *++p;
+						return *++p + 1;
 				}
 
 				return 0;
@@ -587,7 +587,7 @@ int TalkDialog::getArticle(uint16 msgId, uint16 objId) {
 		for (const uint16 *p = tlData; *p != 0; p += 2) {
 			if (*p == id) 
 				// Return the article index to use
-				return *++p;
+				return *++p + 1;
 		}
 
 		return 0;
