@@ -91,7 +91,15 @@ static void decompressIconPlanar(byte *dst, byte *src, uint width, uint height, 
 
 	if (decompress) {
 		icon_pln = (byte *)calloc(width * height, 1);
-
+#ifdef PALMOS_MODE
+		/*	FIXME: (PalmOS) This is the only way I found to workaround bug #1738485.
+			The compiler seems to fail to compile this piece of code at full optimization.
+			Reducing the optimization option make games crash earlier.
+			Don't ask me why... a simple printf at this location fix the problem.
+			Unfortunately debugging on PalmOS is a real pain :(
+		*/
+		printf("");
+#endif
 		// Decode RLE planar icon data
 		i = src;
 		o = icon_pln;
