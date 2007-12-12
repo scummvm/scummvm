@@ -1961,7 +1961,7 @@ void backupOverlayPage(void) {
 	}
 }
 
-void drawMessage(char *messagePtr, int16 x, int16 y, int16 width, int16 color) {
+void drawMessage(const char *messagePtr, int16 x, int16 y, int16 width, int16 color) {
 	byte color2 = 2;
 	byte endOfMessageReached = 0;
 	int16 localX;
@@ -2052,7 +2052,7 @@ void drawMessage(char *messagePtr, int16 x, int16 y, int16 width, int16 color) {
 }
 
 void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color) {
-	char *messagePtr = (char *)messageTable[msgIdx].ptr;
+	const char *messagePtr = (const char *)messageTable[msgIdx].ptr;
 
 	if (!messagePtr) {
 		freeOverlay(msgIdx, 2);
@@ -2069,7 +2069,7 @@ void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color
 void drawFailureMessage(byte cmd) {
 	byte msgIdx = cmd * 4 + g_cine->_rnd.getRandomNumber(3);
 
-	char *messagePtr = (char *)failureMessages[msgIdx];
+	const char *messagePtr = failureMessages[msgIdx];
 	int len = strlen(messagePtr);
 
 	var20 += len;
