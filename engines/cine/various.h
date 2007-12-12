@@ -35,8 +35,7 @@ namespace Cine {
 
 void initLanguage(Common::Language lang);
 
-int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width);
-int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width);
+int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width, bool recheckValue = false);
 void makeCommandLine(void);
 void makeActionMenu(void);
 

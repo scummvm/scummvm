@@ -67,11 +67,9 @@ void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
 uint16 errorVar;
 byte menuVar;
 
-uint16 allowPlayerInput;
-
-uint16 checkForPendingDataLoadSwitch;
-
 bool fadeRequired;
+uint16 allowPlayerInput;
+uint16 checkForPendingDataLoadSwitch;
 uint16 isDrawCommandEnabled;
 uint16 waitForPlayerClick;
 uint16 menuCommandLen;
@@ -84,7 +82,6 @@ byte var21;
 int16 playerCommand;
 
 char commandBuffer[80];
-
 char currentPrcName[20];
 char currentRelName[20];
 char currentObjectName[20];
@@ -93,7 +90,6 @@ char newPrcName[20];
 char newRelName[20];
 char newObjectName[20];
 char newMsgName[20];
-
 char currentBgName[8][15];
 char currentCtName[15];
 char currentPartName[15];
@@ -111,6 +107,23 @@ uint16 inputVar2;
 uint16 inputVar3;
 
 selectedObjStruct currentSelectedObject;
+
+static commandeType currentSaveName[10];
+int16 currentDisk;
+
+static const int16 choiceResultTable[] = { 1, 1, 1, 2, 1, 1, 1 };
+static const int16 subObjectUseTable[] = { 3, 3, 3, 3, 3, 0, 0 };
+static const int16 canUseOnItemTable[] = { 1, 0, 0, 1, 1, 0, 0 };
+
+commandeType objectListCommand[20];
+int16 objListTab[20];
+
+uint16 exitEngine;
+
+uint16 defaultMenuBoxColor2;
+
+uint16 zoneData[NUM_MAX_ZONE];
+
 
 void mainLoopSub3(void) {
 }
@@ -232,18 +245,11 @@ int16 getRelEntryForObject(uint16 param1, uint16 param2, selectedObjStruct *pSel
 int16 getObjectUnderCursor(uint16 x, uint16 y) {
 	overlayHeadElement *currentHead = overlayHead.previous;
 
+	int16 objX, objY, frame, part, threshold, height, xdif, ydif;
+
 	while (currentHead) {
 		if (currentHead->type < 2) {
 			if (objectTable[currentHead->objIdx].name[0]) {
-				int16 objX;
-				int16 objY;
-				int16 frame;
-				int16 part;
-				int16 treshold;
-				int16 height;
-				int16 xdif;
-				int16 ydif;
-
 				objX = objectTable[currentHead->objIdx].x;
 				objY = objectTable[currentHead->objIdx].y;
 
@@ -252,9 +258,9 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 				part = objectTable[currentHead->objIdx].part;
 
 				if (currentHead->type == 0) {
-					treshold = animDataTable[frame].var1;
+					threshold = animDataTable[frame].var1;
 				} else {
-					treshold = animDataTable[frame].width / 2;
+					threshold = animDataTable[frame].width / 2;
 				}
 
 				height = animDataTable[frame].height;
@@ -262,7 +268,7 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 				xdif = x - objX;
 				ydif = y - objY;
 
-				if ((xdif >= 0) && ((treshold << 4) > xdif) && (ydif > 0) && (ydif < height)) {
+				if ((xdif >= 0) && ((threshold << 4) > xdif) && (ydif > 0) && (ydif < height)) {
 					if (animDataTable[frame].ptr1) {
 						if (g_cine->getGameType() == Cine::GType_OS)
 							return currentHead->objIdx;
@@ -287,8 +293,6 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 	return -1;
 }
 
-static commandeType currentSaveName[10];
-
 bool CineEngine::loadSaveDirectory(void) {
 	Common::InSaveFile *fHandle;
 	char tmp[80];
@@ -305,8 +309,6 @@ bool CineEngine::loadSaveDirectory(void) {
 
 	return true;
 }
-
-int16 currentDisk;
 
 void loadObjectScriptFromSave(Common::InSaveFile *fHandle) {
 	int16 i;
@@ -1035,39 +1037,6 @@ void CineEngine::makeSystemMenu(void) {
 	}
 }
 
-static const int16 choiceResultTable[] = {
-	1,
-	1,
-	1,
-	2,
-	1,
-	1,
-	1
-};
-
-static const int16 subObjectUseTable[] = {
-	3,
-	3,
-	3,
-	3,
-	3,
-	0,
-	0
-};
-
-static const int16 canUseOnItemTable[] = {
-	1,
-	0,
-	0,
-	1,
-	1,
-	0,
-	0
-};
-
-commandeType objectListCommand[20];
-int16 objListTab[20];
-
 void makeTextEntry(const commandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width) {
 	byte color = 2;
 	byte color2;
@@ -1076,6 +1045,8 @@ void makeTextEntry(const commandeType commandList[], uint16 height, uint16 X, ui
 	int16 currentY;
 	int16 i;
 	uint16 j;
+	byte currentChar;
+	byte characterWidth, characterIdx;
 
 	if (X + width > 319) {
 		X = 319 - width;
@@ -1100,15 +1071,15 @@ void makeTextEntry(const commandeType commandList[], uint16 height, uint16 X, ui
 		currentX = X + 4;
 
 		for (j = 0; j < strlen(commandList[i]); j++) {
-			byte currentChar = commandList[i][j];
+			currentChar = commandList[i][j];
 
 			if (currentChar == ' ') {
 				currentX += 5;
 			} else {
-				byte characterWidth = fontParamTable[currentChar].characterWidth;
+				characterWidth = fontParamTable[currentChar].characterWidth;
 
 				if (characterWidth) {
-					byte characterIdx = fontParamTable[currentChar].characterIdx;
+					characterIdx = fontParamTable[currentChar].characterIdx;
 					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, currentY);
 					currentX += characterWidth + 1;
 				}
@@ -1149,15 +1120,13 @@ void processInventory(int16 x, int16 y) {
 
 int16 buildObjectListCommand(void) {
 	int16 i;
-	int16 j;
+	int16 j = 0;
 
 	assert(g_cine->getGameType() == Cine::GType_FW);
 
 	for (i = 0; i < 20; i++) {
 		objectListCommand[i][0] = 0;
 	}
-
-	j = 0;
 
 	for (i = 0; i < 255; i++) {
 		if (objectTable[i].name[0] && objectTable[i].costume == -2) {
@@ -1172,15 +1141,13 @@ int16 buildObjectListCommand(void) {
 
 int16 buildObjectListCommand2(int16 param) {
 	int16 i;
-	int16 j;
+	int16 j = 0;
 
 	assert(g_cine->getGameType() == Cine::GType_OS);
 
 	for (i = 0; i < 20; i++) {
 		objectListCommand[i][0] = 0;
 	}
-
-	j = 0;
 
 	for (i = 0; i < 255; i++) {
 		if (objectTable[i].name[0] && objectTable[i].costume == param) {
@@ -1217,7 +1184,7 @@ int16 selectSubObject2(int16 x, int16 y, int16 param) {
 		return -2;
 	}
 
-	selectedObject = makeMenuChoice2(objectListCommand, listSize, x, y, 140);
+	selectedObject = makeMenuChoice(objectListCommand, listSize, x, y, 140, true);
 
 	if (selectedObject == -1)
 		return -1;
@@ -1332,7 +1299,7 @@ uint16 menuVar4 = 0;
 uint16 menuVar5 = 0;
 
 int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, uint16 Y,
-    uint16 width) {
+    uint16 width, bool recheckValue) {
 	byte color = 2;
 	byte color2;
 	int16 paramY;
@@ -1557,239 +1524,10 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 	} while (button);
 
 	if (var_4 == 2)	{	// recheck
-		return -1;
-	}
-
-	return currentSelection;
-}
-
-int16 makeMenuChoice2(const commandeType commandList[], uint16 height, uint16 X, uint16 Y,
-    uint16 width) {
-	byte color = 2;
-	byte color2;
-	int16 paramY;
-	int16 currentX;
-	int16 currentY;
-	int16 i;
-	uint16 button;
-	int16 var_A;
-	int16 di;
-	uint16 j;
-	int16 mouseX;
-	int16 mouseY;
-	int16 var_16;
-	int16 var_14;
-	int16 currentSelection;
-	int16 oldSelection;
-	int16 var_4;
-
-	if (disableSystemMenu)
-		return -1;
-
-	paramY = (height * 9) + 10;
-
-	if (X + width > 319) {
-		X = 319 - width;
-	}
-
-	if (Y + paramY > 199) {
-		Y = 199 - paramY;
-	}
-
-	color2 = defaultMenuBoxColor2;
-
-	hideMouse();
-	blitRawScreen(page1Raw);
-
-	gfxDrawPlainBoxRaw(X, Y, X + width, Y + 4, color2, page1Raw);
-
-	currentX = X + 4;
-	currentY = Y + 4;
-
-	for (i = 0; i < height; i++) {
-		gfxDrawPlainBoxRaw(X, currentY, X + width, currentY + 9, color2, page1Raw);
-		currentX = X + 4;
-
-		for (j = 0; j < strlen(commandList[i]); j++) {
-			byte currentChar = commandList[i][j];
-
-			if (currentChar == ' ') {
-				currentX += 5;
-			} else {
-				byte characterWidth = fontParamTable[currentChar].characterWidth;
-
-				if (characterWidth) {
-					byte characterIdx = fontParamTable[currentChar].characterIdx;
-					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, currentY);
-					currentX += characterWidth + 1;
-				}
-			}
-		}
-
-		currentY += 9;
-	}
-
-	gfxDrawPlainBoxRaw(X, currentY, X + width, currentY + 4, color2, page1Raw);	// bottom part
-
-	gfxDrawLine(X + 1, Y + 1, X + width - 1, Y + 1, 0, page1Raw);	// top
-	gfxDrawLine(X + 1, currentY + 3, X + width - 1, currentY + 3, 0, page1Raw);	// bottom
-	gfxDrawLine(X + 1, Y + 1, X + 1, currentY + 3, 0, page1Raw);	// left
-	gfxDrawLine(X + width - 1, Y + 1, X + width - 1, currentY + 3, 0, page1Raw);	// left
-
-	gfxDrawLine(X, Y, X + width, Y, color, page1Raw);
-	gfxDrawLine(X, currentY + 4, X + width, currentY + 4, color, page1Raw);
-	gfxDrawLine(X, Y, X, currentY + 4, color, page1Raw);
-	gfxDrawLine(X + width, Y, X + width, currentY + 4, color, page1Raw);
-
-	blitRawScreen(page1Raw);
-
-	do {
-		manageEvents();
-		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
-	} while (button);
-
-	var_A = 0;
-
-	currentSelection = 0;
-
-	di = currentSelection * 9 + Y + 4;
-	gfxDrawPlainBoxRaw(X + 2, di - 1, X + width - 2, di + 7, 0, page1Raw);	// draw black box behind selection
-	currentX = X + 4;
-
-	for (j = 0; j < strlen(commandList[currentSelection]); j++) {
-		byte currentChar = commandList[currentSelection][j];
-
-		if (currentChar == ' ') {
-			currentX += 5;
-		} else {
-			byte characterWidth = fontParamTable[currentChar].characterWidth;
-
-			if (characterWidth) {
-				byte characterIdx = fontParamTable[currentChar].characterIdx;
-				drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
-				currentX += characterWidth + 1;
-			}
-		}
-	}
-
-	blitRawScreen(page1Raw);
-
-	manageEvents();
-	getMouseData(mouseUpdateStatus, &button, (uint16 *)&mouseX, (uint16 *)&mouseY);
-
-	var_16 = mouseX;
-	var_14 = mouseY;
-
-	menuVar = 0;
-
-	do {
-		manageEvents();
-		getMouseData(mouseUpdateStatus, &button, (uint16 *)&mouseX, (uint16 *)&mouseY);
-
-		if (button) {
-			var_A = 1;
-		}
-
-		oldSelection = currentSelection;
-
-		if (needMouseSave) {
-			for (j = 0; j < 3; j++) {
-				mainLoopSub6();
-			}
-
-			if (menuVar4 && currentSelection > 0) {	// go up
-				currentSelection--;
-			}
-
-			if (menuVar5) {	// go down
-				if (height - 1 > currentSelection) {
-					currentSelection++;
-				}
-			}
-		} else {
-			if (mouseX > X && mouseX < X + width && mouseY > Y && mouseY < Y + height * 9) {
-				currentSelection = (mouseY - (Y + 4)) / 9;
-
-				if (currentSelection < 0)
-					currentSelection = 0;
-
-				if (currentSelection >= height)
-					currentSelection = height - 1;
-			}
-		}
-
-		if (currentSelection != oldSelection) {	// old != new
-			if (needMouseSave) {
-				hideMouse();
-			}
-
-			di = oldSelection * 9 + Y + 4;
-
-			gfxDrawPlainBoxRaw(X + 2, di - 1, X + width - 2, di + 7, color2, page1Raw);	// restore color
-
-			currentX = X + 4;
-
-			for (j = 0; j < strlen(commandList[oldSelection]); j++) {
-				byte currentChar = commandList[oldSelection][j];
-
-				if (currentChar == ' ') {
-					currentX += 5;
-				} else {
-					byte characterWidth = fontParamTable[currentChar].characterWidth;
-
-					if (characterWidth) {
-						byte characterIdx = fontParamTable[currentChar].characterIdx;
-						drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
-						currentX += characterWidth + 1;
-					}
-				}
-			}
-
-			di = currentSelection * 9 + Y + 4;
-
-			gfxDrawPlainBoxRaw(X + 2, di - 1, X + width - 2, di + 7, 0, page1Raw);	// black new
-
-			currentX = X + 4;
-
-			for (j = 0; j < strlen(commandList[currentSelection]);
-			    j++) {
-				byte currentChar = commandList[currentSelection][j];
-
-				if (currentChar == ' ') {
-					currentX += 5;
-				} else {
-					byte characterWidth = fontParamTable[currentChar].characterWidth;
-
-					if (characterWidth) {
-						byte characterIdx = fontParamTable[currentChar].characterIdx;
-						drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, currentX, di);
-						currentX += characterWidth + 1;
-					}
-				}
-			}
-
-			blitRawScreen(page1Raw);
-
-			if (needMouseSave) {
-				gfxFuncGen2();
-			}
-		}
-
-	} while (!var_A);
-
-	assert(!needMouseSave);
-
-	var_4 = button;
-
-	menuVar = 0;
-
-	do {
-		manageEvents();
-		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
-	} while (button);
-
-	if (var_4 == 2)	{	// recheck
-		return currentSelection + 8000;
+		if (!recheckValue)
+			return -1;
+		else
+			return currentSelection + 8000;
 	}
 
 	return currentSelection;
@@ -1840,7 +1578,7 @@ void makeActionMenu(void) {
 	getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 	if (g_cine->getGameType() == Cine::GType_OS) {
-		playerCommand = makeMenuChoice2(defaultActionCommand, 6, mouseX, mouseY, 70);
+		playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70, true);
 
 		if (playerCommand >= 8000) {
 			playerCommand -= 8000;
@@ -1980,7 +1718,7 @@ uint16 executePlayerInput(void) {
 			if (mouseButton & 2) {
 				if (!(mouseButton & 1)) {
 					if (g_cine->getGameType() == Cine::GType_OS) {
-						playerCommand = makeMenuChoice2(defaultActionCommand, 6, mouseX, mouseY, 70);
+						playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70, true);
 
 						if (playerCommand >= 8000) {
 							playerCommand -= 8000;
@@ -2154,6 +1892,8 @@ void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 	byte i = 0;
 	uint16 si = 0;
 	overlayHeadElement *pCurrentOverlay = currentOverlay;
+	int16 maskX, maskY, maskWidth, maskHeight;
+	uint16 maskSpriteIdx;
 
 	if (g_cine->getGameType() == Cine::GType_OS) {
 		drawSpriteRaw2(spritePtr, objectTable[currentOverlay->objIdx].part, width, height, page, x, y);
@@ -2162,12 +1902,6 @@ void drawSprite(overlayHeadElement *currentOverlay, byte *spritePtr,
 
 	while (pCurrentOverlay) {
 		if (pCurrentOverlay->type == 5) {
-			int16 maskX;
-			int16 maskY;
-			int16 maskWidth;
-			int16 maskHeight;
-			uint16 maskSpriteIdx;
-
 			if (!si) {
 				ptr = (byte *)malloc(width * 8 * height);
 				msk = (byte *)malloc(width * 8 * height);
@@ -2227,129 +1961,12 @@ void backupOverlayPage(void) {
 	}
 }
 
-void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color) {
+void drawMessage(char *messagePtr, int16 x, int16 y, int16 width, int16 color) {
 	byte color2 = 2;
 	byte endOfMessageReached = 0;
 	int16 localX;
 	int16 localY;
 	int16 localWidth;
-
-	char *messagePtr = (char *)messageTable[msgIdx].ptr;
-
-	if (!messagePtr) {
-		freeOverlay(msgIdx, 2);
-		return;
-	}
-
-	var20 += strlen(messagePtr);
-
-	gfxDrawPlainBoxRaw(x, y, x + width, y + 4, color, page1Raw);
-
-	localX = x + 4;
-	localY = y + 4;
-	localWidth = width - 8;
-
-	do {
-		uint16 messageLength = 0;
-		uint16 numWords;
-		uint16 messageWidth;
-		uint16 lineResult;
-		char *endOfMessagePtr;
-		uint16 fullLineWidth;
-		uint16 interWordSize;
-		uint16 interWordSizeRemain;
-		byte currentChar;
-		byte characterWidth;
-
-		while (messagePtr[messageLength] == ' ') {
-			messageLength++;
-		}
-
-		messagePtr += messageLength;
-
-		messageLength = computeMessageLength((byte *) messagePtr, localWidth, &numWords, &messageWidth, &lineResult);
-
-		endOfMessagePtr = messagePtr + messageLength;
-
-		if (lineResult) {
-			fullLineWidth = localWidth - messageWidth;
-
-			if (numWords) {
-				interWordSize = fullLineWidth / numWords;
-				interWordSizeRemain = fullLineWidth % numWords;
-			} else {
-				interWordSize = 5;
-				interWordSizeRemain = 0;
-			}
-		} else {
-			interWordSize = 5;
-			interWordSizeRemain = 0;
-		}
-
-		gfxDrawPlainBoxRaw(x, localY, x + width, localY + 9, color, page1Raw);
-
-		do {
-			currentChar = *(messagePtr++);
-
-			if (currentChar == 0) {
-				endOfMessageReached = 1;
-			} else if (currentChar == ' ') {
-				localX += interWordSizeRemain + interWordSize;
-
-				if (interWordSizeRemain)
-					interWordSizeRemain = 0;
-			} else {
-				characterWidth = fontParamTable[currentChar].characterWidth;
-
-				if (characterWidth) {
-					byte characterIdx = fontParamTable[currentChar].characterIdx;
-					drawSpriteRaw(textTable[characterIdx][0], textTable[characterIdx][1], 2, 8, page1Raw, localX, localY);
-					localX += characterWidth + 1;
-				}
-			}
-		} while ((messagePtr < endOfMessagePtr) && !endOfMessageReached);
-
-		localX = x + 4;
-		localY += 9;
-	} while (!endOfMessageReached);
-
-	gfxDrawPlainBoxRaw(x, localY, x + width, localY + 4, color, page1Raw);
-
-	gfxDrawLine(x + 1, y + 1, x + width - 1, y + 1, 0, page1Raw);	// top
-	gfxDrawLine(x + 1, localY + 3, x + width - 1, localY + 3, 0, page1Raw);	// bottom
-	gfxDrawLine(x + 1, y + 1, x + 1, localY + 3, 0, page1Raw);	// left
-	gfxDrawLine(x + width - 1, y + 1, x + width - 1, localY + 3, 0, page1Raw);	// right
-
-	gfxDrawLine(x, y, x + width, y, color2, page1Raw);
-	gfxDrawLine(x, localY + 4, x + width, localY + 4, color2, page1Raw);
-	gfxDrawLine(x, y, x, localY + 4, color2, page1Raw);
-	gfxDrawLine(x + width, y, x + width, localY + 4, color2, page1Raw);
-
-	freeOverlay(msgIdx, 2);
-}
-
-void drawFailureMessage(byte cmd) {
-	byte color2 = 2;
-	byte endOfMessageReached = 0;
-	int16 localX;
-	int16 localY;
-	int16 localWidth;
-
-	byte msgIdx = cmd * 4 + g_cine->_rnd.getRandomNumber(3);
-
-	const char *messagePtr = failureMessages[msgIdx];
-	int len = strlen(messagePtr);
-
-	var20 += len;
-
-	int16 width = 6 * len + 20;
-
-	if (width > 300)
-		width = 300;
-
-	int16 x = (320 - width) / 2;
-	int16 y = 80;
-	int16 color = 4;
 
 	gfxDrawPlainBoxRaw(x, y, x + width, y + 4, color, page1Raw);
 
@@ -2432,21 +2049,60 @@ void drawFailureMessage(byte cmd) {
 	gfxDrawLine(x, localY + 4, x + width, localY + 4, color2, page1Raw);
 	gfxDrawLine(x, y, x, localY + 4, color2, page1Raw);
 	gfxDrawLine(x + width, y, x + width, localY + 4, color2, page1Raw);
+}
+
+void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color) {
+	char *messagePtr = (char *)messageTable[msgIdx].ptr;
+
+	if (!messagePtr) {
+		freeOverlay(msgIdx, 2);
+		return;
+	}
+
+	var20 += strlen(messagePtr);
+
+	drawMessage(messagePtr, x, y, width, color);
+
+	freeOverlay(msgIdx, 2);
+}
+
+void drawFailureMessage(byte cmd) {
+	byte msgIdx = cmd * 4 + g_cine->_rnd.getRandomNumber(3);
+
+	char *messagePtr = (char *)failureMessages[msgIdx];
+	int len = strlen(messagePtr);
+
+	var20 += len;
+
+	int16 width = 6 * len + 20;
+
+	if (width > 300)
+		width = 300;
+
+	int16 x = (320 - width) / 2;
+	int16 y = 80;
+	int16 color = 4;
+
+	drawMessage(messagePtr, x, y, width, color);
 
 	freeOverlay(cmd, 3);
 }
 
 void drawOverlays(void) {
+	uint16 partVar1, partVar2;
+	AnimData *pPart;
 	overlayHeadElement *currentOverlay;
 	overlayHeadElement *nextOverlay;
+	int16 x, y;
+	objectStruct *objPtr;
+	byte messageIdx;
+	int16 part;
 
 	backupOverlayPage();
 
 	var20 = 0;
 
-	currentOverlay = &overlayHead;
-
-	currentOverlay = currentOverlay->next;
+	currentOverlay = (&overlayHead)->next;
 
 	while (currentOverlay) {
 		nextOverlay = currentOverlay->next;
@@ -2454,10 +2110,6 @@ void drawOverlays(void) {
 		switch (currentOverlay->type) {
 		case 0:	// sprite
 			{
-				objectStruct *objPtr;
-				int16 x;
-				int16 y;
-
 				assert(currentOverlay->objIdx <= NUM_MAX_OBJECT);
 
 				objPtr = &objectTable[currentOverlay->objIdx];
@@ -2467,9 +2119,6 @@ void drawOverlays(void) {
 
 				if (objPtr->frame >= 0) {
 					if (g_cine->getGameType() == Cine::GType_OS) {
-						uint16 partVar1;
-						uint16 partVar2;
-						AnimData *pPart;
 						pPart = &animDataTable[objPtr->frame];
 
 						partVar1 = pPart->var1;
@@ -2479,10 +2128,7 @@ void drawOverlays(void) {
 							drawSprite(currentOverlay, pPart->ptr1, pPart->ptr1, partVar1, partVar2, page1Raw, x, y);
 						}
 					} else {
-						uint16 partVar1;
-						uint16 partVar2;
-						AnimData *pPart;
-						int16 part = objPtr->part;
+						part = objPtr->part;
 
 						assert(part >= 0 && part <= NUM_MAX_ANIMDATA);
 
@@ -2500,12 +2146,6 @@ void drawOverlays(void) {
 			}
 		case 2:	// text
 			{
-				byte messageIdx;
-				int16 x;
-				int16 y;
-				uint16 partVar1;
-				uint16 partVar2;
-
 				// gfxWaitVSync();
 				// hideMouse();
 
@@ -2546,10 +2186,6 @@ void drawOverlays(void) {
 			}
 		case 4:
 			{
-				objectStruct *objPtr;
-				int16 x;
-				int16 y;
-
 				assert(currentOverlay->objIdx <= NUM_MAX_OBJECT);
 
 				objPtr = &objectTable[currentOverlay->objIdx];
@@ -2558,10 +2194,7 @@ void drawOverlays(void) {
 				y = objPtr->y;
 
 				if (objPtr->frame >= 0) {
-					uint16 partVar1;
-					uint16 partVar2;
-					AnimData *pPart;
-					int16 part = objPtr->part;
+					part = objPtr->part;
 
 					assert(part >= 0 && part <= NUM_MAX_ANIMDATA);
 
@@ -2578,18 +2211,14 @@ void drawOverlays(void) {
 			}
 		case 20:
 			{
-				objectStruct *objPtr;
-				int16 x;
-				int16 y;
-
-				var5 = currentOverlay->x;
-
 				assert(currentOverlay->objIdx <= NUM_MAX_OBJECT);
 
 				objPtr = &objectTable[currentOverlay->objIdx];
 
 				x = objPtr->x;
 				y = objPtr->y;
+
+				var5 = currentOverlay->x;
 
 				if (objPtr->frame >= 0) {
 					if (var5 <= 8) {
@@ -2665,8 +2294,6 @@ void checkForPendingDataLoad(void) {
 	}
 }
 
-uint16 exitEngine;
-
 void hideMouse(void) {
 }
 
@@ -2681,10 +2308,6 @@ void removeExtention(char *dest, const char *source) {
 		*ptr = 0;
 	}
 }
-
-uint16 defaultMenuBoxColor2;
-
-uint16 zoneData[NUM_MAX_ZONE];
 
 void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 param5) {
 	overlayHeadElement *currentHead = &overlayHead;
@@ -3034,9 +2657,7 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 	int16 localY;
 	int16 localWidth;
 	int margins = 16;
-
 	int len = strlen(messagePtr);
-
 	int16 width = 6 * len + 20;
 
 	if (width > 250)
