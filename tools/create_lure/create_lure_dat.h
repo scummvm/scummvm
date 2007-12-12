@@ -30,7 +30,7 @@
 #include "common/util.h"
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 26
+#define VERSION_MINOR 27
 
 #define DIALOG_SIZE 0x150
 

@@ -1284,7 +1284,7 @@ void save_fight_segment(byte *&data, uint16 &totalSize) {
 	lureExe.read(data, totalSize);
 }
 
-#define NUM_TEXT_ENTRIES 54
+#define NUM_TEXT_ENTRIES 56
 const char *englishTextStrings[NUM_TEXT_ENTRIES] = {
 	"Get", NULL, "Push", "Pull", "Operate", "Open", "Close", "Lock", "Unlock", "Use", 
 	"Give", "Talk to", "Tell", "Buy", "Look", "Look at", "Look through", "Ask", NULL, 
@@ -1292,8 +1292,8 @@ const char *englishTextStrings[NUM_TEXT_ENTRIES] = {
 	"Credits", "Restart game", "Save game", "Restore game", "Quit", "Fast Text\x8B", 
 	"Slow Text\x8B", "Sound on", "Sound off", "(nothing)", " for ", " to ", " on ", 
 	"and then", "finish", "Are you sure (y/n)?",
-	"a ", "the ", "a ", "a ", "an ", "an ", "an ", "an ",
-	"You are carrying ", "nothing", "You have ", "groat", "groats"
+	"You are carrying ", "nothing", "You have ", "groat", "groats",
+	NULL, "the ", "a ", "a ", "an ", "an ", "an ", "an ", NULL, NULL
 };
 
 const char *italianTextStrings[NUM_TEXT_ENTRIES] = {
@@ -1305,8 +1305,8 @@ const char *italianTextStrings[NUM_TEXT_ENTRIES] = {
 	"Testo veloce\x8B",  "Sonoro acceso", "Sonoro spento", 
 	"(niente)", " per ", " a ", " su ", 
 	"e poi", "finito", "Sei sicuro (s/n)?",
-	NULL, "l' ", "la ", NULL, "le ", "i ", "il ", NULL,
-	"Stai portando ", "niente", "e hai ", "soldi", "soldis"
+	"Stai portando ", "niente", "e hai ", "soldi", "soldis",
+	NULL, "l' ", "la ", NULL, "le ", "i ", "il ", NULL, NULL, NULL
 };
 
 const char frenchUnlockStr[] = {'D', '\x7f', 'v', 'e', 'r', 'r', 'o', 'u', 'i', 'l', 'l', 'e', '\0'};
@@ -1321,8 +1321,8 @@ const char *frenchTextStrings[NUM_TEXT_ENTRIES] = {
 	"Texte rapide\x8b", "Texte lent  \x8b", "Avec son", "Sans son",
 	"(rien)", " avec ", " \x81 ", " sur ", "et puis", "fin",
 	"Vous  \x83tes s\x89r (o/n)?",
-	NULL, "la", "le", "l'", "les", NULL, NULL, NULL,
-	"Vous avez ", "rien", "et vous avez ", "sou", "sous"
+	"Vous avez ", "rien", "et vous avez ", "sou", "sous",
+	NULL, "les", "l'", "l'", "le", "le", "la", "la", NULL, NULL
 };
 
 const char *germanTextStrings[NUM_TEXT_ENTRIES] = {
@@ -1334,8 +1334,8 @@ const char *germanTextStrings[NUM_TEXT_ENTRIES] = {
 	"Abbrechen", "Schneller Text\x8b",
 	"Langsamer Text\x8b", "Sound an", "Sound aus", "(nichts)", " nach ", " an ", " f\x8cr ",
 	"und dann", "Schlu\x92", "Sicher (j/n)?",
-	NULL, "keinen ", "keine ", "kein ", "der ", "die ", "das ", "den ",
 	"Du tr\x8dgst", "niets", "und du hast ", "silberm\x8cnzen", "silberm\x8cnzen"
+	"keinen ", "keine ", "kein ", "der ", "die ", "das ", "den ", "einen ", "eine ",  "ein "
 };
 
 const char *spanishTextStrings[NUM_TEXT_ENTRIES] = {
@@ -1345,8 +1345,8 @@ const char *spanishTextStrings[NUM_TEXT_ENTRIES] = {
 	"Cr\x7f" "ditos", "Reiniciar", "Salvar juego", "Recuperar jue", "Abandonar", "Texto r\x98pido\x8b",
  	"Texto lento \x8b", "Sonido activado   ", "Sonido desactivado ", "(nada)", " con ", " a ", " con ",
  	"y luego", "eso es todo", "\x94" "Est\x98s seguro? (S/N)",
- 	"el ", "la ", "los ", "las ", "este ", "esta ", "estos ", "estas ",
 	"Llevas ", "nada", "y tienes ", "moneda", "monedas"
+ 	"el ", "la ", "los ", "las ", "este ", "esta ", "estos ", "estas ", NULL, NULL
 };
 
 void save_text_strings(byte *&data, uint16 &totalSize) {
