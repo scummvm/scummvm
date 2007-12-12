@@ -46,7 +46,6 @@ struct palEntry {
 };
 
 extern gfxModuleDataStruct gfxModuleData;
-extern short globalAtariScreen[320 * 200 / 4];
 
 void gfxModuleData_gfxClearFrameBuffer(uint8 * ptr);
 void gfxModuleData_setDirtyColors(int min, int max);
