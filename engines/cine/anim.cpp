@@ -379,11 +379,12 @@ void loadSpl(const char *resourceName, int16 idx) {
 
 	if (idx >= 0) {
 		entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
-		assert(entry != -1);
-		memcpy(animDataTable[entry].ptr1, dataPtr, (uint16) partBuffer[foundFileIdx].unpackedSize);
+		memcpy(animDataTable[entry].ptr1, dataPtr, partBuffer[foundFileIdx].unpackedSize);
 	} else {
 		entry = allocFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, -1);
-		memcpy(animDataTable[entry].ptr1, dataPtr, partBuffer[foundFileIdx].unpackedSize);
+		assert(entry != -1);
+		memcpy(animDataTable[entry].ptr1, dataPtr, (uint16) partBuffer[foundFileIdx].unpackedSize);
+
 		animDataTable[entry].fileIdx = foundFileIdx;
 		animDataTable[entry].frameIdx = 0;
 		strcpy(animDataTable[entry].name, currentPartName);
