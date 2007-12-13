@@ -80,12 +80,10 @@ static void drawProc(int x, int y, int c, void *data) {
  * @param y2  y coordinate of end point
  */
 void PictureMgr::drawLine(int x1, int y1, int x2, int y2) {
-	/* CM: Do clipping */
-#define clip(x, y) if ((x)>=(y)) (x)=(y)
-	clip(x1, _width - 1);
-	clip(x2, _width - 1);
-	clip(y1, _height - 1);
-	clip(y2, _height - 1);
+	x1 = CLIP(x1, 0, _width - 1);
+	x2 = CLIP(x2, 0, _width - 1);
+	y1 = CLIP(y1, 0, _height - 1);
+	y2 = CLIP(y2, 0, _height - 1);
 
 #if 0
 	Graphics::drawLine(x1, y1, x2, y2, 0, drawProc, this);

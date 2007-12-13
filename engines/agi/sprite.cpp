@@ -708,23 +708,10 @@ void SpritesMgr::commitBlock(int x1, int y1, int x2, int y2) {
 	if (!_vm->_game.pictureShown)
 		return;
 
-	/* Clipping */
-	if (x1 < 0)
-		x1 = 0;
-	if (x2 < 0)
-		x2 = 0;
-	if (y1 < 0)
-		y1 = 0;
-	if (y2 < 0)
-		y2 = 0;
-	if (x1 >= _WIDTH)
-		x1 = _WIDTH - 1;
-	if (x2 >= _WIDTH)
-		x2 = _WIDTH - 1;
-	if (y1 >= _HEIGHT)
-		y1 = _HEIGHT - 1;
-	if (y2 >= _HEIGHT)
-		y2 = _HEIGHT - 1;
+	x1 = CLIP(x1, 0, _WIDTH - 1);
+	x2 = CLIP(x2, 0, _WIDTH - 1);
+	y1 = CLIP(y1, 0, _HEIGHT - 1);
+	y2 = CLIP(y2, 0, _HEIGHT - 1);
 
 	debugC(7, kDebugLevelSprites, "%d, %d, %d, %d", x1, y1, x2, y2);
 
