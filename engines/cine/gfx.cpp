@@ -133,45 +133,32 @@ void setMouseCursor(int cursor) {
 	}
 }
 
+int8 clipColor(int8 color) {
+	if (color < 0)
+		color = 0;
+	else if (color > 7)
+		color = 7;
+
+	return color;
+}
+
 static uint16 transformColor(uint16 baseColor, int8 r, int8 g, int8 b) {
-	int8 oriR = (baseColor & 0x7);
-	int8 oriG = (baseColor & 0x70) >> 4;
-	int8 oriB = (baseColor & 0x700) >> 8;
-
-	oriR += r;
-	oriG += g;
-	oriB += b;
-
-	if (oriR < 0)
-		oriR = 0;
-	else if (oriR > 7)
-		oriR = 7;
-
-	if (oriG < 0)
-		oriG = 0;
-	else if (oriG > 7)
-		oriG = 7;
-
-	if (oriB < 0)
-		oriB = 0;
-	else if (oriB > 7)
-		oriB = 7;
+	int8 oriR = clipColor((baseColor & 0x7) + r);
+	int8 oriG = clipColor(((baseColor & 0x70) >> 4) + g);
+	int8 oriB = clipColor(((baseColor & 0x700) >> 8) + b);
 
 	return oriR | (oriG << 4) | (oriB << 8);
 }
 
 void transformPaletteRange(byte startColor, byte stopColor, int8 r, int8 g, int8 b) {
-	byte i;
-
-	for (i = startColor; i <= stopColor; i++) {
+	for (byte i = startColor; i <= stopColor; i++) {
 		c_palette[i] = transformColor(tempPalette[i], b, g, r);
 	}
 	//gfxFlipPage(page2);
 }
 
 void gfxFillSprite(byte *spritePtr, uint16 width, uint16 height, byte *page, int16 x, int16 y, uint8 fillColor) {
-	int16 i;
-	int16 j;
+	int16 i, j;
 
 	for (i = 0; i < height; i++) {
 		byte *destPtr = page + x + y * 320;
@@ -353,9 +340,10 @@ void gfxCopyRawPage(byte *source, byte *dest) {
 
 void gfxFlipRawPage(byte *frontBuffer) {
 	byte *page = frontBuffer;
-	int x, y;
+	int x, y, i;
 	byte *pixels = (byte *) screenBuffer;
 	byte c;
+	byte pal[256 * 4];
 
 	for (y = 0; y < 200; y++) {
 		for (x = 0; x < 320; x++) {
@@ -368,9 +356,6 @@ void gfxFlipRawPage(byte *frontBuffer) {
 			pixels[x + 0 + y * 320] = c;
 		}
 	}
-
-	byte pal[256 * 4];
-	int i;
 
 	if (colorMode256) {
 		for (i = 0; i < 256; i++) {
@@ -396,8 +381,7 @@ void gfxFlipRawPage(byte *frontBuffer) {
 
 void drawSpriteRaw(byte *spritePtr, byte *maskPtr, int16 width, int16 height,
 				   byte *page, int16 x, int16 y) {
-	int16 i;
-	int16 j;
+	int16 i, j;
 
 	// FIXME: Is it a bug if maskPtr == NULL?
 	if (!maskPtr)
@@ -424,8 +408,7 @@ void drawSpriteRaw(byte *spritePtr, byte *maskPtr, int16 width, int16 height,
 
 void drawSpriteRaw2(byte *spritePtr, byte transColor, int16 width, int16 height,
 					byte *page, int16 x, int16 y) {
-	int16 i;
-	int16 j;
+	int16 i, j;
 
 	for (i = 0; i < height; i++) {
 		byte *destPtr = page + x + y * 320;
