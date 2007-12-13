@@ -136,7 +136,7 @@ void CineEngine::initialize() {
 		objectTable[i].name[0] = 0;
 	}
 
-	for (i = 0; i < NUM_MAX_OBJECTDATA; i++) {
+	for (i = 0; i < NUM_MAX_VAR; i++) {
 		globalVars[i] = 0;
 	}
 
@@ -170,7 +170,7 @@ void CineEngine::initialize() {
 
 	objScriptList.next = NULL;
 	objScriptList.scriptPtr = NULL;
-	
+
 	globalScriptsHead.next = NULL;
 	globalScriptsHead.scriptPtr = NULL;
 

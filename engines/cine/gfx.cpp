@@ -133,19 +133,10 @@ void setMouseCursor(int cursor) {
 	}
 }
 
-int8 clipColor(int8 color) {
-	if (color < 0)
-		color = 0;
-	else if (color > 7)
-		color = 7;
-
-	return color;
-}
-
 static uint16 transformColor(uint16 baseColor, int8 r, int8 g, int8 b) {
-	int8 oriR = clipColor((baseColor & 0x7) + r);
-	int8 oriG = clipColor(((baseColor & 0x70) >> 4) + g);
-	int8 oriB = clipColor(((baseColor & 0x700) >> 8) + b);
+	int8 oriR = CLIP( (baseColor & 0x007)       + r, 0, 7);
+	int8 oriG = CLIP(((baseColor & 0x070) >> 4) + g, 0, 7);
+	int8 oriB = CLIP(((baseColor & 0x700) >> 8) + b, 0, 7);
 
 	return oriR | (oriG << 4) | (oriB << 8);
 }

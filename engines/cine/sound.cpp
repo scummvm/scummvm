@@ -304,21 +304,17 @@ void AdlibSoundDriver::initCard() {
 	OPLWriteReg(_opl, 0xBD, _vibrato);
 	OPLWriteReg(_opl, 0x08, 0x40);
 
-	int i, j;
-	int oplRegs[] = { 0x60, 0x80, 0x20, 0xE0 };
+	static const int oplRegs[] = { 0x40, 0x60, 0x80, 0x20, 0xE0 };
 
-	for (i = 0; i < 18; ++i) {
-		OPLWriteReg(_opl, 0x40 | _operatorsTable[i], 0);
-	}
-	for (i = 0; i < 9; ++i) {
+	for (int i = 0; i < 9; ++i) {
 		OPLWriteReg(_opl, 0xB0 | i, 0);
 	}
-	for (i = 0; i < 9; ++i) {
+	for (int i = 0; i < 9; ++i) {
 		OPLWriteReg(_opl, 0xC0 | i, 0);
 	}
 
-	for (j = 0; j < 4; j++) {
-		for (i = 0; i < 18; ++i) {
+	for (int j = 0; j < 5; j++) {
+		for (int i = 0; i < 18; ++i) {
 			OPLWriteReg(_opl, oplRegs[j] | _operatorsTable[i], 0);
 		}
 	}
