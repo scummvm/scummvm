@@ -696,15 +696,11 @@ void loadResourcesFromSave() {
 
 			foundFileIdx = currentPtr->fileIdx;
 
-			strcpy(animName, partBuffer[foundFileIdx].partName);
-
-			isSpl = (strstr(animName, ".SPL")) ? 1 : 0;
-
+			strcpy(animName, partBuffer[foundFileIdx].partName);	
 			ptr = dataPtr = readBundleFile(foundFileIdx);
 
-			if (strstr(animName, ".MSK")) {
-				isMask = 1;
-			}
+			isSpl  = (strstr(animName, ".SPL")) ? 1 : 0;
+			isMask = (strstr(animName, ".MSK")) ? 1 : 0;
 
 			if (isSpl) {
 				animHeader.frameWidth = (uint16) partBuffer[foundFileIdx].unpackedSize;
