@@ -149,7 +149,8 @@ void Snd::speakerOff() {
 }
 
 void Snd::speakerOnUpdate(uint32 milis) {
-	_speakerStream->stop(milis);
+	if (_speakerStream->isPlaying())
+		_speakerStream->stop(milis);
 }
 
 void Snd::stopSound(int16 fadeLength, SoundDesc *sndDesc) {
