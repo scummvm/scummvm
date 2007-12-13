@@ -1267,8 +1267,8 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 	}
 
 	gfxDrawPlainBoxRaw(X, currentY, X + width, currentY + 4, color2, page1Raw);	// bottom part
-	drawMessageBox(X, Y, width, Y, 1, 0, page1Raw);
-	drawMessageBox(X, Y, width, Y, 0, color, page1Raw);
+	drawMessageBox(X, Y, width, currentY, 1, 0, page1Raw);
+	drawMessageBox(X, Y, width, currentY, 0, color, page1Raw);
 
 	blitRawScreen(page1Raw);
 
