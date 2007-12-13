@@ -258,61 +258,21 @@ int16 allocFrame(uint16 width, uint16 height, int8 isMask) {
 	return i;
 }
 
-int16 allocFrame2(uint16 width, uint16 height, uint16 type) {
+int16 reserveFrame(uint16 width, uint16 height, uint16 type, int16 idx) {
 	uint16 i;
 	uint32 frameSize;
 
-	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
-		if (!animDataTable[i].ptr1)
-			break;
-	}
-
-	if (i == NUM_MAX_ANIMDATA)
-		return -1;
-
-	frameSize = width * height;
-
-	if (type == 4) {		// 16 color sprites to 256
-		frameSize *= 2;
-		type = 8;
-		width *= 2;
-	}
-
-	if (type == 5) {
-		frameSize += 16;
-	}
-
-	frameSize *= 2;
-
-	animDataTable[i].ptr1 = (byte *)malloc(frameSize);
-
-	assert(animDataTable[i].ptr1);
-
-	animDataTable[i].width = width;
-
-	if (type == 5) {
-		animDataTable[i].var1 = width / 8;
+	if (idx >= 0) {
+		i = (uint16) idx;
 	} else {
-		animDataTable[i].var1 = width / 16;
+		for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
+			if (!animDataTable[i].ptr1)
+				break;
+		}
+
+		if (i == NUM_MAX_ANIMDATA)
+			return -1;
 	}
-
-	animDataTable[i].bpp = type;
-
-	animDataTable[i].height = height;
-
-	animDataTable[i].fileIdx = -1;
-	animDataTable[i].frameIdx = -1;
-
-	animDataCount++;
-
-	return i;
-}
-
-int16 reserveFrame(uint16 width, uint16 height, uint16 type, uint16 idx) {
-	uint16 i;
-	uint32 frameSize;
-
-	i = idx;
 
 	frameSize = width * height;
 
@@ -365,18 +325,13 @@ void generateMask(byte * sprite, byte * mask, uint16 size, byte transparency) {
 }
 
 void convertMask(byte * dest, byte * source, int16 width, int16 height) {
-	int16 i;
-	int16 j;
+	int16 i, j;
+	byte maskEntry;
 
 	for (i = 0; i < width * height; i++) {
-		byte maskEntry = *(source++);
+		maskEntry = *(source++);
 		for (j = 0; j < 8; j++) {
-			if (maskEntry & 0x80) {
-				*(dest++) = 0;
-			} else {
-				*(dest++) = 1;
-			}
-
+			*(dest++) = (maskEntry & 0x80) ? 0 : 1;
 			maskEntry <<= 1;
 		}
 	}
@@ -384,61 +339,16 @@ void convertMask(byte * dest, byte * source, int16 width, int16 height) {
 
 void convert4BBP(byte * dest, byte * source, int16 width, int16 height) {
 	int16 i;
+	byte maskEntry;
 
 	for (i = 0; i < width * height; i++) {
-		byte maskEntry = *(source++);
+		maskEntry = *(source++);
 		*(dest++) = (maskEntry & 0xF0) >> 4;
 		*(dest++) = (maskEntry & 0xF);
 	}
 }
 
-void loadSpl(const char *resourceName) {
-	int16 foundFileIdx;
-	byte *dataPtr;
-	int16 entry;
-
-	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
-
-	entry = allocFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, -1);
-
-	assert(entry != -1);
-
-	memcpy(animDataTable[entry].ptr1, dataPtr, (uint16) partBuffer[foundFileIdx].unpackedSize);
-
-	animDataTable[entry].fileIdx = foundFileIdx;
-	animDataTable[entry].frameIdx = 0;
-	strcpy(animDataTable[entry].name, currentPartName);
-
-	free(dataPtr);
-}
-
-void loadSplAbs(const char *resourceName, uint16 idx) {
-	int16 foundFileIdx;
-	byte *dataPtr;
-	int16 entry;
-
-	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
-
-	entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
-	memcpy(animDataTable[entry].ptr1, dataPtr, partBuffer[foundFileIdx].unpackedSize);
-
-	free(dataPtr);
-}
-
-void loadMsk(const char *resourceName) {
-	int16 foundFileIdx;
-	byte *dataPtr;
-	int16 entry;
-	byte *ptr;
-	int16 i;
-
-	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
-
-	Common::MemoryReadStream readS(dataPtr, 0x16);
-
+void loadAnimHeader(Common::MemoryReadStream readS) {
 	animHeader.field_0 = readS.readByte();
 	animHeader.field_1 = readS.readByte();
 	animHeader.field_2 = readS.readByte();
@@ -457,6 +367,44 @@ void loadMsk(const char *resourceName) {
 	animHeader.field_12 = readS.readByte();
 	animHeader.field_13 = readS.readByte();
 	animHeader.field_14 = readS.readUint16BE();
+}
+
+void loadSpl(const char *resourceName, int16 idx) {
+	int16 foundFileIdx;
+	byte *dataPtr;
+	int16 entry;
+
+	foundFileIdx = findFileInBundle(resourceName);
+	dataPtr = readBundleFile(foundFileIdx);
+
+	if (idx >= 0) {
+		entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
+		assert(entry != -1);
+	} else {
+		entry = allocFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, -1);
+	}
+
+	memcpy(animDataTable[entry].ptr1, dataPtr, (uint16) partBuffer[foundFileIdx].unpackedSize);
+
+	if (idx < 0) {
+		animDataTable[entry].fileIdx = foundFileIdx;
+		animDataTable[entry].frameIdx = 0;
+		strcpy(animDataTable[entry].name, currentPartName);
+	}
+
+	free(dataPtr);
+}
+
+void loadMsk(const char *resourceName) {
+	int16 foundFileIdx, entry, i;
+	byte *dataPtr, *ptr;
+
+	foundFileIdx = findFileInBundle(resourceName);
+	dataPtr = readBundleFile(foundFileIdx);
+
+	Common::MemoryReadStream readS(dataPtr, 0x16);
+
+	loadAnimHeader(readS);
 
 	ptr = dataPtr + 0x16;
 
@@ -490,24 +438,7 @@ void loadAni(const char *resourceName) {
 
 	Common::MemoryReadStream readS(dataPtr, 0x16);
 
-	animHeader.field_0 = readS.readByte();
-	animHeader.field_1 = readS.readByte();
-	animHeader.field_2 = readS.readByte();
-	animHeader.field_3 = readS.readByte();
-	animHeader.frameWidth = readS.readUint16BE();
-	animHeader.frameHeight = readS.readUint16BE();
-	animHeader.field_8 = readS.readByte();
-	animHeader.field_9 = readS.readByte();
-	animHeader.field_A = readS.readByte();
-	animHeader.field_B = readS.readByte();
-	animHeader.field_C = readS.readByte();
-	animHeader.field_D = readS.readByte();
-	animHeader.numFrames = readS.readUint16BE();
-	animHeader.field_10 = readS.readByte();
-	animHeader.field_11 = readS.readByte();
-	animHeader.field_12 = readS.readByte();
-	animHeader.field_13 = readS.readByte();
-	animHeader.field_14 = readS.readUint16BE();
+	loadAnimHeader(readS);
 
 	ptr = dataPtr + 0x16;
 
@@ -574,95 +505,31 @@ void convert8BBP(byte * dest, byte * source, int16 width, int16 height) {
 }
 
 void convert8BBP2(byte * dest, byte * source, int16 width, int16 height) {
-	uint16 i;
-	uint16 j;
-
-	byte al;
-	byte ah;
-	byte bl;
-	byte bh;
-	byte cl;
-	byte ch;
-	byte dl;
-	byte dh;
+	uint16 i, j, k;
 	byte color;
 
 	for (j = 0; j < (width * height) / 16; j++) {
-		al = *(source);
-		ah = *(source + 2);
-		bl = *(source + 4);
-		bh = *(source + 6);
-		cl = *(source + 8);
-		ch = *(source + 0xA);
-		dl = *(source + 0xC);
-		dh = *(source + 0xE);
-
+		// Even bits
 		for (i = 0; i < 8; i++) {
 			color = 0;
-
-			color |= ((dh & 0x080) >> 7);
-			dh <<= 1;
-			color <<= 1;
-			color |= ((dl & 0x080) >> 7);
-			dl <<= 1;
-			color <<= 1;
-			color |= ((ch & 0x080) >> 7);
-			ch <<= 1;
-			color <<= 1;
-			color |= ((cl & 0x080) >> 7);
-			cl <<= 1;
-			color <<= 1;
-			color |= ((bh & 0x080) >> 7);
-			bh <<= 1;
-			color <<= 1;
-			color |= ((bl & 0x080) >> 7);
-			bl <<= 1;
-			color <<= 1;
-			color |= ((ah & 0x080) >> 7);
-			ah <<= 1;
-			color <<= 1;
-			color |= ((al & 0x080) >> 7);
-			al <<= 1;
-
+			for (k = 14; k == 0; k = k - 2) {
+				color |= ((*(source + k) & 0x080) >> 7);
+				*(source + k) <<= 1;
+				if (k > 0)
+					color <<= 1;
+			}
 			*(dest++) = color;
 		}
 
-		al = *(source + 1);
-		ah = *(source + 3);
-		bl = *(source + 5);
-		bh = *(source + 7);
-		cl = *(source + 9);
-		ch = *(source + 0xB);
-		dl = *(source + 0xD);
-		dh = *(source + 0xF);
-
+		// Odd bits
 		for (i = 0; i < 8; i++) {
 			color = 0;
-
-			color |= ((dh & 0x080) >> 7);
-			dh <<= 1;
-			color <<= 1;
-			color |= ((dl & 0x080) >> 7);
-			dl <<= 1;
-			color <<= 1;
-			color |= ((ch & 0x080) >> 7);
-			ch <<= 1;
-			color <<= 1;
-			color |= ((cl & 0x080) >> 7);
-			cl <<= 1;
-			color <<= 1;
-			color |= ((bh & 0x080) >> 7);
-			bh <<= 1;
-			color <<= 1;
-			color |= ((bl & 0x080) >> 7);
-			bl <<= 1;
-			color <<= 1;
-			color |= ((ah & 0x080) >> 7);
-			ah <<= 1;
-			color <<= 1;
-			color |= ((al & 0x080) >> 7);
-			al <<= 1;
-
+			for (k = 15; k == 1; k = k - 2) {
+				color |= ((*(source + k) & 0x080) >> 7);
+				*(source + k) <<= 1;
+				if (k > 1)
+					color <<= 1;
+			}
 			*(dest++) = color;
 		}
 
@@ -670,16 +537,13 @@ void convert8BBP2(byte * dest, byte * source, int16 width, int16 height) {
 	}
 }
 
-void loadSet(const char *resourceName) {
+void loadSet(const char *resourceName, int16 idx) {
 	animHeader2Struct header2;
-	int16 foundFileIdx;
-	byte *dataPtr, *origDataPtr;
-	int16 entry;
-	byte *ptr;
-	int16 i;
 	uint32 fullSize;
 	uint16 numSpriteInAnim;
-	byte *startOfDataPtr;
+	int16 foundFileIdx, entry, typeParam, i;
+	byte *ptr, *startOfDataPtr, *dataPtr, *origDataPtr;
+	byte table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
 	foundFileIdx = findFileInBundle(resourceName);
 	origDataPtr = dataPtr = readBundleFile(foundFileIdx);
@@ -693,8 +557,7 @@ void loadSet(const char *resourceName) {
 	startOfDataPtr = ptr + numSpriteInAnim * 0x10;
 
 	for (i = 0; i < numSpriteInAnim; i++) {
-		int16 typeParam;
-		byte table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+		typeParam = 0;
 
 		Common::MemoryReadStream readS(ptr, 0x10);
 
@@ -710,8 +573,6 @@ void loadSet(const char *resourceName) {
 
 		fullSize = header2.width * header2.height;
 
-		typeParam = 0;
-
 		if (header2.type == 5) {
 			fullSize += 16;
 		}
@@ -721,15 +582,10 @@ void loadSet(const char *resourceName) {
 			typeParam = 1;
 		}
 
-		if (typeParam) {
-			entry = allocFrame2(header2.width * 2, header2.height, header2.type);
-		} else {
-			if (header2.type == 1) {
-				entry = allocFrame2(header2.width * 2, header2.height, header2.type);
-			} else {
-				entry = allocFrame2(header2.width * 2, header2.height, header2.type);
-			}
-		}
+		if (idx >= 0)
+			entry = reserveFrame(header2.width * 2, header2.height, header2.type, idx + i);
+		else
+			entry = reserveFrame(header2.width * 2, header2.height, header2.type, -1);
 
 		assert(entry != -1);
 
@@ -759,122 +615,12 @@ void loadSet(const char *resourceName) {
 	free(origDataPtr);
 }
 
-void loadSetAbs(const char *resourceName, uint16 idx) {
-	animHeader2Struct header2;
-	int16 foundFileIdx;
-	byte *dataPtr, *origDataPtr;
-	int16 entry;
-	byte *ptr;
-	int16 i;
-	uint32 fullSize;
-	uint16 numSpriteInAnim;
-	byte *startOfDataPtr;
-
-	foundFileIdx = findFileInBundle(resourceName);
-	origDataPtr = dataPtr = readBundleFile(foundFileIdx);
-
-	assert(!memcmp(dataPtr, "SET", 3));
-
-	ptr = dataPtr + 4;
-
-	numSpriteInAnim = READ_BE_UINT16(ptr); ptr += 2;
-
-	startOfDataPtr = ptr + numSpriteInAnim * 0x10;
-
-	for (i = 0; i < numSpriteInAnim; i++) {
-		int16 typeParam;
-		byte table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-
-		Common::MemoryReadStream readS(ptr, 0x10);
-
-		header2.field_0 = readS.readUint32BE();
-		header2.width = readS.readUint16BE();
-		header2.height = readS.readUint16BE();
-		header2.type = readS.readUint16BE();
-		header2.field_A = readS.readUint16BE();
-		header2.field_C = readS.readUint16BE();
-		header2.field_E = readS.readUint16BE();
-
-		ptr += 0x10;
-
-		fullSize = header2.width * header2.height;
-
-		typeParam = 0;
-
-		if (header2.type == 5) {
-			fullSize += 16;
-		}
-
-		if (header2.type == 4) {
-			header2.type = 5;
-			typeParam = 1;
-		}
-
-		if (typeParam) {
-			entry = reserveFrame(header2.width * 2, header2.height, header2.type, idx + i);
-		} else {
-			if (header2.type == 1) {
-				entry = reserveFrame(header2.width * 2, header2.height, header2.type, idx + i);
-			} else {
-				entry = reserveFrame(header2.width * 2, header2.height, header2.type, idx + i);
-			}
-		}
-
-		assert(entry != -1);
-
-		dataPtr = startOfDataPtr + header2.field_0;
-
-		if (typeParam) {
-			memcpy(animDataTable[entry].ptr1, table, 0x10);
-			gfxConvertSpriteToRaw(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
-			//memcpy(animDataTable[entry].ptr1 + 0x10, dataPtr, fullSize);
-		} else {
-			if (header2.type == 1) {
-				convert4BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
-			} else if (header2.type == 5) {
-				convert8BBP(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
-			} else if (header2.type == 4) {
-				error("loadSetAbs: header2.type == 4");
-			} else {
-				convert8BBP2(animDataTable[entry].ptr1, dataPtr, header2.width, header2.height);
-			}
-		}
-
-		animDataTable[entry].fileIdx = foundFileIdx;
-		animDataTable[entry].frameIdx = i;
-		strcpy(animDataTable[entry].name, currentPartName);
-	}
-
-	free(origDataPtr);
-}
-
-void loadSeq(const char *resourceName) {
-	int16 foundFileIdx;
-	byte *dataPtr;
-	int16 entry;
-
-	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
-
-	entry = allocFrame2((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0);
+void loadSeq(const char *resourceName, int16 idx) {
+	int16 foundFileIdx = findFileInBundle(resourceName);
+	byte *dataPtr = readBundleFile(foundFileIdx);
+	int16 entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
 
 	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpackedSize - 0x16);
-
-	free(dataPtr);
-}
-
-void loadSeqAbs(const char *resourceName, uint16 idx) {
-	int16 foundFileIdx;
-	byte *dataPtr;
-	int16 entry;
-
-	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
-
-	entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
-
-	memcpy(animDataTable[entry].ptr1, dataPtr + 0x16, (uint16) partBuffer[foundFileIdx].unpackedSize - 0x16);
-
 	free(dataPtr);
 }
 
@@ -883,7 +629,7 @@ void loadResource(const char *resourceName) {
 	/* byte isSpl = 0; */
 
 	if (strstr(resourceName, ".SPL")) {
-		loadSpl(resourceName);
+		loadSpl(resourceName, -1);
 		return;
 	} else if (strstr(resourceName, ".MSK")) {
 		loadMsk(resourceName);
@@ -895,10 +641,10 @@ void loadResource(const char *resourceName) {
 		loadAni(resourceName);
 		return;
 	} else if (strstr(resourceName, ".SET")) {
-		loadSet(resourceName);
+		loadSet(resourceName, -1);
 		return;
 	} else if (strstr(resourceName, ".SEQ")) {
-		loadSeq(resourceName);
+		loadSeq(resourceName, -1);
 		return;
 	} else if (strstr(resourceName, "ECHEC")) {
 		exitEngine = 1;
@@ -913,15 +659,15 @@ void loadAbs(const char *resourceName, uint16 idx) {
 	/* byte isSpl = 0; */
 
 	if (strstr(resourceName, ".SET")) {
-		loadSetAbs(resourceName, idx);
+		loadSet(resourceName, idx);
 		return;
 	} else if (strstr(resourceName, ".H32")) {
 		return;
 	} else if (strstr(resourceName, ".SEQ")) {
-		loadSeqAbs(resourceName, idx);
+		loadSeq(resourceName, idx);
 		return;
 	} else if (strstr(resourceName, ".SPL")) {
-		loadSplAbs(resourceName, idx);
+		loadSpl(resourceName, idx);
 		return;
 	} else if (strstr(resourceName, ".AMI")) {
 		return;
@@ -933,21 +679,18 @@ void loadAbs(const char *resourceName, uint16 idx) {
 }
 
 void loadResourcesFromSave() {
-	char part[256];
-	int16 currentAnim;
+	int16 currentAnim, foundFileIdx, fullSize, entry, i;
+	int8 isMask = 0, isSpl = 0;
+	byte *dataPtr, *ptr, *animPtr;
+	char animName[256], part[256];
+	byte transparentColor;
+	AnimData *currentPtr;
 
 	strcpy(part, currentPartName);
 
 	for (currentAnim = 0; currentAnim < NUM_MAX_ANIMDATA; currentAnim++) {
-		AnimData *currentPtr = &animDataTable[currentAnim];
+		currentPtr = &animDataTable[currentAnim];
 		if (currentPtr->refresh && currentPtr->fileIdx != -1) {
-			int8 isMask = 0;
-			int8 isSpl = 0;
-			int16 foundFileIdx;
-			byte *dataPtr;
-			byte *ptr;
-			char animName[256];
-
 			if (strcmp(currentPartName, currentPtr->name)) {
 				closePart();
 				loadPart(currentPtr->name);
@@ -957,15 +700,9 @@ void loadResourcesFromSave() {
 
 			strcpy(animName, partBuffer[foundFileIdx].partName);
 
-			if (strstr(animName, ".SPL")) {
-				isSpl = 1;
-			} else {
-				isSpl = 0;
-			}
+			isSpl = (strstr(animName, ".SPL")) ? 1 : 0;
 
-			dataPtr = readBundleFile(foundFileIdx);
-
-			ptr = dataPtr;
+			ptr = dataPtr = readBundleFile(foundFileIdx);
 
 			if (strstr(animName, ".MSK")) {
 				isMask = 1;
@@ -979,33 +716,12 @@ void loadResourcesFromSave() {
 			} else {
 				Common::MemoryReadStream readS(ptr, 0x22);
 
-				animHeader.field_0 = readS.readByte();
-				animHeader.field_1 = readS.readByte();
-				animHeader.field_2 = readS.readByte();
-				animHeader.field_3 = readS.readByte();
-				animHeader.frameWidth = readS.readUint16BE();
-				animHeader.frameHeight = readS.readUint16BE();
-				animHeader.field_8 = readS.readByte();
-				animHeader.field_9 = readS.readByte();
-				animHeader.field_A = readS.readByte();
-				animHeader.field_B = readS.readByte();
-				animHeader.field_C = readS.readByte();
-				animHeader.field_D = readS.readByte();
-				animHeader.numFrames = readS.readUint16BE();
-				animHeader.field_10 = readS.readByte();
-				animHeader.field_11 = readS.readByte();
-				animHeader.field_12 = readS.readByte();
-				animHeader.field_13 = readS.readByte();
-				animHeader.field_14 = readS.readUint16BE();
+				loadAnimHeader(readS);
 
 				ptr += 0x16;
 			}
 
 			{
-				uint16 fullSize;
-				uint16 i;
-				byte transparentColor;
-
 				fullSize = animHeader.frameWidth * animHeader.frameHeight;
 
 				loadRelatedPalette(animName);
@@ -1013,9 +729,6 @@ void loadResourcesFromSave() {
 				transparentColor = getAnimTransparentColor(animName);
 
 				for (i = 0; i < animHeader.numFrames; i++) { // load all the frames
-					int16 entry;
-					byte *animPtr;
-
 					// special case transparency handling
 					if (!strcmp(animName, "L2202.ANI")) {
 						if (i < 2) {
