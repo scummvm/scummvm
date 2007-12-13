@@ -36,7 +36,7 @@
 namespace Cine {
 
 objectStruct objectTable[NUM_MAX_OBJECT];
-uint16 globalVars[NUM_MAX_OBJECTDATA];
+uint16 globalVars[NUM_MAX_OBJECTDATA + 1];
 overlayHeadElement overlayHead;
 
 void unloadAllMasks(void) {
@@ -151,11 +151,7 @@ int16 freeOverlay(uint16 objIdx, uint16 param) {
 
 	tempPtr2->previous = currentHeadPtr->previous;
 
-	// FIXME: is this needed? It causes crashes in Windows in the drawOverlays function
-	// (the currentOverlay pointer is incorrect)
-	// Removing this fixes bug #1733238 - FW: crash in copier room
-	// Also, it stops the game from crashing right after the introduction
-	//free(currentHeadPtr);
+	free(currentHeadPtr);
 	return 0;
 }
 

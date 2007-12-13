@@ -53,7 +53,7 @@ struct overlayHeadElement {
 #define NUM_MAX_OBJECTDATA 255
 
 extern objectStruct objectTable[NUM_MAX_OBJECT];
-extern uint16 globalVars[NUM_MAX_OBJECTDATA];
+extern uint16 globalVars[NUM_MAX_OBJECTDATA + 1];
 
 extern overlayHeadElement overlayHead;
 
