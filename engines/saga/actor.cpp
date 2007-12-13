@@ -697,16 +697,10 @@ ActorFrameRange *Actor::getActorFrameRange(uint16 actorId, int frameType) {
 		// Both of them are invisible and immovable
 		// There is no point to keep throwing warnings about this, the original checks for
 		// a valid framecount too
-		if (0 == actor->_framesCount) {
+		if (actor->_framesCount == 0) {
 			return &def;
 		}
-		if (frameType >= actor->_framesCount) {
-			frameType = actor->_framesCount - 1;
-		}
-		if (frameType < 0) {
-			frameType = 0;
-		}
-
+		frameType = CLIP(frameType, 0, actor->_framesCount - 1);
 		fourDirection = actorDirectectionsLUT[actor->_facingDirection];
 		return &actor->_frames[frameType].directions[fourDirection];
 	}

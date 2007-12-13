@@ -407,10 +407,8 @@ void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 num
 	PalEntry *palE;
 	double fpercent;
 
-	from = from > 256 ? 256 : from;
-	from = from < 0 ? 0 : from;
-	to = to > 256 ? 256 : to;
-	to = to < 0 ? 0 : to;
+	from = CLIP((int)from, 0, 256);
+	to   = CLIP((int)to,   0, 256);
 
 	if (from == 0 || to == 0) {
 		// This case works like palToBlack or blackToPal, so no changes are needed

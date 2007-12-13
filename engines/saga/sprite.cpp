@@ -207,15 +207,8 @@ void Sprite::drawClip(Surface *ds, const Rect &clipRect, const Point &spritePoin
 	bufRowPointer = (byte *)ds->pixels + ds->pitch * spritePointer.y;
 	srcRowPointer = spriteBuffer;
 
-	clipWidth = width;
-	if (width > (clipRect.right - spritePointer.x)) {
-		clipWidth = (clipRect.right - spritePointer.x);
-	}
-
-	clipHeight = height;
-	if (height > (clipRect.bottom - spritePointer.y)) {
-		clipHeight = (clipRect.bottom - spritePointer.y);
-	}
+	clipWidth = CLIP(width, 0, clipRect.right - spritePointer.x);
+	clipHeight = CLIP(height, 0, clipRect.bottom - spritePointer.y);
 
 	jo = 0;
 	io = 0;

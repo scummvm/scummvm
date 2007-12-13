@@ -26,9 +26,7 @@
 // Isometric level module
 
 #include "saga/saga.h"
-
 #include "saga/gfx.h"
-
 #include "saga/sagaresnames.h"
 #include "saga/scene.h"
 #include "saga/isomap.h"
@@ -405,23 +403,10 @@ void IsoMap::drawSprite(Surface *ds, SpriteList &spriteList, int spriteNumber, c
 	spritePointer.x = screenPosition.x + xAlign;
 	spritePointer.y = screenPosition.y + yAlign;
 
-	_tileClip.left = spritePointer.x;
-	_tileClip.top = spritePointer.y;
-	_tileClip.right = spritePointer.x + width;
-	_tileClip.bottom = spritePointer.y + height;
-
-	if (_tileClip.left < 0) {
-		_tileClip.left = 0;
-	}
-	if (_tileClip.right > _vm->getDisplayWidth()) {
-		_tileClip.right = _vm->getDisplayWidth();
-	}
-	if (_tileClip.top < 0) {
-		_tileClip.top = 0;
-	}
-	if (_tileClip.bottom > _vm->_scene->getHeight()) {
-		_tileClip.bottom = _vm->_scene->getHeight();
-	}
+	_tileClip.left = CLIP((int)spritePointer.x, 0, _vm->getDisplayWidth());
+	_tileClip.right = CLIP((int)spritePointer.x + width, 0, _vm->getDisplayWidth());
+	_tileClip.top = CLIP((int)spritePointer.y, 0, _vm->_scene->getHeight());
+	_tileClip.bottom = CLIP((int)spritePointer.y + height, 0, _vm->_scene->getHeight());
 
 	_vm->_sprite->drawClip(ds, clip, spritePointer, width, height, spriteBuffer);
 	drawTiles(ds, &location);
