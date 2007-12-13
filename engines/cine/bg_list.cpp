@@ -43,7 +43,7 @@ void addToBGList(int16 objIdx, bool addList) {
 	int16 y = objectTable[objIdx].y;
 	int16 width = animDataTable[objectTable[objIdx].frame].var1;
 	int16 height = animDataTable[objectTable[objIdx].frame].height;
-	int16 part = objectTable[objIdx].part;
+//	int16 part = objectTable[objIdx].part;
 
 	if (g_cine->getGameType() == GType_OS) {
 		drawSpriteRaw2(animDataTable[objectTable[objIdx].frame].ptr1, objectTable[objIdx].part, width, height, page2Raw, x, y);

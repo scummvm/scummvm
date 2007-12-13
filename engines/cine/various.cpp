@@ -907,7 +907,7 @@ void CineEngine::makeSystemMenu(void) {
 		case 4:	// load game
 			{
 				if (loadSaveDirectory()) {
-					int16 selectedSave;
+//					int16 selectedSave;
 
 					getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 					selectedSave = makeMenuChoice(currentSaveName, 10, mouseX, mouseY + 8, 180);
@@ -1259,7 +1259,7 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 		currentX = X + 4;
 
 		for (j = 0; j < strlen(commandList[i]); j++) {
-			byte currentChar = commandList[i][j];
+			currentChar = commandList[i][j];
 			currentX = drawChar(currentChar, currentX, currentY);
 		}
 
@@ -2598,7 +2598,7 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 			int currentX = x + 4;
 
 			for (uint j = 0; j < strlen(inputString); j++) {
-				char currentChar = inputString[j];
+				currentChar = inputString[j];
 				currentX = drawChar(currentChar, currentX, localY);
 
 				// draw cursor here
