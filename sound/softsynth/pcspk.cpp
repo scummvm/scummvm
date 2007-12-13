@@ -74,6 +74,10 @@ void PCSpeaker::setVolume(byte volume) {
 	_volume = volume;
 }
 
+bool PCSpeaker::isPlaying() const {
+	return _remainingSamples != 0;
+}
+
 int PCSpeaker::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock lock(_mutex);
 

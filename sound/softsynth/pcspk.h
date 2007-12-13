@@ -53,6 +53,8 @@ public:
 	/** Adjust the volume. */
 	void setVolume(byte volume);
 
+	bool isPlaying() const;
+
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool isStereo() const	{ return false; }
