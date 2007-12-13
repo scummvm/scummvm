@@ -39,19 +39,11 @@ uint32 var8;
 BGIncrustList *bgIncrustList;
 
 void addToBGList(int16 objIdx, bool addList) {
-	int16 x;
-	int16 y;
-	int16 width;
-	int16 height;
-	int16 part;
-
-	x = objectTable[objIdx].x;
-	y = objectTable[objIdx].y;
-
-	width = animDataTable[objectTable[objIdx].frame].var1;
-	height = animDataTable[objectTable[objIdx].frame].height;
-
-	part = objectTable[objIdx].part;
+	int16 x = objectTable[objIdx].x;
+	int16 y = objectTable[objIdx].y;
+	int16 width = animDataTable[objectTable[objIdx].frame].var1;
+	int16 height = animDataTable[objectTable[objIdx].frame].height;
+	int16 part = objectTable[objIdx].part;
 
 	if (g_cine->getGameType() == GType_OS) {
 		drawSpriteRaw2(animDataTable[objectTable[objIdx].frame].ptr1, objectTable[objIdx].part, width, height, page2Raw, x, y);
@@ -64,16 +56,10 @@ void addToBGList(int16 objIdx, bool addList) {
 }
 
 void addSpriteFilledToBGList(int16 objIdx, bool addList) {
-	int16 x;
-	int16 y;
-	int16 width;
-	int16 height;
-
-	x = objectTable[objIdx].x;
-	y = objectTable[objIdx].y;
-
-	width = animDataTable[objectTable[objIdx].frame].width;
-	height = animDataTable[objectTable[objIdx].frame].height;
+	int16 x = objectTable[objIdx].x;
+	int16 y = objectTable[objIdx].y;
+	int16 width = animDataTable[objectTable[objIdx].frame].width;
+	int16 height = animDataTable[objectTable[objIdx].frame].height;
 
 	if (animDataTable[objectTable[objIdx].frame].ptr1) {
 		gfxFillSprite(animDataTable[objectTable[objIdx].frame].ptr1, width / 2, height, page2Raw, x, y);

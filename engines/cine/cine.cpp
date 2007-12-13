@@ -160,26 +160,21 @@ void CineEngine::initialize() {
 	}
 
 	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
-		animDataTable[i].ptr1 = NULL;
-		animDataTable[i].ptr2 = NULL;
+		animDataTable[i].ptr1 = animDataTable[i].ptr2 = NULL;
 	}
 
-	overlayHead.next = NULL;
-	overlayHead.previous = NULL;
+	overlayHead.next = overlayHead.previous = NULL;
 
 	var8 = 0;
 	bgIncrustList = NULL;
 
 	objScriptList.next = NULL;
-	globalScriptsHead.next = NULL;
-
 	objScriptList.scriptPtr = NULL;
+	
+	globalScriptsHead.next = NULL;
 	globalScriptsHead.scriptPtr = NULL;
 
-	var2 = 0;
-	var3 = 0;
-	var4 = 0;
-	var5 = 0;
+	var2 = var3 = var4 = var5 = 0;
 
 	freePrcLinkedList();
 

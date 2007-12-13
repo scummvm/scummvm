@@ -33,6 +33,8 @@
 namespace Cine {
 
 uint16 bgVar0;
+byte *additionalBgTable[9];
+byte currentAdditionalBgIdx = 0, currentAdditionalBgIdx2 = 0;
 
 void loadCtHigh(byte * currentPtr) {
 	memcpy(page3Raw, currentPtr, 320 * 200);
@@ -114,10 +116,6 @@ byte loadBg(const char *bgName) {
 	free(dataPtr);
 	return 0;
 }
-
-byte *additionalBgTable[9];
-byte currentAdditionalBgIdx = 0;
-byte currentAdditionalBgIdx2 = 0;
 
 void addBackground(const char *bgName, uint16 bgIdx) {
 	byte *ptr, *dataPtr;
