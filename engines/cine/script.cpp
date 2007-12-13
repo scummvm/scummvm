@@ -474,7 +474,7 @@ void addGfxElementA0(int16 param1, int16 param2) {
 	if (currentHead && currentHead->objIdx == param1 && currentHead->type == 20 && currentHead->x == param2)
 		return;
 
-	newElement = (overlayHeadElement *)malloc(sizeof(overlayHeadElement));
+	newElement = new overlayHeadElement;
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
@@ -652,7 +652,7 @@ void addScriptToList0(uint16 idx) {
 		currentHead = tempHead->next;
 	}
 
-	pNewElement =(prcLinkedListStruct *)malloc(sizeof(prcLinkedListStruct));
+	pNewElement = new prcLinkedListStruct;
 
 	assert(pNewElement);
 

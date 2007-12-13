@@ -183,7 +183,7 @@ void loadOverlayElement(uint16 objIdx, uint16 param) {
 		currentHeadPtr = tempHead->next;
 	}
 
-	pNewElement = (overlayHeadElement *)malloc(sizeof(overlayHeadElement));
+	pNewElement = new overlayHeadElement;
 
 	assert(pNewElement);
 

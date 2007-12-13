@@ -93,7 +93,7 @@ void createBgIncrustListElement(int16 objIdx, int16 param) {
 		bgIncrustPtr = bgIncrustPtr->next;
 	}
 
-	bgIncrustPtr = (BGIncrustList *)malloc(sizeof(BGIncrustList));
+	bgIncrustPtr = new BGIncrustList;
 	if (bgIncrustPtrP)
 		bgIncrustPtrP->next = bgIncrustPtr;
 	else
@@ -115,7 +115,7 @@ void freeBgIncrustList(void) {
 
 	while (bgIncrustPtr) {
 		bgIncrustPtrN = bgIncrustPtr->next;
-		free(bgIncrustPtr);
+		delete bgIncrustPtr;
 		bgIncrustPtr = bgIncrustPtrN;
 	}
 
@@ -137,7 +137,7 @@ void loadBgIncrustFromSave(Common::InSaveFile *fHandle) {
 		bgIncrustPtr = bgIncrustPtr->next;
 	}
 
-	bgIncrustPtr = (BGIncrustList *)malloc(sizeof(BGIncrustList));
+	bgIncrustPtr = new BGIncrustList;
 	if (bgIncrustPtrP)
 		bgIncrustPtrP->next = bgIncrustPtr;
 	else

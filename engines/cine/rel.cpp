@@ -48,7 +48,7 @@ void releaseObjectScripts(void) {
 
 		temp = currentHead->next;
 
-		free(currentHead);
+		delete currentHead;
 
 		currentHead = temp;
 	}

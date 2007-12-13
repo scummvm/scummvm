@@ -162,7 +162,7 @@ void runObjectScript(int16 entryIdx) {
 		currentHead = tempHead->next;
 	}
 
-	pNewElement = (prcLinkedListStruct *)malloc(sizeof(prcLinkedListStruct));
+	pNewElement = new prcLinkedListStruct;
 
 	assert(pNewElement);
 
@@ -202,7 +202,7 @@ void addPlayerCommandMessage(int16 cmd) {
 		currentHeadPtr = tempHead->next;
 	}
 
-	pNewElement = (overlayHeadElement *)malloc(sizeof(overlayHeadElement));
+	pNewElement = new overlayHeadElement;
 
 	assert(pNewElement);
 
@@ -324,8 +324,7 @@ void loadObjectScriptFromSave(Common::InSaveFile *fHandle) {
 		currentHead = tempHead->next;
 	}
 
-	newElement =
-	    (prcLinkedListStruct *)malloc(sizeof(prcLinkedListStruct));
+	newElement = new prcLinkedListStruct;
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
@@ -357,7 +356,7 @@ void loadGlobalScriptFromSave(Common::InSaveFile *fHandle) {
 		currentHead = tempHead->next;
 	}
 
-	newElement = (prcLinkedListStruct *)malloc(sizeof(prcLinkedListStruct));
+	newElement = new prcLinkedListStruct;
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
@@ -387,7 +386,7 @@ void loadOverlayFromSave(Common::InSaveFile *fHandle) {
 		currentHead = tempHead->next;
 	}
 
-	newElement = (overlayHeadElement *)malloc(sizeof(overlayHeadElement));
+	newElement = new overlayHeadElement;
 
 	fHandle->readUint32BE();
 	fHandle->readUint32BE();
@@ -2321,7 +2320,7 @@ void addMessage(byte param1, int16 param2, int16 param3, int16 param4, int16 par
 		currentHead = tempHead->next;
 	}
 
-	newElement = (overlayHeadElement *)malloc(sizeof(overlayHeadElement));
+	newElement = new overlayHeadElement;
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
@@ -2356,7 +2355,7 @@ void addSeqListElement(int16 param0, int16 param1, int16 param2, int16 param3, i
 		currentHead = tempHead->next;
 	}
 
-	newElement = (SeqListElement *)malloc(sizeof(SeqListElement));
+	newElement = new SeqListElement;
 
 	newElement->next = tempHead->next;
 	tempHead->next = newElement;
