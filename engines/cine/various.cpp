@@ -1287,7 +1287,7 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 
 	for (j = 0; j < strlen(commandList[currentSelection]); j++) {
 		currentChar = commandList[currentSelection][j];
-		currentX = drawChar(currentChar, currentX, currentY);
+		currentX = drawChar(currentChar, currentX, di);
 	}
 
 	blitRawScreen(page1Raw);
@@ -1349,7 +1349,7 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 
 			for (j = 0; j < strlen(commandList[oldSelection]); j++) {
 				currentChar = commandList[oldSelection][j];
-				currentX = drawChar(currentChar, currentX, currentY);
+				currentX = drawChar(currentChar, currentX, di);
 			}
 
 			di = currentSelection * 9 + Y + 4;
