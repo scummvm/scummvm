@@ -313,9 +313,7 @@ int16 reserveFrame(uint16 width, uint16 height, uint16 type, int16 idx) {
 }
 
 void generateMask(byte * sprite, byte * mask, uint16 size, byte transparency) {
-	uint16 i;
-
-	for (i = 0; i < size; i++) {
+	for (uint16 i = 0; i < size; i++) {
 		if (*(sprite++) != transparency) {
 			*(mask++) = 0;
 		} else {
@@ -338,10 +336,9 @@ void convertMask(byte * dest, byte * source, int16 width, int16 height) {
 }
 
 void convert4BBP(byte * dest, byte * source, int16 width, int16 height) {
-	int16 i;
 	byte maskEntry;
 
-	for (i = 0; i < width * height; i++) {
+	for (int16 i = 0; i < width * height; i++) {
 		maskEntry = *(source++);
 		*(dest++) = (maskEntry & 0xF0) >> 4;
 		*(dest++) = (maskEntry & 0xF);
@@ -370,12 +367,9 @@ void loadAnimHeader(Common::MemoryReadStream readS) {
 }
 
 void loadSpl(const char *resourceName, int16 idx) {
-	int16 foundFileIdx;
-	byte *dataPtr;
+	int16 foundFileIdx = findFileInBundle(resourceName);
 	int16 entry;
-
-	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
+	byte *dataPtr = readBundleFile(foundFileIdx);
 
 	if (idx >= 0) {
 		entry = reserveFrame((uint16) partBuffer[foundFileIdx].unpackedSize, 1, 0, idx);
@@ -394,19 +388,16 @@ void loadSpl(const char *resourceName, int16 idx) {
 }
 
 void loadMsk(const char *resourceName) {
-	int16 foundFileIdx, entry, i;
-	byte *dataPtr, *ptr;
-
-	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
+	int16 foundFileIdx = findFileInBundle(resourceName);
+	int16 entry;
+	byte *dataPtr = readBundleFile(foundFileIdx);
+	byte *ptr;
 
 	Common::MemoryReadStream readS(dataPtr, 0x16);
-
 	loadAnimHeader(readS);
-
 	ptr = dataPtr + 0x16;
 
-	for (i = 0; i < animHeader.numFrames; i++) {
+	for (int16 i = 0; i < animHeader.numFrames; i++) {
 		entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, 1);
 
 		assert(entry != -1);
@@ -423,30 +414,22 @@ void loadMsk(const char *resourceName) {
 }
 
 void loadAni(const char *resourceName) {
-	int16 foundFileIdx;
-	byte *dataPtr;
+	int16 foundFileIdx = findFileInBundle(resourceName);
 	int16 entry;
-	byte *ptr;
-	int16 i;
+	byte *dataPtr = readBundleFile(foundFileIdx);
+	byte *ptr, *animPtr;
 	byte transparentColor;
 	uint32 fullSize;
 
-	foundFileIdx = findFileInBundle(resourceName);
-	dataPtr = readBundleFile(foundFileIdx);
-
 	Common::MemoryReadStream readS(dataPtr, 0x16);
-
 	loadAnimHeader(readS);
-
 	ptr = dataPtr + 0x16;
 
 	transparentColor = getAnimTransparentColor(resourceName);
 
 	fullSize = animHeader.frameWidth * animHeader.frameHeight;
 
-	for (i = 0; i < animHeader.numFrames; i++) {
-		byte *animPtr;
-
+	for (int16 i = 0; i < animHeader.numFrames; i++) {
 		entry = allocFrame(animHeader.frameWidth * 2, animHeader.frameHeight, 0);
 
 		assert(entry != -1);
@@ -488,14 +471,14 @@ void loadAni(const char *resourceName) {
 }
 
 void convert8BBP(byte * dest, byte * source, int16 width, int16 height) {
-	uint16 i;
 	byte table[16];
+	byte color;
 
 	memcpy(table, source, 16);
 	source += 16;
 
-	for (i = 0; i < width * height; i++) {
-		byte color = *(source++);
+	for (uint16 i = 0; i < width * height; i++) {
+		color = *(source++);
 
 		*(dest++) = table[color >> 4];
 		*(dest++) = table[color & 0xF];
@@ -539,22 +522,21 @@ void loadSet(const char *resourceName, int16 idx) {
 	animHeader2Struct header2;
 	uint32 fullSize;
 	uint16 numSpriteInAnim;
-	int16 foundFileIdx, entry, typeParam, i;
+	int16 foundFileIdx = findFileInBundle(resourceName);
+	int16 entry, typeParam;
 	byte *ptr, *startOfDataPtr, *dataPtr, *origDataPtr;
 	byte table[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
-	foundFileIdx = findFileInBundle(resourceName);
 	origDataPtr = dataPtr = readBundleFile(foundFileIdx);
-
 	assert(!memcmp(dataPtr, "SET", 3));
-
 	ptr = dataPtr + 4;
 
-	numSpriteInAnim = READ_BE_UINT16(ptr); ptr += 2;
+	numSpriteInAnim = READ_BE_UINT16(ptr);
+	ptr += 2;
 
 	startOfDataPtr = ptr + numSpriteInAnim * 0x10;
 
-	for (i = 0; i < numSpriteInAnim; i++) {
+	for (int16 i = 0; i < numSpriteInAnim; i++) {
 		typeParam = 0;
 
 		Common::MemoryReadStream readS(ptr, 0x10);

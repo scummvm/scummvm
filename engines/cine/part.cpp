@@ -37,8 +37,6 @@ AnimData *animDataTable;
 PartBuffer *partBuffer;
 
 void loadPart(const char *partName) {
-	uint16 i;
-
 	memset(partBuffer, 0, sizeof(PartBuffer) * NUM_MAX_PARTDATA);
 	numElementInPart = 0;
 
@@ -57,7 +55,7 @@ void loadPart(const char *partName) {
 	if (currentPartName != partName)
 		strcpy(currentPartName, partName);
 
-	for (i = 0; i < numElementInPart; i++) {
+	for (uint16 i = 0; i < numElementInPart; i++) {
 		g_cine->_partFileHandle.read(partBuffer[i].partName, 14);
 		partBuffer[i].offset = g_cine->_partFileHandle.readUint32BE();
 		partBuffer[i].packedSize = g_cine->_partFileHandle.readUint32BE();
@@ -74,8 +72,10 @@ void closePart(void) {
 }
 
 static void fixVolCnfFileName(char *dst, const uint8 *src) {
-	memcpy(dst, src, 8); src += 8;
+	memcpy(dst, src, 8);
+	src += 8;
 	dst[8] = 0;
+
 	char *ext = strchr(dst, ' ');
 	if (!ext) {
 		ext = &dst[8];
