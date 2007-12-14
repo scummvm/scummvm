@@ -35,6 +35,8 @@
 namespace Cine {
 
 uint16 c_palette[256];
+byte colorMode256 = 0;
+byte palette256[256 * 3];
 
 byte *screenBuffer;
 byte *page1Raw;
@@ -104,6 +106,13 @@ void gfxInit() {
 	memset(additionalBgTable, 0, sizeof(additionalBgTable));
 	additionalBgTable[0] = page2Raw;
 	additionalBgTable[8] = page3Raw;
+}
+
+void gfxDestroy() {
+	free(screenBuffer);
+	free(page1Raw);
+	free(page2Raw);
+	free(page3Raw);
 }
 
 void setMouseCursor(int cursor) {
@@ -431,15 +440,6 @@ void fadeToBlack() {
 		g_system->updateScreen();
 		g_system->delayMillis(50);
 	}
-}
-
-void gfxFuncGen1(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5) {
-}
-
-void ptrGfxFunc13(void) {
-}
-
-void gfxFuncGen2(void) {
 }
 
 void blitRawScreen(byte *frontBuffer) {

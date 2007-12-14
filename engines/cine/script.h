@@ -30,7 +30,7 @@ namespace Cine {
 
 #define SCRIPT_STACK_SIZE 50
 
-struct scriptStruct {
+struct ScriptStruct {
 	byte *ptr;
 	uint16 size;
 	int16 stack[SCRIPT_STACK_SIZE];
@@ -38,9 +38,9 @@ struct scriptStruct {
 
 #define NUM_MAX_SCRIPT 50
 
-extern scriptStruct scriptTable[NUM_MAX_SCRIPT];
+extern ScriptStruct scriptTable[NUM_MAX_SCRIPT];
 
- void setupOpcodes(); 
+void setupOpcodes();
 
 void computeScriptStack(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize);
 void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16 scriptIdx);
@@ -50,8 +50,6 @@ void dumpScript(char *dumpName);
 #define OP_loadNewPrcName               0x41
 #define OP_requestCheckPendingDataLoad  0x42
 #define OP_endScript                    0x50
-#define OP_changeDataDisk               0x6B
-#define OP_79                           0x79
 
 void addScriptToList0(uint16 idx);
 int16 checkCollision(int16 objIdx, int16 x, int16 y, int16 numZones, int16 zoneIdx);
@@ -122,8 +120,8 @@ void o1_compareGlobalVar();
 void o1_declareFunctionName();
 void o1_freePartRange();
 void o1_unloadAllMasks();
-void o1_op63();
-void o1_op64();
+void o1_setScreenDimensions();
+void o1_displayBackground();
 void o1_initializeZoneData();
 void o1_setZoneDataEntry();
 void o1_getZoneDataEntry();

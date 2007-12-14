@@ -35,21 +35,21 @@ namespace Cine {
 
 void initLanguage(Common::Language lang);
 
-int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width, bool recheckValue = false);
+int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width, bool recheckValue = false);
 void makeCommandLine(void);
 void makeActionMenu(void);
 
 extern bool disableSystemMenu;
 extern bool inMenu;
 
-struct unk1Struct {
+struct Message {
 	byte *ptr;
 	uint16 len;
 };
 
 #define NUM_MAX_MESSAGE 255
 
-extern unk1Struct messageTable[NUM_MAX_MESSAGE];
+extern Message messageTable[NUM_MAX_MESSAGE];
 
 struct SeqListElement {
 	struct SeqListElement *next;
@@ -71,15 +71,11 @@ struct SeqListElement {
 
 extern SeqListElement seqList;
 
-extern uint32 var6;
-extern uint32 var8;
-
 extern uint16 var2;
 extern uint16 var3;
 extern uint16 var4;
 extern uint16 var5;
 
-void mainLoopSub1(void);
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4);
 
 extern uint16 errorVar;
@@ -93,11 +89,9 @@ extern bool fadeRequired;
 extern uint16 isDrawCommandEnabled;
 extern uint16 waitForPlayerClick;
 extern uint16 menuCommandLen;
-extern uint16 var17;
-extern uint16 var18;
-extern uint16 var19;
-extern uint16 var20;
-extern byte var21;
+extern bool _paletteNeedUpdate;
+extern uint16 _messageLen;
+extern byte _danKeysPressed;
 
 extern int16 playerCommand;
 
@@ -117,7 +111,7 @@ extern char currentCtName[15];
 extern char currentPartName[15];
 
 void stopSample(void);
-void mainLoopSub3(void);
+void stopMusicAfterFadeOut(void);
 uint16 executePlayerInput(void);
 
 void drawOverlays(void);
@@ -140,7 +134,7 @@ void hideMouse(void);
 
 void removeExtention(char *dest, const char *source);
 
-struct selectedObjStruct {
+struct SelectedObjStruct {
 	int16 idx;
 	int16 param;
 };

@@ -36,12 +36,12 @@
 
 namespace Cine {
 
-struct mouseStatusStruct {
+struct MouseStatusStruct {
 	int left;
 	int right;
 };
 
-mouseStatusStruct mouseData;
+MouseStatusStruct mouseData;
 
 uint16 mouseRight = 0;
 uint16 mouseLeft = 0;
@@ -62,7 +62,7 @@ static void processEvent(Common::Event &event) {
 	case Common::EVENT_MOUSEMOVE:
 		break;
 	case Common::EVENT_QUIT:
-		g_system->quit();
+		exitEngine = 1;
 		break;
 	case Common::EVENT_KEYDOWN:
 		switch (event.kbd.keycode) {
@@ -180,7 +180,7 @@ int getKeyData() {
 }
 
 void CineEngine::mainLoop(int bootScriptIdx) {
-	uint16 var_6;
+	bool playerAction;
 	uint16 quitFlag;
 	uint16 i;
 	byte di;
@@ -204,11 +204,9 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		menuVar = 0;
 
-//		gfxFuncGen1(page0c, page0, page0c, page0, -1);
-
-		ptrGfxFunc13();
-
-		gfxFuncGen2();
+//		gfxRedrawPage(page0c, page0, page0c, page0, -1);
+//		gfxWaitVBL();
+//		gfxRedrawMouseCursor();
 
 		inMenu = false;
 		allowPlayerInput = 0;
@@ -233,7 +231,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			c_palette[i] = 0;
 		}
 
-		var17 = 1;
+		_paletteNeedUpdate = true;
 
 		strcpy(newPrcName, "");
 		strcpy(newRelName, "");
@@ -247,12 +245,8 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 	}
 
 	do {
-		mainLoopSub3();
+		stopMusicAfterFadeOut();
 		di = executePlayerInput();
-
-//		if (g_sfxPlayer->_fadeOutCounter != 0 && g_sfxPlayer->_fadeOutCounter < 100) {
-//			g_sfxPlayer->stop();
-//		}
 
 		processSeqList();
 		executeList1();
@@ -271,12 +265,11 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 		flip();
 
 		if (waitForPlayerClick) {
-			var_6 = 0;
+			playerAction = false;
 
-			var20 <<= 3;
-
-			if (var20 < 0x800)
-				var20 = 0x800;
+			_messageLen <<= 3;
+			if (_messageLen < 0x800)
+				_messageLen = 0x800;
 
 			do {
 				manageEvents();
@@ -288,17 +281,9 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			do {
 				manageEvents();
 				getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
-
-				if (mouseButton == 0) {
-					if (processKeyboard(menuVar)) {
-						var_6 = 1;
-					}
-				} else {
-					var_6 = 1;
-				}
-
+				playerAction = (mouseButton != 0) || processKeyboard(menuVar);
 				mainLoopSub6();
-			} while (!var_6);
+			} while (!playerAction);
 
 			menuVar = 0;
 
@@ -329,7 +314,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		manageEvents();
 
-	} while (!exitEngine && !quitFlag && var21 != 7);
+	} while (!exitEngine && !quitFlag && _danKeysPressed != 7);
 
 	hideMouse();
 	g_sound->stopMusic();

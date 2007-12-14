@@ -28,7 +28,7 @@
 
 namespace Cine {
 
-struct animHeaderStruct {
+struct AnimHeaderStruct {
 	byte field_0;
 	byte field_1;
 	byte field_2;
@@ -49,12 +49,10 @@ struct animHeaderStruct {
 	uint16 field_14;
 };
 
-struct animDataEntry {
+struct AnimDataEntry {
 	char name[9];
 	byte color;
 };
-
-extern animDataEntry animData[];
 
 void freeAnimDataTable(void);
 void freeAnimDataRange(byte startIdx, byte numIdx);

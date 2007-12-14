@@ -34,9 +34,9 @@ byte *textDataPtr;
 byte textTable[256][2][16 * 8];
 
 const char **failureMessages;
-const commandeType *defaultActionCommand;
-const commandeType *systemMenu;
-const commandeType *confirmMenu;
+const CommandeType *defaultActionCommand;
+const CommandeType *systemMenu;
+const CommandeType *confirmMenu;
 const char **otherMessages;
 const char *commandPrepositionOn;
 
@@ -200,7 +200,7 @@ void initLanguage(Common::Language lang) {
 		"A wall of silence ..."
 	};
 
-	static const commandeType defaultActionCommand_EN[] = {
+	static const CommandeType defaultActionCommand_EN[] = {
 		"EXAMINE",
 		"TAKE",
 		"INVENTORY",
@@ -210,7 +210,7 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
-	static const commandeType systemMenu_EN[] = {
+	static const CommandeType systemMenu_EN[] = {
 		"Pause",
 		"Restart Game",
 		"Quit",
@@ -230,7 +230,7 @@ void initLanguage(Common::Language lang) {
 		"on"
 	};
 
-	static const commandeType confirmMenu_EN[] = {
+	static const CommandeType confirmMenu_EN[] = {
 		"Ok, go ahead ...",
 		"Absolutely Not!"
 	};
@@ -268,7 +268,7 @@ void initLanguage(Common::Language lang) {
 		"Un mur de silence ..."
 	};
 
-	static const commandeType defaultActionCommand_FR[] = {
+	static const CommandeType defaultActionCommand_FR[] = {
 		"EXAMINER",
 		"PRENDRE",
 		"INVENTAIRE",
@@ -278,7 +278,7 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
-	static const commandeType systemMenu_FR[] = {
+	static const CommandeType systemMenu_FR[] = {
 		"Pause",
 		"Nouvelle partie",
 		"Quitter",
@@ -287,7 +287,7 @@ void initLanguage(Common::Language lang) {
 		"Sauver la partie"
 	};
 
-	static const commandeType confirmMenu_FR[] = {
+	static const CommandeType confirmMenu_FR[] = {
 		"Ok , Vas-y ...",
 		"Surtout Pas !"
 	};
@@ -336,7 +336,7 @@ void initLanguage(Common::Language lang) {
 		"Un muro de silencio ..."
 	};
 
-	static const commandeType defaultActionCommand_ES[] = {
+	static const CommandeType defaultActionCommand_ES[] = {
 		"EXAMINAR",
 		"COGER",
 		"INVENTARIO",
@@ -346,7 +346,7 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
-	static const commandeType systemMenu_ES[] = {
+	static const CommandeType systemMenu_ES[] = {
 		"Pause",
 		"Nueva partida",
 		"Abandonar",
@@ -355,7 +355,7 @@ void initLanguage(Common::Language lang) {
 		"Salvar la partida"
 	};
 
-	static const commandeType confirmMenu_ES[] = {
+	static const CommandeType confirmMenu_ES[] = {
 		"Ok , Vas a ...",
 		"Nade de nada !"
 	};
@@ -404,7 +404,7 @@ void initLanguage(Common::Language lang) {
 		"Eine Wand des Schweigens..."
 	};
 
-	static const commandeType defaultActionCommand_DE[] = {
+	static const CommandeType defaultActionCommand_DE[] = {
 		"Pr\x81""fe",
 		"Nimm",
 		"Bestand",
@@ -414,7 +414,7 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
-	static const commandeType systemMenu_DE[] = {
+	static const CommandeType systemMenu_DE[] = {
 		"Pause",
 		"Spiel Neu Starten",
 		"Lassen",
@@ -423,7 +423,7 @@ void initLanguage(Common::Language lang) {
 		"Spiel Speichern"
 	};
 
-	static const commandeType confirmMenu_DE[] = {
+	static const CommandeType confirmMenu_DE[] = {
 		"Gut, Weitermachen",
 		"Absolut Nicht!"
 	};
@@ -472,7 +472,7 @@ void initLanguage(Common::Language lang) {
 		"Un muro di silenzio ..."
 	};
 
-	static const commandeType defaultActionCommand_IT[] = {
+	static const CommandeType defaultActionCommand_IT[] = {
 		"ESAMINARE",
 		"PRENDERE",
 		"INVENTARIO",
@@ -482,7 +482,7 @@ void initLanguage(Common::Language lang) {
 		"NOACTION"
 	};
 
-	static const commandeType systemMenu_IT[] = {
+	static const CommandeType systemMenu_IT[] = {
 		"Pausa",
 		"Parte nuova",
 		"Quit",
@@ -491,7 +491,7 @@ void initLanguage(Common::Language lang) {
 		"Salvare una parte"
 	};
 
-	static const commandeType confirmMenu_IT[] = {
+	static const CommandeType confirmMenu_IT[] = {
 		"Ok, vacci ...",
 		"Supratutto non!"
 	};

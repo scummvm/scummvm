@@ -36,7 +36,7 @@
 
 namespace Cine {
 
-struct animHeader2Struct {
+struct AnimHeader2Struct {
 	uint32 field_0;
 	uint16 width;
 	uint16 height;
@@ -48,9 +48,9 @@ struct animHeader2Struct {
 
 static uint16 animDataCount = 0;
 
-animHeaderStruct animHeader;
+AnimHeaderStruct animHeader;
 
-animDataEntry animData[] = {
+static const AnimDataEntry animData[] = {
 	{"ALPHA", 0xF},
 	{"TITRE2", 0xF},
 	{"ET", 0xC},
@@ -519,7 +519,7 @@ void convert8BBP2(byte * dest, byte * source, int16 width, int16 height) {
 }
 
 void loadSet(const char *resourceName, int16 idx) {
-	animHeader2Struct header2;
+	AnimHeader2Struct header2;
 	uint32 fullSize;
 	uint16 numSpriteInAnim;
 	int16 foundFileIdx = findFileInBundle(resourceName);
@@ -678,7 +678,7 @@ void loadResourcesFromSave() {
 
 			foundFileIdx = currentPtr->fileIdx;
 
-			strcpy(animName, partBuffer[foundFileIdx].partName);	
+			strcpy(animName, partBuffer[foundFileIdx].partName);
 			ptr = dataPtr = readBundleFile(foundFileIdx);
 
 			isSpl  = (strstr(animName, ".SPL")) ? 1 : 0;

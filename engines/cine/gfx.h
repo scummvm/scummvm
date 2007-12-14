@@ -35,8 +35,11 @@ extern byte *page2Raw;
 extern byte *page3Raw;
 
 extern uint16 c_palette[256];
+extern byte colorMode256;
+extern byte palette256[256 * 3];
 
 void gfxInit();
+void gfxDestroy();
 void setMouseCursor(int cursor);
 void gfxCopyPage(byte *source, byte *dest);
 
@@ -67,8 +70,8 @@ void drawSpriteRaw2(byte *spritePtr, byte transColor, int16 width, int16 height,
 void fadeToBlack(void);
 
 void gfxDrawMaskedSprite(byte *param1, byte *param2, byte *param3, byte *param4, int16 param5);
-void ptrGfxFunc13(void);
-void gfxFuncGen2(void);
+void gfxWaitVBL(void);
+void gfxRedrawMouseCursor(void);
 
 void blitScreen(byte *frontBuffer, byte *backbuffer);
 void blitRawScreen(byte *frontBuffer);

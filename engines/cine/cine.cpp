@@ -97,22 +97,19 @@ int CineEngine::init() {
 }
 
 int CineEngine::go() {
+	gfxInit();
 	CursorMan.showMouse(true);
-
 	mainLoop(1);
-
+	gfxDestroy();
 	delete g_sound;
 	return 0;
 }
 
 
 void CineEngine::initialize() {
-	uint16 i;
-
 	setupOpcodes();
 
 	initLanguage(g_cine->getLanguage());
-	gfxInit();
 
 	textDataPtr = (byte *)malloc(8000);
 
@@ -131,35 +128,13 @@ void CineEngine::initialize() {
 		loadErrmessDat("errmess.dat");
 	}
 
-	for (i = 0; i < NUM_MAX_OBJECT; i++) {
-		objectTable[i].part = 0;
-		objectTable[i].name[0] = 0;
-	}
+	memset(objectTable, 0, sizeof(objectTable));
+	memset(globalVars, 0, sizeof(globalVars));
+	memset(scriptTable, 0, sizeof(scriptTable));
+	memset(messageTable, 0, sizeof(scriptTable));
+	memset(relTable, 0, sizeof(scriptTable));
 
-	for (i = 0; i < NUM_MAX_VAR; i++) {
-		globalVars[i] = 0;
-	}
-
-	for (i = 0; i < NUM_MAX_SCRIPT; i++) {
-		scriptTable[i].ptr = NULL;
-		scriptTable[i].size = 0;
-	}
-
-	for (i = 0; i < NUM_MAX_MESSAGE; i++) {
-		messageTable[i].ptr = NULL;
-		messageTable[i].len = 0;
-	}
-
-	for (i = 0; i < NUM_MAX_REL; i++) {
-		relTable[i].data = NULL;
-		relTable[i].size = 0;
-		relTable[i].obj1Param1 = 0;
-		relTable[i].obj1Param2 = 0;
-		relTable[i].obj2Param = 0;
-		relTable[i].runCount = 0;
-	}
-
-	for (i = 0; i < NUM_MAX_ANIMDATA; i++) {
+	for (int i = 0; i < NUM_MAX_ANIMDATA; i++) {
 		animDataTable[i].ptr1 = animDataTable[i].ptr2 = NULL;
 	}
 

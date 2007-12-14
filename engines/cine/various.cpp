@@ -44,9 +44,7 @@ int16 commandVar3[4];
 int16 commandVar1;
 int16 commandVar2;
 
-unk1Struct messageTable[NUM_MAX_MESSAGE];
-
-uint32 var6;
+Message messageTable[NUM_MAX_MESSAGE];
 
 uint16 var2;
 uint16 var3;
@@ -74,11 +72,9 @@ uint16 checkForPendingDataLoadSwitch;
 uint16 isDrawCommandEnabled;
 uint16 waitForPlayerClick;
 uint16 menuCommandLen;
-uint16 var17;
-uint16 var18;
-uint16 var19;
-uint16 var20;
-byte var21;
+bool _paletteNeedUpdate;
+uint16 _messageLen;
+byte _danKeysPressed;
 
 int16 playerCommand;
 
@@ -105,16 +101,16 @@ uint16 defaultMenuBoxColor;
 byte inputVar1 = 0;
 uint16 inputVar2 = 0, inputVar3 = 0;
 
-selectedObjStruct currentSelectedObject;
+SelectedObjStruct currentSelectedObject;
 
-static commandeType currentSaveName[10];
+static CommandeType currentSaveName[10];
 int16 currentDisk;
 
 static const int16 choiceResultTable[] = { 1, 1, 1, 2, 1, 1, 1 };
 static const int16 subObjectUseTable[] = { 3, 3, 3, 3, 3, 0, 0 };
 static const int16 canUseOnItemTable[] = { 1, 0, 0, 1, 1, 0, 0 };
 
-commandeType objectListCommand[20];
+CommandeType objectListCommand[20];
 int16 objListTab[20];
 
 uint16 exitEngine;
@@ -122,7 +118,10 @@ uint16 defaultMenuBoxColor2;
 uint16 zoneData[NUM_MAX_ZONE];
 
 
-void mainLoopSub3(void) {
+void stopMusicAfterFadeOut(void) {
+//	if (g_sfxPlayer->_fadeOutCounter != 0 && g_sfxPlayer->_fadeOutCounter < 100) {
+//		g_sfxPlayer->stop();
+//	}
 }
 
 int16 stopObjectScript(int16 entryIdx) {
@@ -217,7 +216,7 @@ void addPlayerCommandMessage(int16 cmd) {
 	currentHeadPtr->previous = pNewElement;
 }
 
-int16 getRelEntryForObject(uint16 param1, uint16 param2, selectedObjStruct *pSelectedObject) {
+int16 getRelEntryForObject(uint16 param1, uint16 param2, SelectedObjStruct *pSelectedObject) {
 	int16 i;
 	int16 di = -1;
 
@@ -1016,7 +1015,7 @@ void drawMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 offset,
 	gfxDrawLine(x + width - offset, y + offset, x + width - offset, currentY + 4 - offset, color, page);	// right
 }
 
-void makeTextEntry(const commandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width) {
+void makeTextEntry(const CommandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width) {
 	byte color = 2;
 	byte color2 = defaultMenuBoxColor2;
 	int16 paramY = (height * 9) + 10;
@@ -1193,7 +1192,7 @@ void makeCommandLine(void) {
 			isDrawCommandEnabled = 1;
 
 			if (playerCommand != -1 && choiceResultTable[playerCommand] == commandVar1) {
-				selectedObjStruct obj;
+				SelectedObjStruct obj;
 				obj.idx = commandVar3[0];
 				obj.param = commandVar3[1];
 				int16 di = getRelEntryForObject(playerCommand, commandVar1, &obj);
@@ -1215,7 +1214,7 @@ uint16 needMouseSave = 0;
 uint16 menuVar4 = 0;
 uint16 menuVar5 = 0;
 
-int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, uint16 Y,
+int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, uint16 Y,
     uint16 width, bool recheckValue) {
 	byte color = 2;
 	byte color2 = defaultMenuBoxColor2;
@@ -1365,9 +1364,9 @@ int16 makeMenuChoice(const commandeType commandList[], uint16 height, uint16 X, 
 
 			blitRawScreen(page1Raw);
 
-			if (needMouseSave) {
-				gfxFuncGen2();
-			}
+//			if (needMouseSave) {
+//				gfxRedrawMouseCursor();
+//			}
 		}
 
 	} while (!var_A);
@@ -1401,7 +1400,7 @@ void drawMenuBox(char *command, int16 x, int16 y) {
 
 	gfxDrawPlainBoxRaw(x, y, x + 300, y + 10, 0, page2Raw);
 
-	drawMessageBox(x, y, 300, y + 6, -1, lColor, page2Raw);		
+	drawMessageBox(x, y, 300, y + 6, -1, lColor, page2Raw);
 
 	x += 2;
 	y += 2;
@@ -1422,7 +1421,7 @@ void drawMenuBox(char *command, int16 x, int16 y) {
 		}
 	}
 
-	gfxFuncGen2();
+//	gfxRedrawMouseCursor();
 }
 
 void makeActionMenu(void) {
@@ -1516,7 +1515,7 @@ uint16 executePlayerInput(void) {
 							int16 relEntry;
 
 							drawMenuBox(commandBuffer, 10, defaultMenuBoxColor);
-							selectedObjStruct obj;
+							SelectedObjStruct obj;
 							obj.idx = commandVar3[0];
 							obj.param = commandVar3[1];
 
@@ -1895,7 +1894,7 @@ void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color
 		return;
 	}
 
-	var20 += strlen(messagePtr);
+	_messageLen += strlen(messagePtr);
 
 	drawMessage(messagePtr, x, y, width, color);
 
@@ -1908,7 +1907,7 @@ void drawFailureMessage(byte cmd) {
 	const char *messagePtr = failureMessages[msgIdx];
 	int len = strlen(messagePtr);
 
-	var20 += len;
+	_messageLen += len;
 
 	int16 width = 6 * len + 20;
 
@@ -1935,7 +1934,7 @@ void drawOverlays(void) {
 
 	backupOverlayPage();
 
-	var20 = 0;
+	_messageLen = 0;
 
 	currentOverlay = (&overlayHead)->next;
 
@@ -1995,9 +1994,8 @@ void drawOverlays(void) {
 
 				drawDialogueMessage(messageIdx, x, y, partVar1, partVar2);
 
-				//blitScreen(page0, NULL);
-
-				gfxFuncGen2();
+				// blitScreen(page0, NULL);
+				// gfxRedrawMouseCursor();
 
 				waitForPlayerClick = 1;
 
@@ -2012,9 +2010,8 @@ void drawOverlays(void) {
 
 				drawFailureMessage(currentOverlay->objIdx);
 
-				//blitScreen(page0, NULL);
-
-				gfxFuncGen2();
+				// blitScreen(page0, NULL);
+				// gfxRedrawMouseCursor();
 
 				waitForPlayerClick = 1;
 
@@ -2577,7 +2574,7 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 
 	int quit = 0;
 	bool redraw = true;
-	commandeType tempString;
+	CommandeType tempString;
 	int inputLength = strlen(inputString);
 	int inputPos = inputLength + 1;
 

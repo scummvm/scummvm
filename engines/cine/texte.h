@@ -31,15 +31,15 @@
 
 namespace Cine {
 
-typedef char commandeType[20];
+typedef char CommandeType[20];
 
 extern byte *textDataPtr;
 extern byte textTable[256][2][16 * 8];
 
 extern const char **failureMessages;
-extern const commandeType *defaultActionCommand;
-extern const commandeType *systemMenu;
-extern const commandeType *confirmMenu;
+extern const CommandeType *defaultActionCommand;
+extern const CommandeType *systemMenu;
+extern const CommandeType *confirmMenu;
 extern const char **otherMessages;
 extern const char *commandPrepositionOn;
 

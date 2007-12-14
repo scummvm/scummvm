@@ -37,8 +37,6 @@ struct PalEntry {
 void loadPal(const char *fileName);
 
 extern uint16 tempPalette[256];
-extern byte colorMode256;
-extern byte palette256[256 * 3];
 
 void loadRelatedPalette(const char *fileName);
 

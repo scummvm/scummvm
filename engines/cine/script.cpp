@@ -175,9 +175,9 @@ void setupOpcodes() {
 		{ 0, 0 },
 		{ 0, 0 },
 		{ 0, 0 },
-		{ o1_op63, "wwww" },
+		{ o1_setScreenDimensions, "wwww" },
 		/* 64 */
-		{ o1_op64, "" },
+		{ o1_displayBackground, "" },
 		{ o1_initializeZoneData, "" },
 		{ o1_setZoneDataEntry, "bw" },
 		{ o1_getZoneDataEntry, "bb" },
@@ -335,9 +335,9 @@ void setupOpcodes() {
 		{ 0, 0 },
 		{ 0, 0 },
 		{ 0, 0 },
-		{ o1_op63, "wwww" },
+		{ o1_setScreenDimensions, "wwww" },
 		/* 64 */
-		{ o1_op64, "" },
+		{ o1_displayBackground, "" },
 		{ o1_initializeZoneData, "" },
 		{ o1_setZoneDataEntry, "bw" },
 		{ o1_getZoneDataEntry, "bb" },
@@ -525,7 +525,7 @@ uint16 isSeqRunning(uint16 param1, uint16 param2, uint16 param3) {
 	return 0;
 }
 
-scriptStruct scriptTable[NUM_MAX_SCRIPT];
+ScriptStruct scriptTable[NUM_MAX_SCRIPT];
 
 void stopGlobalScript(uint16 scriptIdx) {
 	prcLinkedListStruct *currentHead = &globalScriptsHead;
@@ -1429,8 +1429,8 @@ void o1_unloadAllMasks() {
 	unloadAllMasks();
 }
 
-void o1_op63() {
-	warning("STUB: o1_op63()");
+void o1_setScreenDimensions() {
+	warning("STUB: o1_setScreenDimensions()");
 	getNextWord();
 	getNextWord();
 	getNextWord();
@@ -1438,8 +1438,8 @@ void o1_op63() {
 	// setupScreenParam
 }
 
-void o1_op64() {
-	warning("STUB: o1_op64()");
+void o1_displayBackground() {
+	warning("STUB: o1_displayBackground()");
 }
 
 void o1_initializeZoneData() {
@@ -2761,7 +2761,7 @@ void decompileScript(byte *scriptPtr, int16 *stackPtr, uint16 scriptSize, uint16
 				sprintf(lineBuffer, "stopSample()\n");
 				break;
 			}
-		case OP_79:
+		case 0x79:
 			{
 				byte param;
 

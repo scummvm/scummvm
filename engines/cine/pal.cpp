@@ -30,15 +30,12 @@ namespace Cine {
 
 uint16 tempPalette[256];
 
-byte colorMode256 = 0;
-byte palette256[256 * 3];
-
 uint16 palEntriesCount;
 
 PalEntry *palPtr = NULL;
 
-byte paletteBuffer1[16];
-byte paletteBuffer2[16];
+static byte paletteBuffer1[16];
+static byte paletteBuffer2[16];
 
 void loadPal(const char *fileName) {
 	char buffer[20];
@@ -60,7 +57,7 @@ void loadPal(const char *fileName) {
 
 	palEntriesCount = palFileHandle.readUint16LE();
 	palFileHandle.readUint16LE(); // entry size
-	
+
 	palPtr = (PalEntry *)malloc(palEntriesCount * sizeof(PalEntry));
 	assert(palPtr);
 	for (int i = 0; i < palEntriesCount; ++i) {
