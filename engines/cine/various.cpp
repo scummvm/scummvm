@@ -1960,6 +1960,7 @@ void drawOverlays(void) {
 						partVar2 = pPart->height;
 
 						if (pPart->ptr1) {
+							// NOTE: is the mask supposed to be in ptr1? Shouldn't that be ptr2, like below?
 							drawSprite(currentOverlay, pPart->ptr1, pPart->ptr1, partVar1, partVar2, page1Raw, x, y);
 						}
 					} else {
@@ -2373,9 +2374,9 @@ uint16 addAni(uint16 param1, uint16 param2, byte *ptr, SeqListElement *element, 
 }
 
 void processSeqListElement(SeqListElement *element) {
-	int16 x;
-	int16 y;
-	byte *ptr1;
+	int16 x = objectTable[element->var6].x;
+	int16 y = objectTable[element->var6].y;
+	byte *ptr1 = animDataTable[element->varA].ptr1;
 	int16 var_10;
 	int16 var_4;
 	int16 var_2;
@@ -2387,16 +2388,9 @@ void processSeqListElement(SeqListElement *element) {
 
 	element->var12 = 0;
 
-	x = objectTable[element->var6].x;
-	y = objectTable[element->var6].y;
-	ptr1 = animDataTable[element->varA].ptr1;
-
 	if (ptr1) {
-		uint16 param1;
-		uint16 param2;
-
-		param1 = ptr1[1];
-		param2 = ptr1[2];
+		uint16 param1 = ptr1[1];
+		uint16 param2 = ptr1[2];
 
 		if (element->varC != 255) {
 			// FIXME: Why is this here? Fingolfin gets lots of these
@@ -2484,6 +2478,7 @@ void processSeqList(void) {
 
 
 bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxLength, int y) {
+	int16 color = 2;
 	byte color2 = defaultMenuBoxColor2;
 	byte endOfMessageReached = 0;
 	int16 localX, localY, localWidth;
@@ -2496,14 +2491,9 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 	const char *endOfMessagePtr;
 	byte currentChar, characterWidth;
 
-	if (width > 250)
-		width = 250;
-
-	if (width < 180)
-		width = 180;
+	width = CLIP((int)width, 180, 250);
 
 	int16 x = (320 - width) / 2;
-	int16 color = 2;
 
 	gfxDrawPlainBoxRaw(x - margins, y, x + width + margins, y + 4, color2, page1Raw);
 
