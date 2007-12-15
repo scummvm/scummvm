@@ -645,7 +645,7 @@ void Mouse::menuMouse() {
 }
 
 void Mouse::normalMouse() {
-	// The gane is playing and none of the menus are activated - but, we
+	// The game is playing and none of the menus are activated - but, we
 	// need to check if a menu is to start. Note, won't have luggage
 
 	MouseEvent *me;
