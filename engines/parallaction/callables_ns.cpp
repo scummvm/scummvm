@@ -620,21 +620,17 @@ void Parallaction_ns::_c_shade(void *parm) {
 }
 
 void Parallaction_ns::_c_projector(void*) {
-#ifdef HALFBRITE
 	static int dword_16032 = 0;
 
-//	Bitmap bm;
-//	InitBitMap(&bm);
+    _gfx->setHalfbriteMode(true);
 
-	if (dword_16032 != 0) {
-/*		// keep drawing spotlight in its final place
-		_gfx->flatBlitCnv(&scnv, 110, 25, Gfx::kBitFront);
-		BltBitMap(&bm, 0, 0, &_screen._bitMap, 110, 25, a3->??, a3->??, 0x20, 0x20);
-*/		return;
-	}
-
-	_gfx->setHalfbriteMode(true);
-/*
+//	if (dword_16032 != 0) {
+		// keep drawing spotlight in its final place
+        _gfx->setProjectorPos(110, 25);
+        printf("FIXED: %i, %i\n", 110, 25);
+		return;
+//	}
+#ifdef HALFBRITE
 	// move spot light around the stage
 	int d7, d6;
 	for (d7 = 0; d7 < 150; d7++) {
@@ -647,7 +643,7 @@ void Parallaction_ns::_c_projector(void*) {
 			d1 >>= 1;
 			d6 = 50 - d1;
 		} else {
-			int d1 = d7 / 100;
+			int d1 = d7 % 100;
 			if (d1 < 0)
 				d1++;
 
@@ -655,36 +651,28 @@ void Parallaction_ns::_c_projector(void*) {
 			d6 = d1;
 		}
 
-		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+20, d6, a3->??, a3->??, 0x20, 0x20);
-		sub_1590C(d6 + a3->??);
-		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+20, d6, a3->??, a3->??, 0xFA, 0x20);
+        printf("%i, %i, ", d7+20, d6);
+//		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+20, d6, a3->??, a3->??, 0x20, 0x20);
 	}
 
 	for (d7 = 50; d7 > -10; d7--) {
-		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0x20, 0x20);
-		sub_1590C(d6 + a3->??);
-		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0xFA, 0x20);
+        printf("%i, %i, ", d7+120, d6);
+//		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0x20, 0x20);
 	}
 
-	BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0x20, 0x20);
-	_gfx->flatBlitCnv(&scnv, d7+120, d6, Gfx::kBitFront);
-*/
-
+    printf("%i, %i\n", d7+120, d6);
+//	BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0x20, 0x20);
+#endif
 	dword_16032 = 1;
 	return;
-#endif
 }
 
 void Parallaction_ns::_c_HBOff(void*) {
-#ifdef HALFBRITE
 	_gfx->setHalfbriteMode(false);
-#endif
 }
 
 void Parallaction_ns::_c_HBOn(void*) {
-#ifdef HALFBRITE
 	_gfx->setHalfbriteMode(true);
-#endif
 }
 
 

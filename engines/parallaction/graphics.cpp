@@ -25,11 +25,46 @@
 
 #include "common/system.h"
 #include "common/file.h"
+#include "graphics/primitives.h"
 
 #include "parallaction/parallaction.h"
 
 
 namespace Parallaction {
+
+
+void halfbritePixel(int x, int y, int color, void *data) {
+    byte *buffer = (byte*)data;
+    buffer[x + y * _vm->_screenWidth] &= ~0x20;
+}
+
+void drawCircleLine(int xCenter, int yCenter, int x, int y, int color, void (*plotProc)(int, int, int, void *), void *data){
+	Graphics::drawLine(xCenter + x, yCenter + y, xCenter - x, yCenter + y, color, plotProc, data);
+	Graphics::drawLine(xCenter + x, yCenter - y, xCenter - x, yCenter - y, color, plotProc, data);
+	Graphics::drawLine(xCenter + y, yCenter + x, xCenter - y, yCenter + x, color, plotProc, data);
+	Graphics::drawLine(xCenter + y, yCenter - x, xCenter - y, yCenter - x, color, plotProc, data);
+}
+
+void drawCircle(int xCenter, int yCenter, int radius, int color, void (*plotProc)(int, int, int, void *), void *data) {
+	int x = 0;
+	int y = radius;
+	int p = 1 - radius;
+
+	/* Plot first set of points */
+	drawCircleLine(xCenter, yCenter, x, y, color, plotProc, data);
+
+	while (x < y) {
+		x++;
+		if (p < 0)
+			p += 2*x + 1;
+		else {
+			y--;
+			p += 2 * (x-y) + 1;
+		}
+		drawCircleLine(xCenter, yCenter, x, y, color, plotProc, data);
+	}
+}
+
 
 
 
@@ -110,7 +145,7 @@ void Palette::fadeTo(const Palette& target, uint step) {
 uint Palette::fillRGBA(byte *rgba) {
 
 	byte r, g, b;
-	byte *hbPal = rgba + _size;
+	byte *hbPal = rgba + _colors * 4;
 
 	for (uint32 i = 0; i < _colors; i++) {
 		r = (_data[i*3]   << 2) | (_data[i*3]   >> 4);
@@ -269,21 +304,23 @@ void Gfx::animatePalette() {
 
 
 void Gfx::setHalfbriteMode(bool enable) {
-#ifdef HALFBRITE
 	if (_vm->getPlatform() != Common::kPlatformAmiga) return;
 	if (enable == _halfbrite) return;
 
-	byte *buf = _buffers[kBitBack];
-	for (uint32 i = 0; i < SCREEN_SIZE; i++)
-		*buf++ ^= 0x20;
-
-	buf = _buffers[kBitFront];
-	for (uint32 i = 0; i < SCREEN_SIZE; i++)
-		*buf++ ^= 0x20;
-
 	_halfbrite = !_halfbrite;
-#endif
+
+	if (!enable) {
+	    _hbCircleRadius = 0;
+	}
 }
+
+#define HALFBRITE_CIRCLE_RADIUS             48
+void Gfx::setProjectorPos(int x, int y) {
+    _hbCircleRadius = HALFBRITE_CIRCLE_RADIUS;
+    _hbCirclePos.x = x + _hbCircleRadius;
+    _hbCirclePos.y = y + _hbCircleRadius;
+}
+
 
 void Gfx::drawInventory() {
 
@@ -325,7 +362,20 @@ void Gfx::drawBalloons() {
 }
 
 void Gfx::updateScreen() {
-	g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _buffers[kBitFront]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
+    if (_halfbrite) {
+        Graphics::Surface *surf = g_system->lockScreen();
+        byte *src = (byte*)_buffers[kBitFront]->pixels;
+        byte *dst = (byte*)surf->pixels;
+        for (int i = 0; i < surf->w*surf->h; i++) {
+            *dst++ = *src++ | 0x20;
+        }
+        if (_hbCircleRadius > 0) {
+            drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &halfbritePixel, surf->pixels);
+        }
+        g_system->unlockScreen();
+    } else {
+        g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _buffers[kBitFront]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
+    }
 
 	drawInventory();
 
@@ -854,6 +904,7 @@ Gfx::Gfx(Parallaction* vm) :
 	memset(_palettefx, 0, sizeof(_palettefx));
 
 	_halfbrite = false;
+    _hbCircleRadius = 0;
 
 	_font = NULL;
 

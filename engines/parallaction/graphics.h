@@ -283,6 +283,7 @@ public:
 
 	// amiga specific
 	void setHalfbriteMode(bool enable);
+    void setProjectorPos(int x, int y);
 
 	// misc
 	int16 queryMask(int16 v);
@@ -314,6 +315,10 @@ protected:
 	MaskBuffer			*_depthMask;
 	Font				*_font;
 	bool				_halfbrite;
+
+    Common::Point       _hbCirclePos;
+    int                 _hbCircleRadius;
+
 
 protected:
 	struct Balloon {
