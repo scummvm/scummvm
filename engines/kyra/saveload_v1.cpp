@@ -65,7 +65,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 	}
 	uint32 version = in->readUint32BE();
 	if (version > CURRENT_VERSION) {
-		warning("Savegame is not the right version (%d)", version);
+		warning("Savegame is not the right version (%u)", version);
 		delete in;
 		return;
 	}

@@ -242,9 +242,9 @@ bool StaticResource::init() {
 	temp = 0;
 
 	if (version != RESFILE_VERSION)
-		error("invalid KYRA.DAT file version (%d, required %d)", version, RESFILE_VERSION);
+		error("invalid KYRA.DAT file version (%u, required %d)", version, RESFILE_VERSION);
 	if (gameID != _vm->game())
-		error("invalid game id (%d)", gameID);
+		error("invalid game id (%u)", gameID);
 
 	uint32 gameFeatures = createFeatures(_vm->gameFlags());
 	if ((featuresValue & GAME_FLAGS) != gameFeatures)

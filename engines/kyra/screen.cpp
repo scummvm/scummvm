@@ -1629,7 +1629,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 }
 
 void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {
-	debugC(9, kDebugLevelScreen, "Screen::decodeFrame3(%p, %p, %d)", (const void *)src, (const void *)dst, size);
+	debugC(9, kDebugLevelScreen, "Screen::decodeFrame3(%p, %p, %u)", (const void *)src, (const void *)dst, size);
 	const uint8 *dstEnd = dst + size;
 	while (dst < dstEnd) {
 		int8 code = *src++;
@@ -1650,7 +1650,7 @@ void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {
 }
 
 uint Screen::decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize) {
-	debugC(9, kDebugLevelScreen, "Screen::decodeFrame4(%p, %p, %d)", (const void *)src, (const void *)dst, dstSize);
+	debugC(9, kDebugLevelScreen, "Screen::decodeFrame4(%p, %p, %u)", (const void *)src, (const void *)dst, dstSize);
 	uint8 *dstOrig = dst;
 	uint8 *dstEnd = dst + dstSize;
 	while (1) {
@@ -2690,7 +2690,7 @@ void Screen::loadPalette(const char *filename, uint8 *palData) {
 	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
 
 	if (palData && fileSize) {
-		debugC(9, kDebugLevelScreen,"Loading a palette of size %i from '%s'", fileSize, filename);
+		debugC(9, kDebugLevelScreen,"Loading a palette of size %u from '%s'", fileSize, filename);
 		if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 			assert(fileSize % 2 == 0);
 			assert(fileSize / 2 <= 256);

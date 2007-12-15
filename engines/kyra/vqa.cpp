@@ -295,7 +295,7 @@ bool VQAMovie::open(const char *filename) {
 			}
 
 			if (size != 4 * (uint32)_header.numFrames) {
-				warning("VQAMovie::open: Expected size %d for `FINF' chunk, but got %d", 4 * _header.numFrames, size);
+				warning("VQAMovie::open: Expected size %d for `FINF' chunk, but got %u", 4 * _header.numFrames, size);
 				return false;
 			}
 
@@ -341,7 +341,7 @@ bool VQAMovie::open(const char *filename) {
 			break;
 
 		default:
-			warning("VQAMovie::open: Unknown tag `%c%c%c%c'", (tag >> 24) & 0xFF, (tag >> 16) & 0xFF, (tag >> 8) & 0xFF, tag & 0xFF);
+			warning("VQAMovie::open: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
 			_file.seek(size, SEEK_CUR);
 			break;
 		}
@@ -508,7 +508,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 					break;
 
 				default:
-					warning("VQAMovie::displayFrame: Unknown `VQFR' sub-tag `%c%c%c%c'", (tag >> 24) & 0xFF, (tag >> 16) & 0xFF, (tag >> 8) & 0xFF, tag & 0xFF);
+					warning("VQAMovie::displayFrame: Unknown `VQFR' sub-tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
 					_file.seek(size, SEEK_CUR);
 					break;
 				}
@@ -518,7 +518,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 			break;
 
 		default:
-			warning("VQAMovie::displayFrame: Unknown tag `%c%c%c%c'", (tag >> 24) & 0xFF, (tag >> 16) & 0xFF, (tag >> 8) & 0xFF, tag & 0xFF);
+			warning("VQAMovie::displayFrame: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
 			_file.seek(size, SEEK_CUR);
 			break;
 		}
@@ -638,7 +638,7 @@ void VQAMovie::play() {
 				break;
 
 			default:
-				warning("VQAMovie::play: Unknown tag `%c%c%c%c'", (tag >> 24) & 0xFF, (tag >> 16) & 0xFF, (tag >> 8) & 0xFF, tag & 0xFF);
+				warning("VQAMovie::play: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
 				_file.seek(size, SEEK_CUR);
 				break;
 			}
