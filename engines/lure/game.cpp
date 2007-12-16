@@ -49,7 +49,10 @@ Game::Game() {
 	_debugger = new Debugger();
 	_fastTextFlag = false;
 	_preloadFlag = false;
+
 	_soundFlag = true;
+	_musicVolume = ConfMan.getBool("music_mute") ? 0 : MIN(255, ConfMan.getInt("music_volume"));
+	_sfxVolume = ConfMan.getBool("sfx_mute") ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
 }
 
 Game::~Game() {

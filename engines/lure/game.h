@@ -47,6 +47,8 @@ class Game {
 private:
 	Debugger *_debugger;
 	bool _fastTextFlag, _soundFlag;
+	uint8 _sfxVolume;
+	uint8 _musicVolume;
 	uint8 _state;
 	uint16 _tellCommands[MAX_TELL_COMMANDS * 3 + 1];
 	int _numTellCommands;
@@ -80,6 +82,8 @@ public:
 	bool &preloadFlag() { return _preloadFlag; }
 	bool fastTextFlag() { return _fastTextFlag; }
 	bool soundFlag() { return _soundFlag; }
+	uint8 sfxVolume() { return _sfxVolume; }
+	uint8 musicVolume() { return _musicVolume; }
 	Debugger &debugger() { return *_debugger; }
 
 	// Menu item support methods

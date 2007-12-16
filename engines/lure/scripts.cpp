@@ -48,9 +48,9 @@ static const uint16 *hotspot_dealloc_set[4] = {&dealloc_list_1[0], &dealloc_list
 
 // Details used for co-ordination of sounds during the endgame sequence
 static const AnimSoundSequence soundList[] = {
-	{9, 2, 0}, {27, 5, 0}, {24, 3, 0}, {24, 1, 0}, {3, 1, 1}, {3, 1, 2}, {3, 1, 3},
-	{3, 1, 4}, {4, 1, 5}, {7, 4, 6}, {31, 6, 0}, 
-	{0, 0, 0}
+	{9, 0x45, 2, 0}, {27, 0x48, 5, 0}, {24, 0x46, 3, 0}, {24, 0x37, 1, 0}, {3, 0x37, 1, 1}, 
+	{3, 0x37, 1, 2}, {3, 0x37, 1, 3}, {3, 0x37, 1, 4}, {4, 0x37, 1, 5}, {7, 0x47, 4, 6}, 
+	{31, 6, 0}, {0, 0, 0, 0}
 };
 
 /*------------------------------------------------------------------------*/
@@ -196,9 +196,11 @@ void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
 	AnimationSequence *anim;
 
 	screen.paletteFadeOut();
-	Sound.killSounds();
-	Sound.loadSection(0xFF10);
 	mouse.cursorOff();
+
+	Sound.killSounds();
+	if (Sound.isRoland())
+		Sound.loadSection(ROLAND_ENDGAME_SOUND_RESOURCE_ID);
 
 	Palette p(ENDGAME_PALETTE_ID);
 	anim = new AnimationSequence(ENDGAME_ANIM_ID, p, true, 9, soundList);

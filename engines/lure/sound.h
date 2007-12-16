@@ -40,7 +40,8 @@ namespace Lure {
 
 struct ChannelEntry {
 	MidiChannel *midiChannel;
-	byte volume;
+	bool isMusic;
+	uint8 volume;
 };
 
 class MidiMusic: public MidiDriver {
@@ -67,7 +68,7 @@ private:
 
 public:
 	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS_INNER], 
-		uint8 channelNum, uint8 soundNum, void *soundData, uint32 size);
+		uint8 channelNum, uint8 soundNum, bool isMusic, void *soundData, uint32 size);
 	~MidiMusic();
 	void setVolume(int volume);
 	int getVolume()	{ return _volume; }
@@ -117,6 +118,7 @@ private:
 	bool _channelsInUse[NUM_CHANNELS_OUTER];
 	bool _isPlaying;
 	bool _nativeMT32;
+	bool _isRoland;
 	Common::MutexRef _soundMutex;
 	bool _paused;
 
@@ -149,6 +151,7 @@ public:
 	void pause() { _paused = true; }
 	void resume() { _paused = false; }
 	bool getPaused() { return _paused; }
+	bool isRoland() { return _isRoland; }
 
 	// The following methods implement the external sound player module
 	void musicInterface_Initialise();

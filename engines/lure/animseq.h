@@ -34,7 +34,8 @@ enum AnimAbortType {ABORT_NONE, ABORT_END_INTRO, ABORT_NEXT_SCENE};
 
 struct AnimSoundSequence {
 	uint16 numFrames;
-	uint8 soundId;
+	uint8 adlibSoundId;
+	uint8 rolandSoundId;
 	uint8 channelNum;
 };
 

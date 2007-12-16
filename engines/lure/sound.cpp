@@ -38,15 +38,18 @@ namespace Lure {
 //#define SOUND_CROP_CHANNELS
 
 SoundManager::SoundManager() {
+	Disk &disk = Disk::getReference();
+	Game &game = Game::getReference();
 	_soundMutex = g_system->createMutex();
 
 	int index;
-	_descs = Disk::getReference().getEntry(SOUND_DESC_RESOURCE_ID);
+	_descs = disk.getEntry(SOUND_DESC_RESOURCE_ID);
 	_numDescs = _descs->size() / sizeof(SoundDescResource);
 	_soundData = NULL;
 	_paused = false;
 
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	_isRoland = midiDriver != MD_ADLIB;
 	_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 
 	Common::set_to(_channelsInUse, _channelsInUse+NUM_CHANNELS_OUTER, false);
@@ -63,7 +66,8 @@ SoundManager::SoundManager() {
 
 		for (index = 0; index < NUM_CHANNELS_INNER; ++index) {
 			_channelsInner[index].midiChannel = _driver->allocateChannel();
-			_channelsInner[index].volume = DEFAULT_VOLUME;
+			_channelsInner[index].isMusic = false;
+			_channelsInner[index].volume = game.sfxVolume();
 		}
 	}
 }
@@ -249,12 +253,12 @@ void SoundManager::addSound2(uint8 soundIndex) {
 void SoundManager::stopSound(uint8 soundIndex) {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::stopSound index=%d", soundIndex);
 	SoundDescResource &rec = soundDescs()[soundIndex];
-	musicInterface_Stop(rec.soundNumber & 0x7f);
+	musicInterface_Stop(rec.soundNumber);
 }
 
 void SoundManager::killSound(uint8 soundNumber) {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::stopSound soundNumber=%d", soundNumber);
-	musicInterface_Stop(soundNumber & 0x7f);
+	musicInterface_Stop(soundNumber);
 }
 
 void SoundManager::setVolume(uint8 soundNumber, uint8 volume) {
@@ -395,6 +399,7 @@ void SoundManager::fadeOut() {
 void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber) {
 	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_Play soundNumber=%d, channel=%d", 
 		soundNumber, channelNumber);
+	Game &game = Game::getReference();
 
 	if (!_soundData)
 		error("Sound section has not been specified");
@@ -407,7 +412,10 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber) {
 		// Only play sounds if a sound driver is active
 		return;
 
-	if (!Game::getReference().soundFlag())
+	bool isMusic = (soundNumber & 0x80) != 0;
+	uint8 volume = isMusic ? game.musicVolume() : game.sfxVolume();
+
+	if (!game.soundFlag() || (volume == 0))
 		// Don't play sounds if sound is turned off
 		return;
 
@@ -424,8 +432,8 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber) {
 
 	g_system->lockMutex(_soundMutex);
 	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNumber, 
-		soundStart, dataSize);
-	sound->setVolume(DEFAULT_VOLUME);
+		isMusic, soundStart, dataSize);
+	sound->setVolume(volume);
 	_playingSounds.push_back(sound);		
 	g_system->unlockMutex(_soundMutex);
 }
@@ -567,16 +575,20 @@ void SoundManager::doTimer() {
 /*------------------------------------------------------------------------*/
 
 MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS_INNER], 
-					 uint8 channelNum, uint8 soundNum, void *soundData, uint32 size) {
-
+					 uint8 channelNum, uint8 soundNum, bool isMusic, void *soundData, uint32 size) {
+	 Game &game = Game::getReference();
 	_driver = driver;
 	_channels = channels;
 	_soundNumber = soundNum;
 	_channelNumber = channelNum;
 
 	_numChannels = 4;
-	_volume = 0xff;
-	setVolume(DEFAULT_VOLUME);
+	_volume = 0;
+	for (int i = 0; i < _numChannels; ++i) {
+		_channels[_channelNumber + i].isMusic = isMusic;
+		_channels[_channelNumber + i].volume = isMusic ? game.musicVolume() : game.sfxVolume();
+	}
+	setVolume(0xff);
 
 	_passThrough = false;
 

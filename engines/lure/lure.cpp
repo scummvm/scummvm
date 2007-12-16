@@ -54,9 +54,6 @@ LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): En
 	if (!_mixer->isReady()) {
 		warning("Sound initialization failed.");
 	}
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 }
 
 int LureEngine::init() {
@@ -135,7 +132,7 @@ int LureEngine::go() {
 
 	if (ConfMan.getInt("boot_param") == 0) {
 		// Show the introduction
-		Sound.loadSection(INTRO_SOUND_RESOURCE_ID);
+		Sound.loadSection(Sound.isRoland() ? ROLAND_INTRO_SOUND_RESOURCE_ID : ADLIB_INTRO_SOUND_RESOURCE_ID);
 		Introduction *intro = new Introduction(*_screen, *_system);
 
 		intro->show();
@@ -145,7 +142,7 @@ int LureEngine::go() {
 	// Play the game
 	if (!_events->quitFlag) {
 		// Play the game
-		Sound.loadSection(MAIN_SOUND_RESOURCE_ID);
+		Sound.loadSection(Sound.isRoland() ? ROLAND_MAIN_SOUND_RESOURCE_ID : ADLIB_MAIN_SOUND_RESOURCE_ID);
 		gameInstance->execute();
 	}
 
