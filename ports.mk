@@ -70,7 +70,7 @@ ifeq ($(BACKEND), iphone)
 OSXOPT=/usr/local/arm-apple-darwin
 else
 # Static libaries, used for the scummvm-static and iphone targets
-OSX_STATIC_LIBS := `sdl-config --static-libs`
+OSX_STATIC_LIBS := `$(OSXOPT)/bin/sdl-config --static-libs`
 endif
 
 ifdef USE_VORBIS
@@ -105,6 +105,7 @@ scummvm-static: $(OBJS)
 		$(OSX_STATIC_LIBS) \
 		-lSystemStubs \
 		-lz
+#		$(OSXOPT)/lib/libz.a
 
 # Special target to create a static linked binary for the iPhone
 iphone: $(OBJS)
