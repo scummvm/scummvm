@@ -63,6 +63,13 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 
 	debug(1, "CHANGED TO LOCATION \"%s\"", _vm->_resman->fetchName(res));
 
+	// We have to clear this. Otherwise, if an exit warps back to the same
+	// room (e.g. the jungle maze), clicking on the same exit again will be
+	// misinterpreted as a double-click, and that only works if we're
+	// actually walking towards that exit. Otherwise, the game would hang.
+
+	_vm->_logic->writeVar(EXIT_CLICK_ID, 0);
+
 	// if last screen was using a shading mask (see below)
 	if (_thisScreen.mask_flag) {
 		if (closeLightMask() != RD_OK)
