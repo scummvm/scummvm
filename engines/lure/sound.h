@@ -57,7 +57,6 @@ private:
 	MidiParser *_parser;
 	ChannelEntry *_channels;
 	bool _isPlaying;
-	bool _nativeMT32;
 
 	void queueUpdatePos();
 	uint8 randomQueuePos();
@@ -73,7 +72,6 @@ public:
 	void setVolume(int volume);
 	int getVolume()	{ return _volume; }
 
-	void hasNativeMT32(bool b)	{ _nativeMT32 = b; }
 	void playSong(uint16 songNum);
 	void stopSong() { stopMusic(); }
 	void playMusic();
@@ -151,6 +149,7 @@ public:
 	void pause() { _paused = true; }
 	void resume() { _paused = false; }
 	bool getPaused() { return _paused; }
+	bool hasNativeMT32() { return _nativeMT32; }
 	bool isRoland() { return _isRoland; }
 
 	// The following methods implement the external sound player module

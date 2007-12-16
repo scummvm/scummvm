@@ -693,8 +693,10 @@ void MidiMusic::send(uint32 b) {
 		_channels[channel].volume = volume;
 		volume = volume * _volume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && !_nativeMT32) {
-		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
+	} else if ((b & 0xF0) == 0xC0) {
+		if (Sound.isRoland() && !Sound.hasNativeMT32()) {
+			b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
+		}
 	}
 	else if ((b & 0xFFF0) == 0x007BB0) {
 		// No implementation
