@@ -956,7 +956,6 @@ void Game::handleBootParam(int value) {
 }
 
 bool Game::getYN() {
-	OSystem &system = *g_system;
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
