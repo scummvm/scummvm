@@ -1688,7 +1688,6 @@ void Hotspot::doAsk(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	uint16 usedId = _currentActions.top().supportData().param(1);
 	Hotspot *destCharacter = res.getActiveHotspot(hotspot->hotspotId);
-	assert(destCharacter);
 	HotspotData *usedHotspot = res.getHotspot(usedId);
 	_data->useHotspotId = usedId;
 
@@ -1707,15 +1706,17 @@ void Hotspot::doAsk(HotspotData *hotspot) {
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, ASK);
 
 	if (sequenceOffset >= 0x8000) {
-		destCharacter->showMessage(sequenceOffset, hotspotId());
+		if (destCharacter != NULL)
+			destCharacter->showMessage(sequenceOffset, hotspotId());
 	} else if (sequenceOffset != 0) {
 		sequenceOffset = Script::execute(sequenceOffset);
 
 		if (sequenceOffset == 0) {
 			// Give item to character
 			usedHotspot->roomNumber = hotspotId();
-			destCharacter->showMessage(32, hotspotId());
-		} else if (sequenceOffset != 1) {
+			if (destCharacter != NULL)
+				destCharacter->showMessage(32, hotspotId());
+		} else if ((sequenceOffset != 1) && (destCharacter != NULL)) {
 			destCharacter->showMessage(sequenceOffset, hotspotId());
 		}
 	}
