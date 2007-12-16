@@ -5,23 +5,8 @@
 ######################################################################
 # The default build target: just build the scummvm executable
 ######################################################################
+
 all: $(EXECUTABLE) plugins
-
-
-######################################################################
-# Various minor settings
-######################################################################
-
-# Files that are to be included in the archive built by "make dist"
-DISTFILES := \
-	Makefile Makefile.common \
-	AUTHORS NEWS README COPYING COPYRIGHT
-
-# The dist file name
-ZIPFILE := scummvm-`date '+%Y-%m-%d'`.zip
-
-# The name for the directory used for depenency tracking
-DEPDIR := .deps
 
 
 ######################################################################
@@ -53,13 +38,14 @@ ifdef DISABLE_HQ_SCALERS
 DEFINES += -DDISABLE_HQ_SCALERS
 endif
 
+
 ######################################################################
 # The build rules follow - normally you should have no need to
 # touch whatever comes after here.
 ######################################################################
 
 # Concat DEFINES and INCLUDES to form the CPPFLAGS
-CPPFLAGS:= $(DEFINES) $(INCLUDES)
+CPPFLAGS := $(DEFINES) $(INCLUDES)
 
 # Include the build instructions for all modules
 -include $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES)))
@@ -74,7 +60,7 @@ DEPFILES =
 base/version.o: $(filter-out base/libbase.a,$(OBJS))
 
 # The build rule for the ScummVM executable
-$(EXECUTABLE):  $(OBJS)
+$(EXECUTABLE): $(OBJS)
 	$(CXX) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 distclean: clean
@@ -83,8 +69,6 @@ distclean: clean
 
 clean:
 	$(RM) $(OBJS) $(EXECUTABLE)
-
-.PHONY: all clean dist distclean plugins
 
 # Old (dumb) compile & dependcy rules
 #INCS	= scumm/scumm.h common/scummsys.h
@@ -123,3 +107,72 @@ endif
 
 # Include the dependency tracking files.
 -include $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
+
+
+######################################################################
+# Create the files that depend on the version
+######################################################################
+
+VERSION_FILES = \
+	$(srcdir)/dists/iphone/Info.plist \
+	$(srcdir)/dists/macosx/Info.plist
+
+VERSION = $(shell cat "${srcdir}/base/internal_version.h" | cut -d\" -f2)
+VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
+VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
+VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
+VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
+
+$(VERSION_FILES): %: %.in
+	@echo "Creating $@"
+	@cat $< | sed \
+		-e "s/@VER_MAJOR@/$(VER_MAJOR)/g" \
+		-e "s/@VER_MINOR@/$(VER_MINOR)/g" \
+		-e "s/@VER_PATCH@/$(VER_PATCH)/g" \
+		-e "s/@VER_EXTRA@/$(VER_EXTRA)/g" \
+		-e "s/@VERSION@/$(VERSION)/g" \
+		> $@
+
+
+######################################################################
+# Distribution settings
+######################################################################
+
+ifeq ($(VER_EXTRA),svn)
+DISTVERSION = $(shell date '+%Y-%m-%d')
+else
+DISTVERSION = $(VERSION)
+endif
+
+DISTNAME := scummvm-$(DISTVERSION)
+DISTDIR := dist
+VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
+
+ifeq ($(shell svn stat $(srcdir) 2>&1 | grep "is not a working copy"),)
+SVNROOT := $(srcdir)
+else
+SVNROOT := https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/
+endif
+
+$(VERFILE): $(srcdir)/base/internal_version.h
+	@$(RM_REC) $(DISTDIR)
+	@$(MKDIR) $(DISTDIR)
+	svn export $(SVNROOT) $(DISTDIR)/$(DISTNAME)
+
+$(DISTDIR)/$(DISTNAME).tar.gz: $(VERFILE)
+	cd $(DISTDIR); tar zcf $(DISTNAME).tar.gz $(DISTNAME)
+
+$(DISTDIR)/$(DISTNAME).tar.bz2: $(VERFILE)
+	cd $(DISTDIR); tar jcf $(DISTNAME).tar.bz2 $(DISTNAME)
+
+$(DISTDIR)/$(DISTNAME).zip: $(VERFILE)
+	cd $(DISTDIR); zip -qr9 $(DISTNAME).zip $(DISTNAME)
+
+dist-src: \
+	$(DISTDIR)/$(DISTNAME).tar.gz \
+	$(DISTDIR)/$(DISTNAME).tar.bz2 \
+	$(DISTDIR)/$(DISTNAME).zip
+	@#RPM-src?
+	@#DEB-src?
+
+.PHONY: all clean distclean plugins dist-src

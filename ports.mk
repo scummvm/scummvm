@@ -24,10 +24,6 @@ uninstall:
 	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
 	rm -rf "$(DESTDIR)$(DATADIR)/scummvm/"
 
-dist:
-	$(RM) $(ZIPFILE)
-	$(ZIP) $(ZIPFILE) $(DISTFILES)
-
 deb:
 	ln -sf dists/debian;
 	debian/prepare
@@ -36,7 +32,7 @@ deb:
 
 # Special target to create a application wrapper for Mac OS X
 bundle_name = ScummVM.app
-bundle: scummvm-static
+bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
@@ -52,7 +48,7 @@ bundle: scummvm-static
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	strip $(bundle_name)/Contents/MacOS/scummvm
 
-iphonebundle:
+iphonebundle: $(srcdir)/dists/iphone/Info.plist
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
 	cp $(srcdir)/gui/themes/modern.ini $(bundle_name)/
@@ -178,4 +174,4 @@ aos4dist: scummvm
 	cp README $(AOS4PATH)/README.txt
 	cp /sdk/local/documentation/SDL-1.2.9/README-SDL.txt $(AOS4PATH)
 
-.PHONY: deb bundle osxsnap win32dist dist install uninstall
+.PHONY: deb bundle osxsnap win32dist install uninstall

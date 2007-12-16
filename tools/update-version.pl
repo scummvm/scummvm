@@ -31,10 +31,7 @@ print "Setting version to '$VERSION'\n";
 
 # List of the files in which we need to perform substitution.
 my @subs_files = qw(
-	backends/platform/ds/arm9/makefile
 	base/internal_version.h
-	dists/iphone/Info.plist
-	dists/macosx/Info.plist
 	dists/redhat/scummvm.spec
 	dists/scummvm.rc
 	dists/slackware/scummvm.SlackBuild
