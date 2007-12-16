@@ -127,6 +127,9 @@ int KyraEngine_v2::init() {
 	_screen->setAnimBlockPtr(3504);
 	_screen->setScreenDim(0);
 
+	if (!_sound->init())
+		error("Couldn't init sound");
+
 	_abortIntroFlag = false;
 
 	// temporary solution until staticres manager support (kyra.dat) is added for kyra 2
@@ -145,7 +148,7 @@ int KyraEngine_v2::init() {
 	}
 
 	for (int i = 0; i < 33; i++)
-		_sequenceStringsDuration[i] = strlen(_sequenceStrings[i]) * 8;
+		_sequenceStringsDuration[i] = (int) strlen(_sequenceStrings[i]) * 8;
 
 	// No mouse display in demo
 	if (_flags.isDemo)
@@ -164,10 +167,8 @@ int KyraEngine_v2::init() {
 }
 
 int KyraEngine_v2::go() {
-	// Temporary measure to work around the fact that there's
-	// several WSA files with identical names in different PAK files.
-	_res->unloadPakFile("OUTFARM.PAK");
-	_res->unloadPakFile("FLYTRAP.PAK");
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+		seq_showStarcraftLogo();
 
 	seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
 	//seq_playSequences(kSequenceFunters, kSequenceFrash);
@@ -175,7 +176,26 @@ int KyraEngine_v2::go() {
 	if (_menuChoice == 1) {
 		// load just the pak files needed for ingame
 		_res->unloadAllPakFiles();
-		_res->loadFileList("FILEDATA.FDT");
+		if (_flags.platform == Common::kPlatformPC && (_flags.isTalkie || _flags.isDemo)) {
+			_res->loadFileList("FILEDATA.FDT");
+		} else if (_flags.platform == Common::kPlatformPC) {
+			//TODO
+		} else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
+			char tmpfilename[13];
+			static const char * pakfiles [] = { "KYRA.DAT", "AUDIO.PAK", "CAULDRON.PAK",
+				"MISC_CPS.PAK", "MISC_EMC.PAK", "OTHER.PAK", "VOC.PAK", "WSCORE.PAK" };
+			for (int i = 0; i < 8; i++)
+				_res->loadPakFile(pakfiles[i]);
+			for (int i = 1; i < 10; i++) {
+				sprintf(tmpfilename, "COST%d_SH.PAK", i);
+				_res->loadPakFile(tmpfilename);
+			}
+			for (int i = 1; i < 6; i++) {
+				sprintf(tmpfilename, "HOFCH_%d.PAK", i);
+				_res->loadPakFile(tmpfilename);
+			}
+		}
+
 		startup();
 		runLoop();
 		cleanup();
@@ -187,7 +207,9 @@ int KyraEngine_v2::go() {
 }
 
 void KyraEngine_v2::startup() {
-	_sound->setSoundFileList(_dosSoundFileList, _dosSoundFileListSize);
+	snd_assignMusicData(kMusicIngame);
+	// The track map is exactly the same
+	// for FM-TOWNS and DOS
 	_trackMap = _dosTrackMap;
 	_trackMapSize = _dosTrackMapSize;
 
@@ -306,7 +328,7 @@ void KyraEngine_v2::runLoop() {
 		//	waitTicks(5);
 		//	sub_270A0();
 		//}
-		
+
 		if (_system->getMillis() > _nextIdleAnim)
 			showIdleAnim();
 
@@ -1540,6 +1562,19 @@ void KyraEngine_v2::snd_loadSoundFile(int id) {
 	_sound->loadSoundFile(file);
 }
 
+void KyraEngine_v2::snd_assignMusicData(kMusicDataID id) {
+	if (_flags.platform == Common::kPlatformPC) {
+		if (id == kMusicIntro)
+			_sound->setSoundFileList(_dosSoundFileListIntro, 1);
+		else if (id == kMusicFinale)
+			_sound->setSoundFileList(_dosSoundFileListFinale, 1);
+		else
+			_sound->setSoundFileList(_dosSoundFileList, _dosSoundFileListSize);
+	} else {
+		_sound->assignData(id);
+	}
+}
+
 void KyraEngine_v2::playVoice(int high, int low) {
 	int vocFile = high * 10000 + low * 10;
 	snd_playVoiceFile(vocFile);
@@ -1632,7 +1667,7 @@ void KyraEngine_v2::updateInvWsa() {
 		case 48:
 			snd_playSoundEffect(0x38);
 			break;
-		
+
 		default:
 			break;
 		}
@@ -1903,5 +1938,4 @@ void KyraEngine_v2::setupOpcodeTable() {
 }
 
 } // end of namespace Kyra
-
 

@@ -52,6 +52,7 @@
 #include "sound/softsynth/ym2612.h"
 
 #include "kyra/kyra.h"
+#include "kyra/kyra_v2.h"
 
 namespace Audio {
 class AudioStream;
@@ -59,7 +60,7 @@ class AudioStream;
 
 namespace Kyra {
 
-/** 
+/**
  * Analog audio output device API for Kyrandia games.
  * It countains functionallity to play music tracks,
  * sound effects and voices.
@@ -107,6 +108,20 @@ public:
 	 * @param s		number of soundfiles
 	 */
 	virtual void setSoundFileList(const char * const *list, uint s) { _soundFileList = list; _soundFileListSize = s; }
+
+	/**
+	 * Selects preset bundles of music files
+	 * and cd audio tracks the output device will use
+	 * when playing a track and/or sound effect.
+	 *
+	 * TODO: this is just needed for Kyrandia 2 FM-Towns version,
+	 * and is similar to what setSoundFileList is used for, so we
+	 * should think of a better solution than this.
+	 * @see setSoundFileList
+	 *
+	 * @param id	kMusicIntro, kMusicIngame or kMusicFinale
+	 */	
+	virtual void assignData(kMusicDataID id) { _currentTheme = id; }
 
 	/**
 	 * Load a specifc sound file for use of
@@ -161,7 +176,7 @@ public:
 	 *
 	 * @param file	file to be played
 	 */
-	void voicePlay(const char *file);
+	virtual void voicePlay(const char *file);
 
 	/**
 	 * Checks if a voice is being played.
@@ -179,6 +194,8 @@ protected:
 	const char *soundFilename(uint file) { return (file < _soundFileListSize) ? _soundFileList[file] : ""; }
 	int _musicEnabled;
 	bool _sfxEnabled;
+
+	int _currentTheme;
 
 	KyraEngine *_vm;
 	Audio::Mixer *_mixer;
@@ -213,7 +230,7 @@ class AdlibDriver;
  * Dune II, Kyrandia 1 and 2. While Dune II and
  * Kyrandia 1 are using exact the same format, the
  * one of Kyrandia 2 slightly differs.
- * 
+ *
  * See AdlibDriver for more information.
  * @see AdlibDriver
  */
@@ -268,7 +285,7 @@ private:
  *
  * Currently it does not initialize the MT-32 output properly,
  * so MT-32 output does sound a bit odd in some cases.
- * 
+ *
  * TODO: this code needs some serious cleanup and rework
  * to support MT-32 and GM properly.
  */
@@ -341,7 +358,7 @@ private:
 	Common::Mutex _mutex;
 };
 
-class FMT_EuphonyDriver;
+class SoundTowns_EuphonyDriver;
 class SoundTowns : public MidiDriver, public Sound {
 public:
 	SoundTowns(KyraEngine *vm, Audio::Mixer *mixer);
@@ -350,8 +367,14 @@ public:
 	bool init();
 	void process();
 
-	void setVolume(int) { /* TODO */ }
-	int getVolume() { return 255; /* TODO */ }
+	void setVolume(int) {}
+	int getVolume() { return 255; }
+
+	// TODO: this should be moved to Sound or at least
+	// supplied by Sound as a pure virtual method.
+	// TODO: define ranges for those two functions
+	void setMusicVolume(int volume);
+	void setSoundEffectsVolume(int volume) { _sfxVolume = CLIP(volume, 0, 255); }
 
 	void loadSoundFile(uint file);
 
@@ -387,20 +410,65 @@ private:
 	Audio::AudioStream *_currentSFX;
 	Audio::SoundHandle _sfxHandle;
 
-	int _currentTrackTable;
 	uint _sfxFileIndex;
 	uint8 *_sfxFileData;
+	uint8 _sfxVolume;
 
-	FMT_EuphonyDriver * _driver;
+	SoundTowns_EuphonyDriver * _driver;
 	MidiParser * _parser;
-	uint8 *_musicTrackData;
 
 	Common::Mutex _mutex;
 
-	static const char *_sfxFiles[];
-	static const int _sfxFilenum;
 	static const uint8 _sfxBTTable[256];
 	const uint8 *_sfxWDTable;
+};
+
+//class SoundTowns_v2_TwnDriver;
+class SoundTowns_v2 : public Sound {
+public:
+	SoundTowns_v2(KyraEngine *vm, Audio::Mixer *mixer);
+	~SoundTowns_v2();
+
+	bool init();
+	void process();
+
+	void setVolume(int) {}
+	int getVolume() { return 255; }
+
+	// TODO: this should be moved to Sound or at least
+	// supplied by Sound as a pure virtual method.
+	// TODO: define ranges for those two functions
+	void setMusicVolume(int volume);
+	void setSoundEffectsVolume(int volume) { _sfxVolume = CLIP(volume, 0, 255); }
+
+	void loadSoundFile(uint file) {}
+
+	void playTrack(uint8 track);
+	void haltTrack();
+	void beginFadeOut();
+
+	void voicePlay(const char *file);
+	void playSoundEffect(uint8) {}
+
+private:
+	int _lastTrack;
+
+	Audio::AudioStream *_currentSFX;
+	Audio::SoundHandle _sfxHandle;
+	uint8 _sfxVolume;
+
+	//SoundTowns_v2_TwnDriver * _driver;
+	uint8 * _twnTrackData;
+
+	static const uint8 _cdaTrackTableK2Intro[];
+	static const uint8 _cdaTrackTableK2Ingame[];
+	static const uint8 _cdaTrackTableK2Finale[];
+
+	static const struct Kyra2AudioThemes {
+		const uint8 * cdaTable;
+		const uint8 cdaTableSize;
+		const char * twnFilename;
+	} _themes[];
 };
 
 class MixedSoundDriver : public Sound {

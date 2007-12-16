@@ -92,15 +92,31 @@ int KyraEngine::init() {
 		// for now we prefer Adlib over native MIDI
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
 
-	if (_flags.platform == Common::kPlatformFMTowns) {
-		// TODO: later on here should be a usage of MixedSoundDriver
-		_sound = new SoundTowns(this, _mixer);
-	} else if (_flags.platform == Common::kPlatformPC98) {
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		// TODO: currently we don't support the PC98 sound data,
 		// but since it has the FM-Towns data files, we just use the
 		// FM-Towns driver
-		// TODO: later on here should be a usage of MixedSoundDriver
-		_sound = new SoundTowns(this, _mixer);
+
+		// Since we handle the volume internally for our FM-Towns driver we set the global
+		// volume for those sound types to the maximum.
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, Audio::Mixer::kMaxMixerVolume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);
+
+		if (_flags.gameID == GI_KYRA1) {
+			SoundTowns *snd = new SoundTowns(this, _mixer);
+
+			snd->setMusicVolume(ConfMan.getInt("music_volume"));
+			snd->setSoundEffectsVolume(ConfMan.getInt("sfx_volume"));
+
+			_sound = snd;
+		} else {
+			SoundTowns_v2 *snd = new SoundTowns_v2(this, _mixer);
+
+			snd->setMusicVolume(ConfMan.getInt("music_volume"));
+			snd->setSoundEffectsVolume(ConfMan.getInt("sfx_volume"));
+
+			_sound = snd;
+		}
 	} else if (midiDriver == MD_ADLIB) {
 		_sound = new SoundAdlibPC(this, _mixer);
 		assert(_sound);
@@ -231,4 +247,5 @@ void KyraEngine::delayWithTicks(int ticks) {
 }
 
 } // End of namespace Kyra
+
 

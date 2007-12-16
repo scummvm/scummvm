@@ -33,11 +33,14 @@
 #include "sound/audiostream.h"
 
 #include "common/util.h"
+
 #include <math.h>
+
+#define		EUPHONY_FADEOUT_TICKS		600
 
 namespace Kyra {
 
-enum EuD_ChannelState { _s_ready, _s_attacking, _s_decaying, _s_sustaining, _s_releasing };
+enum ChannelState { _s_ready, _s_attacking, _s_decaying, _s_sustaining, _s_releasing };
 
 class MidiChannel_EuD : public MidiChannel {
 public:
@@ -125,7 +128,7 @@ protected:
 			const int8 *_samples;
 		} * _snd[8];
 		struct Env {
-			EuD_ChannelState state;
+			ChannelState state;
 			int32 currentLevel;
 			int32 rate;
 			int32 tickCount;
@@ -142,16 +145,43 @@ protected:
 	} * _voice;
 };
 
+class SoundTowns_EuphonyTrackQueue {
+public:
+	SoundTowns_EuphonyTrackQueue(SoundTowns_EuphonyDriver *driver, SoundTowns_EuphonyTrackQueue *last);
+	~SoundTowns_EuphonyTrackQueue() {}
+
+	void release();
+	void initDriver();
+	void loadDataToCurrentPosition(uint8 * trackdata, uint32 size, bool loop = 0);
+	void loadDataToEndOfQueue(uint8 * trackdata, uint32 size, bool loop = 0);
+	void setPlayBackStatus(bool playing);
+	SoundTowns_EuphonyTrackQueue * reset();
+	bool isPlaying() {return _playing; }
+	uint8 * trackData() {return _trackData; }
+
+	bool _loop;
+	SoundTowns_EuphonyTrackQueue * _next;
+
+private:
+	uint8 * _trackData;
+	uint8 * _used;
+	uint8 * _fchan;
+	uint8 * _wchan;
+	bool _playing;
+	SoundTowns_EuphonyDriver * _driver;
+	SoundTowns_EuphonyTrackQueue * _last;
+};
+
 class MidiParser_EuD : public MidiParser {
 public:
-	MidiParser_EuD();
-
-	bool loadMusic (byte *data, uint32 unused = 0);
+	MidiParser_EuD(SoundTowns_EuphonyTrackQueue * queue);
+	bool loadMusic (byte *data, uint32 size);
 	int32 calculateTempo(int16 val);
 
 protected:
 	void parseNextEvent (EventInfo &info);
 	void resetTracking();
+	void setup();
 
 	byte * _enable;
 	byte * _mode;
@@ -159,18 +189,19 @@ protected:
 	byte * _adjVelo;
 	int8 * _adjNote;
 
-	byte _tempo[3];
-
 	uint8 _firstBaseTickStep;
 	uint8 _nextBaseTickStep;
 	uint32 _initialTempo;
 	uint32 _baseTick;
+
+	byte _tempo[3];
+	SoundTowns_EuphonyTrackQueue * _queue;
 };
 
-class FMT_EuphonyDriver : public MidiDriver_Emulated {
+class SoundTowns_EuphonyDriver : public MidiDriver_Emulated {
 public:
-	FMT_EuphonyDriver(Audio::Mixer *mixer);
-	virtual ~FMT_EuphonyDriver();
+	SoundTowns_EuphonyDriver(Audio::Mixer *mixer);
+	virtual ~SoundTowns_EuphonyDriver();
 
 	int open();
 	void close();
@@ -179,9 +210,10 @@ public:
 	uint32 property(int prop, uint32 param) { return 0; }
 
 	void setPitchBendRange(byte channel, uint range) { }
-	//void sysEx(const byte *msg, uint16 length);
 	void loadFmInstruments(const byte *instr);
 	void loadWaveInstruments(const byte *instr);
+
+	SoundTowns_EuphonyTrackQueue * queue() { return _queue; }
 
 	MidiChannel *allocateChannel() { return 0; }
 	MidiChannel *getPercussionChannel() { return 0; }
@@ -189,6 +221,9 @@ public:
 	void assignFmChannel(uint8 midiChannelNumber, uint8 fmChannelNumber);
 	void assignWaveChannel(uint8 midiChannelNumber, uint8 waveChannelNumber);
 	void removeChannel(uint8 midiChannelNumber);
+
+	void setVolume(int val = -1) { if (val >= 0) _volume = val; }
+	int getVolume(int val = -1) { return _volume; }
 
 	// AudioStream API
 	bool isStereo() const { return true; }
@@ -198,7 +233,6 @@ public:
 
 protected:
 	void nextTick(int16 *buf1, int buflen);
-	int volume(int val = -1) { if (val >= 0) _volume = val; return _volume; }
 	void rate(uint16 r);
 
 	void generateSamples(int16 *buf, int len);
@@ -206,6 +240,7 @@ protected:
 	MidiChannel_EuD_FM *_fChannel[6];
 	MidiChannel_EuD_WAVE *_wChannel[8];
 	MidiChannel_EuD * _channel[16];
+	SoundTowns_EuphonyTrackQueue * _queue;
 
 	int _volume;
 	bool _fading;
@@ -532,11 +567,11 @@ void MidiChannel_EuD_WAVE::velocity(int velo) {
 	_velocity = velo;
 }
 
-FMT_EuphonyDriver::FMT_EuphonyDriver(Audio::Mixer *mixer)
-: MidiDriver_Emulated(mixer) {
-
+SoundTowns_EuphonyDriver::SoundTowns_EuphonyDriver(Audio::Mixer *mixer)
+	: MidiDriver_Emulated(mixer) {
 	_volume = 255;
-	_fadestate = 300;
+	_fadestate = EUPHONY_FADEOUT_TICKS;
+	_queue = 0;
 
 	MidiDriver_YM2612::createLookupTables();
 
@@ -551,9 +586,11 @@ FMT_EuphonyDriver::FMT_EuphonyDriver(Audio::Mixer *mixer)
 
 	rate(getRate());
 	fading(0);
+
+	_queue = new SoundTowns_EuphonyTrackQueue(this, 0);
 }
 
-FMT_EuphonyDriver::~FMT_EuphonyDriver() {
+SoundTowns_EuphonyDriver::~SoundTowns_EuphonyDriver() {
 	for (int i = 0; i < 6; i++)
 		delete _fChannel[i];
 	for (int i = 0; i < 8; i++)
@@ -577,33 +614,37 @@ FMT_EuphonyDriver::~FMT_EuphonyDriver() {
 			_waveSounds[i] = 0;
 		}
 	}
+
+	if (_queue) {
+		_queue->release();
+		delete _queue;
+		_queue = 0;
+	}
 }
 
-int FMT_EuphonyDriver::open() {
+int SoundTowns_EuphonyDriver::open() {
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
-
 	MidiDriver_Emulated::open();
 
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle,
 		this, -1, Audio::Mixer::kMaxChannelVolume, 0, false, true);
+
 	return 0;
 }
 
-void FMT_EuphonyDriver::close() {
+void SoundTowns_EuphonyDriver::close() {
 	if (!_isOpen)
 		return;
 	_isOpen = false;
 	_mixer->stopHandle(_mixerSoundHandle);
 }
 
-void FMT_EuphonyDriver::send(uint32 b) {
+void SoundTowns_EuphonyDriver::send(uint32 b) {
 	send(b & 0xF, b & 0xFFFFFFF0);
 }
 
-void FMT_EuphonyDriver::send(byte chan, uint32 b) {
-	//byte param3 = (byte) ((b >> 24) & 0xFF);
-
+void SoundTowns_EuphonyDriver::send(byte chan, uint32 b) {
 	byte param2 = (byte) ((b >> 16) & 0xFF);
 	byte param1 = (byte) ((b >>  8) & 0xFF);
 	byte cmd    = (byte) (b & 0xF0);
@@ -662,18 +703,18 @@ void FMT_EuphonyDriver::send(byte chan, uint32 b) {
 			_channel[chan]->pitchBend((param1 | (param2 << 7)) - 0x2000);
 		break;
 	default:
-		warning("FMT_EuphonyDriver: Unknown send() command 0x%02X", cmd);
+		warning("SoundTowns_EuphonyDriver: Unknown send() command 0x%02X", cmd);
 	}
 }
 
-void FMT_EuphonyDriver::loadFmInstruments(const byte *instr) {
+void SoundTowns_EuphonyDriver::loadFmInstruments(const byte *instr) {
 	if (_fmInstruments)
 		delete [] _fmInstruments;
 	_fmInstruments = new uint8[0x1800];
 	memcpy(_fmInstruments, instr, 0x1800);
 }
 
-void FMT_EuphonyDriver::loadWaveInstruments(const byte *instr) {
+void SoundTowns_EuphonyDriver::loadWaveInstruments(const byte *instr) {
 	if (_waveInstruments)
 		delete [] _waveInstruments;
 	_waveInstruments = new uint8[0x1000];
@@ -698,24 +739,24 @@ void FMT_EuphonyDriver::loadWaveInstruments(const byte *instr) {
 }
 
 
-void FMT_EuphonyDriver::assignFmChannel(uint8 midiChannelNumber, uint8 fmChannelNumber) {
+void SoundTowns_EuphonyDriver::assignFmChannel(uint8 midiChannelNumber, uint8 fmChannelNumber) {
 	_channel[midiChannelNumber] = _fChannel[fmChannelNumber];
 }
 
-void FMT_EuphonyDriver::assignWaveChannel(uint8 midiChannelNumber, uint8 waveChannelNumber) {
+void SoundTowns_EuphonyDriver::assignWaveChannel(uint8 midiChannelNumber, uint8 waveChannelNumber) {
 	_channel[midiChannelNumber] = _wChannel[waveChannelNumber];
 }
 
-void FMT_EuphonyDriver::removeChannel(uint8 midiChannelNumber) {
+void SoundTowns_EuphonyDriver::removeChannel(uint8 midiChannelNumber) {
 	_channel[midiChannelNumber] = 0;
 }
 
-void FMT_EuphonyDriver::generateSamples(int16 *data, int len) {
+void SoundTowns_EuphonyDriver::generateSamples(int16 *data, int len) {
 	memset(data, 0, 2 * sizeof(int16) * len);
 	nextTick(data, len);
 }
 
-void FMT_EuphonyDriver::nextTick(int16 *buf1, int buflen) {
+void SoundTowns_EuphonyDriver::nextTick(int16 *buf1, int buflen) {
 	int32 *buf0 = (int32 *)buf1;
 
 	for (int i = 0; i < ARRAYSIZE(_channel); i++) {
@@ -724,38 +765,62 @@ void FMT_EuphonyDriver::nextTick(int16 *buf1, int buflen) {
 	}
 
 	for (int i = 0; i < buflen; ++i) {
-		int s = int( float(buf0[i] * volume()) * float((float)_fadestate / 300) );
+		int s = int( float(buf0[i] * _volume) * float((float)_fadestate / EUPHONY_FADEOUT_TICKS) );
 		buf1[i*2] = buf1[i*2+1] = (s >> 9) & 0xffff;
 	}
 
 	if (_fading) {
-		if (_fadestate)
+		if (_fadestate) {
 			_fadestate--;
-		else
+		} else {
 			_fading = false;
+			_queue->setPlayBackStatus(false);
+		}
 	}
 }
 
-void FMT_EuphonyDriver::rate(uint16 r) {
+void SoundTowns_EuphonyDriver::rate(uint16 r) {
 	for (uint8 i = 0; i < 16; i++) {
 		if (_channel[i])
 			_channel[i]->rate(r);
 	}
 }
 
-void FMT_EuphonyDriver::fading(bool status) {
+void SoundTowns_EuphonyDriver::fading(bool status) {
 	_fading = status;
 	if (!_fading)
-		_fadestate = 300;
+		_fadestate = EUPHONY_FADEOUT_TICKS;
 }
 
-MidiParser_EuD::MidiParser_EuD() : MidiParser(),
+MidiParser_EuD::MidiParser_EuD(SoundTowns_EuphonyTrackQueue * queue) : MidiParser(),
 	_firstBaseTickStep(0x33), _nextBaseTickStep(0x33) {
 		_initialTempo = calculateTempo(0x5a);
+		_queue = queue;
 }
 
 void MidiParser_EuD::parseNextEvent(EventInfo &info) {
 	byte *pos = _position._play_pos;
+
+	if (_queue->_next) {
+		if (info.ext.type == 0x2F) {
+			unloadMusic();
+			memset(&info, 0, sizeof(EventInfo));
+			pos = _position._play_pos = _tracks[0] = _queue->trackData() + 0x806;
+		} else if (_active_track == 255) {
+			_queue = _queue->_next;
+			setup();
+			setTrack(0);
+			_queue->setPlayBackStatus(true);
+			return;
+		} else if (!_queue->isPlaying()) {
+			unloadMusic();
+			_queue = _queue->_next;
+			setup();
+			setTrack(0);
+			_queue->setPlayBackStatus(true);
+			return;
+		}
+	}
 
 	while (true) {
 		byte cmd = *pos;
@@ -830,10 +895,13 @@ void MidiParser_EuD::parseNextEvent(EventInfo &info) {
 			break;
 		} else if (cmd == 0xFD || cmd == 0xFE) {
 			// End of track.
-			if (_autoLoop)
+			if (_autoLoop) {
+				unloadMusic();
+				_queue->setPlayBackStatus(true);
 				pos = info.start = _tracks[0];
-			else
+			} else {
 				info.start = pos;
+			}
 
 			uint32 last = _position._last_event_tick;
 			uint16 tick = (pos[2] | ((uint16) pos[3] << 7)) + _baseTick;
@@ -852,25 +920,20 @@ void MidiParser_EuD::parseNextEvent(EventInfo &info) {
 	_position._play_pos = pos;
 }
 
-bool MidiParser_EuD::loadMusic(byte *data, uint32) {
-	unloadMusic();
+bool MidiParser_EuD::loadMusic(byte *data, uint32 size) {
+	bool loop = _autoLoop;
 
-	_enable = data + 0x354;
-	_mode = data + 0x374;
-	_channel = data + 0x394;
-	_adjVelo = data + 0x3B4;
-	_adjNote = (int8*) data + 0x3D4;
-
-	_firstBaseTickStep = data[0x804];
-	_initialTempo = calculateTempo((data[0x805] > 0xfc) ? 0x5a : data[0x805]);
-
-	_num_tracks = 1;
-	_ppqn = 120;
-	_tracks[0] = data + 0x806;
-
-	resetTracking();
-	setTrack (0);
-
+	if (_queue->isPlaying() && !_queue->_loop) {
+		_queue->loadDataToEndOfQueue(data, size, loop);
+	} else {
+		unloadMusic();
+		_queue = _queue->reset();
+		_queue->release();
+		_queue->loadDataToCurrentPosition(data, size, loop);
+		setup();
+		setTrack(0);
+		_queue->setPlayBackStatus(true);
+	}
 	return true;
 }
 
@@ -892,15 +955,139 @@ int32 MidiParser_EuD::calculateTempo(int16 val) {
 
 void MidiParser_EuD::resetTracking() {
 	MidiParser::resetTracking();
+
 	_nextBaseTickStep = _firstBaseTickStep;
 	_baseTick = 0;
 	setTempo(_initialTempo);
+	_queue->setPlayBackStatus(false);
+}
+
+void MidiParser_EuD::setup() {
+	uint8 *data = _queue->trackData();
+	if (!data)
+		return;
+	_queue->initDriver();
+
+	_enable = data + 0x354;
+	_mode = data + 0x374;
+	_channel = data + 0x394;
+	_adjVelo = data + 0x3B4;
+	_adjNote = (int8*) data + 0x3D4;
+
+	_nextBaseTickStep = _firstBaseTickStep = data[0x804];
+	_initialTempo = calculateTempo((data[0x805] > 0xfc) ? 0x5a : data[0x805]);
+
+	property(MidiParser::mpAutoLoop, _queue->_loop);
+
+	_num_tracks = 1;
+	_ppqn = 120;
+	_tracks[0] = data + 0x806;
+}
+
+SoundTowns_EuphonyTrackQueue::SoundTowns_EuphonyTrackQueue(SoundTowns_EuphonyDriver * driver, SoundTowns_EuphonyTrackQueue * last) {
+	_trackData = 0;
+	_next = 0;
+	_driver = driver;
+	_last = last;
+	_used = _fchan = _wchan = 0;
+	_playing = false;
+}
+
+void SoundTowns_EuphonyTrackQueue::setPlayBackStatus(bool playing) {
+	SoundTowns_EuphonyTrackQueue * i = this;
+	do {
+		i->_playing = playing;
+		i = i->_next;
+	} while (i);
+}
+
+SoundTowns_EuphonyTrackQueue * SoundTowns_EuphonyTrackQueue::reset() {
+	SoundTowns_EuphonyTrackQueue * i = this;
+	while (i->_last)
+		i = i->_last;
+	return i;
+}
+
+void SoundTowns_EuphonyTrackQueue::loadDataToCurrentPosition(uint8 * trackdata, uint32 size, bool loop) {
+	if (_trackData)
+		delete [] _trackData;
+	_trackData = new uint8[0xC58A];
+	memset(_trackData, 0, 0xC58A);
+	Screen::decodeFrame4(trackdata, _trackData, size);
+
+	_used = _trackData + 0x374;
+	_fchan = _trackData + 0x6d4;
+	_wchan = _trackData + 0x6dA;
+	_loop = loop;
+	_playing = false;
+}
+
+void SoundTowns_EuphonyTrackQueue::loadDataToEndOfQueue(uint8 * trackdata, uint32 size, bool loop) {
+	if (!_trackData) {
+		loadDataToCurrentPosition(trackdata, size, loop);
+		return;
+	}
+
+	SoundTowns_EuphonyTrackQueue * i = this;
+	while (i->_next)
+		i = i->_next;
+
+	i = i->_next = new SoundTowns_EuphonyTrackQueue(_driver, i);
+	i->_trackData = new uint8[0xC58A];
+	memset(i->_trackData, 0, 0xC58A);
+	Screen::decodeFrame4(trackdata, i->_trackData, size);
+
+	i->_used = i->_trackData + 0x374;
+	i->_fchan = i->_trackData + 0x6d4;
+	i->_wchan = i->_trackData + 0x6dA;
+	i->_loop = loop;
+	i->_playing = _playing;
+}
+
+void SoundTowns_EuphonyTrackQueue::release() {
+	SoundTowns_EuphonyTrackQueue * i = _next;
+	_next = 0;
+	_playing = false;
+	_used = _fchan = _wchan = 0;
+
+	if (_trackData) {
+		delete [] _trackData;
+		_trackData = 0;
+	}
+
+	while (i) {
+		if (i->_trackData) {
+			delete [] i->_trackData;
+			i->_trackData = 0;
+		}
+		i = i->_next;
+		if (i)
+			delete i->_last;
+	}
+}
+
+void SoundTowns_EuphonyTrackQueue::initDriver() {
+	for (uint8 i = 0; i < 6; i++) {
+		if (_used[_fchan[i]])
+			_driver->assignFmChannel(_fchan[i], i);
+	}
+
+	for (uint8 i = 0; i < 8; i++) {
+		if (_used[_wchan[i]])
+			_driver->assignWaveChannel(_wchan[i], i);
+	}
+
+	for (uint8 i = 0; i < 16; i++) {
+		if (!_used[i])
+			_driver->removeChannel(i);
+	}
+	_driver->send(0x79B0);
 }
 
 SoundTowns::SoundTowns(KyraEngine *vm, Audio::Mixer *mixer) : Sound(vm, mixer), _lastTrack(-1),
-	 _currentSFX(0), _sfxFileData(0), _sfxFileIndex((uint)-1), _sfxWDTable(0), _parser(0), _musicTrackData(0) {
+	 _currentSFX(0), _sfxFileData(0), _sfxFileIndex((uint)-1), _sfxWDTable(0), _parser(0), _sfxVolume(255) {
 
-	_driver = new FMT_EuphonyDriver(_mixer);
+	_driver = new SoundTowns_EuphonyDriver(_mixer);
 	int ret = open();
 	if (ret != MERR_ALREADY_OPEN && ret != 0) {
 		error("couldn't open midi driver");
@@ -915,9 +1102,6 @@ SoundTowns::~SoundTowns() {
 	Common::StackLock lock(_mutex);
 	_driver->setTimerCallback(0, 0);
 	close();
-
-	if (_musicTrackData)
-		delete [] _musicTrackData;
 
 	_driver = 0;
 }
@@ -950,65 +1134,26 @@ void SoundTowns::playTrack(uint8 track) {
 	track -= 2;
 
 	static const CDTrackTable tTable[] = {
-		{ 0x04000, 1,  0 },
-		{ 0x05480, 1,  6 },
-		{ 0x05E70, 0,  1 },
-		{ 0x06D90, 1,  3 },
-		{ 0x072C0, 0, -1 },
-		{ 0x075F0, 1, -1 },
-		{ 0x07880, 1, -1 },
-		{ 0x089C0, 0, -1 },
-		{ 0x09080, 0, -1 },
-		{ 0x091D0, 1,  4 },
-		{ 0x0A880, 1,  5 },
-		{ 0x0AF50, 0, -1 },
-		{ 0x0B1A0, 1, -1 },
-		{ 0x0B870, 0, -1 },
-		{ 0x0BCF0, 1, -1 },
-		{ 0x0C5D0, 1,  7 },
-		{ 0x0D3E0, 1,  8 },
-		{ 0x0e7b0, 1,  2 },
-		{ 0x0edc0, 0, -1 },
-		{ 0x0eef0, 1,  9 },
-		{ 0x10540, 1, 10 },
-		{ 0x10d80, 0, -1 },
-		{ 0x10E30, 0, -1 },
-		{ 0x10FC0, 0, -1 },
-		{ 0x11310, 1, -1 },
-		{ 0x11A20, 1, -1 },
-		{ 0x12380, 0, -1 },
-		{ 0x12540, 1, -1 },
-		{ 0x12730, 1, -1 },
-		{ 0x12A90, 1, 11 },
-		{ 0x134D0, 0, -1 },
-		{ 0x00000, 0, -1 },
-		{ 0x13770, 0, -1 },
-		{ 0x00000, 0, -1 },
-		{ 0x00000, 0, -1 },
-		{ 0x00000, 0, -1 },
-		{ 0x00000, 0, -1 },
-		{ 0x14710, 1, 12 },
-		{ 0x15DF0, 1, 13 },
-		{ 0x16030, 1, 14 },
-		{ 0x17030, 0, -1 },
-		{ 0x17650, 0, -1 },
-		{ 0x134D0, 0, -1 },
-		{ 0x178E0, 1, -1 },
-		{ 0x18200, 0, -1 },
-		{ 0x18320, 0, -1 },
-		{ 0x184A0, 0, -1 },
-		{ 0x18BB0, 0, -1 },
-		{ 0x19040, 0, 19 },
-		{ 0x19B50, 0, 20 },
-		{ 0x17650, 0, -1 },
-		{ 0x1A730, 1, 21 },
-		{ 0x00000, 0, -1 },
-		{ 0x12380, 0, -1 },
-		{ 0x1B810, 0, -1 },
-		{ 0x1BA50, 0, 15 },
-		{ 0x1C190, 0, 16 },
-		{ 0x1CA50, 0, 17 },
-		{ 0x1D100, 0, 18 },
+		{ 0x04000, 1,  0 },	{ 0x05480, 1,  6 },	{ 0x05E70, 0,  1 },
+		{ 0x06D90, 1,  3 },	{ 0x072C0, 0, -1 },	{ 0x075F0, 1, -1 },
+		{ 0x07880, 1, -1 },	{ 0x089C0, 0, -1 },	{ 0x09080, 0, -1 },
+		{ 0x091D0, 1,  4 },	{ 0x0A880, 1,  5 },	{ 0x0AF50, 0, -1 },
+		{ 0x0B1A0, 1, -1 },	{ 0x0B870, 0, -1 },	{ 0x0BCF0, 1, -1 },
+		{ 0x0C5D0, 1,  7 },	{ 0x0D3E0, 1,  8 },	{ 0x0e7b0, 1,  2 },
+		{ 0x0edc0, 0, -1 },	{ 0x0eef0, 1,  9 },	{ 0x10540, 1, 10 },
+		{ 0x10d80, 0, -1 },	{ 0x10E30, 0, -1 },	{ 0x10FC0, 0, -1 },
+		{ 0x11310, 1, -1 },	{ 0x11A20, 1, -1 },	{ 0x12380, 0, -1 },
+		{ 0x12540, 1, -1 },	{ 0x12730, 1, -1 },	{ 0x12A90, 1, 11 },
+		{ 0x134D0, 0, -1 },	{ 0x00000, 0, -1 },	{ 0x13770, 0, -1 },
+		{ 0x00000, 0, -1 },	{ 0x00000, 0, -1 },	{ 0x00000, 0, -1 },
+		{ 0x00000, 0, -1 },	{ 0x14710, 1, 12 },	{ 0x15DF0, 1, 13 },
+		{ 0x16030, 1, 14 },	{ 0x17030, 0, -1 },	{ 0x17650, 0, -1 },
+		{ 0x134D0, 0, -1 },	{ 0x178E0, 1, -1 },	{ 0x18200, 0, -1 },
+		{ 0x18320, 0, -1 },	{ 0x184A0, 0, -1 },	{ 0x18BB0, 0, -1 },
+		{ 0x19040, 0, 19 },	{ 0x19B50, 0, 20 },	{ 0x17650, 0, -1 },
+		{ 0x1A730, 1, 21 },	{ 0x00000, 0, -1 },	{ 0x12380, 0, -1 },
+		{ 0x1B810, 0, -1 },	{ 0x1BA50, 0, 15 },	{ 0x1C190, 0, 16 },
+		{ 0x1CA50, 0, 17 },	{ 0x1D100, 0, 18 }
 	};
 
 	int trackNum = tTable[track].track;
@@ -1017,7 +1162,7 @@ void SoundTowns::playTrack(uint8 track) {
 	if (track == _lastTrack && _musicEnabled)
 		return;
 
-	haltTrack();
+	beginFadeOut();
 
 	if (_musicEnabled == 2 && trackNum != -1) {
 		AudioCD.play(trackNum+1, loop ? -1 : 1, 0, 0);
@@ -1035,16 +1180,21 @@ void SoundTowns::haltTrack() {
 	AudioCD.updateCD();
 	if (_parser) {
 		Common::StackLock lock(_mutex);
-
 		_parser->setTrack(0);
 		_parser->jumpToTick(0);
-
 		_parser->unloadMusic();
 		delete _parser;
 		_parser = 0;
-
 		setVolume(255);
 	}
+	_driver->queue()->release();
+}
+
+void SoundTowns::setMusicVolume(int volume) {
+	volume = CLIP<int>(volume, 0, Audio::Mixer::kMaxMixerVolume);
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
+	_driver->setVolume(255);
 }
 
 void SoundTowns::loadSoundFile(uint file) {
@@ -1143,7 +1293,7 @@ void SoundTowns::playSoundEffect(uint8 track) {
 
 	_currentSFX = Audio::makeLinearInputStream(sfxPlaybackBuffer, playbackBufferSize,
 		outputRate, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX, -1, _sfxVolume);
 }
 
 void SoundTowns::beginFadeOut() {
@@ -1181,65 +1331,33 @@ uint32 SoundTowns::getBaseTempo(void) {
 }
 
 bool SoundTowns::loadInstruments() {
-	if (!_musicTrackData)
-		_musicTrackData = new uint8[0xC58A];
-
-	memset(_musicTrackData, 0, 0xC58A);
 	uint8 * twm = _vm->resource()->fileData("twmusic.pak", 0);
 	if (!twm)
 		return false;
-	Screen::decodeFrame4(twm, _musicTrackData, 0x8BF0);
-	_driver->loadFmInstruments(_musicTrackData + 8);
+	_driver->queue()->loadDataToCurrentPosition(twm, 0x8BF0);
+	_driver->loadFmInstruments(_driver->queue()->trackData() + 8);
 
-	memset (_musicTrackData, 0, 0xC58A);
-	Screen::decodeFrame4(twm + 0x0CA0, _musicTrackData, 0xC58A);
+	_driver->queue()->loadDataToCurrentPosition(twm + 0x0CA0, 0xC58A);
+	_driver->loadWaveInstruments(_driver->queue()->trackData() + 8);
 	delete [] twm;
-	_driver->loadWaveInstruments(_musicTrackData + 8);
+	_driver->queue()->release();
 
 	return true;
 }
 
 void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
-	if (!_musicTrackData)
-		_musicTrackData = new uint8[0xC58A];
-
-	memset(_musicTrackData, 0, 0xC58A);
 	uint8 * twm = _vm->resource()->fileData("twmusic.pak", 0);
-	Screen::decodeFrame4(twm + 0x4b70 + offset, _musicTrackData, 0xC58A);
-	delete [] twm;
 
-	Common::StackLock lock(_mutex);
-
-	uint8 * used = _musicTrackData + 0x374;
-	uint8 * fchan = _musicTrackData + 0x6d4;
-	uint8 * wchan = _musicTrackData + 0x6dA;
-
-	for (uint8 i = 0; i < 6; i++) {
-		if (used[fchan[i]])
-			_driver->assignFmChannel(fchan[i], i);
+	if (!_parser) {
+		_parser = new MidiParser_EuD(_driver->queue());
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(getBaseTempo());
 	}
 
-	for (uint8 i = 0; i < 8; i++) {
-		if (used[wchan[i]])
-			_driver->assignWaveChannel(wchan[i], i);
-	}
-
-	for (uint8 i = 0; i < 16; i++) {
-		if (!used[i])
-			_driver->removeChannel(i);
-	}
-	_driver->send(0x79B0);
-
-	if (_parser)
-		delete _parser;
-
-	_parser = new MidiParser_EuD;
 	_parser->property(MidiParser::mpAutoLoop, loop);
-	_parser->loadMusic(_musicTrackData, 0);
-	_parser->jumpToTick(0);
+	_parser->loadMusic(twm + 0x4b70 + offset, 0xC58A);
 
-	_parser->setMidiDriver(this);
-	_parser->setTimerRate(getBaseTempo());
+	delete [] twm;
 }
 
 void SoundTowns::onTimer(void * data) {
@@ -1302,5 +1420,165 @@ const uint8 SoundTowns::_sfxBTTable[256] = {
 	0x10, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0A, 0x09, 0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01
 };
 
+//	KYRA 2
+
+SoundTowns_v2::SoundTowns_v2(KyraEngine *vm, Audio::Mixer *mixer) :
+	 Sound(vm, mixer), _lastTrack(-1), _currentSFX(0), /*_driver(0),*/
+	 _twnTrackData(0), _sfxVolume(255) {
+}
+
+SoundTowns_v2::~SoundTowns_v2() {
+	/*if (_driver)
+		delete _driver;*/
+	if (_twnTrackData)
+		delete [] _twnTrackData;
+}
+
+bool SoundTowns_v2::init() {
+	//_driver = new SoundTowns_v2_TwnDriver(_mixer);
+	_vm->checkCD();
+	Common::File f;
+	if (_musicEnabled && (f.exists("track1.mp3") ||
+		f.exists("track1.ogg") || f.exists("track1.flac")  || f.exists("track1.fla")))
+			_musicEnabled = 2;
+	return true;//_driver->init();
+}
+
+void SoundTowns_v2::process() {
+	AudioCD.updateCD();
+}
+
+void SoundTowns_v2::setMusicVolume(int volume) {
+	/* TODO */
+}
+
+void SoundTowns_v2::playTrack(uint8 track) {
+	if (track == _lastTrack && _musicEnabled)
+		return;
+
+	int trackNum = -1;
+	for (int i = 0; i < _themes[_currentTheme].cdaTableSize; i++) {
+		if (track == _themes[_currentTheme].cdaTable[i * 2]) {
+			trackNum = _themes[_currentTheme].cdaTable[i * 2 + 1] - 1;
+			break;
+		}
+	}
+
+	haltTrack();
+
+	// TODO: figure out when to loop and when not for CD Audio
+	bool loop = false;
+
+	if (_musicEnabled == 2 && trackNum != -1) {
+		AudioCD.play(trackNum+1, loop ? -1 : 1, 0, 0);
+		AudioCD.updateCD();
+	} else if (_musicEnabled) {
+		char musicfile[13];
+		sprintf(musicfile, "%s%d.twn", _themes[_currentTheme].twnFilename, track);
+		if (_twnTrackData)
+			delete [] _twnTrackData;
+		_twnTrackData = _vm->resource()->fileData(musicfile, 0);
+		//_driver->loadData(_twnTrackData);
+	}
+
+	_lastTrack = track;
+}
+
+void SoundTowns_v2::haltTrack() {
+	_lastTrack = -1;
+	AudioCD.stop();
+	AudioCD.updateCD();
+	//_driver->reset();
+}
+
+void SoundTowns_v2::voicePlay(const char *file) {
+	static const uint16 rates[] =	{ 0x10E1, 0x0CA9, 0x0870, 0x0654, 0x0438, 0x032A, 0x021C, 0x0194 };
+
+	uint8 * data = _vm->resource()->fileData(file, 0);
+	uint8 * src = data;
+
+	uint16 sfxRate = rates[READ_LE_UINT16(src)];
+	src += 2;
+	bool compressed = (READ_LE_UINT16(src) & 1) ? true : false;
+	src += 2;
+	uint32 outsize = READ_LE_UINT32(src);
+	uint8 *sfx = (uint8*) malloc(outsize);
+	uint8 *dst = sfx;
+	src += 4;
+
+	if (compressed) {
+		for (uint32 i = outsize; i;) {
+			uint8 cnt = *src++;
+			if (cnt & 0x80) {
+				cnt &= 0x7F;
+				memset(dst, *src++, cnt);
+			} else {
+				memcpy(dst, src, cnt);
+				src += cnt;
+			}
+			dst += cnt;
+			i -= cnt;
+		}
+	} else {
+		memcpy(dst, src, outsize);
+	}
+
+	for (uint32 i = 0; i < outsize; i++) {
+		uint8 cmd = sfx[i];
+		if (cmd & 0x80) {
+			cmd = ~cmd;
+		} else {
+			cmd |= 0x80;
+			if (cmd == 0xff)
+				cmd--;
+		}
+		if (cmd < 0x80)
+			cmd = 0x80 - cmd;
+		sfx[i] = cmd;
+	}
+
+	uint32 outputRate = uint32(11025 * SoundTowns::semitoneAndSampleRate_to_sampleStep(0x3c, 0x3c, sfxRate, 11025, 0x2000));
+
+	_currentSFX = Audio::makeLinearInputStream(sfx, outsize, outputRate,
+		Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX, -1, _sfxVolume);
+
+	delete [] data;
+}
+
+void SoundTowns_v2::beginFadeOut() {
+	//_driver->fadeOut();
+	haltTrack();
+}
+
+const uint8 SoundTowns_v2::_cdaTrackTableK2Intro[] =	{
+	0x03, 0x01, 0x04, 0x02, 0x05, 0x03, 0x06, 0x04, 0x07, 0x05, 0x08, 0x06
+};
+
+const uint8 SoundTowns_v2::_cdaTrackTableK2Ingame[] =	{
+	0x02, 0x07, 0x03, 0x08, 0x04, 0x09, 0x07, 0x0A, 0x0C, 0x0B, 0x0D, 0x0C, 0x0E, 0x0D, 0x0F, 0x0E,
+	0x10, 0x0F, 0x12, 0x10, 0x13, 0x11, 0x15, 0x12,	0x17, 0x13, 0x18, 0x14, 0x19, 0x15, 0x1A, 0x16,
+	0x1B, 0x17, 0x1C, 0x18,	0x1D, 0x19, 0x1E, 0x1A, 0x1F, 0x1B, 0x21, 0x1C, 0x22, 0x1D, 0x23, 0x1E,
+	0x24, 0x1F, 0x25, 0x20, 0x26, 0x21, 0x27, 0x22, 0x28, 0x23, 0x29, 0x24,	0x2A, 0x25, 0x2B, 0x26,
+	0x2C, 0x27, 0x2D, 0x28, 0x2E, 0x29, 0x2F, 0x2A,	0x30, 0x2B, 0x31, 0x2C, 0x32, 0x2D, 0x33, 0x2E,
+	0x34, 0x2F, 0x35, 0x30,	0x36, 0x31, 0x37, 0x32, 0x38, 0x33, 0x39, 0x34, 0x3A, 0x35, 0x3B, 0x36,
+	0x3C, 0x37, 0x3D, 0x38, 0x3E, 0x39, 0x3F, 0x3A, 0x40, 0x3B, 0x41, 0x3C,	0x42, 0x3D, 0x43, 0x3E,
+	0x44, 0x3F, 0x45, 0x40, 0x46, 0x41, 0x47, 0x42,	0x48, 0x43, 0x49, 0x44, 0x4A, 0x45, 0x4B, 0x46,
+	0x4C, 0x47, 0x4D, 0x48,	0x4E, 0x49, 0x4F, 0x4A, 0x50, 0x4B, 0x51, 0x4C, 0x52, 0x4D, 0x53, 0x4E,
+	0x54, 0x4F, 0x55, 0x50, 0x56, 0x51, 0x57, 0x52
+};
+
+const uint8 SoundTowns_v2::_cdaTrackTableK2Finale[] =	{
+	0x03, 0x53, 0x04, 0x54
+};
+
+const SoundTowns_v2::Kyra2AudioThemes SoundTowns_v2::_themes[] = {
+	{ _cdaTrackTableK2Intro,	ARRAYSIZE(_cdaTrackTableK2Intro) >> 1,	"intro"		},
+	{ _cdaTrackTableK2Ingame,	ARRAYSIZE(_cdaTrackTableK2Ingame) >> 1,	"k2"		},
+	{ _cdaTrackTableK2Finale,	ARRAYSIZE(_cdaTrackTableK2Finale) >> 1,	"finale"	}
+};
+
 } // end of namespace Kyra
+
+#undef EUPHONY_FADEOUT_TICKS
 

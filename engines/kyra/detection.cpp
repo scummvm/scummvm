@@ -51,6 +51,8 @@ namespace {
 
 #define KYRA2_CD_FLAGS FLAGS(false, false, true, false, Kyra::GI_KYRA2)
 #define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, Kyra::GI_KYRA2)
 
 #define KYRA3_CD_FLAGS FLAGS(false, false, true, false, Kyra::GI_KYRA3)
 
@@ -176,7 +178,11 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"),
+			{
+				{ "EMC.PAK", 0, "a046bb0b422061aab8e4c4689400343a", -1 },
+				{ "TWMUSIC.PAK", 0, "e53bca3a3e3fb49107d59463ec387a59", -1 },
+				{ NULL, 0, NULL, 0 }
+			},
 			Common::EN_ANY,
 			Common::kPlatformFMTowns,
 			Common::ADGF_NO_FLAGS
@@ -187,7 +193,11 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			AD_ENTRY1("TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59"),
+			{
+				{ "JMC.PAK", 0, "9c5707a2a478e8167e44283246612d2c", -1 },
+				{ "TWMUSIC.PAK", 0, "e53bca3a3e3fb49107d59463ec387a59", -1 },
+				{ NULL, 0, NULL, 0 }
+			},
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
 			Common::ADGF_NO_FLAGS
@@ -330,6 +340,29 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_DEMO_FLAGS
 	},
 
+	{ // FM-Towns
+		{
+			"kyra2",
+			0,
+			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
+			Common::EN_ANY,
+			Common::kPlatformFMTowns,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA2_TOWNS_FLAGS
+	},
+	{
+		{
+			"kyra2",
+			0,
+			AD_ENTRY1("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685"),
+			Common::JA_JPN,
+			Common::kPlatformFMTowns,
+			Common::ADGF_NO_FLAGS
+		},
+		KYRA2_TOWNS_SJIS_FLAGS
+	},
+
 	{
 		{
 			"kyra3",
@@ -402,7 +435,7 @@ bool engineCreateKyra(OSystem *syst, Engine **engine, Common::EncapsulatedADGame
 	bool res = true;
 
 	Kyra::GameFlags flags = gd->flags;
-	
+
 	flags.lang = gd->desc.language;
 	flags.platform = gd->desc.platform;
 
@@ -439,4 +472,5 @@ bool engineCreateKyra(OSystem *syst, Engine **engine, Common::EncapsulatedADGame
 ADVANCED_DETECTOR_DEFINE_PLUGIN(KYRA, engineCreateKyra, detectionParams);
 
 REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine", "The Legend of Kyrandia (C) Westwood Studios");
+
 

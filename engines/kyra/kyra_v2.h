@@ -74,6 +74,7 @@ enum kNestedSequences {
 	kSequenceHand4
 };
 
+
 class WSAMovieV2;
 class KyraEngine_v2;
 class TextDisplayer_v2;
@@ -141,6 +142,12 @@ struct NestedSequence {
 	uint16 startupCommand;
 	uint16 finalCommand;
 	uint16 unk1;
+};
+
+enum kMusicDataID {
+	kMusicIntro = 0,
+	kMusicIngame,
+	kMusicFinale
 };
 
 class KyraEngine_v2 : public KyraEngine {
@@ -225,6 +232,8 @@ protected:
 	void seq_printCreditsString(uint16 strIndex, int x, int y, uint8 * colorMap, uint8 textcolor);
 	void seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width,
 		WSAMovieV2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos);
+	int seq_generateFixedRandomValue(int rangeFirst, int rangeLast);
+	void seq_showStarcraftLogo();
 
 	void seq_init();
 	void seq_uninit();
@@ -245,13 +254,6 @@ protected:
 	static const int _dosSoundFileListSize;
 	static const int8 _dosTrackMap[];
 	static const int _dosTrackMapSize;
-
-	static const char *_introSoundList[];
-	static const int _introSoundListSize;
-	static const char *_introStrings[];
-	static const int _introStringsSize;
-
-	int _introStringsDuration[21];
 
 protected:
 	// game initialization
@@ -628,6 +630,7 @@ protected:
 
 	virtual void snd_playVoiceFile(int id);
 	void snd_loadSoundFile(int id);
+	void snd_assignMusicData(kMusicDataID id);
 
 	void playVoice(int high, int low);
 
@@ -639,7 +642,7 @@ protected:
 	void timerFunc6(int);
 
 	void setTimer1DelaySecs(int secs);
-	
+
 	uint32 _nextIdleAnim;
 	int _lastIdleScript;
 
@@ -846,6 +849,8 @@ protected:
 	static const int _sequenceStringsSize_TOWNS_EN;
 	static const char *_sequenceStrings_PC_EN[];
 	static const int _sequenceStringsSize_PC_EN;
+	static const char _actorScreenStrings_PC_EN[];
+	static const int _actorScreenStringsSize_PC_EN;
 
 	int _sequenceStringsDuration[33];
 
@@ -861,6 +866,7 @@ protected:
 	int _seqFrameCounter;
 	int _seqWsaCurrentFrame;
 	bool _seqSpecialFlag;
+	int _seqRandomizeBase;
 	bool _seqSubframePlaying;
 	uint8 _seqTextColor[2];
 	uint8 _seqTextColorMap[16];
@@ -881,5 +887,6 @@ protected:
 } // end of namespace Kyra
 
 #endif
+
 
 

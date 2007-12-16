@@ -53,9 +53,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		};
 		_sound->setSoundFileList(soundFileList, 2);
 	} else {
-		const char *const *soundFileList =
-			(startSeq > kSequenceZanfaun) ?	_dosSoundFileListFinale : _dosSoundFileListIntro;
-		_sound->setSoundFileList(soundFileList, 1);
+		snd_assignMusicData((startSeq > kSequenceZanfaun) ?	kMusicFinale : kMusicIntro);
 	}
 	_sound->loadSoundFile(0);
 
@@ -1445,7 +1443,6 @@ int KyraEngine_v2::seq_finaleFirates(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 }
 
 int KyraEngine_v2::seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm) {
-	//uint32 endtime = 0;
 	int tmp = 0;
 
 	switch (frm) {
@@ -1462,7 +1459,8 @@ int KyraEngine_v2::seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 		case -1:
 			// if (_flags.isTalkie)
 			//	 seq_finaleActorScreen();
-			_seqSpecialFlag = true;
+			_seqSpecialFlag = _flags.isTalkie;
+			_seqRandomizeBase = 1;
 			break;
 
 		case 0:
@@ -1480,7 +1478,7 @@ int KyraEngine_v2::seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			if (_seqFrameCounter < 20 && _seqSpecialFlag) {
 				_seqWsaCurrentFrame = 0;
 			} else {
-				_seqFrameDelay = 500;
+				_seqFrameDelay = _flags.isTalkie ? 500 : (300 + seq_generateFixedRandomValue(1, 300));
 				seq_playTalkText(_flags.isTalkie ? 26 : 22);
 				if (_seqSpecialFlag) {
 					_seqFrameCounter = 3;
@@ -1495,7 +1493,7 @@ int KyraEngine_v2::seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 		case 3:
 			seq_playTalkText(_flags.isTalkie ? 27 : 23);
-			_seqFrameDelay = 500;
+			_seqFrameDelay = _flags.isTalkie ? 500 : (300 + seq_generateFixedRandomValue(1, 300));
 			break;
 
 		case 4:
@@ -1506,9 +1504,9 @@ int KyraEngine_v2::seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			seq_playTalkText(_flags.isTalkie ? 27 : 23);
 			tmp = _seqFrameCounter / 6;
 			if (tmp == 2)
-				_seqFrameDelay = 7;
+				_seqFrameDelay = _flags.isTalkie ? 7 : (1 + seq_generateFixedRandomValue(1, 10));
 			else if (tmp < 2)
-				_seqFrameDelay = 500;
+				_seqFrameDelay = _flags.isTalkie ? 500 : (300 + seq_generateFixedRandomValue(1, 300));
 			break;
 
 		case 6:
@@ -1543,7 +1541,7 @@ void KyraEngine_v2::seq_finaleActorScreen() {
 	_screen->loadBitmap("finale.cps", 3, 3, _screen->_currentPalette);
 	_screen->setFont(Screen::FID_GOLDFONT_FNT);
 
-	_sound->setSoundFileList(_dosSoundFileList, _dosSoundFileListSize);
+	snd_assignMusicData(kMusicIngame);
 	_sound->loadSoundFile(3);
 	_sound->playTrack(3);
 
@@ -1552,7 +1550,7 @@ void KyraEngine_v2::seq_finaleActorScreen() {
 
 	// TODO
 
-	_sound->setSoundFileList(_dosSoundFileListFinale, 1);
+	snd_assignMusicData(kMusicFinale);
 	_sound->loadSoundFile(0);
 }
 
@@ -2098,7 +2096,7 @@ void KyraEngine_v2::seq_printCreditsString(uint16 strIndex, int x, int y, uint8 
 }
 
 void KyraEngine_v2::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width, WSAMovieV2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos) {
-	int dur = strlen(_sequenceStrings[strIndex]) * (_flags.isTalkie ? 7 : 15);
+	int dur = int(strlen(_sequenceStrings[strIndex])) * (_flags.isTalkie ? 7 : 15);
 	int entry = seq_setTextEntry(strIndex, x, y, dur, width);
 	_activeText[entry].textcolor = textColor;
 	uint32 chatTimeout = _system->getMillis() + dur * _tickLength;
@@ -2139,8 +2137,6 @@ void KyraEngine_v2::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, in
 		curframe++;
 	}
 
-
-
 	if (lastframe < 0) {
 		int t = ABS(lastframe);
 		if (t < curframe)
@@ -2153,11 +2149,81 @@ void KyraEngine_v2::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, in
 	_seqWsaCurrentFrame = curframe;
 }
 
+int KyraEngine_v2::seq_generateFixedRandomValue(int rangeFirst, int rangeLast) {
+	int result = 0;
+	if (rangeFirst > rangeFirst)
+		SWAP(rangeFirst, rangeLast);
+	int range = (rangeLast - rangeFirst) + 1;
+
+	do {
+		_seqRandomizeBase = _seqRandomizeBase * 1103515245 + 12345;
+		result = ((range * ((_seqRandomizeBase % 0x7fffffff) & 0x7fff)) / 32768) + rangeFirst;
+	} while (rangeLast < result);
+
+	return result;
+}
+
+void KyraEngine_v2::seq_showStarcraftLogo() {
+	WSAMovieV2 * ci = new WSAMovieV2(this);
+	assert(ci);
+	_screen->clearPage(2);
+	_res->loadPakFile("INTROGEN.PAK");
+	int endframe = ci->open("ci.wsa", 0, _screen->_currentPalette);
+	_res->unloadPakFile("INTROGEN.PAK");
+	if (!ci->opened()) {
+		delete ci;
+		return;
+	}
+	_screen->hideMouse();
+	ci->setX(0);
+	ci->setY(0);
+	ci->setDrawPage(2);
+	ci->displayFrame(0, 0);
+	_screen->copyPage(2, 0);
+	_screen->fadeFromBlack();
+	for (int i = 1; i < endframe; i++) {
+		if (_skipFlag)
+			break;
+		ci->displayFrame(i, 0);
+		_screen->copyPage(2, 0);
+		_screen->updateScreen();
+		delay(50);
+	}
+	if(!_skipFlag) {
+		ci->displayFrame(0, 0);
+		_screen->copyPage(2, 0);
+		_screen->updateScreen();
+		delay(50);
+	}
+	_screen->fadeToBlack();
+	_screen->showMouse();
+
+	_skipFlag = false;
+	delete ci;
+}
+
 void KyraEngine_v2::seq_init() {
 	_seqProcessedString = new char[200];
 	_seqWsa = new WSAMovieV2(this);
 	_activeWSA = new ActiveWSA[8];
 	_activeText = new ActiveText[10];
+
+	_res->unloadAllPakFiles();
+	_res->loadPakFile("KYRA.DAT");
+	_res->loadPakFile("AUDIO.PAK");
+	_res->loadPakFile("INTROGEN.PAK");
+	_res->loadPakFile("OTHER.PAK");
+	_res->loadPakFile("VOC.PAK");
+	if (_flags.isTalkie) {
+		_res->loadPakFile("TALKENG.PAK");
+		_res->loadPakFile("TALKGER.PAK");
+		_res->loadPakFile("TALKFRE.PAK");
+		_res->loadPakFile("INTROTLK.PAK");
+	} else {
+		_res->loadPakFile("INTROVOC.PAK");
+		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+			_res->loadPakFile("WSCORE.PAK");
+	}
 }
 
 void KyraEngine_v2::seq_uninit() {
@@ -2181,7 +2247,7 @@ void KyraEngine_v2::seq_uninit() {
 void KyraEngine_v2::seq_makeBookOrCauldronAppear(int type) {
 	_screen->hideMouse();
 	showMessage(0, 0xCF);
-	
+
 	if (type == 1) {
 		seq_makeBookAppear();
 	} else if (type == 2) {
@@ -2190,7 +2256,7 @@ void KyraEngine_v2::seq_makeBookOrCauldronAppear(int type) {
 
 	_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _screenBuffer);
 	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
-	
+
 	static int16 bookCauldronRects[] = {
 		0x46, 0x90, 0x7F, 0x2B,	// unknown rect (maybe unused?)
 		0xCE, 0x90, 0x2C, 0x2C,	// book rect
@@ -2215,16 +2281,16 @@ void KyraEngine_v2::seq_makeBookOrCauldronAppear(int type) {
 
 void KyraEngine_v2::seq_makeBookAppear() {
 	_screen->hideMouse();
-	
+
 	displayInvWsaLastFrame();
-	
+
 	showMessage(0, 0xCF);
 
 	loadInvWsa("BOOK2.WSA", 0, 4, 2, -1, -1, 0);
-	
+
 	uint8 *rect = new uint8[_screen->getRectSize(_invWsa.w, _invWsa.h)];
 	assert(rect);
-	
+
 	_screen->copyRegionToBuffer(_invWsa.page, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
 
 	_invWsa.running = false;
@@ -2236,19 +2302,19 @@ void KyraEngine_v2::seq_makeBookAppear() {
 
 	while (true) {
 		_invWsa.timer = _system->getMillis() + _invWsa.delay * _tickLength;
-		
+
 		_screen->copyBlockToPage(_invWsa.page, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, rect);
 
 		_invWsa.wsa->displayFrame(_invWsa.curFrame, 0x4000, 0, 0);
 
 		if (_invWsa.page)
 			_screen->copyRegion(_invWsa.x, _invWsa.y, _invWsa.x, _invWsa.y, _invWsa.w, _invWsa.h, _invWsa.page, 0, Screen::CR_NO_P_CHECK);
-		
+
 		++_invWsa.curFrame;
 
 		if (_invWsa.curFrame >= _invWsa.lastFrame && !_quitFlag)
 			break;
-		
+
 		switch (_invWsa.curFrame) {
 		case 39:
 			snd_playSoundEffect(0xCA);
@@ -2383,4 +2449,5 @@ const SequenceControl KyraEngine_v2::_wsaControlHand4[] = {
 };
 
 } // end of namespace Kyra
+
 
