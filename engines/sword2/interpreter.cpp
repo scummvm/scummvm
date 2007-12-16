@@ -312,6 +312,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 	bool checkMopBug = false;
 	bool checkPyramidBug = false;
 	bool checkElevatorBug = false;
+	bool checkPearlBug = false;
 
 	if (scriptNumber == 2) {
 		if (strcmp((char *)header.name, "mop_73") == 0)
@@ -320,6 +321,8 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			checkPyramidBug = true;
 		else if (strcmp((char *)header.name, "lift_82") == 0)
 			checkElevatorBug = true;
+		else if (strcmp((char *)header.name, "pearl_31") == 0)
+			checkPearlBug = true;
 	}
 
 	code += noScripts * 4;
@@ -633,6 +636,15 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 				// Continue as normal
 				break;
 			case IR_TERMINATE:
+				if (checkPearlBug && readVar(1290) == 0) {
+					// Pearl's interaction script will wait
+					// until global(1290) is no longer 0
+					// before doing anything. But if the
+					// script was terminated prematurely,
+					// that never happens.
+					warning("Working around Pearl bug: Resetting Pearl's state");
+					writeVar(1290, 1);
+				}
 				// Return without updating the offset
 				return 2;
 			case IR_REPEAT:
