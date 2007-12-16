@@ -196,6 +196,28 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
+	// Elvira 1 - English DOS Floppy, with Spanish patch
+	{
+		{
+			"elvira1",
+			"Floppy",
+
+			{
+	{ "gamepc",		GAME_BASEFILE,	"97d2f74db08845c43474312a87330cf6", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"fda48c9da7f3e72d0313e2f5f760fc45", -1},
+	{ "tbllist",		GAME_TBLFILE,	"319f6b227c7822a551f57d24e70f8149", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE
+	},
+
 	// Elvira 1 - French DOS Floppy
 	{
 		{

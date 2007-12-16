@@ -916,6 +916,10 @@ restart:
 		message1 = "         Pause.\r\r\r";
 		message2 = "   Weiter      Ende";
 		break;
+	case Common::ES_ESP:
+		message1 = "   Juego en Pausa\r\r\r";
+		message2 = "Continuar      Salir";
+		break;
 	default:
 		message1 = "     Game Paused\r\r\r";
 		message2 = " Continue      Quit";
@@ -942,6 +946,10 @@ restart:
 		case Common::DE_DEU:
 			message1 = "    Bist Du sicher ?\r\r\r";
 			message2 = "     Ja        Nein";
+			break;
+		case Common::ES_ESP:
+			message1 = "    Estas seguro ?\r\r\r";
+			message2 = "    Si          No";
 			break;
 		default:
 			message1 = "    Are you sure ?\r\r\r";
