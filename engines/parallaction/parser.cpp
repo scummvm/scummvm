@@ -95,8 +95,6 @@ char *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ign
 
 	STATES state = NORMAL;
 
-	char *t = s;
-
 	while (count > 0) {
 
 		switch (state) {
@@ -143,7 +141,9 @@ char *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ign
 	}
 
 	*tok = '\0';
-	warning("token was truncated from line '%s'", t);
+	// TODO: if execution flows here, make *REALLY* sure everything has been parsed
+	// out of the input string. This is what is supposed to happen, but never ever
+	// allocated time to properly check.
 
 	return tok;
 
