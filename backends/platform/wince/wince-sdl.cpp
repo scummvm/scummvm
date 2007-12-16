@@ -460,7 +460,7 @@ OSystem_WINCE3::OSystem_WINCE3() : OSystem_SDL(),
 	_orientationLandscape(0), _newOrientation(0), _panelInitialized(false),
 	_panelVisible(true), _panelStateForced(false), _forceHideMouse(false), _unfilteredkeys(false),
 	_freeLook(false), _forcePanelInvisible(false), _toolbarHighDrawn(false), _zoomUp(false), _zoomDown(false),
-	_scalersChanged(false), _lastKeyPressed(0), _tapTime(0),
+	_scalersChanged(false), _lastKeyPressed(0), _tapTime(0), _closeClick(false),
 	_saveToolbarState(false), _saveActiveToolbar(NAME_MAIN_PANEL), _rbutton(false), _hasfocus(true),
 	_usesEmulatedMouse(false), _mouseBackupOld(NULL), _mouseBackupToolbar(NULL), _mouseBackupDim(0)
 {
@@ -2205,11 +2205,10 @@ static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool unfilter)
 bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 	SDL_Event ev;
 	byte b = 0;
-	Common::Event temp_event;
 	DWORD currentTime;
 	bool keyEvent = false;
+	int deltaX, deltaY;
 
-	memset(&temp_event, 0, sizeof(Common::Event));
 	memset(&event, 0, sizeof(Common::Event));
 
 	handleKbdMouse();
@@ -2293,47 +2292,58 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 
 		case SDL_MOUSEBUTTONDOWN:
 			if (ev.button.button == SDL_BUTTON_LEFT)
-				temp_event.type = Common::EVENT_LBUTTONDOWN;
+				event.type = Common::EVENT_LBUTTONDOWN;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				temp_event.type = Common::EVENT_RBUTTONDOWN;
+				event.type = Common::EVENT_RBUTTONDOWN;
 			else
 				break;
+			fillMouseEvent(event, ev.button.x, ev.button.y);
 
-			fillMouseEvent(temp_event, ev.button.x, ev.button.y);
 
-			if (!_isSmartphone) {	
-				// Already tap initiated ?
-				if (_tapTime) {
-					int deltaX; 
-					int deltaY;
-					if (temp_event.mouse.x > _tapX)
-						deltaX = temp_event.mouse.x - _tapX;
-					else
-						deltaX = _tapX - temp_event.mouse.x;
-					if (temp_event.mouse.y > _tapY)
-						deltaY = temp_event.mouse.y - _tapY;
-					else
-						deltaY = _tapY - temp_event.mouse.y;
-					if (deltaX <= 5 && deltaY <= 5 && (GetTickCount() - _tapTime < 1000)) {
-						if (temp_event.mouse.y <= 20 && _panelInitialized) {		// panel double tap?
+			if (event.mouse.x > _tapX)
+				deltaX = event.mouse.x - _tapX;
+			else
+				deltaX = _tapX - event.mouse.x;
+			if (event.mouse.y > _tapY)
+				deltaY = event.mouse.y - _tapY;
+			else
+				deltaY = _tapY - event.mouse.y;
+			_closeClick = (deltaX <= 5 && deltaY <= 5);
+
+			if (!_isSmartphone) {
+				// handle double-taps
+				if (_tapTime) {		// second tap
+					if (_closeClick && (GetTickCount() - _tapTime < 1000)) {
+						if (event.mouse.y <= 20 && _panelInitialized) {		// top of screen (show panel)
 							swap_panel_visibility();
-						} else {		// simulate right click
-							temp_event.type = Common::EVENT_RBUTTONDOWN;
+						} else {		// right click
+							event.type = Common::EVENT_RBUTTONDOWN;
 							_rbutton = true;
 						}
 					}
 					_tapTime = 0;						
 				} else {
 					_tapTime = GetTickCount();
-					_tapX = temp_event.mouse.x;
-					_tapY = temp_event.mouse.y;
+					_tapX = event.mouse.x;
+					_tapY = event.mouse.y;
 				}
 			}
 
-			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, true)) {
-				if (!_toolbarHandler.drawn())
+			if (_freeLook && !_closeClick) {
+				_rbutton = false;
+				_tapTime = 0;
+				_tapX = event.mouse.x;
+				_tapY = event.mouse.y;
+				event.type = Common::EVENT_MOUSEMOVE;
+				setMousePos(event.mouse.x, event.mouse.y);
+			}
+
+
+			if (_toolbarHandler.action(event.mouse.x, event.mouse.y, true)) {
+				if (!_toolbarHandler.drawn()) {
 					_toolbarHighDrawn = false;
 					internUpdateScreen();
+				}
 				if (_newOrientation != _orientationLandscape){
 					_orientationLandscape = _newOrientation;
 					_toolbarHighDrawn = false;
@@ -2341,37 +2351,38 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 					ConfMan.flushToDisk();
 					hotswapGFXMode();
 				}
-			} else {
-				if (!_freeLook)
-					memcpy(&event, &temp_event, sizeof(Common::Event));
-			}
+				return false;
+			} 
 
 			return true;
 
 		case SDL_MOUSEBUTTONUP:
 			if (ev.button.button == SDL_BUTTON_LEFT)
-				temp_event.type = Common::EVENT_LBUTTONUP;
+				event.type = Common::EVENT_LBUTTONUP;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				temp_event.type = Common::EVENT_RBUTTONUP;
+				event.type = Common::EVENT_RBUTTONUP;
 			else
 				break;
 
 			if (_rbutton) {
-				temp_event.type = Common::EVENT_RBUTTONUP;
+				event.type = Common::EVENT_RBUTTONUP;
 				_rbutton = false;
 			}
 
-			fillMouseEvent(temp_event, ev.button.x, ev.button.y);
+			fillMouseEvent(event, ev.button.x, ev.button.y);
 
-			if (_toolbarHandler.action(temp_event.mouse.x, temp_event.mouse.y, false)) {
+			if (_freeLook && !_closeClick) {
+				_tapX = event.mouse.x;
+				_tapY = event.mouse.y;
+				event.type = Common::EVENT_MOUSEMOVE;
+				setMousePos(event.mouse.x, event.mouse.y);
+			}
+
+			if (_toolbarHandler.action(event.mouse.x, event.mouse.y, false)) {
 				if (!_toolbarHandler.drawn())
 					_toolbarHighDrawn = false;
 					internUpdateScreen();
-			} else {
-				if (!_freeLook)
-					memcpy(&event, &temp_event, sizeof(Common::Event));
 			}
-
 			return true;
 
 		case SDL_VIDEOEXPOSE:
@@ -2384,11 +2395,11 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 		
 		case SDL_ACTIVEEVENT:
 			if (ev.active.state & SDL_APPMOUSEFOCUS)
-				debug(1, "%s mouse focus.", ev.active.gain ? "Got" : "Lost");
+				debug(2, "%s mouse focus.", ev.active.gain ? "Got" : "Lost");
 			if (ev.active.state & SDL_APPINPUTFOCUS)
-				debug(1, "%s input focus.", ev.active.gain ? "Got" : "Lost");
+				debug(2, "%s input focus.", ev.active.gain ? "Got" : "Lost");
 			if (ev.active.state & SDL_APPACTIVE)
-				debug(1, "%s total focus.", ev.active.gain ? "Got" : "Lost");
+				debug(2, "%s total focus.", ev.active.gain ? "Got" : "Lost");
 			if (ev.active.state & SDL_APPINPUTFOCUS) {
 				_hasfocus = ev.active.gain;
 				SDL_PauseAudio(!_hasfocus);

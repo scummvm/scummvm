@@ -202,6 +202,7 @@ private:
 	bool _zoomDown;			// zooming down mode
 
 	bool _rbutton;			// double tap -> right button simulation
+	bool _closeClick;		// flag when taps are spatially close together
 
 	bool _usesEmulatedMouse;	// emulated mousemove ever been used in this session
 
