@@ -583,7 +583,7 @@ void Game::handleRightClickMenu() {
 		} else {
 			if (action != TELL) {
 				// Add the hotspot name to the status line and then go do the action
-				if ((itemId != 0xffff) && (action != GIVE)) {
+				if ((itemId != 0xffff) && (action != GIVE) && (action != USE)) {
 					HotspotData *itemHotspot = res.getHotspot(itemId);
 					if (itemHotspot != NULL)
 						strings.getString(itemHotspot->nameId, statusLine);
@@ -846,7 +846,10 @@ void Game::doAction(Action action, uint16 hotspotId, uint16 usedId) {
 		// placeholder entry, and then replace it's details with the TELL command data
 		player->currentActions().addFront(NONE, player->roomNumber(), 0, 0);
 		player->currentActions().top().supportData().setDetails2(TELL, _numTellCommands * 3 + 1, &_tellCommands[0]);
-	} else
+	} else if (action == USE)
+		// Use action parameters are, for some reason, in reverse order from other 2 item actions
+		player->currentActions().addFront(action, player->roomNumber(), usedId, hotspotId);
+	else
 		// All other action types
 		player->currentActions().addFront(action, player->roomNumber(), hotspotId, usedId);
 }
