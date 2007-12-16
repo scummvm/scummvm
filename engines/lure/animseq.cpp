@@ -42,7 +42,7 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 
 	while (g_system->getMillis() < delayCtr) {
 		while (events.pollEvent()) {
-			if (events.type() == Common::EVENT_KEYDOWN) {
+			if ((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) {
 				if (events.event().kbd.keycode == Common::KEYCODE_ESCAPE) return ABORT_END_INTRO;
 				else return ABORT_NEXT_SCENE;
 			} else if (events.type() == Common::EVENT_LBUTTONDOWN)
@@ -140,7 +140,9 @@ AnimAbortType AnimationSequence::show() {
 	// Loop through displaying the animations
 	while ((_pPixels < _pPixelsEnd) && (_pLines < _pLinesEnd)) {
 		if ((soundFrame != NULL) && (frameCtr == 0))
-			Sound.musicInterface_Play(soundFrame->soundId, soundFrame->channelNum);
+			Sound.musicInterface_Play(
+				Sound.isRoland() ? soundFrame->rolandSoundId : soundFrame->adlibSoundId, 
+				soundFrame->channelNum);
 
 		decodeFrame(_pPixels, _pLines);
 
