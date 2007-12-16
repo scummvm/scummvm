@@ -153,6 +153,8 @@ void Room::checkRoomHotspots() {
 	int16 currentY = m.y();
 	HotspotDataList::iterator i;
 
+	_destRoomNumber = 0;
+
 	// Loop for each range of hotspot Ids
 	for (int ctr = 0; ctr < 4; ++ctr) {
 		for (i = list.begin(); i != list.end(); ++i) {
@@ -209,7 +211,6 @@ void Room::checkRoomHotspots() {
 		_hotspotId = 0;
 		_hotspotNameId = 0;
 		_hotspot = NULL;
-		_destRoomNumber = 0;
 	} else {
 		_hotspotNameId = entry->nameId;
 		_hotspot = entry;
