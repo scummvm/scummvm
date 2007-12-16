@@ -48,6 +48,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	DCmd_Register("hotspot",			WRAP_METHOD(Debugger, cmd_hotspot));
 	DCmd_Register("room",				WRAP_METHOD(Debugger, cmd_room));
 	DCmd_Register("showanim",			WRAP_METHOD(Debugger, cmd_showAnim));
+	DCmd_Register("strings",			WRAP_METHOD(Debugger, cmd_saveStrings));
 }
 
 static int strToInt(const char *s) {
@@ -541,5 +542,38 @@ bool Debugger::cmd_showAnim(int argc, const char **argv) {
 	DebugPrintf("Done\n");
 	return true;
 }
+
+bool Debugger::cmd_saveStrings(int argc, const char **argv) {
+	StringData &strings = StringData::getReference();
+	char buffer[32768];
+
+	if (argc != 2) {
+		DebugPrintf("strings <stringId>\n");
+		return true;
+	}
+
+	uint16 id = strToInt(argv[1]);
+	strings.getString(id, buffer, NULL, NULL);
+	DebugPrintf("%s\n", buffer);
+
+/* Commented out code for saving all text strings - note that 0x1000 is chosen 
+ * arbitrarily, so there'll be a bunch of garbage at the end, or the game will crash
+
+	// Save all the strings to a text file - this 
+
+	FILE *f = fopen("strings.txt", "w");
+	
+	for (int index = 0; index < 0x1000; ++index) {
+		strings.getString(index, buffer);
+		fprintf(f, "%.4xh - %s\n", index, buffer);
+	}
+
+	fclose(f);
+
+	DebugPrintf("Done\n");
+*/
+	return true;
+}
+
 
 } // End of namespace Lure
