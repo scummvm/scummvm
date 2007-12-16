@@ -205,7 +205,7 @@ bool Events::interruptableDelay(uint32 milliseconds) {
 		if (events.quitFlag) return true;
 
 		if (events.pollEvent()) {
-			if ((events.type() == Common::EVENT_KEYDOWN) ||
+			if (((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) ||
 				(events.type() == Common::EVENT_LBUTTONDOWN))
 				return true;
 		}
