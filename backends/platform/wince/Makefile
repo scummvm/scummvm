@@ -12,7 +12,7 @@
 ########################################################################
 ## Do you want a build using plugins?
 
-BUILD_PLUGINS = 1
+#BUILD_PLUGINS = 1
 
 ########################################################################
 ## Disable whichever engines you want here
@@ -217,7 +217,7 @@ PocketSCUMM.o: PocketSCUMM.rc
 ARMscaler.o: ARMscaler.s
 	$(AS) $*.s -o $@
 
-clean:
+all-clean: clean
 	$(RM) ARMscaler.o PocketSCUMM.o stub.o
 
 deploy-plugins: dist-plugins
