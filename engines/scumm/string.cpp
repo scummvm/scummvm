@@ -856,6 +856,27 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
 
+	// HACK: Correct positions of text in the grail diary in Indy3 Mac.
+	// See also patch #1851568.
+	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && a == 1) {
+		if (_currentRoom == 75) {
+			if (_charset->_startLeft < 160)
+				_charset->_startLeft = _charset->_left = _string[a].xpos - 22;
+			else if (_charset->_startLeft < 200)
+				_charset->_startLeft = _charset->_left = _string[a].xpos - 10;
+		} else if (_currentRoom == 69) {
+			if (_charset->_startLeft < 160)
+				_charset->_startLeft = _charset->_left = _string[a].xpos - 15;
+			else if (_charset->_startLeft < 200)
+				_charset->_startLeft = _charset->_left = _string[a].xpos - 10;
+		} else if (_currentRoom == 90) {
+			if (_charset->_startLeft < 160)
+				_charset->_startLeft = _charset->_left = _string[a].xpos - 21;
+			else if (_charset->_startLeft < 200)
+				_charset->_startLeft = _charset->_left = _string[a].xpos - 15;
+		}
+	}
+
 	if (_game.version >= 5)
 		memcpy(_charsetColorMap, _charsetData[_charset->getCurID()], 4);
 
