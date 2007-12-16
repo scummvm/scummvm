@@ -956,6 +956,7 @@ void Game::handleBootParam(int value) {
 }
 
 bool Game::getYN() {
+	OSystem &system = *g_system;
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
@@ -967,7 +968,12 @@ bool Game::getYN() {
 	else if ((l == DE_DEU) || (l == NL_NLD)) y = Common::KEYCODE_j;
 	else if ((l == ES_ESP) || (l == IT_ITA)) y = Common::KEYCODE_s;
 
-	mouse.cursorOff();
+	bool vKbdFlag = g_system->hasFeature(OSystem::kFeatureVirtualKeyboard);
+	if (!vKbdFlag)
+		mouse.cursorOff();
+	else
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 	Surface *s = Surface::newDialog(190, res.stringList().getString(S_CONFIRM_YN));
 	s->centerOnScreen();
 	delete s;
@@ -999,7 +1005,10 @@ bool Game::getYN() {
 	} while (!events.quitFlag && !breakFlag);
 
 	screen.update();
-	mouse.cursorOn();
+	if (!vKbdFlag)
+		mouse.cursorOn();
+	else
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	return result;
 }

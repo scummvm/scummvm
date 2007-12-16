@@ -424,6 +424,9 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 	bool vKbdFlag = g_system->hasFeature(OSystem::kFeatureVirtualKeyboard);
 	if (!vKbdFlag)
 		mouse.cursorOff();
+	else
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 
 	// Insert a cursor character at the end of the string
 	newLine.insertChar('_', newLine.size());
@@ -489,6 +492,8 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 
 	if (!vKbdFlag)
 		mouse.cursorOn();
+	else
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	return false;
 }
