@@ -127,6 +127,7 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_touche = (gameid == "touche");
 	bool is_agi = (gameid == "agi");
 	bool is_parallaction = (gameid == "parallaction");
+	bool is_lure = (gameid == "lure");
 
 	GUI_Actions::initInstanceGame();
 
@@ -169,7 +170,7 @@ void CEActionsPocket::initInstanceGame() {
 	// Skip
 	if (!is_cine && !is_parallaction)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche || is_lure)
 		_key_action[POCKET_ACTION_SKIP].setKey(VK_ESCAPE);
 	else
 		_key_action[POCKET_ACTION_SKIP].setKey(KEY_ALL_SKIP);
