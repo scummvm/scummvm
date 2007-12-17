@@ -1047,7 +1047,16 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 
 							if ( (!first) && ((testState==-1) || (testState==objectState))) {
 								if (!strlen(verbe_name))
-									attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+								{
+									if(currentScriptPtr)
+									{
+										attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+									}
+									else
+									{
+										attacheNewScriptToTail(&relHead, j, ptrHead->id, 30, 0, 0, scriptType_REL);
+									}
+								}
 								else if (ovl2->nameVerbGlob) {
 									found = true;
 									ptr = getObjectName(ptrHead->verbNumber, ovl2->nameVerbGlob);
@@ -1120,39 +1129,46 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 
 			if ((pHeader->obj2OldState == -1) || (params.scale == pHeader->obj2OldState)) {
 				if (pHeader->type == 30) { // REL
-				attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
-
-				if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
-					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
-
-					if (pTrack) {
-						animationStart = false;
-
-						if (pHeader->trackDirection == 9999) {
-							objectParamsQuery naratorParams;
-							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
-							pTrack->x_dest = naratorParams.X;
-							pTrack->y_dest = naratorParams.Y;
-							pTrack->endDirection = direction(naratorParams.X, naratorParams.Y, pTrack->x_dest, pTrack->y_dest, 0, 0);
-						} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
-							objectParamsQuery naratorParams;
-							getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
-							pTrack->x_dest = naratorParams.X;
-							pTrack->y_dest = naratorParams.Y;
-							pTrack->endDirection = pHeader->trackDirection;
-						} else {
-							pTrack->x_dest = pHeader->trackX;
-							pTrack->y_dest = pHeader->trackY;
-							pTrack->endDirection = pHeader->trackDirection;
-						}
-
-						pTrack->flag = 1;
-
-						autoTrack = true;
-						userEnabled = 0;
-						changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 0, 9998);
+					if(currentScriptPtr)
+					{
+						attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 					}
-				}
+					else
+					{
+						attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, 0, 0, scriptType_REL);
+					}
+
+					if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
+						actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
+
+						if (pTrack) {
+							animationStart = false;
+
+							if (pHeader->trackDirection == 9999) {
+								objectParamsQuery naratorParams;
+								getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+								pTrack->x_dest = naratorParams.X;
+								pTrack->y_dest = naratorParams.Y;
+								pTrack->endDirection = direction(naratorParams.X, naratorParams.Y, pTrack->x_dest, pTrack->y_dest, 0, 0);
+							} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
+								objectParamsQuery naratorParams;
+								getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+								pTrack->x_dest = naratorParams.X;
+								pTrack->y_dest = naratorParams.Y;
+								pTrack->endDirection = pHeader->trackDirection;
+							} else {
+								pTrack->x_dest = pHeader->trackX;
+								pTrack->y_dest = pHeader->trackY;
+								pTrack->endDirection = pHeader->trackDirection;
+							}
+
+							pTrack->flag = 1;
+
+							autoTrack = true;
+							userEnabled = 0;
+							changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 0, 9998);
+						}
+					}
 				} else if (pHeader->type == 50) {
 					ASSERT(0);
 				}
@@ -1183,7 +1199,14 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 		if (pHeader->obj2Number == nObj2) {
 			// REL
 			if (pHeader->type == 30) {
-				attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+				if(currentScriptPtr)
+				{
+					attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
+				}
+				else
+				{
+					attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, 0, 0, scriptType_REL);
+				}
 
 				if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
 					actorStruct* pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
@@ -1247,7 +1270,14 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 					}
 				}
 
-				createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
+				if(currentScriptPtr)
+				{
+					createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
+				}
+				else
+				{
+					createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), currentActiveBackgroundPlane, 0, 0);
+				}
 				
 				userWait = 1;
 				autoOvl = ovlIdx;

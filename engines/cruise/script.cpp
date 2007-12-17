@@ -738,6 +738,8 @@ int executeScripts(scriptInstanceStruct *ptr) {
 		}
 	} while (!opcodeTypeTable[(opcodeType & 0xFB) >> 3] ());
 
+	currentScriptPtr = NULL;
+
 	return (0);
 }
 

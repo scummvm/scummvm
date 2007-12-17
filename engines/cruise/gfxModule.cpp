@@ -62,11 +62,10 @@ void outputBit(char *buffer, int bitPlaneNumber, uint8 data) {
 	*(buffer + (8000 * bitPlaneNumber)) = data;
 }
 
-void gfxModuleData_field_60(char *sourcePtr, int width, int height,
-    char *destPtr, int x_, int y_) {
+void gfxModuleData_field_60(char *sourcePtr, int width, int height, char *destPtr, int x_, int y_) {
 
 	for (int y = 0; y < height; ++y) {
-		for (int x = 0; x < width / 8; ++x) {
+		for (int x = 0; x < width; ++x) {
 			for (int bit = 0; bit < 16; ++bit) {
 				uint8 color = 0;
 				for (int p = 0; p < 4; ++p) {

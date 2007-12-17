@@ -1550,6 +1550,30 @@ int16 Op_LinkObjects(void) {
 	return 0;
 }
 
+int16 Op_UserDelay(void)
+{
+	int delay = popVar();
+
+	if(delay >= 0)
+	{
+		userDelay = delay;
+	}
+
+	return userDelay;
+}
+
+int16 Op_UserWait(void)
+{
+	userWait = 1;
+	if (currentScriptPtr->type == scriptType_PROC) {
+		changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &procHead, -1, 9999);
+	} else if (currentScriptPtr->type == scriptType_REL) {
+		changeScriptParamInList(currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, &relHead, -1, 9999);
+	}
+
+	return 0;
+}
+
 void setupOpcodeTable(void) {
 	int i;
 
@@ -1577,7 +1601,7 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x12] = NULL;	// used to be exec debug
 	opcodeTablePtr[0x13] = Op_AddMessage;
 	opcodeTablePtr[0x14] = Op_RemoveMessage;
-	opcodeTablePtr[0x15] = NULL;	// user wait
+	opcodeTablePtr[0x15] = Op_UserWait;
 	opcodeTablePtr[0x16] = Op_FreezeCell;
 	opcodeTablePtr[0x17] = Op_LoadCt;
 	opcodeTablePtr[0x18] = Op_AddAnimation;
@@ -1604,6 +1628,7 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x32] = Op_freeBackgroundInscrustList;
 	opcodeTablePtr[0x33] = Op_DialogOn;
 	opcodeTablePtr[0x34] = Op_DialogOff;
+	opcodeTablePtr[0x35] = Op_UserDelay;
 	opcodeTablePtr[0x37] = Op_37;
 	opcodeTablePtr[0x38] = Op_removeBackground;
 	opcodeTablePtr[0x39] = Op_SetActiveBackgroundPlane;
