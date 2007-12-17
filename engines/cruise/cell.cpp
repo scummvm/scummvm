@@ -339,6 +339,8 @@ void sortCells(int16 param1, int16 param2, cellStruct *objPtr) {
 				objPtr->prev = pl2->prev;
 			}
 
+			pl4 = prov.next;
+
 			if (pl4) {
 				pl4->prev = pl2;
 			} else {
