@@ -695,6 +695,7 @@ void Room::setTalkDialog(uint16 srcCharacterId, uint16 destCharacterId, uint16 u
 		_talkDialogX = FULL_SCREEN_WIDTH - 10 - TALK_DIALOG_WIDTH; 
 
 	_talkDialogY = TALK_DIALOG_Y;
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Room::setTalkDialog end");
 }
 
 // Checks to see if a talk dialog is active, and if so if the mouse is in

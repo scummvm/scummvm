@@ -321,6 +321,7 @@ uint16 Surface::textWidth(const char *s, int numChars) {
 }
 
 void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines) {
+	debugC(ERROR_INTERMEDIATE, kLureDebugStrings, "wordWrap(text=%s, width=%d", text, width);
 	numLines = 1;
 	uint16 lineWidth = 0;
 	char *s;
@@ -342,13 +343,23 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 			newLine = false;
 		}
 
+		debugC(ERROR_DETAILED, kLureDebugStrings, "word scanning: start=%xh, after=%xh, newLine=%d",
+			(uint32)(wordStart - text), (uint32)((wordEnd == NULL) ? -1 : wordEnd - text), newLine ? 1 : 0);
+
 		if (wordEnd) {
 			if (!newLine) --wordEnd;
 		} else {
-			wordEnd = strchr(s, '\0') - 1;
+			wordEnd = strchr(wordStart, '\0') - 1;
 		}
 
-		uint16 wordSize = textWidth(s, (int) (wordEnd - s + 1));
+		int wordBytes = (int) (wordEnd - s + 1);
+		uint16 wordSize = textWidth(s, wordBytes);
+		if (gDebugLevel >= ERROR_DETAILED) {
+			char wordBuffer[MAX_DESC_SIZE];
+			strncpy(wordBuffer, wordStart, wordBytes);
+			wordBuffer[wordBytes] = '\0';
+			debugC(ERROR_DETAILED, kLureDebugStrings, "word='%s', size=%d", wordBuffer, wordSize);
+		}
 
 		if (lineWidth + wordSize > width) {
 			// Break word onto next line
@@ -372,8 +383,13 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 	// Set up a list for the start of each line 
 	lines = (char **) Memory::alloc(sizeof(char *) * numLines);
 	lines[0] = text;
-	for (int ctr = 1; ctr < numLines; ++ctr) 
+	debugC(ERROR_DETAILED, kLureDebugStrings, "wordWrap lines[0]='%s'", lines[0]);
+	for (int ctr = 1; ctr < numLines; ++ctr) {
 		lines[ctr] = strchr(lines[ctr-1], 0) + 1;
+		debugC(ERROR_DETAILED, kLureDebugStrings, "wordWrap lines[%d]='%s'", ctr, lines[ctr]);
+	}
+
+	debugC(ERROR_INTERMEDIATE, kLureDebugStrings, "wordWrap end - numLines=%d", numLines);
 }
 
 Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength, uint8 colour) {
@@ -653,6 +669,8 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 		_lines, _numLines);
 	_endLine = 0; _endIndex = 0;
 
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Creating talk dialog for %d lines", _numLines);
+
 	_surface = new Surface(TALK_DIALOG_WIDTH, 
 		(_numLines + 1) * FONT_HEIGHT + TALK_DIALOG_EDGE_SIZE * 4);
 
@@ -712,6 +730,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	uint16 charWidth = Surface::textWidth(srcCharName);
 	_surface->writeString((TALK_DIALOG_WIDTH-charWidth)/2, TALK_DIALOG_EDGE_SIZE + 2,
 		srcCharName, true, DIALOG_WHITE_COLOUR);
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "TalkDialog end");
 }
 
 TalkDialog::~TalkDialog() {
