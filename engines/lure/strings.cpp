@@ -216,7 +216,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 				destPos += strlen(destPos);
 
 				debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh name=%s",
-					charOffset, charBitMask, ch, p);
+					charOffset, charBitMask, (uint8)ch, p);
 			}
 		} else if ((uint8) ch >= 0xa0) {
 			const char *p = getName((uint8) ch - 0xa0);
@@ -227,7 +227,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 		} else {
 			*destPos++ = ch;
 			debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh char=%c",
-				charOffset, charBitMask, ch, ch);
+				charOffset, charBitMask, (uint8)ch, ch);
 		}
 
 		charOffset = _srcPos - _stringTable;
