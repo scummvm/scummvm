@@ -864,8 +864,9 @@ void Game::doShowCredits() {
 	mouse.cursorOff();
 	Palette p(CREDITS_RESOURCE_ID - 1);
 	Surface *s = Surface::getScreen(CREDITS_RESOURCE_ID);
-	screen.setPalette(&p);	
+	screen.setPaletteEmpty();
 	s->copyToScreen(0, 0);
+	screen.setPalette(&p);	
 	delete s;
 
 	events.waitForPress();
