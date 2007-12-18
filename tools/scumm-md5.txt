@@ -736,6 +736,7 @@ activity	Putt-Putt & Fatty Bear's Activity Pack
 
 funpack	Putt-Putt's Fun Pack
 	8afb3cf9f95abf208358e984f0c9e738	-1	en	3DO	-	-	-	sev
+	e95cf980719c0be078fb68a67af97b4a	-1	jp	3DO	-	-	-	clone2727
 	3d219e7546039543307b55a91282bf18	-1	en	DOS	-	-	-	iziku
 	46b53fd430adcfbed791b48a0d4b079f	-1	en	DOS	-	-	-	khalek
 	90a329d8ad5b7ce0690429e98cfbb32f	-1	hb	DOS	-	-	-	
