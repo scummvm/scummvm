@@ -316,7 +316,12 @@ uint16 Surface::textWidth(const char *s, int numChars) {
 	uint16 result = 0;
 	if (numChars == 0) numChars = strlen(s);
 
-	while (numChars-- > 0) result += fontSize[*s++ - ' '] + 2;
+	while (numChars-- > 0) {
+		uint8 charIndex = (uint8)*s++ - 32;
+		assert(charIndex < numFontChars);
+		result += fontSize[charIndex] + 2;
+	}
+
 	return result;
 }
 
