@@ -125,23 +125,16 @@ void updateMenuMouse(int mouseX, int mouseY, menuStruct *pMenu) {
 		if (pMenu->gfx) {
 			int height = pMenu->gfx->height;	// rustine
 			int var_2 = 0;
-			menuElementStruct *pCurrentEntry =
-			    pMenu->ptrNextElement;
+			menuElementStruct *pCurrentEntry = pMenu->ptrNextElement;
 
 			while (pCurrentEntry) {
 				pCurrentEntry->varC = 0;
 
 				if (var_2 == 0) {
-					if ((mouseX > pCurrentEntry->x)
-					    && ((pCurrentEntry->x + 160) >=
-						mouseX)) {
-						if ((mouseY > pCurrentEntry->y)
-						    && ((pCurrentEntry->y +
-							    height) >=
-							mouseY)) {
+					if ((mouseX > pCurrentEntry->x) && ((pCurrentEntry->x + 160) >= mouseX)) {
+						if ((mouseY > pCurrentEntry->y) && ((pCurrentEntry->y + height) >= mouseY)) {
 							var_2 = 1;
-							pCurrentEntry->varC =
-							    1;
+							pCurrentEntry->varC = 1;
 						}
 					}
 				}
@@ -194,18 +187,29 @@ int processMenu(menuStruct *pMenu) {
 	mainDraw(1);
 	flipScreen();
 
-	return 0;
+	if( mouseButton & 1) {
+		menuElementSubStruct* pSelectedEntry = getSelectedEntryInMenu(pMenu);
+
+		if(pSelectedEntry) {
+			return pSelectedEntry->header;
+		}
+		else {
+			return -1;
+		}
+	}
+
+	return -1;
 }
 
 int playerMenu(int menuX, int menuY) {
 	int retourMenu;
 	//int restartGame = 0;
 
-	if (entrerMenuJoueur && affichePasMenuJoueur) {
-		if (var0) {
+	if (entrerMenuJoueur && displayOn) {
+		if (remdo) {
 			systemStrings.param = 0;
-			var24 = 0;
-			var23 = 0;
+			playMusic2 = 0;
+			playMusic = 0;
 			freeStuff2();
 		}
 /*
@@ -236,20 +240,35 @@ int playerMenu(int menuX, int menuY) {
 		menuTable[0] = createMenu(menuX, menuY, "Menu Joueur");
 		ASSERT(menuTable[0]);
 
-		addSelectableMenuEntry(0, 3, menuTable[0], 1, -1,
-		    "Lecteur de Sauvegarde");
+		//addSelectableMenuEntry(0, 3, menuTable[0], 1, -1, "Lecteur de Sauvegarde");
 		if (userEnabled) {
-			addSelectableMenuEntry(0, 4, menuTable[0], 1, -1,
-			    "Sauvegarde");
+			addSelectableMenuEntry(0, 4, menuTable[0], 1, -1, "Sauvegarde");
 		}
-		addSelectableMenuEntry(0, 5, menuTable[0], 1, -1,
-		    "Chargement");
-		addSelectableMenuEntry(0, 6, menuTable[0], 1, -1,
-		    "Recommencer le jeu");
-		addSelectableMenuEntry(0, 7, menuTable[0], 1, -1,
-		    "Chargement");
+		addSelectableMenuEntry(0, 5, menuTable[0], 1, -1, "Chargement");
+		addSelectableMenuEntry(0, 6, menuTable[0], 1, -1, "Recommencer le jeu");
+		addSelectableMenuEntry(0, 7, menuTable[0], 1, -1, "Quitter");
 
 		retourMenu = processMenu(menuTable[0]);
+
+		freeMenu(menuTable[0]);
+		menuTable[0] = NULL;
+
+		switch(retourMenu)
+		{
+		case 3: // select save drive
+			break;
+		case 4: // save
+			saveSavegameData(0);
+			break;
+		case 5: // load
+			loadSavegameData(0);
+			break;
+		case 6: // restart
+			break;
+		case 7: // exit
+			exit(0);
+			break;
+		}
 	}
 
 	return 0;

@@ -361,8 +361,8 @@ int32 opcodeType11(void) {	// break
 int32 opcodeType4(void) {		// test
 	int boolVar = 0;
 
-	var1 = popVar();
-	var2 = popVar();
+	int var1 = popVar();
+	int var2 = popVar();
 
 	switch (currentScriptOpcodeType) {
 	case 0:
@@ -431,8 +431,8 @@ int32 opcodeType6(void) {
 }
 
 int32 opcodeType7(void) {
-	var1 = popVar();
-	var2 = popVar();
+	int var1 = popVar();
+	int var2 = popVar();
 
 	pushVar(var1);
 	pushVar(var2);

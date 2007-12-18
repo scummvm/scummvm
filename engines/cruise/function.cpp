@@ -205,7 +205,7 @@ int16 Op_PlayFX(void) {		// TODO: implement
 }
 
 int16 Op_freeAllPerso(void) {
-	freeAllPerso();
+	freeCTP();
 	return (0);
 }
 
@@ -301,11 +301,8 @@ int16 Op_isFileLoaded(void) {
 }
 
 int16 Op_RemoveFrame(void) {
-	//int var1;
-	//int var2;
-
-	var1 = popVar();
-	var2 = popVar();
+	int var1 = popVar();
+	int var2 = popVar();
 
 	resetFileEntryRange(var2, var1);
 
@@ -394,11 +391,11 @@ int16 Op_ChangeSaveAllowedState(void) {
 }
 
 int16 Op_changeCutSceneState(void) {
-	int oldValue = affichePasMenuJoueur;
+	int oldValue = displayOn;
 	int newValue = popVar();
 
 	if (newValue != -1) {
-		affichePasMenuJoueur = newValue;
+		displayOn = newValue;
 	}
 
 	return oldValue;
@@ -532,8 +529,8 @@ int16 Op_InitializeState(void) {
 	return (0);
 }
 
-int16 Op_GetInitVar1(void) {
-	return initVar1;
+int16 Op_GetlowMemory(void) {
+	return lowMemory;
 }
 
 int16 Op_FadeOut(void) {
@@ -580,7 +577,7 @@ int16 Op_2C(void) {
 }
 
 int16 Op_FadeIn(void) {
-	main5 = 1;
+	doFade = 1;
 	return 0;
 }
 
@@ -829,10 +826,10 @@ int16 Op_removeBackground(void) {
 	return (0);
 }
 
-int op6AVar;
+int vblLimit;
 
 int16 Op_6A(void) {
-	op6AVar = popVar();
+	vblLimit = popVar();
 	return 0;
 }
 
@@ -1194,10 +1191,10 @@ int16 Op_regenerateBackgroundIncrust(void) {
 int16 Op_SetStringColors(void) {
 	// TODO: here ignore if low color mode
 
-	colorOfSelectedSaveDrive = (uint8) popVar();
-	video2 = (uint8) popVar();
-	video3 = (uint8) popVar();
-	video4 = (uint8) popVar();
+	subColor = (uint8) popVar();
+	itemColor = (uint8) popVar();
+	selectColor = (uint8) popVar();
+	titleColor = (uint8) popVar();
 
 	return 0;
 }
@@ -1205,11 +1202,11 @@ int16 Op_SetStringColors(void) {
 int16 Op_1E(void) {		// setup actor position
 	actorStruct *pActor;
 
-	var0 = popVar();
+	int var0 = popVar();
 	int actorY = popVar();
 	int actorX = popVar();
-	var1 = popVar();
-	var2 = popVar();
+	int var1 = popVar();
+	int var2 = popVar();
 	int overlay = popVar();
 
 	if (!overlay) {
@@ -1285,8 +1282,8 @@ int16 Op_40(void) {
 	//freeStuff1();
 	freeStuff2();
 
-	var24 = 0;
-	var23 = 0;
+	playMusic2 = 0;
+	playMusic = 0;
 	return 0;
 }
 
@@ -1295,8 +1292,8 @@ int16 Op_6C(void) {
 	//int var1;
 	int temp;
 
-	var0 = popVar();
-	var1 = popVar();
+	int var0 = popVar();
+	int var1 = popVar();
 
 	if (!var1) {
 		var1 = currentScriptPtr->overlayNumber;
@@ -1344,11 +1341,11 @@ int16 Op_60(void) {
 	 * int var4;
 	 */
 
-	var0 = popVar();
-	var1 = popVar();
-	var2 = popVar();
-	var3 = popVar();
-	var4 = popVar();
+	int var0 = popVar();
+	int var1 = popVar();
+	int var2 = popVar();
+	int var3 = popVar();
+	int var4 = popVar();
 
 	if (!var4) {
 		var4 = currentScriptPtr->overlayNumber;
@@ -1405,9 +1402,9 @@ int16 Op_6E(void) {
 }
 
 int16 Op_InitializeState2(void) {
-	var0 = popVar();
+	int var0 = popVar();
 	char *ptr = (char *)popPtr();
-	var1 = popVar();
+	int var1 = popVar();
 
 	if (!var1)
 		var1 = currentScriptPtr->overlayNumber;
@@ -1671,7 +1668,7 @@ void setupOpcodeTable(void) {
 	opcodeTablePtr[0x71] = Op_SetColorrawLine;
 	opcodeTablePtr[0x72] = Op_InitializeState2;
 	opcodeTablePtr[0x73] = Op_SetXDial;
-	opcodeTablePtr[0x74] = Op_GetInitVar1;
+	opcodeTablePtr[0x74] = Op_GetlowMemory;
 	opcodeTablePtr[0x76] = Op_InitializeState6;
 	opcodeTablePtr[0x79] = Op_PlayFXnterPlayerMenu;
 	opcodeTablePtr[0x78] = Op_InitializeState8;

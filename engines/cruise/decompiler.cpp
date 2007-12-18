@@ -750,7 +750,7 @@ int decompFunction(void) {
 	switch (currentScriptOpcodeType) {
 	case 0x1:
 		{
-			pushDecomp("_setMain5()");
+			pushDecomp("_setdoFade()");
 			break;
 		}
 	case 0x2:
@@ -1344,7 +1344,7 @@ int decompFunction(void) {
 		}
 	case 0x74:
 		{
-			sprintf(tempbuffer, "_getInitVar1()");
+			sprintf(tempbuffer, "_getlowMemory()");
 			pushDecomp(tempbuffer);
 			break;
 		}

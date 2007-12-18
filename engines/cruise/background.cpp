@@ -46,10 +46,10 @@ int loadMEN(uint8 **ptr) {
 	if (!strcmp(localPtr, "MEN")) {
 		localPtr += 4;
 
-		video4 = *(localPtr++);
-		video3 = *(localPtr++);
-		video2 = *(localPtr++);
-		colorOfSelectedSaveDrive = *(localPtr++);
+		titleColor = *(localPtr++);
+		selectColor = *(localPtr++);
+		itemColor = *(localPtr++);
+		subColor = *(localPtr++);
 
 		*ptr = (uint8 *) localPtr;
 

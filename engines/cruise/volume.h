@@ -29,6 +29,7 @@
 namespace Cruise {
 
 int16 readVolCnf(void);
+int closeCnf(void);
 int16 findFileInDisks(char * fileName);
 void freeDisk(void);
 int16 findFileInList(const char * fileName);
@@ -39,6 +40,8 @@ void strToUpper(char * fileName);
 void drawMsgString(const char * string);
 void askDisk(int16 discNumber);
 void setObjectPosition(int16 param1, int16 param2, int16 param3, int16 param4);
+
+int closeBase(void);
 
 } // End of namespace Cruise
 

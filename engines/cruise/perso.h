@@ -49,7 +49,7 @@ extern persoStruct *persoTable[NUM_PERSONS];
 extern int16 computedVar14;
 
 void freePerso(int persoIdx);
-void freeAllPerso(void);
+void freeCTP(void);
 void affiche_chemin(int16 persoIdx, int16 * returnVar);
 int direction(int x1, int y1, int x2, int y2, int inc_jo1, int inc_jo2);
 

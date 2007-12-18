@@ -28,6 +28,7 @@
 
 namespace Cruise {
 
+int saveSavegameData(int saveGameIdx);
 int loadSavegameData(int saveGameIdx);
 
 } // End of namespace Cruise

@@ -63,7 +63,7 @@ void drawInfoStringSmallBlackBox(uint8 *string) {
 	gfxModuleData_gfxWaitVSync();
 	drawBlackSolidBoxSmall();
 
-	drawString(10, 100, string, gfxModuleData.pPage10, video4, 300);
+	drawString(10, 100, string, gfxModuleData.pPage10, titleColor, 300);
 
 	gfxModuleData_flip();
 
@@ -337,8 +337,8 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 	uint8 *unpackedBuffer;
 
 	for (i = 0; i < 64; i++) {
-		if (mediumVar[i].ptr) {
-			if (!strcmp(mediumVar[i].name, name)) {
+		if (preloadData[i].ptr) {
+			if (!strcmp(preloadData[i].name, name)) {
 				printf("Unsupported code in loadFIleSub1 !\n");
 				exit(1);
 			}
@@ -951,7 +951,7 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 									int color;
 
 									if(objectState2==-2)
-										color = colorOfSelectedSaveDrive;
+										color = subColor;
 									else
 										color = -1;
 
@@ -1078,11 +1078,8 @@ int processInventory(void) {
 		menuElementSubStruct *pMenuElementSub = getSelectedEntryInMenu(menuTable[1]);
 
 		if (pMenuElementSub) {
-			//int var2;
-			//int var4;
-
-			var2 = pMenuElementSub->ovlIdx;
-			var4 = pMenuElementSub->header;
+			int var2 = pMenuElementSub->ovlIdx;
+			int var4 = pMenuElementSub->header;
 
 			freeMenu(menuTable[1]);
 			menuTable[1] = NULL;
@@ -1743,7 +1740,7 @@ void mainLoop(void) {
 
 	strcpy(currentOverlay, "");
 	systemStrings.bootScriptName[0] = 0;
-	initVar4[0] = 0;
+	cmdLine[0] = 0;
 	currentActiveMenu = -1;
 	autoMsg = -1;
 	linkedRelation = 0;
@@ -1754,9 +1751,6 @@ void mainLoop(void) {
 	autoTrack = 0;
 
 	initAllData();
-
-	// debug code: automaticaly load savegame 0 at startup
-//	loadSavegameData(0);
 
 	{
 		int playerDontAskQuit = 1;
@@ -1783,7 +1777,7 @@ void mainLoop(void) {
 
 			processAnimation();
 
-			if (var0) {
+			if (remdo) {
 				// ASSERT(0);
 				/*    main3 = 0;
 				 * var24 = 0;
@@ -1792,17 +1786,17 @@ void mainLoop(void) {
 				 * freeStuff2(); */
 			}
 
-			if (initVar4[0]) {
+			if (cmdLine[0]) {
 				ASSERT(0);
-/*        redrawStrings(0,&initVar4,8);
+/*        redrawStrings(0,&cmdLine,8);
 
         waitForPlayerInput();
 
-        initVar4 = 0; */
+        cmdLine = 0; */
 			}
 
-			if (affichePasMenuJoueur) {
-				if (main5)
+			if (displayOn) {
+				if (doFade)
 					fadeVar = 0;
 
 				/*if (fadeVar)
@@ -1940,7 +1934,7 @@ int oldmain(int argc, char *argv[]) {
 
 	// video init stuff
 
-	loadSystemFont();
+	initSystem();
 
 	// another bit of video init
 

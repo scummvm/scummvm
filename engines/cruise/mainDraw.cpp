@@ -1263,7 +1263,7 @@ void drawMenu(menuStruct *pMenu) {
 	int wx = x + (nbcol - 1) * (160/2);
 
 	if (wx <= 320 - 160) {
-		drawMessage(pMenu->gfx, wx, y - hline, 160, video4, gfxModuleData.pPage10);
+		drawMessage(pMenu->gfx, wx, y - hline, 160, titleColor, gfxModuleData.pPage10);
 	}
 
 	wx = x;
@@ -1281,12 +1281,12 @@ void drawMenu(menuStruct *pMenu) {
 		int color;
 
 		if (p1->varC) {
-			color = video3;
+			color = selectColor;
 		} else {
 			if (p1->color != 255) {
 				color = p1->color;
 			} else {
-				color = video2;
+				color = itemColor;
 			}
 		}
 
@@ -1494,7 +1494,7 @@ void mainDraw(int16 param) {
 	//----------------------------------------------------------------------------------------------------------------//
 
 	freeAutoCell();
-	var20 = 0;
+	isMessage = 0;
 
 	//-------------------------------------------------- DRAW OBJECTS TYPE 5 (MSG)-----------------------------------------//
 
@@ -1503,7 +1503,7 @@ void mainDraw(int16 param) {
 	while (currentObjPtr) {
 		if (currentObjPtr->type == OBJ_TYPE_MSG && currentObjPtr->freeze == 0) {
 			drawMessage(currentObjPtr->gfxPtr, currentObjPtr->x, currentObjPtr->field_C, currentObjPtr->spriteIdx, currentObjPtr->color, gfxModuleData.pPage10);
-			var20 = 1;
+			isMessage = 1;
 		}
 		currentObjPtr = currentObjPtr->next;
 	}

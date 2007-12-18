@@ -166,29 +166,31 @@ void loadFNT(const char *fileName) {
 	fontFileHandle.close();
 }
 
-void loadSystemFont(void) {
+void initSystem(void) {
 	int32 i;
 
-	video2 = 15;
-	video4 = 9;
-	video3 = 13;
-	colorOfSelectedSaveDrive = 10;
+	itemColor = 15;
+	titleColor = 9;
+	selectColor = 13;
+	subColor = 10;
 
 	for (i = 0; i < 64; i++) {
-		mediumVar[i].ptr = NULL;
-		mediumVar[i].nofree = 0;
+		strcpy(preloadData[i].name, "");
+		preloadData[i].ptr = NULL;
+		preloadData[i].nofree = 0;
 	}
 
-	initVar1 = 0;
-	main5 = 0;
-	var22 = 0;
-	initVar2 = 0;
+	lowMemory = 0;
+
+	doFade = 0;
+	fadeFlag = 0;
+	scroll = 0;
 	switchPal = 0;
 	currentActiveBackgroundPlane = 0;
 
-	//changeCursor();
+	changeCursor(CURSOR_NORMAL);
 
-	initVar4[0] = 0;
+	strcpy(cmdLine, "");
 
 	loadFNT("system.fnt");
 }
@@ -438,7 +440,7 @@ void drawString(int32 x, int32 y, uint8 *string, uint8 *buffer, uint8 color,
 
 			if (character) {
 				if (character == ' ' || character == 0x7D) {
-					drawPosPixel_X += var1 + 5;
+					drawPosPixel_X += wordSpacingWidth + 5;
 				} else {
 					if (data) {
 						short int *si =

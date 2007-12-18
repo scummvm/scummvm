@@ -108,7 +108,7 @@ void CruiseEngine::initialize() {
 
 	// video init stuff
 
-	loadSystemFont();
+	initSystem();
 
 	// another bit of video init
 

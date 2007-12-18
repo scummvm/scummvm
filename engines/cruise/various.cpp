@@ -27,7 +27,7 @@
 
 namespace Cruise {
 
-uint16 var0 = 0;
+uint16 remdo = 0;
 uint16 fadeVar;
 
 int16 readB16(void *ptr) {

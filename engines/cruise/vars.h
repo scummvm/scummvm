@@ -54,21 +54,21 @@ typedef int16(*opcodeFunction) (void);
 extern uint8 *_systemFNT;
 extern int16 fontFileIndex;
 
-extern uint8 video2;
-extern uint8 video3;
-extern uint8 video4;
-extern uint8 colorOfSelectedSaveDrive;
+extern uint8 itemColor;
+extern uint8 selectColor;
+extern uint8 titleColor;
+extern uint8 subColor;
 
-extern int16 initVar1;
-extern int16 initVar2;
+extern int16 lowMemory;
+extern int16 scroll;
 extern int16 switchPal;
-extern uint8 initVar4[90];
+extern char cmdLine[90];
 
 extern int16 currentActiveBackgroundPlane;
-extern int16 main5;
-extern int16 var22;
+extern int16 doFade;
+extern int16 fadeFlag;
 
-struct mediumVarStruct {
+struct preloadStruct {
 	char name[15];
 	int32 size;
 	int32 sourceSize;
@@ -137,7 +137,7 @@ struct systemStringsStruct {
 	char bootScriptName[8];
 };
 
-extern mediumVarStruct mediumVar[64];
+extern preloadStruct preloadData[64];
 
 extern volumeDataStruct volumeData[20];
 
@@ -170,7 +170,7 @@ extern uint32 volumeFileDescriptorSize;
 extern int16 volumeSizeOfEntry;
 extern int16 volumeNumberOfEntry;
 
-extern int16 affichePasMenuJoueur;
+extern int16 displayOn;
 
 extern int16 globalVars[2000];
 extern dataFileEntry filesDatabase[257];
@@ -197,10 +197,10 @@ extern int16 saveOpcodeVar;
 extern int16 narratorOvl;
 extern int16 narratorIdx;
 
-extern int16 var1;
-extern int16 var2;
-extern int16 var3;
-extern int16 var4;
+extern int16 songLoaded;
+extern int16 songPlayed;
+extern int16 songLoop;
+extern int16 activeMouse;
 extern int16 userEnabled;
 extern int16 var5;
 extern int16 dialogueEnabled;
@@ -210,11 +210,11 @@ extern int16 userDelay;
 extern int16 sysKey;
 extern int16 sysX;
 extern int16 sysY;
-extern int16 var13;
-extern int16 var14;
-extern int16 var20;
-extern int16 var23;
-extern int16 var24;
+extern int16 automoveInc;
+extern int16 automoveMax;
+extern int16 isMessage;
+extern int16 playMusic;
+extern int16 playMusic2;
 extern int16 automaticMode;
 extern int16 aniX;
 extern int16 aniY;

@@ -80,6 +80,10 @@ namespace Cruise {
 
 extern gfxEntryStruct* linkedMsgList;
 
+extern int buttonDown;
+extern int selectDown;
+extern int menuDown;
+
 bool delphineUnpack(byte *dst, const byte *src, int len);
 int findHighColor();
 ovlData3Struct *getOvlData3Entry(int32 scriptNumber, int32 param);
@@ -109,6 +113,11 @@ const char *getObjectName(int index, const char * string);
 void mainLoop(void);
 void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY);
 bool testMask(int x, int y, unsigned char* pData, int stride);
+menuElementSubStruct *getSelectedEntryInMenu(menuStruct *pMenu);
+void closeAllMenu(void);
+int removeFinishedScripts(scriptInstanceStruct *ptrHandle);
+void initBigVar3(void);
+void resetActorPtr(actorStruct *ptr);
 
 } // End of namespace Cruise
 

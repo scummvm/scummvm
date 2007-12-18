@@ -33,6 +33,8 @@ uint8 *PAL_ptr = NULL;
 int16 numLoadedPal;
 int16 fileData2;
 
+char currentBaseName[15] = "";
+
 void loadPal(volumeDataStruct *entry) {
 	char name[20];
 
@@ -54,6 +56,38 @@ void loadPal(volumeDataStruct *entry) {
 	flipShort(&fileData2);
 
 	PAL_ptr = (uint8 *) malloc(numLoadedPal * fileData2);
+}
+
+void closePal(void)
+{
+	if(PAL_fileHandle)
+	{
+		fclose(PAL_fileHandle);
+
+		free(PAL_ptr);
+		PAL_ptr = NULL;
+
+		numLoadedPal = 0;
+		fileData2 = 0;
+	}
+}
+
+int closeBase(void)
+{
+	if(currentVolumeFile.isOpen())
+	{
+		currentVolumeFile.close();
+
+		free(volumePtrToFileDescriptor);
+
+		strcpy(currentBaseName, "");
+	}
+
+	if(PAL_fileHandle) {
+		closePal();
+	}
+
+	return 0;
 }
 
 int getVolumeDataEntry(volumeDataStruct *entry) {
@@ -89,8 +123,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 	assert(volumeSizeOfEntry == 14 + 4 + 4 + 4 + 4);
 
-	volumePtrToFileDescriptor =
-	    (fileEntry *) mallocAndZero(sizeof(fileEntry) * volumeNumEntry);
+	volumePtrToFileDescriptor = (fileEntry *) mallocAndZero(sizeof(fileEntry) * volumeNumEntry);
 
 	for (i = 0; i < volumeNumEntry; i++) {
 		volumePtrToFileDescriptor[i].name[0] = 0;
@@ -102,11 +135,9 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 	for (i = 0; i < volumeNumEntry; i++) {
 		currentVolumeFile.read(&volumePtrToFileDescriptor[i].name, 14);
-		currentVolumeFile.read(&volumePtrToFileDescriptor[i].offset,
-		    4);
+		currentVolumeFile.read(&volumePtrToFileDescriptor[i].offset, 4);
 		currentVolumeFile.read(&volumePtrToFileDescriptor[i].size, 4);
-		currentVolumeFile.read(&volumePtrToFileDescriptor[i].extSize,
-		    4);
+		currentVolumeFile.read(&volumePtrToFileDescriptor[i].extSize, 4);
 		currentVolumeFile.read(&volumePtrToFileDescriptor[i].unk3, 4);
 	}
 
@@ -115,6 +146,8 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 		flipLong(&volumePtrToFileDescriptor[i].size);
 		flipLong(&volumePtrToFileDescriptor[i].extSize);
 	}
+
+	strcpy(currentBaseName, entry->ident);
 
 	loadPal(entry);
 
@@ -307,6 +340,19 @@ int16 findFileInDisks(char *fileName) {
 
 		return (-1);
 	}
+}
+
+int closeCnf(void) {
+	for(long int i=0; i<numOfDisks; i++) {
+		if(volumeData[i].ptr) {
+			free(volumeData[i].ptr);
+			volumeData[i].ptr = NULL;
+		}
+	}
+
+	volumeDataLoaded = 0;
+
+	return 0;
 }
 
 int16 readVolCnf(void) {

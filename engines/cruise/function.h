@@ -29,10 +29,13 @@
 namespace Cruise {
 
 extern int flag_obstacle;
+extern int vblLimit;
 void setupOpcodeTable(void);
 int32 opcodeType8(void);
 int16 computeZoom(int param);
 int16 subOp23(int param1, int param2);
+void freeObjectList(cellStruct *pListHead);
+int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType);
 
 } // End of namespace Cruise
 

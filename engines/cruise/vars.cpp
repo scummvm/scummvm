@@ -29,21 +29,21 @@ namespace Cruise {
 
 uint8 *_systemFNT;
 
-uint8 video2 = 1;
-uint8 video3 = 3;
-uint8 video4 = 2;
-uint8 colorOfSelectedSaveDrive = 5;
+uint8 itemColor = 1;
+uint8 selectColor = 3;
+uint8 titleColor = 2;
+uint8 subColor = 5;
 
-int16 initVar1;
-int16 initVar2;
+int16 lowMemory;
+int16 scroll;
 int16 switchPal;
-uint8 initVar4[90];
+char cmdLine[90];
 
 int16 currentActiveBackgroundPlane;
-int16 main5;
-int16 var22 = 0;
+int16 doFade;
+int16 fadeFlag = 0;
 
-mediumVarStruct mediumVar[64];
+preloadStruct preloadData[64];
 
 volumeDataStruct volumeData[20];
 
@@ -75,7 +75,7 @@ uint32 volumeFileDescriptorSize;
 int16 volumeSizeOfEntry;
 int16 volumeNumberOfEntry;
 
-int16 affichePasMenuJoueur = 1;
+int16 displayOn = 1;
 
 int16 globalVars[2000];
 
@@ -104,10 +104,10 @@ int16 saveOpcodeVar;
 int16 narratorOvl = 0;
 int16 narratorIdx = 0;
 
-int16 var1;
-int16 var2;
-int16 var3;
-int16 var4;
+int16 songLoaded;
+int16 songPlayed;
+int16 songLoop;
+int16 activeMouse;
 int16 userEnabled;
 int16 var5;
 int16 dialogueEnabled;
@@ -119,11 +119,11 @@ int16 sysKey = -1;
 int16 sysX = 0;
 int16 sysY = 0;
 
-int16 var13;
-int16 var14;
-int16 var20;
-int16 var23;
-int16 var24;
+int16 automoveInc;
+int16 automoveMax;
+int16 isMessage;
+int16 playMusic;
+int16 playMusic2;
 int16 automaticMode;
 int16 aniX;
 int16 aniY;

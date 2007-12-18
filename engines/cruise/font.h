@@ -29,7 +29,7 @@
 namespace Cruise {
 
 void loadFNT(const char *fileName);
-void loadSystemFont(void);
+void initSystem(void);
 
 //////////////////////////////////////////////////
 void flipShort(int16 * var);
