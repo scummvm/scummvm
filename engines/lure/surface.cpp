@@ -352,13 +352,13 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 			(uint32)(wordStart - text), (uint32)((wordEnd == NULL) ? -1 : wordEnd - text), newLine ? 1 : 0);
 
 		if (wordEnd) {
-			if (!newLine) --wordEnd;
+			if (*wordEnd != '\0') --wordEnd;
 		} else {
 			wordEnd = strchr(wordStart, '\0') - 1;
 		}
 
 		int wordBytes = (int) (wordEnd - s + 1);
-		uint16 wordSize = textWidth(s, wordBytes);
+		uint16 wordSize = (wordBytes == 0) ? 0 : textWidth(s, wordBytes);
 		if (gDebugLevel >= ERROR_DETAILED) {
 			char wordBuffer[MAX_DESC_SIZE];
 			strncpy(wordBuffer, wordStart, wordBytes);
@@ -375,7 +375,7 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 		} else if (newLine) {
 			// Break on newline
 			++numLines;
-			*wordEnd = '\0';
+			*++wordEnd = '\0';
 			lineWidth = 0;
 		} else {
 			// Add word's length to total for line
