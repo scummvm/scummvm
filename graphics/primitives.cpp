@@ -26,13 +26,6 @@
 
 namespace Graphics {
 
-#if defined (MACOSX) || defined (__SYMBIAN32__)
-// Older versions of Mac OS X didn't supply a sqrtf function. To ensure
-// binary compatibility, we force using sqrt instead of sqrtf (the only
-// potential drawback is that it might be a little bit slower).
-#define sqrtf sqrt
-#endif
-
 void drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, int, int, void *), void *data) {
 	// Bresenham's line algorithm, as described by Wikipedia
 	const bool steep = ABS(y1 - y0) > ABS(x1 - x0);
@@ -89,7 +82,7 @@ void drawThickLine(int x0, int y0, int x1, int y1, int thickness, int color, voi
 
 	float dx = x1 - x0;
 	float dy = y1 - y0;
-	float d = sqrtf(dx * dx + dy * dy);
+	float d = (float)sqrt(dx * dx + dy * dy);
 
 	if (!d)
         return;
