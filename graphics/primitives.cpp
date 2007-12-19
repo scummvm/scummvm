@@ -26,7 +26,7 @@
 
 namespace Graphics {
 
-#ifdef MACOSX
+#if defined (MACOSX) || defined (__SYMBIAN32__)
 // Older versions of Mac OS X didn't supply a sqrtf function. To ensure
 // binary compatibility, we force using sqrt instead of sqrtf (the only
 // potential drawback is that it might be a little bit slower).
