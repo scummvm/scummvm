@@ -90,7 +90,6 @@
 			OutputDirectory="agos_Release"
 			IntermediateDirectory="agos_Release"
 			ConfigurationType="4"
-			ATLMinimizesCRunTimeLibraryUsage="true"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
