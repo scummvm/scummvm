@@ -422,7 +422,7 @@ void Actor::handleActions(int msec, bool setup) {
 				}
 
 				if (ABS(delta.v()) > ABS(delta.u())) {
-					addDelta.v() = clamp(-speed, delta.v(), speed);
+					addDelta.v() = CLIP(delta.v(), -speed, speed);
 					if (addDelta.v() == delta.v()) {
 						addDelta.u() = delta.u();
 					} else {
@@ -431,7 +431,7 @@ void Actor::handleActions(int msec, bool setup) {
 						addDelta.u() /= delta.v();
 					}
 				} else {
-					addDelta.u() = clamp(-speed, delta.u(), speed);
+					addDelta.u() = CLIP(delta.u(), -speed, speed);
 					if (addDelta.u() == delta.u()) {
 						addDelta.v() = delta.v();
 					} else {
@@ -484,7 +484,7 @@ void Actor::handleActions(int msec, bool setup) {
 					speed = speed / 2;
 
 				if ((actor->_actionDirection == kDirUp) || (actor->_actionDirection == kDirDown)) {
-					addDelta.y = clamp(-speed, delta.y, speed);
+					addDelta.y = CLIP(delta.y, -speed, speed);
 					if (addDelta.y == delta.y) {
 						addDelta.x = delta.x;
 					} else {
@@ -494,7 +494,7 @@ void Actor::handleActions(int msec, bool setup) {
 						actor->_facingDirection = actor->_actionDirection;
 					}
 				} else {
-					addDelta.x = clamp(-2 * speed, delta.x, 2 * speed);
+					addDelta.x = CLIP(delta.x, -2 * speed, 2 * speed);
 					if (addDelta.x == delta.x) {
 						addDelta.y = delta.y;
 					} else {
@@ -785,8 +785,8 @@ bool Actor::followProtagonist(ActorData *actor) {
 			prefU /= 2;
 			prefV /= 2;
 
-			newU = clamp(-prefU, delta.u(), prefU) + protagonistLocation.u();
-			newV = clamp(-prefV, delta.v(), prefV) + protagonistLocation.v();
+			newU = CLIP<int32>(delta.u(), -prefU, prefU) + protagonistLocation.u();
+			newV = CLIP<int32>(delta.v(), -prefV, prefV) + protagonistLocation.v();
 
 			newLocation.u() = newU + _vm->_rnd.getRandomNumber(prefU - 1) - prefU / 2;
 			newLocation.v() = newV + _vm->_rnd.getRandomNumber(prefV - 1) - prefV / 2;
@@ -841,11 +841,11 @@ bool Actor::followProtagonist(ActorData *actor) {
 					delta.x = (delta.x > 0) ? prefer3.x : -prefer3.x;
 
 					newLocation.x = delta.x + protagonistLocation.x;
-					newLocation.y = clamp(-prefer2.y, delta.y, prefer2.y) + protagonistLocation.y;
+					newLocation.y = CLIP<int32>(delta.y, -prefer2.y, prefer2.y) + protagonistLocation.y;
 				} else {
 					delta.y = (delta.y > 0) ? prefer3.y : -prefer3.y;
 
-					newLocation.x = clamp(-prefer2.x, delta.x, prefer2.x) + protagonistLocation.x;
+					newLocation.x = CLIP<int32>(delta.x, -prefer2.x, prefer2.x) + protagonistLocation.x;
 					newLocation.y = delta.y + protagonistLocation.y;
 				}
 				newLocation.z = 0;
@@ -855,7 +855,7 @@ bool Actor::followProtagonist(ActorData *actor) {
 					newLocation.y += _vm->_rnd.getRandomNumber(prefer1.y - 1) - prefer1.y / 2;
 				}
 
-				newLocation.x = clamp(-31 * 4, newLocation.x, (_vm->getDisplayWidth() + 31) * 4);
+				newLocation.x = CLIP(newLocation.x, -31 * 4, (_vm->getDisplayWidth() + 31) * 4);
 
 				return actorWalkTo(actor->_id, newLocation);
 			}

@@ -473,18 +473,6 @@ struct SaveGameHeader {
 	char name[SAVE_TITLE_SIZE];
 };
 
-inline int clamp(int minValue, int value, int maxValue) {
-	if (value <= minValue) {
-		return minValue;
-	} else {
-		if (value >= maxValue) {
-			return maxValue;
-		} else {
-			return value;
-		}
-	}
-}
-
 inline int objectTypeId(uint16 objectId) {
 	return objectId >> OBJECT_TYPE_SHIFT;
 }

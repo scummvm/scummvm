@@ -1394,7 +1394,7 @@ void Interface::handleOptionUpdate(const Point& mousePoint) {
 					(_optionSaveFileSlider->height - _optionSaveRectSlider.height());
 			}
 
-			_optionSaveFileTop = clamp(0, _optionSaveFileTop, _vm->getSaveFilesCount() - _vm->getDisplayInfo().optionSaveFileVisible);
+			_optionSaveFileTop = CLIP<uint>(_optionSaveFileTop, 0, _vm->getSaveFilesCount() - _vm->getDisplayInfo().optionSaveFileVisible);
 			calcOptionSaveSlider();
 		}
 	}
@@ -1441,7 +1441,7 @@ void Interface::handleOptionClick(const Point& mousePoint) {
 			}
 		}
 
-		_optionSaveFileTop = clamp(0, _optionSaveFileTop, _vm->getSaveFilesCount() - _vm->getDisplayInfo().optionSaveFileVisible);
+		_optionSaveFileTop = CLIP<uint>(_optionSaveFileTop, 0, _vm->getSaveFilesCount() - _vm->getDisplayInfo().optionSaveFileVisible);
 		calcOptionSaveSlider();
 	} else {
 		if (_optionPanel.currentButton == _optionSaveFilePanel) {

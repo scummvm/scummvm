@@ -403,10 +403,10 @@ void IsoMap::drawSprite(Surface *ds, SpriteList &spriteList, int spriteNumber, c
 	spritePointer.x = screenPosition.x + xAlign;
 	spritePointer.y = screenPosition.y + yAlign;
 
-	_tileClip.left = CLIP((int)spritePointer.x, 0, _vm->getDisplayWidth());
-	_tileClip.right = CLIP((int)spritePointer.x + width, 0, _vm->getDisplayWidth());
-	_tileClip.top = CLIP((int)spritePointer.y, 0, _vm->_scene->getHeight());
-	_tileClip.bottom = CLIP((int)spritePointer.y + height, 0, _vm->_scene->getHeight());
+	_tileClip.left = CLIP<int>(spritePointer.x, 0, _vm->getDisplayWidth());
+	_tileClip.right = CLIP<int>(spritePointer.x + width, 0, _vm->getDisplayWidth());
+	_tileClip.top = CLIP<int>(spritePointer.y, 0, _vm->_scene->getHeight());
+	_tileClip.bottom = CLIP<int>(spritePointer.y + height, 0, _vm->_scene->getHeight());
 
 	_vm->_sprite->drawClip(ds, clip, spritePointer, width, height, spriteBuffer);
 	drawTiles(ds, &location);
@@ -465,8 +465,8 @@ void IsoMap::drawTiles(Surface *ds, const Location *location) {
 					metaTileIndex = 1;
 					break;
 				case kEdgeTypeRpt:
-					uc = clamp( 0, u2, SAGA_TILEMAP_W - 1);
-					vc = clamp( 0, v2, SAGA_TILEMAP_W - 1);
+					uc = CLIP<int16>(u2, 0, SAGA_TILEMAP_W - 1);
+					vc = CLIP<int16>(v2, 0, SAGA_TILEMAP_W - 1);
 					metaTileIndex = _tileMap.tilePlatforms[uc][vc];
 					break;
 				case kEdgeTypeWrap:
@@ -509,8 +509,8 @@ void IsoMap::drawTiles(Surface *ds, const Location *location) {
 					metaTileIndex = 1;
 					break;
 				case kEdgeTypeRpt:
-					uc = clamp( 0, u2, SAGA_TILEMAP_W - 1);
-					vc = clamp( 0, v2, SAGA_TILEMAP_W - 1);
+					uc = CLIP<int16>(u2, 0, SAGA_TILEMAP_W - 1);
+					vc = CLIP<int16>(v2, 0, SAGA_TILEMAP_W - 1);
 					metaTileIndex = _tileMap.tilePlatforms[uc][vc];
 					break;
 				case kEdgeTypeWrap:
@@ -1010,8 +1010,8 @@ int16 IsoMap::getTileIndex(int16 u, int16 v, int16 z) {
 			metaTileIndex = 1;
 			break;
 		case kEdgeTypeRpt:
-			uc = clamp( 0, mtileU, SAGA_TILEMAP_W - 1);
-			vc = clamp( 0, mtileV, SAGA_TILEMAP_W - 1);
+			uc = CLIP<int16>(mtileU, 0, SAGA_TILEMAP_W - 1);
+			vc = CLIP<int16>(mtileV, 0, SAGA_TILEMAP_W - 1);
 			metaTileIndex = _tileMap.tilePlatforms[uc][vc];
 			break;
 		case kEdgeTypeWrap:
