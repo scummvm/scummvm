@@ -2118,7 +2118,7 @@ void Interface::drawButtonBox(Surface *ds, const Rect& rect, ButtonKind kind, bo
 			break;
 		default:
 			cornerColor = 0x8b;
-			frameColor = (_vm->getGameType() == GType_ITE) ? kITEColorBlack : kIHNMColorBlack;
+			frameColor = _vm->KnownColor2ColorId(kKnownColorBlack);
 			solidColor = fillColor = kITEColorLightBlue96;
 			odl = kITEColorDarkBlue8a;
 			our = kITEColorLightBlue94;
@@ -2472,8 +2472,8 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 		bulletForegnd = kITEColorGreen;
 		bulletBackgnd = kITEColorBlack;
 	} else {
-		bulletForegnd = kITEColorBrightWhite;
-		bulletBackgnd = kIHNMColorBlack;
+		bulletForegnd = _vm->KnownColor2ColorId(kKnownColorBrightWhite);
+		bulletBackgnd = _vm->KnownColor2ColorId(kKnownColorBlack);
 		bullet[0] = '>';				// different bullet in IHNM
 	}
 
@@ -2483,7 +2483,7 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 	if (_vm->getGameType() == GType_ITE)
 		ds->drawRect(rect, kITEColorDarkGrey);	//fill bullet place
 	else
-		ds->drawRect(rect, kIHNMColorBlack);	//fill bullet place
+		ds->drawRect(rect, _vm->KnownColor2ColorId(kKnownColorBlack));	//fill bullet place
 
 	for (int i = 0; i < _vm->getDisplayInfo().converseTextLines; i++) {
 		relPos = _converseStartPos + i;
@@ -2497,16 +2497,16 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 				foregnd = kITEColorBrightWhite;
 				backgnd = (!_vm->leftMouseButtonPressed()) ? kITEColorDarkGrey : kITEColorGrey;
 			} else {
-				foregnd = kIHNMColorRed;
-				backgnd = (!_vm->leftMouseButtonPressed()) ? kIHNMColorRed : kIHNMColorRed;
+				foregnd = _vm->KnownColor2ColorId(kKnownColorVerbTextActive);
+				backgnd = _vm->KnownColor2ColorId(kKnownColorVerbTextActive);
 			}
 		} else {
 			if (_vm->getGameType() == GType_ITE) {
 				foregnd = kITEColorBlue;
 				backgnd = kITEColorDarkGrey;
 			} else {
-				foregnd = kITEColorBrightWhite;
-				backgnd = kIHNMColorBlack;
+				foregnd = _vm->KnownColor2ColorId(kKnownColorBrightWhite);
+				backgnd = _vm->KnownColor2ColorId(kKnownColorBlack);
 			}
 		}
 
@@ -2530,7 +2530,7 @@ void Interface::converseDisplayTextLines(Surface *ds) {
 		if (_vm->getGameType() == GType_ITE)
 			_vm->_font->textDraw(kKnownFontSmall, ds, str, textPoint, foregnd, kITEColorBlack, kFontShadow);
 		else
-			_vm->_font->textDraw(kKnownFontVerb, ds, str, textPoint, foregnd, kIHNMColorBlack, kFontShadow);
+			_vm->_font->textDraw(kKnownFontVerb, ds, str, textPoint, foregnd, _vm->KnownColor2ColorId(kKnownColorBlack), kFontShadow);
 	}
 
 	if (_converseStartPos != 0) {
