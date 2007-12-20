@@ -755,9 +755,6 @@ public:
 		int16 p4, int16 p5, int16 p6, int16 p7);
 	void releaseImageStack();
 
-	int _keyControl;
-	int _keyAlt;
-
 	Console *_console;
 
 	int agiInit();

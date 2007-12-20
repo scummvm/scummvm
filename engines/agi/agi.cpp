@@ -114,19 +114,10 @@ void AgiEngine::processEvents() {
 			g_mouse.y = event.mouse.y;
 			break;
 		case Common::EVENT_KEYDOWN:
-			_keyControl = 0;
-			_keyAlt = 0;
-
 			if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == Common::KEYCODE_d) {
 				_console->attach();
 				break;
 			}
-
-			if (event.kbd.flags & Common::KBD_CTRL)
-				_keyControl = 1;
-
-			if (event.kbd.flags & Common::KBD_ALT)
-				_keyAlt = 1;
 
 			switch (key = event.kbd.keycode) {
 			case Common::KEYCODE_LEFT:
@@ -232,9 +223,9 @@ void AgiEngine::processEvents() {
 					key = event.kbd.ascii;
 					break;
 				}
-				if (_keyControl)
+				if (event.kbd.flags & Common::KBD_CTRL)
 					key = (key & ~0x20) - 0x40;
-				else if (_keyAlt)
+				else if (event.kbd.flags & Common::KBD_ALT)
 					key = scancodeTable[(key & ~0x20) - 0x41] << 8;
 				else if (event.kbd.flags & Common::KBD_SHIFT)
 					key = event.kbd.ascii;
@@ -633,9 +624,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_keyQueueStart = 0;
 	_keyQueueEnd = 0;
-
-	_keyControl = 0;
-	_keyAlt = 0;
 
 	_allowSynthetic = false;
 

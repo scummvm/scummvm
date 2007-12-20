@@ -94,9 +94,6 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 	_keyQueueStart = 0;
 	_keyQueueEnd = 0;
 
-	_keyControl = 0;
-	_keyAlt = 0;
-
 	_allowSynthetic = false;
 
 	g_tickTimer = 0;
