@@ -1818,13 +1818,7 @@ int32 opcodeType8(void) {
 	if (opcode > 0x100)
 		return (-21);
 
-	if(opcode > sizeof(opcodeTablePtr) / sizeof(opcodeFunction)) {
-		printf("Unsupported opcode %d in opcode type 8\n", opcode);
-		pushVar(0);
-	}
-
-
-	if (opcodeTablePtr[opcode]) {
+	if (opcode < ARRAYSIZE(opcodeTablePtr) && opcodeTablePtr[opcode]) {
 	//	printf("Function: %d\n",opcode);
 		pushVar(opcodeTablePtr[opcode] ());
 		return (0);
