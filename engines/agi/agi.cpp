@@ -219,6 +219,11 @@ void AgiEngine::processEvents() {
 				key = KEY_BACKSPACE;
 				break;
 			default:
+				// FIXME: This fixes assertions with isalpha below, but it essentially filters
+				// out all function keys (control, alt and shift)
+				if (key > 255)
+					break;
+
 				// FIXME: We let lots of keys slip through here unchanged, passing our internal
 				// keycode values directly to the AGI core. Do we really want that???
 				if (isalpha(key)) {
