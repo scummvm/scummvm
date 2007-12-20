@@ -220,7 +220,12 @@ void AgiEngine::processEvents() {
 				break;
 			default:
 				// FIXME: This fixes assertions with isalpha below, but it essentially filters
-				// out all function keys (control, alt and shift)
+				// out all function keys (control, alt and shift).
+				// Well, actually, it does *not* filter them out (as we still pass the value
+				// in key to keyEnqueue after this switch/case statement); but it means that
+				// we perform no filtering on these input events, which is bad. That is, we 
+				// provide keycode in one format, and the AGI core expects some other format...
+				// So maybe we should set key to 0 if key > 255?
 				if (key > 255)
 					break;
 
