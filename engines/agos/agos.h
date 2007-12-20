@@ -362,9 +362,12 @@ protected:
 
 	uint _numTextBoxes;
 
-	uint _lastTime;
+	uint32 getTime() const;
+
+	uint32 _lastMinute; // Used in processSpecialKeys()
+	uint32 _lastTime;
 	uint32 _clockStopped, _gameStoppedClock, _gameTime;
-	time_t _timeStore;
+	uint32 _timeStore;
 
 	TimeEvent *_firstTimeStruct, *_pendingDeleteTimeEvent;
 

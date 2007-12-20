@@ -397,12 +397,8 @@ void AGOSEngine_Feeble::off_oracleTextUp() {
 
 void AGOSEngine_Feeble::off_ifTime() {
 	// 124: if time
-	time_t t;
-
 	uint a = getVarOrWord();
-	time(&t);
-	t -= _gameStoppedClock;
-	t -= a;
+	uint32 t = getTime() - _gameStoppedClock - a;
 	if (t >= _timeStore)
 		setScriptCondition(true);
 	else
@@ -411,8 +407,7 @@ void AGOSEngine_Feeble::off_ifTime() {
 
 void AGOSEngine_Feeble::off_setTime() {
 	// 131
-	time(&_timeStore);
-	_timeStore -= _gameStoppedClock;
+	_timeStore = getTime() - _gameStoppedClock;
 }
 
 void AGOSEngine_Feeble::off_saveUserGame() {
@@ -612,13 +607,13 @@ void AGOSEngine_Feeble::off_setPathValues() {
 
 void AGOSEngine_Feeble::off_stopClock() {
 	// 193: pause clock
-	_clockStopped = time(NULL);
+	_clockStopped = getTime();
 }
 
 void AGOSEngine_Feeble::off_restartClock() {
 	// 194: resume clock
 	if (_clockStopped != 0)
-		_gameStoppedClock += time(NULL) - _clockStopped;
+		_gameStoppedClock += getTime() - _clockStopped;
 	_clockStopped = 0;
 }
 

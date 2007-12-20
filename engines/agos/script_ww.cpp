@@ -365,7 +365,7 @@ void AGOSEngine_Waxworks::oww_pauseGame() {
 	// 135: pause game
 	HitArea *ha;
 
-	time_t pauseTime = time(NULL);
+	uint32 pauseTime = getTime();
 	haltAnimation();
 
 	for (;;) {
@@ -389,7 +389,7 @@ void AGOSEngine_Waxworks::oww_pauseGame() {
 	}
 
 	restartAnimation();
-	_gameStoppedClock = time(NULL) - pauseTime + _gameStoppedClock;
+	_gameStoppedClock = getTime() - pauseTime + _gameStoppedClock;
 }
 
 void AGOSEngine_Waxworks::oww_boxMessage() {

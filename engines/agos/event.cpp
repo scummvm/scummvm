@@ -42,9 +42,7 @@ namespace AGOS {
 
 void AGOSEngine::addTimeEvent(uint16 timeout, uint16 subroutine_id) {
 	TimeEvent *te = (TimeEvent *)malloc(sizeof(TimeEvent)), *first, *last = NULL;
-	time_t cur_time;
-
-	time(&cur_time);
+	uint32 cur_time = getTime();
 
 	if (getGameId() == GID_DIMP) {
 		timeout /= 2;
@@ -52,7 +50,7 @@ void AGOSEngine::addTimeEvent(uint16 timeout, uint16 subroutine_id) {
 
 	te->time = cur_time + timeout - _gameStoppedClock;
 	if (getGameType() == GType_FF && _clockStopped)
-		te->time -= ((uint32)time(NULL) - _clockStopped);
+		te->time -= (getTime() - _clockStopped);
 	te->subroutine_id = subroutine_id;
 
 	first = _firstTimeStruct;
@@ -135,17 +133,16 @@ void AGOSEngine::killAllTimers() {
 }
 
 bool AGOSEngine::kickoffTimeEvents() {
-	time_t cur_time;
+	uint32 cur_time;
 	TimeEvent *te;
 	bool result = false;
 
 	if (getGameType() == GType_FF && _clockStopped)
 		return result;
 
-	time(&cur_time);
-	cur_time -= _gameStoppedClock;
+	cur_time = getTime() - _gameStoppedClock;
 
-	while ((te = _firstTimeStruct) != NULL && te->time <= (uint32)cur_time) {
+	while ((te = _firstTimeStruct) != NULL && te->time <= cur_time) {
 		result = true;
 		_pendingDeleteTimeEvent = te;
 		invokeTimeEvent(te);

@@ -299,7 +299,7 @@ void AGOSEngine_PuzzlePack::opp_iconifyWindow() {
 	// 30
 	getNextWord();
 	if (_clockStopped != 0)
-		_gameTime += time(NULL) - _clockStopped;
+		_gameTime += getTime() - _clockStopped;
 	_clockStopped  = 0;
 	_system->setFeatureState(OSystem::kFeatureIconifyWindow, true);
 }
@@ -379,7 +379,7 @@ void AGOSEngine_PuzzlePack::opp_sync() {
 void AGOSEngine_PuzzlePack::opp_saveUserGame() {
 	// 132: save game
 	if (_clockStopped != 0)
-		_gameTime += time(NULL) - _clockStopped;
+		_gameTime += getTime() - _clockStopped;
 	_clockStopped = 0;
 
 	if (getGameId() == GID_DIMP) {
@@ -452,7 +452,7 @@ void AGOSEngine_PuzzlePack::opp_setPathValues() {
 void AGOSEngine_PuzzlePack::opp_restartClock() {
 	// 194: resume clock
 	if (_clockStopped != 0)
-		_gameTime += time(NULL) - _clockStopped;
+		_gameTime += getTime() - _clockStopped;
 	_clockStopped = 0;
 }
 

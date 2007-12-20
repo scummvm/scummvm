@@ -825,16 +825,13 @@ void AGOSEngine_Elvira1::oe1_enableInput() {
 
 void AGOSEngine_Elvira1::oe1_setTime() {
 	// 259: set time
-	time(&_timeStore);
+	_timeStore = getTime();
 }
 
 void AGOSEngine_Elvira1::oe1_ifTime() {
 	// 260: if time
-	time_t t;
-
 	uint a = getVarOrWord();
-	time(&t);
-	t -= a;
+	uint32 t = getTime() - a;
 	if (t >= _timeStore)
 		setScriptCondition(true);
 	else
@@ -897,7 +894,7 @@ void AGOSEngine_Elvira1::oe1_pauseGame() {
 	WindowBlock *window = _windowArray[4];
 	const char *message1, *message2;
 
-	time_t pauseTime = time(NULL);
+	uint32 pauseTime = getTime();
 	haltAnimation();
 
 restart:
@@ -970,7 +967,7 @@ restart:
 	}
 
 	restartAnimation();
-	_gameStoppedClock = time(NULL) - pauseTime + _gameStoppedClock;
+	_gameStoppedClock = getTime() - pauseTime + _gameStoppedClock;
 }
 
 void AGOSEngine_Elvira1::oe1_printPlayerHit() {

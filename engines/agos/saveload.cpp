@@ -250,7 +250,7 @@ void AGOSEngine::userGame(bool load) {
 
 	numSaveGames = countSaveGames();
 
-	time_t saveTime = time(NULL);
+	uint32 saveTime = getTime();
 	haltAnimation();
 
 restart:
@@ -331,7 +331,7 @@ restart:
 	}
 
 	restartAnimation();
-	_gameStoppedClock = time(NULL) - saveTime + _gameStoppedClock;
+	_gameStoppedClock = getTime() - saveTime + _gameStoppedClock;
 }
 
 void AGOSEngine_Elvira2::listSaveGames(char *dst) {
@@ -415,7 +415,7 @@ void AGOSEngine_Elvira2::listSaveGames(char *dst) {
 }
 
 void AGOSEngine_Elvira2::userGame(bool load) {
-	time_t saveTime;
+	uint32 saveTime;
 	int i, numSaveGames;
 	char *name;
 	bool b;
@@ -423,7 +423,7 @@ void AGOSEngine_Elvira2::userGame(bool load) {
 
 	_saveOrLoad = load;
 
-	saveTime = time(NULL);
+	saveTime = getTime();
 
 	if (getGameType() == GType_ELVIRA2)
 		haltAnimation();
@@ -504,7 +504,7 @@ void AGOSEngine_Elvira2::userGame(bool load) {
 get_out:;
 	disableFileBoxes();
 
-	_gameStoppedClock = time(NULL) - saveTime + _gameStoppedClock;
+	_gameStoppedClock = getTime() - saveTime + _gameStoppedClock;
 
 	if (getGameType() == GType_ELVIRA2)
 		restartAnimation();
@@ -624,7 +624,7 @@ const byte hebrewKeyTable[96] = {
 };
 
 void AGOSEngine_Simon1::userGame(bool load) {
-	time_t saveTime;
+	uint32 saveTime;
 	int i, numSaveGames, result;
 	WindowBlock *window;
 	char *name;
@@ -634,7 +634,7 @@ void AGOSEngine_Simon1::userGame(bool load) {
 
 	_saveOrLoad = load;
 
-	saveTime = time(NULL);
+	saveTime = getTime();
 
 	numSaveGames = countSaveGames();
 	if (!load)
@@ -772,7 +772,7 @@ restart:;
 get_out:;
 	disableFileBoxes();
 
-	_gameStoppedClock = time(NULL) - saveTime + _gameStoppedClock;
+	_gameStoppedClock = getTime() - saveTime + _gameStoppedClock;
 }
 
 int AGOSEngine_Simon1::userGameGetKey(bool *b, char *buf, uint maxChar) {
@@ -1316,7 +1316,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 
 	uint32 curTime = 0;
 	if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2)
-		curTime = time(NULL);
+		curTime = getTime();
 
 	_lockWord |= 0x100;
 
@@ -1347,7 +1347,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	f->writeUint32BE(i);
 
 	if (getGameType() == GType_FF && _clockStopped)
-		gsc += ((uint32)time(NULL) - _clockStopped);
+		gsc += (getTime() - _clockStopped);
 	for (te = _firstTimeStruct; te; te = te->next) {
 		f->writeUint32BE(te->time - curTime + gsc);
 		f->writeUint16BE(te->subroutine_id);

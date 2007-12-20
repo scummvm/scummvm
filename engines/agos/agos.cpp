@@ -275,6 +275,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_gameStoppedClock = 0;
 	_gameTime = 0;
 	_lastTime = 0;
+	_lastMinute = 0;
 
 	_firstTimeStruct = 0;
 	_pendingDeleteTimeEvent = 0;
@@ -1049,6 +1050,11 @@ void AGOSEngine::shutdown() {
 	delete _sound;
 
 	_system->quit();
+}
+
+uint32 AGOSEngine::getTime() const {
+	// FIXME: calling time() is not portable, use OSystem::getMillis instead
+	return (uint32)time(NULL);
 }
 
 } // End of namespace AGOS
