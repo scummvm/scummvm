@@ -66,7 +66,10 @@
 		#pragma warning( disable : 4702 ) // turn off "unreachable code" warning
 		#pragma warning( disable : 4706 ) // turn off "assignment within conditional expression" warning
 
-		#define vsnprintf _vsnprintf
+		// vsnprintf is already defined in Visual Studio 2008
+		#if (_MSC_VER < 1500)
+			#define vsnprintf _vsnprintf
+		#endif
 		#endif
 
 		#if !defined(_WIN32_WCE)
