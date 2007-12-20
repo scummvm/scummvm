@@ -186,7 +186,56 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 	return newElement;
 }
 
-void loadBackgroundIncrustFromSave(Common::File& currentSaveFile) {
+void saveIncrust(Common::OutSaveFile& currentSaveFile) {
+	int count = 0;
+
+	backgroundIncrustStruct *pl = backgroundIncrustHead.next;
+	while(pl) {
+		count++;
+		pl = pl->next;
+	}
+
+	currentSaveFile.writeSint16LE(count);
+
+	pl = backgroundIncrustHead.next;
+	while(pl) {
+		char dummy[4] = {0, 0, 0, 0};
+		currentSaveFile.write(dummy, 2);
+		currentSaveFile.write(dummy, 2);
+		
+		currentSaveFile.writeSint16LE(pl->objectIdx);
+		currentSaveFile.writeSint16LE(pl->type);
+		currentSaveFile.writeSint16LE(pl->overlayIdx);
+		currentSaveFile.writeSint16LE(pl->X);
+		currentSaveFile.writeSint16LE(pl->Y);
+		currentSaveFile.writeSint16LE(pl->field_E);
+		currentSaveFile.writeSint16LE(pl->scale);
+		currentSaveFile.writeSint16LE(pl->backgroundIdx);
+		currentSaveFile.writeSint16LE(pl->scriptNumber);
+		currentSaveFile.writeSint16LE(pl->scriptOverlayIdx);
+		currentSaveFile.write(dummy, 4);
+		currentSaveFile.writeSint16LE(pl->saveWidth/2);
+		currentSaveFile.writeSint16LE(pl->saveHeight);
+		currentSaveFile.writeSint16LE(pl->saveSize);
+		currentSaveFile.writeSint16LE(pl->savedX);
+		currentSaveFile.writeSint16LE(pl->savedY);
+		currentSaveFile.write(pl->name, 13);
+		currentSaveFile.write(dummy, 1);
+		currentSaveFile.writeSint16LE(pl->spriteId);
+		currentSaveFile.write(dummy, 2);
+
+		if (pl->saveSize) {
+			char* buffer = (char*)malloc(pl->saveSize);
+			memset(buffer, 0, pl->saveSize);
+			currentSaveFile.write(buffer, pl->saveSize);
+			free(buffer);
+		}
+
+		pl = pl->next;
+	}
+}
+
+void loadBackgroundIncrustFromSave(Common::InSaveFile& currentSaveFile) {
 	int16 numEntry;
 	int32 i;
 

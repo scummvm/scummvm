@@ -32,6 +32,7 @@
 
 
 #include "common/scummsys.h"
+#include "common/savefile.h"
 
 #include "cruise/overlay.h"
 #include "cruise/object.h"

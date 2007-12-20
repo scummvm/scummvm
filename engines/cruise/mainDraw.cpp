@@ -72,7 +72,7 @@ void freeAutoCell(void) {
 
 			getMultipleObjectParam(pCurrent->ovlIdx, pCurrent->objIdx, &params);
 
-			pCurrent->pCell->animCounter = params.var6 - 1;
+			pCurrent->pCell->animCounter = params.state2 - 1;
 		}
 
 		delete pCurrent;
@@ -1320,11 +1320,11 @@ int getValueFromObjectQuerry(objectParamsQuery *params, int idx) {
 	case 4:
 		return params->scale;
 	case 5:
-		return params->var5;
+		return params->state;
 	case 6:
-		return params->var6;
+		return params->state2;
 	case 7:
-		return params->var7;
+		return params->nbState;
 	}
 
 	assert(0);
@@ -1396,7 +1396,7 @@ void mainDraw(int16 param) {
 				objZ2 += objZ1;
 			}
 
-			if ((params.var5 >= 0) && (objZ2 >= 0) && filesDatabase[objZ2].subData.ptr) {
+			if ((params.state >= 0) && (objZ2 >= 0) && filesDatabase[objZ2].subData.ptr) {
 				if (filesDatabase[objZ2].subData.resourceType == 8) {	// Poly
 					mainDrawPolygons(objZ2, currentObjPtr, objX2, params.scale, objY2, (char *)gfxModuleData.pPage10, (char *)filesDatabase[objZ2].subData.ptr);	// poly
 				} else if (filesDatabase[objZ2].subData.resourceType == 6) {	// sound

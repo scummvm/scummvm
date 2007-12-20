@@ -108,9 +108,9 @@ int16 getMultipleObjectParam(int16 overlayIdx, int16 objectIdx, objectParamsQuer
 	returnParam->baseFileIdx = ptr2->Z;
 	returnParam->fileIdx = ptr2->frame;
 	returnParam->scale = ptr2->scale;
-	returnParam->var5 = state;
-	returnParam->var6 = state2;
-	returnParam->var7 = ptr->_numStates;
+	returnParam->state = state;
+	returnParam->state2 = state2;
+	returnParam->nbState = ptr->_numStates;
 
 	return 0;
 }

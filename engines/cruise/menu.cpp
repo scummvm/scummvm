@@ -207,7 +207,7 @@ int playerMenu(int menuX, int menuY) {
 
 	if (entrerMenuJoueur && displayOn) {
 		if (remdo) {
-			systemStrings.param = 0;
+			musicName[0] = 0;
 			playMusic2 = 0;
 			playMusic = 0;
 			freeStuff2();

@@ -130,13 +130,13 @@ struct dataFileEntry {
 	uint16 height;
 	dataFileEntrySub subData;
 };
-
+/*
 struct systemStringsStruct {
 	int8 param;
 	char string[12];
 	char bootScriptName[8];
 };
-
+*/
 extern preloadStruct preloadData[64];
 
 extern volumeDataStruct volumeData[20];
@@ -145,7 +145,10 @@ extern int32 volumeDataLoaded;
 
 extern int16 numOfDisks;
 
-extern char currentOverlay[15];
+extern char musicName[15];
+extern char lastOverlay[15];
+extern char nextOverlay[15];
+
 extern int16 currentActiveMenu;
 extern int16 autoMsg;
 extern menuElementSubStruct* linkedRelation;
@@ -235,7 +238,7 @@ extern int16 flagCt;
 extern int8 var50[64];
 extern int16 palette[256 * 3];
 
-extern systemStringsStruct systemStrings;
+//extern systemStringsStruct systemStrings;
 
 extern char currentCtpName[40];
 

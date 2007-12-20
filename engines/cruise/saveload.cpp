@@ -25,6 +25,9 @@
 
 #include "cruise/cruise_main.h"
 
+#include "common/savefile.h"
+#include "common/system.h"
+
 namespace Cruise {
 
 struct overlayRestoreTemporary {
@@ -184,10 +187,35 @@ void initVars(void)
 	fadeVar = 0;
 }
 
-void loadSavegameDataSub1(Common::File& currentSaveFile) {
-	int i;
+void saveOverlay(Common::OutSaveFile& currentSaveFile) {
 
-	for (i = 1; i < numOfLoadedOverlay; i++) {
+	for (int i = 1; i < numOfLoadedOverlay; i++) {
+		if(overlayTable[i].alreadyLoaded) {
+
+			ovlDataStruct* ovlData = overlayTable[i].ovlData;
+
+			// save BSS
+			currentSaveFile.writeSint16LE(ovlData->sizeOfData4);
+			if(ovlData->sizeOfData4)
+				currentSaveFile.write(ovlData->data4Ptr, ovlData->sizeOfData4);
+
+			// save variables
+			currentSaveFile.writeSint16LE(ovlData->size9);
+			for(int j=0; j<ovlData->size9; j++) {
+					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].X);
+					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].Y);
+					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].Z);
+					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].frame);
+					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].scale);
+					currentSaveFile.writeSint16LE(ovlData->arrayObjVar[j].state);
+			}
+		}
+	}
+}
+
+void loadSavegameDataSub1(Common::InSaveFile& currentSaveFile) {
+
+	for (int i = 1; i < numOfLoadedOverlay; i++) {
 		ovlRestoreData[i]._sBssSize = ovlRestoreData[i]._sNumObj = 0;
 		ovlRestoreData[i]._pBss = NULL;
 		ovlRestoreData[i]._pObj = NULL;
@@ -222,7 +250,46 @@ void loadSavegameDataSub1(Common::File& currentSaveFile) {
 	}
 }
 
-void loadScriptsFromSave(Common::File& currentSaveFile, scriptInstanceStruct *entry) {
+void saveScript(Common::OutSaveFile& currentSaveFile, scriptInstanceStruct *entry) {
+	int count = 0;
+
+	scriptInstanceStruct* pCurrent = entry->nextScriptPtr;
+	while( pCurrent ) {
+		count ++;
+		pCurrent = pCurrent->nextScriptPtr;
+	}
+
+	currentSaveFile.writeSint16LE(count);
+
+	pCurrent = entry->nextScriptPtr;
+	while( pCurrent ) {
+		char dummy[4] = { 0, 0, 0, 0 };
+		currentSaveFile.write(dummy, 2);
+
+		currentSaveFile.writeSint16LE(pCurrent->ccr);
+		currentSaveFile.writeSint16LE(pCurrent->var4);
+		currentSaveFile.write(dummy, 4);
+		currentSaveFile.writeSint16LE(pCurrent->varA);
+		currentSaveFile.writeSint16LE(pCurrent->scriptNumber);
+		currentSaveFile.writeSint16LE(pCurrent->overlayNumber);
+		currentSaveFile.writeSint16LE(pCurrent->sysKey);
+		currentSaveFile.writeSint16LE(pCurrent->freeze);
+		currentSaveFile.writeSint16LE(pCurrent->type);
+		currentSaveFile.writeSint16LE(pCurrent->var16);
+		currentSaveFile.writeSint16LE(pCurrent->var18);
+		currentSaveFile.writeSint16LE(pCurrent->var1A);
+
+		currentSaveFile.writeSint16LE(pCurrent->varA);
+
+		if (pCurrent->varA) {
+			currentSaveFile.write(pCurrent->var6, pCurrent->varA);
+		}
+
+		pCurrent = pCurrent->nextScriptPtr;
+	}
+}
+
+void loadScriptsFromSave(Common::InSaveFile& currentSaveFile, scriptInstanceStruct *entry) {
 	short int numScripts;
 	int i;
 
@@ -261,7 +328,48 @@ void loadScriptsFromSave(Common::File& currentSaveFile, scriptInstanceStruct *en
 	}
 }
 
-void loadSavegameActor(Common::File& currentSaveFile) {
+void saveAnim(Common::OutSaveFile& currentSaveFile) {
+	int count = 0;
+
+	actorStruct *ptr = actorHead.next;
+	while(ptr) {
+		count ++;
+		ptr = ptr->next;
+	}
+
+	currentSaveFile.writeSint16LE(count);
+
+	ptr = actorHead.next;
+	while(ptr) {
+		char dummy[2] = {0, 0};
+		currentSaveFile.write(dummy, 2);
+		currentSaveFile.write(dummy, 2);
+
+		currentSaveFile.writeSint16LE(ptr->idx);
+		currentSaveFile.writeSint16LE(ptr->type);
+		currentSaveFile.writeSint16LE(ptr->overlayNumber);
+		currentSaveFile.writeSint16LE(ptr->x_dest);
+		currentSaveFile.writeSint16LE(ptr->y_dest);
+		currentSaveFile.writeSint16LE(ptr->x);
+		currentSaveFile.writeSint16LE(ptr->y);
+		currentSaveFile.writeSint16LE(ptr->startDirection);
+		currentSaveFile.writeSint16LE(ptr->nextDirection);
+		currentSaveFile.writeSint16LE(ptr->endDirection);
+		currentSaveFile.writeSint16LE(ptr->stepX);
+		currentSaveFile.writeSint16LE(ptr->stepY);
+		currentSaveFile.writeSint16LE(ptr->pathId);
+		currentSaveFile.writeSint16LE(ptr->phase);
+		currentSaveFile.writeSint16LE(ptr->counter);
+		currentSaveFile.writeSint16LE(ptr->poly);
+		currentSaveFile.writeSint16LE(ptr->flag);
+		currentSaveFile.writeSint16LE(ptr->start);
+		currentSaveFile.writeSint16LE(ptr->freeze);
+
+		ptr = ptr->next;
+	}
+}
+
+void loadSavegameActor(Common::InSaveFile& currentSaveFile) {
 	short int numEntry;
 	actorStruct *ptr;
 	int i;
@@ -303,7 +411,16 @@ void loadSavegameActor(Common::File& currentSaveFile) {
 	}
 }
 
-void loadSavegameDataSub5(Common::File& currentSaveFile) {
+void saveSong(Common::OutSaveFile& currentSaveFile) {
+	if (songLoaded) {
+		// TODO: implement
+		currentSaveFile.writeByte(0);
+	} else {
+		currentSaveFile.writeByte(0);
+	}
+}
+
+void loadSavegameDataSub5(Common::InSaveFile& currentSaveFile) {
 	if (songLoaded) {
 		saveVar1 = currentSaveFile.readByte();
 
@@ -316,7 +433,36 @@ void loadSavegameDataSub5(Common::File& currentSaveFile) {
 
 }
 
-void loadSavegameDataSub6(Common::File& currentSaveFile) {
+void saveCT(Common::OutSaveFile& currentSaveFile) {
+	if(polyStruct) {
+		currentSaveFile.writeSint32LE(1);
+
+		currentSaveFile.writeSint16LE(numberOfWalkboxes);
+
+		if(numberOfWalkboxes)
+		{
+			currentSaveFile.write(walkboxType, numberOfWalkboxes * 2);
+			currentSaveFile.write(walkboxChange, numberOfWalkboxes * 2);
+		}
+
+		for (unsigned long int i = 0; i < 10; i++) {
+
+			if (persoTable[i]) {
+				currentSaveFile.writeSint32LE(1);
+				assert(sizeof(persoStruct) == 0x6AA);
+				currentSaveFile.write(persoTable[i], 0x6AA);
+			} else {
+				currentSaveFile.writeSint32LE(0);
+			}
+		}
+
+	}
+	else {
+		currentSaveFile.writeSint32LE(0);
+	}
+}
+
+void loadSavegameDataSub6(Common::InSaveFile& currentSaveFile) {
 	int32 var;
 
 	var = currentSaveFile.readUint32LE();
@@ -345,6 +491,160 @@ void loadSavegameDataSub6(Common::File& currentSaveFile) {
 }
 
 int saveSavegameData(int saveGameIdx) {
+	char buffer[256];
+
+	sprintf(buffer, "CR.%d", saveGameIdx);
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::OutSaveFile *currentSaveFile;
+	currentSaveFile = saveMan->openForSaving(buffer);
+
+	char saveIdentBuffer[6];
+	strcpy(saveIdentBuffer, "SAVPC");
+
+	currentSaveFile->write(saveIdentBuffer, 6);
+	currentSaveFile->writeSint16LE(songLoaded);
+	currentSaveFile->writeSint16LE(songPlayed);
+	currentSaveFile->writeSint16LE(songLoop);
+	currentSaveFile->writeSint16LE(activeMouse);
+	currentSaveFile->writeSint16LE(userEnabled);
+	currentSaveFile->writeSint16LE(dialogueEnabled);
+	currentSaveFile->writeSint16LE(dialogueOvl);
+	currentSaveFile->writeSint16LE(dialogueObj);
+	currentSaveFile->writeSint16LE(userDelay);
+	currentSaveFile->writeSint16LE(sysKey);
+	currentSaveFile->writeSint16LE(sysX);
+	currentSaveFile->writeSint16LE(sysY);
+	currentSaveFile->writeSint16LE(automoveInc);
+	currentSaveFile->writeSint16LE(automoveMax);
+	currentSaveFile->writeSint16LE(displayOn);
+	currentSaveFile->writeSint16LE(isMessage);
+	currentSaveFile->writeSint16LE(fadeFlag);
+	currentSaveFile->writeSint16LE(playMusic);
+	currentSaveFile->writeSint16LE(playMusic2);
+	currentSaveFile->writeSint16LE(automaticMode);
+	currentSaveFile->writeSint16LE(titleColor);
+	currentSaveFile->writeSint16LE(itemColor);
+	currentSaveFile->writeSint16LE(selectColor);
+	currentSaveFile->writeSint16LE(subColor);
+	currentSaveFile->writeSint16LE(narratorOvl);
+	currentSaveFile->writeSint16LE(narratorIdx);
+	currentSaveFile->writeSint16LE(aniX);
+	currentSaveFile->writeSint16LE(aniY);
+
+	if(animationStart)
+		currentSaveFile->writeSint16LE(1);
+	else
+		currentSaveFile->writeSint16LE(0);
+
+	currentSaveFile->writeSint16LE(currentActiveBackgroundPlane);
+	currentSaveFile->writeSint16LE(switchPal);
+	currentSaveFile->writeSint16LE(scroll);
+	currentSaveFile->writeSint16LE(fadeFlag);
+	currentSaveFile->writeSint16LE(doFade);
+	currentSaveFile->writeSint16LE(numOfLoadedOverlay);
+	currentSaveFile->writeSint16LE(stateID);
+	currentSaveFile->writeSint16LE(fontFileIndex);
+	currentSaveFile->writeSint16LE(currentActiveMenu);
+	currentSaveFile->writeSint16LE(userWait);
+	currentSaveFile->writeSint16LE(autoOvl);
+	currentSaveFile->writeSint16LE(autoMsg);
+	currentSaveFile->writeSint16LE(autoTrack);
+	currentSaveFile->writeSint16LE(var39);
+	currentSaveFile->writeSint16LE(var42);
+	currentSaveFile->writeSint16LE(var45);
+	currentSaveFile->writeSint16LE(var46);
+	currentSaveFile->writeSint16LE(var47);
+	currentSaveFile->writeSint16LE(var48);
+	currentSaveFile->writeSint16LE(flagCt);
+	currentSaveFile->writeSint16LE(var41);
+	currentSaveFile->writeSint16LE(entrerMenuJoueur);
+
+	currentSaveFile->write(var50, 64);
+	currentSaveFile->write(var50, 64); // Hu ? why 2 times ?
+
+	currentSaveFile->write(musicName, 15);
+	
+	char dummy[6] = { 0, 0, 0, 0, 0, 0 };
+	currentSaveFile->write(dummy, 6);
+
+	currentSaveFile->write(currentCtpName, 40);
+
+	// restore backgroundTable
+	for(int i=0; i<8; i++)
+	{
+		currentSaveFile->write(backgroundTable[i].name, 9);
+		currentSaveFile->write(backgroundTable[i].extention, 6);
+	}
+
+	currentSaveFile->write(palette, 256*2);
+	currentSaveFile->write(initVar5, 24);
+	currentSaveFile->write(globalVars, stateID * 2); // ok
+	for(int i=0; i<257; i++)
+	{
+		currentSaveFile->writeUint16LE(filesDatabase[i].widthInColumn);
+		currentSaveFile->writeUint16LE(filesDatabase[i].width);
+		currentSaveFile->writeUint16LE(filesDatabase[i].resType);
+		currentSaveFile->writeUint16LE(filesDatabase[i].height);
+		if(filesDatabase[i].subData.ptr) {
+			currentSaveFile->writeUint32LE(1);
+		} else {
+			currentSaveFile->writeUint32LE(0);
+		}
+		currentSaveFile->writeUint16LE(filesDatabase[i].subData.index);
+		currentSaveFile->write(filesDatabase[i].subData.name, 13);
+		char dummy[1] = {0};
+		currentSaveFile->write(dummy, 1);
+		currentSaveFile->writeUint16LE(filesDatabase[i].subData.transparency);
+		if(filesDatabase[i].subData.ptrMask) {
+			currentSaveFile->writeUint32LE(1);
+		} else {
+			currentSaveFile->writeUint32LE(0);
+		}
+		currentSaveFile->writeByte(filesDatabase[i].subData.resourceType);
+		currentSaveFile->write(dummy, 1);
+		currentSaveFile->writeUint16LE(filesDatabase[i].subData.compression);
+	}
+
+	for(int i=0; i<numOfLoadedOverlay; i++)
+	{
+		currentSaveFile->write(overlayTable[i].overlayName, 13);
+		char dummy[4] = { 0, 0, 0, 0 };
+		currentSaveFile->write(dummy, 1);
+		currentSaveFile->write(dummy, 4);
+		currentSaveFile->writeUint16LE(overlayTable[i].alreadyLoaded);
+		currentSaveFile->writeUint16LE(overlayTable[i].state);
+		currentSaveFile->write(dummy, 4);
+		currentSaveFile->write(dummy, 4);
+		currentSaveFile->write(dummy, 4);
+		currentSaveFile->write(dummy, 4);
+		currentSaveFile->writeUint16LE(overlayTable[i].executeScripts);
+	}
+
+	for(int i=0; i<64; i++)
+	{
+		currentSaveFile->write(preloadData[i].name, 15);
+		char dummy[4] = { 0, 0, 0, 0 };
+		currentSaveFile->write(dummy, 1);
+		currentSaveFile->writeUint32LE(preloadData[i].size);
+		currentSaveFile->writeUint32LE(preloadData[i].sourceSize);
+		currentSaveFile->write(dummy, 4);
+		currentSaveFile->writeUint16LE(preloadData[i].nofree);
+		currentSaveFile->writeUint16LE(preloadData[i].protect);
+		currentSaveFile->writeUint16LE(preloadData[i].ovl);
+	}
+
+	saveOverlay(*currentSaveFile);
+	saveScript(*currentSaveFile, &procHead);
+	saveScript(*currentSaveFile, &relHead);
+	saveCell(*currentSaveFile);
+	saveIncrust(*currentSaveFile);
+	saveAnim(*currentSaveFile);
+	saveSong(*currentSaveFile);
+	saveCT(*currentSaveFile);
+
+	currentSaveFile->finalize();
+	delete currentSaveFile;
 	return 0;
 }
 
@@ -356,10 +656,11 @@ int loadSavegameData(int saveGameIdx) {
 
 	sprintf(buffer, "CR.%d", saveGameIdx);
 
-	Common::File currentSaveFile;
-	currentSaveFile.open(buffer);
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	Common::InSaveFile *currentSaveFile;
+	currentSaveFile = saveMan->openForLoading(buffer);
 
-	if (!currentSaveFile.isOpen()) {
+	if (currentSaveFile == NULL) {
 		printInfoBlackBox("Savegame not found...");
 		waitForPlayerInput();
 		return (-1);
@@ -367,150 +668,150 @@ int loadSavegameData(int saveGameIdx) {
 
 	printInfoBlackBox("Loading in progress...");
 
-	currentSaveFile.read(saveIdentBuffer, 6);
+	currentSaveFile->read(saveIdentBuffer, 6);
 
 	if (strcmp(saveIdentBuffer, "SAVPC")) {
-		currentSaveFile.close();
+		delete currentSaveFile;
 		return (-1);
 	}
 	initVars();
 
-	songLoaded = currentSaveFile.readSint16LE();
-	songPlayed = currentSaveFile.readSint16LE();
-	songLoop = currentSaveFile.readSint16LE();
-	activeMouse = currentSaveFile.readSint16LE();
-	userEnabled = currentSaveFile.readSint16LE();
-	dialogueEnabled = currentSaveFile.readSint16LE();
+	songLoaded = currentSaveFile->readSint16LE();
+	songPlayed = currentSaveFile->readSint16LE();
+	songLoop = currentSaveFile->readSint16LE();
+	activeMouse = currentSaveFile->readSint16LE();
+	userEnabled = currentSaveFile->readSint16LE();
+	dialogueEnabled = currentSaveFile->readSint16LE();
 
-	dialogueOvl = currentSaveFile.readSint16LE();
-	dialogueObj = currentSaveFile.readSint16LE();
-	userDelay = currentSaveFile.readSint16LE();
-	sysKey = currentSaveFile.readSint16LE();
-	sysX = currentSaveFile.readSint16LE();
-	sysY = currentSaveFile.readSint16LE();
-	automoveInc = currentSaveFile.readSint16LE();
-	automoveMax = currentSaveFile.readSint16LE();
-	displayOn = currentSaveFile.readSint16LE();
-	isMessage = currentSaveFile.readSint16LE();
-	fadeFlag = currentSaveFile.readSint16LE();
-	playMusic = currentSaveFile.readSint16LE();
-	playMusic2 = currentSaveFile.readSint16LE();
-	automaticMode = currentSaveFile.readSint16LE();
+	dialogueOvl = currentSaveFile->readSint16LE();
+	dialogueObj = currentSaveFile->readSint16LE();
+	userDelay = currentSaveFile->readSint16LE();
+	sysKey = currentSaveFile->readSint16LE();
+	sysX = currentSaveFile->readSint16LE();
+	sysY = currentSaveFile->readSint16LE();
+	automoveInc = currentSaveFile->readSint16LE();
+	automoveMax = currentSaveFile->readSint16LE();
+	displayOn = currentSaveFile->readSint16LE();
+	isMessage = currentSaveFile->readSint16LE();
+	fadeFlag = currentSaveFile->readSint16LE();
+	playMusic = currentSaveFile->readSint16LE();
+	playMusic2 = currentSaveFile->readSint16LE();
+	automaticMode = currentSaveFile->readSint16LE();
 
 	// video param (not loaded in EGA mode)
 
-	titleColor = currentSaveFile.readSint16LE();
-	itemColor = currentSaveFile.readSint16LE();
-	selectColor = currentSaveFile.readSint16LE();
-	subColor = currentSaveFile.readSint16LE();
+	titleColor = currentSaveFile->readSint16LE();
+	itemColor = currentSaveFile->readSint16LE();
+	selectColor = currentSaveFile->readSint16LE();
+	subColor = currentSaveFile->readSint16LE();
 
 	//
 
-	narratorOvl = currentSaveFile.readSint16LE();
-	narratorIdx = currentSaveFile.readSint16LE();
-	aniX = currentSaveFile.readSint16LE();
-	aniY = currentSaveFile.readSint16LE();
+	narratorOvl = currentSaveFile->readSint16LE();
+	narratorIdx = currentSaveFile->readSint16LE();
+	aniX = currentSaveFile->readSint16LE();
+	aniY = currentSaveFile->readSint16LE();
 
-	if(currentSaveFile.readSint16LE()) // cast to bool
+	if(currentSaveFile->readSint16LE()) // cast to bool
 		animationStart = true;
 	else
 		animationStart = false;
 
-	currentActiveBackgroundPlane = currentSaveFile.readSint16LE();
-	switchPal = currentSaveFile.readSint16LE();
-	scroll = currentSaveFile.readSint16LE();
-	fadeFlag = currentSaveFile.readSint16LE();
-	doFade = currentSaveFile.readSint16LE();
-	numOfLoadedOverlay = currentSaveFile.readSint16LE();
-	stateID = currentSaveFile.readSint16LE();
-	fontFileIndex = currentSaveFile.readSint16LE();
-	currentActiveMenu = currentSaveFile.readSint16LE();
-	userWait = currentSaveFile.readSint16LE();
-	autoOvl = currentSaveFile.readSint16LE();
-	autoMsg = currentSaveFile.readSint16LE();
-	autoTrack = currentSaveFile.readSint16LE();
-	var39 = currentSaveFile.readSint16LE();
-	var42 = currentSaveFile.readSint16LE();
-	var45 = currentSaveFile.readSint16LE();
-	var46 = currentSaveFile.readSint16LE();
-	var47 = currentSaveFile.readSint16LE();
-	var48 = currentSaveFile.readSint16LE();
-	flagCt = currentSaveFile.readSint16LE();
-	var41 = currentSaveFile.readSint16LE();
-	entrerMenuJoueur = currentSaveFile.readSint16LE();
+	currentActiveBackgroundPlane = currentSaveFile->readSint16LE();
+	switchPal = currentSaveFile->readSint16LE();
+	scroll = currentSaveFile->readSint16LE();
+	fadeFlag = currentSaveFile->readSint16LE();
+	doFade = currentSaveFile->readSint16LE();
+	numOfLoadedOverlay = currentSaveFile->readSint16LE();
+	stateID = currentSaveFile->readSint16LE();
+	fontFileIndex = currentSaveFile->readSint16LE();
+	currentActiveMenu = currentSaveFile->readSint16LE();
+	userWait = currentSaveFile->readSint16LE();
+	autoOvl = currentSaveFile->readSint16LE();
+	autoMsg = currentSaveFile->readSint16LE();
+	autoTrack = currentSaveFile->readSint16LE();
+	var39 = currentSaveFile->readSint16LE();
+	var42 = currentSaveFile->readSint16LE();
+	var45 = currentSaveFile->readSint16LE();
+	var46 = currentSaveFile->readSint16LE();
+	var47 = currentSaveFile->readSint16LE();
+	var48 = currentSaveFile->readSint16LE();
+	flagCt = currentSaveFile->readSint16LE();
+	var41 = currentSaveFile->readSint16LE();
+	entrerMenuJoueur = currentSaveFile->readSint16LE();
 
-	currentSaveFile.read(var50, 64);
-	currentSaveFile.read(var50, 64); // Hu ? why 2 times ?
+	currentSaveFile->read(var50, 64);
+	currentSaveFile->read(var50, 64); // Hu ? why 2 times ?
 
 	// here code seems bogus... this should read music name and it may be a buffer overrun
-	currentSaveFile.skip(21);
+	currentSaveFile->skip(21);
 
-	currentSaveFile.read(currentCtpName, 40);
+	currentSaveFile->read(currentCtpName, 40);
 
 	// restore backgroundTable
 	for(int i=0; i<8; i++)
 	{
-		currentSaveFile.read(backgroundTable[i].name, 9);
-		currentSaveFile.read(backgroundTable[i].extention, 6);
+		currentSaveFile->read(backgroundTable[i].name, 9);
+		currentSaveFile->read(backgroundTable[i].extention, 6);
 	}
 
-	currentSaveFile.read(palette, 256*2);
-	currentSaveFile.read(initVar5, 24);
-	currentSaveFile.read(globalVars, stateID * 2); // ok
+	currentSaveFile->read(palette, 256*2);
+	currentSaveFile->read(initVar5, 24);
+	currentSaveFile->read(globalVars, stateID * 2); // ok
 	for(int i=0; i<257; i++)
 	{
-		filesDatabase[i].widthInColumn = currentSaveFile.readUint16LE();
-		filesDatabase[i].width = currentSaveFile.readUint16LE();
-		filesDatabase[i].resType = currentSaveFile.readUint16LE();
-		filesDatabase[i].height = currentSaveFile.readUint16LE();
-		filesDatabase[i].subData.ptr = (uint8*)currentSaveFile.readSint32LE();
-		filesDatabase[i].subData.index = currentSaveFile.readSint16LE();
-		currentSaveFile.read(filesDatabase[i].subData.name, 13);
-		currentSaveFile.skip(1);
-		filesDatabase[i].subData.transparency = currentSaveFile.readSint16LE();
-		filesDatabase[i].subData.ptrMask = (uint8*)currentSaveFile.readSint32LE();
-		filesDatabase[i].subData.resourceType = currentSaveFile.readByte();
-		currentSaveFile.skip(1);
-		filesDatabase[i].subData.compression = currentSaveFile.readSint16LE();
+		filesDatabase[i].widthInColumn = currentSaveFile->readUint16LE();
+		filesDatabase[i].width = currentSaveFile->readUint16LE();
+		filesDatabase[i].resType = currentSaveFile->readUint16LE();
+		filesDatabase[i].height = currentSaveFile->readUint16LE();
+		filesDatabase[i].subData.ptr = (uint8*)currentSaveFile->readSint32LE();
+		filesDatabase[i].subData.index = currentSaveFile->readSint16LE();
+		currentSaveFile->read(filesDatabase[i].subData.name, 13);
+		currentSaveFile->skip(1);
+		filesDatabase[i].subData.transparency = currentSaveFile->readSint16LE();
+		filesDatabase[i].subData.ptrMask = (uint8*)currentSaveFile->readSint32LE();
+		filesDatabase[i].subData.resourceType = currentSaveFile->readByte();
+		currentSaveFile->skip(1);
+		filesDatabase[i].subData.compression = currentSaveFile->readSint16LE();
 	}
 
 	for(int i=0; i<numOfLoadedOverlay; i++)
 	{
-		currentSaveFile.read(overlayTable[i].overlayName, 13);
-		currentSaveFile.skip(1);
-		currentSaveFile.skip(4);
-		overlayTable[i].alreadyLoaded = currentSaveFile.readSint16LE();
-		overlayTable[i].state = currentSaveFile.readSint16LE();
-		currentSaveFile.skip(4);
-		currentSaveFile.skip(4);
-		currentSaveFile.skip(4);
-		currentSaveFile.skip(4);
-		overlayTable[i].executeScripts = currentSaveFile.readSint16LE();
+		currentSaveFile->read(overlayTable[i].overlayName, 13);
+		currentSaveFile->skip(1);
+		currentSaveFile->skip(4);
+		overlayTable[i].alreadyLoaded = currentSaveFile->readSint16LE();
+		overlayTable[i].state = currentSaveFile->readSint16LE();
+		currentSaveFile->skip(4);
+		currentSaveFile->skip(4);
+		currentSaveFile->skip(4);
+		currentSaveFile->skip(4);
+		overlayTable[i].executeScripts = currentSaveFile->readSint16LE();
 	}
 
 	for(int i=0; i<64; i++)
 	{
-		currentSaveFile.read(preloadData[i].name, 15);
-		currentSaveFile.skip(1);
-		preloadData[i].size = currentSaveFile.readSint32LE();
-		preloadData[i].sourceSize = currentSaveFile.readSint32LE();
-		currentSaveFile.skip(4);
-		preloadData[i].nofree = currentSaveFile.readSint16LE();
-		preloadData[i].protect = currentSaveFile.readSint16LE();
-		preloadData[i].ovl = currentSaveFile.readSint16LE();
+		currentSaveFile->read(preloadData[i].name, 15);
+		currentSaveFile->skip(1);
+		preloadData[i].size = currentSaveFile->readSint32LE();
+		preloadData[i].sourceSize = currentSaveFile->readSint32LE();
+		currentSaveFile->skip(4);
+		preloadData[i].nofree = currentSaveFile->readSint16LE();
+		preloadData[i].protect = currentSaveFile->readSint16LE();
+		preloadData[i].ovl = currentSaveFile->readSint16LE();
 	}
 
-	loadSavegameDataSub1(currentSaveFile);
-	loadScriptsFromSave(currentSaveFile, &procHead);
-	loadScriptsFromSave(currentSaveFile, &relHead);
+	loadSavegameDataSub1(*currentSaveFile);
+	loadScriptsFromSave(*currentSaveFile, &procHead);
+	loadScriptsFromSave(*currentSaveFile, &relHead);
 
-	loadSavegameDataSub2(currentSaveFile);
-	loadBackgroundIncrustFromSave(currentSaveFile);
-	loadSavegameActor(currentSaveFile);
-	loadSavegameDataSub5(currentSaveFile);
-	loadSavegameDataSub6(currentSaveFile);
+	loadSavegameDataSub2(*currentSaveFile);
+	loadBackgroundIncrustFromSave(*currentSaveFile);
+	loadSavegameActor(*currentSaveFile);
+	loadSavegameDataSub5(*currentSaveFile);
+	loadSavegameDataSub6(*currentSaveFile);
 
-	currentSaveFile.close();
+	delete currentSaveFile;
 
 	for (int j = 0; j < 64; j++) {
 		preloadData[j].ptr = NULL;
@@ -571,11 +872,11 @@ int loadSavegameData(int saveGameIdx) {
 				filesDatabase[k].subData.ptrMask = NULL;
 			}
 
-			if (j < 2) {
+			/*if (j < 2) {
 				printf("Unsupported mono file load!\n");
 				ASSERT(0);
 				//loadFileMode1(filesDatabase[j].subData.name,filesDatabase[j].subData.var4);
-			} else {
+			} else */{
 				loadFileRange(filesDatabase[i].subData.name, filesDatabase[i].subData.index, i, j - i);
 				i = j - 1;
 			}
@@ -622,7 +923,7 @@ int loadSavegameData(int saveGameIdx) {
 		}
 	}
 
-	regenerateBackgroundIncrust(&backgroundIncrustHead);
+	//regenerateBackgroundIncrust(&backgroundIncrustHead);
 
 	// to finish
 

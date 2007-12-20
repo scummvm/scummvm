@@ -572,7 +572,7 @@ int initAllData(void) {
 		scriptFunc2(bootOverlayNumber, &procHead, 1, 0);
 	}
 
-	strcpy(systemStrings.bootScriptName, "AUTO00");
+	strcpy(lastOverlay, "AUTO00");
 
 	return (bootOverlayNumber);
 }
@@ -652,7 +652,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 					j2 = params2.fileIdx;
 				}
 
-				if (params.var5 >= 0 && params.fileIdx >= 0) {
+				if (params.state >= 0 && params.fileIdx >= 0) {
 					if (currentObject->type == OBJ_TYPE_SPRITE || currentObject->type == OBJ_TYPE_MASK || currentObject->type == OBJ_TYPE_EXIT) {
 						int x = params.X + x2;
 						int y = params.Y + y2;
@@ -990,7 +990,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					thisOvl = j;
 				}
 
-				//const char* pName = getObjectName(ptrHead->obj1Number, overlayTable[thisOvl].ovlData->arrayNameObj);
+				const char* pName = getObjectName(ptrHead->obj1Number, overlayTable[thisOvl].ovlData->arrayNameObj);
 
 				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
 
@@ -1124,7 +1124,7 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 				getMultipleObjectParam(obj2Ovl, pHeader->obj2Number, &params);
 			}
 
-			if ((pHeader->obj2OldState == -1) || (params.scale == pHeader->obj2OldState)) {
+			if ((pHeader->obj2OldState == -1) || (params.state == pHeader->obj2OldState)) {
 				if (pHeader->type == 30) { // REL
 					if(currentScriptPtr)
 					{
@@ -1738,9 +1738,10 @@ void mainLoop(void) {
 
 	int enableUser = 0;
 
-	strcpy(currentOverlay, "");
-	systemStrings.bootScriptName[0] = 0;
-	cmdLine[0] = 0;
+	strcpy(nextOverlay, "");
+	strcpy(lastOverlay, "");
+	strcpy(cmdLine, "");
+
 	currentActiveMenu = -1;
 	autoMsg = -1;
 	linkedRelation = 0;

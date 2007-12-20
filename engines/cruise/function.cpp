@@ -54,7 +54,7 @@ int16 Op_LoadOverlay(void) {
 
 	updateAllScriptsImports();
 
-	strcpy(currentOverlay, overlayName);
+	strcpy(nextOverlay, overlayName);
 
 	return(overlayLoadResult);
 }
@@ -123,10 +123,10 @@ int16 Op_AddProc(void) {
 	int pop1 = popVar();
 	int pop2;
 	int overlay;
+	int param[160];
 
-	if (pop1 - 1 > 0) {
-		printf("Unsuported arg pop in Op_6!\n");
-		exit(1);
+	for(long int i=0; i<pop1; i++) {
+		param[i] = popVar();
 	}
 
 	pop2 = popVar();
@@ -138,11 +138,14 @@ int16 Op_AddProc(void) {
 	if (!overlay)
 		return (0);
 
-	attacheNewScriptToTail(&procHead, overlay, pop2, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_PROC);
+	uint8* procBss = attacheNewScriptToTail(&procHead, overlay, pop2, currentScriptPtr->type, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_PROC);
 
-	if (pop1 > 0) {
-		printf("Unsupported art send in op6!\n");
-		exit(1);
+	if (procBss) {
+		for(long int i=0; i<pop1; i++) {
+			int16* ptr = (int16*)(procBss+i*2);
+			*ptr = param[i];
+			flipShort(ptr);
+		}
 	}
 
 	return (0);
@@ -773,7 +776,7 @@ int16 Op_AutoCell(void) {
 		objectParamsQuery params;
 
 		getMultipleObjectParam(overlay, obj, &params);
-		pObject->animCounter = params.var6 - 1;
+		pObject->animCounter = params.state2 - 1;
 	}
 
 	return 0;
@@ -789,7 +792,7 @@ int16 Op_66(void) {
 
 	getMultipleObjectParam(overlay, index, &params);
 
-	return params.var7 - 1;
+	return params.nbState - 1;
 }
 
 int16 Op_SetActiveBackgroundPlane(void) {

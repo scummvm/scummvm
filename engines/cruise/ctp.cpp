@@ -393,9 +393,7 @@ int loadCtp(const char *ctpName) {
 	{
 		int numOfUsedEntries = ctpVar13 - (ctpVar19Struct *) ptr;
 		numOfUsedEntries++;	// there is a -1 entry at the end... Original was only mallocing numOfUsedEntries*sizeof(ctpVar19Struct)+4, but this is a bit ugly...
-		ctpVar13 = ctpVar11 = polyStruct =
-		    (ctpVar19Struct *) malloc(numOfUsedEntries *
-		    sizeof(ctpVar19Struct));
+		ctpVar13 = ctpVar11 = polyStruct = (ctpVar19Struct *) malloc(numOfUsedEntries * sizeof(ctpVar19Struct));
 	}
 
 	walkboxCounter = numberOfWalkboxes;

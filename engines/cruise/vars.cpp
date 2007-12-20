@@ -51,7 +51,10 @@ int32 volumeDataLoaded = 0;
 
 int16 numOfDisks;
 
-char currentOverlay[15];
+char musicName[15];
+char lastOverlay[15];
+char nextOverlay[15];
+
 int16 currentActiveMenu;
 int16 autoMsg;
 menuElementSubStruct* linkedRelation;
@@ -143,7 +146,7 @@ int16 flagCt;
 int8 var50[64];
 int16 palette[256 * 3];
 
-systemStringsStruct systemStrings;
+//systemStringsStruct systemStrings;
 
 char currentCtpName[40];
 

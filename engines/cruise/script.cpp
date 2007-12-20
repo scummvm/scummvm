@@ -52,54 +52,62 @@ short int getShortFromScript(void) {
 
 // load opcode
 int32 opcodeType0(void) {
+	int index = 0;
+
 	switch (currentScriptOpcodeType) {
 	case 0:
 		{
 			pushVar(getShortFromScript());
 			return (0);
 		}
+	case 5:
+		index = saveOpcodeVar;
 	case 1:
 		{
-			uint8 *ptr = 0;
-			int byte1 = getByteFromScript();
-			int byte2 = getByteFromScript();
-			short int short1 = getShortFromScript();
+			uint8 *address = 0;
+			int type = getByteFromScript();
+			int ovl = getByteFromScript();
+			short int offset;
+			short int firstOffset = offset = getShortFromScript();
+			offset += index;
 
-			int var_E = byte1 & 7;
+			int typ7 = type & 7;
 
-			if (!var_E) {
-				return (-10);
+			if (!typ7) {
+				return (-10); // unresloved link
 			}
 
-			if (!byte2) {
-				ptr = scriptDataPtrTable[var_E] + short1;
+			if (!ovl) {
+				address = scriptDataPtrTable[typ7];
 			} else	{ // TODO:
-				if (!overlayTable[byte2].alreadyLoaded) {
+				if (!overlayTable[ovl].alreadyLoaded) {
 					return (-7);
 				}
 
-				if (!overlayTable[byte2].ovlData) {
+				if (!overlayTable[ovl].ovlData) {
 					return (-4);
 				}
 
-				if (var_E == 5) {
-					ptr =
-					    overlayTable[byte2].ovlData->
-					    data4Ptr + short1;
+				if (typ7 == 5) {
+					address = overlayTable[ovl].ovlData->data4Ptr;
 				} else {
 					assert(0);
 				}
 			}
 
-			if (((byte1 & 0x18) >> 3) == 1) {
-				pushVar(loadShort(ptr));
+			address += offset;
+
+			int size = (type >> 3) & 3;
+
+			if (size == 1) {
+				address += index;
+				pushVar(loadShort(address));
 				return (0);
-			} else if (((byte1 & 0x18) >> 3) == 2) {
-				pushVar(*ptr);
+			} else if (size == 2) {
+				pushVar(*address);
 				return (0);
 			} else {
-				printf
-				    ("Unsupported code in opcodeType0 case 1!\n");
+				printf("Unsupported code in opcodeType0 case 1!\n");
 				exit(1);
 			}
 
@@ -124,57 +132,6 @@ int32 opcodeType0(void) {
 			return (0);
 
 			break;
-		}
-	case 5:
-		{
-			int byte1 = getByteFromScript();
-			int byte2 = getByteFromScript();
-			short int short1 = getShortFromScript();
-
-			short int var_12 = short1;
-			// short int var_10 = saveOpcodeVar;
-
-			int var_E = byte1 & 7;
-
-			uint8 *ptr = 0;
-
-			if (!var_E) {
-				return (-10);
-			}
-
-			if (!byte2) {
-				ptr = scriptDataPtrTable[var_E] + var_12;
-			} else	{ // TODO:
-				if (!overlayTable[byte2].alreadyLoaded) {
-					return (-7);
-				}
-
-				if (!overlayTable[byte2].ovlData) {
-					return (-4);
-				}
-
-				if (var_E == 5) {
-					ptr =
-					    overlayTable[byte2].ovlData->
-					    data4Ptr + var_12;
-				} else {
-					assert(0);
-				}
-			}
-
-			if (((byte1 & 0x18) >> 3) == 1) {
-				pushVar(loadShort(ptr + saveOpcodeVar * 2));	// TODO: check this !
-				return (0);
-			} else if (((byte1 & 0x18) >> 3) == 2) {
-				pushVar(*(ptr + saveOpcodeVar));
-				return (0);
-			} else {
-				printf
-				    ("Unsupported code in opcodeType0 case 1!\n");
-				exit(1);
-			}
-
-			return (0);
 		}
 	default:
 		{
@@ -680,6 +637,11 @@ int executeScripts(scriptInstanceStruct *ptr) {
 	uint8 opcodeType;
 
 	numScript2 = ptr->scriptNumber;
+
+	if(ptr->overlayNumber == 66)
+	{
+		ptr->overlayNumber= ptr->overlayNumber;
+	}
 
 	if (ptr->type == 20) {
 		ptr2 = getOvlData3Entry(ptr->overlayNumber, numScript2);

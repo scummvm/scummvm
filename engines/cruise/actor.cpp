@@ -615,8 +615,7 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 			return -1;
 		}
 
-		perso = persoTable[i] =
-		    (persoStruct *) malloc(sizeof(persoStruct));
+		perso = persoTable[i] = (persoStruct *) malloc(sizeof(persoStruct));
 
 		ptr = perso->solution[0];
 

@@ -43,9 +43,9 @@ struct objectParamsQuery {
 	int16 baseFileIdx;
 	int16 fileIdx;
 	int16 scale;
-	int16 var5;
-	int16 var6;
-	int16 var7;
+	int16 state;
+	int16 state2;
+	int16 nbState;
 };
 
 objDataStruct *getObjectDataFromOverlay(int ovlIdx, int objIdx);
