@@ -219,14 +219,22 @@ void AgiEngine::processEvents() {
 				key = KEY_BACKSPACE;
 				break;
 			default:
-				if (key < 256 && !isalpha(key))
-					key = event.kbd.ascii;
-				else if (event.kbd.flags & Common::KBD_CTRL)
-					key = (key & ~0x20) - 0x40;
-				else if (event.kbd.flags & Common::KBD_ALT)
-					key = scancodeTable[(key & ~0x20) - 0x41] << 8;
-				else if (event.kbd.flags & Common::KBD_SHIFT)
-					key = event.kbd.ascii;
+				// FIXME: We let lots of keys slip through here unchanged, passing our internal
+				// keycode values directly to the AGI core. Do we really want that???
+				if (isalpha(key)) {
+					// FIXME: We probably should be using event.kbd.ascii at some point here,
+					// but it's not completly clear how/where, this needs testing.
+					// In particular, what about 'a' vs. 'A' (resp. the keys A vs. Shift-A) ?
+
+					// Key is A-Z. 
+					// Map Ctrl-A to 1, Ctrl-B to 2, etc.
+					if (event.kbd.flags & Common::KBD_CTRL) {
+						key = toupper(key) - 'A' + 1;
+					} else if (event.kbd.flags & Common::KBD_ALT) {
+						// Map Alt-A, Alt-B etc. to special scancode values according to an internal scancode table.
+						key = scancodeTable[toupper(key) - 'A'] << 8;
+					}
+				}
 				break;
 			}
 			if (key)
