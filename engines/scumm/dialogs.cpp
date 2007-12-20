@@ -36,7 +36,6 @@
 #endif
 
 #include "gui/about.h"
-#include "gui/chooser.h"
 #include "gui/eval.h"
 #include "gui/newgui.h"
 #include "gui/ListWidget.h"
@@ -71,7 +70,6 @@ using GUI::kTextAlignLeft;
 using GUI::WIDGET_ENABLED;
 
 typedef GUI::OptionsDialog GUI_OptionsDialog;
-typedef GUI::ChooserDialog GUI_ChooserDialog;
 typedef GUI::Dialog GUI_Dialog;
 
 namespace Scumm {
