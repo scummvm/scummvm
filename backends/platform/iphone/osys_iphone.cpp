@@ -562,7 +562,8 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 
 bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	//printf("pollEvent()\n");
-	
+	CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, false);
+
 	long curTime = getMillis();
 	
 	if (_timerCallback && (curTime >= _timerCallbackNext)) {
@@ -606,17 +607,19 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				_secondaryTapped = false;
 
 				warpMouse(x, y);
-				event.type = Common::EVENT_MOUSEMOVE;
-				event.mouse.x = _mouseX;
-				event.mouse.y = _mouseY;
+				// event.type = Common::EVENT_MOUSEMOVE;
+				// event.mouse.x = _mouseX;
+				// event.mouse.y = _mouseY;
 
 				if (_mouseClickAndDragEnabled) {
-					_queuedInputEvent.type = Common::EVENT_LBUTTONDOWN;
-					_queuedInputEvent.mouse.x = _mouseX;
-					_queuedInputEvent.mouse.y = _mouseY;
+					event.type = Common::EVENT_LBUTTONDOWN;
+					event.mouse.x = _mouseX;
+					event.mouse.y = _mouseY;
+					return true;
 				} else {					
 					_lastMouseDown = curTime;
 				}
+				return false;
 				break;
 			case kInputMouseUp:
 				//printf("Mouse up at (%u, %u)\n", x, y);
@@ -643,9 +646,9 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 			case kInputMouseDragged:
 				//printf("Mouse dragged at (%u, %u)\n", x, y);
 				if (_secondaryTapped) {
-					// if (_gestureStartX == -1 || _gestureStartY == -1) {
-					// 	return false;
-					// }
+					 if (_gestureStartX == -1 || _gestureStartY == -1) {
+					 	return false;
+					 }
 
 					int vecX = (x - _gestureStartX);
 					int vecY = (y - _gestureStartY);
@@ -653,8 +656,8 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					//printf("Lengthsq: %u\n", lengthSq);
 
 					if (lengthSq > 15000) { // Long enough gesture to react upon.
-						_gestureStartX = x;
-						_gestureStartY = y;
+						_gestureStartX = -1;
+						_gestureStartY = -1;
 						
 						float vecLength = sqrt(lengthSq);
 						float vecXNorm = vecX / vecLength;
@@ -681,7 +684,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 								dialogMsg = "Mouse-click-and-drag mode disabled.";
 							GUI::TimedMessageDialog dialog(dialogMsg, 1500);
 							dialog.runModal();
-
+							return false;
 						} else if (vecXNorm > 0.75 && vecYNorm >  -0.5 && vecYNorm < 0.5) {
 							// Swipe right
 							// _secondaryTapped = !_secondaryTapped;
@@ -873,26 +876,36 @@ uint32 OSystem_IPHONE::getMillis() {
 void OSystem_IPHONE::delayMillis(uint msecs) {
 	//printf("delayMillis(%d)\n", msecs);
 	usleep(msecs * 1000);
+	CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, false);
 }
 
 OSystem::MutexRef OSystem_IPHONE::createMutex(void) {
-	//pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
-	//pthread_mutex_init(mutex, NULL);
-	//return (MutexRef)mutex;
+	// pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+	// if (pthread_mutex_init(mutex, NULL) != 0) {
+	// 	printf("pthread_mutex_init() failed!\n");
+	// }
+	// return (MutexRef)mutex;
 	return NULL;
 }
 
 void OSystem_IPHONE::lockMutex(MutexRef mutex) {
-	//pthread_mutex_lock((pthread_mutex_t *) mutex);
+	// if (pthread_mutex_lock((pthread_mutex_t *) mutex) != 0) {
+	// 	printf("pthread_mutex_lock() failed!\n");
+	// }
 }
 
 void OSystem_IPHONE::unlockMutex(MutexRef mutex) {
-	//pthread_mutex_unlock((pthread_mutex_t *) mutex);
+	// if (pthread_mutex_unlock((pthread_mutex_t *) mutex) != 0) {
+	// 	printf("pthread_mutex_unlock() failed!\n");
+	// }
 }
 
 void OSystem_IPHONE::deleteMutex(MutexRef mutex) {
-	//pthread_mutex_destroy((pthread_mutex_t *) mutex);
-	//free(mutex);
+	// if (pthread_mutex_destroy((pthread_mutex_t *) mutex) != 0) {
+	// 	printf("pthread_mutex_destroy() failed!\n");
+	// } else {
+	// 	free(mutex);		
+	// }
 }
 
 void OSystem_IPHONE::AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB) {
@@ -920,7 +933,7 @@ bool OSystem_IPHONE::setSoundCallback(SoundProc proc, void *param) {
 	s_AudioQueue.dataFormat.mBitsPerChannel = 16;
 	s_AudioQueue.frameCount = WAVE_BUFFER_SIZE;
 
-	if (AudioQueueNewOutput(&s_AudioQueue.dataFormat, AQBufferCallback, &s_AudioQueue, 0, kCFRunLoopCommonModes, 0, &s_AudioQueue.queue)) {
+	if (AudioQueueNewOutput(&s_AudioQueue.dataFormat, AQBufferCallback, &s_AudioQueue, CFRunLoopGetCurrent(), kCFRunLoopCommonModes, 0, &s_AudioQueue.queue)) {
 		printf("Couldn't set the AudioQueue callback!\n");
 		return false;
 	}
