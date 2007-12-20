@@ -184,13 +184,13 @@ void flip() {
 	//uint8* inPtr  = globalScreen;
 
 	if (palDirtyMax != -1) {
-		for (i = palDirtyMin; i < palDirtyMax; i++) {
+		for (i = palDirtyMin; i <= palDirtyMax; i++) {
 			paletteRGBA[i * 4 + 0] = lpalette[i].R;
 			paletteRGBA[i * 4 + 1] = lpalette[i].G;
 			paletteRGBA[i * 4 + 2] = lpalette[i].B;
 			paletteRGBA[i * 4 + 3] = 0xFF;
 		}
-		g_system->setPalette(paletteRGBA, palDirtyMin, palDirtyMax - palDirtyMin + 1);
+		g_system->setPalette(paletteRGBA+palDirtyMin*4, palDirtyMin, palDirtyMax - palDirtyMin + 1);
 		palDirtyMin = 256;
 		palDirtyMax = -1;
 	}

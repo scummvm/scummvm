@@ -571,8 +571,20 @@ int16 Op_WriteObject(void) {
 	int16 param3 = popVar();
 	int16 param4 = popVar();
 
-getSingleObjectParam(param4, param3, param2, &returnParam);
+	getSingleObjectParam(param4, param3, param2, &returnParam);
 	setObjectPosition(param4, param3, param2, param1);
+
+	return returnParam;
+}
+
+int16 Op_ReadObject(void) {
+	int16 returnParam;
+
+	int member = popVar();
+	int obj = popVar();
+	int ovl = popVar();
+
+	getSingleObjectParam(ovl, obj, member, &returnParam);
 
 	return returnParam;
 }
@@ -1614,7 +1626,7 @@ opcodeFunction opcodeTablePtr[] =
 	Op_FindObject,
 	Op_FindProc,
 	Op_WriteObject,
-	NULL, // Op_ReadObject
+	Op_ReadObject,
 	Op_RemoveOverlay,
 	Op_AddBackgroundIncrust,
 
