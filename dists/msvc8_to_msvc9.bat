@@ -1,4 +1,11 @@
 @echo off
+rem This batch file is used to convert MSVC8 (Visual Studio 2005) project files to MSVC9 (Visual Studio 2008) ones
+rem You need the Windows version of GNU rpl
+rem Get it here:
+rem http://gnuwin32.sourceforge.net/packages/rpl.htm
+rem Place rpl.exe from the bin folder inside the archive in the folder where
+rem this batch file resides
+
 if not exist rpl.exe goto no_rpl
 
 echo Creating MSVC9 project files from the MSVC8 ones
