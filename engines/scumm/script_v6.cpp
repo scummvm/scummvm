@@ -45,6 +45,8 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
+#include <time.h>	// for ScummEngine_v6::o6_getDateTime()
+
 namespace Scumm {
 
 #define OPCODE(x)	_OPCODE(ScummEngine_v6, x)

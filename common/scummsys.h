@@ -114,7 +114,6 @@
 	#include <stdarg.h>
 	#include <assert.h>
 	#include <ctype.h>
-	#include <time.h>
 	#include <math.h>
 
 #endif

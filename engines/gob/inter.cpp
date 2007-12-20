@@ -36,6 +36,8 @@
 #include "gob/scenery.h"
 #include "gob/sound.h"
 
+#include <time.h>	// FIXME: for Inter::renewTimeInVars()
+
 namespace Gob {
 
 Inter::Inter(GobEngine *vm) : _vm(vm) {

@@ -38,6 +38,8 @@
 #include "sound/mididrv.h"
 #include "sound/mods/protracker.h"
 
+#include <time.h>	// for AGOSEngine::getTime()
+
 using Common::File;
 
 namespace AGOS {

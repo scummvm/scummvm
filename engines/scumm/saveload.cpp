@@ -46,6 +46,8 @@
 #include "sound/audiocd.h"
 #include "sound/mixer.h"
 
+#include <time.h>	// for ScummEngine::saveInfos / ScummEngine::loadInfos
+
 namespace Scumm {
 
 struct SaveGameHeader {
