@@ -946,7 +946,7 @@ int decompFunction(void) {
 		}
 	case 0x1E:
 		{
-			sprintf(tempbuffer, "_op_1E(%s,%s,%s,%s,%s,%s)",
+			sprintf(tempbuffer, "_Op_TrackAnim(%s,%s,%s,%s,%s,%s)",
 			    popDecomp(), popDecomp(), popDecomp(), popDecomp(),
 			    popDecomp(), popDecomp());
 			pushDecomp(tempbuffer);

@@ -57,7 +57,7 @@ void freeCTP(void) {
 
 int pathVar0;
 
-unsigned int inc_droite2, inc_jo;
+unsigned int inc_jo;
 
 int direction(int x1, int y1, int x2, int y2, int inc_jo1, int inc_jo2) {
 	int h, v, h1, v1;
@@ -87,8 +87,9 @@ int direction(int x1, int y1, int x2, int y2, int inc_jo1, int inc_jo2) {
 	}
 }
 
-void cor_droite(int x1, int y1, int x2, int y2, int16 cor_joueur[400][2]) {
-	int16 *di = (int16 *) cor_joueur;
+int cor_droite(int x1, int y1, int x2, int y2, point* outputTable) {
+	int numOutput = 0;
+
 	int dx;
 	int dy;
 
@@ -105,9 +106,9 @@ void cor_droite(int x1, int y1, int x2, int y2, int16 cor_joueur[400][2]) {
 	int ax;
 	int bx;
 
-	di[0] = x1;
-	di[1] = y1;
-	di += 2;
+	outputTable[numOutput].x = x1;
+	outputTable[numOutput].y = y1;
+	numOutput++;
 
 	dx = x2 - x1;
 	dy = y2 - y1;
@@ -156,17 +157,19 @@ void cor_droite(int x1, int y1, int x2, int y2, int16 cor_joueur[400][2]) {
 			dx += bp;
 		}
 
-		di[0] = ax;
-		di[1] = bx;
-		di += 2;
+		outputTable[numOutput].x = ax;
+		outputTable[numOutput].y = bx;
+		numOutput++;
+
 	}
 
 	flag_obstacle = 0;
-	inc_droite2 = (di - (int16 *) cor_joueur) / 2;
+
+	return numOutput;
 }
 
 void processActorWalk(int16 resx_y[4], int16 *inc_droite, int16 *inc_droite0,
-    	int16 *inc_chemin, int16 cor_joueur[400][2],
+    	int16 *inc_chemin, point* cor_joueur,
     	int16 solution0[NUM_NODES + 3][2], int16 *inc_jo1, int16 *inc_jo2,
     	int16 *dir_perso, int16 *inc_jo0, int16 num) {
 		int x1, x2, y1, y2;
@@ -193,11 +196,9 @@ void processActorWalk(int16 resx_y[4], int16 *inc_droite, int16 *inc_droite0,
 
 						return;
 					}
-					cor_droite(x1, y1, x2, y2, cor_joueur);
-					*inc_droite0 = inc_droite2;
-					*dir_perso = resx_y[2] =
-					    direction(x1, y1, x2, y2, *inc_jo1,
-					    *inc_jo2);
+					
+					*inc_droite0 = cor_droite(x1, y1, x2, y2, cor_joueur);
+					*dir_perso = resx_y[2] = direction(x1, y1, x2, y2, *inc_jo1, *inc_jo2);
 					*inc_jo0 = inc_jo;
 					u = 1;
 				} else
@@ -215,8 +216,8 @@ void processActorWalk(int16 resx_y[4], int16 *inc_droite, int16 *inc_droite0,
 		*inc_chemin = i;
 	}
 
-	resx_y[0] = cor_joueur[*inc_droite][0];
-	resx_y[1] = cor_joueur[*inc_droite][1];
+	resx_y[0] = cor_joueur[*inc_droite].x;
+	resx_y[1] = cor_joueur[*inc_droite].y;
 	resx_y[2] = *dir_perso;
 	resx_y[3] = computeZoom(resx_y[1]);
 

@@ -188,9 +188,7 @@ int32 opcodeType1(void)	{
 				}
 
 				if (var_6 == 5) {
-					ptr =
-					    overlayTable[byte2].ovlData->
-					    data4Ptr + var_C;
+					ptr = overlayTable[byte2].ovlData->data4Ptr + var_C;
 				} else {
 					ASSERT(0);
 				}
@@ -203,8 +201,7 @@ int32 opcodeType1(void)	{
 			switch (type2) {
 			case 1:
 				{
-					saveShort(ptr + var_A + offset * 2,
-					    var);
+					saveShort(ptr + var_A + offset * 2, var);
 					return 0;
 				}
 			case 2:
@@ -214,8 +211,7 @@ int32 opcodeType1(void)	{
 				}
 			default:
 				{
-					printf
-					    ("Unsupported code in opcodeType1 case 1!\n");
+					printf("Unsupported code in opcodeType1 case 1!\n");
 					exit(1);
 				}
 			}
@@ -258,49 +254,49 @@ int32 opcodeType1(void)	{
 }
 
 int32 opcodeType2(void) {
-	int offset = saveOpcodeVar;
-	int byte1 = getByteFromScript();
-	int byte2 = getByteFromScript();
-	short int short1 = getShortFromScript();
+	int index = 0;
+	switch(currentScriptOpcodeType)
+	{
+	case 5:
+		index = saveOpcodeVar;
+	case 1:
+		{
+			uint8* adresse = NULL;
+			int type = getByteFromScript();
+			int overlay = getByteFromScript();
 
-	ASSERT(currentScriptOpcodeType == 1 || currentScriptOpcodeType == 5);
+			int firstOffset;
+			int offset;
+			firstOffset = offset = getShortFromScript();
+			offset += index;
 
-	if (currentScriptOpcodeType == 5)
-		short1 += saveOpcodeVar;
-
-	ASSERT(byte1 & 7);
-
-	if (!(byte1 & 7)) {
-		return (-10);
-	}
-
-	if (!byte2) {
-		int type2;
-		uint8 *ptr = scriptDataPtrTable[byte1 & 7] + short1;
-
-		type2 = ((byte1 & 0x18) >> 3);
-
-		ASSERT(type2 == 1 || type2 == 2);
-
-		switch (type2) {
-		case 1:
-			{
-				pushPtr(ptr + offset);
-				return (0);
-			}
-		case 2:
-			{
-				pushPtr(ptr);
-				return (0);
-			}
-		default:
-			{
+			int typ7 = type&7;
+			if(!typ7) {
 				return (-10);
 			}
+			if(!overlay) {
+				adresse = scriptDataPtrTable[typ7];
+			} else {
+				if (!overlayTable[overlay].alreadyLoaded) {
+					return (-7);
+				}
+				if (!overlayTable[overlay].ovlData) {
+					return (-4);
+				}
+				ASSERT(0);
+			}
+
+			adresse += offset;
+			int size = (type>>3)&3;
+
+			if(size == 1) {
+				adresse += index;
+				pushPtr(adresse);
+			} else if(size == 2) {
+				pushPtr(adresse);
+			}
+
 		}
-	} else {
-		printf("Unsupported code in opcodeType2 case 1!\n");
-		exit(1);
 	}
 
 	return 0;
@@ -452,6 +448,7 @@ int32 opcodeType5(void) {
 	case 7:
 		{
 			currentScriptPtr->var4 = newSi;	//always
+			break;
 		}
 	}
 
