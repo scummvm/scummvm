@@ -221,15 +221,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\parallaction\gui_ns.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\parallaction\inventory.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\engines\parallaction\inventory.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\gui_ns.cpp"
 			>
 		</File>
 		<File
