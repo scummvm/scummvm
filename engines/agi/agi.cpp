@@ -219,11 +219,9 @@ void AgiEngine::processEvents() {
 				key = KEY_BACKSPACE;
 				break;
 			default:
-				if (key < 256 && !isalpha(key)) {
+				if (key < 256 && !isalpha(key))
 					key = event.kbd.ascii;
-					break;
-				}
-				if (event.kbd.flags & Common::KBD_CTRL)
+				else if (event.kbd.flags & Common::KBD_CTRL)
 					key = (key & ~0x20) - 0x40;
 				else if (event.kbd.flags & Common::KBD_ALT)
 					key = scancodeTable[(key & ~0x20) - 0x41] << 8;
