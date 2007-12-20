@@ -990,7 +990,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					thisOvl = j;
 				}
 
-				const char* pName = getObjectName(ptrHead->obj1Number, overlayTable[thisOvl].ovlData->arrayNameObj);
+				//const char* pName = getObjectName(ptrHead->obj1Number, overlayTable[thisOvl].ovlData->arrayNameObj);
 
 				objDataStruct* pObject = getObjectDataFromOverlay(thisOvl, ptrHead->obj1Number);
 

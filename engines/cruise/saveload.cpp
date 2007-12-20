@@ -565,7 +565,7 @@ int saveSavegameData(int saveGameIdx) {
 
 	currentSaveFile->write(musicName, 15);
 	
-	char dummy[6] = { 0, 0, 0, 0, 0, 0 };
+	const char dummy[6] = { 0, 0, 0, 0, 0, 0 };
 	currentSaveFile->write(dummy, 6);
 
 	currentSaveFile->write(currentCtpName, 40);
@@ -593,7 +593,6 @@ int saveSavegameData(int saveGameIdx) {
 		}
 		currentSaveFile->writeUint16LE(filesDatabase[i].subData.index);
 		currentSaveFile->write(filesDatabase[i].subData.name, 13);
-		char dummy[1] = {0};
 		currentSaveFile->write(dummy, 1);
 		currentSaveFile->writeUint16LE(filesDatabase[i].subData.transparency);
 		if(filesDatabase[i].subData.ptrMask) {
@@ -609,7 +608,6 @@ int saveSavegameData(int saveGameIdx) {
 	for(int i=0; i<numOfLoadedOverlay; i++)
 	{
 		currentSaveFile->write(overlayTable[i].overlayName, 13);
-		char dummy[4] = { 0, 0, 0, 0 };
 		currentSaveFile->write(dummy, 1);
 		currentSaveFile->write(dummy, 4);
 		currentSaveFile->writeUint16LE(overlayTable[i].alreadyLoaded);
@@ -624,7 +622,6 @@ int saveSavegameData(int saveGameIdx) {
 	for(int i=0; i<64; i++)
 	{
 		currentSaveFile->write(preloadData[i].name, 15);
-		char dummy[4] = { 0, 0, 0, 0 };
 		currentSaveFile->write(dummy, 1);
 		currentSaveFile->writeUint32LE(preloadData[i].size);
 		currentSaveFile->writeUint32LE(preloadData[i].sourceSize);

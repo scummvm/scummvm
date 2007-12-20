@@ -67,8 +67,7 @@ int32 opcodeType0(void) {
 			uint8 *address = 0;
 			int type = getByteFromScript();
 			int ovl = getByteFromScript();
-			short int offset;
-			short int firstOffset = offset = getShortFromScript();
+			short int offset = getShortFromScript();
 			offset += index;
 
 			int typ7 = type & 7;
