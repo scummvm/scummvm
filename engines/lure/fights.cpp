@@ -608,6 +608,10 @@ void FightsManager::enemyKilled() {
 		HotspotData *axeHotspot = res.getHotspot(0x2738);
 		axeHotspot->roomNumber = PLAYER_ID;
 		axeHotspot->flags |= HOTSPOTFLAG_FOUND;
+
+		// Prevent the weapon animation being drawn
+		axeHotspot = res.getHotspot(0x440);
+		axeHotspot->layer = 0; 
 	}
 }
 
