@@ -142,7 +142,7 @@ public:
 
 		_origPtr = autoFreeMemory ? ptr : 0;
 	}
-	~LinearMemoryStream() {
+	virtual ~LinearMemoryStream() {
 		free(const_cast<byte *>(_origPtr));
 	}
 	int readBuffer(int16 *buffer, const int numSamples);
