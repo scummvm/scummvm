@@ -1084,14 +1084,14 @@ void SoundTowns_EuphonyTrackQueue::initDriver() {
 	_driver->send(0x79B0);
 }
 
-SoundTowns::SoundTowns(KyraEngine *vm, Audio::Mixer *mixer) : Sound(vm, mixer), _lastTrack(-1),
-	 _currentSFX(0), _sfxFileData(0), _sfxFileIndex((uint)-1), _sfxWDTable(0), _parser(0), _sfxVolume(255) {
+SoundTowns::SoundTowns(KyraEngine *vm, Audio::Mixer *mixer)
+	: Sound(vm, mixer), _lastTrack(-1), _currentSFX(0), _sfxFileData(0),
+	_sfxFileIndex((uint)-1), _sfxWDTable(0), _parser(0) {
 
 	_driver = new SoundTowns_EuphonyDriver(_mixer);
 	int ret = open();
-	if (ret != MERR_ALREADY_OPEN && ret != 0) {
+	if (ret != MERR_ALREADY_OPEN && ret != 0)
 		error("couldn't open midi driver");
-	}
 }
 
 SoundTowns::~SoundTowns() {
@@ -1190,13 +1190,6 @@ void SoundTowns::haltTrack() {
 	_driver->queue()->release();
 }
 
-void SoundTowns::setMusicVolume(int volume) {
-	volume = CLIP<int>(volume, 0, Audio::Mixer::kMaxMixerVolume);
-
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
-	_driver->setVolume(255);
-}
-
 void SoundTowns::loadSoundFile(uint file) {
 	if (_sfxFileIndex == file)
 		return;
@@ -1293,7 +1286,7 @@ void SoundTowns::playSoundEffect(uint8 track) {
 
 	_currentSFX = Audio::makeLinearInputStream(sfxPlaybackBuffer, playbackBufferSize,
 		outputRate, Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX, -1, _sfxVolume);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX);
 }
 
 void SoundTowns::beginFadeOut() {
@@ -1422,9 +1415,9 @@ const uint8 SoundTowns::_sfxBTTable[256] = {
 
 //	KYRA 2
 
-SoundTowns_v2::SoundTowns_v2(KyraEngine *vm, Audio::Mixer *mixer) :
-	 Sound(vm, mixer), _lastTrack(-1), _currentSFX(0), /*_driver(0),*/
-	 _twnTrackData(0), _sfxVolume(255) {
+SoundTowns_v2::SoundTowns_v2(KyraEngine *vm, Audio::Mixer *mixer)
+	: Sound(vm, mixer), _lastTrack(-1), _currentSFX(0), /*_driver(0),*/
+	 _twnTrackData(0) {
 }
 
 SoundTowns_v2::~SoundTowns_v2() {
@@ -1446,10 +1439,6 @@ bool SoundTowns_v2::init() {
 
 void SoundTowns_v2::process() {
 	AudioCD.updateCD();
-}
-
-void SoundTowns_v2::setMusicVolume(int volume) {
-	/* TODO */
 }
 
 void SoundTowns_v2::playTrack(uint8 track) {
@@ -1541,7 +1530,7 @@ void SoundTowns_v2::voicePlay(const char *file) {
 
 	_currentSFX = Audio::makeLinearInputStream(sfx, outsize, outputRate,
 		Audio::Mixer::FLAG_UNSIGNED | Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_AUTOFREE, 0, 0);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX, -1, _sfxVolume);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX);
 
 	delete [] data;
 }

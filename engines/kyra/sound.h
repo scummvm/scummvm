@@ -370,12 +370,6 @@ public:
 	void setVolume(int) {}
 	int getVolume() { return 255; }
 
-	// TODO: this should be moved to Sound or at least
-	// supplied by Sound as a pure virtual method.
-	// TODO: define ranges for those two functions
-	void setMusicVolume(int volume);
-	void setSoundEffectsVolume(int volume) { _sfxVolume = CLIP(volume, 0, 255); }
-
 	void loadSoundFile(uint file);
 
 	void playTrack(uint8 track);
@@ -412,7 +406,6 @@ private:
 
 	uint _sfxFileIndex;
 	uint8 *_sfxFileData;
-	uint8 _sfxVolume;
 
 	SoundTowns_EuphonyDriver * _driver;
 	MidiParser * _parser;
@@ -435,12 +428,6 @@ public:
 	void setVolume(int) {}
 	int getVolume() { return 255; }
 
-	// TODO: this should be moved to Sound or at least
-	// supplied by Sound as a pure virtual method.
-	// TODO: define ranges for those two functions
-	void setMusicVolume(int volume);
-	void setSoundEffectsVolume(int volume) { _sfxVolume = CLIP(volume, 0, 255); }
-
 	void loadSoundFile(uint file) {}
 
 	void playTrack(uint8 track);
@@ -455,7 +442,6 @@ private:
 
 	Audio::AudioStream *_currentSFX;
 	Audio::SoundHandle _sfxHandle;
-	uint8 _sfxVolume;
 
 	//SoundTowns_v2_TwnDriver * _driver;
 	uint8 * _twnTrackData;
