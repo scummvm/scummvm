@@ -55,6 +55,7 @@
 		#pragma warning( disable : 4250 ) // turn off "inherits via dominance" warning
 		#pragma	warning( disable : 4103 ) // turn off "alignement changed after including header" warning. We use pack-start.h file
 		#pragma warning( disable : 4121 ) // turn off "alignment of a member was sensitive to packing" warning
+		#pragma warning( disable : 4125 ) // turn off "decimal digit terminates octal escape sequence" warning
 		#pragma warning( disable : 4511 ) // turn off "copy constructor could not be generated" warning
 		#pragma warning( disable : 4512 ) // turn off "assignment operator could not be generated" warning
 		#pragma warning( disable : 4351 ) // turn off "new behavior ... will be default initialized" warning
