@@ -422,7 +422,7 @@ void Actor::handleActions(int msec, bool setup) {
 				}
 
 				if (ABS(delta.v()) > ABS(delta.u())) {
-					addDelta.v() = CLIP((int) delta.v(), -speed, speed);
+					addDelta.v() = CLIP<int>(delta.v(), -speed, speed);
 					if (addDelta.v() == delta.v()) {
 						addDelta.u() = delta.u();
 					} else {
@@ -431,7 +431,7 @@ void Actor::handleActions(int msec, bool setup) {
 						addDelta.u() /= delta.v();
 					}
 				} else {
-					addDelta.u() = CLIP((int) delta.u(), -speed, speed);
+					addDelta.u() = CLIP<int>(delta.u(), -speed, speed);
 					if (addDelta.u() == delta.u()) {
 						addDelta.v() = delta.v();
 					} else {
@@ -484,7 +484,7 @@ void Actor::handleActions(int msec, bool setup) {
 					speed = speed / 2;
 
 				if ((actor->_actionDirection == kDirUp) || (actor->_actionDirection == kDirDown)) {
-					addDelta.y = CLIP((int) delta.y, -speed, speed);
+					addDelta.y = CLIP<int>(delta.y, -speed, speed);
 					if (addDelta.y == delta.y) {
 						addDelta.x = delta.x;
 					} else {
@@ -494,7 +494,7 @@ void Actor::handleActions(int msec, bool setup) {
 						actor->_facingDirection = actor->_actionDirection;
 					}
 				} else {
-					addDelta.x = CLIP((int) delta.x, -2 * speed, 2 * speed);
+					addDelta.x = CLIP<int>(delta.x, -2 * speed, 2 * speed);
 					if (addDelta.x == delta.x) {
 						addDelta.y = delta.y;
 					} else {
@@ -855,7 +855,7 @@ bool Actor::followProtagonist(ActorData *actor) {
 					newLocation.y += _vm->_rnd.getRandomNumber(prefer1.y - 1) - prefer1.y / 2;
 				}
 
-				newLocation.x = CLIP((int) newLocation.x, -31 * 4, (_vm->getDisplayWidth() + 31) * 4);
+				newLocation.x = CLIP<int>(newLocation.x, -31 * 4, (_vm->getDisplayWidth() + 31) * 4);
 
 				return actorWalkTo(actor->_id, newLocation);
 			}
