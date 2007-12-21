@@ -1015,6 +1015,11 @@ void drawMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 offset,
 	gfxDrawLine(x + width - offset, y + offset, x + width - offset, currentY + 4 - offset, color, page);	// right
 }
 
+void drawDoubleMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 color, byte* page) {
+	drawMessageBox(x, y, width, currentY, 1, 0, page);
+	drawMessageBox(x, y, width, currentY, 0, color, page);
+}
+
 void makeTextEntry(const CommandeType commandList[], uint16 height, uint16 X, uint16 Y, uint16 width) {
 	byte color = 2;
 	byte color2 = defaultMenuBoxColor2;
@@ -1053,8 +1058,7 @@ void makeTextEntry(const CommandeType commandList[], uint16 height, uint16 X, ui
 	}
 
 	gfxDrawPlainBoxRaw(X, currentY, X + width, currentY + 4, color2, page1Raw);	// bottom part
-	drawMessageBox(X, Y, width, currentY, 1, 0, page1Raw);
-	drawMessageBox(X, Y, width, currentY, 0, color, page1Raw);
+	drawDoubleMessageBox(X, Y, width, currentY, color, page1Raw);
 
 	blitRawScreen(page1Raw);
 }
@@ -1266,8 +1270,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 	}
 
 	gfxDrawPlainBoxRaw(X, currentY, X + width, currentY + 4, color2, page1Raw);	// bottom part
-	drawMessageBox(X, Y, width, currentY, 1, 0, page1Raw);
-	drawMessageBox(X, Y, width, currentY, 0, color, page1Raw);
+	drawDoubleMessageBox(X, Y, width, currentY, color, page1Raw);
 
 	blitRawScreen(page1Raw);
 
@@ -1882,8 +1885,7 @@ void drawMessage(const char *messagePtr, int16 x, int16 y, int16 width, int16 co
 
 	gfxDrawPlainBoxRaw(x, localY, x + width, localY + 4, color, page1Raw);
 
-	drawMessageBox(x, y, width, localY, 1, 0, page1Raw);
-	drawMessageBox(x, y, width, localY, 0, color2, page1Raw);
+	drawDoubleMessageBox(x, y, width, localY, color2, page1Raw);
 }
 
 void drawDialogueMessage(byte msgIdx, int16 x, int16 y, int16 width, int16 color) {
@@ -2564,8 +2566,7 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 
 	gfxDrawPlainBoxRaw(x, localY, x + width, localY + 4, color2, page1Raw);
 
-	drawMessageBox(x, y, width, localY, 1, 0, page1Raw);
-	drawMessageBox(x, y, width, localY, 0, color, page1Raw);
+	drawDoubleMessageBox(x, y, width, localY, color, page1Raw);
 
 	x += margins;
 	width -= margins * 2;
