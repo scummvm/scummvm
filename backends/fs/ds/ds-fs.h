@@ -142,7 +142,7 @@ public:
 	 */
 	GBAMPFileSystemNode(const GBAMPFileSystemNode *node);
 
-	virtual bool exists() const { return _isValid || _isDirectory; }		//FIXME: this is just a stub
+	virtual bool exists() const { return _isValid || _isDirectory; }	
 	virtual String getDisplayName() const {  return _displayName; }
 	virtual String getName() const {  return _displayName; }
 	virtual String getPath() const { return _path; }
