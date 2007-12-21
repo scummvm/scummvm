@@ -297,7 +297,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // CD version
 		{
 			"kyra2",
-			0,
+			"CD",
 			AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
@@ -305,10 +305,10 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA2_CD_FLAGS
 	},
-	{ // CD version
+	{
 		{
 			"kyra2",
-			0,
+			"CD",
 			AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
@@ -316,10 +316,10 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA2_CD_FLAGS
 	},
-	{ // CD version
+	{
 		{
 			"kyra2",
-			0,
+			"CD",
 			AD_ENTRY1("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032"),
 			Common::FR_FRA,
 			Common::kPlatformPC,
@@ -328,7 +328,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FLAGS
 	},
 
-	{
+	{ // Demo
 		{
 			"kyra2",
 			"Demo",
