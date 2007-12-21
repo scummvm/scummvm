@@ -377,6 +377,26 @@ const char *ITEinterfaceTextStrings[][52] = {
 		"Text zeigen",
 		"Wie lautet die Antwort?"
 	},
+	// Italian fan translation
+	{
+		"Vai verso", "Guarda", "Prendi", "Parla con", "Apri",
+		"Chiudi", "Usa", "Dai", "Opzioni", "Test",
+		"Demo", "Aiuto", "Uscire", "Veloce", "Lento",
+		"On", "Off", "Continua il Gioco", "Carica", "Salva",
+		"Controlli", "Velocit\224 testo", "Musica", "Suoni", "Annulla",
+		"Fine", "OK", "Med", "Click", "10%",
+		"20%", "30%", "40%", "50%", "60%",
+		"70%", "80%", "90%", "Max", "Terminare il Gioco?",
+		"Caricamento OK!", "Immettere un nome", "Dai %s a %s", "Usa %s con %s",
+		"[Nuovo Salvataggio]",
+		"Non posso raccoglierlo.",
+		"Non ci vedo nulla di speciale.",
+		"Non c'\232 posto per aprirlo.",
+		"Nessuna apertura da chiudere.",
+		"Non saprei come farlo.",
+		"Dialoghi",
+		"Come risponderebbe Rif?"
+	},
 	// Spanish IHNM
 	{
 		NULL, NULL, NULL, NULL, NULL,
@@ -398,28 +418,7 @@ const char *ITEinterfaceTextStrings[][52] = {
 		NULL,
 		NULL,
 		NULL
-	},
-	// Italian fan translation of IHNM
-	{
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, "Uscire?",
-		"Load Successful!", "Nome del salvataggio", "Dai %s a %s", "Usa %s con %s",
-		// This was left untouched in the Italian fan translation
-		"[New Save Game]",
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL
-	},
+	}
 };
 
 Point pieceOrigins[PUZZLE_PIECES] = {
@@ -448,6 +447,10 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 	{ "Schraubendreher", "Zange", "Schraubzwinge", "Holzzwinge", "Wasserwaage",
 	"Bindfaden", "Hobel", "Schusterhammer", "Bandma$", "Beil",
 	"Schere", "Winkel", "S\204ge", "Hammer", "Pinsel"
+	},
+	{ "cacciavite", "pinze", "morsa", "morsa da legno", "livella",
+	"spago", "pialla", "martello", "metro a nastro", "accetta",
+	"cesoie", "righello", "sega", "mazza", "pennello"
 	}
 };
 
@@ -461,6 +464,11 @@ const char *hintStr[][4] = {
 	"Schau, in welche Ecke die wenigsten Teile passen, und fang dort an.",
 	"Untersuche jede Ecke und jede Seite auf Teile, die dort passen k\224nnen.",
 	"Ich sehe nichts an der falschen Stelle."
+	},
+	{ "Controlla prima quali pezzi si inseriscono meglio in ogni angolo.",
+	"Controlla quale angolo ha il minor numero di pezzi che combaciano, e parti da quello.",
+	"Controlla ogni nuovo angolo e lato per ogni pezzo che combacia.",
+	"Non vedo nulla fuori posto."
 	}
 };
 
@@ -476,6 +484,12 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 	"\231hm...\216hm..."
 	"Psst! \047n Tip vielleicht?"
 	"Ja, wei$t Du... ich h\204tte das anders gemacht."
+	},
+	{ "Hey, Volpe! Serve un suggerimento?",
+	"Hai bisogno di aiuto?",
+	"Umm...Umm...",
+	"Psst! Serve un aiutino?",
+	"Io, sai, l'avrei fatto diversamente."
 	}
 };
 
@@ -495,6 +509,10 @@ const char *sakkaStr[][NUM_SAKKA] = {
 	{ "Hey, Du darfst dem Pr\201fling nicht helfen!",
 	"Hallo?! Dies soll eine Pr\201fung sein!",
 	"Also, Jungs. Schummeln steht nicht in den Regeln!"
+	},
+	{ "Hey, non si dovrebbero aiutare i candidati!",
+	"Ragazzi! Questo dovrebbe essere un test!",
+	"Forza ragazzi, non si pu\242!"
 	}
 };
 
@@ -510,6 +528,12 @@ const char *whineStr[][NUM_WHINES] = {
 	"Seufz..."
 	"Ich glaube, Du hast ein Brett vor dem Kopf, Sakka!",
 	"Hm, ich kann mich an keine Regel erinnern, die Tips verbietet."
+	},
+	{ "Ooo, suvvia Sakka!",
+	"Un indizio non guaster\224, no?",
+	"Sigh...",
+	"Credo che questa faccenda ti abbia dato alla testa, Sakka!",
+	"Beh, non ricordo regole specifiche contro i suggerimenti."
 	}
 };
 
@@ -523,6 +547,11 @@ const char *optionsStr[][4] = {
 	"\"Ja, ich m\224chte einen Tip, bitte.\"",
 	"\"Nein danke, ich m\224chte das alleine l\224sen.\"",
 	"Pssst... %s... falsche Stelle..."
+	},
+	{ "\"Far\242 questo puzzle pi\249 tardi.\"",
+	"\"Si, grazie. Ne avrei bisogno.\"",
+	"\"No, grazie, voglio provare a risolverlo da solo.\"",
+	"penso che la tessera %s sia nel posto sbagliato."
 	}
 };
 

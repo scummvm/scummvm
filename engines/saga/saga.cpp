@@ -395,10 +395,10 @@ const char *SagaEngine::getTextString(int textStringId) {
 		case Common::DE_DEU:
 			lang = 1;
 			break;
-		case Common::ES_ESP:
+		case Common::IT_ITA:
 			lang = 2;
 			break;
-		case Common::IT_ITA:
+		case Common::ES_ESP:
 			lang = 3;
 			break;
 		default:

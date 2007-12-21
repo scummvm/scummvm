@@ -187,6 +187,7 @@ typedef Common::List<LoadSceneParams> SceneQueueList;
 
 #define INTRO_CAPTION_Y 170
 #define INTRO_DE_CAPTION_Y 160
+#define INTRO_IT_CAPTION_Y 160
 #define VOICE_PAD 50
 #define VOICE_LETTERLEN 90
 

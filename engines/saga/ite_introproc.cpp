@@ -44,6 +44,7 @@ namespace Saga {
 using Common::UNK_LANG;
 using Common::EN_ANY;
 using Common::DE_DEU;
+using Common::IT_ITA;
 
 LoadSceneParams ITE_IntroList[] = {
 	{RID_ITE_INTRO_ANIM_SCENE, kLoadByResourceId, NULL, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
@@ -100,7 +101,13 @@ Event *Scene::ITEQueueDialogue(Event *q_event, int n_dialogues, const IntroDialo
 	textEntry.useRect = true;
 	textEntry.rect.left = 0;
 	textEntry.rect.right = _vm->getDisplayWidth();
-	textEntry.rect.top = (_vm->getLanguage() == Common::DE_DEU) ? INTRO_DE_CAPTION_Y : INTRO_CAPTION_Y;
+	if (_vm->getLanguage() == Common::DE_DEU) {
+		textEntry.rect.top = INTRO_DE_CAPTION_Y;
+	} else if (_vm->getLanguage() == Common::IT_ITA) {
+		textEntry.rect.top = INTRO_IT_CAPTION_Y;
+	} else {
+		textEntry.rect.top = INTRO_CAPTION_Y;
+	}
 	textEntry.rect.bottom = _vm->getDisplayHeight();
 	textEntry.font = kKnownFontMedium;
 	textEntry.flags = (FontEffectFlags)(kFontOutline | kFontCentered);
@@ -364,7 +371,12 @@ int Scene::SC_ITEIntroCave1Proc(int param, void *refCon) {
 int Scene::ITEIntroCave1Proc(int param) {
 	Event event;
 	Event *q_event;
-	int lang = (_vm->getLanguage() == Common::DE_DEU) ? 1 : 0;
+	int lang = 0;
+	
+	if (_vm->getLanguage() == Common::DE_DEU)
+		lang = 1;
+	else if (_vm->getLanguage() == Common::IT_ITA)
+		lang = 2;
 
 	static const IntroDialogue dialogue[][4] = {
 		{ { // English
@@ -407,6 +419,27 @@ int Scene::ITEIntroCave1Proc(int param) {
 			"Sie kannten das Geheimnis des Fluges, das Geheimnis "
 			"der Fr\224hlichkeit und andere Geheimnisse, die "
 			"unsere Vorstellungskraft \201bersteigen."
+		} },
+		{ { // Italian fan translation
+			RID_CAVE_VOICE_0,
+			"Guardiamo il cielo, guardiamo la terra, guardiamo "
+			"l'acqua, e ci chiediamo: Siamo forse soli?"
+		},
+		{
+			RID_CAVE_VOICE_1,
+			"Molto tempo prima che noi esistessimo, gli Umani "
+			"dominavano la terra."
+		},
+		{
+			RID_CAVE_VOICE_2,
+			"Fecero cose meravigliose, e mossero intere "
+			"montagne."
+		},
+		{
+			RID_CAVE_VOICE_3,
+			"Conoscevano il Segreto del Volo, il Segreto della "
+			"Felicit\224, ed altri segreti oltre ogni nostra "
+			"immaginazione."
 		} }
 	};
 
@@ -451,7 +484,12 @@ int Scene::SC_ITEIntroCave2Proc(int param, void *refCon) {
 int Scene::ITEIntroCave2Proc(int param) {
 	Event event;
 	Event *q_event;
-	int lang = (_vm->getLanguage() == Common::DE_DEU) ? 1 : 0;
+	int lang = 0;
+	
+	if (_vm->getLanguage() == Common::DE_DEU)
+		lang = 1;
+	else if (_vm->getLanguage() == Common::IT_ITA)
+		lang = 2;
 
 	static const IntroDialogue dialogue[][3] = {
 		{ { // English
@@ -482,6 +520,21 @@ int Scene::ITEIntroCave2Proc(int param) {
 		{
 			RID_CAVE_VOICE_6,
 			"Wir sind ihre Kinder."
+		} },
+		{ { // Italian fan translation
+			RID_CAVE_VOICE_4,
+			"Gli Umani conoscevano anche il Segreto della Vita, "
+			"e lo usarono per darci i Quattro Grandi Doni:"
+
+		},
+		{
+			RID_CAVE_VOICE_5,
+			"Il pensiero, le emozioni, la parola e la manualit\224."
+
+		},
+		{
+			RID_CAVE_VOICE_6,
+			"Siamo i loro figli."
 		} }
 	};
 
@@ -533,7 +586,12 @@ int Scene::SC_ITEIntroCave3Proc(int param, void *refCon) {
 int Scene::ITEIntroCave3Proc(int param) {
 	Event event;
 	Event *q_event;
-	int lang = (_vm->getLanguage() == Common::DE_DEU) ? 1 : 0;
+	int lang = 0;
+
+	if (_vm->getLanguage() == Common::DE_DEU)
+		lang = 1;
+	else if (_vm->getLanguage() == Common::IT_ITA)
+		lang = 2;
 
 	static const IntroDialogue dialogue[][3] = {
 		{ { // English
@@ -564,6 +622,22 @@ int Scene::ITEIntroCave3Proc(int param) {
 			"Sie liebten uns, und w\204ren wir bereit gewesen, "
 			"h\204tten sie uns sicherlich das Geheimnis der "
 			"Fr\224hlichkeit offenbart."
+		} },
+		{ { // Italian fan translation
+			RID_CAVE_VOICE_7,
+			"Ci insegnarono come usare le mani e come parlare. "
+
+		},
+		{
+			RID_CAVE_VOICE_8,
+			"Ci mostrarono le gioie che l'uso della mente "
+			"pu\242 dare. "
+		},
+		{
+			RID_CAVE_VOICE_9,
+			"Ci amarono, ed una volta pronti, ci avrebbero "
+			"sicuramente svelato il Segreto della Felicit\224."
+
 		} }
 	};
 
@@ -615,7 +689,12 @@ int Scene::SC_ITEIntroCave4Proc(int param, void *refCon) {
 int Scene::ITEIntroCave4Proc(int param) {
 	Event event;
 	Event *q_event;
-	int lang = (_vm->getLanguage() == Common::DE_DEU) ? 1 : 0;
+	int lang = 0;
+
+	if (_vm->getLanguage() == Common::DE_DEU)
+		lang = 1;
+	else if (_vm->getLanguage() == Common::IT_ITA)
+		lang = 2;
 
 	static const IntroDialogue dialogue[][4] = {
 		{ { // English
@@ -655,6 +734,26 @@ int Scene::ITEIntroCave4Proc(int param) {
 			RID_CAVE_VOICE_13,
 			"Und wird uns eines Tages das gleiche Schicksal "
 			"ereilen?"
+		} },
+		{ { // Italian fan translation
+			RID_CAVE_VOICE_10,
+			"Ed ora che guardiamo il cielo, la terra e l'acqua "
+			"che abbiamo ereditato, pensiamo: Perch\233 partirono?"
+
+		},
+		{
+			RID_CAVE_VOICE_11,
+			"Vivono ancora, nelle stelle? Nelle profondit\224 "
+			"dell'oceano? Nel vento?"
+		},
+		{
+			RID_CAVE_VOICE_12,
+			"Ci domandiamo, il loro destino fu felice o nefasto?"
+		},
+		{
+			RID_CAVE_VOICE_13,
+			"E un giorno, condivideremo anche noi lo stesso "
+			"destino?"
 		} }
 	};
 
@@ -710,13 +809,16 @@ int Scene::ITEIntroValleyProc(int param) {
 	static const IntroCredit credits[] = {
 		{EN_ANY, kITEAny, kCHeader, "Producer"},
 		{DE_DEU, kITEAny, kCHeader, "Produzent"},
+		{IT_ITA, kITEAny, kCHeader, "Produttore"},
 		{UNK_LANG, kITEAny, kCText, "Walter Hochbrueckner"},
 		{EN_ANY, kITEAny, kCHeader, "Executive Producer"},
 		{DE_DEU, kITEAny, kCHeader, "Ausf\201hrender Produzent"},
+		{IT_ITA, kITEAny, kCHeader, "Produttore Esecutivo"},
 		{UNK_LANG, kITEAny, kCText, "Robert McNally"},
 		{UNK_LANG, kITEWyrmKeep, kCHeader, "2nd Executive Producer"},
 		{EN_ANY, kITENotWyrmKeep, kCHeader, "Publisher"},
 		{DE_DEU, kITENotWyrmKeep, kCHeader, "Herausgeber"},
+		{IT_ITA, kITENotWyrmKeep, kCHeader, "Editore"},
 		{UNK_LANG, kITEAny, kCText, "Jon Van Caneghem"}
 	};
 
@@ -810,13 +912,17 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 	static const IntroCredit credits1[] = {
 		{EN_ANY, kITEAny, kCHeader, "Game Design"},
 		{DE_DEU, kITEAny, kCHeader, "Spielentwurf"},
+		{IT_ITA, kITEAny, kCHeader, "Progetto"},
 		{UNK_LANG, kITEAny, kCText, "Talin, Joe Pearce, Robert McNally"},
 		{EN_ANY, kITEAny, kCText, "and Carolly Hauksdottir"},
 		{DE_DEU, kITEAny, kCText, "und Carolly Hauksdottir"},
+		{IT_ITA, kITEAny, kCText, "e Carolly Hauksdottir"},
 		{EN_ANY, kITEAny, kCHeader, "Screenplay and Dialog"},
 		{EN_ANY, kITEAny, kCText, "Robert Leh, Len Wein, and Bill Rotsler"},
 		{DE_DEU, kITEAny, kCHeader, "Geschichte und Dialoge"},
-		{DE_DEU, kITEAny, kCText, "Robert Leh, Len Wein und Bill Rotsler"}
+		{DE_DEU, kITEAny, kCText, "Robert Leh, Len Wein und Bill Rotsler"},
+		{IT_ITA, kITEAny, kCHeader, "Sceneggiatura e Dialoghi"},
+		{IT_ITA, kITEAny, kCText, "Robert Leh, Len Wein e Bill Rotsler"}
 	};
 
 	int n_credits1 = ARRAYSIZE(credits1);
@@ -826,16 +932,20 @@ int Scene::ITEIntroTreeHouseProc(int param) {
 		{UNK_LANG, kITEWyrmKeep, kCText, "Allison Hershey"},
 		{EN_ANY, kITEAny, kCHeader, "Art"},
 		{DE_DEU, kITEAny, kCHeader, "Grafiken"},
+		{IT_ITA, kITEAny, kCHeader, "Grafica"},
 		{UNK_LANG, kITEWyrmKeep, kCText, "Ed Lacabanne, Glenn Price, April Lee,"},
 		{UNK_LANG, kITENotWyrmKeep, kCText, "Edward Lacabanne, Glenn Price, April Lee,"},
 		{UNK_LANG, kITEWyrmKeep, kCText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
 		{EN_ANY, kITEWyrmKeep, kCText, "Allison Hershey and Talin"},
 		{DE_DEU, kITEWyrmKeep, kCText, "Allison Hershey und Talin"},
+		{IT_ITA, kITEWyrmKeep, kCText, "Allison Hershey e Talin"},
 		{EN_ANY, kITENotWyrmKeep, kCText, "Lisa Iennaco, Brian Dowrick, Reed"},
 		{EN_ANY, kITENotWyrmKeep, kCText, "Waller, Allison Hershey and Talin"},
 		{DE_DEU, kITEAny, kCText, "Waller, Allison Hershey und Talin"},
+		{IT_ITA, kITEAny, kCText, "Waller, Allison Hershey e Talin"},
 		{EN_ANY, kITENotWyrmKeep, kCHeader, "Art Direction"},
 		{DE_DEU, kITENotWyrmKeep, kCHeader, "Grafische Leitung"},
+		{IT_ITA, kITENotWyrmKeep, kCHeader, "Direzione Grafica"},
 		{UNK_LANG, kITENotWyrmKeep, kCText, "Allison Hershey"}
 	};
 
@@ -897,15 +1007,18 @@ int Scene::ITEIntroFairePathProc(int param) {
 	static const IntroCredit credits1[] = {
 		{EN_ANY, kITEAny, kCHeader, "Programming"},
 		{DE_DEU, kITEAny, kCHeader, "Programmiert von"},
+		{IT_ITA, kITEAny, kCHeader, "Programmazione"},
 		{UNK_LANG, kITEAny, kCText, "Talin, Walter Hochbrueckner,"},
 		{EN_ANY, kITEAny, kCText, "Joe Burks and Robert Wiggins"},
 		{DE_DEU, kITEAny, kCText, "Joe Burks und Robert Wiggins"},
+		{IT_ITA, kITEAny, kCText, "Joe Burks e Robert Wiggins"},
 		{EN_ANY, kITEPCCD | kITEWyrmKeep, kCHeader, "Additional Programming"},
 		{EN_ANY, kITEPCCD | kITEWyrmKeep, kCText, "John Bolton"},
 		{UNK_LANG, kITEMac, kCHeader, "Macintosh Version"},
 		{UNK_LANG, kITEMac, kCText, "Michael McNally and Robert McNally"},
 		{EN_ANY, kITEAny, kCHeader, "Music and Sound"},
 		{DE_DEU, kITEAny, kCHeader, "Musik und Sound"},
+		{IT_ITA, kITEAny, kCHeader, "Musica e Sonoro"},
 		{UNK_LANG, kITEAny, kCText, "Matt Nathan"}
 	};
 
@@ -914,6 +1027,7 @@ int Scene::ITEIntroFairePathProc(int param) {
 	static const IntroCredit credits2[] = {
 		{EN_ANY, kITEAny, kCHeader, "Directed by"},
 		{DE_DEU, kITEAny, kCHeader, "Regie"},
+		{IT_ITA, kITEAny, kCHeader, "Regia"},
 		{UNK_LANG, kITEAny, kCText, "Talin"}
 	};
 
