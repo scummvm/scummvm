@@ -129,6 +129,7 @@ void	setSnapToBorder(bool enable);
 void 	setIndyFightState(bool st);
 bool 	getIndyFightState();
 bool    isCpuScalerEnabled();
+void	setCpuScalerEnable(bool enable);
 
 // Display
 bool 	getIsDisplayMode8Bit();

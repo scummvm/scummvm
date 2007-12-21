@@ -1,16 +1,51 @@
 #BUILD_PLUGINS = 1
 #libndsdir = $(DEVKITPRO)/libnds
-libndsdir = /home/neil/devkitpro/libnds
+libndsdir = /home/neil/devkitpror21/libnds
 
 # Select the build you want by uncommenting one of the following lines:
 
 
-DS_BUILD_A = 1
+
+ifeq ($(SCUMM_BUILD),a)
+        DS_BUILD_A = 1
+endif
+
+ifeq ($(SCUMM_BUILD),b)
+        DS_BUILD_B = 1
+endif
+
+ifeq ($(SCUMM_BUILD),c)
+        DS_BUILD_C = 1
+endif
+
+ifeq ($(SCUMM_BUILD),d)
+        DS_BUILD_D = 1
+endif
+
+ifeq ($(SCUMM_BUILD),e)
+        DS_BUILD_E = 1
+endif
+
+ifeq ($(SCUMM_BUILD),f)
+        DS_BUILD_F = 1
+endif
+
+ifeq ($(SCUMM_BUILD),g)
+        DS_BUILD_G = 1
+endif
+
+#DS_BUILD_A = 1
 #DS_BUILD_B = 1
 #DS_BUILD_C = 1
-#DS_BUILD_D = 1
+#DS_BUILD_D = 1		# started!
 #DS_BUILD_E = 1
 #DS_BUILD_F = 1
+#DS_BUILD_G = 1
+
+# To do:
+# - FAT cache?
+
+
 
 # Uncomment the following line to build in support for MP3 audio
 # using libmad:
@@ -71,6 +106,7 @@ ifdef DS_BUILD_A
 	USE_ARM_GFX_ASM = 1
 	DISABLE_CRUISE = 1
 	DISABLE_DRASCULA = 1
+	DISABLE_IGOR = 1
 	BUILD=scummvm-A
 endif
 
@@ -81,10 +117,10 @@ ifdef DS_BUILD_B
 	DISABLE_SCUMM = 1
 	DISABLE_SCUMM_7_8 = 1
 	DISABLE_AGOS = 1
-	#DISABLE_SKY = 1
+	#DISABLE_SKY = 1#
 	DISABLE_SWORD1 = 1
 	DISABLE_SWORD2 = 1
-	#DISABLE_QUEEN = 1
+	#DISABLE_QUEEN = 1#
 	DISABLE_SAGA = 1
 	DISABLE_KYRA = 1
 	DISABLE_GOB = 1
@@ -95,6 +131,7 @@ ifdef DS_BUILD_B
 	DISABLE_PARALLACTION = 1
 	DISABLE_CRUISE = 1
 	DISABLE_DRASCULA = 1
+	DISABLE_IGOR = 1
 	BUILD=scummvm-B
 endif
 
@@ -119,6 +156,7 @@ ifdef DS_BUILD_C
 	DISABLE_PARALLACTION = 1
 	DISABLE_CRUISE = 1
 	DISABLE_DRASCULA = 1
+	DISABLE_IGOR = 1
 	BUILD=scummvm-C
 endif
 
@@ -143,6 +181,7 @@ ifdef DS_BUILD_D
 	DISABLE_PARALLACTION = 1
 	DISABLE_CRUISE = 1
 	DISABLE_DRASCULA = 1
+	DISABLE_IGOR = 1
 	BUILD=scummvm-D
 endif
 
@@ -168,6 +207,7 @@ ifdef DS_BUILD_E
 	DISABLE_PARALLACTION = 1
 	DISABLE_CRUISE = 1
 	DISABLE_DRASCULA = 1
+	DISABLE_IGOR = 1
 	BUILD=scummvm-E
 endif
 
@@ -193,9 +233,39 @@ ifdef DS_BUILD_F
 	DISABLE_PARALLACTION = 1
 	DISABLE_CRUISE = 1
 	DISABLE_DRASCULA = 1
+	DISABLE_IGOR = 1
 	BUILD=scummvm-F
 
 endif
+
+
+
+ifdef DS_BUILD_G
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_G
+	LOGO = logog.bmp
+	DISABLE_HE = 1
+	DISABLE_SCUMM = 1
+	DISABLE_SCUMM_7_8 = 1
+	DISABLE_AGOS = 1
+	DISABLE_SKY = 1
+	DISABLE_SWORD1 = 1
+	DISABLE_SWORD2 = 1
+	DISABLE_QUEEN = 1
+	DISABLE_SAGA = 1
+	DISABLE_KYRA = 1
+	DISABLE_GOB = 1
+	#DISABLE_LURE = 1
+	DISABLE_CINE = 1
+	DISABLE_AGI = 1
+	DISABLE_TOUCHE = 1
+	DISABLE_PARALLACTION = 1
+	DISABLE_CRUISE = 1
+	DISABLE_DRASCULA = 1
+	DISABLE_IGOR = 1
+	BUILD=scummvm-G
+
+endif
+
 
 ARM7BIN	:= -7 $(CURDIR)/../../arm7/arm7.bin
 ICON 		:= -b ../../../logo.bmp "ScummVM;By Neil Millstone;"
@@ -219,7 +289,18 @@ ifdef USE_PROFILER
 endif
 		
 CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor	 -Wno-non-virtual-dtor \
-		-fno-exceptions -fno-rtti
+		-fno-exceptions -fno-rtti -mthumb-interwork
+
+#		-mthumb
+
+#		-fno-gcse\
+#		-fno-schedule-insns2
+
+#		-fno-inline-functions-called-once\
+#		-fno-gcse-lm\
+#		-fno-rerun-cse-after-loop\
+#		-fno-cse-follow-jumps -fno-cse-skip-blocks\
+
 
 ASFLAGS = -mcpu=arm9tdmi -mthumb-interwork
 DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DARM
@@ -228,7 +309,7 @@ ifdef USE_MAD
 endif
 
 
-LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt
+LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -Wl,--wrap,time -mno-fpu -Wl,-Map,map.txt
 
 INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)/source -I$(portdir)/source/compressor -I$(portdir)/source/fat \
 			-I$(srcdir)/backends/fs  -I$(srcdir)/backends/fs/ds -I$(portdir)/data -I$(libndsdir)/include -I$(portdir)/../commoninclude\
@@ -302,9 +383,17 @@ FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o
 
 LIBCARTRESET_OBJS := $(portdir)/source/libcartreset/cartreset.o
 			
-# Files in this list will be compiled with -O2, otherwise they will be compiled with -Os
-OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp mixer.cpp
+# Files in this list will be optimisied for speed, otherwise they will be optimised for space
+OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp mixer.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
 #OPTLIST := 
+
+# Compiler options for files which should be optimised for speed
+OPT_SPEED := -O3
+
+# Compiler options for files which should be optimised for space
+OPT_SIZE := -Os -mthumb -fno-gcse -fno-schedule-insns2
+
+
 			
 OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS) 
 		
@@ -396,7 +485,7 @@ else
 
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	$(CXX) -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d"              $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o $(if $(findstring $(notdir $<), $(OPTLIST)), -O2, -Os)
+	$(CXX) -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o 
 endif
 
 

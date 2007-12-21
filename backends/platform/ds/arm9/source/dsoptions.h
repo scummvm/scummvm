@@ -43,6 +43,7 @@ public:
 protected:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	void togglePause();
+	void updateConfigManager();
 
 	GUI::SliderWidget* _touchX;
 	GUI::SliderWidget* _touchY;

@@ -41,9 +41,8 @@ class DSTimerManager : public DefaultTimerManager {
 
 
 class OSystem_DS : public OSystem {
-public:
+protected:
 
-	static OSystem_DS *instance() { return _instance; }
 	int eventNum;
 	int lastPenFrame;
 	
@@ -55,17 +54,21 @@ public:
 	DSAudioMixer* _mixer;
 	DSTimerManager* _timer;
 	Graphics::Surface _framebuffer;
+	bool _frameBufferExists;
 
 
 	static OSystem_DS* _instance;
 	
+	Graphics::Surface* createTempFrameBuffer();
+
+public:
 	typedef void (*SoundProc)(void *param, byte *buf, int len);
 	typedef int  (*TimerProc)(int interval);
 
-public:
-
 	OSystem_DS();
 	virtual ~OSystem_DS();
+
+	static OSystem_DS *instance() { return _instance; }
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);

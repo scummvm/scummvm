@@ -31,12 +31,12 @@ namespace DS {
 
 struct key_data {
 	char keyNum;
-	char x, y;
+	signed char x, y;
 	int character;
 	bool pressed;
 };
 
-#define DS_NUM_KEYS 60
+#define DS_NUM_KEYS 72
 #define DS_SHIFT 2
 #define DS_BACKSPACE 8
 #define DS_RETURN 13
@@ -119,6 +119,20 @@ key_data keys[DS_NUM_KEYS] = {
 	
 	// Close button
 	{56,				30,		0,		Common::KEYCODE_INVALID},
+
+	// Function keys (needed for AGI)
+	{57,				4,		-2,		Common::KEYCODE_F1},
+	{58,				6,		-2,		Common::KEYCODE_F2},
+	{59,				8,		-2,		Common::KEYCODE_F3},
+	{60,				10,		-2,		Common::KEYCODE_F4},
+	{61,				14,		-2,		Common::KEYCODE_F5},
+	{62,				16,		-2,		Common::KEYCODE_F6},
+	{63,				18,		-2,		Common::KEYCODE_F7},
+	{64,				20,		-2,		Common::KEYCODE_F8},
+	{65,				24,		-2,		Common::KEYCODE_F9},
+	{66,				26,		-2,		Common::KEYCODE_F10},
+	{67,				28,		-2,		Common::KEYCODE_F11},
+	{68,				30,		-2,		Common::KEYCODE_F12},
 	
 };
 
@@ -155,14 +169,14 @@ void restoreVRAM(int tileBase, int mapBase, u16* saveSpace) {
 }
 
 void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
-
+	int keyboardDataSize = 4736 * 2;
 
 	for (int r = 0; r < 32 * 32; r++) {
 //		*saveSpace++ = ((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r];
-		((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r] = 127;
+		((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r] = 0;
 	}
 	
-	for (int r = 0; r < 4096; r++) {
+	for (int r = 0; r < KEYBOARD_DATA_SIZE / 2; r++) {
 //		*saveSpace++ = ((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r];
 		((u16 *) CHAR_BASE_BLOCK_SUB(tileBase))[r] = ((u16 *) (keyboard_raw))[r];
 	}
@@ -174,7 +188,7 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 	// this is the font
 	for (int tile = 0; tile < 94; tile++) {
 		
-		u16* tileAddr = (u16 *) (CHAR_BASE_BLOCK_SUB(tileBase) + (8192 + (tile * 32)));
+		u16* tileAddr = (u16 *) (CHAR_BASE_BLOCK_SUB(tileBase) + ((KEYBOARD_DATA_SIZE) + (tile * 32)));
 		u8* src = ((u8 *) (_8x8font_tga_raw)) + 18 + tile * 8;
 
 		for (int y = 0 ; y < 8; y++) {
@@ -208,7 +222,7 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 	}
 	
 	keyboardX = -2;
-	keyboardY = 1;
+	keyboardY = 2;
 	
 	DS::mapBase = mapBase;
 	DS::tileBase = tileBase;
@@ -223,11 +237,11 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 	baseAddress = base;
 	
 	for (int r = 0; r < DS_NUM_KEYS; r++) {
-		base[(y + keys[r].y) * 32 + x + keys[r].x] = keys[r].keyNum * 2;
-		base[(y + keys[r].y) * 32 + x + keys[r].x + 1] = keys[r].keyNum * 2 + 1;
+		base[(y + keys[r].y) * 32 + x + keys[r].x] = 10 + keys[r].keyNum * 2;
+		base[(y + keys[r].y) * 32 + x + keys[r].x + 1] = 10 + keys[r].keyNum * 2 + 1;
 		
-		base[(y + keys[r].y + 1) * 32 + x + keys[r].x] = 128 + keys[r].keyNum * 2;
-		base[(y + keys[r].y + 1) * 32 + x + keys[r].x + 1] = 128 + keys[r].keyNum * 2 + 1;
+		base[(y + keys[r].y + 1) * 32 + x + keys[r].x] = 10 + 148 + keys[r].keyNum * 2;
+		base[(y + keys[r].y + 1) * 32 + x + keys[r].x + 1] = 10 + 148 + keys[r].keyNum * 2 + 1;
 		
 		keys[r].pressed = false;
 	}
@@ -240,7 +254,7 @@ void drawAutoComplete() {
 
 	for (int y = 12; y < 24; y++) {
 		for (int x = 0; x < 32; x++) {
-			baseAddress[y * 32 + x] = 127;
+			baseAddress[y * 32 + x] = 0;
 		}
 	}
 			
@@ -252,7 +266,7 @@ void drawAutoComplete() {
 		for (int p = 0; p < strlen(autoCompleteWord[r]); p++) {
 			char c = autoCompleteWord[r][p];
 			
-			int tile = c - 32 + 255;
+			int tile = c - 33 + (KEYBOARD_DATA_SIZE / 32);
 
 			if (selectedCompletion == r) {
 				tile |= 0x1000;
@@ -354,6 +368,34 @@ void updateTypeEvents()
 	}
 }
 
+void createKeyEvent(int keyNum, Common::Event& event)
+{
+	event.kbd.flags = 0;
+
+	if ((keys[keyNum].character >= '0') && (keys[keyNum].character <= '9')) {
+
+		if (!DS::shiftState) {
+			event.kbd.ascii = keys[keyNum].character;
+			event.kbd.keycode = (Common::KeyCode) keys[keyNum].character; //Common::KEYCODE_INVALID;
+		} else {
+			event.kbd.keycode = (Common::KeyCode) (Common::KEYCODE_F1 - (keys[keyNum].character - '1'));
+			event.kbd.ascii = 0;
+		}					
+	
+	} else if ((keys[keyNum].character >= 'A') && (keys[keyNum].character <= 'Z')) {
+		
+		if ((!DS::shiftState) && (!DS::capsLockState)) {
+			event.kbd.ascii = keys[keyNum].character + 32; // Make key lowercase.
+		} else {
+			event.kbd.ascii = keys[keyNum].character;
+		}
+		
+		event.kbd.keycode = (Common::KeyCode) event.kbd.ascii;
+	} else {
+		event.kbd.ascii = keys[keyNum].character;
+		event.kbd.keycode = (Common::KeyCode) keys[keyNum].character;
+	}				
+}
 
 void addKeyboardEvents() {
 	updateTypeEvents();
@@ -398,40 +440,17 @@ void addKeyboardEvents() {
 				if ((keys[r].character == Common::KEYCODE_INVALID)) {
 					// Close button
 					DS::closed = true;
-				} else	if ((keys[r].character >= '0') && (keys[r].character <= '9')) {
-
-					if (!DS::shiftState) {
-						event.kbd.ascii = keys[r].character;
-						event.kbd.keycode = Common::KEYCODE_INVALID;
-					} else {
-						event.kbd.keycode = (Common::KeyCode) (Common::KEYCODE_F1 - (keys[r].character - '1'));
-						event.kbd.ascii = 0;
-					}					
-				
-				} else if ((keys[r].character >= 'A') && (keys[r].character <= 'Z')) {
-					
-					if ((!DS::shiftState) && (!DS::capsLockState)) {
-						event.kbd.ascii = keys[r].character + 32; // Make key lowercase.
-					} else {
-						event.kbd.ascii = keys[r].character;
-					}
-					
-					event.kbd.keycode = (Common::KeyCode) event.kbd.ascii;
 				} else {
-					event.kbd.ascii = keys[r].character;
-					event.kbd.keycode = (Common::KeyCode) keys[r].character;
+					createKeyEvent(r, event);
 				}				
-			
-				
 				
 				//event.kbd.keycode = keys[r].character;		
 				//event.kbd.ascii = keys[r].character;		
 				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.flags = 0;
 				system->addEvent(event);
 
-				event.type = Common::EVENT_KEYUP;
-				system->addEvent(event);
+//				event.type = Common::EVENT_KEYUP;
+//				system->addEvent(event);
 				
 				switch (keys[r].character) {
 					case DS_SHIFT: {
@@ -467,9 +486,18 @@ void addKeyboardEvents() {
 	}
 	
 	if (DS::getPenReleased()) {
+		
 		for (int r = 0; r < DS_NUM_KEYS; r++) {
 			if (keys[r].pressed) {
 				DS::setKeyHighlight(r, false);
+
+			   	OSystem_DS* system = OSystem_DS::instance();
+				
+				Common::Event event;
+				createKeyEvent(r, event);
+				event.type = Common::EVENT_KEYUP;
+				system->addEvent(event);
+
 				keys[r].pressed = false;
 			}
 		}	

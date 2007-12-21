@@ -24,7 +24,20 @@
 #include "nds/dma.h"
 #include "osystem_ds.h"
 
+/*
+extern "C" time_t __wrap_time(time_t* t) {
+	if (t) {
+		*t = OSystem_DS::instance()->getMillis() / 1000;
+	}
+
+	return OSystem_DS::instance()->getMillis() / 1000;
+}
+*/
+
+
+
 time_t DS_time(time_t) {
+	consolePrintf("Time!");
 	if (OSystem_DS::instance()) {
 		return 0xABCD1234 + (OSystem_DS::instance()->getMillis() / 1000);
 	} else {
@@ -33,6 +46,7 @@ time_t DS_time(time_t) {
 }
 
 time_t DS_time(long* t) {
+	consolePrintf("Time!");
 	if (OSystem_DS::instance()) {
 		if (t) *t = 0xABCD1234 + (OSystem_DS::instance()->getMillis() / 1000);
 		return 0xABCD1234 + (OSystem_DS::instance()->getMillis() / 1000);

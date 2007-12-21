@@ -41,13 +41,15 @@
 OSystem_DS* OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
+	: eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _timer(NULL), _frameBufferExists(false)
 {
-	eventNum = 0;
-	lastPenFrame = 0;
-	queuePos = 0;
+//	eventNum = 0;
+//	lastPenFrame = 0;
+//	queuePos = 0;
 	_instance = this;
-	_mixer = NULL;
-    _timer = NULL;
+//	_mixer = NULL;
+  //  _timer = NULL;
+	//_frameBufferExists = false;
 }
 
 OSystem_DS::~OSystem_DS() {
@@ -229,6 +231,18 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 
 void OSystem_DS::updateScreen()
 {
+
+	if (_frameBufferExists)
+	{
+		// Copy temp framebuffer back to screen
+		copyRectToScreen((byte *)_framebuffer.pixels, _framebuffer.pitch, 0, 0, _framebuffer.w, _framebuffer.h);
+	
+		// Free memory
+		_framebuffer.free();
+
+		_frameBufferExists = false;
+	}
+
 	DS::displayMode16BitFlipBuffer();
 	DS::doSoundCallback();
 //	DS::doTimerCallback();
@@ -495,51 +509,53 @@ Common::SaveFileManager* OSystem_DS::getSavefileManager()
 	}
 }
 
-Graphics::Surface *OSystem_DS::lockScreen() {
-/*	// For now, we create a full temporary screen surface, to which we copy the
+
+Graphics::Surface* OSystem_DS::createTempFrameBuffer() {
+	// For now, we create a full temporary screen surface, to which we copy the
 	// the screen content. Later unlockScreen will copy everything back.
 	// Not very nice nor efficient, but at least works, and is not worse
 	// than in the bad old times where we used grabRawScreen + copyRectToScreen.
-	
+//	consolePrintf("lockScreen()\n");
 	_framebuffer.create(DS::getGameWidth(), DS::getGameHeight(), 1);
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
-<<<<<<< .working
 	
+	size_t imageStrideInBytes = DS::isCpuScalerEnabled()? DS::getGameWidth() : 512;
+	size_t imageStrideInWords = imageStrideInBytes / 2;
 
-=======
-	
-    size_t imageStrideInBytes = DS::isCpuScalerEnabled()? DS::getGameWidth() : 512;
-    size_t imageStrideInWords = imageStrideInBytes / 2;
-
->>>>>>> .merge-right.r28656
 	u16* image = (u16 *) DS::get8BitBackBuffer();
-	for (int y = 0; y <  DS::getGameHeight(); y++)
-	{
-<<<<<<< .working
-		DC_FlushRange(image + (y << 8), DS::getGameWidth());
-=======
+	for (int y = 0; y <  DS::getGameHeight(); y++) {
 		DC_FlushRange(image + (y * imageStrideInWords), DS::getGameWidth());
->>>>>>> .merge-right.r28656
-		for (int x = 0; x < DS::getGameWidth() >> 1; x++)
-		{
-<<<<<<< .working
-			*(((u16 *) (_framebuffer.pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y << 8 + x];
-=======
-			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y * imageStrideInWords + x];
->>>>>>> .merge-right.r28656
+		for (int x = 0; x < DS::getGameWidth() >> 1; x++) {
+			*(((u16 *) (_framebuffer.pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[(y << 8) + x];
+//			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[y * imageStrideInWords + x];
 		}
 	}
+//	consolePrintf("lockScreen() done\n");
+	_frameBufferExists = true;
 
-	return &_framebuffer;*/
+	return &_framebuffer;
+}
+
+
+Graphics::Surface *OSystem_DS::lockScreen() {
+	if (!_frameBufferExists) {
+		createTempFrameBuffer();
+	}
+
+	return &_framebuffer;
 }
 
 void OSystem_DS::unlockScreen() {
-/*	// Copy temp framebuffer back to screen
-	copyRectToScreen((byte *)_framebuffer.pixels, _framebuffer.pitch, 0, 0, _framebuffer.w, _framebuffer.h);
+
+//	consolePrintf("unlockScreen()\n");
+
+	// Copy temp framebuffer back to screen
+//	copyRectToScreen((byte *)_framebuffer.pixels, _framebuffer.pitch, 0, 0, _framebuffer.w, _framebuffer.h);
 
 	// Free memory
-	_framebuffer.free(); */
+//	_framebuffer.free();
+//	consolePrintf("unlockScreen() done\n");
 }
 
 void OSystem_DS::setFocusRectangle(const Common::Rect& rect) {

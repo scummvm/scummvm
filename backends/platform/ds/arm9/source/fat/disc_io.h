@@ -46,6 +46,10 @@
 #define REG_EXMEMCNT REG_EXEMEMCNT 
 #endif
 
+#ifndef REG_EXEMEMCNT
+#define REG_EXEMEMCNT REG_EXMEMCNT
+#endif
+
 //----------------------------------------------------------------------
 
 #if defined _CF_USE_DMA && defined _CF_ALLOW_UNALIGNED

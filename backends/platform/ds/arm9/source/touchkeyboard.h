@@ -23,11 +23,14 @@
 #ifndef _TOUCHKEYBOARD_H_
 #define _TOUCHKEYBOARD_H_
 
+#include "osystem_ds.h"
+
 namespace DS {
 
 static const int NUM_WORDS = 12;
+static const int KEYBOARD_DATA_SIZE = 4736 * 2;
 
-
+void createKeyEvent(int keyNum, Common::Event& event);
 
 void drawKeyboard(int tileBase, int mapBase, u16* saveSpace);
 void restoreVRAM(int tileBase, int mapBase, u16* saveSpace);

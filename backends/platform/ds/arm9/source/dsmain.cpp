@@ -210,6 +210,7 @@ int gameHeight = 200;
 
 // Scale
 bool twoHundredPercentFixedScale = false;
+bool cpuScalerEnable = false;
 #define NUM_SUPPORTED_GAMES 17
 
 #ifdef USE_PROFILER
@@ -282,8 +283,17 @@ TransferSound soundControl;
 
 bool isCpuScalerEnabled()
 {
-	return (ConfMan.hasKey("cpu_scaler", "ds") && ConfMan.getBool("cpu_scaler", "ds"));
+	return cpuScalerEnable;
 }
+
+
+void setCpuScalerEnable(bool enable) {
+	cpuScalerEnable = enable;
+}
+
+
+//	return (ConfMan.hasKey("cpu_scaler", "ds") && ConfMan.getBool("cpu_scaler", "ds"));
+
 
 //plays an 8 bit mono sample at 11025Hz
 void playSound(const void* data, u32 length, bool loop, bool adpcm, int rate)
@@ -352,7 +362,14 @@ void saveGameBackBuffer() {
 #ifdef DISABLE_SCUMM
     if (savedBuffer == NULL) savedBuffer = new u8[gameWidth * gameHeight];
     for (int r = 0; r < gameHeight; r++) {
-		memcpy(savedBuffer + (r * gameWidth), ((u8 *) (get8BitBackBuffer())) + (r * 512), gameWidth);
+
+		u16* dst = (u16 *) (savedBuffer + (r * gameWidth));
+		u16* src = BG_GFX_SUB + (r * 256);
+
+		for (int x = 0; x < gameWidth >> 1; x++)
+		{
+			*dst++ = *src++;
+		}
 	}
 #endif
 }
@@ -361,10 +378,19 @@ void restoreGameBackBuffer() {
 #ifdef DISABLE_SCUMM
 	if (savedBuffer) {
 		for (int r = 0; r < gameHeight; r++) {
-			memcpy(((u8 *) (BG_GFX_SUB)) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
-			memcpy(((u8 *) (get8BitBackBuffer())) + (r * 512), savedBuffer + (r * gameWidth), gameWidth);
-		}
+
+			u16* dst = get8BitBackBuffer() + (r * 256);
+			u16* dst2 = BG_GFX_SUB + (r * 256);
+			u16* src = ((u16 *) (savedBuffer)) + (r * (gameWidth >> 1));
+
+			for (int x = 0; x < gameWidth >> 1; x++)
+			{
+				*dst++ = *src;
+				*dst2++ = *src++;
+			}
 			
+		}
+
 		delete savedBuffer;
 		savedBuffer = NULL;
 	}
@@ -500,7 +526,7 @@ void displayMode8Bit() {
 	
 	if (isCpuScalerEnabled())
 	{
-		videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); 
+		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); 
 		videoSetModeSub(MODE_3_2D /*| DISPLAY_BG0_ACTIVE*/ | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
 	
 		vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
@@ -548,22 +574,27 @@ void displayMode8Bit() {
 
 
 	// Do text stuff
-	BG0_CR = BG_MAP_BASE(0) | BG_TILE_BASE(1);
+	// console chars at 1C000 (7), map at 1D000 (74)
+
+	BG0_CR = BG_MAP_BASE(2) | BG_TILE_BASE(0);
 	BG0_Y0 = 0;
 	
 	// Restore palette entry used by text in the front-end	
 //	PALETTE_SUB[255] = savedPalEntry255;
+
+
 	
-	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(0), (u16*)CHAR_BASE_BLOCK(1), 16);
+	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(2), (u16*)CHAR_BASE_BLOCK(0), 16);
 	consolePrintSet(0, 23);
 	
 	if (!displayModeIs8Bit) {
 		for (int r = 0; r < 32 * 32; r++) {
-			((u16 *) SCREEN_BASE_BLOCK(0))[r] = buffer[r];
+			((u16 *) SCREEN_BASE_BLOCK(2))[r] = buffer[r];
 		}
 //		dmaCopyHalfWords(3, (u16 *) SCREEN_BASE_BLOCK(0), buffer, 32 * 32 * 2);
 	}
 	
+	initGame();
 	
 	if (!displayModeIs8Bit) restoreGameBackBuffer();
 	displayModeIs8Bit = true;
@@ -571,10 +602,10 @@ void displayMode8Bit() {
 	consolePrintf("done\n");
 	#endif
 
+
 	POWER_CR &= ~POWER_SWAP_LCDS;
 	
 	keyboardEnable = false;
-	initGame();
 	
 }
 
@@ -722,7 +753,7 @@ void displayMode16Bit() {
 	if (displayModeIs8Bit) {
 		saveGameBackBuffer();
 		for (int r = 0; r < 32 * 32; r++) {
-			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK(0))[r];
+			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK(2))[r];
 		}
 	}
 
@@ -846,7 +877,7 @@ u16* get16BitBackBuffer() {
 
 u16* get8BitBackBuffer() {
 	if (isCpuScalerEnabled())
-		return BG_GFX;
+		return BG_GFX + 0x60000;
 	else
 		return BG_GFX + 0x10000;		// 16bit qty!
 }
@@ -1047,10 +1078,10 @@ void setKeyboardEnable(bool en) {
 	if (keyboardEnable) {
 
 
-		DS::drawKeyboard(1, 14, backupBank);
+		DS::drawKeyboard(1, 15, backupBank);
 		
 		
-		SUB_BG1_CR = BG_TILE_BASE(1) | BG_MAP_BASE(14);
+		SUB_BG1_CR = BG_TILE_BASE(1) | BG_MAP_BASE(15);
 
 		if (displayModeIs8Bit) {
 			SUB_DISPLAY_CR |= DISPLAY_BG1_ACTIVE;	// Turn on keyboard layer
@@ -2568,7 +2599,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.11.0SVN ");
+	consolePrintf("Version 0.11.0 beta1 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
@@ -2579,7 +2610,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_C)
 	consolePrintf("build C\n");
-	consolePrintf("Simon the Sorcerer 1/2 (SIMON)\n");
+	consolePrintf("Simon/Elvira (AGOS)\n");
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_D)
 	consolePrintf("build D\n");
@@ -2587,11 +2618,15 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_E)
 	consolePrintf("build E\n");
-	consolePrintf("Inherit the earth (SAGA)\n");
+	consolePrintf("ITE/IHNM (SAGA)\n");
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_F)
 	consolePrintf("build F\n");
 	consolePrintf("The Legend of Kyrandia (KYRA)\n");
+	consolePrintf("-------------------------------\n");
+#elif defined(DS_BUILD_G)
+	consolePrintf("build F\n");
+	consolePrintf("Lure of the Temptress (LURE)\n");
 	consolePrintf("-------------------------------\n");
 #endif
 	consolePrintf("L/R + D-pad/pen:    Scroll view\n");
@@ -2730,6 +2765,8 @@ int main(void)
 	char* argv[3] = {"/scummvmds", "--config=scummvme.ini"};
 #elif defined(DS_BUILD_F)
 	char* argv[3] = {"/scummvmds", "--config=scummvmf.ini"};
+#elif defined(DS_BUILD_G)
+	char* argv[3] = {"/scummvmds", "--config=scummvmg.ini"};
 #endif
 
 #ifdef DS_NON_SCUMM_BUILD	

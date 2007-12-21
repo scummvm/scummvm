@@ -58,9 +58,9 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 230 - 20) {
 	_highQualityAudioCheckbox = new GUI::CheckboxWidget(this, 20, 85, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
 	_disablePowerOff = new GUI::CheckboxWidget(this, 20, 100, 250, 20, "Disable power off on quit", 0, 'T');
 	_showCursorCheckbox = new GUI::CheckboxWidget(this, 20, 115, 130, 20, "Show mouse cursor", 0, 'T');
-    #ifdef ALLOW_CPU_SCALER
+#ifdef ALLOW_CPU_SCALER
 	_cpuScaler = new GUI::CheckboxWidget(this, 160, 115, 90, 20, "CPU scaler", 0, 'T');
-    #endif
+#endif
 	_snapToBorderCheckbox = new GUI::CheckboxWidget(this, 20, 130, 250, 20, "Snap to border", 0, 'T');
 
 	new GUI::StaticTextWidget(this, 20, 145, 110, 15, "Touch X Offset", GUI::kTextAlignLeft);
@@ -156,26 +156,29 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 230 - 20) {
 }
 
 DSOptionsDialog::~DSOptionsDialog() {
+	DS::setIndyFightState(_indyFightCheckbox->getState());
+	ConfMan.flushToDisk();
+}
+
+void DSOptionsDialog::updateConfigManager() {
 	ConfMan.setBool("lefthanded", _leftHandedCheckbox->getState(), "ds");
 	ConfMan.setBool("unscaled", _unscaledCheckbox->getState(), "ds");
 	ConfMan.setBool("twohundredpercent", _twoHundredPercentCheckbox->getState(), "ds");
 	ConfMan.setBool("22khzaudio", _highQualityAudioCheckbox->getState(), "ds");
 	ConfMan.setBool("disablepoweroff", _disablePowerOff->getState(), "ds");
-    #ifdef ALLOW_CPU_SCALER
+#ifdef ALLOW_CPU_SCALER
 	ConfMan.setBool("cpu_scaler", _cpuScaler->getState(), "ds");
-    #endif
+#endif
 	ConfMan.setInt("xoffset", _touchX->getValue(), "ds");
 	ConfMan.setInt("yoffset", _touchY->getValue(), "ds");
 	ConfMan.setBool("showcursor", _showCursorCheckbox->getState(), "ds");
 	ConfMan.setBool("snaptoborder", _snapToBorderCheckbox->getState(), "ds");
 	DS::setOptions();
-	DS::setIndyFightState(_indyFightCheckbox->getState());
-	ConfMan.flushToDisk();
 }
-
 
 void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd == GUI::kCloseCmd) {
+		updateConfigManager();
 		close();
 	}
 
@@ -236,9 +239,10 @@ void showOptionsDialog() {
 
 	DSOptionsDialog* d = new DSOptionsDialog();
 	d->runModal();
+	consolePrintf("deleting dialog\n");
 	delete d;
 	
-	
+	consolePrintf("going to 8 bit\n");
 	DS::displayMode8Bit();
 
 	togglePause();
@@ -292,7 +296,14 @@ void setOptions() {
 	} else {
 		DS::setTouchXOffset(0);
 	}
-	
+
+#ifdef ALLOW_CPU_SCALER
+	if (ConfMan.hasKey("cpu_scaler", "ds")) {
+		DS::setCpuScalerEnable(ConfMan.getBool("cpu_scaler", "ds"));
+	} else {
+		DS::setCpuScalerEnable(false);
+	}
+#endif	
 }
 
 }
