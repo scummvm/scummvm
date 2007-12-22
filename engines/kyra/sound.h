@@ -462,7 +462,7 @@ public:
 	MixedSoundDriver(KyraEngine *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx) : Sound(vm, mixer), _music(music), _sfx(sfx) {}
 	~MixedSoundDriver() { delete _music; delete _sfx; }
 
-	bool init() { return _music->init() | _sfx->init(); }
+	bool init() { return (_music->init() && _sfx->init()); }
 	void process() { _music->process(); _sfx->process(); }
 
 	void setVolume(int volume) { _music->setVolume(volume); _sfx->setVolume(volume); }
