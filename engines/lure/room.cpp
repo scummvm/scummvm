@@ -583,15 +583,19 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 
 	loadRoomHotspots();
 
-	if ((_roomData->exitTime != 0xffff) && (_roomData->exitTime != 0)) {
-		// If time has passed, animation ticks needed before room is displayed
-		int numSeconds = (g_system->getMillis() - _roomData->exitTime) / 1000;
-		if (numSeconds > 300) numSeconds = 300;
+	if (leaveFlag) {
+		// A previous room has been left - check if there are any seconds worth 
+		// of animations that need to be done in 'fast forward'
+		if ((_roomData->exitTime != 0xffff) && (_roomData->exitTime != 0)) {
+			// If time has passed, animation ticks needed before room is displayed
+			int numSeconds = (g_system->getMillis() - _roomData->exitTime) / 1000;
+			if (numSeconds > 300) numSeconds = 300;
 
-		game.preloadFlag() = true;
-		while (numSeconds-- > 0)
-			game.tick();
-		game.preloadFlag() = false;
+			game.preloadFlag() = true;
+			while (numSeconds-- > 0)
+				game.tick();
+			game.preloadFlag() = false;
+		}
 	}
 
 	game.tick();
