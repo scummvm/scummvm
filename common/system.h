@@ -750,6 +750,8 @@ public:
 	 * But since those may be implemented using threads (and in fact, that's
 	 * how our primary backend, the SDL one, does it on many systems), we
 	 * still have to do mutex syncing in our timer callbacks.
+	 * In addition, the sound mixer uses a mutex in case the backend runs it
+	 * from a dedicated thread (as e.g. the SDL backend does).
 	 *
 	 * Hence backends which do not use threads to implement the timers simply
 	 * can use dummy implementations for these methods.
@@ -766,6 +768,12 @@ public:
 
 	/**
 	 * Lock the given mutex.
+	 *
+	 * @note ScummVM code assumes that the mutex implementation supports
+	 * recursive locking. That is, a thread may lock a mutex twice w/o
+	 * deadlocking. In case of a multilock, the mutex has to be unlocked
+	 * as many times as it was locked befored it really becomes unlocked.
+	 *
 	 * @param mutex	the mutex to lock.
 	 */
 	virtual void lockMutex(MutexRef mutex) = 0;
