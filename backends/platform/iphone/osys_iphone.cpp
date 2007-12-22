@@ -562,7 +562,6 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 
 bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	//printf("pollEvent()\n");
-	CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, false);
 
 	long curTime = getMillis();
 	
@@ -876,36 +875,41 @@ uint32 OSystem_IPHONE::getMillis() {
 void OSystem_IPHONE::delayMillis(uint msecs) {
 	//printf("delayMillis(%d)\n", msecs);
 	usleep(msecs * 1000);
-	CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, false);
 }
 
 OSystem::MutexRef OSystem_IPHONE::createMutex(void) {
-	// pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
-	// if (pthread_mutex_init(mutex, NULL) != 0) {
-	// 	printf("pthread_mutex_init() failed!\n");
-	// }
-	// return (MutexRef)mutex;
-	return NULL;
+	pthread_mutexattr_t attr;
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+	
+	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
+	if (pthread_mutex_init(mutex, &attr) != 0) {
+		printf("pthread_mutex_init() failed!\n");
+		free(mutex);
+		return NULL;
+	}
+	
+	return (MutexRef)mutex;
 }
 
 void OSystem_IPHONE::lockMutex(MutexRef mutex) {
-	// if (pthread_mutex_lock((pthread_mutex_t *) mutex) != 0) {
-	// 	printf("pthread_mutex_lock() failed!\n");
-	// }
+	if (pthread_mutex_lock((pthread_mutex_t *) mutex) != 0) {
+		printf("pthread_mutex_lock() failed!\n");
+	}
 }
 
 void OSystem_IPHONE::unlockMutex(MutexRef mutex) {
-	// if (pthread_mutex_unlock((pthread_mutex_t *) mutex) != 0) {
-	// 	printf("pthread_mutex_unlock() failed!\n");
-	// }
+	if (pthread_mutex_unlock((pthread_mutex_t *) mutex) != 0) {
+		printf("pthread_mutex_unlock() failed!\n");
+	}
 }
 
 void OSystem_IPHONE::deleteMutex(MutexRef mutex) {
-	// if (pthread_mutex_destroy((pthread_mutex_t *) mutex) != 0) {
-	// 	printf("pthread_mutex_destroy() failed!\n");
-	// } else {
-	// 	free(mutex);		
-	// }
+	if (pthread_mutex_destroy((pthread_mutex_t *) mutex) != 0) {
+		printf("pthread_mutex_destroy() failed!\n");
+	} else {
+		free(mutex);		
+	}
 }
 
 void OSystem_IPHONE::AQBufferCallback(void *in, AudioQueueRef inQ, AudioQueueBufferRef outQB) {
@@ -933,7 +937,7 @@ bool OSystem_IPHONE::setSoundCallback(SoundProc proc, void *param) {
 	s_AudioQueue.dataFormat.mBitsPerChannel = 16;
 	s_AudioQueue.frameCount = WAVE_BUFFER_SIZE;
 
-	if (AudioQueueNewOutput(&s_AudioQueue.dataFormat, AQBufferCallback, &s_AudioQueue, CFRunLoopGetCurrent(), kCFRunLoopCommonModes, 0, &s_AudioQueue.queue)) {
+	if (AudioQueueNewOutput(&s_AudioQueue.dataFormat, AQBufferCallback, &s_AudioQueue, 0, kCFRunLoopCommonModes, 0, &s_AudioQueue.queue)) {
 		printf("Couldn't set the AudioQueue callback!\n");
 		return false;
 	}
