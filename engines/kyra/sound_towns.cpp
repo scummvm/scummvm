@@ -1430,9 +1430,16 @@ SoundTowns_v2::~SoundTowns_v2() {
 bool SoundTowns_v2::init() {
 	//_driver = new SoundTowns_v2_TwnDriver(_mixer);
 	_vm->checkCD();
-	Common::File f;
-	if (_musicEnabled && (f.exists("track1.mp3") ||
-		f.exists("track1.ogg") || f.exists("track1.flac")  || f.exists("track1.fla")))
+	// FIXME While checking for 'track1.XXX(X)' looks like
+	// a good idea, but we should definitly not be doing this
+	// here. Basically our filenaming scheme could change
+	// or we added support for other audio formats. Also
+	// this misses the posibility that we play the tracks
+	// right off CD. So we should find another way to
+	// check if we have access to CD audio.
+	if (_musicEnabled &&
+		(Common::File::exists("track1.mp3") || Common::File::exists("track1.ogg") ||
+		 Common::File::exists("track1.flac") || Common::File::exists("track1.fla")))
 			_musicEnabled = 2;
 	return true;//_driver->init();
 }
