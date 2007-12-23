@@ -106,11 +106,6 @@ void SndRes::setVoiceBank(int serial) {
 	_voiceSerial = serial;
 
 	_voiceContext = _vm->_resource->getContext(GAME_VOICEFILE, _voiceSerial);
-	if (_voiceContext == NULL) {
-		error("SndRes::SndRes resource context not found");
-	}
-
-
 }
 
 void SndRes::playSound(uint32 resourceId, int volume, bool loop) {
@@ -128,6 +123,9 @@ void SndRes::playSound(uint32 resourceId, int volume, bool loop) {
 
 void SndRes::playVoice(uint32 resourceId) {
 	SoundBuffer buffer;
+
+	if (!(_vm->_voiceFilesExist))
+		return;
 
 	if (_vm->getGameType() == GType_IHNM && !(_vm->_voicesEnabled))
 		return;
@@ -329,6 +327,9 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 int SndRes::getVoiceLength(uint32 resourceId) {
 	double msDouble;
 	SoundBuffer buffer;
+
+	if (!(_vm->_voiceFilesExist))
+		return -1;
 
 	if (!load(_voiceContext, resourceId, buffer, true)) {
 		return -1;

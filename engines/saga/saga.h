@@ -522,6 +522,7 @@ public:
 	int _musicVolume;
 	bool _subtitlesEnabled;
 	bool _voicesEnabled;
+	bool _voiceFilesExist;
 	int _readingSpeed;
 
 	bool _copyProtection;

@@ -360,6 +360,8 @@ bool Resource::createContexts() {
 	bool censoredVersion = false;
 	uint16 voiceFileType = GAME_VOICEFILE;
 
+	_vm->_voiceFilesExist = true;
+
 	// If the Wyrmkeep credits file is found, set the Wyrmkeep version flag to true
 	if (Common::File::exists("graphics/credit3n.dlt")) {
 		_vm->_gf_wyrmkeep = true;
@@ -459,6 +461,10 @@ bool Resource::createContexts() {
 			} else {
 				// No voice file found, don't add any file to the array
 				voicesFileInArray = true;
+				warning("No voice file found, voices will be disabled");
+				_vm->_voicesEnabled = false;
+				_vm->_subtitlesEnabled = true;
+				_vm->_voiceFilesExist = false;
 			}
 		} else {
 			// If the voices file is not specified in the detector table, add it here
@@ -494,6 +500,10 @@ bool Resource::createContexts() {
 			} else {
 				// No voice file found, don't add any file to the array
 				voicesFileInArray = true;
+				warning("No voice file found, voices will be disabled");
+				_vm->_voicesEnabled = false;
+				_vm->_subtitlesEnabled = true;
+				_vm->_voiceFilesExist = false;
 			}
 		}
 	}
@@ -554,9 +564,9 @@ bool Resource::createContexts() {
 		}
 		context->serial = 0;
 
-		// IHNM has serveral different voice files, so we need to allow
+		// IHNM has several different voice files, so we need to allow
 		// multiple resource contexts of the same type. We tell them
-		// apart by assigning each of the duplicates an unique serial
+		// apart by assigning each of the duplicates a unique serial
 		// number. The default behaviour when requesting a context will
 		// be to look for serial number 0.
 

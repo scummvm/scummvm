@@ -224,15 +224,17 @@ int SagaEngine::init() {
 
 	_gfx->initPalette();
 
-	if (getGameType() == GType_IHNM) {
-		if (!ConfMan.hasKey("voices")) {
-			_voicesEnabled = true;
-			ConfMan.setBool("voices", true);
+	if (_voiceFilesExist) {
+		if (getGameType() == GType_IHNM) {
+			if (!ConfMan.hasKey("voices")) {
+				_voicesEnabled = true;
+				ConfMan.setBool("voices", true);
+			} else {
+				_voicesEnabled = ConfMan.getBool("voices");
+			}
 		} else {
-			_voicesEnabled = ConfMan.getBool("voices");
+			_voicesEnabled = true;
 		}
-	} else {
-		_voicesEnabled = true;
 	}
 
 	// FIXME: This is the ugly way of reducing redraw overhead. It works

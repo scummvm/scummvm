@@ -1597,15 +1597,20 @@ void Interface::setOption(PanelButton *panelButton) {
 		ConfMan.setInt("sfx_volume", _vm->_soundVolume * 25);
 		break;
 	case kTextVoices:
-		if (_vm->_subtitlesEnabled && _vm->_voicesEnabled) {		// Both
-			_vm->_subtitlesEnabled = false;							// Set it to "Audio"
-			_vm->_voicesEnabled = true;								// Not necessary, just for completeness
-		} else if (!_vm->_subtitlesEnabled && _vm->_voicesEnabled) {
-			_vm->_subtitlesEnabled = true;							// Set it to "Text"
+		if (_vm->_voiceFilesExist) {
+			if (_vm->_subtitlesEnabled && _vm->_voicesEnabled) {		// Both
+				_vm->_subtitlesEnabled = false;							// Set it to "Audio"
+				_vm->_voicesEnabled = true;								// Not necessary, just for completeness
+			} else if (!_vm->_subtitlesEnabled && _vm->_voicesEnabled) {
+				_vm->_subtitlesEnabled = true;							// Set it to "Text"
+				_vm->_voicesEnabled = false;
+			} else if (_vm->_subtitlesEnabled && !_vm->_voicesEnabled) {
+				_vm->_subtitlesEnabled = true;							// Set it to "Both"
+				_vm->_voicesEnabled = true;
+			}
+		} else {
+			_vm->_subtitlesEnabled = true;								// Set it to "Text"
 			_vm->_voicesEnabled = false;
-		} else if (_vm->_subtitlesEnabled && !_vm->_voicesEnabled) {
-			_vm->_subtitlesEnabled = true;							// Set it to "Both"
-			_vm->_voicesEnabled = true;
 		}
 
 		ConfMan.setBool("subtitles", _vm->_subtitlesEnabled);
