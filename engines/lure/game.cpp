@@ -366,7 +366,7 @@ void Game::playerChangeRoom() {
 			--v;
 			fields.setField(29, v);
 			if (v == 0) 
-				res.delayList().add(2, 0xCB7, true);
+				res.delayList().add(2, 0xCB7, false);
 		}
 	}
 }
