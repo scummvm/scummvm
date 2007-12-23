@@ -445,7 +445,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 
 	Common::File tmp;
 	if (!tmp.open(d.node)) {
-		warning("SCUMM detectGames: failed to open '%s' for read access", d.node.getPath().c_str());
+		warning("SCUMM testGame: failed to open '%s' for read access", d.node.getPath().c_str());
 		return false;
 	}
 
@@ -680,7 +680,8 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
 	// TODO: We still don't handle the FM-TOWNS demos (like zakloom) very well.
 	// In particular, they are detected as ZakTowns, which is bad.
 
-	for (Common::List<DetectorResult>::iterator x = results.begin(); x != results.end(); ++x) {
+	for (Common::List<DetectorResult>::iterator
+	          x = results.begin(); x != results.end(); ++x) {
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
 		assert(g);
 		GameDescriptor dg(x->game.gameid, g->description, x->language, x->game.platform);
@@ -769,7 +770,8 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 		Common::List<DetectorResult> tmp;
 
 		// Copy only those candidates which match the platform setting
-		for (Common::List<DetectorResult>::iterator x = results.begin(); x != results.end(); ) {
+		for (Common::List<DetectorResult>::iterator
+		          x = results.begin(); x != results.end(); ++x) {
 			if (x->game.platform == platform) {
 				tmp.push_back(*x);
 			}
