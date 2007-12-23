@@ -232,7 +232,15 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 
 		charOffset = _srcPos - _stringTable;
 		charBitMask = _bitMask;
-		ch = readCharacter();
+
+		// WORKAROUND: Italian version had an unterminated Look description for Prisoner after cutting sack
+		if ((charOffset == 0x1a08) && (charBitMask == 1) && 
+			(LureEngine::getReference().getLanguage() == IT_ITA))
+			// Hardcode for end of string
+			ch = '\0';
+		else
+			// All other character reads
+			ch = readCharacter();
 	}
 
 	debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh EOS", 
