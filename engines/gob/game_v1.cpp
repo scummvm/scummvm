@@ -52,7 +52,6 @@ void Game_v1::playTot(int16 skipPlay) {
 	int16 breakFrom;
 	int16 nestLevel;
 	int32 variablesCount;
-	byte *filePtr;
 
 	int16* oldNestLevel = _vm->_inter->_nestLevel;
 	int16* oldBreakFrom = _vm->_inter->_breakFromLevel;
