@@ -1247,6 +1247,11 @@ void ScummEngine_v7::saveOrLoad(Serializer *s) {
 
 	s->saveLoadArrayOf(_subtitleQueue, ARRAYSIZE(_subtitleQueue), sizeof(_subtitleQueue[0]), subtitleQueueEntries);
 	s->saveLoadEntries(this, V7Entries);
+	
+	if (s->getVersion() <= VER(68) && s->isLoading()) {
+		// WORKAROUND bug #1846049: Reset the default charset color to a sane value.
+		_string[0]._default.charset = 1;
+	}
 }
 #endif
 
