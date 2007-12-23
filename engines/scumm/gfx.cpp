@@ -263,7 +263,11 @@ void GdiV1::roomChanged(byte *roomptr) {
 	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 12), _C64.picMap, roomptr[4] * roomptr[5]);
 	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 14), _C64.colorMap, roomptr[4] * roomptr[5]);
 	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 16), _C64.maskMap, roomptr[4] * roomptr[5]);
-	decodeC64Gfx(roomptr + READ_LE_UINT16(roomptr + 18) + 2, _C64.maskChar, READ_LE_UINT16(roomptr + READ_LE_UINT16(roomptr + 18)));
+	
+	// Read the mask data. The 16bit length value seems to always be 8 too big.
+	// See bug #1837375 for details on this.
+	const byte *maskPtr = roomptr + READ_LE_UINT16(roomptr + 18);
+	decodeC64Gfx(maskPtr + 2, _C64.maskChar, READ_LE_UINT16(maskPtr) - 8);
 	_objectMode = true;
 }
 
