@@ -601,9 +601,11 @@ Hotspot *Resources::addHotspot(uint16 hotspotId) {
 	Hotspot *hotspot = new Hotspot(hData);
 	_activeHotspots.push_back(hotspot);
 
-	if (hotspotId < FIRST_NONCHARACTER_ID) 
+	if (hotspotId < FIRST_NONCHARACTER_ID) { 
 		// Default characters to facing upwards until they start moving
 		hotspot->setDirection(UP);
+		hotspot->setCharRectY(0);
+	}
 
 	return hotspot;
 }
