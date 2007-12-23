@@ -81,6 +81,13 @@ protected:
 	SFMError _error;
 	String _errorDesc;
 
+	/**
+	 * Sets the last ocurred error.
+	 * @param error Code identifying the last error.
+	 * @param errorDesc String describing the last error.
+	 */
+	virtual void setError(SFMError error, const String &errorDesc) { _error = error; _errorDesc = errorDesc; }
+
 public:
 	virtual ~SaveFileManager() {}
 
@@ -102,13 +109,6 @@ public:
 	 * @return A string describing the last error.
 	 */
 	virtual String getErrorDesc() { return _errorDesc; }
-
-	/**
-	 * Sets the last ocurred error.
-	 * @param error Code identifying the last error.
-	 * @param errorDesc String describing the last error.
-	 */
-	virtual void setError(SFMError error, String errorDesc) { _error = error; _errorDesc = errorDesc; }
 
 	/**
 	 * Open the file with name filename in the given directory for saving.
