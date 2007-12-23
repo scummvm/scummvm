@@ -48,31 +48,25 @@ Game_v1::Game_v1(GobEngine *vm) : Game(vm) {
 }
 
 void Game_v1::playTot(int16 skipPlay) {
-	char savedTotName[20];
-	int16 *oldCaptureCounter;
-	int16 *oldBreakFrom;
-	int16 *oldNestLevel;
 	int16 _captureCounter;
 	int16 breakFrom;
 	int16 nestLevel;
 	int32 variablesCount;
 	byte *filePtr;
-	byte *savedIP;
 
-	if (skipPlay < 0)
-		skipPlay = 0;
-
-	oldNestLevel = _vm->_inter->_nestLevel;
-	oldBreakFrom = _vm->_inter->_breakFromLevel;
-	oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
-	savedIP = _vm->_global->_inter_execPtr;
+	int16* oldNestLevel = _vm->_inter->_nestLevel;
+	int16* oldBreakFrom = _vm->_inter->_breakFromLevel;
+	int16* oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
+	byte* savedIP = _vm->_global->_inter_execPtr;
 
 	_vm->_inter->_nestLevel = &nestLevel;
 	_vm->_inter->_breakFromLevel = &breakFrom;
 	_vm->_scenery->_pCaptureCounter = &_captureCounter;
+
+	char savedTotName[20];
 	strcpy(savedTotName, _curTotFile);
 
-	if (skipPlay == 0) {
+	if (skipPlay <= 0) {
 		while (!_vm->_quitRequested) {
 			for (int i = 0; i < 4; i++) {
 				_vm->_draw->_fontToSprite[i].sprite = -1;
@@ -130,7 +124,7 @@ void Game_v1::playTot(int16 skipPlay) {
 			debugC(4, kDebugFileIO, "IMA: %s", _curImaFile);
 			debugC(4, kDebugFileIO, "EXT: %s", _curExtFile);
 
-			filePtr = _totFileData + 0x30;
+			byte* filePtr = _totFileData + 0x30;
 
 			_totTextData = 0;
 			if (READ_LE_UINT32(filePtr) != (uint32) -1) {
