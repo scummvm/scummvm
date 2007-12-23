@@ -79,7 +79,7 @@ public:
 	struct ExtTable {
 		int16 itemsCount;
 		byte unknown;
-		ExtItem* items;
+		ExtItem *items;
 	} PACKED_STRUCT;
 
 #define szGame_TotTextItem (2 + 2)

@@ -53,10 +53,10 @@ void Game_v1::playTot(int16 skipPlay) {
 	int16 nestLevel;
 	int32 variablesCount;
 
-	int16* oldNestLevel = _vm->_inter->_nestLevel;
-	int16* oldBreakFrom = _vm->_inter->_breakFromLevel;
-	int16* oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
-	byte* savedIP = _vm->_global->_inter_execPtr;
+	int16 *oldNestLevel = _vm->_inter->_nestLevel;
+	int16 *oldBreakFrom = _vm->_inter->_breakFromLevel;
+	int16 *oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
+	byte *savedIP = _vm->_global->_inter_execPtr;
 
 	_vm->_inter->_nestLevel = &nestLevel;
 	_vm->_inter->_breakFromLevel = &breakFrom;
@@ -123,7 +123,7 @@ void Game_v1::playTot(int16 skipPlay) {
 			debugC(4, kDebugFileIO, "IMA: %s", _curImaFile);
 			debugC(4, kDebugFileIO, "EXT: %s", _curExtFile);
 
-			byte* filePtr = _totFileData + 0x30;
+			byte *filePtr = _totFileData + 0x30;
 
 			_totTextData = 0;
 			if (READ_LE_UINT32(filePtr) != (uint32) -1) {
