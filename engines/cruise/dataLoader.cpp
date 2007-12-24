@@ -109,43 +109,31 @@ void decodeGfxFormat4(dataFileEntry *pCurrentFileEntry) {
 }
 
 void decodeGfxFormat5(dataFileEntry *pCurrentFileEntry) {
-	uint8 *buffer;
 	uint8 *dataPtr = pCurrentFileEntry->subData.ptr;
-
 	int spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->widthInColumn;
-	int x = 0;
 	int range = pCurrentFileEntry->height * pCurrentFileEntry->width;
 
-	buffer = (uint8 *) malloc(spriteSize);
+	uint8 *buffer = (uint8 *) malloc(spriteSize);
 
-	while (x < spriteSize) {
-		uint8 c;
-		uint16 p0;
-		uint16 p1;
-		uint16 p2;
-		uint16 p3;
-		uint16 p4;
+	for(int line = 0; line < pCurrentFileEntry->height; line++) {
+		uint8 p0;
+		uint8 p1;
+		uint8 p2;
+		uint8 p3;
+		uint8 p4;
 
-		p0 = (dataPtr[0 + range * 0] << 8) | dataPtr[1 + range * 0];
-		p1 = (dataPtr[0 + range * 1] << 8) | dataPtr[1 + range * 1];
-		p2 = (dataPtr[0 + range * 2] << 8) | dataPtr[1 + range * 2];
-		p3 = (dataPtr[0 + range * 3] << 8) | dataPtr[1 + range * 3];
-		p4 = (dataPtr[0 + range * 4] << 8) | dataPtr[1 + range * 4];
+		for(int x = 0; x < pCurrentFileEntry->widthInColumn; x++) {
+			int bit = 7 - (x % 8);
+			int col = x / 8;
 
-		/* decode planes */
-		for (c = 0; c < 16; c++) {
-			buffer[x + c] = ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) & 4) | ((p3 >> 12) & 8) | ((p4 >> 11) & 16);
+			p0 = (dataPtr[line*pCurrentFileEntry->width + col + range * 0] >> bit) & 1;
+			p1 = (dataPtr[line*pCurrentFileEntry->width + col + range * 1] >> bit) & 1;
+			p2 = (dataPtr[line*pCurrentFileEntry->width + col + range * 2] >> bit) & 1;
+			p3 = (dataPtr[line*pCurrentFileEntry->width + col + range * 3] >> bit) & 1;
+			p4 = (dataPtr[line*pCurrentFileEntry->width + col + range * 4] >> bit) & 1;
 
-			p0 <<= 1;
-			p1 <<= 1;
-			p2 <<= 1;
-			p3 <<= 1;
-			p4 <<= 1;
+			buffer[line * pCurrentFileEntry->widthInColumn + x] = p0 | (p1 << 1) | (p2 << 2) | (p3 << 3) | (p4 << 4);
 		}
-
-		x += 16;
-
-		dataPtr += 2;
 	}
 
 	pCurrentFileEntry->subData.ptr = buffer;
@@ -341,6 +329,9 @@ int loadFullBundle(const char *name, int startIdx) {
 
 	loadFileSub1(&ptr, name, NULL);
 
+	if(ptr == NULL)
+		return 0;
+
 	switch (fileType) {
 	case type_SET:
 		{
@@ -455,7 +446,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		flipLong((int32 *) & localBuffer.field_0);
 		flipGen(&localBuffer.width, 12);
 
-		if ((sec == 1) || (localBuffer.type == 5)) {
+		if (sec == 1) {
 			localBuffer.width = localBuffer.width - (localBuffer.type * 2);	// Type 1: Width - (1*2) , Type 5: Width - (5*2)
 		}
 
@@ -502,12 +493,6 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 			}
 		case 5:
 			{
-				if (sec == 0) {
-					// TODO sec type 5 needs special conversion. cut out 2 bytes at every width/5 position.
-//					ASSERT(0);
-//					return -1;
-				}
-				
 				filesDatabase[fileIndex].subData.resourceType = 4;
 				decodeGfxFormat5(&filesDatabase[fileIndex]);
 				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;

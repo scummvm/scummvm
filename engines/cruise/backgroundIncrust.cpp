@@ -56,7 +56,7 @@ void backupBackground(backgroundIncrustStruct *pIncrust, int X, int Y, int width
 	{
 		for(int j=0; j<width; j++)
 		{
-			pIncrust->ptr[i*width+j] = pBackground[(i+Y)*320+j+Y];
+			pIncrust->ptr[i*width+j] = pBackground[(i+Y)*320+j+X];
 		}
 	}
 }
@@ -72,7 +72,7 @@ void restoreBackground(backgroundIncrustStruct *pIncrust)
 	if(pBackground == NULL)
 		return;
 
-	//int X = pIncrust->savedX;
+	int X = pIncrust->savedX;
 	int Y = pIncrust->savedY;
 	int width = pIncrust->saveWidth;
 	int height = pIncrust->saveHeight;
@@ -81,7 +81,7 @@ void restoreBackground(backgroundIncrustStruct *pIncrust)
 	{
 		for(int j=0; j<width; j++)
 		{
-			pBackground[(i+Y)*320+j+Y] = pIncrust->ptr[i*width+j];
+			pBackground[(i+Y)*320+j+X] = pIncrust->ptr[i*width+j];
 		}
 	}
 }
