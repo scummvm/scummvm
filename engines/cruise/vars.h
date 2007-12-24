@@ -30,6 +30,9 @@
 
 namespace Cruise {
 
+#define NBCOLORS 256
+#define NBSCREENS 8
+
 struct menuElementSubStruct {
 	struct menuElementSubStruct *pNext;
 	int16 ovlIdx;
@@ -235,8 +238,9 @@ extern int16 var47;
 extern int16 var48;
 extern int16 flagCt;
 
-extern int8 var50[64];
-extern int16 palette[256 * 3];
+extern uint8 newPal[NBCOLORS*3];
+extern uint8 workpal[NBCOLORS*3];
+extern uint8 palScreen[NBSCREENS][NBCOLORS*3];
 
 //extern systemStringsStruct systemStrings;
 
@@ -282,9 +286,9 @@ extern int16 ctpVar8[200];
 
 extern int16 ctpVar14;
 
-extern int16 bgVar1;
-extern int16 bgVar2;
-extern int16 bgVar3;
+extern int16 flagSpeed;
+extern int16 speedGame;
+extern int16 oldSpeedGame;
 
 extern uint8 globalScreen[320 * 200];
 extern uint8 scaledScreen[640 * 400];

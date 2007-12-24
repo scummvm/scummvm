@@ -535,7 +535,23 @@ int16 Op_GetlowMemory(void) {
 }
 
 int16 Op_FadeOut(void) {
-	printf("Op_FadeOut dummy\n");
+	for(long int i=0; i< 256; i+=32) {
+		for(long int j=0; j<256; j++) {
+			int offsetTable[3];
+			offsetTable[0] = -i;
+			offsetTable[1] = -i;
+			offsetTable[2] = -i;
+			calcRGB(&workpal[3*j], &workpal[3*j], offsetTable);
+		}
+		gfxModuleData_setPal256(workpal);
+		gfxModuleData_flipScreen();
+	}
+
+	//gfxModuleData_gfxClearFrameBuffer(backgroundPtrtable[currentActiveBackgroundPlane]);
+
+	fadeFlag = 1;
+	PCFadeFlag = 1;
+
 	return 0;
 }
 

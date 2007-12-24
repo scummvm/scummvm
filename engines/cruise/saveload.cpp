@@ -184,7 +184,7 @@ void initVars(void)
 	buttonDown = 0;
 	var41 = 0;
 	entrerMenuJoueur = 0;
-	fadeVar = 0;
+	PCFadeFlag = 0;
 }
 
 void saveOverlay(Common::OutSaveFile& currentSaveFile) {
@@ -560,8 +560,8 @@ int saveSavegameData(int saveGameIdx) {
 	currentSaveFile->writeSint16LE(var41);
 	currentSaveFile->writeSint16LE(entrerMenuJoueur);
 
-	currentSaveFile->write(var50, 64);
-	currentSaveFile->write(var50, 64); // Hu ? why 2 times ?
+	currentSaveFile->write(newPal, sizeof(int16) * NBCOLORS);
+	currentSaveFile->write(workpal, sizeof(int16) * NBCOLORS);
 
 	currentSaveFile->write(musicName, 15);
 	
@@ -577,7 +577,7 @@ int saveSavegameData(int saveGameIdx) {
 		currentSaveFile->write(backgroundTable[i].extention, 6);
 	}
 
-	currentSaveFile->write(palette, 256*2);
+	currentSaveFile->write(palScreen, sizeof(int16) * NBCOLORS * NBSCREENS);
 	currentSaveFile->write(initVar5, 24);
 	currentSaveFile->write(globalVars, stateID * 2); // ok
 	for(int i=0; i<257; i++)
@@ -737,8 +737,8 @@ int loadSavegameData(int saveGameIdx) {
 	var41 = currentSaveFile->readSint16LE();
 	entrerMenuJoueur = currentSaveFile->readSint16LE();
 
-	currentSaveFile->read(var50, 64);
-	currentSaveFile->read(var50, 64); // Hu ? why 2 times ?
+	currentSaveFile->read(newPal, sizeof(int16) * NBCOLORS);
+	currentSaveFile->read(newPal, sizeof(int16) * NBCOLORS);
 
 	// here code seems bogus... this should read music name and it may be a buffer overrun
 	currentSaveFile->skip(21);
@@ -752,7 +752,7 @@ int loadSavegameData(int saveGameIdx) {
 		currentSaveFile->read(backgroundTable[i].extention, 6);
 	}
 
-	currentSaveFile->read(palette, 256*2);
+	currentSaveFile->read(palScreen, sizeof(int16) * NBCOLORS * NBSCREENS);
 	currentSaveFile->read(initVar5, 24);
 	currentSaveFile->read(globalVars, stateID * 2); // ok
 	for(int i=0; i<257; i++)

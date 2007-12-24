@@ -50,17 +50,17 @@ extern gfxModuleDataStruct gfxModuleData;
 void gfxModuleData_gfxClearFrameBuffer(uint8 * ptr);
 void gfxModuleData_setDirtyColors(int min, int max);
 void gfxModuleData_setPalColor(int idx, int r, int g, int b);
-void gfxModuleData_setPal(uint8 * ptr);
 void gfxModuleData_field_90(void);
 void gfxModuleData_gfxWaitVSync(void);
 void gfxModuleData_flip(void);
-void gfxModuleData_field_64(char *sourceBuffer, int width, int height,
-    char *dest, int x, int y, int color);
+void gfxModuleData_field_64(char *sourceBuffer, int width, int height, char *dest, int x, int y, int color);
 void gfxModuleData_gfxCopyScreen(char *sourcePtr, char *destPtr);
-void gfxModuleData_field_60(char *sourcePtr, int width, int height,
-    char *destPtr, int x, int y);
+void convertGfxFromMode4(uint8 *sourcePtr, int width, int height, uint8 *destPtr);
+void convertGfxFromMode5(uint8 *sourcePtr, int width, int height, uint8 *destPtr);
 void gfxModuleData_flipScreen(void);
-void gfxModuleData_setPal256(int16 * ptr);
+//void gfxModuleData_setPal(uint8 * ptr);
+void gfxModuleData_convertOldPalColor(uint16 oldColor, uint8* pOutput);
+void gfxModuleData_setPal256(uint8 * ptr);
 void flip(void);
 
 } // End of namespace Cruise

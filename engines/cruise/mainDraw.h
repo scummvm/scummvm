@@ -44,6 +44,7 @@ void flipPoly(int fileId, int16 *dataPtr, int scale, char** newFrame, int X, int
 void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], unsigned char *dataPtr);
 bool findPoly(char* dataPtr, int x, int y, int zoom, int mouseX, int mouseY);
 unsigned char *drawPolyMode2(unsigned char *dataPointer, int linesToDraw);
+void calcRGB(uint8* pColorSrc, uint8* pColorDst, int* offsetTable);
 } // End of namespace Cruise
 
 #endif

@@ -97,7 +97,7 @@ int CruiseEngine::go() {
 
 void CruiseEngine::initialize() {
 
-	fadeVar = 0;
+	PCFadeFlag = 0;
 	ptr_something =
 	    (ctpVar19Struct *) mallocAndZero(sizeof(ctpVar19Struct) * 0x200);
 

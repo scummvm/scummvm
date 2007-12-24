@@ -62,9 +62,9 @@ void outputBit(char *buffer, int bitPlaneNumber, uint8 data) {
 	*(buffer + (8000 * bitPlaneNumber)) = data;
 }
 
-void gfxModuleData_field_60(char *sourcePtr, int width, int height, char *destPtr, int x_, int y_) {
+void convertGfxFromMode4(uint8 *sourcePtr, int width, int height, uint8 *destPtr) {
 
-	for (int y = 0; y < height; ++y) {
+	for (int y = 0; y < (height/16); ++y) {
 		for (int x = 0; x < width; ++x) {
 			for (int bit = 0; bit < 16; ++bit) {
 				uint8 color = 0;
@@ -76,6 +76,30 @@ void gfxModuleData_field_60(char *sourcePtr, int width, int height, char *destPt
 				*destPtr++ = color;
 			}
 			sourcePtr += 8;
+		}
+	}
+}
+
+void convertGfxFromMode5(uint8 *sourcePtr, int width, int height, uint8 *destPtr) {
+	int range = (width/8) * height;
+
+	for(int line = 0; line < 200; line++) {
+		uint8 p0;
+		uint8 p1;
+		uint8 p2;
+		uint8 p3;
+		uint8 p4;
+
+		for(int col = 0; col < 40; col++) {
+			for(int bit = 0; bit <8; bit++ ) {
+				p0 = (sourcePtr[line*40 + col + range * 0] >> bit) & 1;
+				p1 = (sourcePtr[line*40 + col + range * 1] >> bit) & 1;
+				p2 = (sourcePtr[line*40 + col + range * 2] >> bit) & 1;
+				p3 = (sourcePtr[line*40 + col + range * 3] >> bit) & 1;
+				p4 = (sourcePtr[line*40 + col + range * 4] >> bit) & 1;
+
+				destPtr[line * width + col * 8 + (7-bit)] = p0 | (p1 << 1) | (p2 << 2) | (p3 << 3) | (p4 << 4);
+			}
 		}
 	}
 }
@@ -94,7 +118,7 @@ void gfxModuleData_setPalColor(int idx, int r, int g, int b) {
 	gfxModuleData_setDirtyColors(idx, idx);
 }
 
-void gfxModuleData_setPal256(int16 *ptr) {
+void gfxModuleData_setPal256(uint8 *ptr) {
 	int R;
 	int G;
 	int B;
@@ -114,17 +138,17 @@ void gfxModuleData_setPal256(int16 *ptr) {
 	gfxModuleData_setDirtyColors(0, 255);
 }
 
-void gfxModuleData_setPal(uint8 *ptr) {
+/*void gfxModuleData_setPal(uint8 *ptr) {
 	int i;
 	int R;
 	int G;
 	int B;
 
-	for (i = 0; i < 16; i++) {
+	for (i = 0; i < 256; i++) {
 #define convertRatio 36.571428571428571428571428571429
-		short int atariColor = *(int16 *) ptr;
+		uint16 atariColor = *ptr;
 		//flipShort(&atariColor);
-		ptr += 2;
+		ptr ++;
 
 		R = (int)(convertRatio * ((atariColor & 0x700) >> 8));
 		G = (int)(convertRatio * ((atariColor & 0x070) >> 4));
@@ -144,6 +168,29 @@ void gfxModuleData_setPal(uint8 *ptr) {
 	}
 
 	gfxModuleData_setDirtyColors(0, 16);
+}*/
+
+void gfxModuleData_convertOldPalColor(uint16 oldColor, uint8* pOutput) {
+	int R;
+	int G;
+	int B;
+
+#define convertRatio 36.571428571428571428571428571429
+
+	R = (int)(convertRatio * ((oldColor & 0x700) >> 8));
+	G = (int)(convertRatio * ((oldColor & 0x070) >> 4));
+	B = (int)(convertRatio * ((oldColor & 0x007)));
+
+	if (R > 0xFF)
+		R = 0xFF;
+	if (G > 0xFF)
+		G = 0xFF;
+	if (B > 0xFF)
+		B = 0xFF;
+
+	*(pOutput++) = R;
+	*(pOutput++) = G;
+	*(pOutput++) = B;
 }
 
 void gfxModuleData_field_90(void) {

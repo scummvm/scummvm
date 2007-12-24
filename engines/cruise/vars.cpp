@@ -143,8 +143,9 @@ int16 var47;
 int16 var48;
 int16 flagCt;
 
-int8 var50[64];
-int16 palette[256 * 3];
+uint8 newPal[NBCOLORS*3];
+uint8 workpal[NBCOLORS*3];
+uint8 palScreen[NBSCREENS][NBCOLORS*3];
 
 //systemStringsStruct systemStrings;
 
@@ -172,9 +173,9 @@ int16 ctpVar8[200];
 
 int16 ctpVar14;
 
-int16 bgVar1;
-int16 bgVar2;
-int16 bgVar3;
+int16 flagSpeed;
+int16 speedGame;
+int16 oldSpeedGame;
 
 uint8 globalScreen[320 * 200];
 uint8 scaledScreen[640 * 400];

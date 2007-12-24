@@ -81,13 +81,57 @@ void freeAutoCell(void) {
 	}
 }
 
+void calcRGB(uint8* pColorSrc, uint8* pColorDst, int* offsetTable) {
+	for(unsigned long int i=0; i<3; i++) {
+		int color = *(pColorSrc++);
+		int offset = offsetTable[i];
+
+		color += offset;
+		if(color < 0)
+			color = 0;
+		if(color > 0xFF)
+			color = 0xFF;
+
+		*(pColorDst++) = (uint8)color;
+	}
+}
+
+void fadeIn() {
+	for(long int i=256; i>=0; i-=32) {
+		for(long int j=0; j<256; j++) {
+			int offsetTable[3];
+			offsetTable[0] = -i;
+			offsetTable[1] = -i;
+			offsetTable[2] = -i;
+			calcRGB(&palScreen[currentActiveBackgroundPlane][3*j], &workpal[3*j], offsetTable);
+		}
+		gfxModuleData_setPal256(workpal);
+		gfxModuleData_flipScreen();
+	}
+
+	for(long int j=0; j<256; j++) {
+		int offsetTable[3];
+		offsetTable[0] = 0;
+		offsetTable[1] = 0;
+		offsetTable[2] = 0;
+		calcRGB(&palScreen[currentActiveBackgroundPlane][3*j], &workpal[3*j], offsetTable);
+	}
+
+	gfxModuleData_setPal256(workpal);
+
+	fadeFlag = 0;
+	PCFadeFlag = 0;
+}
+
 void flipScreen(void) {
 	SWAP(gfxModuleData.pPage00, gfxModuleData.pPage10);
 
 	gfxModuleData_flipScreen();
 
-	/*memcpy(globalAtariScreen, gfxModuleData.pPage00, 16000);
-	 * convertAtariToRaw(gfxModuleData.pPage00,globalScreen,200,320); */
+	if(doFade) {
+		fadeIn();
+		doFade = 0;
+	}
 }
 
 int spriteX1;
@@ -1344,7 +1388,7 @@ void mainDraw(int16 param) {
 	int16 objZ2 = 0;
 	int16 spriteHeight;
 
-	if (fadeVar) {
+	if (PCFadeFlag) {
 		return;
 	}
 

@@ -31,7 +31,7 @@
 namespace Cruise {
 
 extern uint16 remdo;
-extern uint16 fadeVar;
+extern uint16 PCFadeFlag;
 
 int16 readB16(void *ptr);
 

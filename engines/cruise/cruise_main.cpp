@@ -372,8 +372,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 	if (fileIdx < 0)
 		return (-18);
 
-	unpackedSize = loadFileVar1 =
-	    volumePtrToFileDescriptor[fileIdx].extSize + 2;
+	unpackedSize = loadFileVar1 = volumePtrToFileDescriptor[fileIdx].extSize + 2;
 
 	// TODO: here, can unpack in gfx module buffer
 	unpackedBuffer = (uint8 *) mallocAndZero(unpackedSize);
@@ -385,9 +384,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 	lastFileSize = unpackedSize;
 
 	if (volumePtrToFileDescriptor[fileIdx].size + 2 != unpackedSize) {
-		uint8 *pakedBuffer =
-		    (uint8 *) mallocAndZero(volumePtrToFileDescriptor[fileIdx].
-		    size + 2);
+		uint8 *pakedBuffer = (uint8 *) mallocAndZero(volumePtrToFileDescriptor[fileIdx].size + 2);
 
 		loadPakedFileToMem(fileIdx, pakedBuffer);
 
@@ -1798,15 +1795,12 @@ void mainLoop(void) {
 
 			if (displayOn) {
 				if (doFade)
-					fadeVar = 0;
+					PCFadeFlag = 0;
 
-				/*if (fadeVar)
-				 * {
-				 * //  TODO!
-				 * } */
-
-				mainDraw(0);
-				flipScreen();
+				if (!PCFadeFlag) {
+					mainDraw(0);
+					flipScreen();
+				}
 
 				if (userEnabled && !userWait && !autoTrack) {
 					if (currentActiveMenu == -1) {
@@ -1919,7 +1913,7 @@ int oldmain(int argc, char *argv[]) {
 
 //  initBuffer(scaledScreen,640,400);
 
-	fadeVar = 0;
+	PCFadeFlag = 0;
 
 	//lowLevelInit();
 

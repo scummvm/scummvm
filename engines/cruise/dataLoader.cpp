@@ -92,8 +92,7 @@ void decodeGfxFormat4(dataFileEntry *pCurrentFileEntry) {
 
 		/* decode planes */
 		for (c = 0; c < 16; c++) {
-			buffer[x + c] =
-			    ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) & 4) | ((p3 >> 12) & 8);
+			buffer[x + c] = ((p0 >> 15) & 1) | ((p1 >> 14) & 2) | ((p2 >> 13) & 4) | ((p3 >> 12) & 8);
 
 			p0 <<= 1;
 			p1 <<= 1;

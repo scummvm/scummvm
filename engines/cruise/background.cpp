@@ -93,14 +93,7 @@ int loadBackground(const char *name, int idx) {
 	printf("Loading BG: %s\n", name);
 
 	if (!backgroundPtrtable[idx]) {
-		//if (!gfxModuleData.useEGA && !gfxModuleData.useVGA)
-		{
-			backgroundPtrtable[idx] =
-			    (uint8 *) mallocAndZero(320 * 200 /*64000 */ );
-		}
-/*		else {
-			backgroundPtrtable[idx] = hwMemAddr[idx];
-		} */
+		backgroundPtrtable[idx] = (uint8 *)mallocAndZero(320 * 200);
 	}
 
 	if (!backgroundPtrtable[idx]) {
@@ -126,63 +119,83 @@ int loadBackground(const char *name, int idx) {
 	ptr2 = ptrToFree;
 
 	if (!strcmp(name, "LOGO.PI1")) {
-		bgVar3 = bgVar2;
-		bgVar1 = 1;
-		bgVar2 = 1;
-	} else {
-		if (bgVar1) {
-			bgVar2 = bgVar3;
-			bgVar1 = 0;
-		}
+		oldSpeedGame = speedGame;
+		flagSpeed = 1;
+		speedGame = 1;
+	} else if (flagSpeed) {
+		speedGame = oldSpeedGame;
+		flagSpeed = 0;
 	}
 
 	if (!strcmp((char*)ptr, "PAL")) {
 		printf("Pal loading unsupported !\n");
-		exit(1);
+		ASSERT(0);
 	} else {
-		if (!colorMode || ptr2[1] == 5) {
-			ptr2 += 2;
+		int mode = ptr2[1];
+		ptr2 += 2;
+		// read palette
+		switch(mode)
+		{
+		case 4: // color on 3 bit
+			{
+				uint16 oldPalette[32];
 
-			memcpy(palette, ptr2, 0x20);
-			ptr2 += 0x20;
-			flipGen(palette, 0x20);
-			ptr2 += 0x7D00;
+				memcpy(oldPalette, ptr2, 0x20);
+				ptr2 += 0x20;
+				flipGen(oldPalette, 0x20);
 
-			loadMEN(&ptr2);
-			loadCVT(&ptr2);
-
-			gfxModuleData_gfxClearFrameBuffer(backgroundPtrtable
-			    [idx]);
-			gfxModuleData_field_60((char *)ptrToFree + 34, 20, 200,
-			    (char *)backgroundPtrtable[idx], 0, 0);
-
-			gfxModuleData_setPal((uint8 *) (palette + (idx << 6)));
-		} else if (ptr2[1] == 8) {
-			int i;
-			ptr2 += 2;
-
-			for (i = 0; i < 256 * 3; i++) {
-				palette[i] = ptr2[i];
+				for(unsigned long int i=0; i<32; i++)
+				{
+					gfxModuleData_convertOldPalColor(oldPalette[i], &palScreen[idx][i*3]);
+				}
+				ptr2 += 32000;
+				break;
 			}
-			//memcpy(palette,ptr2,256*3);
-			ptr2 += 256 * 3;
+		case 5: // color on 4 bit
+			{
+				for(unsigned long int i=0; i<32; i++)
+				{
+					uint8* inPtr = ptr2 + i * 2;
+					uint8* outPtr = palScreen[idx] +i * 3;
+					
+					outPtr[2] = ((inPtr[1])&0x0F) << 4;
+					outPtr[1] = (((inPtr[1])&0xF0) >> 4) << 4;
+					outPtr[0] = ((inPtr[0])&0x0F) << 4;
+				}
+				ptr2 += 2*32;
+				break;
+			}
+		case 8:
+			memcpy(palScreen[idx], ptr2, 256*3);
+			ptr2 += 256*3;
+			break;
 
+		default:
+			ASSERT(0);
+		}
+
+		gfxModuleData_setPal256(palScreen[idx]);
+
+		loadMEN(&ptr2);
+		loadCVT(&ptr2);
+
+		// read image data
+		gfxModuleData_gfxClearFrameBuffer(backgroundPtrtable[idx]);
+
+		switch(mode)
+		{
+		case 4:
+			convertGfxFromMode4(ptr2, 320, 200, backgroundPtrtable[idx]);
+			break;
+		case 5:
+			convertGfxFromMode5(ptr2, 320, 200, backgroundPtrtable[idx]);
+			break;
+		case 8:
 			memcpy(backgroundPtrtable[idx], ptr2, 320 * 200);
-
-			gfxModuleData_setPal256(palette);
+			break;
 		}
 	}
 
-	//if (ptrToFree != gfxModuleData.pPage10)
-	//  free(ptrToFree);
-
-	if (gfxModuleData.useEGA || gfxModuleData.useTandy) {
-		ASSERT(0);
-	}
-
-	if (gfxModuleData.useEGA || gfxModuleData.useTandy) {
-		ASSERT(0);
-	}
 
 	strcpy(backgroundTable[idx].name, name);
 
