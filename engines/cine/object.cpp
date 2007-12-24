@@ -45,7 +45,7 @@ void unloadAllMasks(void) {
 	while (current) {
 		overlayHeadElement *next = current->next;
 
-		free(current);
+		delete current;
 
 		current = next;
 	}
@@ -124,7 +124,7 @@ int8 removeOverlayElement(uint16 objIdx, uint16 param) {
 
 	tempPtr2->previous = currentHeadPtr->previous;
 
-	free(currentHeadPtr);
+	delete currentHeadPtr;
 
 	return 0;
 }
@@ -151,7 +151,7 @@ int16 freeOverlay(uint16 objIdx, uint16 param) {
 
 	tempPtr2->previous = currentHeadPtr->previous;
 
-	free(currentHeadPtr);
+	delete currentHeadPtr;
 	return 0;
 }
 
