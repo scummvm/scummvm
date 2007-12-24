@@ -632,7 +632,7 @@ int ScummEngine::loadResource(int type, int idx) {
 
 	if (type == rtCharset && (_game.features & GF_SMALL_HEADER)) {
 		loadCharset(idx);
-		return (1);
+		return 1;
 	}
 
 	roomNr = getResourceRoomNr(type, idx);
@@ -662,7 +662,7 @@ int ScummEngine::loadResource(int type, int idx) {
 
 	if (_game.features & GF_OLD_BUNDLE) {
 		if ((_game.version == 3) && !(_game.platform == Common::kPlatformAmiga) && (type == rtSound)) {
-			return readSoundResourceSmallHeader(type, idx);
+			return readSoundResourceSmallHeader(idx);
 		} else {
 			size = _fileHandle->readUint16LE();
 			_fileHandle->seek(-2, SEEK_CUR);
@@ -674,11 +674,11 @@ int ScummEngine::loadResource(int type, int idx) {
 		tag = _fileHandle->readUint16LE();
 		_fileHandle->seek(-6, SEEK_CUR);
 		if ((type == rtSound) && !(_game.platform == Common::kPlatformAmiga) && !(_game.platform == Common::kPlatformFMTowns)) {
-			return readSoundResourceSmallHeader(type, idx);
+			return readSoundResourceSmallHeader(idx);
 		}
 	} else {
 		if (type == rtSound) {
-			return readSoundResource(type, idx);
+			return readSoundResource(idx);
 		}
 
 		tag = _fileHandle->readUint32BE();

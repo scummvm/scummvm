@@ -759,8 +759,8 @@ public:
 	int getResourceRoomNr(int type, int index);
 
 protected:
-	int readSoundResource(int type, int index);
-	int readSoundResourceSmallHeader(int type, int index);
+	int readSoundResource(int index);
+	int readSoundResourceSmallHeader(int index);
 	bool isResourceInUse(int type, int i) const;
 
 	virtual void setupRoomSubBlocks();
