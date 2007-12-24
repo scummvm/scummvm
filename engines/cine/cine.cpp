@@ -128,11 +128,11 @@ void CineEngine::initialize() {
 		loadErrmessDat("errmess.dat");
 	}
 
-	memset(objectTable, 0, ARRAYSIZE(objectTable));
-	memset(globalVars, 0, ARRAYSIZE(globalVars));
-	memset(scriptTable, 0, ARRAYSIZE(scriptTable));
-	memset(messageTable, 0, ARRAYSIZE(scriptTable));
-	memset(relTable, 0, ARRAYSIZE(scriptTable));
+	memset(objectTable, 0, sizeof(objectTable));
+	memset(globalVars, 0, sizeof(globalVars));
+	memset(scriptTable, 0, sizeof(scriptTable));
+	memset(messageTable, 0, sizeof(messageTable));
+	memset(relTable, 0, sizeof(relTable));
 
 	for (int i = 0; i < NUM_MAX_ANIMDATA; i++) {
 		animDataTable[i].ptr1 = animDataTable[i].ptr2 = NULL;
