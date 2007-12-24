@@ -49,16 +49,19 @@ void TextDisplayer_v2::restoreScreen() {
 
 char *TextDisplayer_v2::preprocessString(const char *str) {
 	debugC(9, kDebugLevelMain, "TextDisplayer_v2::preprocessString('%s')", str);
+
 	if (str != _talkBuffer) {
 		assert(strlen(str) < sizeof(_talkBuffer) - 1);
 		strcpy(_talkBuffer, str);
 	}
+
 	char *p = _talkBuffer;
 	while (*p) {
 		if (*p == '\r')
 			return _talkBuffer;
 		++p;
 	}
+
 	p = _talkBuffer;
 	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
 	_screen->_charWidth = -2;
@@ -473,5 +476,6 @@ void KyraEngine_v2::freeTIM(byte *buffer) {
 		delete[] buffer;
 	}
 }
+
 } // end of namespace Kyra
 

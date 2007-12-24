@@ -1113,7 +1113,6 @@ void Screen::setScreenDim(int dim) {
 	debugC(9, kDebugLevelScreen, "Screen::setScreenDim(%d)", dim);
 	assert(dim < _screenDimTableCount);
 	_curDim = &_screenDimTable[dim];
-	// XXX
 }
 
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {

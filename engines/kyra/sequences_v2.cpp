@@ -60,9 +60,8 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 	_screen->_charWidth = -2;
 
 	memset(_activeWSA, 0, sizeof(ActiveWSA) * 8);
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 8; ++i)
 		_activeWSA[i].flags = -1;
-
 
 	memset(_activeText, 0, sizeof(ActiveText) * 10);
 	seq_resetAllTextEntries();
@@ -70,7 +69,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 	_screen->hideMouse();
 	int oldPage = _screen->setCurPage(2);
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; ++i)
 		memset(_screen->getPalette(i), 0, 0x300);
 
 	_screen->clearPage(10);
@@ -103,8 +102,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 			(this->*_sequences[seqNum].callback)(0, 0, 0, -1);
 
 		if (_sequences[seqNum].flags & 1) {
-			if (_seqWsa->opened())
-				_seqWsa->close();
+			_seqWsa->close();
 			_seqWsa->open(_sequences[seqNum].wsaFile, 0, _screen->getPalette(0));
 			_seqWsa->setX(_sequences[seqNum].xPos);
 			_seqWsa->setY(_sequences[seqNum].yPos);
@@ -207,7 +205,6 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 							_screen->updateScreen();
 						}
 
-
 						uint32 now = _system->getMillis();
 						if (now >= _seqEndTime) {
 							loop2 = false;
@@ -233,8 +230,6 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 				}
 			}
 			_seqWsa->close();
-
-
 		} else {
 			_seqFrameDelay = _sequences[seqNum].frameDelay;
 			_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
@@ -316,8 +311,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 	for (int i = 0; i < 8; i++)
 		seq_unloadWSA(i);
 
-	if (_seqWsa->opened())
-		_seqWsa->close();
+	_seqWsa->close();
 
 	_screen->_charWidth = 0;
 
@@ -491,7 +485,6 @@ int KyraEngine_v2::seq_introLibrary(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 			seq_resetActiveWSA(0);
 			seq_loadNestedSequence(0, kSequenceDarm);
-
 			break;
 
 		case 104:
@@ -577,7 +570,6 @@ int KyraEngine_v2::seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			if (!((_seqFrameCounter == 260 && !_flags.isTalkie) || (_seqFrameCounter == 395 && _flags.isTalkie)))
 				break;
 
-
 			seq_waitForTextsTimeout();
 			seq_resetActiveWSA(0);
 			seq_loadNestedSequence(1, kSequenceHand3);
@@ -598,7 +590,6 @@ int KyraEngine_v2::seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 		case 540:
 			if (!((_seqFrameCounter == 405 && !_flags.isTalkie) || (_seqFrameCounter == 540 && _flags.isTalkie)))
 				break;
-
 
 			seq_playTalkText(10);
 			break;
@@ -763,8 +754,8 @@ int KyraEngine_v2::seq_introForest(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	if (frm == 11) {
 		seq_waitForTextsTimeout();
 	} else if (frm == 12) {
-		if (_flags.lang == Common::FR_FRA)
-			{}//// TODO
+		//if (_flags.lang == Common::FR_FRA)
+		//XXX	
 		seq_playTalkText(2);
 	}
 	return frm;
@@ -904,7 +895,6 @@ int KyraEngine_v2::seq_finaleFunters(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 			seq_playWsaSyncDialogue(23, voiceIndex, 137, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
 			if (_flags.isTalkie)
 				_seqWsaCurrentFrame = 17;
-
 			break;
 
 		default:
@@ -945,7 +935,6 @@ int KyraEngine_v2::seq_finaleFerb(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			memset(_seqTextColorMap, _seqTextColor[1], 16);
 			_seqTextColor[0] = _seqTextColorMap[1] = 255;
 			_screen->setTextColorMap(_seqTextColorMap);
-
 			break;
 
 		case 5:
@@ -970,7 +959,6 @@ int KyraEngine_v2::seq_finaleFerb(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 		case 11:
 			if (_flags.isTalkie)
 				seq_playWsaSyncDialogue(24, 22, 149, 116, 90, 60, wsaObj, 11, 14, x, y);
-
 			break;
 
 		case 16:
@@ -1232,7 +1220,6 @@ int KyraEngine_v2::seq_finaleFarmer(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			chatW = 100;
 
 			seq_playWsaSyncDialogue(29, voiceIndex, 150, chatX, chatY, chatW, wsaObj, 12, -21, x, y);
-
 			break;
 
 		default:
@@ -1548,7 +1535,7 @@ void KyraEngine_v2::seq_finaleActorScreen() {
 	static const uint8 colormap[] = {0, 0, 102, 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	_screen->setTextColorMap(colormap);
 
-	// TODO
+	//XXX
 
 	snd_assignMusicData(kMusicFinale);
 	_sound->loadSoundFile(0);
@@ -1667,7 +1654,7 @@ void KyraEngine_v2::seq_sequenceCommand(int command) {
 
 		case 1:
 			memset(pal, 0x3F, 0x300);
-			//////////TODO
+			//////////XXX
 			//////////Unused anyway (at least by fm-towns intro/outro)
 
 			_screen->fadePalette(pal, 16);
@@ -1817,8 +1804,7 @@ void KyraEngine_v2::seq_loadNestedSequence(int wsaNum, int seqNum) {
 		assert(_activeWSA[wsaNum].movie);
 	}
 
-	if (_activeWSA[wsaNum].movie->opened())
-		_activeWSA[wsaNum].movie->close();
+	_activeWSA[wsaNum].movie->close();
 
 	_activeWSA[wsaNum].movie->open(s.wsaFile, 0, 0);
 
@@ -1926,7 +1912,6 @@ void KyraEngine_v2::seq_nestedSequenceFrame(int command, int wsaNum) {
 
 void KyraEngine_v2::seq_animatedSubFrame(int srcPage, int dstPage, int delaytime, int steps,
                                          int x, int y, int w, int h, int openClose, int directionFlags) {
-
 	if (openClose) {
 		for (int i = 1; i < steps; i++) {
 			uint32 endtime = _system->getMillis() + delaytime * _tickLength;
@@ -2248,16 +2233,15 @@ void KyraEngine_v2::seq_makeBookOrCauldronAppear(int type) {
 	_screen->hideMouse();
 	showMessage(0, 0xCF);
 
-	if (type == 1) {
+	if (type == 1)
 		seq_makeBookAppear();
-	} else if (type == 2) {
+	else if (type == 2)
 		loadInvWsa("CAULDRON.WSA", 1, 6, 0, -2, -2, 1);
-	}
 
 	_screen->copyRegionToBuffer(2, 0, 0, 320, 200, _screenBuffer);
 	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
 
-	static int16 bookCauldronRects[] = {
+	static const uint8 bookCauldronRects[] = {
 		0x46, 0x90, 0x7F, 0x2B,	// unknown rect (maybe unused?)
 		0xCE, 0x90, 0x2C, 0x2C,	// book rect
 		0xFA, 0x90, 0x46, 0x2C	// cauldron rect
@@ -2355,8 +2339,8 @@ const Sequence KyraEngine_v2::_sequences_PC[] = {
 	// flags, wsaFile, cpsFile, startupCommand, finalCommand, stringIndex1, stringIndex2,
 	// startFrame, numFrames, frameDelay, xPos, yPos, callback, duration
 	{ 2, 0, "virgin.cps",   4, 0, -1, -1, 0, 1,  100,  0, 0, 0,                                 30 },
-	{ 1, "westwood.wsa", 0, 4, 0, -1, -1, 0, 18, 6,   0, 0, &KyraEngine_v2::seq_introWestwood, 160 },
-	{ 1, "title.wsa", 0,    4, 0, -1, -1, 0, 26, 6,   0, 0, &KyraEngine_v2::seq_introTitle,    10 },
+	{ 1, "westwood.wsa", 0, 4, 0, -1, -1, 0, 18, 6,    0, 0, &KyraEngine_v2::seq_introWestwood, 160 },
+	{ 1, "title.wsa", 0,    4, 0, -1, -1, 0, 26, 6,    0, 0, &KyraEngine_v2::seq_introTitle,    10 },
 	{ 2, 0, "over.cps",     4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introOverview, 30 },
 	{ 2, 0, "library.cps",  4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introLibrary,  30 },
 	{ 2, 0, "hand.cps",     4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introHand,     90 },

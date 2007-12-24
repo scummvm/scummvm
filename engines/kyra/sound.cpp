@@ -235,9 +235,8 @@ void SoundMidiPC::metaEvent(byte type, byte *data, uint16 length) {
 	case 0x2F:	// End of Track
 		if (_eventFromMusic) {
 			// remap all channels
-			for (int i = 0; i < 16; ++i) {
+			for (int i = 0; i < 16; ++i)
 				_virChannel[i] = i;
-			}
 		} else {
 			_sfxIsPlaying = false;
 		}

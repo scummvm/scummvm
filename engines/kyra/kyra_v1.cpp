@@ -895,11 +895,10 @@ void KyraEngine_v1::updateMousePointer(bool forceUpdate) {
 			if (mouse.y > 158 || (mouse.x >= 12 && mouse.x < 308 && mouse.y < 136 && mouse.y >= 12) || forceUpdate) {
 				_mouseState = _itemInHand;
 				_screen->hideMouse();
-				if (_itemInHand == -1) {
+				if (_itemInHand == -1)
 					_screen->setMouseCursor(1, 1, _shapes[0]);
-				} else {
+				else
 					_screen->setMouseCursor(8, 15, _shapes[216+_itemInHand]);
-				}
 				_screen->showMouse();
 			}
 		}
@@ -966,11 +965,10 @@ int KyraEngine_v1::checkForNPCScriptRun(int xpos, int ypos) {
 		charLeft = currentChar->x1 - 12;
 		charRight = currentChar->x1 + 11;
 		charTop = currentChar->y1 - 48;
-		// if (!i) {
+		// if (!i)
 		// 	charBottom = currentChar->y2 - 16;
-		// } else {
+		// else
 		charBottom = currentChar->y1;
-		// }
 		
 		if (xpos < charLeft || xpos > charRight || ypos < charTop || charBottom < ypos)
 			continue;

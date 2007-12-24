@@ -408,6 +408,7 @@ int KyraEngine_v2::o2_drawSceneShapeOnPage(ScriptState *script) {
 	int y = stackPos(2);
 	int flag = stackPos(3);
 	int drawPage = stackPos(4);
+
 	_screen->drawShape(drawPage, _sceneShapeTable[shape], x, y, 2, flag ? 1 : 0);
 	return 0;
 }
@@ -416,13 +417,17 @@ int KyraEngine_v2::o2_restoreBackBuffer(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_restoreBackBuffer(%p) (%d)", (const void *)script, stackPos(0));
 	int disable = stackPos(0);
 	int oldState = 0;
+
 	if (disable) {
 		oldState = _animObjects[0].enabled;
 		_animObjects[0].enabled = 0;
 	}
+
 	restorePage3();
+
 	if (disable)
 		_animObjects[0].enabled = oldState;
+
 	return 0;
 }
 
@@ -567,7 +572,6 @@ int KyraEngine_v2::o2_runTemporaryScript(ScriptState *script) {
 			stackPos(2), stackPos(3));
 
 	runTemporaryScript(stackPosString(0), stackPos(3), stackPos(2) ? 1 : 0, stackPos(1), stackPos(2));
-
 	return 0;
 }
 
@@ -709,9 +713,7 @@ int KyraEngine_v2::o2_querySpecialSceneScriptState(ScriptState *script) {
 
 int KyraEngine_v2::o2_setHiddenItemsEntry(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setHiddenItemsEntry(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	int item = stackPos(1);
-	_hiddenItems[stackPos(0)] = item;
-	return item;
+	return (_hiddenItems[stackPos(0)] = stackPos(1));
 }
 
 int KyraEngine_v2::o2_getHiddenItemsEntry(ScriptState *script) {
@@ -826,3 +828,4 @@ int KyraEngine_v2::o2t_setShapeFlag(ScriptState *script) {
 }
 
 } // end of namespace Kyra
+

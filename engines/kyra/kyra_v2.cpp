@@ -179,7 +179,8 @@ int KyraEngine_v2::go() {
 		if (_flags.platform == Common::kPlatformPC && (_flags.isTalkie || _flags.isDemo)) {
 			_res->loadFileList("FILEDATA.FDT");
 		} else if (_flags.platform == Common::kPlatformPC) {
-			//TODO
+			//TODO:
+			//What files are needed for floppy version?
 		} else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 			char tmpfilename[13];
 			static const char * pakfiles [] = { "KYRA.DAT", "AUDIO.PAK", "CAULDRON.PAK",
@@ -807,7 +808,8 @@ void KyraEngine_v2::loadChapterBuffer(int chapter) {
 }
 
 void KyraEngine_v2::changeFileExtension(char *buffer) {
-	while (*buffer != '.') ++buffer;
+	while (*buffer != '.')
+		++buffer;
 
 	++buffer;
 	strcpy(buffer, _languageExtension[_lang]);
@@ -985,6 +987,7 @@ void KyraEngine_v2::loadZShapes(int shapes) {
 	for (int i = 9; i <= 32; ++i) {
 		delete [] _defaultShapeTable[i];
 		_defaultShapeTable[i] = _screen->makeShapeCopy(data, i-9);
+		assert(_defaultShapeTable[i]);
 	}
 	delete [] data;
 
@@ -997,8 +1000,10 @@ void KyraEngine_v2::loadInventoryShapes() {
 
 	_screen->loadBitmap("_PLAYALL.CPS", 3, 3, 0);
 
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 10; ++i) {
 		_defaultShapeTable[240+i] = _screen->encodeShape(_inventoryX[i], _inventoryY[i], 16, 16, 0);
+		assert(_defaultShapeTable[240+i]);
+	}
 
 	_screen->_curPage = curPageBackUp;
 }
@@ -1088,8 +1093,7 @@ void KyraEngine_v2::runTemporaryScript(const char *filename, int unk1, int unk2,
 #pragma mark -
 
 void KyraEngine_v2::resetScaleTable() {
-	for (int i = 0; i < ARRAYSIZE(_scaleTable); ++i)
-		_scaleTable[i] = 0x100;
+	Common::set_to(_scaleTable, _scaleTable + ARRAYSIZE(_scaleTable), 0x100);
 }
 
 void KyraEngine_v2::setScaleTableItem(int item, int data) {
@@ -1308,6 +1312,7 @@ void KyraEngine_v2::updateCharAnimFrame(int charId, int *table) {
 
 	Character *character = &_mainCharacter;
 	++character->animFrame;
+
 	int facing = character->facing;
 
 	if (table) {

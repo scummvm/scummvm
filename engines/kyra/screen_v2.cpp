@@ -748,3 +748,4 @@ void Screen_v2::setTextColorMap(const uint8 *cmap) {
 }
 
 } // end of namespace Kyra
+

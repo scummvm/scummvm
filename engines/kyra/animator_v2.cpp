@@ -392,3 +392,4 @@ void KyraEngine_v2::resetCharacterAnimDim() {
 }
 
 } // end of namespace Kyra
+

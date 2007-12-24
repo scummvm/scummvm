@@ -444,3 +444,4 @@ void KyraEngine_v2::removeHandItem() {
 }
 
 } // end of namespace Kyra
+

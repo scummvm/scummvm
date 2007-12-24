@@ -726,11 +726,9 @@ int KyraEngine_v2::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 	y &= ~1; toY &= ~1;
 	int size = KyraEngine::findWay(x, y, toX, toY, moveTable, moveTableSize);
 	if (size) {
-/*
-		int temp = pathfinderUnk1(moveTable);
-		temp = pathfinderUnk3(temp, x, y);
-		pathfinderUnk5(moveTable, temp, x, y, moveTableSize);
-*/
+		//int temp = pathfinderUnk1(moveTable);
+		//temp = pathfinderUnk3(temp, x, y);
+		//pathfinderUnk5(moveTable, temp, x, y, moveTableSize);
 	}
 	return getMoveTableSize(moveTable);
 }
@@ -909,3 +907,4 @@ void KyraEngine_v2::fadeScenePal(int srcIndex, int delayTime) {
 }
 
 } // end of namespace Kyra
+
