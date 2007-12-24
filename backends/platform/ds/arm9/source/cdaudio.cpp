@@ -244,6 +244,11 @@ void update() {
 	playNextBlock();
 }
 
+#ifdef ARM_ADPCM
+extern "C" void ARM_adcpm(int *block, int len, int stepTableIndex,
+                          int firstSample, s16 *decompressionBuffer);
+#endif
+
 void decompressBlock() {
 	int block[2048];
 	bool loop = false;
@@ -294,7 +299,13 @@ void decompressBlock() {
 			return;
 		}
 	}
-		
+
+#ifdef ARM_ADPCM
+	ARM_adpcm(block, waveHeader.fmtExtra,
+	          blockHeader.stepTableIndex,
+	          blockHeader.firstSample,
+	          decompressionBuffer);
+#else		
 	// First sample is in header
 	decompressionBuffer[0] = blockHeader.firstSample;
 	
@@ -387,6 +398,7 @@ void decompressBlock() {
 		
 
 	}
+#endif
 }
 
 void playNextBlock() {
