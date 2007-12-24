@@ -150,7 +150,7 @@ struct MenuItem {
 	uint8 color1;
 	uint8 color2;
 	int (KyraEngine_v1::*callback)(Button*);
-	int16 field_1b;
+	int16 saveSlot;
 	const char *labelString;
 	uint16 labelX;
 	uint8 labelY;

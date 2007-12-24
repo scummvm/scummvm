@@ -669,7 +669,7 @@ void KyraEngine_v1::initMenu(Menu &menu) {
 			_menuButtonData[i].width  = menu.item[i].width  - 1;
 			_menuButtonData[i].height = menu.item[i].height - 1;
 			_menuButtonData[i].buttonCallback = menu.item[i].callback;
-			_menuButtonData[i].specialValue = menu.item[i].field_1b;
+			_menuButtonData[i].specialValue = menu.item[i].saveSlot;
 			//_menuButtonData[i].field_6 = menu.item[i].field_25;
 			//_menuButtonData[i].field_8 = 0;
 
@@ -878,7 +878,7 @@ void KyraEngine_v1::setupSavegames(Menu &menu, int num) {
 	if (_savegameOffset == 0) {
 		menu.item[0].itemString = _specialSavegameString;
 		menu.item[0].enabled = 1;
-		menu.item[0].field_1b = 0;
+		menu.item[0].saveSlot = 0;
 		startSlot = 1;
 	} else {
 		startSlot = 0;
@@ -890,12 +890,12 @@ void KyraEngine_v1::setupSavegames(Menu &menu, int num) {
 			in->read(savenames[i], 31);
 			menu.item[i].itemString = savenames[i];
 			menu.item[i].enabled = 1;
-			menu.item[i].field_1b = i + _savegameOffset;
+			menu.item[i].saveSlot = i + _savegameOffset;
 			delete in;
 		} else {
 			menu.item[i].enabled = 0;
 			//menu.item[i].itemString = "";
-			//menu.item[i].field_1b = -1;
+			//menu.item[i].saveSlot = -1;
 		}
 	}
 }
@@ -1044,7 +1044,7 @@ int KyraEngine_v1::gui_saveGame(Button *button) {
 		_savegameName[0] = 0;
 	} else {
 		for (int i = 0; i < 5; i++) {
-			if (_menu[2].item[i].field_1b == _gameToLoad) {
+			if (_menu[2].item[i].saveSlot == _gameToLoad) {
 				strncpy(_savegameName, _menu[2].item[i].itemString, 31);
 				break;
 			}
