@@ -394,15 +394,46 @@ void Sound::playSound(int soundID) {
 		*/
 	}
 	else if ((_vm->_game.platform == Common::kPlatformMacintosh) && (_vm->_game.id == GID_INDY3) && (ptr[26] == 0)) {
+		// Sound fomat as used in Indy3 EGA Mac. 
+		// It seems to be closely related to the Amiga format, see player_v3a.cpp
+		// The following is known:
+		// offset 0, 16 LE: total size
+		// offset 2-7: ?
+		// offset 8, 16BE: offset to sound data (0x1C = 28 -> header size 28?)
+		// offset 10-11: ? another offset, maybe related to looping?
+		// offset 12, 16BE: size of sound data
+		// offset 14-15: ? often the same as 12-13: maybe loop size/end?
+		// offset 16-19: ? all 0?
+		// offset 20, 16BE: rate divisor
+		// offset 22-23: ? often identical to the rate divisior? (but not in sound 8, which loops)
+		// offset 24, byte (?): volume
+		// offset 25: ? same as volume -- maybe left vs. right channel?
+		// offset 26: ?  if != 0: stop current sound?
+		// offset 27: ?  loopcount? 0xff == -1 for infinite?
+
+		flags = Audio::Mixer::FLAG_AUTOFREE;
 		size = READ_BE_UINT16(ptr + 12);
 		if (size == 0)	// WORKAROUND bug #1852635: Sound 54 has size 0.
 			return;
 		rate = 3579545 / READ_BE_UINT16(ptr + 20);
 		sound = (char *)malloc(size);
 		int vol = ptr[24] * 4;
+		int loopStart = 0, loopEnd = 0;
+#if 0	// Disabling this until after 0.11.0
+		int loopcount = ptr[27];
+		if (loopcount > 1) {
+			// TODO: We can only loop once, or infinitely many times, but
+			// have no support for a finite number of repetitions.
+			// This is 
+			loopStart = READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8);
+			loopEnd = READ_BE_UINT16(ptr + 14);
+			flags |= Audio::Mixer::FLAG_LOOP;
+		}
+#endif
 
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
-		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate, Audio::Mixer::FLAG_AUTOFREE, soundID, vol, 0);
+		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate,
+				flags, soundID, vol, 0, loopStart, loopEnd);
 	}
 	else {
 
