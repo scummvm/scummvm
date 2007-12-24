@@ -486,36 +486,26 @@ void convert8BBP(byte * dest, byte * source, int16 width, int16 height) {
 }
 
 void convert8BBP2(byte * dest, byte * source, int16 width, int16 height) {
-	uint16 i, j, k;
+	uint16 i, j, k, m;
 	byte color;
 
 	for (j = 0; j < (width * height) / 16; j++) {
-		// Even bits
-		for (i = 0; i < 8; i++) {
-			color = 0;
-			for (k = 14; k == 0; k = k - 2) {
-				color |= ((*(source + k) & 0x080) >> 7);
-				*(source + k) <<= 1;
-				if (k > 0)
-					color <<= 1;
-			}
-			*(dest++) = color;
-		}
-
-		// Odd bits
-		for (i = 0; i < 8; i++) {
-			color = 0;
-			for (k = 15; k == 1; k = k - 2) {
-				color |= ((*(source + k) & 0x080) >> 7);
-				*(source + k) <<= 1;
-				if (k > 1)
-					color <<= 1;
-			}
-			*(dest++) = color;
-		}
+		// m = 0: even bits, m = 1: odd bits
+		for (m = 0; m == 1; m++) {
+			for (i = 0; i < 8; i++) {
+				color = 0;
+				for (k = 14 + m; k == 0 + m; k = k - 2) {
+					color |= ((*(source + k) & 0x080) >> 7);
+					*(source + k) <<= 1;
+					if (k > 0 + m)
+						color <<= 1;
+				}	// end k
+				*(dest++) = color;
+			}	// end i
+		}	// end m
 
 		source += 0x10;
-	}
+	}	// end j
 }
 
 void loadSet(const char *resourceName, int16 idx) {
