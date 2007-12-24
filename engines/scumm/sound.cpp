@@ -160,7 +160,6 @@ void Sound::processSoundQueues() {
 }
 
 void Sound::playSound(int soundID) {
-	byte *mallocedPtr = NULL;
 	byte *ptr;
 	char *sound;
 	int size = -1;
@@ -352,7 +351,6 @@ void Sound::playSound(int soundID) {
 			ptr += 0x16;
 
 			if (soundID == _currentCDSound && pollCD() == 1) {
-				free(mallocedPtr);
 				return;
 			}
 
@@ -397,9 +395,12 @@ void Sound::playSound(int soundID) {
 	}
 	else if ((_vm->_game.platform == Common::kPlatformMacintosh) && (_vm->_game.id == GID_INDY3) && (ptr[26] == 0)) {
 		size = READ_BE_UINT16(ptr + 12);
+		if (size == 0)	// WORKAROUND bug #1852635: Sound 54 has size 0.
+			return;
 		rate = 3579545 / READ_BE_UINT16(ptr + 20);
 		sound = (char *)malloc(size);
 		int vol = ptr[24] * 4;
+
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
 		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate, Audio::Mixer::FLAG_AUTOFREE, soundID, vol, 0);
 	}
@@ -441,8 +442,6 @@ void Sound::playSound(int soundID) {
 			_vm->_musicEngine->startSound(soundID);
 		}
 	}
-
-	free(mallocedPtr);
 }
 
 void Sound::processSfxQueues() {
