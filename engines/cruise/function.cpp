@@ -273,7 +273,7 @@ int16 Op_RemoveMessage(void) {
 		overlay = currentScriptPtr->overlayNumber;
 	}
 
-	removeCell(&cellHead, overlay, idx, 5, currentActiveBackgroundPlane);
+	removeCell(&cellHead, overlay, idx, 5, masterScreen);
 
 	return (0);
 }
@@ -538,16 +538,16 @@ int16 Op_FadeOut(void) {
 	for(long int i=0; i< 256; i+=32) {
 		for(long int j=0; j<256; j++) {
 			int offsetTable[3];
-			offsetTable[0] = -i;
-			offsetTable[1] = -i;
-			offsetTable[2] = -i;
+			offsetTable[0] = -32;
+			offsetTable[1] = -32;
+			offsetTable[2] = -32;
 			calcRGB(&workpal[3*j], &workpal[3*j], offsetTable);
 		}
 		gfxModuleData_setPal256(workpal);
 		gfxModuleData_flipScreen();
 	}
 
-	//gfxModuleData_gfxClearFrameBuffer(backgroundPtrtable[currentActiveBackgroundPlane]);
+	//gfxModuleData_gfxClearFrameBuffer(backgroundPtrtable[masterScreen]);
 
 	fadeFlag = 1;
 	PCFadeFlag = 1;
@@ -631,7 +631,7 @@ int16 Op_AddCell(void) {
 	if (!overlayIdx)
 		overlayIdx = currentScriptPtr->overlayNumber;
 
-	addCell(&cellHead, overlayIdx, objIdx, objType, currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, currentScriptPtr->type);
+	addCell(&cellHead, overlayIdx, objIdx, objType, masterScreen, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, currentScriptPtr->type);
 
 	return 0;
 }
@@ -645,7 +645,7 @@ int16 Op_AddBackgroundIncrust(void) {
 	if (!overlayIdx)
 		overlayIdx = currentScriptPtr->overlayNumber;
 
-	addBackgroundIncrust(overlayIdx, objIdx, &backgroundIncrustHead, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, currentActiveBackgroundPlane, objType);
+	addBackgroundIncrust(overlayIdx, objIdx, &backgroundIncrustHead, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, masterScreen, objType);
 
 	return 0;
 }
@@ -659,7 +659,7 @@ int16 Op_RemoveCell(void) {
 		ovlNumber = currentScriptPtr->overlayNumber;
 	}
 
-	removeCell(&cellHead, ovlNumber, objectIdx, objType, currentActiveBackgroundPlane);
+	removeCell(&cellHead, ovlNumber, objectIdx, objType, masterScreen);
 
 	return 0;
 }
@@ -714,7 +714,7 @@ int16 Op_AddMessage(void) {
 		}
 	}
 
-	createTextObject(&cellHead, overlayIdx, var_8, var_6, var_4, var_2, color, currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
+	createTextObject(&cellHead, overlayIdx, var_8, var_6, var_4, var_2, color, masterScreen, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
 
 	return 0;
 }
@@ -770,7 +770,7 @@ int16 Op_AutoCell(void) {
 	if (!overlay)
 		overlay = currentScriptPtr->overlayNumber;
 
-	pObject = addCell(&cellHead, overlay, obj, 4, currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, currentScriptPtr->type);
+	pObject = addCell(&cellHead, overlay, obj, 4, masterScreen, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber, currentScriptPtr->type);
 
 	if (!pObject)
 		return 0;
@@ -822,12 +822,12 @@ int16 Op_Sizeof(void) {
 }
 
 int16 Op_SetActiveBackground(void) {
-	int currentPlane = currentActiveBackgroundPlane;
+	int currentPlane = masterScreen;
 	int newPlane = popVar();
 
 	if (newPlane >= 0 && newPlane < 8) {
 		if (backgroundPtrtable[newPlane]) {
-			currentActiveBackgroundPlane = newPlane;
+			masterScreen = newPlane;
 			switchPal = 1;
 		}
 	}
@@ -842,8 +842,8 @@ int16 Op_RemoveBackground(void) {
 		if(backgroundPtrtable[backgroundIdx])
 			free(backgroundPtrtable[backgroundIdx]);
 
-		if(currentActiveBackgroundPlane == backgroundIdx)
-			currentActiveBackgroundPlane = 0;
+		if(masterScreen == backgroundIdx)
+			masterScreen = 0;
 
 		strcpy(backgroundTable[backgroundIdx].name, "");
 	}
@@ -1258,24 +1258,31 @@ int16 Op_StopSong(void) {
 }
 
 int16 Op_BgName(void) {
-	popPtr();
-	popVar();
+	char* bgName = (char*)popPtr();
+	int bgIdx = popVar();
 
-	printf("Partial op 5C\n");
+	if((bgIdx >= 0) && (bgIdx < 8) && bgName) {
+		strcpy(bgName, backgroundTable[bgIdx].name);
+
+		if(strlen(bgName))
+			return 1;
+
+		return 0;
+	}
 
 	return 0;
 }
 
 int16 Op_StopFX(void) {
-	popVar();
+	int fxIdx = popVar();
 
-	printf("Partial op 5E (sound related)\n");
+	printf("StopFX(%d)\n", fxIdx);
 
 	return 0;
 }
 
 int16 Op_PlaySong(void) {
-	printf("Partial op 3E (sound related)\n");
+	printf("PlaySong()\n");
 
 	return 0;
 }
@@ -1295,12 +1302,12 @@ int16 Op_CTOff(void) {
 }
 
 int16 Op_FadeSong(void) {
-	printf("Partial op 3F (sound related)\n");
+	printf("FadeSong()\n");
 	return 0;
 }
 
 int16 Op_FreeSong(void) {
-	printf("Partial op 40 (sound related)\n");
+	printf("FreeSong()\n");
 	//freeStuff1();
 	freeStuff2();
 

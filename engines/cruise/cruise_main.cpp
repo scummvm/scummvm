@@ -440,7 +440,7 @@ int initAllData(void) {
 	initOverlayTable();
 
 	stateID = 0;
-	currentActiveBackgroundPlane = 0;
+	masterScreen = 0;
 
 	freeDisk();
 
@@ -1266,11 +1266,11 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 
 				if(currentScriptPtr)
 				{
-					createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), currentActiveBackgroundPlane, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
+					createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
 				}
 				else
 				{
-					createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), currentActiveBackgroundPlane, 0, 0);
+					createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, 0, 0);
 				}
 				
 				userWait = 1;
@@ -1882,7 +1882,7 @@ void mainLoop(void) {
 						userEnabled = false;
 					}
 				} else if (autoMsg != -1) {
-					removeCell(&cellHead, autoOvl, autoMsg, 5, currentActiveBackgroundPlane );
+					removeCell(&cellHead, autoOvl, autoMsg, 5, masterScreen );
 					autoMsg = -1;
 				}
 			}

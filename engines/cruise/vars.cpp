@@ -39,7 +39,7 @@ int16 scroll;
 int16 switchPal;
 char cmdLine[90];
 
-int16 currentActiveBackgroundPlane;
+int16 masterScreen;
 int16 doFade;
 int16 fadeFlag = 0;
 

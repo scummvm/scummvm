@@ -67,7 +67,7 @@ extern int16 scroll;
 extern int16 switchPal;
 extern char cmdLine[90];
 
-extern int16 currentActiveBackgroundPlane;
+extern int16 masterScreen;
 extern int16 doFade;
 extern int16 fadeFlag;
 

@@ -103,7 +103,7 @@ void initVars(void)
 	initOverlayTable();
 
 	stateID = 0;
-	currentActiveBackgroundPlane = 0;
+	masterScreen = 0;
 
 	freeDisk();
 
@@ -537,7 +537,7 @@ int saveSavegameData(int saveGameIdx) {
 	else
 		currentSaveFile->writeSint16LE(0);
 
-	currentSaveFile->writeSint16LE(currentActiveBackgroundPlane);
+	currentSaveFile->writeSint16LE(masterScreen);
 	currentSaveFile->writeSint16LE(switchPal);
 	currentSaveFile->writeSint16LE(scroll);
 	currentSaveFile->writeSint16LE(fadeFlag);
@@ -714,7 +714,7 @@ int loadSavegameData(int saveGameIdx) {
 	else
 		animationStart = false;
 
-	currentActiveBackgroundPlane = currentSaveFile->readSint16LE();
+	masterScreen = currentSaveFile->readSint16LE();
 	switchPal = currentSaveFile->readSint16LE();
 	scroll = currentSaveFile->readSint16LE();
 	fadeFlag = currentSaveFile->readSint16LE();

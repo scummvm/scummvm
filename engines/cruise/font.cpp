@@ -186,7 +186,7 @@ void initSystem(void) {
 	fadeFlag = 0;
 	scroll = 0;
 	switchPal = 0;
-	currentActiveBackgroundPlane = 0;
+	masterScreen = 0;
 
 	changeCursor(CURSOR_NORMAL);
 

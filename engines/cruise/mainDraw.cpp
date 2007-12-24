@@ -103,7 +103,7 @@ void fadeIn() {
 			offsetTable[0] = -i;
 			offsetTable[1] = -i;
 			offsetTable[2] = -i;
-			calcRGB(&palScreen[currentActiveBackgroundPlane][3*j], &workpal[3*j], offsetTable);
+			calcRGB(&palScreen[masterScreen][3*j], &workpal[3*j], offsetTable);
 		}
 		gfxModuleData_setPal256(workpal);
 		gfxModuleData_flipScreen();
@@ -114,7 +114,7 @@ void fadeIn() {
 		offsetTable[0] = 0;
 		offsetTable[1] = 0;
 		offsetTable[2] = 0;
-		calcRGB(&palScreen[currentActiveBackgroundPlane][3*j], &workpal[3*j], offsetTable);
+		calcRGB(&palScreen[masterScreen][3*j], &workpal[3*j], offsetTable);
 	}
 
 	gfxModuleData_setPal256(workpal);
@@ -1392,7 +1392,7 @@ void mainDraw(int16 param) {
 		return;
 	}
 
-	bgPtr = backgroundPtrtable[currentActiveBackgroundPlane];
+	bgPtr = backgroundPtrtable[masterScreen];
 
 	if (bgPtr) {
 		gfxModuleData_gfxCopyScreen((char *)bgPtr, (char *)gfxModuleData.pPage10);
@@ -1410,7 +1410,7 @@ void mainDraw(int16 param) {
 	//-------------------------------------------------- PROCESS SPRITES -----------------------------------------//
 
 	while (currentObjPtr) {
-		if ((currentActiveBackgroundPlane == currentObjPtr->backgroundPlane) && (currentObjPtr->freeze == 0) && (currentObjPtr->type == OBJ_TYPE_SPRITE)) {
+		if ((masterScreen == currentObjPtr->backgroundPlane) && (currentObjPtr->freeze == 0) && (currentObjPtr->type == OBJ_TYPE_SPRITE)) {
 			objectParamsQuery params;
 
 			currentObjIdx = currentObjPtr->idx;
