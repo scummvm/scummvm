@@ -471,6 +471,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		case 0:
 			{
 				filesDatabase[fileIndex].subData.resourceType = 8;
+				filesDatabase[fileIndex].subData.index = currentEntryIdx;
 				break;
 			}
 		case 1:
@@ -478,7 +479,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 8;
 				filesDatabase[fileIndex].subData.resourceType = 2;
 				decodeGfxFormat1(&filesDatabase[fileIndex]);
-				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.index = currentEntryIdx;
 				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
 				break;
 			}
@@ -487,7 +488,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn * 2;
 				filesDatabase[fileIndex].subData.resourceType = 4;
 				decodeGfxFormat4(&filesDatabase[fileIndex]);
-				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.index = currentEntryIdx;
 				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
 				break;
 			}
@@ -496,7 +497,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 				filesDatabase[fileIndex].subData.resourceType = 4;
 				decodeGfxFormat5(&filesDatabase[fileIndex]);
 				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
-				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.index = currentEntryIdx;
 				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
 				break;
 			}
@@ -504,7 +505,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 			{
 				filesDatabase[fileIndex].subData.resourceType = 4;
 				filesDatabase[fileIndex].width = filesDatabase[fileIndex].widthInColumn;
-				filesDatabase[fileIndex].subData.index = currentDestEntry;
+				filesDatabase[fileIndex].subData.index = currentEntryIdx;
 				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency;
 				break;
 			}
