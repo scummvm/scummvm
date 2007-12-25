@@ -1174,8 +1174,18 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 }
 
 int findHighColor() {
-	printf("Unimplemented findHighColor\n");
-	return 1;
+	int bestColorResult = -1;
+	int bestColorIdx = -1;
+
+	for(unsigned long int i=0; i<256; i++) {
+		int colorResult = (workpal[i*3+0] + workpal[i*3+1] + workpal[i*3+2]) / 256;
+
+		if(colorResult > bestColorResult) {
+			bestColorIdx = i;
+			bestColorResult =  colorResult;
+		}
+	}
+	return bestColorIdx;
 }
 
 void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {

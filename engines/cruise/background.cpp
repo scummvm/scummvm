@@ -202,7 +202,7 @@ int loadBackground(const char *name, int idx) {
 			break;
 		case 8:
 			memcpy(backgroundPtrtable[idx], ptr2, 320 * 200);
-			ptr2 += 32000;
+			ptr2 += 320*200;
 			break;
 		}
 

@@ -903,29 +903,24 @@ int16 Op_SetColor(void)	{
 
 	int i;
 
-	int R,G,B;
-
 #define convertRatio 36.571428571428571428571428571429
 
 	for (i=startIdx; i<=endIdx; i++) {
-		R = (int)(colorR*convertRatio);
-		G = (int)(colorG*convertRatio);
-		B = (int)(colorB*convertRatio);
+		int offsetTable[3];
 
-		if (R > 0xFF)
-			R = 0xFF;
-		if (G > 0xFF)
-			G = 0xFF;
-		if (B > 0xFF)
-			B = 0xFF;
+		offsetTable[0] = (int)(colorR*convertRatio);
+		offsetTable[1] = (int)(colorG*convertRatio);
+		offsetTable[2] = (int)(colorB*convertRatio);
 
 		if (CVTLoaded) {
 			int colorIdx = cvtPalette[i];
-			gfxModuleData_setPalColor(colorIdx, R, G, B);
+			calcRGB(&palScreen[masterScreen][3*colorIdx], &workpal[3*colorIdx], offsetTable);
 		} else {
-			gfxModuleData_setPalColor(i, R, G, B);
+			calcRGB(&palScreen[masterScreen][3*i], &workpal[3*i], offsetTable);
 		}
 	}
+
+	gfxModuleData_setPal256(workpal);
 
 	return 0;
 }
