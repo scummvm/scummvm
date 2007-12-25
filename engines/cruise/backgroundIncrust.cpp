@@ -177,7 +177,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 			int width = (sizeTable[1]+2) - (sizeTable[0]-2) + 1;
 			int height = sizeTable[3]-sizeTable[2]+1;
 
-			backupBackground(newElement, newElement->X, newElement->Y, width, height, backgroundPtr);
+			backupBackground(newElement, sizeTable[0]-2, sizeTable[2], width, height, backgroundPtr);
 		}
 
 		addBackgroundIncrustSub1(params.fileIdx, newElement->X, newElement->Y, NULL, params.scale, (char *)backgroundPtr, (char *)filesDatabase[params.fileIdx].subData.ptr);

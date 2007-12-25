@@ -145,10 +145,15 @@ int loadBackground(const char *name, int idx) {
 				ptr2 += 0x20;
 				flipGen(oldPalette, 0x20);
 
-				for(unsigned long int i=0; i<32; i++)
-				{
+				for(unsigned long int i=0; i<32; i++) {
 					gfxModuleData_convertOldPalColor(oldPalette[i], &palScreen[idx][i*3]);
 				}
+
+				// duplicate the palette
+				for(unsigned long int i=1; i<8; i++) {
+					memcpy(&palScreen[idx][32*i*3], &palScreen[idx][0], 32*3);
+				}
+
 				break;
 			}
 		case 5: // color on 4 bit
@@ -163,6 +168,12 @@ int loadBackground(const char *name, int idx) {
 					outPtr[0] = ((inPtr[0])&0x0F) * 17;
 				}
 				ptr2 += 2*32;
+
+				// duplicate the palette
+				for(unsigned long int i=1; i<8; i++) {
+					memcpy(&palScreen[idx][32*i*3], &palScreen[idx][0], 32*3);
+				}
+
 				break;
 			}
 		case 8:

@@ -634,11 +634,6 @@ int executeScripts(scriptInstanceStruct *ptr) {
 
 	numScript2 = ptr->scriptNumber;
 
-	if(ptr->overlayNumber == 66)
-	{
-		ptr->overlayNumber= ptr->overlayNumber;
-	}
-
 	if (ptr->type == 20) {
 		ptr2 = getOvlData3Entry(ptr->overlayNumber, numScript2);
 

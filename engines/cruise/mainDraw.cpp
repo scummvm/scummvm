@@ -239,8 +239,8 @@ void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], unsi
 		SWAP(upperBorder, lowerBorder);
 	}
 
-	sizeTable[0] = lowerBorder;	// left
-	sizeTable[1] = upperBorder;	// right
+	sizeTable[0] = lowerBorder + positionX;	// left
+	sizeTable[1] = upperBorder + positionX;	// right
 
 	// Y1
 
@@ -259,8 +259,8 @@ void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], unsi
 		SWAP(upperBorder, lowerBorder);
 	}
 
-	sizeTable[2] = lowerBorder;	// bottom
-	sizeTable[3] = upperBorder;	// top
+	sizeTable[2] = lowerBorder + positionY;	// bottom
+	sizeTable[3] = upperBorder + positionY;	// top
 }
 
 int nbseg;
