@@ -467,7 +467,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 		ptr5 += resourceSize;
 
 		switch (localBuffer.type) {
-		case 0:
+		case 0: // polygon
 			{
 				filesDatabase[fileIndex].subData.resourceType = 8;
 				filesDatabase[fileIndex].subData.index = currentEntryIdx;

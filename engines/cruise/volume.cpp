@@ -452,12 +452,13 @@ int16 readVolCnf(void) {
 
 			char nameBuffer[256];
 
-			sprintf(nameBuffer, "D:/oldies/c-eng/dump/%s", buffer[j].name);
+			sprintf(nameBuffer, "%s", buffer[j].name);
 
 			if (buffer[j].size == buffer[j].extSize) {
 				Common::File fout;
 				fout.open(nameBuffer, Common::File::kFileWriteMode);
-				fout.write(bufferLocal, buffer[j].size);
+				if(fout.isOpen())
+					fout.write(bufferLocal, buffer[j].size);
 			} else {
 				char *uncompBuffer = (char *)mallocAndZero(buffer[j].extSize + 500);
 
@@ -465,7 +466,8 @@ int16 readVolCnf(void) {
 
 				Common::File fout;
 				fout.open(nameBuffer, Common::File::kFileWriteMode);
-				fout.write(uncompBuffer, buffer[j].extSize);
+				if(fout.isOpen())
+					fout.write(uncompBuffer, buffer[j].extSize);
 
 				//free(uncompBuffer);
 
@@ -473,6 +475,7 @@ int16 readVolCnf(void) {
 
 			free(bufferLocal);
 		}
+		fileHandle.close();
 	}
 
 #endif

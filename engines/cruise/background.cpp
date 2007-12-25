@@ -136,6 +136,7 @@ int loadBackground(const char *name, int idx) {
 		// read palette
 		switch(mode)
 		{
+		case 0:
 		case 4: // color on 3 bit
 			{
 				uint16 oldPalette[32];
@@ -148,7 +149,6 @@ int loadBackground(const char *name, int idx) {
 				{
 					gfxModuleData_convertOldPalColor(oldPalette[i], &palScreen[idx][i*3]);
 				}
-				ptr2 += 32000;
 				break;
 			}
 		case 5: // color on 4 bit
@@ -158,9 +158,9 @@ int loadBackground(const char *name, int idx) {
 					uint8* inPtr = ptr2 + i * 2;
 					uint8* outPtr = palScreen[idx] +i * 3;
 					
-					outPtr[2] = ((inPtr[1])&0x0F) << 4;
-					outPtr[1] = (((inPtr[1])&0xF0) >> 4) << 4;
-					outPtr[0] = ((inPtr[0])&0x0F) << 4;
+					outPtr[2] = ((inPtr[1])&0x0F) * 17;
+					outPtr[1] = (((inPtr[1])&0xF0) >> 4) * 17;
+					outPtr[0] = ((inPtr[0])&0x0F) * 17;
 				}
 				ptr2 += 2*32;
 				break;
@@ -176,24 +176,27 @@ int loadBackground(const char *name, int idx) {
 
 		gfxModuleData_setPal256(palScreen[idx]);
 
-		loadMEN(&ptr2);
-		loadCVT(&ptr2);
-
 		// read image data
 		gfxModuleData_gfxClearFrameBuffer(backgroundPtrtable[idx]);
 
 		switch(mode)
 		{
+		case 0:
 		case 4:
 			convertGfxFromMode4(ptr2, 320, 200, backgroundPtrtable[idx]);
+			ptr2 += 32000;
 			break;
 		case 5:
 			convertGfxFromMode5(ptr2, 320, 200, backgroundPtrtable[idx]);
 			break;
 		case 8:
 			memcpy(backgroundPtrtable[idx], ptr2, 320 * 200);
+			ptr2 += 32000;
 			break;
 		}
+
+		loadMEN(&ptr2);
+		loadCVT(&ptr2);
 	}
 
 

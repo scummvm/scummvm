@@ -837,9 +837,9 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 
 				if (destBuffer) {
 					if (pMask) {
-						blitPolyMode1(destBuffer, pMask, polyBuffer4, m_color & 0xF);
+						blitPolyMode1(destBuffer, pMask, polyBuffer4, m_color & 0xFF);
 					} else {
-						blitPolyMode2(destBuffer, polyBuffer4, m_color & 0xF);
+						blitPolyMode2(destBuffer, polyBuffer4, m_color & 0xFF);
 					}
 				}
 			}

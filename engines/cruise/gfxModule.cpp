@@ -63,9 +63,8 @@ void outputBit(char *buffer, int bitPlaneNumber, uint8 data) {
 }
 
 void convertGfxFromMode4(uint8 *sourcePtr, int width, int height, uint8 *destPtr) {
-
-	for (int y = 0; y < (height/16); ++y) {
-		for (int x = 0; x < width; ++x) {
+	for (int y = 0; y < height; ++y) {
+		for (int x = 0; x < width/16; ++x) {
 			for (int bit = 0; bit < 16; ++bit) {
 				uint8 color = 0;
 				for (int p = 0; p < 4; ++p) {
@@ -202,8 +201,7 @@ void gfxModuleData_gfxWaitVSync(void) {
 void gfxModuleData_flip(void) {
 }
 
-void gfxModuleData_field_64(char *sourceBuffer, int width, int height,
-	    char *dest, int x, int y, int color) {
+void gfxModuleData_field_64(char *sourceBuffer, int width, int height, char *dest, int x, int y, int color) {
 	int i;
 	int j;
 
@@ -212,8 +210,7 @@ void gfxModuleData_field_64(char *sourceBuffer, int width, int height,
 
 	for (i = 0; i < height; i++) {
 		for (j = 0; j < width; j++) {
-			dest[(y + i) * 320 / 4 + x + j] =
-			    sourceBuffer[i * width + j];
+			dest[(y + i) * 320 / 4 + x + j] = sourceBuffer[i * width + j];
 		}
 	}
 }
