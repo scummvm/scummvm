@@ -221,6 +221,10 @@ void gfxModuleData_flipScreen(void) {
 	flip();
 }
 
+extern bool bFastMode;
+
+static uint32 lastTick;
+
 void flip() {
 	int i;
 	byte paletteRGBA[256 * 4];
@@ -242,6 +246,16 @@ void flip() {
 	g_system->copyRectToScreen(globalScreen, 320, 0, 0, 320, 200);
 	g_system->updateScreen();
 
+	uint32 currentTick = g_system->getMillis();
+
+	if (!bFastMode) {
+		uint32 speed = 50;
+		if(lastTick + speed > currentTick) {
+			g_system->delayMillis(lastTick + speed - currentTick);
+		}
+	}
+
+	lastTick = g_system->getMillis();
 }
 
 } // End of namespace Cruise

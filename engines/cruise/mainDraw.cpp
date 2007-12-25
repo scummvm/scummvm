@@ -1145,7 +1145,7 @@ void mainDrawPolygons(int fileIndex, cellStruct *plWork, int X, int scale, int Y
 	buildPolyModel(newX, newY, newScale, (char*)polygonMask, destBuffer, newFrame);
 }
 
-void drawMessage(gfxEntryStruct *pGfxPtr, int globalX, int globalY, int idx, int newColor, uint8 *ouputPtr) {
+void drawMessage(gfxEntryStruct *pGfxPtr, int globalX, int globalY, int width, int newColor, uint8 *ouputPtr) {
 	// this is used for font only
 
 	if (pGfxPtr) {
@@ -1157,11 +1157,15 @@ void drawMessage(gfxEntryStruct *pGfxPtr, int globalX, int globalY, int idx, int
 		int y;
 		uint8 *ptr = pGfxPtr->imagePtr;
 		int height = pGfxPtr->height;
-		int width = pGfxPtr->width;
 
-		if (globalY < 0) {
+		if (width>310)
+			width = 310;
+		if(width+globalX>319)
+			globalX = 319 - width;
+		if(globalY < 0)
 			globalY = 0;
-		}
+		if(globalX < 0)
+			globalX = 0;
 
 		if (globalY + pGfxPtr->height >= 198) {
 			globalY = 198 - pGfxPtr->height;
@@ -1175,12 +1179,11 @@ void drawMessage(gfxEntryStruct *pGfxPtr, int globalX, int globalY, int idx, int
 		for (i = 0; i < height; i++) {
 			output = initialOuput + 320 * i;
 
-			for (j = 0; j < width; j++) {
+			for (j = 0; j < pGfxPtr->width; j++) {
 				uint8 color = *(ptr++);
 
 				if (color) {
-					if ((x >= 0) && (x < 320) && (y >= 0)
-					    && (y < 200)) {
+					if ((x >= 0) && (x < 320) && (y >= 0) && (y < 200)) {
 						if (color == 1) {
 							*output = (uint8) 0;
 						} else {

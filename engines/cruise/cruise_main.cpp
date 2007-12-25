@@ -1593,12 +1593,6 @@ int currentMouseX = 0;
 int currentMouseY = 0;
 int currentMouseButton = 0;
 
-void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY) {
-	*pMouseX = currentMouseX;
-	*pMouseY = currentMouseY;
-	*pMouseButton = currentMouseButton;
-}
-
 bool bFastMode = false;
 
 void manageEvents() {
@@ -1730,11 +1724,13 @@ void manageEvents() {
 	 * mouseRight = 0;
 	 * }
 	 */
-	g_system->updateScreen();
+}
 
-	if (!bFastMode) {
-		g_system->delayMillis(40);
-	}
+void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY) {
+	manageEvents();
+	*pMouseX = currentMouseX;
+	*pMouseY = currentMouseY;
+	*pMouseButton = currentMouseButton;
 }
 
 void mainLoop(void) {
@@ -1849,8 +1845,15 @@ void mainLoop(void) {
 				}
 
 				if (userWait) {
-					int16 button = 0;
-					while (!button) {
+					int16 mouseX;
+					int16 mouseY;
+					int16 mouseButton;
+
+					do {
+						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
+					}while(mouseButton);
+
+					while (!mouseButton) {
 						manageScripts(&relHead);
 						manageScripts(&procHead);
 
@@ -1865,7 +1868,9 @@ void mainLoop(void) {
 						int16 mouseVar;
 						int16 mouseX;
 						int16 mouseY;
-						getMouseStatus(&mouseVar, &mouseX, &button, &mouseY);
+						getMouseStatus(&mouseVar, &mouseX, &mouseButton, &mouseY);
+
+						flip();
 					}
 
 					changeScriptParamInList(-1, -1, &procHead, 9999, 0);

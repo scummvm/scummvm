@@ -619,7 +619,7 @@ int16 Op_GetMouseButton(void) {
 
 	getMouseStatus(&dummy, &mouseX, &mouseButton, &mouseY);
 
-	if (mouseButton & 4)
+	if (mouseButton)
 		return 1;
 	return 0;
 }
