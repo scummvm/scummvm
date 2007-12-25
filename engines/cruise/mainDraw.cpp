@@ -124,6 +124,14 @@ void fadeIn() {
 }
 
 void flipScreen(void) {
+	if(switchPal) {
+		for(unsigned long int i=0; i<256*3; i++) {
+			workpal[i] = palScreen[masterScreen][i];
+		}
+		switchPal = 0;
+		gfxModuleData_setPal256(workpal);
+	}
+
 	SWAP(gfxModuleData.pPage00, gfxModuleData.pPage10);
 
 	gfxModuleData_flipScreen();
@@ -1388,9 +1396,9 @@ void mainDraw(int16 param) {
 	int16 objZ2 = 0;
 	int16 spriteHeight;
 
-	if (PCFadeFlag) {
+	/*if (PCFadeFlag) {
 		return;
-	}
+	}*/
 
 	bgPtr = backgroundPtrtable[masterScreen];
 

@@ -547,7 +547,8 @@ int16 Op_FadeOut(void) {
 		gfxModuleData_flipScreen();
 	}
 
-	//gfxModuleData_gfxClearFrameBuffer(backgroundPtrtable[masterScreen]);
+	memset(globalScreen, 0, 320 * 200);
+	flip();
 
 	fadeFlag = 1;
 	PCFadeFlag = 1;

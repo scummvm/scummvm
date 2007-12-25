@@ -1797,7 +1797,7 @@ void mainLoop(void) {
 				if (doFade)
 					PCFadeFlag = 0;
 
-				if (!PCFadeFlag) {
+				/*if (!PCFadeFlag)*/ {
 					mainDraw(0);
 					flipScreen();
 				}
