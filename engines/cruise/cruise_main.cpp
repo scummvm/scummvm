@@ -1845,9 +1845,9 @@ void mainLoop(void) {
 				}
 
 				if (userWait) {
+					int16 mouseButton;
 					int16 mouseX;
 					int16 mouseY;
-					int16 mouseButton;
 
 					do {
 						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
@@ -1866,8 +1866,6 @@ void mainLoop(void) {
 						manageEvents();
 
 						int16 mouseVar;
-						int16 mouseX;
-						int16 mouseY;
 						getMouseStatus(&mouseVar, &mouseX, &mouseButton, &mouseY);
 
 						flip();
