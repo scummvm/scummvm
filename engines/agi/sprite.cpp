@@ -692,7 +692,7 @@ void SpritesMgr::showObj(int n) {
 	s.buffer = (uint8 *)malloc(s.xSize * s.ySize);
 
 	objsSaveArea(&s);
-	blitCel(x1, y1, s.xSize, c, _vm->_game.views[n].agi256_2);
+	blitCel(x1, y1, 15, c, _vm->_game.views[n].agi256_2);
 	commitBlock(x1, y1, x2, y2);
 	_vm->messageBox(_vm->_game.views[n].descr);
 	objsRestoreArea(&s);
