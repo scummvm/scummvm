@@ -47,6 +47,7 @@ void loadPal(volumeDataStruct *entry) {
 	removeExtention(entry->ident, name);
 	strcat(name, ".PAL");
 
+	// FIXME: using fopen/fread is not portable. Use Common::File instead
 	PAL_fileHandle = fopen(name, "rb");
 
 	fread(&numLoadedPal, 2, 1, PAL_fileHandle);
