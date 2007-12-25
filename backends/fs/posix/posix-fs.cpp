@@ -112,27 +112,6 @@ void POSIXFilesystemNode::setFlags() {
 }
 
 POSIXFilesystemNode::POSIXFilesystemNode() {
-/*  The Browser code now saves the last browsed directory into the config file.
-    Hence the need to start at the "current" directory is far less, and we can
-    remove this hack for now. Still, there may be some need to obtain a ref
-    to the "current" directory. See the TODO list for some thoughts on this.
-    
-    I am leaving this code in here for the time being, to be used as reference.
-
-	// FIXME: It is evil & slow to always call getcwd here.
-	// The intention behind this hack was/is to be more user friendly
-	// in our save/load dialogs: Instead of starting at the FS root,
-	// we start at the current directory. However, that's just a hack.
-	// Proper solution would be to extend FilesystemNode by the concept
-	// of 'current' or 'default' directory, and then modify the
-	// save/load dialogs to explicitly use that as starting point.
-	char buf[MAXPATHLEN];
-	getcwd(buf, MAXPATHLEN);
-
-	_path = buf;
-	_displayName = lastPathComponent(_path);
-	_path += '/';
-*/
 	// The root dir.
 	_path = "/";
 	_displayName = _path;
