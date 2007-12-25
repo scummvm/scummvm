@@ -128,8 +128,8 @@ int loadBackground(const char *name, int idx) {
 	}
 
 	if (!strcmp((char*)ptr, "PAL")) {
-		printf("Pal loading unsupported !\n");
-		ASSERT(0);
+		memcpy(palScreen[idx], ptr+4, 256*3);
+		gfxModuleData_setPal256(palScreen[idx]);
 	} else {
 		int mode = ptr2[1];
 		ptr2 += 2;

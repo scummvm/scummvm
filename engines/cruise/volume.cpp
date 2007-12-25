@@ -425,54 +425,47 @@ int16 readVolCnf(void) {
 
 		sprintf(nameBuffer, "D%d.", i + 1);
 
-		fileHandle = fopen(nameBuffer, "rb");
+		fileHandle.open(nameBuffer);
 
 		short int numEntry;
 		short int sizeEntry;
 
-		fread(&numEntry, 2, 1, fileHandle);
-		fread(&sizeEntry, 2, 1, fileHandle);
-
-		flipShort(&numEntry);
-		flipShort(&sizeEntry);
+		numEntry = fileHandle.readSint16BE();
+		sizeEntry = fileHandle.readSint16BE();
 
 		buffer = (fileEntry *) mallocAndZero(numEntry * sizeEntry);
 
-		fread(buffer, numEntry * sizeEntry, 1, fileHandle);
-
 		for (j = 0; j < numEntry; j++) {
-			flipLong(&buffer[j].offset);
-			flipLong(&buffer[j].size);
-			flipLong(&buffer[j].unk2);
-			flipLong(&buffer[j].unk3);
+			fileHandle.seek(4+j*0x1E);
+			fileHandle.read(buffer[j].name, 14);
+			buffer[j].offset = fileHandle.readSint32BE();
+			buffer[j].size = fileHandle.readSint32BE();
+			buffer[j].extSize = fileHandle.readSint32BE();
+			buffer[j].unk3 = fileHandle.readSint32BE();
 
-			fseek(fileHandle, buffer[j].offset, SEEK_SET);
+			fileHandle.seek(buffer[j].offset);
 
 			char *bufferLocal;
 			bufferLocal = (char *)mallocAndZero(buffer[j].size);
 
-			fread(bufferLocal, buffer[j].size, 1, fileHandle);
+			fileHandle.read(bufferLocal, buffer[j].size);
 
 			char nameBuffer[256];
 
-			sprintf(nameBuffer, "D%d.dmp/%s", i + 1,
-			    buffer[j].name);
+			sprintf(nameBuffer, "D:/oldies/c-eng/dump/%s", buffer[j].name);
 
-			if (buffer[j].size == buffer[j].unk2) {
-				FILE *fOut = fopen(nameBuffer, "wb+");
-				fwrite(bufferLocal, buffer[j].size, 1, fOut);
-				fclose(fOut);
+			if (buffer[j].size == buffer[j].extSize) {
+				Common::File fout;
+				fout.open(nameBuffer, Common::File::kFileWriteMode);
+				fout.write(bufferLocal, buffer[j].size);
 			} else {
-				char *uncompBuffer =
-				    (char *)mallocAndZero(buffer[j].unk2 +
-				    500);
+				char *uncompBuffer = (char *)mallocAndZero(buffer[j].extSize + 500);
 
 				delphineUnpack((uint8 *) uncompBuffer, (const uint8 *) bufferLocal, buffer[j].size);
 
-				FILE *fOut = fopen(nameBuffer, "wb+");
-				fwrite(uncompBuffer, buffer[j].unk2, 1,
-				    fOut);
-				fclose(fOut);
+				Common::File fout;
+				fout.open(nameBuffer, Common::File::kFileWriteMode);
+				fout.write(uncompBuffer, buffer[j].extSize);
 
 				//free(uncompBuffer);
 

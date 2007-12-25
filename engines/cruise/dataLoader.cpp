@@ -42,8 +42,7 @@ void decodeGfxFormat1(dataFileEntry *pCurrentFileEntry) {
 	uint8 *buffer;
 	uint8 *dataPtr = pCurrentFileEntry->subData.ptr;
 
-	int spriteSize =
-	    pCurrentFileEntry->height * pCurrentFileEntry->width;
+	int spriteSize = pCurrentFileEntry->height * pCurrentFileEntry->width;
 	int x = 0;
 
 	buffer = (uint8 *) malloc(spriteSize);
@@ -480,7 +479,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 				filesDatabase[fileIndex].subData.resourceType = 2;
 				decodeGfxFormat1(&filesDatabase[fileIndex]);
 				filesDatabase[fileIndex].subData.index = currentEntryIdx;
-				filesDatabase[fileIndex].subData.transparency = localBuffer.transparency % 0x10;
+				filesDatabase[fileIndex].subData.transparency = 0;
 				break;
 			}
 		case 4:

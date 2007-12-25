@@ -607,8 +607,7 @@ int loadOverlay(const char *scriptName) {
 					return (-2);
 				}
 
-				memcpy(ovlData->stringTable[i].string,
-				    scriptPtr, ovlData->stringTable[i].length);
+				memcpy(ovlData->stringTable[i].string, scriptPtr, ovlData->stringTable[i].length);
 				scriptPtr += ovlData->stringTable[i].length;
 			}
 		}

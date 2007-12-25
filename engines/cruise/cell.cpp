@@ -159,17 +159,14 @@ cellStruct *addCell(cellStruct *pHead, int16 overlayIdx, int16 objIdx, int16 typ
 	currentHead3 = currentHead;
 	currentHead2 = currentHead->next;
 
-	while (currentHead2) {
-		if (currentHead2->type == 3) {
-			break;
-		}
+	while (currentHead2 && (currentHead2->type != 3)) {
 
 		if (currentHead2->type != 5) {
 			int16 lvar2;
 
 			getSingleObjectParam(currentHead2->overlay, currentHead2->idx, 2, &lvar2);
 
-			if (lvar2 > var)
+			if (lvar2 >= var)
 				break;
 		}
 
@@ -360,14 +357,14 @@ void freezeCell(cellStruct * pObject, int overlayIdx, int objIdx, int objType, i
 	}
 }
 
-void sortCells(int16 param1, int16 param2, cellStruct *objPtr) {
+void sortCells(int16 ovlIdx, int16 ovjIdx, cellStruct *objPtr) {
 	cellStruct *pl,*pl2,*pl3,*pl4,*plz,*pllast;
 	cellStruct prov;
 	int16 newz, objz, sobjz;
 
 	pl4 = NULL;
 
-	getSingleObjectParam(param1, param2, 2, &sobjz);
+	getSingleObjectParam(ovlIdx, ovjIdx, 2, &sobjz);
 	pl = objPtr;
 	prov.next = NULL;
 	prov.prev = NULL;
@@ -378,7 +375,7 @@ void sortCells(int16 param1, int16 param2, cellStruct *objPtr) {
 
 	while (pl2) {
 		pl3 = pl2->next;
-		if ((pl2->overlay == param1) && (pl2->idx == param2)) {// found
+		if ((pl2->overlay == ovlIdx) && (pl2->idx == ovjIdx)) {// found
 			pl->next = pl3;
 
 			if (pl3) {
