@@ -169,7 +169,7 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 			if (data != NULL) {
 				fp.read(data, agid->len);
 			} else {
-				abort();
+				exit(1);
 			}
 		} else {
 			report("Error: bad signature %04x\n", sig);
