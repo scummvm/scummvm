@@ -89,7 +89,10 @@ int KyraEngine::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 
-		// for now we prefer Adlib over native MIDI
+	// We prefer AdLib over native MIDI, since our AdLib playback code is much
+	// more mature than our MIDI player. For example we are missing MT-32 support
+	// and it seems our MIDI playback code has threading issues (see bug #1506583
+	// "KYRA1: Crash on exceeded polyphony" for more information).
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB/* | MDT_PREFER_MIDI*/);
 
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
@@ -119,8 +122,7 @@ int KyraEngine::init() {
 		// Unlike some SCUMM games, it's not that the MIDI sounds are
 		// missing. It's just that at least at the time of writing they
 		// are decidedly inferior to the Adlib ones.
-
-		if (midiDriver != MD_ADLIB && ConfMan.getBool("multi_midi")) {
+		if (ConfMan.getBool("multi_midi")) {
 			SoundAdlibPC *adlib = new SoundAdlibPC(this, _mixer);
 			assert(adlib);
 
