@@ -173,7 +173,7 @@ bool SaveLoad::saveDataEndian(Common::WriteStream &out,
 }
 
 int32 SaveLoad::getSize(SaveType type) {
-	switch(type) {
+	switch (type) {
 	case kSaveNone:
 		return -1;
 		break;
@@ -203,7 +203,7 @@ int32 SaveLoad::getSize(SaveType type) {
 }
 
 bool SaveLoad::load(SaveType type, int16 dataVar, int32 size, int32 offset) {
-	switch(type) {
+	switch (type) {
 	case kSaveNone:
 		return false;
 		break;
@@ -233,7 +233,7 @@ bool SaveLoad::load(SaveType type, int16 dataVar, int32 size, int32 offset) {
 }
 
 bool SaveLoad::save(SaveType type, int16 dataVar, int32 size, int32 offset) {
-	switch(type) {
+	switch (type) {
 	case kSaveNone:
 		return false;
 		break;
