@@ -322,9 +322,8 @@ public:
 	MidiChannel *getPercussionChannel()	{ return 0; }
 
 	void setPassThrough(bool b)	{ _passThrough = b; }
-	void setUseC55(bool b)		{ _useC55 = b; }
 
-	void hasNativeMT32(bool nativeMT32) { _nativeMT32 = nativeMT32; }
+	void hasNativeMT32(bool nativeMT32);
 	bool isMT32() { return _nativeMT32; }
 
 private:

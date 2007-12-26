@@ -116,9 +116,6 @@ int KyraEngine::init() {
 		assert(_sound);
 		soundMidiPc->hasNativeMT32(native_mt32);
 
-		// C55 appears to be XMIDI for General MIDI instruments
-		soundMidiPc->setUseC55(_flags.gameID == GI_KYRA2 && !native_mt32);
-
 		// Unlike some SCUMM games, it's not that the MIDI sounds are
 		// missing. It's just that at least at the time of writing they
 		// are decidedly inferior to the Adlib ones.

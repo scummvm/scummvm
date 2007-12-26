@@ -131,6 +131,16 @@ SoundMidiPC::~SoundMidiPC() {
 	close();
 }
 
+void SoundMidiPC::hasNativeMT32(bool nativeMT32) {
+	_nativeMT32 = nativeMT32;
+
+	// C55 appears to be XMIDI for General MIDI instruments
+	if (!_nativeMT32 && _vm->game() == GI_KYRA2)
+		_useC55 = true;
+	else
+		_useC55 = false;
+}
+
 void SoundMidiPC::setVolume(int volume) {
 	if (volume < 0)
 		volume = 0;
