@@ -704,24 +704,14 @@ void OSystem_SDL::setFullscreenMode(bool enable) {
 			return;
 		}
 
-#if (defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)) || defined(__MAEMO__)
-		// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
-		// before SDL 1.2.6 it always returned -1 (which would indicate a
-		// successful switch). So we simply don't call it at all and use
-		// hotswapGFXMode() directly to switch to fullscreen mode.
+		// Switch between fullscreen and windowed mode by invoking hotswapGFXMode().
+		// We used to use SDL_WM_ToggleFullScreen() in the past, but this caused various
+		// problems. E.g. on OS X, it was implemented incorrectly for a long time; on
+		// the MAEMO platform, it seems to have caused problems, too.
+		// And on Linux, there were some troubles, too (see bug #1705410).
+		// So, we just do it "manually" now. There shouldn't be any drawbacks to that
+		// anyway.
 		hotswapGFXMode();
-#else
-		if (!SDL_WM_ToggleFullScreen(_hwscreen)) {
-			// if ToggleFullScreen fails, achieve the same effect with hotswap gfx mode
-			hotswapGFXMode();
-		} else {
-			// Blit everything to the screen
-			internUpdateScreen();
-
-			// Make sure that an Common::EVENT_SCREEN_CHANGED gets sent later
-			_modeChanged = true;
-		}
-#endif
 	}
 }
 
