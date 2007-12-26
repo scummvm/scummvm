@@ -3613,8 +3613,8 @@ void DrasculaEngine::canal_p(const char *fich){
 
 	ald2.close();
 	ald3.close();
-	remove(fich);
-	rename(fich2, fich);
+	//remove(fich);	// FIXME: Not portable
+	//rename(fich2, fich);	// FIXME: Not portable
 }
 
 void DrasculaEngine::puertas_cerradas(int l) {
