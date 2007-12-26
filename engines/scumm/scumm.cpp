@@ -2193,7 +2193,7 @@ void ScummEngine::restart() {
 		_scummVars[i] = 0;
 
 	// Empty inventory
-	for (i = 0; i < _numGlobalObjects; i++)
+	for (i = 1; i < _numGlobalObjects; i++)
 		clearOwnerOf(i);
 
 	// Reallocate arrays
