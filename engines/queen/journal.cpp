@@ -230,14 +230,14 @@ void Journal::handleKeyDown(uint16 ascii, int keycode) {
 	case PM_INFO_BOX:
 		break;
 	case PM_YES_NO:
-		if (keycode == 27) {
+		if (keycode == Common::KEYCODE_ESCAPE) {
 			exitYesNoPanelMode();
 		} else if (_textField.enabled) {
 			updateTextField(ascii, keycode);
 		}
 		break;
 	case PM_NORMAL:
-		if (keycode == 27) {
+		if (keycode == Common::KEYCODE_ESCAPE) {
 			_quitMode = QM_CONTINUE;
 		}
 		break;
