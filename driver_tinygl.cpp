@@ -124,36 +124,22 @@ DriverTinyGL::~DriverTinyGL() {
 }
 
 void DriverTinyGL::toggleFullscreenMode() {
-	int result;
+	// We used to use SDL_WM_ToggleFullScreen() to switch to fullscreen
+	// mode, but since that was deemed too buggy for ScummVM it's probably
+	// too buggy for Residual as well.
 
-#if (defined(MACOSX) && !SDL_VERSION_ATLEAST(1, 2, 6)) || defined(__MAEMO__)
-	// On OS X, SDL_WM_ToggleFullScreen is currently not implemented. Worse,
-	// before SDL 1.2.6 it always returned -1 (which would indicate a
-	// successful switch). So we simply don't call it at all.
-	result = 0;
-#else
-	result = SDL_WM_ToggleFullScreen(_screen);
-#endif
+	if (_screen)
+		SDL_FreeSurface(_screen);
 
-	if (!result) {
-		if (_screen)
-			SDL_FreeSurface(_screen);
+	uint32 flags = SDL_HWSURFACE;
+	if (!_isFullscreen)
+		flags |= SDL_FULLSCREEN;
 
-		uint32 flags = SDL_HWSURFACE;
-		if (!_isFullscreen)
-			flags |= SDL_FULLSCREEN;
+	_screen = SDL_SetVideoMode(_screenWidth, _screenHeight, _screenBPP, flags);
+	if (_screen == NULL)
+		error("Could not change fullscreen mode");
 
-		_screen = SDL_SetVideoMode(_screenWidth, _screenHeight, _screenBPP, flags);
-		if (_screen == NULL)
-			error("Could not change fullscreen mode");
-		else
-			result = 1;
-	}
-
-	if (!result)
-		warning("Could not change fullscreen mode");
-	else
-		_isFullscreen = !_isFullscreen;
+	_isFullscreen = !_isFullscreen;
 }
 
 void DriverTinyGL::setupCamera(float fov, float nclip, float fclip, float roll) {
