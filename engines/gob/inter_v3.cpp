@@ -739,7 +739,7 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 	totData += 2;
 
 	while (*totData != 1) {
-		switch(*totData) {
+		switch (*totData) {
 		case 2:
 		case 5:
 			totData++;
@@ -785,7 +785,7 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 						return false;
 					}
 
-					switch(*totData) {
+					switch (*totData) {
 					case 2:
 					case 5:
 						totData += 5;
@@ -820,7 +820,7 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 
 			end = false;
 			while (!end) {
-				switch(*totData) {
+				switch (*totData) {
 				case 2:
 				case 5:
 					if (ABS(offY - READ_LE_UINT16(totData + 3)) > 1)
