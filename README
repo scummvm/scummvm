@@ -76,7 +76,7 @@ page. ScummVM is continually improving, so check back often.
 
 Among the systems on which you can play those games are Windows,
 Linux, Mac OS X, Dreamcast, PocketPC, PalmOS, AmigaOS, BeOS, OS/2,
-PSP, PS2, SymbianOS/EPOC and many more.
+PSP, PS2, SymbianOS/EPOC, iPhone and many more.
 
 At this time ScummVM should be considered beta software, and is still
 under heavy development. Be aware that whilst we attempt to make sure
@@ -708,6 +708,7 @@ Supported platforms include (but are not limited to):
         AmigaOS
         BeOS
         Dreamcast
+        iPhone          (also includes the iPod Touch)
         Nintendo DS
         PalmOS
         PlayStation 2
@@ -1768,6 +1769,10 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
         * Check 'config.mk' file and if everything seems to be fine:
         * Run 'make'.
         * Cross-compiling with Linux may be as easy.
+
+     iPhone:
+        * Please refer to:
+          http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
 
 
 ------------------------------------------------------------------------
