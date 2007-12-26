@@ -85,7 +85,6 @@ uint nextTableSize(uint x);
  */
 template <class Key, class Val, class HashFunc = Hash<Key>, class EqualFunc = EqualTo<Key> >
 class HashMap {
-	friend class const_iterator;
 private:
 #if defined (PALMOS_MODE)
 public:
@@ -96,7 +95,7 @@ public:
 	struct Node {
 		const Key _key;
 		Val _value;
-		Node(const Key &key) : _key(key) {}
+		Node(const Key &key) : _key(key), _value() {}
 	};
 
 	Node **_arr;	// hashtable of size arrsize.
@@ -117,30 +116,37 @@ public:
 	int lookupAndCreateIfMissing(const Key &key);
 	void expand_array(uint newsize);
 
-public:
-	class const_iterator {
-		typedef const HashMap<Key, Val, HashFunc, EqualFunc> * hashmap_t;
+	template <class NodeType>
+	class Iterator {
+		typedef const HashMap<Key, Val, HashFunc, EqualFunc> *hashmap_t;
 		friend class HashMap<Key, Val, HashFunc, EqualFunc>;
-	protected:
+#ifdef MACOSX
+	public:	// FIXME: Work around a bug in gcc version 4.0.1 (Apple Computer, Inc. build 5367)
+#endif
 		uint _idx;
 		hashmap_t _hashmap;
-		const_iterator(uint idx, hashmap_t hashmap) : _idx(idx), _hashmap(hashmap) {}
+	protected:
+		Iterator(uint idx, hashmap_t hashmap) : _idx(idx), _hashmap(hashmap) {}
 
-		const Node *deref() const {
+		NodeType *deref() const {
 			assert(_hashmap != 0);
-			Node *node = _hashmap->_arr[_idx];
+			NodeType *node = _hashmap->_arr[_idx];
 			assert(node != 0);
 			return node;
 		}
 
 	public:
-		const_iterator() : _idx(0), _hashmap(0) {}
+		Iterator() : _idx(0), _hashmap(0) {}
+		// HACK: to allow non const/const begin, end and find to work
+		Iterator(const Iterator<Node> &iter) : _idx(iter._idx), _hashmap(iter._hashmap) {}
 
-		const Node &operator *() const { return *deref(); }
-		const Node *operator->() const { return deref(); }
-		bool operator ==(const const_iterator &iter) const { return _idx == iter._idx && _hashmap == iter._hashmap; }
-		bool operator !=(const const_iterator &iter) const { return !(*this == iter); }
-		const_iterator operator ++() {
+		NodeType &operator *() const { return *deref(); }
+		NodeType *operator->() const { return deref(); }
+
+		bool operator ==(const Iterator &iter) const { return _idx == iter._idx && _hashmap == iter._hashmap; }
+		bool operator !=(const Iterator &iter) const { return !(*this == iter); }
+
+		Iterator &operator ++() {
 			assert(_hashmap);
 			do {
 				_idx++;
@@ -150,7 +156,17 @@ public:
 
 			return *this;
 		}
+
+		Iterator operator ++(int) {
+			Iterator old = *this;
+			operator ++();
+			return old;
+		}
 	};
+
+public:
+	typedef Iterator<Node> iterator;
+	typedef Iterator<const Node> const_iterator;
 
 	HashMap();
 	HashMap(const HM_t& map);
@@ -183,6 +199,18 @@ public:
 
 	uint size() const { return _nele; }
 
+	iterator	begin() {
+		// Find and return the _key non-empty entry
+		for (uint ctr = 0; ctr < _arrsize; ++ctr) {
+			if (_arr[ctr])
+				return iterator(ctr, this);
+		}
+		return end();
+	}
+	iterator	end() {
+		return iterator((uint)-1, this);
+	}
+
 	const_iterator	begin() const {
 		// Find and return the first non-empty entry
 		for (uint ctr = 0; ctr < _arrsize; ++ctr) {
@@ -193,6 +221,13 @@ public:
 	}
 	const_iterator	end() const {
 		return const_iterator((uint)-1, this);
+	}
+
+	iterator	find(const Key &key) {
+		uint ctr = lookup(key);
+		if (_arr[ctr])
+			return iterator(ctr, this);
+		return end();
 	}
 
 	const_iterator	find(const Key &key) const {
