@@ -120,8 +120,8 @@ public:
 	class Iterator {
 		typedef const HashMap<Key, Val, HashFunc, EqualFunc> *hashmap_t;
 		friend class HashMap<Key, Val, HashFunc, EqualFunc>;
-#ifdef MACOSX
-	public:	// FIXME: Work around a bug in gcc version 4.0.1 (Apple Computer, Inc. build 5367)
+#if (__GNUC__ == 4) && (__GNUC_MINOR__ == 0)
+	public:	// FIXME: Work around a bug in gcc version 4.0 (gcc 4.0.1 Apple Computer, Inc. build 5367 and gcc 4.0.2 AmigaOS build 20051012)
 #endif
 		uint _idx;
 		hashmap_t _hashmap;
