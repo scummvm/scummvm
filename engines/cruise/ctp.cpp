@@ -45,7 +45,7 @@ int currentWalkBoxCenterYBis;
 int ctpVarUnk;
 uint8 walkboxTable[0x12];
 
-int ctpProc2(int varX, int varY, int paramX, int paramY) {
+int computeDistance(int varX, int varY, int paramX, int paramY) {
 	int diffX = ABS(paramX - varX);
 	int diffY = ABS(paramY - varY);
 
@@ -53,39 +53,23 @@ int ctpProc2(int varX, int varY, int paramX, int paramY) {
 		diffY = diffX;
 	}
 
-	ctpVar14 = diffY;	// highest difference
 	return (diffY);
 }
 
 // this function process path finding coordinates
-void computeDistance(short int coordCount, short int *ptr) {
-// coordCount = ctp_routeCoordCount, ptr = ctpVar8
-	int i;
-	int offset = 0;
+void computeAllDistance(int16 table[][10], short int coordCount) {
+	for(int i=0; i<coordCount; i++) {
+		int x1 = ctp_routeCoords[i][0];
+		int y1 = ctp_routeCoords[i][1];
 
-	short int *cur_ctp_routeCoords = (short int *)ctp_routeCoords;	// coordinates table
-	int8 *cur_ctp_routes = (int8 *) ctp_routes;
+		for(int j=0; j<ctp_routes[i][0]; j++) {
+			int p = ctp_routes[i][j+1];
 
-	for (i = 0; i < coordCount; i++) {	// for i < ctp_routeCoordCount
-		int varX = cur_ctp_routeCoords[0];	// x
-		int varY = cur_ctp_routeCoords[1];	// y 
+			int x2 = ctp_routeCoords[p][0];
+			int y2 = ctp_routeCoords[p][1];
 
-		int di = 0;
-		int var4Offset = 2;
-
-		while (*(int16 *) cur_ctp_routes > di) {	// while (coordCount > counter++)
-			int idx = *(int16 *) (cur_ctp_routes + var4Offset);
-			ptr[offset + idx] =
-			    ctpProc2(varX, varY, ctp_routeCoords[idx][0],
-			    ctp_routeCoords[idx * 2][1]);
-
-			var4Offset += 2;
-			di++;
+			table[i][p] = computeDistance(x1, y1, x2, y2);
 		}
-
-		offset += 10;
-		cur_ctp_routes += 20;
-		cur_ctp_routeCoords += 2;
 	}
 }
 
@@ -119,13 +103,11 @@ void getWalkBoxCenter(int n, int16 table[][40]) {
 // ax dx bx
 void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, int Y, int scale ) {
 	int numPoints;
-	int wbSelf1;
-	int wbSelf2;
 	int i;
 	int16 *destination;
 
-	wbSelf1 = upscaleValue(hotPointX, scale) - X;
-	wbSelf2 = upscaleValue(hotPointY, scale) - Y;
+	int startX = X - ((upscaleValue(hotPointX, scale) + 0x8000) >> 16);
+	int startY = Y - ((upscaleValue(hotPointY, scale) + 0x8000) >> 16);
 
 	numPoints = *(walkboxData++);
 
@@ -135,13 +117,11 @@ void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, i
 		int pointX = *(walkboxData++);
 		int pointY = *(walkboxData++);
 
-		int scaledX = upscaleValue(pointX, scale) - wbSelf1;
-		int scaledY = upscaleValue(pointY, scale) - wbSelf2;
+		int scaledX =((upscaleValue(pointX, scale) + 0x8000) >> 16) + startX;
+		int scaledY =((upscaleValue(pointY, scale) + 0x8000) >> 16) + startX;
 
-	/*	*(destination++) = scaledX >> 16;
-		*(destination++) = scaledY >> 16; */
-		*(destination++) = pointX;
-		*(destination++) = pointY;
+		*(destination++) = scaledX;
+		*(destination++) = scaledY;
 	}
 
 	m_color = 0;
@@ -217,6 +197,34 @@ int getNode(int nodeResult[2], int nodeId){
 	nodeResult[1] = ctp_routeCoords[nodeId][1];
 
 	return 0;
+}
+
+int setNodeColor(int nodeIdx, int nodeColor) {
+	if (nodeIdx < 0 || nodeIdx >= ctp_routeCoordCount)
+		return -1;
+
+	int oldColor = walkboxColor[nodeIdx];
+
+	if(nodeColor == -1)
+		return 
+
+	walkboxColor[nodeIdx] = nodeColor;
+
+	return oldColor;
+}
+
+int setNodeState(int nodeIdx, int nodeState) {
+	if (nodeIdx < 0 || nodeIdx >= ctp_routeCoordCount)
+		return -1;
+
+	int oldState = walkboxState[nodeIdx];
+
+	if(nodeState == -1)
+		return 
+
+	walkboxState[nodeIdx] = nodeState;
+
+	return oldState;
 }
 
 int initCt(const char *ctpName) {
@@ -321,7 +329,7 @@ int initCt(const char *ctpName) {
 
 	numberOfWalkboxes = segementSizeTable[6] / 2;	// get the number of walkboxes
 
-	computeDistance(ctp_routeCoordCount, ctpVar8);	// process path-finding stuff
+	computeAllDistance(distanceTable, ctp_routeCoordCount);	// process path-finding stuff
 
 	polyStruct = polyStructNorm = adrStructPoly = workBuffer;
 

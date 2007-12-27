@@ -340,12 +340,12 @@ int point_proche(int16 table[][2]) {
 		x = table[i][0];
 		y = table[i][1];
 
-		ctpProc2(x_mouse, y_mouse, x, y);
-		if (ctpVar14 < d1) {
+		int pointDistance = computeDistance(x_mouse, y_mouse, x, y);
+		if (pointDistance < d1) {
 			polydroite(x_mouse, y_mouse, x, y);
 
 			if (!flag_obstacle && ctp_routes[i][0] > 0) {
-				d1 = ctpVar14;
+				d1 = pointDistance;
 				p = i;
 			}
 		}
@@ -394,9 +394,7 @@ void explore(int depart, int arrivee) {
 				sol[idsol] = (char)arrivee;
 				D = 0;
 				for (i = 0; i < idsol; i++) {
-					D = D +
-					    ctp_routeCoords[(int)sol[i]][(int)
-					    sol[i + 1]];
+					D = D + distanceTable[(int)sol[i]][(int)sol[i + 1]];
 					Fsol[i] = sol[i];
 				}
 				prem2 = 0;
@@ -478,9 +476,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 
 		// can we go there directly ?
 		polydroite(x1, y1, x2, y2);
-		////////////////
-		flag_obstacle = 0;
-		////////////////
+
 		if (!flag_obstacle) {
 			solution0[0][0] = x1;
 			solution0[0][1] = y1;
@@ -651,8 +647,7 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 	x_mouse = x;
 	y_mouse = y;
 
-	if (!flag_obstacle
-	    || (point_select = point_proche(ctp_routeCoords)) == -1) {
+	if (!flag_obstacle || (point_select = point_proche(ctp_routeCoords)) == -1) {
 		pSolution[0] = -1;
 		pSolution[1] = -1;
 

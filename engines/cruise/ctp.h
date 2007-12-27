@@ -52,9 +52,11 @@ extern uint8 *ctpVar17;
 extern uint8 *polyStruct0;
 
 int initCt(const char * ctpName);
-int ctpProc2(int varX, int varY, int paramX, int paramY);
+int computeDistance(int varX, int varY, int paramX, int paramY);
 
 int getNode(int nodeResult[2], int nodeId);
+int setNodeColor(int nodeIdx, int nodeColor);
+int setNodeState(int nodeIdx, int nodeState);
 
 } // End of namespace Cruise
 

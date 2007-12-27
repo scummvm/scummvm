@@ -1468,15 +1468,18 @@ int16 Op_SongExist(void) {
 	return 0;
 }
 
+int16 Op_SetNodeState(void) {
+	int16 state = popVar();
+	int16 node = popVar();
+
+	return setNodeState(node, state);
+}
+
 int16 Op_SetNodeColor(void) {
-	int16 color;
-	int16 node;
+	int16 color = popVar();
+	int16 node = popVar();
 
-	color = popVar();
-	node = popVar();
-	printf("Unimplemented \"Op_SetNodeColor\"\n");
-
-	return 0;
+	return setNodeColor(node, color);
 }
 
 int16 Op_SetXDial(void) {
@@ -1587,7 +1590,7 @@ opcodeFunction opcodeTablePtr[] =
 	Op_RemoveAnimation,
 	Op_SetZoom,
 	Op_SetObjectAtNode,
-	NULL, // setNodeState, never used ?
+	Op_SetNodeState,
 	Op_SetNodeColor,
 	Op_TrackAnim,
 	Op_GetNodeX,
