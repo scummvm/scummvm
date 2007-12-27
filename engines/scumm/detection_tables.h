@@ -245,7 +245,6 @@ static const GameSettings gameVariantsTable[] = {
 
 	{"brstorm", 0, 0, GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 	{"fbear", "HE 61", 0, GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
-	{"fbear", "HE 70", 0, GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY, Common::kPlatformWindows},
 
 	{"puttmoon", "", 0, GID_HEGAME,  6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
@@ -254,6 +253,9 @@ static const GameSettings gameVariantsTable[] = {
 	{"puttputt", "Demo",  0, GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
 #ifndef DISABLE_HE
+	// Humongous Entertainment Scumm Version 7.0
+	{"fbear", "HE 70", 0, GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY, Common::kPlatformWindows},
+
 	// HE CUP demos
 	{"", "HE CUP",  0, GID_HECUP,  6, 200, MDT_NONE, 0, UNK},
 
