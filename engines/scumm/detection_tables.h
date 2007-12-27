@@ -73,6 +73,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "comi", "The Curse of Monkey Island" },
 #endif
 
+	{ "activity", "Putt-Putt & Fatty Bear's Activity Pack" },
 	{ "brstorm", "Bear Stormin'" },
 	{ "fbear", "Fatty Bear's Birthday Surprise" },
 	{ "fbpack", "Fatty Bear's Fun Pack" },
@@ -81,7 +82,6 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "puttputt", "Putt-Putt Joins the Parade" },
 
 #ifndef DISABLE_HE
-	{ "activity", "Putt-Putt & Fatty Bear's Activity Pack" },
 	{ "airport", "Let's Explore the Airport with Buzzy" },
 	{ "arttime", "Blue's Art Time Activities" },
 	{ "balloon", "Putt-Putt and Pep's Balloon-O-Rama" },
@@ -245,6 +245,7 @@ static const GameSettings gameVariantsTable[] = {
 
 	{"brstorm", 0, 0, GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 	{"fbear", "HE 61", 0, GID_FBEAR, 6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
+	{"fbear", "HE 70", 0, GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY, Common::kPlatformWindows},
 
 	{"puttmoon", "", 0, GID_HEGAME,  6, 61, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
@@ -252,10 +253,12 @@ static const GameSettings gameVariantsTable[] = {
 	{"puttputt", "HE 60", 0, GID_HEGAME,   6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, Common::kPlatformPC},
 	{"puttputt", "Demo",  0, GID_PUTTDEMO, 6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK},
 
-#ifndef DISABLE_HE
-	// Humongous Entertainment Scumm Version 7.0
-	{"fbear", "HE 70", 0, GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY, Common::kPlatformWindows},
+	// The following are meant to be generic HE game variants and as such do
+	// not specify a game ID. Make sure that these are last in the table, else
+	// they'll override more specific entries that follow later on.
+	{"", "HE 70",   0, GID_HEGAME, 6,  70, MDT_NONE, GF_USE_KEY, UNK},
 
+#ifndef DISABLE_HE
 	// HE CUP demos
 	{"", "HE CUP",  0, GID_HECUP,  6, 200, MDT_NONE, 0, UNK},
 
@@ -354,7 +357,6 @@ static const GameSettings gameVariantsTable[] = {
 	// The following are meant to be generic HE game variants and as such do
 	// not specify a game ID. Make sure that these are last in the table, else
 	// they'll override more specific entries that follow later on.
-	{"", "HE 70",   0, GID_HEGAME, 6,  70, MDT_NONE, GF_USE_KEY, UNK},
 	{"", "HE 71",   0, GID_HEGAME, 6,  71, MDT_NONE, GF_USE_KEY, UNK},
 	{"", "HE 72",   0, GID_HEGAME, 6,  72, MDT_NONE, GF_USE_KEY, UNK},
 	{"", "HE 73",   0, GID_HEGAME, 6,  73, MDT_NONE, GF_USE_KEY, UNK},

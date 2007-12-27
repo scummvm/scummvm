@@ -16,7 +16,9 @@ MODULE_OBJS := \
 	file.o \
 	file_nes.o \
 	gfx.o \
+	he/resource_he.o \
 	he/script_v60he.o \
+	he/script_v70he.o \
 	he/sound_he.o \
 	help.o \
 	imuse/imuse.o \
@@ -103,8 +105,7 @@ MODULE_OBJS += \
 	he/floodfill_he.o \
 	he/logic_he.o \
 	he/palette_he.o \
-	he/resource_he.o \
-	he/script_v70he.o \
+	he/script_v71he.o \
 	he/script_v72he.o \
 	he/script_v80he.o \
 	he/script_v90he.o \

@@ -296,7 +296,7 @@ void ScummEngine_v70he::setupOpcodes() {
 		OPCODE(o6_distPtPt),
 		/* C8 */
 		OPCODE(o60_kernelGetFunctions),
-		OPCODE(o70_kernelSetFunctions),
+		OPCODE(o60_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),
 		/* CC */
@@ -358,9 +358,9 @@ void ScummEngine_v70he::setupOpcodes() {
 		OPCODE(o6_invalid),
 		OPCODE(o70_createDirectory),
 		OPCODE(o70_setSystemMessage),
-		OPCODE(o70_polygonOps),
+		OPCODE(o6_invalid),
 		/* FC */
-		OPCODE(o70_polygonHit),
+		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
@@ -765,68 +765,6 @@ void ScummEngine_v70he::o70_getStringWidth() {
 	push(width);
 }
 
-void ScummEngine_v70he::o70_kernelSetFunctions() {
-	int args[29];
-	int num;
-	Actor *a;
-
-	num = getStackList(args, ARRAYSIZE(args));
-
-	switch (args[0]) {
-	case 1:
-		// Used to restore images when decorating cake in
-		// Fatty Bear's Birthday Surprise
-		virtScreenLoad(args[1], args[2], args[3], args[4], args[5]);
-		break;
-	case 20: // HE72+
-		a = derefActor(args[1], "o70_kernelSetFunctions: 20");
-		((ScummEngine_v71he *)this)->queueAuxBlock(a);
-		break;
-	case 21:
-		_skipDrawObject = 1;
-		break;
-	case 22:
-		_skipDrawObject = 0;
-		break;
-	case 23:
-		clearCharsetMask();
-		_fullRedraw = true;
-		break;
-	case 24:
-		_skipProcessActors = 1;
-		redrawAllActors();
-		break;
-	case 25:
-		_skipProcessActors = 0;
-		redrawAllActors();
-		break;
-	case 26:
-		a = derefActor(args[1], "o70_kernelSetFunctions: 26");
-		a->_auxBlock.r.left = 0;
-		a->_auxBlock.r.right = -1;
-		a->_auxBlock.r.top = 0;
-		a->_auxBlock.r.bottom = -2;
-		break;
-	case 30:
-		a = derefActor(args[1], "o70_kernelSetFunctions: 30");
-		a->_clipOverride.bottom = args[2];
-		break;
-	case 42:
-		_wiz->_rectOverrideEnabled = true;
-		_wiz->_rectOverride.left = args[1];
-		_wiz->_rectOverride.top = args[2];
-		_wiz->_rectOverride.right = args[3];
-		_wiz->_rectOverride.bottom = args[4];
-		adjustRect(_wiz->_rectOverride);
-		break;
-	case 43:
-		_wiz->_rectOverrideEnabled = false;
-		break;
-	default:
-		error("o70_kernelSetFunctions: default case %d (param count %d)", args[0], num);
-	}
-}
-
 void ScummEngine_v70he::o70_getStringLen() {
 	int id, len;
 	byte *addr;
@@ -1116,47 +1054,6 @@ void ScummEngine_v70he::o70_setSystemMessage() {
 	default:
 		error("o70_setSystemMessage: default case %d", subOp);
 	}
-}
-
-void ScummEngine_v70he::o70_polygonOps() {
-	int vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y;
-	int id, fromId, toId;
-	bool flag;
-
-	byte subOp = fetchScriptByte();
-
-	switch (subOp) {
-	case 68: // HE 100
-	case 69: // HE 100
-	case 246:
-	case 248:
-		vert4y = pop();
-		vert4x = pop();
-		vert3y = pop();
-		vert3x = pop();
-		vert2y = pop();
-		vert2x = pop();
-		vert1y = pop();
-		vert1x = pop();
-		flag = (subOp == 69 || subOp == 248);
-		id = pop();
-		_wiz->polygonStore(id, flag, vert1x, vert1y, vert2x, vert2y, vert3x, vert3y, vert4x, vert4y);
-		break;
-	case 28: // HE 100
-	case 247:
-		toId = pop();
-		fromId = pop();
-		_wiz->polygonErase(fromId, toId);
-		break;
-	default:
-		error("o70_polygonOps: default case %d", subOp);
-	}
-}
-
-void ScummEngine_v70he::o70_polygonHit() {
-	int y = pop();
-	int x = pop();
-	push(_wiz->polygonHit(0, x, y));
 }
 
 } // End of namespace Scumm

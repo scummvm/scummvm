@@ -727,15 +727,12 @@ ScummEngine_v60he::~ScummEngine_v60he() {
 	}
 }
 
-#ifndef DISABLE_HE
 ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v60he(syst, dr) {
 	if (_game.platform == Common::kPlatformMacintosh && (_game.heversion >= 72 && _game.heversion <= 73))
 		_resExtractor = new MacResExtractor(this);
 	else
 		_resExtractor = new Win32ResExtractor(this);
-
-	_wiz = new Wiz(this);
 
 	_heV7RoomOffsets = NULL;
 
@@ -756,19 +753,25 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 
 ScummEngine_v70he::~ScummEngine_v70he() {
 	delete _resExtractor;
-	delete _wiz;
 	free(_heV7DiskOffsets);
 	free(_heV7RoomIntOffsets);
 	free(_heV7RoomOffsets);
 	free(_storedFlObjects);
 }
 
+#ifndef DISABLE_HE
 ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v70he(syst, dr) {
 	_auxBlocksNum = 0;
 	memset(_auxBlocks, 0, sizeof(_auxBlocks));
 	_auxEntriesNum = 0;
 	memset(_auxEntries, 0, sizeof(_auxEntries));
+
+	_wiz = new Wiz(this);
+}
+
+ScummEngine_v71he::~ScummEngine_v71he() {
+	delete _wiz;
 }
 
 ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const DetectorResult &dr)

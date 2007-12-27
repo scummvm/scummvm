@@ -148,7 +148,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		/* 50 */
 		OPCODE(o100_paletteOps),
 		OPCODE(o70_pickupObject),
-		OPCODE(o70_polygonOps),
+		OPCODE(o71_polygonOps),
 		OPCODE(o6_pop),
 		/* 54 */
 		OPCODE(o6_printDebug),
@@ -267,7 +267,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o72_findObject),
 		/* B0 */
 		OPCODE(o72_findObjectWithClassOf),
-		OPCODE(o70_polygonHit),
+		OPCODE(o71_polygonHit),
 		OPCODE(o90_getLinesIntersectionPoint),
 		OPCODE(o90_fontUnk),
 		/* B4 */

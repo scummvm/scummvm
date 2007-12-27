@@ -27,9 +27,7 @@
 #include "common/config-manager.h"
 #include "scumm/scumm.h"
 #include "scumm/intern.h"
-#ifndef DISABLE_HE
 #include "scumm/he/intern_he.h"
-#endif
 #include "scumm/he/logic_he.h"
 #include "sound/mididrv.h"
 
@@ -207,7 +205,6 @@ void ScummEngine_v6::setupScummVars() {
 	}
 }
 
-#ifndef DISABLE_HE
 void ScummEngine_v70he::setupScummVars() {
 	ScummEngine_v6::setupScummVars();
 
@@ -219,6 +216,7 @@ void ScummEngine_v70he::setupScummVars() {
 	VAR_SOUND_CHANNEL = 14;
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v72he::setupScummVars() {
 	VAR_KEYPRESS = 0;
 	VAR_DEBUGMODE = 1;
@@ -624,7 +622,6 @@ void ScummEngine_v8::resetScummVars() {
 }
 #endif
 
-#ifndef DISABLE_HE
 void ScummEngine_v70he::resetScummVars() {
 	ScummEngine::resetScummVars();
 
@@ -636,6 +633,7 @@ void ScummEngine_v70he::resetScummVars() {
 	VAR(VAR_TALK_CHANNEL) = 2;
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v72he::resetScummVars() {
 	ScummEngine_v70he::resetScummVars();
 

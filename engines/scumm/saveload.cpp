@@ -1261,7 +1261,6 @@ void ScummEngine_v60he::saveOrLoad(Serializer *s) {
 	s->saveLoadArrayOf(_arraySlot, _numArray, sizeof(_arraySlot[0]), sleByte);
 }
 
-#ifndef DISABLE_HE
 void ScummEngine_v70he::saveOrLoad(Serializer *s) {
 	ScummEngine_v60he::saveOrLoad(s);
 
@@ -1276,6 +1275,7 @@ void ScummEngine_v70he::saveOrLoad(Serializer *s) {
 	s->saveLoadEntries(this, HE70Entries);
 }
 
+#ifndef DISABLE_HE
 void ScummEngine_v71he::saveOrLoad(Serializer *s) {
 	ScummEngine_v70he::saveOrLoad(s);
 

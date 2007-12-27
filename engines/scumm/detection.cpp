@@ -878,10 +878,10 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 		case 71:
 			*engine = new ScummEngine_v71he(syst, res);
 			break;
+#endif
 		case 70:
 			*engine = new ScummEngine_v70he(syst, res);
 			break;
-#endif
 		case 61:
 			*engine = new ScummEngine_v60he(syst, res);
 			break;

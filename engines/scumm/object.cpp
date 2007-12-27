@@ -28,9 +28,7 @@
 #include "scumm/actor.h"
 #include "scumm/bomp.h"
 #include "scumm/intern.h"
-#ifndef DISABLE_HE
 #include "scumm/he/intern_he.h"
-#endif
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/usage_bits.h"
@@ -496,8 +494,8 @@ int ScummEngine::findObject(int x, int y) {
 			b = _objs[b].parent;
 			if (b == 0) {
 #ifndef DISABLE_HE
-				if (_game.heversion >= 70) {
-					if (((ScummEngine_v70he *)this)->_wiz->polygonHit(_objs[i].obj_nr, x, y))
+				if (_game.heversion >= 71) {
+					if (((ScummEngine_v71he *)this)->_wiz->polygonHit(_objs[i].obj_nr, x, y))
 						return _objs[i].obj_nr;
 				}
 #endif
@@ -654,7 +652,6 @@ void ScummEngine::clearRoomObjects() {
 	}
 }
 
-#ifndef DISABLE_HE
 void ScummEngine_v70he::resetRoomObjects() {
 	ScummEngine_v60he::resetRoomObjects();
 	restoreFlObjects();
@@ -682,7 +679,6 @@ void ScummEngine_v70he::clearRoomObjects() {
 		restoreFlObjects();
 }
 
-
 void ScummEngine_v70he::storeFlObject(int slot) {
 	memcpy(&_storedFlObjects[_numStoredFlObjects], &_objs[slot], sizeof(_objs[slot]));
 	_numStoredFlObjects++;
@@ -700,7 +696,6 @@ void ScummEngine_v70he::restoreFlObjects() {
 
 	_numStoredFlObjects = 0;
 }
-#endif
 
 void ScummEngine::resetRoomObjects() {
 	int i, j;
@@ -1079,7 +1074,7 @@ void ScummEngine_v6::clearDrawQueues() {
 }
 
 #ifndef DISABLE_HE
-void ScummEngine_v70he::clearDrawQueues() {
+void ScummEngine_v71he::clearDrawQueues() {
 	ScummEngine_v6::clearDrawQueues();
 
 	_wiz->polygonClear();
@@ -1756,7 +1751,6 @@ int ScummEngine::findFlObjectSlot() {
 	return -1;
 }
 
-#ifndef DISABLE_HE
 void ScummEngine_v70he::loadFlObject(uint object, uint room) {
 	// Don't load an already stored object
 	for (int i = 0; i < _numStoredFlObjects; i++) {
@@ -1766,7 +1760,6 @@ void ScummEngine_v70he::loadFlObject(uint object, uint room) {
 
 	ScummEngine_v60he::loadFlObject(object, room);
 }
-#endif
 
 void ScummEngine::loadFlObject(uint object, uint room) {
 	FindObjectInRoom foir;

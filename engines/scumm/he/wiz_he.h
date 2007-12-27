@@ -142,7 +142,7 @@ enum {
 	kWizCopy
 };
 
-class ScummEngine_v70he;
+class ScummEngine_v71he;
 
 class Wiz {
 public:
@@ -155,7 +155,7 @@ public:
 	uint16 _imagesNum;
 	WizPolygon _polygons[NUM_POLYGONS];
 
-	Wiz(ScummEngine_v70he *vm);
+	Wiz(ScummEngine_v71he *vm);
 
 	void clearWizBuffer();
 	Common::Rect _rectOverride;
@@ -214,7 +214,7 @@ public:
 	void computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPitch, const Common::Rect& rCapt);
 
 private:
-	ScummEngine_v70he *_vm;
+	ScummEngine_v71he *_vm;
 };
 
 } // End of namespace Scumm

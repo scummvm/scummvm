@@ -148,7 +148,6 @@ void ScummEngine::setCursorFromBuffer(const byte *ptr, int width, int height, in
 	updateCursor();
 }
 
-#ifndef DISABLE_HE
 void ScummEngine_v70he::setCursorFromImg(uint img, uint room, uint imgindex) {
 	_resExtractor->setCursor(img);
 }
@@ -183,7 +182,6 @@ void ScummEngine_v70he::setDefaultCursor() {
 
 	updateCursor();
 }
-#endif
 
 void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 	int w, h;

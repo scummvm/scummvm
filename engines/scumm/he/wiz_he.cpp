@@ -36,7 +36,7 @@
 
 namespace Scumm {
 
-Wiz::Wiz(ScummEngine_v70he *vm) : _vm(vm) {
+Wiz::Wiz(ScummEngine_v71he *vm) : _vm(vm) {
 	_imagesNum = 0;
 	memset(&_images, 0, sizeof(_images));
 	memset(&_polygons, 0, sizeof(_polygons));

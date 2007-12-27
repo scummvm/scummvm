@@ -1173,7 +1173,6 @@ int ScummEngine::getActorFromPos(int x, int y) {
 	return 0;
 }
 
-#ifndef DISABLE_HE
 int ScummEngine_v70he::getActorFromPos(int x, int y) {
 	int curActor, i;
 
@@ -1190,7 +1189,6 @@ int ScummEngine_v70he::getActorFromPos(int x, int y) {
 
 	return curActor;
 }
-#endif
 
 
 #pragma mark -

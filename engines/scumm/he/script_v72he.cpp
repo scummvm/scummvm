@@ -300,7 +300,7 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o6_distPtPt),
 		/* C8 */
 		OPCODE(o72_kernelGetFunctions),
-		OPCODE(o70_kernelSetFunctions),
+		OPCODE(o71_kernelSetFunctions),
 		OPCODE(o6_delayFrames),
 		OPCODE(o6_pickOneOf),
 		/* CC */
@@ -362,9 +362,9 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_getResourceSize),
 		OPCODE(o72_createDirectory),
 		OPCODE(o72_setSystemMessage),
-		OPCODE(o70_polygonOps),
+		OPCODE(o71_polygonOps),
 		/* FC */
-		OPCODE(o70_polygonHit),
+		OPCODE(o71_polygonHit),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),

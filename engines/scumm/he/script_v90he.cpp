@@ -358,9 +358,9 @@ void ScummEngine_v90he::setupOpcodes() {
 		OPCODE(o72_getResourceSize),
 		OPCODE(o72_createDirectory),
 		OPCODE(o72_setSystemMessage),
-		OPCODE(o70_polygonOps),
+		OPCODE(o71_polygonOps),
 		/* FC */
-		OPCODE(o70_polygonHit),
+		OPCODE(o71_polygonHit),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),
 		OPCODE(o6_invalid),

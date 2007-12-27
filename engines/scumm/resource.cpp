@@ -32,9 +32,7 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/intern.h"
-#ifndef DISABLE_HE
 #include "scumm/he/intern_he.h"
-#endif
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -59,9 +57,7 @@ extern const char *resTypeFromId(int id);
 static uint16 newTag2Old(uint32 newTag);
 static const byte *findResourceSmall(uint32 tag, const byte *searchin);
 
-#ifndef DISABLE_HE
 static bool checkTryMedia(BaseScummFile *handle);
-#endif
 
 
 /* Open a room */
@@ -293,14 +289,12 @@ void ScummEngine::readIndexFile() {
 		_fileHandle->seek(0, SEEK_SET);
 	}
 
-#ifndef DISABLE_HE
 	if (checkTryMedia(_fileHandle)) {
 		displayMessage(NULL, "You're trying to run game encrypted by ActiveMark. This is not supported.");
 		_quit = true;
 
 		return;
 	}
-#endif
 
 	while (true) {
 		blocktype = _fileHandle->readUint32BE();
@@ -320,7 +314,6 @@ void ScummEngine::readIndexFile() {
 }
 
 
-#ifndef DISABLE_HE
 
 #define TRYMEDIA_MARK_LEN 6
 
@@ -352,7 +345,6 @@ bool checkTryMedia(BaseScummFile *handle) {
 
 	return false;
 }
-#endif
 
 
 #ifndef DISABLE_SCUMM_7_8
@@ -378,7 +370,6 @@ void ScummEngine_v7::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 }
 #endif
 
-#ifndef DISABLE_HE
 void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;
 	switch (blocktype) {
@@ -421,7 +412,6 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 		ScummEngine::readIndexBlock(blocktype, itemsize);
 	}
 }
-#endif
 
 void ScummEngine::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 	int i;

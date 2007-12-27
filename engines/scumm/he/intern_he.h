@@ -39,8 +39,8 @@ class WriteStream;
 
 namespace Scumm {
 
-#ifndef DISABLE_HE
 class ResExtractor;
+#ifndef DISABLE_HE
 class LogicHE;
 class MoviePlayer;
 class Sprite;
@@ -109,7 +109,6 @@ protected:
 	void o60_readFilePos();
 };
 
-#ifndef DISABLE_HE
 class ScummEngine_v70he : public ScummEngine_v60he {
 	friend class ResExtractor;
 	friend class Wiz;
@@ -137,8 +136,6 @@ protected:
 public:
 	ScummEngine_v70he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v70he();
-
-	Wiz *_wiz;
 
 	byte *heFindResourceData(uint32 tag, byte *ptr);
 	byte *heFindResource(uint32 tag, byte *ptr);
@@ -177,17 +174,12 @@ protected:
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
 	virtual void setDefaultCursor();
 
-	virtual void clearDrawQueues();
-
-	void remapHEPalette(const uint8 *src, uint8 *dst);
-
 	/* HE version 70 script opcodes */
 	void o70_startSound();
 	void o70_pickupObject();
 	void o70_getActorRoom();
 	void o70_resourceRoutines();
 	void o70_systemOps();
-	void o70_kernelSetFunctions();
 	void o70_copyString();
 	void o70_getStringWidth();
 	void o70_getStringLen();
@@ -202,18 +194,33 @@ protected:
 	void o70_createDirectory();
 	void o70_findBox();
 	void o70_setSystemMessage();
-	void o70_polygonOps();
-	void o70_polygonHit();
 
 	byte VAR_NUM_SOUND_CHANNELS;
 	byte VAR_WIZ_TCOLOR;
 };
 
+#ifndef DISABLE_HE
 class ScummEngine_v71he : public ScummEngine_v70he {
+protected:
+	typedef void (ScummEngine_v71he::*OpcodeProcv71he)();
+	struct OpcodeEntryv71he {
+		OpcodeProcv71he proc;
+		const char *desc;
+	};
+
+	const OpcodeEntryv71he *_opcodesv71he;
+
 public:
 	ScummEngine_v71he(OSystem *syst, const DetectorResult &dr);
+	~ScummEngine_v71he();
+
+	Wiz *_wiz;
 
 protected:
+	virtual void setupOpcodes();
+	virtual void executeOpcode(byte i);
+	virtual const char *getOpcodeDesc(byte i);
+
 	virtual void saveOrLoad(Serializer *s);
 
 	virtual void redrawBGAreas();
@@ -221,6 +228,13 @@ protected:
 	virtual void processActors();
 	void preProcessAuxQueue();
 	void postProcessAuxQueue();
+
+	virtual void clearDrawQueues();
+
+	/* HE version 70 script opcodes */
+	void o71_kernelSetFunctions();
+	void o71_polygonOps();
+	void o71_polygonHit();
 
 public:
 	/* Actor AuxQueue stuff (HE) */
@@ -231,6 +245,8 @@ public:
 
 	void queueAuxBlock(Actor *a);
 	void queueAuxEntry(int actorNum, int subIndex);
+
+	void remapHEPalette(const uint8 *src, uint8 *dst);
 };
 
 class ScummEngine_v72he : public ScummEngine_v71he {
