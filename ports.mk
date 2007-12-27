@@ -44,8 +44,10 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 	cp $(srcdir)/../../engine-data/trunk/kyra.dat $(bundle_name)/Contents/Resources/KYRA.DAT
 	cp $(srcdir)/../../engine-data/trunk/queen.tbl $(bundle_name)/Contents/Resources/
 	cp $(srcdir)/../../engine-data/trunk/sky.cpt $(bundle_name)/Contents/Resources/
-	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
+	chmod 644 $(bundle_name)/Contents/Resources/*
+	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
+	chmod 755 $(bundle_name)/Contents/MacOS/scummvm
 	strip $(bundle_name)/Contents/MacOS/scummvm
 
 iphonebundle: $(srcdir)/dists/iphone/Info.plist
