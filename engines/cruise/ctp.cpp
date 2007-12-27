@@ -107,7 +107,7 @@ void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, i
 	int16 *destination;
 
 	int startX = X - ((upscaleValue(hotPointX, scale) + 0x8000) >> 16);
-	int startY = Y - ((upscaleValue(hotPointY, scale) + 0x8000) >> 16);
+//	int startY = Y - ((upscaleValue(hotPointY, scale) + 0x8000) >> 16);
 
 	numPoints = *(walkboxData++);
 

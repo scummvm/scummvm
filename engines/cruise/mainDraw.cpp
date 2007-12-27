@@ -1039,7 +1039,7 @@ void clearMaskBit(int x, int y, unsigned char* pData, int stride)
 }
 
 
-void drawMask(unsigned char* workBuffer, int wbWidth, int wbHeight, unsigned char* pMask, int maskWidth, int maskHeight, int maskX, int maskY, int passIdx)
+void drawMask(unsigned char* workBuf, int wbWidth, int wbHeight, unsigned char* pMask, int maskWidth, int maskHeight, int maskX, int maskY, int passIdx)
 {
 	for(int y=0; y<maskHeight; y++)
 	{
@@ -1051,7 +1051,7 @@ void drawMask(unsigned char* workBuffer, int wbWidth, int wbHeight, unsigned cha
 				int destY = maskY + y;
 
 				if((destX >= 0) && (destX < wbWidth*8) && (destY >= 0) && (destY < wbHeight))
-					clearMaskBit(destX, destY, workBuffer, wbWidth);
+					clearMaskBit(destX, destY, workBuf, wbWidth);
 			}
 		}
 	}
@@ -1204,8 +1204,8 @@ void drawSprite(int objX1, int var_6, cellStruct *currentObjPtr, char *data1, in
 	cellStruct* plWork = currentObjPtr;
 	int workBufferSize = var_6 * (objX1/8);
 
-	unsigned char* workBuffer = (unsigned char*)malloc(workBufferSize);
-	memcpy(workBuffer, data2, workBufferSize);
+	unsigned char* workBuf= (unsigned char*)malloc(workBufferSize);
+	memcpy(workBuf, data2, workBufferSize);
 
 	int numPasses = 0;
 
@@ -1223,12 +1223,12 @@ void drawSprite(int objX1, int var_6, cellStruct *currentObjPtr, char *data1, in
 
 			if(filesDatabase[maskFrame].subData.resourceType == OBJ_TYPE_BGMK && filesDatabase[maskFrame].subData.ptrMask)
 			{
-				drawMask(workBuffer, objX1/8, var_6, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width/8, filesDatabase[maskFrame].height, maskX - objX2, maskY - objY2, numPasses++);
+				drawMask(workBuf, objX1/8, var_6, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width/8, filesDatabase[maskFrame].height, maskX - objX2, maskY - objY2, numPasses++);
 			}
 			else
 			if(filesDatabase[maskFrame].subData.resourceType == OBJ_TYPE_SPRITE && filesDatabase[maskFrame].subData.ptrMask)
 			{
-				drawMask(workBuffer, objX1/8, var_6, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width/8, filesDatabase[maskFrame].height, maskX - objX2, maskY - objY2, numPasses++);
+				drawMask(workBuf, objX1/8, var_6, filesDatabase[maskFrame].subData.ptrMask, filesDatabase[maskFrame].width/8, filesDatabase[maskFrame].height, maskX - objX2, maskY - objY2, numPasses++);
 			}
 
 		}
@@ -1242,14 +1242,14 @@ void drawSprite(int objX1, int var_6, cellStruct *currentObjPtr, char *data1, in
 			data1++;
 
 			if ((x + objX2) >= 0 && (x + objX2) < 320 && (y + objY2) >= 0 && (y + objY2) < 200) {
-				if(testMask(x, y, workBuffer, objX1/8)) {
+				if(testMask(x, y, workBuf, objX1/8)) {
 					output[320 * (y + objY2) + x + objX2] = color;
 				}
 			}
 		}
 	}
 
-	free(workBuffer);
+	free(workBuf);
 }
 
 #ifdef _DEBUG
