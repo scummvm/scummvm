@@ -377,6 +377,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\scumm\he\script_v71he.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\scumm\he\script_v72he.cpp"
 				>
 			</File>
