@@ -728,7 +728,7 @@ int16 Op_Preload(void) {
 }
 
 int16 Op_LoadCt(void) {
-	return loadCtp((char*)popPtr());
+	return initCt((char*)popPtr());
 }
 
 int16 Op_LoadSong(void) {
@@ -1095,46 +1095,6 @@ int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType) {
 
 int flag_obstacle;		// computedVar14Bis
 
-void checkCollisionWithWalkBoxesBoundingBoxes(int x, int y) {
-	ctpVar19Struct *di = ctpVar19;
-
-	do {
-		int minX;
-		int maxX;
-		int minY;
-		int maxY;
-
-		ctpVar19SubStruct *subStruct;
-
-		if ((ctpVar19Struct *)-1 == di->field_0) {	// ok, ugly, but it's in the original
-			flag_obstacle = 0;
-			return;
-		}
-
-		subStruct = &di->subStruct;
-
-		minX = subStruct->minX;
-		maxX = subStruct->maxX;
-		minY = subStruct->minY;
-		maxY = subStruct->maxY;
-
-		computedVar14 = subStruct->boxIdx;	// Box index
-
-		if (!(walkboxChange[subStruct->boxIdx]) && (minY >= x)
-		    && (maxY <= x) && (minX >= y) && (maxX <= y)) {
-      /**************/
-
-			flag_obstacle = walkboxType[computedVar14];
-
-      /**************/
-		}
-
-		di = di->field_0;
-	} while (1);
-
-	flag_obstacle = 0;
-}
-
 // add animation
 int16 Op_AddAnimation(void) {
 	int stepY = popVar();
@@ -1176,7 +1136,7 @@ int16 Op_AddAnimation(void) {
 				zoom = -zoom;
 			}
 
-			checkCollisionWithWalkBoxesBoundingBoxes(params.X, params.Y);
+			getPixel(params.X, params.Y);
 
 			setObjectPosition(overlay, obj, 3, newFrame + start);
 			setObjectPosition(overlay, obj, 4, zoom);

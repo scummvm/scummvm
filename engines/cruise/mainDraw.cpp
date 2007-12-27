@@ -1254,12 +1254,12 @@ void drawSprite(int objX1, int var_6, cellStruct *currentObjPtr, char *data1, in
 
 #ifdef _DEBUG
 void drawCtp(void) {
-	int i;
+/*	int i;
 
 	if (ctp_walkboxTable) {
 		for (i = 0; i < 15; i++) {
 			uint16 *dataPtr = &ctp_walkboxTable[i * 40];
-			int type = walkboxType[i];	// show different types in different colors
+			int type = walkboxColor[i];	// show different types in different colors
 
 			if (*dataPtr) {
 				int j;
@@ -1277,7 +1277,7 @@ void drawCtp(void) {
 				    dataPtr[2], 0);
 			}
 		}
-	}
+	}*/
 }
 #endif
 

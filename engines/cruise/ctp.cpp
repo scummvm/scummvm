@@ -28,14 +28,14 @@
 
 namespace Cruise {
 
-ctpVar19Struct *ptr_something;
-ctpVar19Struct *polyStruct;
-ctpVar19Struct *ctpVar11;
-ctpVar19Struct *ctpVar13;
-ctpVar19Struct *ctpVar15;
+uint8 *workBuffer;
+uint8 *polyStruct;
+uint8 *adrStructPoly;
+uint8 *polyStructNorm;
+uint8 *polyStructExp;
 
 uint8 *ctpVar17;
-ctpVar19Struct *ctpVar19;
+uint8 *polyStruct0;
 
 int currentWalkBoxCenterX;
 int currentWalkBoxCenterY;
@@ -58,7 +58,7 @@ int ctpProc2(int varX, int varY, int paramX, int paramY) {
 }
 
 // this function process path finding coordinates
-void loadCtpSub2(short int coordCount, short int *ptr) {
+void computeDistance(short int coordCount, short int *ptr) {
 // coordCount = ctp_routeCoordCount, ptr = ctpVar8
 	int i;
 	int offset = 0;
@@ -89,37 +89,27 @@ void loadCtpSub2(short int coordCount, short int *ptr) {
 	}
 }
 
-void getWalkBoxCenter(int boxIdx, uint16 *_walkboxTable) {
+void getWalkBoxCenter(int n, int16 table[][40]) {
 	int minX = 1000;
 	int minY = 1000;
 	int maxX = -1;
 	int maxY = -1;
 
-	ASSERT(boxIdx <= 15);	// max number of walkboxes is 16
-	ASSERT(_walkboxTable[boxIdx * 40]);	// we should never have an empty walk box
+	for(int i=0; i< table[n][0]; i++) {
+		int x = table[n][i*2+1];
+		int y = table[n][i*2+2];
 
-	if (_walkboxTable[boxIdx * 40] > 0) {
-		int numPoints = _walkboxTable[boxIdx * 40];
-		uint16 *pCurrentPtr = _walkboxTable + (boxIdx * 40) + 1;
+		if (x < minX)
+			minX = x;
 
-		int i;
+		if (x > maxX)
+			maxX = x;
 
-		for (i = 0; i < numPoints; i++) {
-			int X = *(pCurrentPtr++);
-			int Y = *(pCurrentPtr++);;
+		if (y < minY)
+			minY = y;
 
-			if (X < minX)
-				minX = X;
-
-			if (X > maxX)
-				maxX = X;
-
-			if (Y < minY)
-				minY = Y;
-
-			if (Y > maxY)
-				maxY = Y;
-		}
+		if (y > maxY)
+			maxY = y;
 	}
 
 	currentWalkBoxCenterX = ((maxX - minX) / 2) + minX;
@@ -127,16 +117,15 @@ void getWalkBoxCenter(int boxIdx, uint16 *_walkboxTable) {
 }
 
 // ax dx bx
-void renderCTPWalkBox(int X1, int Y1, int X2, int scale, int Y2,
-	    uint16 *walkboxData) {
+void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, int Y, int scale ) {
 	int numPoints;
 	int wbSelf1;
 	int wbSelf2;
 	int i;
 	int16 *destination;
 
-	wbSelf1 = upscaleValue(X1, scale) - X2;
-	wbSelf2 = upscaleValue(Y1, scale) - Y2;
+	wbSelf1 = upscaleValue(hotPointX, scale) - X;
+	wbSelf2 = upscaleValue(hotPointY, scale) - Y;
 
 	numPoints = *(walkboxData++);
 
@@ -149,8 +138,10 @@ void renderCTPWalkBox(int X1, int Y1, int X2, int scale, int Y2,
 		int scaledX = upscaleValue(pointX, scale) - wbSelf1;
 		int scaledY = upscaleValue(pointY, scale) - wbSelf2;
 
-		*(destination++) = scaledX >> 16;
-		*(destination++) = scaledY >> 16;
+	/*	*(destination++) = scaledX >> 16;
+		*(destination++) = scaledY >> 16; */
+		*(destination++) = pointX;
+		*(destination++) = pointY;
 	}
 
 	m_color = 0;
@@ -164,119 +155,58 @@ void renderCTPWalkBox(int X1, int Y1, int X2, int scale, int Y2,
 }
 
 // this process the walkboxes
-void loadCtpSub1(int boxIdx, int scale, uint16 *_walkboxTable,
-	    ctpVar19Struct *param4) {
+void makeCtStruct(uint8* str, int16 table[][40], int num, int z) {
 	int minX = 1000;
-	int minY = 1000;
 	int maxX = -1;
-	int maxY = -1;
 
-	ctpVar19Struct *var_1C;
-	ctpVar19Struct *var_12;
-//	int16 *var_18;
-//	int16 *si;
-	//  int16* di;
-	//  uint8* cx;
-	//  int bx;
-	//  int ax;
-	//  int var_2;
-//	int var_E;
-	//int var_C = 1000;
-	//int var_A = 0;
-	ctpVar19SubStruct *subStruct;
+	if(table[num][0] < 1)
+		return;
 
-	ASSERT(boxIdx <= 15);
+	getWalkBoxCenter(num, table);
 
-	if (_walkboxTable[boxIdx * 40] > 0) {	// is walkbox used ?
-		getWalkBoxCenter(boxIdx, _walkboxTable);
+	currentWalkBoxCenterXBis = currentWalkBoxCenterX;
+	currentWalkBoxCenterYBis = currentWalkBoxCenterY;
 
-		currentWalkBoxCenterYBis = currentWalkBoxCenterY;
-		currentWalkBoxCenterXBis = currentWalkBoxCenterX;
-		// + 512
-		renderCTPWalkBox(currentWalkBoxCenterX, currentWalkBoxCenterY,
-		    currentWalkBoxCenterX, scale + 0x200,
-		    currentWalkBoxCenterY, _walkboxTable + boxIdx * 40);
+	renderCTPWalkBox(&table[num][0], currentWalkBoxCenterX, currentWalkBoxCenterY,  currentWalkBoxCenterX, currentWalkBoxCenterY, z + 0x200 );
 
-		var_1C = param4;
-		var_12 = var_1C + 1;	// next
-/*
-		var_18 = XMIN_XMAX;
-		var_E = 0;
+	int16* a1;
+	int16* a2;
 
-		si = &XMIN_XMAX[1];
-		 if (*si>=0)
-		 * {
-		 * di = si;
-		 * cx = var_12;
-		 * 
-		 * do
-		 * {
-		 * di++;
-		 * bx = di[-1];
-		 * ax = di[0];
-		 * di++;
-		 * 
-		 * var_2 = ax;
-		 * if (var_C < bx)
-		 * {
-		 * var_C = bx;
-		 * }
-		 * 
-		 * if (var_2 < var_A)
-		 * {
-		 * var_A = var_2;
-		 * }
-		 * 
-		 * *cx = bx;
-		 * cx++;
-		 * *cx = var_2;
-		 * cx++;
-		 * var_E ++;
-		 * } while (di);
-		 * 
-		 * var_12 = cx;
-		 * } */
+	a1 = a2 = (int16*)str;
+	a2 += 4+sizeof(int16*); // skip header
 
-		/*************/
-		{
-			int i;
-			int numPoints;
-			uint16 *pCurrentPtr = _walkboxTable + boxIdx * 40;
+	int16* XArray = XMIN_XMAX;
+	int minY = *XArray++;
 
-			numPoints = *(pCurrentPtr++);
+	int i=0;
 
-			for (i = 0; i < numPoints; i++) {
-				int X = *(pCurrentPtr++);
-				int Y = *(pCurrentPtr++);
+	while( *XArray >= 0 ) {
+		int x1 = *XArray++;
+		int x2 = *XArray++;
 
-				if (X < minX)
-					minX = X;
+		if(x1<minX)
+			minX = x1;
 
-				if (X > maxX)
-					maxX = X;
+		if(x2>maxX)
+			maxX = x2;
 
-				if (Y < minY)
-					minY = Y;
-
-				if (Y > maxY)
-					maxY = Y;
-			}
-		}
-		/************/
-
-		var_1C->field_0 = var_12;
-		ctpVar13 = var_12;
-		var_12->field_0 = (ctpVar19Struct *) (-1);
-
-		subStruct = &var_1C->subStruct;
-
-		subStruct->boxIdx = boxIdx;
-		subStruct->type = walkboxType[boxIdx];
-		subStruct->minX = minX;
-		subStruct->maxX = maxX;
-		subStruct->minY = minY;
-		subStruct->maxY = maxY;
+		*a2++ = x1;
+		*a2++ = x2;
+		i++;
 	}
+	*(int16**)a1 = a2;
+
+	adrStructPoly = (uint8*)a2;
+
+	*(uint16**)a2 = (uint16*)-1;
+
+	a1+=sizeof(int16*);
+	*a1++=num;
+	*a1++=walkboxColor[num];
+	*a1++=minX;
+	*a1++=maxX;
+	*a1++=minY;
+	*a1++=minY+i+2;
 }
 
 int getNode(int nodeResult[2], int nodeId){
@@ -289,21 +219,17 @@ int getNode(int nodeResult[2], int nodeId){
 	return 0;
 }
 
-int loadCtp(const char *ctpName) {
-	int walkboxCounter;	// si
-	uint8 *ptr;
+int initCt(const char *ctpName) {
 	uint8 *dataPointer;	// ptr2
 	char fileType[5];	// string2
 	short int segementSizeTable[7];	// tempTable
 
-	if (ctpVar1 == 0) {
-		int i;
-
-		for (i = 0; i < 10; i++) {
+	if ( !loadCtFromSave) {
+		for (int i = 0; i < 10; i++) {
 			persoTable[i] = NULL;
 		}
 	}
-
+	uint8* ptr = NULL;
 	if (!loadFileSub1(&ptr, ctpName, 0)) {
 		free(ptr);
 		return (-18);
@@ -320,96 +246,111 @@ int loadCtp(const char *ctpName) {
 		return (0);
 	}
 
-	memcpy(&ctp_routeCoordCount, dataPointer, 2);	// get the number of path-finding coordinates
+	ctp_routeCoordCount = readB16(dataPointer); // get the number of nods
 	dataPointer += 2;
-	flipShort(&ctp_routeCoordCount);
 
-	memcpy(segementSizeTable, dataPointer, 0xE);
-	dataPointer += 0xE;	// + 14
-	flipGen(segementSizeTable, 0xE);
+	for(int i=0; i<7; i++) {
+		segementSizeTable[i] = readB16(dataPointer);
+		dataPointer += 2;
+	}
 
-	memcpy(ctp_routeCoords, dataPointer, segementSizeTable[0]);	// get the path-finding coordinates
-	dataPointer += segementSizeTable[0];
-	flipGen(ctp_routeCoords, segementSizeTable[0]);
+	// get the path-finding coordinates
+	ASSERT((segementSizeTable[0]%4) == 0);
+	for(int i=0; i<segementSizeTable[0]/4; i++) {
+		ctp_routeCoords[i][0] = readB16(dataPointer);
+		dataPointer += 2;
+		ctp_routeCoords[i][1] = readB16(dataPointer);
+		dataPointer += 2;
+	}
 
-	memcpy(ctp_routes, dataPointer, segementSizeTable[1]);	// get the path-finding line informations (indexing the routeCoords array)
-	dataPointer += segementSizeTable[1];
-	flipGen(ctp_routes, segementSizeTable[1]);
+	// get the path-finding line informations (indexing the routeCoords array)
+	ASSERT((segementSizeTable[1]%20) == 0);
+	for(int i=0; i<segementSizeTable[1]/20; i++) {
+		for(int j=0; j<10; j++) {
+			ctp_routes[i][j] = readB16(dataPointer);
+			dataPointer += 2;
+		}
+	}
 
-	memcpy(ctp_walkboxTable, dataPointer, segementSizeTable[2]);	// get the walkbox coordinates and lines
-	dataPointer += segementSizeTable[2];
-	flipGen(ctp_walkboxTable, segementSizeTable[2]);
+	// read polygons
+	ASSERT((segementSizeTable[2]%80) == 0);
+	for(int i=0; i<segementSizeTable[2]/80; i++) {
+		for(int j=0; j<40; j++) {
+			ctp_walkboxTable[i][j] = readB16(dataPointer);
+			dataPointer += 2;
+		}
+	}
 
-	if (ctpVar1) {
+	if (loadCtFromSave) {
+		// loading from save, ignore the initial values
 		dataPointer += segementSizeTable[3];
 		dataPointer += segementSizeTable[4];
 	} else {
-		memcpy(walkboxType, dataPointer, segementSizeTable[3]);	// get the walkbox type
-		dataPointer += segementSizeTable[3];
-		flipGen(walkboxType, segementSizeTable[3]);	// Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
+		// get the walkbox type
+		// Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
+		ASSERT((segementSizeTable[3] % 2) == 0);
+		for(int i=0; i<segementSizeTable[3]/2; i++) {
+			walkboxColor[i] = readB16(dataPointer);
+			dataPointer += 2;
+		}
 
-		memcpy(walkboxChange, dataPointer, segementSizeTable[4]);	// change indicator, walkbox type can change, i.e. blocked by object (values are either 0x00 or 0x01)
-		dataPointer += segementSizeTable[4];
-		flipGen(walkboxChange, segementSizeTable[4]);
+		// change indicator, walkbox type can change, i.e. blocked by object (values are either 0x00 or 0x01)
+		ASSERT((segementSizeTable[4] % 2) == 0);
+		for(int i=0; i<segementSizeTable[4]/2; i++) {
+			walkboxState[i] = readB16(dataPointer);
+			dataPointer += 2;
+		}
 	}
 
-	memcpy(ctpVar6, dataPointer, segementSizeTable[5]);	// unknown? always 2*16 bytes (used by S24.CTP, S33.CTP, S33_2.CTP, S34.CTP, S35.CTP, S36.CTP; values can be 0x00, 0x01, 0x03, 0x05)
-	dataPointer += segementSizeTable[5];
-	flipGen(ctpVar6, segementSizeTable[5]);
+	//
+	ASSERT((segementSizeTable[5] % 2) == 0);
+	for(int i=0; i<segementSizeTable[5]/2; i++) {
+		walkboxColorIndex[i] = readB16(dataPointer);
+		dataPointer += 2;
+	}
 
-	memcpy(ctp_scale, dataPointer, segementSizeTable[6]);	// scale values for the walkbox coordinates (don't know why there is a need for scaling walkboxes)
-	dataPointer += segementSizeTable[6];
-	flipGen(ctp_scale, segementSizeTable[6]);	// ok
-
+	//
+	ASSERT((segementSizeTable[6] % 2) == 0);
+	for(int i=0; i<segementSizeTable[6]/2; i++) {
+		walkboxZoom[i] = readB16(dataPointer);
+		dataPointer += 2;
+	}
 	free(ptr);
 
 	strcpy(currentCtpName, ctpName);
 
 	numberOfWalkboxes = segementSizeTable[6] / 2;	// get the number of walkboxes
 
-	loadCtpSub2(ctp_routeCoordCount, ctpVar8);	// process path-finding stuff
+	computeDistance(ctp_routeCoordCount, ctpVar8);	// process path-finding stuff
 
-	polyStruct = ctpVar11 = ctpVar13 = ptr_something;
+	polyStruct = polyStructNorm = adrStructPoly = workBuffer;
 
 	ptr = (uint8 *) polyStruct;
 
-	walkboxCounter = numberOfWalkboxes;
-
-	while ((--walkboxCounter) >= 0) {
-		loadCtpSub1(walkboxCounter, 0, ctp_walkboxTable, ctpVar13);
+	for(int i= numberOfWalkboxes-1; i >=0; i--) {
+		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, 0 );
 	}
 
-	ctpVar15 = ctpVar13 + 1;	// was after the -1 thing
+	polyStructExp = adrStructPoly += 4;
 
-	walkboxCounter = numberOfWalkboxes;
-
-	while (--walkboxCounter) {
-		loadCtpSub1(walkboxCounter, ctp_scale[walkboxCounter] * 20,
-		    ctp_walkboxTable, ctpVar13);
+	for(int i= numberOfWalkboxes-1; i >=0; i--) {
+		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, walkboxZoom[i] * 20 );
 	}
 
-	//ctpVar17 = ctpVar13 - ptr + 4;
+	int ctSize = (adrStructPoly - ptr) + 4; // for now, the +4 is a safe zone
+	adrStructPoly = polyStructNorm = polyStruct = (uint8 *) malloc(ctSize);
 
-	{
-		int numOfUsedEntries = ctpVar13 - (ctpVar19Struct *) ptr;
-		numOfUsedEntries++;	// there is a -1 entry at the end... Original was only mallocing numOfUsedEntries*sizeof(ctpVar19Struct)+4, but this is a bit ugly...
-		ctpVar13 = ctpVar11 = polyStruct = (ctpVar19Struct *) malloc(numOfUsedEntries * sizeof(ctpVar19Struct));
+	for(int i= numberOfWalkboxes-1; i >=0; i--) {
+		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, 0);
 	}
 
-	walkboxCounter = numberOfWalkboxes;
-	while ((--walkboxCounter) >= 0) {
-		loadCtpSub1(walkboxCounter, 0, ctp_walkboxTable, ctpVar13);
+	polyStructExp = adrStructPoly += 4;
+
+	for(int i= numberOfWalkboxes-1; i >=0; i--) {
+		makeCtStruct(adrStructPoly, ctp_walkboxTable, i, walkboxZoom[i] * 20);
 	}
 
-	ctpVar15 = ctpVar13 + 1;
-
-	walkboxCounter = numberOfWalkboxes;
-	while (--walkboxCounter) {
-		loadCtpSub1(walkboxCounter, ctp_scale[walkboxCounter] * 20,
-		    ctp_walkboxTable, ctpVar13);
-	}
-
-	ctpVar19 = ctpVar11;
+	polyStruct0 = polyStructNorm;
 
 	return (1);
 }

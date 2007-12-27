@@ -1924,16 +1924,13 @@ int oldmain(int argc, char *argv[]) {
 
 	printf("Initializing engine...\n");
 
-//  initBuffer(scaledScreen,640,400);
-
 	PCFadeFlag = 0;
 
 	//lowLevelInit();
 
 	// arg parser stuff
 
-	ptr_something =
-	    (ctpVar19Struct *) mallocAndZero(sizeof(ctpVar19Struct) * 0x200);
+	workBuffer = (uint8 *) mallocAndZero(8192);
 
 	/*volVar1 = 0;
 	 * fileData1 = 0; */
@@ -1956,7 +1953,7 @@ int oldmain(int argc, char *argv[]) {
 
 	//freeStuff();
 
-	//freePtr(ptr_something);
+	//freePtr(workBuffer);
 
 	return (0);
 }

@@ -42,16 +42,16 @@ struct ctpVar19Struct {
 	ctpVar19SubStruct subStruct;
 };
 
-extern ctpVar19Struct *ptr_something;
-extern ctpVar19Struct *polyStruct;
-extern ctpVar19Struct *ctpVar11;
-extern ctpVar19Struct *ctpVar13;
-extern ctpVar19Struct *ctpVar15;
+extern uint8 *workBuffer;
+extern uint8 *polyStruct;
+extern uint8 *adrStructPoly;
+extern uint8 *polyStructNorm;
+extern uint8 *polyStructExp;
 
 extern uint8 *ctpVar17;
-extern ctpVar19Struct *ctpVar19;
+extern uint8 *polyStruct0;
 
-int loadCtp(const char * ctpName);
+int initCt(const char * ctpName);
 int ctpProc2(int varX, int varY, int paramX, int paramY);
 
 int getNode(int nodeResult[2], int nodeId);

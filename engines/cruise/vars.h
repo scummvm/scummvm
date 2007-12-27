@@ -250,14 +250,14 @@ extern int16 saveVar1;
 extern uint8 saveVar2[97];	// recheck size
 
 extern int16 numberOfWalkboxes;	// saveVar3
-extern int16 walkboxType[15];	// saveVar4     // Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
-extern int16 walkboxChange[15];	// saveVar5 // walkbox can change its type: 0x00 - not changeable, 0x01 - changeable
-												// Assumption: To change the type: walkboxType[i] -= walkboxChane[i] and vice versa
+extern int16 walkboxColor[15];	// saveVar4     // Type: 0x00 - non walkable, 0x01 - walkable, 0x02 - exit zone
+extern int16 walkboxState[15];	// saveVar5 // walkbox can change its type: 0x00 - not changeable, 0x01 - changeable
+												// Assumption: To change the type: walkboxColor[i] -= walkboxChane[i] and vice versa
 extern uint8 lastAni[16];
 
 extern int32 loadFileVar1;
 
-extern int16 ctpVar1;
+extern int16 loadCtFromSave;
 extern int16 ctp_routeCoordCount;	// ctpVar2  // number of path-finding coordinates
 extern int16 ctp_routeCoords[20][2];	// ctpVar3      // path-finding coordinates array
 
@@ -279,9 +279,9 @@ extern int16 ctp_routes[20][10];	// path-finding line information
    for the 20 * i slice the root x,y is routeCoords[i], routeCoords[i+2]
    the unused rest of the slice if filled up with 0xFF
 */
-extern uint16 ctp_walkboxTable[15 * 40];	// ctpVar5      // walkboxes coordinates and lines
-extern int8 ctpVar6[32];
-extern int16 ctp_scale[15];	// ctpVar7  // scaling information for walkboxes
+extern int16 ctp_walkboxTable[15][40];	// ctpVar5      // walkboxes coordinates and lines
+extern int16 walkboxColorIndex[16];
+extern int16 walkboxZoom[15];	// ctpVar7  // scaling information for walkboxes
 extern int16 ctpVar8[200];
 
 extern int16 ctpVar14;
@@ -291,7 +291,6 @@ extern int16 speedGame;
 extern int16 oldSpeedGame;
 
 extern uint8 globalScreen[320 * 200];
-extern uint8 scaledScreen[640 * 400];
 
 //extern OSystem *osystem;
 

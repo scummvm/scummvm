@@ -228,8 +228,6 @@ static uint32 lastTick;
 void flip() {
 	int i;
 	byte paletteRGBA[256 * 4];
-	//uint8* outPtr = scaledScreen;
-	//uint8* inPtr  = globalScreen;
 
 	if (palDirtyMax != -1) {
 		for (i = palDirtyMin; i <= palDirtyMax; i++) {

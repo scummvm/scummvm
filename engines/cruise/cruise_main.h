@@ -96,7 +96,7 @@ void *mallocAndZero(int32 size);
 uint8 *mainProc14(uint16 overlay, uint16 idx);
 void printInfoBlackBox(const char *string);
 void waitForPlayerInput(void);
-int loadCtp(const char * ctpName);
+int initCt(const char * ctpName);
 void loadPakedFileToMem(int fileIdx, uint8 * buffer);
 int getNumObjectsByClass(int scriptIdx, int param);
 void resetFileEntryRange(int param1, int param2);

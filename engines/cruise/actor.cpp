@@ -68,40 +68,35 @@ int flag_aff_chemin;
 void getPixel(int x, int y) {
 	int x_min, x_max, y_min, y_max;
 
-	ctpVar19Struct *polygone;
-	ctpVar19SubStruct *tableau;
+	int16* polygone = (int16*)polyStruct0;
+	int16* next;
 
-	polygone = ctpVar19;	/* adr structure polygone */
+	while ((next = *(int16**)polygone) != (int16 *) -1) {
+		polygone+=sizeof(uint16*);
 
-	while (polygone->field_0 != (ctpVar19Struct *) - 1) {
-		tableau = &polygone->subStruct;
+		int16* tableau = polygone+2;
 
-		x_min = tableau->minX;
-		x_max = tableau->maxX;
-		y_min = tableau->minY;
-		y_max = tableau->maxY;
+		x_min = *tableau++;
+		x_max = *tableau++;
+		y_min = *tableau++;
+		y_max = *tableau++;
 
-		computedVar14 = tableau->boxIdx;	/* numero polygone      */
+		computedVar14 = *polygone++;
 
-		if (walkboxChange[computedVar14] == 0 && ((x >= x_min
-			    && x <= x_max) && (y >= y_min && y <= y_max))) {
+		if (walkboxState[computedVar14] == 0 && ((x >= x_min && x <= x_max) && (y >= y_min && y <= y_max))) {
 			// click was in given box
-			/*  u = y-y_min;
-			 * 
-			 * //tableau+=u;
-			 * tableau = &polygone[u].subStruct;
-			 * 
-			 * x_min = tableau->minX;
-			 * x_max = tableau->maxX;
-			 * 
-			 * if ( (x>=x_min && x<=x_max) ) */
-			{
-				flag_obstacle = walkboxType[computedVar14];	/* sa couleur */
+			int u = y-y_min;
+			tableau+=u*2;
+			x_min = *tableau++;
+			x_max = *tableau++;
+			
+			if ( (x>=x_min && x<=x_max) ) {
+				flag_obstacle = walkboxColor[computedVar14];
 
 				return;
 			}
 		}
-		polygone = polygone->field_0;
+		polygone = next;
 	}
 
 	flag_obstacle = 0;
@@ -306,7 +301,7 @@ int point_proche(int16 table[][2]) {
 	int x1, y1, i, x, y, p;
 	int d1 = 1000;
 
-	ctpVar19 = ctpVar11;
+	polyStruct0 = polyStructNorm;
 
 	if (nclick_noeud == 1) {
 		x = x_mouse;
@@ -314,19 +309,19 @@ int point_proche(int16 table[][2]) {
 		x1 = table_ptselect[0][0];
 		y1 = table_ptselect[0][1];
 
-		ctpVar19 = ctpVar15;
+		polyStruct0 = polyStructExp;
 
 		getPixel(x, y);
 
 		if (!flag_obstacle) {
-			ctpVar19 = ctpVar11;
+			polyStruct0 = polyStructNorm;
 
 			getPixel(x, y);
 
 			if (flag_obstacle) {
 				polydroite(x1, y1, x, y);
 			}
-			ctpVar19 = ctpVar15;
+			polyStruct0 = polyStructExp;
 		}
 		if (!flag_obstacle) {	/* dans flag_obstacle --> couleur du point */
 			x1 = table_ptselect[0][0];
@@ -338,7 +333,7 @@ int point_proche(int16 table[][2]) {
 			y_mouse = Y;
 		}
 	}
-	ctpVar19 = ctpVar11;
+	polyStruct0 = polyStructNorm;
 
 	p = -1;
 	for (i = 0; i < ctp_routeCoordCount; i++) {
@@ -468,7 +463,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 	table_ptselect[*nclick][0] = x_mouse;
 	table_ptselect[*nclick][1] = y_mouse;
 	(*nclick)++;
-	ctpVar19 = ctpVar11;
+	polyStruct0 = polyStructNorm;
 
 	if (*nclick == 2) {	// second point
 		x1 = table_ptselect[0][0];
@@ -479,7 +474,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 			return;
 		}
 		flag_aff_chemin = 1;
-		ctpVar19 = ctpVar15;
+		polyStruct0 = polyStructExp;
 
 		// can we go there directly ?
 		polydroite(x1, y1, x2, y2);
@@ -489,7 +484,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 		if (!flag_obstacle) {
 			solution0[0][0] = x1;
 			solution0[0][1] = y1;
-			ctpVar19 = ctpVar15;
+			polyStruct0 = polyStructExp;
 
 			poly2(x2, y2, ctp_routeCoords[select_noeud[1]][0],
 			    ctp_routeCoords[select_noeud[1]][1]);
@@ -533,7 +528,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 					solution0[++i][1] =
 					    ctp_routeCoords[p1][1];
 				}
-				ctpVar19 = ctpVar15;
+				polyStruct0 = polyStructExp;
 				poly2(x2, y2,
 				    ctp_routeCoords[select_noeud[1]][0],
 				    ctp_routeCoords[select_noeud[1]][1]);
@@ -558,7 +553,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 					while (flag_obstacle && i != d) {
 						x2 = solution0[i][0];
 						y2 = solution0[i][1];
-						ctpVar19 = ctpVar15;
+						polyStruct0 = polyStructExp;
 						polydroite(x1, y1, x2, y2);
 						i--;
 					}
@@ -597,7 +592,7 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 		}
 	}
 
-	//if (!flagCt)
+	if (!flagCt)
 	{
 		int i;
 		int16 *ptr;
@@ -637,7 +632,7 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 	}
 
 	nclick_noeud = 0;
-	ctpVar19 = ctpVar11;
+	polyStruct0 = polyStructNorm;
 	flag_aff_chemin = 0;
 
 	if (x == destX && y == destY) {
@@ -689,12 +684,9 @@ int16 computePathfinding(int16 *pSolution, int16 x, int16 y, int16 destX, int16 
 	y_mouse = destY;
 
 	if ((point_select = point_proche(ctp_routeCoords)) != -1)
-		valide_noeud(select_noeud, point_select, &nclick_noeud,
-		    perso->solution);
+		valide_noeud(select_noeud, point_select, &nclick_noeud, perso->solution);
 
-	if ((!flag_aff_chemin)
-	    || ((table_ptselect[0][0] == table_ptselect[1][0])
-		&& (table_ptselect[0][1] == table_ptselect[1][1]))) {
+	if ((!flag_aff_chemin) || ((table_ptselect[0][0] == table_ptselect[1][0]) && (table_ptselect[0][1] == table_ptselect[1][1]))) {
 		pSolution[0] = -1;
 		pSolution[1] = -1;
 		freePerso(num);

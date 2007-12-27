@@ -155,20 +155,20 @@ int16 saveVar1;
 uint8 saveVar2[97];		// recheck size
 
 int16 numberOfWalkboxes;	// saveVar3
-int16 walkboxType[15];		// saveVar4
-int16 walkboxChange[15];	// saveVar5
+int16 walkboxColor[15];		// saveVar4
+int16 walkboxState[15];	// saveVar5
 
 uint8 lastAni[16];
 
 int32 loadFileVar1;
 
-int16 ctpVar1 = 0;
+int16 loadCtFromSave = 0;
 int16 ctp_routeCoordCount;	// ctpVar2
 int16 ctp_routeCoords[20][2];	// ctpVar3
 int16 ctp_routes[20][10];
-uint16 ctp_walkboxTable[15 * 40];	// ctpVar5
-int8 ctpVar6[32];
-int16 ctp_scale[15];		//  ctpVar7
+int16 ctp_walkboxTable[15][40];	// ctpVar5
+int16 walkboxColorIndex[16];
+int16 walkboxZoom[15];		//  ctpVar7
 int16 ctpVar8[200];
 
 int16 ctpVar14;
@@ -178,7 +178,6 @@ int16 speedGame;
 int16 oldSpeedGame;
 
 uint8 globalScreen[320 * 200];
-uint8 scaledScreen[640 * 400];
 
 //OSystem *osystem;
 

@@ -441,8 +441,8 @@ void saveCT(Common::OutSaveFile& currentSaveFile) {
 
 		if(numberOfWalkboxes)
 		{
-			currentSaveFile.write(walkboxType, numberOfWalkboxes * 2);
-			currentSaveFile.write(walkboxChange, numberOfWalkboxes * 2);
+			currentSaveFile.write(walkboxColor, numberOfWalkboxes * 2);
+			currentSaveFile.write(walkboxState, numberOfWalkboxes * 2);
 		}
 
 		for (unsigned long int i = 0; i < 10; i++) {
@@ -474,8 +474,8 @@ void loadSavegameDataSub6(Common::InSaveFile& currentSaveFile) {
 		numberOfWalkboxes = currentSaveFile.readUint16LE();
 
 		if (numberOfWalkboxes) {
-			currentSaveFile.read(walkboxType, numberOfWalkboxes * 2);
-			currentSaveFile.read(walkboxChange, numberOfWalkboxes * 2);
+			currentSaveFile.read(walkboxColor, numberOfWalkboxes * 2);
+			currentSaveFile.read(walkboxState, numberOfWalkboxes * 2);
 		}
 
 		for (i = 0; i < 10; i++) {
@@ -907,9 +907,9 @@ int loadSavegameData(int saveGameIdx) {
 	//TODO: here, restart music
 
 	if (strlen(currentCtpName)) {
-		ctpVar1 = 1;
-		loadCtp(currentCtpName);
-		ctpVar1 = 0;
+		loadCtFromSave = 1;
+		initCt(currentCtpName);
+		loadCtFromSave = 0;
 	}
 	//prepareFadeOut();
 	//gfxModuleData.gfxFunction8();

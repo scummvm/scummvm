@@ -400,7 +400,7 @@ void drawString(int32 x, int32 y, uint8 *string, uint8 *buffer, uint8 color,
 		}
 		useDynamicBuffer = 1;
 	} else {
-		currentStrRenderBuffer = (uint8 *) ptr_something;
+		currentStrRenderBuffer = (uint8 *) workBuffer;
 		useDynamicBuffer = 0;
 	}
 
