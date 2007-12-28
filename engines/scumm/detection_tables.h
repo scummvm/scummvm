@@ -562,6 +562,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi2", "Freddi Fish 2 Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi2", "Freddi Fish 2", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "freddi2", "FreddiCHSH", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddi2", "FRITZI2", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "freddi2", "Fritzi Fisch 2", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "freddi2", "MALICE2", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
 
