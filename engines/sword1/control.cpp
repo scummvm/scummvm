@@ -738,7 +738,7 @@ void Control::writeSavegameDescriptions(void) {
 
 	if (!outf) {
 		// Display an error message, and do nothing
-		displayMessage(0, "Can't create SAVEGAME.INF in directory '%s'", _saveFileMan->getSavePath());
+		displayMessage(0, "Can't create SAVEGAME.INF. (%s)", _saveFileMan->popErrorDesc().c_str());
 		return;
 	}
 
@@ -757,7 +757,7 @@ void Control::writeSavegameDescriptions(void) {
 	}
 	outf->finalize();
 	if (outf->ioFailed())
-		displayMessage(0, "Can't write to SAVEGAME.INF in directory '%s'. Device full?", _saveFileMan->getSavePath());
+		displayMessage(0, "Can't write to SAVEGAME.INF. Device full? (%s)", _saveFileMan->popErrorDesc().c_str());
 	delete outf;
 }
 
@@ -928,7 +928,7 @@ void Control::saveGameToFile(uint8 slot) {
 	outf = _saveFileMan->openForSaving(fName);
 	if (!outf) {
 		// Display an error message and do nothing
-		displayMessage(0, "Unable to create file '%s' in directory '%s'", fName, _saveFileMan->getSavePath());
+		displayMessage(0, "Unable to create file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		return;
 	}
 
@@ -952,7 +952,7 @@ void Control::saveGameToFile(uint8 slot) {
 		outf->writeUint32LE(playerRaw[cnt2]);
 	outf->finalize();
 	if (outf->ioFailed())
-		displayMessage(0, "Couldn't write to file '%s' in directory '%s'. Device full?", fName, _saveFileMan->getSavePath());
+		displayMessage(0, "Couldn't write to file '%s'. Device full? (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 	delete outf;
 }
 
@@ -964,7 +964,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	inf = _saveFileMan->openForLoading(fName);
 	if (!inf) {
 		// Display an error message, and do nothing
-		displayMessage(0, "Can't open file '%s' in directory '%s'", fName, _saveFileMan->getSavePath());
+		displayMessage(0, "Can't open file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		return false;
 	}
 
@@ -988,7 +988,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 		playerBuf[cnt2] = inf->readUint32LE();
 
 	if (inf->ioFailed()) {
-		displayMessage(0, "Can't read from file '%s' in directory '%s'", fName, _saveFileMan->getSavePath());
+		displayMessage(0, "Can't read from file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		delete inf;
 		free(_restoreBuf);
 		_restoreBuf = NULL;

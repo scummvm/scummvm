@@ -944,7 +944,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 						refreshNames = true;
 					}
 					if (clickRes == NO_DISK_SPACE) {
-						displayMessage(0, "Could not save game in directory '%s'", _saveFileMan->getSavePath());
+						displayMessage(0, "Could not save the game. (%s)", _saveFileMan->popErrorDesc().c_str());
 						quitPanel = true;
 					}
 					if ((clickRes == CANCEL_PRESSED) || (clickRes == GAME_RESTORED))
@@ -1153,7 +1153,7 @@ void Control::saveDescriptions(uint8 *srcBuf) {
 		delete outf;
 	}
 	if (ioFailed)
-		displayMessage(NULL, "Unable to store Savegame names to file SKY-VM.SAV in directory %s", _saveFileMan->getSavePath());
+		displayMessage(NULL, "Unable to store Savegame names to file SKY-VM.SAV. (%s)", _saveFileMan->popErrorDesc().c_str());
 	free(tmpBuf);
 }
 
@@ -1167,7 +1167,7 @@ void Control::doAutoSave(void) {
 
 	outf = _saveFileMan->openForSaving(fName);
 	if (outf == NULL) {
-		displayMessage(0, "Unable to create autosave file '%s' in directory '%s'", fName, _saveFileMan->getSavePath());
+		displayMessage(0, "Unable to create autosave file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		return;
 	}
 	uint8 *saveData = (uint8 *)malloc(0x20000);
@@ -1177,7 +1177,7 @@ void Control::doAutoSave(void) {
 	outf->finalize();
 
 	if (outf->ioFailed())
-		displayMessage(0, "Unable to write autosave file '%s' in directory '%s'. Disk full?", fName, _saveFileMan->getSavePath());
+		displayMessage(0, "Unable to write autosave file '%s'. Disk full?", fName, _saveFileMan->popErrorDesc().c_str());
 
 	delete outf;
 	free(saveData);

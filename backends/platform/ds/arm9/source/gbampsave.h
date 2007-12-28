@@ -24,7 +24,7 @@
 #define _GBAMPSAVE_H_
 
 #include "system.h"
-#include "common/savefile.h"
+#include "saves/default/default-saves.h"
 #include "ds-fs.h"
 
 #define SAVE_BUFFER_SIZE 100000
@@ -58,9 +58,7 @@ public:
 };
 
 
-class GBAMPSaveFileManager : public Common::SaveFileManager {
-
-	
+class GBAMPSaveFileManager : public DefaultSaveFileManager {
 public:
 	GBAMPSaveFileManager();
 	~GBAMPSaveFileManager();
@@ -80,6 +78,5 @@ public:
 	void deleteFile(char* name);
 	void listFiles();
 };
-
 
 #endif
