@@ -285,7 +285,6 @@ const char *DefaultSaveFileManager::getSavePath() const {
 	assert(dir);
 
 	return dir;
-#endif
 }
 
 #endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
