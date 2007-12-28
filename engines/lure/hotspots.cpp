@@ -949,7 +949,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 		if (actionCtr() >= 6) {
 			warning("actionCtr exceeded");
 			setActionCtr(0);
-			converse(NOONE_ID, 0xD);
+			showMessage(13, NOONE_ID);
 			return PC_EXCESS;
 		} 
 
@@ -4429,7 +4429,7 @@ void CurrentActionEntry::saveToStream(WriteStream *stream) {
 				stream->writeUint16LE(supportData().param(index));
 		} else {
 			// Write out the Id for the static entry
-			stream->writeSint16LE(supportData().id());
+			stream->writeUint16LE(supportData().id());
 		}
 	}
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot action entry");
