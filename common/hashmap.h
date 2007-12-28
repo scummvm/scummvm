@@ -120,10 +120,6 @@ public:
 	class Iterator {
 		typedef const HashMap<Key, Val, HashFunc, EqualFunc> *hashmap_t;
 		friend class HashMap<Key, Val, HashFunc, EqualFunc>;
-#if (__GNUC__ == 4) && ( (__GNUC_MINOR__ == 0) || (__GNUC_MINOR__ == 1 && defined(_WIN32_WCE)) )
-	public:	// FIXME: Work around a bug in gcc version 4.0 (gcc 4.0.1 Apple Computer, Inc. build 5367 and gcc 4.0.2 AmigaOS build 20051012)
-			//		  Also in gcc v. 4.1.0 for windows ce (cegcc)
-#endif
 		uint _idx;
 		hashmap_t _hashmap;
 	protected:
@@ -138,7 +134,9 @@ public:
 
 	public:
 		Iterator() : _idx(0), _hashmap(0) {}
-		// HACK: to allow non const/const begin, end and find to work
+
+		// HACK: to allow non const/const begin, end and find to work.
+		friend class Iterator<const NodeType>;
 		Iterator(const Iterator<Node> &iter) : _idx(iter._idx), _hashmap(iter._hashmap) {}
 
 		NodeType &operator *() const { return *deref(); }
