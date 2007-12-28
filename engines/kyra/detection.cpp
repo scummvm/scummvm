@@ -293,7 +293,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_DEMO_FLAGS
 	},
-
+#if 0
 	{ // CD version
 		{
 			"kyra2",
@@ -396,14 +396,14 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FLAGS
 	},
-
+#endif
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0) }
 };
 
 const PlainGameDescriptor gameList[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
-	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate" },
-	{ "kyra3", "The Legend of Kyrandia: Malcolm's Revenge" },
+	//{ "kyra2", "The Legend of Kyrandia: The Hand of Fate" },
+	//{ "kyra3", "The Legend of Kyrandia: Malcolm's Revenge" },
 	{ 0, 0 }
 };
 
