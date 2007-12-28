@@ -68,7 +68,7 @@ add_engine() {
 
 add_engine scumm "SCUMM" yes "scumm_7_8 he"
 add_engine scumm_7_8 "v7 & v8 games" yes
-add_engine he "HE70+ games" yes
+add_engine he "HE71+ games" yes
 add_engine agi "AGI" yes
 add_engine agos "AGOS" yes
 add_engine cine "Cinematique evo 1" yes
