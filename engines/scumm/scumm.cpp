@@ -746,7 +746,6 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 	_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));
 
 	VAR_NUM_SOUND_CHANNELS = 0xFF;
-	VAR_WIZ_TCOLOR = 0xFF;
 }
 
 ScummEngine_v70he::~ScummEngine_v70he() {
@@ -768,6 +767,8 @@ ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const DetectorResult &dr)
 	_wiz = new Wiz(this);
 
 	_skipProcessActors = 0;
+
+	VAR_WIZ_TCOLOR = 0xFF;
 }
 
 ScummEngine_v71he::~ScummEngine_v71he() {

@@ -111,7 +111,6 @@ protected:
 
 class ScummEngine_v70he : public ScummEngine_v60he {
 	friend class ResExtractor;
-	friend class Wiz;
 
 protected:
 	typedef void (ScummEngine_v70he::*OpcodeProcv70he)();
@@ -177,11 +176,12 @@ protected:
 	void o70_setSystemMessage();
 
 	byte VAR_NUM_SOUND_CHANNELS;
-	byte VAR_WIZ_TCOLOR;
 };
 
 #ifndef DISABLE_HE
 class ScummEngine_v71he : public ScummEngine_v70he {
+	friend class Wiz;
+
 protected:
 	typedef void (ScummEngine_v71he::*OpcodeProcv71he)();
 	struct OpcodeEntryv71he {
@@ -235,6 +235,7 @@ protected:
 	void o71_polygonOps();
 	void o71_polygonHit();
 
+	byte VAR_WIZ_TCOLOR;
 public:
 	/* Actor AuxQueue stuff (HE) */
 	AuxBlock _auxBlocks[16];

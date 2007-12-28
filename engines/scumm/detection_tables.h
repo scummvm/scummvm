@@ -263,7 +263,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"", "HE CUP",  0, GID_HECUP,  6, 200, MDT_NONE, 0, UNK},
 
 	// Humongous Entertainment Scumm Version 7.1
-	// The first version to use 640x480 resolution
+	// The first version to use 640x480 resolution and wizImages
 	// There are also 7.1 versions of freddemo, airdemo and farmdemo
 	{"catalog", "", 0, GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY, UNK},
 	{"freddi", "", 0, GID_HEGAME, 6, 71, MDT_NONE, GF_USE_KEY, UNK},
