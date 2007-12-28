@@ -59,9 +59,7 @@
 #include <png.h>
 #endif
 
-#ifdef USE_ZLIB
-#include <zlib.h>
-#endif
+#include "common/zlib.h"
 
 namespace Scumm {
 
@@ -820,8 +818,8 @@ void SmushPlayer::handleZlibFrameObject(Chunk &b) {
 
 	unsigned long decompressedSize = READ_BE_UINT32(chunkBuffer);
 	byte *fobjBuffer = (byte *)malloc(decompressedSize);
-	int result = uncompress(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4);
-	if (result != Z_OK)
+	int result = Common::uncompress(fobjBuffer, &decompressedSize, chunkBuffer + 4, chunkSize - 4);
+	if (result != Common::ZLIB_OK)
 		error("SmushPlayer::handleZlibFrameObject() Zlib uncompress error");
 	free(chunkBuffer);
 

@@ -32,10 +32,7 @@
 #include "agos/intern.h"
 #include "agos/sound.h"
 
-
-#ifdef USE_ZLIB
-#include <zlib.h>
-#endif
+#include "common/zlib.h"
 
 using Common::File;
 
@@ -77,8 +74,8 @@ void AGOSEngine::decompressData(const char *srcName, byte *dst, uint32 offset, u
 				error("decompressData: Read failed");
 
 			unsigned long decompressedSize = dstSize;
-			int result = uncompress(dst, &decompressedSize, srcBuffer, srcSize);
-			if (result != Z_OK)
+			int result = Common::uncompress(dst, &decompressedSize, srcBuffer, srcSize);
+			if (result != Common::ZLIB_OK)
 				error("decompressData: Zlib uncompress error");
 			free(srcBuffer);
 		} else {
