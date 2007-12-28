@@ -48,7 +48,7 @@ Common::Platform Parallaction::getPlatform() const { return _gameDescription->de
 static const PlainGameDescriptor parallactionGames[] = {
 	{"parallaction", "Parallaction engine game"},
 	{"nippon", "Nippon Safes Inc."},
-	{"bra", "The Big Red Adventure"},
+//	{"bra", "The Big Red Adventure"},
 	{0, 0}
 };
 
@@ -139,7 +139,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		GType_Nippon,
 		GF_LANG_IT,
 	},
-
+#if 0
 	{
 		{
 			"bra",
@@ -156,7 +156,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		GType_BRA,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT
 	},
-
+#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
