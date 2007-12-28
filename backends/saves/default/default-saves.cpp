@@ -202,11 +202,11 @@ void DefaultSaveFileManager::checkPath(const Common::String &path) {
 Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
 	char buf[256];
-	const char *savePath = getSavePath();
+	Common::String savePath = getSavePath();
 	checkPath(savePath);
 	
 	if (getError() == SFM_NO_ERROR) {
-		join_paths(filename, savePath, buf, sizeof(buf));
+		join_paths(filename, savePath.c_str(), buf, sizeof(buf));
 		StdioSaveFile *sf = new StdioSaveFile(buf, false);
 	
 		if (!sf->isOpen()) {
@@ -223,11 +223,11 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
 	// Ensure that the savepath is valid. If not, generate an appropriate error.
 	char buf[256];
-	const char *savePath = getSavePath();
+	Common::String savePath = getSavePath();
 	checkPath(savePath);
 
 	if (getError() == SFM_NO_ERROR) {
-		join_paths(filename, savePath, buf, sizeof(buf));
+		join_paths(filename, savePath.c_str(), buf, sizeof(buf));
 		StdioSaveFile *sf = new StdioSaveFile(buf, true);
 	
 		if (!sf->isOpen()) {
@@ -245,7 +245,7 @@ bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 	char buf[256];
 	clearError();
 	Common::String filenameStr;
-	join_paths(filename, getSavePath(), buf, sizeof(buf));
+	join_paths(filename, getSavePath().c_str(), buf, sizeof(buf));
 	
 	if (remove(buf) != 0) {
 #ifndef _WIN32_WCE
@@ -261,27 +261,25 @@ bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 	}
 }
 
-const char *DefaultSaveFileManager::getSavePath() const {
+Common::String DefaultSaveFileManager::getSavePath() const {
 
-	const char *dir = NULL;
+	Common::String dir;
 
 	// Try to use game specific savepath from config
-	dir = ConfMan.get("savepath").c_str();
+	dir = ConfMan.get("savepath");
 
 	// Work around a bug (#999122) in the original 0.6.1 release of
 	// ScummVM, which would insert a bad savepath value into config files.
-	if (0 == strcmp(dir, "None")) {
+	if (dir == "None") {
 		ConfMan.removeKey("savepath", ConfMan.getActiveDomainName());
 		ConfMan.flushToDisk();
-		dir = ConfMan.get("savepath").c_str();
+		dir = ConfMan.get("savepath");
 	}
 
 #ifdef _WIN32_WCE
-	if (dir[0] == 0)
-		dir = ConfMan.get("path").c_str();
+	if (dir.empty())
+		dir = ConfMan.get("path");
 #endif
-
-	assert(dir);
 
 	return dir;
 }

@@ -45,7 +45,7 @@ protected:
 	 * Should only be used internally since some platforms
 	 * might implement savefiles in a completely different way.
 	 */
-	virtual const char *getSavePath() const;
+	virtual Common::String getSavePath() const;
 	
 	/**
 	 * Checks the given path for read access, existence, etc.
