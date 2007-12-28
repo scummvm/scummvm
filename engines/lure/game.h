@@ -66,6 +66,7 @@ private:
 	void displayBarrelAnimation();
 	void handleBootParam(int value);
 	bool getYN();
+	bool isMenuAvailable();
 public:
 	Game();
 	virtual ~Game();
