@@ -724,6 +724,9 @@ public:
 
 	/** Delay/sleep for the specified amount of milliseconds. */
 	virtual void delayMillis(uint msecs) = 0;
+	
+	/** Get the current time and date. Correspond to time()+localtime(). */
+	virtual void getTimeAndDate(struct tm &t) const;
 
 	/**
 	 * Return the timer manager singleton. For more information, refer
