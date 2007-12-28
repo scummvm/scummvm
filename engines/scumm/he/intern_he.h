@@ -128,18 +128,12 @@ protected:
 
 	int32 _heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq;
 
-	bool _skipProcessActors;
-
 	int _numStoredFlObjects;
 	ObjectData *_storedFlObjects;
 
 public:
 	ScummEngine_v70he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v70he();
-
-	byte *heFindResourceData(uint32 tag, byte *ptr);
-	byte *heFindResource(uint32 tag, byte *ptr);
-	byte *findWrappedBlock(uint32 tag, byte *ptr, int state, bool flagError);
 
 	void restoreBackgroundHE(Common::Rect rect, int dirtybit = 0);
 
@@ -166,11 +160,6 @@ protected:
 	void storeFlObject(int slot);
 	void restoreFlObjects();
 
-	int getStringCharWidth(byte chr);
-	virtual int setupStringArray(int size);
-	void appendSubstring(int dst, int src, int len2, int len);
-	void adjustRect(Common::Rect &rect);
-
 	virtual void setCursorFromImg(uint img, uint room, uint imgindex);
 	virtual void setDefaultCursor();
 
@@ -180,19 +169,11 @@ protected:
 	void o70_getActorRoom();
 	void o70_resourceRoutines();
 	void o70_systemOps();
-	void o70_copyString();
-	void o70_getStringWidth();
 	void o70_getStringLen();
-	void o70_appendString();
-	void o70_concatString();
-	void o70_compareString();
 	void o70_isResourceLoaded();
 	void o70_readINI();
 	void o70_writeINI();
-	void o70_getStringLenForWidth();
-	void o70_getCharIndexInString();
 	void o70_createDirectory();
-	void o70_findBox();
 	void o70_setSystemMessage();
 
 	byte VAR_NUM_SOUND_CHANNELS;
@@ -210,9 +191,14 @@ protected:
 
 	const OpcodeEntryv71he *_opcodesv71he;
 
+	bool _skipProcessActors;
 public:
 	ScummEngine_v71he(OSystem *syst, const DetectorResult &dr);
 	~ScummEngine_v71he();
+
+	byte *heFindResourceData(uint32 tag, byte *ptr);
+	byte *heFindResource(uint32 tag, byte *ptr);
+	byte *findWrappedBlock(uint32 tag, byte *ptr, int state, bool flagError);
 
 	Wiz *_wiz;
 
@@ -231,8 +217,21 @@ protected:
 
 	virtual void clearDrawQueues();
 
-	/* HE version 70 script opcodes */
+	int getStringCharWidth(byte chr);
+	virtual int setupStringArray(int size);
+	void appendSubstring(int dst, int src, int len2, int len);
+	void adjustRect(Common::Rect &rect);
+
+	/* HE version 71 script opcodes */
 	void o71_kernelSetFunctions();
+	void o71_copyString();
+	void o71_getStringWidth();
+	void o71_appendString();
+	void o71_concatString();
+	void o71_compareString();
+	void o71_getStringLenForWidth();
+	void o71_getCharIndexInString();
+	void o71_findBox();
 	void o71_polygonOps();
 	void o71_polygonHit();
 

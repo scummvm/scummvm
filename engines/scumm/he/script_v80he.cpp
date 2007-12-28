@@ -341,20 +341,20 @@ void ScummEngine_v80he::setupOpcodes() {
 		OPCODE(o72_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */
-		OPCODE(o70_copyString),
-		OPCODE(o70_getStringWidth),
+		OPCODE(o71_copyString),
+		OPCODE(o71_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o70_appendString),
+		OPCODE(o71_appendString),
 		/* F0 */
-		OPCODE(o70_concatString),
-		OPCODE(o70_compareString),
+		OPCODE(o71_concatString),
+		OPCODE(o71_compareString),
 		OPCODE(o70_isResourceLoaded),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
-		OPCODE(o70_getStringLenForWidth),
-		OPCODE(o70_getCharIndexInString),
-		OPCODE(o70_findBox),
+		OPCODE(o71_getStringLenForWidth),
+		OPCODE(o71_getCharIndexInString),
+		OPCODE(o71_findBox),
 		/* F8 */
 		OPCODE(o72_getResourceSize),
 		OPCODE(o72_createDirectory),

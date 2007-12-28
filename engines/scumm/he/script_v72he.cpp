@@ -344,20 +344,20 @@ void ScummEngine_v72he::setupOpcodes() {
 		OPCODE(o72_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */
-		OPCODE(o70_copyString),
-		OPCODE(o70_getStringWidth),
+		OPCODE(o71_copyString),
+		OPCODE(o71_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o70_appendString),
+		OPCODE(o71_appendString),
 		/* F0 */
-		OPCODE(o70_concatString),
-		OPCODE(o70_compareString),
+		OPCODE(o71_concatString),
+		OPCODE(o71_compareString),
 		OPCODE(o70_isResourceLoaded),
 		OPCODE(o72_readINI),
 		/* F4 */
 		OPCODE(o72_writeINI),
-		OPCODE(o70_getStringLenForWidth),
-		OPCODE(o70_getCharIndexInString),
-		OPCODE(o70_findBox),
+		OPCODE(o71_getStringLenForWidth),
+		OPCODE(o71_getCharIndexInString),
+		OPCODE(o71_findBox),
 		/* F8 */
 		OPCODE(o72_getResourceSize),
 		OPCODE(o72_createDirectory),
@@ -627,75 +627,6 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		}
 	}
 	*dst = 0;
-}
-
-byte *ScummEngine_v70he::heFindResourceData(uint32 tag, byte *ptr) {
-	ptr = heFindResource(tag, ptr);
-
-	if (ptr == NULL)
-		return NULL;
-	return ptr + _resourceHeaderSize;
-}
-
-byte *ScummEngine_v70he::heFindResource(uint32 tag, byte *searchin) {
-	uint32 curpos, totalsize, size;
-
-	debugC(DEBUG_RESOURCE, "heFindResource(%s, %lx)", tag2str(tag), searchin);
-
-	assert(searchin);
-	searchin += 4;
-	_resourceLastSearchSize = totalsize = READ_BE_UINT32(searchin);
-	curpos = 8;
-	searchin += 4;
-
-	while (curpos < totalsize) {
-		if (READ_BE_UINT32(searchin) == tag) {
-			return searchin;
-		}
-
-		size = READ_BE_UINT32(searchin + 4);
-		if ((int32)size <= 0) {
-			error("(%s) Not found in %d... illegal block len %d", tag2str(tag), 0, size);
-			return NULL;
-		}
-
-		curpos += size;
-		searchin += size;
-	}
-
-	return NULL;
-}
-
-byte *ScummEngine_v70he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool errorFlag) {
-	if (READ_BE_UINT32(ptr) == MKID_BE('MULT')) {
-		byte *offs, *wrap;
-		uint32 size;
-
-		wrap = heFindResource(MKID_BE('WRAP'), ptr);
-		if (wrap == NULL)
-			return NULL;
-
-		offs = heFindResourceData(MKID_BE('OFFS'), wrap);
-		if (offs == NULL)
-			return NULL;
-
-		size = getResourceDataSize(offs) / 4;
-		assert((uint32)state <= (uint32)size);
-
-
-		offs += READ_LE_UINT32(offs + state * sizeof(uint32));
-		offs = heFindResourceData(tag, offs - 8);
-		if (offs)
-			return offs;
-
-		offs = heFindResourceData(MKID_BE('DEFA'), ptr);
-		if (offs == NULL)
-			return NULL;
-
-		return heFindResourceData(tag, offs - 8);
-	} else {
-		return heFindResourceData(tag, ptr);
-	}
 }
 
 int ScummEngine_v72he::findObject(int x, int y, int num, int *args) {

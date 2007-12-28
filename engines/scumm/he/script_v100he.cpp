@@ -262,7 +262,7 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o72_findAllObjects),
 		/* AC */
 		OPCODE(o90_findAllObjectsWithClassOf),
-		OPCODE(o70_findBox),
+		OPCODE(o71_findBox),
 		OPCODE(o6_findInventory),
 		OPCODE(o72_findObject),
 		/* B0 */
@@ -326,17 +326,17 @@ void ScummEngine_v100he::setupOpcodes() {
 		OPCODE(o6_startScriptQuick2),
 		OPCODE(o6_getState),
 		/* E0 */
-		OPCODE(o70_compareString),
-		OPCODE(o70_copyString),
-		OPCODE(o70_appendString),
-		OPCODE(o70_concatString),
+		OPCODE(o71_compareString),
+		OPCODE(o71_copyString),
+		OPCODE(o71_appendString),
+		OPCODE(o71_concatString),
 		/* E4 */
 		OPCODE(o70_getStringLen),
-		OPCODE(o70_getStringLenForWidth),
+		OPCODE(o71_getStringLenForWidth),
 		OPCODE(o80_stringToInt),
-		OPCODE(o70_getCharIndexInString),
+		OPCODE(o71_getCharIndexInString),
 		/* E8 */
-		OPCODE(o70_getStringWidth),
+		OPCODE(o71_getStringWidth),
 		OPCODE(o60_readFilePos),
 		OPCODE(o72_getTimer),
 		OPCODE(o6_getVerbEntrypoint),

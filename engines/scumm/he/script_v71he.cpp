@@ -25,12 +25,10 @@
 
 
 
-#include "common/config-manager.h"
-#include "common/system.h"
-
 #include "scumm/actor.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/scumm.h"
+#include "scumm/util.h"
 
 namespace Scumm {
 
@@ -334,20 +332,20 @@ void ScummEngine_v71he::setupOpcodes() {
 		OPCODE(o60_redimArray),
 		OPCODE(o60_readFilePos),
 		/* EC */
-		OPCODE(o70_copyString),
-		OPCODE(o70_getStringWidth),
+		OPCODE(o71_copyString),
+		OPCODE(o71_getStringWidth),
 		OPCODE(o70_getStringLen),
-		OPCODE(o70_appendString),
+		OPCODE(o71_appendString),
 		/* F0 */
-		OPCODE(o70_concatString),
-		OPCODE(o70_compareString),
+		OPCODE(o71_concatString),
+		OPCODE(o71_compareString),
 		OPCODE(o70_isResourceLoaded),
 		OPCODE(o70_readINI),
 		/* F4 */
 		OPCODE(o70_writeINI),
-		OPCODE(o70_getStringLenForWidth),
-		OPCODE(o70_getCharIndexInString),
-		OPCODE(o70_findBox),
+		OPCODE(o71_getStringLenForWidth),
+		OPCODE(o71_getCharIndexInString),
+		OPCODE(o71_findBox),
 		/* F8 */
 		OPCODE(o6_invalid),
 		OPCODE(o70_createDirectory),
@@ -370,6 +368,133 @@ void ScummEngine_v71he::executeOpcode(byte i) {
 
 const char *ScummEngine_v71he::getOpcodeDesc(byte i) {
 	return _opcodesv71he[i].desc;
+}
+
+byte *ScummEngine_v71he::heFindResourceData(uint32 tag, byte *ptr) {
+	ptr = heFindResource(tag, ptr);
+
+	if (ptr == NULL)
+		return NULL;
+	return ptr + _resourceHeaderSize;
+}
+
+byte *ScummEngine_v71he::heFindResource(uint32 tag, byte *searchin) {
+	uint32 curpos, totalsize, size;
+
+	debugC(DEBUG_RESOURCE, "heFindResource(%s, %lx)", tag2str(tag), searchin);
+
+	assert(searchin);
+	searchin += 4;
+	_resourceLastSearchSize = totalsize = READ_BE_UINT32(searchin);
+	curpos = 8;
+	searchin += 4;
+
+	while (curpos < totalsize) {
+		if (READ_BE_UINT32(searchin) == tag) {
+			return searchin;
+		}
+
+		size = READ_BE_UINT32(searchin + 4);
+		if ((int32)size <= 0) {
+			error("(%s) Not found in %d... illegal block len %d", tag2str(tag), 0, size);
+			return NULL;
+		}
+
+		curpos += size;
+		searchin += size;
+	}
+
+	return NULL;
+}
+
+byte *ScummEngine_v71he::findWrappedBlock(uint32 tag, byte *ptr, int state, bool errorFlag) {
+	if (READ_BE_UINT32(ptr) == MKID_BE('MULT')) {
+		byte *offs, *wrap;
+		uint32 size;
+
+		wrap = heFindResource(MKID_BE('WRAP'), ptr);
+		if (wrap == NULL)
+			return NULL;
+
+		offs = heFindResourceData(MKID_BE('OFFS'), wrap);
+		if (offs == NULL)
+			return NULL;
+
+		size = getResourceDataSize(offs) / 4;
+		assert((uint32)state <= (uint32)size);
+
+
+		offs += READ_LE_UINT32(offs + state * sizeof(uint32));
+		offs = heFindResourceData(tag, offs - 8);
+		if (offs)
+			return offs;
+
+		offs = heFindResourceData(MKID_BE('DEFA'), ptr);
+		if (offs == NULL)
+			return NULL;
+
+		return heFindResourceData(tag, offs - 8);
+	} else {
+		return heFindResourceData(tag, ptr);
+	}
+}
+
+int ScummEngine_v71he::getStringCharWidth(byte chr) {
+	int charset = _string[0]._default.charset;
+
+	byte *ptr = getResourceAddress(rtCharset, charset);
+	assert(ptr);
+	ptr += 29;
+
+	int spacing = 0;
+
+	int offs = READ_LE_UINT32(ptr + chr * 4 + 4);
+	if (offs) {
+		spacing = ptr[offs] + (signed char)ptr[offs + 2];
+	}
+
+	return spacing;
+}
+
+int ScummEngine_v71he::setupStringArray(int size) {
+	writeVar(0, 0);
+	defineArray(0, kStringArray, 0, size + 1);
+	writeArray(0, 0, 0, 0);
+	return readVar(0);
+}
+
+void ScummEngine_v71he::appendSubstring(int dst, int src, int srcOffs, int len) {
+	int dstOffs, value;
+	int i = 0;
+
+	if (len == -1) {
+		len = resStrLen(getStringAddress(src));
+		srcOffs = 0;
+	}
+
+	dstOffs = resStrLen(getStringAddress(dst));
+
+	len -= srcOffs;
+	len++;
+
+	while (i < len) {
+		writeVar(0, src);
+		value = readArray(0, 0, srcOffs + i);
+		writeVar(0, dst);
+		writeArray(0, 0, dstOffs + i, value);
+		i++;
+	}
+
+	writeArray(0, 0, dstOffs + i, 0);
+}
+
+void ScummEngine_v71he::adjustRect(Common::Rect &rect) {
+	// Scripts can set all rect positions to -1
+	if (rect.right != -1)
+		rect.right += 1;
+
+	if (rect.bottom != -1)
+		rect.bottom += 1;
 }
 
 void ScummEngine_v71he::o71_kernelSetFunctions() {
@@ -432,6 +557,173 @@ void ScummEngine_v71he::o71_kernelSetFunctions() {
 	default:
 		error("o71_kernelSetFunctions: default case %d (param count %d)", args[0], num);
 	}
+}
+
+void ScummEngine_v71he::o71_copyString() {
+	int dst, size;
+	int src = pop();
+
+	size = resStrLen(getStringAddress(src)) + 1;
+	dst = setupStringArray(size);
+
+	appendSubstring(dst, src, -1, -1);
+
+	push(dst);
+}
+
+void ScummEngine_v71he::o71_getStringWidth() {
+	int array, pos, len;
+	int chr, width = 0;
+
+	len = pop();
+	pos = pop();
+	array = pop();
+
+	if (len == -1) {
+		pos = 0;
+		len = resStrLen(getStringAddress(array));
+	}
+
+	writeVar(0, array);
+	while (pos <= len) {
+		chr = readArray(0, 0, pos);
+		if (chr == 0)
+			break;
+		width += getStringCharWidth(chr);
+		pos++;
+	}
+
+	push(width);
+}
+
+void ScummEngine_v71he::o71_appendString() {
+	int dst, size;
+
+	int len = pop();
+	int srcOffs = pop();
+	int src = pop();
+
+	size = len - srcOffs + 2;
+	dst = setupStringArray(size);
+
+	appendSubstring(dst, src, srcOffs, len);
+
+	push(dst);
+}
+
+void ScummEngine_v71he::o71_concatString() {
+	int dst, size;
+
+	int src2 = pop();
+	int src1 = pop();
+
+	size = resStrLen(getStringAddress(src1));
+	size += resStrLen(getStringAddress(src2)) + 1;
+	dst = setupStringArray(size);
+
+	appendSubstring(dst, src1, 0, -1);
+	appendSubstring(dst, src2, 0, -1);
+
+	push(dst);
+}
+
+void ScummEngine_v71he::o71_compareString() {
+	int result;
+
+	int array1 = pop();
+	int array2 = pop();
+
+	byte *string1 = getStringAddress(array1);
+	if (!string1)
+		error("o71_compareString: Reference to zeroed array pointer (%d)", array1);
+
+	byte *string2 = getStringAddress(array2);
+	if (!string2)
+		error("o71_compareString: Reference to zeroed array pointer (%d)", array2);
+
+	while (*string1 == *string2) {
+		if (*string2 == 0) {
+			push(0);
+			return;
+		}
+
+		string1++;
+		string2++;
+	}
+
+	result = (*string1 > *string2) ? -1 : 1;
+	push(result);
+}
+
+void ScummEngine_v71he::o71_getStringLenForWidth() {
+	int chr, max;
+	int array, len, pos, width = 0;
+
+	max = pop();
+	pos = pop();
+	array = pop();
+
+	len = resStrLen(getStringAddress(array));
+
+	writeVar(0, array);
+	while (pos <= len) {
+		chr = readArray(0, 0, pos);
+		width += getStringCharWidth(chr);
+		if (width >= max) {
+			push(pos);
+			return;
+		}
+		pos++;
+	}
+
+	push(len);
+}
+
+void ScummEngine_v71he::o71_getCharIndexInString() {
+	int array, end, len, pos, value;
+
+	value = pop();
+	end = pop();
+	pos = pop();
+	array = pop();
+
+	if (end >= 0) {
+		len = resStrLen(getStringAddress(array));
+		if (len < end)
+			end = len;
+	} else {
+		end = 0;
+	}
+
+	if (pos < 0)
+		pos = 0;
+
+	writeVar(0, array);
+	if (end > pos) {
+		while (end >= pos) {
+			if (readArray(0, 0, pos) == value) {
+				push(pos);
+				return;
+			}
+			pos++;
+		}
+	} else {
+		while (end <= pos) {
+			if (readArray(0, 0, pos) == value) {
+				push(pos);
+				return;
+			}
+			pos--;
+		}
+	}
+
+	push(-1);
+}
+
+void ScummEngine_v71he::o71_findBox() {
+	int y = pop();
+	int x = pop();
+	push(getSpecialBox(x, y));
 }
 
 void ScummEngine_v71he::o71_polygonOps() {

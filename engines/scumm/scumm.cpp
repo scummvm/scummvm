@@ -742,8 +742,6 @@ ScummEngine_v70he::ScummEngine_v70he(OSystem *syst, const DetectorResult &dr)
 	_heSndFlags = 0;
 	_heSndSoundFreq = 0;
 
-	_skipProcessActors = 0;
-
 	_numStoredFlObjects = 0;
 	_storedFlObjects = (ObjectData *)calloc(100, sizeof(ObjectData));
 
@@ -768,6 +766,8 @@ ScummEngine_v71he::ScummEngine_v71he(OSystem *syst, const DetectorResult &dr)
 	memset(_auxEntries, 0, sizeof(_auxEntries));
 
 	_wiz = new Wiz(this);
+
+	_skipProcessActors = 0;
 }
 
 ScummEngine_v71he::~ScummEngine_v71he() {
