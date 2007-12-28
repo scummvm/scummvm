@@ -179,6 +179,9 @@
 			RelativePath="..\..\engines\queen\logic.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\queen\midiadlib.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\queen\music.cpp">
 		</File>
 		<File

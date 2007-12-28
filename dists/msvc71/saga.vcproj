@@ -116,6 +116,9 @@
 			RelativePath="..\..\engines\saga\actor.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\saga\actor_path.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\saga\actor_walk.cpp">
 		</File>
 		<File

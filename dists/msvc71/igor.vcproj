@@ -214,7 +214,16 @@
 			RelativePath="..\..\engines\igor\menu.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\igor\midi.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\igor\midi.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\igor\resource_ids.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\igor\saveload.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\igor\staticres.cpp">

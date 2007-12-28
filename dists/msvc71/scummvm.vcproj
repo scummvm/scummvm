@@ -437,6 +437,12 @@
 					RelativePath="..\..\sound\softsynth\mt32.cpp">
 				</File>
 				<File
+					RelativePath="..\..\sound\softsynth\pcspk.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\pcspk.h">
+				</File>
+				<File
 					RelativePath="..\..\sound\softsynth\ym2612.cpp">
 				</File>
 				<File
