@@ -35,6 +35,8 @@
 #include "gui/message.h"
 #include "sound/mixer.h"
 
+#include <time.h>
+
 OSystem *g_system = 0;
 
 OSystem::OSystem() {
@@ -120,4 +122,9 @@ void OSystem::clearScreen() {
 	Graphics::Surface *screen = lockScreen();
 	memset(screen->pixels, 0, screen->h * screen->pitch);
 	unlockScreen();
+}
+
+void OSystem::getTimeAndDate(struct tm &t) const {
+	time_t curTime = time(0);
+	t = *localtime(&curTime);
 }

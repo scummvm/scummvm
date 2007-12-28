@@ -125,18 +125,16 @@ bool Inter::evalBoolResult() {
 }
 
 void Inter::renewTimeInVars() {
-	struct tm *t;
-	time_t now = time(NULL);
+	struct tm t;
+	_vm->_system->getTimeAndDate(t);
 
-	t = localtime(&now);
-
-	WRITE_VAR(5, 1900 + t->tm_year);
-	WRITE_VAR(6, t->tm_mon + 1);
+	WRITE_VAR(5, 1900 + t.tm_year);
+	WRITE_VAR(6, t.tm_mon + 1);
 	WRITE_VAR(7, 0);
-	WRITE_VAR(8, t->tm_mday);
-	WRITE_VAR(9, t->tm_hour);
-	WRITE_VAR(10, t->tm_min);
-	WRITE_VAR(11, t->tm_sec);
+	WRITE_VAR(8, t.tm_mday);
+	WRITE_VAR(9, t.tm_hour);
+	WRITE_VAR(10, t.tm_min);
+	WRITE_VAR(11, t.tm_sec);
 }
 
 void Inter::storeMouse() {

@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -555,10 +553,12 @@ bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
 
 	// For header version 1, we load the data in with our old method
 	if (section.version == 1) {
-		time_t tmp = section.timeTValue;
-		tm *curTime = localtime(&tmp);
-		stuff->date = (curTime->tm_mday & 0xFF) << 24 | ((curTime->tm_mon + 1) & 0xFF) << 16 | (curTime->tm_year + 1900) & 0xFFFF;
-		stuff->time = (curTime->tm_hour & 0xFF) << 8 | (curTime->tm_min) & 0xFF;
+		//time_t tmp = section.timeTValue;
+		//tm *curTime = localtime(&tmp);
+		//stuff->date = (curTime->tm_mday & 0xFF) << 24 | ((curTime->tm_mon + 1) & 0xFF) << 16 | (curTime->tm_year + 1900) & 0xFFFF;
+		//stuff->time = (curTime->tm_hour & 0xFF) << 8 | (curTime->tm_min) & 0xFF;
+		stuff->date = 0;
+		stuff->time = 0;
 	}
 
 	if (section.version >= 2) {
@@ -588,11 +588,12 @@ void ScummEngine::saveInfos(Common::OutSaveFile* file) {
 	// still save old format for older versions
 	section.timeTValue = time(0);
 	section.playtime = _system->getMillis() / 1000 - _engineStartTime;
-
-	time_t curTime_ = time(0);
-	tm *curTime = localtime(&curTime_);
-	section.date = (curTime->tm_mday & 0xFF) << 24 | ((curTime->tm_mon + 1) & 0xFF) << 16 | (curTime->tm_year + 1900) & 0xFFFF;
-	section.time = (curTime->tm_hour & 0xFF) << 8 | (curTime->tm_min) & 0xFF;
+	
+	tm curTime;
+	_system->getTimeAndDate(curTime);
+	
+	section.date = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | (curTime.tm_year + 1900) & 0xFFFF;
+	section.time = (curTime.tm_hour & 0xFF) << 8 | (curTime.tm_min) & 0xFF;
 
 	file->writeUint32BE(section.type);
 	file->writeUint32BE(section.version);

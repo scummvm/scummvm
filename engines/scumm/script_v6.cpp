@@ -23,9 +23,8 @@
  *
  */
 
-
-
 #include "common/config-manager.h"
+#include "common/system.h"
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
@@ -3003,19 +3002,17 @@ void ScummEngine_v6::o6_pickVarRandom() {
 }
 
 void ScummEngine_v6::o6_getDateTime() {
-	struct tm *t;
-	time_t now = time(NULL);
+	struct tm t;
+	_system->getTimeAndDate(t);
 
-	t = localtime(&now);
-
-	VAR(VAR_TIMEDATE_YEAR) = t->tm_year;
-	VAR(VAR_TIMEDATE_MONTH) = t->tm_mon;
-	VAR(VAR_TIMEDATE_DAY) = t->tm_mday;
-	VAR(VAR_TIMEDATE_HOUR) = t->tm_hour;
-	VAR(VAR_TIMEDATE_MINUTE) = t->tm_min;
+	VAR(VAR_TIMEDATE_YEAR) = t.tm_year;
+	VAR(VAR_TIMEDATE_MONTH) = t.tm_mon;
+	VAR(VAR_TIMEDATE_DAY) = t.tm_mday;
+	VAR(VAR_TIMEDATE_HOUR) = t.tm_hour;
+	VAR(VAR_TIMEDATE_MINUTE) = t.tm_min;
 
 	if (_game.version == 8)
-		VAR(VAR_TIMEDATE_SECOND) = t->tm_sec;
+		VAR(VAR_TIMEDATE_SECOND) = t.tm_sec;
 }
 
 void ScummEngine_v6::o6_getPixel() {
