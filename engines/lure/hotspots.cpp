@@ -1527,7 +1527,7 @@ void Hotspot::doGive(HotspotData *hotspot) {
 
 	if ((hotspot->hotspotId != PRISONER_ID) || (usedId != BOTTLE_HOTSPOT_ID)) 
 		showMessage(7, hotspot->hotspotId);
-	
+
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, GIVE);
 
 	if (sequenceOffset >= 0x8000) {
@@ -1545,7 +1545,9 @@ void Hotspot::doGive(HotspotData *hotspot) {
 			HotspotData *usedItem = res.getHotspot(usedId);
 			usedItem->roomNumber = hotspot->hotspotId;
 		} else if (sequenceOffset > 1) {
-			showMessage(result);
+			Hotspot *destCharacter = res.getActiveHotspot(hotspot->hotspotId);
+			if (destCharacter != NULL)
+				destCharacter->showMessage(sequenceOffset, hotspotId());
 		}
 	}
 }
