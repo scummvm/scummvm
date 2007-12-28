@@ -51,7 +51,7 @@ protected:
 	 * Checks the given path for read access, existence, etc.
 	 * Sets the internal error and error message accordingly.
 	 */
-	void checkPath(const char *path);
+	void checkPath(const Common::String &path);
 };
 
 #endif

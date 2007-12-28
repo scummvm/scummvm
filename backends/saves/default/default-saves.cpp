@@ -129,72 +129,71 @@ Common::StringList DefaultSaveFileManager::listSavefiles(const char *regex) {
 	return results;
 }
 
-void DefaultSaveFileManager::checkPath(const char *path) {
+void DefaultSaveFileManager::checkPath(const Common::String &path) {
 	clearError();
-	Common::String pathStr(path);
 
 #if defined(UNIX) || defined(__SYMBIAN32__)
 	struct stat sb;
 
 	// Check whether the dir exists
-	if (stat(path, &sb) == -1) {
+	if (stat(path.c_str(), &sb) == -1) {
 		// The dir does not exist, or stat failed for some other reason.
 		// If the problem was that the path pointed to nothing, try
 		// to create the dir (ENOENT case).
 		switch (errno) {
 		case EACCES:
-			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+pathStr);
+			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+path);
 			break;
 #if !defined(__SYMBIAN32__)
 		case ELOOP:
-			setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+pathStr);
+			setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+path);
 			break;
 #endif
 		case ENAMETOOLONG:
-			setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+pathStr);
+			setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+path);
 			break;
 		case ENOENT:
-			if (mkdir(path, 0755) != 0) {
+			if (mkdir(path.c_str(), 0755) != 0) {
 				// mkdir could fail for various reasons: The parent dir doesn't exist,
 				// or is not writeable, the path could be completly bogus, etc.
-				warning("mkdir for '%s' failed!", path);
+				warning("mkdir for '%s' failed!", path.c_str());
 				perror("mkdir");
 
 				switch (errno) {
 				case EACCES:
-					setError(SFM_DIR_ACCESS, "Search or write permission denied: "+pathStr);
+					setError(SFM_DIR_ACCESS, "Search or write permission denied: "+path);
 					break;
 				case EMLINK:
-					setError(SFM_DIR_LINKMAX, "The link count of the parent directory would exceed {LINK_MAX}: "+pathStr);
+					setError(SFM_DIR_LINKMAX, "The link count of the parent directory would exceed {LINK_MAX}: "+path);
 					break;
 #if !defined(__SYMBIAN32__)
 				case ELOOP:
-					setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+pathStr);
+					setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+path);
 					break;
 #endif
 				case ENAMETOOLONG:
-					setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+pathStr);
+					setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+path);
 					break;
 				case ENOENT:
-					setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+pathStr);
+					setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+path);
 					break;
 				case ENOTDIR:
-					setError(SFM_DIR_NOTDIR, "A component of the path prefix is not a directory: "+pathStr);
+					setError(SFM_DIR_NOTDIR, "A component of the path prefix is not a directory: "+path);
 					break;
 				case EROFS:
-					setError(SFM_DIR_ROFS, "The parent directory resides on a read-only file system:"+pathStr);
+					setError(SFM_DIR_ROFS, "The parent directory resides on a read-only file system:"+path);
 					break;
 				}
 			}
 			break;
 		case ENOTDIR:
-			setError(SFM_DIR_NOTDIR, "A component of the path prefix is not a directory: "+pathStr);
+			setError(SFM_DIR_NOTDIR, "A component of the path prefix is not a directory: "+path);
 			break;
 		}
 	} else {
 		// So stat() succeeded. But is the path actually pointing to a directory?
 		if (!S_ISDIR(sb.st_mode)) {
-			setError(SFM_DIR_NOTDIR, "The given savepath is not a directory: "+pathStr);
+			setError(SFM_DIR_NOTDIR, "The given savepath is not a directory: "+path);
 		}
 	}
 #endif
