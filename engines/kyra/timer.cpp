@@ -100,7 +100,7 @@ void TimerManager::update() {
 
 	for (Iterator pos = _timers.begin(); pos != _timers.end(); ++pos) {
 		if (pos->enabled && pos->countdown >= 0 && pos->nextRun <= _system->getMillis()) {
-			if (pos->func && *pos->func)
+			if (pos->func && pos->func->isValid())
 				(*pos->func)(pos->id);
 
 			uint32 curTime = _system->getMillis();

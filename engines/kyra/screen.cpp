@@ -448,7 +448,7 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 			break;
 
 		setScreenPalette(fadePal);
-		if (upFunc && *upFunc)
+		if (upFunc && upFunc->isValid())
 			(*upFunc)();
 		else
 			_system->updateScreen();
@@ -459,7 +459,7 @@ void Screen::fadePalette(const uint8 *palData, int delay, const UpdateFunctor *u
 
 	if (_vm->quit()) {
 		setScreenPalette(palData);
-		if (upFunc && *upFunc)
+		if (upFunc && upFunc->isValid())
 			(*upFunc)();
 		else
 			_system->updateScreen();

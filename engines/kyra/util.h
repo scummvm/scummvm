@@ -34,7 +34,7 @@ template<class Res>
 struct Functor0 {
 	virtual ~Functor0() {}
 
-	virtual operator bool() const = 0;
+	virtual bool isValid() const = 0;
 	virtual Res operator()() const = 0;
 };
 
@@ -45,7 +45,7 @@ public:
 	
 	Functor0Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
 	
-	operator bool() const { return _func != 0; }
+	bool isValid() const { return _func != 0; }
 	Res operator()() const {
 		return (_t->*_func)();
 	}
@@ -58,7 +58,7 @@ template<class Arg, class Res>
 struct Functor1 : public Common::UnaryFunction<Arg, Res> {
 	virtual ~Functor1() {}
 
-	virtual operator bool() const = 0;
+	virtual bool isValid() const = 0;
 	virtual Res operator()(Arg) const = 0;
 };
 
@@ -69,7 +69,7 @@ public:
 	
 	Functor1Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
 	
-	operator bool() const { return _func != 0; }
+	bool isValid() const { return _func != 0; }
 	Res operator()(Arg v1) const {
 		return (_t->*_func)(v1);
 	}
