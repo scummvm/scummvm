@@ -30,7 +30,7 @@
 void PalmSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
 	FileRef fileRef;
 	// try to open the dir
-	Err e = VFSFileOpen(gVars->VFS.volRefNum, getSavePath(), vfsModeRead, &fileRef);
+	Err e = VFSFileOpen(gVars->VFS.volRefNum, SCUMMVM_SAVEPATH, vfsModeRead, &fileRef);
 	memset(marks, false, num*sizeof(bool));
 
 	if (e != errNone)

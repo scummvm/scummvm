@@ -264,10 +264,6 @@ bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 
 const char *DefaultSaveFileManager::getSavePath() const {
 
-#if defined(PALMOS_MODE) || defined(__PSP__)
-	return SCUMMVM_SAVEPATH;
-#else
-
 	const char *dir = NULL;
 
 	// Try to use game specific savepath from config
