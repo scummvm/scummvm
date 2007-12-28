@@ -641,7 +641,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	char srcCharName[MAX_DESC_SIZE];
 	char destCharName[MAX_DESC_SIZE];
 	char itemName[MAX_DESC_SIZE];
-	int characterArticle, hotspotArticle = 0;
+	int characterArticle = 0, hotspotArticle = 0;
 
 	_characterId = characterId;
 	_destCharacterId = destCharacterId;
@@ -656,11 +656,12 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	assert(talkingChar);
 
 	strings.getString(talkingChar->nameId & 0x1fff, srcCharName);
-	characterArticle = getArticle(descId, talkingChar->nameId);
 
 	strcpy(destCharName, "");
-	if (destCharacter != NULL)
+	if (destCharacter != NULL) {
 		strings.getString(destCharacter->nameId, destCharName);
+		characterArticle = getArticle(descId, destCharacter->nameId);
+	}
 	strcpy(itemName, "");
 	if (itemHotspot != NULL) {
 		strings.getString(itemHotspot->nameId & 0x1fff, itemName);
