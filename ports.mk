@@ -41,9 +41,10 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 	cp $(srcdir)/gui/themes/modern.ini $(bundle_name)/Contents/Resources/
 	cp $(srcdir)/gui/themes/modern.zip $(bundle_name)/Contents/Resources/
 	cp $(srcdir)/dists/pred.dic $(bundle_name)/Contents/Resources/
-	cp $(srcdir)/../../engine-data/trunk/kyra.dat $(bundle_name)/Contents/Resources/KYRA.DAT
-	cp $(srcdir)/../../engine-data/trunk/queen.tbl $(bundle_name)/Contents/Resources/
-	cp $(srcdir)/../../engine-data/trunk/sky.cpt $(bundle_name)/Contents/Resources/
+	cp $(srcdir)/dists/engine-data/kyra.dat $(bundle_name)/Contents/Resources/KYRA.DAT
+	cp $(srcdir)/dists/engine-data/queen.tbl $(bundle_name)/Contents/Resources/
+	cp $(srcdir)/dists/engine-data/sky.cpt $(bundle_name)/Contents/Resources/
+	cp $(srcdir)/dists/engine-data/lure.dat $(bundle_name)/Contents/Resources/
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
