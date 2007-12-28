@@ -13,7 +13,8 @@ MODULE_OBJS := \
 	stream.o \
 	util.o \
 	system.o \
-	unzip.o
+	unzip.o \
+	zlib.o
 
 # Include common rules 
 include $(srcdir)/rules.mk
