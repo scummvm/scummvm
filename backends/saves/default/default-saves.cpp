@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "common/fs.h"
 #include "common/file.h"
+#include "common/config-manager.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/saves/compressed/compressed-saves.h"
 
@@ -128,125 +129,167 @@ Common::StringList DefaultSaveFileManager::listSavefiles(const char *regex) {
 	return results;
 }
 
-Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
-	char buf[256];
-	join_paths(filename, getSavePath(), buf, sizeof(buf));
-
-	StdioSaveFile *sf = new StdioSaveFile(buf, false);
-
-	if (!sf->isOpen()) {
-		delete sf;
-		sf = 0;
-	}
-	return wrapInSaveFile(sf);
-}
-
-Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
-	char buf[256];
-
-	// Ensure that the savepath exists and is writeable. If not, generate
-	// an appropriate error
-	const char *savePath = getSavePath();
+void DefaultSaveFileManager::checkPath(const char *path) {
+	clearError();
+	Common::String pathStr(path);
 
 #if defined(UNIX) || defined(__SYMBIAN32__)
 	struct stat sb;
-	clearError();
 
 	// Check whether the dir exists
-	if (stat(savePath, &sb) == -1) {
+	if (stat(path, &sb) == -1) {
 		// The dir does not exist, or stat failed for some other reason.
 		// If the problem was that the path pointed to nothing, try
 		// to create the dir (ENOENT case).
 		switch (errno) {
 		case EACCES:
-			setError(SFM_DIR_ACCESS, Common::String("Search or write permission denied"));
+			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+pathStr);
 			break;
 #if !defined(__SYMBIAN32__)
 		case ELOOP:
-			setError(SFM_DIR_LOOP, Common::String("Too many symbolic links encountered while traversing the path"));
+			setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+pathStr);
 			break;
 #endif
 		case ENAMETOOLONG:
-			setError(SFM_DIR_NAMETOOLONG, Common::String("The path name is too long"));
+			setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+pathStr);
 			break;
 		case ENOENT:
-			if (mkdir(savePath, 0755) != 0) {
+			if (mkdir(path, 0755) != 0) {
 				// mkdir could fail for various reasons: The parent dir doesn't exist,
 				// or is not writeable, the path could be completly bogus, etc.
-				warning("mkdir for '%s' failed!", savePath);
+				warning("mkdir for '%s' failed!", path);
 				perror("mkdir");
 
 				switch (errno) {
 				case EACCES:
-					setError(SFM_DIR_ACCESS, Common::String("Search or write permission denied"));
+					setError(SFM_DIR_ACCESS, "Search or write permission denied: "+pathStr);
 					break;
 				case EMLINK:
-					setError(SFM_DIR_LINKMAX, Common::String("The link count of the parent directory would exceed {LINK_MAX}"));
+					setError(SFM_DIR_LINKMAX, "The link count of the parent directory would exceed {LINK_MAX}: "+pathStr);
 					break;
 #if !defined(__SYMBIAN32__)
 				case ELOOP:
-					setError(SFM_DIR_LOOP, Common::String("Too many symbolic links encountered while traversing the path"));
+					setError(SFM_DIR_LOOP, "Too many symbolic links encountered while traversing the path: "+pathStr);
 					break;
 #endif
 				case ENAMETOOLONG:
-					setError(SFM_DIR_NAMETOOLONG, Common::String("The path name is too long"));
+					setError(SFM_DIR_NAMETOOLONG, "The path name is too long: "+pathStr);
 					break;
 				case ENOENT:
-					setError(SFM_DIR_NOENT, Common::String("A component of the path does not exist, or the path is an empty string"));
+					setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+pathStr);
 					break;
 				case ENOTDIR:
-					setError(SFM_DIR_NOTDIR, Common::String("A component of the path prefix is not a directory"));
+					setError(SFM_DIR_NOTDIR, "A component of the path prefix is not a directory: "+pathStr);
 					break;
 				case EROFS:
-					setError(SFM_DIR_ROFS, Common::String("The parent directory resides on a read-only file system"));
+					setError(SFM_DIR_ROFS, "The parent directory resides on a read-only file system:"+pathStr);
 					break;
 				}
-
-				return 0;
 			}
 			break;
 		case ENOTDIR:
-			setError(SFM_DIR_NOTDIR, Common::String("A component of the path prefix is not a directory"));
+			setError(SFM_DIR_NOTDIR, "A component of the path prefix is not a directory: "+pathStr);
 			break;
 		}
 	} else {
 		// So stat() succeeded. But is the path actually pointing to a directory?
 		if (!S_ISDIR(sb.st_mode)) {
-			setError(SFM_DIR_NOTDIR, Common::String("The given savepath is not a directory"));
-
-			return 0;
+			setError(SFM_DIR_NOTDIR, "The given savepath is not a directory: "+pathStr);
 		}
 	}
 #endif
+}
 
-	join_paths(filename, savePath, buf, sizeof(buf));
-
-	StdioSaveFile *sf = new StdioSaveFile(buf, true);
-
-	if (!sf->isOpen()) {
-		delete sf;
-		sf = 0;
+Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename) {
+	// Ensure that the savepath is valid. If not, generate an appropriate error.
+	char buf[256];
+	const char *savePath = getSavePath();
+	checkPath(savePath);
+	
+	if (getError() == SFM_NO_ERROR) {
+		join_paths(filename, savePath, buf, sizeof(buf));
+		StdioSaveFile *sf = new StdioSaveFile(buf, false);
+	
+		if (!sf->isOpen()) {
+			delete sf;
+			sf = 0;
+		}
+		
+		return wrapInSaveFile(sf);
+	} else {
+		return 0;
 	}
+}
 
-	return wrapOutSaveFile(sf);
+Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename) {
+	// Ensure that the savepath is valid. If not, generate an appropriate error.
+	char buf[256];
+	const char *savePath = getSavePath();
+	checkPath(savePath);
+
+	if (getError() == SFM_NO_ERROR) {
+		join_paths(filename, savePath, buf, sizeof(buf));
+		StdioSaveFile *sf = new StdioSaveFile(buf, true);
+	
+		if (!sf->isOpen()) {
+			delete sf;
+			sf = 0;
+		}
+	
+		return wrapOutSaveFile(sf);
+	} else {
+		return 0;
+	}
 }
 
 bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 	char buf[256];
+	clearError();
+	Common::String filenameStr;
 	join_paths(filename, getSavePath(), buf, sizeof(buf));
 	
 	if (remove(buf) != 0) {
 #ifndef _WIN32_WCE
 		if (errno == EACCES)
-			setError(SFM_DIR_ACCESS, Common::String("Search or write permission denied"));
+			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+filenameStr);
 		
 		if (errno == ENOENT)
-			setError(SFM_DIR_NOENT, Common::String("A component of the path does not exist, or the path is an empty string"));
+			setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+filenameStr);
 #endif
 		return false;
 	} else {
 		return true;
 	}
+}
+
+const char *DefaultSaveFileManager::getSavePath() const {
+
+#if defined(PALMOS_MODE) || defined(__PSP__)
+	return SCUMMVM_SAVEPATH;
+#else
+
+	const char *dir = NULL;
+
+	// Try to use game specific savepath from config
+	dir = ConfMan.get("savepath").c_str();
+
+	// Work around a bug (#999122) in the original 0.6.1 release of
+	// ScummVM, which would insert a bad savepath value into config files.
+	if (0 == strcmp(dir, "None")) {
+		ConfMan.removeKey("savepath", ConfMan.getActiveDomainName());
+		ConfMan.flushToDisk();
+		dir = ConfMan.get("savepath").c_str();
+	}
+
+#ifdef _WIN32_WCE
+	if (dir[0] == 0)
+		dir = ConfMan.get("path").c_str();
+#endif
+
+	assert(dir);
+
+	return dir;
+#endif
 }
 
 #endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)

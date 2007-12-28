@@ -109,7 +109,15 @@ public:
 	 * @return A string describing the last error.
 	 */
 	virtual String getErrorDesc() { return _errorDesc; }
-
+	
+	/**
+	 * Returns the last ocurred error description. If none ocurred, returns 0.
+	 * Also clears the last error state and description.
+	 * 
+	 * @return A string describing the last error.
+	 */
+	virtual String popErrorDesc();
+	
 	/**
 	 * Open the file with name filename in the given directory for saving.
 	 * @param filename	the filename
@@ -145,13 +153,6 @@ public:
 	 * returns a list of strings for all present file names.
 	 */
 	virtual Common::StringList listSavefiles(const char *regex) = 0;
-
-	/**
-	 * Get the path to the save game directory.
-	 * Should only be used for error messages, *never* to construct file paths
-	 * from it, since that is highly unportable!
-	 */
-	virtual const char *getSavePath() const;
 };
 
 } // End of namespace Common

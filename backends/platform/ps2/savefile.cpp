@@ -484,10 +484,6 @@ void Ps2SaveFileManager::listSavefiles(const char *prefix, bool *marks, int num)
 	_screen->wantAnim(false);
 }
 
-const char *Ps2SaveFileManager::getSavePath(void) const {
-	return "mc0:";
-}
-
 bool Ps2SaveFileManager::setupIcon(const char *dest, const char *ico, const char *descr1, const char *descr2) {
 	mcIcon icon_sys;
 	memset(&icon_sys, 0, sizeof(mcIcon));

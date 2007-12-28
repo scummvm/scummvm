@@ -29,12 +29,29 @@
 #include "common/savefile.h"
 #include "common/str.h"
 
+/**
+ * Provides a default savefile manager implementation for common platforms.
+ */
 class DefaultSaveFileManager : public Common::SaveFileManager {
 public:
 	virtual Common::StringList listSavefiles(const char *regex);
 	virtual Common::InSaveFile *openForLoading(const char *filename);
 	virtual Common::OutSaveFile *openForSaving(const char *filename);
 	virtual bool removeSavefile(const char *filename);
+
+protected:
+	/**
+	 * Get the path to the savegame directory.
+	 * Should only be used internally since some platforms
+	 * might implement savefiles in a completely different way.
+	 */
+	virtual const char *getSavePath() const;
+	
+	/**
+	 * Checks the given path for read access, existence, etc.
+	 * Sets the internal error and error message accordingly.
+	 */
+	void checkPath(const char *path);
 };
 
 #endif
