@@ -50,13 +50,13 @@ Common::Platform CineEngine::getPlatform() const { return _gameDescription->desc
 static const PlainGameDescriptor cineGames[] = {
 	{"cine", "Cinematique evo.1 engine game"},
 	{"fw", "Future Wars"},
-	{"os", "Operation Stealth"},
+	//{"os", "Operation Stealth"},
 	{0, 0}
 };
 
 static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
 	{"fw", "cine", Common::kPlatformUnknown},
-	{"os", "cine", Common::kPlatformUnknown},
+	//{"os", "cine", Common::kPlatformUnknown},
 	{0, 0, Common::kPlatformUnknown}
 };
 
@@ -236,7 +236,7 @@ static const CINEGameDescription gameDescriptions[] = {
 		GType_FW,
 		0,
 	},
-
+#if 0
 	{
 		{
 			"os",
@@ -461,7 +461,7 @@ static const CINEGameDescription gameDescriptions[] = {
 		GType_OS,
 		0,
 	},
-
+#endif
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
