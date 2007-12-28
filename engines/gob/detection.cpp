@@ -51,12 +51,12 @@ static const PlainGameDescriptor gobGames[] = {
 	{"gob2cd", "Gobliins 2 CD"},
 	{"ween", "Ween: The Prophecy"},
 	{"bargon", "Bargon Attack"},
-	{"ajworld", "A.J's World of Discovery"},
+//	{"ajworld", "A.J's World of Discovery"},
 	{"gob3", "Goblins Quest 3"},
 	{"gob3cd", "Goblins Quest 3 CD"},
-	{"lostintime", "Lost in Time"},
-	{"inca2", "Inca II: Wiracocha"},
-	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
+//	{"lostintime", "Lost in Time"},
+//	{"inca2", "Inca II: Wiracocha"},
+//	{"woodruff", "The Bizarre Adventures of Woodruff and the Schnibble"},
 //	{"dynasty", "The Last Dynasty"},
 	{0, 0}
 };
@@ -849,6 +849,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
+/*
 	{
 		{
 			"ajworld",
@@ -979,6 +980,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"demo"
 	},
+*/
 	{
 		{
 			"gob3",
@@ -1243,6 +1245,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
+/*
 	{
 		{
 			"inca2",
@@ -1555,6 +1558,7 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro"
 	},
+*/
 	/*{
 		{
 			"dynasty",
