@@ -193,7 +193,8 @@ void Game::execute() {
 					bool handled = true;
 					switch (events.event().kbd.keycode) {
 					case Common::KEYCODE_F5:
-						SaveRestoreDialog::show(true);
+						if (isMenuAvailable())
+							SaveRestoreDialog::show(true);
 						break;
 
 					case Common::KEYCODE_F7:
@@ -1013,6 +1014,21 @@ bool Game::getYN() {
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	return result;
+}
+
+bool Game::isMenuAvailable() {
+	Resources &res = Resources::getReference();
+	Room &room = Room::getReference();
+	uint16 oldRoomNumber = res.fieldList().getField(OLD_ROOM_NUMBER);
+
+	if (oldRoomNumber != 0) 
+		// Viewing a room remotely - so the menu isn't available
+		return false;
+		
+	else if ((room.cursorState() == CS_TALKING) || (res.getTalkState() != TALK_NONE)) 
+		return false;
+
+	return true;
 }
 
 void Game::saveToStream(WriteStream *stream) {
