@@ -283,6 +283,11 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 }
 
 void AGOSEngine::playMusic(uint16 music, uint16 track) {
+	// FIXME: Changing music can cause crashes in PC version of Waxworks
+	if (getPlatform() == Common::kPlatformPC && getGameType() == GType_WW) {
+		return;
+	}
+
 	stopMusic();
 
 	if (getPlatform() == Common::kPlatformAmiga) {
