@@ -938,9 +938,9 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 		if (getBarPlace() == BP_KEEP_TRYING)
 			return PC_WAIT;
 	} else if (hotspot->roomNumber != roomNumber()) {
-		// loc_884
-		if (actionCtr() == 0) 
-			converse(NOONE_ID, 0);
+		// Object is not in the same room
+		if (actionCtr() == 0)
+			showMessage(0, hotspot->hotspotId);
 		setActionCtr(0);
 		return PC_NOT_IN_ROOM;
 	} else if (actionCtr() != 0) {
