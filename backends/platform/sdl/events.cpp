@@ -307,6 +307,10 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 			else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
 				event.type = Common::EVENT_WHEELDOWN;
 #endif
+#if defined(SDL_BUTTON_MIDDLE)
+			else if (ev.button.button == SDL_BUTTON_MIDDLE)
+				event.type = Common::EVENT_MBUTTONDOWN;
+#endif
 			else
 				break;
 
@@ -319,6 +323,10 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 				event.type = Common::EVENT_LBUTTONUP;
 			else if (ev.button.button == SDL_BUTTON_RIGHT)
 				event.type = Common::EVENT_RBUTTONUP;
+#if defined(SDL_BUTTON_MIDDLE)
+			else if (ev.button.button == SDL_BUTTON_MIDDLE)
+				event.type = Common::EVENT_MBUTTONUP;
+#endif
 			else
 				break;
 			fillMouseEvent(event, ev.button.x, ev.button.y);
