@@ -527,9 +527,20 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 			if (e.quitFlag) {
 				selectedIndex = 0xffff;
 				goto bail_out;
-			}
 
-			else if (e.type() == Common::EVENT_KEYDOWN) {
+			} else if (e.type() == Common::EVENT_WHEELUP) {
+				// Scroll upwards
+				if (selectedIndex > 0) {
+					--selectedIndex;
+					refreshFlag = true;
+				}
+			} else if (e.type() == Common::EVENT_WHEELDOWN) {
+				// Scroll downwards
+				if (selectedIndex < numEntries - 1) {
+					++selectedIndex;
+					refreshFlag = true;
+				}
+			} else if (e.type() == Common::EVENT_KEYDOWN) {
 				uint16 keycode = e.event().kbd.keycode;
 
 				if (((keycode == Common::KEYCODE_KP8) || (keycode == Common::KEYCODE_UP)) && (selectedIndex > 0)) {

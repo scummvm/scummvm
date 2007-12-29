@@ -895,17 +895,29 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 					abortFlag = true;
 					break;
 				}
-				if (events.type() == Common::EVENT_MOUSEMOVE) {
+				if (events.type() == Common::EVENT_MOUSEMOVE || 
+					events.type() == Common::EVENT_WHEELUP || events.type() == Common::EVENT_WHEELDOWN) {
 					// Mouse movement
 					int lineNum;
-					if ((mouse.x() < (SAVE_DIALOG_X + DIALOG_EDGE_SIZE)) ||
-						(mouse.x() >= (SAVE_DIALOG_X + s->width() - DIALOG_EDGE_SIZE)) ||
-						(mouse.y() < SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y) ||
-						(mouse.y() >= SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + numSaves * FONT_HEIGHT))
-						// Outside displayed lines
-						lineNum = -1;
-					else
-						lineNum = (mouse.y() - (SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y)) / FONT_HEIGHT;
+
+					if (events.type() == Common::EVENT_MOUSEMOVE) {
+						if ((mouse.x() < (SAVE_DIALOG_X + DIALOG_EDGE_SIZE)) ||
+							(mouse.x() >= (SAVE_DIALOG_X + s->width() - DIALOG_EDGE_SIZE)) ||
+							(mouse.y() < SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y) ||
+							(mouse.y() >= SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + numSaves * FONT_HEIGHT))
+							// Outside displayed lines
+							lineNum = -1;
+						else
+							lineNum = (mouse.y() - (SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y)) / FONT_HEIGHT;
+					} else if (events.type() == Common::EVENT_WHEELUP) {
+						if (selectedLine > 0) {
+							lineNum = selectedLine - 1;
+						}
+					} else if (events.type() == Common::EVENT_WHEELDOWN) {
+						if (selectedLine < numSaves - 1) {
+							lineNum = selectedLine + 1;
+						}
+					}
 
 					if (lineNum != selectedLine) {
 						if (selectedLine != -1)
