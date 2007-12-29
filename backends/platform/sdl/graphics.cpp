@@ -1407,7 +1407,10 @@ void OSystem_SDL::blitCursor() {
 		_mouseCurState.vHotY = _mouseCurState.hotY;
   	}
 
+#ifndef DISABLE_SCALERS
 	int rH1 = rH; // store original to pass to aspect-correction function later
+#endif
+
 	if (_adjustAspectRatio && _cursorTargetScale == 1) {
 		rH = real2Aspect(rH - 1) + 1;
 		_mouseCurState.rHotY = real2Aspect(_mouseCurState.rHotY);
