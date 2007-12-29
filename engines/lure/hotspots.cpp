@@ -3379,12 +3379,20 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			screen.screen().writeString(r.left, r.top, buffer, false, colour);
 		}
 
-		if ((!mouse.lButton() && !mouse.rButton()) || (selectedLine == 0))
-			break;
+		if (mouse.mButton() || mouse.rButton()) {
+			// Abort the conversation
+			talkEndConversation();
+			
+			// Have destination character show question speech bubble
+			charHotspot = res.getActiveHotspot(talkDestCharacter);
+			if (charHotspot != NULL)
+				charHotspot->showMessage(13, NOONE_ID);
 
-		// Set the talk response index to use
-		res.setTalkSelection(selectedLine);
-		res.setTalkState(TALK_RESPOND);
+		} else if (mouse.lButton() && (selectedLine != 0)) {
+			// Set the talk response index to use
+			res.setTalkSelection(selectedLine);
+			res.setTalkState(TALK_RESPOND);
+		}
 		break;
 
 	case TALK_RESPOND:
@@ -3494,19 +3502,25 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			res.setTalkState(TALK_START);
 		} else {
 			// End the conversation
-			res.getActiveHotspot(PLAYER_ID)->setTickProc(PLAYER_TICK_PROC_ID);
-			if (charHotspot)
-			{
-				charHotspot->setUseHotspotId(0);
-				charHotspot->resource()->talkerId = 0;
-				charHotspot->setDelayCtr(24);
-			}
-			res.setTalkData(0);
-			res.setCurrentAction(NONE);
-			res.setTalkState(TALK_NONE);
+			talkEndConversation();
 		}
 		break;
 	}
+}
+
+void HotspotTickHandlers::talkEndConversation() {
+	Resources &res = Resources::getReference();
+	Hotspot *charHotspot = res.getActiveHotspot(talkDestCharacter);
+	assert(charHotspot);
+
+	res.getActiveHotspot(PLAYER_ID)->setTickProc(PLAYER_TICK_PROC_ID);
+	charHotspot->setUseHotspotId(0);
+	charHotspot->resource()->talkerId = 0;
+	charHotspot->setDelayCtr(24);
+
+	res.setTalkData(0);
+	res.setCurrentAction(NONE);
+	res.setTalkState(TALK_NONE);
 }
 
 void HotspotTickHandlers::fighterAnimHandler(Hotspot &h) {

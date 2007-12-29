@@ -56,6 +56,7 @@ class HotspotTickHandlers {
 private:
 	// Support methods
 	static void npcRoomChange(Hotspot &h);
+	static void talkEndConversation();
 
 	// Handler methods
 	static void defaultHandler(Hotspot &h);
