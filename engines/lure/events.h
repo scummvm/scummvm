@@ -38,7 +38,7 @@ class Mouse {
 private:
 	CursorType _cursorNum;
 	int16 _x, _y;
-	bool _lButton, _rButton;
+	bool _lButton, _rButton, _mButton;
 public:
 	Mouse();
 	~Mouse();
@@ -55,6 +55,7 @@ public:
 	int16 y() { return _y; }
 	bool lButton() { return _lButton; }
 	bool rButton() { return _rButton; }
+	bool mButton() { return _mButton; }
 	void waitForRelease();
 	void pushCursorNum(CursorType cursorNum);
 	void pushCursorNum(CursorType cursorNum, int hotspotX, int hotspotY);

@@ -44,6 +44,7 @@ Mouse::Mouse() {
 
 	_lButton = false;
 	_rButton = false;
+	_mButton = false;
 	_cursorNum = CURSOR_ARROW;
 	_x = 0;
 	_y = 0;
@@ -69,6 +70,12 @@ void Mouse::handleEvent(Common::Event event) {
 		break;
 	case Common::EVENT_RBUTTONUP:
 		_rButton = false;
+		break;
+	case Common::EVENT_MBUTTONDOWN:
+		_mButton = true;
+		break;
+	case Common::EVENT_MBUTTONUP:
+		_mButton = false;
 		break;
 	default:
 		break;
@@ -134,7 +141,7 @@ void Mouse::waitForRelease() {
 	do {
 		while (e.pollEvent() && !e.quitFlag) ;
 		g_system->delayMillis(20);
-	} while (!e.quitFlag && (lButton() || rButton()));
+	} while (!e.quitFlag && (lButton() || rButton() || mButton()));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -164,6 +171,8 @@ bool Events::pollEvent() {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
+	case Common::EVENT_MBUTTONDOWN:
+	case Common::EVENT_MBUTTONUP:
 	case Common::EVENT_MOUSEMOVE:
 	case Common::EVENT_WHEELUP:
 	case Common::EVENT_WHEELDOWN:
@@ -184,6 +193,7 @@ void Events::waitForPress() {
 			if (_event.type == Common::EVENT_QUIT) return;
 			else if (_event.type == Common::EVENT_KEYDOWN) keyButton = true;
 			else if ((_event.type == Common::EVENT_LBUTTONDOWN) ||
+				(_event.type == Common::EVENT_MBUTTONDOWN) ||
 				(_event.type == Common::EVENT_RBUTTONDOWN)) {
 				keyButton = true;
 				Mouse::getReference().waitForRelease();
