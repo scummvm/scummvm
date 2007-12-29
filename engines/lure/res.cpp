@@ -97,6 +97,9 @@ void Resources::reset() {
 	freeData();
 
 	_fieldList.reset();
+	_talkState = TALK_NONE;
+	_activeTalkData = NULL;
+
 	reloadData();
 }
 
@@ -711,6 +714,9 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	} else {
 		_talkingCharacter = 0;
 	}
+
+	_talkState = TALK_NONE;
+	_activeTalkData = NULL;
 
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading hotspot data");
 	_hotspotData.loadFromStream(stream);
