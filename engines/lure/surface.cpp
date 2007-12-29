@@ -885,7 +885,8 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	bool doneFlag = false;
 	while (!abortFlag && !doneFlag) {
 		// Provide highlighting of lines to select a save slot
-		while (!abortFlag && !(mouse.lButton() && (selectedLine != -1)) && !mouse.rButton()) {
+		while (!abortFlag && !(mouse.lButton() && (selectedLine != -1)) 
+				&& !mouse.rButton() && !mouse.mButton()) {
 			abortFlag = events.quitFlag;
 			if (abortFlag) break;
 
@@ -949,7 +950,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
 				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
 
-		if (mouse.lButton() || mouse.rButton()) {
+		if (mouse.lButton() || mouse.rButton() || mouse.mButton()) {
 			abortFlag = mouse.rButton();
 			mouse.waitForRelease();
 		}

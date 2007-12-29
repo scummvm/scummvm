@@ -569,7 +569,8 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 						refreshFlag = true;
 				}
 #else
-			} else if (e.type() == Common::EVENT_LBUTTONDOWN) {
+			} else if ((e.type() == Common::EVENT_LBUTTONDOWN) ||
+					(e.type() == Common::EVENT_MBUTTONDOWN)) {
 				//mouse.waitForRelease();
 				goto bail_out;
 #endif
