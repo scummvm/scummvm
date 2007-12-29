@@ -432,6 +432,10 @@
 				RelativePath="..\..\common\zlib.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\common\zlib.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="sound"
