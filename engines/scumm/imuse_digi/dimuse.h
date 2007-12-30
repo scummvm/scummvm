@@ -146,7 +146,7 @@ private:
 
 	void setComiMusicState(int stateId);
 	void setComiMusicSequence(int seqId);
-	void playComiMusic(const imuseComiTable *table, int attribPos, bool sequence);
+	void playComiMusic(const char *songName, const imuseComiTable *table, int attribPos, bool sequence);
 
 	void setDigMusicState(int stateId);
 	void setDigMusicSequence(int seqId);
