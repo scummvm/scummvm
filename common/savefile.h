@@ -148,11 +148,14 @@ public:
 	virtual bool renameSavefile(const char *oldFilename, const char *newFilename);
 
 	/**
-	 * Request a list of available savegames with a given regex.
-	 * @param regex Regular expression to match. Wildcards like * or ? are available.
-	 * returns a list of strings for all present file names.
+	 * Request a list of available savegames with a given DOS-style pattern,
+	 * also known as "glob" in the UNIX world. Refer to the Common::match()
+	 * function to learn about the precise pattern format.
+	 * @param pattern Pattern to match. Wildcards like * or ? are available.
+	 * @return list of strings for all present file names.
+	 * @see Common::match
 	 */
-	virtual Common::StringList listSavefiles(const char *regex) = 0;
+	virtual Common::StringList listSavefiles(const char *pattern) = 0;
 };
 
 } // End of namespace Common
