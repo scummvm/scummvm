@@ -164,62 +164,13 @@ GBAMPSaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool saveOrL
 	}
 }
 
-void GBAMPSaveFileManager::listSavefiles(char const* prefix, bool* marks, int num) {
-//	memset(marks, true, num * sizeof(bool));
-//	return;
-	
-	// Seems like I misunderstood what this function was supposed to do.
-	// I thought I was meant to set the marks[] array according to which
-	// saves are present on disk.
-	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
-	char name[128];
-	char path[128];
-	
-	DS::std_cwd((char *) getSavePath());
-	consolePrintf("Save path: %s\n", getSavePath());
-	
-	int fileType = FAT_FindFirstFileLFN(name);
-	
-	for (int r = 0; r < num; r++) {
-		marks[r] = false;
-	}
-	
-	do {
-	
-		if (fileType == TYPE_FILE) {
-
-			FAT_GetLongFilename(name);
-			
-			for (int r = 0; r < num; r++) {
-				char str[128];
-				
-				
-				sprintf(str, "%s%02d", prefix, r);
-				consolePrintf("%s != %s", str, name);
-				if (!stricmp(str, name)) {
-					marks[r] = true;
-					consolePrintf("Matched %d", r);
-				}
-				
-			}
-			
-		}
-	
-	} while ((fileType = FAT_FindNextFileLFN(name)));
-	
-	FAT_chdir("/");
-}
-
-Common::StringList GBAMPSaveFileManager::listSavefiles(const char *regex) { 
-
-	
+Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) { 
 
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	char name[256];
-
 	
 	DS::std_cwd((char *) getSavePath());
-//	consolePrintf("Save path: '%s', regex: '%s'\n", getSavePath(),regex);
+//	consolePrintf("Save path: '%s', pattern: '%s'\n", getSavePath(),pattern);
 
 	
 	int fileType = FAT_FindFirstFileLFN(name);
@@ -238,15 +189,14 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const char *regex) {
 			}
 			
 			
-			if (Common::matchString(name, regex)) {
+			if (Common::matchString(name, pattern)) {
 				list.push_back(name);
 			}
 		}
-	
+
 	} while ((fileType = FAT_FindNextFileLFN(name)));
 	
 	FAT_chdir("/");
-
 
 	return list;
 }	

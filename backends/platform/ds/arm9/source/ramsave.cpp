@@ -383,6 +383,18 @@ void DSSaveFileManager::deleteFile(char* name) {
 	flushToSaveRAM();
 }
 
+void DSSaveFileManager::removeSavefile(const char *filename) {
+	TODO: Implement this. Most likely, you just have to use the code of deleteFile?
+}
+
+
+Common::StringList DSSaveFileManager::listSavefiles(const char *pattern) {
+	TODO: Implement this. If you don't understand what it should do, just ask
+	(e.g. on scummvm-devel or Fingolfin). It should be pretty simple if you
+	use Common::matchString from common/util.h and read the Doxygen docs,
+	then combine this with the old code below...
+
+/*
 void DSSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
 	memset(marks, true, num * sizeof(bool));
 	return;
@@ -397,6 +409,9 @@ void DSSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) 
 		}
 	}
 	
+}
+*/
+
 }
 
 DSSaveFile *DSSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {

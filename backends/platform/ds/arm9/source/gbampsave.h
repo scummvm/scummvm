@@ -71,9 +71,7 @@ public:
 	virtual Common::InSaveFile* openForLoading(const char* filename) { return openSavefile(filename, false); }
 	
 	virtual bool removeSavefile(const char *filename) { return false; } // TODO: Implement this
-	virtual Common::StringList listSavefiles(const char *regex);
-	
-	void listSavefiles(const char *prefix, bool *marks, int num);
+	virtual Common::StringList listSavefiles(const char *pattern);
 	
 	void deleteFile(char* name);
 	void listFiles();

@@ -442,6 +442,17 @@ Common::OutSaveFile *Ps2SaveFileManager::openForSaving(const char *filename) {
 	return NULL;
 }
 
+void Ps2SaveFileManager::removeSavefile(const char *filename) {
+	TODO: Implement this.
+}
+
+Common::StringList Ps2SaveFileManager::listSavefiles(const char *pattern) {
+	TODO: Implement this. If you don't understand what it should do, just ask
+	(e.g. on scummvm-devel or Fingolfin). It should be pretty simple if you
+	use Common::matchString from common/util.h and read the Doxygen docs,
+	then combine this with the old code below...
+
+/*
 void Ps2SaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
 	_screen->wantAnim(true);
 
@@ -483,6 +494,8 @@ void Ps2SaveFileManager::listSavefiles(const char *prefix, bool *marks, int num)
 	}
 	_screen->wantAnim(false);
 }
+*/
+
 
 bool Ps2SaveFileManager::setupIcon(const char *dest, const char *ico, const char *descr1, const char *descr2) {
 	mcIcon icon_sys;

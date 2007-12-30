@@ -40,7 +40,7 @@ public:
 
 	virtual Common::InSaveFile *openForLoading(const char *filename);
 	virtual Common::OutSaveFile *openForSaving(const char *filename);
-	virtual void listSavefiles(const char *prefix, bool *marks, int num);
+	virtual Common::StringList listSavefiles(const char *pattern);
 
 	void writeSaveNonblocking(char *name, void *buf, uint32 size);
 	void saveThread(void);

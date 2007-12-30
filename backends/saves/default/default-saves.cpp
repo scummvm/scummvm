@@ -114,11 +114,11 @@ static void join_paths(const char *filename, const char *directory,
 	strncat(buf, filename, bufsize-1);
 }
 
-Common::StringList DefaultSaveFileManager::listSavefiles(const char *regex) {
+Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
 	FilesystemNode savePath(getSavePath());
 	FSList savefiles;
 	Common::StringList results;
-	Common::String search(regex);
+	Common::String search(pattern);
 
 	if (savePath.lookupFile(savefiles, search, false, true)) {
 		for (FSList::const_iterator file = savefiles.begin(); file != savefiles.end(); ++file) {

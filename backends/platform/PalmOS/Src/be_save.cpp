@@ -27,6 +27,13 @@
 #include "common/savefile.h"
 #include "be_save.h"
 
+Common::StringList PalmSaveFileManager::listSavefiles(const char *pattern) {
+	TODO: Implement this. If you don't understand what it should do, just ask
+	(e.g. on scummvm-devel or Fingolfin). It should be pretty simple if you
+	use Common::matchString from common/util.h and read the Doxygen docs,
+	then combine this with the old code below...
+
+/*
 void PalmSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
 	FileRef fileRef;
 	// try to open the dir
@@ -64,4 +71,6 @@ void PalmSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num
 	}
 
 	VFSFileClose(fileRef);
+}
+
 }

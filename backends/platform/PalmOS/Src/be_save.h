@@ -30,7 +30,7 @@
 
 class PalmSaveFileManager : public DefaultSaveFileManager {
 public:
-	void listSavefiles(const char *prefix, bool *marks, int num);
+	Common::StringList listSavefiles(const char *pattern);
 };
 
 #endif
