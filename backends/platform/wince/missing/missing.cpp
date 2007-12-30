@@ -89,42 +89,6 @@ int stat(const char *fname, struct stat *ss)
 	return 0;
 }
 
-/* Limited implementation of time.h. time_t formula is possibly incorrect. */
-EXT_C time_t time(time_t* res)
-{
-	time_t t;
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-
-	t = (time_t)(((((((st.wYear-1970)*12+st.wMonth)*31+st.wDay)*7+st.wDayOfWeek)*24+st.wHour)*60+st.wMinute)*60+st.wSecond);
-
-	if (res)
-		*res = t;
-	return t;
-}
-
-EXT_C struct tm* localtime(time_t* timer)
-{
-	static struct tm tmLocalTime;
-	unsigned long rem = *timer;
-
-	tmLocalTime.tm_sec  = (short)(rem % 60);
-	rem /= 60;
-	tmLocalTime.tm_min  = (short)(rem % 60);
-	rem /= 60;
-	tmLocalTime.tm_hour = (short)(rem % 24);
-	rem /= 24;
-	tmLocalTime.tm_mday = (short)(rem % 7);
-	rem /= 7;
-	tmLocalTime.tm_mday = (short)(rem % 31);
-	rem /= 31;
-	tmLocalTime.tm_mon  = (short)(rem % 12);
-	rem /= 12;
-	tmLocalTime.tm_year = (short)(rem+1970);
-
-	return &tmLocalTime;
-}
-
 char cwd[MAX_PATH+1] = "";
 EXT_C char *getcwd(char *buffer, int maxlen)
 {
@@ -408,13 +372,6 @@ char *strdup(const char *strSource)
 }
 
 /* Very limited implementation of sys/time.h */
-void gettimeofday(struct timeval* tp, void* dummy)
-{
-	DWORD dt = GetTickCount();
-	tp->tv_sec = dt/1000;
-	tp->tv_usec = dt*1000;
-}
-
 void usleep(long usec)
 {
 	long msec = usec/1000;
