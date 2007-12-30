@@ -137,7 +137,7 @@ private:
 
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
-	Track *cloneToFadeOutTrack(const Track *track, int fadeDelay);
+	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
 
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);

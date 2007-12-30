@@ -314,7 +314,7 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 	}
 }
 
-IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(const Track *track, int fadeDelay) {
+IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	assert(track);
 	Track *fadeTrack = 0;
 
@@ -330,12 +330,11 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(const Track *track, int f
 	// Clone the settings of the given track
 	memcpy(fadeTrack, track, sizeof(Track));
 
-	// Clone the sound.
-	// According to aquadran, this is only called for bundle files and sound
-	// data in *.la1 from switchToNextRegion and fadeOutMusic func. Henc we
-	// know that track->soundDesc != NULL.
-	fadeTrack->soundDesc = _sound->cloneSound(track->soundDesc);
+	// Clone the sound. We use the original sound in the fadeTrack,
+	// and the cloned sound in the original track. This fixes bug #1635361.
 	assert(fadeTrack->soundDesc);
+	track->soundDesc = _sound->cloneSound(fadeTrack->soundDesc);
+	assert(track->soundDesc);
 
 	// Set the volume fading parameters to indicate a fade out
 	fadeTrack->volFadeDelay = fadeDelay;
