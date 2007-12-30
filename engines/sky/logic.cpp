@@ -1213,6 +1213,16 @@ uint16 Logic::mouseScript(uint32 scrNum, Compact *scriptComp) {
 	_compact = scriptComp;
 	uint16 retVal = script((uint16)(scrNum & 0xFFFF), (uint16)(scrNum >> 16));
 	_compact = tmpComp;
+
+	if (scrNum == MENU_SELECT || (scrNum >= LINC_MENU_SELECT && scrNum <= DOC_MENU_SELECT)) {
+		// HACK: See patch #1689516 for details. The short story:
+		// The user has clicked on an inventory item.  We update the
+		// mouse cursor instead of waiting for the script to update it.
+		// In the original game the cursor is just updated when the mouse
+		// moves away the item, but it's unintuitive.
+		fnCrossMouse(0, 0, 0);
+	}
+
 	return retVal;
 }
 
