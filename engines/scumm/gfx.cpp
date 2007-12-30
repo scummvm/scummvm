@@ -484,10 +484,14 @@ void ScummEngine_v6::drawDirtyScreenParts() {
 		drawBlastObjects();
 	} else {
 		drawBlastObjects();
+		if (_game.version == 8) {
+			// Do this before drawing blast texts. Subtitles go on
+			// top of the CoMI verb coin, e.g. when Murray is
+			// talking to himself early in the game.
+			processUpperActors();
+		}
 		drawBlastTexts();
 	}
-	if (_game.version == 8)
-		processUpperActors();
 
 	// Call the original method.
 	ScummEngine::drawDirtyScreenParts();
