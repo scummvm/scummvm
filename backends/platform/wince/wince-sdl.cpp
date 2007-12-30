@@ -2430,6 +2430,19 @@ void OSystem_WINCE3::quit() {
 	OSystem_SDL::quit();
 }
 
+void OSystem_WINCE3::getTimeAndDate(struct tm &t) const {
+	SYSTEMTIME systime;
+
+	GetLocalTime(&systime);
+	t.tm_year 	= systime.wYear - 1900;
+	t.tm_mon	= systime.wMonth - 1;
+	t.tm_wday	= systime.wDayOfWeek;
+	t.tm_mday	= systime.wDay;
+	t.tm_hour	= systime.wHour;
+	t.tm_min	= systime.wMinute;
+	t.tm_sec	= systime.wSecond;
+}
+
 int OSystem_WINCE3::_platformScreenWidth;
 int OSystem_WINCE3::_platformScreenHeight;
 bool OSystem_WINCE3::_isOzone;

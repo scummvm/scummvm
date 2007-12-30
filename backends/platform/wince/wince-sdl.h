@@ -86,6 +86,7 @@ public:
 	bool setSoundCallback(SoundProc proc, void *param);
 	// Overloaded from OSystem
 	//void engineInit();
+	void getTimeAndDate(struct tm &t) const;
 
 	// Overloaded from SDL_Common (FIXME)
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend
