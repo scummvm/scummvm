@@ -118,7 +118,7 @@ private:
 
 	bool _pause;			// flag mean that iMuse callback should be idle
 
-	int32 _attributes[188];	// internal atributes for each music file to store and check later
+	int32 _attributes[188];	// internal attributes for each music file to store and check later
 	int32 _nextSeqToPlay;	// id of sequence type of music needed played
 	int32 _curMusicState;	// current or previous id of music
 	int32 _curMusicSeq;		// current or previous id of sequence music
@@ -146,11 +146,11 @@ private:
 
 	void setComiMusicState(int stateId);
 	void setComiMusicSequence(int seqId);
-	void playComiMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence);
+	void playComiMusic(const imuseComiTable *table, int attribPos, bool sequence);
 
 	void setDigMusicState(int stateId);
 	void setDigMusicSequence(int seqId);
-	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence);
+	void playDigMusic(const char *songName, const imuseDigTable *table, int attribPos, bool sequence);
 
 public:
 	IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps);
@@ -196,7 +196,7 @@ struct imuseRoomMap {
 	byte stateIndex1;
 	byte offset;
 	byte stateIndex2;
-	byte atribPos;
+	byte attribPos;
 	byte stateIndex3;
 };
 
@@ -204,7 +204,7 @@ struct imuseDigTable {
 	byte transitionType;
 	int16 soundId;
 	char name[20];
-	byte atribPos;
+	byte attribPos;
 	byte hookId;
 	char filename[13];
 };
@@ -213,7 +213,7 @@ struct imuseComiTable {
 	byte transitionType;
 	int16 soundId;
 	char name[20];
-	byte atribPos;
+	byte attribPos;
 	byte hookId;
 	int16 fadeOutDelay;
 	char filename[13];

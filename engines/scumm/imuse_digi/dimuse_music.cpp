@@ -54,7 +54,7 @@ void IMuseDigital::setDigMusicState(int stateId) {
 
 		int offset = _attributes[_digStateMusicMap[num].offset];
 		if (offset == 0) {
-			if (_attributes[_digStateMusicMap[num].atribPos] != 0) {
+			if (_attributes[_digStateMusicMap[num].attribPos] != 0) {
 				num = _digStateMusicMap[num].stateIndex3;
 			} else {
 				num = _digStateMusicMap[num].stateIndex1;
@@ -98,7 +98,7 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 		}
 	}
 
-	if (num == -1)
+	if (num == -1)		// FIXME: setDigMusicSequence vs. setComiMusicSequence
 		return;
 
 	if (_curMusicSeq == num)
@@ -108,16 +108,16 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 		if (_curMusicSeq &&	(_digSeqMusicTable[_curMusicSeq].transitionType == 4)
 				|| (_digSeqMusicTable[_curMusicSeq].transitionType == 6)) {
 			_nextSeqToPlay = num;
-			return;
+			return;		// FIXME: setDigMusicSequence vs. setComiMusicSequence
 		} else {
 			playDigMusic(_digSeqMusicTable[num].name, &_digSeqMusicTable[num], 0, true);
 			_nextSeqToPlay = 0;
-			_attributes[DIG_SEQ_OFFSET + num] = 1;
+			_attributes[DIG_SEQ_OFFSET + num] = 1;		// FIXME: setDigMusicSequence vs. setComiMusicSequence
 		}
 	} else {
 		if (_nextSeqToPlay != 0) {
 			playDigMusic(_digSeqMusicTable[_nextSeqToPlay].name, &_digSeqMusicTable[_nextSeqToPlay], 0, true);
-			_attributes[DIG_SEQ_OFFSET + _nextSeqToPlay] = 1;
+			_attributes[DIG_SEQ_OFFSET + _nextSeqToPlay] = 1;		// FIXME: setDigMusicSequence vs. setComiMusicSequence
 			num = _nextSeqToPlay;
 			_nextSeqToPlay = 0;
 		} else {
@@ -132,36 +132,36 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 	_curMusicSeq = num;
 }
 
-void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence) {
+void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table, int attribPos, bool sequence) {
 	int hookId = 0;
 
 	if (songName != NULL) {
 		if ((_attributes[DIG_SEQ_OFFSET + 38]) && (!_attributes[DIG_SEQ_OFFSET + 41])) {
-			if ((atribPos == 43) || (atribPos == 44))
+			if ((attribPos == 43) || (attribPos == 44))
 				hookId = 3;
 		}
 
 		if ((_attributes[DIG_SEQ_OFFSET + 46] != 0) && (_attributes[DIG_SEQ_OFFSET + 48] == 0)) {
-			if ((atribPos == 38) || (atribPos == 39))
+			if ((attribPos == 38) || (attribPos == 39))
 				hookId = 3;
 		}
 
 		if ((_attributes[DIG_SEQ_OFFSET + 53] != 0)) {
-			if ((atribPos == 50) || (atribPos == 51))
+			if ((attribPos == 50) || (attribPos == 51))
 				hookId = 3;
 		}
 
-		if ((atribPos != 0) && (hookId == 0)) {
-			if (table->atribPos != 0)
-				atribPos = table->atribPos;
-			hookId = _attributes[DIG_STATE_OFFSET + atribPos];
+		if ((attribPos != 0) && (hookId == 0)) {
+			if (table->attribPos != 0)
+				attribPos = table->attribPos;
+			hookId = _attributes[DIG_STATE_OFFSET + attribPos];
 			if (table->hookId != 0) {
 				if ((hookId != 0) && (table->hookId > 1)) {
-					_attributes[DIG_STATE_OFFSET + atribPos] = 2;
+					_attributes[DIG_STATE_OFFSET + attribPos] = 2;
 				} else {
-					_attributes[DIG_STATE_OFFSET + atribPos] = hookId + 1;
+					_attributes[DIG_STATE_OFFSET + attribPos] = hookId + 1;
 					if (table->hookId < hookId + 1)
-						_attributes[DIG_STATE_OFFSET + atribPos] = 1;
+						_attributes[DIG_STATE_OFFSET + attribPos] = 1;
 				}
 			}
 		}
@@ -179,8 +179,8 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 			if (table->filename[0] == 0) {
 				return;
 			}
-			if ((!sequence) && (table->atribPos != 0) &&
-					(table->atribPos == _digStateMusicTable[_curMusicState].atribPos)) {
+			if ((!sequence) && (table->attribPos != 0) &&
+					(table->attribPos == _digStateMusicTable[_curMusicState].attribPos)) {
 				startMusic(table->filename, table->soundId, 0, 127);
 				return;
 			}
@@ -226,6 +226,10 @@ void IMuseDigital::setComiMusicState(int stateId) {
 
 void IMuseDigital::setComiMusicSequence(int seqId) {
 	int l, num = -1;
+	
+	// FIXME: It turns out that setDigMusicSequence and setComiMusicSequence arae
+	// very similiar, with only a few small differences. Question: are those differences
+	// really differences, or just caused by a mistake on our side?
 
 	if (seqId == 0)
 		seqId = 2000;
@@ -237,14 +241,16 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 			break;
 		}
 	}
-	assert(num != -1);
+	assert(num != -1);	// FIXME: setDigMusicSequence vs. setComiMusicSequence
 
 	if (_curMusicSeq == num)
 		return;
 
 	if (num != 0) {
-		if (_curMusicSeq && ((_comiSeqMusicTable[_curMusicSeq].transitionType == 4) || (_comiSeqMusicTable[_curMusicSeq].transitionType == 6))) {
+		if (_curMusicSeq && ((_comiSeqMusicTable[_curMusicSeq].transitionType == 4)
+				|| (_comiSeqMusicTable[_curMusicSeq].transitionType == 6))) {
 			_nextSeqToPlay = num;
+			//return;	// FIXME: setDigMusicSequence vs. setComiMusicSequence
 		} else {
 			playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[num], 0, true);
 			_nextSeqToPlay = 0;
@@ -266,20 +272,20 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 	_curMusicSeq = num;
 }
 
-void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence) {
+void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *table, int attribPos, bool sequence) {
 	int hookId = 0;
 
-	if ((songName != NULL) && (atribPos != 0)) {
-		if (table->atribPos != 0)
-			atribPos = table->atribPos;
-		hookId = _attributes[COMI_STATE_OFFSET + atribPos];
+	if ((songName != NULL) && (attribPos != 0)) {
+		if (table->attribPos != 0)
+			attribPos = table->attribPos;
+		hookId = _attributes[COMI_STATE_OFFSET + attribPos];
 		if (table->hookId != 0) {
 			if ((hookId != 0) && (table->hookId > 1)) {
-				_attributes[COMI_STATE_OFFSET + atribPos] = 2;
+				_attributes[COMI_STATE_OFFSET + attribPos] = 2;
 			} else {
-				_attributes[COMI_STATE_OFFSET + atribPos] = hookId + 1;
+				_attributes[COMI_STATE_OFFSET + attribPos] = hookId + 1;
 				if (table->hookId < hookId + 1)
-					_attributes[COMI_STATE_OFFSET + atribPos] = 1;
+					_attributes[COMI_STATE_OFFSET + attribPos] = 1;
 			}
 		}
 	}
@@ -317,8 +323,8 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 				return;
 			}
 			fadeOutMusic(table->fadeOutDelay);
-			if ((!sequence) && (table->atribPos != 0) &&
-					(table->atribPos == _comiStateMusicTable[_curMusicState].atribPos)) {
+			if ((!sequence) && (table->attribPos != 0) &&
+					(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
 				startMusic(table->filename, table->soundId, 0, 127);
 				return;
 			}

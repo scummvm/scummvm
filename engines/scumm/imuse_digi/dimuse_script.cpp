@@ -83,10 +83,10 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 		}
 		break;
 	case 25: // ImuseStartStream
-		debug(5, "ImuseStartStream (%d, %d, %d)", soundId, c, d);
+		debug(3, "ImuseStartStream (%d, %d, %d)", soundId, c, d);
 		break;
 	case 26: // ImuseSwitchStream
-		debug(5, "ImuseSwitchStream (%d, %d, %d, %d, %d)", soundId, c, d, e, f);
+		debug(3, "ImuseSwitchStream (%d, %d, %d, %d, %d)", soundId, c, d, e, f);
 		break;
 	case 0x1000: // ImuseSetState
 		debug(5, "ImuseSetState (%d)", b);
@@ -147,15 +147,15 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 		}
 		break;
 	case 0x2000: // ImuseSetGroupSfxVolume
-		debug(5, "ImuseSetGroupSFXVolume (%d)", b);
+		debug(3, "ImuseSetGroupSFXVolume (%d)", b);
 //		setGroupSfxVolume(b);
 		break;
 	case 0x2001: // ImuseSetGroupVoiceVolume
-		debug(5, "ImuseSetGroupVoiceVolume (%d)", b);
+		debug(3, "ImuseSetGroupVoiceVolume (%d)", b);
 //		setGroupVoiceVolume(b);
 		break;
 	case 0x2002: // ImuseSetGroupMusicVolume
-		debug(5, "ImuseSetGroupMusicVolume (%d)", b);
+		debug(3, "ImuseSetGroupMusicVolume (%d)", b);
 //		setGroupMusicVolume(b);
 		break;
 	default:
