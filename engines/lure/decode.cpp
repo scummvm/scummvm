@@ -224,7 +224,7 @@ MemoryBlock *PictureDecoder::vgaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 	// Set up initial states
 	dataIn = src;
 	outputOffset = 0;
-	dataPos = READ_LE_UINT32(dataIn + 0x400);
+	dataPos = READ_LE_UINT32(dataIn->data() + 0x400);
 	dataPos2 = 0x404;
 
 	CH = ESBX();

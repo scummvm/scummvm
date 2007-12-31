@@ -48,10 +48,10 @@ private:
 	void decrCtr();
 	bool shlCarry();
 
-	MemoryBlock *egaDecode(MemoryBlock *src, uint32 maxOutputSize);
-	MemoryBlock *vgaDecode(MemoryBlock *src, uint32 maxOutputSize);
 public:
 	MemoryBlock *decode(MemoryBlock *src, uint32 maxOutputSize  = SCREEN_SIZE + 1);
+	MemoryBlock *egaDecode(MemoryBlock *src, uint32 maxOutputSize);
+	MemoryBlock *vgaDecode(MemoryBlock *src, uint32 maxOutputSize);
 };
 
 class AnimationDecoder {
