@@ -81,7 +81,7 @@ public:
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
-
+	bool isEGA() const { return (getFeatures() & GF_EGA) != 0; }
 };
 
 } // End of namespace Lure

@@ -57,6 +57,7 @@ enum {
 
 enum {
 	GF_FLOPPY	= 1 <<  0,
+	GF_EGA		= 1 <<  1,
 	GF_LNGUNK	= 1 << 15
 };
 
