@@ -98,7 +98,7 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 		}
 	}
 
-	if (num == -1)		// FIXME: setDigMusicSequence vs. setComiMusicSequence
+	if (num == -1)
 		return;
 
 	if (_curMusicSeq == num)
@@ -108,16 +108,16 @@ void IMuseDigital::setDigMusicSequence(int seqId) {
 		if (_curMusicSeq &&	(_digSeqMusicTable[_curMusicSeq].transitionType == 4)
 				|| (_digSeqMusicTable[_curMusicSeq].transitionType == 6)) {
 			_nextSeqToPlay = num;
-			return;		// FIXME: setDigMusicSequence vs. setComiMusicSequence
+			return;
 		} else {
 			playDigMusic(_digSeqMusicTable[num].name, &_digSeqMusicTable[num], 0, true);
 			_nextSeqToPlay = 0;
-			_attributes[DIG_SEQ_OFFSET + num] = 1;		// FIXME: setDigMusicSequence vs. setComiMusicSequence
+			_attributes[DIG_SEQ_OFFSET + num] = 1; // _attributes[COMI_SEQ_OFFSET] in Comi are not used as it doesn't have 'room' attributes table
 		}
 	} else {
 		if (_nextSeqToPlay != 0) {
 			playDigMusic(_digSeqMusicTable[_nextSeqToPlay].name, &_digSeqMusicTable[_nextSeqToPlay], 0, true);
-			_attributes[DIG_SEQ_OFFSET + _nextSeqToPlay] = 1;		// FIXME: setDigMusicSequence vs. setComiMusicSequence
+			_attributes[DIG_SEQ_OFFSET + _nextSeqToPlay] = 1; // _attributes[COMI_SEQ_OFFSET] in Comi are not used as it doesn't have 'room' attributes table
 			num = _nextSeqToPlay;
 			_nextSeqToPlay = 0;
 		} else {
@@ -192,11 +192,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 void IMuseDigital::setComiMusicState(int stateId) {
 	int l, num = -1;
 
-	// This happens at the beginning of Part II, but should apparently not
-	// do anything since the correct music is already playing. A left-over
-	// of some kind?
-
-	if (stateId == 4)
+	if (stateId == 4) // left-over of deprecated the dig code
 		return;
 
 	if (stateId == 0)
@@ -209,7 +205,9 @@ void IMuseDigital::setComiMusicState(int stateId) {
 			break;
 		}
 	}
-	assert(num != -1);
+
+	if (num == -1)
+		return;
 
 	if (_curMusicState == num)
 		return;
@@ -226,10 +224,6 @@ void IMuseDigital::setComiMusicState(int stateId) {
 
 void IMuseDigital::setComiMusicSequence(int seqId) {
 	int l, num = -1;
-	
-	// FIXME: It turns out that setDigMusicSequence and setComiMusicSequence are
-	// very similiar, with only a few small differences. Question: are those differences
-	// really differences, or just caused by a mistake on our side?
 
 	if (seqId == 0)
 		seqId = 2000;
@@ -241,7 +235,9 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 			break;
 		}
 	}
-	assert(num != -1);	// FIXME: setDigMusicSequence vs. setComiMusicSequence
+
+	if (num == -1)
+		return;
 
 	if (_curMusicSeq == num)
 		return;
@@ -250,7 +246,7 @@ void IMuseDigital::setComiMusicSequence(int seqId) {
 		if (_curMusicSeq && ((_comiSeqMusicTable[_curMusicSeq].transitionType == 4)
 				|| (_comiSeqMusicTable[_curMusicSeq].transitionType == 6))) {
 			_nextSeqToPlay = num;
-			//return;	// FIXME: setDigMusicSequence vs. setComiMusicSequence
+			return;
 		} else {
 			playComiMusic(_comiSeqMusicTable[num].name, &_comiSeqMusicTable[num], 0, true);
 			_nextSeqToPlay = 0;
