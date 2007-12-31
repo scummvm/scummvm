@@ -48,7 +48,7 @@ namespace AdvancedDetector {
  * @param platform	restrict results to specified platform only
  * @return	list of ADGameDescription (or subclass) pointers corresponding to matched games
  */
-static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform);
+static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra);
 
 
 GameList gameIDList(const Common::ADParams &params) {
@@ -194,13 +194,16 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 
 		desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], realDesc);
 	}
+
+	if (params.flags & kADFlagUseExtraAsHint)
+		desc["extra"] = realDesc->extra;
 }
 
 GameList detectAllGames(
 	const FSList &fslist,
 	const Common::ADParams &params
 	) {
-	ADGameDescList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown);
+	ADGameDescList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown, "");
 	GameList detectedGames;
 
 	// Use fallback detector if there were no matches by other means
@@ -227,15 +230,19 @@ EncapsulatedADGameDesc detectBestMatchingGame(
 	EncapsulatedADGameDesc result;
 	Common::Language language = Common::UNK_LANG;
 	Common::Platform platform = Common::kPlatformUnknown;
+	Common::String extra("");
 
 	if (ConfMan.hasKey("language"))
 		language = Common::parseLanguage(ConfMan.get("language"));
 	if (ConfMan.hasKey("platform"))
 		platform = Common::parsePlatform(ConfMan.get("platform"));
+	if (params.flags & kADFlagUseExtraAsHint)
+		if (ConfMan.hasKey("extra"))
+			extra = ConfMan.get("extra");
 
 	Common::String gameid = ConfMan.get("gameid");
 
-	ADGameDescList matches = detectGame(0, params, language, platform);
+	ADGameDescList matches = detectGame(0, params, language, platform, extra);
 
 	if (params.singleid == NULL) {
 		for (uint i = 0; i < matches.size(); i++) {
@@ -303,7 +310,7 @@ void reportUnknown(StringList &files, int md5Bytes) {
 	reportUnknown(filesMD5, filesSize);
 }
 
-static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform) {
+static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra) {
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
 
@@ -403,6 +410,9 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 			(platform != kPlatformUnknown && g->platform != platform)) {
 			continue;
 		}
+
+		if ((params.flags & kADFlagUseExtraAsHint) && extra != "" && g->extra != extra)
+			continue;
 
 		// Try to match all files for this game
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
