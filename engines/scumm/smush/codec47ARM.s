@@ -18,8 +18,8 @@
 @ along with this program@ if not, write to the Free Software
 @ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 @
-@ $URL:$
-@ $Id:$
+@ $URL$
+@ $Id$
 @
 @ @author Robin Watts (robin@wss.co.uk)
 @
@@ -29,9 +29,9 @@
 
 	.text
 
-	.global	ARM_Smush_decode2
+	.global	_ARM_Smush_decode2
 
-ARM_Smush_decode2:
+_ARM_Smush_decode2:
 	@ r0 = dst
 	@ r1 = src
 	@ r2 = width
@@ -44,7 +44,7 @@ ARM_Smush_decode2:
 	@ <> = _tableSmall
 	STMFD	r13!,{r2,r4-r11,R14}
 
-        LDR	r4,[r13,#(9+1)*4]	@ r4 = param
+        LDR	r4,[r13,#40]	@ r4 = param (40 = (9+1)*4)
 	@ stall
 	@ stall
 	SUB	r4,r4,#0xF8
@@ -72,7 +72,7 @@ x_loop:
 	BEQ	level1codeFE
 level1codeFD:
 	LDRB	r6,[r1],#1		@ r6 = tmp = *_d_src++
-	LDR	r8,[r13,#(9+1+2)*4]	@ r8 = _tableBig
+	LDR	r8,[r13,#48]		@ r8 = _tableBig (48 = (9+1+2)*4)
 	@ stall
 	ADD	r12,r6,r6,LSL #1	@ r12= tmp*3
 	ADD	r6,r6,r12,LSL #5 	@ r6 = tmp*97
@@ -93,7 +93,7 @@ level1codeFD_loop1:
 level1codeFD_over1:
 	LDRB	r9,[r12,#1]		@ r9 = l = tmp_ptr[385]
 	LDRB	r6,[r1],#1		@ r6 = val = *_d_src++
-	SUB	r12,r12,#384-128	@ r12= &tmp_ptr[128]
+	SUB	r12,r12,#256		@ r12= &tmp_ptr[128] (256 = 384-128)
 	@ I don't really believe the next 2 lines are necessary, but...
 	CMP	r9,#0
 	BEQ	level1codeFD_over2
@@ -121,13 +121,13 @@ level1_end:
 	LDMFD	r13!,{r2,r4-r11,PC}
 
 level1codeSMALL:
-	LDR	r8,[r13,#(9+1+1)*4]	@ r8 = _table
-	LDR	r9,[r13,#(9+1+3)*4]	@ r9 = _offset1
+	LDR	r8,[r13,#44]		@ r8 = _table (44 = (9+1+1)*4)
+	LDR	r9,[r13,#52]		@ r9 = _offset1 (52 = (9+1+3)*4)
 	MOV	r6,r6,LSL #1		@ r6 = code<<1
 	LDRSH	r8,[r8,r6]		@ tmp2 = _table[code]
 level1codeFC:
 	@ EQ => FC
-	LDREQ	r9,[r13,#(9+1+4)*4]	@ r9 = _offset2
+	LDREQ	r9,[r13,#56]		@ r9 = _offset2 (56 = (9+1+4)*4)
 	MOVEQ	r8,#0
 	SUB	r11,r2,#7		@ r11 = _d_pitch-7
 	ADD	r9,r9,r0		@ tmp2 = _d_dst+_offset
@@ -212,7 +212,7 @@ level2:
 	BEQ	level2codeFE
 level2codeFD:
 	LDRB	r6,[r1],#1		@ r6 = tmp = *_d_src++
-	LDR	r8,[r13,#(9+1+5)*4]	@ r8 = _tableSmall
+	LDR	r8,[r13,#60]		@ r8 = _tableSmall (60 = (9+1+5)*4)
 	@ stall
 	@ stall
 	ADD	r8,r8,r6,LSL #7		@ r8 = _tableSmall + tmp*128
@@ -230,7 +230,7 @@ level2codeFD_loop1:
 	STRB	r6,[r10,r11,LSL #8]	@ *(_d_dst + (*tmp_ptr2++)) = val
 	BGT	level2codeFD_loop1
 level2codeFD_over1:
-	LDRB	r9,[r12,#97-32]		@ r9 = l = tmp_ptr[97]
+	LDRB	r9,[r12,#65]		@ r9 = l = tmp_ptr[97] (65 = 97-32)
 	LDRB	r6,[r1],#1		@ r6 = val = *_d_src++
 	@ I don't really believe the next 2 lines are necessary, but...
 	CMP	r9,#0
@@ -246,13 +246,13 @@ level2codeFD_loop2:
 	MOV	PC,R14
 
 level2codeSMALL:
-	LDR	r8,[r13,#(9+1+1)*4]	@ r8 = _table
-	LDR	r9,[r13,#(9+1+3)*4]	@ r9 = _offset1
+	LDR	r8,[r13,#44]		@ r8 = _table (44 = (9+1+1)*4)
+	LDR	r9,[r13,#52]		@ r9 = _offset1 (52 = (9+1+3)*4)
 	MOV	r6,r6,LSL #1		@ r6 = code<<1
 	LDRSH	r8,[r8,r6]		@ tmp2 = _table[code]
 level2codeFC:
 	@ EQ => FC
-	LDREQ	r9,[r13,#(9+1+4)*4]	@ r9 = _offset2
+	LDREQ	r9,[r13,#56]		@ r9 = _offset2 (56 = (9+1+4)*4)
 	MOVEQ	r8,#0
 	SUB	r11,r2,#3		@ r11 = _d_pitch-3
 	ADD	r9,r9,r0		@ tmp2 = _d_dst + _table[code]
@@ -350,13 +350,13 @@ level3codeFF:
 	MOV	PC,R14
 
 level3codeSMALL:
-	LDR	r8,[r13,#(9+1+1)*4]	@ r8 = _table
-	LDR	r9,[r13,#(9+1+3)*4]	@ r9 = _offset1
+	LDR	r8,[r13,#44]		@ r8 = _table (44 = (9+1+1)*4)
+	LDR	r9,[r13,#52]		@ r9 = _offset1 (52 = (9+1+3)*4)
 	MOV	r6,r6,LSL #1		@ r6 = code<<1
 	LDRSH	r8,[r8,r6]		@ tmp2 = _table[code]
 level3codeFC:
 	@ EQ => FC
-	LDREQ	r9,[r13,#(9+1+4)*4]	@ r9 = _offset2
+	LDREQ	r9,[r13,#56]		@ r9 = _offset2 (56 = (9+1+4)*4)
 	MOVEQ	r8,#0
 	ADD	r9,r9,r0		@ tmp2 = _d_dst+offset
 	ADD	r8,r8,r9		@ tmp2 = _d_dst+_table[code]+_offset

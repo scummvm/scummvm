@@ -29,17 +29,17 @@
 
         .text
 
-        .global ARM_CopyRate_M
-        .global ARM_CopyRate_S
-        .global ARM_CopyRate_R
-        .global ARM_SimpleRate_M
-        .global ARM_SimpleRate_S
-        .global ARM_SimpleRate_R
-        .global ARM_LinearRate_M
-        .global ARM_LinearRate_S
-        .global ARM_LinearRate_R
+        .global _ARM_CopyRate_M
+        .global _ARM_CopyRate_S
+        .global _ARM_CopyRate_R
+        .global _ARM_SimpleRate_M
+        .global _ARM_SimpleRate_S
+        .global _ARM_SimpleRate_R
+        .global _ARM_LinearRate_M
+        .global _ARM_LinearRate_S
+        .global _ARM_LinearRate_R
 
-ARM_CopyRate_M:
+_ARM_CopyRate_M:
         @ r0 = len
         @ r1 = obuf
         @ r2 = vol_l
@@ -59,9 +59,9 @@ CopyRate_M_loop:
         MUL     r5, r3, r5              @ r5 = tmp1*vol_r
 
         ADDS    r6, r4, r6, LSL #16     @ r6 = obuf[0]<<16 + tmp0*vol_l
-        RSCVS   r6, r14,#1<<31          @ Clamp r6
+        RSCVS   r6, r14,#0x80000000     @ Clamp r6
         ADDS    r7, r5, r7, LSL #16     @ r7 = obuf[1]<<16 + tmp1*vol_r
-        RSCVS   r7, r14,#1<<31          @ Clamp r7
+        RSCVS   r7, r14,#0x80000000     @ Clamp r7
 
         MOV     r6, r6, LSR #16         @ Shift back to halfword
         MOV     r7, r7, LSR #16         @ Shift back to halfword
@@ -74,7 +74,7 @@ CopyRate_M_loop:
 
         LDMFD   r13!,{r4-r7,PC}
 
-ARM_CopyRate_S:
+_ARM_CopyRate_S:
         @ r0 = len
         @ r1 = obuf
         @ r2 = vol_l
@@ -95,9 +95,9 @@ CopyRate_S_loop:
         MUL     r5, r3, r5              @ r6 = tmp1*vol_r
 
         ADDS    r6, r4, r6, LSL #16     @ r6 = obuf[0]<<16 + tmp0*vol_l
-        RSCVS   r6, r14,#1<<31          @ Clamp r6
+        RSCVS   r6, r14,#0x80000000     @ Clamp r6
         ADDS    r7, r5, r7, LSL #16     @ r7 = obuf[1]<<16 + tmp1*vol_r
-        RSCVS   r7, r14,#1<<31          @ Clamp r7
+        RSCVS   r7, r14,#0x80000000     @ Clamp r7
 
         MOV     r6, r6, LSR #16         @ Shift back to halfword
         MOV     r7, r7, LSR #16         @ Shift back to halfword
@@ -110,7 +110,7 @@ CopyRate_S_loop:
 
         LDMFD   r13!,{r4-r7,PC}
 
-ARM_CopyRate_R:
+_ARM_CopyRate_R:
         @ r0 = len
         @ r1 = obuf
         @ r2 = vol_l
@@ -131,9 +131,9 @@ CopyRate_R_loop:
         MUL     r5, r3, r5              @ r5 = tmp1*vol_r
 
         ADDS    r6, r4, r6, LSL #16     @ r6 = obuf[0]<<16 + tmp0*vol_l
-        RSCVS   r6, r14,#1<<31          @ Clamp r6
+        RSCVS   r6, r14,#0x80000000     @ Clamp r6
         ADDS    r7, r5, r7, LSL #16     @ r7 = obuf[1]<<16 + tmp1*vol_r
-        RSCVS   r7, r14,#1<<31          @ Clamp r7
+        RSCVS   r7, r14,#0x80000000     @ Clamp r7
 
         MOV     r6, r6, LSR #16         @ Shift back to halfword
         MOV     r7, r7, LSR #16         @ Shift back to halfword
@@ -146,7 +146,7 @@ CopyRate_R_loop:
 
         LDMFD   r13!,{r4-r7,PC}
 
-ARM_SimpleRate_M:
+_ARM_SimpleRate_M:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer
         @ r2 = input->sr
@@ -183,9 +183,9 @@ SimpleRate_M_read_return:
         MUL     r5, r14,r5              @ r5 = tmp1*vol_r
 
         ADDS    r6, r4, r6, LSL #16     @ r6 = obuf[0]<<16 + tmp0*vol_l
-        RSCVS   r6, r10,#1<<31          @ Clamp r6
+        RSCVS   r6, r10,#0x80000000     @ Clamp r6
         ADDS    r7, r5, r7, LSL #16     @ r7 = obuf[1]<<16 + tmp1*vol_r
-        RSCVS   r7, r10,#1<<31          @ Clamp r7
+        RSCVS   r7, r10,#0x80000000     @ Clamp r7
 
         MOV     r6, r6, LSR #16         @ Shift back to halfword
         MOV     r7, r7, LSR #16         @ Shift back to halfword
@@ -201,7 +201,7 @@ SimpleRate_M_end:
         STMIA   r14,{r0,r1,r2}          @ Store back updated values
         LDMFD   r13!,{r4-r8,r10-r11,PC}
 SimpleRate_M_read:
-        LDR     r0, [r13,#4*2]          @ r0 = sr
+        LDR     r0, [r13,#8]            @ r0 = sr (8 = 4*2)
         ADD     r0, r0, #16             @ r0 = inPtr = inBuf
  .ifdef PALMOS_MODE
 	LDR	r10,[r13,#4*8]		@ restore r10
@@ -209,14 +209,14 @@ SimpleRate_M_read:
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
-        LDR     r0, [r13,#4*5]          @ r0 = AudioStream & input
+        LDR     r0, [r13,#20]          @ r0 = AudioStream & input (20 = 4*5)
         MOV     r2, #512                @ r2 = ARRAYSIZE(inBuf)
 
         @ Calling back into C++ here. WinCE is fairly easy about such things
         @ but other OS are more awkward. r9 is preserved for Symbian, and
         @ we have 3+8+5 = 16 things on the stack (an even number).
         MOV     r14,PC
-        LDR     PC,[r13,#4*6]           @ inLen = input.readBuffer(inBuf,512)
+        LDR     PC,[r13,#24]           @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
         SUBS    r1, r0, #1              @ r1 = inLen-1
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     SimpleRate_M_end
@@ -229,7 +229,7 @@ SimpleRate_M_read:
         B       SimpleRate_M_read_return
 
 
-ARM_SimpleRate_S:
+_ARM_SimpleRate_S:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer
         @ r2 = input->sr
@@ -267,9 +267,9 @@ SimpleRate_S_read_return:
         MUL     r5, r14,r5              @ r6 = tmp1*vol_r
 
         ADDS    r6, r4, r6, LSL #16     @ r6 = obuf[0]<<16 + tmp0*vol_l
-        RSCVS   r6, r10,#1<<31          @ Clamp r6
+        RSCVS   r6, r10,#0x80000000     @ Clamp r6
         ADDS    r7, r5, r7, LSL #16     @ r7 = obuf[1]<<16 + tmp1*vol_r
-        RSCVS   r7, r10,#1<<31          @ Clamp r7
+        RSCVS   r7, r10,#0x80000000     @ Clamp r7
 
         MOV     r6, r6, LSR #16         @ Shift back to halfword
         MOV     r7, r7, LSR #16         @ Shift back to halfword
@@ -285,21 +285,21 @@ SimpleRate_S_end:
         STMIA   r14,{r0,r1,r2}          @ store back updated values
         LDMFD   r13!,{r4-r8,r10-r11,PC}
 SimpleRate_S_read:
-        LDR     r0, [r13,#4*2]          @ r0 = sr
+        LDR     r0, [r13,#8]            @ r0 = sr (8 = 4*2)
         ADD     r0, r0, #16             @ r0 = inPtr = inBuf
  .ifdef PALMOS_MODE
 	LDR	r10,[r13,#4*8]		@ restore r10
  .endif
         STMFD   r13!,{r0,r2-r3,r12,r14}
         MOV     r1, r0                  @ r1 = inBuf
-        LDR     r0, [r13,#4*5]          @ r0 = AudioStream & input
+        LDR     r0, [r13,#20]           @ r0 = AudioStream & input (20 = 4*5)
         MOV     r2, #512                @ r2 = ARRAYSIZE(inBuf)
 
         @ Calling back into C++ here. WinCE is fairly easy about such things
         @ but other OS are more awkward. r9 is preserved for Symbian, and
         @ we have 3+8+5 = 16 things on the stack (an even number).
         MOV     r14,PC
-        LDR     PC,[r13,#4*6]           @ inLen = input.readBuffer(inBuf,512)
+        LDR     PC,[r13,#24]            @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
         SUBS    r1, r0, #2              @ r1 = inLen-2
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     SimpleRate_S_end
@@ -313,7 +313,7 @@ SimpleRate_S_read:
 
 
 
-ARM_SimpleRate_R:
+_ARM_SimpleRate_R:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer
         @ r2 = input->sr
@@ -351,9 +351,9 @@ SimpleRate_R_read_return:
         MUL     r5, r14,r5              @ r6 = tmp1*vol_r
 
         ADDS    r6, r4, r6, LSL #16     @ r6 = obuf[0]<<16 + tmp0*vol_l
-        RSCVS   r6, r10,#1<<31          @ Clamp r6
+        RSCVS   r6, r10,#0x80000000     @ Clamp r6
         ADDS    r7, r5, r7, LSL #16     @ r7 = obuf[1]<<16 + tmp1*vol_r
-        RSCVS   r7, r10,#1<<31          @ Clamp r7
+        RSCVS   r7, r10,#0x80000000     @ Clamp r7
 
         MOV     r6, r6, LSR #16         @ Shift back to halfword
         MOV     r7, r7, LSR #16         @ Shift back to halfword
@@ -369,7 +369,7 @@ SimpleRate_R_end:
         STMIA   r14,{r0,r1,r2}          @ Store back updated values
         LDMFD   r13!,{r4-r8,r10-r11,PC}
 SimpleRate_R_read:
-        LDR     r0, [r13,#4*2]          @ r0 = sr
+        LDR     r0, [r13,#8]            @ r0 = sr (8 = 4*2)
         ADD     r0, r0, #16             @ r0 = inPtr = inBuf
  .ifdef PALMOS_MODE
 	LDR	r10,[r13,#4*8]		@ restore r10
@@ -377,14 +377,14 @@ SimpleRate_R_read:
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
-        LDR     r0, [r13,#4*5]          @ r0 = AudioStream & input
+        LDR     r0, [r13,#20]           @ r0 = AudioStream & input (20 = 4*5)
         MOV     r2, #512                @ r2 = ARRAYSIZE(inBuf)
 
         @ Calling back into C++ here. WinCE is fairly easy about such things
         @ but other OS are more awkward. r9 is preserved for Symbian, and
         @ we have 3+8+5 = 16 things on the stack (an even number).
         MOV     r14,PC
-        LDR     PC,[r13,#4*6]           @ inLen = input.readBuffer(inBuf,512)
+        LDR     PC,[r13,#24]            @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
         SUBS    r1, r0, #2              @ r1 = inLen-2
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     SimpleRate_R_end
@@ -397,7 +397,7 @@ SimpleRate_R_read:
         B       SimpleRate_R_read_return
 
 
-ARM_LinearRate_M:
+_ARM_LinearRate_M:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer
         @ r2 = input->sr
@@ -450,9 +450,9 @@ LinearRate_M_part2:
         MUL     r6, r14,r6              @ r6 = tmp1*vol_r
 
         ADDS    r7, r7, r4, LSL #16     @ r7 = obuf[0]<<16 + tmp0*vol_l
-        RSCVS   r7, r10, #1<<31         @ Clamp r7
+        RSCVS   r7, r10, #0x80000000    @ Clamp r7
         ADDS    r6, r6, r5, LSL #16     @ r6 = obuf[1]<<16 + tmp1*vol_r
-        RSCVS   r6, r10, #1<<31         @ Clamp r6
+        RSCVS   r6, r10, #0x80000000    @ Clamp r6
 
         MOV     r7, r7, LSR #16         @ Shift back to halfword
         MOV     r6, r6, LSR #16         @ Shift back to halfword
@@ -478,14 +478,14 @@ LinearRate_M_read:
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
-        LDR     r0, [r13,#4*5]          @ r0 = AudioStream & input
+        LDR     r0, [r13,#20]           @ r0 = AudioStream & input (20 = 4*5)
         MOV     r2, #512                @ r2 = ARRAYSIZE(inBuf)
 
         @ Calling back into C++ here. WinCE is fairly easy about such things
         @ but other OS are more awkward. r9 is preserved for Symbian, and
         @ we have 2+9+5 = 16 things on the stack (an even number).
         MOV     r14,PC
-        LDR     PC,[r13,#4*6]           @ inLen = input.readBuffer(inBuf,512)
+        LDR     PC,[r13,#24]           @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
         SUBS    r1, r0, #1              @ r1 = inLen-1
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     LinearRate_M_end
@@ -494,7 +494,7 @@ LinearRate_M_read:
  .endif
         B       LinearRate_M_read_return
 
-ARM_LinearRate_S:
+_ARM_LinearRate_S:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer
         @ r2 = input->sr
@@ -557,9 +557,9 @@ LinearRate_S_part2:
 
         ADDS    r7, r7, r10, LSL #16    @ r7 = obuf[0]<<16 + tmp0*vol_l
         MOV     r4, #0
-        RSCVS   r7, r4, #1<<31          @ Clamp r7
+        RSCVS   r7, r4, #0x80000000     @ Clamp r7
         ADDS    r6, r6, r5, LSL #16     @ r6 = obuf[1]<<16 + tmp1*vol_r
-        RSCVS   r6, r4, #1<<31          @ Clamp r6
+        RSCVS   r6, r4, #0x80000000     @ Clamp r6
 
         MOV     r7, r7, LSR #16         @ Shift back to halfword
         MOV     r6, r6, LSR #16         @ Shift back to halfword
@@ -585,20 +585,20 @@ LinearRate_S_read:
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
-        LDR     r0, [r13,#4*5]          @ r0 = AudioStream & input
+        LDR     r0, [r13,#20]          @ r0 = AudioStream & input (20 = 4*5)
         MOV     r2, #512                @ r2 = ARRAYSIZE(inBuf)
 
         @ Calling back into C++ here. WinCE is fairly easy about such things
         @ but other OS are more awkward. r9 is preserved for Symbian, and
         @ we have 2+9+5 = 16 things on the stack (an even number).
         MOV     r14,PC
-        LDR     PC,[r13,#4*6]           @ inLen = input.readBuffer(inBuf,512)
+        LDR     PC,[r13,#24]           @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
         SUBS    r1, r0, #2              @ r1 = inLen-2
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     LinearRate_S_end
         B       LinearRate_S_read_return
 
-ARM_LinearRate_R:
+_ARM_LinearRate_R:
         @ r0 = AudioStream &input
         @ r1 = input.readBuffer
         @ r2 = input->sr
@@ -661,9 +661,9 @@ LinearRate_R_part2:
 
         ADDS    r7, r7, r10, LSL #16    @ r7 = obuf[0]<<16 + tmp0*vol_l
         MOV     r4, #0
-        RSCVS   r7, r4, #1<<31          @ Clamp r7
+        RSCVS   r7, r4, #0x80000000     @ Clamp r7
         ADDS    r6, r6, r5, LSL #16     @ r6 = obuf[1]<<16 + tmp1*vol_r
-        RSCVS   r6, r4, #1<<31          @ Clamp r6
+        RSCVS   r6, r4, #0x80000000     @ Clamp r6
 
         MOV     r7, r7, LSR #16         @ Shift back to halfword
         MOV     r6, r6, LSR #16         @ Shift back to halfword
@@ -689,14 +689,14 @@ LinearRate_R_read:
         STMFD   r13!,{r0,r2-r3,r12,r14}
 
         MOV     r1, r0                  @ r1 = inBuf
-        LDR     r0, [r13,#4*5]          @ r0 = AudioStream & input
+        LDR     r0, [r13,#20]          @ r0 = AudioStream & input (20 = 4*5)
         MOV     r2, #512                @ r2 = ARRAYSIZE(inBuf)
 
         @ Calling back into C++ here. WinCE is fairly easy about such things
         @ but other OS are more awkward. r9 is preserved for Symbian, and
         @ we have 2+9+5 = 16 things on the stack (an even number).
         MOV     r14,PC
-        LDR     PC,[r13,#4*6]           @ inLen = input.readBuffer(inBuf,512)
+        LDR     PC,[r13,#24]           @ inLen = input.readBuffer(inBuf,512) (24 = 4*6)
         SUBS    r1, r0, #2              @ r1 = inLen-2
         LDMFD   r13!,{r0,r2-r3,r12,r14}
         BLT     LinearRate_R_end
