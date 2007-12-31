@@ -23,6 +23,7 @@
  *
  */
 
+#include "lure/lure.h"
 #include "lure/intro.h"
 #include "lure/animseq.h"
 #include "lure/events.h"
@@ -54,15 +55,20 @@ static const AnimRecord anim_screens[] = {
 
 bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize) {
 	Events &events = Events::getReference();
+	bool isEGA = LureEngine::getReference().isEGA();
 	_screen.screen().loadScreen(screenId);
 	_screen.update();
 	Palette p(paletteId);
-	_screen.paletteFadeIn(&p);
+	
+	if (isEGA) _screen.setPalette(&p);
+	else _screen.paletteFadeIn(&p);
 	
 	bool result = interruptableDelay(delaySize);
 	if (events.quitFlag) return true;
 
-	_screen.paletteFadeOut();
+	if (!isEGA)
+		_screen.paletteFadeOut();
+
 	return result;
 }
 
