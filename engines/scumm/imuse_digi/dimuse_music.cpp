@@ -182,9 +182,9 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 			if ((!sequence) && (table->attribPos != 0) &&
 					(table->attribPos == _digStateMusicTable[_curMusicState].attribPos)) {
 				startMusic(table->filename, table->soundId, 0, 127);
-				return;
+			} else {
+				startMusic(table->filename, table->soundId, hookId, 127);
 			}
-			startMusic(table->filename, table->soundId, hookId, 127);
 			break;
 	}
 }
@@ -227,7 +227,7 @@ void IMuseDigital::setComiMusicState(int stateId) {
 void IMuseDigital::setComiMusicSequence(int seqId) {
 	int l, num = -1;
 	
-	// FIXME: It turns out that setDigMusicSequence and setComiMusicSequence arae
+	// FIXME: It turns out that setDigMusicSequence and setComiMusicSequence are
 	// very similiar, with only a few small differences. Question: are those differences
 	// really differences, or just caused by a mistake on our side?
 
@@ -326,9 +326,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 			if ((!sequence) && (table->attribPos != 0) &&
 					(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
 				startMusic(table->filename, table->soundId, 0, 127);
-				return;
-			}
-			if (table->transitionType == 12) {
+			} else if (table->transitionType == 12) {
 				startMusic(table->filename, table->soundId, table->hookId, 127);
 			} else {
 				startMusic(table->filename, table->soundId, hookId, 127);
