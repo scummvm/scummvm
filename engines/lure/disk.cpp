@@ -70,11 +70,13 @@ uint8 Disk::indexOf(uint16 id, bool suppressError) {
 	if (_fileNum == 0)
 		error("Could not find entry Id #%d in file %s", id, SUPPORT_FILENAME);
 	else
-		error("Could not find entry Id #%d in file disk%d.vga", id, _fileNum);
+		error("Could not find entry Id #%d in file disk%d.%s", id, _fileNum,
+			LureEngine::getReference().isEGA() ? "ega" : "vga");
 }
 
 void Disk::openFile(uint8 fileNum) {
 	// Validate that the file number is correct
+	bool isEGA = LureEngine::getReference().isEGA();
 	if (fileNum > 4)
 		error("Invalid file number specified - %d", fileNum);
 
@@ -92,7 +94,7 @@ void Disk::openFile(uint8 fileNum) {
 	if (_fileNum == 0)
 		strcpy(sFilename, SUPPORT_FILENAME);
 	else
-		sprintf(sFilename, "disk%d.vga", _fileNum);
+		sprintf(sFilename, "disk%d.%s", _fileNum, isEGA ? "ega" : "vga");
 
 	_fileHandle->open(sFilename);
 	if (!_fileHandle->isOpen())
@@ -137,7 +139,7 @@ void Disk::openFile(uint8 fileNum) {
 		error("The file %s was not a valid VGA file", sFilename);
 
 	uint16 fileFileNum = _fileHandle->readUint16BE();
-	if (fileFileNum != _fileNum)
+	if ((fileFileNum != 0) && (fileFileNum != (isEGA ? _fileNum + 4 : _fileNum)))
 		error("The file %s was not the correct file number", sFilename);
 
 	// Read in the header entries
