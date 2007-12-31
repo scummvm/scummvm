@@ -24,6 +24,7 @@
  */
 
 #include "lure/decode.h"
+#include "lure/lure.h"
 #include "lure/memory.h"
 #include "lure/luredefs.h"
 #include "common/endian.h"
@@ -50,13 +51,20 @@ void PictureDecoder::writeBytes(MemoryBlock *dest, byte v, uint16 numBytes) {
 }
 
 byte PictureDecoder::DSSI(bool incr) {
-	byte result = dataIn[dataPos];
+	if (dataPos > dataIn->size())
+		error("PictureDecoder went beyond end of source data");
+
+	byte result = (dataPos == dataIn->size()) ? 0 :
+		dataIn->data()[dataPos];
 	if (incr) ++dataPos;
 	return result;
 }
 
 byte PictureDecoder::ESBX(bool incr) {
-	byte result = dataIn[dataPos2];
+	if (dataPos2 >= dataIn->size())
+		error("PictureDecoder went beyond end of source data");
+
+	byte result = dataIn->data()[dataPos2];
 	if (incr) ++dataPos2;
 	return result;
 }
@@ -75,21 +83,146 @@ bool PictureDecoder::shlCarry() {
 	return result;
 }
 
-void PictureDecoder::swap(uint16 &v1, uint16 &v2) {
-	uint16 vTemp;
-	vTemp = v1; 
-	v1 = v2;
-	v2 = vTemp;
-}
-
-// decode_data
-// Takes care of decoding compressed Lure of the Temptress data
+// decode
+// Decodes a compressed Lure of the Temptress screen
 
 MemoryBlock *PictureDecoder::decode(MemoryBlock *src, uint32 maxOutputSize) {
+	bool isEGA = LureEngine::getReference().isEGA();
+	return isEGA ? egaDecode(src, maxOutputSize) : vgaDecode(src, maxOutputSize);
+}
+
+// egaDecode
+// Takes care of decoding a compressed EGA screen
+
+#define READ_BIT_DX { bitFlag = (dx & 0x8000) != 0; dx <<= 1; if (--bitCtr == 0) { dx = (dx & 0xff00) | DSSI(); bitCtr = 8; } }
+#define READ_BITS(loops) for (int ctr = 0; ctr < loops; ++ctr) READ_BIT_DX
+
+MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
+	MemoryBlock *dest = Memory::allocate(maxOutputSize);
+	byte popTable[32 + 128];
+	uint8 al;
+	bool bitFlag;
+
+	// Set up initial states
+	dataIn = src;
+	dataPos = 6;
+
+	uint16 dx = READ_BE_UINT16(src->data() + dataPos);
+	dataPos += sizeof(uint16);
+	int bitCtr = 8;
+	
+	// Decode the colour popularity table
+
+	for (int nibbleCtr = 0; nibbleCtr < 32; ++nibbleCtr) {
+		for (int byteCtr = 0; byteCtr < 128; byteCtr += 32) {
+			popTable[nibbleCtr + byteCtr] = dx >> 11;
+			READ_BITS(5);
+		}
+	}
+
+	// ok, on to the real thing
+
+	outputOffset = 0;
+	al = dx >> 11;
+	writeByte(dest, al);
+	READ_BITS(5);
+
+	uint16 tableOffset = al;
+	uint8 v = 0;
+
+	for (;;) {
+		READ_BIT_DX
+
+		if (!bitFlag) {
+			// Get the favourite colour
+			v = popTable[tableOffset];
+
+		} else {
+
+			READ_BIT_DX
+
+			if (bitFlag) {
+				// Get another bit
+				READ_BIT_DX
+
+				if (bitFlag) {
+					// We have no favourite. Could this be a repeat?
+					al = dx >> 11;
+					READ_BITS(5);
+
+					if (al == popTable[tableOffset]) {
+						// Repeat 16 bits
+						uint16 numLoops = dx & 0xff00;
+						READ_BITS(8);
+						numLoops |= (dx >> 8);
+						READ_BITS(8);
+
+						if (numLoops == 0)
+							// Finished decoding
+							break;
+						writeBytes(dest, al, numLoops);
+						continue;
+
+					} else if (al == popTable[tableOffset + 32]) {
+						// Repeat 8 bits
+						writeBytes(dest, tableOffset, dx >> 8);
+						READ_BITS(8);
+						continue;
+
+					} else if (al == popTable[tableOffset + 64]) {
+						// Repeat 6 bits
+						writeBytes(dest, tableOffset, dx >> 10);
+						READ_BITS(6);
+						continue;
+
+					} else if (al == popTable[tableOffset + 96]) {
+						// Repeat 5 bits
+						writeBytes(dest, tableOffset, dx >> 11);
+						READ_BITS(5);
+						continue;
+	
+					} else {
+						// It's a new colour
+						v = al;
+					}
+
+				} else {
+					// Fourth favourite
+					v = popTable[tableOffset + 96];
+				}
+
+			} else {
+				// Get another bit
+				READ_BIT_DX
+
+				if (bitFlag) {
+					// Third favourite
+					v = popTable[tableOffset + 64];
+				} else {
+					// Second favourite
+					v = popTable[tableOffset + 32];
+				}
+			}
+		}
+
+		tableOffset = v;
+		writeByte(dest, v);
+	}
+
+	// Resize the output to be the number of outputed bytes and return it
+	if (outputOffset < dest->size()) dest->reallocate(outputOffset);
+
+	return dest;
+}
+
+// vgaDecode
+// Takes care of decoding a compressed vga screen
+
+MemoryBlock *PictureDecoder::vgaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 	MemoryBlock *dest = Memory::allocate(maxOutputSize);
 
 	// Set up initial states
-	dataIn = src->data();
+	dataIn = src;
 	outputOffset = 0;
 	dataPos = READ_LE_UINT32(dataIn + 0x400);
 	dataPos2 = 0x404;
@@ -107,7 +240,7 @@ Loc755:
 	if (shlCarry()) goto Loc761;
 	decrCtr();
 	if (shlCarry()) goto Loc759;
-	AL = dataIn[BP];
+	AL = dataIn->data()[BP];
 
 Loc758:
 	writeByte(dest, AL);
@@ -128,17 +261,17 @@ Loc761:
 	decrCtr();
 
 	if (shlCarry()) goto Loc764;
-	AL = dataIn[BP+1];
+	AL = dataIn->data()[BP+1];
 	goto Loc758;
 
 Loc764:
-	AL = dataIn[BP+2];
+	AL = dataIn->data()[BP+2];
 	goto Loc758;
 
 Loc765:
 	decrCtr();
 	if (shlCarry()) goto Loc767;
-	AL = dataIn[BP+3];
+	AL = dataIn->data()[BP+3];
 	goto Loc758;
 
 Loc767:

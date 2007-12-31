@@ -34,7 +34,7 @@ namespace Lure {
 
 class PictureDecoder {
 private:
-	byte *dataIn;
+	MemoryBlock *dataIn;
 	uint32 BP;
 	uint32 dataPos, dataPos2;
 	uint32 outputOffset;
@@ -47,9 +47,11 @@ private:
 	byte ESBX(bool incr = true);
 	void decrCtr();
 	bool shlCarry();
-	void swap(uint16 &v1, uint16 &v2);
+
+	MemoryBlock *egaDecode(MemoryBlock *src, uint32 maxOutputSize);
+	MemoryBlock *vgaDecode(MemoryBlock *src, uint32 maxOutputSize);
 public:
-	MemoryBlock *decode(MemoryBlock *src, uint32 maxOutputSize = SCREEN_SIZE);
+	MemoryBlock *decode(MemoryBlock *src, uint32 maxOutputSize  = SCREEN_SIZE + 1);
 };
 
 class AnimationDecoder {
