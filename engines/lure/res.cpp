@@ -105,6 +105,7 @@ void Resources::reset() {
 
 void Resources::reloadData() {
 	Disk &d = Disk::getReference();
+	bool isEGA = LureEngine::getReference().isEGA();
 	MemoryBlock *mb, *paths;
 	uint16 *offset, offsetVal;
 	uint16 recordId, startOffset;
@@ -112,7 +113,7 @@ void Resources::reloadData() {
 	uint16 *v;
 
 	// Get the palette subset data
-	_paletteSubset = new Palette(ALT_PALETTE_RESOURCE_ID);
+	_paletteSubset = isEGA ? NULL : new Palette(ALT_PALETTE_RESOURCE_ID);
 
 	// Load room data 
 	mb = d.getEntry(ROOM_DATA_RESOURCE_ID);

@@ -41,7 +41,7 @@ Screen &Screen::getReference() {
 Screen::Screen(OSystem &system): _system(system), 
 		_screen(new Surface(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT)), 
 		_disk(Disk::getReference()),
-		_palette(new Palette(GAME_PALETTE_RESOURCE_ID)) {
+		_palette(new Palette(GAME_PALETTE_RESOURCE_ID, RGB64)) {
 	int_disk = this;
 	_screen->empty();
 	_system.setPalette(_palette->data(), 0, GAME_COLOURS);

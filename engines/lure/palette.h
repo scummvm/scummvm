@@ -32,19 +32,20 @@
 
 namespace Lure {
 
-enum PaletteSource {RGB, RGB64};
+enum PaletteSource {DEFAULT, RGB, RGB64, EGA};
 
 class Palette {
 private:
 	MemoryBlock *_palette;
 	uint16 _numEntries;
 
-	void convertPalette(const byte *palette, uint16 numEntries);
+	void convertRgb64Palette(const byte *srcPalette, uint16 srcNumEntries);
+	void convertEGAPalette(const byte *srcPalette);
 public:
 	Palette();
 	Palette(uint8 numEntries, const byte *data, PaletteSource paletteSource);
 	Palette(Palette &src);
-	Palette(uint16 resourceId);
+	Palette(uint16 resourceId, PaletteSource paletteSource = DEFAULT);
 
 	uint8 *data() { return _palette->data(); }
 	MemoryBlock *palette() { return _palette; }

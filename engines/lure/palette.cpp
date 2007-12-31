@@ -23,6 +23,7 @@
  *
  */
 
+#include "lure/lure.h"
 #include "lure/palette.h"
 #include "common/util.h"
 
@@ -40,15 +41,19 @@ Palette::Palette() {
 // Consructor
 // Sets up a palette with the given number of entries and a copy of the passed data
 
-Palette::Palette(uint8 numEntries1, const byte *data1, PaletteSource paletteSource) {
-	_numEntries = numEntries1;
+Palette::Palette(uint8 srcNumEntries, const byte *srcData, PaletteSource paletteSource) {
+	_numEntries = srcNumEntries;
 	_palette = Memory::allocate(_numEntries * 4);
 
-	if (data1) {
+	if (srcData) {
 		if (paletteSource == RGB64) 
-			convertPalette(data1, _numEntries);
-		else
-			_palette->copyFrom(data1, 0, 0, _numEntries * 4);
+			convertRgb64Palette(srcData, _numEntries);
+		else if (paletteSource == EGA) {
+			assert((srcNumEntries == 16) || (srcNumEntries == 17));
+			convertEGAPalette(srcData);
+		} else
+			_palette->copyFrom(srcData, 0, 0, _numEntries * 4);
+
 	} else {
 		// No data provided, set a null palette
 		_palette->empty();
@@ -66,29 +71,63 @@ Palette::Palette(Palette &src) {
 // Constructor
 // Loads a palette from a resource
 
-Palette::Palette(uint16 resourceId) {
-	Disk &d = Disk::getReference();
+Palette::Palette(uint16 resourceId, PaletteSource paletteSource) {
+	Disk &disk = Disk::getReference();
+	bool isEGA = LureEngine::getReference().isEGA();
+	MemoryBlock *srcData = disk.getEntry(resourceId); 
 
-	MemoryBlock *srcData = d.getEntry(resourceId); 
-	if (((srcData->size() % 3) != 0) || ((srcData->size() / 3) > GAME_COLOURS))
-		error("Specified resource %d is not a palette", resourceId);
+	if (paletteSource == DEFAULT)
+		paletteSource = isEGA ? EGA : RGB64;
 
-	_numEntries = srcData->size() / 3;
-	_palette = Memory::allocate(_numEntries * 4);
-	convertPalette(srcData->data(), _numEntries);
+	switch (paletteSource) {
+	case EGA:
+		// Handle EGA palette
+		if ((srcData->size() != 16) && (srcData->size() != 17))
+			error("Specified resource %d is not a palette", resourceId);
+		
+		_numEntries = 16;
+		_palette = Memory::allocate(_numEntries * 4);
+		convertEGAPalette(srcData->data());
+		break;
+
+	case RGB64:
+		if (((srcData->size() % 3) != 0) || ((srcData->size() / 3) > GAME_COLOURS))
+			error("Specified resource %d is not a palette", resourceId);
+
+		_numEntries = srcData->size() / 3;
+		_palette = Memory::allocate(_numEntries * 4);
+		convertRgb64Palette(srcData->data(), _numEntries);
+		break;
+
+	default:
+		error("Invalid palette type specified for palette resource");
+	}
+
 	delete srcData;
 }
 
-void Palette::convertPalette(const byte *palette1, uint16 numEntries1) {
+void Palette::convertRgb64Palette(const byte *srcPalette, uint16 srcNumEntries) {
 	byte *pDest = _palette->data();
-	const byte *pSrc = palette1;
+	const byte *pSrc = srcPalette;
 
-	while (numEntries1-- > 0) {
+	while (srcNumEntries-- > 0) {
 		*pDest++ = (pSrc[0] << 2) + (pSrc[0] >> 4);
 		*pDest++ = (pSrc[1] << 2) + (pSrc[1] >> 4);
 		*pDest++ = (pSrc[2] << 2) + (pSrc[2] >> 4);
 		*pDest++ = 0;
 		pSrc += 3;
+	}
+}
+
+void Palette::convertEGAPalette(const byte *srcPalette) {
+	byte *pDest = _palette->data();
+	const byte *pSrc = srcPalette;
+
+	for (int index = 0; index < 16; ++index, ++pSrc) {
+		*pDest++ = (((*pSrc >> 5) & 1) | ((*pSrc >> 1) & 2)) * 0x55;
+		*pDest++ = (((*pSrc >> 4) & 1) | (*pSrc & 2)) * 0x55;
+		*pDest++ = (((*pSrc >> 3) & 1) | ((*pSrc << 1) & 2)) * 0x55;
+		*pDest++ = 0;
 	}
 }
 
@@ -134,7 +173,6 @@ PaletteCollection::~PaletteCollection() {
 		delete _palettes[paletteCtr];
 	free(_palettes);
 }
-
 
 Palette &PaletteCollection::getPalette(uint8 paletteNum) {
 	if (paletteNum >= _numPalettes)
