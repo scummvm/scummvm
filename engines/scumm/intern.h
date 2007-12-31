@@ -866,9 +866,6 @@ protected:
 	Insane *_insane;
 
 public:
-	/** This flag tells IMuseDigital that INSANE is running. */
-	bool _insaneRunning;	// Used by IMuseDigital::flushTracks()
-
 	SmushMixer *_smixer;
 	SmushPlayer *_splayer;
 

@@ -2547,10 +2547,8 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 				const int insaneVarNum = ((_game.features & GF_DEMO) && (_game.platform == Common::kPlatformPC))
 					? 232 : 233;
 
-				_insaneRunning = true;
 				_insane->setSmushParams(_smushFrameRate);
 				_insane->runScene(insaneVarNum);
-				_insaneRunning = false;
 			}
 		}
 		break;
