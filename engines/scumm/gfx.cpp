@@ -482,6 +482,12 @@ void ScummEngine_v6::drawDirtyScreenParts() {
 	if (_game.version >= 7 && VAR(VAR_BLAST_ABOVE_TEXT) == 1) {
 		drawBlastTexts();
 		drawBlastObjects();
+		if (_game.version == 8) {
+			// Does this case ever happen? We need to draw the
+			// actor over the blast object, so we're forced to
+			// also draw it over the subtitles.
+			processUpperActors();
+		}
 	} else {
 		drawBlastObjects();
 		if (_game.version == 8) {
