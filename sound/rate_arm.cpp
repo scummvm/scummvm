@@ -129,6 +129,14 @@ SimpleRateConverter<stereo, reverseStereo>::SimpleRateConverter(st_rate_t inrate
 	sr.inLen = 0;
 }
 
+extern "C" {
+#ifndef IPHONE
+#define ARM_SimpleRate_M _ARM_SimpleRate_M
+#define ARM_SimpleRate_S _ARM_SimpleRate_S
+#define ARM_SimpleRate_R _ARM_SimpleRate_R
+#endif
+}
+
 extern "C" void ARM_SimpleRate_M(AudioStream       &input,
                                  int (*fn)(Audio::AudioStream&,int16*,int),
                                  SimpleRateDetails *sr,
@@ -219,6 +227,14 @@ typedef struct {
 
 	st_sample_t inBuf[INTERMEDIATE_BUFFER_SIZE];
 } LinearRateDetails;
+
+extern "C" {
+#ifndef IPHONE
+#define ARM_LinearRate_M _ARM_LinearRate_M
+#define ARM_LinearRate_S _ARM_LinearRate_S
+#define ARM_LinearRate_R _ARM_LinearRate_R
+#endif
+}
 
 extern "C" void ARM_LinearRate_M(AudioStream       &input,
                                  int (*fn)(Audio::AudioStream&,int16*,int),
@@ -323,6 +339,14 @@ fflush(stderr);
 /**
  * Simple audio rate converter for the case that the inrate equals the outrate.
  */
+extern "C" {
+#ifndef IPHONE
+#define ARM_CopyRate_M _ARM_CopyRate_M
+#define ARM_CopyRate_S _ARM_CopyRate_S
+#define ARM_CopyRate_R _ARM_CopyRate_R
+#endif
+}
+
 extern "C" void ARM_CopyRate_M(st_size_t    len,
                                st_sample_t *obuf,
                                st_volume_t  vol_l,
@@ -359,7 +383,6 @@ public:
 fprintf(stderr, "Copy st=%d rev=%d\n", stereo, reverseStereo);
 fflush(stderr);
 #endif
-		st_sample_t *ptr;
 		st_size_t len;
 
 		if (stereo)
