@@ -886,7 +886,6 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	_smushFrameRate = 0;
 	_smushVideoShouldFinish = false;
 	_smushActive = false;
-	_insaneRunning = false;
 	_smixer = NULL;
 	_splayer = NULL;
 
