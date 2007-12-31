@@ -159,7 +159,7 @@ static const Common::ADParams detectionParams = {
 	// Fallback callback
 	0,
 	// Flags
-	Common::kADFlagAugmentPreferredTarget
+	Common::kADFlagAugmentPreferredTarget | Common::kADFlagUseExtraAsHint
 };
 
 static bool Engine_LURE_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
