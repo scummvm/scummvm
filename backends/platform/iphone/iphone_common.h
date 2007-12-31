@@ -35,6 +35,12 @@ enum InputEvent {
 	kInputApplicationResumed
 };
 
+enum ScreenOrientation {
+	kScreenOrientationPortrait,
+	kScreenOrientationLandscape,
+	kScreenOrientationFlippedLandscape
+};
+
 // We need this to be able to call functions from/in Objective-C.
 #ifdef  __cplusplus
 extern "C" {

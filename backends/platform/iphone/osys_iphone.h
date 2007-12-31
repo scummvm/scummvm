@@ -26,6 +26,7 @@
 #ifdef IPHONE_BACKEND
 
 #include "graphics/surface.h"
+#include "iphone_common.h"
 
 #define AUDIO_BUFFERS 3
 #define WAVE_BUFFER_SIZE 8192
@@ -89,7 +90,7 @@ protected:
 	TimerProc _timerCallback;
 
 	Common::Array<Common::Rect> _dirtyRects;
-	bool _landscapeMode;
+	ScreenOrientation _screenOrientation;
 	bool _fullScreenIsDirty;
 
 public:
@@ -155,7 +156,7 @@ public:
 	
 protected:
 	inline void addDirtyRect(int16 x1, int16 y1, int16 w, int16 h);
-	template <bool landscapeMode> void internUpdateScreen();
+	void internUpdateScreen();
 	void dirtyMouseCursor();
 	void dirtyFullScreen();
 	void clipRectToScreen(int16 &x, int16 &y, int16 &w, int16 &h);
