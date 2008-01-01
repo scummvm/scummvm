@@ -122,6 +122,11 @@ enum Action {
 // Palette colour increment amouns for palette fade in/outs
 #define PALETTE_FADE_INC_SIZE 4
 
+// EGA constants 
+#define EGA_PALETTE_SIZE 16
+#define EGA_NUM_LAYERS 4
+#define EGA_PIXELS_PER_BYTE 8
+
 // Palette and animation for Skorl catching player
 #define SKORL_CATCH_PALETTE_ID 0x4060
 #define SKORL_CATCH_ANIM_ID 0x4061
