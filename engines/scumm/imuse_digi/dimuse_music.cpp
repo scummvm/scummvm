@@ -318,13 +318,15 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 				fadeOutMusic(60);
 				return;
 			}
-			fadeOutMusic(table->fadeOutDelay);
 			if ((!sequence) && (table->attribPos != 0) &&
 					(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
+				fadeOutMusic(120); // expiremental fadeDelay 120 instead from table
 				startMusic(table->filename, table->soundId, 0, 127);
 			} else if (table->transitionType == 12) {
+				fadeOutMusic(table->fadeOutDelay);
 				startMusic(table->filename, table->soundId, table->hookId, 127);
 			} else {
+				fadeOutMusic(table->fadeOutDelay);
 				startMusic(table->filename, table->soundId, hookId, 127);
 			}
 			break;
