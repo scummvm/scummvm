@@ -1722,6 +1722,10 @@ int ScummEngine::getTalkspeed() {
 #pragma mark --- Main loop ---
 #pragma mark -
 
+enum {
+	kTickDuration = 15	// Corresponds to a tick frequency of 1000/15 = 66.6 Hz
+};
+
 int ScummEngine::go() {
 	_engineStartTime = _system->getMillis() / 1000;
 
@@ -1746,7 +1750,7 @@ int ScummEngine::go() {
 		_rnd.getRandomNumber(2);
 
 		diff -= _system->getMillis();
-		waitForTimer(delta * 15 + diff);
+		waitForTimer(delta * kTickDuration + diff);
 		diff = _system->getMillis();
 		delta = scummLoop(delta);
 
@@ -1834,7 +1838,7 @@ int ScummEngine::scummLoop(int delta) {
 			// to get it correct for all games. Without the ability to watch/listen to the
 			// original games, I can't do that myself.
 			const int MUSIC_DELAY = 350;
-			_tempMusic += delta * 15;	// Convert delta to milliseconds
+			_tempMusic += delta * kTickDuration;	// Convert delta to milliseconds
 			if (_tempMusic >= MUSIC_DELAY) {
 				_tempMusic -= MUSIC_DELAY;
 				VAR(VAR_MUSIC_TIMER) += 1;
