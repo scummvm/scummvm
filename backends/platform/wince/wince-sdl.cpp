@@ -2099,8 +2099,8 @@ void OSystem_WINCE3::showOverlay() {
 	assert (_transactionMode == kTransactionNone);
 
 	undrawMouse();
-
 	_overlayVisible = true;
+	update_scalers();
 	clearOverlay();
 }
 
