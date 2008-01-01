@@ -385,6 +385,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 	}
 
 	int num_regions = _sound->getNumRegions(track->soundDesc);
+	int previous_region = track->curRegion;
 
 	if (++track->curRegion == num_regions) {
 		flushTrack(track);
@@ -404,7 +405,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 		int fadeDelay = (60 * _sound->getJumpFade(soundDesc, jumpId)) / 1000;
 		if (sampleHookId != 0) {
 			if (track->curHookId == sampleHookId) {
-				if (fadeDelay != 0) {
+				if (fadeDelay != 0 && previous_region != -1) {
 					Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 					if (fadeTrack) {
 						fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
@@ -418,7 +419,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 				track->curHookId = 0;
 			}
 		} else {
-			if (fadeDelay != 0) {
+			if (fadeDelay != 0 && previous_region != -1) {
 				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 				if (fadeTrack) {
 					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
