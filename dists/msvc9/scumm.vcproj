@@ -507,6 +507,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\charset-fontdata.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\charset.cpp"
 			>
 		</File>
