@@ -26,6 +26,7 @@
 #include "lure/animseq.h"
 #include "lure/decode.h"
 #include "lure/events.h"
+#include "lure/lure.h"
 #include "lure/palette.h"
 #include "lure/sound.h"
 #include "common/endian.h"
@@ -58,10 +59,53 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 	return ABORT_NONE;
 }
 
-// decodeFrame
-// Decodes a single frame of the animation sequence
+// egaDecodeFrame
+// Decodes a single frame of a EGA animation sequence
 
-void AnimationSequence::decodeFrame(byte *&pPixels, byte *&pLines) {
+void AnimationSequence::egaDecodeFrame(byte *&pPixels) {
+	Screen &screen = Screen::getReference();
+	byte *screenData = screen.screen_raw();   
+
+	// Skip over the list of blocks that are changed
+	int numBlocks = *pPixels++;
+	pPixels += numBlocks;
+
+	// Loop through the list of same/changed pixel ranges
+	int len = *pPixels++;
+	int offset = MENUBAR_Y_SIZE * FULL_SCREEN_WIDTH * 
+		EGA_NUM_LAYERS / EGA_PIXELS_PER_BYTE;
+	while ((offset += len) < FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT / 2) {
+
+		int repeatLen = *pPixels++;
+		if (repeatLen > 0) {
+			byte *pDest = screenData + (offset / EGA_NUM_LAYERS) * EGA_PIXELS_PER_BYTE;
+
+			// Copy over the following bytes - each four bytes contain the four 
+			// planes worth of data for 8 sequential pixels
+			while (repeatLen-- > 0) {
+				int planeNum = offset % EGA_NUM_LAYERS;
+				byte v = *pPixels++;
+				for (int bitCtr = 0; bitCtr < 8; ++bitCtr, v <<= 1) {
+					if ((v & 0x80) != 0)
+						*(pDest + bitCtr) |= 1 << planeNum;
+					else
+						*(pDest + bitCtr) &= ~(1 << planeNum);
+				}
+
+				if ((++offset % EGA_NUM_LAYERS) == 0)
+					pDest += EGA_PIXELS_PER_BYTE;
+			}
+		}
+
+		// Get next skip bytes length
+		len = *pPixels++;
+	}
+}
+
+// vgaDecodeFrame
+// Decodes a single frame of a VGA animation sequence
+
+void AnimationSequence::vgaDecodeFrame(byte *&pPixels, byte *&pLines) {
 	Screen &screen = Screen::getReference();
 	byte *screenData = screen.screen_raw();   
 	uint16 screenPos = 0;
@@ -91,9 +135,6 @@ void AnimationSequence::decodeFrame(byte *&pPixels, byte *&pLines) {
 		screenData += len;
 		screenPos += len;
 	}
-
-	// Make the decoded frame visible
-	screen.update();
 }
 
 AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fadeIn, int frameDelay, 
@@ -102,30 +143,72 @@ AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fa
 	Screen &screen = Screen::getReference();
 	PictureDecoder decoder;
 	Disk &d = Disk::getReference();
+
+	// Get the data and decode it. Note that VGA decompression is used 
+	// even if the decompressed contents is actually EGA data
 	MemoryBlock *data = d.getEntry(_screenId);
-	_decodedData = decoder.decode(data, MAX_ANIM_DECODER_BUFFER_SIZE);
+	_decodedData = decoder.vgaDecode(data, MAX_ANIM_DECODER_BUFFER_SIZE);
 	delete data;
 
-	_lineRefs = d.getEntry(_screenId + 1);
+	_isEGA = LureEngine::getReference().isEGA();
+	if (_isEGA) {
+		// Setup for EGA animation
+		_lineRefs = NULL;
 
-	// Reset the palette and set the initial starting screen
-	screen.setPaletteEmpty(RES_PALETTE_ENTRIES);
-	screen.screen().data().copyFrom(_decodedData, 0, 0, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH);
-	screen.update();
+		// Reset the palette and clear the screen for EGA decoding
+		screen.setPaletteEmpty(RES_PALETTE_ENTRIES);
+		screen.screen().empty();
+		
+		// Load the screen - each four bytes contain the four planes
+		// worth of data for 8 sequential pixels
+		byte *pSrc = _decodedData->data();
+		byte *pDest = screen.screen().data().data() +
+			(FULL_SCREEN_WIDTH * MENUBAR_Y_SIZE);
 
-	// Set the palette
-	if (fadeIn)	screen.paletteFadeIn(&_palette);
-	else screen.setPalette(&_palette, 0, _palette.numEntries());
+		for (int ctr = 0; ctr < FULL_SCREEN_WIDTH * (FULL_SCREEN_HEIGHT - 
+				MENUBAR_Y_SIZE) / 8; ++ctr, pDest += EGA_PIXELS_PER_BYTE) {
+			for (int planeCtr = 0; planeCtr < EGA_NUM_LAYERS; ++planeCtr, ++pSrc) {
+				byte v = *pSrc;
+				for (int bitCtr = 0; bitCtr < 8; ++bitCtr, v <<= 1) {
+					if ((v & 0x80) != 0)
+					*(pDest + bitCtr) |= 1 << planeCtr;
+				}
+			}
+		}
 
-	// Set up frame poitners
-	_pPixels = _decodedData->data() + SCREEN_SIZE;
-	_pLines = _lineRefs->data();
-	_pPixelsEnd = _decodedData->data() + _decodedData->size() - 1;
-	_pLinesEnd = _lineRefs->data() + _lineRefs->size() - 1;
+		screen.update();
+		screen.setPalette(&_palette, 0, _palette.numEntries());
+
+		// Set pointers for animation
+		_pPixels = pSrc;
+		_pPixelsEnd = _decodedData->data() + _decodedData->size() - 1;
+		_pLines = NULL;
+		_pLinesEnd = NULL;
+
+	} else {
+		// Setup for VGA animation
+		_lineRefs = d.getEntry(_screenId + 1);
+
+		// Reset the palette and set the initial starting screen
+		screen.setPaletteEmpty(RES_PALETTE_ENTRIES);
+		screen.screen().data().copyFrom(_decodedData, 0, 0, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH);
+		screen.update();
+
+		// Set the palette
+		if (fadeIn)	screen.paletteFadeIn(&_palette);
+		else screen.setPalette(&_palette, 0, _palette.numEntries());
+
+		// Set up frame pointers
+		_pPixels = _decodedData->data() + SCREEN_SIZE;
+		_pPixelsEnd = _decodedData->data() + _decodedData->size() - 1;
+		_pLines = _lineRefs->data();
+		_pLinesEnd = _lineRefs->data() + _lineRefs->size() - 1;
+	}
 }
 
 AnimationSequence::~AnimationSequence() {
-	delete _lineRefs;
+	if (_lineRefs != NULL)
+		delete _lineRefs;
 	delete _decodedData;
 }
 
@@ -133,18 +216,27 @@ AnimationSequence::~AnimationSequence() {
 // Main method for displaying the animation
 
 AnimAbortType AnimationSequence::show() {
+	Screen &screen = Screen::getReference();
 	AnimAbortType result;
 	const AnimSoundSequence *soundFrame = _soundList;
 	int frameCtr = 0;
 
 	// Loop through displaying the animations
-	while ((_pPixels < _pPixelsEnd) && (_pLines < _pLinesEnd)) {
+	while (_pPixels < _pPixelsEnd) {
 		if ((soundFrame != NULL) && (frameCtr == 0))
 			Sound.musicInterface_Play(
 				Sound.isRoland() ? soundFrame->rolandSoundId : soundFrame->adlibSoundId, 
 				soundFrame->channelNum);
 
-		decodeFrame(_pPixels, _pLines);
+		if (_isEGA) 
+			egaDecodeFrame(_pPixels);
+		else {
+			if (_pLines >= _pLinesEnd) break;
+			vgaDecodeFrame(_pPixels, _pLines);
+		}
+
+		// Make the decoded frame visible
+		screen.update();
 
 		result = delay(_frameDelay * 1000 / 50);
 		if (result != ABORT_NONE) return result;
@@ -161,9 +253,19 @@ AnimAbortType AnimationSequence::show() {
 
 bool AnimationSequence::step() {
 	Screen &screen = Screen::getReference();
-	if ((_pPixels >= _pPixelsEnd) || (_pLines >= _pLinesEnd)) return false;
-	decodeFrame(_pPixels, _pLines);
+	if (_pPixels >= _pPixelsEnd) return false;
+	
+	if (_isEGA) 
+		egaDecodeFrame(_pPixels);
+	else {
+		if (_pLines >= _pLinesEnd) return false;
+		vgaDecodeFrame(_pPixels, _pLines);
+	}
+
+	// Make the decoded frame visible
+	screen.update();
 	screen.setPalette(&_palette);
+
 	return true;
 }
 

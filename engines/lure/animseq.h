@@ -41,6 +41,7 @@ struct AnimSoundSequence {
 
 class AnimationSequence {
 private:
+	bool _isEGA;
 	uint16 _screenId;
 	Palette &_palette;
 	MemoryBlock *_decodedData;
@@ -51,7 +52,8 @@ private:
 	int _frameDelay;
 
 	AnimAbortType delay(uint32 milliseconds);
-	void decodeFrame(byte *&pPixels, byte *&pLines);
+	void egaDecodeFrame(byte *&pPixels);
+	void vgaDecodeFrame(byte *&pPixels, byte *&pLines);
 public:
 	AnimationSequence(uint16 screenId, Palette &palette,  bool fadeIn, int frameDelay = 7, 
 		const AnimSoundSequence *soundList = NULL);
