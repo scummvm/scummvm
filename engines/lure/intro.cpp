@@ -54,20 +54,21 @@ static const AnimRecord anim_screens[] = {
 // should be aborted
 
 bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize) {
+	Screen &screen = Screen::getReference();
 	Events &events = Events::getReference();
 	bool isEGA = LureEngine::getReference().isEGA();
-	_screen.screen().loadScreen(screenId);
-	_screen.update();
+	screen.screen().loadScreen(screenId);
+	screen.update();
 	Palette p(paletteId);
 	
-	if (isEGA) _screen.setPalette(&p);
-	else _screen.paletteFadeIn(&p);
+	if (isEGA) screen.setPalette(&p);
+	else screen.paletteFadeIn(&p);
 	
 	bool result = interruptableDelay(delaySize);
 	if (events.quitFlag) return true;
 
 	if (!isEGA)
-		_screen.paletteFadeOut();
+		screen.paletteFadeOut();
 
 	return result;
 }
@@ -93,7 +94,9 @@ bool Introduction::interruptableDelay(uint32 milliseconds) {
 // Main method for the introduction sequence
 
 bool Introduction::show() {
-	_screen.setPaletteEmpty();
+	Screen &screen = Screen::getReference();
+	bool isEGA = LureEngine::getReference().isEGA();
+	screen.setPaletteEmpty();
 
 	// Initial game company and then game screen
 
@@ -101,12 +104,14 @@ bool Introduction::show() {
 		if (showScreen(start_screens[ctr], start_screens[ctr] + 1, 5000)) 
 			return true;	
 
+	PaletteCollection coll(0x32);
+	Palette EgaPalette(0x1D);
+
 	// Animated screens
 
 	AnimationSequence *anim;
 	bool result;
 	uint8 currentSound = 0xff;
-	PaletteCollection coll(0x32);
 	const AnimRecord *curr_anim = anim_screens;
 	for (; curr_anim->resourceId; ++curr_anim) {
 		// Handle sound selection
@@ -121,7 +126,7 @@ bool Introduction::show() {
 
 		bool fadeIn = curr_anim == anim_screens;
 		anim = new AnimationSequence(curr_anim->resourceId, 
-			coll.getPalette(curr_anim->paletteIndex), fadeIn);
+			isEGA ? EgaPalette : coll.getPalette(curr_anim->paletteIndex), fadeIn);
 		if (curr_anim->initialPause != 0)  
 			if (interruptableDelay(curr_anim->initialPause * 1000 / 50)) return true;
 
@@ -151,10 +156,10 @@ bool Introduction::show() {
 	// Show battle pictures one frame at a time
 
 	result = false;
-	anim = new AnimationSequence(0x48, coll.getPalette(4), false);
+	anim = new AnimationSequence(0x48, isEGA ? EgaPalette : coll.getPalette(4), false);
 	do {
 		result = interruptableDelay(2000);
-		_screen.paletteFadeOut();
+		screen.paletteFadeOut();
 		if (!result) result = interruptableDelay(500);
 		if (result) break;
 	} while (anim->step());

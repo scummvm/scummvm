@@ -32,14 +32,9 @@ namespace Lure {
 
 class Introduction {
 private:
-	Screen &_screen;
-	OSystem &_system;
-
 	bool showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize);
 	bool interruptableDelay(uint32 milliseconds);
 public:
-	Introduction(Screen &screen, OSystem &system): _screen(screen), _system(system) {}
-
 	bool show();
 };
 

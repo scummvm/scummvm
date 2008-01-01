@@ -133,8 +133,8 @@ int LureEngine::go() {
 	if (ConfMan.getInt("boot_param") == 0) {
 		// Show the introduction
 		Sound.loadSection(Sound.isRoland() ? ROLAND_INTRO_SOUND_RESOURCE_ID : ADLIB_INTRO_SOUND_RESOURCE_ID);
-		Introduction *intro = new Introduction(*_screen, *_system);
 
+		Introduction *intro = new Introduction();
 		intro->show();
 		delete intro;
 	}
