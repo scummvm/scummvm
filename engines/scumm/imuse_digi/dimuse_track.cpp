@@ -59,7 +59,22 @@ int IMuseDigital::allocSlot(int priority) {
 		}
 		if (lowest_priority <= priority) {
 			assert(trackId != -1);
-			_track[trackId]->toBeRemoved = true;
+			Track *track = _track[trackId];
+			while (1) {
+				if (!track->used) {
+					break;
+				}
+				// The designated track is not yet available. So, we call flushTrack()
+				// to get it processed (and thus made ready for us). Since the actual
+				// processing is done by another thread, we also call parseEvents to
+				// give it some time (and to avoid busy waiting/looping).
+				flushTrack(track);
+				_mutex.unlock();
+		#ifndef __PLAYSTATION2__
+				_vm->parseEvents();
+		#endif
+				_mutex.lock();
+			}
 			debug(5, "IMuseDigital::allocSlot(): Removed sound %d from track %d", _track[trackId]->soundId, trackId);
 		} else {
 			debug(5, "IMuseDigital::allocSlot(): Priority sound too low");
@@ -71,6 +86,7 @@ int IMuseDigital::allocSlot(int priority) {
 }
 
 void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority) {
+	Common::StackLock lock(_mutex, "IMuseDigital::startSound()");
 	debug(5, "IMuseDigital::startSound(%d)", soundId);
 
 	int l = allocSlot(priority);
@@ -80,21 +96,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	}
 
 	Track *track = _track[l];
-	while (1) {
-		_mutex.lock();
-		if (!track->used) {
-			break;
-		}
-		// The designated track is not yet available. So, we call flushTracks()
-		// to get it processed (and thus made ready for us). Since the actual
-		// processing is done by another thread, we also call parseEvents to
-		// give it some time (and to avoid busy waiting/looping).
-		flushTracks();
-		_mutex.unlock();
-#ifndef __PLAYSTATION2__
-		_vm->parseEvents();
-#endif
-	}
 
 	track->pan = 64;
 	track->vol = volume * 1000;
@@ -113,7 +114,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	track->dataMod12Bit = 0;
 	track->mixerFlags = 0;
 	track->toBeRemoved = false;
-	track->readyToRemove = false;
 	track->soundType = soundType;
 
 	int bits = 0, freq = 0, channels = 0;
@@ -191,7 +191,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	}
 
 	track->used = true;
-	_mutex.unlock();
 }
 
 void IMuseDigital::setPriority(int soundId, int priority) {
@@ -309,7 +308,7 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			cloneToFadeOutTrack(track, fadeDelay);
-			track->toBeRemoved = true;
+			flushTrack(track);
 		}
 	}
 }
@@ -319,9 +318,14 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	Track *fadeTrack = 0;
 
 	debug(0, "IMuseDigital::cloneToFadeOutTrack(%d, %d)", track->trackId, fadeDelay);
+	
+	if (track->toBeRemoved) {
+		error("IMuseDigital::cloneToFadeOutTrack: Tried to clone a track to be removed");
+		return NULL;
+	}
 
 	if (_track[track->trackId + MAX_DIGITAL_TRACKS]->used) {
-		warning("IMuseDigital::cloneToFadeOutTrack: Not free fade track");
+		warning("IMuseDigital::cloneToFadeOutTrack: No free fade track");
 		return NULL;
 	}
 
@@ -360,7 +364,6 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	}
 	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundDesc), makeMixerFlags(fadeTrack->mixerFlags));
 	_mixer->playInputStream(type, &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->vol / 1000, fadeTrack->pan, false);
-
 	fadeTrack->mixerStreamRunning = true;
 	fadeTrack->used = true;
 

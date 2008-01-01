@@ -83,7 +83,6 @@ private:
 		char soundName[15]; // sound name but also filename of sound in bundle data
 		bool used;			// flag mean that track is used
 		bool toBeRemoved;   // flag mean that track need to be free
-		bool readyToRemove; // flag mean that track is ready to stop
 		bool mixerStreamRunning;	// flag mean sound mixer's stream is running
 		bool souStreamUsed;	// flag mean that track use stream from sou file
 		bool sndDataExtComp;// flag mean that sound data is compressed by scummvm tools
@@ -151,6 +150,8 @@ private:
 	void setDigMusicState(int stateId);
 	void setDigMusicSequence(int seqId);
 	void playDigMusic(const char *songName, const imuseDigTable *table, int attribPos, bool sequence);
+
+	void flushTrack(Track *track);
 
 public:
 	IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps);

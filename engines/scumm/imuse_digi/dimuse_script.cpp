@@ -163,32 +163,37 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 	}
 }
 
+void IMuseDigital::flushTrack(Track *track) {
+	track->toBeRemoved = true;
+	if (track->stream) {
+		// Finalize the appendable stream
+		track->stream->finish();
+		// There might still be some data left in the buffers of the
+		// appendable stream. We play it nice and wait till all of it
+		// played.
+		if (track->stream->endOfStream()) {
+			_mixer->stopHandle(track->mixChanHandle);
+			delete track->stream;
+			track->stream = NULL;
+			_sound->closeSound(track->soundDesc);
+			track->soundDesc = NULL;
+			track->used = false;
+		}
+	} else if (track->streamSou) {
+		_mixer->stopHandle(track->mixChanHandle);
+		delete track->streamSou;
+		track->streamSou = NULL;
+		track->used = false;
+	}
+}
+
 void IMuseDigital::flushTracks() {
 	Common::StackLock lock(_mutex, "IMuseDigital::flushTracks()");
 	debug(5, "flushTracks()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && track->readyToRemove) {
-			if (track->stream) {
-				// Finalize the appendable stream
- 				track->stream->finish();
- 				// There might still be some data left in the buffers of the
- 				// appendable stream. We play it nice and wait till all of it
- 				// played.
-				if (track->stream->endOfStream()) {
-					_mixer->stopHandle(track->mixChanHandle);
-					delete track->stream;
-					track->stream = NULL;
-					_sound->closeSound(track->soundDesc);
-					track->soundDesc = NULL;
-					track->used = false;
-				}
-			} else if (track->streamSou) {
-				_mixer->stopHandle(track->mixChanHandle);
-				delete track->streamSou;
-				track->streamSou = NULL;
-				track->used = false;
-			}
+		if (track->used && track->toBeRemoved) {
+			flushTrack(track);
 		}
 	}
 }
@@ -288,7 +293,7 @@ int IMuseDigital::getSoundStatus(int sound) const {
 		Track *track = _track[l];
 		if (track->soundId == sound) {
 			if ((track->streamSou && _mixer->isSoundHandleActive(track->mixChanHandle)) ||
-				(track->stream && track->used && !track->readyToRemove)) {
+				(track->stream && !track->stream->endOfStream())) {
 					return 1;
 			}
 		}

@@ -158,7 +158,6 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		if (!ser->isSaving()) {
 			if (!track->used)
 				continue;
-			track->readyToRemove = false;
 			if ((track->toBeRemoved) || (track->souStreamUsed) || (track->curRegion == -1)) {
 				track->streamSou= NULL;
 				track->stream = NULL;
@@ -231,9 +230,10 @@ void IMuseDigital::callback() {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && !track->readyToRemove) {
+		if (track->used) {
+			// Remove tracks if necessary
 			if (track->toBeRemoved) {
-				track->readyToRemove = true;
+				flushTrack(track);
 				continue;
 			}
 
@@ -249,7 +249,9 @@ void IMuseDigital::callback() {
 							track->volFadeUsed = false;
 						}
 						if (track->vol == 0) {
-							track->toBeRemoved = true;
+							// Fade out complete -> remove this track
+							flushTrack(track);
+							continue;
 						}
 					}
 				} else if (track->volFadeStep > 0) {
@@ -357,6 +359,8 @@ void IMuseDigital::callback() {
 				} while (feedSize != 0);
 			} else if (track->streamSou) {
 				if (_mixer->isReady()) {
+					// FIXME: Can't we replace track->mixerStreamRunning by
+					// _mixer->isSoundHandleActive(track->mixChanHandle) ?
 					if (!track->mixerStreamRunning) {
 						track->mixerStreamRunning = true;
 						_mixer->playInputStream(type, &track->mixChanHandle, track->streamSou, -1, vol, pan, false);
@@ -375,7 +379,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 	debug(5, "switchToNextRegion(track:%d)", track->trackId);
 
 	if (track->trackId >= MAX_DIGITAL_TRACKS) {
-		track->toBeRemoved = true;
+		flushTrack(track);
 		debug(5, "exit (fadetrack can't go next region) switchToNextRegion(trackId:%d)", track->trackId);
 		return;
 	}
@@ -383,7 +387,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 	int num_regions = _sound->getNumRegions(track->soundDesc);
 
 	if (++track->curRegion == num_regions) {
-		track->toBeRemoved = true;
+		flushTrack(track);
 		debug(5, "exit (end of regions) switchToNextRegion(track:%d)", track->trackId);
 		return;
 	}
