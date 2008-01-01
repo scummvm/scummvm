@@ -221,6 +221,14 @@ void Control::askForCd(void) {
 	free(_screenBuf);
 }
 
+static int volToBalance(int volL, int volR) {
+	if (volL + volR == 0) {
+		return 50;
+	} else {
+		return (100 * volL / (volL + volR));
+	}
+}
+
 uint8 Control::runPanel(void) {
 	_mouseDown = false;
 	_restoreBuf = NULL;
@@ -310,6 +318,25 @@ uint8 Control::runPanel(void) {
 		delay(1000 / 12);
 		newMode = getClicks(mode, &retVal);
 	} while ((newMode != BUTTON_DONE) && (retVal == 0) && (!SwordEngine::_systemVars.engineQuit));
+
+	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
+		uint8 volL, volR;
+		_music->giveVolume(&volL, &volR);
+		ConfMan.setInt("music_volume", (int)((volR + volL) / 2));
+		ConfMan.setInt("music_balance", volToBalance(volL, volR));
+
+		_sound->giveSpeechVol(&volL, &volR);
+		ConfMan.setInt("speech_volume", (int)((volR + volL) / 2));
+		ConfMan.setInt("speech_balance", volToBalance(volL, volR));
+
+		_sound->giveSfxVol(&volL, &volR);
+		ConfMan.setInt("sfx_volume", (int)((volR + volL) / 2));
+		ConfMan.setInt("sfx_balance", volToBalance(volL, volR));
+
+		ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText == 1);
+		ConfMan.flushToDisk();
+	}
+
 	destroyButtons();
 	_resMan->resClose(fontId);
 	_resMan->resClose(redFontId);

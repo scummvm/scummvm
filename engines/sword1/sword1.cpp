@@ -241,16 +241,50 @@ int SwordEngine::init() {
 	uint musicVol = ConfMan.getInt("music_volume");
 	uint speechVol = ConfMan.getInt("speech_volume");
 	uint sfxVol = ConfMan.getInt("sfx_volume");
-	if (musicVol > 255)
-		musicVol = 255;
-	if (speechVol > 255)
-		speechVol = 255;
-	if (sfxVol > 255)
-		sfxVol = 255;
+	uint musicBal = 50;
+	if (ConfMan.hasKey("music_balance")) {
+		musicBal = CLIP(ConfMan.getInt("music_balance"), 0, 100);
+	}
+	uint speechBal = 50;
+	if (ConfMan.hasKey("speech_balance")) {
+		speechBal = CLIP(ConfMan.getInt("speech_balance"), 0, 100);
+	}
+	uint sfxBal = 50;
+	if (ConfMan.hasKey("sfx_balance")) {
+		sfxBal = CLIP(ConfMan.getInt("sfx_balance"), 0, 100);
+	}
 
-	_music->setVolume(musicVol, musicVol);      // these routines expect left and right volume,
-	_sound->setSpeechVol(speechVol, speechVol); // but our config manager doesn't support it.
-	_sound->setSfxVol(sfxVol, sfxVol);
+	uint musicVolL = 2 * musicVol * musicBal / 100;
+	uint musicVolR = 2 * musicVol - musicVolL;
+
+	uint speechVolL = 2 * speechVol * speechBal / 100;
+	uint speechVolR = 2 * speechVol - speechVolL;
+
+	uint sfxVolL = 2 * sfxVol * sfxBal / 100;
+	uint sfxVolR = 2 * sfxVol - sfxVolL;
+
+	if (musicVolR > 255) {
+		musicVolR = 255;
+	}
+	if (musicVolL > 255) {
+		musicVolL = 255;
+	}
+	if (speechVolR > 255) {
+		speechVolR = 255;
+	}
+	if (speechVolL > 255) {
+		speechVolL = 255;
+	}
+	if (sfxVolR > 255) {
+		sfxVolR = 255;
+	}
+	if (sfxVolL > 255) {
+		sfxVolL = 255;
+	}
+
+	_music->setVolume(musicVolL, musicVolR);
+	_sound->setSpeechVol(speechVolL, speechVolR);
+	_sound->setSfxVol(sfxVolL, sfxVolR);
 
 	_systemVars.justRestoredGame = 0;
 	_systemVars.currentCD = 0;
