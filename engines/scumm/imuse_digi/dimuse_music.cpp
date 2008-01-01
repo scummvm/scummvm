@@ -292,7 +292,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 			break;
 		case 8:
 		case 9:
-			setHookId(table->soundId, table->soundId);
+			setHookId(table->soundId, table->hookId);
 			break;
 		case 1:
 			if (table->filename[0] == 0) {
