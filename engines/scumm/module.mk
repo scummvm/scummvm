@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	boxes.o \
 	camera.o \
 	charset.o \
+	charset-fontdata.o \
 	costume.o \
 	cursor.o \
 	debugger.o \
@@ -85,7 +86,7 @@ MODULE_OBJS += \
 	smush/saud_channel.o \
 	smush/smush_mixer.o \
 	smush/smush_font.o
-	
+
 ifdef USE_ARM_SMUSH_ASM
 MODULE_OBJS += \
 	smush/codec47ARM.o
