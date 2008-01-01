@@ -165,9 +165,17 @@ bool Introduction::show() {
 	} while (anim->step());
 	delete anim;
 	
-	if (!result) 
-		// Show final introduction screen
-		showScreen(0x22, 0x21, 10000);
+	if (!result) {
+		// Show final introduction animation
+		if (!isEGA)
+			showScreen(0x22, 0x21, 10000);
+		else {
+			Palette finalPalette(0x21);
+			anim = new AnimationSequence(0x22, finalPalette, false);
+			delete anim;
+			interruptableDelay(10000);
+		}
+	}
 
 	Sound.musicInterface_KillAll();
 	return false;
