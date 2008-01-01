@@ -152,18 +152,31 @@ void Palette::copyFrom(Palette *src) {
 PaletteCollection::PaletteCollection(uint16 resourceId) {
 	Disk &d = Disk::getReference();
 	MemoryBlock *resource = d.getEntry(resourceId);
+	bool isEGA = LureEngine::getReference().isEGA();
 	uint32 palSize;
 	uint8 *data = resource->data();
 
-	if (resource->size() % (SUB_PALETTE_SIZE * 3) != 0)
-		error("Resource #%d is not a valid palette set", resourceId);
+	if (isEGA) {
+		// EGA Palette collection - only has 1 sub-palette
+		if ((resource->size() != 16) && (resource->size() != 17))
+			error("Resource #%d is not a valid palette set", resourceId);
 
-	palSize = SUB_PALETTE_SIZE * 3;
-	_numPalettes = resource->size() / palSize;
+		_numPalettes = 1;
+		_palettes = (Palette **) Memory::alloc(1 * sizeof(Palette *));
+		_palettes[0] = new Palette(16, data, EGA);
 
-	_palettes = (Palette **) Memory::alloc(_numPalettes * sizeof(Palette *));
-	for (uint8 paletteCtr = 0; paletteCtr < _numPalettes; ++paletteCtr, data += palSize)
-		_palettes[paletteCtr] = new Palette(SUB_PALETTE_SIZE, data, RGB64);
+	} else {
+		// VGA Palette collection
+		if (resource->size() % (SUB_PALETTE_SIZE * 3) != 0)
+			error("Resource #%d is not a valid palette set", resourceId);
+
+		palSize = SUB_PALETTE_SIZE * 3;
+		_numPalettes = resource->size() / palSize;
+
+		_palettes = (Palette **) Memory::alloc(_numPalettes * sizeof(Palette *));
+		for (uint8 paletteCtr = 0; paletteCtr < _numPalettes; ++paletteCtr, data += palSize)
+			_palettes[paletteCtr] = new Palette(SUB_PALETTE_SIZE, data, RGB64);
+	}
 
 	delete resource;
 }
