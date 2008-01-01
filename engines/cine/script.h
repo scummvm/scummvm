@@ -26,9 +26,33 @@
 #ifndef CINE_SCRIPT_H
 #define CINE_SCRIPT_H
 
+#include "common/savefile.h"
+
 namespace Cine {
 
 #define SCRIPT_STACK_SIZE 50
+
+class ScriptVars {
+private:
+	unsigned int _size;
+	int16 *_vars;
+
+public:
+	explicit ScriptVars(unsigned int len = 50);
+	ScriptVars(Common::InSaveFile &fHandle, unsigned int len = 50);
+	ScriptVars(const ScriptVars &src);
+	~ScriptVars(void);
+
+	ScriptVars &operator=(const ScriptVars &src);
+	int16 &operator[](unsigned int idx);
+	int16 operator[](unsigned int idx) const;
+
+	void save(Common::OutSaveFile &fHandle);
+	void save(Common::OutSaveFile &fHandle, unsigned int len);
+	void load(Common::InSaveFile &fHandle);
+	void load(Common::InSaveFile &fHandle, unsigned int len);
+	void reset(void);
+};
 
 struct ScriptStruct {
 	byte *ptr;

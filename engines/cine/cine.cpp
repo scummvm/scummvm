@@ -129,7 +129,6 @@ void CineEngine::initialize() {
 	}
 
 	memset(objectTable, 0, sizeof(objectTable));
-	memset(globalVars, 0, sizeof(globalVars));
 	memset(scriptTable, 0, sizeof(scriptTable));
 	memset(messageTable, 0, sizeof(messageTable));
 	memset(relTable, 0, sizeof(relTable));

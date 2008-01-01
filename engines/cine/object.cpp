@@ -36,7 +36,7 @@
 namespace Cine {
 
 objectStruct objectTable[NUM_MAX_OBJECT];
-uint16 globalVars[NUM_MAX_VAR];
+ScriptVars globalVars(NUM_MAX_VAR);
 overlayHeadElement overlayHead;
 
 void unloadAllMasks(void) {

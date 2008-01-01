@@ -453,6 +453,86 @@ const char *getNextString() {
 	return val;
 }
 
+// empty array
+ScriptVars::ScriptVars(unsigned int len) : _size(len), _vars(new int16[len]) {
+	assert(_vars);
+	reset();
+}
+
+// read game save, for later use
+ScriptVars::ScriptVars(Common::InSaveFile &fHandle, unsigned int len)
+	: _size(len), _vars(new int16[len]) {
+
+	assert(_vars);
+
+	load(fHandle);
+}
+
+// copy constructor
+ScriptVars::ScriptVars(const ScriptVars &src) : _size(src._size), _vars(new int16[_size]) {
+	assert(_vars);
+	memcpy(_vars, src._vars, _size * sizeof(int16));
+}
+
+ScriptVars::~ScriptVars(void) {
+	delete[] _vars;
+}
+
+ScriptVars &ScriptVars::operator=(const ScriptVars &src) {
+	ScriptVars tmp(src);
+	int16 *tmpvars = _vars;
+
+	_vars = tmp._vars;
+	tmp._vars = tmpvars;
+	_size = src._size;
+
+	return *this;
+}
+
+// array access
+int16 &ScriptVars::operator[](unsigned int idx) {
+	debugN(5, "assert(%d < %d)", idx, _size);
+	assert(idx < _size);
+	return _vars[idx];
+}
+
+int16 ScriptVars::operator[](unsigned int idx) const {
+	debugN(5, "assert(%d < %d)\n", idx, _size);
+	assert(idx < _size);
+	return _vars[idx];
+}
+
+// dump to savefile
+void ScriptVars::save(Common::OutSaveFile &fHandle) {
+	save(fHandle, _size);
+}
+
+// globalVars[255] is not written to savefiles...
+void ScriptVars::save(Common::OutSaveFile &fHandle, unsigned int len) {
+	debugN(5, "assert(%d <= %d)\n", len, _size);
+	assert(len <= _size);
+	for (unsigned int i = 0; i < len; i++) {
+		fHandle.writeUint16BE(_vars[i]);
+	}
+}
+
+// read from savefile
+void ScriptVars::load(Common::InSaveFile &fHandle) {
+	load(fHandle, _size);
+}
+
+void ScriptVars::load(Common::InSaveFile &fHandle, unsigned int len) {
+	debugN(5, "assert(%d <= %d)\n", len, _size);
+	assert(len <= _size);
+	for (unsigned int i = 0; i < len; i++) {
+		_vars[i] = fHandle.readUint16BE();
+	}
+}
+
+void ScriptVars::reset(void) {
+	memset( _vars, 0, _size * sizeof(int16));
+}
+
 void addGfxElementA0(int16 param1, int16 param2) {
 	overlayHeadElement *currentHead = &overlayHead;
 	overlayHeadElement *tempHead = currentHead;
@@ -659,10 +739,6 @@ void addScriptToList0(uint16 idx) {
 	// copy the stack into the script instance
 	for (i = 0; i < SCRIPT_STACK_SIZE; i++) {
 		pNewElement->stack[i] = scriptTable[idx].stack[i];
-	}
-
-	for (i = 0; i < 50; i++) {
-		pNewElement->localVars[i] = 0;
 	}
 
 	pNewElement->compareResult = 0;

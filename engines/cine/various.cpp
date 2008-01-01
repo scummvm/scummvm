@@ -170,10 +170,6 @@ void runObjectScript(int16 entryIdx) {
 		pNewElement->stack[i] = 0;
 	}
 
-	for (i = 0; i < 50; i++) {
-		pNewElement->localVars[i] = 0;
-	}
-
 	pNewElement->compareResult = 0;
 	pNewElement->scriptPosition = 0;
 
@@ -328,8 +324,7 @@ void loadScriptFromSave(Common::InSaveFile *fHandle, bool isGlobal) {
 	for (i = 0; i < SCRIPT_STACK_SIZE; i++)
 		newElement->stack[i] = fHandle->readUint16BE();
 
-	for (i = 0; i < 50; i++)
-		newElement->localVars[i] = fHandle->readUint16BE();
+	newElement->localVars.load(*fHandle);
 
 	newElement->compareResult = fHandle->readUint16BE();
 	newElement->scriptPosition = fHandle->readUint16BE();
@@ -454,9 +449,7 @@ bool CineEngine::makeLoad(char *saveName) {
 		objectTable[i].costume = 0;
 	}
 
-	for (i = 0; i < 255; i++) {
-		globalVars[i] = 0;
-	}
+	globalVars.reset();
 
 	var2 = var3 = var4 = var5 = 0;
 
@@ -519,9 +512,7 @@ bool CineEngine::makeLoad(char *saveName) {
 		tempPalette[i] = fHandle->readUint16BE();
 	}
 
-	for (i = 0; i < 255; i++) {
-		globalVars[i] = fHandle->readUint16BE();
-	}
+	globalVars.load(*fHandle, NUM_MAX_VAR - 1);
 
 	for (i = 0; i < 16; i++) {
 		zoneData[i] = fHandle->readUint16BE();
@@ -682,9 +673,7 @@ void makeSave(char *saveFileName) {
 		fHandle->writeUint16BE(tempPalette[i]);
 	}
 
-	for (i = 0; i < 255; i++) {
-		fHandle->writeUint16BE(globalVars[i]);
-	}
+	globalVars.save(*fHandle, NUM_MAX_VAR - 1);
 
 	for (i = 0; i < 16; i++) {
 		fHandle->writeUint16BE(zoneData[i]);
@@ -756,9 +745,7 @@ void makeSave(char *saveFileName) {
 				fHandle->writeUint16BE(currentHead->stack[i]);
 			}
 
-			for (i = 0; i < 50; i++) {
-				fHandle->writeUint16BE(currentHead->localVars[i]);
-			}
+			currentHead->localVars.save(*fHandle);
 
 			fHandle->writeUint16BE(currentHead->compareResult);
 			fHandle->writeUint16BE(currentHead->scriptPosition);
@@ -787,9 +774,7 @@ void makeSave(char *saveFileName) {
 				fHandle->writeUint16BE(currentHead->stack[i]);
 			}
 
-			for (i = 0; i < 50; i++) {
-				fHandle->writeUint16BE(currentHead->localVars[i]);
-			}
+			currentHead->localVars.save(*fHandle);
 
 			fHandle->writeUint16BE(currentHead->compareResult);
 			fHandle->writeUint16BE(currentHead->scriptPosition);

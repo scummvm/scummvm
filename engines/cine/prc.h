@@ -31,7 +31,7 @@ namespace Cine {
 struct prcLinkedListStruct {
 	struct prcLinkedListStruct *next;
 	int16 stack[SCRIPT_STACK_SIZE];
-	int16 localVars[50];
+	ScriptVars localVars;
 	uint16 compareResult;
 	uint16 scriptPosition;
 	byte *scriptPtr;

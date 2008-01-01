@@ -26,6 +26,8 @@
 #ifndef CINE_OBJECT_H
 #define CINE_OBJECT_H
 
+#include "script.h"
+
 namespace Cine {
 
 struct objectStruct {
@@ -53,7 +55,7 @@ struct overlayHeadElement {
 #define NUM_MAX_VAR 256
 
 extern objectStruct objectTable[NUM_MAX_OBJECT];
-extern uint16 globalVars[NUM_MAX_VAR];
+extern ScriptVars globalVars;
 
 extern overlayHeadElement overlayHead;
 
