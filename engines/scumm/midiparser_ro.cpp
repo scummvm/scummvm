@@ -69,9 +69,20 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 		if (info.command() == 0xA) {
 			++_lastMarkerCount;
 			info.event = 0xF0;
-		} else if (info.event == 0xF0) {
+		} else if (info.command() == 0xF) {
 			byte delay = *(_position._play_pos++);
 			info.delta += delay;
+			if (info.event != 0xF0) {
+				// The event is usually 0xF0 but there are a
+				// few cases in EGA Loom where it's 0xF1. I'm
+				// speculating that this is for adding values
+				// greater than 255 to info.delta. See bug
+				// #1498785.
+				//
+				// The actual calculation is pure guesswork,
+				// but the result sounds good enough to me.
+				info.delta += 256;
+			}
 			continue;
 		}
 		break;
