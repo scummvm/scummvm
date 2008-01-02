@@ -405,12 +405,15 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	// character for sanity before memory is freed
 	freeCharacter();
 
-	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
+	Common::String oldArchive = _disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 	_char._ani._cnv = _disk->loadFrames(_char.getFullName());
 
 	if (!_char.dummy()) {
-		if (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT))
+		if (getPlatform() == Common::kPlatformAmiga) {
 			_disk->selectArchive("disk0");
+        } else {
+			_disk->selectArchive("disk1");
+        }
 
 		_char._head = _disk->loadHead(_char.getBaseName());
 		_char._talk = _disk->loadTalk(_char.getBaseName());
