@@ -403,7 +403,7 @@ void OSystem_IPHONE::internUpdateScreen() {
 					break;
 				}
 				case kScreenOrientationLandscape: {
-					byte *src = &_mouseBuf[_mouseHeight * _mouseWidth - 1];
+					byte *src = &_mouseBuf[(_mouseHeight - 1 - srcY) * _mouseWidth + srcX];
 					uint16 *dst = &_fullscreen[left * _screenHeight + (_screenHeight - bottom + srcY)];
 					for (int x = displayWidth; x > srcX; x--) {
 						for (int y = displayHeight; y > srcY; y--) {
@@ -413,7 +413,7 @@ void OSystem_IPHONE::internUpdateScreen() {
 							src -= _mouseWidth;
 						}
 						dst -= -_screenHeight + displayHeight - srcY;
-						src -= 1 - (displayHeight - srcY) * _mouseWidth;
+						src += 1 - (displayHeight - srcY) * -_mouseWidth;
 					}
 					break;
 				}
@@ -933,7 +933,75 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				event.kbd.ascii = _queuedInputEvent.kbd.ascii = ascii;
 				_needEventRestPeriod = true;				
 				break;
-				
+			
+			case kInputSwipe: {
+				Common::KeyCode keycode = Common::KEYCODE_INVALID;
+				switch (_screenOrientation) {
+					case kScreenOrientationPortrait:
+						switch ((UIViewSwipeDirection)xUnit) {
+							case kUIViewSwipeUp:
+								keycode = Common::KEYCODE_UP;
+								break;
+							case kUIViewSwipeDown:
+								keycode = Common::KEYCODE_DOWN;
+								break;
+							case kUIViewSwipeLeft:
+								keycode = Common::KEYCODE_LEFT;
+								break;
+							case kUIViewSwipeRight:
+								keycode = Common::KEYCODE_RIGHT;
+								break;
+							default:
+								return false;
+						}
+						break;
+					case kScreenOrientationLandscape:
+						switch ((UIViewSwipeDirection)xUnit) {
+							case kUIViewSwipeUp:
+								keycode = Common::KEYCODE_LEFT;
+								break;
+							case kUIViewSwipeDown:
+								keycode = Common::KEYCODE_RIGHT;
+								break;
+							case kUIViewSwipeLeft:
+								keycode = Common::KEYCODE_DOWN;
+								break;
+							case kUIViewSwipeRight:
+								keycode = Common::KEYCODE_UP;
+								break;
+							default:
+								return false;
+						}
+						break;
+					case kScreenOrientationFlippedLandscape:
+						switch ((UIViewSwipeDirection)xUnit) {
+							case kUIViewSwipeUp:
+								keycode = Common::KEYCODE_RIGHT;
+								break;
+							case kUIViewSwipeDown:
+								keycode = Common::KEYCODE_LEFT;
+								break;
+							case kUIViewSwipeLeft:
+								keycode = Common::KEYCODE_UP;
+								break;
+							case kUIViewSwipeRight:
+								keycode = Common::KEYCODE_DOWN;
+								break;
+							default:
+								return false;
+						}
+						break;			
+				}
+
+				event.kbd.keycode = _queuedInputEvent.kbd.keycode = keycode;
+				event.kbd.ascii = _queuedInputEvent.kbd.ascii = 0;
+				event.type = Common::EVENT_KEYDOWN;
+				_queuedInputEvent.type = Common::EVENT_KEYUP;
+				event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
+				_needEventRestPeriod = true;					
+				break;
+			}
+			
 			default:
 				break;
 		}

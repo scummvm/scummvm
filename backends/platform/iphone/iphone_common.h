@@ -32,7 +32,8 @@ enum InputEvent {
 	kInputOrientationChanged,
 	kInputKeyPressed,
 	kInputApplicationSuspended,
-	kInputApplicationResumed
+	kInputApplicationResumed,
+	kInputSwipe
 };
 
 enum ScreenOrientation {
@@ -40,6 +41,14 @@ enum ScreenOrientation {
 	kScreenOrientationLandscape,
 	kScreenOrientationFlippedLandscape
 };
+
+typedef enum
+{
+	kUIViewSwipeUp = 1,
+	kUIViewSwipeDown = 2,
+	kUIViewSwipeLeft = 4,
+	kUIViewSwipeRight = 8
+} UIViewSwipeDirection;
 
 // We need this to be able to call functions from/in Objective-C.
 #ifdef  __cplusplus
