@@ -415,7 +415,6 @@ byte *Resources::getCursor(uint8 cursorNum) {
 	Common::set_to(&_cursor[0], &_cursor[0] + CURSOR_SIZE, 0);
 	byte *pSrc = _cursors->data() + (cursorNum * 64);
 	byte *pDest = &_cursor[0];
-	int planeNum = 0;
 
 	for (int y = 0; y < 16; ++y) {
 		for (int x = 0; x < 2; ++x) {
@@ -434,10 +433,9 @@ byte *Resources::getCursor(uint8 cursorNum) {
 		}
 	}
 
-	// Post-process the cells to swap any values of 2 and 3
+	// Post-process the cells to adjust the colour
 	for (int index = 0; index < CURSOR_SIZE; ++index) {
-		if (_cursor[index] == 2) _cursor[index] = 3;
-		else if (_cursor[index] == 3) _cursor[index] = 2;
+		if (_cursor[index] == 3) _cursor[index] = 15;
 	}
 
 	return &_cursor[0];
