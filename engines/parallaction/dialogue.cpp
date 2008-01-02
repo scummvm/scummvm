@@ -314,7 +314,8 @@ int16 DialogueManager::selectAnswer() {
 		_vm->readInput();
 		_si = getHoverAnswer(_vm->_mousePos.x, _vm->_mousePos.y);
 
-		if (_si != v2) {
+		if (_si != v2 && _si != -1) {
+
 			if (v2 != -1)
 				_vm->_gfx->displayWrappedString(_q->_answers[v2]->_text, _answerBalloonX[v2], _answerBalloonY[v2], 3, MAX_BALLOON_WIDTH);
 
@@ -356,7 +357,7 @@ int16 DialogueManager::getHoverAnswer(int16 x, int16 y) {
 
 	}
 
-	return 0;
+	return -1;
 
 }
 
