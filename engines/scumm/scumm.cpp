@@ -602,6 +602,12 @@ ScummEngine::~ScummEngine() {
 ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
  : ScummEngine(syst, dr) {
 
+	// All "classic" games (V5 and older) encrypted their data files
+	// with exception of the GF_OLD256 games and the PC-Engine version
+	// of Loom.
+	if (!(_game.features & GF_OLD256) && _game.platform != Common::kPlatformPCEngine)
+		_game.features |= GF_USE_KEY;
+
 	resetCursors();
 
 	// Setup flashlight
