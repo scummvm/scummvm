@@ -388,11 +388,20 @@ bool getLocalMouseCoords(CGPoint *point) {
 }
 
 - (BOOL)canHandleSwipes {
-	return FALSE;
+	return TRUE;
 }
 
 - (int)swipe:(UIViewSwipeDirection)num withEvent:(GSEvent*)event {
 	//printf("swipe: %i\n", num);
+	
+	[self addEvent:
+		[[NSDictionary alloc] initWithObjectsAndKeys:
+		 [NSNumber numberWithInt:kInputSwipe], @"type",
+		 [NSNumber numberWithFloat:(float)num], @"x",
+		 [NSNumber numberWithFloat:0], @"y",
+		 nil
+		]
+	];
 }
 
 - (void)view:(UIView *)view handleTapWithCount:(int)count event:(GSEvent *)event fingerCount:(int)fingerCount{
