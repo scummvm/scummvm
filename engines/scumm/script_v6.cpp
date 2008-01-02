@@ -2372,11 +2372,46 @@ void ScummEngine_v6::o6_printEgo() {
 }
 
 void ScummEngine_v6::o6_talkActor() {
+	int offset = _scriptPointer - _scriptOrgPointer;
+
+	// WORKAROUNDfor bug #896489: see below for detailed description
+	if (_forcedWaitForMessage) {
+		if (VAR(VAR_HAVE_MSG)) {
+			_scriptPointer--;
+			o6_breakHere();
+			return;
+		}
+
+		_forcedWaitForMessage = false;
+		_scriptPointer += resStrLen(_scriptPointer) + 1;
+		
+		return;
+	}
+
 	_actorToPrintStrFor = pop();
 
 	_string[0].loadDefault();
 	actorTalk(_scriptPointer);
 
+	// WORKAROUND for bug #896489: "DIG: Missing subtitles when talking to Brink"
+	// Original script does not have wait.waitForMessage() after several messages:
+	//
+	// [011A] (5D)   if (getActorCostume(VAR_EGO) == 1) {
+	// [0126] (BA)     talkActor("/STOP.008/Low out.",3)
+	// [013D] (A9)     wait.waitForMessage()
+	// [013F] (5D)   } else if (var227 == 0) {
+	// [014C] (BA)     talkActor("/STOP.009/Never mind.",3)
+	// [0166] (73)   } else {
+	//
+	// Here we simulate that opcode.
+	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88) {
+		if (offset == 0x158 || offset == 0x214 || offset == 0x231 || offset == 0x278) {
+			_forcedWaitForMessage = true;
+			_scriptPointer--;
+
+			return;
+		}
+	}
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
 }
 

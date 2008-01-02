@@ -674,6 +674,8 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 	_curVerb = 0;
 	_curVerbSlot = 0;
 
+	_forcedWaitForMessage = false;
+
 	VAR_VIDEONAME = 0xFF;
 	VAR_RANDOM_NR = 0xFF;
 	VAR_STRING2DRAW = 0xFF;

@@ -604,6 +604,8 @@ protected:
 	int _curVerb;
 	int _curVerbSlot;
 
+	bool _forcedWaitForMessage;
+
 public:
 	ScummEngine_v6(OSystem *syst, const DetectorResult &dr);
 
