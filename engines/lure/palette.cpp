@@ -41,7 +41,7 @@ Palette::Palette() {
 // Consructor
 // Sets up a palette with the given number of entries and a copy of the passed data
 
-Palette::Palette(uint8 srcNumEntries, const byte *srcData, PaletteSource paletteSource) {
+Palette::Palette(uint16 srcNumEntries, const byte *srcData, PaletteSource paletteSource) {
 	_numEntries = srcNumEntries;
 	_palette = Memory::allocate(_numEntries * 4);
 

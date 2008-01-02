@@ -43,7 +43,7 @@ private:
 	void convertEGAPalette(const byte *srcPalette);
 public:
 	Palette();
-	Palette(uint8 numEntries, const byte *data, PaletteSource paletteSource);
+	Palette(uint16 srcNumEntries, const byte *srcData, PaletteSource paletteSource);
 	Palette(Palette &src);
 	Palette(uint16 resourceId, PaletteSource paletteSource = DEFAULT);
 
