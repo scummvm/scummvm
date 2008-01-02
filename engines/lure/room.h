@@ -48,6 +48,7 @@ namespace Lure {
 class RoomLayer: public Surface {
 private:
 	byte _cells[FULL_VERT_RECTS][FULL_HORIZ_RECTS];
+	uint16 _paletteId;
 public:
 	RoomLayer(uint16 screenId, bool backgroundLayer);
 	bool isOccupied(byte cellX, byte cellY) {
@@ -59,6 +60,7 @@ public:
 	void setCell(byte cellX, byte cellY, byte value) {
 		_cells[cellY][cellX] = value;
 	}
+	uint16 paletteId() { return _paletteId; }
 };
 
 enum CursorState {CS_NONE, CS_ACTION, CS_SEQUENCE, CS_TALKING, CS_BUMPED};

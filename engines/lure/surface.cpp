@@ -106,14 +106,26 @@ Surface::~Surface() {
 
 void Surface::loadScreen(uint16 resourceId) {
 	MemoryBlock *rawData = Disk::getReference().getEntry(resourceId);
-	PictureDecoder decoder;
-	MemoryBlock *tmpScreen = decoder.decode(rawData, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH + 1);
+	loadScreen(rawData);
 	delete rawData;
-	empty();
+}
 
+void Surface::loadScreen(MemoryBlock *rawData) {
+	PictureDecoder decoder;
+	uint16 v = READ_BE_UINT16(rawData->data());
+	bool is5Bit = (v & 0xfffe) == 0x140;
+	MemoryBlock *tmpScreen;
+
+	if (is5Bit) 
+		// 5-bit decompression
+		tmpScreen = decoder.egaDecode(rawData, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH + 1);
+	else
+		// VGA decompression
+		tmpScreen = decoder.vgaDecode(rawData, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH + 1);
+
+	empty();
 	_data->copyFrom(tmpScreen, 0, MENUBAR_Y_SIZE * FULL_SCREEN_WIDTH, 
 		(FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE) * FULL_SCREEN_WIDTH);
-	
 	delete tmpScreen;
 }
 

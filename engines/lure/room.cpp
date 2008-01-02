@@ -37,13 +37,34 @@ static Room *int_room;
 
 RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer): 
 		Surface(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT) {
-	loadScreen(screenId);	
+	Disk &disk = Disk::getReference();
 	byte *screenData = data().data();
 	int cellY;
 	int cellIndex = 0;
 
 	// Reset all the cells to unused
 	Common::set_to((uint8 *) _cells, (uint8 *) _cells + GRID_SIZE, 0xff);
+
+	// Load up the screen data
+	MemoryBlock *rawData = disk.getEntry(screenId);
+	loadScreen(rawData);
+
+	uint16 v = READ_BE_UINT16(rawData->data());
+	bool is5Bit = (v & 0xfffe) == 0x140;
+	delete rawData;
+
+	_paletteId = (screenId & 0xffe0) - 1;
+	if (is5Bit) {
+		uint16 roomNumber = Room::getReference().roomNumber();
+
+		if (roomNumber == 6)
+			_paletteId = 0x45ff;
+		else if (roomNumber == 49)
+			_paletteId = 0xf1ff;
+		else {
+			_paletteId = 0x40ff;
+		}
+	}
 
 	// Loop through each cell of the screen
 	for (cellY = 0; cellY < NUM_VERT_RECTS; ++cellY) {
@@ -522,6 +543,7 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	Resources &res = Resources::getReference();
 	Game &game = Game::getReference();
 	Mouse &mouse = Mouse::getReference();
+	bool isEGA = LureEngine::getReference().isEGA();
 
 	mouse.pushCursorNum(CURSOR_DISK);
 
@@ -560,7 +582,6 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	_numLayers = _roomData->numLayers;
 	if (showOverlay) ++_numLayers;
 
-	uint16 paletteId = (_roomData->layers[0] & 0xffe0) - 1;
 	for (uint8 layerNum = 0; layerNum < _numLayers; ++layerNum) 
 		_layers[layerNum] = new RoomLayer(_roomData->layers[layerNum],
 			layerNum == 0);
@@ -569,11 +590,15 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	layersPostProcess();
 
 	// Generate the palette for the room that will be faded in
-	//Palette p(MAIN_PALETTE_SIZE, NULL, RGB64);
-	Palette p(GAME_PALETTE_RESOURCE_ID);
-	Palette tempPalette(paletteId);
-	p.copyFrom(&tempPalette);
-	res.insertPaletteSubset(p);
+	Palette *p;
+	if (isEGA) {
+		p = new Palette(_layers[0]->paletteId());
+	} else {
+		p = new Palette(GAME_PALETTE_RESOURCE_ID);
+		Palette tempPalette(_layers[0]->paletteId());
+		p->copyFrom(&tempPalette);
+		res.insertPaletteSubset(*p);
+	}
 
 	// Set the new room number
 	res.fieldList().setField(ROOM_NUMBER, newRoomNumber);
@@ -603,11 +628,12 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	_screen.update();
 
 	if (fadeFlag)
-		_screen.paletteFadeIn(&p);
+		_screen.paletteFadeIn(p);
 	else
-		_screen.setPalette(&p);
+		_screen.setPalette(p);
 
 	mouse.popCursor();
+	delete p;
 }
 
 // checkCursor
