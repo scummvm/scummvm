@@ -627,7 +627,6 @@ void Parallaction_ns::_c_projector(void*) {
 //	if (dword_16032 != 0) {
 		// keep drawing spotlight in its final place
         _gfx->setProjectorPos(110, 25);
-        printf("FIXED: %i, %i\n", 110, 25);
 		return;
 //	}
 #ifdef HALFBRITE
