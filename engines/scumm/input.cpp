@@ -495,7 +495,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		abortCutscene();
 
 		// FIXME: Is the following line really necessary?
-		_mouseAndKeyboardStat = VAR(VAR_CUTSCENEEXIT_KEY);
+		if (VAR_CUTSCENEEXIT_KEY != 0xFF)
+			_mouseAndKeyboardStat = VAR(VAR_CUTSCENEEXIT_KEY);
 
 	} else if (lastKeyHit.ascii == '[' || lastKeyHit.ascii == ']') { // Change music volume
 		int vol = ConfMan.getInt("music_volume") / 16;
