@@ -70,7 +70,7 @@ static const VerbSettings v0VerbTable_English[] = {
 // FIXME: Replace * with the correct character
 static const VerbSettings v0VerbTable_German[] = {
 	{ 1,  0, 1,   0, "Ziehe"},
-	{ 2,  0, 0,   0, "Dr[cke"},
+	{ 2,  0, 0,   0, "Dr<cke"},
 	{ 3,  7, 2,   4, "Lese"},
 	{ 4, 23, 0,   0, "Schlie*e auf"},
 	{ 5, 37, 1,   0, "Ein"},
@@ -80,7 +80,7 @@ static const VerbSettings v0VerbTable_German[] = {
 	{ 9,  7, 1,   0, "Nimm"},
 	{10,  0, 2,   0, "Gebe"},
 	{11, 23, 1, 255, "Repariere"},
-	{12,  7, 0,   0, "}ffne"},
+	{12,  7, 0,   0, "$ffne"},
 	{13, 13, 0,   0, "Gehe zu"},
 	{14, 13, 2,   0, "Was ist"},
 	{15, 23, 2,   0, "Benutz"}
