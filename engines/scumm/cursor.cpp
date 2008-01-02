@@ -467,6 +467,41 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 	updateCursor();
 }
 
+void ScummEngine_v5::resetCursors() {
+	// All "classic" games (V5 and older) encrypted their data files
+	// with exception of the GF_OLD256 games and the PC-Engine version
+	// of Loom.
+	if (!(_game.features & GF_OLD256) && _game.platform != Common::kPlatformPCEngine)
+		_game.features |= GF_USE_KEY;
+
+	static const uint16 default_cursor_images[4][16] = {
+		/* cross-hair */
+		{ 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000, 0x7e3f,
+		  0x0000, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0080, 0x0000 },
+		/* hourglass */
+		{ 0x0000, 0x7ffe, 0x6006, 0x300c, 0x1818, 0x0c30, 0x0660, 0x03c0,
+		  0x0660, 0x0c30, 0x1998, 0x33cc, 0x67e6, 0x7ffe, 0x0000, 0x0000 },
+		/* arrow */
+		{ 0x0000, 0x4000, 0x6000, 0x7000, 0x7800, 0x7c00, 0x7e00, 0x7f00,
+		  0x7f80, 0x78c0, 0x7c00, 0x4600, 0x0600, 0x0300, 0x0300, 0x0180 },
+		/* hand */
+		{ 0x1e00, 0x1200, 0x1200, 0x1200, 0x1200, 0x13ff, 0x1249, 0x1249,
+		  0xf249, 0x9001, 0x9001, 0x9001, 0x8001, 0x8001, 0x8001, 0xffff },
+	};
+
+	static const byte default_cursor_hotspots[10] = {
+		8, 7,   8, 7,   1, 1,   5, 0,
+		8, 7, //zak256
+	};
+
+
+	for (int i = 0; i < 4; i++) {
+		memcpy(_cursorImages[i], default_cursor_images[i], 32);
+	}
+	memcpy(_cursorHotspots, default_cursor_hotspots, 8);
+
+}
+
 void ScummEngine_v5::setBuiltinCursor(int idx) {
 	int i, j;
 	byte color = default_cursor_colors[idx];

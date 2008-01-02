@@ -491,6 +491,8 @@ protected:
 	virtual void animateCursor() {}
 	virtual void updatePalette();
 
+	virtual void resetCursors() {}
+
 public:
 	void pauseGame();
 	void restart();
