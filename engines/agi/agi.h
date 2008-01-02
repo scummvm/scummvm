@@ -266,6 +266,18 @@ enum AgiMonitorType {
 };
 
 /**
+ * Different computer types.
+ * Used with AGI variable 20 i.e. vComputer.
+ * FIXME? As an exception Amiga's Space Quest I (Version 1.2, AGI 2.082) uses value 20.
+ */
+enum AgiComputerType {
+	kAgiComputerPC = 0,
+	kAgiComputerAtariST = 4,
+	kAgiComputerAmiga = 5,
+	kAgiComputerApple2GS = 7
+};
+
+/**
  * AGI flags
  */
 enum {

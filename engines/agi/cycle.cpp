@@ -365,7 +365,23 @@ int AgiEngine::runGame() {
 		if (ec == errRestartGame)
 			setflag(fRestartGame, true);
 
-		setvar(vComputer, 0);	/* IBM PC (4 = Atari ST) */
+		// Set computer type (v20 i.e. vComputer)
+		switch (getPlatform()) {
+			case Common::kPlatformAtariST:
+				setvar(vComputer, kAgiComputerAtariST);
+				break;
+			case Common::kPlatformAmiga:
+				setvar(vComputer, kAgiComputerAmiga);
+				break;
+			case Common::kPlatformApple2GS:
+				setvar(vComputer, kAgiComputerApple2GS);
+				break;
+			case Common::kPlatformPC:
+			default:
+				setvar(vComputer, kAgiComputerPC);
+				break;
+		}
+
 		setvar(vSoundgen, 1);	/* IBM PC SOUND */
 
 		// Set monitor type (v26 i.e. vMonitor)
