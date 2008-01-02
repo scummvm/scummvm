@@ -682,10 +682,9 @@ void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int
 			if (_game.heversion == 70)
 				setDirtyColors(idx, idx);
 
-
 			// Original FOA Amiga version skips these colors
 			// Fixes bug #1206994: "FOA AMIGA: Black cursor and text in Dig Site"
-			if (_game.platform == Common::kPlatformAmiga) {
+			if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
 				if (j < 16) {
 					cptr += 3;
 					continue;
