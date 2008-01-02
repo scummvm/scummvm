@@ -408,6 +408,41 @@ void Resources::insertPaletteSubset(Palette &p) {
 	p.palette()->copyFrom(_paletteSubset->palette(), 60*4, 220*4, 8*4);
 }
 
+byte *Resources::getCursor(uint8 cursorNum) { 
+	if (!LureEngine::getReference().isEGA())
+		return _cursors->data() + (cursorNum * CURSOR_SIZE);
+
+	Common::set_to(&_cursor[0], &_cursor[0] + CURSOR_SIZE, 0);
+	byte *pSrc = _cursors->data() + (cursorNum * 64);
+	byte *pDest = &_cursor[0];
+	int planeNum = 0;
+
+	for (int y = 0; y < 16; ++y) {
+		for (int x = 0; x < 2; ++x) {
+			for (int planeNum = 0; planeNum < 2; ++planeNum, ++pSrc) {
+
+				byte v = *pSrc;
+				for (int bitCtr = 0; bitCtr < 8; ++bitCtr, v <<= 1) {
+					if ((v & 0x80) != 0)
+						*(pDest + bitCtr) |= 1 << planeNum;
+					else
+						*(pDest + bitCtr) &= ~(1 << planeNum);
+				}
+			}
+
+			pDest += 8;
+		}
+	}
+
+	// Post-process the cells to swap any values of 2 and 3
+	for (int index = 0; index < CURSOR_SIZE; ++index) {
+		if (_cursor[index] == 2) _cursor[index] = 3;
+		else if (_cursor[index] == 3) _cursor[index] = 2;
+	}
+
+	return &_cursor[0];
+}
+
 HotspotData *Resources::getHotspot(uint16 hotspotId) {
 	HotspotDataList::iterator i;
 

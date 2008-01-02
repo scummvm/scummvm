@@ -90,6 +90,7 @@ private:
 	int _talkSelection;
 	int _talkStartEntry;
 	uint16 _talkingCharacter;
+	byte _cursor[CURSOR_WIDTH * CURSOR_HEIGHT];
 
 	void reloadData();
 	void freeData();
@@ -104,10 +105,7 @@ public:
 	RoomData *getRoom(uint16 roomNumber);
 	bool checkHotspotExtent(HotspotData *hotspot);
 	void insertPaletteSubset(Palette &p);
-
-	byte *getCursor(uint8 cursorNum) { 
-		return _cursors->data() + (cursorNum * CURSOR_SIZE);
-	}
+	byte *getCursor(uint8 cursorNum);
 	HotspotDataList &hotspotData() { return _hotspotData; }
 	HotspotOverrideList &hotspotOverrides() { return _hotspotOverrides; }
 	HotspotAnimList &animRecords() { return _animData; }
