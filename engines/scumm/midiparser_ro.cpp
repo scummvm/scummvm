@@ -69,7 +69,7 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 		if (info.command() == 0xA) {
 			++_lastMarkerCount;
 			info.event = 0xF0;
-		} else if (info.command() == 0xF) {
+		} else if (info.command() == 0xF && info.event != 0xFF) {
 			byte delay = *(_position._play_pos++);
 			info.delta += delay;
 			if (info.event != 0xF0) {
