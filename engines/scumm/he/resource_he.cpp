@@ -943,15 +943,19 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 					uint32 x;
 					uint32 y = (bitmap.height < 0 ? d : height - d - 1);
 					uint32 imod = y * (image_size / height) * 8 / bitmap.bit_count;
-					//uint32 mmod = y * (mask_size / height) * 8;
+					uint32 mmod = y * (mask_size / height) * 8;
 
 					for (x = 0; x < width; x++) {
 
 						uint32 color = simple_vec(image_data, x + imod, bitmap.bit_count);
 
 						// We set up cursor palette for default cursor, so use it
-						if (color) {
-							cursor[0][width * d + x] = 254; // white
+						if (!simple_vec(mask_data, x + mmod, 1)) {
+							if (color) {
+								cursor[0][width * d + x] = 254; // white
+							} else {
+								cursor[0][width * d + x] = 0; // black
+							}
 						} else {
 							cursor[0][width * d + x] = 255; // transparent
 						}
