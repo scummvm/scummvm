@@ -29,7 +29,7 @@
 
 #if defined(IRIX) 
 
-#include "common/stdafx.h"
+#include "common/scummsys.h"
 #include "sound/mpu401.h"
 #include "common/util.h"
 
