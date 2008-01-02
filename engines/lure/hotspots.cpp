@@ -43,6 +43,7 @@ namespace Lure {
 
 Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	Resources &resources = Resources::getReference();
+	bool isEGA = LureEngine::getReference().isEGA();
 
 	_data = res;
 	_anim = NULL;
@@ -70,8 +71,8 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_layer = res->layer;
 	_hotspotScriptOffset = res->hotspotScriptOffset;
 	_frameCtr = res->tickTimeout;
-	_colourOffset = res->colourOffset;
 	_tempDest.counter = 0;
+	_colourOffset = isEGA ? 0 : res->colourOffset;
 
 	_override = resources.getHotspotOverride(res->hotspotId);
 	setAnimation(_data->animRecordId);
