@@ -99,6 +99,8 @@ ScummDebugger::ScummDebugger(ScummEngine *s)
 	DCmd_Register("hide",      WRAP_METHOD(ScummDebugger, Cmd_Hide));
 
 	DCmd_Register("imuse",     WRAP_METHOD(ScummDebugger, Cmd_IMuse));
+
+	DCmd_Register("resetcursors",    WRAP_METHOD(ScummDebugger, Cmd_ResetCursors));
 }
 
 ScummDebugger::~ScummDebugger() {
@@ -861,6 +863,14 @@ bool ScummDebugger::Cmd_PrintDraft(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool ScummDebugger::Cmd_ResetCursors(int argc, const char **argv) {
+	_vm->resetCursors();
+
+	_detach_now = true;
+
+	return false;
 }
 
 } // End of namespace Scumm
