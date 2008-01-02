@@ -371,7 +371,10 @@ int AgiEngine::runGame() {
 				setvar(vComputer, kAgiComputerAtariST);
 				break;
 			case Common::kPlatformAmiga:
-				setvar(vComputer, kAgiComputerAmiga);
+				if (getFeatures() & GF_OLDAMIGAV20)
+					setvar(vComputer, kAgiComputerAmigaOld);
+				else
+					setvar(vComputer, kAgiComputerAmiga);
 				break;
 			case Common::kPlatformApple2GS:
 				setvar(vComputer, kAgiComputerApple2GS);
