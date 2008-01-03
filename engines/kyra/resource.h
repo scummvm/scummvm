@@ -226,6 +226,8 @@ struct Room;
 
 class StaticResource {
 public:
+	static const Common::String _staticDataFile;
+
 	StaticResource(KyraEngine *vm) : _vm(vm), _resList(), _fileLoader(0), _builtIn(0), _filenameTable(0) {}
 	~StaticResource() { deinit(); }
 

@@ -69,10 +69,11 @@ bool Resource::reset() {
 
 	if (_vm->game() == GI_KYRA1) {
 		// we're loading KYRA.DAT here too (but just for Kyrandia 1)
-		if (!loadPakFile("KYRA.DAT") || !StaticResource::checkKyraDat()) {
-			GUI::MessageDialog errorMsg("You're missing the 'KYRA.DAT' file or it got corrupted, (re)get it from the ScummVM website");
+		if (!loadPakFile(StaticResource::_staticDataFile) || !StaticResource::checkKyraDat()) {
+			Common::String errorMessage = "You're missing the '" + StaticResource::_staticDataFile + "' file or it got corrupted, (re)get it from the ScummVM website";
+			GUI::MessageDialog errorMsg(errorMessage);
 			errorMsg.runModal();
-			error("You're missing the 'KYRA.DAT' file or it got corrupted, (re)get it from the ScummVM website");
+			error(errorMessage.c_str());
 		}
 
 		// We only need kyra.dat for the demo.
@@ -144,7 +145,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 		return true;
 	}
 
-	const bool isKyraDat = filename.equalsIgnoreCase("KYRA.DAT");
+	const bool isKyraDat = filename.equalsIgnoreCase(StaticResource::_staticDataFile);
 	uint32 size = 0;
 
 	Common::File handle;
