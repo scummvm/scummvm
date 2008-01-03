@@ -1252,7 +1252,7 @@ void ScummEngine_v60he::redimArray(int arrayId, int newX, int newY, int type) {
 		error("redimArray: Invalid array (%d) reference", readVar(arrayId));
 
 	newSize = (type == kIntArray) ? 2 : 1;
-	oldSize = (ah->type == kIntArray) ? 2 : 1;
+	oldSize = (FROM_LE_16(ah->type) == kIntArray) ? 2 : 1;
 
 	newSize *= (newX + 1) * (newY + 1);
 	oldSize *= FROM_LE_16(ah->dim1) * FROM_LE_16(ah->dim2);
