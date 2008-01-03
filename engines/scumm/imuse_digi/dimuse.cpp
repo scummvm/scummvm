@@ -250,6 +250,7 @@ void IMuseDigital::callback() {
 						}
 						if (track->vol == 0) {
 							track->toBeRemoved = true;
+							continue;
 						}
 					}
 				} else if (track->volFadeStep > 0) {
