@@ -418,7 +418,7 @@ void Troll::drawTroll() {
 }
 
 int Troll::drawRoom(char *menu) {
-	int n;
+	int n = 0;
 	bool contFlag = false;
 
 	if (_currentRoom == 1) {
