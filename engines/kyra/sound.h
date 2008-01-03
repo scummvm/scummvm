@@ -443,7 +443,7 @@ public:
 	void setVolume(int volume) { _music->setVolume(volume); _sfx->setVolume(volume); }
 	int getVolume() { return _music->getVolume(); }
 
-	void setSoundList(const AudioDataStruct * const list) { _music->setSoundList(list); _sfx->setSoundList(list); }
+	void setSoundList(const AudioDataStruct * list) { _music->setSoundList(list); _sfx->setSoundList(list); }
 	void loadSoundFile(uint file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
 
 	void playTrack(uint8 track) { _music->playTrack(track); }
