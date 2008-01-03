@@ -73,7 +73,11 @@
 extern "C" {
 #endif
 
+#ifdef __SYMBIAN32__
+#include <zlib\zlib.h>
+#else
 #include <zlib.h>
+#endif
 
 #if defined(STRICTUNZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted

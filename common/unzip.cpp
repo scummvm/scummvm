@@ -35,7 +35,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef __SYMBIAN32__
+#include <zlib\zlib.h>
+#else
 #include <zlib.h>
+#endif
 
 #include "common/unzip.h"
 #include "common/file.h"
