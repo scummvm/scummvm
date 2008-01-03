@@ -97,7 +97,7 @@ public:
 	 * operating system doesn't support the concept), some other directory is
 	 * used (usually the root directory).
 	 */
-	FilesystemNode(const Common::String &path);
+	explicit FilesystemNode(const Common::String &path);
 
 	/**
 	 * Copy constructor.
