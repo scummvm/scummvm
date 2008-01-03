@@ -71,6 +71,7 @@ int IMuseDigital::allocSlot(int priority) {
 }
 
 void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority) {
+	Common::StackLock lock(_mutex, "IMuseDigital::startSound()");
 	debug(5, "IMuseDigital::startSound(%d)", soundId);
 
 	int l = allocSlot(priority);
@@ -81,7 +82,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 
 	Track *track = _track[l];
 	while (1) {
-		_mutex.lock();
 		if (!track->used) {
 			break;
 		}
@@ -94,6 +94,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 #ifndef __PLAYSTATION2__
 		_vm->parseEvents();
 #endif
+		_mutex.lock();
 	}
 
 	track->pan = 64;
@@ -191,7 +192,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	}
 
 	track->used = true;
-	_mutex.unlock();
 }
 
 void IMuseDigital::setPriority(int soundId, int priority) {
