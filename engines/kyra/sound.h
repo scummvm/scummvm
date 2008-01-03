@@ -105,23 +105,8 @@ public:
 	 * when playing a track and/or sound effect.
 	 *
 	 * @param list	soundfile list
-	 * @param s		number of soundfiles
 	 */
-	virtual void setSoundFileList(const char * const *list, uint s) { _soundFileList = list; _soundFileListSize = s; }
-
-	/**
-	 * Selects preset bundles of music files
-	 * and cd audio tracks the output device will use
-	 * when playing a track and/or sound effect.
-	 *
-	 * TODO: this is just needed for Kyrandia 2 FM-Towns version,
-	 * and is similar to what setSoundFileList is used for, so we
-	 * should think of a better solution than this.
-	 * @see setSoundFileList
-	 *
-	 * @param id	kMusicIntro, kMusicIngame or kMusicFinale
-	 */	
-	virtual void assignData(kMusicDataID id) { _currentTheme = id; }
+	virtual void setSoundList(const AudioDataStruct *list) { _soundDataList = list; }
 
 	/**
 	 * Load a specifc sound file for use of
@@ -191,7 +176,10 @@ public:
 	void voiceStop();
 
 protected:
-	const char *soundFilename(uint file) { return (file < _soundFileListSize) ? _soundFileList[file] : ""; }
+	const char *fileListEntry(uint file) const { return (file < _soundDataList->_fileListLen) ? _soundDataList->_fileList[file] : ""; }
+	const void *cdaData() const { return _soundDataList->_cdaTracks; }
+	const uint32 cdaTrackNum() const { return _soundDataList->_cdaNumTracks; }
+
 	int _musicEnabled;
 	bool _sfxEnabled;
 
@@ -201,9 +189,7 @@ protected:
 	Audio::Mixer *_mixer;
 
 private:
-	const char * const *_soundFileList;
-	uint _soundFileListSize;
-
+	const AudioDataStruct *_soundDataList;
 	Audio::AudioStream *_currentVocFile;
 	Audio::SoundHandle _vocHandle;
 	Common::File _compressHandle;
@@ -444,16 +430,6 @@ private:
 
 	//SoundTowns_v2_TwnDriver * _driver;
 	uint8 * _twnTrackData;
-
-	static const uint8 _cdaTrackTableK2Intro[];
-	static const uint8 _cdaTrackTableK2Ingame[];
-	static const uint8 _cdaTrackTableK2Finale[];
-
-	static const struct Kyra2AudioThemes {
-		const uint8 * cdaTable;
-		const uint8 cdaTableSize;
-		const char * twnFilename;
-	} _themes[];
 };
 
 class MixedSoundDriver : public Sound {
@@ -467,7 +443,7 @@ public:
 	void setVolume(int volume) { _music->setVolume(volume); _sfx->setVolume(volume); }
 	int getVolume() { return _music->getVolume(); }
 
-	void setSoundFileList(const char * const*list, uint s) { _music->setSoundFileList(list, s); _sfx->setSoundFileList(list, s); }
+	void setSoundList(const AudioDataStruct * const list) { _music->setSoundList(list); _sfx->setSoundList(list); }
 	void loadSoundFile(uint file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
 
 	void playTrack(uint8 track) { _music->playTrack(track); }

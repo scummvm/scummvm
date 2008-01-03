@@ -2267,7 +2267,7 @@ void SoundAdlibPC::playTrack(uint8 track) {
 		// sync for each loop. To avoid that, we declare that all four
 		// of the song channels have to jump "in sync".
 
-		if (track == 4 && scumm_stricmp(soundFilename(_soundFileLoaded), "KYRA1B") == 0)
+		if (track == 4 && scumm_stricmp(fileListEntry(_soundFileLoaded), "KYRA1B") == 0)
 			_driver->setSyncJumpMask(0x000F);
 		else
 			_driver->setSyncJumpMask(0);
@@ -2351,7 +2351,7 @@ void SoundAdlibPC::loadSoundFile(uint file) {
 	uint8 *file_data = 0; uint32 file_size = 0;
 
 	char filename[25];
-	sprintf(filename, "%s.ADL", soundFilename(file));
+	sprintf(filename, "%s.ADL", fileListEntry(file));
 
 	file_data = _vm->resource()->fileData(filename, &file_size);
 	if (!file_data) {

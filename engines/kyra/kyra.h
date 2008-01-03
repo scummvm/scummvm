@@ -56,6 +56,13 @@ enum {
 	GI_KYRA3 = 2
 };
 
+struct AudioDataStruct {
+	const char * const *_fileList;
+	const uint _fileListLen;	
+	const void * const _cdaTracks;
+	const uint _cdaNumTracks;
+};
+
 // TODO: this is just the start of makeing the debug output of the kyra engine a bit more useable
 // in the future we maybe merge some flags  and/or create new ones
 enum kDebugLevels {

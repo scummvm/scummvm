@@ -1118,46 +1118,16 @@ void SoundTowns::process() {
 	AudioCD.updateCD();
 }
 
-namespace {
-
-struct CDTrackTable {
-	uint32 fileOffset;
-	bool loop;
-	int track;
-};
-
-} // end of anonymous namespace
-
 void SoundTowns::playTrack(uint8 track) {
 	if (track < 2)
 		return;
 	track -= 2;
 
-	static const CDTrackTable tTable[] = {
-		{ 0x04000, 1,  0 },	{ 0x05480, 1,  6 },	{ 0x05E70, 0,  1 },
-		{ 0x06D90, 1,  3 },	{ 0x072C0, 0, -1 },	{ 0x075F0, 1, -1 },
-		{ 0x07880, 1, -1 },	{ 0x089C0, 0, -1 },	{ 0x09080, 0, -1 },
-		{ 0x091D0, 1,  4 },	{ 0x0A880, 1,  5 },	{ 0x0AF50, 0, -1 },
-		{ 0x0B1A0, 1, -1 },	{ 0x0B870, 0, -1 },	{ 0x0BCF0, 1, -1 },
-		{ 0x0C5D0, 1,  7 },	{ 0x0D3E0, 1,  8 },	{ 0x0e7b0, 1,  2 },
-		{ 0x0edc0, 0, -1 },	{ 0x0eef0, 1,  9 },	{ 0x10540, 1, 10 },
-		{ 0x10d80, 0, -1 },	{ 0x10E30, 0, -1 },	{ 0x10FC0, 0, -1 },
-		{ 0x11310, 1, -1 },	{ 0x11A20, 1, -1 },	{ 0x12380, 0, -1 },
-		{ 0x12540, 1, -1 },	{ 0x12730, 1, -1 },	{ 0x12A90, 1, 11 },
-		{ 0x134D0, 0, -1 },	{ 0x00000, 0, -1 },	{ 0x13770, 0, -1 },
-		{ 0x00000, 0, -1 },	{ 0x00000, 0, -1 },	{ 0x00000, 0, -1 },
-		{ 0x00000, 0, -1 },	{ 0x14710, 1, 12 },	{ 0x15DF0, 1, 13 },
-		{ 0x16030, 1, 14 },	{ 0x17030, 0, -1 },	{ 0x17650, 0, -1 },
-		{ 0x134D0, 0, -1 },	{ 0x178E0, 1, -1 },	{ 0x18200, 0, -1 },
-		{ 0x18320, 0, -1 },	{ 0x184A0, 0, -1 },	{ 0x18BB0, 0, -1 },
-		{ 0x19040, 0, 19 },	{ 0x19B50, 0, 20 },	{ 0x17650, 0, -1 },
-		{ 0x1A730, 1, 21 },	{ 0x00000, 0, -1 },	{ 0x12380, 0, -1 },
-		{ 0x1B810, 0, -1 },	{ 0x1BA50, 0, 15 },	{ 0x1C190, 0, 16 },
-		{ 0x1CA50, 0, 17 },	{ 0x1D100, 0, 18 }
-	};
+	const int32 * const tTable = (const int32 * const) cdaData();
+	int tTableIndex = 3 * track;
 
-	int trackNum = tTable[track].track;
-	bool loop = tTable[track].loop;
+	int trackNum = tTable[tTableIndex + 2];
+	int32 loop = tTable[tTableIndex + 1];
 
 	if (track == _lastTrack && _musicEnabled)
 		return;
@@ -1168,7 +1138,7 @@ void SoundTowns::playTrack(uint8 track) {
 		AudioCD.play(trackNum+1, loop ? -1 : 1, 0, 0);
 		AudioCD.updateCD();
 	} else if (_musicEnabled) {
-		playEuphonyTrack(tTable[track].fileOffset, loop);
+		playEuphonyTrack((uint32) tTable[tTableIndex], loop);
 	}
 
 	_lastTrack = track;
@@ -1195,7 +1165,7 @@ void SoundTowns::loadSoundFile(uint file) {
 		return;
 	_sfxFileIndex = file;
 	delete [] _sfxFileData;
-	_sfxFileData = _vm->resource()->fileData(soundFilename(file), 0);
+	_sfxFileData = _vm->resource()->fileData(fileListEntry(file), 0);
 }
 
 void SoundTowns::playSoundEffect(uint8 track) {
@@ -1230,22 +1200,13 @@ void SoundTowns::playSoundEffect(uint8 track) {
 	if (offset == -1)
 		return;
 
-	struct SfxHeader {
-		uint32 id;
-		uint32 inBufferSize;
-		uint32 unused1;
-		uint32 outBufferSize;
-		uint32 unused2;
-		uint32 unused3;
-		uint32 rate;
-		uint32 rootNoteOffs;
-	} *sfxHeader = (SfxHeader*)(fileBody + offset);
+	uint32 * sfxHeader = (uint32*)(fileBody + offset);
 
-	uint32 sfxHeaderID = TO_LE_32(sfxHeader->id);
-	uint32 sfxHeaderInBufferSize = TO_LE_32(sfxHeader->inBufferSize);
-	uint32 sfxHeaderOutBufferSize = TO_LE_32(sfxHeader->outBufferSize);
-	uint32 sfxRootNoteOffs = TO_LE_32(sfxHeader->rootNoteOffs);
-	uint32 sfxRate = TO_LE_32(sfxHeader->rate);
+	uint32 sfxHeaderID = READ_LE_UINT32(sfxHeader);
+	uint32 sfxHeaderInBufferSize = READ_LE_UINT32(&sfxHeader[1]);
+	uint32 sfxHeaderOutBufferSize = READ_LE_UINT32(&sfxHeader[3]);
+	uint32 sfxRootNoteOffs = READ_LE_UINT32(&sfxHeader[7]);
+	uint32 sfxRate = READ_LE_UINT32(&sfxHeader[6]);
 
 	uint32 playbackBufferSize = (sfxHeaderID == 1) ? sfxHeaderInBufferSize : sfxHeaderOutBufferSize;
 
@@ -1452,10 +1413,12 @@ void SoundTowns_v2::playTrack(uint8 track) {
 	if (track == _lastTrack && _musicEnabled)
 		return;
 
+	const uint8 * const cdaTracks = (const uint8 * const) cdaData();
+
 	int trackNum = -1;
-	for (int i = 0; i < _themes[_currentTheme].cdaTableSize; i++) {
-		if (track == _themes[_currentTheme].cdaTable[i * 2]) {
-			trackNum = _themes[_currentTheme].cdaTable[i * 2 + 1] - 1;
+	for (uint32 i = 0; i < cdaTrackNum(); i++) {
+		if (track == cdaTracks[i * 2]) {
+			trackNum = cdaTracks[i * 2 + 1] - 1;
 			break;
 		}
 	}
@@ -1470,7 +1433,7 @@ void SoundTowns_v2::playTrack(uint8 track) {
 		AudioCD.updateCD();
 	} else if (_musicEnabled) {
 		char musicfile[13];
-		sprintf(musicfile, "%s%d.twn", _themes[_currentTheme].twnFilename, track);
+		sprintf(musicfile, "%s%d.twn", fileListEntry(0), track);
 		if (_twnTrackData)
 			delete [] _twnTrackData;
 		_twnTrackData = _vm->resource()->fileData(musicfile, 0);
@@ -1546,33 +1509,6 @@ void SoundTowns_v2::beginFadeOut() {
 	//_driver->fadeOut();
 	haltTrack();
 }
-
-const uint8 SoundTowns_v2::_cdaTrackTableK2Intro[] =	{
-	0x03, 0x01, 0x04, 0x02, 0x05, 0x03, 0x06, 0x04, 0x07, 0x05, 0x08, 0x06
-};
-
-const uint8 SoundTowns_v2::_cdaTrackTableK2Ingame[] =	{
-	0x02, 0x07, 0x03, 0x08, 0x04, 0x09, 0x07, 0x0A, 0x0C, 0x0B, 0x0D, 0x0C, 0x0E, 0x0D, 0x0F, 0x0E,
-	0x10, 0x0F, 0x12, 0x10, 0x13, 0x11, 0x15, 0x12,	0x17, 0x13, 0x18, 0x14, 0x19, 0x15, 0x1A, 0x16,
-	0x1B, 0x17, 0x1C, 0x18,	0x1D, 0x19, 0x1E, 0x1A, 0x1F, 0x1B, 0x21, 0x1C, 0x22, 0x1D, 0x23, 0x1E,
-	0x24, 0x1F, 0x25, 0x20, 0x26, 0x21, 0x27, 0x22, 0x28, 0x23, 0x29, 0x24,	0x2A, 0x25, 0x2B, 0x26,
-	0x2C, 0x27, 0x2D, 0x28, 0x2E, 0x29, 0x2F, 0x2A,	0x30, 0x2B, 0x31, 0x2C, 0x32, 0x2D, 0x33, 0x2E,
-	0x34, 0x2F, 0x35, 0x30,	0x36, 0x31, 0x37, 0x32, 0x38, 0x33, 0x39, 0x34, 0x3A, 0x35, 0x3B, 0x36,
-	0x3C, 0x37, 0x3D, 0x38, 0x3E, 0x39, 0x3F, 0x3A, 0x40, 0x3B, 0x41, 0x3C,	0x42, 0x3D, 0x43, 0x3E,
-	0x44, 0x3F, 0x45, 0x40, 0x46, 0x41, 0x47, 0x42,	0x48, 0x43, 0x49, 0x44, 0x4A, 0x45, 0x4B, 0x46,
-	0x4C, 0x47, 0x4D, 0x48,	0x4E, 0x49, 0x4F, 0x4A, 0x50, 0x4B, 0x51, 0x4C, 0x52, 0x4D, 0x53, 0x4E,
-	0x54, 0x4F, 0x55, 0x50, 0x56, 0x51, 0x57, 0x52
-};
-
-const uint8 SoundTowns_v2::_cdaTrackTableK2Finale[] =	{
-	0x03, 0x53, 0x04, 0x54
-};
-
-const SoundTowns_v2::Kyra2AudioThemes SoundTowns_v2::_themes[] = {
-	{ _cdaTrackTableK2Intro,	ARRAYSIZE(_cdaTrackTableK2Intro) >> 1,	"intro"		},
-	{ _cdaTrackTableK2Ingame,	ARRAYSIZE(_cdaTrackTableK2Ingame) >> 1,	"k2"		},
-	{ _cdaTrackTableK2Finale,	ARRAYSIZE(_cdaTrackTableK2Finale) >> 1,	"finale"	}
-};
 
 } // end of namespace Kyra
 

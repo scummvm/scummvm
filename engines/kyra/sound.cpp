@@ -40,7 +40,7 @@ namespace Kyra {
 
 Sound::Sound(KyraEngine *vm, Audio::Mixer *mixer)
 	: _vm(vm), _mixer(mixer), _currentVocFile(0), _vocHandle(), _compressHandle(),
-	_musicEnabled(1), _sfxEnabled(true), _soundFileList(0), _soundFileListSize(0) {
+	_musicEnabled(1), _sfxEnabled(true), _soundDataList(0) {
 }
 
 Sound::~Sound() {
@@ -259,7 +259,7 @@ void SoundMidiPC::metaEvent(byte type, byte *data, uint16 length) {
 
 void SoundMidiPC::loadSoundFile(uint file) {
 	char filename[25];
-	sprintf(filename, "%s.%s", soundFilename(file), _useC55 ? "C55" : "XMI");
+	sprintf(filename, "%s.%s", fileListEntry(file), _useC55 ? "C55" : "XMI");
 
 	uint32 size;
 	uint8 *data = (_vm->resource())->fileData(filename, &size);
@@ -296,7 +296,7 @@ void SoundMidiPC::playMusic(uint8 *data, uint32 size) {
 
 void SoundMidiPC::loadSoundEffectFile(uint file) {
 	char filename[25];
-	sprintf(filename, "%s.%s", soundFilename(file), _useC55 ? "C55" : "XMI");
+	sprintf(filename, "%s.%s", fileListEntry(file), _useC55 ? "C55" : "XMI");
 
 	uint32 size;
 	uint8 *data = (_vm->resource())->fileData(filename, &size);

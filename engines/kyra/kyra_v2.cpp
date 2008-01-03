@@ -139,12 +139,21 @@ int KyraEngine_v2::init() {
 		_sequenceStrings = (const char * const *) _sequenceStrings_TOWNS_EN;
 		_sequenceStringsSize = _sequenceStringsSize_TOWNS_EN;
 		_sequences = (const Sequence*) _sequences_TOWNS;
-	} else {
+		_soundData = (const AudioDataStruct *) _soundData_TOWNS;
+	} else if (_flags.isTalkie) {
 		_sequenceSoundList = (const char * const *) _sequenceSoundList_PC;
 		_sequenceSoundListSize = _sequenceSoundListSize_PC;
 		_sequenceStrings = (const char * const *) _sequenceStrings_PC_EN;
 		_sequenceStringsSize = _sequenceStringsSize_PC_EN;
 		_sequences = (const Sequence*) _sequences_PC;
+		_soundData = (const AudioDataStruct *) _soundData_PC;
+	} else {
+		_sequenceSoundList = (const char * const *) _sequenceSoundList_PCFLOPPY;
+		_sequenceSoundListSize = _sequenceSoundListSize_PCFLOPPY;
+		_sequenceStrings = (const char * const *) _sequenceStrings_PC_EN;
+		_sequenceStringsSize = _sequenceStringsSize_PC_EN;
+		_sequences = (const Sequence*) _sequences_PC;
+		_soundData = (const AudioDataStruct *) _soundData_PC;
 	}
 
 	for (int i = 0; i < 33; i++)
@@ -170,45 +179,58 @@ int KyraEngine_v2::go() {
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 		seq_showStarcraftLogo();
 
-	seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
-	//seq_playSequences(kSequenceFunters, kSequenceFrash);
+	if (_flags.platform == Common::kPlatformPC && _flags.isDemo) {
+		_res->loadPakFile("VOC.PAK");
+		_menuChoice = 2;
+	} else {
+		seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
+		//seq_playSequences(kSequenceFunters, kSequenceFrash);
 
-	if (_menuChoice == 1) {
-		// load just the pak files needed for ingame
 		_res->unloadAllPakFiles();
-		if (_flags.platform == Common::kPlatformPC && (_flags.isTalkie || _flags.isDemo)) {
-			_res->loadFileList("FILEDATA.FDT");
-		} else if (_flags.platform == Common::kPlatformPC) {
-			//TODO:
-			//What files are needed for floppy version?
-		} else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
-			char tmpfilename[13];
-			static const char * pakfiles [] = { "KYRA.DAT", "AUDIO.PAK", "CAULDRON.PAK",
-				"MISC_CPS.PAK", "MISC_EMC.PAK", "OTHER.PAK", "VOC.PAK", "WSCORE.PAK" };
-			for (int i = 0; i < 8; i++)
-				_res->loadPakFile(pakfiles[i]);
-			for (int i = 1; i < 10; i++) {
-				sprintf(tmpfilename, "COST%d_SH.PAK", i);
-				_res->loadPakFile(tmpfilename);
-			}
-			for (int i = 1; i < 6; i++) {
-				sprintf(tmpfilename, "HOFCH_%d.PAK", i);
-				_res->loadPakFile(tmpfilename);
+
+		if (_menuChoice != 4) {
+			// load just the pak files needed for ingame
+			if (_flags.platform == Common::kPlatformPC && _flags.isTalkie) {
+				_res->loadFileList("FILEDATA.FDT");
+				_res->loadPakFile("KYRA.DAT");			
+			} else if (_flags.platform == Common::kPlatformPC) {
+				// TODO
+
+			} else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
+				char tmpfilename[13];
+				static const char * pakfiles [] = { "KYRA.DAT", "AUDIO.PAK", "CAULDRON.PAK",
+					"MISC_CPS.PAK", "MISC_EMC.PAK", "OTHER.PAK", "VOC.PAK", "WSCORE.PAK" };
+				for (int i = 0; i < 8; i++)
+					_res->loadPakFile(pakfiles[i]);
+				for (int i = 1; i < 10; i++) {
+					sprintf(tmpfilename, "COST%d_SH.PAK", i);
+					_res->loadPakFile(tmpfilename);
+				}
+				for (int i = 1; i < 6; i++) {
+					sprintf(tmpfilename, "HOFCH_%d.PAK", i);
+					_res->loadPakFile(tmpfilename);
+				}
 			}
 		}
+	}
 
+	if (_menuChoice == 1) {
 		startup();
 		runLoop();
 		cleanup();
 	} else if (_menuChoice == 3) {
-		// Load Game
+		// TODO:	Load Game
+
+	} else if (_menuChoice == 2) {
+		// TODO:	Run Demo
+
 	}
 
 	return 0;
 }
 
 void KyraEngine_v2::startup() {
-	snd_assignMusicData(kMusicIngame);
+	_sound->setSoundList(&_soundData[kMusicIngame]);
 	// The track map is exactly the same
 	// for FM-TOWNS and DOS
 	_trackMap = _dosTrackMap;
@@ -1565,19 +1587,6 @@ void KyraEngine_v2::snd_loadSoundFile(int id) {
 	int file = _trackMap[id*2];
 	_curSfxFile = _curMusicTheme = file;
 	_sound->loadSoundFile(file);
-}
-
-void KyraEngine_v2::snd_assignMusicData(kMusicDataID id) {
-	if (_flags.platform == Common::kPlatformPC) {
-		if (id == kMusicIntro)
-			_sound->setSoundFileList(_dosSoundFileListIntro, 1);
-		else if (id == kMusicFinale)
-			_sound->setSoundFileList(_dosSoundFileListFinale, 1);
-		else
-			_sound->setSoundFileList(_dosSoundFileList, _dosSoundFileListSize);
-	} else {
-		_sound->assignData(id);
-	}
 }
 
 void KyraEngine_v2::playVoice(int high, int low) {

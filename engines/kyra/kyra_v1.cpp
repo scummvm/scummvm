@@ -180,10 +180,9 @@ int KyraEngine_v1::init() {
 
 	initStaticResource();
 	
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
-		_sound->setSoundFileList(_soundFilesTowns, _soundFilesTownsCount);
-	else
-		_sound->setSoundFileList(_soundFiles, _soundFilesCount);
+	const AudioDataStruct *const sndList = (_flags.platform == Common::kPlatformFMTowns ||
+		_flags.platform == Common::kPlatformPC98) ? _soundData_TOWNS : _soundData_PC;
+	_sound->setSoundList(sndList);
 
 	_trackMap = _dosTrackMap;
 	_trackMapSize = _dosTrackMapSize;

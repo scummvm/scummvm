@@ -917,8 +917,6 @@ const char *KyraEngine_v1::_soundFiles[] = {
 	"INTRO"
 };
 
-const int KyraEngine_v1::_soundFilesCount = ARRAYSIZE(KyraEngine_v1::_soundFiles);
-
 const char *KyraEngine_v1::_soundFilesTowns[] = {
 	"TW_INTRO.SFX",
 	"TW_SCEN1.SFX",
@@ -928,8 +926,38 @@ const char *KyraEngine_v1::_soundFilesTowns[] = {
 	"TW_SCEN5.SFX"
 };
 
-const int KyraEngine_v1::_soundFilesTownsCount = ARRAYSIZE(KyraEngine_v1::_soundFilesTowns);
+const int32 KyraEngine_v1::_cdaTrackTable[] = {
+	0x04000, 1,  0,	0x05480, 1,  6,	0x05E70, 0,  1,
+	0x06D90, 1,  3,	0x072C0, 0, -1,	0x075F0, 1, -1,
+	0x07880, 1, -1,	0x089C0, 0, -1,	0x09080, 0, -1,
+	0x091D0, 1,  4,	0x0A880, 1,  5,	0x0AF50, 0, -1,
+	0x0B1A0, 1, -1,	0x0B870, 0, -1,	0x0BCF0, 1, -1,
+	0x0C5D0, 1,  7,	0x0D3E0, 1,  8,	0x0e7b0, 1,  2,
+	0x0edc0, 0, -1,	0x0eef0, 1,  9,	0x10540, 1, 10,
+	0x10d80, 0, -1,	0x10E30, 0, -1,	0x10FC0, 0, -1,
+	0x11310, 1, -1,	0x11A20, 1, -1,	0x12380, 0, -1,
+	0x12540, 1, -1,	0x12730, 1, -1,	0x12A90, 1, 11,
+	0x134D0, 0, -1,	0x00000, 0, -1,	0x13770, 0, -1,
+	0x00000, 0, -1,	0x00000, 0, -1,	0x00000, 0, -1,
+	0x00000, 0, -1,	0x14710, 1, 12,	0x15DF0, 1, 13,
+	0x16030, 1, 14,	0x17030, 0, -1,	0x17650, 0, -1,
+	0x134D0, 0, -1,	0x178E0, 1, -1,	0x18200, 0, -1,
+	0x18320, 0, -1,	0x184A0, 0, -1,	0x18BB0, 0, -1,
+	0x19040, 0, 19,	0x19B50, 0, 20,	0x17650, 0, -1,
+	0x1A730, 1, 21,	0x00000, 0, -1,	0x12380, 0, -1,
+	0x1B810, 0, -1,	0x1BA50, 0, 15,	0x1C190, 0, 16,
+	0x1CA50, 0, 17,	0x1D100, 0, 18
+};
 
+const AudioDataStruct KyraEngine_v1::_soundData_PC[] = {
+	{ _soundFiles, ARRAYSIZE(_soundFiles), 0, 0 },
+	{ 0, 0, 0, 0}
+};
+
+const AudioDataStruct KyraEngine_v1::_soundData_TOWNS[] = {
+	{ _soundFilesTowns, ARRAYSIZE(_soundFilesTowns), _cdaTrackTable, ARRAYSIZE(_cdaTrackTable) },
+	{ 0, 0, 0, 0}
+};
 const int8 KyraEngine_v1::_charXPosTable[] = {
 	 0,  4,  4,  4,  0, -4, -4, -4
 };
@@ -1427,6 +1455,42 @@ const char *KyraEngine_v2::_sequenceSoundList_PC[] = {
 	"theend"
 };
 
+const char *KyraEngine_v2::_sequenceSoundList_PCFLOPPY[] = {
+	"intro1",
+	"intro2",
+	"intro3",
+	"intro4",
+	"intro5",
+	"intro6",
+	"intro7",
+	"intro8",
+	"intro9",
+	"intro10",
+	"intro11",
+	"intro12",
+	"glow",
+
+	"asong",
+	"crowcaw",
+	"eyerub2",
+	"pluck3",
+	"rodnreel",
+	"frog1",
+	"scavmov2",
+	"lambmom3",
+	"lambkid1",
+	"thunder2",
+	"thunder3",
+	"wind6",
+	"h2odrop2",
+	"gasleak",
+	"polgulp1",
+	"hndslap1",
+	"burp1",
+	"scream1",
+	"theend"
+};
+
 const char *KyraEngine_v2::_sequenceSoundList_TOWNS[] = {
 	"intro1.pcm",
 	"intro2.pcm",
@@ -1464,6 +1528,7 @@ const char *KyraEngine_v2::_sequenceSoundList_TOWNS[] = {
 };
 
 const int KyraEngine_v2::_sequenceSoundListSize_PC = ARRAYSIZE(KyraEngine_v2::_sequenceSoundList_PC);
+const int KyraEngine_v2::_sequenceSoundListSize_PCFLOPPY = ARRAYSIZE(KyraEngine_v2::_sequenceSoundList_PCFLOPPY);
 const int KyraEngine_v2::_sequenceSoundListSize_TOWNS = ARRAYSIZE(KyraEngine_v2::_sequenceSoundList_TOWNS);
 
 const uint8 KyraEngine_v2::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
@@ -1542,7 +1607,42 @@ const char *KyraEngine_v2::_dosSoundFileList[] = {
 	"K2TEST15"
 };
 
-const int KyraEngine_v2::_dosSoundFileListSize = ARRAYSIZE(KyraEngine_v2::_dosSoundFileList);
+const char *KyraEngine_v2::_fmtSoundFileListIntro[] = { "intro" };
+const char *KyraEngine_v2::_fmtSoundFileListFinale[] = { "finale" };
+const char *KyraEngine_v2::_fmtSoundFileList[] = { "k2" };
+
+const uint8 KyraEngine_v2::_cdaTrackTableIntro[] =	{
+	0x03, 0x01, 0x04, 0x02, 0x05, 0x03, 0x06, 0x04, 0x07, 0x05, 0x08, 0x06
+};
+
+const uint8 KyraEngine_v2::_cdaTrackTableIngame[] =	{
+	0x02, 0x07, 0x03, 0x08, 0x04, 0x09, 0x07, 0x0A, 0x0C, 0x0B, 0x0D, 0x0C, 0x0E, 0x0D, 0x0F, 0x0E,
+	0x10, 0x0F, 0x12, 0x10, 0x13, 0x11, 0x15, 0x12,	0x17, 0x13, 0x18, 0x14, 0x19, 0x15, 0x1A, 0x16,
+	0x1B, 0x17, 0x1C, 0x18,	0x1D, 0x19, 0x1E, 0x1A, 0x1F, 0x1B, 0x21, 0x1C, 0x22, 0x1D, 0x23, 0x1E,
+	0x24, 0x1F, 0x25, 0x20, 0x26, 0x21, 0x27, 0x22, 0x28, 0x23, 0x29, 0x24,	0x2A, 0x25, 0x2B, 0x26,
+	0x2C, 0x27, 0x2D, 0x28, 0x2E, 0x29, 0x2F, 0x2A,	0x30, 0x2B, 0x31, 0x2C, 0x32, 0x2D, 0x33, 0x2E,
+	0x34, 0x2F, 0x35, 0x30,	0x36, 0x31, 0x37, 0x32, 0x38, 0x33, 0x39, 0x34, 0x3A, 0x35, 0x3B, 0x36,
+	0x3C, 0x37, 0x3D, 0x38, 0x3E, 0x39, 0x3F, 0x3A, 0x40, 0x3B, 0x41, 0x3C,	0x42, 0x3D, 0x43, 0x3E,
+	0x44, 0x3F, 0x45, 0x40, 0x46, 0x41, 0x47, 0x42,	0x48, 0x43, 0x49, 0x44, 0x4A, 0x45, 0x4B, 0x46,
+	0x4C, 0x47, 0x4D, 0x48,	0x4E, 0x49, 0x4F, 0x4A, 0x50, 0x4B, 0x51, 0x4C, 0x52, 0x4D, 0x53, 0x4E,
+	0x54, 0x4F, 0x55, 0x50, 0x56, 0x51, 0x57, 0x52
+};
+
+const uint8 KyraEngine_v2::_cdaTrackTableFinale[] =	{
+	0x03, 0x53, 0x04, 0x54
+};
+
+const AudioDataStruct KyraEngine_v2::_soundData_PC[] = {
+	{ _dosSoundFileListIntro, ARRAYSIZE(_dosSoundFileListIntro), 0, 0 },
+	{ _dosSoundFileList, ARRAYSIZE(_dosSoundFileList), 0, 0},
+	{ _dosSoundFileListFinale, ARRAYSIZE(_dosSoundFileListFinale), 0, 0 }
+};
+
+const AudioDataStruct KyraEngine_v2::_soundData_TOWNS[] = {
+	{ _fmtSoundFileListIntro, ARRAYSIZE(_fmtSoundFileListIntro), _cdaTrackTableIntro, ARRAYSIZE(_cdaTrackTableIntro) >> 1 },
+	{ _fmtSoundFileList, ARRAYSIZE(_fmtSoundFileList),_cdaTrackTableIngame, ARRAYSIZE(_cdaTrackTableIngame) >> 1 },
+	{ _fmtSoundFileListFinale, ARRAYSIZE(_fmtSoundFileListFinale),_cdaTrackTableFinale, ARRAYSIZE(_cdaTrackTableFinale) >> 1 }
+};
 
 const int KyraEngine_v2::_itemStringMapSize = ARRAYSIZE(KyraEngine_v2::_itemStringMap);
 

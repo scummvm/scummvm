@@ -764,10 +764,11 @@ protected:
 	const uint8 * const*_specialPalettes;
 
 	static const char *_soundFiles[];
-	static const int _soundFilesCount;
 	static const char *_soundFilesTowns[];
-	static const int _soundFilesTownsCount;
-	
+	static const int32 _cdaTrackTable[];
+	static const AudioDataStruct _soundData_PC[];
+	static const AudioDataStruct _soundData_TOWNS[];
+		
 	static const int8 _charXPosTable[];
 	static const int8 _charYPosTable[];
 

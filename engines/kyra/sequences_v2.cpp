@@ -46,15 +46,8 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 
 	assert(startSeq >= 0 && endSeq < kSequenceArraySize && startSeq <= endSeq);
 
-	if (_flags.isDemo) {
-		static const char *soundFileList[] = {
-			"K2_DEMO",
-			"LOLSYSEX"
-		};
-		_sound->setSoundFileList(soundFileList, 2);
-	} else {
-		snd_assignMusicData((startSeq > kSequenceZanfaun) ?	kMusicFinale : kMusicIntro);
-	}
+	// TODO: verfiy this is also correct for the demo
+	_sound->setSoundList(&_soundData[(startSeq > kSequenceZanfaun) ? kMusicFinale : kMusicIntro]);
 	_sound->loadSoundFile(0);
 
 	_screen->_charWidth = -2;
@@ -1528,7 +1521,7 @@ void KyraEngine_v2::seq_finaleActorScreen() {
 	_screen->loadBitmap("finale.cps", 3, 3, _screen->_currentPalette);
 	_screen->setFont(Screen::FID_GOLDFONT_FNT);
 
-	snd_assignMusicData(kMusicIngame);
+	_sound->setSoundList(&_soundData[kMusicIngame]);
 	_sound->loadSoundFile(3);
 	_sound->playTrack(3);
 
@@ -1537,7 +1530,7 @@ void KyraEngine_v2::seq_finaleActorScreen() {
 
 	//XXX
 
-	snd_assignMusicData(kMusicFinale);
+	_sound->setSoundList(&_soundData[kMusicFinale]);
 	_sound->loadSoundFile(0);
 }
 

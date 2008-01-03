@@ -250,10 +250,18 @@ protected:
 
 	static const char *_dosSoundFileListIntro[];
 	static const char *_dosSoundFileListFinale[];
-	static const char *_dosSoundFileList[];
-	static const int _dosSoundFileListSize;
+	static const char *_dosSoundFileList[];	
+	static const char *_fmtSoundFileListIntro[];
+	static const char *_fmtSoundFileListFinale[];
+	static const char *_fmtSoundFileList[];
+	static const uint8 _cdaTrackTableIntro[];
+	static const uint8 _cdaTrackTableIngame[];
+	static const uint8 _cdaTrackTableFinale[];
+	static const AudioDataStruct _soundData_PC[];
+	static const AudioDataStruct _soundData_TOWNS[];
 	static const int8 _dosTrackMap[];
 	static const int _dosTrackMapSize;
+	const AudioDataStruct * _soundData;
 
 protected:
 	// game initialization
@@ -630,7 +638,6 @@ protected:
 
 	virtual void snd_playVoiceFile(int id);
 	void snd_loadSoundFile(int id);
-	void snd_assignMusicData(kMusicDataID id);
 
 	void playVoice(int high, int low);
 
@@ -843,6 +850,8 @@ protected:
 
 	static const char *_sequenceSoundList_PC[];
 	static const int _sequenceSoundListSize_PC;
+	static const char *_sequenceSoundList_PCFLOPPY[];
+	static const int _sequenceSoundListSize_PCFLOPPY;
 	static const char *_sequenceSoundList_TOWNS[];
 	static const int _sequenceSoundListSize_TOWNS;
 	static const char *_sequenceStrings_TOWNS_EN[];
