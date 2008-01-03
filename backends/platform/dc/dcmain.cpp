@@ -126,7 +126,7 @@ void OSystem_Dreamcast::setWindowCaption(const char *caption)
 }
 
 void OSystem_Dreamcast::quit() {
-  exit(0);
+  (*(void(**)(int))0x8c0000e0)(0);
 }
 
 /* Mutex handling */
@@ -222,7 +222,7 @@ int main()
 
   int res = scummvm_main(argc, argv);
 
-  exit(0);
+  g_system->quit();
 }
 
 int DCLauncherDialog::runModal()
@@ -230,7 +230,7 @@ int DCLauncherDialog::runModal()
   char *base = NULL, *dir = NULL;
 
   if (!selectGame(base, dir, icon))
-    exit(0);
+    g_system->quit();
 
   // Set the game path.
   ConfMan.addGameDomain(base);
