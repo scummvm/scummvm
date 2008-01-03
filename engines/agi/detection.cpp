@@ -2011,7 +2011,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE_I("sq0", "v1.04", "2ad9d1a4624a98571ee77dcc83f231b6"),
 	FANMADE_I("sqx", "v10.0 Feb 05", "c992ae2f8ab18360404efdf16fa9edd1"),
 	FANMADE_I("sqx", "v10.0 Jul 18", "812edec45cefad559d190ffde2f9c910"),
-	FANMADE("Space Trek (v1.0)", "807a1aeadb2ace6968831d36ab5ea37a"),
+	FANMADE_F("Space Trek (v1.0)", "807a1aeadb2ace6968831d36ab5ea37a", GF_CLIPCOORDS),
 	FANMADE("Special Delivery", "88764dfe61126b8e73612c851b510a33"),
 	FANMADE("Speeder Bike Challenge (v1.0)", "2deb25bab379285ca955df398d96c1e7"),
 	FANMADE("Star Commander 1 - The Escape (v1.0)", "a7806f01e6fa14ebc029faa58f263750"),

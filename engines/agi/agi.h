@@ -130,6 +130,9 @@ enum AgiGameType {
 /*
  * GF_OLDAMIGAV20 means that the interpreter is an old Amiga AGI interpreter that
  * uses value 20 for the computer type (v20 i.e. vComputer) rather than the usual value 5.
+ *
+ * GF_CLIPCOORDS means that views' coordinates must be clipped at least in commands
+ * position and position.v.
  */
 enum AgiGameFeatures {
 	GF_AGIMOUSE =    (1 << 0),
@@ -141,7 +144,8 @@ enum AgiGameFeatures {
 	GF_FANMADE =     (1 << 6),
 	GF_MENUS =		 (1 << 7),
 	GF_ESCPAUSE =	 (1 << 8),
-	GF_OLDAMIGAV20 = (1 << 9)
+	GF_OLDAMIGAV20 = (1 << 9),
+	GF_CLIPCOORDS  = (1 << 10)
 };
 
 struct AGIGameDescription;
@@ -873,6 +877,7 @@ private:
 public:
 
 	void setCel(VtEntry *, int);
+	void clipViewCoordinates(VtEntry *v);
 	void setLoop(VtEntry *, int);
 	void setView(VtEntry *, int);
 	void startUpdate(VtEntry *);

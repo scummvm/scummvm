@@ -757,11 +757,33 @@ cmd(erase) {
 cmd(position) {
 	vt.xPos = vt.xPos2 = p1;
 	vt.yPos = vt.yPos2 = p2;
+
+	// WORKAROUND: Part of the fix for bug #1659209 "AGI: Space Trek sprite duplication"
+	// with an accompanying identical workaround in position.v-command (i.e. command 0x26).
+	// These two workarounds together make up the whole fix. The bug was caused by
+	// wrongly written script data in Space Trek v1.0's scripts (At least logics 4 and 11).
+	// Position-command was called with horizontal values over 200 (Outside the screen!).
+	// Clipping the coordinates so the views stay wholly on-screen seems to fix the problems.
+	//   It is probable (Would have to check better with disassembly to be completely sure)
+	// that AGI 2.440 clipped its coordinates in its position and position.v-commands
+	// although AGI 2.917 certainly doesn't (Checked that with disassembly) and that's why
+	// Space Trek may have worked better with AGI 2.440 than with some other AGI versions.
+	//   I haven't checked but if Space Trek solely abuses the position-command we wouldn't
+	// strictly need the identical workaround in the position.v-command but it does make
+	// for a nice symmetry.
+	if (g_agi->getFeatures() & GF_CLIPCOORDS)
+		g_agi->clipViewCoordinates(&vt);
 }
 
 cmd(position_f) {
 	vt.xPos = vt.xPos2 = _v[p1];
 	vt.yPos = vt.yPos2 = _v[p2];
+
+	// WORKAROUND: Part of the fix for bug #1659209 "AGI: Space Trek sprite duplication"
+	// with an accompanying identical workaround in position-command (i.e. command 0x25).
+	// See that workaround's comment for more in-depth information.
+	if (g_agi->getFeatures() & GF_CLIPCOORDS)
+		g_agi->clipViewCoordinates(&vt);
 }
 
 cmd(get_posn) {

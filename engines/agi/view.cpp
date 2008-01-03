@@ -254,6 +254,15 @@ void AgiEngine::setCel(VtEntry *v, int n) {
 	lSetCel(v, n);
 
 	/* If position isn't appropriate, update it accordingly */
+	clipViewCoordinates(v);
+}
+
+/**
+ * Restrict view table entry's position so it stays wholly inside the screen.
+ * Also take horizon into account when clipping if not set to ignore it.
+ * @param v pointer to view table entry
+ */
+void AgiEngine::clipViewCoordinates(VtEntry *v) {
 	if (v->xPos + v->xSize > _WIDTH) {
 		v->flags |= UPDATE_POS;
 		v->xPos = _WIDTH - v->xSize;
