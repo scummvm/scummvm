@@ -55,7 +55,19 @@ static const LureGameDescription gameDescriptions[] = {
 	{
 		{
 			"lure",
-			"",
+			"EGA",
+			AD_ENTRY1("disk1.ega", "e9c9fdd8a19f7910d68e53cb84651273"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GF_FLOPPY | GF_EGA,
+	},
+
+	{
+		{
+			"lure",
+			"VGA",
 			AD_ENTRY1("disk1.vga", "b2a8aa6d7865813a17a3c636e063572e"),
 			Common::EN_ANY,
 			Common::kPlatformPC,
