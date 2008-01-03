@@ -318,6 +318,7 @@ void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 	ImageStackElement pnew;
 
 	pnew.type = type;
+	pnew.pad = 0;
 	pnew.parm1 = p1;
 	pnew.parm2 = p2;
 	pnew.parm3 = p3;
