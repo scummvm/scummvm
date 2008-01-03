@@ -396,6 +396,13 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 	const HitZone *hitZone;
 	Event event;
 
+	// If the player uses an object and then immediately reuses that object
+	// (without it being shown in the verb area), the object returned is wrong (0),
+	// so we make it equal to the second object here.
+	// Fixes bug #1861863 - "ITE: Crash when using Eeah with Eeah"
+	if (theObject == 0 && objectId == 0 && withObject > 0)
+		theObject = objectId = withObject;
+
 	switch (objectTypeId(objectId)) {
 		case kGameObjectObject:
 			obj = _vm->_actor->getObj(objectId);
@@ -436,8 +443,6 @@ void Script::sfScriptDoAction(SCRIPTFUNC_PARAMS) {
 			break;
 		default:
 			// Unknown case, do nothing
-			// Changing this from an error to a warning should fix bug
-			// #1861863 - "ITE: Crash when using Eeah with Eeah"
 			warning("Script::sfScriptDoAction wrong object type 0x%X", objectId);
 			return;
 	}
