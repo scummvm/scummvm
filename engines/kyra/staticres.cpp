@@ -39,7 +39,7 @@ namespace Kyra {
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
-	if (!kyraDat.open(StaticResource::_staticDataFile))
+	if (!kyraDat.open(StaticResource::staticDataFilename()))
 		return false;
 
 	uint32 size = kyraDat.size() - 16;
@@ -50,7 +50,7 @@ bool StaticResource::checkKyraDat() {
 	kyraDat.close();
 
 	uint8 digestCalc[16];
-	if (!Common::md5_file(StaticResource::_staticDataFile.c_str(), digestCalc, size))
+	if (!Common::md5_file(StaticResource::staticDataFilename().c_str(), digestCalc, size))
 		return false;
 
 	for (int i = 0; i < 16; ++i)
@@ -853,8 +853,6 @@ void KyraEngine_v1::loadMainScreen(int page) {
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 0);
 }
-
-const Common::String StaticResource::_staticDataFile = "kyra.dat";
 
 const ScreenDim Screen::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00 },
