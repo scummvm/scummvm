@@ -841,8 +841,10 @@ void GfxMgr::setAGIPal(int p0) {
 	sprintf(filename, "pal.%d", p0);
 
 	Common::File agipal;
-	if (!agipal.open(filename))
-		error("Couldn't open AGIPAL palette file '%s'", filename);
+	if (!agipal.open(filename)) {
+		warning("Couldn't open AGIPAL palette file '%s'. Not changing palette", filename);
+		return; // Needed at least by Naturette 3 which uses AGIPAL but provides no palette files
+	}
 
 	//Chunk0 holds colors 0-7
 	agipal.read(&_agipalPalette[0], 24);
@@ -857,8 +859,10 @@ void GfxMgr::setAGIPal(int p0) {
 
 	//Chunks4-7 are duplicates of chunks0-3
 
-	if (agipal.ioFailed())
-		error("Couldn't read AGIPAL palette from '%s'", filename);
+	if (agipal.ioFailed()) {
+		warning("Couldn't read AGIPAL palette from '%s'. Not changing palette", filename);
+		return;
+	}
 
 	_agipalFileNum = p0;
 
