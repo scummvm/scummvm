@@ -25,7 +25,12 @@
 #include "common/zlib.h"
 
 #if defined(USE_ZLIB)
+
+#ifdef __SYMBIAN32__
+#include <zlib\zlib.h>
+#else
 #include <zlib.h>
+#endif
 
 namespace Common {
 

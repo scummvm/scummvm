@@ -29,7 +29,11 @@
 #ifndef COMMON_ZLIB_H
 #define COMMON_ZLIB_H
 
+#ifdef __SYMBIAN32__
+#include <zlib\zlib.h>
+#else
 #include <zlib.h>
+#endif
 
 namespace Common {
 
