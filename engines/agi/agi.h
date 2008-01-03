@@ -127,6 +127,10 @@ enum AgiGameType {
 	GType_V3 = 2
 };
 
+/**
+ * GF_CLIPCOORDS means that views' coordinates must be clipped at least in commands
+ * position and position.v.
+ */
 enum AgiGameFeatures {
 	GF_AGIMOUSE =    (1 << 0),
 	GF_AGDS =        (1 << 1),
@@ -136,7 +140,8 @@ enum AgiGameFeatures {
 	GF_MACGOLDRUSH = (1 << 5),
 	GF_FANMADE =     (1 << 6),
 	GF_MENUS =		 (1 << 7),
-	GF_ESCPAUSE =	 (1 << 8)
+	GF_ESCPAUSE =	 (1 << 8),
+	GF_CLIPCOORDS =  (1 << 9)
 };
 
 struct AGIGameDescription;
@@ -838,6 +843,7 @@ private:
 public:
 
 	void setCel(VtEntry *, int);
+	void clipViewCoordinates(VtEntry *v);
 	void setLoop(VtEntry *, int);
 	void setView(VtEntry *, int);
 	void startUpdate(VtEntry *);
