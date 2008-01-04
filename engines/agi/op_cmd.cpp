@@ -1332,9 +1332,9 @@ cmd(mouse_posn) {
 cmd(shake_screen) {
 	int i;
 
-	// AGIPAL uses shake.screen values between 101 and 109 to
-	// set the palette.
-	if (p0 >= 101 && p0 < 110) {
+	// AGIPAL uses shake.screen values between 100 and 109 to set the palette
+	// (Checked the original AGIPAL-hack's shake.screen-routine's disassembly).
+	if (p0 >= 100 && p0 < 110) {
 		if (g_agi->getFeatures() & GF_AGIPAL) {
 			g_gfx->setAGIPal(p0);
 			return;
