@@ -1777,10 +1777,10 @@ namespace Sword1 {
 #define FX_DOORTRY 				 0x07000004
 #define FX_FIESTA 				 0x07000005
 #define FX_FLATDOOR 			 0x07000006
-#define FX_HVYVEHL 				 0x07000007
-#define FX_HVYVEHR 				 0x07000008
-#define FX_LITEVEHL 			 0x07000009
-#define FX_LITEVEHR 			 0x0700000A
+#define FX_HVYVEHR 				 0x07000007
+#define FX_HVYVEHL 				 0x07000008
+#define FX_LITEVEHR 			 0x07000009
+#define FX_LITEVEHL 			 0x0700000A
 #define FX_FONEUP 				 0x0700000B
 #define FX_FONEDN 				 0x0700000C
 #define FX_GEOCCH 				 0x0700000D
