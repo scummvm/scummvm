@@ -52,6 +52,7 @@ namespace CEGUI {
 			return false;
 		if (_current == name)
 			return true;
+		_active->action(0, 0, false);	// make sure any items are unpushed when changing toolbars (e.g. forced VK->main panel)
 		_current = name;
 		_active = _toolbarMap[name];
 		_active->forceRedraw();
