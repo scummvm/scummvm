@@ -688,6 +688,13 @@ void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
 
 void Gfx::displayString(uint16 x, uint16 y, const char *text, byte color) {
 	byte *dst = (byte*)_buffers[kBitFront]->getBasePtr(x, y);
+	if (_fontShadow) {
+        dst = (byte*)_buffers[kBitFront]->getBasePtr(x-2, y+2);
+        _font->setColor(0);
+        _font->drawString(dst, _vm->_screenWidth, text);
+	}
+
+	dst = (byte*)_buffers[kBitFront]->getBasePtr(x, y);
 	_font->setColor(color);
 	_font->drawString(dst, _vm->_screenWidth, text);
 }
@@ -799,8 +806,12 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 void Gfx::setFont(Font *font) {
 	assert(font);
 	_font = font;
+	setFontShadow(false);
 }
 
+void Gfx::setFontShadow(bool enable) {
+    _fontShadow = enable && (_vm->getPlatform() == Common::kPlatformAmiga);
+}
 
 void Gfx::restoreBackground(const Common::Rect& r) {
 
@@ -907,6 +918,7 @@ Gfx::Gfx(Parallaction* vm) :
     _hbCircleRadius = 0;
 
 	_font = NULL;
+	_fontShadow = false;
 
 	return;
 }

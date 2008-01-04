@@ -578,11 +578,13 @@ void Parallaction_ns::initFonts() {
 		_dialogueFont = _disk->loadFont("comic");
 		_labelFont = _disk->loadFont("topaz");
 		_menuFont = _disk->loadFont("slide");
+		_introFont = _disk->loadFont("slide");
 	} else {
 		_dialogueFont = _disk->loadFont("comic");
 		Common::MemoryReadStream stream(_amigaTopazFont, 2600, false);
 		_labelFont = new AmigaFont(stream);
 		_menuFont = _disk->loadFont("slide");
+		_introFont = _disk->loadFont("intro");
 	}
 
 }

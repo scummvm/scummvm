@@ -288,6 +288,7 @@ public:
 	// misc
 	int16 queryMask(int16 v);
 	void setFont(Font* font);
+    void setFontShadow(bool enable);
 	void swapBuffers();
 	void updateScreen();
 	void setBackground(Graphics::Surface *surf);
@@ -314,6 +315,7 @@ protected:
 	Graphics::Surface	*_buffers[NUM_BUFFERS];
 	MaskBuffer			*_depthMask;
 	Font				*_font;
+	bool                _fontShadow;
 	bool				_halfbrite;
 
     Common::Point       _hbCirclePos;

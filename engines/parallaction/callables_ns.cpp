@@ -397,8 +397,10 @@ void Parallaction_ns::_c_finito(void *parm) {
 	cleanInventory();
 	_gfx->setPalette(_gfx->_palette);
 
+    _gfx->setFont(_menuFont);
+    _gfx->setFontShadow(true);
+
 	if (allPartsComplete()) {
-		_gfx->setFont(_menuFont);
 		_gfx->displayCenteredString(70, v4C[_language]);
 		_gfx->displayCenteredString(100, v3C[_language]);
 		_gfx->displayCenteredString(130, v2C[_language]);
@@ -409,7 +411,6 @@ void Parallaction_ns::_c_finito(void *parm) {
 
 		scheduleLocationSwitch("estgrotta.drki");
 	} else {
-		_gfx->setFont(_menuFont);
 		_gfx->displayCenteredString(70, v8C[_language]);
 		_gfx->displayCenteredString(100, v7C[_language]);
 		_gfx->displayCenteredString(130, v6C[_language]);
@@ -438,6 +439,7 @@ void Parallaction_ns::_c_testResult(void *parm) {
 	parseLocation("common");
 
 	_gfx->setFont(_menuFont);
+    _gfx->setFontShadow(true);
 
 	_gfx->displayCenteredString(38, _slideText[0]);
 	_gfx->displayCenteredString(58, _slideText[1]);
@@ -483,6 +485,7 @@ void Parallaction_ns::_c_startIntro(void *parm) {
 void Parallaction_ns::_c_endIntro(void *parm) {
 
 	_gfx->setFont(_menuFont);
+	_gfx->setFontShadow(true);
 
 	debugC(1, kDebugExec, "endIntro()");
 
