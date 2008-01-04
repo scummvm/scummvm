@@ -105,7 +105,6 @@ DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext
 			soundType = kSoundFLAC;
 		}
 
-		_file->seek((long)resourceData->offset + 9, SEEK_SET);
 		createCompressedStream();
 	}
 
@@ -155,7 +154,7 @@ void DigitalMusicInputStream::createCompressedStream() {
 #endif
 		default:
 			// Unknown compression
-			error("Trying to play a compressed digital music, but the compression is not known");
+			error("Trying to play compressed digital music, but the compression is not known");
 			break;
 	}
 }
@@ -185,7 +184,6 @@ void DigitalMusicInputStream::refill() {
 
 	uint32 lengthLeft;
 	byte *ptr = (byte *) _buf;
-
 
 	_file->seek(_filePos, SEEK_SET);
 
