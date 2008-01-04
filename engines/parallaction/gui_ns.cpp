@@ -377,7 +377,7 @@ int Parallaction_ns::guiSelectCharacter() {
 	setArrowCursor();
 	_soundMan->stopMusic();
 
-	_gfx->setFont(_menuFont);
+	_gfx->setFont(_introFont);
 	_gfx->setFontShadow(true);
 
 	_disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
