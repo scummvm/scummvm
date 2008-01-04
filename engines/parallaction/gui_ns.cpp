@@ -127,7 +127,8 @@ void Parallaction_ns::guiStart() {
 
 	guiSplash();
 
-	_gfx->setFont(_menuFont);
+	_gfx->setFont(_introFont);
+	_gfx->setFontShadow(true);
 
 	_language = guiChooseLanguage();
 	_disk->setLanguage(_language);
@@ -190,6 +191,9 @@ void Parallaction_ns::guiSplash() {
 int Parallaction_ns::guiNewGame() {
 
 	const char **v14 = introMsg3;
+
+    _gfx->setFont(_menuFont);
+    _gfx->setFontShadow(true);
 
 	_disk->selectArchive("disk1");
 
@@ -373,7 +377,8 @@ int Parallaction_ns::guiSelectCharacter() {
 	setArrowCursor();
 	_soundMan->stopMusic();
 
-	_gfx->setFont(_menuFont);
+	_gfx->setFont(_introFont);
+	_gfx->setFontShadow(true);
 
 	_disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 

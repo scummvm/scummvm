@@ -160,6 +160,7 @@ void Parallaction_ns::freeFonts() {
 	delete _dialogueFont;
 	delete _labelFont;
 	delete _menuFont;
+    delete _introFont;
 
 }
 

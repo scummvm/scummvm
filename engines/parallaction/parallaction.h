@@ -493,6 +493,7 @@ public:
 
 	Font		*_labelFont;
 	Font		*_menuFont;
+	Font		*_introFont;
 	Font		*_dialogueFont;
 
 	Common::RandomSource _rnd;
