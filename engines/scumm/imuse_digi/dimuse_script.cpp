@@ -165,22 +165,26 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 
 void IMuseDigital::flushTrack(Track *track) {
 	track->toBeRemoved = true;
-	if (!track->souStreamUsed) {
-		assert(track->stream);
-		// Finalize the appendable stream
-		track->stream->finish();
-		// There might still be some data left in the buffers of the
-		// appendable stream. We play it nice and wait till all of it
-		// played.
-		if (track->stream->endOfStream()) {
-			_mixer->stopHandle(track->mixChanHandle);
-			delete track->stream;
-			_sound->closeSound(track->soundDesc);
-			memset(track, 0, sizeof(Track));
-		}
-	} else {
+
+	if (track->souStreamUsed) {
 		_mixer->stopHandle(track->mixChanHandle);
+	} else if (track->stream) {
+		// Finalize the appendable stream, then remove our reference to it.
+		// Note that there might still be some data left in the buffers of the
+		// appendable stream. We play it nice and wait till all of it
+		// played. The audio mixer will take care of it afterwards (and dispose it).
+		track->stream->finish();
+		track->stream = 0;
+		if (track->soundDesc)
+			_sound->closeSound(track->soundDesc);
+	}
+
+	if (!_mixer->isSoundHandleActive(track->mixChanHandle)) {
 		memset(track, 0, sizeof(Track));
+		
+		// Still set toBeRemoved to true in case we are running inside the callback()
+		// function
+		track->toBeRemoved = true;
 	}
 }
 
@@ -396,9 +400,7 @@ void IMuseDigital::stopAllSounds() {
 			// as we are protected by a mutex, and this method is never called
 			// from IMuseDigital::callback either.
 			_mixer->stopHandle(track->mixChanHandle);
-			if (!track->souStreamUsed) {
-				assert(track->stream);
-				delete track->stream;
+			if (track->soundDesc) {
 				_sound->closeSound(track->soundDesc);
 			}
 

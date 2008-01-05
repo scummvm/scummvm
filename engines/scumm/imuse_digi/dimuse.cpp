@@ -206,7 +206,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 
 			track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
 
-			_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan(), false);
+			_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan());
 			_mixer->pauseHandle(track->mixChanHandle, true);
 		}
 	}
