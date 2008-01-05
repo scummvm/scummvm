@@ -64,7 +64,10 @@ struct AgiLogicnames logicNamesTest[] = {
 	_L("compare.strings", 2, 0x00),
 	_L("obj.in.box", 5, 0x00),
 	_L("center.posn", 5, 0x00),
-	_L("right.posn", 5, 0x00)
+	_L("right.posn", 5, 0x00),
+
+	/* Haven't seen an official name for this command so tried to name it descriptively. */
+	_L("in.motion.using.mouse", 0, 0x00)
 };
 
 struct AgiLogicnames logicNamesIf[] = {
