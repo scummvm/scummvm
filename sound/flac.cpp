@@ -331,42 +331,40 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 
 	bool decoderOk = true;
 
-	if (!_lastSampleWritten) {
-		FLAC__StreamDecoderState state = getStreamDecoderState();
+	FLAC__StreamDecoderState state = getStreamDecoderState();
 
-		// Keep poking FLAC to process more samples until we completely satisfied the request
-		// respectively until we run out of data.
-		while (!_lastSampleWritten && _requestedSamples > 0 && state == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC) {
-			assert(_sampleCache.bufFill == 0);
-			assert(_requestedSamples % numChannels == 0);
-			processSingleBlock();
-			state = getStreamDecoderState();
-			
-			if (state == FLAC__STREAM_DECODER_END_OF_STREAM) {
-				_lastSampleWritten = true;
-			}
-
-			// If we reached the end of the stream, and looping is enabled: Try to rewind
-			if (_lastSampleWritten && _numLoops != 1) {
-				if (_numLoops != 0)
-					_numLoops--;
-				seekAbsolute(_firstSample);
-				state = getStreamDecoderState();
-			}
-		}
-
-		// Error handling
-		switch (state) {
-		case FLAC__STREAM_DECODER_END_OF_STREAM:
+	// Keep poking FLAC to process more samples until we completely satisfied the request
+	// respectively until we run out of data.
+	while (!_lastSampleWritten && _requestedSamples > 0 && state == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC) {
+		assert(_sampleCache.bufFill == 0);
+		assert(_requestedSamples % numChannels == 0);
+		processSingleBlock();
+		state = getStreamDecoderState();
+		
+		if (state == FLAC__STREAM_DECODER_END_OF_STREAM) {
 			_lastSampleWritten = true;
-			break;
-		case FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC:
-			break;
-		default:
-			decoderOk = false;
-			warning("FlacInputStream: An error occured while decoding. DecoderState is: %s",
-				FLAC__StreamDecoderStateString[getStreamDecoderState()]);
 		}
+
+		// If we reached the end of the stream, and looping is enabled: Try to rewind
+		if (_lastSampleWritten && _numLoops != 1) {
+			if (_numLoops != 0)
+				_numLoops--;
+			seekAbsolute(_firstSample);
+			state = getStreamDecoderState();
+		}
+	}
+
+	// Error handling
+	switch (state) {
+	case FLAC__STREAM_DECODER_END_OF_STREAM:
+		_lastSampleWritten = true;
+		break;
+	case FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC:
+		break;
+	default:
+		decoderOk = false;
+		warning("FlacInputStream: An error occured while decoding. DecoderState is: %s",
+			FLAC__StreamDecoderStateString[getStreamDecoderState()]);
 	}
 
 	// Compute how many samples we actually produced
