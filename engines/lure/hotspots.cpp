@@ -3375,8 +3375,9 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 			screen.screen().fillRect(r, 0);
 
 			// Display line
-			byte colour = (lineNum+1 == selectedLine) ?
-				DIALOG_WHITE_COLOUR : DIALOG_TEXT_COLOUR;
+			byte colour = LureEngine::getReference().isEGA() ?
+				((lineNum + 1 == selectedLine) ? EGA_DIALOG_WHITE_COLOUR : EGA_DIALOG_TEXT_COLOUR) :
+				((lineNum + 1 == selectedLine) ? VGA_DIALOG_WHITE_COLOUR : VGA_DIALOG_TEXT_COLOUR);
 			screen.screen().writeString(r.left, r.top, buffer, false, colour);
 		}
 
