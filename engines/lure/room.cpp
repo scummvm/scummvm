@@ -559,9 +559,12 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	_descId = _roomData->descId;
 
 	if (fadeFlag) {
-		// Fade out all the colours except the high index 0FFh, which is used to show the
-		// disk cursor as a room changes
-		_screen.paletteFadeOut(GAME_COLOURS - 1);
+		if (isEGA)
+			_screen.setPaletteEmpty();
+		else
+			// Fade out all the colours except the high index 0FFh, which is used to show the
+			// disk cursor as a room changes
+			_screen.paletteFadeOut(GAME_COLOURS - 1);
 
 		// Deallocate graphical layers from the room
 		for (int layerNum = 0; layerNum < _numLayers; ++layerNum) {
@@ -628,7 +631,7 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 	update();
 	_screen.update();
 
-	if (fadeFlag)
+	if (fadeFlag && !isEGA)
 		_screen.paletteFadeIn(p);
 	else
 		_screen.setPalette(p);
