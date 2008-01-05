@@ -85,7 +85,7 @@ void drawThickLine(int x0, int y0, int x1, int y1, int thickness, int color, voi
 	float d = (float)sqrt(dx * dx + dy * dy);
 
 	if (!d)
-        return;
+		return;
 
 	int thickX = (int)((float)thickness * dy / d / 2);
 	int thickY = (int)((float)thickness * dx / d / 2);

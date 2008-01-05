@@ -108,15 +108,15 @@ void ThemeBrowser::updateListing() {
 #endif
 
 #ifdef MACOSX
-    CFURLRef resourceUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-    if (resourceUrl) {
+	CFURLRef resourceUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
+	if (resourceUrl) {
 		char buf[256];
 		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
 			Common::String resourcePath = buf;
 			addDir(_themes, resourcePath, 0);
 		}
-	    CFRelease(resourceUrl);
-    }
+		CFRelease(resourceUrl);
+	}
 #endif
 
 	if (ConfMan.hasKey("extrapath"))

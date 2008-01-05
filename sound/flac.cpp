@@ -573,7 +573,7 @@ void FlacInputStream::convertBuffersGeneric(SampleType* bufDestination, const FL
 }
 
 inline ::FLAC__StreamDecoderWriteStatus FlacInputStream::callbackWrite(const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[]) {
-    assert(frame->header.channels == _streaminfo.channels);
+	assert(frame->header.channels == _streaminfo.channels);
 	assert(frame->header.sample_rate == _streaminfo.sample_rate);
 	assert(frame->header.bits_per_sample == _streaminfo.bits_per_sample);
 	assert(frame->header.number_type == FLAC__FRAME_NUMBER_TYPE_SAMPLE_NUMBER || _streaminfo.min_blocksize == _streaminfo.max_blocksize);
