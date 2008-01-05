@@ -164,8 +164,6 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 }
 
 void IMuseDigital::flushTrack(Track *track) {
-	track->toBeRemoved = true;
-
 	if (track->souStreamUsed) {
 		_mixer->stopHandle(track->mixChanHandle);
 	} else if (track->stream) {
@@ -175,17 +173,20 @@ void IMuseDigital::flushTrack(Track *track) {
 		// played. The audio mixer will take care of it afterwards (and dispose it).
 		track->stream->finish();
 		track->stream = 0;
-		if (track->soundDesc)
+		if (track->soundDesc) {
 			_sound->closeSound(track->soundDesc);
+			track->soundDesc = 0;
+		}
 	}
 
 	if (!_mixer->isSoundHandleActive(track->mixChanHandle)) {
 		memset(track, 0, sizeof(Track));
-		
-		// Still set toBeRemoved to true in case we are running inside the callback()
-		// function
-		track->toBeRemoved = true;
+	
 	}
+
+	// Set toBeRemoved to true, even if we just stopped the sound completly
+	// (and thus set "used" to false);
+	track->toBeRemoved = true;
 }
 
 void IMuseDigital::flushTracks() {
@@ -310,7 +311,7 @@ void IMuseDigital::stopSound(int soundId) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
-			track->toBeRemoved = true;
+			flushTrack();
 		}
 	}
 }
