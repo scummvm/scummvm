@@ -357,13 +357,13 @@ void IMuseDigital::callback() {
 					assert(feedSize >= 0);
 				} while (feedSize != 0);
 			} else {
-				assert(track->streamSou);
 				if (_mixer->isReady()) {
 					// FIXME: Can't we replace track->mixerStreamRunning by
 					// _mixer->isSoundHandleActive(track->mixChanHandle) ?
 					if (!track->mixerStreamRunning) {
 						track->mixerStreamRunning = true;
-						_mixer->playInputStream(type, &track->mixChanHandle, track->streamSou, -1, vol, pan, false);
+						assert(track->streamSou);
+						_mixer->playInputStream(type, &track->mixChanHandle, track->streamSou, -1, vol, pan);
 					} else {
 						_mixer->setChannelVolume(track->mixChanHandle, vol);
 						_mixer->setChannelBalance(track->mixChanHandle, pan);

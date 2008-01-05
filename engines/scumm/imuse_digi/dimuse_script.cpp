@@ -175,17 +175,12 @@ void IMuseDigital::flushTrack(Track *track) {
 		if (track->stream->endOfStream()) {
 			_mixer->stopHandle(track->mixChanHandle);
 			delete track->stream;
-			track->stream = NULL;
 			_sound->closeSound(track->soundDesc);
-			track->soundDesc = NULL;
-			track->used = false;
+			memset(track, 0, sizeof(Track));
 		}
 	} else {
-		assert(track->streamSou);
 		_mixer->stopHandle(track->mixChanHandle);
-		delete track->streamSou;
-		track->streamSou = NULL;
-		track->used = false;
+		memset(track, 0, sizeof(Track));
 	}
 }
 
@@ -400,22 +395,15 @@ void IMuseDigital::stopAllSounds() {
 			// Stop the sound output, *now*. No need to use toBeRemoved etc.
 			// as we are protected by a mutex, and this method is never called
 			// from IMuseDigital::callback either.
+			_mixer->stopHandle(track->mixChanHandle);
 			if (!track->souStreamUsed) {
 				assert(track->stream);
-				_mixer->stopHandle(track->mixChanHandle);
 				delete track->stream;
 				_sound->closeSound(track->soundDesc);
-			} else if (track->streamSou) {
-				assert(track->streamSou);
-				_mixer->stopHandle(track->mixChanHandle);
-				delete track->streamSou;
 			}
 
 			// Mark the track as unused
-			track->soundDesc = NULL;
-			track->streamSou = NULL;
-			track->stream = NULL;
-			track->used = false;
+			memset(track, 0, sizeof(Track));
 		}
 	}
 }

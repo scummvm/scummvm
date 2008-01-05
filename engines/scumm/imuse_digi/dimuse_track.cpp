@@ -52,7 +52,7 @@ int IMuseDigital::allocSlot(int priority) {
 		for (l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			Track *track = _track[l];
 			if (track->used && !track->toBeRemoved &&
-					(lowest_priority > track->soundPriority) && !track->streamSou) {
+					(lowest_priority > track->soundPriority) && !track->souStreamUsed) {
 				lowest_priority = track->soundPriority;
 				trackId = l;
 			}
