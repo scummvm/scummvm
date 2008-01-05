@@ -24,7 +24,7 @@
  */
 
 
-
+#include "common/md5.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -514,6 +514,23 @@ int AgiEngine::agiLoadResource(int r, int n) {
 	int i;
 
 	i = _loader->loadResource(r, n);
+
+	// WORKAROUND: Patches broken picture 147 in a corrupted Amiga version of Gold Rush! (v2.05 1989-03-09).
+	// The picture can be seen in room 147 after dropping through the outhouse's hole in room 146.
+	if (i == errOK && getGameID() == GID_GOLDRUSH && r == rPICTURE && n == 147 && _game.dirPic[n].len == 1982) {
+		uint8 *pic = _game.pictures[n].rdata;
+		Common::MemoryReadStream picStream(pic, _game.dirPic[n].len);
+		char md5str[32+1];
+		Common::md5_file_string(picStream, md5str, _game.dirPic[n].len);
+		if (scumm_stricmp(md5str, "1c685eb048656cedcee4eb6eca2cecea") == 0) {
+			pic[0x042] = 0x4B; // 0x49 -> 0x4B
+			pic[0x043] = 0x66; // 0x26 -> 0x66
+			pic[0x204] = 0x68; // 0x28 -> 0x68
+			pic[0x6C0] = 0x2D; // 0x25 -> 0x2D
+			pic[0x6F0] = 0xF0; // 0x70 -> 0xF0
+			pic[0x734] = 0x6F; // 0x2F -> 0x6F
+		}
+	}
 
 	return i;
 }
