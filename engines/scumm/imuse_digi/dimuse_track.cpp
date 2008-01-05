@@ -60,17 +60,18 @@ int IMuseDigital::allocSlot(int priority) {
 		if (lowest_priority <= priority) {
 			assert(trackId != -1);
 			Track *track = _track[trackId];
-			// FIXME: Should we really wait for the sound to finish "nicely"?
-			// Why not just stop it immediately?
-			
-			while (track->used) {
-				// The designated track is not yet available. So, we call flushTrack()
-				// to get it processed (and thus made ready for us). Since the actual
-				// processing is done by another thread, we also call parseEvents to
-				// give it some time (and to avoid busy waiting/looping).
-				flushTrack(track);
-				_vm->parseEvents();
+
+			// Stop the track immediately
+			_mixer->stopHandle(track->mixChanHandle);
+			if (!track->souStreamUsed) {
+				assert(track->stream);
+				delete track->stream;
+				_sound->closeSound(track->soundDesc);
 			}
+
+			// Mark it as unused
+			memset(track, 0, sizeof(Track));
+
 			debug(5, "IMuseDigital::allocSlot(): Removed sound %d from track %d", _track[trackId]->soundId, trackId);
 		} else {
 			debug(5, "IMuseDigital::allocSlot(): Priority sound too low");
