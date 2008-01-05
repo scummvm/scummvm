@@ -129,7 +129,7 @@ public:
 		 * the frontend code is very inefficient in doing screen updates. So
 		 * the frontend might do a lot of fullscreen blits even though only a
 		 * tiny portion of the actual screen data changed. In that case, it
-		 * might pay off for the backend to compute which parts actual changed,
+		 * might pay off for the backend to compute which parts actually changed,
 		 * and then only mark those as dirty.
 		 * Implementing this is purely optional, and no harm should arise
 		 * when not doing so (except for decreased speed in said frontends).
