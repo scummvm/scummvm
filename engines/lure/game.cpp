@@ -859,16 +859,23 @@ void Game::doShowCredits() {
 	Mouse &mouse = Mouse::getReference();
 	Screen &screen = Screen::getReference();
 	Room &room = Room::getReference();
+	bool isEGA = LureEngine::getReference().isEGA();
 
 	Sound.pause();
 	mouse.cursorOff();
-	Palette p(CREDITS_RESOURCE_ID - 1);
+	
 	Surface *s = Surface::getScreen(CREDITS_RESOURCE_ID);
-	screen.setPaletteEmpty();
-	s->copyToScreen(0, 0);
-	screen.setPalette(&p);	
+	
+	if (isEGA) {
+		s->copyToScreen(0, 0);
+	} else {
+		Palette p(CREDITS_RESOURCE_ID - 1);
+		screen.setPaletteEmpty();
+		s->copyToScreen(0, 0);
+		screen.setPalette(&p);	
+	}
+	
 	delete s;
-
 	events.waitForPress();
 
 	room.setRoomNumber(room.roomNumber());
