@@ -2279,7 +2279,7 @@ void ScummEngine_v5::o5_startSound() {
 	// Woodtick music often resumes before Largo's theme has finished. As
 	// far as I can tell, this is a script bug.
 	if (_game.id == GID_MONKEY2 && sound == 110 && _sound->isSoundRunning(151)) {
-		debug(1, "Delaying Woodtick music until Largo's theme has finished\n");
+		debug(1, "Delaying Woodtick music until Largo's theme has finished");
 		_scriptPointer = oldaddr;
 		o5_breakHere();
 		return;
