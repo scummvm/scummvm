@@ -336,13 +336,14 @@ int AgiEngine::testIfCode(int lognum) {
 			ec = testObjRight(p[0], p[1], p[2], p[3], p[4]);
 			break;
 		case 0x13: // Unknown test command 19
-			// Used at least by the Amiga version of Gold Rush! in logic.001.
-			// Don't know what this actually does in the Amiga executable but
-			// evaluating this to false seems to fix the bug #1745950
-			// (GR: Birds stuck in opening screen (Amiga version)).
-			// FIXME: This hack was taken from NAGI. Need to check it with disassembly.
-			warning("op_test: Amiga-specific testcase 19 was triggered");
-			ec = false;
+			// My current theory is that this command checks whether the ego is currently moving
+			// and that that movement has been caused using the mouse and not using the keyboard.
+			// I base this theory on the game's behaviour on an Amiga emulator, not on disassembly.
+			// This command is used at least in the Amiga version of Gold Rush! v2.05 1989-03-09
+			// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
+			// TODO: Check this command's implementation using disassembly just to be sure.
+			ec = game.viewTable[0].flags & ADJ_EGO_XY;
+			debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %d (Amiga-specific testcase 19)", ec ? "true" : "false");
 			break;
 		default:
 			ec = false;
