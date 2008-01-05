@@ -1081,7 +1081,7 @@ void ScummEngine_v71he::clearDrawQueues() {
 }
 
 void ScummEngine_v80he::clearDrawQueues() {
-	ScummEngine_v70he::clearDrawQueues();
+	ScummEngine_v71he::clearDrawQueues();
 
 	_wiz->clearWizBuffer();
 }
