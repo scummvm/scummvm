@@ -35,14 +35,23 @@ using namespace Common;
 
 namespace Lure {
 
+#define DEFAULT_TEXT_COLOUR -1
+
 class Surface {
 private:
 	MemoryBlock *_data;
 	uint16 _width, _height;
+
+	void egaCreateDialog(bool blackFlag);
+	void vgaCreateDialog(bool blackFlag);
 public:
 	Surface(MemoryBlock *src, uint16 width, uint16 height);
 	Surface(uint16 width, uint16 height);
 	~Surface();
+	static uint16 textX();
+	static uint16 textY();
+	static void getDialogBounds(Common::Point &size, int charWidth, int numLines,
+		bool squashedLines = true);
 
 	static void initialise();
 	static void deinitialise();
@@ -53,11 +62,11 @@ public:
 
 	void loadScreen(uint16 resourceId);
 	void loadScreen(MemoryBlock *data);
-	int writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour);
+	int writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int colour);
 	void writeString(uint16 x, uint16 y, Common::String line, bool transparent,
-		uint8 colour = DIALOG_TEXT_COLOUR, bool varLength = true);
+		int colour = DEFAULT_TEXT_COLOUR, bool varLength = true);
 	void writeSubstring(uint16 x, uint16 y, Common::String line, int len, 
-		bool transparent, uint8 colour = DIALOG_TEXT_COLOUR, bool varLength = true);
+		bool transparent, int colour = DEFAULT_TEXT_COLOUR, bool varLength = true);
 	void transparentCopyTo(Surface *dest);
 	void copyTo(Surface *dest);
 	void copyTo(Surface *dest, uint16 x, uint16 y);
@@ -73,8 +82,9 @@ public:
 
 	static uint16 textWidth(const char *s, int numChars = 0);
 	static void wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines);
-	static Surface *newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength = true, uint8 colour = DIALOG_TEXT_COLOUR);
-	static Surface *newDialog(uint16 width, const char *lines, uint8 colour = DIALOG_TEXT_COLOUR);
+	static Surface *newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength = true, 
+		int colour = DEFAULT_TEXT_COLOUR, bool squashedLines = true);
+	static Surface *newDialog(uint16 width, const char *lines, int colour = DEFAULT_TEXT_COLOUR);
 	static Surface *getScreen(uint16 resourceId);
 	bool getString(Common::String &line, int maxSize, bool isNumeric, bool varLength, int16 x, int16 y);
 };

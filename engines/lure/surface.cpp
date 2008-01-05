@@ -104,6 +104,97 @@ Surface::~Surface() {
 	delete _data;
 }
 
+// textX / textY
+// Returns the offset into a dialog for writing text
+
+uint16 Surface::textX() { return LureEngine::getReference().isEGA() ? 10 : 12; }
+
+uint16 Surface::textY() { return LureEngine::getReference().isEGA() ? 8 : 12; }
+
+// getDialogBounds
+// Returns a suggested size for a dialog given a number of horizontal characters and rows
+
+void Surface::getDialogBounds(Common::Point &size, int charWidth, int numLines, bool squashedLines) {
+	size.x = Surface::textX() * 2 + FONT_WIDTH * charWidth;
+	size.y = Surface::textY() * 2 + (squashedLines ? (FONT_HEIGHT - 1) : FONT_HEIGHT) * numLines;
+}
+
+// egaCreateDialog
+// Forms a dialog encompassing the entire surface
+
+void Surface::egaCreateDialog(bool blackFlag) {
+	byte lineColours1[3] = {6, 0, 9};
+	byte lineColours2[3] = {7, 0, 12};
+
+	// Surface contents
+	data().setBytes(blackFlag ? 0 : 13, 0, data().size());
+	
+	// Top/bottom lines
+	for (int y = 2; y >= 0; --y) {
+		data().setBytes(lineColours1[y], y * width(), width());
+		data().setBytes(lineColours2[y], (height() - y - 1) * width(), width());
+		
+		for (int p = y + 1; p < height() - y; ++p) {
+			byte *line = data().data() + p * width();
+			*(line + y) = lineColours2[y];
+			*(line + width() - y - 1) = lineColours1[y];
+		}
+	}
+}
+
+// vgaCreateDialog
+// Forms a dialog encompassing the entire surface
+
+void copyLine(byte *pSrc, byte *pDest, uint16 leftSide, uint16 center, uint16 rightSide) {
+	// Left area
+	memcpy(pDest, pSrc, leftSide); 
+	pSrc += leftSide; pDest += leftSide; 
+	// Center area
+	memset(pDest, *pSrc, center);
+	++pSrc; pDest += center; 
+	// Right side
+	memcpy(pDest, pSrc, rightSide); 
+	pSrc += rightSide; pDest += rightSide; 
+}
+
+#define VGA_DIALOG_EDGE_WIDTH 9
+
+void Surface::vgaCreateDialog(bool blackFlag) {
+	byte *pSrc = int_dialog_frame->data();
+	byte *pDest = _data->data();
+	uint16 xCenter = _width - VGA_DIALOG_EDGE_WIDTH * 2;
+	uint16 yCenter = _height - VGA_DIALOG_EDGE_WIDTH * 2;
+	int y;
+
+	// Dialog top
+	for (y = 0; y < 9; ++y) {
+		copyLine(pSrc, pDest, VGA_DIALOG_EDGE_WIDTH - 2, xCenter + 2, VGA_DIALOG_EDGE_WIDTH);
+		pSrc += (VGA_DIALOG_EDGE_WIDTH - 2) + 1 + VGA_DIALOG_EDGE_WIDTH;
+		pDest += _width;
+	}
+
+	// Dialog sides - note that the same source data gets used for all side lines
+	for (y = 0; y < yCenter; ++y) {
+		copyLine(pSrc, pDest, VGA_DIALOG_EDGE_WIDTH, xCenter, VGA_DIALOG_EDGE_WIDTH);
+		pDest += _width;
+	}
+	pSrc += VGA_DIALOG_EDGE_WIDTH * 2 + 1;
+
+	// Dialog bottom
+	for (y = 0; y < 9; ++y) {
+		copyLine(pSrc, pDest, VGA_DIALOG_EDGE_WIDTH, xCenter + 1, VGA_DIALOG_EDGE_WIDTH - 1);
+		pSrc += VGA_DIALOG_EDGE_WIDTH + 1 + (VGA_DIALOG_EDGE_WIDTH - 1);
+		pDest += _width;
+	}
+
+	// Final processing - if black flag set, clear dialog inside area
+	if (blackFlag) {
+		Rect r = Rect(VGA_DIALOG_EDGE_WIDTH, VGA_DIALOG_EDGE_WIDTH, 
+			_width - VGA_DIALOG_EDGE_WIDTH, _height-VGA_DIALOG_EDGE_WIDTH);
+		fillRect(r, 0);
+	}
+}
+
 void Surface::loadScreen(uint16 resourceId) {
 	MemoryBlock *rawData = Disk::getReference().getEntry(resourceId);
 	loadScreen(rawData);
@@ -129,8 +220,10 @@ void Surface::loadScreen(MemoryBlock *rawData) {
 	delete tmpScreen;
 }
 
-int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 colour) {
+int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int colour) {
 	byte *const addr = _data->data() + (y * _width) + x;
+	if (colour == DEFAULT_TEXT_COLOUR) 
+		colour = LureEngine::getReference().isEGA() ? EGA_DIALOG_TEXT_COLOUR : VGA_DIALOG_TEXT_COLOUR;
 
 	if ((ascii < 32) || (ascii >= 32 + numFontChars))
 		error("Invalid ascii character passed for display '%d'", ascii);
@@ -158,14 +251,16 @@ int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, uint8 
 }
 
 void Surface::writeString(uint16 x, uint16 y, Common::String line, bool transparent, 
-						  uint8 colour, bool varLength) {
+						  int colour, bool varLength) {
 	writeSubstring(x, y, line, line.size(), transparent, colour, varLength);
 }
 
 void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len, 
-		  bool transparent, uint8 colour, bool varLength) {
+		  bool transparent, int colour, bool varLength) {
 
 	const char *sPtr = line.c_str();
+	if (colour == DEFAULT_TEXT_COLOUR) 
+		colour = LureEngine::getReference().isEGA() ? EGA_DIALOG_TEXT_COLOUR : VGA_DIALOG_TEXT_COLOUR;
 
 	for (int index = 0; (index < len) && (*sPtr != '\0'); ++index, ++sPtr) {
 		writeChar(x, y, (uint8) *sPtr, transparent, colour);
@@ -256,57 +351,11 @@ void Surface::fillRect(const Rect &r, uint8 colour) {
 	}
 }
 
-// createDialog
-// Forms a dialog encompassing the entire surface
-
-void copyLine(byte *pSrc, byte *pDest, uint16 leftSide, uint16 center, uint16 rightSide) {
-	// Left area
-	memcpy(pDest, pSrc, leftSide); 
-	pSrc += leftSide; pDest += leftSide; 
-	// Center area
-	memset(pDest, *pSrc, center);
-	++pSrc; pDest += center; 
-	// Right side
-	memcpy(pDest, pSrc, rightSide); 
-	pSrc += rightSide; pDest += rightSide; 
-}
-
 void Surface::createDialog(bool blackFlag) {
-	if ((_width < 20) || (_height < 20)) return;
-
-	byte *pSrc = int_dialog_frame->data();
-	byte *pDest = _data->data();
-	uint16 xCenter = _width - DIALOG_EDGE_SIZE * 2;
-	uint16 yCenter = _height - DIALOG_EDGE_SIZE * 2;
-	int y;
-
-	// Dialog top
-	for (y = 0; y < 9; ++y) {
-		copyLine(pSrc, pDest, DIALOG_EDGE_SIZE - 2, xCenter + 2, DIALOG_EDGE_SIZE);
-		pSrc += (DIALOG_EDGE_SIZE - 2) + 1 + DIALOG_EDGE_SIZE;
-		pDest += _width;
-	}
-
-	// Dialog sides - note that the same source data gets used for all side lines
-	for (y = 0; y < yCenter; ++y) {
-		copyLine(pSrc, pDest, DIALOG_EDGE_SIZE, xCenter, DIALOG_EDGE_SIZE);
-		pDest += _width;
-	}
-	pSrc += DIALOG_EDGE_SIZE * 2 + 1;
-
-	// Dialog bottom
-	for (y = 0; y < 9; ++y) {
-		copyLine(pSrc, pDest, DIALOG_EDGE_SIZE, xCenter + 1, DIALOG_EDGE_SIZE - 1);
-		pSrc += DIALOG_EDGE_SIZE + 1 + (DIALOG_EDGE_SIZE - 1);
-		pDest += _width;
-	}
-
-	// Final processing - if black flag set, clear dialog inside area
-	if (blackFlag) {
-		Rect r = Rect(DIALOG_EDGE_SIZE, DIALOG_EDGE_SIZE, 
-			_width - DIALOG_EDGE_SIZE, _height-DIALOG_EDGE_SIZE);
-		fillRect(r, 0);
-	}
+	if (LureEngine::getReference().isEGA())
+		egaCreateDialog(blackFlag);
+	else
+		vgaCreateDialog(blackFlag);
 }
 
 void Surface::copyToScreen(uint16 x, uint16 y) {
@@ -409,22 +458,28 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 	debugC(ERROR_INTERMEDIATE, kLureDebugStrings, "wordWrap end - numLines=%d", numLines);
 }
 
-Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength, uint8 colour) {
-	Surface *s = new Surface(width, (DIALOG_EDGE_SIZE + 3) * 2 + 
-		numLines * (FONT_HEIGHT - 1));
+Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength, 
+							int colour, bool squashedLines) {
+	Point size;
+	Surface::getDialogBounds(size, 0, numLines, squashedLines);
+
+	Surface *s = new Surface(width, size.y);
 	s->createDialog();
 
-	for (uint8 ctr = 0; ctr < numLines; ++ctr)
-		s->writeString(DIALOG_EDGE_SIZE + 3, DIALOG_EDGE_SIZE + 2 + 
-			(ctr * (FONT_HEIGHT - 1)), lines[ctr], true, colour, varLength);
+	uint16 yP = Surface::textY();
+	for (uint8 ctr = 0; ctr < numLines; ++ctr) {
+		s->writeString(Surface::textX(), yP, lines[ctr], true, colour, varLength);
+		yP += squashedLines ? FONT_HEIGHT - 1 : FONT_HEIGHT;
+	}
+
 	return s;
 }
 
-Surface *Surface::newDialog(uint16 width, const char *line, uint8 colour) {
+Surface *Surface::newDialog(uint16 width, const char *line, int colour) {
 	char **lines;
 	char *lineCopy = strdup(line);
 	uint8 numLines;
-	wordWrap(lineCopy, width - (DIALOG_EDGE_SIZE + 3) * 2, lines, numLines);
+	wordWrap(lineCopy, width - (Surface::textX() * 2), lines, numLines);
 
 	// Create the dialog 
 	Surface *result = newDialog(width, numLines, const_cast<const char **>(lines), true, colour);
@@ -466,7 +521,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 
 	while (!abortFlag) {
 		// Display the string
-		screen.screen().writeString(x, y, newLine, true, DIALOG_TEXT_COLOUR, varLength);
+		screen.screen().writeString(x, y, newLine, true, DEFAULT_TEXT_COLOUR, varLength);
 		screen.update();
 		int stringSize = textWidth(newLine.c_str());
 
@@ -746,8 +801,9 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 
 	// Write out the character name
 	uint16 charWidth = Surface::textWidth(srcCharName);
-	_surface->writeString((TALK_DIALOG_WIDTH-charWidth)/2, TALK_DIALOG_EDGE_SIZE + 2,
-		srcCharName, true, DIALOG_WHITE_COLOUR);
+	byte white = LureEngine::getReference().isEGA() ?  EGA_DIALOG_WHITE_COLOUR : VGA_DIALOG_WHITE_COLOUR;
+	_surface->writeString((TALK_DIALOG_WIDTH - charWidth) / 2, TALK_DIALOG_EDGE_SIZE + 2,
+		srcCharName, true, white);
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "TalkDialog end");
 }
 
@@ -826,14 +882,18 @@ TalkDialog *TalkDialog::loadFromStream(Common::ReadStream *stream) {
 #define SR_SEPARATOR_HEIGHT 5
 #define SR_SAVEGAME_NAMES_Y (SR_SEPARATOR_Y + SR_SEPARATOR_HEIGHT + 1)
 
+
 void SaveRestoreDialog::toggleHightlight(int xs, int xe, int ys, int ye) {
 	Screen &screen = Screen::getReference();
 	byte *addr = screen.screen().data().data() + FULL_SCREEN_WIDTH * ys + xs;
+	const byte colourList[4] = {EGA_DIALOG_TEXT_COLOUR, EGA_DIALOG_WHITE_COLOUR,
+		VGA_DIALOG_TEXT_COLOUR, VGA_DIALOG_WHITE_COLOUR};
+	const byte *colours = LureEngine::getReference().isEGA() ? &colourList[0] : &colourList[2];
 
 	for (int y = 0; y < ye - ys + 1; ++y, addr += FULL_SCREEN_WIDTH) {
 		for (int x = 0; x < xe - xs + 1; ++x) {
-			if (addr[x] == DIALOG_TEXT_COLOUR) addr[x] = DIALOG_WHITE_COLOUR;
-			else if (addr[x] == DIALOG_WHITE_COLOUR) addr[x] = DIALOG_TEXT_COLOUR;
+			if (addr[x] == colours[0]) addr[x] = colours[1];
+			else if (addr[x] == colours[1]) addr[x] = colours[0];
 		}
 	}
 
@@ -885,7 +945,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 
 	// Write out any existing save names
 	for (index = 0; index < numSaves; ++index)
-		s->writeString(DIALOG_EDGE_SIZE, SR_SAVEGAME_NAMES_Y + (index * 8), saveNames[index]->c_str(), true);
+		s->writeString(Surface::textX(), SR_SAVEGAME_NAMES_Y + (index * 8), saveNames[index]->c_str(), true);
 
 	// Display the dialog
 	s->copyTo(&screen.screen(), SAVE_DIALOG_X, SAVE_DIALOG_Y);
@@ -914,8 +974,8 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 					int lineNum;
 
 					if (events.type() == Common::EVENT_MOUSEMOVE) {
-						if ((mouse.x() < (SAVE_DIALOG_X + DIALOG_EDGE_SIZE)) ||
-							(mouse.x() >= (SAVE_DIALOG_X + s->width() - DIALOG_EDGE_SIZE)) ||
+						if ((mouse.x() < (SAVE_DIALOG_X + Surface::textX())) ||
+							(mouse.x() >= (SAVE_DIALOG_X + s->width() - Surface::textX())) ||
 							(mouse.y() < SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y) ||
 							(mouse.y() >= SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + numSaves * FONT_HEIGHT))
 							// Outside displayed lines
@@ -935,16 +995,16 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 					if (lineNum != selectedLine) {
 						if (selectedLine != -1)
 							// Deselect previously selected line
-							toggleHightlight(SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
-								SAVE_DIALOG_X + s->width() - DIALOG_EDGE_SIZE,
+							toggleHightlight(SAVE_DIALOG_X + Surface::textX(), 
+								SAVE_DIALOG_X + s->width() - Surface::textX(),
 								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
 								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
 
 						// Highlight new line
 						selectedLine = lineNum;
 						if (selectedLine != -1)
-							toggleHightlight(SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
-								SAVE_DIALOG_X + s->width() - DIALOG_EDGE_SIZE,
+							toggleHightlight(SAVE_DIALOG_X + Surface::textX(), 
+								SAVE_DIALOG_X + s->width() - Surface::textX(),
 								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
 								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
 					}
@@ -957,8 +1017,8 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 
 		// Deselect selected row
 		if (selectedLine != -1) 
-			toggleHightlight(SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
-				SAVE_DIALOG_X + s->width() - DIALOG_EDGE_SIZE,
+			toggleHightlight(SAVE_DIALOG_X + Surface::textX(), 
+				SAVE_DIALOG_X + s->width() - Surface::textX(),
 				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
 				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
 
@@ -971,15 +1031,15 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 		// If in save mode, allow the entry of a new savename
 		if (saveDialog) {
 			if (!screen.screen().getString(*saveNames[selectedLine], 
-				INFO_DIALOG_WIDTH - (DIALOG_EDGE_SIZE * 2), 
-				false, true, SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
+				INFO_DIALOG_WIDTH - (Surface::textX() * 2), 
+				false, true, SAVE_DIALOG_X + Surface::textX(), 
 				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT)) {
 				// Aborted out of name selection, so restore old name and 
 				// go back to slot selection
 				screen.screen().writeString(
-					SAVE_DIALOG_X + DIALOG_EDGE_SIZE, 
+					SAVE_DIALOG_X + Surface::textX(), 
 					SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
-                    saveNames[selectedLine]->c_str(), true, DIALOG_TEXT_COLOUR, true);
+                    saveNames[selectedLine]->c_str(), true);
 				selectedLine = -1;
 				continue;
 			}
