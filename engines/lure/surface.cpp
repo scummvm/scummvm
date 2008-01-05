@@ -127,7 +127,7 @@ void Surface::egaCreateDialog(bool blackFlag) {
 	byte lineColours2[3] = {7, 0, 12};
 
 	// Surface contents
-	data().setBytes(blackFlag ? 0 : 13, 0, data().size());
+	data().setBytes(blackFlag ? 0 : EGA_DIALOG_BG_COLOUR, 0, data().size());
 	
 	// Top/bottom lines
 	for (int y = 2; y >= 0; --y) {
