@@ -288,12 +288,14 @@ int32 IMuseDigital::getPosInMs(int soundId) {
 	return 0;
 }
 
-int IMuseDigital::getSoundStatus(int sound) const {
+int IMuseDigital::getSoundStatus(int soundId) const {
 	Common::StackLock lock(_mutex, "IMuseDigital::getSoundStatus()");
-	debug(5, "IMuseDigital::getSoundStatus(%d)", sound);
+	debug(5, "IMuseDigital::getSoundStatus(%d)", soundId);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->soundId == sound) {
+		// Note: We do not check track->toBeRemoved here on purpose.
+		// Tracks which are about to stop are still running.
+		if ((track->soundId == soundId) && track->used) {
 			if (_mixer->isSoundHandleActive(track->mixChanHandle)) {
 				return 1;
 			}
