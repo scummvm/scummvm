@@ -206,18 +206,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 
 			track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
 
-			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
-			const int vol = track->vol / 1000;
-			Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
-
-			if (track->volGroupId == 1)
-				type = Audio::Mixer::kSpeechSoundType;
-			if (track->volGroupId == 2)
-				type = Audio::Mixer::kSFXSoundType;
-			if (track->volGroupId == 3)
-				type = Audio::Mixer::kMusicSoundType;
-
-			_mixer->playInputStream(type, &track->mixChanHandle, track->stream, -1, vol, pan, false);
+			_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan(), false);
 			_mixer->pauseHandle(track->mixChanHandle, true);
 		}
 	}
@@ -263,17 +252,6 @@ void IMuseDigital::callback() {
 				}
 				debug(5, "Fade: sound(%d), Vol(%d)", track->soundId, track->vol / 1000);
 			}
-
-			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
-			const int vol = track->vol / 1000;
-			Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
-
-			if (track->volGroupId == 1)
-				type = Audio::Mixer::kSpeechSoundType;
-			if (track->volGroupId == 2)
-				type = Audio::Mixer::kSFXSoundType;
-			if (track->volGroupId == 3)
-				type = Audio::Mixer::kMusicSoundType;
 
 			if (!track->souStreamUsed) {
 				assert(track->stream);
@@ -341,8 +319,8 @@ void IMuseDigital::callback() {
 						curFeedSize = feedSize;
 
 					if (_mixer->isReady()) {
-						_mixer->setChannelVolume(track->mixChanHandle, vol);
-						_mixer->setChannelBalance(track->mixChanHandle, pan);
+						_mixer->setChannelVolume(track->mixChanHandle, track->getVol());
+						_mixer->setChannelBalance(track->mixChanHandle, track->getPan());
 						track->stream->queueBuffer(tmpSndBufferPtr, curFeedSize);
 						track->regionOffset += curFeedSize;
 					} else
@@ -363,10 +341,10 @@ void IMuseDigital::callback() {
 					if (!track->mixerStreamRunning) {
 						track->mixerStreamRunning = true;
 						assert(track->streamSou);
-						_mixer->playInputStream(type, &track->mixChanHandle, track->streamSou, -1, vol, pan);
+						_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->streamSou, -1, track->getVol(), track->getPan());
 					} else {
-						_mixer->setChannelVolume(track->mixChanHandle, vol);
-						_mixer->setChannelBalance(track->mixChanHandle, pan);
+						_mixer->setChannelVolume(track->mixChanHandle, track->getVol());
+						_mixer->setChannelBalance(track->mixChanHandle, track->getPan());
 					}
 				}
 			}

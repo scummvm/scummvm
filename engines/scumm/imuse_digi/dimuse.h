@@ -103,6 +103,19 @@ private:
 		Audio::AudioStream *streamSou;				// sound mixer's audio stream handle for *.sou
 
 		Track();
+		
+		int getPan() const { return (pan != 64) ? 2 * pan - 127 : 0; }
+		int getVol() const { return vol / 1000; }
+		Audio::Mixer::SoundType getType() const {
+			Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
+			if (volGroupId == 1)
+				type = Audio::Mixer::kSpeechSoundType;
+			else if (volGroupId == 2)
+				type = Audio::Mixer::kSFXSoundType;
+			else if (volGroupId == 3)
+				type = Audio::Mixer::kMusicSoundType;
+			return type;
+		}
 	};
 
 	Track *_track[MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS];

@@ -155,19 +155,8 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			track->mixerFlags |= kFlagLittleEndian;
 #endif
 
-		const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
-		const int vol = track->vol / 1000;
-		Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
-
-		if (track->volGroupId == 1)
-			type = Audio::Mixer::kSpeechSoundType;
-		if (track->volGroupId == 2)
-			type = Audio::Mixer::kSFXSoundType;
-		if (track->volGroupId == 3)
-			type = Audio::Mixer::kMusicSoundType;
-
 		track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
-		_mixer->playInputStream(type, &track->mixChanHandle, track->stream, -1, vol, pan, false);
+		_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan(), false);
 		track->mixerStreamRunning = true;
 	}
 
@@ -328,23 +317,8 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	fadeTrack->volFadeUsed = true;
 
 	// Create an appendable output buffer
-	Audio::Mixer::SoundType type;
-	switch (fadeTrack->volGroupId) {
-	case 1:
-		type = Audio::Mixer::kSpeechSoundType;
-		break;
-	case 2:
-		type = Audio::Mixer::kSFXSoundType;
-		break;
-	case 3:
-		type = Audio::Mixer::kMusicSoundType;
-		break;
-	default:
-		type = Audio::Mixer::kPlainSoundType;
-		break;
-	}
 	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundDesc), makeMixerFlags(fadeTrack->mixerFlags));
-	_mixer->playInputStream(type, &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->vol / 1000, fadeTrack->pan, false);
+	_mixer->playInputStream(track->getType(), &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->getVol(), fadeTrack->pan, false);
 	fadeTrack->mixerStreamRunning = true;
 	fadeTrack->used = true;
 
