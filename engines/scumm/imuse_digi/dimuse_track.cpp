@@ -60,20 +60,16 @@ int IMuseDigital::allocSlot(int priority) {
 		if (lowest_priority <= priority) {
 			assert(trackId != -1);
 			Track *track = _track[trackId];
-			while (1) {
-				if (!track->used) {
-					break;
-				}
+			// FIXME: Should we really wait for the sound to finish "nicely"?
+			// Why not just stop it immediately?
+			
+			while (track->used) {
 				// The designated track is not yet available. So, we call flushTrack()
 				// to get it processed (and thus made ready for us). Since the actual
 				// processing is done by another thread, we also call parseEvents to
 				// give it some time (and to avoid busy waiting/looping).
 				flushTrack(track);
-				_mutex.unlock();
-		#ifndef __PLAYSTATION2__
 				_vm->parseEvents();
-		#endif
-				_mutex.lock();
 			}
 			debug(5, "IMuseDigital::allocSlot(): Removed sound %d from track %d", _track[trackId]->soundId, trackId);
 		} else {
