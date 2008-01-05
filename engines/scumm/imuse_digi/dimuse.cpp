@@ -151,27 +151,26 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (!ser->isSaving()) {
-			track->sndDataExtComp = false;
+		if (ser->isLoading()) {
+			memset(track, 0, sizeof(Track));
 		}
 		ser->saveLoadEntries(track, trackEntries);
-		if (!ser->isSaving()) {
+		if (ser->isLoading()) {
 			if (!track->used)
 				continue;
 			if ((track->toBeRemoved) || (track->souStreamUsed) || (track->curRegion == -1)) {
-				track->streamSou= NULL;
-				track->stream = NULL;
 				track->used = false;
 				continue;
 			}
+			
+			// TODO: The code below has a lot in common with that in IMuseDigital::startSound.
+			// Try to refactor them to reduce the code duplication.
 
 			track->soundDesc = _sound->openSound(track->soundId,
 									track->soundName, track->soundType,
 									track->volGroupId, -1);
 			if (!track->soundDesc) {
 				warning("IMuseDigital::saveOrLoad: Can't open sound so will not be resumed, propably on diffrent CD");
-				track->streamSou = NULL;
-				track->stream = NULL;
 				track->used = false;
 				continue;
 			}
@@ -205,7 +204,6 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 				track->mixerFlags |= kFlagLittleEndian;
 #endif
 
-			track->streamSou = NULL;
 			track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
 
 			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;

@@ -92,24 +92,17 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	}
 
 	Track *track = _track[l];
+	
+	// Reset the track
+	memset(track, 0, sizeof(Track));
 
 	track->pan = 64;
 	track->vol = volume * 1000;
-	track->volFadeDest = 0;
-	track->volFadeStep = 0;
-	track->volFadeDelay = 0;
-	track->volFadeUsed = false;
 	track->soundId = soundId;
-	track->mixerStreamRunning = false;
 	track->volGroupId = volGroupId;
 	track->curHookId = hookId;
 	track->soundPriority = priority;
 	track->curRegion = -1;
-	track->dataOffset = 0;
-	track->regionOffset = 0;
-	track->dataMod12Bit = 0;
-	track->mixerFlags = 0;
-	track->toBeRemoved = false;
 	track->soundType = soundType;
 
 	int bits = 0, freq = 0, channels = 0;
@@ -117,11 +110,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	track->souStreamUsed = (input != 0);
 
 	if (track->souStreamUsed) {
-		track->feedSize = 0;
-		track->soundName[0] = 0;
-		track->soundDesc = NULL;
 		track->streamSou = input;
-		track->stream = NULL;
 		track->mixerStreamRunning = false;
 	} else {
 		strcpy(track->soundName, soundName);
@@ -177,7 +166,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		if (track->volGroupId == 3)
 			type = Audio::Mixer::kMusicSoundType;
 
-		track->streamSou = NULL;
 		track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
 		_mixer->playInputStream(type, &track->mixChanHandle, track->stream, -1, vol, pan, false);
 		track->mixerStreamRunning = true;

@@ -404,17 +404,17 @@ void IMuseDigital::stopAllSounds() {
 				assert(track->stream);
 				_mixer->stopHandle(track->mixChanHandle);
 				delete track->stream;
-				track->stream = NULL;
 				_sound->closeSound(track->soundDesc);
-				track->soundDesc = NULL;
 			} else if (track->streamSou) {
 				assert(track->streamSou);
 				_mixer->stopHandle(track->mixChanHandle);
 				delete track->streamSou;
-				track->streamSou = NULL;
 			}
 
 			// Mark the track as unused
+			track->soundDesc = NULL;
+			track->streamSou = NULL;
+			track->stream = NULL;
 			track->used = false;
 		}
 	}
