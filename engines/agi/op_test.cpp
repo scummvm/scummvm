@@ -343,7 +343,7 @@ int AgiEngine::testIfCode(int lognum) {
 			// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
 			// TODO: Check this command's implementation using disassembly just to be sure.
 			ec = game.viewTable[0].flags & ADJ_EGO_XY;
-			debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %d (Amiga-specific testcase 19)", ec ? "true" : "false");
+			debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %s (Amiga-specific testcase 19)", ec ? "true" : "false");
 			break;
 		default:
 			ec = false;
