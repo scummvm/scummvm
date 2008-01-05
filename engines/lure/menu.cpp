@@ -147,7 +147,7 @@ uint8 Menu::execute() {
 						toggleHighlight(_selectedMenu);
 						_surfaceMenu = Surface::newDialog(
 							_selectedMenu->width(), _selectedMenu->numEntries(), 
-							_selectedMenu->entries(), false, MENU_UNSELECTED_COLOUR);
+							_selectedMenu->entries(), false, DEFAULT_TEXT_COLOUR, false);
 						_surfaceMenu->copyToScreen(_selectedMenu->xstart(), MENUBAR_Y_SIZE);
 					}
 
@@ -214,8 +214,8 @@ MenuRecord *Menu::getMenuAt(int x) {
 uint8 Menu::getIndexAt(uint16 x, uint16 y) {
 	if (!_selectedMenu) return 0;
 
-	int ys = MENUBAR_Y_SIZE + DIALOG_EDGE_SIZE + 3;
-	int ye = MENUBAR_Y_SIZE + _surfaceMenu->height() - DIALOG_EDGE_SIZE - 3;
+	int ys = MENUBAR_Y_SIZE + Surface::textY();
+	int ye = MENUBAR_Y_SIZE + (_surfaceMenu->height() - Surface::textY());
 	if ((y < ys) || (y > ye)) return 0;
 
 	uint16 yRelative = y - ys;
@@ -224,27 +224,37 @@ uint8 Menu::getIndexAt(uint16 x, uint16 y) {
 	return index;
 }
 
+#define MENUBAR_SELECTED_COLOUR 0xf7
+
 void Menu::toggleHighlight(MenuRecord *menuRec) {
+	const byte colourList[4] = {4, 2, 0, 0xf7};
+	const byte *colours = LureEngine::getReference().isEGA() ? &colourList[0] : &colourList[2];
 	byte *addr = _menu->data();
 
 	for (uint16 y=0; y<MENUBAR_Y_SIZE; ++y) {
 		for (uint16 x=menuRec->hsxstart(); x<=menuRec->hsxend(); ++x) {
-			if (addr[x] == MENUBAR_SELECTED_COLOUR) addr[x] = 0;
-			else if (addr[x] == 0) addr[x] = MENUBAR_SELECTED_COLOUR;
+			if (addr[x] == colours[0]) addr[x] = colours[1];
+			else if (addr[x] == colours[1]) addr[x] = colours[0];
 		}
 		addr += FULL_SCREEN_WIDTH;
 	}
 }
 
 void Menu::toggleHighlightItem(uint8 index) {
-	byte *p = _surfaceMenu->data().data() + (DIALOG_EDGE_SIZE + 3 + 
-		((index - 1) * (FONT_HEIGHT - 1))) * _surfaceMenu->width();
-	uint32 numBytes = (FONT_HEIGHT - 1) * _surfaceMenu->width();
+	const byte colourList[4] = {EGA_DIALOG_TEXT_COLOUR, EGA_DIALOG_WHITE_COLOUR,
+		VGA_DIALOG_TEXT_COLOUR, VGA_DIALOG_WHITE_COLOUR};
+	const byte *colours = LureEngine::getReference().isEGA() ? &colourList[0] : &colourList[2];
+	byte *p = _surfaceMenu->data().data() + (Surface::textY() + 
+		((index - 1) * FONT_HEIGHT)) * _surfaceMenu->width() + Surface::textX();
+	int numBytes =_surfaceMenu->width() - Surface::textX() * 2;
 
-	while (numBytes-- > 0) {
-		if (*p == MENU_UNSELECTED_COLOUR) *p = MENU_SELECTED_COLOUR;
-		else if (*p == MENU_SELECTED_COLOUR) *p = MENU_UNSELECTED_COLOUR;
-		++p;
+	for (int y = 0; y < FONT_HEIGHT; ++y, p += _surfaceMenu->width()) {
+		byte *pTemp = p;
+
+		for (int x = 0; x < numBytes; ++x, ++pTemp) {
+			if (*pTemp == colours[0]) *pTemp = colours[1];
+			else if (*pTemp == colours[1]) *pTemp = colours[0];
+		}
 	}
 
 	_surfaceMenu->copyToScreen(_selectedMenu->xstart(), MENUBAR_Y_SIZE);
@@ -457,6 +467,10 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	OSystem &system = *g_system;
 	Screen &screen = Screen::getReference();
 	Rect r;
+	bool isEGA = LureEngine::getReference().isEGA();
+	byte textColour = isEGA ? EGA_DIALOG_TEXT_COLOUR : VGA_DIALOG_TEXT_COLOUR;
+	byte whiteColour = isEGA ? EGA_DIALOG_WHITE_COLOUR : VGA_DIALOG_WHITE_COLOUR;
+
 
 	uint16 oldX = mouse.x();
 	uint16 oldY = mouse.y();
@@ -484,16 +498,17 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	}
 
 	// Create the dialog surface
-	Surface *s = new Surface(DIALOG_EDGE_SIZE * 2 + numCols * FONT_WIDTH, 
-		DIALOG_EDGE_SIZE * 2 + numLines * FONT_HEIGHT);
+	Common::Point size;
+	Surface::getDialogBounds(size, numCols, numLines);
+	Surface *s = new Surface(size.x, size.y);
 	s->createDialog();
 
 	int selectedIndex = 0;
 	bool refreshFlag = true;
-	r.left = DIALOG_EDGE_SIZE;
-	r.right = s->width() - DIALOG_EDGE_SIZE - 1;
-	r.top = DIALOG_EDGE_SIZE;
-	r.bottom = s->height() - DIALOG_EDGE_SIZE - 1;
+	r.left = Surface::textX();
+	r.right = s->width() - Surface::textX() + 1;
+	r.top = Surface::textY();
+	r.bottom = s->height() - Surface::textY() + 1;
 
 	for (;;) {
 		if (refreshFlag) {
@@ -507,12 +522,12 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 				int actionIndex = index;
 #endif
 				if ((actionIndex >= 0) && (actionIndex < numEntries)) {
-					s->writeString(DIALOG_EDGE_SIZE, DIALOG_EDGE_SIZE + index * FONT_HEIGHT,
+					s->writeString(Surface::textX(), Surface::textY() + index * FONT_HEIGHT,
 						actions[actionIndex], true, 
 #ifndef LURE_CLICKABLE_MENUS
-						(index == (numLines / 2)) ? MENU_SELECTED_COLOUR : MENU_UNSELECTED_COLOUR,
+						(index == (numLines / 2)) ? textColour : whiteColour,
 #else
-						(index == selectedIndex) ? MENU_SELECTED_COLOUR : MENU_UNSELECTED_COLOUR,
+						(index == selectedIndex) ? textColour : whiteColour,
 #endif
 						false);
 				}
