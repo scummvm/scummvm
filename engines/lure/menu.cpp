@@ -468,6 +468,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	Screen &screen = Screen::getReference();
 	Rect r;
 	bool isEGA = LureEngine::getReference().isEGA();
+	byte bgColour = isEGA ? EGA_DIALOG_BG_COLOUR : 0;
 	byte textColour = isEGA ? EGA_DIALOG_TEXT_COLOUR : VGA_DIALOG_TEXT_COLOUR;
 	byte whiteColour = isEGA ? EGA_DIALOG_WHITE_COLOUR : VGA_DIALOG_WHITE_COLOUR;
 
@@ -513,7 +514,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	for (;;) {
 		if (refreshFlag) {
 			// Set up the contents of the menu
-			s->fillRect(r, 0);
+			s->fillRect(r, bgColour);
 
 			for (int index = 0; index < numLines; ++index) {
 #ifndef LURE_CLICKABLE_MENUS
@@ -525,9 +526,9 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 					s->writeString(Surface::textX(), Surface::textY() + index * FONT_HEIGHT,
 						actions[actionIndex], true, 
 #ifndef LURE_CLICKABLE_MENUS
-						(index == (numLines / 2)) ? textColour : whiteColour,
+						(index == (numLines / 2)) ? whiteColour : textColour,
 #else
-						(index == selectedIndex) ? textColour : whiteColour,
+						(index == selectedIndex) ? whiteColour : textColour,
 #endif
 						false);
 				}
