@@ -277,7 +277,8 @@ void IMuseDigital::callback() {
 			if (track->volGroupId == 3)
 				type = Audio::Mixer::kMusicSoundType;
 
-			if (track->stream) {
+			if (!track->souStreamUsed) {
+				assert(track->stream);
 				byte *tmpSndBufferPtr = NULL;
 				int32 curFeedSize = 0;
 
@@ -357,7 +358,8 @@ void IMuseDigital::callback() {
 					feedSize -= curFeedSize;
 					assert(feedSize >= 0);
 				} while (feedSize != 0);
-			} else if (track->streamSou) {
+			} else {
+				assert(track->streamSou);
 				if (_mixer->isReady()) {
 					// FIXME: Can't we replace track->mixerStreamRunning by
 					// _mixer->isSoundHandleActive(track->mixChanHandle) ?

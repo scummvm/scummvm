@@ -114,13 +114,16 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 
 	int bits = 0, freq = 0, channels = 0;
 
-	if (input) {
+	track->souStreamUsed = (input != 0);
+
+	if (track->souStreamUsed) {
 		track->feedSize = 0;
-		track->souStreamUsed = true;
 		track->soundName[0] = 0;
 		track->soundDesc = NULL;
+		track->streamSou = input;
+		track->stream = NULL;
+		track->mixerStreamRunning = false;
 	} else {
-		track->souStreamUsed = false;
 		strcpy(track->soundName, soundName);
 		track->soundDesc = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
 
@@ -162,13 +165,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		if (track->sndDataExtComp)
 			track->mixerFlags |= kFlagLittleEndian;
 #endif
-	}
 
-	if (input) {
-		track->streamSou = input;
-		track->stream = NULL;
-		track->mixerStreamRunning = false;
-	} else {
 		const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
 		const int vol = track->vol / 1000;
 		Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;

@@ -165,7 +165,8 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 
 void IMuseDigital::flushTrack(Track *track) {
 	track->toBeRemoved = true;
-	if (track->stream) {
+	if (!track->souStreamUsed) {
+		assert(track->stream);
 		// Finalize the appendable stream
 		track->stream->finish();
 		// There might still be some data left in the buffers of the
@@ -179,7 +180,8 @@ void IMuseDigital::flushTrack(Track *track) {
 			track->soundDesc = NULL;
 			track->used = false;
 		}
-	} else if (track->streamSou) {
+	} else {
+		assert(track->streamSou);
 		_mixer->stopHandle(track->mixChanHandle);
 		delete track->streamSou;
 		track->streamSou = NULL;
@@ -397,13 +399,15 @@ void IMuseDigital::stopAllSounds() {
 			// Stop the sound output, *now*. No need to use toBeRemoved etc.
 			// as we are protected by a mutex, and this method is never called
 			// from IMuseDigital::callback either.
-			if (track->stream) {
+			if (!track->souStreamUsed) {
+				assert(track->stream);
 				_mixer->stopHandle(track->mixChanHandle);
 				delete track->stream;
 				track->stream = NULL;
 				_sound->closeSound(track->soundDesc);
 				track->soundDesc = NULL;
 			} else if (track->streamSou) {
+				assert(track->streamSou);
 				_mixer->stopHandle(track->mixChanHandle);
 				delete track->streamSou;
 				track->streamSou = NULL;
