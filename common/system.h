@@ -415,8 +415,8 @@ public:
 	 *
 	 * The palette data is specified in interleaved RGBA format. That is, the
 	 * first byte of the memory block 'colors' points at is the red component
-	 * of the first new color; the second byte the blue component of the first
-	 * new color; the third byte the green component, the last byte to the alpha
+	 * of the first new color; the second byte the green component of the first
+	 * new color; the third byte the blue component, the last byte to the alpha
 	 * (transparency) value. Then the second color starts, and so on. So memory
 	 * looks like this: R1-G1-B1-A1-R2-G2-B2-A2-R3-...
 	 *
