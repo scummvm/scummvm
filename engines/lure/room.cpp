@@ -430,6 +430,7 @@ void Room::update() {
 	Surface &s = _screen.screen();
 	Resources &res = Resources::getReference();
 	HotspotList &hotspots = res.activeHotspots();
+	byte white = LureEngine::getReference().isEGA() ?  EGA_DIALOG_WHITE_COLOUR : VGA_DIALOG_WHITE_COLOUR;
 	HotspotList::iterator i;
 
 	// Copy the background to the temporary screen surface
@@ -489,7 +490,7 @@ void Room::update() {
 	if (!*_statusLine) {
 		// No current status action being display
 		if (_hotspotId != 0) 
-			s.writeString(0, 0, _hotspotName, false, DIALOG_TEXT_COLOUR);
+			s.writeString(0, 0, _hotspotName, false);
 	} else {
 		// Word wrap (if necessary) the status line and dispaly it
 		char *statusLineCopy = strdup(_statusLine);
@@ -498,7 +499,7 @@ void Room::update() {
 		int16 yPos = 0;
 		s.wordWrap(statusLineCopy, s.width(), lines, numLines);
 		for (int lineNum = 0; lineNum < numLines; ++lineNum) {
-			s.writeString(0, yPos, lines[lineNum], false, DIALOG_WHITE_COLOUR);
+			s.writeString(0, yPos, lines[lineNum], false, white);
 			yPos += FONT_HEIGHT;
 		}
 		Memory::dealloc(lines);
@@ -535,7 +536,7 @@ void Room::update() {
 		Mouse &m = Mouse::getReference();
 		sprintf(buffer, "Room %d Pos (%d,%d) @ (%d,%d)", _roomNumber, m.x(), m.y(),
 			m.x() / RECT_SIZE, (m.y() - MENUBAR_Y_SIZE) / RECT_SIZE);
-		s.writeString(FULL_SCREEN_WIDTH / 2, 0, buffer, false, DIALOG_TEXT_COLOUR);
+		s.writeString(FULL_SCREEN_WIDTH / 2, 0, buffer, false, white);
 	}
 }
 
