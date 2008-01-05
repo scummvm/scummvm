@@ -137,7 +137,7 @@ public:
 	int getRate() const { return _streaminfo.sample_rate; }
 	bool endOfData() const {
 		// End of data is reached if there either is no valid stream data available,
-		// or if we reached the last sample and completely emptied the sample cache
+		// or if we reached the last sample and completely emptied the sample cache.
 		return _streaminfo.channels == 0 || (_lastSampleWritten && _sampleCache.bufFill == 0);
 	}
 
@@ -335,7 +335,8 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		FLAC__StreamDecoderState state = getStreamDecoderState();
 
 		// Keep poking FLAC to process more samples until we completely satisfied the request
-		while (_requestedSamples > 0 && state == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC) {
+		// respectively until we run out of data.
+		while (!_lastSampleWritten && _requestedSamples > 0 && state == FLAC__STREAM_DECODER_SEARCH_FOR_FRAME_SYNC) {
 			assert(_sampleCache.bufFill == 0);
 			assert(_requestedSamples % numChannels == 0);
 			processSingleBlock();
