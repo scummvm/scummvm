@@ -294,9 +294,8 @@ int IMuseDigital::getSoundStatus(int sound) const {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->soundId == sound) {
-			if ((track->streamSou && _mixer->isSoundHandleActive(track->mixChanHandle)) ||
-				(track->stream && !track->stream->endOfStream())) {
-					return 1;
+			if (_mixer->isSoundHandleActive(track->mixChanHandle)) {
+				return 1;
 			}
 		}
 	}
