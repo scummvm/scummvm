@@ -83,7 +83,7 @@ private:
 		char soundName[15]; // sound name but also filename of sound in bundle data
 		bool used;			// flag mean that track is used
 		bool toBeRemoved;   // flag mean that track need to be free
-		bool mixerStreamRunning;	// flag mean sound mixer's stream is running
+		bool mixerStreamRunning;	// flag mean sound mixer's stream is running OBSOLETE
 		bool souStreamUsed;	// flag mean that track use stream from sou file
 		bool sndDataExtComp;// flag mean that sound data is compressed by scummvm tools
 		int32 soundPriority;// priority level of played sound (0-127)
@@ -100,7 +100,6 @@ private:
 		ImuseDigiSndMgr::SoundDesc *soundDesc;	// sound handle used by iMuse sound manager
 		Audio::SoundHandle mixChanHandle;					// sound mixer's channel handle
 		Audio::AppendableAudioStream *stream;		// sound mixer's audio stream handle for *.la1 and *.bun
-		Audio::AudioStream *streamSou;				// sound mixer's audio stream handle for *.sou
 
 		Track();
 		

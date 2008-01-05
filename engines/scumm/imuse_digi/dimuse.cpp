@@ -39,7 +39,7 @@
 namespace Scumm {
 
 IMuseDigital::Track::Track()
-	: soundId(-1), used(false), stream(NULL), streamSou(NULL) {
+	: soundId(-1), used(false), stream(NULL) {
 }
 
 void IMuseDigital::timer_handler(void *refCon) {
@@ -129,7 +129,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKLINE(Track, used, sleByte, VER(31)),
 		MKLINE(Track, toBeRemoved, sleByte, VER(31)),
 		MKLINE(Track, souStreamUsed, sleByte, VER(31)),
-		MKLINE(Track, mixerStreamRunning, sleByte, VER(31)),
+		MKLINE(Track, mixerStreamRunning, sleByte, VER(31)),	// FIXME: OBSOLETE, remove this!
 		MKLINE(Track, soundPriority, sleInt32, VER(31)),
 		MKLINE(Track, regionOffset, sleInt32, VER(31)),
 		MK_OBSOLETE(Track, trackOffset, sleInt32, VER(31), VER(31)),
@@ -336,16 +336,8 @@ void IMuseDigital::callback() {
 				} while (feedSize != 0);
 			} else {
 				if (_mixer->isReady()) {
-					// FIXME: Can't we replace track->mixerStreamRunning by
-					// _mixer->isSoundHandleActive(track->mixChanHandle) ?
-					if (!track->mixerStreamRunning) {
-						track->mixerStreamRunning = true;
-						assert(track->streamSou);
-						_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->streamSou, -1, track->getVol(), track->getPan());
-					} else {
-						_mixer->setChannelVolume(track->mixChanHandle, track->getVol());
-						_mixer->setChannelBalance(track->mixChanHandle, track->getPan());
-					}
+					_mixer->setChannelVolume(track->mixChanHandle, track->getVol());
+					_mixer->setChannelBalance(track->mixChanHandle, track->getPan());
 				}
 			}
 		}

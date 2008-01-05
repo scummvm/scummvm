@@ -110,8 +110,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	track->souStreamUsed = (input != 0);
 
 	if (track->souStreamUsed) {
-		track->streamSou = input;
-		track->mixerStreamRunning = false;
+		_mixer->playInputStream(track->getType(), &track->mixChanHandle, input, -1, track->getVol(), track->getPan());
 	} else {
 		strcpy(track->soundName, soundName);
 		track->soundDesc = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
@@ -157,7 +156,6 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 
 		track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
 		_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan(), false);
-		track->mixerStreamRunning = true;
 	}
 
 	track->used = true;
@@ -319,7 +317,6 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	// Create an appendable output buffer
 	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundDesc), makeMixerFlags(fadeTrack->mixerFlags));
 	_mixer->playInputStream(track->getType(), &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->getVol(), fadeTrack->getPan(), false);
-	fadeTrack->mixerStreamRunning = true;
 	fadeTrack->used = true;
 
 	return fadeTrack;
