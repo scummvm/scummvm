@@ -77,7 +77,7 @@ void ScummEngine::setupScummVars() {
 	VAR_MOUSE_X = 44;
 	VAR_MOUSE_Y = 45;
 	VAR_TIMER = 46;
-	VAR_TMR_4 = 47;
+	VAR_TIMER_TOTAL = 47;
 	VAR_SOUNDCARD = 48;
 	VAR_VIDEOMODE = 49;
 
@@ -349,7 +349,7 @@ void ScummEngine_v7::setupScummVars() {
 	VAR_TALK_ACTOR = 12;
 	VAR_HAVE_MSG = 13;
 	VAR_TIMER = 14;
-	VAR_TMR_4 = 15;
+	VAR_TIMER_TOTAL = 15;
 
 	VAR_TIMEDATE_YEAR = 16;
 	VAR_TIMEDATE_MONTH = 17;

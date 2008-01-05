@@ -361,7 +361,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	VAR_MOUSE_X = 0xFF;
 	VAR_MOUSE_Y = 0xFF;
 	VAR_TIMER = 0xFF;
-	VAR_TMR_4 = 0xFF;
+	VAR_TIMER_TOTAL = 0xFF;
 	VAR_SOUNDCARD = 0xFF;
 	VAR_VIDEOMODE = 0xFF;
 	VAR_MAINMENU_KEY = 0xFF;
@@ -1777,8 +1777,8 @@ int ScummEngine::scummLoop(int delta) {
 			VAR(41) += delta;
 		}
 	}
-	if (VAR_TMR_4 != 0xFF)
-		VAR(VAR_TMR_4) += delta;
+	if (VAR_TIMER_TOTAL != 0xFF)
+		VAR(VAR_TIMER_TOTAL) += delta;
 
 	if (delta > 15)
 		delta = 15;

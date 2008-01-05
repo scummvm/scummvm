@@ -1255,7 +1255,7 @@ public:
 	byte VAR_MOUSE_X;
 	byte VAR_MOUSE_Y;
 	byte VAR_TIMER;
-	byte VAR_TMR_4;
+	byte VAR_TIMER_TOTAL;
 	byte VAR_SOUNDCARD;
 	byte VAR_VIDEOMODE;
 	byte VAR_MAINMENU_KEY;
