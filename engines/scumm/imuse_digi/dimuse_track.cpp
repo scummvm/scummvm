@@ -167,7 +167,7 @@ void IMuseDigital::setPriority(int soundId, int priority) {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
 			track->soundPriority = priority;
 		}
 	}
@@ -179,7 +179,7 @@ void IMuseDigital::setVolume(int soundId, int volume) {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
 			track->vol = volume * 1000;
 		}
 	}
@@ -190,7 +190,7 @@ void IMuseDigital::setHookId(int soundId, int hookId) {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
 			track->curHookId = hookId;
 		}
 	}
@@ -230,7 +230,7 @@ void IMuseDigital::setPan(int soundId, int pan) {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
 			track->pan = pan;
 		}
 	}
@@ -246,7 +246,7 @@ void IMuseDigital::selectVolumeGroup(int soundId, int volGroupId) {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
 			track->volGroupId = volGroupId;
 		}
 	}
@@ -258,7 +258,7 @@ void IMuseDigital::setFade(int soundId, int destVolume, int delay60HzTicks) {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
 			track->volFadeDelay = delay60HzTicks;
 			track->volFadeDest = destVolume * 1000;
 			track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * delay60HzTicks);

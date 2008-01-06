@@ -164,6 +164,8 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 }
 
 void IMuseDigital::flushTrack(Track *track) {
+	track->toBeRemoved = true;
+
 	if (track->souStreamUsed) {
 		_mixer->stopHandle(track->mixChanHandle);
 	} else if (track->stream) {
@@ -181,12 +183,7 @@ void IMuseDigital::flushTrack(Track *track) {
 
 	if (!_mixer->isSoundHandleActive(track->mixChanHandle)) {
 		memset(track, 0, sizeof(Track));
-	
 	}
-
-	// Set toBeRemoved to true, even if we just stopped the sound completly
-	// (and thus set "used" to false);
-	track->toBeRemoved = true;
 }
 
 void IMuseDigital::flushTracks() {
@@ -194,8 +191,8 @@ void IMuseDigital::flushTracks() {
 	debug(5, "flushTracks()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && track->toBeRemoved) {
-			flushTrack(track);
+		if (track->used && track->toBeRemoved && !_mixer->isSoundHandleActive(track->mixChanHandle)) {
+			memset(track, 0, sizeof(Track));
 		}
 	}
 }
@@ -251,7 +248,7 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 		Common::StackLock lock(_mutex, "IMuseDigital::getLipSync()");
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			Track *track = _track[l];
-			if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+			if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
 				_sound->getSyncSizeAndPtrById(track->soundDesc, syncId, sync_size, &sync_ptr);
 				if ((sync_size != 0) && (sync_ptr != NULL)) {
 					sync_size /= 4;
@@ -279,7 +276,7 @@ int32 IMuseDigital::getPosInMs(int soundId) {
 	Common::StackLock lock(_mutex, "IMuseDigital::getPosInMs()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
 			int32 pos = (5 * (track->dataOffset + track->regionOffset)) / (track->feedSize / 200);
 			return pos;
 		}
@@ -310,7 +307,7 @@ void IMuseDigital::stopSound(int soundId) {
 	debug(5, "IMuseDigital::stopSound(%d)", soundId);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
 			flushTrack();
 		}
 	}

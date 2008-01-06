@@ -219,8 +219,8 @@ void IMuseDigital::callback() {
 		Track *track = _track[l];
 		if (track->used) {
 			// Remove tracks if necessary
-			if (track->toBeRemoved) {
-				flushTrack(track);
+			if (!_mixer->isSoundHandleActive(track->mixChanHandle)) {
+				memset(track, 0, sizeof(Track));
 				continue;
 			}
 
@@ -260,7 +260,7 @@ void IMuseDigital::callback() {
 
 				if (track->curRegion == -1) {
 					switchToNextRegion(track);
-					if (track->toBeRemoved)
+					if (track->toBeRemoved || !track->used)
 						continue;
 				}
 
@@ -328,7 +328,7 @@ void IMuseDigital::callback() {
 
 					if (_sound->isEndOfRegion(track->soundDesc, track->curRegion)) {
 						switchToNextRegion(track);
-						if (track->toBeRemoved)
+						if (track->toBeRemoved || !track->used)
 							break;
 					}
 					feedSize -= curFeedSize;
