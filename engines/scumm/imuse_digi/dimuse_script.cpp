@@ -293,8 +293,8 @@ int IMuseDigital::getSoundStatus(int soundId) const {
 	debug(5, "IMuseDigital::getSoundStatus(%d)", soundId);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		// Note: We do not check track->toBeRemoved here on purpose.
-		// Tracks which are about to stop are still running.
+		// Note: We do not check track->toBeRemoved here on purpose (I *think*, at least).
+		// After all, tracks which are about to stop still are running (if only for a brief time).
 		if ((track->soundId == soundId) && track->used) {
 			if (_mixer->isSoundHandleActive(track->mixChanHandle)) {
 				return 1;
