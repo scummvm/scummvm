@@ -115,7 +115,8 @@ bool Introduction::show() {
 
 		bool fadeIn = curr_anim == anim_screens;
 		anim = new AnimationSequence(curr_anim->resourceId, 
-			coll.getPalette(curr_anim->paletteIndex), fadeIn);
+			coll.getPalette(curr_anim->paletteIndex), fadeIn,
+			(curr_anim->resourceId == 0x44) ? 4 : 7);
 		if (curr_anim->initialPause != 0)  
 			if (interruptableDelay(curr_anim->initialPause * 1000 / 50)) return true;
 
