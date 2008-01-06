@@ -115,15 +115,15 @@ iphone: $(OBJS)
 # TODO: Replace AUTHORS by Credits.rtf
 osxsnap: bundle credits
 	mkdir ScummVM-snapshot
-	cp AUTHORS ./ScummVM-snapshot/Authors
-	cp COPYING ./ScummVM-snapshot/License
-	cp COPYRIGHT ./ScummVM-snapshot/Copyright\ Holders
-	cp NEWS ./ScummVM-snapshot/News
-	cp README ./ScummVM-snapshot/ScummVM\ ReadMe
+	cp $(srcdir)/AUTHORS ./ScummVM-snapshot/Authors
+	cp $(srcdir)/COPYING ./ScummVM-snapshot/License
+	cp $(srcdir)/COPYRIGHT ./ScummVM-snapshot/Copyright\ Holders
+	cp $(srcdir)/NEWS ./ScummVM-snapshot/News
+	cp $(srcdir)/README ./ScummVM-snapshot/ScummVM\ ReadMe
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
-	cp dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
-	cp dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
+	cp $(srcdir)/dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
+	cp $(srcdir)/dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
 	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/.DS_Store
 	/Developer/Tools/SetFile -a V ./ScummVM-snapshot/background.jpg
 	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
@@ -143,14 +143,14 @@ scummvmico.o: icons/scummvm.ico
 win32dist: scummvm$(EXEEXT)
 	mkdir -p $(WIN32PATH)
 	strip scummvm.exe -o $(WIN32PATH)/scummvm$(EXEEXT)
-	cp dists/pred.dic $(WIN32PATH)
+	cp $(srcdir)/dists/pred.dic $(WIN32PATH)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 	cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
-	cp AUTHORS $(WIN32PATH)/AUTHORS.txt
-	cp COPYING $(WIN32PATH)/COPYING.txt
-	cp COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
-	cp NEWS $(WIN32PATH)/NEWS.txt
-	cp README $(WIN32PATH)/README.txt
+	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
+	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
+	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
+	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
+	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	u2d $(WIN32PATH)/*.txt
@@ -163,14 +163,14 @@ win32dist: scummvm$(EXEEXT)
 aos4dist: scummvm
 	mkdir -p $(AOS4PATH)
 	strip -R.comment $< -o $(AOS4PATH)/$<
-	cp icons/scummvm.info $(AOS4PATH)/$<.info
+	cp $(srcdir)/icons/scummvm.info $(AOS4PATH)/$<.info
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)
 	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)
-	cp AUTHORS $(AOS4PATH)/AUTHORS.txt
-	cp COPYING $(AOS4PATH)/COPYING.txt
-	cp COPYRIGHT $(AOS4PATH)/COPYRIGHT.txt
-	cp NEWS $(AOS4PATH)/NEWS.txt
-	cp README $(AOS4PATH)/README.txt
+	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
+	cp $(srcdir)/COPYING $(AOS4PATH)/COPYING.txt
+	cp $(srcdir)/COPYRIGHT $(AOS4PATH)/COPYRIGHT.txt
+	cp $(srcdir)/NEWS $(AOS4PATH)/NEWS.txt
+	cp $(srcdir)/README $(AOS4PATH)/README.txt
 	cp /sdk/local/documentation/SDL-1.2.9/README-SDL.txt $(AOS4PATH)
 
 .PHONY: deb bundle osxsnap win32dist install uninstall
