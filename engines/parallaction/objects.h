@@ -278,7 +278,7 @@ struct Zone {
 	int16			_bottom;
 	uint32			_type;
 	uint32			_flags;
-	Label       	_label;
+	Label			_label;
 	uint16			field_2C;		// unused
 	uint16			field_2E;		// unused
 	TypeData		u;
@@ -393,7 +393,7 @@ struct Program {
 
 
 
-struct Animation : public Zone  {
+struct Animation : public Zone {
 
 	Common::Point	_oldPos;
 	Program 	*_program;

@@ -262,7 +262,7 @@ public:
 	void backupGetBackground(GetData *data, int16 x, int16 y);
 	void restoreGetBackground(const Common::Rect& r, byte *data);
 
-    int setLocationBalloon(char *text, bool endGame);
+	int setLocationBalloon(char *text, bool endGame);
 	int setDialogueBalloon(char *text, uint16 winding, byte textColor);
 	int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor);
 	void setBalloonText(uint id, char *text, byte textColor);
@@ -289,12 +289,12 @@ public:
 
 	// amiga specific
 	void setHalfbriteMode(bool enable);
-    void setProjectorPos(int x, int y);
+	void setProjectorPos(int x, int y);
 
 	// misc
 	int16 queryMask(int16 v);
 	void setFont(Font* font);
-    void setFontShadow(bool enable);
+	void setFontShadow(bool enable);
 	void swapBuffers();
 	void updateScreen();
 	void setBackground(Graphics::Surface *surf);
@@ -321,15 +321,15 @@ protected:
 	Graphics::Surface	*_buffers[NUM_BUFFERS];
 	MaskBuffer			*_depthMask;
 	Font				*_font;
-	bool                _fontShadow;
+	bool				_fontShadow;
 	bool				_halfbrite;
 
-    Common::Point       _hbCirclePos;
-    int                 _hbCircleRadius;
+	Common::Point		_hbCirclePos;
+	int				_hbCircleRadius;
 
 
 protected:
-    static int16 _dialogueBalloonX[5];
+	static int16 _dialogueBalloonX[5];
 
 	struct Balloon {
 		uint16 x;
@@ -365,7 +365,7 @@ protected:
 	void copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch);
 
 	int createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness);
-    Balloon *getBalloon(uint id);
+	Balloon *getBalloon(uint id);
 
 	void drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
 	bool drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);

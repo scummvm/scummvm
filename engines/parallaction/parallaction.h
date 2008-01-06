@@ -104,28 +104,28 @@ enum {
 };
 
 enum EngineFlags {
-	kEngineQuit 			= (1 << 0),
-	kEnginePauseJobs		= (1 << 1),
-	kEngineInventory		= (1 << 2),
-	kEngineWalking			= (1 << 3),
+	kEngineQuit 		= (1 << 0),
+	kEnginePauseJobs	= (1 << 1),
+	kEngineInventory	= (1 << 2),
+	kEngineWalking		= (1 << 3),
 	kEngineChangeLocation	= (1 << 4),
-	kEngineBlockInput		= (1 << 5),
-	kEngineDragging 		= (1 << 6),
-	kEngineTransformedDonna		= (1 << 7)
+	kEngineBlockInput	= (1 << 5),
+	kEngineDragging 	= (1 << 6),
+	kEngineTransformedDonna	= (1 << 7)
 };
 
 enum {
-	kEvNone 			= 0,
-	kEvEnterZone   		= 1,
-	kEvExitZone    		= 2,
-	kEvAction	  		= 3,
+	kEvNone			= 0,
+	kEvEnterZone		= 1,
+	kEvExitZone		= 2,
+	kEvAction		= 3,
 	kEvOpenInventory	= 4,
 	kEvCloseInventory	= 5,
 	kEvHoverInventory	= 6,
-	kEvWalk 	  		= 7,
-	kEvQuitGame 		= 1000,
-	kEvSaveGame 		= 2000,
-	kEvLoadGame 		= 4000
+	kEvWalk			= 7,
+	kEvQuitGame		= 1000,
+	kEvSaveGame		= 2000,
+	kEvLoadGame		= 4000
 };
 
 enum {
@@ -215,7 +215,7 @@ struct Character {
 
 	Animation		_ani;
 	Frames			*_head;
-	Frames		    *_talk;
+	Frames			*_talk;
 	Frames 			*_objs;
 	PathBuilder		_builder;
 	WalkNodeList	*_walkPath;
@@ -505,15 +505,15 @@ protected:		// data
 	struct InputData {
 		uint16			_event;
 		Common::Point	_mousePos;
-		int16       	_inventoryIndex;
-		Zone*       	_zone;
-		Label*  		_label;
+		int16		_inventoryIndex;
+		Zone*		_zone;
+		Label*			_label;
 	};
 
-	bool 		_mouseHidden;
+	bool		_mouseHidden;
 
 	// input-only
-	InputData	 _input;
+	InputData	_input;
 	bool		_actionAfterWalk;  // actived when the character needs to move before taking an action
 
 	// these two could/should be merged as they carry on the same duty in two member functions,
@@ -526,14 +526,14 @@ protected:		// data
 
 	JobList		_jobs;
 
-	Common::String      _saveFileName;
+	Common::String	_saveFileName;
 
 	bool		_hasLocationSound;
 	char		_locationSound[50];
 
 	BackgroundInfo	*_backgroundInfo;
 
-	Zone    *_hoverZone;
+	Zone		*_hoverZone;
 
 
 protected:		// members
@@ -687,12 +687,12 @@ public:
 private:
 	void initFonts();
 	void freeFonts();
-    void renameOldSavefiles();
-    Common::String genSaveFileName(uint slot, bool oldStyle = false);
-    Common::InSaveFile *getInSaveFile(uint slot);
-    Common::OutSaveFile *getOutSaveFile(uint slot);
-    bool allPartsComplete();
-    void setPartComplete(const Character& character);
+	void renameOldSavefiles();
+	Common::String genSaveFileName(uint slot, bool oldStyle = false);
+	Common::InSaveFile *getInSaveFile(uint slot);
+	Common::OutSaveFile *getOutSaveFile(uint slot);
+	bool allPartsComplete();
+	void setPartComplete(const Character& character);
 
 private:
 	void changeLocation(char *location);
@@ -839,13 +839,13 @@ protected:
 	virtual void parseHearData(Script &script, Zone *z);
 	virtual void parseSpeakData(Script &script, Zone *z);
 
-	void 		parseLocation(const char *filename);
-	char   		*parseComment(Script &script);
-	char   		*parseDialogueString(Script &script);
+	void		parseLocation(const char *filename);
+	char		*parseComment(Script &script);
+	char		*parseDialogueString(Script &script);
 	Dialogue	*parseDialogue(Script &script);
-    void        resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards);
-    Answer      *parseAnswer(Script &script);
-    Question    *parseQuestion(Script &script);
+	void		resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards);
+	Answer		*parseAnswer(Script &script);
+	Question	*parseQuestion(Script &script);
 
 	void		parseZone(Script &script, ZoneList &list, char *name);
 	void		parseZoneTypeBlock(Script &script, Zone *z);
