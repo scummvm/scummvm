@@ -30,10 +30,6 @@
 
 namespace Parallaction {
 
-#define SKIPPED_ANSWER		   1000
-
-#define MAX_BALLOON_WIDTH			130
-
 #define MAX_PASSWORD_LENGTH 		 7
 
 #define QUESTION_BALLOON_X			140
@@ -43,16 +39,6 @@ namespace Parallaction {
 
 #define ANSWER_CHARACTER_X			10
 #define ANSWER_CHARACTER_Y			80
-
-int16 selectAnswer(Question *q, Graphics::Surface*);
-int16 getHoverAnswer(int16 x, int16 y, Question *q);
-
-int16 _answerBalloonX[10] = { 80, 120, 150, 150, 150, 0, 0, 0, 0, 0 };
-int16 _answerBalloonY[10] = { 10, 70, 130, 0, 0, 0, 0, 0, 0, 0 };
-int16 _answerBalloonW[10] = { 0 };
-int16 _answerBalloonH[10] = { 0 };
-
-
 
 class DialogueManager {
 
@@ -67,6 +53,9 @@ class DialogueManager {
 	Frames			*_answerer;
 
 	Question		*_q;
+
+    uint16          _visAnswers[5];
+    int             _numVisAnswers;
 
 public:
 	DialogueManager(Parallaction *vm, SpeakData *data) : _vm(vm), _data(data) {
@@ -85,10 +74,6 @@ public:
 	void run();
 
 protected:
-	void clear() {
-		_vm->_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-	}
-
 	void displayQuestion();
 	bool displayAnswers();
 	bool displayAnswer(uint16 i);
@@ -103,27 +88,20 @@ protected:
 uint16 DialogueManager::askPassword() {
 	debugC(3, kDebugExec, "checkDialoguePassword()");
 
-	uint16 passwordLen;
+	uint16 passwordLen = 0;
+    _password[0] = '\0';
+
+    _vm->_gfx->setDialogueBalloon(_q->_answers[0]->_text, 1, 3);
+    int id = _vm->_gfx->setItem(_answerer, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y);
+    _vm->_gfx->setItemFrame(id, 0);
+
+    Common::Event e;
+    bool changed = true;    // force first refresh
 
 	while (true) {
-		clear();
+	    e.kbd.ascii = 0;
 
-		passwordLen = 0;
-		_password[0] = '\0';
-
-		Common::Rect r(_answerBalloonW[0], _answerBalloonH[0]);
-		r.moveTo(_answerBalloonX[0], _answerBalloonY[0]);
-
-		_vm->_gfx->drawBalloon(r, 1);
-		_vm->_gfx->displayWrappedString(_q->_answers[0]->_text, _answerBalloonX[0], _answerBalloonY[0], 3, MAX_BALLOON_WIDTH);
-		_vm->_gfx->flatBlitCnv(_answerer, 0, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y,	Gfx::kBitFront);
-		_vm->_gfx->updateScreen();
-
-		Common::Event e;
-		while (e.kbd.ascii != Common::KEYCODE_RETURN && passwordLen < MAX_PASSWORD_LENGTH) {
-
-			// FIXME: see comment for readInput()
-			if (!g_system->getEventManager()->pollEvent(e)) continue;
+        if (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_QUIT) {
 				// TODO: don't quit() here, just have caller routines to check
 				// on kEngineQuit and exit gracefully to allow the engine to shut down
@@ -131,30 +109,41 @@ uint16 DialogueManager::askPassword() {
 				g_system->quit();
 			}
 
-			if (e.type != Common::EVENT_KEYDOWN) continue;
-			if (!isdigit(e.kbd.ascii)) continue;
+            if ((e.type == Common::EVENT_KEYDOWN) && isdigit(e.kbd.ascii)) {
+                _password[passwordLen] = e.kbd.ascii;
+                passwordLen++;
+                _password[passwordLen] = '\0';
+                changed = true;
+            }
+        }
 
-			_password[passwordLen] = e.kbd.ascii;
-			passwordLen++;
-			_password[passwordLen] = '\0';
+        if (changed) {
+            _vm->_gfx->setBalloonText(0, _q->_answers[0]->_text, 3);
+            _vm->_gfx->updateScreen();
+            changed = false;
+        }
 
+        if ((passwordLen == MAX_PASSWORD_LENGTH) || (e.kbd.ascii == Common::KEYCODE_RETURN)) {
 
-			_vm->_gfx->drawBalloon(r, 1);
-			_vm->_gfx->displayWrappedString(_q->_answers[0]->_text, _answerBalloonX[0], _answerBalloonY[0], 3, MAX_BALLOON_WIDTH);
-			_vm->_gfx->updateScreen();
+            if ((!scumm_stricmp(_vm->_char.getBaseName(), _doughName) && !scumm_strnicmp(_password, "1732461", 7)) ||
+                (!scumm_stricmp(_vm->_char.getBaseName(), _donnaName) && !scumm_strnicmp(_password, "1622", 4)) ||
+                (!scumm_stricmp(_vm->_char.getBaseName(), _dinoName) && !scumm_strnicmp(_password, "179", 3))) {
 
-			g_system->delayMillis(20);
+                break;
+
+            } else {
+                passwordLen = 0;
+                _password[0] = '\0';
+                changed = true;
+            }
+
 		}
 
-		if ((!scumm_stricmp(_vm->_char.getBaseName(), _doughName) && !scumm_strnicmp(_password, "1732461", 7)) ||
-			(!scumm_stricmp(_vm->_char.getBaseName(), _donnaName) && !scumm_strnicmp(_password, "1622", 4)) ||
-			(!scumm_stricmp(_vm->_char.getBaseName(), _dinoName) && !scumm_strnicmp(_password, "179", 3))) {
-
-			break;
-
-		}
+        g_system->delayMillis(20);
 
 	}
+
+    _vm->_gfx->hideDialogueStuff();
 
 	return 0;
 
@@ -164,69 +153,50 @@ uint16 DialogueManager::askPassword() {
 
 bool DialogueManager::displayAnswer(uint16 i) {
 
-	uint32 v28 = _vm->_localFlags[_vm->_currentLocationIndex];
-	if (_q->_answers[i]->_yesFlags & kFlagsGlobal)
-		v28 = _commandFlags | kFlagsGlobal;
+    Answer *a = _q->_answers[i];
+
+	uint32 flags = _vm->_localFlags[_vm->_currentLocationIndex];
+	if (a->_yesFlags & kFlagsGlobal)
+		flags = _commandFlags | kFlagsGlobal;
 
 	// display suitable answers
-	if (((_q->_answers[i]->_yesFlags & v28) == _q->_answers[i]->_yesFlags) && ((_q->_answers[i]->_noFlags & ~v28) == _q->_answers[i]->_noFlags)) {
+	if (((a->_yesFlags & flags) == a->_yesFlags) && ((a->_noFlags & ~flags) == a->_noFlags)) {
 
-		_vm->_gfx->getStringExtent(_q->_answers[i]->_text, MAX_BALLOON_WIDTH, &_answerBalloonW[i], &_answerBalloonH[i]);
+        uint id = _vm->_gfx->setDialogueBalloon(a->_text, 1, 3);
+        assert(id >= 0);
+        _visAnswers[id] = i;
 
-		Common::Rect r(_answerBalloonW[i], _answerBalloonH[i]);
-		r.moveTo(_answerBalloonX[i], _answerBalloonY[i]);
-
-		_vm->_gfx->drawBalloon(r, 1);
-
-		_answerBalloonY[i+1] = 10 + _answerBalloonY[i] + _answerBalloonH[i];
-		_askPassword = _vm->_gfx->displayWrappedString(_q->_answers[i]->_text, _answerBalloonX[i], _answerBalloonY[i], 3, MAX_BALLOON_WIDTH);
+        _askPassword = strstr(a->_text, "%p");
+        _numVisAnswers++;
 
 		return true;
 	}
 
-	_answerBalloonY[i+1] = _answerBalloonY[i];
-	_answerBalloonY[i] = SKIPPED_ANSWER;
-
 	return false;
-
 }
 
 bool DialogueManager::displayAnswers() {
 
-	bool displayed = false;
+    _numVisAnswers = 0;
 
-	uint16 i = 0;
-
-	while (i < NUM_ANSWERS && _q->_answers[i]) {
-		if (displayAnswer(i))
-			displayed = true;
-
-		i++;
+	for (int i = 0; i < NUM_ANSWERS && _q->_answers[i]; i++) {
+		displayAnswer(i);
 	}
-	_vm->_gfx->updateScreen();
 
-	return displayed;
+	return _numVisAnswers > 0;
 }
 
 void DialogueManager::displayQuestion() {
 
-	int16 w = 0, h = 0;
-
 	if (!scumm_stricmp(_q->_text, "NULL")) return;
 
-	_vm->_gfx->flatBlitCnv(_questioner, _q->_mood & 0xF, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y, Gfx::kBitFront);
-	_vm->_gfx->getStringExtent(_q->_text, MAX_BALLOON_WIDTH, &w, &h);
+    _vm->_gfx->setSingleBalloon(_q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, _q->_mood & 0x10, 0);
+    int id = _vm->_gfx->setItem(_questioner, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y);
+    _vm->_gfx->setItemFrame(id, _q->_mood & 0xF);
 
-	Common::Rect r(w, h);
-	r.moveTo(QUESTION_BALLOON_X, QUESTION_BALLOON_Y);
-
-	_vm->_gfx->drawBalloon(r, _q->_mood & 0x10);
-	_vm->_gfx->displayWrappedString(_q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, 0, MAX_BALLOON_WIDTH);
-	_vm->_gfx->updateScreen();
-
+    _vm->_gfx->updateScreen();
 	waitUntilLeftClick();
-
-	clear();
+    _vm->_gfx->hideDialogueStuff();
 
 	return;
 }
@@ -241,8 +211,6 @@ uint16 DialogueManager::getAnswer() {
 		answer = askPassword();
 	}
 
-	clear();
-
 	debugC(3, kDebugExec, "runDialogue: user selected answer #%i", answer);
 
 	return answer;
@@ -256,16 +224,12 @@ void DialogueManager::run() {
 	_q = _dialogue->_questions[0];
 	int16 answer;
 
-	_vm->_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-
 	while (_q) {
 
 		answer = 0;
 
 		displayQuestion();
 		if (_q->_answers[0] == NULL) break;
-
-		_answerBalloonY[0] = 10;
 
 		if (scumm_stricmp(_q->_answers[0]->_text, "NULL")) {
 			if (!displayAnswers()) break;
@@ -276,8 +240,6 @@ void DialogueManager::run() {
 		_q = _q->_answers[answer]->_following._question;
 	}
 
-	clear();
-
 	if (cmdlist)
 		_vm->runCommands(*cmdlist);
 
@@ -285,82 +247,51 @@ void DialogueManager::run() {
 
 int16 DialogueManager::selectAnswer() {
 
-	int16 numAvailableAnswers = 0;
-	int16 _si = 0;
-	int16 _di = 0;
+	int16 numAvailableAnswers = _numVisAnswers;
 
-	int16 i = 0;
-	for (; _q->_answers[i]; i++) {
-		if (_answerBalloonY[i] == SKIPPED_ANSWER) continue;
-
-		_di = i;
-		numAvailableAnswers++;
-	}
-	_answerBalloonY[i] = 2000;
+    int id = _vm->_gfx->setItem(_answerer, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y);
+    _vm->_gfx->setItemFrame(id, _q->_answers[0]->_mood & 0xF);
 
 	if (numAvailableAnswers == 1) {
-		_vm->_gfx->displayWrappedString(_q->_answers[_di]->_text, _answerBalloonX[_di], _answerBalloonY[_di], 0, MAX_BALLOON_WIDTH);
-		_vm->_gfx->flatBlitCnv(_answerer, _q->_answers[_di]->_mood & 0xF, ANSWER_CHARACTER_X,	ANSWER_CHARACTER_Y, Gfx::kBitFront);
-		_vm->_gfx->updateScreen();
+	    _vm->_gfx->setBalloonText(0, _q->_answers[0]->_text, 0);
 		waitUntilLeftClick();
-		return _di;
+	    _vm->_gfx->hideDialogueStuff();
+		return 0;
 	}
 
-	int16 v2 = -1;
+	int oldSelection = -1;
+	int selection;
 
-	_mouseButtons = kMouseNone;
-	while (_mouseButtons != kMouseLeftUp) {
+    while (true) {
 
 		_vm->readInput();
-		_si = getHoverAnswer(_vm->_mousePos.x, _vm->_mousePos.y);
+		selection = _vm->_gfx->hitTestDialogueBalloon(_vm->_mousePos.x, _vm->_mousePos.y);
 
-		if (_si != v2 && _si != -1) {
+        if (selection != oldSelection) {
+            if (oldSelection != -1) {
+                _vm->_gfx->setBalloonText(oldSelection, _q->_answers[_visAnswers[oldSelection]]->_text, 3);
+            }
 
-			if (v2 != -1)
-				_vm->_gfx->displayWrappedString(_q->_answers[v2]->_text, _answerBalloonX[v2], _answerBalloonY[v2], 3, MAX_BALLOON_WIDTH);
+            if (selection != -1) {
+                _vm->_gfx->setBalloonText(selection, _q->_answers[_visAnswers[selection]]->_text, 0);
+                _vm->_gfx->setItemFrame(0, _q->_answers[_visAnswers[selection]]->_mood & 0xF);
+            }
+        }
 
-			_vm->_gfx->displayWrappedString(_q->_answers[_si]->_text, _answerBalloonX[_si],	_answerBalloonY[_si], 0, MAX_BALLOON_WIDTH);
-			_vm->_gfx->flatBlitCnv(_answerer, _q->_answers[_si]->_mood & 0xF, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y, Gfx::kBitFront);
-		}
+        if ((selection != -1) && (_mouseButtons == kMouseLeftUp)) {
+            break;
+        }
 
 		_vm->_gfx->updateScreen();
-		g_system->delayMillis(30);
-		v2 = _si;
-	}
+		g_system->delayMillis(20);
 
-	return _si;
+        oldSelection = selection;
+    }
+
+    _vm->_gfx->hideDialogueStuff();
+
+	return _visAnswers[selection];
 }
-
-
-//
-//	finds out which answer is currently selected
-//
-int16 DialogueManager::getHoverAnswer(int16 x, int16 y) {
-
-	int16 top = 1000;
-	int16 bottom = 1000;
-
-	for (int16 _si = 0; _si < NUM_ANSWERS; _si++) {
-		if (_q->_answers[_si] == NULL) break;
-
-		if (_answerBalloonY[_si] != SKIPPED_ANSWER) {
-			top = _answerBalloonY[_si];
-		}
-
-		int16 _di = _si + 1;
-		for (; _answerBalloonY[_di] == SKIPPED_ANSWER; _di++) ;
-
-		bottom = _answerBalloonY[_di];
-
-		// mouse position is compared only with y coordinates
-		if (y > top && y < bottom) return _si;
-
-	}
-
-	return -1;
-
-}
-
 
 
 void Parallaction::runDialogue(SpeakData *data) {
@@ -368,13 +299,8 @@ void Parallaction::runDialogue(SpeakData *data) {
 
 	_gfx->setFont(_dialogueFont);
 
-	if (getPlatform() == Common::kPlatformPC)
-		showCursor(false);
-
 	DialogueManager man(this, data);
 	man.run();
-
-	showCursor(true);
 
 	return;
 }

@@ -841,23 +841,7 @@ void Parallaction::setBackground(const char* name, const char* mask, const char*
 }
 
 void Parallaction::showLocationComment(const char *text, bool end) {
-
-	_gfx->setFont(_dialogueFont);
-
-	int16 w, h;
-	_gfx->getStringExtent(const_cast<char*>(text), 130, &w, &h);
-
-	Common::Rect r(w + (end ? 5 : 10), h + 5);
-	r.moveTo(5, 5);
-
-	_gfx->floodFill(Gfx::kBitFront, r, 0);
-	r.grow(-2);
-	_gfx->floodFill(Gfx::kBitFront, r, 1);
-	_gfx->displayWrappedString(const_cast<char*>(text), 3, 5, 0, 130);
-
-	_gfx->updateScreen();
-
-	return;
+    _gfx->setLocationBalloon(const_cast<char*>(text), end);
 }
 
 
@@ -891,12 +875,10 @@ void Parallaction::doLocationEnterTransition() {
 	drawAnimations();
 
 	_gfx->swapBuffers();
-	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
 
 	showLocationComment(_location._comment, false);
 	waitUntilLeftClick();
-
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront );
+	_gfx->freeBalloons();
 
 	// fades maximum intensity palette towards approximation of main palette
 	for (uint16 _si = 0; _si<6; _si++) {

@@ -352,6 +352,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 	}
 
 	waitUntilLeftClick();
+    _gfx->freeBalloons();
 
 	return;
 }

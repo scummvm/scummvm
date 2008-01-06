@@ -32,6 +32,7 @@
 
 namespace Parallaction {
 
+int16 Gfx::_dialogueBalloonX[5] = { 80, 120, 150, 150, 150 };
 
 void halfbritePixel(int x, int y, int color, void *data) {
     byte *buffer = (byte*)data;
@@ -970,11 +971,16 @@ void Gfx::freeBuffers() {
 }
 
 
-void Gfx::setItem(Frames* frames, uint16 x, uint16 y) {
-	_items[_numItems].data = frames;
-	_items[_numItems].x = x;
-	_items[_numItems].y = y;
+int Gfx::setItem(Frames* frames, uint16 x, uint16 y) {
+	int id = _numItems;
+
+	_items[id].data = frames;
+	_items[id].x = x;
+	_items[id].y = y;
+
 	_numItems++;
+
+    return id;
 }
 
 void Gfx::setItemFrame(uint item, uint16 f) {
@@ -984,45 +990,124 @@ void Gfx::setItemFrame(uint item, uint16 f) {
 	_items[item].rect.moveTo(_items[item].x, _items[item].y);
 }
 
-Gfx::Balloon *Gfx::createBalloon(char *text, uint16 maxwidth, uint16 winding) {
-	assert(_numBalloons < 5);
-
-	Gfx::Balloon *balloon = &_balloons[_numBalloons];
-	_numBalloons++;
-
-	int16 w, h;
-	getStringExtent(text, maxwidth, &w, &h);
-
-	balloon->surface.create(w + 5, h + 9, 1);
-	balloon->surface.fillRect(Common::Rect(w + 5, h + 9), 2);
-
-	Common::Rect r(w + 5, h);
-	balloon->surface.fillRect(r, 0);
-	r.grow(-1);
-	balloon->surface.fillRect(r, 1);
-
-	// draws tail
-	// TODO: this bitmap tail should only be used for Dos games. Amiga should use a polygon fill.
-	winding = (winding == 0 ? 1 : 0);
-	Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
-	s.moveTo(r.width()/2 - 5, r.bottom - 1);
-	flatBlit(s, _resBalloonTail[winding], &balloon->surface, 2);
-
-	return balloon;
+Gfx::Balloon* Gfx::getBalloon(uint id) {
+    assert(id < _numBalloons);
+    return &_balloons[id];
 }
 
+int Gfx::createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness) {
+	assert(_numBalloons < 5);
 
-void Gfx::setDialogueBalloon(char *text, uint16 x, uint16 y, uint16 maxwidth, uint16 winding, byte textColor) {
+    int id = _numBalloons;
 
-	Common::Rect rect;
+	Gfx::Balloon *balloon = &_balloons[id];
+
+    int16 real_h = (winding == -1) ? h : h + 9;
+	balloon->surface.create(w, real_h, 1);
+	balloon->surface.fillRect(Common::Rect(w, real_h), 2);
+
+	Common::Rect r(w, h);
+	balloon->surface.fillRect(r, 0);
+    balloon->outerBox = r;
+
+	r.grow(-borderThickness);
+	balloon->surface.fillRect(r, 1);
+    balloon->innerBox = r;
+
+    if (winding != -1) {
+        // draws tail
+        // TODO: this bitmap tail should only be used for Dos games. Amiga should use a polygon fill.
+        winding = (winding == 0 ? 1 : 0);
+        Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
+        s.moveTo(r.width()/2 - 5, r.bottom - 1);
+        flatBlit(s, _resBalloonTail[winding], &balloon->surface, 2);
+    }
+
+	_numBalloons++;
+
+	return id;
+}
+
+int Gfx::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor) {
+
+    int16 w, h;
 
 	setFont(_vm->_dialogueFont);
-	Gfx::Balloon *balloon = createBalloon(text, maxwidth, winding);
-	drawWrappedText(&balloon->surface, text, textColor, maxwidth);
+	getStringExtent(text, MAX_BALLOON_WIDTH, &w, &h);
+
+	int id = createBalloon(w+5, h, winding, 1);
+	Gfx::Balloon *balloon = &_balloons[id];
+
+	drawWrappedText(&balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
 
 	balloon->x = x;
 	balloon->y = y;
+
+    return id;
 }
+
+int Gfx::setDialogueBalloon(char *text, uint16 winding, byte textColor) {
+
+    int16 w, h;
+
+	setFont(_vm->_dialogueFont);
+	getStringExtent(text, MAX_BALLOON_WIDTH, &w, &h);
+
+	int id = createBalloon(w+5, h, winding, 1);
+	Gfx::Balloon *balloon = &_balloons[id];
+
+	drawWrappedText(&balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
+
+    balloon->x = _dialogueBalloonX[id];
+    balloon->y = 10;
+
+    if (id > 0) {
+        balloon->y += _balloons[id - 1].y + _balloons[id - 1].outerBox.height();
+    }
+
+
+    return id;
+}
+
+void Gfx::setBalloonText(uint id, char *text, byte textColor) {
+	Gfx::Balloon *balloon = getBalloon(id);
+	balloon->surface.fillRect(balloon->innerBox, 1);
+	drawWrappedText(&balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
+}
+
+
+int Gfx::setLocationBalloon(char *text, bool endGame) {
+
+    int16 w, h;
+
+	setFont(_vm->_dialogueFont);
+    getStringExtent(text, MAX_BALLOON_WIDTH, &w, &h);
+
+	int id = createBalloon(w+(endGame ? 5 : 10), h+5, -1, 2);
+	Gfx::Balloon *balloon = &_balloons[id];
+	drawWrappedText(&balloon->surface, text, 0, MAX_BALLOON_WIDTH);
+
+	balloon->x = 5;
+	balloon->y = 5;
+
+	return id;
+}
+
+int Gfx::hitTestDialogueBalloon(int x, int y) {
+
+    Common::Point p;
+
+    for (uint i = 0; i < _numBalloons; i++) {
+        p.x = x - _balloons[i].x;
+        p.y = y - _balloons[i].y;
+
+        if (_balloons[i].innerBox.contains(p))
+            return i;
+    }
+
+    return -1;
+}
+
 
 void Gfx::freeBalloons() {
 	for (uint i = 0; i < _numBalloons; i++) {

@@ -487,23 +487,25 @@ void Parallaction::displayComment(ExamineData *data) {
 		return;
 	}
 
+    int id;
+
 	if (data->_filename) {
         if (data->_cnv == 0) {
             data->_cnv = _disk->loadStatic(data->_filename);
         }
 
 		_gfx->setHalfbriteMode(true);
-		_gfx->setDialogueBalloon(data->_description, 0, 90, 130, 0, 0);
+		_gfx->setSingleBalloon(data->_description, 0, 90, 0, 0);
 		Common::Rect r;
 		data->_cnv->getRect(0, r);
-		_gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
-		_gfx->setItemFrame(0, 0);
-		_gfx->setItem(_char._head, 100, 152);
-		_gfx->setItemFrame(1, 0);
+		id = _gfx->setItem(data->_cnv, 140, (_screenHeight - r.height())/2);
+		_gfx->setItemFrame(id, 0);
+		id = _gfx->setItem(_char._head, 100, 152);
+		_gfx->setItemFrame(id, 0);
 	} else {
-		_gfx->setDialogueBalloon(data->_description, 140, 10, 130, 0, 0);
-		_gfx->setItem(_char._talk, 190, 80);
-		_gfx->setItemFrame(0, 0);
+		_gfx->setSingleBalloon(data->_description, 140, 10, 0, 0);
+		id = _gfx->setItem(_char._talk, 190, 80);
+		_gfx->setItemFrame(id, 0);
 	}
 
 	_inputMode = kInputModeComment;

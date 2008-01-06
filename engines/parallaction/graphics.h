@@ -114,58 +114,6 @@ public:
 
 };
 
-struct Cnv : public Frames {
-	uint16	_count; 	// # of frames
-	uint16	_width; 	//
-	uint16	_height;	//
-	byte**	field_8;	// unused
-	byte*	_data;
-
-public:
-	Cnv() {
-		_width = _height = _count = 0;
-		_data = NULL;
-	}
-
-	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data) : _count(numFrames), _width(width), _height(height), _data(data) {
-
-	}
-
-	~Cnv() {
-		free(_data);
-	}
-
-	byte* getFramePtr(uint16 index) {
-		if (index >= _count)
-			return NULL;
-		return &_data[index * _width * _height];
-	}
-
-	uint16	getNum() {
-		return _count;
-	}
-
-	byte	*getData(uint16 index) {
-		return getFramePtr(index);
-	}
-
-	void getRect(uint16 index, Common::Rect &r) {
-		r.left = 0;
-		r.top = 0;
-		r.setWidth(_width);
-		r.setHeight(_height);
-	}
-};
-
-
-#define NUM_BUFFERS 4
-
-class Parallaction;
-
-struct DoorData;
-struct GetData;
-struct Label;
-
 struct MaskBuffer {
 	// handles a 2-bit depth buffer used for z-buffering
 
@@ -227,6 +175,61 @@ public:
 	void rotate(uint first, uint last, bool forward);
 };
 
+
+struct Cnv : public Frames {
+	uint16	_count; 	// # of frames
+	uint16	_width; 	//
+	uint16	_height;	//
+	byte**	field_8;	// unused
+	byte*	_data;
+
+public:
+	Cnv() {
+		_width = _height = _count = 0;
+		_data = NULL;
+	}
+
+	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data) : _count(numFrames), _width(width), _height(height), _data(data) {
+
+	}
+
+	~Cnv() {
+		free(_data);
+	}
+
+	byte* getFramePtr(uint16 index) {
+		if (index >= _count)
+			return NULL;
+		return &_data[index * _width * _height];
+	}
+
+	uint16	getNum() {
+		return _count;
+	}
+
+	byte	*getData(uint16 index) {
+		return getFramePtr(index);
+	}
+
+	void getRect(uint16 index, Common::Rect &r) {
+		r.left = 0;
+		r.top = 0;
+		r.setWidth(_width);
+		r.setHeight(_height);
+	}
+};
+
+
+#define NUM_BUFFERS 4
+#define MAX_BALLOON_WIDTH 130
+
+class Parallaction;
+
+struct DoorData;
+struct GetData;
+struct Label;
+
+
 class Gfx {
 
 public:
@@ -261,8 +264,13 @@ public:
 	void backupGetBackground(GetData *data, int16 x, int16 y);
 	void restoreGetBackground(const Common::Rect& r, byte *data);
 
-	void setDialogueBalloon(char *text, uint16 x, uint16 y, uint16 maxwidth, uint16 winding, byte textColor);
-	void setItem(Frames* frames, uint16 x, uint16 y);
+    int setLocationBalloon(char *text, bool endGame);
+	int setDialogueBalloon(char *text, uint16 winding, byte textColor);
+	int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor);
+	void setBalloonText(uint id, char *text, byte textColor);
+	int hitTestDialogueBalloon(int x, int y);
+
+	int setItem(Frames* frames, uint16 x, uint16 y);
 	void setItemFrame(uint item, uint16 f);
 	void hideDialogueStuff();
 	void freeBalloons();
@@ -323,9 +331,13 @@ protected:
 
 
 protected:
+    static int16 _dialogueBalloonX[5];
+
 	struct Balloon {
 		uint16 x;
 		uint16 y;
+		Common::Rect outerBox;
+		Common::Rect innerBox;
 		uint16 winding;
 		Graphics::Surface surface;
 	} _balloons[5];
@@ -354,7 +366,8 @@ protected:
 
 	void copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch);
 
-	Balloon *createBalloon(char *text, uint16 maxwidth, uint16 winding);
+	int createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness);
+    Balloon *getBalloon(uint id);
 
 	void drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
 	bool drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
@@ -367,6 +380,7 @@ protected:
 
 
 #endif
+
 
 
 
