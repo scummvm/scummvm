@@ -308,7 +308,7 @@ void IMuseDigital::stopSound(int soundId) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
-			flushTrack();
+			flushTrack(track);
 		}
 	}
 }
