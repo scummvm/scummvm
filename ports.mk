@@ -38,13 +38,9 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
 	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
-	cp $(srcdir)/gui/themes/modern.ini $(bundle_name)/Contents/Resources/
-	cp $(srcdir)/gui/themes/modern.zip $(bundle_name)/Contents/Resources/
 	cp $(srcdir)/dists/pred.dic $(bundle_name)/Contents/Resources/
-	cp $(srcdir)/dists/engine-data/kyra.dat $(bundle_name)/Contents/Resources/KYRA.DAT
-	cp $(srcdir)/dists/engine-data/queen.tbl $(bundle_name)/Contents/Resources/
-	cp $(srcdir)/dists/engine-data/sky.cpt $(bundle_name)/Contents/Resources/
-	cp $(srcdir)/dists/engine-data/lure.dat $(bundle_name)/Contents/Resources/
+	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
+	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
@@ -54,8 +50,8 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 iphonebundle: $(srcdir)/dists/iphone/Info.plist
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
-	cp $(srcdir)/gui/themes/modern.ini $(bundle_name)/
-	cp $(srcdir)/gui/themes/modern.zip $(bundle_name)/
+	cp $(DIST_FILES_THEMES) $(bundle_name)/
+	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
 	cp scummvm $(bundle_name)/ScummVM
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
@@ -148,8 +144,8 @@ win32dist: scummvm$(EXEEXT)
 	mkdir -p $(WIN32PATH)
 	strip scummvm.exe -o $(WIN32PATH)/scummvm$(EXEEXT)
 	cp dists/pred.dic $(WIN32PATH)
-	cp gui/themes/modern.ini $(WIN32PATH)
-	cp gui/themes/modern.zip $(WIN32PATH)
+	cp $(DIST_FILES_THEMES) $(WIN32PATH)
+	cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
 	cp AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp COPYING $(WIN32PATH)/COPYING.txt
 	cp COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
@@ -168,8 +164,8 @@ aos4dist: scummvm
 	mkdir -p $(AOS4PATH)
 	strip -R.comment $< -o $(AOS4PATH)/$<
 	cp icons/scummvm.info $(AOS4PATH)/$<.info
-	cp gui/themes/modern.ini $(AOS4PATH)
-	cp gui/themes/modern.zip $(AOS4PATH)
+	cp $(DIST_FILES_THEMES) $(AOS4PATH)
+	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)
 	cp AUTHORS $(AOS4PATH)/AUTHORS.txt
 	cp COPYING $(AOS4PATH)/COPYING.txt
 	cp COPYRIGHT $(AOS4PATH)/COPYRIGHT.txt

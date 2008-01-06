@@ -175,4 +175,27 @@ dist-src: \
 	@#RPM-src?
 	@#DEB-src?
 
+
+# Themes files
+DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,modern.ini modern.zip)
+
+# Engine data files
+DIST_FILES_ENGINEDATA=
+ifndef DISABLE_IGOR
+DIST_FILES_ENGINEDATA+=igor.tbl
+endif
+ifndef DISABLE_KYRA
+DIST_FILES_ENGINEDATA+=kyra.dat
+endif
+ifndef DISABLE_LURE
+DIST_FILES_ENGINEDATA+=lure.dat
+endif
+ifndef DISABLE_QUEEN
+DIST_FILES_ENGINEDATA+=queen.tbl
+endif
+ifndef DISABLE_SKY
+DIST_FILES_ENGINEDATA+=sky.cpt
+endif
+DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dist/engine-data/,$(DIST_FILES_ENGINEDATA))
+
 .PHONY: all clean distclean plugins dist-src
