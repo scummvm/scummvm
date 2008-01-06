@@ -278,7 +278,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::allocSlot() {
 	return NULL;
 }
 
-bool ImuseDigiSndMgr::openMusicBundle(SoundDesc *sound, int disk) {
+bool ImuseDigiSndMgr::openMusicBundle(SoundDesc *sound, int &disk) {
 	bool result = false;
 
 	sound->bundle = new BundleMgr(_cacheBundleDir);
@@ -313,7 +313,7 @@ bool ImuseDigiSndMgr::openMusicBundle(SoundDesc *sound, int disk) {
 	return result;
 }
 
-bool ImuseDigiSndMgr::openVoiceBundle(SoundDesc *sound, int disk) {
+bool ImuseDigiSndMgr::openVoiceBundle(SoundDesc *sound, int &disk) {
 	bool result = false;
 
 	sound->bundle = new BundleMgr(_cacheBundleDir);
@@ -399,7 +399,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 			sound->soundId = soundId;
 			sound->type = soundType;
 			sound->volGroupId = volGroupId;
-			sound->disk = _disk;
+			sound->disk = disk;
 			return sound;
 		} else if (soundName[0] == 0) {
 			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0 || ptr == NULL) {

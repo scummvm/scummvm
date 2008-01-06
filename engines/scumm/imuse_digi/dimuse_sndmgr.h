@@ -110,8 +110,8 @@ private:
 	byte _disk;
 	BundleDirCache *_cacheBundleDir;
 
-	bool openMusicBundle(SoundDesc *sound, int disk);
-	bool openVoiceBundle(SoundDesc *sound, int disk);
+	bool openMusicBundle(SoundDesc *sound, int &disk);
+	bool openVoiceBundle(SoundDesc *sound, int &disk);
 
 	void countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs);
 
