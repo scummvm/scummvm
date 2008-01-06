@@ -111,6 +111,7 @@ private:
 	uint16 _descId;
 
 	int getArticle(uint16 msgId, uint16 objId);
+	void vgaTalkDialog(Surface *s);
 public:
 	TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId);
 	~TalkDialog();

@@ -700,56 +700,12 @@ int TalkDialog::getArticle(uint16 msgId, uint16 objId) {
 	return (id >> 13) + 1;
 }
 
-TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId) {
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "TalkDialog(chars=%xh/%xh, item=%d, str=%d", 
-		characterId, destCharacterId, activeItemId, descId);
-	StringData &strings = StringData::getReference();
+void TalkDialog::vgaTalkDialog(Surface *s) {
 	Resources &res = Resources::getReference();
-	char srcCharName[MAX_DESC_SIZE];
-	char destCharName[MAX_DESC_SIZE];
-	char itemName[MAX_DESC_SIZE];
-	int characterArticle = 0, hotspotArticle = 0;
-
-	_characterId = characterId;
-	_destCharacterId = destCharacterId;
-	_activeItemId = activeItemId;
-	_descId = descId;
-
-	HotspotData *talkingChar = res.getHotspot(characterId);
-	HotspotData *destCharacter = (destCharacterId == 0) ? NULL : 
-		res.getHotspot(destCharacterId);
-	HotspotData *itemHotspot = (activeItemId == 0) ? NULL :
-		res.getHotspot(activeItemId);
-	assert(talkingChar);
-
-	strings.getString(talkingChar->nameId & 0x1fff, srcCharName);
-
-	strcpy(destCharName, "");
-	if (destCharacter != NULL) {
-		strings.getString(destCharacter->nameId, destCharName);
-		characterArticle = getArticle(descId, destCharacter->nameId);
-	}
-	strcpy(itemName, "");
-	if (itemHotspot != NULL) {
-		strings.getString(itemHotspot->nameId & 0x1fff, itemName);
-		hotspotArticle = getArticle(descId, itemHotspot->nameId);
-	}
-
-	strings.getString(descId, _desc, itemName, destCharName, hotspotArticle, characterArticle);
-
-	// Apply word wrapping to figure out the needed size of the dialog
-	Surface::wordWrap(_desc, TALK_DIALOG_WIDTH - (TALK_DIALOG_EDGE_SIZE + 3) * 2,
-		_lines, _numLines);
-	_endLine = 0; _endIndex = 0;
-
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "Creating talk dialog for %d lines", _numLines);
-
-	_surface = new Surface(TALK_DIALOG_WIDTH, 
-		(_numLines + 1) * FONT_HEIGHT + TALK_DIALOG_EDGE_SIZE * 4);
 
 	// Draw the dialog
 	byte *pSrc = res.getTalkDialogData().data();
-	byte *pDest = _surface->data().data();
+	byte *pDest = s->data().data();
 	int xPos, yPos;
 
 	// Handle the dialog top
@@ -796,6 +752,61 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 		*pDest++ = *pSrc++;
 		*pDest++ = *pSrc++;
 	}
+}
+
+TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId) {
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "TalkDialog(chars=%xh/%xh, item=%d, str=%d", 
+		characterId, destCharacterId, activeItemId, descId);
+	StringData &strings = StringData::getReference();
+	Resources &res = Resources::getReference();
+	char srcCharName[MAX_DESC_SIZE];
+	char destCharName[MAX_DESC_SIZE];
+	char itemName[MAX_DESC_SIZE];
+	int characterArticle = 0, hotspotArticle = 0;
+	bool isEGA = LureEngine::getReference().isEGA();
+
+
+	_characterId = characterId;
+	_destCharacterId = destCharacterId;
+	_activeItemId = activeItemId;
+	_descId = descId;
+
+	HotspotData *talkingChar = res.getHotspot(characterId);
+	HotspotData *destCharacter = (destCharacterId == 0) ? NULL : 
+		res.getHotspot(destCharacterId);
+	HotspotData *itemHotspot = (activeItemId == 0) ? NULL :
+		res.getHotspot(activeItemId);
+	assert(talkingChar);
+
+	strings.getString(talkingChar->nameId & 0x1fff, srcCharName);
+
+	strcpy(destCharName, "");
+	if (destCharacter != NULL) {
+		strings.getString(destCharacter->nameId, destCharName);
+		characterArticle = getArticle(descId, destCharacter->nameId);
+	}
+	strcpy(itemName, "");
+	if (itemHotspot != NULL) {
+		strings.getString(itemHotspot->nameId & 0x1fff, itemName);
+		hotspotArticle = getArticle(descId, itemHotspot->nameId);
+	}
+
+	strings.getString(descId, _desc, itemName, destCharName, hotspotArticle, characterArticle);
+
+	// Apply word wrapping to figure out the needed size of the dialog
+	Surface::wordWrap(_desc, TALK_DIALOG_WIDTH - (TALK_DIALOG_EDGE_SIZE + 3) * 2,
+		_lines, _numLines);
+	_endLine = 0; _endIndex = 0;
+
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Creating talk dialog for %d lines", _numLines);
+
+	_surface = new Surface(TALK_DIALOG_WIDTH, 
+		(_numLines + 1) * FONT_HEIGHT + TALK_DIALOG_EDGE_SIZE * 4);
+
+	if (isEGA)
+		_surface->createDialog();
+	else
+		vgaTalkDialog(_surface);
 
 	_wordCountdown = 0;
 
