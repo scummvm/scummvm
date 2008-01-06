@@ -391,210 +391,6 @@ void ScummEngine_v90he::o90_dup_n() {
 	}
 }
 
-void ScummEngine_v90he::o90_min() {
-	int a = pop();
-	int b = pop();
-
-	if (b < a) {
-		push(b);
-	} else {
-		push(a);
-	}
-}
-
-void ScummEngine_v90he::o90_max() {
-	int a = pop();
-	int b = pop();
-
-	if (b > a) {
-		push(b);
-	} else {
-		push(a);
-	}
-}
-
-void ScummEngine_v90he::o90_sin() {
-	double a = pop() * PI / 180.;
-	push((int)(sin(a) * 100000));
-}
-
-void ScummEngine_v90he::o90_cos() {
-	double a = pop() * PI / 180.;
-	push((int)(cos(a) * 100000));
-}
-
-void ScummEngine_v90he::o90_sqrt() {
-	int i = pop();
-	if (i < 2) {
-		push(i);
-	} else {
-		push((int)sqrt((double)(i + 1)));
-	}
-}
-
-void ScummEngine_v90he::o90_atan2() {
-	int y = pop();
-	int x = pop();
-	int a = (int)(atan2((double)y, (double)x) * 180. / PI);
-	if (a < 0) {
-		a += 360;
-	}
-	push(a);
-}
-
-void ScummEngine_v90he::o90_getSegmentAngle() {
-	int y1 = pop();
-	int x1 = pop();
-	int dy = y1 - pop();
-	int dx = x1 - pop();
-	int a = (int)(atan2((double)dy, (double)dx) * 180. / PI);
-	if (a < 0) {
-		a += 360;
-	}
-	push(a);
-}
-
-void ScummEngine_v90he::o90_getActorData() {
-	Actor *a;
-
-	int subOp = pop();
-	int val = pop();
-	int act = pop();
-
-	a = derefActor(act, "o90_getActorData");
-
-	switch (subOp) {
-	case 1:
-		push(a->isUserConditionSet(val));
-		break;
-	case 2:
-		assertRange(0, val, 15, "o90_getActorData: Limb");
-		push(a->_cost.frame[val]);
-		break;
-	case 3:
-		push(a->getAnimSpeed());
-		break;
-	case 4:
-		push(a->_shadowMode);
-		break;
-	case 5:
-		push(a->_layer);
-		break;
-	case 6:
-		push(a->_hePaletteNum);
-		break;
-	default:
-		error("o90_getActorData: Unknown actor property %d", subOp);
-	}
-}
-
-void ScummEngine_v90he::o90_startScriptUnk() {
-	int args[25];
-	int script, cycle;
-	byte flags;
-
-	getStackList(args, ARRAYSIZE(args));
-	cycle = pop();
-	script = pop();
-	flags = fetchScriptByte();
-	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args, cycle);
-}
-
-void ScummEngine_v90he::o90_jumpToScriptUnk() {
-	int args[25];
-	int script, cycle;
-	byte flags;
-
-	getStackList(args, ARRAYSIZE(args));
-	cycle = pop();
-	script = pop();
-	flags = fetchScriptByte();
-	stopObjectCode();
-	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args, cycle);
-}
-
-void ScummEngine_v90he::o90_videoOps() {
-	// Uses Smacker video
-	int status = fetchScriptByte();
-	int subOp = status - 49;
-
-	switch (subOp) {
-	case 0:
-		copyScriptString(_videoParams.filename, sizeof(_videoParams.filename));
-		_videoParams.status = status;
-		break;
-	case 5:
-		_videoParams.flags |= pop();
-		break;
-	case 8:
-		memset(_videoParams.filename, 0, sizeof(_videoParams.filename));
-		_videoParams.unk2 = pop();
-		break;
-	case 14:
-		_videoParams.wizResNum = pop();
-		if (_videoParams.wizResNum)
-			_videoParams.flags |= 2;
-		break;
-	case 116:
-		_videoParams.status = status;
-		break;
-	case 206:
-		if (_videoParams.status == 49) {
-			// Start video
-			if (_videoParams.flags == 0)
-				_videoParams.flags = 4;
-
-			const char *filename = (char *)_videoParams.filename + convertFilePath(_videoParams.filename);
-			if (_videoParams.flags & 2) {
-				VAR(119) = _moviePlay->load(filename, _videoParams.flags, _videoParams.wizResNum);
-			} else {
-				VAR(119) = _moviePlay->load(filename, _videoParams.flags);
-			}
-		} else if (_videoParams.status == 165) {
-			// Stop video
-			_moviePlay->closeFile();
-		}
-		break;
-	default:
-		error("o90_videoOps: unhandled case %d", subOp);
-	}
-}
-
-void ScummEngine_v90he::o90_getVideoData() {
-	// Uses Smacker video
-	byte subOp = fetchScriptByte();
-	subOp -= 32;
-
-	switch (subOp) {
-	case 0:		// Get width
-		pop();
-		push(_moviePlay->getWidth());
-		break;
-	case 1:		// Get height
-		pop();
-		push(_moviePlay->getHeight());
-		break;
-	case 4:		// Get frame count
-		pop();
-		push(_moviePlay->getFrameCount());
-		break;
-	case 20:	// Get current frame
-		pop();
-		push(_moviePlay->getCurFrame());
-		break;
-	case 31:	// Get image number
-		pop();
-		push(_moviePlay->getImageNum());
-		break;
-	case 107:	// Get statistics
-		debug(0, "o90_getVideoData: subOp 107 stub (%d, %d)", pop(), pop());
-		push(0);
-		break;
-	default:
-		error("o90_getVideoData: unhandled case %d", subOp);
-	}
-}
-
 void ScummEngine_v90he::o90_wizImageOps() {
 	int a, b;
 
@@ -813,6 +609,69 @@ void ScummEngine_v90he::o90_wizImageOps() {
 	default:
 		error("o90_wizImageOps: unhandled case %d", subOp);
 	}
+}
+
+void ScummEngine_v90he::o90_min() {
+	int a = pop();
+	int b = pop();
+
+	if (b < a) {
+		push(b);
+	} else {
+		push(a);
+	}
+}
+
+void ScummEngine_v90he::o90_max() {
+	int a = pop();
+	int b = pop();
+
+	if (b > a) {
+		push(b);
+	} else {
+		push(a);
+	}
+}
+
+void ScummEngine_v90he::o90_sin() {
+	double a = pop() * PI / 180.;
+	push((int)(sin(a) * 100000));
+}
+
+void ScummEngine_v90he::o90_cos() {
+	double a = pop() * PI / 180.;
+	push((int)(cos(a) * 100000));
+}
+
+void ScummEngine_v90he::o90_sqrt() {
+	int i = pop();
+	if (i < 2) {
+		push(i);
+	} else {
+		push((int)sqrt((double)(i + 1)));
+	}
+}
+
+void ScummEngine_v90he::o90_atan2() {
+	int y = pop();
+	int x = pop();
+	int a = (int)(atan2((double)y, (double)x) * 180. / PI);
+	if (a < 0) {
+		a += 360;
+	}
+	push(a);
+}
+
+void ScummEngine_v90he::o90_getSegmentAngle() {
+	int y1 = pop();
+	int x1 = pop();
+	int dy = y1 - pop();
+	int dx = x1 - pop();
+	int a = (int)(atan2((double)dy, (double)dx) * 180. / PI);
+	if (a < 0) {
+		a += 360;
+	}
+	push(a);
 }
 
 void ScummEngine_v90he::o90_getDistanceBetweenPoints() {
@@ -1762,6 +1621,147 @@ void ScummEngine_v90he::o90_getWizData() {
 	}
 }
 
+void ScummEngine_v90he::o90_getActorData() {
+	Actor *a;
+
+	int subOp = pop();
+	int val = pop();
+	int act = pop();
+
+	a = derefActor(act, "o90_getActorData");
+
+	switch (subOp) {
+	case 1:
+		push(a->isUserConditionSet(val));
+		break;
+	case 2:
+		assertRange(0, val, 15, "o90_getActorData: Limb");
+		push(a->_cost.frame[val]);
+		break;
+	case 3:
+		push(a->getAnimSpeed());
+		break;
+	case 4:
+		push(a->_shadowMode);
+		break;
+	case 5:
+		push(a->_layer);
+		break;
+	case 6:
+		push(a->_hePaletteNum);
+		break;
+	default:
+		error("o90_getActorData: Unknown actor property %d", subOp);
+	}
+}
+
+void ScummEngine_v90he::o90_startScriptUnk() {
+	int args[25];
+	int script, cycle;
+	byte flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	cycle = pop();
+	script = pop();
+	flags = fetchScriptByte();
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args, cycle);
+}
+
+void ScummEngine_v90he::o90_jumpToScriptUnk() {
+	int args[25];
+	int script, cycle;
+	byte flags;
+
+	getStackList(args, ARRAYSIZE(args));
+	cycle = pop();
+	script = pop();
+	flags = fetchScriptByte();
+	stopObjectCode();
+	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args, cycle);
+}
+
+void ScummEngine_v90he::o90_videoOps() {
+	// Uses Smacker video
+	int status = fetchScriptByte();
+	int subOp = status - 49;
+
+	switch (subOp) {
+	case 0:
+		copyScriptString(_videoParams.filename, sizeof(_videoParams.filename));
+		_videoParams.status = status;
+		break;
+	case 5:
+		_videoParams.flags |= pop();
+		break;
+	case 8:
+		memset(_videoParams.filename, 0, sizeof(_videoParams.filename));
+		_videoParams.unk2 = pop();
+		break;
+	case 14:
+		_videoParams.wizResNum = pop();
+		if (_videoParams.wizResNum)
+			_videoParams.flags |= 2;
+		break;
+	case 116:
+		_videoParams.status = status;
+		break;
+	case 206:
+		if (_videoParams.status == 49) {
+			// Start video
+			if (_videoParams.flags == 0)
+				_videoParams.flags = 4;
+
+			const char *filename = (char *)_videoParams.filename + convertFilePath(_videoParams.filename);
+			if (_videoParams.flags & 2) {
+				VAR(119) = _moviePlay->load(filename, _videoParams.flags, _videoParams.wizResNum);
+			} else {
+				VAR(119) = _moviePlay->load(filename, _videoParams.flags);
+			}
+		} else if (_videoParams.status == 165) {
+			// Stop video
+			_moviePlay->closeFile();
+		}
+		break;
+	default:
+		error("o90_videoOps: unhandled case %d", subOp);
+	}
+}
+
+void ScummEngine_v90he::o90_getVideoData() {
+	// Uses Smacker video
+	byte subOp = fetchScriptByte();
+	subOp -= 32;
+
+	switch (subOp) {
+	case 0:		// Get width
+		pop();
+		push(_moviePlay->getWidth());
+		break;
+	case 1:		// Get height
+		pop();
+		push(_moviePlay->getHeight());
+		break;
+	case 4:		// Get frame count
+		pop();
+		push(_moviePlay->getFrameCount());
+		break;
+	case 20:	// Get current frame
+		pop();
+		push(_moviePlay->getCurFrame());
+		break;
+	case 31:	// Get image number
+		pop();
+		push(_moviePlay->getImageNum());
+		break;
+	case 107:	// Get statistics
+		debug(0, "o90_getVideoData: subOp 107 stub (%d, %d)", pop(), pop());
+		push(0);
+		break;
+	default:
+		error("o90_getVideoData: unhandled case %d", subOp);
+	}
+}
+
 void ScummEngine_v90he::o90_floodFill() {
 	byte subOp = fetchScriptByte();
 	subOp -= 54;
@@ -1798,6 +1798,13 @@ void ScummEngine_v90he::o90_floodFill() {
 	}
 }
 
+void ScummEngine_v90he::o90_mod() {
+	int a = pop();
+	if (a == 0)
+		error("modulus by zero");
+	push(pop() % a);
+}
+
 void ScummEngine_v90he::o90_shl() {
 	int a = pop();
 	push(pop() << a);
@@ -1811,13 +1818,6 @@ void ScummEngine_v90he::o90_shr() {
 void ScummEngine_v90he::o90_xor() {
 	int a = pop();
 	push(pop() ^ a);
-}
-
-void ScummEngine_v90he::o90_mod() {
-	int a = pop();
-	if (a == 0)
-		error("modulus by zero");
-	push(pop() % a);
 }
 
 void ScummEngine_v90he::o90_findAllObjectsWithClassOf() {

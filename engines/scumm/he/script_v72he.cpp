@@ -1054,17 +1054,17 @@ void ScummEngine_v72he::o72_actorOps() {
 		_actorClipOverride.left = pop();
 		adjustRect(_actorClipOverride);
 		break;
+	case 65: // HE 98+
+		j = pop();
+		i = pop();
+		a->putActor(i, j);
+		break;
 	case 67: // HE 99+
 		a->_clipOverride.bottom = pop();
 		a->_clipOverride.right = pop();
 		a->_clipOverride.top = pop();
 		a->_clipOverride.left = pop();
 		adjustRect(a->_clipOverride);
-		break;
-	case 65: // HE 98+
-		j = pop();
-		i = pop();
-		a->putActor(i, j);
 		break;
 	case 68: // HE 90+
 		k = pop();
