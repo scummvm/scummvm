@@ -12,6 +12,7 @@ export LDFLAGS=-L/opt/open2x/gcc-4.1.1-glibc-2.3.6/lib
 echo Collecting files.
 mkdir "scummvm-gp2x-`date '+%Y-%m-%d'`"
 mkdir "scummvm-gp2x-`date '+%Y-%m-%d'`/saves"
+mkdir "scummvm-gp2x-`date '+%Y-%m-%d'`/engine-data"
 
 echo "Please put your save games in this dir" >> "scummvm-gp2x-`date '+%Y-%m-%d'`/saves/PUT_SAVES_IN_THIS_DIR"
 
@@ -29,6 +30,7 @@ cp ../../../../NEWS ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../gui/themes/modern.ini ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../gui/themes/modern.zip ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../dists/pred.dic ./scummvm-gp2x-`date '+%Y-%m-%d'`/
+cp ../../../../dists/engine-data/* ./scummvm-gp2x-`date '+%Y-%m-%d'`/engine-data
 
 echo Making Stripped GPE.
 arm-open2x-linux-strip ./scummvm-gp2x-`date '+%Y-%m-%d'`/scummvm.gp2x
