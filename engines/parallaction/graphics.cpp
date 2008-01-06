@@ -234,29 +234,6 @@ byte _resBalloonTail[2][BALLOON_TAIL_WIDTH*BALLOON_TAIL_HEIGHT] = {
 	}
 };
 
-void Gfx::drawBalloon(const Common::Rect& r, uint16 winding) {
-//	printf("Gfx::drawBalloon(%i, %i, %i, %i, %i)...", left, top, width, height, winding);
-
-	Common::Rect q = r;
-
-	// draws balloon
-	q.right += 5;
-	floodFill(kBitFront, q, 0);
-	q.grow(-1);
-	floodFill(kBitFront, q, 1);
-
-	// draws tail
-	// TODO: this bitmap tail should only be used for Dos games. Amiga should use a polygon fill.
-	winding = (winding == 0 ? 1 : 0);
-	Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
-	s.moveTo(r.left + (r.width()+5)/2 - 5, r.bottom - 1);
-	flatBlit(s, _resBalloonTail[winding], _buffers[kBitFront], 2);
-
-	return;
-}
-
-
-
 
 void Gfx::setPalette(Palette pal) {
 	byte sysPal[256*4];
@@ -705,61 +682,6 @@ void Gfx::displayCenteredString(uint16 y, const char *text) {
 	displayString(x, y, text, 1);
 }
 
-bool Gfx::displayWrappedString(char *text, uint16 x, uint16 y, byte color, int16 wrapwidth) {
-
-	uint16 lines = 0;
-	bool rv = false;
-	uint16 linewidth = 0;
-
-	uint16 rx = x + 10;
-	uint16 ry = y + 4;
-
-	char token[40];
-
-	if (wrapwidth == -1)
-		wrapwidth = _vm->_screenWidth;
-
-	while (strlen(text) > 0) {
-
-		text = parseNextToken(text, token, 40, "   ", true);
-
-		if (!scumm_stricmp(token, "%p")) {
-			lines++;
-			rx = x + 10;
-			ry = y + 4 + lines*10;	// y
-
-			strcpy(token, "> .......");
-			strncpy(token+2, _password, strlen(_password));
-			rv = true;
-		} else {
-
-			linewidth += getStringWidth(token);
-
-			if (linewidth > wrapwidth) {
-				// wrap line
-				lines++;
-				rx = x + 10;			// x
-				ry = y + 4 + lines*10;	// y
-				linewidth = getStringWidth(token);
-			}
-
-			if (!scumm_stricmp(token, "%s")) {
-				sprintf(token, "%d", _score);
-			}
-
-		}
-
-		displayString(rx, ry, token, color);
-
-		rx += getStringWidth(token) + getStringWidth(" ");
-		linewidth += getStringWidth(" ");
-
-		text = Common::ltrim(text);
-	}
-
-	return rv;
-
-}
 
 uint16 Gfx::getStringWidth(const char *text) {
 	return _font->getStringWidth(text);
