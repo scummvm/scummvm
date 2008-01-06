@@ -841,7 +841,7 @@ void Parallaction::setBackground(const char* name, const char* mask, const char*
 }
 
 void Parallaction::showLocationComment(const char *text, bool end) {
-    _gfx->setLocationBalloon(const_cast<char*>(text), end);
+	_gfx->setLocationBalloon(const_cast<char*>(text), end);
 }
 
 
@@ -862,10 +862,10 @@ void Parallaction::doLocationEnterTransition() {
 		return;
 	}
 
-    if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
-        debugC(2, kDebugExec, "skipping location transition");
-        return; // visited
-    }
+	if (_localFlags[_currentLocationIndex] & kFlagsVisited) {
+		debugC(2, kDebugExec, "skipping location transition");
+		return; // visited
+	}
 
 	Palette pal(_gfx->_palette);
 	pal.makeGrayscale();

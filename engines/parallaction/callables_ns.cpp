@@ -352,7 +352,7 @@ void Parallaction_ns::_c_endComment(void *param) {
 	}
 
 	waitUntilLeftClick();
-    _gfx->freeBalloons();
+	_gfx->freeBalloons();
 
 	return;
 }
@@ -393,13 +393,13 @@ void Parallaction_ns::_c_finito(void *parm) {
 	const char **v2C = endMsg6;
 	const char **v1C = endMsg7;
 
-    setPartComplete(_char);
+	setPartComplete(_char);
 
 	cleanInventory();
 	_gfx->setPalette(_gfx->_palette);
 
-    _gfx->setFont(_menuFont);
-    _gfx->setFontShadow(true);
+	_gfx->setFont(_menuFont);
+	_gfx->setFontShadow(true);
 
 	if (allPartsComplete()) {
 		_gfx->displayCenteredString(70, v4C[_language]);
@@ -440,7 +440,7 @@ void Parallaction_ns::_c_testResult(void *parm) {
 	parseLocation("common");
 
 	_gfx->setFont(_menuFont);
-    _gfx->setFontShadow(true);
+	_gfx->setFontShadow(true);
 
 	_gfx->displayCenteredString(38, _slideText[0]);
 	_gfx->displayCenteredString(58, _slideText[1]);
@@ -626,11 +626,11 @@ void Parallaction_ns::_c_shade(void *parm) {
 void Parallaction_ns::_c_projector(void*) {
 	static int dword_16032 = 0;
 
-    _gfx->setHalfbriteMode(true);
+	_gfx->setHalfbriteMode(true);
 
 //	if (dword_16032 != 0) {
 		// keep drawing spotlight in its final place
-        _gfx->setProjectorPos(110, 25);
+		_gfx->setProjectorPos(110, 25);
 		return;
 //	}
 #ifdef HALFBRITE
@@ -654,16 +654,16 @@ void Parallaction_ns::_c_projector(void*) {
 			d6 = d1;
 		}
 
-        printf("%i, %i, ", d7+20, d6);
+		printf("%i, %i, ", d7+20, d6);
 //		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+20, d6, a3->??, a3->??, 0x20, 0x20);
 	}
 
 	for (d7 = 50; d7 > -10; d7--) {
-        printf("%i, %i, ", d7+120, d6);
+		printf("%i, %i, ", d7+120, d6);
 //		BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0x20, 0x20);
 	}
 
-    printf("%i, %i\n", d7+120, d6);
+	printf("%i, %i\n", d7+120, d6);
 //	BltBitMap(&bm, 0, 0, &_screen._bitMap, d7+120, d6, a3->??, a3->??, 0x20, 0x20);
 #endif
 	dword_16032 = 1;

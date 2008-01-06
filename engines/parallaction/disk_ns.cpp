@@ -48,7 +48,7 @@ namespace Parallaction {
 //  When an archive is opened in Amiga multi-lingual version, the header is
 //  checked again NDOS to detect when a smaller archive is used.
 //
-#define SIZEOF_SMALL_ARCHIVE      	12778
+#define SIZEOF_SMALL_ARCHIVE		12778
 
 #define ARCHIVE_FILENAMES_OFS		0x16
 
@@ -669,23 +669,23 @@ Common::ReadStream* DosDisk_ns::loadSound(const char* name) {
  * placed in the Public Domain on 2003-09-18 by Stuart Caie.
  */
 
-#define PP_READ_BITS(nbits, var) do {                            \
-  bit_cnt = (nbits); (var) = 0;                                  \
-  while (bits_left < bit_cnt) {                                  \
-    if (buf < src) return 0;                                     \
-    bit_buffer |= *--buf << bits_left;                           \
-    bits_left += 8;                                              \
-  }                                                              \
-  bits_left -= bit_cnt;                                          \
-  while (bit_cnt--) {                                            \
-    (var) = ((var) << 1) | (bit_buffer & 1);                     \
-    bit_buffer >>= 1;                                            \
-  }                                                              \
+#define PP_READ_BITS(nbits, var) do {				\
+	bit_cnt = (nbits); (var) = 0;				\
+	while (bits_left < bit_cnt) {				\
+		if (buf < src) return 0;			\
+		bit_buffer |= *--buf << bits_left;		\
+		bits_left += 8;					\
+	}							\
+	bits_left -= bit_cnt;					\
+	while (bit_cnt--) {					\
+		(var) = ((var) << 1) | (bit_buffer & 1);	\
+		bit_buffer >>= 1;				\
+	}							\
 } while (0)
 
-#define PP_BYTE_OUT(byte) do {                                   \
-  if (out <= dest) return 0;                                     \
-  *--out = (byte); written++;                                    \
+#define PP_BYTE_OUT(byte) do {					\
+	if (out <= dest) return 0;				\
+	*--out = (byte); written++;				\
 } while (0)
 
 

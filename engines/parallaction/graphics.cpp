@@ -35,8 +35,8 @@ namespace Parallaction {
 int16 Gfx::_dialogueBalloonX[5] = { 80, 120, 150, 150, 150 };
 
 void halfbritePixel(int x, int y, int color, void *data) {
-    byte *buffer = (byte*)data;
-    buffer[x + y * _vm->_screenWidth] &= ~0x20;
+	byte *buffer = (byte*)data;
+	buffer[x + y * _vm->_screenWidth] &= ~0x20;
 }
 
 void drawCircleLine(int xCenter, int yCenter, int x, int y, int color, void (*plotProc)(int, int, int, void *), void *data){
@@ -311,15 +311,15 @@ void Gfx::setHalfbriteMode(bool enable) {
 	_halfbrite = !_halfbrite;
 
 	if (!enable) {
-	    _hbCircleRadius = 0;
+		_hbCircleRadius = 0;
 	}
 }
 
-#define HALFBRITE_CIRCLE_RADIUS             48
+#define HALFBRITE_CIRCLE_RADIUS		48
 void Gfx::setProjectorPos(int x, int y) {
-    _hbCircleRadius = HALFBRITE_CIRCLE_RADIUS;
-    _hbCirclePos.x = x + _hbCircleRadius;
-    _hbCirclePos.y = y + _hbCircleRadius;
+	_hbCircleRadius = HALFBRITE_CIRCLE_RADIUS;
+	_hbCirclePos.x = x + _hbCircleRadius;
+	_hbCirclePos.y = y + _hbCircleRadius;
 }
 
 
@@ -363,20 +363,20 @@ void Gfx::drawBalloons() {
 }
 
 void Gfx::updateScreen() {
-    if (_halfbrite) {
-        Graphics::Surface *surf = g_system->lockScreen();
-        byte *src = (byte*)_buffers[kBitFront]->pixels;
-        byte *dst = (byte*)surf->pixels;
-        for (int i = 0; i < surf->w*surf->h; i++) {
-            *dst++ = *src++ | 0x20;
-        }
-        if (_hbCircleRadius > 0) {
-            drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &halfbritePixel, surf->pixels);
-        }
-        g_system->unlockScreen();
-    } else {
-        g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _buffers[kBitFront]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
-    }
+	if (_halfbrite) {
+		Graphics::Surface *surf = g_system->lockScreen();
+		byte *src = (byte*)_buffers[kBitFront]->pixels;
+		byte *dst = (byte*)surf->pixels;
+		for (int i = 0; i < surf->w*surf->h; i++) {
+			*dst++ = *src++ | 0x20;
+		}
+		if (_hbCircleRadius > 0) {
+			drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &halfbritePixel, surf->pixels);
+		}
+		g_system->unlockScreen();
+	} else {
+		g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _buffers[kBitFront]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
+	}
 
 	drawInventory();
 
@@ -690,9 +690,9 @@ void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
 void Gfx::displayString(uint16 x, uint16 y, const char *text, byte color) {
 	byte *dst = (byte*)_buffers[kBitFront]->getBasePtr(x, y);
 	if (_fontShadow) {
-        dst = (byte*)_buffers[kBitFront]->getBasePtr(x-2, y+2);
-        _font->setColor(0);
-        _font->drawString(dst, _vm->_screenWidth, text);
+		dst = (byte*)_buffers[kBitFront]->getBasePtr(x-2, y+2);
+		_font->setColor(0);
+		_font->drawString(dst, _vm->_screenWidth, text);
 	}
 
 	dst = (byte*)_buffers[kBitFront]->getBasePtr(x, y);
@@ -811,7 +811,7 @@ void Gfx::setFont(Font *font) {
 }
 
 void Gfx::setFontShadow(bool enable) {
-    _fontShadow = enable && (_vm->getPlatform() == Common::kPlatformAmiga);
+	_fontShadow = enable && (_vm->getPlatform() == Common::kPlatformAmiga);
 }
 
 void Gfx::restoreBackground(const Common::Rect& r) {
@@ -916,7 +916,7 @@ Gfx::Gfx(Parallaction* vm) :
 	memset(_palettefx, 0, sizeof(_palettefx));
 
 	_halfbrite = false;
-    _hbCircleRadius = 0;
+	_hbCircleRadius = 0;
 
 	_font = NULL;
 	_fontShadow = false;
@@ -980,7 +980,7 @@ int Gfx::setItem(Frames* frames, uint16 x, uint16 y) {
 
 	_numItems++;
 
-    return id;
+	return id;
 }
 
 void Gfx::setItemFrame(uint item, uint16 f) {
@@ -991,37 +991,37 @@ void Gfx::setItemFrame(uint item, uint16 f) {
 }
 
 Gfx::Balloon* Gfx::getBalloon(uint id) {
-    assert(id < _numBalloons);
-    return &_balloons[id];
+	assert(id < _numBalloons);
+	return &_balloons[id];
 }
 
 int Gfx::createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness) {
 	assert(_numBalloons < 5);
 
-    int id = _numBalloons;
+	int id = _numBalloons;
 
 	Gfx::Balloon *balloon = &_balloons[id];
 
-    int16 real_h = (winding == -1) ? h : h + 9;
+	int16 real_h = (winding == -1) ? h : h + 9;
 	balloon->surface.create(w, real_h, 1);
 	balloon->surface.fillRect(Common::Rect(w, real_h), 2);
 
 	Common::Rect r(w, h);
 	balloon->surface.fillRect(r, 0);
-    balloon->outerBox = r;
+	balloon->outerBox = r;
 
 	r.grow(-borderThickness);
 	balloon->surface.fillRect(r, 1);
-    balloon->innerBox = r;
+	balloon->innerBox = r;
 
-    if (winding != -1) {
-        // draws tail
-        // TODO: this bitmap tail should only be used for Dos games. Amiga should use a polygon fill.
-        winding = (winding == 0 ? 1 : 0);
-        Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
-        s.moveTo(r.width()/2 - 5, r.bottom - 1);
-        flatBlit(s, _resBalloonTail[winding], &balloon->surface, 2);
-    }
+	if (winding != -1) {
+		// draws tail
+		// TODO: this bitmap tail should only be used for Dos games. Amiga should use a polygon fill.
+		winding = (winding == 0 ? 1 : 0);
+		Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
+		s.moveTo(r.width()/2 - 5, r.bottom - 1);
+		flatBlit(s, _resBalloonTail[winding], &balloon->surface, 2);
+	}
 
 	_numBalloons++;
 
@@ -1030,7 +1030,7 @@ int Gfx::createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness) 
 
 int Gfx::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor) {
 
-    int16 w, h;
+	int16 w, h;
 
 	setFont(_vm->_dialogueFont);
 	getStringExtent(text, MAX_BALLOON_WIDTH, &w, &h);
@@ -1043,12 +1043,12 @@ int Gfx::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte t
 	balloon->x = x;
 	balloon->y = y;
 
-    return id;
+	return id;
 }
 
 int Gfx::setDialogueBalloon(char *text, uint16 winding, byte textColor) {
 
-    int16 w, h;
+	int16 w, h;
 
 	setFont(_vm->_dialogueFont);
 	getStringExtent(text, MAX_BALLOON_WIDTH, &w, &h);
@@ -1058,15 +1058,15 @@ int Gfx::setDialogueBalloon(char *text, uint16 winding, byte textColor) {
 
 	drawWrappedText(&balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
 
-    balloon->x = _dialogueBalloonX[id];
-    balloon->y = 10;
+	balloon->x = _dialogueBalloonX[id];
+	balloon->y = 10;
 
-    if (id > 0) {
-        balloon->y += _balloons[id - 1].y + _balloons[id - 1].outerBox.height();
-    }
+	if (id > 0) {
+		balloon->y += _balloons[id - 1].y + _balloons[id - 1].outerBox.height();
+	}
 
 
-    return id;
+	return id;
 }
 
 void Gfx::setBalloonText(uint id, char *text, byte textColor) {
@@ -1078,10 +1078,10 @@ void Gfx::setBalloonText(uint id, char *text, byte textColor) {
 
 int Gfx::setLocationBalloon(char *text, bool endGame) {
 
-    int16 w, h;
+	int16 w, h;
 
 	setFont(_vm->_dialogueFont);
-    getStringExtent(text, MAX_BALLOON_WIDTH, &w, &h);
+	getStringExtent(text, MAX_BALLOON_WIDTH, &w, &h);
 
 	int id = createBalloon(w+(endGame ? 5 : 10), h+5, -1, 2);
 	Gfx::Balloon *balloon = &_balloons[id];
@@ -1095,17 +1095,17 @@ int Gfx::setLocationBalloon(char *text, bool endGame) {
 
 int Gfx::hitTestDialogueBalloon(int x, int y) {
 
-    Common::Point p;
+	Common::Point p;
 
-    for (uint i = 0; i < _numBalloons; i++) {
-        p.x = x - _balloons[i].x;
-        p.y = y - _balloons[i].y;
+	for (uint i = 0; i < _numBalloons; i++) {
+		p.x = x - _balloons[i].x;
+		p.y = y - _balloons[i].y;
 
-        if (_balloons[i].innerBox.contains(p))
-            return i;
-    }
+		if (_balloons[i].innerBox.contains(p))
+			return i;
+	}
 
-    return -1;
+	return -1;
 }
 
 

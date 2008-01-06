@@ -61,14 +61,14 @@ Debugger::Debugger(Parallaction *vm)
 	: GUI::Debugger() {
 	_vm = vm;
 
-	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("location", WRAP_METHOD(Debugger, Cmd_Location));
-	DCmd_Register("give",     WRAP_METHOD(Debugger, Cmd_Give));
-	DCmd_Register("jobs",     WRAP_METHOD(Debugger, Cmd_Jobs));
-	DCmd_Register("zones",     WRAP_METHOD(Debugger, Cmd_Zones));
-	DCmd_Register("animations",     WRAP_METHOD(Debugger, Cmd_Animations));
-	DCmd_Register("localflags", WRAP_METHOD(Debugger, Cmd_LocalFlags));
-	DCmd_Register("locations", WRAP_METHOD(Debugger, Cmd_Locations));
+	DCmd_Register("continue",	WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("location",	WRAP_METHOD(Debugger, Cmd_Location));
+	DCmd_Register("give",		WRAP_METHOD(Debugger, Cmd_Give));
+	DCmd_Register("jobs",		WRAP_METHOD(Debugger, Cmd_Jobs));
+	DCmd_Register("zones",		WRAP_METHOD(Debugger, Cmd_Zones));
+	DCmd_Register("animations",	WRAP_METHOD(Debugger, Cmd_Animations));
+	DCmd_Register("localflags",	WRAP_METHOD(Debugger, Cmd_LocalFlags));
+	DCmd_Register("locations",	WRAP_METHOD(Debugger, Cmd_Locations));
 
 }
 

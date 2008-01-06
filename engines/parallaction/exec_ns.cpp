@@ -487,12 +487,12 @@ void Parallaction::displayComment(ExamineData *data) {
 		return;
 	}
 
-    int id;
+	int id;
 
 	if (data->_filename) {
-        if (data->_cnv == 0) {
-            data->_cnv = _disk->loadStatic(data->_filename);
-        }
+		if (data->_cnv == 0) {
+			data->_cnv = _disk->loadStatic(data->_filename);
+		}
 
 		_gfx->setHalfbriteMode(true);
 		_gfx->setSingleBalloon(data->_description, 0, 90, 0, 0);

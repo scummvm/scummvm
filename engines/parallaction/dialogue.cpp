@@ -54,8 +54,8 @@ class DialogueManager {
 
 	Question		*_q;
 
-    uint16          _visAnswers[5];
-    int             _numVisAnswers;
+	uint16			_visAnswers[5];
+	int			_numVisAnswers;
 
 public:
 	DialogueManager(Parallaction *vm, SpeakData *data) : _vm(vm), _data(data) {
@@ -89,19 +89,19 @@ uint16 DialogueManager::askPassword() {
 	debugC(3, kDebugExec, "checkDialoguePassword()");
 
 	uint16 passwordLen = 0;
-    _password[0] = '\0';
+	_password[0] = '\0';
 
-    _vm->_gfx->setDialogueBalloon(_q->_answers[0]->_text, 1, 3);
-    int id = _vm->_gfx->setItem(_answerer, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y);
-    _vm->_gfx->setItemFrame(id, 0);
+	_vm->_gfx->setDialogueBalloon(_q->_answers[0]->_text, 1, 3);
+	int id = _vm->_gfx->setItem(_answerer, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y);
+	_vm->_gfx->setItemFrame(id, 0);
 
-    Common::Event e;
-    bool changed = true;    // force first refresh
+	Common::Event e;
+	bool changed = true;	// force first refresh
 
 	while (true) {
-	    e.kbd.ascii = 0;
+		e.kbd.ascii = 0;
 
-        if (g_system->getEventManager()->pollEvent(e)) {
+		if (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_QUIT) {
 				// TODO: don't quit() here, just have caller routines to check
 				// on kEngineQuit and exit gracefully to allow the engine to shut down
@@ -109,41 +109,41 @@ uint16 DialogueManager::askPassword() {
 				g_system->quit();
 			}
 
-            if ((e.type == Common::EVENT_KEYDOWN) && isdigit(e.kbd.ascii)) {
-                _password[passwordLen] = e.kbd.ascii;
-                passwordLen++;
-                _password[passwordLen] = '\0';
-                changed = true;
-            }
-        }
+			if ((e.type == Common::EVENT_KEYDOWN) && isdigit(e.kbd.ascii)) {
+				_password[passwordLen] = e.kbd.ascii;
+				passwordLen++;
+				_password[passwordLen] = '\0';
+				changed = true;
+			}
+		}
 
-        if (changed) {
-            _vm->_gfx->setBalloonText(0, _q->_answers[0]->_text, 3);
-            _vm->_gfx->updateScreen();
-            changed = false;
-        }
+		if (changed) {
+			_vm->_gfx->setBalloonText(0, _q->_answers[0]->_text, 3);
+			_vm->_gfx->updateScreen();
+			changed = false;
+		}
 
-        if ((passwordLen == MAX_PASSWORD_LENGTH) || (e.kbd.ascii == Common::KEYCODE_RETURN)) {
+		if ((passwordLen == MAX_PASSWORD_LENGTH) || (e.kbd.ascii == Common::KEYCODE_RETURN)) {
 
-            if ((!scumm_stricmp(_vm->_char.getBaseName(), _doughName) && !scumm_strnicmp(_password, "1732461", 7)) ||
-                (!scumm_stricmp(_vm->_char.getBaseName(), _donnaName) && !scumm_strnicmp(_password, "1622", 4)) ||
-                (!scumm_stricmp(_vm->_char.getBaseName(), _dinoName) && !scumm_strnicmp(_password, "179", 3))) {
+			if ((!scumm_stricmp(_vm->_char.getBaseName(), _doughName) && !scumm_strnicmp(_password, "1732461", 7)) ||
+			   (!scumm_stricmp(_vm->_char.getBaseName(), _donnaName) && !scumm_strnicmp(_password, "1622", 4)) ||
+			   (!scumm_stricmp(_vm->_char.getBaseName(), _dinoName) && !scumm_strnicmp(_password, "179", 3))) {
 
-                break;
+				break;
 
-            } else {
-                passwordLen = 0;
-                _password[0] = '\0';
-                changed = true;
-            }
+			} else {
+				passwordLen = 0;
+				_password[0] = '\0';
+				changed = true;
+			}
 
 		}
 
-        g_system->delayMillis(20);
+		g_system->delayMillis(20);
 
 	}
 
-    _vm->_gfx->hideDialogueStuff();
+	_vm->_gfx->hideDialogueStuff();
 
 	return 0;
 
@@ -153,7 +153,7 @@ uint16 DialogueManager::askPassword() {
 
 bool DialogueManager::displayAnswer(uint16 i) {
 
-    Answer *a = _q->_answers[i];
+	Answer *a = _q->_answers[i];
 
 	uint32 flags = _vm->_localFlags[_vm->_currentLocationIndex];
 	if (a->_yesFlags & kFlagsGlobal)
@@ -162,12 +162,12 @@ bool DialogueManager::displayAnswer(uint16 i) {
 	// display suitable answers
 	if (((a->_yesFlags & flags) == a->_yesFlags) && ((a->_noFlags & ~flags) == a->_noFlags)) {
 
-        uint id = _vm->_gfx->setDialogueBalloon(a->_text, 1, 3);
-        assert(id >= 0);
-        _visAnswers[id] = i;
+		uint id = _vm->_gfx->setDialogueBalloon(a->_text, 1, 3);
+		assert(id >= 0);
+		_visAnswers[id] = i;
 
-        _askPassword = strstr(a->_text, "%p");
-        _numVisAnswers++;
+		_askPassword = strstr(a->_text, "%p");
+		_numVisAnswers++;
 
 		return true;
 	}
@@ -177,7 +177,7 @@ bool DialogueManager::displayAnswer(uint16 i) {
 
 bool DialogueManager::displayAnswers() {
 
-    _numVisAnswers = 0;
+	_numVisAnswers = 0;
 
 	for (int i = 0; i < NUM_ANSWERS && _q->_answers[i]; i++) {
 		displayAnswer(i);
@@ -190,13 +190,13 @@ void DialogueManager::displayQuestion() {
 
 	if (!scumm_stricmp(_q->_text, "NULL")) return;
 
-    _vm->_gfx->setSingleBalloon(_q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, _q->_mood & 0x10, 0);
-    int id = _vm->_gfx->setItem(_questioner, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y);
-    _vm->_gfx->setItemFrame(id, _q->_mood & 0xF);
+	_vm->_gfx->setSingleBalloon(_q->_text, QUESTION_BALLOON_X, QUESTION_BALLOON_Y, _q->_mood & 0x10, 0);
+	int id = _vm->_gfx->setItem(_questioner, QUESTION_CHARACTER_X, QUESTION_CHARACTER_Y);
+	_vm->_gfx->setItemFrame(id, _q->_mood & 0xF);
 
-    _vm->_gfx->updateScreen();
+	_vm->_gfx->updateScreen();
 	waitUntilLeftClick();
-    _vm->_gfx->hideDialogueStuff();
+	_vm->_gfx->hideDialogueStuff();
 
 	return;
 }
@@ -249,46 +249,46 @@ int16 DialogueManager::selectAnswer() {
 
 	int16 numAvailableAnswers = _numVisAnswers;
 
-    int id = _vm->_gfx->setItem(_answerer, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y);
-    _vm->_gfx->setItemFrame(id, _q->_answers[0]->_mood & 0xF);
+	int id = _vm->_gfx->setItem(_answerer, ANSWER_CHARACTER_X, ANSWER_CHARACTER_Y);
+	_vm->_gfx->setItemFrame(id, _q->_answers[0]->_mood & 0xF);
 
 	if (numAvailableAnswers == 1) {
-	    _vm->_gfx->setBalloonText(0, _q->_answers[0]->_text, 0);
+		_vm->_gfx->setBalloonText(0, _q->_answers[0]->_text, 0);
 		waitUntilLeftClick();
-	    _vm->_gfx->hideDialogueStuff();
+		_vm->_gfx->hideDialogueStuff();
 		return 0;
 	}
 
 	int oldSelection = -1;
 	int selection;
 
-    while (true) {
+	while (true) {
 
 		_vm->readInput();
 		selection = _vm->_gfx->hitTestDialogueBalloon(_vm->_mousePos.x, _vm->_mousePos.y);
 
-        if (selection != oldSelection) {
-            if (oldSelection != -1) {
-                _vm->_gfx->setBalloonText(oldSelection, _q->_answers[_visAnswers[oldSelection]]->_text, 3);
-            }
+		if (selection != oldSelection) {
+			if (oldSelection != -1) {
+				_vm->_gfx->setBalloonText(oldSelection, _q->_answers[_visAnswers[oldSelection]]->_text, 3);
+			}
 
-            if (selection != -1) {
-                _vm->_gfx->setBalloonText(selection, _q->_answers[_visAnswers[selection]]->_text, 0);
-                _vm->_gfx->setItemFrame(0, _q->_answers[_visAnswers[selection]]->_mood & 0xF);
-            }
-        }
+			if (selection != -1) {
+				_vm->_gfx->setBalloonText(selection, _q->_answers[_visAnswers[selection]]->_text, 0);
+				_vm->_gfx->setItemFrame(0, _q->_answers[_visAnswers[selection]]->_mood & 0xF);
+			}
+		}
 
-        if ((selection != -1) && (_mouseButtons == kMouseLeftUp)) {
-            break;
-        }
+		if ((selection != -1) && (_mouseButtons == kMouseLeftUp)) {
+			break;
+		}
 
 		_vm->_gfx->updateScreen();
 		g_system->delayMillis(20);
 
-        oldSelection = selection;
-    }
+		oldSelection = selection;
+	}
 
-    _vm->_gfx->hideDialogueStuff();
+	_vm->_gfx->hideDialogueStuff();
 
 	return _visAnswers[selection];
 }

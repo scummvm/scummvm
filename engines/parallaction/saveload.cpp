@@ -39,8 +39,8 @@
  * A special savefile named 'nippon.999' holds information on whether the user completed one or more parts of the game.
  */
 
-#define NUM_SAVESLOTS       100
-#define SPECIAL_SAVESLOT    999
+#define NUM_SAVESLOTS		100
+#define SPECIAL_SAVESLOT	999
 
 namespace Parallaction {
 
@@ -74,22 +74,22 @@ public:
 };
 
 Common::String Parallaction_ns::genSaveFileName(uint slot, bool oldStyle) {
-    assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
+	assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
 
-    char s[20];
-    sprintf(s, (oldStyle ? "game.%i" : "nippon.%.3d"), slot );
+	char s[20];
+	sprintf(s, (oldStyle ? "game.%i" : "nippon.%.3d"), slot );
 
-    return Common::String(s);
+	return Common::String(s);
 }
 
 Common::InSaveFile *Parallaction_ns::getInSaveFile(uint slot) {
-    Common::String name = genSaveFileName(slot);
-    return _saveFileMan->openForLoading(name.c_str());
+	Common::String name = genSaveFileName(slot);
+	return _saveFileMan->openForLoading(name.c_str());
 }
 
 Common::OutSaveFile *Parallaction_ns::getOutSaveFile(uint slot) {
-    Common::String name = genSaveFileName(slot);
-    return _saveFileMan->openForSaving(name.c_str());
+	Common::String name = genSaveFileName(slot);
+	return _saveFileMan->openForSaving(name.c_str());
 }
 
 
@@ -102,7 +102,7 @@ void Parallaction_ns::doLoadGame(uint16 slot) {
 	_introSarcData3 = 200;
 	_introSarcData2 = 1;
 
-    Common::InSaveFile *f = getInSaveFile(slot);
+	Common::InSaveFile *f = getInSaveFile(slot);
 	if (!f) return;
 
 	char s[200];
@@ -344,7 +344,7 @@ int Parallaction_ns::buildSaveFileList(Common::StringList& l) {
 	for (int i = 0; i < NUM_SAVESLOTS; i++) {
 		buf[0] = '\0';
 
-	    Common::InSaveFile *f = getInSaveFile(i);
+		Common::InSaveFile *f = getInSaveFile(i);
 		if (f) {
 			f->readLine(buf, 199);
 			delete f;
@@ -419,102 +419,102 @@ bool Parallaction_ns::saveGame() {
 
 
 void Parallaction_ns::setPartComplete(const Character& character) {
-    char buf[30];
-    bool alreadyPresent = false;
+	char buf[30];
+	bool alreadyPresent = false;
 
-    memset(buf, 0, sizeof(buf));
+	memset(buf, 0, sizeof(buf));
 
-    Common::InSaveFile *inFile = getInSaveFile(SPECIAL_SAVESLOT);
-    if (inFile) {
-        inFile->readLine(buf, 29);
-        delete inFile;
+	Common::InSaveFile *inFile = getInSaveFile(SPECIAL_SAVESLOT);
+	if (inFile) {
+		inFile->readLine(buf, 29);
+		delete inFile;
 
-        if (strstr(buf, character.getBaseName())) {
-            alreadyPresent = true;
-        }
-    }
+		if (strstr(buf, character.getBaseName())) {
+			alreadyPresent = true;
+		}
+	}
 
-    if (!alreadyPresent) {
-        Common::OutSaveFile *outFile = getOutSaveFile(SPECIAL_SAVESLOT);
-        outFile->writeString(buf);
-        outFile->writeString(character.getBaseName());
-        outFile->finalize();
-        delete outFile;
-    }
+	if (!alreadyPresent) {
+		Common::OutSaveFile *outFile = getOutSaveFile(SPECIAL_SAVESLOT);
+		outFile->writeString(buf);
+		outFile->writeString(character.getBaseName());
+		outFile->finalize();
+		delete outFile;
+	}
 
-    return;
+	return;
 }
 
 bool Parallaction_ns::allPartsComplete() {
-    char buf[30];
+	char buf[30];
 
-    Common::InSaveFile *inFile = getInSaveFile(SPECIAL_SAVESLOT);
-    inFile->readLine(buf, 29);
-    delete inFile;
+	Common::InSaveFile *inFile = getInSaveFile(SPECIAL_SAVESLOT);
+	inFile->readLine(buf, 29);
+	delete inFile;
 
-    return strstr(buf, "dino") && strstr(buf, "donna") && strstr(buf, "dough");
+	return strstr(buf, "dino") && strstr(buf, "donna") && strstr(buf, "dough");
 }
 
 void Parallaction_ns::renameOldSavefiles() {
 
-    bool exists[NUM_SAVESLOTS];
-    uint num = 0;
-    uint i;
+	bool exists[NUM_SAVESLOTS];
+	uint num = 0;
+	uint i;
 
-    for (i = 0; i < NUM_SAVESLOTS; i++) {
-        exists[i] = false;
-        Common::String name = genSaveFileName(i, true);
-        Common::InSaveFile *f = _saveFileMan->openForLoading(name.c_str());
-        if (f) {
-            exists[i] = true;
-            num++;
-        }
-        delete f;
-    }
+	for (i = 0; i < NUM_SAVESLOTS; i++) {
+		exists[i] = false;
+		Common::String name = genSaveFileName(i, true);
+		Common::InSaveFile *f = _saveFileMan->openForLoading(name.c_str());
+		if (f) {
+			exists[i] = true;
+			num++;
+		}
+		delete f;
+	}
 
-    if (num == 0) {
-        // there are no old savefiles: nothing to do
-        return;
-    }
+	if (num == 0) {
+		// there are no old savefiles: nothing to do
+		return;
+	}
 
-    GUI::MessageDialog dialog0(
-        "ScummVM found that you have old savefiles for Nippon Safes that should be renamed.\n"
-        "The old names are no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
-        "Press OK to convert them now, otherwise you will be asked you next time.\n", "OK", "Cancel");
+	GUI::MessageDialog dialog0(
+		"ScummVM found that you have old savefiles for Nippon Safes that should be renamed.\n"
+		"The old names are no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
+		"Press OK to convert them now, otherwise you will be asked you next time.\n", "OK", "Cancel");
 
-    int choice = dialog0.runModal();
-    if (choice == 0) {
-        // user pressed cancel
-        return;
-    }
+	int choice = dialog0.runModal();
+	if (choice == 0) {
+		// user pressed cancel
+		return;
+	}
 
-    uint success = 0;
-    for (i = 0; i < NUM_SAVESLOTS; i++) {
-        if (exists[i]) {
-            Common::String oldName = genSaveFileName(i, true);
-            Common::String newName = genSaveFileName(i, false);
-            if (_saveFileMan->renameSavefile(oldName.c_str(), newName.c_str())) {
-                success++;
-            } else {
-                warning("Error %i (%s) occurred while renaming %s to %s", _saveFileMan->getError(),
-                    _saveFileMan->getErrorDesc().c_str(), oldName.c_str(), newName.c_str());
-            }
-        }
-    }
+	uint success = 0;
+	for (i = 0; i < NUM_SAVESLOTS; i++) {
+		if (exists[i]) {
+			Common::String oldName = genSaveFileName(i, true);
+			Common::String newName = genSaveFileName(i, false);
+			if (_saveFileMan->renameSavefile(oldName.c_str(), newName.c_str())) {
+				success++;
+			} else {
+				warning("Error %i (%s) occurred while renaming %s to %s", _saveFileMan->getError(),
+					_saveFileMan->getErrorDesc().c_str(), oldName.c_str(), newName.c_str());
+			}
+		}
+	}
 
-    char msg[200];
-    if (success == num) {
-        sprintf(msg, "ScummVM successfully converted all your savefiles.");
-    } else {
-        sprintf(msg,
-            "ScummVM printed some warnings in your console window and can't guarantee all your files have been converted.\n\n"
-            "Please report to the team.");
-    }
+	char msg[200];
+	if (success == num) {
+		sprintf(msg, "ScummVM successfully converted all your savefiles.");
+	} else {
+		sprintf(msg,
+			"ScummVM printed some warnings in your console window and can't guarantee all your files have been converted.\n\n"
+			"Please report to the team.");
+	}
 
-    GUI::MessageDialog dialog1(msg);
-    dialog1.runModal();
+	GUI::MessageDialog dialog1(msg);
+	dialog1.runModal();
 
-    return;
+	return;
 }
 
 

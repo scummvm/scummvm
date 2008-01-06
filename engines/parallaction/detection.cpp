@@ -124,12 +124,12 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			"nippon",
 			"",
 			{
-				{"disk0", 	0, "bfee75d8015f1fb97e75dbe08df4bef7", 354304},
-				{"disk1", 	0, "f339dd108c1a1f5cd4853d9966e5d01f", 901120},
-				{"disk2", 	0, "2db40bf8198a57d18e4471a6deaab970", 901120},
-				{"disk3", 	0, "0486972962b2bfc230e789b9f88f9ec8", 901120},
-				{"disk4", 	0, "6f625e7f05da4a2f57d6b62d57013614", 901120},
-				{"it", 		0, "746088eb8de2b2713685d243a4e4678f", 185344},
+				{ "disk0", 	0, "bfee75d8015f1fb97e75dbe08df4bef7", 354304},
+				{ "disk1", 	0, "f339dd108c1a1f5cd4853d9966e5d01f", 901120},
+				{ "disk2", 	0, "2db40bf8198a57d18e4471a6deaab970", 901120},
+				{ "disk3", 	0, "0486972962b2bfc230e789b9f88f9ec8", 901120},
+				{ "disk4", 	0, "6f625e7f05da4a2f57d6b62d57013614", 901120},
+				{ "it",		0, "746088eb8de2b2713685d243a4e4678f", 185344},
 				{ NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,
@@ -145,9 +145,9 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			"bra",
 			"Multi-lingual",
 			{
-				{"tbra.bmp",     0, "3174c095a0e1a4eaf05c403445711e9b", 80972 },
-				{"russia.fnt",   0, "57f85ff62aeca6334fdcaf718e313b49", 18344 },
-				{NULL,   0, NULL, 0 }
+				{ "tbra.bmp",	0, "3174c095a0e1a4eaf05c403445711e9b", 80972 },
+				{ "russia.fnt",	0, "57f85ff62aeca6334fdcaf718e313b49", 18344 },
+				{ NULL, 0, NULL, 0}
 			},
 			Common::UNK_LANG,
 			Common::kPlatformPC,

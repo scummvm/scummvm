@@ -160,7 +160,7 @@ void Parallaction_ns::freeFonts() {
 	delete _dialogueFont;
 	delete _labelFont;
 	delete _menuFont;
-    delete _introFont;
+	delete _introFont;
 
 }
 
@@ -248,7 +248,7 @@ void Parallaction_ns::callFunction(uint index, void* parm) {
 
 
 int Parallaction_ns::go() {
-    renameOldSavefiles();
+	renameOldSavefiles();
 
 	_globalTable = _disk->loadTable("global");
 
@@ -372,8 +372,8 @@ void Parallaction_ns::changeLocation(char *location) {
 	_gfx->setBlackPalette();
 	_gfx->updateScreen();
 
-    // BUG #1837503: kEngineChangeLocation flag must be cleared *before* commands
-    // and acommands are executed, so that it can be set again if needed.
+	// BUG #1837503: kEngineChangeLocation flag must be cleared *before* commands
+	// and acommands are executed, so that it can be set again if needed.
 	_engineFlags &= ~kEngineChangeLocation;
 
 	runCommands(_location._commands);
@@ -412,9 +412,9 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	if (!_char.dummy()) {
 		if (getPlatform() == Common::kPlatformAmiga) {
 			_disk->selectArchive("disk0");
-        } else {
+		} else {
 			_disk->selectArchive("disk1");
-        }
+		}
 
 		_char._head = _disk->loadHead(_char.getBaseName());
 		_char._talk = _disk->loadTalk(_char.getBaseName());

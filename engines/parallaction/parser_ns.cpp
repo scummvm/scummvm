@@ -689,14 +689,14 @@ Dialogue *Parallaction_ns::parseDialogue(Script &script) {
 	while (scumm_stricmp(_tokens[0], "enddialogue")) {
 		if (scumm_stricmp(_tokens[0], "Question")) continue;
 
-        forwards.addData(_tokens[1]);
+		forwards.addData(_tokens[1]);
 
-        dialogue->_questions[numQuestions++] = parseQuestion(script);
+		dialogue->_questions[numQuestions++] = parseQuestion(script);
 
 		script.readLineToken(true);
 	}
 
-    resolveDialogueForwards(dialogue, numQuestions, forwards);
+	resolveDialogueForwards(dialogue, numQuestions, forwards);
 
 	debugC(7, kDebugParser, "parseDialogue() done");
 
@@ -705,80 +705,80 @@ Dialogue *Parallaction_ns::parseDialogue(Script &script) {
 
 Question *Parallaction_ns::parseQuestion(Script &script) {
 
-    Question *question = new Question;
-    assert(question);
+	Question *question = new Question;
+	assert(question);
 
-    question->_text = parseDialogueString(script);
+	question->_text = parseDialogueString(script);
 
-    script.readLineToken(true);
-    question->_mood = atoi(_tokens[0]);
+	script.readLineToken(true);
+	question->_mood = atoi(_tokens[0]);
 
-    uint16 numAnswers = 0;
+	uint16 numAnswers = 0;
 
-    script.readLineToken(true);
-    while (scumm_stricmp(_tokens[0], "endquestion")) {	// parse answers
-        question->_answers[numAnswers] = parseAnswer(script);
-        numAnswers++;
-    }
+	script.readLineToken(true);
+	while (scumm_stricmp(_tokens[0], "endquestion")) {	// parse answers
+		question->_answers[numAnswers] = parseAnswer(script);
+		numAnswers++;
+	}
 
-    return question;
+	return question;
 }
 
 Answer *Parallaction_ns::parseAnswer(Script &script) {
 
-    Answer *answer = new Answer;
-    assert(answer);
+	Answer *answer = new Answer;
+	assert(answer);
 
-    if (_tokens[1][0]) {
+	if (_tokens[1][0]) {
 
-        Table* flagNames;
-        uint16 token;
+		Table* flagNames;
+		uint16 token;
 
-        if (!scumm_stricmp(_tokens[1], "global")) {
-            token = 2;
-            flagNames = _globalTable;
-            answer->_yesFlags |= kFlagsGlobal;
-        } else {
-            token = 1;
-            flagNames = _localFlagNames;
-        }
+		if (!scumm_stricmp(_tokens[1], "global")) {
+			token = 2;
+			flagNames = _globalTable;
+			answer->_yesFlags |= kFlagsGlobal;
+		} else {
+			token = 1;
+			flagNames = _localFlagNames;
+		}
 
-        do {
+		do {
 
-            if (!scumm_strnicmp(_tokens[token], "no", 2)) {
-                byte _al = flagNames->lookup(_tokens[token]+2);
-                answer->_noFlags |= 1 << (_al - 1);
-            } else {
-                byte _al = flagNames->lookup(_tokens[token]);
-                answer->_yesFlags |= 1 << (_al - 1);
-            }
+			if (!scumm_strnicmp(_tokens[token], "no", 2)) {
+				byte _al = flagNames->lookup(_tokens[token]+2);
+				answer->_noFlags |= 1 << (_al - 1);
+			} else {
+				byte _al = flagNames->lookup(_tokens[token]);
+				answer->_yesFlags |= 1 << (_al - 1);
+			}
 
-            token++;
+			token++;
 
-        } while (!scumm_stricmp(_tokens[token++], "|"));
+		} while (!scumm_stricmp(_tokens[token++], "|"));
 
-    }
+	}
 
-    answer->_text = parseDialogueString(script);
+	answer->_text = parseDialogueString(script);
 
-    script.readLineToken(true);
-    answer->_mood = atoi(_tokens[0]);
-    answer->_following._name = parseDialogueString(script);
+	script.readLineToken(true);
+	answer->_mood = atoi(_tokens[0]);
+	answer->_following._name = parseDialogueString(script);
 
-    script.readLineToken(true);
-    if (!scumm_stricmp(_tokens[0], "commands")) {
+	script.readLineToken(true);
+	if (!scumm_stricmp(_tokens[0], "commands")) {
 
-        parseCommands(script, answer->_commands);
-        _locParseCtxt.endcommands = false;
-        do {
-            script.readLineToken(true);
-            parseStatement();
-        } while (!_locParseCtxt.endcommands);
+		parseCommands(script, answer->_commands);
+		_locParseCtxt.endcommands = false;
+		do {
+			script.readLineToken(true);
+			parseStatement();
+		} while (!_locParseCtxt.endcommands);
 
-        script.readLineToken(true);
-    }
+		script.readLineToken(true);
+	}
 
-    return answer;
+	return answer;
 }
 
 void Parallaction_ns::resolveDialogueForwards(Dialogue *dialogue, uint numQuestions, Table &forwards) {
@@ -964,7 +964,7 @@ DECLARE_LOCATION_PARSER(music)  {
 
 
 void Parallaction_ns::parseLocation(const char *filename) {
-    debugC(1, kDebugParser, "parseLocation('%s')", filename);
+	debugC(1, kDebugParser, "parseLocation('%s')", filename);
 
 	allocateLocationSlot(filename);
 //	printf("got location slot #%i for %s\n", _currentLocationIndex, filename);
