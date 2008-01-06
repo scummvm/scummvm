@@ -321,8 +321,6 @@ void IMuseDigital::callback() {
 						curFeedSize = feedSize;
 
 					if (_mixer->isReady()) {
-						_mixer->setChannelVolume(track->mixChanHandle, track->getVol());
-						_mixer->setChannelBalance(track->mixChanHandle, track->getPan());
 						track->stream->queueBuffer(tmpSndBufferPtr, curFeedSize);
 						track->regionOffset += curFeedSize;
 					} else
@@ -336,11 +334,10 @@ void IMuseDigital::callback() {
 					feedSize -= curFeedSize;
 					assert(feedSize >= 0);
 				} while (feedSize != 0);
-			} else {
-				if (_mixer->isReady()) {
-					_mixer->setChannelVolume(track->mixChanHandle, track->getVol());
-					_mixer->setChannelBalance(track->mixChanHandle, track->getPan());
-				}
+			}
+			if (_mixer->isReady()) {
+				_mixer->setChannelVolume(track->mixChanHandle, track->getVol());
+				_mixer->setChannelBalance(track->mixChanHandle, track->getPan());
 			}
 		}
 	}
