@@ -162,7 +162,7 @@ bool DialogueManager::displayAnswer(uint16 i) {
 	// display suitable answers
 	if (((a->_yesFlags & flags) == a->_yesFlags) && ((a->_noFlags & ~flags) == a->_noFlags)) {
 
-		uint id = _vm->_gfx->setDialogueBalloon(a->_text, 1, 3);
+		int id = _vm->_gfx->setDialogueBalloon(a->_text, 1, 3);
 		assert(id >= 0);
 		_visAnswers[id] = i;
 
