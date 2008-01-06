@@ -50,6 +50,7 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 iphonebundle: $(srcdir)/dists/iphone/Info.plist
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
+	cp $(srcdir)/dists/pred.dic $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
 	cp scummvm $(bundle_name)/ScummVM
@@ -164,6 +165,7 @@ aos4dist: scummvm
 	mkdir -p $(AOS4PATH)
 	strip -R.comment $< -o $(AOS4PATH)/$<
 	cp $(srcdir)/icons/scummvm.info $(AOS4PATH)/$<.info
+	cp $(srcdir)/dists/pred.dic $(AOS4PATH)
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)
 	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)
 	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
