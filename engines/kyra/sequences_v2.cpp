@@ -420,7 +420,7 @@ int KyraEngine_v2::seq_introOverview(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 
 		case 354:
 		case 434:
-			if (!((_seqFrameCounter == 354 && !_flags.isTalkie) || (_seqFrameCounter == 434 && _flags.isTalkie)))
+			if (!((_seqFrameCounter == 354 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 434 && _flags.platform == Common::kPlatformPC)))
 				break;
 
 			seq_resetActiveWSA(0);
@@ -429,7 +429,7 @@ int KyraEngine_v2::seq_introOverview(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 
 		case 400:
 		case 540:
-			if (!((_seqFrameCounter == 400 && !_flags.isTalkie) || (_seqFrameCounter == 540 && _flags.isTalkie)))
+			if (!((_seqFrameCounter == 400 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 540 && _flags.platform == Common::kPlatformPC)))
 				break;
 
 			seq_waitForTextsTimeout();
@@ -503,7 +503,7 @@ int KyraEngine_v2::seq_introLibrary(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 		case 480:
 		case 660:
-			if (!((_seqFrameCounter == 480 && !_flags.isTalkie) || (_seqFrameCounter == 660 && _flags.isTalkie)))
+			if (!((_seqFrameCounter == 480 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 660 && _flags.platform == Common::kPlatformPC)))
 				break;
 
 			_screen->copyPage(2, 12);
@@ -560,7 +560,7 @@ int KyraEngine_v2::seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 		case 260:
 		case 395:
-			if (!((_seqFrameCounter == 260 && !_flags.isTalkie) || (_seqFrameCounter == 395 && _flags.isTalkie)))
+			if (!((_seqFrameCounter == 260 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 395 && _flags.platform == Common::kPlatformPC)))
 				break;
 
 			seq_waitForTextsTimeout();
@@ -571,7 +571,7 @@ int KyraEngine_v2::seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 		case 365:
 		case 500:
-			if (!((_seqFrameCounter == 365 && !_flags.isTalkie) || (_seqFrameCounter == 500 && _flags.isTalkie)))
+			if (!((_seqFrameCounter == 365 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 500 && _flags.platform == Common::kPlatformPC)))
 				break;
 
 			seq_waitForTextsTimeout();
@@ -581,7 +581,7 @@ int KyraEngine_v2::seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 		case 405:
 		case 540:
-			if (!((_seqFrameCounter == 405 && !_flags.isTalkie) || (_seqFrameCounter == 540 && _flags.isTalkie)))
+			if (!((_seqFrameCounter == 405 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 540 && _flags.platform == Common::kPlatformPC)))
 				break;
 
 			seq_playTalkText(10);
@@ -589,7 +589,7 @@ int KyraEngine_v2::seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 		case 484:
 		case 630:
-			if (!((_seqFrameCounter == 484 && !_flags.isTalkie) || (_seqFrameCounter == 630 && _flags.isTalkie)))
+			if (!((_seqFrameCounter == 484 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 630 && _flags.platform == Common::kPlatformPC)))
 				break;
 
 			seq_waitForTextsTimeout();
@@ -660,7 +660,7 @@ int KyraEngine_v2::seq_introZanfaun(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			if (_flags.isTalkie) {
 				seq_playWsaSyncDialogue(21, 13, -1, 140, 70, 160, wsaObj, 0, 8, x, y);
 			} else {
-				seq_setTextEntry(21, 140, 70, 20, 160);
+				seq_setTextEntry(21, 140, 70, 200, 160);
 				_seqFrameDelay = 200;
 			}
 			break;
@@ -699,12 +699,12 @@ int KyraEngine_v2::seq_introZanfaun(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 		case 20:
 			if (!_flags.isTalkie) {
-				seq_setTextEntry(18, 160, 50, _sequenceStringsDuration[17], 160);
+				seq_waitForTextsTimeout();
+				seq_setTextEntry(18, 160, 50, _sequenceStringsDuration[18], 160);
 				_seqFrameDelay = 200;
 			}
 			break;
 
-		case 19:
 		case 26:
 			seq_waitForTextsTimeout();
 			break;
@@ -838,22 +838,16 @@ int KyraEngine_v2::seq_finaleFunters(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 			_seqTextColor[0] = 1;
 
 			if (_flags.isTalkie) {
-				if (_flags.lang == Common::FR_FRA) {
-					chatX = 84;
-					chatY = 70;
-				} else {
-					chatX = 88;
-					chatY = 78;
-				}
+				chatY = (_flags.lang == Common::FR_FRA) ? 70 : 78;
 				chatFirstFrame = 9;
 				chatLastFrame = 15;
 				voiceIndex = 34;
 			} else {
-				chatX = 88;
-				chatY = 70;
+				chatY = (_flags.lang == Common::FR_FRA) ? 78 : 70;
 				chatFirstFrame = 0;
 				chatLastFrame = 8;
 			}
+			chatX = (_flags.lang == Common::FR_FRA) ? 84 : 88;
 			chatW = 100;
 
 			seq_playWsaSyncDialogue(22, voiceIndex, 187, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
@@ -866,20 +860,19 @@ int KyraEngine_v2::seq_finaleFunters(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 
 			_seqFrameDelay = 12;
 
+			if (_flags.lang == Common::FR_FRA) {
+				chatX = 80;
+				chatW = 112;
+			} else {
+				chatX = (_flags.lang == Common::DE_DEU) ? 84 : 96;
+				chatW = 100;
+			}
+
 			if (_flags.isTalkie) {
-				if (_flags.lang == Common::FR_FRA) {
-					chatW = 112;
-					chatX = 80;
-				} else {
-					chatW = 100;
-					chatX = (_flags.lang == Common::DE_DEU) ? 84 : 96;
-				}
 				chatFirstFrame = 0;
 				chatLastFrame = 8;
 				voiceIndex = 35;
-			} else {
-				chatX = 96;
-				chatW = 100;
+			} else {				
 				chatFirstFrame = 9;
 				chatLastFrame = 15;
 			}
@@ -958,20 +951,17 @@ int KyraEngine_v2::seq_finaleFerb(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			seq_playTalkText(_flags.isTalkie ? 23 : 19);
 			_seqFrameDelay = _flags.isTalkie ? 20 : 16;
 
-			if (_flags.isTalkie) {
-				if (_flags.lang == Common::FR_FRA) {
-					chatY = 48;
-					chatW = 88;
-				} else {
-					chatY = 60;
-					chatW = 100;
-				}
-				voiceIndex = 36;
+			if (_flags.lang == Common::FR_FRA) {
+				chatY = 48;
+				chatW = 88;
 			} else {
 				chatY = 60;
 				chatW = 100;
 			}
 			chatX = 60;
+
+			if (_flags.isTalkie)
+				voiceIndex = 36;			
 
 			seq_playWsaSyncDialogue(25, voiceIndex, 143, chatX, chatY, chatW, wsaObj, 16, 25, x, y);
 			_seqFrameDelay = 16;
@@ -1033,20 +1023,15 @@ int KyraEngine_v2::seq_finaleFish(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			break;
 
 		case 29:
-			if (_flags.isTalkie) {
-				if (_flags.lang == Common::DE_DEU) {
-					chatX = 82;
-					chatY = 35;
-				} else {
-					chatX = (_flags.lang == Common::FR_FRA) ? 92 : 88;
-					chatY = 40;
-				}
-				voiceIndex = 38;
-			} else {
-				chatX = 88;
-				chatY = 40;
-			}
+			chatX = (_flags.lang == Common::DE_DEU) ? 82 : ((_flags.lang == Common::FR_FRA) ? 92 : 88);
+			chatY = 40;
 			chatW = 100;
+
+			if (_flags.isTalkie) {
+				if (_flags.lang == Common::DE_DEU)
+					chatY = 35;
+				voiceIndex = 38;
+			}
 
 			seq_playWsaSyncDialogue(27, voiceIndex, 187, chatX, chatY, chatW, wsaObj, 28, 34, x, y);
 			break;
@@ -1113,20 +1098,19 @@ int KyraEngine_v2::seq_finaleFheep(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 		case 2:
 			seq_playTalkText(_flags.isTalkie ? 25 : 21);
 
+			if (_flags.lang == Common::FR_FRA) {
+				chatX = 92;
+				chatY = 72;
+			} else {
+				chatX = (_flags.lang == Common::DE_DEU) ? 90 : 98;
+				chatY = 84;
+			}
+
 			if (_flags.isTalkie) {
-				if (_flags.lang == Common::FR_FRA) {
-					chatX = 92;
-					chatY = 72;
-				} else {
-					chatX = (_flags.lang == Common::DE_DEU) ? 90 : 98;
-					chatY = 84;
-				}
 				chatFirstFrame = 8;
 				chatLastFrame = 9;
 				voiceIndex = 39;
 			} else {
-				chatX = 98;
-				chatY = 84;
 				chatFirstFrame = 2;
 				chatLastFrame = -8;
 			}
@@ -1197,20 +1181,17 @@ int KyraEngine_v2::seq_finaleFarmer(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			if (!_flags.isTalkie)
 				seq_playTalkText(14);
 
+			chatX = 90;
+			chatY = 30;
+			chatW = 100;
+			
 			if (_flags.isTalkie) {
 				if (_flags.lang == Common::FR_FRA || _flags.lang == Common::DE_DEU) {
 					chatX = 75;
 					chatY = 25;
-				} else {
-					chatX = 90;
-					chatY = 30;
 				}
 				voiceIndex = 40;
-			} else {
-				chatX = 90;
-				chatY = 30;
 			}
-			chatW = 100;
 
 			seq_playWsaSyncDialogue(29, voiceIndex, 150, chatX, chatY, chatW, wsaObj, 12, -21, x, y);
 			break;
@@ -1271,18 +1252,17 @@ int KyraEngine_v2::seq_finaleFuards(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 			if (_flags.isTalkie) {
 				chatX = 82;
-				chatY = (_flags.lang == Common::FR_FRA || _flags.lang == Common::DE_DEU) ? 88 :100;
 				textCol = 143;
 				chatFirstFrame = 16;
 				chatLastFrame = 21;
 				voiceIndex = 41;
 			} else {
 				chatX = 62;
-				chatY = 100;
 				textCol = 137;
 				chatFirstFrame = 9;
 				chatLastFrame = 13;
 			}
+			chatY = (_flags.lang == Common::FR_FRA || _flags.lang == Common::DE_DEU) ? 88 :100;
 			chatW = 80;
 
 			seq_playWsaSyncDialogue(30, voiceIndex, 137, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
@@ -1369,23 +1349,19 @@ int KyraEngine_v2::seq_finaleFirates(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 
 			seq_playTalkText(_flags.isTalkie ? 31 : 27);
 
-			if (_flags.isTalkie) {
-				if (_flags.lang == Common::DE_DEU) {
-					chatX = 82;
-					chatY = 84;
-					chatW = 140;
-				} else {
-					chatX = 74;
-					chatY = (_flags.lang == Common::FR_FRA) ? 96: 108;
-					chatW = 80;
-				}
-				voiceIndex = 43;
+			if (_flags.lang == Common::DE_DEU) {
+				chatX = 82;
+				chatY = 84;
+				chatW = 140;
 			} else {
 				chatX = 74;
-				chatY = 108;
+				chatY = (_flags.lang == Common::FR_FRA) ? 96: 108;
 				chatW = 80;
 			}
 
+			if (_flags.isTalkie)
+				voiceIndex = 43;
+			
 			seq_playWsaSyncDialogue(32, voiceIndex, 137, chatX, chatY, chatW, wsaObj, 14, 16, x, y);
 			break;
 
@@ -1398,13 +1374,11 @@ int KyraEngine_v2::seq_finaleFirates(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 			break;
 
 		case 31:
-			if (_flags.isTalkie) {
-				chatY = (_flags.lang == Common::DE_DEU) ? 60 : 76;
+			if (_flags.isTalkie)				
 				voiceIndex = 44;
-			} else {
-				chatY = 76;
-			}
+
 			chatX = 90;
+			chatY = (_flags.lang == Common::DE_DEU) ? 60 : 76;
 			chatW = 80;
 
 			seq_playWsaSyncDialogue(33, voiceIndex, 143, chatX, chatY, chatW, wsaObj, 31, 34, x, y);
@@ -1440,7 +1414,6 @@ int KyraEngine_v2::seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			// if (_flags.isTalkie)
 			//	 seq_finaleActorScreen();
 			_seqSpecialFlag = _flags.isTalkie;
-			_seqRandomizeBase = 1;
 			break;
 
 		case 0:
@@ -1458,7 +1431,7 @@ int KyraEngine_v2::seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			if (_seqFrameCounter < 20 && _seqSpecialFlag) {
 				_seqWsaCurrentFrame = 0;
 			} else {
-				_seqFrameDelay = _flags.isTalkie ? 500 : (300 + seq_generateFixedRandomValue(1, 300));
+				_seqFrameDelay = _flags.isTalkie ? 500 : (300 + _rnd.getRandomNumberRng(1, 300));
 				seq_playTalkText(_flags.isTalkie ? 26 : 22);
 				if (_seqSpecialFlag) {
 					_seqFrameCounter = 3;
@@ -1473,7 +1446,7 @@ int KyraEngine_v2::seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 		case 3:
 			seq_playTalkText(_flags.isTalkie ? 27 : 23);
-			_seqFrameDelay = _flags.isTalkie ? 500 : (300 + seq_generateFixedRandomValue(1, 300));
+			_seqFrameDelay = _flags.isTalkie ? 500 : (300 + _rnd.getRandomNumberRng(1, 300));
 			break;
 
 		case 4:
@@ -1484,9 +1457,9 @@ int KyraEngine_v2::seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			seq_playTalkText(_flags.isTalkie ? 27 : 23);
 			tmp = _seqFrameCounter / 6;
 			if (tmp == 2)
-				_seqFrameDelay = _flags.isTalkie ? 7 : (1 + seq_generateFixedRandomValue(1, 10));
+				_seqFrameDelay = _flags.isTalkie ? 7 : (1 + _rnd.getRandomNumberRng(1, 10));
 			else if (tmp < 2)
-				_seqFrameDelay = _flags.isTalkie ? 500 : (300 + seq_generateFixedRandomValue(1, 300));
+				_seqFrameDelay = _flags.isTalkie ? 500 : (300 + _rnd.getRandomNumberRng(1, 300));
 			break;
 
 		case 6:
@@ -2125,20 +2098,6 @@ void KyraEngine_v2::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, in
 		curframe++;
 
 	_seqWsaCurrentFrame = curframe;
-}
-
-int KyraEngine_v2::seq_generateFixedRandomValue(int rangeFirst, int rangeLast) {
-	int result = 0;
-	if (rangeFirst > rangeFirst)
-		SWAP(rangeFirst, rangeLast);
-	int range = (rangeLast - rangeFirst) + 1;
-
-	do {
-		_seqRandomizeBase = _seqRandomizeBase * 1103515245 + 12345;
-		result = ((range * ((_seqRandomizeBase % 0x7fffffff) & 0x7fff)) / 32768) + rangeFirst;
-	} while (rangeLast < result);
-
-	return result;
 }
 
 void KyraEngine_v2::seq_showStarcraftLogo() {

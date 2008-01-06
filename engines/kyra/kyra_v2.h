@@ -232,7 +232,6 @@ protected:
 	void seq_printCreditsString(uint16 strIndex, int x, int y, uint8 * colorMap, uint8 textcolor);
 	void seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width,
 		WSAMovieV2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos);
-	int seq_generateFixedRandomValue(int rangeFirst, int rangeLast);
 	void seq_showStarcraftLogo();
 
 	void seq_init();
@@ -875,7 +874,6 @@ protected:
 	int _seqFrameCounter;
 	int _seqWsaCurrentFrame;
 	bool _seqSpecialFlag;
-	int _seqRandomizeBase;
 	bool _seqSubframePlaying;
 	uint8 _seqTextColor[2];
 	uint8 _seqTextColorMap[16];
