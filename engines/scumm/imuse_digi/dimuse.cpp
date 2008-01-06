@@ -218,9 +218,11 @@ void IMuseDigital::callback() {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used) {
-			// Remove tracks if necessary
-			if (!_mixer->isSoundHandleActive(track->mixChanHandle)) {
-				memset(track, 0, sizeof(Track));
+			// Ignore tracks which are about to finish. Also, if it did finish in the meantime,
+			// mark it as unused.
+			if (!track->stream) {
+				if (!_mixer->isSoundHandleActive(track->mixChanHandle))
+					memset(track, 0, sizeof(Track));
 				continue;
 			}
 
@@ -260,7 +262,7 @@ void IMuseDigital::callback() {
 
 				if (track->curRegion == -1) {
 					switchToNextRegion(track);
-					if (track->toBeRemoved || !track->used)
+					if (!track->stream)	// Seems we reached the end of the stream
 						continue;
 				}
 
@@ -328,7 +330,7 @@ void IMuseDigital::callback() {
 
 					if (_sound->isEndOfRegion(track->soundDesc, track->curRegion)) {
 						switchToNextRegion(track);
-						if (track->toBeRemoved || !track->used)
+						if (!track->stream)	// Seems we reached the end of the stream
 							break;
 					}
 					feedSize -= curFeedSize;
