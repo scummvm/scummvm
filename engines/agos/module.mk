@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	agos.o \
 	animation.o \
 	charset.o \
+	charset-fontdata.o \
 	contain.o \
 	cursor.o \
 	debug.o \
