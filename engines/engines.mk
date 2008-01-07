@@ -108,9 +108,3 @@ DEFINES += -DDISABLE_TOUCHE
 else
 MODULES += engines/touche
 endif
-
-MODULES += engines/m4
-MODULES += engines/kom
-MODULES += engines/mohawk
-MODULES += engines/ill
-MODULES += engines/sci
