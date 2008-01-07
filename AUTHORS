@@ -29,6 +29,7 @@ ScummVM Team
        Matthew Hoops        
        Filippos Karapetis   
        Pawel Kolodziejski   
+       Kari Salminen        
        Eugene Sandulenko    
        David Symonds        
 
@@ -140,6 +141,7 @@ ScummVM Team
        Johannes Schickel    
 
     Miscellaneous:
+       David Corrales-Lopez  - Filesystem access improvements
        Jerome Fisher         - MT-32 emulator
        Jochen Hoenicke       - Speaker & PCjr sound support, Adlib work
        Robin Watts           - ARM assembly routines for nice speedups on
