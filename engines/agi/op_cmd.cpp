@@ -52,6 +52,7 @@ namespace Agi {
 
 #define ip	curLogic->cIP
 #define vt	game.viewTable[p0]
+#define vt_v game.viewTable[game.vars[p0]]
 
 static struct AgiLogic *curLogic;
 static AgiEngine *g_agi;
@@ -513,8 +514,80 @@ cmd(cancel_line) {
 	report("cancel.line\n");
 }
 
+// This implementation is based on observations of Amiga's Gold Rush.
+// You can try this out (in the original and in ScummVM) by writing "bird man"
+// to enter Gold Rush's debug mode and then writing "show position" or "sp".
+// TODO: Make the cycle and motion status lines more like in Amiga's Gold Rush.
+// TODO: Add control status line (After stepsize, before cycle status).
+// Don't know what the control status means yet, possibly flags?
+// Examples of the control-value (Taken in the first screen i.e. room 1):
+// 4051 (When ego is stationary),
+// 471 (When walking on the first screen's bridge),
+// 71 (When walking around, using the mouse or the keyboard).
 cmd(obj_status_f) {
 	report("obj.status.f\n");
+
+	const char *cycleDesc;  // Object's cycle description line
+	const char *motionDesc; // Object's motion description line
+	char msg[256];          // The whole object status message
+
+	// Generate cycle description line
+	switch (vt_v.cycle) {
+	case CYCLE_NORMAL:
+		cycleDesc = "normal cycle";
+		break;
+	case CYCLE_END_OF_LOOP:
+		cycleDesc = "end of loop";
+		break;
+	case CYCLE_REV_LOOP:
+		cycleDesc = "reverse loop";
+		break;
+	case CYCLE_REVERSE:
+		cycleDesc = "reverse cycle";
+		break;
+	default:
+		cycleDesc = "unknown cycle type";
+		break;
+	}
+
+	// Generate motion description line
+	switch (vt_v.motion) {
+	case MOTION_NORMAL:
+		motionDesc = "normal motion";
+		break;
+	case MOTION_WANDER:
+		motionDesc = "wandering";
+		break;
+	case MOTION_FOLLOW_EGO:
+		motionDesc = "following ego";
+		break;
+	case MOTION_MOVE_OBJ:
+		// Amiga's Gold Rush! most probably uses "move to (x, y)"
+		// here with real values for x and y. The same output
+		// is used when moving the ego around using the mouse.
+		motionDesc = "moving to a point";
+		break;
+	default:
+		motionDesc = "unknown motion type";
+		break;
+	}
+
+	sprintf(msg,
+		"Object %d:\n" \
+		"x: %d  xsize: %d\n" \
+		"y: %d  ysize: %d\n" \
+		"pri: %d\n" \
+		"stepsize: %d\n" \
+		"%s\n" \
+		"%s",
+		_v[p0],
+		vt_v.xPos, vt_v.xSize,
+		vt_v.yPos, vt_v.ySize,
+		vt_v.priority,
+		vt_v.stepSize,
+		cycleDesc,
+		motionDesc);
+	g_agi->messageBox(msg);
 }
 
 /* unknown commands:
