@@ -307,21 +307,6 @@ protected:
 		return _data->_height;
 	}
 
-
-public:
-	DosMonospacedFont(Cnv *cnv) : DosFont(cnv) {
-		_width = 8;
-	}
-
-};
-
-class DosMenuFont : public DosMonospacedFont {
-
-public:
-	DosMenuFont(Cnv *cnv) : DosMonospacedFont(cnv) {
-	}
-
-protected:
 	uint16 drawChar(char c) {
 
 		byte *src = _data->getFramePtr(c);
@@ -342,31 +327,14 @@ protected:
 		return _width;
 	}
 
-};
-
-
-class DosLabelFont : public DosMonospacedFont {
-
 public:
-	DosLabelFont(Cnv *cnv) : DosMonospacedFont(cnv) {
-	}
-
-protected:
-	uint16 drawChar(char c) {
-
-		byte *src = _data->getFramePtr(c);
-		byte *dst = _cp;
-
-		for (uint16 i = 0; i < height(); i++) {
-			memcpy(dst, src, _width);
-			dst += _bufPitch;
-			src += _pitch;
-		}
-
-		return _width;
+	DosMonospacedFont(Cnv *cnv) : DosFont(cnv) {
+		_width = 8;
 	}
 
 };
+
+
 
 class AmigaFont : public Font {
 
@@ -552,10 +520,10 @@ Font *DosDisk_ns::createFont(const char *name, Cnv* cnv) {
 		f = new DosDialogueFont(cnv);
 	else
 	if (!scumm_stricmp(name, "topaz"))
-		f = new DosLabelFont(cnv);
+		f = new DosMonospacedFont(cnv);
 	else
 	if (!scumm_stricmp(name, "slide"))
-		f = new DosMenuFont(cnv);
+		f = new DosMonospacedFont(cnv);
 	else
 		error("unknown dos font '%s'", name);
 
