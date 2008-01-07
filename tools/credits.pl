@@ -487,6 +487,7 @@ begin_credits("Credits");
 		  add_person("Matthew Hoops", "clone2727", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+		  add_person("Kari Salminen", "Buddha^", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 		  add_person("David Symonds", "dsymonds", "");
 	  end_section();
@@ -627,6 +628,7 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Miscellaneous");
+		add_person("David Corrales-Lopez", "david_corrales", "Filesystem access improvements");
 		add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 		add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, Adlib work");
 		add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
