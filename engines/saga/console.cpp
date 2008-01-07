@@ -54,6 +54,8 @@ Console::Console(SagaEngine *vm) : GUI::Debugger() {
 	// Game stuff
 
 #if 0
+	#define MAXPATH 512
+
 	// Register "g_language" cfg cvar
 	strncpy(GameModule.game_language, "us", MAXPATH);
 

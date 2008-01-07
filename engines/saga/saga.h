@@ -64,13 +64,8 @@ struct StringList;
 using Common::MemoryReadStream;
 using Common::MemoryReadStreamEndian;
 
-//#define MIN_IMG_RLECODE    3
-//#define MODEX_SCANLINE_LIMIT 200 //TODO: remove
-
 #define SAGA_IMAGE_DATA_OFFSET 776
 #define SAGA_IMAGE_HEADER_LEN  8
-
-#define MAXPATH 512 //TODO: remove
 
 // Note that IHNM has a smaller save title size than ITE
 // We allocate the ITE save title size in savegames, to
