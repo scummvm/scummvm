@@ -49,6 +49,7 @@ Game::Game() {
 	_debugger = new Debugger();
 	_fastTextFlag = false;
 	_preloadFlag = false;
+	_debugFlag = false;
 
 	_soundFlag = true;
 	_musicVolume = ConfMan.getBool("music_mute") ? 0 : MIN(255, ConfMan.getInt("music_volume"));
@@ -206,26 +207,32 @@ void Game::execute() {
 						break;
 
 					case Common::KEYCODE_KP_PLUS:
-						while (++roomNum <= 51) 
-							if (res.getRoom(roomNum) != NULL) break; 
-						if (roomNum == 52) roomNum = 1;
-						room.setRoomNumber(roomNum);
+						if (_debugFlag) {
+							while (++roomNum <= 51) 
+								if (res.getRoom(roomNum) != NULL) break; 
+							if (roomNum == 52) roomNum = 1;
+							room.setRoomNumber(roomNum);
+						}
 						break;
 
 					case Common::KEYCODE_KP_MINUS:
-						if (roomNum == 1) roomNum = 55;
-						while (res.getRoom(--roomNum) == NULL) ;
-						room.setRoomNumber(roomNum);
+						if (_debugFlag) {
+							if (roomNum == 1) roomNum = 55;
+							while (res.getRoom(--roomNum) == NULL) ;
+							room.setRoomNumber(roomNum);
+						}
 						break;
 
 					case Common::KEYCODE_KP_MULTIPLY:
-						res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
-							room.roomNumber());
+						if (_debugFlag) 
+							res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
+								room.roomNumber());
 						break;
 
 					case Common::KEYCODE_KP_DIVIDE:
 					case Common::KEYCODE_SLASH:
-						room.setShowInfo(!room.showInfo());
+						if (_debugFlag) 
+							room.setShowInfo(!room.showInfo());
 						break;
 
 					case Common::KEYCODE_ESCAPE:

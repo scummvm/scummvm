@@ -29,6 +29,7 @@
 #include "lure/luredefs.h"
 #include "lure/debugger.h"
 #include "lure/decode.h"
+#include "lure/game.h"
 #include "lure/res.h"
 #include "lure/res_struct.h"
 #include "lure/room.h"
@@ -49,6 +50,7 @@ Debugger::Debugger(): GUI::Debugger() {
 	DCmd_Register("room",				WRAP_METHOD(Debugger, cmd_room));
 	DCmd_Register("showanim",			WRAP_METHOD(Debugger, cmd_showAnim));
 	DCmd_Register("strings",			WRAP_METHOD(Debugger, cmd_saveStrings));
+	DCmd_Register("debug",				WRAP_METHOD(Debugger, cmd_debug));
 }
 
 static int strToInt(const char *s) {
@@ -575,5 +577,24 @@ bool Debugger::cmd_saveStrings(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::cmd_debug(int argc, const char **argv) {
+	Game &game = Game::getReference();
+	Room &room = Room::getReference();
+
+	if ((argc == 2) && (strcmp(argv[1], "on") == 0)) {
+		DebugPrintf("debug keys are on\n");
+		game.debugFlag() = true;
+
+	} else if ((argc == 2) && (strcmp(argv[1], "off") == 0)) {
+		DebugPrintf("debug keys are off\n");
+		game.debugFlag() = false;
+		room.setShowInfo(false);
+
+	} else {
+		DebugPrintf("debug [on | off]]\n");
+	}
+
+	return true;
+}
 
 } // End of namespace Lure

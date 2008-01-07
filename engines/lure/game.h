@@ -53,6 +53,7 @@ private:
 	uint16 _tellCommands[MAX_TELL_COMMANDS * 3 + 1];
 	int _numTellCommands;
 	bool _preloadFlag;
+	bool _debugFlag;
 
 	void handleMenuResponse(uint8 selection);
 	void handleClick();
@@ -81,6 +82,7 @@ public:
 	void execute();
 	void setState(uint8 flags) { _state = flags; }
 	bool &preloadFlag() { return _preloadFlag; }
+	bool &debugFlag() { return _debugFlag; }
 	bool fastTextFlag() { return _fastTextFlag; }
 	bool soundFlag() { return _soundFlag; }
 	uint8 sfxVolume() { return _sfxVolume; }
