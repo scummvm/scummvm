@@ -2017,7 +2017,7 @@ void Hotspot::npcSupportOffsetConditional(HotspotData *hotspot) {
 
 	_currentActions.top().setSupportData(newEntry);
 	HotspotData *hotspotData = (newEntry->numParams() == 0) ? NULL : res.getHotspot(
-		(newEntry->action() == USE) ? 1 : 0);
+		(newEntry->action() == USE) ? newEntry->param(1) : newEntry->param(0));
 	doAction(newEntry->action(), hotspotData);
 }
 
