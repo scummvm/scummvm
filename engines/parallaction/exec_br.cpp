@@ -70,6 +70,7 @@ typedef OpcodeImpl<Parallaction_br> OpcodeV2;
 #define DECLARE_INSTRUCTION_OPCODE(op) void Parallaction_br::instOp_##op()
 
 void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
+#if 0
 	debugC(5, kDebugExec, "setupSubtitles(%s, %s, %i)", s, s2, y);
 
 	if (!scumm_stricmp("clear", s)) {
@@ -109,6 +110,7 @@ void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 		_jDisplaySubtitle = addJob(kJobDisplaySubtitle, 0, 1);
 		_jEraseSubtitle = addJob(kJobEraseSubtitle, 0, 20);
 	}
+#endif
 }
 
 

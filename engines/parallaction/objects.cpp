@@ -192,7 +192,6 @@ uint16 Zone::height() const {
 
 Label::Label() {
 	resetPosition();
-	_text = 0;
 }
 
 Label::~Label() {
@@ -201,21 +200,12 @@ Label::~Label() {
 
 void Label::free() {
 	_cnv.free();
-	::free(_text);
-	_text = 0;
-
 	resetPosition();
 }
 
 void Label::resetPosition() {
 	_pos.x = -1000;
 	_pos.y = -1000;
-}
-
-void Label::getRect(Common::Rect &r) {
-	r.setWidth(_cnv.w);
-	r.setHeight(_cnv.h);
-	r.moveTo(_pos);
 }
 
 Answer::Answer() {

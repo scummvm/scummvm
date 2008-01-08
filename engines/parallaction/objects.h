@@ -258,7 +258,6 @@ struct TypeData {
 };
 
 struct Label {
-	char*				_text;
 	Graphics::Surface	_cnv;
 
 	Common::Point		_pos;
@@ -268,7 +267,6 @@ struct Label {
 
 	void free();
 	void resetPosition();
-	void getRect(Common::Rect &r);
 };
 
 #define ZONENAME_LENGTH 32
