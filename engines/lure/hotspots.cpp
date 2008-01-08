@@ -1076,7 +1076,7 @@ bool Hotspot::findClearBarPlace() {
 	return false;
 }
 
-bool Hotspot::characterWalkingCheck(uint16 hotspotId) {
+bool Hotspot::characterWalkingCheck(uint16 id) {
 	Resources &res = Resources::getReference();
 	int16 xp, yp;
 	bool altFlag;
@@ -1088,7 +1088,7 @@ bool Hotspot::characterWalkingCheck(uint16 hotspotId) {
 	_walkFlag = true;
 	altFlag = false;
 
-	switch (hotspotId) {
+	switch (id) {
 	case 997:
 		xp = 169; yp = 146;
 		altFlag = true;
@@ -1103,10 +1103,10 @@ bool Hotspot::characterWalkingCheck(uint16 hotspotId) {
 		break;
 
 	default:
-		hotspot = res.getHotspot(hotspotId);
+		hotspot = res.getHotspot(id);
 		if (hotspot == NULL) {
 			// Should never come here, as all other constants are handled
-			warning("characterWalkingCheck done on unknown hotspot Id %xh", hotspotId);
+			warning("characterWalkingCheck done on unknown hotspot Id %xh", id);
 			xp = 78; yp = 162;
 		} else if ((hotspot->walkX == 0) && (hotspot->walkY == 0)) {
 			// The hotspot doesn't have any walk co-ordinates
@@ -2013,7 +2013,7 @@ void Hotspot::npcWalkingCheck(HotspotData *hotspot) {
 	fields.setField(ACTIVE_HOTSPOT_ID, hId);
 
 	if ((hId < PLAYER_ID) || (hotspot->roomNumber == _roomNumber)) {
-		characterWalkingCheck(hotspot);
+		characterWalkingCheck(hotspot->hotspotId);
 	}
 }
 
