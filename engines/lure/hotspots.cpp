@@ -958,7 +958,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 			(hotspot->characterMode == CHARMODE_WAIT_FOR_PLAYER) ||
 			(hotspot->characterMode == CHARMODE_WAIT_FOR_INTERACT)) {
 			// loc_880
-			if (characterWalkingCheck(hotspot))
+			if (characterWalkingCheck(hotspot->hotspotId))
 				return PC_WAIT;
 		} else {
 			// loc_886
@@ -973,7 +973,7 @@ HotspotPrecheckResult Hotspot::actionPrecheck(HotspotData *hotspot) {
 			((hotspot->actionHotspotId != _hotspotId) && 
 			 (hotspot->characterMode == CHARMODE_WAIT_FOR_PLAYER))) {
 			// loc_880
-			if (characterWalkingCheck(hotspot))
+			if (characterWalkingCheck(hotspot->hotspotId))
 				return PC_WAIT;
 
 		} else if (hotspot->actionHotspotId != _hotspotId) {
@@ -1076,33 +1076,60 @@ bool Hotspot::findClearBarPlace() {
 	return false;
 }
 
-bool Hotspot::characterWalkingCheck(HotspotData *hotspot) {
+bool Hotspot::characterWalkingCheck(uint16 hotspotId) {
+	Resources &res = Resources::getReference();
 	int16 xp, yp;
+	bool altFlag;
+	HotspotData *hotspot;
 
-	if (hotspot == NULL) {
-		// DEBUG for now - hardcoded value for 3E7h (NULL)
+	// Note that several invalid hotspot Ids are used to identify special walk to 
+	// coordinates used throughout the game
+
+	_walkFlag = true;
+	altFlag = false;
+
+	switch (hotspotId) {
+	case 997:
+		xp = 169; yp = 146;
+		altFlag = true;
+		break;
+
+	case 998:
+		xp = 124; yp = 169;
+		break;
+
+	case 999:
 		xp = 78; yp = 162;
-		_walkFlag = true;
-	}
-	else if ((hotspot->walkX == 0) && (hotspot->walkY == 0)) {
-		// The hotspot doesn't have any walk co-ordinates
-		xp = hotspot->startX;
-		yp = hotspot->startY + hotspot->heightCopy - 4;
-		_walkFlag = false;
-	} else {
-		xp = hotspot->walkX;
-		yp = hotspot->walkY & 0x7fff;
-		_walkFlag = true;
+		break;
 
-		if ((hotspot->walkY & 0x8000) != 0) {
-			if (((x() >> 3) != (xp >> 3)) || 
-				((((y() + heightCopy()) >> 3) - 1) != (yp >> 3))) {
-				// Walk to the specified destination
-				walkTo(xp, yp);
-				return true;
-			} else {
-				return false;
-			}
+	default:
+		hotspot = res.getHotspot(hotspotId);
+		if (hotspot == NULL) {
+			// Should never come here, as all other constants are handled
+			warning("characterWalkingCheck done on unknown hotspot Id %xh", hotspotId);
+			xp = 78; yp = 162;
+		} else if ((hotspot->walkX == 0) && (hotspot->walkY == 0)) {
+			// The hotspot doesn't have any walk co-ordinates
+			xp = hotspot->startX;
+			yp = hotspot->startY + hotspot->heightCopy - 4;
+			_walkFlag = false;
+		} else {
+			xp = hotspot->walkX;
+			yp = hotspot->walkY & 0x7fff;
+			altFlag = (hotspot->walkY & 0x8000) != 0;
+		}
+		break;
+	}
+
+	if (altFlag) {
+		// Alternate walking check
+		if (((x() >> 3) != (xp >> 3)) || 
+			((((y() + heightCopy()) >> 3) - 1) != (yp >> 3))) {
+			// Walk to the specified destination
+			walkTo(xp, yp);
+			return true;
+		} else {
+			return false;
 		}
 	}
 
