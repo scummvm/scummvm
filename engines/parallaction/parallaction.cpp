@@ -504,7 +504,7 @@ bool Parallaction::translateGameInput() {
 	if ((_hoverZone == NULL) && ((z->_flags & kFlagsNoName) == 0)) {
 		_hoverZone = z;
 		_input._event = kEvEnterZone;
-		_input._label = &z->_label;
+		_input._label = z->_label;
 		return true;
 	}
 
@@ -949,7 +949,6 @@ Character::Character(Parallaction *vm) : _vm(vm), _builder(&_ani) {
 	_ani._frame = 0;
 	_ani._flags = kFlagsActive | kFlagsNoName;
 	_ani._type = kZoneYou;
-	_ani._label._cnv.pixels = NULL;
 	strncpy(_ani._name, "yourself", ZONENAME_LENGTH);
 }
 

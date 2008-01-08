@@ -570,7 +570,6 @@ protected:		// members
 
 public:
 	virtual	void callFunction(uint index, void* parm) { }
-	virtual void renderLabel(Graphics::Surface *cnv, char *text) { }
 
 	virtual void setArrowCursor() = 0;
 	virtual void setInventoryCursor(int pos) = 0;
@@ -670,7 +669,6 @@ public:
 	typedef void (Parallaction_ns::*Callable)(void*);
 
 	virtual	void callFunction(uint index, void* parm);
-	void renderLabel(Graphics::Surface *cnv, char *text);
 	void setMousePointer(uint32 value);
 
 	void	initJobs();

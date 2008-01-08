@@ -505,6 +505,43 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Graphics::Surface *s
 
 }
 
+#define	LABEL_TRANSPARENT_COLOR 0xFF
+
+Label *Gfx::renderFloatingLabel(Font *font, char *text) {
+
+	Label *label = new Label;
+	Graphics::Surface *cnv = &label->_cnv;
+
+	uint w, h;
+
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		w = font->getStringWidth(text) + 16;
+		h = 10;
+
+		cnv->create(w, h, 1);
+		cnv->fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
+
+		font->setColor(7);
+		font->drawString((byte*)cnv->pixels + 1, cnv->w, text);
+		font->drawString((byte*)cnv->pixels + 1 + cnv->w * 2, cnv->w, text);
+		font->drawString((byte*)cnv->pixels + cnv->w, cnv->w, text);
+		font->drawString((byte*)cnv->pixels + 2 + cnv->w, cnv->w, text);
+		font->setColor(1);
+		font->drawString((byte*)cnv->pixels + 1 + cnv->w, cnv->w, text);
+	} else {
+		w = font->getStringWidth(text);
+		h = font->height();
+
+		cnv->create(w, h, 1);
+		cnv->fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
+
+		font->drawString((byte*)cnv->pixels, cnv->w, text);
+	}
+
+	return label;
+}
+
+
 void Gfx::setLabel(Label *label) {
 	_label = label;
 
@@ -544,7 +581,7 @@ void Gfx::drawLabel() {
 	r.moveTo(_label->_pos);
 
 	Graphics::Surface* surf = g_system->lockScreen();
-	flatBlit(r, (byte*)_label->_cnv.getBasePtr(0, 0), surf, 0);
+	flatBlit(r, (byte*)_label->_cnv.getBasePtr(0, 0), surf, LABEL_TRANSPARENT_COLOR);
 	g_system->unlockScreen();
 }
 

@@ -251,6 +251,7 @@ public:
 	// labels
 	Label	*_label;
 	void setLabel(Label *label);
+	Label *renderFloatingLabel(Font *font, char *text);
 
 	// cut/paste
 	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer);

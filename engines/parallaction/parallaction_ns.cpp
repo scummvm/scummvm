@@ -164,25 +164,6 @@ void Parallaction_ns::freeFonts() {
 
 }
 
-void Parallaction_ns::renderLabel(Graphics::Surface *cnv, char *text) {
-
-	if (getPlatform() == Common::kPlatformAmiga) {
-		cnv->create(_labelFont->getStringWidth(text) + 16, 10, 1);
-
-		_labelFont->setColor(7);
-		_labelFont->drawString((byte*)cnv->pixels + 1, cnv->w, text);
-		_labelFont->drawString((byte*)cnv->pixels + 1 + cnv->w * 2, cnv->w, text);
-		_labelFont->drawString((byte*)cnv->pixels + cnv->w, cnv->w, text);
-		_labelFont->drawString((byte*)cnv->pixels + 2 + cnv->w, cnv->w, text);
-		_labelFont->setColor(1);
-		_labelFont->drawString((byte*)cnv->pixels + 1 + cnv->w, cnv->w, text);
-	} else {
-		cnv->create(_labelFont->getStringWidth(text), _labelFont->height(), 1);
-		_labelFont->drawString((byte*)cnv->pixels, cnv->w, text);
-	}
-
-}
-
 void Parallaction_ns::initCursors() {
 
 	_mouseComposedArrow = _disk->loadPointer("pointer");

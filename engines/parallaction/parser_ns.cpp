@@ -119,7 +119,7 @@ DECLARE_ANIM_PARSER(type)  {
 DECLARE_ANIM_PARSER(label)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(label) ");
 
-	renderLabel(&_locParseCtxt.a->_label._cnv, _tokens[1]);
+	_locParseCtxt.a->_label = _gfx->renderFloatingLabel(_labelFont, _tokens[1]);
 }
 
 
@@ -1237,7 +1237,7 @@ DECLARE_ZONE_PARSER(label)  {
 	debugC(7, kDebugParser, "ZONE_PARSER(label) ");
 
 //			printf("label: %s", _tokens[1]);
-	renderLabel(&_locParseCtxt.z->_label._cnv, _tokens[1]);
+	_locParseCtxt.z->_label = _gfx->renderFloatingLabel(_labelFont, _tokens[1]);
 }
 
 

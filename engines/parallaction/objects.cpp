@@ -123,6 +123,8 @@ Zone::Zone() {
 	_type = 0;
 	_flags = 0;
 
+	_label = 0;
+
 	memset(_name, 0, ZONENAME_LENGTH);
 }
 
@@ -166,6 +168,8 @@ Zone::~Zone() {
 	default:
 		break;
 	}
+
+	delete _label;
 }
 
 void Zone::getRect(Common::Rect& r) const {
