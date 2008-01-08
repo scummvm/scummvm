@@ -32,6 +32,7 @@
 #include "backends/platform/gp2x/gp2x-hw.h"
 #include "backends/platform/gp2x/gp2x-mem.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/util.h"
 #include "base/main.h"
 
@@ -116,6 +117,21 @@ void OSystem_GP2X::initBackend() {
 				warning("mkdir for '%s' failed!", savePath);
 
 	ConfMan.registerDefault("savepath", savePath);
+
+	// Setup default extra data path for engine data files to be workingdir/engine-data
+
+	char enginedataPath[PATH_MAX+1];
+
+	strcpy(enginedataPath, workDirName);
+	strcat(enginedataPath, "/engine-data");
+	printf("Current engine-data directory: %s\n", enginedataPath);
+	//struct stat sb;
+	if (stat(enginedataPath, &sb) == -1)
+		if (errno == ENOENT) // Create the dir if it does not exist
+			if (mkdir(enginedataPath, 0755) != 0)
+				warning("mkdir for '%s' failed!", enginedataPath);
+
+	Common::File::addDefaultDirectory(enginedataPath);
 
 	// Note: Review and clean this, it's OTT at the moment.
 
