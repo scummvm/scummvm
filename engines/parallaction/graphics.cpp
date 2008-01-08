@@ -514,7 +514,7 @@ void Gfx::setLabel(Label *label) {
 }
 
 void Gfx::drawLabel() {
-	if (!_label || !_label->_text) {
+	if (!_label) {
 		return;
 	}
 

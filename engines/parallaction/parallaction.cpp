@@ -729,7 +729,7 @@ void Parallaction::parseStatement() {
 Animation *Parallaction::findAnimation(const char *name) {
 
 	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++)
-		if (!scumm_stricmp((*it)->_label._text, name)) return *it;
+		if (!scumm_stricmp((*it)->_name, name)) return *it;
 
 	return NULL;
 }
@@ -900,7 +900,7 @@ void Parallaction::doLocationEnterTransition() {
 Zone *Parallaction::findZone(const char *name) {
 
 	for (ZoneList::iterator it = _zones.begin(); it != _zones.end(); it++) {
-		if (!scumm_stricmp((*it)->_label._text, name)) return *it;
+		if (!scumm_stricmp((*it)->_name, name)) return *it;
 	}
 
 	return findAnimation(name);
@@ -918,7 +918,7 @@ void Parallaction::freeZones() {
 		// to retain special - needed - zones that were lost across location switches.
 		Zone* z = *it;
 		if (((z->_top == -1) || (z->_left == -2)) && ((_engineFlags & kEngineQuit) == 0)) {
-			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_label._text);
+			debugC(2, kDebugExec, "freeZones preserving zone '%s'", z->_name);
 			it++;
 		} else {
 			it = _zones.erase(it);
@@ -950,7 +950,7 @@ Character::Character(Parallaction *vm) : _vm(vm), _builder(&_ani) {
 	_ani._flags = kFlagsActive | kFlagsNoName;
 	_ani._type = kZoneYou;
 	_ani._label._cnv.pixels = NULL;
-	_ani._label._text = strdup("yourself");
+	strncpy(_ani._name, "yourself", ZONENAME_LENGTH);
 }
 
 void Character::getFoot(Common::Point &foot) {

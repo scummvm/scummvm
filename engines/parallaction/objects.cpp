@@ -122,10 +122,12 @@ Zone::Zone() {
 
 	_type = 0;
 	_flags = 0;
+
+	memset(_name, 0, ZONENAME_LENGTH);
 }
 
 Zone::~Zone() {
-//	printf("~Zone(%s)\n", _label._text);
+//	printf("~Zone(%s)\n", _name);
 
 	switch (_type & 0xFFFF) {
 	case kZoneExamine:

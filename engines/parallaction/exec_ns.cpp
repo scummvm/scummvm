@@ -346,7 +346,7 @@ void Parallaction_ns::drawAnimations() {
 			else
 				_si = _gfx->queryMask(v18->_top + v18->height());
 
-			debugC(9, kDebugExec, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, f:%i/%i, %p)", v18->_label._text, v18->_left, v18->_top, _si, v14.w, v14.h,
+			debugC(9, kDebugExec, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, f:%i/%i, %p)", v18->_name, v18->_left, v18->_top, _si, v14.w, v14.h,
 				frame, v18->getFrameNum(), v14.pixels);
 			_gfx->blitCnv(&v14, v18->_left, v18->_top, _si, Gfx::kBitBack);
 
@@ -410,7 +410,7 @@ void Parallaction_ns::runScripts() {
 		InstructionList::iterator inst = a->_program->_ip;
 		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
 
-			debugC(9, kDebugExec, "Animation: %s, instruction: %s", a->_label._text, _instructionNamesRes[(*inst)->_index - 1]);
+			debugC(9, kDebugExec, "Animation: %s, instruction: %s", a->_name, _instructionNamesRes[(*inst)->_index - 1]);
 
 			_instRunCtxt.inst = inst;
 			_instRunCtxt.a = a;
@@ -514,7 +514,7 @@ void Parallaction::displayComment(ExamineData *data) {
 
 
 uint16 Parallaction::runZone(Zone *z) {
-	debugC(3, kDebugExec, "runZone (%s)", z->_label._text);
+	debugC(3, kDebugExec, "runZone (%s)", z->_name);
 
 	uint16 subtype = z->_type & 0xFFFF;
 

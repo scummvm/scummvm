@@ -271,7 +271,11 @@ struct Label {
 	void getRect(Common::Rect &r);
 };
 
+#define ZONENAME_LENGTH 32
+
 struct Zone {
+	char			_name[ZONENAME_LENGTH];
+
 	int16 			_left;
 	int16			_top;
 	int16			_right;

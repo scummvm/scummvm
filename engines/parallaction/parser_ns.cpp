@@ -184,7 +184,7 @@ Animation *Parallaction_ns::parseAnimation(Script& script, AnimationList &list, 
 
 	Animation *a = new Animation;
 
-	a->_label._text = strdup(name);
+	strncpy(a->_name, name, ZONENAME_LENGTH);
 
 	list.push_front(a);
 
@@ -222,7 +222,7 @@ void Parallaction_ns::parseInstruction(Animation *a, LocalVariable *locals) {
 }
 
 void Parallaction_ns::loadProgram(Animation *a, const char *filename) {
-	debugC(1, kDebugParser, "loadProgram(Animation: %s, script: %s)", a->_label._text, filename);
+	debugC(1, kDebugParser, "loadProgram(Animation: %s, script: %s)", a->_name, filename);
 
 	Script *script = _disk->loadScript(filename);
 
@@ -249,7 +249,7 @@ void Parallaction_ns::loadProgram(Animation *a, const char *filename) {
 DECLARE_INSTRUCTION_PARSER(animation)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(animation) ");
 
-	if (!scumm_stricmp(_tokens[1], _instParseCtxt.a->_label._text)) {
+	if (!scumm_stricmp(_tokens[1], _instParseCtxt.a->_name)) {
 		_instParseCtxt.inst->_a = _instParseCtxt.a;
 	} else {
 		_instParseCtxt.inst->_a = findAnimation(_tokens[1]);
@@ -336,7 +336,7 @@ DECLARE_INSTRUCTION_PARSER(move)  {
 DECLARE_INSTRUCTION_PARSER(put)  {
 	debugC(7, kDebugParser, "INSTRUCTION_PARSER(put) ");
 
-	if (!scumm_stricmp(_tokens[1], _instParseCtxt.a->_label._text)) {
+	if (!scumm_stricmp(_tokens[1], _instParseCtxt.a->_name)) {
 		_instParseCtxt.inst->_a = _instParseCtxt.a;
 	} else {
 		_instParseCtxt.inst->_a = findAnimation(_tokens[1]);
@@ -1263,7 +1263,7 @@ void Parallaction_ns::parseZone(Script &script, ZoneList &list, char *name) {
 
 	Zone *z = new Zone;
 
-	z->_label._text = strdup(name);
+	strncpy(z->_name, name, ZONENAME_LENGTH);
 
 	_locParseCtxt.z = z;
 	_locParseCtxt.script = &script;
@@ -1442,7 +1442,7 @@ void Parallaction_ns::parseSpeakData(Script &script, Zone *z) {
 
 
 void Parallaction_ns::parseZoneTypeBlock(Script &script, Zone *z) {
-	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_label._text, z->_type);
+	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_name, z->_type);
 
 	switch (z->_type & 0xFFFF) {
 	case kZoneExamine:	// examine Zone alloc

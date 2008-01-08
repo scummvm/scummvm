@@ -183,7 +183,7 @@ bool Debugger::Cmd_Zones(int argc, const char **argv) {
 				"+--------------------+---+---+---+---+--------+--------+\n");
 	for ( ; b != e; b++) {
 		Zone *z = *b;
-		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", z->_label._text, z->_left, z->_top, z->_right, z->_bottom, z->_type, z->_flags );
+		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", z->_name, z->_left, z->_top, z->_right, z->_bottom, z->_type, z->_flags );
 	}
 	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
 
@@ -201,7 +201,7 @@ bool Debugger::Cmd_Animations(int argc, const char **argv) {
 				"+--------------------+---+---+---+---+--------+--------+\n");
 	for ( ; b != e; b++) {
 		Animation *a = *b;
-		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", a->_label._text, a->_left, a->_top, a->_z, a->_frame, a->_type, a->_flags );
+		DebugPrintf("|%-20s|%3i|%3i|%3i|%3i|%8x|%8x|\n", a->_name, a->_left, a->_top, a->_z, a->_frame, a->_type, a->_flags );
 	}
 	DebugPrintf("+--------------------+---+---+---+---+--------+--------+\n");
 
