@@ -304,7 +304,7 @@ private:
 	HotspotPrecheckResult actionPrecheck(HotspotData *hotspot);
 	BarPlaceResult getBarPlace();
 	bool findClearBarPlace();
-	bool characterWalkingCheck(uint16 hotspotId);
+	bool characterWalkingCheck(uint16 id);
 	bool doorCloseCheck(uint16 doorId);
 	void resetDirection();
 
