@@ -399,7 +399,9 @@ struct StringsTable {
 
 	const char *getString(int index) const {
 		if ((stringsCount <= index) || (index < 0)) {
-			error("StringList::getString wrong index 0x%X (%d)", index, stringsCount);
+			// This occurs at the end of Ted's chapter, right after the ending cutscene
+			warning("StringList::getString wrong index 0x%X (%d)", index, stringsCount);
+			return "";
 		}
 		return strings[index];
 	}
