@@ -737,6 +737,7 @@ public:
 	void run();
 
 	void debugCurRoom();
+	void debugGotoRoom(int);
 	void drawPic(int);
 	void drawObj(ENUM_MSA_OBJECT, int, int);
 
@@ -757,6 +758,7 @@ protected:
 	void printExeStr(int);
 	void printExeMsg(int);
 	void printDesc(int);
+	bool checkMenu();
 	void drawMenu(MSA_MENU, int, int);
 	void getMouseMenuSelRow(MSA_MENU, int*, int*, int, int, int);
 	bool getMenuSelRow(MSA_MENU, int*, int*, int);

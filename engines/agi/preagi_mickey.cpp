@@ -220,6 +220,32 @@ void Mickey::printDesc(int iRoom) {
 	free(buffer);
 }
 
+bool Mickey::checkMenu() {
+	char *buffer = new char[sizeof(MSA_MENU)];
+	MSA_MENU menu;
+	int iSel0, iSel1;
+	MSA_DAT_HEADER hdr;
+	char szFile[256] = {0};
+	Common::File infile;
+
+	getDatFileName(_game.iRoom, szFile);
+	readDatHdr(szFile, &hdr);
+	if (!infile.open(szFile))
+		return false;
+	infile.seek(hdr.ofsRoom[_game.iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
+	infile.read((uint8 *)buffer, sizeof(MSA_MENU));
+	infile.close();
+
+	memcpy(&menu, buffer, sizeof(MSA_MENU));
+	patchMenu(&menu);
+	memcpy(buffer, &menu, sizeof(MSA_MENU));
+
+	getMenuSel(buffer, &iSel0, &iSel1);
+	delete [] buffer;
+
+	return parse(menu.cmd[iSel0].data[iSel1], menu.arg[iSel0].data[iSel1]);
+}
+
 void Mickey::drawMenu(MSA_MENU menu, int sel0, int sel1) {
 	int iWord;
 	int iRow;
@@ -2060,6 +2086,11 @@ void Mickey::debugCurRoom() {
 	}
 }
 
+void Mickey::debugGotoRoom(int room) {
+	_game.iRoom = room;
+	drawRoom();
+}
+
 Mickey::Mickey(PreAgiEngine *vm) : _vm(vm) {
 	_vm->_console = new Mickey_Console(_vm, this);
 }
@@ -2119,13 +2150,7 @@ void Mickey::init() {
 }
 
 void Mickey::run() {
-	char *buffer = new char[sizeof(MSA_MENU)];
-	MSA_MENU menu;
-	int iSel0, iSel1;
 	bool done;
-	MSA_DAT_HEADER hdr;
-	char szFile[256] = {0};
-	Common::File infile;
 
 	// Game intro
 	intro();
@@ -2165,27 +2190,11 @@ void Mickey::run() {
 				_game.nAir = IDI_MSA_MAX_AIR_SUPPLY;
 			}
 
-			// Read menu
-			getDatFileName(_game.iRoom, szFile);
-			readDatHdr(szFile, &hdr);
-			if (!infile.open(szFile))
-				return;
-			infile.seek(hdr.ofsRoom[_game.iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
-			infile.read((uint8 *)buffer, sizeof(MSA_MENU));
-			infile.close();
-
-			memcpy(&menu, buffer, sizeof(MSA_MENU));
-			patchMenu(&menu);
-			memcpy(buffer, &menu, sizeof(MSA_MENU));
-
-			getMenuSel(buffer, &iSel0, &iSel1);
-			done = parse(menu.cmd[iSel0].data[iSel1], menu.arg[iSel0].data[iSel1]);
+			done = checkMenu();
 		}
 
 		_game.nFrame = 0;
 	}
-
-	delete [] buffer;
 
 	gameOver();
 }

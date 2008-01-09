@@ -103,6 +103,7 @@ private:
 	Mickey *_mickey;
 
 	bool Cmd_CurRoom(int argc, const char **argv);
+	bool Cmd_GotoRoom(int argc, const char **argv);
 	bool Cmd_DrawPic(int argc, const char **argv);
 	bool Cmd_DrawObj(int argc, const char **argv);
 };
