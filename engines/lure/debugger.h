@@ -50,6 +50,8 @@ protected:
 	bool cmd_debug(int argc, const char **argv);
 };
 
+extern const char *directionList[5];
+
 } // End of namespace Lure
 
 #endif

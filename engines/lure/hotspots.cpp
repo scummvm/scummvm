@@ -203,6 +203,15 @@ Hotspot::Hotspot(): _pathFinder(NULL) {
 }
 
 Hotspot::~Hotspot() {
+	// WORKAROUND: If Blacksmith is being deactivated, make sure his animation is
+	// reset back to his standard movement set
+	if (_hotspotId == BLACKSMITH_ID) {
+		Resources &res = Resources::getReference();
+		HotspotAnimData *tempAnim = res.animRecords()[BLACKSMITH_DEFAULT_ANIM_INDEX];
+		assert(tempAnim);
+		_data->animRecordId = tempAnim->animRecordId;
+	}
+
 	if (_frames) delete _frames;
 }
 
@@ -694,11 +703,17 @@ bool Hotspot::walkingStep() {
 
 	int16 _xChange, _yChange;
 	uint16 nextFrame;
-	frameSet->getFrame(frameNumber(), _xChange, _yChange, nextFrame);
-	setFrameNumber(nextFrame);
-	setPosition(x() + _xChange, y() + _yChange);
 
-	++_pathFinder.stepCtr();
+	if (frameSet->getFrame(frameNumber(), _xChange, _yChange, nextFrame)) {
+		setFrameNumber(nextFrame);
+		setPosition(x() + _xChange, y() + _yChange);
+
+		++_pathFinder.stepCtr();
+	} else {
+		warning("Hotspot %xh dir frame not found: currentFrame=%d, dir=%s",
+			_hotspotId, frameNumber(), directionList[(int) _pathFinder.top().direction()]);
+	}
+
 	return false;
 }
 
