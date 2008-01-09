@@ -500,9 +500,9 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 
 	// Create the dialog surface
 	Common::Point size;
-	Surface::getDialogBounds(size, numCols, numLines);
+	Surface::getDialogBounds(size, numCols, numLines, false);
 	Surface *s = new Surface(size.x, size.y);
-	s->createDialog();
+	s->createDialog(true);
 
 	int selectedIndex = 0;
 	bool refreshFlag = true;
