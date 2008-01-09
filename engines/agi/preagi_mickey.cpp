@@ -401,6 +401,12 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 				}
 				break;
 			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL) && _vm->_console) {
+					_vm->_console->attach();
+					_vm->_console->onFrame();
+					continue;
+				}
+
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_2:
 					// Hidden message
@@ -2101,9 +2107,15 @@ void Mickey::debug_DrawPics(){
 	}
 }
 
-// Init
+
+// Console-related functions
+
+void Mickey::debugCurRoom() {
+	_vm->_console->DebugPrintf("Current Room = %d\n", _game.iRoom);
+}
 
 Mickey::Mickey(PreAgiEngine *vm) : _vm(vm) {
+	_vm->_console = new Mickey_Console(_vm, this);
 }
 
 Mickey::~Mickey() {

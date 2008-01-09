@@ -729,6 +729,8 @@ struct MSA_GAME {
 	int8 nFrame;
 };
 
+class PreAgiEngine;
+
 class Mickey {
 public:
 	Mickey(PreAgiEngine *vm);
@@ -736,6 +738,9 @@ public:
 
 	void init();
 	void run();
+
+	void debugCurRoom();
+	void drawPic(int);
 
 protected:
 	PreAgiEngine *_vm;
@@ -766,7 +771,6 @@ protected:
 	void playSound(ENUM_MSA_SOUND);
 	void debug();
 	void drawObj(ENUM_MSA_OBJECT, int, int);
-	void drawPic(int);
 	void drawRoomAnimation();
 	void drawRoom();
 	void drawLogo();

@@ -28,6 +28,7 @@
 
 #include "gui/debugger.h"
 
+#include "agi/preagi_mickey.h"
 #include "agi/preagi_winnie.h"
 
 namespace Agi {
@@ -86,6 +87,23 @@ protected:
 
 private:
 	PreAgiEngine *_vm;
+};
+
+
+class Mickey_Console : public PreAGI_Console {
+public:
+	Mickey_Console(PreAgiEngine *vm, Mickey *mickey);
+	virtual ~Mickey_Console(void) {}
+
+protected:
+	virtual void preEnter() {}
+	virtual void postEnter() {}
+
+private:
+	Mickey *_mickey;
+
+	bool Cmd_CurRoom(int argc, const char **argv);
+	bool Cmd_ShowPic(int argc, const char **argv);
 };
 
 class Winnie_Console : public PreAGI_Console {

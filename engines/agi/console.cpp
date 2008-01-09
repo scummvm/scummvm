@@ -247,6 +247,27 @@ PreAGI_Console::PreAGI_Console(PreAgiEngine *vm) {
 	_vm = vm;
 }
 
+Mickey_Console::Mickey_Console(PreAgiEngine *vm, Mickey *mickey) : PreAGI_Console(vm) {
+	_mickey = mickey;
+
+	DCmd_Register("curRoom",     WRAP_METHOD(Mickey_Console, Cmd_CurRoom));
+	DCmd_Register("showPic",     WRAP_METHOD(Mickey_Console, Cmd_ShowPic));
+}
+
+bool Mickey_Console::Cmd_CurRoom(int argc, const char **argv) {
+	_mickey->debugCurRoom();
+
+	return true;
+}
+
+bool Mickey_Console::Cmd_ShowPic(int argc, const char **argv) {
+	if (argc != 2)
+		DebugPrintf("Usage: %s <Picture number>\n", argv[0]);
+	else
+		_mickey->drawPic(atoi(argv[1]));
+	return true;
+}
+
 Winnie_Console::Winnie_Console(PreAgiEngine *vm, Winnie *winnie) : PreAGI_Console(vm) {
 	_winnie = winnie;
 
