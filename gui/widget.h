@@ -28,14 +28,9 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/keyboard.h"
-#include "graphics/font.h"
 #include "graphics/surface.h"
 #include "gui/object.h"
 #include "gui/theme.h"
-
-namespace Graphics {
-	class Font;
-}
 
 namespace GUI {
 
