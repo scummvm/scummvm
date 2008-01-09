@@ -3878,6 +3878,7 @@ void HotspotTickHandlers::castleSkorlAnimHandler(Hotspot &h) {
 		HotspotData *hotspot = res.getHotspot(h.hotspotId());
 		assert(hotspot);
 		res.deactivateHotspot(hotspot->hotspotId);
+		hotspot->roomNumber = 0xffff;
 		hotspot->layer = 255;
 		hotspot->talkCountdown = 0;
 		hotspot->flags |= HOTSPOTFLAG_MENU_EXCLUSION;
