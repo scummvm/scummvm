@@ -103,7 +103,8 @@ private:
 	Mickey *_mickey;
 
 	bool Cmd_CurRoom(int argc, const char **argv);
-	bool Cmd_ShowPic(int argc, const char **argv);
+	bool Cmd_DrawPic(int argc, const char **argv);
+	bool Cmd_DrawObj(int argc, const char **argv);
 };
 
 class Winnie_Console : public PreAGI_Console {

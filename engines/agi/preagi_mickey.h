@@ -55,9 +55,6 @@ const char IDS_MSA_PLANETS[][10] = {
 	"PLUTO.  ", "IO.     ", "MARS.   ", "OBERON. "
 };
 
-#define IDS_MSA_DEBUG_ROOM		"Now in room #%d "
-#define IDS_MSA_DEBUG_OBJ		"There is object #%d "
-
 // patch Mickey.exe offset 0x21E to value 0x01 to enable debug mode
 
 const char IDS_MSA_INSERT_DISK[][40] = {
@@ -741,6 +738,7 @@ public:
 
 	void debugCurRoom();
 	void drawPic(int);
+	void drawObj(ENUM_MSA_OBJECT, int, int);
 
 protected:
 	PreAgiEngine *_vm;
@@ -769,8 +767,6 @@ protected:
 	void printDatMessage(int);
 	void playNote(MSA_SND_NOTE);
 	void playSound(ENUM_MSA_SOUND);
-	void debug();
-	void drawObj(ENUM_MSA_OBJECT, int, int);
 	void drawRoomAnimation();
 	void drawRoom();
 	void drawLogo();
@@ -789,8 +785,6 @@ protected:
 	void getItem(ENUM_MSA_ITEM);
 	void getXtal(int);
 	bool parse(int, int);
-	void debug_DrawObjs();
-	void debug_DrawPics();
 	void flipSwitch();
 	void waitAnyKey(bool anim = false);
 

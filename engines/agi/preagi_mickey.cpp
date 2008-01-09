@@ -637,27 +637,6 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 	delete [] buffer;
 }
 
-void Mickey::debug() {
-	char szLine[41] = {0};
-
-	_vm->clearScreen(IDA_DEFAULT);
-
-	sprintf(szLine, IDS_MSA_DEBUG_ROOM, _game.iRoom);
-	_vm->drawStr(5, 10, IDA_DEFAULT, szLine);
-
-	if (_game.iRoom < IDI_MSA_MAX_PIC_ROOM) {
-		if (_game.iRmObj[_game.iRoom] != IDI_MSA_OBJECT_NONE) {
-			sprintf(szLine, IDS_MSA_DEBUG_OBJ, _game.iRmObj[_game.iRoom]);
-			_vm->drawStr(7, 10, IDA_DEFAULT, szLine);
-		}
-	} else {
-		sprintf(szLine, IDS_MSA_DEBUG_OBJ, 32);
-		_vm->drawStr(7, 10, IDA_DEFAULT, szLine);
-	}
-	_vm->_gfx->doUpdate();
-	_vm->_system->updateScreen();	// TODO: this should go in the game's main loop
-}
-
 // Graphics
 
 void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
@@ -789,25 +768,19 @@ void Mickey::drawRoom() {
 	int nObjs;
 
 	// Draw room picture
-	if (true) {	// (!getDebug()) {	// TODO
-		if (_game.iRoom == IDI_MSA_PIC_TITLE) {
-			drawPic(IDI_MSA_PIC_TITLE);
-		} else {
-			drawPic(_game.iRmPic[_game.iRoom]);
+	if (_game.iRoom == IDI_MSA_PIC_TITLE) {
+		drawPic(IDI_MSA_PIC_TITLE);
+	} else {
+		drawPic(_game.iRmPic[_game.iRoom]);
 
-			if (_game.iRoom == IDI_MSA_PIC_SHIP_CONTROLS) {
-				// Draw ship control room window
-				if (_game.fFlying) {
-					drawObj(IDI_MSA_OBJECT_W_SPACE, 0, 0);
-				} else {
-					drawObj((ENUM_MSA_OBJECT)(IDI_MSA_OBJECT_W_EARTH + _game.iPlanet), 0, 1);
-				}
+		if (_game.iRoom == IDI_MSA_PIC_SHIP_CONTROLS) {
+			// Draw ship control room window
+			if (_game.fFlying) {
+				drawObj(IDI_MSA_OBJECT_W_SPACE, 0, 0);
+			} else {
+				drawObj((ENUM_MSA_OBJECT)(IDI_MSA_OBJECT_W_EARTH + _game.iPlanet), 0, 1);
 			}
 		}
-	} else {
-		// Debug
-		drawPic(0);
-		debug();
 	}
 
 	// Draw room objects
@@ -2077,41 +2050,14 @@ void Mickey::waitAnyKey(bool anim) {
 	}
 }
 
-// Debug
-
-void Mickey::debug_DrawObjs() {
-	char szTitle[14] = {0};
-
-	for (int iObj = 0; iObj < IDI_MSA_MAX_OBJ; iObj++) {
-		drawPic(0);
-		drawObj((ENUM_MSA_OBJECT)iObj, 0, 0);
-
-		_vm->clearTextArea();
-		sprintf(szTitle, "Object %d", iObj);
-		_vm->drawStrMiddle(22, IDA_DEFAULT, szTitle);
-		_vm->drawStrMiddle(23, IDA_DEFAULT, (const char *)IDS_MSA_NAME_OBJ[iObj]);
-		waitAnyKey();
-	}
-}
-
-void Mickey::debug_DrawPics(){
-	char szTitle[14] = {0};
-
-	for (int iPic = 1; iPic <= IDI_MSA_MAX_PIC; iPic++) {
-		drawPic(iPic);
-
-		_vm->clearTextArea();
-		sprintf(szTitle, "Picture %d", iPic);
-		_vm->drawStrMiddle(22, IDA_DEFAULT, szTitle);
-		waitAnyKey();
-	}
-}
-
-
 // Console-related functions
 
 void Mickey::debugCurRoom() {
 	_vm->_console->DebugPrintf("Current Room = %d\n", _game.iRoom);
+
+	if (_game.iRmObj[_game.iRoom] != IDI_MSA_OBJECT_NONE) {
+		_vm->_console->DebugPrintf("Object %d is in the room\n", _game.iRmObj[_game.iRoom]);
+	}
 }
 
 Mickey::Mickey(PreAgiEngine *vm) : _vm(vm) {

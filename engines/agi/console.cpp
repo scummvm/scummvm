@@ -251,20 +251,28 @@ Mickey_Console::Mickey_Console(PreAgiEngine *vm, Mickey *mickey) : PreAGI_Consol
 	_mickey = mickey;
 
 	DCmd_Register("curRoom",     WRAP_METHOD(Mickey_Console, Cmd_CurRoom));
-	DCmd_Register("showPic",     WRAP_METHOD(Mickey_Console, Cmd_ShowPic));
+	DCmd_Register("drawPic",     WRAP_METHOD(Mickey_Console, Cmd_DrawPic));
+	DCmd_Register("drawObj",     WRAP_METHOD(Mickey_Console, Cmd_DrawObj));
 }
 
 bool Mickey_Console::Cmd_CurRoom(int argc, const char **argv) {
 	_mickey->debugCurRoom();
-
 	return true;
 }
 
-bool Mickey_Console::Cmd_ShowPic(int argc, const char **argv) {
+bool Mickey_Console::Cmd_DrawPic(int argc, const char **argv) {
 	if (argc != 2)
 		DebugPrintf("Usage: %s <Picture number>\n", argv[0]);
 	else
 		_mickey->drawPic(atoi(argv[1]));
+	return true;
+}
+
+bool Mickey_Console::Cmd_DrawObj(int argc, const char **argv) {
+	if (argc != 2)
+		DebugPrintf("Usage: %s <Object number>\n", argv[0]);
+	else
+		_mickey->drawObj((ENUM_MSA_OBJECT)atoi(argv[1]), 0, 0);
 	return true;
 }
 
