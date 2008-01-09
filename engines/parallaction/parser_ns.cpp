@@ -973,7 +973,6 @@ void Parallaction_ns::parseLocation(const char *filename) {
 
 	// TODO: the following two lines are specific to Nippon Safes
 	// and should be moved into something like 'initializeParsing()'
-	_gfx->setFont(_labelFont);
 	_hasLocationSound = false;
 
 	_locParseCtxt.end = false;

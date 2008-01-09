@@ -849,11 +849,6 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 void Gfx::setFont(Font *font) {
 	assert(font);
 	_font = font;
-	setFontShadow(false);
-}
-
-void Gfx::setFontShadow(bool enable) {
-	_fontShadow = enable && (_vm->getPlatform() == Common::kPlatformAmiga);
 }
 
 void Gfx::restoreBackground(const Common::Rect& r) {
@@ -962,7 +957,6 @@ Gfx::Gfx(Parallaction* vm) :
 	_hbCircleRadius = 0;
 
 	_font = NULL;
-	_fontShadow = false;
 
 	return;
 }

@@ -297,8 +297,6 @@ int16 DialogueManager::selectAnswer() {
 void Parallaction::runDialogue(SpeakData *data) {
 	debugC(1, kDebugExec, "runDialogue: starting dialogue '%s'", data->_name);
 
-	_gfx->setFont(_dialogueFont);
-
 	DialogueManager man(this, data);
 	man.run();
 
