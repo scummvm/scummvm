@@ -169,7 +169,7 @@ bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 
 	f->write("lure", 5);
 	f->writeByte(getLanguage());
-	f->writeByte(LURE_DAT_MINOR);
+	f->writeByte(LURE_SAVEGAME_MINOR);
 	f->writeString(caption);
 	f->writeByte(0); // End of string terminator
 

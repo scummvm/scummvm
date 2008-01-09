@@ -25,6 +25,7 @@
 
 #include "lure/res.h"
 #include "lure/disk.h"
+#include "lure/lure.h"
 #include "lure/scripts.h"
 #include "common/endian.h"
 
@@ -446,6 +447,7 @@ void HotspotData::saveToStream(WriteStream *stream) {
 	stream->writeSint16LE(startX);
 	stream->writeSint16LE(startY);
 	stream->writeUint16LE(roomNumber);
+	stream->writeByte(layer);
 
 	stream->writeUint16LE(width);
 	stream->writeUint16LE(height);
@@ -489,6 +491,10 @@ void HotspotData::loadFromStream(ReadStream *stream) {
 	startX = stream->readSint16LE();
 	startY = stream->readSint16LE();
 	roomNumber = stream->readUint16LE();
+
+	uint8 saveVersion = LureEngine::getReference().saveVersion();
+	if (saveVersion >= 29)
+		layer = stream->readByte();
 
 	width = stream->readUint16LE();
 	height = stream->readUint16LE();
