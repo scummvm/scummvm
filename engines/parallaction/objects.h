@@ -257,17 +257,6 @@ struct TypeData {
 	}
 };
 
-struct Label {
-	Graphics::Surface	_cnv;
-
-	Common::Point		_pos;
-
-	Label();
-	~Label();
-
-	void free();
-	void resetPosition();
-};
 
 #define ZONENAME_LENGTH 32
 

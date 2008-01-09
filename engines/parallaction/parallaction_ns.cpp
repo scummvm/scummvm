@@ -184,7 +184,7 @@ void Parallaction_ns::setArrowCursor() {
 	debugC(1, kDebugInput, "setting mouse cursor to arrow");
 
 	// this stuff is needed to avoid artifacts with labels and selected items when switching cursors
-	_gfx->setLabel(0);
+	_gfx->setFloatingLabel(0);
 	_activeItem._id = 0;
 
 	_system->setMouseCursor(_mouseArrow, MOUSEARROW_WIDTH, MOUSEARROW_HEIGHT, 0, 0, 0);
@@ -298,7 +298,8 @@ void Parallaction_ns::changeLocation(char *location) {
 	// WORKAROUND: this hideLabel has been added to avoid crashes caused by
 	// execution of label jobs after a location switch. The other workaround in
 	// Parallaction::runGame should have been rendered useless by this one.
-	_gfx->setLabel(0);
+	_gfx->setFloatingLabel(0);
+	_gfx->freeLabels();
 
 	_hoverZone = NULL;
 	if (_engineFlags & kEngineBlockInput) {
@@ -320,10 +321,10 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	if (locname.hasSlide()) {
 		showSlide(locname.slide());
-		_gfx->setFont(_menuFont);
-		_gfx->displayCenteredString(14, _slideText[0]); // displays text on screen
-		_gfx->updateScreen();
+		uint id = _gfx->createLabel(_menuFont, _slideText[0], 1);
+		_gfx->showLabel(id, CENTER_LABEL_HORIZONTAL, 14);
 		waitUntilLeftClick();
+		_gfx->freeLabels();
 	}
 
 	if (locname.hasCharacter()) {

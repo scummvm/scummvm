@@ -384,42 +384,36 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 
 void Parallaction_ns::_c_finito(void *parm) {
 
-	const char **v8C = endMsg0;
-	const char **v7C = endMsg1;
-	const char **v6C = endMsg2;
-	const char **v5C = endMsg3;
-	const char **v4C = endMsg4;
-	const char **v3C = endMsg5;
-	const char **v2C = endMsg6;
-	const char **v1C = endMsg7;
-
 	setPartComplete(_char);
 
 	cleanInventory();
 	_gfx->setPalette(_gfx->_palette);
 
-	_gfx->setFont(_menuFont);
-	_gfx->setFontShadow(true);
+	uint id[4];
 
 	if (allPartsComplete()) {
-		_gfx->displayCenteredString(70, v4C[_language]);
-		_gfx->displayCenteredString(100, v3C[_language]);
-		_gfx->displayCenteredString(130, v2C[_language]);
-		_gfx->displayCenteredString(160, v1C[_language]);
+		id[0] = _gfx->createLabel(_menuFont, endMsg4[_language], 1);
+		id[1] = _gfx->createLabel(_menuFont, endMsg5[_language], 1);
+		id[2] = _gfx->createLabel(_menuFont, endMsg6[_language], 1);
+		id[3] = _gfx->createLabel(_menuFont, endMsg7[_language], 1);
+	} else {
+		id[0] = _gfx->createLabel(_menuFont, endMsg0[_language], 1);
+		id[1] = _gfx->createLabel(_menuFont, endMsg1[_language], 1);
+		id[2] = _gfx->createLabel(_menuFont, endMsg2[_language], 1);
+		id[3] = _gfx->createLabel(_menuFont, endMsg3[_language], 1);
+	}
 
-		_gfx->updateScreen();
-		waitUntilLeftClick();
+	_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 70);
+	_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 100);
+	_gfx->showLabel(id[2], CENTER_LABEL_HORIZONTAL, 130);
+	_gfx->showLabel(id[3], CENTER_LABEL_HORIZONTAL, 160);
+	waitUntilLeftClick();
 
+	_gfx->freeLabels();
+
+	if (allPartsComplete()) {
 		scheduleLocationSwitch("estgrotta.drki");
 	} else {
-		_gfx->displayCenteredString(70, v8C[_language]);
-		_gfx->displayCenteredString(100, v7C[_language]);
-		_gfx->displayCenteredString(130, v6C[_language]);
-		_gfx->displayCenteredString(160, v5C[_language]);
-
-		_gfx->updateScreen();
-		waitUntilLeftClick();
-
 		selectStartLocation();
 	}
 
@@ -439,14 +433,12 @@ void Parallaction_ns::_c_testResult(void *parm) {
 	_disk->selectArchive("disk1");
 	parseLocation("common");
 
-	_gfx->setFont(_menuFont);
-	_gfx->setFontShadow(true);
+	uint id[2];
+	id[0] = _gfx->createLabel(_menuFont, _slideText[0], 1);
+	id[1] = _gfx->createLabel(_menuFont, _slideText[1], 1);
 
-	_gfx->displayCenteredString(38, _slideText[0]);
-	_gfx->displayCenteredString(58, _slideText[1]);
-
-	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBitBack);
-	_gfx->copyScreen(Gfx::kBitFront, Gfx::kBit2);
+	_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 38);
+	_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 58);
 
 	return;
 }
@@ -485,14 +477,15 @@ void Parallaction_ns::_c_startIntro(void *parm) {
 
 void Parallaction_ns::_c_endIntro(void *parm) {
 
-	_gfx->setFont(_menuFont);
-	_gfx->setFontShadow(true);
-
 	debugC(1, kDebugExec, "endIntro()");
 
+	uint id[2];
 	for (uint16 _si = 0; _si < 6; _si++) {
-		_gfx->displayCenteredString(80, _credits[_si]._role);
-		_gfx->displayCenteredString(100, _credits[_si]._name);
+		id[0] = _gfx->createLabel(_menuFont, _credits[_si]._role, 1);
+		id[1] = _gfx->createLabel(_menuFont, _credits[_si]._name, 1);
+
+		_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 80);
+		_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 100);
 
 		_gfx->updateScreen();
 
@@ -505,17 +498,20 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 			waitTime( 1 );
 		}
 
-		_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+		_gfx->freeLabels();
 	}
 	debugC(1, kDebugExec, "endIntro(): done showing credits");
 
 	_soundMan->stopMusic();
 
 	if ((getFeatures() & GF_DEMO) == 0) {
-		_gfx->displayCenteredString(80, "CLICK MOUSE BUTTON TO START");
-		_gfx->updateScreen();
+
+		id[0] = _gfx->createLabel(_menuFont, "CLICK MOUSE BUTTON TO START", 1);
+		_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 80);
 
 		waitUntilLeftClick();
+
+		_gfx->freeLabels();
 
 		_engineFlags &= ~kEngineBlockInput;
 		selectStartLocation();

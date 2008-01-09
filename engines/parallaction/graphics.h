@@ -220,6 +220,25 @@ public:
 };
 
 
+#define CENTER_LABEL_HORIZONTAL	-1
+#define CENTER_LABEL_VERTICAL	-1
+
+struct Label {
+	Graphics::Surface	_cnv;
+
+	Common::Point		_pos;
+	bool				_visible;
+
+	Label();
+	~Label();
+
+	void free();
+	void resetPosition();
+};
+
+
+
+
 #define NUM_BUFFERS 4
 #define MAX_BALLOON_WIDTH 130
 
@@ -243,15 +262,18 @@ public:
 public:
 
 	// balloons and text
-	void displayString(uint16 x, uint16 y, const char *text, byte color);
-	void displayCenteredString(uint16 y, const char *text);
 	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 
 	// labels
-	Label	*_label;
-	void setLabel(Label *label);
+	Label	*_floatingLabel;
+	void setFloatingLabel(Label *label);
 	Label *renderFloatingLabel(Font *font, char *text);
+
+	uint createLabel(Font *font, const char *text, byte color);
+	void showLabel(uint id, int16 x, int16 y);
+	void hideLabel(uint id);
+	void freeLabels();
 
 	// cut/paste
 	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer);
@@ -354,8 +376,13 @@ protected:
 
 	uint	_numItems;
 
+	#define MAX_NUM_LABELS	5
+	Label*	_labels[MAX_NUM_LABELS];
+	uint	_numLabels;
+
 	void drawInventory();
-	void drawLabel();
+	void updateFloatingLabel();
+	void drawLabels();
 	void drawItems();
 	void drawBalloons();
 

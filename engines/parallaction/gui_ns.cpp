@@ -127,9 +127,6 @@ void Parallaction_ns::guiStart() {
 
 	guiSplash();
 
-	_gfx->setFont(_introFont);
-	_gfx->setFontShadow(true);
-
 	_language = guiChooseLanguage();
 	_disk->setLanguage(_language);
 
@@ -192,19 +189,21 @@ int Parallaction_ns::guiNewGame() {
 
 	const char **v14 = introMsg3;
 
-	_gfx->setFont(_menuFont);
-	_gfx->setFontShadow(true);
-
 	_disk->selectArchive("disk1");
 
 	setBackground("test", NULL, NULL);
 
 	_gfx->swapBuffers();
 
-	_gfx->displayCenteredString(50, v14[0]);
-	_gfx->displayCenteredString(70, v14[1]);
-	_gfx->displayCenteredString(100, v14[2]);
-	_gfx->displayCenteredString(120, v14[3]);
+	uint id[4];
+	id[0] = _gfx->createLabel(_menuFont, v14[0], 1);
+	id[1] = _gfx->createLabel(_menuFont, v14[1], 1);
+	id[2] = _gfx->createLabel(_menuFont, v14[2], 1);
+	id[3] = _gfx->createLabel(_menuFont, v14[3], 1);
+	_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 50);
+	_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 70);
+	_gfx->showLabel(id[2], CENTER_LABEL_HORIZONTAL, 100);
+	_gfx->showLabel(id[3], CENTER_LABEL_HORIZONTAL, 120);
 
 	showCursor(false);
 
@@ -216,6 +215,8 @@ int Parallaction_ns::guiNewGame() {
 	} while (_mouseButtons != kMouseLeftUp && _mouseButtons != kMouseRightUp);
 
 	showCursor(true);
+
+	_gfx->freeLabels();
 
 	if (_mouseButtons != kMouseRightUp) {
 		return START_INTRO;
@@ -259,7 +260,10 @@ uint16 Parallaction_ns::guiChooseLanguage() {
 
 	// user can choose language in dos version
 	showSlide("lingua");
-	_gfx->displayString(60, 30, "SELECT LANGUAGE", 1);
+
+	uint id = _gfx->createLabel(_introFont, "SELECT LANGUAGE", 1);
+	_gfx->showLabel(id, 60, 30);
+
 	setArrowCursor();
 
 	int selection = -1;
@@ -275,6 +279,8 @@ uint16 Parallaction_ns::guiChooseLanguage() {
 
 	beep();
 
+	_gfx->freeLabels();
+
 	return selection;
 }
 
@@ -288,6 +294,10 @@ uint16 Parallaction_ns::guiSelectGame() {
 	uint16 _si = 0;
 	uint16 _di = 3;
 
+	uint id0, id1;
+	id0 = _gfx->createLabel(_introFont, loadGameMsg[_language], 1);
+	id1 = _gfx->createLabel(_introFont, newGameMsg[_language], 1);
+
 	_mouseButtons = kMouseNone;
 	while (_mouseButtons != kMouseLeftUp) {
 
@@ -296,22 +306,23 @@ uint16 Parallaction_ns::guiSelectGame() {
 		_si = (_mousePos.x > 160) ? 1 : 0;
 
 		if (_si != _di) {
-			_di = _si;
-
-			_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 			if (_si != 0) {
 				// load a game
-				_gfx->displayString(60, 30, loadGameMsg[_language], 1);
+				_gfx->hideLabel(id1);
+				_gfx->showLabel(id0, 60, 30);
 			} else {
 				// new game
-				_gfx->displayString(60, 30, newGameMsg[_language], 1);
+				_gfx->hideLabel(id0);
+				_gfx->showLabel(id1, 60, 30);
 			}
-
+			_di = _si;
 		}
 
 		_gfx->updateScreen();
 		g_system->delayMillis(30);
 	}
+
+	_gfx->freeLabels();
 
 	return _si ? LOAD_GAME : NEW_GAME;
 }
@@ -391,6 +402,10 @@ int Parallaction_ns::guiSelectCharacter() {
 
 	bool fail;
 
+	uint id[2];
+	id[0] = _gfx->createLabel(_introFont, introMsg1[_language], 1);
+	id[1] = _gfx->createLabel(_introFont, introMsg2[_language], 1);
+
 	while (true) {
 
 		points[0] = 0;
@@ -398,7 +413,8 @@ int Parallaction_ns::guiSelectCharacter() {
 		points[2] = 0;
 		fail = false;
 
-		_gfx->displayString(60, 30, introMsg1[_language], 1);			// displays message
+		_gfx->hideLabel(id[1]);
+		_gfx->showLabel(id[0], 60, 30);
 
 		_di = 0;
 		while (_di < PASSWORD_LEN) {
@@ -437,13 +453,16 @@ int Parallaction_ns::guiSelectCharacter() {
 		}
 
 		_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-		_gfx->displayString(60, 30, introMsg2[_language], 1);
+
+		_gfx->hideLabel(id[0]);
+		_gfx->showLabel(id[1], 60, 30);
+
 		_gfx->updateScreen();
 
 		g_system->delayMillis(2000);
-
-		_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
 	}
+
+	_gfx->freeLabels();
 
 	_gfx->setBlackPalette();
 	_gfx->updateScreen();

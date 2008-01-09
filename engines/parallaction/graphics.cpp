@@ -360,7 +360,7 @@ void Gfx::updateScreen() {
 	drawItems();
 	drawBalloons();
 
-	drawLabel();
+	drawLabels();
 
 	g_system->updateScreen();
 	return;
@@ -541,17 +541,82 @@ Label *Gfx::renderFloatingLabel(Font *font, char *text) {
 	return label;
 }
 
+uint Gfx::createLabel(Font *font, const char *text, byte color) {
+	assert(_numLabels < MAX_NUM_LABELS);
 
-void Gfx::setLabel(Label *label) {
-	_label = label;
+	Label *label = new Label;
+	Graphics::Surface *cnv = &label->_cnv;
 
-	if (_label) {
-		_label->resetPosition();
+	uint w, h;
+
+	if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		w = font->getStringWidth(text) + 2;
+		h = font->height() + 2;
+
+		cnv->create(w, h, 1);
+		cnv->fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
+
+		font->setColor(0);
+		font->drawString((byte*)cnv->getBasePtr(0, 2), cnv->pitch, text);
+		font->setColor(color);
+		font->drawString((byte*)cnv->getBasePtr(2, 0), cnv->pitch, text);
+	} else {
+		w = font->getStringWidth(text);
+		h = font->height();
+
+		cnv->create(w, h, 1);
+		cnv->fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
+
+		font->setColor(color);
+		font->drawString((byte*)cnv->getBasePtr(0, 0), cnv->pitch, text);
+	}
+
+	uint id = _numLabels;
+	_labels[id] = label;
+	_numLabels++;
+
+	return id;
+}
+
+void Gfx::showLabel(uint id, int16 x, int16 y) {
+	assert(id < _numLabels);
+	_labels[id]->_visible = true;
+
+	if (x == CENTER_LABEL_HORIZONTAL) {
+		x = CLIP<int16>((_vm->_screenWidth - _labels[id]->_cnv.w) / 2, 0, _vm->_screenWidth/2);
+	}
+
+	if (y == CENTER_LABEL_VERTICAL) {
+		y = CLIP<int16>((_vm->_screenHeight - _labels[id]->_cnv.h) / 2, 0, _vm->_screenHeight/2);
+	}
+
+	_labels[id]->_pos.x = x;
+	_labels[id]->_pos.y = y;
+}
+
+void Gfx::hideLabel(uint id) {
+	assert(id < _numLabels);
+	_labels[id]->_visible = false;
+}
+
+void Gfx::freeLabels() {
+	for (uint i = 0; i < _numLabels; i++) {
+		delete _labels[i];
+	}
+	_numLabels = 0;
+}
+
+
+void Gfx::setFloatingLabel(Label *label) {
+	_floatingLabel = label;
+
+	if (_floatingLabel) {
+		_floatingLabel->resetPosition();
 	}
 }
 
-void Gfx::drawLabel() {
-	if (!_label) {
+void Gfx::updateFloatingLabel() {
+	if (!_floatingLabel) {
 		return;
 	}
 
@@ -561,28 +626,65 @@ void Gfx::drawLabel() {
 	_vm->getCursorPos(cursor);
 
 	if (_vm->_activeItem._id != 0) {
-		_si = cursor.x + 16 - _label->_cnv.w/2;
+		_si = cursor.x + 16 - _floatingLabel->_cnv.w/2;
 		_di = cursor.y + 34;
 	} else {
-		_si = cursor.x + 8 - _label->_cnv.w/2;
+		_si = cursor.x + 8 - _floatingLabel->_cnv.w/2;
 		_di = cursor.y + 21;
 	}
 
 	if (_si < 0) _si = 0;
 	if (_di > 190) _di = 190;
 
-	if (_label->_cnv.w + _si > _vm->_screenWidth)
-		_si = _vm->_screenWidth - _label->_cnv.w;
+	if (_floatingLabel->_cnv.w + _si > _vm->_screenWidth)
+		_si = _vm->_screenWidth - _floatingLabel->_cnv.w;
 
-	_label->_pos.x = _si;
-	_label->_pos.y = _di;
+	_floatingLabel->_pos.x = _si;
+	_floatingLabel->_pos.y = _di;
+}
 
-	Common::Rect r(_label->_cnv.w, _label->_cnv.h);
-	r.moveTo(_label->_pos);
+void Gfx::drawLabels() {
+	if ((!_floatingLabel) && (_numLabels == 0)) {
+		return;
+	}
+	updateFloatingLabel();
 
 	Graphics::Surface* surf = g_system->lockScreen();
-	flatBlit(r, (byte*)_label->_cnv.getBasePtr(0, 0), surf, LABEL_TRANSPARENT_COLOR);
+
+	for (uint i = 0; i < _numLabels; i++) {
+		if (_labels[i]->_visible) {
+			Common::Rect r(_labels[i]->_cnv.w, _labels[i]->_cnv.h);
+			r.moveTo(_labels[i]->_pos);
+			flatBlit(r, (byte*)_labels[i]->_cnv.getBasePtr(0, 0), surf, LABEL_TRANSPARENT_COLOR);
+		}
+	}
+
+	if (_floatingLabel) {
+		Common::Rect r(_floatingLabel->_cnv.w, _floatingLabel->_cnv.h);
+		r.moveTo(_floatingLabel->_pos);
+		flatBlit(r, (byte*)_floatingLabel->_cnv.getBasePtr(0, 0), surf, LABEL_TRANSPARENT_COLOR);
+	}
+
 	g_system->unlockScreen();
+}
+
+Label::Label() {
+	resetPosition();
+	_visible = false;
+}
+
+Label::~Label() {
+	free();
+}
+
+void Label::free() {
+	_cnv.free();
+	resetPosition();
+}
+
+void Label::resetPosition() {
+	_pos.x = -1000;
+	_pos.y = -1000;
 }
 
 
@@ -699,25 +801,6 @@ void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
 	return;
 }
 
-
-
-void Gfx::displayString(uint16 x, uint16 y, const char *text, byte color) {
-	byte *dst = (byte*)_buffers[kBitFront]->getBasePtr(x, y);
-	if (_fontShadow) {
-		dst = (byte*)_buffers[kBitFront]->getBasePtr(x-2, y+2);
-		_font->setColor(0);
-		_font->drawString(dst, _vm->_screenWidth, text);
-	}
-
-	dst = (byte*)_buffers[kBitFront]->getBasePtr(x, y);
-	_font->setColor(color);
-	_font->drawString(dst, _vm->_screenWidth, text);
-}
-
-void Gfx::displayCenteredString(uint16 y, const char *text) {
-	uint16 x = (_vm->_screenWidth - getStringWidth(text)) / 2;
-	displayString(x, y, text, 1);
-}
 
 
 uint16 Gfx::getStringWidth(const char *text) {
@@ -865,7 +948,8 @@ Gfx::Gfx(Parallaction* vm) :
 
 	_numBalloons = 0;
 	_numItems = 0;
-	_label = 0;
+	_numLabels = 0;
+	_floatingLabel = 0;
 
 	_screenX = 0;
 	_screenY = 0;

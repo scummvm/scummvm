@@ -194,24 +194,6 @@ uint16 Zone::height() const {
 	return _bottom - _top;
 }
 
-Label::Label() {
-	resetPosition();
-}
-
-Label::~Label() {
-	free();
-}
-
-void Label::free() {
-	_cnv.free();
-	resetPosition();
-}
-
-void Label::resetPosition() {
-	_pos.x = -1000;
-	_pos.y = -1000;
-}
-
 Answer::Answer() {
 	_text = NULL;
 	_mood = 0;
