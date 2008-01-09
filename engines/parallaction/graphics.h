@@ -266,10 +266,8 @@ public:
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 
 	// labels
-	Label	*_floatingLabel;
 	void setFloatingLabel(Label *label);
 	Label *renderFloatingLabel(Font *font, char *text);
-
 	uint createLabel(Font *font, const char *text, byte color);
 	void showLabel(uint id, int16 x, int16 y);
 	void hideLabel(uint id);
@@ -376,13 +374,13 @@ protected:
 	#define MAX_NUM_LABELS	5
 	Label*	_labels[MAX_NUM_LABELS];
 	uint	_numLabels;
+	Label	*_floatingLabel;
 
 	void drawInventory();
 	void updateFloatingLabel();
 	void drawLabels();
 	void drawItems();
 	void drawBalloons();
-
 
 	void initBuffers(int w, int h);
 	void freeBuffers();
@@ -392,12 +390,13 @@ protected:
 	int createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness);
 	Balloon *getBalloon(uint id);
 
+	// low level text and patches
+	void setFont(Font* font);
 	void drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
 	bool drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
+
 	void blit(const Common::Rect& r, uint16 z, byte *data, Graphics::Surface *surf);
 	void flatBlit(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor);
-	void setFont(Font* font);
-
 };
 
 

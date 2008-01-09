@@ -507,6 +507,11 @@ void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Graphics::Surface *s
 
 #define	LABEL_TRANSPARENT_COLOR 0xFF
 
+void setupLabelSurface(Graphics::Surface &surf, uint w, uint h) {
+	surf.create(w, h, 1);
+	surf.fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
+}
+
 Label *Gfx::renderFloatingLabel(Font *font, char *text) {
 
 	Label *label = new Label;
@@ -518,8 +523,7 @@ Label *Gfx::renderFloatingLabel(Font *font, char *text) {
 		w = font->getStringWidth(text) + 16;
 		h = 10;
 
-		cnv->create(w, h, 1);
-		cnv->fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
+		setupLabelSurface(*cnv, w, h);
 
 		font->setColor(7);
 		font->drawString((byte*)cnv->pixels + 1, cnv->w, text);
@@ -532,10 +536,10 @@ Label *Gfx::renderFloatingLabel(Font *font, char *text) {
 		w = font->getStringWidth(text);
 		h = font->height();
 
-		cnv->create(w, h, 1);
-		cnv->fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
+		setupLabelSurface(*cnv, w, h);
 
-		font->drawString((byte*)cnv->pixels, cnv->w, text);
+		setFont(font);
+		drawText(cnv, 0, 0, text, 0);
 	}
 
 	return label;
@@ -549,26 +553,23 @@ uint Gfx::createLabel(Font *font, const char *text, byte color) {
 
 	uint w, h;
 
+	setFont(font);
+
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
 		w = font->getStringWidth(text) + 2;
 		h = font->height() + 2;
 
-		cnv->create(w, h, 1);
-		cnv->fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
+		setupLabelSurface(*cnv, w, h);
 
-		font->setColor(0);
-		font->drawString((byte*)cnv->getBasePtr(0, 2), cnv->pitch, text);
-		font->setColor(color);
-		font->drawString((byte*)cnv->getBasePtr(2, 0), cnv->pitch, text);
+		drawText(cnv, 0, 2, text, 0);
+		drawText(cnv, 2, 0, text, color);
 	} else {
 		w = font->getStringWidth(text);
 		h = font->height();
 
-		cnv->create(w, h, 1);
-		cnv->fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
+		setupLabelSurface(*cnv, w, h);
 
-		font->setColor(color);
-		font->drawString((byte*)cnv->getBasePtr(0, 0), cnv->pitch, text);
+		drawText(cnv, 0, 0, text, color);
 	}
 
 	uint id = _numLabels;
