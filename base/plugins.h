@@ -59,6 +59,7 @@ class Plugin {
 public:
 	virtual ~Plugin() {}
 
+//	virtual bool isLoaded() const = 0;	// TODO
 	virtual bool loadPlugin() = 0;
 	virtual void unloadPlugin() = 0;
 
@@ -69,6 +70,8 @@ public:
 	virtual GameList getSupportedGames() const = 0;
 	virtual GameDescriptor findGame(const char *gameid) const = 0;
 	virtual GameList detectGames(const FSList &fslist) const = 0;
+
+	virtual SaveStateList listSaves(const char *target) const = 0;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const = 0;
 };
@@ -106,7 +109,8 @@ public:
 			Engine_##ID##_gameIDList(), \
 			Engine_##ID##_findGameID, \
 			Engine_##ID##_create, \
-			Engine_##ID##_detectGames \
+			Engine_##ID##_detectGames, \
+			Engine_##ID##_listSaves \
 			);\
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
@@ -119,6 +123,7 @@ public:
 		PLUGIN_EXPORT GameDescriptor PLUGIN_findGameID(const char *gameid) { return Engine_##ID##_findGameID(gameid); } \
 		PLUGIN_EXPORT PluginError PLUGIN_createEngine(OSystem *syst, Engine **engine) { return Engine_##ID##_create(syst, engine); } \
 		PLUGIN_EXPORT GameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
+		PLUGIN_EXPORT SaveStateList PLUGIN_listSaves(const char *target) { return Engine_##ID##_listSaves(target); } \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 #endif
@@ -134,6 +139,7 @@ public:
 	typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
 	typedef PluginError (*EngineFactory)(OSystem *syst, Engine **engine);
 	typedef GameList (*DetectFunc)(const FSList &fslist);
+	typedef SaveStateList (*ListSavesFunc)(const char *target);
 
 protected:
 	const char *_name;
@@ -141,11 +147,12 @@ protected:
 	GameIDQueryFunc _qf;
 	EngineFactory _ef;
 	DetectFunc _df;
+	ListSavesFunc _lsf;
 	GameList _games;
 
 public:
-	PluginRegistrator(const char *name, const char *copyright, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df)
-		: _name(name), _copyright(copyright), _qf(qf), _ef(ef), _df(df), _games(games) {}
+	PluginRegistrator(const char *name, const char *copyright, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df, ListSavesFunc lsf)
+		: _name(name), _copyright(copyright), _qf(qf), _ef(ef), _df(df), _lsf(lsf), _games(games) {}
 };
 #endif
 

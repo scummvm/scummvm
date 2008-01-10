@@ -663,9 +663,6 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	// Handle commands passed via the command line (like --list-targets and
 	// --list-games). This must be done after the config file and the plugins
 	// have been loaded.
-	// FIXME: The way are are doing this is rather arbitrary at this time.
-	// E.g. --version and --help are very similar, but are still handled
-	// inside parseCommandLine. This should be unified.
 	if (command == "list-targets") {
 		listTargets();
 		return false;

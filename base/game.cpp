@@ -25,6 +25,8 @@
 
 #include "base/game.h"
 #include "base/plugins.h"
+#include "graphics/surface.h"
+
 
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {
 	const PlainGameDescriptor *g = list;
@@ -65,6 +67,15 @@ void GameDescriptor::updateDesc(const char *extra) {
 		setVal("description", descr);
 	}
 }
+
+void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
+	if (_thumbnail && _thumbnail != t) {
+		_thumbnail->free();
+		delete _thumbnail;
+	}
+	_thumbnail = t;
+}
+
 
 namespace Base {
 
