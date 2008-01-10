@@ -114,6 +114,14 @@ int AgiEngine::setupV3Game(int ver, uint32 crc) {
 		logicNamesCmd[0xad].numArgs = 1;
 	}
 
+	// FIXME: Apply this fix to other games also that use 2 arguments for command 182.
+	// 'adj.ego.move.to.x.y' (i.e. command 182) takes 2 arguments for at least the
+	// Amiga Gold Rush! (v2.05 1989-03-09) using Amiga AGI 2.316. Amiga's Gold Rush
+	// has been set to use AGI 3.149 in ScummVM so that's why this initialization is
+	// here and not in setupV2Game.
+	if (getGameID() == GID_GOLDRUSH && getPlatform() == Common::kPlatformAmiga)
+		logicNamesCmd[182].numArgs = 2;
+
 	return ec;
 }
 

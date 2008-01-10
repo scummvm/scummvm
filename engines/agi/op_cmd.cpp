@@ -664,7 +664,20 @@ cmd(release_key) {
 }
 
 cmd(adj_ego_move_to_x_y) {
-	game.viewTable[0].flags |= ADJ_EGO_XY;
+	switch (logicNamesCmd[182].numArgs) {
+	case 2:
+		// TODO: Implement the 2 arguments using variant of 'adj.ego.move.to.x.y'.
+		// It's used at least in Amiga Gold Rush! (v2.05 1989-03-09, Amiga AGI 2.316)
+		// in logics 130 and 150 (Using arguments (0, 0), (0, 7), (0, 8), (9, 9), (-9, 9)).
+		// I may be wrong about the (-9, 9) argument pair though, it may just be (247, 9).
+		debugC(4, kDebugLevelScripts, "Unsupported command adj.ego.move.to.x.y(%d, %d)",
+			(int8) p0, (int8) p1);
+		break;
+	case 0:
+	default:
+		game.viewTable[0].flags |= ADJ_EGO_XY;
+		break;
+	}
 }
 
 cmd(parse) {

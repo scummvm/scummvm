@@ -269,6 +269,8 @@ struct AgiLogicnames logicNamesCmd[] = {
 	_L("fence.mouse", 4, 0x00),	/* B3 */
 	_L("mouse.posn", 2, 0x00),	/* B4 */
 	_L("release.key", 0, 0x00),	/* B5 */
+
+	/* 2 args for at least the Amiga Gold Rush! (v2.05 1989-03-09) using Amiga AGI 2.316. */
 	_L("adj.ego.move.to.xy", 0, 0x00),	/* B6 */
 	_L(NULL, 0, 0x00)
 };
