@@ -748,7 +748,6 @@ void SequenceDelayList::add(uint16 delay, uint16 seqOffset, bool canClear) {
 }
 
 void SequenceDelayList::tick() {
-	Resources &res = Resources::getReference();
 	uint32 currTime = g_system->getMillis();
 	SequenceDelayList::iterator i;
 

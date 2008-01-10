@@ -255,8 +255,8 @@ class HotspotScheduleRecord: public CurrentActionStack {
 public:
 	uint16 hotspotId;
 
-	HotspotScheduleRecord(uint16 hotspotId, CurrentActionStack &stack);
-	HotspotScheduleRecord(uint16 hotspotId);
+	HotspotScheduleRecord(uint16 hId, CurrentActionStack &stack);
+	HotspotScheduleRecord(uint16 hId);
 };
 
 class HotspotSchedules: public ManagedList<HotspotScheduleRecord *> {

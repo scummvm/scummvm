@@ -4839,13 +4839,13 @@ void HotspotList::loadFromStream(ReadStream *stream) {
 	}
 }
 
-HotspotScheduleRecord::HotspotScheduleRecord(uint16 hotspotId, CurrentActionStack &stack) {
-	this->hotspotId = hotspotId;
+HotspotScheduleRecord::HotspotScheduleRecord(uint16 hId, CurrentActionStack &stack) {
+	hotspotId = hId;
 	copyFrom(stack);
 }
 
-HotspotScheduleRecord::HotspotScheduleRecord(uint16 hotspotId) {
-	this->hotspotId = hotspotId;
+HotspotScheduleRecord::HotspotScheduleRecord(uint16 hId) {
+	hotspotId = hId;
 }
 
 void HotspotSchedules::saveToStream(WriteStream *stream) {
