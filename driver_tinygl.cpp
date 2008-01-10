@@ -381,11 +381,11 @@ void TinyGLBlit(byte *dst, byte *src, int x, int y, int width, int height, bool 
 		srcY = 0;
 	}
 
-	if (x + width > 639)
-		width -= (x + width) - 639;
+	if (x + width > 640)
+		width -= (x + width) - 640;
 
-	if (y + height > 479)
-		height -= (y + height) - 479;
+	if (y + height > 480)
+		height -= (y + height) - 480;
 
 	dst += (x + (y * 640)) * 2;
 	src += (srcX + (srcY * width)) * 2;
