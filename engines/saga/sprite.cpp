@@ -177,7 +177,13 @@ void Sprite::loadList(int resourceId, SpriteList &spriteList) {
 
 void Sprite::getScaledSpriteBuffer(SpriteList &spriteList, int spriteNumber, int scale, int &width, int &height, int &xAlign, int &yAlign, const byte *&buffer) {
 	SpriteInfo *spriteInfo;
-	assert(spriteList.spriteCount>spriteNumber);
+
+	if (spriteList.spriteCount <= spriteNumber) {
+		// this can occur in IHNM while loading a saved game from chapter 1-5 when being in the end chapter
+		warning("spriteList.spriteCount <= spriteNumber");
+		return;
+	}
+
 	spriteInfo = &spriteList.infoList[spriteNumber];
 
 	if (scale < 256) {
