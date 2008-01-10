@@ -23,6 +23,8 @@
  *
  */
 
+#include <time.h>	// for ScummEngine::saveInfos / ScummEngine::loadInfos
+
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -43,8 +45,6 @@
 
 #include "sound/audiocd.h"
 #include "sound/mixer.h"
-
-#include <time.h>	// for ScummEngine::saveInfos / ScummEngine::loadInfos
 
 namespace Scumm {
 
