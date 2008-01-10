@@ -443,9 +443,9 @@ void Script::transformPlayer(uint16 v1, uint16 v2, uint16 v3) {
 	activeHotspot->setHotspotScript(0x630);
 }
 
-// Marks the jail door in room 14 for closing
+// Marks the town hall door in room 14 for closing
 
-void Script::jailClose(uint16 v1, uint16 v2, uint16 v3) {
+void Script::townHallClose(uint16 v1, uint16 v2, uint16 v3) {
 	RoomExitJoinData *joinRec = Resources::getReference().getExitJoin(0x2719);
 	joinRec->blocked = 1;
 }
@@ -798,7 +798,7 @@ static const SequenceMethodRecord scriptMethods[] = {
 	{36, Script::displayMessage2},
 	{37, Script::startOilBurner},
 	{38, Script::transformPlayer},
-	{39, Script::jailClose},
+	{39, Script::townHallClose},
 	{40, Script::checkRoomNumber},
 	{41, Script::makeGoewinFollow},
 	{42, Script::doorClose},
