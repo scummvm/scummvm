@@ -180,18 +180,10 @@ int AgiEngine::handleController(int key) {
 		if (!(getFeatures() & GF_AGIMOUSE)) {
 			/* Handle mouse button events */
 			if (key == BUTTON_LEFT) {
-				// FIXME: Implement adj.ego.move.to.x.y-command properly (With 2 arguments) and remove this hack.
-				// This is a hack for preventing mouse usage in the mines (Rooms 147-162) in Amiga Gold Rush as
-				// moving with mouse bugs in the mines because adj.ego.move.to.x.y isn't properly implemented yet.
-				if (getGameID() == GID_GOLDRUSH && getPlatform() == Common::kPlatformAmiga && _game.vars[0] >= 147 && _game.vars[0] <= 162) {
-					messageBox("Use yer arrow keys ta walk.");
-					return true;
-				} else {
-					v->flags |= ADJ_EGO_XY;
-					v->parm1 = WIN_TO_PIC_X(g_mouse.x);
-					v->parm2 = WIN_TO_PIC_Y(g_mouse.y);
-					return true;
-				}
+				v->flags |= ADJ_EGO_XY;
+				v->parm1 = WIN_TO_PIC_X(g_mouse.x);
+				v->parm2 = WIN_TO_PIC_Y(g_mouse.y);
+				return true;
 			}
 		}
 
