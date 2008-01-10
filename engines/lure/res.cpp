@@ -97,6 +97,7 @@ void Resources::reset() {
 	freeData();
 
 	_fieldList.reset();
+	_barmanLists.reset();
 	_talkState = TALK_NONE;
 	_activeTalkData = NULL;
 

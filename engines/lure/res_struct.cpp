@@ -1153,6 +1153,11 @@ BarmanLists::BarmanLists() {
 		_barList[index] = default_barList[index];
 }
 
+void BarmanLists::reset() {
+	for (int index = 0; index < 3; ++index) 
+		_barList[index] = default_barList[index];
+}
+
 BarEntry &BarmanLists::getDetails(uint16 roomNumber) {
 	for (int index = 0; index < 3; ++index)
 		if (_barList[index].roomNumber == roomNumber)
@@ -1161,7 +1166,7 @@ BarEntry &BarmanLists::getDetails(uint16 roomNumber) {
 }
 
 void BarmanLists::saveToStream(Common::WriteStream *stream) {
-	for (int index = 0; index < 2; ++index) {
+	for (int index = 0; index < 3; ++index) {
 		uint16 value = (_barList[index].currentCustomer == NULL) ? 0 :
 			(_barList[index].currentCustomer - &_barList[index].customers[0]) / sizeof(BarEntry) + 1;
 		stream->writeUint16LE(value);
@@ -1173,7 +1178,10 @@ void BarmanLists::saveToStream(Common::WriteStream *stream) {
 }
 
 void BarmanLists::loadFromStream(Common::ReadStream *stream) {
-	for (int index = 0; index < 2; ++index) {
+	uint8 saveVersion = LureEngine::getReference().saveVersion();
+	int numEntries = (saveVersion >= 30) ? 3 : 2;
+
+	for (int index = 0; index < numEntries; ++index) {
 		int16 value = stream->readUint16LE();
 		_barList[index].currentCustomer = (value == 0) ? NULL : &_barList[index].customers[value - 1];
 
