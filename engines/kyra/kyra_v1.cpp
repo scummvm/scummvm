@@ -180,9 +180,7 @@ int KyraEngine_v1::init() {
 
 	initStaticResource();
 	
-	const AudioDataStruct *const sndList = (_flags.platform == Common::kPlatformFMTowns ||
-		_flags.platform == Common::kPlatformPC98) ? _soundData_TOWNS : _soundData_PC;
-	_sound->setSoundList(sndList);
+	_sound->setSoundList(&_soundData[kMusicIntro]);
 
 	_trackMap = _dosTrackMap;
 	_trackMapSize = _dosTrackMapSize;
@@ -191,8 +189,7 @@ int KyraEngine_v1::init() {
 		error("Couldn't init sound");
 
 	_sound->setVolume(255);
-	_sound->loadSoundFile((_flags.platform == Common::kPlatformFMTowns
-		|| _flags.platform == Common::kPlatformPC98) ? 0 : 9);
+	_sound->loadSoundFile(0);
 
 	setupTimers();
 	setupButtonData();
@@ -342,6 +339,8 @@ void KyraEngine_v1::startup() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::startup()");
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	_screen->setTextColorMap(colorMap);
+	_sound->setSoundList(&_soundData[kMusicIngame]);
+	_sound->loadSoundFile(0);
 //	_screen->setFont(Screen::FID_6_FNT);
 	_screen->setAnimBlockPtr(3750);
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));

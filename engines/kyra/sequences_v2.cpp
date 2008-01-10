@@ -106,11 +106,14 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		if (_sequences[seqNum].flags & 4) {
 			int cp = _screen->setCurPage(2);
 			Screen::FontId cf =	_screen->setFont(Screen::FID_GOLDFONT_FNT);
-			int sX = (320 - _screen->getTextWidth(_sequenceStrings[_sequences[seqNum].stringIndex1])) / 2;
-			_screen->printText(_sequenceStrings[_sequences[seqNum].stringIndex1], sX, 100 - _screen->getFontHeight(), 1, 0);
-			sX = (320 - _screen->getTextWidth(_sequenceStrings[_sequences[seqNum].stringIndex2])) / 2;
-			_screen->printText(_sequenceStrings[_sequences[seqNum].stringIndex2], sX, 100, 1, 0);
-
+			if (_sequences[seqNum].stringIndex1 != -1) {
+				int sX = (320 - _screen->getTextWidth(_sequenceStrings[_sequences[seqNum].stringIndex1])) / 2;
+				_screen->printText(_sequenceStrings[_sequences[seqNum].stringIndex1], sX, 100 - _screen->getFontHeight(), 1, 0);
+			}
+			if (_sequences[seqNum].stringIndex2 != -1) {
+				int sX = (320 - _screen->getTextWidth(_sequenceStrings[_sequences[seqNum].stringIndex2])) / 2;
+				_screen->printText(_sequenceStrings[_sequences[seqNum].stringIndex2], sX, 100, 1, 0);
+			}
 			_screen->setFont(cf);
 			_screen->setCurPage(cp);
 		}
@@ -205,7 +208,6 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 							uint32 tdiff = _seqEndTime - now;
 							uint32 dly = tdiff < _tickLength ? tdiff : _tickLength;
 							delay(dly);
-							//_seqEndTime -= dly;
 						}
 					} else {
 						loop = loop2 = false;
@@ -1494,6 +1496,9 @@ void KyraEngine_v2::seq_finaleActorScreen() {
 	_screen->loadBitmap("finale.cps", 3, 3, _screen->_currentPalette);
 	_screen->setFont(Screen::FID_GOLDFONT_FNT);
 
+	//int talkieCreditsSize;
+	//const uint8 *talkieCredits = _staticres->loadRawData(k2SeqplayCredits, talkieCreditsSize);
+
 	_sound->setSoundList(&_soundData[kMusicIngame]);
 	_sound->loadSoundFile(3);
 	_sound->playTrack(3);
@@ -1957,8 +1962,8 @@ bool KyraEngine_v2::seq_processNextSubFrame(int wsaNum) {
 		_activeWSA[wsaNum].movie->setY(_activeWSA[wsaNum].y);
 
 		if (_activeWSA[wsaNum].flags & 0x20) {
-			_activeWSA[wsaNum].movie->displayFrame(_activeWSA[wsaNum].control[currentFrame].frameIndex, 0x4000);
-			_activeWSA[wsaNum].frameDelay = _activeWSA[wsaNum].control[currentFrame].frameDelay;
+			_activeWSA[wsaNum].movie->displayFrame(READ_LE_UINT16(&_activeWSA[wsaNum].control[currentFrame * 2]), 0x4000);
+			_activeWSA[wsaNum].frameDelay = READ_LE_UINT16(&_activeWSA[wsaNum].control[currentFrame * 2 + 1]);
 		} else {
 			_activeWSA[wsaNum].movie->displayFrame(currentFrame % _activeWSA[wsaNum].movie->frames(), 0x4000);
 		}
@@ -2119,18 +2124,20 @@ void KyraEngine_v2::seq_showStarcraftLogo() {
 	_screen->copyPage(2, 0);
 	_screen->fadeFromBlack();
 	for (int i = 1; i < endframe; i++) {
+		uint32 endTime = _system->getMillis() + 50;
 		if (_skipFlag)
 			break;
 		ci->displayFrame(i, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
-		delay(50);
+		delay(endTime - _system->getMillis());
 	}
 	if(!_skipFlag) {
+		uint32 endTime = _system->getMillis() + 50;
 		ci->displayFrame(0, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
-		delay(50);
+		delay(endTime - _system->getMillis());
 	}
 	_screen->fadeToBlack();
 	_screen->showMouse();
@@ -2146,21 +2153,8 @@ void KyraEngine_v2::seq_init() {
 	_activeText = new ActiveText[10];
 
 	_res->unloadAllPakFiles();
-	_res->loadPakFile("KYRA.DAT");
-	_res->loadPakFile("AUDIO.PAK");
-	_res->loadPakFile("INTROGEN.PAK");
-	_res->loadPakFile("OTHER.PAK");
-	_res->loadPakFile("VOC.PAK");
-	if (_flags.isTalkie) {
-		_res->loadPakFile("TALKENG.PAK");
-		_res->loadPakFile("TALKGER.PAK");
-		_res->loadPakFile("TALKFRE.PAK");
-		_res->loadPakFile("INTROTLK.PAK");
-	} else {
-		_res->loadPakFile("INTROVOC.PAK");
-		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
-			_res->loadPakFile("WSCORE.PAK");
-	}
+	_res->loadPakFile(StaticResource::staticDataFilename());
+	_res->loadFileList(_sequencePakList, _sequencePakListSize);
 }
 
 void KyraEngine_v2::seq_uninit() {
@@ -2284,106 +2278,5 @@ void KyraEngine_v2::seq_makeBookAppear() {
 	_screen->showMouse();
 }
 
-// static res
-// TODO: move to staticres.cpp
-
-const Sequence KyraEngine_v2::_sequences_PC[] = {
-	// flags, wsaFile, cpsFile, startupCommand, finalCommand, stringIndex1, stringIndex2,
-	// startFrame, numFrames, frameDelay, xPos, yPos, callback, duration
-	{ 2, 0, "virgin.cps",   4, 0, -1, -1, 0, 1,  100,  0, 0, 0,                                 30 },
-	{ 1, "westwood.wsa", 0, 4, 0, -1, -1, 0, 18, 6,    0, 0, &KyraEngine_v2::seq_introWestwood, 160 },
-	{ 1, "title.wsa", 0,    4, 0, -1, -1, 0, 26, 6,    0, 0, &KyraEngine_v2::seq_introTitle,    10 },
-	{ 2, 0, "over.cps",     4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introOverview, 30 },
-	{ 2, 0, "library.cps",  4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introLibrary,  30 },
-	{ 2, 0, "hand.cps",     4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introHand,     90 },
-	{ 1, "point.wsa", 0,    4, 8, -1, -1, 0, 38, 7,    0, 0, &KyraEngine_v2::seq_introPoint,    200 },
-	{ 1, "zanfaun.wsa", 0,  4, 0, -1, -1, 0, 51, 16,   0, 0, &KyraEngine_v2::seq_introZanfaun,  240 },
-
-	{ 1, "funters.wsa", 0,	4, 0, -1, -1, 0, 27, 12,   0, 0, &KyraEngine_v2::seq_finaleFunters, 30 },
-	{ 1, "ferb.wsa", 0,		4, 0, -1, -1, 0, 27, 16,   0, 0, &KyraEngine_v2::seq_finaleFerb,	30 },
-	{ 1, "fish.wsa", 0,		4, 0, -1, -1, 0, 56, 12,   0, 0, &KyraEngine_v2::seq_finaleFish,	30 },
-	{ 1, "fheep.wsa", 0,	4, 0, -1, -1, 0, 11, 12,   0, 0, &KyraEngine_v2::seq_finaleFheep,	30 },
-	{ 1, "farmer.wsa", 0,	4, 0, -1, -1, 0, 22, 12,   0, 0, &KyraEngine_v2::seq_finaleFarmer,	100 },
-	{ 1, "fuards.wsa", 0,	4, 0, -1, -1, 0, 24, 14,   0, 0, &KyraEngine_v2::seq_finaleFuards,	30 },
-	{ 1, "firates.wsa", 0,	4, 0, -1, -1, 0, 37, 12,   0, 0, &KyraEngine_v2::seq_finaleFirates,	30 },
-	{ 1, "frash.wsa", 0,	4, 0, -1, -1, 0, 12, 10,   0, 0, &KyraEngine_v2::seq_finaleFrash,	340 }
-};
-
-const Sequence KyraEngine_v2::_sequences_TOWNS[] = {
-	// flags, wsaFile, cpsFile, startupCommand, finalCommand, stringIndex1, stringIndex2,
-	// startFrame, numFrames, frameDelay, xPos, yPos, callback, duration
-	{ 2, 0, "virgin.cps",   4, 0, -1, -1, 0, 1,  100,  0, 0, 0,                                 30 },
-	{ 1, "westwood.wsa", 0, 4, 0, -1, -1, 0, 18, 12,   0, 0, &KyraEngine_v2::seq_introWestwood, 160 },
-	{ 1, "title.wsa", 0,    4, 0, -1, -1, 0, 26, 12,   0, 0, &KyraEngine_v2::seq_introTitle,    10 },
-	{ 2, 0, "over.cps",     4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introOverview, 30 },
-	{ 2, 0, "library.cps",  4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introLibrary,  30 },
-	{ 2, 0, "hand.cps",     4, 0, -1, -1, 0, 1,  3600, 0, 0, &KyraEngine_v2::seq_introHand,     90 },
-	{ 1, "point.wsa", 0,    4, 8, -1, -1, 0, 38, 7,    0, 0, &KyraEngine_v2::seq_introPoint,    200 },
-	{ 1, "zanfaun.wsa", 0,  4, 0, -1, -1, 0, 51, 16,   0, 0, &KyraEngine_v2::seq_introZanfaun,  240 },
-
-	{ 1, "funters.wsa", 0,	4, 0, -1, -1, 0, 27, 12,   0, 0, &KyraEngine_v2::seq_finaleFunters, 30 },
-	{ 1, "ferb.wsa", 0,		4, 0, -1, -1, 0, 27, 16,   0, 0, &KyraEngine_v2::seq_finaleFerb,	30 },
-	{ 1, "fish.wsa", 0,		4, 0, -1, -1, 0, 56, 12,   0, 0, &KyraEngine_v2::seq_finaleFish,	30 },
-	{ 1, "fheep.wsa", 0,	4, 0, -1, -1, 0, 11, 12,   0, 0, &KyraEngine_v2::seq_finaleFheep,	30 },
-	{ 1, "farmer.wsa", 0,	4, 0, -1, -1, 0, 22, 12,   0, 0, &KyraEngine_v2::seq_finaleFarmer,	100 },
-	{ 1, "fuards.wsa", 0,	4, 0, -1, -1, 0, 24, 14,   0, 0, &KyraEngine_v2::seq_finaleFuards,	30 },
-	{ 1, "firates.wsa", 0,	4, 0, -1, -1, 0, 37, 12,   0, 0, &KyraEngine_v2::seq_finaleFirates,	30 },
-	{ 1, "frash.wsa", 0,	4, 0, -1, -1, 0, 12, 10,   0, 0, &KyraEngine_v2::seq_finaleFrash,	340 }
-};
-
-const NestedSequence KyraEngine_v2::_nSequences[] = {
-	// flags, wsaFile, startframe, endFrame, frameDelay, callback, x, y, wsaControl, startupCommand, finalCommand, unk1;
-	{ 0x0C, "figgle.wsa",  0, 3,   60, &KyraEngine_v2::seq_finaleFiggle,  0, 0, 0,                  0, 0, 0 },
-
-	{ 8,    "over1.wsa",   0, 10,  10, &KyraEngine_v2::seq_introOver1,    0, 0, 0,                  0, 0, 0 },
-	{ 8,    "over2.wsa",   0, 11,  9,  &KyraEngine_v2::seq_introOver2,    0, 0, 0,                  0, 0, 0 },
-	{ 8,    "forest.wsa",  0, 22,  6,  &KyraEngine_v2::seq_introForest,   0, 0, 0,                  1, 3, 0 },
-	{ 8,    "dragon.wsa",  0, 11,  6,  &KyraEngine_v2::seq_introDragon,   0, 0, 0,                  2, 0, 0 },
-	{ 2,    "darm.wsa",    0, 19,  9,  &KyraEngine_v2::seq_introDarm,     0, 0, 0,                  4, 0, 0 },
-	{ 2,    "library.wsa", 0, 33,  9,  &KyraEngine_v2::seq_introLibrary2, 0, 0, 0,                  4, 0, 0 },
-	{ 0x2A, "library.wsa", 0, 19,  9,  &KyraEngine_v2::seq_introLibrary2, 0, 0, _wsaControlLibrary, 0, 0, 0 },
-	{ 0x0A, "marco.wsa",   0, 37,  9,  &KyraEngine_v2::seq_introMarco,    0, 0, 0,                  4, 0, 0 },
-	{ 2,    "hand1a.wsa",  0, 34,  9,  &KyraEngine_v2::seq_introHand1a,   0, 0, 0,                  0, 0, 0 },
-	{ 0x2A, "hand1b.wsa",  0, 16,  9,  &KyraEngine_v2::seq_introHand1b,   0, 0, _wsaControlHand1b,  0, 0, 0 },
-	{ 0x2A, "hand1c.wsa",  0, 9,   9,  &KyraEngine_v2::seq_introHand1c,   0, 0, _wsaControlHand1c,  0, 0, 0 },
-	{ 0x2C, "hand2.wsa",   0, 2,   9,  &KyraEngine_v2::seq_introHand2,    0, 0, _wsaControlHand2,   5, 0, 0 },
-	{ 0x2C, "hand3.wsa",   0, 4,   9,  &KyraEngine_v2::seq_introHand3,    0, 0, _wsaControlHand3,   5, 0, 0 },
-	{ 0x2C, "hand4.wsa",   0, 8,   9,  0,                                 0, 0, _wsaControlHand4,   5, 0, 0 }
-};
-
-
-const SequenceControl KyraEngine_v2::_wsaControlLibrary[] = {
-	{0x00, 0x0A}, {0x01, 0x0A}, {0x02, 0x0A}, {0x03, 0x0A}, {0x04, 0x0A}, {0x05, 0x0A},
-	{0x06, 0x0A}, {0x07, 0x0A}, {0x08, 0x0A}, {0x09, 0x0A}, {0x08, 0x0A}, {0x07, 0x0A},
-	{0x06, 0x0A}, {0x05, 0x28}, {0x04, 0x0A}, {0x03, 0x0A}, {0x02, 0x0A}, {0x01, 0x0A}
-};
-
-const SequenceControl KyraEngine_v2::_wsaControlHand1b[] = {
-	{0x00, 0x06}, {0x01, 0x06}, {0x02, 0x06}, {0x03, 0x06}, {0x04, 0x06}, {0x05, 0x06},
-	{0x06, 0x06}, {0x07, 0x06}, {0x08, 0x06}, {0x09, 0x06}, {0x0A, 0x06}, {0x0B, 0x06},
-	{0x0B, 0x0C}, {0x0C, 0x0C}, {0x0D, 0x0C}, {0x0C, 0x0C}, {0x0B, 0x0C}
-};
-
-const SequenceControl KyraEngine_v2::_wsaControlHand1c[] = {
-	{0x00, 0x06}, {0x01, 0x06}, {0x02, 0x06}, {0x03, 0x06}, {0x04, 0x06}, {0x03, 0x06},
-	{0x04, 0x06}, {0x05, 0x40}, {0x05, 0x06}
-};
-
-const SequenceControl KyraEngine_v2::_wsaControlHand2[] = {
-	{0x00, 0x06}, {0x01, 0x06}, {0x00, 0x06}, {0x01, 0x06}, {0x00, 0x06}, {0x01, 0x06},
-	{0x00, 0x06}, {0x01, 0x06}, {0x00, 0x06}, {0x01, 0x06}, {0x00, 0x06}, {0x01, 0x06},
-	{0x00, 0x06}, {0x01, 0x06}, {0x00, 0x06}, {0x01, 0x06}
-};
-
-const SequenceControl KyraEngine_v2::_wsaControlHand3[] = {
-	{0x00, 0x06}, {0x01, 0x06}, {0x02, 0x06}, {0x01, 0x06}, {0x00, 0x01}
-};
-
-const SequenceControl KyraEngine_v2::_wsaControlHand4[] = {
-	{0x00, 0x06}, {0x01, 0x06}, {0x02, 0x06}, {0x03, 0x06}, {0x04, 0x06},
-	{0x03, 0x06}, {0x02, 0x06}, {0x01, 0x06}
-};
-
 } // end of namespace Kyra
-
 

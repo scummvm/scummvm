@@ -49,6 +49,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_activeWSA = 0;
 	_activeText = 0;
 	_seqWsa = 0;
+	_sequences = 0;
+	_nSequences = 0;
+
 
 	_gamePlayBuffer = 0;
 	_cCodeBuffer = _optionsBuffer = _chapterBuffer = 0;
@@ -93,6 +96,11 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 KyraEngine_v2::~KyraEngine_v2() {
 	seq_uninit();
 
+	if (_sequences)
+		delete [] _sequences;
+	if (_nSequences)
+		delete [] _nSequences;
+
 	delete [] _mouseSHPBuf;
 	delete _screen;
 	delete _text;
@@ -112,6 +120,7 @@ int KyraEngine_v2::init() {
 		error("_screen->init() failed");
 
 	KyraEngine::init();
+	initStaticResource();
 
 	_debugger = new Debugger_v2(this);
 	assert(_debugger);
@@ -131,30 +140,6 @@ int KyraEngine_v2::init() {
 		error("Couldn't init sound");
 
 	_abortIntroFlag = false;
-
-	// temporary solution until staticres manager support (kyra.dat) is added for kyra 2
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
-		_sequenceSoundList = (const char * const *) _sequenceSoundList_TOWNS;
-		_sequenceSoundListSize = _sequenceSoundListSize_TOWNS;
-		_sequenceStrings = (const char * const *) _sequenceStrings_TOWNS_EN;
-		_sequenceStringsSize = _sequenceStringsSize_TOWNS_EN;
-		_sequences = (const Sequence*) _sequences_TOWNS;
-		_soundData = (const AudioDataStruct *) _soundData_TOWNS;
-	} else if (_flags.isTalkie) {
-		_sequenceSoundList = (const char * const *) _sequenceSoundList_PC;
-		_sequenceSoundListSize = _sequenceSoundListSize_PC;
-		_sequenceStrings = (const char * const *) _sequenceStrings_PC_EN;
-		_sequenceStringsSize = _sequenceStringsSize_PC_EN;
-		_sequences = (const Sequence*) _sequences_PC;
-		_soundData = (const AudioDataStruct *) _soundData_PC;
-	} else {
-		_sequenceSoundList = (const char * const *) _sequenceSoundList_PCFLOPPY;
-		_sequenceSoundListSize = _sequenceSoundListSize_PCFLOPPY;
-		_sequenceStrings = (const char * const *) _sequenceStrings_PC_EN;
-		_sequenceStringsSize = _sequenceStringsSize_PC_EN;
-		_sequences = (const Sequence*) _sequences_PC;
-		_soundData = (const AudioDataStruct *) _soundData_PC;
-	}
 
 	for (int i = 0; i < 33; i++)
 		_sequenceStringsDuration[i] = (int) strlen(_sequenceStrings[i]) * 8;
@@ -179,39 +164,18 @@ int KyraEngine_v2::go() {
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 		seq_showStarcraftLogo();
 
-	if (_flags.platform == Common::kPlatformPC && _flags.isDemo) {
-		_res->loadPakFile("VOC.PAK");
-		_menuChoice = 2;
-	} else {
-		seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
-		//seq_playSequences(kSequenceFunters, kSequenceFrash);
+	seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
+	//seq_playSequences(kSequenceFunters, kSequenceFrash);
 
-		_res->unloadAllPakFiles();
+	_res->unloadAllPakFiles();
 
-		if (_menuChoice != 4) {
-			// load just the pak files needed for ingame
-			if (_flags.platform == Common::kPlatformPC && _flags.isTalkie) {
-				_res->loadFileList("FILEDATA.FDT");
-				_res->loadPakFile("KYRA.DAT");			
-			} else if (_flags.platform == Common::kPlatformPC) {
-				// TODO
-
-			} else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
-				char tmpfilename[13];
-				static const char * pakfiles [] = { "KYRA.DAT", "AUDIO.PAK", "CAULDRON.PAK",
-					"MISC_CPS.PAK", "MISC_EMC.PAK", "OTHER.PAK", "VOC.PAK", "WSCORE.PAK" };
-				for (int i = 0; i < 8; i++)
-					_res->loadPakFile(pakfiles[i]);
-				for (int i = 1; i < 10; i++) {
-					sprintf(tmpfilename, "COST%d_SH.PAK", i);
-					_res->loadPakFile(tmpfilename);
-				}
-				for (int i = 1; i < 6; i++) {
-					sprintf(tmpfilename, "HOFCH_%d.PAK", i);
-					_res->loadPakFile(tmpfilename);
-				}
-			}
-		}
+	if (_menuChoice != 4) {
+		// load just the pak files needed for ingame
+		_res->loadPakFile(StaticResource::staticDataFilename());
+		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie)
+			_res->loadFileList("FILEDATA.FDT");	
+		else
+			_res->loadFileList(_ingamePakList, _ingamePakListSize);
 	}
 
 	if (_menuChoice == 1) {
@@ -220,9 +184,6 @@ int KyraEngine_v2::go() {
 		cleanup();
 	} else if (_menuChoice == 3) {
 		// TODO:	Load Game
-
-	} else if (_menuChoice == 2) {
-		// TODO:	Run Demo
 
 	}
 

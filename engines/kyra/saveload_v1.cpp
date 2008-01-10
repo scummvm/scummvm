@@ -202,11 +202,11 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 		// In the first version when this entry was introduced,
 		// it wasn't made sure that _curSfxFile was initialized
 		// so if it's out of bounds we just set it to 0.
-		if (_curSfxFile >= (int)_soundData_TOWNS->_fileListLen || _curSfxFile < 0)
-			_curSfxFile = 0;
-
-		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
+			if (_curSfxFile >= _soundData->_fileListLen || _curSfxFile < 0)
+				_curSfxFile = 0;
 			_sound->loadSoundFile(_curSfxFile);
+		}
 	}
 
 	_screen->_disableScreen = true;

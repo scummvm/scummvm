@@ -114,7 +114,7 @@ void KyraEngine_v1::seq_intro() {
 	_seq->setCopyViewOffs(true);
 	_screen->setFont(Screen::FID_8_FNT);
 	if (_flags.platform != Common::kPlatformFMTowns && _flags.platform != Common::kPlatformPC98)
-		snd_playTheme(9, 2);
+		snd_playTheme(0, 2);
 	_text->setTalkCoords(144);
 
 	for (int i = 0; i < ARRAYSIZE(introProcTable) && !seq_skipSequence(); ++i)

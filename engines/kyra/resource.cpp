@@ -67,15 +67,16 @@ bool Resource::reset() {
 	if (!dir.exists() || !dir.isDirectory())
 		error("invalid game path '%s'", dir.getPath().c_str());
 
-	if (_vm->game() == GI_KYRA1) {
-		// we're loading KYRA.DAT here too (but just for Kyrandia 1)
+	if (_vm->game() != GI_KYRA3) {
 		if (!loadPakFile(StaticResource::staticDataFilename()) || !StaticResource::checkKyraDat()) {
 			Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' file or it got corrupted, (re)get it from the ScummVM website";
 			GUI::MessageDialog errorMsg(errorMessage);
 			errorMsg.runModal();
 			error(errorMessage.c_str());
 		}
+	}
 
+	if (_vm->game() == GI_KYRA1) {
 		// We only need kyra.dat for the demo.
 		if (_vm->gameFlags().isDemo)
 			return true;
@@ -83,6 +84,16 @@ bool Resource::reset() {
 		// only VRM file we need in the *whole* game for kyra1
 		if (_vm->gameFlags().isTalkie)
 			loadPakFile("CHAPTER1.VRM");
+	} else if (_vm->game() == GI_KYRA2) {
+		// mouse pointer, fonts, etc. required for initializing
+		if (_vm->gameFlags().isDemo) {
+			loadPakFile("GENERAL.PAK");
+		} else {
+			loadPakFile("INTROGEN.PAK");
+			loadPakFile("OTHER.PAK");
+		}
+
+		return true;
 	} else if (_vm->game() == GI_KYRA3) {
 		// load the installation package file for kyra3
 		INSFile *insFile = new INSFile("WESTWOOD.001");
@@ -106,10 +117,6 @@ bool Resource::reset() {
 		Common::for_each(list, list + ARRAYSIZE(list), Common::bind1st(Common::mem_fun(&Resource::loadPakFile), this));
 		Common::for_each(_pakfiles.begin(), _pakfiles.end(), Common::bind2nd(Common::mem_fun(&ResourceFile::protect), true));
 	} else {
-		// TODO: Kyra 2 InGame uses a special pak file list shipped with the game "FILEDATA.FDT", so we just have to load
-		// the files needed for Kyra 2 intro here. What has to be done is, checking what files are required in the intro
-		// and make a list similar to that for Kyra 1 and just load the files from the list and not all pak files we find.
-
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			Common::String filename = file->getName();
 			filename.toUppercase();
@@ -194,6 +201,20 @@ bool Resource::loadFileList(const Common::String &filedata) {
 				return false;
 			}
 		}			
+	}
+
+	return true;
+}
+
+bool Resource::loadFileList(const char * const *filelist, uint32 numFiles) {
+	if (!filelist)
+		return false;
+
+	while (numFiles--) {
+		if (!loadPakFile(filelist[numFiles])) {
+			error("couldn't load file '%s'", filelist[numFiles]);
+			return false;
+		}
 	}
 
 	return true;

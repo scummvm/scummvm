@@ -35,7 +35,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 17
+#define RESFILE_VERSION 18
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -211,9 +211,36 @@ bool StaticResource::init() {
 		// PALETTE table
 		{ kPaletteList, kPaletteTable, "1 33 PALTABLE" },
 
+		// AUDIO files
+		{ kAudioTracks, kStringList, "TRACKS.TXT" },
+		{ kAudioTracksIntro, kStringList, "TRACKSINT.TXT" },
+
 		// FM-TOWNS specific
-		{ kKyra1TownsSFXTable, kRawData, "SFXTABLE" },
+		{ kKyra1TownsSFXwdTable, kRawData, "SFXWDTABLE" },
+		{ kKyra1TownsSFXbtTable, kRawData, "SFXBTTABLE" },
+		{ kKyra1TownsCDATable, kRawData, "CDATABLE" },
 		{ kCreditsStrings, kRawData, "CREDITS" },
+
+		{ 0, 0, 0 }
+	};
+
+	static const FilenameTable kyra2StaticRes[] = {
+		// Sequence Player
+		{ k2SeqplayPakFiles, kStringList, "S_PAKFILES.TXT" },
+		{ k2SeqplayCredits, kRawData, "S_CREDITS.TXT" },
+		{ k2SeqplayStrings, kLanguageList, "S_STRINGS." },
+		{ k2SeqplaySfxFiles, kStringList, "S_SFXFILES.TXT" },
+		{ k2SeqplayTlkFiles, kLanguageList, "S_TLKFILES." },
+		{ k2SeqplaySeqData, kRawData, "S_DATA.SEQ" },
+		{ k2SeqplayIntroTracks, kStringList, "S_INTRO.TRA" },
+		{ k2SeqplayFinaleTracks, kStringList, "S_FINALE.TRA" },	
+		{ k2SeqplayIntroCDA, kRawData, "S_INTRO.CDA" },
+		{ k2SeqplayFinaleCDA, kRawData, "S_FINALE.CDA" },
+
+		// Ingame
+		{ k2IngamePakFiles, kStringList, "I_PAKFILES.TXT" },
+		{ k2IngameTracks, kStringList, "I_TRACKS.TRA" },
+		{ k2IngameCDA, kRawData, "I_TRACKS.CDA" },
 
 		{ 0, 0, 0 }
 	};
@@ -221,7 +248,10 @@ bool StaticResource::init() {
 	if (_vm->game() == GI_KYRA1) {
 		_builtIn = 0;
 		_filenameTable = kyra1StaticRes;
-	} else if (_vm->game() == GI_KYRA2 || _vm->game() == GI_KYRA3) {
+	} else if (_vm->game() == GI_KYRA2) {
+		_builtIn = 0;
+		_filenameTable = kyra2StaticRes;
+	} else if (_vm->game() == GI_KYRA3) {
 		return true;
 	} else {
 		error("unknown game ID");
@@ -601,6 +631,11 @@ void StaticResource::freePaletteTable(void *&ptr, int &size) {
 uint8 *StaticResource::getFile(const char *name, int &size) {
 	char buffer[64];
 	const char *ext = "";
+	if (_vm->gameFlags().gameID == GI_KYRA2)
+		ext = ".K2";
+	snprintf(buffer, 64, "%s%s", name, ext);
+	ext = "";
+
 	if (_vm->gameFlags().isTalkie)
 		ext = ".CD";
 	else if (_vm->gameFlags().isDemo)
@@ -609,7 +644,7 @@ uint8 *StaticResource::getFile(const char *name, int &size) {
 		ext = ".TNS";
 	else if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		ext = ".AMG";
-	snprintf(buffer, 64, "%s%s", name, ext);
+	strcat(buffer, ext);
 	uint32 tempSize = 0;
 	uint8 *data = _vm->resource()->fileData(buffer, &tempSize);
 	size = tempSize;
@@ -680,6 +715,10 @@ void KyraEngine_v1::initStaticResource() {
 	_guiStrings = _staticres->loadStrings(kGUIStrings, _guiStringsSize);
 	_configStrings = _staticres->loadStrings(kConfigStrings, _configStringsSize);
 
+	_soundFiles = _staticres->loadStrings(kAudioTracks, _soundFilesSize);
+	_soundFilesIntro = _staticres->loadStrings(kAudioTracksIntro, _soundFilesIntroSize);
+	_cdaTrackTable = (const int32*) _staticres->loadRawData(kKyra1TownsCDATable, _cdaTrackTableSize);
+
 	// copied static res
 
 	// room list
@@ -707,6 +746,20 @@ void KyraEngine_v1::initStaticResource() {
 
 		_staticres->unloadId(kDefaultShapes);
 	}
+
+	// audio data tables
+	static const AudioDataStruct soundData_PC[] = {
+		{ _soundFilesIntro, _soundFilesIntroSize, 0, 0 },
+		{ _soundFiles, _soundFilesSize, 0, 0 },
+		{ 0, 0, 0, 0}
+	};
+
+	static const AudioDataStruct soundData_TOWNS[] = {
+		{ _soundFiles, _soundFilesSize, _cdaTrackTable, _cdaTrackTableSize },
+		{ _soundFiles, _soundFilesSize, _cdaTrackTable, _cdaTrackTableSize },
+		{ 0, 0, 0, 0}
+	};
+	_soundData = (_flags.platform == Common::kPlatformPC) ? soundData_PC : soundData_TOWNS;
 }
 
 void KyraEngine_v1::loadMouseShapes() {
@@ -854,6 +907,160 @@ void KyraEngine_v1::loadMainScreen(int page) {
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 0);
 }
 
+void KyraEngine_v2::initStaticResource() {
+	int tmp = 0;
+
+	_sequencePakList = _staticres->loadStrings(k2SeqplayPakFiles, _sequencePakListSize);
+	_ingamePakList = _staticres->loadStrings(k2IngamePakFiles, _ingamePakListSize);
+	_sequenceStrings = _staticres->loadStrings(k2SeqplayStrings, _sequenceStringsSize);
+	_sequenceSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
+	_musicFileListIntro = _staticres->loadStrings(k2SeqplayIntroTracks, _musicFileListIntroSize);
+	_musicFileListIngame = _staticres->loadStrings(k2IngameTracks, _musicFileListIngameSize);
+	_musicFileListFinale = _staticres->loadStrings(k2SeqplayFinaleTracks, _musicFileListFinaleSize);
+	_cdaTrackTableIntro = _staticres->loadRawData(k2SeqplayIntroCDA, _cdaTrackTableIntroSize);
+	_cdaTrackTableIngame = _staticres->loadRawData(k2IngameCDA, _cdaTrackTableIngameSize);
+	_cdaTrackTableFinale = _staticres->loadRawData(k2SeqplayFinaleCDA, _cdaTrackTableFinaleSize);
+
+	// replace sequence talkie files with localized versions and cut off .voc
+	// suffix from voc files so as to allow compression specific file extensions
+	//
+	// FIXME/HACK: this alltogether looks like quite a hack, we should think of making a copy
+	// of _sequenceSoundList instead of casting away const.
+	const char* const* tlkfiles = _staticres->loadStrings(k2SeqplayTlkFiles, tmp);
+	for (int i = 0; i < _sequenceSoundListSize; i++) {
+		uint32 len = strlen(_sequenceSoundList[i]);
+		if (_flags.platform == Common::kPlatformPC)
+			len -= 4;
+
+		if (tlkfiles) {
+			for (int ii = 0; ii < tmp; ii++) {
+				if (!scumm_stricmp(&_sequenceSoundList[i][1], &tlkfiles[ii][1]))
+					strcpy(const_cast<char*>(_sequenceSoundList[i]), tlkfiles[ii]);
+			}
+		}
+
+		const_cast<char*>(_sequenceSoundList[i])[len] = 0;
+	}
+	tlkfiles = 0;
+	_staticres->unloadId(k2SeqplayTlkFiles);
+	
+	// assign music data
+	static const char *fmtMusicFileListIntro[] = { "intro" };
+	static const char *fmtMusicFileListFinale[] = { "finale" };
+	static const char *fmtMusicFileListIngame[] = { "k2" };
+
+	static const AudioDataStruct soundData_PC[] = {
+		{ _musicFileListIntro, _musicFileListIntroSize, 0, 0 },
+		{ _musicFileListIngame, _musicFileListIngameSize, 0, 0},
+		{ _musicFileListFinale, _musicFileListIntroSize, 0, 0 }
+	};
+
+	static const AudioDataStruct soundData_TOWNS[] = {
+		{ fmtMusicFileListIntro, 1, _cdaTrackTableIntro, _cdaTrackTableIntroSize >> 1 },
+		{ fmtMusicFileListIngame, 1, _cdaTrackTableIngame, _cdaTrackTableIngameSize >> 1 },
+		{ fmtMusicFileListFinale, 1, _cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1 }
+	};
+	_soundData = (_flags.platform == Common::kPlatformPC) ? soundData_PC : soundData_TOWNS;
+
+	// setup sequence data
+	const uint8 *seqData = _staticres->loadRawData(k2SeqplaySeqData, tmp);
+	
+	static const Seqproc hofSequenceCallbacks[] = { 0,
+		&KyraEngine_v2::seq_introWestwood,
+		&KyraEngine_v2::seq_introTitle, &KyraEngine_v2::seq_introOverview,
+		&KyraEngine_v2::seq_introLibrary, &KyraEngine_v2::seq_introHand,
+		&KyraEngine_v2::seq_introPoint, &KyraEngine_v2::seq_introZanfaun,
+		&KyraEngine_v2::seq_finaleFunters, &KyraEngine_v2::seq_finaleFerb,
+		&KyraEngine_v2::seq_finaleFish, &KyraEngine_v2::seq_finaleFheep,
+		&KyraEngine_v2::seq_finaleFarmer, &KyraEngine_v2::seq_finaleFuards,
+		&KyraEngine_v2::seq_finaleFirates, &KyraEngine_v2::seq_finaleFrash
+	};
+
+	static const Seqproc hofNestedSequenceCallbacks[] = {
+		&KyraEngine_v2::seq_finaleFiggle, &KyraEngine_v2::seq_introOver1,
+		&KyraEngine_v2::seq_introOver2, &KyraEngine_v2::seq_introForest,
+		&KyraEngine_v2::seq_introDragon, &KyraEngine_v2::seq_introDarm,
+		&KyraEngine_v2::seq_introLibrary2, &KyraEngine_v2::seq_introLibrary2,
+		&KyraEngine_v2::seq_introMarco, &KyraEngine_v2::seq_introHand1a,
+		&KyraEngine_v2::seq_introHand1b, &KyraEngine_v2::seq_introHand1c,
+		&KyraEngine_v2::seq_introHand2,	&KyraEngine_v2::seq_introHand3, 0
+	};
+
+	/*static const Seqproc hofDemoSequenceCallbacks[] = {
+		0 // XXX
+	};
+
+	static const Seqproc hofDemoNestedSequenceCallbacks[] = {
+		0 // XXX
+	};*/
+
+	uint16 *hdr = (uint16*) seqData;
+	uint16 numSeq = READ_LE_UINT16(hdr++);
+	uint16 hdrSize = READ_LE_UINT16(hdr) - 1;
+
+	const Seqproc *cb = hofSequenceCallbacks;
+	const Seqproc *ncb = hofNestedSequenceCallbacks;
+
+	_sequences = new Sequence[numSeq];
+	for (int i = 0; i < numSeq; i++) {
+		const uint8 *offset = (const uint8 *)(seqData + READ_LE_UINT16(hdr++));
+		_sequences[i].flags = READ_LE_UINT16(offset);
+		offset += 2;
+		_sequences[i].wsaFile = (const char *)offset;
+		offset += 14;
+		_sequences[i].cpsFile = (const char *)offset;
+		offset += 14;
+		_sequences[i].startupCommand = *offset++;
+		_sequences[i].finalCommand = *offset++;
+		_sequences[i].stringIndex1 = READ_LE_UINT16(offset);
+		offset += 2;
+		_sequences[i].stringIndex2 = READ_LE_UINT16(offset);
+		offset += 2;
+		_sequences[i].startFrame = READ_LE_UINT16(offset);
+		offset += 2;
+		_sequences[i].numFrames = READ_LE_UINT16(offset);
+		offset += 2;
+		_sequences[i].frameDelay = READ_LE_UINT16(offset);
+		offset += 2;
+		_sequences[i].xPos = READ_LE_UINT16(offset);
+		offset += 2;
+		_sequences[i].yPos = READ_LE_UINT16(offset);
+		offset += 2;
+		_sequences[i].duration = READ_LE_UINT16(offset);
+		_sequences[i].callback = cb[i];
+	}
+
+	if (hdr > ((uint16*)(seqData + hdrSize)))
+		return;
+
+	numSeq = READ_LE_UINT16(hdr++);
+	_nSequences = new NestedSequence[numSeq];
+	for (int i = 0; i < numSeq; i++) {
+		const uint8 *offset = (const uint8 *)(seqData + READ_LE_UINT16(hdr++));
+		_nSequences[i].flags = READ_LE_UINT16(offset);
+		offset += 2;
+		_nSequences[i].wsaFile = (const char *)offset;
+		offset += 14;
+		_nSequences[i].startframe = READ_LE_UINT16(offset);
+		offset += 2;
+		_nSequences[i].endFrame = READ_LE_UINT16(offset);
+		offset += 2;
+		_nSequences[i].frameDelay = READ_LE_UINT16(offset);
+		offset += 2;
+		_nSequences[i].x = READ_LE_UINT16(offset);
+		offset += 2;
+		_nSequences[i].y = READ_LE_UINT16(offset);
+		offset += 2;
+		uint16 ctrlOffs = READ_LE_UINT16(offset);
+		offset += 2;
+		_nSequences[i].startupCommand = READ_LE_UINT16(offset);
+		offset += 2;
+		_nSequences[i].finalCommand = READ_LE_UINT16(offset);
+		_nSequences[i].callback = ncb[i];
+		_nSequences[i].wsaControl = ctrlOffs ? (uint16*) (seqData + ctrlOffs) : 0;
+	}
+}
+
 const ScreenDim Screen::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0x0F, 0x0C, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0x0F, 0x0C, 0x00, 0x00 },
@@ -904,60 +1111,6 @@ const int8 KyraEngine::_addYPosTable[] = {
 	 0, -2, -2, -2,  0,  2,  2,  2
 };
 
-const char *KyraEngine_v1::_soundFiles[] = {
-	"KYRA1A",
-	"KYRA1B",
-	"KYRA2A",
-	"KYRA3A",
-	"KYRA4A",
-	"KYRA4B",
-	"KYRA5A",
-	"KYRA5B",
-	"KYRAMISC",
-	"INTRO"
-};
-
-const char *KyraEngine_v1::_soundFilesTowns[] = {
-	"TW_INTRO.SFX",
-	"TW_SCEN1.SFX",
-	"TW_SCEN2.SFX",
-	"TW_SCEN3.SFX",
-	"TW_SCEN4.SFX",
-	"TW_SCEN5.SFX"
-};
-
-const int32 KyraEngine_v1::_cdaTrackTable[] = {
-	0x04000, 1,  0,	0x05480, 1,  6,	0x05E70, 0,  1,
-	0x06D90, 1,  3,	0x072C0, 0, -1,	0x075F0, 1, -1,
-	0x07880, 1, -1,	0x089C0, 0, -1,	0x09080, 0, -1,
-	0x091D0, 1,  4,	0x0A880, 1,  5,	0x0AF50, 0, -1,
-	0x0B1A0, 1, -1,	0x0B870, 0, -1,	0x0BCF0, 1, -1,
-	0x0C5D0, 1,  7,	0x0D3E0, 1,  8,	0x0e7b0, 1,  2,
-	0x0edc0, 0, -1,	0x0eef0, 1,  9,	0x10540, 1, 10,
-	0x10d80, 0, -1,	0x10E30, 0, -1,	0x10FC0, 0, -1,
-	0x11310, 1, -1,	0x11A20, 1, -1,	0x12380, 0, -1,
-	0x12540, 1, -1,	0x12730, 1, -1,	0x12A90, 1, 11,
-	0x134D0, 0, -1,	0x00000, 0, -1,	0x13770, 0, -1,
-	0x00000, 0, -1,	0x00000, 0, -1,	0x00000, 0, -1,
-	0x00000, 0, -1,	0x14710, 1, 12,	0x15DF0, 1, 13,
-	0x16030, 1, 14,	0x17030, 0, -1,	0x17650, 0, -1,
-	0x134D0, 0, -1,	0x178E0, 1, -1,	0x18200, 0, -1,
-	0x18320, 0, -1,	0x184A0, 0, -1,	0x18BB0, 0, -1,
-	0x19040, 0, 19,	0x19B50, 0, 20,	0x17650, 0, -1,
-	0x1A730, 1, 21,	0x00000, 0, -1,	0x12380, 0, -1,
-	0x1B810, 0, -1,	0x1BA50, 0, 15,	0x1C190, 0, 16,
-	0x1CA50, 0, 17,	0x1D100, 0, 18
-};
-
-const AudioDataStruct KyraEngine_v1::_soundData_PC[] = {
-	{ _soundFiles, ARRAYSIZE(_soundFiles), 0, 0 },
-	{ 0, 0, 0, 0}
-};
-
-const AudioDataStruct KyraEngine_v1::_soundData_TOWNS[] = {
-	{ _soundFilesTowns, ARRAYSIZE(_soundFilesTowns), _cdaTrackTable, ARRAYSIZE(_cdaTrackTable) },
-	{ 0, 0, 0, 0}
-};
 const int8 KyraEngine_v1::_charXPosTable[] = {
 	 0,  4,  4,  4,  0, -4, -4, -4
 };
@@ -1182,355 +1335,6 @@ const char *KyraEngine_v2::_mainMenuStrings[] = {
 
 // kyra 2 static res
 
-const char *KyraEngine_v2::_sequenceStrings_PC_EN[] = {
-	"Kyrandia is disappearing!",
-	"Rock by rock...",
-	"...and tree by tree.",
-	"Kyrandia ceases to exist!",
-	"The Royal Mystics are baffled.",
-	"Every reference has been consulted.",
-	"Even Marko and his new valet have been allowed into the conference.",
-	"Luckily, the Hand was experienced in these matters.",
-	"And finally a plan was approved...",
-	"...that required a magic Anchor Stone...",
-	"...to be retrieved from the center of the world.",
-	"Zanthia, youngest of the Kyrandian Mystics, has been selected to retrieve the Stone.",
-	"Thank you for playing The Hand of Fate.",
-	"This should be enough blueberries to open a portal to the center of the world.",
-	" DUMMY STRING... ",
-	" DUMMY STRING... ",
-	"Hey! All my equipment has been stolen!",
-	" DUMMY STRING... ",
-	"If they think I'm going to walk all the way down there, they're nuts!",
-	" DUMMY STRING... ",
-	" DUMMY STRING... ",
-	"Hurry up Faun!",
-
-	"Boy, that was a close call!",
-	"You said it pal. I, for one, am never going hunting again!",
-	"Ribbit.",
-	"How many times do I have to tell you? You're a toad.",
-	"Oh no! We're out of cheese!",
-	"Let's try this earwax. It's orange.",
-	"Mommy, when do I get the ivy?",
-	"Get out of here, shoo!",
-	"You cut, and I'll choose.",
-	"No. You cut and I'll choose.",
-	"I still say it was derivative drivel.",
-	"Aw, you still wouldn't recognize iambic pentameter if it bit you on the butt!",
-
-	"Executive Producer",
-	"Brett W. Sperry",
-	"Direction & Design",
-	"Rick Gush",
-	"Lead Programmer",
-	"Michael Legg",
-	"Art Management",
-	"Louis Castle",
-	"Joseph B. Hewitt IV",
-	"Lead Artist",
-	"Rick Parks",
-	"Additional Coding by",
-	"Philip W. Gorrow",
-	"Mike Grayford",
-	"Mark McCubbin",
-	"Artists",
-	"Cameron Chun",
-	"Cary Averett",
-	"Cindy Chinn",
-	"Elie Arabian",
-	"Fei Cheng",
-	"Ferby Miguel",
-	"Frank Mendeola",
-	"Jack Martin",
-	"Jerry Moore",
-	"DUMMY STRING... ",
-	"Judith Peterson",
-	"Larry Miller",
-	"Lenny Lee",
-	"Louise Sandoval",
-	"Ren Olsen",
-	"Music & Sounds by",
-	"Paul Mudra",
-	"Frank Klepacki",
-	"Dwight Okahara",
-	"Pat Collins",
-	"Quality Assurance by",
-	"Glenn Sperry",
-	"Michael Lightner",
-	"William Foster",
-	"Jesse Clemit",
-	"Jeff Fillhaber",
-	"Manual, Package Design",
-	"& Fulfillment",
-	"Eydie Laramore",
-	"Lisa Marcinko",
-	"Lauren Rifkin",
-	"Congratulations!",
-	"Thank you for playing The Hand of Fate!",
-	"Guest Coding",
-	"Producer Liaison",
-	"Scott Duckett",
-	"Irvine Testers",
-	"Chris McFarland",
-	"Paul Moore",
-	"Chad Soares",
-	"Jared Brinkley",
-	"Jon Willliams",
-	"Chris Toft",
-	"Joe Kucan's Hair by",
-	"Theodore A. Morris",
-	"Load a game",
-	"Introduction",
-	"Start a new game",
-	"Exit the game",
-	"Special Thanks, to",
-	"Sake Joe Bostic-san",
-	"Tim Fritz",
-	"Kenny Dunne",
-	"Thank you for playing \"The Hand of Fate\"."
-};
-
-const char *KyraEngine_v2::_sequenceStrings_TOWNS_EN[] = {
-	"Kyrandia is disappearing!",
-	"Rock by rock...",
-	"...and tree by tree.",
-	"Kyrandia ceases to exist!",
-	"The Royal Mystics are baffled.",
-	"Every reference has been consulted.",
-	"Even Marko and his new valet have been allowed into the conference.",
-	"Luckily, the Hand was experienced in these matters.",
-	"And finally a plan was approved...",
-	"...that required a magic Anchor Stone...",
-	"...to be retrieved from the center of the world.",
-	"Zanthia, youngest of the Kyrandian Mystics, has been selected to retrieve the Stone.",
-	"Thank you for playing The Hand of Fate.",
-	"This should be enough blueberries to open a portal to the center of the world.",
-	" DUMMY STRING... ",
-	" DUMMY STRING... ",
-	"Hey! All my equipment has been stolen!",
-	" DUMMY STRING... ",
-	"If they think I'm going to walk all the way down there, they're nuts!",
-	" DUMMY STRING... ",
-	" DUMMY STRING... ",
-	"Hurry up Faun!",
-
-	"Boy, that was a close call!",
-	"You said it pal. I, for one, am never going hunting again!",
-	"Ribbit.",
-	"How many times do I have to tell you? You're a toad.",
-	"Oh no! We're out of cheese!",
-	"Let's try this earwax. It's orange.",
-	"Mommy, when do I get the ivy?",
-	"Get out of here, shoo!",
-	"You cut, and I'll choose.",
-	"No. You cut and I'll choose.",
-	"I still say it was derivative drivel.",
-	"Aw, you still wouldn't recognize iambic pentameter if it bit you on the butt!",
-
-	"Executive Producer",
-	"Brett W. Sperry",
-	"Designed & Directed by",
-	"Rick Gush",
-	"Lead Programmer",
-	"Michael Legg",
-	"Art Management",
-	"Louis Castle",
-	"Joseph B. Hewitt IV",
-	"Lead Artist",
-	"Rick Parks",
-	"Additional Coding by",
-	"Philip W. Gorrow",
-	"Matt Collins",
-	"Mark McCubbin",
-	"Artists",
-	"Cameron Chun",
-	"Cary Averett",
-	"Cindy Chinn",
-	"Elie Arabian",
-	"Fei Cheng",
-	"Ferby Miguel",
-	"Frank Mendeola",
-	"Jack Martin",
-	"Jerry Moore",
-	"",
-	"Judith Peterson",
-	"Larry Miller",
-	"Lenny Lee",
-	"Louise Sandoval",
-	"Ren Olsen",
-	"Music & Sounds by",
-	"Paul Mudra",
-	"Frank Klepacki",
-	"Dwight Okahara",
-	"Pat Collins",
-	"Qualilty Assurance by",
-	"Glenn Sperry",
-	"Michael Lightner",
-	"William Foster",
-	"Jesse Clemit",
-	"Jeff Fillhaber",
-	"Manual, Package Design",
-	"& Fulfillment",
-	"Eydie Laramore",
-	"Lisa Marcinko",
-	"Lauren Rifkin",
-	"Congratulations!",
-	"Thank you for playing The Hand of Fate!",
-	"Guest Coding",
-	"Producer Liaison",
-	"Scott Duckett",
-	"Irvine Testers",
-	"Chris McFarland",
-	"Paul Moore",
-	"Chad Soares",
-	"Jared Brinkley",
-	"Jon Willliams",
-	"Chris Toft",
-	"Chris's Hair by",
-	"Cumulo Nimbus",
-	"Load a game",
-	"Introduction",
-	"Start a new game",
-	"Exit the game",
-	"Special Thanks to",
-	"Sake Joe Bostic-san",
-	"Tim Fritz",
-	"Kenny Dunne",
-	"Yukio Sekiguchi (Japan)",
-	"Takeshi Abo (Japan)"
-};
-
-const int KyraEngine_v2::_sequenceStringsSize_PC_EN = ARRAYSIZE(KyraEngine_v2::_sequenceStrings_PC_EN);
-const int KyraEngine_v2::_sequenceStringsSize_TOWNS_EN = ARRAYSIZE(KyraEngine_v2::_sequenceStrings_TOWNS_EN);
-
-const char *KyraEngine_v2::_sequenceSoundList_PC[] = {
-	"eintro1",
-	"eintro2",
-	"eintro3",
-	"eintro4",
-	"eintro5",
-	"eintro6",
-	"eintro7",
-	"eintro8",
-	"eintro9",
-	"eintro10",
-	"eintro11",
-	"eintro12",
-	"eglow",
-	"0000210",
-	"0000130",
-	"0000180",
-	"0000160",
-
-	"asong",
-	"crowcaw",
-	"eyerub2",
-	"pluck3",
-	"rodnreel",
-	"frog1",
-	"scavmov2",
-	"lambmom3",
-	"lambkid1",
-	"thunder2",
-	"thunder3",
-	"wind6",
-	"h2odrop2",
-	"gasleak",
-	"polgulp1",
-	"hndslap1",
-	"burp1",
-	"0000220",
-	"0000230",
-	"0000250",
-	"0000260",
-	"0000270",
-	"0000280",
-	"0000290",
-	"0000300",
-	"0000310",
-	"0000320",
-	"0000330",
-	"scream1",
-	"theend"
-};
-
-const char *KyraEngine_v2::_sequenceSoundList_PCFLOPPY[] = {
-	"intro1",
-	"intro2",
-	"intro3",
-	"intro4",
-	"intro5",
-	"intro6",
-	"intro7",
-	"intro8",
-	"intro9",
-	"intro10",
-	"intro11",
-	"intro12",
-	"glow",
-
-	"asong",
-	"crowcaw",
-	"eyerub2",
-	"pluck3",
-	"rodnreel",
-	"frog1",
-	"scavmov2",
-	"lambmom3",
-	"lambkid1",
-	"thunder2",
-	"thunder3",
-	"wind6",
-	"h2odrop2",
-	"gasleak",
-	"polgulp1",
-	"hndslap1",
-	"burp1",
-	"scream1",
-	"theend"
-};
-
-const char *KyraEngine_v2::_sequenceSoundList_TOWNS[] = {
-	"intro1.pcm",
-	"intro2.pcm",
-	"intro3.pcm",
-	"intro4.pcm",
-	"intro5.pcm",
-	"intro6.pcm",
-	"intro7.pcm",
-	"intro8.pcm",
-	"intro9.pcm",
-	"intro10.pcm",
-	"intro11.pcm",
-	"intro12.pcm",
-	"glow.pcm",
-
-	"asong.pcm",
-	"crowcaw.pcm",
-	"eyerub2.pcm",
-	"pluck3.pcm",
-	"rodnreel.pcm",
-	"frog1.pcm",
-	"scavmov2.pcm",
-	"lambmom3.pcm",
-	"lambkid1.pcm",
-	"thunder2.pcm",
-	"thunder3.pcm",
-	"wind6.pcm",
-	"h2odrop2.pcm",
-	"gasleak.pcm",
-	"polgulp1.pcm",
-	"hndslap1.pcm",
-	"burp1.pcm",
-	"scream1.pcm",
-	"theend.pcm"
-};
-
-const int KyraEngine_v2::_sequenceSoundListSize_PC = ARRAYSIZE(KyraEngine_v2::_sequenceSoundList_PC);
-const int KyraEngine_v2::_sequenceSoundListSize_PCFLOPPY = ARRAYSIZE(KyraEngine_v2::_sequenceSoundList_PCFLOPPY);
-const int KyraEngine_v2::_sequenceSoundListSize_TOWNS = ARRAYSIZE(KyraEngine_v2::_sequenceSoundList_TOWNS);
-
 const uint8 KyraEngine_v2::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
 
 const char *KyraEngine_v2::_languageExtension[] = {
@@ -1584,64 +1388,6 @@ const byte KyraEngine_v2::_itemStringMap[] = {
 	0,    0,    0,    0,    0,    0,    0,    0,
 	2,    2,    0,    0,    0,    0,    0,    2,
 	0,    2,    0,    0,    0,    0,    0,    0
-};
-
-const char *KyraEngine_v2::_dosSoundFileListIntro[] = { "K2INTRO" };
-const char *KyraEngine_v2::_dosSoundFileListFinale[] = { "K2FINALE" };
-
-const char *KyraEngine_v2::_dosSoundFileList[] = {
-	"K2TEST1",
-	"K2TEST2",
-	"K2TEST3",
-	"K2TEST4",
-	"K2TEST5",
-	"K2TEST6",
-	"K2TEST7",
-	"K2TEST8",
-	"K2TEST9",
-	"K2TEST10",
-	"K2TEST11",
-	"K2TEST12",
-	"K2TEST13",
-	"K2TEST14",
-	"K2TEST15"
-};
-
-const char *KyraEngine_v2::_fmtSoundFileListIntro[] = { "intro" };
-const char *KyraEngine_v2::_fmtSoundFileListFinale[] = { "finale" };
-const char *KyraEngine_v2::_fmtSoundFileList[] = { "k2" };
-
-const uint8 KyraEngine_v2::_cdaTrackTableIntro[] =	{
-	0x03, 0x01, 0x04, 0x02, 0x05, 0x03, 0x06, 0x04, 0x07, 0x05, 0x08, 0x06
-};
-
-const uint8 KyraEngine_v2::_cdaTrackTableIngame[] =	{
-	0x02, 0x07, 0x03, 0x08, 0x04, 0x09, 0x07, 0x0A, 0x0C, 0x0B, 0x0D, 0x0C, 0x0E, 0x0D, 0x0F, 0x0E,
-	0x10, 0x0F, 0x12, 0x10, 0x13, 0x11, 0x15, 0x12,	0x17, 0x13, 0x18, 0x14, 0x19, 0x15, 0x1A, 0x16,
-	0x1B, 0x17, 0x1C, 0x18,	0x1D, 0x19, 0x1E, 0x1A, 0x1F, 0x1B, 0x21, 0x1C, 0x22, 0x1D, 0x23, 0x1E,
-	0x24, 0x1F, 0x25, 0x20, 0x26, 0x21, 0x27, 0x22, 0x28, 0x23, 0x29, 0x24,	0x2A, 0x25, 0x2B, 0x26,
-	0x2C, 0x27, 0x2D, 0x28, 0x2E, 0x29, 0x2F, 0x2A,	0x30, 0x2B, 0x31, 0x2C, 0x32, 0x2D, 0x33, 0x2E,
-	0x34, 0x2F, 0x35, 0x30,	0x36, 0x31, 0x37, 0x32, 0x38, 0x33, 0x39, 0x34, 0x3A, 0x35, 0x3B, 0x36,
-	0x3C, 0x37, 0x3D, 0x38, 0x3E, 0x39, 0x3F, 0x3A, 0x40, 0x3B, 0x41, 0x3C,	0x42, 0x3D, 0x43, 0x3E,
-	0x44, 0x3F, 0x45, 0x40, 0x46, 0x41, 0x47, 0x42,	0x48, 0x43, 0x49, 0x44, 0x4A, 0x45, 0x4B, 0x46,
-	0x4C, 0x47, 0x4D, 0x48,	0x4E, 0x49, 0x4F, 0x4A, 0x50, 0x4B, 0x51, 0x4C, 0x52, 0x4D, 0x53, 0x4E,
-	0x54, 0x4F, 0x55, 0x50, 0x56, 0x51, 0x57, 0x52
-};
-
-const uint8 KyraEngine_v2::_cdaTrackTableFinale[] =	{
-	0x03, 0x53, 0x04, 0x54
-};
-
-const AudioDataStruct KyraEngine_v2::_soundData_PC[] = {
-	{ _dosSoundFileListIntro, ARRAYSIZE(_dosSoundFileListIntro), 0, 0 },
-	{ _dosSoundFileList, ARRAYSIZE(_dosSoundFileList), 0, 0},
-	{ _dosSoundFileListFinale, ARRAYSIZE(_dosSoundFileListFinale), 0, 0 }
-};
-
-const AudioDataStruct KyraEngine_v2::_soundData_TOWNS[] = {
-	{ _fmtSoundFileListIntro, ARRAYSIZE(_fmtSoundFileListIntro), _cdaTrackTableIntro, ARRAYSIZE(_cdaTrackTableIntro) >> 1 },
-	{ _fmtSoundFileList, ARRAYSIZE(_fmtSoundFileList),_cdaTrackTableIngame, ARRAYSIZE(_cdaTrackTableIngame) >> 1 },
-	{ _fmtSoundFileListFinale, ARRAYSIZE(_fmtSoundFileListFinale),_cdaTrackTableFinale, ARRAYSIZE(_cdaTrackTableFinale) >> 1 }
 };
 
 const int KyraEngine_v2::_itemStringMapSize = ARRAYSIZE(KyraEngine_v2::_itemStringMap);

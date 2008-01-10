@@ -123,6 +123,7 @@ public:
 	bool isInPakList(const Common::String &filename) const;
 
 	bool loadFileList(const Common::String &filedata);
+	bool loadFileList(const char * const *filelist, uint32 numFiles);
 	// This unloads *all* pakfiles, even kyra.dat and protected ones
 	void unloadAllPakFiles();
 
@@ -215,8 +216,28 @@ enum kKyraResources {
 	kGUIStrings,
 	kConfigStrings,
 
-	kKyra1TownsSFXTable,
+	kAudioTracks,
+	kAudioTracksIntro,
+
+	kKyra1TownsSFXwdTable,
+	kKyra1TownsSFXbtTable,
+	kKyra1TownsCDATable,
 	kCreditsStrings,
+
+	k2SeqplayPakFiles,
+	k2SeqplayCredits,
+	k2SeqplayStrings,
+	k2SeqplaySfxFiles,
+	k2SeqplayTlkFiles,
+	k2SeqplaySeqData,
+	k2SeqplayIntroTracks,
+	k2SeqplayFinaleTracks,
+	k2SeqplayIntroCDA,
+	k2SeqplayFinaleCDA,
+
+	k2IngamePakFiles,
+	k2IngameTracks,
+	k2IngameCDA,
 
 	kMaxResIDs
 };
@@ -282,7 +303,9 @@ private:
 		kRoomList,
 		kShapeList,
 		kRawData,
-		kPaletteTable
+		kPaletteTable,
+
+		k2SeqData
 	};
 
 	struct BuiltinRes {

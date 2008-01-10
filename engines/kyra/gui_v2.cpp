@@ -58,16 +58,25 @@ int KyraEngine_v2::gui_handleMainMenu() {
 	memset(colorMap, 0, sizeof(colorMap));
 	_screen->setTextColorMap(colorMap);
 	
-	const char * const *strings = &_mainMenuStrings[_lang << 2];
+	const char * const *strings;
+	
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
 	int charWidthBackUp = _screen->_charWidth;
 	
 	_screen->_charWidth = -2;
 
-	if (_flags.gameID == GI_KYRA2)
+	if (_flags.gameID == GI_KYRA2) {
 		_screen->setScreenDim(11);
-	else
+		const char * k2strings[4];
+		k2strings[0] = _sequenceStrings[97];
+		k2strings[1] = _sequenceStrings[96];
+		k2strings[2] = _sequenceStrings[95];
+		k2strings[3] = _sequenceStrings[98];
+		strings = k2strings;
+	} else {
 		_screen->setScreenDim(3);
+		strings = &_mainMenuStrings[_lang << 2];
+	}
 
 	int backUpX = _screen->_curDim->sx;
 	int backUpY = _screen->_curDim->sy;

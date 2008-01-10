@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "common/config-manager.h"
 
 #include "sound/mididrv.h"

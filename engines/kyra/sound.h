@@ -176,9 +176,9 @@ public:
 	void voiceStop();
 
 protected:
-	const char *fileListEntry(uint file) const { return (file < _soundDataList->_fileListLen) ? _soundDataList->_fileList[file] : ""; }
+	const char *fileListEntry(int file) const { return (file < _soundDataList->_fileListLen) ? _soundDataList->_fileList[file] : ""; }
 	const void *cdaData() const { return _soundDataList->_cdaTracks; }
-	const uint32 cdaTrackNum() const { return _soundDataList->_cdaNumTracks; }
+	const int cdaTrackNum() const { return _soundDataList->_cdaNumTracks; }
 
 	int _musicEnabled;
 	bool _sfxEnabled;
@@ -397,7 +397,7 @@ private:
 
 	Common::Mutex _mutex;
 
-	static const uint8 _sfxBTTable[256];
+	const uint8 *_sfxBTTable;
 	const uint8 *_sfxWDTable;
 };
 

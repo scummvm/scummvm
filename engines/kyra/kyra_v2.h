@@ -74,16 +74,32 @@ enum kNestedSequences {
 	kSequenceHand4
 };
 
+enum kSequencesDemo {
+	kSequenceDemoVirgin = 0,
+	kSequenceDemoWestwood,
+	kSequenceDemoTitle,
+	kSequenceDemoTitle2,
+	kSequenceDemoHill,
+	kSequenceDemoOuthome,
+	kSequenceDemoWharf,
+	kSequenceDemoDinob,
+	kSequenceDemoFisher
+};
+
+enum kNestedSequencesDemo {
+	kSequenceDemoWharf2 = 0,
+	kSequenceDemoDinob2,
+	kSequenceDemoWater,
+	kSequenceDemoBail,
+	kSequenceDemoDig
+};
 
 class WSAMovieV2;
 class KyraEngine_v2;
 class TextDisplayer_v2;
 class Debugger_v2;
 
-struct SequenceControl {
-	int8 frameIndex;
-	int8 frameDelay;
-};
+typedef int (KyraEngine_v2::*Seqproc)(WSAMovieV2*, int, int, int);
 
 struct ActiveWSA {
 	int16 flags;
@@ -91,13 +107,13 @@ struct ActiveWSA {
 	uint16 startFrame;
 	uint16 endFrame;
 	uint16 frameDelay;
-	int (KyraEngine_v2::*callback)(WSAMovieV2*, int, int, int);
+	Seqproc callback;
 	uint32 nextFrame;
 	uint16 currentFrame;
 	uint16 lastFrame;
 	uint16 x;
 	uint16 y;
-	const SequenceControl *control;
+	const uint16 *control;
 	uint16 startupCommand;
 	uint16 finalCommand;
 };
@@ -125,7 +141,7 @@ struct Sequence {
 	uint16 frameDelay;
 	uint16 xPos;
 	uint16 yPos;
-	int (KyraEngine_v2::*callback)(WSAMovieV2*, int, int, int);
+	Seqproc callback;
 	uint16 duration;
 };
 
@@ -135,13 +151,12 @@ struct NestedSequence {
 	uint16 startframe;
 	uint16 endFrame;
 	uint16 frameDelay;
-	int (KyraEngine_v2::*callback)(WSAMovieV2*, int, int, int);
+	Seqproc callback;
 	uint16 x;
 	uint16 y;
-	const SequenceControl * wsaControl;
+	const uint16 * wsaControl;
 	uint16 startupCommand;
 	uint16 finalCommand;
-	uint16 unk1;
 };
 
 enum kMusicDataID {
@@ -246,20 +261,9 @@ protected:
 
 	uint8 *_mouseSHPBuf;
 
-
-	static const char *_dosSoundFileListIntro[];
-	static const char *_dosSoundFileListFinale[];
-	static const char *_dosSoundFileList[];	
-	static const char *_fmtSoundFileListIntro[];
-	static const char *_fmtSoundFileListFinale[];
-	static const char *_fmtSoundFileList[];
-	static const uint8 _cdaTrackTableIntro[];
-	static const uint8 _cdaTrackTableIngame[];
-	static const uint8 _cdaTrackTableFinale[];
-	static const AudioDataStruct _soundData_PC[];
-	static const AudioDataStruct _soundData_TOWNS[];
 	static const int8 _dosTrackMap[];
 	static const int _dosTrackMapSize;
+
 	const AudioDataStruct * _soundData;
 
 protected:
@@ -267,6 +271,10 @@ protected:
 	void startup();
 	void runLoop();
 	void cleanup();
+
+	// TODO: get rid of all variables having pointers to the static resources if possible
+	// i.e. let them directly use the _staticres functions
+	void initStaticResource();
 
 	void setupTimers();
 	void setupOpcodeTable();
@@ -842,24 +850,27 @@ protected:
 	ActiveWSA *_activeWSA;
 	ActiveText *_activeText;
 
+	const char *const *_sequencePakList;
+	int _sequencePakListSize;
+	const char *const *_ingamePakList;
+	int _ingamePakListSize;
+	
+	const char *const *_musicFileListIntro;
+	int _musicFileListIntroSize;
+	const char *const *_musicFileListFinale;
+	int _musicFileListFinaleSize;
+	const char *const *_musicFileListIngame;
+	int _musicFileListIngameSize;
+	const uint8 *_cdaTrackTableIntro;
+	int _cdaTrackTableIntroSize;
+	const uint8 *_cdaTrackTableIngame;
+	int _cdaTrackTableIngameSize;
+	const uint8 *_cdaTrackTableFinale;
+	int _cdaTrackTableFinaleSize;
 	const char *const *_sequenceSoundList;
 	int _sequenceSoundListSize;
 	const char *const *_sequenceStrings;
 	int _sequenceStringsSize;
-
-	static const char *_sequenceSoundList_PC[];
-	static const int _sequenceSoundListSize_PC;
-	static const char *_sequenceSoundList_PCFLOPPY[];
-	static const int _sequenceSoundListSize_PCFLOPPY;
-	static const char *_sequenceSoundList_TOWNS[];
-	static const int _sequenceSoundListSize_TOWNS;
-	static const char *_sequenceStrings_TOWNS_EN[];
-	static const int _sequenceStringsSize_TOWNS_EN;
-	static const char *_sequenceStrings_PC_EN[];
-	static const int _sequenceStringsSize_PC_EN;
-	static const char _actorScreenStrings_PC_EN[];
-	static const int _actorScreenStringsSize_PC_EN;
-
 	int _sequenceStringsDuration[33];
 
 	static const uint8 _seqTextColorPresets[];
@@ -878,22 +889,11 @@ protected:
 	uint8 _seqTextColor[2];
 	uint8 _seqTextColorMap[16];
 
-	const Sequence *_sequences;
-
-	static const Sequence _sequences_PC[];
-	static const Sequence _sequences_TOWNS[];
-	static const NestedSequence _nSequences[];
-	static const SequenceControl _wsaControlLibrary[];
-	static const SequenceControl _wsaControlHand1b[];
-	static const SequenceControl _wsaControlHand1c[];
-	static const SequenceControl _wsaControlHand2[];
-	static const SequenceControl _wsaControlHand3[];
-	static const SequenceControl _wsaControlHand4[];
+	Sequence * _sequences;
+	NestedSequence * _nSequences;
 };
 
 } // end of namespace Kyra
 
 #endif
-
-
 
