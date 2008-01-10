@@ -23,6 +23,8 @@
  *
  */
 
+#include <time.h>
+
 #include "backends/intern.h"
 #include "backends/events/default/default-events.h"
 
@@ -34,8 +36,6 @@
 #include "graphics/colormasks.h"
 #include "gui/message.h"
 #include "sound/mixer.h"
-
-#include <time.h>
 
 OSystem *g_system = 0;
 
