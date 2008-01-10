@@ -286,6 +286,7 @@ void ToucheEngine::handleMenuAction(void *menu, int actionId) {
 		menuData->mode = kMenuLoadStateMode;
 		break;
 	case kActionSaveMenu:
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 		menuData->mode = kMenuSaveStateMode;
 		break;
 	case kActionRestartGame:
@@ -334,6 +335,7 @@ void ToucheEngine::handleMenuAction(void *menu, int actionId) {
 				menuData->quit = true;
 			}
 		} else if (menuData->mode == kMenuSaveStateMode) {
+			_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 			const char *description = menuData->saveLoadDescriptionsTable[_saveLoadCurrentSlot];
 			if (strlen(description) > 0) {
 				if (saveGameState(_saveLoadCurrentSlot, description)) {
@@ -343,6 +345,7 @@ void ToucheEngine::handleMenuAction(void *menu, int actionId) {
 		}
 		break;
 	case kActionCancelSaveLoad:
+		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 		menuData->mode = kMenuSettingsMode;
 		break;
 	default:
@@ -545,6 +548,7 @@ void ToucheEngine::clearStatusString() {
 
 int ToucheEngine::displayQuitDialog() {
 	debug(kDebugMenu, "ToucheEngine::displayQuitDialog()");
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	printStatusString(getString(-85));
 	int ret = 0;
 	bool quitLoop = false;
@@ -596,6 +600,7 @@ int ToucheEngine::displayQuitDialog() {
 		_system->updateScreen();
 	}
 	clearStatusString();
+	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	return ret;
 }
 
