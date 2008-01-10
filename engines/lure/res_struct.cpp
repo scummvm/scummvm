@@ -1162,7 +1162,8 @@ BarEntry &BarmanLists::getDetails(uint16 roomNumber) {
 
 void BarmanLists::saveToStream(Common::WriteStream *stream) {
 	for (int index = 0; index < 2; ++index) {
-		uint16 value = (_barList[index].currentCustomer - &_barList[index].customers[0]) / sizeof(BarEntry);
+		uint16 value = (_barList[index].currentCustomer == NULL) ? 0 :
+			(_barList[index].currentCustomer - &_barList[index].customers[0]) / sizeof(BarEntry) + 1;
 		stream->writeUint16LE(value);
 		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr) {
 			stream->writeUint16LE(_barList[index].customers[ctr].hotspotId);
@@ -1174,7 +1175,7 @@ void BarmanLists::saveToStream(Common::WriteStream *stream) {
 void BarmanLists::loadFromStream(Common::ReadStream *stream) {
 	for (int index = 0; index < 2; ++index) {
 		int16 value = stream->readUint16LE();
-		_barList[index].currentCustomer = (value == 0) ? NULL : &_barList[index].customers[value];
+		_barList[index].currentCustomer = (value == 0) ? NULL : &_barList[index].customers[value - 1];
 
 		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr) {
 			_barList[index].customers[ctr].hotspotId = stream->readUint16LE();
