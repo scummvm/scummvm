@@ -62,11 +62,6 @@ public:
 		assert(_plugin->_df);
 		return (*_plugin->_df)(fslist);
 	}
-
-	SaveStateList listSaves(const char *target) const {
-		assert(_plugin->_lsf);
-		return (*_plugin->_lsf)(target);
-	}
 };
 
 class StaticPluginProvider : public PluginProvider {
