@@ -109,7 +109,7 @@ Op for_each(In first, In last, Op f) {
 	return f;
 }
 
-// Simple sort function, modelled after std::sort.
+// Simple sort function, modeled after std::sort.
 // Use it like this:  sort(container.begin(), container.end()).
 // Also work on plain old int arrays etc.
 template<class T>
