@@ -2028,7 +2028,7 @@ void Hotspot::npcWalkingCheck(HotspotData *hotspot) {
 	fields.setField(ACTIVE_HOTSPOT_ID, hId);
 
 	if ((hId < PLAYER_ID) || (hotspot->roomNumber == _roomNumber)) {
-		characterWalkingCheck(hotspot->hotspotId);
+		characterWalkingCheck(hId);
 	}
 }
 
