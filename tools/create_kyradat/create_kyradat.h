@@ -59,6 +59,9 @@ enum kExtractID {
 	kRoomList,
 
 	kCharacterImageFilenames,
+
+	kAudioTracks,
+	kAudioTracksIntro,
 	
 	kItemNames,
 	kTakenStrings,
@@ -133,10 +136,25 @@ enum kExtractID {
 	kGUIStrings,
 	kConfigStrings,
 	
-	kKyra1TownsSFXTable,
+	kKyra1TownsSFXwdTable,
+	kKyra1TownsSFXbtTable,
+	kKyra1TownsCDATable,
 	kCreditsStrings,
-	kSjisVTable,
-	kMenuSKB,
+
+	k2SeqplayPakFiles,
+	k2SeqplayStrings,
+	k2SeqplaySfxFiles,
+	k2SeqplayTlkFiles,
+	k2SeqplaySeqData,
+	k2SeqplayCredits,
+	k2SeqplayIntroTracks,
+	k2SeqplayFinaleTracks,
+	k2SeqplayIntroCDA,
+	k2SeqplayFinaleCDA,
+
+	k2IngamePakFiles,
+	k2IngameTracks,
+	k2IngameCDA,
 	
 	kMaxResIDs
 };
@@ -158,7 +176,24 @@ enum kSpecial {
 	kDemoVersion = 1,
 	kFMTownsVersionE = 2,
 	kFMTownsVersionJ = 3,
-	kAmigaVersion = 4
+	kAmigaVersion = 4,
+
+	k2CDFile1E = 5,
+	k2CDFile1F = 6,
+	k2CDFile1G = 7,
+	k2CDFile2E = 8,
+	k2CDFile2F = 9,
+	k2CDFile2G = 10,
+
+	k2TownsFile1E = 11,
+	k2TownsFile1J = 12,
+	k2TownsFile2E = 13,
+	k2TownsFile2J = 14,
+
+	k2FloppyFile1 = 15,
+	k2FloppyFile2 = 16,
+
+	k2DemoVersion = 17
 };
 
 struct SpecialExtension {
@@ -195,13 +230,15 @@ enum kExtractType {
 	kTypeStringList,
 	kTypeRoomList,
 	kTypeShapeList,
-	kTypeRawData
+	kTypeRawData,
+
+	k2TypeSeqData
 };
 
 struct ExtractType {
 	int type;
 	bool (*extract)(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-	void (*createFilename)(char *dstFilename, const int lang, const int special, const char *filename);
+	void (*createFilename)(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
 };
 
 #endif

@@ -80,10 +80,11 @@ const ExtractEntry kyra1FMTownsE[] = {
 	{ kGUIStrings, 0x000291E0, 0x000293DC },
 	{ kNewGameString, 0x0002919C, 0x000291B1 },
 	{ kConfigStrings, 0x00029360, 0x000293AA},
-	{ kKyra1TownsSFXTable, 0x0003A978, 0x0004CF80 },
+	{ kKyra1TownsSFXwdTable, 0x0003A978, 0x0004CF80 },
+	{ kKyra1TownsSFXbtTable, 0x0003A878, 0x0003A978 },
+	{ kKyra1TownsCDATable, 0x0004D021, 0x0004D2E5 },
+	{ kAudioTracks, 0x00027B8E, 0x00027BEB },
 	{ kCreditsStrings, 0x0002AED8, 0x0002B464 },
-	{ kMenuSKB, 0x000293DE, 0x000294A7 },
-	{ kSjisVTable, 0x0003A421, 0x0003A749 },
 	{ -1, 0, 0 }
 };
 

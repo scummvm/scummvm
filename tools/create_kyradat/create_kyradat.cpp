@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 17,
+	kKyraDatVersion = 18,
 	kIndexSize = 12
 };
 
@@ -45,6 +45,11 @@ enum {
 #include "towns.h"
 #include "amiga.h"
 
+#include "hof_floppy.h"
+#include "hof_towns.h"
+#include "hof_cd.h"
+#include "hof_demo.h"
+
 const Game kyra1FanTranslations[] = {
 	{ kKyra1, IT_ITA, kTalkieVersion, "d0f1752098236083d81b9497bd2b6989", kyra1FreCD },
 	GAME_DUMMY_ENTRY
@@ -54,9 +59,13 @@ bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size
 bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+int extractHofSeqData_checkString(const void *ptr, uint8 checkSize);
+int extractHofSeqData_isSequence(const void *ptr, const Game *g, uint32 maxCheckSize);
+int extractHofSeqData_isControl(const void *ptr, uint32 size);
 
-void createFilename(char *dstFilename, const int lang, const int special, const char *filename);
-void createLangFilename(char *dstFilename, const int lang, const int special, const char *filename);
+void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
+void createLangFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
 
 const ExtractType extractTypeTable[] = {
 	{ kTypeLanguageList, extractStrings, createLangFilename },
@@ -64,6 +73,9 @@ const ExtractType extractTypeTable[] = {
 	{ kTypeRoomList, extractRooms, createFilename },
 	{ kTypeShapeList, extractShapes, createFilename },
 	{ kTypeRawData, extractRaw, createFilename },
+
+	{ k2TypeSeqData, extractHofSeqData, createFilename },
+
 	{ -1, 0, 0}
 };
 
@@ -133,6 +145,10 @@ const ExtractFilename extractFilenames[] = {
 	// IMAGE filename table
 	{ kCharacterImageFilenames, kTypeStringList, "CHAR-IMAGE.TXT" },
 
+	// AUDIO filename table
+	{ kAudioTracks, kTypeStringList, "TRACKS.TXT" },
+	{ kAudioTracksIntro, kTypeStringList, "TRACKSINT.TXT" },
+
 	// AMULET anim
 	{ kAmuleteAnimSeq, kTypeRawData, "AMULETEANIM.SEQ" },
 
@@ -172,10 +188,30 @@ const ExtractFilename extractFilenames[] = {
 	{ kPaletteList33, kTypeRawData, "PALTABLE33.PAL" },
 	
 	// FM-TOWNS specific
-	{ kKyra1TownsSFXTable, kTypeRawData, "SFXTABLE" },
+	{ kKyra1TownsSFXwdTable, kTypeRawData, "SFXWDTABLE" },
+	{ kKyra1TownsSFXbtTable, kTypeRawData, "SFXBTTABLE" },
+	{ kKyra1TownsCDATable, kTypeRawData, "CDATABLE" },
 	{ kCreditsStrings, kTypeRawData, "CREDITS" },
-	{ kMenuSKB, kTypeStringList, "MENUSKB" },
-	{ kSjisVTable, kTypeRawData, "SJISTABLE" },
+
+
+	// HAND OF FATE
+
+	// Sequence Player
+	{ k2SeqplayPakFiles, kTypeStringList, "S_PAKFILES.TXT" },
+	{ k2SeqplayCredits, kTypeRawData, "S_CREDITS.TXT" },
+	{ k2SeqplayStrings, kTypeLanguageList, "S_STRINGS" },
+	{ k2SeqplaySfxFiles, kTypeStringList, "S_SFXFILES.TXT" },
+	{ k2SeqplayTlkFiles, kTypeLanguageList, "S_TLKFILES" },
+	{ k2SeqplaySeqData, k2TypeSeqData, "S_DATA.SEQ" },
+	{ k2SeqplayIntroTracks, kTypeStringList, "S_INTRO.TRA" },
+	{ k2SeqplayFinaleTracks, kTypeStringList, "S_FINALE.TRA" },	
+	{ k2SeqplayIntroCDA, kTypeRawData, "S_INTRO.CDA" },
+	{ k2SeqplayFinaleCDA, kTypeRawData, "S_FINALE.CDA" },
+
+	// Ingame
+	{ k2IngamePakFiles, kTypeStringList, "I_PAKFILES.TXT" },
+	{ k2IngameTracks, kTypeStringList, "I_TRACKS.TRA" },
+	{ k2IngameCDA, kTypeRawData, "I_TRACKS.CDA" },
 
 	{ -1, 0, 0 }
 };
@@ -207,12 +243,15 @@ bool getFilename(char *dstFilename, const Game *g, const int id) {
 		return false;
 
 	const ExtractType *type = findExtractType(i->type);
-	type->createFilename(dstFilename, g->lang, g->special, i->filename);
+	type->createFilename(dstFilename, g->game, g->lang, g->special, i->filename);
 	return true;
 }
 
-void createFilename(char *dstFilename, const int lang, const int special, const char *filename) {
+void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
 	strcpy(dstFilename, filename);
+
+	static const char *gidExtensions[] = { "", ".K2", ".K3" };	
+	strcat(dstFilename, gidExtensions[gid]);
 	
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
 		if (specialE->special == special) {
@@ -223,9 +262,9 @@ void createFilename(char *dstFilename, const int lang, const int special, const 
 	}
 }
 
-void createLangFilename(char *dstFilename, const int lang, const int special, const char *filename) {
+void createLangFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
 	strcpy(dstFilename, filename);
-	
+
 	for (const Language *langE = languageTable; langE->lang != -1; ++langE) {
 		if (langE->lang == lang) {
 			strcat(dstFilename, ".");
@@ -233,6 +272,9 @@ void createLangFilename(char *dstFilename, const int lang, const int special, co
 			break;
 		}
 	}
+
+	static const char *gidExtensions[] = { "", ".K2", ".K3" };	
+	strcat(dstFilename, gidExtensions[gid]);
 	
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
 		if (specialE->special == special) {
@@ -328,7 +370,9 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 				++entries;
 			}
 
-			if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
+			if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
+				g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
+				g->special == k2TownsFile2E || g->special == k2TownsFile2J) {
 				// prevents creation of empty entries (which we have mostly between all strings in the fm-towns version)
 				while (!data[++i]) {
 					if (i == size)
@@ -364,8 +408,17 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 		if (g->special == kFMTownsVersionE)
 			targetsize--;
 		if (g->special == kFMTownsVersionJ)
-			targetsize += 2;		
+			targetsize += 2;
 		entries += (g->special - 1);
+	}
+
+	if (fmtPatch == 3) {
+		entries++;
+		targetsize++;
+	}
+
+	if (fmtPatch == 4) {
+		targetsize -= 9;
 	}
 	
 	uint8 *buffer = new uint8[targetsize];
@@ -374,13 +427,16 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	const uint8 *input = (const uint8*) data;
 
 	WRITE_BE_UINT32(output, entries); output += 4;
-	if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
+	if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
+		g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
+		g->special == k2TownsFile2E || g->special == k2TownsFile2J) {
 		const byte * c = data + size;
 		do {
 			if (fmtPatch == 2 && input - data == 0x3C0 && input[0x10] == 0x32) {
 				memcpy(output, input, 0x0F);
 				input += 0x11; output += 0x0F;
 			}
+
 			strcpy((char*) output, (const char*) input);
 			uint32 stringsize = strlen((const char*)output) + 1;
 			input += stringsize; output += stringsize;
@@ -391,6 +447,13 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 					if ((g->special == kFMTownsVersionE && input - data == 0x260) ||
 						(g->special == kFMTownsVersionJ && input - data == 0x2BD) ||
 						(g->special == kFMTownsVersionJ && input - data == 0x2BE))
+							*output++ = *input;
+				}
+
+				// insert one dummy string at hof sequence strings position 59
+				if (fmtPatch == 3) {
+					if ((g->special == k2TownsFile1E && input - data == 0x695) ||
+						(g->special == k2TownsFile1J && input - data == 0x598))
 							*output++ = *input;
 				}
 
@@ -424,7 +487,19 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 		}
 		targetsize = dstPos + 4;
 	} else {
-		memcpy(output, data, size);
+		uint32 copySize = size;
+		if (fmtPatch == 4) {
+			memcpy(output, data, 44);
+			output += 44;
+			data += 44;
+			for (int t = 1; t != 10; t++) {
+				sprintf((char*) output, "COST%d_SH.PAK", t);
+				output += 13;
+			}
+			data += 126;
+			copySize -= 170;
+		}
+		memcpy(output, data, copySize);
 	}
 
 	return out.addFile(filename, buffer, targetsize);
@@ -474,6 +549,284 @@ bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 s
 	return out.addFile(filename, buffer, size + 1 * 4);
 }
 
+bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
+	int numSequences = 0;
+	int numNestedSequences = 0;
+
+	uint16 headerSize = 50 * sizeof(uint16);
+	uint16 bufferSize = size + headerSize;
+	byte *buffer = new byte[bufferSize];
+	assert(buffer);
+	memset(buffer, 0, bufferSize );
+	uint16 *header = (uint16*) buffer;
+	byte *output = buffer + headerSize;
+	uint16 *hdout = header;
+
+	//debug(1, "\nProcessing Hand of Fate sequence data:\n--------------------------------------\n");
+	for (int cycle = 0; cycle < 2; cycle++) {
+		const byte *ptr = data;
+		hdout++;
+
+		const byte * endOffs = (const byte *)(data + size);
+
+		// detect sequence structs
+		while (ptr < endOffs) {
+			if (ptr[1]) {
+				error("invalid sequence data encountered");
+				delete [] buffer;
+				return false;
+			}
+
+			int v = extractHofSeqData_isSequence(ptr, g, endOffs - ptr);
+
+			if (cycle == 0 && v == 1) {
+				if (g->special == k2FloppyFile1 && *ptr == 5) {
+					// patch for floppy version
+					// skips invalid ferb sequence
+					ptr += 54;
+					continue;
+				}
+
+				numSequences++;
+				uint16 relOffs = (uint16) (output - buffer);
+				WRITE_LE_UINT16(hdout, relOffs);
+				hdout++;
+
+				/*char cc[15];
+				cc[14] = 0;
+				if (ptr[2]) {
+					memcpy(cc, ptr + 2, 14);
+					debug(1, "adding sequence with file: %s, output file offset: 0x%x", cc, relOffs);
+				} else if (ptr[16]) {
+					memcpy(cc, ptr + 16, 14);
+					debug(1, "adding sequence with file: %s, output file offset: 0x%x", cc, relOffs);
+				} else if (ptr[0] == 4) {
+					debug(1, "adding sequence (text only), output file offset: 0x%x", relOffs);
+				//}*/
+
+				memcpy(output , ptr, 30);
+				ptr += 30;
+				output += 30;
+				
+				if (g->special == k2TownsFile1E) {
+					memcpy(output , ptr, 2);
+					ptr += 2;
+					output += 2;
+				} else {
+					*output++ = READ_LE_UINT16(ptr) & 0xff;
+					ptr += 2;
+					*output++ = READ_LE_UINT16(ptr) & 0xff;
+					ptr += 2;
+				}						
+
+				memcpy(output, ptr, 14);
+				ptr += 18;
+				output += 14;
+				memcpy(output, ptr, 2);
+				ptr += 2;
+				output+= 2;
+
+			} else if (cycle == 1 && v != 1 && v != -2) {
+				uint16 controlOffs = 0;
+				if (v) {
+					const byte *ctrStart = ptr;
+					while (v && v != -2) {
+						ptr++;
+						v = extractHofSeqData_isSequence(ptr, g, endOffs - ptr);
+					}
+
+					if (v == -2)
+						break;
+
+					uint16 ctrSize = (uint16)(ptr - ctrStart);
+
+					if (g->special != k2DemoVersion &&
+						extractHofSeqData_isControl(ctrStart, ctrSize)) {
+
+						controlOffs = (uint16) (output - buffer);
+						//debug(1, "frame control encountered, size: %d, output file offset: 0x%x", ctrSize, controlOffs);
+						memcpy(output, ctrStart, ctrSize);
+						output += ctrSize;
+					}
+				}				
+
+				numNestedSequences++;
+				uint16 relOffs = (uint16) (output - buffer);
+				WRITE_LE_UINT16(hdout, relOffs);
+				hdout++;
+
+				/*char cc[15];
+				cc[14] = 0;
+				memcpy(cc, ptr + 2, 14);
+				debug(1, "adding nested sequence with file: %s, output file offset: 0x%x", cc, relOffs);*/
+
+				memcpy(output , ptr, 22);
+				ptr += 26;
+				output += 22;
+				memcpy(output, ptr, 4);
+				ptr += 4;
+				output += 4;
+
+				if (!READ_LE_UINT32(ptr))
+					controlOffs = 0;
+				//else if (controlOffs)
+				//	debug(1, "assigning frame control with output file offset 0x%x to item %s (output file offset: 0x%x)", controlOffs, cc, relOffs);
+					
+				WRITE_LE_UINT16(output, controlOffs);
+				if (g->special != k2DemoVersion)
+					ptr += 4;
+				output += 2;
+
+				if (g->special != k2DemoVersion) {
+					memcpy(output, ptr, 4);
+					ptr += 4;
+				} else {
+					WRITE_LE_UINT32(output, 0);
+				}
+
+				output+= 4;
+				if (g->special == k2TownsFile1E)
+					ptr += 2;
+
+			} else if (cycle == 0) {
+				while (v != 1 && v != -2) {
+					ptr++;
+					v = extractHofSeqData_isSequence(ptr, g, endOffs - ptr);
+				}
+
+				if (v == -2)
+					break;
+
+				/*char cc[15];
+				cc[14] = 0;
+				if (ptr[2])
+					memcpy(cc, ptr + 2, 14);
+				else
+					memcpy(cc, ptr + 16, 14);
+				debug(1, "next item: sequence with file %s", cc);*/
+
+			} else if (cycle == 1) {
+				while (v == 1 && v != -2) {
+					ptr++;
+					v = extractHofSeqData_isSequence(ptr, g, endOffs - ptr);
+				}
+
+				if (v == -2)
+					break;
+			}
+		}
+	}
+
+	uint16 finHeaderSize = (2 + numSequences + numNestedSequences) * sizeof(uint16);
+	uint16 finBufferSize = ((output - buffer) - headerSize) + finHeaderSize;
+	byte *finBuffer = new byte[finBufferSize];
+	assert(finBuffer);
+	uint16 diff = headerSize - finHeaderSize;
+	uint16 *finHeader = (uint16*) finBuffer;
+	
+	for (int i = 1; i < finHeaderSize; i++)
+		WRITE_LE_UINT16(&finHeader[i], (READ_LE_UINT16(&header[i]) - diff));
+	WRITE_LE_UINT16(finHeader, numSequences);
+	WRITE_LE_UINT16(&finHeader[numSequences + 1], numNestedSequences);
+	memcpy (finBuffer + finHeaderSize, buffer + headerSize, finBufferSize - finHeaderSize);
+	delete [] buffer;
+
+	finHeader = (uint16*) (finBuffer + ((numSequences + 2) * sizeof(uint16)));
+	for (int i = 0; i < numNestedSequences; i++) {
+		uint8 * offs = finBuffer + READ_LE_UINT16(finHeader++) + 26;
+		uint16 ctrl = READ_LE_UINT16(offs);
+		if (ctrl)
+			ctrl -= diff;
+		WRITE_LE_UINT16(offs, ctrl);
+	}
+
+
+	//debug(1, "\n\nFinished.\n");
+
+	return out.addFile(filename, finBuffer, finBufferSize);
+}
+
+int extractHofSeqData_checkString(const void *ptr, uint8 checkSize) {
+	// return values: 1 = text; 0 = zero string; -1 = other
+
+	int t = 0;
+	int c = checkSize;
+	const uint8 *s = (const uint8*)ptr;
+
+	// check for character string
+	while (c--) {
+		if (*s > 31 && *s < 123)
+			t++;
+		s++;			
+	}
+
+	if (t == checkSize)
+		return 1;
+
+	// check for zero string
+	c = checkSize;
+	uint32 sum = 0;
+	s = (const uint8*)ptr;
+	while (c--)
+		sum += *s++;
+
+	return (sum) ? -1 : 0;
+}
+
+int extractHofSeqData_isSequence(const void *ptr, const Game *g, uint32 maxCheckSize) {
+	// return values: 1 = Sequence; 0 = Nested Sequence; -1 = other; -2 = overflow
+
+	if (maxCheckSize < 30)
+		return -2;
+	
+	const uint8 * s = (const uint8*)ptr;
+	int c1 = extractHofSeqData_checkString(s + 2, 6);
+	int c2 = extractHofSeqData_checkString(s + 16, 6);
+	int c3 = extractHofSeqData_checkString(s + 2, 14);
+	int c4 = extractHofSeqData_checkString(s + 16, 14);
+	int c0 = s[1];
+	int c5 = s[0];
+
+	if (c0 == 0 && c5 && ((c1 + c2) >= 1) && (!(c3 == 0 && c2 != 1)) && (!(c4 == 0 && c1 != 1))) {
+		if (maxCheckSize < 41)
+			return -2;
+
+		if (g->special == k2TownsFile1E) {
+			if (!(s[37] | s[39]) && s[38] > s[36])
+				return 1;
+		} else {
+			if (!(s[39] | s[41]) && s[40] > s[38])
+				return 1;
+		}
+	}
+
+	if (c0 == 0 && c5 == 4 && c3 == 0 && c4 == 0) {
+		if (maxCheckSize >= 41 && READ_LE_UINT32(s + 34) && !(s[39] | s[41]) && s[40] > s[38])
+			return 1;
+	}	
+
+	if (c0 == 0 && c5 && c1 == 1 && c4 == -1 && s[20])
+		return 0;
+	
+	return -1;
+}
+
+int extractHofSeqData_isControl(const void *ptr, uint32 size) {
+	// return values: 1 = possible frame control data; 0 = definitely not frame control data
+
+	const uint8 *s = (const uint8*)ptr;
+	for (uint i = 2; i < size; i += 4) {
+		if (!s[i])
+			return 0;
+	}
+
+	for (uint i = 1; i < size; i += 2) {
+		if (s[i])
+			return 0;
+	}
+	return 1;
+}
+
 // index generation
 
 enum {
@@ -495,11 +848,13 @@ enum {
 uint32 getFeatures(const Game *g) {
 	uint32 features = 0;
 
-	if (g->special == kTalkieVersion)
+	if (g->special == kTalkieVersion || g->special == k2CDFile1E || g->special == k2CDFile1F || g->special == k2CDFile1G || g->special == k2CDFile2E || g->special == k2CDFile2F || g->special == k2CDFile2G)
 		features |= GF_TALKIE;
-	else if (g->special == kDemoVersion)
+	else if (g->special == kDemoVersion || g->special == k2DemoVersion)
 		features |= GF_DEMO;
-	else if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ)
+	else if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
+		g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
+		g->special == k2TownsFile2E || g->special == k2TownsFile2J)
 		features |= GF_FMTOWNS;
 	else if (g->special == kAmigaVersion)
 		features |= GF_AMIGA;
@@ -544,7 +899,7 @@ bool checkIndex(const byte *s, const int srcSize) {
 
 bool updateIndex(PAKFile &out, const Game *g) {
 	char filename[32];
-	createFilename(filename, -1, g->special, "INDEX");
+	createFilename(filename, g->game, -1, g->special, "INDEX");
 	
 	byte *index = new byte[kIndexSize];
 	assert(index);
@@ -572,7 +927,7 @@ bool updateIndex(PAKFile &out, const Game *g) {
 
 bool checkIndex(PAKFile &out, const Game *g) {
 	char filename[32];
-	createFilename(filename, -1, g->special, "INDEX");
+	createFilename(filename, g->game, -1, g->special, "INDEX");
 
 	uint32 size = 0;
 	const uint8 *data = out.getFileData(filename, &size);
@@ -639,9 +994,23 @@ int main(int argc, char *argv[]) {
 		if (!process(out, g, buffer, size))
 			fprintf(stderr, "ERROR: couldn't process file '%s'", argv[i]);
 		
-		if (g->special == kFMTownsVersionE) {
-			// The English and non language specific data has now been extracted
-			// so we switch to Japanese and extract the rest
+		if (g->special == kFMTownsVersionE || g->special == k2TownsFile1E || g->special == k2TownsFile2E ||
+			g->special == k2CDFile1E || g->special == k2CDFile2E) {
+			// This is for executables which contain support for at least 2 languages
+			// The English and non language specific data has now been extracted.
+			// We switch to the second language and continue extraction.
+			if (!hasNeededEntries(++g, &out)) {
+				warning("file '%s' is missing offset entries and thus can't be processed", argv[i]);
+				delete [] buffer;
+				continue;
+			}
+			if (!process(out, g, buffer, size))
+				fprintf(stderr, "ERROR: couldn't process file '%s'", argv[i]);
+		}
+
+		if (g->special == k2CDFile1F || g->special == k2CDFile2F) {
+			// This is for executables which contain support for 3 languages.
+			// We switch to the third language and continue extraction.
 			if (!hasNeededEntries(++g, &out)) {
 				warning("file '%s' is missing offset entries and thus can't be processed", argv[i]);
 				delete [] buffer;
@@ -708,8 +1077,18 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 			if (i->id == kTakenStrings || i->id == kNoDropStrings || i->id == kPoisonGoneString ||
 				i->id == kThePoisonStrings || i->id == kFluteStrings || i->id == kWispJewelStrings)
 				patch = 1;
-			else if (i->id == kIntroStrings || i->id == kKyra1TownsSFXTable)
+			else if (i->id == kIntroStrings || i->id == kKyra1TownsSFXwdTable)
 				patch = 2;						
+		}
+
+		if (g->special == k2TownsFile1E || g->special == k2TownsFile1J) {
+			if (i->id == k2SeqplayStrings)
+				patch = 3;
+		}
+		
+		if (g->special == k2FloppyFile2) {
+			if (i->id == k2IngamePakFiles)
+				patch = 4;
 		}
 		
 		if (!tDesc->extract(out, g, data + i->startOff, i->endOff - i->startOff, filename, patch)) {
@@ -736,6 +1115,12 @@ const Game *gameDescs[] = {
 	kyra1TownsGames,
 	kyra1AmigaGames,
 	kyra1FanTranslations,
+
+	kyra2FloppyGames,
+	kyra2TalkieGames,
+	kyra2TownsGames,
+	kyra2Demos,
+
 	0
 };
 

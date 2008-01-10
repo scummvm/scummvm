@@ -80,6 +80,9 @@ const ExtractEntry kyra1EngFloppy[] = {
 	{ kGUIStrings, 0x0002EE7A, 0x0002F02A },
 	{ kNewGameString, 0x00032466, 0x0003247B },
 	{ kConfigStrings, 0x0002f870, 0x0002f8af },
+	{ kAudioTracks, 0x00032771, 0x000327B2 },
+	{ kAudioTracksIntro, 0x0002FC88, 0x0002FC8E },
+
 	{ -1, 0, 0 }
 };
 
@@ -165,6 +168,8 @@ const ExtractEntry kyra1EngCD[] = {
 	{ kGUIStrings, 0x0002F1EE, 0x0002F3F7 },
 	{ kNewGameString, 0x00032CFB, 0x00032D10 },
 	{ kConfigStrings, 0x0002fc3d, 0x0002fc9e },
+	{ kAudioTracks, 0x00033006, 0x00033047 },
+	{ kAudioTracksIntro, 0x0002FE9A, 0x0002FEA6 },
 	{ -1, 0, 0 }
 };
 

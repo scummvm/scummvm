@@ -80,6 +80,8 @@ const int kyra1FloppyNeed[] = {
 	kGUIStrings,
 	kNewGameString,
 	kConfigStrings,
+	kAudioTracks,
+	kAudioTracksIntro,
 	-1
 };
 
@@ -165,6 +167,8 @@ const int kyra1CDNeed[] = {
 	kGUIStrings,
 	kNewGameString,
 	kConfigStrings,
+	kAudioTracks,
+	kAudioTracksIntro,
 	-1
 };
 
@@ -265,10 +269,11 @@ const int kyra1TownsEngNeed[] = {
 	kNewGameString,
 	kConfigStrings,
 
-	kKyra1TownsSFXTable,
+	kKyra1TownsSFXwdTable,
+	kKyra1TownsSFXbtTable,
+	kKyra1TownsCDATable,
+	kAudioTracks,
 	kCreditsStrings,
-	kMenuSKB,
-	kSjisVTable,
 	-1
 };
 
@@ -351,6 +356,89 @@ const int kyra1AmigaNeed[] = {
 	-1
 };
 
+const int kyra2CDFile1EngNeed[] = {
+	k2SeqplayPakFiles,
+	k2SeqplayCredits,
+	k2SeqplayStrings,
+	k2SeqplaySfxFiles,
+	k2SeqplaySeqData,
+	k2SeqplayIntroTracks,
+	k2SeqplayFinaleTracks,
+	-1
+};
+
+const int kyra2CDFile1FreNeed[] = {
+	k2SeqplayStrings,
+	-1
+};
+
+const int kyra2CDFile1GerNeed[] = {
+	k2SeqplayStrings,
+	-1
+};
+
+const int kyra2CDFile2EngNeed[] = {
+	k2IngameTracks,
+	-1
+};
+
+const int kyra2CDFile2FreNeed[] = {
+	-1
+};
+
+const int kyra2CDFile2GerNeed[] = {
+	-1
+};
+
+const int kyra2FloppyFile1Need[] = {
+	k2SeqplayPakFiles,
+	k2SeqplayStrings,
+	k2SeqplaySfxFiles,
+	k2SeqplayIntroTracks,
+	k2SeqplayFinaleTracks,
+	k2SeqplaySeqData,
+	-1
+};
+
+const int kyra2FloppyFile2Need[] = {
+	k2IngamePakFiles,
+	k2IngameTracks,
+	-1
+};
+
+const int kyra2TownsFile1EngNeed[] = {
+	k2SeqplayPakFiles,
+	k2SeqplayStrings,
+	k2SeqplaySfxFiles,
+	k2SeqplaySeqData,
+	k2SeqplayIntroCDA,
+	k2SeqplayFinaleCDA,
+	-1
+};
+
+const int kyra2TownsFile1JapNeed[] = {
+	k2SeqplayStrings,
+	-1
+};
+
+const int kyra2TownsFile2EngNeed[] = {
+	k2IngamePakFiles,
+	k2IngameCDA,
+	-1
+};
+
+const int kyra2TownsFile2JapNeed[] = {
+	-1
+};
+
+const int kyra2DemoNeed[] = {
+	k2SeqplayPakFiles,
+	k2SeqplaySeqData,
+	k2SeqplaySfxFiles,
+	k2SeqplayIntroTracks,
+	-1
+};
+
 const GameNeed gameNeedTable[] = {
 	{ kKyra1, -1, kyra1FloppyNeed },
 	{ kKyra1, kTalkieVersion, kyra1CDNeed },
@@ -358,6 +446,21 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra1, kFMTownsVersionJ, kyra1TownsJapNeed },
 	{ kKyra1, kAmigaVersion, kyra1AmigaNeed },
 	{ kKyra1, kDemoVersion, kyra1DemoNeed },
+
+	{ kKyra2, k2FloppyFile1, kyra2FloppyFile1Need },
+	{ kKyra2, k2FloppyFile2, kyra2FloppyFile2Need },
+	{ kKyra2, k2CDFile1E, kyra2CDFile1EngNeed },
+	{ kKyra2, k2CDFile1F, kyra2CDFile1FreNeed },
+	{ kKyra2, k2CDFile1G, kyra2CDFile1GerNeed },
+	{ kKyra2, k2CDFile2E, kyra2CDFile2EngNeed },
+	{ kKyra2, k2CDFile2F, kyra2CDFile2FreNeed },
+	{ kKyra2, k2CDFile2G, kyra2CDFile2GerNeed },
+	{ kKyra2, k2TownsFile1E , kyra2TownsFile1EngNeed },
+	{ kKyra2, k2TownsFile1J, kyra2TownsFile1JapNeed },
+	{ kKyra2, k2TownsFile2E , kyra2TownsFile2EngNeed },
+	{ kKyra2, k2TownsFile2J, kyra2TownsFile2JapNeed },
+	{ kKyra2, k2DemoVersion, kyra2DemoNeed},
+
 	{ -1, -1, 0 }
 };
 
@@ -367,6 +470,19 @@ const SpecialExtension specialTable[] = {
 	{ kFMTownsVersionE , "TNS" },
 	{ kFMTownsVersionJ, "TNS" },
 	{ kAmigaVersion, "AMG" },
+
+	{ k2CDFile1E, "CD" },
+	{ k2CDFile1F, "CD" },
+	{ k2CDFile1G, "CD" },
+	{ k2CDFile2E, "CD" },
+	{ k2CDFile2F, "CD" },
+	{ k2CDFile2G, "CD" },
+	{ k2TownsFile1E, "TNS" },
+	{ k2TownsFile1J, "TNS" },
+	{ k2TownsFile2E, "TNS" },
+	{ k2TownsFile2J, "TNS" },
+	{ k2DemoVersion, "DEM" },
+
 	{ -1, 0 }
 };
 
@@ -379,4 +495,3 @@ const Language languageTable[] = {
 	{ JA_JPN, "JPN" },
 	{ -1, 0 }
 };
-
