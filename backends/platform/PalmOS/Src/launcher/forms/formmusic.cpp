@@ -230,7 +230,7 @@ static void MusicFormSave(UInt16 index) {
 		GameInfoType *ogameInfoP;
 
 		if (!MusicTabSave()) return;
-		if (!AudioCDTabSave()) return;
+//		if (!AudioCDTabSave()) return;
 		VolumeTabSave();
 
 		recordH = DmGetRecord(gameDB, index);
@@ -272,13 +272,13 @@ static void MusicFormInit(UInt16 index) {
 		return;
 	}
 
-	tabP = TabNewTabs(3);
+	tabP = TabNewTabs(2);
 	TabAddContent(&frmP, tabP, "Sound", TabMusicForm);
 	TabAddContent(&frmP, tabP, "Volume", TabVolumeForm);
-	TabAddContent(&frmP, tabP, "Audio CD", TabAudioCDForm);
+//	TabAddContent(&frmP, tabP, "Audio CD", TabAudioCDForm);
 
 	MusicTabInit();
-	AudioCDTabInit();
+//	AudioCDTabInit();
 	VolumeTabInit();
 
 	FrmDrawForm(frmP);
