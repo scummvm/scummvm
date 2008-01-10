@@ -203,8 +203,8 @@ struct SpecialExtension {
 
 enum kGame {
 	kKyra1 = 0,
-	kKyra2,
-	kKyra3
+	kKyra2 = 1,
+	kKyra3 = 2
 };
 
 struct Game {
