@@ -23,6 +23,7 @@
  *
  */
 
+#include <time.h>	// FIXME: for Inter::renewTimeInVars()
 
 #include "common/endian.h"
 
@@ -35,8 +36,6 @@
 #include "gob/parse.h"
 #include "gob/scenery.h"
 #include "gob/sound.h"
-
-#include <time.h>	// FIXME: for Inter::renewTimeInVars()
 
 namespace Gob {
 
