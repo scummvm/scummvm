@@ -667,6 +667,7 @@ public:
 	CharacterScheduleEntry(Action theAction, ...);
 	CharacterScheduleEntry(CharacterScheduleSet *parentSet, 
 		CharacterScheduleResource *&rec);
+	CharacterScheduleEntry(CharacterScheduleEntry *src);
 
 	Action action() { return _action; }
 	int numParams() { return _numParams; }

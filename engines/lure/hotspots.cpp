@@ -43,6 +43,7 @@ namespace Lure {
 
 Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	Resources &resources = Resources::getReference();
+	HotspotSchedules &schedules = resources.hotspotSchedules();
 	bool isEGA = LureEngine::getReference().isEGA();
 
 	_data = res;
@@ -88,7 +89,14 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_startRoomNumber = 0;
 	_supportValue = 0;
 
-	if (_data->npcSchedule != 0) {
+	HotspotScheduleRecord *rec = schedules.check(_hotspotId);
+	if (rec != NULL) {
+		// Hotspot was previously active, so restore prior schedule
+		_currentActions.copyFrom(*rec);
+		schedules.remove(_hotspotId);
+
+	} else if (_data->npcSchedule != 0) {
+		// Set up default schedule based on given Schedule Id
 		CharacterScheduleEntry *entry = resources.charSchedules().getEntry(_data->npcSchedule);
 		_currentActions.addFront(DISPATCH_ACTION, entry, _roomNumber);
 	}
@@ -204,13 +212,9 @@ Hotspot::Hotspot(): _pathFinder(NULL) {
 }
 
 Hotspot::~Hotspot() {
-	// WORKAROUND: If Blacksmith is being deactivated, make sure his animation is
-	// reset back to his standard movement set
-	if (_hotspotId == BLACKSMITH_ID) {
-		Resources &res = Resources::getReference();
-		HotspotAnimData *tempAnim = res.animRecords()[BLACKSMITH_DEFAULT_ANIM_INDEX];
-		assert(tempAnim);
-		_data->animRecordId = tempAnim->animRecordId;
+	if ((_data != NULL) && (_data->npcSchedule != 0)) {
+		// When deactivating an NPC schedule, store in case the NPC is later reactivated
+		Resources::getReference().hotspotSchedules().add(_hotspotId, _currentActions);
 	}
 
 	if (_frames) delete _frames;
@@ -4464,6 +4468,19 @@ CurrentActionEntry::CurrentActionEntry(Action newAction, uint16 roomNum, uint16 
 	_roomNumber = roomNum;
 }
 
+CurrentActionEntry::CurrentActionEntry(CurrentActionEntry *src) {
+	_action = src->_action;
+	_dynamicSupportData = src->_dynamicSupportData;
+	_roomNumber = src->_roomNumber;
+	if (!_dynamicSupportData) 
+		_supportData = src->_supportData;
+	else if (src->_supportData == NULL)
+		_supportData = NULL;
+	else {
+		_supportData = new CharacterScheduleEntry(src->_supportData);
+	}
+}
+
 void CurrentActionEntry::setSupportData(uint16 entryId) {
 	CharacterScheduleEntry &entry = supportData();
 
@@ -4622,6 +4639,15 @@ void CurrentActionStack::loadFromStream(ReadStream *stream) {
 	_actions.clear();
 	while ((rec = CurrentActionEntry::loadFromStream(stream)) != NULL)
 		_actions.push_back(rec);
+}
+
+void CurrentActionStack::copyFrom(CurrentActionStack &stack) {
+	ManagedList<CurrentActionEntry *>::iterator i;
+
+	for (i = stack._actions.begin(); i != stack._actions.end(); ++i) {
+		CurrentActionEntry *rec = *i;
+		_actions.push_back(new CurrentActionEntry(rec));
+	}
 }
 
 /*-------------------------------------------------------------------------*/
@@ -4811,6 +4837,75 @@ void HotspotList::loadFromStream(ReadStream *stream) {
 		// Get the next hotspot
 		hotspotId = stream->readUint16LE();
 	}
+}
+
+HotspotScheduleRecord::HotspotScheduleRecord(uint16 hotspotId, CurrentActionStack &stack) {
+	this->hotspotId = hotspotId;
+	copyFrom(stack);
+}
+
+HotspotScheduleRecord::HotspotScheduleRecord(uint16 hotspotId) {
+	this->hotspotId = hotspotId;
+}
+
+void HotspotSchedules::saveToStream(WriteStream *stream) {
+	iterator i;
+
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot schedules stack");
+
+	for (i = begin(); i != end(); ++i) {
+		HotspotScheduleRecord *rec = *i;
+		stream->writeUint16LE(rec->hotspotId);
+		rec->saveToStream(stream);
+	}
+	stream->writeUint16LE(0xffff); // End of list marker
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot schedules stack");
+}
+
+void HotspotSchedules::loadFromStream(ReadStream *stream) {
+	iterator i;
+	uint16 hId;
+
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Loading hotspot schedules stack");
+
+	clear();
+	while ((hId = stream->readUint16LE()) != 0xffff) {
+		HotspotScheduleRecord *rec = new HotspotScheduleRecord(hId);
+		rec->loadFromStream(stream);
+	}
+
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Loading saving hotspot schedules stack");
+}
+
+void HotspotSchedules::add(uint16 hotspotId, CurrentActionStack &actions) {
+	HotspotScheduleRecord *rec = new HotspotScheduleRecord(hotspotId, actions);
+	push_back(rec);
+}
+
+void HotspotSchedules::remove(uint16 hotspotId) {
+	iterator i;
+
+	for (i = begin(); i != end(); ++i) {
+		HotspotScheduleRecord *rec = *i;
+		
+		if (rec->hotspotId == hotspotId) {
+			erase(i);
+			return;
+		}
+	}
+}
+
+HotspotScheduleRecord *HotspotSchedules::check(uint16 hotspotId) {
+	iterator i;
+
+	for (i = begin(); i != end(); ++i) {
+		HotspotScheduleRecord *rec = *i;
+		
+		if (rec->hotspotId == hotspotId)
+			return rec;
+	}
+
+	return NULL;
 }
 
 } // end of namespace Lure

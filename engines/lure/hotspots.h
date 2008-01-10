@@ -108,6 +108,7 @@ public:
 	CurrentActionEntry(CurrentAction newAction, uint16 roomNum);
 	CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum);
 	CurrentActionEntry(Action newAction, uint16 roomNum, uint16 param1, uint16 param2);
+	CurrentActionEntry(CurrentActionEntry *src);
 	virtual ~CurrentActionEntry() {
 		if (_dynamicSupportData) delete _supportData;
 	}
@@ -177,6 +178,7 @@ public:
 
 	void saveToStream(WriteStream *stream);
 	void loadFromStream(ReadStream *stream);
+	void copyFrom(CurrentActionStack &stack);
 };
 
 class WalkingActionEntry {
@@ -248,6 +250,24 @@ struct DestStructure {
 	uint8 counter;
 	Point position;
 };
+
+class HotspotScheduleRecord: public CurrentActionStack {
+public:
+	uint16 hotspotId;
+
+	HotspotScheduleRecord(uint16 hotspotId, CurrentActionStack &stack);
+	HotspotScheduleRecord(uint16 hotspotId);
+};
+
+class HotspotSchedules: public ManagedList<HotspotScheduleRecord *> {
+public:
+	void add(uint16 hotspotId, CurrentActionStack &actions);
+	void remove(uint16 hotspotId);
+	HotspotScheduleRecord *check(uint16 hotspotId);
+	void saveToStream(Common::WriteStream *stream);
+	void loadFromStream(Common::ReadStream *stream);
+};
+
 
 #define MAX_NUM_FRAMES 16
 

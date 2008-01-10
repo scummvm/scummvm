@@ -79,6 +79,7 @@ private:
 	PausedCharacterList _pausedList;
 	BarmanLists _barmanLists;
 	StringList _stringList;
+	HotspotSchedules _hotspotSchedules;
 
 	int numCharOffsets;
 	uint16 *_charOffsets;
@@ -134,6 +135,7 @@ public:
 	RoomExitIndexedHotspotList &exitHotspots() { return _indexedRoomExitHospots; }
 	PausedCharacterList &pausedList() { return _pausedList; }
 	BarmanLists &barmanLists() { return _barmanLists; }
+	HotspotSchedules &hotspotSchedules() { return _hotspotSchedules; }
 	StringList &stringList() { return _stringList; }
 	uint16 getCharOffset(int index) { 
 		if (index >= numCharOffsets) 

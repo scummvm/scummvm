@@ -98,6 +98,7 @@ void Resources::reset() {
 
 	_fieldList.reset();
 	_barmanLists.reset();
+	_hotspotSchedules.clear();
 	_talkState = TALK_NONE;
 	_activeTalkData = NULL;
 
@@ -732,6 +733,7 @@ void Resources::saveToStream(Common::WriteStream *stream) {
 	// Save sublist data
 	_hotspotData.saveToStream(stream);
 	_activeHotspots.saveToStream(stream);
+	_hotspotSchedules.saveToStream(stream);
 	_fieldList.saveToStream(stream);
 	_randomActions.saveToStream(stream);
 	_barmanLists.saveToStream(stream);
@@ -757,6 +759,13 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	_hotspotData.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading active hotspots");
 	_activeHotspots.loadFromStream(stream);
+
+	_hotspotSchedules.clear();
+	if (saveVersion >= 31) {
+		_hotspotSchedules.loadFromStream(stream);
+		debugC(ERROR_DETAILED, kLureDebugScripts, "Loading hotspot schedules");
+	}
+
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading fields");
 	_fieldList.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading random actions");

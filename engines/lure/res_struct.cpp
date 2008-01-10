@@ -741,6 +741,8 @@ SequenceDelayData *SequenceDelayData::load(uint32 delay, uint16 seqOffset, bool 
 }
 
 void SequenceDelayList::add(uint16 delay, uint16 seqOffset, bool canClear) {
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List add sequence=%xh delay=%d canClear=%d",
+		seqOffset, delay, (int)canClear);
 	SequenceDelayData *entry = new SequenceDelayData(delay, seqOffset, canClear);
 	push_front(entry);
 }
@@ -750,20 +752,15 @@ void SequenceDelayList::tick() {
 	uint32 currTime = g_system->getMillis();
 	SequenceDelayList::iterator i;
 
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check start at time %d", currTime);
+
 	for (i = begin(); i != end(); i++) {
 		SequenceDelayData *entry = *i;
+		debugC(ERROR_DETAILED, kLureDebugScripts, "Delay List check %xh at time %d", entry->sequenceOffset, entry->timeoutCtr);
+
 		if (currTime >= entry->timeoutCtr) {
 			// Timeout reached - delete entry from list and execute the sequence
 			uint16 seqOffset = entry->sequenceOffset;
-
-			// FIXME: At current speed the player can enter the cave a bit too quickly ahead of Goewin. 
-			// Use a hard-coded check to make sure Goewin is in the room
-			if (seqOffset == 0xebd) {
-				Hotspot *goewinHotspot = res.getActiveHotspot(GOEWIN_ID);
-				if (goewinHotspot->roomNumber() != 38) 
-					return;
-			}
-
 			erase(i);
 			Script::execute(seqOffset);
 			return;
@@ -840,6 +837,13 @@ CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleSet *parentSet,
 
 	rec = (CharacterScheduleResource *) ((byte *) rec + 
 		(_numParams + 1) * sizeof(uint16));
+}
+
+CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleEntry *src) {
+	_parent = src->_parent;
+	_action = src->_action;
+	_numParams = src->_numParams;
+	Common::copy(src->_params, src->_params + MAX_TELL_COMMANDS * 3 * sizeof(uint16), _params);
 }
 
 uint16 CharacterScheduleEntry::param(int index) {
