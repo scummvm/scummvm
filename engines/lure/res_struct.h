@@ -774,6 +774,7 @@ class BarmanLists {
 public:
 	BarmanLists();
 
+	void reset();
 	BarEntry &getDetails(uint16 roomNumber);
 	void saveToStream(Common::WriteStream *stream);
 	void loadFromStream(Common::ReadStream *stream);
