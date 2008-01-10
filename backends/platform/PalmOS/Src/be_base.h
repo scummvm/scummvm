@@ -26,6 +26,8 @@
 #ifndef BE_BASE_H
 #define BE_BASE_H
 
+#include <time.h>
+
 #include "PalmVersion.h"
 #include "globals.h"
 
