@@ -122,7 +122,7 @@ Common::StringList DefaultSaveFileManager::listSavefiles(const char *pattern) {
 
 	if (savePath.lookupFile(savefiles, search, false, true)) {
 		for (FSList::const_iterator file = savefiles.begin(); file != savefiles.end(); ++file) {
-			results.push_back(file->getPath());
+			results.push_back(file->getName());
 		}
 	}
 
