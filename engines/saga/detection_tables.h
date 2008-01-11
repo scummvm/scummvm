@@ -433,6 +433,41 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+	// Inherit the earth - Italian Wyrmkeep combined Windows/Mac/Linux CD (fan translation)
+
+	// version is different from the other Wyrmkeep re-releases in that it does
+	// not have any substitute files. Presumably the ite.rsc file has been
+	// modified to include the Wyrmkeep changes. The resource files are little-
+	// endian, except for the voice file which is big-endian.
+	{
+		{
+			"ite",
+			"Multi-OS CD Version",
+			{
+	{"ite.rsc",						GAME_RESOURCEFILE,					"a6433e34b97b15e64fe8214651012db9", -1},
+	{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", -1},
+	//{"sounds.rsc",					GAME_SOUNDFILE,						"e2ccb61c325d6d1ead3be0e731fe29fe", -1},
+	//{"inherit the earth voices",	GAME_VOICEFILE | GAME_SWAPENDIAN,	"c14c4c995e7a0d3828e3812a494301b7", -1},
+	//{"music.rsc",					GAME_MUSICFILE,						"d6454756517f042f01210458abe8edd4", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformUnknown,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_MULTICD,
+		GF_WYRMKEEP | GF_CD_FX,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEMAC_GameSound,
+		&ITEPC_GameSound,
+		0,
+		NULL,
+	},
+
 	// Inherit the earth - Windows/Linux/DOS CD version
 	{
 		{
@@ -447,6 +482,36 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_CD,
+		GF_CD_FX,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEPC_GameSound,
+		&ITEPC_GameSound,
+		ARRAYSIZE(ITEPatch_Files),
+		ITEPatch_Files,
+	},
+
+	// Inherit the earth - Italian Windows/Linux/DOS CD version (fan translation)
+	{
+		{
+			"ite",
+			"Windows/Linux/DOS CD Version",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+	//{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe", -1},
+	//{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6", -1},
+	//{"music.rsc",	GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -581,6 +646,33 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEPatch_Files,
 	},
 
+	// Inherit the earth - Italian Disk version (fan translation)
+	{
+		{
+			"ite",
+			"Floppy",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
+	//{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c46e4392fcd2e89bc91e5567db33b62d", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_DISK_G,
+		0,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEDISK_GameSound,
+		&ITEDISK_GameSound,
+		ARRAYSIZE(ITEPatch_Files),
+		ITEPatch_Files,
+	},
 
 	// ITE Amiga versions /////////////////////////////////////////////////////////////////////////////////////
 
