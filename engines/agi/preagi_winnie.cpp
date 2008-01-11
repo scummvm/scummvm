@@ -41,10 +41,9 @@ namespace Agi {
 #define WTP_SAVEGAME_VERSION	1
 
 void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
-	bool isBigEndian = (_vm->getPlatform() == Common::kPlatformAmiga);
 	int i;
 
-	Common::MemoryReadStreamEndian readS(buffer, len, isBigEndian);
+	Common::MemoryReadStreamEndian readS(buffer, len, _isBigEndian);
 
 	roomHdr->roomNumber = readS.readByte();
 	roomHdr->objId = readS.readByte();
@@ -77,10 +76,9 @@ void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
 }
 
 void Winnie::parseObjHeader(WTP_OBJ_HDR *objHdr, byte *buffer, int len) {
-	bool isBigEndian = (_vm->getPlatform() == Common::kPlatformAmiga);
 	int i;
 
-	Common::MemoryReadStreamEndian readS(buffer, len, isBigEndian);
+	Common::MemoryReadStreamEndian readS(buffer, len, _isBigEndian);
 
 	objHdr->fileLen = readS.readUint16();
 	objHdr->objId = readS.readUint16();
@@ -295,10 +293,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			break;
 		default:
 			// print description
-			if (_vm->getPlatform() != Common::kPlatformAmiga)
-				_vm->printStrXOR((char *)(buffer + pc));
-			else
-				_vm->printStr((char *)(buffer + pc));
+			printStrWinnie((char *)(buffer + pc));
 			if (_vm->getSelection(kSelBackspace) == 1)
 				return IDI_WTP_PAR_OK;
 			else 
@@ -376,10 +371,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 		}
 
 		// jump to the script block of the selected option
-		if (_vm->getPlatform() != Common::kPlatformAmiga)
-			pc = hdr.opt[index].ofsOpt[iSel] - IDI_WTP_OFS_ROOM;
-		else
-			pc = hdr.opt[index].ofsOpt[iSel];
+		pc = hdr.opt[index].ofsOpt[iSel] - _roomOffset;
 
 		opcode = *(buffer + pc);
 		if (!opcode) pc++;
@@ -493,11 +485,7 @@ void Winnie::printObjStr(int iObj, int iStr) {
 	readObj(iObj, buffer);
 	parseObjHeader(&hdr, buffer, sizeof(hdr));
 
-	if (_vm->getPlatform() != Common::kPlatformAmiga)
-		_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr] - IDI_WTP_OFS_OBJ));
-	else
-		_vm->printStr((char *)(buffer + hdr.ofsStr[iStr]));
-
+	printStrWinnie((char *)(buffer + hdr.ofsStr[iStr] - _objOffset));
 	free(buffer);
 }
 
@@ -840,17 +828,13 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				getMenuMouseSel(iSel, fCanSel, x, y);
 
 				// Change cursor
-				if (fCanSel[IDI_WTP_SEL_NORTH] && (event.mouse.x >= 20 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2) &&
-					(event.mouse.y >= 0 && event.mouse.y <= 10)) {
+				if (fCanSel[IDI_WTP_SEL_NORTH] && hotspotNorth.contains(event.mouse.x, event.mouse.y)) {
 					_vm->_gfx->setCursorPalette(true);
-				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && (event.mouse.x >= 20 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2) &&
-					(event.mouse.y >= IDI_WTP_PIC_HEIGHT - 10 && event.mouse.y <= IDI_WTP_PIC_HEIGHT)) {
+				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && hotspotSouth.contains(event.mouse.x, event.mouse.y)) {
 					_vm->_gfx->setCursorPalette(true);			
-				} else if (fCanSel[IDI_WTP_SEL_WEST] && (event.mouse.y >= 0  && event.mouse.y <= IDI_WTP_PIC_HEIGHT) &&
-					(event.mouse.x >= 20 && event.mouse.x <= 30)) {
+				} else if (fCanSel[IDI_WTP_SEL_WEST] && hotspotWest.contains(event.mouse.x, event.mouse.y)) {
 					_vm->_gfx->setCursorPalette(true);
-				} else if (fCanSel[IDI_WTP_SEL_EAST] && (event.mouse.y >= 0  && event.mouse.y <= IDI_WTP_PIC_HEIGHT) &&
-					(event.mouse.x >= IDI_WTP_PIC_WIDTH * 2 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2)) {
+				} else if (fCanSel[IDI_WTP_SEL_EAST] && hotspotEast.contains(event.mouse.x, event.mouse.y)) {
 					_vm->_gfx->setCursorPalette(true);
 				} else {
 					_vm->_gfx->setCursorPalette(false);
@@ -859,26 +843,22 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				break;
 			case Common::EVENT_LBUTTONUP:
 				// Click to move
-				if (fCanSel[IDI_WTP_SEL_NORTH] && (event.mouse.x >= 20 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2) &&
-					(event.mouse.y >= 0 && event.mouse.y <= 10)) {
+				if (fCanSel[IDI_WTP_SEL_NORTH] && hotspotNorth.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_NORTH;
 					makeSel();
 					_vm->_gfx->setCursorPalette(false);
 					return;
-				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && (event.mouse.x >= 20 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2) &&
-					(event.mouse.y >= IDI_WTP_PIC_HEIGHT - 10 && event.mouse.y <= IDI_WTP_PIC_HEIGHT)) {
+				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && hotspotSouth.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_SOUTH;
 					makeSel();
 					_vm->_gfx->setCursorPalette(false);
 					return;
-				} else if (fCanSel[IDI_WTP_SEL_WEST] && (event.mouse.y >= 0  && event.mouse.y <= IDI_WTP_PIC_HEIGHT) &&
-					(event.mouse.x >= 20 && event.mouse.x <= 30)) {
+				} else if (fCanSel[IDI_WTP_SEL_WEST] && hotspotWest.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_WEST;
 					makeSel();
 					_vm->_gfx->setCursorPalette(false);
 					return;
-				} else if (fCanSel[IDI_WTP_SEL_EAST] && (event.mouse.y >= 0  && event.mouse.y <= IDI_WTP_PIC_HEIGHT) &&
-					(event.mouse.x >= IDI_WTP_PIC_WIDTH * 2 && event.mouse.x <= (IDI_WTP_PIC_WIDTH + 10) * 2)) {
+				} else if (fCanSel[IDI_WTP_SEL_EAST] && hotspotEast.contains(event.mouse.x, event.mouse.y)) {
 					*iSel = IDI_WTP_SEL_EAST;
 					makeSel();
 					_vm->_gfx->setCursorPalette(false);
@@ -1050,34 +1030,18 @@ phase1:
 	}
 phase2:
 	for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
-		if (_vm->getPlatform() != Common::kPlatformAmiga) {
-			if (parser(hdr.ofsDesc[iBlock] - IDI_WTP_OFS_ROOM, iBlock, roomdata) == IDI_WTP_PAR_BACK)
-				goto phase1;
-		} else {
-			if (parser(hdr.ofsDesc[iBlock], iBlock, roomdata) == IDI_WTP_PAR_BACK)
-				goto phase1;
-		}
+		if (parser(hdr.ofsDesc[iBlock] - _roomOffset, iBlock, roomdata) == IDI_WTP_PAR_BACK)
+			goto phase1;
 	}
 	for (;;) {
 		for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
-			if (_vm->getPlatform() != Common::kPlatformAmiga) {
-				switch(parser(hdr.ofsBlock[iBlock] - IDI_WTP_OFS_ROOM, iBlock, roomdata)) {
-				case IDI_WTP_PAR_GOTO:
-					goto phase0;
-					break;
-				case IDI_WTP_PAR_BACK:
-					goto phase2;
-					break;
-				}
-			} else {
-				switch(parser(hdr.ofsBlock[iBlock], iBlock, roomdata)) {
-				case IDI_WTP_PAR_GOTO:
-					goto phase0;
-					break;
-				case IDI_WTP_PAR_BACK:
-					goto phase2;
-					break;
-				}
+			switch(parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata)) {
+			case IDI_WTP_PAR_GOTO:
+				goto phase0;
+				break;
+			case IDI_WTP_PAR_BACK:
+				goto phase2;
+				break;
 			}
 		}
 	}
@@ -1119,11 +1083,8 @@ void Winnie::drawObjPic(int iObj, int x0, int y0) {
 	uint32 objSize = readObj(iObj, buffer);
 	parseObjHeader(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
 	
-	if (_vm->getPlatform() != Common::kPlatformAmiga)
-		objhdr.ofsPic -= IDI_WTP_OFS_OBJ;
-
 	_vm->_picture->setOffset(x0, y0);
-	_vm->_picture->decodePicture(buffer + objhdr.ofsPic, objSize, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_vm->_picture->decodePicture(buffer + objhdr.ofsPic - _objOffset, objSize, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_picture->setOffset(0, 0);
 	_vm->_picture->showPic(10, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
@@ -1141,11 +1102,8 @@ void Winnie::drawRoomPic() {
 	// read room picture
 	readRoom(_room, buffer, roomhdr);
 
-	if (_vm->getPlatform() != Common::kPlatformAmiga)
-		roomhdr.ofsPic = roomhdr.ofsPic - IDI_WTP_OFS_ROOM;
-
 	// draw room picture
-	_vm->_picture->decodePicture(buffer + roomhdr.ofsPic, 4096, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
+	_vm->_picture->decodePicture(buffer + roomhdr.ofsPic - _roomOffset, 4096, 1, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_picture->showPic(IDI_WTP_PIC_X0, IDI_WTP_PIC_Y0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 
 	// draw object picture
@@ -1165,6 +1123,7 @@ void Winnie::clrMenuSel(int *iSel, int fCanSel[]) {
 	while (!fCanSel[*iSel]) {
 		*iSel += 1;
 	}
+	_vm->_gfx->setCursorPalette(false);
 }
 
 void Winnie::printRoomStr(int iRoom, int iStr) {
@@ -1172,10 +1131,7 @@ void Winnie::printRoomStr(int iRoom, int iStr) {
 	uint8 *buffer = (uint8 *)malloc(4096);
 
 	readRoom(iRoom, buffer, hdr);
-	if (_vm->getPlatform() != Common::kPlatformAmiga)
-		_vm->printStrXOR((char *)(buffer + hdr.ofsStr[iStr - 1] - IDI_WTP_OFS_ROOM));
-	else
-		_vm->printStr((char *)(buffer + hdr.ofsStr[iStr - 1]));
+	printStrWinnie((char *)(buffer + hdr.ofsStr[iStr - 1] - _roomOffset));
 
 	free(buffer);
 }
@@ -1292,6 +1248,13 @@ void Winnie::loadGame() {
 	delete infile;
 }
 
+void Winnie::printStrWinnie(char *szMsg) {
+	if (_vm->getPlatform() != Common::kPlatformAmiga)
+		_vm->printStrXOR(szMsg);
+	else
+		_vm->printStr(szMsg);
+}
+
 // Console-related functions
 
 void Winnie::debugCurRoom() {
@@ -1315,8 +1278,23 @@ void Winnie::init() {
 	_doWind = false;
 	_winnieEvent = false;
 
+	if (_vm->getPlatform() != Common::kPlatformAmiga) {
+		_isBigEndian = false;
+		_roomOffset = IDI_WTP_OFS_ROOM;
+		_objOffset = IDI_WTP_OFS_OBJ;
+	} else {
+		_isBigEndian = true;
+		_roomOffset = 0;
+		_objOffset = 0;
+	}
+
 	if (_vm->getPlatform() == Common::kPlatformC64 || _vm->getPlatform() == Common::kPlatformApple2GS)
 		_vm->_picture->setPictureVersion(AGIPIC_C64);
+
+	hotspotNorth = Common::Rect(20, 0, (IDI_WTP_PIC_WIDTH + 10) * 2, 10);
+	hotspotSouth = Common::Rect(20, IDI_WTP_PIC_HEIGHT - 10, (IDI_WTP_PIC_WIDTH + 10) * 2, IDI_WTP_PIC_HEIGHT);
+	hotspotEast  = Common::Rect(IDI_WTP_PIC_WIDTH * 2, 0, (IDI_WTP_PIC_WIDTH + 10) * 2, IDI_WTP_PIC_HEIGHT);
+	hotspotWest  = Common::Rect(20, 0, 30, IDI_WTP_PIC_HEIGHT);
 }
 
 void Winnie::run() {

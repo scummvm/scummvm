@@ -307,6 +307,11 @@ private:
 	bool _winnieEvent;
 	int	_tiggerMist;
 
+	int _roomOffset;
+	int _objOffset;
+	bool _isBigEndian;
+	Common::Rect hotspotNorth, hotspotSouth, hotspotEast, hotspotWest;
+
 	void randomize();
 	void intro();
 	void drawPic(const char*);
@@ -348,6 +353,8 @@ private:
 
 	void showOwlHelp();
 	bool playSound(ENUM_WTP_SOUND);
+
+	void printStrWinnie(char *szMsg);
 };
 
 }  // End of namespace Agi
