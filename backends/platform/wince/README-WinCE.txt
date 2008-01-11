@@ -1,27 +1,29 @@
 ScummVM Windows CE FAQ
 Last updated: $Date$
-Release version: 0.10.0
+Release version: 0.11.0
 ------------------------------------------------------------------------
 
 New in this version
 -------------------
 
-0.10.0:
-Major improvements have taken place in this version, mostly for behind-
-the-scenes stuff. First, we have migrated to GCC for building the Windows
-CE port. This helped take care of some obscure compiler bugs which were
-in there for quite a long time. It has also lead to efficient code 
-generation due to GCC's advanced capabilities and consequently increased
-runtime speed. The second important change was the overhaul of the SDL
-library port. The benefits from this are twofold: The real-time code paths
-have been optimized, including contributed ARM assembly code for critical
-functions. Further, the screen display and mouse/keyboard input code has
-been partially rewritten to allow for increased compatibility across all
-devices.
-Due to the update of keyboard handling code, the keycodes have changed
-slightly. Running this version of ScummVM will overwrite your key bindings 
-with the new defaults. See the section on how to play on Smartphones and 
-Pocket PCs below for the new default keybindings.
+0.11.0
+- Redesigned 'Free Look' action (Pocket PCs)
+In order to accommodate for the requirements of the lure engine, the
+usage characteristics of the 'Free Look' action have been improved. The
+new behavior is available for use in all engines, but is is *strongly*
+recommended for at least when playing 'Lure of the Temptress'. By using
+the new scheme, when in 'Free Look' mode, it is now possible to enter 
+left clicks by clicking a second time near the current location of the 
+mouse pointer. Left and Right clicks at the current point location
+are also available by using the respective actions' bound key.
+
+- Reduced optimization build
+The ScummVM executable has grown quite large, prohibiting some devices
+from running memory demanding games (or any games at all). Code 
+optimization level has been reduced to offset the growth of the executable.
+Games run slightly slower. This will be addressed before next release.
+
+- Several bugfixes
 
 ------------------------------------------------------------------------
 
@@ -43,8 +45,9 @@ Official build
 --------------
 
 The official build is based on the ARM architecture and should work with any
-Pocket PC 2000, Pocket PC 2002, Pocket PC 2003, Pocket PC 2003 SE, Smartphone
-2002, Smartphone 2003 or Windows Mobile based device.
+Pocket PC 2002, Pocket PC 2003, Pocket PC 2003 SE, Smartphone 2002, 
+Smartphone 2003 or Windows Mobile 5 and 6 based device. It is known to work
+on Pocket PC 2000 devices, but it has not been officially tested.
 
 Support for old ARM architectures (Handheld PCs, Palm Size PCs) and other CPUs 
 (MIPS, SH3) is discontinued. Feel free to generate builds for these 
@@ -92,7 +95,7 @@ improve the port for your favorite device, or use the last release built with
 the previous port architecture (0.5.1) which was less resource hungry and
 supported more exotic devices.
 
-* "Paletted" devices (non "true color")
+* "Palleted" devices (non "true color")
 
 These devices will be supported through the GDI layer which will slow down the
 games a lot. You can try to disable the music/sound effects to get a better
@@ -102,25 +105,6 @@ game experience.
 
 I don't even think anything will be displayed on these devices :) you can try
 and report your success ...
-
-* MIPS/SH3 devices with QVGA resolution (240x320), "true color"
-
-Some devices may be a bit too slow, especially if direct screen access (GAPI)
-is not supported on these devices.  
-
-* ARM/MIPS/SH3 devices with VGA resolution (640x480) (Palm Size PC / Handheld 
-  PC platform)
-
-True VGA games will probably be too slow to run properly on these devices even
-if they can support them ...
-
-* ARM/MIPS/SH3 devices with desktop resolution (800x600) (Handheld PC platform)
-
-No, there will never be ANY scaler supporting 800x600 resolution, because
-320x200 games CANNOT be resized to a 800x600 by a simple operation.
-
-And the device will probably be too slow to perform any kind of graphic
-transform anyway :)
 
 How do I install ScummVM for Windows CE ?
 -----------------------------------------
@@ -201,6 +185,7 @@ The following actions are available :
   * Cursor         : hide or display the mouse cursor
   * Free look      : go in or out of free-look mode. In this mode, you can tap 
                      the screen to look for interesting locations without walking.
+                     Cling a second time near the pointer's location equals to left click.
   * Zoom up        : magnify the upper part of the screen for 640x480 games 
                      rendered on a QVGA device.
   * Zoom down      : magnify the lower part of the screen for 640x480 games
@@ -228,6 +213,7 @@ Notes:
 - YOU MUST HIDE THE TOOLBAR TO SCROLL THROUGH THE INVENTORY IN ZAK
 - YOU MUST DISPLAY THE KEYBOARD TO FIGHT IN INDIANA JONES 3
 - YOU MUST MAP THE RIGHT CLICK ACTION TO PLAY SEVERAL GAMES
+- YOU MUST USE THE FREE LOOK ACTION TO PLAY LURE OF THE TEMPTRESS
 
 How do I hide the toolbar ?
 ---------------------------
@@ -575,6 +561,19 @@ performed either by pressing the phone's numeric keypad keys and dpad enter to
 close the dialog, or by navigating the buttons using the dpad arrows and pressing
 with dpad enter. Check the main Readme file for more information on this.
 
+---------------------------
+-- Lure of the Temptress --
+---------------------------
+
+The control scheme is awkward (Pocket PCs)
+------------------------------------------
+Map and use the 'Free Look' action. Since normal pointer operation is to
+enter a left click at each tap position, the free look mode enables 
+'hovering' the mouse on an object, then right clicking either by using the
+double tap method or by pressing the 'Right Click' action. Also, a left click
+can be entered while in free look mode, by clicking a second time near the
+current pointer's location. Note that two taps equal a left click.
+
 ------------------------------------------------------------------------
 Support
 ------------------------------------------------------------------------
@@ -614,3 +613,25 @@ Good Luck and Happy Adventuring!
 The ScummVM team.
 http://www.scummvm.org/
 ------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------
+Old news follow ...
+------------------------------------------------------------------------
+
+0.10.0:
+Major improvements have taken place in this version, mostly for behind-
+the-scenes stuff. First, we have migrated to GCC for building the Windows
+CE port. This helped take care of some obscure compiler bugs which were
+in there for quite a long time. It has also lead to efficient code 
+generation due to GCC's advanced capabilities and consequently increased
+runtime speed. The second important change was the overhaul of the SDL
+library port. The benefits from this are twofold: The real-time code paths
+have been optimized, including contributed ARM assembly code for critical
+functions. Further, the screen display and mouse/keyboard input code has
+been partially rewritten to allow for increased compatibility across all
+devices.
+Due to the update of keyboard handling code, the keycodes have changed
+slightly. Running this version of ScummVM will overwrite your key bindings 
+with the new defaults. See the section on how to play on Smartphones and 
+Pocket PCs below for the new default key bindings.
