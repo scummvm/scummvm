@@ -30,10 +30,10 @@
 
 namespace Agi {
 
+#define WTP_SAVEGAME_VERSION	1
+#define IDI_XOR_KEY				0x80
+
 // strings
-
-#define IDS_WTP_SELECTION		">"
-
 #define IDS_WTP_ROOM_DOS		"rooms/rm.%02d"
 #define IDS_WTP_ROOM_AMIGA		"room.%d"
 #define IDS_WTP_ROOM_C64		"room%02d"
@@ -283,8 +283,6 @@ struct WTP_SAVE_GAME {
 	uint8	iUsedObj[IDI_WTP_MAX_OBJ_MISSING];
 	uint8	iObjRoom[IDI_WTP_MAX_ROOM_OBJ];
 };
-
-#define IDI_XOR_KEY			0x80
 
 class PreAgiEngine;
 

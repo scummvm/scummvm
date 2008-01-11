@@ -34,10 +34,6 @@
 #include "agi/preagi_mickey.h"
 #include "agi/graphics.h"
 
-#define IDI_SND_OSCILLATOR_FREQUENCY	1193180
-#define IDI_SND_TIMER_RESOLUTION		0.0182
-#define MSA_SAVEGAME_VERSION			1
-
 namespace Agi {
 
 int Mickey::getDat(int iRoom) {

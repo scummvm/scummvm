@@ -34,6 +34,9 @@ namespace Agi {
 #define IDA_DEFAULT		0x0F
 #define IDA_DEFAULT_REV	0xF0
 
+#define IDI_SND_OSCILLATOR_FREQUENCY	1193180
+#define IDI_SND_TIMER_RESOLUTION		0.0182
+
 #define kColorDefault 0x1337
 
 #define IDI_MAX_ROW_PIC	20

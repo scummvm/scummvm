@@ -35,11 +35,6 @@
 
 namespace Agi {
 
-// default attributes
-#define IDA_DEFAULT				0x0F
-#define IDA_DEFAULT_REV			0xF0
-#define WTP_SAVEGAME_VERSION	1
-
 void Winnie::parseRoomHeader(WTP_ROOM_HDR *roomHdr, byte *buffer, int len) {
 	int i;
 
@@ -716,15 +711,9 @@ void Winnie::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 	
 	switch(iSel) {
 	case IDI_WTP_SEL_OPT_1:
-		iRow = IDI_WTP_ROW_OPTION_1;
-		iCol = IDI_WTP_COL_OPTION;
-		break;
 	case IDI_WTP_SEL_OPT_2:
-		iRow = IDI_WTP_ROW_OPTION_2;
-		iCol = IDI_WTP_COL_OPTION;
-		break;
 	case IDI_WTP_SEL_OPT_3:
-		iRow = IDI_WTP_ROW_OPTION_3;
+		iRow = IDI_WTP_ROW_OPTION_1 + iSel;
 		iCol = IDI_WTP_COL_OPTION;
 		break;
 	case IDI_WTP_SEL_NORTH:
@@ -752,7 +741,7 @@ void Winnie::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 		iCol = IDI_WTP_COL_DROP;
 		break;
 	}
-	_vm->drawStr(iRow, iCol - 1, IDA_DEFAULT, IDS_WTP_SELECTION);
+	_vm->drawStr(iRow, iCol - 1, IDA_DEFAULT, ">");
 	_vm->_gfx->doUpdate();
 	_vm->_system->updateScreen(); //TODO: Move to game's main loop
 }
@@ -774,13 +763,9 @@ void Winnie::decMenuSel(int *iSel, int fCanSel[]) {
 void Winnie::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
 	switch(y) {
 	case IDI_WTP_ROW_OPTION_1:
-		if (fCanSel[IDI_WTP_SEL_OPT_1])	*iSel = IDI_WTP_SEL_OPT_1;
-		break;
 	case IDI_WTP_ROW_OPTION_2:
-		if (fCanSel[IDI_WTP_SEL_OPT_2])	*iSel = IDI_WTP_SEL_OPT_2;
-		break;
 	case IDI_WTP_ROW_OPTION_3:
-		if (fCanSel[IDI_WTP_SEL_OPT_3])	*iSel = IDI_WTP_SEL_OPT_3;
+		if (fCanSel[y - IDI_WTP_ROW_OPTION_1])	*iSel = y - IDI_WTP_ROW_OPTION_1;
 		break;
 	case IDI_WTP_ROW_OPTION_4:
 		if (fCanSel[IDI_WTP_SEL_NORTH] && (x > IDI_WTP_COL_NORTH - 1) && (x < 6)) *iSel = IDI_WTP_SEL_NORTH;
@@ -813,10 +798,6 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 	CursorMan.showMouse(true);
 
 	for (;;) {
-		// check if tigger/mist is to be triggered
-//			if (something)
-//				event = true;
-
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch(event.type) {
 			case Common::EVENT_QUIT:
@@ -1051,6 +1032,7 @@ phase2:
 
 void Winnie::drawPic(const char *szName) {
 	char szFile[256] = {0};
+	Common::File file;
 	uint8 *buffer = (uint8 *)malloc(4096);
 
 	// construct filename
@@ -1058,7 +1040,6 @@ void Winnie::drawPic(const char *szName) {
 		sprintf(szFile, "%s.pic", szName);
 	else
 		strcpy(szFile, szName);
-	Common::File file;
 	if (!file.open(szFile)) {
 		warning ("Could not open file \'%s\'", szFile);
 		return;
@@ -1074,12 +1055,11 @@ void Winnie::drawPic(const char *szName) {
 }
 
 void Winnie::drawObjPic(int iObj, int x0, int y0) {
-	WTP_OBJ_HDR	objhdr;
-	uint8 *buffer = (uint8 *)malloc(2048);
-
 	if (!iObj)
 		return;
 
+	WTP_OBJ_HDR	objhdr;
+	uint8 *buffer = (uint8 *)malloc(2048);
 	uint32 objSize = readObj(iObj, buffer);
 	parseObjHeader(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
 	

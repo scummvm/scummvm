@@ -30,8 +30,9 @@
 
 namespace Agi {
 
-// strings
+#define MSA_SAVEGAME_VERSION			1
 
+// strings
 #define IDS_MSA_PATH_DAT	"dat/%s"
 #define IDS_MSA_PATH_OBJ	"obj/%s.ooo"
 #define IDS_MSA_PATH_PIC	"%d.pic"
