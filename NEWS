@@ -73,8 +73,11 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  WinCE Port:
    - Switched compilers again. Now using cegcc (http://cegcc.sourceforge.net/).
-   - Plugins now supported for WinCE.
-   
+   - Plugins now supported for WinCE (but not used in this release).
+   - Redesigned 'Free Look' action, mainly for the lure engine's requirements.
+   - Smaller optimization setting to counteract the growth of the executable.
+   - Various bug fixes.
+
  GP2X Port:
    - Support F200 Touchscreen
    - Various fixes to input code
