@@ -551,7 +551,7 @@ const char *optionsStr[][4] = {
 	{ "\"Far\242 questo puzzle pi\249 tardi.\"",
 	"\"Si, grazie. Ne avrei bisogno.\"",
 	"\"No, grazie, voglio provare a risolverlo da solo.\"",
-	"penso che la tessera %s sia nel posto sbagliato."
+	"Penso che la tessera %s sia nel posto sbagliato."
 	}
 };
 
