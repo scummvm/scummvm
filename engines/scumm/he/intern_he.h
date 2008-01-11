@@ -485,7 +485,7 @@ protected:
 	virtual void setupScummVars();
 	virtual void resetScummVars();
 
-	virtual int scummLoop(int delta);
+	virtual void scummLoop(int delta);
 	virtual void scummLoop_handleDrawing();
 	virtual void runBootscript();
 

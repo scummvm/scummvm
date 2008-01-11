@@ -467,7 +467,7 @@ protected:
 	int getTalkspeed();
 
 	// Scumm main loop & helper functions.
-	virtual int scummLoop(int delta);
+	virtual void scummLoop(int delta);
 	virtual void scummLoop_updateScummVars();
 	virtual void scummLoop_handleSaveLoad();
 	virtual void scummLoop_handleDrawing();

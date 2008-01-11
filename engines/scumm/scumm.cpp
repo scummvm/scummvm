@@ -1700,10 +1700,6 @@ int ScummEngine::getTalkspeed() {
 #pragma mark --- Main loop ---
 #pragma mark -
 
-enum {
-	kTickDuration = 15	// Corresponds to a tick frequency of 1000/15 = 66.6 Hz
-};
-
 int ScummEngine::go() {
 	_engineStartTime = _system->getMillis() / 1000;
 
@@ -1715,8 +1711,7 @@ int ScummEngine::go() {
 		_saveLoadFlag = 0;
 	}
 
-	int delta = 0;
-	int diff = _system->getMillis();
+	int diff = 0;	// Duration of one loop iteration
 
 	while (!_quit) {
 
@@ -1727,13 +1722,29 @@ int ScummEngine::go() {
 		// that it will be in a different state each time you run the program.
 		_rnd.getRandomNumber(2);
 
-		diff -= _system->getMillis();
-		waitForTimer(delta * kTickDuration + diff);
-		diff = _system->getMillis();
-		delta = scummLoop(delta);
+		// Notify the script about how much time has passed, in ticks (60 ticks per second)
+		if (VAR_TIMER != 0xFF)
+			VAR(VAR_TIMER) = diff * 60 / 1000;
+		if (VAR_TIMER_TOTAL != 0xFF)
+			VAR(VAR_TIMER_TOTAL) += diff * 60 / 1000;
 
+		// Determine how long to wait before the next loop iteration should start
+		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
 		if (delta < 1)	// Ensure we don't get into an endless loop
 			delta = 1;  // by not decreasing sleepers.
+
+		// Wait...
+		waitForTimer(delta * 1000 / 60 - diff);
+
+		// Start the stop watch!
+		diff = _system->getMillis();
+
+		// Run the main loop
+		scummLoop(delta);
+
+		// Halt the stop watch and compute how much time this iteration took.
+		diff = _system->getMillis() - diff;
+
 
 		if (_quit) {
 			// TODO: Maybe perform an autosave on exit?
@@ -1763,7 +1774,7 @@ void ScummEngine::waitForTimer(int msec_delay) {
 	}
 }
 
-int ScummEngine::scummLoop(int delta) {
+void ScummEngine::scummLoop(int delta) {
 	if (_game.version >= 3) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
@@ -1777,8 +1788,6 @@ int ScummEngine::scummLoop(int delta) {
 			VAR(41) += delta;
 		}
 	}
-	if (VAR_TIMER_TOTAL != 0xFF)
-		VAR(VAR_TIMER_TOTAL) += delta;
 
 	if (delta > 15)
 		delta = 15;
@@ -1816,7 +1825,7 @@ int ScummEngine::scummLoop(int delta) {
 			// to get it correct for all games. Without the ability to watch/listen to the
 			// original games, I can't do that myself.
 			const int MUSIC_DELAY = 350;
-			_tempMusic += delta * kTickDuration;	// Convert delta to milliseconds
+			_tempMusic += delta * 1000 / 60;	// Convert delta to milliseconds
 			if (_tempMusic >= MUSIC_DELAY) {
 				_tempMusic -= MUSIC_DELAY;
 				VAR(VAR_MUSIC_TIMER) += 1;
@@ -1879,7 +1888,7 @@ load_game:
 	checkAndRunSentenceScript();
 
 	if (_quit)
-		return 0;
+		return;
 
 	// HACK: If a load was requested, immediately perform it. This avoids
 	// drawing the current room right after the load is request but before
@@ -1935,28 +1944,21 @@ load_game:
 
 	/* show or hide mouse */
 	CursorMan.showMouse(_cursor.state > 0);
-
-	if (VAR_TIMER != 0xFF)
-		VAR(VAR_TIMER) = 0;
-	return (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
-
 }
 
 #ifndef DISABLE_HE
-int ScummEngine_v90he::scummLoop(int delta) {
+void ScummEngine_v90he::scummLoop(int delta) {
 	_moviePlay->handleNextFrame();
 	if (_game.heversion >= 98) {
 		_logicHE->startOfFrame();
 	}
 
-	int ret = ScummEngine::scummLoop(delta);
+	ScummEngine::scummLoop(delta);
 
 	_sprite->updateImages();
 	if (_game.heversion >= 98) {
 		_logicHE->endOfFrame();
 	}
-
-	return ret;
 }
 #endif
 
