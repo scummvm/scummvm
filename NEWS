@@ -1,6 +1,11 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
+0.12.0 (????-??-??)
+ SCUMM:
+   - Rewrote parts of iMuse Digitial, fixing some bugs.
+   - 
+
 0.11.0 (????-??-??)
  New Games:
    - Added support for Elvira: Mistress of the Dark.
