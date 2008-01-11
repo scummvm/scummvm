@@ -15,7 +15,7 @@ About ScummVM
 	The main transition to 0.8.0CVS and all relevant changes were done by Jurgen Braam.
 	Jurgen and Lars have successfully transfered all needed changes into CVS, with additional helpful tools for Symbian OS
 	
-	Release version: 0.10.0
+	Release version: 0.11.0
 	* This version is only supported on Symbian OS 9 devices due to compiler constraints for older devices. (That means UIQ3 and S60V3 devices)
 	* Updated to SDL version 1.2.11 (previous version used was 1.2.8)
 	* Information about S60 devices can be found here http://wiki.scummvm.org/index.php/SymbianOS_S60
