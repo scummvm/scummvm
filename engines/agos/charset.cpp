@@ -356,7 +356,13 @@ void AGOSEngine::renderString(uint vga_sprite_id, uint color, uint width, uint h
 				dst -= img_width - 1; // For Hebrew, move from right edge to left edge of image.
 			byte *cur_dst = dst;
 
-			assert(img_width > 0 && img_width < 50 && img_height > 0 && img_height < 50);
+			// Occurs in Amiga and Macintosh ports of The Feeble Files, when
+			// special characters are used by French/German/Spanish versions.
+			// Due to the English image data, been used by all languages.
+			if (img_width == 0 || img_height == 0)
+				continue;
+
+			assert(img_width < 50 && img_height < 50);
 
 			do {
 				for (i = 0; i != img_width; i++) {
