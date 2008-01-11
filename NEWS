@@ -4,7 +4,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 0.12.0 (????-??-??)
  SCUMM:
    - Rewrote parts of iMuse Digitial, fixing some bugs.
-   - 
+   - Rewrote the internal timer code, fixing some speed issues in e.g. COMI.
 
 0.11.0 (????-??-??)
  New Games:
