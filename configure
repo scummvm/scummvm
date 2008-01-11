@@ -1332,7 +1332,7 @@ EOF
 fi
 if test "$_flac" = yes ; then
 	_def_flac='#define USE_FLAC'
-	if test "$_ogg" = yes ; then
+	if test "$_vorbis" = yes ; then
 		LIBS="$LIBS $FLAC_LIBS $OGG_LIBS -lFLAC -logg"
 	else
 		LIBS="$LIBS $FLAC_LIBS -lFLAC"
