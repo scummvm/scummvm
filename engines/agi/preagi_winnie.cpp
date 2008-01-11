@@ -993,8 +993,8 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 						}
 						break;
 					}
-				default:
-					if (!(event.kbd.flags & Common::KBD_CTRL)) {
+				default:					
+					if (!event.kbd.flags) {	// if the control/alt/shift keys are not pressed
 						keyHelp();
 						clrMenuSel(iSel, fCanSel);
 					}
