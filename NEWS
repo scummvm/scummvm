@@ -6,7 +6,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Rewrote parts of iMuse Digitial, fixing some bugs.
    - Rewrote the internal timer code, fixing some speed issues in e.g. COMI.
 
-0.11.0 (????-??-??)
+0.11.0 (2008-01-15)
  New Games:
    - Added support for Elvira: Mistress of the Dark.
    - Added support for Elvira 2: The Jaws of Cerberus.
