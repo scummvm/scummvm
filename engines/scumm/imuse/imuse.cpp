@@ -871,7 +871,23 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 			player->setDetune(a[2]);
 			return 0;
 		case 6:
-			player->setSpeed(a[2]);
+			// WORKAROUND for bug #1324106. When playing the
+			// "flourishes" as Rapp's body appears from his ashes,
+			// MI2 sets up triggers to pause the music, in case the
+			// animation plays too slowly, and then the music is
+			// manually unpaused for the next part of the music.
+			//
+			// In ScummVM, the animation finishes slightly too
+			// quickly, and the pause command is run *after* the
+			// unpause command. So we work around it by ignoring
+			// all attempts at pausing this particular sound.
+			//
+			// I could have sworn this wasn't needed after the
+			// recent timer change, but now it looks like it's
+			// still needed after all.
+			if (_game_id != GID_MONKEY2 || player->getID() != 183 || a[2] != 0) {
+				player->setSpeed(a[2]);
+			}
 			return 0;
 		case 7:
 			return player->jump(a[2], a[3], a[4]) ? 0 : -1;
