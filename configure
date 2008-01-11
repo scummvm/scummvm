@@ -1332,7 +1332,11 @@ EOF
 fi
 if test "$_flac" = yes ; then
 	_def_flac='#define USE_FLAC'
-	LIBS="$LIBS $FLAC_LIBS $OGG_LIBS -lFLAC -logg"
+	if test "$_ogg" = yes ; then
+		LIBS="$LIBS $FLAC_LIBS $OGG_LIBS -lFLAC -logg"
+	else
+		LIBS="$LIBS $FLAC_LIBS -lFLAC"
+	fi
 	INCLUDES="$INCLUDES $FLAC_CFLAGS"
 	add_to_config_mk_if_no no 'USE_FLAC = 1'
 else

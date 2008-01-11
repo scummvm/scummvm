@@ -14,6 +14,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  New Ports:
    - Added iPhone port.
+   - Added Maemo port for Nokia Internet tablets.
  
  General:
    - Added ARM assembly routines for code in the sound mixer and SCUMM
