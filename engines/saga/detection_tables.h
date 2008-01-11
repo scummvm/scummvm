@@ -212,9 +212,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08", 1865461},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b", 70083},
-	//{"soundsd.rsc",		GAME_SOUNDFILE,		"b3a831fbed337d1f1300fee1dd474f6c", -1},
-	//{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
-	//{"musicd.rsc",		GAME_MUSICFILE,		"495bdde51fd9f4bea2b9c911091b1ab2", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -244,9 +241,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ited.rsc",		GAME_RESOURCEFILE,	"addfc9d82bc2fa1f4cab23743c652c08", 1131098},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"fded5c59b8b7c5976229f960d21e6b0b", 38613},
-	//{"soundsd.rsc",		GAME_SOUNDFILE,		"b3a831fbed337d1f1300fee1dd474f6c", -1},
-	//{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
-	//{"musicd.rsc",		GAME_MUSICFILE,		"1a91cd60169f367ecb6c6e058d899b2f", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -276,9 +270,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", 1951395},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", 70051},
-	//{"soundsd.rsc",		GAME_SOUNDFILE,		"95a6c148e22e99a8c243f2978223583c", -1},
-	//{"voicesd.rsc",		GAME_VOICEFILE,		"e139d86bab2ee8ba3157337f894a92d4", -1},
-	//{"musicd.rsc",		GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -308,8 +299,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ited.rsc",		GAME_RESOURCEFILE,	"3a450852cbf3c80773984d565647e6ac", 1327323},
 	{"scriptsd.rsc",	GAME_SCRIPTFILE,	"3f12b67fa93e56e1a6be39d2921d80bb", 38613},
-	//{"soundsd.rsc",		GAME_SOUNDFILE,		"a741139dd7365a13f463cd896ff9969a", -1},
-	//{"voicesd.rsc",		GAME_VOICEFILE,		"0759eaf5b64ae19fd429920a70151ad3", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -373,9 +362,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ite.rsc",						GAME_RESOURCEFILE,	"4f7fa11c5175980ed593392838523060", -1},
 	{"scripts.rsc",					GAME_SCRIPTFILE,	"adf1f46c1d0589083996a7060c798ad0", -1},
-	//{"sounds.rsc",					GAME_SOUNDFILE,		"95863b89a0916941f6c5e1789843ba14", -1},
-	//{"inherit the earth voices",	GAME_VOICEFILE,		"c14c4c995e7a0d3828e3812a494301b7", -1},
-	//{"music.rsc",					GAME_MUSICFILE,		"1a91cd60169f367ecb6c6e058d899b2f", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -411,12 +397,41 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ite.rsc",						GAME_RESOURCEFILE,					"a6433e34b97b15e64fe8214651012db9", -1},
 	{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", -1},
-	//{"sounds.rsc",					GAME_SOUNDFILE,						"e2ccb61c325d6d1ead3be0e731fe29fe", -1},
-	//{"inherit the earth voices",	GAME_VOICEFILE | GAME_SWAPENDIAN,	"c14c4c995e7a0d3828e3812a494301b7", -1},
-	//{"music.rsc",					GAME_MUSICFILE,						"d6454756517f042f01210458abe8edd4", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_MULTICD,
+		GF_WYRMKEEP | GF_CD_FX,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEMAC_GameSound,
+		&ITEPC_GameSound,
+		0,
+		NULL,
+	},
+
+	// Inherit the earth - Italian Wyrmkeep combined Windows/Mac/Linux CD (fan translation)
+
+	// version is different from the other Wyrmkeep re-releases in that it does
+	// not have any substitute files. Presumably the ite.rsc file has been
+	// modified to include the Wyrmkeep changes. The resource files are little-
+	// endian, except for the voice file which is big-endian.
+	{
+		{
+			"ite",
+			"Multi-OS CD Version",
+			{
+	{"ite.rsc",						GAME_RESOURCEFILE,					"a6433e34b97b15e64fe8214651012db9", -1},
+	{"scripts.rsc",					GAME_SCRIPTFILE,					"a891405405edefc69c9d6c420c868b84", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
 			Common::kPlatformUnknown,
 			Common::ADGF_NO_FLAGS
 		},
@@ -441,12 +456,36 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
-	//{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe", -1},
-	//{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6", -1},
-	//{"music.rsc",	GAME_MUSICFILE,		"d6454756517f042f01210458abe8edd4", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_CD,
+		GF_CD_FX,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEPC_GameSound,
+		&ITEPC_GameSound,
+		ARRAYSIZE(ITEPatch_Files),
+		ITEPatch_Files,
+	},
+
+	// Inherit the earth - Italian Windows/Linux/DOS CD version (fan translation)
+	{
+		{
+			"ite",
+			"Windows/Linux/DOS CD Version",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
@@ -471,8 +510,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", -1},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"50a0d2d7003c926a3832d503c8534e90", -1},
-	//{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe", -1},
-	//{"voices.rsc",	GAME_VOICEFILE,		"41bb6b95d792dde5196bdb78740895a6", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -501,8 +538,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ite.rsc",		GAME_RESOURCEFILE,	"869fc23c8f38f575979ec67152914fee", -1},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
-	//{"sounds.rsc",	GAME_SOUNDFILE,		"e2ccb61c325d6d1ead3be0e731fe29fe", -1},
-	//{"voices.rsc",	GAME_VOICEFILE,		"2fbad5d10b9b60a3415dc4aebbb11718", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
@@ -533,7 +568,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ite.rsc",		GAME_RESOURCEFILE,					"869fc23c8f38f575979ec67152914fee", -1},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
-	//{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"0c9113e630f97ef0996b8c3114badb08", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
@@ -561,7 +595,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 			{
 	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", -1},
 	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
-	//{"voices.rsc",	GAME_SOUNDFILE | GAME_VOICEFILE,	"c46e4392fcd2e89bc91e5567db33b62d", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -581,6 +614,32 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEPatch_Files,
 	},
 
+	// Inherit the earth - Italian Disk version (fan translation)
+	{
+		{
+			"ite",
+			"Floppy",
+			{
+	{"ite.rsc",		GAME_RESOURCEFILE,					"8f4315a9bb10ec839253108a032c8b54", -1},
+	{"scripts.rsc",	GAME_SCRIPTFILE,					"516f7330f8410057b834424ea719d1ef", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_ITE,
+		GID_ITE_DISK_G,
+		0,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		&ITEDISK_GameSound,
+		&ITEDISK_GameSound,
+		ARRAYSIZE(ITEPatch_Files),
+		ITEPatch_Files,
+	},
 
 	// ITE Amiga versions /////////////////////////////////////////////////////////////////////////////////////
 
@@ -599,7 +658,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"scream.res",		GAME_RESOURCEFILE,	"46bbdc65d164ba7e89836a0935eec8e6", -1},
 	{"scripts.res",		GAME_SCRIPTFILE,	"9626bda8978094ff9b29198bc1ed5f9a", -1},
 	{"sfx.res",			GAME_SOUNDFILE,		"1c610d543f32ec8b525e3f652536f269", -1},
-	//{"voicesd.res",		GAME_VOICEFILE,		"3bbc16a8f741dbb511da506c660a0b54", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -635,13 +693,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 	// Known MD5 checksums for sfx.res in the English version of the game are 
 	// 1c610d543f32ec8b525e3f652536f269 and 45a9a9f5d37740be24fd2ae2edf36573
 	{"sfx.res",		GAME_SOUNDFILE,						NULL, -1},
-	//{"voicess.res",	GAME_VOICEFILE,						"54b1f2013a075338ceb0e258d97808bd", -1}, //order of voice bank file is important
-	//{"voices1.res",	GAME_VOICEFILE,						"fc6440b38025f4b2cc3ff55c3da5c3eb", -1},
-	//{"voices2.res",	GAME_VOICEFILE,						"b37f10fd1696ade7d58704ccaaebceeb", -1},
-	//{"voices3.res",	GAME_VOICEFILE,						"3bbc16a8f741dbb511da506c660a0b54", -1},
-	//{"voices4.res",	GAME_VOICEFILE,						"ebfa160122d2247a676ca39920e5d481", -1},
-	//{"voices5.res",	GAME_VOICEFILE,						"1f501ce4b72392bdd1d9ec38f6eec6da", -1},
-	//{"voices6.res",	GAME_VOICEFILE,						"f580ed7568c7d6ef34e934ba20adf834", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -675,12 +726,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"scripts.res",	GAME_SCRIPTFILE,					"32aa01a89937520fe0ea513950117292", -1},
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-	//{"voicess.res",	GAME_VOICEFILE,						"8b09a196a52627cacb4eab13bfe0b2c3", -1}, //order of voice bank file is important
-	//{"voices1.res",	GAME_VOICEFILE,						"424971e1e2373187c3f5734fe36071a2", -1},
-	//{"voices2.res",	GAME_VOICEFILE,						"c270e0980782af43641a86e4a14e2a32", -1},
-	//{"voices3.res",	GAME_VOICEFILE,						"49e42befea883fd101ec3d0f5d0647b9", -1},
-	//{"voices5.res",	GAME_VOICEFILE,						"c477443c52a0aa56e686ebd8d051e4ab", -1},
-	//{"voices6.res",	GAME_VOICEFILE,						"2b9aea838f74b4eecfb29a8f205a2bd4", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
@@ -712,13 +757,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-	//{"voicess.res",	GAME_VOICEFILE,						"d869de9883c8faea7f687217a9ec7057", -1}, //order of voice bank file is important
-	//{"voices1.res",	GAME_VOICEFILE,						"dc6a34e3d1668730ea46815a92c7847f", -1},
-	//{"voices2.res",	GAME_VOICEFILE,						"dc6a5fa7a4cdc2ca5a6fd924e969986c", -1},
-	//{"voices3.res",	GAME_VOICEFILE,						"dc6a5fa7a4cdc2ca5a6fd924e969986c", -1},
-	//{"voices4.res",	GAME_VOICEFILE,						"0f87400b804232a58dd22e404420cc45", -1},
-	//{"voices5.res",	GAME_VOICEFILE,						"172668cfc5d8c305cb5b1a9b4d995fc0", -1},
-	//{"voices6.res",	GAME_VOICEFILE,						"96c9bda9a5f41d6bc232ed7bf6d371d9", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
@@ -750,13 +788,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-	//{"voicess.res",	GAME_VOICEFILE,						"9df7cd3b18ddaa16b5291b3432567036", -1}, //order of voice bank file is important
-	//{"voices1.res",	GAME_VOICEFILE,						"d6100d2dc3b2b9f2e1ad247f613dce9b", -1},
-	//{"voices2.res",	GAME_VOICEFILE,						"84f6f48ecc2832841ea6417a9a379430", -1},
-	//{"voices3.res",	GAME_VOICEFILE,						"ebb9501283047f27a0f54e27b3c8ba1e", -1},
-	//{"voices4.res",	GAME_VOICEFILE,						"4c145da5fa6d1306162a7ca8ce5a4f2e", -1},
-	//{"voices5.res",	GAME_VOICEFILE,						"871a559644281917677eca4af1b05620", -1},
-	//{"voices6.res",	GAME_VOICEFILE,						"211be5c24f066d69a2f6cfa953acfba6", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::RU_RUS,
@@ -789,12 +820,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"scripts.res",	GAME_SCRIPTFILE,					"32aa01a89937520fe0ea513950117292", -1},
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-	//{"voicess.res",	GAME_VOICEFILE,						"b8642e943bbebf89cef2f48b31cb4305", -1}, //order of voice bank file is important
-	//{"voices1.res",	GAME_VOICEFILE,						"424971e1e2373187c3f5734fe36071a2", -1},
-	//{"voices2.res",	GAME_VOICEFILE,						"c2d93a35d2c2def9c3d6d242576c794b", -1},
-	//{"voices3.res",	GAME_VOICEFILE,						"49e42befea883fd101ec3d0f5d0647b9", -1},
-	//{"voices5.res",	GAME_VOICEFILE,						"f4c415de7c03de86b73f9a12b8bd632f", -1},
-	//{"voices6.res",	GAME_VOICEFILE,						"3fc5358a5d8eee43bdfab2740276572e", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::FR_FRA,
@@ -826,13 +851,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"patch.re_",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", -1},
 	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
 	{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
-	//{"voicess.res",	GAME_VOICEFILE,						"9df7cd3b18ddaa16b5291b3432567036", -1}, //order of voice bank file is important
-	//{"voices1.res",	GAME_VOICEFILE,						"d6100d2dc3b2b9f2e1ad247f613dce9b", -1},
-	//{"voices2.res",	GAME_VOICEFILE,						"84f6f48ecc2832841ea6417a9a379430", -1},
-	//{"voices3.res",	GAME_VOICEFILE,						"ebb9501283047f27a0f54e27b3c8ba1e", -1},
-	//{"voices4.res",	GAME_VOICEFILE,						"4c145da5fa6d1306162a7ca8ce5a4f2e", -1},
-	//{"voices5.res",	GAME_VOICEFILE,						"871a559644281917677eca4af1b05620", -1},
-	//{"voices6.res",	GAME_VOICEFILE,						"211be5c24f066d69a2f6cfa953acfba6", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,
