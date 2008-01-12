@@ -306,7 +306,7 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 		pathTemp++;
 	}
 
-	consolePrintf("This dir: %s\n", path);
+//	consolePrintf("This dir: %s\n", path);
 	FAT_chdir(path);
 	
 	int entryType = FAT_FindFirstFileLFN(fname);
@@ -317,7 +317,7 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 		||   ((entryType == TYPE_FILE) && ((mode == FilesystemNode::kListFilesOnly) || (mode == FilesystemNode::kListAll))) ) {
 			GBAMPFileSystemNode* dsfsn;
 
-			consolePrintf("Fname: %s\n", fname);
+//			consolePrintf("Fname: %s\n", fname);
 			
 			if (strcmp(fname, ".") && strcmp(fname, "..")) {
 				
@@ -399,11 +399,27 @@ FILE* std_fopen(const char* name, const char* mode) {
 	if (DS::isGBAMPAvailable()) {
 		FAT_chdir("/");
 		
+		// Turn all back slashes into forward slashes for gba_nds_fat
 		char* p = realName;
 		while (*p) {
 			if (*p == '\\') *p = '/';
 			p++;
 		}
+
+		// Remove double slashes if present
+/*		p = realName;
+		while (*p) {
+			if ((*p == '/') && (*(p + 1) == '/')) {
+				char* t = p;
+				while (t) {
+					*t = *(t + 1);
+					t++;
+				}
+			}
+
+			p++;
+		}*/
+
 		
 		FAT_FILE* result = FAT_fopen(realName, mode);
 		
