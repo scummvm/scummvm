@@ -3941,7 +3941,7 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 			}
 			h.currentActions().top().setRoomNumber(h.roomNumber());
 
-		} else if (h.blockedOffset() != 0) {
+		} else if ((h.blockedOffset() != 0) && (h.blockedOffset() != 0xffff)) {
 			// Only current action on stack - and there is a block handler 
 			CharacterScheduleEntry *entry = res.charSchedules().getEntry(h.blockedOffset());
 			h.currentActions().top().setSupportData(entry);
