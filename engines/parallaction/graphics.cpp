@@ -394,6 +394,19 @@ void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
 	return;
 }
 
+void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) {
+
+	if (mask) {
+		uint16 z = queryMask(y);
+		blitCnv(&surf, x, y, z, kBitBack);
+		blitCnv(&surf, x, y, z, kBit2);
+	} else {
+		flatBlitCnv(&surf, x, y, kBitBack);
+		flatBlitCnv(&surf, x, y, kBit2);
+	}
+
+}
+
 void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
 
 	byte *d = (byte*)_buffers[buffer]->getBasePtr(r.left, r.top);

@@ -274,6 +274,8 @@ public:
 	void freeLabels();
 
 	// cut/paste
+	void patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask = false);
+
 	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer);
 	void flatBlitCnv(Frames *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
 	void blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);

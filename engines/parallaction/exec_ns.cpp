@@ -133,15 +133,9 @@ DECLARE_INSTRUCTION_OPCODE(put) {
 
 	int16 x = inst->_opA.getRValue();
 	int16 y = inst->_opB.getRValue();
+	bool mask = (inst->_flags & kInstMaskedPut) == kInstMaskedPut;
 
-	if (inst->_flags & kInstMaskedPut) {
-		uint16 z = _gfx->queryMask(y);
-		_gfx->blitCnv(&v18, x, y, z, Gfx::kBitBack);
-		_gfx->blitCnv(&v18, x, y, z, Gfx::kBit2);
-	} else {
-		_gfx->flatBlitCnv(&v18, x, y, Gfx::kBitBack);
-		_gfx->flatBlitCnv(&v18, x, y, Gfx::kBit2);
-	}
+	_gfx->patchBackground(v18, x, y, mask);
 }
 
 DECLARE_INSTRUCTION_OPCODE(null) {
