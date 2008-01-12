@@ -25,7 +25,7 @@
 
 // Maximum number of files open at once
 // Increase this to open more files, decrease to save memory
-#define MAX_FILES_OPEN	4
+#define MAX_FILES_OPEN	16
 
 // Allow file writing
 // Disable this to remove file writing support

@@ -53,13 +53,17 @@ protected:
 	GUI::CheckboxWidget* _indyFightCheckbox;
 	GUI::CheckboxWidget* _highQualityAudioCheckbox;
 	GUI::CheckboxWidget* _disablePowerOff;
-	GUI::CheckboxWidget* _cpuScaler;
 	GUI::CheckboxWidget* _showCursorCheckbox;
 	GUI::CheckboxWidget* _snapToBorderCheckbox;
+
+	GUI::CheckboxWidget* _hardScaler;
+	GUI::CheckboxWidget* _cpuScaler;
 	
 #ifdef DS_SCUMM_BUILD
 	Scumm::SaveLoadChooser* _delDialog;
 #endif
+
+	bool	_radioButtonMode;
 
 };
 

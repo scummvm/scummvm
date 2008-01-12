@@ -392,12 +392,19 @@ void createKeyEvent(int keyNum, Common::Event& event)
 		
 		event.kbd.keycode = (Common::KeyCode) event.kbd.ascii;
 	} else {
-		event.kbd.ascii = keys[keyNum].character;
-		event.kbd.keycode = (Common::KeyCode) keys[keyNum].character;
+		if ((keys[keyNum].character >= Common::KEYCODE_F1) && (keys[keyNum].character >= Common::KEYCODE_F12))	{
+			event.kbd.keycode = (Common::KeyCode) keys[keyNum].character;
+			event.kbd.ascii = keys[keyNum].character - Common::KEYCODE_F1 + Common::ASCII_F1;
+		} else {
+			event.kbd.ascii = keys[keyNum].character;
+			event.kbd.keycode = (Common::KeyCode) keys[keyNum].character;
+		}
 	}				
 }
 
 void addKeyboardEvents() {
+	bool resetShift = false;
+
 	updateTypeEvents();
 
 	if (DS::getPenDown()) {
@@ -468,15 +475,6 @@ void addKeyboardEvents() {
 					default: {
 						DS::setKeyHighlight(r, true);
 						keys[r].pressed = true;
-						
-						if (DS::shiftState) {
-							DS::shiftState = false;
-							for (int t = 0; t < DS_NUM_KEYS; t++) {
-								if (keys[t].character == DS_SHIFT) {
-									DS::setKeyHighlight(t, false);
-								}
-							}
-						}
 						break;
 					}
 				}
@@ -499,9 +497,26 @@ void addKeyboardEvents() {
 				system->addEvent(event);
 
 				keys[r].pressed = false;
+
+				if (keys[r].character != DS_SHIFT) {
+					resetShift = true;
+				}
 			}
 		}	
+
 	}
+
+
+	if ((resetShift) && (DS::shiftState)) {
+		DS::shiftState = false;
+		resetShift = false;
+		for (int t = 0; t < DS_NUM_KEYS; t++) {
+			if (keys[t].character == DS_SHIFT) {
+				DS::setKeyHighlight(t, false);
+			}
+		}
+	}
+
 }
 
 }

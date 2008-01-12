@@ -383,6 +383,17 @@ void DSSaveFileManager::deleteFile(char* name) {
 	flushToSaveRAM();
 }
 
+bool DSSaveFileManager::removeSavefile(const char *filename) {
+	// TODO: Implement this. 
+}
+
+
+Common::StringList DSSaveFileManager::listSavefiles(const char *pattern) {
+	// TODO: Implement this.
+
+
+
+/*
 void DSSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) {
 	memset(marks, true, num * sizeof(bool));
 	return;
@@ -397,6 +408,9 @@ void DSSaveFileManager::listSavefiles(const char *prefix, bool *marks, int num) 
 		}
 	}
 	
+}
+*/
+
 }
 
 DSSaveFile *DSSaveFileManager::makeSaveFile(const char *filename, bool saveOrLoad) {

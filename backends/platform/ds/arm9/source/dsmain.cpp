@@ -55,6 +55,11 @@
 // - Alternative controls?
 
 
+// - Fix 512x256 backbuffer to 320x240 - Done
+// - Fix keyboard appearing on wrong screen - Done
+// - Volume amplify option
+// - Make save/restore game screen use scaler buffer
+
 
 
 //#define USE_LIBCARTRESET
@@ -158,7 +163,6 @@ bool bufferFirstHalf;
 bool bufferSecondHalf;
 
 // Saved buffers
-u8* savedBuffer = NULL;
 bool highBuffer;
 bool displayModeIs8Bit = false;
 
@@ -216,6 +220,8 @@ bool cpuScalerEnable = false;
 #ifdef USE_PROFILER
 int hBlankCount = 0;
 #endif
+
+u8* scalerBackBuffer = NULL;
 
 
 gameListType gameList[NUM_SUPPORTED_GAMES] = {
@@ -277,13 +283,14 @@ void updateStatus();
 void triggerIcon(int imageNum);
 void setIcon(int num, int x, int y, int imageNum, int flags, bool enable);
 void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable);
+void uploadSpriteGfx();
 
 TransferSound soundControl;
 
 
 bool isCpuScalerEnabled()
 {
-	return cpuScalerEnable;
+	return cpuScalerEnable || !displayModeIs8Bit;
 }
 
 
@@ -322,8 +329,14 @@ void stopSound(int channel) {
 
 void updateOAM() {
 	DC_FlushAll();
-    dmaCopy(sprites, OAM_SUB, 128 * sizeof(SpriteEntry));
-    dmaCopy(spritesMain, OAM, 128 * sizeof(SpriteEntry));
+
+	if (gameScreenSwap) {
+		dmaCopy(sprites, OAM, 128 * sizeof(SpriteEntry));
+		dmaCopy(spritesMain, OAM_SUB, 128 * sizeof(SpriteEntry));
+	} else {
+		dmaCopy(sprites, OAM_SUB, 128 * sizeof(SpriteEntry));
+		dmaCopy(spritesMain, OAM, 128 * sizeof(SpriteEntry));
+	}
 }
 
 void setGameSize(int width, int height) {
@@ -359,52 +372,16 @@ void initSprites() {
 
 
 void saveGameBackBuffer() {
-#ifdef DISABLE_SCUMM
-    if (savedBuffer == NULL) savedBuffer = new u8[gameWidth * gameHeight];
-    for (int r = 0; r < gameHeight; r++) {
 
-		u16* dst = (u16 *) (savedBuffer + (r * gameWidth));
-		u16* src = BG_GFX_SUB + (r * 256);
-
-		for (int x = 0; x < gameWidth >> 1; x++)
-		{
-			*dst++ = *src++;
-		}
-	}
-#endif
+	// Sometimes the only copy of the game screen is in video memory.
+	// So, I lock the video memory here, as if I'm going to modify it.  This
+	// forces OSystem_DS to create a system memory copy if one doesn't exist.
+	// This will be automatially resotred by OSystem_DS::updateScreen().
+	
+	OSystem_DS::instance()->lockScreen();
+	OSystem_DS::instance()->unlockScreen();
 }
 
-void restoreGameBackBuffer() {
-#ifdef DISABLE_SCUMM
-	if (savedBuffer) {
-		for (int r = 0; r < gameHeight; r++) {
-
-			u16* dst = get8BitBackBuffer() + (r * 256);
-			u16* dst2 = BG_GFX_SUB + (r * 256);
-			u16* src = ((u16 *) (savedBuffer)) + (r * (gameWidth >> 1));
-
-			for (int x = 0; x < gameWidth >> 1; x++)
-			{
-				*dst++ = *src;
-				*dst2++ = *src++;
-			}
-			
-		}
-
-		delete savedBuffer;
-		savedBuffer = NULL;
-	}
-#else
-    memset(get8BitBackBuffer(), 0, 512 * 256);
-    memset(BG_GFX_SUB, 0, 512 * 256);
-	if (Scumm::g_scumm) {
-		Scumm::g_scumm->markRectAsDirty(Scumm::kMainVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
-		Scumm::g_scumm->markRectAsDirty(Scumm::kTextVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
-		Scumm::g_scumm->markRectAsDirty(Scumm::kVerbVirtScreen, 0, gameWidth - 1, 0, gameHeight - 1, 1);
-	}
-#endif
-
-}
 
 
 void startSound(int freq, int buffer) {
@@ -523,6 +500,18 @@ void displayMode8Bit() {
 			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK_SUB(4))[r];
 		}
 	}
+
+	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(2), (u16*)CHAR_BASE_BLOCK(0), 16);
+	consolePrintSet(0, 23);
+	
+	if (!displayModeIs8Bit) {
+		for (int r = 0; r < 32 * 32; r++) {
+			((u16 *) SCREEN_BASE_BLOCK(2))[r] = buffer[r];
+		}
+//		dmaCopyHalfWords(3, (u16 *) SCREEN_BASE_BLOCK(0), buffer, 32 * 32 * 2);
+	}
+
+	displayModeIs8Bit = true;
 	
 	if (isCpuScalerEnabled())
 	{
@@ -533,7 +522,7 @@ void displayMode8Bit() {
 		vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
 	
 		vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-		vramSetBankD(VRAM_D_MAIN_BG_0x06040000);
+		vramSetBankD(VRAM_D_SUB_SPRITE);
 		
 		vramSetBankH(VRAM_H_LCD);
 	
@@ -543,6 +532,7 @@ void displayMode8Bit() {
 	    BG3_XDY = 0;
 	    BG3_YDX = 0;
 	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+
 	}
 	else
 	{
@@ -553,7 +543,7 @@ void displayMode8Bit() {
 		vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
 	
 		vramSetBankC(VRAM_C_SUB_BG_0x06200000);
-		vramSetBankD(VRAM_D_MAIN_BG_0x06040000);
+		vramSetBankD(VRAM_D_SUB_SPRITE);
 		
 		vramSetBankH(VRAM_H_LCD);
 	
@@ -584,26 +574,20 @@ void displayMode8Bit() {
 
 
 	
-	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(2), (u16*)CHAR_BASE_BLOCK(0), 16);
-	consolePrintSet(0, 23);
-	
-	if (!displayModeIs8Bit) {
-		for (int r = 0; r < 32 * 32; r++) {
-			((u16 *) SCREEN_BASE_BLOCK(2))[r] = buffer[r];
-		}
-//		dmaCopyHalfWords(3, (u16 *) SCREEN_BASE_BLOCK(0), buffer, 32 * 32 * 2);
-	}
 	
 	initGame();
 	
-	if (!displayModeIs8Bit) restoreGameBackBuffer();
-	displayModeIs8Bit = true;
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
 	#endif
 
+	if (gameScreenSwap) {
+		POWER_CR |= POWER_SWAP_LCDS;
+	} else {
+		POWER_CR &= ~POWER_SWAP_LCDS;
+	}
 
-	POWER_CR &= ~POWER_SWAP_LCDS;
+	uploadSpriteGfx();
 	
 	keyboardEnable = false;
 	
@@ -674,6 +658,7 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 	
 	
 		memset(SPRITE_GFX + off, 0, 32 * 32 * 2);
+		memset(SPRITE_GFX_SUB + off, 0, 32 * 32 * 2);
 	
 		for (uint y=0; y<h; y++) {
 			for (uint x=0; x<w; x++) {
@@ -681,8 +666,10 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 	
 				if (color == keycolor) {
 					SPRITE_GFX[off+(y)*32+x] = 0x0000; // black background
+					SPRITE_GFX_SUB[off+(y)*32+x] = 0x0000; // black background
 				} else {
 					SPRITE_GFX[off+(y)*32+x] = BG_PALETTE[color] | 0x8000;
+					SPRITE_GFX_SUB[off+(y)*32+x] = BG_PALETTE[color] | 0x8000;
 				}
 			}
 		}
@@ -695,8 +682,9 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 	uint16 border = RGB15(24,24,24) | 0x8000;
 	
 	
-	int off = 48*64;
+	int off = 176*64;
 	memset(SPRITE_GFX_SUB+off, 0, 64*64*2);
+	memset(SPRITE_GFX+off, 0, 64*64*2);
 	
 	int pos = 190 - (w+2);
 	
@@ -704,10 +692,16 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 	
 	// make border
 	for (uint i=0; i<w+2; i++) {
+		SPRITE_GFX[off+i] = border;
+		SPRITE_GFX[off+(31)*64+i] = border;
+
 		SPRITE_GFX_SUB[off+i] = border;
 		SPRITE_GFX_SUB[off+(31)*64+i] = border;
 	}
 	for (uint i=1; i<31; i++) {
+		SPRITE_GFX[off+(i*64)] = border;
+		SPRITE_GFX[off+(i*64)+(w+1)] = border;
+
 		SPRITE_GFX_SUB[off+(i*64)] = border;
 		SPRITE_GFX_SUB[off+(i*64)+(w+1)] = border;
 	}
@@ -719,23 +713,24 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 			int color = icon[y*w+x];
 
 			if (color == keycolor) {
+				SPRITE_GFX[off+(y+1+offset)*64+(x+1)] = 0x8000; // black background
 				SPRITE_GFX_SUB[off+(y+1+offset)*64+(x+1)] = 0x8000; // black background
 			} else {
+				SPRITE_GFX[off+(y+1+offset)*64+(x+1)] = BG_PALETTE[color] | 0x8000;
 				SPRITE_GFX_SUB[off+(y+1+offset)*64+(x+1)] = BG_PALETTE[color] | 0x8000;
 			}
 		}
 	}
 	
 	
-	if ((cursorEnable))
-	{
+	if ((cursorEnable)) {
 		sprites[1].attribute[0] = ATTR0_BMP | 150;
 		sprites[1].attribute[1] = ATTR1_SIZE_64 | pos;
-		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 48;
+		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 176;
 	} else {
 		sprites[1].attribute[0] = ATTR0_DISABLED | 150;
 		sprites[1].attribute[1] = ATTR1_SIZE_64 | pos;
-		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 48;
+		sprites[1].attribute[2] = ATTR2_ALPHA(1) | 176;
 	}
 }
 
@@ -751,6 +746,8 @@ void displayMode16Bit() {
 
 
 	if (displayModeIs8Bit) {
+		static int test = 0;
+//		consolePrintf("saving buffer... %d\n", test++);
 		saveGameBackBuffer();
 		for (int r = 0; r < 32 * 32; r++) {
 			buffer[r] = ((u16 *) SCREEN_BASE_BLOCK(2))[r];
@@ -770,10 +767,6 @@ void displayMode16Bit() {
 	BG3_CR = BG_BMP16_512x256;
 	highBuffer = false;
 	
-	BG3_XDX = isCpuScalerEnabled() ? 256 : (int) (1.25f * 256);
-    BG3_XDY = 0;
-    BG3_YDX = 0;
-    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 
 	memset(BG_GFX, 0, 512 * 256 * 2);
 	
@@ -803,6 +796,12 @@ void displayMode16Bit() {
 	POWER_CR &= ~POWER_SWAP_LCDS;
 
 	displayModeIs8Bit = false;
+
+	BG3_XDX = isCpuScalerEnabled() ? 256 : (int) (1.25f * 256);
+    BG3_XDY = 0;
+    BG3_YDX = 0;
+    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
 	#endif
@@ -822,7 +821,7 @@ void displayMode16BitFlipBuffer() {
 		
 		if (isCpuScalerEnabled())
 		{
-            Rescale_320x256x1555_To_256x256x1555(BG_GFX, back, 512, 512);
+			Rescale_320x256x1555_To_256x256x1555(BG_GFX, back, 512, 512);
 		}
 		else
 		{
@@ -841,11 +840,13 @@ void displayMode16BitFlipBuffer() {
         #endif
 		const u8* back = (const u8*)get8BitBackBuffer();
 		u16* base = BG_GFX + 0x10000;
-		Rescale_320x256xPAL8_To_256x256x1555( base,
-											  back,											  
-                                              256,
-											  512,
-                                              BG_PALETTE );
+		Rescale_320x256xPAL8_To_256x256x1555( 
+			base,
+			back,
+			256,
+			get8BitBackBufferStride(),
+			BG_PALETTE, 
+			getGameHeight() );
         
         #ifdef SCALER_PROFILE
         // 10 pixels : 1ms
@@ -875,9 +876,24 @@ u16* get16BitBackBuffer() {
 	return BG_GFX + 0x20000;
 }
 
+s32 get8BitBackBufferStride() {
+	// When the CPU scaler is enabled, the back buffer is in system RAM and is 320 pixels wide
+	// When the CPU scaler is disabled, the back buffer is in video memory and therefore must have a 512 pixel stride
+
+	if (isCpuScalerEnabled()){
+		return 320;
+	} else {
+		return 512;
+	}
+}
+
+u16* getScalerBuffer() {
+	return (u16 *) scalerBackBuffer;
+}
+
 u16* get8BitBackBuffer() {
 	if (isCpuScalerEnabled())
-		return BG_GFX + 0x60000;
+		return (u16 *) scalerBackBuffer;
 	else
 		return BG_GFX + 0x10000;		// 16bit qty!
 }
@@ -1090,7 +1106,11 @@ void setKeyboardEnable(bool en) {
 			SUB_DISPLAY_CR |= DISPLAY_BG1_ACTIVE;	// Turn on keyboard layer
 			SUB_DISPLAY_CR &= ~DISPLAY_BG0_ACTIVE;	// Turn off console layer
 		}
-		lcdSwap();
+
+		// Ensure the keyboard is on the lower screen
+		POWER_CR |= POWER_SWAP_LCDS;
+
+
 	} else {
 
 
@@ -1106,10 +1126,17 @@ void setKeyboardEnable(bool en) {
 			// Copy the sub screen VRAM from the top screen - they should always be
 			// the same.
 			u16* buffer = get8BitBackBuffer();
-            
+			s32 stride = get8BitBackBufferStride();
+
+			for (int y = 0; y < gameHeight; y++) {
+				for (int x = 0; x < gameWidth; x++) {
+					BG_GFX_SUB[y * 256 + x] = buffer[(y * (stride / 2)) + x];
+				}
+			}
+/*            
             for (int r = 0; r < (512 * 256) >> 1; r++)
                 BG_GFX_SUB[r] = buffer[r];
-                
+  */              
 			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
 			SUB_DISPLAY_CR |= DISPLAY_BG3_ACTIVE;	// Turn on game layer
 		} else {
@@ -1117,7 +1144,12 @@ void setKeyboardEnable(bool en) {
 			SUB_DISPLAY_CR |= DISPLAY_BG0_ACTIVE;	// Turn on console layer
 		}
 		
-		lcdSwap();
+		// Restore the screens so they're the right way round
+		if (gameScreenSwap) {
+			POWER_CR |= POWER_SWAP_LCDS;
+		} else {
+			POWER_CR &= ~POWER_SWAP_LCDS;
+		}
 	}
 }
 
@@ -1249,6 +1281,13 @@ void addEventsToQueue() {
 
 				if ((getKeysDown() & KEY_A) && (!indyFightState)) {
 					gameScreenSwap = !gameScreenSwap;
+
+					if (gameScreenSwap) {
+						POWER_CR |= POWER_SWAP_LCDS;
+					} else {
+						POWER_CR &= ~POWER_SWAP_LCDS;
+					}
+
 				}
 	
 				if (!getPenHeld() || (mouseMode != MOUSE_HOVER)) {
@@ -1477,7 +1516,6 @@ void addEventsToQueue() {
 //				consolePrintf("!!!!!F5!!!!!");
 			}
 			event.kbd.flags = 0;
-			consolePrintf("!!!!!F5!!!!!");
 			system->addEvent(event);
 		}
 
@@ -1589,25 +1627,27 @@ void soundBufferEmptyHandler() {
 }
 
 void setMainScreenScroll(int x, int y) {
-	if (gameScreenSwap) {
+/*	if (gameScreenSwap) {
 		SUB_BG3_CX = x + (((frameCount & 1) == 0)? 64: 0);
 		SUB_BG3_CY = y;
-	} else {
+	} else */{
 		BG3_CX = x + (((frameCount & 1) == 0)? 64: 0);
 		BG3_CY = y;
 		
-		touchX = x >> 8;
-		touchY = y >> 8;
+		if (!gameScreenSwap) {
+			touchX = x >> 8;
+			touchY = y >> 8;
+		}
 	}
 }
 
 void setMainScreenScale(int x, int y) {
-	if (gameScreenSwap) {
+/*	if (gameScreenSwap) {
 		SUB_BG3_XDX = x;
 		SUB_BG3_XDY = 0;
 		SUB_BG3_YDX = 0;
 		SUB_BG3_YDY = y;
-	} else {
+	} else*/ {
 		if (isCpuScalerEnabled() && (x==320))
 		{
 			BG3_XDX = 256;
@@ -1622,35 +1662,48 @@ void setMainScreenScale(int x, int y) {
 			BG3_YDX = 0;
 			BG3_YDY = y;
 		}
-				
-		touchScX = x;
-		touchScY = y;
+		
+		if (!gameScreenSwap) {		
+			touchScX = x;
+			touchScY = y;
+		}
 	}
 }
 
 void setZoomedScreenScroll(int x, int y, bool shake) {
-	if (gameScreenSwap) {
+/*	if (gameScreenSwap) {
 		BG3_CX = x + ((shake && ((frameCount & 1) == 0))? 64: 0);
 		BG3_CY = y;
 		
 		touchX = x >> 8;
 		touchY = y >> 8;
-	} else {
+	} else */{
+
+		if (gameScreenSwap) {
+			touchX = x >> 8;
+			touchY = y >> 8;
+		}
+
+
 		SUB_BG3_CX = x + ((shake && (frameCount & 1) == 0)? 64: 0);
 		SUB_BG3_CY = y;
 	}
 }
 
 void setZoomedScreenScale(int x, int y) {
-	if (gameScreenSwap) {
+/*	if (gameScreenSwap) {
 		BG3_XDX = x;
 		BG3_XDY = 0;
 		BG3_YDX = 0;
 		BG3_YDY = y;
 
-		touchScX = x;
-		touchScY = y;
-	} else {
+	} else */{
+
+		if (gameScreenSwap) {
+			touchScX = x;
+			touchScY = y;
+		}
+
 		SUB_BG3_XDX = x;
 		SUB_BG3_XDY = 0;
 		SUB_BG3_YDX = 0;
@@ -2000,6 +2053,19 @@ void hBlankHandler() {
 }
 #endif
 
+void uploadSpriteGfx() {
+	vramSetBankD(VRAM_D_SUB_SPRITE); 
+	vramSetBankE(VRAM_E_MAIN_SPRITE); 
+
+	// Convert texture from 24bit 888 to 16bit 1555, remembering to set top bit!
+	u8* srcTex = (u8 *) icons_raw;
+	for (int r = 32 * 256 ; r >= 0; r--) {
+		SPRITE_GFX_SUB[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
+		SPRITE_GFX[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
+	}
+	
+}
+
 void initHardware() {
 	// Guard band
 //((int *) (0x023FFF00)) = 0xBEEFCAFE;
@@ -2011,7 +2077,7 @@ void initHardware() {
 /*	vramSetBankA(VRAM_A_MAIN_BG); 
 	vramSetBankB(VRAM_B_MAIN_BG); 
 	vramSetBankC(VRAM_C_SUB_BG); */
-	vramSetBankI(VRAM_I_SUB_SPRITE); 
+	vramSetBankD(VRAM_D_SUB_SPRITE); 
 	vramSetBankE(VRAM_E_MAIN_SPRITE); 
 	
 	currentTimeMillis = 0;
@@ -2104,26 +2170,23 @@ void initHardware() {
 	initSprites();
 	
 //	videoSetModeSub(MODE_3_2D | DISPLAY_BG0_ACTIVE | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP); //sub bg 0 will be used to print text
-	
-	// Convert texture from 24bit 888 to 16bit 1555, remembering to set top bit!
-	u8* srcTex = (u8 *) icons_raw;
-	for (int r = 32 * 256 ; r >= 0; r--) {
-		SPRITE_GFX_SUB[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
-		SPRITE_GFX[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
-	}
 
-		
-
+	// If the software scaler's back buffer has not been allocated, do it now
+	scalerBackBuffer = (u8 *) malloc(320 * 256);
 
 
 	WAIT_CR &= ~(0x0080);
 //	REG_WRAM_CNT = 0;
+
+	uploadSpriteGfx();
 
 	// This is a bodge to get around the fact that the cursor is turned on before it's image is set
 	// during startup in Sam & Max.  This bodge moves the cursor offscreen so it is not seen.
 	sprites[1].attribute[1] = ATTR1_SIZE_64 | 192;
 
 }
+
+
 
 
 void setKeyboardIcon(bool enable) {
@@ -2599,7 +2662,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.11.0 beta1 ");
+	consolePrintf("Version 0.11.0 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");

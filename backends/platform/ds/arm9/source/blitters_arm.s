@@ -251,8 +251,8 @@ xLoop3:
 	@                                      const u8   *src,
 	@                                      int         dstStride,
 	@                                      int         srcStride,
-	@                                      const u16  *pal);
-	@
+	@                                      const u16  *pal,
+	@                                      u32         numLines);
 Rescale_320x256xPAL8_To_256x256x1555:
 	@ r0 = dst
 	@ r1 = src
@@ -263,6 +263,7 @@ Rescale_320x256xPAL8_To_256x256x1555:
 	ORR	r8, r8,#0x0000FC00
 	ORR	r8, r8,#0x03E00000	@ r8 = mask
 	LDR	r9, [r13,#9*4]		@ r9 = palette
+	LDR	r7, [r13,#10*4]		@ r7 = numLines
 
 	SUB	r13,r13,#256*4		@ r13 = 1K of space on the stack.
 	MOV	r5, r13			@ r5 points to this space
@@ -280,7 +281,7 @@ palLoop:
 	SUB	r3,r3,#64*5		@ dstStride -= line length
 
 	MOV	r14,#0xFF		@ r14= 255
-	MOV	r5,#200			@ r5 = y
+	MOV	r5,r7			@ r5 = numLines
 yLoop4:
 	MOV	r4,#16			@ r4 = x
 xLoop4:

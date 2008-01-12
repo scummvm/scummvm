@@ -23,6 +23,7 @@
 #include "gbampsave.h"
 #include "gba_nds_fat.h"
 #include "ds-fs.h"
+#include "config-manager.h"
 
 /////////////////////////
 // GBAMP Save File
@@ -30,7 +31,7 @@
 
 GBAMPSaveFile::GBAMPSaveFile(char* name, bool saveOrLoad) {
 	handle = DS::std_fopen(name, saveOrLoad? "w": "r");
-	consolePrintf("%s handle is %d\n", name, handle);
+//	consolePrintf("%s handle is %d\n", name, handle);
 //	consolePrintf("Created %s\n", name);
 	bufferPos = 0;
 	saveSize = 0;
@@ -164,62 +165,35 @@ GBAMPSaveFile* GBAMPSaveFileManager::openSavefile(char const* name, bool saveOrL
 	}
 }
 
-void GBAMPSaveFileManager::listSavefiles(char const* prefix, bool* marks, int num) {
-//	memset(marks, true, num * sizeof(bool));
-//	return;
-	
-	// Seems like I misunderstood what this function was supposed to do.
-	// I thought I was meant to set the marks[] array according to which
-	// saves are present on disk.
-	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
-	char name[128];
-	char path[128];
-	
-	DS::std_cwd((char *) getSavePath());
-	consolePrintf("Save path: %s\n", getSavePath());
-	
-	int fileType = FAT_FindFirstFileLFN(name);
-	
-	for (int r = 0; r < num; r++) {
-		marks[r] = false;
-	}
-	
-	do {
-	
-		if (fileType == TYPE_FILE) {
+// This method copied from an old version of the savefile.cpp, since it's been removed from there and
+// placed in default-saves.cpp, where I cannot call it.
+const char *GBAMPSaveFileManager::getSavePath() const {
+	const char *dir = NULL;
 
-			FAT_GetLongFilename(name);
-			
-			for (int r = 0; r < num; r++) {
-				char str[128];
-				
-				
-				sprintf(str, "%s%02d", prefix, r);
-				consolePrintf("%s != %s", str, name);
-				if (!stricmp(str, name)) {
-					marks[r] = true;
-					consolePrintf("Matched %d", r);
-				}
-				
-			}
-			
-		}
-	
-	} while ((fileType = FAT_FindNextFileLFN(name)));
-	
-	FAT_chdir("/");
+	// Try to use game specific savepath from config
+	dir = ConfMan.get("savepath").c_str();
+
+	// Work around a bug (#999122) in the original 0.6.1 release of
+	// ScummVM, which would insert a bad savepath value into config files.
+	if (0 == strcmp(dir, "None")) {
+		ConfMan.removeKey("savepath", ConfMan.getActiveDomainName());
+		ConfMan.flushToDisk();
+		dir = ConfMan.get("savepath").c_str();
+	}
+
+
+	assert(dir);
+
+	return dir;
 }
 
-Common::StringList GBAMPSaveFileManager::listSavefiles(const char *regex) { 
-
-	
+Common::StringList GBAMPSaveFileManager::listSavefiles(const char *pattern) { 
 
 	enum { TYPE_NO_MORE = 0, TYPE_FILE = 1, TYPE_DIR = 2 };
 	char name[256];
-
 	
 	DS::std_cwd((char *) getSavePath());
-//	consolePrintf("Save path: '%s', regex: '%s'\n", getSavePath(),regex);
+//	consolePrintf("Save path: '%s', pattern: '%s'\n", getSavePath(),pattern);
 
 	
 	int fileType = FAT_FindFirstFileLFN(name);
@@ -238,15 +212,14 @@ Common::StringList GBAMPSaveFileManager::listSavefiles(const char *regex) {
 			}
 			
 			
-			if (Common::matchString(name, regex)) {
+			if (Common::matchString(name, pattern)) {
 				list.push_back(name);
 			}
 		}
-	
+
 	} while ((fileType = FAT_FindNextFileLFN(name)));
 	
 	FAT_chdir("/");
-
 
 	return list;
 }	
