@@ -583,6 +583,10 @@ begin_credits("Credits");
 		  add_person("Oystein Eftevaag", "vinterstum", "");
 	  end_section();
 
+	  begin_section("Maemo");
+		  add_person("Frantisek Dufka", "fanoush", "");
+	  end_section();
+
 	  begin_section("Nintendo DS");
 		  add_person("Neil Millstone", "agent-q", "");
 	  end_section();
