@@ -123,6 +123,7 @@ public:
 
 	void updatePalette(byte *pal, bool packed = true);
 	virtual bool load();
+	bool userInterrupt();
 	void play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn, int32 leadOut);
 };
 

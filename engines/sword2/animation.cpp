@@ -347,6 +347,32 @@ bool MoviePlayer::load() {
 	return false;
 }
 
+bool MoviePlayer::userInterrupt() {
+	Common::Event event;
+	bool terminate = false;
+
+	Common::EventManager *eventMan = _system->getEventManager();
+	while (eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_SCREEN_CHANGED:
+			handleScreenChanged();
+			break;
+		case Common::EVENT_QUIT:
+			_vm->closeGame();
+			terminate = true;
+			break;
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				terminate = true;
+			break;
+		default:
+			break;
+		}
+	}
+
+	return terminate;
+}
+
 void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn, int32 leadOut) {
 	bool terminate = false;
 	bool textVisible = false;
@@ -416,25 +442,8 @@ void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn
 			updateScreen();
 		}
 
-		Common::Event event;
-
-		Common::EventManager *eventMan = _system->getEventManager();
-		while (eventMan->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_SCREEN_CHANGED:
-				handleScreenChanged();
-				break;
-			case Common::EVENT_QUIT:
-				_vm->closeGame();
-				terminate = true;
-				break;
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
-					terminate = true;
-				break;
-			default:
-				break;
-			}
+		if (userInterrupt()) {
+			terminate = true;
 		}
 	}
 
@@ -462,6 +471,11 @@ void MoviePlayer::play(SequenceTextInfo *textList, uint32 numLines, int32 leadIn
 		// free the sound buffer while it's still in use.
 
 		while (_vm->_sound->amISpeaking() == RDSE_SPEAKING || _mixer->isSoundHandleActive(_bgSoundHandle)) {
+			if (userInterrupt()) {
+				terminate = true;
+				_vm->_sound->stopSpeech();
+				_mixer->stopHandle(_bgSoundHandle);
+			}
 			_system->delayMillis(100);
 		}
 	} else {
@@ -755,7 +769,7 @@ bool MoviePlayerDummy::load() {
 }
 
 bool MoviePlayerDummy::decodeFrame() {
-	if (_currentFrame == 0 && _numSpeechLines > 0) {
+	if ((_currentFrame == 0 && _numSpeechLines > 0) || _mixer->isSoundHandleActive(_bgSoundHandle)) {
 		byte dummyPalette[] = {
 			  0,   0,   0, 0,
 			255, 255, 255, 0,
@@ -811,7 +825,11 @@ bool MoviePlayerDummy::decodeFrame() {
 
 	// If we have played the final voice-over, skip ahead to the lead out
 
-	if (_currentText >= _numSpeechLines && _vm->_sound->amISpeaking() == RDSE_QUIET && _leadOutFrame != (uint)-1 && _currentFrame < _leadOutFrame) {
+	if (!_mixer->isSoundHandleActive(_bgSoundHandle) &&
+	    _currentText >= _numSpeechLines &&
+	    _vm->_sound->amISpeaking() == RDSE_QUIET &&
+	    _leadOutFrame != (uint)-1 &&
+	    _currentFrame < _leadOutFrame) {
 		_currentFrame = _leadOutFrame - 1;
 	}
 
@@ -819,7 +837,7 @@ bool MoviePlayerDummy::decodeFrame() {
 }
 
 bool MoviePlayerDummy::syncFrame() {
-	if (_numSpeechLines == 0 || _currentFrame < _firstSpeechFrame) {
+	if ((_numSpeechLines == 0 || _currentFrame < _firstSpeechFrame) && !_mixer->isSoundHandleActive(_bgSoundHandle)) {
 		_ticks = _system->getMillis();
 		return false;
 	}
