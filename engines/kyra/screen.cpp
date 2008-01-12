@@ -2774,8 +2774,7 @@ byte *Screen::getOverlayPtr(int page) {
 		if (page == 12 || page == 13)
 			return _sjisOverlayPtrs[3];
 	}
-	
-	warning("Trying to access unimplemented SJIS overlay page %d", page);
+
 	return 0;
 }
 
