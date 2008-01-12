@@ -208,7 +208,7 @@ void IMuseDigital::refreshScripts() {
 		}
 	}
 
-	if (!found && (_curMusicSeq != 0)) {
+	if (!found && _curMusicState) {
 		debug(5, "refreshScripts() Start Sequence");
 		parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
 	}
