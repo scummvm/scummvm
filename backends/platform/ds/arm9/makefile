@@ -34,10 +34,11 @@ ifeq ($(SCUMM_BUILD),g)
         DS_BUILD_G = 1
 endif
 
+
 #DS_BUILD_A = 1
 #DS_BUILD_B = 1
 #DS_BUILD_C = 1
-#DS_BUILD_D = 1		# started!
+#DS_BUILD_D = 1	
 #DS_BUILD_E = 1
 #DS_BUILD_F = 1
 #DS_BUILD_G = 1
@@ -276,7 +277,9 @@ CXX     = arm-eabi-g++
 CFLAGS	=	-Wno-multichar -Wall\
 		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
  		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
-		-ffast-math -mthumb-interwork
+		-mthumb-interwork
+
+# -ffast-math 
 
 ifdef USE_DEBUGGER
 	DEFINES += -DUSE_DEBUGGER
@@ -388,10 +391,13 @@ OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp 
 #OPTLIST := 
 
 # Compiler options for files which should be optimised for speed
-OPT_SPEED := -O3
+OPT_SPEED := -O2
 
 # Compiler options for files which should be optimised for space
-OPT_SIZE := -Os -mthumb -fno-gcse -fno-schedule-insns2
+OPT_SIZE := -Os
+
+
+#-mthumb -fno-gcse -fno-schedule-insns2
 
 
 			
