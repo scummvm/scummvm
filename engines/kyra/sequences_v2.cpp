@@ -1550,7 +1550,7 @@ void KyraEngine_v2::seq_processWSAs() {
 void KyraEngine_v2::seq_processText() {
 	Screen::FontId curFont = _screen->setFont(Screen::FID_GOLDFONT_FNT);
 	int curPage = _screen->setCurPage(2);
-	char outputStr[60];
+	char outputStr[70];
 
 	for (int i = 0; i < 10; i++) {
 		if (_activeText[i].startTime + _activeText[i].duration > _system->getMillis() && _activeText[i].duration != -1) {

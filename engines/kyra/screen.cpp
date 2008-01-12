@@ -2769,8 +2769,14 @@ byte *Screen::getOverlayPtr(int page) {
 		return _sjisOverlayPtrs[1];
 	else if (page == 2 || page == 3)
 		return _sjisOverlayPtrs[2];
-	else
-		return 0;
+
+	if (_vm->gameFlags().gameID == GI_KYRA2) {
+		if (page == 12 || page == 13)
+			return _sjisOverlayPtrs[3];
+	}
+	
+	warning("Trying to access unimplemented SJIS overlay page %d", page);
+	return 0;
 }
 
 void Screen::clearOverlayPage(int page) {
@@ -2812,14 +2818,18 @@ void Screen::copyOverlayRegion(int x, int y, int x2, int y2, int w, int h, int s
 	y <<= 1; y2 <<= 1;
 	w <<= 1; h <<= 1;
 
-	dst += y2 * 640 + x2;
-	src += y * 640 + x;
+	if (w == 640 && h == 400) {
+		memcpy(dst, src, SCREEN_OVL_SJIS_SIZE);
+	} else {
+		dst += y2 * 640 + x2;
+		src += y * 640 + x;
 
-	while (h--) {
-		for (x = 0; x < w; ++x)
-			memcpy(dst, src, w);
-		dst += 640;
-		src += 640;
+		while (h--) {
+			for (x = 0; x < w; ++x)
+				memcpy(dst, src, w);
+			dst += 640;
+			src += 640;
+		}
 	}
 }
 
