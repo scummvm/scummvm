@@ -1,0 +1,30 @@
+export SCUMM_BUILD=a
+make clean
+make
+
+export SCUMM_BUILD=b
+make clean
+make
+
+export SCUMM_BUILD=c
+make clean
+make
+
+export SCUMM_BUILD=d
+make clean
+make
+
+export SCUMM_BUILD=e
+make clean
+make
+
+export SCUMM_BUILD=f
+make clean
+make
+
+export SCUMM_BUILD=g
+make clean
+make
+
+export SCUMM_BUILD=
+
