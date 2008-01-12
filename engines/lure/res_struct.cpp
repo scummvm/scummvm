@@ -1166,7 +1166,7 @@ BarEntry &BarmanLists::getDetails(uint16 roomNumber) {
 }
 
 void BarmanLists::saveToStream(Common::WriteStream *stream) {
-	for (int index = 0; index < 2; ++index) {
+	for (int index = 0; index < 3; ++index) {
 		uint16 value = (_barList[index].currentCustomer == NULL) ? 0 :
 			(_barList[index].currentCustomer - &_barList[index].customers[0]) / sizeof(BarEntry) + 1;
 		stream->writeUint16LE(value);
