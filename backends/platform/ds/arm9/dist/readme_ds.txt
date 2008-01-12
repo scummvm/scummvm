@@ -26,8 +26,9 @@ Visit the main ScummVM website <http://www.scummvm.org>
     * What to do if saving doesn't work or your card gets corruped -
       force SRAM saves
     * How to use ScummVM DS
-    * Which games are compatible with ScummVM DS
     * Game Specific Controls
+    * DS Options Screen
+    * Which games are compatible with ScummVM DS
     * Predictive dictionary for Sierra AGI games
     * Converting your CD audio
     * Converting speech to MP3 format
@@ -131,6 +132,10 @@ searching on Google.
 NOTE: This site used to detail how to use FlashMe, WifiMe, PassMe or a
 PassMe2, but have now been made obsolete by the NoPass. There are other
 places on the net where you can get information on such methods.
+
+Previous version of ScummVM DS supported a method which used a zip file
+to run games on unsupported flash card readers.  This method is no longer
+supported.
 
 
 
@@ -269,6 +274,8 @@ CANNOT DO THIS.
       or later, the card will autmatically DLDI patch the game, meaning
       you don't have to use dlditool to patch the .NDS file. This makes
       things a lot easier! 
+    * *M3DS Real*: This card autmatically DLDI patches the game, meaning
+      that you do not need to do this yourself.
 
 
 
@@ -345,7 +352,7 @@ Gobliins 2                                D
 
 Goblins 3                                 D
 
-Ween: THe Prophecy                        D	
+Ween: The Prophecy                        D	
 
 Bargon Attack                             D	
 
@@ -397,7 +404,6 @@ for each game on your card.
 [monkey2]
 description=Monkey Island 2: LeChuck's Revenge (English/DOS)
 path=mp:/MONKEY2
-
 
 
       How to Use ScummVM
@@ -518,6 +524,49 @@ R + d-pad right    Zoom out
     * Bargon Attack: Press Start to hit F1 when you need to start the
       game. Use shift with the number keys on the on-screen keyboard to
       press other function keys. 
+
+
+      DS Options Screen
+      ------------------------------------------------------------------------
+
+Pressing the 'select' button during any game to show the DS options
+screen.  This screen shows options specific to the Nintendo DS version
+of ScummVM.
+
+High Quality Audio - Enhance the sound quality, at the expense of some
+slowdown during some games.
+
+Indy Fighting Controls - Enable fighting controls for the Indiana Jones
+games.  See 'Game Specific Controls' for more information.
+
+Zoomed Screen at fixed 200% zoom - disable the zoom in/out feature on the
+top screen and force it to show the graphics at double size.
+
+Left handed Mode - Switch the controls on the D-pad with the controls
+on the A/B/X/Y buttons.
+
+Disable power off - ScummVM DS turns the power off when the game quits.
+This option disables that feature.
+
+Show mouse cursor - Shows the game's mouse cursor on the bottom screen.
+
+Snap to border - makes it easier for the mouse controls to reach the edges
+of the screen.  Useful for Beneath a Steel Sky and Goblins 3.
+
+Scaling options:
+
+Three scaling options are available for the main screen.
+
+Harware Scale - Scales using the DS hardware scaler using a flicker method.
+Produces lower quality graphics but doesn't slow the game down.
+
+Software Scale - Scales using the CPU.  A much higher quality image is
+produced, but at the expense of speed in some games.
+
+Unscaled - Allows you to see the graphics as originaly displayed.  This
+doesn't fit on the DS screen, but you can scroll the screen around by holding
+the left shoulder button and using the D-pad or touch screen.
+
 
 
 
@@ -665,18 +714,14 @@ started. You will notice that no other versions of ScummVM can quit back
 to the menu either. This will be fixed at some time in the future.
 
 
-*Q:* The text looks a little unclear. Is there a chance of a better
-scaler? Perhaps a software scaler?
-*A:* A solution to this is being worked on for a later version of
-ScummVM DS.
-
-
 
 
       Contributors
       ------------------------------------------------------------------------
 
 ScummVM DS uses chishm's GBA Movie Player FAT driver.
+The CPU scaler is by Tramboi and Robin Watts
+The ARM code was optimised by Robin Watts
 Thanks to highpass for the ScummVM DS icons.
 Thanks to zhevon for the Sam & Max cursor code.
 Thanks to theNinjaBunny for the M3 Adaptor guide on this site.
