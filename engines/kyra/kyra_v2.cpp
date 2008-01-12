@@ -674,12 +674,13 @@ int KyraEngine_v2::checkInput(void *p) {
 			breakLoop = true;
 			break;
 
-		case Common::EVENT_LBUTTONUP:
-			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
+		case Common::EVENT_LBUTTONUP: {
+			Common::Point pos = getMousePos();
+			_mouseX = pos.x;
+			_mouseY = pos.y;
 			keys = 198;
 			breakLoop = true;
-			break;
+			} break;
 
 		case Common::EVENT_QUIT:
 			_quitFlag = true;
