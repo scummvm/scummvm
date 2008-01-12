@@ -469,20 +469,32 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 	//	XXX
 	//}
 	
-	assert(command*2+1 < _trackMapSize);
-	if (_curMusicTheme != _trackMap[command*2]) {
-		if (_trackMap[command*2] != -1 && _trackMap[command*2] != -2)
-			snd_playTheme(_trackMap[command*2]);
-	}
-
-	if (command != 1) {
-		if (_lastMusicCommand != command) {
-			_sound->haltTrack();
-			_sound->playTrack(_trackMap[command*2+1]);
+	if (_flags.platform == Common::kPlatformPC) {
+		assert(command*2+1 < _trackMapSize);
+		if (_curMusicTheme != _trackMap[command*2]) {
+			if (_trackMap[command*2] != -1 && _trackMap[command*2] != -2)
+				snd_playTheme(_trackMap[command*2]);
 		}
-	} else {
-		_sound->beginFadeOut();
-	}
+
+		if (command != 1) {
+			if (_lastMusicCommand != command) {
+				_sound->haltTrack();
+				_sound->playTrack(_trackMap[command*2+1]);
+			}
+		} else {
+			_sound->beginFadeOut();
+		}
+	} else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
+		if (command == -1) {
+			_sound->haltTrack();
+		} else {
+			assert(command*2+1 < _trackMapSize);
+			if (_trackMap[command*2] != -2 && command != _lastMusicCommand) {
+				_sound->haltTrack();
+				_sound->playTrack(command);
+			}
+		}
+	} 
 
 	_lastMusicCommand = command;
 }
