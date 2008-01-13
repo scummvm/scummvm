@@ -280,22 +280,6 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 	}
 }
 
-void IMuseDigital::updateMusicFadeTrack(int fadeDelay) {
-	Common::StackLock lock(_mutex, "IMuseDigital::updateMusicFadeTrack()");
-	debug(5, "IMuseDigital::updateMusicFadeTrack");
-
-	for (int l = MAX_DIGITAL_TRACKS; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
-			track->volFadeDelay = fadeDelay;
-			track->volFadeDest = 0;
-			track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
-			track->volFadeUsed = true;
-		}
-	}
-}
-
-
 IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	assert(track);
 	Track *fadeTrack = 0;
