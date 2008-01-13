@@ -204,33 +204,33 @@ FIXME (Fingolfin asks): Why are Mickey, Winnie and Troll standalone classes
 
 	// run preagi engine main loop
 	switch (getGameID()) {
-		case GID_MICKEY:
-			{
-				Mickey *mickey = new Mickey(this);
-				mickey->init();
-				mickey->run();
-				delete mickey;
-			}
-			break;
-		case GID_WINNIE:
-			{
-				Winnie *winnie = new Winnie(this);
-				winnie->init();
-				winnie->run();
-				delete winnie;
-			}
-			break;
-		case GID_TROLL:
-			{
-				Troll *troll = new Troll(this);
-				troll->init();
-				troll->run();
-				delete troll;
-			}
-			break;
-		default:
-			error("Unknown preagi engine");
-			break;
+	case GID_MICKEY:
+		{
+			Mickey *mickey = new Mickey(this);
+			mickey->init();
+			mickey->run();
+			delete mickey;
+		}
+		break;
+	case GID_WINNIE:
+		{
+			Winnie *winnie = new Winnie(this);
+			winnie->init();
+			winnie->run();
+			delete winnie;
+		}
+		break;
+	case GID_TROLL:
+		{
+			Troll *troll = new Troll(this);
+			troll->init();
+			troll->run();
+			delete troll;
+		}
+		break;
+	default:
+		error("Unknown preagi engine");
+		break;
 	}
 	return 0;
 }

@@ -394,22 +394,22 @@ bool AgiEngine::predictiveDialog(void) {
 					}
 
 					switch (mode) {
-						case kModeNum:
-							_currentWord = _currentCode;
-							break;
-						case kModePre:
-							if (!matchWord() && _currentCode.size()) {
-								_currentCode.deleteLastChar();
-								matchWord();
-							}
-							numMatchingWords = countWordsInString(_predictiveDictActLine);
-							break;
-						case kModeAbc:
-							for (x = 0; x < _currentCode.size(); x++)
-								if (_currentCode[x] >= '1')
-									temp[x] = buttons[_currentCode[x] - '1'][3 + repeatcount[x]];
-							temp[_currentCode.size()] = 0;
-							_currentWord = temp;
+					case kModeNum:
+						_currentWord = _currentCode;
+						break;
+					case kModePre:
+						if (!matchWord() && _currentCode.size()) {
+							_currentCode.deleteLastChar();
+							matchWord();
+						}
+						numMatchingWords = countWordsInString(_predictiveDictActLine);
+						break;
+					case kModeAbc:
+						for (x = 0; x < _currentCode.size(); x++)
+							if (_currentCode[x] >= '1')
+								temp[x] = buttons[_currentCode[x] - '1'][3 + repeatcount[x]];
+						temp[_currentCode.size()] = 0;
+						_currentWord = temp;
 					}
 				} else if (active == 9) { // next
 					if (mode == kModePre) {

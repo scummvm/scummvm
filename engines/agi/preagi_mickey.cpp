@@ -104,14 +104,15 @@ bool Mickey::chooseY_N(int ofsPrompt, bool fErrorMsg) {
 
 	for (;;) {
 		switch (_vm->getSelection(kSelYesNo)) {
-			case 0: return false;
-			case 1: return true;
-			default: if (fErrorMsg) {
-						printExeStr(IDO_MSA_PRESS_YES_OR_NO);
-						waitAnyKey();
-						printExeStr(ofsPrompt);
-					}
-					break;
+		case 0: return false;
+		case 1: return true;
+		default:
+			if (fErrorMsg) {
+				printExeStr(IDO_MSA_PRESS_YES_OR_NO);
+				waitAnyKey();
+				printExeStr(ofsPrompt);
+			}
+			break;
 		}
 	}
 }

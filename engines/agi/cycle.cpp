@@ -367,22 +367,22 @@ int AgiEngine::runGame() {
 
 		// Set computer type (v20 i.e. vComputer)
 		switch (getPlatform()) {
-			case Common::kPlatformAtariST:
-				setvar(vComputer, kAgiComputerAtariST);
-				break;
-			case Common::kPlatformAmiga:
-				if (getFeatures() & GF_OLDAMIGAV20)
-					setvar(vComputer, kAgiComputerAmigaOld);
-				else
-					setvar(vComputer, kAgiComputerAmiga);
-				break;
-			case Common::kPlatformApple2GS:
-				setvar(vComputer, kAgiComputerApple2GS);
-				break;
-			case Common::kPlatformPC:
-			default:
-				setvar(vComputer, kAgiComputerPC);
-				break;
+		case Common::kPlatformAtariST:
+			setvar(vComputer, kAgiComputerAtariST);
+			break;
+		case Common::kPlatformAmiga:
+			if (getFeatures() & GF_OLDAMIGAV20)
+				setvar(vComputer, kAgiComputerAmigaOld);
+			else
+				setvar(vComputer, kAgiComputerAmiga);
+			break;
+		case Common::kPlatformApple2GS:
+			setvar(vComputer, kAgiComputerApple2GS);
+			break;
+		case Common::kPlatformPC:
+		default:
+			setvar(vComputer, kAgiComputerPC);
+			break;
 		}
 
 		setvar(vSoundgen, 1);	/* IBM PC SOUND */
