@@ -257,7 +257,7 @@ void AGOSEngine::vc53_dissolveIn() {
 		*dst &= color;
 		*dst |= *src & 0xF;
 
-		dst = dstOffs2 + yoffs * _screenWidth;;
+		dst = dstOffs2 + yoffs * _screenWidth;
 		src = srcOffs2 + yoffs * 224;
 
 		*dst &= color;

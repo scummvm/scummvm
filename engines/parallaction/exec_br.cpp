@@ -365,7 +365,7 @@ DECLARE_INSTRUCTION_OPCODE(inc) {
 		break;
 
 	default:
-		error("This should never happen. Report immediately");;
+		error("This should never happen. Report immediately");
 	}
 
 	if (inst->_opA._flags & kParaLocal) {

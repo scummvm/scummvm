@@ -367,7 +367,7 @@ void Imd::copyCurrentFrame(byte *dest, uint16 x, uint16 y, uint16 width, int16 t
 			d++;
 		}
 
-		dest += width;;
+		dest += width;
 		vidMem += _width;
 	}
 }

@@ -93,7 +93,7 @@ void OSystem_SDL_Symbian::setFeatureState(Feature f, bool enable) {
 			break;
 		case kFeatureDisableKeyFiltering:
 			GUI::Actions::Instance()->beginMapping(enable);
-			break;;
+			break;
 		default:
 			OSystem_SDL::setFeatureState(f, enable);
 	}

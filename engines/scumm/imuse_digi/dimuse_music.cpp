@@ -177,7 +177,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 		case 3:
 		case 4:
 			if (table->filename[0] == 0) {
-				fadeOutMusic(60);;
+				fadeOutMusic(60);
 				return;
 			}
 			if (table->transitionType == 4)
