@@ -101,19 +101,23 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 				}
 			}
 		} else if ((_vm->_game.id == GID_CMI) && (_vm->_game.features & GF_DEMO)) {
-			fadeOutMusic(120);
 			if (b == 2) {
+				fadeOutMusic(108);
 				startMusic("in1.imx", 1100, 0, 127);
 			} else if (b == 4) {
+				fadeOutMusic(108);
 				startMusic("in2.imx", 1120, 0, 127);
 			} else if (b == 8) {
+				fadeOutMusic(108);
 				startMusic("out1.imx", 1140, 0, 127);
 			} else if (b == 9) {
+				fadeOutMusic(108);
 				startMusic("out2.imx", 1150, 0, 127);
 			} else if (b == 16) {
+				fadeOutMusic(108);
 				startMusic("gun.imx", 1210, 0, 127);
 			} else {
-				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, _vm->_currentRoom);
+				fadeOutMusic(120);
 			}
 		} else if (_vm->_game.id == GID_DIG) {
 			setDigMusicState(b);
