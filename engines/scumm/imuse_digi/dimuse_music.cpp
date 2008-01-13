@@ -178,6 +178,8 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 			if (table->filename[0] == 0) {
 				return;
 			}
+			if (table->transitionType == 4)
+				_stopingSequence = true;
 			if ((!sequence) && (table->attribPos != 0) &&
 					(table->attribPos == _digStateMusicTable[_curMusicState].attribPos)) {
 				startMusic(table->filename, table->soundId, 0, 127);
@@ -320,6 +322,8 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 				fadeOutMusic(60);
 				return;
 			}
+			if (table->transitionType == 4)
+				_stopingSequence = true;
 			if ((!sequence) && (table->attribPos != 0) &&
 					(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
 				fadeOutMusic(120); // expiremental fadeDelay 120 instead from table
