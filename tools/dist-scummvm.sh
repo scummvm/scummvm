@@ -3,6 +3,7 @@
 # dist-module.sh - make release tarballs for one CVS module
 #
 # Largely based on dist-fink.sh, Copyright (c) 2001 Christoph Pfisterer
+# Modified to use Subversion instead of SVN by Max Horn
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -21,8 +22,7 @@
 
 ### configuration
 
-#cvsroot=':ext:USER@cvs.sourceforge.net:/cvsroot/scummvm'
-cvsroot=':pserver:anonymous@cvs.sourceforge.net:/cvsroot/scummvm'
+svnroot='https://scummvm.svn.sourceforge.net/svnroot/scummvm'
 
 ### init
 
@@ -40,7 +40,7 @@ if [ -z "$tag" ]; then
 fi
 fullname="$module-$version"
 
-echo "packaging $module release $version, CVS tag $tag"
+echo "packaging $module release $version, SVN tag $tag"
 
 ### setup temp directory
 
@@ -54,27 +54,14 @@ if [ -d $fullname ]; then
   exit 1
 fi
 
-### check code out from CVS
+### check code out from SVN
+# TODO: Add support for making tarballs from trunk / branches?
 
 echo "Exporting module $module, tag $tag from CVS:"
-cvs -d "$cvsroot" export -r "$tag" -d $fullname $module
+svn export "$svnroot/$module/tags/$tag" $fullname
 if [ ! -d $fullname ]; then
-  echo "CVS export failed, directory $fullname doesn't exist!"
+  echo "SVN export failed, directory $fullname doesn't exist!"
   exit 1
-fi
-
-### remove any .cvsignore files
-
-find $fullname -name .cvsignore -exec rm {} \;
-
-### versioning
-
-if [ -f $fullname/VERSION ]; then
-  echo $version >$fullname/VERSION
-fi
-if [ -f $fullname/stamp-cvs-live ]; then
-  rm -f $fullname/stamp-cvs-live
-  touch $fullname/stamp-rel-$version
 fi
 
 ### roll the tarball
@@ -108,6 +95,6 @@ fi
 ### finish up
 
 echo "Done:"
-ls -l *.tar.gz
+ls -l $fullname.tar.gz $fullname.tar.bz2 $fullname.zip
 
 exit 0
