@@ -75,4 +75,4 @@ md5scumm: tools/md5table$(EXEEXT)
 #	$(srcdir)/tools/credits.pl --cpp > $@
 
 
-.PHONY: clean-tools tools credits md5scumm md5simon
+.PHONY: clean-tools tools credits md5scumm

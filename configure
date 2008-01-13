@@ -109,15 +109,7 @@ _nasm=auto
 # more defaults
 _backend=sdl
 _ranlib=ranlib
-_install=install
 _ar="ar cru"
-_mkdir="mkdir -p"
-_echo=printf
-_cat=cat
-_rm="rm -f"
-_rm_rec="$_rm -r"
-_zip="zip -q"
-_cp=cp
 _windres=windres
 _win32path="C:/scummvm"
 _aos4path="Games:ScummVM_Snapshot"
@@ -1646,15 +1638,7 @@ CXX := $CXX
 CXXFLAGS := $CXXFLAGS
 LIBS += $LIBS
 RANLIB := $_ranlib
-INSTALL := $_install
 AR := $_ar
-MKDIR := $_mkdir
-ECHO := $_echo
-CAT := $_cat
-RM := $_rm
-RM_REC := $_rm_rec
-ZIP := $_zip
-CP := $_cp
 WINDRES := $_windres
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
@@ -1685,8 +1669,6 @@ SAVED_LDFLAGS     := $SAVED_LDFLAGS
 SAVED_CXX         := $SAVED_CXX
 SAVED_CXXFLAGS    := $SAVED_CXXFLAGS
 SAVED_CPPFLAGS    := $SAVED_CPPFLAGS
-
-CONFIG_MK_IS_PRESENT := 1
 EOF
 
 #

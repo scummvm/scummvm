@@ -36,6 +36,19 @@ CXXFLAGS+= -fno-rtti -fno-exceptions -fcheck-new
 #CXXFLAGS+= -O -Wuninitialized
 
 #######################################################################
+# Default commands - put the necessary replacements in config.mk      #
+#######################################################################
+
+CAT     ?= cat
+CP      ?= cp
+ECHO    ?= printf
+INSTALL ?= install
+MKDIR   ?= mkdir -p
+RM      ?= rm -f
+RM_REC  ?= $(RM) -r
+ZIP     ?= zip -q
+
+#######################################################################
 # Misc stuff - you should never have to edit this                     #
 #######################################################################
 
@@ -44,8 +57,8 @@ EXECUTABLE  := scummvm$(EXEEXT)
 include $(srcdir)/Makefile.common
 
 # check if configure has been run or has been changed since last run
-config.mk: $(srcdir)/configure
-ifdef CONFIG_MK_IS_PRESENT
+config.h config.mk: $(srcdir)/configure
+ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 	@echo "Running $(srcdir)/configure with the last specified parameters"
 	@sleep 2s
 	LDFLAGS="$(SAVED_LDFLAGS)" CXX="$(SAVED_CXX)" CXXFLAGS="$(SAVED_CXXFLAGS)" CPPFLAGS="$(SAVED_CPPFLAGS)" \
