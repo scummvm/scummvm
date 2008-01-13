@@ -327,7 +327,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 				_stopingSequence = true;
 			if ((!sequence) && (table->attribPos != 0) &&
 					(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
-				updateMusicFadeTrack(120); // expiremental fadeDelay 120 instead from table
+				updateMusicFadeTrack(table->fadeOutDelay);
 				startMusic(table->filename, table->soundId, 0, 127);
 			} else if (table->transitionType == 12) {
 				updateMusicFadeTrack(table->fadeOutDelay);
