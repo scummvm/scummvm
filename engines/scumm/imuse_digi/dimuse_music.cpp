@@ -172,7 +172,6 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 	switch (table->transitionType) {
 		case 0:
 		case 5:
-		case 6:
 			break;
 		case 3:
 		case 4:
@@ -185,6 +184,9 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 			} else {
 				startMusic(table->filename, table->soundId, hookId, 127);
 			}
+			break;
+		case 6:
+			_stopingSequence = true;
 			break;
 	}
 }
@@ -288,7 +290,10 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 			fadeOutMusic(120);
 			break;
 		case 8:
+			setHookId(table->soundId, table->hookId);
+			break;
 		case 9:
+			_stopingSequence = true;
 			setHookId(table->soundId, table->hookId);
 			break;
 		case 1:

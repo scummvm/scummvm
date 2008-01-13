@@ -200,6 +200,12 @@ void IMuseDigital::flushTracks() {
 void IMuseDigital::refreshScripts() {
 	Common::StackLock lock(_mutex, "IMuseDigital::refreshScripts()");
 	debug(5, "refreshScripts()");
+
+	if (_stopingSequence) {
+		parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
+		_stopingSequence = false;
+	}
+
 	bool found = false;
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];

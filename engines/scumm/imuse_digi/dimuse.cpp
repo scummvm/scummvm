@@ -100,6 +100,7 @@ void IMuseDigital::resetState() {
 	_curMusicCue = 0;
 	memset(_attributes, 0, sizeof(_attributes));
 	_nextSeqToPlay = 0;
+	_stopingSequence = false;
 }
 
 void IMuseDigital::saveOrLoad(Serializer *ser) {

@@ -134,6 +134,7 @@ private:
 	int32 _curMusicState;	// current or previous id of music
 	int32 _curMusicSeq;		// current or previous id of sequence music
 	int32 _curMusicCue;		// current cue for current music. used in FT
+	bool _stopingSequence;
 
 	int32 makeMixerFlags(int32 flags);
 	static void timer_handler(void *refConf);
