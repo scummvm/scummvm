@@ -2,8 +2,12 @@
 #
 # dist-module.sh - make release tarballs for one CVS module
 #
-# Largely based on dist-fink.sh, Copyright (c) 2001 Christoph Pfisterer
-# Modified to use Subversion instead of SVN by Max Horn
+# Largely based on dist-fink.sh, Copyright (c) 2001 Christoph Pfisterer.
+# Modified to use Subversion instead of CVS by Max Horn in 2007.
+#
+# ScummVM is the legal property of its developers, whose names
+# are too numerous to list here. Please refer to the COPYRIGHT
+# file distributed with this source distribution.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -19,6 +23,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
+# $URL$
+# $Id$
 
 ### configuration
 
