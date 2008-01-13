@@ -169,6 +169,9 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 
 	fadeOutMusic(120);
 
+	if (!songName)
+		updateMusicFadeTrack(120);
+
 	switch (table->transitionType) {
 		case 0:
 		case 5:
@@ -176,14 +179,17 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 		case 3:
 		case 4:
 			if (table->filename[0] == 0) {
+				updateMusicFadeTrack(60);
 				return;
 			}
 			if (table->transitionType == 4)
 				_stopingSequence = true;
 			if ((!sequence) && (table->attribPos != 0) &&
 					(table->attribPos == _digStateMusicTable[_curMusicState].attribPos)) {
+				updateMusicFadeTrack(108);
 				startMusic(table->filename, table->soundId, 0, 127);
 			} else {
+				updateMusicFadeTrack(108);
 				startMusic(table->filename, table->soundId, hookId, 127);
 			}
 			break;
@@ -287,9 +293,13 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		}
 	}
 
+	fadeOutMusic(120);
+
+	if (!songName)
+		updateMusicFadeTrack(120);
+
 	switch (table->transitionType) {
 		case 0:
-			fadeOutMusic(120);
 			break;
 		case 8:
 			setHookId(table->soundId, table->hookId);
@@ -298,41 +308,32 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 			_stopingSequence = true;
 			setHookId(table->soundId, table->hookId);
 			break;
-		case 1:
-			if (table->filename[0] == 0) {
-				fadeOutMusic(120);
-				return;
-			}
-			fadeOutMusic(120);
-			startMusic(table->filename, table->soundId, 0, 1);
-			setFade(table->soundId, 127, 120);
-			break;
 		case 2:
 			if (table->filename[0] == 0) {
-				fadeOutMusic(60);
+				updateMusicFadeTrack(60);
 				return;
 			}
-			fadeOutMusic(table->fadeOutDelay);
+			updateMusicFadeTrack(table->fadeOutDelay);
 			startMusic(table->filename, table->soundId, table->hookId, 127);
 			break;
 		case 3:
 		case 4:
 		case 12:
 			if (table->filename[0] == 0) {
-				fadeOutMusic(60);
+				updateMusicFadeTrack(60);
 				return;
 			}
 			if (table->transitionType == 4)
 				_stopingSequence = true;
 			if ((!sequence) && (table->attribPos != 0) &&
 					(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
-				fadeOutMusic(120); // expiremental fadeDelay 120 instead from table
+				updateMusicFadeTrack(120); // expiremental fadeDelay 120 instead from table
 				startMusic(table->filename, table->soundId, 0, 127);
 			} else if (table->transitionType == 12) {
-				fadeOutMusic(table->fadeOutDelay);
+				updateMusicFadeTrack(table->fadeOutDelay);
 				startMusic(table->filename, table->soundId, table->hookId, 127);
 			} else {
-				fadeOutMusic(table->fadeOutDelay);
+				updateMusicFadeTrack(table->fadeOutDelay);
 				startMusic(table->filename, table->soundId, hookId, 127);
 			}
 			break;
