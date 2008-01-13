@@ -20,11 +20,11 @@ MODULE_DIRS :=
 -include config.mk
 
 CXXFLAGS:= -Wall $(CXXFLAGS)
-CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas
-# Even more warnings...
+# Turn off some annoying and not-so-useful warnings
+CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder 
+# Enable even more warnings...
 CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wconversion
-CXXFLAGS+= -Wshadow -Wimplicit -Wundef -Wnon-virtual-dtor
-CXXFLAGS+= -Wno-reorder -Wwrite-strings
+CXXFLAGS+= -Wshadow -Wimplicit -Wundef -Wnon-virtual-dtor -Wwrite-strings
 
 # Disable RTTI and exceptions, and enabled checking of pointers returned by "new"
 CXXFLAGS+= -fno-rtti -fno-exceptions -fcheck-new
