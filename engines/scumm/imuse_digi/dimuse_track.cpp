@@ -284,6 +284,7 @@ void IMuseDigital::fadeOutMusicAndStartNew(int fadeDelay, const char *filename, 
 			startMusicWithOtherPos(filename, soundId, 0, 127, track);
 			cloneToFadeOutTrack(track, fadeDelay);
 			flushTrack(track);
+			break;
 		}
 	}
 }
