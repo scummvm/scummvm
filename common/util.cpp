@@ -43,7 +43,7 @@ extern bool isSmartphone(void);
 #endif
 
 #ifdef __DS__
-	#include "ds-fs.h"
+	#include "backends/fs/ds/ds-fs.h"
 
 	#undef stderr
 	#undef stdout
