@@ -328,8 +328,8 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	}
 
 	if (_track[track->trackId + MAX_DIGITAL_TRACKS]->used) {
-		warning("IMuseDigital::cloneToFadeOutTrack: No free fade track, force flush");
-		flushTrack(_track[track->trackId + MAX_DIGITAL_TRACKS]);
+		warning("IMuseDigital::cloneToFadeOutTrack: No free fade track");
+		return NULL;
 	}
 
 	fadeTrack = _track[track->trackId + MAX_DIGITAL_TRACKS];
