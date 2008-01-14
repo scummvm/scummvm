@@ -311,6 +311,7 @@ void IMuseDigital::setHookIdForMusic(int hookId) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			track->curHookId = hookId;
+			break;
 		}
 	}
 }
