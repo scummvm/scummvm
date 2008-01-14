@@ -80,7 +80,7 @@ int IMuseDigital::allocSlot(int priority) {
 	return trackId;
 }
 
-void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority) {
+void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority, Track *otherTrack) {
 	Common::StackLock lock(_mutex, "IMuseDigital::startSound()");
 	debug(5, "IMuseDigital::startSound(%d)", soundId);
 
@@ -152,6 +152,13 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		if (track->sndDataExtComp)
 			track->mixerFlags |= kFlagLittleEndian;
 #endif
+
+		if (otherTrack && otherTrack->used && !otherTrack->toBeRemoved) {
+			track->curRegion = otherTrack->curRegion;
+			track->regionOffset = otherTrack->regionOffset;
+			track->dataOffset = otherTrack->dataOffset;
+			track->dataMod12Bit = otherTrack->dataMod12Bit;
+		}
 
 		track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
 		_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan());
@@ -267,6 +274,20 @@ void IMuseDigital::setFade(int soundId, int destVolume, int delay60HzTicks) {
 	}
 }
 
+void IMuseDigital::fadeOutMusicAndStartNew(int fadeDelay, const char *filename, int soundId) {
+	Common::StackLock lock(_mutex, "IMuseDigital::fadeOutMusicAndStartNew()");
+	debug(5, "IMuseDigital::fadeOutMusicAndStartNew");
+
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+			startMusicWithOtherPos(filename, soundId, 0, 127, track);
+			cloneToFadeOutTrack(track, fadeDelay);
+			flushTrack(track);
+		}
+	}
+}
+
 void IMuseDigital::fadeOutMusic(int fadeDelay) {
 	Common::StackLock lock(_mutex, "IMuseDigital::fadeOutMusic()");
 	debug(5, "IMuseDigital::fadeOutMusic");
@@ -276,6 +297,7 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			cloneToFadeOutTrack(track, fadeDelay);
 			flushTrack(track);
+			break;
 		}
 	}
 }

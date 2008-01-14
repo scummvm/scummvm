@@ -141,7 +141,7 @@ private:
 	void callback();
 	void switchToNextRegion(Track *track);
 	int allocSlot(int priority);
-	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority);
+	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority, Track *otherTrack);
 	void selectVolumeGroup(int soundId, int volGroupId);
 
 	int32 getPosInMs(int soundId);
@@ -149,6 +149,7 @@ private:
 
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
+	void fadeOutMusicAndStartNew(int fadeDelay, const char *filename, int soundId);
 	void setHookIdForMusic(int hookId);
 	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
 
@@ -177,6 +178,7 @@ public:
 	void startVoice(int soundId, const char *soundName);
 	void startMusic(int soundId, int volume);
 	void startMusic(const char *soundName, int soundId, int hookId, int volume);
+	void startMusicWithOtherPos(const char *soundName, int soundId, int hookId, int volume, Track *otherTrack);
 	void startSfx(int soundId, int priority);
 	void startSound(int sound)
 		{ error("IMuseDigital::startSound(int) should be never called"); }
