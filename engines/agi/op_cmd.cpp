@@ -1222,6 +1222,37 @@ cmd(distance) {
 	} else {
 		d = 0xff;
 	}
+
+	// WORKAROUND: Fixes King's Quest IV's script bug #1660424 (KQ4: Zombie bug).
+	// In the graveyard (Room 16) at night if you had the Obsidian Scarab (Item 4)
+	// and you were very close to a spot where a zombie was going to rise up from the
+	// ground you could reproduce the bug. Just standing there and letting the zombie
+	// try to rise up the Obsidian Scarab would repel the zombie immediately and that
+	// would make the script bug so that the zombie would still come up but it just
+	// wouldn't chase Rosella around anymore. If it had worked correctly the zombie
+	// wouldn't have come up at all or it would have come up and gone back down
+	// immediately. The latter approach is the one implemented here.
+	if (g_agi->getGameID() == GID_KQ4 && _v[vCurRoom] == 16 && p2 >= 221 && p2 <= 223) {
+		// Room 16 is a graveyard where three zombies come up at night. It uses logic 16.
+		// Variables 221-223 are used to save the distance between each zombie and Rosella.
+		// Variables 155, 156 and 162 are used to save the state of each zombie.
+		// Rosella gets turned to a zombie only if any of the zombies is under 10 units away
+		// from her and she doesn't have the Obsidian Scarab (Item 4). Likewise Rosella makes
+		// a zombie go back into the ground if the zombie comes under 15 units away from her
+		// and she has the Obsidian Scarab. To ensure a zombie always first rises up before
+		// checking for either of the aforementioned conditions (Rosella getting turned to
+		// a zombie or the zombie getting turned away by the scarab) we make it appear the
+		// zombie is far away from Rosella if the zombie is not already up and chasing her.
+		enum zombieStates {ZOMBIE_SET_TO_RISE_UP, ZOMBIE_RISING_UP, ZOMBIE_CHASING_EGO};
+		static const uint8 zombieStateVarNumList[] = {155, 156, 162};
+		uint8 zombieNum         = p2 - 221;                         // Zombie's number (In range 0-2)
+		uint8 zombieStateVarNum = zombieStateVarNumList[zombieNum]; // Number of the variable containing zombie's state
+		uint8 zombieState       = _v[zombieStateVarNum];            // Zombie's state
+		// If zombie is not chasing Rosella then set its distance from Rosella to the maximum
+		if (zombieState != ZOMBIE_CHASING_EGO)
+			d = 0xff;
+	}
+
 	_v[p2] = (unsigned char)d;
 }
 
