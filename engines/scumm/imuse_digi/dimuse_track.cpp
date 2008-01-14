@@ -318,7 +318,7 @@ void IMuseDigital::setHookIdForMusic(int hookId) {
 
 IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	assert(track);
-	Track *fadeTrack = 0;
+	Track *fadeTrack;
 
 	debug(0, "IMuseDigital::cloneToFadeOutTrack(%d, %d)", track->trackId, fadeDelay);
 	
@@ -327,21 +327,23 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 		return NULL;
 	}
 
-	if (_track[track->trackId + MAX_DIGITAL_TRACKS]->used) {
-		warning("IMuseDigital::cloneToFadeOutTrack: No free fade track");
-		return NULL;
-	}
-
+	ImuseDigiSndMgr::SoundDesc *soundDesc = _sound->cloneSound(track->soundDesc);
+	assert(soundDesc);
 	fadeTrack = _track[track->trackId + MAX_DIGITAL_TRACKS];
+
+	if (fadeTrack->used) {
+		warning("IMuseDigital::cloneToFadeOutTrack: No free fade track, force flush");
+		flushTrack(fadeTrack);
+		_mixer->stopHandle(fadeTrack->mixChanHandle);
+	}
 
 	// Clone the settings of the given track
 	memcpy(fadeTrack, track, sizeof(Track));
+	fadeTrack->trackId = track->trackId + MAX_DIGITAL_TRACKS;
 
-	// Clone the sound. We use the original sound in the fadeTrack,
-	// and the cloned sound in the original track. This fixes bug #1635361.
-	assert(fadeTrack->soundDesc);
-	track->soundDesc = _sound->cloneSound(fadeTrack->soundDesc);
-	assert(track->soundDesc);
+	// Clone the sound.
+	// leaving bug number for now #1635361
+	fadeTrack->soundDesc = soundDesc;
 
 	// Set the volume fading parameters to indicate a fade out
 	fadeTrack->volFadeDelay = fadeDelay;
