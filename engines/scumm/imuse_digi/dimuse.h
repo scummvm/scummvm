@@ -149,6 +149,7 @@ private:
 
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
+	void setHookIdForMusic(int hookId);
 	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
 
 	void setFtMusicState(int stateId);

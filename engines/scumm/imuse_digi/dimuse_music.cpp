@@ -298,11 +298,11 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 	case 0:
 		break;
 	case 8:
-		setHookId(table->soundId, table->hookId);
+		setHookIdForMusic(table->hookId);
 		break;
 	case 9:
 		_stopingSequence = true;
-		setHookId(table->soundId, table->hookId);
+		setHookIdForMusic(table->hookId);
 		break;
 	case 2:
 		if (table->filename[0] == 0) {

@@ -280,6 +280,18 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 	}
 }
 
+void IMuseDigital::setHookIdForMusic(int hookId) {
+	Common::StackLock lock(_mutex, "IMuseDigital::setHookIdForMusic()");
+	debug(5, "IMuseDigital::setHookIdForMusic");
+
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+			track->curHookId = hookId;
+		}
+	}
+}
+
 IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	assert(track);
 	Track *fadeTrack = 0;
