@@ -575,7 +575,7 @@ bool ImuseDigiSndMgr::checkForTriggerByRegionAndMarker(SoundDesc *soundDesc, int
 	int32 offset = soundDesc->region[region].offset;
 	for (int l = 0; l < soundDesc->numMarkers; l++) {
 		if (offset == soundDesc->marker[l].pos) {
-			if (!stricmp(soundDesc->marker[l].ptr, marker))
+			if (!scumm_stricmp(soundDesc->marker[l].ptr, marker))
 				return true;
 		}
 	}
