@@ -116,18 +116,26 @@ public:
 	int lookupAndCreateIfMissing(const Key &key);
 	void expand_array(uint newsize);
 
-	template <class NodeType>
+	/**
+	 * Simple HashMap iterator implementation.
+	 */
 	class Iterator {
-		typedef const HashMap<Key, Val, HashFunc, EqualFunc> *hashmap_t;
-		friend class HashMap<Key, Val, HashFunc, EqualFunc>;
-		uint _idx;
-		hashmap_t _hashmap;
 	protected:
-		Iterator(uint idx, hashmap_t hashmap) : _idx(idx), _hashmap(hashmap) {}
+		typedef const HashMap hashmap_t;
+		friend class HashMap;
 
-		NodeType *deref() const {
+		// Allow ConstIterator to read member vars, so that Iterators can be converted to ConstIterator
+		friend class HashMap::ConstIterator;
+
+		uint _idx;
+		hashmap_t *_hashmap;
+
+	protected:
+		Iterator(uint idx, hashmap_t *hashmap) : _idx(idx), _hashmap(hashmap) {}
+
+		Node *deref() const {
 			assert(_hashmap != 0);
-			NodeType *node = _hashmap->_arr[_idx];
+			Node *node = _hashmap->_arr[_idx];
 			assert(node != 0);
 			return node;
 		}
@@ -135,12 +143,8 @@ public:
 	public:
 		Iterator() : _idx(0), _hashmap(0) {}
 
-		// HACK: to allow non const/const begin, end and find to work.
-		friend class Iterator<const NodeType>;
-		Iterator(const Iterator<Node> &iter) : _idx(iter._idx), _hashmap(iter._hashmap) {}
-
-		NodeType &operator *() const { return *deref(); }
-		NodeType *operator->() const { return deref(); }
+		Node &operator *() const { return *deref(); }
+		Node *operator->() const { return deref(); }
 
 		bool operator ==(const Iterator &iter) const { return _idx == iter._idx && _hashmap == iter._hashmap; }
 		bool operator !=(const Iterator &iter) const { return !(*this == iter); }
@@ -163,9 +167,68 @@ public:
 		}
 	};
 
+	/**
+	 * Simple HashMap const iterator implementation.
+	 * This is almost completely identical to the normal iterator class, only
+	 * with some const keywords added here and there, plus a conversion
+	 * operator which makes it possible to transparently convert iterators to
+	 * const iterators. 
+	 * It is sadly not really possible to reduce this code duplication using
+	 * template, unless one is willing to accept various warnings on certain
+	 * compilers. Note that many (most? all?) implementations of the standard
+	 * C++ library use a similar approach for their implementations.
+	 */
+	class ConstIterator {
+	protected:
+		typedef const HashMap hashmap_t;
+		friend class HashMap;
+
+		uint _idx;
+		hashmap_t *_hashmap;
+
+	protected:
+		ConstIterator(uint idx, hashmap_t *hashmap) : _idx(idx), _hashmap(hashmap) {}
+
+		const Node *deref() const {
+			assert(_hashmap != 0);
+			const Node *node = _hashmap->_arr[_idx];
+			assert(node != 0);
+			return node;
+		}
+
+	public:
+		ConstIterator() : _idx(0), _hashmap(0) {}
+
+		// Converting a non-const iterator to a const one is allowed
+		ConstIterator(const Iterator &iter) : _idx(iter._idx), _hashmap(iter._hashmap) {}
+
+		const Node &operator *() const { return *deref(); }
+		const Node *operator->() const { return deref(); }
+
+		bool operator ==(const ConstIterator &iter) const { return _idx == iter._idx && _hashmap == iter._hashmap; }
+		bool operator !=(const ConstIterator &iter) const { return !(*this == iter); }
+
+		ConstIterator &operator ++() {
+			assert(_hashmap);
+			do {
+				_idx++;
+			} while (_idx < _hashmap->_arrsize && _hashmap->_arr[_idx] == 0);
+			if (_idx >= _hashmap->_arrsize)
+				_idx = (uint)-1;
+
+			return *this;
+		}
+
+		ConstIterator operator ++(int) {
+			ConstIterator old = *this;
+			operator ++();
+			return old;
+		}
+	};
+
 public:
-	typedef Iterator<Node> iterator;
-	typedef Iterator<const Node> const_iterator;
+	typedef Iterator iterator;
+	typedef ConstIterator const_iterator;
 
 	HashMap();
 	HashMap(const HM_t& map);
