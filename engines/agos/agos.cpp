@@ -711,6 +711,8 @@ void AGOSEngine_Feeble::setupGame() {
 	_numTextBoxes = 40;
 	_numVars = 255;
 
+	_numSpeech = 10000;
+
 	AGOSEngine::setupGame();
 }
 
