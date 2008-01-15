@@ -155,9 +155,15 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 
 		if (otherTrack && otherTrack->used && !otherTrack->toBeRemoved) {
 			track->curRegion = otherTrack->curRegion;
-			track->regionOffset = otherTrack->regionOffset;
-			track->dataOffset = otherTrack->dataOffset;
-			track->dataMod12Bit = otherTrack->dataMod12Bit;
+			if (track->sndDataExtComp) {
+				track->dataOffset = _sound->getRegionOffset(track->soundDesc, track->curRegion);
+				track->regionOffset = 0;
+				track->dataMod12Bit = 0;
+			} else {
+				track->dataOffset = otherTrack->dataOffset;
+				track->regionOffset = otherTrack->regionOffset;
+				track->dataMod12Bit = otherTrack->dataMod12Bit;
+			}
 		}
 
 		track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
@@ -282,7 +288,7 @@ void IMuseDigital::fadeOutMusicAndStartNew(int fadeDelay, const char *filename, 
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			startMusicWithOtherPos(filename, soundId, 0, 127, track);
-			cloneToFadeOutTrack(track, fadeDelay);
+			Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 			flushTrack(track);
 			break;
 		}
@@ -296,7 +302,7 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
-			cloneToFadeOutTrack(track, fadeDelay);
+			Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 			flushTrack(track);
 			break;
 		}
@@ -342,7 +348,7 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	fadeTrack->trackId = track->trackId + MAX_DIGITAL_TRACKS;
 
 	// Clone the sound.
-	// leaving bug number for now #1635361
+	// leaving bug number for now #1635361, we need implement seek in compressed stream
 	fadeTrack->soundDesc = soundDesc;
 
 	// Set the volume fading parameters to indicate a fade out
