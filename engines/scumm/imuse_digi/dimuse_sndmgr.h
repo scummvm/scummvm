@@ -65,6 +65,12 @@ private:
 		byte *ptr;			// pointer to sync
 	};
 
+	struct Marker {
+		int32 pos;			// position Markaer in sound data
+		int32 length;		// length of marker string
+		char *ptr;			// pointer to string
+	};
+
 public:
 
 	struct SoundDesc {
@@ -80,6 +86,9 @@ public:
 
 		int numSyncs;		// number of Syncs
 		Sync *sync;
+
+		int numMarkers;		// number of Markers
+		Marker *marker;
 
 		bool endFlag;
 		bool inUse;
@@ -113,7 +122,7 @@ private:
 	bool openMusicBundle(SoundDesc *sound, int &disk);
 	bool openVoiceBundle(SoundDesc *sound, int &disk);
 
-	void countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs);
+	void countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs, int &numMarkers);
 
 public:
 

@@ -58,17 +58,21 @@ ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 	delete _cacheBundleDir;
 }
 
-void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs) {
+void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs, int &numMarkers) {
 	uint32 tag;
 	int32 size = 0;
 
 	do {
 		tag = READ_BE_UINT32(ptr); ptr += 4;
 		switch (tag) {
-		case MKID_BE('TEXT'):
 		case MKID_BE('STOP'):
 		case MKID_BE('FRMT'):
 		case MKID_BE('DATA'):
+			size = READ_BE_UINT32(ptr); ptr += size + 4;
+			break;
+		case MKID_BE('TEXT'):
+			if (!scumm_stricmp((const char *)(ptr + 8), "exit"))
+				numMarkers++;
 			size = READ_BE_UINT32(ptr); ptr += size + 4;
 			break;
 		case MKID_BE('REGN'):
@@ -96,8 +100,8 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound,
 	uint32 tag = file->readUint32BE();
 	assert(tag == MKID_BE('RMAP'));
 	int32 version = file->readUint32BE();
-	if (version != 2) {
-		error("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version number, expected 2, but it's: %d.", version);
+	if (version != 3) {
+		error("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version number, expected 3, but it's: %d.", version);
 	}
 	sound->bits = file->readUint32BE();
 	sound->freq = file->readUint32BE();
@@ -105,12 +109,16 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound,
 	sound->numRegions = file->readUint32BE();
 	sound->numJumps = file->readUint32BE();
 	sound->numSyncs = file->readUint32BE();
+	sound->numMarkers = file->readUint32BE();
 	sound->region = new Region[sound->numRegions];
 	assert(sound->region);
 	sound->jump = new Jump[sound->numJumps];
 	assert(sound->jump);
 	sound->sync = new Sync[sound->numSyncs];
 	assert(sound->sync);
+	sound->marker = new Marker[sound->numMarkers];
+	assert(sound->marker);
+
 	for (l = 0; l < sound->numRegions; l++) {
 		sound->region[l].offset = file->readUint32BE();
 		sound->region[l].length = file->readUint32BE();
@@ -125,6 +133,12 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound,
 		sound->sync[l].size = file->readUint32BE();
 		sound->sync[l].ptr = (byte *)malloc(sound->sync[l].size);
 		file->read(sound->sync[l].ptr, sound->sync[l].size);
+	}
+	for (l = 0; l < sound->numMarkers; l++) {
+		sound->marker[l].pos = file->readUint32BE();
+		sound->marker[l].length = file->readUint32BE();
+		sound->marker[l].ptr = new char[sound->marker[l].length];
+		file->read(sound->marker[l].ptr, sound->marker[l].length);
 	}
 }
 
@@ -207,17 +221,21 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 		int curIndexRegion = 0;
 		int curIndexJump = 0;
 		int curIndexSync = 0;
+		int curIndexMarker = 0;
 
 		sound->numRegions = 0;
 		sound->numJumps = 0;
 		sound->numSyncs = 0;
-		countElements(ptr, sound->numRegions, sound->numJumps, sound->numSyncs);
+		sound->numMarkers = 0;
+		countElements(ptr, sound->numRegions, sound->numJumps, sound->numSyncs, sound->numMarkers);
 		sound->region = new Region[sound->numRegions];
 		assert(sound->region);
 		sound->jump = new Jump[sound->numJumps];
 		assert(sound->jump);
 		sound->sync = new Sync[sound->numSyncs];
 		assert(sound->sync);
+		sound->marker = new Marker[sound->numMarkers];
+		assert(sound->marker);
 
 		do {
 			tag = READ_BE_UINT32(ptr); ptr += 4;
@@ -229,6 +247,15 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 				sound->channels = READ_BE_UINT32(ptr); ptr += 4;
 				break;
 			case MKID_BE('TEXT'):
+				if (!scumm_stricmp((const char *)(ptr + 8), "exit")) {
+					sound->marker[curIndexRegion].pos = READ_BE_UINT32(ptr + 4);
+					sound->marker[curIndexRegion].length = strlen((const char *)(ptr + 8)) + 1;
+					sound->marker[curIndexRegion].ptr = new char[sound->marker[curIndexRegion].length];
+					strcpy(sound->marker[curIndexRegion].ptr, (const char *)(ptr + 8));
+					curIndexMarker++;
+				}
+				size = READ_BE_UINT32(ptr); ptr += size + 4;
+				break;
 			case MKID_BE('STOP'):
 				size = READ_BE_UINT32(ptr); ptr += size + 4;
 				break;
@@ -451,6 +478,7 @@ void ImuseDigiSndMgr::closeSound(SoundDesc *soundDesc) {
 	delete[] soundDesc->region;
 	delete[] soundDesc->jump;
 	delete[] soundDesc->sync;
+	delete[] soundDesc->marker;
 	memset(soundDesc, 0, sizeof(SoundDesc));
 }
 
