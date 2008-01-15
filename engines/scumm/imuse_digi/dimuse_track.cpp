@@ -333,8 +333,6 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 		return NULL;
 	}
 
-	ImuseDigiSndMgr::SoundDesc *soundDesc = _sound->cloneSound(track->soundDesc);
-	assert(soundDesc);
 	fadeTrack = _track[track->trackId + MAX_DIGITAL_TRACKS];
 
 	if (fadeTrack->used) {
@@ -348,8 +346,8 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 	fadeTrack->trackId = track->trackId + MAX_DIGITAL_TRACKS;
 
 	// Clone the sound.
-	// leaving bug number for now #1635361, we need implement seek in compressed stream
-	fadeTrack->soundDesc = soundDesc;
+	// leaving bug number for now #1635361
+	track->soundDesc = _sound->cloneSound(track->soundDesc);
 
 	// Set the volume fading parameters to indicate a fade out
 	fadeTrack->volFadeDelay = fadeDelay;
