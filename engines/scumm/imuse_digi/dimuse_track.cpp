@@ -288,7 +288,7 @@ void IMuseDigital::fadeOutMusicAndStartNew(int fadeDelay, const char *filename, 
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			startMusicWithOtherPos(filename, soundId, 0, 127, track);
-			Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
+			cloneToFadeOutTrack(track, fadeDelay);
 			flushTrack(track);
 			break;
 		}
@@ -302,7 +302,7 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
-			Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
+			cloneToFadeOutTrack(track, fadeDelay);
 			flushTrack(track);
 			break;
 		}
