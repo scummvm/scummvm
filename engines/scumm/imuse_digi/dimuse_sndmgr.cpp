@@ -461,7 +461,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 	sound->disk = _disk;
 	prepareSound(ptr, sound);
 	if ((soundType == IMUSE_BUNDLE) && !sound->compressed) {
-		free(ptr);
+		delete[] ptr;
 	}
 	return sound;
 }

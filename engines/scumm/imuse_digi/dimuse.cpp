@@ -302,7 +302,7 @@ void IMuseDigital::callback() {
 						int tmpFeedSize = _sound->getDataFromRegion(track->soundDesc, track->curRegion, &tmpPtr, tmpOffset, tmpFeedSize12Bits);
 						curFeedSize = BundleCodecs::decode12BitsSample(tmpPtr, &tmpSndBufferPtr, tmpFeedSize);
 
-						free(tmpPtr);
+						delete[] tmpPtr;
 					} else if (bits == 16) {
 						curFeedSize = _sound->getDataFromRegion(track->soundDesc, track->curRegion, &tmpSndBufferPtr, track->regionOffset, feedSize);
 						if (channels == 1) {
