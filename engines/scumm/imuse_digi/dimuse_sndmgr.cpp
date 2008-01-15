@@ -101,7 +101,10 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound,
 	assert(tag == MKID_BE('RMAP'));
 	int32 version = file->readUint32BE();
 	if (version != 3) {
-		error("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version number, expected 3, but it's: %d.", version);
+		if (version == 2)
+			warning("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version number, expected 3, but it's 2. Recompress data with latest tool.");
+		else
+			error("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version number, expected 3, but it's: %d.", version);
 	}
 	sound->bits = file->readUint32BE();
 	sound->freq = file->readUint32BE();
@@ -109,7 +112,11 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound,
 	sound->numRegions = file->readUint32BE();
 	sound->numJumps = file->readUint32BE();
 	sound->numSyncs = file->readUint32BE();
-	sound->numMarkers = file->readUint32BE();
+	if (version >= 3)
+		sound->numMarkers = file->readUint32BE();
+	else
+		sound->numMarkers = 0;
+
 	sound->region = new Region[sound->numRegions];
 	assert(sound->region);
 	sound->jump = new Jump[sound->numJumps];
@@ -134,11 +141,13 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound,
 		sound->sync[l].ptr = (byte *)malloc(sound->sync[l].size);
 		file->read(sound->sync[l].ptr, sound->sync[l].size);
 	}
-	for (l = 0; l < sound->numMarkers; l++) {
-		sound->marker[l].pos = file->readUint32BE();
-		sound->marker[l].length = file->readUint32BE();
-		sound->marker[l].ptr = new char[sound->marker[l].length];
-		file->read(sound->marker[l].ptr, sound->marker[l].length);
+	if (version >= 3) {
+		for (l = 0; l < sound->numMarkers; l++) {
+			sound->marker[l].pos = file->readUint32BE();
+			sound->marker[l].length = file->readUint32BE();
+			sound->marker[l].ptr = new char[sound->marker[l].length];
+			file->read(sound->marker[l].ptr, sound->marker[l].length);
+		}
 	}
 }
 
@@ -475,10 +484,11 @@ void ImuseDigiSndMgr::closeSound(SoundDesc *soundDesc) {
 
 	for (int r = 0; r < soundDesc->numSyncs; r++)
 		free(soundDesc->sync[r].ptr);
+	for (int r = 0; r < soundDesc->numSyncs; r++)
+		delete[] soundDesc->marker[r].ptr;
 	delete[] soundDesc->region;
 	delete[] soundDesc->jump;
 	delete[] soundDesc->sync;
-	delete[] soundDesc->marker->ptr;
 	delete[] soundDesc->marker;
 	memset(soundDesc, 0, sizeof(SoundDesc));
 }
