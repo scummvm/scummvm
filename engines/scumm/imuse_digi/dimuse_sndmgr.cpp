@@ -478,6 +478,7 @@ void ImuseDigiSndMgr::closeSound(SoundDesc *soundDesc) {
 	delete[] soundDesc->region;
 	delete[] soundDesc->jump;
 	delete[] soundDesc->sync;
+	delete[] soundDesc->marker->ptr;
 	delete[] soundDesc->marker;
 	memset(soundDesc, 0, sizeof(SoundDesc));
 }
