@@ -257,10 +257,10 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 				break;
 			case MKID_BE('TEXT'):
 				if (!scumm_stricmp((const char *)(ptr + 8), "exit")) {
-					sound->marker[curIndexRegion].pos = READ_BE_UINT32(ptr + 4);
-					sound->marker[curIndexRegion].length = strlen((const char *)(ptr + 8)) + 1;
-					sound->marker[curIndexRegion].ptr = new char[sound->marker[curIndexRegion].length];
-					strcpy(sound->marker[curIndexRegion].ptr, (const char *)(ptr + 8));
+					sound->marker[curIndexMarker].pos = READ_BE_UINT32(ptr + 4);
+					sound->marker[curIndexMarker].length = strlen((const char *)(ptr + 8)) + 1;
+					sound->marker[curIndexMarker].ptr = new char[sound->marker[curIndexMarker].length];
+					strcpy(sound->marker[curIndexMarker].ptr, (const char *)(ptr + 8));
 					curIndexMarker++;
 				}
 				size = READ_BE_UINT32(ptr); ptr += size + 4;
