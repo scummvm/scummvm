@@ -367,7 +367,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 	ImuseDigiSndMgr::SoundDesc *soundDesc = track->soundDesc;
 	if (_triggerUsed && track->soundDesc->numMarkers) {
 		if (_sound->checkForTriggerByRegionAndMarker(soundDesc, track->curRegion, _triggerParams.marker)) {
-			debug(5, "trigger %s reached, switchToNextRegion(track:%d)", track->trackId, _triggerParams.marker);
+			debug(5, "trigger %s reached, switchToNextRegion(track:%d)", _triggerParams.marker, track->trackId);
 			debug(5, "exit current region, switchToNextRegion(track:%d)", track->trackId);
 			Track *fadeTrack = cloneToFadeOutTrack(track, _triggerParams.fadeOutDelay);
 			if (fadeTrack) {
