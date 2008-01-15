@@ -484,7 +484,7 @@ void ImuseDigiSndMgr::closeSound(SoundDesc *soundDesc) {
 
 	for (int r = 0; r < soundDesc->numSyncs; r++)
 		free(soundDesc->sync[r].ptr);
-	for (int r = 0; r < soundDesc->numSyncs; r++)
+	for (int r = 0; r < soundDesc->numMarkers; r++)
 		delete[] soundDesc->marker[r].ptr;
 	delete[] soundDesc->region;
 	delete[] soundDesc->jump;
