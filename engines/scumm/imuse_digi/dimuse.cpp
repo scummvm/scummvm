@@ -101,6 +101,7 @@ void IMuseDigital::resetState() {
 	memset(_attributes, 0, sizeof(_attributes));
 	_nextSeqToPlay = 0;
 	_stopingSequence = false;
+	_triggerUsed = false;
 }
 
 void IMuseDigital::saveOrLoad(Serializer *ser) {
@@ -364,6 +365,24 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 	}
 
 	ImuseDigiSndMgr::SoundDesc *soundDesc = track->soundDesc;
+	if (_triggerUsed && track->soundDesc->numMarkers) {
+		if (_sound->checkForTriggerByRegionAndMarker(soundDesc, track->curRegion, _triggerParams.marker)) {
+			debug(5, "trigger %s reached, switchToNextRegion(track:%d)", track->trackId, _triggerParams.marker);
+			debug(5, "exit current region, switchToNextRegion(track:%d)", track->trackId);
+			Track *fadeTrack = cloneToFadeOutTrack(track, _triggerParams.fadeOutDelay);
+			if (fadeTrack) {
+				fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
+				fadeTrack->regionOffset = 0;
+				debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+				fadeTrack->curHookId = 0;
+			}
+			flushTrack(track);
+			startMusic(_triggerParams.filename, _triggerParams.soundId, _triggerParams.hookId, _triggerParams.volume);
+			_triggerUsed = false;
+			return;
+		}
+	}
+
 	int jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, track->curHookId);
 	if (jumpId == -1)
 		jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, 0);

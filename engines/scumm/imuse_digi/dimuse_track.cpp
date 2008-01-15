@@ -322,6 +322,14 @@ void IMuseDigital::setHookIdForMusic(int hookId) {
 	}
 }
 
+void IMuseDigital::setTrigger(TriggerParams *trigger) {
+	Common::StackLock lock(_mutex, "IMuseDigital::setTrigger()");
+	debug(5, "IMuseDigital::setTrigger");
+
+	memcpy(&_triggerParams, trigger, sizeof(TriggerParams));
+	_triggerUsed = true;
+}
+
 IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	assert(track);
 	Track *fadeTrack;

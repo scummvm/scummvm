@@ -142,6 +142,7 @@ public:
 	int getNumJumps(SoundDesc *soundDesc);
 	int getRegionOffset(SoundDesc *soundDesc, int region);
 	int getJumpIdByRegionAndHookId(SoundDesc *soundDesc, int region, int hookId);
+	bool checkForTriggerByRegionAndMarker(SoundDesc *soundDesc, int region, const char *marker);
 	int getRegionIdByJumpId(SoundDesc *soundDesc, int jumpId);
 	int getJumpHookId(SoundDesc *soundDesc, int number);
 	int getJumpFade(SoundDesc *soundDesc, int number);

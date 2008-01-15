@@ -117,6 +117,16 @@ private:
 		}
 	};
 
+	struct TriggerParams {
+		char marker[10];
+		int fadeOutDelay;
+		char filename[13];
+		int soundId;
+		int hookId;
+		int volume;
+	} _triggerParams;
+	bool _triggerUsed;
+
 	Track *_track[MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS];
 
 	Common::Mutex _mutex;
@@ -150,6 +160,7 @@ private:
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
 	void fadeOutMusicAndStartNew(int fadeDelay, const char *filename, int soundId);
+	void setTrigger(TriggerParams *trigger);
 	void setHookIdForMusic(int hookId);
 	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
 

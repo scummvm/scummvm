@@ -328,8 +328,11 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 				(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
 			fadeOutMusicAndStartNew(table->fadeOutDelay, table->filename, table->soundId);
 		} else if (table->transitionType == 12) {
-			fadeOutMusic(table->fadeOutDelay);
-			startMusic(table->filename, table->soundId, table->hookId, 127);
+			TriggerParams trigger;
+			strcpy(trigger.marker, "exit"); trigger.fadeOutDelay = table->fadeOutDelay;
+			strcpy(trigger.filename, table->filename); trigger.soundId = table->soundId;
+			trigger.hookId = table->hookId; trigger.volume = 127;
+			setTrigger(&trigger);
 		} else {
 			fadeOutMusic(table->fadeOutDelay);
 			startMusic(table->filename, table->soundId, hookId, 127);

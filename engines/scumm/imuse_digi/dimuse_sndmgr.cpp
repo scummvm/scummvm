@@ -567,6 +567,22 @@ int ImuseDigiSndMgr::getJumpIdByRegionAndHookId(SoundDesc *soundDesc, int region
 	return -1;
 }
 
+bool ImuseDigiSndMgr::checkForTriggerByRegionAndMarker(SoundDesc *soundDesc, int region, const char *marker) {
+	debug(5, "checkForTriggerByRegionAndMarker() region:%d, marker:%s", region, marker);
+	assert(checkForProperHandle(soundDesc));
+	assert(region >= 0 && region < soundDesc->numRegions);
+	assert(marker);
+	int32 offset = soundDesc->region[region].offset;
+	for (int l = 0; l < soundDesc->numMarkers; l++) {
+		if (offset == soundDesc->marker[l].pos) {
+			if (!stricmp(soundDesc->marker[l].ptr, marker))
+				return true;
+		}
+	}
+
+	return false;
+}
+
 void ImuseDigiSndMgr::getSyncSizeAndPtrById(SoundDesc *soundDesc, int number, int32 &sync_size, byte **sync_ptr) {
 	assert(checkForProperHandle(soundDesc));
 	assert(number >= 0);
