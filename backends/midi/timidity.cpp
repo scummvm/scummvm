@@ -53,6 +53,11 @@
 #include <stdlib.h>
 #include <errno.h>
 
+// WORKAROUND bug #1870304: Solaris does not provide INADDR_NONE.
+#ifndef INADDR_NONE
+#define INADDR_NONE 0xffffffff
+#endif
+
 #define SEQ_MIDIPUTC 5
 
 #define TIMIDITY_LOW_DELAY
