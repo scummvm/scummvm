@@ -526,6 +526,7 @@ void Codec47Decoder::decode2(byte *dst, const byte *src, int width, int height, 
 #endif
 
 Codec47Decoder::Codec47Decoder(int width, int height) {
+	_lastTableWidth = -1;
 	_width = width;
 	_height = height;
 	_tableBig = (byte *)malloc(256 * 388);
