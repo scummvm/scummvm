@@ -462,6 +462,8 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 	for (int tableNum = 0; tableNum < 4; ++tableNum) {
 		uint16 hotspotIndex = 0;
 		for (;;) {
+			uint16 currentHotspotId = startId[tableNum] + hotspotIndex;
+
 			lureExe.seek(dataSegment + offsets[tableNum] +  hotspotIndex * 9);
 			lureExe.read(&entryHeader, sizeof(HotspotHeaderEntry));
 			if (FROM_LE_16(entryHeader.offset) == 0xffff) break;
@@ -548,18 +550,20 @@ printf("%xh,\n",
 					r->tickProcId = TO_LE_16(procIndex + 1);
 			}
 
-			// Special check for the tinderbox hotspot to set it's room number correctly - the original 
+			// WORKAROUND: Special check for the tinderbox hotspot to set it's room number correctly - the original 
 			// game used this as a backup against people trying to hack the copy protection
-			if (startId[tableNum] + hotspotIndex == 0x271C)
+			if (currentHotspotId == 0x271C)
 				r->roomNumber = TO_LE_16(28);
-if (startId[tableNum] + hotspotIndex == 0x46b) r->tickProcId = 1;
+
+			// WORKAROUND: Sets a null handler for a hotspot that has an invalid tick proc offset
+			if (currentHotspotId == 0x46b) r->tickProcId = 1;
 
 			// Find the walk-to coordinates for the hotspot
 			uint16 findId = FROM_LE_16(r->hotspotId);
 			walkCtr = 0;
 			while (walkCtr < walkNumEntries) {
 				uint16 id = FROM_LE_16(walkList[walkCtr].hotspotId);
-				if ((id == findId) || ((findId == 1007) && (id == 0xffff)))
+				if (id == findId)
 					break;
 				++walkCtr;
 			}
@@ -570,7 +574,13 @@ if (startId[tableNum] + hotspotIndex == 0x46b) r->tickProcId = 1;
 			} else {
 				r->walkX = TO_LE_16(FROM_LE_16(walkList[walkCtr].x) - 0x80);
 				uint16 y = FROM_LE_16(walkList[walkCtr].y);
-				r->walkY = TO_LE_16((y & 0x8000) | (uint16) ((int16) (y & 0x7fff) - 0x80));
+
+				// WORKAROUND: Edwina's walk-to position is actually inside the table, which meant that walking over
+				// to her could fail, depending on your start position. This increments it into the clear
+				int tempY = (int16) (y & 0x7fff) - 0x80;
+				if (currentHotspotId == 0x442) 
+					tempY += 8;
+				r->walkY = TO_LE_16((y & 0x8000) | (uint16) tempY);
 			}
 
 			// Use the offset of the animation data as a dummy Id for the data
