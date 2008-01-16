@@ -654,6 +654,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 		*buf = new byte[size];
 		assert(*buf);
 		char fileName[24];
+		int offsetMs = ((offset * 8 * 1000) / soundDesc->bits) / (soundDesc->channels * soundDesc->freq);
 		sprintf(fileName, "%s_reg%03d", soundDesc->name, region);
 		if (scumm_stricmp(fileName, soundDesc->lastFileName) != 0) {
 			int32 offs = 0, len = 0;
@@ -695,25 +696,26 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 				assert(tmp);
 #ifdef USE_FLAC
 				if (soundMode == 3)
-					soundDesc->compressedStream = Audio::makeFlacStream(tmp, true);
+					soundDesc->compressedStream = Audio::makeFlacStream(tmp, true, offsetMs);
 #endif
 #ifdef USE_VORBIS
 				if (soundMode == 2)
-					soundDesc->compressedStream = Audio::makeVorbisStream(tmp, true);
+					soundDesc->compressedStream = Audio::makeVorbisStream(tmp, true, offsetMs);
 #endif
 #ifdef USE_MAD
 				if (soundMode == 1)
-					soundDesc->compressedStream = Audio::makeMP3Stream(tmp, true);
+					soundDesc->compressedStream = Audio::makeMP3Stream(tmp, true, offsetMs);
 #endif
 				assert(soundDesc->compressedStream);
 			}
 			strcpy(soundDesc->lastFileName, fileName);
 		}
 		size = soundDesc->compressedStream->readBuffer((int16 *)*buf, size / 2) * 2;
-		if (soundDesc->compressedStream->endOfData()) {
+		if (soundDesc->compressedStream->endOfData() || soundDesc->endFlag) {
 			delete soundDesc->compressedStream;
 			soundDesc->compressedStream = NULL;
 			soundDesc->lastFileName[0] = 0;
+			soundDesc->endFlag = true;
 		}
 	}
 
