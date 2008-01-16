@@ -603,6 +603,10 @@ void Script::makeGoewinWork(uint16 v1, uint16 v2, uint16 v3) {
 	goewin->setHotspotScript(0x616);
 	goewin->setDelayCtr(1500);
 	goewin->setTickProc(GOEWIN_SHOP_TICK_PROC);
+
+	// Set walk to position for Goewin whilst she's working
+	goewin->resource()->walkX = 179;
+	goewin->resource()->walkY = 138;
 }
 
 // Sets a character moving to the player's room (if they're not already there)
@@ -700,6 +704,10 @@ void Script::normalGoewin(uint16 v1, uint16 v2, uint16 v3) {
 	hotspot->setCharacterMode(CHARMODE_NONE);
 	hotspot->setDirection(UP);
 	hotspot->setTickProc(STANDARD_CHARACTER_TICK_PROC);
+
+	// Clear walk to position for Goewin so player must walk up to her when interacting
+	hotspot->resource()->walkX = 0;
+	hotspot->resource()->walkY = 0;
 }
 
 // Flags the player as dead
