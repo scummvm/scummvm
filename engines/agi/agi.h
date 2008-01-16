@@ -280,6 +280,7 @@ enum AgiMonitorType {
  *
  * At least these Amiga AGI versions use value 5:
  * 2.082 (King's Quest I v1.0U 1986)
+ * 2.090 (King's Quest III v1.01 1986-11-08)
  * x.yyy (Black Cauldron v2.00 1987-06-14)
  * x.yyy (Larry I v1.05 1987-06-26)
  * 2.107 (King's Quest II v2.0J. Date is probably 1987-01-29)
@@ -290,8 +291,6 @@ enum AgiMonitorType {
  * At least these Amiga AGI versions use value 20:
  * 2.082 (Space Quest I v1.2 1986)
  *
- * TODO: Check Amiga version of King's Quest III (v1.01 1986-11-08, AGI 2.090).
- *       This is a good candidate for testing as it uses quite an old Amiga AGI version.
  * TODO: Check Amiga version of Space Quest II (v2.0F, AGI 2.202) because
  *       it's a bit of an odd bird (e.g. uses a slightly different palette than others).
  * TODO: Check Amiga versions of Manhunter I & II (I'd guess they use value 5 though).
