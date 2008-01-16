@@ -994,7 +994,7 @@ void KyraEngine_v2::initStaticResource() {
 		0 // XXX
 	};*/
 
-	uint16 *hdr = (uint16*) seqData;
+	const uint16 *hdr = (const uint16 *) seqData;
 	uint16 numSeq = READ_LE_UINT16(hdr++);
 	uint16 hdrSize = READ_LE_UINT16(hdr) - 1;
 
@@ -1030,7 +1030,7 @@ void KyraEngine_v2::initStaticResource() {
 		_sequences[i].callback = cb[i];
 	}
 
-	if (hdr > ((uint16*)(seqData + hdrSize)))
+	if (hdr > ((const uint16*)(seqData + hdrSize)))
 		return;
 
 	numSeq = READ_LE_UINT16(hdr++);
@@ -1057,7 +1057,7 @@ void KyraEngine_v2::initStaticResource() {
 		offset += 2;
 		_nSequences[i].finalCommand = READ_LE_UINT16(offset);
 		_nSequences[i].callback = ncb[i];
-		_nSequences[i].wsaControl = ctrlOffs ? (uint16*) (seqData + ctrlOffs) : 0;
+		_nSequences[i].wsaControl = ctrlOffs ? (const uint16*) (seqData + ctrlOffs) : 0;
 	}
 }
 
