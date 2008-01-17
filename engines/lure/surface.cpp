@@ -1255,7 +1255,7 @@ static const ItemDesc copyProtectElements[] = {
 	
 	{EN_ANY, 57, 40, 208, 40, WORDING_HEADER, 32},
 	{FR_FRA, 57, 40, 208, 40, WORDING_HEADER, 32},
-	{DE_DEU, 39, 40, 208, 40, WORDING_HEADER, 32},
+	{DE_DEU, 39, 30, 240, 53, WORDING_HEADER, 32},
 	{NL_NLD, 57, 40, 208, 40, WORDING_HEADER, 32},
 	{ES_ESP, 57, 40, 208, 40, WORDING_HEADER, 32},
 	{IT_ITA, 57, 40, 208, 40, WORDING_HEADER, 32},
@@ -1277,7 +1277,6 @@ CopyProtectionDialog::CopyProtectionDialog() {
 	const ItemDesc *ptr = &copyProtectElements[0];
 	while ((ptr->width != 0) || (ptr->height != 0)) {
 		if ((ptr->language == UNK_LANG) || (ptr->language == engine.getLanguage())) {
-			if (ptr->animId == 0) break; //***DEBUG***
 			Hotspot *h = new Hotspot();
 			h->setPosition(ptr->x, ptr->y);
 			h->setSize(ptr->width, ptr->height);
