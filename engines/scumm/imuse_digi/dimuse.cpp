@@ -158,13 +158,14 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		}
 		ser->saveLoadEntries(track, trackEntries);
 		if (ser->isLoading()) {
+			_track[l]->trackId = l;
 			if (!track->used)
 				continue;
 			if ((track->toBeRemoved) || (track->souStreamUsed) || (track->curRegion == -1)) {
 				track->used = false;
 				continue;
 			}
-			
+
 			// TODO: The code below has a lot in common with that in IMuseDigital::startSound.
 			// Try to refactor them to reduce the code duplication.
 
