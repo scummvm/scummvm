@@ -63,7 +63,7 @@ int IMuseDigital::allocSlot(int priority) {
 
 			// Stop the track immediately
 			_mixer->stopHandle(track->mixChanHandle);
-			if (!track->soundDesc) {
+			if (track->soundDesc) {
 				_sound->closeSound(track->soundDesc);
 			}
 
