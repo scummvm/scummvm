@@ -115,7 +115,7 @@ public:
 	static void displayMessage2(uint16 messageId, uint16 hotspotId, uint16 v3);
 	static void startOilBurner(uint16 v1, uint16 v2, uint16 v3);
 	static void transformPlayer(uint16 v1, uint16 v2, uint16 v3);
-	static void jailClose(uint16 v1, uint16 v2, uint16 v3);
+	static void townHallClose(uint16 v1, uint16 v2, uint16 v3);
 	static void checkRoomNumber(uint16 hotspotId, uint16 roomNumber, uint16 v3);
 	static void makeGoewinFollow(uint16 v1, uint16 v2, uint16 v3);
 	static void doorClose(uint16 hotspotId, uint16 v2, uint16 v3);
