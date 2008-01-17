@@ -308,13 +308,6 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		setHookIdForMusic(table->hookId);
 		break;
 	case 2:
-		if (table->filename[0] == 0) {
-			fadeOutMusic(60);
-			return;
-		}
-		fadeOutMusic(table->fadeOutDelay);
-		startMusic(table->filename, table->soundId, table->hookId, 127);
-		break;
 	case 3:
 	case 4:
 	case 12:
@@ -324,6 +317,11 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		}
 		if (table->transitionType == 4)
 			_stopingSequence = true;
+		if (table->transitionType == 2) {
+			fadeOutMusic(table->fadeOutDelay);
+			startMusic(table->filename, table->soundId, table->hookId, 127);
+			return;
+		}
 		if ((!sequence) && (table->attribPos != 0) &&
 				(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
 			fadeOutMusicAndStartNew(table->fadeOutDelay, table->filename, table->soundId);
