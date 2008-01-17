@@ -103,7 +103,7 @@ AnimListRecord animDataList[] = {
 	{{0x5A62, 0x5B22, 0x5B42, 0x5b72, 0x5b42}},	// Minnow pulling lever in room #48
 	{{0x5AAA, 0x5B6A, 0x5B8A, 0x5bba, 0x5b8a}},	// Goewin mixing potion					
 	{{0x5C80, 0x5D40, 0x5D60, 0x5d90, 0x5d60}}, // Player standard animation
-	{{0x5C95, 0x5D55, 0x5D75, 0x5db5, 0x5d75}}, // Player operating rack
+	{{0x5C95, 0x5D55, 0x5D75, 0x5da5, 0x5d75}}, // Player operating rack
 	{{0x5CAA, 0x5D6A, 0x5D8A, 0x5dba, 0x5d8a}},	// Selena animation
 	{{0x5CE9, 0x5DA9, 0x5DC9, 0x5df9, 0x5dc9}},	// Blacksmith default
 	{{0x5D28, 0x5DE8, 0x5E08, 0x5e38, 0x5e08}},	// Goewin animation
@@ -462,6 +462,8 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 	for (int tableNum = 0; tableNum < 4; ++tableNum) {
 		uint16 hotspotIndex = 0;
 		for (;;) {
+			uint16 currentHotspotId = startId[tableNum] + hotspotIndex;
+
 			lureExe.seek(dataSegment + offsets[tableNum] +  hotspotIndex * 9);
 			lureExe.read(&entryHeader, sizeof(HotspotHeaderEntry));
 			if (FROM_LE_16(entryHeader.offset) == 0xffff) break;
@@ -548,18 +550,20 @@ printf("%xh,\n",
 					r->tickProcId = TO_LE_16(procIndex + 1);
 			}
 
-			// Special check for the tinderbox hotspot to set it's room number correctly - the original 
+			// WORKAROUND: Special check for the tinderbox hotspot to set it's room number correctly - the original 
 			// game used this as a backup against people trying to hack the copy protection
-			if (startId[tableNum] + hotspotIndex == 0x271C)
+			if (currentHotspotId == 0x271C)
 				r->roomNumber = TO_LE_16(28);
-if (startId[tableNum] + hotspotIndex == 0x46b) r->tickProcId = 1;
+
+			// WORKAROUND: Sets a null handler for a hotspot that has an invalid tick proc offset
+			if (currentHotspotId == 0x46b) r->tickProcId = 1;
 
 			// Find the walk-to coordinates for the hotspot
 			uint16 findId = FROM_LE_16(r->hotspotId);
 			walkCtr = 0;
 			while (walkCtr < walkNumEntries) {
 				uint16 id = FROM_LE_16(walkList[walkCtr].hotspotId);
-				if ((id == findId) || ((findId == 1007) && (id == 0xffff)))
+				if (id == findId)
 					break;
 				++walkCtr;
 			}
@@ -570,7 +574,13 @@ if (startId[tableNum] + hotspotIndex == 0x46b) r->tickProcId = 1;
 			} else {
 				r->walkX = TO_LE_16(FROM_LE_16(walkList[walkCtr].x) - 0x80);
 				uint16 y = FROM_LE_16(walkList[walkCtr].y);
-				r->walkY = TO_LE_16((y & 0x8000) | (uint16) ((int16) (y & 0x7fff) - 0x80));
+
+				// WORKAROUND: Edwina's walk-to position is actually inside the table, which meant that walking over
+				// to her could fail, depending on your start position. This increments it into the clear
+				int tempY = (int16) (y & 0x7fff) - 0x80;
+				if (currentHotspotId == 0x442) 
+					tempY += 8;
+				r->walkY = TO_LE_16((y & 0x8000) | (uint16) tempY);
 			}
 
 			// Use the offset of the animation data as a dummy Id for the data
@@ -1008,7 +1018,10 @@ void read_talk_headers(byte *&data, uint16 &totalSize) {
 		sortedOffsets[entryCtr] = currVal;
 		prevVal = currVal;
 	}
-	sortedOffsets[entryCtr] = 0x5540; // end for end record
+
+	// Assume that the last talk header will have the same number of entries across language versions, 
+	// so create an end address based on the start of the last entry using start/end from English version
+	sortedOffsets[entryCtr] = sortedOffsets[entryCtr - 1] + (0x5540 - 0x5504);
 
 	data = (byte *) malloc(MAX_DATA_SIZE);
 	TalkEntry *entry = (TalkEntry *) data;
