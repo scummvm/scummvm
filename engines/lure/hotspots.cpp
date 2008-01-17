@@ -1253,7 +1253,7 @@ void Hotspot::doAction() {
 void Hotspot::doAction(Action action, HotspotData *hotspot) {
 	StringList &stringList = Resources::getReference().stringList();
 	debugC(ERROR_INTERMEDIATE, kLureDebugHotspots,  "Action charId=%xh Action=%d/%s", 
-		_hotspotId, (int)action, stringList.getString((int)action));
+		_hotspotId, (int)action, (action > EXAMINE) ? NULL : stringList.getString((int)action));
 
 	// Set the ACTIVE_HOTSPOT_ID and USE_HOTSPOT_ID fields
 	if (hotspot != NULL) {
@@ -1312,7 +1312,7 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 
 	(this->*actionProcList[action])(hotspot);
 	debugC(ERROR_DETAILED, kLureDebugHotspots,  "Action charId=%xh Action=%d/%s Complete", 
-		_hotspotId, (int)action, stringList.getString((int)action));
+		_hotspotId, (int)action, (action > EXAMINE) ? NULL : stringList.getString((int)action));
 }
 
 void Hotspot::doNothing(HotspotData *hotspot) {
