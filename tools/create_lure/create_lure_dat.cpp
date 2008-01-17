@@ -103,7 +103,7 @@ AnimListRecord animDataList[] = {
 	{{0x5A62, 0x5B22, 0x5B42, 0x5b72, 0x5b42}},	// Minnow pulling lever in room #48
 	{{0x5AAA, 0x5B6A, 0x5B8A, 0x5bba, 0x5b8a}},	// Goewin mixing potion					
 	{{0x5C80, 0x5D40, 0x5D60, 0x5d90, 0x5d60}}, // Player standard animation
-	{{0x5C95, 0x5D55, 0x5D75, 0x5db5, 0x5d75}}, // Player operating rack
+	{{0x5C95, 0x5D55, 0x5D75, 0x5da5, 0x5d75}}, // Player operating rack
 	{{0x5CAA, 0x5D6A, 0x5D8A, 0x5dba, 0x5d8a}},	// Selena animation
 	{{0x5CE9, 0x5DA9, 0x5DC9, 0x5df9, 0x5dc9}},	// Blacksmith default
 	{{0x5D28, 0x5DE8, 0x5E08, 0x5e38, 0x5e08}},	// Goewin animation
@@ -1018,7 +1018,10 @@ void read_talk_headers(byte *&data, uint16 &totalSize) {
 		sortedOffsets[entryCtr] = currVal;
 		prevVal = currVal;
 	}
-	sortedOffsets[entryCtr] = 0x5540; // end for end record
+
+	// Assume that the last talk header will have the same number of entries across language versions, 
+	// so create an end address based on the start of the last entry using start/end from English version
+	sortedOffsets[entryCtr] = sortedOffsets[entryCtr - 1] + (0x5540 - 0x5504);
 
 	data = (byte *) malloc(MAX_DATA_SIZE);
 	TalkEntry *entry = (TalkEntry *) data;
