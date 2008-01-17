@@ -44,7 +44,7 @@ namespace Agi {
 #include "agi/font.h"
 
 /**
- * 16 color RGB palette (plus 16 transparent colors).
+ * 16 color RGB palette.
  * This array contains the 6-bit RGB values of the EGA palette exported
  * to the console drivers.
  */
