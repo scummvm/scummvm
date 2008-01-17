@@ -58,13 +58,13 @@ public:
 	 */
 	PSPFilesystemNode(const Common::String &p, bool verify);
 
-	virtual bool exists() const { return true; }		//FIXME: this is just a stub
+	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; }
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
-	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
+	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
 
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
