@@ -24,7 +24,7 @@
 #define _DS_FS_H
 
 //#include <NDS/ARM9/console.h>
-#include "fs.h"
+#include "common/fs.h"
 #include "zipreader.h"
 #include "ramsave.h"
 #include "scummconsole.h"

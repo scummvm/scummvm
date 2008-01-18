@@ -20,10 +20,10 @@
  *
  */
 
-#include "str.h"
+#include "common/str.h"
 #include "common/util.h"
 //#include <NDS/ARM9/console.h> //basic print funcionality
-#include "ds-fs.h"
+#include "backends/fs/ds/ds-fs.h"
 #include "dsmain.h"
 #include "gba_nds_fat.h"
 
