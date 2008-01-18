@@ -30,6 +30,7 @@
 #include "scumm/sound.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
+#include "scumm/imuse_digi/dimuse_track.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -330,7 +331,7 @@ void IMuseDigital::setTrigger(TriggerParams *trigger) {
 	_triggerUsed = true;
 }
 
-IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
+Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	assert(track);
 	Track *fadeTrack;
 

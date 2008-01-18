@@ -32,15 +32,12 @@
 #include "scumm/sound.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
+#include "scumm/imuse_digi/dimuse_track.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
 namespace Scumm {
-
-IMuseDigital::Track::Track()
-	: soundId(-1), used(false), stream(NULL) {
-}
 
 void IMuseDigital::timer_handler(void *refCon) {
 	IMuseDigital *imuseDigital = (IMuseDigital *)refCon;

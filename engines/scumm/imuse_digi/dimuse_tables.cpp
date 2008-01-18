@@ -23,7 +23,8 @@
  */
 
 
-#include "scumm/imuse_digi/dimuse.h"
+//#include "scumm/imuse_digi/dimuse.h"
+#include "scumm/imuse_digi/dimuse_tables.h"
 
 namespace Scumm {
 
