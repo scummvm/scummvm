@@ -156,11 +156,16 @@ void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len,
 	const char *sPtr = line.c_str();
 
 	for (int index = 0; (index < len) && (*sPtr != '\0'); ++index, ++sPtr) {
+		int charSize = varLength ? fontSize[(uint8)*sPtr - 32] + 2 : FONT_WIDTH;
+		if (x + charSize >= width())
+			// Passed the right hand edge of the surface
+			break;
+
+		// Write next character
 		writeChar(x, y, (uint8) *sPtr, transparent, colour);
 
 		// Move to after the character in preparation for the next character
-		if (!varLength) x += FONT_WIDTH;
-		else x += fontSize[(uint8)*sPtr - 32] + 2;
+		x += charSize;
 	}
 }
 
