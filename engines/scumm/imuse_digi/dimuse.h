@@ -39,8 +39,10 @@
 
 namespace Scumm {
 
-#define MAX_DIGITAL_TRACKS 8
-#define MAX_DIGITAL_FADETRACKS 8
+enum {
+	MAX_DIGITAL_TRACKS = 8,
+	MAX_DIGITAL_FADETRACKS = 8
+};
 
 struct imuseDigTable;
 struct imuseComiTable;

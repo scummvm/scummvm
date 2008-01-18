@@ -341,7 +341,7 @@ IMuseDigital::Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDel
 		return NULL;
 	}
 
-	assert(track->trackId < 8);
+	assert(track->trackId < MAX_DIGITAL_TRACKS);
 	fadeTrack = _track[track->trackId + MAX_DIGITAL_TRACKS];
 
 	if (fadeTrack->used) {
