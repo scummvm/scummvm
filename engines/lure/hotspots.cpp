@@ -203,13 +203,21 @@ Hotspot::Hotspot(): _pathFinder(NULL) {
 }
 
 Hotspot::~Hotspot() {
+	Resources &res = Resources::getReference();
+
 	// WORKAROUND: If Blacksmith is being deactivated, make sure his animation is
 	// reset back to his standard movement set
 	if (_hotspotId == BLACKSMITH_ID) {
-		Resources &res = Resources::getReference();
 		HotspotAnimData *tempAnim = res.animRecords()[BLACKSMITH_DEFAULT_ANIM_INDEX];
 		assert(tempAnim);
 		_data->animRecordId = tempAnim->animRecordId;
+	}
+
+	// WORKAROUND: Goewin is initially deactivated when the player faces the dragon. When she's later
+	// reactivated, make sure she doesn't have a schedule set (so standard follower logic will apply)
+	if (_hotspotId == GOEWIN_ID) {
+		HotspotData *goewinHotspot = res.getHotspot(GOEWIN_ID);
+		goewinHotspot->npcSchedule = 0;
 	}
 
 	if (_frames) delete _frames;
