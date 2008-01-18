@@ -20,7 +20,7 @@
  *
  */
 
-#include "str.h"
+#include "common/str.h"
 #include "common/util.h"
 //#include <NDS/ARM9/console.h> //basic print funcionality
 #include "ds-fs.h"
