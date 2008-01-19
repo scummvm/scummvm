@@ -332,7 +332,7 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	Track *fadeTrack;
 
 	debug(5, "cloneToFadeOutTrack(%d, %d) - begin of func", track->trackId, fadeDelay);
-	
+
 	if (track->toBeRemoved) {
 		error("cloneToFadeOutTrack: Tried to clone a track to be removed, please bug report");
 		return NULL;
@@ -342,7 +342,7 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	fadeTrack = _track[track->trackId + MAX_DIGITAL_TRACKS];
 
 	if (fadeTrack->used) {
-		error("cloneToFadeOutTrack: No free fade track, force flush, please bug report");
+		debug(5, "cloneToFadeOutTrack: No free fade track, force flush");
 		flushTrack(fadeTrack);
 		_mixer->stopHandle(fadeTrack->mixChanHandle);
 	}
