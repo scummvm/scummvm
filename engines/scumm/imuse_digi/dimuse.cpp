@@ -380,9 +380,9 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 		assert(region != -1);
 		int sampleHookId = _sound->getJumpHookId(soundDesc, jumpId);
 		assert(sampleHookId != -1);
-		int fadeDelay = (60 * _sound->getJumpFade(soundDesc, jumpId)) / 1000;
 		debug(5, "SwToNeReg(trackId:%d) - JUMP found - sound:%d, track hookId:%d, data hookId:%d", track->trackId, track->soundId, track->curHookId, sampleHookId);
 		if (track->curHookId == sampleHookId) {
+			int fadeDelay = (60 * _sound->getJumpFade(soundDesc, jumpId)) / 1000;
 			debug(5, "SwToNeReg(trackId:%d) - sound(%d) match hookId", track->trackId, track->soundId);
 			if (fadeDelay) {
 				debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, fadeDelay);
