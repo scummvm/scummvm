@@ -987,7 +987,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 				if (events.type() == Common::EVENT_MOUSEMOVE || 
 					events.type() == Common::EVENT_WHEELUP || events.type() == Common::EVENT_WHEELDOWN) {
 					// Mouse movement
-					int lineNum;
+					int lineNum = 0;
 
 					if (events.type() == Common::EVENT_MOUSEMOVE) {
 						if ((mouse.x() < (SAVE_DIALOG_X + Surface::textX())) ||
