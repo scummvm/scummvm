@@ -3,4 +3,5 @@
 #BASEDIR=`dirname $0`
 BASENAME=`basename $0`
 export SDL_VIDEO_X11_WMCLASS=${BASENAME}
+export SCUMMVM_MAEMO_DEVICE=$(awk '/^product/ { print $2;}' /proc/component_version)
 exec ${0}.bin "$@"
