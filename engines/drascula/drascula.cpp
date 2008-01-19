@@ -1435,8 +1435,8 @@ static char *getLine(Common::File *fp, char *buf, int len) {
 }
 
 void DrasculaEngine::carga_escoba(const char *nom_fich) {
-	int soc, l, martin, obj_salir;
-	float chiquez, pequegnez = 0;
+	int soc, l, martin = 0, obj_salir;
+	float chiquez = 0, pequegnez = 0;
 	char pant1[20], pant2[20], pant3[20], pant4[20];
 	char para_codificar[20];
 	char buffer[256];
@@ -5523,7 +5523,7 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	int juego1 = 1, juego2 = 1, juego3 = 1, juego4 = 1;
 	char frase1[78];
 	char frase2[78];
-	char frase3[78];
+	char frase3[79];
 	char frase4[78];
 	char para_codificar[13];
 	char suena1[13];
