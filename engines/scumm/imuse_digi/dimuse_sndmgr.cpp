@@ -139,7 +139,7 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound,
 	}
 	for (l = 0; l < sound->numSyncs; l++) {
 		sound->sync[l].size = file->readUint32BE();
-		sound->sync[l].ptr = (byte *)malloc(sound->sync[l].size);
+		sound->sync[l].ptr = new byte[sound->sync[l].size];
 		file->read(sound->sync[l].ptr, sound->sync[l].size);
 	}
 	if (version >= 3) {
@@ -261,6 +261,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 					sound->marker[curIndexMarker].pos = READ_BE_UINT32(ptr + 4);
 					sound->marker[curIndexMarker].length = strlen((const char *)(ptr + 8)) + 1;
 					sound->marker[curIndexMarker].ptr = new char[sound->marker[curIndexMarker].length];
+					assert(sound->marker[curIndexMarker].ptr);
 					strcpy(sound->marker[curIndexMarker].ptr, (const char *)(ptr + 8));
 					curIndexMarker++;
 				}
@@ -286,7 +287,8 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 			case MKID_BE('SYNC'):
 				size = READ_BE_UINT32(ptr); ptr += 4;
 				sound->sync[curIndexSync].size = size;
-				sound->sync[curIndexSync].ptr = (byte *)malloc(size);
+				sound->sync[curIndexSync].ptr = new byte[size];
+				assert(sound->sync[curIndexSync].ptr);
 				memcpy(sound->sync[curIndexSync].ptr, ptr, size);
 				curIndexSync++;
 				ptr += size;
@@ -484,7 +486,7 @@ void ImuseDigiSndMgr::closeSound(SoundDesc *soundDesc) {
 	delete soundDesc->bundle;
 
 	for (int r = 0; r < soundDesc->numSyncs; r++)
-		free(soundDesc->sync[r].ptr);
+		delete[] soundDesc->sync[r].ptr;
 	for (int r = 0; r < soundDesc->numMarkers; r++)
 		delete[] soundDesc->marker[r].ptr;
 	delete[] soundDesc->region;
