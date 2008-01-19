@@ -83,13 +83,14 @@ int IMuseDigital::allocSlot(int priority) {
 
 void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority, Track *otherTrack) {
 	Common::StackLock lock(_mutex, "IMuseDigital::startSound()");
-	debug(5, "IMuseDigital::startSound(%d)", soundId);
+	debug(5, "IMuseDigital::startSound(%d) - begin func", soundId);
 
 	int l = allocSlot(priority);
 	if (l == -1) {
 		warning("IMuseDigital::startSound() Can't start sound - no free slots");
 		return;
 	}
+	debug(5, "IMuseDigital::startSound(%d)(trackId:%d)", soundId, l);
 
 	Track *track = _track[l];
 	
@@ -104,6 +105,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	track->soundPriority = priority;
 	track->curRegion = -1;
 	track->soundType = soundType;
+	track->trackId = l;
 
 	int bits = 0, freq = 0, channels = 0;
 
@@ -329,10 +331,10 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	assert(track);
 	Track *fadeTrack;
 
-	debug(0, "IMuseDigital::cloneToFadeOutTrack(%d, %d)", track->trackId, fadeDelay);
+	debug(5, "cloneToFadeOutTrack(%d, %d) - begin of func", track->trackId, fadeDelay);
 	
 	if (track->toBeRemoved) {
-		error("IMuseDigital::cloneToFadeOutTrack: Tried to clone a track to be removed");
+		error("cloneToFadeOutTrack: Tried to clone a track to be removed. exit func");
 		return NULL;
 	}
 
@@ -340,7 +342,7 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	fadeTrack = _track[track->trackId + MAX_DIGITAL_TRACKS];
 
 	if (fadeTrack->used) {
-		warning("IMuseDigital::cloneToFadeOutTrack: No free fade track, force flush");
+		warning("cloneToFadeOutTrack: No free fade track, force flush");
 		flushTrack(fadeTrack);
 		_mixer->stopHandle(fadeTrack->mixChanHandle);
 	}
@@ -363,6 +365,8 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	fadeTrack->stream = Audio::makeAppendableAudioStream(_sound->getFreq(fadeTrack->soundDesc), makeMixerFlags(fadeTrack->mixerFlags));
 	_mixer->playInputStream(track->getType(), &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->getVol(), fadeTrack->getPan());
 	fadeTrack->used = true;
+
+	debug(5, "cloneToFadeOutTrack() - end of func, track %d, fadeTrackId %d", track->trackId, fadeTrack->trackId);
 
 	return fadeTrack;
 }

@@ -405,7 +405,7 @@ int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
 
 void IMuseDigital::stopAllSounds() {
 	Common::StackLock lock(_mutex, "IMuseDigital::stopAllSounds()");
-	debug(0, "IMuseDigital::stopAllSounds");
+	debug(5, "IMuseDigital::stopAllSounds");
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];

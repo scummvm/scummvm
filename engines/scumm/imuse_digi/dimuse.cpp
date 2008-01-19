@@ -339,11 +339,10 @@ void IMuseDigital::callback() {
 
 void IMuseDigital::switchToNextRegion(Track *track) {
 	assert(track);
-	debug(5, "switchToNextRegion(track:%d)", track->trackId);
 
 	if (track->trackId >= MAX_DIGITAL_TRACKS) {
 		flushTrack(track);
-		debug(5, "exit (fadetrack can't go next region) switchToNextRegion(trackId:%d)", track->trackId);
+		debug(5, "SwToNeReg(trackId:%d) - fadetrack can't go next region, exiting SwToNeReg", track->trackId);
 		return;
 	}
 
@@ -352,20 +351,21 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 
 	if (++track->curRegion == num_regions) {
 		flushTrack(track);
-		debug(5, "exit (end of regions) switchToNextRegion(track:%d)", track->trackId);
+		debug(5, "SwToNeReg(trackId:%d) - end of region, exiting SwToNeReg", track->trackId);
 		return;
 	}
 
 	ImuseDigiSndMgr::SoundDesc *soundDesc = track->soundDesc;
 	if (_triggerUsed && track->soundDesc->numMarkers) {
 		if (_sound->checkForTriggerByRegionAndMarker(soundDesc, track->curRegion, _triggerParams.marker)) {
-			debug(5, "trigger %s reached, switchToNextRegion(track:%d)", _triggerParams.marker, track->trackId);
-			debug(5, "exit current region, switchToNextRegion(track:%d)", track->trackId);
+			debug(5, "SwToNeReg(trackId:%d) - trigger %s reached", track->trackId, _triggerParams.marker);
+			debug(5, "SwToNeReg(trackId:%d) - exit current region %d", track->trackId, track->curRegion);
+			debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, _triggerParams.fadeOutDelay);
 			Track *fadeTrack = cloneToFadeOutTrack(track, _triggerParams.fadeOutDelay);
 			if (fadeTrack) {
 				fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
 				fadeTrack->regionOffset = 0;
-				debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+				debug(5, "SwToNeReg(trackId:%d)-sound(%d) select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
 				fadeTrack->curHookId = 0;
 			}
 			flushTrack(track);
@@ -376,46 +376,39 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 	}
 
 	int jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, track->curHookId);
-	if (jumpId == -1)
-		jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, 0);
 	if (jumpId != -1) {
 		int region = _sound->getRegionIdByJumpId(soundDesc, jumpId);
 		assert(region != -1);
 		int sampleHookId = _sound->getJumpHookId(soundDesc, jumpId);
 		assert(sampleHookId != -1);
 		int fadeDelay = (60 * _sound->getJumpFade(soundDesc, jumpId)) / 1000;
-		if (sampleHookId != 0) {
-			if (track->curHookId == sampleHookId) {
-				if (fadeDelay != 0 && previous_region != -1) {
-					Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
-					if (fadeTrack) {
-						fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
-						fadeTrack->regionOffset = 0;
-						debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
-						fadeTrack->curHookId = 0;
-					}
-				}
-				track->curRegion = region;
-				debug(5, "switchToNextRegion-sound(%d) jump to region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
-				track->curHookId = 0;
-			}
-		} else {
+		debug(5, "SwToNeReg(trackId:%d) - JUMP found - sound:%d, track hookId:%d, data hookId:%d", track->trackId, track->soundId, track->curHookId, sampleHookId);
+		if (track->curHookId == sampleHookId) {
+			debug(5, "SwToNeReg(trackId:%d) - sound(%d) match hookId", track->trackId, track->soundId);
 			if (fadeDelay != 0 && previous_region != -1) {
+				debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, fadeDelay);
 				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 				if (fadeTrack) {
 					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
 					fadeTrack->regionOffset = 0;
-					debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+					debug(5, "SwToNeReg(trackId:%d) - sound(%d) faded track, select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+					fadeTrack->curHookId = 0;
 				}
 			}
 			track->curRegion = region;
-			debug(5, "switchToNextRegion-sound(%d) jump to region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
+			debug(5, "SwToNeReg(trackId:%d) - sound(%d) jump to region %d, curHookId: %d", track->trackId, track->soundId, track->curRegion, track->curHookId);
+			track->curHookId = 0;
+		} else {
+			debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);
 		}
+	} else {
+		debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);
 	}
 
-	debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
+	debug(5, "SwToNeReg(trackId:%d) - sound(%d), select region %d", track->trackId, track->soundId, track->curRegion);
 	track->dataOffset = _sound->getRegionOffset(soundDesc, track->curRegion);
 	track->regionOffset = 0;
+	debug(5, "SwToNeReg(trackId:%d) - end of func", track->trackId);
 }
 
 } // End of namespace Scumm
