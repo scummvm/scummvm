@@ -5523,7 +5523,7 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	int juego1 = 1, juego2 = 1, juego3 = 1, juego4 = 1;
 	char frase1[78];
 	char frase2[78];
-	char frase3[79];
+	char frase3[86];
 	char frase4[78];
 	char para_codificar[13];
 	char suena1[13];
