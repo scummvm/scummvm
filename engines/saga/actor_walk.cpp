@@ -708,9 +708,8 @@ void Actor::handleActions(int msec, bool setup) {
 				// (room 51) for hitzone 24577 (the door with the copy protection) to avoid the glitch. This glitch
 				// happens because the copy protection is supposed to kick in at this point, but it's bypassed
 				// (with permission from Wyrmkeep Entertainment)
-				if (!(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51 && hitZone->getHitZoneId() == 24577)) {
-					if (hitZone)
-						stepZoneAction(actor, hitZone, false, false);
+				if (hitZone && !(_vm->getGameType() == GType_ITE && _vm->_scene->currentSceneNumber() == 51 && hitZone->getHitZoneId() == 24577)) {
+					stepZoneAction(actor, hitZone, false, false);
 				}
 			}
 		}
