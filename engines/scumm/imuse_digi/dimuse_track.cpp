@@ -156,15 +156,9 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 
 		if (otherTrack && otherTrack->used && !otherTrack->toBeRemoved) {
 			track->curRegion = otherTrack->curRegion;
-/*			if (track->sndDataExtComp) {
-				track->dataOffset = _sound->getRegionOffset(track->soundDesc, track->curRegion);
-				track->regionOffset = 0;
-				track->dataMod12Bit = 0;
-			} else */{
-				track->dataOffset = otherTrack->dataOffset;
-				track->regionOffset = otherTrack->regionOffset;
-				track->dataMod12Bit = otherTrack->dataMod12Bit;
-			}
+			track->dataOffset = otherTrack->dataOffset;
+			track->regionOffset = otherTrack->regionOffset;
+			track->dataMod12Bit = otherTrack->dataMod12Bit;
 		}
 
 		track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));

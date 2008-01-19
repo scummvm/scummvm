@@ -175,13 +175,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 				continue;
 			}
 
-/*			if (track->sndDataExtComp) {
-				track->regionOffset = 0;
-			}
 			track->sndDataExtComp = _sound->isSndDataExtComp(track->soundDesc);
-			if (track->sndDataExtComp) {
-				track->regionOffset = 0;
-			}*/
 			track->dataOffset = _sound->getRegionOffset(track->soundDesc, track->curRegion);
 			int bits = _sound->getBits(track->soundDesc);
 			int channels = _sound->getChannels(track->soundDesc);
