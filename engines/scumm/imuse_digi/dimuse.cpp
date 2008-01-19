@@ -347,7 +347,6 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 	}
 
 	int num_regions = _sound->getNumRegions(track->soundDesc);
-	int previous_region = track->curRegion;
 
 	if (++track->curRegion == num_regions) {
 		flushTrack(track);
@@ -385,7 +384,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 		debug(5, "SwToNeReg(trackId:%d) - JUMP found - sound:%d, track hookId:%d, data hookId:%d", track->trackId, track->soundId, track->curHookId, sampleHookId);
 		if (track->curHookId == sampleHookId) {
 			debug(5, "SwToNeReg(trackId:%d) - sound(%d) match hookId", track->trackId, track->soundId);
-			if (fadeDelay != 0 && previous_region != -1) {
+			if (fadeDelay) {
 				debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, fadeDelay);
 				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 				if (fadeTrack) {
