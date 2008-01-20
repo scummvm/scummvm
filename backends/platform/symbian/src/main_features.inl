@@ -72,6 +72,11 @@
 #ifndef DISABLE_IGOR
 	"Igor "
 #endif
-
+#ifndef DISABLE_PARALLACTION
+	"Parallaction "
+#endif
+#ifndef DISABLE_CRUISE
+	"Cruise "
+#endif
 
 

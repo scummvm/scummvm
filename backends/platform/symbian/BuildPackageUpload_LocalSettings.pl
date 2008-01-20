@@ -11,10 +11,11 @@
 	$DefaultBottomMacros = "
 		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
 		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
-		MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib		
-		MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
 		MACRO			DISABLE_DRASCULA	// LIB:scummvm_drascula.lib
 		MACRO			DISABLE_IGOR	// LIB:scummvm_igor.lib
+
+		MACRO			DISABLE_CRUISE	// LIB:scummvm_cruise.lib
+
 	";
 
 	##
@@ -364,7 +365,7 @@ if (1) # all regular combo's
 #		//MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 #	$DefaultBottomMacros";
 
-	$SDK_Variations{'ALL'}{'test_lure'} = "$DefaultTopMacros
+	$SDK_Variations{'ALL'}{'lure'} = "$DefaultTopMacros
 		MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
 		MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
@@ -395,7 +396,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
 
-	$SDK_Variations{'ALL'}{'test_agi'} = "$DefaultTopMacros
+	$SDK_Variations{'ALL'}{'agi'} = "$DefaultTopMacros
 		MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
 		MACRO			DISABLE_SKY		// LIB:scummvm_sky.lib
