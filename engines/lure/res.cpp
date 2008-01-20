@@ -695,6 +695,9 @@ void Resources::saveToStream(Common::WriteStream *stream) {
 	// Save basic fields
 	stream->writeUint16LE(_talkingCharacter);
 
+	// Dummy save of empty hotspot schedules list
+	stream->writeUint16LE(0xffff);
+
 	// Save sublist data
 	_hotspotData.saveToStream(stream);
 	_activeHotspots.saveToStream(stream);
@@ -704,6 +707,7 @@ void Resources::saveToStream(Common::WriteStream *stream) {
 	_exitJoins.saveToStream(stream);
 	_roomData.saveToStream(stream);
 	_delayList.saveToStream(stream);
+	_talkData.saveToStream(stream);
 }
 
 void Resources::loadFromStream(Common::ReadStream *stream) {
@@ -718,6 +722,15 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 
 	_talkState = TALK_NONE;
 	_activeTalkData = NULL;
+
+	if (saveVersion >= 31) {
+		// ScummVM 0.11 Lure engine doesn't have the 0.12 saved actor schedules list, so just scan past it
+		CurrentActionEntry *rec;
+		while (stream->readUint16LE() != 0xffff) {
+			while ((rec = CurrentActionEntry::loadFromStream(stream)) != NULL)
+				delete rec;
+		}
+	}
 
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading hotspot data");
 	_hotspotData.loadFromStream(stream);
@@ -735,6 +748,12 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	_roomData.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading delay list");
 	_delayList.loadFromStream(stream); 
+
+	if (saveVersion >= 32) {
+		debugC(ERROR_DETAILED, kLureDebugScripts, "Loading talk data");
+		_talkData.loadFromStream(stream);
+	}
+
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Finished loading");
 }
 
