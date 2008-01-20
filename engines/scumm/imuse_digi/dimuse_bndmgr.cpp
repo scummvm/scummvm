@@ -348,7 +348,7 @@ int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 si
 		return final_size;
 	}
 
-	debug(2, "BundleMgr::decompressSampleByName() Failed finding voice %s", name);
+	debug(2, "BundleMgr::decompressSampleByName() Failed finding sound %s", name);
 	return final_size;
 }
 
