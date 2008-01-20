@@ -218,24 +218,11 @@ int IMuseDigital::getCurMusicSoundId() {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			soundId = track->soundId;
+			break;
 		}
 	}
 
 	return soundId;
-}
-
-char *IMuseDigital::getCurMusicSoundName() {
-	Common::StackLock lock(_mutex, "IMuseDigital::getCurMusicSoundName()");
-	char *soundName = NULL;
-
-	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
-		Track *track = _track[l];
-		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
-			soundName = track->soundName;
-		}
-	}
-
-	return soundName;
 }
 
 void IMuseDigital::setPan(int soundId, int pan) {

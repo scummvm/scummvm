@@ -316,6 +316,8 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 			fadeOutMusic(60);
 			return;
 		}
+		if (getCurMusicSoundId() == table->soundId)
+			return;
 		if (table->transitionType == 4)
 			_stopingSequence = true;
 		if (table->transitionType == 2) {

@@ -633,7 +633,7 @@ int ImuseDigiSndMgr::getJumpFade(SoundDesc *soundDesc, int number) {
 }
 
 int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte **buf, int32 offset, int32 size) {
-	debug(5, "getDataFromRegion() region:%d, offset:%d, size:%d, numRegions:%d", region, offset, size, soundDesc->numRegions);
+	debug(6, "getDataFromRegion() region:%d, offset:%d, size:%d, numRegions:%d", region, offset, size, soundDesc->numRegions);
 	assert(checkForProperHandle(soundDesc));
 	assert(buf && offset >= 0 && size >= 0);
 	assert(region >= 0 && region < soundDesc->numRegions);

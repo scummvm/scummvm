@@ -142,7 +142,6 @@ public:
 	void setPan(int soundId, int pan);
 	void setFade(int soundId, int destVolume, int delay60HzTicks);
 	int getCurMusicSoundId();
-	char *getCurMusicSoundName();
 	void setHookId(int soundId, int hookId);
 	void setMusicVolume(int vol) {}
 	void stopSound(int sound);
