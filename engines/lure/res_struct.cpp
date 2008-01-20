@@ -692,6 +692,34 @@ TalkEntryData *TalkData::getResponse(int index) {
 	return *i;
 }
 
+// The following class acts as a container for all the NPC conversations
+
+void TalkDataList::saveToStream(WriteStream *stream) {
+	TalkDataList::iterator i;
+	for (i = begin(); i != end(); ++i) {
+		TalkData *rec = *i;
+		TalkEntryList::iterator i;
+		
+		for (i = rec->entries.begin(); i != rec->entries.end(); ++i) {
+			TalkEntryData *entry = *i;
+			stream->writeUint16LE(entry->descId);
+		}
+	}
+}
+
+void TalkDataList::loadFromStream(ReadStream *stream) {
+	TalkDataList::iterator i;
+	for (i = begin(); i != end(); ++i) {
+		TalkData *rec = *i;
+		TalkEntryList::iterator i;
+		
+		for (i = rec->entries.begin(); i != rec->entries.end(); ++i) {
+			TalkEntryData *entry = *i;
+			entry->descId = stream->readUint16LE();
+		}
+	}
+}
+
 // The following class handles a set of coordinates a character should walk to
 // if they're to exit a room to a designated secondary room
 

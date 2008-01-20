@@ -731,15 +731,16 @@ void Resources::saveToStream(Common::WriteStream *stream) {
 	stream->writeUint16LE(_talkingCharacter);
 
 	// Save sublist data
+	_hotspotSchedules.saveToStream(stream);
 	_hotspotData.saveToStream(stream);
 	_activeHotspots.saveToStream(stream);
-	_hotspotSchedules.saveToStream(stream);
 	_fieldList.saveToStream(stream);
 	_randomActions.saveToStream(stream);
 	_barmanLists.saveToStream(stream);
 	_exitJoins.saveToStream(stream);
 	_roomData.saveToStream(stream);
 	_delayList.saveToStream(stream);
+	_talkData.saveToStream(stream);
 }
 
 void Resources::loadFromStream(Common::ReadStream *stream) {
@@ -755,17 +756,16 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	_talkState = TALK_NONE;
 	_activeTalkData = NULL;
 
-	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading hotspot data");
-	_hotspotData.loadFromStream(stream);
-	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading active hotspots");
-	_activeHotspots.loadFromStream(stream);
-
 	_hotspotSchedules.clear();
 	if (saveVersion >= 31) {
 		_hotspotSchedules.loadFromStream(stream);
 		debugC(ERROR_DETAILED, kLureDebugScripts, "Loading hotspot schedules");
 	}
 
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading hotspot data");
+	_hotspotData.loadFromStream(stream);
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading active hotspots");
+	_activeHotspots.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading fields");
 	_fieldList.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading random actions");
@@ -778,6 +778,12 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	_roomData.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading delay list");
 	_delayList.loadFromStream(stream); 
+
+	if (saveVersion >= 32) {
+		debugC(ERROR_DETAILED, kLureDebugScripts, "Loading talk data");
+		_talkData.loadFromStream(stream);
+	}
+
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Finished loading");
 }
 

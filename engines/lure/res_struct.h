@@ -589,7 +589,11 @@ public:
 	TalkEntryData *getResponse(int index);
 };
 
-typedef ManagedList<TalkData *> TalkDataList;
+class TalkDataList: public ManagedList<TalkData *> {
+public:
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
+};
 
 struct RoomExitCoordinateData {
 	int16 x;
