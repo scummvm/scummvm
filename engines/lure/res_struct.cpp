@@ -698,10 +698,10 @@ void TalkDataList::saveToStream(WriteStream *stream) {
 	TalkDataList::iterator i;
 	for (i = begin(); i != end(); ++i) {
 		TalkData *rec = *i;
-		TalkEntryList::iterator i;
+		TalkEntryList::iterator i2;
 		
-		for (i = rec->entries.begin(); i != rec->entries.end(); ++i) {
-			TalkEntryData *entry = *i;
+		for (i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
+			TalkEntryData *entry = *i2;
 			stream->writeUint16LE(entry->descId);
 		}
 	}
@@ -711,10 +711,10 @@ void TalkDataList::loadFromStream(ReadStream *stream) {
 	TalkDataList::iterator i;
 	for (i = begin(); i != end(); ++i) {
 		TalkData *rec = *i;
-		TalkEntryList::iterator i;
+		TalkEntryList::iterator i2;
 		
-		for (i = rec->entries.begin(); i != rec->entries.end(); ++i) {
-			TalkEntryData *entry = *i;
+		for (i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
+			TalkEntryData *entry = *i2;
 			entry->descId = stream->readUint16LE();
 		}
 	}
