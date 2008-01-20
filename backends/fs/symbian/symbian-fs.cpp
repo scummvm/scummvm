@@ -59,12 +59,12 @@ public:
 	SymbianFilesystemNode(const String &path);
 	
 	virtual bool exists() const { 
-			TFileName fname;
-			TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
-			fname.Copy(ptr);
+		TFileName fname;
+		TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
+		fname.Copy(ptr);
 
-			return BaflUtils::FileExists(CEikonEnv::Static()->FsSession(), fname);
-	}		//FIXME: this is just a stub
+		return BaflUtils::FileExists(CEikonEnv::Static()->FsSession(), fname);
+	}
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; }
 	virtual String getPath() const { return _path; }
