@@ -166,11 +166,14 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 			// TODO: The code below has a lot in common with that in IMuseDigital::startSound.
 			// Try to refactor them to reduce the code duplication.
 
-			track->soundDesc = _sound->openSound(track->soundId,
-									track->soundName, track->soundType,
-									track->volGroupId, -1);
+			track->soundDesc = _sound->openSound(track->soundId, track->soundName, track->soundType, track->volGroupId, -1);
+			if (!track->soundDesc)
+				track->soundDesc = _sound->openSound(track->soundId, track->soundName, track->soundType, track->volGroupId, 1);
+			if (!track->soundDesc)
+				track->soundDesc = _sound->openSound(track->soundId, track->soundName, track->soundType, track->volGroupId, 2);
+
 			if (!track->soundDesc) {
-				warning("IMuseDigital::saveOrLoad: Can't open sound so will not be resumed, propably on diffrent CD");
+				warning("IMuseDigital::saveOrLoad: Can't open sound so will not be resumed");
 				track->used = false;
 				continue;
 			}

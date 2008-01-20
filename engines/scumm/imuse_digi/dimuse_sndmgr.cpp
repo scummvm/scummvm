@@ -497,9 +497,15 @@ void ImuseDigiSndMgr::closeSound(SoundDesc *soundDesc) {
 }
 
 ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::cloneSound(SoundDesc *soundDesc) {
+	ImuseDigiSndMgr::SoundDesc *desc;
 	assert(checkForProperHandle(soundDesc));
 
-	return openSound(soundDesc->soundId, soundDesc->name, soundDesc->type, soundDesc->volGroupId, soundDesc->disk);
+	desc = openSound(soundDesc->soundId, soundDesc->name, soundDesc->type, soundDesc->volGroupId, soundDesc->disk);
+	if (!desc)
+		desc = openSound(soundDesc->soundId, soundDesc->name, soundDesc->type, soundDesc->volGroupId, 1);
+	if (!desc)
+		desc = openSound(soundDesc->soundId, soundDesc->name, soundDesc->type, soundDesc->volGroupId, 2);
+	return desc;
 }
 
 bool ImuseDigiSndMgr::checkForProperHandle(SoundDesc *soundDesc) {

@@ -116,8 +116,12 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	} else {
 		strcpy(track->soundName, soundName);
 		track->soundDesc = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
+		if (!track->soundDesc)
+			track->soundDesc = _sound->openSound(soundId, soundName, soundType, volGroupId, 1);
+		if (!track->soundDesc)
+			track->soundDesc = _sound->openSound(soundId, soundName, soundType, volGroupId, 2);
 
-		if (track->soundDesc == NULL)
+		if (!track->soundDesc)
 			return;
 
 		track->sndDataExtComp = _sound->isSndDataExtComp(track->soundDesc);
@@ -353,7 +357,13 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 
 	// Clone the sound.
 	// leaving bug number for now #1635361
-	track->soundDesc = _sound->cloneSound(track->soundDesc);
+	ImuseDigiSndMgr::SoundDesc *soundDesc = _sound->cloneSound(track->soundDesc);
+	if (!soundDesc) {
+		// it fail load open old song after switch to diffrent CDs
+		// so gave up
+		error("Game not supported while playing on 2 diffrent CDs");
+	}
+	track->soundDesc = soundDesc;
 
 	// Set the volume fading parameters to indicate a fade out
 	fadeTrack->volFadeDelay = fadeDelay;
