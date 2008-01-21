@@ -489,6 +489,11 @@ struct AgiGame {
 #define STATE_RUNNING	0x02
 	int state;		/**< state of the interpreter */
 
+	// TODO: Check whether adjMouseX and adjMouseY must be saved and loaded when using savegames.
+	//       If they must be then loading and saving is partially broken at the moment.
+	int adjMouseX;	/**< last given adj.ego.move.to.x.y-command's 1st parameter */
+	int adjMouseY;	/**< last given adj.ego.move.to.x.y-command's 2nd parameter */
+
 	char name[8];	/**< lead in id (e.g. `GR' for goldrush) */
 	char id[8];		/**< game id */
 	uint32 crc;		/**< game CRC */

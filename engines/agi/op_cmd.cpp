@@ -664,15 +664,36 @@ cmd(release_key) {
 }
 
 cmd(adj_ego_move_to_x_y) {
+	int8 x, y;
+
 	switch (logicNamesCmd[182].numArgs) {
+	// The 2 arguments version is used at least in Amiga Gold Rush!
+	// (v2.05 1989-03-09, Amiga AGI 2.316) in logics 130 and 150
+	// (Using arguments (0, 0), (0, 7), (0, 8), (9, 9) and (-9, 9)).
 	case 2:
-		// TODO: Implement the 2 arguments using variant of 'adj.ego.move.to.x.y'.
-		// It's used at least in Amiga Gold Rush! (v2.05 1989-03-09, Amiga AGI 2.316)
-		// in logics 130 and 150 (Using arguments (0, 0), (0, 7), (0, 8), (9, 9), (-9, 9)).
-		// I may be wrong about the (-9, 9) argument pair though, it may just be (247, 9).
-		debugC(4, kDebugLevelScripts, "Unsupported command adj.ego.move.to.x.y(%d, %d)",
-			(int8) p0, (int8) p1);
+		// Both arguments are signed 8-bit (i.e. in range -128 to +127).
+		x = (int8) p0;
+		y = (int8) p1;
+
+		// Turn off ego's current movement caused with the mouse if
+		// adj.ego.move.to.x.y is called with other arguments than previously.
+		// Fixes weird looping behaviour when walking to a ladder in the mines
+		// (Rooms 147-162) in Gold Rush using the mouse. Sometimes the ego didn't
+		// stop when walking to a ladder using the mouse but kept moving on the
+		// ladder in a horizontally looping manner i.e. from right to left, from
+		// right to left etc. In the Amiga Gold Rush the ego stopped when getting
+		// onto the ladder so this is more like it (Although that may be a caused
+		// by something else because this command doesn't do any flag manipulations
+		// in the Amiga version - checked it with disassembly).
+		if (x != game.adjMouseX || y != game.adjMouseY)
+			game.viewTable[EGO_VIEW_TABLE].flags &= ~ADJ_EGO_XY;
+
+		game.adjMouseX = x;
+		game.adjMouseY = y;
+
+		debugC(4, kDebugLevelScripts, "adj.ego.move.to.x.y(%d, %d)", x, y);
 		break;
+	// TODO: Check where (if anywhere) the 0 arguments version is used
 	case 0:
 	default:
 		game.viewTable[0].flags |= ADJ_EGO_XY;

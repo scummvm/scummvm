@@ -360,6 +360,9 @@ int AgiEngine::agiInit() {
 	debug(2, "initializing");
 	debug(2, "game.ver = 0x%x", _game.ver);
 
+	/* initialize with adj.ego.move.to.x.y(0, 0) so to speak */
+	_game.adjMouseX = _game.adjMouseY = 0;
+
 	/* reset all flags to false and all variables to 0 */
 	for (i = 0; i < MAX_FLAGS; i++)
 		_game.flags[i] = 0;

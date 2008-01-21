@@ -223,7 +223,22 @@ int AgiEngine::mainCycle() {
 
 	/* Click-to-walk mouse interface */
 	if (_game.playerControl && v->flags & ADJ_EGO_XY) {
-		v->direction = getDirection(v->xPos, v->yPos, v->parm1, v->parm2, v->stepSize);
+		int toX = v->parm1;
+		int toY = v->parm2;
+
+		// AGI Mouse games use ego's sprite's bottom left corner for mouse walking target.
+		// Amiga games use ego's sprite's bottom center for mouse walking target.
+		// TODO: Check what Atari ST AGI and Apple IIGS AGI use for mouse walking target.
+		if (getPlatform() == Common::kPlatformAmiga)
+			toX -= (v->xSize / 2); // Center ego's sprite horizontally
+
+		// Adjust ego's sprite's mouse walking target position (These parameters are
+		// controlled with the adj.ego.move.to.x.y-command). Note that these values rely
+		// on the horizontal centering of the ego's sprite at least on the Amiga platform.
+		toX += _game.adjMouseX;
+		toY += _game.adjMouseY;
+
+		v->direction = getDirection(v->xPos, v->yPos, toX, toY, v->stepSize);
 
 		if (v->direction == 0)
 			inDestination(v);
