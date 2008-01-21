@@ -152,15 +152,15 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 		}
 		break;
 	case 0x2000: // ImuseSetGroupSfxVolume
-		debug(3, "ImuseSetGroupSFXVolume (%d)", b);
+		debug(5, "ImuseSetGroupSFXVolume (%d)", b);
 //		setGroupSfxVolume(b);
 		break;
 	case 0x2001: // ImuseSetGroupVoiceVolume
-		debug(3, "ImuseSetGroupVoiceVolume (%d)", b);
+		debug(5, "ImuseSetGroupVoiceVolume (%d)", b);
 //		setGroupVoiceVolume(b);
 		break;
 	case 0x2002: // ImuseSetGroupMusicVolume
-		debug(3, "ImuseSetGroupMusicVolume (%d)", b);
+		debug(5, "ImuseSetGroupMusicVolume (%d)", b);
 //		setGroupMusicVolume(b);
 		break;
 	default:
@@ -209,6 +209,7 @@ void IMuseDigital::refreshScripts() {
 	debug(6, "refreshScripts()");
 
 	if (_stopingSequence) {
+		debug(5, "refreshScripts() Force restore music state");
 		parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
 		_stopingSequence = false;
 	}
@@ -222,7 +223,7 @@ void IMuseDigital::refreshScripts() {
 	}
 
 	if (!found && _curMusicState) {
-		debug(5, "refreshScripts() Start Sequence");
+		debug(5, "refreshScripts() Restore music state");
 		parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
 	}
 }
@@ -233,7 +234,7 @@ void IMuseDigital::startVoice(int soundId, Audio::AudioStream *input) {
 }
 
 void IMuseDigital::startVoice(int soundId, const char *soundName) {
-	debug(5, "startVoiceBundle(%s)", soundName);
+	debug(5, "startVoiceBundle(%s, %d)", soundName, soundId);
 	startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOLGRP_VOICE, NULL, 0, 127, 127, NULL);
 }
 
@@ -243,12 +244,12 @@ void IMuseDigital::startMusic(int soundId, int volume) {
 }
 
 void IMuseDigital::startMusic(const char *soundName, int soundId, int hookId, int volume) {
-	debug(5, "startMusicBundle(%s)", soundName);
+	debug(5, "startMusicBundle(%s, soundId:%d, hookId:%d)", soundName, soundId, hookId);
 	startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOLGRP_MUSIC, NULL, hookId, volume, 126, NULL);
 }
 
 void IMuseDigital::startMusicWithOtherPos(const char *soundName, int soundId, int hookId, int volume, Track *otherTrack) {
-	debug(5, "startMusicWithOtherPos(%s)", soundName);
+	debug(5, "startMusicWithOtherPos(%s, soundId:%d, hookId:%d, oldSoundId:%d)", soundName, soundId, hookId, otherTrack->soundId);
 	startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOLGRP_MUSIC, NULL, hookId, volume, 126, otherTrack);
 }
 
@@ -326,6 +327,7 @@ void IMuseDigital::stopSound(int soundId) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
+			debug(5, "IMuseDigital::stopSound(%d) - stopping sound", soundId);
 			flushTrack(track);
 		}
 	}
@@ -343,7 +345,7 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 	}
 
 	int32 msPos = getPosInMs(soundId);
-	debug(5, "IMuseDigital::getCurMusicPosInMs(%d) = %d", soundId, msPos);
+	debug(6, "IMuseDigital::getCurMusicPosInMs(%d) = %d", soundId, msPos);
 	return msPos;
 }
 
@@ -352,7 +354,7 @@ int32 IMuseDigital::getCurVoiceLipSyncWidth() {
 	int32 msPos = getPosInMs(kTalkSoundID) + 50;
 	int32 width = 0, height = 0;
 
-	debug(5, "IMuseDigital::getCurVoiceLipSyncWidth(%d)", kTalkSoundID);
+	debug(6, "IMuseDigital::getCurVoiceLipSyncWidth(%d)", kTalkSoundID);
 	getLipSync(kTalkSoundID, 0, msPos, width, height);
 	return width;
 }
@@ -362,7 +364,7 @@ int32 IMuseDigital::getCurVoiceLipSyncHeight() {
 	int32 msPos = getPosInMs(kTalkSoundID) + 50;
 	int32 width = 0, height = 0;
 
-	debug(5, "IMuseDigital::getCurVoiceLipSyncHeight(%d)", kTalkSoundID);
+	debug(6, "IMuseDigital::getCurVoiceLipSyncHeight(%d)", kTalkSoundID);
 	getLipSync(kTalkSoundID, 0, msPos, width, height);
 	return height;
 }
@@ -381,7 +383,7 @@ int32 IMuseDigital::getCurMusicLipSyncWidth(int syncId) {
 	int32 msPos = getPosInMs(soundId) + 50;
 	int32 width = 0, height = 0;
 
-	debug(5, "IMuseDigital::getCurVoiceLipSyncWidth(%d, %d)", soundId, msPos);
+	debug(6, "IMuseDigital::getCurVoiceLipSyncWidth(%d, %d)", soundId, msPos);
 	getLipSync(soundId, syncId, msPos, width, height);
 	return width;
 }
@@ -400,7 +402,7 @@ int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
 	int32 msPos = getPosInMs(soundId) + 50;
 	int32 width = 0, height = 0;
 
-	debug(5, "IMuseDigital::getCurVoiceLipSyncHeight(%d, %d)", soundId, msPos);
+	debug(6, "IMuseDigital::getCurVoiceLipSyncHeight(%d, %d)", soundId, msPos);
 	getLipSync(soundId, syncId, msPos, width, height);
 	return height;
 }
@@ -417,6 +419,7 @@ void IMuseDigital::stopAllSounds() {
 			// from IMuseDigital::callback either.
 			_mixer->stopHandle(track->mixChanHandle);
 			if (track->soundDesc) {
+				debug(5, "IMuseDigital::stopAllSounds - stopping sound(%d)", track->soundId);
 				_sound->closeSound(track->soundDesc);
 			}
 
