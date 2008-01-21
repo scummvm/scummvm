@@ -184,7 +184,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 			return;
 		}
 		if (table->transitionType == 4)
-			_stopingSequence = true;
+			_stopingSequence = 1;
 		if ((!sequence) && (table->attribPos != 0) &&
 				(table->attribPos == _digStateMusicTable[_curMusicState].attribPos)) {
 			fadeOutMusicAndStartNew(108, table->filename, table->soundId);
@@ -194,7 +194,7 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 		}
 		break;
 	case 6:
-		_stopingSequence = true;
+		_stopingSequence = 1;
 		break;
 	}
 }
@@ -305,7 +305,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		setHookIdForMusic(table->hookId);
 		break;
 	case 9:
-		_stopingSequence = true;
+		_stopingSequence = 1;
 		setHookIdForMusic(table->hookId);
 		break;
 	case 2:
@@ -319,7 +319,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		if (getCurMusicSoundId() == table->soundId)
 			return;
 		if (table->transitionType == 4)
-			_stopingSequence = true;
+			_stopingSequence = 1;
 		if (table->transitionType == 2) {
 			fadeOutMusic(table->fadeOutDelay);
 			startMusic(table->filename, table->soundId, table->hookId, 127);
