@@ -319,7 +319,8 @@ extern int gDebugLevel;
 
 char *scumm_strrev(char *str);
 
-const char *tag2str(uint32 tag);
+Common::String tag2string(uint32 tag);
+#define tag2str(x)	tag2string(x).c_str()
 
 
 #endif
