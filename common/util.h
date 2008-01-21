@@ -319,4 +319,7 @@ extern int gDebugLevel;
 
 char *scumm_strrev(char *str);
 
+const char *tag2str(uint32 tag);
+
+
 #endif

@@ -43,8 +43,6 @@ int toSimpleDir(int dirtype, int dir);
 
 void assertRange(int min, int value, int max, const char *desc);
 
-const char *tag2str(uint32 tag);
-
 } // End of namespace Scumm
 
 #endif

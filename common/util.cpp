@@ -639,3 +639,13 @@ char *scumm_strrev(char *str) {
 	}
 	return str;
 }
+
+const char *tag2str(uint32 tag) {
+	static char str[5];
+	str[0] = (char)(tag >> 24);
+	str[1] = (char)(tag >> 16);
+	str[2] = (char)(tag >> 8);
+	str[3] = (char)tag;
+	str[4] = '\0';
+	return str;
+}
