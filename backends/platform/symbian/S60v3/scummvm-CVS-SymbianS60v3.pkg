@@ -59,10 +59,10 @@
 "..\..\..\..\NEWS"-"!:\resource\apps\scummvm\NEWS"
 
 ; Common datafiles needed for some games
-"..\..\..\..\dists\engine-data\kyra.dat"-"c:\shared\scummvm\kyra.dat"
-"..\..\..\..\dists\engine-data\sky.cpt"-"c:\shared\scummvm\sky.cpt"
-"..\..\..\..\dists\engine-data\igor.tbl"-"c:\shared\scummvm\igor.tbl"
-"..\..\..\..\dists\engine-data\lure.dat"-"c:\shared\scummvm\lure.dat"
+"..\..\..\..\dists\engine-data\kyra.dat"-"c:\data\scummvm\kyra.dat"
+"..\..\..\..\dists\engine-data\sky.cpt"-"c:\data\scummvm\sky.cpt"
+"..\..\..\..\dists\engine-data\igor.tbl"-"c:\data\scummvm\igor.tbl"
+"..\..\..\..\dists\engine-data\lure.dat"-"c:\data\scummvm\lure.dat"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\data\scummvm\scummvm.ini",FILENULL
