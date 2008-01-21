@@ -210,7 +210,8 @@ void IMuseDigital::refreshScripts() {
 
 	if (_stopingSequence) {
 		debug(5, "refreshScripts() Force restore music state");
-		parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
+		// disabled that, it seems help for fix bug #1757010
+		//parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
 		_stopingSequence = false;
 	}
 
