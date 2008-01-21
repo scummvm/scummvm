@@ -397,8 +397,7 @@ protected:
 	void drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
 	bool drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
 
-	void blit(const Common::Rect& r, uint16 z, byte *data, Graphics::Surface *surf);
-	void flatBlit(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor);
+    void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
 };
 
 

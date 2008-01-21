@@ -32,6 +32,11 @@
 
 namespace Parallaction {
 
+#define BUFFER_FOREGROUND   3
+#define	LABEL_TRANSPARENT_COLOR 0xFF
+#define	BALLOON_TRANSPARENT_COLOR 2
+
+
 int16 Gfx::_dialogueBalloonX[5] = { 80, 120, 150, 150, 150 };
 
 void halfbritePixel(int x, int y, int color, void *data) {
@@ -320,7 +325,7 @@ void Gfx::drawItems() {
 
 	Graphics::Surface *surf = g_system->lockScreen();
 	for (uint i = 0; i < _numItems; i++) {
-		flatBlit(_items[i].rect, _items[i].data->getData(_items[i].frame), surf, 0);
+	    blt(_items[i].rect, _items[i].data->getData(_items[i].frame), surf, BUFFER_FOREGROUND, 0);
 	}
 	g_system->unlockScreen();
 }
@@ -334,7 +339,7 @@ void Gfx::drawBalloons() {
 	for (uint i = 0; i < _numBalloons; i++) {
 		Common::Rect r(_balloons[i].surface.w, _balloons[i].surface.h);
 		r.moveTo(_balloons[i].x, _balloons[i].y);
-		flatBlit(r, (byte*)_balloons[i].surface.getBasePtr(0, 0), surf, 2);
+		blt(r, (byte*)_balloons[i].surface.getBasePtr(0, 0), surf, BUFFER_FOREGROUND, BALLOON_TRANSPARENT_COLOR);
 	}
 	g_system->unlockScreen();
 }
@@ -437,7 +442,7 @@ void Gfx::invertRect(Gfx::Buffers buffer, const Common::Rect& r) {
 
 }
 
-void Gfx::flatBlit(const Common::Rect& r, byte *data, Graphics::Surface *surf, byte transparentColor) {
+void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor) {
 
 	Common::Point dp;
 	Common::Rect q(r);
@@ -458,67 +463,46 @@ void Gfx::flatBlit(const Common::Rect& r, byte *data, Graphics::Surface *surf, b
 	uint sPitch = r.width() - q.width();
 	uint dPitch = surf->w - q.width();
 
-	for (uint16 i = q.top; i < q.bottom; i++) {
-		for (uint16 j = q.left; j < q.right; j++) {
-			if (*s != transparentColor)
-				*d = *s;
+    if (_depthMask && (z < BUFFER_FOREGROUND)) {
 
-			s++;
-			d++;
-		}
+        for (uint16 i = 0; i < q.height(); i++) {
 
-		s += sPitch;
-		d += dPitch;
-	}
+            for (uint16 j = 0; j < q.width(); j++) {
+                if (*s != transparentColor) {
+                    byte v = _depthMask->getValue(dp.x + j, dp.y + i);
+                    if (z >= v) *d = *s;
+                }
 
-	return;
+                s++;
+                d++;
+            }
 
+            s += sPitch;
+            d += dPitch;
+        }
 
-}
+    } else {
 
-void Gfx::blit(const Common::Rect& r, uint16 z, byte *data, Graphics::Surface *surf) {
+        for (uint16 i = q.top; i < q.bottom; i++) {
+            for (uint16 j = q.left; j < q.right; j++) {
+                if (*s != transparentColor)
+                    *d = *s;
 
-	Common::Point dp;
-	Common::Rect q(r);
+                s++;
+                d++;
+            }
 
-	Common::Rect clipper(surf->w, surf->h);
+            s += sPitch;
+            d += dPitch;
+        }
 
-	q.clip(clipper);
-	if (!q.isValidRect()) return;
-
-	dp.x = q.left;
-	dp.y = q.top;
-
-	q.translate(-r.left, -r.top);
-
-
-	byte *s = data + q.left + q.top * r.width();
-	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
-
-	uint sPitch = r.width() - q.width();
-	uint dPitch = surf->w - q.width();
-
-	for (uint16 i = 0; i < q.height(); i++) {
-
-		for (uint16 j = 0; j < q.width(); j++) {
-			if (*s != 0) {
-				byte v = _depthMask->getValue(dp.x + j, dp.y + i);
-				if (z >= v) *d = *s;
-			}
-
-			s++;
-			d++;
-		}
-
-		s += sPitch;
-		d += dPitch;
-	}
-
-	return;
+    }
 
 }
 
-#define	LABEL_TRANSPARENT_COLOR 0xFF
+
+
+
 
 void setupLabelSurface(Graphics::Surface &surf, uint w, uint h) {
 	surf.create(w, h, 1);
@@ -669,14 +653,14 @@ void Gfx::drawLabels() {
 		if (_labels[i]->_visible) {
 			Common::Rect r(_labels[i]->_cnv.w, _labels[i]->_cnv.h);
 			r.moveTo(_labels[i]->_pos);
-			flatBlit(r, (byte*)_labels[i]->_cnv.getBasePtr(0, 0), surf, LABEL_TRANSPARENT_COLOR);
+			blt(r, (byte*)_labels[i]->_cnv.getBasePtr(0, 0), surf, BUFFER_FOREGROUND, LABEL_TRANSPARENT_COLOR);
 		}
 	}
 
 	if (_floatingLabel) {
 		Common::Rect r(_floatingLabel->_cnv.w, _floatingLabel->_cnv.h);
 		r.moveTo(_floatingLabel->_pos);
-		flatBlit(r, (byte*)_floatingLabel->_cnv.getBasePtr(0, 0), surf, LABEL_TRANSPARENT_COLOR);
+        blt(r, (byte*)_floatingLabel->_cnv.getBasePtr(0, 0), surf, BUFFER_FOREGROUND, LABEL_TRANSPARENT_COLOR);
 	}
 
 	g_system->unlockScreen();
@@ -723,8 +707,7 @@ void Gfx::flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buf
 	Common::Rect r(cnv->w, cnv->h);
 	r.moveTo(x, y);
 
-	flatBlit(r, (byte*)cnv->pixels, _buffers[buffer], 0);
-	return;
+	blt(r, (byte*)cnv->pixels, _buffers[buffer], BUFFER_FOREGROUND, 0);
 }
 
 
@@ -732,8 +715,7 @@ void Gfx::blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffe
 	Common::Rect r(cnv->w, cnv->h);
 	r.moveTo(x, y);
 
-	blit(r, z, (byte*)cnv->pixels, _buffers[buffer]);
-	return;
+    blt(r, (byte*)cnv->pixels, _buffers[buffer], z, 0);
 }
 
 void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
@@ -808,11 +790,8 @@ void Gfx::restoreDoorBackground(const Common::Rect& r, byte *data, byte* backgro
 //	copies a rectangular bitmap on the background
 //
 void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
-
-	flatBlit(r, data, _buffers[kBitBack], 0);
-	flatBlit(r, data, _buffers[kBit2], 0);
-
-	return;
+    blt(r, data, _buffers[kBitBack], BUFFER_FOREGROUND, 0);
+    blt(r, data, _buffers[kBit2], BUFFER_FOREGROUND, 0);
 }
 
 
@@ -934,7 +913,7 @@ int16 Gfx::queryMask(int16 v) {
 		if (_bgLayers[_si+1] > v) return _si;
 	}
 
-	return 3;
+	return BUFFER_FOREGROUND;
 }
 
 Gfx::Gfx(Parallaction* vm) :
@@ -1055,7 +1034,7 @@ int Gfx::createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness) 
 
 	int16 real_h = (winding == -1) ? h : h + 9;
 	balloon->surface.create(w, real_h, 1);
-	balloon->surface.fillRect(Common::Rect(w, real_h), 2);
+	balloon->surface.fillRect(Common::Rect(w, real_h), BALLOON_TRANSPARENT_COLOR);
 
 	Common::Rect r(w, h);
 	balloon->surface.fillRect(r, 0);
@@ -1071,7 +1050,7 @@ int Gfx::createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness) 
 		winding = (winding == 0 ? 1 : 0);
 		Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
 		s.moveTo(r.width()/2 - 5, r.bottom - 1);
-		flatBlit(s, _resBalloonTail[winding], &balloon->surface, 2);
+		blt(s, _resBalloonTail[winding], &balloon->surface, BUFFER_FOREGROUND, BALLOON_TRANSPARENT_COLOR);
 	}
 
 	_numBalloons++;
@@ -1134,7 +1113,7 @@ int Gfx::setLocationBalloon(char *text, bool endGame) {
 	setFont(_vm->_dialogueFont);
 	getStringExtent(text, MAX_BALLOON_WIDTH, &w, &h);
 
-	int id = createBalloon(w+(endGame ? 5 : 10), h+5, -1, 2);
+	int id = createBalloon(w+(endGame ? 5 : 10), h+5, -1, BALLOON_TRANSPARENT_COLOR);
 	Gfx::Balloon *balloon = &_balloons[id];
 	drawWrappedText(&balloon->surface, text, 0, MAX_BALLOON_WIDTH);
 
