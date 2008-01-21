@@ -62,15 +62,15 @@ public:
 		TFileName fname;
 		TPtrC8 ptr((const unsigned char*)_path.c_str(),_path.size());
 		fname.Copy(ptr);
-
-		return BaflUtils::FileExists(CEikonEnv::Static()->FsSession(), fname);
+		TBool fileExists = BaflUtils::FileExists(CEikonEnv::Static()->FsSession(), fname);
+		return fileExists;
 	}
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; }
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
-	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }	//FIXME: this is just a stub
+	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }	//FIXME: this is just a stub
 
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
