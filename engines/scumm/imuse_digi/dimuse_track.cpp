@@ -311,7 +311,7 @@ void IMuseDigital::setHookIdForMusic(int hookId) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
-			debug(5, "IMuseDigital::setHookIdForMusic - setting for sound:%d", hookId);
+			debug(5, "IMuseDigital::setHookIdForMusic - setting for sound:%d", track->soundId);
 			track->curHookId = hookId;
 			break;
 		}
