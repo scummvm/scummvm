@@ -682,7 +682,7 @@ cmd(adj_ego_move_to_x_y) {
 		// stop when walking to a ladder using the mouse but kept moving on the
 		// ladder in a horizontally looping manner i.e. from right to left, from
 		// right to left etc. In the Amiga Gold Rush the ego stopped when getting
-		// onto the ladder so this is more like it (Although that may be a caused
+		// onto the ladder so this is more like it (Although that may be caused
 		// by something else because this command doesn't do any flag manipulations
 		// in the Amiga version - checked it with disassembly).
 		if (x != game.adjMouseX || y != game.adjMouseY)
