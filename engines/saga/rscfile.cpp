@@ -534,6 +534,7 @@ bool Resource::createContexts() {
 	for (i = 0; i < _contextsCount; i++) {
 		context = &_contexts[i];
 		context->file = new Common::File();
+		context->serial = 0;
 
 		// For ITE, add the digital music file and sfx file information here
 		if (_vm->getGameType() == GType_ITE && digitalMusic && i == _contextsCount - 1) {
@@ -560,20 +561,13 @@ bool Resource::createContexts() {
 
 				context->fileName = voicesFileName;
 				context->fileType = GAME_VOICEFILE;
-			}
-		}
-		context->serial = 0;
 
-		// IHNM has several different voice files, so we need to allow
-		// multiple resource contexts of the same type. We tell them
-		// apart by assigning each of the duplicates a unique serial
-		// number. The default behaviour when requesting a context will
-		// be to look for serial number 0.
-
-		for (int j = i - 1; j >= 0; j--) {
-			if (_contexts[j].fileType & context->fileType) {
-				context->serial = _contexts[j].serial + 1;
-				break;
+				// IHNM has several different voice files, so we need to allow
+				// multiple resource contexts of the same type. We tell them
+				// apart by assigning each of the duplicates a unique serial
+				// number. The default behaviour when requesting a context will
+				// be to look for serial number 0.
+				context->serial = i - voicesFileIndex + token;
 			}
 		}
 
