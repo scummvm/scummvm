@@ -27,7 +27,6 @@
 #include "common/scummsys.h"
 //#include "graphics/scaler.h"
 #include "common/system.h"
-#include "backends/intern.h"
 
 #include "gp32std.h"
 #include "gp32std_file.h"

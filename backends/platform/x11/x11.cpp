@@ -30,7 +30,6 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "base/main.h"
-#include "backends/intern.h"
 #include "backends/platform/x11/x11.h"
 #include "backends/plugins/posix/posix-provider.h"
 
@@ -60,6 +59,12 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+
+
+//#define SAMPLES_PER_SEC 11025
+#define SAMPLES_PER_SEC 22050
+//#define SAMPLES_PER_SEC 44100
+
 
 int main(int argc, char *argv[]) {
 	g_system = OSystem_X11::create(0, 0);

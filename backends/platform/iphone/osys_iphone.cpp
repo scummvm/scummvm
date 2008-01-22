@@ -41,7 +41,6 @@
 
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
-#include "backends/intern.h"
 #include "sound/mixer.h"
 #include "gui/message.h"
 

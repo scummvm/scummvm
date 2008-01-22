@@ -24,8 +24,18 @@
  */
 
 #include "be_os5.h"
-#include "backends/intern.h"
 #include "common/config-manager.h"
+
+#ifdef PALMOS_ARM
+#	ifdef COMPILE_ZODIAC
+#		define SAMPLES_PER_SEC 44100
+#	else
+#		define SAMPLES_PER_SEC 22050
+#	endif
+#else
+#	define SAMPLES_PER_SEC 8000
+#endif
+
 
 SoundExType _soundEx;
 

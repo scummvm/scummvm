@@ -39,6 +39,8 @@
 
 #include "./trace.h"
 
+#define	SAMPLES_PER_SEC	44100
+
 #define	SCREEN_WIDTH	480
 #define	SCREEN_HEIGHT	272
 

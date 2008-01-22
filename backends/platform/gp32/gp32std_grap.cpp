@@ -25,7 +25,6 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "backends/intern.h"
 
 #include "gp32std.h"
 #include "gp32std_grap.h"

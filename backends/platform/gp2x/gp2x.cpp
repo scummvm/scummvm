@@ -54,6 +54,8 @@
 #include "config.h"
 #endif
 
+#define	SAMPLES_PER_SEC	11025
+
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
 	return interval;

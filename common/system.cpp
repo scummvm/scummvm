@@ -23,7 +23,6 @@
  *
  */
 
-#include "backends/intern.h"
 #include "backends/events/default/default-events.h"
 
 #include "common/config-manager.h"

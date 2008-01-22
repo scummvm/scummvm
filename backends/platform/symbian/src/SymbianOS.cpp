@@ -35,6 +35,13 @@
 
 #include "..\..\sdl\main.cpp"
 
+#ifdef SAMPLES_PER_SEC_8000 // the GreanSymbianMMP format cannot handle values for defines :(
+  #define SAMPLES_PER_SEC 8000
+#else
+  #define SAMPLES_PER_SEC 16000
+#endif
+
+
 ////////// extern "C" ///////////////////////////////////////////////////
 namespace Symbian {
 
@@ -52,8 +59,7 @@ void FatalError(const char *msg) {
 }
 
 // make this easily available everywhere
-char* GetExecutablePath()
-{
+char* GetExecutablePath() {
 	return CSDLApp::GetExecutablePathCStr();	
 }
 

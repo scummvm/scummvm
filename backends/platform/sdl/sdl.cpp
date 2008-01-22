@@ -34,6 +34,11 @@
 
 #include "icons/scummvm.xpm"
 
+//#define SAMPLES_PER_SEC 11025
+#define SAMPLES_PER_SEC 22050
+//#define SAMPLES_PER_SEC 44100
+
+
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
 	return interval;

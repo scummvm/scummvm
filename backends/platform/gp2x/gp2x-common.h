@@ -32,7 +32,6 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
-#include "backends/intern.h"
 
 #include <SDL.h>
 #include <SDL_gp2x.h>

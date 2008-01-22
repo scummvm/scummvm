@@ -26,7 +26,6 @@
 #include "common/scummsys.h"
 //#include "graphics/scaler.h"
 #include "common/system.h"
-#include "backends/intern.h"
 
 #include "engines/engine.h"
 

@@ -68,6 +68,9 @@
 extern "C" _CRTIMP FILE* __cdecl   _wfreopen (const wchar_t*, const wchar_t*, FILE*);
 #endif
 
+#define SAMPLES_PER_SEC_OLD 11025
+#define SAMPLES_PER_SEC_NEW 22050
+
 using namespace CEGUI;
 
 // ********************************************************************************************
