@@ -880,7 +880,7 @@ fi;
 # Engine selection
 #
 for engine in $_engines; do
-	add_to_config_mk_if_no `get_engine_build $engine` "DISABLE_$(echo $engine | tr [a-z] [A-Z]) = 1"
+	add_to_config_mk_if_no `get_engine_build $engine` "DISABLE_`echo $engine | tr [a-z] [A-Z]` = 1"
 done
 add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
 add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
