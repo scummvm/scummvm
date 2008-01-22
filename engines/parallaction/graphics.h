@@ -262,7 +262,6 @@ public:
 public:
 
 	// balloons and text
-	uint16 getStringWidth(const char *text);
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 
 	// labels

@@ -795,38 +795,38 @@ void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
 }
 
 
-
-uint16 Gfx::getStringWidth(const char *text) {
-	return _font->getStringWidth(text);
-}
-
 void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height) {
 
 	uint16 lines = 0;
 	uint16 w = 0;
 	*width = 0;
 
+	uint16 blankWidth = _font->getStringWidth(" ");
+	uint16 tokenWidth = 0;
+
 	char token[40];
 
 	while (strlen(text) != 0) {
 
 		text = parseNextToken(text, token, 40, "   ", true);
-		w += getStringWidth(token);
+		tokenWidth = _font->getStringWidth(token);
+
+		w += tokenWidth;
 
 		if (!scumm_stricmp(token, "%p")) {
 			lines++;
 		} else {
 			if (w > maxwidth) {
-				w -= getStringWidth(token);
+				w -= tokenWidth;
 				lines++;
 				if (w > *width)
 					*width = w;
 
-				w = getStringWidth(token);
+				w = tokenWidth;
 			}
 		}
 
-		w += getStringWidth(" ");
+		w += blankWidth;
 		text = Common::ltrim(text);
 	}
 
@@ -1170,6 +1170,9 @@ bool Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16
 	uint16 rx = 10;
 	uint16 ry = 4;
 
+	uint16 blankWidth = _font->getStringWidth(" ");
+	uint16 tokenWidth = 0;
+
 	char token[40];
 
 	if (wrapwidth == -1)
@@ -1186,17 +1189,20 @@ bool Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16
 
 			strcpy(token, "> .......");
 			strncpy(token+2, _password, strlen(_password));
+			tokenWidth = _font->getStringWidth(token);
+
 			rv = true;
 		} else {
+			tokenWidth = _font->getStringWidth(token);
 
-			linewidth += getStringWidth(token);
+			linewidth += tokenWidth;
 
 			if (linewidth > wrapwidth) {
 				// wrap line
 				lines++;
 				rx = 10;			// x
 				ry = 4 + lines*10;	// y
-				linewidth = getStringWidth(token);
+				linewidth = tokenWidth;
 			}
 
 			if (!scumm_stricmp(token, "%s")) {
@@ -1207,8 +1213,8 @@ bool Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16
 
 		drawText(surf, rx, ry, token, color);
 
-		rx += getStringWidth(token) + getStringWidth(" ");
-		linewidth += getStringWidth(" ");
+		rx += tokenWidth + blankWidth;
+		linewidth += blankWidth;
 
 		text = Common::ltrim(text);
 	}
