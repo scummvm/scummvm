@@ -2116,8 +2116,8 @@ void ScummEngine_v7::scummLoop_handleSound() {
 	ScummEngine_v6::scummLoop_handleSound();
 	if (_imuseDigital) {
 		_imuseDigital->flushTracks();
-		// In CoMI and the full (non-demo) version of The Dig, also invoke IMuseDigital::refreshScripts
-		if ( ((_game.id == GID_DIG) && (!(_game.features & GF_DEMO))) || (_game.id == GID_CMI) )
+		// In CoMI and the Dig the full (non-demo) version invoke IMuseDigital::refreshScripts 
+		if ((_game.id == GID_DIG || _game.id == GID_CMI) && !(_game.features & GF_DEMO))
 			_imuseDigital->refreshScripts();
 	}
 	if (_smixer) {

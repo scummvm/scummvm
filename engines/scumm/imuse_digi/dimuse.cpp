@@ -32,15 +32,12 @@
 #include "scumm/sound.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
+#include "scumm/imuse_digi/dimuse_track.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
 namespace Scumm {
-
-IMuseDigital::Track::Track()
-	: soundId(-1), used(false), stream(NULL), streamSou(NULL) {
-}
 
 void IMuseDigital::timer_handler(void *refCon) {
 	IMuseDigital *imuseDigital = (IMuseDigital *)refCon;
@@ -100,6 +97,8 @@ void IMuseDigital::resetState() {
 	_curMusicCue = 0;
 	memset(_attributes, 0, sizeof(_attributes));
 	_nextSeqToPlay = 0;
+	_stopingSequence = 0;
+	_triggerUsed = false;
 }
 
 void IMuseDigital::saveOrLoad(Serializer *ser) {
@@ -129,7 +128,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 		MKLINE(Track, used, sleByte, VER(31)),
 		MKLINE(Track, toBeRemoved, sleByte, VER(31)),
 		MKLINE(Track, souStreamUsed, sleByte, VER(31)),
-		MKLINE(Track, mixerStreamRunning, sleByte, VER(31)),
+		MKLINE(Track, mixerStreamRunning, sleByte, VER(31)),	// FIXME: OBSOLETE, remove this!
 		MKLINE(Track, soundPriority, sleInt32, VER(31)),
 		MKLINE(Track, regionOffset, sleInt32, VER(31)),
 		MK_OBSOLETE(Track, trackOffset, sleInt32, VER(31), VER(31)),
@@ -151,39 +150,35 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (!ser->isSaving()) {
-			track->sndDataExtComp = false;
+		if (ser->isLoading()) {
+			memset(track, 0, sizeof(Track));
 		}
 		ser->saveLoadEntries(track, trackEntries);
-		if (!ser->isSaving()) {
+		if (ser->isLoading()) {
+			_track[l]->trackId = l;
 			if (!track->used)
 				continue;
-			track->readyToRemove = false;
 			if ((track->toBeRemoved) || (track->souStreamUsed) || (track->curRegion == -1)) {
-				track->streamSou= NULL;
-				track->stream = NULL;
 				track->used = false;
 				continue;
 			}
 
-			track->soundDesc = _sound->openSound(track->soundId,
-									track->soundName, track->soundType,
-									track->volGroupId, -1);
+			// TODO: The code below has a lot in common with that in IMuseDigital::startSound.
+			// Try to refactor them to reduce the code duplication.
+
+			track->soundDesc = _sound->openSound(track->soundId, track->soundName, track->soundType, track->volGroupId, -1);
+			if (!track->soundDesc)
+				track->soundDesc = _sound->openSound(track->soundId, track->soundName, track->soundType, track->volGroupId, 1);
+			if (!track->soundDesc)
+				track->soundDesc = _sound->openSound(track->soundId, track->soundName, track->soundType, track->volGroupId, 2);
+
 			if (!track->soundDesc) {
-				warning("IMuseDigital::saveOrLoad: Can't open sound so will not be resumed, propably on diffrent CD");
-				track->streamSou = NULL;
-				track->stream = NULL;
+				warning("IMuseDigital::saveOrLoad: Can't open sound so will not be resumed");
 				track->used = false;
 				continue;
 			}
 
-			if (track->sndDataExtComp) {
-				track->regionOffset = 0;
-			}
 			track->sndDataExtComp = _sound->isSndDataExtComp(track->soundDesc);
-			if (track->sndDataExtComp) {
-				track->regionOffset = 0;
-			}
 			track->dataOffset = _sound->getRegionOffset(track->soundDesc, track->curRegion);
 			int bits = _sound->getBits(track->soundDesc);
 			int channels = _sound->getChannels(track->soundDesc);
@@ -206,21 +201,9 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 				track->mixerFlags |= kFlagLittleEndian;
 #endif
 
-			track->streamSou = NULL;
 			track->stream = Audio::makeAppendableAudioStream(freq, makeMixerFlags(track->mixerFlags));
 
-			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
-			const int vol = track->vol / 1000;
-			Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
-
-			if (track->volGroupId == 1)
-				type = Audio::Mixer::kSpeechSoundType;
-			if (track->volGroupId == 2)
-				type = Audio::Mixer::kSFXSoundType;
-			if (track->volGroupId == 3)
-				type = Audio::Mixer::kMusicSoundType;
-
-			_mixer->playInputStream(type, &track->mixChanHandle, track->stream, -1, vol, pan, false);
+			_mixer->playInputStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan());
 			_mixer->pauseHandle(track->mixChanHandle, true);
 		}
 	}
@@ -231,9 +214,12 @@ void IMuseDigital::callback() {
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && !track->readyToRemove) {
-			if (track->toBeRemoved) {
-				track->readyToRemove = true;
+		if (track->used) {
+			// Ignore tracks which are about to finish. Also, if it did finish in the meantime,
+			// mark it as unused.
+			if (!track->stream) {
+				if (!_mixer->isSoundHandleActive(track->mixChanHandle))
+					memset(track, 0, sizeof(Track));
 				continue;
 			}
 
@@ -249,7 +235,8 @@ void IMuseDigital::callback() {
 							track->volFadeUsed = false;
 						}
 						if (track->vol == 0) {
-							track->toBeRemoved = true;
+							// Fade out complete -> remove this track
+							flushTrack(track);
 							continue;
 						}
 					}
@@ -265,24 +252,14 @@ void IMuseDigital::callback() {
 				debug(5, "Fade: sound(%d), Vol(%d)", track->soundId, track->vol / 1000);
 			}
 
-			const int pan = (track->pan != 64) ? 2 * track->pan - 127 : 0;
-			const int vol = track->vol / 1000;
-			Audio::Mixer::SoundType type = Audio::Mixer::kPlainSoundType;
-
-			if (track->volGroupId == 1)
-				type = Audio::Mixer::kSpeechSoundType;
-			if (track->volGroupId == 2)
-				type = Audio::Mixer::kSFXSoundType;
-			if (track->volGroupId == 3)
-				type = Audio::Mixer::kMusicSoundType;
-
-			if (track->stream) {
+			if (!track->souStreamUsed) {
+				assert(track->stream);
 				byte *tmpSndBufferPtr = NULL;
 				int32 curFeedSize = 0;
 
 				if (track->curRegion == -1) {
 					switchToNextRegion(track);
-					if (track->toBeRemoved)
+					if (!track->stream)	// Seems we reached the end of the stream
 						continue;
 				}
 
@@ -321,7 +298,7 @@ void IMuseDigital::callback() {
 						int tmpFeedSize = _sound->getDataFromRegion(track->soundDesc, track->curRegion, &tmpPtr, tmpOffset, tmpFeedSize12Bits);
 						curFeedSize = BundleCodecs::decode12BitsSample(tmpPtr, &tmpSndBufferPtr, tmpFeedSize);
 
-						free(tmpPtr);
+						delete[] tmpPtr;
 					} else if (bits == 16) {
 						curFeedSize = _sound->getDataFromRegion(track->soundDesc, track->curRegion, &tmpSndBufferPtr, track->regionOffset, feedSize);
 						if (channels == 1) {
@@ -341,8 +318,6 @@ void IMuseDigital::callback() {
 						curFeedSize = feedSize;
 
 					if (_mixer->isReady()) {
-						_mixer->setChannelVolume(track->mixChanHandle, vol);
-						_mixer->setChannelBalance(track->mixChanHandle, pan);
 						track->stream->queueBuffer(tmpSndBufferPtr, curFeedSize);
 						track->regionOffset += curFeedSize;
 					} else
@@ -350,22 +325,16 @@ void IMuseDigital::callback() {
 
 					if (_sound->isEndOfRegion(track->soundDesc, track->curRegion)) {
 						switchToNextRegion(track);
-						if (track->toBeRemoved)
+						if (!track->stream)	// Seems we reached the end of the stream
 							break;
 					}
 					feedSize -= curFeedSize;
 					assert(feedSize >= 0);
 				} while (feedSize != 0);
-			} else if (track->streamSou) {
-				if (_mixer->isReady()) {
-					if (!track->mixerStreamRunning) {
-						track->mixerStreamRunning = true;
-						_mixer->playInputStream(type, &track->mixChanHandle, track->streamSou, -1, vol, pan, false);
-					} else {
-						_mixer->setChannelVolume(track->mixChanHandle, vol);
-						_mixer->setChannelBalance(track->mixChanHandle, pan);
-					}
-				}
+			}
+			if (_mixer->isReady()) {
+				_mixer->setChannelVolume(track->mixChanHandle, track->getVol());
+				_mixer->setChannelBalance(track->mixChanHandle, track->getPan());
 			}
 		}
 	}
@@ -373,64 +342,75 @@ void IMuseDigital::callback() {
 
 void IMuseDigital::switchToNextRegion(Track *track) {
 	assert(track);
-	debug(5, "switchToNextRegion(track:%d)", track->trackId);
 
 	if (track->trackId >= MAX_DIGITAL_TRACKS) {
-		track->toBeRemoved = true;
-		debug(5, "exit (fadetrack can't go next region) switchToNextRegion(trackId:%d)", track->trackId);
+		flushTrack(track);
+		debug(5, "SwToNeReg(trackId:%d) - fadetrack can't go next region, exiting SwToNeReg", track->trackId);
 		return;
 	}
 
 	int num_regions = _sound->getNumRegions(track->soundDesc);
 
 	if (++track->curRegion == num_regions) {
-		track->toBeRemoved = true;
-		debug(5, "exit (end of regions) switchToNextRegion(track:%d)", track->trackId);
+		flushTrack(track);
+		debug(5, "SwToNeReg(trackId:%d) - end of region, exiting SwToNeReg", track->trackId);
 		return;
 	}
 
 	ImuseDigiSndMgr::SoundDesc *soundDesc = track->soundDesc;
+	if (_triggerUsed && track->soundDesc->numMarkers) {
+		if (_sound->checkForTriggerByRegionAndMarker(soundDesc, track->curRegion, _triggerParams.marker)) {
+			debug(5, "SwToNeReg(trackId:%d) - trigger %s reached", track->trackId, _triggerParams.marker);
+			debug(5, "SwToNeReg(trackId:%d) - exit current region %d", track->trackId, track->curRegion);
+			debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, _triggerParams.fadeOutDelay);
+			Track *fadeTrack = cloneToFadeOutTrack(track, _triggerParams.fadeOutDelay);
+			if (fadeTrack) {
+				fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
+				fadeTrack->regionOffset = 0;
+				debug(5, "SwToNeReg(trackId:%d)-sound(%d) select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+				fadeTrack->curHookId = 0;
+			}
+			flushTrack(track);
+			startMusic(_triggerParams.filename, _triggerParams.soundId, _triggerParams.hookId, _triggerParams.volume);
+			_triggerUsed = false;
+			return;
+		}
+	}
+
 	int jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, track->curHookId);
-	if (jumpId == -1)
-		jumpId = _sound->getJumpIdByRegionAndHookId(soundDesc, track->curRegion, 0);
 	if (jumpId != -1) {
 		int region = _sound->getRegionIdByJumpId(soundDesc, jumpId);
 		assert(region != -1);
 		int sampleHookId = _sound->getJumpHookId(soundDesc, jumpId);
 		assert(sampleHookId != -1);
-		int fadeDelay = (60 * _sound->getJumpFade(soundDesc, jumpId)) / 1000;
-		if (sampleHookId != 0) {
-			if (track->curHookId == sampleHookId) {
-				if (fadeDelay != 0) {
-					Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
-					if (fadeTrack) {
-						fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
-						fadeTrack->regionOffset = 0;
-						debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
-						fadeTrack->curHookId = 0;
-					}
-				}
-				track->curRegion = region;
-				debug(5, "switchToNextRegion-sound(%d) jump to region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
-				track->curHookId = 0;
-			}
-		} else {
-			if (fadeDelay != 0) {
+		debug(5, "SwToNeReg(trackId:%d) - JUMP found - sound:%d, track hookId:%d, data hookId:%d", track->trackId, track->soundId, track->curHookId, sampleHookId);
+		if (track->curHookId == sampleHookId) {
+			int fadeDelay = (60 * _sound->getJumpFade(soundDesc, jumpId)) / 1000;
+			debug(5, "SwToNeReg(trackId:%d) - sound(%d) match hookId", track->trackId, track->soundId);
+			if (fadeDelay) {
+				debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, fadeDelay);
 				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 				if (fadeTrack) {
 					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
 					fadeTrack->regionOffset = 0;
-					debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+					debug(5, "SwToNeReg(trackId:%d) - sound(%d) faded track, select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+					fadeTrack->curHookId = 0;
 				}
 			}
 			track->curRegion = region;
-			debug(5, "switchToNextRegion-sound(%d) jump to region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
+			debug(5, "SwToNeReg(trackId:%d) - sound(%d) jump to region %d, curHookId: %d", track->trackId, track->soundId, track->curRegion, track->curHookId);
+			track->curHookId = 0;
+		} else {
+			debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);
 		}
+	} else {
+		debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);
 	}
 
-	debug(5, "switchToNextRegion-sound(%d) select region %d, curHookId: %d", track->soundId, track->curRegion, track->curHookId);
+	debug(5, "SwToNeReg(trackId:%d) - sound(%d), select region %d", track->trackId, track->soundId, track->curRegion);
 	track->dataOffset = _sound->getRegionOffset(soundDesc, track->curRegion);
 	track->regionOffset = 0;
+	debug(5, "SwToNeReg(trackId:%d) - end of func", track->trackId);
 }
 
 } // End of namespace Scumm

@@ -281,7 +281,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.h"
 				>
 			</File>
 		</Filter>

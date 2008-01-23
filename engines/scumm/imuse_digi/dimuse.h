@@ -39,72 +39,33 @@
 
 namespace Scumm {
 
-#define MAX_DIGITAL_TRACKS 8
-#define MAX_DIGITAL_FADETRACKS 8
+enum {
+	MAX_DIGITAL_TRACKS = 8,
+	MAX_DIGITAL_FADETRACKS = 8
+};
 
 struct imuseDigTable;
 struct imuseComiTable;
 class Serializer;
 class ScummEngine_v7;
-
-// These flag bits correspond exactly to the sound mixer flags of March 2007.
-// We don't want to use the mixer flags directly, because then our saved games
-// will break in interesting ways if the mixer flags are ever assigned new
-// values. Now they should keep working, as long as these flags don't change.
-
-enum {
-	kFlagUnsigned = 1 << 0,
-	kFlag16Bits = 1 << 1,
-	kFlagLittleEndian = 1 << 2,
-	kFlagStereo = 1 << 3,
-	kFlagReverseStereo = 1 << 4
-
-	// Not used by Digital iMUSE
-	// kFlagAutoFree = 1 << 5,
-	// kFlagLoop = 1 << 6
-};
+struct Track;
 
 class IMuseDigital : public MusicEngine {
 private:
 
 	int _callbackFps;		// value how many times callback needs to be called per second
 
-	struct Track {
-		int trackId;		// used to identify track by value (0-15)
-
-		int8 pan;			// panning value of sound
-		int32 vol;			// volume level (values 0-127 * 1000)
-		int32 volFadeDest;	// volume level which fading target (values 0-127 * 1000)
-		int32 volFadeStep;	// delta of step while changing volume at each imuse callback
-		int32 volFadeDelay;	// time in ms how long fading volume must be
-		bool volFadeUsed;	// flag if fading is in progress
-
-		int32 soundId;		// sound id used by scumm script
-		char soundName[15]; // sound name but also filename of sound in bundle data
-		bool used;			// flag mean that track is used
-		bool toBeRemoved;   // flag mean that track need to be free
-		bool readyToRemove; // flag mean that track is ready to stop
-		bool mixerStreamRunning;	// flag mean sound mixer's stream is running
-		bool souStreamUsed;	// flag mean that track use stream from sou file
-		bool sndDataExtComp;// flag mean that sound data is compressed by scummvm tools
-		int32 soundPriority;// priority level of played sound (0-127)
-		int32 regionOffset; // offset to sound data relative to begining of current region
-		int32 dataOffset;	// offset to sound data relative to begining of 'DATA' chunk
-		int32 curRegion;	// id of current used region
-		int32 curHookId;	// id of current used hook id
-		int32 volGroupId;	// id of volume group (IMUSE_VOLGRP_VOICE, IMUSE_VOLGRP_SFX, IMUSE_VOLGRP_MUSIC)
-		int32 soundType;	// type of sound data (kSpeechSoundType, kSFXSoundType, kMusicSoundType)
-		int32 feedSize;		// size of sound data needed to be filled at each callback iteration
-		int32 dataMod12Bit;	// value used between all callback to align 12 bit source of data
-		int32 mixerFlags;	// flags for sound mixer's channel (kFlagStereo, kFlag16Bits, kFlagReverseStereo, kFlagUnsigned, kFlagLittleEndian)
-
-		ImuseDigiSndMgr::SoundDesc *soundDesc;	// sound handle used by iMuse sound manager
-		Audio::SoundHandle mixChanHandle;					// sound mixer's channel handle
-		Audio::AppendableAudioStream *stream;		// sound mixer's audio stream handle for *.la1 and *.bun
-		Audio::AudioStream *streamSou;				// sound mixer's audio stream handle for *.sou
-
-		Track();
+	struct TriggerParams {
+		char marker[10];
+		int fadeOutDelay;
+		char filename[13];
+		int soundId;
+		int hookId;
+		int volume;
 	};
+
+	TriggerParams _triggerParams;
+	bool _triggerUsed;
 
 	Track *_track[MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS];
 
@@ -118,18 +79,19 @@ private:
 
 	bool _pause;			// flag mean that iMuse callback should be idle
 
-	int32 _attributes[188];	// internal atributes for each music file to store and check later
+	int32 _attributes[188];	// internal attributes for each music file to store and check later
 	int32 _nextSeqToPlay;	// id of sequence type of music needed played
 	int32 _curMusicState;	// current or previous id of music
 	int32 _curMusicSeq;		// current or previous id of sequence music
 	int32 _curMusicCue;		// current cue for current music. used in FT
+	int _stopingSequence;
 
 	int32 makeMixerFlags(int32 flags);
 	static void timer_handler(void *refConf);
 	void callback();
 	void switchToNextRegion(Track *track);
 	int allocSlot(int priority);
-	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority);
+	void startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority, Track *otherTrack);
 	void selectVolumeGroup(int soundId, int volGroupId);
 
 	int32 getPosInMs(int soundId);
@@ -137,6 +99,9 @@ private:
 
 	int getSoundIdByName(const char *soundName);
 	void fadeOutMusic(int fadeDelay);
+	void fadeOutMusicAndStartNew(int fadeDelay, const char *filename, int soundId);
+	void setTrigger(TriggerParams *trigger);
+	void setHookIdForMusic(int hookId);
 	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
 
 	void setFtMusicState(int stateId);
@@ -146,11 +111,13 @@ private:
 
 	void setComiMusicState(int stateId);
 	void setComiMusicSequence(int seqId);
-	void playComiMusic(const char *songName, const imuseComiTable *table, int atribPos, bool sequence);
+	void playComiMusic(const char *songName, const imuseComiTable *table, int attribPos, bool sequence);
 
 	void setDigMusicState(int stateId);
 	void setDigMusicSequence(int seqId);
-	void playDigMusic(const char *songName, const imuseDigTable *table, int atribPos, bool sequence);
+	void playDigMusic(const char *songName, const imuseDigTable *table, int attribPos, bool sequence);
+
+	void flushTrack(Track *track);
 
 public:
 	IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps);
@@ -162,6 +129,7 @@ public:
 	void startVoice(int soundId, const char *soundName);
 	void startMusic(int soundId, int volume);
 	void startMusic(const char *soundName, int soundId, int hookId, int volume);
+	void startMusicWithOtherPos(const char *soundName, int soundId, int hookId, int volume, Track *otherTrack);
 	void startSfx(int soundId, int priority);
 	void startSound(int sound)
 		{ error("IMuseDigital::startSound(int) should be never called"); }
@@ -174,7 +142,6 @@ public:
 	void setPan(int soundId, int pan);
 	void setFade(int soundId, int destVolume, int delay60HzTicks);
 	int getCurMusicSoundId();
-	char *getCurMusicSoundName();
 	void setHookId(int soundId, int hookId);
 	void setMusicVolume(int vol) {}
 	void stopSound(int sound);
@@ -190,61 +157,6 @@ public:
 	int32 getCurMusicLipSyncWidth(int syncId);
 	int32 getCurMusicLipSyncHeight(int syncId);
 };
-
-struct imuseRoomMap {
-	int8 roomId;
-	byte stateIndex1;
-	byte offset;
-	byte stateIndex2;
-	byte atribPos;
-	byte stateIndex3;
-};
-
-struct imuseDigTable {
-	byte transitionType;
-	int16 soundId;
-	char name[20];
-	byte atribPos;
-	byte hookId;
-	char filename[13];
-};
-
-struct imuseComiTable {
-	byte transitionType;
-	int16 soundId;
-	char name[20];
-	byte atribPos;
-	byte hookId;
-	int16 fadeOutDelay;
-	char filename[13];
-};
-
-
-struct imuseFtNames {
-	char name[20];
-};
-
-struct imuseFtStateTable {
-	char audioName[9];
-	byte transitionType;
-	byte volume;
-	char name[21];
-};
-
-struct imuseFtSeqTable {
-	char audioName[9];
-	byte transitionType;
-	byte volume;
-};
-
-extern const imuseRoomMap _digStateMusicMap[];
-extern const imuseDigTable _digStateMusicTable[];
-extern const imuseDigTable _digSeqMusicTable[];
-extern const imuseComiTable _comiStateMusicTable[];
-extern const imuseComiTable _comiSeqMusicTable[];
-extern const imuseFtStateTable _ftStateMusicTable[];
-extern const imuseFtSeqTable _ftSeqMusicTable[];
-extern const imuseFtNames _ftSeqNames[];
 
 } // End of namespace Scumm
 

@@ -31,6 +31,7 @@
 #include "scumm/sound.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
+#include "scumm/imuse_digi/dimuse_track.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -83,10 +84,10 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 		}
 		break;
 	case 25: // ImuseStartStream
-		debug(5, "ImuseStartStream (%d, %d, %d)", soundId, c, d);
+		debug(3, "ImuseStartStream (%d, %d, %d)", soundId, c, d);
 		break;
 	case 26: // ImuseSwitchStream
-		debug(5, "ImuseSwitchStream (%d, %d, %d, %d, %d)", soundId, c, d, e, f);
+		debug(3, "ImuseSwitchStream (%d, %d, %d, %d, %d)", soundId, c, d, e, f);
 		break;
 	case 0x1000: // ImuseSetState
 		debug(5, "ImuseSetState (%d)", b);
@@ -101,19 +102,23 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 				}
 			}
 		} else if ((_vm->_game.id == GID_CMI) && (_vm->_game.features & GF_DEMO)) {
-			fadeOutMusic(120);
 			if (b == 2) {
+				fadeOutMusic(108);
 				startMusic("in1.imx", 1100, 0, 127);
 			} else if (b == 4) {
+				fadeOutMusic(108);
 				startMusic("in2.imx", 1120, 0, 127);
 			} else if (b == 8) {
+				fadeOutMusic(108);
 				startMusic("out1.imx", 1140, 0, 127);
 			} else if (b == 9) {
+				fadeOutMusic(108);
 				startMusic("out2.imx", 1150, 0, 127);
 			} else if (b == 16) {
+				fadeOutMusic(108);
 				startMusic("gun.imx", 1210, 0, 127);
 			} else {
-				warning("imuse digital: set state unknown for cmi demo: %d, room: %d", b, _vm->_currentRoom);
+				fadeOutMusic(120);
 			}
 		} else if (_vm->_game.id == GID_DIG) {
 			setDigMusicState(b);
@@ -163,39 +168,55 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 	}
 }
 
+void IMuseDigital::flushTrack(Track *track) {
+	track->toBeRemoved = true;
+
+	if (track->souStreamUsed) {
+		_mixer->stopHandle(track->mixChanHandle);
+	} else if (track->stream) {
+		debug(5, "flushTrack() - soundId:%d", track->soundId);
+		// Finalize the appendable stream, then remove our reference to it.
+		// Note that there might still be some data left in the buffers of the
+		// appendable stream. We play it nice and wait till all of it
+		// played. The audio mixer will take care of it afterwards (and dispose it).
+		track->stream->finish();
+		track->stream = 0;
+		if (track->soundDesc) {
+			_sound->closeSound(track->soundDesc);
+			track->soundDesc = 0;
+		}
+	}
+
+	if (!_mixer->isSoundHandleActive(track->mixChanHandle)) {
+		memset(track, 0, sizeof(Track));
+	}
+}
+
 void IMuseDigital::flushTracks() {
 	Common::StackLock lock(_mutex, "IMuseDigital::flushTracks()");
-	debug(5, "flushTracks()");
+	debug(6, "flushTracks()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && track->readyToRemove) {
-			if (track->stream) {
-				// Finalize the appendable stream
- 				track->stream->finish();
- 				// There might still be some data left in the buffers of the
- 				// appendable stream. We play it nice and wait till all of it
- 				// played.
-				if (track->stream->endOfStream()) {
-					_mixer->stopHandle(track->mixChanHandle);
-					delete track->stream;
-					track->stream = NULL;
-					_sound->closeSound(track->soundDesc);
-					track->soundDesc = NULL;
-					track->used = false;
-				}
-			} else if (track->streamSou) {
-				_mixer->stopHandle(track->mixChanHandle);
-				delete track->streamSou;
-				track->streamSou = NULL;
-				track->used = false;
-			}
+		if (track->used && track->toBeRemoved && !_mixer->isSoundHandleActive(track->mixChanHandle)) {
+			debug(5, "flushTracks() - soundId:%d", track->soundId);
+			memset(track, 0, sizeof(Track));
 		}
 	}
 }
 
 void IMuseDigital::refreshScripts() {
 	Common::StackLock lock(_mutex, "IMuseDigital::refreshScripts()");
-	debug(5, "refreshScripts()");
+	debug(6, "refreshScripts()");
+
+	if (_stopingSequence) {
+		// small delay, it seems help for fix bug #1757010
+		if (_stopingSequence++ > 120) {
+			debug(5, "refreshScripts() Force restore music state");
+			parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
+			_stopingSequence = 0;
+		}
+	}
+
 	bool found = false;
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
@@ -204,35 +225,40 @@ void IMuseDigital::refreshScripts() {
 		}
 	}
 
-	if (!found && (_curMusicSeq != 0)) {
-		debug(5, "refreshScripts() Start Sequence");
+	if (!found && _curMusicState) {
+		debug(5, "refreshScripts() Restore music state");
 		parseScriptCmds(0x1001, 0, 0, 0, 0, 0, 0, 0);
 	}
 }
 
 void IMuseDigital::startVoice(int soundId, Audio::AudioStream *input) {
 	debug(5, "startVoiceStream(%d)", soundId);
-	startSound(soundId, "", 0, IMUSE_VOLGRP_VOICE, input, 0, 127, 127);
+	startSound(soundId, "", 0, IMUSE_VOLGRP_VOICE, input, 0, 127, 127, NULL);
 }
 
 void IMuseDigital::startVoice(int soundId, const char *soundName) {
-	debug(5, "startVoiceBundle(%s)", soundName);
-	startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOLGRP_VOICE, NULL, 0, 127, 127);
+	debug(5, "startVoiceBundle(%s, %d)", soundName, soundId);
+	startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOLGRP_VOICE, NULL, 0, 127, 127, NULL);
 }
 
 void IMuseDigital::startMusic(int soundId, int volume) {
 	debug(5, "startMusicResource(%d)", soundId);
-	startSound(soundId, "", IMUSE_RESOURCE, IMUSE_VOLGRP_MUSIC, NULL, 0, volume, 126);
+	startSound(soundId, "", IMUSE_RESOURCE, IMUSE_VOLGRP_MUSIC, NULL, 0, volume, 126, NULL);
 }
 
 void IMuseDigital::startMusic(const char *soundName, int soundId, int hookId, int volume) {
-	debug(5, "startMusicBundle(%s)", soundName);
-	startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOLGRP_MUSIC, NULL, hookId, volume, 126);
+	debug(5, "startMusicBundle(%s, soundId:%d, hookId:%d)", soundName, soundId, hookId);
+	startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOLGRP_MUSIC, NULL, hookId, volume, 126, NULL);
+}
+
+void IMuseDigital::startMusicWithOtherPos(const char *soundName, int soundId, int hookId, int volume, Track *otherTrack) {
+	debug(5, "startMusicWithOtherPos(%s, soundId:%d, hookId:%d, oldSoundId:%d)", soundName, soundId, hookId, otherTrack->soundId);
+	startSound(soundId, soundName, IMUSE_BUNDLE, IMUSE_VOLGRP_MUSIC, NULL, hookId, volume, 126, otherTrack);
 }
 
 void IMuseDigital::startSfx(int soundId, int priority) {
 	debug(5, "startSfx(%d)", soundId);
-	startSound(soundId, "", IMUSE_RESOURCE, IMUSE_VOLGRP_SFX, NULL, 0, 127, priority);
+	startSound(soundId, "", IMUSE_RESOURCE, IMUSE_VOLGRP_SFX, NULL, 0, 127, priority, NULL);
 }
 
 void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width, int32 &height) {
@@ -244,7 +270,7 @@ void IMuseDigital::getLipSync(int soundId, int syncId, int32 msPos, int32 &width
 		Common::StackLock lock(_mutex, "IMuseDigital::getLipSync()");
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			Track *track = _track[l];
-			if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+			if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
 				_sound->getSyncSizeAndPtrById(track->soundDesc, syncId, sync_size, &sync_ptr);
 				if ((sync_size != 0) && (sync_ptr != NULL)) {
 					sync_size /= 4;
@@ -272,7 +298,7 @@ int32 IMuseDigital::getPosInMs(int soundId) {
 	Common::StackLock lock(_mutex, "IMuseDigital::getPosInMs()");
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
+		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
 			int32 pos = (5 * (track->dataOffset + track->regionOffset)) / (track->feedSize / 200);
 			return pos;
 		}
@@ -281,15 +307,16 @@ int32 IMuseDigital::getPosInMs(int soundId) {
 	return 0;
 }
 
-int IMuseDigital::getSoundStatus(int sound) const {
+int IMuseDigital::getSoundStatus(int soundId) const {
 	Common::StackLock lock(_mutex, "IMuseDigital::getSoundStatus()");
-	debug(5, "IMuseDigital::getSoundStatus(%d)", sound);
+	debug(5, "IMuseDigital::getSoundStatus(%d)", soundId);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if (track->soundId == sound) {
-			if ((track->streamSou && _mixer->isSoundHandleActive(track->mixChanHandle)) ||
-				(track->stream && track->used && !track->readyToRemove)) {
-					return 1;
+		// Note: We do not check track->toBeRemoved here on purpose (I *think*, at least).
+		// After all, tracks which are about to stop still are running (if only for a brief time).
+		if ((track->soundId == soundId) && track->used) {
+			if (_mixer->isSoundHandleActive(track->mixChanHandle)) {
+				return 1;
 			}
 		}
 	}
@@ -302,8 +329,9 @@ void IMuseDigital::stopSound(int soundId) {
 	debug(5, "IMuseDigital::stopSound(%d)", soundId);
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
-		if ((track->soundId == soundId) && track->used && !track->toBeRemoved) {
-			track->toBeRemoved = true;
+		if (track->used && !track->toBeRemoved && (track->soundId == soundId)) {
+			debug(5, "IMuseDigital::stopSound(%d) - stopping sound", soundId);
+			flushTrack(track);
 		}
 	}
 }
@@ -320,7 +348,7 @@ int32 IMuseDigital::getCurMusicPosInMs() {
 	}
 
 	int32 msPos = getPosInMs(soundId);
-	debug(5, "IMuseDigital::getCurMusicPosInMs(%d) = %d", soundId, msPos);
+	debug(6, "IMuseDigital::getCurMusicPosInMs(%d) = %d", soundId, msPos);
 	return msPos;
 }
 
@@ -329,7 +357,7 @@ int32 IMuseDigital::getCurVoiceLipSyncWidth() {
 	int32 msPos = getPosInMs(kTalkSoundID) + 50;
 	int32 width = 0, height = 0;
 
-	debug(5, "IMuseDigital::getCurVoiceLipSyncWidth(%d)", kTalkSoundID);
+	debug(6, "IMuseDigital::getCurVoiceLipSyncWidth(%d)", kTalkSoundID);
 	getLipSync(kTalkSoundID, 0, msPos, width, height);
 	return width;
 }
@@ -339,7 +367,7 @@ int32 IMuseDigital::getCurVoiceLipSyncHeight() {
 	int32 msPos = getPosInMs(kTalkSoundID) + 50;
 	int32 width = 0, height = 0;
 
-	debug(5, "IMuseDigital::getCurVoiceLipSyncHeight(%d)", kTalkSoundID);
+	debug(6, "IMuseDigital::getCurVoiceLipSyncHeight(%d)", kTalkSoundID);
 	getLipSync(kTalkSoundID, 0, msPos, width, height);
 	return height;
 }
@@ -358,7 +386,7 @@ int32 IMuseDigital::getCurMusicLipSyncWidth(int syncId) {
 	int32 msPos = getPosInMs(soundId) + 50;
 	int32 width = 0, height = 0;
 
-	debug(5, "IMuseDigital::getCurVoiceLipSyncWidth(%d, %d)", soundId, msPos);
+	debug(6, "IMuseDigital::getCurVoiceLipSyncWidth(%d, %d)", soundId, msPos);
 	getLipSync(soundId, syncId, msPos, width, height);
 	return width;
 }
@@ -377,14 +405,14 @@ int32 IMuseDigital::getCurMusicLipSyncHeight(int syncId) {
 	int32 msPos = getPosInMs(soundId) + 50;
 	int32 width = 0, height = 0;
 
-	debug(5, "IMuseDigital::getCurVoiceLipSyncHeight(%d, %d)", soundId, msPos);
+	debug(6, "IMuseDigital::getCurVoiceLipSyncHeight(%d, %d)", soundId, msPos);
 	getLipSync(soundId, syncId, msPos, width, height);
 	return height;
 }
 
 void IMuseDigital::stopAllSounds() {
 	Common::StackLock lock(_mutex, "IMuseDigital::stopAllSounds()");
-	debug(0, "IMuseDigital::stopAllSounds");
+	debug(5, "IMuseDigital::stopAllSounds");
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
@@ -392,20 +420,14 @@ void IMuseDigital::stopAllSounds() {
 			// Stop the sound output, *now*. No need to use toBeRemoved etc.
 			// as we are protected by a mutex, and this method is never called
 			// from IMuseDigital::callback either.
-			if (track->stream) {
-				_mixer->stopHandle(track->mixChanHandle);
-				delete track->stream;
-				track->stream = NULL;
+			_mixer->stopHandle(track->mixChanHandle);
+			if (track->soundDesc) {
+				debug(5, "IMuseDigital::stopAllSounds - stopping sound(%d)", track->soundId);
 				_sound->closeSound(track->soundDesc);
-				track->soundDesc = NULL;
-			} else if (track->streamSou) {
-				_mixer->stopHandle(track->mixChanHandle);
-				delete track->streamSou;
-				track->streamSou = NULL;
 			}
 
 			// Mark the track as unused
-			track->used = false;
+			memset(track, 0, sizeof(Track));
 		}
 	}
 }

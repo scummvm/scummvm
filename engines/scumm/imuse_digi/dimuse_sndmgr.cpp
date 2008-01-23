@@ -58,17 +58,21 @@ ImuseDigiSndMgr::~ImuseDigiSndMgr() {
 	delete _cacheBundleDir;
 }
 
-void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs) {
+void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, int &numSyncs, int &numMarkers) {
 	uint32 tag;
 	int32 size = 0;
 
 	do {
 		tag = READ_BE_UINT32(ptr); ptr += 4;
 		switch (tag) {
-		case MKID_BE('TEXT'):
 		case MKID_BE('STOP'):
 		case MKID_BE('FRMT'):
 		case MKID_BE('DATA'):
+			size = READ_BE_UINT32(ptr); ptr += size + 4;
+			break;
+		case MKID_BE('TEXT'):
+			if (!scumm_stricmp((const char *)(ptr + 8), "exit"))
+				numMarkers++;
 			size = READ_BE_UINT32(ptr); ptr += size + 4;
 			break;
 		case MKID_BE('REGN'):
@@ -96,8 +100,12 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound,
 	uint32 tag = file->readUint32BE();
 	assert(tag == MKID_BE('RMAP'));
 	int32 version = file->readUint32BE();
-	if (version != 2) {
-		error("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version number, expected 2, but it's: %d.", version);
+	if (version != 3) {
+		if (version == 2) {
+			warning("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version of compressed *.bun file, expected 3, but it's 2.");
+			warning("Suggested to recompress with latest tool from daily builds.");
+		} else
+			error("ImuseDigiSndMgr::prepareSoundFromRMAP: Wrong version number, expected 3, but it's: %d.", version);
 	}
 	sound->bits = file->readUint32BE();
 	sound->freq = file->readUint32BE();
@@ -105,12 +113,20 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound,
 	sound->numRegions = file->readUint32BE();
 	sound->numJumps = file->readUint32BE();
 	sound->numSyncs = file->readUint32BE();
+	if (version >= 3)
+		sound->numMarkers = file->readUint32BE();
+	else
+		sound->numMarkers = 0;
+
 	sound->region = new Region[sound->numRegions];
 	assert(sound->region);
 	sound->jump = new Jump[sound->numJumps];
 	assert(sound->jump);
 	sound->sync = new Sync[sound->numSyncs];
 	assert(sound->sync);
+	sound->marker = new Marker[sound->numMarkers];
+	assert(sound->marker);
+
 	for (l = 0; l < sound->numRegions; l++) {
 		sound->region[l].offset = file->readUint32BE();
 		sound->region[l].length = file->readUint32BE();
@@ -123,8 +139,16 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::File *file, SoundDesc *sound,
 	}
 	for (l = 0; l < sound->numSyncs; l++) {
 		sound->sync[l].size = file->readUint32BE();
-		sound->sync[l].ptr = (byte *)malloc(sound->sync[l].size);
+		sound->sync[l].ptr = new byte[sound->sync[l].size];
 		file->read(sound->sync[l].ptr, sound->sync[l].size);
+	}
+	if (version >= 3) {
+		for (l = 0; l < sound->numMarkers; l++) {
+			sound->marker[l].pos = file->readUint32BE();
+			sound->marker[l].length = file->readUint32BE();
+			sound->marker[l].ptr = new char[sound->marker[l].length];
+			file->read(sound->marker[l].ptr, sound->marker[l].length);
+		}
 	}
 }
 
@@ -207,17 +231,21 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 		int curIndexRegion = 0;
 		int curIndexJump = 0;
 		int curIndexSync = 0;
+		int curIndexMarker = 0;
 
 		sound->numRegions = 0;
 		sound->numJumps = 0;
 		sound->numSyncs = 0;
-		countElements(ptr, sound->numRegions, sound->numJumps, sound->numSyncs);
+		sound->numMarkers = 0;
+		countElements(ptr, sound->numRegions, sound->numJumps, sound->numSyncs, sound->numMarkers);
 		sound->region = new Region[sound->numRegions];
 		assert(sound->region);
 		sound->jump = new Jump[sound->numJumps];
 		assert(sound->jump);
 		sound->sync = new Sync[sound->numSyncs];
 		assert(sound->sync);
+		sound->marker = new Marker[sound->numMarkers];
+		assert(sound->marker);
 
 		do {
 			tag = READ_BE_UINT32(ptr); ptr += 4;
@@ -229,6 +257,16 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 				sound->channels = READ_BE_UINT32(ptr); ptr += 4;
 				break;
 			case MKID_BE('TEXT'):
+				if (!scumm_stricmp((const char *)(ptr + 8), "exit")) {
+					sound->marker[curIndexMarker].pos = READ_BE_UINT32(ptr + 4);
+					sound->marker[curIndexMarker].length = strlen((const char *)(ptr + 8)) + 1;
+					sound->marker[curIndexMarker].ptr = new char[sound->marker[curIndexMarker].length];
+					assert(sound->marker[curIndexMarker].ptr);
+					strcpy(sound->marker[curIndexMarker].ptr, (const char *)(ptr + 8));
+					curIndexMarker++;
+				}
+				size = READ_BE_UINT32(ptr); ptr += size + 4;
+				break;
 			case MKID_BE('STOP'):
 				size = READ_BE_UINT32(ptr); ptr += size + 4;
 				break;
@@ -249,7 +287,8 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 			case MKID_BE('SYNC'):
 				size = READ_BE_UINT32(ptr); ptr += 4;
 				sound->sync[curIndexSync].size = size;
-				sound->sync[curIndexSync].ptr = (byte *)malloc(size);
+				sound->sync[curIndexSync].ptr = new byte[size];
+				assert(sound->sync[curIndexSync].ptr);
 				memcpy(sound->sync[curIndexSync].ptr, ptr, size);
 				curIndexSync++;
 				ptr += size;
@@ -278,7 +317,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::allocSlot() {
 	return NULL;
 }
 
-bool ImuseDigiSndMgr::openMusicBundle(SoundDesc *sound, int disk) {
+bool ImuseDigiSndMgr::openMusicBundle(SoundDesc *sound, int &disk) {
 	bool result = false;
 
 	sound->bundle = new BundleMgr(_cacheBundleDir);
@@ -313,7 +352,7 @@ bool ImuseDigiSndMgr::openMusicBundle(SoundDesc *sound, int disk) {
 	return result;
 }
 
-bool ImuseDigiSndMgr::openVoiceBundle(SoundDesc *sound, int disk) {
+bool ImuseDigiSndMgr::openVoiceBundle(SoundDesc *sound, int &disk) {
 	bool result = false;
 
 	sound->bundle = new BundleMgr(_cacheBundleDir);
@@ -399,7 +438,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 			sound->soundId = soundId;
 			sound->type = soundType;
 			sound->volGroupId = volGroupId;
-			sound->disk = _disk;
+			sound->disk = disk;
 			return sound;
 		} else if (soundName[0] == 0) {
 			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0 || ptr == NULL) {
@@ -425,7 +464,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 	sound->disk = _disk;
 	prepareSound(ptr, sound);
 	if ((soundType == IMUSE_BUNDLE) && !sound->compressed) {
-		free(ptr);
+		delete[] ptr;
 	}
 	return sound;
 }
@@ -447,17 +486,26 @@ void ImuseDigiSndMgr::closeSound(SoundDesc *soundDesc) {
 	delete soundDesc->bundle;
 
 	for (int r = 0; r < soundDesc->numSyncs; r++)
-		free(soundDesc->sync[r].ptr);
+		delete[] soundDesc->sync[r].ptr;
+	for (int r = 0; r < soundDesc->numMarkers; r++)
+		delete[] soundDesc->marker[r].ptr;
 	delete[] soundDesc->region;
 	delete[] soundDesc->jump;
 	delete[] soundDesc->sync;
+	delete[] soundDesc->marker;
 	memset(soundDesc, 0, sizeof(SoundDesc));
 }
 
 ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::cloneSound(SoundDesc *soundDesc) {
+	ImuseDigiSndMgr::SoundDesc *desc;
 	assert(checkForProperHandle(soundDesc));
 
-	return openSound(soundDesc->soundId, soundDesc->name, soundDesc->type, soundDesc->volGroupId, soundDesc->disk);
+	desc = openSound(soundDesc->soundId, soundDesc->name, soundDesc->type, soundDesc->volGroupId, soundDesc->disk);
+	if (!desc)
+		desc = openSound(soundDesc->soundId, soundDesc->name, soundDesc->type, soundDesc->volGroupId, 1);
+	if (!desc)
+		desc = openSound(soundDesc->soundId, soundDesc->name, soundDesc->type, soundDesc->volGroupId, 2);
+	return desc;
 }
 
 bool ImuseDigiSndMgr::checkForProperHandle(SoundDesc *soundDesc) {
@@ -528,6 +576,22 @@ int ImuseDigiSndMgr::getJumpIdByRegionAndHookId(SoundDesc *soundDesc, int region
 	return -1;
 }
 
+bool ImuseDigiSndMgr::checkForTriggerByRegionAndMarker(SoundDesc *soundDesc, int region, const char *marker) {
+	debug(5, "checkForTriggerByRegionAndMarker() region:%d, marker:%s", region, marker);
+	assert(checkForProperHandle(soundDesc));
+	assert(region >= 0 && region < soundDesc->numRegions);
+	assert(marker);
+	int32 offset = soundDesc->region[region].offset;
+	for (int l = 0; l < soundDesc->numMarkers; l++) {
+		if (offset == soundDesc->marker[l].pos) {
+			if (!scumm_stricmp(soundDesc->marker[l].ptr, marker))
+				return true;
+		}
+	}
+
+	return false;
+}
+
 void ImuseDigiSndMgr::getSyncSizeAndPtrById(SoundDesc *soundDesc, int number, int32 &sync_size, byte **sync_ptr) {
 	assert(checkForProperHandle(soundDesc));
 	assert(number >= 0);
@@ -569,7 +633,7 @@ int ImuseDigiSndMgr::getJumpFade(SoundDesc *soundDesc, int number) {
 }
 
 int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte **buf, int32 offset, int32 size) {
-	debug(5, "getDataFromRegion() region:%d, offset:%d, size:%d, numRegions:%d", region, offset, size, soundDesc->numRegions);
+	debug(6, "getDataFromRegion() region:%d, offset:%d, size:%d, numRegions:%d", region, offset, size, soundDesc->numRegions);
 	assert(checkForProperHandle(soundDesc));
 	assert(buf && offset >= 0 && size >= 0);
 	assert(region >= 0 && region < soundDesc->numRegions);
@@ -598,6 +662,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 		*buf = new byte[size];
 		assert(*buf);
 		char fileName[24];
+		int offsetMs = (((offset * 8 * 10) / soundDesc->bits) / (soundDesc->channels * soundDesc->freq)) * 100;
 		sprintf(fileName, "%s_reg%03d", soundDesc->name, region);
 		if (scumm_stricmp(fileName, soundDesc->lastFileName) != 0) {
 			int32 offs = 0, len = 0;
@@ -639,25 +704,26 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 				assert(tmp);
 #ifdef USE_FLAC
 				if (soundMode == 3)
-					soundDesc->compressedStream = Audio::makeFlacStream(tmp, true);
+					soundDesc->compressedStream = Audio::makeFlacStream(tmp, true, offsetMs);
 #endif
 #ifdef USE_VORBIS
 				if (soundMode == 2)
-					soundDesc->compressedStream = Audio::makeVorbisStream(tmp, true);
+					soundDesc->compressedStream = Audio::makeVorbisStream(tmp, true, offsetMs);
 #endif
 #ifdef USE_MAD
 				if (soundMode == 1)
-					soundDesc->compressedStream = Audio::makeMP3Stream(tmp, true);
+					soundDesc->compressedStream = Audio::makeMP3Stream(tmp, true, offsetMs);
 #endif
 				assert(soundDesc->compressedStream);
 			}
 			strcpy(soundDesc->lastFileName, fileName);
 		}
 		size = soundDesc->compressedStream->readBuffer((int16 *)*buf, size / 2) * 2;
-		if (soundDesc->compressedStream->endOfData()) {
+		if (soundDesc->compressedStream->endOfData() || soundDesc->endFlag) {
 			delete soundDesc->compressedStream;
 			soundDesc->compressedStream = NULL;
 			soundDesc->lastFileName[0] = 0;
+			soundDesc->endFlag = true;
 		}
 	}
 

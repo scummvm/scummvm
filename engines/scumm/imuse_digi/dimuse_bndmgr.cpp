@@ -281,7 +281,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		lastBlock = _numCompItems - 1;
 
 	int32 blocksFinalSize = 0x2000 * (1 + lastBlock - firstBlock);
-	*compFinal = (byte *)malloc(blocksFinalSize);
+	*compFinal = new byte[blocksFinalSize];
 	assert(*compFinal);
 	finalSize = 0;
 
@@ -348,7 +348,7 @@ int32 BundleMgr::decompressSampleByName(const char *name, int32 offset, int32 si
 		return final_size;
 	}
 
-	debug(2, "BundleMgr::decompressSampleByName() Failed finding voice %s", name);
+	debug(2, "BundleMgr::decompressSampleByName() Failed finding sound %s", name);
 	return final_size;
 }
 
