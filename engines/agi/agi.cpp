@@ -83,14 +83,14 @@ void AgiEngine::processEvents() {
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			key = BUTTON_LEFT;
-			g_mouse.button = 1;
+			g_mouse.button = kAgiMouseButtonLeft;
 			keyEnqueue(key);
 			g_mouse.x = event.mouse.x;
 			g_mouse.y = event.mouse.y;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			key = BUTTON_RIGHT;
-			g_mouse.button = 2;
+			g_mouse.button = kAgiMouseButtonRight;
 			keyEnqueue(key);
 			g_mouse.x = event.mouse.x;
 			g_mouse.y = event.mouse.y;
@@ -109,7 +109,7 @@ void AgiEngine::processEvents() {
 			break;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			g_mouse.button = 0;
+			g_mouse.button = kAgiMouseButtonUp;
 			g_mouse.x = event.mouse.x;
 			g_mouse.y = event.mouse.y;
 			break;

@@ -220,6 +220,14 @@ struct Mouse {
 	unsigned int y;
 };
 
+// Used by AGI Mouse protocol 1.0 for v27 (i.e. button pressed -variable).
+enum AgiMouseButton {
+	kAgiMouseButtonUp,    // Mouse button is up (not pressed)
+	kAgiMouseButtonLeft,  // Left mouse button
+	kAgiMouseButtonRight, // Right mouse button
+	kAgiMouseButtonMiddle // Middle mouse button
+};
+
 #define report printf
 
 enum GameId {
