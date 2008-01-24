@@ -439,8 +439,120 @@ enum BlockedState {BS_NONE, BS_INITIAL, BS_FINAL};
 
 enum VariantBool {VB_INITIAL, VB_FALSE, VB_TRUE};
 
+enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRIPT, 
+	PROCESSING_PATH, WALKING};
+
+class CharacterScheduleSet;
+
+class CharacterScheduleEntry {
+private:
+	CharacterScheduleSet *_parent;
+	Action _action;
+	uint16 _params[MAX_TELL_COMMANDS * 3];
+	int _numParams;
+public:
+	CharacterScheduleEntry() { _action = NONE; _parent = NULL; }
+	CharacterScheduleEntry(Action theAction, ...);
+	CharacterScheduleEntry(CharacterScheduleSet *parentSet, 
+		CharacterScheduleResource *&rec);
+	CharacterScheduleEntry(CharacterScheduleEntry *src);
+
+	Action action() { return _action; }
+	int numParams() { return _numParams; }
+	uint16 param(int index);
+	void setDetails(Action theAction, ...);
+	void setDetails2(Action theAction, int numParamEntries, uint16 *paramList);
+	CharacterScheduleEntry *next();
+	CharacterScheduleSet *parent() { return _parent; }
+	uint16 id();
+};
+
+class CurrentActionEntry {
+private:
+	CurrentAction _action;
+	CharacterScheduleEntry *_supportData;
+	uint16 _roomNumber;
+	bool _dynamicSupportData;
+public:
+	CurrentActionEntry(CurrentAction newAction, uint16 roomNum);
+	CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum);
+	CurrentActionEntry(Action newAction, uint16 roomNum, uint16 param1, uint16 param2);
+	CurrentActionEntry(CurrentActionEntry *src);
+	virtual ~CurrentActionEntry() {
+		if (_dynamicSupportData) delete _supportData;
+	}
+
+	CurrentAction action() { return _action; }
+	CharacterScheduleEntry &supportData() { 
+		if (!_supportData) error("Access made to non-defined action support record");
+		return *_supportData;
+	}
+	bool hasSupportData() { return _supportData != NULL; }
+	uint16 roomNumber() { return _roomNumber; }
+	void setAction(CurrentAction newAction) { _action = newAction; }
+	void setRoomNumber(uint16 roomNum) { _roomNumber = roomNum; }
+	void setSupportData(CharacterScheduleEntry *newRec) { 
+		assert((newRec == NULL) || (newRec->parent() != NULL));
+		_supportData = newRec; 
+	}
+	void setSupportData(uint16 entryId);
+
+	void saveToStream(WriteStream *stream);
+	static CurrentActionEntry *loadFromStream(ReadStream *stream);
+};
+
+class CurrentActionStack {
+private:
+	ManagedList<CurrentActionEntry *> _actions;
+	void validateStack() { 
+		if (_actions.size() > 20) 
+			error("NPC character got an excessive number of pending actions");
+	}
+public:
+	CurrentActionStack() { _actions.clear(); }
+
+	bool isEmpty() { return _actions.begin() == _actions.end(); }
+	void clear() { _actions.clear(); }
+	CurrentActionEntry &top() { return **_actions.begin(); }
+	CurrentAction action() { return isEmpty() ? NO_ACTION : top().action(); }
+	void pop() { _actions.erase(_actions.begin()); }
+	int size() { return _actions.size(); }
+	void list(char *buffer);
+	void list() { list(NULL); }
+
+	void addBack(CurrentAction newAction, uint16 roomNum) {
+		_actions.push_back(new CurrentActionEntry(newAction, roomNum));
+		validateStack();
+	}
+	void addBack(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
+		_actions.push_back(new CurrentActionEntry(newAction, rec, roomNum));
+		validateStack();
+	}
+	void addBack(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
+		_actions.push_back(new CurrentActionEntry(newAction, roomNum, param1, param2));
+		validateStack();
+	}
+	void addFront(CurrentAction newAction, uint16 roomNum) {
+		_actions.push_front(new CurrentActionEntry(newAction, roomNum));
+		validateStack();
+	}
+	void addFront(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
+		_actions.push_front(new CurrentActionEntry(newAction, rec, roomNum));
+		validateStack();
+	}
+	void addFront(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
+		_actions.push_front(new CurrentActionEntry(newAction, roomNum, param1, param2));
+		validateStack();
+	}
+
+	void saveToStream(WriteStream *stream);
+	void loadFromStream(ReadStream *stream);
+	void copyFrom(CurrentActionStack &stack);
+};
+
 class HotspotData {
 public:
+	CurrentActionStack npcSchedule;
 	HotspotData(HotspotResource *rec);
 	
 	uint16 hotspotId;
@@ -472,7 +584,6 @@ public:
 	uint16 tickProcId;
 	uint16 tickTimeout;
 	uint16 tickScriptOffset;
-	uint16 npcSchedule;
 	CharacterMode characterMode;
 	uint16 delayCtr;
 	uint8 flags2;
@@ -657,31 +768,6 @@ public:
 // The following classes holds the data for NPC schedules
 
 extern const int actionNumParams[NPC_JUMP_ADDRESS+1];
-
-class CharacterScheduleSet;
-
-class CharacterScheduleEntry {
-private:
-	CharacterScheduleSet *_parent;
-	Action _action;
-	uint16 _params[MAX_TELL_COMMANDS * 3];
-	int _numParams;
-public:
-	CharacterScheduleEntry() { _action = NONE; _parent = NULL; }
-	CharacterScheduleEntry(Action theAction, ...);
-	CharacterScheduleEntry(CharacterScheduleSet *parentSet, 
-		CharacterScheduleResource *&rec);
-	CharacterScheduleEntry(CharacterScheduleEntry *src);
-
-	Action action() { return _action; }
-	int numParams() { return _numParams; }
-	uint16 param(int index);
-	void setDetails(Action theAction, ...);
-	void setDetails2(Action theAction, int numParamEntries, uint16 *paramList);
-	CharacterScheduleEntry *next();
-	CharacterScheduleSet *parent() { return _parent; }
-	uint16 id();
-};
 
 class CharacterScheduleSet: public ManagedList<CharacterScheduleEntry *> {
 private:

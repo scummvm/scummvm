@@ -98,7 +98,6 @@ void Resources::reset() {
 
 	_fieldList.reset();
 	_barmanLists.reset();
-	_hotspotSchedules.clear();
 	_talkState = TALK_NONE;
 	_activeTalkData = NULL;
 
@@ -176,6 +175,35 @@ void Resources::reloadData() {
 		_exitJoins.push_back(newEntry);
 
 		GET_NEXT(joinRec, RoomExitJoinResource);
+	}
+	delete mb;
+
+	// Load the set of NPC schedules
+	mb = d.getEntry(NPC_SCHEDULES_RESOURCE_ID);
+
+	// Load the lookup list of support data indexes used in the script engine
+	numCharOffsets = 0;
+	offset = (uint16 *) mb->data();
+	while (READ_LE_UINT16(offset++) != 0xffff) ++numCharOffsets;
+	_charOffsets = new uint16[numCharOffsets];
+	offset = (uint16 *) mb->data();
+	for (ctr = 0; ctr < numCharOffsets; ++ctr, ++offset) 
+		_charOffsets[ctr] = READ_LE_UINT16(offset);
+
+	// Next load up the list of random actions your follower can do in each room
+
+	++offset;
+	while (READ_LE_UINT16(offset) != 0xffff) {
+		RandomActionSet *actionSet = new RandomActionSet(offset);
+		_randomActions.push_back(actionSet);
+	}
+
+	// Loop through loading the schedules
+	ctr = 0;
+	while ((startOffset = READ_LE_UINT16(++offset)) != 0xffff) {
+		CharacterScheduleResource *res = (CharacterScheduleResource *) (mb->data() + startOffset);
+		CharacterScheduleSet *newEntry = new CharacterScheduleSet(res, ++ctr);
+		_charSchedules.push_back(newEntry);
 	}
 	delete mb;
 
@@ -311,35 +339,6 @@ void Resources::reloadData() {
 		RoomExitCoordinates *newEntry = new RoomExitCoordinates(coordRec);
 		_coordinateList.push_back(newEntry);
 		++coordRec;
-	}
-	delete mb;
-
-	// Load the set of NPC schedules
-	mb = d.getEntry(NPC_SCHEDULES_RESOURCE_ID);
-
-	// Load the lookup list of support data indexes used in the script engine
-	numCharOffsets = 0;
-	offset = (uint16 *) mb->data();
-	while (READ_LE_UINT16(offset++) != 0xffff) ++numCharOffsets;
-	_charOffsets = new uint16[numCharOffsets];
-	offset = (uint16 *) mb->data();
-	for (ctr = 0; ctr < numCharOffsets; ++ctr, ++offset) 
-		_charOffsets[ctr] = READ_LE_UINT16(offset);
-
-	// Next load up the list of random actions your follower can do in each room
-
-	++offset;
-	while (READ_LE_UINT16(offset) != 0xffff) {
-		RandomActionSet *actionSet = new RandomActionSet(offset);
-		_randomActions.push_back(actionSet);
-	}
-
-	// Loop through loading the schedules
-	ctr = 0;
-	while ((startOffset = READ_LE_UINT16(++offset)) != 0xffff) {
-		CharacterScheduleResource *res = (CharacterScheduleResource *) (mb->data() + startOffset);
-		CharacterScheduleSet *newEntry = new CharacterScheduleSet(res, ++ctr);
-		_charSchedules.push_back(newEntry);
 	}
 	delete mb;
 
@@ -730,8 +729,21 @@ void Resources::saveToStream(Common::WriteStream *stream) {
 	// Save basic fields
 	stream->writeUint16LE(_talkingCharacter);
 
+	// Save out the schedule for any non-active NPCs
+	HotspotDataList::iterator i;
+	for (i = _hotspotData.begin(); i != _hotspotData.end(); ++i) {
+		HotspotData *rec = *i;
+		if (!rec->npcSchedule.isEmpty()) {
+			Hotspot *h = getActiveHotspot(rec->hotspotId);
+			if (h == NULL) {
+				stream->writeUint16LE(rec->hotspotId);
+				rec->npcSchedule.saveToStream(stream);
+			}
+		}
+	}
+	stream->writeUint16LE(0xffff);
+
 	// Save sublist data
-	_hotspotSchedules.saveToStream(stream);
 	_hotspotData.saveToStream(stream);
 	_activeHotspots.saveToStream(stream);
 	_fieldList.saveToStream(stream);
@@ -756,10 +768,15 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	_talkState = TALK_NONE;
 	_activeTalkData = NULL;
 
-	_hotspotSchedules.clear();
 	if (saveVersion >= 31) {
-		_hotspotSchedules.loadFromStream(stream);
-		debugC(ERROR_DETAILED, kLureDebugScripts, "Loading hotspot schedules");
+		// Load in any schedules for non-active NPCS
+		debugC(ERROR_DETAILED, kLureDebugScripts, "Loading NPC schedules");
+		uint16 hotspotId;
+		while ((hotspotId = stream->readUint16LE()) != 0xffff) {
+			HotspotData *hotspot = getHotspot(hotspotId);
+			assert(hotspot);
+			hotspot->npcSchedule.loadFromStream(stream);
+		}
 	}
 
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading hotspot data");

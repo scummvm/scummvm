@@ -95,92 +95,6 @@ public:
 	static HandlerMethodPtr getHandler(uint16 procIndex);
 };
 
-enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRIPT, 
-	PROCESSING_PATH, WALKING};
-	
-class CurrentActionEntry {
-private:
-	CurrentAction _action;
-	CharacterScheduleEntry *_supportData;
-	uint16 _roomNumber;
-	bool _dynamicSupportData;
-public:
-	CurrentActionEntry(CurrentAction newAction, uint16 roomNum);
-	CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum);
-	CurrentActionEntry(Action newAction, uint16 roomNum, uint16 param1, uint16 param2);
-	CurrentActionEntry(CurrentActionEntry *src);
-	virtual ~CurrentActionEntry() {
-		if (_dynamicSupportData) delete _supportData;
-	}
-
-	CurrentAction action() { return _action; }
-	CharacterScheduleEntry &supportData() { 
-		if (!_supportData) error("Access made to non-defined action support record");
-		return *_supportData;
-	}
-	bool hasSupportData() { return _supportData != NULL; }
-	uint16 roomNumber() { return _roomNumber; }
-	void setAction(CurrentAction newAction) { _action = newAction; }
-	void setRoomNumber(uint16 roomNum) { _roomNumber = roomNum; }
-	void setSupportData(CharacterScheduleEntry *newRec) { 
-		assert((newRec == NULL) || (newRec->parent() != NULL));
-		_supportData = newRec; 
-	}
-	void setSupportData(uint16 entryId);
-
-	void saveToStream(WriteStream *stream);
-	static CurrentActionEntry *loadFromStream(ReadStream *stream);
-};
-
-class CurrentActionStack {
-private:
-	ManagedList<CurrentActionEntry *> _actions;
-	void validateStack() { 
-		if (_actions.size() > 20) 
-			error("NPC character got an excessive number of pending actions");
-	}
-public:
-	CurrentActionStack() { _actions.clear(); }
-
-	bool isEmpty() { return _actions.begin() == _actions.end(); }
-	void clear() { _actions.clear(); }
-	CurrentActionEntry &top() { return **_actions.begin(); }
-	CurrentAction action() { return isEmpty() ? NO_ACTION : top().action(); }
-	void pop() { _actions.erase(_actions.begin()); }
-	int size() { return _actions.size(); }
-	void list(char *buffer);
-	void list() { list(NULL); }
-
-	void addBack(CurrentAction newAction, uint16 roomNum) {
-		_actions.push_back(new CurrentActionEntry(newAction, roomNum));
-		validateStack();
-	}
-	void addBack(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
-		_actions.push_back(new CurrentActionEntry(newAction, rec, roomNum));
-		validateStack();
-	}
-	void addBack(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
-		_actions.push_back(new CurrentActionEntry(newAction, roomNum, param1, param2));
-		validateStack();
-	}
-	void addFront(CurrentAction newAction, uint16 roomNum) {
-		_actions.push_front(new CurrentActionEntry(newAction, roomNum));
-		validateStack();
-	}
-	void addFront(CurrentAction newAction, CharacterScheduleEntry *rec, uint16 roomNum) {
-		_actions.push_front(new CurrentActionEntry(newAction, rec, roomNum));
-		validateStack();
-	}
-	void addFront(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
-		_actions.push_front(new CurrentActionEntry(newAction, roomNum, param1, param2));
-		validateStack();
-	}
-
-	void saveToStream(WriteStream *stream);
-	void loadFromStream(ReadStream *stream);
-	void copyFrom(CurrentActionStack &stack);
-};
-
 class WalkingActionEntry {
 private:
 	Direction _direction;
@@ -251,23 +165,6 @@ struct DestStructure {
 	Point position;
 };
 
-class HotspotScheduleRecord: public CurrentActionStack {
-public:
-	uint16 hotspotId;
-
-	HotspotScheduleRecord(uint16 hId, CurrentActionStack &stack);
-	HotspotScheduleRecord(uint16 hId);
-};
-
-class HotspotSchedules: public ManagedList<HotspotScheduleRecord *> {
-public:
-	void add(uint16 hotspotId, CurrentActionStack &actions);
-	void remove(uint16 hotspotId);
-	HotspotScheduleRecord *check(uint16 hotspotId);
-	void saveToStream(Common::WriteStream *stream);
-	void loadFromStream(Common::ReadStream *stream);
-};
-
 
 #define MAX_NUM_FRAMES 16
 
@@ -296,7 +193,6 @@ private:
 	bool _persistant;
 	HotspotOverrideData *_override;
 	bool _skipFlag;
-	CurrentActionStack _currentActions;
 	PathFinder _pathFinder;
 	uint16 _frameWidth;
 	bool _frameStartsUsed;
@@ -542,7 +438,10 @@ public:
 
 	void doAction();
 	void doAction(Action action, HotspotData *hotspot);
-	CurrentActionStack &currentActions() { return _currentActions; }
+	CurrentActionStack &currentActions() { 
+		assert(_data);
+		return _data->npcSchedule; 
+	}
 	PathFinder &pathFinder() { return _pathFinder; }
 	DestStructure &tempDest() { return _tempDest; }
 	uint16 frameCtr() { return _frameCtr; }

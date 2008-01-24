@@ -316,7 +316,6 @@ bool Debugger::cmd_hotspot(int argc, const char **argv) {
 			hs->talkScriptOffset, hs->tickScriptOffset);
 		DebugPrintf("Tick Proc offset = %xh\n", hs->tickProcId);
 		DebugPrintf("Tick timeout = %d\n", hs->tickTimeout);
-		DebugPrintf("NPC Shcedule = %xh\n", hs->npcSchedule);
 		DebugPrintf("Character mode = %d, delay ctr = %d, pause ctr = %d\n",
 			hs->characterMode, hs->delayCtr, hs->pauseCtr);
 

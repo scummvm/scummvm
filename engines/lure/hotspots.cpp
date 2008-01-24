@@ -43,7 +43,6 @@ namespace Lure {
 
 Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	Resources &resources = Resources::getReference();
-	HotspotSchedules &schedules = resources.hotspotSchedules();
 	bool isEGA = LureEngine::getReference().isEGA();
 
 	_data = res;
@@ -88,18 +87,6 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 	_walkFlag = false;
 	_startRoomNumber = 0;
 	_supportValue = 0;
-
-	HotspotScheduleRecord *rec = schedules.check(_hotspotId);
-	if (rec != NULL) {
-		// Hotspot was previously active, so restore prior schedule
-		_currentActions.copyFrom(*rec);
-		schedules.remove(_hotspotId);
-
-	} else if (_data->npcSchedule != 0) {
-		// Set up default schedule based on given Schedule Id
-		CharacterScheduleEntry *entry = resources.charSchedules().getEntry(_data->npcSchedule);
-		_currentActions.addFront(DISPATCH_ACTION, entry, _roomNumber);
-	}
 }
 
 // Special constructor used to create a voice hotspot
@@ -212,11 +199,6 @@ Hotspot::Hotspot(): _pathFinder(NULL) {
 }
 
 Hotspot::~Hotspot() {
-	if ((_data != NULL) && (_data->npcSchedule != 0)) {
-		// When deactivating an NPC schedule, store in case the NPC is later reactivated
-		Resources::getReference().hotspotSchedules().add(_hotspotId, _currentActions);
-	}
-
 	if (_frames) delete _frames;
 }
 
@@ -507,13 +489,13 @@ void Hotspot::walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot) {
 	_destX = endPosX;
 	_destY = endPosY;
 	_destHotspotId = destHotspot;
-	_currentActions.addFront(START_WALKING, _roomNumber);
+	currentActions().addFront(START_WALKING, _roomNumber);
 }
 
 void Hotspot::stopWalking() {
 	_voiceCtr = 0;
 	setActionCtr(0);
-	_currentActions.clear();
+	currentActions().clear();
 	Room::getReference().setCursorState(CS_NONE);
 }
 
@@ -525,9 +507,9 @@ void Hotspot::endAction() {
 	if (_hotspotId == PLAYER_ID)
 		room.setCursorState((CursorState) ((int) room.cursorState() & 2));
 
-	if (_currentActions.top().hasSupportData()) {
-		CharacterScheduleEntry *rec = _currentActions.top().supportData().next();
-		_currentActions.top().setSupportData(rec);
+	if (currentActions().top().hasSupportData()) {
+		CharacterScheduleEntry *rec = currentActions().top().supportData().next();
+		currentActions().top().setSupportData(rec);
 	}
 }
 
@@ -617,10 +599,10 @@ void Hotspot::setRandomDest() {
 
 	g_system->getEventManager()->registerRandomSource(rnd, "lureHotspots");
 
-	if (_currentActions.isEmpty())
-		_currentActions.addFront(START_WALKING, roomNumber());
+	if (currentActions().isEmpty())
+		currentActions().addFront(START_WALKING, roomNumber());
 	else
-		_currentActions.top().setAction(START_WALKING);
+		currentActions().top().setAction(START_WALKING);
 	_walkFlag = true;
 
 	// Try up to 20 times to find an unoccupied destination 
@@ -723,7 +705,7 @@ bool Hotspot::walkingStep() {
 
 void Hotspot::updateMovement() {
 	assert(_data != NULL);
-	if (_currentActions.action() == EXEC_HOTSPOT_SCRIPT) {
+	if (currentActions().action() == EXEC_HOTSPOT_SCRIPT) {
 		if (_data->coveredFlag) {
 			// Reset position and direction
 			resetPosition();
@@ -1241,7 +1223,7 @@ void Hotspot::resetDirection() {
 typedef void (Hotspot::*ActionProcPtr)(HotspotData *hotspot);
 
 void Hotspot::doAction() {
-	CurrentActionEntry &entry = _currentActions.top();
+	CurrentActionEntry &entry = currentActions().top();
 	HotspotData *hotspot = NULL;
 
 	if (!entry.hasSupportData() || (entry.supportData().action() == NONE)) {
@@ -1265,9 +1247,9 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 		fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
 
 		if (action == USE) 
-			fields.setField(USE_HOTSPOT_ID, _currentActions.top().supportData().param(0));
+			fields.setField(USE_HOTSPOT_ID, currentActions().top().supportData().param(0));
 		else if ((action == GIVE) || (action == ASK)) 
-			fields.setField(USE_HOTSPOT_ID, _currentActions.top().supportData().param(1));
+			fields.setField(USE_HOTSPOT_ID, currentActions().top().supportData().param(1));
 		 else 
 			fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
 	}
@@ -1320,9 +1302,9 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 }
 
 void Hotspot::doNothing(HotspotData *hotspot) {
-	if (!_currentActions.isEmpty()) {
-		_currentActions.pop();
-		if (!_currentActions.isEmpty()) {
+	if (!currentActions().isEmpty()) {
+		currentActions().pop();
+		if (!currentActions().isEmpty()) {
 			setBlockedFlag(false);
 			currentActions().top().setAction(DISPATCH_ACTION);
 			return;
@@ -1375,7 +1357,7 @@ void Hotspot::doGet(HotspotData *hotspot) {
 
 void Hotspot::doOperate(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
-	Action action = _currentActions.top().supportData().action();
+	Action action = currentActions().top().supportData().action();
 
 	HotspotPrecheckResult result = actionPrecheck(hotspot);
 	if (result == PC_WAIT) return;
@@ -1509,7 +1491,7 @@ void Hotspot::doClose(HotspotData *hotspot) {
 
 void Hotspot::doUse(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
-	uint16 usedId = _currentActions.top().supportData().param(0);
+	uint16 usedId = currentActions().top().supportData().param(0);
 	HotspotData *usedHotspot = res.getHotspot(usedId);
 	_data->useHotspotId = usedId;
 
@@ -1550,7 +1532,7 @@ void Hotspot::doUse(HotspotData *hotspot) {
 
 void Hotspot::doGive(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
-	uint16 usedId = _currentActions.top().supportData().param(1);
+	uint16 usedId = currentActions().top().supportData().param(1);
 	HotspotData *usedHotspot = res.getHotspot(usedId);
 	_data->useHotspotId = usedId;
 
@@ -1662,7 +1644,7 @@ void Hotspot::doTell(HotspotData *hotspot) {
 
 		if (result == 0) {
 			// Build up sequence of commands for character to follow
-			CharacterScheduleEntry &cmdData = _currentActions.top().supportData();
+			CharacterScheduleEntry &cmdData = currentActions().top().supportData();
 			character->setStartRoomNumber(character->roomNumber());
 			character->currentActions().clear();
 			character->setBlockedFlag(false);
@@ -1734,7 +1716,7 @@ void Hotspot::doLookAction(HotspotData *hotspot, Action action) {
 
 void Hotspot::doAsk(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
-	uint16 usedId = _currentActions.top().supportData().param(1);
+	uint16 usedId = currentActions().top().supportData().param(1);
 	Hotspot *destCharacter = res.getActiveHotspot(hotspot->hotspotId);
 	HotspotData *usedHotspot = res.getHotspot(usedId);
 	_data->useHotspotId = usedId;
@@ -1864,7 +1846,7 @@ void Hotspot::doStatus(HotspotData *hotspot) {
 void Hotspot::doGoto(HotspotData *hotspot) {
 	_exitCtr = 0;
 	_blockedOffset = 0;
-	_currentActions.top().setRoomNumber(_currentActions.top().supportData().param(0));
+	currentActions().top().setRoomNumber(currentActions().top().supportData().param(0));
 	endAction();
 }
 
@@ -1937,7 +1919,7 @@ void Hotspot::doExamine(HotspotData *hotspot) {
 }
 
 void Hotspot::doLockUnlock(HotspotData *hotspot) {
-	Action action = _currentActions.top().supportData().action();
+	Action action = currentActions().top().supportData().action();
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
 	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
@@ -1964,11 +1946,11 @@ void Hotspot::doLockUnlock(HotspotData *hotspot) {
 }
 
 void Hotspot::npcSetRoomAndBlockedOffset(HotspotData *hotspot) {
-	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	CharacterScheduleEntry &entry = currentActions().top().supportData();
 	_exitCtr = 0;
 
 	_blockedOffset = entry.param(1);
-	_currentActions.top().setRoomNumber(entry.param(0));
+	currentActions().top().setRoomNumber(entry.param(0));
 	endAction();
 }
 
@@ -1994,14 +1976,14 @@ void Hotspot::npcHeySir(HotspotData *hotspot) {
 	setCharacterMode(CHARMODE_WAIT_FOR_PLAYER);
 
 	// Set the talk override to the specified Id
-	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	CharacterScheduleEntry &entry = currentActions().top().supportData();
 	_data->talkOverride = entry.param(0);
 
 	doNothing(hotspot);
 }
 
 void Hotspot::npcExecScript(HotspotData *hotspot) {
-	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	CharacterScheduleEntry &entry = currentActions().top().supportData();
 	uint16 offset = entry.param(0);
 	endAction();
 	Script::execute(offset);
@@ -2024,7 +2006,7 @@ void Hotspot::npcSetRandomDest(HotspotData *hotspot) {
 void Hotspot::npcWalkingCheck(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
-	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	CharacterScheduleEntry &entry = currentActions().top().supportData();
 	uint16 hId = entry.param(0);
 
 	endAction();
@@ -2037,17 +2019,17 @@ void Hotspot::npcWalkingCheck(HotspotData *hotspot) {
 }
 
 void Hotspot::npcSetSupportOffset(HotspotData *hotspot) {
-	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	CharacterScheduleEntry &entry = currentActions().top().supportData();
 	uint16 entryId = entry.param(0);
 
 	CharacterScheduleEntry *newEntry = Resources::getReference().
 		charSchedules().getEntry(entryId, entry.parent());
-	_currentActions.top().setSupportData(newEntry);
+	currentActions().top().setSupportData(newEntry);
 }
 
 void Hotspot::npcSupportOffsetConditional(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
-	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	CharacterScheduleEntry &entry = currentActions().top().supportData();
 	CharacterScheduleEntry *newEntry;
 	uint16 scriptOffset = entry.param(0);
 	uint16 entryId = entry.param(1);
@@ -2060,7 +2042,7 @@ void Hotspot::npcSupportOffsetConditional(HotspotData *hotspot) {
 		newEntry = res.charSchedules().getEntry(entryId, entry.parent());
 	}
 
-	_currentActions.top().setSupportData(newEntry);
+	currentActions().top().setSupportData(newEntry);
 	HotspotData *hotspotData = (newEntry->numParams() == 0) ? NULL : res.getHotspot(
 		(newEntry->action() == USE) ? newEntry->param(1) : newEntry->param(0));
 	doAction(newEntry->action(), hotspotData);
@@ -2069,7 +2051,7 @@ void Hotspot::npcSupportOffsetConditional(HotspotData *hotspot) {
 void Hotspot::npcDispatchAction(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
-	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	CharacterScheduleEntry &entry = currentActions().top().supportData();
 
 	fields.setField(USE_HOTSPOT_ID, entry.param(0));
 	fields.setField(ACTIVE_HOTSPOT_ID, entry.param(0));
@@ -2080,7 +2062,7 @@ void Hotspot::npcDispatchAction(HotspotData *hotspot) {
 	} else if (result != PC_WAIT) {
 		CharacterScheduleEntry *newEntry = Resources::getReference().
 			charSchedules().getEntry(entry.param(0), entry.parent());
-		_currentActions.top().setSupportData(newEntry);
+		currentActions().top().setSupportData(newEntry);
 		
 		HotspotData *hotspotData = (newEntry->numParams() == 0) ? NULL : 
 			res.getHotspot(newEntry->param((newEntry->action() == USE) ? 1 : 0));
@@ -2091,7 +2073,7 @@ void Hotspot::npcDispatchAction(HotspotData *hotspot) {
 void Hotspot::npcTalkNpcToNpc(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
-	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	CharacterScheduleEntry &entry = currentActions().top().supportData();
 	fields.setField(ACTIVE_HOTSPOT_ID, hotspot->hotspotId);
 	fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
 
@@ -2124,7 +2106,7 @@ void Hotspot::npcTalkNpcToNpc(HotspotData *hotspot) {
 }
 
 void Hotspot::npcPause(HotspotData *hotspot) {
-	uint16 delayAmount = _currentActions.top().supportData().param(0);
+	uint16 delayAmount = currentActions().top().supportData().param(0);
 	endAction();
 
 	setCharacterMode(CHARMODE_PAUSED);
@@ -2132,7 +2114,7 @@ void Hotspot::npcPause(HotspotData *hotspot) {
 }
 
 void Hotspot::npcStartTalking(HotspotData *hotspot) {
-	CharacterScheduleEntry &entry = _currentActions.top().supportData();
+	CharacterScheduleEntry &entry = currentActions().top().supportData();
 	uint16 stringId = entry.param(0);
 	uint16 destHotspot = entry.param(1);
 
@@ -2143,7 +2125,7 @@ void Hotspot::npcStartTalking(HotspotData *hotspot) {
 void Hotspot::npcJumpAddress(HotspotData *hotspot) {
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
-	int procIndex = _currentActions.top().supportData().param(0);
+	int procIndex = currentActions().top().supportData().param(0);
 	Hotspot *player;
 	CharacterScheduleEntry *entry;
 	endAction();
@@ -2163,8 +2145,8 @@ void Hotspot::npcJumpAddress(HotspotData *hotspot) {
 			entry = res.charSchedules().getEntry(JUMP_ADDR_2_SUPPORT_ID, NULL);
 			assert(entry);
 
-			_currentActions.clear();
-			_currentActions.addFront(DISPATCH_ACTION, entry, ROOMNUM_CELLAR);
+			currentActions().clear();
+			currentActions().addFront(DISPATCH_ACTION, entry, ROOMNUM_CELLAR);
 		}
 		break;
 
@@ -2227,7 +2209,7 @@ void Hotspot::startTalk(HotspotData *charHotspot, uint16 id) {
 }
 
 void Hotspot::saveToStream(Common::WriteStream *stream) {
-	_currentActions.saveToStream(stream);
+	currentActions().saveToStream(stream);
 	_pathFinder.saveToStream(stream);
 
 	stream->writeUint16LE(_roomNumber);
@@ -2267,7 +2249,7 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 }
 
 void Hotspot::loadFromStream(Common::ReadStream *stream) {
-	_currentActions.loadFromStream(stream);
+	currentActions().loadFromStream(stream);
 	_pathFinder.loadFromStream(stream);
 
 	_roomNumber = stream->readUint16LE();
@@ -4442,214 +4424,6 @@ void PathFinder::loadFromStream(Common::ReadStream *stream) {
 	}
 }
 
-// Current action entry class methods
-
-CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, uint16 roomNum) {
-	_action = newAction; 
-	_supportData = NULL; 
-	_dynamicSupportData = false;
-	_roomNumber = roomNum;
-}
-
-CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum) { 
-	assert(data->parent() != NULL);
-	_action = newAction; 
-	_supportData = data; 
-	_dynamicSupportData = false;
-	_roomNumber = roomNum;
-}
-
-CurrentActionEntry::CurrentActionEntry(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
-	_action = DISPATCH_ACTION;
-	_dynamicSupportData = true;
-	_supportData = new CharacterScheduleEntry();
-	uint16 params[2] = {param1, param2};
-	_supportData->setDetails2(newAction, 2, params);
-	_roomNumber = roomNum;
-}
-
-CurrentActionEntry::CurrentActionEntry(CurrentActionEntry *src) {
-	_action = src->_action;
-	_dynamicSupportData = src->_dynamicSupportData;
-	_roomNumber = src->_roomNumber;
-	if (!_dynamicSupportData) 
-		_supportData = src->_supportData;
-	else if (src->_supportData == NULL)
-		_supportData = NULL;
-	else {
-		_supportData = new CharacterScheduleEntry(src->_supportData);
-	}
-}
-
-void CurrentActionEntry::setSupportData(uint16 entryId) {
-	CharacterScheduleEntry &entry = supportData();
-
-	CharacterScheduleEntry *newEntry = Resources::getReference().
-		charSchedules().getEntry(entryId, entry.parent());
-	setSupportData(newEntry);
-}
-
-void CurrentActionEntry::saveToStream(WriteStream *stream) {
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action entry dyn=%d id=%d",
-		hasSupportData(), hasSupportData() ? supportData().id() : 0);
-	stream->writeByte((uint8) _action);
-	stream->writeUint16LE(_roomNumber);
-	stream->writeByte(hasSupportData());
-	if (hasSupportData()) {
-		// Handle the support data
-		stream->writeByte(_dynamicSupportData);
-		if (_dynamicSupportData) {
-			// Write out the dynamic data
-			stream->writeByte(supportData().action());
-			stream->writeSint16LE(supportData().numParams());
-			for (int index = 0; index < supportData().numParams(); ++index)
-				stream->writeUint16LE(supportData().param(index));
-		} else {
-			// Write out the Id for the static entry
-			stream->writeUint16LE(supportData().id());
-		}
-	}
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot action entry");
-}
-
-CurrentActionEntry *CurrentActionEntry::loadFromStream(ReadStream *stream) {
-	Resources &res = Resources::getReference();
-	uint8 actionNum = stream->readByte();
-	if (actionNum == 0xff) return NULL;
-	CurrentActionEntry *result;
-
-	uint16 roomNumber = stream->readUint16LE();
-	bool hasSupportData = stream->readByte() != 0;
-
-	if (!hasSupportData) {
-		// An entry that doesn't have support data
-		result = new CurrentActionEntry(
-			(CurrentAction) actionNum, roomNumber);
-	} else {
-		// Handle support data for the entry
-		bool dynamicData = stream->readByte() != 0;
-		if (dynamicData) {
-			// Load action entry that has dynamic data
-			result = new CurrentActionEntry(
-				(CurrentAction) actionNum, roomNumber);
-			result->_supportData = new CharacterScheduleEntry();
-			Action action = (Action) stream->readByte();
-			int numParams = stream->readSint16LE();
-			uint16 *paramList = new uint16[numParams];
-			for (int index = 0; index < numParams; ++index)
-				paramList[index] = stream->readUint16LE();
-				
-			result->_supportData->setDetails2(action, numParams, paramList);
-			delete paramList;
-		} else {
-			// Load action entry with an NPC schedule entry
-			uint16 entryId = stream->readUint16LE();
-			CharacterScheduleEntry *entry = res.charSchedules().getEntry(entryId);
-			result = new CurrentActionEntry((CurrentAction) actionNum, roomNumber);
-			result->setSupportData(entry);
-		}
-	}
-
-	return result;
-}
-
-void CurrentActionStack::list(char *buffer) {
-	ManagedList<CurrentActionEntry *>::iterator i;
-
-	if (buffer) {
-		sprintf(buffer, "CurrentActionStack::list num_actions=%d\n", size());
-		buffer += strlen(buffer);
-	}
-	else
-		printf("CurrentActionStack::list num_actions=%d\n", size());
-
-	for (i = _actions.begin(); i != _actions.end(); ++i) {
-		CurrentActionEntry *entry = *i;
-		if (buffer) {
-			sprintf(buffer, "style=%d room#=%d", entry->action(), entry->roomNumber());
-			buffer += strlen(buffer);
-		}
-		else
-			printf("style=%d room#=%d", entry->action(), entry->roomNumber());
-	
-		if (entry->hasSupportData()) {
-			CharacterScheduleEntry &rec = entry->supportData();
-
-			if (buffer) {
-				sprintf(buffer, ", action=%d params=", rec.action());
-				buffer += strlen(buffer);
-			}
-			else
-				printf(", action=%d params=", rec.action());
-
-			if (rec.numParams() == 0) 
-				if (buffer) {
-					strcat(buffer, "none");
-					buffer += strlen(buffer);
-				}
-				else
-					printf("none");
-			else {
-				for (int ctr = 0; ctr < rec.numParams(); ++ctr) {
-					if (ctr != 0) {
-						if (buffer) {
-							strcpy(buffer, ", ");
-							buffer += strlen(buffer);
-						}
-						else
-							printf(", ");
-					}
-
-					if (buffer) {
-						sprintf(buffer, "%d", rec.param(ctr));
-						buffer += strlen(buffer);
-					} else 
-						printf("%d", rec.param(ctr));
-				}
-			}
-		}
-		if (buffer) {
-			sprintf(buffer, "\n");
-			buffer += strlen(buffer);
-		}
-		else
-			printf("\n");
-	}
-}
-
-void CurrentActionStack::saveToStream(WriteStream *stream) {
-	ManagedList<CurrentActionEntry *>::iterator i;
-
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action stack");
-	char buffer[MAX_DESC_SIZE];
-	list(buffer);
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "%s", buffer);
-
-	for (i = _actions.begin(); i != _actions.end(); ++i) {
-		CurrentActionEntry *rec = *i;
-		rec->saveToStream(stream);
-	}
-	stream->writeByte(0xff);      // End of list marker
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot action stack");
-}
-
-void CurrentActionStack::loadFromStream(ReadStream *stream) {
-	CurrentActionEntry *rec;
-
-	_actions.clear();
-	while ((rec = CurrentActionEntry::loadFromStream(stream)) != NULL)
-		_actions.push_back(rec);
-}
-
-void CurrentActionStack::copyFrom(CurrentActionStack &stack) {
-	ManagedList<CurrentActionEntry *>::iterator i;
-
-	for (i = stack._actions.begin(); i != stack._actions.end(); ++i) {
-		CurrentActionEntry *rec = *i;
-		_actions.push_back(new CurrentActionEntry(rec));
-	}
-}
-
 /*-------------------------------------------------------------------------*/
 /* Support methods                                                         */
 /*                                                                         */
@@ -4837,75 +4611,6 @@ void HotspotList::loadFromStream(ReadStream *stream) {
 		// Get the next hotspot
 		hotspotId = stream->readUint16LE();
 	}
-}
-
-HotspotScheduleRecord::HotspotScheduleRecord(uint16 hId, CurrentActionStack &stack) {
-	hotspotId = hId;
-	copyFrom(stack);
-}
-
-HotspotScheduleRecord::HotspotScheduleRecord(uint16 hId) {
-	hotspotId = hId;
-}
-
-void HotspotSchedules::saveToStream(WriteStream *stream) {
-	iterator i;
-
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot schedules stack");
-
-	for (i = begin(); i != end(); ++i) {
-		HotspotScheduleRecord *rec = *i;
-		stream->writeUint16LE(rec->hotspotId);
-		rec->saveToStream(stream);
-	}
-	stream->writeUint16LE(0xffff); // End of list marker
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot schedules stack");
-}
-
-void HotspotSchedules::loadFromStream(ReadStream *stream) {
-	iterator i;
-	uint16 hId;
-
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "Loading hotspot schedules stack");
-
-	clear();
-	while ((hId = stream->readUint16LE()) != 0xffff) {
-		HotspotScheduleRecord *rec = new HotspotScheduleRecord(hId);
-		rec->loadFromStream(stream);
-	}
-
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "Loading saving hotspot schedules stack");
-}
-
-void HotspotSchedules::add(uint16 hotspotId, CurrentActionStack &actions) {
-	HotspotScheduleRecord *rec = new HotspotScheduleRecord(hotspotId, actions);
-	push_back(rec);
-}
-
-void HotspotSchedules::remove(uint16 hotspotId) {
-	iterator i;
-
-	for (i = begin(); i != end(); ++i) {
-		HotspotScheduleRecord *rec = *i;
-		
-		if (rec->hotspotId == hotspotId) {
-			erase(i);
-			return;
-		}
-	}
-}
-
-HotspotScheduleRecord *HotspotSchedules::check(uint16 hotspotId) {
-	iterator i;
-
-	for (i = begin(); i != end(); ++i) {
-		HotspotScheduleRecord *rec = *i;
-		
-		if (rec->hotspotId == hotspotId)
-			return rec;
-	}
-
-	return NULL;
 }
 
 } // end of namespace Lure

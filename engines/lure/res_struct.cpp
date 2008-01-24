@@ -23,9 +23,10 @@
  *
  */
 
-#include "lure/res.h"
 #include "lure/disk.h"
 #include "lure/lure.h"
+#include "lure/res.h"
+#include "lure/res_struct.h"
 #include "lure/scripts.h"
 #include "common/endian.h"
 
@@ -412,7 +413,6 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	tickProcId = READ_LE_UINT16(&rec->tickProcId);
 	tickTimeout = READ_LE_UINT16(&rec->tickTimeout);
 	tickScriptOffset = READ_LE_UINT16(&rec->tickScriptOffset);
-	npcSchedule = READ_LE_UINT16(&rec->npcSchedule);
 	characterMode = (CharacterMode) READ_LE_UINT16(&rec->characterMode);
 	delayCtr = READ_LE_UINT16(&rec->delayCtr);
 	flags2 = READ_LE_UINT16(&rec->flags2);
@@ -433,6 +433,14 @@ HotspotData::HotspotData(HotspotResource *rec) {
 	talkOverride = 0;
 	talkGate = 0;
 	scriptHotspotId = 0;
+
+	// Set up NPC schedule if any
+	uint16 npcScheduleId = READ_LE_UINT16(&rec->npcSchedule);
+	if (npcScheduleId != 0) {
+		Resources &res = Resources::getReference();
+		CharacterScheduleEntry *entry = res.charSchedules().getEntry(npcScheduleId);
+		npcSchedule.addFront(DISPATCH_ACTION, entry, roomNumber);
+	}
 }
 
 void HotspotData::saveToStream(WriteStream *stream) {
@@ -834,7 +842,7 @@ void SequenceDelayList::loadFromStream(ReadStream *stream) {
 	}
 }
 
-// The following classes hold the NPC schedule classes
+// The following classes hold the NPC schedules
 
 CharacterScheduleEntry::CharacterScheduleEntry(Action theAction, ...) {
 	_parent = NULL;
@@ -1318,6 +1326,216 @@ void ValueTableData::loadFromStream(Common::ReadStream *stream) {
 	// Read in the field list
 	for (int index = 0; index < NUM_VALUE_FIELDS; ++index)
 		_fieldList[index] = stream->readUint16LE();
+}
+
+/*-------------------------------------------------------------------------*/
+
+// Current action entry class methods
+
+CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, uint16 roomNum) {
+	_action = newAction; 
+	_supportData = NULL; 
+	_dynamicSupportData = false;
+	_roomNumber = roomNum;
+}
+
+CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum) { 
+	assert(data->parent() != NULL);
+	_action = newAction; 
+	_supportData = data; 
+	_dynamicSupportData = false;
+	_roomNumber = roomNum;
+}
+
+CurrentActionEntry::CurrentActionEntry(Action newAction, uint16 roomNum, uint16 param1, uint16 param2) {
+	_action = DISPATCH_ACTION;
+	_dynamicSupportData = true;
+	_supportData = new CharacterScheduleEntry();
+	uint16 params[2] = {param1, param2};
+	_supportData->setDetails2(newAction, 2, params);
+	_roomNumber = roomNum;
+}
+
+CurrentActionEntry::CurrentActionEntry(CurrentActionEntry *src) {
+	_action = src->_action;
+	_dynamicSupportData = src->_dynamicSupportData;
+	_roomNumber = src->_roomNumber;
+	if (!_dynamicSupportData) 
+		_supportData = src->_supportData;
+	else if (src->_supportData == NULL)
+		_supportData = NULL;
+	else {
+		_supportData = new CharacterScheduleEntry(src->_supportData);
+	}
+}
+
+void CurrentActionEntry::setSupportData(uint16 entryId) {
+	CharacterScheduleEntry &entry = supportData();
+
+	CharacterScheduleEntry *newEntry = Resources::getReference().
+		charSchedules().getEntry(entryId, entry.parent());
+	setSupportData(newEntry);
+}
+
+void CurrentActionEntry::saveToStream(WriteStream *stream) {
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action entry dyn=%d id=%d",
+		hasSupportData(), hasSupportData() ? supportData().id() : 0);
+	stream->writeByte((uint8) _action);
+	stream->writeUint16LE(_roomNumber);
+	stream->writeByte(hasSupportData());
+	if (hasSupportData()) {
+		// Handle the support data
+		stream->writeByte(_dynamicSupportData);
+		if (_dynamicSupportData) {
+			// Write out the dynamic data
+			stream->writeByte(supportData().action());
+			stream->writeSint16LE(supportData().numParams());
+			for (int index = 0; index < supportData().numParams(); ++index)
+				stream->writeUint16LE(supportData().param(index));
+		} else {
+			// Write out the Id for the static entry
+			stream->writeUint16LE(supportData().id());
+		}
+	}
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot action entry");
+}
+
+CurrentActionEntry *CurrentActionEntry::loadFromStream(ReadStream *stream) {
+	Resources &res = Resources::getReference();
+	uint8 actionNum = stream->readByte();
+	if (actionNum == 0xff) return NULL;
+	CurrentActionEntry *result;
+
+	uint16 roomNumber = stream->readUint16LE();
+	bool hasSupportData = stream->readByte() != 0;
+
+	if (!hasSupportData) {
+		// An entry that doesn't have support data
+		result = new CurrentActionEntry(
+			(CurrentAction) actionNum, roomNumber);
+	} else {
+		// Handle support data for the entry
+		bool dynamicData = stream->readByte() != 0;
+		if (dynamicData) {
+			// Load action entry that has dynamic data
+			result = new CurrentActionEntry(
+				(CurrentAction) actionNum, roomNumber);
+			result->_supportData = new CharacterScheduleEntry();
+			Action action = (Action) stream->readByte();
+			int numParams = stream->readSint16LE();
+			uint16 *paramList = new uint16[numParams];
+			for (int index = 0; index < numParams; ++index)
+				paramList[index] = stream->readUint16LE();
+				
+			result->_supportData->setDetails2(action, numParams, paramList);
+			delete paramList;
+		} else {
+			// Load action entry with an NPC schedule entry
+			uint16 entryId = stream->readUint16LE();
+			CharacterScheduleEntry *entry = res.charSchedules().getEntry(entryId);
+			result = new CurrentActionEntry((CurrentAction) actionNum, roomNumber);
+			result->setSupportData(entry);
+		}
+	}
+
+	return result;
+}
+
+void CurrentActionStack::list(char *buffer) {
+	ManagedList<CurrentActionEntry *>::iterator i;
+
+	if (buffer) {
+		sprintf(buffer, "CurrentActionStack::list num_actions=%d\n", size());
+		buffer += strlen(buffer);
+	}
+	else
+		printf("CurrentActionStack::list num_actions=%d\n", size());
+
+	for (i = _actions.begin(); i != _actions.end(); ++i) {
+		CurrentActionEntry *entry = *i;
+		if (buffer) {
+			sprintf(buffer, "style=%d room#=%d", entry->action(), entry->roomNumber());
+			buffer += strlen(buffer);
+		}
+		else
+			printf("style=%d room#=%d", entry->action(), entry->roomNumber());
+	
+		if (entry->hasSupportData()) {
+			CharacterScheduleEntry &rec = entry->supportData();
+
+			if (buffer) {
+				sprintf(buffer, ", action=%d params=", rec.action());
+				buffer += strlen(buffer);
+			}
+			else
+				printf(", action=%d params=", rec.action());
+
+			if (rec.numParams() == 0) 
+				if (buffer) {
+					strcat(buffer, "none");
+					buffer += strlen(buffer);
+				}
+				else
+					printf("none");
+			else {
+				for (int ctr = 0; ctr < rec.numParams(); ++ctr) {
+					if (ctr != 0) {
+						if (buffer) {
+							strcpy(buffer, ", ");
+							buffer += strlen(buffer);
+						}
+						else
+							printf(", ");
+					}
+
+					if (buffer) {
+						sprintf(buffer, "%d", rec.param(ctr));
+						buffer += strlen(buffer);
+					} else 
+						printf("%d", rec.param(ctr));
+				}
+			}
+		}
+		if (buffer) {
+			sprintf(buffer, "\n");
+			buffer += strlen(buffer);
+		}
+		else
+			printf("\n");
+	}
+}
+
+void CurrentActionStack::saveToStream(WriteStream *stream) {
+	ManagedList<CurrentActionEntry *>::iterator i;
+
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Saving hotspot action stack");
+	char buffer[MAX_DESC_SIZE];
+	list(buffer);
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "%s", buffer);
+
+	for (i = _actions.begin(); i != _actions.end(); ++i) {
+		CurrentActionEntry *rec = *i;
+		rec->saveToStream(stream);
+	}
+	stream->writeByte(0xff);      // End of list marker
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "Finished saving hotspot action stack");
+}
+
+void CurrentActionStack::loadFromStream(ReadStream *stream) {
+	CurrentActionEntry *rec;
+
+	_actions.clear();
+	while ((rec = CurrentActionEntry::loadFromStream(stream)) != NULL)
+		_actions.push_back(rec);
+}
+
+void CurrentActionStack::copyFrom(CurrentActionStack &stack) {
+	ManagedList<CurrentActionEntry *>::iterator i;
+
+	for (i = stack._actions.begin(); i != stack._actions.end(); ++i) {
+		CurrentActionEntry *rec = *i;
+		_actions.push_back(new CurrentActionEntry(rec));
+	}
 }
 
 } // end of namespace Lure
