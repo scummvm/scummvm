@@ -1883,6 +1883,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Ed Ward", "98be839b9f30cbedea4c9cee5442d827"),
 	FANMADE("Elfintard", "c3b847e9e9e978af9708df76a0751dc2"),
 	FANMADE("Enclosure (v1.01)", "f08e66fee9ecdde77db7ee9a10c96ba2"),
+	FANMADE("Enclosure (v1.03)", "e4a0613ed02401502e506ba3565a8c40"),
 	FANMADE("Epic Fighting (v0.1)", "aff24a1b3bdd676187685c4d95ba4294"),
 	FANMADE("Escape Quest (v0.0.3)", "2346b65619b1da0298b715b06d1a45a1"),
 	FANMADE("Escape from the Desert (beta 1)", "dfdc634d340854bd6ece28024010758d"),
