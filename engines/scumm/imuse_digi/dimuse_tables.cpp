@@ -448,7 +448,7 @@ const imuseComiTable _comiSeqMusicTable[] = {
 	{3, 2445, "seqSkullArrive",  0, 0,   60, "2445-S~1.IMX"},
 	{3, 2450, "seqFloat",        0, 0,   60, "2450-C~1.IMX"},
 	{2, 2451, "seqFall",         0, 1,   60, "2450-C~1.IMX"},
-	{2, 2452, "seqUmbrella",     0, 0,   60, "2450-C~1.IMX"},
+	{2, 2452, "seqUmbrella",     0, 2,   60, "2450-C~1.IMX"},
 	{3, 2460, "seqFight",        0, 0,   60, "2460-F~1.IMX"},
 	{0, 2465, "seqLAVE_RIDE",    0, 0,    0, ""},
 	{0, 2470, "seqMORE_SLAW",    0, 0,    0, ""},
