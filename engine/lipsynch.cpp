@@ -20,10 +20,11 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "lipsynch.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+
+#include "engine/lipsynch.h"
 
 #include <cstring>
 

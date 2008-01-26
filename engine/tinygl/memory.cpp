@@ -1,7 +1,7 @@
 
 // Memory allocator for TinyGL
 
-#include "tinygl/zgl.h"
+#include "engine/tinygl/zgl.h"
 
 // modify these functions so that they suit your needs
 

@@ -1,5 +1,6 @@
 
-#include "tinygl/zgl.h"
+#include "engine/tinygl/zgl.h"
+
 #include <stdio.h>
 
 // glVertex

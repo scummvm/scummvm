@@ -20,26 +20,27 @@
  *
  */
 
-#include "stdafx.h"
-#include "debug.h"
-#include "lua.h"
-#include "resource.h"
-#include "actor.h"
-#include "registry.h"
-#include "localize.h"
-#include "color.h"
-#include "colormap.h"
-#include "costume.h"
-#include "engine.h"
-#include "smush.h"
-#include "textobject.h"
-#include "objectstate.h"
-#include "font.h"
-#include "primitives.h"
-#include "savegame.h"
-#include "lipsynch.h"
+#include "common/sys.h"
+#include "common/debug.h"
 
-#include "imuse/imuse.h"
+#include "engine/lua.h"
+#include "engine/resource.h"
+#include "engine/actor.h"
+#include "engine/registry.h"
+#include "engine/localize.h"
+#include "engine/color.h"
+#include "engine/colormap.h"
+#include "engine/costume.h"
+#include "engine/engine.h"
+#include "engine/smush/smush.h"
+#include "engine/textobject.h"
+#include "engine/objectstate.h"
+#include "engine/font.h"
+#include "engine/primitives.h"
+#include "engine/savegame.h"
+#include "engine/lipsynch.h"
+
+#include "engine/imuse/imuse.h"
 
 #include <cstdio>
 #include <cmath>

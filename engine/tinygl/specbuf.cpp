@@ -1,6 +1,7 @@
 
-#include "tinygl/zgl.h"
-#include "tinygl/msghandling.h"
+#include "engine/tinygl/zgl.h"
+#include "engine/tinygl/msghandling.h"
+
 #include <math.h>
 #include <stdlib.h>
 

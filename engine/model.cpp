@@ -20,14 +20,15 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "model.h"
-#include "resource.h"
-#include "material.h"
-#include "textsplit.h"
-#include "driver.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+
+#include "engine/model.h"
+#include "engine/resource.h"
+#include "engine/material.h"
+#include "engine/textsplit.h"
+#include "engine/backend/driver.h"
 
 #include <cstring>
 

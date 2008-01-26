@@ -23,7 +23,7 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include "resource.h"
+#include "engine/resource.h"
 
 #include <cstring>
 

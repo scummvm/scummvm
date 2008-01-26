@@ -20,9 +20,10 @@
  *
  */
 
-#include "stdafx.h"
-#include "registry.h"
-#include "debug.h"
+#include "common/sys.h"
+#include "common/debug.h"
+
+#include "engine/registry.h"
 
 #include <cstdlib>
 

@@ -23,8 +23,9 @@
 #ifndef COLORMAP_H
 #define COLORMAP_H
 
-#include "debug.h"
-#include "resource.h"
+#include "common/debug.h"
+
+#include "engine/resource.h"
 
 #include <cstring>
 

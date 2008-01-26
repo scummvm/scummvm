@@ -20,13 +20,14 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "resource.h"
-#include "engine.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
 
-#include "imuse/imuse_mcmp_mgr.h"
+#include "engine/resource.h"
+#include "engine/engine.h"
+
+#include "engine/imuse/imuse_mcmp_mgr.h"
 
 uint16 imuseDestTable[5786];
 

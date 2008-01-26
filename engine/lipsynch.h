@@ -23,8 +23,8 @@
 #ifndef LIPSYNCH_H
 #define LIPSYNCH_H
 
-#include "bits.h"
-#include "resource.h"
+#include "common/platform.h"
+#include "engine/resource.h"
 
 #include <list>
 

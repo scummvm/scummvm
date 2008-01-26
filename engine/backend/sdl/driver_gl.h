@@ -20,17 +20,19 @@
  *
  */
 
-#ifndef DRIVER_GL_H
-#define DRIVER_GL_H
+#ifndef BACKEND_DRIVER_GL_H
+#define BACKEND_DRIVER_GL_H
 
-#include "bits.h"
-#include "vector3d.h"
-#include "color.h"
-#include "model.h"
-#include "colormap.h"
-#include "bitmap.h"
-#include "driver.h"
-#include "driver_sdl.h"
+#include "common/platform.h"
+#include "common/vector3d.h"
+
+#include "engine/color.h"
+#include "engine/model.h"
+#include "engine/colormap.h"
+#include "engine/bitmap.h"
+
+#include "engine/backend/driver.h"
+#include "engine/backend/sdl/driver_sdl.h"
 
 #include <SDL.h>
 #include <SDL_opengl.h>

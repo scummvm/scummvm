@@ -20,19 +20,20 @@
  *
  */
 
-#include "stdafx.h"
-#include "engine.h"
-#include "scene.h"
-#include "lua.h"
-#include "colormap.h"
-#include "actor.h"
-#include "textobject.h"
-#include "smush.h"
-#include "driver.h"
-#include "savegame.h"
-#include "lipsynch.h"
+#include "common/sys.h"
 
-#include "imuse/imuse.h"
+#include "engine/engine.h"
+#include "engine/scene.h"
+#include "engine/lua.h"
+#include "engine/colormap.h"
+#include "engine/actor.h"
+#include "engine/textobject.h"
+#include "engine/smush/smush.h"
+#include "engine/backend/driver.h"
+#include "engine/savegame.h"
+#include "engine/lipsynch.h"
+
+#include "engine/imuse/imuse.h"
 
 #include <assert.h>
 

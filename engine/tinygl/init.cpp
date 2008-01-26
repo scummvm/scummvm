@@ -1,5 +1,5 @@
 
-#include "tinygl/zgl.h"
+#include "engine/tinygl/zgl.h"
 
 GLContext *gl_ctx;
 

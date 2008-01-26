@@ -20,11 +20,11 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
 
-#include "imuse/imuse.h"
+#include "engine/imuse/imuse.h"
 
 void Imuse::setMusicState(int stateId) {
 	int l, num = -1;

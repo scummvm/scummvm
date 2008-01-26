@@ -20,14 +20,15 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "smush.h"
-#include "timer.h"
-#include "resource.h"
-#include "engine.h"
-#include "driver.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+#include "common/timer.h"
+
+#include "engine/smush/smush.h"
+#include "engine/resource.h"
+#include "engine/engine.h"
+#include "engine/backend/driver.h"
 
 #include "mixer/mixer.h"
 

@@ -5,9 +5,10 @@
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
-#include "tinygl/gl.h"
-#include "tinygl/zbuffer.h"
-#include "tinygl/zmath.h"
+
+#include "engine/tinygl/gl.h"
+#include "engine/tinygl/zbuffer.h"
+#include "engine/tinygl/zmath.h"
 
 #define DEBUG
 /* #define NDEBUG */

@@ -20,11 +20,12 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "keyframe.h"
-#include "textsplit.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+
+#include "engine/keyframe.h"
+#include "engine/textsplit.h"
 
 #include <cstring>
 

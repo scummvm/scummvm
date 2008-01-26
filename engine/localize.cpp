@@ -20,11 +20,12 @@
  *
  */
 
-#include "stdafx.h"
-#include "debug.h"
-#include "localize.h"
-#include "registry.h"
-#include "engine.h"
+#include "common/sys.h"
+#include "common/debug.h"
+
+#include "engine/localize.h"
+#include "engine/registry.h"
+#include "engine/engine.h"
 
 #include <cstdio>
 #include <cstring>

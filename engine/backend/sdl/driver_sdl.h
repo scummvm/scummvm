@@ -20,16 +20,17 @@
  *
  */
 
-#ifndef DRIVER_SDL_H
-#define DRIVER_SDL_H
+#ifndef BACKEND_DRIVER_SDL_H
+#define BACKEND_DRIVER_SDL_H
 
-#include "bits.h"
-#include "vector3d.h"
-#include "color.h"
-#include "model.h"
-#include "colormap.h"
-#include "bitmap.h"
-#include "driver.h"
+#include "common/sys.h"
+#include "common/vector3d.h"
+
+#include "engine/color.h"
+#include "engine/model.h"
+#include "engine/colormap.h"
+#include "engine/bitmap.h"
+#include "engine/backend/driver.h"
 
 #include <SDL.h>
 

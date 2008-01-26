@@ -20,17 +20,18 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "timer.h"
-#include "driver.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+#include "common/timer.h"
+
+#include "engine/backend/driver.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
 
-#include "imuse/imuse.h"
-#include "imuse/imuse_sndmgr.h"
+#include "engine/imuse/imuse.h"
+#include "engine/imuse/imuse_sndmgr.h"
 
 void Imuse::flushTracks() {
 	// flushTracks should not lock the stack since all the functions

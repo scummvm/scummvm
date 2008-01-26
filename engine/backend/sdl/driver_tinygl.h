@@ -20,20 +20,21 @@
  *
  */
 
-#ifndef DRIVER_TINYGL_H
-#define DRIVER_TINYGL_H
+#ifndef BACKEND_DRIVER_TINYGL_H
+#define BACKEND_DRIVER_TINYGL_H
 
-#include "bits.h"
-#include "vector3d.h"
-#include "color.h"
-#include "model.h"
-#include "colormap.h"
-#include "bitmap.h"
-#include "driver.h"
-#include "driver_sdl.h"
+#include "common/platform.h"
+#include "common/vector3d.h"
 
-#include "tinygl/gl.h"
-#include "tinygl/zgl.h"
+#include "engine/color.h"
+#include "engine/model.h"
+#include "engine/colormap.h"
+#include "engine/bitmap.h"
+#include "engine/backend/driver.h"
+#include "engine/backend/sdl/driver_sdl.h"
+
+#include "engine/tinygl/gl.h"
+#include "engine/tinygl/zgl.h"
 
 #include <SDL.h>
 

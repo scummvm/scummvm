@@ -20,10 +20,10 @@
  *
  */
 
-#include "bits.h"
+#include "common/platform.h"
 
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef COMMON_DEBUG_H
+#define COMMON_DEBUG_H
 
 enum enDebugLevels {
 	DEBUG_NONE,

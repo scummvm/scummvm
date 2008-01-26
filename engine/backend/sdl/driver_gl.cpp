@@ -20,10 +20,12 @@
  *
  */
 
-#include "debug.h"
-#include "colormap.h"
-#include "material.h"
-#include "driver_gl.h"
+#include "common/debug.h"
+
+#include "engine/colormap.h"
+#include "engine/material.h"
+
+#include "engine/backend/sdl/driver_gl.h"
 
 // Constructor. Should create the driver and open screens, etc.
 DriverGL::DriverGL(int screenW, int screenH, int screenBPP, bool fullscreen) {

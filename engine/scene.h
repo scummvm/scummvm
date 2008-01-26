@@ -23,12 +23,13 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "vector3d.h"
-#include "bitmap.h"
-#include "color.h"
-#include "debug.h"
-#include "walkplane.h"
-#include "objectstate.h"
+#include "common/vector3d.h"
+#include "common/debug.h"
+
+#include "engine/bitmap.h"
+#include "engine/color.h"
+#include "engine/walkplane.h"
+#include "engine/objectstate.h"
 
 #include <string>
 

@@ -20,11 +20,11 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
 
-#include "imuse/imuse.h"
+#include "engine/imuse/imuse.h"
 
 ImuseTable grimStateMusicTable[] = {
 	{0, 1000,   0, 0, 60, 127,   0, ""},

@@ -23,8 +23,8 @@
 #ifndef AUDIOSTREAM_H
 #define AUDIOSTREAM_H
 
-#include "stdafx.h"
-#include "bits.h"
+#include "common/sys.h"
+#include "common/platform.h"
 
 
 /**

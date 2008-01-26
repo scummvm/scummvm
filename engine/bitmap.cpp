@@ -20,12 +20,13 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "bitmap.h"
-#include "smush.h"
-#include "driver.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+
+#include "engine/bitmap.h"
+#include "engine/smush/smush.h"
+#include "engine/backend/driver.h"
 
 #include <cstdlib>
 #include <cstring>

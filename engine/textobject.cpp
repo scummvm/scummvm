@@ -20,11 +20,12 @@
  *
  */
 
-#include "stdafx.h"
-#include "textobject.h"
-#include "engine.h"
-#include "localize.h"
-#include "driver.h"
+#include "common/sys.h"
+
+#include "engine/textobject.h"
+#include "engine/engine.h"
+#include "engine/localize.h"
+#include "engine/backend/driver.h"
 
 std::string parseMsgText(const char *msg, char *msgId);
 

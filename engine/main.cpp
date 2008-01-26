@@ -20,22 +20,24 @@
  *
  */
 
-#include "stdafx.h"
-#include "debug.h"
-#include "bitmap.h"
-#include "resource.h"
-#include "lua.h"
-#include "registry.h"
-#include "localize.h"
-#include "engine.h"
-#include "timer.h"
-#include "smush.h"
-#include "driver_gl.h"
-#include "driver_tinygl.h"
+#include "common/sys.h"
+#include "common/debug.h"
+
+#include "engine/bitmap.h"
+#include "engine/resource.h"
+#include "engine/lua.h"
+#include "engine/registry.h"
+#include "engine/localize.h"
+#include "engine/engine.h"
+#include "common/timer.h"
+#include "engine/smush/smush.h"
+
+#include "engine/backend/sdl/driver_gl.h"
+#include "engine/backend/sdl/driver_tinygl.h"
 
 #include "mixer/mixer.h"
 
-#include "imuse/imuse.h"
+#include "engine/imuse/imuse.h"
 
 #include <SDL.h>
 #include <SDL_video.h>

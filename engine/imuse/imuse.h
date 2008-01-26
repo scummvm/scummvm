@@ -23,16 +23,17 @@
 #ifndef IMUSE_H
 #define IMUSE_H
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "lua.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+
+#include "engine/lua.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
 
-#include "imuse/imuse_sndmgr.h"
-#include "imuse/imuse_mcmp_mgr.h"
+#include "engine/imuse/imuse_sndmgr.h"
+#include "engine/imuse/imuse_mcmp_mgr.h"
 
 #define MAX_IMUSE_TRACKS 16
 #define MAX_IMUSE_FADETRACKS 16

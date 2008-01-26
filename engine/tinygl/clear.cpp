@@ -1,5 +1,5 @@
 
-#include "tinygl/zgl.h"
+#include "engine/tinygl/zgl.h"
 
 void glopClearColor(GLContext *c, TGLParam *p) {
 	c->clear_color.v[0] = p[1].f;

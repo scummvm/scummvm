@@ -1,5 +1,5 @@
 
-#include "tinygl/zgl.h"
+#include "engine/tinygl/zgl.h"
 
 void glGetIntegerv(int pname,int *params) {
 	GLContext *c=gl_get_context();

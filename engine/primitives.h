@@ -23,11 +23,12 @@
 #ifndef PRIMITIVESOBJECT_H
 #define PRIMITIVESOBJECT_H
 
-#include "stdafx.h"
-#include "debug.h"
-#include "font.h"
-#include "color.h"
-#include "driver.h"
+#include "common/sys.h"
+#include "common/debug.h"
+
+#include "engine/font.h"
+#include "engine/color.h"
+#include "engine/backend/driver.h"
 
 #include <string>
 

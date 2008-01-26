@@ -23,7 +23,7 @@
 #ifndef BLOCKY16_H
 #define BLOCKY16_H
 
-#include "bits.h"
+#include "common/platform.h"
 
 class Blocky16 {
 private:

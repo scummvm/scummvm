@@ -23,8 +23,10 @@
 #ifndef SAVEGAME_H
 #define SAVEGAME_H
 
-#include "debug.h"
-#include "lua.h"
+#include "common/debug.h"
+
+#include "engine/lua.h"
+
 #include <zlib.h>
 
 class SaveGame {

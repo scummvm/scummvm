@@ -20,11 +20,11 @@
  *
  */
 
-#ifndef BITS_H
-#define BITS_H
+#ifndef COMMON_PLATFORM_H
+#define COMMON_PLATFORM_H
 
-#include "stdafx.h"
-#include "vector3d.h"
+#include "common/sys.h"
+#include "common/vector3d.h"
 
 #include <stdlib.h>
 #include <stdio.h>

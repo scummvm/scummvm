@@ -23,10 +23,10 @@
 #ifndef LUA_HH
 #define LUA_HH
 
-#include "lua/lua.h"
-#include "lua/lualib.h"
-#include "lua/luadebug.h"
-#include "lua/lauxlib.h"
+#include "engine/lua/lua.h"
+#include "engine/lua/lualib.h"
+#include "engine/lua/luadebug.h"
+#include "engine/lua/lauxlib.h"
 
 // Register Residual builtin functions and structures
 void register_lua();

@@ -20,18 +20,19 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "timer.h"
-#include "engine.h"
-#include "savegame.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+#include "common/timer.h"
+
+#include "engine/engine.h"
+#include "engine/savegame.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
 
-#include "imuse/imuse.h"
-#include "imuse/imuse_sndmgr.h"
+#include "engine/imuse/imuse.h"
+#include "engine/imuse/imuse_sndmgr.h"
 
 Imuse *g_imuse = NULL;
 

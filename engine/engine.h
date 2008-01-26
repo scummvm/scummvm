@@ -23,13 +23,14 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "bits.h"
-#include "scene.h"
-#include "textobject.h"
-#include "primitives.h"
-#include "font.h"
-#include "lua.h"
-#include "savegame.h"
+#include "common/sys.h"
+
+#include "engine/scene.h"
+#include "engine/textobject.h"
+#include "engine/primitives.h"
+#include "engine/font.h"
+#include "engine/lua.h"
+#include "engine/savegame.h"
 
 #include <cstdlib>
 #include <list>

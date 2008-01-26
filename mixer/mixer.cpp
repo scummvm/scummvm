@@ -20,10 +20,11 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "driver.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+
+#include "engine/backend/driver.h"
 
 #include "mixer/mixer.h"
 #include "mixer/rate.h"

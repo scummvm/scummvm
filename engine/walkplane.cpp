@@ -20,9 +20,10 @@
  *
  */
 
-#include "stdafx.h"
-#include "walkplane.h"
-#include "textsplit.h"
+#include "common/sys.h"
+
+#include "engine/walkplane.h"
+#include "engine/textsplit.h"
 
 void Sector::load(TextSplitter &ts) {
 //	float height = 12345.f; // Yaz: this is in the original code...

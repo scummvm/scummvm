@@ -1,6 +1,7 @@
 
 #include <stdarg.h>
-#include "tinygl/zgl.h"
+
+#include "engine/tinygl/zgl.h"
 
 void gl_fatal_error(char *format, ...) {
 	va_list ap;

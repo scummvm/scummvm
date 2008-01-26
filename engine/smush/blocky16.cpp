@@ -20,10 +20,11 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "blocky16.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+
+#include "engine/smush/blocky16.h"
 
 #if defined(SYSTEM_NEED_ALIGNMENT)
 

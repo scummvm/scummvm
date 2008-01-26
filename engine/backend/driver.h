@@ -20,18 +20,19 @@
  *
  */
 
-#ifndef DRIVER_H
-#define DRIVER_H
+#ifndef BACKEND_DRIVER_H
+#define BACKEND_DRIVER_H
 
-#include "bits.h"
-#include "vector3d.h"
-#include "color.h"
-#include "model.h"
-#include "scene.h"
-#include "colormap.h"
-#include "font.h"
-#include "primitives.h"
-#include "actor.h"
+#include "common/platform.h"
+#include "common/vector3d.h"
+
+#include "engine/color.h"
+#include "engine/model.h"
+#include "engine/scene.h"
+#include "engine/colormap.h"
+#include "engine/font.h"
+#include "engine/primitives.h"
+#include "engine/actor.h"
 
 class Material;
 class Bitmap;

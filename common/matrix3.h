@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef MATRIX3_HH
-#define MATRIX3_HH
+#ifndef COMMON_MATRIX3_H
+#define COMMON_MATRIX3_H
 
-#include "vector3d.h"
+#include "common/vector3d.h"
 
 // matrix 3 is a rotation matrix
 class Matrix3{

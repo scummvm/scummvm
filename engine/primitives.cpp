@@ -20,12 +20,13 @@
  *
  */
 
-#include "stdafx.h"
-#include "debug.h"
-#include "font.h"
-#include "color.h"
-#include "driver.h"
-#include "primitives.h"
+#include "common/sys.h"
+#include "common/debug.h"
+
+#include "engine/font.h"
+#include "engine/color.h"
+#include "engine/backend/driver.h"
+#include "engine/primitives.h"
 
 #include <string>
 

@@ -20,19 +20,20 @@
  *
  */
 
-#include "stdafx.h"
-#include "debug.h"
-#include "colormap.h"
-#include "costume.h"
-#include "actor.h"
-#include "textsplit.h"
-#include "engine.h"
-#include "keyframe.h"
-#include "material.h"
-#include "model.h"
-#include "lua.h"
+#include "common/sys.h"
+#include "common/debug.h"
 
-#include "imuse/imuse.h"
+#include "engine/colormap.h"
+#include "engine/costume.h"
+#include "engine/actor.h"
+#include "engine/textsplit.h"
+#include "engine/engine.h"
+#include "engine/keyframe.h"
+#include "engine/material.h"
+#include "engine/model.h"
+#include "engine/lua.h"
+
+#include "engine/imuse/imuse.h"
 
 #include <string>
 #include <cstdio>

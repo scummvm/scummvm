@@ -28,8 +28,8 @@
  * improvments over the original code were made.
  */
 
-#include "stdafx.h"
-#include "debug.h"
+#include "common/sys.h"
+#include "common/debug.h"
 
 #include "mixer/rate.h"
 #include "mixer/audiostream.h"

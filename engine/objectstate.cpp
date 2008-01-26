@@ -20,7 +20,7 @@
  *
  */
 
-#include "objectstate.h"
+#include "engine/objectstate.h"
 
 ObjectState::ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool visible) :
 		_setupID(setupID), _pos(pos) {

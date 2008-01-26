@@ -20,13 +20,14 @@
  *
  */
 
-#include "debug.h"
-#include "colormap.h"
-#include "material.h"
-#include "driver_tinygl.h"
+#include "common/debug.h"
 
-#include "tinygl/gl.h"
-#include "tinygl/zgl.h"
+#include "engine/colormap.h"
+#include "engine/material.h"
+#include "engine/backend/sdl/driver_tinygl.h"
+
+#include "engine/tinygl/gl.h"
+#include "engine/tinygl/zgl.h"
 
 // func below is from Mesa glu sources
 static void lookAt(TGLfloat eyex, TGLfloat eyey, TGLfloat eyez, TGLfloat centerx,

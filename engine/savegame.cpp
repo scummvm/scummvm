@@ -20,8 +20,8 @@
  *
  */
 
-#include "debug.h"
-#include "savegame.h"
+#include "common/debug.h"
+#include "engine/savegame.h"
 
 #define SAVEGAME_HEADERTAG	'RSAV'
 #define SAVEGAME_FOOTERTAG	'ESAV'

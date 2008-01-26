@@ -20,11 +20,12 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "timer.h"
-#include "driver.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+#include "common/timer.h"
+
+#include "engine/backend/driver.h"
 
 Timer *g_timer = NULL;
 

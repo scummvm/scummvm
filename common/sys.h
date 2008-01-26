@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _STDAFX_H
-#define _STDAFX_H
+#ifndef COMMON_SYS_H
+#define COMMON_SYS_H
 
 
 typedef struct Mutex *MutexRef;

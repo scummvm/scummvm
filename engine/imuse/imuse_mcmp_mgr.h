@@ -23,15 +23,15 @@
 #ifndef MCMP_MGR_H
 #define MCMP_MGR_H
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "timer.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+#include "common/timer.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
 
-#include "imuse/imuse_sndmgr.h"
+#include "engine/imuse/imuse_sndmgr.h"
 
 class McmpMgr {
 private:

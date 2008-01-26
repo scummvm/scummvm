@@ -20,12 +20,13 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "material.h"
-#include "colormap.h"
-#include "driver.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+
+#include "engine/material.h"
+#include "engine/colormap.h"
+#include "engine/backend/driver.h"
 
 Material::Material(const char *filename, const char *data, int len, const CMap &cmap) :
 		Resource(filename), _cmap((CMap *) &cmap) {

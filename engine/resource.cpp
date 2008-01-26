@@ -20,19 +20,20 @@
  *
  */
 
-#include "stdafx.h"
-#include "debug.h"
-#include "resource.h"
-#include "registry.h"
-#include "bitmap.h"
-#include "colormap.h"
-#include "costume.h"
-#include "font.h"
-#include "keyframe.h"
-#include "material.h"
-#include "model.h"
-#include "engine.h"
-#include "lipsynch.h"
+#include "common/sys.h"
+#include "common/debug.h"
+
+#include "engine/resource.h"
+#include "engine/registry.h"
+#include "engine/bitmap.h"
+#include "engine/colormap.h"
+#include "engine/costume.h"
+#include "engine/font.h"
+#include "engine/keyframe.h"
+#include "engine/material.h"
+#include "engine/model.h"
+#include "engine/engine.h"
+#include "engine/lipsynch.h"
 
 #include <cstring>
 #include <cctype>

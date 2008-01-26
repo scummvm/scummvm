@@ -23,8 +23,8 @@
 #ifndef WALKPLANE_H
 #define WALKPLANE_H
 
-#include "debug.h"
-#include "vector3d.h"
+#include "common/debug.h"
+#include "common/vector3d.h"
 
 #include <string>
 

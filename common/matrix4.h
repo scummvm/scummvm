@@ -20,11 +20,11 @@
  *
  */
 
-#ifndef MATRIX4_HH
-#define MATRIX4_HH
+#ifndef COMMON_MATRIX4_H
+#define COMMON_MATRIX4_H
 
-#include "vector3d.h"
-#include "matrix3.h"
+#include "common/vector3d.h"
+#include "common/matrix3.h"
 
 // matrix 4 is a rotation matrix + position
 class Matrix4 {

@@ -20,7 +20,7 @@
  *
  */
 
-#include "matrix4.h"
+#include "common/matrix4.h"
 
 Matrix4::Matrix4() {
 	_pos.set(0.f, 0.f, 0.f);

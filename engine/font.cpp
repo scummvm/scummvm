@@ -20,11 +20,12 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "font.h"
-#include "driver.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+
+#include "engine/font.h"
+#include "engine/backend/driver.h"
 
 #include <cstring>
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef VECTOR3D_HH
-#define VECTOR3D_HH
+#ifndef COMMON_VECTOR3D_H
+#define COMMON_VECTOR3D_H
 
 #include <cmath>
 

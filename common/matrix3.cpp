@@ -20,7 +20,7 @@
  *
  */
 
-#include "matrix3.h"
+#include "common/matrix3.h"
 
 #include <math.h>
 

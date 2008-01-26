@@ -23,8 +23,8 @@
 #ifndef SOUND_MIXER_H
 #define SOUND_MIXER_H
 
-#include "stdafx.h"
-#include "bits.h"
+#include "common/sys.h"
+#include "common/platform.h"
 
 class AudioStream;
 class Channel;

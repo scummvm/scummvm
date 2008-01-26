@@ -23,9 +23,9 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
-#include "lab.h"
-#include "map"
+#include "engine/lab.h"
 
+#include <map>
 #include <list>
 #include <string>
 

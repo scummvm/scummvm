@@ -20,18 +20,19 @@
  *
  */
 
-#include "stdafx.h"
-#include "scene.h"
-#include "textsplit.h"
-#include "resource.h"
-#include "debug.h"
-#include "bitmap.h"
-#include "colormap.h"
-#include "vector3d.h"
-#include "driver.h"
-#include "engine.h"
+#include "common/sys.h"
+#include "common/debug.h"
+#include "common/vector3d.h"
 
-#include "imuse/imuse.h"
+#include "engine/scene.h"
+#include "engine/textsplit.h"
+#include "engine/resource.h"
+#include "engine/bitmap.h"
+#include "engine/colormap.h"
+#include "engine/backend/driver.h"
+#include "engine/engine.h"
+
+#include "engine/imuse/imuse.h"
 
 #include <cmath>
 

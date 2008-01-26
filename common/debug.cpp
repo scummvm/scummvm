@@ -20,8 +20,8 @@
  *
  */
 
-#include "stdafx.h"
-#include "debug.h"
+#include "common/sys.h"
+#include "common/debug.h"
 
 #include <cstdarg>
 #include <cstdio>

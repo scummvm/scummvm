@@ -23,10 +23,10 @@
 #ifndef IMUSE_SNDMGR_H
 #define IMUSE_SNDMGR_H
 
-#include "stdafx.h"
-#include "bits.h"
-#include "debug.h"
-#include "timer.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "common/debug.h"
+#include "common/timer.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"

@@ -20,19 +20,20 @@
  *
  */
 
-#include "stdafx.h"
-#include "actor.h"
-#include "engine.h"
-#include "costume.h"
-#include "lipsynch.h"
-#include "localize.h"
-#include "driver.h"
-#include "smush.h"
-#include "walkplane.h"
+#include "common/sys.h"
 
 #include "mixer/mixer.h"
 
-#include "imuse/imuse.h"
+#include "engine/actor.h"
+#include "engine/engine.h"
+#include "engine/costume.h"
+#include "engine/lipsynch.h"
+#include "engine/localize.h"
+#include "engine/smush/smush.h"
+#include "engine/walkplane.h"
+#include "engine/imuse/imuse.h"
+
+#include "backend/driver.h"
 
 #include <cmath>
 #include <cstring>

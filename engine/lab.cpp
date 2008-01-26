@@ -20,9 +20,9 @@
  *
  */
 
-#include "stdafx.h"
-#include "bits.h"
-#include "lab.h"
+#include "common/sys.h"
+#include "common/platform.h"
+#include "engine/lab.h"
 
 #include <algorithm>
 #include <cstdlib>

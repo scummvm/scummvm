@@ -20,8 +20,9 @@
  *
  */
 
-#include "debug.h"
-#include "driver_sdl.h"
+#include "common/debug.h"
+
+#include "engine/backend/sdl/driver_sdl.h"
 
 // NOTE: This is not a complete driver, it needs to be subclassed
 //       to provide rendering functionality.

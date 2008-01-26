@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "tinygl/zmath.h"
+
+#include "engine/tinygl/zmath.h"
 
 void gl_M4_Id(M4 *a) {
 	int i, j;

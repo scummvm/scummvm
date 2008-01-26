@@ -23,10 +23,11 @@
 #ifndef TEXTOBJECT_H
 #define TEXTOBJECT_H
 
-#include "debug.h"
-#include "font.h"
-#include "color.h"
-#include "driver.h"
+#include "common/debug.h"
+
+#include "engine/font.h"
+#include "engine/color.h"
+#include "engine/backend/driver.h"
 
 #include <string>
 

@@ -23,8 +23,8 @@
 #ifndef COMMON_TIMER_H
 #define COMMON_TIMER_H
 
-#include "stdafx.h"
-#include "bits.h"
+#include "common/sys.h"
+#include "common/platform.h"
 
 #define MAX_TIMERS 3
 

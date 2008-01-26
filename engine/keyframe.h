@@ -23,9 +23,10 @@
 #ifndef KEYFRAME_H
 #define KEYFRAME_H
 
-#include "vector3d.h"
-#include "resource.h"
-#include "model.h"
+#include "common/vector3d.h"
+
+#include "engine/resource.h"
+#include "engine/model.h"
 
 class TextSplitter;
 

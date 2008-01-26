@@ -23,8 +23,9 @@
 #ifndef COSTUME_H
 #define COSTUME_H
 
-#include "matrix4.h"
-#include "model.h"
+#include "common/matrix4.h"
+
+#include "engine/model.h"
 
 #include <string>
 
