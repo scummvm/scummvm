@@ -1,8 +1,8 @@
 CXX = g++
 CC = gcc
 AR = ar rcu
-CXXFLAGS = -g -W -Wall -Ilua `sdl-config --cflags` -I. -DUNIX -Wno-multichar # -O2
-LDFLAGS = -g -W -Wall # -O2
+CXXFLAGS = -g -W -Wall `sdl-config --cflags` -I. -DUNIX -Wno-multichar # -O2
+LDFLAGS = -g -W -Wall
 LIBS = `sdl-config --libs` -lz 
 
 # Comment this out for Mac OS X ...
