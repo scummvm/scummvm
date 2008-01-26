@@ -216,37 +216,24 @@ public:
 	 * @return bool true if the object can be written to, false otherwise.
 	 */
 	virtual bool isWritable() const;
-	
+
 	/**
-	 * Searches recursively for a filename inside the given directories.
+	 * Searches recursively for files matching the specified pattern inside this directory and
+	 * all its subdirectories. It is safe to call this method for non-directories, in this case
+	 * it will just return false.
 	 * 
-	 * For each directory in the directory list a breadth-first search is performed,
-	 * that is, the current directory entries are scanned before going into subdirectories.
-	 * 
-	 * @param results List to put the matches in.
-	 * @param fslist List of directories to search within.
-	 * @param pattern Pattern of the files to look for.
-	 * @param hidden Whether to search hidden files or not.
-	 * @param exhaustive Whether to continue searching after one match has been found.
-	 * 
-	 * @return true if matches could be found, false otherwise.
-	 */
-	virtual bool lookupFile(FSList &results, FSList &fslist, Common::String &pattern, bool hidden, bool exhaustive) const;
-	
-	/**
-	 * Searches recursively for a filename inside this directory.
-	 * 
-	 * The search is performed breadth-first, that is, the current directory entries
-	 * are scanned before going into subdirectories.
+	 * The files in each directory are scanned first. Other than that, a depth first search
+	 * is performed.
 	 * 
 	 * @param results List to put the matches in.
 	 * @param pattern Pattern of the files to look for.
 	 * @param hidden Whether to search hidden files or not.
 	 * @param exhaustive Whether to continue searching after one match has been found.
+	 * @param depth How many levels to search through (-1 = search all subdirs, 0 = only the current one)
 	 * 
 	 * @return true if matches could be found, false otherwise.
 	 */
-	virtual bool lookupFile(FSList &results, Common::String &pattern, bool hidden, bool exhaustive) const;
+	virtual bool lookupFile(FSList &results, const Common::String &pattern, bool hidden, bool exhaustive, int depth = -1) const;
 
 protected:
 	/**
@@ -254,22 +241,6 @@ protected:
 	 * deletes the corresponding underlying references.
 	 */
 	void decRefCount();
-	
-	/**
-	 * Searches recursively for a filename inside the given directory.
-	 * 
-	 * The search is performed breadth-first, that is, the current directory entries
-	 * are scanned before going into subdirectories.
-	 * 
-	 * @param results List to put the matches in.
-	 * @param dir Directory to search within.
-	 * @param pattern Pattern of the files to look for.
-	 * @param hidden Whether to search hidden files or not.
-	 * @param exhaustive Whether to continue searching after one match has been found.
-	 * 
-	 * @return The number of matches found.
-	 */
-	int lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &pattern, bool hidden, bool exhaustive) const;
 };
 
 //} // End of namespace Common

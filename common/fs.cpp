@@ -171,61 +171,40 @@ bool FilesystemNode::isWritable() const {
 	return _realNode->isWritable();
 }
 
-bool FilesystemNode::lookupFile(FSList &results, FSList &fslist, Common::String &pattern, bool hidden, bool exhaustive) const
-{
-	int matches = 0;
-
-	for (FSList::iterator entry = fslist.begin(); entry != fslist.end(); ++entry) {
-		if (entry->isDirectory()) {
-			matches += lookupFileRec(results, *entry, pattern, hidden, exhaustive);
-		}
-	}
-
-	return ((matches > 0) ? true : false);
-}
-
-bool FilesystemNode::lookupFile(FSList &results, Common::String &pattern, bool hidden, bool exhaustive) const
-{
-	int matches;
-
+bool FilesystemNode::lookupFile(FSList &results, const Common::String &p, bool hidden, bool exhaustive, int depth) const {
 	if (!isDirectory())
 		return false;
 
-	FilesystemNode dir = *this;
-	matches = lookupFileRec(results, dir, pattern, hidden, exhaustive);
-
-	return ((matches > 0) ? true : false);
-}
-
-int FilesystemNode::lookupFileRec(FSList &results, FilesystemNode &dir, Common::String &pattern, bool hidden, bool exhaustive) const
-{
-	FSList entries;
 	FSList children;
-	int matches = 0;
+	FSList subdirs;
+	Common::String pattern = p;
+
 	pattern.toUppercase();
-	dir.getChildren(entries, FilesystemNode::kListAll, hidden);
 	
-	//Breadth search (entries in the same level)
-	for (FSList::iterator entry = entries.begin(); entry != entries.end(); ++entry) {
+	// First match all files on this level
+	getChildren(children, FilesystemNode::kListAll, hidden);
+	for (FSList::iterator entry = children.begin(); entry != children.end(); ++entry) {
 		if (entry->isDirectory()) {
-			children.push_back(*entry);
+			if (depth != 0)
+				subdirs.push_back(*entry);
 		} else {
 			Common::String filename = entry->getName();
 			filename.toUppercase();
 			if (Common::matchString(filename.c_str(), pattern.c_str())) {
 				results.push_back(*entry);
-				matches++;
 
 				if (!exhaustive)
-					break;
+					return true;	// Abort on first match if no exhaustive search was requested
 			}
 		}
 	}
 
-	//Depth search (entries in lower levels)
-	for (FSList::iterator child = children.begin(); child != children.end(); ++child) {
-		matches += lookupFileRec(results, *child, pattern, hidden, exhaustive);
+	// Now scan all subdirs
+	for (FSList::iterator child = subdirs.begin(); child != subdirs.end(); ++child) {
+		child->lookupFile(results, pattern, hidden, exhaustive, depth - 1);
+		if (!exhaustive && !results.empty())
+			return true;	// Abort on first match if no exhaustive search was requested
 	}
 
-	return matches;
+	return !results.empty();
 }
