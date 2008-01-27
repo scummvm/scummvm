@@ -126,7 +126,7 @@ int KyraEngine_v2::chatGetType(const char *str) {
 }
 
 int KyraEngine_v2::chatCalcDuration(const char *str) {
-	return MIN<int>(strlen(str) << 3, 120);
+	return MAX<int>(strlen(str) << 3, 120);
 }
 
 void KyraEngine_v2::objectChat(const char *str, int object, int vocHigh, int vocLow) {

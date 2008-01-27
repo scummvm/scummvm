@@ -264,7 +264,6 @@ int KyraEngine_v1::init() {
 	assert(_movFacingTable);
 	_movFacingTable[0] = 8;
 
-	registerDefaultSettings();
 	readSettings();
 
 	_skipFlag = false;

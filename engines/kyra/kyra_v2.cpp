@@ -131,6 +131,8 @@ int KyraEngine_v2::init() {
 
 	setupTimers();
 
+	readSettings();
+
 	_screen->loadFont(_screen->FID_6_FNT, "6.FNT");
 	_screen->loadFont(_screen->FID_8_FNT, "8FAT.FNT");
 	_screen->loadFont(_screen->FID_GOLDFONT_FNT, "GOLDFONT.FNT");
@@ -524,7 +526,7 @@ void KyraEngine_v2::updateWithText() {
 	restorePage3();
 	drawAnimObjects();
 
-	if (1/*textEnabled()*/ && _chatText) {
+	if (textEnabled() && _chatText) {
 		int pageBackUp = _screen->_curPage;
 		_screen->_curPage = 2;
 		objectChatPrintText(_chatText, _chatObject);

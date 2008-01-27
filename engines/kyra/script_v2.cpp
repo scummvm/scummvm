@@ -760,7 +760,7 @@ int KyraEngine_v2::o2_zanthiaChat(ScriptState *script) {
 
 int KyraEngine_v2::o2_isVoiceEnabled(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_isVoiceEnabled(%p) ()", (const void *)script);
-	return 1/*voiceEnabled()*/;
+	return speechEnabled() ? 1 : 0;
 }
 
 int KyraEngine_v2::o2_isVoicePlaying(ScriptState *script) {
