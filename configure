@@ -905,7 +905,7 @@ void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
 $CXX $CXXFLAGS -c -o tmp_endianness_check.o tmp_endianness_check.cpp
-if grep BIGenDianSyS tmp_endianness_check.o >/dev/null; then
+if strings tmp_endianness_check.o | grep BIGenDianSyS >/dev/null; then
 	_endian=big
 else
 	_endian=little
