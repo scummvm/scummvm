@@ -191,7 +191,6 @@ int KyraEngine_v1::init() {
 	_sound->setVolume(255);
 	_sound->loadSoundFile(0);
 
-	setupTimers();
 	setupButtonData();
 	setupMenu();
 
@@ -263,8 +262,6 @@ int KyraEngine_v1::init() {
 	_movFacingTable = new int[150];
 	assert(_movFacingTable);
 	_movFacingTable[0] = 8;
-
-	readSettings();
 
 	_skipFlag = false;
 

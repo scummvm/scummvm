@@ -129,10 +129,6 @@ int KyraEngine_v2::init() {
 	_text = new TextDisplayer_v2(this, _screen);
 	assert(_text);
 
-	setupTimers();
-
-	readSettings();
-
 	_screen->loadFont(_screen->FID_6_FNT, "6.FNT");
 	_screen->loadFont(_screen->FID_8_FNT, "8FAT.FNT");
 	_screen->loadFont(_screen->FID_GOLDFONT_FNT, "GOLDFONT.FNT");

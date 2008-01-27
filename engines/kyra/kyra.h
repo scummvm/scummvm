@@ -168,6 +168,8 @@ protected:
 	uint16 _gameSpeed;
 
 	// timer
+	virtual void setupTimers() = 0;
+
 	virtual void setWalkspeed(uint8 speed) = 0;
 	
 	// detection

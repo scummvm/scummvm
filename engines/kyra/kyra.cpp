@@ -140,10 +140,12 @@ int KyraEngine::init() {
 		error("_staticres->init() failed");
 	_timer = new TimerManager(this, _system);
 	assert(_timer);
+	setupTimers();
 	_scriptInterpreter = new ScriptHelper(this);
 	assert(_scriptInterpreter);
 
 	setupOpcodeTable();
+	readSettings();
 
 	_lang = 0;
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
