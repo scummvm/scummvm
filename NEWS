@@ -16,7 +16,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      of platforms
    - Reduced the number of simultaneous open files in I Have no Mouth, to allow
      it to run on platforms that can keep a limited amount of files open (e.g.
-	 on the PSP)
+     on the PSP)
 
 0.11.0 (2008-01-15)
  New Games:
@@ -169,7 +169,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Improved performance for S60v3 and UIQ3 using ARM target.
    - Limited support for pre Symbian OS9 devices due to compiler issues.
    - Updated key mapping handling.
-	
+
  WinCE Port:
    - Switched to using a GCC toolchain for building.
    - Major update to the SDL lib. Better, faster, more compatible :-)
