@@ -13,7 +13,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  SAGA:
    - Fix for rat maze bug in Inherit the Earth which made game not completable
    - Fixes for Inherit the Earth and I Have no Mouth game startup on a number
-     of platforms. Some platforms are still not supported
+     of platforms
    - Reduced the number of simultaneous open files in I Have no Mouth, to allow
      it to run on platforms that can keep a limited amount of files open (e.g.
 	 on the PSP)
