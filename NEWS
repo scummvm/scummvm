@@ -1,6 +1,20 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.sourceforge.net/daily/ChangeLog
 
+0.11.1 (2008-??-??)
+ SCUMM:
+   - Fix for lockups in Loom with use of FLAC-compressed tracks
+   - Improvements for iMUSE subsystem
+   - Fixes for cursors in HE games
+
+ AGI:
+   - Fix for zombies in King's Quest 4
+
+ SAGA:
+   - Fix for rat maze bug which made game not completable
+   - Fixes for game startup on number of platforms
+
+
 0.11.0 (2008-01-15)
  New Games:
    - Added support for Elvira: Mistress of the Dark.
