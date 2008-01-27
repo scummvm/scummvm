@@ -954,7 +954,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 							if (color) {
 								cursor[0][width * d + x] = 254; // white
 							} else {
-								cursor[0][width * d + x] = 0; // black
+								cursor[0][width * d + x] = 253; // black
 							}
 						} else {
 							cursor[0][width * d + x] = 255; // transparent
