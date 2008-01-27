@@ -3,8 +3,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 0.11.1 (2008-??-??)
  SCUMM:
-   - Fix for lockups in Loom with use of FLAC-compressed tracks
-   - Improvements for iMUSE subsystem
+   - Improvements for Digital iMUSE subsystem
    - Fixes for cursors in HE games
 
  AGI:
