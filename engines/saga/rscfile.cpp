@@ -342,6 +342,12 @@ bool Resource::loadContext(ResourceContext *context) {
 		}
 	}
 
+	// Close the file if it's part of a series of files
+	// This prevents having all voice files open in IHNM for no reason, as each chapter uses
+	// a different voice file
+	if (context->serial > 0)
+		context->file->close();
+
 	return true;
 }
 
@@ -350,7 +356,6 @@ bool Resource::createContexts() {
 	ResourceContext *context;
 	char musicFileName[256];
 	char soundFileName[256];
-	char voicesFileName[256];
 	int soundFileIndex = 0;
 	int voicesFileIndex = 0;
 	bool digitalMusic = false;
@@ -428,18 +433,18 @@ bool Resource::createContexts() {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
 				if (Common::File::exists("voices.rsc")) {
-					sprintf(voicesFileName, "voices.rsc");
+					sprintf(_voicesFileName[0], "voices.rsc");
 				} else {
-					sprintf(voicesFileName, "voices.cmp");
+					sprintf(_voicesFileName[0], "voices.cmp");
 					_vm->_gf_compressed_sounds = true;
 				}
 			} else if (Common::File::exists("voicesd.rsc") || Common::File::exists("voicesd.cmp")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
 				if (Common::File::exists("voicesd.rsc")) {
-					sprintf(voicesFileName, "voicesd.rsc");
+					sprintf(_voicesFileName[0], "voicesd.rsc");
 				} else {
-					sprintf(voicesFileName, "voicesd.cmp");
+					sprintf(_voicesFileName[0], "voicesd.cmp");
 					_vm->_gf_compressed_sounds = true;
 				}
 			} else if (Common::File::exists("inherit the earth voices") || 
@@ -447,9 +452,9 @@ bool Resource::createContexts() {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
 				if (Common::File::exists("inherit the earth voices")) {
-					sprintf(voicesFileName, "inherit the earth voices");
+					sprintf(_voicesFileName[0], "inherit the earth voices");
 				} else {
-					sprintf(voicesFileName, "inherit the earth voices.cmp");
+					sprintf(_voicesFileName[0], "inherit the earth voices.cmp");
 					_vm->_gf_compressed_sounds = true;
 				}
 
@@ -483,18 +488,18 @@ bool Resource::createContexts() {
 					censoredVersion = true;
 				}
 				if (Common::File::exists("voicess.res")) {
-					sprintf(voicesFileName, "voicess.res");
+					sprintf(_voicesFileName[0], "voicess.res");
 				} else {
-					sprintf(voicesFileName, "voicess.cmp");
+					sprintf(_voicesFileName[0], "voicess.cmp");
 					_vm->_gf_compressed_sounds = true;
 				}
 			} else if (Common::File::exists("voicesd.res") || Common::File::exists("voicesd.cmp")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
 				if (Common::File::exists("voicesd.res")) {
-					sprintf(voicesFileName, "voicesd.res");
+					sprintf(_voicesFileName[0], "voicesd.res");
 				} else {
-					sprintf(voicesFileName, "voicesd.cmp");
+					sprintf(_voicesFileName[0], "voicesd.cmp");
 					_vm->_gf_compressed_sounds = true;
 				}
 			} else {
@@ -544,7 +549,7 @@ bool Resource::createContexts() {
 			context->fileName = soundFileName;
 			context->fileType = GAME_SOUNDFILE;	
 		} else if (!voicesFileInArray && i == voicesFileIndex) {
-			context->fileName = voicesFileName;
+			context->fileName = _voicesFileName[0];
 			// can be GAME_VOICEFILE or GAME_SOUNDFILE | GAME_VOICEFILE or GAME_VOICEFILE | GAME_SWAPENDIAN
 			context->fileType = voiceFileType;
 		} else {
@@ -555,11 +560,11 @@ bool Resource::createContexts() {
 				int token = (censoredVersion && (i - voicesFileIndex >= 4)) ? 1 : 0;	// censored versions don't have voice4
 
 				if (_vm->getFeatures() & GF_COMPRESSED_SOUNDS)
-					sprintf(voicesFileName, "voices%i.cmp", i - voicesFileIndex + token);
+					sprintf(_voicesFileName[i - voicesFileIndex + token], "voices%i.cmp", i - voicesFileIndex + token);
 				else
-					sprintf(voicesFileName, "voices%i.res", i - voicesFileIndex + token);
+					sprintf(_voicesFileName[i - voicesFileIndex + token], "voices%i.res", i - voicesFileIndex + token);
 
-				context->fileName = voicesFileName;
+				context->fileName = _voicesFileName[i - voicesFileIndex + token];
 				context->fileType = GAME_VOICEFILE;
 
 				// IHNM has several different voice files, so we need to allow
