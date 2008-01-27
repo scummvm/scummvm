@@ -31,14 +31,14 @@
 namespace Saga {
 
 static const PathDirectionData pathDirectionLUT[8][3] = {
-	{ { 0, Point( 0, -1) }, { 7, Point(-1, -1) }, { 4, Point( 1, -1) } },
-	{ { 1, Point( 1,  0) }, { 4, Point( 1, -1) }, { 5, Point( 1,  1) } },
-	{ { 2, Point( 0,  1) }, { 5, Point( 1,  1) }, { 6, Point(-1,  1) } },
-	{ { 3, Point(-1,  0) }, { 6, Point(-1,  1) }, { 7, Point(-1, -1) } },
-	{ { 0, Point( 0, -1) }, { 1, Point( 1,  0) }, { 4, Point( 1, -1) } },
-	{ { 1, Point( 1,  0) }, { 2, Point( 0,  1) }, { 5, Point( 1,  1) } },
-	{ { 2, Point( 0,  1) }, { 3, Point(-1,  0) }, { 6, Point(-1,  1) } },
-	{ { 3, Point(-1,  0) }, { 0, Point( 0, -1) }, { 7, Point(-1, -1) } }
+	{ { 0,  0, -1 }, { 7, -1, -1 }, { 4,  1, -1 } },
+	{ { 1,  1,  0 }, { 4,  1, -1 }, { 5,  1,  1 } },
+	{ { 2,  0,  1 }, { 5,  1,  1 }, { 6, -1,  1 } },
+	{ { 3, -1,  0 }, { 6, -1,  1 }, { 7, -1, -1 } },
+	{ { 0,  0, -1 }, { 1,  1,  0 }, { 4,  1, -1 } },
+	{ { 1,  1,  0 }, { 2,  0,  1 }, { 5,  1,  1 } },
+	{ { 2,  0,  1 }, { 3, -1,  0 }, { 6, -1,  1 } },
+	{ { 3, -1,  0 }, { 0,  0, -1 }, { 7, -1, -1 } }
 };
 
 static const int pathDirectionLUT2[8][2] = {
@@ -242,7 +242,8 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 
 	for (startDirection = 0; startDirection < 4; startDirection++) {
 		newPathDirection = addPathDirectionListData();
-		newPathDirection->coord = fromPoint;
+		newPathDirection->x = fromPoint.x;
+		newPathDirection->y = fromPoint.y;
 		newPathDirection->direction = startDirection;
 	}
 
@@ -260,9 +261,9 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 		pathDirection = &_pathDirectionList[i];
 		for (directionCount = 0; directionCount < 3; directionCount++) {
 			samplePathDirection = &pathDirectionLUT[pathDirection->direction][directionCount];
-			nextPoint = pathDirection->coord;
-			nextPoint.x += samplePathDirection->coord.x;
-			nextPoint.y += samplePathDirection->coord.y;
+			nextPoint = Point(pathDirection->x, pathDirection->y);
+			nextPoint.x += samplePathDirection->x;
+			nextPoint.y += samplePathDirection->y;
 
 			if (!validPathCellPoint(nextPoint)) {
 				continue;
@@ -278,7 +279,8 @@ int Actor::fillPathArray(const Point &fromPoint, const Point &toPoint, Point &be
 			addDebugPoint(nextPoint, samplePathDirection->direction + 96);
 #endif
 			newPathDirection = addPathDirectionListData();
-			newPathDirection->coord = nextPoint;
+			newPathDirection->x = nextPoint.x;
+			newPathDirection->y = nextPoint.y;
 			newPathDirection->direction = samplePathDirection->direction;
 			++pointCounter;
 			if (nextPoint == toPoint) {
