@@ -1,10 +1,10 @@
 CXX ?= g++
 CC ?= gcc
 
-LDFLAGS ?= 
+LDFLAGS ?=
 CXXFLAGS ?= -O2
 CFLAGS ?= -O2
-CPPFLAGS ?= 
+CPPFLAGS ?=
 
 BIN=create_kyradat
 

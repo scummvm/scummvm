@@ -34,7 +34,7 @@ namespace Common {
  * Simple string class for ScummVM. Provides automatic storage managment,
  * and overloads several operators in a 'natural' fashion, mimicking
  * the std::string class. Even provides simple iterators.
- * 
+ *
  * This class tries to avoid allocating lots of small blocks on the heap,
  * since that is inefficient on several platforms supported by ScummVM.
  * Instead, small strings are stored 'inside' the string object (i.e. on
@@ -62,14 +62,14 @@ protected:
 	 * on purpose :-).
 	 */
 	uint32 		_len;
-	
+
 	/**
 	 * Pointer to the actual string storage. Either points to _storage,
 	 * or to a block allocated on the heap via malloc.
 	 */
 	char		*_str;
-	
-	
+
+
 	union {
 		/**
 		 * Internal string storage.
@@ -84,11 +84,11 @@ protected:
 			uint32 		_capacity;
 		} _extern;
 	};
-	
+
 	inline bool isStorageIntern() const {
 		return _str == _storage;
 	}
-	
+
 public:
 #if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))
 	static const String emptyString;
@@ -131,7 +131,7 @@ public:
 
 	bool hasSuffix(const char *x) const;
 	bool hasPrefix(const char *x) const;
-	
+
 	bool contains(const char *x) const;
 
 	inline const char *c_str() const		{ return _str; }

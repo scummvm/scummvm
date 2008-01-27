@@ -1,6 +1,6 @@
 
 	.globl	_flush_instruction_cache
-	
+
 	.align 2
 
 	! Flush the SH instruction cache

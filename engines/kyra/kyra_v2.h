@@ -859,7 +859,7 @@ protected:
 	int _sequencePakListSize;
 	const char *const *_ingamePakList;
 	int _ingamePakListSize;
-	
+
 	const char *const *_musicFileListIntro;
 	int _musicFileListIntroSize;
 	const char *const *_musicFileListFinale;

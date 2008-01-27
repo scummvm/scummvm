@@ -46,7 +46,7 @@ protected:
 	 * might implement savefiles in a completely different way.
 	 */
 	virtual Common::String getSavePath() const;
-	
+
 	/**
 	 * Checks the given path for read access, existence, etc.
 	 * Sets the internal error and error message accordingly.

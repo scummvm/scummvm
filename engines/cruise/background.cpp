@@ -162,7 +162,7 @@ int loadBackground(const char *name, int idx) {
 				{
 					uint8* inPtr = ptr2 + i * 2;
 					uint8* outPtr = palScreen[idx] +i * 3;
-					
+
 					outPtr[2] = ((inPtr[1])&0x0F) * 17;
 					outPtr[1] = (((inPtr[1])&0xF0) >> 4) * 17;
 					outPtr[0] = ((inPtr[0])&0x0F) * 17;

@@ -26,7 +26,7 @@ void TabDeleteTabs(TabType *tabP) {
 	UInt16 cnt, num;
 	num = MemPtrSize(tabP->tabs) / sizeof(TabDataType);
 
-	for (cnt = 0; cnt < num; cnt++)	
+	for (cnt = 0; cnt < num; cnt++)
 		FrmDeleteForm(tabP->tabs[cnt].srcP);
 
 	delete tabP->tabs;
@@ -93,7 +93,7 @@ Err TabAddContent(FormType **frmP, TabType *tabP, const Char *nameP, UInt16 rscI
 				UInt16 items = LstGetNumberOfItems((ListType *)objP);
 				UInt16 trigger = id - 1;
 				trigger = (FrmGetObjectIndex((FormType *)*dstP, trigger) != frmInvalidObjectId) ? trigger : 0;
-				
+
 				LstNewList(dstP, id, x, y, w, h, font, visible, trigger);
 				newP = (ListType *)FrmGetObjectPtr((FormType *)*dstP, FrmGetObjectIndex((FormType *)*dstP, id));
 				LstSetListChoices(newP, itemsP, items);
@@ -197,10 +197,10 @@ void TabSetActive(FormType *frmP, TabType *tabP, UInt16 num) {
 
 				r.topLeft.y	-= 1;
 				WinSetForeColor(UIColorGetTableEntryIndex(UIObjectFrame));
-				WinDrawRectangleFrame(simpleFrame, &r); 
+				WinDrawRectangleFrame(simpleFrame, &r);
 				WinSetForeColor(line);
 				WinDrawLine(r.topLeft.x, r.topLeft.y, r.topLeft.x + r.extent.x - 1, r.topLeft.y);
-				FrmShowObject(frmP, idx);				
+				FrmShowObject(frmP, idx);
 
 			} else {
 				UInt8 frame = UIColorGetTableEntryIndex(UIObjectFrame);
@@ -211,7 +211,7 @@ void TabSetActive(FormType *frmP, TabType *tabP, UInt16 num) {
 				light.b = (255 - light.b) > 72 ? light.b + 72 : 255;
 
 				WinSetForeColor(WinRGBToIndex(&light));
-				WinDrawRectangleFrame(simpleFrame, &r); 
+				WinDrawRectangleFrame(simpleFrame, &r);
 				WinSetForeColor(frame);
 				WinDrawLine(r.topLeft.x - 1, r.topLeft.y + r.extent.y, r.topLeft.x + r.extent.x, r.topLeft.y + r.extent.y);
 			}

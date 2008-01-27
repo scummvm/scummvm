@@ -676,7 +676,7 @@ void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 
 	if (iObj == IDI_MSA_OBJECT_CRYSTAL)
 		_vm->_picture->setPictureFlags(kPicFStep);
-	
+
 	_vm->_picture->setOffset(x0, y0);
 	_vm->_picture->decodePicture(buffer, size, false, IDI_MSA_PIC_WIDTH, IDI_MSA_PIC_HEIGHT);
 	_vm->_picture->setOffset(0, 0);
@@ -892,7 +892,7 @@ void Mickey::drawLogo() {
 	}
 
 	_vm->_picture->showPic(10, 10, w, h);
-	
+
 	delete [] buffer;
 }
 

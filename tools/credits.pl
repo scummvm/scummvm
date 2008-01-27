@@ -58,7 +58,7 @@ if ($mode eq "TEXT") {
 # Convert HTML entities to ASCII for the plain text mode
 sub html_entities_to_ascii {
 	my $text = shift;
-	
+
 	# For now we hardcode these mappings
 	# &aacute;  -> a
 	# &eacute;  -> e
@@ -82,7 +82,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&ouml;/oe/g;
 
 	$text =~ s/&amp;/&/g;
-	
+
 	return $text;
 }
 
@@ -101,14 +101,14 @@ sub html_entities_to_cpp {
 	$text =~ s/&uuml;/\\374/g;
 
 	$text =~ s/&amp;/&/g;
-	
+
 	return $text;
 }
 
 # Convert HTML entities to RTF codes
 sub html_entities_to_rtf {
 	my $text = shift;
-	
+
 	$text =~ s/&aacute;/\\'87/g;
 	$text =~ s/&eacute;/\\'8e/g;
 	$text =~ s/&oacute;/\\'97/g;
@@ -120,14 +120,14 @@ sub html_entities_to_rtf {
 	$text =~ s/&uuml;/\\'9f/g;
 
 	$text =~ s/&amp;/&/g;
-	
+
 	return $text;
 }
 
 # Convert HTML entities to TeX codes
 sub html_entities_to_tex {
 	my $text = shift;
-	
+
 	$text =~ s/&aacute;/\\'a/g;
 	$text =~ s/&eacute;/\\'e/g;
 	$text =~ s/&oacute;/\\'o/g;
@@ -139,11 +139,11 @@ sub html_entities_to_tex {
 	$text =~ s/&uuml;/\\"u/g;
 
 	$text =~ s/&amp;/\\&/g;
-	
+
 	return $text;
 }
 
-# 
+#
 # Small reference of the RTF commands used here:
 #
 #  \fs28   switches to 14 point font (28 = 2 * 14)
@@ -224,7 +224,7 @@ sub begin_section {
 		if ($section_level >= 2) {
 			$title .= ":"
 		}
-		
+
 		print "  " x $section_level . $title."\n";
 		if ($section_level eq 0) {
 			print "  " x $section_level . "*" x (length $title)."\n";
@@ -251,7 +251,7 @@ sub begin_section {
 		} elsif ($section_level eq 1) {
 			print '\fs32 ';
 		}
-		
+
 		# Insert an empty line before this section header, *unless*
 		# this is the very first section header in the file.
 		if ($section_level > 0 || @section_count[0] > 0) {
@@ -261,7 +261,7 @@ sub begin_section {
 		print '\f1\b0\fs24 \cf0 \\' . "\n";
 	} elsif ($mode eq "CPP") {
 		if ($section_level eq 0) {
-		  # TODO: Would be nice to have a 'fat' or 'large' mode for 
+		  # TODO: Would be nice to have a 'fat' or 'large' mode for
 		  # headlines...
 		  $title = html_entities_to_cpp($title);
 		  print '"\\\\C\\\\c1""'.$title.'",' . "\n";
@@ -347,15 +347,15 @@ sub add_person {
 	my $nick = shift;
 	my $desc = shift;
 	my $tab;
-	
+
 	if ($mode eq "TEXT") {
 		$name = $nick if $name eq "";
 		$name = html_entities_to_ascii($name);
 		$desc = html_entities_to_ascii($desc);
-		
+
 		$tab = " " x ($section_level * 2 + 1);
 		printf $tab."%-".$max_name_width.".".$max_name_width."s", $name;
-		
+
 		# Print desc wrapped
 		if (length $desc > 0) {
 		  my $inner_indent = ($section_level * 2 + 1) + $max_name_width + 3;
@@ -418,7 +418,7 @@ sub add_person {
 sub add_paragraph {
 	my $text = shift;
 	my $tab;
-	
+
 	if ($mode eq "TEXT") {
 		$tab = " " x ($section_level * 2 + 1);
 		print wrap($tab, $tab, html_entities_to_ascii($text))."\n";

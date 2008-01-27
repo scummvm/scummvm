@@ -48,13 +48,13 @@ class DefaultEventManager : public Common::EventManager {
 	int _buttonState;
 	int _modifierState;
 	bool _shouldQuit;
-	
+
 	class RandomSourceRecord {
 	public:
 		Common::String name;
 		uint32 seed;
 	};
-	Common::Array<RandomSourceRecord> _randomSourceRecords; 
+	Common::Array<RandomSourceRecord> _randomSourceRecords;
 
 	bool _recordSubtitles;
 	volatile uint32 _recordCount;
@@ -70,7 +70,7 @@ class DefaultEventManager : public Common::EventManager {
 	volatile uint32 _playbackDiff;
 	volatile bool _hasPlaybackEvent;
 	volatile uint32 _playbackTimeCount;
-	Common::Event _playbackEvent;	
+	Common::Event _playbackEvent;
 	Common::InSaveFile *_playbackFile;
 	Common::InSaveFile *_playbackTimeFile;
 
@@ -86,7 +86,7 @@ class DefaultEventManager : public Common::EventManager {
 	Common::String _recordFileName;
 	Common::String _recordTempFileName;
 	Common::String _recordTimeFileName;
-	
+
 	// for continuous events (keyDown)
 	enum {
 		kKeyRepeatInitialDelay = 400,

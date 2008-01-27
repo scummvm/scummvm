@@ -41,10 +41,10 @@ class Support {
 private:
 	static bool changeRoomCheckBumped(Hotspot &h);
 public:
-	static int findIntersectingCharacters(Hotspot &h, uint16 *charList); 
+	static int findIntersectingCharacters(Hotspot &h, uint16 *charList);
 	static bool checkForIntersectingCharacter(Hotspot &h);
 	static bool checkRoomChange(Hotspot &h);
-	static void characterChangeRoom(Hotspot &h, uint16 roomNumber, 
+	static void characterChangeRoom(Hotspot &h, uint16 roomNumber,
 								  int16 newX, int16 newY, Direction dir);
 	static bool charactersIntersecting(HotspotData *hotspot1, HotspotData *hotspot2);
 	static bool isCharacterInList(uint16 *lst, int numEntries, uint16 charId);
@@ -133,11 +133,11 @@ private:
 	void processCell(uint16 *p);
 	void scanLine(int numScans, int changeAmount, uint16 *&pEnd, int &v);
 
-	void add(Direction dir, int steps) { 
-		_list.push_front(new WalkingActionEntry(dir, steps)); 
+	void add(Direction dir, int steps) {
+		_list.push_front(new WalkingActionEntry(dir, steps));
 	}
-	void addBack(Direction dir, int steps) { 
-		_list.push_back(new WalkingActionEntry(dir, steps)); 
+	void addBack(Direction dir, int steps) {
+		_list.push_back(new WalkingActionEntry(dir, steps));
 	}
 public:
 	PathFinder(Hotspot *h);
@@ -209,8 +209,8 @@ private:
 	uint8 _exitCtr;
 	bool _walkFlag;
 	uint16 _startRoomNumber;
-	uint16 _supportValue; 
-	
+	uint16 _supportValue;
+
 	// Support methods
 	uint16 getTalkId(HotspotData *charHotspot);
 	void startTalk(HotspotData *charHotspot, uint16 id);
@@ -245,19 +245,19 @@ private:
 	void doBribe(HotspotData *hotspot);
 	void doExamine(HotspotData *hotspot);
 	void npcSetRoomAndBlockedOffset(HotspotData *hotspot);
-	void npcHeySir(HotspotData *hotspot); 
-	void npcExecScript(HotspotData *hotspot); 
-	void npcResetPausedList(HotspotData *hotspot); 
+	void npcHeySir(HotspotData *hotspot);
+	void npcExecScript(HotspotData *hotspot);
+	void npcResetPausedList(HotspotData *hotspot);
 	void npcSetRandomDest(HotspotData *hotspot);
-	void npcWalkingCheck(HotspotData *hotspot); 
-	void npcSetSupportOffset(HotspotData *hotspot); 
+	void npcWalkingCheck(HotspotData *hotspot);
+	void npcSetSupportOffset(HotspotData *hotspot);
 	void npcSupportOffsetConditional(HotspotData *hotspot);
-	void npcDispatchAction(HotspotData *hotspot); 
-	void npcTalkNpcToNpc(HotspotData *hotspot); 
-	void npcPause(HotspotData *hotspot); 
+	void npcDispatchAction(HotspotData *hotspot);
+	void npcTalkNpcToNpc(HotspotData *hotspot);
+	void npcPause(HotspotData *hotspot);
 	void npcStartTalking(HotspotData *hotspot);
 	void npcJumpAddress(HotspotData *hotspot);
-	
+
 	// Auxillaries
 	void doLookAction(HotspotData *hotspot, Action action);
 public:
@@ -276,9 +276,9 @@ public:
 	HotspotData *resource() { return _data; }
 	uint16 numFrames() { return _numFrames; }
 	uint16 frameNumber() { return _frameNumber; }
-	void setFrameNumber(uint16 frameNum) { 
+	void setFrameNumber(uint16 frameNum) {
 		assert(frameNum < _numFrames);
-		_frameNumber = frameNum; 
+		_frameNumber = frameNum;
 	}
 	void incFrameNumber();
 	Direction direction() { return _direction; }
@@ -301,9 +301,9 @@ public:
 	uint16 yCorrection() { return _yCorrection; }
 	uint16 charRectY() { return _charRectY; }
 	uint16 roomNumber() { return _roomNumber; }
-	uint16 talkScript() { 
+	uint16 talkScript() {
 		assert(_data);
-		return _data->talkScriptOffset; 
+		return _data->talkScriptOffset;
 	}
 	uint16 hotspotScript() { return _hotspotScriptOffset; }
 	uint8 layer() { return _layer; }
@@ -313,8 +313,8 @@ public:
 	void setPersistant(bool value) { _persistant = value; }
 	uint8 colourOffset() { return _colourOffset; }
 	void setColourOffset(uint8 value) { _colourOffset = value; }
-	void setRoomNumber(uint16 roomNum) { 
-		_roomNumber = roomNum; 
+	void setRoomNumber(uint16 roomNum) {
+		_roomNumber = roomNum;
 		if (_data) _data->roomNumber = roomNum;
 	}
 	uint16 nameId();
@@ -324,13 +324,13 @@ public:
 	void setDestPosition(int16 newX, int16 newY) { _destX = newX; _destY = newY; }
 	void setDestHotspot(uint16 id) { _destHotspotId = id; }
 	void setExitCtr(uint8 value) { _exitCtr = value; }
-	BlockedState blockedState() { 
+	BlockedState blockedState() {
 		assert(_data);
-		return _data->blockedState; 
+		return _data->blockedState;
 	}
-	void setBlockedState(BlockedState newState) { 
+	void setBlockedState(BlockedState newState) {
 		assert(_data);
-		_data->blockedState = newState; 
+		_data->blockedState = newState;
 	}
 	bool blockedFlag() {
 		assert(_data);
@@ -347,20 +347,20 @@ public:
 		_width = newWidth;
 		_frameWidth = newWidth;
 	}
-	void setHeight(uint16 newHeight) { 
+	void setHeight(uint16 newHeight) {
 		_height = newHeight;
 	}
 	void setHotspotScript(uint16 offset) {
 		assert(_data != NULL);
 		_hotspotScriptOffset = offset;
-		_data->hotspotScriptOffset = offset; 
+		_data->hotspotScriptOffset = offset;
 	}
 	void setLayer(uint8 newLayer) {
 		assert(_data != NULL);
 		_layer = newLayer;
 		_data->layer = newLayer;
 	}
-	void setActions(uint32 newActions) { 
+	void setActions(uint32 newActions) {
 		assert(_data);
 		_data->actions = newActions;
 	}
@@ -374,33 +374,33 @@ public:
 		assert(_data != NULL);
 		_data->characterMode = value;
 	}
-	uint16 delayCtr() { 
+	uint16 delayCtr() {
 		assert(_data);
-		return _data->delayCtr; 
+		return _data->delayCtr;
 	}
-	void setDelayCtr(uint16 value) { 
+	void setDelayCtr(uint16 value) {
 		assert(_data);
-		_data->delayCtr = value;	
+		_data->delayCtr = value;
 	}
-	uint16 pauseCtr() { 
+	uint16 pauseCtr() {
 		assert(_data);
 		return _data->pauseCtr;
 	}
-	void setPauseCtr(uint16 value) { 
+	void setPauseCtr(uint16 value) {
 		assert(_data);
 		_data->pauseCtr = value;
 	}
-	VariantBool coveredFlag() { 
+	VariantBool coveredFlag() {
 		assert(_data);
 		return _data->coveredFlag;
 	}
-	void setCoveredFlag(VariantBool value) { 
+	void setCoveredFlag(VariantBool value) {
 		assert(_data);
 		_data->coveredFlag = value;
 	}
-	uint16 useHotspotId() { 
+	uint16 useHotspotId() {
 		assert(_data);
-		return _data->useHotspotId; 
+		return _data->useHotspotId;
 	}
 	void setUseHotspotId(uint16 value) {
 		assert(_data);
@@ -438,29 +438,29 @@ public:
 
 	void doAction();
 	void doAction(Action action, HotspotData *hotspot);
-	CurrentActionStack &currentActions() { 
+	CurrentActionStack &currentActions() {
 		assert(_data);
-		return _data->npcSchedule; 
+		return _data->npcSchedule;
 	}
 	PathFinder &pathFinder() { return _pathFinder; }
 	DestStructure &tempDest() { return _tempDest; }
 	uint16 frameCtr() { return _frameCtr; }
 	void setFrameCtr(uint16 value) { _frameCtr = value; }
 	void decrFrameCtr() { if (_frameCtr > 0) --_frameCtr; }
-	uint8 actionCtr() { 
+	uint8 actionCtr() {
 		assert(_data);
-		return _data->actionCtr; 
+		return _data->actionCtr;
 	}
-	void setActionCtr(uint8 v) { 
+	void setActionCtr(uint8 v) {
 		assert(_data);
-		_data->actionCtr = v; 
+		_data->actionCtr = v;
 	}
 	uint8 voiceCtr() { return _voiceCtr; }
 	void setVoiceCtr(uint8 v) { _voiceCtr = v; }
 
 	// Miscellaneous
 	void doNothing(HotspotData *hotspot);
-	void converse(uint16 destCharacterId, uint16 messageId, bool srcStandStill = false, 
+	void converse(uint16 destCharacterId, uint16 messageId, bool srcStandStill = false,
 					   bool destStandStill = false);
 	void showMessage(uint16 messageId, uint16 destCharacterId = NOONE_ID);
 	void scheduleConverse(uint16 destHotspot, uint16 messageId);

@@ -50,7 +50,7 @@ public:
 
 	void clearAll();
 	void updateScreen();
-	
+
 	void resetDrawArea();
 
 	const Graphics::Font *getFont(FontStyle font) const { return _font; }

@@ -597,10 +597,10 @@ void ScummEngine::saveInfos(Common::OutSaveFile* file) {
 	// still save old format for older versions
 	section.timeTValue = time(0);
 	section.playtime = _system->getMillis() / 1000 - _engineStartTime;
-	
+
 	tm curTime;
 	_system->getTimeAndDate(curTime);
-	
+
 	section.date = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | (curTime.tm_year + 1900) & 0xFFFF;
 	section.time = (curTime.tm_hour & 0xFF) << 8 | (curTime.tm_min) & 0xFF;
 
@@ -1257,7 +1257,7 @@ void ScummEngine_v7::saveOrLoad(Serializer *s) {
 
 	s->saveLoadArrayOf(_subtitleQueue, ARRAYSIZE(_subtitleQueue), sizeof(_subtitleQueue[0]), subtitleQueueEntries);
 	s->saveLoadEntries(this, V7Entries);
-	
+
 	if (s->getVersion() <= VER(68) && s->isLoading()) {
 		// WORKAROUND bug #1846049: Reset the default charset color to a sane value.
 		_string[0]._default.charset = 1;

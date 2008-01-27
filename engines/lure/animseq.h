@@ -55,7 +55,7 @@ private:
 	void egaDecodeFrame(byte *&pPixels);
 	void vgaDecodeFrame(byte *&pPixels, byte *&pLines);
 public:
-	AnimationSequence(uint16 screenId, Palette &palette,  bool fadeIn, int frameDelay = 7, 
+	AnimationSequence(uint16 screenId, Palette &palette,  bool fadeIn, int frameDelay = 7,
 		const AnimSoundSequence *soundList = NULL);
 	~AnimationSequence();
 

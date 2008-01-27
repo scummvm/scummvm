@@ -43,7 +43,7 @@ bool cartSetMenuMode(u32 _deviceType)
         tmp = *(vu16*)(0x08800612);
         tmp = *(vu16*)(0x08000000);
         tmp = *(vu16*)(0x08801B66);
-        tmp = *(vu16*)(0x08000000 + (mode << 1)); 
+        tmp = *(vu16*)(0x08000000 + (mode << 1));
         tmp = *(vu16*)(0x0800080E);
         tmp = *(vu16*)(0x08000000);
 

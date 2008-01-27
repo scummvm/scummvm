@@ -57,7 +57,7 @@ md5scumm: tools/md5table$(EXEEXT)
 
 
 #
-# Rules which automatically and implicitly rebuild the credits and 
+# Rules which automatically and implicitly rebuild the credits and
 # MD5 tables when needed.
 # These are currently disabled, because if the input data changes, then
 # the generated files should be checked in, too. Otherwise, we'd reduce

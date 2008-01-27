@@ -61,7 +61,7 @@ KyraEngine_v3::KyraEngine_v3(OSystem *system, const GameFlags &flags) : KyraEngi
 
 KyraEngine_v3::~KyraEngine_v3() {
 	delete _soundDigital;
-	
+
 	delete [] _unkPage1;
 	delete [] _unkPage2;
 	delete [] _interfaceCPS1;
@@ -96,12 +96,12 @@ int KyraEngine_v3::init() {
 	KyraEngine::init();
 
 	gui_initMainMenu();
-	
+
 	_soundDigital = new SoundDigital(this, _mixer);
 	assert(_soundDigital);
 	if (!_soundDigital->init())
 		error("_soundDigital->init() failed");
-	
+
 	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
 	_screen->loadFont(Screen::FID_BOOKFONT_FNT, "BOOKFONT.FNT");
@@ -134,24 +134,24 @@ int KyraEngine_v3::init() {
 int KyraEngine_v3::go() {
 	uint8 *pal = _screen->getPalette(1);
 	assert(pal);
-	
+
 	_mainMenuLogo = createWSAMovie();
 	assert(_mainMenuLogo);
 	_mainMenuLogo->open("REVENGE.WSA", 1, pal);
 	assert(_mainMenuLogo->opened());
-	
+
 	bool running = true;
 	while (running && !_quitFlag) {
 		_screen->_curPage = 0;
 		_screen->clearPage(0);
 
 		pal[0] = pal[1] = pal[2] = 0;
-		
+
 		_screen->setScreenPalette(pal);
-		
+
 		// XXX
 		playMenuAudioFile();
-		
+
 		_mainMenuLogo->setX(0); _mainMenuLogo->setY(0);
 		_mainMenuLogo->setDrawPage(0);
 
@@ -178,18 +178,18 @@ int KyraEngine_v3::go() {
 			// XXX
 			running = false;
 			break;
-		
+
 		case 1:
 			playVQA("K3INTRO");
 			break;
-		
+
 		case 2:
 			//delete _mainMenuLogo;
 			//_mainMenuLogo = 0;
 			//show load dialog
 			//running = false;
 			break;
-		
+
 		case 3:
 			_soundDigital->beginFadeOut(_musicSoundChannel);
 			_screen->fadeToBlack();
@@ -197,7 +197,7 @@ int KyraEngine_v3::go() {
 			_musicSoundChannel = -1;
 			running = false;
 			break;
-		
+
 		default:
 			break;
 		}
@@ -255,19 +255,19 @@ void KyraEngine_v3::playMenuAudioFile() {
 
 void KyraEngine_v3::playMusicTrack(int track, int force) {
 	debugC(9, kDebugLevelMain, "KyraEngine::playMusicTrack(%d, %d)", track, force);
-	
+
 	// XXX byte_2C87C compare
-	
+
 	if (_musicSoundChannel != -1 && !_soundDigital->isPlaying(_musicSoundChannel))
 		force = 1;
 	else if (_musicSoundChannel == -1)
 		force = 1;
-	
+
 	if (track == _curMusicTrack && !force)
 		return;
-	
+
 	stopMusicTrack();
-	
+
 	if (_musicSoundChannel == -1) {
 		assert(track < _soundListSize && track >= 0);
 
@@ -279,7 +279,7 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 		else
 			delete handle;
 	}
-	
+
 	_musicSoundChannel = track;
 }
 
@@ -287,21 +287,21 @@ void KyraEngine_v3::stopMusicTrack() {
 	if (_musicSoundChannel != -1 && _soundDigital->isPlaying(_musicSoundChannel)) {
 		_soundDigital->stopSound(_musicSoundChannel);
 	}
-	
+
 	_curMusicTrack = -1;
 	_musicSoundChannel = -1;
 }
 
 int KyraEngine_v3::musicUpdate(int forceRestart) {
 	debugC(9, kDebugLevelMain, "KyraEngine::unkUpdate(%d)", forceRestart);
-	
+
 	static uint32 mTimer = 0;
 	static uint16 lock = 0;
 
 	if (ABS<int>(_system->getMillis() - mTimer) > (int)(0x0F * _tickLength)) {
 		mTimer = _system->getMillis();
 	}
-	
+
 	if (_system->getMillis() < mTimer && !forceRestart) {
 		return 1;
 	}
@@ -318,7 +318,7 @@ int KyraEngine_v3::musicUpdate(int forceRestart) {
 		lock = 0;
 		mTimer = _system->getMillis() + 0x0F * _tickLength;
 	}
-	
+
 	return 1;
 }
 
@@ -332,17 +332,17 @@ void KyraEngine_v3::gui_initMainMenu() {
 
 void KyraEngine_v3::gui_updateMainMenuAnimation() {
 	uint32 nextRun = 0;
-	
+
 	uint32 now = _system->getMillis();
 	if (now < nextRun)
 		return;
 
 	// yes 2 * _tickLength here not 3 * like in the first draw
 	nextRun = now + 2 * _tickLength;
-	
+
 	_mainMenuLogo->displayFrame(_mainMenuFrame);
 	_screen->updateScreen();
-		
+
 	_mainMenuFrame += _mainMenuFrameAdd;
 	if (_mainMenuFrame < 29) {
 		_mainMenuFrame = 29;
@@ -351,7 +351,7 @@ void KyraEngine_v3::gui_updateMainMenuAnimation() {
 		_mainMenuFrame = 64;
 		_mainMenuFrameAdd = -1;
 	}
-		
+
 	// XXX
 }
 
@@ -367,17 +367,17 @@ void KyraEngine_v3::preinit() {
 
 	// XXX
 	setGameFlag(0x216);
-	
+
 	_unkPage1 = new uint8[64000];
 	assert(_unkPage1);
-	
+
 	musicUpdate(0);
 	musicUpdate(0);
-	
+
 	_interfaceCPS1 = new uint8[17920];
 	_interfaceCPS2 = new uint8[3840];
 	assert(_interfaceCPS1 && _interfaceCPS2);
-	
+
 	_screen->setFont(Screen::FID_6_FNT);
 }
 

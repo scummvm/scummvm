@@ -58,7 +58,7 @@ const bool SagaEngine::isMacResources() const { return (getPlatform() == Common:
 const GameResourceDescription *SagaEngine::getResourceDescription() { return _gameDescription->resourceDescription; }
 const GameSoundInfo *SagaEngine::getVoiceInfo() const { return _gameDescription->voiceInfo; }
 const GameSoundInfo *SagaEngine::getSfxInfo() const { return _gameDescription->sfxInfo; }
-const GameSoundInfo *SagaEngine::getMusicInfo() const { 
+const GameSoundInfo *SagaEngine::getMusicInfo() const {
 	static GameSoundInfo musicInfo;
 	musicInfo.resourceType = kSoundPCM;
 	musicInfo.frequency = 11025;
@@ -68,7 +68,7 @@ const GameSoundInfo *SagaEngine::getMusicInfo() const {
 	musicInfo.isBigEndian = false;
 	musicInfo.isSigned = true;
 
-	return &musicInfo; 
+	return &musicInfo;
 }
 
 const GameFontDescription *SagaEngine::getFontDescription(int index) {
@@ -89,7 +89,7 @@ uint32 SagaEngine::getFeatures() const {
 	if (_gf_compressed_sounds)
 		result |= GF_COMPRESSED_SOUNDS;
 
-	return result; 
+	return result;
 }
 
 Common::Language SagaEngine::getLanguage() const { return _gameDescription->desc.language; }

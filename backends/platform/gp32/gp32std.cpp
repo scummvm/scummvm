@@ -51,7 +51,7 @@ void _dprintf(const char *s, ...) {
 	if (debnext == DEBUG_MAX)
 		debnext = 0;
 	gp_fillRect(frameBuffer1, 0, 243 - (DEBUG_MAX * 8) - 4, 320, (DEBUG_MAX * 8), 0);
-	
+
 	for (deb = debnext, deba = 0; deb < DEBUG_MAX; deb++, deba++) {
 		//gp_fillRect(frameBuffer1, 0, (243 - (DEBUG_MAX * 8) - 4) + 8 * deba, 320, 8, 0);
 		gp_textOut(frameBuffer1, 0, (240 - (DEBUG_MAX * 8) - 4) + 8 * deba, debline[deb], 0xFFFF);

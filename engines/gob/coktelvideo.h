@@ -74,7 +74,7 @@ public:
 	struct State {
 		/** Left-most value of the updated rectangle. */
 		int16 left;
-		/** Top-most value of the updated rectangle. */ 
+		/** Top-most value of the updated rectangle. */
 		int16 top;
 		/** Right-most value of the updated rectangle. */
 		int16 right;
@@ -231,7 +231,7 @@ protected:
 
 	Audio::AppendableAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
-	
+
 	uint32 _frameLength;
 	uint32 _lastFrameTime;
 

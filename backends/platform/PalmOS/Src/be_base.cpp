@@ -45,13 +45,13 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	_mode = _setMode;
 	_redawOSD = false;
 	_setPalette = true;
-	
+
 	_offScreenH = NULL;
 	_screenH = NULL;
 	_offScreenP = NULL;
 	_screenP = NULL;
 	_screenPitch = gVars->screenPitch;
-	
+
 	_wasKey = false;
 	_lastKeyModifier = kModifierNone;
 	_lastKeyRepeat = 100;
@@ -59,11 +59,11 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	_showBatLow = false;
 	_batCheckTicks = SysTicksPerSecond() * 15;
 	_batCheckLast = TimGetTicks();
-	
+
 	_saveMgr = 0;
 	_timerMgr = 0;
 	_mixerMgr = 0;
-	
+
 	_mouseDataP = NULL;
 	_mouseBackupP = NULL;
 	_mouseVisible = false;
@@ -73,7 +73,7 @@ OSystem_PalmBase::OSystem_PalmBase() {
 	MemSet(&_mouseOldState, sizeof(_mouseOldState), 0);
 	MemSet(&_timer, sizeof(TimerType), 0);
 	MemSet(&_sound, sizeof(SoundType), 0);
-	
+
 	_keyExtraRepeat = 0;
 	_keyExtraPressed = 0;
 	_keyExtraDelay = (gVars->arrowKeys) ? computeMsecs(125) : computeMsecs(25);
@@ -136,7 +136,7 @@ void OSystem_PalmBase::setTimerCallback(TimerProc callback, int timer) {
 		_timer.duration = timer;
 		_timer.nextExpiry = getMillis() + timer;
 		_timer.callback = callback;
-		_timer.active = true;		
+		_timer.active = true;
 	} else {
 		_timer.active = false;
 	}
@@ -155,7 +155,7 @@ void OSystem_PalmBase::quit() {
 	delete _saveMgr;
 	delete _timerMgr;
 	delete _mixerMgr;
-	
+
 	exit(0);
 }
 

@@ -62,8 +62,8 @@ class FSList : public Common::Array<FilesystemNode> {};
  * paths (MacOS 9 doesn't even have the notion of a "current directory").
  * And if we ever want to support devices with no FS in the classical sense (Palm...),
  * we can build upon this.
- * 
- * This class acts as a wrapper around the AbstractFilesystemNode class defined in backends/fs. 
+ *
+ * This class acts as a wrapper around the AbstractFilesystemNode class defined in backends/fs.
  */
 class FilesystemNode {
 private:
@@ -83,7 +83,7 @@ public:
 
 	/**
 	 * Create a new pathless FilesystemNode. Since there's no path associated
-	 * with this node, path-related operations (i.e. exists(), isDirectory(), 
+	 * with this node, path-related operations (i.e. exists(), isDirectory(),
 	 * getPath()) will always return false or raise an assertion.
 	 */
 	FilesystemNode();
@@ -103,7 +103,7 @@ public:
 	 * Copy constructor.
 	 */
 	FilesystemNode(const FilesystemNode &node);
-	
+
 	/**
 	 * Destructor.
 	 */
@@ -113,7 +113,7 @@ public:
 	 * Copy operator.
 	 */
 	FilesystemNode &operator= (const FilesystemNode &node);
-	
+
 	/**
 	 * Compare the name of this node to the name of another. Directories
 	 * go before normal files.
@@ -122,7 +122,7 @@ public:
 
 	/**
 	 * Indicates whether the object referred by this path exists in the filesystem or not.
-	 * 
+	 *
 	 * @return bool true if the path exists, false otherwise.
 	 */
 	virtual bool exists() const;
@@ -133,20 +133,20 @@ public:
 	 * If no child node with the given name exists, an invalid node is returned.
 	 */
 	FilesystemNode getChild(const Common::String &name) const;
-	
+
 	/**
 	 * Return a list of child nodes of this directory node. If called on a node
 	 * that does not represent a directory, false is returned.
-	 * 
+	 *
 	 * @return true if succesful, false otherwise (e.g. when the directory does not exist).
 	 */
-	virtual bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly, bool hidden = false) const;	
+	virtual bool getChildren(FSList &fslist, ListMode mode = kListDirectoriesOnly, bool hidden = false) const;
 
 	/**
 	 * Return a human readable string for this node, usable for display (e.g.
 	 * in the GUI code). Do *not* rely on it being usable for anything else,
 	 * like constructing paths!
-	 * 
+	 *
 	 * @return the display name
 	 */
 	virtual Common::String getDisplayName() const;
@@ -173,7 +173,7 @@ public:
 	 * @return the 'path' represented by this filesystem node
 	 */
 	virtual Common::String getPath() const;
-	
+
 	/**
 	 * Get the parent node of this node. If this node has no parent node,
 	 * then it returns a duplicate of this node.
@@ -182,7 +182,7 @@ public:
 
 	/**
 	 * Indicates whether the path refers to a directory or not.
-	 * 
+	 *
 	 * @todo Currently we assume that a node that is not a directory
 	 * automatically is a file (ignoring things like symlinks or pipes).
 	 * That might actually be OK... but we could still add an isFile method.
@@ -190,29 +190,29 @@ public:
 	 * kDirNodeType, kFileNodeType, kInvalidNodeType.
 	 */
 	virtual bool isDirectory() const;
-	
+
 	/**
 	 * Indicates whether the object referred by this path can be read from or not.
-	 * 
-	 * If the path refers to a directory, readability implies being able to read 
+	 *
+	 * If the path refers to a directory, readability implies being able to read
 	 * and list the directory entries.
-	 * 
-	 * If the path refers to a file, readability implies being able to read the 
+	 *
+	 * If the path refers to a file, readability implies being able to read the
 	 * contents of the file.
-	 * 
+	 *
 	 * @return bool true if the object can be read, false otherwise.
 	 */
 	virtual bool isReadable() const;
-	
+
 	/**
 	 * Indicates whether the object referred by this path can be written to or not.
-	 * 
+	 *
 	 * If the path refers to a directory, writability implies being able to modify
 	 * the directory entry (i.e. rename the directory, remove it or write files inside of it).
-	 * 
+	 *
 	 * If the path refers to a file, writability implies being able to write data
 	 * to the file.
-	 * 
+	 *
 	 * @return bool true if the object can be written to, false otherwise.
 	 */
 	virtual bool isWritable() const;
@@ -221,16 +221,16 @@ public:
 	 * Searches recursively for files matching the specified pattern inside this directory and
 	 * all its subdirectories. It is safe to call this method for non-directories, in this case
 	 * it will just return false.
-	 * 
+	 *
 	 * The files in each directory are scanned first. Other than that, a depth first search
 	 * is performed.
-	 * 
+	 *
 	 * @param results List to put the matches in.
 	 * @param pattern Pattern of the files to look for.
 	 * @param hidden Whether to search hidden files or not.
 	 * @param exhaustive Whether to continue searching after one match has been found.
 	 * @param depth How many levels to search through (-1 = search all subdirs, 0 = only the current one)
-	 * 
+	 *
 	 * @return true if matches could be found, false otherwise.
 	 */
 	virtual bool lookupFile(FSList &results, const Common::String &pattern, bool hidden, bool exhaustive, int depth = -1) const;

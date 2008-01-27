@@ -42,7 +42,7 @@ EPOCHEAPSIZE	1024	161920000
 
 MACRO			S90
 
-//START_AUTO_MACROS_SLAVE// 
+//START_AUTO_MACROS_SLAVE//
 
 	// empty base file, will be updated by Perl build scripts
 
@@ -63,7 +63,7 @@ USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl ..
 
 SYSTEMINCLUDE 	\epoc32\include\ESDL
 SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
-SYSTEMINCLUDE   \epoc32\include\libc 
+SYSTEMINCLUDE   \epoc32\include\libc
 SYSTEMINCLUDE   \epoc32\include
 SYSTEMINCLUDE   ..\src // for portdefs.h
 
@@ -84,8 +84,8 @@ SOURCE backends\platform\sdl\events.cpp
 SOURCE backends\platform\sdl\graphics.cpp
 SOURCE backends\platform\sdl\sdl.cpp
 SOURCE backends\fs\symbian\symbian-fs.cpp
-SOURCE backends\platform\symbian\src\SymbianOS.cpp 
-SOURCE backends\platform\symbian\src\SymbianActions.cpp 
+SOURCE backends\platform\symbian\src\SymbianOS.cpp
+SOURCE backends\platform\symbian\src\SymbianActions.cpp
 SOURCE backends\platform\symbian\src\ScummApp.cpp
 
 SOURCE gui\Key.cpp
@@ -97,8 +97,8 @@ source graphics\iff.cpp
 
 // *** Dynamic Libraries
 
-LIBRARY cone.lib  eikcore.lib 
-LIBRARY euser.lib apparc.lib fbscli.lib  
+LIBRARY cone.lib  eikcore.lib
+LIBRARY euser.lib apparc.lib fbscli.lib
 LIBRARY estlib.lib apgrfx.lib
 LIBRARY gdi.lib hal.lib bitgdi.lib bafl.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib

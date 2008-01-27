@@ -589,7 +589,7 @@ void Screen::copyRegionToBuffer(int pageNum, int x, int y, int w, int h, uint8 *
 
 	if (x < 0) {
 		dest += -x;
-		w += x;	
+		w += x;
 		x = 0;
 	} else if (x + w > SCREEN_W) {
 		w = SCREEN_W - x;
@@ -627,7 +627,7 @@ void Screen::copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint
 
 	if (x < 0) {
 		src += -x;
-		w += x;	
+		w += x;
 		x = 0;
 	} else if (x + w > SCREEN_W) {
 		w = SCREEN_W - x;

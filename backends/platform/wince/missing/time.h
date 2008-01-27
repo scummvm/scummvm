@@ -20,7 +20,7 @@ struct tm
 #ifdef __GNUC__
 #define EXT_C extern "C"
 #else
-#define EXT_C 
+#define EXT_C
 #endif
 
 EXT_C time_t time(time_t* dummy);

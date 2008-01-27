@@ -45,7 +45,7 @@ public:
 	void writeSaveNonblocking(char *name, void *buf, uint32 size);
 	void saveThread(void);
 	void quit(void);
-	
+
 private:
 	bool setupIcon(const char *dest, const char *ico, const char *descr1, const char *descr2);
 

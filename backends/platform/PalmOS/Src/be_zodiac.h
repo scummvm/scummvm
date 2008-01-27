@@ -38,7 +38,7 @@ private:
 	TwGfxSurfaceType *_palmScreenP, *_tmpScreenP;
 	TwGfxSurfaceType *_overlayP;
 	Boolean _fullscreen;
-	
+
 	TwGfxPointType _srcPos;
 	TwGfxRectType _srcRect, _dstRect;
 	TwGfxBitmapType _srcBmp;
@@ -61,7 +61,7 @@ public:
 	OSystem_PalmZodiac();
 
 	static OSystem *create();
-	
+
 	void setFeatureState(Feature f, bool enable);
 
 	int getDefaultGraphicsMode() const;

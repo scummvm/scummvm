@@ -468,7 +468,7 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 	//if (!_disableSound) {
 	//	XXX
 	//}
-	
+
 	if (_flags.platform == Common::kPlatformPC) {
 		assert(command*2+1 < _trackMapSize);
 		if (_curMusicTheme != _trackMap[command*2]) {
@@ -494,7 +494,7 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 				_sound->playTrack(command);
 			}
 		}
-	} 
+	}
 
 	_lastMusicCommand = command;
 }

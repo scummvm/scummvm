@@ -226,7 +226,7 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 			return true;
 		case SMARTPHONE_ACTION_RIGHT:
 			_CESystem->move_cursor_right();
-			return true; 
+			return true;
 		case SMARTPHONE_ACTION_ZONE:
 			_CESystem->switch_zone();
 			return true;

@@ -83,7 +83,7 @@ struct font {
 	BBX*	bbx;		/* character bounding box or NULL if fixed*/
 	int		defaultchar;	/* default char (not glyph index)*/
 	long	bits_size;	/* # words of bitmap_t bits*/
-	
+
 	/* unused by runtime system, read in by convbdf*/
 	char *	facename;	/* facename of font*/
 	char *	copyright;	/* copyright info for loadable fonts*/
@@ -161,11 +161,11 @@ void getopts(int *pac, char ***pav)
 	const char *p;
 	char **av;
 	int ac;
-	
+
 	ac = *pac;
 	av = *pav;
 	while (ac > 0 && av[0][0] == '-') {
-		p = &av[0][1]; 
+		p = &av[0][1];
 		while (*p) {
 			switch (*p++) {
 			case ' ':			/* multiple -args on av[]*/
@@ -254,7 +254,7 @@ int convbdf(char *path)
 	pf = bdf_read_font(path);
 	if (!pf)
 		exit(1);
-	
+
 	if (!oflag) {
 		strcpy(outfile, basename(path));
 		strcat(outfile, ".cpp");
@@ -280,12 +280,12 @@ int main(int ac, char *av[])
 		usage();
 		exit(1);
 	}
-	
+
 	while (ac > 0) {
 		ret |= convbdf(av[0]);
 		++av; --ac;
 	}
-	
+
 	exit(ret);
 }
 
@@ -313,11 +313,11 @@ struct font* bdf_read_font(char *path)
 		fprintf(stderr, "Error opening file: %s\n", path);
 		return NULL;
 	}
-	
+
 	pf = (struct font*)calloc(1, sizeof(struct font));
 	if (!pf)
 		goto errout;
-	
+
 	pf->name = strdup(basename(path));
 
 	if (!bdf_read_header(fp, pf)) {
@@ -422,8 +422,8 @@ int bdf_read_header(FILE *fp, struct font* pf)
 				fprintf(stderr, "Error: bad 'ENCODING'\n");
 				return 0;
 			}
-			if (encoding >= 0 && 
-				encoding <= limit_char && 
+			if (encoding >= 0 &&
+				encoding <= limit_char &&
 				encoding >= start_char) {
 
 				if (firstchar > encoding)
@@ -445,15 +445,15 @@ int bdf_read_header(FILE *fp, struct font* pf)
 	pf->height = pf->ascent + pf->descent;
 
 	/* calc default char*/
-	if (pf->defaultchar < 0 || 
-		pf->defaultchar < firstchar || 
+	if (pf->defaultchar < 0 ||
+		pf->defaultchar < firstchar ||
 		pf->defaultchar > limit_char )
 		pf->defaultchar = firstchar;
 
 	/* calc font size (offset/width entries)*/
 	pf->firstchar = firstchar;
 	pf->size = lastchar - firstchar + 1;
-	
+
 	/* use the font boundingbox to get initial maxwidth*/
 	/*maxwidth = pf->fbbw - pf->fbbx;*/
 	maxwidth = pf->fbbw;
@@ -466,7 +466,7 @@ int bdf_read_header(FILE *fp, struct font* pf)
 	pf->offset = (unsigned long *)malloc(pf->size * sizeof(unsigned long));
 	pf->width = (unsigned char *)malloc(pf->size * sizeof(unsigned char));
 	pf->bbx = (BBX *)malloc(pf->size * sizeof(BBX));
-	
+
 	if (!pf->bits || !pf->offset || !pf->width) {
 		fprintf(stderr, "Error: no memory for font load\n");
 		return 0;
@@ -570,7 +570,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 
 				for (k = 0; k < ch_words; ++k) {
 					bitmap_t value;
-					
+
 					value = bdf_hexval((unsigned char *)buf);
 
 					if (bbw > 8) {
@@ -714,7 +714,7 @@ bitmap_t bdf_hexval(unsigned char *buf) {
 			c = c - 'A' + 10;
 		else if (c >= 'a' && c <= 'f')
 			c = c - 'a' + 10;
-		else 
+		else
 			c = 0;
 		val = (val << 4) | c;
 	}
@@ -767,7 +767,7 @@ int gen_c_source(struct font* pf, char *path)
 	strcpy(buf, ctime(&t));
 	buf[strlen(buf) - 1] = 0;
 
-	fprintf(ofp, hdr1, buf, 
+	fprintf(ofp, hdr1, buf,
 			pf->name,
 			pf->facename? pf->facename: "",
 			pf->maxwidth, pf->height,
@@ -796,7 +796,7 @@ int gen_c_source(struct font* pf, char *path)
 		 * the default character in encode map, or the default
 		 * character hasn't been generated yet.
 		 */
-		if (pf->offset && 
+		if (pf->offset &&
 			(pf->offset[i] == pf->offset[pf->defaultchar-pf->firstchar])) {
 			if (did_defaultchar)
 				continue;
@@ -849,7 +849,7 @@ int gen_c_source(struct font* pf, char *path)
 				fprintf(stderr, "Warning: found encoding values in non-sorted order (not an error).\n");
 				did_syncmsg = 1;
 			}
-		}	
+		}
 	}
 	fprintf(ofp, "};\n\n");
 
@@ -859,7 +859,7 @@ int gen_c_source(struct font* pf, char *path)
 				"static const unsigned long _sysfont_offset[] = {\n");
 
 		for (i = 0; i < pf->size; ++i)
-			fprintf(ofp, "	%ld,\t/* (0x%02x) */\n", 
+			fprintf(ofp, "	%ld,\t/* (0x%02x) */\n",
 					pf->offset[i], i+pf->firstchar);
 		fprintf(ofp, "};\n\n");
 	}
@@ -870,7 +870,7 @@ int gen_c_source(struct font* pf, char *path)
 				"static const unsigned char _sysfont_width[] = {\n");
 
 		for (i = 0; i < pf->size; ++i)
-			fprintf(ofp, "	%d,\t/* (0x%02x) */\n", 
+			fprintf(ofp, "	%d,\t/* (0x%02x) */\n",
 					pf->width[i], i+pf->firstchar);
 		fprintf(ofp, "};\n\n");
 	}
@@ -936,6 +936,6 @@ int gen_c_source(struct font* pf, char *path)
 	fprintf(ofp, "DEFINE_FONT(g_sysfont)\n");
 	fprintf(ofp, "#endif\n");
 	fprintf(ofp, "\n} // End of namespace Graphics\n");
- 
+
 	return 0;
 }

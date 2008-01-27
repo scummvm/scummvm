@@ -71,7 +71,7 @@ public:
 		uint32 fadeSize = fade ? _size / 2 : 0;
 		return ((_size * repCount - fadeSize) * 1000) / frequency;
 	}
-	
+
 	SoundDesc() : _data(0), _dataPtr(0), _size(0), _type(SOUND_SND),
 			_source(SOUND_FILE), _repCount(0), _frequency(0),
 			_flag(0), _id(0) {}
@@ -129,7 +129,7 @@ protected:
 
 	Audio::SoundHandle *_activeHandle;
 	Audio::SoundHandle _compositionHandle;
-	
+
 	SoundDesc *_compositionSamples;
 	int8 _compositionSampleCount;
 	int16 _composition[50];

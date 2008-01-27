@@ -52,7 +52,7 @@ CPPFLAGS := $(DEFINES) $(INCLUDES)
 
 # Depdir information
 DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS))
-DEPFILES = 
+DEPFILES =
 
 # Make base/version.o depend on all other object files. This way if anything is
 # changed, it causes version.cpp to be recompiled. This in turn ensures that
@@ -78,7 +78,7 @@ clean:
 
 ifndef HAVE_GCC3
 # If you use GCC, disable the above and enable this for intelligent
-# dependency tracking. 
+# dependency tracking.
 %.o: %.cpp
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o

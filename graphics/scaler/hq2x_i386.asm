@@ -503,31 +503,31 @@ _hq2x_16:
     mov     ebx,[nextline]
     movq    mm7,[esi+ebx-2]
     movd    eax,mm5
-    movzx   edx,ax  
+    movzx   edx,ax
     mov     [w1],edx
     shr     eax,16
     mov     [w2],eax
     psrlq   mm5,32
     movd    eax,mm5
-    movzx   edx,ax  
+    movzx   edx,ax
     mov     [w3],edx
     movd    eax,mm6
-    movzx   edx,ax  
+    movzx   edx,ax
     mov     [w4],edx
     shr     eax,16
     mov     [w5],eax
     psrlq   mm6,32
     movd    eax,mm6
-    movzx   edx,ax  
+    movzx   edx,ax
     mov     [w6],edx
     movd    eax,mm7
-    movzx   edx,ax  
+    movzx   edx,ax
     mov     [w7],edx
     shr     eax,16
     mov     [w8],eax
     psrlq   mm7,32
     movd    eax,mm7
-    movzx   edx,ax  
+    movzx   edx,ax
     mov     [w9],edx
 .flags
     mov     ebx,[_RGBtoYUV]

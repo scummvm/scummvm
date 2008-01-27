@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #ifndef CD_AEROPLAYER_H
 #define CD_AEROPLAYER_H
 
@@ -40,9 +40,9 @@ public:
 	void update();
 	void play(int track, int num_loops, int start_frame, int duration);
 	void stop();
- 
+
  	void setVolume(int volume);
- 
+
 private:
 	OSystem *_sys;
 	Char gameP[15];

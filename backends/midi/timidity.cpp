@@ -168,7 +168,7 @@ int MidiDriver_TIMIDITY::open() {
 		return -1;
 	}
 
-	/* should read greeting issued by server upon connect: 
+	/* should read greeting issued by server upon connect:
 	 * "220 TiMidity++ v2.13.2 ready)" */
 	res = timidity_ctl_command(NULL);
 	if (atoi(res) != 220) {
@@ -178,7 +178,7 @@ int MidiDriver_TIMIDITY::open() {
 	}
 
 	/*
-	 * setup buf and prepare data connection 
+	 * setup buf and prepare data connection
 	 */
 	/* should read: "200 OK" */
 	res = timidity_ctl_command("SETBUF %f %f", BUF_LOW_SYNC, BUF_HIGH_SYNC);
@@ -200,7 +200,7 @@ int MidiDriver_TIMIDITY::open() {
 	}
 
 	/*
-	 * open data connection 
+	 * open data connection
 	 */
 	data_port = atoi(res + 4);
 	if ((_data_fd = connect_to_server(timidity_host, data_port)) < 0) {

@@ -42,9 +42,9 @@ template<class Res, class T>
 class Functor0Mem : public Functor0<Res> {
 public:
 	typedef Res (T::*FuncType)();
-	
+
 	Functor0Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
-	
+
 	bool isValid() const { return _func != 0; }
 	Res operator()() const {
 		return (_t->*_func)();
@@ -66,9 +66,9 @@ template<class Arg, class Res, class T>
 class Functor1Mem : public Functor1<Arg, Res> {
 public:
 	typedef Res (T::*FuncType)(Arg);
-	
+
 	Functor1Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
-	
+
 	bool isValid() const { return _func != 0; }
 	Res operator()(Arg v1) const {
 		return (_t->*_func)(v1);

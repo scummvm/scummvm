@@ -60,10 +60,10 @@ bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySiz
 	screen.screen().loadScreen(screenId);
 	screen.update();
 	Palette p(paletteId);
-	
+
 	if (isEGA) screen.setPalette(&p);
 	else screen.paletteFadeIn(&p);
-	
+
 	bool result = interruptableDelay(delaySize);
 	if (events.quitFlag) return true;
 
@@ -81,7 +81,7 @@ bool Introduction::interruptableDelay(uint32 milliseconds) {
 	Events &events = Events::getReference();
 
 	if (events.interruptableDelay(milliseconds)) {
-		if (events.type() == Common::EVENT_KEYDOWN) 
+		if (events.type() == Common::EVENT_KEYDOWN)
 			return events.event().kbd.keycode == 27;
 		else if (events.type() == Common::EVENT_LBUTTONDOWN)
 			return false;
@@ -101,8 +101,8 @@ bool Introduction::show() {
 	// Initial game company and then game screen
 
 	for (int ctr = 0; start_screens[ctr]; ++ctr)
-		if (showScreen(start_screens[ctr], start_screens[ctr] + 1, 5000)) 
-			return true;	
+		if (showScreen(start_screens[ctr], start_screens[ctr] + 1, 5000))
+			return true;
 
 	PaletteCollection coll(0x32);
 	Palette EgaPalette(0x1D);
@@ -116,19 +116,19 @@ bool Introduction::show() {
 	for (; curr_anim->resourceId; ++curr_anim) {
 		// Handle sound selection
 		if (curr_anim->soundNumber != 0xff) {
-			if (currentSound != 0xff) 
+			if (currentSound != 0xff)
 				// Stop the previous sound
 				Sound.musicInterface_KillAll();
-		
+
 			currentSound = curr_anim->soundNumber;
 			Sound.musicInterface_Play(currentSound, 0);
 		}
 
 		bool fadeIn = curr_anim == anim_screens;
-		anim = new AnimationSequence(curr_anim->resourceId, 
-			isEGA ? EgaPalette : coll.getPalette(curr_anim->paletteIndex), fadeIn, 
+		anim = new AnimationSequence(curr_anim->resourceId,
+			isEGA ? EgaPalette : coll.getPalette(curr_anim->paletteIndex), fadeIn,
 			(curr_anim->resourceId == 0x44) ? 4 : 7);
-		if (curr_anim->initialPause != 0)  
+		if (curr_anim->initialPause != 0)
 			if (interruptableDelay(curr_anim->initialPause * 1000 / 50)) return true;
 
 		result = false;
@@ -149,7 +149,7 @@ bool Introduction::show() {
 		delete anim;
 
 		if (result) {
-			Sound.musicInterface_KillAll();	
+			Sound.musicInterface_KillAll();
 			return true;
 		}
 	}
@@ -165,7 +165,7 @@ bool Introduction::show() {
 		if (result) break;
 	} while (anim->step());
 	delete anim;
-	
+
 	if (!result) {
 		// Show final introduction animation
 		if (!isEGA)

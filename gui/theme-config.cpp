@@ -583,9 +583,9 @@ void Theme::processSingleLine(const String &section, const String &prefix, const
 
 	// If we have all 4 parameters, set .x2 and .y2
 	if (npostfix == 3) {
-		_evaluator->setVar(prefixedname + ".x2", 
+		_evaluator->setVar(prefixedname + ".x2",
 			_evaluator->getVar(prefixedname + ".x") + _evaluator->getVar(prefixedname + ".w"));
-		_evaluator->setVar(prefixedname + ".y2", 
+		_evaluator->setVar(prefixedname + ".y2",
 			_evaluator->getVar(prefixedname + ".y") + _evaluator->getVar(prefixedname + ".h"));
 	}
 
@@ -733,7 +733,7 @@ bool Theme::sectionIsSkipped(Common::ConfigFile &config, const char *name, int w
 		default:
 			break;
 		}
-		
+
 		ptr++;
 	}
 

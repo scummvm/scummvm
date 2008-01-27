@@ -54,10 +54,10 @@ ifdef DS_BUILD_F
 	# TODO: Fix this.  When libmad is compiled in, the Kyrandia resource loading
 	# searches through it's entire index to find an mp3 each time a voice sample is requested
 	# this causes a nasty pause.
-else 
+else
 	ifdef DS_BUILD_E
 	# TODO: Inherit the earth uses so much RAM that I have removed libmad in order to
-	# claw some back.	
+	# claw some back.
 
 
 	else
@@ -135,7 +135,7 @@ ifdef DS_BUILD_B
 	BUILD=scummvm-B
 endif
 
-ifdef DS_BUILD_C	
+ifdef DS_BUILD_C
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_C
 	LOGO = logoc.bmp
 	DISABLE_HE = 1
@@ -287,7 +287,7 @@ ifdef USE_PROFILER
 	CFLAGS += -mpoke-function-name -finstrument-functions -g
 	DEFINES += -DUSE_PROFILER
 endif
-		
+
 CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor	 -Wno-non-virtual-dtor \
 		-fno-exceptions -fno-rtti -mthumb-interwork
 
@@ -315,7 +315,7 @@ INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)
 			-I$(srcdir)/backends/fs  -I$(srcdir)/backends/fs/ds -I$(portdir)/data -I$(libndsdir)/include -I$(portdir)/../commoninclude\
 			-I$(srcdir)/scumm -I$(libndsdir)/include -I$(libndsdir)/include/nds -I$(srcdir)/engines -I$(portdir)/source/mad\
 			-I$(portdir)/source/libcartreset -include $(srcdir)/common/scummsys.h
-			
+
 
 LIBS	= -lm -L$(libndsdir)/lib -L$(portdir)/lib -lnds9
 ifdef USE_MAD
@@ -352,15 +352,15 @@ PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(port
 		$(portdir)/source/osystem_ds.o $(portdir)/source/portdefs.o $(portdir)/source/ramsave.o\
 		$(portdir)/source/scummconsole.o $(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
 		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o $(portdir)/source/wordcompletion.o
-		
+
 ifdef USE_PROFILER
 	PORT_OBJS += $(portdir)/source/profiler/cyg-profile.o
 endif
 
 
 DATA_OBJS := $(portdir)/data/icons.o $(portdir)/data/keyboard.o $(portdir)/data/keyboard_pal.o $(portdir)/data/default_font.o $(portdir)/data/8x8font_tga.o
-			
-		
+
+
 COMPRESSOR_OBJS := $(portdir)/source/compressor/lz.o
 
 FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o\
@@ -379,13 +379,13 @@ FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o
 
 #			$(portdir)/source/fat/io_cf_common.o $(portdir)/source/fat/io_m3_common.o\
 #			$(portdir)/source/fat/io_sd_common.o $(portdir)/source/fat/io_scsd_s.o \
-#			$(portdir)/source/fat/io_sc_common.o $(portdir)/source/fat/io_sd_common.o 
+#			$(portdir)/source/fat/io_sc_common.o $(portdir)/source/fat/io_sd_common.o
 
 LIBCARTRESET_OBJS := $(portdir)/source/libcartreset/cartreset.o
-			
+
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
 OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp mixer.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
-#OPTLIST := 
+#OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
 OPT_SPEED := -O3
@@ -394,11 +394,11 @@ OPT_SPEED := -O3
 OPT_SIZE := -Os -mthumb -fno-gcse -fno-schedule-insns2
 
 
-			
-OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS) 
-		
 
-		
+OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS)
+
+
+
 MODULE_DIRS += .
 
 ndsall:
@@ -448,7 +448,7 @@ endef
 #	$(*).tmp $(@)
 #	echo "extern const u8" $(notdir $*)"[] __attribute__ ((aligned (4)));" > $(*).h
 #	echo "extern const u32" $(notdir $(*))_size[]";" >> $(*).h
-#	
+#
 #	echo $(*).h
 #	rm $(*).tmp
 #endef
@@ -459,7 +459,7 @@ endef
 ##############
 ifndef HAVE_GCC3
 # If you use GCC, disable the above and enable this for intelligent
-# dependency tracking. 
+# dependency tracking.
 .cpp.o:
 
 	$(MKDIR) $(*D)/$(DEPDIR)
@@ -485,36 +485,36 @@ else
 
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	$(CXX) -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o 
+	$(CXX) -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 endif
 
 
 #---------------------------------------------------------------------------------
- 
+
 #---------------------------------------------------------------------------------
 %.o	:	%.pcx
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
- 
+
 #---------------------------------------------------------------------------------
 %.o	:	%.bin
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
- 
+
 #---------------------------------------------------------------------------------
 %.o	:	%.raw
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
- 
+
 #---------------------------------------------------------------------------------
 %.o	:	%.pal
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
- 
+
 #---------------------------------------------------------------------------------
 %.o	:	%.map
 #---------------------------------------------------------------------------------
@@ -543,4 +543,4 @@ endif
 #%.o: %.s
 #	$(MKDIR) $(*D)/$(DEPDIR)
 #	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	
+

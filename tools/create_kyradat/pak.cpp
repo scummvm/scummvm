@@ -39,21 +39,21 @@ bool PAKFile::loadFile(const char *file, const bool isAmiga) {
 	// TODO: get rid of temp. buffer
 	uint8 *buffer = new uint8[filesize];
 	assert(buffer);
-	
+
 	fread(buffer, filesize, 1, pakfile);
-	
+
 	fclose(pakfile);
-	
+
 	const char *currentName = 0;
-	
+
 	uint32 startoffset = _isAmiga ? READ_BE_UINT32(buffer) : READ_LE_UINT32(buffer);
 	uint32 endoffset = 0;
 	uint8* position = buffer + 4;
-	
+
 	while (true) {
 		uint32 strlgt = strlen((const char*)position);
 		currentName = (const char*)position;
-		
+
 		if (!(*currentName))
 			break;
 
@@ -65,19 +65,19 @@ bool PAKFile::loadFile(const char *file, const bool isAmiga) {
 			endoffset = filesize;
 		}
 		position += 4;
-		
+
 		uint8 *data = new uint8[endoffset - startoffset];
 		assert(data);
 		memcpy(data, buffer + startoffset, endoffset - startoffset);
 		addFile(currentName, data, endoffset - startoffset);
 		data = 0;
-		
+
 		if (endoffset == filesize)
 			break;
-		
+
 		startoffset = endoffset;
 	}
-	
+
 	delete [] buffer;
 	return true;
 }
@@ -91,11 +91,11 @@ bool PAKFile::saveFile(const char *file) {
 		error("couldn't open file '%s' for writing", file);
 		return false;
 	}
-	
+
 	// TODO: implement error handling
 	uint32 startAddr = _fileList->getTableSize()+5+4;
 	static const char *zeroName = "\0\0\0\0\0";
-	
+
 	uint32 curAddr = startAddr;
 	for (FileList *cur = _fileList; cur; cur = cur->next) {
 		if (_isAmiga)
@@ -110,11 +110,11 @@ bool PAKFile::saveFile(const char *file) {
 	else
 		writeUint32LE(f, curAddr);
 	fwrite(zeroName, 1, 5, f);
-	
+
 	for (FileList *cur = _fileList; cur; cur = cur->next)
 		fwrite(cur->data, 1, cur->size, f);
-	
-	fclose(f);	
+
+	fclose(f);
 	return true;
 }
 
@@ -176,7 +176,7 @@ const uint8 *PAKFile::getFileData(const char *file, uint32 *size) {
 
 	if (!cur)
 		return 0;
-	
+
 	if (size)
 		*size = cur->size;
 	return cur->data;
@@ -187,13 +187,13 @@ bool PAKFile::addFile(const char *name, const char *file) {
 		error("entry '%s' already exists");
 		return false;
 	}
-	
+
 	FILE *f = fopen(file, "rb");
 	if (!f) {
 		error("couldn't open file '%s'", file);
 		return false;
 	}
-	
+
 	uint32 filesize = fileSize(f);
 	uint8 *data = new uint8[filesize];
 	assert(data);
@@ -201,7 +201,7 @@ bool PAKFile::addFile(const char *name, const char *file) {
 		error("couldn't read from file '%s'", file);
 		return false;
 	}
-	fclose(f);	
+	fclose(f);
 	return addFile(name, data, filesize);
 }
 

@@ -38,7 +38,7 @@ enum ChildType {
 	kContainerType = 7,
 	kChainType = 8,
 	kUserFlagType = 9,
-	
+
 	kInheritType = 255
 };
 

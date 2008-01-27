@@ -57,7 +57,7 @@ public:
 protected:
 	KyraEngine *_vm;
 	bool _opened;
-	
+
 	int _x, _y;
 	int _drawPage;
 };
@@ -103,7 +103,7 @@ public:
 	void close();
 
 	void displayFrame(int frameNum, ...);
-private:	
+private:
 	void processFrame(int frameNum, uint8 *dst);
 
 	uint8 *_buffer;
@@ -112,23 +112,23 @@ private:
 class WSAMovieV2 : public WSAMovieV1 {
 public:
 	WSAMovieV2(KyraEngine_v2 *vm);
-	
+
 	int open(const char *filename, int unk1, uint8 *palette);
-	
+
 	virtual void displayFrame(int frameNum, ...);
 
 	void setX(int x) { _x = x + _xAdd; }
 	void setY(int y) { _y = y + _yAdd; }
-	
+
 	int xAdd() const { return _xAdd; }
 	int yAdd() const { return _yAdd; }
-	
+
 	int width() const { return _width; }
 	int height() const { return _height; }
 
 	void setWidth(int w) { _width = w; }
 	void setHeight(int h) { _height = h; }
-	
+
 	// HACK for our intro code
 	void flagOldOff(bool enabled) { _oldOff = enabled; }
 protected:

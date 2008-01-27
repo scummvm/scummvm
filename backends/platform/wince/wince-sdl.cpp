@@ -170,14 +170,14 @@ int SDL_main(int argc, char **argv) {
 	extern void (*__CTOR_LIST__)() ;
 	void (**constructor)() = &__CTOR_LIST__ ;
 	constructor++ ;
-	while (*constructor) { 
+	while (*constructor) {
             (*constructor)() ;
             constructor++ ;
         }
 #endif
-	
+
 	CEDevice::init();
-	
+
 	/* Redirect standard input and standard output */
 	strcpy(stdout_fname, getcwd(NULL, MAX_PATH));
 	strcpy(stderr_fname, getcwd(NULL, MAX_PATH));
@@ -291,7 +291,7 @@ static int ParseCommandLine(char *cmdline, char **argv)
 
 	argc = 0;
 	for (bufp = cmdline; *bufp;) {
-		// Skip leading whitespace 
+		// Skip leading whitespace
 		while (isspace(*bufp))
 			++bufp;
 
@@ -592,7 +592,7 @@ void OSystem_WINCE3::swap_zoom_up() {
 			_scaleFactorYd = 1;
 			_scalerProc = PocketPCHalfZoom;
 		}
-		
+
 		_zoomDown = false;
 		_zoomUp = true;
 	}
@@ -872,7 +872,7 @@ int OSystem_WINCE3::getOutputSampleRate() const {
 
 void OSystem_WINCE3::setWindowCaption(const char *caption) {
 	check_mappings(); // called here to initialize virtual keys handling
-	
+
 	//update_game_settings();
 	// finalize mixer init
 	get_sample_rate();
@@ -915,7 +915,7 @@ void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
 				_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
 				_toolbarHandler.setVisible(true);
 			}
-			else 
+			else
 				if (_panelStateForced) {
 					_panelStateForced = false;
 					_toolbarHandler.setActive(_saveActiveToolbar);
@@ -1122,7 +1122,7 @@ bool OSystem_WINCE3::update_scalers() {
 	_adjustAspectRatio = false;
 
 	if (CEDevice::hasPocketPCResolution()) {
-		if ( 	(!_orientationLandscape && (_screenWidth == 320 || !_screenWidth)) 
+		if ( 	(!_orientationLandscape && (_screenWidth == 320 || !_screenWidth))
 			|| CEDevice::hasSquareQVGAResolution() ) {
 			if (getScreenWidth() != 320) {
 				_scaleFactorXm = 3;
@@ -1653,7 +1653,7 @@ void OSystem_WINCE3::internUpdateScreen() {
 			rout->w = routw;	rout->h = routh;
 			numRectsOut++;
 			rout++;
-	 		
+
 		}
 		SDL_UnlockSurface(srcSurf);
 		SDL_UnlockSurface(_hwscreen);
@@ -1759,7 +1759,7 @@ void OSystem_WINCE3::copyRectToOverlay(const OverlayColor *buf, int pitch, int x
 	}
 
 	if (w <= 0 || h <= 0)
-		return; 
+		return;
 
 	// Mark the modified region as dirty
 	_cksumValid = false;
@@ -1784,7 +1784,7 @@ void OSystem_WINCE3::copyRectToScreen(const byte *src, int pitch, int x, int y, 
 	assert (_transactionMode == kTransactionNone);
 	assert(src);
 
-	if (_screen == NULL) 
+	if (_screen == NULL)
 		return;
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
@@ -1898,7 +1898,7 @@ void OSystem_WINCE3::internDrawMouse() {
 	byte color;
 	const byte *src = _mouseData;		// Image representing the mouse
 	int width;
-	
+
 	// clip the mouse rect, and adjust the src pointer accordingly
 	if (x < 0) {
 		w += x;
@@ -1930,7 +1930,7 @@ void OSystem_WINCE3::internDrawMouse() {
 	if (!_overlayVisible) {
 		byte *bak = _mouseBackupOld;		// Surface used to backup the area obscured by the mouse
 		byte *dst;					// Surface we are drawing into
-	
+
 		dst = (byte *)_screen->pixels + y * _screenWidth + x;
 		while (h > 0) {
 			width = w;
@@ -1947,11 +1947,11 @@ void OSystem_WINCE3::internDrawMouse() {
 			dst += _screenWidth - w;
 			h--;
 		}
-	
+
 	} else {
 		uint16 *bak = (uint16 *)_mouseBackupOld;	// Surface used to backup the area obscured by the mouse
 		byte *dst;					// Surface we are drawing into
-	
+
 		dst = (byte *)_overlayscreen->pixels + (y + 1) * _overlayscreen->pitch + (x + 1) * 2;
 		while (h > 0) {
 			width = w;
@@ -2022,7 +2022,7 @@ void OSystem_WINCE3::undrawMouse() {
 	} else {
 		byte *dst;
 		uint16 *bak = (uint16 *)_mouseBackupOld;
-	
+
 		// No need to do clipping here, since drawMouse() did that already
 		dst = (byte *)_overlayscreen->pixels + (old_mouse_y + 1) * _overlayscreen->pitch + (old_mouse_x + 1) * 2;
 		for (y = 0; y < old_mouse_h; ++y, bak += _mouseBackupDim, dst += _overlayscreen->pitch)
@@ -2122,7 +2122,7 @@ void OSystem_WINCE3::drawMouse() {
 	// needs fixing, or remove it!
 	// FIXME
 	if (!(_toolbarHandler.visible() && _mouseCurState.y >= _toolbarHandler.getOffset() && !_usesEmulatedMouse) && !_forceHideMouse)
-		internDrawMouse();		
+		internDrawMouse();
 }
 
 void OSystem_WINCE3::fillMouseEvent(Common::Event &event, int x, int y) {
@@ -2320,7 +2320,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 							_rbutton = true;
 						}
 					}
-					_tapTime = 0;						
+					_tapTime = 0;
 				} else {
 					_tapTime = GetTickCount();
 					_tapX = event.mouse.x;
@@ -2351,7 +2351,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 					hotswapGFXMode();
 				}
 				return false;
-			} 
+			}
 
 			return true;
 
@@ -2391,7 +2391,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 		case SDL_QUIT:
 			event.type = Common::EVENT_QUIT;
 			return true;
-		
+
 		case SDL_ACTIVEEVENT:
 			if (ev.active.state & SDL_APPMOUSEFOCUS)
 				debug(2, "%s mouse focus.", ev.active.gain ? "Got" : "Lost");

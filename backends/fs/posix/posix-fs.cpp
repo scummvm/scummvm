@@ -37,7 +37,7 @@
 
 /**
  * Implementation of the ScummVM file system API based on POSIX.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class POSIXFilesystemNode : public AbstractFilesystemNode {
@@ -52,15 +52,15 @@ public:
 	 * Creates a POSIXFilesystemNode with the root node as path.
 	 */
 	POSIXFilesystemNode();
-	
+
 	/**
 	 * Creates a POSIXFilesystemNode for a given path.
-	 * 
+	 *
 	 * @param path String with the path the new node should point to.
 	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
 	 */
 	POSIXFilesystemNode(const String &path, bool verify);
-	
+
 	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; }
@@ -68,11 +68,11 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
 	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
-	
+
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
-	
+
 private:
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using the stat() function.
@@ -82,18 +82,18 @@ private:
 
 /**
  * Returns the last component of a given path.
- * 
+ *
  * Examples:
  * 			/foo/bar.txt would return /bar.txt
  * 			/foo/bar/    would return /bar/
- *  
+ *
  * @param str String containing the path.
  * @return Pointer to the first char of the last component inside str.
  */
 const char *lastPathComponent(const Common::String &str) {
 	if(str.empty())
 		return "";
-	
+
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
 
@@ -106,7 +106,7 @@ const char *lastPathComponent(const Common::String &str) {
 
 void POSIXFilesystemNode::setFlags() {
 	struct stat st;
-	
+
 	_isValid = (0 == stat(_path.c_str(), &st));
 	_isDirectory = _isValid ? S_ISDIR(st.st_mode) : false;
 }
@@ -146,18 +146,18 @@ AbstractFilesystemNode *POSIXFilesystemNode::getChild(const String &n) const {
 	// FIXME: Pretty lame implementation! We do no error checking to speak
 	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
-	
+
 	String newPath(_path);
 	if (_path.lastChar() != '/')
 		newPath += '/';
 	newPath += n;
-	
+
 	return new POSIXFilesystemNode(newPath, true);
 }
 
 bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
-	
+
 	DIR *dirp = opendir(_path.c_str());
 	struct dirent *dp;
 
@@ -186,7 +186,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 		/* TODO: d_type is not part of POSIX, so it might not be supported
 		 * on some of our targets. For those systems where it isn't supported,
 		 * add this #elif case, which tries to use stat() instead.
-		 * 
+		 *
 		 * The d_type method is used to avoid costly recurrent stat() calls in big
 		 * directories.
 		 */
@@ -221,11 +221,11 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 
 		if (entry._isDirectory)
 			entry._path += "/";
-			
+
 		myList.push_back(new POSIXFilesystemNode(entry));
 	}
 	closedir(dirp);
-	
+
 	return true;
 }
 

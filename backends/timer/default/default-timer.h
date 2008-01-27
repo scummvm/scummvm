@@ -31,13 +31,13 @@
 class OSystem;
 
 struct TimerSlot;
-	
+
 class DefaultTimerManager : public Common::TimerManager {
 private:
 	Common::Mutex _mutex;
 	void *_timerHandler;
 	TimerSlot *_head;
-	
+
 
 public:
 	DefaultTimerManager();

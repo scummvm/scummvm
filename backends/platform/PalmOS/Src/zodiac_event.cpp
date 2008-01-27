@@ -86,7 +86,7 @@ bool OSystem_PalmZodiac::check_event(Common::Event &event, EventPtr ev) {
 			if (_sound.active)
 				SndStreamPause(_soundEx.handle, true);
 			break;
-		
+
 		case vchrLateWakeup:
 			// resume the sound thread if any
 			if (_sound.active)

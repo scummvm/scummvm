@@ -105,7 +105,7 @@ static UInt32 ModulesPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 				LocalID dbID;
 
 				LaunchParamType *lp = (LaunchParamType *)cmdPBP;
-				
+
 				gVars = lp->gVars;
 				argvP = lp->args.argv;
 
@@ -128,7 +128,7 @@ static UInt32 ModulesPalmMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 	//			MemPtrSetOwner(gVars, ownerID);
 	//			ArgsSetOwner(argvP, ownerID);	// will be freed by main(...)
 	//			MemPtrFree(lp);					// will be freed by the system on exit
-				
+
 				run(lp->args.argc, argvP);
 
 				cardNo = 0;

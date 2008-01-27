@@ -52,7 +52,7 @@ protected:
 		virtual ~Debuglet() {}
 		virtual bool operator()(int argc, const char **argv) = 0;
 	};
-	
+
 	template <class T>
 	class DelegateDebuglet : public Debuglet {
 		typedef bool (T::*Method)(int argc, const char **argv);
@@ -68,7 +68,7 @@ protected:
 			return (_delegate->*_method)(argc, argv);
 		};
 	};
-	
+
 	// Convenicence macro for registering a method of a debugger class
 	// as the current command.
 	#define WRAP_METHOD(cls, method) \
@@ -95,7 +95,7 @@ protected:
 
 	int _frame_countdown;
 	bool _detach_now;
-	
+
 private:
 	// TODO: Consider replacing the following two arrays by a Hashmap
 	int _dvar_count;
@@ -121,7 +121,7 @@ protected:
 	// handled, false otherwise.
 	virtual bool handleCommand(int argc, const char **argv, bool &keepRunning);
 
-	
+
 private:
 	void detach();
 	void enter();

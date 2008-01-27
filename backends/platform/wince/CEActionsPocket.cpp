@@ -286,7 +286,7 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 			return true;
 		case POCKET_ACTION_RIGHT:
 			_CESystem->move_cursor_right();
-			return true; 
+			return true;
 		case POCKET_ACTION_QUIT:
 			{
 				GUI::MessageDialog alert("   Are you sure you want to quit ?   ", "Yes", "No");

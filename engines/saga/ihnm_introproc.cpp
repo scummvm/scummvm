@@ -228,7 +228,7 @@ bool Scene::playTitle(int title, int time, int mode) {
 					break;
 				}
 			}
-			
+
 			if (checkKey()) {
 				_vm->_scene->cutawaySkip();
 				interrupted = true;
@@ -244,7 +244,7 @@ bool Scene::playTitle(int title, int time, int mode) {
 						playParameter = false;
 
 					frameTime = curTime;
-			
+
 					_vm->_system->copyRectToScreen((byte *)backBufferSurface->pixels, backBufferSurface->w, 0, 0,
 							  backBufferSurface->w, backBufferSurface->h);
 				}

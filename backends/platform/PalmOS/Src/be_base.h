@@ -90,7 +90,7 @@ typedef struct {
 class OSystem_PalmBase : public OSystem {
 private:
 	virtual void int_initBackend() { }
-	
+
 	virtual const GraphicsMode *int_getSupportedGraphicsModes() const;
 	virtual void int_updateScreen() = 0;
 	virtual void int_initSize(uint w, uint h) = 0;
@@ -104,9 +104,9 @@ private:
 
 	virtual void draw_mouse() = 0;
 	virtual void undraw_mouse() = 0;
-	
+
 	virtual bool check_event(Common::Event &event, EventPtr ev) = 0;
-	
+
 	virtual void timer_handler();
 	void battery_handler();
 	virtual void get_coordinates(EventPtr ev, Coord &x, Coord &y) = 0;
@@ -134,12 +134,12 @@ protected:
 
 	RGBColorType _currentPalette[256];
 	uint _paletteDirtyStart, _paletteDirtyEnd;
-	
+
 	int _mode, _setMode;
 	int16 _screenWidth, _screenHeight;
 	Boolean _modeChanged, _gfxLoaded;
 	UInt32 _screenPitch;
-	
+
 	PointType _screenOffset;
 	struct {
 		Coord w, h;
@@ -162,7 +162,7 @@ protected:
 		UInt32 bitActionA;	// left mouse button
 		UInt32 bitActionB;	// right mouse button
 	} _keyExtra;
-	
+
 	bool _mouseVisible;
 	bool _mouseDrawn;
 	MousePos _mouseCurState;
@@ -171,14 +171,14 @@ protected:
 	int16 _mouseHotspotY;
 	byte _mouseKeyColor;
 	byte *_mouseDataP, *_mouseBackupP;
-	
+
 
 	bool _wasKey;
 	UInt8 _lastKeyModifier;
 	UInt32 _lastKeyRepeat;
 	Boolean _useNumPad, _showBatLow;
 	UInt32 _batCheckTicks, _batCheckLast;
-	
+
 	int _samplesPerSec;
 
 public:
@@ -190,19 +190,19 @@ public:
 
 	bool hasFeature(Feature f);
 	bool getFeatureState(Feature f);
-	
+
 	virtual void beginGFXTransaction();
 	virtual void endGFXTransaction();
-	
+
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-	
+
 	virtual OverlayColor ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b);
 	virtual void colorToARGB(OverlayColor color, uint8 &a, uint8 &r, uint8 &g, uint8 &b);
-	
+
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 	virtual void disableCursorPalette(bool disable);
-	
+
 	virtual void displayMessageOnOSD(const char *msg);
 */
 	const GraphicsMode *getSupportedGraphicsModes() const;
@@ -233,25 +233,25 @@ public:
 	void grabPalette(byte *colors, uint start, uint num);
 	virtual OverlayColor RGBToColor(uint8 r, uint8 g, uint8 b) = 0;
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) = 0;
-	
+
 	bool pollEvent(Common::Event &event);
-	
+
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
-	
+
 	virtual void setTimerCallback(TimerProc callback, int interval);
 
 	virtual MutexRef createMutex() { return NULL; }
 	virtual void lockMutex(MutexRef mutex) {}
 	virtual void unlockMutex(MutexRef mutex) {}
 	virtual void deleteMutex(MutexRef mutex) {}
-	
+
 	int getOutputSampleRate() const { return _samplesPerSec; }
 	virtual Audio::Mixer *getMixer();
 
 	void quit();
 	virtual void setWindowCaption(const char *caption) = 0;
-	
+
 	Common::SaveFileManager *getSavefileManager();
 	Common::TimerManager *getTimerManager();
 };

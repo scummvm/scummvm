@@ -116,7 +116,7 @@ void Resources::reloadData() {
 	// Get the palette subset data
 	_paletteSubset = isEGA ? NULL : new Palette(ALT_PALETTE_RESOURCE_ID);
 
-	// Load room data 
+	// Load room data
 	mb = d.getEntry(ROOM_DATA_RESOURCE_ID);
 	paths = d.getEntry(ROOM_PATHS_RESOURCE_ID);
 
@@ -150,11 +150,11 @@ void Resources::reloadData() {
 	for (;;) {
 		offsetVal = READ_LE_UINT16(mb->data() + (ctr * 2));
 		if (offsetVal == 0xffff) break;
-		
+
 		if (offsetVal != 0) {
 			RoomData *room = getRoom(ctr);
 			if (room) {
-				RoomExitHotspotResource *re = (RoomExitHotspotResource *) 
+				RoomExitHotspotResource *re = (RoomExitHotspotResource *)
 					(mb->data() + offsetVal);
 				while (READ_LE_UINT16(&re->hotspotId) != 0xffff) {
 					RoomExitHotspotData *newEntry = new RoomExitHotspotData(re);
@@ -187,7 +187,7 @@ void Resources::reloadData() {
 	while (READ_LE_UINT16(offset++) != 0xffff) ++numCharOffsets;
 	_charOffsets = new uint16[numCharOffsets];
 	offset = (uint16 *) mb->data();
-	for (ctr = 0; ctr < numCharOffsets; ++ctr, ++offset) 
+	for (ctr = 0; ctr < numCharOffsets; ++ctr, ++offset)
 		_charOffsets[ctr] = READ_LE_UINT16(offset);
 
 	// Next load up the list of random actions your follower can do in each room
@@ -262,7 +262,7 @@ void Resources::reloadData() {
 	mb = d.getEntry(HOTSPOT_SCRIPT_LIST_RESOURCE_ID);
 	uint16 numEntries = mb->size() / 2;
 	uint16 *srcVal = (uint16 *) mb->data();
-	uint16 *destVal = _hotspotScriptData = (uint16 *) 
+	uint16 *destVal = _hotspotScriptData = (uint16 *)
 		Memory::alloc(numEntries * sizeof(uint16));
 	for (ctr = 0; ctr < numEntries; ++ctr, ++srcVal, ++destVal) {
 		*destVal = READ_LE_UINT16(srcVal);
@@ -298,7 +298,7 @@ void Resources::reloadData() {
 
 	// Read in the talk data entries
 	mb = d.getEntry(TALK_DATA_RESOURCE_ID);
-	
+
 	// First get the list of give talk Ids
 	v = (uint16 *) mb->data();
 
@@ -334,7 +334,7 @@ void Resources::reloadData() {
 
 	// Load in the list of room exit coordinates
 	mb = d.getEntry(EXIT_COORDINATES_RESOURCE_ID);
-	RoomExitCoordinateEntryResource *coordRec = (RoomExitCoordinateEntryResource *) mb->data();	
+	RoomExitCoordinateEntryResource *coordRec = (RoomExitCoordinateEntryResource *) mb->data();
 	while (READ_LE_UINT16(coordRec) != 0xffff) {
 		RoomExitCoordinates *newEntry = new RoomExitCoordinates(coordRec);
 		_coordinateList.push_back(newEntry);
@@ -371,7 +371,7 @@ void Resources::reloadData() {
 
 RoomExitJoinData *Resources::getExitJoin(uint16 hotspotId) {
 	RoomExitJoinList::iterator i;
-	
+
 	for (i = _exitJoins.begin(); i != _exitJoins.end(); ++i) {
 		RoomExitJoinData *rec = *i;
 		if ((rec->hotspots[0].hotspotId == hotspotId) || (rec->hotspots[1].hotspotId == hotspotId))
@@ -400,7 +400,7 @@ RoomData *Resources::getRoom(uint16 roomNumber) {
 bool Resources::checkHotspotExtent(HotspotData *hotspot) {
 	uint16 roomNum = hotspot->roomNumber;
 	RoomData *room = getRoom(roomNum);
-	return (hotspot->startX >= room->clippingXStart) && ((room->clippingXEnd == 0) || 
+	return (hotspot->startX >= room->clippingXStart) && ((room->clippingXEnd == 0) ||
 			(hotspot->startX + 32 < room->clippingXEnd));
 }
 
@@ -409,7 +409,7 @@ void Resources::insertPaletteSubset(Palette &p) {
 	p.palette()->copyFrom(_paletteSubset->palette(), 60*4, 220*4, 8*4);
 }
 
-byte *Resources::getCursor(uint8 cursorNum) { 
+byte *Resources::getCursor(uint8 cursorNum) {
 	if (!LureEngine::getReference().isEGA())
 		return _cursors->data() + (cursorNum * CURSOR_SIZE);
 
@@ -503,7 +503,7 @@ int Resources::getAnimationIndex(HotspotAnimData *animData) {
 uint16 Resources::getHotspotAction(uint16 actionsOffset, Action action) {
 	HotspotActionList *list = _actionsList.getActions(actionsOffset);
 	uint16 offset = (!list) ? 0 : list->getActionOffset(action);
-	debugC(ERROR_DETAILED, kLureDebugHotspots, 
+	debugC(ERROR_DETAILED, kLureDebugHotspots,
 		"Resources::getHotspotAction actionsOffset=%xh result=%xh", actionsOffset, offset);
 	return offset;
 }
@@ -530,12 +530,12 @@ void Resources::setTalkingCharacter(uint16 id) {
 		assert(charHotspot);
 		charHotspot->talkDestCharacterId = 0;
 
-		if (_talkingCharacter != id) 
+		if (_talkingCharacter != id)
 			charHotspot->talkCountdown = 0;
 	}
 
-	_talkingCharacter = id; 
-	
+	_talkingCharacter = id;
+
 	if (_talkingCharacter != 0) {
 		Hotspot *character = getActiveHotspot(id);
 		assert(character);
@@ -591,7 +591,7 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 				loadFlag = false;
 			else
 				// Make the notice be on-screen
-				res->startY = 85;    
+				res->startY = 85;
 			break;
 
 		case 6:
@@ -612,7 +612,7 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 			// Special post-load handling
 			if (res->loadOffset == 3) hotspot->setPersistant(true);
 			if (res->loadOffset == 5) hotspot->handleTalkDialog();
-			
+
 			// TODO: Figure out why there's a room set in the animation decode for a range of characters,
 			// particularly since it doesn't seem to match what happens in-game
 			/*
@@ -639,7 +639,7 @@ Hotspot *Resources::addHotspot(uint16 hotspotId) {
 	Hotspot *hotspot = new Hotspot(hData);
 	_activeHotspots.push_back(hotspot);
 
-	if (hotspotId < FIRST_NONCHARACTER_ID) { 
+	if (hotspotId < FIRST_NONCHARACTER_ID) {
 		// Default characters to facing upwards until they start moving
 		hotspot->setDirection(UP);
 		hotspot->setCharRectY(0);
@@ -662,7 +662,7 @@ void Resources::deactivateHotspot(uint16 hotspotId, bool isDestId) {
 			_activeHotspots.erase(i);
 			break;
 		}
-		
+
 		i++;
 	}
 }
@@ -676,7 +676,7 @@ void Resources::deactivateHotspot(Hotspot *hotspot) {
 			_activeHotspots.erase(i);
 			break;
 		}
-		
+
 		i++;
 	}
 }
@@ -794,7 +794,7 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading walkable paths");
 	_roomData.loadFromStream(stream);
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Loading delay list");
-	_delayList.loadFromStream(stream); 
+	_delayList.loadFromStream(stream);
 
 	if (saveVersion >= 32) {
 		debugC(ERROR_DETAILED, kLureDebugScripts, "Loading talk data");

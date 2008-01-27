@@ -26,10 +26,10 @@
 NAME SCUM
 
 // Include definitions of resource STRUCTS used by this
-// resource script 
+// resource script
 #include <eikon.rh>
 #include "..\src\Scummvm.hrh"
-// Include the standard Eikon resource ids 
+// Include the standard Eikon resource ids
 #include <eikon.rsg>
 
 
@@ -52,11 +52,11 @@ RESOURCE MENU_BAR r_scum_menubar                                         // *** 
 	};
 }
 
-RESOURCE MENU_PANE r_scum_menu                                  // *** Submenu 
+RESOURCE MENU_PANE r_scum_menu                                  // *** Submenu
 {
 	items =
 	{
-	
+
 		MENU_ITEM{command = EEikCmdExit;txt = "Exit";}
     };
 }

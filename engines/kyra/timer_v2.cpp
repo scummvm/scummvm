@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #include "kyra/kyra_v2.h"
 #include "kyra/timer.h"
 
@@ -32,7 +32,7 @@ namespace Kyra {
 
 void KyraEngine_v2::setupTimers() {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::setupTimers()");
-	
+
 	_timer->addTimer(0, 0, 5, 1);
 	_timer->addTimer(1, TimerV2(timerFunc2), -1, 1);
 	_timer->addTimer(2, TimerV2(timerCauldronAnimation), 1, 1);
@@ -96,7 +96,7 @@ void KyraEngine_v2::setTimer1DelaySecs(int secs) {
 
 	if (secs == -1)
 		secs = 32000;
-	
+
 	_timer->setCountdown(1, secs * 60);
 }
 

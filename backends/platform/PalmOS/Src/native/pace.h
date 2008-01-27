@@ -52,9 +52,9 @@ extern GlobalsType global;
 
 
 #ifdef __cplusplus
-#	define PACE_CLASS_WRAPPER(rv)		extern "C" rv 
+#	define PACE_CLASS_WRAPPER(rv)		extern "C" rv
 #else
-#	define PACE_CLASS_WRAPPER(rv)		rv 
+#	define PACE_CLASS_WRAPPER(rv)		rv
 #endif
 #define PACE_CALLBACK_PTR			g_call68KFuncP
 #define PACE_EMULSTATE				g_emulStateP
@@ -66,7 +66,7 @@ extern GlobalsType global;
 
 #define PACE_PARAMS_INIT()						\
 	UInt8 params[] = {
-	
+
 #define PACE_PARAMS_ADD8(param)					\
 	(UInt8)(param),								\
 	0,
@@ -91,7 +91,7 @@ extern GlobalsType global;
 		static_cast<void *>(PACE_EMULSTATE),	\
 		PceNativeTrapNo(sysTrapPinsDispatch), 	\
 		NULL, 0)));
-		
+
 #define PACE_PIN_EXEC(pinTrap, returnType)		\
 	PACE_EMULSTATE->regData[2] = pinTrap;		\
 	return ((returnType)((PACE_CALLBACK_PTR)(	\

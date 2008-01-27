@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #include "kyra/sound.h"
 #include "kyra/kyra_v1.h"
 

@@ -46,7 +46,7 @@ Palette::Palette(uint16 srcNumEntries, const byte *srcData, PaletteSource palett
 	_palette = Memory::allocate(_numEntries * 4);
 
 	if (srcData) {
-		if (paletteSource == RGB64) 
+		if (paletteSource == RGB64)
 			convertRgb64Palette(srcData, _numEntries);
 		else if (paletteSource == EGA) {
 			assert((srcNumEntries == 16) || (srcNumEntries == 17));
@@ -74,7 +74,7 @@ Palette::Palette(Palette &src) {
 Palette::Palette(uint16 resourceId, PaletteSource paletteSource) {
 	Disk &disk = Disk::getReference();
 	bool isEGA = LureEngine::getReference().isEGA();
-	MemoryBlock *srcData = disk.getEntry(resourceId); 
+	MemoryBlock *srcData = disk.getEntry(resourceId);
 
 	if (paletteSource == DEFAULT)
 		paletteSource = isEGA ? EGA : RGB64;
@@ -84,7 +84,7 @@ Palette::Palette(uint16 resourceId, PaletteSource paletteSource) {
 		// Handle EGA palette
 		if ((srcData->size() != 16) && (srcData->size() != 17))
 			error("Specified resource %d is not a palette", resourceId);
-		
+
 		_numEntries = 16;
 		_palette = Memory::allocate(_numEntries * 4);
 		convertEGAPalette(srcData->data());
@@ -159,7 +159,7 @@ uint32 Palette::getEntry(uint8 index) {
 	return *entry;
 }
 
-void Palette::copyFrom(Palette *src) { 
+void Palette::copyFrom(Palette *src) {
 	_palette->copyFrom(src->palette());
 }
 

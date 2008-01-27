@@ -78,7 +78,7 @@ HitZone::HitZone(MemoryReadStreamEndian *readStream, int index, int sceneNumber)
 
 			// WORKAROUND: bug #1259608: "ITE: Riff ignores command in Ferret merchant center"
 			// Apparently ITE Mac version has bug in game data. Both ObjectMap and ActionMap
-			// for exit area are little taller (y = 123) and thus Riff goes to exit 
+			// for exit area are little taller (y = 123) and thus Riff goes to exit
 			// when clicked on barrel of nails.
 			if (sceneNumber == 18 && index == 0 && i == 0 && j == 0 && point->y == 123)
 				point->y = 129;

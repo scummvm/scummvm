@@ -194,7 +194,7 @@ void OSystem_GP32::copyRectToScreen(const byte *src, int pitch, int x, int y, in
 
 	if (w <= 0 || h <= 0)
 		return;
-	
+
 	byte *dst = _gameScreen + y * _screenWidth + x;
 
 	if (_screenWidth == pitch && pitch == w) {
@@ -346,7 +346,7 @@ void OSystem_GP32::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, 
 	if (w <= 0 || h <= 0)
 		return;
 
-	
+
 	OverlayColor *dst = _overlayBuffer + y * _overlayWidth + x;
 	if (_overlayWidth == pitch && pitch == w) {
 		memcpy(dst, buf, h * w * sizeof(OverlayColor));
@@ -504,7 +504,7 @@ bool OSystem_GP32::pollEvent(Common::Event &event) {
 
 	if (!gp_pollButtonEvent(&ev))
 		return false;
-	
+
 	switch(ev.type) {
 	case BUTTON_DOWN:
 		if (ev.button == GPC_VK_LEFT) {
@@ -715,9 +715,9 @@ bool OSystem_GP32::setSoundCallback(SoundProc proc, void *param) {
 
 	if (ConfMan.hasKey("output_rate"))
 		_samplesPerSec = ConfMan.getInt("output_rate");
-		
+
 	_samplesPerSec = (int)g_vars.sampleRate; //hack
-	
+
 	if (_samplesPerSec == 0) {
 		return false;
 	}

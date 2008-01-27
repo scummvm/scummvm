@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #include "kyra/kyra_v1.h"
 #include "kyra/screen_v1.h"
 #include "kyra/text.h"
@@ -33,7 +33,7 @@
 namespace Kyra {
 
 void KyraEngine_v1::waitForChatToFinish(int vocFile, int16 chatDuration, const char *chatStr, uint8 charNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v1::waitForChatToFinish(%i, %s, %i)", chatDuration, chatStr, charNum); 
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::waitForChatToFinish(%i, %s, %i)", chatDuration, chatStr, charNum);
 	bool hasUpdatedNPCs = false;
 	bool runLoop = true;
 	bool drawText = textEnabled();
@@ -113,8 +113,8 @@ void KyraEngine_v1::waitForChatToFinish(int vocFile, int16 chatDuration, const c
 		if ((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && (!drawText || !snd_voiceIsPlaying()))
 			break;
 
-		uint32 nextTime = loopStart + _tickLength; 
-		
+		uint32 nextTime = loopStart + _tickLength;
+
 		while (_system->getMillis() < nextTime) {
 			while (_eventMan->pollEvent(event)) {
 				switch (event.type) {
@@ -133,7 +133,7 @@ void KyraEngine_v1::waitForChatToFinish(int vocFile, int16 chatDuration, const c
 					break;
 				}
 			}
-		
+
 			if (nextTime - _system->getMillis() >= 10) {
 				_system->delayMillis(10);
 				_system->updateScreen();
@@ -189,7 +189,7 @@ void KyraEngine_v1::restoreChatPartnerAnimFrame(int8 charNum) {
 void KyraEngine_v1::backupChatPartnerAnimFrame(int8 charNum) {
 	_talkingCharNum = 0;
 
-	if (charNum < 5 && charNum > 0) 
+	if (charNum < 5 && charNum > 0)
 		_currentChatPartnerBackupFrame = _characterList[charNum].currentAnimFrame;
 
 	if (_currentCharacter->currentAnimFrame != 88) {
@@ -230,7 +230,7 @@ int KyraEngine_v1::initCharacterChat(int8 charNum) {
 	if (_talkingCharNum == -1) {
 		returnValue = 1;
 		_talkingCharNum = 0;
-		
+
 		if (_currentCharacter->currentAnimFrame != 88) {
 			_currentCharacter->currentAnimFrame = 16;
 			if (_scaleMode != 0)
@@ -269,7 +269,7 @@ void KyraEngine_v1::characterSays(int vocFile, const char *chatStr, int8 charNum
 	if (_currentCharacter->sceneId == 210)
 		return;
 
-	convoInitialized = initCharacterChat(charNum);	
+	convoInitialized = initCharacterChat(charNum);
 	chatPartnerNum = getChatPartnerNum();
 
 	if (chatPartnerNum >= 0 && chatPartnerNum < 5)
@@ -298,7 +298,7 @@ void KyraEngine_v1::characterSays(int vocFile, const char *chatStr, int8 charNum
 
 	_text->_talkMessageY = yPos;
 	_text->_talkMessageH = lineNum * 10;
-	
+
 	if (textEnabled()) {
 		_animator->restoreAllObjectBackgrounds();
 
@@ -347,7 +347,7 @@ void KyraEngine_v1::drawSentenceCommand(const char *sentence, int color) {
 		_currSentenceColor[0] = _screen->_currentPalette[765] = _screen->_currentPalette[color*3];
 		_currSentenceColor[1] = _screen->_currentPalette[766] = _screen->_currentPalette[color*3+1];
 		_currSentenceColor[2] = _screen->_currentPalette[767] = _screen->_currentPalette[color*3+2];
-	
+
 		_screen->setScreenPalette(_screen->_currentPalette);
 		_startSentencePalIndex = 0;
 	}
@@ -373,7 +373,7 @@ void KyraEngine_v1::updateTextFade() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::updateTextFade()");
 	if (!_fadeText)
 		return;
-	
+
 	bool finished = false;
 	for (int i = 0; i < 3; i++) {
 		if (_currSentenceColor[i] > 4)
@@ -384,7 +384,7 @@ void KyraEngine_v1::updateTextFade() {
 				finished = true;
 			}
 	}
-	
+
 	_screen->_currentPalette[765] = _currSentenceColor[0];
 	_screen->_currentPalette[766] = _currSentenceColor[1];
 	_screen->_currentPalette[767] = _currSentenceColor[2];

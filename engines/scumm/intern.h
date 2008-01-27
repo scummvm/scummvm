@@ -61,7 +61,7 @@ protected:
 		uint16 xStrips, yStrips;
 		bool isDrawn;
 	} _flashlight;
-	
+
 	char _saveLoadVarsFilename[256];
 
 public:
@@ -283,7 +283,7 @@ protected:
 
 	V2MouseoverBox _mouseOverBoxesV2[7];
 	int8 _mouseOverBoxV2;
-	
+
 	char _sentenceBuf[256];
 
 	int _activeInventory;
@@ -568,7 +568,7 @@ protected:
 		int16 xpos, ypos;
 		byte color;
 		byte charset;
-		byte text[256];		
+		byte text[256];
 	};
 
 	/** BlastObjects to draw */
@@ -879,7 +879,7 @@ public:
 		char tag[12+1];
 		int32 offset;
 	};
-	
+
 protected:
 	int _verbLineSpacing;
 	bool _existLanguageFile;
@@ -893,7 +893,7 @@ protected:
 		int16 xpos, ypos;
 		byte color;
 		byte charset;
-		byte text[256];		
+		byte text[256];
 		bool actorSpeechMsg;
 	};
 #else

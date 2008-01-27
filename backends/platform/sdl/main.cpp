@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
 	// Set up redirects for stdout/stderr under Windows and Symbian.
 	// Code copied from SDL_main.
 	//
-	
+
 	// Symbian does not like any output to the console through any *print* function
 	char STDOUT_FILE[256], STDERR_FILE[256]; // shhh, don't tell anybody :)
 	strcpy(STDOUT_FILE, Symbian::GetExecutablePath());

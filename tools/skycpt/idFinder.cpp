@@ -35,7 +35,7 @@ uint16 findCptId(char *name, TextFile *cptFile) {
 		cLine = cptFile->findLine(kmp, cLine);
 		if (cLine >= 0) {
 			char *line = cptFile->giveLine(cLine);
-			if ((strncmp(line, "COMPACT::", 9) == 0) || 
+			if ((strncmp(line, "COMPACT::", 9) == 0) ||
 				(strncmp(line, "SCRATCH::", 9) == 0) ||
 				(strncmp(line, "GET_TOS::", 9) == 0)) {
 				char *stopCh;

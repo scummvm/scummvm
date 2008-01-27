@@ -77,7 +77,7 @@ public:
 #else
 	static const char *kApplicationDomain;
 	static const char *kTransientDomain;
-	
+
 	const String _emptyString;
 #endif
 
@@ -97,7 +97,7 @@ public:
 	// Generic access methods: No domain specified, use the values from the
 	// various domains in the order of their priority.
 	//
-	
+
 	bool				hasKey(const String &key) const;
 	const String &		get(const String &key) const;
 	void				set(const String &key, const String &value);
@@ -143,7 +143,7 @@ public:
 	void				renameGameDomain(const String &oldName, const String &newName);
 	bool				hasGameDomain(const String &domName) const;
 	const DomainMap &	getGameDomains() const { return _gameDomains; }
-	
+
 /*
 	TODO: Callback/change notification system
 	typedef void (*ConfigCallback)(const ConstString &key, void *refCon);

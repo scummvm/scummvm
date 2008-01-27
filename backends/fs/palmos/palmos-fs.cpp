@@ -31,7 +31,7 @@
 
 /**
  * Implementation of the ScummVM file system API based on PalmOS VFS API.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class PalmOSFilesystemNode : public AbstractFilesystemNode {
@@ -41,16 +41,16 @@ protected:
 	bool _isDirectory;
 	bool _isValid;
 	bool _isPseudoRoot;
-	
+
 public:
 	/**
 	 * Creates a PalmOSFilesystemNode with the root node as path.
 	 */
 	PalmOSFilesystemNode();
-	
+
 	/**
 	 * Creates a POSIXFilesystemNode for a given path.
-	 * 
+	 *
 	 * @param path String with the path the new node should point to.
 	 */
 	PalmOSFilesystemNode(const String &p);
@@ -70,8 +70,8 @@ public:
 private:
 	/**
 	 * Adds a single WindowsFilesystemNode to a given list.
-	 * This method is used by getChildren() to populate the directory entries list. 
-	 * 
+	 * This method is used by getChildren() to populate the directory entries list.
+	 *
 	 * @param list List to put the file entry node in.
 	 * @param mode Mode to use while adding the file entry to the list.
 	 * @param base String with the directory being listed.
@@ -82,18 +82,18 @@ private:
 
 /**
  * Returns the last component of a given path.
- * 
+ *
  * Examples:
  * 			/foo/bar.txt would return /bar.txt
  * 			/foo/bar/    would return /bar/
- *  
+ *
  * @param str String containing the path.
  * @return Pointer to the first char of the last component inside str.
  */
 const char *lastPathComponent(const Common::String &str) {
 	if(str.empty())
 		return "";
-	
+
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
 
@@ -122,7 +122,7 @@ void PalmOSFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const ch
 	if (entry._isDirectory)
 		entry._path += "/";
 
-	entry._isValid = true;	
+	entry._isValid = true;
 	entry._isPseudoRoot = false;
 
 	list.push_back(new PalmOSFilesystemNode(entry));
@@ -161,7 +161,7 @@ PalmOSFilesystemNode::PalmOSFilesystemNode(const String &p) {
 
 AbstractFilesystemNode *PalmOSFilesystemNode::getChild(const String &n) const {
 	assert(_isDirectory);
-	
+
 	String newPath(_path);
 	if (_path.lastChar() != '/')
 		newPath += '/';
@@ -172,7 +172,7 @@ AbstractFilesystemNode *PalmOSFilesystemNode::getChild(const String &n) const {
 	Err error = VFSFileOpen(gVars->VFS.volRefNum, newPath.c_str(), vfsModeRead, &handle);
 	if (error)
 		return 0;
-	
+
 	error = VFSFileGetAttributes(handle, &attr);
 	VFSFileClose(handle);
 
@@ -184,7 +184,7 @@ AbstractFilesystemNode *PalmOSFilesystemNode::getChild(const String &n) const {
 
 bool PalmOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	//TODO: honor the hidden flag
-	
+
 	Err error;
 	Char nameP[256];
 	FileInfoType desc;
@@ -197,7 +197,7 @@ bool PalmOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 
 	if (error)
 		return false;
-	
+
 	while (dirIterator != expIteratorStop) {
 		error = VFSDirEntryEnumerate(handle, &dirIterator, &desc);
 		if (!error) {
@@ -212,11 +212,11 @@ bool PalmOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bo
 
 AbstractFilesystemNode *PalmOSFilesystemNode::getParent() const {
 	PalmOSFilesystemNode *p = 0;
-	
+
 	if (!_isPseudoRoot) {
 		const char *start = _path.c_str();
 		const char *end = lastPathComponent(_path);
-	
+
 		p = new PalmOSFilesystemNode();
 		p->_path = String(start, end - start);
 		p->_isValid = true;
@@ -224,7 +224,7 @@ AbstractFilesystemNode *PalmOSFilesystemNode::getParent() const {
 		p->_displayName = lastPathComponent(p->_path);
 		p->_isPseudoRoot =(p->_path == "/");
 	}
-	
+
 	return p;
 }
 

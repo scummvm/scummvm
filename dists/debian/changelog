@@ -9,7 +9,7 @@ scummvm (0.10.0-0svn20070530) experimental; urgency=low
     system, use the ScummVM team's own bug tracker instead.  You can find this
     tracker at <http://sourceforge.net/tracker/?group_id=37116>.
 
- -- Tore Anderson <tore@debian.org>  Wed, 30 May 2007 11:54:05 +0200 
+ -- Tore Anderson <tore@debian.org>  Wed, 30 May 2007 11:54:05 +0200
 
 scummvm (0.7.1-1) unstable; urgency=low
 
@@ -180,7 +180,7 @@ scummvm (0.5.0-1) unstable; urgency=low
   * Restructure 00buildopts somewhat, to ease future maintenance.
   * Standards-Version 3.6.0, no changes required.
   * Revised the description.
-  * Sponsored by Joey Hess. (Tore fed me all the beer I could take .. 
+  * Sponsored by Joey Hess. (Tore fed me all the beer I could take ..
     and then asked me to do this. ;-)
 
  -- Tore Anderson <tore@linpro.no>  Fri,  1 Aug 2003 21:45:06 +0200

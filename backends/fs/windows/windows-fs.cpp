@@ -141,7 +141,7 @@ private:
 const char *lastPathComponent(const Common::String &str) {
 	if(str.empty())
 		return "";
-		
+
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
 

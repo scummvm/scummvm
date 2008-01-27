@@ -237,7 +237,7 @@ struct RoomExitIndexedHotspotResource {
 
 enum SoundDescFlags {SF_IN_USE = 1, SF_RESTORE = 2};
 
-// In desc entry, numChannels: bits 0-1 # roland, bits 2-3 #adlib, bits 4-5 #internal 
+// In desc entry, numChannels: bits 0-1 # roland, bits 2-3 #adlib, bits 4-5 #internal
 
 struct SoundDescResource {
 	uint8 soundNumber;
@@ -279,7 +279,7 @@ public:
 		return result;
 	}
 
-	typename Common_List::iterator erase(typename Common_List::iterator first, 
+	typename Common_List::iterator erase(typename Common_List::iterator first,
 			typename Common_List::iterator last) {
 
 		while (first != last)
@@ -290,7 +290,7 @@ public:
 
 	T operator[](int index) {
 		typename Common_List::iterator i = Common_List::begin();
-		while (index-- > 0) 
+		while (index-- > 0)
 			++i;
 		return *i;
 	}
@@ -432,14 +432,14 @@ public:
 };
 
 enum CharacterMode {CHARMODE_NONE, CHARMODE_HESITATE, CHARMODE_IDLE, CHARMODE_PAUSED,
-	CHARMODE_WAIT_FOR_PLAYER, CHARMODE_CONVERSING, CHARMODE_PLAYER_WAIT, 
+	CHARMODE_WAIT_FOR_PLAYER, CHARMODE_CONVERSING, CHARMODE_PLAYER_WAIT,
 	CHARMODE_WAIT_FOR_INTERACT, CHARMODE_INTERACTING, CHARMODE_SPECIAL_PLAYER};
 
 enum BlockedState {BS_NONE, BS_INITIAL, BS_FINAL};
 
 enum VariantBool {VB_INITIAL, VB_FALSE, VB_TRUE};
 
-enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRIPT, 
+enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRIPT,
 	PROCESSING_PATH, WALKING};
 
 class CharacterScheduleSet;
@@ -453,7 +453,7 @@ private:
 public:
 	CharacterScheduleEntry() { _action = NONE; _parent = NULL; }
 	CharacterScheduleEntry(Action theAction, ...);
-	CharacterScheduleEntry(CharacterScheduleSet *parentSet, 
+	CharacterScheduleEntry(CharacterScheduleSet *parentSet,
 		CharacterScheduleResource *&rec);
 	CharacterScheduleEntry(CharacterScheduleEntry *src);
 
@@ -483,7 +483,7 @@ public:
 	}
 
 	CurrentAction action() { return _action; }
-	CharacterScheduleEntry &supportData() { 
+	CharacterScheduleEntry &supportData() {
 		if (!_supportData) error("Access made to non-defined action support record");
 		return *_supportData;
 	}
@@ -491,9 +491,9 @@ public:
 	uint16 roomNumber() { return _roomNumber; }
 	void setAction(CurrentAction newAction) { _action = newAction; }
 	void setRoomNumber(uint16 roomNum) { _roomNumber = roomNum; }
-	void setSupportData(CharacterScheduleEntry *newRec) { 
+	void setSupportData(CharacterScheduleEntry *newRec) {
 		assert((newRec == NULL) || (newRec->parent() != NULL));
-		_supportData = newRec; 
+		_supportData = newRec;
 	}
 	void setSupportData(uint16 entryId);
 
@@ -504,8 +504,8 @@ public:
 class CurrentActionStack {
 private:
 	ManagedList<CurrentActionEntry *> _actions;
-	void validateStack() { 
-		if (_actions.size() > 20) 
+	void validateStack() {
+		if (_actions.size() > 20)
 			error("NPC character got an excessive number of pending actions");
 	}
 public:
@@ -554,7 +554,7 @@ class HotspotData {
 public:
 	CurrentActionStack npcSchedule;
 	HotspotData(HotspotResource *rec);
-	
+
 	uint16 hotspotId;
 	uint16 nameId;
 	uint16 descId;
@@ -599,7 +599,7 @@ public:
 	uint16 talkDestCharacterId;
 	uint16 talkCountdown;
 	uint16 pauseCtr;
-	uint16 useHotspotId;	
+	uint16 useHotspotId;
 	uint16 talkGate;
 	uint16 actionHotspotId;
 	uint16 talkOverride;
@@ -639,7 +639,7 @@ public:
 
 class MovementDataList: public ManagedList<MovementData *> {
 public:
-	bool getFrame(uint16 currentFrame, int16 &xChange, int16 &yChange, 
+	bool getFrame(uint16 currentFrame, int16 &xChange, int16 &yChange,
 		uint16 &nextFrame);
 };
 
@@ -773,7 +773,7 @@ class CharacterScheduleSet: public ManagedList<CharacterScheduleEntry *> {
 private:
 	uint16 _id;
 public:
-	CharacterScheduleSet(CharacterScheduleResource *rec, uint16 setId); 
+	CharacterScheduleSet(CharacterScheduleResource *rec, uint16 setId);
 	uint16 getId(CharacterScheduleEntry *rec);
 	uint16 id() { return _id; }
 };
@@ -880,12 +880,12 @@ struct RoomTranslationRecord {
 
 extern const RoomTranslationRecord roomTranslations[];
 
-enum StringEnum {S_CREDITS = 25, S_RESTART_GAME = 26, S_SAVE_GAME = 27, S_RESTORE_GAME = 28, 
-	S_QUIT = 29, S_FAST_TEXT = 30, S_SLOW_TEXT = 31, S_SOUND_ON = 32, S_SOUND_OFF = 33, 
-	S_ACTION_NOTHING = 34, S_FOR = 35, S_TO = 36, S_ON = 37, S_AND_THEN = 38, S_FINISH = 39, 
-	S_CONFIRM_YN = 40, S_YOU_ARE_CARRYING = 41, S_INV_NOTHING = 42, S_YOU_HAVE = 43, 
+enum StringEnum {S_CREDITS = 25, S_RESTART_GAME = 26, S_SAVE_GAME = 27, S_RESTORE_GAME = 28,
+	S_QUIT = 29, S_FAST_TEXT = 30, S_SLOW_TEXT = 31, S_SOUND_ON = 32, S_SOUND_OFF = 33,
+	S_ACTION_NOTHING = 34, S_FOR = 35, S_TO = 36, S_ON = 37, S_AND_THEN = 38, S_FINISH = 39,
+	S_CONFIRM_YN = 40, S_YOU_ARE_CARRYING = 41, S_INV_NOTHING = 42, S_YOU_HAVE = 43,
 	S_GROAT = 44, S_GROATS = 45,
-	S_ARTICLE_LIST = 46}; 
+	S_ARTICLE_LIST = 46};
 
 class StringList {
 private:
@@ -907,14 +907,14 @@ public:
 	const char *getString(StringEnum sEnum) { return getString((int) sEnum); }
 };
 
-// The following class holds the field list used by the script engine as 
-// well as miscellaneous fields used by the game.                          
+// The following class holds the field list used by the script engine as
+// well as miscellaneous fields used by the game.
 
 #define NUM_VALUE_FIELDS 90
 
 enum FieldName {
-	ROOM_NUMBER = 0, 
-	CHARACTER_HOTSPOT_ID = 1, 
+	ROOM_NUMBER = 0,
+	CHARACTER_HOTSPOT_ID = 1,
 	USE_HOTSPOT_ID = 2,
 	ACTIVE_HOTSPOT_ID = 3,
 	SEQUENCE_RESULT = 4,

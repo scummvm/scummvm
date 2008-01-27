@@ -47,7 +47,7 @@ namespace Symbian {
 
 // Show a simple Symbian Info win with Msg & exit
 void FatalError(const char *msg) {
-	TPtrC8 msgPtr((const TUint8 *)msg); 
+	TPtrC8 msgPtr((const TUint8 *)msg);
 	TBuf<512> msg16Bit;
 	msg16Bit.Copy(msgPtr);
 #ifdef S60
@@ -60,7 +60,7 @@ void FatalError(const char *msg) {
 
 // make this easily available everywhere
 char* GetExecutablePath() {
-	return CSDLApp::GetExecutablePathCStr();	
+	return CSDLApp::GetExecutablePathCStr();
 }
 
 } // namespace Symbian {
@@ -89,12 +89,12 @@ bool OSystem_SDL_Symbian::hasFeature(Feature f) {
 }
 
 void OSystem_SDL_Symbian::setFeatureState(Feature f, bool enable) {
-	switch(f) {	
-		case kFeatureVirtualKeyboard:				
-			if (enable) {			
+	switch(f) {
+		case kFeatureVirtualKeyboard:
+			if (enable) {
 			}
 			else {
-			
+
 			}
 			break;
 		case kFeatureDisableKeyFiltering:
@@ -123,15 +123,15 @@ void OSystem_SDL_Symbian::initBackend() {
 #endif
 	ConfMan.setInt("joystick_num", 0); // Symbian OS  should have joystick_num set to 0 in the ini file , but uiq devices might refuse opening the joystick
 	ConfMan.flushToDisk();
-	
+
 	GUI::Actions::init();
 
 	OSystem_SDL::initBackend();
-	
+
 	// Initialize global key mapping for Smartphones
 	GUI::Actions* actions = GUI::Actions::Instance();
 
-	actions->initInstanceMain(this);	
+	actions->initInstanceMain(this);
 	actions->loadMapping();
 	initZones();
 }
@@ -157,7 +157,7 @@ bool OSystem_SDL_Symbian::setGraphicsMode(const char * /*name*/) {
 void OSystem_SDL_Symbian::quitWithErrorMsg(const char * /*aMsg*/) {
 
 	CEikonEnv::Static()->AlertWin(_L("quitWithErrorMsg()")) ;
-	
+
 	if (g_system)
 		g_system->quit();
 }
@@ -171,7 +171,7 @@ void OSystem_SDL_Symbian::quit() {
 bool OSystem_SDL_Symbian::setSoundCallback(SoundProc proc, void *param) {
 
 	// First save the proc and param
-	_sound_proc_param = param; 
+	_sound_proc_param = param;
 	_sound_proc = proc;
 	SDL_AudioSpec desired;
 	SDL_AudioSpec obtained;
@@ -267,11 +267,11 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 		return false;
 
 	for (TInt loop = 0; loop < GUI::ACTION_LAST; loop++) {
-		if (GUI::Actions::Instance()->getMapping(loop) == ev.key.keysym.sym && 
+		if (GUI::Actions::Instance()->getMapping(loop) == ev.key.keysym.sym &&
 			GUI::Actions::Instance()->isEnabled(loop)) {
 			// Create proper event instead
 			switch(loop) {
-			case GUI::ACTION_UP:	
+			case GUI::ACTION_UP:
 				if (ev.type == SDL_KEYDOWN) {
 					_km.y_vel = -1;
 					_km.y_down_count = 1;
@@ -282,7 +282,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 				event.type = Common::EVENT_MOUSEMOVE;
 				fillMouseEvent(event, _km.x, _km.y);
 
-				return true;			
+				return true;
 
 			case GUI::ACTION_DOWN:
 				if (ev.type == SDL_KEYDOWN) {
@@ -295,7 +295,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 				event.type = Common::EVENT_MOUSEMOVE;
 				fillMouseEvent(event, _km.x, _km.y);
 
-				return true;	
+				return true;
 
 			case GUI::ACTION_LEFT:
 				if (ev.type == SDL_KEYDOWN) {
@@ -337,8 +337,8 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 
 			case GUI::ACTION_ZONE:
 				if (ev.type == SDL_KEYDOWN) {
-					int i;				
-					
+					int i;
+
 					for (i=0; i < TOTAL_ZONES; i++)
 						if (_km.x >= _zones[i].x && _km.y >= _zones[i].y &&
 							_km.x <= _zones[i].x + _zones[i].width && _km.y <= _zones[i].y + _zones[i].height
@@ -352,7 +352,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 							_currentZone = 0;
 						event.type = Common::EVENT_MOUSEMOVE;
 						fillMouseEvent(event, _mouseXZone[_currentZone], _mouseYZone[_currentZone]);
-						SDL_WarpMouse(event.mouse.x, event.mouse.y);					
+						SDL_WarpMouse(event.mouse.x, event.mouse.y);
 				}
 
 				return true;
@@ -376,24 +376,24 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 					ev.key.keysym.scancode = 0;
 					ev.key.keysym.mod = (SDLMod) key.flags();
 
-					// Translate from SDL keymod event to Scummvm Key Mod Common::Event. 
+					// Translate from SDL keymod event to Scummvm Key Mod Common::Event.
 					// This codes is also present in GP32 backend and in SDL backend as a static function
-					// Perhaps it should be shared. 
-					if (key.flags() != 0) {									
+					// Perhaps it should be shared.
+					if (key.flags() != 0) {
 						event.kbd.flags = 0;
 
 						if (ev.key.keysym.mod & KMOD_SHIFT)
 							event.kbd.flags |= Common::KBD_SHIFT;
-						
+
 						if (ev.key.keysym.mod & KMOD_ALT)
 							event.kbd.flags |= Common::KBD_ALT;
-						
+
 						if (ev.key.keysym.mod & KMOD_CTRL)
 							event.kbd.flags |= Common::KBD_CTRL;
 					}
 
 					return false;
-				}			
+				}
 
 			case GUI::ACTION_QUIT:
 				{
@@ -447,20 +447,20 @@ FILE* 	symbian_fopen(const char* name, const char* mode) {
 		TInt modeLen = strlen(mode);
 
 		TPtrC8 namePtr((unsigned char*) name, strlen(name));
-		TFileName tempFileName;		
+		TFileName tempFileName;
 		tempFileName.Copy(namePtr);
-		
+
 		TInt fileMode = EFileRead;
-		
+
 		if (mode[0] == 'a')
 			fileMode = EFileWrite;
-		
+
 		if (!((modeLen > 1 && mode[1] == 'b') || (modeLen > 2 && mode[2] == 'b'))) {
 			fileMode |= EFileStreamText;
 		}
-		
+
 		if ((modeLen > 1 && mode[1] == '+') || (modeLen > 2 && mode[2] == '+')) {
-			fileMode = fileMode| EFileWrite;	
+			fileMode = fileMode| EFileWrite;
 		}
 
 		fileMode = fileMode| EFileShareAny;
@@ -474,13 +474,13 @@ FILE* 	symbian_fopen(const char* name, const char* mode) {
 				}
 			}
 			break;
-		case 'r': 
+		case 'r':
 			if (fileEntry->iFileHandle.Open(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
 				delete fileEntry;
 				fileEntry = NULL;
 			}
 			break;
-			
+
 		case 'w':
 			if (fileEntry->iFileHandle.Replace(CEikonEnv::Static()->FsSession(), tempFileName, fileMode) != KErrNone) {
 				delete fileEntry;
@@ -502,7 +502,7 @@ size_t symbian_fread(const void* ptr, size_t size, size_t numItems, FILE* handle
 	TPtr8 pointer( (unsigned char*) ptr, size*numItems);
 
 	((TSymbianFileEntry*)(handle))->iFileHandle.Read(pointer);
-	
+
 	return pointer.Length()/size;
 }
 
@@ -552,7 +552,7 @@ int symbian_fseek(FILE* handle, long int offset, int whence) {
 	case SEEK_END:
 		seekMode = ESeekEnd;
 		break;
-		
+
 	}
 
 	return ((TSymbianFileEntry*)(handle))->iFileHandle.Seek(seekMode, pos);

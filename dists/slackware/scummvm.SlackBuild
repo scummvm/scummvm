@@ -13,10 +13,10 @@ ARCH=i486
 BUILD=1
 
 if [ ! -d $TMP ]; then
-  mkdir -p $TMP 
+  mkdir -p $TMP
 fi
 if [ ! -d $PKG ]; then
-  mkdir -p $PKG 
+  mkdir -p $PKG
 fi
 
 cd $TMP

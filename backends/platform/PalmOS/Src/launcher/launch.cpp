@@ -95,7 +95,7 @@ UInt16 ModFind(const Char *f) {
 		if (!e) e = VFSFileClose(r);
 		if (!e) break;
 	}
-	
+
 	return volRefNum;
 }
 
@@ -105,7 +105,7 @@ static void ModSetStack(UInt32 newSize, UInt16 cardNo, LocalID dbID) {
 	if (dbRef) {
 		MemHandle pref = DmGetResource('pref',0);
 		UInt32 size = 0;
-		
+
 		if (pref) {
 			SysAppPrefsType *data = (SysAppPrefsType *)MemHandleLock(pref);
 			size = data->stackSize;
@@ -273,7 +273,7 @@ Boolean StartScummVM(Int16 engine) {
 			case 5:
 				ArgsAdd(&argvP[argc], "--render-mode=", "hercGreen", &argc);
 				break;
-		}		
+		}
 
 		switch (gameInfoP->gfxMode)	{
 			case 1:
@@ -311,7 +311,7 @@ Boolean StartScummVM(Int16 engine) {
 				"segacd",
 				"windows"
 			};
-			ArgsAdd(&argvP[argc], "--platform=", platform[gameInfoP->platform], &argc);	
+			ArgsAdd(&argvP[argc], "--platform=", platform[gameInfoP->platform], &argc);
 		}
 
 		// subtitles
@@ -354,7 +354,7 @@ Boolean StartScummVM(Int16 engine) {
 				else
 					ArgsAdd(&argvP[argc], "-e", "auto", &argc);		// no driver, switch to auto
 			} else {
-				ArgsAdd(&argvP[argc], "-e", drv[gameInfoP->musicInfo.sound.drvMusic], &argc);	
+				ArgsAdd(&argvP[argc], "-e", drv[gameInfoP->musicInfo.sound.drvMusic], &argc);
 			}
 
 			// output rate
@@ -398,7 +398,7 @@ Boolean StartScummVM(Int16 engine) {
 		if (gPrefs->altIntro)
 			ArgsAdd(&argvP[argc], "--alt-intro", NULL, &argc);
 	}
-		
+
 	if (engine == ENGINE_SCUMM) {
 		// demo mode ?
 		if (gPrefs->demoMode)
@@ -418,7 +418,7 @@ Boolean StartScummVM(Int16 engine) {
 	lightspeed= (gPrefs->lightspeed.enable ? gPrefs->lightspeed.mode : 255);
 	toLauncher= (gPrefs->exitLauncher);
 
-	// gVars values 
+	// gVars values
 	// (gVars->HRrefNum defined in checkHRmode on Clie)
 #ifndef _DEBUG_ENGINE
 	gVars->VFS.volRefNum	= (gPrefs->card.autoDetect ? vfsInvalidVolRef : gPrefs->card.volRefNum);
@@ -436,12 +436,12 @@ Boolean StartScummVM(Int16 engine) {
 
 	// user params
 	HWR_RSTALL();
-	
+
 	if (gPrefs->goLCD)
 		HWR_SET(INIT_GOLCD);
 	else
 		OPTIONS_RST(kOptGoLcdAPI);
-	
+
 	if (!gPrefs->autoOff)
 		HWR_SET(INIT_AUTOOFF);
 

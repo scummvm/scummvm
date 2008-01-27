@@ -109,15 +109,15 @@ public:
 	 * @return A string describing the last error.
 	 */
 	virtual String getErrorDesc() { return _errorDesc; }
-	
+
 	/**
 	 * Returns the last ocurred error description. If none ocurred, returns 0.
 	 * Also clears the last error state and description.
-	 * 
+	 *
 	 * @return A string describing the last error.
 	 */
 	virtual String popErrorDesc();
-	
+
 	/**
 	 * Open the file with name filename in the given directory for saving.
 	 * @param filename	the filename

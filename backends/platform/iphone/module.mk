@@ -9,6 +9,6 @@ MODULE_OBJS := \
 
 MODULE_DIRS += \
 	backends/platform/iphone/
-	
+
 # We don't use the rules.mk here on purpose
 OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)

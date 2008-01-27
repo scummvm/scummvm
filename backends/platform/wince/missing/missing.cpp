@@ -33,7 +33,7 @@ char *strdup(const char *strSource);
 #ifdef __GNUC__
 #define EXT_C extern "C"
 #else
-#define EXT_C 
+#define EXT_C
 #endif
 
 // common missing functions required by both gcc and evc
@@ -155,7 +155,7 @@ int remove(const char* path)
 int _access(const char *path, int mode) {
 	TCHAR fname[MAX_PATH];
 	MultiByteToWideChar(CP_ACP, 0, path, -1, fname, sizeof(fname)/sizeof(TCHAR));
- 
+
 	WIN32_FIND_DATA ffd;
 	HANDLE h=FindFirstFile(fname, &ffd);
 
@@ -174,7 +174,7 @@ int _access(const char *path, int mode) {
 			return ffd.dwFileAttributes&FILE_ATTRIBUTE_READONLY?-1:0;
 		case 04: //Check Read permission
 			return 0; //Assume always have read permission
-	} 
+	}
 	//Bad mode value supplied, return failure
 	return -1;
 }

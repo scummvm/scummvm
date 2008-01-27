@@ -78,7 +78,7 @@ public:
 	Header *lockScript(uint32 scrID);
 	void unlockScript(uint32 scrID);
 	FrameHeader *fetchFrame(void *resourceData, uint32 frameNo);
-	
+
 	uint16 getUint16(uint16 value) {
 		return (_isBigEndian) ? FROM_BE_16(value): FROM_LE_16(value);
 	}

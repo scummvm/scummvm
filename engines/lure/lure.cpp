@@ -67,9 +67,9 @@ int LureEngine::init() {
 	// Check the version of the lure.dat file
 	Common::File f;
 	VersionStructure version;
-	if (!f.open(SUPPORT_FILENAME))  
+	if (!f.open(SUPPORT_FILENAME))
 		GUIError("Could not locate Lure support file");
-	
+
 	f.seek(0xbf * 8);
 	f.read(&version, sizeof(VersionStructure));
 	f.close();
@@ -78,7 +78,7 @@ int LureEngine::init() {
 		GUIError("Error validating %s - file is invalid or out of date", SUPPORT_FILENAME);
 	else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR))
 		GUIError("Incorrect version of %s file - expected %d.%d but got %d.%d",
-			SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR, 
+			SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR,
 			version.vMajor, version.vMinor);
 
 	_disk = new Disk();
@@ -164,7 +164,7 @@ const char *LureEngine::generateSaveName(int slotNumber) {
 bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 	Common::WriteStream *f = this->_saveFileMan->openForSaving(
 		generateSaveName(slotNumber));
-	if (f == NULL) 
+	if (f == NULL)
 		return false;
 
 	f->write("lure", 5);
@@ -188,7 +188,7 @@ bool LureEngine::saveGame(uint8 slotNumber, Common::String &caption) {
 bool LureEngine::loadGame(uint8 slotNumber) {
 	Common::ReadStream *f = this->_saveFileMan->openForLoading(
 		generateSaveName(slotNumber));
-	if (f == NULL) 
+	if (f == NULL)
 		return false;
 
 	// Check for header
@@ -230,7 +230,7 @@ void LureEngine::GUIError(const char *msg, ...) {
 	// Generate the full error message
 	va_start(va, msg);
 	vsnprintf(buffer, STRINGBUFLEN, msg, va);
-	va_end(va);	
+	va_end(va);
 
 	Engine::GUIErrorMessage(buffer);
 	exit(1);

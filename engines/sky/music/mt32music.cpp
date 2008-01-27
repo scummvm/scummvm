@@ -102,10 +102,10 @@ bool MT32Music::processPatchSysEx(uint8 *sysExData) {
 		return false;
 
 	// decompress data from stream
-	sysExBuf[ 0] = 0x41; 
-	sysExBuf[ 1] = 0x10; 
-	sysExBuf[ 2] = 0x16; 
-	sysExBuf[ 3] = 0x12; 
+	sysExBuf[ 0] = 0x41;
+	sysExBuf[ 1] = 0x10;
+	sysExBuf[ 2] = 0x16;
+	sysExBuf[ 3] = 0x12;
 	sysExBuf[ 4] = 0x5;
 	sysExBuf[ 5] = sysExData[0] >> 4;			// patch offset part 1
 	sysExBuf[ 6] = (sysExData[0] & 0xF) << 3;	// patch offset part 2

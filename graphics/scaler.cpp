@@ -78,10 +78,10 @@ template<class T>
 void InitLUT() {
 	int r, g, b;
 	int Y, u, v;
-	
+
 	assert(T::kBytesPerPixel == 2);
 
-	// Allocate the YUV/LUT buffers on the fly if needed.	
+	// Allocate the YUV/LUT buffers on the fly if needed.
 	if (RGBtoYUV == 0)
 		RGBtoYUV = (uint32 *)malloc(65536 * sizeof(uint32));
 	if (LUT16to32 == 0)

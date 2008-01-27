@@ -58,7 +58,7 @@ enum {
 
 struct AudioDataStruct {
 	const char * const *_fileList;
-	const int _fileListLen;	
+	const int _fileListLen;
 	const void * const _cdaTracks;
 	const int _cdaNumTracks;
 };
@@ -92,12 +92,12 @@ class KyraEngine : public Engine {
 public:
 	KyraEngine(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine();
-	
+
 	bool quit() const { return _quitFlag; }
-	
+
 	uint8 game() const { return _flags.gameID; }
 	const GameFlags &gameFlags() const { return _flags; }
-	
+
 	// access to Kyra specific functionallity
 	Resource *resource() { return _res; }
 	virtual Screen *screen() = 0;
@@ -105,17 +105,17 @@ public:
 	Sound *sound() { return _sound; }
 	StaticResource *staticres() { return _staticres; }
 	TimerManager *timer() { return _timer; }
-	
+
 	uint32 tickLength() const { return _tickLength; }
-	
+
 	virtual Movie *createWSAMovie() = 0;
-	
+
 	Common::RandomSource _rnd;
-	
+
 	// quit handling
 	virtual void quitGame();
 
-	// game flag handling	
+	// game flag handling
 	int setGameFlag(int flag);
 	int queryGameFlag(int flag) const;
 	int resetGameFlag(int flag);
@@ -127,7 +127,7 @@ public:
 	virtual void snd_playVoiceFile(int id) = 0;
 	virtual bool snd_voiceIsPlaying();
 	virtual void snd_stopVoice();
-	
+
 	// delay functionallity
 	virtual void delayUntil(uint32 timestamp, bool updateGameTimers = false, bool update = false, bool isMainLoop = false);
 	virtual void delay(uint32 millis, bool update = false, bool isMainLoop = false);
@@ -136,10 +136,10 @@ public:
 protected:
 	virtual int go() = 0;
 	virtual int init();
-	
+
 	// quit Handling
 	bool _quitFlag;
-	
+
 	// intern
 	Resource *_res;
 	Sound *_sound;
@@ -161,7 +161,7 @@ protected:
 
 	bool speechEnabled();
 	bool textEnabled();
-	
+
 	// game speed
 	bool _skipFlag;
 	uint16 _tickLength;
@@ -171,7 +171,7 @@ protected:
 	virtual void setupTimers() = 0;
 
 	virtual void setWalkspeed(uint8 speed) = 0;
-	
+
 	// detection
 	GameFlags _flags;
 	int _lang;
@@ -179,7 +179,7 @@ protected:
 	// opcode
 	virtual void setupOpcodeTable() = 0;
 	Common::Array<const Opcode*> _opcodes;
-	
+
 	// game flags
 	uint8 _flagsTable[100];	// TODO: check this value
 
@@ -190,10 +190,10 @@ protected:
 
 	const int8 *_trackMap;
 	int _trackMapSize;
-	
-	// input	
+
+	// input
 	Common::Point getMousePos() const;
-	
+
 	// pathfinder
 	virtual int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);
 	int findSubPath(int x, int y, int toX, int toY, int *moveTable, int start, int end);
@@ -202,7 +202,7 @@ protected:
 	void changePosTowardsFacing(int &x, int &y, int facing);
 	int getMoveTableSize(int *moveTable);
 	virtual bool lineIsPassable(int x, int y) = 0;
-	
+
 	static const int8 _addXPosTable[];
 	static const int8 _addYPosTable[];
 };

@@ -178,7 +178,7 @@ private:
 	int _moves;
 
 	bool _isTrollAway;
-	
+
 	int _inventory[IDI_TRO_MAX_TREASURE];
 
 	bool _soundOn;

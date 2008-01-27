@@ -1709,7 +1709,7 @@ void ScummEngine_v72he::o72_openFile() {
 int ScummEngine_v72he::readFileToArray(int slot, int32 size) {
 	writeVar(0, 0);
 	byte *data = defineArray(0, kByteArray, 0, 0, 0, size);
-	
+
 	if (slot != -1) {
 		_hInFileTable[slot]->read(data, size + 1);
 	}

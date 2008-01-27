@@ -152,7 +152,7 @@ static const char *c_footer =
 static void parseEntry(Entry *entry, char *line) {
 	assert(entry);
 	assert(line);
-	
+
 	/* Split at the tabs */
 	entry->md5 = strtok(line, "\t\n\r");
 	entry->size = strtok(NULL, "\t\n\r");
@@ -238,7 +238,7 @@ int main(int argc, char *argv[])
 	} else {
 		showhelp(argv[0]);
 	}
-	
+
 	time(&theTime);
 	generationDate = strdup(asctime(gmtime(&theTime)));
 
@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
 			parseEntry(&entry, line+1);
 			if (outputMode == kPHPOutput) {
 				fprintf(outFile, "\taddEntry(");
-				
+
 				// Print the description string
 				fprintf(outFile, "\"");
 				if (entry.extra && strcmp(entry.extra, "-")) {
@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 	if (outputMode == kPHPOutput) {
 		if (gameid[0] != 0)		// If there is an active section, close it now
 			fprintf(outFile, "endSection();\n");
-		
+
 		fprintf(outFile, "?>\n");
 	}
 
@@ -365,7 +365,7 @@ int main(int argc, char *argv[])
 		/* Finally, print the footer */
 		fprintf(outFile, c_footer);
 	}
-	
+
 	free(entriesBuffer);
 
 	return 0;

@@ -44,6 +44,6 @@ sourcepath ..
 AIF			ScummVm.Aif ..\res\ ScummVmAif.rss c16 ScummL.bmp ScummLM.bmp ScummS.bmp ScummSM.bmp
 
 // libraries
-LIBRARY cone.lib  EIKCORE.lib 
-LIBRARY euser.lib apparc.lib  
+LIBRARY cone.lib  EIKCORE.lib
+LIBRARY euser.lib apparc.lib
 LIBRARY efsrv.lib  apgrfx.lib

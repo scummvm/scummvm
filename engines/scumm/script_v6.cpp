@@ -2384,7 +2384,7 @@ void ScummEngine_v6::o6_talkActor() {
 
 		_forcedWaitForMessage = false;
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
-		
+
 		return;
 	}
 

@@ -20,7 +20,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  New Ports:
    - Added iPhone port.
    - Added Maemo port for Nokia Internet tablets.
- 
+
  General:
    - Added ARM assembly routines for code in the sound mixer and SCUMM
      video playback, resulting in some nice speedups on several ports.
@@ -157,7 +157,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Improved performance for S60v3 and UIQ3 using ARM target.
    - Limited support for pre Symbian OS9 devices due to compiler issues.
    - Updated key mapping handling.
-	
+
  WinCE Port:
    - Switched to using a GCC toolchain for building.
    - Major update to the SDL lib. Better, faster, more compatible :-)
@@ -274,13 +274,13 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Missing data files are handled more gracefully.
 
  WinCE Port:
-   - Added: PocketPC: Vertical oversampling scaler 320x200=>320x240 when panel not shown (n0p) 
-   - Added: PocketPC: Right click by double-tapping (n0p) 
-   - Fixed: All: Clipping issues in some cases 
-   - Added: PocketPC: Mouse emulation using keys 
-   - Added: Smartphones: Virtual keyboard popup 
-   - Fixed: Smartphones: Incorrect screen blit in SDL port 
-   - Added: All: Mouse cursor visible on panel if using emulated mouse 
+   - Added: PocketPC: Vertical oversampling scaler 320x200=>320x240 when panel not shown (n0p)
+   - Added: PocketPC: Right click by double-tapping (n0p)
+   - Fixed: All: Clipping issues in some cases
+   - Added: PocketPC: Mouse emulation using keys
+   - Added: Smartphones: Virtual keyboard popup
+   - Fixed: Smartphones: Incorrect screen blit in SDL port
+   - Added: All: Mouse cursor visible on panel if using emulated mouse
    - Added: All: Inverse landscape mode
    - Fixed: PocketPC: Dialogs cut-off/not redrawn
 
@@ -298,7 +298,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Should fix weird crashes with DOTT stamp and in FOA (#1399830 #1392815)
    - Fixed Monkey Island blocking keyboard panel on Smartphones (thks Knakos)
    - Fixed QVGA Smartphone detection (mean it this time :p)
-   - Fixed Smartphone double right click issue. 
+   - Fixed Smartphone double right click issue.
 
 0.8.1 (2006-01-31)
  General:
@@ -437,12 +437,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  SCUMM:
    - Fixed wrong actor animation in Full Throttle INSANE
- 
+
  Windows Mobile port (PocketPC / Smartphone) :
    - Fixed FOTAQ crash on all platforms when leaving the hotel AGAIN
    - Better low quality Adlib emulation for FOTAQ
    - Fix randomly broken Hide Toolbar option (thanks iKi)
-   - Fix first hardware key mapping (was not displayed before) 
+   - Fix first hardware key mapping (was not displayed before)
    - Fix BASS & Simon hangs on Smartphone when using the Skip hotkey
    - Fix Zone key action on Smartphone (now mapped on key 9)
    - Experimental third party VGA mode (SE-VGA) fix
@@ -494,7 +494,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      file. This removes the need for using the 'RESCUMM' program
    - Added smooth horizontal scrolling for The Dig, Full Throttle and COMI
      (matching the original engine)
-   - Partially rewrote the text engine, fixing various bugs, especially in 
+   - Partially rewrote the text engine, fixing various bugs, especially in
      newer games (The Dig, COMI)
    - Fixed actor drawing glitches in V1 Maniac and Zak
    - Fixed ship-to-ship graphic glitches in COMI
@@ -521,7 +521,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 0.6.1b (2004-08-03)
  General:
-   - Fixed copy/paste bug in launcher that may corrupt the Savegame Path 
+   - Fixed copy/paste bug in launcher that may corrupt the Savegame Path
    - Fixed crashes on 64-bit architectures
 
  SCUMM:
@@ -602,7 +602,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Keyboard support for cannon battle in Curse of Monkey Island
    - Keyboard support for derby scene in Full Throttle
 
-0.5.1 (2003-08-06) 
+0.5.1 (2003-08-06)
 - Rewrote Beneath a Steel Sky savegame code (see note in READMEs 'Known Bugs')
 - Fixed dialog skipping, music volume and several crashes/freezes in Steel Sky
 - Fixed dialog skipping in V7 games
@@ -644,7 +644,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 - Added support for the EGA versions of Loom, Monkey Island and Indy3
 - Improved music support in Indy3 and the floppy versions of Monkey Island
 - Many Simon the Sorcerer 1 & 2 improvements and fixes
-- Very pre-alpha Beneath a Steel Sky code. Don't expect it to do anything. 
+- Very pre-alpha Beneath a Steel Sky code. Don't expect it to do anything.
 - Even more pre-alpha support for V2 SCUMM games (Maniac Mansion and Zak)
 - Preliminary support for early Humongous Entertainment titles (very
   experimental)

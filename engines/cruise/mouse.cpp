@@ -119,7 +119,7 @@ int16 main10;
 		int hotspotY;
 		const byte *bitmap;
 	};
-	
+
 	static const MouseCursor mouseCursors[] = {
 		{ 1, 1, mouseCursorNormal },
 		{ 0, 0, mouseCursorDisk },

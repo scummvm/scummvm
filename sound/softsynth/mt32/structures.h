@@ -143,7 +143,7 @@ struct MemParams {
 		Bit8u panpot; // PANPOT 0-14 (R-L)
 		Bit8u dummyv[6];
 	} MT32EMU_ALIGN_PACKED;
-	
+
 	PatchTemp patchSettings[9];
 
 	struct RhythmTemp {
@@ -152,7 +152,7 @@ struct MemParams {
 		Bit8u panpot; // PANPOT 0-14 (R-L)
 		Bit8u reverbSwitch;  // REVERB SWITCH 0-1 (OFF,ON)
 	} MT32EMU_ALIGN_PACKED;
-	
+
 	RhythmTemp rhythmSettings[85];
 
 	TimbreParam timbreSettings[8];
@@ -164,7 +164,7 @@ struct MemParams {
 		TimbreParam timbre;
 		Bit8u padding[10];
 	} MT32EMU_ALIGN_PACKED;
-	
+
 	PaddedTimbre timbres[64 + 64 + 64 + 64]; // Group A, Group B, Memory, Rhythm
 
 	struct SystemArea {
@@ -176,7 +176,7 @@ struct MemParams {
 		Bit8u chanAssign[9]; // MIDI CHANNEL (PART1) 0-16 (1-16,OFF)
 		Bit8u masterVol; // MASTER VOLUME 0-100
 	} MT32EMU_ALIGN_PACKED;
-	
+
 	SystemArea system;
 };
 

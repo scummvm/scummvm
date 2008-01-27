@@ -173,7 +173,7 @@ int KyraEngine_v2::go() {
 		// load just the pak files needed for ingame
 		_res->loadPakFile(StaticResource::staticDataFilename());
 		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie)
-			_res->loadFileList("FILEDATA.FDT");	
+			_res->loadFileList("FILEDATA.FDT");
 		else
 			_res->loadFileList(_ingamePakList, _ingamePakListSize);
 	}
@@ -214,10 +214,10 @@ void KyraEngine_v2::startup() {
 	_screenBuffer = new uint8[64000];
 	_unkBuf200kByte = new uint8[200000];
 
-	loadChapterBuffer(_newChapterFile);	
+	loadChapterBuffer(_newChapterFile);
 
 	loadCCodeBuffer("C_CODE.XXX");
-	
+
 	if (_flags.isTalkie) {
 		loadOptionsBuffer("OPTIONS.XXX");
 
@@ -928,7 +928,7 @@ void KyraEngine_v2::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 		++src;
 		*src = toupper(*src);
 	}
-	
+
 	strcpy((char*)_unkBuf500Bytes, src);
 
 	if (str2 > 0) {
@@ -1571,7 +1571,7 @@ void KyraEngine_v2::playVoice(int high, int low) {
 
 void KyraEngine_v2::snd_playSoundEffect(int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::snd_playSoundEffect(%d)", track);
-	
+
 	if (track == 10)
 		track = _lastSfxTrack;
 
@@ -1583,7 +1583,7 @@ void KyraEngine_v2::snd_playSoundEffect(int track) {
 	int16 vocIndex = (int16) READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 	if (vocIndex != -1)
 		_sound->voicePlay(_ingameSoundList[vocIndex]);
-	else if (_flags.platform == Common::kPlatformPC) 
+	else if (_flags.platform == Common::kPlatformPC)
 		// TODO ?? Maybe there is a way to let users select whether they want
 		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
 		// For now this is used as a fallback only (if no voc file exists).

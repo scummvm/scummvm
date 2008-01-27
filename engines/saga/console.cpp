@@ -117,7 +117,7 @@ bool Console::cmdPlayCutaway(int argc, const char **argv) {
 }
 
 bool Console::cmdCurrentScene(int argc, const char **argv) {
-	DebugPrintf("Current Scene is: %i, scene resource id: %i\n", 
+	DebugPrintf("Current Scene is: %i, scene resource id: %i\n",
 		_vm->_scene->currentSceneNumber(), _vm->_scene->currentSceneResourceId());
 	return true;
 }

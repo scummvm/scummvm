@@ -180,7 +180,7 @@ bool FilesystemNode::lookupFile(FSList &results, const Common::String &p, bool h
 	Common::String pattern = p;
 
 	pattern.toUppercase();
-	
+
 	// First match all files on this level
 	getChildren(children, FilesystemNode::kListAll, hidden);
 	for (FSList::iterator entry = children.begin(); entry != children.end(); ++entry) {

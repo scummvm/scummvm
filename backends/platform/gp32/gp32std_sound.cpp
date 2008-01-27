@@ -151,7 +151,7 @@ int gp_soundBufStart(GPSOUNDBUF *sb) {
 	}
 
 	soundBuf.samplesize = 1 << shiftVal;
-	
+
 	// Allocate memory for the playing buffer
 	bufferSize = soundBuf.samplesize * soundBuf.samples * 2;
 	buffer = malloc(bufferSize);

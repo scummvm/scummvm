@@ -30,20 +30,20 @@
 
 /**
  * Creates ABoxFilesystemNode objects.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class ABoxFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<ABoxFilesystemFactory> {	
+class ABoxFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<ABoxFilesystemFactory> {
 public:
 	typedef Common::String String;
-		
+
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const;
-	
+
 protected:
 	ABoxFilesystemFactory() {};
-		
+
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 };

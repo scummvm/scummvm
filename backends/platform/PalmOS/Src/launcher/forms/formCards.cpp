@@ -50,7 +50,7 @@ static void CardSlotFreeList() {
 	if (itemsText && itemsList) {
 		cards = MemPtrRecoverHandle(itemsList);
 		items = MemPtrRecoverHandle(itemsText);
-	
+
 		itemsText = NULL;
 		itemsList = NULL;
 	}
@@ -88,13 +88,13 @@ static UInt16 CardSlotFillList(Boolean getRefNum = false) {
 			if (err || StrLen(labelP) == 0) {	// if no label try to retreive card type
 				VolumeInfoType volInfo;
 				err = VFSVolumeInfo(volRefNum, &volInfo);
-				
+
 				if (!err) {
 					ExpCardInfoType info;
 					err = ExpCardInfo(volInfo.slotRefNum, &info);
 					StrCopy(labelP, info.deviceClassStr);
 				}
-				
+
 				if (err)	// if err default name
 					StrPrintF(labelP,"Other Card %ld", other++);
 			}
@@ -103,7 +103,7 @@ static UInt16 CardSlotFillList(Boolean getRefNum = false) {
 				cards = MemHandleNew(sizeof(CardInfoType));
 			else
 				MemHandleResize(cards, MemHandleSize(cards) + sizeof(CardInfoType));
-				
+
 			cardsInfo = (CardInfoType *)MemHandleLock(cards);
 			cardsInfo[counter].volRefNum = volRefNum;
 			StrCopy(cardsInfo[counter].nameP, labelP);
@@ -146,7 +146,7 @@ static UInt16 CardSlotFillList(Boolean getRefNum = false) {
 	// no card found ? free old list in any or return invalid volref
 	} else {
 		if (!getRefNum)
-			CardSlotFreeList(); 
+			CardSlotFreeList();
 		else
 			return vfsInvalidVolRef;
 	}
@@ -240,7 +240,7 @@ static UInt16 ConfigTabSave() {
 
 	CardSlotCreateDirs();
 	CardSlotFreeList();
-	
+
 	return updateCode;
 }
 
@@ -341,7 +341,7 @@ Boolean CardSlotFormHandleEvent(EventPtr eventP) {
 				case CardSlotCancelButton:
 					CardSlotFormCancel();
 					break;
-				
+
 				case TabCardGameListMoveCheckbox:
 					GameListTabDraw();
 					break;
@@ -352,7 +352,7 @@ Boolean CardSlotFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-	
+
 	return handled;
 }
 

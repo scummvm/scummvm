@@ -93,7 +93,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	debug(5, "IMuseDigital::startSound(%d, trackId:%d)", soundId, l);
 
 	Track *track = _track[l];
-	
+
 	// Reset the track
 	memset(track, 0, sizeof(Track));
 

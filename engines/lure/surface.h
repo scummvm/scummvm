@@ -65,7 +65,7 @@ public:
 	int writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int colour);
 	void writeString(uint16 x, uint16 y, Common::String line, bool transparent,
 		int colour = DEFAULT_TEXT_COLOUR, bool varLength = true);
-	void writeSubstring(uint16 x, uint16 y, Common::String line, int len, 
+	void writeSubstring(uint16 x, uint16 y, Common::String line, int len,
 		bool transparent, int colour = DEFAULT_TEXT_COLOUR, bool varLength = true);
 	void transparentCopyTo(Surface *dest);
 	void copyTo(Surface *dest);
@@ -82,7 +82,7 @@ public:
 
 	static uint16 textWidth(const char *s, int numChars = 0);
 	static void wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines);
-	static Surface *newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength = true, 
+	static Surface *newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength = true,
 		int colour = DEFAULT_TEXT_COLOUR, bool squashedLines = true);
 	static Surface *newDialog(uint16 width, const char *lines, int colour = DEFAULT_TEXT_COLOUR);
 	static Surface *getScreen(uint16 resourceId);

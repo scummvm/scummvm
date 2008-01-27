@@ -29,8 +29,8 @@
 TARGET          ScummVM.exe
 TARGETPATH      sys\bin
 TARGETTYPE      exe
-						
-UID             0x100039ce 0xA0000657 
+
+UID             0x100039ce 0xA0000657
 
 START RESOURCE  ScummVM_reg.rss
 TARGETPATH              \private\10003a3f\apps
@@ -48,7 +48,7 @@ TARGETPATH              \Resource\Apps
 LANG                    SC
 END
 
-EPOCSTACKSIZE	80000 
+EPOCSTACKSIZE	80000
 EPOCHEAPSIZE	3000000 32000000
 
 START BITMAP    ScummVM.mbm
@@ -91,7 +91,7 @@ USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl ..
 
 SYSTEMINCLUDE 	\epoc32\include\ESDL
 SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
-SYSTEMINCLUDE   \epoc32\include\libc 
+SYSTEMINCLUDE   \epoc32\include\libc
 SYSTEMINCLUDE   \epoc32\include
 SYSTEMINCLUDE   ..\src // for portdefs.h
 
@@ -112,8 +112,8 @@ SOURCE backends\platform\sdl\events.cpp
 SOURCE backends\platform\sdl\graphics.cpp
 SOURCE backends\platform\sdl\sdl.cpp
 SOURCE backends\fs\abstract-fs-factory.cpp
-SOURCE backends\platform\symbian\src\SymbianOS.cpp 
-SOURCE backends\platform\symbian\src\SymbianActions.cpp 
+SOURCE backends\platform\symbian\src\SymbianOS.cpp
+SOURCE backends\platform\symbian\src\SymbianActions.cpp
 SOURCE backends\platform\symbian\src\ScummApp.cpp
 
 SOURCE gui\Key.cpp
@@ -124,10 +124,10 @@ SOURCE gui\Actions.cpp
 source graphics\iff.cpp
 
 // *** Dynamic Libraries
-LIBRARY cone.lib  eikcore.lib 
-LIBRARY euser.lib apparc.lib fbscli.lib  
+LIBRARY cone.lib  eikcore.lib
+LIBRARY euser.lib apparc.lib fbscli.lib
 LIBRARY estlib.lib apgrfx.lib
 LIBRARY gdi.lib hal.lib bitgdi.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
 LIBRARY qikctl.lib
-library qikcore.lib bafl.lib eikcoctl.lib 
+library qikcore.lib bafl.lib eikcoctl.lib

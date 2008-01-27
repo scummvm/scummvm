@@ -78,7 +78,7 @@ private:
 	uint8 *_instrumentMap;
 	uint8 *_registerTable, *_opOutputTable;
 	uint8 *_adlibRegMirror;
-	
+
 	// normal subs
 	void setRegister(uint8 regNum, uint8 value);
 	int32 getNextEventTime(void);
@@ -87,7 +87,7 @@ private:
 	void setupInstrument(uint8 opcode);
 	void setupChannelVolume(uint8 volume);
 	void stopNote(void);
-	
+
 	// Streamfunctions from Command90hTable
 	void com90_caseNoteOff(void);       // 0
 	void com90_stopChannel(void);       // 1

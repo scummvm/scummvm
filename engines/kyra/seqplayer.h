@@ -43,7 +43,7 @@ public:
 	void freeHandShapes();
 
 	bool playSequence(const uint8 *seqData, bool skipSeq);
-	
+
 	uint8 *setPanPages(int pageNum, int shape);
 protected:
 	KyraEngine_v1 *_vm;

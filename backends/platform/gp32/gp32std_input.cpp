@@ -148,7 +148,7 @@ public:
 		return (numElement == MAX_EVENTS);
 	}
 
-	bool get(GP32BtnEvent *ev) { 
+	bool get(GP32BtnEvent *ev) {
 		if (front == rear) {
 			return false;
 		}

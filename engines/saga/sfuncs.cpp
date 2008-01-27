@@ -840,7 +840,7 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 	obj->_sceneNumber = _vm->_scene->currentSceneNumber();
 
 	// HACK for the compact disk in Ellen's chapter
-	// Change the scene number of the compact disk so that it's not shown. It will be shown 
+	// Change the scene number of the compact disk so that it's not shown. It will be shown
 	// once Ellen says that there's something different (i.e. after speaking with AM)
 	// See Actor::actorSpeech for the other part of this hack
 	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 3 &&
@@ -982,7 +982,7 @@ void Script::sfCycleFrames(SCRIPTFUNC_PARAMS) {
 		actor->_actorFlags |= kActorRandom;
 	}
 	if (flags & kCycleReverse) {
-		if (_vm->getGameType() == GType_IHNM && 
+		if (_vm->getGameType() == GType_IHNM &&
 			_vm->_scene->currentChapterNumber() == 2 && _vm->_scene->currentSceneNumber() == 41) {
 			// WORKAROUND: Prevent Benny from walking backwards after talking to the child via the monitor. This
 			// occurs in the original as well, and is fixed by not setting the kActorBackwards flag at this point
@@ -1728,7 +1728,7 @@ void Script::sfScriptStartCutAway(SCRIPTFUNC_PARAMS) {
 	thread->pop();		// Not used
 	int16 fade = thread->pop();
 
-	_vm->_anim->setCutAwayMode(kPanelCutaway);	
+	_vm->_anim->setCutAwayMode(kPanelCutaway);
 	_vm->_anim->playCutaway(cut, fade != 0);
 }
 
@@ -1804,7 +1804,7 @@ void Script::sfShowIHNMDemoHelpBg(SCRIPTFUNC_PARAMS) {
 }
 
 void Script::sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS) {
-	int stringId = thread->pop();	
+	int stringId = thread->pop();
 	TextListEntry textEntry;
 	Event event;
 

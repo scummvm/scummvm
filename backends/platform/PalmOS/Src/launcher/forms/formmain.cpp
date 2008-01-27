@@ -48,7 +48,7 @@ static Err BeamMe() {
 		err = SendDatabase(0, dbID, "ScummVM.prc", "\nPlay your favorite LucasArts games");
 	else
 		err = DmGetLastErr();
-	
+
 	return err;
 }
 
@@ -107,7 +107,7 @@ static Boolean MainFormDoCommand(UInt16 command)
 			FrmPopupForm(GameEditForm);
 			handled = true;
 			break;
-			
+
 		case MainGamesDelete:
 			EditGameFormDelete(true);
 			handled = true;

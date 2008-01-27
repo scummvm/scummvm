@@ -22,7 +22,7 @@ class ListTestSuite : public CxxTest::TestSuite
 
 		// The container is initially empty ...
 		TS_ASSERT( container.begin() == container.end() );
-		
+
 		// ... then non-empty ...
 		container.push_back(33);
 		TS_ASSERT( container.begin() != container.end() );

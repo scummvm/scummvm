@@ -30,7 +30,7 @@
 #if defined (__WINS__) && !defined (__SERIES60_30__) && !defined (UIQ3)
 extern "C" int _chkstk(int /*a*/) {
 _asm {
-	push ecx 
+	push ecx
 	cmp eax,_PAGESIZE_
 	lea ecx,[esp] + 8
 	jb short lastpage
@@ -66,7 +66,7 @@ _asm {
 
 // this function is called automatically by the SymbianOS to deliver the new CApaApplication object
 #if !defined (UIQ3) && !defined (S60V3)
-EXPORT_C 
+EXPORT_C
 #endif
 CApaApplication* NewApplication() {
 	// Return pointer to newly created CQMApp

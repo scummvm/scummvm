@@ -105,7 +105,7 @@ void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr
 			p2 = *((uint16*)inbuf+j); inbuf += srcPitch16;
 			*((uint16*)outbuf+j) = MAKEPIXEL(P20(RB(p1))+P80(RB(p2)),P20(G(p1))+P80(G(p2)));  outbuf += dstPitch16;
 
-			p1 = p2; 
+			p1 = p2;
 			p2 = *((uint16*)inbuf+j); inbuf += srcPitch16;
 			*((uint16*)outbuf+j) = MAKEPIXEL(P40(RB(p1))+P60(RB(p2)),P40(G(p1))+P60(G(p2)));  outbuf += dstPitch16;
 
@@ -118,10 +118,10 @@ void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr
 			*((uint16*)outbuf+j) = MAKEPIXEL(P80(RB(p1))+P20(RB(p2)),P80(G(p1))+P20(G(p2)));  outbuf += dstPitch16;
 
 			*((uint16*)outbuf+j) = p2;
-			
-			inbuf = inbuf - srcPitch16*4;   
-			outbuf = outbuf - dstPitch16*5; 
-		}      
+
+			inbuf = inbuf - srcPitch16*4;
+			outbuf = outbuf - dstPitch16*5;
+		}
 		inbuf = inbuf + srcPitch16*5;
 		outbuf = outbuf + dstPitch16*6;
 	}

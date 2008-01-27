@@ -12,14 +12,14 @@ In order to accommodate for the requirements of the lure engine, the
 usage characteristics of the 'Free Look' action have been improved. The
 new behavior is available for use in all engines, but is is *strongly*
 recommended for at least when playing 'Lure of the Temptress'. By using
-the new scheme, when in 'Free Look' mode, it is now possible to enter 
-left clicks by clicking a second time near the current location of the 
+the new scheme, when in 'Free Look' mode, it is now possible to enter
+left clicks by clicking a second time near the current location of the
 mouse pointer. Left and Right clicks at the current point location
 are also available by using the respective actions' bound key.
 
 - Reduced optimization build
 The ScummVM executable has grown quite large, prohibiting some devices
-from running memory demanding games (or any games at all). Code 
+from running memory demanding games (or any games at all). Code
 optimization level has been reduced to offset the growth of the executable.
 Games run slightly slower. This will be addressed before next release.
 
@@ -45,12 +45,12 @@ Official build
 --------------
 
 The official build is based on the ARM architecture and should work with any
-Pocket PC 2002, Pocket PC 2003, Pocket PC 2003 SE, Smartphone 2002, 
+Pocket PC 2002, Pocket PC 2003, Pocket PC 2003 SE, Smartphone 2002,
 Smartphone 2003 or Windows Mobile 5 and 6 based device. It is known to work
 on Pocket PC 2000 devices, but it has not been officially tested.
 
-Support for old ARM architectures (Handheld PCs, Palm Size PCs) and other CPUs 
-(MIPS, SH3) is discontinued. Feel free to generate builds for these 
+Support for old ARM architectures (Handheld PCs, Palm Size PCs) and other CPUs
+(MIPS, SH3) is discontinued. Feel free to generate builds for these
 architectures and contact us to include them on ScummVM website.
 
 Games supported
@@ -60,14 +60,14 @@ The Windows CE port of ScummVM supports all available game engines.
 
 ScummVM distinguishes devices based on two characteristics: Type and resolution.
 Supported types of devices are Smartphones (usually no stylus) and Pocket PCs
-(stylus). The supported resolutions are 176x220 (Smartphone), 240x240 (QVGA 
+(stylus). The supported resolutions are 176x220 (Smartphone), 240x240 (QVGA
 square), 240x320 (QVGA), 320x240 (QVGA landscape), 480x640 (VGA). Devices with
 resolutions larger than VGA should also be supported with automatic screen
 centering.
 
 * Low resolution Smartphones (176x220)
 
-Support is only provided for all 320x200 or 320x240 games. The font can get 
+Support is only provided for all 320x200 or 320x240 games. The font can get
 hard to read (you should prefer talkie games, or wear glasses :-P)
 Games with 640x480 resolution such as COMI or BSWORD cannot be scaled down
 to this resolution and still be playable.
@@ -81,7 +81,7 @@ Only 320x200 or 320x240 games are supported due to lack of downsampling scaler.
 All games are playable in these devices. Landscape devices may not be able to
 rotate the screen around.
 
-* VGA (640x480) or higher Pocket PCs 
+* VGA (640x480) or higher Pocket PCs
 
 All non VGA games should work properly on these devices. They can be resized
 with different scalers. Moreover, VGA games will be displayed in true VGA mode.
@@ -109,8 +109,8 @@ and report your success ...
 How do I install ScummVM for Windows CE ?
 -----------------------------------------
 
-Simple! Unpack the release package on your desktop pc, then copy all its contents 
-to a folder on your device. Typically, you should at least have scummvm.exe, 
+Simple! Unpack the release package on your desktop pc, then copy all its contents
+to a folder on your device. Typically, you should at least have scummvm.exe,
 modern.ini and modern.zip in the same directory. Finally, upload your beloved games
 and fire it up :-)
 
@@ -119,8 +119,8 @@ Some devices (like Pocket PC 2000) require GAPI to be present.
 How do I install a game ?
 -------------------------
 
-You'll at least need to copy all the data files from your game, in a 
-sub-directory of your game directory. 
+You'll at least need to copy all the data files from your game, in a
+sub-directory of your game directory.
 
 You'll need to put the data files in a directory named after ScummVM game
 name (see "Supported Games" section in ScummVM readme) for the games having
@@ -134,7 +134,7 @@ the ScummVM readme. If you are running these games on a slow device with Ogg
 Vorbis compression, it's recommended to sample the files to 11 kHz (this sample
 rate is not supported by other versions of ScummVM).
 
-If you need more details, you can check SirDave's mini-manual online available 
+If you need more details, you can check SirDave's mini-manual online available
 at: http://forums.scummvm.org/viewtopic.php?t=936
 and at: http://www.pocketmatrix.com/forums/viewtopic.php?t=8606
 
@@ -142,14 +142,14 @@ How do I run a game ?
 ---------------------
 
 If it's the first time you're running ScummVM for Windows CE, have installed or
-removed games, you need to rescan your game directory. 
+removed games, you need to rescan your game directory.
  * Select Add Game, tap the root directory of your games, and tap "Yes" to begin
-   an automatic scan of the installed games. 
+   an automatic scan of the installed games.
 
-Usually all games are detected and you can start playing right away. If your 
+Usually all games are detected and you can start playing right away. If your
 game is not detected check its directory name and your data files.
 
-To play a game, tap on its name then tap the "Start" button or double tap its 
+To play a game, tap on its name then tap the "Start" button or double tap its
 name.
 
 How do I play a game on a Pocket PC or Handheld PC device ?
@@ -161,14 +161,14 @@ As the Pocket PC lacks some keys, a toolbar is displayed at the bottom of the
 screen to make the most common functions just a tap away
   * The disk icon opens ScummVM options menu to save your game, or change your
     current game settings (depends on the game)
-  * The movie icon skips a non interactive sequence, the current dialog or 
+  * The movie icon skips a non interactive sequence, the current dialog or
     behaves like the ESC key on a regular keyboard (depends on the game)
   * The sound icon turns all sound effects and music off and on
   * The key icon allow you to map a key action to a device button
   * The monkey icon switches between portrait, landscape and inverse landscape
     mode (depends on the display drivers)
 
-You can map additional actions on your device hardware buttons using the 
+You can map additional actions on your device hardware buttons using the
 "Options" / "Key" menu in the ScummVM options menu. To associate an action to
 a key, tap the action, then the "Map" button and press the hardware key.
 The following actions are available :
@@ -176,17 +176,17 @@ The following actions are available :
   * Pause          : pause the game
   * Save           : open ScummVM option menu
   * Quit           : quit ScummVM (without saving, be careful when using it)
-  * Skip           : skip a non interactive sequence, the current dialog or 
+  * Skip           : skip a non interactive sequence, the current dialog or
                      behaves like the ESC key on a regular keyboard
   * Hide           : hide or display the toolbar
   * Keyboard       : hide or display the virtual keyboard
   * Sound          : turns all sound effects and music off and on
   * Right click    : acts as a right mouse button click
   * Cursor         : hide or display the mouse cursor
-  * Free look      : go in or out of free-look mode. In this mode, you can tap 
+  * Free look      : go in or out of free-look mode. In this mode, you can tap
                      the screen to look for interesting locations without walking.
                      Cling a second time near the pointer's location equals to left click.
-  * Zoom up        : magnify the upper part of the screen for 640x480 games 
+  * Zoom up        : magnify the upper part of the screen for 640x480 games
                      rendered on a QVGA device.
   * Zoom down      : magnify the lower part of the screen for 640x480 games
                      rendered on a QVGA device.
@@ -230,7 +230,7 @@ ratio correction) for better gaming experience.
 How do I play a game on a Smartphone device ?
 ---------------------------------------------
 
-On non-stylus devices, the mouse cursor is emulated via a set of keys. 
+On non-stylus devices, the mouse cursor is emulated via a set of keys.
 The cursor will move faster if you keep the key down. You can tweak this
 behaviour in the configuration file described below.
 
@@ -242,7 +242,7 @@ the list of available actions for Smartphones:
     Left Click     :
     Right Click    :
   * Save           : open ScummVM option menu
-  * Skip           : skip a non interactive sequence, the current dialog or 
+  * Skip           : skip a non interactive sequence, the current dialog or
                      behaves like the ESC key on a regular keyboard
   * Zone           : switch between the 3 different mouse zones
   * Multi Function : this key performs a different function depending on the game
@@ -255,10 +255,10 @@ the list of available actions for Smartphones:
   * Rotate         : rotate the screen (also rotates dpad keys)
   * Quit           : quit ScummVM (without saving, be careful when using it)
 
-The "Zone" key is a *very* valuable addition allowing you to jump quickly 
-between three screen zones : the game zone, the verbs zone and the inventory 
+The "Zone" key is a *very* valuable addition allowing you to jump quickly
+between three screen zones : the game zone, the verbs zone and the inventory
 zone. When you switch to a zone the cursor will be reset to its former location
-in this zone. 
+in this zone.
 
 The default key map for these actions is:
 
@@ -287,11 +287,11 @@ Some parameters are specific to this port :
 
 Game specific sections (f.e. [monkey2]) - performance options
 
- *  high_sample_rate       bool     Desktop quality (22 kHz) sound output if set. 
-                                    11 kHz otherwise.  The default is 11 kHz. 
+ *  high_sample_rate       bool     Desktop quality (22 kHz) sound output if set.
+                                    11 kHz otherwise.  The default is 11 kHz.
                                     If you have a fast device, you can set this to
                                     true to enjoy better sound effects and music.
- *  FM_high_quality        bool     Desktop quality FM synthesis if set. Lower 
+ *  FM_high_quality        bool     Desktop quality FM synthesis if set. Lower
                                     quality otherwise. The default is low quality.
                                     You can change this if you have a fast device.
  *  sound_thread_priority  int      Set the priority of the sound thread (0, 1, 2).
@@ -302,7 +302,7 @@ Game specific sections (f.e. [monkey2]) - performance options
                                     you prefer better audio/video synchronization.
  *  Smush_force_redraw     int      Force a Smush frame redraw every X missed
                                     frames. Mainly used for Full Throttle action
-                                    sequences. Setting it lower gives more 
+                                    sequences. Setting it lower gives more
                                     priority to screen redraws. Setting it higher
                                     gives more priority to stylus/keyboard input.
                                     The default is 30.
@@ -316,7 +316,7 @@ Game specific sections (f.e. [monkey2]) - game options
 
 [scummvm] section - keys definition
 
-You usually do not wish to modify these values directly, as they are set 
+You usually do not wish to modify these values directly, as they are set
 by the option dialog, and are only given here for reference.
 
  *  action_mapping_version int       Mapping version linked to ScummVM version.
@@ -351,7 +351,7 @@ You can tweak these parameters to customize how the cursor is handled.
                                     repeated more than repeatY.
 
 ------------------------------------------------------------------------
-Game specific questions 
+Game specific questions
 ------------------------------------------------------------------------
 
 ---------------
@@ -432,9 +432,9 @@ You need to map the right click button (see the General Questions section).
 I'm experiencing random crashes ...
 ------------------------------------
 
-This game has high memory requirements, and may crash sometimes on low 
+This game has high memory requirements, and may crash sometimes on low
 memory devices. Continue your game with the latest automatically saved
-game and everything should be fine. 
+game and everything should be fine.
 You can consider removing the music and voice files (VOXDISK.BUN, MUSDISK.BUN)
 to lower these requirements.
 
@@ -450,10 +450,10 @@ Use a faster device :-(
 I'm experiencing random crashes ...
 ------------------------------------
 
-This game has high memory requirements, and may crash sometimes on low 
+This game has high memory requirements, and may crash sometimes on low
 memory devices. Continue your game with the latest automatically saved
-game and everything should be fine. 
-You can consider removing the voice file (MONSTER.SOU) and disable the 
+game and everything should be fine.
+You can consider removing the voice file (MONSTER.SOU) and disable the
 music to lower these requirements.
 
 ----------------------------------------
@@ -499,9 +499,9 @@ quit the game.
 I'm experiencing random crashes ...
 ------------------------------------
 
-This game has high memory requirements, and may crash sometimes on low 
+This game has high memory requirements, and may crash sometimes on low
 memory devices. Continue your game with the latest automatically saved
-game and everything should be fine. 
+game and everything should be fine.
 You can consider removing the music and voice files (VOXDISK.BUN, MUSDISK.BUN)
 to lower these requirements.
 
@@ -568,7 +568,7 @@ with dpad enter. Check the main Readme file for more information on this.
 The control scheme is awkward (Pocket PCs)
 ------------------------------------------
 Map and use the 'Free Look' action. Since normal pointer operation is to
-enter a left click at each tap position, the free look mode enables 
+enter a left click at each tap position, the free look mode enables
 'hovering' the mouse on an object, then right clicking either by using the
 double tap method or by pressing the 'Right Click' action. Also, a left click
 can be entered while in free look mode, by clicking a second time near the
@@ -581,9 +581,9 @@ Support
 Help, I've read everything and ...
 -----------------------------------
 
-Luckily, as there is a huge variety of Windows CE devices, a specific forum 
+Luckily, as there is a huge variety of Windows CE devices, a specific forum
 is dedicated to this ScummVM port. You can ask your question on the WinCE
-ScummVM forum available at http://forums.scummvm.org/viewforum.php?f=6 
+ScummVM forum available at http://forums.scummvm.org/viewforum.php?f=6
 
 Some older questions and very nice tutorials are still available on the historic
 PocketMatrix forum at http://www.pocketmatrix.com/forums/viewforum.php?f=20
@@ -593,7 +593,7 @@ many years now :)
 I think I found a bug, ScummVM crashes in ...
 ---------------------------------------------
 
-See the "Reporting Bugs" section in ScummVM readme. 
+See the "Reporting Bugs" section in ScummVM readme.
 
 If you have a Pocket PC or Handheld PC, be sure to include its resolution (obtained
 on the second dialog displayed on the "About" menu) in your bug report.
@@ -623,7 +623,7 @@ Old news follow ...
 Major improvements have taken place in this version, mostly for behind-
 the-scenes stuff. First, we have migrated to GCC for building the Windows
 CE port. This helped take care of some obscure compiler bugs which were
-in there for quite a long time. It has also lead to efficient code 
+in there for quite a long time. It has also lead to efficient code
 generation due to GCC's advanced capabilities and consequently increased
 runtime speed. The second important change was the overhaul of the SDL
 library port. The benefits from this are twofold: The real-time code paths
@@ -632,6 +632,6 @@ functions. Further, the screen display and mouse/keyboard input code has
 been partially rewritten to allow for increased compatibility across all
 devices.
 Due to the update of keyboard handling code, the keycodes have changed
-slightly. Running this version of ScummVM will overwrite your key bindings 
-with the new defaults. See the section on how to play on Smartphones and 
+slightly. Running this version of ScummVM will overwrite your key bindings
+with the new defaults. See the section on how to play on Smartphones and
 Pocket PCs below for the new default key bindings.

@@ -70,7 +70,7 @@ void OSystem_PalmOS5Ex::setTimerCallback(TimerProc callback, int timer) {
 	} else {
 		_timer.active = false;
 	}
-	
+
 	if (!_timer.active)
 		_timerEx.timerID = 0;
 }

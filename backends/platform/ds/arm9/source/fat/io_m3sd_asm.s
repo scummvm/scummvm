@@ -54,7 +54,7 @@ sd_write_loop2:
 
 sd_write_busy:
 	bl      clkin
-	ldrh    r0,[r1]   
+	ldrh    r0,[r1]
 	tst	    r0,#0x100
 	beq	    sd_write_busy
 	ldmfd	r13!,{r0-r1}
@@ -68,10 +68,10 @@ SD_crc16:
 	stmfd   r13!,{r4-r9}
 	mov	    r9,r2
 
-	mov	    r3,#0  
-	mov	    r4,#0  
-	mov	    r5,#0  
-	mov	    r6,#0  
+	mov	    r3,#0
+	mov	    r4,#0
+	mov	    r5,#0
+	mov	    r6,#0
 
 	ldr	    r7,=0x80808080
 	ldr	    r8,=0x1021
@@ -86,19 +86,19 @@ sd_crc16_loop:
 	eorne	r3,r3,r8
 	tst	    r2,r7,lsr #24
 	eorne	r3,r3,r8
-	
+
 	mov	    r4,r4,lsl #1
 	tst	    r4,#0x10000
 	eorne	r4,r4,r8
 	tst	    r2,r7,lsr #25
 	eorne	r4,r4,r8
-	
+
 	mov	    r5,r5,lsl #1
 	tst	    r5,#0x10000
 	eorne	r5,r5,r8
 	tst	    r2,r7,lsr #26
 	eorne	r5,r5,r8
-	
+
 	mov	    r6,r6,lsl #1
 	tst	    r6,#0x10000
 	eorne	r6,r6,r8
@@ -107,7 +107,7 @@ sd_crc16_loop:
 
 	mov	    r7,r7,ror #4
 	subs	r1,r1,#4
-	bne     sd_crc16_loop 
+	bne     sd_crc16_loop
 
 	mov	    r2,r9
 	mov	    r8,#16
@@ -145,7 +145,7 @@ SD_data_write:
 	mov	    r2,#SDODA
 sd_data_write_busy:
 	bl      clkin
-	ldrh    r3,[r2]   
+	ldrh    r3,[r2]
 	tst	    r3,#0x100
 	beq	    sd_data_write_busy
 
@@ -169,7 +169,7 @@ sd_data_write_loop:
 	bl      clkout
 
 	subs    r5, r5, #2
-	bne     sd_data_write_loop  
+	bne     sd_data_write_loop
 
 	cmp	    r1,#0
 	movne   r0,r1
@@ -184,10 +184,10 @@ sd_data_write_loop2:
 	bl      clkout
 	subs    r5, r5, #1
 	bne     sd_data_write_loop2
-	
+
 sd_data_write_busy2:
 	bl      clkin
-	ldrh    r3,[r2]   
+	ldrh    r3,[r2]
 	tst	    r3,#0x100
 	beq	    sd_data_write_busy2
 

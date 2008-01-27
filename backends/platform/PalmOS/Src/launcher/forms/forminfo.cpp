@@ -43,10 +43,10 @@ static void SystemTabDraw() {
 	PalmGetMemory(&sm, &dm, &sf, 0);
 	stack = GetStackSize();
 	df = gVars->startupMemory;
-	
+
 	WinSetTextColor(UIColorGetTableEntryIndex(UIObjectForeground));
 	FntSetFont(stdFont);
-	
+
 	StrIToA(num, dm);
 	x = 147 - FntCharsWidth(num, StrLen(num)) + 5;
 	WinDrawChars(num, StrLen(num), x, 12 + 30);
@@ -115,7 +115,7 @@ Boolean InfoFormHandleEvent(EventPtr eventP) {
 			InfoFormInit();
 			handled = true;
 			break;
-			
+
 		case frmCloseEvent:
 			InfoFormSave();
 			handled = true;
@@ -141,6 +141,6 @@ Boolean InfoFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-	
+
 	return handled;
 }

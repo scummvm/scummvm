@@ -89,7 +89,7 @@ void getPixel(int x, int y) {
 			tableau+=u*2;
 			x_min = *tableau++;
 			x_max = *tableau++;
-			
+
 			if ( (x>=x_min && x<=x_max) ) {
 				flag_obstacle = walkboxColor[computedVar14];
 
@@ -1001,8 +1001,8 @@ void processAnimation(void) {
 								/*
 								 * if (pl->next_dir!=pl->start_dir)
 								 * {
-								 * pl->phase=PHASE_STATIC; 
-								 * pl->cnt=0;   
+								 * pl->phase=PHASE_STATIC;
+								 * pl->cnt=0;
 								 * break;
 								 * }
 								 */

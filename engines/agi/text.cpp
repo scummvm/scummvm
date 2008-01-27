@@ -91,7 +91,7 @@ void AgiEngine::printText2(int l, const char *msg, int foff, int xoff, int yoff,
 				}
 
 				x1++;
-				
+
 				/* DF: changed the len-1 to len... */
 				if (x1 == len && m[1] != '\n')
 					y1++, x1 = foff = 0;

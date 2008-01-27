@@ -56,7 +56,7 @@ public:
 	int read(int fd, void *buf, int size);
 	int write(int fd, const void *buf, int size);
 	int mkDir(const char *name);
-	int getDir(const char *name, unsigned int mode, int max, void *dest);    
+	int getDir(const char *name, unsigned int mode, int max, void *dest);
 	int getInfo(int *type, int *free, int *format);
 	int remove(const char *name);
 private:
@@ -290,7 +290,7 @@ Ps2SaveFileManager::Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen) 
 
 	saveThread.initial_priority = thisThread.current_priority + 1;
 	saveThread.stack_size = 8 * 1024;
-	_autoSaveStack = malloc(saveThread.stack_size);	
+	_autoSaveStack = malloc(saveThread.stack_size);
 	saveThread.stack  = _autoSaveStack;
 	saveThread.func   = (void *)runSaveThread;
 	saveThread.gp_reg = &_gp;

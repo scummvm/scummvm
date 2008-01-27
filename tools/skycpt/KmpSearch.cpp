@@ -41,11 +41,11 @@ __declspec(naked) void __fastcall KmpSearch::init(const char *subStr) {
 		lea edi, [ecx + KmpSearch::_subStr]   // this + 0x100
 		lea ebx, [ecx + KmpSearch::_retarget] // this
 		lea ebp, [ecx + 1]
-		
+
 		mov byte ptr [ebx], -1
 
 		xor eax, eax
-        
+
 		loopStart:
 			shr ecx, 8
 			test al, 3
@@ -107,7 +107,7 @@ __declspec(naked) char * __fastcall KmpSearch::search(const char *str) {
 		jz  short endOfString	//	   goto endOfString
 
 		xor edx, edx	// index
-		
+
 		mov cl, 3
 		searchLoop:
 			shr eax, 8
@@ -117,7 +117,7 @@ __declspec(naked) char * __fastcall KmpSearch::search(const char *str) {
 				lodsd
 				xor cl, cl
 			skipRead:
-			
+
 			test al, al
 			jz short endOfString
 

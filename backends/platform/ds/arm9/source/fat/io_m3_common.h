@@ -1,5 +1,5 @@
 /*
- io_m3_common.h 
+ io_m3_common.h
 
  Routines common to all version of the M3
 
@@ -7,7 +7,7 @@
  Some code written by SaTa may have been unknowingly used.
 
  Copyright (c) 2006 Michael "Chishm" Chisholm
-	
+
  Redistribution and use in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
 
@@ -40,7 +40,7 @@
 
 // Values for changing mode
 #define M3_MODE_ROM 0x00400004
-#define M3_MODE_MEDIA 0x00400003 
+#define M3_MODE_MEDIA 0x00400003
 
 extern void _M3_changeMode (u32 mode);
 

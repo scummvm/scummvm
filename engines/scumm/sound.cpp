@@ -394,7 +394,7 @@ void Sound::playSound(int soundID) {
 		*/
 	}
 	else if ((_vm->_game.platform == Common::kPlatformMacintosh) && (_vm->_game.id == GID_INDY3) && (ptr[26] == 0)) {
-		// Sound fomat as used in Indy3 EGA Mac. 
+		// Sound fomat as used in Indy3 EGA Mac.
 		// It seems to be closely related to the Amiga format, see player_v3a.cpp
 		// The following is known:
 		// offset 0, 16 LE: total size
@@ -424,7 +424,7 @@ void Sound::playSound(int soundID) {
 		if (loopcount > 1) {
 			// TODO: We can only loop once, or infinitely many times, but
 			// have no support for a finite number of repetitions.
-			// This is 
+			// This is
 			loopStart = READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8);
 			loopEnd = READ_BE_UINT16(ptr + 14);
 			flags |= Audio::Mixer::FLAG_LOOP;

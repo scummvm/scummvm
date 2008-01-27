@@ -54,7 +54,7 @@ protected:
 	uint32 _shakePos;
 
 	// Keyboard mouse emulation
-	struct KbdMouse {	
+	struct KbdMouse {
 		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
 	};
@@ -73,7 +73,7 @@ protected:
 	byte *_mouseBuf;
 
 	bool _adjustAspectRatio;
-	
+
 	/** Force full redraw on next updateScreen */
 	bool _forceFull;
 

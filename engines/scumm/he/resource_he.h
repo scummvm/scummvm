@@ -181,7 +181,7 @@ class Win32ResExtractor : public ResExtractor {
 		int level;
 		bool numeric_id;
 		bool is_directory;
-		
+
 		char *get_resource_id_quoted();
 	} PACKED_STRUCT;
 

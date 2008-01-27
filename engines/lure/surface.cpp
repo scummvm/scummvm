@@ -72,7 +72,7 @@ void Surface::initialise() {
 			byte v = *pChar++;
 
 			for (int xp = 0; xp < FONT_WIDTH; ++xp) {
-				if ((v & 0x80) && (xp > fontSize[ctr])) 
+				if ((v & 0x80) && (xp > fontSize[ctr]))
 					fontSize[ctr] = xp;
 				v = (v << 1) & 0xff;
 			}
@@ -90,7 +90,7 @@ void Surface::deinitialise() {
 
 /*--------------------------------------------------------------------------*/
 
-Surface::Surface(MemoryBlock *src, uint16 wdth, uint16 hght): _data(src), 
+Surface::Surface(MemoryBlock *src, uint16 wdth, uint16 hght): _data(src),
 		_width(wdth), _height(hght) {
 	if ((uint32) (wdth * hght) != src->size())
 		error("Surface dimensions do not match size of passed data");
@@ -128,12 +128,12 @@ void Surface::egaCreateDialog(bool blackFlag) {
 
 	// Surface contents
 	data().setBytes(blackFlag ? 0 : EGA_DIALOG_BG_COLOUR, 0, data().size());
-	
+
 	// Top/bottom lines
 	for (int y = 2; y >= 0; --y) {
 		data().setBytes(lineColours1[y], y * width(), width());
 		data().setBytes(lineColours2[y], (height() - y - 1) * width(), width());
-		
+
 		for (int p = y + 1; p < height() - y; ++p) {
 			byte *line = data().data() + p * width();
 			*(line + y) = lineColours2[y];
@@ -147,14 +147,14 @@ void Surface::egaCreateDialog(bool blackFlag) {
 
 void copyLine(byte *pSrc, byte *pDest, uint16 leftSide, uint16 center, uint16 rightSide) {
 	// Left area
-	memcpy(pDest, pSrc, leftSide); 
-	pSrc += leftSide; pDest += leftSide; 
+	memcpy(pDest, pSrc, leftSide);
+	pSrc += leftSide; pDest += leftSide;
 	// Center area
 	memset(pDest, *pSrc, center);
-	++pSrc; pDest += center; 
+	++pSrc; pDest += center;
 	// Right side
-	memcpy(pDest, pSrc, rightSide); 
-	pSrc += rightSide; pDest += rightSide; 
+	memcpy(pDest, pSrc, rightSide);
+	pSrc += rightSide; pDest += rightSide;
 }
 
 #define VGA_DIALOG_EDGE_WIDTH 9
@@ -189,7 +189,7 @@ void Surface::vgaCreateDialog(bool blackFlag) {
 
 	// Final processing - if black flag set, clear dialog inside area
 	if (blackFlag) {
-		Rect r = Rect(VGA_DIALOG_EDGE_WIDTH, VGA_DIALOG_EDGE_WIDTH, 
+		Rect r = Rect(VGA_DIALOG_EDGE_WIDTH, VGA_DIALOG_EDGE_WIDTH,
 			_width - VGA_DIALOG_EDGE_WIDTH, _height-VGA_DIALOG_EDGE_WIDTH);
 		fillRect(r, 0);
 	}
@@ -207,7 +207,7 @@ void Surface::loadScreen(MemoryBlock *rawData) {
 	bool is5Bit = (v & 0xfffe) == 0x140;
 	MemoryBlock *tmpScreen;
 
-	if (is5Bit) 
+	if (is5Bit)
 		// 5-bit decompression
 		tmpScreen = decoder.egaDecode(rawData, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH + 1);
 	else
@@ -215,19 +215,19 @@ void Surface::loadScreen(MemoryBlock *rawData) {
 		tmpScreen = decoder.vgaDecode(rawData, FULL_SCREEN_HEIGHT * FULL_SCREEN_WIDTH + 1);
 
 	empty();
-	_data->copyFrom(tmpScreen, 0, MENUBAR_Y_SIZE * FULL_SCREEN_WIDTH, 
+	_data->copyFrom(tmpScreen, 0, MENUBAR_Y_SIZE * FULL_SCREEN_WIDTH,
 		(FULL_SCREEN_HEIGHT - MENUBAR_Y_SIZE) * FULL_SCREEN_WIDTH);
 	delete tmpScreen;
 }
 
 int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int colour) {
 	byte *const addr = _data->data() + (y * _width) + x;
-	if (colour == DEFAULT_TEXT_COLOUR) 
+	if (colour == DEFAULT_TEXT_COLOUR)
 		colour = LureEngine::getReference().isEGA() ? EGA_DIALOG_TEXT_COLOUR : VGA_DIALOG_TEXT_COLOUR;
 
 	if ((ascii < 32) || (ascii >= 32 + numFontChars))
 		error("Invalid ascii character passed for display '%d'", ascii);
-	
+
 	uint8 v;
 	byte *pFont = int_font->data() + ((ascii - 32) * 8);
 	byte *pDest;
@@ -250,16 +250,16 @@ int Surface::writeChar(uint16 x, uint16 y, uint8 ascii, bool transparent, int co
 	return charWidth;
 }
 
-void Surface::writeString(uint16 x, uint16 y, Common::String line, bool transparent, 
+void Surface::writeString(uint16 x, uint16 y, Common::String line, bool transparent,
 						  int colour, bool varLength) {
 	writeSubstring(x, y, line, line.size(), transparent, colour, varLength);
 }
 
-void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len, 
+void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len,
 		  bool transparent, int colour, bool varLength) {
 
 	const char *sPtr = line.c_str();
-	if (colour == DEFAULT_TEXT_COLOUR) 
+	if (colour == DEFAULT_TEXT_COLOUR)
 		colour = LureEngine::getReference().isEGA() ? EGA_DIALOG_TEXT_COLOUR : VGA_DIALOG_TEXT_COLOUR;
 
 	for (int index = 0; (index < len) && (*sPtr != '\0'); ++index, ++sPtr) {
@@ -277,7 +277,7 @@ void Surface::writeSubstring(uint16 x, uint16 y, Common::String line, int len,
 }
 
 void Surface::transparentCopyTo(Surface *dest) {
-	if (dest->width() != _width) 
+	if (dest->width() != _width)
 		error("Incompatible surface sizes for transparent copy");
 
 	byte *pSrc = _data->data();
@@ -286,7 +286,7 @@ void Surface::transparentCopyTo(Surface *dest) {
 
 	while (numBytes-- > 0) {
 		if (*pSrc) *pDest = *pSrc;
-		
+
 		++pSrc;
 		++pDest;
 	}
@@ -311,7 +311,7 @@ void Surface::copyTo(Surface *dest, uint16 x, uint16 y) {
 	}
 }
 
-void Surface::copyTo(Surface *dest, const Rect &srcBounds, 
+void Surface::copyTo(Surface *dest, const Rect &srcBounds,
 					 uint16 destX, uint16 destY, int transparentColour) {
 	int numBytes = srcBounds.right - srcBounds.left + 1;
 	if (destX + numBytes > dest->width())
@@ -372,7 +372,7 @@ void Surface::copyToScreen(uint16 x, uint16 y) {
 void Surface::centerOnScreen() {
 	OSystem &system = *g_system;
 
-	system.copyRectToScreen(_data->data(), _width, 
+	system.copyRectToScreen(_data->data(), _width,
 		(FULL_SCREEN_WIDTH - _width) / 2, (FULL_SCREEN_HEIGHT - _height) / 2,
 		_width, _height);
 	system.updateScreen();
@@ -451,7 +451,7 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 		s = wordEnd+1;
 	}
 
-	// Set up a list for the start of each line 
+	// Set up a list for the start of each line
 	lines = (char **) Memory::alloc(sizeof(char *) * numLines);
 	lines[0] = text;
 	debugC(ERROR_DETAILED, kLureDebugStrings, "wordWrap lines[0]='%s'", lines[0]);
@@ -463,7 +463,7 @@ void Surface::wordWrap(char *text, uint16 width, char **&lines, uint8 &numLines)
 	debugC(ERROR_INTERMEDIATE, kLureDebugStrings, "wordWrap end - numLines=%d", numLines);
 }
 
-Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength, 
+Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bool varLength,
 							int colour, bool squashedLines) {
 	Point size;
 	Surface::getDialogBounds(size, 0, numLines, squashedLines);
@@ -486,7 +486,7 @@ Surface *Surface::newDialog(uint16 width, const char *line, int colour) {
 	uint8 numLines;
 	wordWrap(lineCopy, width - (Surface::textX() * 2), lines, numLines);
 
-	// Create the dialog 
+	// Create the dialog
 	Surface *result = newDialog(width, numLines, const_cast<const char **>(lines), true, colour);
 
 	// Deallocate used resources
@@ -651,9 +651,9 @@ struct GermanLanguageArticle {
 };
 
 const GermanLanguageArticle germanArticles[] = {
-	{&german_pre_k_type[0], &german_pre_k_type_tl[0]}, 
+	{&german_pre_k_type[0], &german_pre_k_type_tl[0]},
 	{&german_pre_d[0], &german_pre_d_tl[0]},
-	{&german_pre_d_type[0], &german_pre_d_type_tl[0]}, 
+	{&german_pre_d_type[0], &german_pre_d_type_tl[0]},
 	{&german_pre_e_type[0], &german_pre_e_type_tl[0]}
 };
 
@@ -676,7 +676,7 @@ int TalkDialog::getArticle(uint16 msgId, uint16 objId) {
 			if (msgFound) {
 				// Scan against possible bit combinations
 				for (const uint16 *p = germanArticles[sectionIndex].translations; *p != 0; p += 2) {
-					if (*p == id) 
+					if (*p == id)
 						// Return the article index to use
 						return *++p + 1;
 				}
@@ -684,17 +684,17 @@ int TalkDialog::getArticle(uint16 msgId, uint16 objId) {
 				return 0;
 			}
 		}
-		
+
 
 		return 0;
 
 	} else if (language == ES_ESP) {
 		// Special handling for Spanish langugae
 		const uint16 *tlData = (msgId == 158) ? spanish_pre_e1_type_tl : spanish_others_tl;
-		
+
 		// Scan through the list of article bitflag mappings
 		for (const uint16 *p = tlData; *p != 0; p += 2) {
-			if (*p == id) 
+			if (*p == id)
 				// Return the article index to use
 				return *++p + 1;
 		}
@@ -718,7 +718,7 @@ void TalkDialog::vgaTalkDialog(Surface *s) {
 		*pDest++ = *pSrc++;
 		*pDest++ = *pSrc++;
 
-		for (xPos = 0; xPos < TALK_DIALOG_WIDTH - TALK_DIALOG_EDGE_SIZE - 2; ++xPos) 
+		for (xPos = 0; xPos < TALK_DIALOG_WIDTH - TALK_DIALOG_EDGE_SIZE - 2; ++xPos)
 			*pDest++ = *pSrc;
 		++pSrc;
 
@@ -733,7 +733,7 @@ void TalkDialog::vgaTalkDialog(Surface *s) {
 		// Left edge
 		for (xPos = 0; xPos < TALK_DIALOG_EDGE_SIZE; ++xPos)
 			*pDest++ = *pSrcTemp++;
-		
+
 		// Middle section
 		for (xPos = 0; xPos < _surface->width() - TALK_DIALOG_EDGE_SIZE * 2; ++xPos)
 			*pDest++ = *pSrcTemp;
@@ -750,7 +750,7 @@ void TalkDialog::vgaTalkDialog(Surface *s) {
 		for (xPos = 0; xPos < TALK_DIALOG_EDGE_SIZE; ++xPos)
 			*pDest++ = *pSrc++;
 
-		for (xPos = 0; xPos < TALK_DIALOG_WIDTH - TALK_DIALOG_EDGE_SIZE - 2; ++xPos) 
+		for (xPos = 0; xPos < TALK_DIALOG_WIDTH - TALK_DIALOG_EDGE_SIZE - 2; ++xPos)
 			*pDest++ = *pSrc;
 		++pSrc;
 
@@ -760,7 +760,7 @@ void TalkDialog::vgaTalkDialog(Surface *s) {
 }
 
 TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 activeItemId, uint16 descId) {
-	debugC(ERROR_DETAILED, kLureDebugAnimations, "TalkDialog(chars=%xh/%xh, item=%d, str=%d", 
+	debugC(ERROR_DETAILED, kLureDebugAnimations, "TalkDialog(chars=%xh/%xh, item=%d, str=%d",
 		characterId, destCharacterId, activeItemId, descId);
 	StringData &strings = StringData::getReference();
 	Resources &res = Resources::getReference();
@@ -777,7 +777,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 	_descId = descId;
 
 	HotspotData *talkingChar = res.getHotspot(characterId);
-	HotspotData *destCharacter = (destCharacterId == 0) ? NULL : 
+	HotspotData *destCharacter = (destCharacterId == 0) ? NULL :
 		res.getHotspot(destCharacterId);
 	HotspotData *itemHotspot = (activeItemId == 0) ? NULL :
 		res.getHotspot(activeItemId);
@@ -805,7 +805,7 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Creating talk dialog for %d lines", _numLines);
 
-	_surface = new Surface(TALK_DIALOG_WIDTH, 
+	_surface = new Surface(TALK_DIALOG_WIDTH,
 		(_numLines + 1) * FONT_HEIGHT + TALK_DIALOG_EDGE_SIZE * 4);
 
 	if (isEGA)
@@ -849,7 +849,7 @@ void TalkDialog::copyTo(Surface *dest, uint16 x, uint16 y) {
 			}
 
 			// Write out the completed portion of the current line
-			_surface->writeSubstring(TALK_DIALOG_EDGE_SIZE + 2, 
+			_surface->writeSubstring(TALK_DIALOG_EDGE_SIZE + 2,
 				TALK_DIALOG_EDGE_SIZE + 4 + (_endLine + 1) * FONT_HEIGHT,
 				_lines[_endLine], _endIndex, true);
 
@@ -882,7 +882,7 @@ TalkDialog *TalkDialog::loadFromStream(Common::ReadStream *stream) {
 
 	uint16 destCharacterId = stream->readUint16LE();
 	uint16 activeItemId = stream->readUint16LE();
-	uint16 descId = stream->readUint16LE(); 
+	uint16 descId = stream->readUint16LE();
 
 	TalkDialog *dialog = new TalkDialog(characterId, destCharacterId, activeItemId, descId);
 	dialog->_endLine = stream->readSint16LE();
@@ -929,11 +929,11 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	// Figure out a list of present savegames
 	String **saveNames = (String **)Memory::alloc(sizeof(String *) * MAX_SAVEGAME_SLOTS);
 	int numSaves = 0;
-	while ((numSaves < MAX_SAVEGAME_SLOTS) && 
+	while ((numSaves < MAX_SAVEGAME_SLOTS) &&
 		((saveNames[numSaves] = engine.detectSave(numSaves + 1)) != NULL))
 		++numSaves;
 
-	// For the save dialog, if all the slots have not been used up, create a 
+	// For the save dialog, if all the slots have not been used up, create a
 	// blank entry for a new savegame
 	if (saveDialog && (numSaves < MAX_SAVEGAME_SLOTS))
 		saveNames[numSaves++] = new String();
@@ -944,7 +944,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 		return false;
 	}
 
-	Surface *s = new Surface(INFO_DIALOG_WIDTH, SR_SAVEGAME_NAMES_Y + 
+	Surface *s = new Surface(INFO_DIALOG_WIDTH, SR_SAVEGAME_NAMES_Y +
 		numSaves * FONT_HEIGHT + FONT_HEIGHT + 2);
 
 	// Create the outer dialog and dividing line
@@ -973,7 +973,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 	bool doneFlag = false;
 	while (!abortFlag && !doneFlag) {
 		// Provide highlighting of lines to select a save slot
-		while (!abortFlag && !(mouse.lButton() && (selectedLine != -1)) 
+		while (!abortFlag && !(mouse.lButton() && (selectedLine != -1))
 				&& !mouse.rButton() && !mouse.mButton()) {
 			abortFlag = events.quitFlag;
 			if (abortFlag) break;
@@ -984,7 +984,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 					abortFlag = true;
 					break;
 				}
-				if (events.type() == Common::EVENT_MOUSEMOVE || 
+				if (events.type() == Common::EVENT_MOUSEMOVE ||
 					events.type() == Common::EVENT_WHEELUP || events.type() == Common::EVENT_WHEELDOWN) {
 					// Mouse movement
 					int lineNum = 0;
@@ -1011,7 +1011,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 					if (lineNum != selectedLine) {
 						if (selectedLine != -1)
 							// Deselect previously selected line
-							toggleHightlight(SAVE_DIALOG_X + Surface::textX(), 
+							toggleHightlight(SAVE_DIALOG_X + Surface::textX(),
 								SAVE_DIALOG_X + s->width() - Surface::textX(),
 								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
 								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
@@ -1019,7 +1019,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 						// Highlight new line
 						selectedLine = lineNum;
 						if (selectedLine != -1)
-							toggleHightlight(SAVE_DIALOG_X + Surface::textX(), 
+							toggleHightlight(SAVE_DIALOG_X + Surface::textX(),
 								SAVE_DIALOG_X + s->width() - Surface::textX(),
 								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
 								SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
@@ -1032,8 +1032,8 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 		}
 
 		// Deselect selected row
-		if (selectedLine != -1) 
-			toggleHightlight(SAVE_DIALOG_X + Surface::textX(), 
+		if (selectedLine != -1)
+			toggleHightlight(SAVE_DIALOG_X + Surface::textX(),
 				SAVE_DIALOG_X + s->width() - Surface::textX(),
 				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
 				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + (selectedLine + 1) * FONT_HEIGHT - 1);
@@ -1046,14 +1046,14 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 
 		// If in save mode, allow the entry of a new savename
 		if (saveDialog) {
-			if (!screen.screen().getString(*saveNames[selectedLine], 
-				INFO_DIALOG_WIDTH - (Surface::textX() * 2), 
-				false, true, SAVE_DIALOG_X + Surface::textX(), 
+			if (!screen.screen().getString(*saveNames[selectedLine],
+				INFO_DIALOG_WIDTH - (Surface::textX() * 2),
+				false, true, SAVE_DIALOG_X + Surface::textX(),
 				SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT)) {
-				// Aborted out of name selection, so restore old name and 
+				// Aborted out of name selection, so restore old name and
 				// go back to slot selection
 				screen.screen().writeString(
-					SAVE_DIALOG_X + Surface::textX(), 
+					SAVE_DIALOG_X + Surface::textX(),
 					SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
                     saveNames[selectedLine]->c_str(), true);
 				selectedLine = -1;
@@ -1140,7 +1140,7 @@ bool RestartRestoreDialog::show() {
 
 		// Get the correct button bounds record to use
 		const RestartRecord *btnRecord = &buttonBounds[0];
-		while ((btnRecord->Language != engine.getLanguage()) && 
+		while ((btnRecord->Language != engine.getLanguage()) &&
 			   (btnRecord->Language != UNK_LANG))
 			++btnRecord;
 
@@ -1257,7 +1257,7 @@ struct ItemDesc {
 static const ItemDesc copyProtectElements[] = {
 	{UNK_LANG, 104, 96, 32, 48, PROT_SPR_HEADER, 0},
 	{UNK_LANG, 179, 96, 32, 48, PROT_SPR_HEADER, 0},
-	
+
 	{EN_ANY, 57, 40, 208, 40, WORDING_HEADER, 32},
 	{FR_FRA, 57, 40, 208, 40, WORDING_HEADER, 32},
 	{DE_DEU, 39, 30, 240, 53, WORDING_HEADER, 32},
@@ -1330,7 +1330,7 @@ bool CopyProtectionDialog::show() {
 
 		while (!events.quitFlag) {
 			while (events.pollEvent() && (_charIndex < 4)) {
-				if (events.type() == Common::EVENT_KEYDOWN) { 
+				if (events.type() == Common::EVENT_KEYDOWN) {
 					if ((events.event().kbd.keycode == Common::KEYCODE_BACKSPACE) && (_charIndex > 0)) {
 						// Remove the last number typed
 						--_charIndex;
@@ -1362,7 +1362,7 @@ bool CopyProtectionDialog::show() {
 		// At this point, two page numbers have been entered - validate them
 		int page1 = (_hotspots[3]->frameNumber() * 10) + _hotspots[4]->frameNumber();
 		int page2 = (_hotspots[5]->frameNumber() * 10) + _hotspots[6]->frameNumber();
-		
+
 		if ((page1 == pageNumbers[_hotspots[0]->frameNumber()]) &&
 			(page2 == pageNumbers[_hotspots[1]->frameNumber()]))
 			return true;

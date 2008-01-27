@@ -36,7 +36,7 @@ AeroCDPlayer::AeroCDPlayer(OSystem *sys) {
 bool AeroCDPlayer::init() {
 	aeroplayer_Startup();
 	_isInitialized = aeroplayer_PlayerIsActive();
-	
+
 	if (_isInitialized)
 		_volumeLimit = aeroplayer_GetMaxVolumeIndex();
 
@@ -73,7 +73,7 @@ void AeroCDPlayer::setVolume(int volume) {
 
 bool AeroCDPlayer::poll() {
 	return
-	(	_pckLoops != 0 && 
+	(	_pckLoops != 0 &&
 		(	getPosition() < _pckTrackEndFrame &&
 			getStatus() == AEROPLAYER_STATUS_PLAY
 		)
@@ -107,7 +107,7 @@ void AeroCDPlayer::update() {
 		forceStop();
 	else {
 		//_pckStopTime = 0;
-			
+
 		if (_pckTrackStartFrame == 0 && _pckTrackDuration == 0) {
 			setPosition(0);
 		} else {
@@ -136,10 +136,10 @@ void AeroCDPlayer::play(int track, int num_loops, int start_frame, int duration)
 
 	Char fileP[100];
 	static const Char *ext[] = { "mp3", "ogg" };
-	
+
 //	if (duration > 0)
 //		duration += 5;
-	
+
 	_pckTrack = track;
 	_pckLoops = num_loops;
 	_pckTrackStartFrame = TO_MSECS(start_frame);
@@ -149,7 +149,7 @@ void AeroCDPlayer::play(int track, int num_loops, int start_frame, int duration)
 	aeroplayer_Pause();
 	aeroplayer_PlayTrack(gVars->VFS.volRefNum, fileP);
 	aeroplayer_Pause();
-	
+
 	if (_pckTrackStartFrame == 0 && _pckTrackDuration == 0) {
 		_pckTrackDuration = getDuration();
 	} else {
@@ -157,7 +157,7 @@ void AeroCDPlayer::play(int track, int num_loops, int start_frame, int duration)
 		if (_pckTrackDuration == 0)
 			_pckTrackDuration = getDuration() - _pckTrackStartFrame;
 	}
-	
+
 	aeroplayer_Play();
 
 	_pckStopTime = 0;

@@ -45,7 +45,7 @@ MenuRecord::MenuRecord(const MenuRecordBounds *bounds, int numParams, ...) {
 	va_list params;
 
 	_numEntries = numParams;
-	_entries = (const char **) malloc(sizeof(const char *) * _numEntries);	
+	_entries = (const char **) malloc(sizeof(const char *) * _numEntries);
 
 	va_start(params, numParams);
 	for (int index = 0; index < _numEntries; ++index)
@@ -86,13 +86,13 @@ Menu::Menu() {
 	delete data;
 
 	const MenuRecordLanguage *rec = &menuList[0];
-	while ((rec->language != UNK_LANG) && (rec->language != language)) 
+	while ((rec->language != UNK_LANG) && (rec->language != language))
 		++rec;
 	if (rec->language == UNK_LANG)
 		error("Unknown language encountered in top line handler");
 
 	_menus[0] = new MenuRecord(&rec->menus[0], 1, sl.getString(S_CREDITS));
-	_menus[1] = new MenuRecord(&rec->menus[1], 3, 
+	_menus[1] = new MenuRecord(&rec->menus[1], 3,
 		sl.getString(S_RESTART_GAME), sl.getString(S_SAVE_GAME), sl.getString(S_RESTORE_GAME));
 	_menus[2] = new MenuRecord(&rec->menus[2], 3,
 		sl.getString(S_QUIT), sl.getString(S_SLOW_TEXT), sl.getString(S_SOUND_ON));
@@ -116,7 +116,7 @@ uint8 Menu::execute() {
 	Screen &screen = Screen::getReference();
 
 	mouse.setCursorNum(CURSOR_ARROW);
-	system.copyRectToScreen(_menu->data(), FULL_SCREEN_WIDTH, 0, 0, 
+	system.copyRectToScreen(_menu->data(), FULL_SCREEN_WIDTH, 0, 0,
 		FULL_SCREEN_WIDTH, MENUBAR_Y_SIZE);
 
 	_selectedMenu = NULL;
@@ -138,7 +138,7 @@ uint8 Menu::execute() {
 						delete _surfaceMenu;
 						_surfaceMenu = NULL;
 						_selectedIndex = 0;
-					}						
+					}
 
 					_selectedMenu = p;
 
@@ -146,12 +146,12 @@ uint8 Menu::execute() {
 					if (_selectedMenu) {
 						toggleHighlight(_selectedMenu);
 						_surfaceMenu = Surface::newDialog(
-							_selectedMenu->width(), _selectedMenu->numEntries(), 
+							_selectedMenu->width(), _selectedMenu->numEntries(),
 							_selectedMenu->entries(), false, DEFAULT_TEXT_COLOUR, false);
 						_surfaceMenu->copyToScreen(_selectedMenu->xstart(), MENUBAR_Y_SIZE);
 					}
 
-					system.copyRectToScreen(_menu->data(), FULL_SCREEN_WIDTH, 0, 0, 
+					system.copyRectToScreen(_menu->data(), FULL_SCREEN_WIDTH, 0, 0,
 						FULL_SCREEN_WIDTH, MENUBAR_Y_SIZE);
 				}
 			}
@@ -172,12 +172,12 @@ uint8 Menu::execute() {
 	if (_surfaceMenu) delete _surfaceMenu;
 
 	// Deselect the currently selected menu header
-	if (_selectedMenu) 
+	if (_selectedMenu)
 		toggleHighlight(_selectedMenu);
 
 	// Restore the previous screen
 	screen.update();
-	
+
 	if ((_selectedMenu == NULL) || (_selectedIndex == 0)) return MENUITEM_NONE;
 	else if (_selectedMenu == _menus[0])
 		return MENUITEM_CREDITS;
@@ -201,11 +201,11 @@ uint8 Menu::execute() {
 		}
 	}
 	return MENUITEM_NONE;
-}	
+}
 
 MenuRecord *Menu::getMenuAt(int x) {
 	for (int ctr = 0; ctr < NUM_MENUS; ++ctr)
-		if ((x >= _menus[ctr]->hsxstart()) && (x <= _menus[ctr]->hsxend())) 
+		if ((x >= _menus[ctr]->hsxstart()) && (x <= _menus[ctr]->hsxend()))
 			return _menus[ctr];
 
 	return NULL;
@@ -244,7 +244,7 @@ void Menu::toggleHighlightItem(uint8 index) {
 	const byte colourList[4] = {EGA_DIALOG_TEXT_COLOUR, EGA_DIALOG_WHITE_COLOUR,
 		VGA_DIALOG_TEXT_COLOUR, VGA_DIALOG_WHITE_COLOUR};
 	const byte *colours = LureEngine::getReference().isEGA() ? &colourList[0] : &colourList[2];
-	byte *p = _surfaceMenu->data().data() + (Surface::textY() + 
+	byte *p = _surfaceMenu->data().data() + (Surface::textY() +
 		((index - 1) * FONT_HEIGHT)) * _surfaceMenu->width() + Surface::textX();
 	int numBytes =_surfaceMenu->width() - Surface::textX() * 2;
 
@@ -280,7 +280,7 @@ uint16 PopupMenu::ShowInventory() {
 			strings.getString(hotspot->nameId, hotspotName);
 		}
 	}
-	
+
 	uint16 result = Show(numItems, const_cast<const char **>(itemNames));
 	if (result != 0xffff) result = idList[result];
 
@@ -336,16 +336,16 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 	for (ih = hotspots.begin(); ih != hotspots.end(); ++ih) {
 		HotspotData *hotspot = *ih;
 
-		if ((hotspot->headerFlags != 15) && 
+		if ((hotspot->headerFlags != 15) &&
 			((hotspot->headerFlags & fields.hdrFlagMask()) == 0))
 			continue;
 
 		if (((hotspot->flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0) || ((hotspot->flags & HOTSPOTFLAG_FOUND) == 0))
-			// Skip the current hotspot		
+			// Skip the current hotspot
 			continue;
 
 		// If the hotspot is room specific, skip if the character will not be in the specified room
-		if (((hotspot->flags & HOTSPOTFLAG_ROOM_SPECIFIC) != 0) && 
+		if (((hotspot->flags & HOTSPOTFLAG_ROOM_SPECIFIC) != 0) &&
 			(hotspot->roomNumber != roomNumber))
 			continue;
 
@@ -374,7 +374,7 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 		++numItems;
 	}
 
-	if (numItems == 0) 
+	if (numItems == 0)
 		// No items, so add a 'nothing' to the statusLine
 		strcat(room.statusLine(), "(nothing)");
 
@@ -454,7 +454,7 @@ Action PopupMenu::Show(int numEntries, Action *actions) {
 	for (int index = 0; index < numEntries; ++index)
 		strList[index] = stringList.getString(*actionPtr++);
 	uint16 result = Show(numEntries, strList);
-	
+
 	delete strList;
 	if (result == 0xffff) return NONE;
 	else return actions[result];
@@ -524,7 +524,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 #endif
 				if ((actionIndex >= 0) && (actionIndex < numEntries)) {
 					s->writeString(Surface::textX(), Surface::textY() + index * FONT_HEIGHT,
-						actions[actionIndex], true, 
+						actions[actionIndex], true,
 #ifndef LURE_CLICKABLE_MENUS
 						(index == (numLines / 2)) ? whiteColour : textColour,
 #else
@@ -562,7 +562,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 				if (((keycode == Common::KEYCODE_KP8) || (keycode == Common::KEYCODE_UP)) && (selectedIndex > 0)) {
 					--selectedIndex;
 					refreshFlag = true;
-				} else if (((keycode == Common::KEYCODE_KP2) || (keycode == Common::KEYCODE_DOWN)) && 
+				} else if (((keycode == Common::KEYCODE_KP2) || (keycode == Common::KEYCODE_DOWN)) &&
 						(selectedIndex < numEntries-1)) {
 					++selectedIndex;
 					refreshFlag = true;

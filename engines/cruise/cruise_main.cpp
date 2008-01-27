@@ -899,7 +899,7 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 						if (!verbeOvl) verbeOvl=j;
 						if (!obj1Ovl)  obj1Ovl=j;
 						if (!obj2Ovl)  obj2Ovl=j;
-						
+
 						char verbe_name[80];
 						char obj1_name[80];
 						char obj2_name[80];
@@ -999,7 +999,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					if (!verbeOvl) verbeOvl=j;
 					if (!obj1Ovl)  obj1Ovl=j;
 					if (!obj2Ovl)  obj2Ovl=j;
-					
+
 					char verbe_name[80];
 					char obj1_name[80];
 					char obj2_name[80];
@@ -1282,7 +1282,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 				{
 					createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, 0, 0);
 				}
-				
+
 				userWait = 1;
 				autoOvl = ovlIdx;
 				autoMsg = pHeader->id;
@@ -1393,7 +1393,7 @@ int processInput(void) {
 	}
 
 	if (dialogueEnabled) {
-		
+
 		if( menuDown || selectDown || linkedRelation ) {
 			closeAllMenu();
 			menuDown = 0;
@@ -1818,17 +1818,17 @@ void mainLoop(void) {
 						static int16 oldMouseY = -1;
 
 						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
-					 
+
 						if (mouseX != oldMouseX && mouseY != oldMouseY) {
 							int objectType;
 							int newCursor1;
 							int newCursor2;
-							
+
 							oldMouseX = mouseX;
 							oldMouseY = mouseY;
-							
+
 							objectType = findObject(mouseX, mouseY, &newCursor1, &newCursor2);
-							
+
 							if (objectType == 9) {
 								changeCursor(CURSOR_EXIT);
 							} else if (objectType != -1) {

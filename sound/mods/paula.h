@@ -79,12 +79,12 @@ protected:
 		_playing = true;
 		_end = false;
 	}
-	
+
 	void stopPaula() {
 		_playing = false;
 		_end = true;
 	}
-	
+
 	void setChannelPanning(byte channel, byte panning) {
 		assert(channel < NUM_VOICES);
 		_voice[channel].panning = panning;

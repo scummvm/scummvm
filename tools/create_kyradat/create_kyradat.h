@@ -62,7 +62,7 @@ enum kExtractID {
 
 	kAudioTracks,
 	kAudioTracksIntro,
-	
+
 	kItemNames,
 	kTakenStrings,
 	kPlacedStrings,
@@ -85,7 +85,7 @@ enum kExtractID {
 
 	kVeryCleverString,
 	kNewGameString,
-	
+
 	kDefaultShapes,
 	kHealing1Shapes,
 	kHealing2Shapes,
@@ -135,7 +135,7 @@ enum kExtractID {
 
 	kGUIStrings,
 	kConfigStrings,
-	
+
 	kKyra1TownsSFXwdTable,
 	kKyra1TownsSFXbtTable,
 	kKyra1TownsCDATable,
@@ -158,7 +158,7 @@ enum kExtractID {
 	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameCDA,
-	
+
 	kMaxResIDs
 };
 

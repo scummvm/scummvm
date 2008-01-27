@@ -66,7 +66,7 @@ static void GameTabInit(GameInfoType *gameInfoP) {
 	nameP = (Char *)MemHandleLock(nameH);
 	pathP = (Char *)MemHandleLock(pathH);
 	gameP = (Char *)MemHandleLock(gameH);
-	
+
 	if (gameInfoP) {
 		LstSetSelection(list1P, gameInfoP->engine);
 		LstSetTopItem(list1P, gameInfoP->engine);
@@ -139,7 +139,7 @@ static Err GameTabSave(GameInfoType *gameInfoP) {
 		MemPtrFree(itemsText);
 		itemsText = NULL;
 	}
-	
+
 	return errNone;
 }
 
@@ -148,7 +148,7 @@ static void DisplayInit(GameInfoType *gameInfoP) {
 
 	list1P = (ListType *)GetObjectPtr(TabGameDisplayGfxListList);
 	list2P = (ListType *)GetObjectPtr(TabGameDisplayRenderList);
-	
+
 	if (gameInfoP) {
 		LstSetSelection(list1P, gameInfoP->gfxMode);
 		LstSetSelection(list2P, gameInfoP->renderMode);
@@ -169,7 +169,7 @@ static void DisplayInit(GameInfoType *gameInfoP) {
 
 static Err DisplaySave(GameInfoType *gameInfoP) {
 	ListType *list1P, *list2P;
-	ControlType *cck6P, *cck7P, *cck8P;	
+	ControlType *cck6P, *cck7P, *cck8P;
 
 	FormType *frmP = FrmGetActiveForm();
 
@@ -187,7 +187,7 @@ static Err DisplaySave(GameInfoType *gameInfoP) {
 		gameInfoP->fullscreen = CtlGetValue(cck7P);
 		gameInfoP->aspectRatio = CtlGetValue(cck8P);
 	}
-	
+
 	return errNone;
 }
 
@@ -257,7 +257,7 @@ static void OptionsInit(GameInfoType *gameInfoP) {
 
 static Err OptionsSave(GameInfoType *gameInfoP) {
 	FieldType *fld4P, *fld5P, *fld6P;
-	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P;	
+	ControlType *cck1P, *cck2P, *cck3P, *cck4P, *cck5P;
 	ListType *list2P, *list3P;
 
 	FormType *frmP = FrmGetActiveForm();
@@ -291,7 +291,7 @@ static Err OptionsSave(GameInfoType *gameInfoP) {
 	} else {
 		gameInfoP->language = LstGetSelection(list2P);
 		gameInfoP->platform = LstGetSelection(list3P);
-		
+
 		gameInfoP->autoLoad = CtlGetValue(cck1P);
 		gameInfoP->bootParam = CtlGetValue(cck2P);
 		gameInfoP->setPlatform = CtlGetValue(cck3P);
@@ -302,7 +302,7 @@ static Err OptionsSave(GameInfoType *gameInfoP) {
 		gameInfoP->bootValue = StrAToI(FldGetTextPtr(fld5P));
 		gameInfoP->talkValue = StrAToI(FldGetTextPtr(fld6P));
 	}
-	
+
 	return errNone;
 }
 
@@ -371,7 +371,7 @@ static void GameManSave(UInt16 index) {
 		newGameInfo.version	= curItemVersion;
 		newGameInfo.icnID = 0xFFFF;
 		newGameInfo.selected = true;
-		
+
 		// default sound data
 		newGameInfo.musicInfo.volume.palm = 50;
 		newGameInfo.musicInfo.volume.music = 192;
@@ -383,7 +383,7 @@ static void GameManSave(UInt16 index) {
 		newGameInfo.musicInfo.sound.defaultTrackLength = 10;
 		newGameInfo.musicInfo.sound.firstTrack = 1;
 	}
-	
+
 	GameTabSave(&newGameInfo);
 	DisplaySave(&newGameInfo);
 	OptionsSave(&newGameInfo);
@@ -397,14 +397,14 @@ static void GameManSave(UInt16 index) {
 	{
 		RectangleType rArea;
 		UInt16 posIndex, maxView;
-		
+
 		// get the sorted index
 		index = GamGetSelected();
 		// if new item is out of the list bounds, change current list pos
 		SknGetListBounds(&rArea, NULL);
 		maxView = rArea.extent.y / sknInfoListItemSize;
 		posIndex = gPrefs->listPosition;
-		
+
 		// if out of the current list position
 		if (!(index >= posIndex && index < (posIndex + maxView)))
 			gPrefs->listPosition = index;	// this value is corrected in SknUpdateList if needed
@@ -421,7 +421,7 @@ static void GameManSave(UInt16 index) {
  * FUNCTION:    EditGameFormInit
  * FUNCTION:    EditGameFormHandleEvent
  *
- * DESCRIPTION: 
+ * DESCRIPTION:
  *
  * REVISION HISTORY:
  *
@@ -468,14 +468,14 @@ static void EditGameBowser() {
 			UInt16 volRefNum = gPrefs->card.volRefNum;
 			Char *textP, *pathP = (Char *)MemPtrNew(kFileBrowserLibPathBufferSize);
 			pathP[0] = chrNull;
-			
+
 			if (FileBrowserLibShowOpenDialog(refNum, &volRefNum, pathP, 0, 0, 0, "Game Data Path", kFileBrowserLibFlagNoFiles)) {
 				FieldPtr fldP;
 				MemHandle textH;
 				Int16 offset, copySize, maxSize;
-				
+
 				fldP = (FieldType *)GetObjectPtr(TabGameInfoPathField);
-				maxSize = FldGetMaxChars(fldP);				
+				maxSize = FldGetMaxChars(fldP);
 				textH = FldGetTextHandle(fldP);
 
 				FldSetTextHandle(fldP, NULL);
@@ -518,7 +518,7 @@ Boolean EditGameFormHandleEvent(EventPtr eventP) {
 			EditGameCancel();
 			handled = true;
 			break;
-		
+
 		case frmOpenEvent:
 			switch (gFormEditMode) {
 				case edtModeAdd:
@@ -567,11 +567,11 @@ Boolean EditGameFormHandleEvent(EventPtr eventP) {
 				case GameEditCancelButton:
 					EditGameCancel();
 					break;
-				
+
 				case GameEditDeleteButton:
 					EditGameFormDelete(false);
 					break;
-					
+
 				case TabGameInfoBrowsePushButton:
 					EditGameBowser();
 					break;
@@ -607,6 +607,6 @@ Boolean EditGameFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-	
+
 	return handled;
 }

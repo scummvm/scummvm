@@ -170,7 +170,7 @@ enum KeyCode {
 	KEYCODE_MODE        = 313,      // "Alt Gr" key
 	KEYCODE_COMPOSE     = 314,      // Multi-key compose key
 
-	// Miscellaneous function keys 
+	// Miscellaneous function keys
 	KEYCODE_HELP        = 315,
 	KEYCODE_PRINT       = 316,
 	KEYCODE_SYSREQ      = 317,
@@ -248,13 +248,13 @@ struct KeyState {
 	 * @see KBD_CTRL, KBD_ALT, KBD_SHIFT
 	 */
 	byte flags;
-	
+
 	KeyState(KeyCode kc = KEYCODE_INVALID, uint16 asc = 0, byte f = 0) {
 		keycode = kc;
 		ascii = asc ? asc : (uint16)kc;
 		flags = f;
 	}
-	
+
 	void reset() {
 		keycode = KEYCODE_INVALID;
 		ascii = flags = 0;

@@ -42,7 +42,7 @@ SoundExType _soundEx;
 static Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt32 *bufferSizeP) {
 	SoundExType *_soundEx = (SoundExType *)UserDataP;
 	SoundType *_sound = _soundEx->sound;
-	
+
 	if (_soundEx->set && _soundEx->size) {
 		MemMove(bufferP, _soundEx->dataP, _soundEx->size);
 		*bufferSizeP = _soundEx->size;
@@ -53,7 +53,7 @@ static Err sndCallback(void* UserDataP, SndStreamRef stream, void* bufferP, UInt
 		MemSet(bufferP, 128, 0);
 		*bufferSizeP = 128;
 	}
-	
+
 	return errNone;
 }
 

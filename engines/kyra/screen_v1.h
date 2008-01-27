@@ -22,10 +22,10 @@
  * $Id$
  *
  */
- 
+
 #ifndef KYRA_SCREEN_V1_H
 #define KYRA_SCREEN_V1_H
- 
+
 #include "kyra/screen.h"
 
 namespace Kyra {
@@ -36,9 +36,9 @@ class Screen_v1 : public Screen {
 public:
 	Screen_v1(KyraEngine_v1 *vm, OSystem *system);
 	virtual ~Screen_v1();
-	
+
 	void fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime);
-	
+
 protected:
 	KyraEngine_v1 *_vm;
 };

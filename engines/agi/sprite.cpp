@@ -57,7 +57,7 @@ void *SpritesMgr::poolAlloc(int size) {
 	uint8 *x;
 
 	/* Adjust size to 32-bit boundary to prevent data misalignment
-	 * errors. 
+	 * errors.
 	 */
 	size = (size + 3) & ~3;
 

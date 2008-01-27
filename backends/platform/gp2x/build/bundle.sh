@@ -7,7 +7,7 @@ PATH=/opt/open2x/gcc-4.1.1-glibc-2.3.6/bin:$PATH
 export CXX=arm-open2x-linux-g++
 export CXXFLAGS=-march=armv4t
 export CPPFLAGS=-I/opt/open2x/gcc-4.1.1-glibc-2.3.6/include
-export LDFLAGS=-L/opt/open2x/gcc-4.1.1-glibc-2.3.6/lib 
+export LDFLAGS=-L/opt/open2x/gcc-4.1.1-glibc-2.3.6/lib
 
 echo Collecting files.
 mkdir "scummvm-gp2x-`date '+%Y-%m-%d'`"
@@ -42,7 +42,7 @@ if [ -f /usr/bin/zip ]
 		echo You should have a "scummvm-gp2x-`date '+%Y-%m-%d'`.zip" for the GP2X port ready to go.
 		cd ..
 		rm -R ./"scummvm-gp2x-`date '+%Y-%m-%d'`"
-	else  
+	else
 		echo - /usr/bin/zip not found, ZIP bundle not created.
 		echo All included files can also be found in ./"scummvm-gp2x-`date '+%Y-%m-%d'`"
 		echo - Please use you preferred archive tool to bundle these files.

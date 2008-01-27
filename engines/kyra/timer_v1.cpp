@@ -46,28 +46,28 @@ void KyraEngine_v1::setupTimers() {
 	_timer->addTimer(7, 0,  8, 1);
 	_timer->addTimer(8, 0,  9, 1);
 	_timer->addTimer(9, 0,  7, 1);
-	
+
 	for (int i = 10; i <= 13; ++i)
 		_timer->addTimer(i, 0, 420, 1);
 
 	_timer->addTimer(14, TimerV1(timerCheckAnimFlag2), 600, 1);
 	_timer->addTimer(15, TimerV1(timerUpdateHeadAnims), 11, 1);
 	_timer->addTimer(16, TimerV1(timerSetFlags1), 7200, 1);
-	_timer->addTimer(17, 0 /*sub_15120*/, 7200, 1);	
+	_timer->addTimer(17, 0 /*sub_15120*/, 7200, 1);
 	_timer->addTimer(18, TimerV1(timerCheckAnimFlag1), 600, 1);
 	_timer->addTimer(19, TimerV1(timerRedrawAmulet), 600, 1);
-	
+
 	_timer->addTimer(20, 0, 7200, 1);
 	_timer->addTimer(21, 0/*sub_1517C*/, 18000, 1);
 	_timer->addTimer(22, 0, 7200, 1);
-	
+
 	for (int i = 23; i <= 27; ++i)
 		_timer->addTimer(i, 0, 10800, 1);
 
 	_timer->addTimer(28, 0, 21600, 1);
 	_timer->addTimer(29, 0, 7200, 1);
 	_timer->addTimer(30, 0, 10800, 1);
-	
+
 	_timer->addTimer(31, TimerV1(timerFadeText), -1, 1);
 	_timer->addTimer(32, TimerV1(updateAnimFlag1), 9, 1);
 	_timer->addTimer(33, TimerV1(updateAnimFlag2), 3, 1);
@@ -141,7 +141,7 @@ void KyraEngine_v1::setTextFadeTimerCountdown(int16 countdown) {
 void KyraEngine_v1::timerSetFlags2(int timerNum) {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v1::timerSetFlags2(%i)", timerNum);
 	if (!((uint32*)(_flagsTable+0x2D))[timerNum])
-		((uint32*)(_flagsTable+0x2D))[timerNum] = 1;	
+		((uint32*)(_flagsTable+0x2D))[timerNum] = 1;
 }
 
 void KyraEngine_v1::timerCheckAnimFlag1(int timerNum) {

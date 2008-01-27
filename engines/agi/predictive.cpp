@@ -49,7 +49,7 @@ uint8 countWordsInString(char *str) {
 	if (!str)
 		return 0;
 
-	ptr = strchr(str, ' ');	
+	ptr = strchr(str, ' ');
 	if (!ptr) {
 		debug("Invalid dictionary line");
 		return 0;
@@ -111,7 +111,7 @@ bool AgiEngine::predictiveDialog(void) {
 		"(7)pqrs", "(8)tuv", "(9)wxyz",
 		"(#)next",    "add",
 		"<",
-		"Cancel",  "OK", 
+		"Cancel",  "OK",
 		"Pre", "(0) ", NULL
 	};
 	const int colors[] = {
@@ -198,7 +198,7 @@ bool AgiEngine::predictiveDialog(void) {
 							|| (mode == kModeAbc && _currentWord.size() && _currentWord.lastChar() != ' '))) { // Next
 					color2 = 7;
 				}
-				
+
 				// needs fixing, or remove it!
 				bool _addIsActive = false; // FIXME: word adding is not implemented
 				if (i == 10 && !_addIsActive) { // Add

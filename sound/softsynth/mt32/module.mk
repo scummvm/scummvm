@@ -10,5 +10,5 @@ MODULE_OBJS := \
 	tables.o \
 	freeverb.o
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk

@@ -564,7 +564,7 @@ int saveSavegameData(int saveGameIdx) {
 	currentSaveFile->write(workpal, sizeof(int16) * NBCOLORS);
 
 	currentSaveFile->write(musicName, 15);
-	
+
 	const char dummy[6] = { 0, 0, 0, 0, 0, 0 };
 	currentSaveFile->write(dummy, 6);
 

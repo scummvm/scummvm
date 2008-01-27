@@ -36,20 +36,20 @@
 
 namespace Lure {
 
-// This list of hotspot Ids are used by sequence method #5 to deallocate a set 
+// This list of hotspot Ids are used by sequence method #5 to deallocate a set
 // of hotspot Ids at once
 static const uint16 dealloc_list_1[] = {0x13F2, 0x418, 0x2711, 0x2712, 0x40D, 0x3EA, 0x411, 0};
 static const uint16 dealloc_list_2[] = {0x2729, 0x272A, 0x272B, 0x272C, 0x272E, 0x272E, 0x272F, 0};
-static const uint16 dealloc_list_3[] = {0x3EF, 0x3E9, 0x3EB, 0x3EC, 0x3ED, 0x3EE, 0x3F0, 0x3F1, 
-	0x420, 0x429, 0x436, 0x2715, 0x2716, 0x2717, 0x2718, 0x2719, 0x271A, 0x271E, 
+static const uint16 dealloc_list_3[] = {0x3EF, 0x3E9, 0x3EB, 0x3EC, 0x3ED, 0x3EE, 0x3F0, 0x3F1,
+	0x420, 0x429, 0x436, 0x2715, 0x2716, 0x2717, 0x2718, 0x2719, 0x271A, 0x271E,
 	0x271F, 0x2720, 0x2721, 0x2722, 0x2725, 0x2726, 0};
 static const uint16 *hotspot_dealloc_set[4] = {&dealloc_list_1[0], &dealloc_list_2[0],
 	&dealloc_list_3[1], &dealloc_list_3[0]};
 
 // Details used for co-ordination of sounds during the endgame sequence
 static const AnimSoundSequence soundList[] = {
-	{9, 0x45, 2, 0}, {27, 0x48, 5, 0}, {24, 0x46, 3, 0}, {24, 0x37, 1, 0}, {3, 0x37, 1, 1}, 
-	{3, 0x37, 1, 2}, {3, 0x37, 1, 3}, {3, 0x37, 1, 4}, {4, 0x37, 1, 5}, {7, 0x47, 4, 6}, 
+	{9, 0x45, 2, 0}, {27, 0x48, 5, 0}, {24, 0x46, 3, 0}, {24, 0x37, 1, 0}, {3, 0x37, 1, 1},
+	{3, 0x37, 1, 2}, {3, 0x37, 1, 3}, {3, 0x37, 1, 4}, {4, 0x37, 1, 5}, {7, 0x47, 4, 6},
 	{31, 0x00, 6, 0}, {0, 0, 0, 0}
 };
 
@@ -103,7 +103,7 @@ void Script::clearSequenceDelayList(uint16 v1, uint16 scriptIndex, uint16 v3) {
 // Deactivates a set of predefined of hotspots in a given list index
 
 void Script::deactivateHotspotSet(uint16 listIndex, uint16 v2, uint16 v3) {
-	if (listIndex > 3) 
+	if (listIndex > 3)
 		error("Script::deactiveHotspotSet - Invalid list index");
 	Resources &res = Resources::getReference();
 	const uint16 *hotspotId = hotspot_dealloc_set[listIndex];
@@ -130,12 +130,12 @@ void Script::resetPathfinder(uint16 v1, uint16 v2, uint16 v3) {
 
 void Script::deactivateHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 	Resources &rsc = Resources::getReference();
-	if (hotspotId < START_NONVISUAL_HOTSPOT_ID) 
+	if (hotspotId < START_NONVISUAL_HOTSPOT_ID)
 		rsc.deactivateHotspot(hotspotId);
 	HotspotData *hs = rsc.getHotspot(hotspotId);
 	hs->roomNumber = 0xffff;
 	hs->flags |= 0x20;
-	if (hotspotId < START_NONVISUAL_HOTSPOT_ID) 
+	if (hotspotId < START_NONVISUAL_HOTSPOT_ID)
 		hs->layer = 0xff;
 }
 
@@ -321,7 +321,7 @@ void Script::characterChangeRoom(uint16 y, uint16 x, uint16 roomNumber) {
 	uint16 newRoomNumber = roomNumber & 0xff;
 	Direction newDirection = (Direction)(roomNumber >> 8);
 
-	Support::characterChangeRoom(*charHotspot, newRoomNumber, 
+	Support::characterChangeRoom(*charHotspot, newRoomNumber,
 		(int16) (x - 0x80), (int16) (y - 0x80), newDirection);
 }
 
@@ -335,7 +335,7 @@ void Script::pauseRatpouch(uint16 v1, uint16 v2, uint16 v3) {
 	ratpouch->setDelayCtr(0x7fff);
 }
 
-// Sets a character to a given hotspot script, and sets the character's current 
+// Sets a character to a given hotspot script, and sets the character's current
 // action to executing a script
 
 void Script::setBlockingHotspotScript(uint16 charId, uint16 scriptIndex, uint16 v3) {
@@ -361,7 +361,7 @@ void Script::decrInventoryItems(uint16 v1, uint16 v2, uint16 v3) {
 void Script::setTalking(uint16 characterId, uint16 destHotspot, uint16 messageId) {
 	Hotspot *hotspot = Resources::getReference().getActiveHotspot(characterId);
 	if (hotspot)
-		hotspot->converse(destHotspot, messageId, true, false);	
+		hotspot->converse(destHotspot, messageId, true, false);
 }
 
 // Sets the current action ctr value for the given hotspot
@@ -383,7 +383,7 @@ void Script::startSpeaking(uint16 characterId, uint16 destHotspot, uint16 messag
 
 void Script::disableHotspot(uint16 hotspotId, uint16 v2, uint16 v3) {
 	HotspotData *hotspot = Resources::getReference().getHotspot(hotspotId);
-	hotspot->flags |= 0x20;	
+	hotspot->flags |= 0x20;
 }
 
 // Called when the sack is cut with the knife
@@ -437,7 +437,7 @@ void Script::transformPlayer(uint16 v1, uint16 v2, uint16 v3) {
 	hotspot->roomNumber = player->roomNumber;
 	hotspot->startX = player->startX - 14;
 	hotspot->startY = player->startY - 10;
-	
+
 	Hotspot *activeHotspot = res.activateHotspot(TRANSFORM_ID);
 	activeHotspot->setActionCtr(0);
 	activeHotspot->setHotspotScript(0x630);
@@ -450,7 +450,7 @@ void Script::townHallClose(uint16 v1, uint16 v2, uint16 v3) {
 	joinRec->blocked = 1;
 }
 
-// Sets the sequence result to 1 if the given secondary description for a 
+// Sets the sequence result to 1 if the given secondary description for a
 // hotspot is empty (for inventory items, this gives the description before
 // the item is initially picked up)
 
@@ -471,7 +471,7 @@ void Script::makeGoewinFollow(uint16 v1, uint16 v2, uint16 v3) {
 	hotspot->currentActions().clear();
 	CharacterScheduleEntry *entry = res.charSchedules().getEntry(GOEWIN_CAVE_SUPPORT_ID);
 	hotspot->currentActions().addFront(DISPATCH_ACTION, entry, ROOMNUM_CAVE);
-	
+
 	hotspot->setActions(hotspot->resource()->actions | (1 << (TELL - 1)));
 	hotspot->setActionCtr(0);
 	hotspot->setDelayCtr(0);
@@ -493,7 +493,7 @@ void Script::fixGoewin(uint16 v1, uint16 v2, uint16 v3) {
 	Hotspot *hotspot = res.getActiveHotspot(GOEWIN_ID);
 	assert(hotspot);
 	hotspot->setTickProc(STANDARD_CHARACTER_TICK_PROC);
-	
+
 	CharacterScheduleEntry *entry = res.charSchedules().getEntry(GOEWIN_STANDARD_SUPPORT_ID);
 	assert(entry);
 	hotspot->currentActions().clear();
@@ -529,9 +529,9 @@ void Script::checkWakeBrenda(uint16 v1, uint16 v2, uint16 v3) {
 	ValueTableData &fields = res.fieldList();
 	Room &room = Room::getReference();
 
-	if ((fields.getField(TALK_INDEX) < 3) && 
+	if ((fields.getField(TALK_INDEX) < 3) &&
 		(room.roomNumber() == ROOMNUM_DINING_HALL) &&
-		(fields.getField(67) == 0)) 
+		(fields.getField(67) == 0))
 		// Wake up Brenda
 		Script::execute(0x1E15);
 }
@@ -561,7 +561,7 @@ void Script::setNewSupportData(uint16 index, uint16 hotspotId, uint16 v3) {
 
 void Script::setSupportData(uint16 hotspotId, uint16 index, uint16 v3) {
 	Resources &res = Resources::getReference();
-	
+
 	// WORKAROUND: In room #45, the script for the Skorl noticing you gets
 	// the parameters back to front. If this the case, just ignore it
 	if (index == CASTLE_SKORL_ID) return;
@@ -592,7 +592,7 @@ void Script::decreaseNumGroats(uint16 characterId, uint16 numGroats, uint16 v3) 
 	fields.numGroats() -= numGroats;
 }
 
-// Makes Goewin work 
+// Makes Goewin work
 
 void Script::makeGoewinWork(uint16 v1, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
@@ -615,7 +615,7 @@ void Script::moveCharacterToPlayer(uint16 characterId, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
 	Hotspot *playerHotspot = res.getActiveHotspot(PLAYER_ID);
 	Hotspot *charHotspot = res.getActiveHotspot(characterId);
-	assert(charHotspot); 
+	assert(charHotspot);
 
 	// If character in same room as player, then no need to do anything
 	if (!charHotspot->currentActions().isEmpty() &&
@@ -623,7 +623,7 @@ void Script::moveCharacterToPlayer(uint16 characterId, uint16 v2, uint16 v3) {
 		return;
 
 	uint16 destRoom = playerHotspot->roomNumber();
-	const RoomTranslationRecord *rec; 
+	const RoomTranslationRecord *rec;
 	for (rec = &roomTranslations[0]; rec->srcRoom != 0; ++rec) {
 		if (rec->srcRoom == destRoom) {
 			destRoom = rec->destRoom;
@@ -660,7 +660,7 @@ void Script::barmanServe(uint16 v1, uint16 v2, uint16 v3) {
 	Resources &res = Resources::getReference();
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
 	BarEntry &barEntry = res.barmanLists().getDetails(player->roomNumber());
-	
+
 	for (int index = 0; index < NUM_SERVE_CUSTOMERS; ++index) {
 		if (barEntry.customers[index].hotspotId == PLAYER_ID) {
 			barEntry.customers[index].serveFlags |= 5;
@@ -681,7 +681,7 @@ void Script::checkHasBook(uint16 v1, uint16 v2, uint16 v3) {
 	HotspotData *bookHotspot = res.getHotspot(BOOK_ID);
 	res.fieldList().setField(SEQUENCE_RESULT, (bookHotspot->roomNumber == PLAYER_ID) ? 1 : 0);
 }
-	
+
 // Enables the talk action on the two gargoyles
 
 void Script::enableGargoylesTalk(uint16 v1, uint16 v2, uint16 v3) {
@@ -767,7 +767,7 @@ struct SequenceMethodRecord {
 };
 
 static const SequenceMethodRecord scriptMethods[] = {
-	{0, Script::activateHotspot}, 
+	{0, Script::activateHotspot},
 	{1, Script::setHotspotScript},
 	{2, Script::addSound2},
 	{3, Script::setHotspotFlagMask},
@@ -844,31 +844,31 @@ static const char *scriptOpcodes[] = {
 };
 
 static const char *scriptMethodNames[67] = {
-	"ACTIVATE HOTSPOT", "SET HOTSPOT SCRIPT", "ADD SOUND 2", "SET HOTSPOT FLAG MASK", 
-	"CLEAR SEQUENCE DELAY LIST", "DEACTIVATE HOTSPOT SET", "DEACTIVATE HOTSPOT", 
+	"ACTIVATE HOTSPOT", "SET HOTSPOT SCRIPT", "ADD SOUND 2", "SET HOTSPOT FLAG MASK",
+	"CLEAR SEQUENCE DELAY LIST", "DEACTIVATE HOTSPOT SET", "DEACTIVATE HOTSPOT",
 	"RESET PATHFINDER",	"ADD DELAYED SCRIPT", "KILL SOUND",
 
 	"IS CHARACTER IN ROOM", "SET HOTSPOT DESC", "SET HOTSPOT NAME",
-	"ADD SOUND", "ENDGAME SEQUENCE", "SETUP PIG FIGHT", "DISPLAY DIALOG", "SETUP SKORL FIGHT", 
+	"ADD SOUND", "ENDGAME SEQUENCE", "SETUP PIG FIGHT", "DISPLAY DIALOG", "SETUP SKORL FIGHT",
 	"REMOTE ROOM VIEW SETUP", "SET CHAR SPEAKING TO ITSELF",
 
 	"CHECK CELL DOOR", "PLAY MUSIC", "IS DOOR BLOCKED", "IS SKORL IN CELL",
-	"PUSH BRICKS", "CHARACTER CHANGE ROOM", "PAUSE RATPOUCH", "SET BLOCKING HOTSPOT SCRIPT", 
+	"PUSH BRICKS", "CHARACTER CHANGE ROOM", "PAUSE RATPOUCH", "SET BLOCKING HOTSPOT SCRIPT",
 	"DECREMENT # INVENTORY ITEMS", "SET TALKING",
 
 	"SET ACTION CTR", "START SPEAKING", "DISABLE HOTSPOT", "CUT SACK",
 	"INCREASE # GROATS", "ENABLE HOTSPOT", "DISPLAY MESSAGE 2", "START OIL BURNER",
 	"TRANSFORM PLAYER", "JAIL CLOSE",
 
-	"CHECK DROPPED DESC", "MAKE GOEWIN FOLLOW", "CLOSE DOOR", "FIX GOEWIN", "OPEN DOOR", 
-	"NPC WAIT", "BRENDA BODGE",	"DISPLAY MESSAGE", "SET NEW ACTION SUPPORT DATA", 
+	"CHECK DROPPED DESC", "MAKE GOEWIN FOLLOW", "CLOSE DOOR", "FIX GOEWIN", "OPEN DOOR",
+	"NPC WAIT", "BRENDA BODGE",	"DISPLAY MESSAGE", "SET NEW ACTION SUPPORT DATA",
 	"SET ACTION SUPPORT DATA",
-	
+
 	"GIVE PLAYER ITEM", "DECREASE # GROATS", "MAKE GOEWIN WORK", "MOVE CHAR TO PLAYER",
-	"SET VILLAGE SKORL TICK PROC", "FREE GOEWIN", "BARMAN SERVE", "GET # GROATS", 
+	"SET VILLAGE SKORL TICK PROC", "FREE GOEWIN", "BARMAN SERVE", "GET # GROATS",
 	"CHECK HAS BOOK", "ENABLE GARGOYLE TALK",
 
-	"NORMAL GOEWIN", "KILL PLAYER", "ANIMATION LOAD", "ADD ACTIONS", "RANDOM TO GENERAL", 
+	"NORMAL GOEWIN", "KILL PLAYER", "ANIMATION LOAD", "ADD ACTIONS", "RANDOM TO GENERAL",
 	"CHECK CELL DOOR", "METHOD 66"
 };
 
@@ -905,7 +905,7 @@ uint16 Script::execute(uint16 startOffset) {
 	strcpy(debugInfo, "");
 
 	while (!breakFlag) {
-		if (offset >= scriptData->size()) 
+		if (offset >= scriptData->size())
 			error("Script failure in script %d - invalid offset %d", startOffset, offset);
 
 		if (gDebugLevel >= ERROR_DETAILED)
@@ -922,14 +922,14 @@ uint16 Script::execute(uint16 startOffset) {
 
 		if (hasParam) {
 			// Flag to read next two bytes as active parameter
-			if (offset >= scriptData->size()-2) 
+			if (offset >= scriptData->size()-2)
 				error("Script failure in script %d - invalid offset %d", startOffset, offset);
 
 			param = READ_LE_UINT16(scripts + offset);
 			offset += 2;
 
 			if (gDebugLevel >= ERROR_DETAILED)
-				sprintf(debugInfo + strlen(debugInfo), " [%d]", 
+				sprintf(debugInfo + strlen(debugInfo), " [%d]",
 					((opcode == S_OPCODE_GET_FIELD) || (opcode == S_OPCODE_SET_FIELD)) ?
 					param >> 1 : param);
 		}
@@ -950,10 +950,10 @@ uint16 Script::execute(uint16 startOffset) {
 			case S_OPCODE_OR:
 			case S_OPCODE_LOGICAL_AND:
 			case S_OPCODE_LOGICAL_OR:
-				sprintf(debugInfo + strlen(debugInfo), 
+				sprintf(debugInfo + strlen(debugInfo),
 					" %d, %d", stack[stack.size() - 1], stack[stack.size() - 2]);
 				break;
-			
+
 			case S_OPCODE_SET_FIELD:
 				sprintf(debugInfo + strlen(debugInfo), " <= ST (%d)", stack[stack.size() - 1]);
 				break;
@@ -1091,7 +1091,7 @@ uint16 Script::execute(uint16 startOffset) {
 				else if (stack.size() == 1)
 					sprintf(debugInfo + strlen(debugInfo), " (%d)", stack[stack.size()-1]);
 				strcat(debugInfo, ")");
-				
+
 				debugC(ERROR_DETAILED, kLureDebugScripts, debugInfo);
 			}
 
@@ -1100,7 +1100,7 @@ uint16 Script::execute(uint16 startOffset) {
 			if (!stack.empty()) param2 = stack.pop();
 			if (!stack.empty()) param3 = stack.pop();
 
-			if (rec->methodIndex == 0xff) 
+			if (rec->methodIndex == 0xff)
 				warning("Undefined script method %d", param);
 			else {
 				ptr = rec->proc;
@@ -1123,7 +1123,7 @@ uint16 Script::execute(uint16 startOffset) {
 
 		case S_OPCODE_END:
 			// Signal to end the execution
-			if (!methodStack.empty()) 
+			if (!methodStack.empty())
 				offset = methodStack.pop();
 			else
 				breakFlag = true;
@@ -1167,7 +1167,7 @@ uint16 Script::execute(uint16 startOffset) {
 	}
 
 	uint16 result = fields.getField(SEQUENCE_RESULT);
-	debugC(ERROR_DETAILED, kLureDebugScripts, "Script result = %d", result); 
+	debugC(ERROR_DETAILED, kLureDebugScripts, "Script result = %d", result);
 	return result;
 }
 
@@ -1177,7 +1177,7 @@ uint16 Script::execute(uint16 startOffset) {
 /*------------------------------------------------------------------------*/
 
 int16 HotspotScript::nextVal(MemoryBlock *data, uint16 &offset) {
-	if (offset >= data->size() - 1) 
+	if (offset >= data->size() - 1)
 		error("Script failure - invalid offset");
 	int16 value = READ_LE_UINT16(data->data() + offset);
 	offset += 2;
@@ -1194,7 +1194,7 @@ bool HotspotScript::execute(Hotspot *h) {
 	uint32 actions;
 	bool breakFlag = false;
 
-	debugC(ERROR_BASIC, kLureDebugScripts, "Executing hotspot %xh script pos=%xh", 
+	debugC(ERROR_BASIC, kLureDebugScripts, "Executing hotspot %xh script pos=%xh",
 		h->hotspotId(), offset);
 
 	while (!breakFlag) {
@@ -1213,16 +1213,16 @@ bool HotspotScript::execute(Hotspot *h) {
 		case S2_OPCODE_POSITION:
 			param1 = nextVal(scriptData, offset);
 			param2 = nextVal(scriptData, offset);
-			debugC(ERROR_DETAILED, kLureDebugScripts, "SET POSITION = (%d,%d)", 
+			debugC(ERROR_DETAILED, kLureDebugScripts, "SET POSITION = (%d,%d)",
 				param1 - 0x80, param2 - 0x80);
 
 			h->setPosition(param1 - 0x80, param2 - 0x80);
 			break;
-			
+
 		case S2_OPCODE_CHANGE_POS:
 			param1 = nextVal(scriptData, offset);
 			param2 = nextVal(scriptData, offset);
-			debugC(ERROR_DETAILED, kLureDebugScripts, "CHANGE POSITION BY = (%d,%d)", 
+			debugC(ERROR_DETAILED, kLureDebugScripts, "CHANGE POSITION BY = (%d,%d)",
 				param1, param2);
 
 			h->setPosition(h->x() + param1, h->y() + param2);

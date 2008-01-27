@@ -981,7 +981,7 @@ void DebugInputDialog::handleKeyDown(Common::KeyState state) {
 		draw();
 		reflowLayout();
 		setInfoText(total);
-	} 
+	}
 }
 
 } // End of namespace Scumm

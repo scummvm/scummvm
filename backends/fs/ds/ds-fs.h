@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
+
 #ifndef _DS_FS_H
 #define _DS_FS_H
 
@@ -36,7 +36,7 @@ namespace DS {
 /**
  * Implementation of the ScummVM file system API.
  * This class is used when a Flash cart is in use.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class DSFileSystemNode : public AbstractFilesystemNode {
@@ -50,33 +50,33 @@ protected:
 	bool _isDirectory;
 	bool _isValid;
 	int _refCountVal;
-	
+
 public:
 	/**
 	 * Creates a DSFilesystemNode with the root node as path.
 	 */
 	DSFileSystemNode();
-	
+
 	/**
 	 * Creates a DSFilesystemNode for a given path.
-	 * 
+	 *
 	 * @param path String with the path the new node should point to.
 	 */
 	DSFileSystemNode(const String &path);
-	
+
 	/**
 	 * Creates a DSFilesystemNode for a given path.
-	 * 
+	 *
 	 * @param path String with the path the new node should point to.
 	 * @param path true if path is a directory, false otherwise.
 	 */
 	DSFileSystemNode(const String& path, bool isDir);
-	
+
 	/**
 	 * Copy constructor.
 	 */
 	DSFileSystemNode(const DSFileSystemNode *node);
-	
+
 	virtual bool exists() const { return true; }		//FIXME: this is just a stub
 	virtual String getDisplayName() const {  return _displayName; }
 	virtual String getName() const {  return _displayName; }
@@ -84,7 +84,7 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
-	
+
 	/**
 	 * Returns a copy of this node.
 	 */
@@ -92,7 +92,7 @@ public:
 	virtual AbstractFilesystemNode *getChild(const Common::String& name) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode = FilesystemNode::kListDirectoriesOnly, bool hidden = false) const;
 	virtual AbstractFilesystemNode *getParent() const;
-	
+
 	/**
 	 * Returns the zip file this node points to.
 	 * TODO: check this documentation.
@@ -103,7 +103,7 @@ public:
  /**
  * Implementation of the ScummVM file system API.
  * This class is used when the GBAMP (GBA Movie Player) is used with a CompactFlash card.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class GBAMPFileSystemNode : public AbstractFilesystemNode {
@@ -115,41 +115,41 @@ protected:
 	bool _isDirectory;
 	bool _isValid;
 	int _refCountVal;
-	
+
 public:
 	/**
 	 * Creates a GBAMPFilesystemNode with the root node as path.
 	 */
 	GBAMPFileSystemNode();
-	
+
 	/**
 	 * Creates a GBAMPFilesystemNode for a given path.
-	 * 
+	 *
 	 * @param path String with the path the new node should point to.
 	 */
 	GBAMPFileSystemNode(const String &path);
-	
+
 	/**
 	 * Creates a DSFilesystemNode for a given path.
-	 * 
+	 *
 	 * @param path String with the path the new node should point to.
 	 * @param path true if path is a directory, false otherwise.
 	 */
 	GBAMPFileSystemNode(const String &path, bool isDirectory);
-	
+
 	/**
 	 * Copy constructor.
 	 */
 	GBAMPFileSystemNode(const GBAMPFileSystemNode *node);
 
-	virtual bool exists() const { return _isValid || _isDirectory; }	
+	virtual bool exists() const { return _isValid || _isDirectory; }
 	virtual String getDisplayName() const {  return _displayName; }
 	virtual String getName() const {  return _displayName; }
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
-	
+
 	/**
 	 * Returns a copy of this node.
 	 */
@@ -164,7 +164,7 @@ struct fileHandle {
 	bool used;
 	char* data;
 	int size;
-	
+
 	DSSaveFile* sramFile;
 };
 
@@ -177,7 +177,7 @@ struct fileHandle {
 #define stdin ((DS::fileHandle*) -3)
 
 #define FILE DS::fileHandle
-	
+
 // Please do not remove any of these prototypes that appear not to be required.
 FILE* 	std_fopen(const char* name, const char* mode);
 void 	std_fclose(FILE* handle);

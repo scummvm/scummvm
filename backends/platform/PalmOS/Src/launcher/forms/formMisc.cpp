@@ -40,7 +40,7 @@ static Boolean ScummVMTabSave() {
 
 	fld1P = (FieldType *)GetObjectPtr(TabMiscScummVMDebugLevelField);
 	fld2P = (FieldType *)GetObjectPtr(TabMiscScummVMAutosaveField);
-	
+
 	cckP[0] = (ControlType *)GetObjectPtr(TabMiscScummVMAutosaveCheckbox);
 	cckP[3] = (ControlType *)GetObjectPtr(TabMiscScummVMDebugCheckbox);
 	cckP[6] = (ControlType *)GetObjectPtr(TabMiscScummVMDemoCheckbox);
@@ -69,7 +69,7 @@ static Boolean ScummVMTabSave() {
 
 	gPrefs->debugLevel = StrAToI(FldGetTextPtr(fld1P));
 	gPrefs->autoSavePeriod = StrAToI(FldGetTextPtr(fld2P));
-	
+
 	return true;
 }
 
@@ -111,7 +111,7 @@ static void ExtsTabSave() {
 		gPrefs->lightspeed.enable = CtlGetValue(cckP[0]);
 		gPrefs->lightspeed.mode = LstGetSelection(list1P);
 	}
-	if (OPTIONS_TST(kOptGoLcdAPI)) {	
+	if (OPTIONS_TST(kOptGoLcdAPI)) {
 		cckP[1] = (ControlType *)GetObjectPtr(TabMiscExtsGolcdCheckbox);
 		gPrefs->goLCD = CtlGetValue(cckP[1]);
 	}
@@ -176,7 +176,7 @@ static void MiscFormSave() {
 	if (!ScummVMTabSave()) return;
 	PalmOSTabSave();
 	ExtsTabSave();
-	
+
 	TabDeleteTabs(myTabP);
 	FrmReturnToMain();
 }
@@ -216,7 +216,7 @@ static void MiscFormInit() {
 		TabMoveUpObject(frmP, TabMiscExtsNothingLabel, 12);
 		extsCnt--;
 	}
-	
+
 	if (extsCnt)
 		FrmRemoveObject(&frmP, FrmGetObjectIndex(frmP, TabMiscExtsNothingLabel));
 
@@ -270,6 +270,6 @@ Boolean MiscFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-	
+
 	return handled;
 }

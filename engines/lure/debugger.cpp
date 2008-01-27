@@ -557,13 +557,13 @@ bool Debugger::cmd_saveStrings(int argc, const char **argv) {
 	strings.getString(id, buffer, NULL, NULL);
 	DebugPrintf("%s\n", buffer);
 
-/* Commented out code for saving all text strings - note that 0x1000 is chosen 
+/* Commented out code for saving all text strings - note that 0x1000 is chosen
  * arbitrarily, so there'll be a bunch of garbage at the end, or the game will crash
 
-	// Save all the strings to a text file - this 
+	// Save all the strings to a text file - this
 
 	FILE *f = fopen("strings.txt", "w");
-	
+
 	for (int index = 0; index < 0x1000; ++index) {
 		strings.getString(index, buffer);
 		fprintf(f, "%.4xh - %s\n", index, buffer);

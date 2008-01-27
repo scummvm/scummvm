@@ -135,12 +135,12 @@ public:
 	PausedCharacterList &pausedList() { return _pausedList; }
 	BarmanLists &barmanLists() { return _barmanLists; }
 	StringList &stringList() { return _stringList; }
-	uint16 getCharOffset(int index) { 
-		if (index >= numCharOffsets) 
+	uint16 getCharOffset(int index) {
+		if (index >= numCharOffsets)
 			error("Invalid index %d passed to script engine support data offset list", index);
 		if (index == 1)
 			error("support data list index #1 was referenced - special handlng TODO");
-		return _charOffsets[index]; 
+		return _charOffsets[index];
 	}
 	void copyCursorTo(Surface *s, uint8 cursorNum, int16 x, int16 y);
 
@@ -149,7 +149,7 @@ public:
 	TalkData *getTalkData() { return _activeTalkData; }
 	void setTalkState(TalkState state) { _talkState = state; }
 	TalkState getTalkState() { return _talkState; }
-	TalkSelections &getTalkSelections() { return _talkSelections; }	
+	TalkSelections &getTalkSelections() { return _talkSelections; }
 	TalkDialogDetails &getTalkDetails() { return _talkDetails; }
 	void setTalkSelection(int index) { _talkSelection = index; }
 	int getTalkSelection() { return _talkSelection; }
@@ -164,8 +164,8 @@ public:
 	}
 	void setCurrentAction(Action action) { _currentAction = action; }
 	Action getCurrentAction() { return _currentAction; }
-	const char *getCurrentActionStr() { 
-		if (_currentAction > EXAMINE) 
+	const char *getCurrentActionStr() {
+		if (_currentAction > EXAMINE)
 			error("Invalid current action %d", _currentAction);
 		return _stringList.getString(_currentAction);
 	}

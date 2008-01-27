@@ -133,7 +133,7 @@ public:
 
 		return _passMap[y * _mapWidth + x];
 	}
-	
+
 	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
 		if (!_passMap)
 			return;
@@ -167,7 +167,7 @@ public:
 			heightOff = _passWidth;
 		return _passMap[y * heightOff + x];
 	}
-	
+
 	virtual void setPass(int x, int y, int8 pass, int heightOff = -1) {
 		if (!_passMap)
 			return;

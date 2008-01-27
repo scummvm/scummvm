@@ -33,7 +33,7 @@ UInt32 StuffsGetPitch(Coord fullw) {
 
 	if (OPTIONS_TST(kOptModeHiDensity)) {
 		WinScreenGetAttribute(winScreenRowBytes, &pitch);
-		
+
 		// FIXME : hack for TT3 simulator (and real ?) return 28 on landscape mode
 		if (pitch < fullw)
 			pitch = fullw;

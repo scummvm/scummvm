@@ -33,7 +33,7 @@ struct ColorMasks {
 /*
 The ColorMasks template can be used to map bit format values
 (like 555, 565, 1555, 4444) to corresponding bit masks and shift values.
-Currently this is only meant for 
+Currently this is only meant for
 
 The meaning of these is masks is the following:
  kBytesPerPixel
@@ -41,17 +41,17 @@ The meaning of these is masks is the following:
 
  kRedMask, kGreenMask, kBlueMask
     -> bitmask, and this with the color to select only the bits of the corresponding color
- 
+
  The k*Bits and k*Shift values can be used to extract R,G,B. I.e. to get
  the red color component of a pixel, as a 8-bit value, you would write
- 
+
  R = ((color & kRedMask) >> kRedShift) << (8-kRedBits)
- 
+
  Actually, instead of the simple left shift, one might want to use somewhat
- more sophisticated code (which fills up the least significant bits with 
+ more sophisticated code (which fills up the least significant bits with
  appropriate data).
- 
- 
+
+
  The highBits / lowBits / qhighBits / qlowBits are special values that are
  used in the super-optimized interpolation functions in scaler/intern.h
  and scaler/aspect.cpp. Currently they are only available in 555 and 565 mode.

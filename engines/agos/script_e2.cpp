@@ -654,7 +654,7 @@ void AGOSEngine_Elvira2::oe2_isAdjNoun() {
 	int16 a = getNextWord(), b = getNextWord();
 
 	if (getGameType() == GType_ELVIRA2) {
-		// WORKAROUND bug #1745996: A NULL item can occur when 
+		// WORKAROUND bug #1745996: A NULL item can occur when
 		// interacting with items in the dinning room
 		if (item == NULL) {
 			setScriptCondition(false);

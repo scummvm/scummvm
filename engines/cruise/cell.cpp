@@ -135,7 +135,7 @@ void loadSavegameDataSub2(Common::InSaveFile& currentSaveFile) {
 		t->animCounter = currentSaveFile.readSint16LE();
 		t->animLoop = currentSaveFile.readSint16LE();
 		currentSaveFile.skip(2);
-		
+
 		t->next = NULL;
 		p->next = t;
 		t->prev = cellHead.prev;

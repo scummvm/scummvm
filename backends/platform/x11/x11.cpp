@@ -212,7 +212,7 @@ out_of_loop:
 
 	/* And finally start the local timer */
 	gettimeofday(&_start_time, NULL);
-	
+
 	OSystem::initBackend();
 }
 
@@ -390,7 +390,7 @@ void OSystem_X11::initSize(uint w, uint h) {
 		if (_local_fb)
 			free(_local_fb);
 		if (_local_fb_overlay)
-			free(_local_fb_overlay);	
+			free(_local_fb_overlay);
 		/* Initialize the 'local' frame buffer and the palette */
 		_local_fb = (uint8 *)calloc(_fb_width * _fb_height, sizeof(uint8));
 		_local_fb_overlay = (uint16 *)calloc(_fb_width * _fb_height, sizeof(uint16));
@@ -541,7 +541,7 @@ void OSystem_X11::updateScreen_helper(const DirtyRect *d, DirtyRect *dout) {
 						currLine = y * _fb_width;
 						for (x = d->x; x < d->x + d->w; x++) {
 							currPixel = _local_fb_overlay[(currLine + x)];
-							*(uint32 *)ptr_dst = ((currPixel & 0xF800) << 8) + ((currPixel & 0x07E0) << 5) + 
+							*(uint32 *)ptr_dst = ((currPixel & 0xF800) << 8) + ((currPixel & 0x07E0) << 5) +
 													((currPixel & 0x001F) << 3);
 							ptr_dst += sizeof(uint32);
 						}

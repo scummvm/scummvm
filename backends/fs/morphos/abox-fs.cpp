@@ -35,7 +35,7 @@
 
 /**
  * Implementation of the ScummVM file system API based on the MorphOS A-Box API.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class ABoxFilesystemNode : public AbstractFilesystemNode {
@@ -51,19 +51,19 @@ public:
 	 * Creates a ABoxFilesystemNode with the root node as path.
 	 */
 	ABoxFilesystemNode();
-	
+
 	/**
 	 * Creates a ABoxFilesystemNode for a given path.
-	 * 
+	 *
 	 * @param path String with the path the new node should point to.
 	 */
 	ABoxFilesystemNode(const String &p);
-	
+
 	/**
 	 * FIXME: document this constructor.
 	 */
 	ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name = NULL);
-	
+
 	/**
 	 * Copy constructor.
 	 */
@@ -81,11 +81,11 @@ public:
 	virtual bool isDirectory() const { return _isDirectory; }
 	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
 	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
-	
+
 	virtual AbstractFilesystemNode *getChild(const String &name) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
 	virtual AbstractFilesystemNode *getParent() const;
-	
+
 	/**
 	 * Return the list of child nodes for the root node.
 	 */
@@ -94,14 +94,14 @@ public:
 
 /**
  * Returns the last component of a given path.
- * 
+ *
  * @param str String containing the path.
  * @return Pointer to the first char of the last component inside str.
  */
 const char *lastPathComponent(const Common::String &str) {
 	if (str.empty())
 		return "";
-	
+
 	const char *str = _path.c_str();
 	while (offset > 0 && (str[offset-1] == '/' || str[offset-1] == ':') )
 		offset--;
@@ -109,7 +109,7 @@ const char *lastPathComponent(const Common::String &str) {
 		len++;
 		offset--;
 	}
-	
+
 	return str + offset;
 }
 
@@ -162,7 +162,7 @@ ABoxFilesystemNode::ABoxFilesystemNode(const String &p) {
 				_isValid = true;
 			}
 		}
-	
+
 		UnLock(pLock);
 	}
 
@@ -217,7 +217,7 @@ ABoxFilesystemNode::ABoxFilesystemNode(BPTR lock, CONST_STRPTR display_name)
 			_isValid = true;
 		}
 	}
-	
+
 	FreeDosObject(DOS_FIB, fib);
 }
 
@@ -262,7 +262,7 @@ AbstractFilesystemNode *ABoxFilesystemNode::getChild(const String &name) const {
 bool ABoxFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const
 {
 	//TODO: honor the hidden flag
-	
+
 	if (!_isValid)
 	{
 		debug(6, "listDir() called on invalid node");

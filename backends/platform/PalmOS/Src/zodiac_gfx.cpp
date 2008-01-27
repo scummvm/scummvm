@@ -175,7 +175,7 @@ void OSystem_PalmZodiac::unload_gfx_mode() {
 	Err e;
 
 	if (!_gfxLoaded)
-		return;	
+		return;
 	_gfxLoaded = false;
 
 	if (_tmpScreenP) {
@@ -186,7 +186,7 @@ void OSystem_PalmZodiac::unload_gfx_mode() {
 	e = TwGfxFreeSurface(_overlayP);
 	e = TwGfxClose(_gfxH);
 
-	UInt32 depth = 8;		
+	UInt32 depth = 8;
 	WinScreenMode(winScreenModeSet, NULL, NULL, &depth, NULL);
 	clearScreen();
 
@@ -246,11 +246,11 @@ void OSystem_PalmZodiac::updateScreen() {
 			}
 			e = TwGfxDrawBitmap(_tmpScreenP, &pos, &_srcBmp);
 			e = TwGfxWaitForVBlank(_gfxH);
-			e = TwGfxStretchBlt2(_palmScreenP, &dst, _tmpScreenP, &_srcRect, twGfxStretchFast| (gVars->filter ? twGfxStretchSmooth : 0)); 
-			
+			e = TwGfxStretchBlt2(_palmScreenP, &dst, _tmpScreenP, &_srcRect, twGfxStretchFast| (gVars->filter ? twGfxStretchSmooth : 0));
+
 		} else {
 			TwGfxPointType pos = {_srcPos.x, _srcPos.y};
-		
+
 			if (_new_shake_pos != _current_shake_pos) {
 				if (_new_shake_pos != 0) {
 					TwGfxRectType r = { _screenOffset.x, _screenOffset.y, _screenWidth, _new_shake_pos };
@@ -263,7 +263,7 @@ void OSystem_PalmZodiac::updateScreen() {
 			e = TwGfxDrawBitmap(_palmScreenP, &pos, &_srcBmp);
 		}
 	}
-	
+
 	// undraw the mouse
 	undraw_mouse();
 }

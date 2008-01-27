@@ -74,12 +74,12 @@ public:
 	void setupSceneAnims();
 	void loadDat(const char *filename, SceneExits &exits);
 	void loadSceneShapes();
-	
+
 	Anim _anims[MAX_NUM_ANIMS];
 	uint8 *_sceneShapes[50];
 
 	void refreshSceneAnimObject(uint8 animNum, uint8 shapeNum, uint16 x, uint16 y, bool flipX, bool unkFlag);
-	
+
 	int getDrawLayer(int y);
 
 	int _sceneAnimatorBeaconFlag;

@@ -16,13 +16,13 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
  *
  */
- 
+
 #include <hildon-widgets/hildon-app.h>
 #include <gtk/gtk.h>
 #include <libosso.h>
@@ -108,9 +108,9 @@ int main(int argc, char *argv[]) {
     gtk_box_pack_start(GTK_BOX(main_vbox), label, FALSE, TRUE, 0);
 
     // Add handler for hello D-BUS messages
-    result = osso_rpc_set_cb_f(appdata->osso_context, 
-                               OSSO_APP_SERVICE, 
-                               OSSO_APP_OBJECT, 
+    result = osso_rpc_set_cb_f(appdata->osso_context,
+                               OSSO_APP_SERVICE,
+                               OSSO_APP_OBJECT,
                                OSSO_APP_IFACE,
                                dbus_req_handler, appdata);
     if (result != OSSO_OK) {

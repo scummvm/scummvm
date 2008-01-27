@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
+
 #include "dsoptions.h"
 #include "dsmain.h"
 #include "gui/dialog.h"
@@ -42,7 +42,7 @@ namespace DS {
 
 DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 230 - 20) {
 	addButton(this, 10, 175, "Close", GUI::kCloseCmd, 'C');
-	
+
 #ifdef DS_SCUMM_BUILD
 	if (!DS::isGBAMPAvailable()) {
 //		addButton(this, 100, 140, "Delete Save", 'dels', 'D');
@@ -152,7 +152,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(20, 0, 320 - 40, 230 - 20) {
 	} else {
 		_touchY->setValue(0);
 	}
-	
+
 }
 
 DSOptionsDialog::~DSOptionsDialog() {
@@ -186,7 +186,7 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 /*	if (cmd == 'dels') {
 		_delDialog->setList(Scumm::generateSavegameList(Scumm::g_scumm, false));
 		_delDialog->handleCommand(NULL, GUI::kListSelectionChangedCmd, 0);
-		
+
 		Common::Event event;
 		event.type = Common::EVENT_KEYDOWN;
 		event.kbd.ascii = 0;
@@ -195,9 +195,9 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 
 		event.type = Common::EVENT_KEYUP;
 		OSystem_DS::instance()->addEvent(event);
-				
+
 		int idx = _delDialog->runModal();
-		
+
 		if (idx >= 0) {
 			char name[256];
 			Scumm::g_scumm->makeSavegameName(name, idx, false);
@@ -205,10 +205,10 @@ void DSOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint
 				((DSSaveFileManager *) (OSystem_DS::instance()->getSavefileManager()))->deleteFile(name);
 			}
 		}
-		
+
 	}*/
 #endif
-	
+
 
 }
 
@@ -220,11 +220,11 @@ void togglePause() {
 		OSystem_DS* system = OSystem_DS::instance();
 
 		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_p;		
+		event.kbd.keycode = Common::KEYCODE_p;
 		event.kbd.ascii = 'p';
 		event.kbd.flags = 0;
 		system->addEvent(event);
-	
+
 		event.type = Common::EVENT_KEYUP;
 		system->addEvent(event);
 	}
@@ -235,13 +235,13 @@ void showOptionsDialog() {
 	togglePause();
 
 	DS::displayMode16Bit();
-	
+
 
 	DSOptionsDialog* d = new DSOptionsDialog();
 	d->runModal();
 	consolePrintf("deleting dialog\n");
 	delete d;
-	
+
 	consolePrintf("going to 8 bit\n");
 	DS::displayMode8Bit();
 
@@ -303,7 +303,7 @@ void setOptions() {
 	} else {
 		DS::setCpuScalerEnable(false);
 	}
-#endif	
+#endif
 }
 
 }

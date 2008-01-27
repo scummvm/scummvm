@@ -43,7 +43,7 @@ void DrawStatus(Boolean show) {
 	if (OPTIONS_TST(kOptDisableOnScrDisp))
 		return;
 
-	UInt8 x,y;	
+	UInt8 x,y;
 	UInt32 depth, d1;
 	Boolean d2;
 	WinScreenMode(winScreenModeGet, &d1, &d1, &depth, &d2);

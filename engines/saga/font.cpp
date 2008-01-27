@@ -249,7 +249,7 @@ int Font::getStringWidth(FontId fontId, const char *text, size_t count, FontEffe
 	int ch;
 	const byte *txt;
 
-	
+
 	font = getFont(fontId);
 
 	txt = (const byte *) text;

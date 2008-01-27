@@ -504,7 +504,7 @@ void IgorEngine::PART_17() {
 	while (_currentPart >= 170 && _currentPart <= 171) {
 		runPartLoop();
 	}
-	leavePartLoop();	
+	leavePartLoop();
 	if (_objectsState[55] == 1) {
 		_objectsState[56] = 1;
 	}

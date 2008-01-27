@@ -22,8 +22,8 @@
  * $Id$
  *
  * This is a utility for extracting needed resource data from different language
- * version of the Lure of the Temptress lure.exe executable files into a new file 
- * lure.dat - this file is required for the ScummVM  Lure of the Temptress module 
+ * version of the Lure of the Temptress lure.exe executable files into a new file
+ * lure.dat - this file is required for the ScummVM  Lure of the Temptress module
  * to work properly
  */
 
@@ -92,16 +92,16 @@ AnimListRecord animDataList[] = {
 	{{0x5647, 0x5707, 0x5727, 0x5757, 0x5727}},	// Pig recoiling from hit
 	{{0x5650, 0x5710, 0x5730, 0x5760, 0x5730}},	// Pig dies
 	{{0x5810, 0x58D0, 0x58F0, 0x5920, 0x58f0}},	// Voice bubble
-	{{0x5915, 0x59D5, 0x59F5, 0x5a25, 0x59f5}},	// Blacksmith hammering					
+	{{0x5915, 0x59D5, 0x59F5, 0x5a25, 0x59f5}},	// Blacksmith hammering
 	{{0x59E4, 0x5AA4, 0x5AC4, 0x5af4, 0x5ac4}}, // Ewan's standard animation
 	{{0x59ED, 0x5AAD, 0x5ACD, 0x5afd, 0x5acd}},	// Ewan's alternate animation
 	{{0x59FF, 0x5ABF, 0x5ADF, 0x5b0f, 0x5adf}},	// Dragon breathing fire
 	{{0x5A08, 0x5AC8, 0x5AE8, 0x5b18, 0x5af1}},	// Dragon breathing fire 2
 	{{0x5A11, 0x5AD1, 0x5AF1, 0x5b21, 0x5af1}},	// Dragon breathing fire 3
 	{{0x5A1A, 0x5ADA, 0x5AFA, 0x5b2a, 0x5afa}},	// Player turning winch in room #48
-	{{0x5A59, 0x5B19, 0x5B39, 0x5b69, 0x5b39}},	// Player pulling lever in room #48		 
+	{{0x5A59, 0x5B19, 0x5B39, 0x5b69, 0x5b39}},	// Player pulling lever in room #48
 	{{0x5A62, 0x5B22, 0x5B42, 0x5b72, 0x5b42}},	// Minnow pulling lever in room #48
-	{{0x5AAA, 0x5B6A, 0x5B8A, 0x5bba, 0x5b8a}},	// Goewin mixing potion					
+	{{0x5AAA, 0x5B6A, 0x5B8A, 0x5bba, 0x5b8a}},	// Goewin mixing potion
 	{{0x5C80, 0x5D40, 0x5D60, 0x5d90, 0x5d60}}, // Player standard animation
 	{{0x5C95, 0x5D55, 0x5D75, 0x5da5, 0x5d75}}, // Player operating rack
 	{{0x5CAA, 0x5D6A, 0x5D8A, 0x5dba, 0x5d8a}},	// Selena animation
@@ -232,7 +232,7 @@ void read_room_data(byte *&data, uint16 &totalSize)  {
 		break;
 	case FR_FRA:
 		dataStart = 0xc020;
-		walkAreaOffset = 0x2ed0; 
+		walkAreaOffset = 0x2ed0;
 		break;
 	case DE_DEU:
 		dataStart = 0xc050;
@@ -251,7 +251,7 @@ void read_room_data(byte *&data, uint16 &totalSize)  {
 		lureExe.seek(dataSegment + dataStart + index * 9);
 		lureExe.read(&headerEntry, sizeof(RoomHeaderEntry));
 
-		if ((FROM_LE_16(headerEntry.offset) != 0) && 
+		if ((FROM_LE_16(headerEntry.offset) != 0) &&
 			(FROM_LE_16(headerEntry.offset) != 0xffff) &&
 			(FROM_LE_16(headerEntry.roomNumber) != 0)) {
 			// Store offset of room entry
@@ -263,13 +263,13 @@ void read_room_data(byte *&data, uint16 &totalSize)  {
 			RoomResourceOutput *rec = (RoomResourceOutput *) (data + offset);
 			rec->hdrFlags = headerEntry.hdrFlags;
 			rec->actions = FROM_LE_32(buffer.actions);
-			rec->roomNumber = index; 
+			rec->roomNumber = index;
 			rec->descId = headerEntry.descId;
 			rec->numLayers = buffer.numLayers;
 			memcpy(rec->layers, buffer.layers, 8);
-			rec->sequenceOffset = buffer.sequenceOffset;			
+			rec->sequenceOffset = buffer.sequenceOffset;
 			rec->clippingXStart = TO_LE_16(FROM_LE_16(buffer.clippingXStart) - 0x80);
-			rec->clippingXEnd = (FROM_LE_16(buffer.clippingXEnd) == 0) ? 0 : 
+			rec->clippingXEnd = (FROM_LE_16(buffer.clippingXEnd) == 0) ? 0 :
 			  TO_LE_16(FROM_LE_16(buffer.clippingXEnd) - 0x80);
 			rec->exitTime = FROM_LE_32(buffer.exitTime);
 			rec->areaFlag = buffer.areaFlag;
@@ -283,7 +283,7 @@ void read_room_data(byte *&data, uint16 &totalSize)  {
 				lureExe.read(p, sizeof(RoomResourceExit1));
 				if (FROM_LE_16(p->xs) == 0xffff) break;
 
-				if (++rec->numExits == 255) 
+				if (++rec->numExits == 255)
 					errorExit("Too many rooms read in");
 
 				p->xs = TO_LE_16(FROM_LE_16(p->xs) - 0x80);
@@ -310,7 +310,7 @@ void read_room_data(byte *&data, uint16 &totalSize)  {
 
 			// Handle the random destination walk bounds for the room
 
-			lureExe.seek(dataSegment + walkAreaOffset + 
+			lureExe.seek(dataSegment + walkAreaOffset +
 				buffer.walkBoundsIndex * sizeof(RoomRectIn));
 			lureExe.read(&bounds, sizeof(RoomRectIn));
 			rec->walkBounds.xs = TO_LE_16(FROM_LE_16(bounds.xs) - 0x80);
@@ -338,38 +338,38 @@ uint16 englishTickProcOffsets[] = {
 	0x41BD, 0x4f82, 0x5e44, 0x625e, 0x6571, 0x7207, 0x7c14, 0x7c24, 0x7efa, 0x7f02,
 	0x7F37, 0x7f3a, 0x7f54, 0x7f69, 0x7fa1, 0x8009, 0x80c6, 0x813f, 0x8180, 0x81b3,
 	0x81f3, 0x820e, 0x8241, 0x82a0, 0x85ce, 0x862d, 0x865A, 0x86FA, 0x86FF, 0x871E,
-	0x873D, 0x8742, 0x8747, 0x87B3, 0x87EC, 0x882A, 0x8ABD, 0x982D, 0x98B6, 
+	0x873D, 0x8742, 0x8747, 0x87B3, 0x87EC, 0x882A, 0x8ABD, 0x982D, 0x98B6,
 	0xffff
 };
 
 uint16 italianTickProcOffsets[] = {
 	0x4205, 0x4fca, 0x5e8c, 0x62a6, 0x65b9, 0x724f, 0x7c5c, 0x7c6c, 0x7f58, 0x7f60,
-	0x7f95, 0x7f98, 0x7fb2, 0x7fc7, 0x7fff, 0x8067, 0x8124, 0x819d, 0x81de, 0x8211, 
-	0x8251, 0x826c, 0x829f, 0x82fe, 0x862c, 0x868b, 0x86b8, 0x8758, 0x875D, 0x877C, 
-	0x879B, 0x87a0, 0x87a5, 0x8811, 0x884a, 0x8888,	0x8b20,	0x988f, 0x9918, 
+	0x7f95, 0x7f98, 0x7fb2, 0x7fc7, 0x7fff, 0x8067, 0x8124, 0x819d, 0x81de, 0x8211,
+	0x8251, 0x826c, 0x829f, 0x82fe, 0x862c, 0x868b, 0x86b8, 0x8758, 0x875D, 0x877C,
+	0x879B, 0x87a0, 0x87a5, 0x8811, 0x884a, 0x8888,	0x8b20,	0x988f, 0x9918,
 	0xffff
 };
 
 uint16 frenchTickProcOffsets[] = {
-	0x457b, 0x5340, 0x6202, 0x661c, 0x692f, 0x75fb, 0x8008, 0x8018, 0x82f8, 0x8300, 
-	0x8335, 0x8338, 0x8352, 0x8367, 0x839f, 0x8407, 0x84c4, 0x853d, 0x857e, 0x85b1, 
-	0x85f1, 0x860c, 0x863f, 0x869e, 0x89cf, 0x8a2e, 0x8a5b, 0x8afb, 0x8b00, 0x8b1f, 
+	0x457b, 0x5340, 0x6202, 0x661c, 0x692f, 0x75fb, 0x8008, 0x8018, 0x82f8, 0x8300,
+	0x8335, 0x8338, 0x8352, 0x8367, 0x839f, 0x8407, 0x84c4, 0x853d, 0x857e, 0x85b1,
+	0x85f1, 0x860c, 0x863f, 0x869e, 0x89cf, 0x8a2e, 0x8a5b, 0x8afb, 0x8b00, 0x8b1f,
 	0x8b3e, 0x8b43, 0x8b48, 0x8bb4, 0x8bed, 0x8c26, 0x8ebe, 0x9c41, 0x9cca,
 	0xffff
 };
 
 uint16 germanTickProcOffsets[] = {
-	0x4543, 0x5308, 0x61ca, 0x65e4, 0x68fa, 0x7591, 0x7f9e, 0x7fae,	0x8358, 0x8360, 
-	0x8395, 0x8398, 0x83b2, 0x83c7, 0x83ff, 0x8467, 0x8524, 0x859d, 0x85de, 0x8611, 
-	0x8651, 0x866c, 0x869f, 0x86fe, 0x8a2c, 0x8a8b, 0x8ab8, 0x8b58, 0x8b5d, 0x8b7c, 
+	0x4543, 0x5308, 0x61ca, 0x65e4, 0x68fa, 0x7591, 0x7f9e, 0x7fae,	0x8358, 0x8360,
+	0x8395, 0x8398, 0x83b2, 0x83c7, 0x83ff, 0x8467, 0x8524, 0x859d, 0x85de, 0x8611,
+	0x8651, 0x866c, 0x869f, 0x86fe, 0x8a2c, 0x8a8b, 0x8ab8, 0x8b58, 0x8b5d, 0x8b7c,
 	0x8b9b, 0x8ba0, 0x8ba5, 0x8c11, 0x8c4a, 0x8c83, 0x8f1a, 0x9c9b, 0x9d24,
 	0xffff
 };
 
 uint16 spanishTickProcOffsets[] = {
-	0x4247, 0x500c, 0x5ece,	0x62e8, 0x65fb, 0x7291, 0x7c9e, 0x7cae, 0x7fbe, 0x7fc6, 
-	0x7ffb, 0x7ffe, 0x8018, 0x802d, 0x8065, 0x80cd, 0x818a, 0x8203, 0x8244, 0x8277, 
-	0x82b7, 0x82d2, 0x8305, 0x8364, 0x8692, 0x86f1, 0x871e, 0x87be, 0x87c3, 0x87e2, 
+	0x4247, 0x500c, 0x5ece,	0x62e8, 0x65fb, 0x7291, 0x7c9e, 0x7cae, 0x7fbe, 0x7fc6,
+	0x7ffb, 0x7ffe, 0x8018, 0x802d, 0x8065, 0x80cd, 0x818a, 0x8203, 0x8244, 0x8277,
+	0x82b7, 0x82d2, 0x8305, 0x8364, 0x8692, 0x86f1, 0x871e, 0x87be, 0x87c3, 0x87e2,
 	0x8801, 0x8806, 0x880b, 0x8877, 0x88b0, 0x88ee, 0x8b86, 0x98f5, 0x997e,
 	0xffff
 };
@@ -425,7 +425,7 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 		procList = &germanTickProcOffsets[0];
 		walkToOffset = 0xBD5B;
 		loadOffsets = &germanLoadOffsets[0];
-		break;	
+		break;
 	case ES_ESP:
 		offsets = &spanishOffsets[0];
 		procList = &spanishTickProcOffsets[0];
@@ -475,14 +475,14 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 			memset(r, 0, sizeof(HotspotResourceOutput));
 			r->hotspotId = TO_LE_16(startId[tableNum] + hotspotIndex);
 			r->nameId = entryHeader.resourceId;
-			r->descId = entryHeader.descId; 
+			r->descId = entryHeader.descId;
 			r->descId2 = entryHeader.descId2;
 			r->hdrFlags = entryHeader.hdrFlags;
 
 			// Get the hotspot data
 			lureExe.seek(dataSegment + entryHeader.offset);
 			lureExe.read(&entry, sizeof(HotspotResource));
-			
+
 			r->actions = entry.actions;
 			r->roomNumber = entry.roomNumber;
 			r->startX = TO_LE_16(FROM_LE_16(entry.startX) - 0x80);
@@ -519,7 +519,7 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 					++loadIndex;
 
 				if (loadOffsets[loadIndex] == 0) {
-					printf("Unknown load offset encountered for hotspot %xh offset %xh\n", 
+					printf("Unknown load offset encountered for hotspot %xh offset %xh\n",
 						startId[tableNum] + hotspotIndex,
 						FROM_LE_16(entry.loadOffset));
 					exit(1);
@@ -540,7 +540,7 @@ void read_hotspot_data(byte *&data, uint16 &totalSize)  {
 				if (procList[procIndex] == 0xffff) {
 					if ((FROM_LE_16(entry.tickProcOffset) != 0xe00) &&
 						(FROM_LE_16(entry.tickProcOffset) != 2))
-//						printf("Could not find a tick proc handler for hotspot %xh offset %xh\n", 
+//						printf("Could not find a tick proc handler for hotspot %xh offset %xh\n",
 //							startId[tableNum] + hotspotIndex,
 printf("%xh,\n",
 							FROM_LE_16(entry.tickProcOffset));
@@ -550,7 +550,7 @@ printf("%xh,\n",
 					r->tickProcId = TO_LE_16(procIndex + 1);
 			}
 
-			// WORKAROUND: Special check for the tinderbox hotspot to set it's room number correctly - the original 
+			// WORKAROUND: Special check for the tinderbox hotspot to set it's room number correctly - the original
 			// game used this as a backup against people trying to hack the copy protection
 			if (currentHotspotId == 0x271C)
 				r->roomNumber = TO_LE_16(28);
@@ -567,7 +567,7 @@ printf("%xh,\n",
 					break;
 				++walkCtr;
 			}
-					
+
 			if (walkCtr == walkNumEntries) {
 				r->walkX = 0;
 				r->walkY = 0;
@@ -578,7 +578,7 @@ printf("%xh,\n",
 				// WORKAROUND: Edwina's walk-to position is actually inside the table, which meant that walking over
 				// to her could fail, depending on your start position. This increments it into the clear
 				int tempY = (int16) (y & 0x7fff) - 0x80;
-				if (currentHotspotId == 0x442) 
+				if (currentHotspotId == 0x442)
 					tempY += 8;
 				r->walkY = TO_LE_16((y & 0x8000) | (uint16) tempY);
 			}
@@ -601,7 +601,7 @@ printf("%xh,\n",
 				lureExe.seek(dataSegment + entryHeader.offset + 0x63);
 				lureExe.read(&action, sizeof(CurrentActionInput));
 
-				if (action.action != 2) 
+				if (action.action != 2)
 					r->npcSchedule = 0;
 				else {
 					r->npcSchedule = get_sequence_index(FROM_LE_16(action.dataOffset));
@@ -626,7 +626,7 @@ printf("%xh,\n",
 	free(walkList);
 }
 
-void read_hotspot_override_data(byte *&data, uint16 &totalSize) 
+void read_hotspot_override_data(byte *&data, uint16 &totalSize)
 {
 	lureExe.seek(dataSegment + HOTSPOT_OVERRIDE_OFFSET);
 	int numOverrides = 0;
@@ -695,7 +695,7 @@ void read_room_exits(byte *&data, uint16 &totalSize) {
 	uint16 *offset = (uint16 *) data;
 	uint16 destIndex = (NUM_ROOM_EXITS + 1) * sizeof(uint16);
 	uint16 entryCtr;
-	
+
 	// Loop to build up the result table
 
 	for (roomCtr = 0; roomCtr < NUM_ROOM_EXITS; ++roomCtr) {
@@ -705,7 +705,7 @@ void read_room_exits(byte *&data, uint16 &totalSize) {
 			// Read in the entries for the room
 			*offset++ = TO_LE_16(destIndex);
 
-			RoomExitHotspotOutputRecord *destP = (RoomExitHotspotOutputRecord *) 
+			RoomExitHotspotOutputRecord *destP = (RoomExitHotspotOutputRecord *)
 				(data + destIndex);
 
 			lureExe.seek(dataSegment + offsets[roomCtr]);
@@ -722,7 +722,7 @@ void read_room_exits(byte *&data, uint16 &totalSize) {
 				destP->cursorNum = rec.cursorNum;
 				destP->destRoomNumber = rec.destRoomNumber;
 			}
-			
+
 			destIndex += numEntries[roomCtr] * sizeof(RoomExitHotspotOutputRecord);
 			WRITE_LE_UINT16(data + destIndex, 0xffff);
 			destIndex += sizeof(uint16);
@@ -738,7 +738,7 @@ void read_room_exit_joins(byte *&data, uint16 &totalSize) {
 
 	uint16 dataStart = 0xce30;
 	if (language == IT_ITA) dataStart = 0xcef0;
-	else if (language == FR_FRA) dataStart = 0xcf10; 
+	else if (language == FR_FRA) dataStart = 0xcf10;
 	else if (language == DE_DEU) dataStart = 0xcf40;
 	else if (language == ES_ESP) dataStart = 0xcf10;
 	else if (language != EN_ANY) errorExit("read_room_exit_joins: Unknown language");
@@ -756,7 +756,7 @@ void read_room_exit_joins(byte *&data, uint16 &totalSize) {
 	totalSize = (numRecords * sizeof(RoomExitHotspotJoinRecord)) + 2;
 	data = (byte *) malloc(totalSize);
 	lureExe.seek(dataSegment + dataStart);
-	
+
 	p = (RoomExitHotspotJoinRecord *) data;
 	for (int recordCtr = 0; recordCtr < numRecords; ++recordCtr)
 	{
@@ -785,7 +785,7 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 		lureExe.seek(dataSegment + animOffsets[ctr]);
 		lureExe.read(&inRec, sizeof(AnimRecord));
 
-		if ((FROM_LE_16(inRec.leftOffset) < 0x5000) || 
+		if ((FROM_LE_16(inRec.leftOffset) < 0x5000) ||
 			(FROM_LE_16(inRec.rightOffset) < 0x5000) ||
 			(abs(FROM_LE_16(inRec.leftOffset)-FROM_LE_16(inRec.rightOffset)) > 0x800) ||
 			(abs(FROM_LE_16(inRec.rightOffset)-FROM_LE_16(inRec.upOffset)) > 0x800) ||
@@ -837,7 +837,7 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 		rec->animId = inRec.animId;
 		rec->flags = TO_LE_16(inRec.flags);
 
-		rec->leftOffset = 0; 
+		rec->leftOffset = 0;
 		rec->rightOffset = 0;
 		rec->upOffset = 0;
 		rec->downOffset = 0;
@@ -875,7 +875,7 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 						++destMove;
 						lureExe.read(&move, sizeof(MovementRecord));
 					}
-					
+
 					destMove->frameNumber = TO_LE_16(0xffff);
 					moveOffset += 2;
 				}
@@ -897,7 +897,7 @@ void read_script_data(byte *&data, uint16 &totalSize) {
 	else if (language == ES_ESP) segmentOffset = 0x1e0b0;
 	else if (language != EN_ANY) errorExit("read_script_data: Unknown language");
 	lureExe.seek(segmentOffset);
-	
+
 	totalSize = SCRIPT_SEGMENT_SIZE;
 	data = (byte *) malloc(totalSize);
 	lureExe.read(data, totalSize);
@@ -911,7 +911,7 @@ void read_script2_data(byte *&data, uint16 &totalSize) {
 	else if (language == ES_ESP) segmentOffset = 0x19e20;
 	else if (language != EN_ANY) errorExit("read_script2_data: Unknown language");
 	lureExe.seek(segmentOffset);
-	
+
 	totalSize = SCRIPT2_SEGMENT_SIZE;
 	data = (byte *) malloc(totalSize);
 	lureExe.read(data, totalSize);
@@ -971,10 +971,10 @@ void read_actions_list(byte *&data, uint16 &totalSize) {
 	header->recordId = TO_LE_16(0xffff);
 }
 
-// Reads in the talk data 
+// Reads in the talk data
 
 void add_talk_offset(uint16 offset) {
-	for (int ctr = 0; ctr < talkOffsetIndex; ++ctr) 
+	for (int ctr = 0; ctr < talkOffsetIndex; ++ctr)
 		if (talkOffsets[ctr] == offset) return;
 	if (talkOffsetIndex == MAX_TALK_LISTS) {
 		printf("Exceeded maximum talk offset list size\n");
@@ -1010,7 +1010,7 @@ void read_talk_headers(byte *&data, uint16 &totalSize) {
 		currVal = 0xffff;
 		for (subentryCtr = 0; subentryCtr < TALK_NUM_ENTRIES; ++subentryCtr) {
 			if ((FROM_LE_16(entries[subentryCtr].offset) < currVal) &&
-				(FROM_LE_16(entries[subentryCtr].offset) > prevVal)) 
+				(FROM_LE_16(entries[subentryCtr].offset) > prevVal))
 				currVal = FROM_LE_16(entries[subentryCtr].offset);
 		}
 		if (currVal == 0xffff) break;
@@ -1019,7 +1019,7 @@ void read_talk_headers(byte *&data, uint16 &totalSize) {
 		prevVal = currVal;
 	}
 
-	// Assume that the last talk header will have the same number of entries across language versions, 
+	// Assume that the last talk header will have the same number of entries across language versions,
 	// so create an end address based on the start of the last entry using start/end from English version
 	sortedOffsets[entryCtr] = sortedOffsets[entryCtr - 1] + (0x5540 - 0x5504);
 
@@ -1041,7 +1041,7 @@ void read_talk_headers(byte *&data, uint16 &totalSize) {
 				break;
 			}
 		}
-		if (nextOffset == 0) 
+		if (nextOffset == 0)
 			exit(1);
 
 		// Read in line entries into the data
@@ -1051,7 +1051,7 @@ void read_talk_headers(byte *&data, uint16 &totalSize) {
 		lureExe.read(talkOffset, size);
 
 		while (size > 0) {
-			if (READ_UINT16(talkOffset) != 0) 
+			if (READ_UINT16(talkOffset) != 0)
 				add_talk_offset(READ_UINT16(talkOffset));
 			size -= sizeof(uint16);
 			offset += sizeof(uint16);
@@ -1115,7 +1115,7 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 		currVal = 0xffff;
 		for (subentryCtr = 0; subentryCtr < talkOffsetIndex; ++subentryCtr) {
 			if ((talkOffsets[subentryCtr] < currVal) &&
-				(talkOffsets[subentryCtr] > prevVal)) 
+				(talkOffsets[subentryCtr] > prevVal))
 				currVal = talkOffsets[subentryCtr];
 		}
 		if (currVal == 0xffff) break;
@@ -1134,7 +1134,7 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 
 		header->recordId = startOffset;
 		header->listOffset = offset;
-		
+
 		lureExe.seek(dataSegment + startOffset);
 		responseOffset = lureExe.readWord();
 		startOffset += 2;
@@ -1173,7 +1173,7 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 		for (subentryCtr = 0; subentryCtr < numTalks; ++subentryCtr) {
 			if ((responseOffset >= sortedList[subentryCtr]) &&
 				(responseOffset < sortedList[subentryCtr+1])) {
-				// Found a record				
+				// Found a record
 				nextOffset = sortedList[subentryCtr+1];
 				break;
 			}
@@ -1182,7 +1182,7 @@ void read_talk_data(byte *&data, uint16 &totalSize) {
 			printf("Failure reading talk data: no response found\n");
 			exit(1);
 		}
-		
+
 		size = nextOffset - responseOffset;
 		if ((size % 6) != 0) size -= (size % 6);
 
@@ -1212,20 +1212,20 @@ void read_room_pathfinding_data(byte *&data, uint16 &totalSize) {
 	else if (language == ES_ESP) dataStart = 0x992A;
 	else if (language != EN_ANY) errorExit("read_room_pathfinding_data: Unknown language");
 	lureExe.seek(dataSegment + dataStart);
-	
+
 	totalSize = PATHFIND_SIZE;
 	data = (byte *) malloc(totalSize);
 	lureExe.read(data, totalSize);
 }
 
-void read_room_exit_coordinate_data(byte *&data, uint16 &totalSize) 
+void read_room_exit_coordinate_data(byte *&data, uint16 &totalSize)
 {
-	// Read in the exit coordinates list	
+	// Read in the exit coordinates list
 	int roomNum, entryNum;
 	uint16 x, y;
 	RoomExitCoordinateEntryInputResource dataIn;
 
-	totalSize = EXIT_COORDINATES_NUM_ROOMS * sizeof(RoomExitCoordinateEntryOutputResource) + 2; 
+	totalSize = EXIT_COORDINATES_NUM_ROOMS * sizeof(RoomExitCoordinateEntryOutputResource) + 2;
 	data = (byte *) malloc(totalSize);
 	lureExe.seek(dataSegment + EXIT_COORDINATES_OFFSET);
 	WRITE_LE_UINT16(data + totalSize - 2, 0xffff);
@@ -1253,7 +1253,7 @@ void read_room_exit_coordinate_data(byte *&data, uint16 &totalSize)
 			rec->roomIndex[entryNum] = TO_LE_16(FROM_LE_16(dataIn.roomIndex[entryNum]) / 6);
 		}
 
-		// WORKAROUND: Bugfix for the original game data to get to room #27 via rooms #10 or #11 
+		// WORKAROUND: Bugfix for the original game data to get to room #27 via rooms #10 or #11
 		if ((roomNum == 10) || (roomNum == 11))
 			rec->roomIndex[26] = TO_LE_16(1);
 	}
@@ -1264,7 +1264,7 @@ void read_room_exit_hotspots_data(byte *&data, uint16 &totalSize) {
 	data = (byte *) malloc(MAX_DATA_SIZE);
 
 	RoomExitIndexedHotspotResource *rec = (RoomExitIndexedHotspotResource *) data;
-	
+
 	uint16 dataStart = 0x2E57;
 	if (language == IT_ITA) dataStart = 0x2E66;
 	else if (language == FR_FRA) dataStart = 0x2e76;
@@ -1272,7 +1272,7 @@ void read_room_exit_hotspots_data(byte *&data, uint16 &totalSize) {
 	else if (language == ES_ESP) dataStart = 0x2e71;
 	else if (language != EN_ANY) errorExit("read_room_exit_hotspots_data: Unknown language");
 	lureExe.seek(dataSegment + dataStart);
-	
+
 	lureExe.read(rec, sizeof(RoomExitIndexedHotspotResource));
 	while (FROM_LE_16(rec->roomNumber) != 0) {
 		++rec;
@@ -1292,7 +1292,7 @@ void save_fight_segment(byte *&data, uint16 &totalSize) {
 	else if (language == ES_ESP) fightSegment = 0x1c5b0;
 	else if (language != EN_ANY) errorExit("save_fight_segment: Unknown language");
 	lureExe.seek(fightSegment);
-	
+
 	totalSize = FIGHT_SEGMENT_SIZE;
 	data = (byte *) malloc(totalSize);
 	lureExe.read(data, totalSize);
@@ -1300,11 +1300,11 @@ void save_fight_segment(byte *&data, uint16 &totalSize) {
 
 #define NUM_TEXT_ENTRIES 56
 const char *englishTextStrings[NUM_TEXT_ENTRIES] = {
-	"Get", NULL, "Push", "Pull", "Operate", "Open", "Close", "Lock", "Unlock", "Use", 
-	"Give", "Talk to", "Tell", "Buy", "Look", "Look at", "Look through", "Ask", NULL, 
+	"Get", NULL, "Push", "Pull", "Operate", "Open", "Close", "Lock", "Unlock", "Use",
+	"Give", "Talk to", "Tell", "Buy", "Look", "Look at", "Look through", "Ask", NULL,
 	"Drink", "Status", "Go to", "Return", "Bribe", "Examine",
-	"Credits", "Restart game", "Save game", "Restore game", "Quit", "Fast Text\x8B", 
-	"Slow Text\x8B", "Sound on", "Sound off", "(nothing)", " for ", " to ", " on ", 
+	"Credits", "Restart game", "Save game", "Restore game", "Quit", "Fast Text\x8B",
+	"Slow Text\x8B", "Sound on", "Sound off", "(nothing)", " for ", " to ", " on ",
 	"and then", "finish", "Are you sure (y/n)?",
 	"You are carrying ", "nothing", "You have ", "groat", "groats",
 	NULL, "the ", "a ", "a ", "an ", "an ", "an ", "an ", NULL, NULL
@@ -1315,9 +1315,9 @@ const char *italianTextStrings[NUM_TEXT_ENTRIES] = {
 	"Sblocca", "Usa", "Dai", "Parla con", "Ordina a", "Buy", "Guarda", "Osserva",
 	"Guarda tra", "Chiedi", NULL,  "Bevi", "Stato", "Vai a", "Ritorna",
 	"Corrompi", "Esamina",
-	"Inform", "Reavvia", "Salva gioco", "Ripristina", "Abbandona", "Testo lento\x8B", 
-	"Testo veloce\x8B",  "Sonoro acceso", "Sonoro spento", 
-	"(niente)", " per ", " a ", " su ", 
+	"Inform", "Reavvia", "Salva gioco", "Ripristina", "Abbandona", "Testo lento\x8B",
+	"Testo veloce\x8B",  "Sonoro acceso", "Sonoro spento",
+	"(niente)", " per ", " a ", " su ",
 	"e poi", "finito", "Sei sicuro (s/n)?",
 	"Stai portando ", "niente", "e hai ", "soldi", "soldis",
 	NULL, "l' ", "la ", NULL, "le ", "i ", "il ", NULL, NULL, NULL
@@ -1330,7 +1330,7 @@ const char *frenchTextStrings[NUM_TEXT_ENTRIES] = {
 	"Prends", NULL, "Pousse", "Tire", "Actionne", "Ouvre", "Ferme", "Verrouille",
 	frenchUnlockStr, "Utilise", "Donne", "Parle \0x81", "Dis \x81", NULL,
 	"Regarde", "Observe", "Regarde par", "Demande \x81", NULL, "Bois", "Statut",
-	"Va \x81", "Reviens", "Corromps", "Examine", 
+	"Va \x81", "Reviens", "Corromps", "Examine",
 	frenchCreditsStr, "Recommencer", "Sauvegarder", "Restituer", "Quitter",
 	"Texte rapide\x8b", "Texte lent  \x8b", "Avec son", "Sans son",
 	"(rien)", " avec ", " \x81 ", " sur ", "et puis", "fin",
@@ -1344,7 +1344,7 @@ const char *germanTextStrings[NUM_TEXT_ENTRIES] = {
 	"Sperre", "Steck Schl\x8cssel in", "Benutze", "Gib", "Sprich mit", "Befehl an",
 	NULL, "Betrachte", "Betrachte", "Schau durch", "Verlange", NULL, "Trink",
 	"Status", "Geh zu", "Zur\x8c" "ck", "Besteche", "Untersuche",
-	"Mitwirkende", "Spiel neu starten", "Spiel sichern", "Gesichertes Spiel laden", 
+	"Mitwirkende", "Spiel neu starten", "Spiel sichern", "Gesichertes Spiel laden",
 	"Abbrechen", "Schneller Text\x8b",
 	"Langsamer Text\x8b", "Sound an", "Sound aus", "(nichts)", " nach ", " an ", " f\x8cr ",
 	"und dann", "Schlu\x92", "Sicher (j/n)?",
@@ -1376,7 +1376,7 @@ void save_text_strings(byte *&data, uint16 &totalSize) {
 	// Calculate the total needed space
 	totalSize = sizeof(uint16);
 	for (index = 0; index < NUM_TEXT_ENTRIES; ++index) {
-		if (textStrings[index] != NULL) 
+		if (textStrings[index] != NULL)
 			totalSize += strlen(textStrings[index]);
 		++totalSize;
 	}
@@ -1404,7 +1404,7 @@ void save_sound_desc_data(byte *&data, uint16 &totalSize) {
 	else if (language == ES_ESP) dataStart = 0x5751;
 	else if (language != EN_ANY) errorExit("save_sound_desc_data: Unknown language");
 	lureExe.seek(dataSegment + dataStart);
-	
+
 	totalSize = SOUND_DESCS_SIZE;
 	data = (byte *) malloc(totalSize);
 	lureExe.read(data, totalSize);
@@ -1416,33 +1416,33 @@ struct DecoderEntry {
 };
 
 const DecoderEntry englishDecoders[] = {
-	{"00", ' '}, {"0100", 'e'}, {"0101", 'o'}, {"0110", 't'}, {"01110", 'a'}, 
-	{"01111", 'n'}, {"1000", 's'}, {"1001", 'i'}, {"1010", 'r'}, {"10110", 'h'}, 
-	{"101110", 'u'}, {"1011110", 'l'}, {"1011111", 'd'}, {"11000", 'y'}, 
-	{"110010", 'g'}, {"110011", '\0'}, {"110100", 'w'}, {"110101", 'c'}, 
-	{"110110", 'f'}, {"1101110", '.'}, {"1101111", 'm'}, {"111000", 'p'}, 
-	{"111001", 'b'}, {"1110100", ','}, {"1110101", 'k'}, {"1110110", '\''}, 
-	{"11101110", 'I'}, {"11101111", 'v'}, {"1111000", '!'}, {"1111001", '\xb4'}, 
-	{"11110100", 'T'}, {"11110101", '\xb5'}, {"11110110", '?'}, {"111101110", '\xb2'}, 
-	{"111101111", '\xb3'}, {"11111000", 'W'}, {"111110010", 'H'}, {"111110011", 'A'}, 
-	{"111110100", '\xb1'}, {"111110101", 'S'}, {"111110110", 'Y'}, {"1111101110", 'G'}, 
-	{"11111011110", 'M'}, {"11111011111", 'N'}, {"111111000", 'O'}, {"1111110010", 'E'}, 
-	{"1111110011", 'L'}, {"1111110100", '-'}, {"1111110101", 'R'}, {"1111110110", 'B'}, 
-	{"11111101110", 'D'}, {"11111101111", '\xa6'}, {"1111111000", 'C'}, 
-	{"11111110010", 'x'}, {"11111110011", 'j'}, {"1111111010", '\xac'}, 
-	{"11111110110", '\xa3'}, {"111111101110", 'P'}, {"111111101111", 'U'}, 
-	{"11111111000", 'q'}, {"11111111001", '\xad'}, {"111111110100", 'F'}, 
-	{"111111110101", '1'}, {"111111110110", '\xaf'}, {"1111111101110", ';'}, 
-	{"1111111101111", 'z'}, {"111111111000", '\xa5'}, {"1111111110010", '2'}, 
-	{"1111111110011", '\xb0'}, {"111111111010", 'K'}, {"1111111110110", '%'}, 
-	{"11111111101110", '\xa2'}, {"11111111101111", '5'}, {"1111111111000", ':'}, 
-	{"1111111111001", 'J'}, {"1111111111010", 'V'}, {"11111111110110", '6'}, 
-	{"11111111110111", '3'}, {"1111111111100", '\xab'}, {"11111111111010", '\xae'}, 
-	{"111111111110110", '0'}, {"111111111110111", '4'}, {"11111111111100", '7'}, 
-	{"111111111111010", '9'}, {"111111111111011", '"'}, {"111111111111100", '8'}, 
-	{"111111111111101", '\xa7'}, {"1111111111111100", '/'}, {"1111111111111101", 'Q'}, 
-	{"11111111111111100", '\xa8'}, {"11111111111111101", '('}, {"111111111111111100", ')'}, 
-	{"111111111111111101", '\x99'}, {"11111111111111111", '\xa9'}, 
+	{"00", ' '}, {"0100", 'e'}, {"0101", 'o'}, {"0110", 't'}, {"01110", 'a'},
+	{"01111", 'n'}, {"1000", 's'}, {"1001", 'i'}, {"1010", 'r'}, {"10110", 'h'},
+	{"101110", 'u'}, {"1011110", 'l'}, {"1011111", 'd'}, {"11000", 'y'},
+	{"110010", 'g'}, {"110011", '\0'}, {"110100", 'w'}, {"110101", 'c'},
+	{"110110", 'f'}, {"1101110", '.'}, {"1101111", 'm'}, {"111000", 'p'},
+	{"111001", 'b'}, {"1110100", ','}, {"1110101", 'k'}, {"1110110", '\''},
+	{"11101110", 'I'}, {"11101111", 'v'}, {"1111000", '!'}, {"1111001", '\xb4'},
+	{"11110100", 'T'}, {"11110101", '\xb5'}, {"11110110", '?'}, {"111101110", '\xb2'},
+	{"111101111", '\xb3'}, {"11111000", 'W'}, {"111110010", 'H'}, {"111110011", 'A'},
+	{"111110100", '\xb1'}, {"111110101", 'S'}, {"111110110", 'Y'}, {"1111101110", 'G'},
+	{"11111011110", 'M'}, {"11111011111", 'N'}, {"111111000", 'O'}, {"1111110010", 'E'},
+	{"1111110011", 'L'}, {"1111110100", '-'}, {"1111110101", 'R'}, {"1111110110", 'B'},
+	{"11111101110", 'D'}, {"11111101111", '\xa6'}, {"1111111000", 'C'},
+	{"11111110010", 'x'}, {"11111110011", 'j'}, {"1111111010", '\xac'},
+	{"11111110110", '\xa3'}, {"111111101110", 'P'}, {"111111101111", 'U'},
+	{"11111111000", 'q'}, {"11111111001", '\xad'}, {"111111110100", 'F'},
+	{"111111110101", '1'}, {"111111110110", '\xaf'}, {"1111111101110", ';'},
+	{"1111111101111", 'z'}, {"111111111000", '\xa5'}, {"1111111110010", '2'},
+	{"1111111110011", '\xb0'}, {"111111111010", 'K'}, {"1111111110110", '%'},
+	{"11111111101110", '\xa2'}, {"11111111101111", '5'}, {"1111111111000", ':'},
+	{"1111111111001", 'J'}, {"1111111111010", 'V'}, {"11111111110110", '6'},
+	{"11111111110111", '3'}, {"1111111111100", '\xab'}, {"11111111111010", '\xae'},
+	{"111111111110110", '0'}, {"111111111110111", '4'}, {"11111111111100", '7'},
+	{"111111111111010", '9'}, {"111111111111011", '"'}, {"111111111111100", '8'},
+	{"111111111111101", '\xa7'}, {"1111111111111100", '/'}, {"1111111111111101", 'Q'},
+	{"11111111111111100", '\xa8'}, {"11111111111111101", '('}, {"111111111111111100", ')'},
+	{"111111111111111101", '\x99'}, {"11111111111111111", '\xa9'},
 	{NULL, '\0'}
 };
 
@@ -1481,8 +1481,8 @@ const DecoderEntry italianDecoders[] = {
 
 const DecoderEntry frenchDecoders[] = {
 	{"00", (char) 0x20}, {"0100", (char) 0x65}, {"0101", (char) 0x73}, {"0110", (char) 0x61}, {"01110", (char) 0x69},
-	{"011110", (char) 0x6E}, {"011111", (char) 0x72}, {"1000", (char) 0x6F}, {"10010", (char) 0x74}, 
-	{"100110", (char) 0x75}, {"100111", (char) 0x70}, {"10100", (char) 0x6C}, {"10101", (char) 0x6D}, 
+	{"011110", (char) 0x6E}, {"011111", (char) 0x72}, {"1000", (char) 0x6F}, {"10010", (char) 0x74},
+	{"100110", (char) 0x75}, {"100111", (char) 0x70}, {"10100", (char) 0x6C}, {"10101", (char) 0x6D},
 	{"101100", (char) 0x63}, {"101101", (char) 0x76}, {"101110", (char) 0x00}, {"1011110", (char) 0x2E},
 	{"1011111", (char) 0x7F}, {"110000", (char) 0xAA}, {"110001", (char) 0x27}, {"110010", (char) 0x64},
 	{"1100110", (char) 0xB8}, {"1100111", (char) 0x2C}, {"110100", (char) 0x62}, {"1101010", (char) 0x68},
@@ -1526,7 +1526,7 @@ const DecoderEntry frenchDecoders[] = {
 
 const DecoderEntry germanDecoders[] = {
 	{"000", (char) 0x20}, {"001", (char) 0x65}, {"0100", (char) 0x6E}, {"0101", (char) 0x61}, {"0110", (char) 0x72},
-	{"01110", (char) 0x69}, {"011110", (char) 0x74}, {"011111", (char) 0x73}, {"10000", (char) 0x68}, 
+	{"01110", (char) 0x69}, {"011110", (char) 0x74}, {"011111", (char) 0x73}, {"10000", (char) 0x68},
 	{"10001", (char) 0x6C}, {"10010", (char) 0x75}, {"100110", (char) 0x6D}, {"100111", (char) 0xB0},
 	{"10100", (char) 0x67}, {"101010", (char) 0x00}, {"101011", (char) 0x62}, {"101100", (char) 0x63},
 	{"101101", (char) 0x2C}, {"101110", (char) 0x6F}, {"1011110", (char) 0xAA}, {"1011111", (char) 0x77},
@@ -1569,36 +1569,36 @@ const DecoderEntry germanDecoders[] = {
 };
 
 const DecoderEntry spanishDecoders[] = {
-	{"00", (char) 0x20}, {"010", (char) 0x61}, {"0110", (char) 0x6F}, {"01110", (char) 0x65}, 
-	{"01111", (char) 0x72}, {"1000", (char) 0x73}, {"1001", (char) 0x6E}, {"10100", (char) 0x69}, 
-	{"10101", (char) 0x75}, {"10110", (char) 0x63}, {"101110", (char) 0x74}, {"1011110", (char) 0x6C}, 
-	{"1011111", (char) 0x64}, {"11000", (char) 0x70}, {"110010", (char) 0x2E}, {"110011", (char) 0x6D}, 
-	{"110100", (char) 0x00}, {"110101", (char) 0xB3}, {"1101100", (char) 0x62}, {"1101101", (char) 0x2C}, 
-	{"1101110", (char) 0x68}, {"11011110", (char) 0x67}, {"11011111", (char) 0xB1}, {"1110000", (char) 0x76}, 
-	{"1110001", (char) 0xB5}, {"1110010", (char) 0x79}, {"11100110", (char) 0xAB}, {"11100111", (char) 0xB4}, 
-	{"1110100", (char) 0x97}, {"11101010", (char) 0xB2}, {"11101011", (char) 0x98}, {"11101100", (char) 0x45}, 
-	{"11101101", (char) 0x66}, {"11101110", (char) 0x95}, {"111011110", (char) 0x21}, {"111011111", (char) 0x6A}, 
-	{"11110000", (char) 0x4C}, {"11110001", (char) 0x4E}, {"11110010", (char) 0x7F}, {"111100110", (char) 0x96}, 
-	{"111100111", (char) 0x3F}, {"11110100", (char) 0xAC}, {"11110101", (char) 0x94}, {"11110110", (char) 0x7A}, 
-	{"111101110", (char) 0x41}, {"1111011110", (char) 0x53}, {"1111011111", (char) 0x71}, {"11111000", (char) 0x54}, 
-	{"111110010", (char) 0x93}, {"1111100110", (char) 0xAF}, {"1111100111", (char) 0x43}, {"111110100", (char) 0x50}, 
+	{"00", (char) 0x20}, {"010", (char) 0x61}, {"0110", (char) 0x6F}, {"01110", (char) 0x65},
+	{"01111", (char) 0x72}, {"1000", (char) 0x73}, {"1001", (char) 0x6E}, {"10100", (char) 0x69},
+	{"10101", (char) 0x75}, {"10110", (char) 0x63}, {"101110", (char) 0x74}, {"1011110", (char) 0x6C},
+	{"1011111", (char) 0x64}, {"11000", (char) 0x70}, {"110010", (char) 0x2E}, {"110011", (char) 0x6D},
+	{"110100", (char) 0x00}, {"110101", (char) 0xB3}, {"1101100", (char) 0x62}, {"1101101", (char) 0x2C},
+	{"1101110", (char) 0x68}, {"11011110", (char) 0x67}, {"11011111", (char) 0xB1}, {"1110000", (char) 0x76},
+	{"1110001", (char) 0xB5}, {"1110010", (char) 0x79}, {"11100110", (char) 0xAB}, {"11100111", (char) 0xB4},
+	{"1110100", (char) 0x97}, {"11101010", (char) 0xB2}, {"11101011", (char) 0x98}, {"11101100", (char) 0x45},
+	{"11101101", (char) 0x66}, {"11101110", (char) 0x95}, {"111011110", (char) 0x21}, {"111011111", (char) 0x6A},
+	{"11110000", (char) 0x4C}, {"11110001", (char) 0x4E}, {"11110010", (char) 0x7F}, {"111100110", (char) 0x96},
+	{"111100111", (char) 0x3F}, {"11110100", (char) 0xAC}, {"11110101", (char) 0x94}, {"11110110", (char) 0x7A},
+	{"111101110", (char) 0x41}, {"1111011110", (char) 0x53}, {"1111011111", (char) 0x71}, {"11111000", (char) 0x54},
+	{"111110010", (char) 0x93}, {"1111100110", (char) 0xAF}, {"1111100111", (char) 0x43}, {"111110100", (char) 0x50},
 	{"111110101", (char) 0x4D}, {"111110110", (char) 0x44}, {"1111101110", (char) 0xAE}, {"11111011110", (char) 0xAD},
-	{"11111011111", (char) 0xB0}, {"111111000", (char) 0x48}, {"1111110010", (char) 0x51}, {"1111110011", (char) 0x55}, 
-	{"1111110100", (char) 0x4F}, {"1111110101", (char) 0x47}, {"1111110110", (char) 0x99}, 
-	{"11111101110", (char) 0xA8}, {"11111101111", (char) 0x22}, {"1111111000", (char) 0xA9}, 
-	{"11111110010", (char) 0xA6}, {"11111110011", (char) 0x52}, {"1111111010", (char) 0x59}, 
-	{"11111110110", (char) 0xA3}, {"111111101110", (char) 0x78}, {"111111101111", (char) 0x56}, 
-	{"11111111000", (char) 0x77}, {"11111111001", (char) 0x42}, {"111111110100", (char) 0x6B}, 
-	{"111111110101", (char) 0x49}, {"111111110110", (char) 0x31}, {"1111111101110", (char) 0xAA}, 
-	{"1111111101111", (char) 0x2D}, {"111111111000", (char) 0x46}, {"111111111001", (char) 0xA5}, 
-	{"1111111110100", (char) 0x32}, {"1111111110101", (char) 0x3B}, {"1111111110110", (char) 0xA7}, 
-	{"11111111101110", (char) 0x35}, {"11111111101111", (char) 0x25}, {"1111111111000", (char) 0x3A}, 
-	{"1111111111001", (char) 0xA2}, {"1111111111010", (char) 0x57}, {"11111111110110", (char) 0x36}, 
-	{"11111111110111", (char) 0x33}, {"1111111111100", (char) 0x4A}, {"11111111111010", (char) 0x30}, 
-	{"11111111111011", (char) 0x34}, {"11111111111100", (char) 0x37}, {"111111111111010", (char) 0x39}, 
-	{"111111111111011", (char) 0x38}, {"111111111111100", (char) 0xA4}, {"111111111111101", (char) 0x2F}, 
-	{"1111111111111100", (char) 0x5A}, {"1111111111111101", (char) 0x8C}, {"11111111111111100", (char) 0x28}, 
-	{"11111111111111101", (char) 0x29}, {"11111111111111110", (char) 0x4B}, {"111111111111111110", (char) 0x58}, 
+	{"11111011111", (char) 0xB0}, {"111111000", (char) 0x48}, {"1111110010", (char) 0x51}, {"1111110011", (char) 0x55},
+	{"1111110100", (char) 0x4F}, {"1111110101", (char) 0x47}, {"1111110110", (char) 0x99},
+	{"11111101110", (char) 0xA8}, {"11111101111", (char) 0x22}, {"1111111000", (char) 0xA9},
+	{"11111110010", (char) 0xA6}, {"11111110011", (char) 0x52}, {"1111111010", (char) 0x59},
+	{"11111110110", (char) 0xA3}, {"111111101110", (char) 0x78}, {"111111101111", (char) 0x56},
+	{"11111111000", (char) 0x77}, {"11111111001", (char) 0x42}, {"111111110100", (char) 0x6B},
+	{"111111110101", (char) 0x49}, {"111111110110", (char) 0x31}, {"1111111101110", (char) 0xAA},
+	{"1111111101111", (char) 0x2D}, {"111111111000", (char) 0x46}, {"111111111001", (char) 0xA5},
+	{"1111111110100", (char) 0x32}, {"1111111110101", (char) 0x3B}, {"1111111110110", (char) 0xA7},
+	{"11111111101110", (char) 0x35}, {"11111111101111", (char) 0x25}, {"1111111111000", (char) 0x3A},
+	{"1111111111001", (char) 0xA2}, {"1111111111010", (char) 0x57}, {"11111111110110", (char) 0x36},
+	{"11111111110111", (char) 0x33}, {"1111111111100", (char) 0x4A}, {"11111111111010", (char) 0x30},
+	{"11111111111011", (char) 0x34}, {"11111111111100", (char) 0x37}, {"111111111111010", (char) 0x39},
+	{"111111111111011", (char) 0x38}, {"111111111111100", (char) 0xA4}, {"111111111111101", (char) 0x2F},
+	{"1111111111111100", (char) 0x5A}, {"1111111111111101", (char) 0x8C}, {"11111111111111100", (char) 0x28},
+	{"11111111111111101", (char) 0x29}, {"11111111111111110", (char) 0x4B}, {"111111111111111110", (char) 0x58},
 	{"111111111111111111", (char) 0x91},
 	{NULL, '\0'}
 };
@@ -1708,7 +1708,7 @@ void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size) {
 		break;
 
 	case 14:
-		// Get the messages segment 
+		// Get the messages segment
 		read_messages_segment(data, size);
 		break;
 
@@ -1761,7 +1761,7 @@ void getEntry(uint8 entryIndex, uint16 &resourceId, byte *&data, uint16 &size) {
 		// Save the decoder sequence list
 		save_string_decoder_data(data, size);
 		break;
-		
+
 	default:
 		data = NULL;
 		size = 0;
@@ -1827,7 +1827,7 @@ void createFile(const char *outFilename) {
 		// Get next data entry
 		if (resourceFlag)
 			// Get resource details
-			getEntry(resIndex, resourceId, resourceData, resourceSize); 
+			getEntry(resIndex, resourceId, resourceData, resourceSize);
 
 		// Write out the next header entry
 		outputFile.seek(outputStart + (resIndex + 1) * 8);
@@ -1854,7 +1854,7 @@ void createFile(const char *outFilename) {
 
 			// Write out enough bytes to move to the next 32 byte boundary
 			numBytes = 0x20 * ((startOffset + 0x1f) / 0x20) - startOffset;
-			if (numBytes != 0) 
+			if (numBytes != 0)
 			{
 				outputFile.write(tempBuffer, numBytes);
 				startOffset += numBytes;
@@ -1869,13 +1869,13 @@ void createFile(const char *outFilename) {
 // validate_executable
 // Validates that the correct executable is being used to generate the
 // resource file. Eventually the resource file creator will need to work
-// with the other language executables, but for now just make 
+// with the other language executables, but for now just make
 
 bool validate_executable() {
 	uint32 sumTotal = 0;
 	byte buffer[NUM_BYTES_VALIDATE];
 	lureExe.read(buffer, NUM_BYTES_VALIDATE);
-	for (int ctr = 0; ctr < NUM_BYTES_VALIDATE; ++ctr) 
+	for (int ctr = 0; ctr < NUM_BYTES_VALIDATE; ++ctr)
 		sumTotal += buffer[ctr];
 
 	if (sumTotal == ENGLISH_FILE_CHECKSUM) {
@@ -1927,11 +1927,11 @@ int main(int argc, char *argv[]) {
 	openOutputFile(argv[1]);
 
 	for (int argi = 2; argi < argc; ++argi) {
-		if (!lureExe.open(argv[argi])) 
+		if (!lureExe.open(argv[argi]))
 			printf("Could not open file: %s\n", argv[argi]);
 		else {
-			if (validate_executable()) 
-				createFile(outFilename);	
+			if (validate_executable())
+				createFile(outFilename);
 			lureExe.close();
 		}
 	}

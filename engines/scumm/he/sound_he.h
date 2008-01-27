@@ -61,7 +61,7 @@ public: // Used by createSound()
 public:
 	SoundHE(ScummEngine *parent, Audio::Mixer *mixer);
 	~SoundHE();
-	
+
 	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
 	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
 

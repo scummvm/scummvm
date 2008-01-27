@@ -175,7 +175,7 @@ public:
 	 *
 	 * This for examples displays the overlay, clears the
 	 * renderer's temporary screen buffers and does other
-	 * things to make the renderer for use. 
+	 * things to make the renderer for use.
 	 *
 	 * This will NOT back up the data on the overlay.
 	 * So if you've got data in the overlay save it before

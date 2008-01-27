@@ -79,13 +79,13 @@ void StringData::add(const char *sequence, char ascii) {
 	uint32 value = 0;
 
 	for (uint8 index = 0; index < strlen(sequence); ++index) {
-		if (sequence[index] == '1') 
+		if (sequence[index] == '1')
 			value |= (1 << index);
-		else if (sequence[index] != '0') 
+		else if (sequence[index] != '0')
 			error("Invalid character in string bit-stream sequence");
 	}
 
-	if (_numChars == MAX_NUM_CHARS) 
+	if (_numChars == MAX_NUM_CHARS)
 		error("Max characters too lower in string decoder");
 	_chars[_numChars++] = new CharacterEntry(strlen(sequence), value, ascii);
 }
@@ -103,10 +103,10 @@ byte StringData::readBit() {
 
 bool StringData::initPosition(uint16 stringId) {
 	uint16 roomNumber = Room::getReference().roomNumber();
-	
-	if ((roomNumber >= 0x2A) && (stringId >= STRING_ID_RANGE) && (stringId < STRING_ID_UPPER)) 
+
+	if ((roomNumber >= 0x2A) && (stringId >= STRING_ID_RANGE) && (stringId < STRING_ID_UPPER))
 		stringId = 0x76;
-	if ((roomNumber < 0x2A) && (stringId >= STRING_ID_UPPER)) 
+	if ((roomNumber < 0x2A) && (stringId >= STRING_ID_UPPER))
 		stringId = 0x76;
 
 	if (stringId < STRING_ID_RANGE)
@@ -120,7 +120,7 @@ bool StringData::initPosition(uint16 stringId) {
 	}
 
 	_srcPos = _stringTable + 4;
-	
+
 	uint32 total = 0;
 	int numLoops = stringId >> 5;
 	for (int ctr = 0; ctr < numLoops; ++ctr) {
@@ -131,7 +131,7 @@ bool StringData::initPosition(uint16 stringId) {
 	numLoops = stringId & 0x1f;
 	if (numLoops!= 0) {
 		byte *tempPtr = _stringTable + (stringId & 0xffe0) + READ_LE_UINT16(_stringTable);
-		
+
 		for (int ctr = 0; ctr < numLoops; ++ctr) {
 			byte v = *tempPtr++;
 			if ((v & 0x80) == 0) {
@@ -170,8 +170,8 @@ char StringData::readCharacter() {
 
 		// Scan through list for a match
 		for (int index = 0; _chars[index] != NULL; ++index) {
-			if ((_chars[index]->_numBits == numBits) && 
-				(_chars[index]->_sequence == searchValue)) 
+			if ((_chars[index]->_numBits == numBits) &&
+				(_chars[index]->_sequence == searchValue))
 				return _chars[index]->_ascii;
 		}
 	}
@@ -181,9 +181,9 @@ char StringData::readCharacter() {
 	return 0;
 }
 
-void StringData::getString(uint16 stringId, char *dest, const char *hotspotName, 
+void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 		const char *characterName, int hotspotArticle, int characterArticle) {
-	debugC(ERROR_INTERMEDIATE, kLureDebugStrings, 
+	debugC(ERROR_INTERMEDIATE, kLureDebugStrings,
 		"StringData::getString stringId=%xh hotspot=%d,%s character=%d,%s",
 		stringId, hotspotArticle, hotspotName, characterArticle, characterName);
 	StringList &stringList = Resources::getReference().stringList();
@@ -201,7 +201,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 
 	while (ch != '\0') {
 		if (ch == '%') {
-			// Copy over hotspot or action 
+			// Copy over hotspot or action
 			ch = readCharacter();
 			const char *p = (ch == '1') ? hotspotName : characterName;
 			int article = !includeArticles ? 0 : ((ch == '1') ? hotspotArticle : characterArticle);
@@ -234,7 +234,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 		charBitMask = _bitMask;
 
 		// WORKAROUND: Italian version had an unterminated Look description for Prisoner after cutting sack
-		if ((charOffset == 0x1a08) && (charBitMask == 1) && 
+		if ((charOffset == 0x1a08) && (charBitMask == 1) &&
 			(LureEngine::getReference().getLanguage() == IT_ITA))
 			// Hardcode for end of string
 			ch = '\0';
@@ -243,7 +243,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 			ch = readCharacter();
 	}
 
-	debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh EOS", 
+	debugC(ERROR_DETAILED, kLureDebugStrings, "String data %xh/%.2xh val=%.2xh EOS",
 		charOffset, charBitMask, ch);
 	*destPos = '\0';
 }
@@ -253,7 +253,7 @@ void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,
 
 char *StringData::getName(uint8 nameIndex) {
 	uint16 numNames = READ_LE_UINT16(_names->data()) / 2;
-	if (nameIndex >= numNames) 
+	if (nameIndex >= numNames)
 		error("Invalid name index was passed to getCharacterName");
 
 	uint16 nameStart = READ_LE_UINT16(_names->data() + (nameIndex * 2));

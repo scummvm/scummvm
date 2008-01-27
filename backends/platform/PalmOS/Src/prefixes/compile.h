@@ -38,7 +38,7 @@
 #define DISABLE_SAGA
 #define DISABLE_KYRA
 #define DISABLE_AWE
-#define DISABLE_GOB 
+#define DISABLE_GOB
 #define DISABLE_LURE
 #define DISABLE_CINE
 #define DISABLE_AGI

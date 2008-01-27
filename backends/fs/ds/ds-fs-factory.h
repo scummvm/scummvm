@@ -30,20 +30,20 @@
 
 /**
  * Creates DSFilesystemNode objects.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class DSFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<DSFilesystemFactory> {	
+class DSFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<DSFilesystemFactory> {
 public:
 	typedef Common::String String;
-		
+
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const;
-	
+
 protected:
 	DSFilesystemFactory() {};
-		
+
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 };

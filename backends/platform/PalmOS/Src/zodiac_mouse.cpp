@@ -28,7 +28,7 @@
 void OSystem_PalmZodiac::draw_mouse() {
 	if (!_mouseDataP || _mouseDrawn || !_mouseVisible)
 		return;
-	
+
 	byte *src = _mouseDataP;
 
 	int x = _mouseCurState.x - _mouseHotspotX;

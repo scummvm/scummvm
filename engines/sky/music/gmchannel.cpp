@@ -119,7 +119,7 @@ uint8 GmChannel::process(uint16 aktTime) {
 				case 11: com90_getChannelPanValue(); break;
 				case 12: com90_setLoopPoint(); break;
 				case 13: com90_getChannelControl(); break;
-				
+
 				default:
 					error("GmChannel: Unknown music opcode 0x%02X", opcode);
 					break;

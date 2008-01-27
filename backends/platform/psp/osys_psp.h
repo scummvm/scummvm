@@ -51,9 +51,9 @@ protected:
 	uint16  _palette[256];
 	bool	_overlayVisible;
 	uint32	_shakePos;
-	
+
 	Graphics::Surface _framebuffer;
-	
+
 	bool	_mouseVisible;
 	int	_mouseX, _mouseY;
 	int	_mouseWidth, _mouseHeight;
@@ -64,7 +64,7 @@ protected:
 	uint32	_prevButtons;
 	uint32	_lastPadCheck;
 	uint32	_padAccel;
-	
+
 	uint32		_samplesPerSec;
 	SceCtrlData pad;
 

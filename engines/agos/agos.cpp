@@ -523,7 +523,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	File::addDefaultDirectory(_gameDataPath + "SFX");
 	File::addDefaultDirectory(_gameDataPath + "speech");
 	File::addDefaultDirectory(_gameDataPath + "SPEECH");
-	
+
 	syst->getEventManager()->registerRandomSource(_rnd, "agos");
 }
 

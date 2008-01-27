@@ -37,7 +37,7 @@ bool PckTunesCDPlayer::init() {
 	_isInitialized = PocketTunesIsRunning();
 	_isPlaying = false;
 	_pAction = NULL;
-	
+
 	if (_isInitialized) {
 		_pAction = (PocketTunesAction*)MemPtrNew(sizeof(PocketTunesAction));
 		_volumeLimit = getVolumeLimit();
@@ -64,12 +64,12 @@ UInt32 PckTunesCDPlayer::getVolumeLimit() {
 
 	_pAction->action = kPocketTunesActionGetValue;
 	_pAction->data.getValueAction.which = kPtunesValueMaxVolume;
-	
+
 	EvtGetEvent(&_eAction, evtNoWait);
 	if (PocketTunesCallSynch(_pAction) == errNone)
 		value = _pAction->data.getValueAction.value;
 
-	return value;	
+	return value;
 }
 
 UInt32 PckTunesCDPlayer::getStatus() {
@@ -83,8 +83,8 @@ UInt32 PckTunesCDPlayer::getStatus() {
 	EvtGetEvent(&_eAction, evtNoWait);
 	if (PocketTunesCallSynch(_pAction) == errNone)
 		status = _pAction->data.getStatusAction.status;
-	
-	return status;	
+
+	return status;
 }
 
 UInt32 PckTunesCDPlayer::getPosition(UInt32 deflt) {
@@ -95,7 +95,7 @@ UInt32 PckTunesCDPlayer::getPosition(UInt32 deflt) {
 
 	_pAction->action = kPocketTunesActionGetValue;
 	_pAction->data.getValueAction.which = kPtunesValueSongPosition;
-	
+
 	EvtGetEvent(&_eAction, evtNoWait);
 	if (PocketTunesCallSynch(_pAction) == errNone)
 		value = _pAction->data.getValueAction.value;
@@ -111,12 +111,12 @@ UInt32 PckTunesCDPlayer::getDuration() {
 
 	_pAction->action = kPocketTunesActionGetValue;
 	_pAction->data.getValueAction.which = kPtunesValueSongDuration;
-	
+
 	EvtGetEvent(&_eAction, evtNoWait);
 	if (PocketTunesCallSynch(_pAction) == errNone)
 		value = _pAction->data.getValueAction.value;
 
-	return value;	
+	return value;
 }
 
 void PckTunesCDPlayer::setPosition(UInt32 value) {
@@ -203,16 +203,16 @@ void PckTunesCDPlayer::play(int track, int num_loops, int start_frame, int durat
 	EventType e;
 	Char nameP[256], fileP[100];
 	static const Char *ext[] = { "mp3", "ogg" };
-	
+
 	_pckTrack = track;
 	_pckLoops = num_loops;
 	_pckTrackStartFrame = TO_MSECS(start_frame);
 	_pckTrackDuration = TO_MSECS(duration);
 
 	VFSVolumeGetLabel(gVars->VFS.volRefNum, nameP, 256);
-	
+
 	StrPrintF(fileP, "/Palm/Programs/ScummVM/Audio/%s_%03ld.%s", gameP, (track + gVars->CD.firstTrack - 1), ext[gVars->CD.format]);
-	
+
 	if (PocketTunesOpenFile(nameP, fileP, 0) == errNone) {
 		EvtGetEvent(&e, evtNoWait);
 		PocketTunesPauseIfPlaying();

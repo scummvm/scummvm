@@ -94,7 +94,7 @@ OSystem_PSP::~OSystem_PSP() {
 
 
 void OSystem_PSP::initBackend() {
-	_savefile = new DefaultSaveFileManager(); 
+	_savefile = new DefaultSaveFileManager();
 	_mixer = new Audio::Mixer();
 	_timer = new DefaultTimerManager();
 	setSoundCallback(Audio::Mixer::mixCallback, _mixer);
@@ -141,7 +141,7 @@ void OSystem_PSP::initSize(uint width, uint height) {
 	_overlayHeight = _screenHeight = height;
 
 	free(_offscreen);
-	
+
 	_offscreen = (byte *)malloc(width * height);
 
 	free(_overlayBuffer);
@@ -194,8 +194,8 @@ void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 
 	if (w <= 0 || h <= 0)
 		return;
-	
-	
+
+
 	byte *dst = _offscreen + y * _screenWidth + x;
 	if (_screenWidth == pitch && pitch == w) {
 		memcpy(dst, buf, h * w);
@@ -227,7 +227,7 @@ void OSystem_PSP::updateScreen() {
 
 	uint xStart = (SCREEN_WIDTH >> 1) - (_screenWidth >> 1);
 	uint yStart = (SCREEN_HEIGHT >> 1) - (_screenHeight >> 1);
-	
+
 	for (int i = 0; i < _screenHeight; ++i) {
 		for (int j = 0; j < _screenWidth; ++j) {
 			putPixel(xStart + j, yStart + i, _palette[_offscreen[i * _screenWidth +j]]);
@@ -302,7 +302,7 @@ void OSystem_PSP::grabOverlay(OverlayColor *buf, int pitch) {
 
 void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	PSPDebugTrace("copyRectToOverlay\n");
-	
+
 	//Clip the coordinates
 	if (x < 0) {
 		w += x;
@@ -327,7 +327,7 @@ void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 	if (w <= 0 || h <= 0)
 		return;
 
-	
+
 	OverlayColor *dst = _overlayBuffer + (y * _overlayWidth + x);
 	if (_overlayWidth == pitch && pitch == w) {
 		memcpy(dst, buf, h * w * sizeof(OverlayColor));
@@ -357,7 +357,7 @@ void OSystem_PSP::colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b) {
 		g = (((color >> 5) & 0x1F) << 3);
 		b = (((color >> 10) & 0x1F) << 3);
 }
-	
+
 OverlayColor OSystem_PSP::ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
 	OverlayColor color = RGBToColor(r, g, b);
 
@@ -384,11 +384,11 @@ void OSystem_PSP::grabPalette(byte *colors, uint start, uint num) {
 		*colors++ = ((color & 0x1F) << 3);
 		*colors++ = (((color >> 5) & 0x1F) << 3);
 		*colors++ = (((color >> 10) & 0x1F) << 3);
-		*colors++ = (color & 0x8000 ? 255 : 0); 
+		*colors++ = (color & 0x8000 ? 255 : 0);
 	}
 }
 
-bool OSystem_PSP::showMouse(bool visible) { 
+bool OSystem_PSP::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
 	return last;
@@ -423,7 +423,7 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 bool OSystem_PSP::pollEvent(Common::Event &event) {
 	s8 analogStepAmountX = 0;
 	s8 analogStepAmountY = 0;
-/*	
+/*
 	SceCtrlData pad;
 
 	sceCtrlSetSamplingCycle(0);
@@ -443,7 +443,7 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 			//any of the other buttons.
 			event.type = buttonsChanged & pad.Buttons ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
 			event.kbd.flags = 0;
-			
+
 			if (buttonsChanged & PSP_CTRL_LTRIGGER) {
 				event.kbd.keycode = Common::KEYCODE_ESCAPE;
 				event.kbd.ascii = 27;
@@ -460,35 +460,35 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 				event.kbd.keycode = Common::KEYCODE_PERIOD;
 				event.kbd.ascii = '.';
 			}
-			
+
 		}
-			
+
 		event.mouse.x = _mouseX;
 		event.mouse.y = _mouseY;
 		_prevButtons = pad.Buttons;
 		return true;
 	}
-	
+
 	uint32 time = getMillis();
 	if (time - _lastPadCheck > PAD_CHECK_TIME) {
 		_lastPadCheck = time;
 		int16 newX = _mouseX;
 		int16 newY = _mouseY;
-	
+
 		if (pad.Lx < 100) {
 			analogStepAmountX = pad.Lx - 100;
 		}
 		else if (pad.Lx > 155) {
 			analogStepAmountX = pad.Lx - 155;
 		}
-		
+
 		if (pad.Ly < 100) {
 			analogStepAmountY = pad.Ly - 100;
 		}
 		else if (pad.Ly > 155) {
 			analogStepAmountY = pad.Ly - 155;
 		}
-	
+
 		if (pad.Buttons & PAD_DIR_MASK ||
 		    analogStepAmountX != 0 || analogStepAmountY != 0) {
 			if (_prevButtons & PAD_DIR_MASK) {
@@ -506,7 +506,7 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 			if (pad.Buttons & PSP_CTRL_DOWN)
 				newY += _padAccel >> 2;
 
-			// If no movement then this has no effect	
+			// If no movement then this has no effect
 			if (pad.Buttons & PSP_CTRL_TRIANGLE) {
 				// Fine control mode for analog
 					if (analogStepAmountX != 0)
@@ -514,7 +514,7 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 							newX += analogStepAmountX - (analogStepAmountX - 1);
 						else
 							newX -= -analogStepAmountX - (-analogStepAmountX - 1);
-						
+
 					if (analogStepAmountY != 0)
 						if (analogStepAmountY > 0)
 							newY += analogStepAmountY - (analogStepAmountY - 1);
@@ -531,21 +531,21 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 			if (_overlayVisible)
 			{
 				if (newX >= _overlayWidth) newX = _overlayWidth - 1;
-				if (newY >= _overlayHeight) newY = _overlayHeight - 1;		
+				if (newY >= _overlayHeight) newY = _overlayHeight - 1;
 			}
 			else
 			{
 				if (newX >= _screenWidth) newX = _screenWidth - 1;
-				if (newY >= _screenHeight) newY = _screenHeight - 1;		
+				if (newY >= _screenHeight) newY = _screenHeight - 1;
 			}
-			
+
 			if ((_mouseX != newX) || (_mouseY != newY)) {
 				event.type = Common::EVENT_MOUSEMOVE;
 				event.mouse.x = _mouseX = newX;
 				event.mouse.y = _mouseY = newY;
 				return true;
 			}
-		} else { 
+		} else {
 			//reset pad acceleration
 			_padAccel = 0;
 		}
@@ -558,7 +558,7 @@ uint32 OSystem_PSP::getMillis() {
 	return SDL_GetTicks();
 }
 
-void OSystem_PSP::delayMillis(uint msecs) {	
+void OSystem_PSP::delayMillis(uint msecs) {
 	SDL_Delay(msecs);
 }
 
@@ -627,7 +627,7 @@ void OSystem_PSP::clearSoundCallback() {
 }
 
 int OSystem_PSP::getOutputSampleRate() const {
-	return _samplesPerSec; 
+	return _samplesPerSec;
 }
 
 void OSystem_PSP::quit() {

@@ -52,7 +52,7 @@ public:
 	uint16 numEntries() { return _palette->size() / 4; }
 	void setEntry(uint8 index, uint32 value);
 	uint32 getEntry(uint8 index);
-	void copyFrom(Palette *src); 
+	void copyFrom(Palette *src);
 };
 
 class PaletteCollection {

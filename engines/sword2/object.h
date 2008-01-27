@@ -280,7 +280,7 @@ public:
 // walk-data structure - contains details of layout of frames in the
 // mega-set, and how they are to be used
 
-struct ObjectWalkdata { 
+struct ObjectWalkdata {
 	int32 nWalkFrames;		// no. of frames per walk-cycle
 	int32 usingStandingTurnFrames;	// 0 = no  1 = yes
 	int32 usingWalkingTurnFrames;	// 0 = no  1 = yes

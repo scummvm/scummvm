@@ -53,7 +53,7 @@ static size_t read_stream_wrap(void *ptr, size_t size, size_t nmemb, void *datas
 	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)datasource;
 
 	uint32 result = stream->read(ptr, size * nmemb);
-	
+
 	return result / size;
 }
 
@@ -92,7 +92,7 @@ protected:
 	bool _isStereo;
 	int _rate;
 	uint _numLoops;
-	
+
 #ifdef USE_TREMOR
 	ogg_int64_t _startTime;
 	ogg_int64_t _endTime;
@@ -106,7 +106,7 @@ protected:
 	int16 _buffer[4096];
 	const int16 *_bufferEnd;
 	const int16 *_pos;
-	
+
 public:
 	// startTime / duration are in milliseconds
 	VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime = 0, uint endTime = 0, uint numLoops = 1);
@@ -148,7 +148,7 @@ VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool 
 	_startTime = startTime / 1000.0;
 	_endTime = endTime / 1000.0;
 #endif
-	
+
 	// If endTime was 0, or is past the end of the file, set it to the maximal time possible
 	totalTime = ov_time_total(&_ovFile, -1);
 	if (_endTime == 0 || _endTime > totalTime)
@@ -159,13 +159,13 @@ VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool 
 		_pos = _bufferEnd;
 		return;
 	}
-	
+
 	// Seek to the start position
 	ov_time_seek(&_ovFile, _startTime);
 
 	// Read in initial data
 	refill();
-	
+
 	// Setup some header information
 	_isStereo = ov_info(&_ovFile, -1)->channels >= 2;
 	_rate = ov_info(&_ovFile, -1)->rate;
@@ -221,7 +221,7 @@ void VorbisInputStream::refill() {
 		long result;
 #ifdef USE_TREMOR
 		// Tremor ov_read() always returns data as signed 16 bit interleaved PCM
-		// in host byte order. As such, it does not take arguments to request 
+		// in host byte order. As such, it does not take arguments to request
 		// specific signedness, byte order or bit depth as in Vorbisfile.
 		result = ov_read(&_ovFile, read_pos, len_left,
 						NULL);

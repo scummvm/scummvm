@@ -202,10 +202,10 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 				++channelCtr2;
 			}
 
-			if (foundSpace) 
+			if (foundSpace)
 				break;
 		}
-		
+
 		++channelCtr;
 	}
 
@@ -229,7 +229,7 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 	// Map each two channels to four of the 16 available channels
 	byte innerChannel = (channelCtr / 2) * 4;
 	musicInterface_Play(rec.soundNumber, innerChannel);
-	setVolume(rec.soundNumber, rec.volume);	
+	setVolume(rec.soundNumber, rec.volume);
 }
 
 void SoundManager::addSound2(uint8 soundIndex) {
@@ -261,12 +261,12 @@ void SoundManager::killSound(uint8 soundNumber) {
 }
 
 void SoundManager::setVolume(uint8 soundNumber, uint8 volume) {
-	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::setVolume soundNumber=%d, volume=%d", 
+	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::setVolume soundNumber=%d, volume=%d",
 		soundNumber, volume);
 	musicInterface_TidySounds();
 
 	SoundDescResource *entry = findSound(soundNumber);
-	if (entry) 
+	if (entry)
 		musicInterface_SetVolume(entry->channel, volume);
 }
 
@@ -281,7 +281,7 @@ void SoundManager::setVolume(uint8 volume) {
 
 uint8 SoundManager::descIndexOf(uint8 soundNumber) {
 	SoundDescResource *rec = soundDescs();
-	
+
 	for (uint8 index = 0; index < _numDescs; ++index, ++rec) {
 		if (rec->soundNumber == soundNumber)
 			return index;
@@ -321,7 +321,7 @@ void SoundManager::tidySounds() {
 		else {
 			// Mark the channels that it used as now being free
 			Common::set_to(_channelsInUse+rec->channel, _channelsInUse+rec->channel+rec->numChannels, false);
-			
+
 			i = _activeSounds.erase(i);
 		}
 	}
@@ -336,7 +336,7 @@ void SoundManager::removeSounds() {
 	while (i != _activeSounds.end()) {
 		SoundDescResource *rec = *i;
 
-		if ((rec->flags & SF_IN_USE) != 0) 
+		if ((rec->flags & SF_IN_USE) != 0)
 			musicInterface_Stop(rec->soundNumber);
 
 		++i;
@@ -396,7 +396,7 @@ void SoundManager::fadeOut() {
 // Play the specified sound
 
 void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber) {
-	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_Play soundNumber=%d, channel=%d", 
+	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_Play soundNumber=%d, channel=%d",
 		soundNumber, channelNumber);
 	Game &game = Game::getReference();
 
@@ -404,7 +404,7 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber) {
 		error("Sound section has not been specified");
 
 	uint8 soundNum = soundNumber & 0x7f;
-	if (soundNum > _soundsTotal) 
+	if (soundNum > _soundsTotal)
 		error("Invalid sound index %d requested", soundNum);
 
 	if (_driver == NULL)
@@ -430,10 +430,10 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber) {
 	}
 
 	g_system->lockMutex(_soundMutex);
-	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNumber, 
+	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNumber,
 		isMusic, soundStart, dataSize);
 	sound->setVolume(volume);
-	_playingSounds.push_back(sound);		
+	_playingSounds.push_back(sound);
 	g_system->unlockMutex(_soundMutex);
 }
 
@@ -484,7 +484,7 @@ bool SoundManager::musicInterface_CheckPlaying(uint8 soundNumber) {
 // Sets the volume of the specified channel
 
 void SoundManager::musicInterface_SetVolume(uint8 channelNum, uint8 volume) {
-	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_SetVolume channel=%d, volume=%d", 
+	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_SetVolume channel=%d, volume=%d",
 		channelNum, volume);
 	musicInterface_TidySounds();
 
@@ -539,10 +539,10 @@ void SoundManager::musicInterface_TidySounds() {
 	debugC(ERROR_DETAILED, kLureDebugSounds, "musicInterface_TidySounds");
 
 	g_system->lockMutex(_soundMutex);
-	ManagedList<MidiMusic *>::iterator i = _playingSounds.begin(); 
+	ManagedList<MidiMusic *>::iterator i = _playingSounds.begin();
 	while (i != _playingSounds.end()) {
 		MidiMusic *music = *i;
-		if (!music->isPlaying()) 
+		if (!music->isPlaying())
 			i = _playingSounds.erase(i);
 		else
 			++i;
@@ -564,7 +564,7 @@ void SoundManager::doTimer() {
 	ManagedList<MidiMusic *>::iterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		MidiMusic *music = *i;
-		if (music->isPlaying()) 
+		if (music->isPlaying())
 			music->onTimer();
 	}
 
@@ -573,7 +573,7 @@ void SoundManager::doTimer() {
 
 /*------------------------------------------------------------------------*/
 
-MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS_INNER], 
+MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS_INNER],
 					 uint8 channelNum, uint8 soundNum, bool isMusic, void *soundData, uint32 size) {
 	 Game &game = Game::getReference();
 	_driver = driver;
@@ -600,9 +600,9 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS_INNE
 	_soundData = (uint8 *) soundData;
 	_soundSize = size;
 
-	// Check whether the music data is compressed - if so, decompress it for the duration 
+	// Check whether the music data is compressed - if so, decompress it for the duration
 	// of playing the sound
-	
+
 	_decompressedSound = NULL;
 	if ((*_soundData == 'C') || (*_soundData == 'c')) {
 		uint32 packedSize = size - 0x201;
@@ -630,7 +630,7 @@ MidiMusic::~MidiMusic() {
 	_parser->unloadMusic();
 	delete _parser;
 	this->close();
-	if (_decompressedSound != NULL) 
+	if (_decompressedSound != NULL)
 		delete _decompressedSound;
 }
 

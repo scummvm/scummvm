@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #include "kyra/kyra_v2.h"
 #include "kyra/screen_v2.h"
 #include "kyra/sound.h"
@@ -45,12 +45,12 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 	}
 
 	_screen->hideMouse();
-	
+
 	if (!unk3) {
 		//updateSpecialItems();
 		//displayInvWsaLastFrame();
 	}
-	
+
 	if (unk1) {
 		int x = _mainCharacter.x1;
 		int y = _mainCharacter.y1;
@@ -71,60 +71,60 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 		case 6:
 			x = -16;
 			break;
-		
+
 		default:
 			break;
 		}
-		
+
 		moveCharacter(facing, x, y);
 	}
-	
+
 	bool newSoundFile = false;
 	if (_sceneList[newScene].sound != _lastMusicCommand) {
 		newSoundFile = true;
 		//XXX
 		_sound->beginFadeOut();
 	}
-	
+
 	_unkFlag1 = false;
-	
+
 	if (!unk3) {
 		_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
 		_scriptInterpreter->startScript(&_sceneScriptState, 5);
 		while (_scriptInterpreter->validScript(&_sceneScriptState))
 			_scriptInterpreter->runScript(&_sceneScriptState);
 	}
-	
+
 	Common::for_each(_wsaSlots, _wsaSlots+ARRAYSIZE(_wsaSlots), Common::mem_fun(&WSAMovieV2::close));
 	_specialExitCount = 0;
 	memset(_specialExitTable, -1, sizeof(_specialExitTable));
-	
+
 	_mainCharacter.sceneId = newScene;
 	_sceneList[newScene].flags &= ~1;
 	loadScenePal();
 	unloadScene();
 	loadSceneMsc();
-	
+
 	SceneDesc &scene = _sceneList[newScene];
 	_sceneExit1 = scene.exit1;
 	_sceneExit2 = scene.exit2;
 	_sceneExit3 = scene.exit3;
 	_sceneExit4 = scene.exit4;
-	
+
 	if (newSoundFile) {
 		//XXX while (snd_isPlaying()) ;
 		snd_loadSoundFile(_sceneList[newScene].sound);
 	}
-	
+
 	startSceneScript(unk3);
-	
+
 	if (_overwriteSceneFacing) {
 		facing = _mainCharacter.facing;
 		_overwriteSceneFacing = false;
 	}
-	
+
 	enterNewSceneUnk1(facing, unk2, unk3);
-	
+
 	setTimer1DelaySecs(-1);
 	_sceneScriptState.regs[3] = 1;
 	enterNewSceneUnk2(unk3);
@@ -139,34 +139,34 @@ void KyraEngine_v2::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 	int x = 0, y = 0;
 	int x2 = 0, y2 = 0;
 	bool needProc = true;
-	
+
 	if (_mainCharX == -1 && _mainCharY == -1) {
 		switch (facing+1) {
 		case 1: case 2: case 8:
 			x2 = _sceneEnterX3;
 			y2 = _sceneEnterY3;
 			break;
-		
+
 		case 3:
 			x2 = _sceneEnterX4;
 			y2 = _sceneEnterY4;
 			break;
-		
+
 		case 4: case 5: case 6:
 			x2 = _sceneEnterX1;
 			y2 = _sceneEnterY1;
 			break;
-		
+
 		case 7:
 			x2 = _sceneEnterX2;
 			y2 = _sceneEnterY2;
 			break;
-		
+
 		default:
 			x2 = y2 = -1;
 			break;
 		}
-		
+
 		if (x2 >= 316)
 			x2 = 312;
 		if (y2 >= 141)
@@ -174,45 +174,45 @@ void KyraEngine_v2::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 		if (x2 <= 4)
 			x2 = 8;
 	}
-	
+
 	if (_mainCharX >= 0) {
 		x = x2 = _mainCharX;
 		needProc = false;
 	}
-	
+
 	if (_mainCharY >= 0) {
 		y = y2 = _mainCharY;
 		needProc = false;
 	}
-	
+
 	_mainCharX = _mainCharY = -1;
-	
+
 	if (unk1 && needProc) {
 		x = x2;
 		y = y2;
-		
+
 		switch (facing) {
 		case 0:
 			y2 = 147;
 			break;
-		
+
 		case 2:
 			x2 = -16;
 			break;
-		
+
 		case 4:
 			y2 = y - 4;
 			break;
-		
+
 		case 6:
 			x2 = 335;
 			break;
-			
+
 		default:
 			break;
 		}
 	}
-	
+
 	x2 &= ~3;
 	x &= ~3;
 	y2 &= ~1;
@@ -222,17 +222,17 @@ void KyraEngine_v2::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 	_mainCharacter.x1 = _mainCharacter.x2 = x2;
 	_mainCharacter.y1 = _mainCharacter.y2 = y2;
 	initSceneAnims(unk2);
-	
+
 	if (!unk2)
 		snd_playWanderScoreViaMap(_sceneList[_mainCharacter.sceneId].sound, 0);
-	
+
 	if (unk1 && !unk2 && _mainCharacter.animFrame != 32)
 		moveCharacter(facing, x, y);
 }
 
 void KyraEngine_v2::enterNewSceneUnk2(int unk1) {
 	_unk3 = -1;
-	
+
 	if (_mainCharX == -1 && _mainCharY == -1 && _mainCharacter.sceneId != 61 &&
 		!queryGameFlag(0x1F1) && !queryGameFlag(0x192) && !queryGameFlag(0x193) &&
 		_mainCharacter.sceneId != 70 && !queryGameFlag(0x159) && _mainCharacter.sceneId != 37) {
@@ -240,12 +240,12 @@ void KyraEngine_v2::enterNewSceneUnk2(int unk1) {
 		updateCharacterAnim(0);
 		refreshAnimObjectsIfNeed();
 	}
-	
+
 	if (!unk1) {
 		runSceneScript4(0);
 		//XXX sub_27158
 	}
-	
+
 	_unk4 = 0;
 	_unk3 = -1;
 }
@@ -269,12 +269,12 @@ int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
 				unkFlag = false;
 			}
 		}
-		
+
 		if (checkSceneChange()) {
 			running = false;
 			changedScene = 1;
 		}
-		
+
 		if (unk1) {
 			// TODO: check this again
 			int inputFlag = checkInput(0/*dword_324C5*/);
@@ -283,7 +283,7 @@ int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
 				_unk4 = 1;
 			}
 		}
-		
+
 		if (!unkFlag || !running)
 			continue;
 
@@ -304,13 +304,13 @@ int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
 			updateType = -1;
 		}
 	}
-	
+
 	if (updateChar)
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
-	
+
 	updateCharacterAnim(0);
 	refreshAnimObjectsIfNeed();
-	
+
 	if (!changedScene && !_unk4) {
 		//XXX
 	}
@@ -322,7 +322,7 @@ int KyraEngine_v2::checkSceneChange() {
 	int charX = _mainCharacter.x1, charY = _mainCharacter.y1;
 	int facing = 0;
 	int process = 0;
-	
+
 	if (_screen->getLayer(charX, charY) == 1 && _unk3 == -6) {
 		facing = 0;
 		process = 1;
@@ -336,36 +336,36 @@ int KyraEngine_v2::checkSceneChange() {
 		facing = 6;
 		process = 1;
 	}
-	
+
 	if (!process)
 		return 0;
-	
+
 	uint16 newScene = 0xFFFF;
 	switch (facing) {
 	case 0:
 		newScene = curScene.exit1;
 		break;
-	
+
 	case 2:
 		newScene = curScene.exit2;
 		break;
-	
+
 	case 4:
 		newScene = curScene.exit3;
 		break;
-	
+
 	case 6:
 		newScene = curScene.exit4;
 		break;
-	
+
 	default:
 		newScene = _mainCharacter.sceneId;
 		break;
 	}
-	
+
 	if (newScene == 0xFFFF)
 		return 0;
-	
+
 	enterNewScene(newScene, facing, 1, 1, 0);
 	return 1;
 }
@@ -379,7 +379,7 @@ void KyraEngine_v2::unloadScene() {
 void KyraEngine_v2::loadScenePal() {
 	uint16 sceneId = _mainCharacter.sceneId;
 	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
-	
+
 	char filename[14];
 	strcpy(filename, _sceneList[sceneId].filename);
 	strcat(filename, ".COL");
@@ -400,10 +400,10 @@ void KyraEngine_v2::loadSceneMsc() {
 void KyraEngine_v2::startSceneScript(int unk1) {
 	uint16 sceneId = _mainCharacter.sceneId;
 	char filename[14];
-	
+
 	strcpy(filename, _sceneList[sceneId].filename);
 	if (sceneId == 68 && (queryGameFlag(0x1BC) || queryGameFlag(0x1DC)))
-		strcpy(filename, "DOORX");	
+		strcpy(filename, "DOORX");
 	strcat(filename, ".CPS");
 
 	_screen->loadBitmap(filename, 3, 3, 0);
@@ -421,18 +421,18 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 	_sceneEnterY3 = 128;
 	_sceneEnterX4 = 24;
 	_sceneEnterY4 = 72;
-	
+
 	_sceneCommentString = "Undefined scene comment string!";
 	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
-	
+
 	strcpy(filename, _sceneList[sceneId].filename);
 	strcat(filename, ".");
 	strcat(filename, _scriptLangExt[(_flags.platform == Common::kPlatformPC && !_flags.isTalkie) ? 0 : _lang]);
-	
+
 	assert(_res->getFileSize(filename));
 	_scriptInterpreter->loadScript(filename, &_sceneScriptData, &_opcodes);
 	runSceneScript7();
-		
+
 	_scriptInterpreter->startScript(&_sceneScriptState, 0);
 	_sceneScriptState.regs[0] = sceneId;
 	_sceneScriptState.regs[5] = unk1;
@@ -440,13 +440,13 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 		_scriptInterpreter->runScript(&_sceneScriptState);
 
 	memcpy(_gamePlayBuffer, _screen->getCPagePtr(3), 46080);
-	
+
 	for (int i = 0; i < 10; ++i) {
 		_scriptInterpreter->initScript(&_sceneSpecialScripts[i], &_sceneScriptData);
 		_scriptInterpreter->startScript(&_sceneSpecialScripts[i], i+8);
 		_sceneSpecialScriptsTimer[i] = 0;
 	}
-	
+
 	_sceneEnterX1 &= ~3;
 	_sceneEnterX2 &= ~3;
 	_sceneEnterX3 &= ~3;
@@ -461,7 +461,7 @@ void KyraEngine_v2::runSceneScript2() {
 	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
 	_sceneScriptState.regs[4] = _itemInHand;
 	_scriptInterpreter->startScript(&_sceneScriptState, 2);
-	
+
 	while (_scriptInterpreter->validScript(&_sceneScriptState))
 		_scriptInterpreter->runScript(&_sceneScriptState);
 }
@@ -491,7 +491,7 @@ void KyraEngine_v2::runSceneScript6() {
 void KyraEngine_v2::runSceneScript7() {
 	int oldPage = _screen->_curPage;
 	_screen->_curPage = 2;
-	
+
 	_scriptInterpreter->startScript(&_sceneScriptState, 7);
 	while (_scriptInterpreter->validScript(&_sceneScriptState))
 		_scriptInterpreter->runScript(&_sceneScriptState);
@@ -502,32 +502,32 @@ void KyraEngine_v2::runSceneScript7() {
 void KyraEngine_v2::initSceneAnims(int unk1) {
 	for (int i = 0; i < ARRAYSIZE(_animObjects); ++i)
 		_animObjects[i].enabled = 0;
-	
+
 	bool animInit = false;
-	
+
 	AnimObj *animState = &_animObjects[0];
-	
+
 	if (_mainCharacter.animFrame != 32)
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
-	
+
 	animState->enabled = 1;
 	animState->xPos1 = _mainCharacter.x1;
 	animState->yPos1 = _mainCharacter.y1;
 	animState->shapePtr = _defaultShapeTable[_mainCharacter.animFrame];
 	animState->shapeIndex1 = animState->shapeIndex2 = _mainCharacter.animFrame;
-	
+
 	int frame = _mainCharacter.animFrame - 9;
 	int shapeX = _shapeDescTable[frame].xAdd;
 	int shapeY = _shapeDescTable[frame].yAdd;
-	
+
 	animState->xPos2 = _mainCharacter.x1;
 	animState->yPos2 = _mainCharacter.y1;
-	
+
 	_charScaleX = _charScaleY = getScale(_mainCharacter.x1, _mainCharacter.y1);
-	
+
 	int shapeXScaled = (shapeX * _charScaleX) >> 8;
 	int shapeYScaled = (shapeY * _charScaleY) >> 8;
-	
+
 	animState->xPos2 += shapeXScaled;
 	animState->yPos2 += shapeYScaled;
 	animState->xPos3 = animState->xPos2;
@@ -536,39 +536,39 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 	animState->unk8 = 1;
 
 	_animList = 0;
-	
+
 	AnimObj *charAnimState = animState;
-	
+
 	for (int i = 0; i < 10; ++i) {
 		animState = &_animObjects[i+1];
 		animState->enabled = 0;
 		animState->needRefresh = 0;
 		animState->unk8 = 0;
-		
+
 		if (_sceneAnims[i].flags & 1) {
 			animState->enabled = 1;
 			animState->needRefresh = 1;
 			animState->unk8 = 1;
 		}
-		
+
 		animState->animFlags = _sceneAnims[i].flags & 8;
-		
+
 		if (_sceneAnims[i].flags & 2)
 			animState->flags = 0x800;
 		else
 			animState->flags = 0;
-		
+
 		if (_sceneAnims[i].flags & 4)
 			animState->flags |= 1;
-		
+
 		animState->xPos1 = _sceneAnims[i].x;
 		animState->yPos1 = _sceneAnims[i].y;
-		
+
 		if (_sceneAnims[i].flags & 0x20)
 			animState->shapePtr = _sceneShapeTable[_sceneAnims[i].shapeIndex];
 		else
 			animState->shapePtr = 0;
-		
+
 		if (_sceneAnims[i].flags & 0x40) {
 			animState->shapeIndex3 = _sceneAnims[i].shapeIndex;
 			animState->animNum = i;
@@ -576,15 +576,15 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 			animState->shapeIndex3 = 0xFFFF;
 			animState->animNum = 0xFFFF;
 		}
-		
+
 		animState->shapeIndex2 = 0xFFFF;
-		
+
 		animState->xPos3 = animState->xPos2 = _sceneAnims[i].x2;
 		animState->yPos3 = animState->yPos2 = _sceneAnims[i].y2;
 		animState->width = _sceneAnims[i].width;
 		animState->height = _sceneAnims[i].height;
 		animState->width2 = animState->height2 = _sceneAnims[i].specialSize;
-		
+
 		if (_sceneAnims[i].flags & 1) {
 			if (animInit) {
 				_animList = addToAnimListSorted(_animList, animState);
@@ -594,17 +594,17 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 			}
 		}
 	}
-	
+
 	if (animInit) {
 		_animList = addToAnimListSorted(_animList, charAnimState);
 	} else {
 		_animList = initAnimList(_animList, charAnimState);
 		animInit = true;
 	}
-	
+
 	for (int i = 0; i < 30; ++i) {
 		animState = &_animObjects[i+11];
-		
+
 		uint16 shapeIndex = _itemList[i].id;
 		if (shapeIndex == 0xFFFF || _itemList[i].sceneId != _mainCharacter.sceneId) {
 			animState->enabled = 0;
@@ -615,21 +615,21 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 			animState->yPos1 = _itemList[i].y;
 			animState->shapePtr = _defaultShapeTable[64+shapeIndex];
 			animState->shapeIndex1 = animState->shapeIndex2 = shapeIndex+64;
-			
+
 			animState->xPos2 = _itemList[i].x;
 			animState->yPos2 = _itemList[i].y;
 			int objectScale = getScale(animState->xPos2, animState->yPos2);
-			
+
 			const uint8 *shape = getShapePtr(animState->shapeIndex1);
 			animState->xPos2 -= (_screen->getShapeScaledWidth(shape, objectScale) >> 1);
 			animState->yPos2 -= (_screen->getShapeScaledHeight(shape, objectScale) >> 1);
 			animState->xPos3 = animState->xPos2;
 			animState->yPos3 = animState->yPos2;
-			
+
 			animState->enabled = 1;
 			animState->needRefresh = 1;
 			animState->unk8 = 1;
-			
+
 			if (animInit) {
 				_animList = addToAnimListSorted(_animList, animState);
 			} else {
@@ -638,17 +638,17 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 			}
 		}
 	}
-	
+
 	_animObjects[0].unk8 = 1;
 	_animObjects[0].needRefresh = 1;
-	
+
 	for (int i = 1; i < 41; ++i) {
 		if (_animObjects[i].enabled) {
 			_animObjects[i].needRefresh = 1;
 			_animObjects[i].unk8 = 1;
 		}
 	}
-	
+
 	restorePage3();
 	drawAnimObjects();
 	_screen->hideMouse();
@@ -686,23 +686,23 @@ void KyraEngine_v2::updateSpecialSceneScripts() {
 	const int startScript = _lastProcessedSceneScript;
 
 	while (_system->getMillis() <= nextTime) {
-		if (_sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis() && 
+		if (_sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis() &&
 			!_specialSceneScriptState[_lastProcessedSceneScript]) {
 			_specialSceneScriptRunFlag = true;
-			
+
 			while (_specialSceneScriptRunFlag && _sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis())
 				_specialSceneScriptRunFlag = _scriptInterpreter->runScript(&_sceneSpecialScripts[_lastProcessedSceneScript]) != 0;
 		}
-		
+
 		if (!_scriptInterpreter->validScript(&_sceneSpecialScripts[_lastProcessedSceneScript])) {
 			_scriptInterpreter->startScript(&_sceneSpecialScripts[_lastProcessedSceneScript], 8+_lastProcessedSceneScript);
 			_specialSceneScriptRunFlag = false;
 		}
-		
+
 		++_lastProcessedSceneScript;
 		if (_lastProcessedSceneScript >= 10)
 			_lastProcessedSceneScript = 0;
-		
+
 		if (_lastProcessedSceneScript == startScript)
 			return;
 	}
@@ -743,22 +743,22 @@ bool KyraEngine_v2::lineIsPassable(int x, int y) {
 		if (x >= 320)
 			return false;
 	}
-	
+
 	if (_pathfinderFlag & 4) {
 		if (y >= 144)
 			return false;
 	}
-	
+
 	if (_pathfinderFlag & 8) {
 		if (x < 0)
 			return false;
 	}
-	
+
 	if (y > 143)
 		return false;
 
 	int unk1 = unkTable[getScale(x, y) >> 5];
-	
+
 	if (y < 0)
 		y = 0;
 	x -= unk1 >> 1;
@@ -767,7 +767,7 @@ bool KyraEngine_v2::lineIsPassable(int x, int y) {
 	int x2 = x + unk1;
 	if (x2 > 320)
 		x2 = 320;
-	
+
 	for (;x < x2; ++x)
 		if (!_screen->getShapeFlag1(x, y))
 			return false;
@@ -793,15 +793,15 @@ int KyraEngine_v2::pathfinderUnk1(int *moveTable) {
 	int oldX = 0, newX = 0, oldY = 0, newY = 0;
 	int lastEntry = 0;
 	lastEntry = pathfinderUnk2(lastEntry, 0, 0);
-	
+
 	while (*moveTableCur != 8) {
 		oldEntry = curEntry;
-		
+
 		while (true) {
 			curEntry = *moveTableCur;
 			if (curEntry >= 0 && curEntry <= 7)
 				break;
-			
+
 			if (curEntry == 8) {
 				breakLoop = true;
 				break;
@@ -809,27 +809,27 @@ int KyraEngine_v2::pathfinderUnk1(int *moveTable) {
 				++moveTableCur;
 			}
 		}
-		
+
 		if (breakLoop)
 			break;
-		
+
 		oldX = newX;
 		oldY = newY;
-		
+
 		newX += _addXPosTable[curEntry];
 		newY += _addYPosTable[curEntry];
-		
+
 		int temp = ABS(curEntry - oldEntry);
 		if (temp > 4) {
 			temp = 8 - temp;
 		}
-		
+
 		if (temp > 1 || oldEntry != curEntry)
 			lastEntry = pathfinderUnk2(lastEntry, oldX, oldY);
-	
+
 		++moveTableCur;
 	}
-	
+
 	lastEntry = pathfinderUnk2(lastEntry, newX, newY);
 	_pathfinderUnkTable1[lastEntry*2+0] = -1;
 	_pathfinderUnkTable1[lastEntry*2+1] = -1;
@@ -855,7 +855,7 @@ int KyraEngine_v2::pathfinderUnk3(int tableLen, int x, int y) {
 		y1 = _pathfinderUnkTable1[index1*2+1] + y;
 		x2 = _pathfinderUnkTable1[index2*2+0] + x;
 		y2 = _pathfinderUnkTable1[index2*2+0] + x;
-		
+
 		if (directLinePassable(x1, y1, x2, y2)) {
 			lastEntry = pathfinderUnk4(lastEntry, index2);
 			if (tableLen-1 == index2)
@@ -892,7 +892,7 @@ void KyraEngine_v2::pathfinderUnk5(int *moveTable, int tableLen, int x, int y, i
 		y1 = _pathfinderUnkTable1[index1*2+1] + y;
 		x2 = _pathfinderUnkTable1[index2*2+0] + x;
 		y2 = _pathfinderUnkTable1[index2*2+0] + x;
-		
+
 		int wayLen = findWay(x1, y1, x2, y2, moveTable, sizeLeft);
 		moveTable += wayLen;
 		sizeLeft -= wayLen;	// unlike the original we want to be sure that the size left is correct

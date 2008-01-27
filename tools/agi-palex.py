@@ -67,7 +67,7 @@ def printPalette(palette, filename, arrayname):
 	comments = ["A 16-color, 12-bit RGB palette from an Amiga AGI game."]
 	comments.append("Extracted from file " + os.path.basename(filename))
 	printCommentLineList(comments)
-	
+
 	# Print the palette as a C-style array
 	print "static const unsigned char " + arrayname + "[] = {"
 	for color in palette[:-1]:
@@ -80,20 +80,20 @@ def isAmigaPalette(palette):
 	# Palette must be of correct size
 	if len(palette) != colorsPerPalette:
 		return False
-	
+
 	# First palette color must be black and last palette color must be black
 	if palette[whiteColorNum] != decodedWhite or palette[blackColorNum] != decodedBlack:
 		return False
-	
+
 	# All colors must be 12-bit (i.e. 4 bits per color component)
 	for color in palette:
 		if not isColor12Bit(color):
 			return False
-	
+
 	# All colors must be unique
 	if len(set(palette)) != colorsPerPalette:
 		return False
-	
+
 	return True
 
 def preliminaryPaletteTest(data, pos):
@@ -128,7 +128,7 @@ def searchForAmigaPalettes(filename):
 				# Save good candidates to a list
 				if isAmigaPalette(palette):
 					foundPalettes.append(tuple(palette))
-		# Close source file and return unique found palettes	
+		# Close source file and return unique found palettes
 		file.close()
 		return set(foundPalettes)
 	except IOError:

@@ -45,13 +45,13 @@ public:
 
 	void enable();
 	void disable();
-	
+
 	void openDialog(bool topDialog);
 	void closeAllDialogs();
 
 	void clearAll();
 	void updateScreen();
-	
+
 	void setDrawArea(const Common::Rect &r);
 	void resetDrawArea();
 
@@ -146,47 +146,47 @@ private:
 		kDialogBkgdTop = 1,
 		kDialogBkgdLeft = 2,
 		kDialogBkgd = 3,
-		
+
 		kWidgetBkgdCorner = 4,
 		kWidgetBkgdTop = 5,
 		kWidgetBkgdLeft = 6,
 		kWidgetBkgd = 7,
-		
+
 		kCheckboxEmpty = 8,
 		kCheckboxChecked = 9,
-		
+
 		kWidgetArrow = 10,
-		
+
 		kTabBkgdCorner = 11,
 		kTabBkgdTop = 12,
 		kTabBkgdLeft = 13,
 		kTabBkgd = 14,
-		
+
 		kSliderBkgdCorner = 15,
 		kSliderBkgdTop = 16,
 		kSliderBkgdLeft = 17,
 		kSliderBkgd = 18,
-		
+
 		kSliderCorner = 19,
 		kSliderTop = 20,
 		kSliderLeft = 21,
 		kSlider = 22,
-		
+
 		kScrollbarBkgdCorner = 23,
 		kScrollbarBkgdTop = 24,
 		kScrollbarBkgdLeft = 25,
 		kScrollbarBkgd = 26,
-		
+
 		kScrollbarCorner = 27,
 		kScrollbarTop = 28,
 		kScrollbarLeft = 29,
 		kScrollbar = 30,
-		
+
 		kButtonBkgdCorner = 31,
 		kButtonBkgdTop = 32,
 		kButtonBkgdLeft = 33,
 		kButtonBkgd = 34,
-		
+
 		kWidgetSmallBkgdCorner = 35,
 		kWidgetSmallBkgdTop = 36,
 		kWidgetSmallBkgdLeft = 37,
@@ -205,15 +205,15 @@ private:
 		kEditTextBkgd = 47,
 
 		kGUICursor = 48,
-	
+
 		kImageHandlesMax
 	};
 
 private:
 	int _dimPercentValue;
-	typedef OverlayColor (ThemeModern::*InactiveDialogCallback)(OverlayColor col);	
+	typedef OverlayColor (ThemeModern::*InactiveDialogCallback)(OverlayColor col);
 	InactiveDialogCallback _dialogShadingCallback;
-	
+
 	OverlayColor calcLuminance(OverlayColor col);
 	OverlayColor calcDimColor(OverlayColor col);
 
@@ -231,56 +231,56 @@ private:
 private:
 	Common::String _imageHandles[kImageHandlesMax];
 	const Graphics::Surface **_images;
-	
+
 	enum ColorHandles {
 		kMainDialogStart = 0,
 		kMainDialogEnd = 1,
-		
+
 		kDialogStart = 2,
 		kDialogEnd = 3,
-		
+
 		kColorStateDisabled = 4,
 		kColorStateHighlight = 5,
 		kColorStateEnabled = 6,
 		kColorTransparency = 7,
-		
+
 		kTextInvertedBackground = 8,
 		kTextInvertedColor = 9,
-		
+
 		kWidgetBackgroundStart = 10,
 		kWidgetBackgroundEnd = 11,
 		kWidgetBackgroundSmallStart = 12,
 		kWidgetBackgroundSmallEnd = 13,
-		
+
 		kButtonBackgroundStart = 14,
 		kButtonBackgroundEnd = 15,
 		kButtonTextEnabled = 16,
 		kButtonTextDisabled = 17,
 		kButtonTextHighlight = 18,
-		
+
 		kSliderBackgroundStart = 19,
 		kSliderBackgroundEnd = 20,
 		kSliderStart = 21,
 		kSliderEnd = 22,
-		
+
 		kTabBackgroundStart = 23,
 		kTabBackgroundEnd = 24,
-		
+
 		kScrollbarBackgroundStart = 25,
 		kScrollbarBackgroundEnd = 26,
 		kScrollbarButtonStart = 27,
 		kScrollbarButtonEnd = 28,
 		kScrollbarSliderStart = 29,
 		kScrollbarSliderEnd = 30,
-		
+
 		kCaretColor = 31,
-		
+
 		kSliderHighStart = 32,
 		kSliderHighEnd = 33,
-		
+
 		kButtonBackgroundHighlightStart = 34,
 		kButtonBackgroundHighlightEnd = 35,
-		
+
 		kScrollbarButtonHighlightStart = 36,
 		kScrollbarButtonHighlightEnd = 37,
 		kScrollbarSliderHighlightStart = 38,
@@ -290,7 +290,7 @@ private:
 		kPopUpWidgetEnd = 41,
 		kPopUpWidgetHighlightStart = 42,
 		kPopUpWidgetHighlightEnd = 43,
-		
+
 		kEditTextBackgroundStart = 44,
 		kEditTextBackgroundEnd = 45,
 
@@ -301,34 +301,34 @@ private:
 
 		kColorHandlesMax
 	};
-	
+
 	OverlayColor _colors[kColorHandlesMax];
-	
+
 	enum GradientFactors {
 		kMainDialogFactor = 0,
 		kDialogFactor = 1,
 		kDialogSpecialFactor = 2,
-		
+
 		kWidgetSmallFactor = 3,
 		kWidgetFactor = 4,
-		
+
 		kButtonFactor = 5,
-		
+
 		kSliderFactor = 6,
 		kSliderBackground = 7,
-		
+
 		kTabFactor = 7,
-		
+
 		kScrollbarFactor = 8,
 		kScrollbarBkgdFactor = 9,
 
 		kPopUpWidgetFactor = 10,
-		
+
 		kEditTextFactor = 11,
-		
+
 		kMaxGradientFactors
 	};
-	
+
 	uint _gradientFactors[kMaxGradientFactors];
 };
 

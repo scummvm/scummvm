@@ -61,7 +61,7 @@ protected:
 		#endif
 		if (!func)
 			debug("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
-	
+
 		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 		// standard and POSIX: ISO C++ disallows casting between function pointers
 		// and data pointers, but dlsym always returns a void pointer. For details,
@@ -84,7 +84,7 @@ public:
 		if (!_filename.hasSuffix("scummvm.dll"))	// skip loading the core scummvm module
 			_dlHandle = LoadLibrary(toUnicode(_filename.c_str()));
 		#endif
-	
+
 		if (!_dlHandle) {
 			debug("Failed loading plugin '%s' (error code %d)", _filename.c_str(), (int32) GetLastError());
 			return false;
@@ -114,8 +114,8 @@ Win32PluginProvider::~Win32PluginProvider() {
 
 PluginList Win32PluginProvider::getPlugins() {
 	PluginList pl;
-	
-	
+
+
 	// Load dynamic plugins
 	// TODO... this is right now just a nasty hack.
 	// This should search one or multiple directories for all plugins it can
@@ -145,8 +145,8 @@ PluginList Win32PluginProvider::getPlugins() {
 			pl.push_back(new Win32Plugin(i->getPath()));
 		}
 	}
-	
-	
+
+
 	return pl;
 }
 

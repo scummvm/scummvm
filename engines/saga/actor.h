@@ -298,7 +298,7 @@ public:
 	Point _screenPosition;		// screen coordinates
 	int32 _screenDepth;			//
 	int32 _screenScale;			//
-	
+
 	void saveState(Common::OutSaveFile *out) {
 		out->writeUint16LE(_flags);
 		out->writeSint32LE(_nameIndex);

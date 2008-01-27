@@ -183,7 +183,7 @@ struct AnimHeader {
 		writeS.writeByte(feetEndDir);
 		writeS.writeUint16LE(blend);
 	}
-		
+
 };
 
 // runtimeComp - compression used on each frame of the anim

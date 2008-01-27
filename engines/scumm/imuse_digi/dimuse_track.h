@@ -81,7 +81,7 @@ struct Track {
 
 	Track() : soundId(-1), used(false), stream(NULL) {
 	}
-	
+
 	int getPan() const { return (pan != 64) ? 2 * pan - 127 : 0; }
 	int getVol() const { return vol / 1000; }
 	Audio::Mixer::SoundType getType() const {

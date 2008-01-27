@@ -84,7 +84,7 @@ public:
 	void clearQueue() { _objectQueue = 0; }
 	void addObjectToQueue(AnimObject *object);
 	void refreshObject(AnimObject *object);
-	
+
 	void makeBrandonFaceMouse();
 	void setBrandonAnimSeqSize(int width, int height);
 	void resetBrandonAnimSeqSize();
@@ -124,7 +124,7 @@ protected:
 
 	int _brandonAnimSeqSizeWidth;
 	int _brandonAnimSeqSizeHeight;
-	
+
 };
 } // end of namespace Kyra
 

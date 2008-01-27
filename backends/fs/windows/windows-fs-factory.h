@@ -30,20 +30,20 @@
 
 /**
  * Creates WindowsFilesystemNode objects.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class WindowsFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<WindowsFilesystemFactory> {	
+class WindowsFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<WindowsFilesystemFactory> {
 public:
 	typedef Common::String String;
-	
+
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const;
-	
+
 protected:
 	WindowsFilesystemFactory() {};
-		
+
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 };

@@ -197,10 +197,10 @@ static void SelectorFormInit() {
 
 	listP = (ListType *)FrmGetObjectPtr(frmP, FrmGetObjectIndex(frmP, EngineListList));
 	itemsText = (Char **)MemPtrNew(ENGINE_COUNT * sizeof(Char *));
-	
+
 	for (int i = 0; i < ENGINE_COUNT; i++)
 		itemsText[i] = (Char *)engines[i].nameP;
-		
+
 	LstSetListChoices (listP, itemsText, ENGINE_COUNT);
 	LstSetSelection(listP, 0);
 
@@ -251,7 +251,7 @@ Boolean SelectorFormHandleEvent(EventPtr eventP) {
 		case lstSelectEvent:
 			if (eventP->data.lstSelect.listID == EngineSupportedList)
 				LstSetSelection(eventP->data.lstSelect.pList, -1);
-			else 
+			else
 				SelectorSetList(eventP->data.lstSelect.selection);
 			handled = true;
 			break;
@@ -273,6 +273,6 @@ Boolean SelectorFormHandleEvent(EventPtr eventP) {
 		default:
 			break;
 	}
-	
+
 	return handled;
 }

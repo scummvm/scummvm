@@ -30,7 +30,7 @@ namespace Kyra {
 
 void KyraEngine_v2::clearAnimObjects() {
 	memset(_animObjects, 0, sizeof(_animObjects));
-	
+
 	_animObjects[0].index = 0;
 	_animObjects[0].type = 0;
 	_animObjects[0].enabled = 1;
@@ -39,12 +39,12 @@ void KyraEngine_v2::clearAnimObjects() {
 	_animObjects[0].height = 49;
 	_animObjects[0].width2 = 4;
 	_animObjects[0].height2 = 10;
-	
+
 	for (int i = 1; i < 11; ++i) {
 		_animObjects[i].index = i;
 		_animObjects[i].type = 2;
 	}
-	
+
 	for (int i = 11; i <= 40; ++i) {
 		_animObjects[i].index = i;
 		_animObjects[i].type = 1;
@@ -74,7 +74,7 @@ KyraEngine_v2::AnimObj *KyraEngine_v2::addToAnimListSorted(AnimObj *list, AnimOb
 		prev = cur;
 		cur = temp;
 	}
-	
+
 	if (add->yPos1 <= cur->yPos1) {
 		prev->nextObject = add;
 		add->nextObject = cur;
@@ -126,11 +126,11 @@ void KyraEngine_v2::drawAnimObjects() {
 	for (AnimObj *curObject = _animList; curObject; curObject = curObject->nextObject) {
 		if (!curObject->enabled)
 			continue;
-		
+
 		int x = curObject->xPos2 - (_screen->getScreenDim(2)->sx << 3);
 		int y = curObject->yPos2 - _screen->getScreenDim(2)->sy;
 		int layer = 7;
-		
+
 		if (curObject->flags & 0x800) {
 			if (curObject->animFlags)
 				layer = 0;
@@ -170,11 +170,11 @@ void KyraEngine_v2::refreshAnimObjects(int force) {
 			width -= width + x - 322;
 		if (height + y > 143)
 			height -= height + y - 144;
-	
+
 		_screen->hideMouse();
 		_screen->copyRegion(x, y, x, y, width, height, 2, 0, Screen::CR_CLIPPED);
 		_screen->showMouse();
-		
+
 		curObject->needRefresh = false;
 	}
 }
@@ -247,37 +247,37 @@ void KyraEngine_v2::updateSceneAnim(int anim, int newFrame) {
 	AnimObj *animObject = &_animObjects[1+anim];
 	if (!animObject->enabled)
 		return;
-	
+
 	animObject->needRefresh = 1;
 	animObject->unk8 = 1;
 	animObject->flags = 0;
-	
+
 	if (_sceneAnims[anim].flags & 2)
 		animObject->flags |= 0x800;
 	else
 		animObject->flags &= ~0x800;
-	
+
 	if (_sceneAnims[anim].flags & 4)
 		animObject->flags |= 1;
 	else
 		animObject->flags &= ~1;
-	
+
 	if (_sceneAnims[anim].flags & 0x20) {
 		animObject->shapePtr = _sceneShapeTable[newFrame];
 		animObject->shapeIndex2 = 0xFFFF;
 		animObject->shapeIndex3 = 0xFFFF;
-		animObject->animNum = 0xFFFF;		
+		animObject->animNum = 0xFFFF;
 	} else {
 		animObject->shapePtr = 0;
 		animObject->shapeIndex3 = newFrame;
 		animObject->animNum = anim;
 	}
-	
+
 	animObject->xPos1 = _sceneAnims[anim].x;
 	animObject->yPos1 = _sceneAnims[anim].y;
 	animObject->xPos2 = _sceneAnims[anim].x2;
 	animObject->yPos2 = _sceneAnims[anim].y2;
-	
+
 	if (_sceneAnims[anim].flags & 2) {
 		_animList = deleteAnimListEntry(_animList, animObject);
 		if (!_animList)

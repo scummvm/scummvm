@@ -41,7 +41,7 @@ typedef GameList (*DetectFunc)(const FSList &fslist);
 class DynamicPlugin : public Plugin {
 protected:
 	typedef void (*VoidFunc)();
-	
+
 	Common::String _name;
 	Common::String _copyright;
 	GameIDQueryFunc _qf;
@@ -82,7 +82,7 @@ public:
 			return false;
 		}
 		_name = nameFunc();
-	
+
 		// Query the plugin's copyright
 		nameFunc = (NameFunc)findSymbol("PLUGIN_copyright");
 		if (!nameFunc) {
@@ -90,7 +90,7 @@ public:
 			return false;
 		}
 		_copyright = nameFunc();
-	
+
 		// Query the plugin for the game ids it supports
 		GameIDListFunc gameListFunc = (GameIDListFunc)findSymbol("PLUGIN_gameIDList");
 		if (!gameListFunc) {
@@ -98,28 +98,28 @@ public:
 			return false;
 		}
 		_games = gameListFunc();
-	
+
 		// Retrieve the gameid query function
 		_qf = (GameIDQueryFunc)findSymbol("PLUGIN_findGameID");
 		if (!_qf) {
 			unloadPlugin();
 			return false;
 		}
-	
+
 		// Retrieve the factory function
 		_ef = (EngineFactory)findSymbol("PLUGIN_createEngine");
 		if (!_ef) {
 			unloadPlugin();
 			return false;
 		}
-	
+
 		// Retrieve the detector function
 		_df = (DetectFunc)findSymbol("PLUGIN_detectGames");
 		if (!_df) {
 			unloadPlugin();
 			return false;
 		}
-	
+
 		return true;
 	}
 };

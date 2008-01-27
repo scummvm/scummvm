@@ -75,7 +75,7 @@ UInt8 PalmScreenSize(Coord *stdw, Coord *stdh, Coord *fullw, Coord *fullh) {
 	UInt8 mode = 0;
 
 	Coord sw = 160;
-	Coord sh = 160;	
+	Coord sh = 160;
 
 	// Hi-Density present ?
 	if (!FtrGet(sysFtrCreator, sysFtrNumWinVersion, &ftr)) {
@@ -136,7 +136,7 @@ void PalmGetMemory(UInt32* storageMemoryP, UInt32* dynamicMemoryP, UInt32 *stora
 	UInt32		dynamicFree = 0;
 
 	// Iterate through each card to support devices with multiple cards.
-	nCards = MemNumCards();		
+	nCards = MemNumCards();
 
 	for (cardNo = 0; cardNo < nCards; cardNo++) {
 		// Iterate through the RAM heaps on a card (excludes ROM).

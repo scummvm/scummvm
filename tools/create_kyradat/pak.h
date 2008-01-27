@@ -34,7 +34,7 @@ public:
 	bool loadFile(const char *file, const bool isAmiga);
 	bool saveFile(const char *file);
 	void clearFile() { delete _fileList; _fileList = 0; }
-	
+
 	const uint32 getFileSize() const { return _fileList->getTableSize()+5+4+_fileList->getFileSize(); }
 
 	void drawFileList();
@@ -47,7 +47,7 @@ public:
 
 	bool addFile(const char *name, const char *file);
 	bool addFile(const char *name, uint8 *data, uint32 size);
-	
+
 	bool removeFile(const char *name);
 public:
 	struct FileList {
@@ -57,7 +57,7 @@ public:
 			delete [] data;
 			delete next;
 		}
-		
+
 		FileList *findEntry(const char *f) {
 			for (FileList *cur = this; cur; cur = cur->next) {
 				if (scumm_stricmp(cur->filename, f) != 0)
@@ -66,7 +66,7 @@ public:
 			}
 			return 0;
 		}
-		
+
 		const FileList *findEntry(const char *f) const {
 			for (const FileList *cur = this; cur; cur = cur->next) {
 				if (scumm_stricmp(cur->filename, f) != 0)
@@ -92,12 +92,12 @@ public:
 		char *filename;
 		uint32 size;
 		uint8 *data;
-		
+
 		FileList *next;
 	};
 
 	typedef const FileList cFileList;
-	
+
 	cFileList *getFileList() const { return _fileList; }
 private:
 	FileList *_fileList;

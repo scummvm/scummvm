@@ -61,7 +61,7 @@ class HashMapTestSuite : public CxxTest::TestSuite
 
 		// The container is initially empty ...
 		TS_ASSERT( container.begin() == container.end() );
-		
+
 		// ... then non-empty ...
 		container[324] = 33;
 		TS_ASSERT( container.begin() != container.end() );

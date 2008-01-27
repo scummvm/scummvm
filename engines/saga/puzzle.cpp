@@ -149,7 +149,7 @@ void Puzzle::initPieces(void) {
 	int frameNumber;
 	SpriteList *spriteList;
 	_vm->_actor->getSpriteParams(puzzle, frameNumber, spriteList);
-	
+
 	for (int i = 0; i < PUZZLE_PIECES; i++) {
 		spI = &(spriteList->infoList[i]);
 		_pieceInfo[i].offX = (byte)(spI->width >> 1);

@@ -125,7 +125,7 @@ void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
 	cdm.w <<= 3;
 
 	int na = 0, nb = 0, nc = w2;
-	
+
 	if (!calcBounds(cdm.w, cdm.h, x2, y2, w2, h2, na, nb, nc))
 		return;
 
@@ -140,7 +140,7 @@ void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
 			u = t;
 			uint8 * s = src + (x1 + t) * 320;
 			uint8 * dt = (uint8*) _wsaFrameAnimBuffer;
-			
+
 			t = w2 - w1;
 			if (!t) {
 				memcpy(dt, s, w2);
@@ -158,7 +158,7 @@ void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
 							cnt++;
 						}
 						memset(dt, *s++, cnt);
-						dt += cnt;						
+						dt += cnt;
 					}
 				}
 			} else {
@@ -181,7 +181,7 @@ void Screen_v2::wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
 		}
 		memcpy(dst + x2 + cdm.sx, _wsaFrameAnimBuffer + na, w2);
 		dst += 320;
-	} while (++nb < h2);	
+	} while (++nb < h2);
 }
 
 void Screen_v2::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage, int dstW,
@@ -212,7 +212,7 @@ void Screen_v2::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int 
 	uint8 * dst = getPagePtr(dstPage) + dstW * (Y2 + r2);
 	uint8 * cmp = getPagePtr(cmpPage);
 
-	while (H2--) {		
+	while (H2--) {
 		uint8 * s = src + r4 + X1;
 		uint8 * d = dst + r1 + X2;
 
@@ -230,7 +230,7 @@ bool Screen_v2::calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, i
 	x2 = 0;
 	y2 = 0;
 	w2 = w1;
-	
+
 	int t = x1 + w1;
 	if (t < 1) {
 		w1 = h1 = -1;

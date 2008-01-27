@@ -65,7 +65,7 @@ private:
 	bool _passThrough;
 
 public:
-	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS_INNER], 
+	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS_INNER],
 		uint8 channelNum, uint8 soundNum, bool isMusic, void *soundData, uint32 size);
 	~MidiMusic();
 	void setVolume(int volume);

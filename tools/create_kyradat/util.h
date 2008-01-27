@@ -80,7 +80,7 @@ typedef uint8 bool;
 	#define START_PACK_STRUCTS pack(push, 1)
 	#define END_PACK_STRUCTS   pack(pop)
 
-	
+
 #elif defined(__MINGW32__)
 
 	#define scumm_stricmp stricmp

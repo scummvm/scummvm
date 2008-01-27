@@ -54,10 +54,10 @@ void OSystem_PalmBase::setMouseCursor(const byte *buf, uint w, uint h, int hotsp
 	if (_mouseCurState.w != w || _mouseCurState.h != h) {
 		_mouseCurState.w = w;
 		_mouseCurState.h = h;
-		
+
 		if (_mouseDataP)
 			free(_mouseDataP);
-		
+
 		if (_mouseBackupP)
 			free(_mouseBackupP);
 
@@ -95,7 +95,7 @@ void OSystem_PalmBase::simulate_mouse(Common::Event &event, Int8 iHoriz, Int8 iV
 	x = (x >= _screenWidth	) ? _screenWidth - 1	: x;
 	y = (y < 0				) ? 0					: y;
 	y = (y >= _screenHeight	) ? _screenHeight - 1	: y;
-	
+
 	*xr = x;
 	*yr = y;
 }

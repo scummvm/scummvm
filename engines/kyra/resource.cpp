@@ -63,7 +63,7 @@ bool Resource::reset() {
 	unloadAllPakFiles();
 
 	FilesystemNode dir(ConfMan.get("path"));
-	
+
 	if (!dir.exists() || !dir.isDirectory())
 		error("invalid game path '%s'", dir.getPath().c_str());
 
@@ -179,7 +179,7 @@ bool Resource::loadPakFile(const Common::String &filename) {
 
 bool Resource::loadFileList(const Common::String &filedata) {
 	Common::File f;
-	
+
 	if (!f.open(filedata))
 		return false;
 
@@ -200,7 +200,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 				error("couldn't load file '%s'", filename.c_str());
 				return false;
 			}
-		}			
+		}
 	}
 
 	return true;

@@ -168,7 +168,7 @@ int Anim::playCutaway(int cut, bool fade) {
 		warning("Could not allocate cutaway animation slot");
 		return 0;
 	}
-	
+
 	// Some cutaways in IHNM have animResourceId equal to 0, which means that they only have
 	// a background frame and no animation. Those animations are actually game scripts.
 	// An example is the "nightfall" animation in Ben's chapter (fadein-fadeout), the animation
@@ -461,7 +461,7 @@ void Anim::setCycles(uint16 animId, int cycles) {
 int Anim::getCycles(uint16 animId) {
 	if (animId >= MAX_ANIMATIONS && _cutawayAnimations[animId - MAX_ANIMATIONS] == NULL)
 		return 0;
-	
+
 	return getAnimation(animId)->cycles;
 }
 
@@ -484,7 +484,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		return;
 
 	if (animId >= MAX_ANIMATIONS && _cutawayAnimations[animId - MAX_ANIMATIONS] == NULL) {
-		// In IHNM, cutaways without an animation bit are not rendered, but the framecount 
+		// In IHNM, cutaways without an animation bit are not rendered, but the framecount
 		// needs to be updated
 		_vm->_frameCount++;
 
@@ -538,7 +538,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 
 		// FIXME: if start > 0, then this works incorrectly
 		decodeFrame(anim, anim->frameOffsets[frame], displayBuffer, _vm->getDisplayWidth() * _vm->getDisplayHeight());
-		_vm->_frameCount++;	
+		_vm->_frameCount++;
 		anim->currentFrame++;
 		if (anim->completed != 65535) {
 			anim->completed++;
@@ -547,7 +547,7 @@ void Anim::play(uint16 animId, int vectorTime, bool playing) {
 		if (anim->currentFrame > anim->maxFrame) {
 
 			anim->currentFrame = anim->loopFrame;
-			_vm->_frameCount++;	
+			_vm->_frameCount++;
 
 			if (anim->state == ANIM_STOPPING || anim->currentFrame == -1) {
 				anim->state = ANIM_PAUSE;
@@ -728,7 +728,7 @@ void Anim::decodeFrame(AnimationData *anim, size_t frameOffset, byte *buf, size_
 
 
 	// Begin RLE decompression to output buffer
-	do {		
+	do {
 		markByte = readS.readByte();
 		switch (markByte) {
 		case SAGA_FRAME_START:

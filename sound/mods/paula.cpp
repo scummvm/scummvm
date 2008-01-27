@@ -92,21 +92,21 @@ template<bool stereo>
 int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 	int samples = _stereo ? numSamples / 2 : numSamples;
 	while (samples > 0) {
-	
+
 		// Handle 'interrupts'. This gives subclasses the chance to adjust the channel data
 		// (e.g. insert new samples, do pitch bending, whatever).
 		if (_curInt == _intFreq) {
 			interrupt();
 			_curInt = 0;
 		}
-		
+
 		// Compute how many samples to generate: at most the requested number of samples,
 		// of course, but we may stop earlier when an 'interrupt' is expected.
 		const int nSamples = MIN(samples, _intFreq - _curInt);
-		
+
 		// Loop over the four channels of the emulated Paula chip
 		for (int voice = 0; voice < NUM_VOICES; voice++) {
-		
+
 			// No data, or paused -> skip channel
 			if (!_voice[voice].data || (_voice[voice].period <= 0))
 				continue;
@@ -148,7 +148,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 				sLen = intToFrac(_voice[voice].length);
 
 				// If the "rate" exceeds the sample rate, we would have to perform constant
-				// wrap arounds. So, apply the first step of the euclidean algorithm to 
+				// wrap arounds. So, apply the first step of the euclidean algorithm to
 				// achieve the same more efficiently: Take rate modulo sLen
 				if (sLen < rate)
 					rate %= sLen;

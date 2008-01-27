@@ -55,7 +55,7 @@ void Troll::drawMenu(const char *szMenu, int iSel) {
 bool Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 	Common::Event event;
 	int y;
-	
+
 	drawMenu(szMenu, *iSel);
 
 	for (;;) {
@@ -122,7 +122,7 @@ bool Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 		_vm->_system->updateScreen();
 		_vm->_system->delayMillis(10);
 	}
-	
+
 	return true;
 }
 
@@ -193,7 +193,7 @@ void Troll::inventory() {
 		sprintf(tmp, IDS_TRO_TREASURE_4, _treasuresLeft);
 		_vm->drawStr(20, 10, kColorDefault, tmp);
 		break;
-	}	
+	}
 
 	pressAnyKey(6);
 }
@@ -258,7 +258,7 @@ void Troll::credits() {
 	_vm->drawStr(15, 8, 10, IDS_TRO_CREDITS_4);
 	_vm->drawStr(17, 7, 12, IDS_TRO_CREDITS_5);
 	_vm->drawStr(19, 2, 14, IDS_TRO_CREDITS_6);
-	
+
 	_vm->_gfx->doUpdate();
 
 	pressAnyKey();
@@ -274,7 +274,7 @@ void Troll::tutorial() {
 
 		_vm->printStr(IDS_TRO_TUTORIAL_0);
 		_vm->getSelection(kSelSpace);
-		
+
 		_vm->clearScreen(0x55);
 		_vm->setDefaultTextColor(0x0F);
 
@@ -317,25 +317,25 @@ void Troll::tutorial() {
 	_vm->drawStr(6, 1, kColorDefault, IDS_TRO_TUTORIAL_9);
 	_vm->_gfx->doUpdate();
 	pressAnyKey();
-	
+
 	_vm->clearScreen(0x19);
 	_vm->drawStr(7, 1, kColorDefault, IDS_TRO_TUTORIAL_10);
 	_vm->drawStr(8, 1, kColorDefault, IDS_TRO_TUTORIAL_11);
 	_vm->_gfx->doUpdate();
 	pressAnyKey();
-	
+
 	_vm->clearScreen(0x6E);
 	_vm->drawStr(9, 1, kColorDefault, IDS_TRO_TUTORIAL_12);
 	_vm->drawStr(10, 1, kColorDefault, IDS_TRO_TUTORIAL_13);
 	_vm->_gfx->doUpdate();
 	pressAnyKey();
-	
+
 	_vm->clearScreen(0x4C);
 	_vm->drawStr(11, 1, kColorDefault, IDS_TRO_TUTORIAL_14);
 	_vm->drawStr(12, 1, kColorDefault, IDS_TRO_TUTORIAL_15);
 	_vm->_gfx->doUpdate();
 	pressAnyKey();
-	
+
 	_vm->clearScreen(0x5D);
 	_vm->drawStr(13, 1, kColorDefault, IDS_TRO_TUTORIAL_16);
 	_vm->drawStr(14, 1, kColorDefault, IDS_TRO_TUTORIAL_17);
@@ -369,7 +369,7 @@ void Troll::intro() {
 	_vm->setDefaultTextColor(0x0f);
 	drawPic(45, false, true);
 	_vm->_gfx->doUpdate();
-	
+
 	// wait for keypress and alternate message
 	waitAnyKeyIntro();
 
@@ -377,7 +377,7 @@ void Troll::intro() {
 	_vm->drawStr(22, 3, kColorDefault, IDS_TRO_INTRO_4);
 	_vm->drawStr(23, 6, kColorDefault, IDS_TRO_INTRO_5);
 	_vm->_gfx->doUpdate();
-	
+
 	if (!_vm->getSelection(kSelYesNo))
 		tutorial();
 
@@ -391,7 +391,7 @@ void Troll::gameOver() {
 	drawPic(42, true, true);
 
 	playTune(4, 25);
-			
+
 	printUserMessage(16);
 
 	printUserMessage(33);
@@ -533,7 +533,7 @@ void Troll::printUserMessage(int msgId) {
 	for (i = 0; i < _userMessages[msgId - 1].num; i++) {
 		_vm->drawStr(21 + i, 1, kColorDefault, _userMessages[msgId - 1].msg[i]);
 	}
-		
+
 	if (msgId == 34) {
 		for (i = 0; i < 2; i++)
 			playTune(5, 11);
@@ -559,10 +559,10 @@ void Troll::gameLoop() {
 	memset(_roomStates, 0, sizeof(_roomStates));
 
 	memset(_inventory, 0, sizeof(_inventory));
-	
+
 	while (!done) {
 		*menu = 0;
-		
+
 		currentOption = 0;
 
 		numberOfOptions = drawRoom(menu);
@@ -614,7 +614,7 @@ void Troll::gameLoop() {
 				if (roomParam == 1)
 					haveFlashlight = true;
 
-				_locMessagesIdx[_currentRoom] = IDO_TRO_LOCMESSAGES + 
+				_locMessagesIdx[_currentRoom] = IDO_TRO_LOCMESSAGES +
 					(roomParam + 42) * 39;
 
 				pickupTreasure(roomParam);

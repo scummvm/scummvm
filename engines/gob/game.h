@@ -215,7 +215,7 @@ protected:
 	byte *_variablesSizesArray[5];
 
 	GobEngine *_vm;
-		
+
 	int16 adjustKey(int16 key);
 
 	byte *loadLocTexts(int32 *dataSize = 0);

@@ -233,14 +233,14 @@ bool StaticResource::init() {
 		{ k2SeqplayTlkFiles, kLanguageList, "S_TLKFILES." },
 		{ k2SeqplaySeqData, kRawData, "S_DATA.SEQ" },
 		{ k2SeqplayIntroTracks, kStringList, "S_INTRO.TRA" },
-		{ k2SeqplayFinaleTracks, kStringList, "S_FINALE.TRA" },	
+		{ k2SeqplayFinaleTracks, kStringList, "S_FINALE.TRA" },
 		{ k2SeqplayIntroCDA, kRawData, "S_INTRO.CDA" },
 		{ k2SeqplayFinaleCDA, kRawData, "S_FINALE.CDA" },
 
 		// Ingame
 		{ k2IngamePakFiles, kStringList, "I_PAKFILES.TXT" },
 		{ k2IngameSfxFiles, kStringList, "I_SFXFILES.TXT" },
-		{ k2IngameSfxIndex, kRawData, "I_SFXINDEX.TRA" },		
+		{ k2IngameSfxIndex, kRawData, "I_SFXINDEX.TRA" },
 		{ k2IngameTracks, kStringList, "I_TRACKS.TRA" },
 		{ k2IngameCDA, kRawData, "I_TRACKS.CDA" },
 
@@ -947,7 +947,7 @@ void KyraEngine_v2::initStaticResource() {
 	}
 	tlkfiles = 0;
 	_staticres->unloadId(k2SeqplayTlkFiles);
-	
+
 	// assign music data
 	static const char *fmtMusicFileListIntro[] = { "intro" };
 	static const char *fmtMusicFileListFinale[] = { "finale" };
@@ -968,7 +968,7 @@ void KyraEngine_v2::initStaticResource() {
 
 	// setup sequence data
 	const uint8 *seqData = _staticres->loadRawData(k2SeqplaySeqData, tmp);
-	
+
 	static const Seqproc hofSequenceCallbacks[] = { 0,
 		&KyraEngine_v2::seq_introWestwood,
 		&KyraEngine_v2::seq_introTitle, &KyraEngine_v2::seq_introOverview,

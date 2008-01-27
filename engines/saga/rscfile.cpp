@@ -143,7 +143,7 @@ bool Resource::loadMacContext(ResourceContext *context) {
 	uint32 macDataOffset;
 
 	MacResMap macResMap;
-	MacResType *macResTypes;	
+	MacResType *macResTypes;
 
 	MacResType *macResType;
 	MacResource *macResource;
@@ -209,7 +209,7 @@ bool Resource::loadMacContext(ResourceContext *context) {
 	for (i = macResMap.numTypes, macResType = macResTypes; i > 0; i--, macResType++) {
 		context->file->seek(macResType->offset + macMapOffset + macResMap.typeOffset);
 
-		for (j = macResType->items, macResource = macResType->resources; j > 0; j--, macResource++) {			
+		for (j = macResType->items, macResource = macResType->resources; j > 0; j--, macResource++) {
 			macResource->id = context->file->readUint16BE();
 			macResource->nameOffset = context->file->readUint16BE();
 			macResource->dataOffset = context->file->readUint32BE();
@@ -222,7 +222,7 @@ bool Resource::loadMacContext(ResourceContext *context) {
 			}
 		}
 
-		for (j = macResType->items, macResource = macResType->resources; j > 0; j--, macResource++) {			
+		for (j = macResType->items, macResource = macResType->resources; j > 0; j--, macResource++) {
 			if (macResource->nameOffset != -1) {
 				context->file->seek(macResource->nameOffset + macMapOffset + macResMap.nameOffset);
 				macNameLen = context->file->readByte();
@@ -235,7 +235,7 @@ bool Resource::loadMacContext(ResourceContext *context) {
 	for (i = macResMap.numTypes, macResType = macResTypes; i > 0; i--, macResType++) {
 		//getting offsets & sizes of midi
 		if (((context->fileType & GAME_MUSICFILE_GM) > 0) && (macResType->id == ID_MIDI)) {
-			
+
 			context->count = macResType->maxItemId + 1;
 			context->table = (ResourceData *)calloc(context->count, sizeof(*context->table));
 			for (j = macResType->items, macResource = macResType->resources; j > 0; j--, macResource++) {
@@ -283,10 +283,10 @@ bool Resource::loadContext(ResourceContext *context) {
 
 	if (context->fileType & GAME_SWAPENDIAN)
 		context->isBigEndian = !context->isBigEndian;
-	
+
 	isMacBinary = (context->fileType & GAME_MACBINARY) > 0;
 	context->fileType &= ~GAME_MACBINARY;
-	
+
 	if (isMacBinary) {
 		if (!loadMacContext(context)) {
 			return false;
@@ -447,7 +447,7 @@ bool Resource::createContexts() {
 					sprintf(_voicesFileName[0], "voicesd.cmp");
 					_vm->_gf_compressed_sounds = true;
 				}
-			} else if (Common::File::exists("inherit the earth voices") || 
+			} else if (Common::File::exists("inherit the earth voices") ||
 					   Common::File::exists("inherit the earth voices.cmp")) {
 				_contextsCount++;
 				voicesFileIndex = _contextsCount - 1;
@@ -547,7 +547,7 @@ bool Resource::createContexts() {
 			context->fileType = GAME_MUSICFILE;
 		} else if (!soundFileInArray && i == soundFileIndex) {
 			context->fileName = soundFileName;
-			context->fileType = GAME_SOUNDFILE;	
+			context->fileType = GAME_SOUNDFILE;
 		} else if (!voicesFileInArray && i == voicesFileIndex) {
 			context->fileName = _voicesFileName[0];
 			// can be GAME_VOICEFILE or GAME_SOUNDFILE | GAME_VOICEFILE or GAME_VOICEFILE | GAME_SWAPENDIAN
@@ -740,7 +740,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 	}
 
 	free(_vm->_sndRes->_fxTable);
-	
+
 	_vm->_sndRes->_fxTableLen = resourceLength / 4;
 	_vm->_sndRes->_fxTable = (FxTable *)malloc(sizeof(FxTable) * _vm->_sndRes->_fxTableLen);
 
@@ -791,7 +791,7 @@ void Resource::loadGlobalResources(int chapter, int actorsEntrance) {
 		}
 
 		free(_vm->_music->_songTable);
-		
+
 		_vm->_music->_songTableLen = resourceLength / 4;
 		_vm->_music->_songTable = (int32 *)malloc(sizeof(int32) * _vm->_music->_songTableLen);
 

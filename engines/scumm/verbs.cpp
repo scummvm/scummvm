@@ -635,7 +635,7 @@ void ScummEngine_v2::checkExecVerbs() {
 				}
 			}
 		}
-	
+
 		// Generic keyboard input
 		runInputScript(4, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {

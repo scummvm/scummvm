@@ -197,7 +197,7 @@ diff -Naur scummvm-0.11.orig/debian/rules scummvm-0.11/debian/rules
 +	install -m0644 -d debian/scummvm/usr/share/scummvm
 +	install -m0644 dists/pred.dic debian/scummvm/usr/share/scummvm
 +#	install -m0644 gui/themes/modern.ini gui/themes/modern.zip gui/themes/classic080.ini debian/scummvm/usr/share/scummvm
-+	 
++
 +binary: binary-arch
 +
 +binary-arch: build install
@@ -275,7 +275,7 @@ diff -Naur scummvm-0.11.orig/debian/scummvm.substvars scummvm-0.11/debian/scummv
  				_keyboardEvent.pending = true;
  				_keyboardEvent.kbd = event.kbd;
  			}
-+ 
++
 +			break;
 +#ifdef MAEMO_SDL
 +		case Common::EVENT_KEYUP:
@@ -297,7 +297,7 @@ diff -Naur scummvm-0.11.orig/debian/scummvm.substvars scummvm-0.11/debian/scummv
  
 +#ifdef	MAEMO_SDL
 +		switch (_keyPressed.keycode) {
-+			case Common::KEYCODE_F8: _fastMode ^= 1; break ;// Map F8 (zoom out) to toggle fast mode                                                                                             
++			case Common::KEYCODE_F8: _fastMode ^= 1; break ;// Map F8 (zoom out) to toggle fast mode
 +			case Common::KEYCODE_F4: _keyPressed.keycode = Common::KEYCODE_F5; _keyPressed.ascii=Common::ASCII_F5 ; break; // map F4 to F5 (menu key)
 +			case Common::KEYCODE_RETURN: _keyPressed.keycode = Common::KEYCODE_TAB; _keyPressed.ascii=Common::ASCII_TAB ; break; // map Select (return) to Tab (right mouse button)
 +			case Common::KEYCODE_F7: if(_game.id == GID_MONKEY2){ _keyPressed.ascii = '1';_keyPressed.keycode=Common::KEYCODE_1;} break; // map F7 (zoom in) to 1 (to bypass Monkey2 copy protection)
@@ -552,7 +552,7 @@ diff -Naur scummvm-0.11.orig/debian/scummvm.substvars scummvm-0.11/debian/scummv
 +		case Common::KEYCODE_F7:
 +			if (inMenu)
 +				lastKeyStroke = '2';
-+			else 
++			else
 +			if (allowPlayerInput) {
 +				playerCommand = 3; // USE
 +				makeCommandLine();
@@ -656,13 +656,13 @@ diff -Naur scummvm-0.11.orig/debian/scummvm.substvars scummvm-0.11/debian/scummv
 +#define	ENG_OTHER	-1
 +//#define	ENG_SCUMM	1
 +	static int game=0;
-+#define GAME_OTHER	-1	
++#define GAME_OTHER	-1
 +#define GAME_LURE	1
 +//#define GAME_SWORD1	2
 +//#define	GAME_SWORD2	3
 +	if (!engine){
 +		// one time initialization
-+		Common::String gameid(ConfMan.get("gameid"));                                                                                                                
++		Common::String gameid(ConfMan.get("gameid"));
 +		if (gameid == "lure") {
 +			game=GAME_LURE;
 +			engine=ENG_OTHER;
@@ -673,7 +673,7 @@ diff -Naur scummvm-0.11.orig/debian/scummvm.substvars scummvm-0.11/debian/scummv
 +	}
 +	// engine specific mappings
 +	switch (engine){
-+	
++
 +	}
 +	// game specific mapping
 +	switch (game) {
@@ -687,13 +687,13 @@ diff -Naur scummvm-0.11.orig/debian/scummvm.substvars scummvm-0.11/debian/scummv
 +					break;
 +				case SDLK_F4: // map menu to right click
 +					event.type = ((ev.type==SDL_KEYUP) ? Common::EVENT_RBUTTONUP : Common::EVENT_RBUTTONDOWN );
-+					event.mouse.x = _mouseCurState.x;                                                                                                                        
-+					event.mouse.y = _mouseCurState.y;                                                                                                                        
-+					return true;			 
++					event.mouse.x = _mouseCurState.x;
++					event.mouse.y = _mouseCurState.y;
++					return true;
 +				default:
 +					;
 +			}
-+		break;	
++		break;
 +	}
 +#endif //SDL_MAEMO
 +

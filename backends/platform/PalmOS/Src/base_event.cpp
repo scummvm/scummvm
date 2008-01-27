@@ -208,7 +208,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 					sy = -1;
 				else if (keyCurrentState & _keyExtra.bitDown)
 					sy = +1;
-					
+
 				if (keyCurrentState & _keyExtra.bitLeft)
 					sx = -1;
 				else if (keyCurrentState & _keyExtra.bitRight)
@@ -222,7 +222,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 					warpMouse(x, y);
 
 					return true;
-				}			
+				}
 			}
 		}
 
@@ -293,7 +293,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 				k = Common::KEYCODE_RIGHT; break;
 			case chrLeftArrow:
 				k = Common::KEYCODE_LEFT; break;
-			
+
 			// return
 			case chrLineFeed:
 			case chrCarriageReturn:
@@ -314,10 +314,10 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 			return true;
 
 		// prevent crash when alarm is raised
-		handled = ((ev.eType == keyDownEvent) && 
-						(ev.data.keyDown.modifiers & commandKeyMask) && 
-						((ev.data.keyDown.chr == vchrAttnStateChanged) || 
-						(ev.data.keyDown.chr == vchrAttnUnsnooze))); 
+		handled = ((ev.eType == keyDownEvent) &&
+						(ev.data.keyDown.modifiers & commandKeyMask) &&
+						((ev.data.keyDown.chr == vchrAttnStateChanged) ||
+						(ev.data.keyDown.chr == vchrAttnUnsnooze)));
 
 		// graffiti strokes, auto-off, etc...
 		if (!handled)

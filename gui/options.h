@@ -108,7 +108,7 @@ private:
 	StaticTextWidget *_midiGainDesc;
 	SliderWidget *_midiGainSlider;
 	StaticTextWidget *_midiGainLabel;
-	
+
 	//
 	// Subtitle controls
 	//

@@ -39,7 +39,7 @@ struct GameSettings {
 	 * The gameid of this game.
 	 */
 	const char *gameid;
-	
+
 	/**
 	 * An identifier which can be used to distinguish game variants.
 	 * This string is also used to augment the description string
@@ -51,13 +51,13 @@ struct GameSettings {
 	 * variant. Failing to obey this rule can lead to odd bugs.
 	 */
 	const char *variant;
-	
+
 	/**
 	 * An optional string that will be added to the 'preferredtarget'
 	 * computed by the detector.
 	 */
 	const char *preferredTag;
-	
+
 	/**
 	 * The numerical gameid of this game.
 	 * This is not in one-to-one correspondence with the gameid above.
@@ -72,16 +72,16 @@ struct GameSettings {
 
 	/** The HE subversion. */
 	byte heversion;
-	
+
 	/** MidiDriverFlags values */
 	int midi;
-	
+
 	/**
 	 * Bitmask obtained by ORing various GameFeatures enums, and used
 	 * to en-/disable certain features of this game variant.
 	 */
 	uint32 features;
-	
+
 	/**
 	 * Platform indicator, this is set to a value different from
 	 * kPlatformUnknown if this game variant only existed for this

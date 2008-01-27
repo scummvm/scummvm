@@ -41,7 +41,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPWSTR szCmdLine, int sw) {
 	 *    resolve imported symbols to a dll from an executable.
 	 * 2) But wait! DLLs can have any way of importing/exporting symbols
 	 *    between them. Hmmm...
-	 * 
+	 *
 	 * Right! The solution is thus: We build everything as a dll. This means
 	 * the individual engines (plugins) and also the scummvm core application.
 	 * It is in fact "The sub-DLL solution" described over at edll

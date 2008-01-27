@@ -7,7 +7,7 @@ MODULE_OBJS := \
 	graphics.o \
 	gp2x.o
 	# gp2x-options.o
-	# overload_help.o 
+	# overload_help.o
 
 MODULE_DIRS += \
 	backends/platform/gp2x/

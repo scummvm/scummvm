@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
+
 #ifndef _DSOPTIONS_H_
 #define _DSOPTIONS_H_
 
@@ -39,7 +39,7 @@ class DSOptionsDialog : public GUI::Dialog {
 public:
 	DSOptionsDialog();
 	~DSOptionsDialog();
-	
+
 protected:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	void togglePause();
@@ -56,7 +56,7 @@ protected:
 	GUI::CheckboxWidget* _cpuScaler;
 	GUI::CheckboxWidget* _showCursorCheckbox;
 	GUI::CheckboxWidget* _snapToBorderCheckbox;
-	
+
 #ifdef DS_SCUMM_BUILD
 	Scumm::SaveLoadChooser* _delDialog;
 #endif

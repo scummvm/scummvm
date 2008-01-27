@@ -445,8 +445,8 @@ enum ColorId {
 
 enum KnownColor {
 	kKnownColorTransparent,
-	kKnownColorBrightWhite,	
-	kKnownColorWhite,	
+	kKnownColorBrightWhite,
+	kKnownColorWhite,
 	kKnownColorBlack,
 
 	kKnownColorSubtitleTextColor,
@@ -655,8 +655,8 @@ private:
 
 public:
 	ColorId KnownColor2ColorId(KnownColor knownColor);
-	void setTalkspeed(int talkspeed); 
-	int getTalkspeed(); 
+	void setTalkspeed(int talkspeed);
+	int getTalkspeed();
 };
 
 } // End of namespace Saga

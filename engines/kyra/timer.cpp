@@ -53,7 +53,7 @@ struct TimerResync : public Common::UnaryFunction<TimerEntry&, void> {
 
 struct TimerEqual : public Common::UnaryFunction<const TimerEntry&, bool> {
 	uint8 _id;
-	
+
 	TimerEqual(uint8 id) : _id(id) {}
 
 	bool operator()(const TimerEntry &entry) const {
@@ -80,13 +80,13 @@ void TimerManager::addTimer(uint8 id, TimerFunc *func, int countdown, bool enabl
 	}
 
 	TimerEntry newTimer;
-	
+
 	newTimer.id = id;
 	newTimer.countdown = countdown;
 	newTimer.enabled = enabled ? 1 : 0;
 	newTimer.lastUpdate = newTimer.nextRun = 0;
 	newTimer.func = func;
-	
+
 	_timers.push_back(newTimer);
 }
 
@@ -95,7 +95,7 @@ void TimerManager::update() {
 
 	if (_system->getMillis() < _nextRun)
 		return;
-	
+
 	_nextRun += 99999;
 
 	for (Iterator pos = _timers.begin(); pos != _timers.end(); ++pos) {
@@ -106,7 +106,7 @@ void TimerManager::update() {
 			uint32 curTime = _system->getMillis();
 			pos->lastUpdate = curTime;
 			pos->nextRun = curTime + pos->countdown * _vm->tickLength();
-			
+
 			_nextRun = MIN(_nextRun, pos->nextRun);
 		}
 	}
@@ -116,7 +116,7 @@ void TimerManager::resync() {
 	debugC(9, kDebugLevelTimer, "TimerManager::resync()");
 
 	_nextRun = 0;	// force rerun
-	Common::for_each(_timers.begin(), _timers.end(), TimerResync(_vm, _system->getMillis()));	
+	Common::for_each(_timers.begin(), _timers.end(), TimerResync(_vm, _system->getMillis()));
 }
 
 void TimerManager::resetNextRun() {
@@ -135,7 +135,7 @@ void TimerManager::setCountdown(uint8 id, int32 countdown) {
 			uint32 curTime = _system->getMillis();
 			timer->lastUpdate = curTime;
 			timer->nextRun = curTime + countdown * _vm->tickLength();
-		
+
 			_nextRun = MIN(_nextRun, timer->nextRun);
 		}
 	} else {
@@ -197,14 +197,14 @@ void TimerManager::disable(uint8 id) {
 
 void TimerManager::loadDataFromFile(Common::InSaveFile *file, int version) {
 	debugC(9, kDebugLevelTimer, "TimerManager::loadDataFromFile(%p, %d)", (const void*)file, version);
-	
+
 	if (version <= 7) {
 		_nextRun = 0;
 		for (int i = 0; i < 32; ++i) {
 			uint8 enabled = file->readByte();
 			int32 countdown = file->readSint32BE();
 			uint32 nextRun = file->readUint32BE();
-			
+
 			Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(i));
 			if (timer != _timers.end()) {
 				timer->enabled = enabled;
@@ -220,7 +220,7 @@ void TimerManager::loadDataFromFile(Common::InSaveFile *file, int version) {
 				}
 			} else {
 				warning("Loading timer data for non existing timer %d", i);
-			}			
+			}
 		}
 	} else {
 		int entries = file->readByte();
@@ -237,14 +237,14 @@ void TimerManager::loadDataFromFile(Common::InSaveFile *file, int version) {
 				file->seek(7, SEEK_CUR);
 			}
 		}
-		
+
 		resync();
 	}
 }
 
 void TimerManager::saveDataToFile(Common::OutSaveFile *file) const {
 	debugC(9, kDebugLevelTimer, "TimerManager::saveDataToFile(%p)", (const void*)file);
-	
+
 	file->writeByte(count());
 	for (CIterator pos = _timers.begin(); pos != _timers.end(); ++pos) {
 		file->writeByte(pos->id);

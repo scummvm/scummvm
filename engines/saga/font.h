@@ -141,7 +141,7 @@ class Font {
 	}
 	void textDrawRect(KnownFont font, Surface *ds, const char *text, const Common::Rect &rect, int color, int effectColor, FontEffectFlags flags) {
 		textDrawRect(knownFont2FontIdx(font), ds, text, rect, color, effectColor, flags);
-	}	
+	}
 	void setFontMapping(int mapping) {
 		_fontMapping = mapping;
 	}
@@ -168,7 +168,7 @@ class Font {
 	 void createOutline(FontData *font);
 	 void draw(FontId fontId, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags);
 	 void outFont(const FontStyle &drawFont, Surface *ds, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
-	 
+
 	 FontData *getFont(FontId fontId) {
 		 validate(fontId);
 		 return _fonts[fontId];

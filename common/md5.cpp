@@ -268,10 +268,10 @@ bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 		warning("md5_file couldn't open '%s'", name);
 		return false;
 	}
-	
+
 	return md5_file(f, digest, length);
 }
-	
+
 
 bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length) {
 

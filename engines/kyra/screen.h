@@ -85,7 +85,7 @@ public:
 		DSF_WND_COORDS = 0x10,
 		DSF_CENTER     = 0x20
 	};
-	
+
 	enum FontId {
 		FID_6_FNT = 0,
 		FID_8_FNT,
@@ -95,7 +95,7 @@ public:
 		FID_GOLDFONT_FNT,
 		FID_NUM
 	};
-	
+
 	Screen(KyraEngine *vm, OSystem *system);
 	virtual ~Screen();
 
@@ -181,7 +181,7 @@ public:
 	// mouse handling
 	void hideMouse();
 	void showMouse();
-	void setMouseCursor(int x, int y, byte *shape);	
+	void setMouseCursor(int x, int y, byte *shape);
 
 	// rect handling
 	virtual int getRectSize(int w, int h);
@@ -191,7 +191,7 @@ public:
 	void addBitBlitRect(int x, int y, int w, int h);
 	void bitBlitRects();
 
-	// misc	
+	// misc
 	void loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *palData);
 
 	void loadPalette(const char *filename, uint8 *palData);
@@ -200,10 +200,10 @@ public:
 	void setAnimBlockPtr(int size);
 
 	void setShapePages(int page1, int page2);
-	
+
 	byte getShapeFlag1(int x, int y);
 	byte getShapeFlag2(int x, int y);
-	
+
 	void savePageToDisk(const char *file, int page);
 	void loadPageFromDisk(const char *file, int page);
 	void deletePageFromDisk(int page);
@@ -227,7 +227,7 @@ public:
 	bool _disableScreen;
 
 	const ScreenDim *_curDim;
-	
+
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
 
@@ -298,19 +298,19 @@ protected:
 	int _animBlockSize;
 
 	int _mouseLockCount;
-	
+
 	Rect *_bitBlitRects;
 	int _bitBlitNum;
 	uint8 *_unkPtr1, *_unkPtr2;
-	
+
 	enum {
 		kMaxDirtyRects = 50
 	};
-	
+
 	bool _forceFullUpdate;
 	int _numDirtyRects;
 	Rect *_dirtyRects;
-	
+
 	void addDirtyRect(int x, int y, int w, int h);
 
 	OSystem *_system;

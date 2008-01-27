@@ -9,7 +9,7 @@ Watcom C++ arguments order:
 
 Sceneres.h
 ==========
- LOADREQ_FIGURE                
+ LOADREQ_FIGURE
  LOADREQ_OBJECT
  LOADREQ_BACKGROUND        SAGA_BG_IMAGE
  LOADREQ_ZBUF              SAGA_BG_MASK

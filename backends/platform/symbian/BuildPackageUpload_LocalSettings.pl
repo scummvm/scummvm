@@ -1,13 +1,13 @@
 
 ##################################################################################################################
 
-	# you can use these below for speed & clarity or override with custom settings	
+	# you can use these below for speed & clarity or override with custom settings
 	$DefaultTopMacros = "
 		MACRO			USE_ZLIB			// LIB:zlib.lib
 		MACRO			USE_MAD				// LIB:libmad.lib
 		MACRO			USE_TREMOR			// LIB:libtremor.lib
 	";
-		
+
 	$DefaultBottomMacros = "
 		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
 		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
@@ -31,7 +31,7 @@
 		$HaltOnError = 1;
 		$SkipExistingPackages = 0;
 		$ReallyQuiet = 0;
-		
+
 		# specify an optional FTP server to upload to after each Build+Package (can leave empty)
 		#$FTP_Host = "host.domain";
 		#$FTP_User = "test";
@@ -42,7 +42,7 @@
 		$FTP_User = "something";
 		$FTP_Pass = "password";
 		$FTP_Dir  = "cvsbuilds";
-	
+
 		# possible SDKs: ("UIQ2", UIQ3", "S60v1", "S60v2", "S60v3", "S80", "S90")
 		# Note1: the \epoc32 directory needs to be in these rootdirs
 		# Note2: these paths do NOT end in a backslash!
@@ -67,12 +67,12 @@
 			#$SDK_LibraryDirs{'S90'}{'esdl.lib'}		= "C:\\S\\ESDL\\epoc\\S90";
 			#$SDK_LibraryDirs{'ALL'}{'libmpeg2.lib'} = "C:\\S\\mpeg2dec-0.4.0\\epoc";
 		}
-			
+
 		# backup :P
 		#Path=C:\Progra~1\Active\Python24\.;C:\Program Files\Active\Tcl\bin;C:\Progra~1\Active\Perl\bin\;C:\WINDOWS\system32;C:\W
 		#INDOWS;C:\WINDOWS\System32\Wbem;C:\Program Files\ATI Technologies\ATI Control Panel;C:\Program Files\GNU\cvsnt;C:\Progra
 		#m Files\WinSCP3\;"C:\Program Files\Common Files\Microsoft Shared\VSA\8.0\VsaEnv\";"c:\Program Files\Microsoft Visual Stu
-		#dio 8\VC\bin";"C:\Program Files\UltraEdit-32"		
+		#dio 8\VC\bin";"C:\Program Files\UltraEdit-32"
 	}
 	elsif ($ENV{'COMPUTERNAME'} eq "TSSLND0106")
 	{
@@ -81,12 +81,12 @@
 		$HaltOnError = 0;
 		$SkipExistingPackages = 0;
 		$ReallyQuiet = 0;
-		
+
 		#$FTP_Host = "host.com";
 		#$FTP_User = "ag@host.com";
 		#$FTP_Pass = "password";
 		#$FTP_Dir  = "cvsbuilds";
-		
+
 		#$SDK_RootDirs{'UIQ2'}= "C:\\UIQ2";
 		$SDK_RootDirs{'UIQ3'}= "C:\\UIQ3";
 		#$SDK_RootDirs{'S60v1'}= "C:\\S60v1";
@@ -115,12 +115,12 @@ elsif ($ENV{'COMPUTERNAME'} eq "BIGMACHINE")
 		$HaltOnError = 0;
 		$SkipExistingPackages = 1;
 		$ReallyQuiet = 1;
-		
+
 		#$FTP_Host = "host.com";
 		#$FTP_User = "ag@host.com";
 		#$FTP_Pass = "password";
 		#$FTP_Dir  = "cvsbuilds";
-		
+
 		#$SDK_RootDirs{'UIQ2'}= "E:\\UIQ2";
 		$SDK_RootDirs{'UIQ3'}= "E:\\UIQ3";
 		#$SDK_RootDirs{'S60v1'}= "E:\\S60v1";
@@ -146,7 +146,7 @@ if (0) # so we can turn them on/off easily
 	}
 	else
 	{
-		print "ERROR: Computer name ".$ENV{'COMPUTERNAME'}." not recognized! Plz edit _LocalSettings.pl!"; 
+		print "ERROR: Computer name ".$ENV{'COMPUTERNAME'}." not recognized! Plz edit _LocalSettings.pl!";
 		exit 1;
 	}
 
@@ -156,7 +156,7 @@ if (0) # so we can turn them on/off easily
 
 	# second hash index = literal string used in .sis file created.
 	# empty string also removes the trailing '_'. Some 051101 examples:
-	
+
 	# $SDK_Variations{'UIQ2'}{''} would produce:
 	#   scummvm-051101-SymbianUIQ2.sis
 
@@ -187,7 +187,7 @@ if (0) # so we can turn them on/off easily
 if (1) # all regular combo's
 {
 	# the first one includes all SDKs & release-ready engines
-	
+
 	$SDK_Variations{'ALL'}{'all'} = "$DefaultTopMacros
 		//MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 		//MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
@@ -206,7 +206,7 @@ if (1) # all regular combo's
 	$DefaultBottomMacros";
 
 	# now one for each ready-for-release engine
-	
+
 	$SDK_Variations{'ALL'}{'scumm'} = "$DefaultTopMacros
 		//MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
@@ -217,7 +217,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
-		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib	
+		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
@@ -247,7 +247,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
-		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib	
+		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
@@ -305,9 +305,9 @@ if (1) # all regular combo's
 		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 		//MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib		
+		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
-		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib	
+		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
@@ -317,7 +317,7 @@ if (1) # all regular combo's
 	$SDK_Variations{'ALL'}{'saga_mini'} = "
 		//MACRO			USE_ZLIB			// LIB:zlib.lib
 		//MACRO			USE_MAD				// LIB:libmad.lib
-		//MACRO			USE_TREMOR			// LIB:libtremor.lib		
+		//MACRO			USE_TREMOR			// LIB:libtremor.lib
 		MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
 		MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
@@ -325,9 +325,9 @@ if (1) # all regular combo's
 		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
 		//MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib		
+		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
-		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib		
+		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
@@ -337,7 +337,7 @@ if (1) # all regular combo's
 #		MACRO			USE_MAD				// LIB:libmad.lib
 #		//MACRO			USE_TREMOR			// LIB:libtremor.lib
 #		MACRO			DISABLE_SCUMM_7_8
-#		MACRO			DISABLE_SCUMM_HE		
+#		MACRO			DISABLE_SCUMM_HE
 #		//MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 #		MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
 #		MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
@@ -345,17 +345,17 @@ if (1) # all regular combo's
 #		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
 #		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
 #		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
-#		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib		
+#		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
 #		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
-#		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib		
+#		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 #		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 #	$DefaultBottomMacros";
-	
+
 #	$SDK_Variations{'ALL'}{'all_vorbis'} = "
 #		MACRO			USE_ZLIB			// LIB:zlib.lib
 #		MACRO			USE_MAD				// LIB:libmad.lib
 #		MACRO			USE_TREMOR			// LIB:libtremor.lib
-#		
+#
 #		//MACRO			DISABLE_SCUMM		// LIB:scummvm_scumm.lib
 #		//MACRO			DISABLE_AGOS		// LIB:scummvm_agos.lib
 #		//MACRO			DISABLE_SKY			// LIB:scummvm_sky.lib
@@ -372,10 +372,10 @@ if (1) # all regular combo's
 		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
 		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
-		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib				
+		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 		//MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_agi.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib			
+		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
@@ -388,10 +388,10 @@ if (1) # all regular combo's
 		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
 		MACRO			DISABLE_GOB			// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
-		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib				
+		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		//MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
-		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib		
+		MACRO			DISABLE_AGI			// LIB:scummvm_agi.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	$DefaultBottomMacros";
@@ -403,7 +403,7 @@ if (1) # all regular combo's
 		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
 		MACRO			DISABLE_GOB		// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
-		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib				
+		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
 		//MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
@@ -419,16 +419,16 @@ if (1) # all regular combo's
 		MACRO			DISABLE_QUEEN		// LIB:scummvm_queen.lib
 		MACRO			DISABLE_GOB		// LIB:scummvm_gob.lib
 		MACRO			DISABLE_SAGA		// LIB:scummvm_saga.lib
-		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib		
+		MACRO			DISABLE_KYRA		// LIB:scummvm_kyra.lib
 		MACRO			DISABLE_LURE		// LIB:scummvm_lure.lib
 		MACRO			DISABLE_CINE		// LIB:scummvm_cine.lib
-		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib	
+		MACRO			DISABLE_AGI		// LIB:scummvm_agi.lib
 		MACRO			DISABLE_CRUISE		// LIB:scummvm_cruise.lib
 		//MACRO			DISABLE_TOUCHE		// LIB:scummvm_touche.lib
 		MACRO			DISABLE_SWORD1		// LIB:scummvm_sword1.lib
 		MACRO			DISABLE_SWORD2		// LIB:scummvm_sword2.lib
-		MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib	
-		MACRO			DISABLE_DRASCULA	// LIB:scummvm_drascula.lib		
+		MACRO			DISABLE_PARALLACTION	// LIB:scummvm_parallaction.lib
+		MACRO			DISABLE_DRASCULA	// LIB:scummvm_drascula.lib
 		MACRO			DISABLE_IGOR		// LIB:scummvm_igor.lib
 	";
 }

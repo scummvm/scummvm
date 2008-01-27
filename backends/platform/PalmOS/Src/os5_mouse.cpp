@@ -30,7 +30,7 @@ void OSystem_PalmOS5::setCursorPalette(const byte *colors, uint start, uint num)
 		_mousePal[i + start] = gfxMakeDisplayRGB(colors[0], colors[1], colors[2]);
 		colors += 4;
 	}
-	
+
 	_cursorPaletteDisabled = false;
 }
 
@@ -42,7 +42,7 @@ void OSystem_PalmOS5::disableCursorPalette(bool disable) {
 void OSystem_PalmOS5::draw_mouse() {
 	if (!_mouseDataP || _mouseDrawn || !_mouseVisible)
 		return;
-	
+
 	byte *src = _mouseDataP;
 
 	int x = _mouseCurState.x - _mouseHotspotX;
@@ -145,7 +145,7 @@ void OSystem_PalmOS5::undraw_mouse() {
 	} else {
 		byte *dst = _offScreenP + _mouseOldState.y * _screenWidth + _mouseOldState.x;
 		byte *bak = _mouseBackupP;
-		
+
 		do {
 			MemMove(dst, bak, _mouseOldState.w);
 			dst += _screenWidth;

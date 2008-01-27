@@ -32,7 +32,7 @@
 
 /**
  * Implementation of the ScummVM file system API based on Ronin.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class RoninCDFilesystemNode : public AbstractFilesystemNode {
@@ -47,10 +47,10 @@ public:
 	 * Creates a RoninCDFilesystemNode with the root node as path.
 	 */
 	RoninCDFilesystemNode();
-	
+
 	/**
 	 * Creates a RoninCDFilesystemNode for a given path.
-	 * 
+	 *
 	 * @param path String with the path the new node should point to.
 	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
 	 */
@@ -71,18 +71,18 @@ public:
 
 /**
  * Returns the last component of a given path.
- * 
+ *
  * Examples:
  * 			/foo/bar.txt would return /bar.txt
  * 			/foo/bar/    would return /bar/
- *  
+ *
  * @param str String containing the path.
  * @return Pointer to the first char of the last component inside str.
  */
 const char *lastPathComponent(const Common::String &str) {
 	if(str.empty())
 		return "";
-	
+
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
 
@@ -129,7 +129,7 @@ AbstractFilesystemNode *RoninCDFilesystemNode::getChild(const String &n) const {
 	// FIXME: Pretty lame implementation! We do no error checking to speak
 	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
-	
+
 	String newPath(_path);
 	if (_path.lastChar() != '/')
 		newPath += '/';
@@ -140,9 +140,9 @@ AbstractFilesystemNode *RoninCDFilesystemNode::getChild(const String &n) const {
 
 bool RoninCDFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
 	assert(_isDirectory);
-	
+
 	//TODO: honor the hidden flag
-	
+
 	DIR *dirp = opendir(_path.c_str());
 	struct dirent *dp;
 
@@ -172,11 +172,11 @@ bool RoninCDFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 		if (entry._isDirectory)
 			entry._path += "/";
-			
+
 		myList.push_back(new RoninCDFilesystemNode(entry));
 	}
 	closedir(dirp);
-	
+
 	return true;
 }
 

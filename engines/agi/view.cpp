@@ -45,7 +45,7 @@ void AgiEngine::lSetCel(VtEntry *v, int n) {
 	// WORKAROUND: This is a very nasty hack to fix a bug in the KQ4 introduction
 	// In its original form, it caused a lot of regressions, including KQ4 bugs and crashes
 	// Refer to Sarien bug #588899 for the original issue
-	// Modifying this workaround to only work for a specific view in the KQ4 intro fixes several 
+	// Modifying this workaround to only work for a specific view in the KQ4 intro fixes several
 	// ScummVM bugs. Refer to bugs #1660486, #1660169, #1660192, #1660162 and #1660354
 	// FIXME: Remove this workaround and investigate the reason for the erroneous actor behavior
 	// in the KQ4 introduction

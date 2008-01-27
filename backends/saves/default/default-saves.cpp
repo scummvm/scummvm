@@ -204,16 +204,16 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const char *filename)
 	char buf[256];
 	Common::String savePath = getSavePath();
 	checkPath(savePath);
-	
+
 	if (getError() == SFM_NO_ERROR) {
 		join_paths(filename, savePath.c_str(), buf, sizeof(buf));
 		StdioSaveFile *sf = new StdioSaveFile(buf, false);
-	
+
 		if (!sf->isOpen()) {
 			delete sf;
 			sf = 0;
 		}
-		
+
 		return wrapInSaveFile(sf);
 	} else {
 		return 0;
@@ -229,12 +229,12 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const char *filename)
 	if (getError() == SFM_NO_ERROR) {
 		join_paths(filename, savePath.c_str(), buf, sizeof(buf));
 		StdioSaveFile *sf = new StdioSaveFile(buf, true);
-	
+
 		if (!sf->isOpen()) {
 			delete sf;
 			sf = 0;
 		}
-	
+
 		return wrapOutSaveFile(sf);
 	} else {
 		return 0;
@@ -246,12 +246,12 @@ bool DefaultSaveFileManager::removeSavefile(const char *filename) {
 	clearError();
 	Common::String filenameStr;
 	join_paths(filename, getSavePath().c_str(), buf, sizeof(buf));
-	
+
 	if (remove(buf) != 0) {
 #ifndef _WIN32_WCE
 		if (errno == EACCES)
 			setError(SFM_DIR_ACCESS, "Search or write permission denied: "+filenameStr);
-		
+
 		if (errno == ENOENT)
 			setError(SFM_DIR_NOENT, "A component of the path does not exist, or the path is an empty string: "+filenameStr);
 #endif

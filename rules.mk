@@ -35,7 +35,7 @@ OBJS += $(MODULE_LIB-$(MODULE))
 $(MODULE_LIB-$(MODULE)): $(MODULE_OBJS-$(MODULE))
 	-$(RM) $@
 	$(AR) $@ $+
-	$(RANLIB) $@ 
+	$(RANLIB) $@
 
 # Pseudo target for comfort, allows for "make common", "make gui" etc.
 $(MODULE): $(MODULE_LIB-$(MODULE))

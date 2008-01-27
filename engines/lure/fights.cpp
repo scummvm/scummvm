@@ -47,7 +47,7 @@ FightsManager::FightsManager() {
 	reset();
 }
 
-FightsManager::~FightsManager() {	
+FightsManager::~FightsManager() {
 	if (_fightData != NULL)
 		// Release the fight data
 		delete _fightData;
@@ -131,7 +131,7 @@ void FightsManager::fightLoop() {
 		if (game.debugger().isAttached())
 			game.debugger().onFrame();
 
-		g_system->delayMillis(10);		
+		g_system->delayMillis(10);
 	}
 }
 
@@ -169,7 +169,7 @@ void FightsManager::reset() {
 	_fighterList[2] = initialFighterList[2];
 }
 
-const CursorType moveList[] = {CURSOR_LEFT_ARROW, CURSOR_FIGHT_UPPER, 
+const CursorType moveList[] = {CURSOR_LEFT_ARROW, CURSOR_FIGHT_UPPER,
 	CURSOR_FIGHT_MIDDLE, CURSOR_FIGHT_LOWER, CURSOR_RIGHT_ARROW};
 
 struct KeyMapping {
@@ -178,9 +178,9 @@ struct KeyMapping {
 };
 
 const KeyMapping keyList[] = {
-	{Common::KEYCODE_LEFT, 10}, {Common::KEYCODE_RIGHT, 14}, 
-	{Common::KEYCODE_KP7, 11}, {Common::KEYCODE_KP4, 12}, {Common::KEYCODE_KP1, 13}, 
-	{Common::KEYCODE_KP9, 6},  {Common::KEYCODE_KP6, 7},  {Common::KEYCODE_KP3, 8}, 
+	{Common::KEYCODE_LEFT, 10}, {Common::KEYCODE_RIGHT, 14},
+	{Common::KEYCODE_KP7, 11}, {Common::KEYCODE_KP4, 12}, {Common::KEYCODE_KP1, 13},
+	{Common::KEYCODE_KP9, 6},  {Common::KEYCODE_KP6, 7},  {Common::KEYCODE_KP3, 8},
 	{Common::KEYCODE_INVALID, 0}};
 
 void FightsManager::checkEvents() {
@@ -224,7 +224,7 @@ void FightsManager::checkEvents() {
 
 		} else if (events.type() == Common::EVENT_MOUSEMOVE) {
 			Point mPos = events.event().mouse;
-			if (mPos.x < rec.fwtrue_x - 12) 
+			if (mPos.x < rec.fwtrue_x - 12)
 				mouse.setCursorNum(CURSOR_LEFT_ARROW);
 			else if (mPos.x > rec.fwtrue_x + player->width())
 				mouse.setCursorNum(CURSOR_RIGHT_ARROW);
@@ -232,9 +232,9 @@ void FightsManager::checkEvents() {
 				mouse.setCursorNum(CURSOR_FIGHT_UPPER);
 			else if (mPos.y < player->y() + 38)
 				mouse.setCursorNum(CURSOR_FIGHT_MIDDLE);
-			else 
+			else
 				mouse.setCursorNum(CURSOR_FIGHT_LOWER);
-		
+
 		} else if ((events.type() == Common::EVENT_LBUTTONDOWN) ||
 				(events.type() == Common::EVENT_RBUTTONDOWN) ||
 				(events.type() == Common::EVENT_LBUTTONUP) ||
@@ -261,11 +261,11 @@ void FightsManager::checkEvents() {
 
 	rec.fwmove_number = moveNumber;
 
-	if (_keyDown == KS_KEYDOWN_1) 
+	if (_keyDown == KS_KEYDOWN_1)
 		_keyDown = KS_KEYDOWN_2;
 
 	if (rec.fwmove_number >= 5)
-		debugC(ERROR_INTERMEDIATE, kLureDebugFights, 
+		debugC(ERROR_INTERMEDIATE, kLureDebugFights,
 			"Player fight move number=%d", rec.fwmove_number);
 }
 
@@ -293,14 +293,14 @@ void FightsManager::fighterAnimHandler(Hotspot &h) {
 			offset += 4;
 			v = getWord(offset);
 		}
-		
+
 		if (v == 0) {
 			// No sequence match found
 			seqNum = getFighterMove(fighter, fighter.fwattack_table);
 		} else {
 			v = getWord(offset + 2);
 			seqNum  = getFighterMove(fighter, fighter.fwdefend_table);
-			
+
 			if (seqNum == 0)
 				seqNum = getFighterMove(fighter, fighter.fwattack_table);
 			else if (seqNum == 0xff)
@@ -331,11 +331,11 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 			// Player is doing nothing, so check the move number
 			moveOffset = getWord(FIGHT_PLAYER_MOVE_TABLE + (fighter.fwmove_number << 1));
 
-			debugC(ERROR_DETAILED, kLureDebugFights, 
-				"Hotspot %xh fight move=%d, new offset=%xh", 
+			debugC(ERROR_DETAILED, kLureDebugFights,
+				"Hotspot %xh fight move=%d, new offset=%xh",
 				h.hotspotId(), fighter.fwmove_number, moveOffset);
 
-			if (moveOffset == 0) 
+			if (moveOffset == 0)
 				return;
 
 			fighter.fwseq_no = fighter.fwmove_number;
@@ -343,15 +343,15 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 		}
 
 		uint16 moveValue = getWord(moveOffset);
-		debugC(ERROR_DETAILED, kLureDebugFights, 
-			"Hotspot %xh script offset=%xh value=%xh", 
+		debugC(ERROR_DETAILED, kLureDebugFights,
+			"Hotspot %xh script offset=%xh value=%xh",
 			h.hotspotId(), moveOffset, moveValue);
 		moveOffset += sizeof(uint16);
 
 		if ((moveValue & 0x8000) == 0) {
 			// Set frame to specified number
 			h.setFrameNumber(moveValue);
-			
+
 			// Set the new fighter position
 			int16 newX, newY;
 			newX = h.x() + (int16)getWord(moveOffset);
@@ -363,7 +363,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 			if (fighter.fwweapon != 0) {
 				Hotspot *weaponHotspot = res.getActiveHotspot(fighter.fwweapon);
 				assert(weaponHotspot);
-				
+
 				uint16 newFrameNumber = getWord(moveOffset + 4);
 				int16 xChange = (int16)getWord(moveOffset + 6);
 				int16 yChange = (int16)getWord(moveOffset + 8);
@@ -408,7 +408,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 				moveOffset = 0;
 			}
 			break;
-				
+
 		case 0xFFF9:
 			// Walk right
 			if ((fighter.fwmove_number == 9) || (fighter.fwmove_number == 14)) {
@@ -419,8 +419,8 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 					h.setPosition(h.x() + 4, h.y());
 					fighter.fwtrue_x = h.x();
 					fighter.fwtrue_y = h.y();
-					
-					fighter.fwwalk_roll = (fighter.fwwalk_roll == 0) ? 7 : 
+
+					fighter.fwwalk_roll = (fighter.fwwalk_roll == 0) ? 7 :
 						fighter.fwwalk_roll - 1;
 					fighter.fwseq_ad = moveOffset;
 					h.setFrameNumber(fighter.fwwalk_roll);
@@ -450,7 +450,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 				fighter.fwseq_ad = moveOffset;
 			}
 			return;
-		
+
 		case 0xFFFB:
 			// End of sequence
 			breakFlag = true;
@@ -463,10 +463,10 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 
 		case 0xFFFF:
 		case 0xFFFE:
-			if (moveValue == 0xffff) 
+			if (moveValue == 0xffff)
 				// Set the animation record
 				h.setAnimation(getWord(moveOffset));
-			else 
+			else
 				// New set animation record
 				h.setAnimation(getWord(fighter.fwheader_list + (getWord(moveOffset) << 1)));
 			h.setFrameNumber(0);
@@ -480,7 +480,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 			else
 				moveOffset += 2 * sizeof(uint16);
 			break;
-				
+
 		case 0xFFF6:
 			// Not hold
 			if (getWord(moveOffset) == fighter.fwmove_number)
@@ -488,7 +488,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 			else
 				moveOffset = getWord(moveOffset + 2);
 			break;
-			
+
 		case 0xFFF4:
 			// End sequence
 			fighter.fwseq_no = 0;
@@ -525,7 +525,7 @@ void FightsManager::fightHandler(Hotspot &h, uint16 moveOffset) {
 						opponent.fwseq_ad = v1;
 						if (++opponent.fwhit_value != opponent.fwhit_rate) {
 							opponent.fwhit_value = 0;
-							if (++opponent.fwhits == 5) 
+							if (++opponent.fwhits == 5)
 								opponent.fwseq_ad = opponent.fwdie_seq;
 						}
 					}
@@ -589,7 +589,7 @@ uint16 FightsManager::fetchFighterDistance(FighterRecord &f1, FighterRecord &f2)
 
 void FightsManager::enemyKilled() {
 	Resources &res = Resources::getReference();
-	Hotspot *playerHotspot = res.getActiveHotspot(PLAYER_ID); 
+	Hotspot *playerHotspot = res.getActiveHotspot(PLAYER_ID);
 	FighterRecord &playerRec = getDetails(PLAYER_ID);
 
 	playerHotspot->setTickProc(PLAYER_TICK_PROC_ID);
@@ -601,7 +601,7 @@ void FightsManager::enemyKilled() {
 	playerHotspot->setAnimationIndex(PLAYER_ANIM_INDEX);
 	playerHotspot->setPosition(playerHotspot->x(), playerHotspot->y() + 5);
 	playerHotspot->setDirection(LEFT);
-	
+
 	if (playerHotspot->roomNumber() == 6) {
 		Dialog::show(0xc9f);
 		HotspotData *axeHotspot = res.getHotspot(0x2738);
@@ -610,7 +610,7 @@ void FightsManager::enemyKilled() {
 
 		// Prevent the weapon animation being drawn
 		axeHotspot = res.getHotspot(0x440);
-		axeHotspot->layer = 0; 
+		axeHotspot->layer = 0;
 	}
 }
 

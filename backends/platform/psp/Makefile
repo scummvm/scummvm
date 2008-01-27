@@ -35,14 +35,14 @@ endif
 INCDIR   := $(srcdir) . $(srcdir)/engines/ . $(PSPSDK)/include
 LIBDIR   := $(LIBDIR) . $(PSPSDK)/lib
 
-CXXFLAGS = -O2 -Wall -D__PSP__ -DNONSTANDARD_PORT -DUSE_ZLIB -Wno-multichar `$(PSPBIN)/sdl-config --cflags` 
+CXXFLAGS = -O2 -Wall -D__PSP__ -DNONSTANDARD_PORT -DUSE_ZLIB -Wno-multichar `$(PSPBIN)/sdl-config --cflags`
 CXXFLAGS:= $(addprefix -I,$(INCDIR)) $(CXXFLAGS)
 LDFLAGS := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
-LIBS     = 
+LIBS     =
 
 #comment this out if you don't want to use libmad
 CXXFLAGS+= -DUSE_MAD
-LIBS	+= -lmad 
+LIBS	+= -lmad
 
 #comment this out if you don't want to use libtremor
 CXXFLAGS+= -DUSE_VORBIS -DUSE_TREMOR

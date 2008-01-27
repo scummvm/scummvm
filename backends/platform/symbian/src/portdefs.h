@@ -57,7 +57,7 @@
 	#define SIGND(fp)	((fp.l.upper) & SIGNBIT)
 	#define HIDDEND_LL	((long long)1 << 52)
 	#define MANTD_LL(fp)	((fp.ll & (HIDDEND_LL-1)) | HIDDEND_LL)
-	
+
 	union double_long {
 	    double d;
 	    struct {
@@ -73,36 +73,36 @@
 	    register union double_long dl1;
 	    register int exp;
 	    register long long l;
-	
+
 	    dl1.d = a1;
-	
+
 	    if (!dl1.l.upper && !dl1.l.lower)
 			return (0);
-	
+
 	    exp = EXPD (dl1) - EXCESSD - 64;
 	    l = MANTD_LL(dl1);
-	
+
 	    if (exp > 0) {
 		l = (long long)1<<63;
 		if (!SIGND(dl1))
 		    l--;
 		return l;
 	    }
-	
+
 	    /* shift down until exp = 0 or l = 0 */
 	    if (exp < 0 && exp > -64 && l)
 			l >>= -exp;
 	    else
 			return (0);
-	
+
 	    return (SIGND (dl1) ? -l : l);
 	}
-	
+
 	/* 	okay, okay: I admit it: I absolutely have _NO_ idea why __fixdfdi does not get linked in by gcc from libgcc.a
 		because I know it's in there: I checked with `ar x _fixdfdi.o libgcc.a` and the symbol is in there, so I'm lost
 		and had to fix it this way. I tried all gcc and ld options I could find: no hope :( If someone can enlighten me:
 		feel free to let me know at sumthinwicked@users.sf.net! Much obliged.
-		PS1. I think for __fixunsdfdi they have made a circumvention by having to add STATICLIBRARY EGCC.LIB		
+		PS1. I think for __fixunsdfdi they have made a circumvention by having to add STATICLIBRARY EGCC.LIB
 		PS2. http://gcc.gnu.org/ml/gcc-bugs/2004-01/msg01596.html might have found out the same problem there
 	*/
 
@@ -117,7 +117,7 @@
 		return strlen(str);
 	}
 
-	int inline scumm_vsnprintf (char *str, unsigned long /*n*/, char const *fmt, va_list valist) {	
+	int inline scumm_vsnprintf (char *str, unsigned long /*n*/, char const *fmt, va_list valist) {
 		vsprintf(str, fmt, valist);
 		return strlen(str);
 	}

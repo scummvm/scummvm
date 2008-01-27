@@ -16,5 +16,5 @@ MODULE_OBJS := \
 	unzip.o \
 	zlib.o
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk

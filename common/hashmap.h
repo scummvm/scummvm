@@ -173,7 +173,7 @@ public:
 	 * This is almost completely identical to the normal iterator class, only
 	 * with some const keywords added here and there, plus a conversion
 	 * operator which makes it possible to transparently convert iterators to
-	 * const iterators. 
+	 * const iterators.
 	 * It is sadly not really possible to reduce this code duplication using
 	 * template, unless one is willing to accept various warnings on certain
 	 * compilers. Note that many (most? all?) implementations of the standard

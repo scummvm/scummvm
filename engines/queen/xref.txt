@@ -159,7 +159,7 @@ no_check_keys				Input::_noCheckKeys
 
 INVENTORY
 =========
-DEL_ITEM_NUM()				Logic::inventoryDeleteItem 
+DEL_ITEM_NUM()				Logic::inventoryDeleteItem
 INS_ITEM_NUM()				Logic::inventoryInsertItem
 INVDWN()					Logic::inventoryScroll
 INVENTORY()					Logic::inventoryRefresh
@@ -427,7 +427,7 @@ in()						Cutaway::inRange
 find_cd_cut()				findCdCut
 find_cd_desc()				*not needed* (included in Logic::joeSpeak)
 -
-Kstr				
+Kstr
 bank9
 NEWDEF,
 M,A,
@@ -490,7 +490,7 @@ OUTLINE	// not needed, textSet() Graphics::parameter
 FTOT //	queen.c/SETUP_FURNITURE local var
 OBJMAXv	// == Logic::_objMax[Logic::_currentRoom]
 TEMPstr
-WORDstr 
+WORDstr
 JOE2str,PERSON2str // locals in Talk::initialTalk
 SUBJECT
 tmpbamflag

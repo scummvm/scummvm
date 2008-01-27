@@ -27,10 +27,10 @@
 NAME SCUM
 
 // Include definitions of resource STRUCTS used by this
-// resource script 
+// resource script
 #include <eikon.rh>
 #include "..\src\Scummvm.hrh"
-// Include the standard Eikon resource ids 
+// Include the standard Eikon resource ids
 #include <eikon.rsg>
 
 

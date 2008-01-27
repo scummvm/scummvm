@@ -172,7 +172,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	} else {
 		soundInfo = _vm->getSfxInfo();
 	}
-	
+
 	context->table[resourceId].fillSoundPatch(soundInfo);
 
 	MemoryReadStream readS(soundResource, soundResourceLength);
@@ -184,8 +184,8 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundVOC;
 		} else if (!memcmp(soundResource, "RIFF", 4) != 0) {
 			resourceType = kSoundWAV;
-		} 
-		
+		}
+
 		bool uncompressedSound = false;
 		// If patch data exists for sound resource 4 (used in ITE intro), don't treat this sound as compressed
 		// Patch data for this resource is in file p2_a.iaf or p2_a.voc

@@ -184,8 +184,8 @@ bool Actor::scanPathLine(const Point &point1, const Point &point2) {
 				point.x += s.x;
 				errterm -= fDelta.y;
 			}
-			
-			point.y += s.y;		
+
+			point.y += s.y;
 			errterm += fDelta.x;
 
 			if (!validPathCellPoint(point)) {
@@ -205,7 +205,7 @@ bool Actor::scanPathLine(const Point &point1, const Point &point2) {
 				point.y += s.y;
 				errterm -= fDelta.x;
 			}
-			
+
 			point.x += s.x;
 			errterm += fDelta.y;
 
@@ -381,7 +381,7 @@ int pathLine(Point *pointList, const Point &point1, const Point &point2) {
 	tempPoint.y = delta.y * 2;
 
 	if (delta.y > delta.x) {
-		
+
 		errterm = tempPoint.x - delta.y;
 		res = delta.y;
 

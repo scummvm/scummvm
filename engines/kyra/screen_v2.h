@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #ifndef KYRA_SCREEN_V2_H
 #define KYRA_SCREEN_V2_H
 
@@ -37,10 +37,10 @@ friend class Debugger_v2;
 public:
 	Screen_v2(KyraEngine_v2 *vm, OSystem *system);
 	virtual ~Screen_v2();
-	
+
 	virtual void setScreenDim(int dim);
 	const ScreenDim *getScreenDim(int dim);
-	
+
 	// sequence player
 	void generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag);
 	void applyGrayOverlay(int x, int y, int w, int h, int pageNum, const uint8 *grayOverlay);
@@ -50,30 +50,30 @@ public:
 		int w1, int h1, int w2, int h2,	int srcPage, int dstPage, int dim);
 	void cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage,
 		int dstW, int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage);
-	
+
 	// screen page handling
 	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
 					int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2);
-	
+
 	// shape handling
 	uint8 *getPtrToShape(uint8 *shpFile, int shape);
 	const uint8 *getPtrToShape(const uint8 *shpFile, int shape);
-	
+
 	int getShapeScaledWidth(const uint8 *shpFile, int scale);
 	int getShapeScaledHeight(const uint8 *shpFile, int scale);
 
 	uint16 getShapeSize(const uint8 *shp);
-	
+
 	uint8 *makeShapeCopy(const uint8 *src, int index);
-	
+
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
-	
+
 	// rect handling
 	virtual int getRectSize(int w, int h);
-	
+
 	// layer handling
 	int getLayer(int x, int y);
-	
+
 	// mouse handling
 	bool isMouseVisible() const;
 
@@ -81,12 +81,12 @@ public:
 	void setTextColorMap(const uint8 *cmap);
 private:
 	KyraEngine_v2 *_vm;
-	
+
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
 
 	uint8 *_wsaFrameAnimBuffer;
-	
+
 	// maybe subclass screen for kyra3
 	static const ScreenDim _screenDimTableK3[];
 	static const int _screenDimTableCountK3;

@@ -129,7 +129,7 @@ class EventManager : NonCopyable {
 public:
 	EventManager() {}
 	virtual ~EventManager() {}
-	
+
 	enum {
 		LBUTTON = 1 << 0,
 		RBUTTON = 1 << 1
@@ -144,19 +144,19 @@ public:
 
 	/** Register random source so it can be serialized in game test purposes **/
 	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name) = 0;
-	
+
 	virtual void processMillis(uint32 &millis) = 0;
-	
+
 	/** Return the current key state */
 	virtual Common::Point getMousePos() const = 0;
-	
+
 	/**
 	 * Return a bitmask with the button states:
 	 * - bit 0: left button up=1, down=0
 	 * - bit 1: right button up=1, down=0
 	 */
 	virtual int getButtonState() const = 0;
-	
+
 	/** Get a bitmask with the current modifier state */
 	virtual int getModifierState() const = 0;
 
@@ -165,12 +165,12 @@ public:
 	 * received an EVENT_QUIT.
 	 */
 	virtual int shouldQuit() const = 0;
-	
+
 	// Optional: check whether a given key is currently pressed ????
 	//virtual bool isKeyPressed(int keycode) = 0;
 
 	// TODO: Keyboard repeat support?
-	
+
 	// TODO: Consider removing OSystem::getScreenChangeID and
 	// replacing it by a generic getScreenChangeID method here
 };

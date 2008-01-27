@@ -53,16 +53,16 @@ bool KyraEngine_v2::gui_mainMenuGetInput() {
 int KyraEngine_v2::gui_handleMainMenu() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::gui_handleMainMenu()");
 	int command = -1;
-	
+
 	uint8 colorMap[16];
 	memset(colorMap, 0, sizeof(colorMap));
 	_screen->setTextColorMap(colorMap);
-	
+
 	const char * const *strings;
-	
+
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
 	int charWidthBackUp = _screen->_charWidth;
-	
+
 	_screen->_charWidth = -2;
 
 	if (_flags.gameID == GI_KYRA2) {
@@ -91,9 +91,9 @@ int KyraEngine_v2::gui_handleMainMenu() {
 
 	gui_drawMainBox(x, y, width, height, 1);
 	gui_drawMainBox(x + 1, y + 1, width - 2, height - 2, 0);
-	
+
 	int selected = 0;
-	
+
 	gui_drawMainMenu(strings, selected);
 
 	_screen->showMouse();
@@ -102,7 +102,7 @@ int KyraEngine_v2::gui_handleMainMenu() {
 	int textPos = ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3;
 
 	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * 4);
-	
+
 	while (!_quitFlag) {
 		gui_updateMainMenuAnimation();
 		bool mousePressed = gui_mainMenuGetInput();
@@ -133,14 +133,14 @@ int KyraEngine_v2::gui_handleMainMenu() {
 		}
 		_system->delayMillis(10);
 	}
-	
+
 	if (_quitFlag)
 		command = -1;
-	
+
 	_screen->copyRegion(backUpX, backUpY, backUpX, backUpY, backUpWidth, backUpHeight, 3, 0);
 	_screen->_charWidth = charWidthBackUp;
 	_screen->setFont(oldFont);
-	
+
 	return command;
 }
 
@@ -157,7 +157,7 @@ void KyraEngine_v2::gui_drawMainMenu(const char *const *strings, int select) {
 
 	int top = _screen->_curDim->sy;
 	top += menuTable[1];
-	
+
 	for (int i = 0; i < menuTable[3]; ++i) {
 		int curY = top + i * _screen->getFontHeight();
 		int color = (i == select) ? menuTable[6] : menuTable[5];
@@ -175,17 +175,17 @@ void KyraEngine_v2::gui_drawMainBox(int x, int y, int w, int h, int fill) {
 		colorTable = kyra3ColorTable;
 	else
 		colorTable = kyra2ColorTable;
-		
+
 	--w; --h;
 
 	if (fill)
 		_screen->fillRect(x, y, x+w, y+h, colorTable[0]);
-	
+
 	_screen->drawClippedLine(x, y+h, x+w, y+h, colorTable[1]);
 	_screen->drawClippedLine(x+w, y, x+w, y+h, colorTable[1]);
 	_screen->drawClippedLine(x, y, x+w, y, colorTable[2]);
 	_screen->drawClippedLine(x, y, x, y+h, colorTable[2]);
-	
+
 	_screen->setPagePixel(_screen->_curPage, x, y+h, colorTable[3]);
 	_screen->setPagePixel(_screen->_curPage, x+w, y, colorTable[3]);
 }
@@ -194,29 +194,29 @@ void KyraEngine_v2::gui_printString(const char *format, int x, int y, int col1, 
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::gui_printString('%s', %d, %d, %d, %d, %d, ...)", format, x, y, col1, col2, flags);
 	if (!format)
 		return;
-	
+
 	char string[512];
 	va_list vaList;
 	va_start(vaList, flags);
 	vsprintf(string, format, vaList);
 	va_end(vaList);
-	
+
 	if (flags & 1)
 		x -= _screen->getTextWidth(string) >> 1;
-	
+
 	if (flags & 2)
 		x -= _screen->getTextWidth(string);
-	
+
 	if (flags & 4) {
 		_screen->printText(string, x - 1, y, 240, col2);
 		_screen->printText(string, x, y + 1, 240, col2);
 	}
-	
+
 	if (flags & 8) {
 		_screen->printText(string, x - 1, y, 227, col2);
 		_screen->printText(string, x, y + 1, 227, col2);
 	}
-	
+
 	_screen->printText(string, x, y, col1, col2);
 }
 

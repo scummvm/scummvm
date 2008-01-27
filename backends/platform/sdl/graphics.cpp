@@ -1147,12 +1147,12 @@ void OSystem_SDL::clearOverlay() {
 
 	SDL_LockSurface(_tmpscreen);
 	SDL_LockSurface(_overlayscreen);
-	_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch, 
+	_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _screenWidth, _screenHeight);
 
 #ifndef DISABLE_SCALERS
 	if (_adjustAspectRatio)
-		stretch200To240((uint8 *)_overlayscreen->pixels, _overlayscreen->pitch, 
+		stretch200To240((uint8 *)_overlayscreen->pixels, _overlayscreen->pitch,
 						_overlayWidth, _screenHeight * _scaleFactor, 0, 0, 0);
 #endif
 	SDL_UnlockSurface(_tmpscreen);
@@ -1264,7 +1264,7 @@ void OSystem_SDL::warpMouse(int x, int y) {
 		y1 = real2Aspect(y);
 
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-		if (!_overlayVisible) 
+		if (!_overlayVisible)
 			SDL_WarpMouse(x * _scaleFactor, y1 * _scaleFactor);
 		else
 			SDL_WarpMouse(x, y1);
@@ -1352,7 +1352,7 @@ void OSystem_SDL::blitCursor() {
 		palette = _currentPalette;
 	else
 		palette = _cursorPalette;
-	
+
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
 			color = *srcPtr;
@@ -1556,7 +1556,7 @@ void OSystem_SDL::drawMouse() {
 
 	if (_adjustAspectRatio && !_overlayVisible)
 		dst.y = real2Aspect(dst.y);
-  
+
 	dst.x = scale * dst.x - _mouseCurState.rHotX;
 	dst.y = scale * dst.y - _mouseCurState.rHotY;
 	dst.w = _mouseCurState.rW;

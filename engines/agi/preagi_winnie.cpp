@@ -162,7 +162,7 @@ void Winnie::randomize() {
 		}
 
 		_game.iUsedObj[i] = iObj;
-		
+
 		done = false;
 		while (!done) {
 			iRoom = _vm->rnd(IDI_WTP_MAX_ROOM_NORMAL);
@@ -201,8 +201,8 @@ void Winnie::intro() {
 }
 
 int Winnie::getObjInRoom(int iRoom) {
-	for (int iObj = 1; iObj < IDI_WTP_MAX_ROOM_OBJ; iObj++) 
-		if (_game.iObjRoom[iObj] == iRoom) 
+	for (int iObj = 1; iObj < IDI_WTP_MAX_ROOM_OBJ; iObj++)
+		if (_game.iObjRoom[iObj] == iRoom)
 			return iObj;
 	return 0;
 }
@@ -267,12 +267,12 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 
 			// check if NSEW directions should be displayed
 			if (hdr.roomNew[0])
-				fCanSel[IDI_WTP_SEL_NORTH] = fCanSel[IDI_WTP_SEL_SOUTH] = 
+				fCanSel[IDI_WTP_SEL_NORTH] = fCanSel[IDI_WTP_SEL_SOUTH] =
 				fCanSel[IDI_WTP_SEL_EAST] = fCanSel[IDI_WTP_SEL_WEST] = true;
 
 			// check if object in room or player carrying one
 			setTakeDrop();
-			
+
 			// check which rows have a menu option
 			for (iSel = 0; iSel < IDI_WTP_MAX_OPTION; iSel++) {
 				opcode = *(buffer + pc++);
@@ -291,7 +291,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			printStrWinnie((char *)(buffer + pc));
 			if (_vm->getSelection(kSelBackspace) == 1)
 				return IDI_WTP_PAR_OK;
-			else 
+			else
 				return IDI_WTP_PAR_BACK;
 		}
 
@@ -558,7 +558,7 @@ void Winnie::dropObj(int iRoom) {
 			// increase amount of objects returned, decrease amount of objects missing
 			_game.nObjMiss--;
 			_game.nObjRet++;
-			
+
 			// xor the dropped object with 0x80 to signify it has been dropped in the right place
 			for (int i = 0; i < IDI_WTP_MAX_OBJ_MISSING; i++) {
 				if (_game.iUsedObj[i] == _game.iObjHave) {
@@ -569,10 +569,10 @@ void Winnie::dropObj(int iRoom) {
 
 			// set flag according to dropped object's id
 			_game.fGame[iCode] = 1;
-			
+
 			// player is carrying nothing
 			_game.iObjHave = 0;
-			
+
 			if (!_game.nObjMiss) {
 				// all objects returned, tell player to find party
 				playSound(IDI_WTP_SND_FANFARE);
@@ -605,7 +605,7 @@ void Winnie::dropObj(int iRoom) {
 void Winnie::dropObjRnd() {
 	if (!_game.iObjHave)
 		return;
-	
+
 	int iRoom = 0;
 	bool done = false;
 
@@ -708,7 +708,7 @@ void Winnie::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 		_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_TAKE, IDA_DEFAULT, IDS_WTP_TAKE);
 	if (fCanSel[IDI_WTP_SEL_DROP])
 		_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_DROP, IDA_DEFAULT, IDS_WTP_DROP);
-	
+
 	switch(iSel) {
 	case IDI_WTP_SEL_OPT_1:
 	case IDI_WTP_SEL_OPT_2:
@@ -812,7 +812,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 				if (fCanSel[IDI_WTP_SEL_NORTH] && hotspotNorth.contains(event.mouse.x, event.mouse.y)) {
 					_vm->_gfx->setCursorPalette(true);
 				} else if (fCanSel[IDI_WTP_SEL_SOUTH] && hotspotSouth.contains(event.mouse.x, event.mouse.y)) {
-					_vm->_gfx->setCursorPalette(true);			
+					_vm->_gfx->setCursorPalette(true);
 				} else if (fCanSel[IDI_WTP_SEL_WEST] && hotspotWest.contains(event.mouse.x, event.mouse.y)) {
 					_vm->_gfx->setCursorPalette(true);
 				} else if (fCanSel[IDI_WTP_SEL_EAST] && hotspotEast.contains(event.mouse.x, event.mouse.y)) {
@@ -974,7 +974,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 						}
 						break;
 					}
-				default:					
+				default:
 					if (!event.kbd.flags) {	// if the control/alt/shift keys are not pressed
 						keyHelp();
 						clrMenuSel(iSel, fCanSel);
@@ -1062,7 +1062,7 @@ void Winnie::drawObjPic(int iObj, int x0, int y0) {
 	uint8 *buffer = (uint8 *)malloc(2048);
 	uint32 objSize = readObj(iObj, buffer);
 	parseObjHeader(&objhdr, buffer, sizeof(WTP_OBJ_HDR));
-	
+
 	_vm->_picture->setOffset(x0, y0);
 	_vm->_picture->decodePicture(buffer + objhdr.ofsPic - _objOffset, objSize, 0, IDI_WTP_PIC_WIDTH, IDI_WTP_PIC_HEIGHT);
 	_vm->_picture->setOffset(0, 0);
@@ -1191,7 +1191,7 @@ void Winnie::loadGame() {
 		// Note that the original saves variables as 16-bit integers, but only 8 bits are used.
 		// Since we read the save file data as little-endian, we skip the first byte of each
 		// variable
-		
+
 		infile->seek(0);					// Jump back to the beginning of the file
 
 		infile->readUint16LE();				// skip unused field
@@ -1222,7 +1222,7 @@ void Winnie::loadGame() {
 	for(i = 0; i < IDI_WTP_MAX_ROOM_OBJ; i++)
 		_game.iObjRoom[i] = infile->readByte();
 
-	// Note that saved games from the original interpreter have 2 more 16-bit fields here 
+	// Note that saved games from the original interpreter have 2 more 16-bit fields here
 	// which are ignored
 
 	delete infile;

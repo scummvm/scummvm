@@ -347,7 +347,7 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver, int enable
 	_currentVolume = 0;
 
 	xmidiParser = MidiParser::createParser_XMIDI();
-	smfParser = MidiParser::createParser_SMF();	
+	smfParser = MidiParser::createParser_SMF();
 
 	_digitalMusicContext = _vm->_resource->getContext(GAME_MUSICFILE);
 
@@ -424,7 +424,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	MidiParser *parser;
 	ResourceContext *context = NULL;
 	byte *resourceData;
-	size_t resourceSize;	
+	size_t resourceSize;
 	uint32 loopStart;
 
 	debug(2, "Music::play %d, %d", resourceId, flags);
@@ -507,7 +507,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		context = _vm->_resource->getContext(GAME_MUSICFILE_GM);
 		if (context == NULL) {
 			context = _vm->_resource->getContext(GAME_RESOURCEFILE);
-		}		
+		}
 	} else {
 		// I've listened to music from both the FM and the GM
 		// file, and I've tentatively reached the conclusion

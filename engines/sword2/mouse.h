@@ -76,7 +76,7 @@ enum {
 #define RDMENU_MAXPOCKETS	15
 
 #define MOUSE_ANIM_HEADER_SIZE	6
- 
+
 struct MouseAnim {
 	uint8 runTimeComp;	// type of runtime compression used for the
 				// frame data

@@ -35,7 +35,7 @@ bool md5_file(const char *name, uint8 digest[16], uint32 length = 0);
 bool md5_file(const FilesystemNode &file, uint8 digest[16], uint32 length = 0);
 bool md5_file(ReadStream &stream, uint8 digest[16], uint32 length = 0);
 
-// The following two methods work similar to the above two, but 
+// The following two methods work similar to the above two, but
 // instead of computing the binary MD5 digest, they produce
 // a human readable lowercase hexstring representing the digest.
 // The md5str parameter must point to a buffer of 32+1 chars.

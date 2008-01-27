@@ -128,7 +128,7 @@ protected:
 
 	void setupCursor();
 	void animateCursor();
-	
+
 	Dialog *getTopDialog() const;
 };
 

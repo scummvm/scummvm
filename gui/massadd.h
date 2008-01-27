@@ -44,7 +44,7 @@ public:
 private:
 	Common::Stack<FilesystemNode>  _scanStack;
 	GameList _games;
-	
+
 	int _dirsScanned;
 
 	Widget *_okButton;

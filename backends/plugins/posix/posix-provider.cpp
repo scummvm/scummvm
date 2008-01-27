@@ -42,7 +42,7 @@ protected:
 		void *func = dlsym(_dlHandle, symbol);
 		if (!func)
 			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
-	
+
 		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 		// standard and POSIX: ISO C++ disallows casting between function pointers
 		// and data pointers, but dlsym always returns a void pointer. For details,
@@ -60,12 +60,12 @@ public:
 	bool loadPlugin() {
 		assert(!_dlHandle);
 		_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
-	
+
 		if (!_dlHandle) {
 			warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
 			return false;
 		}
-	
+
 		return DynamicPlugin::loadPlugin();
 	}
 	void unloadPlugin() {
@@ -86,8 +86,8 @@ POSIXPluginProvider::~POSIXPluginProvider() {
 
 PluginList POSIXPluginProvider::getPlugins() {
 	PluginList pl;
-	
-	
+
+
 	// Load dynamic plugins
 	// TODO... this is right now just a nasty hack.
 	// This should search one or multiple directories for all plugins it can
@@ -117,8 +117,8 @@ PluginList POSIXPluginProvider::getPlugins() {
 			pl.push_back(new POSIXPlugin(i->getPath()));
 		}
 	}
-	
-	
+
+
 	return pl;
 }
 

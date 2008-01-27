@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: 
- * $Id: dmedia.cpp
+ * $URL:$
+ * $Id: dmedia.cpp$
  */
 
 /*
@@ -27,7 +27,7 @@
  *    some code liberated from seq.cpp and coremidi.cpp
  */
 
-#if defined(IRIX) 
+#if defined(IRIX)
 
 #include "common/scummsys.h"
 #include "sound/mpu401.h"
@@ -86,7 +86,7 @@ int MidiDriver_DMEDIA::open() {
 	if (getenv("SCUMMVM_MIDIPORT")) {
 		_deviceNum = atoi(getenv("SCUMMVM_MIDIPORT"));
 		_midiportName = mdGetName(_deviceNum);
-	} 
+	}
 		else
 	{
 		_midiportName = mdGetName(0);

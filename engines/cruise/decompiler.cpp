@@ -281,11 +281,11 @@ void addDecomp(char *string, ...) {
 	va_list va;
 
 	/* fprintf(fHandle,"%d: ",currentLineIdx);
-	 * 
+	 *
 	 * va_start(va,string);
 	 * vfprintf(fHandle,string,va);
 	 * va_end(va);
-	 * 
+	 *
 	 * fprintf(fHandle,"\n"); */
 
 	struct decompileLineStruct *pLineStruct =
@@ -305,11 +305,11 @@ void addDecomp(char *string, ...) {
 	currentLineType = 0;
 
 	/*printf("%d: ",currentOffset);
-	 * 
+	 *
 	 * va_start(va,string);
 	 * vprintf(string,va);
 	 * va_end(va);
-	 * 
+	 *
 	 * printf("\n"); */
 }
 

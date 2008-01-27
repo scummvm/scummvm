@@ -88,6 +88,6 @@ void GpMain(void *arg) {
 	memBlockDeinit();
 
 	g_system->quit();	// TODO: Consider removing / replacing this!
-	
+
 	//return res;
 }

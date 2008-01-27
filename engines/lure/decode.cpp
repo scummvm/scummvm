@@ -38,13 +38,13 @@ namespace Lure {
 /*--------------------------------------------------------------------------*/
 
 void PictureDecoder::writeByte(MemoryBlock *dest, byte v) {
-	if (outputOffset == dest->size()) 
+	if (outputOffset == dest->size())
 		error("Decoded data exceeded allocated output buffer size");
 	dest->data()[outputOffset++] = v;
 }
 
 void PictureDecoder::writeBytes(MemoryBlock *dest, byte v, uint16 numBytes) {
-	if (outputOffset + numBytes > dest->size()) 
+	if (outputOffset + numBytes > dest->size())
 		error("Decoded data exceeded allocated output buffer size");
 	dest->setBytes(v, outputOffset, numBytes);
 	outputOffset += numBytes;
@@ -110,7 +110,7 @@ MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 	uint16 dx = READ_BE_UINT16(src->data() + dataPos);
 	dataPos += sizeof(uint16);
 	int bitCtr = 8;
-	
+
 	// Decode the colour popularity table
 
 	for (int nibbleCtr = 0; nibbleCtr < 32; ++nibbleCtr) {
@@ -180,7 +180,7 @@ MemoryBlock *PictureDecoder::egaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 						writeBytes(dest, tableOffset, dx >> 11);
 						READ_BITS(5);
 						continue;
-	
+
 					} else {
 						// It's a new colour
 						v = al;
@@ -308,15 +308,15 @@ void AnimationDecoder::rcl(uint16 &value, bool &carry) {
 #define SET_HI_BYTE(x,v) x = (x & 0xff) | ((v) << 8);
 #define SET_LO_BYTE(x,v) x = (x & 0xff00) | (v);
 
-void AnimationDecoder::decode_data_2(MemoryBlock *src, byte *&pSrc, uint16 &currData, 
+void AnimationDecoder::decode_data_2(MemoryBlock *src, byte *&pSrc, uint16 &currData,
 									 uint16 &bitCtr, uint16 &dx, bool &carry) {
 	SET_HI_BYTE(dx, currData >> 8);
-	
+
 	for (int v = 0; v < 8; ++v) {
 		rcl(currData, carry);
 		if (--bitCtr == 0) {
 			uint32 offset = (uint32) (pSrc - src->data());
-			if (offset >= src->size()) 
+			if (offset >= src->size())
 				// Beyond end of source, so read in a 0 value
 				currData &= 0xff00;
 			else
@@ -346,7 +346,7 @@ uint32 AnimationDecoder::decode_data(MemoryBlock *src, MemoryBlock *dest, uint32
 		currData = *pSrc++;
 		*(pDest + 0x30) = currData & 0xf;
 		*(pDest + 0x20) = (currData >> 4) & 0xf;
-	}	
+	}
 
 	pDest = (byte *) (dest->data() + 0x40);
 	currData = READ_BE_UINT16(pSrc);
@@ -424,14 +424,14 @@ loc_1441:
 			tempReg1 = bitCtr;
 			tempReg2 = dx;
 			decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
-		
+
 			SET_LO_BYTE(dx, dx >> 8);
 			decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
 			SET_HI_BYTE(bitCtr, dx & 0xff);
 			SET_LO_BYTE(bitCtr, dx >> 8);
 			dx = tempReg2;
 
-			if (bitCtr == 0) 
+			if (bitCtr == 0)
 				// Exit out of infinite loop
 				break;
 
@@ -453,7 +453,7 @@ loc_1441:
 
 			tempReg1 = bitCtr;
 			bitCtr = dx >> 8;
-		
+
 		} else if (dxHigh == BX_VAL(0x30)) {
 			SET_HI_BYTE(dx, currData >> 11);
 

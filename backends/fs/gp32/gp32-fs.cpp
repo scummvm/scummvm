@@ -29,7 +29,7 @@
 
 /**
  * Implementation of the ScummVM file system API.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class GP32FilesystemNode : public AbstractFilesystemNode {
@@ -44,10 +44,10 @@ public:
 	 * Creates a GP32FilesystemNode with the root node as path.
 	 */
 	GP32FilesystemNode();
-	
+
 	/**
 	 * Creates a GP32FilesystemNode for a given path.
-	 * 
+	 *
 	 * @param path String with the path the new node should point to.
 	 */
 	GP32FilesystemNode(const String &path);
@@ -72,18 +72,18 @@ const char gpRootPath[] = "gp:\\";
 
 /**
  * Returns the last component of a given path.
- * 
+ *
  * Examples:
  * 			gp:\foo\bar.txt would return "\bar.txt"
  * 			gp:\foo\bar\    would return "\bar\"
- *  
+ *
  * @param str Path to obtain the last component from.
  * @return Pointer to the first char of the last component inside str.
  */
 const char *lastPathComponent(const Common::String &str) {
 	if(str.empty())
 		return "";
-	
+
 	const char *start = str.c_str();
 	const char *cur = start + str.size() - 2;
 
@@ -96,7 +96,7 @@ const char *lastPathComponent(const Common::String &str) {
 
 /**
  * FIXME: document this function.
- * 
+ *
  * @param path
  * @param convPath
  */
@@ -165,7 +165,7 @@ GP32FilesystemNode::GP32FilesystemNode(const String &path) {
 
 	_path = convPath;
 	pos = convPath;
-	
+
 	while (*pos)
 		if (*pos++ == '\\')
 			dsplName = pos;
@@ -186,7 +186,7 @@ AbstractFilesystemNode *GP32FilesystemNode::getChild(const String &n) const {
 	// FIXME: Pretty lame implementation! We do no error checking to speak
 	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
-	
+
 	String newPath(_path);
 	if (_path.lastChar() != '\\')
 		newPath += '\\';
@@ -213,11 +213,11 @@ bool GP32FilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool
 	int startIdx = 0; // current file
 	String listDir(_path);
 	//listDir += "/";
-	
+
 	while (GpDirEnumList(listDir.c_str(), startIdx++, 1, &dirEntry, &read)  == SM_OK) {
 da			if (dirEntry.name[0] == '.')
 			continue;
-			
+
 		entry._displayName = dirEntry.name;
 		entry._path = _path;
 		entry._path += dirEntry.name;

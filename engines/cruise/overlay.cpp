@@ -279,7 +279,7 @@ int loadOverlay(const char *scriptName) {
 
 			if (!ptr) {
 				/*      releaseScript(scriptIdx,scriptName);
-				 * 
+				 *
 				 * if (freeIsNeeded)
 				 * {
 				 * freePtr(unpackedBuffer);
@@ -328,7 +328,7 @@ int loadOverlay(const char *scriptName) {
 
 			if (!ptr) {
 				/*      releaseScript(scriptIdx,scriptName);
-				 * 
+				 *
 				 * if (freeIsNeeded)
 				 * {
 				 * freePtr(unpackedBuffer);
@@ -494,7 +494,7 @@ int loadOverlay(const char *scriptName) {
 	}
 
 	if (ovlData->
-	    specialString1Length /*|| ovlData->specialString2Length */ 
+	    specialString1Length /*|| ovlData->specialString2Length */
 	    || ovlData->stringTable) {
 		int i;
 		//int unpackedSize;
@@ -549,7 +549,7 @@ int loadOverlay(const char *scriptName) {
 
 			if (!ovlData->nameVerbGlob) {
 				/*      releaseScript(scriptIdx,scriptName);
-				 * 
+				 *
 				 * if (freeIsNeeded)
 				 * {
 				 * freePtr(unpackedBuffer);
@@ -572,7 +572,7 @@ int loadOverlay(const char *scriptName) {
 
 			if (!ovlData->arrayNameObj) {
 				/*      releaseScript(scriptIdx,scriptName);
-				 * 
+				 *
 				 * if (freeIsNeeded)
 				 * {
 				 * freePtr(unpackedBuffer);
@@ -598,7 +598,7 @@ int loadOverlay(const char *scriptName) {
 
 				if (!ovlData->stringTable[i].string) {
 					/*      releaseScript(scriptIdx,scriptName);
-					 * 
+					 *
 					 * if (freeIsNeeded)
 					 * {
 					 * freePtr(unpackedBuffer);

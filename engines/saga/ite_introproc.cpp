@@ -372,7 +372,7 @@ int Scene::ITEIntroCave1Proc(int param) {
 	Event event;
 	Event *q_event;
 	int lang = 0;
-	
+
 	if (_vm->getLanguage() == Common::DE_DEU)
 		lang = 1;
 	else if (_vm->getLanguage() == Common::IT_ITA)
@@ -485,7 +485,7 @@ int Scene::ITEIntroCave2Proc(int param) {
 	Event event;
 	Event *q_event;
 	int lang = 0;
-	
+
 	if (_vm->getLanguage() == Common::DE_DEU)
 		lang = 1;
 	else if (_vm->getLanguage() == Common::IT_ITA)

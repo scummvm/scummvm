@@ -43,7 +43,7 @@ void OSystem_PalmZodiac::clearOverlay() {
 void OSystem_PalmZodiac::grabOverlay(OverlayColor *buf, int pitch) {
 	Err e;
 	OverlayColor *src;
-	
+
 	e = TwGfxLockSurface(_overlayP, (void **)&src);
 	int h = _screenHeight;
 	do {

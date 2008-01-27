@@ -1757,7 +1757,7 @@ void Goblin::setState(int16 index, int16 state) {
 			(_vm->_scenery->_animBottom - _vm->_scenery->_animTop) -
 			(obj->goblinY + 1) / 2;
 	} else {
-		*obj->pPosY = (obj->goblinY + 1) * _vm->_map->_tilesHeight - 
+		*obj->pPosY = (obj->goblinY + 1) * _vm->_map->_tilesHeight -
 			(_vm->_scenery->_animBottom - _vm->_scenery->_animTop);
 	}
 	*obj->pPosX = obj->goblinX * _vm->_map->_tilesWidth;
@@ -1849,7 +1849,7 @@ void Goblin::move(int16 destX, int16 destY, int16 objIndex) {
 			mouseY = _vm->_global->_inter_mouseY;
 			if (_vm->_map->_bigTiles)
 				mouseY += ((_vm->_global->_inter_mouseY / _vm->_map->_tilesHeight) + 1) / 2;
-			
+
 			gobDestX = mouseX / _vm->_map->_tilesWidth;
 			gobDestY = mouseY / _vm->_map->_tilesHeight;
 

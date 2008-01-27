@@ -60,7 +60,7 @@ void readRecord(Common::InSaveFile *inFile, uint32 &diff, Common::Event &event) 
 		break;
 	default:
 		break;
-	}	
+	}
 }
 
 void writeRecord(Common::OutSaveFile *outFile, uint32 diff, Common::Event &event) {
@@ -174,7 +174,7 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 
 		// conf vars
 		ConfMan.setBool("subtitles", _playbackFile->readByte() != 0);
-		
+
 		_recordCount = _playbackFile->readUint32LE();
 		_recordTimeCount = _playbackFile->readUint32LE();
 		randomSourceCount = _playbackFile->readUint32LE();
@@ -274,7 +274,7 @@ bool DefaultEventManager::playback(Common::Event &event) {
 				break;
 			default:
 				break;
-			}	
+			}
 			event = _playbackEvent;
 			_hasPlaybackEvent = false;
 			_lastEventCount = _eventCount;
@@ -361,7 +361,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			if (event.type != Common::EVENT_QUIT) {
 				result = playback(event);
 			}
-		} else {		
+		} else {
 			if (_recordMode == kRecorderRecord) {
 				if (result) {
 					record(event);

@@ -65,7 +65,7 @@ public:
 	LureEngine(OSystem *system, const LureGameDescription *gameDesc);
 	~LureEngine();
 	static LureEngine &getReference();
-	
+
 	virtual int init();
 	virtual int go();
 	void quitGame();

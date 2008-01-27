@@ -59,7 +59,7 @@
 #define MAX_HOTSPOTS 0x100
 #define MAX_DATA_SIZE 0x4000
 
-#define PATHFIND_SIZE (120 * ROOM_NUM_ENTRIES) 
+#define PATHFIND_SIZE (120 * ROOM_NUM_ENTRIES)
 
 #define EXIT_COORDINATES_OFFSET 0x1929
 #define EXIT_COORDINATES_NUM_ROOMS 49
@@ -344,7 +344,7 @@ struct RoomExitCoordinateEntryOutputResource {
 };
 
 
-enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRIPT, 
+enum CurrentAction {NO_ACTION, START_WALKING, DISPATCH_ACTION, EXEC_HOTSPOT_SCRIPT,
 	PROCESSING_PATH, WALKING};
 
 extern void read_action_sequence(byte *&data, uint16 &totalSize);
@@ -381,7 +381,7 @@ public:
 	void write(const void *buffer, int len) {
 		fwrite(buffer, 1, len, f);
 	}
-	byte readByte() { 
+	byte readByte() {
 		byte v;
 		read(&v, sizeof(byte));
 		return v;
@@ -396,14 +396,14 @@ public:
 		read(&v, sizeof(uint32));
 		return FROM_LE_32(v);
 	}
-	void writeByte(byte v) { 
+	void writeByte(byte v) {
 		write(&v, sizeof(byte));
 	}
-	void writeWord(uint16 v) { 
+	void writeWord(uint16 v) {
 		uint16 vTemp = TO_LE_16(v);
 		write(&vTemp, sizeof(uint16));
 	}
-	void writeLong(uint32 v) { 
+	void writeLong(uint32 v) {
 		uint32 vTemp = TO_LE_32(v);
 		write(&vTemp, sizeof(uint32));
 	}

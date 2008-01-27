@@ -34,7 +34,7 @@ extern OSystem_PS2 *g_systemPs2;
 
 /**
  * Implementation of the ScummVM file system API based on the Ps2SDK.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class Ps2FilesystemNode : public AbstractFilesystemNode {
@@ -49,14 +49,14 @@ public:
 	 * Creates a PS2FilesystemNode with the root node as path.
 	 */
 	Ps2FilesystemNode();
-	
+
 	/**
 	 * Creates a PS2FilesystemNode for a given path.
-	 * 
+	 *
 	 * @param path String with the path the new node should point to.
 	 */
 	Ps2FilesystemNode(const String &path);
-	
+
 	/**
 	 * Copy constructor.
 	 */
@@ -78,7 +78,7 @@ public:
 
 /**
  * Returns the last component of a given path.
- * 
+ *
  * @param str String containing the path.
  * @return Pointer to the first char of the last component inside str.
  */
@@ -138,10 +138,10 @@ AbstractFilesystemNode *Ps2FilesystemNode::getChild(const String &n) const {
 	char listDir[256];
 	sprintf(listDir, "%s/", _path.c_str());
 	int fd = fio.dopen(listDir);
-	
+
 	if (fd >= 0) {
 		iox_dirent_t dirent;
-		
+
 		while (fio.dread(fd, &dirent) > 0) {
 			if (strcmp(n.c_str(), dirent.name) == 0) {
 				Ps2FilesystemNode *dirEntry = new Ps2FilesystemNode();
@@ -161,13 +161,13 @@ AbstractFilesystemNode *Ps2FilesystemNode::getChild(const String &n) const {
 		}
 		fio.dclose(fd);
 	}
-	
+
 	return NULL;
 }
 
 bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hidden) const {
 	//TODO: honor the hidden flag
-	
+
 	if (!_isDirectory)
 		return false;
 
@@ -194,14 +194,14 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 	} else {
 		char listDir[256];
 		int fd;
-		
+
 		if (_path.lastChar() == '/')
 			fd = fio.dopen(_path.c_str());
 		else {
 			sprintf(listDir, "%s/", _path.c_str());
 			fd = fio.dopen(listDir);
 		}
-		
+
 		if (fd >= 0) {
 			iox_dirent_t dirent;
 			Ps2FilesystemNode dirEntry;

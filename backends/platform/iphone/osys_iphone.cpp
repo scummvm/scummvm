@@ -63,7 +63,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_needEventRestPeriod(false), _mouseClickAndDragEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0)
-{	
+{
 	_queuedInputEvent.type = (Common::EventType)0;
 	_lastDrawnMouseRect = Common::Rect(0, 0, 0, 0);
 }
@@ -95,7 +95,7 @@ void OSystem_IPHONE::initBackend() {
 	setTimerCallback(&OSystem_IPHONE::timerHandler, 10);
 
 	OSystem::initBackend();
-}	
+}
 
 bool OSystem_IPHONE::hasFeature(Feature f) {
 	return false;
@@ -136,7 +136,7 @@ void OSystem_IPHONE::initSize(uint width, uint height) {
 	_screenHeight = height;
 
 	free(_offscreen);
-	
+
 	_offscreen = (byte *)malloc(width * height);
 	bzero(_offscreen, width * height);
 
@@ -145,12 +145,12 @@ void OSystem_IPHONE::initSize(uint width, uint height) {
 	int fullSize = _screenWidth * _screenHeight * sizeof(OverlayColor);
 	_overlayBuffer = (OverlayColor *)malloc(fullSize);
 	clearOverlay();
-	
+
 	free(_fullscreen);
 
 	_fullscreen = (uint16 *)malloc(fullSize);
 	bzero(_fullscreen, fullSize);
-	
+
 	if (_screenOrientation != kScreenOrientationPortrait)
 		iPhone_initSurface(height, width, true);
 	else
@@ -177,7 +177,7 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 		_palette[i] = RGBToColor(b[0], b[1], b[2]);
 		b += 4;
 	}
-	
+
 	dirtyFullScreen();
 }
 
@@ -210,12 +210,12 @@ void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 
 	if (w <= 0 || h <= 0)
 		return;
-	
+
 	if (!_fullScreenIsDirty) {
 		_dirtyRects.push_back(Common::Rect(x, y, x + w, y + h));
 	}
-	
-		
+
+
 	byte *dst = _offscreen + y * _screenWidth + x;
 	if (_screenWidth == pitch && pitch == w)
 		memcpy(dst, buf, h * w);
@@ -233,7 +233,7 @@ void OSystem_IPHONE::addDirtyRect(int16 x, int16 y, int16 w, int16 h) {
 		return;
 	}
 
-	clipRectToScreen(x, y, w, h);	
+	clipRectToScreen(x, y, w, h);
 	_dirtyRects.push_back(Common::Rect(x, y, x + w, y + h));
 }
 
@@ -257,7 +257,7 @@ void OSystem_IPHONE::clipRectToScreen(int16 &x, int16 &y, int16 &w, int16 &h) {
 	if (w < 0) {
 		w = 0;
 	}
-	
+
 	if (h < 0) {
 		h = 0;
 	}
@@ -268,7 +268,7 @@ void OSystem_IPHONE::updateScreen() {
 
 	if (_dirtyRects.size() == 0 && !_mouseDirty)
 		return;
-	
+
 	internUpdateScreen();
 	_fullScreenIsDirty = false;
 
@@ -320,7 +320,7 @@ void OSystem_IPHONE::internUpdateScreen() {
 					uint16 *dst = &_fullscreen[dirtyRect.left * _screenHeight + (_screenHeight - dirtyRect.bottom)];
 					blitLandscapeScreenRect16bpp(dst, src, w, h, -_screenWidth, -_screenHeight);
 					break;
-				}							
+				}
 				case kScreenOrientationFlippedLandscape: {
 					uint16 *src = (uint16 *)&_overlayBuffer[dirtyRect.top * _screenWidth + dirtyRect.left];
 					uint16 *dst = &_fullscreen[(_screenWidth - dirtyRect.left - 1) * _screenHeight + dirtyRect.top];
@@ -354,9 +354,9 @@ void OSystem_IPHONE::internUpdateScreen() {
 					blitLandscapeScreenRect8bpp(dst, src, w, h, _palette, _screenWidth, _screenHeight);
 					break;
 				}
-			}			
+			}
 		}
-		
+
 		//draw mouse on top
 		if (_mouseVisible && (dirtyRect.intersects(mouseRect))) {
 			int srcX = 0;
@@ -364,12 +364,12 @@ void OSystem_IPHONE::internUpdateScreen() {
 			int left = _mouseX - _mouseHotspotX;
 			if (left < 0) {
 				srcX -= left;
-				left = 0;				
+				left = 0;
 			}
 			int top = _mouseY - _mouseHotspotY;
 			if (top < 0) {
 				srcY -= top;
-				top = 0;				
+				top = 0;
 			}
 
 			//int right = left + _mouseWidth;
@@ -380,7 +380,7 @@ void OSystem_IPHONE::internUpdateScreen() {
 			int displayWidth = _mouseWidth;
 			if (_mouseWidth + left > _screenWidth)
 				displayWidth = _screenWidth - left;
-			
+
 			int displayHeight = _mouseHeight;
 			if (_mouseHeight + top > _screenHeight)
 				displayHeight = _screenHeight - top;
@@ -463,7 +463,7 @@ void OSystem_IPHONE::internUpdateScreen() {
 						fs += _screenHeight;
 					}
 					break;
-				}	
+				}
 				case kScreenOrientationFlippedLandscape: {
 					int height = h * 2;
 					int offset = ((_screenWidth - dirtyRect.left - 1) * _screenHeight + dirtyRect.top);
@@ -475,17 +475,17 @@ void OSystem_IPHONE::internUpdateScreen() {
 						fs -= _screenHeight;
 					}
 					break;
-				}	
+				}
 			}
 		}
-		
+
 		//iPhone_updateScreenRect(dirtyRect.left, dirtyRect.top, dirtyRect.right, dirtyRect.bottom );
 	}
 }
 
 Graphics::Surface *OSystem_IPHONE::lockScreen() {
 	//printf("lockScreen()\n");
-	
+
 	_framebuffer.pixels = _offscreen;
 	_framebuffer.w = _screenWidth;
 	_framebuffer.h = _screenHeight;
@@ -560,9 +560,9 @@ void OSystem_IPHONE::copyRectToOverlay(const OverlayColor *buf, int pitch, int x
 		return;
 
 	if (!_fullScreenIsDirty) {
-		_dirtyRects.push_back(Common::Rect(x, y, x + w, y + h));		
+		_dirtyRects.push_back(Common::Rect(x, y, x + w, y + h));
 	}
-		
+
 	OverlayColor *dst = _overlayBuffer + (y * _screenWidth + x);
 	if (_screenWidth == pitch && pitch == w)
 		memcpy(dst, buf, h * w * sizeof(OverlayColor));
@@ -593,14 +593,14 @@ bool OSystem_IPHONE::showMouse(bool visible) {
 
 void OSystem_IPHONE::warpMouse(int x, int y) {
 	//printf("warpMouse()\n");
-	
+
 	_mouseX = x;
 	_mouseY = y;
 	_mouseDirty = true;
 }
 
 void OSystem_IPHONE::dirtyMouseCursor() {
-	addDirtyRect(_mouseX - _mouseHotspotX, _mouseY - _mouseHotspotY, _mouseX + _mouseWidth - _mouseHotspotX, _mouseY + _mouseHeight - _mouseHotspotY);	
+	addDirtyRect(_mouseX - _mouseHotspotX, _mouseY - _mouseHotspotY, _mouseX + _mouseWidth - _mouseHotspotX, _mouseY + _mouseHeight - _mouseHotspotY);
 }
 
 void OSystem_IPHONE::dirtyFullScreen() {
@@ -618,7 +618,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 		free(_mouseBuf);
 		_mouseBuf = NULL;
 	}
-	
+
 	if (_mouseBuf == NULL)
 		_mouseBuf = (byte *)malloc(w * h);
 
@@ -629,7 +629,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	_mouseHotspotY = hotspotY;
 
 	_mouseKeyColour = keycolor;
-	
+
 	memcpy(_mouseBuf, buf, w * h);
 
 	_mouseDirty = true;
@@ -639,12 +639,12 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 	//printf("pollEvent()\n");
 
 	long curTime = getMillis();
-	
+
 	if (_timerCallback && (curTime >= _timerCallbackNext)) {
 		_timerCallback(_timerCallbackTimer);
 		_timerCallbackNext = curTime + _timerCallbackTimer;
 	}
-	
+
 	if (_needEventRestPeriod) {
 		// Workaround: Some engines can't handle mouse-down and mouse-up events
 		// appearing right after each other, without a call returning no input in between.
@@ -667,7 +667,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 		switch (_screenOrientation) {
 			case kScreenOrientationPortrait:
 				x = (int)(xUnit * _screenWidth);
-				y = (int)(yUnit * _screenHeight);			
+				y = (int)(yUnit * _screenHeight);
 				break;
 			case kScreenOrientationLandscape:
 				x = (int)(yUnit * _screenWidth);
@@ -676,13 +676,13 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 			case kScreenOrientationFlippedLandscape:
 				x = (int)((1.0 - yUnit) * _screenWidth);
 				y = (int)(xUnit * _screenHeight);
-				break;			
+				break;
 		}
 
 		switch ((InputEvent)eventType) {
 			case kInputMouseDown:
 				//printf("Mouse down at (%u, %u)\n", x, y);
-				
+
 				// Workaround: kInputMouseSecondToggled isn't always sent when the
 				// secondary finger is lifted. Need to make sure we get out of that mode.
 				_secondaryTapped = false;
@@ -697,7 +697,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					event.mouse.x = _mouseX;
 					event.mouse.y = _mouseY;
 					return true;
-				} else {					
+				} else {
 					_lastMouseDown = curTime;
 				}
 				return false;
@@ -739,7 +739,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 					if (lengthSq > 15000) { // Long enough gesture to react upon.
 						_gestureStartX = -1;
 						_gestureStartY = -1;
-						
+
 						float vecLength = sqrt(lengthSq);
 						float vecXNorm = vecX / vecLength;
 						float vecYNorm = vecY / vecLength;
@@ -770,8 +770,8 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 							// Swipe right
 							// _secondaryTapped = !_secondaryTapped;
 							// _gestureStartX = x;
-							// _gestureStartY = y;					
-							// 							
+							// _gestureStartY = y;
+							//
 							// GUI::TimedMessageDialog dialog("Forcing toggle of pressed state.", 1500);
 							// dialog.runModal();
 							return false;
@@ -800,7 +800,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 						event.type = Common::EVENT_LBUTTONUP;
 						event.mouse.x = _mouseX;
 						event.mouse.y = _mouseY;
-						
+
 						_queuedInputEvent.type = Common::EVENT_RBUTTONDOWN;
 						_queuedInputEvent.mouse.x = _mouseX;
 						_queuedInputEvent.mouse.y = _mouseY;
@@ -812,11 +812,11 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 						if (curTime - _lastSecondaryTap < 250 && !_overlayVisible) {
 							event.type = Common::EVENT_KEYDOWN;
 							_queuedInputEvent.type = Common::EVENT_KEYUP;
-					
+
 							event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
 							event.kbd.keycode = _queuedInputEvent.kbd.keycode = Common::KEYCODE_ESCAPE;
-							event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;	
-							_needEventRestPeriod = true;	
+							event.kbd.ascii = _queuedInputEvent.kbd.ascii = Common::ASCII_ESCAPE;
+							_needEventRestPeriod = true;
 							_lastSecondaryTap = 0;
 						} else if (!_mouseClickAndDragEnabled) {
 							event.type = Common::EVENT_RBUTTONDOWN;
@@ -833,8 +833,8 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 						event.type = Common::EVENT_RBUTTONUP;
 						event.mouse.x = _mouseX;
 						event.mouse.y = _mouseY;
-					} 
-				} 
+					}
+				}
 				break;
 			case kInputOrientationChanged:
 				//printf("Orientation: %i", (int)xUnit);
@@ -864,7 +864,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 
 					dirtyFullScreen();
 					updateScreen();
-				}				
+				}
 				break;
 
 			case kInputApplicationSuspended:
@@ -930,9 +930,9 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
 				event.kbd.keycode = _queuedInputEvent.kbd.keycode = (Common::KeyCode)keyPressed;
 				event.kbd.ascii = _queuedInputEvent.kbd.ascii = ascii;
-				_needEventRestPeriod = true;				
+				_needEventRestPeriod = true;
 				break;
-			
+
 			case kInputSwipe: {
 				Common::KeyCode keycode = Common::KEYCODE_INVALID;
 				switch (_screenOrientation) {
@@ -989,7 +989,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 							default:
 								return false;
 						}
-						break;			
+						break;
 				}
 
 				event.kbd.keycode = _queuedInputEvent.kbd.keycode = keycode;
@@ -997,10 +997,10 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				event.type = Common::EVENT_KEYDOWN;
 				_queuedInputEvent.type = Common::EVENT_KEYUP;
 				event.kbd.flags = _queuedInputEvent.kbd.flags = 0;
-				_needEventRestPeriod = true;					
+				_needEventRestPeriod = true;
 				break;
 			}
-			
+
 			default:
 				break;
 		}
@@ -1022,7 +1022,7 @@ void OSystem_IPHONE::suspendLoop() {
 		if (iPhone_fetchEvent(&eventType, &xUnit, &yUnit))
 			if ((InputEvent)eventType == kInputApplicationResumed)
 				done = true;
-		usleep(100000);		
+		usleep(100000);
 	}
 
 	AudioQueueStart(s_AudioQueue.queue, NULL);
@@ -1047,14 +1047,14 @@ OSystem::MutexRef OSystem_IPHONE::createMutex(void) {
 	pthread_mutexattr_t attr;
 	pthread_mutexattr_init(&attr);
 	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	
+
 	pthread_mutex_t *mutex = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t));
 	if (pthread_mutex_init(mutex, &attr) != 0) {
 		printf("pthread_mutex_init() failed!\n");
 		free(mutex);
 		return NULL;
 	}
-	
+
 	return (MutexRef)mutex;
 }
 
@@ -1074,7 +1074,7 @@ void OSystem_IPHONE::deleteMutex(MutexRef mutex) {
 	if (pthread_mutex_destroy((pthread_mutex_t *) mutex) != 0) {
 		printf("pthread_mutex_destroy() failed!\n");
 	} else {
-		free(mutex);		
+		free(mutex);
 	}
 }
 
@@ -1117,7 +1117,7 @@ bool OSystem_IPHONE::setSoundCallback(SoundProc proc, void *param) {
 		}
 
 		AQBufferCallback(&s_AudioQueue, s_AudioQueue.queue, s_AudioQueue.buffers[i]);
-	}	
+	}
 
 	AudioQueueSetParameter(s_AudioQueue.queue, kAudioQueueParam_Volume, 1.0);
 	if (AudioQueueStart(s_AudioQueue.queue, NULL)) {
@@ -1137,8 +1137,8 @@ int OSystem_IPHONE::getOutputSampleRate() const {
 }
 
 void OSystem_IPHONE::setTimerCallback(TimerProc callback, int interval) {
-	//printf("setTimerCallback()\n");	
-	
+	//printf("setTimerCallback()\n");
+
 	if (callback != NULL) {
 		_timerCallbackTimer = interval;
 		_timerCallbackNext = getMillis() + interval;
@@ -1173,7 +1173,7 @@ OSystem *OSystem_IPHONE_create() {
 }
 
 void iphone_main(int argc, char *argv[]) {
-	
+
 	// Redirect stdout and stderr if we're launching from the Springboard.
 	if (argc == 2 && strcmp(argv[1], "--launchedFromSB") == 0) {
 		FILE *newfp = fopen("/tmp/scummvm.log", "a");
@@ -1183,11 +1183,11 @@ void iphone_main(int argc, char *argv[]) {
 			*stdout = *newfp;
 			*stderr = *newfp;
 			setbuf(stdout, NULL);
-			setbuf(stderr, NULL);	
+			setbuf(stderr, NULL);
 
 			//extern int gDebugLevel;
 			//gDebugLevel = 10;
-		}		
+		}
 	}
 
 	g_system = OSystem_IPHONE_create();

@@ -43,7 +43,7 @@ namespace Agi {
 #define IDS_MSA_CRYSTALS	"%s CRYSTALS"
 
 const char IDS_MSA_CRYSTAL_NO[][3] = {
-	"NO", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9" 
+	"NO", " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9"
 };
 const char IDS_MSA_TEMP_C[][5] = {
 	" 20 ", " 480", "-200", " 430", "-185", "-230", "-130", "-150", "-215"
@@ -52,7 +52,7 @@ const char IDS_MSA_TEMP_F[][5] = {
 	" 68 ", " 897", "-328", " 807", "-301", "-382", "-202", "-238", "-355"
 };
 const char IDS_MSA_PLANETS[][10] = {
-	"EARTH.  ", "VENUS.  ", "TRITON. ", "MERCURY.", "TITAN.  ", 
+	"EARTH.  ", "VENUS.  ", "TRITON. ", "MERCURY.", "TITAN.  ",
 	"PLUTO.  ", "IO.     ", "MARS.   ", "OBERON. "
 };
 
@@ -111,7 +111,7 @@ const char IDS_MSA_INSERT_DISK[][40] = {
 #define IDI_MSA_MSG_STAR_MAP_2						48
 #define IDI_MSA_MSG_SPACESUIT_WEAR					11
 #define IDI_MSA_MSG_SPACESUIT_REMOVE				13
-#define IDI_MSA_MSG_SPACESUIT_0						3	
+#define IDI_MSA_MSG_SPACESUIT_0						3
 #define IDI_MSA_MSG_SPACESUIT_CANT_WEAR_ON_EARTH	12
 #define IDI_MSA_MSG_SHIP_LAUNCH						16
 #define IDI_MSA_MSG_SHIP_LAND						22
@@ -387,7 +387,7 @@ const char IDS_MSA_NAME_DAT[][13] = {
 };
 
 const char IDS_MSA_NAME_PLANET[][10] = {
-	"EARTH", "VENUS", "TRITON", "MERCURY", "TITAN",	
+	"EARTH", "VENUS", "TRITON", "MERCURY", "TITAN",
 	"PLUTO", "IO", "MARS", "OBERON"
 };
 
@@ -397,7 +397,7 @@ const char IDS_MSA_NAME_PLANET_2[][10] = {
 };
 
 const char IDS_MSA_ADDR_PLANET[][7] = {
-	"OB", "B", "OOBBB", "O", "OOBB", 
+	"OB", "B", "OOBBB", "O", "OOBB",
 	"OOOBBB", "OBB", "OOB", "OOOBB"
 };
 
@@ -429,7 +429,7 @@ enum ENUM_MSA_ITEM {
 };
 
 const char IDS_MSA_NAME_ITEM[][15] = {
-	"A FLASHLIGHT", "A ROPE ", "A BONE ", "A LETTER", "A CROWBAR", "A WRENCH", 
+	"A FLASHLIGHT", "A ROPE ", "A BONE ", "A LETTER", "A CROWBAR", "A WRENCH",
 	"A MATTRESS", "A SCARF", "SUNGLASSES", "A SCALE ", "A ROCK "
 };
 

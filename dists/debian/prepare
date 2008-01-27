@@ -28,7 +28,7 @@ scummvm ($VERSION) experimental; urgency=low
     system, use the ScummVM team's own bug tracker instead.  You can find this
     tracker at <http://sourceforge.net/tracker/?group_id=37116>.
 
- -- Tore Anderson <tore@debian.org>  $DATE 
+ -- Tore Anderson <tore@debian.org>  $DATE
 
 __eof
 

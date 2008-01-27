@@ -30,20 +30,20 @@
 
 /**
  * Creates SymbianFilesystemNode objects.
- * 
+ *
  * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
  */
-class SymbianFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<SymbianFilesystemFactory> {	
+class SymbianFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<SymbianFilesystemFactory> {
 public:
 	typedef Common::String String;
-		
+
 	virtual AbstractFilesystemNode *makeRootFileNode() const;
 	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const;
-	
+
 protected:
 	SymbianFilesystemFactory() {};
-		
+
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 };

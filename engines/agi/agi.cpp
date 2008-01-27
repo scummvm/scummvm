@@ -235,7 +235,7 @@ void AgiEngine::processEvents() {
 				//   When used with a debug CRT library, isalpha will display a CRT assert
 				//   if passed a parameter that isn't EOF or in the range of 0 through 0xFF.
 				if (key >= 0 && key <= 0xFF && isalpha(key)) {
-					// Key is A-Z. 
+					// Key is A-Z.
 					// Map Ctrl-A to 1, Ctrl-B to 2, etc.
 					if (event.kbd.flags & Common::KBD_CTRL) {
 						key = toupper(key) - 'A' + 1;

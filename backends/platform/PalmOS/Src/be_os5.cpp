@@ -29,7 +29,7 @@
 OSystem_PalmOS5::OSystem_PalmOS5() : OSystem_PalmBase() {
 	_sound.active = false;
 	_setPalette = false;
-	
+
 	_workScreenH = NULL;
 	_overlayH = NULL;
 	_isSwitchable = false;
@@ -67,9 +67,9 @@ void OSystem_PalmOS5::calc_rect(Boolean fullscreen) {
 		h = gVars->screenHeight * _screenHeight / _screenWidth;
 
 		_screenOffset.x = 0;
-		_screenOffset.y = (gVars->screenHeight - h) / 2;		
+		_screenOffset.y = (gVars->screenHeight - h) / 2;
 	}
-	
+
 	_screenDest.w = w;
 	_screenDest.h = h;
 }

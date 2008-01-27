@@ -241,7 +241,7 @@ void KyraEngine::registerDefaultSettings() {
 
 void KyraEngine::readSettings() {
 	_configWalkspeed = ConfMan.getInt("walkspeed");
-	_configMusic = ConfMan.getBool("music_mute") ? 0 : ((ConfMan.getBool("cdaudio") && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) ? 2 : 1);	
+	_configMusic = ConfMan.getBool("music_mute") ? 0 : ((ConfMan.getBool("cdaudio") && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) ? 2 : 1);
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 
 	_sound->enableMusic(_configMusic);

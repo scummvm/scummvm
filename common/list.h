@@ -31,7 +31,7 @@ namespace Common {
 
 /**
  * Simple double linked list, modeled after the list template of the standard
- * C++ library. 
+ * C++ library.
  */
 template <class t_T>
 class List {
@@ -44,11 +44,11 @@ public:
 		NodeBase *_prev;
 		NodeBase *_next;
 	};
-	
+
 	template <class t_T2>
 	struct Node : public NodeBase {
 		t_T2 _data;
-		
+
 		Node(const t_T2 &x) : _data(x) {}
 	};
 
@@ -101,11 +101,11 @@ public:
 		t_T2* operator->() const {
 			return &(operator*());
 		}
-		
+
 		bool operator==(const Iterator<t_T2>& x) const {
 			return _node == x._node;
 		}
-		
+
 		bool operator!=(const Iterator<t_T2>& x) const {
 			return _node != x._node;
 		}
@@ -148,7 +148,7 @@ public:
 
 	void insert(iterator pos, const t_T& element) {
 		NodeBase *newNode = new Node<t_T>(element);
-		
+
 		newNode->_next = pos._node;
 		newNode->_prev = pos._node->_prev;
 		newNode->_prev->_next = newNode;
@@ -216,7 +216,7 @@ public:
 			else
 				erase(i, end());
 		}
-		
+
 		return *this;
 	}
 
@@ -230,8 +230,8 @@ public:
 	void clear() {
 		erase(begin(), end());
 	}
-	
-	bool empty() const { 
+
+	bool empty() const {
 		return (_anchor == _anchor->_next);
 	}
 

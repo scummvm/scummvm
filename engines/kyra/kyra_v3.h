@@ -53,14 +53,14 @@ private:
 	void setupOpcodeTable() {}
 
 	SoundDigital *_soundDigital;
-	
+
 	// sound specific
 private:
 	void playMenuAudioFile();
-	
+
 	int _musicSoundChannel;
 	const char *_menuAudioFile;
-	
+
 	static const char *_soundList[];
 	static const int _soundListSize;
 

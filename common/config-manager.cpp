@@ -138,7 +138,7 @@ void ConfigManager::loadDefaultConfigFile() {
 	#elif defined(PALMOS_MODE)
 		strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
 	#elif defined(IPHONE)
-		strcpy(configFile,"/var/root/" DEFAULT_CONFIG_FILE);	
+		strcpy(configFile,"/var/root/" DEFAULT_CONFIG_FILE);
 	#elif defined(__PLAYSTATION2__)
 		((OSystem_PS2*)g_system)->makeConfigPath(configFile);
 	#elif defined(__PSP__)

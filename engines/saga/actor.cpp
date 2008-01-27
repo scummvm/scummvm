@@ -338,9 +338,9 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	int stateResourceId;
 
 	freeActorList();
-	
+
 	_vm->_resource->loadResource(_actorContext, actorsResourceID, actorListData, actorListLength);
-		
+
 	_actorsCount = actorCount;
 
 	if (actorListLength != (uint)_actorsCount * ACTOR_INHM_SIZE) {
@@ -348,14 +348,14 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 	}
 
 	MemoryReadStream actorS(actorListData, actorListLength);
-	
+
 	_actors = (ActorData **)malloc(_actorsCount * sizeof(*_actors));
 	for (i = 0; i < _actorsCount; i++) {
 		actor = _actors[i] = new ActorData();
 		actor->_id = objectIndexToId(kGameObjectActor, i); //actorIndexToId(i);
 		actor->_index = i;
 		debug(4, "init actor id=0x%x index=%d", actor->_id, actor->_index);
-		actorS.readUint32LE(); //next displayed	
+		actorS.readUint32LE(); //next displayed
 		actorS.readByte(); //type
 		actor->_flags = actorS.readByte();
 		actor->_nameIndex = actorS.readUint16LE();
@@ -450,10 +450,10 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 		}
 
 		MemoryReadStream statesIds(idsResourcePointer, idsResourceLength);
-		
+
 		for (i = 0; i < protagStatesCount; i++) {
 			stateResourceId = statesIds.readUint32LE();
-						
+
 			loadFrameList(stateResourceId, _protagStates[i]._frames, _protagStates[i]._framesCount);
 		}
 		free(idsResourcePointer);
@@ -485,20 +485,20 @@ void Actor::loadObjList(int objectCount, int objectsResourceID) {
 	byte* objectListData;
 	size_t objectListLength;
 	freeObjList();
-	
+
 	_vm->_resource->loadResource(_actorContext, objectsResourceID, objectListData, objectListLength);
-		
+
 	_objsCount = objectCount;
 
 	MemoryReadStream objectS(objectListData, objectListLength);
-	
+
 	_objs = (ObjectData **)malloc(_objsCount * sizeof(*_objs));
 	for (i = 0; i < _objsCount; i++) {
 		object = _objs[i] = new ObjectData();
 		object->_id = objectIndexToId(kGameObjectObject, i);
 		object->_index = i;
 		debug(9, "init object id=%d index=%d", object->_id, object->_index);
-		objectS.readUint32LE(); //next displayed	
+		objectS.readUint32LE(); //next displayed
 		objectS.readByte(); //type
 		object->_flags = objectS.readByte();
 		object->_nameIndex = objectS.readUint16LE();
@@ -624,7 +624,7 @@ void Actor::setProtagState(int state) {
 }
 
 int Actor::getFrameType(ActorFrameTypes frameType) {
-	
+
 	if (_vm->getGameType() == GType_ITE) {
 		switch (frameType) {
 		case kFrameStand:
@@ -915,10 +915,10 @@ uint16 Actor::hitTest(const Point &testPoint, bool skipProtagonist) {
 	// id in this case, even though the chalk was drawn after the circle.
 	// Therefore, for IHNM, we iterate through the whole draw list and
 	// return the last match found, not the first one.
-	// Unfortunately, it is only possible to search items in the sorted draw 
+	// Unfortunately, it is only possible to search items in the sorted draw
 	// list from start to end, not reverse, so it's necessary to search
 	// through the whole list to get the item drawn last
-	
+
 	uint16 result = ID_NOTHING;
 
 	if (!_vm->_scene->getSceneClip().contains(testPoint))
@@ -1162,7 +1162,7 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 
 	// HACK for the compact disk in Ellen's chapter
 	// Once Ellen starts saying that "Something is different", bring the compact disk in the
-	// scene. After speaking with AM, the compact disk is visible. She always says this line 
+	// scene. After speaking with AM, the compact disk is visible. She always says this line
 	// when entering room 59, after speaking with AM, if the compact disk is not picked up yet
 	// Check Script::sfDropObject for the other part of this hack
 	if (_vm->getGameType() == GType_IHNM && _vm->_scene->currentChapterNumber() == 3 &&

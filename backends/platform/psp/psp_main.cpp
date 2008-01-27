@@ -16,7 +16,7 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
@@ -126,7 +126,7 @@ int main(void)
 	SceUID fd = sceIoDopen(SCUMMVM_SAVEPATH);
 	if (fd < 0) {
 		//No? then let's create it.
-		sceIoMkdir(SCUMMVM_SAVEPATH, 0777); 
+		sceIoMkdir(SCUMMVM_SAVEPATH, 0777);
 	} else {
 		//it exists, so close it again.
 		sceIoDclose(fd);
@@ -141,7 +141,7 @@ int main(void)
 	int res = scummvm_main(argc, argv);
 
 	g_system->quit();	// TODO: Consider removing / replacing this!
-	
+
 	sceKernelSleepThread();
 
 	return res;

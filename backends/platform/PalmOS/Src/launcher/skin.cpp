@@ -232,7 +232,7 @@ void SknGetObjectBounds(DmOpenRef skinDBP, DmResID resID, RectangleType *rP) {
 						rP->topLeft.x = strTemp[sknInfoPosX] * 2;
 						rP->topLeft.y = strTemp[sknInfoPosY] * 2;
 
-						MemPtrUnlock(strTemp);					
+						MemPtrUnlock(strTemp);
 						DmReleaseResource(hStr);
 					}
 
@@ -274,8 +274,8 @@ UInt8 SknSetState(DmOpenRef skinDBP, DmResID resID, UInt8 newState) {
 					DmWrite(strTemp, 0, &newState, 1);
 				}
 
-				MemPtrUnlock(strTemp);					
-				DmReleaseResource(hStr);				
+				MemPtrUnlock(strTemp);
+				DmReleaseResource(hStr);
 			}
 		}
 	}
@@ -298,8 +298,8 @@ UInt8 SknGetDepth(DmOpenRef skinDBP) {
 			if (hStr) {
 				strTemp = (UInt8 *)MemHandleLock(hStr);
 				depth = *strTemp;
-				MemPtrUnlock(strTemp);					
-				DmReleaseResource(hStr);				
+				MemPtrUnlock(strTemp);
+				DmReleaseResource(hStr);
 			}
 		}
 	}
@@ -321,9 +321,9 @@ UInt8 SknGetState(DmOpenRef skinDBP, DmResID resID) {
 
 			if (hStr) {
 				strTemp = (UInt8 *)MemHandleLock(hStr);
-				oldState = strTemp[sknInfoState];				
-				MemPtrUnlock(strTemp);					
-				DmReleaseResource(hStr);				
+				oldState = strTemp[sknInfoState];
+				MemPtrUnlock(strTemp);
+				DmReleaseResource(hStr);
 			}
 		}
 	}
@@ -450,7 +450,7 @@ void SknUpdateList() {
 	x = rCopy.topLeft.x;
 	y = rCopy.topLeft.y;
 	rCopy.topLeft.x	-= rField.topLeft.x;
-	rCopy.topLeft.y	-= rField.topLeft.y;	
+	rCopy.topLeft.y	-= rField.topLeft.y;
 	SknCopyBits(skinDBP, skinBackgroundImageTop, &rCopy, x, y);
 	// copy bottom bg
 	SknGetObjectBounds(skinDBP, skinBackgroundImageBottom, &rField);
@@ -458,7 +458,7 @@ void SknUpdateList() {
 	x = rCopy.topLeft.x;
 	y = rCopy.topLeft.y;
 	rCopy.topLeft.x	-= rField.topLeft.x;
-	rCopy.topLeft.y	-= rField.topLeft.y;	
+	rCopy.topLeft.y	-= rField.topLeft.y;
 	SknCopyBits(skinDBP, skinBackgroundImageBottom, &rCopy, x, y);
 
 	FntSetFont(stdFont);

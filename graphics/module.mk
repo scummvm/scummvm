@@ -41,5 +41,5 @@ endif
 
 endif
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk

@@ -53,10 +53,10 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_seq_Forest = _seq_KallakWriting = _seq_KyrandiaLogo = _seq_KallakMalcolm =
 	_seq_MalcolmTree = _seq_WestwoodLogo = _seq_Demo1 = _seq_Demo2 = _seq_Demo3 =
 	_seq_Demo4 = 0;
-	
+
 	_seq_WSATable = _seq_CPSTable = _seq_COLTable = _seq_textsTable = 0;
 	_seq_WSATable_Size = _seq_CPSTable_Size = _seq_COLTable_Size = _seq_textsTable_Size = 0;
-	
+
 	_roomFilenameTable = _characterImageTable = 0;
 	_roomFilenameTableSize = _characterImageTableSize = 0;
 	_itemList = _takenList = _placedList = _droppedList = _noDropList = 0;
@@ -66,7 +66,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_thePoison = _fluteString = _wispJewelStrings = _magicJewelString = _flaskFull = _fullFlask = 0;
 	_thePoison_Size = _fluteString_Size = _wispJewelStrings_Size = 0;
 	_magicJewelString_Size = _flaskFull_Size = _fullFlask_Size = 0;
-	
+
 	_defaultShapeTable = 0;
 	_healingShapeTable = _healingShape2Table = 0;
 	_defaultShapeTableSize = _healingShapeTableSize = _healingShape2TableSize = 0;
@@ -122,15 +122,15 @@ KyraEngine_v1::~KyraEngine_v1() {
 	delete _sprites;
 	delete _animator;
 	delete _seq;
-		
+
 	delete _npcScriptData;
 	delete _scriptMain;
-	
+
 	delete _scriptClickData;
 	delete _scriptClick;
-	
+
 	delete [] _characterList;
-	
+
 	delete [] _movFacingTable;
 
 	delete [] _scrollUpButton.process0PtrShape;
@@ -141,7 +141,7 @@ KyraEngine_v1::~KyraEngine_v1() {
 	delete [] _scrollDownButton.process2PtrShape;
 
 	delete [] _itemBkgBackUp[0];
-	delete [] _itemBkgBackUp[1];	
+	delete [] _itemBkgBackUp[1];
 
 	for (int i = 0; i < ARRAYSIZE(_shapes); ++i) {
 		if (_shapes[i] != 0) {
@@ -179,12 +179,12 @@ int KyraEngine_v1::init() {
 	assert(_text);
 
 	initStaticResource();
-	
+
 	_sound->setSoundList(&_soundData[kMusicIntro]);
 
 	_trackMap = _dosTrackMap;
 	_trackMapSize = _dosTrackMapSize;
-	
+
 	if (!_sound->init())
 		error("Couldn't init sound");
 
@@ -207,27 +207,27 @@ int KyraEngine_v1::init() {
 	_characterList[0].height = 48;
 	_characterList[0].facing = 3;
 	_characterList[0].currentAnimFrame = 7;
-	
+
 	_npcScriptData = new ScriptData;
 	memset(_npcScriptData, 0, sizeof(ScriptData));
 	assert(_npcScriptData);
 	_npcScript = new ScriptState;
 	assert(_npcScript);
 	memset(_npcScript, 0, sizeof(ScriptState));
-	
+
 	_scriptMain = new ScriptState;
 	assert(_scriptMain);
 	memset(_scriptMain, 0, sizeof(ScriptState));
-	
+
 	_scriptClickData = new ScriptData;
 	assert(_scriptClickData);
 	memset(_scriptClickData, 0, sizeof(ScriptData));
 	_scriptClick = new ScriptState;
 	assert(_scriptClick);
 	memset(_scriptClick, 0, sizeof(ScriptState));
-	
+
 	_debugger = new Debugger_v1(this);
-	assert(_debugger);	
+	assert(_debugger);
 	memset(_shapes, 0, sizeof(_shapes));
 
 	for (int i = 0; i < ARRAYSIZE(_movieObjects); ++i)
@@ -251,7 +251,7 @@ int KyraEngine_v1::init() {
 	_brandonPosX = _brandonPosY = -1;
 	_deathHandler = 0xFF;
 	_poisonDeathCounter = 0;
-	
+
 	memset(_itemTable, 0, sizeof(_itemTable));
 	memset(_exitList, 0xFFFF, sizeof(_exitList));
 	_exitListPtr = 0;
@@ -269,17 +269,17 @@ int KyraEngine_v1::init() {
 	memset(_foyerItemTable, -1, sizeof(_foyerItemTable));
 	_mouseState = _itemInHand = -1;
 	_handleInput = false;
-	
+
 	_currentRoom = 0xFFFF;
 	_scenePhasingFlag = 0;
 	_lastProcessedItem = 0;
 	_lastProcessedItemHeight = 16;
-	
+
 	_unkScreenVar1 = 1;
 	_unkScreenVar2 = 0;
 	_unkScreenVar3 = 0;
 	_unkAmuletVar = 0;
-	
+
 	_endSequenceNeedLoading = 1;
 	_malcolmFlag = 0;
 	_beadStateVar = 0;
@@ -291,16 +291,16 @@ int KyraEngine_v1::init() {
 	_lastDisplayedPanPage = 0;
 	memset(_panPagesTable, 0, sizeof(_panPagesTable));
 	_finalA = _finalB = _finalC = 0;
-	memset(&_kyragemFadingState, 0, sizeof(_kyragemFadingState));	
+	memset(&_kyragemFadingState, 0, sizeof(_kyragemFadingState));
 	_kyragemFadingState.gOffset = 0x13;
 	_kyragemFadingState.bOffset = 0x13;
 
 	_mousePressFlag = false;
-	
+
 	_menuDirectlyToLoad = false;
 
 	_lastMusicCommand = 0;
-	
+
 	return 0;
 }
 
@@ -390,15 +390,15 @@ void KyraEngine_v1::startup() {
 
 	while (_scriptInterpreter->validScript(_scriptMain))
 		_scriptInterpreter->runScript(_scriptMain);
-	
+
 	_scriptInterpreter->unloadScript(_npcScriptData);
 
 	if (!_scriptInterpreter->loadScript("_NPC.EMC", _npcScriptData, &_opcodes))
 		error("Could not load \"_NPC.EMC\" script");
-	
+
 	snd_playTheme(1);
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
-	
+
 	if (_abortIntroFlag && _skipIntroFlag) {
 		_menuDirectlyToLoad = true;
 		_screen->setMouseCursor(1, 1, _shapes[0]);
@@ -421,7 +421,7 @@ void KyraEngine_v1::mainLoop() {
 			if (seq_playEnd() && _deathHandler != 8)
 				break;
 		}
-		
+
 		if (_deathHandler != 0xFF) {
 			snd_playWanderScoreViaMap(0, 1);
 			snd_playSoundEffect(49);
@@ -432,7 +432,7 @@ void KyraEngine_v1::mainLoop() {
 			buttonMenuCallback(0);
 			_deathHandler = 0xFF;
 		}
-		
+
 		if ((_brandonStatusBit & 2) && _brandonStatusBit0x02Flag)
 			_animator->animRefreshNPC(0);
 
@@ -440,7 +440,7 @@ void KyraEngine_v1::mainLoop() {
 			_animator->animRefreshNPC(0);
 			_brandonStatusBit0x20Flag = 0;
 		}
-		
+
 		_screen->showMouse();
 
 		processButtonList(_buttonList);
@@ -474,7 +474,7 @@ void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' && 
+				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
 						(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && isMainLoop) {
 					const char *saveLoadSlot = getSavegameFilename(event.kbd.keycode - '0');
 
@@ -510,7 +510,7 @@ void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
 			case Common::EVENT_LBUTTONUP:
 				_mousePressFlag = false;
 
-				if (_abortWalkFlag2) 
+				if (_abortWalkFlag2)
 					_abortWalkFlag = true;
 
 				if (_handleInput) {
@@ -541,7 +541,7 @@ void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
 
 		if (_skipFlag && !_abortIntroFlag && !queryGameFlag(0xFE))
 			_skipFlag = false;
-			
+
 		if (amount > 0 && !_skipFlag && !_quitFlag)
 			_system->delayMillis(10);
 
@@ -698,8 +698,8 @@ void KyraEngine_v1::processInput() {
 		int handled = clickEventHandler(xpos, ypos);
 		if (_changedScene || handled)
 			return;
-	} 
-	
+	}
+
 	// XXX _deathHandler specific
 	if (ypos <= 158) {
 		uint16 exit = 0xFFFF;
@@ -712,7 +712,7 @@ void KyraEngine_v1::processInput() {
 		} else if (ypos < 12) {
 			exit = _walkBlockNorth;
 		}
-		
+
 		if (exit != 0xFFFF) {
 			_abortWalkFlag2 = true;
 			handleSceneChange(xpos, ypos, 1, 1);
@@ -742,7 +742,7 @@ void KyraEngine_v1::processInput() {
 				}
 			}
 		}
-	}	
+	}
 }
 
 int KyraEngine_v1::processInputHelper(int xpos, int ypos) {
@@ -789,7 +789,7 @@ int KyraEngine_v1::clickEventHandler(int xpos, int ypos) {
 
 void KyraEngine_v1::updateMousePointer(bool forceUpdate) {
 	int shape = 0;
-	
+
 	int newMouseState = 0;
 	int newX = 0;
 	int newY = 0;
@@ -834,7 +834,7 @@ void KyraEngine_v1::updateMousePointer(bool forceUpdate) {
 			}
 		}
 	}
-	
+
 	if (mouse.x >= _entranceMouseCursorTracks[0] && mouse.y >= _entranceMouseCursorTracks[1]
 		&& mouse.x <= _entranceMouseCursorTracks[2] && mouse.y <= _entranceMouseCursorTracks[3]) {
 		switch (_entranceMouseCursorTracks[4]) {
@@ -870,20 +870,20 @@ void KyraEngine_v1::updateMousePointer(bool forceUpdate) {
 			break;
 		}
 	}
-	
+
 	if (newMouseState == -2) {
 		shape = 6;
 		newX = 4;
 		newY = 4;
 	}
-	
+
 	if ((newMouseState && _mouseState != newMouseState) || (newMouseState && forceUpdate)) {
 		_mouseState = newMouseState;
 		_screen->hideMouse();
 		_screen->setMouseCursor(newX, newY, _shapes[shape]);
 		_screen->showMouse();
 	}
-	
+
 	if (!newMouseState) {
 		if (_mouseState != _itemInHand || forceUpdate) {
 			if (mouse.y > 158 || (mouse.x >= 12 && mouse.x < 308 && mouse.y < 136 && mouse.y >= 12) || forceUpdate) {
@@ -924,7 +924,7 @@ void KyraEngine_v1::clickEventHandler2() {
 	_scriptClick->regs[2] = mouse.y;
 	_scriptClick->regs[4] = _itemInHand;
 	_scriptInterpreter->startScript(_scriptClick, 6);
-	
+
 	while (_scriptInterpreter->validScript(_scriptClick))
 		_scriptInterpreter->runScript(_scriptClick);
 }
@@ -934,28 +934,28 @@ int KyraEngine_v1::checkForNPCScriptRun(int xpos, int ypos) {
 	int returnValue = -1;
 	const Character *currentChar = _currentCharacter;
 	int charLeft = 0, charRight = 0, charTop = 0, charBottom = 0;
-	
+
 	int scaleFactor = _scaleTable[currentChar->y1];
 	int addX = (((scaleFactor*8)*3)>>8)>>1;
 	int addY = ((scaleFactor*3)<<4)>>8;
-	
+
 	charLeft = currentChar->x1 - addX;
 	charRight = currentChar->x1 + addX;
 	charTop = currentChar->y1 - addY;
 	charBottom = currentChar->y1;
-	
+
 	if (xpos >= charLeft && charRight >= xpos && charTop <= ypos && charBottom >= ypos)
 		return 0;
-	
+
 	if (xpos > 304 || xpos < 16)
 		return -1;
-	
+
 	for (int i = 1; i < 5; ++i) {
 		currentChar = &_characterList[i];
-		
+
 		if (currentChar->sceneId != _currentCharacter->sceneId)
 			continue;
-			
+
 		charLeft = currentChar->x1 - 12;
 		charRight = currentChar->x1 + 11;
 		charTop = currentChar->y1 - 48;
@@ -963,10 +963,10 @@ int KyraEngine_v1::checkForNPCScriptRun(int xpos, int ypos) {
 		// 	charBottom = currentChar->y2 - 16;
 		// else
 		charBottom = currentChar->y1;
-		
+
 		if (xpos < charLeft || xpos > charRight || ypos < charTop || charBottom < ypos)
 			continue;
-		
+
 		if (returnValue != -1) {
 			if (currentChar->y1 >= _characterList[returnValue].y1)
 				returnValue = i;
@@ -974,7 +974,7 @@ int KyraEngine_v1::checkForNPCScriptRun(int xpos, int ypos) {
 			returnValue = i;
 		}
 	}
-	
+
 	return returnValue;
 }
 
@@ -985,7 +985,7 @@ void KyraEngine_v1::runNpcScript(int func) {
 	_npcScript->regs[0] = _currentCharacter->sceneId;
 	_npcScript->regs[4] = _itemInHand;
 	_npcScript->regs[5] = func;
-	
+
 	while (_scriptInterpreter->validScript(_npcScript))
 		_scriptInterpreter->runScript(_npcScript);
 }
@@ -1050,7 +1050,7 @@ void KyraEngine_v1::writeSettings() {
 	}
 
 	ConfMan.setInt("talkspeed", talkspeed);
-	
+
 	KyraEngine::writeSettings();
 }
 
@@ -1258,7 +1258,7 @@ void KyraEngine_v1::setupOpcodeTable() {
 		// 0x9c
 		Opcode(o1_dummy)
 	};
-	
+
 	for (int i = 0; i < ARRAYSIZE(opcodeTable); ++i)
 		_opcodes.push_back(&opcodeTable[i]);
 }

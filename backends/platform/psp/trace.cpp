@@ -34,7 +34,7 @@ void PSPDebugTrace (const char *format, ...) {
 	va_list	opt;
 	char		buff[2048];
 	int			bufsz, fd;
-   
+
 	va_start(opt, format);
 	bufsz = vsnprintf( buff, (size_t) sizeof(buff), format, opt);
 	va_end(opt);
@@ -45,7 +45,7 @@ void PSPDebugTrace (const char *format, ...) {
 	{
 		return;
 	}
-	
+
 	sceIoWrite(fd, (const void*)buff, bufsz);
 	sceIoClose(fd);
 #endif
@@ -56,7 +56,7 @@ void PSPDebugTrace (const char * filename, const char *format, ...) {
 	va_list	opt;
 	char		buff[2048];
 	int			bufsz, fd;
-   
+
 	va_start(opt, format);
 	bufsz = vsnprintf( buff, (size_t) sizeof(buff), format, opt);
 	va_end(opt);
@@ -67,7 +67,7 @@ void PSPDebugTrace (const char * filename, const char *format, ...) {
 	{
 		return;
 	}
-	
+
 	sceIoWrite(fd, (const void*)buff, bufsz);
 	sceIoClose(fd);
 #endif

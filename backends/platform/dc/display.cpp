@@ -161,7 +161,7 @@ void OSystem_Dreamcast::setCursorPalette(const byte *colors, uint start, uint nu
 
 void OSystem_Dreamcast::disableCursorPalette(bool disable)
 {
-  _enable_cursor_palette = !disable;  
+  _enable_cursor_palette = !disable;
 }
 
 void OSystem_Dreamcast::grabPalette(byte *colors, uint start, uint num)

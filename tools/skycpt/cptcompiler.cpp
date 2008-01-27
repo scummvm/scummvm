@@ -244,7 +244,7 @@ void processSymlinks(FILE *inf, CptObj *destArr, uint16 *baseLists) {
 			assertEmpty(from);
 			dlinkNames[dlinkCount] = (char*)malloc(strlen(cptName) + 1);
 			strcpy(dlinkNames[dlinkCount], cptName);
-			
+
 			dofgets(line, 1024, inf);
 			assert((line[0] == '\t') && (line[1] == '\t') && (line[2] == '-') && (line[3] == '>'));
  			char *stopCh;
@@ -256,7 +256,7 @@ void processSymlinks(FILE *inf, CptObj *destArr, uint16 *baseLists) {
 			dlinks[dlinkCount * 2 + 1] = destId;
 
 			dlinkCount++;
-			
+
 			dofgets(line, 1024, inf);
 			assert(isEndOfObject(line, "SYMLINK", fromId));
 		} else
@@ -303,7 +303,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 			if (resCpts[id].data || resCpts[id].dbgName || resCpts[id].len)
 				dataListLen[cnt] = elemCnt + 1;
 		}
-	
+
 	// write the header
 	uint32 rev = 0;
 	fwrite(&rev, 2, 1, debOutf);
@@ -432,7 +432,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 				pos++;
 				diff[diffDest++] = (uint16)strtoul(pos, &pos, 16);
 			}
-			assert(diff[diffDest - 1] == 0xFFFF);            			
+			assert(diff[diffDest - 1] == 0xFFFF);
 			diffNo++;
 		}
 	}
@@ -457,7 +457,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 		else {
 			saveIds[numIds] = resId;
 			numIds++;
-		}		
+		}
 	}
 	printf("%d saveIds\n", numIds);
 	fwrite(&numIds, 2, 1, debOutf);
@@ -481,7 +481,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 			printf("File %s not found\n", inName);
 		}
 	}
-	
+
 	if (filesExist) {
 		FILE *res288 = fopen("RESET.288", "rb");
 		fseek(res288, 0, SEEK_END);

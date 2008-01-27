@@ -209,7 +209,7 @@ public:
 	const char * const*seqCPSTable() { return _seq_CPSTable; }
 	const char * const*seqCOLTable() { return _seq_COLTable; }
 	const char * const*seqTextsTable() { return _seq_textsTable; }
-	
+
 	const uint8 * const*palTable1() { return &_specialPalettes[0]; }
 	const uint8 * const*palTable2() { return &_specialPalettes[29]; }
 
@@ -279,7 +279,7 @@ public:
 	void snd_playWanderScoreViaMap(int command, int restart);
 	virtual void snd_playVoiceFile(int id);
 	void snd_voiceWaitForFinish(bool ingame = true);
-	
+
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);
 
@@ -316,7 +316,7 @@ protected:
 	int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);
 	bool lineIsPassable(int x, int y);
 
-	// -> item handling 
+	// -> item handling
 	// --> misc
 	void addItemToRoom(uint16 sceneId, uint8 item, int itemIndex, int x, int y);
 
@@ -417,10 +417,10 @@ protected:
 	// misc (TODO)
 	void startup();
 	void mainLoop();
-	
+
 	int checkForNPCScriptRun(int xpos, int ypos);
 	void runNpcScript(int func);
-	
+
 	void loadMouseShapes();
 	void loadCharacterShapes();
 	void loadSpecialEffectShapes();
@@ -431,7 +431,7 @@ protected:
 	void setupPanPages();
 	void freePanPages();
 	void closeFinalWsa();
-	
+
 	//void setTimer19();
 	void setupTimers();
 	void timerUpdateHeadAnims(int timerNum);
@@ -457,7 +457,7 @@ protected:
 	void calcCoords(Menu &menu);
 	void initMenu(Menu &menu);
 	void setGUILabels();
-	
+
 	Button *initButton(Button *list, Button *newButton);
 	void processButtonList(Button *list);
 	void processButton(Button *button);
@@ -515,7 +515,7 @@ protected:
 	int _unkScreenVar1, _unkScreenVar2, _unkScreenVar3;
 	int _beadStateVar;
 	int _unkAmuletVar;
-		
+
 	int _malcolmFlag;
 	int _endSequenceSkipFlag;
 	int _endSequenceNeedLoading;
@@ -526,7 +526,7 @@ protected:
 	int _lastDisplayedPanPage;
 	uint8 *_panPagesTable[20];
 	Movie *_finalA, *_finalB, *_finalC;
-	
+
 	Movie *_movieObjects[10];
 
 	uint16 _entranceMouseCursorTracks[8];
@@ -534,18 +534,18 @@ protected:
 	uint16 _walkBlockEast;
 	uint16 _walkBlockSouth;
 	uint16 _walkBlockWest;
-	
+
 	int32 _scaleMode;
 	int16 _scaleTable[145];
-	
+
 	Rect _noDropRects[11];
-	
+
 	int8 _birthstoneGemTable[4];
 	int8 _idolGemsTable[3];
-	
+
 	int8 _marbleVaseItem;
 	int8 _foyerItemTable[3];
-	
+
 	int8 _cauldronState;
 	int8 _crystalState[2];
 
@@ -561,27 +561,27 @@ protected:
 
 	uint16 _currentChatPartnerBackupFrame;
 	uint16 _currentCharAnimFrame;
-	
+
 	int8 *_sceneAnimTable[50];
-	
+
 	Item _itemTable[145];
 	int _lastProcessedItem;
 	int _lastProcessedItemHeight;
-	
+
 	int16 *_exitListPtr;
 	int16 _exitList[11];
 	SceneExits _sceneExits;
 	uint16 _currentRoom;
 	int _scenePhasingFlag;
-	
+
 	int _sceneChangeState;
 	int _loopFlag2;
-	
+
 	int _pathfinderFlag;
 	int _pathfinderFlag2;
 	int _lastFindWayRet;
 	int *_movFacingTable;
-	
+
 	int8 _talkingCharNum;
 	int8 _charSayUnk2;
 	int8 _charSayUnk3;
@@ -599,16 +599,16 @@ protected:
 	Debugger *_debugger;
 
 	ScriptState *_scriptMain;
-	
+
 	ScriptState *_npcScript;
 	ScriptData *_npcScriptData;
-	
+
 	ScriptState *_scriptClick;
 	ScriptData *_scriptClickData;
-	
+
 	Character *_characterList;
 	Character *_currentCharacter;
-	
+
 	Button *_buttonList;
 	Button *_menuButtonList;
 	bool _displayMenu;
@@ -648,17 +648,17 @@ protected:
 	const uint8 *_seq_Demo3;
 	const uint8 *_seq_Demo4;
 	const uint8 *_seq_Reunion;
-	
+
 	const char * const*_seq_WSATable;
 	const char * const*_seq_CPSTable;
 	const char * const*_seq_COLTable;
 	const char * const*_seq_textsTable;
-	
+
 	int _seq_WSATable_Size;
 	int _seq_CPSTable_Size;
 	int _seq_COLTable_Size;
 	int _seq_textsTable_Size;
-	
+
 	const char * const*_itemList;
 	const char * const*_takenList;
 	const char * const*_placedList;
@@ -678,13 +678,13 @@ protected:
 	const char * const*_veryClever;
 	const char * const*_homeString;
 	const char * const*_newGameString;
-	
+
 	const char *_voiceTextString;
 	const char *_textSpeedString;
 	const char *_onString;
 	const char *_offString;
 	const char *_onCDString;
-		
+
 	int _itemList_Size;
 	int _takenList_Size;
 	int _placedList_Size;
@@ -704,7 +704,7 @@ protected:
 	int _veryClever_Size;
 	int _homeString_Size;
 	int _newGameString_Size;
-	
+
 	const char * const*_characterImageTable;
 	int _characterImageTableSize;
 
@@ -713,47 +713,47 @@ protected:
 
 	const char * const*_configStrings;
 	int _configStringsSize;
-	
+
 	Shape *_defaultShapeTable;
 	int _defaultShapeTableSize;
-	
+
 	const Shape *_healingShapeTable;
 	int  _healingShapeTableSize;
 	const Shape *_healingShape2Table;
 	int  _healingShape2TableSize;
-	
+
 	const Shape *_posionDeathShapeTable;
 	int _posionDeathShapeTableSize;
-	
+
 	const Shape *_fluteAnimShapeTable;
 	int _fluteAnimShapeTableSize;
-	
+
 	const Shape *_winterScrollTable;
 	int _winterScrollTableSize;
 	const Shape *_winterScroll1Table;
 	int _winterScroll1TableSize;
 	const Shape *_winterScroll2Table;
 	int _winterScroll2TableSize;
-	
+
 	const Shape *_drinkAnimationTable;
 	int _drinkAnimationTableSize;
-	
+
 	const Shape *_brandonToWispTable;
 	int _brandonToWispTableSize;
-	
+
 	const Shape *_magicAnimationTable;
 	int _magicAnimationTableSize;
-	
+
 	const Shape *_brandonStoneTable;
 	int _brandonStoneTableSize;
-	
+
 	Room *_roomTable;
 	int _roomTableSize;
 	const char * const*_roomFilenameTable;
 	int _roomFilenameTableSize;
-	
+
 	const uint8 *_amuleteAnim;
-	
+
 	const uint8 * const*_specialPalettes;
 
 	const char *const *_soundFiles;
@@ -763,14 +763,14 @@ protected:
 	const int32 *_cdaTrackTable;
 	int _cdaTrackTableSize;
 	const AudioDataStruct * _soundData;
-		
+
 	static const int8 _charXPosTable[];
 	static const int8 _charYPosTable[];
 
 	// positions of the inventory
 	static const uint16 _itemPosX[];
 	static const uint8 _itemPosY[];
-	
+
 	void setupButtonData();
 	Button *_buttonData;
 	Button **_buttonDataListPtr;

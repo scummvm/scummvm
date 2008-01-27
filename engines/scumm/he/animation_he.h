@@ -47,7 +47,7 @@ class MoviePlayer : public Graphics::DXAPlayer {
 	char baseName[40];
 	uint32 _flags;
 	uint32 _wizResNum;
-	
+
 public:
 	MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer);
 

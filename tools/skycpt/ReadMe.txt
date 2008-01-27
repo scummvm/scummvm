@@ -44,7 +44,7 @@ If you still want to waste your time by creating this file:
 9) Rename this file to SKY.CPT.
 10) DELETE IT BECAUSE IT'S PROBABLY BROKEN, NOT WORTH BOTHERING WITH ANYWAYS
 	AND DOWNLOAD THE SKY.CPT FILE FROM THE URL ABOVE!!
-	
+
 Oh, I almost forgot.
 The program only works on little endian systems and probably isn't alignment safe either.
 It may also leak memory or accidentially reformat your harddisk. Who knows.

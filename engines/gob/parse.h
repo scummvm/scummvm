@@ -36,7 +36,7 @@ public:
 	virtual int16 parseVarIndex(void) = 0;
 	virtual int16 parseValExpr(byte stopToken = 99) = 0;
 	virtual int16 parseExpr(byte stopToken, byte *resultPtr) = 0;
-	
+
 	Parse(GobEngine *vm);
 	virtual ~Parse() {}
 

@@ -88,7 +88,7 @@ enum MidiDriverType {
  *
  * The flags (except for MDT_PREFER_MIDI) indicate whether a given driver
  * type is acceptable. E.g. the TOWNS music driver could be returned by
- * detectMusicDriver if and only if MDT_TOWNS is specified. 
+ * detectMusicDriver if and only if MDT_TOWNS is specified.
  *
  * @todo Rename MidiDriverFlags to MusicDriverFlags
  */
@@ -178,7 +178,7 @@ public:
 	 * opcode.
 	 */
 	virtual void send(uint32 b) = 0;
-	
+
 	/**
 	 * Output a midi command to the midi stream. Convenience wrapper
 	 * around the usual 'packed' send method.
@@ -209,11 +209,11 @@ public:
 	/**
 	 * Transmit a sysEx to the midi device.
 	 *
-	 * The given msg MUST NOT contain the usual SysEx frame, i.e. 
+	 * The given msg MUST NOT contain the usual SysEx frame, i.e.
 	 * do NOT include the leading 0xF0 and the trailing 0xF7.
 	 *
 	 * Furthermore, the maximal supported length of a SysEx
-	 * is 254 bytes. Passing longer buffers can lead to 
+	 * is 254 bytes. Passing longer buffers can lead to
 	 * undefined behavior (most likely, a crash).
 	 */
 	virtual void sysEx(const byte *msg, uint16 length) { }

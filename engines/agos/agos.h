@@ -592,7 +592,7 @@ protected:
 	void setUserItem(Item *item, int n, int m);
 
 	void paletteFadeOut(byte *palPtr, uint num, uint size);
-	
+
 	byte *allocateItem(uint size);
 	byte *allocateTable(uint size);
 	void alignTableMem();
@@ -795,7 +795,7 @@ protected:
 	virtual void drawIconArray(uint i, Item *item_ptr, int line, int classMask);
 	void removeIconArray(uint num);
 
-	void loadIconData();	
+	void loadIconData();
 	void loadIconFile();
 	void loadMenuFile();
 
@@ -1054,7 +1054,7 @@ public:
 	void o_setDollar();
 	void o_isBox();
 
-	int16 levelOf(Item *item); 
+	int16 levelOf(Item *item);
 	int16 moreText(Item *i);
 	void lobjFunc(Item *i, const char *f);
 	uint confirmYesOrNo(uint16 x, uint16 y);

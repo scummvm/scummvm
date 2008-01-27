@@ -1,4 +1,4 @@
-ScummVM-PSP 0.10.0SVN README 
+ScummVM-PSP 0.10.0SVN README
 ===========================
 
 Installation
@@ -13,7 +13,7 @@ Controls
 ========
 
 Left trigger 		- ESC
-Right trigger 		- Enter 
+Right trigger 		- Enter
 Analog 			- Mouse movement
 Directionals		- Mouse movement
 Analog + triangle	- Fine control mouse
@@ -58,7 +58,7 @@ A:  If your version of Monkey Island came on a CD then it has the music
     to the same directory as the game datafiles for music to work.
 
 Q:  Game X crashes, or feature Y doesn't work. Can you fix this?
-A:  Possibly.  
+A:  Possibly.
     Because of the large amount of games ScummVM supports we obviously haven't
     played them all start-to-finish on the PSP, so it's possible there
     are bugs or issues that we're not aware of.

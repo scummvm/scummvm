@@ -208,7 +208,7 @@ void Actor::updateActorsScene(int actorsEntrance) {
 			if (actor->_flags & kProtagonist) {
 				actor->_finalTarget = actor->_location;
 				_centerActor = _protagonist = actor;
-			} else if (_vm->getGameType() == GType_ITE && 
+			} else if (_vm->getGameType() == GType_ITE &&
 					   _vm->_scene->currentSceneResourceId() == RID_ITE_OVERMAP_SCENE) {
 				continue;
 			}
@@ -938,7 +938,7 @@ bool Actor::actorWalkTo(uint16 actorId, const Location &toLocation) {
 				((actor->_currentAction >= kActionWalkToPoint && actor->_currentAction <= kActionWalkDir) ||
 				(_vm->getGameType() == GType_ITE && actor == _protagonist)) &&
 				!_vm->_scene->canWalk(pointFrom)) {
-				
+
 				int max = _vm->getGameType() == GType_ITE ? 8 : 4;
 
 				for (i = 1; i < max; i++) {
@@ -1109,7 +1109,7 @@ bool Actor::actorEndWalk(uint16 actorId, bool recurse) {
 				actor->_location.toScreenPointUV(testPoint); // it's wrong calculation, but it is used in ITE
 			else
 				actor->_location.toScreenPointXY(testPoint);
-				
+
 			hitZoneIndex = _vm->_scene->_actionMap->hitTest(testPoint);
 			if (hitZoneIndex != -1) {
 				hitZone = _vm->_scene->_actionMap->getHitZone(hitZoneIndex);

@@ -257,7 +257,7 @@ int loadFile(const char* name, int idx, int destIdx)
 			int numMaxEntriesInSet = getNumMaxEntiresInSet(ptr);
 
 			if (idx > numMaxEntriesInSet) {
-				return 0;	// exit if limit is reached 
+				return 0;	// exit if limit is reached
 			}
 			return loadSetEntry(name, ptr, idx, destIdx );
 
@@ -296,7 +296,7 @@ int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numId
 
 			for (i = 0; i < numIdx; i++) {
 				if ((startIdx + i) > numMaxEntriesInSet) {
-					return 0;	// exit if limit is reached 
+					return 0;	// exit if limit is reached
 				}
 				loadSetEntry(name, ptr, startIdx + i, currentEntryIdx + i );
 			}

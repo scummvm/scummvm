@@ -38,8 +38,8 @@ Screen &Screen::getReference() {
 	return *int_disk;
 }
 
-Screen::Screen(OSystem &system): _system(system), 
-		_screen(new Surface(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT)), 
+Screen::Screen(OSystem &system): _system(system),
+		_screen(new Surface(FULL_SCREEN_WIDTH, FULL_SCREEN_HEIGHT)),
 		_disk(Disk::getReference()),
 		_palette(new Palette(GAME_PALETTE_RESOURCE_ID, RGB64)) {
 	int_disk = this;
@@ -105,7 +105,7 @@ void Screen::paletteFadeIn(Palette *p) {
 			bool isDifferent = *pCurrent < *pFinal;
 
 			if (isDifferent) {
-				if ((*pFinal - *pCurrent) < PALETTE_FADE_INC_SIZE) 
+				if ((*pFinal - *pCurrent) < PALETTE_FADE_INC_SIZE)
 					*pCurrent = *pFinal;
 				else
 					*pCurrent += PALETTE_FADE_INC_SIZE;
@@ -136,7 +136,7 @@ void Screen::paletteFadeOut(int numEntries) {
 		changed = false;
 
 		for (uint32 palCtr = 0; palCtr < (uint32)(numEntries * PALETTE_FADE_INC_SIZE); ++palCtr, ++pTemp) {
-			if (palCtr % PALETTE_FADE_INC_SIZE == (PALETTE_FADE_INC_SIZE - 1)) 
+			if (palCtr % PALETTE_FADE_INC_SIZE == (PALETTE_FADE_INC_SIZE - 1))
 				continue;
 			bool isDifferent = *pTemp > 0;
 			if (isDifferent) {

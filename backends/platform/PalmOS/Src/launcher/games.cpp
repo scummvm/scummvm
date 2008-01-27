@@ -94,7 +94,7 @@ static Err GamUpdateList() {
 
 						// new format
 						gitCur.version = curItemVersion;
-						
+
 						if (version < itemVersion_300) {
 							gitCur.musicInfo.volume.palm = 50;
 							gitCur.musicInfo.volume.music = 192;
@@ -109,7 +109,7 @@ static Err GamUpdateList() {
 
 						if (version < itemVersion_310)
 							gitCur.engine = 0;
-						
+
 						if (version < itemVersion_320)
 							gitCur.renderMode = 0;
 
@@ -159,34 +159,34 @@ static Err GamUpdateList() {
 
 						if (version <= itemVersion_340) {
 							gitCur.platform++;
-							
+
 							if (gitCur.language == 3)
 								gitCur.language = 0;
 							else if (gitCur.language >= 11)
 								gitCur.language++;
 						}
-						
+
 						if (version <= itemVersion_350)
 							if (gitCur.platform >= 9)
 								gitCur.platform++;
-								
+
 						if (version <= itemVersion_351) {
 							if (gitCur.engine >= ENGINE_LURE)	// newly added engine
 								gitCur.engine++;
-							
+
 							if (gitCur.engine == ENGINE_SCUMM)	// reorder
 								gitCur.engine = ENGINE_AGOS;
 							else if (gitCur.engine == ENGINE_AGOS)
 								gitCur.engine = ENGINE_SCUMM;
 						}
-						
+
 						if (version <= itemVersion_352) {
 							if (gitCur.engine >= ENGINE_CINE)	// newly added engine
 								gitCur.engine++;
-							
+
 							gitCur.platform++;
 						}
-						
+
 						if (version <= itemVersion_353)
 							gitCur.musicInfo.sound.drvMusic++;
 
@@ -288,16 +288,16 @@ static Err GamUpdateList() {
 
 						// to V3.5
 						gitCur.platform++;
-						
+
 						if (gitCur.language == 3)
 							gitCur.language = 0;
 						else if (gitCur.language >= 11)
 							gitCur.language++;
-							
+
 						// to V3.5.1
 						if (gitCur.platform >= 9)
 							gitCur.platform++;
-							
+
 						//to V3.5.3
 						gitCur.musicInfo.sound.drvMusic++;
 
@@ -366,7 +366,7 @@ static Err GamUpdateList() {
 				FrmDeleteForm(frmP);
 				if (ofmP)
 					FrmSetActiveForm(ofmP);
-			}	
+			}
 		}
 	}
 
@@ -529,7 +529,7 @@ Boolean GamJumpTo(Char letter) {
 
 				GamUnselect();
 				DmWrite(game, OffsetOf(GameInfoType,selected), &newValue, sizeof(Boolean));
-				
+
 				if (index < gPrefs->listPosition || index >= (gPrefs->listPosition + maxView))
 					gPrefs->listPosition = index;
 			}

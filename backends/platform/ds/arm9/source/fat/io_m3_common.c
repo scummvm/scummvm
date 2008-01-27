@@ -1,13 +1,13 @@
 /*
-	io_m3_common.c 
+	io_m3_common.c
 
 	Routines common to all version of the M3
-	
+
 	Some code based on M3 SD drivers supplied by M3Adapter.
 	Some code written by SaTa may have been unknowingly used.
 
  Copyright (c) 2006 Michael "Chishm" Chisholm
-	
+
  Redistribution and use in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
 
@@ -47,7 +47,7 @@ void _M3_changeMode (u32 mode) {
 	_M3_readHalfword (0x08000000 + (mode << 1));
 	_M3_readHalfword (0x0800080e);
 	_M3_readHalfword (0x08000000);
-	
+
 	if ((mode & 0x0f) != 4) {
 		_M3_readHalfword (0x09000000);
 	} else {
@@ -56,5 +56,5 @@ void _M3_changeMode (u32 mode) {
 		_M3_readHalfword (0x08000188);
 		_M3_readHalfword (0x08000188);
 	}
-}	
+}
 

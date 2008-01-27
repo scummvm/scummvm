@@ -74,7 +74,7 @@ bool SaveFileManager::renameSavefile(const char *oldFilename, const char *newFil
 String SaveFileManager::popErrorDesc() {
 	String err = _errorDesc;
 	clearError();
-	
+
 	return err;
 }
 

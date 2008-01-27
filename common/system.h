@@ -164,7 +164,7 @@ public:
 		 * phone-like keypad temporarily unmap all user actions which leads to
 		 * comfortable word entry. Conversely, when the dialog exits the feature
 		 * is set to false.
-		 * TODO: Fingolfin suggests that the way the feature is used can be 
+		 * TODO: Fingolfin suggests that the way the feature is used can be
 		 * generalized in this sense: Have a keyboard mapping feature, which the
 		 * engine queries for to assign keys to actions ("Here's my default key
 		 * map for these actions, what do you want them set to?").
@@ -511,11 +511,11 @@ public:
 	 * @note This is currently used in the SCUMM, QUEEN and KYRA engines.
 	 */
 	virtual void setShakePos(int shakeOffset) = 0;
-		
+
 	/**
 	 * Sets the area of the screen that has the focus.  For example, when a character
 	 * is speaking, they will have the focus.  Allows for pan-and-scan style views
-	 * where the backend could follow the speaking character or area of interest on 
+	 * where the backend could follow the speaking character or area of interest on
 	 * the screen.
 	 *
 	 * The backend is responsible for clipping the rectangle and deciding how best to
@@ -523,9 +523,9 @@ public:
 	 *
 	 * @param rect A rectangle on the screen to be focused on
 	 * @see clearFocusRectangle
-	 */	
+	 */
 	virtual void setFocusRectangle(const Common::Rect& rect) {}
-	
+
 	/**
 	 * Clears the focus set by a call to setFocusRectangle().  This allows the engine
 	 * to clear the focus during times when no particular area of the screen has the
@@ -724,7 +724,7 @@ public:
 
 	/** Delay/sleep for the specified amount of milliseconds. */
 	virtual void delayMillis(uint msecs) = 0;
-	
+
 	/** Get the current time and date. Correspond to time()+localtime(). */
 	virtual void getTimeAndDate(struct tm &t) const;
 
@@ -904,7 +904,7 @@ public:
 	/**
 	 * Return String which is used for backend-specific addition to theme
 	 * config.
-	 * 
+	 *
 	 * Typical usage is to disable unneeded GUI widgets or defining
 	 * theme-specific tab.
 	 */

@@ -50,6 +50,6 @@ SOURCEPATH ..\..\..\..\engines\igor
 
 // *** Include paths
 
-USERINCLUDE     ..\..\..\..\engines 
+USERINCLUDE     ..\..\..\..\engines
 USERINCLUDE     ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound ..\src
 SYSTEMINCLUDE   \epoc32\include \epoc32\include\libc ..\src

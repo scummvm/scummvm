@@ -165,7 +165,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 			int newY;
 			int newScale;
 			char *newFrame;
-			
+
 			int sizeTable[4];	// 0 = left, 1 = right, 2 = bottom, 3 = top
 
 			// this function checks if the dataPtr is not 0, else it retrives the data for X, Y, scale and DataPtr again (OLD: mainDrawSub1Sub1)
@@ -202,7 +202,7 @@ void saveIncrust(Common::OutSaveFile& currentSaveFile) {
 		char dummy[4] = {0, 0, 0, 0};
 		currentSaveFile.write(dummy, 2);
 		currentSaveFile.write(dummy, 2);
-		
+
 		currentSaveFile.writeSint16LE(pl->objectIdx);
 		currentSaveFile.writeSint16LE(pl->type);
 		currentSaveFile.writeSint16LE(pl->overlayIdx);
@@ -249,7 +249,7 @@ void loadBackgroundIncrustFromSave(Common::InSaveFile& currentSaveFile) {
 
 		currentSaveFile.skip(2);
 		currentSaveFile.skip(2);
-		
+
 		pl2->objectIdx = currentSaveFile.readSint16LE();
 		pl2->type = currentSaveFile.readSint16LE();
 		pl2->overlayIdx = currentSaveFile.readSint16LE();

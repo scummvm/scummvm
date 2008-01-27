@@ -121,7 +121,7 @@ UInt8 SonyScreenSize(UInt16 HRrefNum, Coord *stdw, Coord *stdh, Coord *fullw, Co
 	UInt8 mode = 0;
 
 	Coord sw = 160;
-	Coord sh = 160;	
+	Coord sh = 160;
 	Coord fw = sw;
 	Coord fh = sh;
 
@@ -158,6 +158,6 @@ UInt8 SonyScreenSize(UInt16 HRrefNum, Coord *stdw, Coord *stdh, Coord *fullw, Co
 	*stdh = sh;
 	*fullw = fw;
 	*fullh = fh;
-	
+
 	return mode;
 }

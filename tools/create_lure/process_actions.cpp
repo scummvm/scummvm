@@ -34,10 +34,10 @@ enum Action {
 	UNLOCK = 9,	USE = 10, GIVE = 11, TALK_TO = 12, TELL = 13, BUY = 14,
 	LOOK = 15, LOOK_AT = 16, LOOK_THROUGH = 17,	ASK = 18, DRINK = 20,
 	STATUS = 21, GO_TO = 22, RETURN = 23, BRIBE = 24, EXAMINE = 25,
-	NPC_SET_ROOM_AND_BLOCKED_OFFSET = 28, NPC_HEY_SIR = 29, NPC_EXEC_SCRIPT = 30, 
-	NPC_RESET_PAUSED_LIST = 31, NPC_SET_RAND_DEST = 32, NPC_WALKING_CHECK = 33, 
-	NPC_SET_SUPPORT_OFFSET = 34, NPC_SUPPORT_OFFSET_COND = 35, 
-	NPC_DISPATCH_ACTION = 36, NPC_TALK_NPC_TO_NPC = 37, NPC_PAUSE = 38, 
+	NPC_SET_ROOM_AND_BLOCKED_OFFSET = 28, NPC_HEY_SIR = 29, NPC_EXEC_SCRIPT = 30,
+	NPC_RESET_PAUSED_LIST = 31, NPC_SET_RAND_DEST = 32, NPC_WALKING_CHECK = 33,
+	NPC_SET_SUPPORT_OFFSET = 34, NPC_SUPPORT_OFFSET_COND = 35,
+	NPC_DISPATCH_ACTION = 36, NPC_TALK_NPC_TO_NPC = 37, NPC_PAUSE = 38,
 	NPC_START_TALKING = 39, NPC_JUMP_ADDRESS = 40,
 	NONE = 0
 };
@@ -50,7 +50,7 @@ struct CurrentActionOutput {
 	uint16 usedId;
 };
 
-int numParams[NPC_JUMP_ADDRESS+1] = {0, 
+int numParams[NPC_JUMP_ADDRESS+1] = {0,
 	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
 	0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
 
@@ -77,7 +77,7 @@ JumpOffsetsRecord jumpOffsets[] = {
 struct SupportStructure {
 	uint16 offset;
 	int numInstructions;
-	uint16 instructionOffsets[MAX_INSTRUCTION_ENTRIES];	
+	uint16 instructionOffsets[MAX_INSTRUCTION_ENTRIES];
 	uint16 resourceOffset;
 };
 
@@ -101,7 +101,7 @@ uint16 get_sequence_index(uint16 offset, int supportIndex) {
 		SupportStructure &rec = supportList[index];
 
 		if ((rec.numInstructions > 0) &&
-			(offset >= rec.instructionOffsets[0]) && 
+			(offset >= rec.instructionOffsets[0]) &&
 			(offset <= rec.instructionOffsets[rec.numInstructions - 1])) {
 			// Scan through the entry's insruction list
 			for (int iIndex = 0; iIndex < rec.numInstructions; ++iIndex) {
@@ -236,11 +236,11 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 
 			// Special check for forward references - it's considered to be in
 			// the same block if it's forward within 100h blocks
-			if ((params[paramIndex] > offset) && 
+			if ((params[paramIndex] > offset) &&
 				(params[paramIndex] < offset + FORWARD_JUMP_ALLOWANCE) &&
 				(params[paramIndex] > maxOffset)) {
 				maxOffset = params[paramIndex];
-			} 
+			}
 			break;
 
 		case NPC_JUMP_ADDRESS:
@@ -250,9 +250,9 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 			index = 0;
 			while ((index < NUM_JUMP_OFFSETS) && (jmpOffset->jumpOffsets[index] != params[0]))
 				++index;
-			
+
 			if (index != NUM_JUMP_OFFSETS)
-				// Replace code offset with an index			
+				// Replace code offset with an index
 				params[0] = index;
 			else {
 				printf("\nEncountered unrecognised NPC code jump point: %xh\n", params[0]);
@@ -261,7 +261,7 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 			break;
 
 		case NPC_HEY_SIR:
-			// The 'Hey Sir' opcode causes the NPC to request your attention, and sets the active talk 
+			// The 'Hey Sir' opcode causes the NPC to request your attention, and sets the active talk
 			// record to a designated offset. So any offset occurances need to be saved so that it can
 			// be included in the resource for talk records
 			add_talk_offset(params[0]);
@@ -280,7 +280,7 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 //printf("\n");
 
 		// Increase size
-		totalSize += (numParams[actionNum] + 1) * sizeof(uint16); 
+		totalSize += (numParams[actionNum] + 1) * sizeof(uint16);
 		offset = startOffset + totalSize;
 		remainingSize -= (numParams[actionNum] + 1) * sizeof(uint16);
 	}
@@ -292,19 +292,19 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 	// handle post-processing of the symbol list
 
 	for (int symbolCtr = 0; symbolCtr < numSymbols; ++symbolCtr) {
-		if (READ_LE_UINT16(symbolTable[symbolCtr].p) == 0) 
+		if (READ_LE_UINT16(symbolTable[symbolCtr].p) == 0)
 			// No Id special constant
 			WRITE_LE_UINT16(symbolTable[symbolCtr].p, 0xffff);
 		else {
 			// Handle resolving the constant
-			index = get_sequence_index(READ_LE_UINT16(symbolTable[symbolCtr].p), 
+			index = get_sequence_index(READ_LE_UINT16(symbolTable[symbolCtr].p),
 				symbolTable[symbolCtr].globalNeeded ? -1 : supportIndex);
 //printf("Symbol %xh => %xh\n", *symbolTable[symbolCtr].p, index);
 			if (index != 0xffff) {
-				// Jump found - so replace symbol entry with it 
+				// Jump found - so replace symbol entry with it
 				WRITE_LE_UINT16(symbolTable[symbolCtr].p, index);
 			} else {
-				printf("Sequence contained unknown offset %xh\n", 
+				printf("Sequence contained unknown offset %xh\n",
 					READ_LE_UINT16(symbolTable[symbolCtr].p));
 				exit(1);
 			}
@@ -328,7 +328,7 @@ void process_entry(uint16 offset, byte *data, uint16 &totalSize) {
 		}
 
 //printf("process_entry index=%d, offset=%xh\n", numSupportEntries, offset);
-		totalSize += process_action_sequence_entry(numSupportEntries - 1, 
+		totalSize += process_action_sequence_entry(numSupportEntries - 1,
 			data + totalSize,  MAX_DATA_SIZE - totalSize);
 	}
 }
@@ -344,7 +344,7 @@ struct RoomRandomActionSet {
 	RoomRandomActionEntry *entries;
 };
 
-void read_action_sequence(byte *&data, uint16 &totalSize) 
+void read_action_sequence(byte *&data, uint16 &totalSize)
 {
 	uint16 hotspotIndex;
 	HotspotHeaderEntry entryHeader;
@@ -364,7 +364,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 
 	/* Process the list of random actions that your follower can do in each room */
 	RoomRandomActionSet *randomActions = new RoomRandomActionSet[RANDOM_ROOM_NUM_ENTRIES];
-	
+
 	// Get a list of the offsets for each room
 	uint16 raOffset = 0x4D10;
 	if (language == IT_ITA) raOffset = 0x4dc0;
@@ -399,11 +399,11 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 			offset += 2;
 
 			uint16 firstCommand = lureExe.readWord();
-			randomActions[roomIndex].entries[entryCtr].offset = 
+			randomActions[roomIndex].entries[entryCtr].offset =
 				(firstCommand == 0xfffe) ? 0 : offset;
-			
+
 			offset += sizeof(uint16);
-			while (lureExe.readWord() != 0xffff) 
+			while (lureExe.readWord() != 0xffff)
 				offset += sizeof(uint16);
 			offset += sizeof(uint16);
 		}
@@ -424,8 +424,8 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 		process_entry(0x13c2, data, totalSize);	  // RETURN sequence
 		process_entry(0xbb95, data, totalSize);	  // Exit blocked sequence
 		process_entry(0x706c, data, totalSize);   // Jump proc #2 - go to castle basement
-		process_entry(0x728a, data, totalSize);		
-		process_entry(0x76ec, data, totalSize);   
+		process_entry(0x728a, data, totalSize);
+		process_entry(0x76ec, data, totalSize);
 		process_entry(0x4ebb, data, totalSize);	  // Goewin as a follower in cave
 		process_entry(0x7D9D, data, totalSize);	  // Goewin standard handler
 		break;
@@ -453,9 +453,9 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 		errorExit("read_action_sequence: Unknown language");
 	}
 
-	// Process the script engine list 
-	
-	for (index = 0; index < NUM_TABLED_ACTION_BLOCKS; ++index) 
+	// Process the script engine list
+
+	for (index = 0; index < NUM_TABLED_ACTION_BLOCKS; ++index)
 		if (offsetList[index] != 0)
 			process_entry(offsetList[index], data, totalSize);
 
@@ -470,7 +470,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 
 	hotspotIndex = 0;
 	for (;;) {
-		lureExe.seek(dataSegment + hsOffset + 
+		lureExe.seek(dataSegment + hsOffset +
 			hotspotIndex * sizeof(HotspotHeaderEntry));
 		lureExe.read(&entryHeader, sizeof(HotspotHeaderEntry));
 		if (FROM_LE_16(entryHeader.offset) == 0xffff) break;
@@ -479,7 +479,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 		// Move to the action sequence area of the hotspot
 		lureExe.seek(dataSegment + entryHeader.offset + 0x63);
 		lureExe.read(&action, sizeof(CurrentActionInput));
-		if (FROM_LE_16(action.action) == 2) 
+		if (FROM_LE_16(action.action) == 2)
 			process_entry(FROM_LE_16(action.dataOffset), data, totalSize);
 	}
 
@@ -500,7 +500,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 	// Output the list used in the script engine
 
 	pHeader = (uint16 *) data;
-	for (index = 0; index < NUM_TABLED_ACTION_BLOCKS; ++index) 
+	for (index = 0; index < NUM_TABLED_ACTION_BLOCKS; ++index)
 		if (offsetList[index] == 0)
 			*pHeader++ = 0;
 		else
@@ -535,7 +535,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 
 	// Output the offsets of each action set
 
-	for (index = 0; index < numSupportEntries; ++index) 
+	for (index = 0; index < numSupportEntries; ++index)
 		*pHeader++ = TO_LE_16(supportList[index].resourceOffset);
 	*pHeader++ = TO_LE_16(0xffff);
 
@@ -546,4 +546,4 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 			delete randomActions[roomIndex].entries;
 	}
 	delete randomActions;
-}	
+}

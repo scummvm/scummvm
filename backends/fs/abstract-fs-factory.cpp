@@ -27,7 +27,7 @@
 /*
  * All the following includes choose, at compile time, which specific backend will be used
  * during the execution of the ScummVM.
- * 
+ *
  * It has to be done this way because not all the necessary libraries will be available in
  * all build environments. Additionally, this results in smaller binaries.
  */
@@ -57,8 +57,8 @@
 
 /**
  * Creates concrete FilesystemFactory objects depending on the current architecture.
- * 
- * @return AbstractFilesystemFactory* The specific factory for the current architecture. 
+ *
+ * @return AbstractFilesystemFactory* The specific factory for the current architecture.
  */
 AbstractFilesystemFactory *AbstractFilesystemFactory::makeFSFactory() {
 	#if defined(__amigaos4__)

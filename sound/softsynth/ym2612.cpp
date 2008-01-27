@@ -96,8 +96,8 @@ void Operator2612::setInstrument(byte const *instrument) {
 void Operator2612::keyOn() {
 	_state = _s_attacking;
 	_tickCount = 0;
-	_phase = 0;			
-	_currentLevel = ((int32)0x7f << 15); 
+	_phase = 0;
+	_currentLevel = ((int32)0x7f << 15);
 }
 
 void Operator2612::keyOff() {
@@ -124,7 +124,7 @@ void Operator2612::frequency(int freq) {
 	else {
 		value = powtbl[(r&3) << 7];
 		value *= 1 << (r >> 2);
-		value *= 41; 
+		value *= 41;
 		value /= 1 << (15 + 5);
 		value *= 127 - _specifiedTotalLevel;
 		value /= 127;
@@ -228,11 +228,11 @@ void Operator2612::nextTick(const int *phasebuf, int *outbuf, int buflen) {
 			}
 
 			if (level < zero_level) {
-				int phaseShift = *phasebuf >> 2; 
+				int phaseShift = *phasebuf >> 2;
 				if (_feedbackLevel)
 					phaseShift += (output << (_feedbackLevel - 1)) / 1024;
 				output = sintbl[((_phase >> 7) + phaseShift) & 0x7ff];
-				output >>= (level >> 18);	
+				output >>= (level >> 18);
 				// Here is the original code, which requires 64-bit ints
 //				output *= powtbl[511 - ((level>>25)&511)];
 //				output >>= 16;
@@ -437,9 +437,9 @@ void Voice2612::pitchBend(int value) {
 }
 
 void Voice2612::recalculateFrequency() {
-	// 
-	// 
-	// 
+	//
+	//
+	//
 	int32 basefreq = frequencyTable[_note];
 	int cfreq = frequencyTable[_note - (_note % 12)];
 	int oct = _note / 12;
@@ -696,7 +696,7 @@ void MidiDriver_YM2612::createLookupTables() {
 		};
 
 		// (int)(880.0 * 256.0 * pow(2.0, (note-0x51)/12.0))
-		// 
+		//
 		frequencyTable = new int [120];
 		for (block = -1; block < 9; block++) {
 			for (i = 0; i < 12; i++) {
@@ -706,7 +706,7 @@ void MidiDriver_YM2612::createLookupTables() {
 		}
 
 		keycodeTable = new int [120];
-		// detune 
+		// detune
 		for (block = -1; block < 9; block++) {
 			for (i = 0; i < 12; i++) {
 				// see p.204

@@ -86,7 +86,7 @@ static Err AppStartCheckNotify() {
 	UInt32 romVersion;
 	Err err;
 
-	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion); 
+	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion);
 	if (!err) {
 		UInt16 cardNo;
 		LocalID dbID;
@@ -128,7 +128,7 @@ static Err AppStartLoadSkin() {
 				if (type != 'skin' || creator != appFileCreator)
 					err = dmErrInvalidParam;
 		}
-		
+
 		if (!found || err)
 			MemSet(&(gPrefs->skin),sizeof(SkinInfoType),0);
 	}
@@ -141,13 +141,13 @@ static Err AppStartLoadSkin() {
 		if (!err)
 			err = DmDatabaseInfo (gPrefs->skin.cardNo, gPrefs->skin.dbID, gPrefs->skin.nameP, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
-	
+
 	return err;
 }
 
 static Err AppStartCheckMathLib() {
 	Err e = MathlibInit();
-	
+
 	switch (e) {
 		case errNone:
 			break;
@@ -158,7 +158,7 @@ static Err AppStartCheckMathLib() {
 			FrmCustomAlert(FrmErrorAlert,"Can't open MathLib !",0,0);
 			break;
 	}
-	
+
 	return e;
 }
 
@@ -262,7 +262,7 @@ Err AppStart(void) {
 		gPrefs->exitLauncher = true;
 		gPrefs->stdPalette = OPTIONS_TST(kOptDeviceOS5);
 		gPrefs->stylusClick = true;
-		
+
 	} else {
 		PrefGetAppPreferences(appFileCreator, appPrefID, gPrefs, &dataSize, true);
 	}
@@ -274,7 +274,7 @@ Err AppStart(void) {
 
 	error = AppStartCheckHRmode();
 	if (error) return (error);
-	
+
 	bDirectMode = (AppStartLoadSkin() != errNone);
 
 	// if volref previously defined, check if it's a valid one
@@ -318,8 +318,8 @@ static Err AppStopCheckNotify()
 {
 	UInt32 romVersion;
 	Err err;
-	
-	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion); 
+
+	err = FtrGet(sysFtrCreator, sysFtrNumNotifyMgrVersion, &romVersion);
 	if (!err) {
 		UInt16 cardNo;
 		LocalID dbID;
@@ -332,7 +332,7 @@ static Err AppStopCheckNotify()
 			SysNotifyUnregister(cardNo, dbID, sysNotifyDisplayResizedEvent, sysNotifyNormalPriority);
 		}
 	}
-	
+
 	return err;
 }
 
@@ -345,7 +345,7 @@ void AppStop(void) {
 	// Close and move Game list database
 	GamCloseDatabase(false);
 
-	// Write the saved preferences / saved-state information.  This data 
+	// Write the saved preferences / saved-state information.  This data
 	// will saved during a HotSync backup.
 	SavePrefs();
 

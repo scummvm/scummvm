@@ -35,7 +35,7 @@ Theme::Theme() : _drawArea(), _stylefile(""), _configFile(), _loadedThemeX(0), _
 
 	_evaluator = new Eval();
 }
-	
+
 Theme::~Theme() {
 	delete _evaluator;
 }
@@ -79,9 +79,9 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
 			unzCloseCurrentFile(zipFile);
 			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
-	
+
 			font = Graphics::NewFont::loadFromCache(stream);
-	
+
 			delete [] buffer;
 			buffer = 0;
 		}
@@ -109,9 +109,9 @@ const Graphics::Font *Theme::loadFont(const char *filename) {
 			unzReadCurrentFile(zipFile, buffer, fileInfo.uncompressed_size);
 			unzCloseCurrentFile(zipFile);
 			Common::MemoryReadStream stream(buffer, fileInfo.uncompressed_size+1);
-	
+
 			font = Graphics::NewFont::loadFont(stream);
-	
+
 			delete [] buffer;
 			buffer = 0;
 		}

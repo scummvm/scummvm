@@ -64,5 +64,5 @@ public:
 	UInt32 _msaTrackStartSu, _msaTrackEndSu;
 	UInt32 _msaTrackLength;
 };
- 
+
 #endif

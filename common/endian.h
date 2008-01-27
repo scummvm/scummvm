@@ -58,7 +58,7 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
  *
  * Why is this necessary? The C/C++ standard does not define the endianess to
  * be used for character constants. Hence if one uses multi-byte character
- * constants, a potential portability problem opens up. 
+ * constants, a potential portability problem opens up.
  *
  * Fortunately, a semi-standard has been established: On almost all systems
  * and compilers, multi-byte character constants are encoded using the big

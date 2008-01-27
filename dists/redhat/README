@@ -8,7 +8,7 @@ adapt the below instructions where necessary.
 
 1) Collect sources:
 
-Place scummvm-%{version}.tar.bz2, libmad-0.15.1b.tar.bz2 and 
+Place scummvm-%{version}.tar.bz2, libmad-0.15.1b.tar.bz2 and
 mpeg2dec-0.4.0b.tar.bz2 in /usr/src/redhat/SOURCES .
 If you have different versions of mpeg2dec or libmad, put the correct version
 numbers in the .spec file.

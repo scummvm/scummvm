@@ -391,7 +391,7 @@ public:
 	void increaseResourceCounter();
 
 	void resourceStats();
-	
+
 //protected:
 	bool validateResource(const char *str, int type, int index) const;
 protected:
@@ -434,7 +434,7 @@ public:
 
 protected:
 	VirtualMachineState vm;
-	
+
 	bool _oldSoundsPaused;
 
 public:
@@ -474,7 +474,7 @@ protected:
 	virtual void scummLoop_handleActors() = 0;
 	virtual void scummLoop_handleEffects();
 	virtual void scummLoop_handleSound();
-	
+
 	virtual void runBootscript();
 
 	// Event handling

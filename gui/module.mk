@@ -27,5 +27,5 @@ MODULE_OBJS := \
 	ThemeModern.o \
 	theme-config.o
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk

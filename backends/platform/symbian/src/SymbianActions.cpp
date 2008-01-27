@@ -35,10 +35,10 @@ namespace GUI {
 
 // SumthinWicked says: we either split our Actions like WinCE did with Pocket/Smartphone
 // or we put them in this file separated by #ifdefs, this one is up to you, AnotherGuest :)
- 
-const Common::String actionNames[] = { 
-	"Up", 
-	"Down", 
+
+const Common::String actionNames[] = {
+	"Up",
+	"Down",
 	"Left",
 	"Right",
 	"Left Click",
@@ -48,8 +48,8 @@ const Common::String actionNames[] = {
 	"Zone",
 	"Multi Function",
 	"Swap character",
-	"Skip text",	
-	"Pause", 
+	"Skip text",
+	"Pause",
 	"Fast mode",
 	"Quit",
 	"Debugger"
@@ -100,7 +100,7 @@ SymbianActions::SymbianActions()
 
 void SymbianActions::initInstanceMain(OSystem *mainSystem) {
 	Actions::initInstanceMain(mainSystem);
-	
+
 	// Mouse Up
 	_action_enabled[ACTION_UP] = true;
 
@@ -154,24 +154,24 @@ void SymbianActions::initInstanceGame() {
 		_action_enabled[ACTION_SAVE] = false;
 	else {
 		_action_enabled[ACTION_SAVE] = true;
-		
-		if (is_queen) {			
+
+		if (is_queen) {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, Common::KEYCODE_F5); // F1 key for FOTAQ
-		} else if (is_sky) {		
-			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, Common::KEYCODE_F5); 
-		} else if (is_cine) {			
+		} else if (is_sky) {
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, Common::KEYCODE_F5);
+		} else if (is_cine) {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_F10, Common::KEYCODE_F10); // F10
-		} else if (is_agi) {		
+		} else if (is_agi) {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_ESCAPE, Common::KEYCODE_ESCAPE);
 		} else if (is_parallaction) {
 			_key_action[ACTION_SAVE].setKey('s', Common::KEYCODE_s);
-		} else {		
+		} else {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, Common::KEYCODE_F5); // F5 key
 		}
 	}
 	// Quit
 	_action_enabled[ACTION_QUIT] = true;
-	
+
 	// Skip text
 	if (!is_cine && !is_parallaction)
 		_action_enabled[ACTION_SKIP_TEXT] = true;
@@ -184,7 +184,7 @@ void SymbianActions::initInstanceGame() {
 	// Enable fast mode
 	_action_enabled[ACTION_FASTMODE] = true;
 	_key_action[ACTION_FASTMODE].setKey('f', Common::KEYCODE_f, KMOD_CTRL);
-	
+
 	// Swap character
 	_action_enabled[ACTION_SWAPCHAR] = true;
 	_key_action[ACTION_SWAPCHAR].setKey('b'); // b

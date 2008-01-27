@@ -14,7 +14,7 @@ Err GoLCDInit(MemHandle *goLcdH) {
 	UInt16 refNum;
 	Boolean loaded = false;
 	*goLcdH = NULL;
-	
+
 	if (e = SysLibFind(goLcdLibName, &refNum))
 		loaded = !(e = SysLibLoad(goLcdLibType, goLcdLibCreator, &refNum));
 
@@ -41,7 +41,7 @@ Err GoLCDRelease(MemHandle goLcdH) {
 
 	Err e;
 	GoLCDType *lcdP = (GoLCDType *)MemHandleLock(goLcdH);
-	if (lcdP->refNum != sysInvalidRefNum)		
+	if (lcdP->refNum != sysInvalidRefNum)
 		if (!(e = GoLcdLibClose(lcdP->refNum)))
 			e = SysLibRemove(lcdP->refNum);
 
@@ -115,7 +115,7 @@ Boolean GoLCDToggle(MemHandle goLcdH) {
 	GoLCDType *lcdP = (GoLCDType *)MemHandleLock(goLcdH);
 	active = lcdP->active;
 	MemPtrUnlock(lcdP);
-	
+
 	GoLCDActivate(goLcdH, !active);
 	return (!active);
 }

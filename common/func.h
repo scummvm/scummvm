@@ -94,7 +94,7 @@ private:
 	Result (*_func)(Arg);
 public:
 	typedef Result (*FuncType)(Arg);
-	
+
 	PointerToUnaryFunc(const FuncType &func) : _func(func) {}
 	Result operator()(Arg v) const {
 		return _func(v);

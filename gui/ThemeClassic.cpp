@@ -173,7 +173,7 @@ int ThemeClassic::getTabPadding() const {
 void ThemeClassic::drawDialogBackground(const Common::Rect &r, uint16 hints, WidgetStateInfo state) {
 	if (!_initOk)
 		return;
-	
+
 	restoreBackground(r);
 
 #ifndef CT_NO_TRANSPARENCY
@@ -260,7 +260,7 @@ void ThemeClassic::drawSurface(const Common::Rect &r, const Graphics::Surface &s
 
 	if (!rect.isValidRect())
 		return;
-	
+
 	assert(surface.bytesPerPixel == sizeof(OverlayColor));
 
 	OverlayColor *src = (OverlayColor *)surface.pixels;
@@ -384,7 +384,7 @@ void ThemeClassic::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, c
 		box(r.left + i * tabWidth, r.top+2, tabWidth, tabHeight-2, _color, _shadowcolor);
 		_font->drawString(&_screen, tabs[i], r.left + i * tabWidth, r.top+4, tabWidth, getColor(state), Graphics::kTextAlignCenter, 0, true);
 	}
-	
+
 	if (active >= 0) {
 		box(r.left + active * tabWidth, r.top, tabWidth, tabHeight, _color, _shadowcolor, true);
 		_font->drawString(&_screen, tabs[active], r.left + active * tabWidth, r.top+titleVPad, tabWidth, getColor(kStateHighlight), Graphics::kTextAlignCenter, 0, true);
@@ -395,7 +395,7 @@ void ThemeClassic::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, c
 		_screen.vLine(r.left, r.top + tabHeight, r.bottom - 1, _color);
 		_screen.vLine(r.right - 1, r.top + tabHeight, r.bottom - 1, _shadowcolor);
 	}
-	
+
 	addDirtyRect(r);
 }
 
@@ -601,7 +601,7 @@ void ThemeClassic::blendScreenToDialog() {
 		b = ab * a;
 
 		OverlayColor *ptr = (OverlayColor*)_dialog->screen.getBasePtr(rect.left, rect.top);
-		
+
 		int h = rect.height();
 		int w = rect.width();
 		while (h--) {
@@ -624,7 +624,7 @@ void ThemeClassic::blendScreenToDialog() {
 		b = ab * 3;
 
 		OverlayColor *ptr = (OverlayColor*)_dialog->screen.getBasePtr(rect.left, rect.top);
-		
+
 		int h = rect.height();
 		int w = rect.width();
 
@@ -691,7 +691,7 @@ bool ThemeClassic::loadConfig() {
 	temp.clear();
 	temp = _evaluator->getStringVar("font");
 	if (temp.empty() || 0 == temp.compareToIgnoreCase("builtin")) {
-		if (!_fontName.empty())	
+		if (!_fontName.empty())
 			delete _font;
 		_fontName.clear();
 	} else if (temp != _fontName) {

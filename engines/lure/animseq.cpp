@@ -48,7 +48,7 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 				else return ABORT_NEXT_SCENE;
 			} else if (events.type() == Common::EVENT_LBUTTONDOWN)
 				return ABORT_NEXT_SCENE;
-			else if (events.type() == Common::EVENT_QUIT) 
+			else if (events.type() == Common::EVENT_QUIT)
 				return ABORT_END_INTRO;
 		}
 
@@ -64,7 +64,7 @@ AnimAbortType AnimationSequence::delay(uint32 milliseconds) {
 
 void AnimationSequence::egaDecodeFrame(byte *&pPixels) {
 	Screen &screen = Screen::getReference();
-	byte *screenData = screen.screen_raw();   
+	byte *screenData = screen.screen_raw();
 
 	// Skip over the list of blocks that are changed
 	int numBlocks = *pPixels++;
@@ -72,7 +72,7 @@ void AnimationSequence::egaDecodeFrame(byte *&pPixels) {
 
 	// Loop through the list of same/changed pixel ranges
 	int len = *pPixels++;
-	int offset = MENUBAR_Y_SIZE * FULL_SCREEN_WIDTH * 
+	int offset = MENUBAR_Y_SIZE * FULL_SCREEN_WIDTH *
 		EGA_NUM_LAYERS / EGA_PIXELS_PER_BYTE;
 	while ((offset += len) < FULL_SCREEN_WIDTH * FULL_SCREEN_HEIGHT / 2) {
 
@@ -80,7 +80,7 @@ void AnimationSequence::egaDecodeFrame(byte *&pPixels) {
 		if (repeatLen > 0) {
 			byte *pDest = screenData + (offset / EGA_NUM_LAYERS) * EGA_PIXELS_PER_BYTE;
 
-			// Copy over the following bytes - each four bytes contain the four 
+			// Copy over the following bytes - each four bytes contain the four
 			// planes worth of data for 8 sequential pixels
 			while (repeatLen-- > 0) {
 				int planeNum = offset % EGA_NUM_LAYERS;
@@ -107,7 +107,7 @@ void AnimationSequence::egaDecodeFrame(byte *&pPixels) {
 
 void AnimationSequence::vgaDecodeFrame(byte *&pPixels, byte *&pLines) {
 	Screen &screen = Screen::getReference();
-	byte *screenData = screen.screen_raw();   
+	byte *screenData = screen.screen_raw();
 	uint16 screenPos = 0;
 	uint16 len;
 
@@ -118,7 +118,7 @@ void AnimationSequence::vgaDecodeFrame(byte *&pPixels, byte *&pLines) {
 			len = READ_LE_UINT16(pLines);
 			pLines += 2;
 		}
-	
+
 		// Move the splice over
 		memcpy(screenData, pPixels, len);
 		screenData += len;
@@ -137,14 +137,14 @@ void AnimationSequence::vgaDecodeFrame(byte *&pPixels, byte *&pLines) {
 	}
 }
 
-AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fadeIn, int frameDelay, 
-					 const AnimSoundSequence *soundList): _screenId(screenId), _palette(palette), 
+AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fadeIn, int frameDelay,
+					 const AnimSoundSequence *soundList): _screenId(screenId), _palette(palette),
 					 _frameDelay(frameDelay), _soundList(soundList) {
 	Screen &screen = Screen::getReference();
 	PictureDecoder decoder;
 	Disk &d = Disk::getReference();
 
-	// Get the data and decode it. Note that VGA decompression is used 
+	// Get the data and decode it. Note that VGA decompression is used
 	// even if the decompressed contents is actually EGA data
 	MemoryBlock *data = d.getEntry(_screenId);
 	_decodedData = decoder.vgaDecode(data, MAX_ANIM_DECODER_BUFFER_SIZE);
@@ -158,14 +158,14 @@ AnimationSequence::AnimationSequence(uint16 screenId, Palette &palette,  bool fa
 		// Reset the palette and clear the screen for EGA decoding
 		screen.setPaletteEmpty(RES_PALETTE_ENTRIES);
 		screen.screen().empty();
-		
+
 		// Load the screen - each four bytes contain the four planes
 		// worth of data for 8 sequential pixels
 		byte *pSrc = _decodedData->data();
 		byte *pDest = screen.screen().data().data() +
 			(FULL_SCREEN_WIDTH * MENUBAR_Y_SIZE);
 
-		for (int ctr = 0; ctr < FULL_SCREEN_WIDTH * (FULL_SCREEN_HEIGHT - 
+		for (int ctr = 0; ctr < FULL_SCREEN_WIDTH * (FULL_SCREEN_HEIGHT -
 				MENUBAR_Y_SIZE) / 8; ++ctr, pDest += EGA_PIXELS_PER_BYTE) {
 			for (int planeCtr = 0; planeCtr < EGA_NUM_LAYERS; ++planeCtr, ++pSrc) {
 				byte v = *pSrc;
@@ -225,10 +225,10 @@ AnimAbortType AnimationSequence::show() {
 	while (_pPixels < _pPixelsEnd) {
 		if ((soundFrame != NULL) && (frameCtr == 0))
 			Sound.musicInterface_Play(
-				Sound.isRoland() ? soundFrame->rolandSoundId : soundFrame->adlibSoundId, 
+				Sound.isRoland() ? soundFrame->rolandSoundId : soundFrame->adlibSoundId,
 				soundFrame->channelNum);
 
-		if (_isEGA) 
+		if (_isEGA)
 			egaDecodeFrame(_pPixels);
 		else {
 			if (_pLines >= _pLinesEnd) break;
@@ -254,8 +254,8 @@ AnimAbortType AnimationSequence::show() {
 bool AnimationSequence::step() {
 	Screen &screen = Screen::getReference();
 	if (_pPixels >= _pPixelsEnd) return false;
-	
-	if (_isEGA) 
+
+	if (_isEGA)
 		egaDecodeFrame(_pPixels);
 	else {
 		if (_pLines >= _pLinesEnd) return false;

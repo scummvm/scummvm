@@ -87,7 +87,7 @@ namespace Saga {
 
 #define RID_ITEDEMO_MAIN_PANEL 2
 #define RID_ITEDEMO_CONVERSE_PANEL 3
-#define RID_ITEDEMO_OPTION_PANEL 3 // FIXME: should be 4 but it is an empty resource.	
+#define RID_ITEDEMO_OPTION_PANEL 3 // FIXME: should be 4 but it is an empty resource.
 #define RID_ITEDEMO_MAIN_SPRITES 5 // Proper fix would be not load options panel when demo is running
 #define RID_ITEDEMO_MAIN_PANEL_SPRITES 6
 #define RID_ITEDEMO_MAIN_STRINGS 8 //main strings

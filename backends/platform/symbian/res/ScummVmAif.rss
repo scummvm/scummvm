@@ -30,7 +30,7 @@ RESOURCE AIF_DATA
 	hidden=KAppNotHidden;
 	embeddability=KAppNotEmbeddable;
 	caption_list=
-		{ 
+		{
 		CAPTION { code=ELangEnglish;  caption="ScummVM"; },
 		CAPTION { code=ELangAmerican; caption="ScummVM"; },
 		CAPTION { code=ELangOther; caption="ScummVM"; }

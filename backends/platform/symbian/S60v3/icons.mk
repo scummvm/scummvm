@@ -20,7 +20,7 @@ LIB : do_nothing
 
 CLEANLIB : do_nothing
 
-RESOURCE :	
+RESOURCE :
 	mifconv $(ICONTARGETFILENAME) \
 	/c32 ..\res\scummvm.svg
 

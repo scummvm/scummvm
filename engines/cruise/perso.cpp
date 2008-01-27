@@ -196,7 +196,7 @@ void processActorWalk(int16 resx_y[4], int16 *inc_droite, int16 *inc_droite0,
 
 						return;
 					}
-					
+
 					*inc_droite0 = cor_droite(x1, y1, x2, y2, cor_joueur);
 					*dir_perso = resx_y[2] = direction(x1, y1, x2, y2, *inc_jo1, *inc_jo2);
 					*inc_jo0 = inc_jo;

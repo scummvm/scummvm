@@ -47,9 +47,9 @@ int main(int argc, char** argv) {
 	gArgv = argv;
 
 	[[NSAutoreleasePool alloc] init];
-	
+
     return UIApplicationMain(argc, argv, [iPhoneMain class]);
-} 
+}
 
 @implementation iPhoneMain
 
@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
 
 - (void) mainLoop: (id)param {
 	[[NSAutoreleasePool alloc] init];
-	
+
 	iphone_main(gArgc, gArgv);
 	[UIApp terminate];
 }
@@ -78,13 +78,13 @@ int main(int argc, char** argv) {
 
 	_window = [[UIWindow alloc] initWithContentRect:  [UIHardware fullScreenApplicationContentRect]];
 	[_window retain];
-	
+
 	_view = [[iPhoneView alloc] initWithFrame:  [UIHardware fullScreenApplicationContentRect]];
 	[_window setContentView: _view];
-		
+
 	[_window orderFront: self];
-    [_window makeKey: self];
-	
+	[_window makeKey: self];
+
 	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
 }
 

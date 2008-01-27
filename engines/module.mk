@@ -3,5 +3,5 @@ MODULE := engines
 MODULE_OBJS := \
 	engine.o
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk

@@ -146,10 +146,10 @@ void MusicBase::startMusic(uint16 param) {
 	_onNextPoll.musicToProcess = param & 0xF;
 }
 
-uint8 MusicBase::giveVolume(void) { 
-	return (uint8)_musicVolume; 
+uint8 MusicBase::giveVolume(void) {
+	return (uint8)_musicVolume;
 }
-	
+
 uint8 MusicBase::giveCurrentMusic(void) {
 	return _currentMusic;
 }

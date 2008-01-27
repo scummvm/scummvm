@@ -132,9 +132,9 @@ protected:
 	void updateScreen(void);
 };
 
-#endif 
+#endif
 
-#ifdef USE_MPEG2 
+#ifdef USE_MPEG2
 
 class AnimationState : public Graphics::BaseAnimationState {
 private:

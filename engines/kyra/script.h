@@ -64,12 +64,12 @@ struct ScriptState {
 class ScriptFileParser {
 public:
 	ScriptFileParser() : _scriptFile(), _startOffset(0), _endOffset(0) {}
-	ScriptFileParser(const char *filename, Resource *res) : _scriptFile(), _startOffset(0), _endOffset(0) { setFile(filename, res); } 
+	ScriptFileParser(const char *filename, Resource *res) : _scriptFile(), _startOffset(0), _endOffset(0) { setFile(filename, res); }
 	~ScriptFileParser() { destroy(); }
-	
+
 	// 'script' must be allocated with new!
 	void setFile(const char *filename, Resource *res);
-	
+
 	operator bool() const { return (_startOffset != _endOffset) && _scriptFile.isOpen(); }
 
 	uint32 getFORMBlockSize();
@@ -86,15 +86,15 @@ private:
 class ScriptHelper {
 public:
 	ScriptHelper(KyraEngine *vm);
-	
+
 	bool loadScript(const char *filename, ScriptData *data, const Common::Array<const Opcode*> *opcodes);
 	void unloadScript(ScriptData *data);
-	
+
 	void initScript(ScriptState *scriptState, const ScriptData *data);
 	bool startScript(ScriptState *script, int function);
-	
+
 	bool validScript(ScriptState *script);
-	
+
 	bool runScript(ScriptState *script);
 protected:
 	KyraEngine *_vm;
@@ -106,7 +106,7 @@ protected:
 		CommandProc proc;
 		const char *desc;
 	};
-	
+
 	const CommandEntry *_commands;
 private:
 	void cmd_jmpTo(ScriptState*);

@@ -205,7 +205,7 @@ void IgorEngine::PART_21_ACTION_111() {
 	PART_21_HELPER_1(255);
 	if (_game.version == kIdEngDemo110) {
 		++_demoActionsCounter;
-	}	
+	}
 	ADD_DIALOGUE_TEXT(210, 2);
 	SET_DIALOGUE_TEXT(1, 1);
 	startIgorDialogue();
@@ -468,7 +468,7 @@ void IgorEngine::PART_21() {
 		PART_21_HELPER_3();
 	} else if (_currentPart == 212) {
 		PART_21_HELPER_4();
-	}	
+	}
 	enterPartLoop();
 	while (_currentPart >= 210 && _currentPart <= 212) {
 		runPartLoop();

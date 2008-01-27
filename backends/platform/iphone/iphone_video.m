@@ -69,7 +69,7 @@ void iPhone_initSurface(int width, int height, bool landscape) {
 	_width = width;
 	_height = height;
 	_landscape = landscape;
-	
+
  	[sharedInstance performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
 }
 
@@ -78,14 +78,14 @@ bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY) {
 	if (event == nil) {
 		return false;
 	}
-	
+
 	id type = [event objectForKey:@"type"];
-	
+
 	if (type == nil) {
 		printf("fetchEvent says: No type!\n");
-		return false;			
+		return false;
 	}
-	
+
 	*outEvent = [type intValue];
 	*outX = [[event objectForKey:@"x"] floatValue];
 	*outY = [[event objectForKey:@"y"] floatValue];
@@ -97,10 +97,10 @@ bool getLocalMouseCoords(CGPoint *point) {
 		point->y < _screenRect.origin.y || point->y >= _screenRect.origin.y + _screenRect.size.height) {
 			return false;
 	}
-	
+
 	point->x = (point->x - _screenRect.origin.x) / _screenRect.size.width;
 	point->y = (point->y - _screenRect.origin.y) / _screenRect.size.height;
-	
+
 	return true;
 }
 
@@ -122,9 +122,9 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 -(void) dealloc {
 	[super dealloc];
-	
+
 	if (_keyboardView != nil) {
-		[_keyboardView dealloc];		
+		[_keyboardView dealloc];
 	}
 }
 
@@ -136,7 +136,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 	// if (lastTick == 0) {
 	// 	lastTick = time(0);
 	// }
-	// 
+	//
 	// frames++;
 	// if (time(0) > lastTick) {
 	// 	lastTick = time(0);
@@ -148,7 +148,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 - (void)updateScreenRect:(id)rect {
 	NSRect nsRect = [rect rectValue];
 	CGRect cgRect = CGRectMake(nsRect.origin.x, nsRect.origin.y, nsRect.size.width, nsRect.size.height);
-	[sharedInstance setNeedsDisplayInRect: cgRect];	
+	[sharedInstance setNeedsDisplayInRect: cgRect];
 }
 
 - (void)initSurface {
@@ -157,7 +157,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 	int pitch = _width * 2;
 	int allocSize = 2 * _width * _height;
 	char *pixelFormat = "565L";
-	
+
 	NSDictionary* dict = [[NSDictionary alloc] initWithObjectsAndKeys:
 		kCFBooleanTrue, kCoreSurfaceBufferGlobal,
 		 @"PurpleGFXMem", kCoreSurfaceBufferMemoryRegion,
@@ -179,7 +179,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 	CoreSurfaceBufferLock(_screenSurface, 3);
 
 	LKLayer* screenLayer = [[LKLayer layer] retain];
-	
+
 	if (_keyboardView != nil) {
 		[_keyboardView removeFromSuperview];
 		[[_keyboardView inputView] removeFromSuperview];
@@ -202,8 +202,8 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 		//printf("Rect: %i, %i, %i, %i\n", _widthOffset, _heightOffset, rectWidth, rectHeight);
 		_screenRect = CGRectMake(_widthOffset, _heightOffset, rectWidth, rectHeight);
-		[screenLayer setFrame: _screenRect];		
-	} else {			
+		[screenLayer setFrame: _screenRect];
+	} else {
 		float ratio = (float)_height / (float)_width;
 		_screenRect = CGRectMake(0, 0, _fullWidth, _fullWidth * ratio);
 		[screenLayer setFrame: _screenRect];
@@ -211,9 +211,9 @@ bool getLocalMouseCoords(CGPoint *point) {
 		CGRect keyFrame = CGRectMake(0.0f, _screenRect.size.height, _fullWidth, _fullHeight - _screenRect.size.height);
 		if (_keyboardView == nil) {
 			_keyboardView = [[SoftKeyboard alloc] initWithFrame:keyFrame];
-			[_keyboardView setInputDelegate:self];			
+			[_keyboardView setInputDelegate:self];
 		}
-		
+
 		[self addSubview:[_keyboardView inputView]];
 		[self addSubview: _keyboardView];
 		[[_keyboardView inputView] becomeFirstResponder];
@@ -221,14 +221,14 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 	[screenLayer setContents: _screenSurface];
 	[screenLayer setOpaque: YES];
-	
+
 	if (_screenLayer != nil) {
 		[[sharedInstance _layer] replaceSublayer: _screenLayer with: screenLayer];
 	} else {
 		[[sharedInstance _layer] addSublayer: screenLayer];
 	}
 	_screenLayer = screenLayer;
-	
+
 	CoreSurfaceBufferUnlock(_screenSurface);
 	[dict release];
 }
@@ -253,21 +253,21 @@ bool getLocalMouseCoords(CGPoint *point) {
 	if (event == nil) {
 		return nil;
 	}
-	
+
 	[_events removeObjectAtIndex: 0];
 	[self unlock];
-		
+
 	return event;
 }
 
 - (void)addEvent:(NSDictionary*)event {
 	[self lock];
-	
+
 	if(_events == nil)
 		_events = [[NSMutableArray alloc] init];
-		
+
 	[_events addObject: event];
-	
+
 	[self unlock];
 }
 
@@ -284,7 +284,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 - (void)mouseDown:(GSEvent*)event {
 	struct CGPoint point = GSEventGetLocationInWindow(event);
-	
+
 	if (!getLocalMouseCoords(&point))
 		return;
 
@@ -300,10 +300,10 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 - (void)mouseUp:(GSEvent*)event {
 	struct CGPoint point = GSEventGetLocationInWindow(event);
-	
+
 	if (!getLocalMouseCoords(&point))
 		return;
-	
+
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputMouseUp], @"type",
@@ -317,10 +317,10 @@ bool getLocalMouseCoords(CGPoint *point) {
 - (void)mouseDragged:(GSEvent*)event {
 	//printf("mouseDragged()\n");
 	struct CGPoint point = GSEventGetLocationInWindow(event);
-	
+
 	if (!getLocalMouseCoords(&point))
 		return;
-	
+
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputMouseDragged], @"type",
@@ -334,10 +334,10 @@ bool getLocalMouseCoords(CGPoint *point) {
 - (void)mouseEntered:(GSEvent*)event {
 	//printf("mouseEntered()\n");
 	// struct CGPoint point = GSEventGetLocationInWindow(event);
-	// 
+	//
 	// if (!getLocalMouseCoords(&point))
 	// 	return;
-	// 
+	//
 	// [self addEvent:
 	// 	[[NSDictionary alloc] initWithObjectsAndKeys:
 	// 	 [NSNumber numberWithInt:kInputMouseSecondToggled], @"type",
@@ -362,10 +362,10 @@ bool getLocalMouseCoords(CGPoint *point) {
 {
 	//printf("mouseMoved()\n");
 	struct CGPoint point = GSEventGetLocationInWindow(event);
-	
+
 	if (!getLocalMouseCoords(&point))
 		return;
-	
+
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputMouseSecondToggled], @"type",
@@ -393,7 +393,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 - (int)swipe:(UIViewSwipeDirection)num withEvent:(GSEvent*)event {
 	//printf("swipe: %i\n", num);
-	
+
 	[self addEvent:
 		[[NSDictionary alloc] initWithObjectsAndKeys:
 		 [NSNumber numberWithInt:kInputSwipe], @"type",
@@ -416,7 +416,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 		 [NSNumber numberWithFloat:0], @"y",
 		 nil
 		]
-	];	
+	];
 }
 
 - (void)applicationResume {
@@ -427,7 +427,7 @@ bool getLocalMouseCoords(CGPoint *point) {
 		 [NSNumber numberWithFloat:0], @"y",
 		 nil
 		]
-	];	
+	];
 }
 
 @end

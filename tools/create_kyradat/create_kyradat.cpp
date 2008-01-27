@@ -123,7 +123,7 @@ const ExtractFilename extractFilenames[] = {
 	// GUI strings table
 	{ kGUIStrings, kTypeLanguageList, "GUISTRINGS" },
 	{ kConfigStrings, kTypeLanguageList, "CONFIGSTRINGS" },
-	
+
 	// ROOM table/filenames
 	{ kRoomList, kTypeRoomList, "ROOM-TABLE.ROOM" },
 	{ kRoomFilenames, kTypeStringList, "ROOM-FILENAMES.TXT" },
@@ -186,7 +186,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kPaletteList31, kTypeRawData, "PALTABLE31.PAL" },
 	{ kPaletteList32, kTypeRawData, "PALTABLE32.PAL" },
 	{ kPaletteList33, kTypeRawData, "PALTABLE33.PAL" },
-	
+
 	// FM-TOWNS specific
 	{ kKyra1TownsSFXwdTable, kTypeRawData, "SFXWDTABLE" },
 	{ kKyra1TownsSFXbtTable, kTypeRawData, "SFXBTTABLE" },
@@ -205,14 +205,14 @@ const ExtractFilename extractFilenames[] = {
 	{ k2SeqplayTlkFiles, kTypeLanguageList, "S_TLKFILES" },
 	{ k2SeqplaySeqData, k2TypeSeqData, "S_DATA.SEQ" },
 	{ k2SeqplayIntroTracks, kTypeStringList, "S_INTRO.TRA" },
-	{ k2SeqplayFinaleTracks, kTypeStringList, "S_FINALE.TRA" },	
+	{ k2SeqplayFinaleTracks, kTypeStringList, "S_FINALE.TRA" },
 	{ k2SeqplayIntroCDA, kTypeRawData, "S_INTRO.CDA" },
 	{ k2SeqplayFinaleCDA, kTypeRawData, "S_FINALE.CDA" },
 
 	// Ingame
 	{ k2IngamePakFiles, kTypeStringList, "I_PAKFILES.TXT" },
 	{ k2IngameSfxFiles, kTypeStringList, "I_SFXFILES.TXT" },
-	{ k2IngameSfxIndex, kTypeRawData, "I_SFXINDEX.TRA" },	
+	{ k2IngameSfxIndex, kTypeRawData, "I_SFXINDEX.TRA" },
 	{ k2IngameTracks, kTypeStringList, "I_TRACKS.TRA" },
 	{ k2IngameCDA, kTypeRawData, "I_TRACKS.CDA" },
 
@@ -253,9 +253,9 @@ bool getFilename(char *dstFilename, const Game *g, const int id) {
 void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
 	strcpy(dstFilename, filename);
 
-	static const char *gidExtensions[] = { "", ".K2", ".K3" };	
+	static const char *gidExtensions[] = { "", ".K2", ".K3" };
 	strcat(dstFilename, gidExtensions[gid]);
-	
+
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
 		if (specialE->special == special) {
 			strcat(dstFilename, ".");
@@ -276,9 +276,9 @@ void createLangFilename(char *dstFilename, const int gid, const int lang, const 
 		}
 	}
 
-	static const char *gidExtensions[] = { "", ".K2", ".K3" };	
+	static const char *gidExtensions[] = { "", ".K2", ".K3" };
 	strcat(dstFilename, gidExtensions[gid]);
-	
+
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
 		if (specialE->special == special) {
 			strcat(dstFilename, ".");
@@ -314,13 +314,13 @@ int hashEntries(const Game *game, const GameNeed *need, const PAKFile *file) {
 			hash += *i;
 			continue;
 		}
-		
+
 		if (file) {
 			filename[0] = 0;
 
 			if (!getFilename(filename, game, *i))
 				error("couldn't find filename for id %d", *i);
-			
+
 			PAKFile::cFileList *list = file->getFileList();
 			if (list && list->findEntry(filename) != 0)
 				hash += *i;
@@ -328,7 +328,7 @@ int hashEntries(const Game *game, const GameNeed *need, const PAKFile *file) {
 	}
 
 	return hash;
-} 
+}
 
 bool hasNeededEntries(const Game *game, const PAKFile *file) {
 	for (const GameNeed *need = gameNeedTable; need->game != -1; ++need) {
@@ -383,7 +383,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 					targetsize--;
 				}
 				if (fmtPatch == 1) {
-					// Here is the first step of the extra treatment for all fm-towns string arrays that 
+					// Here is the first step of the extra treatment for all fm-towns string arrays that
 					// contain more than one string and which the original code
 					// addresses via stringname[boolJapanese].
 					// We simply skip every other string
@@ -406,7 +406,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 			}
 		}
 	}
-	
+
 	if (fmtPatch == 2) {
 		if (g->special == kFMTownsVersionE)
 			targetsize--;
@@ -423,7 +423,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	if (fmtPatch == 4) {
 		targetsize -= 9;
 	}
-	
+
 	uint8 *buffer = new uint8[targetsize];
 	assert(buffer);
 	uint8 *output = buffer;
@@ -465,7 +465,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 			}
 
 			if (fmtPatch == 1) {
-				// Here is the extra treatment for all fm-towns string arrays that 
+				// Here is the extra treatment for all fm-towns string arrays that
 				// contain more than one string and which the original code
 				// addresses via stringname[boolJapanese].
 				// We simply skip every other string
@@ -610,7 +610,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 				memcpy(output , ptr, 30);
 				ptr += 30;
 				output += 30;
-				
+
 				if (g->special == k2TownsFile1E) {
 					memcpy(output , ptr, 2);
 					ptr += 2;
@@ -620,7 +620,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 					ptr += 2;
 					*output++ = READ_LE_UINT16(ptr) & 0xff;
 					ptr += 2;
-				}						
+				}
 
 				memcpy(output, ptr, 14);
 				ptr += 18;
@@ -651,7 +651,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 						memcpy(output, ctrStart, ctrSize);
 						output += ctrSize;
 					}
-				}				
+				}
 
 				numNestedSequences++;
 				uint16 relOffs = (uint16) (output - buffer);
@@ -674,7 +674,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 					controlOffs = 0;
 				//else if (controlOffs)
 				//	debug(1, "assigning frame control with output file offset 0x%x to item %s (output file offset: 0x%x)", controlOffs, cc, relOffs);
-					
+
 				WRITE_LE_UINT16(output, controlOffs);
 				if (g->special != k2DemoVersion)
 					ptr += 4;
@@ -726,7 +726,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 	assert(finBuffer);
 	uint16 diff = headerSize - finHeaderSize;
 	uint16 *finHeader = (uint16*) finBuffer;
-	
+
 	for (int i = 1; i < finHeaderSize; i++)
 		WRITE_LE_UINT16(&finHeader[i], (READ_LE_UINT16(&header[i]) - diff));
 	WRITE_LE_UINT16(finHeader, numSequences);
@@ -760,7 +760,7 @@ int extractHofSeqData_checkString(const void *ptr, uint8 checkSize) {
 	while (c--) {
 		if (*s > 31 && *s < 123)
 			t++;
-		s++;			
+		s++;
 	}
 
 	if (t == checkSize)
@@ -781,7 +781,7 @@ int extractHofSeqData_isSequence(const void *ptr, const Game *g, uint32 maxCheck
 
 	if (maxCheckSize < 30)
 		return -2;
-	
+
 	const uint8 * s = (const uint8*)ptr;
 	int c1 = extractHofSeqData_checkString(s + 2, 6);
 	int c2 = extractHofSeqData_checkString(s + 16, 6);
@@ -806,11 +806,11 @@ int extractHofSeqData_isSequence(const void *ptr, const Game *g, uint32 maxCheck
 	if (c0 == 0 && c5 == 4 && c3 == 0 && c4 == 0) {
 		if (maxCheckSize >= 41 && READ_LE_UINT32(s + 34) && !(s[39] | s[41]) && s[40] > s[38])
 			return 1;
-	}	
+	}
 
 	if (c0 == 0 && c5 && c1 == 1 && c4 == -1 && s[20])
 		return 0;
-	
+
 	return -1;
 }
 
@@ -876,7 +876,7 @@ uint32 getFeatures(const Game *g) {
 		features |= GF_ITALIAN;
 	else if (g->lang == JA_JPN)
 		features |= GF_JAPANESE;
-	
+
 	return features;
 }
 
@@ -895,7 +895,7 @@ bool updateIndex(byte *dst, const int dstSize, const Game *g) {
 
 bool checkIndex(const byte *s, const int srcSize) {
 	if ((size_t)srcSize < sizeof(uint32))
-		return false;	
+		return false;
 	uint32 version = READ_BE_UINT32(s);
 	return (version == kKyraDatVersion);
 }
@@ -903,28 +903,28 @@ bool checkIndex(const byte *s, const int srcSize) {
 bool updateIndex(PAKFile &out, const Game *g) {
 	char filename[32];
 	createFilename(filename, g->game, -1, g->special, "INDEX");
-	
+
 	byte *index = new byte[kIndexSize];
 	assert(index);
 	memset(index, 0, kIndexSize);
-	
+
 	uint32 size = 0;
 	const uint8 *data = out.getFileData(filename, &size);
 	if (data)
 		memcpy(index, data, size);
-	
+
 	if (!updateIndex(index, kIndexSize, g)) {
 		delete [] index;
 		return false;
 	}
-	
+
 	out.removeFile(filename);
 	if (!out.addFile(filename, index, kIndexSize)) {
 		fprintf(stderr, "ERROR: couldn't update %s file", filename);
 		delete [] index;
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -955,7 +955,7 @@ int main(int argc, char *argv[]) {
 		printHelp(argv[0]);
 		return -1;
 	}
-	
+
 	PAKFile out;
 	out.loadFile(argv[1], false);
 
@@ -969,10 +969,10 @@ int main(int argc, char *argv[]) {
 
 		uint32 size = fileSize(input);
 		fseek(input, 0, SEEK_SET);
-		
+
 		byte *buffer = new uint8[size];
 		assert(buffer);
-		
+
 		if (fread(buffer, 1, size, input) != size) {
 			warning("couldn't read from file '%s', skipping it", argv[i]);
 			delete [] buffer;
@@ -980,23 +980,23 @@ int main(int argc, char *argv[]) {
 			continue;
 		}
 		fclose(input);
-		
+
 		const Game *g = findGame(buffer, size);
 		if (!g) {
 			warning("skipping unknown file '%s'", argv[i]);
 			delete [] buffer;
 			continue;
 		}
-		
+
 		if (!hasNeededEntries(g, &out)) {
 			warning("file '%s' is missing offset entries and thus can't be processed", argv[i]);
 			delete [] buffer;
 			continue;
 		}
-		
+
 		if (!process(out, g, buffer, size))
 			fprintf(stderr, "ERROR: couldn't process file '%s'", argv[i]);
-		
+
 		if (g->special == kFMTownsVersionE || g->special == k2TownsFile1E || g->special == k2TownsFile2E ||
 			g->special == k2CDFile1E || g->special == k2CDFile2E) {
 			// This is for executables which contain support for at least 2 languages
@@ -1022,7 +1022,7 @@ int main(int argc, char *argv[]) {
 			if (!process(out, g, buffer, size))
 				fprintf(stderr, "ERROR: couldn't process file '%s'", argv[i]);
 		}
-		
+
 		delete [] buffer;
 	}
 
@@ -1038,7 +1038,7 @@ int main(int argc, char *argv[]) {
 	if (fwrite(digest, 1, 16, f) != 16)
 		error("couldn't write md5sum to file '%s'", argv[1]);
 	fclose(f);
-	
+
 	return 0;
 }
 
@@ -1055,7 +1055,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 			fprintf(stderr, "ERROR: couldn't get filename for id %d\n", i->id);
 			return false;
 		}
-		
+
 		const ExtractFilename *fDesc = getFilenameDesc(i->id);
 
 		if (!fDesc) {
@@ -1064,16 +1064,16 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		}
 
 		const ExtractType *tDesc = findExtractType(fDesc->type);
-		
+
 		if (!tDesc) {
 			fprintf(stderr, "ERROR: couldn't find type description for id %d\n", i->id);
 			return false;
 		}
-		
+
 		PAKFile::cFileList *list = out.getFileList();
 		if (list && list->findEntry(filename) != 0)
 			continue;
-		
+
 		int patch = 0;
 		if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
 			// FM Towns files that need addional patches
@@ -1081,14 +1081,14 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 				i->id == kThePoisonStrings || i->id == kFluteStrings || i->id == kWispJewelStrings)
 				patch = 1;
 			else if (i->id == kIntroStrings || i->id == kKyra1TownsSFXwdTable)
-				patch = 2;						
+				patch = 2;
 		}
 
 		if (g->special == k2TownsFile1E || g->special == k2TownsFile1J) {
 			if (i->id == k2SeqplayStrings)
 				patch = 3;
 		}
-		
+
 		if (g->special == k2FloppyFile2) {
 			if (i->id == k2IngamePakFiles)
 				patch = 4;
@@ -1097,8 +1097,8 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		if (g->special == k2FloppyFile2 || g->special == k2CDFile2E) {
 			if (i->id == k2IngameSfxFiles)
 				patch = 5;
-		}		
-		
+		}
+
 		if (!tDesc->extract(out, g, data + i->startOff, i->endOff - i->startOff, filename, patch)) {
 			fprintf(stderr, "ERROR: couldn't extract id %d\n", i->id);
 			return false;
@@ -1140,11 +1140,11 @@ const Game *findGame(const byte *buffer, const uint32 size) {
 	md5_starts(&ctx);
 	md5_update(&ctx, buffer, size);
 	md5_finish(&ctx, digest);
-	
+
 	for (int j = 0; j < 16; ++j) {
 		sprintf(md5str + j*2, "%02x", (int)digest[j]);
 	}
-	
+
 	for (const Game **i = gameDescs; *i != 0; ++i) {
 		for (const Game *p = *i; p->game != -1; ++p) {
 			if (strcmp(md5str, p->md5) == 0)

@@ -61,14 +61,14 @@ foreach my $file (@subs_files) {
 	print "Processing $file...\n";
 	open(INPUT, "< $file.in") or die "Can't open '$file.in' for reading: $!\n";
 	open(OUTPUT, "> $file") or die "Can't open '$file' for writing: $!\n";
-	
+
 	while (<INPUT>) {
 		while (my ($key, $value) = each(%subs)) {
 			s/\@$key\@/$value/;
 		}
 		print OUTPUT;
 	}
-	
+
 	close(INPUT);
 	close(OUTPUT);
 }

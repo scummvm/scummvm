@@ -99,7 +99,7 @@ void OSystem_PalmBase::setPalette(const byte *colors, uint start, uint num) {
 		base[i].r = colors[0];
 		base[i].g = colors[1];
 		base[i].b = colors[2];
-		
+
 		extras_palette(i + start, colors[0], colors[1], colors[2]);
 		colors += 4;
 	}
@@ -134,7 +134,7 @@ void OSystem_PalmBase::setShakePos(int shakeOffset) {
 
 void OSystem_PalmBase::updateScreen() {
 	// Check whether the palette was changed in the meantime and update the
-	// screen surface accordingly. 
+	// screen surface accordingly.
 	if (_paletteDirtyEnd != 0 && _setPalette) {
 		WinSetDrawWindow(WinGetDisplayWindow());
 		WinPalette(winPaletteSet, _paletteDirtyStart, _paletteDirtyEnd - _paletteDirtyStart, _currentPalette + _paletteDirtyStart);

@@ -40,7 +40,7 @@ WinHandle OSystem_PalmOS5::alloc_screen(Coord w, Coord h) {
 	UInt16 old = WinSetCoordinateSystem(kCoordinatesNative);
 	winH = WinCreateOffscreenWindow(w, h, nativeFormat, &e);
 	WinSetCoordinateSystem(old);
-	
+
 	return winH;
 }
 
@@ -162,9 +162,9 @@ void OSystem_PalmOS5::hotswap_gfx_mode(int mode) {
 
 void OSystem_PalmOS5::unload_gfx_mode() {
 	if (!_gfxLoaded)
-		return;	
+		return;
 	_gfxLoaded = false;
-	
+
 	// mouse data freed in quit()
 	free(_offScreenP);
 
@@ -172,7 +172,7 @@ void OSystem_PalmOS5::unload_gfx_mode() {
 		WinDeleteWindow(_workScreenH, false);
 	if (_overlayH)
 		WinDeleteWindow(_overlayH, false);
-		
+
 	_workScreenH = NULL;
 	_overlayH = NULL;
 

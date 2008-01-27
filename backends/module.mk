@@ -21,5 +21,5 @@ MODULE_OBJS := \
 	saves/compressed/compressed-saves.o \
 	timer/default/default-timer.o
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk

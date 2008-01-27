@@ -59,7 +59,7 @@ private:
 	int blitCel(int x, int y, int spr, ViewCel *c, bool agi256_2);
 	void objsSaveArea(Sprite *s);
 	void objsRestoreArea(Sprite *s);
-	
+
 	FORCEINLINE int prioToY(int p);
 	Sprite *newSprite(VtEntry *v);
 	void sprAddlist(SpriteList &l, VtEntry *v);
@@ -69,10 +69,10 @@ private:
 	void freeList(SpriteList &l);
 	void commitSprites(SpriteList &l);
 	void eraseSprites(SpriteList &l);
-	void blitSprites(SpriteList &l);	
+	void blitSprites(SpriteList &l);
 	static bool testUpdating(VtEntry *v, AgiEngine *);
 	static bool testNotUpdating(VtEntry *v, AgiEngine *);
-	
+
 public:
 	SpritesMgr(AgiEngine *agi, GfxMgr *gfx);
 	~SpritesMgr();

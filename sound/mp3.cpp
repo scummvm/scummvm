@@ -54,15 +54,15 @@ protected:
 
 	Common::SeekableReadStream *_inStream;
 	bool _disposeAfterUse;
-	
+
 	uint _numLoops;
 	uint _posInFrame;
 	State _state;
-	
+
 	const mad_timer_t _startTime;
 	const mad_timer_t _endTime;
 	mad_timer_t _totalTime;
-	
+
 	mad_stream _stream;
 	mad_frame _frame;
 	mad_synth _synth;
@@ -70,7 +70,7 @@ protected:
 	enum {
 		BUFFER_SIZE = 5 * 8192
 	};
-	
+
 	// This buffer contains a slab of input data
 	byte _buf[BUFFER_SIZE + MAD_BUFFER_GUARD];
 
@@ -81,7 +81,7 @@ public:
 	               mad_timer_t end = mad_timer_zero,
 	               uint numLoops = 1);
 	~MP3InputStream();
-	
+
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool endOfData() const		{ return _state == MP3_STATE_EOS; }
@@ -136,19 +136,19 @@ void MP3InputStream::decodeMP3Data() {
 			mad_stream_init(&_stream);
 			mad_frame_init(&_frame);
 			mad_synth_init(&_synth);
-	
+
 			// Reset the stream data
 			_inStream->seek(0, SEEK_SET);
 			_totalTime = mad_timer_zero;
 			_posInFrame = 0;
-		
+
 			// Update state
 			_state = MP3_STATE_READY;
-	
+
 			// Read the first few sample bytes
 			readMP3Data();
 		}
-	
+
 		if (_state == MP3_STATE_EOS)
 			return;
 
@@ -173,10 +173,10 @@ void MP3InputStream::decodeMP3Data() {
 					break;
 				}
 			}
-		
+
 			// Sum up the total playback time so far
 			mad_timer_add(&_totalTime, _frame.header.duration);
-			
+
 			// If we have not yet reached the start point, skip to the next frame
 			if (mad_timer_compare(_totalTime, _startTime) < 0)
 				continue;
@@ -186,7 +186,7 @@ void MP3InputStream::decodeMP3Data() {
 				_state = MP3_STATE_EOS;
 				break;
 			}
-			
+
 			// Decode the next frame
 			if (mad_frame_decode(&_frame, &_stream) == -1) {
 				if (_stream.error == MAD_ERROR_BUFLEN) {
@@ -202,13 +202,13 @@ void MP3InputStream::decodeMP3Data() {
 					break;
 				}
 			}
-			
+
 			// Synthesize PCM data
 			mad_synth_frame(&_synth, &_frame);
 			_posInFrame = 0;
 			break;
 		}
-	
+
 		if (_state == MP3_STATE_EOS && _numLoops != 1) {
 			// If looping is on and there are loops left, rewind to the start
 			if (_numLoops != 0)
@@ -218,13 +218,13 @@ void MP3InputStream::decodeMP3Data() {
 			mad_synth_finish(&_synth);
 			mad_frame_finish(&_frame);
 			mad_stream_finish(&_stream);
-			
+
 			// Reset the decoder state to indicate we should start over
 			_state = MP3_STATE_INIT;
 		}
 
 	} while (_state != MP3_STATE_EOS && _stream.error == MAD_ERROR_BUFLEN);
-	
+
 	if (_stream.error != MAD_ERROR_NONE)
 		_state = MP3_STATE_EOS;
 }
@@ -253,7 +253,7 @@ void MP3InputStream::readMP3Data() {
 		_state = MP3_STATE_EOS;
 		return;
 	}
-	
+
 	// Feed the data we just read into the stream decoder
 	_stream.error = MAD_ERROR_NONE;
 	mad_stream_buffer(&_stream, _buf, size + remaining);

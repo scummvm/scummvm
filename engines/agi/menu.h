@@ -81,7 +81,7 @@ private:
 	void drawMenuOptionHilite(int hMenu, int vMenu);
 	void newMenuSelected(int i);
 	bool mouseOverText(unsigned int line, unsigned int col, char *s);
-	
+
 };
 
 } // End of namespace Agi

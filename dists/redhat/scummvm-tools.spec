@@ -46,7 +46,7 @@ install -m644 -D convert_dxa.sh %{buildroot}%{_datadir}/scummvm-tools/convert_dx
 rm -Rf ${RPM_BUILD_ROOT}
 
 #------------------------------------------------------------------------------
-#   Files listing.  
+#   Files listing.
 #------------------------------------------------------------------------------
 %files
 %doc README COPYING

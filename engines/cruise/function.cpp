@@ -950,7 +950,7 @@ int16 Op_ComputeLine(void) {
 	int x2 = popVar();
 	int y1 = popVar();
 	int x1 = popVar();
-	
+
 	point* pDest = (point*)popPtr();
 
 	int maxValue = cor_droite( x1, y1, x2, y2, pDest);
@@ -1382,7 +1382,7 @@ int16 Op_Strcat(void) {
 	while(*pSource)
 		*(pDest++) = *(pSource++);
 	*(pDest++) = '\0';
-	
+
 	return 0;
 }
 
@@ -1559,7 +1559,7 @@ int16 Op_UserWait(void)
 	return 0;
 }
 
-opcodeFunction opcodeTablePtr[] = 
+opcodeFunction opcodeTablePtr[] =
 {
 	NULL, // 0x00
 	Op_FadeIn,

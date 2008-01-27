@@ -120,13 +120,13 @@ public:
 	void updateAnim(int16 layer, int16 frame, int16 animation,
 			int16 flags, int16 drawDeltaX, int16 drawDeltaY, char doDraw);
 
-	void writeAnimLayerInfo(uint16 index, uint16 layer, 
+	void writeAnimLayerInfo(uint16 index, uint16 layer,
 			int16 varDX, int16 varDY, int16 varUnk0, int16 varFrames);
 	int16 getStaticLayersCount(uint16 index);
 	int16 getAnimLayersCount(uint16 index);
 	StaticLayer *getStaticLayer(uint16 index, uint16 layer);
 	AnimLayer *getAnimLayer(uint16 index, uint16 layer);
-	
+
 	virtual int16 loadAnim(char search);
 
 	Scenery(GobEngine *vm);

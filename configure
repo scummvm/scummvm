@@ -229,7 +229,7 @@ find_sdlconfig()
 	echo_n "Looking for sdl-config... "
 	sdlconfigs="$_sdlconfig:sdl-config:sdl11-config:sdl12-config"
 	_sdlconfig=
-	
+
 	IFS="${IFS=   }"; ac_save_ifs="$IFS"; IFS="$SEPARATOR"
 	for path_dir in $_sdlpath; do
 		#reset separator to parse sdlconfigs
@@ -243,9 +243,9 @@ find_sdlconfig()
 			fi
 		done
 	done
-	
+
 	IFS="$ac_save_ifs"
-	
+
 	if test -z "$_sdlconfig"; then
 		echo "none found!"
 		exit 1
@@ -255,8 +255,8 @@ find_sdlconfig()
 #
 # Function to provide echo -n for bourne shells that don't have it
 #
-echo_n() 
-{ 
+echo_n()
+{
 	printf "$@"
 }
 
@@ -297,7 +297,7 @@ CheckNASM()
 	fi
 
 	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
-		
+
 	for path_dir in $_nasmpath; do
 		if test -x "$path_dir/nasm" ; then
 			NASM="$path_dir/nasm"
@@ -305,7 +305,7 @@ CheckNASM()
 			break
 		fi
 	done
-		
+
 	IFS="$ac_save_ifs"
 
 	if test x$NASM = x -o x$NASM = x'"$NASM"'; then
@@ -766,7 +766,7 @@ arm-riscos)
 	;;
 gp2x-linux)
 	EXEEXT=".gp2x"
-	;;	
+	;;
 *)
 	EXEEXT=""
 	;;
@@ -838,7 +838,7 @@ case $cxx_version in
 		cxx_verc_fail=no
 		;;
 	# whacky beos version strings
-	2.9-beos-991026*|2.9-beos-000224*)	
+	2.9-beos-991026*|2.9-beos-000224*)
 		_cxx_major=2
 		_cxx_minor=95
 		cxx_version="$cxx_version, ok"
@@ -863,7 +863,7 @@ if test "$cxx_verc_fail" = yes ; then
 	echo
 	echo "The version of your compiler is not supported at this time"
 	echo "Please ensure you are using GCC >= 2.95"
-	exit 1	
+	exit 1
 fi
 
 #
@@ -927,19 +927,19 @@ type_1_byte=`find_type_with_size 1`
 TMP="$?"
 echo "$type_1_byte"
 test $TMP -eq 0 || exit 1	# check exit code of subshell
-	
+
 echo_n "Type with 2 bytes... "
 type_2_byte=`find_type_with_size 2`
 TMP="$?"
 echo "$type_2_byte"
 test $TMP -eq 0 || exit 1	# check exit code of subshell
-	
+
 echo_n "Type with 4 bytes... "
 type_4_byte=`find_type_with_size 4`
 TMP="$?"
 echo "$type_4_byte"
 test $TMP -eq 0 || exit 1	# check exit code of subshell
-	
+
 #
 # Check whether we can use x86 asm routines
 #
@@ -1044,7 +1044,7 @@ if test -n "$_host"; then
 			_backend="gp2x"
 			_mak_hq_scalers='DISABLE_HQ_SCALERS = 1'
 			_build_hq_scalers="no"
-			;;			
+			;;
 		ppc-amigaos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=big
@@ -1099,7 +1099,7 @@ if test -n "$_host"; then
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
 			;;
 	esac
-	
+
 else
 	#
 	# Check whether memory alignment is required
@@ -1224,7 +1224,7 @@ _def_plugin='
 '
 _mak_plugins='
 BUILD_PLUGINS := 1
-PLUGIN_PREFIX := 
+PLUGIN_PREFIX :=
 PLUGIN_SUFFIX := .plugin
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
 CXXFLAGS        += -DDYNAMIC_MODULES

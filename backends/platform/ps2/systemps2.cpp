@@ -204,7 +204,7 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 				}
 			} else
 				sioprintf("Module \"%s\" wasn't found: %d", modules[i].path, modules[i].errorCode);
-			
+
 			if ((modules[i].errorCode < 0) || (res < 0) || (rv < 0)) {
 				if (!(modules[i].fileRef->flags & OPTIONAL)) {
 					if (modules[i].errorCode < 0)
@@ -215,7 +215,7 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 					quit();
 				}
 			}
-			
+
 			if (modules[i].buffer);
 				free(modules[i].buffer);
 		} else {
@@ -475,7 +475,7 @@ void OSystem_PS2::soundThread(void) {
 				SjPCM_Enqueue((short int*)soundBufL, (short int*)soundBufR, SMP_PER_BLOCK, 0);
 				bufferedSamples += SMP_PER_BLOCK;
 			}
-		} 
+		}
 		SignalSema(_soundSema);
 	}
 	free(soundBufL);
@@ -710,7 +710,7 @@ void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
 		while ((*lnEnd) && (*lnEnd != '\n'))
 			lnEnd++;
 		*lnEnd = '\0';
-		
+
 		Common::String str(lnSta);
 		int width = Graphics::g_sysfont.getStringWidth(str);
 		if (width > maxWidth)

@@ -102,7 +102,7 @@ void CEDevice::init() {
 	backlight_xchg();
 	REG_tampered = true;
 	SystemParametersInfo(SPI_GETBATTERYIDLETIMEOUT, 0, (void *) &bat_timeout, 0);
-	SystemParametersInfo(SPI_SETBATTERYIDLETIMEOUT, 60 * 60 * 2, NULL, SPIF_SENDCHANGE);	
+	SystemParametersInfo(SPI_SETBATTERYIDLETIMEOUT, 60 * 60 * 2, NULL, SPIF_SENDCHANGE);
 }
 
 void CEDevice::end() {
@@ -110,7 +110,7 @@ void CEDevice::end() {
 		_ReleasePowerRequirement(_hPowerManagement);
 	if (REG_tampered)
 		backlight_xchg();
-	SystemParametersInfo(SPI_SETBATTERYIDLETIMEOUT, bat_timeout, NULL, SPIF_SENDCHANGE);	
+	SystemParametersInfo(SPI_SETBATTERYIDLETIMEOUT, bat_timeout, NULL, SPIF_SENDCHANGE);
 }
 
 void CEDevice::wakeUp() {

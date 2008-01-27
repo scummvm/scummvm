@@ -33,12 +33,12 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 	x &= 0xFFFC; toX &= 0xFFFC;
 	y &= 0xFFFE; toY &= 0xFFFE;
 	x = (int16)x; y = (int16)y; toX = (int16)toX; toY = (int16)toY;
-	
+
 	if (x == toY && y == toY) {
 		moveTable[0] = 8;
 		return 0;
 	}
-	
+
 	int curX = x;
 	int curY = y;
 	int tempValue = 0;
@@ -46,7 +46,7 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 	int *pathTable1 = new int[0x7D0];
 	int *pathTable2 = new int[0x7D0];
 	assert(pathTable1 && pathTable2);
-	
+
 	while (true) {
 		int newFacing = getFacingFromPointToPoint(x, y, toX, toY);
 		changePosTowardsFacing(curX, curY, newFacing);
@@ -86,7 +86,7 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 				screen()->updateScreen();
 				//waitTicks(5);
 			}*/
-			
+
 			if (!lineIsPassable(curX, curY)) {
 				if (curX != toX || curY != toY)
 					continue;
@@ -99,7 +99,7 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 					break;
 				}
 			}
-			
+
 			temp = findSubPath(x, y, curX, curY, pathTable1, 1, 0x7D0);
 			tempValue = findSubPath(x, y, curX, curY, pathTable2, 0, 0x7D0);
 			if (curX == toX && curY == toY) {
@@ -109,11 +109,11 @@ int KyraEngine::findWay(int x, int y, int toX, int toY, int *moveTable, int move
 					return 0x7D00;
 				}
 			}
-			
+
 			if (temp != 0x7D00 || tempValue != 0x7D00)
 				break;
 		}
-		
+
 		if (temp < tempValue) {
 			if (lastUsedEntry + temp > moveTableSize) {
 				delete [] pathTable1;
@@ -152,18 +152,18 @@ int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int 
 	static const int8 facingTable3[] = {  2,  4,  4,  6,  6,  0,  0,  2,  6,  6,  0,  0,  2,  2,  4,  4 };
 	static const int8 addPosTableX[] = { -1,  0, -1,  4, -1,  0, -1, -4, -1, -4, -1,  0, -1,  4, -1,  0 };
 	static const int8 addPosTableY[] = { -1,  2, -1,  0, -1, -2, -1,  0, -1,  0, -1,  2, -1,  0, -1, -2 };
-	
+
 	// debug specific
 	/*++unkTable[start];
 	while (screen()->getPalette(0)[unkTable[start]] != 0x0F) {
 		++unkTable[start];
 	}*/
-	
+
 	int xpos1 = x, xpos2 = x;
 	int ypos1 = y, ypos2 = y;
 	int newFacing = getFacingFromPointToPoint(x, y, toX, toY);
 	int position = 0;
-	
+
 	while (position != end) {
 		int newFacing2 = newFacing;
 		while (true) {
@@ -202,7 +202,7 @@ int KyraEngine::findSubPath(int x, int y, int toX, int toY, int *moveTable, int 
 
 		if (x == toX && y == toY)
 			return position;
-		
+
 		if (xpos1 == xpos2 && ypos1 == ypos2)
 			break;
 
@@ -217,21 +217,21 @@ int KyraEngine::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
 	static const int facingTable[] = {
 		1, 0, 1, 2, 3, 4, 3, 2, 7, 0, 7, 6, 5, 4, 5, 6
 	};
-	
+
 	int facingEntry = 0;
 	int ydiff = y - toY;
 	if (ydiff < 0) {
 		++facingEntry;
 		ydiff = -ydiff;
-	}	
+	}
 	facingEntry <<= 1;
-	
+
 	int xdiff = toX - x;
 	if (xdiff < 0) {
 		++facingEntry;
 		xdiff = -xdiff;
 	}
-	
+
 	if (xdiff >= ydiff) {
 		int temp = ydiff;
 		ydiff = xdiff;
@@ -243,7 +243,7 @@ int KyraEngine::getFacingFromPointToPoint(int x, int y, int toX, int toY) {
 		facingEntry += 1;
 	}
 	int temp = (ydiff + 1) >> 1;
-	
+
 	if (xdiff < temp) {
 		facingEntry <<= 1;
 		facingEntry += 1;
@@ -290,7 +290,7 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 	int retValue = 0;
 	if (moveTable[0] == 8)
 		return 0;
-	
+
 	static const int facingTable[] = {
 		4, 5, 6, 7, 0, 1, 2, 3
 	};
@@ -304,7 +304,7 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 		 7,  0, -1,  4,  5, -1, -1, -1,
 		-1, -1,  0, -1,  6, -1, -1, -1
 	};
-	
+
 	int *oldPosition = moveTable;
 	int *tempPosition = moveTable;
 	int *curPosition = moveTable + 1;
@@ -315,13 +315,13 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 			retValue -= 2;
 			*oldPosition = 9;
 			*curPosition = 9;
-			
+
 			while (tempPosition != moveTable) {
 				--tempPosition;
 				if (*tempPosition != 9)
 					break;
 			}
-			
+
 			if (tempPosition == moveTable && *tempPosition == 9) {
 				while (*tempPosition != 8 && *tempPosition == 9)
 					++tempPosition;
@@ -329,7 +329,7 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 				if (*tempPosition == 8)
 					return 0;
 			}
-			
+
 			oldPosition = tempPosition;
 			curPosition = oldPosition+1;
 
@@ -338,12 +338,12 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 
 			continue;
 		}
-		
+
 		if (unkTable[*curPosition+((*oldPosition)*8)] != -1) {
 			--retValue;
 			*oldPosition = unkTable[*curPosition+((*oldPosition)*8)];
 			*curPosition = 9;
-			
+
 			if (tempPosition != oldPosition) {
 				curPosition = oldPosition;
 				oldPosition = tempPosition;
@@ -365,7 +365,7 @@ int KyraEngine::getMoveTableSize(int *moveTable) {
 			}
 			continue;
 		}
-		
+
 		tempPosition = oldPosition;
 		oldPosition = curPosition;
 		++retValue;

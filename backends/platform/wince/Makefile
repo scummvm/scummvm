@@ -119,7 +119,7 @@ LIBS += -lzlib
 endif
 
 ifdef USE_MAD
-DEFINES += -DUSE_MAD 
+DEFINES += -DUSE_MAD
 LIBS += -lmad
 endif
 
@@ -157,17 +157,17 @@ endif
 
 EXECUTABLE = scummvm.exe
 CXXFLAGS := $(CFLAGS)
-OBJS := 
+OBJS :=
 MODULE_DIRS += .
 
 OBJS += CEActionsPocket.o CEDevice.o CEScaler.o \
-        CEActionsSmartphone.o CELauncherDialog.o wince-sdl.o 
+        CEActionsSmartphone.o CELauncherDialog.o wince-sdl.o
 OBJS += CEgui/GUIElement.o CEgui/Panel.o CEgui/SDL_ImageResource.o \
         CEgui/ItemAction.o CEgui/PanelItem.o CEgui/Toolbar.o \
-        CEgui/ItemSwitch.o CEgui/PanelKeyboard.o CEgui/ToolbarHandler.o 
+        CEgui/ItemSwitch.o CEgui/PanelKeyboard.o CEgui/ToolbarHandler.o
 OBJS += CEkeys/EventsBuffer.o
-OBJS += $(srcdir)/gui/Actions.o $(srcdir)/gui/Key.o $(srcdir)/gui/KeysDialog.o 
-OBJS += ../sdl/sdl.o ../sdl/graphics.o ../sdl/events.o 
+OBJS += $(srcdir)/gui/Actions.o $(srcdir)/gui/Key.o $(srcdir)/gui/KeysDialog.o
+OBJS += ../sdl/sdl.o ../sdl/graphics.o ../sdl/events.o
 OBJS += missing/missing.o
 OBJS += ARMscaler.o
 ifndef BUILD_PLUGINS

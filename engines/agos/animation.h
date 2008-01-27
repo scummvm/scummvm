@@ -51,7 +51,7 @@ class MoviePlayer : public Graphics::DXAPlayer {
 	bool _leftButtonDown;
 	bool _rightButtonDown;
 	uint32 _ticks;
-	
+
 	char baseName[40];
 	static const char *_sequenceList[90];
 	uint8 _sequenceNum;

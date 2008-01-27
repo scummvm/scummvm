@@ -59,6 +59,6 @@ const Game kyra2FloppyGames[] = {
 	{ kKyra2, DE_DEU, k2FloppyFile1, "0ca4f9a1438264a4c63c3218e064ed3b", kyra2File1G},
 	{ kKyra2, EN_ANY, k2FloppyFile2, "7c3eadbe5122722cf2e5e1611e19dfb9", kyra2File2E},
 	{ kKyra2, FR_FRA, k2FloppyFile2, "fc2c6782778e6c6d5a553d1cb73c98ad", kyra2File2F},
-	{ kKyra2, DE_DEU, k2FloppyFile2, "0d9b0eb7b0ad889ec942d74d80dde1bf", kyra2File2G},	
+	{ kKyra2, DE_DEU, k2FloppyFile2, "0d9b0eb7b0ad889ec942d74d80dde1bf", kyra2File2G},
 	GAME_DUMMY_ENTRY
 };

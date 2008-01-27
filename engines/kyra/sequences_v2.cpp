@@ -750,7 +750,7 @@ int KyraEngine_v2::seq_introForest(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 		seq_waitForTextsTimeout();
 	} else if (frm == 12) {
 		//if (_flags.lang == Common::FR_FRA)
-		//XXX	
+		//XXX
 		seq_playTalkText(2);
 	}
 	return frm;
@@ -874,7 +874,7 @@ int KyraEngine_v2::seq_finaleFunters(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 				chatFirstFrame = 0;
 				chatLastFrame = 8;
 				voiceIndex = 35;
-			} else {				
+			} else {
 				chatFirstFrame = 9;
 				chatLastFrame = 15;
 			}
@@ -963,7 +963,7 @@ int KyraEngine_v2::seq_finaleFerb(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			chatX = 60;
 
 			if (_flags.isTalkie)
-				voiceIndex = 36;			
+				voiceIndex = 36;
 
 			seq_playWsaSyncDialogue(25, voiceIndex, 143, chatX, chatY, chatW, wsaObj, 16, 25, x, y);
 			_seqFrameDelay = 16;
@@ -1186,7 +1186,7 @@ int KyraEngine_v2::seq_finaleFarmer(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			chatX = 90;
 			chatY = 30;
 			chatW = 100;
-			
+
 			if (_flags.isTalkie) {
 				if (_flags.lang == Common::FR_FRA || _flags.lang == Common::DE_DEU) {
 					chatX = 75;
@@ -1363,7 +1363,7 @@ int KyraEngine_v2::seq_finaleFirates(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 
 			if (_flags.isTalkie)
 				voiceIndex = 43;
-			
+
 			seq_playWsaSyncDialogue(32, voiceIndex, 137, chatX, chatY, chatW, wsaObj, 14, 16, x, y);
 			break;
 
@@ -1376,7 +1376,7 @@ int KyraEngine_v2::seq_finaleFirates(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 			break;
 
 		case 31:
-			if (_flags.isTalkie)				
+			if (_flags.isTalkie)
 				voiceIndex = 44;
 
 			chatX = 90;

@@ -122,7 +122,7 @@ int KyraEngine_v1::buttonAmuletCallback(Button *caller) {
 	}
 	if (queryGameFlag(0xF1)) {
 		assert(_waitForAmulet);
-		characterSays(2001, _waitForAmulet[0], 0, -2);	
+		characterSays(2001, _waitForAmulet[0], 0, -2);
 		return 1;
 	}
 	if (!queryGameFlag(0x55+jewel)) {
@@ -135,18 +135,18 @@ int KyraEngine_v1::buttonAmuletCallback(Button *caller) {
 	drawJewelPress(jewel, 0);
 	drawJewelsFadeOutStart();
 	drawJewelsFadeOutEnd(jewel);
-	
+
 	_scriptInterpreter->initScript(_scriptClick, _scriptClickData);
 	_scriptClick->regs[3] = 0;
 	_scriptClick->regs[6] = jewel;
 	_scriptInterpreter->startScript(_scriptClick, 4);
-	
+
 	while (_scriptInterpreter->validScript(_scriptClick))
 		_scriptInterpreter->runScript(_scriptClick);
-	
+
 	if (_scriptClick->regs[3])
 		return 1;
-	
+
 	_unkAmuletVar = 1;
 	switch (jewel-1) {
 	case 0:
@@ -158,7 +158,7 @@ int KyraEngine_v1::buttonAmuletCallback(Button *caller) {
 			characterSays(2003, _healingTip[0], 0, -2);
 		}
 		break;
-		
+
 	case 1:
 		seq_makeBrandonInv();
 		break;
@@ -192,7 +192,7 @@ int KyraEngine_v1::buttonAmuletCallback(Button *caller) {
 		assert(_magicJewelString);
 		characterSays(2007, _magicJewelString[0], 0, -2);
 		break;
-		
+
 	default:
 		break;
 	}
@@ -213,7 +213,7 @@ void KyraEngine_v1::processButtonList(Button *list) {
 			list = list->nextButton;
 			continue;
 		}
-		
+
 		int x = list->x;
 		int y = list->y;
 		assert(list->dimTableIndex < _screen->_screenDimTableCount);
@@ -221,12 +221,12 @@ void KyraEngine_v1::processButtonList(Button *list) {
 			x += _screen->_screenDimTable[list->dimTableIndex].w << 3;
 		}
 		x += _screen->_screenDimTable[list->dimTableIndex].sx << 3;
-		
+
 		if (y < 0) {
 			y += _screen->_screenDimTable[list->dimTableIndex].h;
 		}
 		y += _screen->_screenDimTable[list->dimTableIndex].sy;
-		
+
 		Common::Point mouse = getMousePos();
 		if (mouse.x >= x && mouse.y >= y && x + list->width >= mouse.x && y + list->height >= mouse.y) {
 			int processMouseClick = 0;
@@ -248,7 +248,7 @@ void KyraEngine_v1::processButtonList(Button *list) {
 			} else if (_mousePressFlag) {
 				processMouseClick = 1;
 			}
-				
+
 			if (processMouseClick) {
 				if (list->buttonCallback) {
 					if ((this->*(list->buttonCallback))(list)) {
@@ -269,7 +269,7 @@ void KyraEngine_v1::processButtonList(Button *list) {
 			list = list->nextButton;
 			continue;
 		}
-		
+
 		list = list->nextButton;
 	}
 }
@@ -277,11 +277,11 @@ void KyraEngine_v1::processButtonList(Button *list) {
 void KyraEngine_v1::processButton(Button *button) {
 	if (!button)
 		return;
-	
+
 	int processType = 0;
 	uint8 *shape = 0;
 	Button::ButtonCallback callback = 0;
-	
+
 	int flags = (button->flags2 & 5);
 	if (flags == 1) {
 		processType = button->process2;
@@ -302,16 +302,16 @@ void KyraEngine_v1::processButton(Button *button) {
 		else if (processType == 4)
 			callback = button->process0PtrCallback;
 	}
-	
+
 	int x = button->x;
 	int y = button->y;
 	assert(button->dimTableIndex < _screen->_screenDimTableCount);
 	if (x < 0)
 		x += _screen->_screenDimTable[button->dimTableIndex].w << 3;
-	
+
 	if (y < 0)
 		y += _screen->_screenDimTable[button->dimTableIndex].h;
-	
+
 	if (processType == 1 && shape)
 		_screen->drawShape(_screen->_curPage, shape, x, y, button->dimTableIndex, 0x10);
 	else if (processType == 4 && callback)
@@ -370,7 +370,7 @@ int KyraEngine_v1::drawBoxCallback(Button *button) {
 int KyraEngine_v1::drawShadedBoxCallback(Button *button) {
 	if (!_displayMenu)
 		return 0;
-	
+
 	_screen->hideMouse();
 	_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 0xf9, 0xfa);
 	_screen->showMouse();
@@ -386,7 +386,7 @@ void KyraEngine_v1::setGUILabels() {
 
 	int walkspeedGarbageOffset = 36;
 	int menuLabelGarbageOffset = 0;
-	
+
 	if (_flags.isTalkie) {
 		if (_flags.lang == Common::EN_ANY)
 			offset = 52;
@@ -409,7 +409,7 @@ void KyraEngine_v1::setGUILabels() {
 	}
 
 	assert(offset + 27 < _guiStringsSize);
-		
+
 	// The Legend of Kyrandia
 	_menu[0].menuName = _guiStrings[0];
 	// Load a Game
@@ -425,7 +425,7 @@ void KyraEngine_v1::setGUILabels() {
 
 	// Cancel
 	_menu[2].item[5].itemString = _guiStrings[10];
-	
+
 	// Enter a description of your saved game:
 	_menu[3].menuName = _guiStrings[11];
 	// Save
@@ -439,14 +439,14 @@ void KyraEngine_v1::setGUILabels() {
 	_menu[4].item[0].itemString = _guiStrings[1];
 	// Quit playing
 	_menu[4].item[1].itemString = _guiStrings[4];
-	
+
 	// Game Controls
 	_menu[5].menuName = _guiStrings[6];
 	// Yes
 	_menu[1].item[0].itemString = _guiStrings[22 + offset];
 	// No
 	_menu[1].item[1].itemString = _guiStrings[23 + offset];
-		
+
 	// Music is
 	_menu[5].item[0].labelString = _guiStrings[26 + offsetOptions];
 	// Sounds are
@@ -457,7 +457,7 @@ void KyraEngine_v1::setGUILabels() {
 	_menu[5].item[4].labelString = _guiStrings[25 + offsetOptions];
 	// Main Menu
 	_menu[5].item[5].itemString = &_guiStrings[19 + offsetMainMenu][menuLabelGarbageOffset];
-	
+
 	if (_flags.isTalkie)
 		// Text & Voice
 		_voiceTextString = _guiStrings[28 + offset];
@@ -473,7 +473,7 @@ int KyraEngine_v1::buttonMenuCallback(Button *caller) {
 
 	assert(_guiStrings);
 	assert(_configStrings);
-	
+
 	/*
 	for (int i = 0; i < _guiStringsSize; i++)
 		debug("GUI string %i: %s", i, _guiStrings[i]);
@@ -481,7 +481,7 @@ int KyraEngine_v1::buttonMenuCallback(Button *caller) {
 	for (int i = 0; i < _configStringsSize; i++)
 		debug("Config string %i: %s", i, _configStrings[i]);
 	*/
-	
+
 	setGUILabels();
 	if (_currentCharacter->sceneId == 210 && _deathHandler == 0xFF) {
 		snd_playSoundEffect(0x36);
@@ -505,7 +505,7 @@ int KyraEngine_v1::buttonMenuCallback(Button *caller) {
 	_menuRestoreScreen = true;
 	_keyPressed.reset();
 	_mousePressFlag = false;
-	
+
 	_toplevelMenu = 0;
 	if (_menuDirectlyToLoad) {
 		gui_loadGameMenu(0);
@@ -558,7 +558,7 @@ void KyraEngine_v1::initMenu(Menu &menu) {
 	_text->printText(menu.menuName, textX - 1, textY + 1, 12, 248, 0);
 	_text->printText(menu.menuName, textX, textY, menu.textColor, 0, 0);
 
-	int x1, y1, x2, y2;	
+	int x1, y1, x2, y2;
 	for (int i = 0; i < menu.nrOfItems; i++) {
 		if (!menu.item[i].enabled)
 			continue;
@@ -618,7 +618,7 @@ void KyraEngine_v1::initMenu(Menu &menu) {
 		_scrollUpButton.nextButton = 0;
 		_menuButtonList = initButton(_menuButtonList, &_scrollUpButton);
 		processMenuButton(&_scrollUpButton);
-		
+
 		_scrollDownButton.x = menu.scrollDownBtnX + menu.x;
 		_scrollDownButton.y = menu.scrollDownBtnY + menu.y;
 		_scrollDownButton.buttonCallback = &KyraEngine_v1::gui_scrollDown;
@@ -638,12 +638,12 @@ void KyraEngine_v1::calcCoords(Menu &menu) {
 
 	int widthBackup = _screen->_charWidth;
 	_screen->_charWidth = -2;
-	
+
 	menu.x = (320 - menu.width)/2;
 
-	int menu_x2 = menu.width  + menu.x - 1;	
+	int menu_x2 = menu.width  + menu.x - 1;
 	int maxOffset = 0;
-	int x1, x2, y1, y2;	
+	int x1, x2, y1, y2;
 
 	for (int i = 0; i < menu.nrOfItems; i++) {
 		if (menu.item[i].x == -1)
@@ -665,18 +665,18 @@ void KyraEngine_v1::calcCoords(Menu &menu) {
 					maxOffset = offset;
 			}
 		}
-		
+
 		if (menu.item[i].itemString) {
 			int textWidth = _screen->getTextWidth(menu.item[i].itemString) + 15;
 
 			if (menu.item[i].width < textWidth) {
 				menu.item[i].width = textWidth;
-				
+
 				if ( menu.x + menu.item[i].x + menu.item[i].width > menu_x2)
 					menu.item[i].x -= (menu.x + menu.item[i].x + menu.item[i].width) - menu_x2 + 10;
 			}
-		}	
-		
+		}
+
 	}
 
 	if (maxOffset > 0) {
@@ -687,7 +687,7 @@ void KyraEngine_v1::calcCoords(Menu &menu) {
 		}
 		menu.width += maxOffset;
 	}
-	
+
 	if (menu.menuName != 0) {
 		int menuNameLength = _screen->getTextWidth(menu.menuName);
 		if (menuNameLength  > menu.width)
@@ -698,10 +698,10 @@ void KyraEngine_v1::calcCoords(Menu &menu) {
 		menu.width = 310;
 
 	menu.x = (320 - menu.width)/2;
-			
+
 	if (menu.y == -1)
 		menu.y = (200 - menu.height)/2;
-		
+
 	_screen->_charWidth = widthBackup;
 }
 
@@ -1030,7 +1030,7 @@ bool KyraEngine_v1::gui_quitConfirm(const char *str) {
 	_menu[1].menuName = str;
 	calcCoords(_menu[1]);
 	initMenu(_menu[1]);
-	
+
 	_displaySubMenu = true;
 	_cancelSubMenu = true;
 
@@ -1162,7 +1162,7 @@ void KyraEngine_v1::gui_setupControls(Menu &menu) {
 	if (_flags.isTalkie) {
 		textControl = 4;
 		clickableOffset = 11;
-		
+
 		if (_configVoice == 0)
 			_menu[5].item[4].enabled = 1;
 		else
@@ -1297,7 +1297,7 @@ void KyraEngine_v1::gui_processHighlights(Menu &menu) {
 
 		if (mouse.x > x1 && mouse.x < x2 &&
 			mouse.y > y1 && mouse.y < y2) {
-			
+
 			if (menu.highlightedItem != i) {
 				if (menu.item[menu.highlightedItem].enabled )
 					gui_redrawText(menu);
@@ -1410,4 +1410,4 @@ void KyraEngine_v1::drawAmulet() {
 }
 
 } // end of namespace Kyra
- 
+

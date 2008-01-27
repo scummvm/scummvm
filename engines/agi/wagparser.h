@@ -26,7 +26,7 @@
 namespace Agi {
 
 /**
- * WagProperty represents a single property from WinAGI's *.wag file. 
+ * WagProperty represents a single property from WinAGI's *.wag file.
  * A property consists of a header and of data.
  * The header consists of the following:
  * - Property code (Integer/Enumeration, 1 byte)
@@ -62,7 +62,7 @@ public:
 		PC_VIEW = 240,
 		PC_UNDEFINED = 0x100 ///< An undefined property code (Added for ScummVM).
 	};
-	
+
 	/**
 	 * Property types taken from WinAGI 1.1.21's source code file WinAGI/AGIObjects.bas.
 	 * At the moment these aren't really at all needed by ScummVM. Just here if anyone decides to use them.
@@ -97,7 +97,7 @@ public:
 	 * No property header or property data in it.
 	 */
 	WagProperty();
-	
+
 	/**
 	 * Destructor. Releases allocated memory if any etc. The usual.
 	 */
@@ -119,7 +119,7 @@ protected:
 	 * Sets the default values for member variables.
 	 */
 	void setDefaults();
-	
+
 	/**
 	 * Delete's the property's data from memory if we have it, otherwise does nothing.
 	 */
@@ -138,7 +138,7 @@ public:
 	 * @return True if reading was a success, false otherwise.
 	 */
 	bool read(Common::SeekableReadStream &stream);
-	
+
 	/**
 	 * Clears the property.
 	 * After this the property is empty. No header or data.
@@ -146,7 +146,7 @@ public:
 	void clear();
 
 // Public access functions
-public:	
+public:
 	/**
 	 * Was the property read ok from the source stream?
 	 */
@@ -157,25 +157,25 @@ public:
 	 * @return The property's code if readOk(), PC_UNDEFINED otherwise.
 	 */
 	enum WagPropertyCode getCode() const { return _propCode; };
-	
+
 	/**
 	 * Return the property's type.
 	 * @return The property's type if readOk(), PT_UNDEFINED otherwise.
-	 */	
+	 */
 	enum WagPropertyType getType() const { return _propType; };
-	
+
 	/**
 	 * Return the property's number.
 	 * @return The property's number if readOk(), 0 otherwise.
-	 */	
+	 */
 	byte getNumber() const { return _propNum; };
-	
+
 	/**
 	 * Return the property's data's length.
 	 * @return The property's data's length if readOk(), 0 otherwise.
 	 */
 	uint16 getSize() const { return _propSize; }
-	
+
 	/**
 	 * Return property's data. Constant access version.
 	 * Can be used as a C-style string (i.e. this is guaranteed to have a trailing zero).
@@ -200,16 +200,16 @@ protected:
  */
 class WagFileParser {
 // Constants, type definitions, enumerations etc.
-public:	
-	static const uint WINAGI_VERSION_LENGTH = 16; ///< WinAGI's version string's length (Always 16)	
+public:
+	static const uint WINAGI_VERSION_LENGTH = 16; ///< WinAGI's version string's length (Always 16)
 	typedef Common::Array<WagProperty> PropertyList; ///< A type definition for an array of *.wag file properties
-	
+
 public:
 	/**
 	 * Constructor. Creates a WagFileParser object in a default state.
 	 */
 	WagFileParser();
-	
+
 	/**
 	 * Destructor.
 	 */
@@ -220,7 +220,7 @@ public:
 	 * @note After this you can access the loaded properties using getProperty() and getProperties() etc.
 	 * @param filename Name of the file to be parsed.
 	 * @return True if parsed successfully, false otherwise.
-	 */	
+	 */
 	bool parse(const char *filename);
 
 	/**
@@ -229,7 +229,7 @@ public:
 	 * @return The list of loaded properties.
 	 */
 	const PropertyList &getProperties() const { return _propList; };
-	
+
 	/**
 	 * Get property with the given property code.
 	 * @note Use only after a call to parse() first.
@@ -257,7 +257,7 @@ public:
 	 * @return AGI interpreter version number if successful, 0 otherwise.
 	 */
 	uint16 convertToAgiVersionNumber(const WagProperty &version);
-	
+
 	/**
 	 * Was the file parsed successfully?
 	 * @return True if file was parsed successfully, false otherwise.

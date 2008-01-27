@@ -74,11 +74,11 @@ static void Go() {
 	int argc;
 
 #ifdef DEBUG_ARM
-// Tell the debugger we want to enable full debugging 
-	UInt32 flags = AdnDebugEnableGet(); 
-	flags |= kAdnEnableMasterSwitch | kAdnEnableFullDebugging; 
-	AdnDebugEnableSet(flags); 
-// Tell the debugger where our code lives in memory: 
+// Tell the debugger we want to enable full debugging
+	UInt32 flags = AdnDebugEnableGet();
+	flags |= kAdnEnableMasterSwitch | kAdnEnableFullDebugging;
+	AdnDebugEnableSet(flags);
+// Tell the debugger where our code lives in memory:
 	AdnDebugNativeRegister(sysFileTApplication, appFileCreator, 'ARMC', 1);
 #endif
 
@@ -102,9 +102,9 @@ static void Go() {
 	if (HWR_INIT(INIT_VIBRATOR))	gVars->vibrator =	RumbleInit();
 
 	// run ...
-	DO_EXIT ( palm_main(argc, argvP); )	
+	DO_EXIT ( palm_main(argc, argvP); )
 
-	// release 
+	// release
 	if (HWR_INIT(INIT_VIBRATOR))	RumbleRelease();
 	stdio_release();
 
@@ -118,7 +118,7 @@ static void Go() {
 Int8 *g_newStack, *g_newStackPos;
 void *g_oldStack;
 
-static asm void *StkSwap(void *newStack ,void *dummy) {	
+static asm void *StkSwap(void *newStack ,void *dummy) {
 	mov  r1, r13
 	mov  r13, r0
 	mov	 r0, r1
@@ -134,7 +134,7 @@ extern UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags) {
 		g_newStack = (Int8 *)malloc(g_stackSize + 8);
 		g_newStackPos = (g_newStack + g_stackSize);
 		g_newStackPos -= ((UInt32)g_newStackPos & 7);
-		
+
 		g_oldStack = StkSwap(g_newStackPos, 0);
 
 		Go();

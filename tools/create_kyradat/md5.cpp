@@ -243,7 +243,7 @@ bool md5_file(const char *name, uint8 digest[16], uint32 length) {
 
 	md5_starts(&ctx);
 
-	
+
 	while ((i = (uint32)fread(buf, 1, readlen, f)) > 0) {
 		md5_update(&ctx, buf, i);
 

@@ -66,8 +66,8 @@
 	// all of these to my own code.
 	//
 	// A #define is the only way, as redefinig the functions would cause linker errors.
-	
-	// These functions need to be #undef'ed, as their original definition 
+
+	// These functions need to be #undef'ed, as their original definition
 	// in devkitarm is done with #includes (ugh!)
 	#undef feof
 	#undef clearerr
@@ -75,7 +75,7 @@
 	//#undef ferror
 
 	#include "backends/fs/ds/ds-fs.h"
-	
+
 
 	//void 	std_fprintf(FILE* handle, const char* fmt, ...);	// used in common/util.cpp
 	//void 	std_fflush(FILE* handle);	// used in common/util.cpp
@@ -85,7 +85,7 @@
 	//char* 	std_getcwd(char* dir, int dunno);	// not used
 	//void 	std_cwd(char* dir);	// not used
 	//int 	std_ferror(FILE* handle);	// not used
-	
+
 	// Only functions used in the ScummVM source have been defined here!
 	#define fopen(name, mode) 					DS::std_fopen(name, mode)
 	#define fclose(handle) 						DS::std_fclose(handle)
@@ -111,9 +111,9 @@
 #ifdef __SYMBIAN32__
 	#undef feof
 	#undef clearerr
-	
+
 	#define FILE void
-	
+
 	FILE* 	symbian_fopen(const char* name, const char* mode);
 	void 	symbian_fclose(FILE* handle);
 	size_t 	symbian_fread(const void* ptr, size_t size, size_t numItems, FILE* handle);
@@ -230,7 +230,7 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 
 	FSList fslist;
 	if (!dir.getChildren(fslist, FilesystemNode::kListAll)) {
-		// Failed listing the contents of this node, so it is either not a 
+		// Failed listing the contents of this node, so it is either not a
 		// directory, or just doesn't exist at all.
 		return;
 	}
@@ -265,7 +265,7 @@ void File::addDefaultDirectoryRecursive(const FilesystemNode &dir, int level, co
 void File::resetDefaultDirectories() {
 	delete _defaultDirectories;
 	delete _filesMap;
-	
+
 	_defaultDirectories = 0;
 	_filesMap = 0;
 }
@@ -417,27 +417,27 @@ bool File::exists(const String &filename) {
 	FilesystemNode file(filename);
 	if (file.exists())
 		return !file.isDirectory();
-	
+
 	// See if the file is already mapped
 	if (_filesMap && _filesMap->contains(filename)) {
 		FilesystemNode file2((*_filesMap)[filename]);
-		
+
 		if (file2.exists())
 			return !file2.isDirectory();
 	}
-	
+
 	// Try all default directories
 	if (_defaultDirectories) {
 		StringIntMap::const_iterator i(_defaultDirectories->begin());
 		for (; i != _defaultDirectories->end(); ++i) {
 			FilesystemNode file2(i->_key + filename);
-			
+
 			if(file2.exists())
 				return !file2.isDirectory();
 		}
 	}
-	
-	//Try opening the file inside the local directory as a last resort	
+
+	//Try opening the file inside the local directory as a last resort
 	File tmp;
 	return tmp.open(filename, kFileReadMode);
 }

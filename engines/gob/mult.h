@@ -197,7 +197,7 @@ public:
 
 		int16 sndSlotsCount;
 		int16 sndSlot[60];
-		int16 frameRate;      
+		int16 frameRate;
 
 		Video::Color fadePal[5][16];
 		int16 animObjs[4][4];

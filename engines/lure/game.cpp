@@ -63,7 +63,7 @@ Game::~Game() {
 void Game::tick() {
 	// Call the tick method for each hotspot - this is somewaht complicated
 	// by the fact that a tick proc can unload both itself and/or others,
-	// so we first get a list of the Ids, and call the tick proc for each 
+	// so we first get a list of the Ids, and call the tick proc for each
 	// id in sequence if it's still active
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
@@ -74,7 +74,7 @@ void Game::tick() {
 	for (i = res.activeHotspots().begin(); i != res.activeHotspots().end(); ++i) {
 		Hotspot *hotspot = *i;
 
-		if (!_preloadFlag || ((hotspot->layer() != 0xff) && 
+		if (!_preloadFlag || ((hotspot->layer() != 0xff) &&
 			(hotspot->hotspotId() < FIRST_NONCHARACTER_ID)))
 			// Add hotspot to list to execute
 			idList[idSize++] = hotspot->hotspotId();
@@ -100,7 +100,7 @@ void Game::tickCheck() {
 
 	_state |= GS_TICK;
 	if ((room.roomNumber() == ROOMNUM_VILLAGE_SHOP) && !remoteFlag && ((_state & GS_TICK) != 0)) {
-		// In the village shop, 
+		// In the village shop,
 		bool tockFlag = (_state & GS_TOCK) != 0;
 		Sound.addSound(tockFlag ? 16 : 50);
 
@@ -112,7 +112,7 @@ void Game::nextFrame() {
 	Resources &res = Resources::getReference();
 	Room &room = Room::getReference();
 
-	if (Fights.isFighting()) 
+	if (Fights.isFighting())
 		Fights.fightLoop();
 
 	res.pausedList().countdown();
@@ -139,11 +139,11 @@ void Game::execute() {
 	screen.setPaletteEmpty();
 
 	// Flag for starting game
-	setState(GS_RESTART); 
+	setState(GS_RESTART);
 	bool initialRestart = true;
 
 	while (!events.quitFlag) {
-		
+
 		if ((_state & GS_RESTART) != 0) {
 			res.reset();
 			Fights.reset();
@@ -208,8 +208,8 @@ void Game::execute() {
 
 					case Common::KEYCODE_KP_PLUS:
 						if (_debugFlag) {
-							while (++roomNum <= 51) 
-								if (res.getRoom(roomNum) != NULL) break; 
+							while (++roomNum <= 51)
+								if (res.getRoom(roomNum) != NULL) break;
 							if (roomNum == 52) roomNum = 1;
 							room.setRoomNumber(roomNum);
 						}
@@ -224,14 +224,14 @@ void Game::execute() {
 						break;
 
 					case Common::KEYCODE_KP_MULTIPLY:
-						if (_debugFlag) 
+						if (_debugFlag)
 							res.getActiveHotspot(PLAYER_ID)->setRoomNumber(
 								room.roomNumber());
 						break;
 
 					case Common::KEYCODE_KP_DIVIDE:
 					case Common::KEYCODE_SLASH:
-						if (_debugFlag) 
+						if (_debugFlag)
 							room.setShowInfo(!room.showInfo());
 						break;
 
@@ -247,7 +247,7 @@ void Game::execute() {
 				}
 
 				if ((events.type() == Common::EVENT_LBUTTONDOWN) ||
-					(events.type() == Common::EVENT_RBUTTONDOWN)) 
+					(events.type() == Common::EVENT_RBUTTONDOWN))
 					handleClick();
 			}
 
@@ -287,7 +287,7 @@ void Game::execute() {
 
 		// If the Restart/Restore dialog is needed, show it
 		if ((_state & GS_RESTORE) != 0) {
-			// Show the Restore/Restart dialog 
+			// Show the Restore/Restart dialog
 			bool restartFlag = RestartRestoreDialog::show();
 
 			if (restartFlag)
@@ -307,7 +307,7 @@ void Game::handleMenuResponse(uint8 selection) {
 		doShowCredits();
 		break;
 
-	case MENUITEM_RESTART_GAME: 
+	case MENUITEM_RESTART_GAME:
 		doRestart();
 		break;
 
@@ -315,7 +315,7 @@ void Game::handleMenuResponse(uint8 selection) {
 		SaveRestoreDialog::show(true);
 		break;
 
-	case MENUITEM_RESTORE_GAME: 
+	case MENUITEM_RESTORE_GAME:
 		SaveRestoreDialog::show(false);
 		break;
 
@@ -355,7 +355,7 @@ void Game::playerChangeRoom() {
 		displayChuteAnimation();
 	else if (animFlag != 0)
 		displayBarrelAnimation();
-	
+
 	fields.setField(ROOM_EXIT_ANIMATION, 0);
 	roomData->exitTime = g_system->getMillis();
 
@@ -373,7 +373,7 @@ void Game::playerChangeRoom() {
 		if (v != 0) {
 			--v;
 			fields.setField(29, v);
-			if (v == 0) 
+			if (v == 0)
 				res.delayList().add(2, 0xCB7, false);
 		}
 	}
@@ -395,12 +395,12 @@ void Game::displayChuteAnimation() {
 	AnimationSequence *anim = new AnimationSequence(CHUTE_ANIM_ID, palette, false);
 	anim->show();
 	delete anim;
-	
-	anim = new AnimationSequence(CHUTE2_ANIM_ID, palette, false);	
+
+	anim = new AnimationSequence(CHUTE2_ANIM_ID, palette, false);
 	anim->show();
 	delete anim;
 
-	anim = new AnimationSequence(CHUTE3_ANIM_ID, palette, false);	
+	anim = new AnimationSequence(CHUTE3_ANIM_ID, palette, false);
 	anim->show();
 	delete anim;
 
@@ -442,7 +442,7 @@ void Game::handleClick() {
 		// Viewing a room remotely - handle returning to prior room
 		if ((room.roomNumber() != 35) || (fields.getField(87) == 0)) {
 			// Reset player tick proc and signal to change back to the old room
-			res.getActiveHotspot(PLAYER_ID)->setTickProc(PLAYER_TICK_PROC_ID); 
+			res.getActiveHotspot(PLAYER_ID)->setTickProc(PLAYER_TICK_PROC_ID);
 			fields.setField(NEW_ROOM_NUMBER, oldRoomNumber);
 			fields.setField(OLD_ROOM_NUMBER, 0);
 		}
@@ -454,7 +454,7 @@ void Game::handleClick() {
 		if (response != MENUITEM_NONE)
 			handleMenuResponse(response);
 	} else if ((room.cursorState() == CS_SEQUENCE) ||
-			   (room.cursorState() == CS_BUMPED)) { 
+			   (room.cursorState() == CS_BUMPED)) {
 		// No action necessary
 	} else {
 		if (mouse.lButton())
@@ -489,7 +489,7 @@ void Game::handleRightClickMenu() {
 	}
 
 	// If no inventory items remove entries that require them
-	if (res.numInventoryItems() == 0) 
+	if (res.numInventoryItems() == 0)
 		actions &= 0xFEF3F9FD;
 
 	// If the player hasn't any money, remove any bribe entry
@@ -556,16 +556,16 @@ void Game::handleRightClickMenu() {
 					hotspot = res.getHotspot(room.hotspotId());
 				itemId = PopupMenu::ShowInventory();
 				breakFlag = (itemId != 0xffff);
-				if (breakFlag) { 
+				if (breakFlag) {
 					fields.setField(USE_HOTSPOT_ID, itemId);
 					if ((action == GIVE) || (action == USE)) {
 						// Add in the "X to " or "X on " section of give/use action
 						useHotspot = res.getHotspot(itemId);
 						assert(useHotspot);
 						strings.getString(useHotspot->nameId, statusLine);
-						if (action == GIVE) 
+						if (action == GIVE)
 							strcat(statusLine, stringList.getString(S_TO));
-						else 
+						else
 							strcat(statusLine, stringList.getString(S_ON));
 						statusLine += strlen(statusLine);
 					}
@@ -621,7 +621,7 @@ void Game::handleLeftClick() {
 	player->setActionCtr(0);
 	strcpy(room.statusLine(), "");
 
-	if ((room.destRoomNumber() == 0) && (room.hotspotId() != 0)) {	
+	if ((room.destRoomNumber() == 0) && (room.hotspotId() != 0)) {
 		// Handle look at hotspot
 		sprintf(room.statusLine(), "%s ", stringList.getString(LOOK_AT));
 		HotspotData *hotspot = res.getHotspot(room.hotspotId());
@@ -631,10 +631,10 @@ void Game::handleLeftClick() {
 
 	} else if (room.destRoomNumber() != 0) {
 		// Walk to another room
-		RoomExitCoordinateData &exitData = 
+		RoomExitCoordinateData &exitData =
 			res.coordinateList().getEntry(room.roomNumber()).getData(room.destRoomNumber());
 
-		player->walkTo((exitData.x & 0xfff8) | 5, (exitData.y & 0xfff8), 
+		player->walkTo((exitData.x & 0xfff8) | 5, (exitData.y & 0xfff8),
 			room.hotspotId() == 0 ? 0xffff : room.hotspotId());
 	} else {
 		// Walking within room
@@ -670,7 +670,7 @@ bool Game::GetTellActions() {
 
 	while ((_numTellCommands >= 0) && (_numTellCommands < MAX_TELL_COMMANDS)) {
 
-		// Loop for each sub-part of commands: Action, up to two params, and 
+		// Loop for each sub-part of commands: Action, up to two params, and
 		// a "and then" selection to allow for more commands
 
 		while ((paramIndex >= 0) && (paramIndex <= 4)) {
@@ -687,7 +687,7 @@ bool Game::GetTellActions() {
 				if (action == NONE) {
 					// Move backwards to prior specified action
 					--_numTellCommands;
-					if (_numTellCommands < 0) 
+					if (_numTellCommands < 0)
 						paramIndex = -1;
 					else {
 						paramIndex = 3;
@@ -709,10 +709,10 @@ bool Game::GetTellActions() {
 
 			case 1:
 				// First parameter
-				action = (Action) commands[_numTellCommands * 3]; 
+				action = (Action) commands[_numTellCommands * 3];
 				if (action != RETURN) {
 					// Prompt for selection
-					if ((action != USE) && (action != DRINK) && (action != GIVE)) 
+					if ((action != USE) && (action != DRINK) && (action != GIVE))
 						selectionId = PopupMenu::ShowItems(action, *roomList.begin());
 					else
 						selectionId = PopupMenu::ShowItems(GET, *roomList.begin());
@@ -724,7 +724,7 @@ bool Game::GetTellActions() {
 						*statusLine = '\0';
 						break;
 					}
-							
+
 					if (selectionId < NOONE_ID) {
 						// Must be a room selection
 						strings.getString(selectionId, selectionName);
@@ -745,7 +745,7 @@ bool Game::GetTellActions() {
 
 			case 2:
 				// Second parameter
-				action = (Action) commands[_numTellCommands * 3]; 
+				action = (Action) commands[_numTellCommands * 3];
 				if (action == ASK)
 					strcat(statusLine, stringList.getString(S_FOR));
 				else if (action == GIVE)
@@ -803,7 +803,7 @@ bool Game::GetTellActions() {
 
 					default:
 						// Move to end of just completed command
-						action = (Action) commands[_numTellCommands * 3]; 
+						action = (Action) commands[_numTellCommands * 3];
 						if (action == RETURN)
 							paramIndex = 0;
 						else if ((action == ASK) || (action == GIVE) || (action == USE))
@@ -870,18 +870,18 @@ void Game::doShowCredits() {
 
 	Sound.pause();
 	mouse.cursorOff();
-	
+
 	Surface *s = Surface::getScreen(CREDITS_RESOURCE_ID);
-	
+
 	if (isEGA) {
 		s->copyToScreen(0, 0);
 	} else {
 		Palette p(CREDITS_RESOURCE_ID - 1);
 		screen.setPaletteEmpty();
 		s->copyToScreen(0, 0);
-		screen.setPalette(&p);	
+		screen.setPalette(&p);
 	}
-	
+
 	delete s;
 	events.waitForPress();
 
@@ -892,7 +892,7 @@ void Game::doShowCredits() {
 
 void Game::doQuit() {
 	Sound.pause();
-	if (getYN()) 
+	if (getYN())
 		Events::getReference().quitFlag = true;
 	Sound.resume();
 }
@@ -944,7 +944,7 @@ void Game::handleBootParam(int value) {
 		h->setPosition(140, 120);
 		h->currentActions().top().setSupportData(0x1400);
 		fields.setField(11, 1);
-	
+
 		// Set up player
 		h = res.getActiveHotspot(PLAYER_ID);
 		h->setRoomNumber(4);
@@ -978,7 +978,7 @@ bool Game::getYN() {
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
 	Resources &res = Resources::getReference();
-	
+
 	Common::Language l = LureEngine::getReference().getLanguage();
 	Common::KeyCode y = Common::KEYCODE_y;
 	if (l == FR_FRA) y = Common::KEYCODE_o;
@@ -996,7 +996,7 @@ bool Game::getYN() {
 	delete s;
 
 	bool breakFlag = false;
-	bool result = false; 
+	bool result = false;
 
 	do {
 		while (events.pollEvent()) {
@@ -1035,11 +1035,11 @@ bool Game::isMenuAvailable() {
 	Room &room = Room::getReference();
 	uint16 oldRoomNumber = res.fieldList().getField(OLD_ROOM_NUMBER);
 
-	if (oldRoomNumber != 0) 
+	if (oldRoomNumber != 0)
 		// Viewing a room remotely - so the menu isn't available
 		return false;
-		
-	else if ((room.cursorState() == CS_TALKING) || (res.getTalkState() != TALK_NONE)) 
+
+	else if ((room.cursorState() == CS_TALKING) || (res.getTalkState() != TALK_NONE))
 		return false;
 
 	return true;

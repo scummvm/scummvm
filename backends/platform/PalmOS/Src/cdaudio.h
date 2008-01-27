@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #ifndef CDAUDIO_H
 #define CDAUDIO_H
 
@@ -37,7 +37,7 @@
 #define FROM_SEC(secs)	((UInt32)((secs) * 1000))
 
 class CDAudio {
-public:	
+public:
 	CDAudio() {
 		_isInitialized = false;
 		_volumeLevel = 100;
@@ -45,7 +45,7 @@ public:
 
 	virtual bool init() = 0;
 	virtual void release() = 0;
-	
+
 	// OSystem functions
 	virtual bool poll() = 0;
 	virtual void play(int track, int num_loops, int start_frame, int duration) = 0;

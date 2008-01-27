@@ -11,7 +11,7 @@ TEST_LIBS    := common/libcommon.a
 #
 TEST_FLAGS   := --runner=StdioPrinter
 TEST_CFLAGS  := -Itest/cxxtest
-TEST_LDFLAGS := 
+TEST_LDFLAGS :=
 
 
 # Enable this to get an X11 GUI for the error reporter.

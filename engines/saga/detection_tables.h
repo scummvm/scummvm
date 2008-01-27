@@ -690,7 +690,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", -1},
 	//{"sfx.res",		GAME_SOUNDFILE,						"1c610d543f32ec8b525e3f652536f269", -1},
 	// There are two English versions of the game, each one with a different sfx.res file
-	// Known MD5 checksums for sfx.res in the English version of the game are 
+	// Known MD5 checksums for sfx.res in the English version of the game are
 	// 1c610d543f32ec8b525e3f652536f269 and 45a9a9f5d37740be24fd2ae2edf36573
 	{"sfx.res",		GAME_SOUNDFILE,						NULL, -1},
 	{ NULL, 0, NULL, 0}

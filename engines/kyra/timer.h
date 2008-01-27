@@ -43,11 +43,11 @@ typedef Functor1<int, void> TimerFunc;
 struct TimerEntry {
 	uint8 id;
 	int32 countdown;
-	int8 enabled;		
+	int8 enabled;
 
 	int32 lastUpdate;
 	uint32 nextRun;
-	
+
 	TimerFunc *func;
 };
 
@@ -55,27 +55,27 @@ class TimerManager {
 public:
 	TimerManager(KyraEngine *vm, OSystem *sys) : _vm(vm), _system(sys), _timers(), _nextRun(0) {}
 	~TimerManager() { reset(); }
-	
+
 	void reset();
-	
+
 	void addTimer(uint8 id, TimerFunc *func, int countdown, bool enabled);
 
 	int count() const { return _timers.size(); }
-	
+
 	void update();
-	
+
 	void resetNextRun();
-	
+
 	void setCountdown(uint8 id, int32 countdown);
 	void setDelay(uint8 id, int32 countdown);
 	int32 getDelay(uint8 id) const;
-	
+
 	bool isEnabled(uint8 id) const;
 	void enable(uint8 id);
 	void disable(uint8 id);
 
 	void resync();
-	
+
 	void loadDataFromFile(Common::InSaveFile *file, int version);
 	void saveDataToFile(Common::OutSaveFile *file) const;
 private:
@@ -83,7 +83,7 @@ private:
 	OSystem *_system;
 	Common::List<TimerEntry> _timers;
 	uint32 _nextRun;
-	
+
 	typedef Common::List<TimerEntry>::iterator Iterator;
 	typedef Common::List<TimerEntry>::const_iterator CIterator;
 };

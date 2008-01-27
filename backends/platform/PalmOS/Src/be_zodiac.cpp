@@ -38,7 +38,7 @@ void OSystem_PalmZodiac::int_initBackend() {
 	_keyExtra.bitDown		= keyBitRockerDown;
 	_keyExtra.bitLeft		= keyBitRockerLeft;
 	_keyExtra.bitRight		= keyBitRockerRight;
-	
+
 //	_keyExtra.bitActionA	= keyBitActionD;
 //	_keyExtra.bitActionB	= keyBitActionB;
 }

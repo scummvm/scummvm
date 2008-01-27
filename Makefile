@@ -21,7 +21,7 @@ MODULE_DIRS :=
 
 CXXFLAGS:= -Wall $(CXXFLAGS)
 # Turn off some annoying and not-so-useful warnings
-CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder 
+CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
 # Enable even more warnings...
 CXXFLAGS+= -pedantic -Wpointer-arith -Wcast-qual -Wconversion
 CXXFLAGS+= -Wshadow -Wimplicit -Wundef -Wnon-virtual-dtor -Wwrite-strings

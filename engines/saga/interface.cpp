@@ -69,14 +69,14 @@ static int verbTypeToTextStringsIdLUT[2][kVerbTypeIdsMax] = {
 	-1,
 	-1,
 	-1},
-	{-1, 
+	{-1,
 	kVerbIHNMWalk,
 	kVerbIHNMLookAt,
-	kVerbIHNMTake, 
-	kVerbIHNMUse, 
+	kVerbIHNMTake,
+	kVerbIHNMUse,
 	kVerbIHNMTalkTo,
 	kVerbIHNMSwallow,
-	kVerbIHNMGive, 
+	kVerbIHNMGive,
 	kVerbIHNMPush}
 };
 
@@ -95,7 +95,7 @@ static int IHNMTextStringIdsLUT[56] = {
 	8,	// Give
 	10,	// Options
 	11,	// Test
-	12,	// 
+	12,	//
 	13,	// Help
 	14,	// Quit Game
 	16,	// Fast
@@ -672,7 +672,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 			if (keystate.keycode == Common::KEYCODE_ESCAPE || keystate.keycode == Common::KEYCODE_RETURN) {
 				_vm->_script->wakeUpThreads(kWaitTypeRequest);
 				_vm->_interface->setMode(kPanelMain);
-				
+
 				_protectHash = 0;
 
 				for (char *p = _textInputString; *p; p++)
@@ -772,7 +772,7 @@ void Interface::draw() {
 
 	drawStatusBar();
 
-	if (_panelMode == kPanelMain || _panelMode == kPanelMap || 
+	if (_panelMode == kPanelMain || _panelMode == kPanelMap ||
 		(_panelMode == kPanelNull && _vm->getGameId() == GID_IHNM_DEMO)) {
 		_mainPanel.getRect(rect);
 		backBuffer->blit(rect, _mainPanel.image);
@@ -2336,7 +2336,7 @@ void Interface::drawVerbPanelText(Surface *ds, PanelButton *panelButton, KnownCo
 	if (_vm->getGameType() == GType_ITE) {
 		textId = verbTypeToTextStringsIdLUT[0][panelButton->id];
 		text = _vm->getTextString(textId);
-	} else {	
+	} else {
 		textId = verbTypeToTextStringsIdLUT[1][panelButton->id];
 		text = _vm->_script->_mainStrings.getString(textId + 1);
 		textShadowKnownColor = kKnownColorTransparent;
@@ -2397,7 +2397,7 @@ bool Interface::converseAddText(const char *text, int strId, int replyId, byte r
 
 		for (i = len; i >= 0; i--) {
 			c = _converseWorkString[i];
-			
+
 			if (_vm->getGameType() == GType_ITE) {
 				if ((c == ' ' || c == '\0') && (_vm->_font->getStringWidth(kKnownFontSmall, _converseWorkString, i, kFontNormal) <= _vm->getDisplayInfo().converseMaxTextWidth))
 					break;
@@ -2674,7 +2674,7 @@ void Interface::mapPanelShow() {
 
 	rect.left = rect.top = 0;
 
-	_vm->_resource->loadResource(_interfaceContext, 
+	_vm->_resource->loadResource(_interfaceContext,
 			 _vm->_resource->convertResourceId(RID_ITE_TYCHO_MAP), resource, resourceLength);
 	if (resourceLength == 0) {
 		error("Interface::mapPanelShow() unable to load Tycho map resource");

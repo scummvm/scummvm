@@ -16,7 +16,7 @@
 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
@@ -32,7 +32,7 @@
 #define	PSP_SCREEN_WIDTH	480
 #define	PSP_SCREEN_HEIGHT	272
 #define PSP_FRAME_SIZE (BUF_WIDTH * PSP_SCREEN_HEIGHT * PIXEL_SIZE)
-#define MOUSE_SIZE	128	
+#define MOUSE_SIZE	128
 #define	KBD_DATA_SIZE	130560
 
 unsigned int __attribute__((aligned(16))) list[262144];
@@ -89,17 +89,17 @@ OSystem_PSP_GU::OSystem_PSP_GU() {
 	sceGuSync(0,0);
 
 	sceDisplayWaitVblankStart();
-	sceGuDisplay(1); 
+	sceGuDisplay(1);
 
 	//decompress keyboard data
 	uLongf kbdSize = KBD_DATA_SIZE;
 	keyboard_letters = (unsigned char *)memalign(16, KBD_DATA_SIZE);
 	assert(Z_OK == uncompress((Bytef *)keyboard_letters, &kbdSize, (const Bytef *)keyboard_letters_compressed, size_keyboard_letters_compressed));
-	
+
 	kbdSize = KBD_DATA_SIZE;
 	keyboard_letters_shift = (unsigned char *)memalign(16, KBD_DATA_SIZE);
 	assert(Z_OK == uncompress((Bytef *)keyboard_letters_shift, &kbdSize, (const Bytef *)keyboard_letters_shift_compressed, size_keyboard_letters_shift_compressed));
-	
+
 	kbdSize = KBD_DATA_SIZE;
 	keyboard_symbols = (unsigned char *)memalign(16, KBD_DATA_SIZE);
 	assert(Z_OK == uncompress((Bytef *)keyboard_symbols, &kbdSize, (const Bytef *)keyboard_symbols_compressed, size_keyboard_symbols_compressed));
@@ -107,7 +107,7 @@ OSystem_PSP_GU::OSystem_PSP_GU() {
 	kbdSize = KBD_DATA_SIZE;
 	keyboard_symbols_shift = (unsigned char *)memalign(16, KBD_DATA_SIZE);
 	assert(Z_OK == uncompress((Bytef *)keyboard_symbols_shift, &kbdSize, (const Bytef *)keyboard_symbols_shift_compressed, size_keyboard_symbols_shift_compressed));
-	
+
 	_keyboardVisible = false;
 	_clut = (unsigned short*)(((unsigned int)clut256)|0x40000000);
 	_kbdClut = (unsigned short*)(((unsigned int)kbClut)|0x40000000);
@@ -124,7 +124,7 @@ OSystem_PSP_GU::~OSystem_PSP_GU() {
 	free(keyboard_symbols);
 	free(keyboard_letters_shift);
 	free(keyboard_letters);
-	
+
 	_offscreen = 0;
 	_overlayBuffer = 0;
 	_mouseBuf = 0;
@@ -195,7 +195,7 @@ void OSystem_PSP_GU::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	memcpy(mouseClut, _palette, 256*sizeof(unsigned short));
 	mouseClut[_mouseKeyColour] = 0;
 	sceKernelDcacheWritebackAll();
-	
+
 	for (unsigned int i=0;i<h;i++)
 		memcpy(_mouseBuf+i*MOUSE_SIZE, buf+i*w, w);
 }
@@ -210,11 +210,11 @@ void OSystem_PSP_GU::setPalette(const byte *colors, uint start, uint num) {
 
 	//copy to CLUT
 	memcpy(_clut, _palette, 256*sizeof(unsigned short));
-	
+
 	//force update of mouse CLUT as well, as it may have been set up before this palette was set
 	memcpy(mouseClut, _palette, 256*sizeof(unsigned short));
 	mouseClut[_mouseKeyColour] = 0;
-		
+
 	sceKernelDcacheWritebackAll();
 }
 
@@ -244,10 +244,10 @@ void OSystem_PSP_GU::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 	if (w <= 0 || h <= 0)
 		return;
 
-	
+
 	byte *dst = _offscreen + y * _screenWidth + x;
 
-	if (_screenWidth == pitch && pitch == w) 
+	if (_screenWidth == pitch && pitch == w)
 	{
 		memcpy(dst, buf, h * w);
 /*
@@ -257,9 +257,9 @@ void OSystem_PSP_GU::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 		sceGuSync(0,0);
 */
 	}
-	 else 
+	 else
 	{
-		do 
+		do
 		{
 			memcpy(dst, buf, w);
 			buf += pitch;
@@ -270,7 +270,7 @@ void OSystem_PSP_GU::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 
 void OSystem_PSP_GU::updateScreen() {
 	sceGuStart(0,list);
-	
+
 	sceGuClearColor(0xff000000);
 	sceGuClear(GU_COLOR_BUFFER_BIT);
 
@@ -281,7 +281,7 @@ void OSystem_PSP_GU::updateScreen() {
 	    	sceGuTexImage(0, 512, 256, _screenWidth, _offscreen);
 	else
 	    	sceGuTexImage(0, 512, 512, _screenWidth, _offscreen);
-	sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGB); 
+	sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGB);
 	sceGuTexFilter(GU_LINEAR, GU_LINEAR);
 	sceGuTexOffset(0,0);
 	sceGuAmbientColor(0xffffffff);
@@ -321,8 +321,8 @@ void OSystem_PSP_GU::updateScreen() {
 		vertices[0].x += (vertices[1].x - vertices[0].x) * 511 / 640; vertices[0].y = 0; vertices[0].z = 0;
 		sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertices);
 	}
-			
-	
+
+
 	// draw overlay
 	if (_overlayVisible) {
 		vertices[0].x = 0; vertices[0].y = 0; vertices[0].z = 0;
@@ -337,7 +337,7 @@ void OSystem_PSP_GU::updateScreen() {
 		else
 			sceGuTexImage(0, 512, 256, _overlayWidth, _overlayBuffer);
 
-		sceGuTexFunc(GU_TFX_MODULATE, GU_TCC_RGBA); 
+		sceGuTexFunc(GU_TFX_MODULATE, GU_TCC_RGBA);
 		sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertices);
 		// need to render twice for textures > 512
 		if ( _overlayWidth > 512) {
@@ -347,7 +347,7 @@ void OSystem_PSP_GU::updateScreen() {
 			sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertices);
 		}
 	}
-	
+
 	// draw mouse
    	if (_mouseVisible) {
 		sceGuTexMode(GU_PSM_T8, 0, 0, 0); // 8-bit image
@@ -356,15 +356,15 @@ void OSystem_PSP_GU::updateScreen() {
 		sceGuAlphaFunc(GU_GREATER,0,0xff);
 		sceGuEnable(GU_ALPHA_TEST);
 		sceGuTexImage(0, MOUSE_SIZE, MOUSE_SIZE, MOUSE_SIZE, _mouseBuf);
-		sceGuTexFunc(GU_TFX_MODULATE, GU_TCC_RGBA); 
-		
+		sceGuTexFunc(GU_TFX_MODULATE, GU_TCC_RGBA);
+
 		vertices[0].u = 0.5; vertices[0].v = 0.5;
 		vertices[1].u = _mouseWidth - 0.5; vertices[1].v = _mouseHeight - 0.5;
 
 		//adjust cursor position
 		int mX = _mouseX - _mouseHotspotX;
 		int mY = _mouseY - _mouseHotspotY;
-		
+
 		if (_overlayVisible) {
 			float scalex, scaley;
 
@@ -394,7 +394,7 @@ void OSystem_PSP_GU::updateScreen() {
 			case CENTERED_362X272:
 			{
 				float scalex, scaley;
-				
+
 				scalex = 362.0f / _screenWidth;
 				scaley = 272.0f / _screenHeight;
 
@@ -408,7 +408,7 @@ void OSystem_PSP_GU::updateScreen() {
 
 				scalex = (float)PSP_SCREEN_WIDTH / _screenWidth;
 				scaley = (float)PSP_SCREEN_HEIGHT / _screenHeight;
-				
+
 				vertices[0].x = mX * scalex; vertices[0].y = mY * scaley; vertices[0].z = 0;
 				vertices[1].x = vertices[0].x + _mouseWidth * scalex; vertices[1].y = vertices[0].y + _mouseHeight * scaley; vertices[0].z = 0;
 			}
@@ -438,8 +438,8 @@ void OSystem_PSP_GU::updateScreen() {
 				sceGuTexImage(0, 512, 512, 480, keyboard_symbols_shift);
 				break;
 		}
-		sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA); 
-		
+		sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
+
 		vertices[0].u = 0.5; vertices[0].v = 0.5;
 		vertices[1].u = PSP_SCREEN_WIDTH-0.5; vertices[1].v = PSP_SCREEN_HEIGHT-0.5;
 		vertices[0].x = 0; vertices[0].y = 0; vertices[0].z = 0;
@@ -448,7 +448,7 @@ void OSystem_PSP_GU::updateScreen() {
 		sceGuDisable(GU_BLEND);
 	}
 	sceKernelDcacheWritebackAll();
-	
+
 	sceGuFinish();
 	sceGuSync(0,0);
 
@@ -491,7 +491,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 		_prevButtons = pad.Buttons;
 		return true;
 	}
-	
+
 	if ( (buttonsChanged & PSP_CTRL_RIGHT) && !(pad.Buttons & PSP_CTRL_RIGHT)) {
 		event.kbd.flags = 0;
 		event.kbd.ascii = 0;
@@ -499,7 +499,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 		_prevButtons = pad.Buttons;
 		return true;
 	}
-	
+
 	if ( (buttonsChanged & PSP_CTRL_UP) && !(pad.Buttons & PSP_CTRL_UP)) {
 		event.kbd.flags = 0;
 		event.kbd.ascii = 0;
@@ -507,7 +507,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 		_prevButtons = pad.Buttons;
 		return true;
 	}
-	
+
 	if ( (buttonsChanged & PSP_CTRL_DOWN) && !(pad.Buttons & PSP_CTRL_DOWN)) {
 		event.kbd.flags = 0;
 		event.kbd.ascii = 0;
@@ -515,7 +515,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 		_prevButtons = pad.Buttons;
 		return true;
 	}
-	
+
 	// compute nub direction
 	x = pad.Lx-128;
 	y = pad.Ly-128;
@@ -527,7 +527,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 		if (_keySelected < 1)
 			_keySelected += 30;
 		_kbdClut[_keySelected] = 0xffff;
-	
+
 		if  (buttonsChanged & PSP_CTRL_CROSS) {
 			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
 			if (_keySelected > 26) {
@@ -550,7 +550,7 @@ bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 						event.kbd.keycode = Common::KEYCODE_RETURN;
 					break;
 				}
-			} else {			
+			} else {
 				switch( _keyboardMode) {
 					case 0:
 						event.kbd.flags = 0;

@@ -75,7 +75,7 @@ BootDevice detectBootPath(const char *elfPath, char *bootPath) {
 		device = OTHER;
 
 	sioprintf("elf path: %s, device %d", elfPath, device);
-	
+
 	strcpy(bootPath, elfPath);
 
 	char *pathPos = bootPath;
@@ -117,7 +117,7 @@ BootDevice detectBootPath(const char *elfPath, char *bootPath) {
 	return device;
 }
 
-int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {	
+int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {
 
 	IrxReference *resModules = (IrxReference *)malloc(numIrxFiles * sizeof(IrxReference));
 	IrxReference *curModule = resModules;

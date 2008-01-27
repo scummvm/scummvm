@@ -322,7 +322,7 @@ _fincol6:
 gp_clearFramebuffer:
         @ r0 = framebuffer
         @ r1 = color
-        orr r1,r1,r1,lsl #16   @hi halfword = lo halfword  
+        orr r1,r1,r1,lsl #16   @hi halfword = lo halfword
         mov r2,#38400
 clear:  str  r1,[r0],#4
         subs r2,r2,#1

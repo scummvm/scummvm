@@ -28,9 +28,9 @@
 //////////////////////////////////////////////////////////////////////
 
 //#define USE_LIBCARTRESET
- 
+
 #include <nds.h>
- 
+
 #include <bios.h>
 #include <arm7/touch.h>
 #include <arm7/clock.h>
@@ -113,12 +113,12 @@ void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8
   } else {
 	channel = 0;
   }*/
-  
+
   if (channel > 1) channel = 1;
-  
+
   bytes &= ~7;		// Multiple of 4 bytes!
 //  bytes += 4;
-  
+
   SCHANNEL_CR(channel) = 0;
   SCHANNEL_TIMER(channel)  = SOUND_FREQ(sampleRate);
   SCHANNEL_SOURCE(channel) = ((uint32) (data));
@@ -130,7 +130,7 @@ void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8
   SCHANNEL_SOURCE(channel + 2) = ((uint32) (data));
   SCHANNEL_LENGTH(channel + 2) = ((bytes & 0x7FFFFFFF) >> 2);
   SCHANNEL_REPEAT_POINT(channel + 2) = 0;
-  
+
   uint32 flags = SCHANNEL_ENABLE | SOUND_VOL(vol) | SOUND_PAN(pan);
 
   switch (format) {
@@ -139,21 +139,21 @@ void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8
 		flags |= SOUND_REPEAT;// | (1 << 15);
 		break;
 	}
-	
+
 	case 0: {
 		flags |= SOUND_16BIT;
 		flags |= SOUND_REPEAT;// | (1 << 15);
 		break;
 	}
-	
+
 	case 2: {
 		flags |= SOUND_FORMAT_ADPCM;
 		flags |= SOUND_ONE_SHOT;// | (1 << 15);
-		
+
 		SCHANNEL_SOURCE(channel) = (unsigned int) IPC->adpcm.buffer[0];
 		//bytes += 32;
 		SCHANNEL_LENGTH(channel) = (((bytes + 4) & 0x7FFFFFFF) >> 2);
-		
+
 		SCHANNEL_CR(channel + 1) = 0;
 		SCHANNEL_SOURCE(channel + 1) = (unsigned int) IPC->adpcm.buffer[0];
 		SCHANNEL_LENGTH(channel + 1) = (((bytes + 4) & 0x7FFFFFFF) >> 2);
@@ -165,16 +165,16 @@ void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8
 		break;
 	}
   }
-	
-  
+
+
 //  if (bytes & 0x80000000) {
 //    flags |= SOUND_REPEAT;
 //  } else {
 //  }
 
-  
-   
-  
+
+
+
   soundData = (vu8* ) data;
 
   SCHANNEL_CR(channel)     = flags;
@@ -186,11 +186,11 @@ void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8
 	for (volatile int i = 0; i < 16384 * 2; i++) {
 		// Delay loop - this makes everything stay in sync!
 	}
-		
+
 	TIMER0_CR = 0;
 	TIMER0_DATA = SOUND_FREQ(sampleRate) * 2;
 	TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
-		
+
 	TIMER1_CR = 0;
 	TIMER1_DATA = 65536 - ((bytes & 0x7FFFFFFF) >> 3);		// Trigger four times during the length of the buffer
 	TIMER1_CR = TIMER_ENABLE | TIMER_IRQ_REQ | TIMER_CASCADE;
@@ -200,19 +200,19 @@ void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8
 	for (volatile int i = 0; i < 16384 * 2; i++) {
 		// Delay loop - this makes everything stay in sync!
 	}
-		
+
 	TIMER2_CR = 0;
 	TIMER2_DATA = SOUND_FREQ(sampleRate) * 2;
 	TIMER2_CR = TIMER_ENABLE | TIMER_DIV_1;
-		
+
 	TIMER3_CR = 0;
 	TIMER3_DATA = 65536 - ((bytes & 0x7FFFFFFF) >> 3);		// Trigger four times during the length of the buffer
 	TIMER3_CR = TIMER_ENABLE | TIMER_IRQ_REQ | TIMER_CASCADE;
-	
+
 	for (int r = 0; r < 4; r++) {
 //		IPC->streamFillNeeded[r] = true;
 	}
-	
+
 	IPC->streamPlayingSection = 0;
   }
 
@@ -221,7 +221,7 @@ void startSound(int sampleRate, const void* data, uint32 bytes, u8 channel=0, u8
 //  IPC->fillSoundFirstHalf = true;
 //  IPC->fillSoundSecondHalf = true;
 //  soundFirstHalf = true;
-  
+
 //  REG_IME = IME_ENABLE;
 }
 
@@ -247,7 +247,7 @@ uint16 powerManagerWrite(uint32 command, u32 data, bool enable) {
   REG_SPICNT = SPI_ENABLE | SPI_BAUD_1MHz;
   REG_SPIDATA = 0;
   SerialWaitBusy();
-  
+
   result = REG_SPIDATA & 0xFF;
 
 
@@ -277,15 +277,15 @@ void performSleep() {
   IRQ_HANDLER = DummyHandler;
   IF = ~0;
   IME = 1;
-  
-  
+
+
   // Now save which interrupts are enabled, then set only the screens unfolding
   // interrupt to be enabled, so that the first interrupt that happens is the
   // one I want.
   int saveInts = IE;
-  
-  
-  
+
+
+
   IE = IRQ_TIMER0;		// Screens unfolding interrupt
 
   // Now call the sleep function in the bios
@@ -294,26 +294,26 @@ void performSleep() {
     TIMER0_CR = 0;
 	TIMER0_DATA = TIMER_FREQ(20);
 	TIMER0_CR = TIMER_ENABLE | TIMER_DIV_64;
-	
+
 	swiDelay(100);
-  
+
 	swiSleep();
 
 	swiDelay(100);
-	
-	powerManagerWrite(0, 0x30, b = !b);	
+
+	powerManagerWrite(0, 0x30, b = !b);
   } while (!(TIMER0_CR & TIMER_ENABLE));
-  
+
   TIMER0_CR = 0;
 
-  // We're back from sleep, now restore the interrupt state and IRQ handler  
+  // We're back from sleep, now restore the interrupt state and IRQ handler
   IRQ_HANDLER = (void (*)()) irq;
   IE = saveInts;
   IF = ~0;
   IME = 1;
 
-  
-  
+
+
   powerManagerWrite(0, 0x30, false);
 }
 
@@ -322,29 +322,29 @@ void performSleep() {
   powerManagerWrite(0, 0x30, true);
 
   IPC->performArm9SleepMode = true;	// Tell ARM9 to sleep
-  
+
 //  u32 irq = (u32) IRQ_HANDLER;
 //  IRQ_HANDLER = DummyHandler;
 //  POWER_CR &= ~POWER_SOUND;
-  
+
 //  int saveInts = REG_IE;
 //  REG_IE = (1 << 22) | IRQ_VBLANK;		// Lid open
 //  *((u32*) (0x0380FFF8)) = *((u32*) (0x0380FFF8)) | (REG_IE & REG_IF);
 //  VBLANK_INTR_WAIT_FLAGS = IRQ_VBLANK;
 
-  
+
   int r = 0;
   while ((REG_KEYXY & (1 << 7))) {		// Wait for lid to open
 	swiDelay(1000000);
 	r++;
   }
-  
+
 //  IRQ_HANDLER = (void (*)()) irq;
   IPC->performArm9SleepMode = false;	// Tell ARM9 to wake up
 //  REG_IE = saveInts;
-  
+
 //  POWER_CR |= POWER_SOUND;
- 
+
   powerManagerWrite(0, 0x30, false);
 }
 
@@ -353,33 +353,33 @@ void powerOff() {
 }
 //////////////////////////////////////////////////////////////////////
 
-  
-  	
+
+
 void InterruptTimer1() {
-	
+
 	IPC->fillNeeded[playingSection] = true;
 	soundFilled[playingSection] = false;
-	  
+
 	if (playingSection == 3) {
 //		IME = IME_DISABLED;
-		
+
 	//	while (SCHANNEL_CR(0) & SCHANNEL_ENABLE) {
 	//	}
-//		SCHANNEL_CR(0) &= ~SCHANNEL_ENABLE;	
-		
+//		SCHANNEL_CR(0) &= ~SCHANNEL_ENABLE;
+
 //		SCHANNEL_CR(0) |= SCHANNEL_ENABLE;
 //		TIMER1_CR = 0;
 //		TIMER1_CR = TIMER_ENABLE | TIMER_IRQ_REQ | TIMER_CASCADE;
-		
+
 		playingSection = 0;
-		
+
 //		IME = IME_ENABLED;
 	} else {
 		playingSection++;
 	}
-	
+
 	IPC->playingSection = playingSection;
-	
+
 /*	for (int r = 0; r < 4; r++) {
 		//if ((!soundFilled[r]) && (!IPC->fillNeeded[playingSection])) {
 			memcpy((void *) (soundBuffer + (r * 1024)), (void *) (arm9Buffer + (r * 1024)), 1024);
@@ -391,21 +391,21 @@ void InterruptTimer1() {
 			soundFilled[r] = true;
 		//}
 	}*/
-}	
-  
+}
+
 void InterruptTimer3() {
 	while (IPC->adpcm.semaphore);		// Wait for buffer to become free if needed
 	IPC->adpcm.semaphore = true;		// Lock the buffer structure to prevent clashing with the ARM7
-		
+
 	IPC->streamFillNeeded[IPC->streamPlayingSection] = true;
-	  
+
 	if (IPC->streamPlayingSection == 3) {
 		IPC->streamPlayingSection = 0;
 	} else {
 		IPC->streamPlayingSection++;
 	}
-	
-	
+
+
 	IPC->adpcm.semaphore = false;
 }
 
@@ -416,10 +416,10 @@ void InterruptTimer3() {
 //  static int16 TOUCH_HEIGHT = TOUCH_CAL_Y2 - TOUCH_CAL_Y1;
 //  static int16 CNTRL_WIDTH  = TOUCH_CNTRL_X2 - (TOUCH_CNTRL_X1 - 8);
 //  static int16 CNTRL_HEIGHT = TOUCH_CNTRL_Y2 - (TOUCH_CNTRL_Y1 - 8);
-  
-  
-  
- 
+
+
+
+
  void InterruptVBlank() {
     uint16 but=0, x=0, y=0, xpx=0, ypx=0, z1=0, z2=0, batt=0, aux=0;
     int t1=0, t2=0;
@@ -428,7 +428,7 @@ void InterruptTimer3() {
 	static int heartbeat = 0;
     // Update the heartbeat
     heartbeat++;
- 
+
     // Read the X/Y buttons and the /PENIRQ line
     but = REG_KEYXY;
     if (!(but & 0x40)) {
@@ -437,28 +437,28 @@ void InterruptTimer3() {
 
 //      x = touchRead(TSC_MEASURE_X);
  //     y = touchRead(TSC_MEASURE_Y);
-	  
+
 	  x = p.x;
 	  y = p.y;
-	  
+
 	  xpx = p.px;
 	  ypx = p.py;
-	  
+
 //      xpx = ( ((SCREEN_WIDTH -60) * x) / TOUCH_WIDTH  ) - TOUCH_OFFSET_X;
   //    ypx = ( ((SCREEN_HEIGHT-60) * y) / TOUCH_HEIGHT ) - TOUCH_OFFSET_Y;
-	  
-//	  xpx = (IPC->touchX - (int16) TOUCH_CAL_X1) * CNTRL_WIDTH  / TOUCH_WIDTH  + (int16) (TOUCH_CNTRL_X1 - 8);
-	//  ypx = (IPC->touchY - (int16) TOUCH_CAL_Y1) * CNTRL_HEIGHT / TOUCH_HEIGHT + (int16) (TOUCH_CNTRL_Y1 - 8); 
 
-	  
+//	  xpx = (IPC->touchX - (int16) TOUCH_CAL_X1) * CNTRL_WIDTH  / TOUCH_WIDTH  + (int16) (TOUCH_CNTRL_X1 - 8);
+	//  ypx = (IPC->touchY - (int16) TOUCH_CAL_Y1) * CNTRL_HEIGHT / TOUCH_HEIGHT + (int16) (TOUCH_CNTRL_Y1 - 8);
+
+
       z1 = touchRead(TSC_MEASURE_Z1);
       z2 = touchRead(TSC_MEASURE_Z2);
     }
-	
+
     if (but & (1 << 7)) {		// Check if screen is folded
 	  needSleep = true;
 	}
-	
+
 
     batt = touchRead(TSC_MEASURE_BATTERY);
     aux  = touchRead(TSC_MEASURE_AUX);
@@ -466,11 +466,11 @@ void InterruptTimer3() {
     // Read the time
     rtcGetTime((uint8 *)ct);
     BCDToInteger((uint8 *)&(ct[1]), 7);
- 
+
     // Read the temperature
     temp = touchReadTemperature(&t1, &t2);
- 
- 
+
+
     // Update the IPC struct
     IPC->heartbeat = heartbeat;
     IPC->buttons   = but;
@@ -491,7 +491,7 @@ void InterruptTimer3() {
     IPC->tdiode1 = t1;
     IPC->tdiode2 = t2;
 
-   
+
 
 	//sound code  :)
     TransferSound *snd = IPC->soundData;
@@ -508,12 +508,12 @@ void InterruptTimer3() {
 		}
       }
     }
-    
-   
+
+
  #ifdef USE_DEBUGGER
     Wifi_Update(); // update wireless in vblank
  #endif
-} 
+}
 
 //////////////////////////////////////////////////////////////////////
 
@@ -530,10 +530,10 @@ void arm7_fifo() { // check incoming fifo messages
    if (msg==0x87654321) Wifi_Sync();
 }
 
- 
+
 
 void initDebugger() {
-	
+
 	// set up the wifi irq
 	irqSet(IRQ_WIFI, Wifi_Interrupt); // set up wifi interrupt
 	irqEnable(IRQ_WIFI);
@@ -558,7 +558,7 @@ void initDebugger() {
    	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_RECV_IRQ;
 
    	Wifi_SetSyncHandler(arm7_synctoarm9); // allow wifi lib to notify arm9
-	// arm7 wifi init complete	
+	// arm7 wifi init complete
 
 }
 #endif
@@ -572,11 +572,11 @@ void reboot() {
 
 int main(int argc, char ** argv) {
 
-	
+
 #ifdef USE_DEBUGGER
   REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR;
 #endif
-  
+
   // Reset the clock if needed
   rtcReset();
 
@@ -587,19 +587,19 @@ int main(int argc, char ** argv) {
   IPC->reset = false;
 
 
- 
-  
+
+
   for (int r = 0; r < 8; r++) {
 	IPC->adpcm.arm7Buffer[r] = (u8 *) malloc(512);
   }
-  
+
   for (int r = 0; r < 4; r++) {
 	soundFilled[r] = false;
   }
 
- 
+
   // Set up the interrupt handler
-  
+
   irqInit();
 
   irqSet(IRQ_VBLANK, InterruptVBlank);
@@ -610,7 +610,7 @@ int main(int argc, char ** argv) {
 
   irqSet(IRQ_TIMER3, InterruptTimer3);
   irqEnable(IRQ_TIMER3);
-  
+
 /*  REG_IME = 0;
   IRQ_HANDLER = &InterruptHandler;
   REG_IE = IRQ_VBLANK | IRQ_TIMER1 | IRQ_TIMER3;
@@ -619,10 +619,10 @@ int main(int argc, char ** argv) {
   REG_IME = 1;
   */
 
- 
-#ifdef USE_DEBUGGER  
+
+#ifdef USE_DEBUGGER
   initDebugger();
-#endif  
+#endif
 
   // Keep the ARM7 out of main RAM
   while ((1)) {
@@ -646,6 +646,6 @@ int main(int argc, char ** argv) {
   return 0;
 }
 
- 
+
 //////////////////////////////////////////////////////////////////////
 

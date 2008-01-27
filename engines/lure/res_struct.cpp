@@ -32,7 +32,7 @@
 
 namespace Lure {
 
-extern const int actionNumParams[NPC_JUMP_ADDRESS+1] = {0, 
+extern const int actionNumParams[NPC_JUMP_ADDRESS+1] = {0,
 	1, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 0, 1,
 	0, 1, 1, 1, 1, 0, 0, 2, 1, 1, 0, 0, 1, 1, 2, 2, 5, 2, 2, 1};
 
@@ -64,19 +64,19 @@ static const uint16 ewanExtraGraphic2[] = {
 static const BarEntry default_barList[3] = {
 	{29, SID_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&basicPolish[0], &sidsFetch[0], NULL, NULL}, 13, NULL},
 	{32, NELLIE_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&nelliesScratch[0], &nelliesFetch[0], NULL, NULL}, 14, NULL},
-	{35, EWAN_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&ewansFetch[0], &ewansFetch[0], 
+	{35, EWAN_ID, {{0, 0}, {0, 0}, {0, 0}, {0, 0}}, {&ewansFetch[0], &ewansFetch[0],
 		&ewanExtraGraphic1[0], &ewanExtraGraphic2[0]}, 16, NULL}
 };
 
 extern const RoomTranslationRecord roomTranslations[] = {
-	{0x1E, 0x13}, {0x07, 0x08}, {0x1C, 0x12}, {0x26, 0x0F}, 
-	{0x27, 0x0F}, {0x28, 0x0F}, {0x29, 0x0F}, {0x22, 0x0A}, 
+	{0x1E, 0x13}, {0x07, 0x08}, {0x1C, 0x12}, {0x26, 0x0F},
+	{0x27, 0x0F}, {0x28, 0x0F}, {0x29, 0x0F}, {0x22, 0x0A},
 	{0x23, 0x13}, {0x24, 0x14}, {0x31, 0x2C}, {0x2F, 0x2C},
 	{0, 0}};
 
 // Room data holding class
 
-RoomData::RoomData(RoomResource *rec, MemoryBlock *pathData) { 
+RoomData::RoomData(RoomResource *rec, MemoryBlock *pathData) {
 	roomNumber = READ_LE_UINT16(&rec->roomNumber);
 	hdrFlags = rec->hdrFlags;
 
@@ -116,7 +116,7 @@ RoomExitHotspotData::RoomExitHotspotData(RoomExitHotspotResource *rec) {
 //  Room exit class
 
 RoomExitData::RoomExitData(RoomExitResource *rec) {
-	xs = READ_LE_INT16(&rec->xs); 
+	xs = READ_LE_INT16(&rec->xs);
 	ys = READ_LE_INT16(&rec->ys);
 	xe = READ_LE_INT16(&rec->xe);
 	ye = READ_LE_INT16(&rec->ye);
@@ -126,16 +126,16 @@ RoomExitData::RoomExitData(RoomExitResource *rec) {
 	y = READ_LE_INT16(&rec->newRoomY);
 
 	switch (rec->direction) {
-	case 0x80: 
+	case 0x80:
 		direction = UP;
 		break;
-	case 0x40: 
+	case 0x40:
 		direction = DOWN;
 		break;
-	case 0x20: 
+	case 0x20:
 		direction = LEFT;
 		break;
-	case 0x10: 
+	case 0x10:
 		direction = RIGHT;
 		break;
 	default:
@@ -235,7 +235,7 @@ void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int character
 
 		for (int x = 0; x < (ROOM_PATHS_WIDTH / 8); ++x) {
 			// Get next byte, which containing bits for 8 blocks
-			v = *pIn--;		
+			v = *pIn--;
 
 			for (int bitCtr = 0; bitCtr < 8; ++bitCtr) {
 				bool isSet = (v & 1) != 0;
@@ -243,7 +243,7 @@ void RoomPathsData::decompress(RoomPathsDecompressedData &dataOut, int character
 
 				if (charState) {
 					// Handling occupied characters adjusted for character width
-					if (isSet) 
+					if (isSet)
 						// Reset character counter
 						charCtr = charWidth;
 
@@ -345,7 +345,7 @@ void RoomExitJoinList::loadFromStream(ReadStream *stream) {
 		if (hotspot1Id == 0xffff) error("Invalid room exit join list");
 		uint16 hotspot2Id = stream->readUint16LE();
 
-		if ((rec->hotspots[0].hotspotId != hotspot1Id) || 
+		if ((rec->hotspots[0].hotspotId != hotspot1Id) ||
 			(rec->hotspots[1].hotspotId != hotspot2Id))
 			break;
 
@@ -578,7 +578,7 @@ MovementData::MovementData(MovementResource *rec) {
 
 // List of movement frames
 
-bool MovementDataList::getFrame(uint16 currentFrame, int16 &xChange, 
+bool MovementDataList::getFrame(uint16 currentFrame, int16 &xChange,
 							   int16 &yChange, uint16 &nextFrame) {
 	if (empty()) return false;
 	bool foundFlag = false;
@@ -619,8 +619,8 @@ HotspotActionList::HotspotActionList(uint16 id, byte *data) {
 	data += 2;
 
 	HotspotActionResource *actionRec = (HotspotActionResource *) data;
-	
-	for (int actionCtr = 0; actionCtr < numItems; ++actionCtr, 
+
+	for (int actionCtr = 0; actionCtr < numItems; ++actionCtr,
 		GET_NEXT(actionRec, HotspotActionResource)) {
 
 		HotspotActionData *actionEntry = new HotspotActionData(actionRec);
@@ -662,8 +662,8 @@ TalkHeaderData::~TalkHeaderData() {
 }
 
 uint16 TalkHeaderData::getEntry(int index) {
-	if (index >= _numEntries) 
-		error("Invalid talk index %d specified for hotspot %xh", 
+	if (index >= _numEntries)
+		error("Invalid talk index %d specified for hotspot %xh",
 			_numEntries, characterId);
 	return _data[index];
 }
@@ -692,7 +692,7 @@ TalkEntryData *TalkData::getResponse(int index) {
 	TalkEntryList::iterator i = responses.begin();
 	int v = index;
 	while (v-- > 0) {
-		if (i == responses.end()) 
+		if (i == responses.end())
 			error("Invalid talk response index %d specified", index);
 		++i;
 	}
@@ -707,7 +707,7 @@ void TalkDataList::saveToStream(WriteStream *stream) {
 	for (i = begin(); i != end(); ++i) {
 		TalkData *rec = *i;
 		TalkEntryList::iterator i2;
-		
+
 		for (i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
 			TalkEntryData *entry = *i2;
 			stream->writeUint16LE(entry->descId);
@@ -720,7 +720,7 @@ void TalkDataList::loadFromStream(ReadStream *stream) {
 	for (i = begin(); i != end(); ++i) {
 		TalkData *rec = *i;
 		TalkEntryList::iterator i2;
-		
+
 		for (i2 = rec->entries.begin(); i2 != rec->entries.end(); ++i2) {
 			TalkEntryData *entry = *i2;
 			entry->descId = stream->readUint16LE();
@@ -742,13 +742,13 @@ RoomExitCoordinates::RoomExitCoordinates(RoomExitCoordinateEntryResource *rec) {
 		_entries[ctr].hotspotIndexId = (tempY >> 12) << 4;
 	}
 
-	for (ctr = 0; ctr < ROOM_EXIT_COORDINATES_NUM_ROOMS; ++ctr) 
+	for (ctr = 0; ctr < ROOM_EXIT_COORDINATES_NUM_ROOMS; ++ctr)
 		_roomIndex[ctr] = rec->roomIndex[ctr];
 }
 
 RoomExitCoordinates &RoomExitCoordinatesList::getEntry(uint16 roomNumber) {
 	RoomExitCoordinatesList::iterator i = begin();
-	while (--roomNumber > 0) 
+	while (--roomNumber > 0)
 		++i;
 	return **i;
 }
@@ -822,7 +822,7 @@ void SequenceDelayList::saveToStream(WriteStream *stream) {
 	for (i = begin(); i != end(); ++i) {
 		SequenceDelayData *entry = *i;
 		stream->writeUint16LE(entry->sequenceOffset);
-		stream->writeUint32LE((currTime > entry->timeoutCtr ) ? 0 : 
+		stream->writeUint32LE((currTime > entry->timeoutCtr ) ? 0 :
 			entry->timeoutCtr - currTime);
 		stream->writeByte(entry->canClear);
 	}
@@ -851,14 +851,14 @@ CharacterScheduleEntry::CharacterScheduleEntry(Action theAction, ...) {
 	va_list u_Arg;
 	va_start(u_Arg, theAction);
 
-	for (int paramCtr = 0; paramCtr < actionNumParams[_action]; ++paramCtr) 
+	for (int paramCtr = 0; paramCtr < actionNumParams[_action]; ++paramCtr)
 		_params[paramCtr] = (uint16) va_arg(u_Arg, int);
 
 	va_end(u_Arg);
 	_numParams = actionNumParams[_action];
 }
 
-CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleSet *parentSet, 
+CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleSet *parentSet,
 		CharacterScheduleResource *&rec) {
 	_parent = parentSet;
 
@@ -867,10 +867,10 @@ CharacterScheduleEntry::CharacterScheduleEntry(CharacterScheduleSet *parentSet,
 
 	_action = (Action) READ_LE_UINT16(&rec->action);
 	_numParams = actionNumParams[_action];
-	for (int index = 0; index < _numParams; ++index) 
+	for (int index = 0; index < _numParams; ++index)
 		_params[index] = READ_LE_UINT16(&rec->params[index]);
 
-	rec = (CharacterScheduleResource *) ((byte *) rec + 
+	rec = (CharacterScheduleResource *) ((byte *) rec +
 		(_numParams + 1) * sizeof(uint16));
 }
 
@@ -894,7 +894,7 @@ void CharacterScheduleEntry::setDetails(Action theAction, ...) {
 	va_list list;
 	va_start(list, theAction);
 
-	for (int paramCtr = 0; paramCtr < actionNumParams[_action]; ++paramCtr) 
+	for (int paramCtr = 0; paramCtr < actionNumParams[_action]; ++paramCtr)
 		_params[paramCtr] = (uint16) va_arg(list, int);
 
 	va_end(list);
@@ -960,7 +960,7 @@ CharacterScheduleEntry *CharacterScheduleList::getEntry(uint16 id, CharacterSche
 			--index;
 		}
 
-		if (i == end()) 
+		if (i == end())
 			error("Invalid index %d specified for support data set", id >> 8);
 		currentSet = *i;
 	}
@@ -979,12 +979,12 @@ CharacterScheduleEntry *CharacterScheduleList::getEntry(uint16 id, CharacterSche
 }
 
 uint16 CharacterScheduleSet::getId(CharacterScheduleEntry *rec) {
-	// Return an Id for the entry based on the id of the set combined with the 
+	// Return an Id for the entry based on the id of the set combined with the
 	// index of the specific entry
 	uint16 result = _id << 10;
 
 	iterator i;
-	for (i = begin(); i != end(); ++i, ++result) 
+	for (i = begin(); i != end(); ++i, ++result)
 		if (*i == rec) break;
 	if (i == end())
 		error("Parent child relationship missing in character schedule set");
@@ -1037,12 +1037,12 @@ void RandomActionSet::loadFromStream(Common::ReadStream *stream) {
 
 
 void RandomActionList::saveToStream(Common::WriteStream *stream) {
-	for (iterator i = begin(); i != end(); ++i) 
+	for (iterator i = begin(); i != end(); ++i)
 		(*i)->saveToStream(stream);
 }
 
 void RandomActionList::loadFromStream(Common::ReadStream *stream) {
-	for (iterator i = begin(); i != end(); ++i) 
+	for (iterator i = begin(); i != end(); ++i)
 		(*i)->loadFromStream(stream);
 }
 
@@ -1098,13 +1098,13 @@ void PausedCharacterList::countdown() {
 		--rec->counter;
 
 		// Handle reflecting counter to hotspot
-		if (rec->destCharId < START_EXIT_ID) 
+		if (rec->destCharId < START_EXIT_ID)
 			rec->charHotspot->pauseCtr = rec->counter + 1;
 
 		// If counter has reached zero, remove entry from list
-		if (rec->counter == 0) 
+		if (rec->counter == 0)
 			i = erase(i);
-		else 
+		else
 			++i;
 	}
 }
@@ -1119,8 +1119,8 @@ void PausedCharacterList::scan(Hotspot &h) {
 
 			if (rec->srcCharId == h.hotspotId()) {
 				rec->counter = IDLE_COUNTDOWN_SIZE;
-				
-				if (rec->destCharId < START_EXIT_ID) 
+
+				if (rec->destCharId < START_EXIT_ID)
 					rec->charHotspot->pauseCtr = IDLE_COUNTDOWN_SIZE;
 			}
 		}
@@ -1138,7 +1138,7 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 		Hotspot *hotspot = res.getActiveHotspot(impingingList[index]);
 		if ((!hotspot) || (!hotspot->currentActions().isEmpty() &&
 			(hotspot->currentActions().top().action() == EXEC_HOTSPOT_SCRIPT)))
-			// Entry is skipped if hotspot not present or is executing hotspot script		
+			// Entry is skipped if hotspot not present or is executing hotspot script
 			continue;
 
 		// Scan through the pause list to see if there's a record for the
@@ -1146,7 +1146,7 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 		bool foundEntry = false;
 		for (i = res.pausedList().begin(); !foundEntry && (i != res.pausedList().end()); ++i) {
 			PausedCharacter *rec = *i;
-			foundEntry = (rec->srcCharId == charId) && 
+			foundEntry = (rec->srcCharId == charId) &&
 				(rec->destCharId == hotspot->hotspotId());
 		}
 
@@ -1162,11 +1162,11 @@ int PausedCharacterList::check(uint16 charId, int numImpinging, uint16 *impingin
 		// Add a new paused character entry
 		PausedCharacter *entry = new PausedCharacter(charId, hotspot->hotspotId());
 		res.pausedList().push_back(entry);
-		charHotspot->setBlockedState(BS_INITIAL); 
+		charHotspot->setBlockedState(BS_INITIAL);
 
 		if (hotspot->hotspotId() < START_EXIT_ID) {
-			if ((charHotspot->characterMode() == CHARMODE_PAUSED) || 
-				((charHotspot->pauseCtr() == 0) && 
+			if ((charHotspot->characterMode() == CHARMODE_PAUSED) ||
+				((charHotspot->pauseCtr() == 0) &&
 				(charHotspot->characterMode() == CHARMODE_NONE))) {
 				if (hotspot->characterMode() != CHARMODE_WAIT_FOR_INTERACT)
 					hotspot->resource()->scriptHotspotId = charId;
@@ -1193,7 +1193,7 @@ BarmanLists::BarmanLists() {
 }
 
 void BarmanLists::reset() {
-	for (int index = 0; index < 3; ++index) 
+	for (int index = 0; index < 3; ++index)
 		_barList[index] = default_barList[index];
 }
 
@@ -1244,7 +1244,7 @@ void StringList::load(MemoryBlock *data) {
 
 	for (int index = 0; index < _numEntries; ++index) {
 		_entries[index] = p;
-		p += strlen(p) + 1;	
+		p += strlen(p) + 1;
 	}
 }
 
@@ -1267,7 +1267,7 @@ void ValueTableData::reset() {
 	_playerNewPos.roomNumber = 0;
 	_playerNewPos.position.x = 0;
 	_playerNewPos.position.y = 0;
-	_hdrFlagMask = 1;    
+	_hdrFlagMask = 1;
 
 	for (uint16 index = 0; index < NUM_VALUE_FIELDS; ++index)
 		_fieldList[index] = 0;
@@ -1309,7 +1309,7 @@ void ValueTableData::saveToStream(Common::WriteStream *stream) {
 	stream->writeSint16LE(_playerNewPos.position.y);
 	stream->writeUint16LE(_playerNewPos.roomNumber);
 	stream->writeByte(_hdrFlagMask);
-	
+
 	// Write out the special fields
 	for (int index = 0; index < NUM_VALUE_FIELDS; ++index)
 		stream->writeUint16LE(_fieldList[index]);
@@ -1322,7 +1322,7 @@ void ValueTableData::loadFromStream(Common::ReadStream *stream) {
 	_playerNewPos.position.y = stream->readSint16LE();
 	_playerNewPos.roomNumber = stream->readUint16LE();
 	_hdrFlagMask = stream->readByte();
-	
+
 	// Read in the field list
 	for (int index = 0; index < NUM_VALUE_FIELDS; ++index)
 		_fieldList[index] = stream->readUint16LE();
@@ -1333,16 +1333,16 @@ void ValueTableData::loadFromStream(Common::ReadStream *stream) {
 // Current action entry class methods
 
 CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, uint16 roomNum) {
-	_action = newAction; 
-	_supportData = NULL; 
+	_action = newAction;
+	_supportData = NULL;
 	_dynamicSupportData = false;
 	_roomNumber = roomNum;
 }
 
-CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum) { 
+CurrentActionEntry::CurrentActionEntry(CurrentAction newAction, CharacterScheduleEntry *data, uint16 roomNum) {
 	assert(data->parent() != NULL);
-	_action = newAction; 
-	_supportData = data; 
+	_action = newAction;
+	_supportData = data;
 	_dynamicSupportData = false;
 	_roomNumber = roomNum;
 }
@@ -1360,7 +1360,7 @@ CurrentActionEntry::CurrentActionEntry(CurrentActionEntry *src) {
 	_action = src->_action;
 	_dynamicSupportData = src->_dynamicSupportData;
 	_roomNumber = src->_roomNumber;
-	if (!_dynamicSupportData) 
+	if (!_dynamicSupportData)
 		_supportData = src->_supportData;
 	else if (src->_supportData == NULL)
 		_supportData = NULL;
@@ -1426,7 +1426,7 @@ CurrentActionEntry *CurrentActionEntry::loadFromStream(ReadStream *stream) {
 			uint16 *paramList = new uint16[numParams];
 			for (int index = 0; index < numParams; ++index)
 				paramList[index] = stream->readUint16LE();
-				
+
 			result->_supportData->setDetails2(action, numParams, paramList);
 			delete paramList;
 		} else {
@@ -1459,7 +1459,7 @@ void CurrentActionStack::list(char *buffer) {
 		}
 		else
 			printf("style=%d room#=%d", entry->action(), entry->roomNumber());
-	
+
 		if (entry->hasSupportData()) {
 			CharacterScheduleEntry &rec = entry->supportData();
 
@@ -1470,7 +1470,7 @@ void CurrentActionStack::list(char *buffer) {
 			else
 				printf(", action=%d params=", rec.action());
 
-			if (rec.numParams() == 0) 
+			if (rec.numParams() == 0)
 				if (buffer) {
 					strcat(buffer, "none");
 					buffer += strlen(buffer);
@@ -1491,7 +1491,7 @@ void CurrentActionStack::list(char *buffer) {
 					if (buffer) {
 						sprintf(buffer, "%d", rec.param(ctr));
 						buffer += strlen(buffer);
-					} else 
+					} else
 						printf("%d", rec.param(ctr));
 				}
 			}

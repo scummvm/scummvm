@@ -241,7 +241,7 @@ bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
 	if (argc > 1) {
 		int scene = atoi(argv[1]);
 
-		// game will crash if entering a non-existent scene 
+		// game will crash if entering a non-existent scene
 		if (scene >= _vm->_sceneListSize) {
 			DebugPrintf("scene number must be any value between (including) 0 and %d\n", _vm->_sceneListSize-1);
 			return true;

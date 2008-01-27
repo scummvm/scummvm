@@ -665,7 +665,7 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 				doVerb();
 				return;
 			}
-		} else { 
+		} else {
 			if (_vm->getGameType() == GType_IHNM) {
 				if ((hitZone->getFlags() & kHitZoneNoWalk) && (_pendingVerb != getVerbType(kVerbWalkTo))) {
 					doVerb();
@@ -738,8 +738,8 @@ void Script::playfieldClick(const Point& mousePoint, bool leftButton) {
 				// (screens with Gorrister's heart) in IHNM. For some reason, this zone does
 				// not have a corresponding action zone, so we auto-use it here, like the exits
 				// in Benny's chapter
-				if (_vm->_scene->currentChapterNumber() == 1 && 
-					_vm->_scene->currentSceneNumber() >= 16 && 
+				if (_vm->_scene->currentChapterNumber() == 1 &&
+					_vm->_scene->currentSceneNumber() >= 16 &&
 					_vm->_scene->currentSceneNumber() <= 19 &&
 					_pendingVerb == getVerbType(kVerbWalkTo) &&
 					hitZone != NULL && hitZone->getHitZoneId() == 24576) {
@@ -813,7 +813,7 @@ void Script::whichObject(const Point& mousePoint) {
 					// Note: for IHNM, the default right button action is "Look at" for actors,
 					// but "Talk to" makes much more sense
 					newRightButtonVerb = getVerbType(kVerbTalkTo);
-					// Slight hack because of the above change: the jukebox in Gorrister's chapter 
+					// Slight hack because of the above change: the jukebox in Gorrister's chapter
 					// is an actor, so change the right button action to "Look at"
 					if (_vm->getGameType() == GType_IHNM && objectId == 8199)
 						newRightButtonVerb = getVerbType(kVerbLookAt);

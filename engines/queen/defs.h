@@ -65,7 +65,7 @@ enum InkColor {
 	INK_TALK_NORMAL,
 	INK_JOE,
 	INK_OUTLINED_TEXT,
-	
+
 	INK_COUNT
 };
 

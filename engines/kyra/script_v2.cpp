@@ -110,7 +110,7 @@ int KyraEngine_v2::o2_setCharacterAnimFrame(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setCharacterAnimFrame(%p) (-, %d, %d)", (const void *)script, stackPos(1), stackPos(2));
 	int animFrame = stackPos(1);
 	int updateAnim = stackPos(2);
-	
+
 	_mainCharacter.animFrame = animFrame;
 	if (updateAnim)
 		updateCharacterAnim(0);
@@ -162,7 +162,7 @@ int KyraEngine_v2::o2_displayWsaFrame(ScriptState *script) {
 	int doUpdate = stackPos(6);
 	int dstPage = stackPos(7);
 	int backUp = stackPos(8);
-	
+
 	_screen->hideMouse();
 	uint32 endTime = _system->getMillis() + waitTime * _tickLength;
 	_wsaSlots[slot]->setX(x);
@@ -170,18 +170,18 @@ int KyraEngine_v2::o2_displayWsaFrame(ScriptState *script) {
 	_wsaSlots[slot]->setDrawPage(dstPage);
 	_wsaSlots[slot]->displayFrame(frame, copyParam | 0xC000);
 	_screen->updateScreen();
-	
+
 	if (backUp)
 		memcpy(_gamePlayBuffer, _screen->getCPagePtr(3), 46080);
 
 	while (_system->getMillis() < endTime) {
 		if (doUpdate)
 			update();
-		
+
 		if (endTime - _system->getMillis() >= 10)
 			delay(10);
 	}
-	_screen->showMouse();	
+	_screen->showMouse();
 	return 0;
 }
 
@@ -196,14 +196,14 @@ int KyraEngine_v2::o2_displayWsaSequentialFrames(ScriptState *script) {
 	int slot = stackPos(5);
 	int maxTimes = stackPos(6);
 	int copyFlags = stackPos(7);
-	
+
 	if (maxTimes > 1)
 		maxTimes = 1;
-	
+
 	_wsaSlots[slot]->setX(x);
 	_wsaSlots[slot]->setY(y);
 	_wsaSlots[slot]->setDrawPage(0);
-	
+
 	_screen->hideMouse();
 	int curTime = 0;
 	while (curTime < maxTimes) {
@@ -212,7 +212,7 @@ int KyraEngine_v2::o2_displayWsaSequentialFrames(ScriptState *script) {
 				uint32 endTime = _system->getMillis() + waitTime * _tickLength;
 				_wsaSlots[slot]->displayFrame(i, 0xC000 | copyFlags);
 				_screen->updateScreen();
-				
+
 				do {
 					update();
 
@@ -257,7 +257,7 @@ int KyraEngine_v2::o2_defineItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_defineItem(%p) (%d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int freeItem = findFreeItem();
-	
+
 	if (freeItem >= 0) {
 		_itemList[freeItem].id = stackPos(0);
 		_itemList[freeItem].x = stackPos(1);
@@ -280,7 +280,7 @@ int KyraEngine_v2::o2_countItemInInventory(ScriptState *script) {
 
 	if (_itemInHand == int16(item))
 		++count;
-	
+
 	return count;
 }
 
@@ -386,9 +386,9 @@ int KyraEngine_v2::o2_drawSceneShape(ScriptState *script) {
 
 	_screen->hideMouse();
 	restorePage3();
-	
+
 	_screen->drawShape(2, _sceneShapeTable[shape], x, y, 2, flag);
-	
+
 	memcpy(_gamePlayBuffer, _screen->getCPagePtr(3), 46080);
 
 	_screen->drawShape(0, _sceneShapeTable[shape], x, y, 2, flag);
@@ -442,7 +442,7 @@ int KyraEngine_v2::o2_update(ScriptState *script) {
 			update();
 	}
 
-	return 0;	
+	return 0;
 }
 
 int KyraEngine_v2::o2_fadeScenePal(ScriptState *script) {
@@ -461,7 +461,7 @@ int KyraEngine_v2::o2_enterNewSceneEx(ScriptState *script) {
 		runSceneScript4(0);
 
 	_unk5 = 1;
-	
+
 	if (_mainCharX == -1 || _mainCharY == -1) {
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 		updateCharacterAnim(0);
@@ -545,22 +545,22 @@ int KyraEngine_v2::o2_defineRoomEntrance(ScriptState *script) {
 		_sceneEnterX1 = stackPos(1);
 		_sceneEnterY1 = stackPos(2);
 		break;
-	
+
 	case 1:
 		_sceneEnterX2 = stackPos(1);
 		_sceneEnterY2 = stackPos(2);
 		break;
-	
+
 	case 2:
 		_sceneEnterX3 = stackPos(1);
 		_sceneEnterY3 = stackPos(2);
 		break;
-	
+
 	case 3:
 		_sceneEnterX4 = stackPos(1);
 		_sceneEnterY4 = stackPos(2);
 		break;
-	
+
 	default:
 		break;
 	}
@@ -601,17 +601,17 @@ int KyraEngine_v2::o2_defineSceneAnim(ScriptState *script) {
 	anim.shapeIndex = stackPos(11);
 	if (stackPosString(12) != 0)
 		strcpy(anim.filename, stackPosString(12));
-	
+
 	if (anim.flags & 0x40) {
 		if (!_sceneAnimMovie[animId]->open(anim.filename, 1, 0))
 			error("couldn't load '%s'", anim.filename);
-	
+
 		if (_sceneAnimMovie[animId]->xAdd() || _sceneAnimMovie[animId]->yAdd())
 			anim.wsaFlag = 1;
 		else
 			anim.wsaFlag = 0;
 	}
-	
+
 	return 0;
 }
 
@@ -633,7 +633,7 @@ int KyraEngine_v2::o2_defineRoom(ScriptState *script) {
 	scene->exit4 = stackPos(5);
 	scene->flags = stackPos(6);
 	scene->sound = stackPos(7);
-	
+
 	if (_mainCharacter.sceneId == stackPos(0)) {
 		_sceneExit1 = scene->exit1;
 		_sceneExit2 = scene->exit2;
@@ -661,7 +661,7 @@ int KyraEngine_v2::o2_countItemInstances(ScriptState *script) {
 		if (_itemList[i].id == item)
 			++count;
 	}
-	
+
 	if (_hiddenItems[0] == item && _newChapterFile == 1)
 		++count;
 	if (_hiddenItems[1] == item && _newChapterFile == 1)

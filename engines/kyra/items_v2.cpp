@@ -78,7 +78,7 @@ int KyraEngine_v2::checkItemCollision(int x, int y) {
 			yPos = curItem.y;
 		}
 	}
-	
+
 	return itemPos;
 }
 
@@ -139,7 +139,7 @@ bool KyraEngine_v2::processItemDrop(uint16 sceneId, uint16 item, int x, int y, i
 	}
 
 	int itemHeight = _itemHtDat[item];
-	
+
 	// no idea why it's '&&' here and not single checks for x and y
 	if (x == -1 && y == -1) {
 		x = _rnd.getRandomNumberRng(0x10, 0x130);
@@ -188,7 +188,7 @@ bool KyraEngine_v2::processItemDrop(uint16 sceneId, uint16 item, int x, int y, i
 
 	if (itemX == -1 || itemY == -1)
 		return false;
-	
+
 	if (unk1 == 3) {
 		_itemList[freeItemSlot].x = itemX;
 		_itemList[freeItemSlot].y = itemY;
@@ -286,7 +286,7 @@ void KyraEngine_v2::itemDropDown(int startX, int startY, int dstX, int dstY, int
 					uint16 endDelay = _system->getMillis() + _tickLength;
 					_screen->drawShape(0, itemShape, x, y, 0, 0);
 					_screen->updateScreen();
-					
+
 					// XXX: original doesn't update game state while delaying
 					// our implementation *could* do it, so maybe check this again
 					delayUntil(endDelay);
@@ -295,7 +295,7 @@ void KyraEngine_v2::itemDropDown(int startX, int startY, int dstX, int dstY, int
 				restoreGfxRect24x24(x, y);
 			} else {
 				restoreGfxRect24x24(curX, curY-16);
-			}	
+			}
 		}
 
 		if (_layerFlagTable[_screen->getLayer(dstX, dstY)] && item != 13) {
@@ -329,10 +329,10 @@ void KyraEngine_v2::exchangeMouseItem(int itemPos) {
 	snd_playSoundEffect(0x0b);
 	setMouseCursor(_itemInHand);
 	int str2 = 7;
-		
+
 	if (_lang == 1)
 		str2 = getItemCommandStringPickUp(itemId);
-	
+
 	updateCommandLineEx(itemId + 54, str2, 0xD6);
 	_screen->showMouse();
 
@@ -341,7 +341,7 @@ void KyraEngine_v2::exchangeMouseItem(int itemPos) {
 
 bool KyraEngine_v2::pickUpItem(int x, int y) {
 	int itemPos = checkItemCollision(x, y);
-	
+
 	if (itemPos <= -1)
 		return false;
 
@@ -355,10 +355,10 @@ bool KyraEngine_v2::pickUpItem(int x, int y) {
 		snd_playSoundEffect(0x0b);
 		setMouseCursor(itemId);
 		int str2 = 7;
-		
+
 		if (_lang == 1)
 			str2 = getItemCommandStringPickUp(itemId);
-		
+
 		updateCommandLineEx(itemId + 54, str2, 0xD6);
 		_itemInHand = itemId;
 		_screen->showMouse();
@@ -375,7 +375,7 @@ bool KyraEngine_v2::isDropable(int x, int y) {
 
 	x -= 8;
 	y -= 1;
-	
+
 	for (int xpos = x; xpos < x + 16; ++xpos) {
 		if (_screen->getShapeFlag1(xpos, y) == 0)
 			return false;

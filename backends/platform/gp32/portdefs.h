@@ -57,9 +57,9 @@
 #undef fseek
 
 #undef ferror
-#undef clearerr 
+#undef clearerr
 
-#undef feof	
+#undef feof
 #undef getc
 
 #define FILE GPFILE

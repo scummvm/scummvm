@@ -408,7 +408,7 @@ void buildSegment(void) {
 		int Y2 = di[3];
 		int Y1 = di[1];
 
-		
+
 		int tempAX = Y1;
 		int tempDX = Y2;
 		if (tempAX > tempDX) {
@@ -750,9 +750,9 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 
 	/*
 	 * NOTE:
-	 * 
+	 *
 	 * The original code continues here with using X, Y instead of startX and StartY.
-	 * 
+	 *
 	 * Original code:
 	 * positionX -= (upscaleValue(startX, m_scaleValue) + 0x8000) >> 16;
 	 * positionY -= (upscaleValue(startX, m_scaleValue) + 0x8000) >> 16;
@@ -836,7 +836,7 @@ void buildPolyModel(int positionX, int positionY, int scale, char *pMask, char *
 
 			flipShort(&minimumScale);
 
-			if ((minimumScale <= scale)) {	
+			if ((minimumScale <= scale)) {
 				if (m_flipLeftRight) {
 					drawPolyMode1((unsigned char *)dataPointer, linesToDraw);
 				} else {
@@ -911,9 +911,9 @@ bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX
 
 	/*
 	 * NOTE:
-	 * 
+	 *
 	 * The original code continues here with using X, Y instead of startX and StartY.
-	 * 
+	 *
 	 * Original code:
 	 * positionX -= (upscaleValue(startX, m_scaleValue) + 0x8000) >> 16;
 	 * positionY -= (upscaleValue(startX, m_scaleValue) + 0x8000) >> 16;
@@ -997,7 +997,7 @@ bool findPoly(char* dataPtr, int positionX, int positionY, int scale, int mouseX
 
 			flipShort(&minimumScale);
 
-			if ((minimumScale <= scale)) {	
+			if ((minimumScale <= scale)) {
 				if (m_flipLeftRight) {
 					drawPolyMode1((unsigned char *)dataPointer, linesToDraw);
 				} else {
@@ -1065,7 +1065,7 @@ void mainDrawPolygons(int fileIndex, cellStruct *plWork, int X, int scale, int Y
 	int newY;
 	int newScale;
 	char *newFrame;
-	
+
 	int var_8;		// unused
 
 	int sizeTable[4];	// 0 = left, 1 = right, 2 = bottom, 3 = top
@@ -1284,7 +1284,7 @@ void drawCtp(void) {
 void drawMenu(menuStruct *pMenu) {
 	if (pMenu == NULL)
 		return;
-	
+
 	if(pMenu->numElements == 0)
 		return;
 

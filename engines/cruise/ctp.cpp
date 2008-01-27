@@ -192,7 +192,7 @@ void makeCtStruct(uint8* str, int16 table[][40], int num, int z) {
 int getNode(int nodeResult[2], int nodeId){
 	if (nodeId < 0 || nodeId >= ctp_routeCoordCount)
 		return -1;
-	
+
 	nodeResult[0] = ctp_routeCoords[nodeId][0];
 	nodeResult[1] = ctp_routeCoords[nodeId][1];
 
@@ -206,7 +206,7 @@ int setNodeColor(int nodeIdx, int nodeColor) {
 	int oldColor = walkboxColor[nodeIdx];
 
 	if(nodeColor == -1)
-		return 
+		return
 
 	walkboxColor[nodeIdx] = nodeColor;
 
@@ -220,7 +220,7 @@ int setNodeState(int nodeIdx, int nodeState) {
 	int oldState = walkboxState[nodeIdx];
 
 	if(nodeState == -1)
-		return 
+		return
 
 	walkboxState[nodeIdx] = nodeState;
 

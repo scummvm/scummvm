@@ -34,7 +34,7 @@
 
 typedef void (*SoundProc)(void *param, byte *buf, int len);
 typedef int (*TimerProc)(int interval);
- 
+
 typedef struct AQCallbackStruct {
     AudioQueueRef queue;
     uint32 frameCount;
@@ -49,7 +49,7 @@ protected:
 	static AQCallbackStruct s_AudioQueue;
 	static SoundProc s_soundCallback;
 	static void *s_soundParam;
-	
+
 	Common::SaveFileManager *_savefile;
 	Audio::Mixer *_mixer;
 	Common::TimerManager *_timer;
@@ -153,7 +153,7 @@ public:
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
 	virtual Common::TimerManager *getTimerManager();
-	
+
 protected:
 	inline void addDirtyRect(int16 x1, int16 y1, int16 w, int16 h);
 	void internUpdateScreen();

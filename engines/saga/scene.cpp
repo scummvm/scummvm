@@ -676,9 +676,9 @@ void Scene::loadScene(LoadSceneParams *loadSceneParams) {
 	debug(3, "Loading scene number %d:", _sceneNumber);
 
 	if (isNonInteractiveIHNMDemoPart()) {
-		// WORKAROUND for the non-interactive part of the IHNM demo: When restarting the 
+		// WORKAROUND for the non-interactive part of the IHNM demo: When restarting the
 		// non-interactive demo, opcode sfMainMode is incorrectly called. Therefore, if any
-		// of the scenes of the non-interactive demo are loaded (scenes 144-149), set panel 
+		// of the scenes of the non-interactive demo are loaded (scenes 144-149), set panel
 		// to null and lock the user interface
 		_vm->_interface->deactivate();
 		_vm->_interface->setMode(kPanelNull);

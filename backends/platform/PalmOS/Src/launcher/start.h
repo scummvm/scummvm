@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #ifndef __START_H__
 #define __START_H__
 
@@ -36,7 +36,7 @@ typedef	struct {
 
 	//skin params
 	SkinInfoType skin;	//	card where is located the skin
-	Boolean soundClick;	
+	Boolean soundClick;
 
 	Boolean vibrator;
 	Boolean autoOff;

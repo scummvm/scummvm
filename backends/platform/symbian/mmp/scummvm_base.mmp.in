@@ -36,7 +36,7 @@ ALWAYS_BUILD_AS_ARM
 //START_AUTO_MACROS_MASTER//
 
 	// empty base file, will be updated by Perl build scripts
-	
+
 	// list of possible MACROs: (will be replaced when generating scummvm_base.mmp)
 	//MACRO			USE_ZLIB			// LIB:zlib.lib
 	//MACRO			USE_MAD				// LIB:libmad.lib
@@ -69,7 +69,7 @@ USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl
 
 SYSTEMINCLUDE 	\epoc32\include\ESDL
 SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
-SYSTEMINCLUDE   \epoc32\include\libc 
+SYSTEMINCLUDE   \epoc32\include\libc
 SYSTEMINCLUDE   \epoc32\include\tremor
 SYSTEMINCLUDE   \epoc32\include
 SYSTEMINCLUDE   ..\src // for portdefs.h

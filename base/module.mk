@@ -7,5 +7,5 @@ MODULE_OBJS := \
 	plugins.o \
 	version.o
 
-# Include common rules 
+# Include common rules
 include $(srcdir)/rules.mk

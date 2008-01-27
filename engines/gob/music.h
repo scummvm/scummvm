@@ -63,7 +63,7 @@ public:
 	bool endOfData() const { return !_playing; }
 	bool endOfStream() const { return false; }
 	int getRate() const { return _rate; }
-	
+
 protected:
 	static const char *_tracks[][2];
 	static const char *_trackFiles[];

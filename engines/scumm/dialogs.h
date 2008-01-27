@@ -124,7 +124,7 @@ protected:
 
 	int _page;
 	int _numPages;
-	
+
 	const GameSettings _game;
 
 	void displayKeyBindings();
@@ -251,7 +251,7 @@ public:
 protected:
 	int _value;
 	uint32 _timer;
-	
+
 	void cycleValue();
 };
 

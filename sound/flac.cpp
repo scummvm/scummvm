@@ -113,7 +113,7 @@ protected:
 		// a 16 bit value (in fact it seems the maximal block size is 32768, but we play it safe).
 		BUFFER_SIZE = 65536
 	};
-	
+
 	struct {
 		SampleType bufData[BUFFER_SIZE];
 		SampleType *bufReadPos;
@@ -218,14 +218,14 @@ FlacInputStream::FlacInputStream(Common::SeekableReadStream *inStream, bool disp
 #else
 	success = (::FLAC__stream_decoder_init_stream(
 		_decoder,
-		&FlacInputStream::callWrapRead, 
-		&FlacInputStream::callWrapSeek, 
-		&FlacInputStream::callWrapTell, 
-		&FlacInputStream::callWrapLength, 
-		&FlacInputStream::callWrapEOF, 
-		&FlacInputStream::callWrapWrite, 
-		&FlacInputStream::callWrapMetadata, 
-		&FlacInputStream::callWrapError, 
+		&FlacInputStream::callWrapRead,
+		&FlacInputStream::callWrapSeek,
+		&FlacInputStream::callWrapTell,
+		&FlacInputStream::callWrapLength,
+		&FlacInputStream::callWrapEOF,
+		&FlacInputStream::callWrapWrite,
+		&FlacInputStream::callWrapMetadata,
+		&FlacInputStream::callWrapError,
 		(void*)this
 	) == FLAC__STREAM_DECODER_INIT_STATUS_OK);
 #endif
@@ -340,7 +340,7 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		assert(_requestedSamples % numChannels == 0);
 		processSingleBlock();
 		state = getStreamDecoderState();
-		
+
 		if (state == FLAC__STREAM_DECODER_END_OF_STREAM) {
 			_lastSampleWritten = true;
 		}

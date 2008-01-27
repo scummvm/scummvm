@@ -129,9 +129,9 @@ struct IIgsOscillatorList {
 	IIgsOscillator osc[MAX_OSCILLATORS]; ///< The oscillators
 
 	/** Indexing operators for easier access to the oscillators. */
-	const IIgsOscillator &operator()(uint index) const { return osc[index]; }	
+	const IIgsOscillator &operator()(uint index) const { return osc[index]; }
 	IIgsOscillator &operator()(uint index) { return osc[index]; }
-	
+
 	/** Reads an Apple IIGS oscillator list from the given stream. */
 	bool read(Common::SeekableReadStream &stream, uint oscillatorCount, bool ignoreAddr = false);
 	bool finalize(Common::SeekableReadStream &uint8Wave);
