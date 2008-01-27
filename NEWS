@@ -11,9 +11,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fix for zombies in King's Quest 4
 
  SAGA:
-   - Fix for rat maze bug which made game not completable
-   - Fixes for game startup on number of platforms
-
+   - Fix for rat maze bug in Inherit the Earth which made game not completable
+   - Fixes for Inherit the Earth and I Have no Mouth game startup on a number
+     of platforms. Some platforms are still not supported
+   - Reduced the number of simultaneous open files in I Have no Mouth, to allow
+     it to run on platforms that can keep a limited amount of files open (e.g.
+	 on the PSP)
 
 0.11.0 (2008-01-15)
  New Games:
