@@ -1008,6 +1008,58 @@ void KyraEngine_v1::checkAmuletAnimFlags() {
 	}
 }
 
+#pragma mark -
+
+void KyraEngine_v1::registerDefaultSettings() {
+	KyraEngine::registerDefaultSettings();
+
+	// Most settings already have sensible defaults. This one, however, is
+	// specific to the Kyra engine.
+	ConfMan.registerDefault("walkspeed", 2);
+}
+
+void KyraEngine_v1::readSettings() {
+	int talkspeed = ConfMan.getInt("talkspeed");
+
+	// The default talk speed is 60. This should be mapped to "Normal".
+
+	if (talkspeed == 0)
+		_configTextspeed = 3;	// Clickable
+	if (talkspeed <= 50)
+		_configTextspeed = 0;	// Slow
+	else if (talkspeed <= 150)
+		_configTextspeed = 1;	// Normal
+	else
+		_configTextspeed = 2;	// Fast
+
+	KyraEngine::readSettings();
+}
+
+void KyraEngine_v1::writeSettings() {
+	int talkspeed;
+
+	switch (_configTextspeed) {
+	case 0:		// Slow
+		talkspeed = 1;
+		break;
+	case 1:		// Normal
+		talkspeed = 60;
+		break;
+	case 2:		// Fast
+		talkspeed = 255;
+		break;
+	default:	// Clickable
+		talkspeed = 0;
+		break;
+	}
+
+	ConfMan.setInt("talkspeed", talkspeed);
+	
+	KyraEngine::writeSettings();
+}
+
+#pragma mark -
+
 typedef Functor1Mem<ScriptState*, int, KyraEngine_v1> OpcodeV1;
 #define Opcode(x) OpcodeV1(this, &KyraEngine_v1::x)
 void KyraEngine_v1::setupOpcodeTable() {

@@ -230,6 +230,75 @@ void KyraEngine::delayWithTicks(int ticks) {
 	delay(ticks * _tickLength);
 }
 
+void KyraEngine::registerDefaultSettings() {
+	if (_flags.gameID != GI_KYRA3)
+		ConfMan.registerDefault("cdaudio", (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98));
+}
+
+void KyraEngine::readSettings() {
+	_configWalkspeed = ConfMan.getInt("walkspeed");
+	_configMusic = ConfMan.getBool("music_mute") ? 0 : ((ConfMan.getBool("cdaudio") && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) ? 2 : 1);	
+	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
+
+	_sound->enableMusic(_configMusic);
+	_sound->enableSFX(_configSounds);
+
+	bool speechMute = ConfMan.getBool("speech_mute");
+	bool subtitles = ConfMan.getBool("subtitles");
+
+	if (!speechMute && subtitles)
+		_configVoice = 2;	// Voice & Text
+	else if (!speechMute && !subtitles)
+		_configVoice = 1;	// Voice only
+	else
+		_configVoice = 0;	// Text only
+
+	setWalkspeed(_configWalkspeed);
+}
+
+void KyraEngine::writeSettings() {
+	bool speechMute, subtitles;
+
+	ConfMan.setInt("walkspeed", _configWalkspeed);
+	ConfMan.setBool("music_mute", _configMusic == 0);
+	ConfMan.setBool("cdaudio", _configMusic == 2);
+	ConfMan.setBool("sfx_mute", _configSounds == 0);
+
+	switch (_configVoice) {
+	case 0:		// Text only
+		speechMute = true;
+		subtitles = true;
+		break;
+	case 1:		// Voice only
+		speechMute = false;
+		subtitles = false;
+		break;
+	default:	// Voice & Text
+		speechMute = false;
+		subtitles = true;
+		break;
+	}
+
+	if (!_configMusic)
+		_sound->beginFadeOut();
+
+	_sound->enableMusic(_configMusic);
+	_sound->enableSFX(_configSounds);
+
+	ConfMan.setBool("speech_mute", speechMute);
+	ConfMan.setBool("subtitles", subtitles);
+
+	ConfMan.flushToDisk();
+}
+
+bool KyraEngine::speechEnabled() {
+	return _flags.isTalkie && (_configVoice == 1 || _configVoice == 2);
+}
+
+bool KyraEngine::textEnabled() {
+	return !_flags.isTalkie || (_configVoice == 0 || _configVoice == 2);
+}
+
 } // End of namespace Kyra
 
 

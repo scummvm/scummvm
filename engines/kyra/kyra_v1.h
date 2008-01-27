@@ -279,9 +279,6 @@ public:
 	void snd_playWanderScoreViaMap(int command, int restart);
 	virtual void snd_playVoiceFile(int id);
 	void snd_voiceWaitForFinish(bool ingame = true);
-
-	bool speechEnabled();
-	bool textEnabled();
 	
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);
@@ -594,10 +591,6 @@ protected:
 	bool _fadeText;
 
 	uint8 _configTextspeed;
-	uint8 _configWalkspeed;
-	int _configMusic;
-	bool _configSounds;
-	uint8 _configVoice;
 
 	ScreenAnimator *_animator;
 	SeqPlayer *_seq;

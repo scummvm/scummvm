@@ -28,14 +28,6 @@
 
 namespace Kyra {
 
-bool KyraEngine_v1::speechEnabled() {
-	return _flags.isTalkie && (_configVoice == 1 || _configVoice == 2);
-}
-
-bool KyraEngine_v1::textEnabled() {
-	return !_flags.isTalkie || (_configVoice == 0 || _configVoice == 2);
-}
-
 void KyraEngine_v1::snd_playSoundEffect(int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v1::snd_playSoundEffect(%d)", track);
 	if ((_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) && track == 49) {

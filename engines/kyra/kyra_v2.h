@@ -272,6 +272,8 @@ protected:
 	void runLoop();
 	void cleanup();
 
+	void registerDefaultSettings();
+
 	// TODO: get rid of all variables having pointers to the static resources if possible
 	// i.e. let them directly use the _staticres functions
 	void initStaticResource();
@@ -666,6 +668,7 @@ protected:
 	void showIdleAnim();
 	void runIdleScript(int script);
 
+	void setWalkspeed(uint8 speed);
 
 	// delay
 	void delay(uint32 millis, bool updateGame = false, bool isMainLoop = false);

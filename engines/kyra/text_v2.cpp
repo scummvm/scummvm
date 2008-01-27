@@ -212,14 +212,14 @@ void KyraEngine_v2::objectChatInit(const char *str, int object, int vocHigh, int
 
 	_screen->hideMouse();
 
-	if (1/*textEnabled()*/) {
+	if (textEnabled()) {
 		objectChatPrintText(str, object);
 		_chatEndTime = _system->getMillis() + chatCalcDuration(str) * _tickLength;
 	} else {
 		_chatEndTime = _system->getMillis();
 	}
 
-	if (1/*voiceEnabled()*/) {
+	if (speechEnabled()) {
 		_chatVocHigh = vocHigh;
 		_chatVocLow = vocLow;
 	} else {
@@ -318,7 +318,7 @@ void KyraEngine_v2::objectChatWaitToFinish() {
 			}
 
 			const uint32 curTime = _system->getMillis();
-			if ((1/*textEnabled()*/ && curTime > endTime) || (1/*voiceEnabled()*/ && !snd_voiceIsPlaying()) || _skipFlag) {
+			if ((textEnabled() && curTime > endTime) || (speechEnabled() && !snd_voiceIsPlaying()) || _skipFlag) {
 				_skipFlag = false;
 				nextFrame = curTime;
 				running = false;

@@ -35,6 +35,7 @@
 #include "kyra/debugger.h"
 
 #include "common/system.h"
+#include "common/config-manager.h"
 
 namespace Kyra {
 
@@ -1701,6 +1702,16 @@ void KyraEngine_v2::displayInvWsaLastFrame() {
 
 	int32 countdown = _rnd.getRandomNumberRng(45, 80);
 	_timer->setCountdown(2, countdown * 60);
+}
+
+#pragma mark -
+
+void KyraEngine_v2::registerDefaultSettings() {
+	KyraEngine::registerDefaultSettings();
+
+	// Most settings already have sensible defaults. This one, however, is
+	// specific to the Kyra engine.
+	ConfMan.registerDefault("walkspeed", 5);
 }
 
 #pragma mark -

@@ -100,4 +100,16 @@ void KyraEngine_v2::setTimer1DelaySecs(int secs) {
 	_timer->setCountdown(1, secs * 60);
 }
 
+void KyraEngine_v2::setWalkspeed(uint8 newSpeed) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::setWalkspeed(%i)", newSpeed);
+
+	if (newSpeed < 5)
+		newSpeed = 3;
+	else
+		newSpeed = 5;
+
+	_timer->setDelay(5, newSpeed);
+}
+
+
 } // end of namespace Kyra

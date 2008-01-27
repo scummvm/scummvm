@@ -147,11 +147,28 @@ protected:
 	StaticResource *_staticres;
 	TimerManager *_timer;
 	ScriptHelper *_scriptInterpreter;
+
+	// config specific
+	virtual void registerDefaultSettings();
+	virtual void readSettings();
+	virtual void writeSettings();
+
+	uint8 _configWalkspeed;
+
+	int _configMusic;
+	bool _configSounds;
+	uint8 _configVoice;
+
+	bool speechEnabled();
+	bool textEnabled();
 	
 	// game speed
 	bool _skipFlag;
 	uint16 _tickLength;
 	uint16 _gameSpeed;
+
+	// timer
+	virtual void setWalkspeed(uint8 speed) = 0;
 	
 	// detection
 	GameFlags _flags;
