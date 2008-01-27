@@ -147,12 +147,15 @@ enum kExtractID {
 	k2SeqplayTlkFiles,
 	k2SeqplaySeqData,
 	k2SeqplayCredits,
+	k2SeqplayCreditsSpecial,
 	k2SeqplayIntroTracks,
 	k2SeqplayFinaleTracks,
 	k2SeqplayIntroCDA,
 	k2SeqplayFinaleCDA,
 
 	k2IngamePakFiles,
+	k2IngameSfxFiles,
+	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameCDA,
 	

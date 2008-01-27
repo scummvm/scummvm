@@ -31,18 +31,24 @@ const ExtractEntry kyra2File1G[] = {
 
 const ExtractEntry kyra2File2E[] = {
 	{ k2IngamePakFiles, 0x0035E4E, 0x00362ED },
+	{ k2IngameSfxFiles, 0x00034700, 0x00034DF1 },
+	{ k2IngameSfxIndex, 0x0002A710, 0x0002AA68 },
 	{ k2IngameTracks, 0x0003B2F2, 0x0003B370 },
 	{ -1, 0, 0 }
 };
 
 const ExtractEntry kyra2File2F[] = {
 	{ k2IngamePakFiles, 0x0003AA9C, 0x0003AB1A },
+	{ k2IngameSfxFiles, 0x00033E24, 0x00034515 },
+	{ k2IngameSfxIndex, 0x000288B0, 0x00028C08 },
 	{ k2IngameTracks, 0x0003B2F2, 0x0003B370 },
 	{ -1, 0, 0 }
 };
 
 const ExtractEntry kyra2File2G[] = {
 	{ k2IngamePakFiles, 0x0035626, 0x0035AC5 },
+	{ k2IngameSfxFiles, 0x00033ED8, 0x000345C9 },
+	{ k2IngameSfxIndex, 0x000288E0, 0x00028C38 },
 	{ k2IngameTracks, 0x0003AA8C, 0x0003AB0A },
 	{ -1, 0, 0 }
 };

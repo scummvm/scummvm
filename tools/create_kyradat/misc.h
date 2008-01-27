@@ -359,6 +359,7 @@ const int kyra1AmigaNeed[] = {
 const int kyra2CDFile1EngNeed[] = {
 	k2SeqplayPakFiles,
 	k2SeqplayCredits,
+	k2SeqplayCreditsSpecial,
 	k2SeqplayStrings,
 	k2SeqplaySfxFiles,
 	k2SeqplaySeqData,
@@ -378,6 +379,8 @@ const int kyra2CDFile1GerNeed[] = {
 };
 
 const int kyra2CDFile2EngNeed[] = {
+	k2IngameSfxFiles,
+	k2IngameSfxIndex,
 	k2IngameTracks,
 	-1
 };
@@ -402,6 +405,8 @@ const int kyra2FloppyFile1Need[] = {
 
 const int kyra2FloppyFile2Need[] = {
 	k2IngamePakFiles,
+	k2IngameSfxFiles,
+	k2IngameSfxIndex,
 	k2IngameTracks,
 	-1
 };
@@ -423,6 +428,8 @@ const int kyra2TownsFile1JapNeed[] = {
 
 const int kyra2TownsFile2EngNeed[] = {
 	k2IngamePakFiles,
+	k2IngameSfxFiles,
+	k2IngameSfxIndex,
 	k2IngameCDA,
 	-1
 };

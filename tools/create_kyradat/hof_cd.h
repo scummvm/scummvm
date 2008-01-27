@@ -1,6 +1,7 @@
 const ExtractEntry kyra2File1CDE[] = {
 	{ k2SeqplayPakFiles, 0x00029FA4, 0x00029FEA },
 	{ k2SeqplayCredits, 0x00027920, 0x00028408 },
+	{ k2SeqplayCreditsSpecial, 0x00029E01, 0x00029E1B },
 	{ k2SeqplayStrings, 0x0002C566, 0x0002CE7C },
 	{ k2SeqplaySfxFiles, 0x0002E284, 0x0002E4B8 },
 	{ k2SeqplayTlkFiles, 0x0002A2AC, 0x0002A349 },
@@ -23,6 +24,8 @@ const ExtractEntry kyra2File1CDG[] = {
 };
 
 const ExtractEntry kyra2File2CDE[] = {
+	{ k2IngameSfxFiles, 0x0002CB30, 0x0002D221 },
+	{ k2IngameSfxIndex, 0x000294F0, 0x00029848 },
 	{ k2IngameTracks, 0x0002F2FE, 0x0002F37E },
 	{ -1, 0, 0 }
 };

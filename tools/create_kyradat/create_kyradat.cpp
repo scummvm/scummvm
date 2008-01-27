@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 18,
+	kKyraDatVersion = 19,
 	kIndexSize = 12
 };
 
@@ -199,6 +199,7 @@ const ExtractFilename extractFilenames[] = {
 	// Sequence Player
 	{ k2SeqplayPakFiles, kTypeStringList, "S_PAKFILES.TXT" },
 	{ k2SeqplayCredits, kTypeRawData, "S_CREDITS.TXT" },
+	{ k2SeqplayCreditsSpecial, kTypeStringList, "S_CREDITS2.TXT" },
 	{ k2SeqplayStrings, kTypeLanguageList, "S_STRINGS" },
 	{ k2SeqplaySfxFiles, kTypeStringList, "S_SFXFILES.TXT" },
 	{ k2SeqplayTlkFiles, kTypeLanguageList, "S_TLKFILES" },
@@ -210,6 +211,8 @@ const ExtractFilename extractFilenames[] = {
 
 	// Ingame
 	{ k2IngamePakFiles, kTypeStringList, "I_PAKFILES.TXT" },
+	{ k2IngameSfxFiles, kTypeStringList, "I_SFXFILES.TXT" },
+	{ k2IngameSfxIndex, kTypeRawData, "I_SFXINDEX.TRA" },	
 	{ k2IngameTracks, kTypeStringList, "I_TRACKS.TRA" },
 	{ k2IngameCDA, kTypeRawData, "I_TRACKS.CDA" },
 
@@ -372,7 +375,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 
 			if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
 				g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
-				g->special == k2TownsFile2E || g->special == k2TownsFile2J) {
+				g->special == k2TownsFile2E || g->special == k2TownsFile2J || fmtPatch == 5) {
 				// prevents creation of empty entries (which we have mostly between all strings in the fm-towns version)
 				while (!data[++i]) {
 					if (i == size)
@@ -429,7 +432,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	WRITE_BE_UINT32(output, entries); output += 4;
 	if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
 		g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
-		g->special == k2TownsFile2E || g->special == k2TownsFile2J) {
+		g->special == k2TownsFile2E || g->special == k2TownsFile2J || fmtPatch == 5) {
 		const byte * c = data + size;
 		do {
 			if (fmtPatch == 2 && input - data == 0x3C0 && input[0x10] == 0x32) {
@@ -580,9 +583,9 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 			int v = extractHofSeqData_isSequence(ptr, g, endOffs - ptr);
 
 			if (cycle == 0 && v == 1) {
-				if (g->special == k2FloppyFile1 && *ptr == 5) {
-					// patch for floppy version
-					// skips invalid ferb sequence
+				if ((g->special == k2FloppyFile1 && *ptr == 5) || (g->special == k2DemoVersion && (ptr - data == 312))) {
+					// patch for floppy version: skips invalid ferb sequence
+					// patch for demo: skips invalid title sequence
 					ptr += 54;
 					continue;
 				}
@@ -815,12 +818,12 @@ int extractHofSeqData_isControl(const void *ptr, uint32 size) {
 	// return values: 1 = possible frame control data; 0 = definitely not frame control data
 
 	const uint8 *s = (const uint8*)ptr;
-	for (uint i = 2; i < size; i += 4) {
+	for (uint32 i = 2; i < size; i += 4) {
 		if (!s[i])
 			return 0;
 	}
 
-	for (uint i = 1; i < size; i += 2) {
+	for (uint32 i = 1; i < size; i += 2) {
 		if (s[i])
 			return 0;
 	}
@@ -1090,6 +1093,11 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 			if (i->id == k2IngamePakFiles)
 				patch = 4;
 		}
+
+		if (g->special == k2FloppyFile2 || g->special == k2CDFile2E) {
+			if (i->id == k2IngameSfxFiles)
+				patch = 5;
+		}		
 		
 		if (!tDesc->extract(out, g, data + i->startOff, i->endOff - i->startOff, filename, patch)) {
 			fprintf(stderr, "ERROR: couldn't extract id %d\n", i->id);
