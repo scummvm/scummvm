@@ -236,6 +236,8 @@ enum kKyraResources {
 	k2SeqplayFinaleCDA,
 
 	k2IngamePakFiles,
+	k2IngameSfxFiles,
+	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameCDA,
 

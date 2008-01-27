@@ -35,9 +35,11 @@ namespace Kyra {
 void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk2, int unk3) {
 	if (_newChapterFile != _currentTalkFile) {
 		_currentTalkFile = _newChapterFile;
-		showMessageFromCCode(265, 150, 0);
-		_screen->updateScreen();
-		openTalkFile(_currentTalkFile);
+		if (_flags.isTalkie) {
+			showMessageFromCCode(265, 150, 0);
+			_screen->updateScreen();
+			openTalkFile(_currentTalkFile);
+		}
 		showMessage(0, 207);
 		_screen->updateScreen();
 	}
@@ -425,7 +427,7 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 	
 	strcpy(filename, _sceneList[sceneId].filename);
 	strcat(filename, ".");
-	strcat(filename, _scriptLangExt[_lang]);
+	strcat(filename, _scriptLangExt[(_flags.platform == Common::kPlatformPC && !_flags.isTalkie) ? 0 : _lang]);
 	
 	assert(_res->getFileSize(filename));
 	_scriptInterpreter->loadScript(filename, &_sceneScriptData, &_opcodes);

@@ -162,6 +162,10 @@ int KyraEngine::init() {
 			_lang = 2;
 			break;
 
+		case Common::JA_JPN:
+			_lang = 3;
+			break;
+
 		default:
 			warning("unsupported language, switching back to English");
 			_lang = 0;

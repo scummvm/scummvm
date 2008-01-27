@@ -642,11 +642,13 @@ protected:
 	int _oldTalkFile;
 	int _currentTalkFile;
 	void openTalkFile(int newFile);
+	int _lastSfxTrack;
 
 	virtual void snd_playVoiceFile(int id);
 	void snd_loadSoundFile(int id);
 
 	void playVoice(int high, int low);
+	void snd_playSoundEffect(int track);
 
 	// timer
 	void timerFunc2(int);
@@ -869,6 +871,10 @@ protected:
 	int _cdaTrackTableFinaleSize;
 	const char *const *_sequenceSoundList;
 	int _sequenceSoundListSize;
+	const char *const *_ingameSoundList;
+	int _ingameSoundListSize;
+	const uint16 *_ingameSoundIndex;
+	int _ingameSoundIndexSize;
 	const char *const *_sequenceStrings;
 	int _sequenceStringsSize;
 	int _sequenceStringsDuration[33];

@@ -67,6 +67,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_newChapterFile = 1;
 	_oldTalkFile = -1;
 	_currentTalkFile = 0;
+	_lastSfxTrack = -1;
 	_handItemSet = -1;
 	_lastProcessedSceneScript = 0;
 	_specialSceneScriptRunFlag = false;
@@ -212,18 +213,20 @@ void KyraEngine_v2::startup() {
 	_screen->setMouseCursor(0, 0, getShapePtr(0));
 
 	_screenBuffer = new uint8[64000];
-
-	loadCCodeBuffer("C_CODE.XXX");
-	loadOptionsBuffer("OPTIONS.XXX");
-	loadChapterBuffer(_newChapterFile);
-
 	_unkBuf200kByte = new uint8[200000];
 
-	showMessageFromCCode(265, 150, 0);
+	loadChapterBuffer(_newChapterFile);	
 
-	openTalkFile(0);
-	_currentTalkFile = 1;
-	openTalkFile(1);
+	loadCCodeBuffer("C_CODE.XXX");
+	
+	if (_flags.isTalkie) {
+		loadOptionsBuffer("OPTIONS.XXX");
+
+		showMessageFromCCode(265, 150, 0);
+		openTalkFile(0);
+		_currentTalkFile = 1;
+		openTalkFile(1);
+	}
 
 	showMessage(0, 207);
 
@@ -806,7 +809,7 @@ const uint8 *KyraEngine_v2::getTableEntry(const uint8 *buffer, int id) {
 const char *KyraEngine_v2::getTableString(int id, const uint8 *buffer, int decode) {
 	const char *string = (const char*)getTableEntry(buffer, id);
 
-	if (decode) {
+	if (decode && _flags.lang != Common::JA_JPN) {
 		decodeString1(string, _internStringBuf);
 		decodeString2(_internStringBuf, _internStringBuf);
 		string = _internStringBuf;
@@ -920,15 +923,18 @@ void KyraEngine_v2::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 
 	strcpy(src, getTableString(str1, _cCodeBuffer, 1));
 
-	while (*src != 0x20)
+	if (_flags.lang != Common::JA_JPN) {
+		while (*src != 0x20)
+			++src;
 		++src;
-	++src;
-
-	*src = toupper(*src);
+		*src = toupper(*src);
+	}
+	
 	strcpy((char*)_unkBuf500Bytes, src);
 
 	if (str2 > 0) {
-		strcat((char*)_unkBuf500Bytes, " ");
+		if (_flags.lang != Common::JA_JPN)
+			strcat((char*)_unkBuf500Bytes, " ");
 		strcat((char*)_unkBuf500Bytes, getTableString(str2, _cCodeBuffer, 1));
 	}
 
@@ -1013,22 +1019,28 @@ void KyraEngine_v2::loadNPCScript() {
 	char filename[12];
 	strcpy(filename, "_NPC.EMC");
 
-	switch (_lang) {
-	case 0:
-		filename[5] = 'E';
-		break;
+	if (_flags.platform != Common::kPlatformPC || _flags.isTalkie) {
+		switch (_lang) {
+		case 0:
+			filename[5] = 'E';
+			break;
 
-	case 1:
-		filename[5] = 'F';
-		break;
+		case 1:
+			filename[5] = 'F';
+			break;
 
-	case 2:
-		filename[5] = 'G';
-		break;
+		case 2:
+			filename[5] = 'G';
+			break;
 
-	default:
-		break;
-	};
+		case 3:
+			filename[5] = 'J';
+			break;
+
+		default:
+			break;
+		};
+	}
 
 	_scriptInterpreter->loadScript(filename, &_npcScriptData, &_opcodes);
 }
@@ -1552,8 +1564,31 @@ void KyraEngine_v2::snd_loadSoundFile(int id) {
 }
 
 void KyraEngine_v2::playVoice(int high, int low) {
+	if (!_flags.isTalkie)
+		return;
 	int vocFile = high * 10000 + low * 10;
 	snd_playVoiceFile(vocFile);
+}
+
+void KyraEngine_v2::snd_playSoundEffect(int track) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::snd_playSoundEffect(%d)", track);
+	
+	if (track == 10)
+		track = _lastSfxTrack;
+
+	if (track == 10 || track == -1)
+		return;
+
+	_lastSfxTrack = track;
+
+	int16 vocIndex = (int16) READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
+	if (vocIndex != -1)
+		_sound->voicePlay(_ingameSoundList[vocIndex]);
+	else if (_flags.platform == Common::kPlatformPC) 
+		// TODO ?? Maybe there is a way to let users select whether they want
+		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
+		// For now this is used as a fallback only (if no voc file exists).
+		KyraEngine::snd_playSoundEffect(track);
 }
 
 #pragma mark -

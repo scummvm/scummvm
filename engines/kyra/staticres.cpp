@@ -35,7 +35,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 18
+#define RESFILE_VERSION 19
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -239,6 +239,8 @@ bool StaticResource::init() {
 
 		// Ingame
 		{ k2IngamePakFiles, kStringList, "I_PAKFILES.TXT" },
+		{ k2IngameSfxFiles, kStringList, "I_SFXFILES.TXT" },
+		{ k2IngameSfxIndex, kRawData, "I_SFXINDEX.TRA" },		
 		{ k2IngameTracks, kStringList, "I_TRACKS.TRA" },
 		{ k2IngameCDA, kRawData, "I_TRACKS.CDA" },
 
@@ -914,6 +916,8 @@ void KyraEngine_v2::initStaticResource() {
 	_ingamePakList = _staticres->loadStrings(k2IngamePakFiles, _ingamePakListSize);
 	_sequenceStrings = _staticres->loadStrings(k2SeqplayStrings, _sequenceStringsSize);
 	_sequenceSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
+	_ingameSoundList = _staticres->loadStrings(k2IngameSfxFiles, _ingameSoundListSize);
+	_ingameSoundIndex = (const uint16*) _staticres->loadRawData(k2IngameSfxIndex, _ingameSoundIndexSize);
 	_musicFileListIntro = _staticres->loadStrings(k2SeqplayIntroTracks, _musicFileListIntroSize);
 	_musicFileListIngame = _staticres->loadStrings(k2IngameTracks, _musicFileListIngameSize);
 	_musicFileListFinale = _staticres->loadStrings(k2SeqplayFinaleTracks, _musicFileListFinaleSize);
@@ -1340,17 +1344,19 @@ const uint8 KyraEngine_v2::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x
 const char *KyraEngine_v2::_languageExtension[] = {
 	"ENG",
 	"FRE",
-	"GER"/*,
+	"GER",/*,
 	"ITA",		Italian and Spanish was never included
 	"SPA"*/
+	"JPN"
 };
 
 const char *KyraEngine_v2::_scriptLangExt[] = {
 	"EMC",
 	"FMC",
-	"GMC"/*,
+	"GMC",/*,
 	"IMC",		Italian and Spanish was never included
 	"SMC"*/
+	"JMC"
 };
 
 const int KyraEngine_v2::_characterFrameTable[] = {
