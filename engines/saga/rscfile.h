@@ -161,11 +161,11 @@ private:
 	SagaEngine *_vm;
 	ResourceContext *_contexts;
 	int _contextsCount;
+	char _voicesFileName[8][256];
 
 	bool loadContext(ResourceContext *context);
 	bool loadMacContext(ResourceContext *context);
-	bool loadSagaContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize);
-
+	bool loadSagaContext(ResourceContext *context, uint32 contextOffset, uint32 contextSize);	
 
 public:
 	MetaResource _metaResource;

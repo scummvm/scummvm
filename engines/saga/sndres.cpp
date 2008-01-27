@@ -103,9 +103,17 @@ SndRes::~SndRes() {
 void SndRes::setVoiceBank(int serial) {
 	if (_voiceSerial == serial) return;
 
+	// Close previous voice bank file
+	if (_voiceSerial >= 0 && _voiceContext->file->isOpen())
+		_voiceContext->file->close();
+
 	_voiceSerial = serial;
 
 	_voiceContext = _vm->_resource->getContext(GAME_VOICEFILE, _voiceSerial);
+
+	// Open new voice bank file
+	if (!_voiceContext->file->isOpen())
+		_voiceContext->file->open(_voiceContext->fileName);
 }
 
 void SndRes::playSound(uint32 resourceId, int volume, bool loop) {
