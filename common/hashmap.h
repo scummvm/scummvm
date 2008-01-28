@@ -116,6 +116,8 @@ public:
 	int lookupAndCreateIfMissing(const Key &key);
 	void expand_array(uint newsize);
 
+	class ConstIterator;
+
 	/**
 	 * Simple HashMap iterator implementation.
 	 */
