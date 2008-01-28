@@ -355,7 +355,7 @@ void Gfx::updateScreen() {
 	if (_halfbrite) {
 		// FIXME: the implementation of halfbrite is now largely sub-optimal in that a full screen
 		// rewrite is needed to apply the effect.
-		Graphics::Surface *surf = g_system->lockScreen();
+		surf = g_system->lockScreen();
 		byte *src = (byte*)_buffers[kBit2]->pixels;
 		byte *dst = (byte*)surf->pixels;
 		for (int i = 0; i < surf->w*surf->h; i++) {
