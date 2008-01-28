@@ -57,13 +57,13 @@ uint GfxObj::getNum() {
 }
 
 
-void GfxObj::getRect(uint frame, Common::Rect &r) {
-	_frames->getRect(frame, r);
+void GfxObj::getRect(uint f, Common::Rect &r) {
+	_frames->getRect(f, r);
 }
 
 
-byte *GfxObj::getData(uint frame) {
-	return _frames->getData(frame);
+byte *GfxObj::getData(uint f) {
+	return _frames->getData(f);
 }
 
 
