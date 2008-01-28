@@ -360,6 +360,10 @@ void Gfx::updateScreen() {
 		g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _buffers[kBitFront]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
 	}
 
+	Graphics::Surface *surf = g_system->lockScreen();
+	drawGfxObjects(*surf);
+	g_system->unlockScreen();
+
 	drawInventory();
 
 	drawItems();
@@ -719,37 +723,10 @@ void Gfx::blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffe
 }
 
 void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
-	byte *s = (byte*)_buffers[kBit2]->getBasePtr(x, y);
-	Common::Rect r;
-	data->_cnv->getRect(0, r);
-	copyRect(r.width(), r.height(), data->_background, r.width(), s,_backgroundWidth);
-	return;
 }
 
 void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 
-	byte *t = (byte*)data->_cnv->getData(0);
-	byte *s = (byte*)_buffers[kBitBack]->getBasePtr(x, y);
-	byte *d = data->_backup;
-
-	Common::Rect r;
-	data->_cnv->getRect(0, r);
-
-	uint pitch = _backgroundWidth - r.width();
-
-	for (uint16 i = 0; i < r.height(); i++) {
-		for (uint16 j = 0; j < r.width(); j++) {
-			*d = (*t) ? *s : 0;
-
-			d++;
-			t++;
-			s++;
-		}
-
-		s += pitch;
-	}
-
-	return;
 }
 
 //
@@ -757,32 +734,6 @@ void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
 //
 void Gfx::restoreDoorBackground(const Common::Rect& r, byte *data, byte* background) {
 
-	byte *t = data;
-	byte *s = background;
-	byte *d0 = (byte*)_buffers[kBitBack]->getBasePtr(r.left, r.top);
-	byte *d1 = (byte*)_buffers[kBit2]->getBasePtr(r.left, r.top);
-
-	uint pitch = _backgroundWidth - r.width();
-
-	for (uint16 i = 0; i < r.height() ; i++) {
-		for (uint16 j = 0; j < r.width() ; j++) {
-			if (*t) {
-				*d0 = *s;
-				*d1 = *s;
-			}
-
-			d0++;
-			d1++;
-			t++;
-			s++;
-		}
-
-		d0 += pitch;
-		d1 += pitch;
-	}
-
-
-	return;
 }
 
 
@@ -790,8 +741,7 @@ void Gfx::restoreDoorBackground(const Common::Rect& r, byte *data, byte* backgro
 //	copies a rectangular bitmap on the background
 //
 void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
-    blt(r, data, _buffers[kBitBack], BUFFER_FOREGROUND, 0);
-    blt(r, data, _buffers[kBit2], BUFFER_FOREGROUND, 0);
+
 }
 
 
@@ -917,7 +867,7 @@ int16 Gfx::queryMask(int16 v) {
 }
 
 Gfx::Gfx(Parallaction* vm) :
-	_vm(vm) {
+	_vm(vm), _disk(vm->_disk) {
 
 	g_system->beginGFXTransaction();
 	g_system->initSize(_vm->_screenWidth, _vm->_screenHeight);

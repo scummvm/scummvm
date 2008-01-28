@@ -795,6 +795,8 @@ void Parallaction::freeLocation() {
 
 	_location._walkNodes.clear();
 
+	_gfx->clearGfxObjects();
+
 	freeZones();
 	freeAnimations();
 
@@ -977,12 +979,11 @@ void Character::scheduleWalk(int16 x, int16 y) {
 
 void Character::free() {
 
-	delete _ani._cnv;
 	delete _talk;
 	delete _head;
 	delete _objs;
 
-	_ani._cnv = NULL;
+	_ani.gfxobj = NULL;
 	_talk = NULL;
 	_head = NULL;
 	_objs = NULL;

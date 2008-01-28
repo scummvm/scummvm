@@ -583,7 +583,7 @@ DECLARE_ZONE_PARSER(type)  {
 DECLARE_ANIM_PARSER(file)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(file) ");
 
-	_locParseCtxt.a->_cnv = _disk->loadFrames(_tokens[1]);
+	_locParseCtxt.a->gfxobj = _gfx->loadAnim(_tokens[1]);
 }
 
 
@@ -610,7 +610,7 @@ DECLARE_ANIM_PARSER(endanimation)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(endanimation) ");
 
 
-	if (_locParseCtxt.a->_cnv) {
+	if (_locParseCtxt.a->gfxobj) {
 		_locParseCtxt.a->_right = _locParseCtxt.a->width();
 		_locParseCtxt.a->_bottom = _locParseCtxt.a->height();
 	}

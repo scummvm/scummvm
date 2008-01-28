@@ -43,7 +43,7 @@ Command::~Command() {
 
 
 Animation::Animation() {
-	_cnv = NULL;
+	gfxobj = NULL;
 	_program = NULL;
 	_scriptName = 0;
 	_frame = 0;
@@ -53,31 +53,30 @@ Animation::Animation() {
 Animation::~Animation() {
 	delete _program;
 	free(_scriptName);
-	delete _cnv;
 }
 
 uint16 Animation::width() const {
-	if (!_cnv) return 0;
+	if (!gfxobj) return 0;
 	Common::Rect r;
-	_cnv->getRect(0, r);
+	gfxobj->getRect(0, r);
 	return r.width();
 }
 
 uint16 Animation::height() const {
-	if (!_cnv) return 0;
+	if (!gfxobj) return 0;
 	Common::Rect r;
-	_cnv->getRect(0, r);
+	gfxobj->getRect(0, r);
 	return r.height();
 }
 
 uint16 Animation::getFrameNum() const {
-	if (!_cnv) return 0;
-	return _cnv->getNum();
+	if (!gfxobj) return 0;
+	return gfxobj->getNum();
 }
 
 byte* Animation::getFrameData(uint32 index) const {
-	if (!_cnv) return NULL;
-	return _cnv->getData(index);
+	if (!gfxobj) return NULL;
+	return gfxobj->getData(index);
 }
 
 
@@ -142,7 +141,7 @@ Zone::~Zone() {
 	case kZoneDoor:
 		free(u.door->_location);
 		free(u.door->_background);
-		delete u.door->_cnv;
+		u.door->gfxobj->release();
 		delete u.door;
 		break;
 
@@ -153,7 +152,7 @@ Zone::~Zone() {
 
 	case kZoneGet:
 		free(u.get->_backup);
-		delete u.get->_cnv;
+		u.get->gfxobj->release();
 		delete u.get;
 		break;
 

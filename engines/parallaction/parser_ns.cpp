@@ -146,7 +146,7 @@ DECLARE_ANIM_PARSER(file)  {
 			strcat(vC8, "tras");
 		}
 	}
-	_locParseCtxt.a->_cnv = _disk->loadFrames(vC8);
+	_locParseCtxt.a->gfxobj = _gfx->loadAnim(vC8);
 }
 
 
@@ -1284,17 +1284,18 @@ void Parallaction_ns::parseGetData(Script &script, Zone *z) {
 	do {
 
 		if (!scumm_stricmp(_tokens[0], "file")) {
-			data->_cnv = _disk->loadStatic(_tokens[1]);
 
-			Common::Rect r;
-			data->_cnv->getRect(0, r);
+			bool visible = (z->_flags & kFlagsRemove) == 0;
 
-			data->_backup = (byte*)malloc(r.width() * r.height());
+			GfxObj *obj = _gfx->loadGet(_tokens[1]);
+//			obj->setFrame(0);
+//			obj->setPos(z->_left, z->_top);
+			obj->frame = 0;
+			obj->x = z->_left;
+			obj->y = z->_top;
+			_gfx->showGfxObj(obj, visible);
 
-			if ((z->_flags & kFlagsRemove) == 0) {
-				_gfx->backupGetBackground(data, z->_left, z->_top);
-				_gfx->flatBlitCnv(data->_cnv, 0, z->_left, z->_top, Gfx::kBitBack);
-			}
+			data->gfxobj = obj;
 		}
 
 		if (!scumm_stricmp(_tokens[0], "icon")) {
@@ -1349,16 +1350,17 @@ void Parallaction_ns::parseDoorData(Script &script, Zone *z) {
 		if (!scumm_stricmp(_tokens[0], "file")) {
 //				printf("file: '%s'", _tokens[0]);
 
-			data->_cnv = _disk->loadFrames(_tokens[1]);
-			uint16 _ax = (z->_flags & kFlagsClosed ? 0 : 1);
+			uint16 frame = (z->_flags & kFlagsClosed ? 0 : 1);
 
-			Common::Rect r;
-			data->_cnv->getRect(0, r);
+			GfxObj *obj = _gfx->loadDoor(_tokens[1]);
+//			obj->setFrame(frame);
+//			obj->setPos(z->_left, z->_top);
+			obj->frame = frame;
+			obj->x = z->_left;
+			obj->y = z->_top;
+			_gfx->showGfxObj(obj, true);
 
-			data->_background = (byte*)malloc(r.width() * r.height());
-			_gfx->backupDoorBackground(data, z->_left, z->_top);
-
-			_gfx->flatBlitCnv(data->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
+			data->gfxobj = obj;
 		}
 
 		if (!scumm_stricmp(_tokens[0],	"startpos")) {

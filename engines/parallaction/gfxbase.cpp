@@ -1,0 +1,124 @@
+#include "graphics.h"
+#include "disk.h"
+
+namespace Parallaction {
+
+GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : type(objType), _frames(frames), x(0), y(0), z(3), frame(0), _flags(0), _keep(true) {
+	if (name) {
+		_name = strdup(name);
+	} else {
+		_name = 0;
+	}
+}
+
+GfxObj::~GfxObj() {
+	delete _frames;
+	free(_name);
+}
+
+void GfxObj::release() {
+//	_keep = false;
+	delete this;
+}
+
+const char *GfxObj::getName() const {
+	return _name;
+}
+
+
+uint GfxObj::getNum() {
+	return _frames->getNum();
+}
+
+
+void GfxObj::getRect(uint frame, Common::Rect &r) {
+	_frames->getRect(frame, r);
+}
+
+
+byte *GfxObj::getData(uint frame) {
+	return _frames->getData(frame);
+}
+
+
+void GfxObj::setFlags(uint flags) {
+	_flags |= flags;
+}
+
+void GfxObj::clearFlags(uint flags) {
+	_flags &= ~flags;
+}
+
+GfxObj* Gfx::loadAnim(const char *name) {
+	Frames *frames = _disk->loadFrames(name);
+	GfxObj *obj = new GfxObj(kGfxObjTypeAnim, frames, name);
+	assert(obj);
+
+	return obj;
+}
+
+
+GfxObj* Gfx::loadGet(const char *name) {
+	Frames *frames = _disk->loadStatic(name);
+	GfxObj *obj = new GfxObj(kGfxObjTypeGet, frames, name);
+	assert(obj);
+
+	return obj;
+}
+
+GfxObj* Gfx::loadDoor(const char *name) {
+	Frames *frames = _disk->loadFrames(name);
+	GfxObj *obj = new GfxObj(kGfxObjTypeDoor, frames, name);
+	assert(obj);
+
+	return obj;
+}
+
+void Gfx::clearGfxObjects() {
+	_gfxobjList[0].clear();
+	_gfxobjList[1].clear();
+	_gfxobjList[2].clear();
+}
+
+void Gfx::showGfxObj(GfxObj* obj, bool visible) {
+	if (!obj || obj->isVisible() == visible) {
+		return;
+	}
+
+	if (visible) {
+		obj->setFlags(kGfxObjVisible);
+		_gfxobjList[obj->type].push_back(obj);
+	} else {
+		obj->clearFlags(kGfxObjVisible);
+		_gfxobjList[obj->type].remove(obj);
+	}
+
+}
+
+void Gfx::drawGfxObjects(Graphics::Surface &surf) {
+
+	Common::Rect rect;
+	byte *data;
+
+	// TODO: sort animations before drawing
+	// TODO: some zones don't appear because of wrong masking (3 or 0?)
+	// TODO: Dr.Ki is not visible inside the club
+
+	for (uint i = 0; i < 3; i++) {
+
+		GfxObjList::iterator b = _gfxobjList[i].begin();
+		GfxObjList::iterator e = _gfxobjList[i].end();
+
+		for (; b != e; b++) {
+			GfxObj *obj = *b;
+			if (obj->isVisible()) {
+				obj->getRect(obj->frame, rect);
+				rect.moveTo(obj->x, obj->y);
+				data = obj->getData(obj->frame);
+				blt(rect, data, &surf, obj->z, 0);
+			}
+		}
+	}
+}
+
+} // namespace Parallaction

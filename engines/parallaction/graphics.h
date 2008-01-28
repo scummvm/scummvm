@@ -247,7 +247,50 @@ class Parallaction;
 struct DoorData;
 struct GetData;
 struct Label;
+class Disk;
 
+enum {
+	kGfxObjVisible = 1,
+
+
+	kGfxObjTypeDoor = 0,
+	kGfxObjTypeGet = 1,
+	kGfxObjTypeAnim = 2,
+};
+
+class GfxObj {
+	char *_name;
+	Frames *_frames;
+	uint32 _flags;
+
+	bool _keep;
+
+public:
+	int16 x, y;
+	uint16 z;
+	uint type;
+	uint frame;
+
+	GfxObj(uint type, Frames *frames, const char *name = NULL);
+	virtual ~GfxObj();
+
+	const char *getName() const;
+
+	uint getNum();
+	void getRect(uint frame, Common::Rect &r);
+	byte *getData(uint frame);
+
+	void setFlags(uint32 flags);
+	void clearFlags(uint32 flags);
+	bool isVisible() {
+		return (_flags & kGfxObjVisible) == kGfxObjVisible;
+	}
+
+	void release();
+};
+
+
+typedef Common::List<GfxObj*> GfxObjList;
 
 class Gfx {
 
@@ -258,6 +301,17 @@ public:
 		kBitBack,
 		kBit2
 	};
+
+	Disk *_disk;
+
+	GfxObj* loadAnim(const char *name);
+	GfxObj* loadGet(const char *name);
+	GfxObj* loadDoor(const char *name);
+	void clearGfxObjects();
+
+	void showGfxObj(GfxObj* obj, bool visible);
+	GfxObjList _gfxobjList[3];
+	void drawGfxObjects(Graphics::Surface &surf);
 
 public:
 

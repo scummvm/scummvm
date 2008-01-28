@@ -170,7 +170,7 @@ struct Dialogue {
 
 struct GetData {	// size = 24
 	uint32			_icon;
-	Frames			*_cnv;
+	GfxObj			*gfxobj;
 	byte		   *_backup;
 	uint16			field_14;		// unused
 	uint16			field_16;		// unused
@@ -178,7 +178,7 @@ struct GetData {	// size = 24
 	GetData() {
 		_icon = 0;
 		_backup = NULL;
-		_cnv = NULL;
+		gfxobj = NULL;
 	}
 };
 struct SpeakData {	// size = 36
@@ -206,7 +206,7 @@ struct ExamineData {	// size = 28
 };
 struct DoorData {	// size = 28
 	char*	_location;
-	Frames	*_cnv;
+	GfxObj	*gfxobj;
 	byte*	_background;
 	Common::Point	_startPos;
 	uint16	_startFrame;
@@ -215,7 +215,7 @@ struct DoorData {	// size = 28
 		_location = NULL;
 		_background = NULL;
 		_startFrame = 0;
-		_cnv = NULL;
+		gfxobj = NULL;
 	}
 };
 struct HearData {	// size = 20
@@ -387,8 +387,8 @@ struct Program {
 struct Animation : public Zone {
 
 	Common::Point	_oldPos;
-	Program		*_program;
-	Frames		*_cnv;
+	Program 	*_program;
+	GfxObj		*gfxobj;
 	char		*_scriptName;
 	int16		_frame;
 	uint16		field_50;		// unused

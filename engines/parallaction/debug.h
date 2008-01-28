@@ -27,6 +27,7 @@ protected:
 	bool Cmd_Animations(int argc, const char **argv);
 	bool Cmd_LocalFlags(int argc, const char **argv);
 	bool Cmd_Locations(int argc, const char **argv);
+	bool Cmd_GfxObjects(int argc, const char **argv);
 };
 
 } // End of namespace Parallaction

@@ -579,6 +579,7 @@ public:
 	virtual void jobDisplayDroppedItem(void*, Job *j) = 0;
 	virtual void jobRemovePickedItem(void*, Job *j) = 0;
 	virtual void jobToggleDoor(void*, Job *j) = 0;
+	void updateDoor(Zone *z);
 
 	virtual void runScripts() = 0;
 	virtual void walk() = 0;
@@ -751,9 +752,9 @@ private:
 	const Callable *_callables;
 
 protected:
-	void jobDisplayDroppedItem(void*, Job *j);
-	void jobRemovePickedItem(void*, Job *j);
-	void jobToggleDoor(void*, Job *j);
+	void jobDisplayDroppedItem(void*, Job *j) { }
+	void jobRemovePickedItem(void*, Job *j)  { }
+	void jobToggleDoor(void*, Job *j)  { }
 
 	void runScripts();
 	void walk();

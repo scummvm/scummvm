@@ -246,32 +246,33 @@ DECLARE_COMMAND_OPCODE(location) {
 
 DECLARE_COMMAND_OPCODE(open) {
 	_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsClosed;
-	if (_cmdRunCtxt.cmd->u._zone->u.door->_cnv) {
-		addJob(kJobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
+	if (_cmdRunCtxt.cmd->u._zone->u.door->gfxobj) {
+		updateDoor(_cmdRunCtxt.cmd->u._zone);
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(close) {
 	_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsClosed;
-	if (_cmdRunCtxt.cmd->u._zone->u.door->_cnv) {
-		addJob(kJobToggleDoor, (void*)_cmdRunCtxt.cmd->u._zone, kPriority18 );
+	if (_cmdRunCtxt.cmd->u._zone->u.door->gfxobj) {
+		updateDoor(_cmdRunCtxt.cmd->u._zone);
 	}
 }
 
 
 DECLARE_COMMAND_OPCODE(on) {
+	Zone *z = _cmdRunCtxt.cmd->u._zone;
 	// WORKAROUND: the original DOS-based engine didn't check u->_zone before dereferencing
 	// the pointer to get structure members, thus leading to crashes in systems with memory
 	// protection.
 	// As a side note, the overwritten address is the 5th entry in the DOS interrupt table
 	// (print screen handler): this suggests that a system would hang when the print screen
 	// key is pressed after playing Nippon Safes, provided that this code path is taken.
-	if (_cmdRunCtxt.cmd->u._zone != NULL) {
-		_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsRemove;
-		_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsActive;
-		if ((_cmdRunCtxt.cmd->u._zone->_type & 0xFFFF) == kZoneGet) {
-			addJob(kJobDisplayDroppedItem, _cmdRunCtxt.cmd->u._zone, kPriority17 );
+	if (z != NULL) {
+		z->_flags &= ~kFlagsRemove;
+		z->_flags |= kFlagsActive;
+		if ((z->_type & 0xFFFF) == kZoneGet) {
+			_gfx->showGfxObj(z->u.get->gfxobj, true);
 		}
 	}
 }
@@ -319,36 +320,36 @@ DECLARE_COMMAND_OPCODE(stop) {
 
 void Parallaction_ns::drawAnimations() {
 
-	Graphics::Surface v14;
-
 	uint16 _si = 0;
 
 	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 
 		Animation *v18 = *it;
+		GfxObj *obj = v18->gfxobj;
 
 		if ((v18->_flags & kFlagsActive) && ((v18->_flags & kFlagsRemove) == 0))   {
-			v14.w = v18->width();
-			v14.h = v18->height();
 
 			int16 frame = CLIP((int)v18->_frame, 0, v18->getFrameNum()-1);
-
-			v14.pixels = v18->getFrameData(frame);
-
 			if (v18->_flags & kFlagsNoMasked)
 				_si = 3;
 			else
 				_si = _gfx->queryMask(v18->_top + v18->height());
 
-			debugC(9, kDebugExec, "jobDisplayAnimations(%s, x:%i, y:%i, z:%i, w:%i, h:%i, f:%i/%i, %p)", v18->_name, v18->_left, v18->_top, _si, v14.w, v14.h,
-				frame, v18->getFrameNum(), v14.pixels);
-			_gfx->blitCnv(&v14, v18->_left, v18->_top, _si, Gfx::kBitBack);
 
+			_gfx->showGfxObj(obj, true);
+			obj->frame = frame;
+//			obj->setFrame(frame);
+			obj->x = v18->_left;
+			obj->y = v18->_top;
+//			obj->setPos(v18->_top, v18->_left);
+//			obj->setZ(_si);
+			obj->z = _si;
 		}
 
 		if (((v18->_flags & kFlagsActive) == 0) && (v18->_flags & kFlagsRemove))   {
 			v18->_flags &= ~kFlagsRemove;
 			v18->_oldPos.x = -1000;
+			_gfx->showGfxObj(obj, false);
 		}
 
 		if ((v18->_flags & kFlagsActive) && (v18->_flags & kFlagsRemove))	{
@@ -530,8 +531,7 @@ uint16 Parallaction::runZone(Zone *z) {
 	case kZoneDoor:
 		if (z->_flags & kFlagsLocked) break;
 		z->_flags ^= kFlagsClosed;
-		if (z->u.door->_cnv == NULL) break;
-		addJob(kJobToggleDoor, z, kPriority18 );
+		updateDoor(z);
 		break;
 
 	case kZoneHear:
@@ -554,29 +554,12 @@ uint16 Parallaction::runZone(Zone *z) {
 //
 //	ZONE TYPE: DOOR
 //
-void Parallaction_ns::jobToggleDoor(void *parm, Job *j) {
+void Parallaction::updateDoor(Zone *z) {
 
-	static byte count = 0;
-
-	Zone *z = (Zone*)parm;
-
-	if (z->u.door->_cnv) {
-		Common::Rect r;
-		z->u.door->_cnv->getRect(0, r);
-		r.moveTo(z->_left, z->_top);
-
-		uint16 _ax = (z->_flags & kFlagsClosed ? 1 : 0);
-		_gfx->restoreDoorBackground(r, z->u.door->_cnv->getData(_ax), z->u.door->_background);
-
-		_ax = (z->_flags & kFlagsClosed ? 0 : 1);
-		_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBitBack);
-		_gfx->flatBlitCnv(z->u.door->_cnv, _ax, z->_left, z->_top, Gfx::kBit2);
-	}
-
-	count++;
-	if (count == 2) {
-		j->_finished = 1;
-		count = 0;
+	if (z->u.door->gfxobj) {
+		uint frame = (z->_flags & kFlagsClosed ? 0 : 1);
+//		z->u.door->gfxobj->setFrame(frame);
+		z->u.door->gfxobj->frame = frame;
 	}
 
 	return;
@@ -590,60 +573,12 @@ void Parallaction_ns::jobToggleDoor(void *parm, Job *j) {
 
 int16 Parallaction::pickupItem(Zone *z) {
 	int r = addInventoryItem(z->u.get->_icon);
-	if (r != -1)
-		addJob(kJobRemovePickedItem, z, kPriority17 );
+	if (r != -1) {
+		_gfx->showGfxObj(z->u.get->gfxobj, false);
+	}
 
 	return (r == -1);
 }
-
-void Parallaction_ns::jobRemovePickedItem(void *parm, Job *j) {
-
-	Zone *z = (Zone*)parm;
-
-	static uint16 count = 0;
-
-	if (z->u.get->_cnv) {
-		Common::Rect r;
-		z->u.get->_cnv->getRect(0, r);
-		r.moveTo(z->_left, z->_top);
-
-		_gfx->restoreGetBackground(r, z->u.get->_backup);
-	}
-
-	count++;
-	if (count == 2) {
-		count = 0;
-		j->_finished = 1;
-	}
-
-	return;
-}
-
-void Parallaction_ns::jobDisplayDroppedItem(void *parm, Job *j) {
-//	printf("jobDisplayDroppedItem...");
-
-	Zone *z = (Zone*)parm;
-
-	if (z->u.get->_cnv) {
-		if (j->_count == 0) {
-			_gfx->backupGetBackground(z->u.get, z->_left, z->_top);
-		}
-
-		_gfx->flatBlitCnv(z->u.get->_cnv, 0, z->_left, z->_top, Gfx::kBitBack);
-		_gfx->flatBlitCnv(z->u.get->_cnv, 0, z->_left, z->_top, Gfx::kBit2);
-	}
-
-	j->_count++;
-	if (j->_count == 2) {
-		j->_count = 0;
-		j->_finished = 1;
-	}
-
-//	printf("done");
-
-	return;
-}
-
 
 
 
