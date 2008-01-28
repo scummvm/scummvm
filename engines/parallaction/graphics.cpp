@@ -345,10 +345,18 @@ void Gfx::drawBalloons() {
 }
 
 void Gfx::updateScreen() {
-#if 0
+
+	g_system->copyRectToScreen((const byte*)_buffers[kBit2]->pixels, _buffers[kBit2]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
+
+	Graphics::Surface *surf = g_system->lockScreen();
+	drawGfxObjects(*surf);
+	g_system->unlockScreen();
+
 	if (_halfbrite) {
+		// FIXME: the implementation of halfbrite is now largely sub-optimal in that a full screen
+		// rewrite is needed to apply the effect.
 		Graphics::Surface *surf = g_system->lockScreen();
-		byte *src = (byte*)_buffers[kBitFront]->pixels;
+		byte *src = (byte*)_buffers[kBit2]->pixels;
 		byte *dst = (byte*)surf->pixels;
 		for (int i = 0; i < surf->w*surf->h; i++) {
 			*dst++ = *src++ | 0x20;
@@ -357,15 +365,7 @@ void Gfx::updateScreen() {
 			drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &halfbritePixel, surf->pixels);
 		}
 		g_system->unlockScreen();
-	} else {
-		g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _buffers[kBitFront]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
 	}
-#endif
-	g_system->copyRectToScreen((const byte*)_buffers[kBit2]->pixels, _buffers[kBit2]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
-
-	Graphics::Surface *surf = g_system->lockScreen();
-	drawGfxObjects(*surf);
-	g_system->unlockScreen();
 
 	drawInventory();
 
