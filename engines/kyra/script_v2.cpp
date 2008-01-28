@@ -644,6 +644,15 @@ int KyraEngine_v2::o2_defineRoom(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_objectChat(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_objectChat(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
+	if (_flags.isTalkie)
+		warning("Unexpected call: o2_objectChat(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
+	else
+		objectChat(stackPosString(0), stackPos(1));
+	return 0;
+}
+
 int KyraEngine_v2::o2_countItemInstances(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_countItemInstances(%p) (%d)", (const void *)script, stackPos(0));
 	uint16 item = stackPos(0);
@@ -823,9 +832,11 @@ int KyraEngine_v2::o2t_fadeScenePal(ScriptState *script) {
 
 int KyraEngine_v2::o2t_setShapeFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2t_setShapeFlag(%p) (%d)", (const void *)script, stackPos(0));
-	_newShapeFlag = stackPos(0);
+	if (_flags.isTalkie)
+		_newShapeFlag = stackPos(0);
 	return 0;
 }
 
 } // end of namespace Kyra
+
 

@@ -1880,7 +1880,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_dummy),
 		OpcodeUnImpl(),
 		// 0x80
-		OpcodeUnImpl(),
+		Opcode(o2_objectChat),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
@@ -1958,4 +1958,5 @@ void KyraEngine_v2::setupOpcodeTable() {
 }
 
 } // end of namespace Kyra
+
 

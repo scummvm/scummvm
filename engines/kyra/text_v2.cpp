@@ -126,7 +126,14 @@ int KyraEngine_v2::chatGetType(const char *str) {
 }
 
 int KyraEngine_v2::chatCalcDuration(const char *str) {
-	return MAX<int>(strlen(str) << 3, 120);
+	static const uint8 durationMultiplicator[] = { 16, 14, 12, 10, 8, 8, 7, 6, 5, 4 };
+
+	// TODO / HACK: imlement this correctly
+	const int _configTextspeed = 50;
+
+	int duration = strlen(str);
+	duration *= _flags.isTalkie ? 8 : durationMultiplicator[(_configTextspeed / 10)];
+	return MAX<int>(duration, 120);
 }
 
 void KyraEngine_v2::objectChat(const char *str, int object, int vocHigh, int vocLow) {
@@ -478,4 +485,5 @@ void KyraEngine_v2::freeTIM(byte *buffer) {
 }
 
 } // end of namespace Kyra
+
 

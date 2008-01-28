@@ -632,8 +632,8 @@ protected:
 	int chatGetType(const char *text);
 	int chatCalcDuration(const char *text);
 
-	void objectChat(const char *text, int object, int vocHigh, int vocLow);
-	void objectChatInit(const char *text, int object, int vocHigh, int vocLow);
+	void objectChat(const char *text, int object, int vocHigh = -1, int vocLow = -1);
+	void objectChatInit(const char *text, int object, int vocHigh = -1, int vocLow = -1);
 	void objectChatPrintText(const char *text, int object);
 	void objectChatProcess(const char *script);
 	void objectChatWaitToFinish();
@@ -795,6 +795,7 @@ protected:
 	int o2_defineSceneAnim(ScriptState *script);
 	int o2_updateSceneAnim(ScriptState *script);
 	int o2_defineRoom(ScriptState *script);
+	int o2_objectChat(ScriptState *script);
 	int o2_countItemInstances(ScriptState *script);
 	int o2_initObject(ScriptState *script);
 	int o2_deinitObject(ScriptState *script);
@@ -905,4 +906,5 @@ protected:
 } // end of namespace Kyra
 
 #endif
+
 
