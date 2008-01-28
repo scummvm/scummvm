@@ -383,9 +383,6 @@ int Parallaction_ns::guiGetSelectedBlock(const Common::Point &p) {
 int Parallaction_ns::guiSelectCharacter() {
 	debugC(1, kDebugMenu, "Parallaction_ns::guiselectCharacter()");
 
-	Graphics::Surface v14;
-	v14.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
-
 	setArrowCursor();
 	_soundMan->stopMusic();
 
@@ -404,6 +401,14 @@ int Parallaction_ns::guiSelectCharacter() {
 	id[0] = _gfx->createLabel(_introFont, introMsg1[_language], 1);
 	id[1] = _gfx->createLabel(_introFont, introMsg2[_language], 1);
 
+	Graphics::Surface v14;
+	v14.create(BLOCK_WIDTH * 8, BLOCK_HEIGHT, 1);
+	Common::Rect rect(SLOT_X, SLOT_Y, SLOT_X + BLOCK_WIDTH * 8, SLOT_Y + BLOCK_HEIGHT);
+	_gfx->grabRect((byte*)v14.pixels, rect, Gfx::kBit2, rect.width());
+
+	Graphics::Surface block;
+	block.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
+
 	while (true) {
 
 		points[0] = 0;
@@ -421,8 +426,8 @@ int Parallaction_ns::guiSelectCharacter() {
 			int _si = guiGetSelectedBlock(_mousePos);
 
 			if (_si != -1) {
-				_gfx->grabRect((byte*)v14.pixels, codeTrueBlocks[_si], Gfx::kBitFront, BLOCK_WIDTH);
-				_gfx->flatBlitCnv(&v14, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBitFront);
+				_gfx->grabRect((byte*)block.pixels, codeTrueBlocks[_si], Gfx::kBit2, BLOCK_WIDTH);
+				_gfx->flatBlitCnv(&block, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBit2);
 
 				if (keys[0][_di] == _si) {
 					points[0]++;
@@ -450,7 +455,7 @@ int Parallaction_ns::guiSelectCharacter() {
 			break;
 		}
 
-		_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
+		_gfx->flatBlitCnv(&v14, SLOT_X, SLOT_Y, Gfx::kBit2);
 
 		_gfx->hideLabel(id[0]);
 		_gfx->showLabel(id[1], 60, 30);
