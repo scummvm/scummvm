@@ -538,7 +538,6 @@ void Parallaction_ns::_c_moveSheet(void *parm) {
 	r.top = 47;
 	r.right = (x + 32 > 319) ? 319 : (x + 32);
 	r.bottom = 199;
-	_gfx->floodFill(Gfx::kBitBack, r, 1);
 	_gfx->floodFill(Gfx::kBit2, r, 1);
 
 	if (x >= 104) return;
@@ -547,7 +546,6 @@ void Parallaction_ns::_c_moveSheet(void *parm) {
 	r.top = 47;
 	r.right = (x + 247 > 319) ? 319 : (x + 247);
 	r.bottom = 199;
-	_gfx->floodFill(Gfx::kBitBack, r, 12);
 	_gfx->floodFill(Gfx::kBit2, r, 12);
 
 	return;
