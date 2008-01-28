@@ -1276,49 +1276,112 @@ void Hotspot::doAction(Action action, HotspotData *hotspot) {
 			fields.setField(USE_HOTSPOT_ID, hotspot->hotspotId);
 	}
 
-	ActionProcPtr actionProcList[NPC_JUMP_ADDRESS + 1] = {
-		&Hotspot::doNothing, 
-		&Hotspot::doGet, 
-		NULL, 
-		&Hotspot::doOperate, 
-		&Hotspot::doOperate, 
-		&Hotspot::doOperate, 
-		&Hotspot::doOpen, 
-		&Hotspot::doClose,
-		&Hotspot::doLockUnlock, 
-		&Hotspot::doLockUnlock, 
-		&Hotspot::doUse, 
-		&Hotspot::doGive, 
-		&Hotspot::doTalkTo, 
-		&Hotspot::doTell, 
-		NULL,
-		&Hotspot::doLook, 
-		&Hotspot::doLookAt, 
-		&Hotspot::doLookThrough, 
-		&Hotspot::doAsk, 
-		NULL, 
-		&Hotspot::doDrink,
-		&Hotspot::doStatus, 
-		&Hotspot::doGoto, 
-		&Hotspot::doReturn, 
-		&Hotspot::doBribe, 
-		&Hotspot::doExamine, 
-		NULL, NULL,
-		&Hotspot::npcSetRoomAndBlockedOffset, 
-		&Hotspot::npcHeySir, 
-		&Hotspot::npcExecScript, 
-		&Hotspot::npcResetPausedList, 
-		&Hotspot::npcSetRandomDest,
-		&Hotspot::npcWalkingCheck, 
-		&Hotspot::npcSetSupportOffset,
-		&Hotspot::npcSupportOffsetConditional,
-		&Hotspot::npcDispatchAction, 
-		&Hotspot::npcTalkNpcToNpc, 
-		&Hotspot::npcPause, 
-		&Hotspot::npcStartTalking,
-		&Hotspot::npcJumpAddress};
+	// Call the appropriate action method
+	switch (action) {
+	case GET:
+		doGet(hotspot);
+		break;
+	case PUSH:
+	case PULL:
+	case OPERATE:
+		doOperate(hotspot);
+		break;
+	case OPEN:
+		doOpen(hotspot);
+		break;
+	case CLOSE:
+		doClose(hotspot);
+		break;
+	case LOCK:
+	case UNLOCK:
+		doLockUnlock(hotspot);
+		break;
+	case USE:
+		doUse(hotspot);
+		break;
+	case GIVE:
+		doGive(hotspot);
+		break;
+	case TALK_TO:
+		doTalkTo(hotspot);
+		break;
+	case TELL:
+		doTell(hotspot);
+		break;
+	case LOOK:
+		doLook(hotspot);
+		break;
+	case LOOK_AT:
+		doLookAt(hotspot);
+		break;
+	case LOOK_THROUGH:
+		doLookThrough(hotspot);
+		break;
+	case ASK:
+		doAsk(hotspot);
+		break;
+	case DRINK:
+		doDrink(hotspot);
+		break;
+	case STATUS:
+		doStatus(hotspot);
+		break;
+	case GO_TO:
+		doGoto(hotspot);
+		break;
+	case RETURN:
+		doReturn(hotspot);
+		break;
+	case BRIBE:
+		doBribe(hotspot);
+		break;
+	case EXAMINE:
+		doExamine(hotspot);
+		break;
+	case NPC_SET_ROOM_AND_OFFSET:
+		npcSetRoomAndBlockedOffset(hotspot);
+		break;
+	case NPC_TALK_TO_PLAYER:
+		npcHeySir(hotspot);
+		break;
+	case NPC_EXEC_SCRIPT:
+		npcExecScript(hotspot);
+		break;
+	case NPC_RESET_PAUSED_LIST:
+		npcResetPausedList(hotspot);
+		break;
+	case NPC_SET_RAND_DEST:
+		npcSetRandomDest(hotspot);
+		break;
+	case NPC_WALKING_CHECK:
+		npcWalkingCheck(hotspot);
+		break;
+	case NPC_SET_SUPPORT_OFFSET:
+		npcSetSupportOffset(hotspot);
+		break;
+	case NPC_SUPPORT_OFFSET_COND:
+		npcSupportOffsetConditional(hotspot);
+		break;
+	case NPC_DISPATCH_ACTION:
+		npcDispatchAction(hotspot);
+		break;
+	case NPC_TALK_NPC_TO_NPC:
+		npcTalkNpcToNpc(hotspot);
+		break;
+	case NPC_PAUSE:
+		npcPause(hotspot);
+		break;
+	case NPC_START_TALKING:
+		npcStartTalking(hotspot);
+		break;
+	case NPC_JUMP_ADDRESS:
+		npcJumpAddress(hotspot);
+		break;
+	default:
+		doNothing(hotspot);
+		break;
+	}
 
-	(this->*actionProcList[action])(hotspot);
 	debugC(ERROR_DETAILED, kLureDebugHotspots,  "Action charId=%xh Action=%d/%s Complete", 
 		_hotspotId, (int)action, (action > EXAMINE) ? NULL : stringList.getString((int)action));
 }
