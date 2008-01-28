@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	exec_br.o \
 	exec_ns.o \
 	font.o \
+	gfxbase.o \
 	graphics.o \
 	inventory.o \
 	gui_ns.o \

@@ -255,7 +255,7 @@ enum {
 
 	kGfxObjTypeDoor = 0,
 	kGfxObjTypeGet = 1,
-	kGfxObjTypeAnim = 2,
+	kGfxObjTypeAnim = 2
 };
 
 class GfxObj {
