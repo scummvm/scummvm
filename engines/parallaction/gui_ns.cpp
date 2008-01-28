@@ -194,7 +194,7 @@ int Parallaction_ns::guiNewGame() {
 
 	setBackground("test", NULL, NULL);
 
-	_gfx->swapBuffers();
+	_gfx->updateScreen();
 
 	uint id[4];
 	id[0] = _gfx->createLabel(_menuFont, v14[0], 1);
@@ -427,7 +427,7 @@ int Parallaction_ns::guiSelectCharacter() {
 
 			if (_si != -1) {
 				_gfx->grabRect((byte*)block.pixels, codeTrueBlocks[_si], Gfx::kBit2, BLOCK_WIDTH);
-				_gfx->flatBlitCnv(&block, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, Gfx::kBit2);
+				_gfx->patchBackground(block, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, false);
 
 				if (keys[0][_di] == _si) {
 					points[0]++;
@@ -455,7 +455,7 @@ int Parallaction_ns::guiSelectCharacter() {
 			break;
 		}
 
-		_gfx->flatBlitCnv(&v14, SLOT_X, SLOT_Y, Gfx::kBit2);
+		_gfx->patchBackground(v14, SLOT_X, SLOT_Y, false);
 
 		_gfx->hideLabel(id[0]);
 		_gfx->showLabel(id[1], 60, 30);

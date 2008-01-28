@@ -302,7 +302,7 @@ void Parallaction::updateView() {
 	}
 
 	_gfx->animatePalette();
-	_gfx->swapBuffers();
+	_gfx->updateScreen();
 	g_system->delayMillis(30);
 }
 
@@ -784,7 +784,7 @@ void Parallaction::doLocationEnterTransition() {
 	runScripts();
 	drawAnimations();
 
-	_gfx->swapBuffers();
+	_gfx->updateScreen();
 
 	showLocationComment(_location._comment, false);
 	waitUntilLeftClick();

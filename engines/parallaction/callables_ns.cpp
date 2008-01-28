@@ -428,7 +428,7 @@ void Parallaction_ns::_c_ridux(void *parm) {
 }
 
 void Parallaction_ns::_c_testResult(void *parm) {
-	_gfx->swapBuffers();
+	_gfx->updateScreen();
 
 	_disk->selectArchive("disk1");
 	parseLocation("common");

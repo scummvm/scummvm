@@ -384,14 +384,6 @@ public:
 	// cut/paste
 	void patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask = false);
 
-	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer);
-	void flatBlitCnv(Frames *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer);
-	void blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer);
-	void restoreBackground(const Common::Rect& r);
-	void backupDoorBackground(DoorData *data, int16 x, int16 y);
-	void restoreDoorBackground(const Common::Rect& r, byte *data, byte* background);
-	void backupGetBackground(GetData *data, int16 x, int16 y);
-	void restoreGetBackground(const Common::Rect& r, byte *data);
 
 	int setLocationBalloon(char *text, bool endGame);
 	int setDialogueBalloon(char *text, uint16 winding, byte textColor);
@@ -407,8 +399,6 @@ public:
 
 	// low level surfaces
 	void clearScreen(Gfx::Buffers buffer);
-	void copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer);
-	void copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch);
 	void grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch);
 	void floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color);
 	void invertRect(Gfx::Buffers buffer, const Common::Rect& r);
@@ -424,7 +414,6 @@ public:
 
 	// misc
 	uint16 queryMask(uint16 v);
-	void swapBuffers();
 	void updateScreen();
 	void setBackground(Graphics::Surface *surf);
 	void setMask(MaskBuffer *buffer);
@@ -504,6 +493,10 @@ protected:
 	void setFont(Font* font);
 	void drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
 	bool drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
+
+
+	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y);
+	void blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z);
 
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
 };

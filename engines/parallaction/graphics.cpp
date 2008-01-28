@@ -379,11 +379,6 @@ void Gfx::updateScreen() {
 }
 
 
-void Gfx::swapBuffers() {
-	updateScreen();
-	return;
-}
-
 
 //
 //	graphic primitives
@@ -393,17 +388,13 @@ void Gfx::clearScreen(Gfx::Buffers buffer) {
 }
 
 
-void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
-	memcpy(_buffers[dstbuffer]->pixels, _buffers[srcbuffer]->pixels, _vm->_screenSize);
-}
-
 void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) {
 
 	if (mask) {
 		uint16 z = queryMask(y);
-		blitCnv(&surf, x, y, z, kBit2);
+		blitCnv(&surf, x, y, z);
 	} else {
-		flatBlitCnv(&surf, x, y, kBit2);
+		flatBlitCnv(&surf, x, y);
 	}
 
 }
@@ -682,58 +673,20 @@ void Label::resetPosition() {
 }
 
 
-//
-//	Cnv management
-//
-void Gfx::flatBlitCnv(Frames *cnv, uint16 frame, int16 x, int16 y, Gfx::Buffers buffer) {
 
-	Graphics::Surface scnv;
-	Common::Rect r;
-
-	cnv->getRect(frame, r);
-
-	scnv.w = r.width();
-	scnv.h = r.height();
-	scnv.pixels = cnv->getData(frame);
-
-	flatBlitCnv(&scnv, x, y, buffer);
-}
-
-void Gfx::flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y, Gfx::Buffers buffer) {
+void Gfx::flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y) {
 	Common::Rect r(cnv->w, cnv->h);
 	r.moveTo(x, y);
 
-	blt(r, (byte*)cnv->pixels, _buffers[buffer], BUFFER_FOREGROUND, 0);
+	blt(r, (byte*)cnv->pixels, _buffers[kBit2], BUFFER_FOREGROUND, 0);
 }
 
 
-void Gfx::blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z, Gfx::Buffers buffer) {
+void Gfx::blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z) {
 	Common::Rect r(cnv->w, cnv->h);
 	r.moveTo(x, y);
 
-    blt(r, (byte*)cnv->pixels, _buffers[buffer], z, 0);
-}
-
-void Gfx::backupDoorBackground(DoorData *data, int16 x, int16 y) {
-}
-
-void Gfx::backupGetBackground(GetData *data, int16 x, int16 y) {
-
-}
-
-//
-//	restores background according to specified frame
-//
-void Gfx::restoreDoorBackground(const Common::Rect& r, byte *data, byte* background) {
-
-}
-
-
-//
-//	copies a rectangular bitmap on the background
-//
-void Gfx::restoreGetBackground(const Common::Rect& r, byte *data) {
-
+    blt(r, (byte*)cnv->pixels, _buffers[kBit2], z, 0);
 }
 
 
@@ -790,7 +743,8 @@ void Gfx::setFont(Font *font) {
 void Gfx::setBackground(Graphics::Surface *surface) {
 	_buffers[kBit2] = surface;
 
-	initBuffers(surface->w, surface->h);
+	_backgroundWidth = surface->w;
+	_backgroundHeight = surface->h;
 }
 
 void Gfx::setMask(MaskBuffer *buffer) {
@@ -808,13 +762,6 @@ void Gfx::copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src,
 
 	return;
 }
-
-void Gfx::copyRect(Gfx::Buffers dstbuffer, const Common::Rect& r, byte *src, uint16 pitch) {
-	byte *d = (byte*)_buffers[dstbuffer]->getBasePtr(r.left, r.top);
-	copyRect(r.width(), r.height(), d, _backgroundWidth, src, pitch);
-	return;
-}
-
 
 void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch) {
 	byte *s = (byte*)_buffers[srcbuffer]->getBasePtr(r.left, r.top);
@@ -843,7 +790,9 @@ Gfx::Gfx(Parallaction* vm) :
 	_buffers[kBit2] = 0;
 	_depthMask = 0;
 
-	initBuffers(_vm->_screenWidth, _vm->_screenHeight);
+	// FIXME: screen size must be decoupled from background size
+	_backgroundWidth = _vm->_screenWidth;
+	_backgroundHeight = _vm->_screenHeight;
 
 	setPalette(_palette);
 
@@ -870,24 +819,12 @@ Gfx::Gfx(Parallaction* vm) :
 
 Gfx::~Gfx() {
 
-	freeBuffers();
-
 	freeBackground();
 	delete _backgroundInfo;
 
 	return;
 }
 
-void Gfx::initBuffers(int w, int h) {
-
-	_backgroundWidth = w;
-	_backgroundHeight = h;
-
-}
-
-void Gfx::freeBuffers() {
-
-}
 
 
 int Gfx::setItem(Frames* frames, uint16 x, uint16 y) {
