@@ -131,6 +131,27 @@ void sort(T first, T last) {
 	}
 }
 
+// Using this with: Common::Less from common/func.h
+// will give the same results as the function above.
+template<class T, class StrictWeakOrdering>
+void sort(T first, T last, StrictWeakOrdering comp) {
+	if (first == last)
+		return;
+
+	// Simple selection sort
+	T i(first);
+	for (; i != last; ++i) {
+		T minElem(i);
+		T j(i);
+		++j;
+		for (; j != last; ++j)
+			if (comp(*j, *minElem))
+				minElem = j;
+		if (minElem != i)
+			SWAP(*minElem, *i);
+	}
+}
+
 } // end of namespace Common
 #endif
 

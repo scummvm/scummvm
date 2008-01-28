@@ -27,6 +27,8 @@
 #include "graphics.h"
 #include "disk.h"
 
+#include "common/algorithm.h"
+
 namespace Parallaction {
 
 GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : type(objType), _frames(frames), x(0), y(0), z(0), frame(0), layer(3), _flags(0), _keep(true) {
@@ -123,32 +125,15 @@ void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 
 
 
-int compareAnimationZ(const GfxObj* a1, const GfxObj* a2) {
-	if (a1->z == a2->z) return 0;
-	return (a1->z < a2->z ? -1 : 1);
+bool compareAnimationZ(const GfxObj* a1, const GfxObj* a2) {
+	return a1->z < a2->z;
 }
 
 void Gfx::sortAnimations() {
-
 	GfxObjList::iterator first = _gfxobjList[kGfxObjTypeAnim].begin();
 	GfxObjList::iterator last = _gfxobjList[kGfxObjTypeAnim].end();
 
-	if (first == last)
-		return;
-
-	// Simple selection sort
-	GfxObjList::iterator i(first);
-	for (; i != last; ++i) {
-		GfxObjList::iterator minElem(i);
-		GfxObjList::iterator j(i);
-		++j;
-		for (; j != last; ++j)
-			if (compareAnimationZ(*j, *minElem) < 0)
-				minElem = j;
-		if (minElem != i)
-			SWAP(*minElem, *i);
-	}
-
+	Common::sort(first, last, compareAnimationZ);
 }
 
 void Gfx::drawGfxObjects(Graphics::Surface &surf) {
