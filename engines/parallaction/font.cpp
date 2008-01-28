@@ -239,7 +239,7 @@ public:
 class DosDialogueFont : public DosFont {
 
 private:
-	static const byte 	_glyphWidths[126];
+	static const byte	_glyphWidths[126];
 
 protected:
 	uint16 width(byte c) {

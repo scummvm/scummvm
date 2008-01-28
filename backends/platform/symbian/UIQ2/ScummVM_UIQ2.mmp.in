@@ -59,8 +59,8 @@ STATICLIBRARY egcc.lib // for __fixunsdfsi
 USERINCLUDE	    ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\engines
 USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl ..\..\..\..\sound
 
-SYSTEMINCLUDE 	\epoc32\include\ESDL
-SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
+SYSTEMINCLUDE	\epoc32\include\ESDL
+SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
 SYSTEMINCLUDE   \epoc32\include\libc
 SYSTEMINCLUDE   \epoc32\include
 SYSTEMINCLUDE   ..\src // for portdefs.h

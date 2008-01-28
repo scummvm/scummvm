@@ -179,7 +179,7 @@ void IgorEngine::PART_23_HELPER_4() {
 	_walkData[0].setPos(233, 120, 3, 0);
 	_walkData[0].setDefaultScale();
 	_walkDataLastIndex = 0;
- 	_roomObjectAreasTable[_screenLayer2[38633]].area = 1;
+	_roomObjectAreasTable[_screenLayer2[38633]].area = 1;
 	buildWalkPathSimple(233, 120, 233, 137);
 	_roomObjectAreasTable[_screenLayer2[38633]].area = 0;
 	_walkData[_walkDataLastIndex].frameNum = 0;

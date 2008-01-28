@@ -30,20 +30,20 @@
 
  class DefaultCDPlayer : public CDAudio {
  public:
- 	DefaultCDPlayer(OSystem *sys);
+	DefaultCDPlayer(OSystem *sys);
 
- 	bool init();
- 	void release();
+	bool init();
+	void release();
 
- 	bool poll();
- 	void update();
- 	void play(int track, int num_loops, int start_frame, int duration);
- 	void stop();
+	bool poll();
+	void update();
+	void play(int track, int num_loops, int start_frame, int duration);
+	void stop();
 
  private:
- 	OSystem *_sys;
+	OSystem *_sys;
 
- 	// cdrom
+	// cdrom
 	UInt16 _defLoops;
 	UInt32 _defStopTime, _defTrackEndFrame, _defTrackLength;
  };

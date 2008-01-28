@@ -218,11 +218,11 @@ public:
 		return &_chunk;
 	}
 
-	IFF_ID 	_typeId;
+	IFF_ID	_typeId;
 
 protected:
-	IFFChunk 	_formChunk;
-	IFFChunk 	_chunk;
+	IFFChunk	_formChunk;
+	IFFChunk	_chunk;
 };
 
 } // namespace Common

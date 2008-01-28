@@ -138,7 +138,7 @@ public:
 	void stopSpeech()		{ _mixer->stopHandle(_speechHandle); }
 
 	bool isSpeechActive() const	{ return _mixer->isSoundHandleActive(_speechHandle); }
-	bool isSfxActive() const 	{ return _mixer->isSoundHandleActive(_sfxHandle); }
+	bool isSfxActive() const	{ return _mixer->isSoundHandleActive(_sfxHandle); }
 
 	void setVolume(int vol);
 

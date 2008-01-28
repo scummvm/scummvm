@@ -53,8 +53,8 @@ struct Voice8Header {
 class A8SVXDecoder : public Common::IFFParser {
 
 protected:
-	Voice8Header  	&_header;
-	int8* 			&_data;
+	Voice8Header	&_header;
+	int8*			&_data;
 	uint32			&_dataSize;
 
 protected:

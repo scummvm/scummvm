@@ -59,8 +59,8 @@ protected:
 	void readCMAP(Common::IFFChunk &chunk);
 	void readBODY(Common::IFFChunk &chunk);
 
-	BMHD 	_bitmapHeader;
-	uint32 	_colorCount;
+	BMHD	_bitmapHeader;
+	uint32	_colorCount;
 
 	Surface *_surface;
 	byte    **_colors;
@@ -83,8 +83,8 @@ protected:
 	void readCMAP(Common::IFFChunk &chunk);
 	void readBODY(Common::IFFChunk &chunk);
 
-	BMHD 	_bitmapHeader;
-	uint32 	_colorCount;
+	BMHD	_bitmapHeader;
+	uint32	_colorCount;
 
 	Surface *_surface;
 	byte    **_colors;

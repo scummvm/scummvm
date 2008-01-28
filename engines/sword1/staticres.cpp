@@ -72,7 +72,7 @@ const uint8 SwordEngine::_cdList[TOTAL_SECTIONS] = {
 	1,		// 27		PARIS 3
 	1,		// 28
 	1,		// 29
- 	1,		// 30 - Heart Monitor
+	1,		// 30 - Heart Monitor
 	1,		// 31
 	1,		// 32
 	1,		// 33
@@ -120,7 +120,7 @@ const uint8 SwordEngine::_cdList[TOTAL_SECTIONS] = {
 
 	2,		// 71		SCOTLAND
 	2,		// 72
-	2,	 	// 73
+	2,		// 73
 	2,		// 74		END SEQUENCE IN SECRET_CRYPT
 	2,		// 75
 	2,		// 76
@@ -1220,7 +1220,7 @@ const uint32 ResMan::_scriptList[TOTAL_SECTIONS] = { //a table of resource tags
 };
 
 const uint32 ObjectMan::_objectList[TOTAL_SECTIONS] = { //a table of pointers to object files
-	0, 			// 0
+	0,			// 0
 
 	COMP1,		// 1		PARIS 1
 	COMP2,		// 2
@@ -1254,7 +1254,7 @@ const uint32 ObjectMan::_objectList[TOTAL_SECTIONS] = { //a table of pointers to
 	COMP27,		// 27		PARIS 3
 	COMP28,		// 28
 	COMP29,		// 29
- 	COMP30,		// 30 - Heart Monitor
+	COMP30,		// 30 - Heart Monitor
 	COMP31,		// 31
 	COMP32,		// 32
 	COMP33,		// 33
@@ -1302,7 +1302,7 @@ const uint32 ObjectMan::_objectList[TOTAL_SECTIONS] = { //a table of pointers to
 
 	COMP71,		// 71		SCOTLAND
 	COMP72,		// 72
-	COMP73,	 	// 73
+	COMP73,		// 73
 	COMP74,		// 74		END SEQUENCE IN SECRET_CRYPT
 	COMP75,		// 75
 	COMP76,		// 76
@@ -1338,7 +1338,7 @@ const uint32 ObjectMan::_objectList[TOTAL_SECTIONS] = { //a table of pointers to
 	0,				// 100
 	0,				// 101
 	0,				// 102
-	0,			 	// 103
+	0,				// 103
 	0,				// 104
 	0,				// 105
 	0,				// 106
@@ -1349,7 +1349,7 @@ const uint32 ObjectMan::_objectList[TOTAL_SECTIONS] = { //a table of pointers to
 	0,				// 110
 	0,				// 111
 	0,				// 112
-	0,			 	// 113
+	0,				// 113
 	0,				// 114
 	0,				// 115
 	0,				// 116
@@ -1360,7 +1360,7 @@ const uint32 ObjectMan::_objectList[TOTAL_SECTIONS] = { //a table of pointers to
 	0,				// 120
 	0,				// 121
 	0,				// 122
-	0,			 	// 123
+	0,				// 123
 	0,				// 124
 	0,				// 125
 	0,				// 126
@@ -1383,7 +1383,7 @@ const uint32 ObjectMan::_objectList[TOTAL_SECTIONS] = { //a table of pointers to
 	0,					// 140
 	0,					// 141
 	0,					// 142
-	0,			 		// 143
+	0,					// 143
 
 // jeremy megas
 	0,					// 144 mega_phone
@@ -2740,13 +2740,13 @@ const char Music::_tuneList[TOTAL_TUNES][8] = {
 	"5m6",		// DONE 132	After "I'm sure it will come in useful" when George leaves. Also, George leaving Nico after, "Keep me informed if you find anything new" (5M20). + "just take care of yourself"
 	"5m8",		// DONE 133	Entering the museum for the first time on the fade.
 	"5m9",		// DONE 134	George with guard after, "park their cars." Guard saying "No, no, no"
-	"5m10", 	// DONE 135	Incidental looking around the museum music. + fading from map to museum street, when lobineau is in museum
+	"5m10",		// DONE 135	Incidental looking around the museum music. + fading from map to museum street, when lobineau is in museum
 	"5m11",		// DONE 136	From "In the case was a spindly tripod, blackened with age and pitted with rust...". George answers Tripod ((?)That's what the cue list says). Also 5M15 and 5M16)
 	"5m12",		// DONE 137	More looking around music.
 	"5m13",		// DONE 138	Opening the mummy case.
 	"5m14",		// DONE 139	High above me was a window
 
-	"5m17",		// DONE 140 	"As I reached toward the display case" (5M18 is in slot 165)
+	"5m17",		// DONE 140	"As I reached toward the display case" (5M18 is in slot 165)
 	"5m22",		// !SMK 141	From Ireland on the Europe map.
 	"5m23",		// !!!! 142	IN front of the pub, searching.
 	"5m24",		// DONE 143	Cheeky Maguire, "Wait 'til I get back"
@@ -2898,8 +2898,8 @@ const FxDef Sound::_fxList[312] = {
 		// 0
 	{
 		0,						// sampleId
-		0,						// type 			(FX_LOOP, FX_RANDOM or FX_SPOT)
-		0,						// delay 			(random chance for FX_RANDOM sound fx)
+		0,						// type				(FX_LOOP, FX_RANDOM or FX_SPOT)
+		0,						// delay			(random chance for FX_RANDOM sound fx)
 		{							// roomVolList
 			{0,0,0},		// {roomNo,leftVol,rightVol}
 		},
@@ -5036,7 +5036,7 @@ const FxDef Sound::_fxList[312] = {
 	// 187 Hospital exterior ambience
 	{
 		FX_HOSPEXT,		// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{31,3,4},		// {roomNo,leftVol,rightVol}
@@ -5047,7 +5047,7 @@ const FxDef Sound::_fxList[312] = {
 	// 188 Hospital exterior gravel footstep #1
 	{
 		FX_GRAVEL1,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{31,16,16},	// {roomNo,leftVol,rightVol}
@@ -5058,7 +5058,7 @@ const FxDef Sound::_fxList[312] = {
 	// 189 Hospital exterior gravel footstep #2
 	{
 		FX_GRAVEL2,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{31,16,16},	// {roomNo,leftVol,rightVol}
@@ -5070,7 +5070,7 @@ const FxDef Sound::_fxList[312] = {
 	// 190 George opens sarcophagus: GEOSAR
 	{
 		FX_SARCO28A,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		26,						// delay (or random chance) *
 		{							// roomVolList
 			{28,6,6},		// {roomNo,leftVol,rightVol}
@@ -5081,7 +5081,7 @@ const FxDef Sound::_fxList[312] = {
 	// 191 George closes sarcophagus: GEOSAR2
 	{
 		FX_SARCO28B,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		24,						// delay (or random chance) *
 		{							// roomVolList
 			{28,3,3},		// {roomNo,leftVol,rightVol}
@@ -5092,7 +5092,7 @@ const FxDef Sound::_fxList[312] = {
 	// 192 Guard opens sarcophagus: MUSOPN
 	{
 		FX_SARCO28C,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		14,						// delay (or random chance) *
 		{							// roomVolList
 			{28,3,3},		// {roomNo,leftVol,rightVol}
@@ -5103,7 +5103,7 @@ const FxDef Sound::_fxList[312] = {
 	// 193 George peeks out of sarcophagus: GEOPEEK
 	{
 		FX_SARCO29,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		4,						// delay (or random chance) *
 		{							// roomVolList
 			{29,5,10},	// {roomNo,leftVol,rightVol}
@@ -5114,7 +5114,7 @@ const FxDef Sound::_fxList[312] = {
 	// 194 The rope drops into the room: ROPE29
 	{
 		FX_ROPEDOWN,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		3,						// delay (or random chance) *
 		{							// roomVolList
 			{29,3,3},		// {roomNo,leftVol,rightVol}
@@ -5125,7 +5125,7 @@ const FxDef Sound::_fxList[312] = {
 	// 195 George pushes the totem pole: GEOTOT29
 	{
 		FX_TOTEM29A,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		30,						// delay (or random chance) *
 		{							// roomVolList
 			{29,12,12},	// {roomNo,leftVol,rightVol}
@@ -5136,7 +5136,7 @@ const FxDef Sound::_fxList[312] = {
 	// 196 George pushes the totem pole over: GEOTOTB
 	{
 		FX_TOTEM29B,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{29,16,16},	// {roomNo,leftVol,rightVol}
@@ -5147,7 +5147,7 @@ const FxDef Sound::_fxList[312] = {
 	// 197 George rocks the totem pole in museum hours: TOTEM28
 	{
 		FX_TOTEM28A,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		8,						// delay (or random chance) *
 		{							// roomVolList
 			{28,4,4},		// {roomNo,leftVol,rightVol}
@@ -5158,7 +5158,7 @@ const FxDef Sound::_fxList[312] = {
 	// 198 Ambient sound for Montfaucon Square
 	{
 		FX_MONTAMB,		// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{36,6,6},		// {roomNo,leftVol,rightVol}
@@ -5170,7 +5170,7 @@ const FxDef Sound::_fxList[312] = {
 	// 199 Ambient sound churchyard.
 	{
 		FX_WIND71,		// sampleId
-		FX_RANDOM, 		// type
+		FX_RANDOM,		// type
 		720,					// delay (or random chance) *
 		{							// roomVolList
 			{71,10,10},	// {roomNo,leftVol,rightVol}
@@ -5182,7 +5182,7 @@ const FxDef Sound::_fxList[312] = {
 	// 200 Owl cry #1 in churchyard
 	{
 		FX_OWL71A,		// sampleId
-		FX_RANDOM, 		// type
+		FX_RANDOM,		// type
 		720,					// delay (or random chance) *
 		{							// roomVolList
 			{71,8,8},		// {roomNo,leftVol,rightVol}
@@ -5194,7 +5194,7 @@ const FxDef Sound::_fxList[312] = {
 	// 201 Owl cry #2 in churchyard
 	{
 		FX_OWL71B,		// sampleId
-		FX_RANDOM, 		// type
+		FX_RANDOM,		// type
 		1080,					// delay (or random chance) *
 		{							// roomVolList
 			{71,8,8},		// {roomNo,leftVol,rightVol}
@@ -5206,7 +5206,7 @@ const FxDef Sound::_fxList[312] = {
 	// 202 Air conditioner in the museum
 	{
 		FX_AIRCON28,	// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{28,6,6},		// {roomNo,leftVol,rightVol}
@@ -5218,7 +5218,7 @@ const FxDef Sound::_fxList[312] = {
 	// 203 George breaks the handle off in the church tower. GEOWND72
 	{
 		FX_COG72A,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		5,						// delay (or random chance) *
 		{							// roomVolList
 			{72,10,10},
@@ -5229,7 +5229,7 @@ const FxDef Sound::_fxList[312] = {
 	// 204 Countess' room ambience
 	{
 		FX_AMBIEN56,	// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{56,3,2},		// {roomNo,leftVol,rightVol}
@@ -5240,7 +5240,7 @@ const FxDef Sound::_fxList[312] = {
 	// 205 Musical effect for George drinking beer. GEODRN20
 	{
 		FX_DRINK,			// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		17,						// delay (or random chance) *
 		{							// roomVolList
 			{20,12,12},	// {roomNo,leftVol,rightVol}
@@ -5251,7 +5251,7 @@ const FxDef Sound::_fxList[312] = {
 	// 206 Torch thrown through the air. GEOTHROW
 	{
 		FX_TORCH73,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		14,						// delay (or random chance) *
 		{							// roomVolList
 			{73,16,16},	// {roomNo,leftVol,rightVol}
@@ -5262,7 +5262,7 @@ const FxDef Sound::_fxList[312] = {
 	// 207 Internal train ambience.
 	{
 		FX_TRAININT,	// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{63,3,3},		// {roomNo,leftVol,rightVol}
@@ -5277,7 +5277,7 @@ const FxDef Sound::_fxList[312] = {
 	// 208 Countess' clock. PENDULUM. Note: Trigger the sound effect on alternate runs of the pendulum animation.
 	{
 		FX_PENDULUM,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		6,						// delay (or random chance) *
 		{							// roomVolList
 			{56,2,2},		// {roomNo,leftVol,rightVol}
@@ -5288,7 +5288,7 @@ const FxDef Sound::_fxList[312] = {
 	// 209 Compartment door.  DOOR65
 	{
 		FX_DOOR65,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{65,3,3},		// {roomNo,leftVol,rightVol}
@@ -5300,7 +5300,7 @@ const FxDef Sound::_fxList[312] = {
 	// 210 Opening window. GEOOPN1
 	{
 		FX_WINDOW66,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		8,						// delay (or random chance) *
 		{							// roomVolList
 			{66,5,5},		// {roomNo,leftVol,rightVol}
@@ -5311,7 +5311,7 @@ const FxDef Sound::_fxList[312] = {
 	// 211 Wind rip by the open window. Triggered at the end of effect 210.
 	{
 		FX_WIND66,		// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{66,5,5},		// {roomNo,leftVol,rightVol}
@@ -5322,7 +5322,7 @@ const FxDef Sound::_fxList[312] = {
 	// 212 George electrocutes himself on the pantograph. Fool.  GEOSHK64
 	{
 		FX_SHOCK63,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		11,						// delay (or random chance) *
 		{							// roomVolList
 			{63,12,14},	// {roomNo,leftVol,rightVol}
@@ -5333,7 +5333,7 @@ const FxDef Sound::_fxList[312] = {
 	// 213 The train brakes violently. GEOSTP69
 	{
 		FX_BRAKES,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		13,						// delay (or random chance) *
 		{							// roomVolList
 			{69,16,16},	// {roomNo,leftVol,rightVol}
@@ -5344,7 +5344,7 @@ const FxDef Sound::_fxList[312] = {
 	// 214 The train ticks over. From the end of BRAKE.
 	{
 		FX_TICK69,		// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{69,8,8},		// {roomNo,leftVol,rightVol}
@@ -5355,7 +5355,7 @@ const FxDef Sound::_fxList[312] = {
 	// 215 Eklund shoot Khan.  FIGHT69
 	{
 		FX_EKSHOOT,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		120,					// delay (or random chance) *
 		{							// roomVolList
 			{69,12,12},	// {roomNo,leftVol,rightVol}
@@ -5366,7 +5366,7 @@ const FxDef Sound::_fxList[312] = {
 	// 216 Eklund shoots George. GEODIE69
 	{
 		FX_EKSHOOT,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		21,						// delay (or random chance) *
 		{							// roomVolList
 			{69,12,12},	// {roomNo,leftVol,rightVol}
@@ -5377,7 +5377,7 @@ const FxDef Sound::_fxList[312] = {
 	// 217 Khan pulls the door open. FIGHT69
 	{
 		FX_DOOR69,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		42,						// delay (or random chance) *
 		{							// roomVolList
 			{69,8,12},	// {roomNo,leftVol,rightVol}
@@ -5388,7 +5388,7 @@ const FxDef Sound::_fxList[312] = {
 	// 218 Wind shriek. Loops from the end of DOOR69 wav to the beginning of BRAKES.
 	{
 		FX_WIND66,		// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{69,8,12},	// {roomNo,leftVol,rightVol}
@@ -5399,7 +5399,7 @@ const FxDef Sound::_fxList[312] = {
 	// 219 Brakes releasing pressure. Only after BRAKE has been run.
 	{
 		FX_PNEUMO69,	// sampleId
-		FX_RANDOM, 		// type
+		FX_RANDOM,		// type
 		720,					// delay (or random chance) *
 		{							// roomVolList
 			{69,8,8},		// {roomNo,leftVol,rightVol}
@@ -5410,7 +5410,7 @@ const FxDef Sound::_fxList[312] = {
 	// 220 External train sound. Played while George is on the top of the train.
 	{
 		FX_TRAINEXT,	// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{63,8,8},		// {roomNo,leftVol,rightVol}
@@ -5421,7 +5421,7 @@ const FxDef Sound::_fxList[312] = {
 	// 221 The passing train. FIGHT69
 	{
 		FX_TRNPASS,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		102,					// delay (or random chance) *
 		{							// roomVolList
 			{69,4,16},	// {roomNo,leftVol,rightVol}
@@ -5432,7 +5432,7 @@ const FxDef Sound::_fxList[312] = {
 	// 222 George descends into sewer. GEODESO6
 	{
 		FX_LADD2,			// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{6,4,4},		// {roomNo,leftVol,rightVol}
@@ -5443,7 +5443,7 @@ const FxDef Sound::_fxList[312] = {
 	// 223 George ascends into alley. GEOASC06
 	{
 		FX_LADD3,			// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		10,						// delay (or random chance) *
 		{							// roomVolList
 			{6,4,4},		// {roomNo,leftVol,rightVol}
@@ -5454,7 +5454,7 @@ const FxDef Sound::_fxList[312] = {
 	// 224 George replaces manhole cover. GEOMAN9
 	{
 		FX_COVERON2,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		19,						// delay (or random chance) *
 		{							// roomVolList
 			{2,12,11},	// {roomNo,leftVol,rightVol}
@@ -5465,7 +5465,7 @@ const FxDef Sound::_fxList[312] = {
 	// 225 Montfaucon sewer ambience.
 	{
 		FX_AMBIEN37,	// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{37,5,5},		// {roomNo,leftVol,rightVol}
@@ -5476,7 +5476,7 @@ const FxDef Sound::_fxList[312] = {
 	// 226 George's winning smile. GEOJMP72.
 	{
 		FX_PING,			// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		26,						// delay (or random chance) *
 		{							// roomVolList
 			{72,10,14},	// {roomNo,leftVol,rightVol}
@@ -5487,7 +5487,7 @@ const FxDef Sound::_fxList[312] = {
 	// 227 George starts to open the manhole. GEO36KNE
 	{
 		FX_MANOP36,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		19,						// delay (or random chance) *
 		{							// roomVolList
 			{36,4,6},		// {roomNo,leftVol,rightVol}
@@ -5498,7 +5498,7 @@ const FxDef Sound::_fxList[312] = {
 	// 228 George opens the manhole. GEO36OPE
 	{
 		FX_PULLUP36,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		9,						// delay (or random chance) *
 		{							// roomVolList
 			{36,4,6},		// {roomNo,leftVol,rightVol}
@@ -5509,7 +5509,7 @@ const FxDef Sound::_fxList[312] = {
 	// 229 George replaces the manhole cover. GEO36CLO
 	{
 		FX_REPLCE36,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		20,						// delay (or random chance) *
 		{							// roomVolList
 			{36,4,6},		// {roomNo,leftVol,rightVol}
@@ -5521,7 +5521,7 @@ const FxDef Sound::_fxList[312] = {
 	// 230 George knocks at righthand arch. GEO37TA3
 	{
 		FX_KNOCK37,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		20,						// delay (or random chance) *
 		{							// roomVolList
 			{37,6,12},	// {roomNo,leftVol,rightVol}
@@ -5532,7 +5532,7 @@ const FxDef Sound::_fxList[312] = {
 	// 231 George knocks at middle or lefthand arch. GEO37TA1 or GEO37TA2.
 	{
 		FX_KNOCK37B,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		20,						// delay (or random chance) *
 		{							// roomVolList
 			{37,4,8},		// {roomNo,leftVol,rightVol}
@@ -5543,7 +5543,7 @@ const FxDef Sound::_fxList[312] = {
 	// 232 George winds the chain down  HOO37LBO
 	{
 		FX_CHAIN37,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		14,						// delay (or random chance) *
 		{							// roomVolList
 			{37,6,10},	// {roomNo,leftVol,rightVol}
@@ -5554,7 +5554,7 @@ const FxDef Sound::_fxList[312] = {
 	// 233 George winds the chain up.  HOO37LBO (In reverse)
 	{
 		FX_CHAIN37B,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{37,6,10},	// {roomNo,leftVol,rightVol}
@@ -5565,7 +5565,7 @@ const FxDef Sound::_fxList[312] = {
 	// 234 George breaks hole in door. GEO37TA4
 	{
 		FX_HOLE37,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		11,						// delay (or random chance) *
 		{							// roomVolList
 			{37,6,12},	// {roomNo,leftVol,rightVol}
@@ -5576,7 +5576,7 @@ const FxDef Sound::_fxList[312] = {
 	// 235 Plaster door collapses. DOR37COL
 	{
 		FX_DOOR37,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		23,						// delay (or random chance) *
 		{							// roomVolList
 			{37,8,15},	// {roomNo,leftVol,rightVol}
@@ -5587,7 +5587,7 @@ const FxDef Sound::_fxList[312] = {
 	// 236 Barge winch. GEO37TUL (If it runs more than once, trigger the effect on frame one. Incidentally, this is a reversible so the effect must launch on frame one of the .cdr version as well. )
 	{
 		FX_WINCH37,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{37,16,16},	// {roomNo,leftVol,rightVol}
@@ -5598,7 +5598,7 @@ const FxDef Sound::_fxList[312] = {
 	// 237 George places chess piece. GEOSPA17
 	{
 		FX_CHESS,			// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		23,						// delay (or random chance) *
 		{							// roomVolList
 			{59,4,4},		// {roomNo,leftVol,rightVol}
@@ -5609,7 +5609,7 @@ const FxDef Sound::_fxList[312] = {
 	// 238 Piano loop for the upstairs hotel corridor.
 	{
 		FX_PIANO14,		// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{14,2,2},		// {roomNo,leftVol,rightVol}
@@ -5620,7 +5620,7 @@ const FxDef Sound::_fxList[312] = {
 	// 239 Door opens in church tower. PANEL72
 	{
 		FX_SECDOR72,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{72,8,10},	// {roomNo,leftVol,rightVol}
@@ -5632,7 +5632,7 @@ const FxDef Sound::_fxList[312] = {
 	// 240 George rummages through debris. Tied to the end of the whichever crouch is used. Use either this one or RUMMAGE2 alternatively or randomly. Same kind of schtick as the pick axe noises, I suppose.
 	{
 		FX_RUMMAGE1,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		9,						// delay (or random chance) *
 		{							// roomVolList
 			{72,8,6},		// {roomNo,leftVol,rightVol}
@@ -5643,7 +5643,7 @@ const FxDef Sound::_fxList[312] = {
 	// 241 George rummages through debris. See above for notes.
 	{
 		FX_RUMMAGE2,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		9,						// delay (or random chance) *
 		{							// roomVolList
 			{72,8,6},		// {roomNo,leftVol,rightVol}
@@ -5654,7 +5654,7 @@ const FxDef Sound::_fxList[312] = {
 	// 242 Gust of wind in the graveyard.
 	{
 		FX_GUST71,		// sampleId
-		FX_RANDOM, 		// type
+		FX_RANDOM,		// type
 		1080,					// delay (or random chance) *
 		{							// roomVolList
 			{71,3,3},		// {roomNo,leftVol,rightVol}
@@ -5666,7 +5666,7 @@ const FxDef Sound::_fxList[312] = {
 	// 243 Violin ambience for Ireland.
 	{
 		FX_VIOLIN19,	// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{19,3,3},		// {roomNo,leftVol,rightVol}
@@ -5679,7 +5679,7 @@ const FxDef Sound::_fxList[312] = {
 	// 244 Footstep #1 for underground locations. Same schtick as for 188 and 189.
 	{
 		FX_SEWSTEP1,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{6,8,8},		// {roomNo,leftVol,rightVol}
@@ -5691,7 +5691,7 @@ const FxDef Sound::_fxList[312] = {
 	// 245 Footstep #2 for underground locations. Same schtick as for 188 and 189.
 	{
 		FX_SEWSTEP2,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{6,16,16},	// {roomNo,leftVol,rightVol}
@@ -5703,7 +5703,7 @@ const FxDef Sound::_fxList[312] = {
 	// 246 Nico's carabiner as she descends into the museum. NICPUS1
 	{
 		FX_CARABINE,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		4,						// delay (or random chance) *
 		{							// roomVolList
 			{29,8,8},		// {roomNo,leftVol,rightVol}
@@ -5714,7 +5714,7 @@ const FxDef Sound::_fxList[312] = {
 	// 247 Rosso is shot (with a piece of field artillery).  ROSSHOT
 	{
 		FX_GUN79,			// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		2,						// delay (or random chance) *
 		{							// roomVolList
 			{79,16,16},	// {roomNo,leftVol,rightVol}
@@ -5725,7 +5725,7 @@ const FxDef Sound::_fxList[312] = {
 	// 248 George is hit by the thrown stilletto. GEODIE1
 	{
 		FX_DAGGER1,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		2,						// delay (or random chance) *
 		{							// roomVolList
 			{73,12,12},	// {roomNo,leftVol,rightVol}
@@ -5736,7 +5736,7 @@ const FxDef Sound::_fxList[312] = {
 	// 249 George is hit by the thrown stilletto after walking forward. GEODIE2
 	{
 		FX_DAGGER1,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		9,						// delay (or random chance) *
 		{							// roomVolList
 			{73,12,12},	// {roomNo,leftVol,rightVol}
@@ -5748,7 +5748,7 @@ const FxDef Sound::_fxList[312] = {
 	// 250 Can hits the well water. The cue is in GAR2SC57.TXT immediately after the line, "over: Lopez threw the can away. It seemed to fall an awfully long way."
 	{
 		FX_CANFALL,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		4,						// delay (or random chance) *
 		{							// roomVolList
 			{57,16,16},	// {roomNo,leftVol,rightVol}
@@ -5759,7 +5759,7 @@ const FxDef Sound::_fxList[312] = {
 	// 251 Mad, fizzing damp and ancient gunpowder after the application of a torch.
 	{
 		FX_GUNPOWDR,	// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{73,12,12},	// {roomNo,leftVol,rightVol}
@@ -5770,7 +5770,7 @@ const FxDef Sound::_fxList[312] = {
 	// 252 Maguire whistling. MAGSLK. Plays while Maguire is idling, stops abruptly when he does something else.
 	{
 		FX_WHISTLE,		// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{19,2,5},		// {roomNo,leftVol,rightVol}
@@ -5781,7 +5781,7 @@ const FxDef Sound::_fxList[312] = {
 	// 253  George is hit by the goat. GEOHITR and GEOHITL.
 	{
 		FX_GEOGOAT,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		11,						// delay (or random chance) *
 		{							// roomVolList
 			{24,10,10},	// {roomNo,leftVol,rightVol}
@@ -5792,7 +5792,7 @@ const FxDef Sound::_fxList[312] = {
 	// 254 Manager says, "Hello". MAN2
 	{
 		FX_MANG1,			// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		7,						// delay (or random chance) *
 		{							// roomVolList
 			{49,6,5},		// {roomNo,leftVol,rightVol}
@@ -5803,7 +5803,7 @@ const FxDef Sound::_fxList[312] = {
 	// 255 Manager says, Don't go in there!" MAN3
 	{
 		FX_MANG2,			// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		11,						// delay (or random chance) *
 		{							// roomVolList
 			{49,6,5},		// {roomNo,leftVol,rightVol}
@@ -5814,7 +5814,7 @@ const FxDef Sound::_fxList[312] = {
 	// 256 Manager says, "Here are the keys." MAN4
 	{
 		FX_MANG3,			// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		6,						// delay (or random chance) *
 		{							// roomVolList
 			{49,6,5},		// {roomNo,leftVol,rightVol}
@@ -5825,7 +5825,7 @@ const FxDef Sound::_fxList[312] = {
 	// 257 George pulls the lion's tooth. GEOSPA26
 	{
 		FX_TOOTHPUL,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		19,						// delay (or random chance) *
 		{							// roomVolList
 			{61,8,16},	// {roomNo,leftVol,rightVol}
@@ -5836,7 +5836,7 @@ const FxDef Sound::_fxList[312] = {
 	// 258 George escapes the lion.  LION1
 	{
 		FX_LIONFALL,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		7,						// delay (or random chance) *
 		{							// roomVolList
 			{61,8,16},	// {roomNo,leftVol,rightVol}
@@ -5847,7 +5847,7 @@ const FxDef Sound::_fxList[312] = {
 	// 259 George gets flattened. LION2
 	{
 		FX_LIONFAL2,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		4,						// delay (or random chance) *
 		{							// roomVolList
 			{61,8,16},	// {roomNo,leftVol,rightVol}
@@ -5858,7 +5858,7 @@ const FxDef Sound::_fxList[312] = {
 	// 260 Rosso dies. ROSSFALL
 	{
 		FX_ROSSODIE,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{74,16,16},	// {roomNo,leftVol,rightVol}
@@ -5869,7 +5869,7 @@ const FxDef Sound::_fxList[312] = {
 	// 261 Eklund chokes George. FIGHT79
 	{
 		FX_CHOKE1,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		9,						// delay (or random chance) *
 		{							// roomVolList
 			{79,16,16},	// {roomNo,leftVol,rightVol}
@@ -5880,7 +5880,7 @@ const FxDef Sound::_fxList[312] = {
 	// 262 Eklund chokes George some more. FIGHT79
 	{
 		FX_CHOKE2,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		54,						// delay (or random chance) *
 		{							// roomVolList
 			{79,16,16},	// {roomNo,leftVol,rightVol}
@@ -5891,7 +5891,7 @@ const FxDef Sound::_fxList[312] = {
 	// 263 Eklund dies. FIGHT79
 	{
 		FX_FIGHT2,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		44,					// delay (or random chance) *
 		{							// roomVolList
 			{79,16,16},	// {roomNo,leftVol,rightVol}
@@ -5902,7 +5902,7 @@ const FxDef Sound::_fxList[312] = {
 	// 264 George hears museum break-in. GEOSUR29
 	{
 		FX_DOOR29,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		10,						// delay (or random chance) *
 		{							// roomVolList
 			{94,14,10},	// {roomNo,leftVol,rightVol}
@@ -5913,7 +5913,7 @@ const FxDef Sound::_fxList[312] = {
 	// 265 George hits the floor having been shot. GEODED.
 	{
 		FX_GDROP29,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		27,						// delay (or random chance) *
 		{							// roomVolList
 			{29,10,16},	// {roomNo,leftVol,rightVol}
@@ -5924,7 +5924,7 @@ const FxDef Sound::_fxList[312] = {
 	// 266 George hits the floor having been stunned. GEOFISH
 	{
 		FX_GDROP29,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		27,						// delay (or random chance) *
 		{							// roomVolList
 			{29,10,16},	// {roomNo,leftVol,rightVol}
@@ -5935,7 +5935,7 @@ const FxDef Sound::_fxList[312] = {
 	// 267 Fitz being knocked down as heard from inside the pub. Triggered from the script, I think. This is just a stopgap until Hackenbacker do the full version for the Smacker, then I'll sample the requisite bit and put it in here.
 	{
 		FX_FITZHIT,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{20,16,10},	// {roomNo,leftVol,rightVol}
@@ -5946,7 +5946,7 @@ const FxDef Sound::_fxList[312] = {
 	// 268 Gendarme shoots lock off. GENSHOT
 	{
 		FX_GUN34,			// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{34,16,16},	// {roomNo,leftVol,rightVol}
@@ -5958,7 +5958,7 @@ const FxDef Sound::_fxList[312] = {
 	// Incidentally, James, please switch off Mr Shiney permanently when George first gets into Marquet's room. He gets in the way when they're figuring out that Eklund's an imposter.
 	{
 		FX_PULSE2,		// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{30,16,16},	// {roomNo,leftVol,rightVol}
@@ -5971,7 +5971,7 @@ const FxDef Sound::_fxList[312] = {
 	// 270 ECG alarm, Marquet dead. Switch off the previous effect and replace with this immediately before the gendarme says, "Stand back, messieurs."
 	{
 		FX_PULSE3,		// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{30,16,16},	// {roomNo,leftVol,rightVol}
@@ -5984,7 +5984,7 @@ const FxDef Sound::_fxList[312] = {
 	// 271 Door closing. GEOENT15
 	{
 		FX_DORCLOSE,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		4,						// delay (or random chance) *
 		{							// roomVolList
 			{15,12,12},	// {roomNo,leftVol,rightVol}
@@ -5995,7 +5995,7 @@ const FxDef Sound::_fxList[312] = {
 	// 272 Cupboard opening. GEOCOT
 	{
 		FX_CUPBOPEN,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		8,						// delay (or random chance) *
 		{							// roomVolList
 			{33,12,12},	// {roomNo,leftVol,rightVol}
@@ -6006,7 +6006,7 @@ const FxDef Sound::_fxList[312] = {
 	// 273 Cupboard closing. GEOCOT
 	{
 		FX_CUPBCLOS,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		33,						// delay (or random chance) *
 		{							// roomVolList
 			{33,12,12},	// {roomNo,leftVol,rightVol}
@@ -6017,7 +6017,7 @@ const FxDef Sound::_fxList[312] = {
 	// 274 Closing door when George leaves hotel room. GEOLVS15 and GEODOR17 (they're identical).
 	{
 		FX_DORCLOSE,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		44,						// delay (or random chance) *
 		{							// roomVolList
 			{15,12,12},	// {roomNo,leftVol,rightVol}
@@ -6029,7 +6029,7 @@ const FxDef Sound::_fxList[312] = {
 	// 275 Closing door when George leaves the pub. DOROPN20 (Reversed)
 	{
 		FX_DORCLOSE20,// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		11,						// delay (or random chance) *
 		{							// roomVolList
 			{20,12,12},	// {roomNo,leftVol,rightVol}
@@ -6040,7 +6040,7 @@ const FxDef Sound::_fxList[312] = {
 	// 276 Nico call for a cab.  NICPHN10
 	{
 		FX_PHONICO1,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		15,						// delay (or random chance) *
 		{							// roomVolList
 			{10,12,12},	// {roomNo,leftVol,rightVol}
@@ -6051,7 +6051,7 @@ const FxDef Sound::_fxList[312] = {
 	// 277 Nico puts down the phone. NICDWN10
 	{
 		FX_FONEDN,		// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		6,						// delay (or random chance) *
 		{							// roomVolList
 			{10,12,12},	// {roomNo,leftVol,rightVol}
@@ -6062,7 +6062,7 @@ const FxDef Sound::_fxList[312] = {
 	// 278 Painter puts down the phone. PAI41HAN
 	{
 		FX_FONEDN41,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		5,						// delay (or random chance) *
 		{							// roomVolList
 			{41,12,12},	// {roomNo,leftVol,rightVol}
@@ -6073,7 +6073,7 @@ const FxDef Sound::_fxList[312] = {
 	// 279 Mechanical hum of heating system in the dig lobby.
 	{
 		FX_AIRCON41,	// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{41,6,6},		// {roomNo,leftVol,rightVol}
@@ -6086,7 +6086,7 @@ const FxDef Sound::_fxList[312] = {
 	// 280 The Sword is Reforged (Grandmaster gets zapped) GMPOWER
 	{
 		FX_REFORGE1,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{78,16,16},	// {roomNo,leftVol,rightVol}
@@ -6097,7 +6097,7 @@ const FxDef Sound::_fxList[312] = {
 	// 281 The Sword is Reforged (G&N gawp at the spectacle) There's no anim I know of to tie it to unless the flickering blue light is one.
 	{
 		FX_REFORGE2,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{75,12,12},	// {roomNo,leftVol,rightVol}
@@ -6108,7 +6108,7 @@ const FxDef Sound::_fxList[312] = {
 	// 282 The Sword is Reforged (We watch over G&N's heads as the Grandmaster gets zapped) GMWRIT74
 	{
 		FX_REFORGE2,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{74,14,14},	// {roomNo,leftVol,rightVol}
@@ -6119,7 +6119,7 @@ const FxDef Sound::_fxList[312] = {
 	// 283 The Sword is Reforged (Grandmaster finishes being zapped) GMWRITH
 	{
 		FX_REFORGE4,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		1,						// delay (or random chance) *
 		{							// roomVolList
 			{78,16,16},	// {roomNo,leftVol,rightVol}
@@ -6130,7 +6130,7 @@ const FxDef Sound::_fxList[312] = {
 	// 284 Baphomet Cavern Ambience
 	{
 		FX_BAPHAMB,		// sampleId
-		FX_LOOP, 			// type
+		FX_LOOP,			// type
 		0,						// delay (or random chance) *
 		{							// roomVolList
 			{74,6,8},		// {roomNo,leftVol,rightVol}
@@ -6146,7 +6146,7 @@ const FxDef Sound::_fxList[312] = {
 	// 285 Duane's Happy-Snappy Camera. XDNEPHO3 and XDNEPHO5.
 	{
 		FX_CAMERA45,	// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		30,						// delay (or random chance) *
 		{							// roomVolList
 			{45,4,4},		// {roomNo,leftVol,rightVol}
@@ -6157,7 +6157,7 @@ const FxDef Sound::_fxList[312] = {
 	// 286 Grand Master strikes the floor with his cane. GMENTER
 	{
 		FX_STAFF,			// sampleId
-		FX_SPOT, 			// type
+		FX_SPOT,			// type
 		28,						// delay (or random chance) *
 		{							// roomVolList
 			{73,8,8},		// {roomNo,leftVol,rightVol}
@@ -6772,7 +6772,7 @@ const uint8 g_startPos35[] = {				// hospital jacques
 	RUN_HELPER_SCRIPT(HELP_WHITECOAT)
 };
 
-const uint8 g_startPos36[] = { 				// montfaucon
+const uint8 g_startPos36[] = {				// montfaucon
 	GEORGE_POS(300, 480, RIGHT, FLOOR_36),
 	LOGIC_CALL_FN(opcAddObject, LENS),
 	LOGIC_CALL_FN(opcAddObject, RED_NOSE),

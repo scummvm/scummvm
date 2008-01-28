@@ -469,8 +469,8 @@ int16 Walk::findAreaPosition(int16 *x, int16 *y, bool recalibrate) {
 			pos = i;
 		}
 	}
- 	// we now have the closest area near X,Y, so we can recalibrate
- 	// the X,Y coord to be in this area
+	// we now have the closest area near X,Y, so we can recalibrate
+	// the X,Y coord to be in this area
 	if (recalibrate) {
 		b = &_roomArea[pos].box;
 		if (*x < b->x1) *x = b->x1;

@@ -96,7 +96,7 @@ DefaultEventManager::DefaultEventManager(OSystem *boss) :
 	_modifierState(0),
 	_shouldQuit(false) {
 
- 	assert(_boss);
+	assert(_boss);
 
 	_recordFile = NULL;
 	_recordTimeFile = NULL;

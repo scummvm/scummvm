@@ -728,7 +728,7 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 				//printf("Mouse dragged at (%u, %u)\n", x, y);
 				if (_secondaryTapped) {
 					 if (_gestureStartX == -1 || _gestureStartY == -1) {
-					 	return false;
+						return false;
 					 }
 
 					int vecX = (x - _gestureStartX);

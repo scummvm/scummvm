@@ -479,7 +479,7 @@ void Screen::processLayer(byte *file, uint32 layer_number) {
 
 	layer_head.read(_vm->fetchLayerHeader(file, layer_number));
 
- 	SpriteInfo spriteInfo;
+	SpriteInfo spriteInfo;
 
 	spriteInfo.x = layer_head.x;
 	spriteInfo.y = layer_head.y;
@@ -679,7 +679,7 @@ void Screen::registerFrame(byte *ob_mouse, byte *ob_graph, byte *ob_mega, BuildU
 
 	// fill in the BuildUnit structure for this frame
 
- 	build_unit->anim_resource = obGraph.getAnimResource();
+	build_unit->anim_resource = obGraph.getAnimResource();
 	build_unit->anim_pc = obGraph.getAnimPc();
 	build_unit->layer_number = 0;
 

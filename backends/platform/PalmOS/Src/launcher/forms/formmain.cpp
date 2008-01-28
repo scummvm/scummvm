@@ -121,8 +121,8 @@ static Boolean MainFormDoCommand(UInt16 command)
 			break;
 
 		case MainOptionsAbout:
- 			FrmPopupForm(InfoForm);
- 			handled = true;
+			FrmPopupForm(InfoForm);
+			handled = true;
 			break;
 
 		case MainGamesMusicSound:
@@ -252,7 +252,7 @@ Boolean MainFormHandleEvent(EventPtr eventP)
 					break;
 
 				case MainAboutButton:
-		 			FrmPopupForm(InfoForm);
+					FrmPopupForm(InfoForm);
 					break;
 
 //				case MainListTypeSelTrigger:

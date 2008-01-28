@@ -51,7 +51,7 @@ void TabWidget::init() {
 	_tabPadding = g_gui.theme()->getTabPadding();
 
 	setFlags(WIDGET_ENABLED);
- 	_type = kTabWidget;
+	_type = kTabWidget;
 	_activeTab = -1;
 	_firstVisibleTab = 0;
 

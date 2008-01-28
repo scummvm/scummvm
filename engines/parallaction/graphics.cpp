@@ -179,7 +179,7 @@ void Palette::rotate(uint first, uint last, bool forward) {
 
 	byte tmp[3];
 
-	if (forward) { 					// forward
+	if (forward) {					// forward
 
 		tmp[0] = _data[first * 3];
 		tmp[1] = _data[first * 3 + 1];

@@ -726,14 +726,14 @@ void ScummEngine_v8::o8_cursorCommand() {
 	case 0xE6:		// SO_CURSOR_TRANSPARENT Set cursor transparent color
 		setCursorTransparency(pop());
 		break;
-	case 0xE7: 		// SO_CHARSET_SET
+	case 0xE7:		// SO_CHARSET_SET
 		_string[0]._default.charset = pop();
 		break;
 	case 0xE8:		// SO_CHARSET_COLOR
 		getStackList(args, ARRAYSIZE(args));
 		// This opcode does nothing (confirmed with disasm)
 		break;
-	case 0xE9: 		// SO_CURSOR_PUT
+	case 0xE9:		// SO_CURSOR_PUT
 		{
 		int y = pop();
 		int x = pop();
@@ -1388,7 +1388,7 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 			push(ConfMan.getBool("object_labels"));
 		else if (!strcmp(str, "Saveload Page"))
 			push(14);
-		else 		// Use defaults
+		else		// Use defaults
 			push(-1);
 		debugC(DEBUG_GENERAL,"o8_kernelGetFunctions: readRegistryValue(%s)", str);
 		}

@@ -29,7 +29,7 @@
 
 namespace Parallaction {
 
-#define INST_ON 						1
+#define INST_ON							1
 #define INST_OFF						2
 #define INST_X							3
 #define INST_Y							4
@@ -722,8 +722,8 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		_e = ((_si >= a->_left + a->width()) || (_si <= a->_left)) ? 0 : 1;		// _e: horizontal range
 		_f = ((_di >= a->_top + a->height()) || (_di <= a->_top)) ? 0 : 1;		// _f: vertical range
 
-		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1; 										 // _b: (no type specified) AND (Animation is not the character)
-		_c = (a->_type & 0xFFFF0000) ? 0 : 1; 															// _c: Animation is not an object
+		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1;										 // _b: (no type specified) AND (Animation is not the character)
+		_c = (a->_type & 0xFFFF0000) ? 0 : 1;															// _c: Animation is not an object
 		_d = ((a->_type & 0xFFFF0000) != type) ? 0 : 1;													// _d: Animation is an object of the same type
 
 		if ((_a != 0 && _e != 0 && _f != 0) && ((_b != 0 && _c != 0) || (a->_type == type) || (_d != 0))) {

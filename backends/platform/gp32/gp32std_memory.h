@@ -30,6 +30,6 @@ extern void *	gp_memcpy(void *dst, const void *src, size_t count);
 extern void *	gp_memset(void *dst, int val, size_t count);
 extern void *	gp_malloc(size_t size);
 extern void *	gp_calloc(size_t nitems, size_t size);
-extern void 	gp_free(void *block);
+extern void		gp_free(void *block);
 
 #endif

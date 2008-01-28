@@ -53,8 +53,8 @@ extern bool isSmartphone(void);
 	#define stderr ((DS::fileHandle*) -2)
 	#define stdin ((DS::fileHandle*) -3)
 
-	void 	std_fprintf(FILE* handle, const char* fmt, ...);
-	void 	std_fflush(FILE* handle);
+	void	std_fprintf(FILE* handle, const char* fmt, ...);
+	void	std_fflush(FILE* handle);
 
 	#define fprintf(file, fmt, ...)				{ char str[128]; sprintf(str, fmt, ##__VA_ARGS__); DS::std_fwrite(str, strlen(str), 1, file); }
 	#define fflush(file)						DS::std_fflush(file)

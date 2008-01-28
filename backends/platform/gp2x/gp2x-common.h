@@ -309,7 +309,7 @@ protected:
 		int16 x, y;
 
 		// The size and hotspot of the original cursor image.
-	    	int16 w, h;
+		int16 w, h;
 		int16 hotX, hotY;
 
 		// The size and hotspot of the pre-scaled cursor image, in real

@@ -956,7 +956,7 @@ int ScummEngine::init() {
 #endif
 
 
-	// The 	kGenUnchanged method is only used for 'container files', i.e. files
+	// The	kGenUnchanged method is only used for 'container files', i.e. files
 	// that contain the real game files bundled together in an archive format.
 	// This is the case of the NES, C64 and Mac versions of certain games.
 	// Note: All of these can also occur in 'extracted' form, in which case they
@@ -1862,7 +1862,7 @@ load_game:
 			else if (_game.version == 4)	// 256 color CD version
 				var = 150;
 			else
- 				var = 100;
+				var = 100;
 			byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
 			// if verbs should be shown restore them
 			if (VAR(var) == 2)

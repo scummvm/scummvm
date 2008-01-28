@@ -55,12 +55,12 @@ struct WaveHeader {
 } __attribute__ ((packed));
 
 struct chunkHeader {
-	char 		name[4];
+	char		name[4];
 	u32			size;
 } __attribute__ ((packed));
 
 struct Header {
-	s16 		firstSample;
+	s16			firstSample;
 	char		stepTableIndex;
 	char		reserved;
 } __attribute__ ((packed));

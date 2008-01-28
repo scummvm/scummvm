@@ -180,7 +180,7 @@ bool Events::pollEvent() {
 		break;
 
 	default:
- 		break;
+		break;
 	}
 
 	return true;

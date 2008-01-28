@@ -12,12 +12,12 @@ Installation
 Controls
 ========
 
-Left trigger 		- ESC
-Right trigger 		- Enter
-Analog 			- Mouse movement
+Left trigger		- ESC
+Right trigger		- Enter
+Analog			- Mouse movement
 Directionals		- Mouse movement
 Analog + triangle	- Fine control mouse
-Cross 			- Mouse button 1
+Cross			- Mouse button 1
 Circle			- Mouse button 2
 Square			- '.' (skip dialogue in some games)
 Select			- Show/Hide Virtual Keyboard
@@ -76,9 +76,9 @@ To build ScummVM for PSP you need:
 
 - PSP toolchain	(svn co svn://svn.pspdev.org/psp/trunk/psptoolchain)
 
-- PSPSDK 	(svn co svn://svn.pspdev.org/psp/trunk/pspsdk)
-  		Note: This usually gets installed by the PSP toolchain,
-	 	so you don't have to do it manually.
+- PSPSDK	(svn co svn://svn.pspdev.org/psp/trunk/pspsdk)
+		Note: This usually gets installed by the PSP toolchain,
+		so you don't have to do it manually.
 
 - SDL		(svn co svn://svn.pspdev.org/psp/trunk/SDL)
 

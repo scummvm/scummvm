@@ -180,7 +180,7 @@ USE_CLOTHES()				Logic::joeUseClothes
 USE_DRESS()					Logic::joeUseDress
 -
 CUTJOEF						Logic::_joe.cutFacing
-JOE_RESPstr 				Logic::_joeResponse
+JOE_RESPstr					Logic::_joeResponse
 JOEF,JX,JY,JDIR				Logic::_joe.*
 JOEWALK						Logic::_joe.walk
 
@@ -219,13 +219,13 @@ SETUP_FURNITURE()			Graphics::setupRoomFurniture
 SETUP_ROOM()				Logic::changeRoom
 SETUP_SCREENS()				*not needed* (only calls Display::setupPanel)
 SETUP_VARS()				*not needed* (equivalent to Command::clear(), SCENE=0, clear(gamestate))
-update() 					QueenEngine::update
+update()					QueenEngine::update
 -
-A_ANIMstr 					Logic::_aAnim
+A_ANIMstr					Logic::_aAnim
 A_ANIM_MAX					Logic::_numAAnim
-A_NAMEstr 					Logic::_aName
+A_NAMEstr					Logic::_aName
 A_NAME_MAX					Logic::_numAName
-A_FILEstr 					Logic::_aFile
+A_FILEstr					Logic::_aFile
 A_FILE_MAX					Logic::_numAFile
 ACTOR_DATA_MAX				Logic::_numActors
 bamflag						BamScene::_flag
@@ -250,7 +250,7 @@ OBJECT_DATA					Logic::_objectData
 OBJECT_DESCRstr				Logic::_objDescription
 OBJECT_NAMEstr				Logic::_objName
 OBJTOT						Logic::_numObjects
-OLDROOM,ROOM,NEW_ROOM  		Logic::_*oom
+OLDROOM,ROOM,NEW_ROOM		Logic::_*oom
 ROOMTOT						Logic::_numRooms
 ROOM_DATA					Logic::_roomData
 ROOM_NAMEstr				Logic::_roomName
@@ -282,9 +282,9 @@ SFRAME						Person.bobFrame
 
 RESOURCE
 ========
-tflen() 					Resource::fileSize
+tflen()						Resource::fileSize
 topen()						Resource::loadFile
-tseek() 					*not needed*
+tseek()						*not needed*
 
 
 SCREEN
@@ -375,10 +375,10 @@ TEXTS
 =====
 blanktexts()				Display::clearTexts
 drawtext()					Display::drawTexts
-Ink() 						Display::textCurrentColor
-MIDDLE() 					Display::textCenterX / Display::textSetCentered
+Ink()						Display::textCurrentColor
+MIDDLE()					Display::textCenterX / Display::textSetCentered
 text()						Display::setText
-textlen() 					Display::textWidth
+textlen()					Display::textWidth
 -
 textcol						Display::_curTextColor
 texts						Display::_texts

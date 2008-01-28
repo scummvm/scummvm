@@ -38,13 +38,13 @@ namespace Parallaction {
 //	but only 24x24 pixels are actually copied to graphic memory
 //
 
-#define INVENTORY_MAX_ITEMS 		30
+#define INVENTORY_MAX_ITEMS			30
 #define INVENTORY_FIRST_ITEM		4		// first four entries are used up by verbs
 
 #define INVENTORY_ITEMS_PER_LINE	5
-#define INVENTORY_LINES 			6
+#define INVENTORY_LINES				6
 
-#define INVENTORY_WIDTH 			(INVENTORY_ITEMS_PER_LINE*INVENTORYITEM_WIDTH)
+#define INVENTORY_WIDTH				(INVENTORY_ITEMS_PER_LINE*INVENTORYITEM_WIDTH)
 #define INVENTORY_HEIGHT			(INVENTORY_LINES*INVENTORYITEM_HEIGHT)
 
 

@@ -78,7 +78,7 @@ public:
 	virtual uint16	getWidth() const	{ return _w; }
 	virtual uint16	getHeight() const	{ return _h; }
 
-	virtual bool 	isVisible() const = 0;
+	virtual bool	isVisible() const = 0;
 
 	virtual void	draw() = 0;
 

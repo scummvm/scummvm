@@ -267,8 +267,8 @@ void Wiz::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int
 	uint8 *dst2Ptr = dst2 + dstRect.left + dstRect.top * dstw;
 	const uint8 *dataPtr = src;
 
-  	while (rh--) {
- 		uint16 off = READ_LE_UINT16(dataPtr); dataPtr += 2;
+	while (rh--) {
+		uint16 off = READ_LE_UINT16(dataPtr); dataPtr += 2;
 		const uint8 *dataPtrNext = off + dataPtr;
 		uint8 *dst1PtrNext = dst1Ptr + dstw;
 		uint8 *dst2PtrNext = dst2Ptr + dstw;
@@ -1302,40 +1302,40 @@ struct PolygonDrawData {
 		int32 tx_acc = tp1->x << 16;
 		int32 sx_acc = sp1->x << 16;
 		int32 sy_acc = sp1->y << 16;
-  		uint16 dy = ABS(tp2->y - tp1->y) + 1;
-  		int32 tx_step = ((tp2->x - tp1->x) << 16) / dy;
-  		int32 sx_step = ((sp2->x - sp1->x) << 16) / dy;
-  		int32 sy_step = ((sp2->y - sp1->y) << 16) / dy;
+		uint16 dy = ABS(tp2->y - tp1->y) + 1;
+		int32 tx_step = ((tp2->x - tp1->x) << 16) / dy;
+		int32 sx_step = ((sp2->x - sp1->x) << 16) / dy;
+		int32 sy_step = ((sp2->y - sp1->y) << 16) / dy;
 
-  		int y = tp1->y - mat[0].y;
-  		while (dy--) {
-  			assert(y >= 0 && y < pAreasNum);
-  			PolygonArea *ppa = &pa[y];
-  			int32 ttx = tx_acc >> 16;
-  			int32 tsx = sx_acc >> 16;
-  			int32 tsy = sy_acc >> 16;
+		int y = tp1->y - mat[0].y;
+		while (dy--) {
+			assert(y >= 0 && y < pAreasNum);
+			PolygonArea *ppa = &pa[y];
+			int32 ttx = tx_acc >> 16;
+			int32 tsx = sx_acc >> 16;
+			int32 tsy = sy_acc >> 16;
 
-  			if (ppa->xmin > ttx) {
-  				ppa->xmin = ttx;
-  				ppa->x1 = tsx;
-  				ppa->y1 = tsy;
+			if (ppa->xmin > ttx) {
+				ppa->xmin = ttx;
+				ppa->x1 = tsx;
+				ppa->y1 = tsy;
 			}
-  			if (ppa->xmax < ttx) {
-  				ppa->xmax = ttx;
-  				ppa->x2 = tsx;
-  				ppa->y2 = tsy;
+			if (ppa->xmax < ttx) {
+				ppa->xmax = ttx;
+				ppa->x2 = tsx;
+				ppa->y2 = tsy;
 			}
 
-  			tx_acc += tx_step;
-  			sx_acc += sx_step;
-  			sy_acc += sy_step;
+			tx_acc += tx_step;
+			sx_acc += sx_step;
+			sy_acc += sy_step;
 
-  			if (tp2->y <= tp1->y) {
-  				--y;
-  			} else {
-  				++y;
-  			}
-  		}
+			if (tp2->y <= tp1->y) {
+				--y;
+			} else {
+				++y;
+			}
+		}
 	}
 };
 
@@ -1411,26 +1411,26 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		bbox[3].x = 0;
 		bbox[3].y = wizH - 1;
 
-  		int16 xmin_p, xmax_p, ymin_p, ymax_p;
-  		xmin_p = ymin_p = (int16)0x7FFF;
-  		xmax_p = ymax_p = (int16)0x8000;
-
-  		for (i = 0; i < 4; ++i) {
-  			xmin_p = MIN(wp[i].x, xmin_p);
-  			xmax_p = MAX(wp[i].x, xmax_p);
-  			ymin_p = MIN(wp[i].y, ymin_p);
-  			ymax_p = MAX(wp[i].y, ymax_p);
-  		}
-
-  		int16 xmin_b, xmax_b, ymin_b, ymax_b;
-  		xmin_b = ymin_b = (int16)0x7FFF;
-  		xmax_b = ymax_b = (int16)0x8000;
+		int16 xmin_p, xmax_p, ymin_p, ymax_p;
+		xmin_p = ymin_p = (int16)0x7FFF;
+		xmax_p = ymax_p = (int16)0x8000;
 
 		for (i = 0; i < 4; ++i) {
-  			xmin_b = MIN(bbox[i].x, xmin_b);
-  			xmax_b = MAX(bbox[i].x, xmax_b);
-  			ymin_b = MIN(bbox[i].y, ymin_b);
-  			ymax_b = MAX(bbox[i].y, ymax_b);
+			xmin_p = MIN(wp[i].x, xmin_p);
+			xmax_p = MAX(wp[i].x, xmax_p);
+			ymin_p = MIN(wp[i].y, ymin_p);
+			ymax_p = MAX(wp[i].y, ymax_p);
+		}
+
+		int16 xmin_b, xmax_b, ymin_b, ymax_b;
+		xmin_b = ymin_b = (int16)0x7FFF;
+		xmax_b = ymax_b = (int16)0x8000;
+
+		for (i = 0; i < 4; ++i) {
+			xmin_b = MIN(bbox[i].x, xmin_b);
+			xmax_b = MAX(bbox[i].x, xmax_b);
+			ymin_b = MIN(bbox[i].y, ymin_b);
+			ymax_b = MAX(bbox[i].y, ymax_b);
 		}
 
 		PolygonDrawData pdd(ymax_p - ymin_p + 1);
@@ -1872,7 +1872,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		displayWizComplexImage(params);
 		break;
 	case 2:
- 		captureWizImage(params->img.resNum, params->box, (params->img.flags & kWIFBlitToFrontVideoBuffer) != 0, params->compType);
+		captureWizImage(params->img.resNum, params->box, (params->img.flags & kWIFBlitToFrontVideoBuffer) != 0, params->compType);
 		break;
 	case 3:
 		if (params->processFlags & kWPFUseFile) {

@@ -84,8 +84,8 @@ private:
  * Returns the last component of a given path.
  *
  * Examples:
- * 			/foo/bar.txt would return /bar.txt
- * 			/foo/bar/    would return /bar/
+ *			/foo/bar.txt would return /bar.txt
+ *			/foo/bar/    would return /bar/
  *
  * @param str String containing the path.
  * @return Pointer to the first char of the last component inside str.

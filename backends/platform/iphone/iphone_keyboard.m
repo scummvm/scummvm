@@ -42,7 +42,7 @@
 
 - (id)initWithKeyboard:(SoftKeyboard*)keyboard; {
 	self = [super initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)];
- 	softKeyboard = keyboard;
+	softKeyboard = keyboard;
 	return self;
 }
 

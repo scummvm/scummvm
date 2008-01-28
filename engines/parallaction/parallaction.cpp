@@ -548,7 +548,7 @@ bool Parallaction::translateInventoryInput() {
 
 		_input._event = kEvCloseInventory;
 		_input._inventoryIndex = getHoverInventoryItem(_mousePos.x, _mousePos.y);
-		highlightInventoryItem(_transCurrentHoverItem, 12); 		// disable
+		highlightInventoryItem(_transCurrentHoverItem, 12);			// disable
 
 		if ((_engineFlags & kEngineDragging) == 0) {
 			return true;

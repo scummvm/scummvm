@@ -61,7 +61,7 @@ protected:
 	 * a lot. Yes, we limit ourselves to strings shorter than 4GB --
 	 * on purpose :-).
 	 */
-	uint32 		_len;
+	uint32		_len;
 
 	/**
 	 * Pointer to the actual string storage. Either points to _storage,
@@ -81,7 +81,7 @@ protected:
 		 */
 		struct {
 			mutable int *_refCount;
-			uint32 		_capacity;
+			uint32		_capacity;
 		} _extern;
 	};
 

@@ -439,7 +439,7 @@ void OSystem_X11::setPalette(const byte *colors, uint start, uint num) {
 	_palette_changed = true;
 }
 
-#define AddDirtyRec(xi,yi,wi,hi) 				\
+#define AddDirtyRec(xi,yi,wi,hi)				\
   if (_num_of_dirty_rects < MAX_NUMBER_OF_DIRTY_RECTS) {	\
     _ds[_num_of_dirty_rects].x = xi;				\
     _ds[_num_of_dirty_rects].y = yi;				\

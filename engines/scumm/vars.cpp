@@ -656,7 +656,7 @@ void ScummEngine_v80he::resetScummVars() {
 		VAR(VAR_PLATFORM_VERSION) = 70;
 	} else {
 		VAR(VAR_PLATFORM) = 1;
-		VAR(VAR_PLATFORM_VERSION) = 40; 	// 31 is Windows 3.1, 40 is Windows 95+
+		VAR(VAR_PLATFORM_VERSION) = 40;		// 31 is Windows 3.1, 40 is Windows 95+
 	}
 	VAR(VAR_COLOR_DEPTH) = 256;
 }

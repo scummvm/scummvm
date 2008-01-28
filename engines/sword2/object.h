@@ -110,7 +110,7 @@ public:
 
 // in low word:
 
-#define	NO_SPRITE 	0x00000000	// don't print
+#define	NO_SPRITE	0x00000000	// don't print
 #define	BGP0_SPRITE	0x00000001	// fixed to background parallax[0]
 #define	BGP1_SPRITE	0x00000002	// fixed to background parallax[1]
 #define	BACK_SPRITE	0x00000004	// 'background' sprite, fixed to main background

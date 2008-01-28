@@ -429,7 +429,7 @@ byte *Win32ResExtractor::extract_group_icon_cursor_resource(WinLibrary *fi, WinR
 			/* get_resource_entry has printed error */
 			return NULL;
 		}
-    	if (size == 0) {
+		if (size == 0) {
 		    skipped++;
 		    continue;
 		}

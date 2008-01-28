@@ -179,17 +179,17 @@ struct fileHandle {
 #define FILE DS::fileHandle
 
 // Please do not remove any of these prototypes that appear not to be required.
-FILE* 	std_fopen(const char* name, const char* mode);
-void 	std_fclose(FILE* handle);
-int 	std_getc(FILE* handle);
-size_t 	std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle);
-size_t 	std_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle);
-bool 	std_feof(FILE* handle);
+FILE*	std_fopen(const char* name, const char* mode);
+void	std_fclose(FILE* handle);
+int		std_getc(FILE* handle);
+size_t	std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle);
+size_t	std_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle);
+bool	std_feof(FILE* handle);
 long int std_ftell(FILE* handle);
-int 	std_fseek(FILE* handle, long int offset, int whence);
-void 	std_clearerr(FILE* handle);
-void 	std_cwd(char* dir);
-void 	std_fflush(FILE* handle);
+int		std_fseek(FILE* handle, long int offset, int whence);
+void	std_clearerr(FILE* handle);
+void	std_cwd(char* dir);
+void	std_fflush(FILE* handle);
 
 } //namespace DS
 

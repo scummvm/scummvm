@@ -525,7 +525,7 @@ void Insane::iactScene17(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 void Insane::iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 					  int32 setupsan13, Chunk &b, int32 size, int32 flags,
-  					  int16 par1, int16 par2, int16 par3, int16 par4) {
+					  int16 par1, int16 par2, int16 par3, int16 par4) {
 	// void implementation
 }
 

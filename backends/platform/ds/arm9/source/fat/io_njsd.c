@@ -445,7 +445,7 @@ static bool _NJSD_cardInit (void) {
 	_NJSD_sendCLK (SD_CLK_200KHz, 8);
 
 	_NJSD_sendCLK (SD_CLK_200KHz, 256);
- 	_NJSD_sendCMDN (SD_CLK_200KHz, GO_IDLE_STATE, 0);
+	_NJSD_sendCMDN (SD_CLK_200KHz, GO_IDLE_STATE, 0);
 	_NJSD_sendCLK (SD_CLK_200KHz, 8);
 
 	for (i = 0; i < MAX_STARTUP_TRIES ; i++) {
@@ -473,7 +473,7 @@ static bool _NJSD_cardInit (void) {
 			break;
 		}
 	}
- 	if (i >= MAX_STARTUP_TRIES) {
+	if (i >= MAX_STARTUP_TRIES) {
 		return false;
 	}
 
@@ -525,7 +525,7 @@ bool _NJSD_startup(void) {
 
 
 bool _NJSD_writeSectors (u32 sector, u32 numSectors, const void* buffer) {
- 	u8 crc[8];
+	u8 crc[8];
 	u32 offset = sector * BYTES_PER_READ;
 	u8* data = (u8*) buffer;
 

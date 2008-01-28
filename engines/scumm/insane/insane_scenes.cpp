@@ -1257,7 +1257,7 @@ void Insane::postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				}
 			}
 		}
- 	}
+	}
 
 	_roadBranch = false;
 	_roadStop = false;
@@ -1318,7 +1318,7 @@ void Insane::postCase10(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				break;
 			}
 		}
- 	}
+	}
 
 	_roadBranch = false;
 	_roadStop = false;

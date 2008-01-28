@@ -1853,7 +1853,7 @@ void KyraEngine_v2::seq_nestedSequenceFrame(int command, int wsaNum) {
 			_activeWSA[wsaNum].movie->setX(0);
 			_activeWSA[wsaNum].movie->setY(0);
 			seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
-						     	_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 0, 2);
+								_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 0, 2);
 			break;
 
 		case 3:

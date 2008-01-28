@@ -377,7 +377,7 @@ void ToucheEngine::runCycle() {
 	updateSpeech();
 	handleConversation();
 	if (scrollRoom(_currentKeyCharNum)) {
-	 	_fullRedrawCounter |= 1;
+		_fullRedrawCounter |= 1;
 	}
 	redrawRoom();
 	clearDirtyRects();

@@ -10,7 +10,7 @@
 //	THIS IS AN AUTOMATICALLY GENERATED HEADER FILE
 //	DO NOT EDIT - CHANGES MADE TO THIS FILE WILL BE LOST
 //
-//	Palm App Name:   		"ScummVM"
+//	Palm App Name:			"ScummVM"
 //
 //	Palm App Version:		"1.0"
 

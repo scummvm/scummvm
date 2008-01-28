@@ -380,7 +380,7 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 							if (entry) {
 								//FIXME: since the isValid() function is no longer part of the AbstractFilesystemNode
 								//       specification, the following call had to be changed:
-								//       	if (entry->isValid())
+								//          if (entry->isValid())
 								//		 Please verify that the logic of the code remains coherent. Also, remember
 								//		 that the isReadable() and isWritable() methods are available.
 								if (entry->exists())
@@ -542,7 +542,7 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes()	const {
 				if (entry) {
 					//FIXME: since the isValid() function is no longer part of the AbstractFilesystemNode
 					//       specification, the following call had to be changed:
-					//       	if (entry->isValid())
+					//          if (entry->isValid())
 					//		 Please verify that the logic of the code remains coherent. Also, remember
 					//		 that the isReadable() and isWritable() methods are available.
 					if(entry->exists())

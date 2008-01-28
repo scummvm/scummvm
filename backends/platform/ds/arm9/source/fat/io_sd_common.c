@@ -169,7 +169,7 @@ bool _SD_InitCard (_SD_FN_CMD_6BYTE_RESPONSE cmd_6byte_response,
 			break;
 		}
 	}
- 	if (i >= MAX_STARTUP_TRIES) {
+	if (i >= MAX_STARTUP_TRIES) {
 		return false;
 	}
 

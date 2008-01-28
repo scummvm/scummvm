@@ -1078,7 +1078,7 @@ void Mouse::setMouse(uint32 res) {
 		if (res == NORMAL_MOUSE_ID)
 			setMouseAnim(icon, len, RDMOUSE_NOFLASH);
 		else
- 			setMouseAnim(icon, len, RDMOUSE_FLASH);
+			setMouseAnim(icon, len, RDMOUSE_FLASH);
 
 		_vm->_resman->closeResource(res);
 	} else {

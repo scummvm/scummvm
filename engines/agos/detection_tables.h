@@ -750,10 +750,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-	{ "gamebase.dat", 	GAME_BASEFILE,	"c392e494dcabed797b98cbcfc687b33a", -1},
-	{ "icondata.dat", 	GAME_ICONFILE, 	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "stripped.dat", 	GAME_STRFILE,	"c95a0a1ee973e19c2a1c5d12026c139f", -1},
-	{ "tbllist.dat", 	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "gamebase.dat",	GAME_BASEFILE,	"c392e494dcabed797b98cbcfc687b33a", -1},
+	{ "icondata.dat",	GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
+	{ "stripped.dat",	GAME_STRFILE,	"c95a0a1ee973e19c2a1c5d12026c139f", -1},
+	{ "tbllist.dat",	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -773,11 +773,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD Demo",
 
 			{
-	{ "data", 	GAME_GMEFILE,	"b4a7526ced425ba8ad0d548d0ec69900", -1},
-	{ "gamebase", 	GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", -1},
-	{ "icondata", 	GAME_ICONFILE, 	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "stripped", 	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", -1},
-	{ "tbllist", 	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "data",	GAME_GMEFILE,	"b4a7526ced425ba8ad0d548d0ec69900", -1},
+	{ "gamebase",	GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", -1},
+	{ "icondata",	GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
+	{ "stripped",	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", -1},
+	{ "tbllist",	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -797,11 +797,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD",
 
 			{
-	{ "data", 	GAME_GMEFILE,	"64958b3a38afdcb85da1eeed85169806", -1},
-	{ "gamebase", 	GAME_BASEFILE,	"28261b99cd9da1242189b4f6f2841bd6", -1},
-	{ "icondata", 	GAME_ICONFILE, 	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "stripped", 	GAME_STRFILE,	"f3b27a3fbb45dcd323a48159496e45e8", -1},
-	{ "tbllist", 	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "data",	GAME_GMEFILE,	"64958b3a38afdcb85da1eeed85169806", -1},
+	{ "gamebase",	GAME_BASEFILE,	"28261b99cd9da1242189b4f6f2841bd6", -1},
+	{ "icondata",	GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
+	{ "stripped",	GAME_STRFILE,	"f3b27a3fbb45dcd323a48159496e45e8", -1},
+	{ "tbllist",	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
@@ -1189,11 +1189,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"CD Demo",
 
 			{
-	{ "simon.gme", 		GAME_GMEFILE,	"b4a7526ced425ba8ad0d548d0ec69900", -1},
-	{ "gamepc"	, 	GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", -1},
-	{ "icon.dat", 		GAME_ICONFILE, 	"22107c24dfb31b66ac503c28a6e20b19", -1},
-	{ "stripped.txt", 	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", -1},
-	{ "tbllist", 		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ "simon.gme",		GAME_GMEFILE,	"b4a7526ced425ba8ad0d548d0ec69900", -1},
+	{ "gamepc"	,	GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", -1},
+	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,

@@ -35,7 +35,7 @@ namespace DS {
 // DSFileSystemNode - Flash ROM file system using Zip files //
 //////////////////////////////////////////////////////////////
 
-ZipFile*   	DSFileSystemNode::_zipFile = NULL;
+ZipFile*	DSFileSystemNode::_zipFile = NULL;
 char		currentDir[128];
 
 DSFileSystemNode::DSFileSystemNode() {
@@ -803,8 +803,8 @@ int std_ferror(FILE* handle) {
  * Returns the last component of a given path.
  *
  * Examples:
- * 			/foo/bar.txt would return /bar.txt
- * 			/foo/bar/    would return /bar/
+ *			/foo/bar.txt would return /bar.txt
+ *			/foo/bar/    would return /bar/
  *
  * @param str String containing the path.
  * @return Pointer to the first char of the last component inside str.

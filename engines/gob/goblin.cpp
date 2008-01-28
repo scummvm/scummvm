@@ -1121,7 +1121,7 @@ void Goblin::moveTreatRopeStairs(Gob_Object *gobDesc) {
 	}
 
 	if ((gobDesc->nextState == 29) &&
-		 	(_vm->_map->getPass(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY + 1) == 6)) {
+			(_vm->_map->getPass(_vm->_map->_curGoblinX, _vm->_map->_curGoblinY + 1) == 6)) {
 		_forceNextState[0] = 29;
 		_forceNextState[1] = -1;
 	}

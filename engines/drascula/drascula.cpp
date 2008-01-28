@@ -240,7 +240,7 @@ int DrasculaEngine::go() {
 
 			lee_dibujos("95.alg");
 			descomprime_dibujo(dir_mesa, 1);
- 		}
+		}
 		memset(nombre_icono, 0, sizeof(nombre_icono));
 		strcpy(nombre_icono[1], "look");
 		strcpy(nombre_icono[2], "take");
@@ -2316,7 +2316,7 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 				x_de_letra = X_N0;
 			else
 				y_de_letra = Y_ACENTOS;
- 		}
+		}
 
 		pos_texto[0] = x_de_letra;
 		pos_texto[1] = y_de_letra;
@@ -3733,7 +3733,7 @@ void DrasculaEngine::actualiza_refresco() {
 		else if (!strcmp(num_room, "62.alg"))
 			refresca_62();
 	} else if (num_ejec == 2) {
- 		if (!strcmp(num_room, "3.alg"))
+		if (!strcmp(num_room, "3.alg"))
 			refresca_3();
 		else if (!strcmp(num_room, "2.alg"))
 			refresca_2();
@@ -3890,7 +3890,7 @@ void DrasculaEngine::pon_hare() {
 					paso_y = PASO_HARE_Y;
 					hare_x = sitio_x - ancho_hare + 4;
 					hare_y = sitio_y - alto_hare;
-       			}
+				}
 			}
 		}
 	}
@@ -4413,7 +4413,7 @@ bool DrasculaEngine::banderas(int fl) {
 			else if (objeto_que_lleva == HABLAR && fl == 15)
 				hablar(TEXT118, "118.als");
 			else
- 				hay_respuesta = 0;
+				hay_respuesta = 0;
 		} else if (num_ejec == 6) {
 			if (objeto_que_lleva == MIRAR && fl == 28)
 				hablar(TEXT328, "328.als");
@@ -4441,7 +4441,7 @@ bool DrasculaEngine::banderas(int fl) {
 				hablar(TEXT313, "313.als");
 			else if (objeto_que_lleva == HABLAR && fl == 50)
 				hablar(TEXT314, "314.als");
- 			else if (!strcmp(num_room, "62.alg"))
+			else if (!strcmp(num_room, "62.alg"))
 				pantalla_62(fl);
 			else if (!strcmp(num_room, "63.alg"))
 				pantalla_63(fl);

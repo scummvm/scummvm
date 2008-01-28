@@ -31,7 +31,7 @@
 
 namespace Common {
 
-/*! 	@brief simple class for handling both 2D position and size
+/*!		@brief simple class for handling both 2D position and size
 
 	This small class is an helper for position and size values.
 */
@@ -65,7 +65,7 @@ struct Point {
 	}
 };
 
-/*! 	@brief simple class for handling a rectangular zone.
+/*!		@brief simple class for handling a rectangular zone.
 
 	This small class is an helper for rectangles.
 	Note: This implementation is built around the assumption that (top,left) is

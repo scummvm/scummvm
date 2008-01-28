@@ -1122,7 +1122,7 @@ bool OSystem_WINCE3::update_scalers() {
 	_adjustAspectRatio = false;
 
 	if (CEDevice::hasPocketPCResolution()) {
-		if ( 	(!_orientationLandscape && (_screenWidth == 320 || !_screenWidth))
+		if (	(!_orientationLandscape && (_screenWidth == 320 || !_screenWidth))
 			|| CEDevice::hasSquareQVGAResolution() ) {
 			if (getScreenWidth() != 320) {
 				_scaleFactorXm = 3;
@@ -1157,14 +1157,14 @@ bool OSystem_WINCE3::update_scalers() {
 				_scalerProc = Normal1x;
 				_modeFlags = 0;
 			}
-		} else 	if (_screenWidth == 640 && !(isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
+		} else	if (_screenWidth == 640 && !(isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
 			_scaleFactorXd = 2;
 			_scaleFactorYm = 1;
 			_scaleFactorYd = 2;
 			_scalerProc = PocketPCHalf;
 			_modeFlags = 0;
-		} else 	if (_screenWidth == 640 && (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
+		} else	if (_screenWidth == 640 && (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
 			_scaleFactorXd = 1;
 			_scaleFactorYm = 1;
@@ -2433,7 +2433,7 @@ void OSystem_WINCE3::getTimeAndDate(struct tm &t) const {
 	SYSTEMTIME systime;
 
 	GetLocalTime(&systime);
-	t.tm_year 	= systime.wYear - 1900;
+	t.tm_year	= systime.wYear - 1900;
 	t.tm_mon	= systime.wMonth - 1;
 	t.tm_wday	= systime.wDayOfWeek;
 	t.tm_mday	= systime.wDay;

@@ -217,7 +217,7 @@ static const byte charWidth[226] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- 	0, 0, 0, 0, 0, 7
+	0, 0, 0, 0, 0, 7
 };
 
 const char *getPixelLength(const char *string, uint16 maxWidth, uint16 &pixels) {
@@ -410,8 +410,8 @@ void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char
 			if (spaces != 0)
 				spaces--;
 			while (spaces) {
-	   				*convertedString2++ = ' ';
-	   				spaces--;
+					*convertedString2++ = ' ';
+					spaces--;
 			}
 			strcpy(convertedString2, string);
 			break;
@@ -425,8 +425,8 @@ void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char
 		if (spaces != 0)
 			spaces--;
 		while (spaces) {
-	   			*convertedString2++ = ' ';
-	    		spaces--;
+				*convertedString2++ = ' ';
+				spaces--;
 		}
 		b = string2 - string;
 		strncpy(convertedString2, string, b);
@@ -574,7 +574,7 @@ uint16 AGOSEngine_Waxworks::getBoxSize() {
 	case 3: if (_lineCounts[0] <= 37) {
 			if (_lineCounts[1] <= 37) {
 				if (_lineCounts[2] <= 37)
-			    		return 3;
+						return 3;
 				if (_lineCounts[2] <= 84)
 					if (checkFit(_linePtrs[2], 42, 2))
 						return 4;
@@ -590,7 +590,7 @@ uint16 AGOSEngine_Waxworks::getBoxSize() {
 					if (checkFit(_linePtrs[2], 48, 2))
 						return 5;
 				return 6;
-		    	}
+			}
 			if ((_lineCounts[1] <= 144) && (checkFit(_linePtrs[1], 48, 3))) {
 				if (_lineCounts[2] <= 48)
 					return 5;

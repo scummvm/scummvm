@@ -31,7 +31,7 @@ static uint16 _doorData1 = 1000;
 static Zone *_zoneTrap = NULL;
 
 static uint16	walkData1 = 0;
-static uint16	walkData2 = 0; 	// next walk frame
+static uint16	walkData2 = 0;	// next walk frame
 
 
 inline byte PathBuffer::getValue(uint16 x, uint16 y) {

@@ -1230,8 +1230,8 @@ uint16 Logic::mouseScript(uint32 scrNum, Compact *scriptComp) {
  * This is the actual script engine.  It interprets script \a scriptNo starting at \a offset
  *
  * @param scriptNo The script to interpret.
- * 	 @arg Bits 0-11 - Script number
- * 	 @arg Bits 12-15 - Module number
+ *	 @arg Bits 0-11 - Script number
+ *	 @arg Bits 12-15 - Module number
  * @param offset At which offset to start interpreting the script.
  *
  * @return 0 if script finished. Else offset where to continue.
@@ -1559,7 +1559,7 @@ bool Logic::fnCloseHand(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnGetTo(uint32 targetPlaceId, uint32 mode, uint32 c) {
- 	_compact->upFlag = (uint16)mode; // save mode for action script
+	_compact->upFlag = (uint16)mode; // save mode for action script
 	_compact->mode += 4; // next level up
 	Compact *cpt = _skyCompact->fetchCpt(_compact->place);
 	if (!cpt) {
@@ -1702,7 +1702,7 @@ bool Logic::fnQuit(uint32 a, uint32 b, uint32 c) {
 
 bool Logic::fnSpeakMe(uint32 targetId, uint32 mesgNum, uint32 animNum) {
 	stdSpeak(_skyCompact->fetchCpt(targetId), mesgNum, animNum, 0);
-	return false; 	//drop out of script
+	return false;	//drop out of script
 }
 
 bool Logic::fnSpeakMeDir(uint32 targetId, uint32 mesgNum, uint32 animNum) {
@@ -2578,7 +2578,7 @@ void Logic::stdSpeak(Compact *target, uint32 textNum, uint32 animNum, uint32 bas
 
 		} else {
 			//talking off-screen
-			target->spTextId = 0; 	//don't kill any text 'cos none was made
+			target->spTextId = 0;	//don't kill any text 'cos none was made
 			textCompact->status = 0;	//don't display text
 		}
 		// In CD version, we're doing the timing by checking when the VOC has stopped playing.

@@ -7,7 +7,7 @@ struct dirent
 	long		d_ino;		/* Always zero. */
 	unsigned short	d_reclen;	/* Always zero. */
 	unsigned short	d_namlen;	/* Length of name in d_name. */
-	char*		d_name; 	/* File name. */
+	char*		d_name;		/* File name. */
 	/* NOTE: The name in the dirent structure points to the name in the
 	 *		 finddata_t structure in the DIR. */
 };
@@ -44,7 +44,7 @@ typedef struct
 
 DIR*		opendir (const char*);
 struct dirent*	readdir (DIR*);
-int 	closedir (DIR*);
+int		closedir (DIR*);
 /*
 void		rewinddir (DIR*);
 long		telldir (DIR*);

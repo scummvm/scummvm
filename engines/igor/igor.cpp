@@ -2619,7 +2619,7 @@ void IgorEngine::buildWalkPathAreaRightDirection(int srcX, int srcY, int dstX, i
 				WalkData::setNextFrame(kFacingPositionRight, _walkCurrentFrame);
 			}
 		} else {
- 			if (_walkCurrentPosLocalVar == 2 && _walkToObjectPosX == dstX && _walkToObjectPosY == dstY) {
+			if (_walkCurrentPosLocalVar == 2 && _walkToObjectPosX == dstX && _walkToObjectPosY == dstY) {
 				_walkData[_walkDataLastIndex] = _walkData[_walkDataLastIndex - 1];
 				_walkData[_walkDataLastIndex].posNum = 2;
 				_walkData[_walkDataLastIndex].frameNum = 1;

@@ -1357,10 +1357,10 @@ const char *spanishTextStrings[NUM_TEXT_ENTRIES] = {
 	"Dale", "Habla con", "Dile a", "Compra", "Obsevar", "Observe", "Mirar por", "P\x97" "dele", NULL,
 	"Bebe", "Estado", "Ve a", "Regresa", "Sobornar", "Examinar",
 	"Cr\x7f" "ditos", "Reiniciar", "Salvar juego", "Recuperar jue", "Abandonar", "Texto r\x98pido\x8b",
- 	"Texto lento \x8b", "Sonido activado   ", "Sonido desactivado ", "(nada)", " con ", " a ", " con ",
- 	"y luego", "eso es todo", "\x94" "Est\x98s seguro? (S/N)",
+	"Texto lento \x8b", "Sonido activado   ", "Sonido desactivado ", "(nada)", " con ", " a ", " con ",
+	"y luego", "eso es todo", "\x94" "Est\x98s seguro? (S/N)",
 	"Llevas ", "nada", "y tienes ", "moneda", "monedas"
- 	"el ", "la ", "los ", "las ", "este ", "esta ", "estos ", "estas ", NULL, NULL
+	"el ", "la ", "los ", "las ", "este ", "esta ", "estos ", "estas ", NULL, NULL
 };
 
 void save_text_strings(byte *&data, uint16 &totalSize) {

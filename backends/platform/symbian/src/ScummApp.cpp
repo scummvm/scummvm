@@ -77,7 +77,7 @@ CApaApplication* NewApplication() {
 #include <eikstart.h>
 // E32Main() contains the program's start up code, the entry point for an EXE.
 GLDEF_C TInt E32Main() {
- 	return EikStart::RunApplication(NewApplication);
+	return EikStart::RunApplication(NewApplication);
 }
 #endif
 

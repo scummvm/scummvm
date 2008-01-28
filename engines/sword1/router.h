@@ -34,8 +34,8 @@ namespace Sword1 {
 
 struct BarData {
 	int16 x1;
-  	int16 y1;
-  	int16 x2;
+	int16 y1;
+	int16 x2;
 	int16 y2;
 	int16 xmin;
 	int16 ymin;
@@ -125,7 +125,7 @@ private:
 	RouteData			_route[O_ROUTE_SIZE];
 	PathData			_smoothPath[O_ROUTE_SIZE];
 	PathData			_modularPath[O_ROUTE_SIZE];
-	int32   			_routeLength;
+	int32				_routeLength;
 
 	int32		_framesPerStep, _framesPerChar;
 	uint8		_nWalkFrames, _nTurnFrames;

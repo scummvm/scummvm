@@ -53,7 +53,7 @@ int MidiDriver_Zodiac::open() {
 	Err e;
 
 	if (e = TwMidiOpen(&_midiHandle))
- 		return MERR_DEVICE_NOT_AVAILABLE;
+		return MERR_DEVICE_NOT_AVAILABLE;
 
 	TwMidiGetMasterVolume(&_oldVol);
 	TwMidiSetMasterVolume(twMidiMaxVolume); // TODO : set volume based on gVars

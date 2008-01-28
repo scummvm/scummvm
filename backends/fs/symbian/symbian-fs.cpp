@@ -81,8 +81,8 @@ public:
  * Returns the last component of a given path.
  *
  * Examples:
- * 			c:\foo\bar.txt would return "\bar.txt"
- * 			c:\foo\bar\    would return "\bar\"
+ *			c:\foo\bar.txt would return "\bar.txt"
+ *			c:\foo\bar\    would return "\bar\"
  *
  * @param str Path to obtain the last component from.
  * @return Pointer to the first char of the last component inside str.

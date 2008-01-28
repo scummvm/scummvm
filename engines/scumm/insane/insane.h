@@ -81,7 +81,7 @@ class Insane {
 	bool _insaneIsRunning;
 
 	int32 _numberArray;
-   	int32 _emulTimerId;
+	int32 _emulTimerId;
 	int32 _emulateInterrupt;
 	int32 _flag1d;
 	int32 _mainTimerId;

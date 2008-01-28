@@ -547,17 +547,17 @@ void initDebugger() {
 		while (REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
 		fifo_temp=REG_IPC_FIFO_RX;
 		if (fifo_temp==0x12345678) break;
-   	}
+	}
 
-   	while (REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
-   	fifo_temp=REG_IPC_FIFO_RX; // give next value to wifi_init
-   	Wifi_Init(fifo_temp);
+	while (REG_IPC_FIFO_CR&IPC_FIFO_RECV_EMPTY) swiWaitForVBlank();
+	fifo_temp=REG_IPC_FIFO_RX; // give next value to wifi_init
+	Wifi_Init(fifo_temp);
 
-   	irqSet(IRQ_FIFO_NOT_EMPTY,arm7_fifo); // set up fifo irq
-   	irqEnable(IRQ_FIFO_NOT_EMPTY);
-   	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_RECV_IRQ;
+	irqSet(IRQ_FIFO_NOT_EMPTY,arm7_fifo); // set up fifo irq
+	irqEnable(IRQ_FIFO_NOT_EMPTY);
+	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_RECV_IRQ;
 
-   	Wifi_SetSyncHandler(arm7_synctoarm9); // allow wifi lib to notify arm9
+	Wifi_SetSyncHandler(arm7_synctoarm9); // allow wifi lib to notify arm9
 	// arm7 wifi init complete
 
 }

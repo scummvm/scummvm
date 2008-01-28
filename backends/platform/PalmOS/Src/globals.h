@@ -94,7 +94,7 @@ extern GlobalsDataPtr gVars;
 #define DO_VARS(z, t, o) \
 	{	Int8 *tmp = (Int8 *)gVars + o + 8; \
 		for (Int8 cnt = 0; cnt < gVars->z; cnt++) \
-			{ 	UInt##t val = *((UInt##t *)tmp);	\
+			{	UInt##t val = *((UInt##t *)tmp);	\
 				val = ByteSwap##t(val);	\
 				*((UInt##t *)tmp) = val;	\
 				tmp += (t / 8);	\

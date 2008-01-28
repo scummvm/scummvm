@@ -80,11 +80,11 @@ void StuffsGetFeatures() {
 			OPTIONS_SET(kOptDeviceOS5);
 
 	// ARM ?
- 	if (!FtrGet(sysFileCSystem, sysFtrNumProcessorID, &ulProcessorType))
- 		if (sysFtrNumProcessorIsARM(ulProcessorType))
- 			OPTIONS_SET(kOptDeviceARM);
- 		else if (ulProcessorType == sysFtrNumProcessorx86)
- 			OPTIONS_SET(kOptDeviceProcX86);
+	if (!FtrGet(sysFileCSystem, sysFtrNumProcessorID, &ulProcessorType))
+		if (sysFtrNumProcessorIsARM(ulProcessorType))
+			OPTIONS_SET(kOptDeviceARM);
+		else if (ulProcessorType == sysFtrNumProcessorx86)
+			OPTIONS_SET(kOptDeviceProcX86);
 
 	// 5Way Navigator
 	if (!FtrGet(hsFtrCreator, hsFtrIDNavigationSupported, &version)) {

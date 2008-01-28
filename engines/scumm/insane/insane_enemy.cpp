@@ -1009,7 +1009,7 @@ int32 Insane::enemy5initializer(int32 actor1, int32 actor2, int32 probability) {
 	int i;
 
 	for (i = 0; i < 9; i++)
-  		_enemyState[EN_VULTF2][i] = 0;
+		_enemyState[EN_VULTF2][i] = 0;
 
 	for (i = 0; i < 9; i++)
 		_enHdlVar[EN_VULTF2][i] = 0;

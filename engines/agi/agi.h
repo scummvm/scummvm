@@ -517,7 +517,7 @@ struct AgiGame {
 	int lineMinPrint;		/**< num lines to print on */
 	int cursorPos;			/**< column where the input cursor is */
 	uint8 inputBuffer[40]; /**< buffer for user input */
-	uint8 echoBuffer[40]; 	/**< buffer for echo.line */
+	uint8 echoBuffer[40];	/**< buffer for echo.line */
 	int keypress;
 #define INPUT_NORMAL	0x01
 #define INPUT_GETSTRING	0x02
@@ -577,7 +577,7 @@ struct AgiGame {
 	AgiDir dirSound[MAX_DIRS];
 
 	/* resources */
-	AgiPicture pictures[MAX_DIRS]; 	/**< AGI picture resources */
+	AgiPicture pictures[MAX_DIRS];	/**< AGI picture resources */
 	AgiLogic logics[MAX_DIRS];		/**< AGI logic resources */
 	AgiView views[MAX_DIRS];		/**< AGI view resources */
 	AgiSound *sounds[MAX_DIRS];		/**< Pointers to AGI sound resources */

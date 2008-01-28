@@ -44,17 +44,17 @@ struct Instruction;
 struct Program;
 
 enum ZoneTypes {
-	kZoneExamine	   = 1, 				// zone displays comment if activated
-	kZoneDoor		   = 2, 				// zone activated on click (after some walk if needed)
-	kZoneGet		   = 4, 				// for pickable items
-	kZoneMerge		   = 8, 				// tags items which can be merged in inventory
+	kZoneExamine	   = 1,					// zone displays comment if activated
+	kZoneDoor		   = 2,					// zone activated on click (after some walk if needed)
+	kZoneGet		   = 4,					// for pickable items
+	kZoneMerge		   = 8,					// tags items which can be merged in inventory
 	kZoneTaste		   = 0x10,				// NEVER USED
 	kZoneHear		   = 0x20,				// NEVER USED: they ran out of time before integrating sfx
 	kZoneFeel		   = 0x40,				// NEVER USED
 	kZoneSpeak		   = 0x80,				// tags NPCs the character can talk with
-	kZoneNone		   = 0x100, 			// used to prevent parsing on peculiar Animations
-	kZoneTrap		   = 0x200, 			// zone activated when character enters
-	kZoneYou		   = 0x400, 			// marks the character
+	kZoneNone		   = 0x100,				// used to prevent parsing on peculiar Animations
+	kZoneTrap		   = 0x200,				// zone activated when character enters
+	kZoneYou		   = 0x400,				// marks the character
 	kZoneCommand	   = 0x800
 };
 
@@ -64,14 +64,14 @@ enum ZoneFlags {
 	kFlagsActive		= 2,				// Zone/Animation: object is visible
 	kFlagsRemove		= 4,				// Zone/Animation: object is soon to be removed
 	kFlagsActing		= 8,				// Animation: script execution is active
-	kFlagsLocked		= 0x10, 			// Zone: door or switch cannot be toggled
-	kFlagsFixed 		= 0x20, 			// Zone: Zone item cannot be picked up
-	kFlagsNoName		= 0x40, 			// Zone with no name (used to prevent some kEvEnterZone events)
-	kFlagsNoMasked		= 0x80, 			// Animation is to be drawn ignoring z buffer
+	kFlagsLocked		= 0x10,				// Zone: door or switch cannot be toggled
+	kFlagsFixed			= 0x20,				// Zone: Zone item cannot be picked up
+	kFlagsNoName		= 0x40,				// Zone with no name (used to prevent some kEvEnterZone events)
+	kFlagsNoMasked		= 0x80,				// Animation is to be drawn ignoring z buffer
 	kFlagsLooping		= 0x100,			// Animation: script is to be executed repeatedly
-	kFlagsAdded 		= 0x200,			// NEVER USED in Nippon Safes
-	kFlagsCharacter 	= 0x400,			//
-	kFlagsNoWalk		= 0x800, 			// Zone: character doesn't need to walk towards object to interact
+	kFlagsAdded			= 0x200,			// NEVER USED in Nippon Safes
+	kFlagsCharacter		= 0x400,			//
+	kFlagsNoWalk		= 0x800,			// Zone: character doesn't need to walk towards object to interact
 
 	// BRA specific
 	kFlagsYourself		= 0x1000,
@@ -84,7 +84,7 @@ enum ZoneFlags {
 enum CommandFlags {
 	kFlagsVisited		= 1,
 	kFlagsExit			= 0x10000000,
-	kFlagsEnter 		= 0x20000000,
+	kFlagsEnter			= 0x20000000,
 	kFlagsGlobal		= 0x40000000,
 
 	// BRA specific
@@ -93,7 +93,7 @@ enum CommandFlags {
 
 struct CommandData {
 	uint32			_flags;
-	Animation * 	_animation;
+	Animation *		_animation;
 	Zone*			_zone;
 	char*			_string;
 	uint16			_callable;
@@ -126,7 +126,7 @@ struct CommandData {
 
 struct Command {
 	uint16			_id;
-	CommandData 	u;
+	CommandData		u;
 	uint32			_flagsOn;
 	uint32			_flagsOff;
 
@@ -138,7 +138,7 @@ typedef ManagedList<Command*> CommandList;
 
 
 #define NUM_QUESTIONS		20
-#define NUM_ANSWERS		 	5
+#define NUM_ANSWERS			5
 
 struct Answer {
 	char*		_text;
@@ -206,7 +206,7 @@ struct ExamineData {	// size = 28
 };
 struct DoorData {	// size = 28
 	char*	_location;
-	Frames 	*_cnv;
+	Frames	*_cnv;
 	byte*	_background;
 	Common::Point	_startPos;
 	uint16	_startFrame;
@@ -240,7 +240,7 @@ struct MergeData {	// size = 12
 };
 
 struct TypeData {
-	GetData 	*get;
+	GetData		*get;
 	SpeakData	*speak;
 	ExamineData *examine;
 	DoorData	*door;
@@ -263,7 +263,7 @@ struct TypeData {
 struct Zone {
 	char			_name[ZONENAME_LENGTH];
 
-	int16 			_left;
+	int16			_left;
 	int16			_top;
 	int16			_right;
 	int16			_bottom;
@@ -273,7 +273,7 @@ struct Zone {
 	uint16			field_2C;		// unused
 	uint16			field_2E;		// unused
 	TypeData		u;
-	CommandList 	_commands;
+	CommandList		_commands;
 	Common::Point	_moveTo;
 
 	// BRA specific
@@ -314,7 +314,7 @@ enum ParaFlags {
 
 
 struct ScriptVar {
-	uint32 			_flags;
+	uint32			_flags;
 
 	int16			_value;
 	int16*			_pvalue;
@@ -327,8 +327,8 @@ struct ScriptVar {
 
 	void	setLocal(LocalVariable *local);
 	void	setField(int16 *field);
-	void 	setImmediate(int16 value);
-	void 	setRandom(int16 seed);
+	void	setImmediate(int16 value);
+	void	setRandom(int16 seed);
 };
 
 enum InstructionFlags {
@@ -378,8 +378,8 @@ struct Program {
 	Program();
 	~Program();
 
-	int16 		findLocal(const char* name);
-	int16 		addLocal(const char *name, int16 value = 0, int16 min = -10000, int16 max = 10000);
+	int16		findLocal(const char* name);
+	int16		addLocal(const char *name, int16 value = 0, int16 min = -10000, int16 max = 10000);
 };
 
 
@@ -387,8 +387,8 @@ struct Program {
 struct Animation : public Zone {
 
 	Common::Point	_oldPos;
-	Program 	*_program;
-	Frames 		*_cnv;
+	Program		*_program;
+	Frames		*_cnv;
 	char		*_scriptName;
 	int16		_frame;
 	uint16		field_50;		// unused

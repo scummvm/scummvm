@@ -146,7 +146,7 @@ void Logic::locateTalker(int32 *params) {
 
 void Logic::formText(int32 *params) {
 	// params	0 pointer to ob_graphic
-	// 		1 pointer to ob_speech
+	//		1 pointer to ob_speech
 	//		2 pointer to ob_logic
 	//		3 pointer to ob_mega
 	//		4 encoded text number
@@ -213,7 +213,7 @@ bool Logic::wantSpeechForLine(uint32 wavId) {
 			//	SFX (4214);
 			//	4214FXMeow!
 	case 4568:	// trapdoor_13
- 			//	SFX (4568);
+			//	SFX (4568);
 			//	4568fx<door slamming>
 	case 4913:	// LobineauSpeech
 			//	SFX (tone2);

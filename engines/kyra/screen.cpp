@@ -2942,7 +2942,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 		return;
 	}
 
-   	destPage += y * 640 + x;
+	destPage += y * 640 + x;
 	uint8 *src = 0, *dst = 0;
 
 	if (color2 != 0x80) {

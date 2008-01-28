@@ -58,12 +58,12 @@ namespace Sword2 {
 
 /****************************************************************************
  *    JROUTER.C				polygon router with modular walks
- *       					using a tree of modules
- *       					21 july 94
+ *							using a tree of modules
+ *							21 july 94
  *  3  november 94
  *  System currently works by scanning grid data and coming up with a	ROUTE
  *  as a series of way points(nodes), the smoothest eight directional PATH
- * 	through these nodes is then found, and a WALK created to fit the PATH.
+ *	through these nodes is then found, and a WALK created to fit the PATH.
  *
  *	Two funtions are called by the user, RouteFinder creates a route as a
  *	module list, HardWalk creates an animation list from the module list.
@@ -175,7 +175,7 @@ void Router::freeAllRouteMem() {
 int32 Router::routeFinder(byte *ob_mega, byte *ob_walkdata, int32 x, int32 y, int32 dir) {
 	/*********************************************************************
 	 * RouteFinder.C		polygon router with modular walks
-	 * 						21 august 94
+	 *						21 august 94
 	 *						3  november 94
 	 * routeFinder creates a list of modules that enables HardWalk to
 	 * create an animation list.
@@ -190,9 +190,9 @@ int32 Router::routeFinder(byte *ob_mega, byte *ob_walkdata, int32 x, int32 y, in
 	 *
 	 * return	0 = failed to find a route
 	 *
-	 *    		1 = found a route
+	 *			1 = found a route
 	 *
-	 *    		2 = mega already at target
+	 *			2 = mega already at target
 	 *
 	 *********************************************************************/
 
@@ -294,7 +294,7 @@ int32 Router::getRoute() {
 	 *
 	 * static routeData _route[O_ROUTE_SIZE];
 	 *
-	 * return 	0 = failed to find a route
+	 * return	0 = failed to find a route
 	 *
 	 *		1 = found a route
 	 *

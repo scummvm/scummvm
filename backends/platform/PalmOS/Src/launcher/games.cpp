@@ -414,8 +414,8 @@ void GamImportDatabase() {
 					return;
 				}
 
- 			// get current db info and rename it
- 			DmOpenDatabaseInfo(gameDB, &oDbID, 0, 0, &oCardNo, 0);
+			// get current db info and rename it
+			DmOpenDatabaseInfo(gameDB, &oDbID, 0, 0, &oCardNo, 0);
 			GamCloseDatabase(true);
 			e = DmDeleteDatabase(oCardNo, oDbID);
 

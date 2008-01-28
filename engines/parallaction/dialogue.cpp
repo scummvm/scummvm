@@ -30,7 +30,7 @@
 
 namespace Parallaction {
 
-#define MAX_PASSWORD_LENGTH 		 7
+#define MAX_PASSWORD_LENGTH			 7
 
 #define QUESTION_BALLOON_X			140
 #define QUESTION_BALLOON_Y			10
@@ -46,9 +46,9 @@ class DialogueManager {
 	SpeakData		*_data;
 	Dialogue		*_dialogue;
 
-	bool 			_askPassword;
+	bool			_askPassword;
 
-	bool 			isNpc;
+	bool			isNpc;
 	Frames			*_questioner;
 	Frames			*_answerer;
 

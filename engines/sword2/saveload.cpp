@@ -312,7 +312,7 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 	readS.read(globalVars, _resman->fetchLen(1));
 
 	_resman->closeResource(CUR_PLAYER_ID);
- 	_resman->closeResource(1);
+	_resman->closeResource(1);
 
 	free(buffer);
 

@@ -38,8 +38,8 @@ class ManagedList : public Common::List<T> {
 
 public:
 
-	typedef typename Common::List<T> 				Common_List;
-	typedef typename Common::List<T>::iterator 		iterator;
+	typedef typename Common::List<T>				Common_List;
+	typedef typename Common::List<T>::iterator		iterator;
 
 	typedef int (*CompareFunction) (const T& a, const T& b);
 

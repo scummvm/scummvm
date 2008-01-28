@@ -76,7 +76,7 @@ private:
 	 * @param mode Mode to use while adding the file entry to the list.
 	 * @param base String with the directory being listed.
 	 * @param find_data Describes a file that the FindFirstFile, FindFirstFileEx, or FindNextFile functions find.
- 	 */
+	 */
 	static void addFile(AbstractFSList &list, ListMode mode, const Char *base, FileInfoType* find_data);
 };
 
@@ -84,8 +84,8 @@ private:
  * Returns the last component of a given path.
  *
  * Examples:
- * 			/foo/bar.txt would return /bar.txt
- * 			/foo/bar/    would return /bar/
+ *			/foo/bar.txt would return /bar.txt
+ *			/foo/bar/    would return /bar/
  *
  * @param str String containing the path.
  * @return Pointer to the first char of the last component inside str.

@@ -307,7 +307,7 @@ class Scene {
 	int getSceneResourceId(int sceneNumber) {
 	#ifdef SCENE_DEBUG
 		if ((sceneNumber < 0) || (sceneNumber >= _sceneCount)) {
- 			error("getSceneResourceId: wrong sceneNumber %i", sceneNumber);
+			error("getSceneResourceId: wrong sceneNumber %i", sceneNumber);
 		}
 	#endif
 		return _sceneLUT[sceneNumber];

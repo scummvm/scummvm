@@ -199,7 +199,7 @@ private:
 	//! returns true if the specified verb is an inventory scroll
 	bool isVerbInvScroll(Verb v) const { return v == VERB_SCROLL_UP || v == VERB_SCROLL_DOWN; }
 
- 	//! commands list for each possible action
+	//! commands list for each possible action
 	CmdListData *_cmdList;
 	uint16 _numCmdList;
 

@@ -349,7 +349,7 @@ MegaSet *SkyCompact::getMegaSet(Compact *cpt) {
 
 /**
  \brief Returns the turn table for direction \a dir
- 	from Compact \a cpt in \a megaSet.
+	from Compact \a cpt in \a megaSet.
 
  Functionally equivalent to:
  \verbatim

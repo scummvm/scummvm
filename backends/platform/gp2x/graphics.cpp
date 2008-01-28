@@ -1222,29 +1222,29 @@ void OSystem_GP2X::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x
 
 	_mouseKeyColor = keycolor;
 
- 	_cursorTargetScale = cursorTargetScale;
+	_cursorTargetScale = cursorTargetScale;
 
- 	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
- 		_mouseCurState.w = w;
- 		_mouseCurState.h = h;
+	if (_mouseCurState.w != (int)w || _mouseCurState.h != (int)h) {
+		_mouseCurState.w = w;
+		_mouseCurState.h = h;
 
- 		if (_mouseOrigSurface)
- 			SDL_FreeSurface(_mouseOrigSurface);
+		if (_mouseOrigSurface)
+			SDL_FreeSurface(_mouseOrigSurface);
 
 		// Allocate bigger surface because AdvMame2x adds black pixel at [0,0]
- 		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
- 						_mouseCurState.w + 2,
- 						_mouseCurState.h + 2,
- 						16,
- 						_hwscreen->format->Rmask,
- 						_hwscreen->format->Gmask,
- 						_hwscreen->format->Bmask,
- 						_hwscreen->format->Amask);
+		_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
+						_mouseCurState.w + 2,
+						_mouseCurState.h + 2,
+						16,
+						_hwscreen->format->Rmask,
+						_hwscreen->format->Gmask,
+						_hwscreen->format->Bmask,
+						_hwscreen->format->Amask);
 
- 		if (_mouseOrigSurface == NULL)
- 			error("allocating _mouseOrigSurface failed");
- 		SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
- 	}
+		if (_mouseOrigSurface == NULL)
+			error("allocating _mouseOrigSurface failed");
+		SDL_SetColorKey(_mouseOrigSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
+	}
 
 	free(_mouseData);
 
@@ -1260,7 +1260,7 @@ void OSystem_GP2X::blitCursor() {
 	int w, h, i, j;
 
 	if (!_mouseOrigSurface || !_mouseData)
- 		return;
+		return;
 
 	w = _mouseCurState.w;
 	h = _mouseCurState.h;
@@ -1297,7 +1297,7 @@ void OSystem_GP2X::blitCursor() {
 			srcPtr++;
 		}
 		dstPtr += _mouseOrigSurface->pitch - w * 2;
-  	}
+	}
 
 	int rW, rH;
 
@@ -1338,7 +1338,7 @@ void OSystem_GP2X::blitCursor() {
 		_mouseCurState.vH = h;
 		_mouseCurState.vHotX = _mouseCurState.hotX;
 		_mouseCurState.vHotY = _mouseCurState.hotY;
-  	}
+	}
 
 	int rH1 = rH; // store original to pass to aspect-correction function later
 	if (_adjustAspectRatio && _cursorTargetScale == 1) {
@@ -1366,7 +1366,7 @@ void OSystem_GP2X::blitCursor() {
 			error("allocating _mouseSurface failed");
 
 		SDL_SetColorKey(_mouseSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kMouseColorKey);
-  	}
+	}
 
 	SDL_LockSurface(_mouseSurface);
 
@@ -1429,7 +1429,7 @@ void OSystem_GP2X::undrawMouse() {
 void OSystem_GP2X::drawMouse() {
 	if (!_mouseVisible || !_mouseSurface) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
-  		return;
+		return;
 	}
 
 	SDL_Rect zoomdst;

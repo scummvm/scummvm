@@ -30,28 +30,28 @@
 
 class MsaCDPlayer : public CDAudio {
 public:
- 	MsaCDPlayer(OSystem *sys);
+	MsaCDPlayer(OSystem *sys);
 
- 	bool init();
- 	void release();
+	bool init();
+	void release();
 
- 	bool poll();
- 	void update();
- 	void play(int track, int num_loops, int start_frame, int duration);
- 	void stop();
+	bool poll();
+	void update();
+	void play(int track, int num_loops, int start_frame, int duration);
+	void stop();
 
- 	void setVolume(int volume);
+	void setVolume(int volume);
 
  private:
- 	void initInternal();
+	void initInternal();
 
- 	OSystem *_sys;
- 	UInt16 _msaRefNum;
+	OSystem *_sys;
+	UInt16 _msaRefNum;
 
 	UInt32 _volumeLLimit;
 	UInt32 _volumeRLimit;
 
- 	// cdrom
+	// cdrom
 	AlbumInfoType _msaAlbum;
 	UInt16 _msaLoops;
 

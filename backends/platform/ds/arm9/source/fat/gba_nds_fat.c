@@ -362,7 +362,7 @@ u32 FAT_NextCluster(u32 cluster)
 
 			if (cluster & 0x01) {
 				nextCluster = nextCluster >> 4;
-			} else 	{
+			} else	{
 				nextCluster &= 0x0FFF;
 			}
 
@@ -1231,7 +1231,7 @@ bool FAT_GetAlias (char* alias)
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
 
-	return 	FAT_GetFilename (((DIR_ENT*)globalBuffer)[wrkDirOffset], alias);
+	return	FAT_GetFilename (((DIR_ENT*)globalBuffer)[wrkDirOffset], alias);
 }
 
 /*-----------------------------------------------------------------
@@ -1245,7 +1245,7 @@ u32 FAT_GetFileSize (void)
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
 
-	return 	((DIR_ENT*)globalBuffer)[wrkDirOffset].fileSize;
+	return	((DIR_ENT*)globalBuffer)[wrkDirOffset].fileSize;
 }
 
 /*-----------------------------------------------------------------
@@ -1258,7 +1258,7 @@ u32 FAT_GetFileCluster (void)
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
 
-	return 	(((DIR_ENT*)globalBuffer)[wrkDirOffset].startCluster) | (((DIR_ENT*)globalBuffer)[wrkDirOffset].startClusterHigh << 16);
+	return	(((DIR_ENT*)globalBuffer)[wrkDirOffset].startCluster) | (((DIR_ENT*)globalBuffer)[wrkDirOffset].startClusterHigh << 16);
 }
 
 /*-----------------------------------------------------------------
@@ -1271,7 +1271,7 @@ u8 FAT_GetFileAttributes (void)
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
 
-	return 	((DIR_ENT*)globalBuffer)[wrkDirOffset].attrib;
+	return	((DIR_ENT*)globalBuffer)[wrkDirOffset].attrib;
 }
 
 #ifdef CAN_WRITE_TO_DISC
@@ -1297,7 +1297,7 @@ u8 FAT_SetFileAttributes (const char* filename, u8 attributes, u8 mask)
 
 	disc_WriteSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
 
-	return 	((DIR_ENT*)globalBuffer)[wrkDirOffset].attrib;
+	return	((DIR_ENT*)globalBuffer)[wrkDirOffset].attrib;
 }
 #endif
 
@@ -1327,7 +1327,7 @@ time_t FAT_GetFileCreationTime (void)
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
 
-	return 	FAT_FileTimeToCTime(((DIR_ENT*)globalBuffer)[wrkDirOffset].cTime, ((DIR_ENT*)globalBuffer)[wrkDirOffset].cDate);
+	return	FAT_FileTimeToCTime(((DIR_ENT*)globalBuffer)[wrkDirOffset].cTime, ((DIR_ENT*)globalBuffer)[wrkDirOffset].cDate);
 }
 
 /*-----------------------------------------------------------------
@@ -1340,7 +1340,7 @@ time_t FAT_GetFileLastWriteTime (void)
 	// Read in the last accessed directory entry
 	disc_ReadSector ((wrkDirCluster == FAT16_ROOT_DIR_CLUSTER ? filesysRootDir : FAT_ClustToSect(wrkDirCluster)) + wrkDirSector, globalBuffer);
 
-	return 	FAT_FileTimeToCTime(((DIR_ENT*)globalBuffer)[wrkDirOffset].mTime, ((DIR_ENT*)globalBuffer)[wrkDirOffset].mDate);
+	return	FAT_FileTimeToCTime(((DIR_ENT*)globalBuffer)[wrkDirOffset].mTime, ((DIR_ENT*)globalBuffer)[wrkDirOffset].mDate);
 }
 #endif
 

@@ -177,8 +177,8 @@ public:
 
 
 struct Cnv : public Frames {
-	uint16	_count; 	// # of frames
-	uint16	_width; 	//
+	uint16	_count;		// # of frames
+	uint16	_width;		//
 	uint16	_height;	//
 	byte**	field_8;	// unused
 	byte*	_data;
@@ -330,8 +330,8 @@ public:
 	PaletteFxRange		_palettefx[6];
 	Palette				_palette;
 
-	int 				_backgroundWidth;
-	int 				_backgroundHeight;
+	int					_backgroundWidth;
+	int					_backgroundHeight;
 
 	uint				_screenX;		// scrolling position
 	uint				_screenY;

@@ -324,8 +324,8 @@ protected:
 	uint8 _wallOn;
 
 	uint16 _hyperLink, _newLines;
- 	uint16 _oracleMaxScrollY, _noOracleScroll;
- 	uint16 _interactY;
+	uint16 _oracleMaxScrollY, _noOracleScroll;
+	uint16 _interactY;
 
 	int16 _scriptVerb, _scriptNoun1, _scriptNoun2;
 	int16 _scriptAdj1, _scriptAdj2;
@@ -1634,8 +1634,8 @@ protected:
 	void sendInteractText(uint16 num, const char *fmt, ...);
 
 	void checkLinkBox();
- 	void hyperLinkOn(uint16 x);
- 	void hyperLinkOff();
+	void hyperLinkOn(uint16 x);
+	void hyperLinkOff();
 	void linksUp();
 	void linksDown();
 

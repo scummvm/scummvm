@@ -320,7 +320,7 @@ my $header = "
 	{
 		PrintErrorMessage("'abld build $TargetName urel' apparently failed.");
 		if ($HaltOnError)
- 		{
+		{
 			PrintErrorMessage("Halting on error as requested!");
 			exit 1;
 		}

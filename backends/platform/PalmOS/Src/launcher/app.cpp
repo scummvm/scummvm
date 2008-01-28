@@ -202,7 +202,7 @@ static void AppStartCheckScreenSize() {
 
 #define max(id,value)	gVars->memory[id] = (gVars->memory[id] < value ? value : gVars->memory[id])
 #define min(id,value)	gVars->memory[id] = (gVars->memory[id] > value ? value : gVars->memory[id])
-#define threshold 		700
+#define threshold		700
 
 static void AppStartSetMemory() {
 	UInt32 mem, def;
@@ -221,7 +221,7 @@ Err AppStart(void) {
 
 #ifndef _DEBUG_ENGINE
 	// delete old databases
- 	ModDelete();
+	ModDelete();
 #endif
 
 	// allocate global variables space
@@ -295,7 +295,7 @@ Err AppStart(void) {
 	GamImportDatabase();
 
 	AppStartCheckScreenSize();
-	AppStartCheckNotify(); 		// not fatal error if not avalaible
+	AppStartCheckNotify();		// not fatal error if not avalaible
 
 	return error;
 }

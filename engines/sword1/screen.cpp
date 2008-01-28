@@ -330,7 +330,7 @@ void Screen::newScreen(uint32 screen) {
 	for (cnt = 0; cnt < _roomDefTable[_currentScreen].totalLayers - 1; cnt++) {
 		// there's no grid for the background layer, so it's totalLayers - 1
 		_layerGrid[cnt] = (uint16*)_resMan->openFetchRes(_roomDefTable[_currentScreen].grids[cnt]);
- 		_layerGrid[cnt] += 14;
+		_layerGrid[cnt] += 14;
 	}
 	_parallax[0] = _parallax[1] = NULL;
 	if (_roomDefTable[_currentScreen].parallax[0])

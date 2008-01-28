@@ -214,7 +214,7 @@ void OSystem_GP2X::moveStick() {
 	} else if ((stickBtn[3])||(stickBtn[4])||(stickBtn[5])){
 		if (_km.y_down_count!=2){
 			_km.y_vel = 1;
-		 	_km.y_down_count = 1;
+			_km.y_down_count = 1;
 		}else
 			_km.y_vel = 4;
 	}
@@ -297,7 +297,7 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 	Combos:
 
 	GP2X_BUTTON_VOLUP &	GP2X_BUTTON_VOLDOWN		0 (For Monkey 2 CP)
-	GP2X_BUTTON_L &	GP2X_BUTTON_SELECT 			Common::EVENT_QUIT (Calls Sync() to make sure SD is flushed)
+	GP2X_BUTTON_L &	GP2X_BUTTON_SELECT			Common::EVENT_QUIT (Calls Sync() to make sure SD is flushed)
 	GP2X_BUTTON_L &	GP2X_BUTTON_Y				Toggles setZoomOnMouse() for larger then 320*240 games to scale to the point + raduis.
 	GP2X_BUTTON_L &	GP2X_BUTTON_A				Common::EVENT_PREDICTIVE_DIALOG for predictive text entry box (AGI games)
 	*/

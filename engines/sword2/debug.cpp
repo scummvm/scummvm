@@ -144,7 +144,7 @@ void Debugger::buildDebugText() {
 		makeDebugTextBlock(buf, 500, 380);
 	}
 
-   	// current text number & speech-sample resource id
+	// current text number & speech-sample resource id
 
 	if (_displayTextNumbers) {
 		if (_textNumber) {
@@ -152,7 +152,7 @@ void Debugger::buildDebugText() {
 				if (_vm->_logic->readVar(SYSTEM_WANT_PREVIOUS_LINE))
 					sprintf(buf, "backwards");
 				else
- 					sprintf(buf, "forwards");
+					sprintf(buf, "forwards");
 
 				makeDebugTextBlock(buf, 0, 340);
 			}
@@ -163,7 +163,7 @@ void Debugger::buildDebugText() {
 			sprintf(buf, "pos: %d", _textNumber & 0xffff);
 			makeDebugTextBlock(buf, 0, 370);
 
- 			sprintf(buf, "TEXT: %d", _vm->_logic->_officialTextNumber);
+			sprintf(buf, "TEXT: %d", _vm->_logic->_officialTextNumber);
 			makeDebugTextBlock(buf, 0, 385);
 		}
 	}
@@ -197,7 +197,7 @@ void Debugger::buildDebugText() {
 				_vm->_logic->readVar(MOUSE_X),
 				_vm->_logic->readVar(MOUSE_Y));
 
- 		makeDebugTextBlock(buf, 0, 15);
+		makeDebugTextBlock(buf, 0, 15);
 
 		uint32 mouseTouching = _vm->_mouse->getMouseTouching();
 
@@ -218,7 +218,7 @@ void Debugger::buildDebugText() {
 
 		makeDebugTextBlock(buf, 0, 30);
 
- 		// player coords & graphic info
+		// player coords & graphic info
 		// if player objct has a graphic
 
 		if (_graphAnimRes)
@@ -237,22 +237,22 @@ void Debugger::buildDebugText() {
 
 		makeDebugTextBlock(buf, 0, 45);
 
- 		// frames-per-second counter
+		// frames-per-second counter
 
 		sprintf(buf, "fps %d", _vm->_screen->getFps());
 		makeDebugTextBlock(buf, 440, 0);
 
- 		// location number
+		// location number
 
 		sprintf(buf, "location=%d", _vm->_logic->readVar(LOCATION));
 		makeDebugTextBlock(buf, 440, 15);
 
- 		// "result" variable
+		// "result" variable
 
 		sprintf(buf, "result=%d", _vm->_logic->readVar(RESULT));
 		makeDebugTextBlock(buf, 440, 30);
 
- 		// no. of events in event list
+		// no. of events in event list
 
 		sprintf(buf, "events=%d", _vm->_logic->countEvents());
 		makeDebugTextBlock(buf, 440, 45);
@@ -352,7 +352,7 @@ void Debugger::drawDebugGraphics() {
 		plotCrossHair(mouseX + screenInfo->scroll_offset_x, mouseY + screenInfo->scroll_offset_y, 215);
 	}
 
-   	// mouse area rectangle / sprite box rectangle when testing anims
+	// mouse area rectangle / sprite box rectangle when testing anims
 
 	if (_vm->_logic->readVar(SYSTEM_TESTING_ANIMS)) {
 		// draw box around current frame

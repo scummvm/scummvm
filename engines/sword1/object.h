@@ -95,12 +95,12 @@ struct Object {
 	ScriptTree	o_tree;					// 108	size = 44 bytes
 	ScriptTree	o_bookmark;				// 152	size = 44 bytes
 
-	int32	o_dir;					 	// 196
+	int32	o_dir;						// 196
 	int32	o_speech_pen;				// 200
 	int32	o_speech_width;				// 204
 	int32	o_speech_time;				// 208
 	int32	o_text_id;					// 212 working back from o_ins1
-	int32	o_tag;					 	// 216
+	int32	o_tag;						// 216
 	int32	o_anim_pc;					// 220 position within an animation structure
 	int32	o_anim_resource;			// 224 cdt or anim table
 

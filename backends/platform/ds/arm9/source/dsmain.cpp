@@ -220,7 +220,7 @@ int hBlankCount = 0;
 
 gameListType gameList[NUM_SUPPORTED_GAMES] = {
 	// Unknown game - use normal SCUMM controls
-	{"unknown", 	CONT_SCUMM_ORIGINAL},
+	{"unknown",	CONT_SCUMM_ORIGINAL},
 
 	// SCUMM games
 	{"maniac",		CONT_SCUMM_ORIGINAL},
@@ -1810,7 +1810,7 @@ void VBlankHandler(void) {
 			if (zooming) {
 				subScX = subScTargetX;
 				subScY = subScTargetY;
-			 	triggerIcon(5);
+				triggerIcon(5);
 			}
 		} else if ( ((subScreenWidth) > 128 - 8) && ((subScreenWidth) < 128 + 8) ) {
 			subScreenWidth = 128;

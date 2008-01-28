@@ -987,7 +987,7 @@ void ScummEngine_v6::o6_cursorCommand() {
 	case 0x97:		// SO_USERPUT_SOFT_OFF
 		_userPut--;
 		break;
-	case 0x99: 		// SO_CURSOR_IMAGE Set cursor image
+	case 0x99:		// SO_CURSOR_IMAGE Set cursor image
 		{
 			int room, obj;
 			if (_game.heversion >= 70) {
@@ -2246,8 +2246,8 @@ void ScummEngine_v6::o6_wait() {
 		// For now, if the value passed in is divisible by 45, assume it is an
 		// angle, and use _curActor as the actor to wait for.
 		offs = fetchScriptWordSigned();
- 		actnum = pop();
- 		if (actnum % 45 == 0) {
+		actnum = pop();
+		if (actnum % 45 == 0) {
 			actnum = _curActor;
 		}
 		a = derefActor(actnum, "o6_wait:232b");

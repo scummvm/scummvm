@@ -60,10 +60,10 @@ void Surface::create(uint16 width, uint16 height, uint8 bytesPP) {
 }
 
 void Surface::free() {
- 	::free(pixels);
- 	pixels = 0;
- 	w = h = pitch = 0;
- 	bytesPerPixel = 0;
+	::free(pixels);
+	pixels = 0;
+	w = h = pitch = 0;
+	bytesPerPixel = 0;
 }
 
 void Surface::hLine(int x, int y, int x2, uint32 color) {

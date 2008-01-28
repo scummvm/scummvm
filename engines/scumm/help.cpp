@@ -46,7 +46,7 @@ int ScummHelp::numPages(byte gameId) {
 	case GID_MONKEY:
 	case GID_MONKEY2:
 	case GID_INDY4:
- 	case GID_TENTACLE:
+	case GID_TENTACLE:
 	case GID_SAMNMAX:
 	case GID_DIG:
 	case GID_FT:

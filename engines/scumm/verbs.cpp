@@ -357,8 +357,8 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 			_inventoryOffset -= 2;
 			redrawV2Inventory();
 		}
- 	} else if (_mouseOverBoxesV2[kInventoryDownArrow].rect.contains(x, y)) {
- 		if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
+	} else if (_mouseOverBoxesV2[kInventoryDownArrow].rect.contains(x, y)) {
+		if (_inventoryOffset + 4 < getInventoryCount(_scummVars[VAR_EGO])) {
 			_inventoryOffset += 2;
 			redrawV2Inventory();
 		}

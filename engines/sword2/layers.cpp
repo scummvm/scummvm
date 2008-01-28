@@ -154,7 +154,7 @@ void Screen::initBackground(int32 res, int32 new_palette) {
 	screenLayerTable.read(file + ResHeader::size());
 
 	if (screenLayerTable.maskOffset) {
-	 	SpriteInfo spriteInfo;
+		SpriteInfo spriteInfo;
 
 		spriteInfo.x = 0;
 		spriteInfo.y = 0;

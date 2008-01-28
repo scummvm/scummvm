@@ -847,16 +847,16 @@ uint8 virtScreenLoadUnpack(vsUnpackCtx *ctx, byte *data) {
 			ctx->size = a;
 			a = (a >> 1) + 1;
 		} else {
- 			a = ctx->size;
+			a = ctx->size;
 		}
-  		if (ctx->type == 2) {
-  			ctx->b = *(ctx->ptr)++;
-  		}
-  		ctx->size = a - 1;
-  		if (ctx->size == 0) {
-  			ctx->type = 0;
-  		}
-  		decByte = ctx->b;
+		if (ctx->type == 2) {
+			ctx->b = *(ctx->ptr)++;
+		}
+		ctx->size = a - 1;
+		if (ctx->size == 0) {
+			ctx->type = 0;
+		}
+		decByte = ctx->b;
 	}
 	return decByte;
 }

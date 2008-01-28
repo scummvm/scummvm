@@ -3143,7 +3143,7 @@ void HotspotTickHandlers::droppingTorchAnimHandler(Hotspot &h) {
 			fire->loadOffset = 4;
 			res.activateHotspot(0x418);
 		}
- 	}
+	}
 }
 
 void HotspotTickHandlers::playerSewerExitAnimHandler(Hotspot &h) {

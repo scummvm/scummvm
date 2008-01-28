@@ -141,7 +141,7 @@ static char * arm_register_name_strings[] =
 // Some USB stuff
 GPN_DESC		g_CommDesc;
 GPN_COMM		g_Comm;
-const char 		HexDigits[17] = "0123456789abcdef";
+const char		HexDigits[17] = "0123456789abcdef";
 char			g_SendBuffer[256];
 char			g_TempBuffer[256];
 char			g_ReadBuffer[0x100];
@@ -592,7 +592,7 @@ int	GetBytes(char *pBuffer)
 void SendMemory(void *pAddr, int iBytes)
 {
 	unsigned char	*pData;
-	unsigned char 	iData;
+	unsigned char	iData;
 	int				iBufferPos = 0;
 	int				iBytesToSend;
 	char			Byte;
@@ -1016,7 +1016,7 @@ void BreakPoint()
 	int		iResult;
 	int		iMessageLength;
 	int		iOffsetAdd;
-	int 	iNullVal = 0;
+	int		iNullVal = 0;
 	void	*pAddr;
 	int		iOffset;
 	int		iBytes;
@@ -1871,7 +1871,7 @@ unsigned int DecodeLSRO(lsro Instr, unsigned int uiPC)
 unsigned int DecodeLSM(lsm Instr, unsigned int uiPC)
 {
 	unsigned int	uiRnValue = g_Registers[Instr.Rn];
-	unsigned int  	uiOffsetToPC = 0;
+	unsigned int	uiOffsetToPC = 0;
 	unsigned int	uiMemValue;
 
 	// Make sure PC is destination and it's Load instruction

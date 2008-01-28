@@ -1958,10 +1958,10 @@ void ScummEngine_v72he::redimArray(int arrayId, int newDim2start, int newDim2end
 void ScummEngine_v72he::checkArrayLimits(int array, int dim2start, int dim2end, int dim1start, int dim1end) {
 	if (dim1end < dim1start) {
 		error("Across max %d smaller than min %d", dim1end, dim1start);
- 	}
- 	if (dim2end < dim2start) {
-	 	error("Down max %d smaller than min %d", dim2end, dim2start);
- 	}
+	}
+	if (dim2end < dim2start) {
+		error("Down max %d smaller than min %d", dim2end, dim2start);
+	}
 	ArrayHeader *ah = (ArrayHeader *)getResourceAddress(rtString, readVar(array));
 	assert(ah);
 	if ((int)FROM_LE_32(ah->dim2start) > dim2start || (int)FROM_LE_32(ah->dim2end) < dim2end || (int)FROM_LE_32(ah->dim1start) > dim1start || (int)FROM_LE_32(ah->dim1end) < dim1end) {

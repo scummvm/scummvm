@@ -29,16 +29,16 @@
 
 namespace Parallaction {
 
-#define CMD_SET 			1
+#define CMD_SET				1
 #define CMD_CLEAR			2
 #define CMD_START			3
 #define CMD_SPEAK			4
-#define CMD_GET 			5
+#define CMD_GET				5
 #define CMD_LOCATION		6
 #define CMD_OPEN			7
 #define CMD_CLOSE			8
 #define CMD_ON				9
-#define CMD_OFF 			10
+#define CMD_OFF				10
 #define CMD_CALL			11
 #define CMD_TOGGLE			12
 #define CMD_DROP			13
@@ -46,7 +46,7 @@ namespace Parallaction {
 #define CMD_MOVE			15
 #define CMD_STOP			16
 
-#define INST_ON 			1
+#define INST_ON				1
 #define INST_OFF			2
 #define INST_X				3
 #define INST_Y				4
@@ -1034,10 +1034,10 @@ void Parallaction_ns::parseWalkNodes(Script& script, WalkNodeList &list) {
 
 typedef OpcodeImpl<Parallaction_ns> OpcodeV1;
 #define INSTRUCTION_PARSER(sig) OpcodeV1(this, &Parallaction_ns::instParse_##sig)
-#define ZONE_PARSER(sig) 		OpcodeV1(this, &Parallaction_ns::locZoneParse_##sig)
-#define ANIM_PARSER(sig) 		OpcodeV1(this, &Parallaction_ns::locAnimParse_##sig)
-#define LOCATION_PARSER(sig) 	OpcodeV1(this, &Parallaction_ns::locParse_##sig)
-#define COMMAND_PARSER(sig) 	OpcodeV1(this, &Parallaction_ns::cmdParse_##sig)
+#define ZONE_PARSER(sig)		OpcodeV1(this, &Parallaction_ns::locZoneParse_##sig)
+#define ANIM_PARSER(sig)		OpcodeV1(this, &Parallaction_ns::locAnimParse_##sig)
+#define LOCATION_PARSER(sig)	OpcodeV1(this, &Parallaction_ns::locParse_##sig)
+#define COMMAND_PARSER(sig)		OpcodeV1(this, &Parallaction_ns::cmdParse_##sig)
 
 #define WARNING_PARSER(sig)		OpcodeV1(this, &Parallaction_br::warning_##sig)
 

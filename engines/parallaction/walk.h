@@ -48,7 +48,7 @@ public:
 typedef ManagedList<WalkNode*> WalkNodeList;
 
 
-void 		 jobWalk(void*, Job *j);
+void		 jobWalk(void*, Job *j);
 
 struct PathBuffer {
 	// handles a 1-bit depth buffer used for masking non-walkable areas
@@ -86,10 +86,10 @@ public:
 
 class PathBuilder {
 
-	Animation 		*_anim;
+	Animation		*_anim;
 
-	WalkNodeList 	*_list;
-	Common::List<WalkNode*> 	_subPath;
+	WalkNodeList	*_list;
+	Common::List<WalkNode*>		_subPath;
 
 	void correctPathPoint(Common::Point &to);
 	uint32 buildSubPath(const Common::Point& pos, const Common::Point& stop);

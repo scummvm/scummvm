@@ -1126,7 +1126,7 @@ void KyraEngine_v1::seq_playCredits() {
 		}
 
 		if (*currentString == 1) {
-		   	currentString++;
+			currentString++;
 			if (!_flags.isTalkie)
 				_screen->setFont(Screen::FID_CRED6_FNT);
 		} else {

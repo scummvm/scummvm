@@ -960,7 +960,7 @@ int KyraEngine_v1::checkForNPCScriptRun(int xpos, int ypos) {
 		charRight = currentChar->x1 + 11;
 		charTop = currentChar->y1 - 48;
 		// if (!i)
-		// 	charBottom = currentChar->y2 - 16;
+		//	charBottom = currentChar->y2 - 16;
 		// else
 		charBottom = currentChar->y1;
 

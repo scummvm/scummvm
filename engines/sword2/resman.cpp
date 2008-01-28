@@ -539,7 +539,7 @@ void ResourceManager::remove(int res) {
 void ResourceManager::removeAll() {
 	// We need to clear the FX queue, because otherwise the sound system
 	// will still believe that the sound resources are in memory. We also
- 	// need to kill the movie lead-in/out.
+	// need to kill the movie lead-in/out.
 
 	_vm->_sound->clearFxQueue(true);
 

@@ -3174,7 +3174,7 @@ void ScummEngine::fadeIn(int effect) {
 		//
 		// Hopefully it's safe to do it at this point, at least.
 		_virtscr[kMainVirtScreen].setDirtyRange(0, 0);
- 		transitionEffect(effect - 1);
+		transitionEffect(effect - 1);
 		break;
 	case 128:
 		unkScreenEffect6();
@@ -3206,11 +3206,11 @@ void ScummEngine::fadeOut(int effect) {
 	if (_game.version < 7)
 		camera._last.x = camera._cur.x;
 
- 	// TheDig can disable fadeIn(), and may call fadeOut() several times
- 	// successively. Disabling the _screenEffectFlag check forces the screen
- 	// to get cleared. This fixes glitches, at least, in the first cutscenes
- 	// when bypassed of FT and TheDig.
- 	if ((_game.version == 7 || _screenEffectFlag) && effect != 0) {
+	// TheDig can disable fadeIn(), and may call fadeOut() several times
+	// successively. Disabling the _screenEffectFlag check forces the screen
+	// to get cleared. This fixes glitches, at least, in the first cutscenes
+	// when bypassed of FT and TheDig.
+	if ((_game.version == 7 || _screenEffectFlag) && effect != 0) {
 
 		// Fill screen 0 with black
 		memset(vs->getPixels(0, 0), 0, vs->pitch * vs->h);
@@ -3301,7 +3301,7 @@ void ScummEngine::transitionEffect(int a) {
 					b = bottom;
 				if (t < 0)
 					t = 0;
- 				_virtscr[kMainVirtScreen].tdirty[l] = _screenTop + t * 8;
+				_virtscr[kMainVirtScreen].tdirty[l] = _screenTop + t * 8;
 				_virtscr[kMainVirtScreen].bdirty[l] = _screenTop + (b + 1) * 8;
 			}
 			updateDirtyScreen(kMainVirtScreen);

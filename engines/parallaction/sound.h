@@ -46,8 +46,8 @@ class MidiPlayer;
 class SoundMan {
 
 protected:
-	Parallaction 	*_vm;
-	Audio::Mixer 	*_mixer;
+	Parallaction	*_vm;
+	Audio::Mixer	*_mixer;
 	char			_musicFile[PATH_LEN];
 
 public:
@@ -67,7 +67,7 @@ public:
 
 class DosSoundMan : public SoundMan {
 
-	MidiPlayer 	*_midiPlayer;
+	MidiPlayer	*_midiPlayer;
 	int			_musicData1;
 
 public:

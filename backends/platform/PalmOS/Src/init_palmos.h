@@ -26,7 +26,7 @@
 #ifndef INIT_PALMOS_H
 #define INIT_PALMOS_H
 
-#define PALM_PORTRAIT 	1
+#define PALM_PORTRAIT	1
 #define PALM_LANDSCAPE	2
 
 void PalmInit(UInt8 init);

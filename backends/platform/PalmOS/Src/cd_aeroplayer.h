@@ -41,7 +41,7 @@ public:
 	void play(int track, int num_loops, int start_frame, int duration);
 	void stop();
 
- 	void setVolume(int volume);
+	void setVolume(int volume);
 
 private:
 	OSystem *_sys;
@@ -53,9 +53,9 @@ private:
 	UInt32 getPosition();
 	void forceStop();
 
- 	UInt16 _volumeLimit;
+	UInt16 _volumeLimit;
 
- 	Boolean _isPlaying;
+	Boolean _isPlaying;
 	// cdrom
 	UInt16 _pckLoops, _pckTrack;
 	UInt32 _pckTrackStartFrame, _pckTrackEndFrame;

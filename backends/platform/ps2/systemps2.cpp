@@ -465,7 +465,7 @@ void OSystem_PS2::soundThread(void) {
 					"  addiu $t8, 32\n\t"
 					"  bnez  $t9, loop\n\t"		// loop
 						:  // outputs
-				 		: "r"(soundBufL), "r"(soundBufR)  // inputs
+						: "r"(soundBufL), "r"(soundBufR)  // inputs
 					//  : "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"  // destroyed
 						: "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25"  // destroyed
 				);

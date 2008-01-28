@@ -251,7 +251,7 @@ byte *ScummEngine::get2byteCharPtr(int idx) {
 	default:
 		idx = 0;
 	}
-	return 	_2byteFontPtr + ((_2byteWidth + 7) / 8) * _2byteHeight * idx;
+	return	_2byteFontPtr + ((_2byteWidth + 7) / 8) * _2byteHeight * idx;
 }
 
 

@@ -67,11 +67,11 @@ const char *loadGameMsg[] = {
 };
 
 
-#define BLOCK_WIDTH 	16
+#define BLOCK_WIDTH		16
 #define BLOCK_HEIGHT	24
 
-#define BLOCK_X 		112
-#define BLOCK_Y 		130
+#define BLOCK_X			112
+#define BLOCK_Y			130
 
 #define BLOCK_SELECTION_X		  (BLOCK_X-1)
 #define BLOCK_SELECTION_Y		  (BLOCK_Y-1)

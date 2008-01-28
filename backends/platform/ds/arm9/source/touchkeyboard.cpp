@@ -194,7 +194,7 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 		for (int y = 0 ; y < 8; y++) {
 			for (int x = 0; x < 2; x++) {
 				 *(tileAddr + (y * 2) + x) =(*(src + (y * 752) + (x * 4) + 0) & 0x0F)
-									 	 | ((*(src + (y * 752) + (x * 4) + 1) & 0x0F) << 4)
+										 | ((*(src + (y * 752) + (x * 4) + 1) & 0x0F) << 4)
 										 | ((*(src + (y * 752) + (x * 4) + 2) & 0x0F) << 8)
 										 | ((*(src + (y * 752) + (x * 4) + 3) & 0x0F) << 12);
 
@@ -317,7 +317,7 @@ void clearAutoComplete() {
 
 void typeCompletion(int current) {
 	Common::Event event;
-   	OSystem_DS* system = OSystem_DS::instance();
+	OSystem_DS* system = OSystem_DS::instance();
 
 	strcat(autoCompleteBuffer, &autoCompleteWord[current][charactersEntered]);
 	strcat(autoCompleteBuffer, " ");
@@ -350,7 +350,7 @@ void updateTypeEvents()
 	if (autoCompleteBuffer[0] != '\0')
 	{
 		Common::Event event;
-   		OSystem_DS* system = OSystem_DS::instance();
+		OSystem_DS* system = OSystem_DS::instance();
 
 		event.kbd.keycode = (Common::KeyCode) autoCompleteBuffer[0];
 		event.kbd.ascii = autoCompleteBuffer[0];
@@ -433,7 +433,7 @@ void addKeyboardEvents() {
 		for (int r = 0; r < DS_NUM_KEYS; r++) {
 			if (( (tx >= keys[r].x) && (tx <= keys[r].x + 1)) &&
 				   (ty >= keys[r].y) && (ty <= keys[r].y + 1)) {
-			   	OSystem_DS* system = OSystem_DS::instance();
+				OSystem_DS* system = OSystem_DS::instance();
 				Common::Event event;
 
 //				consolePrintf("Key: %d\n", r);
@@ -491,7 +491,7 @@ void addKeyboardEvents() {
 			if (keys[r].pressed) {
 				DS::setKeyHighlight(r, false);
 
-			   	OSystem_DS* system = OSystem_DS::instance();
+				OSystem_DS* system = OSystem_DS::instance();
 
 				Common::Event event;
 				createKeyEvent(r, event);

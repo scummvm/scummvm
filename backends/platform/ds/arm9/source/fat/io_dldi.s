@@ -17,7 +17,7 @@
 	.byte	0x01			@ Version number
 	.byte	0x0F	@32KiB	@ Log [base-2] of the size of this driver in bytes.
 	.byte	0x00			@ Sections to fix
-	.byte 	0x0F	@32KiB	@ Log [base-2] of the allocated space in bytes.
+	.byte	0x0F	@32KiB	@ Log [base-2] of the allocated space in bytes.
 
 @---------------------------------------------------------------------------------
 @ Text identifier - can be anything up to 47 chars + terminating null -- 16 bytes

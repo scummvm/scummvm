@@ -91,7 +91,7 @@ protected:
 	int		_firstLineInBuffer;
 
 	int		_promptStartPos;
-	int 	_promptEndPos;
+	int		_promptEndPos;
 
 	bool	_caretVisible;
 	uint32	_caretTime;

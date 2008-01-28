@@ -38,8 +38,8 @@ struct InventoryItem {
 	uint16		_index;			// index to frame in objs file
 };
 
-#define INVENTORYITEM_PITCH 		32
-#define INVENTORYITEM_WIDTH 		24
+#define INVENTORYITEM_PITCH			32
+#define INVENTORYITEM_WIDTH			24
 #define INVENTORYITEM_HEIGHT		24
 
 #define MAKE_INVENTORY_ID(x) (((x) & 0xFFFF) << 16)
@@ -75,7 +75,7 @@ public:
 
 class InventoryRenderer {
 	Parallaction	*_vm;
-	Inventory 		*_inv;
+	Inventory		*_inv;
 	Common::Point	_pos;
 
 	Graphics::Surface	_surf;

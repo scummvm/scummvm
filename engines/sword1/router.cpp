@@ -36,12 +36,12 @@ namespace Sword1 {
 
 /****************************************************************************
  *    JROUTER.C				polygon router with modular walks
- *       							using a tree of modules
- *       							21 july 94
+ *							using a tree of modules
+ *							21 july 94
  *    3  november 94
  *    System currently works by scanning grid data and coming up with a	ROUTE
  *    as a series of way points(nodes), the smoothest eight directional PATH
- * 		through these nodes is then found, and a WALK created to fit the PATH.
+ *		through these nodes is then found, and a WALK created to fit the PATH.
  *
  *		Two funtions are called by the user, RouteFinder creates a route as a
  *		module list, HardWalk creates an animation list from the module list.
@@ -87,7 +87,7 @@ Router::Router(ObjectMan *pObjMan, ResMan *pResMan) {
 int32 Router::routeFinder(int32 id, Object *megaObject, int32 x, int32 y, int32 dir) {
 	/*********************************************************************
 	 * RouteFinder.C		polygon router with modular walks
-	 * 						21 august 94
+	 *						21 august 94
 	 *						3  november 94
 	 * routeFinder creates a list of modules that enables HardWalk to
 	 * create an animation list.
@@ -102,9 +102,9 @@ int32 Router::routeFinder(int32 id, Object *megaObject, int32 x, int32 y, int32 
 	 *
 	 * return	0 = failed to find a route
 	 *
-	 *    		1 = found a route
+	 *			1 = found a route
 	 *
-	 *    		2 = mega already at target
+	 *			2 = mega already at target
 	 *
 	 *********************************************************************/
 
@@ -150,7 +150,7 @@ int32 Router::routeFinder(int32 id, Object *megaObject, int32 x, int32 y, int32 
 // All route data now loaded start finding a route
 // **************************************************************************
 // **************************************************************************
-// check if we can get a route through the floor 		changed 12 Oct95 JPS
+// check if we can get a route through the floor		changed 12 Oct95 JPS
 // **************************************************************************
 
 	routeFlag = getRoute();
@@ -234,7 +234,7 @@ int32 Router::getRoute() {
 	 *
 	 * static routeData _route[O_ROUTE_SIZE];
 	 *
-	 * return 	0 = failed to find a route
+	 * return	0 = failed to find a route
 	 *
 	 *		1 = found a route
 	 *
@@ -1849,11 +1849,11 @@ int32 Router::checkTarget(int32 x, int32 y) {
 
 int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir) {
 	WalkGridHeader	floorHeader;
-	int32 	i;
+	int32	i;
 	uint8  *fPolygrid;
 	uint8  *fMegaWalkData;
 
-	int32 	floorId;
+	int32	floorId;
 	int32		walkGridResourceId;
 	Object *floorObject;
 

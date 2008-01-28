@@ -268,14 +268,14 @@ endif
 
 
 ARM7BIN	:= -7 $(CURDIR)/../../arm7/arm7.bin
-ICON 		:= -b ../../../logo.bmp "ScummVM;By Neil Millstone;"
+ICON		:= -b ../../../logo.bmp "ScummVM;By Neil Millstone;"
 
 CC      = arm-eabi-gcc
 CXX     = arm-eabi-g++
 
 CFLAGS	=	-Wno-multichar -Wall\
 		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
- 		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
+		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
 		-ffast-math -mthumb-interwork
 
 ifdef USE_DEBUGGER

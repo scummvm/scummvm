@@ -184,7 +184,7 @@ void AGOSEngine_Feeble::oracleTextUp() {
 	changeWindow(3);
 	_noOracleScroll = 0;
 
-	if (_textWindow->scrollY > _oracleMaxScrollY) 		// For scroll up
+	if (_textWindow->scrollY > _oracleMaxScrollY)		// For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
 	while (1) {
 		if (_textWindow->scrollY == _oracleMaxScrollY)
@@ -218,7 +218,7 @@ void AGOSEngine_Feeble::oracleTextDown() {
 	changeWindow(3);
 	_noOracleScroll = 0;
 
-	if (_textWindow->scrollY > _oracleMaxScrollY) 		// For scroll up
+	if (_textWindow->scrollY > _oracleMaxScrollY)		// For scroll up
 		_oracleMaxScrollY = _textWindow->scrollY;
 	while (1) {
 		if (_textWindow->scrollY == 0)
@@ -411,7 +411,7 @@ void AGOSEngine_Feeble::listSaveGames(int n) {
 				showMessageFormat("\n");
 				hyperLinkOn(j + 400);
 				setTextColor(116);
-	    			showMessageFormat(" %d. ",1);
+				showMessageFormat(" %d. ",1);
 				hyperLinkOff();
 				setTextColor(113);
 				k++;

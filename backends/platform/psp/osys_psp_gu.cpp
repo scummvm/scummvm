@@ -65,7 +65,7 @@ unsigned char kbd_ascii_cl[] = {'!', '@', '#', '$', '%', '^', '&', '*', '(', ')'
 Common::KeyCode  kbd_code_cl[]  = {Common::KEYCODE_EXCLAIM, Common::KEYCODE_AT, Common::KEYCODE_HASH, Common::KEYCODE_DOLLAR, (Common::KeyCode)37, Common::KEYCODE_CARET, Common::KEYCODE_AMPERSAND, Common::KEYCODE_ASTERISK, Common::KEYCODE_LEFTPAREN, Common::KEYCODE_RIGHTPAREN, Common::KEYCODE_UNDERSCORE,
 								Common::KEYCODE_PLUS, (Common::KeyCode)123, (Common::KeyCode)125, (Common::KeyCode)124, Common::KEYCODE_COLON, Common::KEYCODE_QUOTEDBL, Common::KEYCODE_LESS, Common::KEYCODE_GREATER, Common::KEYCODE_QUESTION, (Common::KeyCode)126};
 #define CAPS_LOCK	(1 << 0)
-#define SYMBOLS 	(1 << 1)
+#define SYMBOLS		(1 << 1)
 
 
 OSystem_PSP_GU::OSystem_PSP_GU() {
@@ -278,9 +278,9 @@ void OSystem_PSP_GU::updateScreen() {
 	sceGuClutLoad(32, clut256); // upload 32*8 entries (256)
 	sceGuTexMode(GU_PSM_T8, 0, 0, 0); // 8-bit image
 	if (_screenWidth == 320)
-	    	sceGuTexImage(0, 512, 256, _screenWidth, _offscreen);
+			sceGuTexImage(0, 512, 256, _screenWidth, _offscreen);
 	else
-	    	sceGuTexImage(0, 512, 512, _screenWidth, _offscreen);
+			sceGuTexImage(0, 512, 512, _screenWidth, _offscreen);
 	sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGB);
 	sceGuTexFilter(GU_LINEAR, GU_LINEAR);
 	sceGuTexOffset(0,0);
@@ -349,7 +349,7 @@ void OSystem_PSP_GU::updateScreen() {
 	}
 
 	// draw mouse
-   	if (_mouseVisible) {
+	if (_mouseVisible) {
 		sceGuTexMode(GU_PSM_T8, 0, 0, 0); // 8-bit image
 		sceGuClutMode(GU_PSM_5551, 0, 0xff, 0);
 		sceGuClutLoad(32, mouseClut); // upload 32*8 entries (256)

@@ -779,10 +779,10 @@ void Parallaction_br::parseRValue(ScriptVar &v, const char *str) {
 
 typedef OpcodeImpl<Parallaction_br> OpcodeV2;
 #define INSTRUCTION_PARSER(sig) OpcodeV2(this, &Parallaction_br::instParse_##sig)
-#define ZONE_PARSER(sig) 		OpcodeV2(this, &Parallaction_br::locZoneParse_##sig)
-#define ANIM_PARSER(sig) 		OpcodeV2(this, &Parallaction_br::locAnimParse_##sig)
-#define LOCATION_PARSER(sig) 	OpcodeV2(this, &Parallaction_br::locParse_##sig)
-#define COMMAND_PARSER(sig) 	OpcodeV2(this, &Parallaction_br::cmdParse_##sig)
+#define ZONE_PARSER(sig)		OpcodeV2(this, &Parallaction_br::locZoneParse_##sig)
+#define ANIM_PARSER(sig)		OpcodeV2(this, &Parallaction_br::locAnimParse_##sig)
+#define LOCATION_PARSER(sig)	OpcodeV2(this, &Parallaction_br::locParse_##sig)
+#define COMMAND_PARSER(sig)		OpcodeV2(this, &Parallaction_br::cmdParse_##sig)
 
 #define WARNING_PARSER(sig)		OpcodeV2(this, &Parallaction_br::warning_##sig)
 

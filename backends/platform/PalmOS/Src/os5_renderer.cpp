@@ -79,10 +79,10 @@ void OSystem_PalmOS5::render_landscapeAny(RectangleType &r, PointType &p) {
 
 void OSystem_PalmOS5::render_landscape15x(RectangleType &r, PointType &p) {
 	Coord x, y, o = 0;
-   	int16 *dst =  _workScreenP;
+	int16 *dst =  _workScreenP;
 
 	if (_overlayVisible) {
-   		int16 *src = _overlayP;
+		int16 *src = _overlayP;
 
 		for (y = 0; y < 100; y++) {
 			// draw 2 lines

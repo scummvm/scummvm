@@ -945,7 +945,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		if (memcmp(md5Backup, _gameMD5, 16) != 0) {
 			warning("Game was saved with different gamedata - you may encounter problems");
 			debug(1, "You have %s and save is %s.", md5str2, md5str1);
- 			memcpy(_gameMD5, md5Backup, 16);
+			memcpy(_gameMD5, md5Backup, 16);
 		}
 	}
 
@@ -1068,16 +1068,16 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		// Old, fragile resource save/load system. Doesn't save resources
 		// with index 0, and breaks whenever we change the limit on a given
 		// resource type.
- 		for (type = rtFirst; type <= rtLast; type++)
- 			if (_res->mode[type] != 1 && type != rtTemp && type != rtBuffer) {
- 				// For V1-V5 games, there used to be no object name resources.
- 				// At some point this changed. But since old savegames rely on
- 				// unchanged resource counts, we have to hard code the following check
- 				if (_game.version < 6 && type == rtObjectName)
- 					continue;
- 				for (idx = 1; idx < _res->num[type]; idx++)
- 					saveLoadResource(s, type, idx);
- 			}
+		for (type = rtFirst; type <= rtLast; type++)
+			if (_res->mode[type] != 1 && type != rtTemp && type != rtBuffer) {
+				// For V1-V5 games, there used to be no object name resources.
+				// At some point this changed. But since old savegames rely on
+				// unchanged resource counts, we have to hard code the following check
+				if (_game.version < 6 && type == rtObjectName)
+					continue;
+				for (idx = 1; idx < _res->num[type]; idx++)
+					saveLoadResource(s, type, idx);
+			}
 	}
 
 

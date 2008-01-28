@@ -53,9 +53,9 @@ typedef struct {
 	UInt16	icnID;			// icon to display on the list
 	Boolean	selected;
 
-	Char 	nameP[50];		// game name to display in list
-	Char 	pathP[150];		// path to the game files
-	Char 	gameP[10];		// scumm name of the game
+	Char	nameP[50];		// game name to display in list
+	Char	pathP[150];		// path to the game files
+	Char	gameP[10];		// scumm name of the game
 	UInt16	gfxMode;
 
 	Boolean autoLoad;
@@ -75,9 +75,9 @@ typedef struct {
 	UInt16	icnID;			// icon to display on the list
 	Boolean	selected;
 
-	Char 	nameP[50];		// game name to display in list
-	Char 	pathP[150];		// path to the game files
-	Char 	gameP[10];		// scumm name of the game
+	Char	nameP[50];		// game name to display in list
+	Char	pathP[150];		// path to the game files
+	Char	gameP[10];		// scumm name of the game
 	UInt16	gfxMode;
 
 	Boolean autoLoad;
@@ -127,9 +127,9 @@ typedef struct {
 	UInt16	icnID;			// icon to display on the list
 	Boolean	selected;
 
-	Char 	nameP[50];		// game name to display in list
-	Char 	pathP[150];		// path to the game files
-	Char 	gameP[15];		// scumm name of the game
+	Char	nameP[50];		// game name to display in list
+	Char	pathP[150];		// path to the game files
+	Char	gameP[15];		// scumm name of the game
 	UInt16	gfxMode;
 
 	Boolean autoLoad;
@@ -142,13 +142,13 @@ typedef struct {
 	UInt16 bootValue;
 	UInt16 talkValue;
 	UInt8 platform;
-	UInt8 language;			// |- 	v2.5
+	UInt8 language;			// |-	v2.5
 
-	Boolean filter;			// 		v2.6
+	Boolean filter;			//		v2.6
 	Boolean fullscreen;		// |
 	Boolean aspectRatio;	// |-	v2.7
 
-	MusicInfoType musicInfo;// 		v3.0
+	MusicInfoType musicInfo;//		v3.0
 
 	UInt8 engine;			// |-	v3.1
 	UInt8 renderMode;		// |-	v3.2

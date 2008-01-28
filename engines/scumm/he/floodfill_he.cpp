@@ -110,15 +110,15 @@ static void floodFillProcess(int x, int y, FloodFillState *ffs, FloodFillPixelCh
 		Common::Rect r;
 		int x_start;
 		FloodFillLine *fflCur = --(*fillLineCur);
-  		int dy = fflCur->inc;
-  		int x_end = fflCur->x2;
-  		int x1 = fflCur->x1;
-  		int x2 = fflCur->x1 + 1;
+		int dy = fflCur->inc;
+		int x_end = fflCur->x2;
+		int x1 = fflCur->x1;
+		int x2 = fflCur->x1 + 1;
 		r.bottom = r.top = y = fflCur->y + fflCur->inc;
-  		r.left = x2;
-  		r.right = x1;
-  		x = x1;
-  		while (ffs->srcBox.left <= x) {
+		r.left = x2;
+		r.right = x1;
+		x = x1;
+		while (ffs->srcBox.left <= x) {
 			if (!(*pixelCheckCallback)(x, y, ffs)) {
 				break;
 			}

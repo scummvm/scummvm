@@ -78,24 +78,24 @@ enum EventType {
  *       Implementation wise, we might want to use the classic
  *       union-of-structs trick. It goes roughly like this:
  *       struct BasicEvent {
- *       	EventType type;
+ *          EventType type;
  *       };
  *       struct MouseMovedEvent : BasicEvent {
- *       	Common::Point pos;
+ *          Common::Point pos;
  *       };
  *       struct MouseButtonEvent : MouseMovedEvent {
- *       	int button;
+ *          int button;
  *       };
  *       struct KeyEvent : BasicEvent {
- *       	...
+ *          ...
  *       };
  *       ...
  *       union Event {
  *          EventType type;
- *       	MouseMovedEvent mouse;
- *       	MouseButtonEvent button;
- *       	KeyEvent key;
- *       	...
+ *          MouseMovedEvent mouse;
+ *          MouseButtonEvent button;
+ *          KeyEvent key;
+ *          ...
  *       };
  */
 struct Event {

@@ -247,7 +247,7 @@ void processSymlinks(FILE *inf, CptObj *destArr, uint16 *baseLists) {
 
 			dofgets(line, 1024, inf);
 			assert((line[0] == '\t') && (line[1] == '\t') && (line[2] == '-') && (line[3] == '>'));
- 			char *stopCh;
+			char *stopCh;
 			uint16 destId = (uint16)strtoul(line + 4, &stopCh, 16);
 			assert(stopCh == (line + 8));
 			assert((stopCh[0] == ':') && (stopCh[1] == ':'));

@@ -241,7 +241,7 @@ static const CINEGameDescription gameDescriptions[] = {
 		{
 			"os",
 			"256 colors",
-			AD_ENTRY1("procs00", 	"d6752e7d25924cb866b61eb7cb0c8b56"),
+			AD_ENTRY1("procs00",	"d6752e7d25924cb866b61eb7cb0c8b56"),
 			Common::EN_GRB,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS

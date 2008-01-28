@@ -60,7 +60,7 @@ public:
 
 	virtual int runModal();
 
-	bool 	isVisible() const	{ return _visible; }
+	bool	isVisible() const	{ return _visible; }
 
 	void	releaseFocus();
 

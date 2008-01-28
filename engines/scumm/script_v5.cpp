@@ -2529,7 +2529,7 @@ void ScummEngine_v5::o5_verbOps() {
 					vs->curRect.top += 8;
 					break;
 				}
-			} else 	if (_game.id == GID_LOOM && _game.version == 4) {
+			} else	if (_game.id == GID_LOOM && _game.version == 4) {
 			// FIXME: hack loom notes into right spot
 				if ((verb >= 90) && (verb <= 97)) {	// Notes
 					switch (verb) {
@@ -2878,10 +2878,10 @@ void ScummEngine_v5::decodeParseString() {
 			}
 
 
- 			// In SCUMM V1-V3, there were no 'default' values for the text slot
- 			// values. Hence to achieve correct behaviour, we have to keep the
- 			// 'default' values in sync with the active values.
- 			//
+			// In SCUMM V1-V3, there were no 'default' values for the text slot
+			// values. Hence to achieve correct behaviour, we have to keep the
+			// 'default' values in sync with the active values.
+			//
 			// Note: This is needed for Indy3 (Grail Diary). It's also needed
 			// for Loom, or the lines Bobbin speaks during the intro are put
 			// at position 0,0.

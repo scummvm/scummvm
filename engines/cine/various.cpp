@@ -406,7 +406,7 @@ bool CineEngine::makeLoad(char *saveName) {
 	freeAnimDataTable();
 	unloadAllMasks();
 	// if (g_cine->getGameType() == Cine::GType_OS) {
-	// 	freeUnkList();
+	//	freeUnkList();
 	// }
 	freePrcLinkedList();
 	releaseObjectScripts();

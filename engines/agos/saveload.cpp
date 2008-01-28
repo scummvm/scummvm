@@ -1235,7 +1235,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, kSuperRoomType);
 		if (sr) {
 			uint16 n = sr->roomX * sr->roomY * sr->roomZ;
- 			for (i = j = 0; i != n; i++)
+			for (i = j = 0; i != n; i++)
 				sr->roomExitStates[j++] = f->readUint16BE();
 		}
 
@@ -1384,7 +1384,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 		SubSuperRoom *sr = (SubSuperRoom *)findChildOfType(item, kSuperRoomType);
 		if (sr) {
 			uint16 n = sr->roomX * sr->roomY * sr->roomZ;
- 			for (i = j = 0; i != n; i++)
+			for (i = j = 0; i != n; i++)
 				f->writeUint16BE(sr->roomExitStates[j++]);
 		}
 

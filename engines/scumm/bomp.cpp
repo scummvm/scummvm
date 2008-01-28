@@ -138,7 +138,7 @@ void bompApplyShadow0(const byte *shadowPalette, const byte *line_buffer, byte *
 		byte tmp = *line_buffer++;
 		if (tmp != transparency) {
 			if (HE7Check)
- 				*dst = shadowPalette[tmp];
+				*dst = shadowPalette[tmp];
 			else
 				*dst = tmp;
 		}

@@ -292,7 +292,7 @@ xLoop4:
 	ADD	r6, r6, r6, LSL #1	@ r6 = 3*pal[src0]
 	AND	r9, r14,r10,LSR #16	@ r9 = src2
 	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src2]
- 	MOV	r10,r10,LSR #24		@ r10= src3
+	MOV	r10,r10,LSR #24		@ r10= src3
 	LDR	r10,[r13,r10,LSL #2]	@ r10= pal[src3]
 	ADD	r6, r6, r7		@ r6 = dst0<<2
 	AND	r6, r8, r6, LSR #2	@ r6 = dst0 (split)
@@ -322,7 +322,7 @@ xLoop4:
 	ADD	r6, r6, r6, LSL #1	@ r6 = 3*pal[src5]
 	MOV	r9, r11,LSR #24		@ r9 = src7
 	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src7]
- 	AND	r10,r14,r12		@ r10= src8
+	AND	r10,r14,r12		@ r10= src8
 	LDR	r10,[r13,r10,LSL #2]	@ r10= pal[src8]
 	ADD	r6, r6, r7		@ r6 = dst4<<2
 	AND	r6, r8, r6, LSR #2	@ r6 = dst4 (split)
@@ -354,7 +354,7 @@ xLoop4:
 	ADD	r6, r6, r6, LSL #1	@ r6 = 3*pal[src10]
 	AND	r9, r14,r10		@ r9 = src12
 	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src12]
- 	AND	r12,r14,r10,LSR #8	@ r11= src13
+	AND	r12,r14,r10,LSR #8	@ r11= src13
 	LDR	r12,[r13,r12,LSL #2]	@ r11= pal[src13]
 	ADD	r6, r6, r7		@ r6 = dst8<<2
 	AND	r6, r8, r6, LSR #2	@ r6 = dst8 (split)
@@ -384,7 +384,7 @@ xLoop4:
 	ADD	r6, r6, r6, LSL #1	@ r6 = 3*pal[src15]
 	AND	r9, r14,r11,LSR #8	@ r9 = src17
 	LDR	r9, [r13,r9, LSL #2]	@ r9 = pal[src17]
- 	AND	r12,r14,r11,LSR #16	@ r11= src18
+	AND	r12,r14,r11,LSR #16	@ r11= src18
 	LDR	r12,[r13,r12,LSL #2]	@ r11= pal[src18]
 	ADD	r6, r6, r7		@ r6 = dst12<<2
 	AND	r6, r8, r6, LSR #2	@ r6 = dst12 (split)

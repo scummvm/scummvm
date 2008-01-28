@@ -70,7 +70,7 @@ void iPhone_initSurface(int width, int height, bool landscape) {
 	_height = height;
 	_landscape = landscape;
 
- 	[sharedInstance performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
+	[sharedInstance performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
 }
 
 bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY) {
@@ -134,14 +134,14 @@ bool getLocalMouseCoords(CGPoint *point) {
 
 - (void)drawRect:(CGRect)frame {
 	// if (lastTick == 0) {
-	// 	lastTick = time(0);
+	//	lastTick = time(0);
 	// }
 	//
 	// frames++;
 	// if (time(0) > lastTick) {
-	// 	lastTick = time(0);
-	// 	printf("FPS: %i\n", frames);
-	// 	frames = 0;
+	//	lastTick = time(0);
+	//	printf("FPS: %i\n", frames);
+	//	frames = 0;
 	// }
 }
 
@@ -336,25 +336,25 @@ bool getLocalMouseCoords(CGPoint *point) {
 	// struct CGPoint point = GSEventGetLocationInWindow(event);
 	//
 	// if (!getLocalMouseCoords(&point))
-	// 	return;
+	//	return;
 	//
 	// [self addEvent:
-	// 	[[NSDictionary alloc] initWithObjectsAndKeys:
-	// 	 [NSNumber numberWithInt:kInputMouseSecondToggled], @"type",
-	// 	 [NSNumber numberWithFloat:point.x], @"x",
-	// 	 [NSNumber numberWithFloat:point.y], @"y",
-	// 	 nil
-	// 	]
+	//	[[NSDictionary alloc] initWithObjectsAndKeys:
+	//	 [NSNumber numberWithInt:kInputMouseSecondToggled], @"type",
+	//	 [NSNumber numberWithFloat:point.x], @"x",
+	//	 [NSNumber numberWithFloat:point.y], @"y",
+	//	 nil
+	//	]
 	// ];
 }
 
 - (void)mouseExited:(GSEvent*)event {
 	//printf("mouseExited().\n");
 	// [self addEvent:
-	// 	[[NSDictionary alloc] initWithObjectsAndKeys:
-	// 	 @"mouseExited", @"type",
-	// 	 nil
-	// 	]
+	//	[[NSDictionary alloc] initWithObjectsAndKeys:
+	//	 @"mouseExited", @"type",
+	//	 nil
+	//	]
 	// ];
 }
 

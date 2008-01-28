@@ -230,7 +230,7 @@ void flipGen(void *var, int32 length) {
 
 void renderWord(uint8 * fontPtr_Data, uint8 * outBufferPtr,
 	    int32 drawPosPixel_X, int32 heightOff, int32 height, int32 param4,
-    	int32 stringRenderBufferSize, int32 width, int32 charWidth) {
+		int32 stringRenderBufferSize, int32 width, int32 charWidth) {
 	int i;
 	int j;
 	uint8 *fontPtr_Data2 = fontPtr_Data + height * 2;

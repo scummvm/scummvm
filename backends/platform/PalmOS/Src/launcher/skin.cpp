@@ -134,7 +134,7 @@ static void SknCopyBits(DmOpenRef skinDBP, DmResID bitmapID, const RectangleType
 						WinDrawBitmap(bmpTemp, 0, 0);
 						WinSetDrawWindow(old);
 
- 						bmp2P = BmpCreateBitmapV3(WinGetBitmap(win), kDensityDouble, BmpGetBits(WinGetBitmap(win)), NULL);
+						bmp2P = BmpCreateBitmapV3(WinGetBitmap(win), kDensityDouble, BmpGetBits(WinGetBitmap(win)), NULL);
 
 						copy.topLeft.x = destX / 2;
 						copy.topLeft.y = destY / 2;

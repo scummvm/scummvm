@@ -89,14 +89,14 @@ extern GlobalsType global;
 	PACE_EMULSTATE->regData[2] = pinTrap;		\
 	return ((returnType)((PACE_CALLBACK_PTR)(	\
 		static_cast<void *>(PACE_EMULSTATE),	\
-		PceNativeTrapNo(sysTrapPinsDispatch), 	\
+		PceNativeTrapNo(sysTrapPinsDispatch),	\
 		NULL, 0)));
 
 #define PACE_PIN_EXEC(pinTrap, returnType)		\
 	PACE_EMULSTATE->regData[2] = pinTrap;		\
 	return ((returnType)((PACE_CALLBACK_PTR)(	\
 		static_cast<void *>(PACE_EMULSTATE),	\
-		PceNativeTrapNo(sysTrapPinsDispatch), 	\
+		PceNativeTrapNo(sysTrapPinsDispatch),	\
 		&params,								\
 		sizeof(params))));
 

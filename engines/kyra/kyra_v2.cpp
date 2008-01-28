@@ -419,7 +419,7 @@ void KyraEngine_v2::handleInput(int x, int y) {
 	} else {
 		int skipHandling = 0;
 
-	   	if (checkItemCollision(x, y) == -1) {
+		if (checkItemCollision(x, y) == -1) {
 			resetGameFlag(0x1EF);
 			skipHandling = handleInputUnkSub(x, y) ? 1 : 0;
 

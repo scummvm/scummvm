@@ -74,8 +74,8 @@ const char gpRootPath[] = "gp:\\";
  * Returns the last component of a given path.
  *
  * Examples:
- * 			gp:\foo\bar.txt would return "\bar.txt"
- * 			gp:\foo\bar\    would return "\bar\"
+ *			gp:\foo\bar.txt would return "\bar.txt"
+ *			gp:\foo\bar\    would return "\bar\"
  *
  * @param str Path to obtain the last component from.
  * @return Pointer to the first char of the last component inside str.

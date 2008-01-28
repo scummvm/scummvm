@@ -129,7 +129,7 @@ static void convertCompressedImage(const byte *src, byte *dst, uint8 colorDepth,
 	free(uncbfrout);
 	for (i = 0; i < colorDepth; ++i) {
 		free(uncptr[i]);
-  	}
+	}
 }
 
 byte *AGOSEngine::convertImage(VC10_state *state, bool compressed) {

@@ -2112,7 +2112,7 @@ const byte *Actor::getActorName() {
 	if (_vm->_game.version == 0) {
 		ptr = (const byte *)v0ActorNames[_number - 1];
 	} else {
- 		ptr = _vm->getResourceAddress(rtActorName, _number);
+		ptr = _vm->getResourceAddress(rtActorName, _number);
 	}
 
 	if (ptr == NULL) {

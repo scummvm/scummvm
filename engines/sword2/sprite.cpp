@@ -63,7 +63,7 @@ int32 Screen::decompressRLE256(byte *dst, byte *src, int32 decompSize) {
 	// source	points to the start of the sprite data for input
 	// decompSize	gives size of decompressed data in bytes
 	// dest		points to start of destination buffer for decompressed
-	// 		data
+	//		data
 
 	byte headerByte;			// block header byte
 	byte *endDest = dst + decompSize;	// pointer to byte after end of decomp buffer

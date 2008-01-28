@@ -723,7 +723,7 @@ void Troll::fillOffsets() {
 // Init
 
 void Troll::init() {
-   	_vm->_picture->setPictureVersion(AGIPIC_V15);
+	_vm->_picture->setPictureVersion(AGIPIC_V15);
 	//SetScreenPar(320, 200, (char*)ibm_fontdata);
 
 	const int gaps[] = { 0x3A40,  0x4600,  0x4800,  0x5800,  0x5a00,  0x6a00,

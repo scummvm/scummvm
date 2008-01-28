@@ -31,35 +31,35 @@
 
  class PckTunesCDPlayer : public CDAudio {
  public:
- 	PckTunesCDPlayer(OSystem *sys);
+	PckTunesCDPlayer(OSystem *sys);
 
- 	bool init();
- 	void release();
+	bool init();
+	void release();
 
- 	bool poll();
- 	void update();
- 	void play(int track, int num_loops, int start_frame, int duration);
- 	void stop();
+	bool poll();
+	void update();
+	void play(int track, int num_loops, int start_frame, int duration);
+	void stop();
 
- 	void setVolume(int volume);
+	void setVolume(int volume);
 
  private:
- 	OSystem *_sys;
- 	Char gameP[15];
+	OSystem *_sys;
+	Char gameP[15];
 
- 	PocketTunesAction *_pAction;	// prevent memory fragmentation
- 	EventType _eAction;
+	PocketTunesAction *_pAction;	// prevent memory fragmentation
+	EventType _eAction;
 
- 	UInt32 getStatus();
- 	void setPosition(UInt32 value);
- 	UInt32 getDuration();
- 	UInt32 getPosition(UInt32 deft);
+	UInt32 getStatus();
+	void setPosition(UInt32 value);
+	UInt32 getDuration();
+	UInt32 getPosition(UInt32 deft);
 
- 	UInt32 _volumeLimit;
- 	UInt32 getVolumeLimit();
+	UInt32 _volumeLimit;
+	UInt32 getVolumeLimit();
 
- 	Boolean _isPlaying;
- 	// cdrom
+	Boolean _isPlaying;
+	// cdrom
 	UInt16 _pckLoops, _pckTrack;
 	UInt32 _pckTrackStartFrame, _pckTrackEndFrame;
 	UInt32 _pckStopTime, _pckTrackDuration;

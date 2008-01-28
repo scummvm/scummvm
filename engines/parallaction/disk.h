@@ -71,20 +71,20 @@ public:
 
 
 
-#define MAX_ARCHIVE_ENTRIES 		384
+#define MAX_ARCHIVE_ENTRIES			384
 
 class Archive : public Common::SeekableReadStream {
 
 protected:
-	bool   			_file;
+	bool			_file;
 	uint32			_fileOffset;
 	uint32			_fileCursor;
 	uint32			_fileEndOffset;
 	Common::String	_archiveName;
-	char 			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
+	char			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
 	uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
 	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
-	Common::File 	_archive;
+	Common::File	_archive;
 	uint32			_numFiles;
 
 protected:
@@ -110,8 +110,8 @@ class Disk_ns : public Disk {
 protected:
 	Archive			_resArchive;
 	Archive			_locArchive;
-	char		  	_languageDir[3];
-	Parallaction 	*_vm;
+	char			_languageDir[3];
+	Parallaction	*_vm;
 
 protected:
 	void errorFileNotFound(const char *s);
@@ -201,7 +201,7 @@ public:
 class DosDisk_br : public Disk {
 
 protected:
-	Parallaction 	*_vm;
+	Parallaction	*_vm;
 	char			_partPath[PATH_LEN];
 	char			_languageDir[2];
 

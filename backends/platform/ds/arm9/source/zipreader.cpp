@@ -98,7 +98,7 @@ bool ZipFile::currentFileInFolder() {
 
 	if (_directory[0] == 0) { // Root directory
 		name[strlen(name) - 1] = 0;
-		return !strchr(name, '\\'); 	// Not in root if contains a / character before the last character
+		return !strchr(name, '\\');		// Not in root if contains a / character before the last character
 	} else {
 /*		if (name starts with directory && it's not the directory
 			&& (no slashes after the directory || it's the last character)
@@ -170,7 +170,7 @@ int ZipFile::getFileSize() {
 }
 
 bool ZipFile::isDirectory() {
-	return _currentFile->fileSize == 0; 		// This is a bit wrong, but seems to work.
+	return _currentFile->fileSize == 0;			// This is a bit wrong, but seems to work.
 }
 
 char* ZipFile::getFile() {

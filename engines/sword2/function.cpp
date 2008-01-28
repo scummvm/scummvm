@@ -57,7 +57,7 @@ int32 Logic::fnTestFlags(int32 *params) {
 
 int32 Logic::fnRegisterStartPoint(int32 *params) {
 	// params:	0 id of startup script to call - key
-	// 		1 pointer to ascii message
+	//		1 pointer to ascii message
 
 	int32 key = params[0];
 	char *name = (char *)decodePtr(params[1]);
@@ -521,7 +521,7 @@ int32 Logic::fnPassMega(int32 *params) {
 	// remember, we cannot simply read a compact any longer but instead
 	// must request it from the object itself
 
-	// params: 	0 pointer to a mega structure
+	// params:	0 pointer to a mega structure
 
 	memcpy(_engineMega, decodePtr(params[0]), ObjectMega::size());
 	return IR_CONT;
@@ -1118,7 +1118,7 @@ int32 Logic::fnISpeak(int32 *params) {
 	if (_leftClickDelay)
 		_leftClickDelay--;
 
- 	if (_rightClickDelay)
+	if (_rightClickDelay)
 		_rightClickDelay--;
 
 	return IR_REPEAT;
@@ -1770,9 +1770,9 @@ int32 Logic::fnSetPlayerActionEvent(int32 *params) {
 
 int32 Logic::fnSetScrollCoordinate(int32 *params) {
 	// params:	0 feet_x value
-	// 		1 feet_y value
+	//		1 feet_y value
 
-  	// Called feet_x and feet_y to retain intellectual compatibility with
+	// Called feet_x and feet_y to retain intellectual compatibility with
 	// Sword1!
 	//
 	// feet_x & feet_y refer to the physical screen coords where the
@@ -1806,7 +1806,7 @@ int32 Logic::fnStandAtAnim(int32 *params) {
 int32 Logic::fnSetScrollLeftMouse(int32 *params) {
 	// params:	0 pointer to object's mouse structure
 
- 	byte *ob_mouse = decodePtr(params[0]);
+	byte *ob_mouse = decodePtr(params[0]);
 	ScreenInfo *screenInfo = _vm->_screen->getScreenInfo();
 
 	// Highest priority
@@ -1966,7 +1966,7 @@ int32 Logic::fnGetPlayerSaveData(int32 *params) {
 	memcpy(ob_graph, _saveGraphic, ObjectGraphic::size());
 	memcpy(ob_mega, _saveMega, ObjectMega::size());
 
- 	// Any walk-data must be cleared - the player will be set to stand if
+	// Any walk-data must be cleared - the player will be set to stand if
 	// he was walking when saved.
 
 	ObjectMega obMega(ob_mega);
@@ -2115,7 +2115,7 @@ int32 Logic::fnFaceMega(int32 *params) {
 
 int32 Logic::fnPlaySequence(int32 *params) {
 	// params:	0 pointer to null-terminated ascii filename
-	// 		1 number of frames in the sequence, used for PSX.
+	//		1 number of frames in the sequence, used for PSX.
 
 	char filename[30];
 
@@ -2131,7 +2131,7 @@ int32 Logic::fnPlaySequence(int32 *params) {
 	strcpy(filename, (const char *)decodePtr(params[0]));
 
 	// Write to walkthrough file (zebug0.txt)
- 	debug(5, "PLAYING SEQUENCE \"%s\"", filename);
+	debug(5, "PLAYING SEQUENCE \"%s\"", filename);
 
 	// don't want to carry on streaming game music when cutscene starts!
 	fnStopMusic(NULL);

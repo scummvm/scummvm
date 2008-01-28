@@ -401,7 +401,7 @@ void Gfx::blackToPal(PalEntry *srcPal, double percent) {
 
 // Used in IHNM only
 void Gfx::palFade(PalEntry *srcPal, int16 from, int16 to, int16 start, int16 numColors, double percent) {
- 	int i;
+	int i;
 	int new_entry;
 	byte *ppal;
 	PalEntry *palE;

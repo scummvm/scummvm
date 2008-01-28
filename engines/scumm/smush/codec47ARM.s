@@ -75,7 +75,7 @@ level1codeFD:
 	LDR	r8,[r13,#48]		@ r8 = _tableBig (48 = (9+1+2)*4)
 	@ stall
 	ADD	r12,r6,r6,LSL #1	@ r12= tmp*3
-	ADD	r6,r6,r12,LSL #5 	@ r6 = tmp*97
+	ADD	r6,r6,r12,LSL #5	@ r6 = tmp*97
 	ADD	r8,r8,r6,LSL #2		@ r8 = _tableBig + tmp*388
 	LDRB	r9,[r8,#384]		@ r9 = l = tmp_ptr[384]
 	LDRB	r6,[r1],#1		@ r6 = val = *_d_src++

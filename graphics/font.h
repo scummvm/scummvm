@@ -104,7 +104,7 @@ struct BBX {
 struct FontDesc {
 	const char *	name;		/* font name*/
 	int		maxwidth;	/* max width in pixels*/
-	int 	height;		/* height in pixels*/
+	int		height;		/* height in pixels*/
 	int	fbbw, fbbh, fbbx, fbby;	/* max bounding box */
 	int		ascent;		/* ascent (baseline) height*/
 	int		firstchar;	/* first character in bitmap*/

@@ -46,7 +46,7 @@ namespace Scumm {
 
 #define PE_HEADER(module) \
     ((Win32ImageNTHeaders*)((byte *)(module) + \
-    	(((DOSImageHeader*)(module))->lfanew)))
+		(((DOSImageHeader*)(module))->lfanew)))
 
 #define PE_SECTIONS(module) \
     ((Win32ImageSectionHeader *)((byte *) &PE_HEADER(module)->optional_header + \

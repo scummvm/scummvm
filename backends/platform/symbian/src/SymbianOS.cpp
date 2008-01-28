@@ -243,7 +243,7 @@ void OSystem_SDL_Symbian::symbianMixCallback(void *s, byte *samples, int len) {
 void OSystem_SDL_Symbian::symbianMix(byte *samples, int len) {
 	// If not stereo then we need to downmix
 	if (_channels != 2) {
-	  	_sound_proc(_sound_proc_param, _stereo_mix_buffer, len * 2);
+		_sound_proc(_sound_proc_param, _stereo_mix_buffer, len * 2);
 		int16 *bitmixDst = (int16 *)samples;
 		int16 *bitmixSrc = (int16 *)_stereo_mix_buffer;
 
@@ -440,7 +440,7 @@ struct TSymbianFileEntry {
 
 #define FILE void
 
-FILE* 	symbian_fopen(const char* name, const char* mode) {
+FILE*	symbian_fopen(const char* name, const char* mode) {
 	TSymbianFileEntry* fileEntry = new TSymbianFileEntry;
 
 	if (fileEntry != NULL) {

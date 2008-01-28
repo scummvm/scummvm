@@ -79,8 +79,8 @@ public:
 	 *
 	 * Examples:
 	 *			path=c:\foo\bar.txt, currentDir=false -> c:\foo\bar.txt
-	 * 			path=c:\foo\bar.txt, currentDir=true -> current directory
-	 * 			path=NULL, currentDir=true -> current directory
+	 *			path=c:\foo\bar.txt, currentDir=true -> current directory
+	 *			path=NULL, currentDir=true -> current directory
 	 *
 	 * @param path String with the path the new node should point to.
 	 * @param currentDir if true, the path parameter will be ignored and the resulting node will point to the current directory.
@@ -108,7 +108,7 @@ private:
 	 * @param mode Mode to use while adding the file entry to the list.
 	 * @param base String with the directory being listed.
 	 * @param find_data Describes a file that the FindFirstFile, FindFirstFileEx, or FindNextFile functions find.
- 	 */
+	 */
 	static void addFile(AbstractFSList &list, ListMode mode, const char *base, WIN32_FIND_DATA* find_data);
 
 	/**
@@ -116,7 +116,7 @@ private:
 	 *
 	 * @param str String to convert from Unicode to Ascii.
 	 * @return str in Ascii format.
- 	 */
+	 */
 	static char *toAscii(TCHAR *str);
 
 	/**
@@ -124,7 +124,7 @@ private:
 	 *
 	 * @param str String to convert from Ascii to Unicode.
 	 * @return str in Unicode format.
- 	 */
+	 */
 	static const TCHAR* toUnicode(const char *str);
 };
 
@@ -132,8 +132,8 @@ private:
  * Returns the last component of a given path.
  *
  * Examples:
- * 			c:\foo\bar.txt would return "\bar.txt"
- * 			c:\foo\bar\    would return "\bar\"
+ *			c:\foo\bar.txt would return "\bar.txt"
+ *			c:\foo\bar\    would return "\bar\"
  *
  * @param str Path to obtain the last component from.
  * @return Pointer to the first char of the last component inside str.

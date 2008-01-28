@@ -73,7 +73,7 @@ static inline void Neo_MK2GameMode()	{
 static inline void Neo_EnableEEPROM( bool enable )	{
 	Neo_OpenSPI(spi_freq);
 	if(enable)	Neo_SPI(0x06);
-	else 		Neo_SPI(0x0E);
+	else		Neo_SPI(0x0E);
 	Neo_CloseSPI();
 }
 
@@ -294,7 +294,7 @@ bool NMMC_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 	Neo_SPI( 0xFF );													// Send fake CRC16
 	Neo_SPI( 0xFF );													// Send fake CRC16
 
-	Neo_SPI (0xFF); 													// Send 8 clocks
+	Neo_SPI (0xFF);														// Send 8 clocks
 	while( Neo_SPI( 0xFF ) == 0x00 );									// Wait for the busy signal to clear
 
 

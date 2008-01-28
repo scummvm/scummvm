@@ -692,7 +692,7 @@ void ScummEngine_v2::o2_actorOps() {
 	a = derefActor(act, "actorOps");
 
 	switch (_opcode) {
-	case 1: 	// SO_SOUND
+	case 1:		// SO_SOUND
 		a->_sound[0] = arg;
 		break;
 	case 2:		// SO_PALETTE

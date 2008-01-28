@@ -314,7 +314,7 @@ const RetailGameVersion *Resource::detectGameVersionFromSize(uint32 size) {
 		if (_gameVersions[i].dataFileSize == size) {
 			return &_gameVersions[i];
 		}
- 	}
+	}
 	return NULL;
 }
 

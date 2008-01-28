@@ -56,7 +56,7 @@ void Screen::startNewPalette() {
 
 	_vm->_resman->closeResource(_thisScreen.background_layer_id);
 	fadeUp();
- 	_thisScreen.new_palette = 0;
+	_thisScreen.new_palette = 0;
 }
 
 void Screen::setFullPalette(int32 palRes) {
@@ -83,7 +83,7 @@ void Screen::setFullPalette(int32 palRes) {
 		// file anyway eg. for pausing & unpausing during the eclipse
 
 		// unpausing (fudged for location 13)
- 		if (palRes == -1) {
+		if (palRes == -1) {
 			// we really meant '0'
 			palRes = 0;
 		}

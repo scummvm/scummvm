@@ -56,7 +56,7 @@ GPSDK		=	/usr/compat/gp32/share/sdk
 
 LDSPECS		=	-specs=gp32_gpsdk.specs
 
-LDFLAGS 	= 	$(STRIP_DEBUG) -Wl,-Map,$(MAPFILE) $(LDSPECS) -Wl,--no-warn-mismatch
+LDFLAGS		=	$(STRIP_DEBUG) -Wl,-Map,$(MAPFILE) $(LDSPECS) -Wl,--no-warn-mismatch
 
 LIBS		+=	-L$(GPSDK)/lib \
 				-lgpmem -lgpos -lgpstdio -lgpstdlib -lgpsound -lgpgraphic -lgpfont \
@@ -75,7 +75,7 @@ FXE			= scummvm.fxe
 # Plugins hack
 srcdir		= ./
 
-DEFINES 	= 	-D__GP32__
+DEFINES		=	-D__GP32__
 DEFINES		+=	-DNONSTANDARD_PORT
 
 # Disable new themes. GP32 has LOW memory!
@@ -132,7 +132,7 @@ OBJS	+=	backends/platform/gp32/gp32std.o \
 			#backends/platform/gp32/dmaaudio.o \
 
 #Main ScummVM for the GP32 Backend
-OBJS	+= 	backends/platform/gp32/gp32_main.o \
+OBJS	+=	backends/platform/gp32/gp32_main.o \
 			backends/platform/gp32/gp32_launcher.o \
 			backends/platform/gp32/gp32_osys.o \
 			backends/fs/gp32/gp32-fs.o

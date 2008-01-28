@@ -323,7 +323,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 	freePrcLinkedList();
 	releaseObjectScripts();
 	// if (g_cine->getGameType() == Cine::GType_OS) {
-	// 	freeUnkList();
+	//	freeUnkList();
 	// }
 	freeBgIncrustList();
 	closePart();

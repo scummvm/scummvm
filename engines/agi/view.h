@@ -92,7 +92,7 @@ struct VtEntry {
 
 #define	CYCLE_NORMAL		0
 #define CYCLE_END_OF_LOOP	1
-#define	CYCLE_REV_LOOP 		2
+#define	CYCLE_REV_LOOP		2
 #define	CYCLE_REVERSE		3
 	uint8 cycle;
 

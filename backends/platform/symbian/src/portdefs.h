@@ -98,7 +98,7 @@
 	    return (SIGND (dl1) ? -l : l);
 	}
 
-	/* 	okay, okay: I admit it: I absolutely have _NO_ idea why __fixdfdi does not get linked in by gcc from libgcc.a
+	/*	okay, okay: I admit it: I absolutely have _NO_ idea why __fixdfdi does not get linked in by gcc from libgcc.a
 		because I know it's in there: I checked with `ar x _fixdfdi.o libgcc.a` and the symbol is in there, so I'm lost
 		and had to fix it this way. I tried all gcc and ld options I could find: no hope :( If someone can enlighten me:
 		feel free to let me know at sumthinwicked@users.sf.net! Much obliged.

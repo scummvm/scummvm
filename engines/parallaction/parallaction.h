@@ -100,17 +100,17 @@ enum {
 	kMouseLeftUp		= 1,
 	kMouseLeftDown		= 2,
 	kMouseRightUp		= 3,
-	kMouseRightDown 	= 4
+	kMouseRightDown		= 4
 };
 
 enum EngineFlags {
-	kEngineQuit 		= (1 << 0),
+	kEngineQuit			= (1 << 0),
 	kEnginePauseJobs	= (1 << 1),
 	kEngineInventory	= (1 << 2),
 	kEngineWalking		= (1 << 3),
 	kEngineChangeLocation	= (1 << 4),
 	kEngineBlockInput	= (1 << 5),
-	kEngineDragging 	= (1 << 6),
+	kEngineDragging		= (1 << 6),
 	kEngineTransformedDonna	= (1 << 7)
 };
 
@@ -144,7 +144,7 @@ struct PARALLACTIONGameDescription;
 struct Job;
 
 struct Job {
-	uint16		_count; 		// # of executions left
+	uint16		_count;			// # of executions left
 	uint16		_tag;			// used for ordering
 	uint16		_finished;
 	void *		_parm;
@@ -155,27 +155,27 @@ public:
 };
 
 
-extern uint16 		_mouseButtons;
+extern uint16		_mouseButtons;
 extern char			_password[8];
-extern uint16 		_score;
-extern uint16 		_language;
-extern uint32 		_engineFlags;
-extern Command 		*_forwardedCommands[];
-extern char 		_forwardedAnimationNames[][20];
-extern uint16 		_numForwards;
-extern char 		_slideText[][40];
-extern uint16 		_introSarcData3;		 // sarcophagus stuff to be saved
-extern uint16 		_introSarcData2;		 // sarcophagus stuff to be saved
-extern char 		_saveData1[];
-extern uint32 		_commandFlags;
-extern const char 	*_dinoName;
-extern const char 	*_donnaName;
-extern const char 	*_doughName;
-extern const char 	*_drkiName;
-extern const char 	*_minidinoName;
-extern const char 	*_minidonnaName;
-extern const char 	*_minidoughName;
-extern const char 	*_minidrkiName;
+extern uint16		_score;
+extern uint16		_language;
+extern uint32		_engineFlags;
+extern Command		*_forwardedCommands[];
+extern char			_forwardedAnimationNames[][20];
+extern uint16		_numForwards;
+extern char			_slideText[][40];
+extern uint16		_introSarcData3;		 // sarcophagus stuff to be saved
+extern uint16		_introSarcData2;		 // sarcophagus stuff to be saved
+extern char			_saveData1[];
+extern uint32		_commandFlags;
+extern const char	*_dinoName;
+extern const char	*_donnaName;
+extern const char	*_doughName;
+extern const char	*_drkiName;
+extern const char	*_minidinoName;
+extern const char	*_minidonnaName;
+extern const char	*_minidoughName;
+extern const char	*_minidrkiName;
 
 
 void waitUntilLeftClick();
@@ -216,7 +216,7 @@ struct Character {
 	Animation		_ani;
 	Frames			*_head;
 	Frames			*_talk;
-	Frames 			*_objs;
+	Frames			*_objs;
 	PathBuilder		_builder;
 	WalkNodeList	*_walkPath;
 
@@ -372,10 +372,10 @@ public:
 	virtual bool loadGame() = 0;
 	virtual bool saveGame() = 0;
 
-	uint16 		readInput();
+	uint16		readInput();
 	void		updateInput();
 
-	void 		waitTime(uint32 t);
+	void		waitTime(uint32 t);
 
 	enum {
 		kInputModeGame = 0,
@@ -389,7 +389,7 @@ public:
 
 	uint	_lookup;
 	Common::Stack<OpcodeSet*>	_opcodes;
-	Common::Stack<Table*> 		_statements;
+	Common::Stack<Table*>		_statements;
 	OpcodeSet	*_currentOpcodes;
 	Table		*_currentStatements;
 	void	pushParserTables(OpcodeSet *opcodes, Table* statements);
@@ -415,32 +415,32 @@ public:
 
 	void		showCursor(bool visible);
 
-	Job 		*addJob(uint functionId, void *parm, uint16 tag);
-	void 		removeJob(Job *j);
-	void 		pauseJobs();
-	void 		resumeJobs();
-	void 		runJobs();
+	Job			*addJob(uint functionId, void *parm, uint16 tag);
+	void		removeJob(Job *j);
+	void		pauseJobs();
+	void		resumeJobs();
+	void		runJobs();
 	virtual		JobOpcode* createJobOpcode(uint functionId, Job *job) = 0;
 
-	void 		finalizeWalk(WalkNodeList *list);
-	int16 		selectWalkFrame(const Common::Point& pos, const WalkNode* from);
-	void 		clipMove(Common::Point& pos, const WalkNode* from);
+	void		finalizeWalk(WalkNodeList *list);
+	int16		selectWalkFrame(const Common::Point& pos, const WalkNode* from);
+	void		clipMove(Common::Point& pos, const WalkNode* from);
 
-	Zone 		*findZone(const char *name);
-	Zone   		*hitZone(uint32 type, uint16 x, uint16 y);
+	Zone		*findZone(const char *name);
+	Zone		*hitZone(uint32 type, uint16 x, uint16 y);
 	uint16		runZone(Zone*);
-	void 		freeZones();
+	void		freeZones();
 
-	void 		runDialogue(SpeakData*);
+	void		runDialogue(SpeakData*);
 
-	void 		runCommands(CommandList& list, Zone *z = NULL);
+	void		runCommands(CommandList& list, Zone *z = NULL);
 
-	Animation  	*findAnimation(const char *name);
+	Animation	*findAnimation(const char *name);
 	void		sortAnimations();
-	void 		freeAnimations();
+	void		freeAnimations();
 
-	void 		setBackground(const char *background, const char *mask, const char *path);
-	void 		freeBackground();
+	void		setBackground(const char *background, const char *mask, const char *path);
+	void		freeBackground();
 
 	Table		*_globalTable;
 	Table		*_objectsNames;
@@ -461,8 +461,8 @@ private:
 public:
 	// info
 	int32			_screenWidth;
-	int32 			_screenHeight;
-	int32 			_screenSize;
+	int32			_screenHeight;
+	int32			_screenSize;
 
 	PathBuffer		*_pathBuffer;
 
@@ -486,10 +486,10 @@ public:
 		p = _mousePos;
 	}
 
-	Zone	   		*_activeZone;
+	Zone			*_activeZone;
 
-	ZoneList 		_zones;
-	AnimationList 	_animations;
+	ZoneList		_zones;
+	AnimationList	_animations;
 
 	Font		*_labelFont;
 	Font		*_menuFont;
@@ -522,7 +522,7 @@ protected:		// data
 	int16		_transCurrentHoverItem;
 
 	uint32		_baseTime;
-	char		_characterName1[50]; 	// only used in changeCharacter
+	char		_characterName1[50];	// only used in changeCharacter
 
 	JobList		_jobs;
 
@@ -545,9 +545,9 @@ protected:		// members
 	uint32		getElapsedTime();
 	void		resetTimer();
 
-	InputData 	*translateInput();
-	bool 		translateGameInput();
-	bool 		translateInventoryInput();
+	InputData	*translateInput();
+	bool		translateGameInput();
+	bool		translateInventoryInput();
 	void		processInput(InputData*);
 
 
@@ -556,17 +556,17 @@ protected:		// members
 	virtual void changeLocation(char *location) = 0;
 	virtual void changeCharacter(const char *name) = 0;
 	void		allocateLocationSlot(const char *name);
-	void 		finalizeLocationParsing();
-	void 		freeLocation();
-	void 		showLocationComment(const char *text, bool end);
+	void		finalizeLocationParsing();
+	void		freeLocation();
+	void		showLocationComment(const char *text, bool end);
 
-	void 		displayComment(ExamineData *data);
+	void		displayComment(ExamineData *data);
 
-	uint16 		checkDoor();
+	uint16		checkDoor();
 
-	void 		freeCharacter();
+	void		freeCharacter();
 
-	int16 		pickupItem(Zone *z);
+	int16		pickupItem(Zone *z);
 
 public:
 	virtual	void callFunction(uint index, void* parm) { }
@@ -675,8 +675,8 @@ public:
 
 	typedef void (Parallaction_ns::*JobFn)(void*, Job*);
 
-	const JobFn 	*_jobsFn;
-	JobOpcode* 	createJobOpcode(uint functionId, Job *job);
+	const JobFn		*_jobsFn;
+	JobOpcode*	createJobOpcode(uint functionId, Job *job);
 
 	bool loadGame();
 	bool saveGame();
@@ -776,8 +776,8 @@ protected:
 
 		const char	*filename;
 		Script		*script;
-		Zone 		*z;
-		Animation 	*a;
+		Zone		*z;
+		Animation	*a;
 		int			nextToken;
 		CommandList *list;
 		bool		endcommands;
@@ -847,14 +847,14 @@ protected:
 
 	void		parseZone(Script &script, ZoneList &list, char *name);
 	void		parseZoneTypeBlock(Script &script, Zone *z);
-	void 		parseWalkNodes(Script& script, WalkNodeList &list);
+	void		parseWalkNodes(Script& script, WalkNodeList &list);
 	Animation	*parseAnimation(Script &script, AnimationList &list, char *name);
 	void		parseCommands(Script &script, CommandList&);
 	void		parseCommandFlags();
 	void		createCommand(uint id);
 	void		addCommand();
-	void 		initOpcodes();
-	void 		initParsers();
+	void		initOpcodes();
+	void		initParsers();
 
 	// program parser
 	OpcodeSet	_instructionParsers;
@@ -891,7 +891,7 @@ protected:
 	void		loadProgram(Animation *a, const char *filename);
 	void		parseLValue(ScriptVar &var, const char *str);
 	virtual void	parseRValue(ScriptVar &var, const char *str);
-	void 		wrapLocalVar(LocalVariable *local);
+	void		wrapLocalVar(LocalVariable *local);
 
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(invalid);
 	DECLARE_UNQUALIFIED_COMMAND_OPCODE(set);
@@ -931,14 +931,14 @@ protected:
 
 	void		guiStart();
 	int			guiSelectCharacter();
-	void 		guiSplash();
+	void		guiSplash();
 	int			guiNewGame();
 	uint16		guiChooseLanguage();
 	uint16		guiSelectGame();
 	int			guiGetSelectedBlock(const Common::Point &p);
 
-	void 		switchBackground(const char* background, const char* mask);
-	void 		showSlide(const char *name);
+	void		switchBackground(const char* background, const char* mask);
+	void		showSlide(const char *name);
 };
 
 
@@ -974,10 +974,10 @@ public:
 	int			_zeta2;
 
 	int16		_lipSyncVal;
-	uint 		_subtitleLipSync;
+	uint		_subtitleLipSync;
 
-	Label 		_subtitle0;
-	Label 		_subtitle1;
+	Label		_subtitle0;
+	Label		_subtitle1;
 
 	Zone		*_activeZone2;
 
@@ -986,11 +986,11 @@ public:
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
 
 private:
-	void 		initResources();
-	void 		initFonts();
-	void 		freeFonts();
-	void 		initOpcodes();
-	void 		initParsers();
+	void		initResources();
+	void		initFonts();
+	void		freeFonts();
+	void		initOpcodes();
+	void		initParsers();
 	void		initJobs();
 
 	void setArrowCursor();
@@ -998,10 +998,10 @@ private:
 
 
 	typedef void (Parallaction_br::*JobFn)(void*, Job*);
-	const JobFn 	*_jobsFn;
-	JobOpcode* 		createJobOpcode(uint functionId, Job *job);
+	const JobFn		*_jobsFn;
+	JobOpcode*		createJobOpcode(uint functionId, Job *job);
 
-	void 		changeLocation(char *location);
+	void		changeLocation(char *location);
 	void		changeCharacter(const char *name);
 
 	void		initPart();
@@ -1011,10 +1011,10 @@ private:
 	void setMousePointer(int16 index);
 	void initCursors();
 
-	Frames 	*_dinoCursor;
+	Frames	*_dinoCursor;
 	Frames	*_dougCursor;
 	Frames	*_donnaCursor;
-	Frames 	*_mouseArrow;
+	Frames	*_mouseArrow;
 
 
 	int showMenu();

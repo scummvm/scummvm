@@ -295,7 +295,7 @@ void Codec37Decoder::maketable(int pitch, int index) {
 
 #define LITERAL_4X1(src, dst, pitch)				\
 	do {							\
-  		int x;						\
+		int x;						\
 		DECLARE_LITERAL_TEMP(t);			\
 		for (x=0; x<4; x++) {				\
 			READ_LITERAL_PIXEL(src, t);		\

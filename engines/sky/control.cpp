@@ -955,7 +955,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 						quitPanel = true;
 					}
 					if (clickRes == RESTORE_FAILED)
- 						refreshAll = true;
+						refreshAll = true;
 				}
 			}
 

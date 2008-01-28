@@ -1156,7 +1156,7 @@ void Sound::fnStartFx(uint32 sound, uint8 channel) {
 	if (SkyEngine::_systemVars.systemFlags & SF_SBLASTER)
 		volume = roomList[i].adlibVolume;
 	else if (SkyEngine::_systemVars.systemFlags & SF_ROLAND)
-	 	volume = roomList[i].rolandVolume;
+		volume = roomList[i].rolandVolume;
 	volume = (volume * _mainSfxVolume) >> 8;
 
 	// Check the flags, the sound may come on after a delay.

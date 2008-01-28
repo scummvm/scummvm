@@ -53,8 +53,8 @@ protected:
 	 * handle this gracefully by returning 0.
 	 *
 	 * Example:
-	 * 			Calling getChild() for a node with path "/foo/bar" using name="file.txt",
-	 * 			would produce a new node with "/foo/bar/file.txt" as path.
+	 *			Calling getChild() for a node with path "/foo/bar" using name="file.txt",
+	 *			would produce a new node with "/foo/bar/file.txt" as path.
 	 *
 	 * @note This function will append a separator char (\ or /) to the end of the
 	 * path if needed.
@@ -106,8 +106,8 @@ public:
 	 * Returns the last component of the path pointed by this FilesystemNode.
 	 *
 	 * Examples (POSIX):
-	 * 			/foo/bar.txt would return /bar.txt
-	 * 			/foo/bar/    would return /bar/
+	 *			/foo/bar.txt would return /bar.txt
+	 *			/foo/bar/    would return /bar/
 	 *
 	 * @note This method is very architecture dependent, please check the concrete implementation for more information.
 	 */

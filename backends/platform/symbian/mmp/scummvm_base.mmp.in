@@ -67,8 +67,8 @@ ALWAYS_BUILD_AS_ARM
 USERINCLUDE	    ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound
 USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl
 
-SYSTEMINCLUDE 	\epoc32\include\ESDL
-SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
+SYSTEMINCLUDE	\epoc32\include\ESDL
+SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
 SYSTEMINCLUDE   \epoc32\include\libc
 SYSTEMINCLUDE   \epoc32\include\tremor
 SYSTEMINCLUDE   \epoc32\include
@@ -119,6 +119,6 @@ source	   backends\timer\default\default-timer.cpp
 source	   backends\saves\savefile.cpp
 source	   backends\saves\default\default-saves.cpp
 source	   backends\saves\compressed\compressed-saves.cpp
-source 	   engines\engine.cpp
+source	   engines\engine.cpp
 // backend specific includes
 // backend specific includes

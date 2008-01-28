@@ -45,13 +45,13 @@ UInt16 SilkInit(UInt32 *retVersion) {
 				e = FtrGet(sonySysFtrCreator, sonySysFtrNumVskVersion, &version);
 				if (e) {
 					// v1 = NR
-				 	e = SilkLibOpen(slkRefNum);
+					e = SilkLibOpen(slkRefNum);
 					if (!e) version = vskVersionNum1;
 
 				} else {
 					// v2 = NX/NZ
 					// v3 = UX...
-				 	e = VskOpen(slkRefNum);
+					e = VskOpen(slkRefNum);
 				}
 			}
 		} else

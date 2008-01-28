@@ -1384,7 +1384,7 @@ void Inter_v2::o2_initScreen() {
 			_vm->_system->beginGFXTransaction();
 				_vm->_system->initSize(_vm->_width, _vm->_height);
 				_vm->initCommonGFX(true);
-		   	_vm->_system->endGFXTransaction();
+			_vm->_system->endGFXTransaction();
 		} else if (_vm->_global->_videoMode == 0x10) {
 			if (width == -1)
 				width = 320;
