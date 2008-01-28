@@ -380,9 +380,6 @@ void Gfx::updateScreen() {
 
 
 void Gfx::swapBuffers() {
-	Graphics::Surface *temp = _buffers[kBitFront];
-	_buffers[kBitFront] = _buffers[kBitBack];
-	_buffers[kBitBack] = temp;
 	updateScreen();
 	return;
 }
@@ -393,27 +390,19 @@ void Gfx::swapBuffers() {
 //
 void Gfx::clearScreen(Gfx::Buffers buffer) {
 	memset(_buffers[buffer]->pixels, 0, _vm->_screenSize);
-
-	if (buffer == kBitFront) updateScreen();
-
-	return;
 }
 
 
 void Gfx::copyScreen(Gfx::Buffers srcbuffer, Gfx::Buffers dstbuffer) {
 	memcpy(_buffers[dstbuffer]->pixels, _buffers[srcbuffer]->pixels, _vm->_screenSize);
-
-	return;
 }
 
 void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) {
 
 	if (mask) {
 		uint16 z = queryMask(y);
-		blitCnv(&surf, x, y, z, kBitBack);
 		blitCnv(&surf, x, y, z, kBit2);
 	} else {
-		flatBlitCnv(&surf, x, y, kBitBack);
 		flatBlitCnv(&surf, x, y, kBit2);
 	}
 
@@ -797,37 +786,11 @@ void Gfx::setFont(Font *font) {
 	_font = font;
 }
 
-void Gfx::restoreBackground(const Common::Rect& r) {
-
-	int16 left = r.left;
-	int16 top = r.top;
-	int16 width = r.width();
-	int16 height = r.height();
-
-	if (left < 0) left = 0;
-	if (top < 0) top = 0;
-
-	if (left >= _backgroundWidth) return;
-	if (top >= _backgroundHeight) return;
-
-	if (left+width >= _backgroundWidth) width = _backgroundWidth - left;
-	if (top+height >= _backgroundHeight) height = _backgroundHeight - top;
-
-	Common::Rect q(width, height);
-	q.moveTo(left, top);
-
-	copyRect(kBitBack, q, (byte*)_buffers[kBit2]->getBasePtr(q.left, q.top), _backgroundWidth);
-
-	return;
-}
-
-
 
 void Gfx::setBackground(Graphics::Surface *surface) {
 	_buffers[kBit2] = surface;
 
 	initBuffers(surface->w, surface->h);
-	copyScreen(kBit2, kBitBack);
 }
 
 void Gfx::setMask(MaskBuffer *buffer) {
@@ -880,9 +843,6 @@ Gfx::Gfx(Parallaction* vm) :
 	_buffers[kBit2] = 0;
 	_depthMask = 0;
 
-	_buffers[kBitFront] = 0;
-	_buffers[kBitBack] = 0;
-
 	initBuffers(_vm->_screenWidth, _vm->_screenHeight);
 
 	setPalette(_palette);
@@ -923,38 +883,10 @@ void Gfx::initBuffers(int w, int h) {
 	_backgroundWidth = w;
 	_backgroundHeight = h;
 
-	if (!_buffers[kBitFront]) {
-		_buffers[kBitFront] = new Graphics::Surface;
-	}
-
-	if (!_buffers[kBitBack]) {
-		_buffers[kBitBack] = new Graphics::Surface;
-	}
-
-	if (_buffers[kBitFront]->w != w || _buffers[kBitFront]->h != h) {
-		_buffers[kBitFront]->create(w, h, 1);
-	}
-
-	if (_buffers[kBitBack]->w != w || _buffers[kBitBack]->h != h) {
-		_buffers[kBitBack]->create(w, h, 1);
-	}
-
 }
 
 void Gfx::freeBuffers() {
 
-	if (_buffers[kBitFront]) {
-		_buffers[kBitFront]->free();
-		delete _buffers[kBitFront];
-	}
-
-	if (_buffers[kBitBack]) {
-		_buffers[kBitBack]->free();
-		delete _buffers[kBitBack];
-	}
-
-	_buffers[kBitFront] = 0;
-	_buffers[kBitBack] = 0;
 }
 
 

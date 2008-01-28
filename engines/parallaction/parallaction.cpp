@@ -284,7 +284,6 @@ void Parallaction::runGame() {
 		}
 
 		if (_inputMode == kInputModeGame) {
-			eraseAnimations();
 			runScripts();
 			walk();
 			drawAnimations();

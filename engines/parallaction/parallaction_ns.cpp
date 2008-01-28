@@ -248,7 +248,7 @@ void Parallaction_ns::switchBackground(const char* background, const char* mask)
 
 	uint16 v2 = 0;
 	if (!scumm_stricmp(background, "final")) {
-		_gfx->clearScreen(Gfx::kBitBack);
+		_gfx->clearScreen(Gfx::kBit2);
 		for (uint16 _si = 0; _si < 32; _si++) {
 			pal.setEntry(_si, v2, v2, v2);
 			v2 += 4;
@@ -323,8 +323,6 @@ void Parallaction_ns::changeLocation(char *location) {
 	}
 
 
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBit2);
 	_gfx->setBlackPalette();
 	_gfx->updateScreen();
 

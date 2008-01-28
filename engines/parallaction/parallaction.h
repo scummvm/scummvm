@@ -491,7 +491,6 @@ public:
 	virtual void runScripts() = 0;
 	virtual void walk() = 0;
 	virtual void drawAnimations() = 0;
-	virtual void eraseAnimations() = 0;
 
 	void		beep();
 
@@ -655,7 +654,6 @@ protected:
 	void runScripts();
 	void walk();
 	void drawAnimations();
-	void eraseAnimations();
 
 
 	// location parser

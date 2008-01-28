@@ -388,7 +388,7 @@ int Parallaction_ns::guiSelectCharacter() {
 
 	_disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
 
-	showSlide("password");	// loads background into kBitBack buffer
+	showSlide("password");
 
 
 	const uint16 (*keys)[PASSWORD_LEN] = (getPlatform() == Common::kPlatformAmiga && (getFeatures() & GF_LANG_MULT)) ? _amigaKeys : _pcKeys;

@@ -144,7 +144,7 @@ int Parallaction_br::go() {
 }
 
 void Parallaction_br::splash(const char *name) {
-
+#if 0
 	BackgroundInfo info;
 
 	_gfx->clearScreen(Gfx::kBitFront);
@@ -163,7 +163,7 @@ void Parallaction_br::splash(const char *name) {
 		_system->delayMillis(20);
 	}
 	info.bg.free();
-
+#endif
 	return;
 }
 
@@ -186,9 +186,9 @@ void Parallaction_br::invertMenuItem(Graphics::Surface &surf) {
 
 int Parallaction_br::showMenu() {
 	// TODO: filter menu entries according to progress in game
-
+#if 0
 	_gfx->clearScreen(Gfx::kBitFront);
-
+#endif
 	BackgroundInfo info;
 
 	Graphics::Surface	_menuItems[7];
@@ -212,11 +212,11 @@ int Parallaction_br::showMenu() {
 		kMenuPart3,
 		kMenuPart4
 	};
-
+#if 0
 	_disk->loadSlide(info, "tbra");
 	_gfx->setPalette(info.palette);
 	_gfx->flatBlitCnv(&info.bg, 20, 50, Gfx::kBitFront);
-
+#endif
 	int availItems = 4 + _progress;
 
 	for (int i = 0; i < availItems; i++)
@@ -251,12 +251,12 @@ int Parallaction_br::showMenu() {
 				invertMenuItem(_menuItems[oldSelectedItem]);
 
 			Common::Rect r(MENUITEM_WIDTH, MENUITEM_HEIGHT);
-
+#if 0
 			for (int i = 0; i < availItems; i++) {
 				r.moveTo(MENUITEMS_X, MENUITEMS_Y + i * 20);
 				_gfx->copyRect(Gfx::kBitFront, r, (byte*)_menuItems[i].pixels, _menuItems[i].pitch);
 			}
-
+#endif
 			oldSelectedItem = selectedItem;
 		}
 

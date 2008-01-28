@@ -349,8 +349,6 @@ class Gfx {
 public:
 	enum Buffers {
 		// bit buffers
-		kBitFront,
-		kBitBack,
 		kBit2
 	};
 

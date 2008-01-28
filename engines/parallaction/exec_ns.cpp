@@ -360,27 +360,6 @@ void Parallaction_ns::drawAnimations() {
 }
 
 
-void Parallaction_ns::eraseAnimations() {
-	debugC(9, kDebugExec, "eraseAnimations");
-
-	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
-
-		Animation *a = *it;
-
-		if (((a->_flags & kFlagsActive) == 0) && ((a->_flags & kFlagsRemove) == 0)) continue;
-
-		Common::Rect r(a->width(), a->height());
-		r.moveTo(a->_oldPos);
-		_gfx->restoreBackground(r);
-
-		a->_oldPos.x = a->_left;
-		a->_oldPos.y = a->_top;
-	}
-
-	return;
-}
-
-
 void Parallaction_ns::runScripts() {
 	debugC(9, kDebugExec, "runScripts");
 
