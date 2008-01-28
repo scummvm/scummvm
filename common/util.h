@@ -236,16 +236,6 @@ struct EngineDebugLevel {
 	EngineDebugLevel() : option(""), description(""), level(0), enabled(false) {}
 	EngineDebugLevel(uint32 l, const String &o, const String &d)
 		: option(o), description(d), level(l), enabled(false) {}
-	EngineDebugLevel(const EngineDebugLevel &copy)
-		: option(copy.option), description(copy.description), level(copy.level), enabled(copy.enabled) {}
-
-	EngineDebugLevel &operator =(const EngineDebugLevel &copy) {
-		option = copy.option;
-		description = copy.description;
-		level = copy.level;
-		enabled = copy.enabled;
-		return *this;
-	}
 
 	String option;
 	String description;
