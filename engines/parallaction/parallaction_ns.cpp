@@ -131,7 +131,6 @@ int Parallaction_ns::init() {
 		_soundMan = new AmigaSoundMan(this);
 	}
 
-	initJobs();
 	initResources();
 	initFonts();
 	initCursors();
@@ -295,9 +294,6 @@ void Parallaction_ns::changeLocation(char *location) {
 
 	_soundMan->playLocationMusic(location);
 
-	// WORKAROUND: this hideLabel has been added to avoid crashes caused by
-	// execution of label jobs after a location switch. The other workaround in
-	// Parallaction::runGame should have been rendered useless by this one.
 	_gfx->setFloatingLabel(0);
 	_gfx->freeLabels();
 
@@ -307,12 +303,6 @@ void Parallaction_ns::changeLocation(char *location) {
 	}
 
 	_animations.remove(&_char._ani);
-
-	// WORKAROUND: eat up any pending short-lived job that may be referring to the
-	// current location before the actual switch is performed, or engine may
-	// segfault because of invalid pointers.
-	runJobs();
-	runJobs();
 
 	freeLocation();
 
@@ -422,30 +412,6 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	debugC(3, kDebugExec, "changeCharacter: switch completed");
 
 	return;
-}
-
-void Parallaction_ns::initJobs() {
-
-	static const JobFn jobs[] = {
-		0,
-		0,
-		&Parallaction_ns::jobDisplayDroppedItem,
-		&Parallaction_ns::jobRemovePickedItem,
-		0,
-		0,
-		0,
-		0,
-		0,
-		&Parallaction_ns::jobToggleDoor,
-		0,
-		0
-	};
-
-	_jobsFn = jobs;
-}
-
-JobOpcode* Parallaction_ns::createJobOpcode(uint functionId, Job *job) {
-	return new OpcodeImpl2<Parallaction_ns>(this, _jobsFn[functionId], job);
 }
 
 void Parallaction_ns::cleanupGame() {

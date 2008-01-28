@@ -398,12 +398,12 @@ void Parallaction_ns::walk() {
 
 	if (it != list->end()) {
 		if ((*it)->_x == pos.x && (*it)->_y == pos.y) {
-			debugC(1, kDebugWalk, "jobWalk reached node (%i, %i)", (*it)->_x, (*it)->_y);
+			debugC(1, kDebugWalk, "walk reached node (%i, %i)", (*it)->_x, (*it)->_y);
 			it = list->erase(it);
 		}
 	}
 	if (it == list->end()) {
-		debugC(1, kDebugWalk, "jobWalk reached last node");
+		debugC(1, kDebugWalk, "walk reached last node");
 //		j->_finished = 1;
 		finalizeWalk(list);
 		return;
@@ -419,7 +419,7 @@ void Parallaction_ns::walk() {
 	Common::Point newpos(_char._ani._left, _char._ani._top);
 
 	if (newpos == _char._ani._oldPos) {
-		debugC(1, kDebugWalk, "jobWalk was blocked by an unforeseen obstacle");
+		debugC(1, kDebugWalk, "walk was blocked by an unforeseen obstacle");
 //		j->_finished = 1;
 		finalizeWalk(list);
 	} else {

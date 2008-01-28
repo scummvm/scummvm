@@ -293,7 +293,6 @@ void Parallaction::runGame() {
 			eraseAnimations();
 			runScripts();
 			walk();
-			runJobs();
 			drawAnimations();
 		}
 
@@ -623,39 +622,6 @@ void Parallaction::freeCharacter() {
 }
 
 
-
-/*
-	helper function to provide *descending* ordering of the job list
-	(higher priorities values comes first in the list)
-*/
-int compareJobPriority(const JobPointer &j1, const JobPointer &j2) {
-	return (j1->_job->_tag >= j2->_job->_tag ? -1 : 1);
-}
-
-Job *Parallaction::addJob(uint functionId, void *parm, uint16 tag) {
-	debugC(9, kDebugExec, "addJob(%i)", tag);
-
-	Job *v8 = new Job;
-
-	v8->_parm = parm;
-	v8->_tag = tag;
-	v8->_finished = 0;
-	v8->_count = 0;
-
-	JobOpcode *op = createJobOpcode(functionId, v8);
-
-	_jobs.insertSorted(op, compareJobPriority);
-
-	return v8;
-}
-
-void Parallaction::removeJob(Job *j) {
-	debugC(9, kDebugExec, "addJob(%i)", j->_tag);
-
-	j->_finished = 1;
-	return;
-}
-
 void Parallaction::pauseJobs() {
 	debugC(9, kDebugExec, "pausing jobs execution");
 
@@ -669,33 +635,6 @@ void Parallaction::resumeJobs() {
 	_engineFlags &= ~kEnginePauseJobs;
 	return;
 }
-
-void Parallaction::runJobs() {
-
-	if (_engineFlags & kEnginePauseJobs) return;
-
-	JobList::iterator it = _jobs.begin();
-	while (it != _jobs.end()) {
-		Job *job = (*it)->_job;
-		if (job->_finished == 1)
-			it = _jobs.erase(it);
-		else
-			it++;
-	}
-
-	it = _jobs.begin();
-	while (it != _jobs.end()) {
-		Job *job = (*it)->_job;
-		debugC(9, kDebugExec, "runJobs: %i", job->_tag);
-		(*(*it))();
-		it++;
-	}
-
-
-	return;
-}
-
-
 
 
 void Parallaction::pushParserTables(OpcodeSet *opcodes, Table *statements) {
@@ -970,10 +909,6 @@ void Character::scheduleWalk(int16 x, int16 y) {
 	}
 
 	_walkPath = _builder.buildPath(x, y);
-
-//	WalkNodeList *list = _builder.buildPath(x, y);
-//	_vm->addJob(kJobWalk, list, kPriority19 );
-
 	_engineFlags |= kEngineWalking;
 }
 

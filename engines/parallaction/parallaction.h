@@ -141,20 +141,6 @@ struct PARALLACTIONGameDescription;
 
 
 
-struct Job;
-
-struct Job {
-	uint16		_count;			// # of executions left
-	uint16		_tag;			// used for ordering
-	uint16		_finished;
-	void *		_parm;
-
-public:
-	Job() : _count(0), _tag(0), _finished(0), _parm(NULL) {
-	}
-};
-
-
 extern uint16		_mouseButtons;
 extern char			_password[8];
 extern uint16		_score;
@@ -288,63 +274,6 @@ public:
 
 typedef Common::Array<const Opcode*>	OpcodeSet;
 
-class JobOpcode {
-
-public:
-	Job *_job;
-
-	JobOpcode(Job *job) : _job(job) { }
-
-	virtual void operator()() const = 0;
-	virtual ~JobOpcode() {
-		delete _job;
-	}
-};
-
-template <class T>
-class OpcodeImpl2 : public JobOpcode {
-
-	typedef void (T::*Fn)(void *, Job*);
-
-	T*	_instance;
-	Fn	_fn;
-
-public:
-	OpcodeImpl2(T* instance, const Fn &fn, Job* job) : JobOpcode(job), _instance(instance), _fn(fn) { }
-
-	void operator()() const {
-		(_instance->*_fn)(_job->_parm, _job);
-	}
-
-};
-
-typedef JobOpcode* JobPointer;
-typedef ManagedList<JobPointer> JobList;
-
-enum Jobs {
-	kJobDisplayAnimations = 0,
-	kJobEraseAnimations = 1,
-	kJobDisplayDroppedItem = 2,
-	kJobRemovePickedItem = 3,
-	kJobRunScripts = 4,
-	kJobWalk = 5,
-	kJobDisplayLabel = 6,
-	kJobEraseLabel = 7,
-	kJobWaitRemoveJob = 8,
-	kJobToggleDoor = 9,
-
-	// NS specific
-	kJobShowInventory = 10,
-	kJobHideInventory,
-
-	// BRA specific
-	kJobEraseSubtitle = 10,
-	kJobDisplaySubtitle,
-	kJobWaitRemoveSubtitleJob,
-	kJobPauseSfx,
-	kJobStopFollower,
-	kJobScroll
-};
 
 
 #define DECLARE_UNQUALIFIED_ZONE_PARSER(sig) void locZoneParse_##sig()
@@ -415,12 +344,8 @@ public:
 
 	void		showCursor(bool visible);
 
-	Job			*addJob(uint functionId, void *parm, uint16 tag);
-	void		removeJob(Job *j);
 	void		pauseJobs();
 	void		resumeJobs();
-	void		runJobs();
-	virtual		JobOpcode* createJobOpcode(uint functionId, Job *job) = 0;
 
 	void		finalizeWalk(WalkNodeList *list);
 	int16		selectWalkFrame(const Common::Point& pos, const WalkNode* from);
@@ -524,8 +449,6 @@ protected:		// data
 	uint32		_baseTime;
 	char		_characterName1[50];	// only used in changeCharacter
 
-	JobList		_jobs;
-
 	Common::String	_saveFileName;
 
 	bool		_hasLocationSound;
@@ -576,9 +499,6 @@ public:
 
 	virtual void parseLocation(const char* name) = 0;
 
-	virtual void jobDisplayDroppedItem(void*, Job *j) = 0;
-	virtual void jobRemovePickedItem(void*, Job *j) = 0;
-	virtual void jobToggleDoor(void*, Job *j) = 0;
 	void updateDoor(Zone *z);
 
 	virtual void runScripts() = 0;
@@ -672,13 +592,6 @@ public:
 	virtual	void callFunction(uint index, void* parm);
 	void setMousePointer(uint32 value);
 
-	void	initJobs();
-
-	typedef void (Parallaction_ns::*JobFn)(void*, Job*);
-
-	const JobFn		*_jobsFn;
-	JobOpcode*	createJobOpcode(uint functionId, Job *job);
-
 	bool loadGame();
 	bool saveGame();
 
@@ -752,10 +665,6 @@ private:
 	const Callable *_callables;
 
 protected:
-	void jobDisplayDroppedItem(void*, Job *j) { }
-	void jobRemovePickedItem(void*, Job *j)  { }
-	void jobToggleDoor(void*, Job *j)  { }
-
 	void runScripts();
 	void walk();
 	void drawAnimations();
@@ -992,15 +901,9 @@ private:
 	void		freeFonts();
 	void		initOpcodes();
 	void		initParsers();
-	void		initJobs();
 
 	void setArrowCursor();
 	void setInventoryCursor(int pos);
-
-
-	typedef void (Parallaction_br::*JobFn)(void*, Job*);
-	const JobFn		*_jobsFn;
-	JobOpcode*		createJobOpcode(uint functionId, Job *job);
 
 	void		changeLocation(char *location);
 	void		changeCharacter(const char *name);
@@ -1146,10 +1049,8 @@ private:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(stop);
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
 
-	Job *_jDisplaySubtitle;
-	Job *_jEraseSubtitle;
 	void setupSubtitles(char *s, char *s2, int y);
-
+#if 0
 	void jobWaitRemoveLabelJob(void *parm, Job *job);
 	void jobDisplaySubtitle(void *parm, Job *job);
 	void jobEraseSubtitle(void *parm, Job *job);
@@ -1157,7 +1058,7 @@ private:
 	void jobPauseSfx(void *parm, Job *job);
 	void jobStopFollower(void *parm, Job *job);
 	void jobScroll(void *parm, Job *job);
-
+#endif
 };
 
 // FIXME: remove global

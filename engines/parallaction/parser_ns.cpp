@@ -1288,8 +1288,6 @@ void Parallaction_ns::parseGetData(Script &script, Zone *z) {
 			bool visible = (z->_flags & kFlagsRemove) == 0;
 
 			GfxObj *obj = _gfx->loadGet(_tokens[1]);
-//			obj->setFrame(0);
-//			obj->setPos(z->_left, z->_top);
 			obj->frame = 0;
 			obj->x = z->_left;
 			obj->y = z->_top;
@@ -1353,8 +1351,6 @@ void Parallaction_ns::parseDoorData(Script &script, Zone *z) {
 			uint16 frame = (z->_flags & kFlagsClosed ? 0 : 1);
 
 			GfxObj *obj = _gfx->loadDoor(_tokens[1]);
-//			obj->setFrame(frame);
-//			obj->setPos(z->_left, z->_top);
 			obj->frame = frame;
 			obj->x = z->_left;
 			obj->y = z->_top;

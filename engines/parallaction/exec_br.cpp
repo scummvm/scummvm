@@ -425,14 +425,13 @@ DECLARE_INSTRUCTION_OPCODE(print) {
 }
 
 
-
+#if 0
 void Parallaction_br::jobDisplaySubtitle(void *parm, Job *job) {
 //	_gfx->drawLabel(_subtitle0);
 //	_gfx->drawLabel(_subtitle1);
 }
 
 void Parallaction_br::jobEraseSubtitle(void *parm, Job *job) {
-#if 0
 	Common::Rect r;
 
 	if (_subtitle0._old.x != -1000) {
@@ -452,9 +451,8 @@ void Parallaction_br::jobEraseSubtitle(void *parm, Job *job) {
 		_gfx->restoreBackground(r);
 	}
 	_subtitle1._old = _subtitle1._pos;
-#endif
 }
-
+#endif
 DECLARE_INSTRUCTION_OPCODE(text) {
 	Instruction *inst = (*_instRunCtxt.inst);
 	setupSubtitles(inst->_text, inst->_text2, inst->_y);
@@ -582,7 +580,7 @@ void Parallaction_br::initOpcodes() {
 
 }
 
-
+#if 0
 void Parallaction_br::jobWaitRemoveLabelJob(void *parm, Job *job) {
 
 }
@@ -606,7 +604,7 @@ void Parallaction_br::jobStopFollower(void *parm, Job *job) {
 void Parallaction_br::jobScroll(void *parm, Job *job) {
 
 }
-
+#endif
 
 
 

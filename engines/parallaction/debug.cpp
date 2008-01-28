@@ -32,31 +32,6 @@
 namespace Parallaction {
 
 
-const char *_jobDescriptions[] = {
-	"draw label",
-	"draw mouse",
-	"delayed label deletion || show inventory",
-	"draw animations",
-	"NONE",
-	"NONE",
-	"NONE",
-	"NONE",
-	"NONE",
-	"NONE",
-	"NONE",
-	"NONE",
-	"NONE",
-	"NONE",
-	"NONE",
-	"delayed label deletion || run scripts || erase animations",
-	"NONE",
-	"put item || pickup item",
-	"toggle door",
-	"walk",
-	"erase label || hide inventory",
-	"erase mouse"
-};
-
 Debugger::Debugger(Parallaction *vm)
 	: GUI::Debugger() {
 	_vm = vm;
@@ -64,7 +39,6 @@ Debugger::Debugger(Parallaction *vm)
 	DCmd_Register("continue",	WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("location",	WRAP_METHOD(Debugger, Cmd_Location));
 	DCmd_Register("give",		WRAP_METHOD(Debugger, Cmd_Give));
-	DCmd_Register("jobs",		WRAP_METHOD(Debugger, Cmd_Jobs));
 	DCmd_Register("zones",		WRAP_METHOD(Debugger, Cmd_Zones));
 	DCmd_Register("animations",	WRAP_METHOD(Debugger, Cmd_Animations));
 	DCmd_Register("localflags",	WRAP_METHOD(Debugger, Cmd_LocalFlags));
@@ -124,9 +98,6 @@ bool Debugger::Cmd_Locations(int argc, const char **argv) {
 
 bool Debugger::Cmd_LocalFlags(int argc, const char **argv) {
 
-	JobList::iterator b = _vm->_jobs.begin();
-	JobList::iterator e = _vm->_jobs.end();
-
 	uint32 flags = _vm->_localFlags[_vm->_currentLocationIndex];
 
 	DebugPrintf("+------------------------------+---------+\n"
@@ -156,23 +127,6 @@ bool Debugger::Cmd_Give(int argc, const char **argv) {
 	return true;
 }
 
-
-bool Debugger::Cmd_Jobs(int argc, const char **argv) {
-
-	JobList::iterator b = _vm->_jobs.begin();
-	JobList::iterator e = _vm->_jobs.end();
-
-	DebugPrintf("+---+-------------------------------------------------------------+\n"
-				"|tag| description                                                 |\n"
-				"+---+-------------------------------------------------------------+\n");
-	for ( ; b != e; b++) {
-		DebugPrintf("|%3i| %-60s|\n", (*b)->_job->_tag, _jobDescriptions[(*b)->_job->_tag] );
-	}
-	DebugPrintf("+---+-------------------------------------------------------------+\n");
-
-
-	return true;
-}
 
 bool Debugger::Cmd_Zones(int argc, const char **argv) {
 

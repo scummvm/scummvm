@@ -130,6 +130,7 @@ void Gfx::drawGfxObjects(Graphics::Surface &surf) {
 	// TODO: some zones don't appear because of wrong masking (3 or 0?)
 	// TODO: Dr.Ki is not visible inside the club
 
+
 	for (uint i = 0; i < 3; i++) {
 
 		GfxObjList::iterator b = _gfxobjList[i].begin();

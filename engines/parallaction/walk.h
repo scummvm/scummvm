@@ -31,7 +31,6 @@
 namespace Parallaction {
 
 struct Animation;
-struct Job;
 
 struct WalkNode {
 	int16	_x;
@@ -47,8 +46,6 @@ public:
 
 typedef ManagedList<WalkNode*> WalkNodeList;
 
-
-void		 jobWalk(void*, Job *j);
 
 struct PathBuffer {
 	// handles a 1-bit depth buffer used for masking non-walkable areas

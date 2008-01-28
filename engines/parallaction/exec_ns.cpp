@@ -338,11 +338,8 @@ void Parallaction_ns::drawAnimations() {
 
 			_gfx->showGfxObj(obj, true);
 			obj->frame = frame;
-//			obj->setFrame(frame);
 			obj->x = v18->_left;
 			obj->y = v18->_top;
-//			obj->setPos(v18->_top, v18->_left);
-//			obj->setZ(_si);
 			obj->z = _si;
 		}
 
@@ -363,7 +360,7 @@ void Parallaction_ns::drawAnimations() {
 
 
 void Parallaction_ns::eraseAnimations() {
-	debugC(9, kDebugExec, "jobEraseAnimations");
+	debugC(9, kDebugExec, "eraseAnimations");
 
 	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 
@@ -384,7 +381,7 @@ void Parallaction_ns::eraseAnimations() {
 
 
 void Parallaction_ns::runScripts() {
-	debugC(9, kDebugExec, "jobRunScripts");
+	debugC(9, kDebugExec, "runScripts");
 
 	if (_engineFlags & kEnginePauseJobs) {
 		return;
