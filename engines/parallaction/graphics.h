@@ -270,6 +270,7 @@ public:
 	uint16 z;
 	uint type;
 	uint frame;
+	uint layer;
 
 	GfxObj(uint type, Frames *frames, const char *name = NULL);
 	virtual ~GfxObj();
@@ -312,6 +313,7 @@ public:
 	void showGfxObj(GfxObj* obj, bool visible);
 	GfxObjList _gfxobjList[3];
 	void drawGfxObjects(Graphics::Surface &surf);
+	void sortAnimations();
 
 public:
 
@@ -368,7 +370,7 @@ public:
 	void setProjectorPos(int x, int y);
 
 	// misc
-	int16 queryMask(int16 v);
+	uint16 queryMask(uint16 v);
 	void swapBuffers();
 	void updateScreen();
 	void setBackground(Graphics::Surface *surf);
@@ -458,6 +460,7 @@ protected:
 
 
 #endif
+
 
 
 

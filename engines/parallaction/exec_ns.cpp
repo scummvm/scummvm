@@ -320,7 +320,7 @@ DECLARE_COMMAND_OPCODE(stop) {
 
 void Parallaction_ns::drawAnimations() {
 
-	uint16 _si = 0;
+	uint16 layer = 0;
 
 	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
 
@@ -331,16 +331,17 @@ void Parallaction_ns::drawAnimations() {
 
 			int16 frame = CLIP((int)v18->_frame, 0, v18->getFrameNum()-1);
 			if (v18->_flags & kFlagsNoMasked)
-				_si = 3;
+				layer = 3;
 			else
-				_si = _gfx->queryMask(v18->_top + v18->height());
+				layer = _gfx->queryMask(v18->_top + v18->height());
 
 
 			_gfx->showGfxObj(obj, true);
 			obj->frame = frame;
 			obj->x = v18->_left;
 			obj->y = v18->_top;
-			obj->z = _si;
+			obj->z = v18->_z;
+			obj->layer = layer;
 		}
 
 		if (((v18->_flags & kFlagsActive) == 0) && (v18->_flags & kFlagsRemove))   {
@@ -426,7 +427,8 @@ label1:
 			a->_z = a->_top + a->height();
 	}
 
-	sortAnimations();
+	_char._ani._z = _char._ani.height() + _char._ani._top;
+	_char._ani.gfxobj->z = _char._ani._z;
 	modCounter++;
 
 	return;

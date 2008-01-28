@@ -361,7 +361,6 @@ public:
 	void		runCommands(CommandList& list, Zone *z = NULL);
 
 	Animation	*findAnimation(const char *name);
-	void		sortAnimations();
 	void		freeAnimations();
 
 	void		setBackground(const char *background, const char *mask, const char *path);

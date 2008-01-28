@@ -857,7 +857,7 @@ void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uin
 }
 
 
-int16 Gfx::queryMask(int16 v) {
+uint16 Gfx::queryMask(uint16 v) {
 
 	for (uint16 _si = 0; _si < 3; _si++) {
 		if (_bgLayers[_si+1] > v) return _si;

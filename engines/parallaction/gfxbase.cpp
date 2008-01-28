@@ -29,7 +29,7 @@
 
 namespace Parallaction {
 
-GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : type(objType), _frames(frames), x(0), y(0), z(3), frame(0), _flags(0), _keep(true) {
+GfxObj::GfxObj(uint objType, Frames *frames, const char* name) : type(objType), _frames(frames), x(0), y(0), z(0), frame(0), layer(3), _flags(0), _keep(true) {
 	if (name) {
 		_name = strdup(name);
 	} else {
@@ -121,12 +121,42 @@ void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 
 }
 
+
+
+int compareAnimationZ(const GfxObj* a1, const GfxObj* a2) {
+	if (a1->z == a2->z) return 0;
+	return (a1->z < a2->z ? -1 : 1);
+}
+
+void Gfx::sortAnimations() {
+
+	GfxObjList::iterator first = _gfxobjList[kGfxObjTypeAnim].begin();
+	GfxObjList::iterator last = _gfxobjList[kGfxObjTypeAnim].end();
+
+	if (first == last)
+		return;
+
+	// Simple selection sort
+	GfxObjList::iterator i(first);
+	for (; i != last; ++i) {
+		GfxObjList::iterator minElem(i);
+		GfxObjList::iterator j(i);
+		++j;
+		for (; j != last; ++j)
+			if (compareAnimationZ(*j, *minElem) < 0)
+				minElem = j;
+		if (minElem != i)
+			SWAP(*minElem, *i);
+	}
+
+}
+
 void Gfx::drawGfxObjects(Graphics::Surface &surf) {
 
 	Common::Rect rect;
 	byte *data;
 
-	// TODO: sort animations before drawing
+	sortAnimations();
 	// TODO: some zones don't appear because of wrong masking (3 or 0?)
 	// TODO: Dr.Ki is not visible inside the club
 
@@ -142,7 +172,7 @@ void Gfx::drawGfxObjects(Graphics::Surface &surf) {
 				obj->getRect(obj->frame, rect);
 				rect.moveTo(obj->x, obj->y);
 				data = obj->getData(obj->frame);
-				blt(rect, data, &surf, obj->z, 0);
+				blt(rect, data, &surf, obj->layer, 0);
 			}
 		}
 	}

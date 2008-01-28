@@ -678,16 +678,6 @@ void Parallaction::freeAnimations() {
 	return;
 }
 
-int compareAnimationZ(const AnimationPointer &a1, const AnimationPointer &a2) {
-	if (a1->_z == a2->_z) return 0;
-	return (a1->_z < a2->_z ? -1 : 1);
-}
-
-void Parallaction::sortAnimations() {
-	_char._ani._z = _char._ani.height() + _char._ani._top;
-	_animations.sort(compareAnimationZ);
-	return;
-}
 
 
 void Parallaction::allocateLocationSlot(const char *name) {

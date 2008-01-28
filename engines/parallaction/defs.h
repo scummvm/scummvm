@@ -75,36 +75,13 @@ public:
 			Common_List::insert(it, element);
 	}
 
-	// FIXME: this routine is a copy of the sort routine that can be found in common/func.cpp
-	// That wasn't usable because the 'less than' operator was hardcoded. Any comments or
-	// suggestions are welcome.
-	void sort(CompareFunction compare) {
-		iterator first = Common_List::begin();
-		iterator last = Common_List::end();
-
-		if (first == last)
-			return;
-
-		// Simple selection sort
-		iterator i(first);
-		for (; i != last; ++i) {
-			iterator minElem(i);
-			iterator j(i);
-			++j;
-			for (; j != last; ++j)
-				if (compare(*j, *minElem) < 0)
-					minElem = j;
-			if (minElem != i)
-				SWAP(*minElem, *i);
-		}
-	}
-
 };
 
 } // namespace Parallaction
 
 
 #endif
+
 
 
 
