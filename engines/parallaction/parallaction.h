@@ -237,16 +237,6 @@ public:
 
 
 
-struct BackgroundInfo {
-	uint width;
-	uint height;
-
-	Graphics::Surface	bg;
-	MaskBuffer			mask;
-	PathBuffer			path;
-
-	Palette				palette;
-};
 
 class Opcode {
 
@@ -452,8 +442,6 @@ protected:		// data
 
 	bool		_hasLocationSound;
 	char		_locationSound[50];
-
-	BackgroundInfo	*_backgroundInfo;
 
 	Zone		*_hoverZone;
 

@@ -152,6 +152,41 @@ public:
 
 };
 
+
+struct PathBuffer {
+	// handles a 1-bit depth buffer used for masking non-walkable areas
+
+	uint16	w;
+	uint16  internalWidth;
+	uint16	h;
+	uint	size;
+	byte	*data;
+
+public:
+	PathBuffer() : w(0), internalWidth(0), h(0), size(0), data(0) {
+	}
+
+	void create(uint16 width, uint16 height) {
+		w = width;
+		internalWidth = w >> 3;
+		h = height;
+		size = (internalWidth * h);
+		data = (byte*)calloc(size, 1);
+	}
+
+	void free() {
+		::free(data);
+		data = 0;
+		w = 0;
+		h = 0;
+		internalWidth = 0;
+		size = 0;
+	}
+
+	inline byte getValue(uint16 x, uint16 y);
+};
+
+
 class Palette {
 
 	byte	_data[768];
@@ -290,8 +325,24 @@ public:
 	void release();
 };
 
-
 typedef Common::List<GfxObj*> GfxObjList;
+
+struct BackgroundInfo {
+	uint width;
+	uint height;
+
+	Graphics::Surface	bg;
+	MaskBuffer			mask;
+	PathBuffer			path;
+
+	Palette				palette;
+};
+
+
+enum {
+	kBackgroundLocation = 1,
+	kBackgroundSlide = 2
+};
 
 class Gfx {
 
@@ -314,6 +365,10 @@ public:
 	GfxObjList _gfxobjList[3];
 	void drawGfxObjects(Graphics::Surface &surf);
 	void sortAnimations();
+
+	BackgroundInfo	*_backgroundInfo;
+	void freeBackground();
+	void setBackground(uint type, const char* name, const char* mask, const char* path);
 
 public:
 

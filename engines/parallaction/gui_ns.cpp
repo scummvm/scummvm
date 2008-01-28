@@ -178,11 +178,12 @@ void Parallaction_ns::guiSplash() {
 	showSlide("intro");
 	_gfx->updateScreen();
 	g_system->delayMillis(2000);
+	freeBackground();
 
 	showSlide("minintro");
 	_gfx->updateScreen();
 	g_system->delayMillis(2000);
-
+	freeBackground();
 }
 
 int Parallaction_ns::guiNewGame() {

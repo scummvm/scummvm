@@ -266,24 +266,7 @@ void Parallaction_ns::switchBackground(const char* background, const char* mask)
 
 
 void Parallaction_ns::showSlide(const char *name) {
-
-	BackgroundInfo info;
-
-	_disk->loadSlide(info, name);
-
-	// TODO: avoid using screen buffers for displaying slides. Using a generic buffer
-	// allows for positioning of graphics as needed by Big Red Adventure.
-	// The main problem lies with menu, which relies on multiple buffers, mainly because
-	// it is crappy code.
-	_gfx->setBackground(&info.bg);
-	_gfx->setPalette(info.palette);
-	_gfx->copyScreen(Gfx::kBitBack, Gfx::kBitFront);
-
-	info.bg.free();
-	info.mask.free();
-	info.path.free();
-
-	return;
+	_gfx->setBackground(kBackgroundSlide, name, 0, 0);
 }
 
 //	changeLocation handles transitions between locations, and is able to display slides
@@ -315,6 +298,7 @@ void Parallaction_ns::changeLocation(char *location) {
 		_gfx->showLabel(id, CENTER_LABEL_HORIZONTAL, 14);
 		waitUntilLeftClick();
 		_gfx->freeLabels();
+		freeBackground();
 	}
 
 	if (locname.hasCharacter()) {

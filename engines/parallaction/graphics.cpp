@@ -345,6 +345,7 @@ void Gfx::drawBalloons() {
 }
 
 void Gfx::updateScreen() {
+#if 0
 	if (_halfbrite) {
 		Graphics::Surface *surf = g_system->lockScreen();
 		byte *src = (byte*)_buffers[kBitFront]->pixels;
@@ -359,6 +360,8 @@ void Gfx::updateScreen() {
 	} else {
 		g_system->copyRectToScreen((const byte*)_buffers[kBitFront]->pixels, _buffers[kBitFront]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
 	}
+#endif
+	g_system->copyRectToScreen((const byte*)_buffers[kBit2]->pixels, _buffers[kBit2]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
 
 	Graphics::Surface *surf = g_system->lockScreen();
 	drawGfxObjects(*surf);
@@ -900,6 +903,7 @@ Gfx::Gfx(Parallaction* vm) :
 	_hbCircleRadius = 0;
 
 	_font = NULL;
+	_backgroundInfo = new BackgroundInfo;
 
 	return;
 }
@@ -907,6 +911,9 @@ Gfx::Gfx(Parallaction* vm) :
 Gfx::~Gfx() {
 
 	freeBuffers();
+
+	freeBackground();
+	delete _backgroundInfo;
 
 	return;
 }
@@ -1172,5 +1179,42 @@ bool Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16
 	return rv;
 
 }
+
+void Gfx::freeBackground() {
+
+	if (!_backgroundInfo)
+		return;
+
+	_backgroundInfo->bg.free();
+	_backgroundInfo->mask.free();
+	_backgroundInfo->path.free();
+
+}
+
+void Gfx::setBackground(uint type, const char* name, const char* mask, const char* path) {
+
+	if (type == kBackgroundLocation) {
+
+		_disk->loadScenery(*_backgroundInfo, name, mask, path);
+
+		setPalette(_backgroundInfo->palette);
+		_palette.clone(_backgroundInfo->palette);
+		setBackground(&_backgroundInfo->bg);
+
+		if (_backgroundInfo->mask.data)
+			setMask(&_backgroundInfo->mask);
+
+	} else {
+
+		_disk->loadSlide(*_backgroundInfo, name);
+
+		setPalette(_backgroundInfo->palette);
+		setBackground(&_backgroundInfo->bg);
+
+	}
+
+	return;
+}
+
 
 } // namespace Parallaction

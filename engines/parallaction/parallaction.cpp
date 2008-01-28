@@ -118,9 +118,6 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 Parallaction::~Parallaction() {
 	delete _debugger;
 
-	freeBackground();
-	delete _backgroundInfo;
-
 	delete _globalTable;
 
 	delete _callableNames;
@@ -160,13 +157,10 @@ int Parallaction::init() {
 	_location._comment = NULL;
 	_location._endComment = NULL;
 
-	_backgroundInfo = 0;
 	_pathBuffer = 0;
 	_activeZone = 0;
 
 	_screenSize = _screenWidth * _screenHeight;
-
-	_backgroundInfo = new BackgroundInfo;
 
 	strcpy(_characterName1, "null");
 
@@ -725,6 +719,7 @@ void Parallaction::freeLocation() {
 	_location._walkNodes.clear();
 
 	_gfx->clearGfxObjects();
+	freeBackground();
 
 	freeZones();
 	freeAnimations();
@@ -743,30 +738,15 @@ void Parallaction::freeLocation() {
 
 void Parallaction::freeBackground() {
 
-	if (!_backgroundInfo)
-		return;
-
-	_backgroundInfo->bg.free();
-	_backgroundInfo->mask.free();
-	_backgroundInfo->path.free();
-
+	_gfx->freeBackground();
 	_pathBuffer = 0;
 
 }
 
 void Parallaction::setBackground(const char* name, const char* mask, const char* path) {
 
-	_disk->loadScenery(*_backgroundInfo, name, mask, path);
-
-	_gfx->setPalette(_backgroundInfo->palette);
-	_gfx->_palette.clone(_backgroundInfo->palette);
-	_gfx->setBackground(&_backgroundInfo->bg);
-
-	if (_backgroundInfo->mask.data)
-		_gfx->setMask(&_backgroundInfo->mask);
-
-	if (_backgroundInfo->path.data)
-		_pathBuffer = &_backgroundInfo->path;
+	_gfx->setBackground(kBackgroundLocation, name, mask, path);
+	_pathBuffer = &_gfx->_backgroundInfo->path;
 
 	return;
 }

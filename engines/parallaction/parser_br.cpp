@@ -125,7 +125,7 @@ DECLARE_LOCATION_PARSER(location)  {
 	} else {
 		nextToken = 2;
 	}
-
+#if 0
 	_disk->loadScenery(*_backgroundInfo, _location._name, NULL, NULL);
 
 //	if (flip) {
@@ -135,7 +135,7 @@ DECLARE_LOCATION_PARSER(location)  {
 	_gfx->setBackground(&_backgroundInfo->bg);
 	_gfx->_palette.clone(_backgroundInfo->palette);
 	_gfx->setPalette(_backgroundInfo->palette);
-
+#endif
 
 	if (_tokens[nextToken][0] != '\0') {
 		_char._ani._left = atoi(_tokens[nextToken]);
@@ -271,21 +271,23 @@ DECLARE_LOCATION_PARSER(null)  {
 
 DECLARE_LOCATION_PARSER(mask)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(mask) ");
-
+#if 0
 	_disk->loadScenery(*_backgroundInfo, NULL, _tokens[1], NULL);
 	_gfx->setMask(&_backgroundInfo->mask);
 
 	_gfx->_bgLayers[0] = atoi(_tokens[2]);
 	_gfx->_bgLayers[1] = atoi(_tokens[3]);
 	_gfx->_bgLayers[2] = atoi(_tokens[4]);
+#endif
 }
 
 
 DECLARE_LOCATION_PARSER(path)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(path) ");
-
+#if 0
 	_disk->loadScenery(*_backgroundInfo, NULL, NULL, _tokens[1]);
 	_pathBuffer = &_backgroundInfo->path;
+#endif
 }
 
 
