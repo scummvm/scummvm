@@ -346,7 +346,7 @@ void Gfx::drawBalloons() {
 
 void Gfx::updateScreen() {
 
-	g_system->copyRectToScreen((const byte*)_buffers[kBit2]->pixels, _buffers[kBit2]->pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
+	g_system->copyRectToScreen((const byte*)_backgroundInfo->bg.pixels, _backgroundInfo->bg.pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
 
 	Graphics::Surface *surf = g_system->lockScreen();
 	drawGfxObjects(*surf);
@@ -354,7 +354,7 @@ void Gfx::updateScreen() {
 	if (_halfbrite) {
 		// FIXME: the implementation of halfbrite is now largely sub-optimal in that a full screen
 		// rewrite is needed to apply the effect.
-		byte *src = (byte*)_buffers[kBit2]->pixels;
+		byte *src = (byte*)_backgroundInfo->bg.pixels;
 		byte *dst = (byte*)surf->pixels;
 		for (int i = 0; i < surf->w*surf->h; i++) {
 			*dst++ = *src++ | 0x20;
@@ -383,7 +383,7 @@ void Gfx::updateScreen() {
 //	graphic primitives
 //
 void Gfx::clearBackground() {
-	memset(_buffers[kBit2]->pixels, 0, _vm->_screenSize);
+	memset(_backgroundInfo->bg.pixels, 0, _vm->_screenSize);
 }
 
 
@@ -393,16 +393,16 @@ void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) 
 	r.moveTo(x, y);
 
 	uint16 z = (mask) ? queryMask(y) : BUFFER_FOREGROUND;
-	blt(r, (byte*)surf.pixels, _buffers[kBit2], z, 0);
+	blt(r, (byte*)surf.pixels, &_backgroundInfo->bg, z, 0);
 }
 
 void Gfx::fillBackground(const Common::Rect& r, byte color) {
-	_buffers[kBit2]->fillRect(r, color);
+	_backgroundInfo->bg.fillRect(r, color);
 }
 
 void Gfx::invertBackground(const Common::Rect& r) {
 
-	byte *d = (byte*)_buffers[kBit2]->getBasePtr(r.left, r.top);
+	byte *d = (byte*)_backgroundInfo->bg.getBasePtr(r.left, r.top);
 
 	for (int i = 0; i < r.height(); i++) {
 		for (int j = 0; j < r.width(); j++) {
@@ -410,7 +410,7 @@ void Gfx::invertBackground(const Common::Rect& r) {
 			d++;
 		}
 
-		d += (_buffers[kBit2]->pitch - r.width());
+		d += (_backgroundInfo->bg.pitch - r.width());
 	}
 
 }
@@ -436,13 +436,13 @@ void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16
 	uint sPitch = r.width() - q.width();
 	uint dPitch = surf->w - q.width();
 
-    if (_depthMask && (z < BUFFER_FOREGROUND)) {
+    if (_backgroundInfo->mask.data && (z < BUFFER_FOREGROUND)) {
 
         for (uint16 i = 0; i < q.height(); i++) {
 
             for (uint16 j = 0; j < q.width(); j++) {
                 if (*s != transparentColor) {
-                    byte v = _depthMask->getValue(dp.x + j, dp.y + i);
+                    byte v = _backgroundInfo->mask.getValue(dp.x + j, dp.y + i);
                     if (z >= v) *d = *s;
                 }
 
@@ -709,33 +709,24 @@ void Gfx::setFont(Font *font) {
 }
 
 
-void Gfx::setBackground(Graphics::Surface *surface) {
-	_buffers[kBit2] = surface;
 
-	_backgroundWidth = surface->w;
-	_backgroundHeight = surface->h;
-}
+void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst) {
 
-void Gfx::setMask(MaskBuffer *buffer) {
-	_depthMask = buffer;
-}
+	byte *s = (byte*)src.getBasePtr(r.left, r.top);
+	byte *d = (byte*)dst.getBasePtr(0, 0);
 
-void Gfx::copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch) {
+	for (uint16 i = 0; i < r.height(); i++) {
+		memcpy(d, s, r.width());
 
-	for (uint16 _si = 0; _si < height; _si++) {
-		memcpy(dst, src, width);
-
-		src += srcPitch;
-		dst += dstPitch;
+		s += src.pitch;
+		d += dst.pitch;
 	}
 
 	return;
 }
 
 void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
-	byte *s = (byte*)_buffers[kBit2]->getBasePtr(r.left, r.top);
-	copyRect(r.width(), r.height(), (byte*)dst.pixels, dst.pitch, s, _backgroundWidth);
-	return;
+	copyRect(r, _backgroundInfo->bg, dst);
 }
 
 
@@ -755,13 +746,6 @@ Gfx::Gfx(Parallaction* vm) :
 	g_system->initSize(_vm->_screenWidth, _vm->_screenHeight);
 	_vm->initCommonGFX(_vm->getGameType() == GType_BRA);
 	g_system->endGFXTransaction();
-
-	_buffers[kBit2] = 0;
-	_depthMask = 0;
-
-	// FIXME: screen size must be decoupled from background size
-	_backgroundWidth = _vm->_screenWidth;
-	_backgroundHeight = _vm->_screenHeight;
 
 	setPalette(_palette);
 
@@ -1032,26 +1016,14 @@ void Gfx::freeBackground() {
 void Gfx::setBackground(uint type, const char* name, const char* mask, const char* path) {
 
 	if (type == kBackgroundLocation) {
-
 		_disk->loadScenery(*_backgroundInfo, name, mask, path);
-
 		setPalette(_backgroundInfo->palette);
 		_palette.clone(_backgroundInfo->palette);
-		setBackground(&_backgroundInfo->bg);
-
-		if (_backgroundInfo->mask.data)
-			setMask(&_backgroundInfo->mask);
-
 	} else {
-
 		_disk->loadSlide(*_backgroundInfo, name);
-
 		setPalette(_backgroundInfo->palette);
-		setBackground(&_backgroundInfo->bg);
-
 	}
 
-	return;
 }
 
 

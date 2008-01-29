@@ -274,7 +274,6 @@ struct Label {
 
 
 
-#define NUM_BUFFERS 4
 #define MAX_BALLOON_WIDTH 130
 
 class Parallaction;
@@ -347,11 +346,6 @@ enum {
 class Gfx {
 
 public:
-	enum Buffers {
-		// bit buffers
-		kBit2
-	};
-
 	Disk *_disk;
 
 	GfxObj* loadAnim(const char *name);
@@ -415,7 +409,6 @@ public:
 	// misc
 	uint16 queryMask(uint16 v);
 	void updateScreen();
-	void setBackground(Graphics::Surface *surf);
 	void setMask(MaskBuffer *buffer);
 
 	// init
@@ -428,16 +421,11 @@ public:
 	PaletteFxRange		_palettefx[6];
 	Palette				_palette;
 
-	int					_backgroundWidth;
-	int					_backgroundHeight;
-
 	uint				_screenX;		// scrolling position
 	uint				_screenY;
 
 protected:
 	Parallaction*		_vm;
-	Graphics::Surface	*_buffers[NUM_BUFFERS];
-	MaskBuffer			*_depthMask;
 	Font				*_font;
 	bool				_halfbrite;
 
@@ -481,7 +469,7 @@ protected:
 	void drawItems();
 	void drawBalloons();
 
-	void copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch);
+	void copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst);
 
 	int createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness);
 	Balloon *getBalloon(uint id);
