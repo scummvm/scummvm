@@ -347,12 +347,12 @@ void Parallaction_ns::drawAnimations() {
 		if (((v18->_flags & kFlagsActive) == 0) && (v18->_flags & kFlagsRemove))   {
 			v18->_flags &= ~kFlagsRemove;
 			v18->_oldPos.x = -1000;
-			_gfx->showGfxObj(obj, false);
 		}
 
 		if ((v18->_flags & kFlagsActive) && (v18->_flags & kFlagsRemove))	{
 			v18->_flags &= ~kFlagsActive;
 			v18->_flags |= kFlagsRemove;
+			_gfx->showGfxObj(obj, false);
 		}
 	}
 
