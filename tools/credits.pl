@@ -756,6 +756,7 @@ begin_credits("Credits");
 		  add_person("Andreas Karlsson", "Sprawl", "Initial port for EPOC/SymbianOS");
 		  add_person("Claudio Matsuoka", "", "Daily Linux builds");
 		  add_person("Thomas Mayer", "", "PSP port contributions");
+		  add_person("Sean Murray", "lightcast", "ScummVM tools GUI application (GSoC 2007 task)");
 		  add_person("", "n0p", "Windows CE port aspect ratio correction scaler and right click input method");
 		  add_person("Mikesch Nepomuk", "mnepomuk", "MI1 VGA floppy patches");
 		  add_person("Nicolas Noble", "pixels", "Config file and ALSA support");

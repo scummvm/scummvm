@@ -283,6 +283,8 @@ static const char *credits[] = {
 "\\C\\c2""Daily Linux builds",
 "\\C\\c0""Thomas Mayer",
 "\\C\\c2""PSP port contributions",
+"\\C\\c0""Sean Murray",
+"\\C\\c2""ScummVM tools GUI application (GSoC 2007 task)",
 "\\C\\c0""n0p",
 "\\C\\c2""Windows CE port aspect ratio correction scaler and right click input method",
 "\\C\\c0""Mikesch Nepomuk",

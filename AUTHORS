@@ -246,6 +246,7 @@ Other contributions
      Andreas Karlsson      - Initial port for EPOC/SymbianOS
      Claudio Matsuoka      - Daily Linux builds
      Thomas Mayer          - PSP port contributions
+     Sean Murray           - ScummVM tools GUI application (GSoC 2007 task)
      n0p                   - Windows CE port aspect ratio correction scaler
                              and right click input method
      Mikesch Nepomuk       - MI1 VGA floppy patches
