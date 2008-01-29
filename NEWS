@@ -11,10 +11,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  Lure:
    - Fixed some conversation crashes in the German version
-   - Fixed operation of the optional copy protection dialog in the German version
+   - Fixed operation of the optional copy protection dialog in the German
+     version
    - Added saving of conversation flags as to whether a particular conversation
      option had been previously selected or not
-   - Fixed glitch that could cause transformation sparkle to happen a second time
+   - Fixed glitch that could cause transformation sparkle to happen a second
+     time
    - Fixed behavior of Goewin when you rejoin her after meeting the dragon
 
  SAGA:
