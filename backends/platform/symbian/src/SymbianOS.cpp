@@ -35,6 +35,13 @@
 
 #include "..\..\sdl\main.cpp"
 
+#ifdef SAMPLES_PER_SEC_8000 // the GreanSymbianMMP format cannot handle values for defines :(
+  #define SAMPLES_PER_SEC 8000
+#else
+  #define SAMPLES_PER_SEC 16000
+#endif
+
+
 ////////// extern "C" ///////////////////////////////////////////////////
 namespace Symbian {
 
@@ -52,9 +59,8 @@ void FatalError(const char *msg) {
 }
 
 // make this easily available everywhere
-char* GetExecutablePath()
-{
-	return CSDLApp::GetExecutablePathCStr();	
+char* GetExecutablePath() {
+	return CSDLApp::GetExecutablePathCStr();
 }
 
 } // namespace Symbian {
@@ -93,7 +99,7 @@ void OSystem_SDL_Symbian::setFeatureState(Feature f, bool enable) {
 			break;
 		case kFeatureDisableKeyFiltering:
 			GUI::Actions::Instance()->beginMapping(enable);
-			break;;
+			break;
 		default:
 			OSystem_SDL::setFeatureState(f, enable);
 	}

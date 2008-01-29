@@ -24,7 +24,7 @@
 	"Vibra "
 #endif
 	"\n"
-	
+
 // we want a list of supported engines visible in the program,
 // because we also release special builds with only one engine
 #ifndef DISABLE_SCUMM
@@ -72,6 +72,11 @@
 #ifndef DISABLE_IGOR
 	"Igor "
 #endif
-
+#ifndef DISABLE_PARALLACTION
+	"Parallaction "
+#endif
+#ifndef DISABLE_CRUISE
+	"Cruise "
+#endif
 
 

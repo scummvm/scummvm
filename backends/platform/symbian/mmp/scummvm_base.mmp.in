@@ -30,13 +30,14 @@ TARGET          scummvm_base.lib
 TARGETTYPE      lib
 OPTION			MSVC /QIfist /Ob1 /Oy /GF // /QIfist disables use of __ftol2 to avoid linker probs with MS libc: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore/html/vcrefQIfistSuppress_ftol.asp
 OPTION			GCC -Wno-multichar -Wno-reorder // don't optimize for ARM, platform way too sensitive for that :( just turn off some common warnings
+OPTION			GCCE -Wno-multichar -Wno-reorder -fsigned-char
 ALWAYS_BUILD_AS_ARM
 
 // Note: the LIB:*.lib statements are used by AdaptAllMMPs.pl, so don't remove them!
 //START_AUTO_MACROS_MASTER//
 
 	// empty base file, will be updated by Perl build scripts
-	
+
 	// list of possible MACROs: (will be replaced when generating scummvm_base.mmp)
 	//MACRO			USE_ZLIB			// LIB:zlib.lib
 	//MACRO			USE_MAD				// LIB:libmad.lib
@@ -67,9 +68,9 @@ ALWAYS_BUILD_AS_ARM
 USERINCLUDE	    ..\..\..\.. ..\..\..\..\common ..\..\..\..\gui ..\..\..\..\sound
 USERINCLUDE		..\..\..\..\backends\fs ..\src ..\..\..\..\backends\platform\sdl
 
-SYSTEMINCLUDE 	\epoc32\include\ESDL
-SYSTEMINCLUDE 	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
-SYSTEMINCLUDE   \epoc32\include\libc 
+SYSTEMINCLUDE	\epoc32\include\ESDL
+SYSTEMINCLUDE	\epoc32\include\ZLIB // before \epoc32\include because symbian already has older version
+SYSTEMINCLUDE   \epoc32\include\libc
 SYSTEMINCLUDE   \epoc32\include\tremor
 SYSTEMINCLUDE   \epoc32\include
 SYSTEMINCLUDE   ..\src // for portdefs.h
@@ -119,6 +120,6 @@ source	   backends\timer\default\default-timer.cpp
 source	   backends\saves\savefile.cpp
 source	   backends\saves\default\default-saves.cpp
 source	   backends\saves\compressed\compressed-saves.cpp
-source 	   engines\engine.cpp
+source	   engines\engine.cpp
 // backend specific includes
 // backend specific includes
