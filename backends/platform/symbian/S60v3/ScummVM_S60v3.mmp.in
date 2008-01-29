@@ -29,6 +29,7 @@
 TARGET          ScummVM.exe
 TARGETPATH      sys\bin
 TARGETTYPE      exe
+OPTION			GCCE -Wno-multichar -Wno-reorder -fsigned-char
 
 UID             0x100039ce 0xA0000657
 
