@@ -365,11 +365,11 @@ int Parallaction_ns::guiGetSelectedBlock(const Common::Point &p) {
 	}
 
 	if ((selection != -1) && (getPlatform() == Common::kPlatformAmiga)) {
-		_gfx->invertRect(Gfx::kBit2, codeTrueBlocks[selection]);
+		_gfx->invertBackground(codeTrueBlocks[selection]);
 		_gfx->updateScreen();
 		beep();
 		g_system->delayMillis(100);
-		_gfx->invertRect(Gfx::kBit2, codeTrueBlocks[selection]);
+		_gfx->invertBackground(codeTrueBlocks[selection]);
 		_gfx->updateScreen();
 	}
 
@@ -404,7 +404,7 @@ int Parallaction_ns::guiSelectCharacter() {
 	Graphics::Surface v14;
 	v14.create(BLOCK_WIDTH * 8, BLOCK_HEIGHT, 1);
 	Common::Rect rect(SLOT_X, SLOT_Y, SLOT_X + BLOCK_WIDTH * 8, SLOT_Y + BLOCK_HEIGHT);
-	_gfx->grabRect((byte*)v14.pixels, rect, Gfx::kBit2, rect.width());
+	_gfx->grabBackground(rect, v14);
 
 	Graphics::Surface block;
 	block.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
@@ -426,7 +426,7 @@ int Parallaction_ns::guiSelectCharacter() {
 			int _si = guiGetSelectedBlock(_mousePos);
 
 			if (_si != -1) {
-				_gfx->grabRect((byte*)block.pixels, codeTrueBlocks[_si], Gfx::kBit2, BLOCK_WIDTH);
+				_gfx->grabBackground(codeTrueBlocks[_si], block);
 				_gfx->patchBackground(block, _di * SLOT_WIDTH + SLOT_X, SLOT_Y, false);
 
 				if (keys[0][_di] == _si) {

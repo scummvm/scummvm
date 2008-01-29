@@ -382,40 +382,27 @@ void Gfx::updateScreen() {
 //
 //	graphic primitives
 //
-void Gfx::clearScreen(Gfx::Buffers buffer) {
-	memset(_buffers[buffer]->pixels, 0, _vm->_screenSize);
+void Gfx::clearBackground() {
+	memset(_buffers[kBit2]->pixels, 0, _vm->_screenSize);
 }
 
 
 void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) {
 
-	if (mask) {
-		uint16 z = queryMask(y);
-		blitCnv(&surf, x, y, z);
-	} else {
-		flatBlitCnv(&surf, x, y);
-	}
+	Common::Rect r(surf.w, surf.h);
+	r.moveTo(x, y);
 
+	uint16 z = (mask) ? queryMask(y) : BUFFER_FOREGROUND;
+	blt(r, (byte*)surf.pixels, _buffers[kBit2], z, 0);
 }
 
-void Gfx::floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color) {
-
-	byte *d = (byte*)_buffers[buffer]->getBasePtr(r.left, r.top);
-	uint16 w = r.width() + 1;
-	uint16 h = r.height() + 1;
-
-	for (uint16 i = 0; i < h; i++) {
-		memset(d, color, w);
-
-		d += _backgroundWidth;
-	}
-
-	return;
+void Gfx::fillBackground(const Common::Rect& r, byte color) {
+	_buffers[kBit2]->fillRect(r, color);
 }
 
-void Gfx::invertRect(Gfx::Buffers buffer, const Common::Rect& r) {
+void Gfx::invertBackground(const Common::Rect& r) {
 
-	byte *d = (byte*)_buffers[buffer]->getBasePtr(r.left, r.top);
+	byte *d = (byte*)_buffers[kBit2]->getBasePtr(r.left, r.top);
 
 	for (int i = 0; i < r.height(); i++) {
 		for (int j = 0; j < r.width(); j++) {
@@ -423,7 +410,7 @@ void Gfx::invertRect(Gfx::Buffers buffer, const Common::Rect& r) {
 			d++;
 		}
 
-		d += (_buffers[buffer]->pitch - r.width());
+		d += (_buffers[kBit2]->pitch - r.width());
 	}
 
 }
@@ -672,23 +659,6 @@ void Label::resetPosition() {
 }
 
 
-
-void Gfx::flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y) {
-	Common::Rect r(cnv->w, cnv->h);
-	r.moveTo(x, y);
-
-	blt(r, (byte*)cnv->pixels, _buffers[kBit2], BUFFER_FOREGROUND, 0);
-}
-
-
-void Gfx::blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z) {
-	Common::Rect r(cnv->w, cnv->h);
-	r.moveTo(x, y);
-
-    blt(r, (byte*)cnv->pixels, _buffers[kBit2], z, 0);
-}
-
-
 void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height) {
 
 	uint16 lines = 0;
@@ -762,9 +732,9 @@ void Gfx::copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src,
 	return;
 }
 
-void Gfx::grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch) {
-	byte *s = (byte*)_buffers[srcbuffer]->getBasePtr(r.left, r.top);
-	copyRect(r.width(), r.height(), dst, pitch, s, _backgroundWidth);
+void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
+	byte *s = (byte*)_buffers[kBit2]->getBasePtr(r.left, r.top);
+	copyRect(r.width(), r.height(), (byte*)dst.pixels, dst.pitch, s, _backgroundWidth);
 	return;
 }
 

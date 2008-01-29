@@ -398,10 +398,10 @@ public:
 	void freeItems();
 
 	// low level surfaces
-	void clearScreen(Gfx::Buffers buffer);
-	void grabRect(byte *dst, const Common::Rect& r, Gfx::Buffers srcbuffer, uint16 pitch);
-	void floodFill(Gfx::Buffers buffer, const Common::Rect& r, byte color);
-	void invertRect(Gfx::Buffers buffer, const Common::Rect& r);
+	void clearBackground();
+	void grabBackground(const Common::Rect& r, Graphics::Surface &dst);
+	void fillBackground(const Common::Rect& r, byte color);
+	void invertBackground(const Common::Rect& r);
 
 	// palette
 	void setPalette(Palette palette);
@@ -481,9 +481,6 @@ protected:
 	void drawItems();
 	void drawBalloons();
 
-	void initBuffers(int w, int h);
-	void freeBuffers();
-
 	void copyRect(uint width, uint height, byte *dst, uint dstPitch, byte *src, uint srcPitch);
 
 	int createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness);
@@ -493,10 +490,6 @@ protected:
 	void setFont(Font* font);
 	void drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
 	bool drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
-
-
-	void flatBlitCnv(Graphics::Surface *cnv, int16 x, int16 y);
-	void blitCnv(Graphics::Surface *cnv, int16 x, int16 y, uint16 z);
 
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
 };
