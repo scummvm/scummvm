@@ -2259,8 +2259,6 @@ bool engineCreateAgi(OSystem *syst, Engine **engine, Common::EncapsulatedADGameD
 		*engine = new Agi::PreAgiEngine(syst, gd);
 		break;
 	case Agi::GType_V2:
-		*engine = new Agi::AgiEngine(syst, gd);
-		break;
 	case Agi::GType_V3:
 		*engine = new Agi::AgiEngine(syst, gd);
 		break;
