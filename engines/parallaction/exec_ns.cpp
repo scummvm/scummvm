@@ -627,9 +627,9 @@ Zone *Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 
 
 	int16 _a, _b, _c, _d, _e, _f;
-	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
+	for (AnimationList::iterator ait = _animations.begin(); ait != _animations.end(); ait++) {
 
-		Animation *a = *it;
+		Animation *a = *ait;
 
 		_a = (a->_flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
 		_e = ((_si >= a->_left + a->width()) || (_si <= a->_left)) ? 0 : 1;		// _e: horizontal range
