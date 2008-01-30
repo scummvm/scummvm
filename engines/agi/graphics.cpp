@@ -864,17 +864,19 @@ void GfxMgr::setAGIPal(int p0) {
 		return;
 	}
 
-	// Check that all components are maximum 6 bits (VGA used 6 bits per color component).
-	// Makes at least Naturette 2's colors not be messed up anymore (Naturette 2 provides
-	// AGIPAL-files that use 8 bits per color component. Haven't seen any other game that
-	// provides such files and don't know of *any* AGI interpreter that supports such files.
-	// So I presume they have been left over to Naturette 2's release file by accident).
+	// Use only the lowest 6 bits of each color component (Red, Green and Blue)
+	// because VGA used only 6 bits per color component (i.e. VGA had 18-bit colors).
+	// This should now be identical to the original AGIPAL-hack's behaviour.
+	bool validVgaPalette = true;
 	for (int i = 0; i < 16 * 3; i++) {
 		if (_agipalPalette[i] >= (1 << 6)) {
-			warning("Invalid AGIPAL palette (Over 6 bits per color component) in '%s'. Not changing palette", filename);
-			return;
+			_agipalPalette[i] &= 0x3F; // Leave only the lowest 6 bits of each color component
+			validVgaPalette = false;
 		}
 	}
+
+	if (!validVgaPalette)
+		warning("Invalid AGIPAL palette (Over 6 bits per color component) in '%s'. Using only the lowest 6 bits per color component", filename);
 
 	_agipalFileNum = p0;
 
