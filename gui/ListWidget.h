@@ -75,6 +75,7 @@ protected:
 
 public:
 	ListWidget(GuiObject *boss, const String &name);
+	ListWidget(GuiObject *boss, int x, int y, int w, int h);
 	virtual ~ListWidget();
 
 	virtual Widget *findWidget(int x, int y);

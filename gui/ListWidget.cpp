@@ -62,6 +62,36 @@ ListWidget::ListWidget(GuiObject *boss, const String &name)
 	_editable = true;
 }
 
+ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h)
+	: EditableWidget(boss, x, y, w, h), CommandSender(boss) {
+
+	_scrollBar = NULL;
+	_textWidth = NULL;
+
+	// This ensures that _entriesPerPage is properly initialised.
+	reflowLayout();
+
+	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth + 1, 0, _scrollBarWidth, _h);
+	_scrollBar->setTarget(this);
+
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
+	setHints(THEME_HINT_SAVE_BACKGROUND | THEME_HINT_USE_SHADOW);
+	_type = kListWidget;
+	_editMode = false;
+	_numberingMode = kListNumberingOne;
+	_currentPos = 0;
+	_selectedItem = -1;
+	_currentKeyDown = 0;
+
+	_quickSelectTime = 0;
+
+	// The item is selected, thus _bgcolor is used to draw the caret and _textcolorhi to erase it
+	_caretInverse = true;
+
+	// FIXME: This flag should come from widget definition
+	_editable = true;
+}
+
 ListWidget::~ListWidget() {
 	delete[] _textWidth;
 }
