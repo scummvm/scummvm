@@ -69,11 +69,11 @@ byte *GfxObj::getData(uint f) {
 }
 
 
-void GfxObj::setFlags(uint flags) {
+void GfxObj::setFlags(uint32 flags) {
 	_flags |= flags;
 }
 
-void GfxObj::clearFlags(uint flags) {
+void GfxObj::clearFlags(uint32 flags) {
 	_flags &= ~flags;
 }
 
