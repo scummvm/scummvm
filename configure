@@ -955,9 +955,16 @@ echo "$_have_x86"
 echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
-	linux* | uclinux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | hpux* | beos*)
+	linux* | uclinux* | openbsd* | freebsd* | netbsd* | bsd* | sunos* | hpux*)
 		DEFINES="$DEFINES -DUNIX"
 		;;
+	beos*)
+		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		LIBS="$LIBS -lbind -lsocket"
+		type_1_byte='char'
+		type_2_byte='short'
+		type_4_byte='long'
+		;;	
 	solaris*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
@@ -1266,6 +1273,11 @@ else
 fi
 
 #
+# Check for math lib
+cc_check $LDFLAGS $CXXFLAGS -lm && LDFLAGS="$LDFLAGS -lm"
+#
+
+#
 # Check for Ogg Vorbis
 #
 echocheck "Ogg Vorbis"
@@ -1276,7 +1288,7 @@ if test "$_vorbis" = auto ; then
 int main(void) { vorbis_packet_blocksize(0,0); return 0; }
 EOF
 	cc_check $LDFLAGS $CXXFLAGS $OGG_CFLAGS $OGG_LIBS $VORBIS_CFLAGS $VORBIS_LIBS \
-		-lvorbisfile -lvorbis -logg -lm && _vorbis=yes
+		-lvorbisfile -lvorbis -logg && _vorbis=yes
 fi
 if test "$_vorbis" = yes ; then
 	_def_vorbis='#define USE_VORBIS'
@@ -1328,7 +1340,7 @@ if test "$_flac" = auto ; then
 int main(void) { return FLAC__STREAM_SYNC_LEN >> 30; /* guaranteed to be 0 */ }
 EOF
 	cc_check $LDFLAGS $CXXFLAGS $FLAC_CFLAGS $FLAC_LIBS $OGG_CFLAGS $OGG_LIBS \
-		-lFLAC -logg -lm && _flac=yes
+		-lFLAC -logg && _flac=yes
 fi
 if test "$_flac" = yes ; then
 	_def_flac='#define USE_FLAC'
