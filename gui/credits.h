@@ -206,6 +206,7 @@ static const char *credits[] = {
 "\\C\\c0""",
 "\\C\\c1""BeOS",
 "\\C\\c0""Stefan Parviainen",
+"\\C\\c0""Luc Schrijvers",
 "\\C\\c0""",
 "\\C\\c1""Debian GNU/Linux",
 "\\C\\c0""David Weinehall",

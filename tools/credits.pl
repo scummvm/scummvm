@@ -682,6 +682,7 @@ begin_credits("Credits");
 
 	  begin_section("BeOS");
 		  add_person("Stefan Parviainen", "", "");
+		  add_person("Luc Schrijvers", "Begasus", "");
 	  end_section();
 
 	  begin_section("Debian GNU/Linux");
