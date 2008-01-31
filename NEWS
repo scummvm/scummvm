@@ -8,6 +8,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  AGI:
    - Fix for zombies in King's Quest 4
+   - Fix for changing palettes in fanmade games using AGIPAL
 
  Lure:
    - Fixed some conversation crashes in the German version
