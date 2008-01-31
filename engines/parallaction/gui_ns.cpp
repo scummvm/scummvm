@@ -123,7 +123,7 @@ enum {
 
 void Parallaction_ns::guiStart() {
 
-	_disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
+	_disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 
 	guiSplash();
 
@@ -386,7 +386,7 @@ int Parallaction_ns::guiSelectCharacter() {
 	setArrowCursor();
 	_soundMan->stopMusic();
 
-	_disk->selectArchive((getFeatures() & GF_LANG_MULT) ? "disk1" : "disk0");
+	_disk->selectArchive((getFeatures() & GF_DEMO) ? "disk0" : "disk1");
 
 	showSlide("password");
 

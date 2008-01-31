@@ -366,8 +366,6 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	if (!_char.dummy()) {
 		if (getPlatform() == Common::kPlatformAmiga) {
 			_disk->selectArchive("disk0");
-		} else {
-			_disk->selectArchive("disk1");
 		}
 
 		_char._head = _disk->loadHead(_char.getBaseName());

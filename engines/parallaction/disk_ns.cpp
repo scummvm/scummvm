@@ -1252,18 +1252,7 @@ void AmigaDisk_ns::loadScenery(BackgroundInfo& info, const char* background, con
 
 void AmigaDisk_ns::loadSlide(BackgroundInfo& info, const char *name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadSlide '%s'", name);
-
-	char path[PATH_LEN];
-	sprintf(path, "slides/%s", name);
-	Common::SeekableReadStream *s = openArchivedFile(path, false);
-
-	if (s)
-		loadBackground(info, path);
-	else
-		loadBackground(info, name);
-
-	delete s;
-
+	loadBackground(info, name);
 	return;
 }
 
