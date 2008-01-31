@@ -116,7 +116,10 @@ public:
 	int lookupAndCreateIfMissing(const Key &key);
 	void expand_array(uint newsize);
 
+	class Iterator;
 	class ConstIterator;
+	friend class Iterator;
+	friend class ConstIterator;
 
 	/**
 	 * Simple HashMap iterator implementation.
