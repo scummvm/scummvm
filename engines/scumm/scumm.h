@@ -45,7 +45,7 @@ namespace GUI {
 }
 using GUI::Dialog;
 namespace Common {
-	class InSaveFile;
+	class SeekableReadStream;
 	class OutSaveFile;
 }
 
@@ -635,8 +635,8 @@ public:
 	bool loadInfosFromSlot(int slot, InfoStuff *stuff);
 
 protected:
-	Graphics::Surface *loadThumbnail(Common::InSaveFile *file);
-	bool loadInfos(Common::InSaveFile *file, InfoStuff *stuff);
+	Graphics::Surface *loadThumbnail(Common::SeekableReadStream *file);
+	bool loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff);
 	void saveThumbnail(Common::OutSaveFile *file);
 	void saveInfos(Common::OutSaveFile* file);
 

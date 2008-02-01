@@ -49,7 +49,7 @@ inline void colorToRGB(uint16 color, uint8 &r, uint8 &g, uint8 &b) {
 	b = ((color&0x1F) << 3);
 }
 
-Graphics::Surface *ScummEngine::loadThumbnail(Common::InSaveFile *file) {
+Graphics::Surface *ScummEngine::loadThumbnail(Common::SeekableReadStream *file) {
 	ThumbnailHeader header;
 
 	header.type = file->readUint32BE();

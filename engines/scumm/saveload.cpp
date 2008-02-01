@@ -130,7 +130,7 @@ bool ScummEngine::saveState(int slot, bool compat) {
 	return true;
 }
 
-static bool loadSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hdr) {
+static bool loadSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &hdr) {
 	hdr.type = in->readUint32BE();
 	hdr.size = in->readUint32LE();
 	hdr.ver = in->readUint32LE();
@@ -140,7 +140,7 @@ static bool loadSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hdr) {
 
 bool ScummEngine::loadState(int slot, bool compat) {
 	char filename[256];
-	Common::InSaveFile *in;
+	Common::SeekableReadStream *in;
 	int i, j;
 	SaveGameHeader hdr;
 	int sb, sh;
@@ -433,7 +433,7 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 
 bool ScummEngine::getSavegameName(int slot, char *desc) {
 	char filename[256];
-	Common::InSaveFile *in;
+	Common::SeekableReadStream *in;
 	SaveGameHeader hdr;
 
 	makeSavegameName(filename, slot, false);
@@ -469,7 +469,7 @@ bool ScummEngine::getSavegameName(int slot, char *desc) {
 
 Graphics::Surface *ScummEngine::loadThumbnailFromSlot(int slot) {
 	char filename[256];
-	Common::InSaveFile *in;
+	Common::SeekableReadStream *in;
 	SaveGameHeader hdr;
 
 	makeSavegameName(filename, slot, false);
@@ -497,7 +497,7 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(int slot) {
 
 bool ScummEngine::loadInfosFromSlot(int slot, InfoStuff *stuff) {
 	char filename[256];
-	Common::InSaveFile *in;
+	Common::SeekableReadStream *in;
 	SaveGameHeader hdr;
 
 	makeSavegameName(filename, slot, false);
@@ -537,7 +537,7 @@ bool ScummEngine::loadInfosFromSlot(int slot, InfoStuff *stuff) {
 	return true;
 }
 
-bool ScummEngine::loadInfos(Common::InSaveFile *file, InfoStuff *stuff) {
+bool ScummEngine::loadInfos(Common::SeekableReadStream *file, InfoStuff *stuff) {
 	memset(stuff, 0, sizeof(InfoStuff));
 
 	SaveInfoSection section;

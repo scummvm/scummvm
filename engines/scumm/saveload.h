@@ -30,7 +30,7 @@
 #include <stddef.h>	// for ptrdiff_t
 
 namespace Common {
-	class InSaveFile;
+	class SeekableReadStream;
 	class OutSaveFile;
 }
 
@@ -125,7 +125,7 @@ struct SaveLoadEntry {
 
 class Serializer {
 public:
-	Serializer(Common::InSaveFile *in, Common::OutSaveFile *out, uint32 savegameVersion)
+	Serializer(Common::SeekableReadStream *in, Common::OutSaveFile *out, uint32 savegameVersion)
 		: _loadStream(in), _saveStream(out),
 		  _savegameVersion(savegameVersion)
 	{ }
@@ -150,7 +150,7 @@ public:
 	void loadBytes(void *b, int len);
 
 protected:
-	Common::InSaveFile *_loadStream;
+	Common::SeekableReadStream *_loadStream;
 	Common::OutSaveFile *_saveStream;
 	uint32 _savegameVersion;
 
