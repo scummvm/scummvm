@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef BASE_ENGINE_H
-#define BASE_ENGINE_H
+#ifndef ENGINES_ENGINE_H
+#define ENGINES_ENGINE_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
