@@ -44,4 +44,17 @@ enum SFMError {
 	SFM_DIR_ROFS			//mkdir()::EROFS: The parent directory resides on a read-only file system
 };
 
+/**
+ * Error codes which may be reported by plugins under various circumstances.
+ * @todo Turn this into a global 'ErrorCode' enum used by all of ScummVM ?
+ */
+enum PluginError {
+	kNoError = 0,	// No error occured
+	kInvalidPathError,
+	kNoGameDataFoundError,
+	kUnsupportedGameidError,
+
+	kUnknownError		// Catch-all error, used if no other error code matches
+};
+
 #endif //COMMON_ERROR_H

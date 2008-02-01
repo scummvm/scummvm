@@ -27,6 +27,7 @@
 #define BASE_PLUGINS_H
 
 #include "common/array.h"
+#include "common/error.h"
 #include "common/list.h"
 #include "common/singleton.h"
 #include "common/util.h"
@@ -35,20 +36,6 @@
 class Engine;
 class FSList;
 class OSystem;
-
-/**
- * Error codes which mayb be reported by plugins under various circumstances.
- * @todo Turn this into a global 'ErrorCode' enum used by all of ScummVM ?
- */
-enum PluginError {
-	kNoError = 0,	// No error occured
-	kInvalidPathError,
-	kNoGameDataFoundError,
-	kUnsupportedGameidError,
-
-	kUnknownError		// Catch-all error, used if no other error code matches
-};
-
 
 /**
  * Abstract base class for the plugin system.
