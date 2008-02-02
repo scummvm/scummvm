@@ -15,7 +15,7 @@ RESOURCE LOCALISABLE_APP_INFO
 			// that exist in the icon_file.
 			number_of_icons = 3;
 			// Using the application icons.
-			icon_file = "\\Resource\\Apps\\ScummVM.mbm";
+			icon_file = "\\Resource\\Apps\\ScummVM.mif";
 			}
 		};
 	}
