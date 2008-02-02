@@ -325,7 +325,7 @@ void Gfx::drawItems() {
 
 	Graphics::Surface *surf = g_system->lockScreen();
 	for (uint i = 0; i < _numItems; i++) {
-	    blt(_items[i].rect, _items[i].data->getData(_items[i].frame), surf, LAYER_FOREGROUND, 0);
+		blt(_items[i].rect, _items[i].data->getData(_items[i].frame), surf, LAYER_FOREGROUND, _items[i].transparentColor);
 	}
 	g_system->unlockScreen();
 }
@@ -772,12 +772,14 @@ Gfx::~Gfx() {
 
 
 
-int Gfx::setItem(Frames* frames, uint16 x, uint16 y) {
+int Gfx::setItem(Frames* frames, uint16 x, uint16 y, byte transparentColor) {
 	int id = _numItems;
 
 	_items[id].data = frames;
 	_items[id].x = x;
 	_items[id].y = y;
+
+	_items[id].transparentColor = transparentColor;
 
 	_numItems++;
 

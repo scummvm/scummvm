@@ -180,16 +180,72 @@ void Parallaction_br::invertMenuItem(Graphics::Surface &surf) {
 		((byte*)surf.pixels)[i] ^= 0xD;
 }
 
+/*
+	this adapter can handle Surfaces containing multiple frames,
+	provided all these frames are the same width and height
+*/
+struct SurfaceToMultiFrames : public Frames {
+
+	uint _num;
+	uint _width, _height;
+	Graphics::Surface *_surf;
+
+	SurfaceToMultiFrames(uint num, uint w, uint h, Graphics::Surface *surf) : _num(num), _width(w), _height(h), _surf(surf) {
+
+	}
+
+	~SurfaceToMultiFrames() {
+		delete _surf;
+	}
+
+	uint16	getNum() {
+		return _num;
+	}
+	byte*	getData(uint16 index) {
+		assert(index < _num);
+		return (byte*)_surf->getBasePtr(0, _height * index);
+	}
+	void	getRect(uint16 index, Common::Rect &r) {
+		assert(index < _num);
+		r.left = 0;
+		r.top = 0;
+		r.setWidth(_width);
+		r.setHeight(_height);
+	}
+
+};
+
+Frames* Parallaction_br::renderMenuItem(const char *text) {
+	// this builds a surface containing two copies of the text.
+	// one is in normal color, the other is inverted.
+	// the two 'frames' are used to display selected/unselected menu items
+
+	Graphics::Surface *surf = new Graphics::Surface;
+	surf->create(MENUITEM_WIDTH, MENUITEM_HEIGHT*2, 1);
+
+	// build first frame to be displayed when item is not selected
+	_menuFont->setColor(0);
+	_menuFont->drawString((byte*)surf->getBasePtr(5, 2), MENUITEM_WIDTH, text);
+
+	// build second frame to be displayed when item is selected
+	_menuFont->drawString((byte*)surf->getBasePtr(5, 2 + MENUITEM_HEIGHT), MENUITEM_WIDTH, text);
+	byte *s = (byte*)surf->getBasePtr(0, MENUITEM_HEIGHT);
+	for (int i = 0; i < surf->w * MENUITEM_HEIGHT; i++) {
+		*s++ ^= 0xD;
+	}
+
+	// wrap the surface into the suitable Frames adapter
+	return new SurfaceToMultiFrames(2, MENUITEM_WIDTH, MENUITEM_HEIGHT, surf);
+}
+
+
 int Parallaction_br::showMenu() {
 	// TODO: filter menu entries according to progress in game
-#if 0
-	_gfx->clearScreen(Gfx::kBitFront);
-#endif
-	BackgroundInfo info;
 
-	Graphics::Surface	_menuItems[7];
+	#define NUM_MENULINES	7
+	Frames *_lines[NUM_MENULINES];
 
-	const char *menuStrings[7] = {
+	const char *menuStrings[NUM_MENULINES] = {
 		"SEE INTRO",
 		"NEW GAME",
 		"SAVED GAME",
@@ -199,7 +255,7 @@ int Parallaction_br::showMenu() {
 		"PART 4"
 	};
 
-	MenuOptions options[7] = {
+	MenuOptions options[NUM_MENULINES] = {
 		kMenuPart0,
 		kMenuPart1,
 		kMenuLoadGame,
@@ -208,17 +264,24 @@ int Parallaction_br::showMenu() {
 		kMenuPart3,
 		kMenuPart4
 	};
-#if 0
-	_disk->loadSlide(info, "tbra");
-	_gfx->setPalette(info.palette);
-	_gfx->flatBlitCnv(&info.bg, 20, 50, Gfx::kBitFront);
-#endif
+
+	_gfx->clearScreen();
+	_gfx->setBackground(kBackgroundSlide, "tbra", 0, 0);
+	_gfx->_backgroundInfo.x = 20;
+	_gfx->_backgroundInfo.y = 50;
+
 	int availItems = 4 + _progress;
 
-	for (int i = 0; i < availItems; i++)
-		renderMenuItem(_menuItems[i], menuStrings[i]);
+	// TODO: keep track of and destroy menu item frames/surfaces
 
-	int selectedItem = -1, oldSelectedItem = -2;
+	int i;
+	for (i = 0; i < availItems; i++) {
+		_lines[i] = renderMenuItem(menuStrings[i]);
+		uint id = _gfx->setItem(_lines[i], MENUITEMS_X, MENUITEMS_Y + MENUITEM_HEIGHT * i, 0xFF);
+		_gfx->setItemFrame(id, 0);
+	}
+
+	int selectedItem = -1;
 
 	setMousePointer(0);
 
@@ -237,23 +300,8 @@ int Parallaction_br::showMenu() {
 		} else
 			selectedItem = -1;
 
-
-		if (selectedItem != oldSelectedItem) {
-
-			if (selectedItem >= 0 && selectedItem < availItems)
-				invertMenuItem(_menuItems[selectedItem]);
-
-			if (oldSelectedItem >= 0 && oldSelectedItem < availItems)
-				invertMenuItem(_menuItems[oldSelectedItem]);
-
-			Common::Rect r(MENUITEM_WIDTH, MENUITEM_HEIGHT);
-#if 0
-			for (int i = 0; i < availItems; i++) {
-				r.moveTo(MENUITEMS_X, MENUITEMS_Y + i * 20);
-				_gfx->copyRect(Gfx::kBitFront, r, (byte*)_menuItems[i].pixels, _menuItems[i].pitch);
-			}
-#endif
-			oldSelectedItem = selectedItem;
+		for (int i = 0; i < availItems; i++) {
+			_gfx->setItemFrame(i, selectedItem == i ? 1 : 0);
 		}
 
 		_gfx->updateScreen();
@@ -261,11 +309,11 @@ int Parallaction_br::showMenu() {
 	}
 
 	_system->showMouse(false);
+	_gfx->hideDialogueStuff();
 
-	info.bg.free();
-
-	for (int i = 0; i < availItems; i++)
-		_menuItems[i].free();
+	for (i = 0; i < availItems; i++) {
+		delete _lines[i];
+	}
 
 	return options[selectedItem];
 }

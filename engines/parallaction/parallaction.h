@@ -909,6 +909,8 @@ private:
 	int showMenu();
 	void renderMenuItem(Graphics::Surface &surf, const char *text);
 	void invertMenuItem(Graphics::Surface &surf);
+	Frames* renderMenuItem(const char *text);
+
 
 	void splash(const char *name);
 

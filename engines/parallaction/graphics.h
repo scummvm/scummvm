@@ -413,7 +413,7 @@ public:
 	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 
 	// other items
-	int setItem(Frames* frames, uint16 x, uint16 y);
+	int setItem(Frames* frames, uint16 x, uint16 y, byte transparentColor = 0);
 	void setItemFrame(uint item, uint16 f);
 	void hideDialogueStuff();
 	void freeBalloons();
@@ -480,8 +480,9 @@ protected:
 		uint16 frame;
 		Frames *data;
 
+		byte transparentColor;
 		Common::Rect rect;
-	} _items[2];
+	} _items[14];
 
 	uint	_numItems;
 
