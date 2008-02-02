@@ -1411,6 +1411,10 @@
 				RelativePath="..\..\engines\engine.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\engines\metaengine.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
