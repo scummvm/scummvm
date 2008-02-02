@@ -107,7 +107,7 @@ static const Common::ADParams igorDetectionParams = {
 
 class IgorMetaEngine : public AdvancedMetaEngine {
 public:
-	IgorMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	IgorMetaEngine() : AdvancedMetaEngine(igorDetectionParams) {}
 
 	virtual const char *getName() const {
 		return "Igor: Objective Uikokahonia";
