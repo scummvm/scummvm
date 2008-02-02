@@ -425,6 +425,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
+	{ // Supplied by fac76 in bug report #1883808
+		{
+			"gob2",
+			"",
+			AD_ENTRY1s("intro.stk", "eebf2810122cfd17399260cd1468e994", 554014),
+			EN_ANY,
+			kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesNone,
+		"intro"
+	},
 	{
 		{
 			"gob2",
