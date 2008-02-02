@@ -425,6 +425,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
+	{ // Supplied by fac76 in bug report #1883808
+		{
+			"gob2",
+			"",
+			AD_ENTRY1s("intro.stk", "eebf2810122cfd17399260cd1468e994", 554014),
+			EN_ANY,
+			kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesNone,
+		"intro"
+	},
 	{
 		{
 			"gob2",
@@ -574,11 +587,11 @@ static const GOBGameDescription gameDescriptions[] = {
 			"Interactive Demo",
 			AD_ENTRY1("intro.stk", "4b278c2678ea01383fd5ca114d947eea"),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformAmiga,
 			Common::ADGF_DEMO
 		},
 		kGameTypeGob2,
-		kFeaturesAdlib,
+		kFeaturesNone,
 		"intro"
 	},
 	{
