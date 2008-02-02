@@ -176,7 +176,7 @@ int Parallaction_br::guiShowMenu() {
 		} else
 			selectedItem = -1;
 
-		for (int i = 0; i < availItems; i++) {
+		for (i = 0; i < availItems; i++) {
 			_gfx->setItemFrame(i, selectedItem == i ? 1 : 0);
 		}
 
