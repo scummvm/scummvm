@@ -680,6 +680,9 @@ protected:
 
 		// BRA specific
 		int numZones;
+		char *bgName;
+		char *maskName;
+		char *pathName;
 	} _locParseCtxt;
 
 	void warning_unexpected();

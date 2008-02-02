@@ -318,6 +318,7 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 
 		info.bg.create(info.width, info.height, 1);
 		stream.read(info.bg.pixels, info.width * info.height);
+		stream.close();
 	}
 
 	if (mask) {
@@ -329,6 +330,7 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 		// have already been loaded
 		info.mask.create(info.width, info.height);
 		stream.read(info.mask.data, info.width * info.height);
+		stream.close();
 	}
 
 	if (path) {
@@ -340,6 +342,7 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 		// have already been loaded
 		info.path.create(info.width, info.height);
 		stream.read(info.path.data, info.width * info.height);
+		stream.close();
 	}
 
 	return;

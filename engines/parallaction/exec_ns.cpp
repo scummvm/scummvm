@@ -335,13 +335,14 @@ void Parallaction_ns::drawAnimations() {
 			else
 				layer = _gfx->_backgroundInfo.getLayer(v18->_top + v18->height());
 
-
-			_gfx->showGfxObj(obj, true);
-			obj->frame = frame;
-			obj->x = v18->_left;
-			obj->y = v18->_top;
-			obj->z = v18->_z;
-			obj->layer = layer;
+			if (obj) {
+				_gfx->showGfxObj(obj, true);
+				obj->frame = frame;
+				obj->x = v18->_left;
+				obj->y = v18->_top;
+				obj->z = v18->_z;
+				obj->layer = layer;
+			}
 		}
 
 		if (((v18->_flags & kFlagsActive) == 0) && (v18->_flags & kFlagsRemove))   {
@@ -352,7 +353,9 @@ void Parallaction_ns::drawAnimations() {
 		if ((v18->_flags & kFlagsActive) && (v18->_flags & kFlagsRemove))	{
 			v18->_flags &= ~kFlagsActive;
 			v18->_flags |= kFlagsRemove;
-			_gfx->showGfxObj(obj, false);
+			if (obj) {
+				_gfx->showGfxObj(obj, false);
+			}
 		}
 	}
 
@@ -407,7 +410,9 @@ label1:
 	}
 
 	_char._ani._z = _char._ani.height() + _char._ani._top;
-	_char._ani.gfxobj->z = _char._ani._z;
+	if (_char._ani.gfxobj) {
+		_char._ani.gfxobj->z = _char._ani._z;
+	}
 	modCounter++;
 
 	return;

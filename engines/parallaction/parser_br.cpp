@@ -115,6 +115,7 @@ DECLARE_LOCATION_PARSER(location)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(location) ");
 
 	strcpy(_location._name, _tokens[1]);
+	_locParseCtxt.bgName = strdup(_tokens[1]);
 
 	bool flip = false;
 	int nextToken;
@@ -125,17 +126,8 @@ DECLARE_LOCATION_PARSER(location)  {
 	} else {
 		nextToken = 2;
 	}
-#if 0
-	_disk->loadScenery(*_backgroundInfo, _location._name, NULL, NULL);
 
-//	if (flip) {
-//		flip();
-//	}
-
-	_gfx->setBackground(&_backgroundInfo.bg);
-	_gfx->_palette.clone(_backgroundInfo.palette);
-	_gfx->setPalette(_backgroundInfo.palette);
-#endif
+	// TODO: handle background horizontal flip (via a context parameter)
 
 	if (_tokens[nextToken][0] != '\0') {
 		_char._ani._left = atoi(_tokens[nextToken]);
@@ -271,23 +263,18 @@ DECLARE_LOCATION_PARSER(null)  {
 
 DECLARE_LOCATION_PARSER(mask)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(mask) ");
-#if 0
-	_disk->loadScenery(*_backgroundInfo, NULL, _tokens[1], NULL);
-	_gfx->setMask(&_backgroundInfo.mask);
 
-	_gfx->_bgLayers[0] = atoi(_tokens[2]);
-	_gfx->_bgLayers[1] = atoi(_tokens[3]);
-	_gfx->_bgLayers[2] = atoi(_tokens[4]);
-#endif
+	_locParseCtxt.maskName = strdup(_tokens[1]);
+	_gfx->_backgroundInfo.layers[0] = atoi(_tokens[2]);
+	_gfx->_backgroundInfo.layers[1] = atoi(_tokens[3]);
+	_gfx->_backgroundInfo.layers[2] = atoi(_tokens[4]);
 }
 
 
 DECLARE_LOCATION_PARSER(path)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(path) ");
-#if 0
-	_disk->loadScenery(*_backgroundInfo, NULL, NULL, _tokens[1]);
-	_pathBuffer = &_backgroundInfo.path;
-#endif
+
+	_locParseCtxt.pathName = strdup(_tokens[1]);
 }
 
 
@@ -947,8 +934,18 @@ void Parallaction_br::initParsers() {
 void Parallaction_br::parseLocation(const char* filename) {
 
 	_locParseCtxt.numZones = 0;
+	_locParseCtxt.bgName = 0;
+	_locParseCtxt.maskName = 0;
+	_locParseCtxt.pathName = 0;
 
 	Super::parseLocation(filename);
+
+	_gfx->setBackground(kBackgroundLocation, _locParseCtxt.bgName, _locParseCtxt.maskName, _locParseCtxt.pathName);
+	_pathBuffer = &_gfx->_backgroundInfo.path;
+
+	free(_locParseCtxt.bgName);
+	free(_locParseCtxt.maskName);
+	free(_locParseCtxt.pathName);
 
 //	drawZones();
 
