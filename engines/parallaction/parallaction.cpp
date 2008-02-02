@@ -745,7 +745,7 @@ void Parallaction::freeBackground() {
 void Parallaction::setBackground(const char* name, const char* mask, const char* path) {
 
 	_gfx->setBackground(kBackgroundLocation, name, mask, path);
-	_pathBuffer = &_gfx->_backgroundInfo->path;
+	_pathBuffer = &_gfx->_backgroundInfo.path;
 
 	return;
 }

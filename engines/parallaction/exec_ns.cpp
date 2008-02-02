@@ -333,7 +333,7 @@ void Parallaction_ns::drawAnimations() {
 			if (v18->_flags & kFlagsNoMasked)
 				layer = 3;
 			else
-				layer = _gfx->queryMask(v18->_top + v18->height());
+				layer = _gfx->_backgroundInfo.getLayer(v18->_top + v18->height());
 
 
 			_gfx->showGfxObj(obj, true);

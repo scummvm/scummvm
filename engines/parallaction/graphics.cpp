@@ -32,7 +32,6 @@
 
 namespace Parallaction {
 
-#define BUFFER_FOREGROUND   3
 #define	LABEL_TRANSPARENT_COLOR 0xFF
 #define	BALLOON_TRANSPARENT_COLOR 2
 
@@ -262,7 +261,7 @@ void Gfx::animatePalette() {
 
 	PaletteFxRange *range;
 	for (uint16 i = 0; i < 4; i++) {
-		range = &_backgroundInfo->ranges[i];
+		range = &_backgroundInfo.ranges[i];
 
 		if ((range->_flags & 1) == 0) continue;		// animated palette
 		range->_timer += range->_step * 2;	// update timer
@@ -326,7 +325,7 @@ void Gfx::drawItems() {
 
 	Graphics::Surface *surf = g_system->lockScreen();
 	for (uint i = 0; i < _numItems; i++) {
-	    blt(_items[i].rect, _items[i].data->getData(_items[i].frame), surf, BUFFER_FOREGROUND, 0);
+	    blt(_items[i].rect, _items[i].data->getData(_items[i].frame), surf, LAYER_FOREGROUND, 0);
 	}
 	g_system->unlockScreen();
 }
@@ -340,14 +339,14 @@ void Gfx::drawBalloons() {
 	for (uint i = 0; i < _numBalloons; i++) {
 		Common::Rect r(_balloons[i].surface.w, _balloons[i].surface.h);
 		r.moveTo(_balloons[i].x, _balloons[i].y);
-		blt(r, (byte*)_balloons[i].surface.getBasePtr(0, 0), surf, BUFFER_FOREGROUND, BALLOON_TRANSPARENT_COLOR);
+		blt(r, (byte*)_balloons[i].surface.getBasePtr(0, 0), surf, LAYER_FOREGROUND, BALLOON_TRANSPARENT_COLOR);
 	}
 	g_system->unlockScreen();
 }
 
 void Gfx::updateScreen() {
 
-	g_system->copyRectToScreen((const byte*)_backgroundInfo->bg.pixels, _backgroundInfo->bg.pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
+	g_system->copyRectToScreen((const byte*)_backgroundInfo.bg.pixels, _backgroundInfo.bg.pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
 
 	Graphics::Surface *surf = g_system->lockScreen();
 	drawGfxObjects(*surf);
@@ -355,7 +354,7 @@ void Gfx::updateScreen() {
 	if (_halfbrite) {
 		// FIXME: the implementation of halfbrite is now largely sub-optimal in that a full screen
 		// rewrite is needed to apply the effect.
-		byte *src = (byte*)_backgroundInfo->bg.pixels;
+		byte *src = (byte*)_backgroundInfo.bg.pixels;
 		byte *dst = (byte*)surf->pixels;
 		for (int i = 0; i < surf->w*surf->h; i++) {
 			*dst++ = *src++ | 0x20;
@@ -384,7 +383,7 @@ void Gfx::updateScreen() {
 //	graphic primitives
 //
 void Gfx::clearBackground() {
-	memset(_backgroundInfo->bg.pixels, 0, _vm->_screenSize);
+	memset(_backgroundInfo.bg.pixels, 0, _vm->_screenSize);
 }
 
 
@@ -393,17 +392,17 @@ void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) 
 	Common::Rect r(surf.w, surf.h);
 	r.moveTo(x, y);
 
-	uint16 z = (mask) ? queryMask(y) : BUFFER_FOREGROUND;
-	blt(r, (byte*)surf.pixels, &_backgroundInfo->bg, z, 0);
+	uint16 z = (mask) ? _backgroundInfo.getLayer(y) : LAYER_FOREGROUND;
+	blt(r, (byte*)surf.pixels, &_backgroundInfo.bg, z, 0);
 }
 
 void Gfx::fillBackground(const Common::Rect& r, byte color) {
-	_backgroundInfo->bg.fillRect(r, color);
+	_backgroundInfo.bg.fillRect(r, color);
 }
 
 void Gfx::invertBackground(const Common::Rect& r) {
 
-	byte *d = (byte*)_backgroundInfo->bg.getBasePtr(r.left, r.top);
+	byte *d = (byte*)_backgroundInfo.bg.getBasePtr(r.left, r.top);
 
 	for (int i = 0; i < r.height(); i++) {
 		for (int j = 0; j < r.width(); j++) {
@@ -411,7 +410,7 @@ void Gfx::invertBackground(const Common::Rect& r) {
 			d++;
 		}
 
-		d += (_backgroundInfo->bg.pitch - r.width());
+		d += (_backgroundInfo.bg.pitch - r.width());
 	}
 
 }
@@ -437,13 +436,13 @@ void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16
 	uint sPitch = r.width() - q.width();
 	uint dPitch = surf->w - q.width();
 
-    if (_backgroundInfo->mask.data && (z < BUFFER_FOREGROUND)) {
+    if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
 
         for (uint16 i = 0; i < q.height(); i++) {
 
             for (uint16 j = 0; j < q.width(); j++) {
                 if (*s != transparentColor) {
-                    byte v = _backgroundInfo->mask.getValue(dp.x + j, dp.y + i);
+                    byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
                     if (z >= v) *d = *s;
                 }
 
@@ -627,14 +626,14 @@ void Gfx::drawLabels() {
 		if (_labels[i]->_visible) {
 			Common::Rect r(_labels[i]->_cnv.w, _labels[i]->_cnv.h);
 			r.moveTo(_labels[i]->_pos);
-			blt(r, (byte*)_labels[i]->_cnv.getBasePtr(0, 0), surf, BUFFER_FOREGROUND, LABEL_TRANSPARENT_COLOR);
+			blt(r, (byte*)_labels[i]->_cnv.getBasePtr(0, 0), surf, LAYER_FOREGROUND, LABEL_TRANSPARENT_COLOR);
 		}
 	}
 
 	if (_floatingLabel) {
 		Common::Rect r(_floatingLabel->_cnv.w, _floatingLabel->_cnv.h);
 		r.moveTo(_floatingLabel->_pos);
-        blt(r, (byte*)_floatingLabel->_cnv.getBasePtr(0, 0), surf, BUFFER_FOREGROUND, LABEL_TRANSPARENT_COLOR);
+        blt(r, (byte*)_floatingLabel->_cnv.getBasePtr(0, 0), surf, LAYER_FOREGROUND, LABEL_TRANSPARENT_COLOR);
 	}
 
 	g_system->unlockScreen();
@@ -727,18 +726,9 @@ void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surf
 }
 
 void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
-	copyRect(r, _backgroundInfo->bg, dst);
+	copyRect(r, _backgroundInfo.bg, dst);
 }
 
-
-uint16 Gfx::queryMask(uint16 v) {
-
-	for (uint16 _si = 0; _si < 3; _si++) {
-		if (_backgroundInfo->layers[_si+1] > v) return _si;
-	}
-
-	return BUFFER_FOREGROUND;
-}
 
 Gfx::Gfx(Parallaction* vm) :
 	_vm(vm), _disk(vm->_disk) {
@@ -762,7 +752,6 @@ Gfx::Gfx(Parallaction* vm) :
 	_hbCircleRadius = 0;
 
 	_font = NULL;
-	_backgroundInfo = new BackgroundInfo;
 
 	return;
 }
@@ -770,7 +759,6 @@ Gfx::Gfx(Parallaction* vm) :
 Gfx::~Gfx() {
 
 	freeBackground();
-	delete _backgroundInfo;
 
 	return;
 }
@@ -826,7 +814,7 @@ int Gfx::createBalloon(int16 w, int16 h, int16 winding, uint16 borderThickness) 
 		winding = (winding == 0 ? 1 : 0);
 		Common::Rect s(BALLOON_TAIL_WIDTH, BALLOON_TAIL_HEIGHT);
 		s.moveTo(r.width()/2 - 5, r.bottom - 1);
-		blt(s, _resBalloonTail[winding], &balloon->surface, BUFFER_FOREGROUND, BALLOON_TRANSPARENT_COLOR);
+		blt(s, _resBalloonTail[winding], &balloon->surface, LAYER_FOREGROUND, BALLOON_TRANSPARENT_COLOR);
 	}
 
 	_numBalloons++;
@@ -1000,25 +988,18 @@ bool Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16
 }
 
 void Gfx::freeBackground() {
-
-	if (!_backgroundInfo)
-		return;
-
-	_backgroundInfo->bg.free();
-	_backgroundInfo->mask.free();
-	_backgroundInfo->path.free();
-
+	_backgroundInfo.free();
 }
 
 void Gfx::setBackground(uint type, const char* name, const char* mask, const char* path) {
 
 	if (type == kBackgroundLocation) {
-		_disk->loadScenery(*_backgroundInfo, name, mask, path);
-		setPalette(_backgroundInfo->palette);
-		_palette.clone(_backgroundInfo->palette);
+		_disk->loadScenery(_backgroundInfo, name, mask, path);
+		setPalette(_backgroundInfo.palette);
+		_palette.clone(_backgroundInfo.palette);
 	} else {
-		_disk->loadSlide(*_backgroundInfo, name);
-		setPalette(_backgroundInfo->palette);
+		_disk->loadSlide(_backgroundInfo, name);
+		setPalette(_backgroundInfo.palette);
 	}
 
 }

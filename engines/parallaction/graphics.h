@@ -326,6 +326,8 @@ public:
 
 typedef Common::List<GfxObj*> GfxObjList;
 
+#define LAYER_FOREGROUND   3
+
 struct BackgroundInfo {
 	uint width;
 	uint height;
@@ -348,6 +350,20 @@ struct BackgroundInfo {
 		assert(index < 6);
 		memcpy(&ranges[index], &range, sizeof(PaletteFxRange));
 	}
+
+	uint16 getLayer(uint16 z) {
+		for (uint16 i = 0; i < 3; i++) {
+			if (layers[i+1] > z) return i;
+		}
+		return LAYER_FOREGROUND;
+	}
+
+	void free() {
+		bg.free();
+		mask.free();
+		path.free();
+	}
+
 };
 
 
@@ -394,7 +410,7 @@ public:
 	void freeItems();
 
 	// background surface
-	BackgroundInfo	*_backgroundInfo;
+	BackgroundInfo	_backgroundInfo;
 	void setBackground(uint type, const char* name, const char* mask, const char* path);
 	void clearBackground();
 	void patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask = false);
@@ -411,10 +427,6 @@ public:
 	// amiga specific
 	void setHalfbriteMode(bool enable);
 	void setProjectorPos(int x, int y);
-
-	// misc
-	uint16 queryMask(uint16 v);
-	void setMask(MaskBuffer *buffer);
 
 	// init
 	Gfx(Parallaction* vm);

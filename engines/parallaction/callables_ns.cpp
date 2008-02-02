@@ -330,8 +330,8 @@ void Parallaction_ns::_c_onMouse(void *parm) {
 
 void Parallaction_ns::_c_setMask(void *parm) {
 
-	memset(_gfx->_backgroundInfo->mask.data + 3600, 0, 3600);
-	_gfx->_backgroundInfo->layers[1] = 500;
+	memset(_gfx->_backgroundInfo.mask.data + 3600, 0, 3600);
+	_gfx->_backgroundInfo.layers[1] = 500;
 
 	return;
 }
@@ -584,7 +584,7 @@ void Parallaction_ns::_c_sketch(void *parm) {
 		newx = _rightHandPositions[2*index];
 	}
 
-	Graphics::drawLine(oldx, oldy, newx, newy, 0, zeroMask, _gfx->_backgroundInfo);
+	Graphics::drawLine(oldx, oldy, newx, newy, 0, zeroMask, &_gfx->_backgroundInfo);
 
 	_rightHandAnim->_left = newx;
 	_rightHandAnim->_top = newy - 20;
@@ -606,11 +606,11 @@ void Parallaction_ns::_c_shade(void *parm) {
 		_rightHandAnim->_top
 	);
 
-	uint16 _di = r.left/4 + r.top * _gfx->_backgroundInfo->mask.internalWidth;
+	uint16 _di = r.left/4 + r.top * _gfx->_backgroundInfo.mask.internalWidth;
 
 	for (uint16 _si = r.top; _si < r.bottom; _si++) {
-		memset(_gfx->_backgroundInfo->mask.data + _di, 0, r.width()/4+1);
-		_di += _gfx->_backgroundInfo->mask.internalWidth;
+		memset(_gfx->_backgroundInfo.mask.data + _di, 0, r.width()/4+1);
+		_di += _gfx->_backgroundInfo.mask.internalWidth;
 	}
 
 	return;
