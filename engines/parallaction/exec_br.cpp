@@ -72,8 +72,7 @@ typedef OpcodeImpl<Parallaction_br> OpcodeV2;
 void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 	debugC(5, kDebugExec, "setupSubtitles(%s, %s, %i)", s, s2, y);
 
-	_gfx->freeLabels();
-	_subtitle[0] = _subtitle[1] = -1;
+	clearSubtitles();
 
 	if (!scumm_stricmp("clear", s)) {
 		return;
@@ -95,10 +94,17 @@ void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 	_subtitleLipSync = 0;
 }
 
+void Parallaction_br::clearSubtitles() {
+	_gfx->freeLabels();
+	_subtitle[0] = _subtitle[1] = -1;
+}
 
 
 DECLARE_COMMAND_OPCODE(location) {
 	warning("Parallaction_br::cmdOp_location command not yet implemented");
+
+	// TODO: handle startPos and startPos2
+	scheduleLocationSwitch(_cmdRunCtxt.cmd->u._string);
 }
 
 
@@ -544,12 +550,6 @@ void Parallaction_br::initOpcodes() {
 void Parallaction_br::jobWaitRemoveLabelJob(void *parm, Job *job) {
 
 }
-
-
-void Parallaction_br::jobWaitRemoveSubtitleJob(void *parm, Job *job) {
-
-}
-
 
 void Parallaction_br::jobPauseSfx(void *parm, Job *job) {
 

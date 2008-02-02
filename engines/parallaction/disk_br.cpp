@@ -255,7 +255,7 @@ Frames* DosDisk_br::loadFrames(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadFrames");
 
 	char path[PATH_LEN];
-	sprintf(path, "%s/ani/%s.ani", _partPath, name);
+	sprintf(path, "%s/ani/%s", _partPath, name);
 
 	return createSprites(path);
 }

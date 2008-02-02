@@ -181,20 +181,41 @@ void Parallaction_br::startPart() {
 	strcpy(_location._name, partFirstLocation[_part]);
 
 	parseLocation("common");
-	parseLocation(_location._name);
-
 	changeLocation(_location._name);
 
 }
 
+void Parallaction_br::runPendingZones() {
+	Zone *z;
+
+	if (_activeZone) {
+		z = _activeZone;	// speak Zone or sound
+		_activeZone = NULL;
+		runZone(z);
+	}
+
+	if (_activeZone2) {
+		z = _activeZone2;	// speak Zone or sound
+		_activeZone2 = NULL;
+		runZone(z);
+	}
+}
+
+
 void Parallaction_br::changeLocation(char *location) {
 
+	// free open location stuff
+	clearSubtitles();
+
+	freeLocation();
+
+	// load new location
+	parseLocation(location);
 	runCommands(_location._commands);
-
 //	doLocationEnterTransition();
-
 	runCommands(_location._aCommands);
 
+	_engineFlags &= ~kEngineChangeLocation;
 }
 
 void Parallaction_br::changeCharacter(const char *name) {

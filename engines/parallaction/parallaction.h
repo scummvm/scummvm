@@ -465,6 +465,7 @@ protected:		// members
 	void		doLocationEnterTransition();
 	virtual void changeLocation(char *location) = 0;
 	virtual void changeCharacter(const char *name) = 0;
+	virtual void runPendingZones() = 0;
 	void		allocateLocationSlot(const char *name);
 	void		finalizeLocationParsing();
 	void		freeLocation();
@@ -595,6 +596,7 @@ private:
 private:
 	void changeLocation(char *location);
 	void changeCharacter(const char *name);
+	void runPendingZones();
 	void cleanupGame();
 
 	void setArrowCursor();
@@ -894,6 +896,7 @@ private:
 
 	void		changeLocation(char *location);
 	void		changeCharacter(const char *name);
+	void 		runPendingZones();
 
 	void		initPart();
 	void		freePart();
@@ -1038,11 +1041,9 @@ private:
 	DECLARE_UNQUALIFIED_INSTRUCTION_OPCODE(endscript);
 
 	void setupSubtitles(char *s, char *s2, int y);
+	void clearSubtitles();
 #if 0
 	void jobWaitRemoveLabelJob(void *parm, Job *job);
-	void jobDisplaySubtitle(void *parm, Job *job);
-	void jobEraseSubtitle(void *parm, Job *job);
-	void jobWaitRemoveSubtitleJob(void *parm, Job *job);
 	void jobPauseSfx(void *parm, Job *job);
 	void jobStopFollower(void *parm, Job *job);
 	void jobScroll(void *parm, Job *job);

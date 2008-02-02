@@ -265,7 +265,6 @@ void waitUntilLeftClick() {
 	return;
 }
 
-
 void Parallaction::runGame() {
 
 	_inputMode = kInputModeGame;
@@ -273,11 +272,7 @@ void Parallaction::runGame() {
 	while ((_engineFlags & kEngineQuit) == 0) {
 		updateInput();
 
-		if (_activeZone) {
-			Zone *z = _activeZone;	// speak Zone or sound
-			_activeZone = NULL;
-			runZone(z);
-		}
+		runPendingZones();
 
 		if (_engineFlags & kEngineChangeLocation) {
 			changeLocation(_location._name);

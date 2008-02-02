@@ -269,6 +269,14 @@ void Parallaction_ns::showSlide(const char *name) {
 	_gfx->setBackground(kBackgroundSlide, name, 0, 0);
 }
 
+void Parallaction_ns::runPendingZones() {
+	if (_activeZone) {
+		Zone *z = _activeZone;	// speak Zone or sound
+		_activeZone = NULL;
+		runZone(z);
+	}
+}
+
 //	changeLocation handles transitions between locations, and is able to display slides
 //	between one and the other.
 //
