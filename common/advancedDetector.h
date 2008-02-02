@@ -272,8 +272,6 @@ void reportUnknown(StringList &files, int md5Bytes);
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 
-}	// End of namespace Common
-
 /**
  * A MetaEngine implementation based around the advanced detector code.
  */
@@ -310,5 +308,7 @@ protected:
 		return kNoError;
 	}
 };
+
+}	// End of namespace Common
 
 #endif

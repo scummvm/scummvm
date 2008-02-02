@@ -430,9 +430,9 @@ const Common::ADParams detectionParams = {
 
 } // End of anonymous namespace
 
-class KyraMetaEngine : public AdvancedMetaEngine {
+class KyraMetaEngine : public Common::AdvancedMetaEngine {
 public:
-	KyraMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	KyraMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Legend of Kyrandia Engine";

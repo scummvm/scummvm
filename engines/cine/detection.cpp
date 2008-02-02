@@ -488,9 +488,9 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-class CineMetaEngine : public AdvancedMetaEngine {
+class CineMetaEngine : public Common::AdvancedMetaEngine {
 public:
-	CineMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	CineMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Cinematique evo 1 engine";

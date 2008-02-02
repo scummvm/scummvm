@@ -105,9 +105,9 @@ static const Common::ADParams igorDetectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-class IgorMetaEngine : public AdvancedMetaEngine {
+class IgorMetaEngine : public Common::AdvancedMetaEngine {
 public:
-	IgorMetaEngine() : AdvancedMetaEngine(igorDetectionParams) {}
+	IgorMetaEngine() : Common::AdvancedMetaEngine(igorDetectionParams) {}
 
 	virtual const char *getName() const {
 		return "Igor: Objective Uikokahonia";

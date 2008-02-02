@@ -2250,9 +2250,9 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-class AgiMetaEngine : public AdvancedMetaEngine {
+class AgiMetaEngine : public Common::AdvancedMetaEngine {
 public:
-	AgiMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	AgiMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "AGI preAGI + v2 + v3 Engine";

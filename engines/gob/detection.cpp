@@ -1742,9 +1742,9 @@ static const ADParams detectionParams = {
 	kADFlagAugmentPreferredTarget
 };
 
-class GobMetaEngine : public AdvancedMetaEngine {
+class GobMetaEngine : public Common::AdvancedMetaEngine {
 public:
-	GobMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	GobMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Gob Engine";

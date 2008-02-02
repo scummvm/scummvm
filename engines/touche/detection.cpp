@@ -124,9 +124,9 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget | Common::kADFlagPrintWarningOnFileBasedFallback
 };
 
-class ToucheMetaEngine : public AdvancedMetaEngine {
+class ToucheMetaEngine : public Common::AdvancedMetaEngine {
 public:
-	ToucheMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	ToucheMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Touche Engine";

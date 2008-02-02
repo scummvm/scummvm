@@ -184,9 +184,9 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-class ParallactionMetaEngine : public AdvancedMetaEngine {
+class ParallactionMetaEngine : public Common::AdvancedMetaEngine {
 public:
-	ParallactionMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	ParallactionMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Parallaction engine";

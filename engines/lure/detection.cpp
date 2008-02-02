@@ -174,9 +174,9 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget | Common::kADFlagUseExtraAsHint
 };
 
-class LureMetaEngine : public AdvancedMetaEngine {
+class LureMetaEngine : public Common::AdvancedMetaEngine {
 public:
-	LureMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	LureMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Lure of the Temptress Engine";

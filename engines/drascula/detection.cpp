@@ -163,9 +163,9 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-class DrasculaMetaEngine : public AdvancedMetaEngine {
+class DrasculaMetaEngine : public Common::AdvancedMetaEngine {
 public:
-	DrasculaMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	DrasculaMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Drascula Engine";

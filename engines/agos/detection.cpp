@@ -99,9 +99,9 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-class AgosMetaEngine : public AdvancedMetaEngine {
+class AgosMetaEngine : public Common::AdvancedMetaEngine {
 public:
-	AgosMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	AgosMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "AGOS";

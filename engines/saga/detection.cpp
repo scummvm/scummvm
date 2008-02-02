@@ -141,9 +141,9 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-class SagaMetaEngine : public AdvancedMetaEngine {
+class SagaMetaEngine : public Common::AdvancedMetaEngine {
 public:
-	SagaMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+	SagaMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
 	virtual const char *getName() const {
 		return "Saga engine";
