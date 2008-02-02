@@ -906,13 +906,12 @@ private:
 	Frames	*_mouseArrow;
 
 
-	int showMenu();
-	void renderMenuItem(Graphics::Surface &surf, const char *text);
-	void invertMenuItem(Graphics::Surface &surf);
-	Frames* renderMenuItem(const char *text);
+	static const char *_partNames[];
 
-
-	void splash(const char *name);
+	void guiStart();
+	int guiShowMenu();
+	void guiSplash(const char *name);
+	Frames* guiRenderMenuItem(const char *text);
 
 	static const Callable _dosCallables[6];
 
