@@ -144,27 +144,23 @@ int Parallaction_br::go() {
 }
 
 void Parallaction_br::splash(const char *name) {
-#if 0
-	BackgroundInfo info;
 
-	_gfx->clearScreen(Gfx::kBitFront);
-
-	_disk->loadSlide(info, name);
-	_gfx->setPalette(info.palette);
-	_gfx->flatBlitCnv(&info.bg, (640 - info.width) >> 1, (400 - info.height) >> 1, Gfx::kBitFront);
+	_gfx->clearScreen();
+	_gfx->setBackground(kBackgroundSlide, name, 0, 0);
+	_gfx->_backgroundInfo.x = (_screenWidth - _gfx->_backgroundInfo.width) >> 1;
+	_gfx->_backgroundInfo.y = (_screenHeight - _gfx->_backgroundInfo.height) >> 1;
 	_gfx->updateScreen();
 	_system->delayMillis(600);
 
-	Palette pal;
+	Palette blackPal;
+	Palette pal(_gfx->_backgroundInfo.palette);
 	for (uint i = 0; i < 64; i++) {
-		info.palette.fadeTo(pal, 1);
-		_gfx->setPalette(info.palette);
+		pal.fadeTo(blackPal, 1);
+		_gfx->setPalette(pal);
 		_gfx->updateScreen();
 		_system->delayMillis(20);
 	}
-	info.bg.free();
-#endif
-	return;
+
 }
 
 #define MENUITEMS_X			250

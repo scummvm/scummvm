@@ -328,9 +328,15 @@ typedef Common::List<GfxObj*> GfxObjList;
 
 #define LAYER_FOREGROUND   3
 
+/*
+	BackgroundInfo keeps information about the background bitmap that can be seen in the game.
+	These bitmaps can be of any size, smaller or larger than the visible screen, the latter
+	being the most common options.
+*/
 struct BackgroundInfo {
-	uint width;
-	uint height;
+	int x, y;		// used to display bitmaps smaller than the screen
+	int width;
+	int height;
 
 	Graphics::Surface	bg;
 	MaskBuffer			mask;
@@ -341,7 +347,7 @@ struct BackgroundInfo {
 	int 				layers[4];
 	PaletteFxRange		ranges[6];
 
-	BackgroundInfo() : width(0), height(0) {
+	BackgroundInfo() : x(0), y(0), width(0), height(0) {
 		layers[0] = layers[1] = layers[2] = layers[3] = 0;
 		memset(ranges, 0, sizeof(ranges));
 	}
@@ -362,6 +368,10 @@ struct BackgroundInfo {
 		bg.free();
 		mask.free();
 		path.free();
+		x = 0;
+		y = 0;
+		width = 0;
+		height = 0;
 	}
 
 };
@@ -412,7 +422,6 @@ public:
 	// background surface
 	BackgroundInfo	_backgroundInfo;
 	void setBackground(uint type, const char* name, const char* mask, const char* path);
-	void clearBackground();
 	void patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask = false);
 	void grabBackground(const Common::Rect& r, Graphics::Surface &dst);
 	void fillBackground(const Common::Rect& r, byte color);
@@ -432,6 +441,8 @@ public:
 	Gfx(Parallaction* vm);
 	virtual ~Gfx();
 
+
+	void clearScreen();
 	void updateScreen();
 
 public:
@@ -493,7 +504,7 @@ protected:
 	// low level text and patches
 	void setFont(Font* font);
 	void drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
-	bool drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
+	void drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
 
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
 };

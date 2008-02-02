@@ -344,10 +344,20 @@ void Gfx::drawBalloons() {
 	g_system->unlockScreen();
 }
 
+void Gfx::clearScreen() {
+	g_system->clearScreen();
+}
+
 void Gfx::updateScreen() {
 
-	g_system->copyRectToScreen((const byte*)_backgroundInfo.bg.pixels, _backgroundInfo.bg.pitch, _screenX, _screenY, _vm->_screenWidth, _vm->_screenHeight);
+	// background may not cover the whole screen, so adjust bulk update size
+	uint w = MIN(_vm->_screenWidth, _backgroundInfo.width);
+	uint h = MIN(_vm->_screenHeight, _backgroundInfo.height);
 
+	// TODO: add displacement to source to handle scrolling in BRA
+	g_system->copyRectToScreen((const byte*)_backgroundInfo.bg.pixels, _backgroundInfo.bg.pitch, _backgroundInfo.x, _backgroundInfo.y, w, h);
+
+	// TODO: transform objects coordinates to be drawn with scrolling
 	Graphics::Surface *surf = g_system->lockScreen();
 	drawGfxObjects(*surf);
 
@@ -382,9 +392,6 @@ void Gfx::updateScreen() {
 //
 //	graphic primitives
 //
-void Gfx::clearBackground() {
-	memset(_backgroundInfo.bg.pixels, 0, _vm->_screenSize);
-}
 
 
 void Gfx::patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask) {
@@ -925,10 +932,9 @@ void Gfx::drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text
 	_font->drawString(dst, surf->w, text);
 }
 
-bool Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth) {
+void Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth) {
 
 	uint16 lines = 0;
-	bool rv = false;
 	uint16 linewidth = 0;
 
 	uint16 rx = 10;
@@ -954,8 +960,6 @@ bool Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16
 			strcpy(token, "> .......");
 			strncpy(token+2, _password, strlen(_password));
 			tokenWidth = _font->getStringWidth(token);
-
-			rv = true;
 		} else {
 			tokenWidth = _font->getStringWidth(token);
 
@@ -983,8 +987,6 @@ bool Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16
 		text = Common::ltrim(text);
 	}
 
-	return rv;
-
 }
 
 void Gfx::freeBackground() {
@@ -992,6 +994,8 @@ void Gfx::freeBackground() {
 }
 
 void Gfx::setBackground(uint type, const char* name, const char* mask, const char* path) {
+
+	freeBackground();
 
 	if (type == kBackgroundLocation) {
 		_disk->loadScenery(_backgroundInfo, name, mask, path);
