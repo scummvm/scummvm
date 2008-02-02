@@ -146,12 +146,10 @@ int ADPCMInputStream::readBufferOKI(int16 *buffer, const int numSamples) {
 
 
 int ADPCMInputStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
-	int samples;
+	int samples = 0;
 	byte data;
 
 	assert(numSamples % 2 == 0);
-
-	samples = 0;
 
 	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
 		if (_blockPos == _blockAlign) {
@@ -178,13 +176,14 @@ int ADPCMInputStream::readBufferMSIMA2(int16 *buffer, const int numSamples) {
 	int samples;
 	uint32 data;
 	int nibble;
+	byte k;
 
 	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos;) {
 		for (int channel = 0; channel < 2; channel++) {
 			data = _stream->readUint32LE();
 
 			for (nibble = 0; nibble < 8; nibble++) {
-				byte k = ((data & 0xf0000000) >> 28);
+				k = ((data & 0xf0000000) >> 28);
 				buffer[samples + channel + nibble * 2] = TO_LE_16(decodeMSIMA(k));
 				data <<= 4;
 			}
@@ -205,38 +204,30 @@ static const int MSADPCMAdaptCoeff2[] = {
 int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSamples) {
 	int samples;
 	byte data;
-	int stereo = channels - 1; // We use it in index
+	int i = 0;
 
 	samples = 0;
 
 	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
 		if (_blockPos == _blockAlign) {
 			// read block header
-			_status.ch[0].predictor = CLIP(_stream->readByte(), (byte)0, (byte)6);
-			_status.ch[0].coeff1 = MSADPCMAdaptCoeff1[_status.ch[0].predictor];
-			_status.ch[0].coeff2 = MSADPCMAdaptCoeff2[_status.ch[0].predictor];
-			if (stereo) {
-				_status.ch[1].predictor = CLIP(_stream->readByte(), (byte)0, (byte)6);
-				_status.ch[1].coeff1 = MSADPCMAdaptCoeff1[_status.ch[1].predictor];
-				_status.ch[1].coeff2 = MSADPCMAdaptCoeff2[_status.ch[1].predictor];
+			for (i = 0; i <= channels; i++) {
+				_status.ch[i].predictor = CLIP(_stream->readByte(), (byte)0, (byte)6);
+				_status.ch[i].coeff1 = MSADPCMAdaptCoeff1[_status.ch[i].predictor];
+				_status.ch[i].coeff2 = MSADPCMAdaptCoeff2[_status.ch[i].predictor];
 			}
 
-			_status.ch[0].delta = _stream->readSint16LE();
-			if (stereo)
-				_status.ch[1].delta = _stream->readSint16LE();
+			for (i = 0; i <= channels; i++)
+				_status.ch[i].delta = _stream->readSint16LE();
 
-			_status.ch[0].sample1 = _stream->readSint16LE();
-			if (stereo)
-				_status.ch[1].sample1 = _stream->readSint16LE();
+			for (i = 0; i <= channels; i++)
+				_status.ch[i].sample1 = _stream->readSint16LE();
 
-			buffer[samples++] = _status.ch[0].sample2 = _stream->readSint16LE();
+			for (i = 0; i <= channels; i++)
+				buffer[samples++] = _status.ch[i].sample2 = _stream->readSint16LE();
 
-			if (stereo)
-				buffer[samples++] = _status.ch[1].sample2 = _stream->readSint16LE();
-
-			buffer[samples++] = _status.ch[0].sample1;
-			if (stereo)
-				buffer[samples++] = _status.ch[1].sample1;
+			for (i = 0; i <= channels; i++)
+				buffer[samples++] = _status.ch[i].sample1;
 
 			_blockPos = channels * 7;
 		}
@@ -245,7 +236,7 @@ int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSam
 			data = _stream->readByte();
 			_blockPos++;
 			buffer[samples] = TO_LE_16(decodeMS(&_status.ch[0], (data >> 4) & 0x0f));
-			buffer[samples + 1] = TO_LE_16(decodeMS(&_status.ch[stereo], data & 0x0f));
+			buffer[samples + 1] = TO_LE_16(decodeMS(&_status.ch[channels - 1], data & 0x0f));
 		}
 	}
 
@@ -265,10 +256,7 @@ int16 ADPCMInputStream::decodeMS(ADPCMChannelStatus *c, byte code) {
 	predictor = (((c->sample1) * (c->coeff1)) + ((c->sample2) * (c->coeff2))) / 256;
 	predictor += (signed)((code & 0x08) ? (code - 0x10) : (code)) * c->delta;
 
-	if (predictor < -32768)
-		predictor = -32768;
-	else if (predictor > 32767)
-		predictor = 32767;
+	predictor = CLIP<int32>(predictor, -32768, 32767);
 
 	c->sample2 = c->sample1;
 	c->sample1 = predictor;
@@ -304,19 +292,12 @@ int16 ADPCMInputStream::decodeOKI(byte code) {
 	E = (2 * (code & 0x7) + 1) * okiStepSize[_status.stepIndex] / 8;
 	diff = (code & 0x08) ? -E : E;
 	samp = _status.last + diff;
-
 	// Clip the values to +/- 2^11 (supposed to be 12 bits)
-	if (samp > 2047)
-		samp = 2047;
-	if (samp < -2048)
-		samp = -2048;
+	samp = CLIP<int16>(samp, -2048, 2047);
 
 	_status.last = samp;
 	_status.stepIndex += stepAdjust(code);
-	if (_status.stepIndex < 0)
-		_status.stepIndex = 0;
-	if (_status.stepIndex > ARRAYSIZE(okiStepSize) - 1)
-		_status.stepIndex = ARRAYSIZE(okiStepSize) - 1;
+	_status.stepIndex = CLIP(_status.stepIndex, 0, ARRAYSIZE(okiStepSize) - 1);
 
 	// * 16 effectively converts 12-bit input to 16-bit output
 	return samp * 16;
@@ -339,23 +320,13 @@ static const uint16 imaStepTable[89] = {
 };
 
 int16 ADPCMInputStream::decodeMSIMA(byte code) {
-	int32 diff, E, samp;
-
-	E = (2 * (code & 0x7) + 1) * imaStepTable[_status.stepIndex] / 8;
-	diff = (code & 0x08) ? -E : E;
-	samp = _status.last + diff;
-
-	if (samp < -32768)
-		samp = -32768;
-	else if (samp > 32767)
-		samp = 32767;
+	int32 E = (2 * (code & 0x7) + 1) * imaStepTable[_status.stepIndex] / 8;
+	int32 diff = (code & 0x08) ? -E : E;
+	int32 samp = CLIP<int32>(_status.last + diff, -32768, 32767);
 
 	_status.last = samp;
 	_status.stepIndex += stepAdjust(code);
-	if (_status.stepIndex < 0)
-		_status.stepIndex = 0;
-	if (_status.stepIndex > ARRAYSIZE(imaStepTable) - 1)
-		_status.stepIndex = ARRAYSIZE(imaStepTable) - 1;
+	_status.stepIndex = CLIP(_status.stepIndex, 0, ARRAYSIZE(imaStepTable) - 1);
 
 	return samp;
 }
