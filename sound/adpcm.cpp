@@ -211,22 +211,22 @@ int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSam
 	while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
 		if (_blockPos == _blockAlign) {
 			// read block header
-			for (i = 0; i <= channels; i++) {
+			for (i = 0; i < channels; i++) {
 				_status.ch[i].predictor = CLIP(_stream->readByte(), (byte)0, (byte)6);
 				_status.ch[i].coeff1 = MSADPCMAdaptCoeff1[_status.ch[i].predictor];
 				_status.ch[i].coeff2 = MSADPCMAdaptCoeff2[_status.ch[i].predictor];
 			}
 
-			for (i = 0; i <= channels; i++)
+			for (i = 0; i < channels; i++)
 				_status.ch[i].delta = _stream->readSint16LE();
 
-			for (i = 0; i <= channels; i++)
+			for (i = 0; i < channels; i++)
 				_status.ch[i].sample1 = _stream->readSint16LE();
 
-			for (i = 0; i <= channels; i++)
+			for (i = 0; i < channels; i++)
 				buffer[samples++] = _status.ch[i].sample2 = _stream->readSint16LE();
 
-			for (i = 0; i <= channels; i++)
+			for (i = 0; i < channels; i++)
 				buffer[samples++] = _status.ch[i].sample1;
 
 			_blockPos = channels * 7;
