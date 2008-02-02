@@ -26,10 +26,11 @@
 #define COMMON_ADVANCED_DETECTOR_H
 
 #include "common/fs.h"
+#include "common/error.h"
 
 #include "base/game.h"	// For PlainGameDescriptor and GameList
-#include "base/plugins.h"	// For PluginError
 
+#include "engines/metaengine.h"
 
 namespace Common {
 
@@ -272,5 +273,42 @@ void reportUnknown(StringList &files, int md5Bytes);
 	void dummyFuncToAllowTrailingSemicolon()
 
 }	// End of namespace Common
+
+/**
+ * A MetaEngine implementation based around the advanced detector code.
+ */
+class AdvancedMetaEngine : public MetaEngine {
+	const Common::ADParams &params;
+public:
+	AdvancedMetaEngine(const Common::ADParams &dp) : params(dp) {}
+	
+	// To be provided by subclasses
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const = 0;
+
+
+protected:
+	virtual GameList getSupportedGames() const {
+		return Common::AdvancedDetector::gameIDList(params);
+	}
+	virtual GameDescriptor findGame(const char *gameid) const {
+		return Common::AdvancedDetector::findGameID(gameid, params.list, params.obsoleteList);
+	}
+	virtual GameList detectGames(const FSList &fslist) const {
+		return Common::AdvancedDetector::detectAllGames(fslist, params);
+	}
+
+	virtual PluginError createInstance(OSystem *syst, Engine **engine) const {
+		assert(engine);
+		Common::AdvancedDetector::upgradeTargetIfNecessary(params);
+		Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(params);
+		if (encapsulatedDesc.realDesc == 0) {
+			return kNoGameDataFoundError;
+		}
+		if (!createInstance(syst,engine,encapsulatedDesc)) {
+			return kNoGameDataFoundError;
+		}
+		return kNoError;
+	}
+};
 
 #endif

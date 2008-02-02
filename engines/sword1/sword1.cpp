@@ -34,6 +34,8 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "engines/metaengine.h"
+
 #include "sword1/resman.h"
 #include "sword1/objectman.h"
 #include "sword1/mouse.h"
@@ -83,7 +85,23 @@ static const char *g_filesToCheck[NUM_FILES_TO_CHECK] = { // these files have to
 	// the engine needs several more files to work, but checking these should be sufficient
 };
 
-GameList Engine_SWORD1_gameIDList() {
+class SwordMetaEngine : public MetaEngine {
+public:
+	virtual const char *getName() const {
+		return "Broken Sword";
+	}
+	virtual const char *getCopyright() const {
+		return "Broken Sword Games (C) Revolution";
+	}
+
+	virtual GameList getSupportedGames() const;
+	virtual GameDescriptor findGame(const char *gameid) const;
+	virtual GameList detectGames(const FSList &fslist) const;
+
+	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+};
+
+GameList SwordMetaEngine::getSupportedGames() const {
 	GameList games;
 	games.push_back(sword1FullSettings);
 	games.push_back(sword1DemoSettings);
@@ -92,7 +110,7 @@ GameList Engine_SWORD1_gameIDList() {
 	return games;
 }
 
-GameDescriptor Engine_SWORD1_findGameID(const char *gameid) {
+GameDescriptor SwordMetaEngine::findGame(const char *gameid) const {
 	if (0 == scumm_stricmp(gameid, sword1FullSettings.gameid))
 		return sword1FullSettings;
 	if (0 == scumm_stricmp(gameid, sword1DemoSettings.gameid))
@@ -122,7 +140,7 @@ void Sword1CheckDirectory(const FSList &fslist, bool *filesFound) {
 	}
 }
 
-GameList Engine_SWORD1_detectGames(const FSList &fslist) {
+GameList SwordMetaEngine::detectGames(const FSList &fslist) const {
 	int i, j;
 	GameList detectedGames;
 	bool filesFound[NUM_FILES_TO_CHECK];
@@ -163,11 +181,13 @@ GameList Engine_SWORD1_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-PluginError Engine_SWORD1_create(OSystem *syst, Engine **engine) {
+PluginError SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 	*engine = new SwordEngine(syst);
 	return kNoError;
 }
+
+META_COMPATIBLITY_WRAPPER(SWORD1, SwordMetaEngine);
 
 REGISTER_PLUGIN(SWORD1, "Broken Sword", "Broken Sword Games (C) Revolution");
 

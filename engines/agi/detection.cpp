@@ -2250,7 +2250,21 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-bool engineCreateAgi(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+class AgiMetaEngine : public AdvancedMetaEngine {
+public:
+	AgiMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "AGI preAGI + v2 + v3 Engine";
+	}
+	virtual const char *getCopyright() const {
+		return "Sierra AGI Engine (C) Sierra On-Line Software";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)(encapsulatedDesc.realDesc);
 	bool res = true;
 
@@ -2270,7 +2284,7 @@ bool engineCreateAgi(OSystem *syst, Engine **engine, Common::EncapsulatedADGameD
 	return res;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(AGI, engineCreateAgi, detectionParams);
+META_COMPATIBLITY_WRAPPER(AGI, AgiMetaEngine);
 
 REGISTER_PLUGIN(AGI, "AGI preAGI + v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line Software");
 

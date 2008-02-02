@@ -124,7 +124,22 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget | Common::kADFlagPrintWarningOnFileBasedFallback
 };
 
-static bool Engine_TOUCHE_createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) {
+class ToucheMetaEngine : public AdvancedMetaEngine {
+public:
+	ToucheMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "Touche Engine";
+	}
+	virtual const char *getCopyright() const {
+		return "Touche: The Adventures of the 5th Musketeer (C) Clipper Software";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+
+bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const Common::ADGameDescription *gd = encapsulatedDesc.realDesc;
 	if (gd) {
 		*engine = new Touche::ToucheEngine(syst, gd->language);
@@ -132,6 +147,6 @@ static bool Engine_TOUCHE_createInstance(OSystem *syst, Engine **engine, const C
 	return gd != 0;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(TOUCHE, Engine_TOUCHE_createInstance, detectionParams);
+META_COMPATIBLITY_WRAPPER(TOUCHE, ToucheMetaEngine);
 
 REGISTER_PLUGIN(TOUCHE, "Touche Engine", "Touche: The Adventures of the 5th Musketeer (C) Clipper Software");

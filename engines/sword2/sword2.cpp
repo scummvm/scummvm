@@ -35,6 +35,8 @@
 #include "common/events.h"
 #include "common/system.h"
 
+#include "engines/metaengine.h"
+
 #include "sword2/sword2.h"
 #include "sword2/defs.h"
 #include "sword2/header.h"
@@ -68,7 +70,23 @@ static const GameSettings sword2_settings[] = {
 
 } // End of namespace Sword2
 
-GameList Engine_SWORD2_gameIDList() {
+class Sword2MetaEngine : public MetaEngine {
+public:
+	virtual const char *getName() const {
+		return "Broken Sword 2";
+	}
+	virtual const char *getCopyright() const {
+		return "Broken Sword Games (C) Revolution";
+	}
+
+	virtual GameList getSupportedGames() const;
+	virtual GameDescriptor findGame(const char *gameid) const;
+	virtual GameList detectGames(const FSList &fslist) const;
+
+	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+};
+
+GameList Sword2MetaEngine::getSupportedGames() const {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;
 	GameList games;
 	while (g->gameid) {
@@ -78,7 +96,7 @@ GameList Engine_SWORD2_gameIDList() {
 	return games;
 }
 
-GameDescriptor Engine_SWORD2_findGameID(const char *gameid) {
+GameDescriptor Sword2MetaEngine::findGame(const char *gameid) const {
 	const Sword2::GameSettings *g = Sword2::sword2_settings;
 	while (g->gameid) {
 		if (0 == scumm_stricmp(gameid, g->gameid))
@@ -88,7 +106,7 @@ GameDescriptor Engine_SWORD2_findGameID(const char *gameid) {
 	return GameDescriptor(g->gameid, g->description);
 }
 
-GameList Engine_SWORD2_detectGames(const FSList &fslist) {
+GameList Sword2MetaEngine::detectGames(const FSList &fslist) const {
 	GameList detectedGames;
 	const Sword2::GameSettings *g;
 	FSList::const_iterator file;
@@ -123,7 +141,7 @@ GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 				if (0 == scumm_stricmp("clusters", fileName)) {
 					FSList recList;
 					if (file->getChildren(recList, FilesystemNode::kListAll)) {
-						GameList recGames(Engine_SWORD2_detectGames(recList));
+						GameList recGames(detectGames(recList));
 						if (!recGames.empty()) {
 							detectedGames.push_back(recGames);
 							break;
@@ -138,7 +156,7 @@ GameList Engine_SWORD2_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-PluginError Engine_SWORD2_create(OSystem *syst, Engine **engine) {
+PluginError Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(syst);
 	assert(engine);
 
@@ -150,7 +168,7 @@ PluginError Engine_SWORD2_create(OSystem *syst, Engine **engine) {
 
 	// Invoke the detector
 	Common::String gameid = ConfMan.get("gameid");
-	GameList detectedGames = Engine_SWORD2_detectGames(fslist);
+	GameList detectedGames = detectGames(fslist);
 
 	for (uint i = 0; i < detectedGames.size(); i++) {
 		if (detectedGames[i].gameid() == gameid) {
@@ -161,6 +179,8 @@ PluginError Engine_SWORD2_create(OSystem *syst, Engine **engine) {
 
 	return kNoGameDataFoundError;
 }
+
+META_COMPATIBLITY_WRAPPER(SWORD2, Sword2MetaEngine);
 
 REGISTER_PLUGIN(SWORD2, "Broken Sword 2", "Broken Sword Games (C) Revolution");
 

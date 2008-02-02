@@ -36,6 +36,9 @@
 #include "scumm/intern.h"
 #include "scumm/he/intern_he.h"
 
+#include "engines/metaengine.h"
+
+
 namespace Scumm {
 
 enum {
@@ -662,20 +665,33 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 
 using namespace Scumm;
 
-GameList Engine_SCUMM_gameIDList() {
+class ScummMetaEngine : public MetaEngine {
+public:
+	virtual const char *getName() const;
+	virtual const char *getCopyright() const;
+//	virtual int getVersion() const	{ return 0; }	// TODO!
+
+	virtual GameList getSupportedGames() const;
+	virtual GameDescriptor findGame(const char *gameid) const;
+	virtual GameList detectGames(const FSList &fslist) const;
+
+	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+};
+
+GameList ScummMetaEngine::getSupportedGames() const {
 	return GameList(gameDescriptions);
 }
 
-GameDescriptor Engine_SCUMM_findGameID(const char *gameid) {
+GameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
 	return Common::AdvancedDetector::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
 
 
-GameList Engine_SCUMM_detectGames(const FSList &fslist) {
+GameList ScummMetaEngine::detectGames(const FSList &fslist) const {
 	GameList detectedGames;
 	Common::List<DetectorResult> results;
 
-	detectGames(fslist, results, 0);
+	::detectGames(fslist, results, 0);
 
 	// TODO: We still don't handle the FM-TOWNS demos (like zakloom) very well.
 	// In particular, they are detected as ZakTowns, which is bad.
@@ -724,7 +740,7 @@ GameList Engine_SCUMM_detectGames(const FSList &fslist) {
  *
  * This is heavily based on our MD5 detection scheme.
  */
-PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
+PluginError ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(syst);
 	assert(engine);
 	const char *gameid = ConfMan.get("gameid").c_str();
@@ -756,7 +772,7 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 
 	// Invoke the detector, but fixed to the specified gameid.
 	Common::List<DetectorResult> results;
-	detectGames(fslist, results, gameid);
+	::detectGames(fslist, results, gameid);
 
 	// Unable to locate game data
 	if (results.empty()) {
@@ -903,6 +919,17 @@ PluginError Engine_SCUMM_create(OSystem *syst, Engine **engine) {
 
 	return kNoError;
 }
+
+const char *ScummMetaEngine::getName() const {
+	return "Scumm Engine";
+}
+
+const char *ScummMetaEngine::getCopyright() const {
+	return "LucasArts SCUMM Games (C) LucasArts\n"
+	       "Humongous SCUMM Games (C) Humongous";
+}
+
+META_COMPATIBLITY_WRAPPER(SCUMM, ScummMetaEngine);
 
 REGISTER_PLUGIN(SCUMM, "Scumm Engine",
 				"LucasArts SCUMM Games (C) LucasArts\n"
