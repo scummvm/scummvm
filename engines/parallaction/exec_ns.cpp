@@ -364,11 +364,12 @@ void Parallaction_ns::drawAnimations() {
 
 
 void Parallaction_ns::runScripts() {
-	debugC(9, kDebugExec, "runScripts");
-
 	if (_engineFlags & kEnginePauseJobs) {
 		return;
 	}
+
+	debugC(9, kDebugExec, "runScripts");
+
 
 	static uint16 modCounter = 0;
 

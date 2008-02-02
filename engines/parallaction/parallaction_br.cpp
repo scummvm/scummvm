@@ -183,9 +183,17 @@ void Parallaction_br::startPart() {
 	parseLocation("common");
 	parseLocation(_location._name);
 
+	changeLocation(_location._name);
+
 }
 
 void Parallaction_br::changeLocation(char *location) {
+
+	runCommands(_location._commands);
+
+//	doLocationEnterTransition();
+
+	runCommands(_location._aCommands);
 
 }
 

@@ -70,47 +70,29 @@ typedef OpcodeImpl<Parallaction_br> OpcodeV2;
 #define DECLARE_INSTRUCTION_OPCODE(op) void Parallaction_br::instOp_##op()
 
 void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
-#if 0
 	debugC(5, kDebugExec, "setupSubtitles(%s, %s, %i)", s, s2, y);
 
+	_gfx->freeLabels();
+	_subtitle[0] = _subtitle[1] = -1;
+
 	if (!scumm_stricmp("clear", s)) {
-
-		removeJob(_jDisplaySubtitle);
-		addJob(kJobWaitRemoveSubtitleJob, _jEraseSubtitle, 15);
-		_jDisplaySubtitle = 0;
-
-		_subtitle0.free();
-		_subtitle1.free();
 		return;
 	}
 
-	_subtitle0.free();
-	_subtitle1.free();
+	if (y != -1) {
+		_subtitleY = y;
+	}
 
-	renderLabel(&_subtitle0._cnv, s);
-	_subtitle0._text = strdup(s);
-
+	_subtitle[0] = _gfx->createLabel(_labelFont, s, 0);
+	_gfx->showLabel(_subtitle[0], CENTER_LABEL_HORIZONTAL, _subtitleY);
 	if (s2) {
-		renderLabel(&_subtitle1._cnv, s2);
-		_subtitle1._text = strdup(s2);
+		_subtitle[1] = _gfx->createLabel(_labelFont, s2, 0);
+		_gfx->showLabel(_subtitle[1], CENTER_LABEL_HORIZONTAL, _subtitleY + 5 + _labelFont->height());
+	} else {
+		_subtitle[1] = -1;
 	}
 
 	_subtitleLipSync = 0;
-
-	if (y != -1) {
-		_subtitle0._pos.y = y;
-		_subtitle1._pos.y = y + 5 + _labelFont->height();
-	}
-
-	_subtitle0._pos.x = (_gfx->_screenX << 2) + ((640 - _subtitle0._cnv.w) >> 1);
-	if (_subtitle1._text)
-		_subtitle1._pos.x = (_gfx->_screenX << 2) + ((640 - _subtitle1._cnv.w) >> 1);
-
-	if (_jDisplaySubtitle == 0) {
-		_jDisplaySubtitle = addJob(kJobDisplaySubtitle, 0, 1);
-		_jEraseSubtitle = addJob(kJobEraseSubtitle, 0, 20);
-	}
-#endif
 }
 
 
@@ -155,7 +137,7 @@ DECLARE_COMMAND_OPCODE(move) {
 }
 
 DECLARE_COMMAND_OPCODE(start) {
-	warning("Parallaction_br::cmdOp_start not yet implemented");
+	_cmdRunCtxt.cmd->u._animation->_flags |= kFlagsActing;
 }
 
 DECLARE_COMMAND_OPCODE(stop) {
@@ -425,35 +407,6 @@ DECLARE_INSTRUCTION_OPCODE(print) {
 	warning("Parallaction_br::instOp_print not yet implemented");
 }
 
-
-#if 0
-void Parallaction_br::jobDisplaySubtitle(void *parm, Job *job) {
-//	_gfx->drawLabel(_subtitle0);
-//	_gfx->drawLabel(_subtitle1);
-}
-
-void Parallaction_br::jobEraseSubtitle(void *parm, Job *job) {
-	Common::Rect r;
-
-	if (_subtitle0._old.x != -1000) {
-		_subtitle0.getRect(r);
-
-//		printf("sub0: (%i, %i, %i, %i)\n", r.left, r.top, r.right, r.bottom);
-
-		_gfx->restoreBackground(r);
-	}
-	_subtitle0._old = _subtitle0._pos;
-
-	if (_subtitle1._old.x != -1000) {
-		_subtitle0.getRect(r);
-
-//		printf("sub1: (%i, %i, %i, %i)\n", r.left, r.top, r.right, r.bottom);
-
-		_gfx->restoreBackground(r);
-	}
-	_subtitle1._old = _subtitle1._pos;
-}
-#endif
 DECLARE_INSTRUCTION_OPCODE(text) {
 	Instruction *inst = (*_instRunCtxt.inst);
 	setupSubtitles(inst->_text, inst->_text2, inst->_y);
@@ -485,7 +438,13 @@ DECLARE_INSTRUCTION_OPCODE(stop) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(endscript) {
-	warning("Parallaction_br::instOp_endscript not yet implemented");
+	if ((_instRunCtxt.a->_flags & kFlagsLooping) == 0) {
+		_instRunCtxt.a->_flags &= ~kFlagsActing;
+		runCommands(_instRunCtxt.a->_commands, _instRunCtxt.a);
+	}
+	_instRunCtxt.a->_program->_ip = _instRunCtxt.a->_program->_instructions.begin();
+
+	_instRunCtxt.suspend = true;
 }
 
 void Parallaction_br::initOpcodes() {

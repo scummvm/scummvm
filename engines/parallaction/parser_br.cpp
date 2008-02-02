@@ -494,7 +494,7 @@ DECLARE_COMMAND_PARSER(text)  {
 		_locParseCtxt.cmd->u._zeta0 = atoi(_tokens[1]);
 		_locParseCtxt.nextToken++;
 	} else {
-		_locParseCtxt.cmd->u._zeta0 = 0;
+		_locParseCtxt.cmd->u._zeta0 = -1;
 	}
 
 	_locParseCtxt.cmd->u._string = strdup(_tokens[_locParseCtxt.nextToken]);
@@ -946,6 +946,13 @@ void Parallaction_br::parseLocation(const char* filename) {
 	free(_locParseCtxt.bgName);
 	free(_locParseCtxt.maskName);
 	free(_locParseCtxt.pathName);
+
+	AnimationList::iterator it = _animations.begin();
+	for ( ; it != _animations.end(); it++) {
+		if (((*it)->_scriptName) && ((*it)->_program == 0)) {
+			loadProgram(*it, (*it)->_scriptName);
+		}
+	}
 
 //	drawZones();
 

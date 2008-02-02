@@ -873,9 +873,8 @@ public:
 
 	int16		_lipSyncVal;
 	uint		_subtitleLipSync;
-
-	Label		_subtitle0;
-	Label		_subtitle1;
+	int			_subtitleY;
+	int			_subtitle[2];
 
 	Zone		*_activeZone2;
 
