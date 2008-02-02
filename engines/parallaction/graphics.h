@@ -335,6 +335,19 @@ struct BackgroundInfo {
 	PathBuffer			path;
 
 	Palette				palette;
+
+	int 				layers[4];
+	PaletteFxRange		ranges[6];
+
+	BackgroundInfo() : width(0), height(0) {
+		layers[0] = layers[1] = layers[2] = layers[3] = 0;
+		memset(ranges, 0, sizeof(ranges));
+	}
+
+	void setPaletteRange(int index, const PaletteFxRange& range) {
+		assert(index < 6);
+		memcpy(&ranges[index], &range, sizeof(PaletteFxRange));
+	}
 };
 
 
@@ -348,24 +361,14 @@ class Gfx {
 public:
 	Disk *_disk;
 
+	GfxObjList _gfxobjList[3];
 	GfxObj* loadAnim(const char *name);
 	GfxObj* loadGet(const char *name);
 	GfxObj* loadDoor(const char *name);
-	void clearGfxObjects();
-
-	void showGfxObj(GfxObj* obj, bool visible);
-	GfxObjList _gfxobjList[3];
 	void drawGfxObjects(Graphics::Surface &surf);
+	void showGfxObj(GfxObj* obj, bool visible);
+	void clearGfxObjects();
 	void sortAnimations();
-
-	BackgroundInfo	*_backgroundInfo;
-	void freeBackground();
-	void setBackground(uint type, const char* name, const char* mask, const char* path);
-
-public:
-
-	// balloons and text
-	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 
 	// labels
 	void setFloatingLabel(Label *label);
@@ -375,27 +378,30 @@ public:
 	void hideLabel(uint id);
 	void freeLabels();
 
-	// cut/paste
-	void patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask = false);
-
-
+	// dialogue balloons
 	int setLocationBalloon(char *text, bool endGame);
 	int setDialogueBalloon(char *text, uint16 winding, byte textColor);
 	int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor);
 	void setBalloonText(uint id, char *text, byte textColor);
 	int hitTestDialogueBalloon(int x, int y);
+	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
 
+	// other items
 	int setItem(Frames* frames, uint16 x, uint16 y);
 	void setItemFrame(uint item, uint16 f);
 	void hideDialogueStuff();
 	void freeBalloons();
 	void freeItems();
 
-	// low level surfaces
+	// background surface
+	BackgroundInfo	*_backgroundInfo;
+	void setBackground(uint type, const char* name, const char* mask, const char* path);
 	void clearBackground();
+	void patchBackground(Graphics::Surface &surf, int16 x, int16 y, bool mask = false);
 	void grabBackground(const Common::Rect& r, Graphics::Surface &dst);
 	void fillBackground(const Common::Rect& r, byte color);
 	void invertBackground(const Common::Rect& r);
+	void freeBackground();
 
 	// palette
 	void setPalette(Palette palette);
@@ -408,17 +414,15 @@ public:
 
 	// misc
 	uint16 queryMask(uint16 v);
-	void updateScreen();
 	void setMask(MaskBuffer *buffer);
 
 	// init
 	Gfx(Parallaction* vm);
 	virtual ~Gfx();
 
+	void updateScreen();
 
 public:
-	uint16				_bgLayers[4];
-	PaletteFxRange		_palettefx[6];
 	Palette				_palette;
 
 	uint				_screenX;		// scrolling position

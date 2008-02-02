@@ -413,10 +413,11 @@ DECLARE_INSTRUCTION_OPCODE(color) {
 
 DECLARE_INSTRUCTION_OPCODE(mask) {
 	Instruction *inst = *_instRunCtxt.inst;
-
+#if 0
 	_gfx->_bgLayers[0] = inst->_opA.getRValue();
 	_gfx->_bgLayers[1] = inst->_opB.getRValue();
 	_gfx->_bgLayers[2] = inst->_opC.getRValue();
+#endif
 }
 
 

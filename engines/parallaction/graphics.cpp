@@ -260,17 +260,18 @@ void Gfx::animatePalette() {
 	// avoid forcing setPalette when not needed
 	bool done = false;
 
+	PaletteFxRange *range;
 	for (uint16 i = 0; i < 4; i++) {
+		range = &_backgroundInfo->ranges[i];
 
-		if ((_palettefx[i]._flags & 1) == 0) continue;		// animated palette
+		if ((range->_flags & 1) == 0) continue;		// animated palette
+		range->_timer += range->_step * 2;	// update timer
 
-		_palettefx[i]._timer += _palettefx[i]._step * 2;	// update timer
+		if (range->_timer < 0x4000) continue;		// check timeout
 
-		if (_palettefx[i]._timer < 0x4000) continue;		// check timeout
+		range->_timer = 0;							// reset timer
 
-		_palettefx[i]._timer = 0;							// reset timer
-
-		_palette.rotate(_palettefx[i]._first, _palettefx[i]._last, (_palettefx[i]._flags & 2) != 0);
+		_palette.rotate(range->_first, range->_last, (range->_flags & 2) != 0);
 
 		done = true;
 	}
@@ -733,7 +734,7 @@ void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
 uint16 Gfx::queryMask(uint16 v) {
 
 	for (uint16 _si = 0; _si < 3; _si++) {
-		if (_bgLayers[_si+1] > v) return _si;
+		if (_backgroundInfo->layers[_si+1] > v) return _si;
 	}
 
 	return BUFFER_FOREGROUND;
@@ -756,10 +757,6 @@ Gfx::Gfx(Parallaction* vm) :
 
 	_screenX = 0;
 	_screenY = 0;
-
-	_bgLayers[0] = _bgLayers[1] = _bgLayers[2] = _bgLayers[3] = 0;
-
-	memset(_palettefx, 0, sizeof(_palettefx));
 
 	_halfbrite = false;
 	_hbCircleRadius = 0;

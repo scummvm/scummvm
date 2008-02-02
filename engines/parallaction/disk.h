@@ -133,7 +133,7 @@ private:
 	Frames* loadExternalStaticCnv(const char *filename);
 	void loadBackground(BackgroundInfo& info, const char *filename);
 	void loadMaskAndPath(BackgroundInfo& info, const char *name);
-	void parseDepths(Common::SeekableReadStream &stream);
+	void parseDepths(BackgroundInfo &info, Common::SeekableReadStream &stream);
 	void parseBackground(BackgroundInfo& info, Common::SeekableReadStream &stream);
 	Font *createFont(const char *name, Cnv* cnv);
 

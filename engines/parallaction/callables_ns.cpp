@@ -331,7 +331,7 @@ void Parallaction_ns::_c_onMouse(void *parm) {
 void Parallaction_ns::_c_setMask(void *parm) {
 
 	memset(_gfx->_backgroundInfo->mask.data + 3600, 0, 3600);
-	_gfx->_bgLayers[1] = 500;
+	_gfx->_backgroundInfo->layers[1] = 500;
 
 	return;
 }

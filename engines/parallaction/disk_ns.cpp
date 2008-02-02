@@ -24,7 +24,6 @@
  */
 
 #include "graphics/iff.h"
-#include "graphics/surface.h"
 
 #include "parallaction/parallaction.h"
 
@@ -321,7 +320,6 @@ DosDisk_ns::~DosDisk_ns() {
 // loads a cnv from an external file
 //
 Cnv* DosDisk_ns::loadExternalCnv(const char *filename) {
-//	printf("Gfx::loadExternalCnv(%s)...", filename);
 
 	char path[PATH_LEN];
 
@@ -367,7 +365,6 @@ Frames* DosDisk_ns::loadExternalStaticCnv(const char *filename) {
 }
 
 Cnv* DosDisk_ns::loadCnv(const char *filename) {
-//	printf("Gfx::loadCnv(%s)\n", filename);
 
 	char path[PATH_LEN];
 
@@ -525,12 +522,11 @@ void DosDisk_ns::unpackBackground(Common::ReadStream *stream, byte *screen, byte
 	return;
 }
 
-
-void DosDisk_ns::parseDepths(Common::SeekableReadStream &stream) {
-	_vm->_gfx->_bgLayers[0] = stream.readByte();
-	_vm->_gfx->_bgLayers[1] = stream.readByte();
-	_vm->_gfx->_bgLayers[2] = stream.readByte();
-	_vm->_gfx->_bgLayers[3] = stream.readByte();
+void DosDisk_ns::parseDepths(BackgroundInfo &info, Common::SeekableReadStream &stream) {
+	info.layers[0] = stream.readByte();
+	info.layers[1] = stream.readByte();
+	info.layers[2] = stream.readByte();
+	info.layers[3] = stream.readByte();
 }
 
 
@@ -545,14 +541,17 @@ void DosDisk_ns::parseBackground(BackgroundInfo& info, Common::SeekableReadStrea
 		info.palette.setEntry(i, tmp[0], tmp[1], tmp[2]);
 	}
 
-	parseDepths(stream);
+	parseDepths(info, stream);
 
+	PaletteFxRange range;
 	for (uint32 _si = 0; _si < 6; _si++) {
-		_vm->_gfx->_palettefx[_si]._timer = stream.readUint16BE();
-		_vm->_gfx->_palettefx[_si]._step = stream.readUint16BE();
-		_vm->_gfx->_palettefx[_si]._flags = stream.readUint16BE();
-		_vm->_gfx->_palettefx[_si]._first = stream.readByte();
-		_vm->_gfx->_palettefx[_si]._last = stream.readByte();
+		range._timer = stream.readUint16BE();
+		range._step = stream.readUint16BE();
+		range._flags = stream.readUint16BE();
+		range._first = stream.readByte();
+		range._last = stream.readByte();
+
+		info.setPaletteRange(_si, range);
 	}
 
 }
@@ -590,7 +589,7 @@ void DosDisk_ns::loadMaskAndPath(BackgroundInfo& info, const char *name) {
 	if (!_resArchive.openArchivedFile(path))
 		errorFileNotFound(name);
 
-	parseDepths(_resArchive);
+	parseDepths(info, _resArchive);
 
 	info.path.create(info.width, info.height);
 	_resArchive.read(info.path.data, info.path.size);
@@ -1145,15 +1144,18 @@ void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
 	Common::SeekableReadStream *s = openArchivedFile(name, true);
 
 	byte *pal;
+	PaletteFxRange ranges[6];
 
-	BackgroundDecoder decoder(*s, info.bg, pal, _vm->_gfx->_palettefx);
+	BackgroundDecoder decoder(*s, info.bg, pal, ranges);
 	decoder.decode();
+
+	uint i;
 
 	info.width = info.bg.w;
 	info.height = info.bg.h;
 
 	byte *p = pal;
-	for (uint i = 0; i < 32; i++) {
+	for (i = 0; i < 32; i++) {
 		byte r = *p >> 2;
 		p++;
 		byte g = *p >> 2;
@@ -1164,6 +1166,10 @@ void AmigaDisk_ns::loadBackground(BackgroundInfo& info, const char *name) {
 	}
 
 	free(pal);
+
+	for (i = 0; i < 6; i++) {
+		info.setPaletteRange(i, ranges[i]);
+	}
 
 	delete s;
 
@@ -1191,11 +1197,8 @@ void AmigaDisk_ns::loadMask(BackgroundInfo& info, const char *name) {
 		g = s->readByte();
 		b = s->readByte();
 
-		_vm->_gfx->_bgLayers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
-
-//		printf("rgb = (%x, %x, %x) -> %x\n", r, g, b, _vm->_gfx->_bgLayers[i]);
+		info.layers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
 	}
-
 
 	s->seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
 	Graphics::PackBitsReadStream stream(*s);
