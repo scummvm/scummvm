@@ -184,7 +184,21 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-static bool Engine_PARALLACTION_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+class ParallactionMetaEngine : public AdvancedMetaEngine {
+public:
+	ParallactionMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "Parallaction engine";
+	}
+	virtual const char *getCopyright() const {
+		return "Nippon Safes Inc. (C) Dynabyte";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)(encapsulatedDesc.realDesc);
 	bool res = true;
 
@@ -203,6 +217,6 @@ static bool Engine_PARALLACTION_createInstance(OSystem *syst, Engine **engine, C
 	return res;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(PARALLACTION, Engine_PARALLACTION_createInstance, detectionParams);
+META_COMPATIBLITY_WRAPPER(PARALLACTION, ParallactionMetaEngine);
 
 REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dynabyte");
