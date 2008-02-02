@@ -174,7 +174,22 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget | Common::kADFlagUseExtraAsHint
 };
 
-static bool Engine_LURE_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+class LureMetaEngine : public AdvancedMetaEngine {
+public:
+	LureMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "Lure of the Temptress Engine";
+	}
+
+	virtual const char *getCopyright() const {
+		return "Lure of the Temptress (C) Revolution";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const Lure::LureGameDescription *gd = (const Lure::LureGameDescription *)(encapsulatedDesc.realDesc);
 	if (gd) {
 		*engine = new Lure::LureEngine(syst, gd);
@@ -182,6 +197,6 @@ static bool Engine_LURE_createInstance(OSystem *syst, Engine **engine, Common::E
 	return gd != 0;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(LURE, Engine_LURE_createInstance, detectionParams);
+META_COMPATIBLITY_WRAPPER(LURE, LureMetaEngine);
 
 REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine", "Lure of the Temptress (C) Revolution");

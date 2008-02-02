@@ -99,7 +99,22 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-bool engineCreateAgos(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+class AgosMetaEngine : public AdvancedMetaEngine {
+public:
+	AgosMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "AGOS";
+	}
+
+	virtual const char *getCopyright() const {
+		return "AGOS (C) Adventure Soft";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const AGOS::AGOSGameDescription *gd = (const AGOS::AGOSGameDescription *)(encapsulatedDesc.realDesc);
 	bool res = true;
 
@@ -136,7 +151,7 @@ bool engineCreateAgos(OSystem *syst, Engine **engine, Common::EncapsulatedADGame
 	return res;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(AGOS, engineCreateAgos, detectionParams);
+META_COMPATIBLITY_WRAPPER(AGOS, AgosMetaEngine);
 
 REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
 

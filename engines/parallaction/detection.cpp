@@ -191,6 +191,7 @@ public:
 	virtual const char *getName() const {
 		return "Parallaction engine";
 	}
+
 	virtual const char *getCopyright() const {
 		return "Nippon Safes Inc. (C) Dynabyte";
 	}

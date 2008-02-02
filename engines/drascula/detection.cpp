@@ -163,7 +163,22 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-static bool Engine_DRASCULA_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+class DrasculaMetaEngine : public AdvancedMetaEngine {
+public:
+	DrasculaMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "Drascula Engine";
+	}
+
+	virtual const char *getCopyright() const {
+		return "Drascula Engine (C) 2000 Alcachofa Soft, 1996 (C) Digital Dreams Multimedia, 1994 (C) Emilio de Paz";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const Drascula::DrasculaGameDescription *gd = (const Drascula::DrasculaGameDescription *)(encapsulatedDesc.realDesc);
 	if (gd) {
 		*engine = new Drascula::DrasculaEngine(syst, gd);
@@ -171,7 +186,6 @@ static bool Engine_DRASCULA_createInstance(OSystem *syst, Engine **engine, Commo
 	return gd != 0;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(DRASCULA, Engine_DRASCULA_createInstance, detectionParams);
+META_COMPATIBLITY_WRAPPER(DRASCULA, DrasculaMetaEngine);
 
 REGISTER_PLUGIN(DRASCULA, "Drascula Engine", "Drascula Engine (C) 2000 Alcachofa Soft, 1996 (C) Digital Dreams Multimedia, 1994 (C) Emilio de Paz");
-

@@ -1742,7 +1742,22 @@ static const ADParams detectionParams = {
 	kADFlagAugmentPreferredTarget
 };
 
-static bool Engine_GOB_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+class GobMetaEngine : public AdvancedMetaEngine {
+public:
+	GobMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "Gob Engine";
+	}
+
+	virtual const char *getCopyright() const {
+		return "Goblins Games (C) Coktel Vision";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const Gob::GOBGameDescription *gd = (const Gob::GOBGameDescription *)(encapsulatedDesc.realDesc);
 	if (gd) {
 		*engine = new Gob::GobEngine(syst);
@@ -1751,7 +1766,7 @@ static bool Engine_GOB_createInstance(OSystem *syst, Engine **engine, Common::En
 	return gd != 0;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(GOB, Engine_GOB_createInstance, detectionParams);
+META_COMPATIBLITY_WRAPPER(GOB, GobMetaEngine);
 
 REGISTER_PLUGIN(GOB, "Gob Engine", "Goblins Games (C) Coktel Vision");
 

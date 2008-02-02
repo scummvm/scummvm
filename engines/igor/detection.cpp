@@ -105,7 +105,22 @@ static const Common::ADParams igorDetectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-static bool Engine_IGOR_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+class IgorMetaEngine : public AdvancedMetaEngine {
+public:
+	IgorMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "Igor: Objective Uikokahonia";
+	}
+
+	virtual const char *getCopyright() const {
+		return "Igor: Objective Uikokahonia (C) Pendulo Studios";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+bool IgorMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const IgorGameDescription *gd = (const IgorGameDescription *)(encapsulatedDesc.realDesc);
 	if (gd) {
 		Igor::DetectedGameVersion dgv;
@@ -119,6 +134,6 @@ static bool Engine_IGOR_createInstance(OSystem *syst, Engine **engine, Common::E
 	return gd != 0;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(IGOR, Engine_IGOR_createInstance, igorDetectionParams);
+META_COMPATIBLITY_WRAPPER(IGOR, IgorMetaEngine);
 
 REGISTER_PLUGIN(IGOR, "Igor: Objective Uikokahonia", "Igor: Objective Uikokahonia (C) Pendulo Studios");

@@ -123,7 +123,22 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-static bool Engine_CRUISE_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+class CruiseMetaEngine : public AdvancedMetaEngine {
+public:
+	CruiseMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "Cinematique evo 2 engine";
+	}
+
+	virtual const char *getCopyright() const {
+		return "Cruise for a Corpse (C) Delphine Software";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const Cruise::CRUISEGameDescription *gd = (const Cruise::CRUISEGameDescription *)(encapsulatedDesc.realDesc);
 	if (gd) {
 		*engine = new Cruise::CruiseEngine(syst, gd);
@@ -131,6 +146,6 @@ static bool Engine_CRUISE_createInstance(OSystem *syst, Engine **engine, Common:
 	return gd != 0;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(CRUISE, Engine_CRUISE_createInstance, detectionParams);
+META_COMPATIBLITY_WRAPPER(CRUISE, CruiseMetaEngine);
 
 REGISTER_PLUGIN(CRUISE, "Cinematique evo 2 engine", "Cruise for a Corpse (C) Delphine Software");

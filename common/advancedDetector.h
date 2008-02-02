@@ -281,7 +281,7 @@ class AdvancedMetaEngine : public MetaEngine {
 	const Common::ADParams &params;
 public:
 	AdvancedMetaEngine(const Common::ADParams &dp) : params(dp) {}
-	
+
 	// To be provided by subclasses
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const = 0;
 

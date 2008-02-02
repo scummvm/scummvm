@@ -430,7 +430,22 @@ const Common::ADParams detectionParams = {
 
 } // End of anonymous namespace
 
-bool engineCreateKyra(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+class KyraMetaEngine : public AdvancedMetaEngine {
+public:
+	KyraMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "Legend of Kyrandia Engine";
+	}
+
+	virtual const char *getCopyright() const {
+		return "The Legend of Kyrandia (C) Westwood Studios";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const KYRAGameDescription *gd = (const KYRAGameDescription *)(encapsulatedDesc.realDesc);
 	bool res = true;
 
@@ -469,8 +484,6 @@ bool engineCreateKyra(OSystem *syst, Engine **engine, Common::EncapsulatedADGame
 	return res;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(KYRA, engineCreateKyra, detectionParams);
+META_COMPATIBLITY_WRAPPER(KYRA, KyraMetaEngine);
 
 REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine", "The Legend of Kyrandia (C) Westwood Studios");
-
-

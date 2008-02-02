@@ -141,7 +141,22 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-static bool Engine_SAGA_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+class SagaMetaEngine : public AdvancedMetaEngine {
+public:
+	SagaMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "Saga engine";
+	}
+
+	virtual const char *getCopyright() const {
+		return "Inherit the Earth (C) Wyrmkeep Entertainment";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const Saga::SAGAGameDescription *gd = (const Saga::SAGAGameDescription *)(encapsulatedDesc.realDesc);
 	if (gd) {
 		*engine = new Saga::SagaEngine(syst, gd);
@@ -149,7 +164,7 @@ static bool Engine_SAGA_createInstance(OSystem *syst, Engine **engine, Common::E
 	return gd != 0;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(SAGA, Engine_SAGA_createInstance, detectionParams);
+META_COMPATIBLITY_WRAPPER(SAGA, SagaMetaEngine);
 
 REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainment");
 

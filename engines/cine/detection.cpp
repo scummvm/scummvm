@@ -488,7 +488,22 @@ static const Common::ADParams detectionParams = {
 	Common::kADFlagAugmentPreferredTarget
 };
 
-static bool Engine_CINE_createInstance(OSystem *syst, Engine **engine, Common::EncapsulatedADGameDesc encapsulatedDesc) {
+class CineMetaEngine : public AdvancedMetaEngine {
+public:
+	CineMetaEngine() : AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "Cinematique evo 1 engine";
+	}
+
+	virtual const char *getCopyright() const {
+		return "Future Wars & Operation Stealth (C) Delphine Software";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+};
+
+bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const Cine::CINEGameDescription *gd = (const Cine::CINEGameDescription *)(encapsulatedDesc.realDesc);
 	if (gd) {
 		*engine = new Cine::CineEngine(syst, gd);
@@ -496,6 +511,6 @@ static bool Engine_CINE_createInstance(OSystem *syst, Engine **engine, Common::E
 	return gd != 0;
 }
 
-ADVANCED_DETECTOR_DEFINE_PLUGIN(CINE, Engine_CINE_createInstance, detectionParams);
+META_COMPATIBLITY_WRAPPER(CINE, CineMetaEngine);
 
 REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Stealth (C) Delphine Software");
