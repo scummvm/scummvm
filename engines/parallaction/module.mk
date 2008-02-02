@@ -13,8 +13,9 @@ MODULE_OBJS := \
 	font.o \
 	gfxbase.o \
 	graphics.o \
-	inventory.o \
+	gui_br.o \
 	gui_ns.o \
+	inventory.o \
 	objects.o \
 	parallaction.o \
 	parallaction_br.o \
