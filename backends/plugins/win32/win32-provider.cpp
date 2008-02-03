@@ -106,12 +106,6 @@ public:
 };
 
 
-Win32PluginProvider::Win32PluginProvider() {
-}
-
-Win32PluginProvider::~Win32PluginProvider() {
-}
-
 PluginList Win32PluginProvider::getPlugins() {
 	PluginList pl;
 

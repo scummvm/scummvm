@@ -32,9 +32,6 @@
 
 class POSIXPluginProvider : public PluginProvider {
 public:
-	POSIXPluginProvider();
-	~POSIXPluginProvider();
-
 	virtual PluginList getPlugins();
 };
 

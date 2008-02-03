@@ -32,9 +32,6 @@
 
 class Win32PluginProvider : public PluginProvider {
 public:
-	Win32PluginProvider();
-	~Win32PluginProvider();
-
 	virtual PluginList getPlugins();
 };
 

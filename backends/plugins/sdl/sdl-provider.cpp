@@ -78,12 +78,6 @@ public:
 };
 
 
-SDLPluginProvider::SDLPluginProvider() {
-}
-
-SDLPluginProvider::~SDLPluginProvider() {
-}
-
 PluginList SDLPluginProvider::getPlugins() {
 	PluginList pl;
 

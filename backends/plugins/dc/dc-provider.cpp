@@ -85,12 +85,6 @@ public:
 };
 
 
-DCPluginProvider::DCPluginProvider() {
-}
-
-DCPluginProvider::~DCPluginProvider() {
-}
-
 PluginList DCPluginProvider::getPlugins() {
 	PluginList pl;
 

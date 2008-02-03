@@ -32,9 +32,6 @@
 
 class DCPluginProvider : public PluginProvider {
 public:
-	DCPluginProvider();
-	~DCPluginProvider();
-
 	virtual PluginList getPlugins();
 };
 

@@ -32,9 +32,6 @@
 
 class SDLPluginProvider : public PluginProvider {
 public:
-	SDLPluginProvider();
-	~SDLPluginProvider();
-
 	virtual PluginList getPlugins();
 };
 

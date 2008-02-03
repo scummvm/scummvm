@@ -78,12 +78,6 @@ public:
 };
 
 
-POSIXPluginProvider::POSIXPluginProvider() {
-}
-
-POSIXPluginProvider::~POSIXPluginProvider() {
-}
-
 PluginList POSIXPluginProvider::getPlugins() {
 	PluginList pl;
 
