@@ -163,7 +163,7 @@ void Gfx::drawGfxObjects(Graphics::Surface &surf) {
 			GfxObj *obj = *b;
 			if (obj->isVisible()) {
 				obj->getRect(obj->frame, rect);
-				rect.moveTo(obj->x, obj->y);
+				rect.translate(obj->x, obj->y);
 				data = obj->getData(obj->frame);
 				if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {
 					blt(rect, data, &surf, obj->layer, 0);
