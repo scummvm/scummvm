@@ -437,7 +437,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 	bool masked;
 
 #ifdef USE_ARM_COSTUME_ASM
-	if ((_shadow_mode & 0x20) == 0) &&
+	if (((_shadow_mode & 0x20) == 0) &&
 	    (v1.mask_ptr != NULL) &&
 	    (_shadow_table != NULL))
 	{
