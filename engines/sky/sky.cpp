@@ -108,7 +108,6 @@ class SkyMetaEngine : public MetaEngine {
 public:
 	virtual const char *getName() const;
 	virtual const char *getCopyright() const;
-//	virtual int getVersion() const	{ return 0; }	// TODO!
 
 	virtual GameList getSupportedGames() const;
 	virtual GameDescriptor findGame(const char *gameid) const;
