@@ -36,10 +36,14 @@ namespace Graphics {
  * operations, font rendering, etc.
  */
 struct Surface {
-	void *pixels;
+    	/**
+    	 * ARM code relies on the layout of the first 3 of these fields. Do
+    	 * not change them.
+    	 */
 	uint16 w;
 	uint16 h;
 	uint16 pitch;
+	void *pixels;
 	uint8 bytesPerPixel;
 	Surface() : pixels(0), w(0), h(0), pitch(0), bytesPerPixel(0) {}
 
