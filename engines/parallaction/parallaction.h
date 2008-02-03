@@ -150,7 +150,7 @@ extern uint32		_engineFlags;
 extern Command		*_forwardedCommands[];
 extern char			_forwardedAnimationNames[][20];
 extern uint16		_numForwards;
-extern char			_slideText[][40];
+extern char			_slideText[][MAX_TOKEN_LEN];
 extern uint16		_introSarcData3;		 // sarcophagus stuff to be saved
 extern uint16		_introSarcData2;		 // sarcophagus stuff to be saved
 extern char			_saveData1[];

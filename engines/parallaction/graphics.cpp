@@ -699,11 +699,11 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 	uint16 blankWidth = _font->getStringWidth(" ");
 	uint16 tokenWidth = 0;
 
-	char token[40];
+	char token[MAX_TOKEN_LEN];
 
 	while (strlen(text) != 0) {
 
-		text = parseNextToken(text, token, 40, "   ", true);
+		text = parseNextToken(text, token, MAX_TOKEN_LEN, "   ", true);
 		tokenWidth = _font->getStringWidth(token);
 
 		w += tokenWidth;
@@ -969,14 +969,14 @@ void Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16
 	uint16 blankWidth = _font->getStringWidth(" ");
 	uint16 tokenWidth = 0;
 
-	char token[40];
+	char token[MAX_TOKEN_LEN];
 
 	if (wrapwidth == -1)
 		wrapwidth = _vm->_screenWidth;
 
 	while (strlen(text) > 0) {
 
-		text = parseNextToken(text, token, 40, "   ", true);
+		text = parseNextToken(text, token, MAX_TOKEN_LEN, "   ", true);
 
 		if (!scumm_stricmp(token, "%p")) {
 			lines++;

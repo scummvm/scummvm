@@ -49,7 +49,7 @@ uint16	_mouseButtons = 0;
 
 char		_saveData1[30] = { '\0' };
 uint16		_language = 0;
-char		_slideText[2][40];
+char		_slideText[2][MAX_TOKEN_LEN];
 uint32		_engineFlags = 0;
 
 uint16		_score = 1;

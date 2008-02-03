@@ -28,7 +28,7 @@
 
 namespace Parallaction {
 
-char			_tokens[20][40];
+char			_tokens[20][MAX_TOKEN_LEN];
 
 Script::Script(Common::ReadStream *input, bool disposeSource) : _input(input), _disposeSource(disposeSource), _line(0) {
 }
@@ -153,7 +153,7 @@ uint16 Script::fillTokens(char* line) {
 
 	uint16 i = 0;
 	while (strlen(line) > 0 && i < 20) {
-		line = parseNextToken(line, _tokens[i], 40, " \t\n");
+		line = parseNextToken(line, _tokens[i], MAX_TOKEN_LEN, " \t\n");
 		line = Common::ltrim(line);
 		i++;
 	}

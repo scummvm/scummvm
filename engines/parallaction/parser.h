@@ -34,7 +34,8 @@ namespace Parallaction {
 
 char   *parseNextToken(char *s, char *tok, uint16 count, const char *brk, bool ignoreQuotes = false);
 
-extern char _tokens[][40];
+#define MAX_TOKEN_LEN	50
+extern char _tokens[][MAX_TOKEN_LEN];
 
 class Script {
 
