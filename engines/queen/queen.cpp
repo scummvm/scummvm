@@ -49,24 +49,47 @@
 #include "queen/talk.h"
 #include "queen/walk.h"
 
+#include "engines/metaengine.h"
+
 static const PlainGameDescriptor queenGameDescriptor = {
 	"queen", "Flight of the Amazon Queen"
 };
 
-GameList Engine_QUEEN_gameIDList() {
+class QueenMetaEngine : public MetaEngine {
+public:
+	virtual const char *getName() const;
+	virtual const char *getCopyright() const;
+//	virtual int getVersion() const	{ return 0; }	// TODO!
+
+	virtual GameList getSupportedGames() const;
+	virtual GameDescriptor findGame(const char *gameid) const;
+	virtual GameList detectGames(const FSList &fslist) const;
+
+	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+};
+
+const char *QueenMetaEngine::getName() const {
+	return "Flight of the Amazon Queen";
+}
+
+const char *QueenMetaEngine::getCopyright() const {
+	return "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis";
+}
+
+GameList QueenMetaEngine::getSupportedGames() const {
 	GameList games;
 	games.push_back(queenGameDescriptor);
 	return games;
 }
 
-GameDescriptor Engine_QUEEN_findGameID(const char *gameid) {
+GameDescriptor QueenMetaEngine::findGame(const char *gameid) const {
 	if (0 == scumm_stricmp(gameid, queenGameDescriptor.gameid)) {
 		return queenGameDescriptor;
 	}
 	return GameDescriptor();
 }
 
-GameList Engine_QUEEN_detectGames(const FSList &fslist) {
+GameList QueenMetaEngine::detectGames(const FSList &fslist) const {
 	GameList detectedGames;
 
 	// Iterate over all files in the given directory
@@ -99,11 +122,13 @@ GameList Engine_QUEEN_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-PluginError Engine_QUEEN_create(OSystem *syst, Engine **engine) {
+PluginError QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 	*engine = new Queen::QueenEngine(syst);
 	return kNoError;
 }
+
+META_COMPATIBLITY_WRAPPER(QUEEN, QueenMetaEngine);
 
 REGISTER_PLUGIN(QUEEN, "Flight of the Amazon Queen", "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis");
 

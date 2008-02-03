@@ -55,6 +55,8 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
+#include "engines/metaengine.h"
+
 #ifdef _WIN32_WCE
 
 extern bool toolbar_drawn;
@@ -81,18 +83,6 @@ extern bool draw_keyboard;
 static const PlainGameDescriptor skySetting =
 	{"sky", "Beneath a Steel Sky" };
 
-GameList Engine_SKY_gameIDList() {
-	GameList games;
-	games.push_back(skySetting);
-	return games;
-}
-
-GameDescriptor Engine_SKY_findGameID(const char *gameid) {
-	if (0 == scumm_stricmp(gameid, skySetting.gameid))
-		return skySetting;
-	return GameDescriptor();
-}
-
 struct SkyVersion {
 	int dinnerTableEntries;
 	int dataDiskSize;
@@ -114,7 +104,40 @@ static const SkyVersion skyVersions[] = {
 	{ 0, 0, 0, 0 }
 };
 
-GameList Engine_SKY_detectGames(const FSList &fslist) {
+class SkyMetaEngine : public MetaEngine {
+public:
+	virtual const char *getName() const;
+	virtual const char *getCopyright() const;
+//	virtual int getVersion() const	{ return 0; }	// TODO!
+
+	virtual GameList getSupportedGames() const;
+	virtual GameDescriptor findGame(const char *gameid) const;
+	virtual GameList detectGames(const FSList &fslist) const;
+
+	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+};
+
+const char *SkyMetaEngine::getName() const {
+	return "Beneath a Steel Sky";
+}
+
+const char *SkyMetaEngine::getCopyright() const {
+	return "Beneath a Steel Sky (C) Revolution";
+}
+
+GameList SkyMetaEngine::getSupportedGames() const {
+	GameList games;
+	games.push_back(skySetting);
+	return games;
+}
+
+GameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
+	if (0 == scumm_stricmp(gameid, skySetting.gameid))
+		return skySetting;
+	return GameDescriptor();
+}
+
+GameList SkyMetaEngine::detectGames(const FSList &fslist) const {
 	GameList detectedGames;
 	bool hasSkyDsk = false;
 	bool hasSkyDnr = false;
@@ -166,11 +189,13 @@ GameList Engine_SKY_detectGames(const FSList &fslist) {
 	return detectedGames;
 }
 
-PluginError Engine_SKY_create(OSystem *syst, Engine **engine) {
+PluginError SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
 	*engine = new Sky::SkyEngine(syst);
 	return kNoError;
 }
+
+META_COMPATIBLITY_WRAPPER(SKY, SkyMetaEngine);
 
 REGISTER_PLUGIN(SKY, "Beneath a Steel Sky", "Beneath a Steel Sky (C) Revolution");
 
