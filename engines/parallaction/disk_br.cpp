@@ -180,6 +180,21 @@ Frames* DosDisk_br::loadHead(const char* name) {
 	return 0;
 }
 
+void DosDisk_br::loadBitmap(Common::SeekableReadStream &stream, Graphics::Surface &surf, byte *palette) {
+	stream.skip(4);
+	uint width = stream.readUint32BE();
+	uint height = stream.readUint32BE();
+	stream.skip(20);
+
+	if (palette) {
+		stream.read(palette, 768);
+	} else {
+		stream.skip(768);
+	}
+
+	surf.create(width, height, 1);
+	stream.read(surf.pixels, width * height);
+}
 
 Frames* DosDisk_br::loadPointer(const char *name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadPointer");
@@ -191,17 +206,8 @@ Frames* DosDisk_br::loadPointer(const char *name) {
 	if (!stream.open(path))
 		errorFileNotFound(path);
 
-	stream.skip(4);
-	uint width = stream.readUint32BE();
-	uint height = stream.readUint32BE();
-	stream.skip(20);
-	stream.skip(768);
-
 	Graphics::Surface *surf = new Graphics::Surface;
-
-	surf->create(width, height, 1);
-	stream.read(surf->pixels, width * height);
-
+	loadBitmap(stream, *surf, 0);
 	return new SurfaceToFrames(surf);
 }
 
@@ -231,7 +237,17 @@ void genSlidePath(char *path, const char* name) {
 
 Frames* DosDisk_br::loadStatic(const char* name) {
 	debugC(5, kDebugDisk, "DosDisk_br::loadStatic");
-	return 0;
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/ras/%s", _partPath, name);
+	Common::File stream;
+	if (!stream.open(path)) {
+		errorFileNotFound(path);
+	}
+
+	Graphics::Surface *surf = new Graphics::Surface;
+	loadBitmap(stream, *surf, 0);
+	return new SurfaceToFrames(surf);
 }
 
 Sprites* DosDisk_br::createSprites(const char *path) {
@@ -284,20 +300,15 @@ void DosDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
 	if (!stream.open(path))
 		errorFileNotFound(path);
 
-	stream.skip(4);
-	info.width = stream.readUint32BE();
-	info.height = stream.readUint32BE();
-	stream.skip(20);
-
 	byte rgb[768];
-	stream.read(rgb, 768);
+
+	loadBitmap(stream, info.bg, rgb);
+	info.width = info.bg.w;
+	info.height = info.bg.h;
 
 	for (uint i = 0; i < 256; i++) {
 		info.palette.setEntry(i, rgb[i] >> 2, rgb[i+256] >> 2, rgb[i+512] >> 2);
 	}
-
-	info.bg.create(info.width, info.height, 1);
-	stream.read(info.bg.pixels, info.width * info.height);
 
 	return;
 }
@@ -313,20 +324,16 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 		if (!stream.open(filename))
 			errorFileNotFound(filename);
 
-		stream.skip(4);
-		info.width = stream.readUint32BE();
-		info.height = stream.readUint32BE();
-		stream.skip(20);
-
 		byte rgb[768];
-		stream.read(rgb, 768);
+
+		loadBitmap(stream, info.bg, rgb);
+		info.width = info.bg.w;
+		info.height = info.bg.h;
 
 		for (uint i = 0; i < 256; i++) {
 			info.palette.setEntry(i, rgb[i] >> 2, rgb[i+256] >> 2, rgb[i+512] >> 2);
 		}
 
-		info.bg.create(info.width, info.height, 1);
-		stream.read(info.bg.pixels, info.width * info.height);
 		stream.close();
 	}
 

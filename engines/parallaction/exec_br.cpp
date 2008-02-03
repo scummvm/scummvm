@@ -294,11 +294,35 @@ DECLARE_COMMAND_OPCODE(offsave) {
 
 DECLARE_INSTRUCTION_OPCODE(on) {
 	warning("Parallaction_br::instOp_on not yet implemented");
+
+	Instruction *inst = *_instRunCtxt.inst;
+	Zone *z = inst->_z;
+
+	if (z) {
+		z->_flags |= kFlagsActive;
+		z->_flags &= ~kFlagsRemove;
+
+		if ((z->_type & 0xFFFF) & kZoneGet) {
+			_gfx->showGfxObj(z->u.get->gfxobj, true);
+		}
+	}
+
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(off) {
 	warning("Parallaction_br::instOp_off not yet implemented");
+
+	Instruction *inst = *_instRunCtxt.inst;
+	Zone *z = inst->_z;
+
+	if (z) {
+		z->_flags |= kFlagsRemove;
+
+		if ((z->_type & 0xFFFF) & kZoneGet) {
+			_gfx->showGfxObj(z->u.get->gfxobj, false);
+		}
+	}
 }
 
 
