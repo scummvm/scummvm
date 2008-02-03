@@ -132,6 +132,12 @@
 	#define vsnprintf(buf,len,format,valist)	vsprintf(buf,format,valist)
 #endif
 
+#ifndef __WINS__
+#define USE_ARM_GFX_ASM
+#define USE_ARM_SMUSH_ASM
+#define USE_ARM_COSTUME_ASM
+#define USE_ARM_SOUND_ASM
+#endif
 // somehow nobody has this function...
 #define hypot(a, b)					sqrt((a)*(a) + (b)*(b))
 
