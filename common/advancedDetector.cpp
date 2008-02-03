@@ -36,6 +36,12 @@ namespace Common {
 
 namespace AdvancedDetector {
 
+// FIXME/TODO: Rename this function to something more sensible.
+// Helper function to announce an unknown version of the game (useful for
+// fallback detection functions).
+void reportUnknown(StringList &files, int md5Bytes);
+
+
 /**
  * Detect games in specified directory.
  * Parameters language and platform are used to pass on values
@@ -51,6 +57,10 @@ namespace AdvancedDetector {
 static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra);
 
 
+/**
+ * Returns list of targets supported by the engine.
+ * Distinguishes engines with single ID
+ */
 GameList gameIDList(const Common::ADParams &params) {
 	if (params.singleid != NULL) {
 		GameList gl;
@@ -554,5 +564,28 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 }
 
 }	// End of namespace AdvancedDetector
+
+GameList AdvancedMetaEngine::getSupportedGames() const {
+	return Common::AdvancedDetector::gameIDList(params);
+}
+GameDescriptor AdvancedMetaEngine::findGame(const char *gameid) const {
+	return Common::AdvancedDetector::findGameID(gameid, params.list, params.obsoleteList);
+}
+GameList AdvancedMetaEngine::detectGames(const FSList &fslist) const {
+	return Common::AdvancedDetector::detectAllGames(fslist, params);
+}
+
+PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+	assert(engine);
+	Common::AdvancedDetector::upgradeTargetIfNecessary(params);
+	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(params);
+	if (encapsulatedDesc.realDesc == 0) {
+		return kNoGameDataFoundError;
+	}
+	if (!createInstance(syst,engine,encapsulatedDesc)) {
+		return kNoGameDataFoundError;
+	}
+	return kNoError;
+}
 
 }	// End of namespace Common

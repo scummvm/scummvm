@@ -134,7 +134,8 @@ enum ADFlags {
 /**
  * A structure containing all parameters for the AdvancedDetector.
  * Typically, an engine will have a single instance of this which is
- * then passed to the various AdvancedDetector functions.
+ * used by its AdvancedMetaEngine subclass as a parameter to the
+ * primary AdvancedMetaEngine constructor.
  */
 struct ADParams {
 	/**
@@ -200,7 +201,8 @@ struct ADParams {
 	 * @note The fslist parameter may be 0 -- in that case, it is assumed
 	 *       that the callback searchs the current directory.
 	 *
-	 * @todo
+	 * @todo Change this to a member method of AdvancedMetaEngine which can
+	 *       be overriden via subclassing.
 	 */
 	EncapsulatedADGameDesc (*fallbackDetectFunc)(const FSList *fslist);
 
@@ -216,14 +218,8 @@ struct ADParams {
 namespace AdvancedDetector {
 
 /**
- * Returns list of targets supported by the engine.
- * Distinguishes engines with single ID
- */
-GameList gameIDList(const Common::ADParams &params);
-
-/**
  * Scan through the game descriptors specified in params and search for
- * 'gameid' in there. If a match is found, returns a  GameDescriptor
+ * 'gameid' in there. If a match is found, returns a GameDescriptor
  * with gameid and description set.
  */
 GameDescriptor findGameID(
@@ -232,45 +228,7 @@ GameDescriptor findGameID(
 	const Common::ADObsoleteGameID *obsoleteList = 0
 	);
 
-// FIXME/TODO: Rename this function to something more sensible.
-GameList detectAllGames(const FSList &fslist, const Common::ADParams &params);
-
-// FIXME/TODO: Rename this function to something more sensible.
-EncapsulatedADGameDesc detectBestMatchingGame(const Common::ADParams &params);
-
-void upgradeTargetIfNecessary(const Common::ADParams &params);
-
-// FIXME/TODO: Rename this function to something more sensible.
-// Helper function to announce an unknown version of the game (useful for
-// fallback detection functions).
-void reportUnknown(StringList &files, int md5Bytes);
-
 } // End of namespace AdvancedDetector
-
-
-#define ADVANCED_DETECTOR_DEFINE_PLUGIN(engine,factoryFunc,params) \
-	GameList Engine_##engine##_gameIDList() { \
-		return Common::AdvancedDetector::gameIDList(params); \
-	} \
-	GameDescriptor Engine_##engine##_findGameID(const char *gameid) { \
-		return Common::AdvancedDetector::findGameID(gameid, params.list, params.obsoleteList); \
-	} \
-	GameList Engine_##engine##_detectGames(const FSList &fslist) { \
-		return Common::AdvancedDetector::detectAllGames(fslist, params); \
-	} \
-	PluginError Engine_##engine##_create(OSystem *syst, Engine **engine) { \
-		assert(engine); \
-		Common::AdvancedDetector::upgradeTargetIfNecessary(params); \
-		Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(params); \
-		if (encapsulatedDesc.realDesc == 0) { \
-			return kNoGameDataFoundError; \
-		} \
-		if (!factoryFunc(syst,engine,encapsulatedDesc)) {	\
-			return kNoGameDataFoundError; \
-		} \
-		return kNoError; \
-	} \
-	void dummyFuncToAllowTrailingSemicolon()
 
 /**
  * A MetaEngine implementation based around the advanced detector code.
@@ -280,33 +238,13 @@ class AdvancedMetaEngine : public MetaEngine {
 public:
 	AdvancedMetaEngine(const Common::ADParams &dp) : params(dp) {}
 
+	virtual GameList getSupportedGames() const;
+	virtual GameDescriptor findGame(const char *gameid) const;
+	virtual GameList detectGames(const FSList &fslist) const;
+	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+
 	// To be provided by subclasses
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const = 0;
-
-
-protected:
-	virtual GameList getSupportedGames() const {
-		return Common::AdvancedDetector::gameIDList(params);
-	}
-	virtual GameDescriptor findGame(const char *gameid) const {
-		return Common::AdvancedDetector::findGameID(gameid, params.list, params.obsoleteList);
-	}
-	virtual GameList detectGames(const FSList &fslist) const {
-		return Common::AdvancedDetector::detectAllGames(fslist, params);
-	}
-
-	virtual PluginError createInstance(OSystem *syst, Engine **engine) const {
-		assert(engine);
-		Common::AdvancedDetector::upgradeTargetIfNecessary(params);
-		Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(params);
-		if (encapsulatedDesc.realDesc == 0) {
-			return kNoGameDataFoundError;
-		}
-		if (!createInstance(syst,engine,encapsulatedDesc)) {
-			return kNoGameDataFoundError;
-		}
-		return kNoError;
-	}
 };
 
 }	// End of namespace Common
