@@ -1,8 +1,18 @@
-#BUILD_PLUGINS = 1
-#libndsdir = $(DEVKITPRO)/libnds
-libndsdir = /home/neil/devkitpror21/libnds
 
-# Select the build you want by uncommenting one of the following lines:
+DEFINES     := -DHAVE_CONFIG_H
+LDFLAGS     :=
+INCLUDES    := -I. -I$(srcdir) -I$(srcdir)/engines
+LIBS        :=
+OBJS        :=
+DEPDIR      := .deps
+  
+MODULES     :=
+MODULE_DIRS :=
+
+#BUILD_PLUGINS = 1
+libndsdir = $(DEVKITPRO)/libnds
+#libndsdir = /home/neil/devkitpror21/libnds
+  
 
 
 
@@ -34,6 +44,8 @@ ifeq ($(SCUMM_BUILD),g)
         DS_BUILD_G = 1
 endif
 
+
+# Select the build you want by uncommenting one of the following lines:
 
 #DS_BUILD_A = 1
 #DS_BUILD_B = 1
@@ -76,7 +88,9 @@ endif
 # NOTE: The header and libs for the debugger is assumed to be in the libnds
 # folder.
 
-VPATH = $(srcdir)
+vpath %.h $(srcdir)
+vpath %.cpp $(srcdir)
+vpath %.s $(srcdir)
 
 # Command to build libmad is:
 # ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork'
@@ -314,11 +328,13 @@ endif
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -Wl,--wrap,time -mno-fpu -Wl,-Map,map.txt
 
-INCLUDES= -I./ -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/common -I$(portdir)/source -I$(portdir)/source/compressor -I$(portdir)/source/fat \
-			-I$(srcdir)/backends/fs  -I$(srcdir)/backends/fs/ds -I$(portdir)/data -I$(libndsdir)/include -I$(portdir)/../commoninclude\
-			-I$(srcdir)/scumm -I$(libndsdir)/include -I$(libndsdir)/include/nds -I$(srcdir)/engines -I$(portdir)/source/mad\
-			-I$(portdir)/source/libcartreset -include $(srcdir)/common/scummsys.h
-			
+INCLUDES= -I. -I$(portdir)/$(BUILD) \
+			-I$(srcdir) -I$(srcdir)/engines -I$(srcdir)/common -I$(srcdir)/backends/fs -I$(srcdir)/backends/fs/ds  \
+			-I$(portdir)/source -I$(portdir)/source/compressor -I$(portdir)/source/fat \
+			-I$(portdir)/source/mad -I$(portdir)/source/libcartreset \
+			-I$(portdir)/data -I$(portdir)/../commoninclude \
+			-I$(libndsdir)/include -I$(libndsdir)/include/nds \
+			-include $(srcdir)/common/scummsys.h
 
 LIBS	= -lm -L$(libndsdir)/lib -L$(portdir)/lib -lnds9
 ifdef USE_MAD
@@ -400,11 +416,10 @@ OPT_SIZE := -Os
 #-mthumb -fno-gcse -fno-schedule-insns2
 
 
-			
 OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS) 
-		
 
-		
+
+
 MODULE_DIRS += .
 
 ndsall:
@@ -413,7 +428,8 @@ ndsall:
 
 include $(srcdir)/Makefile.common
 
-clean:
+clean: clean-nds
+clean-nds:
 	$(RM) $(OBJS) $(EXECUTABLE)
 	rm -fr $(BUILD)
 
@@ -462,22 +478,8 @@ endef
 
 ##############
 # Replacement rule for the one in makefile.common
+# FIXME: Why does this compile the source code twice?
 ##############
-ifndef HAVE_GCC3
-# If you use GCC, disable the above and enable this for intelligent
-# dependency tracking. 
-.cpp.o:
-
-	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-#	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
-	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
-	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
-else
-# If you even have GCC 3.x, you can use this build rule, which is safer; the above
-# rule can get you into a bad state if you Ctrl-C at the wrong moment.
-# Also, with this GCC inserts additional dummy rules for the involved headers,
-# which ensures a smooth compilation even if said headers become obsolete.
 .cpp.o:
 #	echo !!!!!!!!!!!! $(notdir $<)
 #	ifeq ( $(notdir $<), $(findstring $(notdir $<), $(OPTLIST)) )
@@ -492,8 +494,6 @@ else
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 	$(CXX) -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o 
-endif
-
 
 #---------------------------------------------------------------------------------
  
@@ -534,6 +534,7 @@ endif
 	@$(bin2o)
 
 #---------------------------------------------------------------------------------
+# FIXME: The following rule hardcodes the input filename -- shouldn't it use $< instead?
 %.nds: %.bin
 	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM $(VERSION);DS Port"
 	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM $(VERSION);DS Port"
@@ -542,11 +543,12 @@ endif
 	padbin 16 $(basename $@).ds.gba
 
 #---------------------------------------------------------------------------------
+# FIXME: The following rule hardcodes the input & output filename -- shouldn't it use $< and $@ instead?
 %.bin: %.elf
 	$(OBJCOPY) -S scummvm.elf scummvm-stripped.elf
 	$(OBJCOPY) -O binary scummvm-stripped.elf scummvm.bin
 
-#%.o: %.s
-#	$(MKDIR) $(*D)/$(DEPDIR)
-#	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	
+%.o: %.s
+	$(MKDIR) $(*D)
+	#$(MKDIR) $(*D)/$(DEPDIR)
+	$(AS) $(ASFLAGS) -o  $*.o $<

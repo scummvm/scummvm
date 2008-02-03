@@ -24,7 +24,6 @@
 #define _GBAMPSAVE_H_
 
 #include "system.h"
-#include "backends/saves/default/default-saves.h"
 #include "ds-fs.h"
 
 #define SAVE_BUFFER_SIZE 100000
