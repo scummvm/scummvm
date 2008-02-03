@@ -13,9 +13,9 @@ RESOURCE LOCALISABLE_APP_INFO
 			// application launcher and application title bar.
 			// The number_of_icons value identifies how many icons 
 			// that exist in the icon_file.
-			number_of_icons = 3;
+			number_of_icons = 1;
 			// Using the application icons.
-			icon_file = "\\Resource\\Apps\\ScummVM.mbm";
+			icon_file = "\\Resource\\Apps\\ScummVM.mif";
 			}
 		};
 	}

@@ -37,17 +37,18 @@
 #include "scumm/util.h"
 
 #ifdef USE_ARM_GFX_ASM
-extern "C" void DrawStripToScreenARM(int height, int width, byte const* text, byte const* src, byte* dst,
+extern "C" void asmDrawStripToScreen(int height, int width, byte const* text, byte const* src, byte* dst,
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
-extern "C" void Copy8ColARM(byte* dst, int dstPitch, const byte* src, int height);
+extern "C" void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height);
 #endif /* USE_ARM_GFX_ASM */
 
 namespace Scumm {
 
 static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
 static void fill(byte *dst, int dstPitch, byte color, int w, int h);
-
+#ifndef ARM_USE_GFX_ASM
 static void copy8Col(byte *dst, int dstPitch, const byte *src, int height);
+#endif
 static void clear8Col(byte *dst, int dstPitch, int height);
 
 static void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height);
@@ -625,7 +626,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		//         but also more complicated to implement, and incurs a bigger overhead when
 		//         writing to the text surface.
 #ifdef ARM_USE_GFX_ASM
-		DrawStripToScreenARM(height, width, text, src, dst, vs->pitch, width, _textSurface.pitch);
+		asmDrawStripToScreen(height, width, text, src, dst, vs->pitch, width, _textSurface.pitch);
 #else
 		for (int h = 0; h < height * m; ++h) {
 			for (int w = 0; w < width * m; ++w) {
@@ -1079,7 +1080,7 @@ static void fill(byte *dst, int dstPitch, byte color, int w, int h) {
 
 #ifdef ARM_USE_GFX_ASM
 
-#define copy8Col(A,B,C,D) copy8ColARM(A,B,C,D)
+#define copy8Col(A,B,C,D) asmCopy8Col(A,B,C,D)
 
 #else
 

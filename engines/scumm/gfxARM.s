@@ -23,6 +23,7 @@
 	.text
 
 	.global	asmDrawStripToScreen
+	.global	asmCopy8Col
 
 	@ ARM implementation of asmDrawStripToScreen.
 	@
@@ -118,3 +119,41 @@ singleByteCompare:
 	BGT	yLoop
 end:
 	LDMFD	r13!,{r4-r7,r9-r11,PC}
+	
+	@ ARM implementation of asmCopy8Col
+	@
+	@ C prototype would be:
+	@
+	@ extern "C" void asmCopy8Col(byte       *dst,
+	@                             int         dstPitch,
+	@                             const byte *src,
+	@                             int         height);
+	@
+	@ In addition, we assume that src and dst are both word (4 byte)
+	@ aligned. This is the same assumption that the old 'inline' version
+	@ made.
+asmCopy8Col:
+	@ r0 = dst
+	@ r1 = dstPitch
+	@ r2 = src
+	@ r3 = height
+	STMFD	r13!,{r14}
+	SUB	r1,r1,#4
+
+	TST	r3,#1
+	ADDNE   r3,r3,#1
+	BNE	roll2
+yLoop2:
+	LDR	r12,[r2],#4
+	LDR	r14,[r2],r1
+	STR	r12,[r0],#4
+	STR	r14,[r0],r1
+roll2:
+	LDR	r12,[r2],#4
+	LDR	r14,[r2],r1
+	SUBS	r3,r3,#2
+	STR	r12,[r0],#4
+	STR	r14,[r0],r1
+	BNE	yLoop2
+
+	LDMFD	r13!,{PC}	
