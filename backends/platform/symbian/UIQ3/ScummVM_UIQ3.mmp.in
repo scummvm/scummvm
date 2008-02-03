@@ -84,7 +84,7 @@ STATICLIBRARY esdl.lib
 
 #if !defined(WINS)
 staticlibrary rate_arm_asm.o 
-//staticlibrary proc3arm.o
+staticlibrary proc3arm.o
 staticlibrary codec47ARM.o 
 staticlibrary gfxARM.o 
 #endif

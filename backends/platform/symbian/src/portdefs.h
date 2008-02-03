@@ -136,7 +136,7 @@
 #define USE_ARM_GFX_ASM
 #define ARM_USE_GFX_ASM
 #define USE_ARM_SMUSH_ASM
-//#define USE_ARM_COSTUME_ASM
+#define USE_ARM_COSTUME_ASM
 #define USE_ARM_SOUND_ASM
 #endif
 // somehow nobody has this function...
