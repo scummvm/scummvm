@@ -106,22 +106,25 @@ protected:
 	// width and height of cel to decode
 	int _width, _height;
 
+public:
 	struct Codec1 {
 		// Parameters for the original ("V1") costume codec.
+		// These ones are accessed from ARM code. Don't reorder.
+		int x;
+		int y;
 		const byte *scaletable;
-		byte mask, shr;
-		byte repcolor;
-		byte replen;
-		int scaleXstep;
-		int x, y;
-		Common::Rect boundsRect;
-		int scaleXindex, scaleYindex;
 		int skip_width;
 		byte *destptr;
 		const byte *mask_ptr;
+		int scaleXstep;
+		byte mask, shr;
+		byte repcolor;
+		byte replen;
+		// These ones aren't accessed from ARM code.
+		Common::Rect boundsRect;
+		int scaleXindex, scaleYindex;
 	};
 
-public:
 	BaseCostumeRenderer(ScummEngine *scumm) {
 		_actorID = 0;
 		_shadow_mode = 0;

@@ -64,7 +64,7 @@ REMOTE_DIRECTORY = \Storage Card\Program Files\Scummvm
 USE_ARM_SOUND_ASM = 1
 USE_ARM_SMUSH_ASM = 1
 USE_ARM_GFX_ASM   = 1
-
+USE_ARM_COSTUME_ASM = 1
 
 ########################################################################
 ##    Hopefully you shouldn't need to change anything below here.     ##
