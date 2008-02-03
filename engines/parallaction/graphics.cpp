@@ -422,6 +422,30 @@ void Gfx::invertBackground(const Common::Rect& r) {
 
 }
 
+byte _unpackedBitmap[320*200];
+
+void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor) {
+
+	byte *d = _unpackedBitmap;
+
+	while (size > 0) {
+
+		uint8 p = *data++;
+		size--;
+		uint8 color = p & 0xF;
+		uint8 repeat = (p & 0xF0) >> 4;
+		if (repeat == 0) {
+			repeat = *data++;
+			size--;
+		}
+
+		memset(d, color, repeat);
+		d += repeat;
+	}
+
+	blt(r, _unpackedBitmap, surf, z, transparentColor);
+}
+
 void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor) {
 
 	Common::Point dp;

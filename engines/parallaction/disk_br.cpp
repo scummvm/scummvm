@@ -73,7 +73,16 @@ struct Sprites : public Frames {
 		r.setWidth(_sprites[index].w);
 		r.setHeight(_sprites[index].h);
 		r.moveTo(_sprites[index].x, _sprites[index].y);
-}
+	}
+	uint	getRawSize(uint16 index) {
+		assert(index < _num);
+		return _sprites[index].size;
+	}
+	uint	getSize(uint16 index) {
+		assert(index < _num);
+		return _sprites[index].w * _sprites[index].h;
+	}
+
 
 };
 

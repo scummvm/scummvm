@@ -206,8 +206,14 @@ void Parallaction_br::changeLocation(char *location) {
 
 	// free open location stuff
 	clearSubtitles();
+	freeBackground();
+	freeZones();
+//	freeAnimations();
+//	free(_location._comment);
+//	_location._comment = 0;
+//	_location._commands.clear();
+//	_location._aCommands.clear();
 
-	freeLocation();
 
 	// load new location
 	parseLocation(location);

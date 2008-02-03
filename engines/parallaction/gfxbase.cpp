@@ -28,6 +28,7 @@
 #include "disk.h"
 
 #include "common/algorithm.h"
+#include "parallaction/parallaction.h"
 
 namespace Parallaction {
 
@@ -66,6 +67,13 @@ void GfxObj::getRect(uint f, Common::Rect &r) {
 
 byte *GfxObj::getData(uint f) {
 	return _frames->getData(f);
+}
+
+uint GfxObj::getRawSize(uint f) {
+	return _frames->getRawSize(f);
+}
+uint GfxObj::getSize(uint f) {
+	return _frames->getSize(f);
 }
 
 
@@ -157,7 +165,11 @@ void Gfx::drawGfxObjects(Graphics::Surface &surf) {
 				obj->getRect(obj->frame, rect);
 				rect.moveTo(obj->x, obj->y);
 				data = obj->getData(obj->frame);
-				blt(rect, data, &surf, obj->layer, 0);
+				if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {
+					blt(rect, data, &surf, obj->layer, 0);
+				} else {
+					unpackBlt(rect, data, obj->getRawSize(obj->frame), &surf, obj->layer, 0);
+				}
 			}
 		}
 	}

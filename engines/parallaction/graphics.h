@@ -78,6 +78,8 @@ struct Frames {
 	virtual uint16	getNum() = 0;
 	virtual byte*	getData(uint16 index) = 0;
 	virtual void	getRect(uint16 index, Common::Rect &r) = 0;
+	virtual uint	getRawSize(uint16 index) = 0;
+	virtual uint	getSize(uint16 index) = 0;
 
 	virtual ~Frames() { }
 
@@ -110,6 +112,15 @@ public:
 		r.setWidth(_surf->w);
 		r.setHeight(_surf->h);
 	}
+	uint	getRawSize(uint16 index) {
+		assert(index == 0);
+		return getSize(index);
+	}
+	uint	getSize(uint16 index) {
+		assert(index == 0);
+		return _surf->w * _surf->h;
+	}
+
 };
 
 /*
@@ -144,6 +155,15 @@ struct SurfaceToMultiFrames : public Frames {
 		r.setWidth(_width);
 		r.setHeight(_height);
 	}
+	uint	getRawSize(uint16 index) {
+		assert(index == 0);
+		return getSize(index);
+	}
+	uint	getSize(uint16 index) {
+		assert(index == 0);
+		return _width * _height;
+	}
+
 };
 
 struct MaskBuffer {
@@ -284,6 +304,15 @@ public:
 		r.setWidth(_width);
 		r.setHeight(_height);
 	}
+	uint	getRawSize(uint16 index) {
+		assert(index < _count);
+		return getSize(index);
+	}
+	uint	getSize(uint16 index) {
+		assert(index < _count);
+		return _width * _height;
+	}
+
 };
 
 
@@ -346,6 +375,9 @@ public:
 	uint getNum();
 	void getRect(uint frame, Common::Rect &r);
 	byte *getData(uint frame);
+	uint getRawSize(uint frame);
+	uint getSize(uint frame);
+
 
 	void setFlags(uint32 flags);
 	void clearFlags(uint32 flags);
@@ -540,6 +572,7 @@ protected:
 	void drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
 
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
+	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor);
 };
 
 
