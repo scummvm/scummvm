@@ -76,14 +76,14 @@ DECLARE_INSTRUCTION_OPCODE(off) {
 DECLARE_INSTRUCTION_OPCODE(loop) {
 	Instruction *inst = *_instRunCtxt.inst;
 
-	_instRunCtxt.a->_program->_loopCounter = inst->_opB.getRValue();
-	_instRunCtxt.a->_program->_loopStart = _instRunCtxt.inst;
+	_instRunCtxt.program->_loopCounter = inst->_opB.getRValue();
+	_instRunCtxt.program->_loopStart = _instRunCtxt.inst;
 }
 
 
 DECLARE_INSTRUCTION_OPCODE(endloop) {
-	if (--_instRunCtxt.a->_program->_loopCounter > 0) {
-		_instRunCtxt.inst = _instRunCtxt.a->_program->_loopStart;
+	if (--_instRunCtxt.program->_loopCounter > 0) {
+		_instRunCtxt.inst = _instRunCtxt.program->_loopStart;
 	}
 }
 
@@ -177,11 +177,11 @@ DECLARE_INSTRUCTION_OPCODE(move) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(endscript) {
-	if ((_instRunCtxt.a->_flags & kFlagsLooping) == 0) {
-		_instRunCtxt.a->_flags &= ~kFlagsActing;
-		runCommands(_instRunCtxt.a->_commands, _instRunCtxt.a);
+	if ((_instRunCtxt.anim->_flags & kFlagsLooping) == 0) {
+		_instRunCtxt.anim->_flags &= ~kFlagsActing;
+		runCommands(_instRunCtxt.anim->_commands, _instRunCtxt.anim);
 	}
-	_instRunCtxt.a->_program->_ip = _instRunCtxt.a->_program->_instructions.begin();
+	_instRunCtxt.program->_ip = _instRunCtxt.program->_instructions.begin();
 
 	_instRunCtxt.suspend = true;
 }
@@ -373,9 +373,9 @@ void Parallaction_ns::runScripts() {
 
 	static uint16 modCounter = 0;
 
-	for (AnimationList::iterator it = _animations.begin(); it != _animations.end(); it++) {
+	for (ProgramList::iterator it = _programs.begin(); it != _programs.end(); it++) {
 
-		Animation *a = *it;
+		Animation *a = (*it)->_anim;
 
 		if (a->_flags & kFlagsCharacter)
 			a->_z = a->_top + a->height();
@@ -383,13 +383,14 @@ void Parallaction_ns::runScripts() {
 		if ((a->_flags & kFlagsActing) == 0)
 			continue;
 
-		InstructionList::iterator inst = a->_program->_ip;
+		InstructionList::iterator inst = (*it)->_ip;
 		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
 
 			debugC(9, kDebugExec, "Animation: %s, instruction: %s", a->_name, _instructionNamesRes[(*inst)->_index - 1]);
 
 			_instRunCtxt.inst = inst;
-			_instRunCtxt.a = a;
+			_instRunCtxt.anim = a;
+			_instRunCtxt.program = *it;
 			_instRunCtxt.modCounter = modCounter;
 			_instRunCtxt.suspend = false;
 
@@ -403,7 +404,7 @@ void Parallaction_ns::runScripts() {
 			inst++;
 		}
 
-		a->_program->_ip = ++inst;
+		(*it)->_ip = ++inst;
 
 label1:
 		if (a->_flags & kFlagsCharacter)

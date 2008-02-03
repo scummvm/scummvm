@@ -44,14 +44,12 @@ Command::~Command() {
 
 Animation::Animation() {
 	gfxobj = NULL;
-	_program = NULL;
 	_scriptName = 0;
 	_frame = 0;
 	_z = 0;
 }
 
 Animation::~Animation() {
-	delete _program;
 	free(_scriptName);
 }
 

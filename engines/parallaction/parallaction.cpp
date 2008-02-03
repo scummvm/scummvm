@@ -715,6 +715,7 @@ void Parallaction::freeLocation() {
 	_gfx->clearGfxObjects();
 	freeBackground();
 
+	_programs.clear();
 	freeZones();
 	freeAnimations();
 

@@ -365,6 +365,8 @@ struct Instruction {
 
 
 struct Program {
+	Animation		*_anim;
+
 	LocalVariable	*_locals;
 
 	uint16			_loopCounter;
@@ -382,12 +384,11 @@ struct Program {
 	int16		addLocal(const char *name, int16 value = 0, int16 min = -10000, int16 max = 10000);
 };
 
-
+typedef ManagedList<Program*> ProgramList;
 
 struct Animation : public Zone {
 
 	Common::Point	_oldPos;
-	Program 	*_program;
 	GfxObj		*gfxobj;
 	char		*_scriptName;
 	int16		_frame;

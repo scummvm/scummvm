@@ -196,7 +196,7 @@ Animation *Parallaction_ns::parseAnimation(Script& script, AnimationList &list, 
 	return a;
 }
 
-void Parallaction_ns::parseInstruction(Animation *a, LocalVariable *locals) {
+void Parallaction_ns::parseInstruction(Program *program) {
 
 	Instruction *inst = new Instruction;
 
@@ -208,15 +208,15 @@ void Parallaction_ns::parseInstruction(Animation *a, LocalVariable *locals) {
 		_tokens[1][1] = '\0';
 		_instParseCtxt.a = findAnimation(&_tokens[1][2]);
 	} else
-		_instParseCtxt.a = a;
+		_instParseCtxt.a = program->_anim;
 
 	inst->_index = _instructionNames->lookup(_tokens[0]);
 	_instParseCtxt.inst = inst;
-	_instParseCtxt.locals = locals;
+	_instParseCtxt.locals = program->_locals;
 
 	(*(_instructionParsers[inst->_index]))();
 
-	a->_program->_instructions.push_back(inst);
+	program->_instructions.push_back(inst);
 
 	return;
 }
@@ -225,21 +225,23 @@ void Parallaction_ns::loadProgram(Animation *a, const char *filename) {
 	debugC(1, kDebugParser, "loadProgram(Animation: %s, script: %s)", a->_name, filename);
 
 	Script *script = _disk->loadScript(filename);
-
-	a->_program = new Program;
+	Program *program = new Program;
+	program->_anim = a;
 
 	_instParseCtxt.openIf = NULL;
 	_instParseCtxt.end = false;
-	_instParseCtxt.program = a->_program;
+	_instParseCtxt.program = program;
 
 	do {
 		script->readLineToken();
-		parseInstruction(a, a->_program->_locals);
+		parseInstruction(program);
 	} while (!_instParseCtxt.end);
 
-	a->_program->_ip = a->_program->_instructions.begin();
+	program->_ip = program->_instructions.begin();
 
 	delete script;
+
+	_programs.push_back(program);
 
 	debugC(1, kDebugParser, "loadProgram() done");
 
@@ -998,7 +1000,7 @@ void Parallaction_ns::parseLocation(const char *filename) {
 	// this loads animation scripts
 	AnimationList::iterator it = _animations.begin();
 	for ( ; it != _animations.end(); it++) {
-		if (((*it)->_scriptName) && ((*it)->_program == 0)) {
+		if ((*it)->_scriptName) {
 			loadProgram(*it, (*it)->_scriptName);
 		}
 	}

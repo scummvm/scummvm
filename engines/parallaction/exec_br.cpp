@@ -316,8 +316,8 @@ DECLARE_INSTRUCTION_OPCODE(set) {
 DECLARE_INSTRUCTION_OPCODE(loop) {
 	Instruction *inst = *_instRunCtxt.inst;
 
-	_instRunCtxt.a->_program->_loopCounter = inst->_opB.getRValue();
-	_instRunCtxt.a->_program->_loopStart = _instRunCtxt.inst;
+	_instRunCtxt.program->_loopCounter = inst->_opB.getRValue();
+	_instRunCtxt.program->_loopStart = _instRunCtxt.inst;
 }
 
 
@@ -444,11 +444,11 @@ DECLARE_INSTRUCTION_OPCODE(stop) {
 }
 
 DECLARE_INSTRUCTION_OPCODE(endscript) {
-	if ((_instRunCtxt.a->_flags & kFlagsLooping) == 0) {
-		_instRunCtxt.a->_flags &= ~kFlagsActing;
-		runCommands(_instRunCtxt.a->_commands, _instRunCtxt.a);
+	if ((_instRunCtxt.anim->_flags & kFlagsLooping) == 0) {
+		_instRunCtxt.anim->_flags &= ~kFlagsActing;
+		runCommands(_instRunCtxt.anim->_commands, _instRunCtxt.anim);
 	}
-	_instRunCtxt.a->_program->_ip = _instRunCtxt.a->_program->_instructions.begin();
+	_instRunCtxt.program->_ip = _instRunCtxt.program->_instructions.begin();
 
 	_instRunCtxt.suspend = true;
 }

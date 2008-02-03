@@ -949,7 +949,7 @@ void Parallaction_br::parseLocation(const char* filename) {
 
 	AnimationList::iterator it = _animations.begin();
 	for ( ; it != _animations.end(); it++) {
-		if (((*it)->_scriptName) && ((*it)->_program == 0)) {
+		if ((*it)->_scriptName) {
 			loadProgram(*it, (*it)->_scriptName);
 		}
 	}

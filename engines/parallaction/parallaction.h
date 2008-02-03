@@ -325,7 +325,8 @@ public:
 	OpcodeSet	_instructionOpcodes;
 
 	struct {
-		Animation	*a;
+		Animation	*anim;
+		Program		*program;
 		InstructionList::iterator inst;
 		uint16		modCounter;
 		bool		suspend;
@@ -404,6 +405,7 @@ public:
 
 	ZoneList		_zones;
 	AnimationList	_animations;
+	ProgramList		_programs;
 
 	Font		*_labelFont;
 	Font		*_menuFont;
@@ -787,7 +789,7 @@ protected:
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(null);
 	DECLARE_UNQUALIFIED_INSTRUCTION_PARSER(endscript);
 
-	void		parseInstruction(Animation *a, LocalVariable *locals);
+	void		parseInstruction(Program *program);
 	void		loadProgram(Animation *a, const char *filename);
 	void		parseLValue(ScriptVar &var, const char *str);
 	virtual void	parseRValue(ScriptVar &var, const char *str);
