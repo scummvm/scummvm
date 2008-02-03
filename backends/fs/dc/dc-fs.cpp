@@ -56,13 +56,13 @@ public:
 	 */
 	RoninCDFilesystemNode(const String &path, bool verify);
 
-	virtual bool exists() const { return true; }		//FIXME: this is just a stub
+	virtual bool exists() const { return _isValid; }
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; }
 	virtual String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
-	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isReadable() const { return true; }
+	virtual bool isWritable() const { return false; }
 
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
