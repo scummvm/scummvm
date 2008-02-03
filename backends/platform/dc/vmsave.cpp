@@ -164,13 +164,8 @@ static bool tryDelete(const char *filename, int vm)
   if (!vmsfs_get_superblock(&info, &super))
     return false;
 
-#if 0
-  // FIXME: implement this function in vmsfs...
   if (!vmsfs_delete_file(&super, filename))
     return false;
-#else
-  return false;
-#endif
 
   return true;
 }
