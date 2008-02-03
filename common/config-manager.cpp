@@ -39,6 +39,10 @@ DECLARE_SINGLETON(Common::ConfigManager);
 #include "backends/platform/ps2/systemps2.h"
 #endif
 
+#ifdef IPHONE
+#include "backends/platform/iphone/osys_iphone.h"
+#endif
+
 #if defined(UNIX)
 #ifdef MACOSX
 #define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"
@@ -138,7 +142,7 @@ void ConfigManager::loadDefaultConfigFile() {
 	#elif defined(PALMOS_MODE)
 		strcpy(configFile,"/PALM/Programs/ScummVM/" DEFAULT_CONFIG_FILE);
 	#elif defined(IPHONE)
-		strcpy(configFile,"/var/root/" DEFAULT_CONFIG_FILE);
+		strcpy(configFile, OSystem_IPHONE::getConfigPath());	
 	#elif defined(__PLAYSTATION2__)
 		((OSystem_PS2*)g_system)->makeConfigPath(configFile);
 	#elif defined(__PSP__)

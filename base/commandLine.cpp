@@ -35,6 +35,10 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
+#ifdef IPHONE
+#include "backends/platform/iphone/osys_iphone.h"
+#endif
+
 #ifdef UNIX
 #ifdef MACOSX
 #define DEFAULT_SAVE_PATH "Documents/ScummVM Savegames"
@@ -224,10 +228,8 @@ void registerDefaults() {
 	strcpy(savePath, Symbian::GetExecutablePath());
 	strcat(savePath, DEFAULT_SAVE_PATH);
 	ConfMan.registerDefault("savepath", savePath);
-#elif defined (IPHONE) // The iphone has / set as home dir when launching from the Springboard.
-	strcpy(savePath, "/var/root/");
-	strcat(savePath, DEFAULT_SAVE_PATH);
-	ConfMan.registerDefault("savepath", savePath);
+#elif defined (IPHONE)
+	ConfMan.registerDefault("savepath", OSystem_IPHONE::getSavePath());
 #endif
 #endif // #ifdef DEFAULT_SAVE_PATH
 
