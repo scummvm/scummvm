@@ -511,6 +511,4 @@ bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-META_COMPATIBILITY_WRAPPER(CINE, CineMetaEngine);
-
-REGISTER_PLUGIN(CINE, "Cinematique evo 1 engine", "Future Wars & Operation Stealth (C) Delphine Software");
+REGISTER_PLUGIN(CINE, CineMetaEngine);

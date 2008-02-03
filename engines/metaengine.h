@@ -57,25 +57,4 @@ public:
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const = 0;
 };
 
-
-/**
- * The META_COMPATIBILITY_WRAPPER macro is there to ease the transition from the
- * old plugin API to the new MetaEngine class. Ultimately, this macro will go
- * and REGISTER_PLUGIN will be changed to simply take an ID and a METACLASS.
- * Until then, use META_COMPATIBILITY_WRAPPER + REGISTER_PLUGIN.
- */
-#define META_COMPATIBILITY_WRAPPER(ID,METACLASS) \
-	static MetaEngine &getMetaEngine() { \
-		static MetaEngine *meta = 0; \
-		if (!meta) meta = new METACLASS(); \
-		return *meta; \
-	} \
-	GameList Engine_##ID##_gameIDList() { return getMetaEngine().getSupportedGames(); } \
-	GameDescriptor Engine_##ID##_findGameID(const char *gameid) { return getMetaEngine().findGame(gameid); } \
-	PluginError Engine_##ID##_create(OSystem *syst, Engine **engine) { return getMetaEngine().createInstance(syst, engine); } \
-	GameList Engine_##ID##_detectGames(const FSList &fslist) { return getMetaEngine().detectGames(fslist); } \
-	void dummyFuncToAllowTrailingSemicolon()
-
-
-
 #endif

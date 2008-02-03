@@ -197,6 +197,4 @@ bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-META_COMPATIBILITY_WRAPPER(LURE, LureMetaEngine);
-
-REGISTER_PLUGIN(LURE, "Lure of the Temptress Engine", "Lure of the Temptress (C) Revolution");
+REGISTER_PLUGIN(LURE, LureMetaEngine);

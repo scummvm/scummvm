@@ -194,10 +194,7 @@ PluginError SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) const 
 	return kNoError;
 }
 
-META_COMPATIBILITY_WRAPPER(SKY, SkyMetaEngine);
-
-REGISTER_PLUGIN(SKY, "Beneath a Steel Sky", "Beneath a Steel Sky (C) Revolution");
-
+REGISTER_PLUGIN(SKY, SkyMetaEngine);
 
 namespace Sky {
 

@@ -484,6 +484,4 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return res;
 }
 
-META_COMPATIBILITY_WRAPPER(KYRA, KyraMetaEngine);
-
-REGISTER_PLUGIN(KYRA, "Legend of Kyrandia Engine", "The Legend of Kyrandia (C) Westwood Studios");
+REGISTER_PLUGIN(KYRA, KyraMetaEngine);

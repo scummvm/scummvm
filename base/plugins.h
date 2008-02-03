@@ -35,6 +35,7 @@
 
 class Engine;
 class FSList;
+class MetaEngine;
 class OSystem;
 
 /**
@@ -67,73 +68,23 @@ public:
  * makes it possible to compile the very same code in a module
  * both as a static and a dynamic plugin.
  *
- * Each plugin has to define the following functions:
- * - GameList Engine_##ID##_gameIDList()
- *   -> returns a list of gameid/desc pairs. Only used to implement '--list-games'.
- * - GameDescriptor Engine_##ID##_findGameID(const char *gameid)
- *   -> asks the Engine for a GameDescriptor matching the gameid. If that is not
- *      possible, the engine MUST set the gameid of the returned value to 0.
- *      Note: This MUST succeed for every gameID on the list returned by
- *      gameIDList(), but MAY also work for additional gameids (e.g. to support
- *      obsolete targets).
- * - GameList Engine_##ID##_detectGames(const FSList &fslist)
- *   -> scans through the given file list (usually the contents of a directory),
- *      and attempts to detects games present in that location.
- * - PluginError Engine_##ID##_create(OSystem *syst, Engine **engine)
- *   -> factory function, create an instance of the Engine class.
- *
  * @todo	add some means to query the plugin API version etc.
  */
 
 #ifndef DYNAMIC_MODULES
-#define REGISTER_PLUGIN(ID,name,copyright) \
-	PluginRegistrator *g_##ID##_PluginReg; \
-	void g_##ID##_PluginReg_alloc() { \
-		g_##ID##_PluginReg = new PluginRegistrator(name, copyright, \
-			Engine_##ID##_gameIDList(), \
-			Engine_##ID##_findGameID, \
-			Engine_##ID##_create, \
-			Engine_##ID##_detectGames \
-			);\
+#define REGISTER_PLUGIN(ID,METAENGINE) \
+	MetaEngine *g_##ID##_MetaEngine_alloc() { \
+		return new METAENGINE(); \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 #else
-#define REGISTER_PLUGIN(ID,name,copyright) \
+#define REGISTER_PLUGIN(ID,METAENGINE) \
 	extern "C" { \
-		PLUGIN_EXPORT const char *PLUGIN_name() { return name; } \
-		PLUGIN_EXPORT const char *PLUGIN_copyright() { return copyright; } \
-		PLUGIN_EXPORT GameList PLUGIN_gameIDList() { return Engine_##ID##_gameIDList(); } \
-		PLUGIN_EXPORT GameDescriptor PLUGIN_findGameID(const char *gameid) { return Engine_##ID##_findGameID(gameid); } \
-		PLUGIN_EXPORT PluginError PLUGIN_createEngine(OSystem *syst, Engine **engine) { return Engine_##ID##_create(syst, engine); } \
-		PLUGIN_EXPORT GameList PLUGIN_detectGames(const FSList &fslist) { return Engine_##ID##_detectGames(fslist); } \
+		PLUGIN_EXPORT MetaEngine *PLUGIN_MetaEngine_alloc() { \
+			return new METAENGINE(); \
+		} \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
-#endif
-
-#ifndef DYNAMIC_MODULES
-/**
- * The PluginRegistrator class is used by the static version of REGISTER_PLUGIN
- * to allow static 'plugins' to register with the PluginManager.
- */
-class PluginRegistrator {
-	friend class StaticPlugin;
-public:
-	typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
-	typedef PluginError (*EngineFactory)(OSystem *syst, Engine **engine);
-	typedef GameList (*DetectFunc)(const FSList &fslist);
-
-protected:
-	const char *_name;
-	const char *_copyright;
-	GameIDQueryFunc _qf;
-	EngineFactory _ef;
-	DetectFunc _df;
-	GameList _games;
-
-public:
-	PluginRegistrator(const char *name, const char *copyright, GameList games, GameIDQueryFunc qf, EngineFactory ef, DetectFunc df)
-		: _name(name), _copyright(copyright), _qf(qf), _ef(ef), _df(df), _games(games) {}
-};
 #endif
 
 
@@ -154,13 +105,9 @@ public:
 	virtual PluginList getPlugins() = 0;
 };
 
-//class PluginManager;
-
 /**
  * Instances of this class manage all plugins, including loading them,
  * making wrapper objects of class Plugin available, and unloading them.
- *
- * @todo Add support for dynamic plugins (this may need additional API, e.g. for a plugin path)
  */
 class PluginManager : public Common::Singleton<PluginManager> {
 	typedef Common::List<PluginProvider *> ProviderList;

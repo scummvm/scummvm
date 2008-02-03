@@ -147,6 +147,4 @@ bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const Comm
 	return gd != 0;
 }
 
-META_COMPATIBILITY_WRAPPER(TOUCHE, ToucheMetaEngine);
-
-REGISTER_PLUGIN(TOUCHE, "Touche Engine", "Touche: The Adventures of the 5th Musketeer (C) Clipper Software");
+REGISTER_PLUGIN(TOUCHE, ToucheMetaEngine);

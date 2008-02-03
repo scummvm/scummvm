@@ -25,42 +25,47 @@
 
 #include "base/plugins.h"
 #include "common/util.h"
+#include "engines/metaengine.h"
 
 
 #ifndef DYNAMIC_MODULES
 class StaticPlugin : public Plugin {
-	PluginRegistrator *_plugin;
+	MetaEngine *_metaengine;
 public:
-	StaticPlugin(PluginRegistrator *plugin)
-		: _plugin(plugin) {
-		assert(_plugin);
+	StaticPlugin(MetaEngine *metaengine)
+		: _metaengine(metaengine) {
+		assert(_metaengine);
 	}
 
 	~StaticPlugin() {
-		delete _plugin;
+		delete _metaengine;
 	}
 
 	virtual bool loadPlugin()		{ return true; }
 	virtual void unloadPlugin()		{}
 
-	const char *getName() const { return _plugin->_name; }
-	const char *getCopyright() const { return _plugin->_copyright; }
-
-	PluginError createInstance(OSystem *syst, Engine **engine) const {
-		assert(_plugin->_ef);
-		return (*_plugin->_ef)(syst, engine);
+	const char *getName() const {
+		return _metaengine->getName();
 	}
 
-	GameList getSupportedGames() const { return _plugin->_games; }
+	const char *getCopyright() const {
+		return _metaengine->getCopyright();
+	}
+
+	PluginError createInstance(OSystem *syst, Engine **engine) const {
+		return _metaengine->createInstance(syst, engine);
+	}
+
+	GameList getSupportedGames() const {
+		return _metaengine->getSupportedGames();
+	}
 
 	GameDescriptor findGame(const char *gameid) const {
-		assert(_plugin->_qf);
-		return (*_plugin->_qf)(gameid);
+		return _metaengine->findGame(gameid);
 	}
 
 	GameList detectGames(const FSList &fslist) const {
-		assert(_plugin->_df);
-		return (*_plugin->_df)(fslist);
+		return _metaengine->detectGames(fslist);
 	}
 };
 
@@ -76,15 +81,11 @@ public:
 		PluginList pl;
 
 		#define LINK_PLUGIN(ID) \
-			extern PluginRegistrator *g_##ID##_PluginReg; \
-			extern void g_##ID##_PluginReg_alloc(); \
-			g_##ID##_PluginReg_alloc(); \
-			plugin = g_##ID##_PluginReg; \
-			pl.push_back(new StaticPlugin(plugin));
+			extern MetaEngine *g_##ID##_MetaEngine_alloc(); \
+			pl.push_back(new StaticPlugin(g_##ID##_MetaEngine_alloc()));
 
 		// "Loader" for the static plugins.
 		// Iterate over all registered (static) plugins and load them.
-		PluginRegistrator *plugin;
 
 		#ifndef DISABLE_SCUMM
 		LINK_PLUGIN(SCUMM)

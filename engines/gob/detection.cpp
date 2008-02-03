@@ -1779,9 +1779,7 @@ bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common:
 	return gd != 0;
 }
 
-META_COMPATIBILITY_WRAPPER(GOB, GobMetaEngine);
-
-REGISTER_PLUGIN(GOB, "Gob Engine", "Goblins Games (C) Coktel Vision");
+REGISTER_PLUGIN(GOB, GobMetaEngine);
 
 namespace Gob {
 

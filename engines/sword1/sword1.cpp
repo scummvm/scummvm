@@ -187,9 +187,7 @@ PluginError SwordMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	return kNoError;
 }
 
-META_COMPATIBILITY_WRAPPER(SWORD1, SwordMetaEngine);
-
-REGISTER_PLUGIN(SWORD1, "Broken Sword", "Broken Sword Games (C) Revolution");
+REGISTER_PLUGIN(SWORD1, SwordMetaEngine);
 
 namespace Sword1 {
 

@@ -27,95 +27,59 @@
 #define BACKENDS_PLUGINS_DYNAMICPLUGIN_H
 
 #include "base/plugins.h"
-
-
-/** Type of factory functions which make new Engine objects. */
-typedef PluginError (*EngineFactory)(OSystem *syst, Engine **engine);
-
-typedef const char *(*NameFunc)();
-typedef GameDescriptor (*GameIDQueryFunc)(const char *gameid);
-typedef GameList (*GameIDListFunc)();
-typedef GameList (*DetectFunc)(const FSList &fslist);
+#include "engines/metaengine.h"
 
 
 class DynamicPlugin : public Plugin {
 protected:
 	typedef void (*VoidFunc)();
 
-	Common::String _name;
-	Common::String _copyright;
-	GameIDQueryFunc _qf;
-	EngineFactory _ef;
-	DetectFunc _df;
-	GameList _games;
+	typedef MetaEngine *(*MetaAllocFunc)();
+
+	MetaEngine *_metaengine;
 
 	virtual VoidFunc findSymbol(const char *symbol) = 0;
 
 public:
-	DynamicPlugin() : _qf(0), _ef(0), _df(0), _games() {}
-
-	const char *getName() const					{ return _name.c_str(); }
-	const char *getCopyright() const			{ return _copyright.c_str(); }
-
-	PluginError createInstance(OSystem *syst, Engine **engine) const {
-		assert(_ef);
-		return (*_ef)(syst, engine);
+	DynamicPlugin() : _metaengine(0) {}
+	~DynamicPlugin() {
+		delete _metaengine;
 	}
 
-	GameList getSupportedGames() const { return _games; }
+	const char *getName() const {
+		return _metaengine->getName();
+	}
+
+	const char *getCopyright() const {
+		return _metaengine->getCopyright();
+	}
+
+	PluginError createInstance(OSystem *syst, Engine **engine) const {
+		return _metaengine->createInstance(syst, engine);
+	}
+
+	GameList getSupportedGames() const {
+		return _metaengine->getSupportedGames();
+	}
 
 	GameDescriptor findGame(const char *gameid) const {
-		assert(_qf);
-		return (*_qf)(gameid);
+		return _metaengine->findGame(gameid);
 	}
 
 	GameList detectGames(const FSList &fslist) const {
-		assert(_df);
-		return (*_df)(fslist);
+		return _metaengine->detectGames(fslist);
 	}
 
 	virtual bool loadPlugin() {
 		// Query the plugin's name
-		NameFunc nameFunc = (NameFunc)findSymbol("PLUGIN_name");
-		if (!nameFunc) {
-			unloadPlugin();
-			return false;
-		}
-		_name = nameFunc();
-
-		// Query the plugin's copyright
-		nameFunc = (NameFunc)findSymbol("PLUGIN_copyright");
-		if (!nameFunc) {
-			unloadPlugin();
-			return false;
-		}
-		_copyright = nameFunc();
-
-		// Query the plugin for the game ids it supports
-		GameIDListFunc gameListFunc = (GameIDListFunc)findSymbol("PLUGIN_gameIDList");
-		if (!gameListFunc) {
-			unloadPlugin();
-			return false;
-		}
-		_games = gameListFunc();
-
-		// Retrieve the gameid query function
-		_qf = (GameIDQueryFunc)findSymbol("PLUGIN_findGameID");
-		if (!_qf) {
+		MetaAllocFunc metaAlloc = (MetaAllocFunc)findSymbol("PLUGIN_MetaEngine_alloc");
+		if (!metaAlloc) {
 			unloadPlugin();
 			return false;
 		}
 
-		// Retrieve the factory function
-		_ef = (EngineFactory)findSymbol("PLUGIN_createEngine");
-		if (!_ef) {
-			unloadPlugin();
-			return false;
-		}
-
-		// Retrieve the detector function
-		_df = (DetectFunc)findSymbol("PLUGIN_detectGames");
-		if (!_df) {
+		_metaengine = metaAlloc();
+		if (!_metaengine) {
 			unloadPlugin();
 			return false;
 		}

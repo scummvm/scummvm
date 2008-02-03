@@ -151,9 +151,7 @@ bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return res;
 }
 
-META_COMPATIBILITY_WRAPPER(AGOS, AgosMetaEngine);
-
-REGISTER_PLUGIN(AGOS, "AGOS", "AGOS (C) Adventure Soft");
+REGISTER_PLUGIN(AGOS, AgosMetaEngine);
 
 namespace AGOS {
 
