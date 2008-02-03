@@ -164,7 +164,7 @@ bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-META_COMPATIBLITY_WRAPPER(SAGA, SagaMetaEngine);
+META_COMPATIBILITY_WRAPPER(SAGA, SagaMetaEngine);
 
 REGISTER_PLUGIN(SAGA, "SAGA Engine", "Inherit the Earth (C) Wyrmkeep Entertainment");
 

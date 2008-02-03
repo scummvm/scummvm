@@ -218,6 +218,6 @@ bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 	return res;
 }
 
-META_COMPATIBLITY_WRAPPER(PARALLACTION, ParallactionMetaEngine);
+META_COMPATIBILITY_WRAPPER(PARALLACTION, ParallactionMetaEngine);
 
 REGISTER_PLUGIN(PARALLACTION, "Parallaction engine", "Nippon Safes Inc. (C) Dynabyte");

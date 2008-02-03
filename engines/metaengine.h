@@ -59,12 +59,12 @@ public:
 
 
 /**
- * The META_COMPATIBLITY_WRAPPER macro is there to ease the transition from the
+ * The META_COMPATIBILITY_WRAPPER macro is there to ease the transition from the
  * old plugin API to the new MetaEngine class. Ultimately, this macro will go
  * and REGISTER_PLUGIN will be changed to simply take an ID and a METACLASS.
- * Until then, use META_COMPATIBLITY_WRAPPER + REGISTER_PLUGIN.
+ * Until then, use META_COMPATIBILITY_WRAPPER + REGISTER_PLUGIN.
  */
-#define META_COMPATIBLITY_WRAPPER(ID,METACLASS) \
+#define META_COMPATIBILITY_WRAPPER(ID,METACLASS) \
 	static MetaEngine &getMetaEngine() { \
 		static MetaEngine *meta = 0; \
 		if (!meta) meta = new METACLASS(); \

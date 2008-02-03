@@ -2284,7 +2284,7 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common:
 	return res;
 }
 
-META_COMPATIBLITY_WRAPPER(AGI, AgiMetaEngine);
+META_COMPATIBILITY_WRAPPER(AGI, AgiMetaEngine);
 
 REGISTER_PLUGIN(AGI, "AGI preAGI + v2 + v3 Engine", "Sierra AGI Engine (C) Sierra On-Line Software");
 

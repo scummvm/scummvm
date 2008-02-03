@@ -128,7 +128,7 @@ PluginError QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	return kNoError;
 }
 
-META_COMPATIBLITY_WRAPPER(QUEEN, QueenMetaEngine);
+META_COMPATIBILITY_WRAPPER(QUEEN, QueenMetaEngine);
 
 REGISTER_PLUGIN(QUEEN, "Flight of the Amazon Queen", "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis");
 

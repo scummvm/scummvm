@@ -180,7 +180,7 @@ PluginError Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) con
 	return kNoGameDataFoundError;
 }
 
-META_COMPATIBLITY_WRAPPER(SWORD2, Sword2MetaEngine);
+META_COMPATIBILITY_WRAPPER(SWORD2, Sword2MetaEngine);
 
 REGISTER_PLUGIN(SWORD2, "Broken Sword 2", "Broken Sword Games (C) Revolution");
 

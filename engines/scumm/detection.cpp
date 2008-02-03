@@ -929,7 +929,7 @@ const char *ScummMetaEngine::getCopyright() const {
 	       "Humongous SCUMM Games (C) Humongous";
 }
 
-META_COMPATIBLITY_WRAPPER(SCUMM, ScummMetaEngine);
+META_COMPATIBILITY_WRAPPER(SCUMM, ScummMetaEngine);
 
 REGISTER_PLUGIN(SCUMM, "Scumm Engine",
 				"LucasArts SCUMM Games (C) LucasArts\n"

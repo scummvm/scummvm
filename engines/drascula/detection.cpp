@@ -186,6 +186,6 @@ bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Co
 	return gd != 0;
 }
 
-META_COMPATIBLITY_WRAPPER(DRASCULA, DrasculaMetaEngine);
+META_COMPATIBILITY_WRAPPER(DRASCULA, DrasculaMetaEngine);
 
 REGISTER_PLUGIN(DRASCULA, "Drascula Engine", "Drascula Engine (C) 2000 Alcachofa Soft, 1996 (C) Digital Dreams Multimedia, 1994 (C) Emilio de Paz");

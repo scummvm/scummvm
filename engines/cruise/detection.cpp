@@ -146,6 +146,6 @@ bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const Comm
 	return gd != 0;
 }
 
-META_COMPATIBLITY_WRAPPER(CRUISE, CruiseMetaEngine);
+META_COMPATIBILITY_WRAPPER(CRUISE, CruiseMetaEngine);
 
 REGISTER_PLUGIN(CRUISE, "Cinematique evo 2 engine", "Cruise for a Corpse (C) Delphine Software");

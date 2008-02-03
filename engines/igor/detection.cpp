@@ -134,6 +134,6 @@ bool IgorMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-META_COMPATIBLITY_WRAPPER(IGOR, IgorMetaEngine);
+META_COMPATIBILITY_WRAPPER(IGOR, IgorMetaEngine);
 
 REGISTER_PLUGIN(IGOR, "Igor: Objective Uikokahonia", "Igor: Objective Uikokahonia (C) Pendulo Studios");
