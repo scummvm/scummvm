@@ -444,7 +444,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 		_scaleIndexX = ClassicProc3RendererShadowARM(_scaleY,
 		                                             &v1,
 		                                             &_out,
-		                                             src,
+		                                             _srcptr,
 		                                             _height,
 		                                             _scaleX,
 		                                             _scaleIndexX,
@@ -452,6 +452,7 @@ void ClassicCostumeRenderer::proc3(Codec1 &v1) {
 		                                             _palette,
 		                                             _numStrips,
 		                                             _scaleIndexY);
+		return;
 	}
 #endif /* USE_ARM_COSTUME_ASM */
 

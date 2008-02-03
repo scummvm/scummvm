@@ -152,6 +152,10 @@ ifdef USE_ARM_GFX_ASM
 DEFINES += -DUSE_ARM_GFX_ASM
 endif
 
+ifdef USE_ARM_COSTUME_ASM
+DEFINES += -DUSE_ARM_COSTUME_ASM
+endif
+
 ########################################################################
 # Targets follow here
 
