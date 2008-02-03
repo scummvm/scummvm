@@ -427,6 +427,7 @@ DECLARE_COMMAND_PARSER(zone)  {
 	_locParseCtxt.nextToken++;
 
 	if (_locParseCtxt.cmd->u._zone == NULL) {
+		assert(_numForwards < MAX_FORWARDS);
 		strcpy(_forwardedAnimationNames[_numForwards], _tokens[_locParseCtxt.nextToken-1]);
 		_forwardedCommands[_numForwards] = _locParseCtxt.cmd;
 		_numForwards++;
@@ -946,13 +947,6 @@ void Parallaction_br::parseLocation(const char* filename) {
 	free(_locParseCtxt.bgName);
 	free(_locParseCtxt.maskName);
 	free(_locParseCtxt.pathName);
-
-	AnimationList::iterator it = _animations.begin();
-	for ( ; it != _animations.end(); it++) {
-		if ((*it)->_scriptName) {
-			loadProgram(*it, (*it)->_scriptName);
-		}
-	}
 
 //	drawZones();
 

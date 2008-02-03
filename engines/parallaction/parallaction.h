@@ -146,6 +146,7 @@ extern char			_password[8];
 extern uint16		_score;
 extern uint16		_language;
 extern uint32		_engineFlags;
+#define MAX_FORWARDS	50
 extern Command		*_forwardedCommands[];
 extern char			_forwardedAnimationNames[][20];
 extern uint16		_numForwards;

@@ -137,6 +137,8 @@ int Parallaction_ns::init() {
 	initOpcodes();
 	initParsers();
 
+	_animations.push_front(&_char._ani);
+
 	Parallaction::init();
 
 	return 0;
@@ -150,6 +152,8 @@ Parallaction_ns::~Parallaction_ns() {
 	delete _commandsNames;
 	delete _instructionNames;
 	delete _locationStmt;
+
+	_animations.remove(&_char._ani);
 
 }
 

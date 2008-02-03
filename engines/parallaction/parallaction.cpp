@@ -55,30 +55,11 @@ uint32		_engineFlags = 0;
 uint16		_score = 1;
 char		_password[8];
 
-Command *	_forwardedCommands[20] = {
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+Command *	_forwardedCommands[MAX_FORWARDS] = {
 	NULL
 };
 
-char		_forwardedAnimationNames[20][20];
+char		_forwardedAnimationNames[MAX_FORWARDS][20];
 uint16		_numForwards = 0;
 
 uint32		_commandFlags = 0;
@@ -125,8 +106,6 @@ Parallaction::~Parallaction() {
 	delete _zoneTypeNames;
 	delete _zoneFlagNames;
 
-	_animations.remove(&_char._ani);
-
 	freeLocation();
 
 	freeCharacter();
@@ -170,7 +149,6 @@ int Parallaction::init() {
 
 	_hoverZone = NULL;
 
-	_animations.push_front(&_char._ani);
 	_gfx = new Gfx(this);
 
 	_debugger = new Debugger(this);
