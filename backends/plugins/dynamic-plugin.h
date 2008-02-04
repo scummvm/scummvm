@@ -43,7 +43,9 @@ protected:
 public:
 	DynamicPlugin() : _metaengine(0) {}
 	~DynamicPlugin() {
-		delete _metaengine;
+		// FIXME: The plugin has already been unloaded, so _metaengine isn't
+		// a valid pointer anymore, and you can't call unloadPlugin from here.
+		//delete _metaengine;
 	}
 
 	const char *getName() const {
