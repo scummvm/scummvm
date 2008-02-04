@@ -25,48 +25,47 @@
 
 #include "base/plugins.h"
 #include "common/util.h"
-#include "engines/metaengine.h"
 
 
 const char *Plugin::getName() const {
-	return _metaengine->getName();
+	return _pluginObject->getName();
 }
 
 const char *Plugin::getCopyright() const {
-	return _metaengine->getCopyright();
+	return ((MetaEngine*)_pluginObject)->getCopyright();
 }
 
 PluginError Plugin::createInstance(OSystem *syst, Engine **engine) const {
-	return _metaengine->createInstance(syst, engine);
+	return ((MetaEngine*)_pluginObject)->createInstance(syst, engine);
 }
 
 GameList Plugin::getSupportedGames() const {
-	return _metaengine->getSupportedGames();
+	return ((MetaEngine*)_pluginObject)->getSupportedGames();
 }
 
 GameDescriptor Plugin::findGame(const char *gameid) const {
-	return _metaengine->findGame(gameid);
+	return ((MetaEngine*)_pluginObject)->findGame(gameid);
 }
 
 GameList Plugin::detectGames(const FSList &fslist) const {
-	return _metaengine->detectGames(fslist);
+	return ((MetaEngine*)_pluginObject)->detectGames(fslist);
 }
 
 SaveStateList Plugin::listSaves(const char *target) const {
-	return _metaengine->listSaves(target);
+	return ((MetaEngine*)_pluginObject)->listSaves(target);
 }
 
 
 #ifndef DYNAMIC_MODULES
 class StaticPlugin : public Plugin {
 public:
-	StaticPlugin(MetaEngine *metaengine) {
-		assert(metaengine);
-		_metaengine = metaengine;
+	StaticPlugin(PluginObject *pluginobject) {
+		assert(pluginobject);
+		_pluginObject = pluginobject;
 	}
 
 	~StaticPlugin() {
-		delete _metaengine;
+		delete _pluginObject;
 	}
 
 	virtual bool loadPlugin()		{ return true; }
@@ -85,8 +84,8 @@ public:
 		PluginList pl;
 
 		#define LINK_PLUGIN(ID) \
-			extern MetaEngine *g_##ID##_MetaEngine_alloc(); \
-			pl.push_back(new StaticPlugin(g_##ID##_MetaEngine_alloc()));
+			extern PluginObject *g_##ID##_getObject(); \
+			pl.push_back(new StaticPlugin(g_##ID##_getObject()));
 
 		// "Loader" for the static plugins.
 		// Iterate over all registered (static) plugins and load them.

@@ -27,27 +27,27 @@
 #define BACKENDS_PLUGINS_DYNAMICPLUGIN_H
 
 #include "base/plugins.h"
-#include "engines/metaengine.h"
 
 
 class DynamicPlugin : public Plugin {
 protected:
 	typedef void (*VoidFunc)();
-	typedef MetaEngine *(*MetaAllocFunc)();
+	typedef PluginObject *(*GetObjectFunc)();
 
 	virtual VoidFunc findSymbol(const char *symbol) = 0;
 
 public:
 	virtual bool loadPlugin() {
-		// Query the plugin's name
-		MetaAllocFunc metaAlloc = (MetaAllocFunc)findSymbol("PLUGIN_MetaEngine_alloc");
-		if (!metaAlloc) {
+		// Get the plugin's instantiator object
+		GetObjectFunc getObject = (GetObjectFunc)findSymbol("PLUGIN_getObject");
+		if (!getObject) {
 			unloadPlugin();
 			return false;
 		}
 
-		_metaengine = metaAlloc();
-		if (!_metaengine) {
+		// Get the plugin object
+		_pluginObject = getObject();
+		if (!_pluginObject) {
 			unloadPlugin();
 			return false;
 		}
@@ -56,7 +56,7 @@ public:
 	}
 	
 	virtual void unloadPlugin() {
-		delete _metaengine;
+		delete _pluginObject;
 	}
 };
 

@@ -33,9 +33,23 @@
 #include "common/util.h"
 #include "base/game.h"
 
+/**
+ * Abstract base class for the plugin objects which handle plugins
+ * instantiation. Subclasses for this may be used for engine plugins
+ * and other types of plugins.
+ */
+class PluginObject {
+public:
+	virtual ~PluginObject() {}
+
+	/** Returns the name of the plugin. */
+	virtual const char *getName() const = 0;
+};
+
+#include "engines/metaengine.h"
+
 class Engine;
 class FSList;
-class MetaEngine;
 class OSystem;
 
 /**
@@ -45,10 +59,10 @@ class OSystem;
  */
 class Plugin {
 protected:
-	MetaEngine *_metaengine;
+	PluginObject *_pluginObject;
 
 public:
-	Plugin() : _metaengine(0) {}
+	Plugin() : _pluginObject(0) {}
 	virtual ~Plugin() {
 		//if (isLoaded())
 			//unloadPlugin();
@@ -81,16 +95,16 @@ public:
  */
 
 #ifndef DYNAMIC_MODULES
-#define REGISTER_PLUGIN(ID,METAENGINE) \
-	MetaEngine *g_##ID##_MetaEngine_alloc() { \
-		return new METAENGINE(); \
+#define REGISTER_PLUGIN(ID,PLUGINCLASS) \
+	PluginObject *g_##ID##_getObject() { \
+		return new PLUGINCLASS(); \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 #else
-#define REGISTER_PLUGIN(ID,METAENGINE) \
+#define REGISTER_PLUGIN(ID,PLUGINCLASS) \
 	extern "C" { \
-		PLUGIN_EXPORT MetaEngine *PLUGIN_MetaEngine_alloc() { \
-			return new METAENGINE(); \
+		PLUGIN_EXPORT PluginObject *PLUGIN_getObject() { \
+			return new PLUGINCLASS(); \
 		} \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()

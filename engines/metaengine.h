@@ -28,8 +28,10 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/error.h"
+#include "common/fs.h"
 
 #include "base/game.h"
+#include "base/plugins.h"
 
 class Engine;
 class OSystem;
@@ -42,12 +44,9 @@ class OSystem;
  * This is then in turn used by the frontend code to detect games,
  * and instantiate actual Engine objects.
  */
-class MetaEngine {
+class MetaEngine : public PluginObject {
 public:
 	virtual ~MetaEngine() {}
-
-	/** Returns the name of the engine. */
-	virtual const char *getName() const = 0;
 
 	/** Returns some copyright information about the engine. */
 	virtual const char *getCopyright() const = 0;
