@@ -29,6 +29,8 @@
 #include "common/fs.h"
 #include "common/list.h"
 #include "common/md5.h"
+#include "common/savefile.h"
+#include "common/system.h"
 
 #include "scumm/detection.h"
 #include "scumm/detection_tables.h"
@@ -675,6 +677,8 @@ public:
 	virtual GameList detectGames(const FSList &fslist) const;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+
+	virtual SaveStateList listSaves(const char *target) const;
 };
 
 GameList ScummMetaEngine::getSupportedGames() const {
@@ -926,6 +930,38 @@ const char *ScummMetaEngine::getName() const {
 const char *ScummMetaEngine::getCopyright() const {
 	return "LucasArts SCUMM Games (C) LucasArts\n"
 	       "Humongous SCUMM Games (C) Humongous";
+}
+
+namespace Scumm {
+	extern bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
+}
+
+SaveStateList ScummMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	Common::String saveDesc;
+	Common::String pattern = target;
+	pattern += ".s??";
+
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++){
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+		
+		if (slotNum >= 0 && slotNum <= 99) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				Scumm::getSavegameName(in, saveDesc, 0);	// FIXME: heversion?!?
+				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc, *file));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
 }
 
 REGISTER_PLUGIN(SCUMM, ScummMetaEngine);

@@ -421,16 +421,14 @@ void SaveLoadChooser::updateInfos() {
 Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
 	// Get savegame descriptions
 	Common::StringList descriptions;
-	char name[32];
 	uint i = saveMode ? 1 : 0;		//the autosave is on slot #0
 	bool avail_saves[81];
 
 	scumm->listSavegames(avail_saves, ARRAYSIZE(avail_saves));
 	for (; i < ARRAYSIZE(avail_saves); i++) {
+		Common::String name;
 		if (avail_saves[i])
 			scumm->getSavegameName(i, name);
-		else
-			name[0] = 0;
 		descriptions.push_back(name);
 	}
 

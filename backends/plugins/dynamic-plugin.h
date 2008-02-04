@@ -67,6 +67,10 @@ public:
 		return _metaengine->detectGames(fslist);
 	}
 
+	SaveStateList listSaves(const char *target) const {
+		return _metaengine->listSaves(target);
+	}
+
 	virtual bool loadPlugin() {
 		// Query the plugin's name
 		MetaAllocFunc metaAlloc = (MetaAllocFunc)findSymbol("PLUGIN_MetaEngine_alloc");

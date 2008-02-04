@@ -46,15 +46,54 @@ class MetaEngine {
 public:
 	virtual ~MetaEngine() {}
 
+	/** Returns the name of the engine. */
 	virtual const char *getName() const = 0;
+
+	/** Returns some copyright information about the engine. */
 	virtual const char *getCopyright() const = 0;
+
 //	virtual int getVersion() const = 0;	// TODO!
 
+	/** Returns a list of games supported by this engine. */
 	virtual GameList getSupportedGames() const = 0;
+
+	/** Query the engine for a GameDescriptor for the specified gameid, if any. */
 	virtual GameDescriptor findGame(const char *gameid) const = 0;
+
+	/**
+	 * Runs the engine's game detector on the given list of files, and returns a
+	 * (possibly empty) list of games supported by the engine which it was able
+	 * to detect amongst the given files.
+	 */
 	virtual GameList detectGames(const FSList &fslist) const = 0;
 
+	/**
+	 * Tries to instantiate an engine instance based on the settings of
+	 * the currently active ConfMan target. That is, the MetaEngine should
+	 * query the ConfMan singleton for the target, gameid, path etc. data.
+	 *
+	 * @param syst	Pointer to the global OSystem object
+	 * @param engine	Pointer to a pointer which the MetaEngine sets to
+	 *					the newly create Engine, or 0 in case of an error
+	 * @return		a PluginError describing the error which occurred, or kNoError
+	 */
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const = 0;
+
+	/**
+	 * Return a list of all save states associated with the given target.
+	 *
+	 * In general, the caller will already have ensured that this (Meta)Engine
+	 * is responsible for the specified target by using findGame on it resp.
+	 * on the associated gameid from the relevant ConfMan entry, if present.
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @param target	name of a config manager target
+	 * @return			a list of save state descriptors
+	 */
+	virtual SaveStateList listSaves(const char *target) const {
+		return SaveStateList();
+	}
 };
 
 #endif

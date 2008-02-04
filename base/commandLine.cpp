@@ -350,6 +350,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, char **ar
 			DO_LONG_COMMAND("test-detector")
 			END_OPTION
 
+			DO_LONG_OPTION("list-saves")
+				// FIXME: Need to document this.
+				// TODO: Make the argument optional. If no argument is given, list all savegames
+				// for all configured targets.
+				return "list-saves";
+			END_OPTION
 
 			DO_OPTION('c', "config")
 			END_OPTION
@@ -571,7 +577,7 @@ static void listTargets() {
 
 	using namespace Common;
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
-	ConfigManager::DomainMap::const_iterator iter = domains.begin();
+	ConfigManager::DomainMap::const_iterator iter;
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
 		Common::String description(iter->_value.get("description"));
@@ -587,8 +593,49 @@ static void listTargets() {
 		}
 
 		printf("%-20s %s\n", name.c_str(), description.c_str());
+
 	}
 }
+
+/** List all saves states for the given target. */
+static void listSaves(const char *target) {
+	// FIXME HACK
+	g_system->initBackend();
+
+	// Grab the "target" domain, if any
+	const Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
+
+	// Grab the gameid from the domain resp. use the target as gameid
+	Common::String gameid;
+	if (domain)
+		gameid = domain->get("gameid");
+	if (gameid.empty())
+		gameid = target;
+	gameid.toLowercase();	// Normalize it to lower case
+
+	// Find the plugin that will handle the specified gameid
+	const Plugin *plugin = 0;
+	GameDescriptor game = Base::findGame(gameid, &plugin);
+
+	if (!plugin) {
+		error("Could not find any plugin to handle gameid '%s' (target '%s')", gameid.c_str(), target);
+		return;
+	}
+
+	// Query the plugin for a list of savegames
+	SaveStateList saveList = plugin->listSaves(target);
+
+	// TODO: Include more info about the target (desc, engine name, ...) ???
+	printf("Saves for target '%s':\n", target);
+	printf("  Slot Description                                           \n"
+	       "  ---- ------------------------------------------------------\n");
+
+	for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
+		printf("  %-4s %s\n", x->save_slot().c_str(), x->description().c_str());
+		// TODO: Could also iterate over the full hashmap, printing all key-value pairs
+	}
+}
+
 
 #ifdef DETECTOR_TESTING_HACK
 static void runDetectorTest() {
@@ -670,6 +717,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		return false;
 	} else if (command == "list-games") {
 		listGames();
+		return false;
+	} else if (command == "list-saves") {
+		listSaves(settings["list-saves"].c_str());
 		return false;
 	} else if (command == "version") {
 		printf("%s\n", gScummVMFullVersion);

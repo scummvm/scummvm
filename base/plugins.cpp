@@ -67,6 +67,10 @@ public:
 	GameList detectGames(const FSList &fslist) const {
 		return _metaengine->detectGames(fslist);
 	}
+
+	SaveStateList listSaves(const char *target) const {
+		return _metaengine->listSaves(target);
+	}
 };
 
 class StaticPluginProvider : public PluginProvider {

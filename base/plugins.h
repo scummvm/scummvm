@@ -47,6 +47,7 @@ class Plugin {
 public:
 	virtual ~Plugin() {}
 
+//	virtual bool isLoaded() const = 0;	// TODO
 	virtual bool loadPlugin() = 0;
 	virtual void unloadPlugin() = 0;
 
@@ -57,6 +58,8 @@ public:
 	virtual GameList getSupportedGames() const = 0;
 	virtual GameDescriptor findGame(const char *gameid) const = 0;
 	virtual GameList detectGames(const FSList &fslist) const = 0;
+
+	virtual SaveStateList listSaves(const char *target) const = 0;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const = 0;
 };

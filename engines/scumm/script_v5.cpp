@@ -942,7 +942,6 @@ void ScummEngine_v5::loadVars() {
 			int slotSize;
 			byte* slotContent;
 			int savegameId;
-			char name[32];
 			bool avail_saves[100];
 
 			if (a == STRINGID_IQ_SERIES && b == STRINGID_IQ_SERIES) {
@@ -960,9 +959,10 @@ void ScummEngine_v5::loadVars() {
 
 				// load savegame names
 				savegameId = slot - a + 1;
+				Common::String name;
 				if (avail_saves[savegameId] && getSavegameName(savegameId, name)) {
 					int pos;
-					char *ptr = name;
+					const char *ptr = name.c_str();
 					// slotContent ends with {'\0','@'} -> max. length = slotSize-2
 					for (pos = 0; pos < slotSize - 2; ++pos) {
 						if (!ptr[pos])

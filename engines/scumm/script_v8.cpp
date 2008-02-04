@@ -1235,9 +1235,9 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		removeBlastTexts();
 		break;
 	case 25: {	// saveGameReadName
-		char name[30];
+		Common::String name;
 		if (getSavegameName(args[1], name)) {
-			int size = resStrLen((const byte *)name) + 1;
+			int size = name.size() + 1;
 			_res->nukeResource(rtString, args[2]);
 
 			ArrayHeader *ah = (ArrayHeader *)_res->createResource(rtString, args[2], size + sizeof(ArrayHeader));
@@ -1245,7 +1245,7 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 			ah->dim1 = TO_LE_16(size + 1);
 			ah->dim2 = TO_LE_16(1);
 
-			memcpy(getStringAddress(args[2]), name, size);
+			memcpy(getStringAddress(args[2]), name.c_str(), size);
 		}
 		break;
 	}

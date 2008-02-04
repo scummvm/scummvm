@@ -431,39 +431,46 @@ void ScummEngine::listSavegames(bool *marks, int num) {
 	}
 }
 
-bool ScummEngine::getSavegameName(int slot, char *desc) {
+bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion);
+
+bool ScummEngine::getSavegameName(int slot, Common::String &desc) {
+	Common::InSaveFile *in = 0;
+	bool result = false;
 	char filename[256];
-	Common::SeekableReadStream *in;
+
+	desc.clear();
+	makeSavegameName(filename, slot, false);
+	in = _saveFileMan->openForLoading(filename);
+	if (in) {
+		result = Scumm::getSavegameName(in, desc, _game.heversion);
+		delete in;
+	}
+	return result;
+}
+
+bool getSavegameName(Common::InSaveFile *in, Common::String &desc, int heversion) {
 	SaveGameHeader hdr;
 
-	makeSavegameName(filename, slot, false);
-	if (!(in = _saveFileMan->openForLoading(filename))) {
-		strcpy(desc, "");
-		return false;
-	}
-
 	if (!loadSaveGameHeader(in, hdr)) {
-		delete in;
-		strcpy(desc, "Invalid savegame");
+		desc = "Invalid savegame";
 		return false;
 	}
-	delete in;
 
 	if (hdr.ver > CURRENT_VER)
 		hdr.ver = TO_LE_32(hdr.ver);
 	if (hdr.ver < VER(7) || hdr.ver > CURRENT_VER) {
-		strcpy(desc, "Invalid version");
+		desc = "Invalid version";
 		return false;
 	}
 
 	// We (deliberately) broke HE savegame compatibility at some point.
-	if (hdr.ver < VER(57) && _game.heversion >= 60) {
-		strcpy(desc, "Unsupported version");
+	if (hdr.ver < VER(57) && heversion >= 60) {
+		desc = "Unsupported version";
 		return false;
 	}
 
-	memcpy(desc, hdr.name, sizeof(hdr.name));
-	desc[sizeof(hdr.name) - 1] = 0;
+	hdr.name[sizeof(hdr.name) - 1] = 0;
+	desc = hdr.name;
 	return true;
 }
 
