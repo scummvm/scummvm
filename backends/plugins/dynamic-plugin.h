@@ -33,44 +33,11 @@
 class DynamicPlugin : public Plugin {
 protected:
 	typedef void (*VoidFunc)();
-
 	typedef MetaEngine *(*MetaAllocFunc)();
-
-	MetaEngine *_metaengine;
 
 	virtual VoidFunc findSymbol(const char *symbol) = 0;
 
 public:
-	DynamicPlugin() : _metaengine(0) {}
-
-	const char *getName() const {
-		return _metaengine->getName();
-	}
-
-	const char *getCopyright() const {
-		return _metaengine->getCopyright();
-	}
-
-	PluginError createInstance(OSystem *syst, Engine **engine) const {
-		return _metaengine->createInstance(syst, engine);
-	}
-
-	GameList getSupportedGames() const {
-		return _metaengine->getSupportedGames();
-	}
-
-	GameDescriptor findGame(const char *gameid) const {
-		return _metaengine->findGame(gameid);
-	}
-
-	GameList detectGames(const FSList &fslist) const {
-		return _metaengine->detectGames(fslist);
-	}
-
-	SaveStateList listSaves(const char *target) const {
-		return _metaengine->listSaves(target);
-	}
-
 	virtual bool loadPlugin() {
 		// Query the plugin's name
 		MetaAllocFunc metaAlloc = (MetaAllocFunc)findSymbol("PLUGIN_MetaEngine_alloc");

@@ -28,13 +28,41 @@
 #include "engines/metaengine.h"
 
 
+const char *Plugin::getName() const {
+	return _metaengine->getName();
+}
+
+const char *Plugin::getCopyright() const {
+	return _metaengine->getCopyright();
+}
+
+PluginError Plugin::createInstance(OSystem *syst, Engine **engine) const {
+	return _metaengine->createInstance(syst, engine);
+}
+
+GameList Plugin::getSupportedGames() const {
+	return _metaengine->getSupportedGames();
+}
+
+GameDescriptor Plugin::findGame(const char *gameid) const {
+	return _metaengine->findGame(gameid);
+}
+
+GameList Plugin::detectGames(const FSList &fslist) const {
+	return _metaengine->detectGames(fslist);
+}
+
+SaveStateList Plugin::listSaves(const char *target) const {
+	return _metaengine->listSaves(target);
+}
+
+
 #ifndef DYNAMIC_MODULES
 class StaticPlugin : public Plugin {
-	MetaEngine *_metaengine;
 public:
-	StaticPlugin(MetaEngine *metaengine)
-		: _metaengine(metaengine) {
-		assert(_metaengine);
+	StaticPlugin(MetaEngine *metaengine) {
+		assert(metaengine);
+		_metaengine = metaengine;
 	}
 
 	~StaticPlugin() {
@@ -43,34 +71,6 @@ public:
 
 	virtual bool loadPlugin()		{ return true; }
 	virtual void unloadPlugin()		{}
-
-	const char *getName() const {
-		return _metaengine->getName();
-	}
-
-	const char *getCopyright() const {
-		return _metaengine->getCopyright();
-	}
-
-	PluginError createInstance(OSystem *syst, Engine **engine) const {
-		return _metaengine->createInstance(syst, engine);
-	}
-
-	GameList getSupportedGames() const {
-		return _metaengine->getSupportedGames();
-	}
-
-	GameDescriptor findGame(const char *gameid) const {
-		return _metaengine->findGame(gameid);
-	}
-
-	GameList detectGames(const FSList &fslist) const {
-		return _metaengine->detectGames(fslist);
-	}
-
-	SaveStateList listSaves(const char *target) const {
-		return _metaengine->listSaves(target);
-	}
 };
 
 class StaticPluginProvider : public PluginProvider {

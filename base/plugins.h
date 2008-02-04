@@ -44,24 +44,30 @@ class OSystem;
  * plugins.
  */
 class Plugin {
+protected:
+	MetaEngine *_metaengine;
+
 public:
-	virtual ~Plugin() {}
+	Plugin() : _metaengine(0) {}
+	virtual ~Plugin() {
+		//if (isLoaded())
+			//unloadPlugin();
+	}
 
 //	virtual bool isLoaded() const = 0;	// TODO
-	virtual bool loadPlugin() = 0;
-	virtual void unloadPlugin() = 0;
+	virtual bool loadPlugin() = 0;	// TODO: Rename to load() ?
+	virtual void unloadPlugin() = 0;	// TODO: Rename to unload() ?
 
-	virtual const char *getName() const = 0;
-	virtual const char *getCopyright() const = 0;
+	const char *getName() const;
+	const char *getCopyright() const;
+
 //	virtual int getVersion() const	{ return 0; }	// TODO!
 
-	virtual GameList getSupportedGames() const = 0;
-	virtual GameDescriptor findGame(const char *gameid) const = 0;
-	virtual GameList detectGames(const FSList &fslist) const = 0;
-
-	virtual SaveStateList listSaves(const char *target) const = 0;
-
-	virtual PluginError createInstance(OSystem *syst, Engine **engine) const = 0;
+	PluginError createInstance(OSystem *syst, Engine **engine) const;
+	GameList getSupportedGames() const;
+	GameDescriptor findGame(const char *gameid) const;
+	GameList detectGames(const FSList &fslist) const;
+	SaveStateList listSaves(const char *target) const;
 };
 
 
