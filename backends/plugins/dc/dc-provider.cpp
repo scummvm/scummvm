@@ -76,6 +76,7 @@ public:
 		return ret;
 	}
 	void unloadPlugin() {
+		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
 			if (dlclose(_dlHandle) != 0)
 				warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerror());

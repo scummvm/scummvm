@@ -95,6 +95,7 @@ public:
 		return DynamicPlugin::loadPlugin();
 	}
 	void unloadPlugin() {
+		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
 			if (!FreeLibrary((HMODULE)_dlHandle))
 				debug("Failed unloading plugin '%s'", _filename.c_str());

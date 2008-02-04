@@ -70,6 +70,7 @@ public:
 		return DynamicPlugin::loadPlugin();
 	}
 	void unloadPlugin() {
+		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
 			SDL_UnloadObject(_dlHandle);
 			_dlHandle = 0;
