@@ -245,7 +245,7 @@ int16 ScriptVar::getRValue() {
 	}
 
 	if (_flags & kParaRandom) {
-		return (_vm->_rnd.getRandomNumber(65536) * _value) / 32767;
+		return (_vm->_rnd.getRandomNumber(65536) * _value) >> 16;
 	}
 
 	error("Parameter is not an r-value");
