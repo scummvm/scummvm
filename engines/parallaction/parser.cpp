@@ -161,14 +161,31 @@ uint16 Script::fillTokens(char* line) {
 	return i;
 }
 
+bool isCommentLine(char *text) {
+	return text[0] == '#';
+}
+
+bool isStartOfCommentBlock(char *text) {
+	return (text[0] == '[');
+}
+
+bool isEndOfCommentBlock(char *text) {
+	return (text[0] == ']');
+}
+
 uint16 Script::readLineToken(bool errorOnEOF) {
 
 	clearTokens();
 
+	bool inBlockComment = false, inLineComment;
+
 	char buf[200];
 	char *line = NULL;
 	do {
+		inLineComment = false;
+
 		line = readLine(buf, 200);
+
 		if (line == NULL) {
 			if (errorOnEOF)
 				error("unexpected end of file while parsing");
@@ -176,7 +193,18 @@ uint16 Script::readLineToken(bool errorOnEOF) {
 				return 0;
 		}
 		line = Common::ltrim(line);
-	} while (strlen(line) == 0 || line[0] == '#');
+
+		if (isCommentLine(line)) {
+			inLineComment = true;
+		} else
+		if (isStartOfCommentBlock(line)) {
+			inBlockComment = true;
+		} else
+		if (isEndOfCommentBlock(line)) {
+			inBlockComment = false;
+		}
+
+	} while (inLineComment || inBlockComment || strlen(line) == 0);
 
 	return fillTokens(line);
 }
