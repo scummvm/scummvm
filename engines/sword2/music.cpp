@@ -172,9 +172,9 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 // Custom AudioStream class to handle Broken Sword 2's audio compression.
 // ----------------------------------------------------------------------------
 
-#define GetCompressedShift(n)      ((n) >> 4)
-#define GetCompressedSign(n)       (((n) >> 3) & 1)
-#define GetCompressedAmplitude(n)  ((n) & 7)
+#define GetCompressedShift(n)      (((n) >> 4) & 0x0F)
+#define GetCompressedSign(n)       ((n) & 0x08)
+#define GetCompressedAmplitude(n)  ((n) & 0x07)
 
 CLUInputStream::CLUInputStream(Common::File *file, int size)
 	: _file(file), _firstTime(true), _bufferEnd(_outbuf + BUFFER_SIZE) {
@@ -236,7 +236,7 @@ void CLUInputStream::refill() {
 			in++;
 		}
 
-		*out++ = sample;
+		*out++ = (int16)sample;
 	}
 
 	_pos = _outbuf;
