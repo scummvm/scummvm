@@ -41,6 +41,7 @@ Debugger::Debugger(Parallaction *vm)
 	DCmd_Register("give",		WRAP_METHOD(Debugger, Cmd_Give));
 	DCmd_Register("zones",		WRAP_METHOD(Debugger, Cmd_Zones));
 	DCmd_Register("animations",	WRAP_METHOD(Debugger, Cmd_Animations));
+	DCmd_Register("globalflags",WRAP_METHOD(Debugger, Cmd_GlobalFlags));
 	DCmd_Register("localflags",	WRAP_METHOD(Debugger, Cmd_LocalFlags));
 	DCmd_Register("locations",	WRAP_METHOD(Debugger, Cmd_Locations));
 	DCmd_Register("gfxobjects",	WRAP_METHOD(Debugger, Cmd_GfxObjects));
@@ -90,6 +91,22 @@ bool Debugger::Cmd_Locations(int argc, const char **argv) {
 				"+------------------------------+---------+\n");
 	for (uint i = 0; i < _vm->_numLocations; i++) {
 		DebugPrintf("|%-30s| %08x|\n", _vm->_locationNames[i], _vm->_localFlags[i]);
+	}
+	DebugPrintf("+------------------------------+---------+\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_GlobalFlags(int argc, const char **argv) {
+
+	uint32 flags = _commandFlags;
+
+	DebugPrintf("+------------------------------+---------+\n"
+				"| flag name                    |  value  |\n"
+				"+------------------------------+---------+\n");
+	for (uint i = 0; i < _vm->_globalTable->count(); i++) {
+		const char *value = ((flags & (1 << i)) == 0) ? "OFF" : "ON";
+		DebugPrintf("|%-30s|   %-6s|\n", _vm->_globalTable->item(i),  value);
 	}
 	DebugPrintf("+------------------------------+---------+\n");
 
