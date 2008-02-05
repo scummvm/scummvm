@@ -152,16 +152,10 @@ void IMuseDigital::parseScriptCmds(int cmd, int b, int c, int d, int e, int f, i
 		}
 		break;
 	case 0x2000: // ImuseSetGroupSfxVolume
-		debug(5, "ImuseSetGroupSFXVolume (%d)", b);
-//		setGroupSfxVolume(b);
 		break;
 	case 0x2001: // ImuseSetGroupVoiceVolume
-		debug(5, "ImuseSetGroupVoiceVolume (%d)", b);
-//		setGroupVoiceVolume(b);
 		break;
 	case 0x2002: // ImuseSetGroupMusicVolume
-		debug(5, "ImuseSetGroupMusicVolume (%d)", b);
-//		setGroupMusicVolume(b);
 		break;
 	default:
 		error("IMuseDigital::doCommand DEFAULT command %d", cmd);
