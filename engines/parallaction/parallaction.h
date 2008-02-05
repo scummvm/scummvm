@@ -111,7 +111,10 @@ enum EngineFlags {
 	kEngineChangeLocation	= (1 << 4),
 	kEngineBlockInput	= (1 << 5),
 	kEngineDragging		= (1 << 6),
-	kEngineTransformedDonna	= (1 << 7)
+	kEngineTransformedDonna	= (1 << 7),
+
+	// BRA specific
+	kEngineReturn		= (1 << 10)
 };
 
 enum {

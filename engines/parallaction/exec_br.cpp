@@ -279,7 +279,7 @@ DECLARE_COMMAND_OPCODE(testsfx) {
 
 
 DECLARE_COMMAND_OPCODE(ret) {
-	warning("Parallaction_br::cmdOp_ret not yet implemented");
+	_engineFlags |= kEngineReturn;
 }
 
 

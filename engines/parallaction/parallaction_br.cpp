@@ -96,16 +96,22 @@ void Parallaction_br::callFunction(uint index, void* parm) {
 
 int Parallaction_br::go() {
 
+	guiSplash("dyna");
+	guiSplash("core");
+
 	while ((_engineFlags & kEngineQuit) == 0) {
 
 		guiStart();
 
 //		initCharacter();
 
-		runGame();
+		_inputMode = kInputModeGame;
+		while ((_engineFlags & (kEngineReturn | kEngineQuit)) == 0) {
+			runGame();
+		}
+		_engineFlags &= ~kEngineReturn;
 
 		freePart();
-//		freeLocation();
 //		freeCharacter();
 
 	}

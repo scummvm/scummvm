@@ -245,26 +245,21 @@ void waitUntilLeftClick() {
 
 void Parallaction::runGame() {
 
-	_inputMode = kInputModeGame;
+	updateInput();
 
-	while ((_engineFlags & kEngineQuit) == 0) {
-		updateInput();
+	runPendingZones();
 
-		runPendingZones();
-
-		if (_engineFlags & kEngineChangeLocation) {
-			changeLocation(_location._name);
-		}
-
-		if (_inputMode == kInputModeGame) {
-			runScripts();
-			walk();
-			drawAnimations();
-		}
-
-		updateView();
-
+	if (_engineFlags & kEngineChangeLocation) {
+		changeLocation(_location._name);
 	}
+
+	if (_inputMode == kInputModeGame) {
+		runScripts();
+		walk();
+		drawAnimations();
+	}
+
+	updateView();
 
 }
 

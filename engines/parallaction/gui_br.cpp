@@ -41,8 +41,6 @@ enum MenuOptions {
 
 
 void Parallaction_br::guiStart() {
-	guiSplash("dyna");
-	guiSplash("core");
 
 	// TODO: load progress value from special save game
 	_progress = 3;

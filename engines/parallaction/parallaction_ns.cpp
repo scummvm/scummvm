@@ -240,7 +240,10 @@ int Parallaction_ns::go() {
 
 	changeLocation(_location._name);
 
-	runGame();
+	_inputMode = kInputModeGame;
+	while ((_engineFlags & kEngineQuit) == 0) {
+		runGame();
+	}
 
 	return 0;
 }
