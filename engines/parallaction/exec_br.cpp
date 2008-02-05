@@ -150,7 +150,7 @@ DECLARE_COMMAND_OPCODE(start) {
 }
 
 DECLARE_COMMAND_OPCODE(stop) {
-	warning("Parallaction_br::cmdOp_stop not yet implemented");
+	_cmdRunCtxt.cmd->u._animation->_flags &= ~kFlagsActing;
 }
 
 

@@ -613,9 +613,11 @@ void Parallaction_ns::parseCommandFlags() {
 			} else
 			if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
 				byte _al = _localFlagNames->lookup(&_tokens[_si][2]);
+				assert(_al != Table::notFound);
 				cmd->_flagsOff |= 1 << (_al - 1);
 			} else {
 				byte _al = _localFlagNames->lookup(_tokens[_si]);
+				assert(_al != Table::notFound);
 				cmd->_flagsOn |= 1 << (_al - 1);
 			}
 
@@ -638,9 +640,11 @@ void Parallaction_ns::parseCommandFlags() {
 			} else
 			if (!scumm_strnicmp(_tokens[_si], "no", 2)) {
 				byte _al = _globalTable->lookup(&_tokens[_si][2]);
+				assert(_al != Table::notFound);
 				cmd->_flagsOff |= 1 << (_al - 1);
 			} else {
 				byte _al = _globalTable->lookup(_tokens[_si]);
+				assert(_al != Table::notFound);
 				cmd->_flagsOn |= 1 << (_al - 1);
 			}
 

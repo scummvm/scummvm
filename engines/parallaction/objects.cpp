@@ -222,7 +222,18 @@ Question::~Question() {
 }
 
 Instruction::Instruction() {
-	memset(this, 0, sizeof(Instruction));
+	_index = 0;
+	_flags = 0;
+
+	// common
+	_a = 0;
+	_z = 0;
+	_immediate = 0;
+
+	// BRA specific
+	_text = 0;
+	_text2 = 0;
+	_y = 0;
 }
 
 Instruction::~Instruction() {

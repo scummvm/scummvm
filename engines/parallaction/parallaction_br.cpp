@@ -191,7 +191,7 @@ void Parallaction_br::runPendingZones() {
 	if (_activeZone) {
 		z = _activeZone;	// speak Zone or sound
 		_activeZone = NULL;
-		runZone(z);
+//		runZone(z);			// FIXME: BRA doesn't handle sound yet
 	}
 
 	if (_activeZone2) {

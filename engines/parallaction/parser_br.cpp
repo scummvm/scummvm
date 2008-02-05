@@ -322,17 +322,19 @@ DECLARE_COMMAND_PARSER(location)  {
 	_locParseCtxt.nextToken++;
 
 	if (_tokens[_locParseCtxt.nextToken][0] != '\0') {
-		_locParseCtxt.cmd->u._startPos.x = atoi(_tokens[_locParseCtxt.nextToken]);
-		_locParseCtxt.nextToken++;
-		_locParseCtxt.cmd->u._startPos.y = atoi(_tokens[_locParseCtxt.nextToken]);
-		_locParseCtxt.nextToken++;
-	}
+		if (isdigit(_tokens[_locParseCtxt.nextToken][0]) || _tokens[_locParseCtxt.nextToken][0] == '-') {
+			_locParseCtxt.cmd->u._startPos.x = atoi(_tokens[_locParseCtxt.nextToken]);
+			_locParseCtxt.nextToken++;
+			_locParseCtxt.cmd->u._startPos.y = atoi(_tokens[_locParseCtxt.nextToken]);
+			_locParseCtxt.nextToken++;
+		}
 
-	if (_tokens[_locParseCtxt.nextToken][0] != '\0') {
-		_locParseCtxt.cmd->u._startPos2.x = atoi(_tokens[_locParseCtxt.nextToken]);
-		_locParseCtxt.nextToken++;
-		_locParseCtxt.cmd->u._startPos2.y = atoi(_tokens[_locParseCtxt.nextToken]);
-		_locParseCtxt.nextToken++;
+		if (isdigit(_tokens[_locParseCtxt.nextToken][0]) || _tokens[_locParseCtxt.nextToken][0] == '-') {
+			_locParseCtxt.cmd->u._startPos2.x = atoi(_tokens[_locParseCtxt.nextToken]);
+			_locParseCtxt.nextToken++;
+			_locParseCtxt.cmd->u._startPos2.y = atoi(_tokens[_locParseCtxt.nextToken]);
+			_locParseCtxt.nextToken++;
+		}
 	}
 
 	parseCommandFlags();
