@@ -422,7 +422,8 @@ void Gfx::invertBackground(const Common::Rect& r) {
 
 }
 
-byte _unpackedBitmap[320*200];
+// this is the maximum size of an unpacked frame in BRA
+byte _unpackedBitmap[640*401];
 
 void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor) {
 
