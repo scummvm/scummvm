@@ -142,6 +142,7 @@ public:
 		LINK_PLUGIN(TOUCHE)
 		#endif
 
+		LINK_PLUGIN(MOHAWK)
 		return pl;
 	}
 };

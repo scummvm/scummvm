@@ -351,8 +351,8 @@ void Gfx::clearScreen() {
 void Gfx::updateScreen() {
 
 	// background may not cover the whole screen, so adjust bulk update size
-	uint w = MIN(_vm->_screenWidth, _backgroundInfo.width);
-	uint h = MIN(_vm->_screenHeight, _backgroundInfo.height);
+	uint w = MIN(_vm->_screenWidth, (int32)_backgroundInfo.width);
+	uint h = MIN(_vm->_screenHeight, (int32)_backgroundInfo.height);
 
 	// TODO: add displacement to source to handle scrolling in BRA
 	g_system->copyRectToScreen((const byte*)_backgroundInfo.bg.pixels, _backgroundInfo.bg.pitch, _backgroundInfo.x, _backgroundInfo.y, w, h);
