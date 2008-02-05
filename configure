@@ -314,7 +314,7 @@ CheckNASM()
 	else
 		case $_host_os in
 			mingw* | cygwin*)
-				NASMFLAGS="-f win32 -w-orphan-labels"
+				NASMFLAGS="-f win32"
 			;;
 			darwin*)
 				NASMFLAGS="-f macho"
