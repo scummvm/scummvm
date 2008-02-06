@@ -122,12 +122,31 @@ DECLARE_COMMAND_OPCODE(close) {
 
 
 DECLARE_COMMAND_OPCODE(on) {
-	warning("Parallaction_br::cmdOp_on not yet implemented");
+	CommandData *data = &_cmdRunCtxt.cmd->u;
+	Zone *z = data->_zone;
+
+	if (z) {
+		z->_flags |= kFlagsActive;
+		z->_flags &= ~kFlagsRemove;
+
+		if ((z->_type & 0xFFFF) & kZoneGet) {
+			_gfx->showGfxObj(z->u.get->gfxobj, true);
+		}
+	}
 }
 
 
 DECLARE_COMMAND_OPCODE(off) {
-	warning("Parallaction_br::cmdOp_off not yet implemented");
+	CommandData *data = &_cmdRunCtxt.cmd->u;
+	Zone *z = data->_zone;
+
+	if (z) {
+		z->_flags |= kFlagsRemove;
+
+		if ((z->_type & 0xFFFF) & kZoneGet) {
+			_gfx->showGfxObj(z->u.get->gfxobj, false);
+		}
+	}
 }
 
 
