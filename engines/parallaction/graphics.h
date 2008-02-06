@@ -27,6 +27,7 @@
 #define PARALLACTION_GRAPHICS_H
 
 #include "common/rect.h"
+#include "common/hash-str.h"
 #include "common/stream.h"
 
 #include "graphics/surface.h"
@@ -174,9 +175,10 @@ struct MaskBuffer {
 	uint16	h;
 	uint	size;
 	byte	*data;
+	bool	bigEndian;
 
 public:
-	MaskBuffer() : w(0), internalWidth(0), h(0), size(0), data(0) {
+	MaskBuffer() : w(0), internalWidth(0), h(0), size(0), data(0), bigEndian(true) {
 	}
 
 	void create(uint16 width, uint16 height) {
@@ -198,8 +200,13 @@ public:
 
 	inline byte getValue(uint16 x, uint16 y) {
 		byte m = data[(x >> 2) + y * internalWidth];
-		uint n = (x & 3) << 1;
-		return ((3 << n) & m) >> n;
+		uint n;
+		if (bigEndian) {
+			n = (x & 3) << 1;
+		} else {
+			n = (3 - (x & 3)) << 1;
+		}
+		return (m >> n) & 3;
 	}
 
 };

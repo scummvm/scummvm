@@ -568,6 +568,7 @@ void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
 
 	info.bg.create(info.width, info.height, 1);
 	info.mask.create(info.width, info.height);
+	info.mask.bigEndian = true;
 	info.path.create(info.width, info.height);
 
 	Graphics::PackBitsReadStream stream(_resArchive);
@@ -595,6 +596,7 @@ void DosDisk_ns::loadMaskAndPath(BackgroundInfo& info, const char *name) {
 	_resArchive.read(info.path.data, info.path.size);
 
 	info.mask.create(info.width, info.height);
+	info.mask.bigEndian = true;
 	_resArchive.read(info.mask.data, info.mask.size);
 
 	return;
