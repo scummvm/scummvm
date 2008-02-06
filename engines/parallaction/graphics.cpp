@@ -32,6 +32,40 @@
 
 namespace Parallaction {
 
+
+typedef Common::HashMap<Common::String, int32, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> VarMap;
+VarMap _vars;
+
+void Gfx::registerVar(const Common::String &name, int32 initialValue) {
+	if (_vars.contains(name)) {
+		warning("Variable '%s' already registered, ignoring initial value.\n", name.c_str());
+	} else {
+		_vars.setVal(name, initialValue);
+	}
+}
+
+void Gfx::setVar(const Common::String &name, int32 value) {
+	if (!_vars.contains(name)) {
+		warning("Variable '%s' doesn't exist, skipping assignment.\n", name.c_str());
+	} else {
+		_vars.setVal(name, value);
+	}
+}
+
+int32 Gfx::getVar(const Common::String &name) {
+	int32 v = 0;
+
+	if (!_vars.contains(name)) {
+		warning("Variable '%s' doesn't exist, returning default value.\n", name.c_str());
+	} else {
+		v = _vars.getVal(name);
+	}
+
+	return v;
+}
+
+
+
 #define	LABEL_TRANSPARENT_COLOR 0xFF
 #define	BALLOON_TRANSPARENT_COLOR 2
 
@@ -348,14 +382,51 @@ void Gfx::clearScreen() {
 	g_system->clearScreen();
 }
 
+void Gfx::beginFrame() {
+
+	int32 oldBackgroundMode = _varBackgroundMode;
+	_varBackgroundMode = getVar("background_mode");
+
+	if (oldBackgroundMode != _varBackgroundMode) {
+		switch (_varBackgroundMode) {
+		case 1:
+			_bitmapMask.free();
+			break;
+		case 2:
+			_bitmapMask.create(_backgroundInfo.width, _backgroundInfo.height, 1);
+			byte *data = (byte*)_bitmapMask.pixels;
+			for (uint y = 0; y < _bitmapMask.h; y++) {
+				for (uint x = 0; x < _bitmapMask.w; x++) {
+					*data++ = _backgroundInfo.mask.getValue(x, y);
+				}
+			}
+			break;
+		}
+	}
+
+
+}
+
 void Gfx::updateScreen() {
 
 	// background may not cover the whole screen, so adjust bulk update size
 	uint w = MIN(_vm->_screenWidth, (int32)_backgroundInfo.width);
 	uint h = MIN(_vm->_screenHeight, (int32)_backgroundInfo.height);
 
-	// TODO: add displacement to source to handle scrolling in BRA
-	g_system->copyRectToScreen((const byte*)_backgroundInfo.bg.pixels, _backgroundInfo.bg.pitch, _backgroundInfo.x, _backgroundInfo.y, w, h);
+	byte *backgroundData;
+	uint16 backgroundPitch;
+	switch (_varBackgroundMode) {
+	case 1:
+		backgroundData = (byte*)_backgroundInfo.bg.pixels;
+		backgroundPitch = _backgroundInfo.bg.pitch;
+		break;
+	case 2:
+		backgroundData = (byte*)_bitmapMask.pixels;
+		backgroundPitch = _bitmapMask.pitch;
+		break;
+	}
+	g_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo.x, _backgroundInfo.y, w, h);
+
 
 	// TODO: transform objects coordinates to be drawn with scrolling
 	Graphics::Surface *surf = g_system->lockScreen();
@@ -785,6 +856,9 @@ Gfx::Gfx(Parallaction* vm) :
 
 	_font = NULL;
 
+	registerVar("background_mode", 1);
+	_varBackgroundMode = 1;
+
 	return;
 }
 
@@ -1034,6 +1108,5 @@ void Gfx::setBackground(uint type, const char* name, const char* mask, const cha
 	}
 
 }
-
 
 } // namespace Parallaction

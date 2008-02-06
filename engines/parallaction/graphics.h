@@ -512,6 +512,11 @@ public:
 	Gfx(Parallaction* vm);
 	virtual ~Gfx();
 
+	void beginFrame();
+
+	void registerVar(const Common::String &name, int32 initialValue);
+	void setVar(const Common::String &name, int32 value);
+	int32 getVar(const Common::String &name);
 
 	void clearScreen();
 	void updateScreen();
@@ -529,6 +534,10 @@ protected:
 
 	Common::Point		_hbCirclePos;
 	int				_hbCircleRadius;
+
+	// frame data stored in programmable variables
+	int32				_varBackgroundMode;
+	Graphics::Surface 	_bitmapMask;
 
 
 protected:
@@ -587,6 +596,7 @@ protected:
 
 
 #endif
+
 
 
 

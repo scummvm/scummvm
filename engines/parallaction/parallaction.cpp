@@ -253,12 +253,16 @@ void Parallaction::runGame() {
 		changeLocation(_location._name);
 	}
 
+
+	_gfx->beginFrame();
+
 	if (_inputMode == kInputModeGame) {
 		runScripts();
 		walk();
 		drawAnimations();
 	}
 
+	// change this to endFrame?
 	updateView();
 
 }
