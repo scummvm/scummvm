@@ -325,10 +325,7 @@ void Gfx::setHalfbriteMode(bool enable) {
 	if (enable == _halfbrite) return;
 
 	_halfbrite = !_halfbrite;
-
-	if (!enable) {
-		_hbCircleRadius = 0;
-	}
+	_hbCircleRadius = 0;
 }
 
 #define HALFBRITE_CIRCLE_RADIUS		48
@@ -338,6 +335,9 @@ void Gfx::setProjectorPos(int x, int y) {
 	_hbCirclePos.y = y + _hbCircleRadius;
 }
 
+void Gfx::setProjectorProgram(int16 *data) {
+	_nextProjectorPos = data;
+}
 
 void Gfx::drawInventory() {
 
@@ -438,6 +438,15 @@ void Gfx::updateScreen() {
 		byte *buf = (byte*)surf->pixels;
 		for (int i = 0; i < surf->w*surf->h; i++) {
 			*buf++ |= 0x20;
+		}
+		if (_nextProjectorPos) {
+			int16 x = *_nextProjectorPos++;
+			int16 y = *_nextProjectorPos++;
+			if (x == -1 && y == -1) {
+				_nextProjectorPos = 0;
+			} else {
+				setProjectorPos(x, y);
+			}
 		}
 		if (_hbCircleRadius > 0) {
 			drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &halfbritePixel, surf->pixels);

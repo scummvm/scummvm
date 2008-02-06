@@ -507,6 +507,9 @@ public:
 	// amiga specific
 	void setHalfbriteMode(bool enable);
 	void setProjectorPos(int x, int y);
+	void setProjectorProgram(int16 *data);
+	int16 *_nextProjectorPos;
+
 
 	// init
 	Gfx(Parallaction* vm);
