@@ -345,7 +345,7 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 		// NOTE: info.width and info.height are only valid if the background graphics
 		// have already been loaded
 		info.mask.create(info.width, info.height);
-		stream.read(info.mask.data, info.width * info.height);
+		stream.read(info.mask.data, info.mask.size);
 		stream.close();
 	}
 
@@ -357,7 +357,7 @@ void DosDisk_br::loadScenery(BackgroundInfo& info, const char *name, const char 
 		// NOTE: info.width and info.height are only valid if the background graphics
 		// have already been loaded
 		info.path.create(info.width, info.height);
-		stream.read(info.path.data, info.width * info.height);
+		stream.read(info.path.data, info.path.size);
 		stream.close();
 	}
 
