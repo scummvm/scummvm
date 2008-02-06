@@ -434,11 +434,10 @@ void Gfx::updateScreen() {
 
 	if (_halfbrite) {
 		// FIXME: the implementation of halfbrite is now largely sub-optimal in that a full screen
-		// rewrite is needed to apply the effect.
-		byte *src = (byte*)_backgroundInfo.bg.pixels;
-		byte *dst = (byte*)surf->pixels;
+		// rewrite is needed to apply the effect. Also, we are manipulating the frame buffer. Is it a good idea?
+		byte *buf = (byte*)surf->pixels;
 		for (int i = 0; i < surf->w*surf->h; i++) {
-			*dst++ = *src++ | 0x20;
+			*buf++ |= 0x20;
 		}
 		if (_hbCircleRadius > 0) {
 			drawCircle(_hbCirclePos.x, _hbCirclePos.y, _hbCircleRadius, 0, &halfbritePixel, surf->pixels);
