@@ -481,7 +481,7 @@ public:
 	int setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte textColor);
 	void setBalloonText(uint id, char *text, byte textColor);
 	int hitTestDialogueBalloon(int x, int y);
-	void getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height);
+	void getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height);
 
 	// other items
 	int setItem(Frames* frames, uint16 x, uint16 y, byte transparentColor = 0);
@@ -529,7 +529,6 @@ public:
 
 protected:
 	Parallaction*		_vm;
-	Font				*_font;
 	bool				_halfbrite;
 
 	Common::Point		_hbCirclePos;
@@ -583,9 +582,8 @@ protected:
 	Balloon *getBalloon(uint id);
 
 	// low level text and patches
-	void setFont(Font* font);
-	void drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
-	void drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
+	void drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color);
+	void drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth);
 
     void blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor);
 	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, byte transparentColor);

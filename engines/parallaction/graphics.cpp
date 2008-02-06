@@ -611,8 +611,7 @@ Label *Gfx::renderFloatingLabel(Font *font, char *text) {
 
 		setupLabelSurface(*cnv, w, h);
 
-		setFont(font);
-		drawText(cnv, 0, 0, text, 0);
+		drawText(font, cnv, 0, 0, text, 0);
 	}
 
 	return label;
@@ -626,23 +625,21 @@ uint Gfx::createLabel(Font *font, const char *text, byte color) {
 
 	uint w, h;
 
-	setFont(font);
-
 	if (_vm->getPlatform() == Common::kPlatformAmiga) {
 		w = font->getStringWidth(text) + 2;
 		h = font->height() + 2;
 
 		setupLabelSurface(*cnv, w, h);
 
-		drawText(cnv, 0, 2, text, 0);
-		drawText(cnv, 2, 0, text, color);
+		drawText(font, cnv, 0, 2, text, 0);
+		drawText(font, cnv, 2, 0, text, color);
 	} else {
 		w = font->getStringWidth(text);
 		h = font->height();
 
 		setupLabelSurface(*cnv, w, h);
 
-		drawText(cnv, 0, 0, text, color);
+		drawText(font, cnv, 0, 0, text, color);
 	}
 
 	uint id = _numLabels;
@@ -762,13 +759,13 @@ void Label::resetPosition() {
 }
 
 
-void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* height) {
+void Gfx::getStringExtent(Font *font, char *text, uint16 maxwidth, int16* width, int16* height) {
 
 	uint16 lines = 0;
 	uint16 w = 0;
 	*width = 0;
 
-	uint16 blankWidth = _font->getStringWidth(" ");
+	uint16 blankWidth = font->getStringWidth(" ");
 	uint16 tokenWidth = 0;
 
 	char token[MAX_TOKEN_LEN];
@@ -776,7 +773,7 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 	while (strlen(text) != 0) {
 
 		text = parseNextToken(text, token, MAX_TOKEN_LEN, "   ", true);
-		tokenWidth = _font->getStringWidth(token);
+		tokenWidth = font->getStringWidth(token);
 
 		w += tokenWidth;
 
@@ -804,13 +801,6 @@ void Gfx::getStringExtent(char *text, uint16 maxwidth, int16* width, int16* heig
 
 	return;
 }
-
-
-void Gfx::setFont(Font *font) {
-	assert(font);
-	_font = font;
-}
-
 
 
 void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst) {
@@ -853,8 +843,6 @@ Gfx::Gfx(Parallaction* vm) :
 
 	_halfbrite = false;
 	_hbCircleRadius = 0;
-
-	_font = NULL;
 
 	registerVar("background_mode", 1);
 	_varBackgroundMode = 1;
@@ -934,13 +922,12 @@ int Gfx::setSingleBalloon(char *text, uint16 x, uint16 y, uint16 winding, byte t
 
 	int16 w, h;
 
-	setFont(_vm->_dialogueFont);
-	getStringExtent(text, MAX_BALLOON_WIDTH, &w, &h);
+	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
 
 	int id = createBalloon(w+5, h, winding, 1);
 	Gfx::Balloon *balloon = &_balloons[id];
 
-	drawWrappedText(&balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
+	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
 
 	balloon->x = x;
 	balloon->y = y;
@@ -952,13 +939,12 @@ int Gfx::setDialogueBalloon(char *text, uint16 winding, byte textColor) {
 
 	int16 w, h;
 
-	setFont(_vm->_dialogueFont);
-	getStringExtent(text, MAX_BALLOON_WIDTH, &w, &h);
+	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
 
 	int id = createBalloon(w+5, h, winding, 1);
 	Gfx::Balloon *balloon = &_balloons[id];
 
-	drawWrappedText(&balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
+	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
 
 	balloon->x = _dialogueBalloonX[id];
 	balloon->y = 10;
@@ -974,7 +960,7 @@ int Gfx::setDialogueBalloon(char *text, uint16 winding, byte textColor) {
 void Gfx::setBalloonText(uint id, char *text, byte textColor) {
 	Gfx::Balloon *balloon = getBalloon(id);
 	balloon->surface.fillRect(balloon->innerBox, 1);
-	drawWrappedText(&balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
+	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, textColor, MAX_BALLOON_WIDTH);
 }
 
 
@@ -982,12 +968,11 @@ int Gfx::setLocationBalloon(char *text, bool endGame) {
 
 	int16 w, h;
 
-	setFont(_vm->_dialogueFont);
-	getStringExtent(text, MAX_BALLOON_WIDTH, &w, &h);
+	getStringExtent(_vm->_dialogueFont, text, MAX_BALLOON_WIDTH, &w, &h);
 
 	int id = createBalloon(w+(endGame ? 5 : 10), h+5, -1, BALLOON_TRANSPARENT_COLOR);
 	Gfx::Balloon *balloon = &_balloons[id];
-	drawWrappedText(&balloon->surface, text, 0, MAX_BALLOON_WIDTH);
+	drawWrappedText(_vm->_dialogueFont, &balloon->surface, text, 0, MAX_BALLOON_WIDTH);
 
 	balloon->x = 5;
 	balloon->y = 5;
@@ -1027,13 +1012,13 @@ void Gfx::hideDialogueStuff() {
 	freeBalloons();
 }
 
-void Gfx::drawText(Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color) {
+void Gfx::drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color) {
 	byte *dst = (byte*)surf->getBasePtr(x, y);
-	_font->setColor(color);
-	_font->drawString(dst, surf->w, text);
+	font->setColor(color);
+	font->drawString(dst, surf->w, text);
 }
 
-void Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16 wrapwidth) {
+void Gfx::drawWrappedText(Font *font, Graphics::Surface* surf, char *text, byte color, int16 wrapwidth) {
 
 	uint16 lines = 0;
 	uint16 linewidth = 0;
@@ -1041,7 +1026,7 @@ void Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16
 	uint16 rx = 10;
 	uint16 ry = 4;
 
-	uint16 blankWidth = _font->getStringWidth(" ");
+	uint16 blankWidth = font->getStringWidth(" ");
 	uint16 tokenWidth = 0;
 
 	char token[MAX_TOKEN_LEN];
@@ -1060,9 +1045,9 @@ void Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16
 
 			strcpy(token, "> .......");
 			strncpy(token+2, _password, strlen(_password));
-			tokenWidth = _font->getStringWidth(token);
+			tokenWidth = font->getStringWidth(token);
 		} else {
-			tokenWidth = _font->getStringWidth(token);
+			tokenWidth = font->getStringWidth(token);
 
 			linewidth += tokenWidth;
 
@@ -1080,7 +1065,7 @@ void Gfx::drawWrappedText(Graphics::Surface* surf, char *text, byte color, int16
 
 		}
 
-		drawText(surf, rx, ry, token, color);
+		drawText(font, surf, rx, ry, token, color);
 
 		rx += tokenWidth + blankWidth;
 		linewidth += blankWidth;
