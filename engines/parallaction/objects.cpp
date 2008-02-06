@@ -122,7 +122,10 @@ Zone::Zone() {
 
 	_label = 0;
 
-	memset(_name, 0, ZONENAME_LENGTH);
+	// BRA specific
+	_index = 0;
+	_linkedName = 0;
+	_linkedAnim = 0;
 }
 
 Zone::~Zone() {
