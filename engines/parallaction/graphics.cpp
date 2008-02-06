@@ -413,8 +413,8 @@ void Gfx::updateScreen() {
 	uint w = MIN(_vm->_screenWidth, (int32)_backgroundInfo.width);
 	uint h = MIN(_vm->_screenHeight, (int32)_backgroundInfo.height);
 
-	byte *backgroundData;
-	uint16 backgroundPitch;
+	byte *backgroundData = 0;
+	uint16 backgroundPitch = 0;
 	switch (_varBackgroundMode) {
 	case 1:
 		backgroundData = (byte*)_backgroundInfo.bg.pixels;
