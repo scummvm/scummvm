@@ -241,7 +241,13 @@ void KyraEngine::registerDefaultSettings() {
 
 void KyraEngine::readSettings() {
 	_configWalkspeed = ConfMan.getInt("walkspeed");
-	_configMusic = ConfMan.getBool("music_mute") ? 0 : ((ConfMan.getBool("cdaudio") && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) ? 2 : 1);
+	_configMusic = 0;
+	
+	if (!ConfMan.getBool("music_mute")) {
+		_configMusic = 1;
+		if (_flags.gameID != GI_KYRA3 && ConfMan.getBool("cdaudio") && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98))
+			_configMusic = 2;
+	}
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 
 	_sound->enableMusic(_configMusic);
@@ -265,7 +271,8 @@ void KyraEngine::writeSettings() {
 
 	ConfMan.setInt("walkspeed", _configWalkspeed);
 	ConfMan.setBool("music_mute", _configMusic == 0);
-	ConfMan.setBool("cdaudio", _configMusic == 2);
+	if (_flags.gameID != GI_KYRA3)
+		ConfMan.setBool("cdaudio", _configMusic == 2);
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
 
 	switch (_configVoice) {
