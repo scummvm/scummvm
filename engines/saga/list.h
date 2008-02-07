@@ -97,7 +97,6 @@ public:
 		while (i != Common::List<T>::end()) {
 			res = compareFunction(i.operator*(), pos.operator*());
 			if (res <= 0) {
-
 				T temp(*pos);
 				erase(pos);
 				++i;
@@ -116,7 +115,6 @@ public:
 		while (i != Common::List<T>::end()) {
 			res = compareFunction(i.operator*(), pos.operator*());
 			if (res >= 0) {
-
 				T temp(*pos);
 				erase(pos);
 				return insert(i, temp);
@@ -143,12 +141,11 @@ public:
 			}
 	}
 
-	bool locate(const T* val, iterator& foundedIterator) {
+	bool locate(const T* val, iterator& foundIterator) {
 
 		for (iterator i = Common::List<T>::begin(); i != Common::List<T>::end(); ++i)
-			if (val == i.operator->())
-			{
-				foundedIterator = i;
+			if (val == i.operator->()) {
+				foundIterator = i;
 				return true;
 			}
 
