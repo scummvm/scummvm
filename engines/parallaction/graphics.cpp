@@ -405,7 +405,28 @@ void Gfx::beginFrame() {
 	}
 
 
+	if (_vm->_screenWidth >= _backgroundInfo.width) {
+		_varScrollX = 0;
+	} else {
+		_varScrollX = getVar("scroll_x");
+	}
+
+	_varAnimRenderMode = getRenderMode("anim_render_mode");
+	_varMiscRenderMode = getRenderMode("misc_render_mode");
 }
+
+int32 Gfx::getRenderMode(const char *type) {
+
+	int32 mode = getVar(type);
+	if (mode < 0 || mode > 2) {
+		warning("new value for '%s' is wrong: resetting default", type);
+		setVar(type, 1);
+		mode = 1;
+	}
+	return mode;
+
+}
+
 
 void Gfx::updateScreen() {
 
@@ -417,16 +438,18 @@ void Gfx::updateScreen() {
 	uint16 backgroundPitch = 0;
 	switch (_varBackgroundMode) {
 	case 1:
-		backgroundData = (byte*)_backgroundInfo.bg.pixels;
+		backgroundData = (byte*)_backgroundInfo.bg.getBasePtr(_varScrollX, 0);
 		backgroundPitch = _backgroundInfo.bg.pitch;
 		break;
 	case 2:
-		backgroundData = (byte*)_bitmapMask.pixels;
+		backgroundData = (byte*)_bitmapMask.getBasePtr(_varScrollX, 0);
 		backgroundPitch = _bitmapMask.pitch;
 		break;
 	}
 	g_system->copyRectToScreen(backgroundData, backgroundPitch, _backgroundInfo.x, _backgroundInfo.y, w, h);
 
+
+	_varRenderMode = _varAnimRenderMode;
 
 	// TODO: transform objects coordinates to be drawn with scrolling
 	Graphics::Surface *surf = g_system->lockScreen();
@@ -455,11 +478,11 @@ void Gfx::updateScreen() {
 
 	g_system->unlockScreen();
 
-	drawInventory();
+	_varRenderMode = _varMiscRenderMode;
 
+	drawInventory();
 	drawItems();
 	drawBalloons();
-
 	drawLabels();
 
 	g_system->updateScreen();
@@ -526,6 +549,7 @@ void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surf
 	blt(r, _unpackedBitmap, surf, z, transparentColor);
 }
 
+
 void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, byte transparentColor) {
 
 	Common::Point dp;
@@ -547,40 +571,65 @@ void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16
 	uint sPitch = r.width() - q.width();
 	uint dPitch = surf->w - q.width();
 
-    if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
 
-        for (uint16 i = 0; i < q.height(); i++) {
+	if (_varRenderMode == 2) {
 
-            for (uint16 j = 0; j < q.width(); j++) {
-                if (*s != transparentColor) {
-                    byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
-                    if (z >= v) *d = *s;
-                }
+		for (uint16 i = 0; i < q.height(); i++) {
 
-                s++;
-                d++;
-            }
+			for (uint16 j = 0; j < q.width(); j++) {
+				if (*s != transparentColor) {
+					if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
+						byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
+						if (z >= v) *d = 5;
+					} else {
+						*d = 5;
+					}
+				}
 
-            s += sPitch;
-            d += dPitch;
-        }
+				s++;
+				d++;
+			}
+
+			s += sPitch;
+			d += dPitch;
+		}
 
     } else {
+		if (_backgroundInfo.mask.data && (z < LAYER_FOREGROUND)) {
 
-        for (uint16 i = q.top; i < q.bottom; i++) {
-            for (uint16 j = q.left; j < q.right; j++) {
-                if (*s != transparentColor)
-                    *d = *s;
+			for (uint16 i = 0; i < q.height(); i++) {
 
-                s++;
-                d++;
-            }
+				for (uint16 j = 0; j < q.width(); j++) {
+					if (*s != transparentColor) {
+						byte v = _backgroundInfo.mask.getValue(dp.x + j, dp.y + i);
+						if (z >= v) *d = *s;
+					}
 
-            s += sPitch;
-            d += dPitch;
-        }
+					s++;
+					d++;
+				}
 
-    }
+				s += sPitch;
+				d += dPitch;
+			}
+
+		} else {
+
+			for (uint16 i = q.top; i < q.bottom; i++) {
+				for (uint16 j = q.left; j < q.right; j++) {
+					if (*s != transparentColor)
+						*d = *s;
+
+					s++;
+					d++;
+				}
+
+				s += sPitch;
+				d += dPitch;
+			}
+
+		}
+	}
 
 }
 
@@ -854,6 +903,12 @@ Gfx::Gfx(Parallaction* vm) :
 
 	registerVar("background_mode", 1);
 	_varBackgroundMode = 1;
+
+	registerVar("scroll_x", 0);
+	_varScrollX = 0;
+
+	registerVar("anim_render_mode", 1);
+	registerVar("misc_render_mode", 1);
 
 	return;
 }

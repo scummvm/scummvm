@@ -538,9 +538,13 @@ protected:
 	int				_hbCircleRadius;
 
 	// frame data stored in programmable variables
-	int32				_varBackgroundMode;
+	int32				_varBackgroundMode;	// 1 = normal, 2 = only mask
+	int32				_varScrollX;
+	int32				_varAnimRenderMode;	// 1 = normal, 2 = flat
+	int32				_varMiscRenderMode;	// 1 = normal, 2 = flat
+	int32				_varRenderMode;
 	Graphics::Surface 	_bitmapMask;
-
+	int32 				getRenderMode(const char *type);
 
 protected:
 	static int16 _dialogueBalloonX[5];
