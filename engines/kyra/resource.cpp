@@ -460,10 +460,8 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 	Common::List<ResFileEntry>::iterator entry = entries.begin();
 	Common::List<Common::String>::iterator file = filenames.begin();
 
-	for (; entry != entries.end(); ++entry, ++file) {
-		map.erase(*file);
+	for (; entry != entries.end(); ++entry, ++file)
 		map[*file] = *entry;
-	}
 
 	return true;
 }
@@ -496,10 +494,10 @@ bool ResLoaderIns::isLoadable(const Common::String &filename, Common::SeekableRe
 	stream.seek(3);
 	uint32 size = stream.readUint32LE();
 
-	if (size > stream.size())
+	if (size+7 > stream.size())
 		return false;
 
-	stream.seek(size+1, SEEK_SET);
+	stream.seek(size+5, SEEK_SET);
 	uint8 buffer[2];
 	stream.read(&buffer, 2);
 
@@ -536,8 +534,6 @@ bool ResLoaderIns::loadFile(const Common::String &filename, Common::SeekableRead
 	stream.seek(3, SEEK_SET);
 
 	for (Common::List<Common::String>::iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		map.erase(*file);
-
 		ResFileEntry entry;
 		entry.parent = filename;
 		entry.type = ResFileEntry::kAutoDetect;

@@ -36,7 +36,7 @@ namespace Kyra {
 
 class AUDStream : public Audio::AudioStream {
 public:
-	AUDStream(Common::File *file, bool loop = false);
+	AUDStream(Common::SeekableReadStream *stream, bool loop = false);
 	~AUDStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -49,7 +49,7 @@ public:
 	void beginFadeIn();
 	void beginFadeOut();
 private:
-	Common::File *_file;
+	Common::SeekableReadStream *_stream;
 	bool _loop;
 	uint32 _loopStart;
 	bool _endOfData;
@@ -82,12 +82,12 @@ const int8 AUDStream::WSTable4Bit[] = {
 	 0,  1,  2,  3,  4,  5,  6,  8
 };
 
-AUDStream::AUDStream(Common::File *file, bool loop) : _file(file), _endOfData(true), _rate(0),
+AUDStream::AUDStream(Common::SeekableReadStream *stream, bool loop) : _stream(stream), _endOfData(true), _rate(0),
 	_processedSize(0), _totalSize(0), _bytesLeft(0), _outBuffer(0),
 	_outBufferOffset(0), _outBufferSize(0), _inBuffer(0), _inBufferSize(0) {
 
-	_rate = _file->readUint16LE();
-	_totalSize = _file->readUint32LE();
+	_rate = _stream->readUint16LE();
+	_totalSize = _stream->readUint32LE();
 	_loop = loop;
 
 	// TODO: Find the correct number of samples for a fade-in/out. Should
@@ -97,10 +97,10 @@ AUDStream::AUDStream(Common::File *file, bool loop) : _file(file), _endOfData(tr
 	_fading = 0;
 
 	// TODO?: add checks
-	int flags = _file->readByte();	// flags
-	int type = _file->readByte();	// type
+	int flags = _stream->readByte();	// flags
+	int type = _stream->readByte();	// type
 
-	_loopStart = file->pos();
+	_loopStart = stream->pos();
 
 	if (type == 1 && !flags) {
 		_endOfData = false;
@@ -111,7 +111,7 @@ AUDStream::AUDStream(Common::File *file, bool loop) : _file(file), _endOfData(tr
 AUDStream::~AUDStream() {
 	delete [] _outBuffer;
 	delete [] _inBuffer;
-	delete _file;
+	delete _stream;
 }
 
 void AUDStream::beginFadeIn() {
@@ -154,7 +154,7 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 	if (_bytesLeft <= 0) {
 		if (_processedSize >= _totalSize) {
 			if (_loop) {
-				_file->seek(_loopStart);
+				_stream->seek(_loopStart);
 				_processedSize = 0;
 			} else {
 				_endOfData = true;
@@ -162,9 +162,9 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 			}
 		}
 
-		uint16 size = _file->readUint16LE();
-		uint16 outSize = _file->readUint16LE();
-		uint32 id = _file->readUint32LE();
+		uint16 size = _stream->readUint16LE();
+		uint16 outSize = _stream->readUint16LE();
+		uint32 id = _stream->readUint32LE();
 
 		assert(id == 0x0000DEAF);
 
@@ -181,7 +181,7 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 
 			_bytesLeft = size;
 
-			_file->read(_outBuffer, _bytesLeft);
+			_stream->read(_outBuffer, _bytesLeft);
 		} else {
 			_bytesLeft = outSize;
 
@@ -199,7 +199,7 @@ int AUDStream::readChunk(int16 *buffer, const int maxSamples) {
 				assert(_inBuffer);
 			}
 
-			if (_file->read(_inBuffer, size) != size) {
+			if (_stream->read(_inBuffer, size) != size) {
 				_endOfData = true;
 				return 0;
 			}
@@ -328,7 +328,7 @@ SoundDigital::~SoundDigital() {
 		stopSound(i);
 }
 
-int SoundDigital::playSound(Common::File *fileHandle, bool loop, bool fadeIn, int channel) {
+int SoundDigital::playSound(Common::SeekableReadStream *stream, bool loop, bool fadeIn, int channel) {
 	Sound *use = 0;
 	if (channel != -1 && channel < SOUND_STREAMS) {
 		stopSound(channel);
@@ -343,12 +343,12 @@ int SoundDigital::playSound(Common::File *fileHandle, bool loop, bool fadeIn, in
 
 		if (!use) {
 			warning("no free sound channel");
-			delete fileHandle;
+			delete stream;
 			return -1;
 		}
 	}
 
-	use->stream = new AUDStream(fileHandle, loop);
+	use->stream = new AUDStream(stream, loop);
 	if (use->stream->endOfData()) {
 		delete use->stream;
 		use->stream = 0;

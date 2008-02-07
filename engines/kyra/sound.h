@@ -476,7 +476,7 @@ public:
 	/**
 	 * Plays a sound.
 	 *
-	 * @param fileHandle	file handle used for playback.
+	 * @param stream		Data stream used for playback
 	 *                      It will be deleted when playback is finished
 	 * @param loop			true if the sound should loop (endlessly)
 	 * @param fadeIn		true if the sound should be faded in volume wise
@@ -484,7 +484,7 @@ public:
 	 *
 	 * @return channel playing the sound
 	 */
-	int playSound(Common::File *fileHandle, bool loop = false, bool fadeIn = false, int channel = -1);
+	int playSound(Common::SeekableReadStream *stream, bool loop = false, bool fadeIn = false, int channel = -1);
 
 	/**
 	 * Checks if a given channel is playing a sound.

@@ -244,13 +244,9 @@ void KyraEngine_v3::playMenuAudioFile() {
 	if (_soundDigital->isPlaying(_musicSoundChannel))
 		return;
 
-	/*Common::File *handle = new Common::File();
-	uint32 temp = 0;
-	_res->getFileHandle(_menuAudioFile, &temp, *handle);
-	if (handle->isOpen())
-		_musicSoundChannel = _soundDigital->playSound(handle, true);
-	else
-		delete handle;*/
+	Common::SeekableReadStream *stream = _res->getFileStream(_menuAudioFile);
+	if (stream)
+		_musicSoundChannel = _soundDigital->playSound(stream, true);
 }
 
 void KyraEngine_v3::playMusicTrack(int track, int force) {
@@ -271,22 +267,17 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 	if (_musicSoundChannel == -1) {
 		assert(track < _soundListSize && track >= 0);
 
-		/*Common::File *handle = new Common::File();
-		uint32 temp = 0;
-		_res->getFileHandle(_soundList[track], &temp, *handle);
-		if (handle->isOpen())
-			_musicSoundChannel = _soundDigital->playSound(handle);
-		else
-			delete handle;*/
+		Common::SeekableReadStream *stream = _res->getFileStream(_soundList[track]);
+		if (stream)
+			_musicSoundChannel = _soundDigital->playSound(stream);
 	}
 
 	_musicSoundChannel = track;
 }
 
 void KyraEngine_v3::stopMusicTrack() {
-	if (_musicSoundChannel != -1 && _soundDigital->isPlaying(_musicSoundChannel)) {
+	if (_musicSoundChannel != -1 && _soundDigital->isPlaying(_musicSoundChannel))
 		_soundDigital->stopSound(_musicSoundChannel);
-	}
 
 	_curMusicTrack = -1;
 	_musicSoundChannel = -1;
