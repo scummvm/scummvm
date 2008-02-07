@@ -1078,20 +1078,17 @@ if test -n "$_host"; then
 			_ranlib=m68k-atari-mint-ranlib
 			_ar="m68k-atari-mint-ar cru"
 			;;
-		i586-mingw32msvc)
+		*mingw32*)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DWIN32"
 			_endian=little
 			_have_x86=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_sdlconfig=i586-mingw32msvc-sdl-config
-			_windres=i586-mingw32msvc-windres
-			_ar="i586-mingw32msvc-ar cru"
-			_ranlib=i586-mingw32msvc-ranlib
-			LIBS="$LIBS -lmingw32 -lwinmm"
-			OBJS="$OBJS scummvmico.o"
+			_sdlconfig=$_host-sdl-config
+			_windres=$_host-windres
+			_ar="$_host-ar cru"
+			_ranlib=$_host-ranlib
 			;;
 		iphone)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
