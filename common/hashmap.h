@@ -140,7 +140,7 @@ public:
 
 		Node *deref() const {
 			assert(_hashmap != 0);
-			assert(_idx < _arrsize);
+			assert(_idx < _hashmap->_arrsize);
 			Node *node = _hashmap->_arr[_idx];
 			assert(node != 0);
 			return node;
@@ -197,6 +197,7 @@ public:
 
 		const Node *deref() const {
 			assert(_hashmap != 0);
+			assert(_idx < _hashmap->_arrsize);
 			const Node *node = _hashmap->_arr[_idx];
 			assert(node != 0);
 			return node;
