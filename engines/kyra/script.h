@@ -29,7 +29,7 @@
 #include "kyra/kyra.h"
 #include "kyra/util.h"
 
-#include "common/file.h"
+#include "common/stream.h"
 
 namespace Kyra {
 
@@ -63,14 +63,14 @@ struct ScriptState {
 
 class ScriptFileParser {
 public:
-	ScriptFileParser() : _scriptFile(), _startOffset(0), _endOffset(0) {}
-	ScriptFileParser(const char *filename, Resource *res) : _scriptFile(), _startOffset(0), _endOffset(0) { setFile(filename, res); }
+	ScriptFileParser() : _stream(0), _startOffset(0), _endOffset(0) {}
+	ScriptFileParser(const char *filename, Resource *res) : _stream(0), _startOffset(0), _endOffset(0) { setFile(filename, res); }
 	~ScriptFileParser() { destroy(); }
 
 	// 'script' must be allocated with new!
 	void setFile(const char *filename, Resource *res);
 
-	operator bool() const { return (_startOffset != _endOffset) && _scriptFile.isOpen(); }
+	operator bool() const { return (_startOffset != _endOffset) && _stream; }
 
 	uint32 getFORMBlockSize();
 	uint32 getIFFBlockSize(const uint32 chunk);
@@ -78,7 +78,7 @@ public:
 private:
 	void destroy();
 
-	Common::File _scriptFile;
+	Common::SeekableReadStream *_stream;
 	uint32 _startOffset;
 	uint32 _endOffset;
 };

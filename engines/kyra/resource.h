@@ -31,84 +31,46 @@
 #include "common/str.h"
 #include "common/file.h"
 #include "common/list.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
+#include "common/stream.h"
 
 #include "kyra/kyra.h"
 
 namespace Kyra {
 
-class ResourceFile {
-public:
-	ResourceFile() : _open(false), _protected(false), _filename() {}
-	virtual ~ResourceFile() {}
+struct ResFileEntry {
+	Common::String parent;
+	uint32 size;
 
-	virtual uint8 *getFile(uint file) const = 0;
-	virtual bool getFileHandle(uint file, Common::File &filehandle) const = 0;
-	virtual uint32 getFileSize(uint file) const = 0;
+	bool preload;
+	bool loadable;
+	bool prot;
 
-	uint filename() const { return _filename; }
-
-	virtual bool isValid(void) const { return (_filename != 0); }
-	bool isOpen(void) const { return _open; }
-
-	virtual void close() { if (!_protected) _open = false; }
-	virtual void protect(const bool prot = true) { _protected = prot; }
-	virtual void open() { _open = true; }
-protected:
-	bool _open;
-	bool _protected;
-	uint _filename;
+	enum kType {
+		kRaw = 0,
+		kPak = 1,
+		kIns = 2,
+		kAutoDetect
+	};
+	kType type;
+	uint32 offset;
 };
 
-// standard Package format for Kyrandia games
-class PAKFile : public ResourceFile {
-	struct PakChunk {
-		uint _name;
-		uint32 _start;
-		uint32 _size;
+typedef Common::HashMap<Common::String, ResFileEntry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ResFileMap;
+class Resource;
 
-		operator uint() const { return _name; }
-	};
-
+class ResArchiveLoader {
 public:
-	PAKFile(const char *file, const char *physfile, Common::File &pakfile, bool isAmiga = false);
-	~PAKFile();
+	virtual ~ResArchiveLoader() {}
 
-	uint8 *getFile(uint file) const;
-	bool getFileHandle(uint file, Common::File &filehandle) const;
-	uint32 getFileSize(uint file) const;
-private:
-	bool openFile(Common::File &filehandle) const;
+	virtual bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const = 0;
+	virtual bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, ResFileMap &map) const = 0;
+	// parameter 'archive' can be deleted by this method and it may not be deleted from the caller
+	virtual Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileMap &map) const = 0;
 
-	Common::String _physfile;
-	uint32 _physOffset;
-
-	typedef Common::List<PakChunk>::iterator PakIterator;
-	typedef Common::List<PakChunk>::const_iterator ConstPakIterator;
-	Common::List<PakChunk> _files; // the entries
-};
-
-// installation file packages for (Kyra2/)Kyra3
-class INSFile : public ResourceFile {
-	struct FileEntry {
-		uint _name;
-		uint32 _start;
-		uint32 _size;
-
-		operator uint() const { return _name; }
-	};
-public:
-	INSFile(const char *file);
-	~INSFile();
-
-	uint8 *getFile(uint file) const;
-	bool getFileHandle(uint file, Common::File &filehandle) const;
-	uint32 getFileSize(uint file) const;
+	virtual ResFileEntry::kType getType() const = 0;
 protected:
-	typedef Common::List<FileEntry>::iterator FileIterator;
-	typedef Common::List<FileEntry>::const_iterator ConstFileIterator;
-	Common::List<FileEntry> _files; // the entries
-
-	Common::String _physfile;
 };
 
 class Resource {
@@ -129,18 +91,22 @@ public:
 
 	uint32 getFileSize(const char *file) const;
 	uint8* fileData(const char *file, uint32 *size) const;
-	// gives back a file handle
-	// it is possible that the needed file is embedded in the returned handle
-	bool getFileHandle(const char *file, uint32 *size, Common::File &filehandle);
+	Common::SeekableReadStream *getFileStream(const Common::String &file) const;
 
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize);
-
 protected:
-	typedef Common::List<ResourceFile*>::iterator ResIterator;
-	typedef Common::List<ResourceFile*>::const_iterator ConstResIterator;
+	bool isAccessable(const Common::String &file) const;
+
+	void detectFileTypes();
+
+	void initializeLoaders();
+	const ResArchiveLoader *getLoader(ResFileEntry::kType type) const;
+	typedef Common::List<ResArchiveLoader*>::iterator LoaderIterator;
+	typedef Common::List<ResArchiveLoader*>::const_iterator CLoaderIterator;
+	Common::List<ResArchiveLoader*> _loaders;
+	ResFileMap _map;
 
 	KyraEngine *_vm;
-	Common::List<ResourceFile*> _pakfiles;
 };
 
 // TODO?: maybe prefix all things here with 'kKyra1' instead of 'k'

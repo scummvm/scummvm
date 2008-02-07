@@ -39,7 +39,7 @@
 namespace Kyra {
 
 Sound::Sound(KyraEngine *vm, Audio::Mixer *mixer)
-	: _vm(vm), _mixer(mixer), _currentVocFile(0), _vocHandle(), _compressHandle(),
+	: _vm(vm), _mixer(mixer), _currentVocFile(0), _vocHandle(),
 	_musicEnabled(1), _sfxEnabled(true), _soundDataList(0) {
 }
 
@@ -56,14 +56,10 @@ void Sound::voicePlay(const char *file) {
 		strcpy(filenamebuffer, file);
 		strcat(filenamebuffer, _supportedCodes[i].fileext);
 
-		_compressHandle.close();
-		_vm->resource()->getFileHandle(filenamebuffer, &fileSize, _compressHandle);
-		if (!_compressHandle.isOpen())
+		Common::SeekableReadStream *stream = _vm->resource()->getFileStream(filenamebuffer);
+		if (!stream)
 			continue;
-
-		Common::MemoryReadStream *tmp = _compressHandle.readStream(fileSize);
-		assert(tmp);
-		_currentVocFile = _supportedCodes[i].streamFunc(tmp, true, 0, 0, 1);
+		_currentVocFile = _supportedCodes[i].streamFunc(stream, true, 0, 0, 1);
 		found = true;
 		break;
 	}

@@ -192,7 +192,6 @@ private:
 	const AudioDataStruct *_soundDataList;
 	Audio::AudioStream *_currentVocFile;
 	Audio::SoundHandle _vocHandle;
-	Common::File _compressHandle;
 
 	struct SpeechCodecs {
 		const char *fileext;

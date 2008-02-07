@@ -244,13 +244,13 @@ void KyraEngine_v3::playMenuAudioFile() {
 	if (_soundDigital->isPlaying(_musicSoundChannel))
 		return;
 
-	Common::File *handle = new Common::File();
+	/*Common::File *handle = new Common::File();
 	uint32 temp = 0;
 	_res->getFileHandle(_menuAudioFile, &temp, *handle);
 	if (handle->isOpen())
 		_musicSoundChannel = _soundDigital->playSound(handle, true);
 	else
-		delete handle;
+		delete handle;*/
 }
 
 void KyraEngine_v3::playMusicTrack(int track, int force) {
@@ -271,13 +271,13 @@ void KyraEngine_v3::playMusicTrack(int track, int force) {
 	if (_musicSoundChannel == -1) {
 		assert(track < _soundListSize && track >= 0);
 
-		Common::File *handle = new Common::File();
+		/*Common::File *handle = new Common::File();
 		uint32 temp = 0;
 		_res->getFileHandle(_soundList[track], &temp, *handle);
 		if (handle->isOpen())
 			_musicSoundChannel = _soundDigital->playSound(handle);
 		else
-			delete handle;
+			delete handle;*/
 	}
 
 	_musicSoundChannel = track;

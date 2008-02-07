@@ -217,43 +217,44 @@ bool ScriptHelper::runScript(ScriptState *script) {
 void ScriptFileParser::setFile(const char *filename, Resource *res) {
 	destroy();
 
-	if (!res->getFileHandle(filename, &_endOffset, _scriptFile))
-		return;
-	_startOffset = _scriptFile.pos();
-	_endOffset += _startOffset;
+	_stream = res->getFileStream(filename);
+	assert(_stream);
+	_startOffset = 0;
+	_endOffset = _stream->size();
 }
 
 void ScriptFileParser::destroy() {
-	_scriptFile.close();
+	delete _stream;
+	_stream = 0;
 	_startOffset = _endOffset = 0;
 }
 
 uint32 ScriptFileParser::getFORMBlockSize() {
-	uint32 oldOffset = _scriptFile.pos();
+	uint32 oldOffset = _stream->pos();
 
-	uint32 data = _scriptFile.readUint32LE();
+	uint32 data = _stream->readUint32LE();
 
 	if (data != FORM_CHUNK) {
-		_scriptFile.seek(oldOffset);
+		_stream->seek(oldOffset);
 		return (uint32)-1;
 	}
 
-	data = _scriptFile.readUint32BE();
+	data = _stream->readUint32BE();
 	return data;
 }
 
 uint32 ScriptFileParser::getIFFBlockSize(const uint32 chunkName) {
 	uint32 size = (uint32)-1;
 
-	_scriptFile.seek(_startOffset + 0x0C);
+	_stream->seek(_startOffset + 0x0C);
 
-	while (_scriptFile.pos() < _endOffset) {
-		uint32 chunk = _scriptFile.readUint32LE();
-		uint32 size_temp = _scriptFile.readUint32BE();
+	while (_stream->pos() < _endOffset) {
+		uint32 chunk = _stream->readUint32LE();
+		uint32 size_temp = _stream->readUint32BE();
 
 		if (chunk != chunkName) {
-			_scriptFile.seek((size_temp + 1) & (~1), SEEK_CUR);
-			assert(_scriptFile.pos() <= _endOffset);
+			_stream->seek((size_temp + 1) & (~1), SEEK_CUR);
+			assert(_stream->pos() <= _endOffset);
 		} else {
 			size = size_temp;
 			break;
@@ -264,20 +265,20 @@ uint32 ScriptFileParser::getIFFBlockSize(const uint32 chunkName) {
 }
 
 bool ScriptFileParser::loadIFFBlock(const uint32 chunkName, void *loadTo, uint32 ptrSize) {
-	_scriptFile.seek(_startOffset + 0x0C);
+	_stream->seek(_startOffset + 0x0C);
 
-	while (_scriptFile.pos() < _endOffset) {
-		uint32 chunk = _scriptFile.readUint32LE();
-		uint32 chunkSize = _scriptFile.readUint32BE();
+	while (_stream->pos() < _endOffset) {
+		uint32 chunk = _stream->readUint32LE();
+		uint32 chunkSize = _stream->readUint32BE();
 
 		if (chunk != chunkName) {
-			_scriptFile.seek((chunkSize + 1) & (~1), SEEK_CUR);
-			assert(_scriptFile.pos() <= _endOffset);
+			_stream->seek((chunkSize + 1) & (~1), SEEK_CUR);
+			assert(_stream->pos() <= _endOffset);
 		} else {
 			uint32 loadSize = 0;
 
 			loadSize = MIN(ptrSize, chunkSize);
-			_scriptFile.read(loadTo, loadSize);
+			_stream->read(loadTo, loadSize);
 			return true;
 		}
 	}
