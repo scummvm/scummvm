@@ -43,6 +43,9 @@ Resource::Resource(KyraEngine *vm) : _loaders(), _map(), _vm(vm) {
 
 Resource::~Resource() {
 	unloadAllPakFiles();
+	for (LoaderIterator i = _loaders.begin(); i != _loaders.end(); ++i)
+		delete (*i);
+	_loaders.clear();
 }
 
 bool Resource::reset() {
