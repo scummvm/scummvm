@@ -1282,8 +1282,11 @@ fi
 
 #
 # Check for math lib
-cc_check $LDFLAGS $CXXFLAGS -lm && LDFLAGS="$LDFLAGS -lm"
 #
+cat > $TMPC << EOF
+int main(void) { return 0; }
+EOF
+cc_check $LDFLAGS $CXXFLAGS -lm && LDFLAGS="$LDFLAGS -lm"
 
 #
 # Check for Ogg Vorbis
@@ -1476,7 +1479,6 @@ else
 	add_to_config_mk_if_no yes 'USE_MPEG2 = 1'
 fi
 echo "$_mpeg2"
-rm -f $TMPC $TMPO$EXEEXT
 
 #
 # Check for libfluidsynth
