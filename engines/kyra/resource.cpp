@@ -96,6 +96,12 @@ bool Resource::reset() {
 		};
 
 		Common::for_each(list, list + ARRAYSIZE(list), Common::bind1st(Common::mem_fun(&Resource::loadPakFile), this));
+
+		for (int i = 0; i < ARRAYSIZE(list); ++i) {
+			ResFileMap::iterator iterator = _map.find(list[i]);
+			if (iterator != _map.end())
+				iterator->_value.prot = true;
+		}
 	} else {
 		for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 			Common::String filename = file->getName();
