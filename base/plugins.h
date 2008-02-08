@@ -48,11 +48,20 @@ public:
 
 #include "engines/metaengine.h"
 
+// Global Plugin API version
+#define PLUGIN_VERSION 1
+
 enum PluginType {
 	PLUGIN_TYPE_ENGINE = 0,
 
 	PLUGIN_TYPE_MAX
 };
+
+// TODO: Make the engine API version depend on ScummVM's version
+// because of the backlinking
+#define PLUGIN_TYPE_ENGINE_VERSION 1
+
+extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
 class Engine;
 class FSList;
@@ -83,8 +92,6 @@ public:
 	const char *getName() const;
 	const char *getCopyright() const;
 
-//	virtual int getVersion() const	{ return 0; }	// TODO!
-
 	PluginError createInstance(OSystem *syst, Engine **engine) const;
 	GameList getSupportedGames() const;
 	GameDescriptor findGame(const char *gameid) const;
@@ -112,7 +119,9 @@ public:
 #else
 #define REGISTER_PLUGIN(ID,TYPE,PLUGINCLASS) \
 	extern "C" { \
+ 		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
  		PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
+ 		PLUGIN_EXPORT int32 PLUGIN_getTypeVersion() { return TYPE##_VERSION; } \
 		PLUGIN_EXPORT PluginObject *PLUGIN_getObject() { \
 			return new PLUGINCLASS(); \
 		} \

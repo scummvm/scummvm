@@ -39,6 +39,17 @@ protected:
 
 public:
 	virtual bool loadPlugin() {
+ 		// Validate the plugin API version
+ 		IntFunc verFunc = (IntFunc)findSymbol("PLUGIN_getVersion");
+ 		if (!verFunc) {
+ 			unloadPlugin();
+ 			return false;
+ 		}
+ 		if (verFunc() != PLUGIN_VERSION) {
+ 			unloadPlugin();
+ 			return false;
+ 		}
+
  		// Get the type of the plugin
  		IntFunc typeFunc = (IntFunc)findSymbol("PLUGIN_getType");
  		if (!typeFunc) {
@@ -47,6 +58,17 @@ public:
  		}
  		_type = (PluginType)typeFunc();
  		if (_type >= PLUGIN_TYPE_MAX) {
+ 			unloadPlugin();
+ 			return false;
+ 		}
+
+ 		// Validate the plugin type API version
+ 		IntFunc typeVerFunc = (IntFunc)findSymbol("PLUGIN_getTypeVersion");
+ 		if (!typeVerFunc) {
+ 			unloadPlugin();
+ 			return false;
+ 		}
+ 		if (typeVerFunc() != pluginTypeVersions[_type]) {
  			unloadPlugin();
  			return false;
  		}

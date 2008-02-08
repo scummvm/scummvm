@@ -26,6 +26,10 @@
 #include "base/plugins.h"
 #include "common/util.h"
 
+int pluginTypeVersions[PLUGIN_TYPE_MAX] = {
+	PLUGIN_TYPE_ENGINE_VERSION,
+};
+
 PluginType Plugin::getType() const {
 	return _type;
 }
