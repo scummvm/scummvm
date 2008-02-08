@@ -244,18 +244,18 @@ void Resource::unloadAllPakFiles() {
 		temp.close();
 	}
 
-	ResFileMap::iterator iter = _map.find("kyra.dat");
+	ResFileMap::iterator iter = _map.find(StaticResource::staticDataFilename());
 	if (iter == _map.end()) {
-		if (temp.open("kyra.dat")) {
+		if (temp.open(StaticResource::staticDataFilename())) {
 			ResFileEntry entry;
 			entry.parent = "";
 			entry.size = temp.size();
-			entry.loadable = true;
+			entry.loadable = false;
 			entry.preload = false;
 			entry.prot = false;
 			entry.type = ResFileEntry::kPak;
 			entry.offset = 0;
-			_map["kyra.dat"] = entry;
+			_map[StaticResource::staticDataFilename()] = entry;
 			temp.close();
 		}
 	} else {
