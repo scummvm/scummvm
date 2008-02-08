@@ -133,6 +133,7 @@ public:
 	bool hasPrefix(const char *x) const;
 
 	bool contains(const char *x) const;
+	bool contains(char x) const;
 
 	inline const char *c_str() const		{ return _str; }
 	inline uint size() const				{ return _len; }

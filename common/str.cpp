@@ -226,6 +226,10 @@ bool String::contains(const char *x) const {
 	return strstr(c_str(), x) != NULL;
 }
 
+bool String::contains(char x) const {
+	return strchr(c_str(), x) != NULL;
+}
+
 void String::deleteLastChar() {
 	deleteChar(_len - 1);
 }
