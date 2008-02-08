@@ -164,7 +164,7 @@ bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(SAGA, SagaMetaEngine);
+REGISTER_PLUGIN(SAGA, PLUGIN_TYPE_ENGINE, SagaMetaEngine);
 
 namespace Saga {
 

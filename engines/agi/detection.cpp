@@ -2284,5 +2284,4 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common:
 	return res;
 }
 
-REGISTER_PLUGIN(AGI, AgiMetaEngine);
-
+REGISTER_PLUGIN(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);

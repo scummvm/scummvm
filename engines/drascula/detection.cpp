@@ -186,4 +186,4 @@ bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Co
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(DRASCULA, DrasculaMetaEngine);
+REGISTER_PLUGIN(DRASCULA, PLUGIN_TYPE_ENGINE, DrasculaMetaEngine);

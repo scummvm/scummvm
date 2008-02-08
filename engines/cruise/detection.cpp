@@ -146,4 +146,4 @@ bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const Comm
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(CRUISE, CruiseMetaEngine);
+REGISTER_PLUGIN(CRUISE, PLUGIN_TYPE_ENGINE, CruiseMetaEngine);

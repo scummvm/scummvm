@@ -1779,7 +1779,7 @@ bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common:
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(GOB, GobMetaEngine);
+REGISTER_PLUGIN(GOB, PLUGIN_TYPE_ENGINE, GobMetaEngine);
 
 namespace Gob {
 

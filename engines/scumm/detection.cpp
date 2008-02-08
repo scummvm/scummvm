@@ -964,4 +964,4 @@ SaveStateList ScummMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-REGISTER_PLUGIN(SCUMM, ScummMetaEngine);
+REGISTER_PLUGIN(SCUMM, PLUGIN_TYPE_ENGINE, ScummMetaEngine);

@@ -48,6 +48,12 @@ public:
 
 #include "engines/metaengine.h"
 
+enum PluginType {
+	PLUGIN_TYPE_ENGINE = 0,
+
+	PLUGIN_TYPE_MAX
+};
+
 class Engine;
 class FSList;
 class OSystem;
@@ -60,6 +66,7 @@ class OSystem;
 class Plugin {
 protected:
 	PluginObject *_pluginObject;
+	PluginType _type;
 
 public:
 	Plugin() : _pluginObject(0) {}
@@ -72,6 +79,7 @@ public:
 	virtual bool loadPlugin() = 0;	// TODO: Rename to load() ?
 	virtual void unloadPlugin() = 0;	// TODO: Rename to unload() ?
 
+	PluginType getType() const;
 	const char *getName() const;
 	const char *getCopyright() const;
 
@@ -95,14 +103,16 @@ public:
  */
 
 #ifndef DYNAMIC_MODULES
-#define REGISTER_PLUGIN(ID,PLUGINCLASS) \
+#define REGISTER_PLUGIN(ID,TYPE,PLUGINCLASS) \
+ 	PluginType g_##ID##_type = TYPE; \
 	PluginObject *g_##ID##_getObject() { \
 		return new PLUGINCLASS(); \
 	} \
 	void dummyFuncToAllowTrailingSemicolon()
 #else
-#define REGISTER_PLUGIN(ID,PLUGINCLASS) \
+#define REGISTER_PLUGIN(ID,TYPE,PLUGINCLASS) \
 	extern "C" { \
+ 		PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
 		PLUGIN_EXPORT PluginObject *PLUGIN_getObject() { \
 			return new PLUGINCLASS(); \
 		} \

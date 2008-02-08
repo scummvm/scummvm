@@ -31,6 +31,7 @@
 
 class DynamicPlugin : public Plugin {
 protected:
+	typedef int32 (*IntFunc)();
 	typedef void (*VoidFunc)();
 	typedef PluginObject *(*GetObjectFunc)();
 
@@ -38,6 +39,18 @@ protected:
 
 public:
 	virtual bool loadPlugin() {
+ 		// Get the type of the plugin
+ 		IntFunc typeFunc = (IntFunc)findSymbol("PLUGIN_getType");
+ 		if (!typeFunc) {
+ 			unloadPlugin();
+ 			return false;
+ 		}
+ 		_type = (PluginType)typeFunc();
+ 		if (_type >= PLUGIN_TYPE_MAX) {
+ 			unloadPlugin();
+ 			return false;
+ 		}
+
 		// Get the plugin's instantiator object
 		GetObjectFunc getObject = (GetObjectFunc)findSymbol("PLUGIN_getObject");
 		if (!getObject) {
@@ -54,7 +67,7 @@ public:
 
 		return true;
 	}
-	
+
 	virtual void unloadPlugin() {
 		delete _pluginObject;
 	}

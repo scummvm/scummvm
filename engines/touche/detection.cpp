@@ -131,13 +131,13 @@ public:
 	virtual const char *getName() const {
 		return "Touche Engine";
 	}
+
 	virtual const char *getCopyright() const {
 		return "Touche: The Adventures of the 5th Musketeer (C) Clipper Software";
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
 };
-
 
 bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
 	const Common::ADGameDescription *gd = encapsulatedDesc.realDesc;
@@ -147,4 +147,4 @@ bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const Comm
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(TOUCHE, ToucheMetaEngine);
+REGISTER_PLUGIN(TOUCHE, PLUGIN_TYPE_ENGINE, ToucheMetaEngine);

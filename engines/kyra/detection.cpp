@@ -484,4 +484,4 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return res;
 }
 
-REGISTER_PLUGIN(KYRA, KyraMetaEngine);
+REGISTER_PLUGIN(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);

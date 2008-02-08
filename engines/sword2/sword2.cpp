@@ -180,7 +180,7 @@ PluginError Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) con
 	return kNoGameDataFoundError;
 }
 
-REGISTER_PLUGIN(SWORD2, Sword2MetaEngine);
+REGISTER_PLUGIN(SWORD2, PLUGIN_TYPE_ENGINE, Sword2MetaEngine);
 
 namespace Sword2 {
 

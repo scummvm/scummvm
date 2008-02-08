@@ -26,6 +26,9 @@
 #include "base/plugins.h"
 #include "common/util.h"
 
+PluginType Plugin::getType() const {
+	return _type;
+}
 
 const char *Plugin::getName() const {
 	return _pluginObject->getName();
@@ -59,9 +62,11 @@ SaveStateList Plugin::listSaves(const char *target) const {
 #ifndef DYNAMIC_MODULES
 class StaticPlugin : public Plugin {
 public:
-	StaticPlugin(PluginObject *pluginobject) {
+	StaticPlugin(PluginObject *pluginobject, PluginType type) {
 		assert(pluginobject);
+		assert(type < PLUGIN_TYPE_MAX);
 		_pluginObject = pluginobject;
+		_type = type;
 	}
 
 	~StaticPlugin() {
@@ -84,8 +89,9 @@ public:
 		PluginList pl;
 
 		#define LINK_PLUGIN(ID) \
+ 			extern PluginType g_##ID##_type; \
 			extern PluginObject *g_##ID##_getObject(); \
-			pl.push_back(new StaticPlugin(g_##ID##_getObject()));
+			pl.push_back(new StaticPlugin(g_##ID##_getObject(), g_##ID##_type));
 
 		// "Loader" for the static plugins.
 		// Iterate over all registered (static) plugins and load them.

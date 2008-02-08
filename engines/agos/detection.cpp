@@ -151,7 +151,7 @@ bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return res;
 }
 
-REGISTER_PLUGIN(AGOS, AgosMetaEngine);
+REGISTER_PLUGIN(AGOS, PLUGIN_TYPE_ENGINE, AgosMetaEngine);
 
 namespace AGOS {
 

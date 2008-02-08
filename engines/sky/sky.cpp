@@ -194,7 +194,7 @@ PluginError SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) const 
 	return kNoError;
 }
 
-REGISTER_PLUGIN(SKY, SkyMetaEngine);
+REGISTER_PLUGIN(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
 
 namespace Sky {
 

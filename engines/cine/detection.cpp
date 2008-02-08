@@ -511,4 +511,4 @@ bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 	return gd != 0;
 }
 
-REGISTER_PLUGIN(CINE, CineMetaEngine);
+REGISTER_PLUGIN(CINE, PLUGIN_TYPE_ENGINE, CineMetaEngine);
