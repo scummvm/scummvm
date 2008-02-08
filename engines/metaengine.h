@@ -51,8 +51,6 @@ public:
 	/** Returns some copyright information about the engine. */
 	virtual const char *getCopyright() const = 0;
 
-//	virtual int getVersion() const = 0;	// TODO!
-
 	/** Returns a list of games supported by this engine. */
 	virtual GameList getSupportedGames() const = 0;
 

@@ -111,7 +111,7 @@ public:
 
 #ifndef DYNAMIC_MODULES
 #define REGISTER_PLUGIN(ID,TYPE,PLUGINCLASS) \
- 	PluginType g_##ID##_type = TYPE; \
+	PluginType g_##ID##_type = TYPE; \
 	PluginObject *g_##ID##_getObject() { \
 		return new PLUGINCLASS(); \
 	} \
@@ -119,9 +119,9 @@ public:
 #else
 #define REGISTER_PLUGIN(ID,TYPE,PLUGINCLASS) \
 	extern "C" { \
- 		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
- 		PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
- 		PLUGIN_EXPORT int32 PLUGIN_getTypeVersion() { return TYPE##_VERSION; } \
+		PLUGIN_EXPORT int32 PLUGIN_getVersion() { return PLUGIN_VERSION; } \
+		PLUGIN_EXPORT int32 PLUGIN_getType() { return TYPE; } \
+		PLUGIN_EXPORT int32 PLUGIN_getTypeVersion() { return TYPE##_VERSION; } \
 		PLUGIN_EXPORT PluginObject *PLUGIN_getObject() { \
 			return new PLUGINCLASS(); \
 		} \
