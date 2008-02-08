@@ -222,6 +222,7 @@ void KyraEngine_v2::startup() {
 		loadOptionsBuffer("OPTIONS.XXX");
 
 		showMessageFromCCode(265, 150, 0);
+		_screen->updateScreen();
 		openTalkFile(0);
 		_currentTalkFile = 1;
 		openTalkFile(1);
