@@ -228,18 +228,6 @@ void Resource::unloadAllPakFiles() {
 	_map.clear();
 	
 	Common::File temp;
-	if (temp.open("kyra.dat")) {
-		ResFileEntry entry;
-		entry.parent = "";
-		entry.size = temp.size();
-		entry.loadable = true;
-		entry.preload = false;
-		entry.prot = false;
-		entry.type = ResFileEntry::kPak;
-		entry.offset = 0;
-		_map["kyra.dat"] = entry;
-		temp.close();
-	}
 	
 	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		ResFileEntry entry;
@@ -254,6 +242,24 @@ void Resource::unloadAllPakFiles() {
 		entry.type = ResFileEntry::kAutoDetect;
 		_map[file->getName()] = entry;
 		temp.close();
+	}
+
+	ResFileMap::iterator iter = _map.find("kyra.dat");
+	if (iter == _map.end()) {
+		if (temp.open("kyra.dat")) {
+			ResFileEntry entry;
+			entry.parent = "";
+			entry.size = temp.size();
+			entry.loadable = true;
+			entry.preload = false;
+			entry.prot = false;
+			entry.type = ResFileEntry::kPak;
+			entry.offset = 0;
+			_map["kyra.dat"] = entry;
+			temp.close();
+		}
+	} else {
+		iter->_value.type = ResFileEntry::kPak;
 	}
 
 	detectFileTypes();
