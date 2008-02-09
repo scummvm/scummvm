@@ -46,6 +46,7 @@ Debugger::Debugger(Parallaction *vm)
 	DCmd_Register("locations",	WRAP_METHOD(Debugger, Cmd_Locations));
 	DCmd_Register("gfxobjects",	WRAP_METHOD(Debugger, Cmd_GfxObjects));
 	DCmd_Register("set", 		WRAP_METHOD(Debugger, Cmd_Set));
+	DCmd_Register("programs", 	WRAP_METHOD(Debugger, Cmd_Programs));
 
 }
 
@@ -212,6 +213,27 @@ bool Debugger::Cmd_Set(int argc, const char** argv) {
 	} else {
 		_vm->_gfx->setVar(Common::String(argv[1]), atoi(argv[2]));
 	}
+
+	return true;
+}
+
+bool Debugger::Cmd_Programs(int argc, const char** argv) {
+
+	ProgramList::iterator b = _vm->_programs.begin();
+	ProgramList::iterator e = _vm->_programs.end();
+
+	const char *status[] = { "idle", "running", "completed" };
+
+	int i = 1;
+
+	DebugPrintf("+---+--------------------+----------+\n"
+				"| # | bound animation    |  status  |\n"
+				"+---+--------------------+----------+\n");
+	for ( ; b != e; b++, i++) {
+		Program *p = *b;
+		DebugPrintf("|%3i|%-20s|%-10s|\n", i, p->_anim->_name, status[p->_status] );
+	}
+	DebugPrintf("+---+--------------------+---------+\n");
 
 	return true;
 }

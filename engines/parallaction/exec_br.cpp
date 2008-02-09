@@ -489,6 +489,7 @@ DECLARE_INSTRUCTION_OPCODE(endscript) {
 	if ((_instRunCtxt.anim->_flags & kFlagsLooping) == 0) {
 		_instRunCtxt.anim->_flags &= ~kFlagsActing;
 		runCommands(_instRunCtxt.anim->_commands, _instRunCtxt.anim);
+		_instRunCtxt.program->_status = kProgramDone;
 	}
 	_instRunCtxt.program->_ip = _instRunCtxt.program->_instructions.begin();
 

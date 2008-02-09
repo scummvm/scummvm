@@ -363,6 +363,11 @@ struct Instruction {
 
 };
 
+enum {
+	kProgramIdle,		// awaiting execution
+	kProgramRunning,	// running
+	kProgramDone		// execution completed
+};
 
 struct Program {
 	Animation		*_anim;
@@ -376,6 +381,8 @@ struct Program {
 	InstructionList::iterator	_ip;
 	InstructionList::iterator	_loopStart;
 	InstructionList				_instructions;
+
+	uint32	_status;
 
 	Program();
 	~Program();

@@ -85,6 +85,7 @@ Program::Program() {
 	_loopCounter = 0;
 	_locals = new LocalVariable[NUM_LOCALS];
 	_numLocals = 0;
+	_status = kProgramIdle;
 }
 
 Program::~Program() {

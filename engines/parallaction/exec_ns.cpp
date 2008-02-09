@@ -180,6 +180,7 @@ DECLARE_INSTRUCTION_OPCODE(endscript) {
 	if ((_instRunCtxt.anim->_flags & kFlagsLooping) == 0) {
 		_instRunCtxt.anim->_flags &= ~kFlagsActing;
 		runCommands(_instRunCtxt.anim->_commands, _instRunCtxt.anim);
+		_instRunCtxt.program->_status = kProgramDone;
 	}
 	_instRunCtxt.program->_ip = _instRunCtxt.program->_instructions.begin();
 
@@ -385,6 +386,8 @@ void Parallaction_ns::runScripts() {
 
 		InstructionList::iterator inst = (*it)->_ip;
 		while (((*inst)->_index != INST_SHOW) && (a->_flags & kFlagsActing)) {
+
+			(*it)->_status = kProgramRunning;
 
 			debugC(9, kDebugExec, "Animation: %s, instruction: %s", a->_name, _instructionNamesRes[(*inst)->_index - 1]);
 
