@@ -62,13 +62,22 @@ class Resource;
 
 class ResArchiveLoader {
 public:
+	struct File {
+		File() : filename(), entry() {}
+		File(const Common::String &f, const ResFileEntry &e) : filename(f), entry(e) {}
+
+		Common::String filename;
+		ResFileEntry entry;
+	};
+	typedef Common::List<File> FileList;
+
 	virtual ~ResArchiveLoader() {}
 
 	virtual bool checkFilename(Common::String filename) const = 0;
 	virtual bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const = 0;
-	virtual bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, ResFileMap &map) const = 0;
+	virtual bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const = 0;
 	// parameter 'archive' can be deleted by this method and it may not be deleted from the caller
-	virtual Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileMap &map) const = 0;
+	virtual Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const = 0;
 
 	virtual ResFileEntry::kType getType() const = 0;
 protected:

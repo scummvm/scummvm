@@ -154,9 +154,41 @@ bool Resource::loadPakFile(const Common::String &filename) {
 
 	iter->_value.mounted = true;
 	iter->_value.preload = true;
-	loader->loadFile(filename, *stream, _map);
+	ResArchiveLoader::FileList files;
+	loader->loadFile(filename, *stream, files);
 	delete stream;
 	stream = 0;
+	
+	for (ResArchiveLoader::FileList::iterator i = files.begin(); i != files.end(); ++i) {
+		iter = _map.find(i->filename);
+		if (iter == _map.end()) {
+			_map[i->filename] = i->entry;
+		} else if (!iter->_value.parent.empty()) {
+			if (!iter->_value.parent.equalsIgnoreCase(filename)) {
+				ResFileMap::iterator oldParent = _map.find(iter->_value.parent);
+				if (oldParent != _map.end()) {
+					// Protected files and their embedded files don't get overwritten!
+					if (!oldParent->_value.prot) {
+						// If it's not protected we mark the old parent as not preload anymore,
+						// since not all of its embedded files are not in the filemap now anymore.
+						oldParent->_value.preload = false;
+						_map[i->filename] = i->entry;
+					}
+				} else {
+					// Old parent not found? That's strange... But we just overwrite the old
+					// entry.
+					_map[i->filename] = i->entry;
+				}
+			} else {
+				// The parent has the same filenames as we, but we are sure and overwrite the
+				// old file entry.
+				_map[i->filename] = i->entry;
+			}
+		}
+		// 'else' case would mean here an existing fileentry in the map without parent.
+		// We don't support that though, so one can overwrite files from archives by putting
+		// them in the gamepath.
+	}
 
 	detectFileTypes();
 	return true;
@@ -322,7 +354,7 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 		const ResArchiveLoader *loader = getLoader(parentIter->_value.type);
 		assert(loader);
 
-		return loader->loadFileFromArchive(file, parent, _map);
+		return loader->loadFileFromArchive(file, parent, iter->_value);
 	} else {
 		Common::File *stream = new Common::File();
 		if (!stream->open(file.c_str())) {
@@ -393,8 +425,8 @@ class ResLoaderPak : public ResArchiveLoader {
 public:
 	bool checkFilename(Common::String filename) const;
 	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
-	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, ResFileMap &map) const;
-	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileMap &map) const;
+	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const;
+	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const;
 
 	ResFileEntry::kType getType() const {
 		return ResFileEntry::kPak;
@@ -450,12 +482,9 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 	return true;
 }
 
-bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, ResFileMap &map) const {
+bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
 	uint32 filesize = stream.size();
 	
-	Common::List<Common::String> filenames;
-	Common::List<ResFileEntry> entries;
-
 	uint32 startoffset = 0, endoffset = 0;
 	bool switchEndian = false;
 	bool firstFile = true;
@@ -510,8 +539,7 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 			entry.prot = false;
 			entry.preload = false;
 
-			filenames.push_back(file);
-			entries.push_back(entry);
+			files.push_back(File(file, entry));
 		}
 
 		if (endoffset == filesize)
@@ -520,26 +548,14 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 		startoffset = endoffset;
 	}
 
-	assert(filenames.size() == entries.size());
-
-	Common::List<ResFileEntry>::iterator entry = entries.begin();
-	Common::List<Common::String>::iterator file = filenames.begin();
-
-	for (; entry != entries.end(); ++entry, ++file)
-		map[*file] = *entry;
-
 	return true;
 }
 
-Common::SeekableReadStream *ResLoaderPak::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileMap &map) const {
+Common::SeekableReadStream *ResLoaderPak::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
 	assert(archive);
 
-	ResFileMap::const_iterator entry = map.find(file);
-	if (entry == map.end())
-		return 0;
-
-	archive->seek(entry->_value.offset, SEEK_SET);
-	Common::SeekableSubReadStream *stream = new Common::SeekableSubReadStream(archive, entry->_value.offset, entry->_value.offset + entry->_value.size, true);
+	archive->seek(entry.offset, SEEK_SET);
+	Common::SeekableSubReadStream *stream = new Common::SeekableSubReadStream(archive, entry.offset, entry.offset + entry.size, true);
 	assert(stream);
 	return stream;
 }
@@ -548,8 +564,8 @@ class ResLoaderIns : public ResArchiveLoader {
 public:
 	bool checkFilename(Common::String filename) const;
 	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
-	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, ResFileMap &map) const;
-	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileMap &map) const;
+	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const;
+	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const;
 
 	ResFileEntry::kType getType() const {
 		return ResFileEntry::kIns;
@@ -575,7 +591,7 @@ bool ResLoaderIns::isLoadable(const Common::String &filename, Common::SeekableRe
 	return (buffer[0] == 0x0D && buffer[1] == 0x0A);
 }
 
-bool ResLoaderIns::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, ResFileMap &map) const {
+bool ResLoaderIns::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, FileList &files) const {
 	Common::List<Common::String> filenames;
 
 	// thanks to eriktorbjorn for this code (a bit modified though)
@@ -614,22 +630,17 @@ bool ResLoaderIns::loadFile(const Common::String &filename, Common::SeekableRead
 		entry.size = stream.readUint32LE();
 		entry.offset = stream.pos();
 		stream.seek(entry.size, SEEK_CUR);
-
-		map[*file] = entry;
+		files.push_back(File(*file, entry));
 	}
 
 	return true;
 }
 
-Common::SeekableReadStream *ResLoaderIns::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileMap &map) const {
+Common::SeekableReadStream *ResLoaderIns::loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileEntry entry) const {
 	assert(archive);
 
-	ResFileMap::const_iterator entry = map.find(file);
-	if (entry == map.end())
-		return 0;
-
-	archive->seek(entry->_value.offset, SEEK_SET);
-	Common::SeekableSubReadStream *stream = new Common::SeekableSubReadStream(archive, entry->_value.offset, entry->_value.offset + entry->_value.size, true);
+	archive->seek(entry.offset, SEEK_SET);
+	Common::SeekableSubReadStream *stream = new Common::SeekableSubReadStream(archive, entry.offset, entry.offset + entry.size, true);
 	assert(stream);
 	return stream;
 }
