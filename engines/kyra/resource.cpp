@@ -132,8 +132,10 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	if (iter == _map.end())
 		return false;
 
-	if (iter->_value.preload)
+	if (iter->_value.preload) {
+		iter->_value.mounted = true;
 		return true;
+	}
 
 	const ResArchiveLoader *loader = getLoader(iter->_value.type);
 	if (!loader) {
@@ -141,20 +143,16 @@ bool Resource::loadPakFile(const Common::String &filename) {
 		return false;
 	}
 
-	iter->_value.loadable = true;
-
-	if (!isAccessable(filename)) {
-		iter->_value.loadable = false;
+	if (!isAccessable(filename))
 		return false;
-	}
 
 	Common::SeekableReadStream *stream = getFileStream(filename);
 	if (!stream) {
-		iter->_value.loadable = false;
 		error("archive file '%s' not found", filename.c_str());
 		return false;
 	}
 
+	iter->_value.mounted = true;
 	iter->_value.preload = true;
 	loader->loadFile(filename, *stream, _map);
 	delete stream;
@@ -211,7 +209,7 @@ void Resource::unloadPakFile(const Common::String &filename) {
 	ResFileMap::iterator iter = _map.find(filename);
 	if (iter != _map.end()) {
 		if (!iter->_value.prot)
-			iter->_value.loadable = false;
+			iter->_value.mounted = false;
 	}
 }
 
@@ -241,7 +239,7 @@ void Resource::unloadAllPakFiles() {
 			error("couldn't open file '%s'", file->getName().c_str());
 		entry.size = temp.size();
 		entry.offset = 0;
-		entry.loadable = true;
+		entry.mounted = false;
 		entry.preload = false;
 		entry.prot = false;
 		entry.type = ResFileEntry::kAutoDetect;
@@ -255,7 +253,7 @@ void Resource::unloadAllPakFiles() {
 			ResFileEntry entry;
 			entry.parent = "";
 			entry.size = temp.size();
-			entry.loadable = true;
+			entry.mounted = true;
 			entry.preload = false;
 			entry.prot = false;
 			entry.type = ResFileEntry::kAutoDetect;
@@ -339,17 +337,20 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 
 bool Resource::isAccessable(const Common::String &file) const {
 	ResFileMap::const_iterator iter = _map.find(file);
-	while (true) {
-		if (iter == _map.end())
-			break;
-
-		if (!iter->_value.loadable)
-			return false;
-
-		if (!iter->_value.parent.empty())
+	while (iter != _map.end()) {
+		if (!iter->_value.parent.empty()) {
 			iter = _map.find(iter->_value.parent);
-		else
-			return iter->_value.loadable;
+			if (iter != _map.end()) {
+				// parent can never be a non archive file
+				if (iter->_value.type == ResFileEntry::kRaw)
+					return false;
+				// not mounted parent means not accessable
+				else if (!iter->_value.mounted)
+					return false;
+			}
+		} else {
+			return true;
+		}
 	}
 	return false;
 }
@@ -370,7 +371,7 @@ void Resource::detectFileTypes() {
 
 				if ((*l)->isLoadable(i->_key, *stream)) {
 					i->_value.type = (*l)->getType();
-					i->_value.loadable = false;
+					i->_value.mounted = false;
 					i->_value.preload = false;
 					break;
 				}
@@ -378,10 +379,8 @@ void Resource::detectFileTypes() {
 			delete stream;
 			stream = 0;
 
-			if (i->_value.type == ResFileEntry::kAutoDetect) {
+			if (i->_value.type == ResFileEntry::kAutoDetect)
 				i->_value.type = ResFileEntry::kRaw;
-				i->_value.loadable = true;
-			}
 		}
 	}
 }
@@ -507,7 +506,7 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 			entry.offset = startoffset;
 			entry.parent = filename;
 			entry.type = ResFileEntry::kAutoDetect;
-			entry.loadable = true;
+			entry.mounted = false;
 			entry.prot = false;
 			entry.preload = false;
 
@@ -609,7 +608,7 @@ bool ResLoaderIns::loadFile(const Common::String &filename, Common::SeekableRead
 		ResFileEntry entry;
 		entry.parent = filename;
 		entry.type = ResFileEntry::kAutoDetect;
-		entry.loadable = true;
+		entry.mounted = false;
 		entry.preload = false;
 		entry.prot = false;
 		entry.size = stream.readUint32LE();

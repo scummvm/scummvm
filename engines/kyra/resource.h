@@ -44,7 +44,7 @@ struct ResFileEntry {
 	uint32 size;
 
 	bool preload;
-	bool loadable;
+	bool mounted;
 	bool prot;
 
 	enum kType {
