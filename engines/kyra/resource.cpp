@@ -415,6 +415,12 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 	}
 
 	while (!stream.eos()) {
+		// The start offset of a file should never be in the filelist
+		if (startoffset < stream.pos()) {
+			warning("PAK file '%s' is corrupted", filename.c_str());
+			return false;
+		}
+
 		Common::String file = "";
 		byte c = 0;
 
