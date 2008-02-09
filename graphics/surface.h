@@ -45,7 +45,7 @@ struct Surface {
 	uint16 pitch;
 	void *pixels;
 	uint8 bytesPerPixel;
-	Surface() : pixels(0), w(0), h(0), pitch(0), bytesPerPixel(0) {}
+	Surface() : w(0), h(0), pitch(0), pixels(0), bytesPerPixel(0) {}
 
 	inline const void *getBasePtr(int x, int y) const {
 		// SumthinWicked says: I was getting a typecast error here from GCC/UIQ: might need an #ifdef __SYMBIAN32__
