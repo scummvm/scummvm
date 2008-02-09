@@ -64,6 +64,7 @@ class ResArchiveLoader {
 public:
 	virtual ~ResArchiveLoader() {}
 
+	virtual bool checkFilename(Common::String filename) const = 0;
 	virtual bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const = 0;
 	virtual bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, ResFileMap &map) const = 0;
 	// parameter 'archive' can be deleted by this method and it may not be deleted from the caller

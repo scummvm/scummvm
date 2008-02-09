@@ -355,17 +355,23 @@ void Resource::detectFileTypes() {
 			continue;
 
 		if (i->_value.type == ResFileEntry::kAutoDetect) {
+			Common::SeekableReadStream *stream = 0;
 			for (LoaderIterator l = _loaders.begin(); l != _loaders.end(); ++l) {
-				Common::SeekableReadStream *stream = getFileStream(i->_key);
+				if (!(*l)->checkFilename(i->_key))
+					continue;
+				
+				if (!stream)
+					stream = getFileStream(i->_key);
+
 				if ((*l)->isLoadable(i->_key, *stream)) {
 					i->_value.type = (*l)->getType();
 					i->_value.loadable = false;
 					i->_value.preload = false;
 					break;
 				}
-				delete stream;
-				stream = 0;
 			}
+			delete stream;
+			stream = 0;
 
 			if (i->_value.type == ResFileEntry::kAutoDetect) {
 				i->_value.type = ResFileEntry::kRaw;
@@ -381,6 +387,7 @@ void Resource::detectFileTypes() {
 
 class ResLoaderPak : public ResArchiveLoader {
 public:
+	bool checkFilename(Common::String filename) const;
 	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
 	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, ResFileMap &map) const;
 	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileMap &map) const;
@@ -389,6 +396,11 @@ public:
 		return ResFileEntry::kPak;
 	}
 };
+
+bool ResLoaderPak::checkFilename(Common::String filename) const {
+	filename.toUppercase();
+	return (filename.hasSuffix(".PAK") || filename.hasSuffix(".APK") || filename.hasSuffix(".VRM") || filename.hasSuffix(".TLK") || filename.equalsIgnoreCase(StaticResource::staticDataFilename()));
+}
 
 bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
 	uint32 filesize = stream.size();
@@ -530,6 +542,7 @@ Common::SeekableReadStream *ResLoaderPak::loadFileFromArchive(const Common::Stri
 
 class ResLoaderIns : public ResArchiveLoader {
 public:
+	bool checkFilename(Common::String filename) const;
 	bool isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const;
 	bool loadFile(const Common::String &filename, Common::SeekableReadStream &stream, ResFileMap &map) const;
 	Common::SeekableReadStream *loadFileFromArchive(const Common::String &file, Common::SeekableReadStream *archive, const ResFileMap &map) const;
@@ -538,6 +551,11 @@ public:
 		return ResFileEntry::kIns;
 	}
 };
+
+bool ResLoaderIns::checkFilename(Common::String filename) const {
+	filename.toUppercase();
+	return (filename.hasSuffix(".001"));
+}
 
 bool ResLoaderIns::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
 	stream.seek(3);
