@@ -250,16 +250,14 @@ void Resource::unloadAllPakFiles() {
 			ResFileEntry entry;
 			entry.parent = "";
 			entry.size = temp.size();
-			entry.loadable = false;
+			entry.loadable = true;
 			entry.preload = false;
 			entry.prot = false;
-			entry.type = ResFileEntry::kPak;
+			entry.type = ResFileEntry::kAutoDetect;
 			entry.offset = 0;
 			_map[StaticResource::staticDataFilename()] = entry;
 			temp.close();
 		}
-	} else {
-		iter->_value.type = ResFileEntry::kPak;
 	}
 
 	detectFileTypes();
@@ -393,10 +391,47 @@ public:
 };
 
 bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
-	// TODO improve check:
-	Common::String file = filename;
-	file.toUppercase();
-	return ((file.hasSuffix(".PAK") && file != "TWMUSIC.PAK") || file.hasSuffix(".APK") || file.hasSuffix(".VRM") || file.hasSuffix(".TLK"));
+	uint32 filesize = stream.size();
+	uint32 offset = 0;
+	bool switchEndian = false;
+	bool firstFile = true;
+
+	offset = stream.readUint32LE();
+	if (offset > filesize) {
+		switchEndian = true;
+		offset = SWAP_BYTES_32(offset);
+	}
+
+	while (!stream.eos()) {
+		// The start offset of a file should never be in the filelist
+		if (offset < stream.pos() || offset > filesize)
+			return false;
+
+		Common::String file = "";
+		byte c = 0;
+
+		while (!stream.eos() && (c = stream.readByte()) != 0)
+			file += c;
+
+		if (stream.eos())
+			return false;
+
+		// Quit now if we encounter an empty string
+		if (file.empty()) {
+			if (firstFile)
+				return false;
+			else
+				break;
+		}
+
+		firstFile = false;
+		offset = switchEndian ? stream.readUint32BE() : stream.readUint32LE();
+
+		if (!offset || offset == filesize)
+			break;
+	}
+
+	return true;
 }
 
 bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableReadStream &stream, ResFileMap &map) const {
@@ -407,6 +442,7 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 
 	uint32 startoffset = 0, endoffset = 0;
 	bool switchEndian = false;
+	bool firstFile = true;
 
 	startoffset = stream.readUint32LE();
 	if (startoffset > filesize) {
@@ -416,7 +452,7 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
-		if (startoffset < stream.pos()) {
+		if (startoffset < stream.pos() || startoffset > filesize) {
 			warning("PAK file '%s' is corrupted", filename.c_str());
 			return false;
 		}
@@ -433,9 +469,16 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 		}
 
 		// Quit now if we encounter an empty string
-		if (file.empty())
-			break;
+		if (file.empty()) {
+			if (firstFile) {
+				warning("PAK file '%s' is corrupted", filename.c_str());
+				return false;
+			} else {
+				break;
+			}
+		}
 
+		firstFile = false;
 		endoffset = switchEndian ? stream.readUint32BE() : stream.readUint32LE();
 
 		if (!endoffset)
