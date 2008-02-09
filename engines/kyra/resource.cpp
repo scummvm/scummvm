@@ -162,15 +162,16 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	for (ResArchiveLoader::FileList::iterator i = files.begin(); i != files.end(); ++i) {
 		iter = _map.find(i->filename);
 		if (iter == _map.end()) {
+			// A new file entry, so we just insert it into the file map.
 			_map[i->filename] = i->entry;
 		} else if (!iter->_value.parent.empty()) {
 			if (!iter->_value.parent.equalsIgnoreCase(filename)) {
 				ResFileMap::iterator oldParent = _map.find(iter->_value.parent);
 				if (oldParent != _map.end()) {
-					// Protected files and their embedded files don't get overwritten!
+					// Protected files and their embedded file entries do not get overwritten.
 					if (!oldParent->_value.prot) {
-						// If it's not protected we mark the old parent as not preload anymore,
-						// since not all of its embedded files are not in the filemap now anymore.
+						// If the old parent is not protected we mark it as not preload anymore,
+						// since now no longer all of its embedded files are in the filemap.
 						oldParent->_value.preload = false;
 						_map[i->filename] = i->entry;
 					}
@@ -180,12 +181,13 @@ bool Resource::loadPakFile(const Common::String &filename) {
 					_map[i->filename] = i->entry;
 				}
 			} else {
-				// The parent has the same filenames as we, but we are sure and overwrite the
-				// old file entry.
+				// The old parent has the same filenames as the new archive, we are sure and overwrite the
+				// old file entry, could be afterall that the preload flag of the new archive was
+				// just unflagged.
 				_map[i->filename] = i->entry;
 			}
 		}
-		// 'else' case would mean here an existing fileentry in the map without parent.
+		// 'else' case would mean here overwriting an existing file entry in the map without parent.
 		// We don't support that though, so one can overwrite files from archives by putting
 		// them in the gamepath.
 	}
