@@ -405,40 +405,32 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 	Common::List<Common::String> filenames;
 	Common::List<ResFileEntry> entries;
 
-	uint32 pos = 0, startoffset = 0, endoffset = 0;
+	uint32 startoffset = 0, endoffset = 0;
 	bool switchEndian = false;
 
-	startoffset = stream.readUint32LE(); pos += 4;
+	startoffset = stream.readUint32LE();
 	if (startoffset > filesize) {
 		switchEndian = true;
 		startoffset = SWAP_BYTES_32(startoffset);
 	}
 
-	while (pos < filesize) {
-		uint8 buffer[64];
-		uint32 nameLength;
+	while (!stream.eos()) {
+		Common::String file = "";
+		byte c = 0;
 
-		// Move to the position of the next file entry
-		stream.seek(pos);
+		while (!stream.eos() && (c = stream.readByte()) != 0)
+			file += c;
 
-		// Read in the header
-		if (stream.read(&buffer, 64) < 5) {
+		if (stream.eos()) {
 			warning("PAK file '%s' is corrupted", filename.c_str());
 			return false;
 		}
 
 		// Quit now if we encounter an empty string
-		if (!(*((const char*)buffer)))
+		if (file.empty())
 			break;
 
-		nameLength = strlen((const char*)buffer) + 1;
-
-		if (nameLength > 60) {
-			warning("PAK file '%s' is corrupted", filename.c_str());
-			return false;
-		}
-
-		endoffset = (switchEndian ? READ_BE_UINT32 : READ_LE_UINT32)(buffer + nameLength);
+		endoffset = switchEndian ? stream.readUint32BE() : stream.readUint32LE();
 
 		if (!endoffset)
 			endoffset = filesize;
@@ -453,7 +445,7 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 			entry.prot = false;
 			entry.preload = false;
 
-			filenames.push_back(Common::String((const char*)buffer));
+			filenames.push_back(file);
 			entries.push_back(entry);
 		}
 
@@ -461,7 +453,6 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 			break;
 
 		startoffset = endoffset;
-		pos += nameLength + 4;
 	}
 
 	assert(filenames.size() == entries.size());
