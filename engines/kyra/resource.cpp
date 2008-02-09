@@ -132,30 +132,35 @@ bool Resource::loadPakFile(const Common::String &filename) {
 	if (iter == _map.end())
 		return false;
 
-	iter->_value.loadable = true;
-
-	if (!isAccessable(filename))
-		return false;
-
 	if (iter->_value.preload)
 		return true;
 
-	Common::SeekableReadStream *stream = getFileStream(filename);
-	assert(stream);
-
 	const ResArchiveLoader *loader = getLoader(iter->_value.type);
-	assert(loader);
+	if (!loader) {
+		error("no archive loader for file '%s' found which is of type %d", filename.c_str(), iter->_value.type);
+		return false;
+	}
 
+	iter->_value.loadable = true;
+
+	if (!isAccessable(filename)) {
+		iter->_value.loadable = false;
+		return false;
+	}
+
+	Common::SeekableReadStream *stream = getFileStream(filename);
+	if (!stream) {
+		iter->_value.loadable = false;
+		error("archive file '%s' not found", filename.c_str());
+		return false;
+	}
+
+	iter->_value.preload = true;
 	loader->loadFile(filename, *stream, _map);
 	delete stream;
 	stream = 0;
 
-	iter = _map.find(filename);
-	if (iter == _map.end())
-		return false;
-	iter->_value.preload = true;
 	detectFileTypes();
-
 	return true;
 }
 
