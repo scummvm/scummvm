@@ -55,13 +55,6 @@ uint32		_engineFlags = 0;
 uint16		_score = 1;
 char		_password[8];
 
-Command *	_forwardedCommands[MAX_FORWARDS] = {
-	NULL
-};
-
-char		_forwardedAnimationNames[MAX_FORWARDS][20];
-uint16		_numForwards = 0;
-
 uint32		_commandFlags = 0;
 uint16		_introSarcData3 = 200;
 uint16		_introSarcData2 = 1;

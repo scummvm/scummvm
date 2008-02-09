@@ -495,30 +495,15 @@ DECLARE_COMMAND_PARSER(flags)  {
 }
 
 
-DECLARE_COMMAND_PARSER(animation)  {
-	debugC(7, kDebugParser, "COMMAND_PARSER(animation) ");
-
-	createCommand(_lookup);
-
-	_locParseCtxt.cmd->u._animation = findAnimation(_tokens[_locParseCtxt.nextToken]);
-	_locParseCtxt.nextToken++;
-	if (_locParseCtxt.cmd->u._animation == NULL) {
-		strcpy(_forwardedAnimationNames[_numForwards], _tokens[_locParseCtxt.nextToken-1]);
-		_forwardedCommands[_numForwards] = _locParseCtxt.cmd;
-		_numForwards++;
-	}
-
-	parseCommandFlags();
-	addCommand();
-}
-
-
 DECLARE_COMMAND_PARSER(zone)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(zone) ");
 
 	createCommand(_lookup);
 
 	_locParseCtxt.cmd->u._zone = findZone(_tokens[_locParseCtxt.nextToken]);
+	if (_locParseCtxt.cmd->u._zone == NULL) {
+		saveCommandForward(_tokens[_locParseCtxt.nextToken], _locParseCtxt.cmd);
+	}
 	_locParseCtxt.nextToken++;
 
 	parseCommandFlags();
@@ -668,6 +653,25 @@ void Parallaction_ns::createCommand(uint id) {
 	_locParseCtxt.cmd = new Command;
 	_locParseCtxt.cmd->_id = id;
 
+}
+
+void Parallaction_ns::saveCommandForward(const char *name, Command* cmd) {
+	assert(_numForwardedCommands < MAX_FORWARDS);
+
+	strcpy(_forwardedCommands[_numForwardedCommands].name, name);
+	_forwardedCommands[_numForwardedCommands].cmd = cmd;
+
+	_numForwardedCommands++;
+}
+
+void Parallaction_ns::resolveCommandForwards() {
+	for (uint i = 0; i < _numForwardedCommands; i++) {
+		_forwardedCommands[i].cmd->u._zone = findZone(_forwardedCommands[i].name);
+		if (_forwardedCommands[i].cmd->u._zone == 0) {
+			warning("Cannot find zone '%s' into current location script. This may be a bug in the original scripts.\n", _forwardedCommands[i].name);
+		}
+	}
+	_numForwardedCommands = 0;
 }
 
 void Parallaction_ns::parseCommands(Script &script, CommandList& list) {
@@ -975,6 +979,8 @@ void Parallaction_ns::parseLocation(const char *filename) {
 	allocateLocationSlot(filename);
 //	printf("got location slot #%i for %s\n", _currentLocationIndex, filename);
 
+	_numForwardedCommands = 0;
+
 	Script *script = _disk->loadLocation(filename);
 
 	// TODO: the following two lines are specific to Nippon Safes
@@ -994,12 +1000,7 @@ void Parallaction_ns::parseLocation(const char *filename) {
 
 	delete script;
 
-	// this resolves any forward references in the script
-	for (uint16 _si = 0; _forwardedCommands[_si]; _si++) {
-		_forwardedCommands[_si]->u._animation = findAnimation(_forwardedAnimationNames[_si]);
-		_forwardedCommands[_si] = NULL;
-	}
-	_numForwards = 0;
+	resolveCommandForwards();
 
 	// this loads animation scripts
 	AnimationList::iterator it = _animations.begin();
@@ -1081,7 +1082,7 @@ void Parallaction_ns::initParsers() {
 		WARNING_PARSER(unexpected),
 		COMMAND_PARSER(flags),			// set
 		COMMAND_PARSER(flags),			// clear
-		COMMAND_PARSER(animation),		// start
+		COMMAND_PARSER(zone),		// start
 		COMMAND_PARSER(zone),			// speak
 		COMMAND_PARSER(zone),			// get
 		COMMAND_PARSER(location),		// location
@@ -1094,7 +1095,7 @@ void Parallaction_ns::initParsers() {
 		COMMAND_PARSER(drop),			// drop
 		COMMAND_PARSER(simple),			// quit
 		COMMAND_PARSER(move),			// move
-		COMMAND_PARSER(animation),		// stop
+		COMMAND_PARSER(zone),		// stop
 		COMMAND_PARSER(endcommands),	// endcommands
 		COMMAND_PARSER(endcommands)		// endzone
 	};

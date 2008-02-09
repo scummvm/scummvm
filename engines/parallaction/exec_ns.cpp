@@ -225,7 +225,7 @@ DECLARE_COMMAND_OPCODE(clear) {
 
 
 DECLARE_COMMAND_OPCODE(start) {
-	_cmdRunCtxt.cmd->u._animation->_flags |= kFlagsActing;
+	_cmdRunCtxt.cmd->u._zone->_flags |= kFlagsActing;
 }
 
 
@@ -315,7 +315,7 @@ DECLARE_COMMAND_OPCODE(move) {
 
 
 DECLARE_COMMAND_OPCODE(stop) {
-	_cmdRunCtxt.cmd->u._animation->_flags &= ~kFlagsActing;
+	_cmdRunCtxt.cmd->u._zone->_flags &= ~kFlagsActing;
 }
 
 

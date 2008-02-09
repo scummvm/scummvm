@@ -150,9 +150,6 @@ extern uint16		_score;
 extern uint16		_language;
 extern uint32		_engineFlags;
 #define MAX_FORWARDS	50
-extern Command		*_forwardedCommands[];
-extern char			_forwardedAnimationNames[][20];
-extern uint16		_numForwards;
 extern char			_slideText[][MAX_TOKEN_LEN];
 extern uint16		_introSarcData3;		 // sarcophagus stuff to be saved
 extern uint16		_introSarcData2;		 // sarcophagus stuff to be saved
@@ -757,10 +754,18 @@ protected:
 	Animation	*parseAnimation(Script &script, AnimationList &list, char *name);
 	void		parseCommands(Script &script, CommandList&);
 	void		parseCommandFlags();
+	void 		saveCommandForward(const char *name, Command* cmd);
+	void 		resolveCommandForwards();
 	void		createCommand(uint id);
 	void		addCommand();
 	void		initOpcodes();
 	void		initParsers();
+
+	struct CommandForwardReference {
+		char		name[20];
+		Command*	cmd;
+	} _forwardedCommands[MAX_FORWARDS];
+	uint		_numForwardedCommands;
 
 	// program parser
 	OpcodeSet	_instructionParsers;
@@ -954,7 +959,6 @@ private:
 	DECLARE_UNQUALIFIED_LOCATION_PARSER(null);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(ifchar);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(endif);
-	DECLARE_UNQUALIFIED_COMMAND_PARSER(zone);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(location);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(toggle);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(string);

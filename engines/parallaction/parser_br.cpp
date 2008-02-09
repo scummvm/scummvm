@@ -420,26 +420,6 @@ DECLARE_COMMAND_PARSER(music)  {
 }
 
 
-DECLARE_COMMAND_PARSER(zone)  {
-	debugC(7, kDebugParser, "COMMAND_PARSER(zone) ");
-
-	createCommand(_lookup);
-
-	_locParseCtxt.cmd->u._zone = findZone(_tokens[_locParseCtxt.nextToken]);
-	_locParseCtxt.nextToken++;
-
-	if (_locParseCtxt.cmd->u._zone == NULL) {
-		assert(_numForwards < MAX_FORWARDS);
-		strcpy(_forwardedAnimationNames[_numForwards], _tokens[_locParseCtxt.nextToken-1]);
-		_forwardedCommands[_numForwards] = _locParseCtxt.cmd;
-		_numForwards++;
-	}
-
-	parseCommandFlags();
-	addCommand();
-}
-
-
 DECLARE_COMMAND_PARSER(zeta)  {
 	debugC(7, kDebugParser, "COMMAND_PARSER(zeta) ");
 
@@ -824,7 +804,7 @@ void Parallaction_br::initParsers() {
 		WARNING_PARSER(unexpected),
 		COMMAND_PARSER(flags),		// set
 		COMMAND_PARSER(flags),		// clear
-		COMMAND_PARSER(animation),	// start
+		COMMAND_PARSER(zone),	// start
 		COMMAND_PARSER(zone),		// speak
 		COMMAND_PARSER(zone),		// get
 		COMMAND_PARSER(location),
@@ -837,7 +817,7 @@ void Parallaction_br::initParsers() {
 		COMMAND_PARSER(drop),
 		COMMAND_PARSER(simple),		// quit
 		COMMAND_PARSER(move),
-		COMMAND_PARSER(animation),	// stop
+		COMMAND_PARSER(zone),	// stop
 		COMMAND_PARSER(string),		// character
 		COMMAND_PARSER(string),		// followme
 		COMMAND_PARSER(simple),		// onmouse

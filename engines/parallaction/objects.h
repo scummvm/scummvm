@@ -93,7 +93,6 @@ enum CommandFlags {
 
 struct CommandData {
 	uint32			_flags;
-	Animation *		_animation;
 	Zone*			_zone;
 	char*			_string;
 	uint16			_callable;
