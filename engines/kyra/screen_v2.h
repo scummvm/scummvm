@@ -46,10 +46,10 @@ public:
 	void applyGrayOverlay(int x, int y, int w, int h, int pageNum, const uint8 *grayOverlay);
 	int findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors);
 	bool calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2);
-	void wsaFrameAnimationStep(int x1, int y1, int x2, int y2,
-		int w1, int h1, int w2, int h2,	int srcPage, int dstPage, int dim);
-	void cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage,
-		int dstW, int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage);
+	void wsaFrameAnimationStep(int x1, int y1, int x2, int y2, int w1, int h1, int w2, int h2,	int srcPage, int dstPage, int dim);
+	void cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int srcY, int dstPage,	int dstW, int dstH, int dstX, int dstY, int cmpW, int cmpH, int cmpPage);
+	void copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos, int numBytes);
+	void copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX,int dstY, int dstW, int dstH, const ScreenDim *d, bool flag = false);
 
 	// screen page handling
 	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,

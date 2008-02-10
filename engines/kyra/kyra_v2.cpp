@@ -52,7 +52,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_seqWsa = 0;
 	_sequences = 0;
 	_nSequences = 0;
-
+	_demoShapeDefs = 0;
 
 	_gamePlayBuffer = 0;
 	_cCodeBuffer = _optionsBuffer = _chapterBuffer = 0;
@@ -129,10 +129,15 @@ int KyraEngine_v2::init() {
 	_text = new TextDisplayer_v2(this, _screen);
 	assert(_text);
 
-	_screen->loadFont(_screen->FID_6_FNT, "6.FNT");
-	_screen->loadFont(_screen->FID_8_FNT, "8FAT.FNT");
+	if (_flags.isDemo && !_flags.isTalkie) {
+		_screen->loadFont(_screen->FID_8_FNT, "FONT9P.FNT");
+	} else {
+		_screen->loadFont(_screen->FID_6_FNT, "6.FNT");
+		_screen->loadFont(_screen->FID_8_FNT, "8FAT.FNT");
+		_screen->loadFont(_screen->FID_BOOKFONT_FNT, "BOOKFONT.FNT");
+	}
 	_screen->loadFont(_screen->FID_GOLDFONT_FNT, "GOLDFONT.FNT");
-	_screen->loadFont(_screen->FID_BOOKFONT_FNT, "BOOKFONT.FNT");
+
 	_screen->setAnimBlockPtr(3504);
 	_screen->setScreenDim(0);
 
@@ -141,8 +146,10 @@ int KyraEngine_v2::init() {
 
 	_abortIntroFlag = false;
 
-	for (int i = 0; i < 33; i++)
-		_sequenceStringsDuration[i] = (int) strlen(_sequenceStrings[i]) * 8;
+	if (_sequenceStrings) {
+		for (int i = 0; i < 33; i++)
+			_sequenceStringsDuration[i] = (int) strlen(_sequenceStrings[i]) * 8;
+	}
 
 	// No mouse display in demo
 	if (_flags.isDemo)
@@ -164,8 +171,13 @@ int KyraEngine_v2::go() {
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
 		seq_showStarcraftLogo();
 
-	seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
-	//seq_playSequences(kSequenceFunters, kSequenceFrash);
+	if (_flags.isDemo && !_flags.isTalkie) {
+		seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
+		_menuChoice = 4;
+	} else {
+		seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
+		//seq_playSequences(kSequenceFunters, kSequenceFrash);
+	}
 
 	_res->unloadAllPakFiles();
 
@@ -178,13 +190,12 @@ int KyraEngine_v2::go() {
 			_res->loadFileList(_ingamePakList, _ingamePakListSize);
 	}
 
-	if (_menuChoice == 1) {
+	//_menuDirectlyToLoad = (_menuChoice == 3) ? true : false;
+
+	if (_menuChoice & 1) {
 		startup();
 		runLoop();
 		cleanup();
-	} else if (_menuChoice == 3) {
-		// TODO:	Load Game
-
 	}
 
 	return 0;

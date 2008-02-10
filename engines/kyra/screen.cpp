@@ -43,10 +43,7 @@ Screen::~Screen() {
 	for (int i = 0; i < SCREEN_OVLS_NUM; ++i)
 		delete [] _sjisOverlayPtrs[i];
 
-	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
-		delete [] _pagePtrs[pageNum];
-		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = 0;
-	}
+	delete [] _pagePtrs[0];
 
 	for (int f = 0; f < ARRAYSIZE(_fonts); ++f) {
 		delete[] _fonts[f].fontData;
@@ -98,12 +95,10 @@ bool Screen::init() {
 	setResolution();
 
 	_curPage = 0;
-	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2) {
-		uint8 *pagePtr = new uint8[SCREEN_PAGE_SIZE];
-		assert(pagePtr);
-		memset(pagePtr, 0, SCREEN_PAGE_SIZE);
-		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr;
-	}
+	uint8 *pagePtr = new uint8[SCREEN_PAGE_SIZE * 8];
+	for (int pageNum = 0; pageNum < SCREEN_PAGE_NUM; pageNum += 2)
+		_pagePtrs[pageNum] = _pagePtrs[pageNum + 1] = pagePtr + (pageNum >> 1) * SCREEN_PAGE_SIZE;
+
 	memset(_shapePages, 0, sizeof(_shapePages));
 
 	memset(_palettes, 0, sizeof(_palettes));

@@ -35,7 +35,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 19
+#define RESFILE_VERSION 20
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -228,6 +228,7 @@ bool StaticResource::init() {
 		// Sequence Player
 		{ k2SeqplayPakFiles, kStringList, "S_PAKFILES.TXT" },
 		{ k2SeqplayCredits, kRawData, "S_CREDITS.TXT" },
+		{ k2SeqplayCreditsSpecial, kStringList, "S_CREDITS2.TXT" },
 		{ k2SeqplayStrings, kLanguageList, "S_STRINGS." },
 		{ k2SeqplaySfxFiles, kStringList, "S_SFXFILES.TXT" },
 		{ k2SeqplayTlkFiles, kLanguageList, "S_TLKFILES." },
@@ -236,6 +237,7 @@ bool StaticResource::init() {
 		{ k2SeqplayFinaleTracks, kStringList, "S_FINALE.TRA" },
 		{ k2SeqplayIntroCDA, kRawData, "S_INTRO.CDA" },
 		{ k2SeqplayFinaleCDA, kRawData, "S_FINALE.CDA" },
+		{ k2SeqplayShapeDefs, kRawData, "S_DEMO.SHP" },
 
 		// Ingame
 		{ k2IngamePakFiles, kStringList, "I_PAKFILES.TXT" },
@@ -990,20 +992,25 @@ void KyraEngine_v2::initStaticResource() {
 		&KyraEngine_v2::seq_introHand2,	&KyraEngine_v2::seq_introHand3, 0
 	};
 
-	/*static const Seqproc hofDemoSequenceCallbacks[] = {
-		0 // XXX
+	static const Seqproc hofDemoSequenceCallbacks[] = {
+		&KyraEngine_v2::seq_demoVirgin, &KyraEngine_v2::seq_demoWestwood,
+		&KyraEngine_v2::seq_demoTitle, &KyraEngine_v2::seq_demoHill,
+		&KyraEngine_v2::seq_demoOuthome, &KyraEngine_v2::seq_demoWharf,
+		&KyraEngine_v2::seq_demoDinob, &KyraEngine_v2::seq_demoFisher, 0
 	};
 
 	static const Seqproc hofDemoNestedSequenceCallbacks[] = {
-		0 // XXX
-	};*/
+		&KyraEngine_v2::seq_demoWharf2, &KyraEngine_v2::seq_demoDinob2,
+		&KyraEngine_v2::seq_demoWater, &KyraEngine_v2::seq_demoBail,
+		&KyraEngine_v2::seq_demoDig, 0
+	};
 
 	const uint16 *hdr = (const uint16 *) seqData;
 	uint16 numSeq = READ_LE_UINT16(hdr++);
 	uint16 hdrSize = READ_LE_UINT16(hdr) - 1;
 
-	const Seqproc *cb = hofSequenceCallbacks;
-	const Seqproc *ncb = hofNestedSequenceCallbacks;
+	const Seqproc *cb = (_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks;
+	const Seqproc *ncb = (_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks;
 
 	_sequences = new Sequence[numSeq];
 	for (int i = 0; i < numSeq; i++) {

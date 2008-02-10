@@ -78,7 +78,6 @@ enum kSequencesDemo {
 	kSequenceDemoVirgin = 0,
 	kSequenceDemoWestwood,
 	kSequenceDemoTitle,
-	kSequenceDemoTitle2,
 	kSequenceDemoHill,
 	kSequenceDemoOuthome,
 	kSequenceDemoWharf,
@@ -223,8 +222,22 @@ protected:
 	int seq_finaleFirates(WSAMovieV2 *wsaObj, int x, int y, int frm);
 	int seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm);
 
-	void seq_finaleActorScreen();
 	int seq_finaleFiggle(WSAMovieV2 *wsaObj, int x, int y, int frm);
+
+	int seq_demoVirgin(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoWestwood(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoTitle(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoHill(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoOuthome(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoWharf(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoDinob(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoFisher(WSAMovieV2 *wsaObj, int x, int y, int frm);
+
+	int seq_demoWharf2(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoDinob2(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoWater(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoBail(WSAMovieV2 *wsaObj, int x, int y, int frm);
+	int seq_demoDig(WSAMovieV2 *wsaObj, int x, int y, int frm);
 
 	void seq_sequenceCommand(int command);
 	void seq_loadNestedSequence(int wsaNum, int seqNum);
@@ -236,7 +249,6 @@ protected:
 	void seq_unloadWSA(int wsaNum);
 	void seq_processWSAs();
 	void seq_cmpFadeFrame(const char *cmpFile);
-
 	void seq_playTalkText(uint8 chatNum);
 	void seq_resetAllTextEntries();
 	uint32 seq_activeTextsTimeLeft();
@@ -244,9 +256,12 @@ protected:
 	int seq_setTextEntry(uint16 strIndex, uint16 posX, uint16 posY, int duration, uint16 width);
 	void seq_processText();
 	char *seq_preprocessString(const char *str, int width);
-	void seq_printCreditsString(uint16 strIndex, int x, int y, uint8 * colorMap, uint8 textcolor);
+	void seq_printCreditsString(uint16 strIndex, int x, int y, const uint8 *colorMap, uint8 textcolor);
 	void seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width,
 		WSAMovieV2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos);
+	void seq_finaleActorScreen();
+	void seq_displayScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed, int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData = 0, const char *const *specialData = 0);
+	void seq_scrollPage();
 	void seq_showStarcraftLogo();
 
 	void seq_init();
@@ -264,7 +279,7 @@ protected:
 	static const int8 _dosTrackMap[];
 	static const int _dosTrackMapSize;
 
-	const AudioDataStruct * _soundData;
+	const AudioDataStruct *_soundData;
 
 protected:
 	// game initialization
@@ -697,7 +712,7 @@ protected:
 		uint16 unk_2;
 		uint16 unk_4;
 		uint16 unk_8;
-		uint16* unk_20;
+		uint16 *unk_20;
 	};
 
 	struct TIMBuffers {
@@ -715,7 +730,7 @@ protected:
 	TalkSections _currentTalkSections;
 
 	bool _objectChatFinished;
-	byte* loadTIMFile(const char *filename, byte *buffer, int32 bufferSize);
+	byte *loadTIMFile(const char *filename, byte *buffer, int32 bufferSize);
 	void freeTIM(byte *buffer);
 
 	// ingame static sequence handling
@@ -881,6 +896,7 @@ protected:
 	int _ingameSoundIndexSize;
 	const char *const *_sequenceStrings;
 	int _sequenceStringsSize;
+	uint8 *_demoShapeDefs;
 	int _sequenceStringsDuration[33];
 
 	static const uint8 _seqTextColorPresets[];
@@ -891,16 +907,18 @@ protected:
 	int _menuChoice;
 
 	uint32 _seqFrameDelay;
+	uint32 _seqStartTime;
 	uint32 _seqEndTime;
 	int _seqFrameCounter;
+	int _seqScrollTextCounter;
 	int _seqWsaCurrentFrame;
 	bool _seqSpecialFlag;
 	bool _seqSubframePlaying;
 	uint8 _seqTextColor[2];
 	uint8 _seqTextColorMap[16];
 
-	Sequence * _sequences;
-	NestedSequence * _nSequences;
+	Sequence *_sequences;
+	NestedSequence *_nSequences;
 };
 
 } // end of namespace Kyra

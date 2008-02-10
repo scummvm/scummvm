@@ -202,6 +202,7 @@ enum kKyraResources {
 
 	k2SeqplayPakFiles,
 	k2SeqplayCredits,
+	k2SeqplayCreditsSpecial,
 	k2SeqplayStrings,
 	k2SeqplaySfxFiles,
 	k2SeqplayTlkFiles,
@@ -210,6 +211,7 @@ enum kKyraResources {
 	k2SeqplayFinaleTracks,
 	k2SeqplayIntroCDA,
 	k2SeqplayFinaleCDA,
+	k2SeqplayShapeDefs,
 
 	k2IngamePakFiles,
 	k2IngameSfxFiles,
