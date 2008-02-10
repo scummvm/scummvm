@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 19,
+	kKyraDatVersion = 20,
 	kIndexSize = 12
 };
 
@@ -208,6 +208,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k2SeqplayFinaleTracks, kTypeStringList, "S_FINALE.TRA" },
 	{ k2SeqplayIntroCDA, kTypeRawData, "S_INTRO.CDA" },
 	{ k2SeqplayFinaleCDA, kTypeRawData, "S_FINALE.CDA" },
+	{ k2SeqplayShapeDefs, kTypeRawData, "S_DEMO.SHP" },
 
 	// Ingame
 	{ k2IngamePakFiles, kTypeStringList, "I_PAKFILES.TXT" },

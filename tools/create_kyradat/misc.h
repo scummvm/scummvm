@@ -443,6 +443,7 @@ const int kyra2DemoNeed[] = {
 	k2SeqplaySeqData,
 	k2SeqplaySfxFiles,
 	k2SeqplayIntroTracks,
+	k2SeqplayShapeDefs,
 	-1
 };
 
