@@ -26,6 +26,7 @@
 #include "engine/registry.h"
 
 #include <cstdlib>
+#include <cstring>
 
 Registry *g_registry = NULL;
 
