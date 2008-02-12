@@ -171,13 +171,11 @@ void Player_MOD::do_mix(int16 *data, uint len) {
 			dlen = len;
 			len = 0;
 		}
-		for (i = 0; i < MOD_MAXCHANS; i++)
-		{
+		for (i = 0; i < MOD_MAXCHANS; i++) {
 			if (_channels[i].id) {
 				Audio::st_volume_t vol_l = (127 - _channels[i].pan) * _channels[i].vol / 127;
 				Audio::st_volume_t vol_r = (127 + _channels[i].pan) * _channels[i].vol / 127;
-				for (uint j = 0; j < dlen; j++)
-				{
+				for (uint j = 0; j < dlen; j++) {
 					// simple linear resample, unbuffered
 					int delta = (uint32)(_channels[i].freq * 0x10000) / _samplerate;
 					uint16 cfrac = ~_channels[i].ctr & 0xFFFF;
@@ -185,28 +183,25 @@ void Player_MOD::do_mix(int16 *data, uint len) {
 						cfrac = delta;
 					_channels[i].ctr += delta;
 					int32 cpos = _channels[i].pos * cfrac / 0x10000;
-					while (_channels[i].ctr >= 0x10000)
-					{
-						if (_channels[i].input->readBuffer(&_channels[i].pos, 1) != 1)
-						{	// out of data
+					while (_channels[i].ctr >= 0x10000) {
+						if (_channels[i].input->readBuffer(&_channels[i].pos, 1) != 1) {	// out of data
 							stopChannel(_channels[i].id);
 							goto skipchan;	// exit 2 loops at once
 						}
 						_channels[i].ctr -= 0x10000;
 						if (_channels[i].ctr > 0x10000)
 							cpos += _channels[i].pos;
-						else	cpos += (int32)(_channels[i].pos * (_channels[i].ctr & 0xFFFF)) / 0x10000;
+						else
+							cpos += (int32)(_channels[i].pos * (_channels[i].ctr & 0xFFFF)) / 0x10000;
 					}
 					int16 pos = 0;
 					// if too many samples play in a row, the calculation below will overflow and clip
 					// so try and split it up into pieces it can manage comfortably
-					while (cpos < -0x8000)
-					{
+					while (cpos < -0x8000) {
 						pos -= 0x80000000 / delta;
 						cpos += 0x8000;
 					}
-					while (cpos > 0x7FFF)
-					{
+					while (cpos > 0x7FFF) {
 						pos += 0x7FFF0000 / delta;
 						cpos -= 0x7FFF;
 					}
