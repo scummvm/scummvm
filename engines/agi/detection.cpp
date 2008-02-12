@@ -2224,7 +2224,7 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 	// Check if we found a match with any of the fallback methods
 	Common::EncapsulatedADGameDesc result;
 	if (matchedUsingWag || matchedUsingFilenames) {
-		extra = description + " " + extra; // Let's combine the description and extra
+		extra = description + (!extra.empty() ? " " : "") + extra; // Let's combine the description and extra
 		result = Common::EncapsulatedADGameDesc((const Common::ADGameDescription *)&g_fallbackDesc, gameid, extra);
 
 		printf("Your game version has been detected using fallback matching as a\n");
