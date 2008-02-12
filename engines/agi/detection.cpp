@@ -2125,7 +2125,18 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 		// so we don't have to change it here.
 		matchedUsingFilenames = true;
 
-		if (allFiles.contains("pal.101")) { // Check if it is AGIPAL
+		// Check for AGIPAL by checking for existence of any of the files "pal.100" - "pal.109"
+		bool agipal = false;
+		char agipalFile[] = "pal.xxx";
+		for (uint i = 100; i <= 109; i++) {
+			sprintf(agipalFile, "pal.%d", i);
+			if (allFiles.contains(agipalFile)) {
+				agipal = true; // We found a file "pal.x" where 100 <= x <= 109 so it's AGIPAL
+				break;
+			}
+		}
+
+		if (agipal) { // Check if it is AGIPAL
 			description = "Unknown v2 AGIPAL Game";
 			g_fallbackDesc.features |= GF_AGIPAL; // Add AGIPAL feature flag
 		} else { // Not AGIPAL so just plain v2
