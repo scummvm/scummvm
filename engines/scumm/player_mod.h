@@ -75,7 +75,9 @@ private:
 		uint8 vol;
 		int8 pan;
 		uint16 freq;
-		Audio::RateConverter *converter;
+
+		uint32 ctr;
+		int16 pos;
 		Audio::AudioStream *input;
 	};
 
