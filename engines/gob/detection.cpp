@@ -109,6 +109,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
+	{ // Supplied by raziel_ in bug report #1891864
+		{
+			"gob1",
+			"VGA",
+			AD_ENTRY1s("intro.stk", "e157cb59c6d330ca70d12ab0ef1dd12b", 288972),
+			EN_GRB,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		"intro"
+	},
 	{ // CD 1.000 version.
 		{
 			"gob1cd",
@@ -391,6 +404,19 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob2",
 			"",
 			AD_ENTRY1("intro.stk", "dedb5d31d8c8050a8cf77abedcc53dae"),
+			EN_USA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{ // Supplied by raziel_ in bug report #1891867
+		{
+			"gob2",
+			"",
+			AD_ENTRY1s("intro.stk", "25a99827cd59751a80bed9620fb677a0", 893302),
 			EN_USA,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
@@ -999,6 +1025,19 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob3",
 			"",
 			AD_ENTRY1s("intro.stk", "32b0f57f5ae79a9ae97e8011df38af42", 157084),
+			EN_GRB,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeGob3,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{ // Supplied by raziel_ in bug report #1891869
+		{
+			"gob3",
+			"",
+			AD_ENTRY1s("intro.stk", "16b014bf32dbd6ab4c5163c44f56fed1", 445104),
 			EN_GRB,
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
