@@ -46,6 +46,7 @@ struct LureGameDescription;
 
 class LureEngine : public Engine {
 private:
+	bool _initialised;
 	uint8 _saveVersion;
 	Disk *_disk;
 	Resources *_resources;

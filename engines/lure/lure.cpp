@@ -58,6 +58,7 @@ LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): En
 
 int LureEngine::init() {
 	int_engine = this;
+	_initialised = false;
 
 	_system->beginGFXTransaction();
 	initCommonGFX(false);
@@ -67,19 +68,24 @@ int LureEngine::init() {
 	// Check the version of the lure.dat file
 	Common::File f;
 	VersionStructure version;
-	if (!f.open(SUPPORT_FILENAME))
+	if (!f.open(SUPPORT_FILENAME)) {
 		GUIError("Could not locate Lure support file");
+		return 1;
+	}
 
 	f.seek(0xbf * 8);
 	f.read(&version, sizeof(VersionStructure));
 	f.close();
 
-	if (READ_LE_UINT16(&version.id) != 0xffff)
+	if (READ_LE_UINT16(&version.id) != 0xffff) {
 		GUIError("Error validating %s - file is invalid or out of date", SUPPORT_FILENAME);
-	else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR))
+		return 1;
+	} else if ((version.vMajor != LURE_DAT_MAJOR) || (version.vMinor != LURE_DAT_MINOR)) {
 		GUIError("Incorrect version of %s file - expected %d.%d but got %d.%d",
 			SUPPORT_FILENAME, LURE_DAT_MAJOR, LURE_DAT_MINOR,
 			version.vMajor, version.vMinor);
+		return 1;
+	}
 
 	_disk = new Disk();
 	_resources = new Resources();
@@ -91,6 +97,8 @@ int LureEngine::init() {
 	Surface::initialise();
 	_room = new Room();
 	_fights = new FightsManager();
+
+	_initialised = true;
 	return 0;
 }
 
@@ -98,17 +106,19 @@ LureEngine::~LureEngine() {
 	// Remove all of our debug levels here
 	Common::clearAllSpecialDebugLevels();
 
-	// Delete and deinitialise subsystems
-	Surface::deinitialise();
-	delete _fights;
-	delete _room;
-	delete _menu;
-	delete _events;
-	delete _mouse;
-	delete _screen;
-	delete _strings;
-	delete _resources;
-	delete _disk;
+	if (_initialised) {
+		// Delete and deinitialise subsystems
+		Surface::deinitialise();
+		delete _fights;
+		delete _room;
+		delete _menu;
+		delete _events;
+		delete _mouse;
+		delete _screen;
+		delete _strings;
+		delete _resources;
+		delete _disk;
+	}
 }
 
 LureEngine &LureEngine::getReference() {
@@ -233,7 +243,6 @@ void LureEngine::GUIError(const char *msg, ...) {
 	va_end(va);
 
 	Engine::GUIErrorMessage(buffer);
-	exit(1);
 }
 
 Common::String *LureEngine::detectSave(int slotNumber) {
