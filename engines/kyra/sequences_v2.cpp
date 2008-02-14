@@ -1964,7 +1964,7 @@ void KyraEngine_v2::seq_playTalkText(uint8 chatNum) {
 
 	assert(chatNum < _sequenceSoundListSize);
 
-	if (chatNum < 12 && !_flags.isDemo)
+	if (chatNum < 12 && !_flags.isDemo && textEnabled())
 		seq_setTextEntry(chatNum, 160, 168, _sequenceStringsDuration[chatNum], 160);
 
 	_sound->voicePlay(_sequenceSoundList[chatNum]);
@@ -1975,8 +1975,14 @@ void KyraEngine_v2::seq_waitForTextsTimeout() {
 
 	uint32 longest = seq_activeTextsTimeLeft() + _system->getMillis();
 	uint32 now = _system->getMillis();
-	if (longest > now)
-		delay(longest - now);
+
+	if (textEnabled()) {
+		if (longest > now)
+			delay(longest - now);
+	} else if (speechEnabled()) {
+		while (snd_voiceIsPlaying())
+			delay(_tickLength);
+	}
 
 	seq_resetAllTextEntries();
 }
@@ -2300,12 +2306,12 @@ void KyraEngine_v2::seq_printCreditsString(uint16 strIndex, int x, int y, const 
 
 void KyraEngine_v2::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width, WSAMovieV2 *wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos) {
 	int dur = int(strlen(_sequenceStrings[strIndex])) * (_flags.isTalkie ? 7 : 15);
-	int entry = seq_setTextEntry(strIndex, x, y, dur, width);
+	int entry = textEnabled() ? seq_setTextEntry(strIndex, x, y, dur, width) : strIndex;
 	_activeText[entry].textcolor = textColor;
 	uint32 chatTimeout = _system->getMillis() + dur * _tickLength;
 	int curframe = firstframe;
 
-	if (vocIndex)
+	if (vocIndex && speechEnabled())
 		seq_playTalkText(vocIndex);
 
 	while (_system->getMillis() < chatTimeout) {
@@ -2333,6 +2339,9 @@ void KyraEngine_v2::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, in
 		uint32 tm = _system->getMillis();
 		if (frameTimeout > tm && chatTimeout > tm)
 			delay(MIN(frameTimeout - tm, chatTimeout - tm));
+
+		if (speechEnabled() && !textEnabled() && !snd_voiceIsPlaying())
+			break;
 
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
