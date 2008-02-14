@@ -77,6 +77,7 @@ static const char *credits[] = {
 "\\C\\c0""Torbj\366rn Andersson",
 "\\C\\c2""VQA Player",
 "\\C\\c0""Oystein Eftevaag",
+"\\C\\c0""Florian Kagerer",
 "\\C\\c0""Gregory Montoir",
 "\\C\\c0""Johannes Schickel",
 "\\C\\c0""",
