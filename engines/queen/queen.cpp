@@ -424,8 +424,6 @@ int QueenEngine::init() {
 		_logic = new LogicGame(this);
 	}
 
-	if (!_mixer->isReady())
-		warning("Sound initialisation failed");
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	// Set mixer music volume to maximum, since music volume is regulated by MusicPlayer's MIDI messages
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume);

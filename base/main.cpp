@@ -201,11 +201,9 @@ static int runGame(const Plugin *plugin, OSystem &system, const Common::String &
 	// Inform backend that the engine is about to be run
 	system.engineInit();
 
-	int result;
-
 	// Init the engine (this might change the screen parameters)
 	// TODO: We should specify what return values
-	result = engine->init();
+	int result = engine->init();
 
 	// Run the game engine if the initialization was successful.
 	if (result == 0) {

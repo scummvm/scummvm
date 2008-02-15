@@ -328,10 +328,6 @@ int Sword2Engine::init() {
 	_sound = new Sound(this);
 	_mouse = new Mouse(this);
 
-	// Setup mixer
-	if (!_mixer->isReady())
-		warning("Sound initialization failed");
-
 	registerDefaultSettings();
 	readSettings();
 

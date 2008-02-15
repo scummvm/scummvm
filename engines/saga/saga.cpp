@@ -108,11 +108,6 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	// Mac CD Wyrmkeep
 	Common::File::addDefaultDirectory(_gameDataPath + "patch/");
 
-	// Setup mixer
-	if (!_mixer->isReady()) {
-		warning("Sound initialization failed.");
-	}
-
 	_displayClip.left = _displayClip.top = 0;
 	syst->getEventManager()->registerRandomSource(_rnd, "saga");
 }

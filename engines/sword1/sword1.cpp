@@ -201,9 +201,6 @@ SwordEngine::SwordEngine(OSystem *syst)
 	else
 		_features = 0;
 
-	if (!_mixer->isReady())
-		warning("Sound initialization failed");
-
 	// Add default file directories
 	Common::File::addDefaultDirectory(_gameDataPath + "CLUSTERS/");
 	Common::File::addDefaultDirectory(_gameDataPath + "MUSIC/");

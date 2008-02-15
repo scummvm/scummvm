@@ -54,10 +54,6 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	    "Script debug level");
 
 	// Setup mixer
-	if (!_mixer->isReady()) {
-		warning("Sound initialization failed.");
-	}
-
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
 	    ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,

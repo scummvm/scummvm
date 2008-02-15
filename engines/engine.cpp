@@ -58,6 +58,16 @@ Engine::Engine(OSystem *syst)
 
 	g_engine = this;
 	_autosavePeriod = ConfMan.getInt("autosave_period");
+
+	// FIXME: Get rid of the following again. It is only here temporarily.
+	// We really should never run with a non-working Mixer, so ought to handle
+	// this at a much earlier stage. If we *really* want to support systems
+	// without a working mixer, then we need more work. E.g. we could modify the
+	// Mixer to immediately drop any streams passed to it. This way, at least
+	// we don't crash because heaps of (sound) memory get allocated but never
+	// freed. Of course, there still would be problems with many games...
+	if (!_mixer->isReady())
+		warning("Sound initialization failed. This may cause severe problems in some games.");
 }
 
 Engine::~Engine() {

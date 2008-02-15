@@ -48,12 +48,6 @@ LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): En
 	Common::addSpecialDebugLevel(kLureDebugFights, "fights", "Fights debugging");
 	Common::addSpecialDebugLevel(kLureDebugSounds, "sounds", "Sounds debugging");
 	Common::addSpecialDebugLevel(kLureDebugStrings, "strings", "Strings debugging");
-
-	// Setup mixer
-
-	if (!_mixer->isReady()) {
-		warning("Sound initialization failed.");
-	}
 }
 
 int LureEngine::init() {

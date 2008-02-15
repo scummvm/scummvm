@@ -545,9 +545,6 @@ int AGOSEngine::init() {
 	_system->endGFXTransaction();
 
 	// Setup mixer
-	if (!_mixer->isReady())
-		warning("Sound initialization failed. "
-						"Features of the game that depend on sound synchronization will most likely break");
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 

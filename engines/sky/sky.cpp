@@ -371,9 +371,6 @@ int SkyEngine::init() {
 		_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
-	if (!_mixer->isReady())
-		warning("Sound initialisation failed");
-
 	if (ConfMan.getBool("sfx_mute")) {
 		SkyEngine::_systemVars.systemFlags |= SF_FX_OFF;
 	}
