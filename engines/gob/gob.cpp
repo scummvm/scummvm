@@ -80,10 +80,6 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	_saveLoad = 0;
 
 	// Setup mixer
-	if (!_mixer->isReady()) {
-		warning("Sound initialization failed.");
-	}
-
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
