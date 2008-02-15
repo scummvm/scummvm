@@ -8387,86 +8387,86 @@ void DrasculaEngine::animacion_12_5() {
 			palFondo3[color][componente] = palJuego[color][componente];
 		}
 
-		for (fundido = 1; fundido >= 0; fundido--) {
-			for (color = 0; color < 128; color++)
-				for (componente = 0; componente < 3; componente++)
-					palFondo1[color][componente] = LimitaVGA(palFondo1[color][componente] - 8 + fundido);
-		}
+	for (fundido = 1; fundido >= 0; fundido--) {
+		for (color = 0; color < 128; color++)
+			for (componente = 0; componente < 3; componente++)
+				palFondo1[color][componente] = LimitaVGA(palFondo1[color][componente] - 8 + fundido);
+	}
 
-		for (fundido = 2; fundido >= 0; fundido--) {
-			for (color = 0; color < 128; color++)
-				for (componente = 0; componente < 3; componente++)
-					palFondo2[color][componente] = LimitaVGA(palFondo2[color][componente] - 8 + fundido);
-		}
+	for (fundido = 2; fundido >= 0; fundido--) {
+		for (color = 0; color < 128; color++)
+			for (componente = 0; componente < 3; componente++)
+				palFondo2[color][componente] = LimitaVGA(palFondo2[color][componente] - 8 + fundido);
+	}
 
-		for (fundido = 3; fundido >= 0; fundido--) {
-			for (color = 0; color < 128; color++)
-				for (componente = 0; componente < 3; componente++)
-					palFondo3[color][componente] = LimitaVGA(palFondo3[color][componente] - 8 + fundido);
-		}
+	for (fundido = 3; fundido >= 0; fundido--) {
+		for (color = 0; color < 128; color++)
+			for (componente = 0; componente < 3; componente++)
+				palFondo3[color][componente] = LimitaVGA(palFondo3[color][componente] - 8 + fundido);
+	}
 
-		lee_dibujos("3an11_1.alg");
-		descomprime_dibujo(dir_hare_fondo, 1);
+	lee_dibujos("3an11_1.alg");
+	descomprime_dibujo(dir_hare_fondo, 1);
 
-		for (frame = 0; frame < 8; frame++) {
-			if (frame == 2 || frame == 4 || frame == 8 || frame==10)
-				setvgapalette256((byte *)&palFondo1);
-			else if (frame == 1 || frame == 5 || frame == 7 || frame == 9)
-				setvgapalette256((byte *)&palFondo2);
-			else
-				setvgapalette256((byte *)&palFondo3);
+	for (frame = 0; frame < 8; frame++) {
+		if (frame == 2 || frame == 4 || frame == 8 || frame==10)
+			setvgapalette256((byte *)&palFondo1);
+		else if (frame == 1 || frame == 5 || frame == 7 || frame == 9)
+			setvgapalette256((byte *)&palFondo2);
+		else
+			setvgapalette256((byte *)&palFondo3);
 
-			pausa(4);
-			refresca_pantalla();
-			DIBUJA_BLOQUE(rayo_x[frame], 1, 41, 0, 44, 44, dir_hare_fondo, dir_zona_pantalla);
-			DIBUJA_BLOQUE(frusky_x[frame], 113, 205, 50, 38, 86, dir_dibujo3, dir_zona_pantalla);
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		}
+		pausa(4);
+		refresca_pantalla();
+		DIBUJA_BLOQUE(rayo_x[frame], 1, 41, 0, 44, 44, dir_hare_fondo, dir_zona_pantalla);
+		DIBUJA_BLOQUE(frusky_x[frame], 113, 205, 50, 38, 86, dir_dibujo3, dir_zona_pantalla);
+		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	}
 
-		fin_sound_corte();
+	fin_sound_corte();
 
-		for (frame = 0; frame < 15; frame++) {
-			if (frame == 2 || frame == 4 || frame == 7 || frame == 9)
-				setvgapalette256((byte *)&palFondo1);
-			else if (frame == 1 || frame == 5)
-				setvgapalette256((byte *)&palJuego);
-			else
-				setvgapalette256((byte *)&palFondo2);
+	for (frame = 0; frame < 15; frame++) {
+		if (frame == 2 || frame == 4 || frame == 7 || frame == 9)
+			setvgapalette256((byte *)&palFondo1);
+		else if (frame == 1 || frame == 5)
+			setvgapalette256((byte *)&palJuego);
+		else
+			setvgapalette256((byte *)&palFondo2);
 
-			pausa(4);
-			refresca_pantalla();
-			DIBUJA_BLOQUE(elfrusky_x[frame], 47, 192, 39, 66, 106, dir_hare_fondo, dir_zona_pantalla);
-			VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-		}
+		pausa(4);
+		refresca_pantalla();
+		DIBUJA_BLOQUE(elfrusky_x[frame], 47, 192, 39, 66, 106, dir_hare_fondo, dir_zona_pantalla);
+		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	}
 
-		anima("frel.bin", 16);
-		borra_pantalla();
-		hare_claro();
-		ActualizaPaleta();
+	anima("frel.bin", 16);
+	borra_pantalla();
+	hare_claro();
+	ActualizaPaleta();
 
-		flags[1] = 1;
+	flags[1] = 1;
 
-		animacion_13_5();
-		comienza_sound("s1.als");
-		hipo(12);
-		fin_sound();
+	animacion_13_5();
+	comienza_sound("s1.als");
+	hipo(12);
+	fin_sound();
 
-		lee_dibujos("99.alg");
-		descomprime_dibujo(dir_hare_fondo, 1);
+	lee_dibujos("99.alg");
+	descomprime_dibujo(dir_hare_fondo, 1);
 
-		lleva_al_hare(40, 169);
-		lleva_al_hare(-14, 175);
+	lleva_al_hare(40, 169);
+	lleva_al_hare(-14, 175);
 
-		rompo = 1;
-		musica_antes = musica_room;
-		hare_se_ve = 1;
-		borra_pantalla();
-		sentido_hare = 1;
-		hare_se_mueve = 0;
-		hare_x = -1;
-		obj_saliendo = 104;
-		sin_verbo();
-		carga_escoba("57.ald");
+	rompo = 1;
+	musica_antes = musica_room;
+	hare_se_ve = 1;
+	borra_pantalla();
+	sentido_hare = 1;
+	hare_se_mueve = 0;
+	hare_x = -1;
+	obj_saliendo = 104;
+	sin_verbo();
+	carga_escoba("57.ald");
 }
 
 void DrasculaEngine::animacion_13_5() {
