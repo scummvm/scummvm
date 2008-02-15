@@ -33,7 +33,6 @@
 #include "common/fs.h"
 
 #include "sound/mididrv.h"
-#include "sound/mixer.h"
 
 #ifdef IPHONE
 #include "backends/platform/iphone/osys_iphone.h"
