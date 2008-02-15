@@ -202,7 +202,10 @@ void IMuseDigital::playDigMusic(const char *songName, const imuseDigTable *table
 void IMuseDigital::setComiMusicState(int stateId) {
 	int l, num = -1;
 
-	if (stateId == 0 || stateId == 4)
+	if (stateId == 4) // look into #1881415 bug, ignore stateId == 4 it's seems needed after all
+		return;
+
+	if (stateId == 0)
 		stateId = 1000;
 
 	for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {
