@@ -159,6 +159,8 @@ enum kExtractID {
 	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameCDA,
+	k2IngameTalkObjIndex,
+	k2IngameTimJpStrings,
 
 	kMaxResIDs
 };
@@ -207,8 +209,8 @@ struct SpecialExtension {
 
 enum kGame {
 	kKyra1 = 0,
-	kKyra2 = 1,
-	kKyra3 = 2
+	kKyra2,
+	kKyra3
 };
 
 struct Game {

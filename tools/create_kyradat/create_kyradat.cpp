@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 20,
+	kKyraDatVersion = 21,
 	kIndexSize = 12
 };
 
@@ -212,11 +212,13 @@ const ExtractFilename extractFilenames[] = {
 
 	// Ingame
 	{ k2IngamePakFiles, kTypeStringList, "I_PAKFILES.TXT" },
-	{ k2IngameSfxFiles, kTypeStringList, "I_SFXFILES.TXT" },
-	{ k2IngameSfxIndex, kTypeRawData, "I_SFXINDEX.TRA" },
+	{ k2IngameSfxFiles, kTypeStringList, "I_SFXFILES.TRA" },
+	{ k2IngameSfxIndex, kTypeRawData, "I_SFXINDEX.MAP" },
 	{ k2IngameTracks, kTypeStringList, "I_TRACKS.TRA" },
 	{ k2IngameCDA, kTypeRawData, "I_TRACKS.CDA" },
-
+	{ k2IngameTalkObjIndex, kTypeRawData, "I_TALKOBJECTS.MAP" },
+	{ k2IngameTimJpStrings, kTypeStringList, "I_TIMJPSTR.TXT" },
+	
 	{ -1, 0, 0 }
 };
 
@@ -254,7 +256,7 @@ bool getFilename(char *dstFilename, const Game *g, const int id) {
 void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
 	strcpy(dstFilename, filename);
 
-	static const char *gidExtensions[] = { "", ".K2", ".K3" };
+	static const char *gidExtensions[] = { "", ".K2", ".K3" };	
 	strcat(dstFilename, gidExtensions[gid]);
 
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
@@ -277,7 +279,7 @@ void createLangFilename(char *dstFilename, const int gid, const int lang, const 
 		}
 	}
 
-	static const char *gidExtensions[] = { "", ".K2", ".K3" };
+	static const char *gidExtensions[] = { "", ".K2", ".K3" };	
 	strcat(dstFilename, gidExtensions[gid]);
 
 	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
@@ -1156,5 +1158,6 @@ const Game *findGame(const byte *buffer, const uint32 size) {
 	printf("file is not supported (unknown md5 \"%s\")\n", md5str);
 	return 0;
 }
+
 
 
