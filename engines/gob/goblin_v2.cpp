@@ -266,7 +266,7 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 		if (_vm->_map->_screenWidth == 640) {
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10)
 				animData->nextState = 41;
-			if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY) != 10)
+			if (_vm->_map->getPass(obj->goblinX - 1, obj->goblinY + 2) != 10)
 				animData->nextState = 7;
 		}
 		break;
@@ -277,7 +277,7 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 		if (_vm->_map->_screenWidth == 640) {
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 20)
 				animData->nextState = 39;
-			else if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 19)
+			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 19)
 				animData->nextState = 27;
 		}
 		break;
@@ -287,7 +287,7 @@ void Goblin_v2::movePathFind(Mult::Mult_Object *obj, Gob_Object *gobDesc, int16 
 		if (_vm->_map->_screenWidth == 640) {
 			if (_vm->_map->getPass(obj->goblinX, obj->goblinY) == 10)
 				animData->nextState = 43;
-			if (_vm->_map->getPass(obj->goblinX + 1, obj->goblinY) != 10)
+			if (_vm->_map->getPass(obj->goblinX + 1, obj->goblinY + 2) != 10)
 				animData->nextState = 5;
 		}
 		break;
@@ -351,6 +351,8 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	case 13:
 	case 16:
 	case 23:
+	case 40:
+	case 41:
 		animData->curLookDir = 0;
 		break;
 
@@ -358,6 +360,8 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	case 15:
 	case 18:
 	case 21:
+	case 26:
+	case 38:
 		animData->curLookDir = 2;
 		break;
 
@@ -367,6 +371,8 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	case 12:
 	case 19:
 	case 22:
+	case 42:
+	case 43:
 		animData->curLookDir = 4;
 		break;
 
@@ -374,6 +380,8 @@ void Goblin_v2::moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 	case 14:
 	case 17:
 	case 20:
+	case 27:
+	case 39:
 		animData->curLookDir = 6;
 		break;
 
