@@ -123,6 +123,9 @@
 			RelativePath="..\..\engines\agos\animation.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\agos\charset-fontdata.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\agos\charset.cpp">
 		</File>
 		<File
