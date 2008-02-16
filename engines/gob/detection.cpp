@@ -620,6 +620,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesNone,
 		"intro"
 	},
+	{ // Supplied by polluks in bug report #1895126
+		{
+			"gob2",
+			"Interactive Demo",
+			AD_ENTRY1s("intro.stk", "9fa85aea959fa8c582085855fbd99346", 553063),
+			UNK_LANG,
+			kPlatformAmiga,
+			Common::ADGF_DEMO
+		},
+		kGameTypeGob2,
+		kFeaturesNone,
+		"intro"
+	},
 	{
 		{
 			"ween",
