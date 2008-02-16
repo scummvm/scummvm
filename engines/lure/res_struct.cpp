@@ -1209,9 +1209,11 @@ void BarmanLists::loadFromStream(Common::ReadStream *stream) {
 	uint8 saveVersion = LureEngine::getReference().saveVersion();
 	int numEntries = (saveVersion >= 30) ? 3 : 2;
 
+	reset();
 	for (int index = 0; index < numEntries; ++index) {
 		int16 value = stream->readUint16LE();
-		_barList[index].currentCustomer = (value == 0) ? NULL : &_barList[index].customers[value - 1];
+		_barList[index].currentCustomer = ((value < 1) || (value > NUM_SERVE_CUSTOMERS)) ? NULL : 
+			&_barList[index].customers[value - 1];
 
 		for (int ctr = 0; ctr < NUM_SERVE_CUSTOMERS; ++ctr) {
 			_barList[index].customers[ctr].hotspotId = stream->readUint16LE();
