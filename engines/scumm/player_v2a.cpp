@@ -73,7 +73,7 @@ class V2A_Sound_Unsupported : public V2A_Sound {
 public:
 	V2A_Sound_Unsupported() { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
-		warning("player_v2a - sound %i not supported yet", id);
+		warning("player_v2a - sound %i not supported!", id);
 	}
 	virtual bool update() { return false; }
 	virtual void stop() { }
@@ -375,9 +375,9 @@ private:
 
 // plays a single looped waveform starting at a specific frequency/volume, dropping in frequency and fading volume to zero
 // used when Maniac Mansion explodes
-class V2A_Sound_Special_ManiacNuclear : public V2A_Sound_Base<1> {
+class V2A_Sound_Special_Maniac69 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_ManiacNuclear(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
+	V2A_Sound_Special_Maniac69(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -528,9 +528,9 @@ private:
 
 // plays a single looped waveform, starting at one frequency, bending down to another frequency, and then back up to the original frequency
 // used for electronic noises
-class V2A_Sound_Special_ManiacElectric : public V2A_Sound_Base<1> {
+class V2A_Sound_Special_Maniac59 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_ManiacElectric(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step, uint8 vol) :
+	V2A_Sound_Special_Maniac59(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 step, uint8 vol) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _step(step), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -573,7 +573,6 @@ private:
 
 // plays a single looped waveform, simultaneously bending the frequency downward and slowly fading volume to zero
 // don't remember where this one is used
-// old name: SlowPitchbendDownAndFadeout
 class V2A_Sound_Special_Maniac61 : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_Maniac61(uint16 offset, uint16 size, uint16 freq1, uint16 freq2) :
@@ -663,9 +662,9 @@ private:
 
 // intermittently plays a single waveform for a specified duration
 // used when applying a wrench to a pipe
-class V2A_Sound_Special_ManiacWrench : public V2A_Sound_Base<1> {
+class V2A_Sound_Special_Maniac46 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_ManiacWrench(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 loopwidth, uint8 numloops) :
+	V2A_Sound_Special_Maniac46(uint16 offset, uint16 size, uint16 freq, uint8 vol, uint8 loopwidth, uint8 numloops) :
 		V2A_Sound_Base<1>(offset, size), _freq(freq), _vol(vol), _loopwidth(loopwidth), _numloops(numloops) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -755,7 +754,6 @@ private:
 
 // plays two looped waveforms pitch bending up at various predefined rates
 // used for some sort of siren-like noise in Maniac Mansion
-// old name: TwinSirenMulti
 class V2A_Sound_Special_Maniac44 : public V2A_Sound_Base<2> {
 public:
 	V2A_Sound_Special_Maniac44(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2, uint8 vol) :
@@ -821,9 +819,9 @@ private:
 
 // plays 4 looped waveforms, each at modulating frequencies
 // used for the siren noise in Maniac Mansion
-class V2A_Sound_Special_ManiacSiren : public V2A_Sound_Base<4> {
+class V2A_Sound_Special_Maniac32 : public V2A_Sound_Base<4> {
 public:
-	V2A_Sound_Special_ManiacSiren(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint8 vol) :
+	V2A_Sound_Special_Maniac32(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint8 vol) :
 		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -894,7 +892,6 @@ private:
 
 // plays 4 looped waveforms
 // some sort of laserbeam-like sound effect in Zak
-// old name: QuadFreqLooped
 class V2A_Sound_Special_Zak70 : public V2A_Sound_Base<4> {
 public:
 	V2A_Sound_Special_Zak70(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol) :
@@ -930,7 +927,6 @@ protected:
 
 // plays 4 looped waveforms and fades volume to zero after a specific delay
 // some whooshing-type sound in Zak
-// old name: QuadFreqFadeout
 class V2A_Sound_Special_Zak101 : public V2A_Sound_Special_Zak70 {
 public:
 	V2A_Sound_Special_Zak101(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol, uint16 dur) :
@@ -959,7 +955,6 @@ private:
 
 // plays a single looped waveform and slowly fades volume to zero
 // another whooshing-type noise in Zak
-// old name: SingleFadeout
 class V2A_Sound_Special_Zak37 : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_Zak37(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
@@ -1092,10 +1087,10 @@ private:
 };
 
 // plays a single looped waveform, bending the frequency upward at a varying rate
-// used in Zak for the tram on Mars (?)
-class V2A_Sound_Special_ZakTram : public V2A_Sound_Base<1> {
+// used for the tram on Mars (?)
+class V2A_Sound_Special_Zak99 : public V2A_Sound_Base<1> {
 public:
-	V2A_Sound_Special_ZakTram(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol) :
+	V2A_Sound_Special_Zak99(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol) :
 		V2A_Sound_Base<1>(offset, size), _freq1(freq1), _freq2(freq2), _vol(vol) { }
 	virtual void start(Player_MOD *mod, int id, const byte *data) {
 		_mod = mod;
@@ -1158,7 +1153,8 @@ public:
 			_vol--;
 			if (_vol)
 				_mod->setChannelVol(_id, _vol);
-			else	return false;
+			else
+				return false;
 		} else if (!--_loop) {
 			_mod->stopChannel(_id);
 			char *tmp_data = (char *)malloc(_size2);
@@ -1179,8 +1175,560 @@ private:
 	int _loop;
 };
 
-#define CRCToSound(CRC, SOUND)  \
-	if (crc == CRC)             \
+// plays 2 looped waveforms at different frequencies, pulsing at different frequencies and ramping the volume up and down once
+// probably used for some sort of alarm sound
+class V2A_Sound_Special_Zak110 : public V2A_Sound_Base<2> {
+public:
+	V2A_Sound_Special_Zak110(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2) :
+		_offset1(offset1), _size1(size1), _offset2(offset2), _size2(size2), _freq1(freq1), _freq2(freq2) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		_data = (char *)malloc(READ_LE_UINT16(data));
+		memcpy(_data, data, READ_LE_UINT16(data));
+
+		_loopnum = 0;
+		_vol = 0x1500;
+		_beepcount = 0;
+	}
+	virtual bool update() {
+		char *tmp_data;
+		assert(_id);
+
+		int vol = (((_vol >> 7) & 0x7E) | ((_vol >> 15) & 0x01));
+		_beepcount++;
+
+		switch (_beepcount & 0x3) {
+		case 0:
+			_mod->stopChannel(_id | 0x000);
+			break;
+		case 1:
+			tmp_data = (char *)malloc(_size1);
+			memcpy(tmp_data, _data + _offset1, _size1);
+			_mod->startChannel(_id | 0x000, tmp_data, _size1, BASE_FREQUENCY / _freq1, vol, 0, _size1, -127);
+			break;
+		default:
+			_mod->setChannelVol(_id | 0x000, vol);
+			break;
+		}
+
+		switch (_beepcount & 0x7) {
+		case 0:
+			_mod->stopChannel(_id | 0x100);
+			break;
+		case 1:
+			tmp_data = (char *)malloc(_size2);
+			memcpy(tmp_data, _data + _offset2, _size2);
+			_mod->startChannel(_id | 0x100, tmp_data, _size2, BASE_FREQUENCY / _freq2, vol, 0, _size2, 127);
+			break;
+		default:
+			_mod->setChannelVol(_id | 0x100, vol);
+			break;
+		}
+
+		if (_loopnum == 0) {
+			_vol += 0x80;
+			if (_vol == 0x4000) {
+				_vol = 0x3F00;
+				_loopnum = 1;
+			}
+		} else if (_loopnum == 1) {
+			_vol -= 0x20;
+			if (_vol == 0x2000)
+				_loopnum = 2;
+		}
+		return true;
+	}
+private:
+	const uint16 _offset1;
+	const uint16 _size1;
+	const uint16 _offset2;
+	const uint16 _size2;
+	const uint16 _freq1;
+	const uint16 _freq2;
+
+	uint16 _loopnum;
+	uint16 _vol;
+	uint16 _beepcount;
+};
+
+// plays a stereo siren, sweeping up and down quickly several times before sweeping up slowly, stopping, and then going silent
+// probably used for some sort of alarm sound
+class V2A_Sound_Special_Zak32 : public V2A_Sound_Base<2> {
+public:
+	V2A_Sound_Special_Zak32(uint16 offset1, uint16 offset2, uint16 size1, uint16 size2) :
+		_offset1(offset1), _offset2(offset2), _size1(size1), _size2(size2) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		_data = (char *)malloc(READ_LE_UINT16(data));
+		memcpy(_data, data, READ_LE_UINT16(data));
+
+		_loopnum = 1;
+		_freqmod = -4;
+		_freq = 0x00C8;
+
+		char *tmp_data1 = (char *)malloc(_size1);
+		char *tmp_data2 = (char *)malloc(_size1);
+		memcpy(tmp_data1, _data + _offset1, _size1);
+		memcpy(tmp_data2, _data + _offset1, _size1);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size1, BASE_FREQUENCY / _freq, 0x7F, 0, _size1, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size1, BASE_FREQUENCY / (_freq + 3), 0x7F, 0, _size1, 127);
+	}
+	virtual bool update() {
+		assert(_id);
+
+		if (_loopnum < 7) {
+			_mod->setChannelFreq(_id | 0x000, BASE_FREQUENCY / _freq);
+			_mod->setChannelFreq(_id | 0x100, BASE_FREQUENCY / (_freq + 3));
+			_freq += _freqmod;
+			if (_freq <= 0x80)
+				_freqmod = -_freqmod;
+			else if (_freq >= 0xC8) {
+				_freqmod = -_freqmod;
+				_loopnum++;
+				if (_loopnum == 7) {
+					_freq = 0x00C8;
+					_freqmod = 2;
+				}
+			}
+			return true;
+		} else {
+			if (_loopnum == 7) {
+				_mod->stopChannel(_id | 0x000);
+				_mod->stopChannel(_id | 0x100);
+
+				char *tmp_data1 = (char *)malloc(_size2);
+				char *tmp_data2 = (char *)malloc(_size2);
+				memcpy(tmp_data1, _data + _offset2, _size2);
+				memcpy(tmp_data2, _data + _offset2, _size2);
+				_mod->startChannel(_id | 0x000, tmp_data1, _size2, BASE_FREQUENCY / (_freq), 0x7F, 0, _size2, -127);
+				_mod->startChannel(_id | 0x100, tmp_data2, _size2, BASE_FREQUENCY / (_freq + 3), 0x7F, 0, _size2, 127);
+				_loopnum++;
+			} else {
+				_mod->setChannelFreq(_id | 0x000, BASE_FREQUENCY / _freq);
+				_mod->setChannelFreq(_id | 0x100, BASE_FREQUENCY / (_freq + 3));
+			}
+			_freq -= _freqmod;
+			if (_freq > 0)
+				return true;
+			else
+				return false;
+		}
+	}
+private:
+	const uint16 _offset1;
+	const uint16 _offset2;
+	const uint16 _size1;
+	const uint16 _size2;
+
+	uint16 _loopnum;
+	int16 _freqmod;
+	uint16 _freq;
+};
+
+// plays a looped waveform, increasing frequency and reducing volume once the frequency reaches a certain point
+// probably used for some sort of vehicle sound
+class V2A_Sound_Special_Zak52 : public V2A_Sound_Base<1> {
+public:
+	V2A_Sound_Special_Zak52(uint16 offset, uint16 size) :
+		_offset(offset), _size(size) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		_data = (char *)malloc(READ_LE_UINT16(data));
+		memcpy(_data, data, READ_LE_UINT16(data));
+
+		_curfreq = 0x0312;
+
+		char *tmp_data = (char *)malloc(_size);
+		memcpy(tmp_data, _data + _offset, _size);
+		_mod->startChannel(_id | 0x000, tmp_data, _size, BASE_FREQUENCY / _curfreq, 0xFF, 0, _size, -127);
+	}
+	virtual bool update() {
+		assert(_id);
+		int vol = (_curfreq - 0xC8) >> 3;
+		if (vol > 0x3F)
+			vol = 0x3F;
+		vol = (vol << 2) | (vol >> 4);
+		_mod->setChannelFreq(_id | 0x000, BASE_FREQUENCY / _curfreq);
+		_mod->setChannelVol(_id | 0x000, vol);
+		_curfreq--;
+		if (_curfreq >= 0x107)
+			return true;
+		else
+			return false;
+	}
+private:
+	const uint16 _offset;
+	const uint16 _size;
+
+	uint16 _curfreq;
+};
+
+// plays a looped waveform, sweeping the frequency up while modulating it (alternating which channel updates) and fading volume out
+// dunno what it's for
+class V2A_Sound_Special_Zak61 : public V2A_Sound_Base<2> {
+public:
+	V2A_Sound_Special_Zak61(uint16 offset, uint16 size) :
+		_offset(offset), _size(size) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		_data = (char *)malloc(READ_LE_UINT16(data));
+		memcpy(_data, data, READ_LE_UINT16(data));
+
+		_loop = 1;
+		_curfreq = 0x01F4;
+
+		char *tmp_data = (char *)malloc(_size);
+		memcpy(tmp_data, _data + _offset, _size);
+		_mod->startChannel(_id | 0x000, tmp_data, _size, BASE_FREQUENCY / _curfreq, 0x7F, 0, _size, -127);
+		// start 2nd channel silent
+		_mod->startChannel(_id | 0x100, tmp_data, _size, BASE_FREQUENCY / _curfreq, 0, 0, _size, 127);
+	}
+	virtual bool update() {
+		assert(_id);
+		int freq = (_loop << 4) + _curfreq;
+		int vol = freq - 0x76;
+		if (vol > 0x3F)
+			vol = 0x3F;
+		vol = (vol << 1) | (vol >> 5);
+		switch (_loop) {
+		case 0:
+			_mod->setChannelFreq(_id | 0x000, BASE_FREQUENCY / freq);
+			_mod->setChannelVol(_id | 0x000, vol);
+			break;
+		case 1:
+			_mod->setChannelFreq(_id | 0x100, BASE_FREQUENCY / freq);
+			_mod->setChannelVol(_id | 0x100, vol);
+			break;
+		}
+		_loop = (_loop + 1) & 3;
+		if (!_loop) {
+			_curfreq -= 4;
+			if (_curfreq <= 0x80)
+				return false;
+		}
+		return true;
+	}
+private:
+	const uint16 _offset;
+	const uint16 _size;
+
+	uint16 _loop;
+	uint16 _curfreq;
+};
+
+// just like Zak61, but sweeps frequency in the other direction
+// dunno what it's for
+class V2A_Sound_Special_Zak62 : public V2A_Sound_Base<2> {
+public:
+	V2A_Sound_Special_Zak62(uint16 offset, uint16 size) :
+		_offset(offset), _size(size) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		_data = (char *)malloc(READ_LE_UINT16(data));
+		memcpy(_data, data, READ_LE_UINT16(data));
+
+		_loop = 1;
+		_curfreq = 0x0080;
+
+		char *tmp_data = (char *)malloc(_size);
+		memcpy(tmp_data, _data + _offset, _size);
+		_mod->startChannel(_id | 0x000, tmp_data, _size, BASE_FREQUENCY / _curfreq, 0x7F, 0, _size, -127);
+		// start 2nd channel silent
+		_mod->startChannel(_id | 0x100, tmp_data, _size, BASE_FREQUENCY / _curfreq, 0, 0, _size, 127);
+	}
+	virtual bool update() {
+		assert(_id);
+		int freq = (_loop << 4) + _curfreq;
+		int vol = 0x0200 - freq;
+		if (vol > 0x3F)
+			vol = 0x3F;
+		vol = (vol << 1) | (vol >> 5);
+		switch (_loop) {
+		case 0:
+			_mod->setChannelFreq(_id | 0x000, BASE_FREQUENCY / freq);
+			_mod->setChannelVol(_id | 0x000, vol);
+			break;
+		case 1:
+			_mod->setChannelFreq(_id | 0x100, BASE_FREQUENCY / freq);
+			_mod->setChannelVol(_id | 0x100, vol);
+			break;
+		}
+		_loop = (_loop + 1) & 3;
+		if (!_loop) {
+			_curfreq += 4;
+			if (_curfreq >= 0x01F4)
+				return false;
+		}
+		return true;
+	}
+private:
+	const uint16 _offset;
+	const uint16 _size;
+
+	uint16 _loop;
+	uint16 _curfreq;
+};
+
+// plays a series of double-looped sounds at varying frequencies and delays, very specialized 
+// sounds like some sort of creature growl/scream
+class V2A_Sound_Special_Zak82 : public V2A_Sound_Base<4> {
+public:
+	V2A_Sound_Special_Zak82(uint16 offset, uint16 size) :
+		_offset(offset), _size(size) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		_data = (char *)malloc(READ_LE_UINT16(data));
+		memcpy(_data, data, READ_LE_UINT16(data));
+
+		// Wait values were to insure playing an integral number of loops on each sample
+		// and have been adjusted to reflect the actual duration spent playing
+		_loop = 0;
+		_playctr = 240;
+		_wait1 = 76; // was 39, extended to loop twice
+		_wait2 = 10000;
+		_wait3 = 10000;
+		_wait4 = 10000;
+
+		int size = 2000;
+		int offset = _offset;
+		assert(offset + size < _offset + _size);
+		char *tmp_data = (char *)malloc(size);
+		memcpy(tmp_data, _data + offset, size);
+		_mod->startChannel(_id | 0x000, tmp_data, size, BASE_FREQUENCY / 0x0479, 0xFF, 0, size);
+	}
+	virtual bool update() {
+		assert(_id);
+		char *tmp_data1, *tmp_data2;
+		int size, offset = _offset;
+
+		if (!--_wait1) {
+			_wait1 = 10000;
+			_mod->stopChannel(_id | 0x000);
+		} else if (!--_wait2) {
+			_wait2 = 10000;
+			_mod->stopChannel(_id | 0x000);
+		} else if (!--_wait3) {
+			_wait3 = 10000;
+			_mod->stopChannel(_id | 0x200);
+		} else if (!--_wait4) {
+			_wait4 = 10000;
+			_mod->stopChannel(_id | 0x100);
+			_mod->stopChannel(_id | 0x300);
+		}
+		if (--_playctr)
+			return true;
+
+		switch (++_loop) {
+		case 1:
+			size = 6300;
+			offset += 0x07D0;
+			assert(offset + size <_offset +  _size);
+			tmp_data1 = (char *)malloc(size);
+			memcpy(tmp_data1, _data + offset, size);
+			_mod->startChannel(_id | 0x000, tmp_data1, size, BASE_FREQUENCY / 0x0479, 0x7F, 0, size, -127);
+			_wait2 = 241; // was 120, extended to loop twice
+			_playctr = 10;
+			break;
+		case 2:
+			size = 6292;
+			offset += 0x206C;
+			assert(offset + size < _offset + _size);
+			tmp_data1 = (char *)malloc(size);
+			memcpy(tmp_data1, _data + offset, size);
+			_mod->startChannel(_id | 0x200, tmp_data1, size, BASE_FREQUENCY / 0x0384, 0x7F, 0, size, 127);
+			_wait3 = 189; // was 94, extended to loop twice
+			_playctr = 20;
+			break;
+		case 3:
+			size = 6300;
+			offset += 0x07D0;
+			assert(offset + size < _offset + _size);
+			tmp_data1 = (char *)malloc(size);
+			tmp_data2 = (char *)malloc(size);
+			memcpy(tmp_data1, _data + offset, size);
+			memcpy(tmp_data2, _data + offset, size);
+			_mod->startChannel(_id | 0x100, tmp_data1, size, BASE_FREQUENCY / 0x01E0, 0x7F, 0, size, 127);
+			_mod->startChannel(_id | 0x300, tmp_data2, size, BASE_FREQUENCY / 0x01E0, 0x7F, 0, size, -127);
+			_wait4 = 101; // was 50, extended to loop twice
+			_playctr = 120;
+			break;
+		default:
+			return false;
+		}
+		return true;
+	}
+private:
+	const uint16 _offset;
+	const uint16 _size;
+
+	uint16 _loop;
+	uint16 _playctr;
+	uint16 _wait1;
+	uint16 _wait2;
+	uint16 _wait3;
+	uint16 _wait4;
+};
+
+// plays a "ding" (volume 0-max-0) followed by a sound sample, a pause, then loops again
+// dunno what this is for
+class V2A_Sound_Special_Zak86 : public V2A_Sound_Base<1> {
+public:
+	V2A_Sound_Special_Zak86(uint16 offset, uint16 size) :
+		_offset(offset), _size(size) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		_data = (char *)malloc(READ_LE_UINT16(data));
+		memcpy(_data, data, READ_LE_UINT16(data));
+
+		_mode = 0;
+		_vol = 0;
+		_volmod = 16;
+
+		int size = 32;
+		int offset = _offset + 0x2B8E;
+		assert(offset + size < _offset + _size);
+		char *tmp_data = (char *)malloc(size);
+		memcpy(tmp_data, _data + offset, size);
+		_mod->startChannel(_id | 0x000, tmp_data, size, BASE_FREQUENCY / 0x0096, 0, 0, size, 0);
+	}
+	virtual bool update() {
+		assert(_id);
+		int size, offset;
+		char *tmp_data;
+
+		switch (_mode) {
+		case 0:
+			_mod->setChannelVol(_id | 0x000, (_vol << 2) | (_vol >> 4));
+			if (_vol + _volmod > 0) {
+				_vol += _volmod;
+				if (_vol > 0x3F) {
+					_vol = 0x3F;
+					_volmod = -4;
+				}
+				return true;
+			}
+			_mod->stopChannel(_id | 0x000);
+			_mode = 1;
+			
+			size = 0x2B8E;
+			offset = _offset;
+			assert(offset + size < _offset + _size);
+			tmp_data = (char *)malloc(size);
+			memcpy(tmp_data, _data + offset, size);
+			_mod->startChannel(_id | 0x000, tmp_data, size, BASE_FREQUENCY / 0x0152, 0x3F);
+			_volmod = 100;
+			break;
+		case 1:
+			if (!--_volmod) {
+				size = 32;
+				offset = _offset + 0x2B8E;
+				assert(offset + size < _offset + _size);
+				tmp_data = (char *)malloc(size);
+				memcpy(tmp_data, _data + offset, size);
+				_mod->startChannel(_id | 0x000, tmp_data, size, BASE_FREQUENCY / 0x0096, 0, 0, size, 0);
+				_mode = 0;
+				_vol = 0;
+				_volmod = 16;
+			}
+			break;
+		}
+		return true;
+	}
+private:
+	const uint16 _offset;
+	const uint16 _size;
+
+	uint16 _mode;
+	uint16 _vol;
+	int16 _volmod;
+};
+
+// modulates volume on 4 samples, frequency on only 2 of them
+// some sort of droning machine, perhaps?
+class V2A_Sound_Special_Zak98 : public V2A_Sound_Base<4> {
+public:
+	V2A_Sound_Special_Zak98(uint16 offset, uint16 size) :
+		_offset(offset), _size(size) { }
+	virtual void start(Player_MOD *mod, int id, const byte *data) {
+		_mod = mod;
+		_id = id;
+		_data = (char *)malloc(READ_LE_UINT16(data));
+		memcpy(_data, data, READ_LE_UINT16(data));
+
+		_freq[0] = 0x1E0;
+		_freq[1] = 0x3E8;
+		_freq[2] = 0x200;
+		_freq[3] = 0x408;
+		_vol[0] = 0x3F;
+		_vol[1] = 0x3F;
+		_vol[2] = 0x3F;
+		_vol[3] = 0x3F;
+		_freqmod = 4;
+		_volmod[0] = -2;
+		_volmod[1] = -1;
+
+		char *tmp_data1 = (char *)malloc(_size);
+		char *tmp_data2 = (char *)malloc(_size);
+		char *tmp_data3 = (char *)malloc(_size);
+		char *tmp_data4 = (char *)malloc(_size);
+		memcpy(tmp_data1, _data + _offset, _size);
+		memcpy(tmp_data2, _data + _offset, _size);
+		memcpy(tmp_data3, _data + _offset, _size);
+		memcpy(tmp_data4, _data + _offset, _size);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq[0], _vol[0], 0, _size, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq[1], _vol[1], 0, _size, 127);
+		_mod->startChannel(_id | 0x200, tmp_data3, _size, BASE_FREQUENCY / _freq[2], _vol[2], 0, _size, 127);
+		_mod->startChannel(_id | 0x300, tmp_data4, _size, BASE_FREQUENCY / _freq[3], _vol[3], 0, _size, -127);
+	}
+	virtual bool update() {
+		assert(_id);
+		const uint16 _minvol[2] = {0x2E,0x32};
+		int i;
+                for (i = 0; i < 4; i++) {
+			_mod->setChannelFreq(_id | (i << 8), BASE_FREQUENCY / _freq[i]);
+			_mod->setChannelVol(_id | (i << 8), _vol[i]);
+		}
+		for (i = 0; i < 2; i++) {
+			_vol[i] += _volmod[i];
+			if (_vol[i] > 0x3F) {
+				_vol[i] = 0x3F;
+				_volmod[i] = -_volmod[i];
+			} else if (_vol[i] < _minvol[i]) {
+				_vol[i] = _minvol[i];
+				_volmod[i] = -_volmod[i];
+			}
+			_vol[i+2] = _vol[i];
+		}
+		_freq[0] += _freqmod;
+		if (_freq[0] > 0x2BC) {
+			_freq[0] = 0x2BC;
+			_freqmod = -_freqmod;
+		} else if (_freq[0] < 0x1E0) {
+			_freq[0] = 0x1E0;
+			_freqmod = -_freqmod;
+		}
+		_freq[2] = _freq[0] + 0x20;
+		return true;
+	}
+private:
+	const uint16 _offset;
+	const uint16 _size;
+
+	uint16 _freq[4];
+	uint16 _vol[4];
+	int16 _freqmod;
+	int16 _volmod[2];
+};
+
+#define CRCToSound(CRC, SOUND) \
+	if (crc == CRC) \
 		return new SOUND
 
 static V2A_Sound *findSound (unsigned long crc) {
@@ -1210,18 +1758,18 @@ static V2A_Sound *findSound (unsigned long crc) {
 	CRCToSound(0x62D5B11F, V2A_Sound_Single(0x00AE,0x165C,0x01CB,0x3F));	// Maniac 27
 	CRCToSound(0x3AB22CB5, V2A_Sound_Single(0x00AE,0x294E,0x012A,0x3F));	// Maniac 62
 	CRCToSound(0x2D70BBE9, V2A_Sound_SingleLoopedPitchbend(0x00B4,0x1702,0x03E8,0x0190,0x3F,5));	// Maniac 64
-	CRCToSound(0xFA4C1B1C, V2A_Sound_Special_ManiacNuclear(0x00B2,0x1702,0x0190,0x3F));	// Maniac 69
+	CRCToSound(0xFA4C1B1C, V2A_Sound_Special_Maniac69(0x00B2,0x1702,0x0190,0x3F));	// Maniac 69
 	CRCToSound(0x19D50D67, V2A_Sound_Special_ManiacDing(0x00B6,0x0020,0x00C8,16,2));	// Maniac 14
 	CRCToSound(0x3E6FBE15, V2A_Sound_Special_ManiacTentacle(0x00B2,0x0010,0x007C,0x016D,1));	// Maniac 25
 	CRCToSound(0x5305753C, V2A_Sound_Special_ManiacTentacle(0x00B2,0x0010,0x007C,0x016D,7));	// Maniac 36
-	CRCToSound(0x28895106, V2A_Sound_Special_ManiacElectric(0x00C0,0x00FE,0x00E9,0x0111,4,0x0A));	// Maniac 59
+	CRCToSound(0x28895106, V2A_Sound_Special_Maniac59(0x00C0,0x00FE,0x00E9,0x0111,4,0x0A));	// Maniac 59
 	CRCToSound(0xB641ACF6, V2A_Sound_Special_Maniac61(0x00C8,0x0100,0x00C8,0x01C2));	// Maniac 61
 	CRCToSound(0xE1A91583, V2A_Sound_Special_ManiacPhone(0x00D0,0x0040,0x007C,0x3F,0x007B,0x3F,0x3C,5,6));	// Maniac 23
 	CRCToSound(0x64816ED5, V2A_Sound_Special_ManiacPhone(0x00D0,0x0040,0x00BE,0x37,0x00BD,0x37,0x3C,5,6));	// Maniac 24
-	CRCToSound(0x639D72C2, V2A_Sound_Special_ManiacWrench(0x00D0,0x10A4,0x0080,0x3F,0x28,3));	// Maniac 46
+	CRCToSound(0x639D72C2, V2A_Sound_Special_Maniac46(0x00D0,0x10A4,0x0080,0x3F,0x28,3));	// Maniac 46
 	CRCToSound(0xE8826D92, V2A_Sound_Special_ManiacTypewriter(0x00EC,0x025A,0x023C,0x3F,8,(const uint8 *)"\x20\x41\x04\x21\x08\x10\x13\x07", true));	// Maniac 45
 	CRCToSound(0xEDFF3D41, V2A_Sound_Single(0x00F8,0x2ADE,0x01F8,0x3F));	// Maniac 42 (this should echo, but it's barely noticeable and I don't feel like doing it)
-	CRCToSound(0x15606D06, V2A_Sound_Special_ManiacSiren(0x0148,0x0020,0x0168,0x0020,0x3F));	// Maniac 32
+	CRCToSound(0x15606D06, V2A_Sound_Special_Maniac32(0x0148,0x0020,0x0168,0x0020,0x3F));	// Maniac 32
 	CRCToSound(0x753EAFE3, V2A_Sound_Special_Maniac44(0x017C,0x0010,0x018C,0x0020,0x00C8,0x0080,0x3F));	// Maniac 44
 	CRCToSound(0xB1AB065C, V2A_Sound_Music(0x0032,0x00B2,0x08B2,0x1222,0x1A52,0x23C2,0x3074,false));	// Maniac 50
 	CRCToSound(0x091F5D9C, V2A_Sound_Music(0x0032,0x0132,0x0932,0x1802,0x23D2,0x3EA2,0x4F04,false));	// Maniac 58
@@ -1267,21 +1815,21 @@ static V2A_Sound *findSound (unsigned long crc) {
 	CRCToSound(0xC0DD2089, V2A_Sound_Special_ZakStereoDing(0x00BE,0x0020,0x009C,0x009B,8,1));	// Zak 75
 	CRCToSound(0x627DFD92, V2A_Sound_Special_ZakStereoDing(0x00BE,0x0020,0x008B,0x008A,8,1));	// Zak 76
 	CRCToSound(0x703E05C1, V2A_Sound_Special_ZakStereoDing(0x00BE,0x0020,0x007C,0x007B,8,1));	// Zak 77
-	CRCToSound(0xB0F77006, V2A_Sound_Unsupported());	// Zak 52
+	CRCToSound(0xB0F77006, V2A_Sound_Special_Zak52(0x00B0,0x01BC));	// Zak 52
 	CRCToSound(0x5AE9D6A7, V2A_Sound_Special_ZakAirplane(0x00CA,0x22A4,0x0113,0x0227));	// Zak 109
 	CRCToSound(0xABE0D3B0, V2A_Sound_Special_ZakAirplane(0x00CE,0x22A4,0x0227,0x0113));	// Zak 105
 	CRCToSound(0x788CC749, V2A_Sound_Special_Zak71(0x00C8,0x0B37));	// Zak 71
-	CRCToSound(0x2E2AB1FA, V2A_Sound_Special_ZakTram(0x00D4,0x04F0,0x0FE3,0x0080,0x3F));	// Zak 99
+	CRCToSound(0x2E2AB1FA, V2A_Sound_Special_Zak99(0x00D4,0x04F0,0x0FE3,0x0080,0x3F));	// Zak 99
 	CRCToSound(0x1304CF20, V2A_Sound_Special_ManiacTypewriter(0x00DC,0x0624,0x023C,0x3C,2,(const uint8 *)"\x14\x11",false));	// Zak 79
 	CRCToSound(0xAE68ED91, V2A_Sound_Special_Zak54(0x00D4,0x1A25,0x1E1E,0x0B80,0x01F4));	// Zak 54
-	CRCToSound(0xA4F40F97, V2A_Sound_Unsupported());	// Zak 61
-	CRCToSound(0x348F85CE, V2A_Sound_Unsupported());	// Zak 62
+	CRCToSound(0xA4F40F97, V2A_Sound_Special_Zak61(0x00E4,0x0020));	// Zak 61
+	CRCToSound(0x348F85CE, V2A_Sound_Special_Zak62(0x00E4,0x0020));	// Zak 62
 	CRCToSound(0xD473AB86, V2A_Sound_Special_ManiacTypewriter(0x0122,0x03E8,0x00BE,0x3F,7,(const uint8 *)"\x0F\x0B\x04\x0F\x1E\x0F\x66",false));	// Zak 46
-	CRCToSound(0x84A0BA90, V2A_Sound_Unsupported());	// Zak 110
-	CRCToSound(0x92680D9F, V2A_Sound_Unsupported());	// Zak 32
-	CRCToSound(0xABFFDB02, V2A_Sound_Unsupported());	// Zak 86
-	CRCToSound(0x41045447, V2A_Sound_Unsupported());	// Zak 98
-	CRCToSound(0xC8EEBD34, V2A_Sound_Unsupported());	// Zak 82
+	CRCToSound(0x84A0BA90, V2A_Sound_Special_Zak110(0x0126,0x0040,0x0136,0x0080,0x007C,0x0087));	// Zak 110
+	CRCToSound(0x92680D9F, V2A_Sound_Special_Zak32(0x0140,0x0150,0x0010,0x0010));	// Zak 32
+	CRCToSound(0xABFFDB02, V2A_Sound_Special_Zak86(0x01A2,0x2BAE));	// Zak 86
+	CRCToSound(0x41045447, V2A_Sound_Special_Zak98(0x017A,0x0020));	// Zak 98
+	CRCToSound(0xC8EEBD34, V2A_Sound_Special_Zak82(0x01A6,0x3900));	// Zak 82
 	CRCToSound(0x42F9469F, V2A_Sound_Music(0x05F6,0x0636,0x0456,0x0516,0x05D6,0x05E6,0x0A36,true));	// Zak 96
 	CRCToSound(0x038BBD78, V2A_Sound_Music(0x054E,0x05CE,0x044E,0x04BE,0x052E,0x053E,0x0BCE,true));	// Zak 85
 	CRCToSound(0x06FFADC5, V2A_Sound_Music(0x0626,0x0686,0x0446,0x04F6,0x0606,0x0616,0x0C86,true));	// Zak 87
