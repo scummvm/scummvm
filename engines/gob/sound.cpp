@@ -333,7 +333,7 @@ int Snd::readBuffer(int16 *buffer, const int numSamples) {
 
 		// Linear interpolation. See sound/rate.cpp
 
-		int32 val = (_last + (((_cur - _last) * _offsetFrac +
+		int16 val = (_last + (((_cur - _last) * _offsetFrac +
 					FRAC_HALF) >> FRAC_BITS)) << 8;
 		*buffer++ = (val * _fadeVol) >> 16;
 
