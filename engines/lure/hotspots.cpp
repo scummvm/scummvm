@@ -2272,7 +2272,12 @@ void Hotspot::startTalk(HotspotData *charHotspot, uint16 id) {
 }
 
 void Hotspot::saveToStream(Common::WriteStream *stream) {
-	currentActions().saveToStream(stream);
+	if (_data)
+		_data->npcSchedule.saveToStream(stream);
+	else 
+		// Hotspot doesn't have an underlying data object, so write out an empty actions list
+		stream->writeByte(0xff);
+
 	_pathFinder.saveToStream(stream);
 
 	stream->writeUint16LE(_roomNumber);
@@ -2312,7 +2317,12 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 }
 
 void Hotspot::loadFromStream(Common::ReadStream *stream) {
-	currentActions().loadFromStream(stream);
+	if (_data)
+		_data->npcSchedule.loadFromStream(stream);
+	else 
+		// Dummy read of terminator for empty actions list
+		assert(stream->readByte() == 0xff);
+
 	_pathFinder.loadFromStream(stream);
 
 	_roomNumber = stream->readUint16LE();
