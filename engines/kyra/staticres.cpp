@@ -945,9 +945,6 @@ void KyraEngine_v2::initStaticResource() {
 		if (_flags.platform == Common::kPlatformPC)
 			len -= 4;
 
-		tmpSndLst[i] = new char[len + 1];
-		tmpSndLst[i][0] = 0;
-
 		if (tlkfiles) {
 			for (int ii = 0; ii < tmpSize; ii++) {
 				if (!scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
