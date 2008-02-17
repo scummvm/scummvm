@@ -64,10 +64,10 @@ $(EXECUTABLE): $(OBJS)
 	$(CXX) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 distclean: clean
-	$(RM_REC) $(DEPDIRS)
 	$(RM) config.h config.mk config.log
 
 clean:
+	$(RM_REC) $(DEPDIRS)
 	$(RM) $(OBJS) $(EXECUTABLE)
 
 # Old (dumb) compile & dependcy rules
