@@ -914,12 +914,11 @@ void KyraEngine_v1::loadMainScreen(int page) {
 }
 
 void KyraEngine_v2::initStaticResource() {
-	int tmp = 0;
+	int tmpSize = 0;
 
 	_sequencePakList = _staticres->loadStrings(k2SeqplayPakFiles, _sequencePakListSize);
 	_ingamePakList = _staticres->loadStrings(k2IngamePakFiles, _ingamePakListSize);
-	_sequenceStrings = _staticres->loadStrings(k2SeqplayStrings, _sequenceStringsSize);
-	_sequenceSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
+	_sequenceStrings = _staticres->loadStrings(k2SeqplayStrings, _sequenceStringsSize);	
 	_ingameSoundList = _staticres->loadStrings(k2IngameSfxFiles, _ingameSoundListSize);
 	_ingameSoundIndex = (const uint16*) _staticres->loadRawData(k2IngameSfxIndex, _ingameSoundIndexSize);
 	_musicFileListIntro = _staticres->loadStrings(k2SeqplayIntroTracks, _musicFileListIntroSize);
@@ -933,26 +932,39 @@ void KyraEngine_v2::initStaticResource() {
 
 	// replace sequence talkie files with localized versions and cut off .voc
 	// suffix from voc files so as to allow compression specific file extensions
-	//
-	// FIXME/HACK: this alltogether looks like quite a hack, we should think of making a copy
-	// of _sequenceSoundList instead of casting away const.
-	const char* const* tlkfiles = _staticres->loadStrings(k2SeqplayTlkFiles, tmp);
+	const char* const* seqSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
+	const char* const* tlkfiles = _staticres->loadStrings(k2SeqplayTlkFiles, tmpSize);
+	char ** tmpSndLst = new char*[_sequenceSoundListSize];
+
 	for (int i = 0; i < _sequenceSoundListSize; i++) {
-		int len = strlen(_sequenceSoundList[i]);
+		int len = strlen(seqSoundList[i]);
+
+		tmpSndLst[i] = new char[len + 1];
+		tmpSndLst[i][0] = 0;
+
 		if (_flags.platform == Common::kPlatformPC)
 			len -= 4;
 
+		tmpSndLst[i] = new char[len + 1];
+		tmpSndLst[i][0] = 0;
+
 		if (tlkfiles) {
-			for (int ii = 0; ii < tmp; ii++) {
-				if (!scumm_stricmp(&_sequenceSoundList[i][1], &tlkfiles[ii][1]))
-					strcpy(const_cast<char*>(_sequenceSoundList[i]), tlkfiles[ii]);
+			for (int ii = 0; ii < tmpSize; ii++) {
+				if (!scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
+					strcpy(tmpSndLst[i], tlkfiles[ii]);
 			}
 		}
 
-		const_cast<char*>(_sequenceSoundList[i])[len] = 0;
+		if (tmpSndLst[i][0] == 0)
+			strcpy(tmpSndLst[i], seqSoundList[i]);
+
+		tmpSndLst[i][len] = 0;
 	}
-	tlkfiles = 0;
+
+	tlkfiles = seqSoundList = 0;
 	_staticres->unloadId(k2SeqplayTlkFiles);
+	_staticres->unloadId(k2SeqplaySfxFiles);
+	_sequenceSoundList = tmpSndLst;
 
 	// assign music data
 	static const char *fmtMusicFileListIntro[] = { "intro" };
@@ -973,7 +985,7 @@ void KyraEngine_v2::initStaticResource() {
 	_soundData = (_flags.platform == Common::kPlatformPC) ? soundData_PC : soundData_TOWNS;
 
 	// setup sequence data
-	const uint8 *seqData = _staticres->loadRawData(k2SeqplaySeqData, tmp);
+	const uint8 *seqData = _staticres->loadRawData(k2SeqplaySeqData, tmpSize);
 
 	static const Seqproc hofSequenceCallbacks[] = { 0,
 		&KyraEngine_v2::seq_introWestwood,

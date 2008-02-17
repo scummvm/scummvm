@@ -53,6 +53,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_sequences = 0;
 	_nSequences = 0;
 	_demoShapeDefs = 0;
+	_sequenceSoundList = 0;
 
 	_gamePlayBuffer = 0;
 	_cCodeBuffer = _optionsBuffer = _chapterBuffer = 0;

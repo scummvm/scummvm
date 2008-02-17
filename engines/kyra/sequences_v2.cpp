@@ -2625,6 +2625,9 @@ void KyraEngine_v2::seq_uninit() {
 	delete [] _seqProcessedString;
 	_seqProcessedString = NULL;
 
+	delete [] _sequenceSoundList;
+	_sequenceSoundList = NULL;
+
 	delete [] _activeWSA;
 	_activeWSA = NULL;
 
