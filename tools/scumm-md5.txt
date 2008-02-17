@@ -695,7 +695,7 @@ puttzoo	Putt-Putt Saves the Zoo
 
 	3486ede0f904789267d4bcc5537a46d4	-1	en	Mac	-	Demo	-	khalek
 	d220d154aafbfa12bd6f3ab1b2dae420	-1	de	Mac	-	Demo	-	Joachim Eberhard
-	de4efb910210736813c9a1185384bace	-1	en	Windows	-	Demo	-	khalek
+	de4efb910210736813c9a1185384bace	-1	en	Windows	HE 72	Demo	-	khalek
 	f3d55aea441e260e9e9c7d2a187097e0	14337	en	Windows	-	Demo	-	khalek
 	65fa23d6884e8ca23d5d2406d70de7e8	-1	fr	Windows	-	Demo	-	gist974
 	2a446817ffcabfef8716e0c456ecaf81	-1	de	Windows	-	Demo	-	Joachim Eberhard

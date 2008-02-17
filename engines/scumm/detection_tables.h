@@ -270,11 +270,11 @@ static const GameSettings gameVariantsTable[] = {
 
 	// Humongous Entertainment Scumm Version 7.2
 	{"airport", "", 0, GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY, UNK},
-	{"puttzoo", "", 0, GID_HEGAME, 6, 72, MDT_NONE, GF_USE_KEY, UNK},
 
 	// Changed o_getResourceSize to cover all resource types
 	{"farm", "", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY, UNK},
 	{"jungle", "", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY, UNK},
+	{"puttzoo", "", 0, GID_HEGAME, 6, 73, MDT_NONE, GF_USE_KEY, UNK},
 
 	// Humongous Entertainment Scumm Version 8.0 ?  Scummsrc.80
 	{"freddi2", "", 0, GID_HEGAME, 6, 80, MDT_NONE, GF_USE_KEY, UNK},
