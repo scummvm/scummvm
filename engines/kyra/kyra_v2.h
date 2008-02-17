@@ -666,7 +666,6 @@ protected:
 	int _npcTalkDlgIndex;
 	uint8 _newSceneDlgState[32];
 	int8 **_conversationState;
-	uint8 _npcTalkUNK;
 	uint8 *_dlgBuffer;
 
 	// tim sequence

@@ -642,7 +642,7 @@ void KyraEngine_v2::setNewDlgIndex(int dlgIndex) {
 	memset(_newSceneDlgState, 0, 32);
 	for (int i = 0; i < 19; i++)
 		memset(_conversationState[i], -1, 14);
-	_npcTalkUNK = 0;
+	_unkFlag1 = false;
 	_mainCharacter.dlgIndex = dlgIndex;
 }
 

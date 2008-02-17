@@ -455,9 +455,10 @@ int KyraEngine_v2::o2_enterNewSceneEx(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_enterNewSceneEx(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0),
 		stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 
-	enterNewScene(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	int skipNpcScript = stackPos(3);
+	enterNewScene(stackPos(0), stackPos(1), stackPos(2), skipNpcScript, stackPos(4));
 
-	if (!stackPos(3))
+	if (!skipNpcScript)
 		runSceneScript4(0);
 
 	_unk5 = 1;
