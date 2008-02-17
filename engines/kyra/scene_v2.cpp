@@ -925,3 +925,4 @@ void KyraEngine_v2::fadeScenePal(int srcIndex, int delayTime) {
 }
 
 } // end of namespace Kyra
+
