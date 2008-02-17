@@ -59,6 +59,11 @@ MODULE_OBJS := \
 	vars.o \
 	verbs.o
 
+ifdef USE_ARM_COSTUME_ASM
+MODULE_OBJS += \
+	proc3ARM.o
+endif
+
 ifndef DISABLE_SCUMM_7_8
 MODULE_OBJS += \
 	nut_renderer.o \
