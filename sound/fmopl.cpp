@@ -86,7 +86,8 @@ int EG_AED;
 #define AMS_ENT 512
 #define AMS_SHIFT (32-9)
 
-#define VIB_RATE 256
+#define VIB_RATE_SHIFT 8
+#define VIB_RATE (1<<VIB_RATE_SHIFT)
 
 /* -------------------- local defines , macros --------------------- */
 
@@ -402,7 +403,7 @@ inline void CALC_FCSLOT(OPL_CH *CH, OPL_SLOT *SLOT) {
 
 /* set multi,am,vib,EG-TYP,KSR,mul */
 inline void set_mul(FM_OPL *OPL, int slot, int v) {
-	OPL_CH   *CH   = &OPL->P_CH[slot / 2];
+	OPL_CH   *CH   = &OPL->P_CH[slot>>1];
 	OPL_SLOT *SLOT = &CH->SLOT[slot & 1];
 
 	SLOT->mul    = MUL_TABLE[v & 0x0f];
@@ -415,7 +416,7 @@ inline void set_mul(FM_OPL *OPL, int slot, int v) {
 
 /* set ksl & tl */
 inline void set_ksl_tl(FM_OPL *OPL, int slot, int v) {
-	OPL_CH   *CH   = &OPL->P_CH[slot / 2];
+	OPL_CH   *CH   = &OPL->P_CH[slot>>1];
 	OPL_SLOT *SLOT = &CH->SLOT[slot & 1];
 	int ksl = v >> 6; /* 0 / 1.5 / 3 / 6 db/OCT */
 
@@ -429,7 +430,7 @@ inline void set_ksl_tl(FM_OPL *OPL, int slot, int v) {
 
 /* set attack rate & decay rate  */
 inline void set_ar_dr(FM_OPL *OPL, int slot, int v) {
-	OPL_CH   *CH   = &OPL->P_CH[slot / 2];
+	OPL_CH   *CH   = &OPL->P_CH[slot>>1];
 	OPL_SLOT *SLOT = &CH->SLOT[slot & 1];
 	int ar = v >> 4;
 	int dr = v & 0x0f;
@@ -447,7 +448,7 @@ inline void set_ar_dr(FM_OPL *OPL, int slot, int v) {
 
 /* set sustain level & release rate */
 inline void set_sl_rr(FM_OPL *OPL, int slot, int v) {
-	OPL_CH   *CH   = &OPL->P_CH[slot / 2];
+	OPL_CH   *CH   = &OPL->P_CH[slot>>1];
 	OPL_SLOT *SLOT = &CH->SLOT[slot & 1];
 	int sl = v >> 4;
 	int rr = v & 0x0f;
@@ -476,10 +477,10 @@ inline void OPL_CALC_CH(OPL_CH *CH) {
 	if(env_out < (uint)(EG_ENT - 1)) {
 		/* PG */
 		if(SLOT->vib)
-			SLOT->Cnt += (SLOT->Incr * vib / VIB_RATE);
+			SLOT->Cnt += (SLOT->Incr * vib) >> VIB_RATE_SHIFT;
 		else
 			SLOT->Cnt += SLOT->Incr;
-		/* connectoion */
+		/* connection */
 		if(CH->FB) {
 			int feedback1 = (CH->op1_out[0] + CH->op1_out[1]) >> CH->FB;
 			CH->op1_out[1] = CH->op1_out[0];
@@ -497,10 +498,10 @@ inline void OPL_CALC_CH(OPL_CH *CH) {
 	if(env_out < (uint)(EG_ENT - 1)) {
 		/* PG */
 		if(SLOT->vib)
-			SLOT->Cnt += (SLOT->Incr * vib / VIB_RATE);
+			SLOT->Cnt += (SLOT->Incr * vib) >> VIB_RATE_SHIFT;
 		else
 			SLOT->Cnt += SLOT->Incr;
-		/* connectoion */
+		/* connection */
 		outd[0] += OP_OUT(SLOT, env_out, feedback2);
 	}
 }
@@ -509,7 +510,11 @@ inline void OPL_CALC_CH(OPL_CH *CH) {
 #define WHITE_NOISE_db 6.0
 inline void OPL_CALC_RH(FM_OPL *OPL, OPL_CH *CH) {
 	uint env_tam, env_sd, env_top, env_hh;
-	int whitenoise = int(OPL->rnd.getRandomNumber(1) * (WHITE_NOISE_db / EG_STEP));
+	// This code used to do int(OPL->rnd.getRandomBit() * (WHITE_NOISE_db / EG_STEP)),
+	// but EG_STEP = 96.0/EG_ENT, and WHITE_NOISE_db=6.0. So, that's equivalent to
+	// int(OPL->rnd.getRandomBit() * EG_ENT/16). We know that EG_ENT is 4096, or 1024,
+	// or 128, so we can safely avoid any FP ops.
+	int whitenoise = OPL->rnd.getRandomBit() * (EG_ENT>>4);
 
 	int tone8;
 
@@ -524,10 +529,10 @@ inline void OPL_CALC_RH(FM_OPL *OPL, OPL_CH *CH) {
 	if(env_out < EG_ENT-1) {
 		/* PG */
 		if(SLOT->vib)
-			SLOT->Cnt += (SLOT->Incr * vib / VIB_RATE);
+			SLOT->Cnt += (SLOT->Incr * vib) >> VIB_RATE_SHIFT;
 		else
 			SLOT->Cnt += SLOT->Incr;
-		/* connectoion */
+		/* connection */
 		if(CH[6].FB) {
 			int feedback1 = (CH[6].op1_out[0] + CH[6].op1_out[1]) >> CH[6].FB;
 			CH[6].op1_out[1] = CH[6].op1_out[0];
@@ -547,10 +552,10 @@ inline void OPL_CALC_RH(FM_OPL *OPL, OPL_CH *CH) {
 	if(env_out < EG_ENT-1) {
 		/* PG */
 		if(SLOT->vib)
-			SLOT->Cnt += (SLOT->Incr * vib / VIB_RATE);
+			SLOT->Cnt += (SLOT->Incr * vib) >> VIB_RATE_SHIFT;
 		else
 			SLOT->Cnt += SLOT->Incr;
-		/* connectoion */
+		/* connection */
 		outd[0] += OP_OUT(SLOT, env_out, feedback2) * 2;
 	}
 
@@ -565,19 +570,19 @@ inline void OPL_CALC_RH(FM_OPL *OPL, OPL_CH *CH) {
 
 	/* PG */
 	if(SLOT7_1->vib)
-		SLOT7_1->Cnt += (2 * SLOT7_1->Incr * vib / VIB_RATE);
+		SLOT7_1->Cnt += (SLOT7_1->Incr * vib) >> (VIB_RATE_SHIFT-1);
 	else
 		SLOT7_1->Cnt += 2 * SLOT7_1->Incr;
 	if(SLOT7_2->vib)
-		SLOT7_2->Cnt += ((CH[7].fc * 8) * vib / VIB_RATE);
+		SLOT7_2->Cnt += (CH[7].fc * vib) >> (VIB_RATE_SHIFT-3);
 	else
 		SLOT7_2->Cnt += (CH[7].fc * 8);
 	if(SLOT8_1->vib)
-		SLOT8_1->Cnt += (SLOT8_1->Incr * vib / VIB_RATE);
+		SLOT8_1->Cnt += (SLOT8_1->Incr * vib) >> VIB_RATE_SHIFT;
 	else
 		SLOT8_1->Cnt += SLOT8_1->Incr;
 	if(SLOT8_2->vib)
-		SLOT8_2->Cnt += ((CH[8].fc * 48) * vib / VIB_RATE);
+		SLOT8_2->Cnt += ((CH[8].fc * 3) * vib) >> (VIB_RATE_SHIFT-4);
 	else
 		SLOT8_2->Cnt += (CH[8].fc * 48);
 
@@ -938,7 +943,7 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 		slot = slot_array[r & 0x1f];
 		if(slot == -1)
 			return;
-		CH = &OPL->P_CH[slot / 2];
+		CH = &OPL->P_CH[slot>>1];
 		if(OPL->wavesel) {
 			CH->SLOT[slot&1].wavetable = &SIN_TABLE[(v & 0x03) * SIN_ENT];
 		}

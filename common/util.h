@@ -83,7 +83,7 @@ bool matchString(const char *str, const char *pat);
 class StringTokenizer {
 public:
 	/**
-	 * Creates a StringTokenizer.	 
+	 * Creates a StringTokenizer.
 	 * @param str The string to be tokenized.
 	 * @param delimiters String containing all the delimiter characters (i.e. the characters to be ignored).
 	 * @note Uses space, horizontal tab, carriage return, newline, form feed and vertical tab as delimiters by default.
@@ -131,6 +131,12 @@ public:
 	 * @return	a random number in the interval [0, max].
 	 */
 	uint getRandomNumber(uint max);
+	/**
+	 * Generates a random unsigned integer in the interval [0, 1].
+	 * Identical to getRandomNumber(1), but faster, hopefully.
+	 * @return	a random number in the interval [0, max].
+	 */
+	uint getRandomBit(void);
 	/**
 	 * Generates a random unsigned integer in the interval [min, max].
 	 * @param min	the lower bound
