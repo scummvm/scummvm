@@ -218,6 +218,8 @@ enum kKyraResources {
 	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameCDA,
+	k2IngameTalkObjIndex,
+	k2IngameTimJpStrings,
 
 	kMaxResIDs
 };
@@ -327,4 +329,5 @@ private:
 } // end of namespace Kyra
 
 #endif
+
 

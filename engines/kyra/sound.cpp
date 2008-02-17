@@ -39,7 +39,7 @@
 namespace Kyra {
 
 Sound::Sound(KyraEngine *vm, Audio::Mixer *mixer)
-	: _vm(vm), _mixer(mixer), _currentVocFile(0), _vocHandle(),
+	: _vm(vm), _mixer(mixer), _currentVocFile(0), _vocHandles(),
 	_musicEnabled(1), _sfxEnabled(true), _soundDataList(0) {
 }
 
@@ -51,6 +51,14 @@ void Sound::voicePlay(const char *file) {
 	byte *fileData = 0;
 	bool found = false;
 	char filenamebuffer[25];
+
+	int h = 0;
+	if (_currentVocFile) {
+		while (_mixer->isSoundHandleActive(_vocHandles[h]))
+			h++;
+		if (h >= kNumVocHandles)
+			return;
+	}
 
 	for (int i = 0; _supportedCodes[i].fileext; ++i) {
 		strcpy(filenamebuffer, file);
@@ -76,21 +84,26 @@ void Sound::voicePlay(const char *file) {
 		_currentVocFile = Audio::makeVOCStream(vocStream);
 	}
 
-	if (_currentVocFile) {
-		//_mixer->stopHandle(_vocHandle);
-		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandle, _currentVocFile);
-	}
+	_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandles[h], _currentVocFile);
+
 	delete [] fileData;
 	fileSize = 0;
 }
 
 void Sound::voiceStop() {
-	if (_mixer->isSoundHandleActive(_vocHandle))
-		_mixer->stopHandle(_vocHandle);
+	for (int h = 0; h < kNumVocHandles; h++) {
+		if (_mixer->isSoundHandleActive(_vocHandles[h]))
+			_mixer->stopHandle(_vocHandles[h]);
+	}
 }
 
 bool Sound::voiceIsPlaying() {
-	return _mixer->isSoundHandleActive(_vocHandle);
+	bool res = false;
+	for (int h = 0; h < kNumVocHandles; h++) {
+		if (_mixer->isSoundHandleActive(_vocHandles[h]))
+			res = true;
+	}
+	return res;
 }
 
 #pragma mark -
@@ -521,4 +534,5 @@ const Sound::SpeechCodecs Sound::_supportedCodes[] = {
 };
 
 } // end of namespace Kyra
+
 

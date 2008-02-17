@@ -35,7 +35,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 20
+#define RESFILE_VERSION 21
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -241,10 +241,12 @@ bool StaticResource::init() {
 
 		// Ingame
 		{ k2IngamePakFiles, kStringList, "I_PAKFILES.TXT" },
-		{ k2IngameSfxFiles, kStringList, "I_SFXFILES.TXT" },
-		{ k2IngameSfxIndex, kRawData, "I_SFXINDEX.TRA" },
+		{ k2IngameSfxFiles, kStringList, "I_SFXFILES.TRA" },
+		{ k2IngameSfxIndex, kRawData, "I_SFXINDEX.MAP" },
 		{ k2IngameTracks, kStringList, "I_TRACKS.TRA" },
 		{ k2IngameCDA, kRawData, "I_TRACKS.CDA" },
+		{ k2IngameTalkObjIndex, kRawData, "I_TALKOBJECTS.MAP" },
+		{ k2IngameTimJpStrings, kStringList, "I_TIMJPSTR.TXT" },
 
 		{ 0, 0, 0 }
 	};
@@ -926,6 +928,8 @@ void KyraEngine_v2::initStaticResource() {
 	_cdaTrackTableIntro = _staticres->loadRawData(k2SeqplayIntroCDA, _cdaTrackTableIntroSize);
 	_cdaTrackTableIngame = _staticres->loadRawData(k2IngameCDA, _cdaTrackTableIngameSize);
 	_cdaTrackTableFinale = _staticres->loadRawData(k2SeqplayFinaleCDA, _cdaTrackTableFinaleSize);
+	_ingameTalkObjIndex = (const uint16*) _staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
+	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
 
 	// replace sequence talkie files with localized versions and cut off .voc
 	// suffix from voc files so as to allow compression specific file extensions
@@ -934,7 +938,7 @@ void KyraEngine_v2::initStaticResource() {
 	// of _sequenceSoundList instead of casting away const.
 	const char* const* tlkfiles = _staticres->loadStrings(k2SeqplayTlkFiles, tmp);
 	for (int i = 0; i < _sequenceSoundListSize; i++) {
-		uint32 len = strlen(_sequenceSoundList[i]);
+		int len = strlen(_sequenceSoundList[i]);
 		if (_flags.platform == Common::kPlatformPC)
 			len -= 4;
 
@@ -1492,5 +1496,6 @@ const char *KyraEngine_v3::_languageExtension[] = {
 const int KyraEngine_v3::_languageExtensionSize = ARRAYSIZE(KyraEngine_v3::_languageExtension);
 
 } // End of namespace Kyra
+
 
 

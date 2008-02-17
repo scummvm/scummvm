@@ -86,13 +86,27 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_chatObject = -1;
 	_lastIdleScript = -1;
 
+	_timChatText = 0;
+	_timChatObject = -1;
+
 	_currentTalkSections.STATim = NULL;
 	_currentTalkSections.TLKTim = NULL;
 	_currentTalkSections.ENDTim = NULL;
 
 	_invWsa.wsa = 0;
 
+	_colorCodeFlag1 = 0;
+	_colorCodeFlag2 = -1;
+
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
+
+	_dlgBuffer = 0;
+	_conversationState = new int8*[19];
+	for (int i = 0; i < 19; i++)
+		_conversationState[i] = new int8[14];
+	_npcTalkChpIndex = _npcTalkDlgIndex = -1;
+	_mainCharacter.dlgIndex = 0;
+	setNewDlgIndex(-1);
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
@@ -109,6 +123,12 @@ KyraEngine_v2::~KyraEngine_v2() {
 	_text = 0;
 	delete _debugger;
 	delete _invWsa.wsa;
+
+	if (_dlgBuffer)
+		delete [] _dlgBuffer;
+	for (int i = 0; i < 19; i++)
+		delete [] _conversationState[i];
+	delete [] _conversationState;
 }
 
 Movie *KyraEngine_v2::createWSAMovie() {
@@ -154,6 +174,8 @@ int KyraEngine_v2::init() {
 	// No mouse display in demo
 	if (_flags.isDemo)
 		return 0;
+
+	tim_setupOpcodes();
 
 	_mouseSHPBuf = _res->fileData("PWGMOUSE.SHP", 0);
 	assert(_mouseSHPBuf);
@@ -1877,12 +1899,12 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_updateSceneAnim),
 		OpcodeUnImpl(),
 		// 0x74
+		Opcode(o2_useItemOnMainChar),
+		Opcode(o2_startDialogue),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_setupDialogue),
 		// 0x78
-		OpcodeUnImpl(),
+		Opcode(o2_getDlgIndex),
 		Opcode(o2_defineRoom),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
@@ -1894,18 +1916,18 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x80
 		Opcode(o2_objectChat),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_getColorCodeFlag1),
+		Opcode(o2_setColorCodeFlag1),
 		// 0x84
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_getColorCodeFlag2),
+		Opcode(o2_setColorCodeFlag2),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		// 0x88
 		Opcode(o2_countItemInstances),
 		OpcodeUnImpl(),
 		Opcode(o2_initObject),
-		OpcodeUnImpl(),
+		Opcode(o2_npcChat),
 		// 0x8c
 		Opcode(o2_deinitObject),
 		OpcodeUnImpl(),
@@ -1970,5 +1992,6 @@ void KyraEngine_v2::setupOpcodeTable() {
 }
 
 } // end of namespace Kyra
+
 
 

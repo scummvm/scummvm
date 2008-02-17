@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	script_v2.o \
 	script.o \
 	seqplayer.o \
+	sequences_tim.o \
 	sequences_v1.o \
 	sequences_v2.o \
 	sound_adlib.o \

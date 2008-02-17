@@ -622,6 +622,41 @@ int KyraEngine_v2::o2_updateSceneAnim(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_useItemOnMainChar(ScriptState *script) {
+	ScriptState tmpScript;
+	_scriptInterpreter->initScript(&tmpScript, &_npcScriptData);
+	_scriptInterpreter->startScript(&tmpScript, 0);
+	tmpScript.regs[4] = _itemInHand;
+	tmpScript.regs[0] = _mainCharacter.sceneId;
+
+	int oldVocH = _vocHigh;
+	_vocHigh = 0x5a;
+
+	while(_scriptInterpreter->validScript(&tmpScript))
+		_scriptInterpreter->runScript(&tmpScript);
+
+	_vocHigh = oldVocH;
+
+	return 0;
+}
+
+int KyraEngine_v2::o2_startDialogue(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_startDialogue(%p) (%d)", (const void *)script, stackPos(0));
+	startDialogue(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_setupDialogue(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setupDialogue(%p) (%d)", (const void *)script, stackPos(0));
+	setNewDlgIndex(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_getDlgIndex(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setNewDlgIndex(%p) (%d)", (const void *)script, stackPos(0));
+	return _mainCharacter.dlgIndex;
+}
+
 int KyraEngine_v2::o2_defineRoom(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_defineRoom(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
@@ -650,6 +685,28 @@ int KyraEngine_v2::o2_objectChat(ScriptState *script) {
 		warning("Unexpected call: o2_objectChat(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
 	else
 		objectChat(stackPosString(0), stackPos(1));
+	return 0;
+}
+
+int KyraEngine_v2::o2_getColorCodeFlag1(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getColorCodeFlag1(%p)", (const void *)script);
+	return _colorCodeFlag1;
+}
+
+int KyraEngine_v2::o2_setColorCodeFlag1(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getColorCodeFlag1(%p) (%d)", (const void *)script, stackPos(0));
+	_colorCodeFlag1 = stackPos(0);
+	return 0;
+}
+
+int KyraEngine_v2::o2_getColorCodeFlag2(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getColorCodeFlag2(%p)", (const void *)script);
+	return _colorCodeFlag2;
+}
+
+int KyraEngine_v2::o2_setColorCodeFlag2(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getColorCodeFlag2(%p) (%d)", (const void *)script, stackPos(0));
+	_colorCodeFlag2 = stackPos(0);
 	return 0;
 }
 
@@ -688,6 +745,17 @@ int KyraEngine_v2::o2_countItemInstances(ScriptState *script) {
 int KyraEngine_v2::o2_initObject(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_initObject(%p) (%d)", (const void *)script, stackPos(0));
 	initTalkObject(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_npcChat(ScriptState *script) {
+	if (_flags.isTalkie) {
+		debugC(3, kDebugLevelScriptFuncs, "o2_npcChat(%p) ('%s', %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), _vocHigh, stackPos(2));
+		npcChatSequence(stackPosString(0), stackPos(1), _vocHigh, stackPos(2));
+	} else {
+		debugC(3, kDebugLevelScriptFuncs, "o2_npcChat(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
+		npcChatSequence(stackPosString(0), stackPos(1));
+	}
 	return 0;
 }
 
@@ -838,5 +906,6 @@ int KyraEngine_v2::o2t_setShapeFlag(ScriptState *script) {
 }
 
 } // end of namespace Kyra
+
 
 

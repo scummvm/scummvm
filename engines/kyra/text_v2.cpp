@@ -27,6 +27,8 @@
 #include "kyra/kyra_v2.h"
 #include "kyra/resource.h"
 
+#include "common/endian.h"
+
 namespace Kyra {
 
 TextDisplayer_v2::TextDisplayer_v2(KyraEngine_v2 *vm, Screen_v2 *screen)
@@ -325,7 +327,7 @@ void KyraEngine_v2::objectChatWaitToFinish() {
 			}
 
 			const uint32 curTime = _system->getMillis();
-			if ((textEnabled() && curTime > endTime) || (speechEnabled() && !snd_voiceIsPlaying()) || _skipFlag) {
+			if ((textEnabled() && curTime > endTime) || (speechEnabled() && !textEnabled() && !snd_voiceIsPlaying()) || _skipFlag) {
 				_skipFlag = false;
 				nextFrame = curTime;
 				running = false;
@@ -340,150 +342,308 @@ void KyraEngine_v2::objectChatWaitToFinish() {
 	resetCharacterAnimDim();
 }
 
-void KyraEngine_v2::initTalkObject(int initObject) {
-	TalkObject &object = _talkObjectList[initObject];
+void KyraEngine_v2::startDialogue(int dlgIndex) {
+	updateDlgBuffer();
+	int csEntry, vocH, unused1, unused2;
+	loadDlgHeader(csEntry, vocH, unused1, unused2);
+	int s = _conversationState[dlgIndex][csEntry];
+	uint8 bufferIndex = 8;
+
+	if (s == -1) {
+		bufferIndex += (dlgIndex * 6);
+		_conversationState[dlgIndex][csEntry] = 0;
+	} else if (!s || s == 2) {
+		bufferIndex += (dlgIndex * 6 + 2);
+		_conversationState[dlgIndex][csEntry] = 1;
+	} else {
+		bufferIndex += (dlgIndex * 6 + 4);
+		_conversationState[dlgIndex][csEntry] = 2;
+	}
+
+	int offs = READ_LE_UINT16(_dlgBuffer + bufferIndex);
+	processDialogue(offs, vocH, csEntry);
+}
+
+void KyraEngine_v2::updateDlgBuffer() {
+	static const char DlgFileTemplate[] = "CH**-S**.DLG";
+	char filename[13];
+	filename[12] = 0;
+	memcpy(filename, DlgFileTemplate, 12);
+
+	static const char suffixTalkie[] = "EFG";
+	static const char suffixTowns[] = "G  J";
+	const char * suffix = _flags.isTalkie ? suffixTalkie : suffixTowns;
+
+	filename[2] = (char)((_currentChapter / 10 + 48) & 0xFF);
+	filename[3] = (char)((_currentChapter % 10 + 48) & 0xFF);
+
+	if (!(_flags.platform == Common::kPlatformPC && !_flags.isTalkie))
+		filename[11] = suffix[_lang];
+
+	if (_currentChapter == _npcTalkChpIndex && _mainCharacter.dlgIndex == _npcTalkDlgIndex)
+		return;
+
+	_npcTalkChpIndex = _currentChapter;
+	_npcTalkDlgIndex = _mainCharacter.dlgIndex;
+
+	filename[6] = (char)((_npcTalkDlgIndex / 10 + 48) & 0xFF);
+	filename[7] = (char)((_npcTalkDlgIndex % 10 + 48) & 0xFF);
+
+	if (_dlgBuffer)
+		delete [] _dlgBuffer;
+
+	_dlgBuffer = _res->fileData(filename, 0);
+}
+
+void KyraEngine_v2::loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2) {
+	csEntry = READ_LE_UINT16(_dlgBuffer);
+	vocH = READ_LE_UINT16(_dlgBuffer + 2);
+	scIndex1 = READ_LE_UINT16(_dlgBuffer + 4);
+	scIndex2 = READ_LE_UINT16(_dlgBuffer + 6);
+}
+
+void KyraEngine_v2::processDialogue(int dlgOffset, int vocH, int csEntry) {
+	int activeTimSequence = -1;
+	int nextTimSequence = -1;
+	int cmd = 0;
+	int vocHi = -1;
+	int vocLo = -1;
+	bool loop = true;
+	int offs = dlgOffset;
+
+	_screen->hideMouse();
+
+	while (loop) {
+		cmd = READ_LE_UINT16(_dlgBuffer + offs);
+		offs += 2;
+
+		nextTimSequence = READ_LE_UINT16(&_ingameTalkObjIndex[cmd]);
+
+		if (nextTimSequence == 10) {
+			if (queryGameFlag(0x3e))
+				nextTimSequence = 14;
+			if (queryGameFlag(0x3f))
+				nextTimSequence = 15;
+			if (queryGameFlag(0x40))
+				nextTimSequence = 16;
+		}
+
+		if (nextTimSequence == 27 && _mainCharacter.sceneId == 34)
+			nextTimSequence = 41;
+
+		if (queryGameFlag(0x72)) {
+			if (nextTimSequence == 18)
+				nextTimSequence = 43;
+			else if (nextTimSequence == 19)
+				nextTimSequence = 44;
+		}
+
+		if (_mainCharacter.x1 > 160) {
+			if (nextTimSequence == 4)
+				nextTimSequence = 46;
+			else if (nextTimSequence == 5)
+				nextTimSequence = 47;
+		}
+
+		if (cmd == 10) {
+			loop = false;
+
+		} else if (cmd == 4) {
+			csEntry = READ_LE_UINT16(_dlgBuffer + offs);
+			setNewDlgIndex(csEntry);
+			offs += 2;
+
+		} else {
+			if (!_flags.isTalkie || cmd == 11) {
+				int len = READ_LE_UINT16(_dlgBuffer + offs);
+				offs += 2;
+				if (_flags.isTalkie) {
+					vocLo = READ_LE_UINT16(_dlgBuffer + offs);
+					offs += 2;
+				}
+				memcpy(_unkBuf500Bytes, _dlgBuffer + offs, len);
+				_unkBuf500Bytes[len] = 0;
+				offs += len;
+				if (_flags.isTalkie)
+					continue;
+
+			} else if (_flags.isTalkie) {
+				int len = READ_LE_UINT16(_dlgBuffer + offs);
+				offs += 2;
+				static const int irnv[] = { 91, 105, 110, 114, 118 };
+				vocHi = irnv[vocH - 1] + csEntry;
+				vocLo = READ_LE_UINT16(_dlgBuffer + offs);
+				offs += 2;
+				memcpy(_unkBuf500Bytes, _dlgBuffer + offs, len);
+				_unkBuf500Bytes[len] = 0;
+				offs += len;
+			}
+
+			if (_unkBuf500Bytes[0]) {
+				if ((!_flags.isTalkie && cmd == 11) || (_flags.isTalkie && cmd == 12)) {
+					if (activeTimSequence > -1) {
+						deinitTalkObject(activeTimSequence);
+						activeTimSequence = -1;
+					}
+					objectChat((const char*) _unkBuf500Bytes, 0, vocHi, vocLo);
+				} else {
+					if (activeTimSequence != nextTimSequence ) {
+						if (activeTimSequence > -1) {
+							deinitTalkObject(activeTimSequence);
+							activeTimSequence = -1;
+						}
+						initTalkObject(nextTimSequence);
+						activeTimSequence = nextTimSequence;
+					}
+					npcChatSequence((const char *)_unkBuf500Bytes, nextTimSequence, vocHi, vocLo);
+				}
+			}
+		}
+	}
+
+	if (activeTimSequence > -1)
+		deinitTalkObject(activeTimSequence);
+
+	_screen->showMouse();
+}
+
+void KyraEngine_v2::initTalkObject(int index) {
+	TalkObject &object = _talkObjectList[index];
 
 	char STAFilename[13];
-	char TLKFilename[13];
 	char ENDFilename[13];
 
 	strcpy(STAFilename, object.filename);
-	strcpy(TLKFilename, object.filename);
+	strcpy(_TLKFilename, object.filename);
 	strcpy(ENDFilename, object.filename);
 
 	strcpy(STAFilename + 4, "_STA.TIM");
-	strcpy(TLKFilename + 4, "_TLK.TIM");
+	strcpy(_TLKFilename + 4, "_TLK.TIM");
 	strcpy(ENDFilename + 4, "_END.TIM");
 
-	_currentTalkSections.STATim = loadTIMFile(STAFilename, NULL, 0);
-	_currentTalkSections.TLKTim = loadTIMFile(TLKFilename, NULL, 0);
-	_currentTalkSections.ENDTim = loadTIMFile(ENDFilename, NULL, 0);
+	_currentTalkSections.STATim = tim_loadFile(STAFilename, NULL, 0);
+	_currentTalkSections.TLKTim = tim_loadFile(_TLKFilename, NULL, 0);
+	_currentTalkSections.ENDTim = tim_loadFile(ENDFilename, NULL, 0);
 
 	if (object.scriptId != -1) {
 		_specialSceneScriptStateBackup[object.scriptId] = _specialSceneScriptState[object.scriptId];
 		_specialSceneScriptState[object.scriptId] = 1;
 	}
 
-	/*if (_currentTalkObject.STATim) {
+	if (_currentTalkSections.STATim) {
 		_objectChatFinished = false;
 		while (!_objectChatFinished) {
-			processTalkObject(_currentTalkObject.STATim, 0);
+			tim_processSequence(_currentTalkSections.STATim, 0);
 			if (_chatText)
 				updateWithText();
 			else
 				update();
 		}
-	}*/
+	}
 }
 
-void KyraEngine_v2::deinitTalkObject(int initObject) {
-	TalkObject &object = _talkObjectList[initObject];
+void KyraEngine_v2::deinitTalkObject(int index) {
+	TalkObject &object = _talkObjectList[index];
 
-	/*if (_currentTalkObject.ENDTim) {
+	if (_currentTalkSections.ENDTim) {
 		_objectChatFinished = false;
 		while (!_objectChatFinished) {
-			processTalkObject(_currentTalkObject.ENDTim, 0);
+			tim_processSequence(_currentTalkSections.ENDTim, 0);
 			if (_chatText)
 				updateWithText();
 			else
 				update();
 		}
-	}*/
+	}
 
 	if (object.scriptId != -1) {
 		_specialSceneScriptState[object.scriptId] = _specialSceneScriptStateBackup[object.scriptId];
 	}
 
 	if (_currentTalkSections.STATim != NULL) {
-		freeTIM(_currentTalkSections.STATim);
+		tim_releaseBuffer(_currentTalkSections.STATim);
 		_currentTalkSections.STATim = NULL;
 	}
 
 	if (_currentTalkSections.TLKTim != NULL) {
-		freeTIM(_currentTalkSections.TLKTim);
+		tim_releaseBuffer(_currentTalkSections.TLKTim);
 		_currentTalkSections.TLKTim = NULL;
 	}
 
 	if (_currentTalkSections.ENDTim != NULL) {
-		freeTIM(_currentTalkSections.ENDTim);
+		tim_releaseBuffer(_currentTalkSections.ENDTim);
 		_currentTalkSections.ENDTim = NULL;
 	}
 }
 
-byte *KyraEngine_v2::loadTIMFile(const char *filename, byte *buffer, int32 bufferSize) {
-	ScriptFileParser file(filename, _res);
-	if (!file) {
-		error("Couldn't open script file '%s'", filename);
-		return NULL;
+void KyraEngine_v2::npcChatSequence(const char *str, int objectId, int vocHigh, int vocLow) {
+	_chatText = str;
+	_chatObject = objectId;
+	objectChatInit(str, objectId, vocHigh, vocLow);
+
+	if (!_currentTalkSections.TLKTim)
+		_currentTalkSections.TLKTim = tim_loadFile(_TLKFilename, 0, 0);
+
+	setNextIdleAnimTimer();
+
+	uint32 ct = chatCalcDuration(str);
+	uint32 time = _system->getMillis();
+	_chatEndTime =  time + (3 + ct) * _tickLength;
+	uint32 chatAnimEndTime = time + (3 + (ct >> 1)) * _tickLength;
+
+	if (_chatVocHigh >= 0) {
+		playVoice(_chatVocHigh, _chatVocLow);
+		_chatVocHigh = _chatVocLow = -1;
 	}
 
-	int32 formBlockSize = file.getFORMBlockSize();
-	if (formBlockSize == -1) {
-		error("No FORM chunk found in file: '%s'", filename);
-		return NULL;
-	}
+	while (((textEnabled() && _chatEndTime > _system->getMillis()) || (speechEnabled() && snd_voiceIsPlaying())) && !(_quitFlag || _skipFlag)) {
+		if (!speechEnabled() && chatAnimEndTime > _system->getMillis() || speechEnabled() && snd_voiceIsPlaying()) {
+			_objectChatFinished = false;
 
-	if (formBlockSize < 20) {
-		return NULL;
-	}
+			while (!_objectChatFinished && !_skipFlag) {
+				if (_currentTalkSections.TLKTim)
+					tim_processSequence(_currentTalkSections.TLKTim, 0);
+				else
+					_objectChatFinished = false;
 
-	formBlockSize += sizeof(TIMHeader) + 120 + sizeof(TIMStructUnk1) * 10;
+				updateWithText();
 
-	TIMHeader *timHeader;
-	if (buffer == NULL || bufferSize < formBlockSize) {
-		buffer = new byte[formBlockSize];
-		timHeader = (TIMHeader *)buffer;
-		timHeader->deleteBufferFlag = 0xBABE;
-	} else {
-		timHeader = (TIMHeader *)buffer;
-		timHeader->deleteBufferFlag = 0x0;
-	}
-
-	int32 chunkSize = file.getIFFBlockSize(AVTL_CHUNK);
-	timHeader->unkFlag = -1;
-	timHeader->unkFlag2 = 0;
-	timHeader->unkOffset = sizeof(TIMHeader);
-	timHeader->unkOffset2 = timHeader->unkOffset + sizeof(TIMStructUnk1) * 10;
-	timHeader->AVTLOffset = timHeader->unkOffset2 + 120;
-	timHeader->TEXTOffset = timHeader->AVTLOffset + chunkSize;
-
-	_TIMBuffers.AVTLChunk = (uint16 *)(buffer + timHeader->AVTLOffset);
-	_TIMBuffers.TEXTChunk = buffer + timHeader->TEXTOffset;
-
-	if (!file.loadIFFBlock(AVTL_CHUNK, _TIMBuffers.AVTLChunk, chunkSize)) {
-		error("Couldn't load AVTL chunk from file: '%s'", filename);
-		return NULL;
-	}
-
-	_TIMBuffers.UnkChunk = (TIMStructUnk1 *)(buffer + timHeader->unkOffset);
-
-	for (int i = 0; i < 10; i++) {
-		_TIMBuffers.UnkChunk[i].unk_0 = 0;
-		_TIMBuffers.UnkChunk[i].unk_2 = 0;
-		_TIMBuffers.UnkChunk[i].unk_20 = &_TIMBuffers.AVTLChunk[ _TIMBuffers.AVTLChunk[i] ];
-		_TIMBuffers.UnkChunk[i].unk_4 = 0;
-		_TIMBuffers.UnkChunk[i].unk_8 = 0;
-	}
-
-	chunkSize = file.getIFFBlockSize(TEXT_CHUNK);
-	if (chunkSize > 0) {
-		if (!file.loadIFFBlock(TEXT_CHUNK, _TIMBuffers.TEXTChunk, chunkSize)) {
-			error("Couldn't load TEXT chunk from file: '%s'", filename);
-			return NULL;
+				int inputFlag = checkInput(0);
+				removeInputTop();
+				if (inputFlag == 198 || inputFlag == 199) {
+					//XXX
+					_skipFlag = true;
+					snd_stopVoice();
+				}
+				delay(10);
+			}
+			if (_currentTalkSections.TLKTim)
+				tim_o_abort(0);
 		}
+		updateWithText();
 	}
 
-	return buffer;
+	_skipFlag = false;
+
+	if (_currentTalkSections.TLKTim) {
+		tim_releaseBuffer(_currentTalkSections.TLKTim);
+		_currentTalkSections.TLKTim = 0;
+	}
+
+	_text->restoreScreen();
+	_chatText = 0;
+	_chatObject = -1;
+	setNextIdleAnimTimer();
 }
 
-void KyraEngine_v2::freeTIM(byte *buffer) {
-	TIMHeader *timHeader = (TIMHeader *)buffer;
-
-	if (timHeader->deleteBufferFlag == 0xBABE) {
-		delete[] buffer;
-	}
+void KyraEngine_v2::setNewDlgIndex(int dlgIndex) {
+	if (dlgIndex == _mainCharacter.dlgIndex)
+		return;
+	memset(_newSceneDlgState, 0, 32);
+	for (int i = 0; i < 19; i++)
+		memset(_conversationState[i], -1, 14);
+	_npcTalkUNK = 0;
+	_mainCharacter.dlgIndex = dlgIndex;
 }
 
 } // end of namespace Kyra
-
-

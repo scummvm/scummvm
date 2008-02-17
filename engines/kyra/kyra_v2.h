@@ -495,6 +495,8 @@ protected:
 	void runSceneScript6();
 	void runSceneScript7();
 
+	void sceneStartupChat();
+
 	void initSceneAnims(int unk1);
 	void initSceneScreen(int unk1);
 
@@ -589,7 +591,7 @@ protected:
 	// character
 	struct Character {
 		uint16 sceneId;
-		uint16 unk2;
+		uint16 dlgIndex;
 		uint8 height;
 		uint8 facing;
 		uint16 animFrame;
@@ -652,8 +654,100 @@ protected:
 	void objectChatPrintText(const char *text, int object);
 	void objectChatProcess(const char *script);
 	void objectChatWaitToFinish();
-	void initTalkObject(int initObject);
-	void deinitTalkObject(int initObject);
+
+	void startDialogue(int dlgIndex);
+	void updateDlgBuffer();
+	void loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2);
+	void processDialogue(int dlgOffset, int vocH = 0, int csEntry = 0);
+	void npcChatSequence(const char *str, int objectId, int vocHigh = -1, int vocLow = -1);
+	void setNewDlgIndex(int dlgIndex);
+
+	int _npcTalkChpIndex;
+	int _npcTalkDlgIndex;
+	uint8 _newSceneDlgState[32];
+	int8 **_conversationState;
+	uint8 _npcTalkUNK;
+	uint8 *_dlgBuffer;
+
+	// tim sequence
+	void tim_setupOpcodes();
+	uint8 *tim_loadFile(const char *filename, uint8 *buffer, int32 bufferSize);
+	void tim_releaseBuffer(uint8 *buffer);
+	void tim_processSequence(uint8 *timBuffer, int loop);
+
+	int tim_o_dummy_r0(uint8 *ptr);
+	int tim_o_dummy_r1(uint8 *ptr);
+	int tim_o_clearCmds2(uint8 *ptr);
+	int tim_o_abort(uint8 *ptr);
+	int tim_o_selectcurrentCommandSet(uint8 *ptr);
+	int tim_o_deleteBuffer(uint8 *ptr);
+	int tim_o_refreshTimers(uint8 *ptr);
+	int tim_o_execSubOpcode(uint8 *ptr);
+	int tim_o_initActiveSub(uint8 *ptr);
+	int tim_o_resetActiveSub(uint8 *ptr);
+	int tim_o_printTalkText(uint8 *ptr);
+	int tim_o_updateSceneAnim(uint8 *ptr);
+	int tim_o_resetChat(uint8 *ptr);
+	int tim_o_playSoundEffect(uint8 *ptr);
+
+	typedef int (KyraEngine_v2::*TimOpc)(uint8 *ptr);
+	const TimOpc * _timOpcodes;
+
+	struct TIMHeader {
+		uint16 deleteBufferFlag;
+		int16 unkFlag;
+		int16 unkFlag2;
+		int16 cmdsOffset;
+		int16 unkOffset2;
+		int16 AVTLOffset;
+		int16 TEXTOffset;
+	};
+
+	struct Cmds {
+		uint8 *dataPtr;
+		uint32 unk_2;
+		uint32 timer1;
+		uint32 timer2;
+		uint8 *backupPtr;
+		uint8 *AVTLSubChunk;
+	};
+
+	struct TIMBuffers {
+		uint8 *AVTLChunk;
+		uint8 *TEXTChunk;
+		uint8 *offsUnkFlag2;
+		uint8 *offsUnkFlag;
+		int16 currentEntry;
+		int16 unk_12;
+		Cmds *currentCommandSet;
+		uint8 *unkCmds;
+	};
+	TIMBuffers _TIMBuffers;
+
+	const char *_timChatText;
+	int _timChatObject;
+
+	// Talk object handling
+	void initTalkObject(int index);
+	void deinitTalkObject(int index);
+
+	struct TalkObject {
+		char filename[13];
+		int8 scriptId;
+		int16 x, y;
+		int8 color;
+	};
+	TalkObject *_talkObjectList;
+
+	struct TalkSections {
+		uint8 *STATim;
+		uint8 *TLKTim;
+		uint8 *ENDTim;
+	};
+	TalkSections _currentTalkSections;
+
+	char _TLKFilename[13];
+	bool _objectChatFinished;
 
 	// sound
 	int _oldTalkFile;
@@ -687,51 +781,6 @@ protected:
 
 	// delay
 	void delay(uint32 millis, bool updateGame = false, bool isMainLoop = false);
-
-	// Talk object handling
-	struct TalkObject {
-		char filename[13];
-		int8 scriptId;
-		int16 x, y;
-		int8 color;
-	};
-	TalkObject *_talkObjectList;
-
-	struct TIMHeader {
-		uint16 deleteBufferFlag;
-		int16 unkFlag;
-		int16 unkFlag2;
-		int16 unkOffset;
-		int16 unkOffset2;
-		int16 AVTLOffset;
-		int16 TEXTOffset;
-	};
-
-	struct TIMStructUnk1 {
-		uint16 unk_0;
-		uint16 unk_2;
-		uint16 unk_4;
-		uint16 unk_8;
-		uint16 *unk_20;
-	};
-
-	struct TIMBuffers {
-		uint16 *AVTLChunk;
-		byte *TEXTChunk;
-		TIMStructUnk1 *UnkChunk;
-	};
-	TIMBuffers _TIMBuffers;
-
-	struct TalkSections {
-		byte *STATim;
-		byte *TLKTim;
-		byte *ENDTim;
-	};
-	TalkSections _currentTalkSections;
-
-	bool _objectChatFinished;
-	byte *loadTIMFile(const char *filename, byte *buffer, int32 bufferSize);
-	void freeTIM(byte *buffer);
 
 	// ingame static sequence handling
 	void seq_makeBookOrCauldronAppear(int type);
@@ -809,10 +858,19 @@ protected:
 	int o2_setSpecialSceneScriptRunTime(ScriptState *script);
 	int o2_defineSceneAnim(ScriptState *script);
 	int o2_updateSceneAnim(ScriptState *script);
+	int o2_useItemOnMainChar(ScriptState *script);
+	int o2_startDialogue(ScriptState *script);
+	int o2_setupDialogue(ScriptState *script);
+	int o2_getDlgIndex(ScriptState *script);
 	int o2_defineRoom(ScriptState *script);
 	int o2_objectChat(ScriptState *script);
+	int o2_getColorCodeFlag1(ScriptState *script);
+	int o2_setColorCodeFlag1(ScriptState *script);
+	int o2_getColorCodeFlag2(ScriptState *script);
+	int o2_setColorCodeFlag2(ScriptState *script);
 	int o2_countItemInstances(ScriptState *script);
 	int o2_initObject(ScriptState *script);
+	int o2_npcChat(ScriptState *script);
 	int o2_deinitObject(ScriptState *script);
 	int o2_makeBookOrCauldronAppear(ScriptState *script);
 	int o2_setSpecialSceneScriptState(ScriptState *script);
@@ -896,6 +954,10 @@ protected:
 	int _ingameSoundIndexSize;
 	const char *const *_sequenceStrings;
 	int _sequenceStringsSize;
+	const uint16 *_ingameTalkObjIndex;
+	int _ingameTalkObjIndexSize;
+	const char *const *_ingameTimJpStr;
+	int _ingameTimJpStrSize;
 	uint8 *_demoShapeDefs;
 	int _sequenceStringsDuration[33];
 
@@ -919,10 +981,15 @@ protected:
 
 	Sequence *_sequences;
 	NestedSequence *_nSequences;
+
+	// these are used whenever the color code has to be entered
+	int _colorCodeFlag1;
+	int _colorCodeFlag2;
 };
 
 } // end of namespace Kyra
 
 #endif
+
 
 

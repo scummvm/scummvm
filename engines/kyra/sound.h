@@ -180,6 +180,10 @@ protected:
 	const void *cdaData() const { return _soundDataList != 0 ? _soundDataList->_cdaTracks : 0; }
 	const int cdaTrackNum() const { return _soundDataList != 0 ? _soundDataList->_cdaNumTracks : 0; }
 
+	enum {
+		kNumVocHandles = 4
+	};
+
 	int _musicEnabled;
 	bool _sfxEnabled;
 
@@ -191,7 +195,7 @@ protected:
 private:
 	const AudioDataStruct *_soundDataList;
 	Audio::AudioStream *_currentVocFile;
-	Audio::SoundHandle _vocHandle;
+	Audio::SoundHandle _vocHandles[kNumVocHandles];
 
 	struct SpeechCodecs {
 		const char *fileext;
@@ -425,10 +429,10 @@ private:
 	int _lastTrack;
 
 	Audio::AudioStream *_currentSFX;
-	Audio::SoundHandle _sfxHandle;
+	Audio::SoundHandle _sfxHandles[kNumVocHandles];
 
-	//SoundTowns_v2_TwnDriver * _driver;
-	uint8 * _twnTrackData;
+	//SoundTowns_v2_TwnDriver *_driver;
+	uint8 *_twnTrackData;
 };
 
 class MixedSoundDriver : public Sound {
