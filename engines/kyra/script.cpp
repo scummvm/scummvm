@@ -186,6 +186,9 @@ bool ScriptHelper::runScript(ScriptState *script) {
 	if (!script->ip)
 		return false;
 
+	// Should be no Problem at all to cast to uint32 here, since that's the biggest ptrdiff the original
+	// would allow, of course that's not realistic to happen to be somewhere near the limit of uint32 anyway.
+	const uint32 instOffset = (uint32)((const byte*)script->ip - (const byte*)script->dataPtr->data);
 	int16 code = *script->ip++;
 	int16 opcode = (code >> 8) & 0x1F;
 
@@ -203,7 +206,7 @@ bool ScriptHelper::runScript(ScriptState *script) {
 	if (opcode > 18) {
 		error("Script unknown command: %d", opcode);
 	} else {
-		debugC(5, kDebugLevelScript, "%s([%d/%u])", _commands[opcode].desc, _parameter, (uint)_parameter);
+		debugC(5, kDebugLevelScript, "[0x%.08X] %s([%d/%u])", instOffset, _commands[opcode].desc, _parameter, (uint)_parameter);
 		(this->*(_commands[opcode].proc))(script);
 	}
 
