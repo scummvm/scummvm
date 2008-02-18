@@ -85,7 +85,7 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 		//XXX
 		_sound->beginFadeOut();
 	}
-
+	
 	_unkFlag1 = false;
 
 	if (!unk3) {
@@ -233,9 +233,17 @@ void KyraEngine_v2::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 void KyraEngine_v2::enterNewSceneUnk2(int unk1) {
 	_unk3 = -1;
 
-	if (_mainCharX == -1 && _mainCharY == -1 && _mainCharacter.sceneId != 61 &&
-		!queryGameFlag(0x1F1) && !queryGameFlag(0x192) && !queryGameFlag(0x193) &&
-		_mainCharacter.sceneId != 70 && !queryGameFlag(0x159) && _mainCharacter.sceneId != 37) {
+	if (_flags.isTalkie) {
+		if (_mainCharX == -1 && _mainCharY == -1 && _mainCharacter.sceneId != 61 &&
+			!queryGameFlag(0x1F1) && !queryGameFlag(0x192) && !queryGameFlag(0x193) &&
+			_mainCharacter.sceneId != 70 && !queryGameFlag(0x159) && _mainCharacter.sceneId != 37) {
+			_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
+			updateCharacterAnim(0);
+			refreshAnimObjectsIfNeed();
+		}
+	} else if (_mainCharX != -1 && _mainCharY != -1) {		
+		if (_characterFrameTable[_mainCharacter.facing] == 25)
+			_mainCharacter.facing = 5;
 		_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 		updateCharacterAnim(0);
 		refreshAnimObjectsIfNeed();

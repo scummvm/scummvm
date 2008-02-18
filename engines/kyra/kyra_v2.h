@@ -862,11 +862,15 @@ protected:
 	int o2_setupDialogue(ScriptState *script);
 	int o2_getDlgIndex(ScriptState *script);
 	int o2_defineRoom(ScriptState *script);
+	int o2_setCountDown(ScriptState *script);
+	int o2_getCountDown(ScriptState *script);
 	int o2_objectChat(ScriptState *script);
 	int o2_getColorCodeFlag1(ScriptState *script);
 	int o2_setColorCodeFlag1(ScriptState *script);
 	int o2_getColorCodeFlag2(ScriptState *script);
 	int o2_setColorCodeFlag2(ScriptState *script);
+	int o2_getColorCodeValue(ScriptState *script);
+	int o2_setColorCodeValue(ScriptState *script);
 	int o2_countItemInstances(ScriptState *script);
 	int o2_initObject(ScriptState *script);
 	int o2_npcChat(ScriptState *script);
@@ -879,6 +883,7 @@ protected:
 	int o2_getHiddenItemsEntry(ScriptState *script);
 	int o2_customChat(ScriptState *script);
 	int o2_customChatFinish(ScriptState *script);
+	int o2_getBoolFromStack(ScriptState *script);
 	int o2_setVocHigh(ScriptState *script);
 	int o2_getVocHigh(ScriptState *script);
 	int o2_zanthiaChat(ScriptState *script);
@@ -981,14 +986,17 @@ protected:
 	Sequence *_sequences;
 	NestedSequence *_nSequences;
 
-	// these are used whenever the color code has to be entered
+	// color code related vars
 	int _colorCodeFlag1;
 	int _colorCodeFlag2;
+	uint8 _colorCode[7];
+	uint32 _scriptCountDown;
 };
 
 } // end of namespace Kyra
 
 #endif
+
 
 
 

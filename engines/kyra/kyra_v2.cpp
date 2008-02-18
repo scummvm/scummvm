@@ -98,6 +98,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	_colorCodeFlag1 = 0;
 	_colorCodeFlag2 = -1;
+	_scriptCountDown = 0;
 
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 
@@ -124,6 +125,15 @@ KyraEngine_v2::~KyraEngine_v2() {
 	_text = 0;
 	delete _debugger;
 	delete _invWsa.wsa;
+
+	if (_sequenceSoundList) {
+		for (int i = 0; i < _sequenceSoundListSize; i++) {
+			if (_sequenceSoundList[i])
+				delete _sequenceSoundList[i];
+		}
+		delete [] _sequenceSoundList;
+		_sequenceSoundList = NULL;
+	}
 
 	if (_dlgBuffer)
 		delete [] _dlgBuffer;
@@ -1908,9 +1918,9 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_getDlgIndex),
 		Opcode(o2_defineRoom),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_setCountDown),
 		// 0x7c
-		OpcodeUnImpl(),
+		Opcode(o2_getCountDown),
 		Opcode(o2_dummy),
 		Opcode(o2_dummy),
 		OpcodeUnImpl(),
@@ -1922,8 +1932,8 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x84
 		Opcode(o2_getColorCodeFlag2),
 		Opcode(o2_setColorCodeFlag2),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_getColorCodeValue),
+		Opcode(o2_setColorCodeValue),
 		// 0x88
 		Opcode(o2_countItemInstances),
 		OpcodeUnImpl(),
@@ -1958,7 +1968,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_getBoolFromStack),
 		// 0xa4
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
@@ -1993,6 +2003,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 }
 
 } // end of namespace Kyra
+
 
 
 

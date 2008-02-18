@@ -680,6 +680,18 @@ int KyraEngine_v2::o2_defineRoom(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_setCountDown(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setCountDown(%p) (%d)", (const void *)script, stackPos(0));
+	_scriptCountDown = _system->getMillis() + stackPos(0) * _tickLength;
+	return 0;
+}
+
+int KyraEngine_v2::o2_getCountDown(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getCountDown(%p)", (const void *)script);
+	uint32 time = _system->getMillis();
+	return (time > _scriptCountDown) ? 0 : _scriptCountDown - time;
+}
+
 int KyraEngine_v2::o2_objectChat(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_objectChat(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
 	if (_flags.isTalkie)
@@ -709,6 +721,17 @@ int KyraEngine_v2::o2_setColorCodeFlag2(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_getColorCodeFlag2(%p) (%d)", (const void *)script, stackPos(0));
 	_colorCodeFlag2 = stackPos(0);
 	return 0;
+}
+
+int KyraEngine_v2::o2_getColorCodeValue(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getColorCodeValue(%p) (%d)", (const void *)script, stackPos(0));
+	return _colorCode[stackPos(0)];
+}
+
+int KyraEngine_v2::o2_setColorCodeValue(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setColorCodeValue(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	_colorCode[stackPos(0)] = stackPos(1) & 0xff;
+	return stackPos(1) & 0xff;
 }
 
 int KyraEngine_v2::o2_countItemInstances(ScriptState *script) {
@@ -819,6 +842,11 @@ int KyraEngine_v2::o2_customChatFinish(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_getBoolFromStack(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getBoolFromStack(%p) ()", (const void *)script);
+	return stackPos(0) ? 1 : 0;
+}
+
 int KyraEngine_v2::o2_setVocHigh(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setVocHigh(%p) (%d)", (const void *)script, stackPos(0));
 	_vocHigh = stackPos(0);
@@ -907,6 +935,7 @@ int KyraEngine_v2::o2t_setShapeFlag(ScriptState *script) {
 }
 
 } // end of namespace Kyra
+
 
 
 
