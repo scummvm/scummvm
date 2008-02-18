@@ -689,7 +689,7 @@ int KyraEngine_v2::o2_setCountDown(ScriptState *script) {
 int KyraEngine_v2::o2_getCountDown(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_getCountDown(%p)", (const void *)script);
 	uint32 time = _system->getMillis();
-	return (time > _scriptCountDown) ? 0 : _scriptCountDown - time;
+	return (time > _scriptCountDown) ? 0 : (_scriptCountDown - time) / _tickLength;
 }
 
 int KyraEngine_v2::o2_objectChat(ScriptState *script) {
