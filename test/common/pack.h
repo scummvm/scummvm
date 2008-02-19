@@ -22,15 +22,15 @@ class PackTestSuite : public CxxTest::TestSuite
 	public:
 	void test_packing( void )
 	{
-		TS_ASSERT_EQUALS( sizeof(TestStruct), 4+1+2+4+1 );
+		TS_ASSERT_EQUALS( sizeof(TestStruct), size_t(4+1+2+4+1) );
 	}
 
 	void test_offsets( void )
 	{
-		TS_ASSERT_EQUALS( OFFS(TestStruct, x), 0 );
-		TS_ASSERT_EQUALS( OFFS(TestStruct, y), 4 );
-		TS_ASSERT_EQUALS( OFFS(TestStruct, z), 5 );
-		TS_ASSERT_EQUALS( OFFS(TestStruct, a), 7 );
-		TS_ASSERT_EQUALS( OFFS(TestStruct, b), 11 );
+		TS_ASSERT_EQUALS( OFFS(TestStruct, x), (ptrdiff_t)0 );
+		TS_ASSERT_EQUALS( OFFS(TestStruct, y), (ptrdiff_t)4 );
+		TS_ASSERT_EQUALS( OFFS(TestStruct, z), (ptrdiff_t)5 );
+		TS_ASSERT_EQUALS( OFFS(TestStruct, a), (ptrdiff_t)7 );
+		TS_ASSERT_EQUALS( OFFS(TestStruct, b), (ptrdiff_t)11 );
 	}
 };
