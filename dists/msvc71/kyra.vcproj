@@ -218,6 +218,9 @@
 			RelativePath="..\..\engines\kyra\seqplayer.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sequences_tim.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sequences_v1.cpp">
 		</File>
 		<File
