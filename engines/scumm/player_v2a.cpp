@@ -891,7 +891,7 @@ private:
 };
 
 // plays 4 looped waveforms
-// some sort of laserbeam-like sound effect in Zak
+// used in the white crystal chamber
 class V2A_Sound_Special_Zak70 : public V2A_Sound_Base<4> {
 public:
 	V2A_Sound_Special_Zak70(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol) :
@@ -926,7 +926,7 @@ protected:
 };
 
 // plays 4 looped waveforms and fades volume to zero after a specific delay
-// some whooshing-type sound in Zak
+// used when the Mindbender disappears
 class V2A_Sound_Special_Zak101 : public V2A_Sound_Special_Zak70 {
 public:
 	V2A_Sound_Special_Zak101(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint16 freq3, uint16 freq4, uint8 vol, uint16 dur) :
@@ -954,7 +954,7 @@ private:
 };
 
 // plays a single looped waveform and slowly fades volume to zero
-// another whooshing-type noise in Zak
+// used when refilling oxygen
 class V2A_Sound_Special_Zak37 : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_Zak37(uint16 offset, uint16 size, uint16 freq, uint8 vol) :
@@ -1028,7 +1028,7 @@ private:
 };
 
 // plays 4 looped waveforms, starting at specific frequencies and bending at different rates while fading volume to zero
-// used for some weird sound effect
+// used when the white crystal machine turns off
 class V2A_Sound_Special_Zak71 : public V2A_Sound_Base<4> {
 public:
 	V2A_Sound_Special_Zak71(uint16 offset, uint16 size) :
@@ -1087,7 +1087,7 @@ private:
 };
 
 // plays a single looped waveform, bending the frequency upward at a varying rate
-// used for the tram on Mars (?)
+// used when the Skolarian device activates
 class V2A_Sound_Special_Zak99 : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_Zak99(uint16 offset, uint16 size, uint16 freq1, uint16 freq2, uint8 vol) :
@@ -1131,7 +1131,7 @@ private:
 };
 
 // plays one waveform, then switches to a different looped waveform and slowly fades volume to zero
-// used for some odd sound effect
+// used when depressurizing the hostel
 class V2A_Sound_Special_Zak54 : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_Zak54(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq) :
@@ -1176,7 +1176,7 @@ private:
 };
 
 // plays 2 looped waveforms at different frequencies, pulsing at different frequencies and ramping the volume up and down once
-// probably used for some sort of alarm sound
+// used when abducted at the Bermuda Triangle
 class V2A_Sound_Special_Zak110 : public V2A_Sound_Base<2> {
 public:
 	V2A_Sound_Special_Zak110(uint16 offset1, uint16 size1, uint16 offset2, uint16 size2, uint16 freq1, uint16 freq2) :
@@ -1253,7 +1253,7 @@ private:
 };
 
 // plays a stereo siren, sweeping up and down quickly several times before sweeping up slowly, stopping, and then going silent
-// probably used for some sort of alarm sound
+// door orb sound in the Mars Face
 class V2A_Sound_Special_Zak32 : public V2A_Sound_Base<2> {
 public:
 	V2A_Sound_Special_Zak32(uint16 offset1, uint16 offset2, uint16 size1, uint16 size2) :
@@ -1367,7 +1367,7 @@ private:
 };
 
 // plays a looped waveform, sweeping the frequency up while modulating it (alternating which channel updates) and fading volume out
-// dunno what it's for
+// used when teleporting out with the yellow crystal
 class V2A_Sound_Special_Zak61 : public V2A_Sound_Base<2> {
 public:
 	V2A_Sound_Special_Zak61(uint16 offset, uint16 size) :
@@ -1421,7 +1421,7 @@ private:
 };
 
 // just like Zak61, but sweeps frequency in the other direction
-// dunno what it's for
+// used when teleporting in with the yellow crystal
 class V2A_Sound_Special_Zak62 : public V2A_Sound_Base<2> {
 public:
 	V2A_Sound_Special_Zak62(uint16 offset, uint16 size) :
@@ -1475,7 +1475,7 @@ private:
 };
 
 // plays a series of double-looped sounds at varying frequencies and delays, very specialized 
-// sounds like some sort of creature growl/scream
+// Guardian of the Sphinx, perhaps?
 class V2A_Sound_Special_Zak82 : public V2A_Sound_Base<4> {
 public:
 	V2A_Sound_Special_Zak82(uint16 offset, uint16 size) :
@@ -1497,7 +1497,7 @@ public:
 
 		int size = 2000;
 		int offset = _offset;
-		assert(offset + size < _offset + _size);
+		assert(offset + size <= _offset + _size);
 		char *tmp_data = (char *)malloc(size);
 		memcpy(tmp_data, _data + offset, size);
 		_mod->startChannel(_id | 0x000, tmp_data, size, BASE_FREQUENCY / 0x0479, 0xFF, 0, size);
@@ -1528,7 +1528,7 @@ public:
 		case 1:
 			size = 6300;
 			offset += 0x07D0;
-			assert(offset + size <_offset +  _size);
+			assert(offset + size <= _offset +  _size);
 			tmp_data1 = (char *)malloc(size);
 			memcpy(tmp_data1, _data + offset, size);
 			_mod->startChannel(_id | 0x000, tmp_data1, size, BASE_FREQUENCY / 0x0479, 0x7F, 0, size, -127);
@@ -1538,7 +1538,7 @@ public:
 		case 2:
 			size = 6292;
 			offset += 0x206C;
-			assert(offset + size < _offset + _size);
+			assert(offset + size <= _offset + _size);
 			tmp_data1 = (char *)malloc(size);
 			memcpy(tmp_data1, _data + offset, size);
 			_mod->startChannel(_id | 0x200, tmp_data1, size, BASE_FREQUENCY / 0x0384, 0x7F, 0, size, 127);
@@ -1548,7 +1548,7 @@ public:
 		case 3:
 			size = 6300;
 			offset += 0x07D0;
-			assert(offset + size < _offset + _size);
+			assert(offset + size <= _offset + _size);
 			tmp_data1 = (char *)malloc(size);
 			tmp_data2 = (char *)malloc(size);
 			memcpy(tmp_data1, _data + offset, size);
@@ -1576,7 +1576,7 @@ private:
 };
 
 // plays a "ding" (volume 0-max-0) followed by a sound sample, a pause, then loops again
-// dunno what this is for
+// Mars Tram about to depart
 class V2A_Sound_Special_Zak86 : public V2A_Sound_Base<1> {
 public:
 	V2A_Sound_Special_Zak86(uint16 offset, uint16 size) :
@@ -1593,7 +1593,7 @@ public:
 
 		int size = 32;
 		int offset = _offset + 0x2B8E;
-		assert(offset + size < _offset + _size);
+		assert(offset + size <= _offset + _size);
 		char *tmp_data = (char *)malloc(size);
 		memcpy(tmp_data, _data + offset, size);
 		_mod->startChannel(_id | 0x000, tmp_data, size, BASE_FREQUENCY / 0x0096, 0, 0, size, 0);
@@ -1619,7 +1619,7 @@ public:
 			
 			size = 0x2B8E;
 			offset = _offset;
-			assert(offset + size < _offset + _size);
+			assert(offset + size <= _offset + _size);
 			tmp_data = (char *)malloc(size);
 			memcpy(tmp_data, _data + offset, size);
 			_mod->startChannel(_id | 0x000, tmp_data, size, BASE_FREQUENCY / 0x0152, 0x3F);
@@ -1629,7 +1629,7 @@ public:
 			if (!--_volmod) {
 				size = 32;
 				offset = _offset + 0x2B8E;
-				assert(offset + size < _offset + _size);
+				assert(offset + size <= _offset + _size);
 				tmp_data = (char *)malloc(size);
 				memcpy(tmp_data, _data + offset, size);
 				_mod->startChannel(_id | 0x000, tmp_data, size, BASE_FREQUENCY / 0x0096, 0, 0, size, 0);
@@ -1651,7 +1651,7 @@ private:
 };
 
 // modulates volume on 4 samples, frequency on only 2 of them
-// some sort of droning machine, perhaps?
+// Skolarian device pedestal activated without any parts
 class V2A_Sound_Special_Zak98 : public V2A_Sound_Base<4> {
 public:
 	V2A_Sound_Special_Zak98(uint16 offset, uint16 size) :
