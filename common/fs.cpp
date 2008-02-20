@@ -69,12 +69,9 @@ FilesystemNode &FilesystemNode::operator= (const FilesystemNode &node) {
 	return *this;
 }
 
-bool FilesystemNode::operator<(const FilesystemNode& node) const
-{
-	if (isDirectory() && !node.isDirectory())
-		return true;
-	if (!isDirectory() && node.isDirectory())
-		return false;
+bool FilesystemNode::operator<(const FilesystemNode& node) const {
+	if (isDirectory() != node.isDirectory())
+		return isDirectory();
 
 	return scumm_stricmp(getDisplayName().c_str(), node.getDisplayName().c_str()) < 0;
 }
