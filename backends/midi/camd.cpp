@@ -31,9 +31,7 @@
 #include "common/endian.h"
 
 #include <proto/camd.h>
-#include <proto/dos.h>
 #include <proto/exec.h>
-#include <proto/intuition.h>
 
 /*
  * CAMD sequencer driver
@@ -53,6 +51,9 @@ private:
 	struct Library *_CamdBase;
 	struct CamdIFace *_ICamd;
 	struct MidiLink *_midi_link;
+
+	char *getDevice();
+	void closeAll();
 };
 
 MidiDriver_CAMD::MidiDriver_CAMD()
@@ -60,8 +61,6 @@ MidiDriver_CAMD::MidiDriver_CAMD()
 }
 
 int MidiDriver_CAMD::open() {
-	const char *devicename = "via686.out.0";
-
 	if (_isOpen)
 		return MERR_ALREADY_OPEN;
 
@@ -73,7 +72,7 @@ int MidiDriver_CAMD::open() {
 
 	_ICamd = (struct CamdIFace *) IExec->GetInterface(_CamdBase, "main", 1, NULL);
 	if (!_ICamd) {
-		IExec->CloseLibrary(_CamdBase);
+		closeAll();
 		error("Error while retrieving CAMD interface");
 		return -1;
 	}
@@ -81,16 +80,23 @@ int MidiDriver_CAMD::open() {
 	struct MidiNode *midi_node;
 	midi_node = _ICamd->CreateMidi(MIDI_MsgQueue, 0L, MIDI_SysExSize, 4096L, MIDI_Name, "scummvm", TAG_END);
 	if (!midi_node) {
-		IExec->CloseLibrary(_CamdBase);
+		closeAll();
 		error("Could not create CAMD MIDI node");
 		return -1;
 	}
 
+	char *devicename = getDevice();
+	if (!devicename) {
+		closeAll();
+		error("Could not find an output device");
+		return MERR_DEVICE_NOT_AVAILABLE;
+	}
+
 	_midi_link = _ICamd->AddMidiLink(midi_node, MLTYPE_Sender, MLINK_Location, devicename, TAG_END);
 	if (!_midi_link) {
-		IExec->CloseLibrary(_CamdBase);
+		closeAll();
 		error("Could not create CAMD MIDI link to '%s'", devicename);
-		return -1;
+		return MERR_CANNOT_CONNECT;
 	}
 
 	_isOpen = true;
@@ -98,11 +104,8 @@ int MidiDriver_CAMD::open() {
 }
 
 void MidiDriver_CAMD::close() {
-	_isOpen = false;
 	MidiDriver_MPU401::close();
-
-	if (_CamdBase)
-		IExec->CloseLibrary(_CamdBase);
+	closeAll();
 }
 
 void MidiDriver_CAMD::send(uint32 b) {
@@ -122,6 +125,41 @@ void MidiDriver_CAMD::sysEx(const byte *msg, uint16 length) {
 
 	// Send it
 	_ICamd->PutSysEx(_midi_link, buf);
+}
+
+char *MidiDriver_CAMD::getDevice() {
+	char *retname = NULL;
+
+	APTR key;
+	if (key = _ICamd->LockCAMD(CD_Linkages)) {
+		struct MidiCluster *cluster = _ICamd->NextCluster(NULL);
+
+		while (cluster && !retname) {
+			// Get the current cluster name
+			char *dev = cluster->mcl_Node.ln_Name;
+
+			if (strstr(dev, "out") != NULL) {
+				// This is an output device, return this
+				retname = dev;
+			} else {
+				// Search the next one
+				cluster = _ICamd->NextCluster(cluster);
+			}
+		}
+
+		_ICamd->UnlockCAMD(key);
+	}
+
+	return retname;
+}
+
+void MidiDriver_CAMD::closeAll() {
+	if (_ICamd)
+		IExec->DropInterface((struct Interface *)_ICamd);
+	if (_CamdBase)
+		IExec->CloseLibrary(_CamdBase);
+
+	_isOpen = false;
 }
 
 MidiDriver *MidiDriver_CAMD_create() {
