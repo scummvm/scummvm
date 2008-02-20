@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	events/default/default-events.o \
 	fs/abstract-fs-factory.o \
 	midi/alsa.o \
+	midi/camd.o \
 	midi/coreaudio.o \
 	midi/coremidi.o \
 	midi/morphos.o \

@@ -54,6 +54,10 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	{"dmedia", "DMedia", MD_DMEDIA, MDT_MIDI},
 #endif
 
+#if defined(__amigaos4__)
+	{"camd", "CAMD", MD_CAMD, MDT_MIDI},
+#endif
+
 #if defined(MACOSX)
 	{"core", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
 //	{"coreaudio", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
@@ -267,6 +271,9 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 #endif
 #if defined(UNIX) && defined(USE_ALSA)
 	case MD_ALSA:      return MidiDriver_ALSA_create();
+#endif
+#if defined(__amigaos4__)
+	case MD_CAMD:      return MidiDriver_CAMD_create();
 #endif
 	}
 
