@@ -600,7 +600,7 @@ void AgiEngine::writeStatus() {
 	}
 
 	if (!_game.statusLine) {
-		int l = _game.lineStatus;
+		int l = _game.lineStatus + _game.lineUserInput;
 		clearLines(l, l, 0);
 		flushLines(l, l);
 		return;
