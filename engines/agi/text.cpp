@@ -600,9 +600,13 @@ void AgiEngine::writeStatus() {
 	}
 
 	if (!_game.statusLine) {
-		int l = _game.lineStatus + _game.lineUserInput;
-		clearLines(l, l, 0);
-		flushLines(l, l);
+		clearLines(_game.lineStatus, _game.lineStatus, 0);
+		flushLines(_game.lineStatus, _game.lineStatus);
+
+		// Clear the user input line as well when clearing the status line
+		// Fixes bug #1893564 - AGI: Texts messed out in Naturette 1
+		clearLines(_game.lineUserInput, _game.lineUserInput, 0);
+		flushLines(_game.lineUserInput, _game.lineUserInput);
 		return;
 	}
 
