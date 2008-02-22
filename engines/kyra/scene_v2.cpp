@@ -251,7 +251,7 @@ void KyraEngine_v2::enterNewSceneUnk2(int unk1) {
 
 	if (!unk1) {
 		runSceneScript4(0);
-		sceneStartupChat();
+		zanthSceneStartupChat();
 	}
 
 	_unk4 = 0;
@@ -505,22 +505,6 @@ void KyraEngine_v2::runSceneScript7() {
 		_scriptInterpreter->runScript(&_sceneScriptState);
 
 	_screen->_curPage = oldPage;
-}
-
-void KyraEngine_v2::sceneStartupChat() {
-	int tableIndex = _mainCharacter.sceneId - READ_LE_UINT16(&_ingameTalkObjIndex[5 + _newChapterFile]);
-	if (queryGameFlag(0x159) || _newSceneDlgState[tableIndex])
-		return;
-
-	int csEntry, vocH, scIndex1, scIndex2;
-	updateDlgBuffer();
-	loadDlgHeader(csEntry, vocH, scIndex1, scIndex2);
-
-	uint8 bufferIndex = 8 + scIndex1 * 6 + scIndex2 * 4 + tableIndex * 2;
-	int offs = READ_LE_UINT16(_dlgBuffer + bufferIndex);
-	processDialogue(offs, vocH, csEntry);
-
-	_newSceneDlgState[tableIndex] = 1;
 }
 
 void KyraEngine_v2::initSceneAnims(int unk1) {

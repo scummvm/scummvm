@@ -647,6 +647,12 @@ int KyraEngine_v2::o2_startDialogue(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_zanthRandomChat(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_zanthRandomChat(%p)", (const void *)script);
+	zanthRandomChat();
+	return 0;
+}
+
 int KyraEngine_v2::o2_setupDialogue(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setupDialogue(%p) (%d)", (const void *)script, stackPos(0));
 	setNewDlgIndex(stackPos(0));
@@ -820,6 +826,29 @@ int KyraEngine_v2::o2_setHiddenItemsEntry(ScriptState *script) {
 int KyraEngine_v2::o2_getHiddenItemsEntry(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_getHiddenItemsEntry(%p) (%d)", (const void *)script, stackPos(0));
 	return _hiddenItems[stackPos(0)];
+}
+
+int KyraEngine_v2::o2_mushroomEffect(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_mushroomEffect(%p)", (const void *)script);
+	memcpy(_screen->getPalette(1), _screen->_currentPalette, 768);
+
+	for (int i = 1; i < 768; i += 3)
+		_screen->_currentPalette[i] = 0;	
+	snd_playSoundEffect(106);
+	_screen->fadePalette(_screen->_currentPalette, 90, &_updateFunctor);
+	memcpy(_screen->_currentPalette, _screen->getPalette(1), 768);
+	
+	for (int i = 0; i < 768; i += 3) {
+		_screen->_currentPalette[i] = _screen->_currentPalette[i + 1] = 0;
+		_screen->_currentPalette[i + 2] += (((int8)_screen->_currentPalette[i + 2]) >> 1);
+		if (_screen->_currentPalette[i + 2] > 63)
+			_screen->_currentPalette[i + 2] = 63;
+	}
+	snd_playSoundEffect(106);
+	_screen->fadePalette(_screen->_currentPalette, 90, &_updateFunctor);
+	_screen->fadePalette(_screen->getPalette(1), 30, &_updateFunctor);	
+
+	return 0;
 }
 
 int KyraEngine_v2::o2_customChat(ScriptState *script) {

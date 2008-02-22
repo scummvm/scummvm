@@ -495,8 +495,6 @@ protected:
 	void runSceneScript6();
 	void runSceneScript7();
 
-	void sceneStartupChat();
-
 	void initSceneAnims(int unk1);
 	void initSceneScreen(int unk1);
 
@@ -556,7 +554,7 @@ protected:
 	void setHandItem(uint16 item);
 	void removeHandItem();
 
-	// inventroy
+	// inventory
 	static const int _inventoryX[];
 	static const int _inventoryY[];
 
@@ -656,6 +654,9 @@ protected:
 	void objectChatWaitToFinish();
 
 	void startDialogue(int dlgIndex);
+
+	void zanthSceneStartupChat();
+	void zanthRandomChat();
 	void updateDlgBuffer();
 	void loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2);
 	void processDialogue(int dlgOffset, int vocH = 0, int csEntry = 0);
@@ -667,6 +668,28 @@ protected:
 	uint8 _newSceneDlgState[32];
 	int8 **_conversationState;
 	uint8 *_dlgBuffer;
+
+	// Talk object handling
+	void initTalkObject(int index);
+	void deinitTalkObject(int index);
+
+	struct TalkObject {
+		char filename[13];
+		int8 scriptId;
+		int16 x, y;
+		int8 color;
+	};
+	TalkObject *_talkObjectList;
+
+	struct TalkSections {
+		uint8 *STATim;
+		uint8 *TLKTim;
+		uint8 *ENDTim;
+	};
+	TalkSections _currentTalkSections;
+
+	char _TLKFilename[13];
+	bool _objectChatFinished;
 
 	// tim sequence
 	void tim_setupOpcodes();
@@ -725,28 +748,6 @@ protected:
 
 	const char *_timChatText;
 	int _timChatObject;
-
-	// Talk object handling
-	void initTalkObject(int index);
-	void deinitTalkObject(int index);
-
-	struct TalkObject {
-		char filename[13];
-		int8 scriptId;
-		int16 x, y;
-		int8 color;
-	};
-	TalkObject *_talkObjectList;
-
-	struct TalkSections {
-		uint8 *STATim;
-		uint8 *TLKTim;
-		uint8 *ENDTim;
-	};
-	TalkSections _currentTalkSections;
-
-	char _TLKFilename[13];
-	bool _objectChatFinished;
 
 	// sound
 	int _oldTalkFile;
@@ -859,6 +860,7 @@ protected:
 	int o2_updateSceneAnim(ScriptState *script);
 	int o2_useItemOnMainChar(ScriptState *script);
 	int o2_startDialogue(ScriptState *script);
+	int o2_zanthRandomChat(ScriptState *script);
 	int o2_setupDialogue(ScriptState *script);
 	int o2_getDlgIndex(ScriptState *script);
 	int o2_defineRoom(ScriptState *script);
@@ -881,6 +883,7 @@ protected:
 	int o2_querySpecialSceneScriptState(ScriptState *script);
 	int o2_setHiddenItemsEntry(ScriptState *script);
 	int o2_getHiddenItemsEntry(ScriptState *script);
+	int o2_mushroomEffect(ScriptState *script);
 	int o2_customChat(ScriptState *script);
 	int o2_customChatFinish(ScriptState *script);
 	int o2_getBoolFromStack(ScriptState *script);

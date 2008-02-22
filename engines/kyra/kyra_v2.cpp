@@ -1912,7 +1912,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x74
 		Opcode(o2_useItemOnMainChar),
 		Opcode(o2_startDialogue),
-		OpcodeUnImpl(),
+		Opcode(o2_zanthRandomChat),
 		Opcode(o2_setupDialogue),
 		// 0x78
 		Opcode(o2_getDlgIndex),
@@ -1951,7 +1951,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_setHiddenItemsEntry),
 		// 0x94
 		Opcode(o2_getHiddenItemsEntry),
-		OpcodeUnImpl(),
+		Opcode(o2_mushroomEffect),
 		Opcode(o2_wsaClose),
 		OpcodeUnImpl(),
 		// 0x98
