@@ -846,7 +846,9 @@ int KyraEngine_v2::o2_mushroomEffect(ScriptState *script) {
 	}
 	snd_playSoundEffect(106);
 	_screen->fadePalette(_screen->_currentPalette, 90, &_updateFunctor);
-	_screen->fadePalette(_screen->getPalette(1), 30, &_updateFunctor);	
+	
+	memcpy(_screen->_currentPalette, _screen->getPalette(1), 768);
+	_screen->fadePalette(_screen->_currentPalette, 30, &_updateFunctor);	
 
 	return 0;
 }
