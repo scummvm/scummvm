@@ -63,17 +63,17 @@ public:
 
 
 /**
- * The SaveFileManager is serving as a factor for InSaveFile
+ * The SaveFileManager is serving as a factory for InSaveFile
  * and OutSaveFile objects.
  *
  * Engines and other code should use SaveFiles whenever they need to
- * store data which they need to be able to retrieve later on --
+ * store data which they need to be able to retrieve again later on --
  * i.e. typically save states, but also configuration files and similar
  * things.
  *
- * While not declared as a singleton,
- * it is effectively used as such, with OSystem::getSavefileManager
- * returning the single SaveFileManager instances to be used.
+ * While not declared as a singleton, it is effectively used as such,
+ * with OSystem::getSavefileManager returning a pointer to the single
+ * SaveFileManager instances to be used.
  */
 class SaveFileManager : NonCopyable {
 
@@ -82,7 +82,7 @@ protected:
 	String _errorDesc;
 
 	/**
-	 * Sets the last ocurred error.
+	 * Set some information about the last error which occurred .
 	 * @param error Code identifying the last error.
 	 * @param errorDesc String describing the last error.
 	 */
@@ -97,21 +97,21 @@ public:
 	virtual void clearError() { _error = SFM_NO_ERROR; _errorDesc = ""; }
 
 	/**
-	 * Returns the last ocurred error code. If none ocurred, returns SFM_NO_ERROR.
+	 * Returns the last occurred error code. If none occurred, returns SFM_NO_ERROR.
 	 *
 	 * @return A SFMError indicating the type of the last error.
 	 */
 	virtual SFMError getError() { return _error; }
 
 	/**
-	 * Returns the last ocurred error description. If none ocurred, returns 0.
+	 * Returns the last occurred error description. If none occurred, returns 0.
 	 *
 	 * @return A string describing the last error.
 	 */
 	virtual String getErrorDesc() { return _errorDesc; }
 
 	/**
-	 * Returns the last ocurred error description. If none ocurred, returns 0.
+	 * Returns the last occurred error description. If none occurred, returns 0.
 	 * Also clears the last error state and description.
 	 *
 	 * @return A string describing the last error.
@@ -119,33 +119,33 @@ public:
 	virtual String popErrorDesc();
 
 	/**
-	 * Open the file with name filename in the given directory for saving.
-	 * @param filename	the filename
+	 * Open the savefile with the specified name in the given directory for saving.
+	 * @param name	the name of the savefile
 	 * @return pointer to an OutSaveFile, or NULL if an error occured.
 	 */
-	virtual OutSaveFile *openForSaving(const char *filename) = 0;
+	virtual OutSaveFile *openForSaving(const char *name) = 0;
 
 	/**
-	 * Open the file with name filename in the given directory for loading.
-	 * @param filename	the filename
+	 * Open the file with the specified name in the given directory for loading.
+	 * @param name	the name of the savefile
 	 * @return pointer to an InSaveFile, or NULL if an error occured.
 	 */
-	virtual InSaveFile *openForLoading(const char *filename) = 0;
+	virtual InSaveFile *openForLoading(const char *name) = 0;
 
 	/**
-	 * Removes the given savefile from the filesystem.
-	 * @param filename Filename path pointing to the savefile.
-	 * @return true if no error ocurred. false otherwise.
+	 * Removes the given savefile from the system.
+	 * @param name the name of the savefile to be removed.
+	 * @return true if no error occurred, false otherwise.
 	 */
-	virtual bool removeSavefile(const char *filename) = 0;
+	virtual bool removeSavefile(const char *name) = 0;
 
 	/**
 	 * Renames the given savefile.
-	 * @param oldFilename Old filename.
-	 * @param newFilename New filename.
-	 * @return true if no error ocurred. false otherwise.
+	 * @param oldName Old name.
+	 * @param newName New name.
+	 * @return true if no error occurred. false otherwise.
 	 */
-	virtual bool renameSavefile(const char *oldFilename, const char *newFilename);
+	virtual bool renameSavefile(const char *oldName, const char *newName);
 
 	/**
 	 * Request a list of available savegames with a given DOS-style pattern,
