@@ -27,10 +27,20 @@
 
 #include "graphics/surface.h"
 #include "iphone_common.h"
+#include "common/system.h"
+#include "common/events.h"
+
+#include <AudioToolbox/AudioQueue.h>
 
 #define AUDIO_BUFFERS 3
 #define WAVE_BUFFER_SIZE 8192
 #define AUDIO_SAMPLE_RATE 44100
+
+#define SCUMMVM_ROOT_PATH "/var/mobile/Library/ScummVM"
+#define SCUMMVM_SAVE_PATH SCUMMVM_ROOT_PATH "/Savegames"
+#define SCUMMVM_OLD_SAVE_PATH "/var/root/.scummvm"
+#define SCUMMVM_PREFS_PATH SCUMMVM_ROOT_PATH "/Preferences"
+#define SCUMMVM_OLD_PREFS_PATH "/var/root/.scummvmrc"
 
 typedef void (*SoundProc)(void *param, byte *buf, int len);
 typedef int (*TimerProc)(int interval);
@@ -49,7 +59,8 @@ protected:
 	static AQCallbackStruct s_AudioQueue;
 	static SoundProc s_soundCallback;
 	static void *s_soundParam;
-	
+	static bool s_is113OrHigher;
+
 	Common::SaveFileManager *_savefile;
 	Audio::Mixer *_mixer;
 	Common::TimerManager *_timer;
@@ -154,6 +165,10 @@ public:
 	virtual Audio::Mixer *getMixer();
 	virtual Common::TimerManager *getTimerManager();
 	
+	static void migrateApp();
+	static const char* getConfigPath();
+	static const char* getSavePath();	
+
 protected:
 	inline void addDirtyRect(int16 x1, int16 y1, int16 w, int16 h);
 	void internUpdateScreen();
