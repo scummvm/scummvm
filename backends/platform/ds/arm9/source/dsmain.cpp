@@ -215,7 +215,7 @@ int gameHeight = 200;
 // Scale
 bool twoHundredPercentFixedScale = false;
 bool cpuScalerEnable = false;
-#define NUM_SUPPORTED_GAMES 17
+#define NUM_SUPPORTED_GAMES 20
 
 #ifdef USE_PROFILER
 int hBlankCount = 0;
@@ -233,20 +233,23 @@ gameListType gameList[NUM_SUPPORTED_GAMES] = {
 	{"zak",			CONT_SCUMM_ORIGINAL},
 	{"loom",		CONT_SCUMM_ORIGINAL},
 	{"indy3",		CONT_SCUMM_ORIGINAL},
-	{"atlantis",	CONT_SCUMM_ORIGINAL},
+	{"atlantis",		CONT_SCUMM_ORIGINAL},
 	{"monkey",		CONT_SCUMM_ORIGINAL},
 	{"monkey2",		CONT_SCUMM_ORIGINAL},
-	{"tentacle",	CONT_SCUMM_ORIGINAL},
+	{"tentacle",		CONT_SCUMM_ORIGINAL},
 	{"samnmax",		CONT_SCUMM_SAMNMAX},
 	
 	// Non-SCUMM games
 	{"sky",			CONT_SKY},
 	{"simon1",		CONT_SIMON},
 	{"simon2",		CONT_SIMON},
-	{"gob",		CONT_GOBLINS},
+	{"gob",			CONT_GOBLINS},
 	{"queen",		CONT_SCUMM_ORIGINAL},
 	{"cine",		CONT_FUTURE_WARS},
-	{"agi",			CONT_AGI}
+	{"agi",			CONT_AGI},
+	{"elvira2",		CONT_SIMON},
+	{"elvira1",		CONT_SIMON},
+	{"waxworks",		CONT_SIMON},
 };
 
 gameListType* currentGame = NULL;
@@ -1391,22 +1394,23 @@ void addEventsToQueue() {
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}
-				/*	if (getKeysReleased() & KEY_LEFT) {
+					if (getKeysReleased() & KEY_LEFT) {
 						event.type = Common::EVENT_LBUTTONUP;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
-					}*/
-	
+					}
+
+
 					if (getKeysDown() & KEY_RIGHT) {
 						event.type = Common::EVENT_RBUTTONDOWN;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
 					}
-					/*if (getKeysReleased() & KEY_RIGHT) {
+					if (getKeysReleased() & KEY_RIGHT) {
 						event.type = Common::EVENT_RBUTTONUP;
 						event.mouse = Common::Point(getPenX(), getPenY());
 						system->addEvent(event);
-					}*/
+					}
 				}
 			}
 			
@@ -2662,7 +2666,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.11.0 ");
+	consolePrintf("Version 0.11.1");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
@@ -2673,7 +2677,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_C)
 	consolePrintf("build C\n");
-	consolePrintf("Simon/Elvira (AGOS)\n");
+	consolePrintf("Simon/Elvira/Waxworks (AGOS)\n");
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_D)
 	consolePrintf("build D\n");
@@ -2681,7 +2685,7 @@ int main(void)
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_E)
 	consolePrintf("build E\n");
-	consolePrintf("ITE/IHNM (SAGA)\n");
+	consolePrintf("Inherit the Earth (SAGA)\n");
 	consolePrintf("-------------------------------\n");
 #elif defined(DS_BUILD_F)
 	consolePrintf("build F\n");
