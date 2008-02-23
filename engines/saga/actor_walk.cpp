@@ -218,6 +218,9 @@ void Actor::updateActorsScene(int actorsEntrance) {
 		if (actor->_sceneNumber == _vm->_scene->currentSceneNumber()) {
 			actor->_inScene = true;
 			actor->_actionCycle = (_vm->_rnd.getRandomNumber(7) & 0x7) * 4; // 1/8th chance
+			if (actor->_currentAction != kActionFreeze) {
+				actor->_currentAction = kActionWait;
+			}
 		}
 	}
 
