@@ -1207,7 +1207,7 @@ void Actor::simulSpeech(const char *string, uint16 *actorIds, int actorIdsCount,
 		actor = getActor(actorIds[i]);
 		_activeSpeech.actorIds[i] = actorIds[i];
 		_activeSpeech.speechColor[i] = actor->_speechColor;
-		_activeSpeech.outlineColor[i] = 0; // disable outline
+		_activeSpeech.outlineColor[i] = _vm->KnownColor2ColorId(kKnownColorBlack);
 	}
 	_activeSpeech.actorsCount = actorIdsCount;
 	_activeSpeech.strings[0] = string;
