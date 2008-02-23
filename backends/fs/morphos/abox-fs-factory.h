@@ -26,14 +26,14 @@
 #define ABOX_FILESYSTEM_FACTORY_H
 
 #include "common/singleton.h"
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates ABoxFilesystemNode objects.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class ABoxFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<ABoxFilesystemFactory> {
+class ABoxFilesystemFactory : public FilesystemFactory, public Common::Singleton<ABoxFilesystemFactory> {
 public:
 	typedef Common::String String;
 

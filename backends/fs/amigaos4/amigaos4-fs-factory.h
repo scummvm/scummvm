@@ -26,14 +26,14 @@
 #define AMIGAOS_FILESYSTEM_FACTORY_H
 
 #include "common/singleton.h"
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates AmigaOSFilesystemNode objects.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class AmigaOSFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<AmigaOSFilesystemFactory> {
+class AmigaOSFilesystemFactory : public FilesystemFactory, public Common::Singleton<AmigaOSFilesystemFactory> {
 public:
 	typedef Common::String String;
 

@@ -26,14 +26,14 @@
 #define PALMOS_FILESYSTEM_FACTORY_H
 
 #include "common/singleton.h"
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates PalmOSFilesystemNode objects.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class PalmOSFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<PalmOSFilesystemFactory> {
+class PalmOSFilesystemFactory : public FilesystemFactory, public Common::Singleton<PalmOSFilesystemFactory> {
 public:
 	typedef Common::String String;
 

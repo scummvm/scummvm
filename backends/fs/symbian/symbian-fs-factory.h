@@ -26,14 +26,14 @@
 #define SYMBIAN_FILESYSTEM_FACTORY_H
 
 #include "common/singleton.h"
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates SymbianFilesystemNode objects.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class SymbianFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<SymbianFilesystemFactory> {
+class SymbianFilesystemFactory : public FilesystemFactory, public Common::Singleton<SymbianFilesystemFactory> {
 public:
 	typedef Common::String String;
 

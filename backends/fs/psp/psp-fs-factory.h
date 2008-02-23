@@ -26,14 +26,14 @@
 #define PSP_FILESYSTEM_FACTORY_H
 
 #include "common/singleton.h"
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates PSPFilesystemNode objects.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class PSPFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<PSPFilesystemFactory> {
+class PSPFilesystemFactory : public FilesystemFactory, public Common::Singleton<PSPFilesystemFactory> {
 public:
 	typedef Common::String String;
 

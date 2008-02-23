@@ -22,7 +22,7 @@
  * $Id$
  */
 
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /*
  * All the following includes choose, at compile time, which specific backend will be used
@@ -58,9 +58,9 @@
 /**
  * Creates concrete FilesystemFactory objects depending on the current architecture.
  *
- * @return AbstractFilesystemFactory* The specific factory for the current architecture.
+ * @return FilesystemFactory* The specific factory for the current architecture.
  */
-AbstractFilesystemFactory *AbstractFilesystemFactory::makeFSFactory() {
+FilesystemFactory *FilesystemFactory::makeFSFactory() {
 	#if defined(__amigaos4__)
 		return &AmigaOSFilesystemFactory::instance();
 	#elif defined(__DC__)

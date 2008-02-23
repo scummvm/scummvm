@@ -26,14 +26,14 @@
 #define PS2_FILESYSTEM_FACTORY_H
 
 #include "common/singleton.h"
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates PS2FilesystemNode objects.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class Ps2FilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<Ps2FilesystemFactory> {
+class Ps2FilesystemFactory : public FilesystemFactory, public Common::Singleton<Ps2FilesystemFactory> {
 public:
 	typedef Common::String String;
 

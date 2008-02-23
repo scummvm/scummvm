@@ -26,14 +26,14 @@
 #define POSIX_FILESYSTEM_FACTORY_H
 
 #include "common/singleton.h"
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates POSIXFilesystemNode objects.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class POSIXFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<POSIXFilesystemFactory> {
+class POSIXFilesystemFactory : public FilesystemFactory, public Common::Singleton<POSIXFilesystemFactory> {
 public:
 	typedef Common::String String;
 

@@ -26,14 +26,14 @@
 #define DS_FILESYSTEM_FACTORY_H
 
 #include "common/singleton.h"
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates DSFilesystemNode objects.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class DSFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<DSFilesystemFactory> {
+class DSFilesystemFactory : public FilesystemFactory, public Common::Singleton<DSFilesystemFactory> {
 public:
 	typedef Common::String String;
 

@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef ABSTRACT_FILESYSTEM_FACTORY_H
-#define ABSTRACT_FILESYSTEM_FACTORY_H
+#ifndef FILESYSTEM_FACTORY_H
+#define FILESYSTEM_FACTORY_H
 
 #include "common/str.h"
 #include "backends/fs/abstract-fs.h"
@@ -31,14 +31,12 @@
 /**
  * Creates concrete FilesystemNode objects depending on the current architecture.
  */
-class AbstractFilesystemFactory {
+class FilesystemFactory {
 public:
-	typedef Common::String String;
-
 	/**
 	 * Destructor.
 	 */
-	virtual ~AbstractFilesystemFactory() {}
+	virtual ~FilesystemFactory() {}
 
 	/**
 	 * Returns a node representing the "current directory".
@@ -58,7 +56,7 @@ public:
 	 *
 	 * @param path The path string to create a FilesystemNode for.
 	 */
-	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const = 0;
+	virtual AbstractFilesystemNode *makeFileNodePath(const Common::String &path) const = 0;
 
 	/**
 	 * Returns a special node representing the filesystem root.
@@ -71,10 +69,10 @@ public:
 
 
 	/**
-	 * Meta-factory method which returns a concrete AbstractFilesystemFactory
+	 * Meta-factory method which returns a concrete FilesystemFactory
 	 * instance depending on the current architecture.
 	 */
-	static AbstractFilesystemFactory *makeFSFactory();
+	static FilesystemFactory *makeFSFactory();
 };
 
-#endif /*ABSTRACT_FILESYSTEM_FACTORY_H*/
+#endif /*FILESYSTEM_FACTORY_H*/

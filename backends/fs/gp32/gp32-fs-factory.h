@@ -26,14 +26,14 @@
 #define GP32_FILESYSTEM_FACTORY_H
 
 #include "common/singleton.h"
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates GP32FilesystemNode objects.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class GP32FilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<GP32FilesystemFactory> {
+class GP32FilesystemFactory : public FilesystemFactory, public Common::Singleton<GP32FilesystemFactory> {
 public:
 	typedef Common::String String;
 

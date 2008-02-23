@@ -26,14 +26,14 @@
 #define WINDOWS_FILESYSTEM_FACTORY_H
 
 #include "common/singleton.h"
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates WindowsFilesystemNode objects.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class WindowsFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<WindowsFilesystemFactory> {
+class WindowsFilesystemFactory : public FilesystemFactory, public Common::Singleton<WindowsFilesystemFactory> {
 public:
 	typedef Common::String String;
 

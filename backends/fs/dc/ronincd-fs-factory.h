@@ -26,14 +26,14 @@
 #define RONINCD_FILESYSTEM_FACTORY_H
 
 #include "common/singleton.h"
-#include "backends/fs/abstract-fs-factory.h"
+#include "backends/fs/fs-factory.h"
 
 /**
  * Creates RoninCDFilesystemNode objects.
  *
- * Parts of this class are documented in the base interface class, AbstractFilesystemFactory.
+ * Parts of this class are documented in the base interface class, FilesystemFactory.
  */
-class RoninCDFilesystemFactory : public AbstractFilesystemFactory, public Common::Singleton<RoninCDFilesystemFactory> {
+class RoninCDFilesystemFactory : public FilesystemFactory, public Common::Singleton<RoninCDFilesystemFactory> {
 public:
 	typedef Common::String String;
 
