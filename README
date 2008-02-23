@@ -717,7 +717,7 @@ Supported platforms include (but are not limited to):
         PlayStation Portable
         RISC OS
         Symbian
-        Maemo (Nokia Internet tablets 770, N800, N810)
+        Maemo (Nokia Internet Tablets 770, N800, N810)
 
 The Dreamcast port does not support The Curse of Monkey Island, nor The Dig.
 The PalmOS port does not support The Curse of Monkey Island, Beneath a Steel
@@ -1771,14 +1771,15 @@ messages (see http://www.sysinternals.com/ntw2k/freeware/debugview.shtml).
 
      Maemo:
         * Get Scratchbox environment with Maemo 2.2 rootstrap (2.2 is for 770 and up)
-        * Install limbad, Tremor, FLAC, libmpeg2 from source
+        * Compile and install static versions of limbad, Tremor, FLAC, libmpeg2 from source
         * patch scummvm source (some stuff is currently too dirty to be in svn directly)
-          patch -p1 < backends/platform/maemo/scummvm-0.11.0-maemo.patch
+          patch -p1 < backends/platform/maemo/scummvm-{version}-maemo.patch
         * go to backends/platform/maemo
         * run 'make config'
         * run 'make scummvm'
         * create your debian/changelog in top directory
-        * run 'make deb' in backends/platform/maemo 
+        * run 'make deb' in backends/platform/maemo
+          or directly 'dpkg-buildpackage -rfakeroot -b -nc' in toplevel directory
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
