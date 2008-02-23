@@ -43,7 +43,12 @@ Visit the main ScummVM website <http://www.scummvm.org>
       What's New?
       ------------------------------------------------------------------------
 
-ScummVM DS 0.11.0a
+ScummVM DS 0.11.1
+
+ * Bugfix release - No new DS port features
+
+
+ScummVM DS 0.11.0
 
  * New games supported: Elvira 1 and 2, Waxworks (Amiga version)
  * Software scaler for improved image quality. Turn it on using the DS options
