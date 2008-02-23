@@ -331,7 +331,7 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 ///////////////////////////////////////////
 // Pak file manager
 PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, bool isAmiga) : ResourceFile() {
-	_open = false;
+	_mopen = false;
 
 	if (!pakfile.isOpen()) {
 		debug(3, "couldn't open pakfile '%s'\n", file);
@@ -407,7 +407,7 @@ PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, 
 		pos += nameLength + 4;
 	}
 
-	_open = true;
+	_mopen = true;
 	_filename = Common::hashit_lower(file);
 	_physfile = physfile;
 	_physOffset = off;
@@ -416,7 +416,7 @@ PAKFile::PAKFile(const char *file, const char *physfile, Common::File &pakfile, 
 
 PAKFile::~PAKFile() {
 	_physfile.clear();
-	_open = false;
+	_mopen = false;
 
 	_files.clear();
 }
@@ -470,7 +470,7 @@ bool PAKFile::openFile(Common::File &filehandle) const {
 // Ins file manager
 INSFile::INSFile(const char *file) : ResourceFile(), _files() {
 	Common::File pakfile;
-	_open = false;
+	_mopen = false;
 
 	if (!pakfile.open(file)) {
 		debug(3, "couldn't open insfile '%s'\n", file);
@@ -521,11 +521,11 @@ INSFile::INSFile(const char *file) : ResourceFile(), _files() {
 
 	_filename = Common::hashit_lower(file);
 	_physfile = file;
-	_open = true;
+	_mopen = true;
 }
 
 INSFile::~INSFile() {
-	_open = false;
+	_mopen = false;
 
 	_files.clear();
 }
