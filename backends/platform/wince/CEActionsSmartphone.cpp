@@ -118,6 +118,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	bool is_agi = (gameid == "agi");
 	bool is_parallaction = (gameid == "parallaction");
 	bool is_lure = (gameid == "lure");
+	bool is_feeble = (gameid == "feeble");
 
 	GUI_Actions::initInstanceGame();
 
@@ -127,7 +128,7 @@ void CEActionsSmartphone::initInstanceGame() {
 
 	// Initialize keys for different actions
 	// Save
-	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche)
+	if (is_simon || is_sword2 || is_gob || is_kyra || is_touche || is_feeble)
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = false;
 	else if (is_queen) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
@@ -150,7 +151,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	}
 	// Skip
 	_action_enabled[SMARTPHONE_ACTION_SKIP] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche || is_lure)
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_saga || is_kyra || is_touche || is_lure || is_feeble)
 		_key_action[SMARTPHONE_ACTION_SKIP].setKey(VK_ESCAPE);
 	else
 		_key_action[SMARTPHONE_ACTION_SKIP].setKey(KEY_ALL_SKIP);
