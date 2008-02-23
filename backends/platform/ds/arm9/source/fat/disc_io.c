@@ -499,8 +499,36 @@ bool disc_WriteSectors(u32 sector, u8 numSecs, void* buffer)
 #ifdef DISC_CACHE
 	disc_CacheInit();
 #endif
+
+#define MISALIGNMENT_BODGE
+
+#ifdef MISALIGNMENT_BODGE
+	// This bodge works around problems with some card reader drivers which require data to be
+	// aligned to 2- or 4-byte boundaries it varies which one they require.  This bodge sorts
+	// it but also reduces write speed as it doesn't use the multi-sector write capability any
+	// more.  A better fix will be written for a future version.
+
+	if (active_interface) {
+		u8 sectorBuffer[512];
+		int r;
+
+		for (r = 0; r < numSecs; r++) {
+			memcpy(sectorBuffer, &buffer[r * 512], 512);
+
+			if (!active_interface->fn_WriteSectors(sector + r, 1, sectorBuffer))
+			{
+				return false;
+			}
+		}
+		
+
+		return true;
+	}
+
+#else
 	if (active_interface) return active_interface->fn_WriteSectors(sector,numSecs,buffer) ;
 	return false ;
+#endif
 //#endif
 } 
 
