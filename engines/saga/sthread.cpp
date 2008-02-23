@@ -231,7 +231,6 @@ bool Script::runThread(ScriptThread *thread, uint instructionLimit) {
 							if (operandChar == opName) {							\
 								operandName = #opName;								\
 								debug(2, operandName);								\
-								_vm->_console->DebugPrintf("%s\n", operandName);	\
 							}
 
 		debug(8, "Executing thread offset: %u (%x) stack: %d", thread->_instructionOffset, operandChar, thread->pushedSize());
