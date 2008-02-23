@@ -36,5 +36,17 @@ AbstractFilesystemNode *Ps2FilesystemFactory::makeCurrentDirectoryFileNode() con
 }
 
 AbstractFilesystemNode *Ps2FilesystemFactory::makeFileNodePath(const String &path) const {
-	return new Ps2FilesystemNode(path);
+	// return new Ps2FilesystemNode(path);
+
+	Ps2FilesystemNode *nf = new Ps2FilesystemNode(path, true);
+/*
+	int fd = fio.dopen(path.c_str());
+	if (fd < 0) {
+		nf->_isDirectory = false;
+	}
+	else {
+		fio.dclose(fd);
+	}
+*/
+	return nf; // new Ps2FilesystemNode(path, true);
 }

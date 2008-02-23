@@ -42,10 +42,15 @@ public:
 	virtual Common::OutSaveFile *openForSaving(const char *filename);
 	virtual void listSavefiles(const char *prefix, bool *marks, int num);
 
+	virtual Common::StringList listSavefiles(const char *regex);
+	virtual bool removeSavefile(const char *filename);
+
+	/** Get the path to the save game directory. */
+	virtual const char *getSavePath() const;
+
 	void writeSaveNonblocking(char *name, void *buf, uint32 size);
 	void saveThread(void);
 	void quit(void);
-	
 private:
 	bool setupIcon(const char *dest, const char *ico, const char *descr1, const char *descr2);
 

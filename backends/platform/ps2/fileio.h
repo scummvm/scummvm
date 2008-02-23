@@ -26,6 +26,10 @@
 #ifndef __PS2FILE_IO__
 #define __PS2FILE_IO__
 
+typedef unsigned long uint64;
+typedef signed long   int64;
+
+#include <stdio.h>
 #include "common/scummsys.h"
 
 class Ps2File {

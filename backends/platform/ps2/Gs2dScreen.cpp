@@ -364,6 +364,30 @@ void Gs2dScreen::copyScreenRect(const uint8 *buf, int pitch, int x, int y, int w
 	}
 }
 
+void Gs2dScreen::clearScreen(void) {
+	WaitSema(g_DmacSema);
+	memset(_screenBuf, 0, _width * _height);
+	_screenChanged = true;
+	SignalSema(g_DmacSema);
+}
+
+Graphics::Surface *Gs2dScreen::lockScreen() {
+	WaitSema(g_DmacSema);
+
+	_framebuffer.pixels = _screenBuf;
+	_framebuffer.w = _width;
+	_framebuffer.h = _height;
+	_framebuffer.pitch = _width; // -not- _pitch; ! It's EE mem, not Tex
+	_framebuffer.bytesPerPixel = 1;
+
+	return &_framebuffer;
+}
+
+void Gs2dScreen::unlockScreen() {
+	_screenChanged = true;
+	SignalSema(g_DmacSema);
+}
+
 void Gs2dScreen::setPalette(const uint32 *pal, uint8 start, uint16 num) {
 	assert(start + num <= 256);
 
@@ -386,20 +410,11 @@ void Gs2dScreen::grabPalette(uint32 *pal, uint8 start, uint16 num) {
 	}
 }
 
-Graphics::Surface *Gs2dScreen::lockScreen() {
+void Gs2dScreen::grabScreen(Graphics::Surface *surf) {
+	assert(surf);
 	WaitSema(g_DmacSema);
-
-	_framebuffer.pixels = _screen->pixels;
-	_framebuffer.w = _screen->w;
-	_framebuffer.h = _screen->h;
-	_framebuffer.pitch = _screen->pitch;
-	_framebuffer.bytesPerPixel = 1;
-
-	return &_framebuffer;
-}
-
-void Gs2dScreen::unlockScreen() {
-	_screenChanged = true;
+	surf->create(_width, _height, 1);
+	memcpy(surf->pixels, _screenBuf, _width * _height);
 	SignalSema(g_DmacSema);
 }
 

@@ -34,7 +34,7 @@
 #include <iopcontrol.h>
 #include <iopheap.h>
 #include "common/scummsys.h"
-#include "../intern.h"
+#include "backends/intern.h"
 #include "engines/engine.h"
 #include "backends/platform/ps2/systemps2.h"
 #include "backends/platform/ps2/Gs2dScreen.h"
@@ -45,6 +45,7 @@
 #include "backends/platform/ps2/savefile.h"
 #include "common/file.h"
 #include "backends/platform/ps2/sysdefs.h"
+#include "backends/platform/ps2/fileio.h"
 #include <libmc.h>
 #include <libpad.h>
 #include "backends/platform/ps2/cd.h"
@@ -54,6 +55,9 @@
 #include "eecodyvdfs.h"
 #include "graphics/surface.h"
 #include "graphics/font.h"
+#include "backends/timer/default/default-timer.h"
+#include "sound/mixer.h"
+#include "common/events.h"
 
 // asm("mfc0	%0, $9\n" : "=r"(tickStart));
 
@@ -118,8 +122,16 @@ extern "C" int main(int argc, char *argv[]) {
 	sioprintf("Creating system");
 	g_system = g_systemPs2 = new OSystem_PS2(argv[0]);
 
+	g_systemPs2->init();
+
 	sioprintf("init done. starting ScummVM.");
-	return scummvm_main(argc, argv);
+	int res = scummvm_main(argc, argv);
+	sioprintf("scummvm_main terminated: %d", res);
+
+	g_systemPs2->quit();
+
+	// control never gets here
+	return res;
 }
 
 s32 timerInterruptHandler(s32 cause) {
@@ -216,7 +228,7 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 				}
 			}
 			
-			if (modules[i].buffer);
+			if (modules[i].buffer)
 				free(modules[i].buffer);
 		} else {
 			sioprintf("module %d of %d damaged, loc %d, path %s", i, numModules, modules[i].loc, modules[i].path);
@@ -233,9 +245,6 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 
 OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	_soundStack = _timerStack = NULL;
-	_scummTimerProc = NULL;
-	_scummSoundProc = NULL;
-	_scummSoundParam = NULL;
 	_printY = 0;
 	_msgClearTime = 0;
 	_systemQuit = false;
@@ -244,7 +253,6 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	_screen = new Gs2dScreen(320, 200, TV_DONT_CARE);
 
 	sioprintf("Initializing system...");
-	initTimer();
 
 	_screen->wantAnim(true);
 
@@ -287,12 +295,21 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 		quit();
 	}
 
+	// _useHdd = false; // romeo
+
 	if (_useHdd) {
 		if ((hddCheckPresent() < 0) || (hddCheckFormatted() < 0))
 			_useHdd = false;
 
-		hddPreparePoweroff();
-		hddSetUserPoweroffCallback(gluePowerOffCallback, this);
+		printf("romeo : hddCheckPresent done : %d\n", _useHdd);
+
+		// hddPreparePoweroff();
+		// poweroffInit();
+		printf("romeo : hddPreparePoweroff done\n");     
+
+		// hddSetUserPoweroffCallback(gluePowerOffCallback, this);
+		// poweroffSetCallback(gluePowerOffCallback, this);
+		printf("romeo : hddSetUserPoweroffCallback done\n");
 	}
 
 	fileXioSetBlockMode(FXIO_NOWAIT);
@@ -303,11 +320,19 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	readRtcTime();
 
 	if (_useHdd) {
+		printf("romeo : trying to mount...\n");
 		if (fio.mount("pfs0:", "hdd0:+ScummVM", 0) >= 0)
 			printf("Successfully mounted!\n");
 		else
 			_useHdd = false;
 	}
+
+	initMutexes();
+
+	/*sioprintf("Timer...");
+	_scummTimerManager = new DefaultTimerManager();
+	_scummMixer = new Audio::Mixer();
+	initTimer();
 
 	sioprintf("Starting SavefileManager");
 	_saveManager = new Ps2SaveFileManager(this, _screen);
@@ -315,30 +340,29 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	sioprintf("Initializing ps2Input");
 	_input = new Ps2Input(this, _useMouse, _useKbd);
 
-	ee_sema_t newSema;
-	newSema.init_count = 1;
-	newSema.max_count = 1;
-	_mutexSema = CreateSema(&newSema);
-	for (int i = 0; i < MAX_MUTEXES; i++) {
-		_mutex[i].sema = -1;
-		_mutex[i].count = _mutex[i].owner = 0;
-	}
+	_screen->wantAnim(false);
+	_screen->clearScreen();*/
+}
+
+void OSystem_PS2::init(void) {
+	sioprintf("Timer...");
+	_scummTimerManager = new DefaultTimerManager();
+	_scummMixer = new Audio::Mixer();
+	initTimer();
+
+	sioprintf("Starting SavefileManager");
+	_saveManager = new Ps2SaveFileManager(this, _screen);
+
+	sioprintf("Initializing ps2Input");
+	_input = new Ps2Input(this, _useMouse, _useKbd);
 
 	_screen->wantAnim(false);
-	clearScreen();
+	_screen->clearScreen();
+
+	// OSystem::initBackend(); // romeo
 }
 
 OSystem_PS2::~OSystem_PS2(void) {
-}
-
-void OSystem_PS2::initBackend() {
-	// FIXME: Should probably move lots of stuff from the constructor to here
-	_mixer = new Audio::Mixer();
-	_timer = new DefaultTimerManager();
-	setSoundCallback(Audio::Mixer::mixCallback, _mixer);
-	setTimerCallback(&timer_handler, 10);
-
-	OSystem::initBackend();
 }
 
 void OSystem_PS2::initTimer(void) {
@@ -404,18 +428,12 @@ void OSystem_PS2::initTimer(void) {
 void OSystem_PS2::timerThread(void) {
 	while (!_systemQuit) {
 		WaitSema(g_TimerThreadSema);
-		if (_scummTimerProc)
-			_scummTimerProc(0);
+		_scummTimerManager->handler();
 	}
 	ExitThread();
 }
 
 void OSystem_PS2::soundThread(void) {
-	ee_sema_t soundSema;
-	soundSema.init_count = 1;
-	soundSema.max_count = 1;
-	_soundSema = CreateSema(&soundSema);
-	assert(_soundSema >= 0);
 	int16 *soundBufL = (int16*)memalign(64, SMP_PER_BLOCK * sizeof(int16) * 2);
 	int16 *soundBufR = soundBufL + SMP_PER_BLOCK;
 
@@ -431,55 +449,51 @@ void OSystem_PS2::soundThread(void) {
 			bufferedSamples -= 480;
 		cycles++;
 
-		WaitSema(_soundSema);
-		if (_scummSoundProc) {
-			if (bufferedSamples <= 8 * SMP_PER_BLOCK) {
-				// we have to produce more samples, call sound mixer
-				// the scratchpad at 0x70000000 is used as temporary soundbuffer
-				_scummSoundProc(_scummSoundParam, (uint8*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
+		if (bufferedSamples <= 8 * SMP_PER_BLOCK) {
+			// we have to produce more samples, call sound mixer
+			// the scratchpad at 0x70000000 is used as temporary soundbuffer
+			//_scummSoundProc(_scummSoundParam, (uint8*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
+			Audio::Mixer::mixCallback(_scummMixer, (byte*)0x70000000, SMP_PER_BLOCK * 2 * sizeof(int16));
 
-				// demux data into 2 buffers, L and R
-				 __asm__ (
-					"move  $t2, %1\n\t"			// dest buffer right
-					"move  $t3, %0\n\t"			// dest buffer left
-					"lui   $t8, 0x7000\n\t"		// muxed buffer, fixed at 0x70000000
-					"addiu $t9, $0, 100\n\t"	// number of loops
-					"mtsab $0, 2\n\t"			// set qword shift = 2 byte
+			// demux data into 2 buffers, L and R
+			 __asm__ (
+				"move  $t2, %1\n\t"			// dest buffer right
+				"move  $t3, %0\n\t"			// dest buffer left
+				"lui   $t8, 0x7000\n\t"		// muxed buffer, fixed at 0x70000000
+				"addiu $t9, $0, 100\n\t"	// number of loops
+				"mtsab $0, 2\n\t"			// set qword shift = 2 byte
 
-					"loop:\n\t"
-					"  lq $t4,  0($t8)\n\t"		// load 8 muxed samples
-					"  lq $t5, 16($t8)\n\t"		// load 8 more muxed samples
+				"loop:\n\t"
+				"  lq $t4,  0($t8)\n\t"		// load 8 muxed samples
+				"  lq $t5, 16($t8)\n\t"		// load 8 more muxed samples
 
-					"  qfsrv $t6, $0, $t4\n\t"	// shift right for second
-					"  qfsrv $t7, $0, $t5\n\t"	// packing step (right channel)
+				"  qfsrv $t6, $0, $t4\n\t"	// shift right for second
+				"  qfsrv $t7, $0, $t5\n\t"	// packing step (right channel)
 
-					"  ppach $t4, $t5, $t4\n\t"	// combine left channel data
-					"  ppach $t6, $t7, $t6\n\t"	// right channel data
+				"  ppach $t4, $t5, $t4\n\t"	// combine left channel data
+				"  ppach $t6, $t7, $t6\n\t"	// right channel data
 
-					"  sq $t4, 0($t3)\n\t"		// write back
-					"  sq $t6, 0($t2)\n\t"		//
+				"  sq $t4, 0($t3)\n\t"		// write back
+				"  sq $t6, 0($t2)\n\t"		//
 
-					"  addiu $t9, -1\n\t"		// decrement loop counter
-					"  addiu $t2, 16\n\t"		// increment pointers
-					"  addiu $t3, 16\n\t"
-					"  addiu $t8, 32\n\t"
-					"  bnez  $t9, loop\n\t"		// loop
-						:  // outputs
-				 		: "r"(soundBufL), "r"(soundBufR)  // inputs
-					//  : "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"  // destroyed
-						: "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25"  // destroyed
-				);
-				// and feed it into the SPU
-				// non-blocking call, the function will return before the buffer's content
-				// was transferred.
-				SjPCM_Enqueue((short int*)soundBufL, (short int*)soundBufR, SMP_PER_BLOCK, 0);
-				bufferedSamples += SMP_PER_BLOCK;
-			}
-		} 
-		SignalSema(_soundSema);
+				"  addiu $t9, -1\n\t"		// decrement loop counter
+				"  addiu $t2, 16\n\t"		// increment pointers
+				"  addiu $t3, 16\n\t"
+				"  addiu $t8, 32\n\t"
+				"  bnez  $t9, loop\n\t"		// loop
+					:  // outputs
+			 		: "r"(soundBufL), "r"(soundBufR)  // inputs
+				//  : "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"  // destroyed
+					: "$10", "$11", "$12", "$13", "$14", "$15", "$24", "$25"  // destroyed
+			);
+			// and feed it into the SPU
+			// non-blocking call, the function will return before the buffer's content
+			// was transferred.
+			SjPCM_Enqueue((short int*)soundBufL, (short int*)soundBufR, SMP_PER_BLOCK, 0);
+			bufferedSamples += SMP_PER_BLOCK;
+		}
 	}
 	free(soundBufL);
-	DeleteSema(_soundSema);
 	ExitThread();
 }
 
@@ -488,11 +502,14 @@ bool OSystem_PS2::hddPresent(void) {
 }
 
 void OSystem_PS2::setUsbMassConnected(bool stat) {
+	printf("_usbMassConnected = %d\n", stat); // romeo
 	_usbMassConnected = stat;
 }
 
 bool OSystem_PS2::usbMassPresent(void) {
-	return _usbMassConnected;
+	return true; // _usbMassConnected; // romeo
+	// TODO : we should check on start if there is already a USB
+	//        trying an open on "mass:"
 }
 
 void OSystem_PS2::initSize(uint width, uint height) {
@@ -519,12 +536,9 @@ void OSystem_PS2::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 	_screen->copyScreenRect((const uint8*)buf, pitch, x, y, w, h);
 }
 
-Graphics::Surface *OSystem_PS2::lockScreen() {
-	return _screen->lockScreen();
-}
-
-void OSystem_PS2::unlockScreen() {
-	_screen->unlockScreen();
+bool OSystem_PS2::grabRawScreen(Graphics::Surface *surf) {
+	_screen->grabScreen(surf);
+	return true;
 }
 
 void OSystem_PS2::updateScreen(void) {
@@ -558,31 +572,16 @@ void OSystem_PS2::delayMillis(uint msecs) {
 	}
 }
 
-void OSystem_PS2::setTimerCallback(OSystem::TimerProc callback, int interval) {
-	if (callback && (interval != 10))
-		sioprintf("unhandled timer interval: %d\n", interval);
-	_scummTimerProc = callback;
+Common::TimerManager *OSystem_PS2::getTimerManager() {
+	return _scummTimerManager;
 }
 
 int OSystem_PS2::getOutputSampleRate(void) const {
 	return 48000;
 }
 
-bool OSystem_PS2::setSoundCallback(SoundProc proc, void *param) {
-	assert(proc != NULL);
-
-	WaitSema(_soundSema);
-    _scummSoundProc = proc;
-	_scummSoundParam = param;
-	SignalSema(_soundSema);
-	return true;
-}
-
-void OSystem_PS2::clearSoundCallback(void) {
-	WaitSema(_soundSema);
-	_scummSoundProc = NULL;
-	_scummSoundParam = NULL;
-	SignalSema(_soundSema);
+Audio::Mixer *OSystem_PS2::getMixer() {
+	return _scummMixer;
 }
 
 Common::SaveFileManager *OSystem_PS2::getSavefileManager(void) {
@@ -644,6 +643,14 @@ void OSystem_PS2::grabOverlay(OverlayColor *buf, int pitch) {
 
 void OSystem_PS2::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	_screen->copyOverlayRect((uint16*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
+}
+
+Graphics::Surface *OSystem_PS2::lockScreen() {
+	return _screen->lockScreen();
+}
+
+void OSystem_PS2::unlockScreen() {
+	_screen->unlockScreen();
 }
 
 const OSystem::GraphicsMode OSystem_PS2::_graphicsMode = { NULL, NULL, 0 };
@@ -752,28 +759,32 @@ void OSystem_PS2::powerOffCallback(void) {
 }
 
 void OSystem_PS2::quit(void) {
+	sioprintf("OSystem_PS2::quit called");
 	if (_bootDevice == HOST) {
-		printf("OSystem_PS2::quit\n");
+		sioprintf("OSystem_PS2::quit (HOST)\n");
 		SleepThread();
 	} else {
-		sioprintf("OSystem_PS2::quit");
+		sioprintf("OSystem_PS2::quit (bootdev=%d)", _bootDevice);
 		if (_useHdd) {
 			driveStandby();
 			fio.umount("pfs0:");
 		}
-		clearSoundCallback();
-		setTimerCallback(NULL, 0);
+		//clearSoundCallback();
+		//setTimerCallback(NULL, 0);
 		_screen->wantAnim(false);
 		_systemQuit = true;
 		ee_thread_t statSound, statTimer;
+		sioprintf("Waiting for timer and sound thread to end");
 		do {	// wait until both threads called ExitThread()
 			ReferThreadStatus(_timerTid, &statTimer);
 			ReferThreadStatus(_soundTid, &statSound);
 		} while ((statSound.status != 0x10) || (statTimer.status != 0x10));
+		sioprintf("Done");
 		DeleteThread(_timerTid);
 		DeleteThread(_soundTid);
 		free(_timerStack);
 		free(_soundStack);
+		sioprintf("Stopping timer");
 		DisableIntc(INT_TIMER0);
 		RemoveIntcHandler(INT_TIMER0, _intrId);
 

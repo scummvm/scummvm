@@ -28,6 +28,8 @@
 
 #include "common/system.h"
 
+class DefaultTimerManager;
+
 class Gs2dScreen;
 class Ps2Input;
 class Ps2SaveFileManager;
@@ -43,14 +45,21 @@ struct Ps2Mutex {
 	int count;
 };
 
+namespace Common {
+	class TimerManager;
+};
+
+namespace Audio {
+	class Mixer;
+};
+
 class OSystem_PS2 : public OSystem {
 public:
 	OSystem_PS2(const char *elfPath);
 	virtual ~OSystem_PS2(void);
-
-	virtual void initBackend();
-
 	virtual void initSize(uint width, uint height);
+
+	void init(void);
 
 	virtual int16 getHeight(void);
 	virtual int16 getWidth(void);
@@ -58,6 +67,7 @@ public:
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual void setShakePos(int shakeOffset);
 	virtual void grabPalette(byte *colors, uint start, uint num);
+	virtual bool grabRawScreen(Graphics::Surface *surf);
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
 	virtual void updateScreen();
@@ -75,11 +85,10 @@ public:
 
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
-	virtual void setTimerCallback(TimerProc callback, int interval);
+	virtual Common::TimerManager *getTimerManager();
 	virtual bool pollEvent(Common::Event &event);
 
-	virtual bool setSoundCallback(SoundProc proc, void *param);
-	virtual void clearSoundCallback();
+	virtual Audio::Mixer *getMixer();
 	virtual int  getOutputSampleRate(void) const;
 
 	virtual bool openCD(int drive);
@@ -105,8 +114,6 @@ public:
 	virtual void colorToRGB(OverlayColor color, uint8 &r, uint8 &g, uint8 &b);
 
 	virtual Common::SaveFileManager *getSavefileManager();
-	virtual Audio::Mixer *getMixer() { return _mixer; }
-	virtual Common::TimerManager *getTimerManager() { return _timer; }
 
 	void timerThread(void);
 	void soundThread(void);
@@ -121,20 +128,18 @@ public:
 private:
 	void startIrxModules(int numModules, IrxReference *modules);
 
-	volatile OSystem::TimerProc _scummTimerProc;
-	volatile OSystem::SoundProc _scummSoundProc;
-	void *_scummSoundParam;
-	int _soundSema;
-
+	void initMutexes(void);
 	void initTimer(void);
 	void readRtcTime(void);
+
+	DefaultTimerManager *_scummTimerManager;
+	Audio::Mixer *_scummMixer;
+
 
 	bool _mouseVisible;
 	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _usbMassConnected;
 
 	Ps2SaveFileManager *_saveManager;
-	Audio::Mixer *_mixer;
-	Common::TimerManager *_timer;
 
 	Gs2dScreen	*_screen;
 	Ps2Input	*_input;

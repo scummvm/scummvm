@@ -26,8 +26,20 @@
 #include <kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "asyncfio.h"
+#include "fileio.h"
+
 #include "systemps2.h"
+
+#define DEFAULT_MODE (FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IROTH | FIO_S_IWOTH)
+
+FILE *ps2_fopen(const char *fname, const char *mode);
+int ps2_fclose(FILE *stream);
+// extern int fileXioChdir(const char* pathname);
+
+#include <fileXio_rpc.h>
+
 
 extern AsyncFio fio;
 extern OSystem_PS2 *g_systemPs2;
@@ -38,6 +50,9 @@ extern OSystem_PS2 *g_systemPs2;
  * Parts of this class are documented in the base interface class, AbstractFilesystemNode.
  */
 class Ps2FilesystemNode : public AbstractFilesystemNode {
+
+friend class Ps2FilesystemFactory;
+
 protected:
 	String _displayName;
 	String _path;
@@ -56,19 +71,107 @@ public:
 	 * @param path String with the path the new node should point to.
 	 */
 	Ps2FilesystemNode(const String &path);
+	Ps2FilesystemNode(const String &path, bool verify);
 	
 	/**
 	 * Copy constructor.
 	 */
 	Ps2FilesystemNode(const Ps2FilesystemNode *node);
+	
+	virtual bool exists() const {
+		int fd;
 
-	virtual bool exists() const { return true; }		//FIXME: this is just a stub
+		printf("Q: Does %s exist ?\n", _path.c_str());
+
+		if (_path[4] != ':') { // don't bother for relative path...
+		                       //  ...they always fail on PS2!
+			printf("A: nope -> skip relative path\n");
+			return false;
+		}
+
+		if (_path[0] == 'h') { // bypass host
+			printf("A: nope -> skip host\n");
+			return false;
+		}
+
+		if ((fd = fio.open(_path.c_str(), O_RDONLY)) >= 0) { /* it's a file */
+			fio.close(fd);
+			printf("A: yep -> file\n");
+			return true;
+		}
+
+		   /* romeo's black magic */
+		fd = fio.open(_path.c_str(), O_RDONLY, DEFAULT_MODE | FIO_S_IFDIR); 
+		if (fd == -EISDIR) {
+			printf("A: yep -> dir\n");
+			return true;
+		}
+		/* NOTE: it cannot be a file cause it would have been caught by
+		         the previous test, so no need to close it ;-)          */
+
+		printf("A: nope\n");
+		return false;
+	}
+
 	virtual String getDisplayName() const { return _displayName; }
 	virtual String getName() const { return _displayName; }
 	virtual String getPath() const { return _path; }
-	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return true; }	//FIXME: this is just a stub
-	virtual bool isWritable() const { return true; }	//FIXME: this is just a stub
+	virtual bool isDirectory() const {
+
+		printf("Q: Is %s a dir?\n", _path.c_str());
+
+#if 0
+		int fd;
+
+		if (_path.empty()) {
+			printf("A: yep -> top level\n");
+			return true; // top level
+		}
+
+		if (_path.lastChar() == ':' ||
+			(_path.lastChar() == '/' && _path[_path.size()-2] == ':')) {
+			printf("A: yep -> device\n");
+			return true; // device
+		}
+
+		fd = fio.open(_path.c_str(), O_RDONLY, DEFAULT_MODE | FIO_S_IFDIR);
+		if (fd == -EISDIR) {
+			printf("A: yep\n");
+			return true;
+		}
+
+		if (fd >= 0)
+			fio.close(fd);
+
+		printf("A: nope\n");
+		return false;
+#else
+		if (_isDirectory)
+			printf("A: yep -> _isDirectory == 1\n");
+		else
+			printf("A: nope -> _isDirectory == 0\n");
+
+		return _isDirectory;
+#endif
+	}
+
+	virtual bool isReadable() const {
+		int fd;
+		if ((fd = fio.open(_path.c_str(), O_RDONLY)) >= 0) {
+			fio.close(fd);
+			return true;
+		}
+		return false;
+	}
+
+	virtual bool isWritable() const {
+		int fd;
+		if ((fd =  fio.open(_path.c_str(), O_WRONLY)) >= 0) {
+			fio.close(fd);
+			return true;
+		}
+		return false;
+	}
 
 	virtual AbstractFilesystemNode *clone() const { return new Ps2FilesystemNode(this); }
 	virtual AbstractFilesystemNode *getChild(const String &n) const;
@@ -83,13 +186,19 @@ public:
  * @return Pointer to the first char of the last component inside str.
  */
 const char *lastPathComponent(const Common::String &str) {
-	//FIXME: implement this method properly.
-	// This code is probably around the constructors,
-	// but I couldn't figure it out without having
-	// doubts on the correctness of my assumptions.
-	// Therefore, I leave it to the porter to correctly
-	// implement this method.
-	assert(false);
+	if (str.empty())
+		return "";
+
+	const char *start = str.c_str();
+	const char *cur = start + str.size() - 2;
+
+	while (cur >= start && *cur != '/' && *cur != ':') {
+		--cur;
+	}
+
+	printf("romeo : lastPathComponent = %s\n", cur + 1);
+
+	return cur + 1;
 }
 
 Ps2FilesystemNode::Ps2FilesystemNode() {
@@ -121,6 +230,105 @@ Ps2FilesystemNode::Ps2FilesystemNode(const String &path) {
 			else
 				_displayName = "Harddisk";
 		}
+	}
+}
+
+Ps2FilesystemNode::Ps2FilesystemNode(const String &path, bool verify) {
+	_path = path;
+	_isDirectory = true;
+
+	if (strcmp(path.c_str(), "") == 0) {
+		_isRoot = true;
+		_displayName = String("PlayStation 2");
+		verify = false; /* root is always a dir*/
+	} else {
+		_isRoot = false;
+		const char *dsplName = NULL, *pos = path.c_str();
+		while (*pos)
+			if (*pos++ == '/')
+				dsplName = pos;
+		if (dsplName)
+			_displayName = String(dsplName);
+		else {
+			if (strncmp(path.c_str(), "cdfs", 4) == 0)
+				_displayName = "DVD Drive";
+			else if (strncmp(path.c_str(), "mass", 4) == 0)
+				_displayName = "USB Mass Storage";
+			else
+				_displayName = "Harddisk";
+			verify = false; /* devices are always dir */
+		}
+	}
+
+	if (verify && !_isRoot) {
+		int medium, fd;
+
+		if (strncmp(path.c_str(), "pfs0", 4) == 0)
+			medium = 0;
+		else if (strncmp(path.c_str(), "cdfs", 4) == 0)
+			medium = 1;
+		else if (strncmp(path.c_str(), "mass", 4) == 0)
+			medium = 2;
+
+		switch(medium) {
+
+		case 0: /* hd */
+		printf("hd >  ");
+		fd = fio.open(_path.c_str(), O_RDONLY, DEFAULT_MODE | FIO_S_IFDIR);
+
+		if (fd == -EISDIR) {
+			printf(" romeo : new node [ %s ] is a dir\n", path.c_str());
+		}
+		else if (fd >=0) {
+			_isDirectory = false;
+			printf(" romeo : new node [ %s ] is -not- a dir (%d)\n",
+				path.c_str(), fd);
+			fio.close(fd);
+		}
+		else
+			printf(" romeo : new node [ %s ] is -not- (%d)\n",
+				 path.c_str(), fd);
+
+		break;
+
+		case 1: /* cd */
+		printf("cd >  ");
+		fd = fio.open(_path.c_str(), O_RDONLY, DEFAULT_MODE | FIO_S_IFDIR);
+
+		if (fd == -ENOENT) {
+			printf(" romeo : new node [ %s ] is a dir\n", path.c_str());
+		}
+		else if (fd >=0) {
+			_isDirectory = false;
+			printf(" romeo : new node [ %s ] is -not- a dir (%d)\n",
+				path.c_str(), fd);
+			fio.close(fd);
+		}
+		else
+			printf(" romeo : new node [ %s ] is -not- (%d)\n",
+				path.c_str(), fd);
+
+		break;
+
+		case 2: /* usb */
+		printf("usb >  ");
+		// fd = fio.open(_path.c_str(), O_RDONLY, DEFAULT_MODE | FIO_S_IFDIR);
+		fd = fio.chdir(path.c_str());
+
+		if (fd == -48) {
+			printf(" romeo : new node [ %s ] is a dir\n", path.c_str());
+			// fio.close(fd);
+			// chdir("");
+		}
+		else {
+			_isDirectory = false;
+			printf(" romeo : new node [ %s ] is a -not- a dir (%d)\n",
+				path.c_str(), fd);
+		}
+
+		break;
+		} /* switch(medium) */
+
 	}
 }
 
@@ -195,7 +403,7 @@ bool Ps2FilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 		char listDir[256];
 		int fd;
 		
-		if (_path.lastChar() == '/')
+		if (_path.lastChar() == '/' /* || _path.lastChar() == ':'*/)
 			fd = fio.dopen(_path.c_str());
 		else {
 			sprintf(listDir, "%s/", _path.c_str());

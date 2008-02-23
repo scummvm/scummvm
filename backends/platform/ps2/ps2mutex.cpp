@@ -25,6 +25,17 @@
 
 #include "backends/platform/ps2/systemps2.h"
 
+void OSystem_PS2::initMutexes(void) {
+	ee_sema_t newSema;
+	newSema.init_count = 1;
+	newSema.max_count = 1;
+	_mutexSema = CreateSema(&newSema);
+	for (int i = 0; i < MAX_MUTEXES; i++) {
+		_mutex[i].sema = -1;
+		_mutex[i].count = _mutex[i].owner = 0;
+	}
+}
+
 OSystem::MutexRef OSystem_PS2::createMutex(void) {
 	WaitSema(_mutexSema);
 	Ps2Mutex *mutex = NULL;
@@ -49,6 +60,7 @@ void OSystem_PS2::lockMutex(MutexRef mutex) {
 	WaitSema(_mutexSema);
 	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
 	int tid = GetThreadId();
+
 	assert(tid != 0);
 	if (sysMutex->owner && (sysMutex->owner == tid))
 		sysMutex->count++;
@@ -66,6 +78,7 @@ void OSystem_PS2::unlockMutex(MutexRef mutex) {
 	WaitSema(_mutexSema);
 	Ps2Mutex *sysMutex = (Ps2Mutex*)mutex;
 	int tid = GetThreadId();
+
 	if (sysMutex->owner && sysMutex->count && (sysMutex->owner == tid))
 		sysMutex->count--;
 	else {

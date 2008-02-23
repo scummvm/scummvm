@@ -34,6 +34,8 @@
 #include "backends/platform/ps2/savefile.h"
 #include "backends/platform/ps2/Gs2dScreen.h"
 #include "backends/platform/ps2/systemps2.h"
+#include "backends/fs/abstract-fs.h"
+
 #include "common/scummsys.h"
 
 extern void *_gp;
@@ -482,6 +484,90 @@ void Ps2SaveFileManager::listSavefiles(const char *prefix, bool *marks, int num)
 		free(mcEntries);
 	}
 	_screen->wantAnim(false);
+}
+
+Common::StringList Ps2SaveFileManager::listSavefiles(const char *regex) {
+	_screen->wantAnim(true);
+	Common::StringList results;
+	int mcType, mcFree, mcFormat, mcResult;
+
+	printf("listSavefiles -> regex=%s\n", regex);
+
+	mcResult = _mc->getInfo(&mcType, &mcFree, &mcFormat);
+
+	if ((mcResult == 0) || (mcResult == -1)) {
+		// there's a memory card in the slot.
+		if (mcResult == -1)
+			_mcNeedsUpdate = true;
+
+		mcTable *mcEntries = (mcTable*)memalign(64, sizeof(mcTable) * MAX_MC_ENTRIES);
+    
+		char temp[256], mcSearchStr[256], *dir, *ext;
+		strcpy(temp, regex);
+		dir = strdup(strtok(temp, "."));
+		ext = strdup(strtok(NULL, "*"));
+
+		printf("dir = %s - ext = %s\n", dir, ext);
+/*
+		strcpy(dirStr, refix);
+		char *pos = strchr(dirStr, '.');
+		if (pos) {
+			strcpy(ext, pos + 1);
+			*pos = '\0';
+		} else
+			ext[0] = '\0';
+*/
+		sprintf(mcSearchStr, "/ScummVM-%s/%s*", dir, ext);
+
+		int numEntries = _mc->getDir(mcSearchStr, 0, MAX_MC_ENTRIES, mcEntries);
+		char *name;
+#if 1
+        for (int i = 0; i < numEntries; i++) {
+			name = (char*)mcEntries[i].name;
+
+            if ((name[0] != '.') && stricmp(name, "icon.sys")) {
+				printf(" name = %s\n", (char*)mcEntries[i].name);
+				if (Common::matchString(name, "s*.ucl")) {
+					sprintf(temp, "%s.%s%c%c", dir, ext, name[1], name[2]);
+					results.push_back(temp);
+					printf("  -> match [%s] ;-)\n", temp);
+				}
+				else {
+					results.push_back(name); // ;-)
+					printf("  -> no match :-(\n");
+				}
+			}
+		}
+#else
+		results.push_back("dig.s00");
+		results.push_back("dig.s01");
+		results.push_back("dig.s03");
+#endif
+		free(mcEntries);
+		free(dir);
+		free(ext);
+    }
+
+    _screen->wantAnim(false);
+
+	return results;
+}
+
+bool Ps2SaveFileManager::removeSavefile(const char *filename) {
+/*
+	char buf[256];
+	sprintf(buf, "%s/%s", getSavePath(), filename);
+*/
+	int res = _mc->remove(filename);
+
+	if (res == 0)
+		return true;
+
+	return false;
+}
+
+const char *Ps2SaveFileManager::getSavePath(void) const {
+	return "mc0:";
 }
 
 bool Ps2SaveFileManager::setupIcon(const char *dest, const char *ico, const char *descr1, const char *descr2) {

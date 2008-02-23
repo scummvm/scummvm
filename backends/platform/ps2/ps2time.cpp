@@ -26,6 +26,8 @@
 #include "backends/platform/ps2/systemps2.h"
 #include "eecodyvdfs.h"
 #include <osd_config.h>
+#include <time.h>
+
 #define FROM_BCD(a) ((a >> 4) * 10 + (a & 0xF))
 
 static int	  g_timeSecs;
@@ -104,15 +106,10 @@ void OSystem_PS2::readRtcTime(void) {
 }
 
 extern "C" time_t time(time_t *p) {
-	if (p) *p = (time_t)g_timeSecs;
 	return (time_t)g_timeSecs;
 }
 
 extern "C" struct tm *localtime(const time_t *p) {
-	// FIXME: This function should actually use the value in *p!
-	// But the work needed for that is not necessary -- just implement
-	// OSystem::getTimeAndDate using the code provided here, and
-	// ditch the custom time & localtime methods.
 	uint32 currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
 	if (currentSecs >= SECONDS_PER_DAY) {
 		buildNewDate(+1);

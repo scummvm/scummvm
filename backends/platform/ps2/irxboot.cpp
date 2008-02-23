@@ -34,8 +34,8 @@
 
 extern void sioprintf(const char *zFormat, ...);
 
-static const char hddArg[] = "-o" "\0" "4" "\0" "-n" "\0" "20";
-static const char pfsArg[] = "-m" "\0" "2" "\0" "-o" "\0" "16" "\0" "-n" "\0" "40" /*"\0" "-debug"*/;
+static const char hddArg[] = "-o" "\0" "8" "\0" "-n" "\0" "20";
+static const char pfsArg[] = "-m" "\0" "2" "\0" "-o" "\0" "32" "\0" "-n" "\0" "72"; // "\0" "-debug";
 
 IrxFile irxFiles[] = {
 	{ "SIO2MAN", BIOS, NOTHING, NULL, 0 },
@@ -209,6 +209,7 @@ int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {
 		}
 		curModule++;
 	}
+
 	*modules = resModules;
 	sioprintf("List of %d modules:", curModule - resModules);
 	for (int i = 0; i < curModule - resModules; i++)
