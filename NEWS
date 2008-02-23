@@ -9,6 +9,37 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Rewrote parts of Digital iMUSE, fixing some bugs.
    - Rewrote the internal timer code, fixing some speed issues in e.g. COMI.
 
+0.11.1 (2008-02-29)
+ SCUMM:
+   - Improvements for Digital iMUSE subsystem. This fixes several glitches in
+     The Curse of Monkey Island.
+   - Fixes for cursors in HE games.
+
+ AGI:
+   - Fix for zombies in King's Quest 4.
+   - Fix for changing palettes in fanmade games using AGIPAL.
+
+ Lure:
+   - Fixed some conversation crashes in the German version.
+   - Fixed operation of the optional copy protection dialog in the German
+     version.
+   - Added saving of conversation flags as to whether a particular conversation
+     option had been previously selected or not.
+   - Fixed glitch that could cause transformation sparkle to happen a second
+     time.
+   - Fixed behavior of Goewin when you rejoin her after meeting the dragon.
+
+ SAGA:
+   - Fix for rat maze bug in Inherit the Earth which made game not completable.
+   - Fixes for Inherit the Earth and I Have no Mouth game startup on a number
+     of platforms.
+   - Reduced the number of simultaneous open files in I Have no Mouth, to allow
+     it to run on platforms that can keep a limited amount of files open (e.g.
+     on the PSP).
+   - Fixed graphics glitch in Inherit the Earth with simultaneous speech.
+   - Fixed palette glitch in Inherit the Earth when looking at the map while at
+     the docks.
+
 0.11.0 (2008-01-15)
  New Games:
    - Added support for Elvira: Mistress of the Dark.
