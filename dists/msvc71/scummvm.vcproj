@@ -590,10 +590,10 @@
 				Name="fs"
 				Filter="">
 				<File
-					RelativePath="..\..\backends\fs\abstract-fs-factory.cpp">
+					RelativePath="..\..\backends\fs\fs-factory.cpp">
 				</File>
 				<File
-					RelativePath="..\..\backends\fs\abstract-fs-factory.h">
+					RelativePath="..\..\backends\fs\fs-factory.h">
 				</File>
 			</Filter>
 			<Filter
