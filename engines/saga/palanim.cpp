@@ -30,6 +30,7 @@
 #include "saga/events.h"
 
 #include "saga/palanim.h"
+#include "saga/interface.h"
 
 namespace Saga {
 
@@ -170,7 +171,10 @@ int PalAnim::cycleStep(int vectortime) {
 		}
 	}
 
-	_vm->_gfx->setPalette(pal);
+	// Don't cycle the palette when the map is open
+	// Fixes bug #1900258 - "ITE: Glitch when looking at the map while at the docks"
+	if (_vm->_interface->getMode() != kPanelMap)
+		_vm->_gfx->setPalette(pal);
 
 	event.type = kEvTOneshot;
 	event.code = kPalAnimEvent;
