@@ -6,7 +6,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added CAMD MIDI driver for AmigaOS4.
 
  SCUMM:
-   - Rewrote parts of iMuse Digitial, fixing some bugs.
+   - Rewrote parts of Digital iMUSE, fixing some bugs.
    - Rewrote the internal timer code, fixing some speed issues in e.g. COMI.
 
 0.11.0 (2008-01-15)
@@ -39,9 +39,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      on POSIX systems (Linux, Mac OS X etc.).
 
  AGI:
-   - Added support for AGI256 and AGI256-2 hacks (GSoC Task)
-   - Added support for Amiga menus and palettes (GSoC Task)
-   - Better support for early Sierra AGI titles
+   - Added support for AGI256 and AGI256-2 hacks. (GSoC Task)
+   - Added support for Amiga menus and palettes. (GSoC Task)
+   - Better support for early Sierra AGI titles.
 
  AGOS:
    - Fixed crashes related to OmniTV playback in The Feeble Files.
@@ -55,7 +55,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  Parallaction:
    - Added support for Amiga version of Nippon Safes, Inc.
-   - Many bugfixes
+   - Many bugfixes.
 
  Queen:
    - Added support for Adlib music.
@@ -88,8 +88,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Various bug fixes.
 
  GP2X Port:
-   - Support F200 Touchscreen
-   - Various fixes to input code
+   - Support F200 Touchscreen.
+   - Various fixes to input code.
 
 0.10.0 (2007-06-20)
  New Games:
@@ -149,33 +149,33 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      LINC space and terminals, particularly in non-English languages.
 
  Nintendo DS Port:
-   - New engines supported: AGI, CINE, and SAGA
-   - Option to show the mouse cursor
-   - Word completion on keyboard for AGI games
-   - Plenty of optimisations
+   - New engines supported: AGI, CINE, and SAGA.
+   - Option to show the mouse cursor.
+   - Word completion on keyboard for AGI games.
+   - Plenty of optimisations.
 
  Symbian Port:
    - Added support for MP3 to S60v3 and UIQ3 versions.
-   - Switched to SDL 1.2.11 for bug fixes and improvements
+   - Switched to SDL 1.2.11 for bug fixes and improvements.
    - Improved performance for S60v3 and UIQ3 using ARM target.
    - Limited support for pre Symbian OS9 devices due to compiler issues.
    - Updated key mapping handling.
 
  WinCE Port:
    - Switched to using a GCC toolchain for building.
-   - Major update to the SDL lib. Better, faster, more compatible :-)
+   - Major update to the SDL lib. Better, faster, more compatible. :-)
      The included fixes are too numerous to mention here.
      Most of the updates in this version have concentrated on infrastructure.
      This leads to faster execution, greatly increased compatibility and
      OS friendliness - especially for keyboard/mouse input and display
-     handling (f.ex. no more popups during gameplay) -.
+     handling (f.ex. no more popups during gameplay).
 
  Windows Port:
    - The default location of the config file changed, to support multi-user
      systems.
 
  PalmOS Port:
-   - Now using PalmOS Porting SDK which enables use of the C standard library
+   - Now using PalmOS Porting SDK which enables use of the C standard library.
 
 0.9.1 (2006-10-29)
  New Ports:
@@ -195,18 +195,18 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed graphical glitches in HE80 version of Putt-Putt Travels Through
      Time.
    - Fixed FM-TOWNS version of Indy3 failing on Amiga port.
-   - Fixed crash in MM NES when clicking on top screen area
-   - Now it is possible to turn on or off subtitles during SMUSH movies
+   - Fixed crash in MM NES when clicking on top screen area.
+   - Now it is possible to turn on or off subtitles during SMUSH movies.
 
  Simon:
    - Improved support for international versions of the Feeble Files.
    - Fixed undefined behaviour when loading music.
    - Fixed crash when displaying some subtitles in the Feeble Files.
-   - Fixed crackling sound in Mac version of Feeble Files
+   - Fixed crackling sound in Mac version of Feeble Files.
 
  BASS:
-   - Fixed character spacing in LINC terminals in floppy version v0.0303
-   - Fixed a regression which caused incorrect adlib music emulation
+   - Fixed character spacing in LINC terminals in floppy version v0.0303.
+   - Fixed a regression which caused incorrect adlib music emulation.
 
  Broken Sword 1:
    - Fixed speech-related crashes.
@@ -230,14 +230,14 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Can boot from USB, HDD etc. as well.
 
  WinCE Port:
-   - Several bugfixes
-   - Re-add support for 2002 based devices
+   - Several bugfixes.
+   - Re-add support for 2002 based devices.
 
 0.9.0 (2006-06-25)
  New Games:
    - Added kyra engine (for the Kyrandia series). Currently only the first
      part of the series is supported.
-   - Added support for The Feeble Files
+   - Added support for The Feeble Files.
 
  General:
    - Switched from CVS to Subversion.
@@ -277,15 +277,16 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Missing data files are handled more gracefully.
 
  WinCE Port:
-   - Added: PocketPC: Vertical oversampling scaler 320x200=>320x240 when panel not shown (n0p)
-   - Added: PocketPC: Right click by double-tapping (n0p)
-   - Fixed: All: Clipping issues in some cases
-   - Added: PocketPC: Mouse emulation using keys
-   - Added: Smartphones: Virtual keyboard popup
-   - Fixed: Smartphones: Incorrect screen blit in SDL port
-   - Added: All: Mouse cursor visible on panel if using emulated mouse
-   - Added: All: Inverse landscape mode
-   - Fixed: PocketPC: Dialogs cut-off/not redrawn
+   - Added: PocketPC: Vertical oversampling scaler 320x200=>320x240 when panel
+     not shown. (n0p)
+   - Added: PocketPC: Right click by double-tapping. (n0p)
+   - Fixed: All: Clipping issues in some cases.
+   - Added: PocketPC: Mouse emulation using keys.
+   - Added: Smartphones: Virtual keyboard popup.
+   - Fixed: Smartphones: Incorrect screen blit in SDL port.
+   - Added: All: Mouse cursor visible on panel if using emulated mouse.
+   - Added: All: Inverse landscape mode.
+   - Fixed: PocketPC: Dialogs cut-off/not redrawn.
 
 0.8.2 (2006-02-08)
  General:
@@ -298,9 +299,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed last-minute crash when playing sound effects.
 
  WinCE Port:
-   - Should fix weird crashes with DOTT stamp and in FOA (#1399830 #1392815)
-   - Fixed Monkey Island blocking keyboard panel on Smartphones (thks Knakos)
-   - Fixed QVGA Smartphone detection (mean it this time :p)
+   - Should fix weird crashes with DOTT stamp and in FOA. (#1399830 #1392815)
+   - Fixed Monkey Island blocking keyboard panel on Smartphones. (thks Knakos)
+   - Fixed QVGA Smartphone detection (mean it this time :p).
    - Fixed Smartphone double right click issue.
 
 0.8.1 (2006-01-31)
@@ -334,8 +335,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      of the scummvm window.
 
  Gob:
-   - Fixed disappearing cursor when level password is typed in
-   - Warn user if he tries to run CD version directly from CD under Windows
+   - Fixed disappearing cursor when level password is typed in.
+   - Warn user if he tries to run CD version directly from CD under Windows.
 
  Queen:
    - Fixed charset for Spanish version.
@@ -372,10 +373,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      functioning properly after a while.
 
  WinCE Port:
-   - Check backends/wince/README-WinCE for the latest news
-   - Fixed disappearing panel when opening a list widget in GUI
+   - Check backends/wince/README-WinCE for the latest news.
+   - Fixed disappearing panel when opening a list widget in GUI.
    - Knakos patches (QVGA smartphones fix, easier key binding and panel
-     switching)
+     switching).
 
 0.8.0 (2005-10-30)
  New Games:
@@ -415,7 +416,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      support.
    - Fixed the last few known music glitches in Sam & Max. (There are
      still some - probably - minor missing features though.)
-   - Added support for Commodore64 version of Zak McKracken
+   - Added support for Commodore64 version of Zak McKracken.
    - Eliminated all demos targets and platform-specific targets. Config
      file is autoupdated.
 
@@ -439,22 +440,22 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Less memory-hungry MPEG movie playback for the Broken Sword games.
 
  SCUMM:
-   - Fixed wrong actor animation in Full Throttle INSANE
+   - Fixed wrong actor animation in Full Throttle INSANE.
 
- Windows Mobile port (PocketPC / Smartphone) :
-   - Fixed FOTAQ crash on all platforms when leaving the hotel AGAIN
-   - Better low quality Adlib emulation for FOTAQ
-   - Fix randomly broken Hide Toolbar option (thanks iKi)
-   - Fix first hardware key mapping (was not displayed before)
-   - Fix BASS & Simon hangs on Smartphone when using the Skip hotkey
-   - Fix Zone key action on Smartphone (now mapped on key 9)
-   - Experimental third party VGA mode (SE-VGA) fix
-   - Add Key Mapping option in the launcher (Options / Misc / Keys)
-   - Remove AYGSHELL.DLL dependency to work on CE .Net platforms
-   - Fix key mapping issues introduced in 0.7.0
+ Windows Mobile port (PocketPC / Smartphone):
+   - Fixed FOTAQ crash on all platforms when leaving the hotel AGAIN.
+   - Better low quality Adlib emulation for FOTAQ.
+   - Fix randomly broken Hide Toolbar option. (thanks iKi)
+   - Fix first hardware key mapping (was not displayed before).
+   - Fix BASS & Simon hangs on Smartphone when using the Skip hotkey.
+   - Fix Zone key action on Smartphone (now mapped on key 9).
+   - Experimental third party VGA mode (SE-VGA) fix.
+   - Add Key Mapping option in the launcher (Options / Misc / Keys).
+   - Remove AYGSHELL.DLL dependency to work on CE .Net platforms.
+   - Fix key mapping issues introduced in 0.7.0.
    - Full Throttle interactive action sequences should be more playable.
-   - New key mapping option "FT Cheat" to win a Full Throttle action sequence
-   - Quit Simon game with 'Action key' on Smartphones
+   - New key mapping option "FT Cheat" to win a Full Throttle action sequence.
+   - Quit Simon game with 'Action key' on Smartphones.
 
  Sword2:
    - Fixed crash caused by attempting to play music from CD1 and CD2 at the
@@ -470,17 +471,17 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added 26 Humongous Entertainment titles, only a few are completable.
 
  General:
-   - Added support for FLAC (lossless) encoded audio files
-   - Added an 'On Screen Display' to the SDL backend
-   - Partially rewrote the backend API
-   - Comments and the order of section in config files are preserved now
+   - Added support for FLAC (lossless) encoded audio files.
+   - Added an 'On Screen Display' to the SDL backend.
+   - Partially rewrote the backend API.
+   - Comments and the order of section in config files are preserved now.
    - Updated AdvMame scalers based on scale2x 2.0 - AdvMame3x looks nicer now,
-     and AdvMame2x is MMX accelerated
-   - Added MMX i386 assembler versions of the HQ2x and HQ3x scalers
+     and AdvMame2x is MMX accelerated.
+   - Added MMX i386 assembler versions of the HQ2x and HQ3x scalers.
    - Added 'Extra Path' option allows for a searching an additional datafile
-     location (for reencoded cutscenes and the like)
+     location (for reencoded cutscenes and the like).
    - Disabled Alt-x and Ctrl-z quit keys in favour of Ctrl-q on unix like
-     operating systems, like Linux (exception: Mac OS X still uses Cmd-q)
+     operating systems, like Linux (exception: Mac OS X still uses Cmd-q).
    - Separate smaller font for the console, allowing for more visible
      information, for example in the SCUMM debugger.
    - Added support for setting output sample rate at run-time, although there
@@ -489,19 +490,19 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
      some platforms:
          Mac OS X:     $HOME/Documents/ScummVM Savegames/
          Other unices: $HOME/.scummvm/
-   - Added a new about dialog with scrolling credits
+   - Added a new about dialog with scrolling credits.
 
  SCUMM:
-   - Removed the old zak256 target, use zakTowns instead
+   - Removed the old zak256 target, use zakTowns instead.
    - Added native support for Macintosh versions using a special container
-     file. This removes the need for using the 'RESCUMM' program
+     file. This removes the need for using the 'RESCUMM' program.
    - Added smooth horizontal scrolling for The Dig, Full Throttle and COMI
-     (matching the original engine)
+     (matching the original engine).
    - Partially rewrote the text engine, fixing various bugs, especially in
-     newer games (The Dig, COMI)
-   - Fixed actor drawing glitches in V1 Maniac and Zak
-   - Fixed ship-to-ship graphic glitches in COMI
-   - Fixed palette glitches in COMI
+     newer games (The Dig, COMI).
+   - Fixed actor drawing glitches in V1 Maniac and Zak.
+   - Fixed ship-to-ship graphic glitches in COMI.
+   - Fixed palette glitches in COMI.
 
  Queen:
    - Fixed some issues with the Dreamcast backend.
@@ -513,8 +514,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added workarounds for script and subtitle bugs in some game versions.
 
  Sword2:
-   - Simplified memory/resource management
-   - Simplified sound effects handling
+   - Simplified memory/resource management.
+   - Simplified sound effects handling.
    - Added support for compressed speech and music.
    - Fixed various minor bugs.
 
@@ -524,15 +525,15 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 0.6.1b (2004-08-03)
  General:
-   - Fixed copy/paste bug in launcher that may corrupt the Savegame Path
-   - Fixed crashes on 64-bit architectures
+   - Fixed copy/paste bug in launcher that may corrupt the Savegame Path.
+   - Fixed crashes on 64-bit architectures.
 
  SCUMM:
-   - Fixed VOC crash when playing DOTT Floppy
-   - Fixed palette issues in Amiga version of MI2
+   - Fixed VOC crash when playing DOTT Floppy.
+   - Fixed palette issues in Amiga version of MI2.
 
  Simon:
-   - Fixed VOC crash
+   - Fixed VOC crash.
 
 0.6.1 (2004-07-25)
  General:
@@ -541,10 +542,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  SCUMM:
    - As usual: many SCUMM game engine fixes.
-   - Added graphics decoders for 3DO Humongous Entertainment games
-   - Numerous Humongous Entertainment games fixes
-   - Fixed bug in Full Throttle, so battle difficulty matches original
-   - Improved Digital iMUSE
+   - Added graphics decoders for 3DO Humongous Entertainment games.
+   - Numerous Humongous Entertainment games fixes.
+   - Fixed bug in Full Throttle, so battle difficulty matches original.
+   - Improved Digital iMUSE.
 
  Sword1:
    - Warn the user if saving fails, instead of crashing.
@@ -555,148 +556,148 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Warn the user if saving a game doesn't work.
 
  Simon:
-   - Fixed crashes in some international versions
+   - Fixed crashes in some international versions.
 
 0.6.0 (2004-03-14)
  New Games:
    - Added Broken Sword 1 engine.
    - Added Broken Sword 2 engine.
-   - Added Flight of the Amazon Queen engine
-   - Added support for V1 SCUMM games 'Maniac Mansion' and 'Zak McKracken'
-   - SCUMM game Full Throttle is now supported
+   - Added Flight of the Amazon Queen engine.
+   - Added support for V1 SCUMM games 'Maniac Mansion' and 'Zak McKracken'.
+   - SCUMM game Full Throttle is now supported.
 
  General:
    - Subtitles now default to disabled. '-n' option now enabled subtitles.
-   - Added HQ2x and HQ3x scalers
-   - Rewrote sound code for more flexibility and performance
-   - Improved native MT32 support
-   - Adlib GM emulation table revamped, providing more accurate software MIDI
-   - Default Makefile now uses configure script
-   - Greatly improved the launcher and options dialogs (work-in-progress)
+   - Added HQ2x and HQ3x scalers.
+   - Rewrote sound code for more flexibility and performance.
+   - Improved native MT32 support.
+   - Adlib GM emulation table revamped, providing more accurate software MIDI.
+   - Default Makefile now uses configure script.
+   - Greatly improved the launcher and options dialogs (work-in-progress).
    - Many other "under the hood" improvements, like a new config managment
-     and plugin capabilities
+     and plugin capabilities.
 
  Simon:
-   - Added data files decoder for Amiga disk versions
-   - Added support for inventory graphics in Amiga versions
-   - Fixed various brief freezes
-   - Fixed minor glitches in load/save dialog in non-English versions
-   - Fixed missing inventory arrows in some versions of Simon the Sorcerer 1
+   - Added data files decoder for Amiga disk versions.
+   - Added support for inventory graphics in Amiga versions.
+   - Fixed various brief freezes.
+   - Fixed minor glitches in load/save dialog in non-English versions.
+   - Fixed missing inventory arrows in some versions of Simon the Sorcerer 1.
 
  SCUMM:
    - Many, Many, Many SCUMM game engine fixes. Many of them. And that's a lot.
-   - Added INSANE support for Full Throttle 'action sequences'
+   - Added INSANE support for Full Throttle 'action sequences'.
    - Added option to choose between Adlib, PCjr and PC Speaker in earlier
      games.
-   - Added Adlib support for indy3ega and loom (ega)
+   - Added Adlib support for indy3ega and loom (ega).
    - Added MIDI support for loom (ega), monkeyega and monkeyvga.
-   - Added sound effects support for indy3/monkeyega/monkeyvga/pass
-   - Added FM Towns targets for Loom and Indy3
-   - Rewrote in-game menu (F5) to be easier to use
-   - Improved FM Towns SFX support (YM2612 emulation, looping)
+   - Added sound effects support for indy3/monkeyega/monkeyvga/pass.
+   - Added FM Towns targets for Loom and Indy3.
+   - Rewrote in-game menu (F5) to be easier to use.
+   - Improved FM Towns SFX support (YM2612 emulation, looping).
    - Classic V1 versions of Maniac Mansion and Zak McKracken are now supported
-     and completable
-   - Rewrote Digital iMUSE music system
-   - Several Analog iMUSE music system bugs fixed
-   - Improved music/sound for various Amiga versions
+     and completable.
+   - Rewrote Digital iMUSE music system.
+   - Several Analog iMUSE music system bugs fixed.
+   - Improved music/sound for various Amiga versions.
    - Improved compression of Fate of Atlantis and Simon the Sorcerer 2 sound
-     files
-   - Keyboard fighting in Fate of Atlantis now works
-   - Keyboard support for cannon battle in Curse of Monkey Island
-   - Keyboard support for derby scene in Full Throttle
+     files.
+   - Keyboard fighting in Fate of Atlantis now works.
+   - Keyboard support for cannon battle in Curse of Monkey Island.
+   - Keyboard support for derby scene in Full Throttle.
 
 0.5.1 (2003-08-06)
-- Rewrote Beneath a Steel Sky savegame code (see note in READMEs 'Known Bugs')
-- Fixed dialog skipping, music volume and several crashes/freezes in Steel Sky
-- Fixed dialog skipping in V7 games
-- Fixed glitch when quitting ScummVM in fullscreen mode on Mac OS X
-- Fixed various COMI bugs related to actor placement/scaling
-- Added complete Hebrew support for Simon the Sorcerer 1 and 2
-- Several MorphOS and DreamCast port fixes
-- DreamCast now runs Simon the Sorcerer 1 & 2
+- Rewrote Beneath a Steel Sky savegame code (see note in READMEs 'Known Bugs').
+- Fixed dialog skipping, music volume and several crashes/freezes in Steel Sky.
+- Fixed dialog skipping in V7 games.
+- Fixed glitch when quitting ScummVM in fullscreen mode on Mac OS X.
+- Fixed various COMI bugs related to actor placement/scaling.
+- Added complete Hebrew support for Simon the Sorcerer 1 and 2.
+- Several MorphOS and DreamCast port fixes.
+- DreamCast now runs Simon the Sorcerer 1 & 2.
 - Fixed a fullscreen problem on Mac OS X were you couldn't use the mouse in
-  the top part of the screen by linking to a bugfixed version of SDL
+  the top part of the screen by linking to a bugfixed version of SDL.
 
 0.5.0 (2003-08-02)
 - Enhanced versions of Maniac Mansion and Zak McKracken are now supported and
-  completable
-- Beneath A Steel Sky is now supported and completable
-- Added support for Amiga version of Monkey Island 1
-- Initial unplayable support for V1 version of Maniac Mansion/Zak McKracken
+  completable.
+- Beneath A Steel Sky is now supported and completable.
+- Added support for Amiga version of Monkey Island 1.
+- Initial unplayable support for V1 version of Maniac Mansion/Zak McKracken.
 - Curse of Monkey Island (COMI) support for playing from CD improved on Mac
-  OS X
-- Loading COMI savegames for disk 2 doesn't anymore require disk 1 first
-- Rewritten iMUSE engine, and many Music fixes (exp. Monkey Island 2)
+  OS X.
+- Loading COMI savegames for disk 2 doesn't anymore require disk 1 first.
+- Rewritten iMUSE engine, and many Music fixes (exp. Monkey Island 2).
 - Support for music in Humongous games and simon2dos/simon2talkie (XMIDI
-  format)
-- Support for music in simon1demo (Proprietary format)
-- Complete music support for Simon the Sorcerer 2
-- Improved music and sound support in Zak256
-- Added Aspect Ratio option
-- Many other bug fixes, improvements and optimizations
+  format).
+- Support for music in simon1demo (Proprietary format).
+- Complete music support for Simon the Sorcerer 2.
+- Improved music and sound support in Zak256.
+- Added Aspect Ratio option.
+- Many other bug fixes, improvements and optimizations.
 
 0.4.1 (2003-05-25)
-- Added AdvMame3x filter
-- Fixed crash in Curse of Monkey Island (and possibly other games as well)
-- Fixed airport doors in Zak256
-- Fixed crash in SDL backend
-- Fixed various iMUSE bugs
+- Added AdvMame3x filter.
+- Fixed crash in Curse of Monkey Island (and possibly other games as well).
+- Fixed airport doors in Zak256.
+- Fixed crash in SDL backend.
+- Fixed various iMUSE bugs.
 
 0.4.0 (2003-05-11)
-- Curse of Monkey Island (comi) support (experimental)
-- Added support for the EGA versions of Loom, Monkey Island and Indy3
-- Improved music support in Indy3 and the floppy versions of Monkey Island
-- Many Simon the Sorcerer 1 & 2 improvements and fixes
+- Curse of Monkey Island (comi) support (experimental).
+- Added support for the EGA versions of Loom, Monkey Island and Indy3.
+- Improved music support in Indy3 and the floppy versions of Monkey Island.
+- Many Simon the Sorcerer 1 & 2 improvements and fixes.
 - Very pre-alpha Beneath a Steel Sky code. Don't expect it to do anything.
-- Even more pre-alpha support for V2 SCUMM games (Maniac Mansion and Zak)
+- Even more pre-alpha support for V2 SCUMM games (Maniac Mansion and Zak).
 - Preliminary support for early Humongous Entertainment titles (very
-  experimental)
-- New debug console and several GUI/Launcher enhancements
-- New Save/Load code (easier to expand while retaining compatibility)
-- DreamCast port now works with new games added for 0.3.0b
-- New official PalmOS port
-- Various minor and not so minor SCUMM game fixes
-- Large memory leak fixed for The Dig/ComI
-- SMUSH code optimised, frame dropping added for slower machines
-- Code cleanups
+  experimental).
+- New debug console and several GUI/Launcher enhancements.
+- New Save/Load code (easier to expand while retaining compatibility).
+- DreamCast port now works with new games added for 0.3.0b.
+- New official PalmOS port.
+- Various minor and not so minor SCUMM game fixes.
+- Large memory leak fixed for The Dig/ComI.
+- SMUSH code optimised, frame dropping added for slower machines.
+- Code cleanups.
 
 0.3.0b (2002-12-08)
-- massive cleanup work for iMUSE. Sam and Max music now plays correctly
-- many bugfixes for Zak256, + sound and music support
-- music support for Simon the Sorcerer on any platform with real MIDI
-- experimental support for Indy3 (VGA) - Indiana Jones + Last Crusade
-- completed support for Monkey1 VGA Floppy, The Dig
-- added akos16 implementation for The Dig and Full Throttle costumes
-- added digital iMUSE implementation for The Dig and Full Throttle music.
-- Loom CD speech+music syncronisation improved greatly
-- added midi-emulation via adlib, for platforms without sequencer support
-- code separation of various engine parts into several libraries
-- several fixes to prevent Simon the Sorcerer crashing and hanging
-- hundreds of bugfixes for many other games
-- new SMUSH video engine, for Full Throttle and The Dig
-- new in-game GUI
-- launcher dialog
+- Massive cleanup work for iMUSE. Sam and Max music now plays correctly.
+- Many bugfixes for Zak256, + sound and music support.
+- Music support for Simon the Sorcerer on any platform with real MIDI.
+- Experimental support for Indy3 (VGA) - Indiana Jones + Last Crusade.
+- Completed support for Monkey1 VGA Floppy, The Dig.
+- Added akos16 implementation for The Dig and Full Throttle costumes.
+- Added Digital iMUSE implementation for The Dig and Full Throttle music.
+- Loom CD speech+music syncronisation improved greatly.
+- Added midi-emulation via adlib, for platforms without sequencer support.
+- Code separation of various engine parts into several libraries.
+- Several fixes to prevent Simon the Sorcerer crashing and hanging.
+- Hundreds of bugfixes for many other games.
+- New SMUSH video engine, for Full Throttle and The Dig.
+- New in-game GUI.
+- Launcher dialog.
 
 0.2.0 (2002-04-14)
-- core engine rewrite
-- enhanced ingame GUI, including options/volume settings.
-- auto-save feature
-- added more command-line options, and configuration file
-- new ports and platforms (MorphOS, Macintosh, Dreamcast, Solaris, IRIX, etc)
-- graphics filtering added (2xSAI, Super2xSAI, SuperEagle, AdvMame2x)
-- support for MAD MP3 compressed audio
-- support for first non-SCUMM games (Simon the Sorcerer)
-- support for V4 games (Loom CD)
-- enhanced V6 game support (Sam and Max is now completable)
-- experimental support for V7 games (Full Throttle/The Dig)
-- experimental support for V3 games (Zak256/Indy3)
+- Core engine rewrite.
+- Enhanced ingame GUI, including options/volume settings.
+- Auto-save feature.
+- Added more command-line options, and configuration file.
+- New ports and platforms (MorphOS, Macintosh, Dreamcast, Solaris, IRIX, etc).
+- Graphics filtering added (2xSAI, Super2xSAI, SuperEagle, AdvMame2x).
+- Support for MAD MP3 compressed audio.
+- Support for first non-SCUMM games (Simon the Sorcerer).
+- Support for V4 games (Loom CD).
+- Enhanced V6 game support (Sam and Max is now completable).
+- Experimental support for V7 games (Full Throttle/The Dig).
+- Experimental support for V3 games (Zak256/Indy3).
 
 0.1.0 (2002-01-13)
-- loads of changes
+- Loads of changes.
 
-0.0.2 (2001-10-12):
-- bug fixes
-- save & load support
+0.0.2 (2001-10-12)
+- Bug fixes.
+- Save & load support.
 
-0.0.1 (2001-10-08):
-- initial version
+0.0.1 (2001-10-08)
+- Initial version.
