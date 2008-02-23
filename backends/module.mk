@@ -2,7 +2,6 @@ MODULE := backends
 
 MODULE_OBJS := \
 	events/default/default-events.o \
-	fs/fs-factory.o \
 	midi/alsa.o \
 	midi/camd.o \
 	midi/coreaudio.o \

@@ -46,6 +46,8 @@ namespace Common {
 	class TimerManager;
 }
 
+class FilesystemFactory;
+
 /**
  * Interface for ScummVM backends. If you want to port ScummVM to a system
  * which is not currently covered by any of our backends, this is the place
@@ -899,6 +901,13 @@ public:
 	 * refer to the SaveFileManager documentation.
 	 */
 	virtual Common::SaveFileManager *getSavefileManager() = 0;
+
+	/**
+	 * Returns the FilesystemFactory object, depending on the current architecture.
+	 *
+	 * @return FilesystemFactory* The specific factory for the current architecture.
+	 */
+	virtual FilesystemFactory *getFilesystemFactory();
 
 
 	/**

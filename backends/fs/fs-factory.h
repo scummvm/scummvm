@@ -66,13 +66,6 @@ public:
 	 * On Windows, it will be a special node which "contains" all drives (C:, D:, E:).
 	 */
 	virtual AbstractFilesystemNode *makeRootFileNode() const = 0;
-
-
-	/**
-	 * Meta-factory method which returns a concrete FilesystemFactory
-	 * instance depending on the current architecture.
-	 */
-	static FilesystemFactory *makeFSFactory();
 };
 
 #endif /*FILESYSTEM_FACTORY_H*/

@@ -23,6 +23,7 @@
  */
 
 #include "common/util.h"
+#include "common/system.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/fs-factory.h"
 
@@ -44,7 +45,7 @@ FilesystemNode::FilesystemNode(const FilesystemNode &node) {
 }
 
 FilesystemNode::FilesystemNode(const Common::String &p) {
-	FilesystemFactory *factory = FilesystemFactory::makeFSFactory();
+	FilesystemFactory *factory = g_system->getFilesystemFactory();
 
 	if (p.empty() || p == ".")
 		_realNode = factory->makeCurrentDirectoryFileNode();
