@@ -531,8 +531,10 @@ Codec47Decoder::Codec47Decoder(int width, int height) {
 	_height = height;
 	_tableBig = (byte *)malloc(256 * 388);
 	_tableSmall = (byte *)malloc(256 * 128);
-	makeTablesInterpolation(4);
-	makeTablesInterpolation(8);
+	if ((_tableBig != NULL) && (_tableSmall != NULL)) {
+		makeTablesInterpolation(4);
+		makeTablesInterpolation(8);
+	}
 
 	_frameSize = _width * _height;
 	_deltaSize = _frameSize * 3;
@@ -562,6 +564,9 @@ Codec47Decoder::~Codec47Decoder() {
 }
 
 bool Codec47Decoder::decode(byte *dst, const byte *src) {
+	if ((_tableBig == NULL) || (_tableSmall == NULL) || (_deltaBuf == NULL))
+		return false;
+  
 	_offset1 = _deltaBufs[1] - _curBuf;
 	_offset2 = _deltaBufs[0] - _curBuf;
 
