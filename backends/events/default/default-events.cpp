@@ -25,7 +25,6 @@
 
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
 
-#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "backends/events/default/default-events.h"
