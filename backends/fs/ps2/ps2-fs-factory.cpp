@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#if defined(__PLAYSTATION2__)
 #include "backends/fs/ps2/ps2-fs-factory.h"
 #include "backends/fs/ps2/ps2-fs.cpp"
 
@@ -38,3 +39,4 @@ AbstractFilesystemNode *Ps2FilesystemFactory::makeCurrentDirectoryFileNode() con
 AbstractFilesystemNode *Ps2FilesystemFactory::makeFileNodePath(const String &path) const {
 	return new Ps2FilesystemNode(path);
 }
+#endif

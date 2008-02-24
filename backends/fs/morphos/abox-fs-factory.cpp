@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#if defined(__MORPHOS__)
 #include "backends/fs/morphos/abox-fs-factory.h"
 #include "backends/fs/morphos/abox-fs.cpp"
 
@@ -38,3 +39,4 @@ AbstractFilesystemNode *ABoxFilesystemFactory::makeCurrentDirectoryFileNode() co
 AbstractFilesystemNode *ABoxFilesystemFactory::makeFileNodePath(const String &path) const {
 	return new ABoxFilesystemNode(path);
 }
+#endif

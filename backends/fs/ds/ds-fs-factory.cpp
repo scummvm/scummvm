@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#if defined(__DS__)
 #include "backends/fs/ds/ds-fs-factory.h"
 #include "backends/fs/ds/ds-fs.h"
 #include "dsmain.h" //for the isGBAMPAvailable() function
@@ -51,3 +52,4 @@ AbstractFilesystemNode *DSFilesystemFactory::makeFileNodePath(const String &path
 		return new DS::DSFileSystemNode(path);
 	}
 }
+#endif

@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#if defined(__SYMBIAN32__)
 #include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/fs/symbian/symbian-fs.cpp"
 
@@ -40,3 +41,4 @@ AbstractFilesystemNode *SymbianFilesystemFactory::makeCurrentDirectoryFileNode()
 AbstractFilesystemNode *SymbianFilesystemFactory::makeFileNodePath(const String &path) const {
 	return new SymbianFilesystemNode(path);
 }
+#endif

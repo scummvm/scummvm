@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#if defined(WIN32)
 #include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/fs/windows/windows-fs.cpp"
 
@@ -38,3 +39,4 @@ AbstractFilesystemNode *WindowsFilesystemFactory::makeCurrentDirectoryFileNode()
 AbstractFilesystemNode *WindowsFilesystemFactory::makeFileNodePath(const String &path) const {
 	return new WindowsFilesystemNode(path, false);
 }
+#endif

@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#if defined(__DC__)
 #include "backends/fs/dc/ronincd-fs-factory.h"
 #include "backends/fs/dc/dc-fs.cpp"
 
@@ -38,3 +39,4 @@ AbstractFilesystemNode *RoninCDFilesystemFactory::makeCurrentDirectoryFileNode()
 AbstractFilesystemNode *RoninCDFilesystemFactory::makeFileNodePath(const String &path) const {
 	return new RoninCDFilesystemNode(path, true);
 }
+#endif

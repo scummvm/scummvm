@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#if defined(UNIX)
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.cpp"
 
@@ -40,3 +41,4 @@ AbstractFilesystemNode *POSIXFilesystemFactory::makeCurrentDirectoryFileNode() c
 AbstractFilesystemNode *POSIXFilesystemFactory::makeFileNodePath(const String &path) const {
 	return new POSIXFilesystemNode(path, true);
 }
+#endif

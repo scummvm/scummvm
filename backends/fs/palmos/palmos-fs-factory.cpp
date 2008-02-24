@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#if defined(PALMOS_MODE)
 #include "backends/fs/palmos/palmos-fs-factory.h"
 #include "backends/fs/palmos/palmos-fs.cpp"
 
@@ -38,3 +39,4 @@ AbstractFilesystemNode *PalmOSFilesystemFactory::makeCurrentDirectoryFileNode() 
 AbstractFilesystemNode *PalmOSFilesystemFactory::makeFileNodePath(const String &path) const {
 	return new PalmOSFilesystemNode(path);
 }
+#endif
