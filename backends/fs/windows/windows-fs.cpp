@@ -24,8 +24,13 @@
 
 #ifdef WIN32
 
+#ifdef ARRAYSIZE
+#undef ARRAYSIZE
+#endif
 #ifdef _WIN32_WCE
 #include <windows.h>
+// winnt.h defines ARRAYSIZE, but we want our own one...
+#undef ARRAYSIZE
 #undef GetCurrentDirectory
 #endif
 #include "backends/fs/abstract-fs.h"
@@ -34,6 +39,8 @@
 #include <stdlib.h>
 #ifndef _WIN32_WCE
 #include <windows.h>
+// winnt.h defines ARRAYSIZE, but we want our own one...
+#undef ARRAYSIZE
 #endif
 #include <tchar.h>
 
