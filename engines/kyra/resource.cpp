@@ -275,13 +275,15 @@ void Resource::unloadAllPakFiles() {
 			temp.close();
 		}
 	}
+
+	detectFileTypes();
 }
 
 bool Resource::addSearchPath(const Common::String &path) {
 	if (path.empty())
 		return false;
 
-	FilesystemNode dir(ConfMan.get("path"));
+	FilesystemNode dir(path);
 
 	if (!dir.exists() || !dir.isDirectory()) {
 		warning("invalid data path '%s'", dir.getPath().c_str());
