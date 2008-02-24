@@ -252,35 +252,14 @@ bool Resource::isInPakList(const Common::String &filename) const {
 }
 
 void Resource::unloadAllPakFiles() {
-	FilesystemNode dir(ConfMan.get("path"));
-
-	if (!dir.exists() || !dir.isDirectory())
-		error("invalid game path '%s'", dir.getPath().c_str());
-
-	FSList fslist;
-	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly))
-		error("can't list files inside game path '%s'", dir.getPath().c_str());
-
 	// remove all entries
 	_map.clear();
+
+	addSearchPath(ConfMan.get("path"));
+	addSearchPath(ConfMan.get("extrapath"));
 	
 	Common::File temp;
 	
-	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		ResFileEntry entry;
-		entry.parent = "";
-		if (!temp.open(file->getPath()))
-			error("couldn't open file '%s'", file->getName().c_str());
-		entry.size = temp.size();
-		entry.offset = 0;
-		entry.mounted = false;
-		entry.preload = false;
-		entry.prot = false;
-		entry.type = ResFileEntry::kAutoDetect;
-		_map[file->getName()] = entry;
-		temp.close();
-	}
-
 	ResFileMap::iterator iter = _map.find(StaticResource::staticDataFilename());
 	if (iter == _map.end()) {
 		if (temp.open(StaticResource::staticDataFilename())) {
@@ -296,8 +275,44 @@ void Resource::unloadAllPakFiles() {
 			temp.close();
 		}
 	}
+}
+
+bool Resource::addSearchPath(const Common::String &path) {
+	if (path.empty())
+		return false;
+
+	FilesystemNode dir(ConfMan.get("path"));
+
+	if (!dir.exists() || !dir.isDirectory()) {
+		warning("invalid data path '%s'", dir.getPath().c_str());
+		return false;
+	}
+
+	FSList fslist;
+	if (!dir.getChildren(fslist, FilesystemNode::kListFilesOnly)) {
+		warning("can't list files inside path '%s'", dir.getPath().c_str());
+		return false;
+	}
+
+	Common::File temp;
+
+	for (FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		ResFileEntry entry;
+		entry.parent = "";
+		if (!temp.open(file->getPath()))
+			error("couldn't open file '%s'", file->getName().c_str());
+		entry.size = temp.size();
+		entry.offset = 0;
+		entry.mounted = false;
+		entry.preload = false;
+		entry.prot = false;
+		entry.type = ResFileEntry::kAutoDetect;
+		_map[file->getName()] = entry;
+		temp.close();
+	}
 
 	detectFileTypes();
+	return true;
 }
 
 uint8 *Resource::fileData(const char *file, uint32 *size) const {

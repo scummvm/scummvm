@@ -90,6 +90,8 @@ public:
 
 	bool reset();
 
+	bool addSearchPath(const Common::String &path);
+
 	bool loadPakFile(const Common::String &filename);
 	void unloadPakFile(const Common::String &filename);
 	bool isInPakList(const Common::String &filename) const;
