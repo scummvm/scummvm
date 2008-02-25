@@ -1,4 +1,10 @@
+###############################################
 # Common build rules, used by the sub modules and their module.mk files
+#
+# $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/tools/trunk/Makefile $
+# $Id$
+###############################################
+
 
 # Copy the list of objects to a new variable. The name of the new variable
 # contains the module name, a trick we use so we can keep multiple different
@@ -9,23 +15,50 @@ MODULE_OBJS-$(MODULE) := $(addprefix $(MODULE)/, $(MODULE_OBJS))
 MODULE_DIRS += $(sort $(dir $(MODULE_OBJS-$(MODULE))))
 
 
+
+ifdef TOOL_EXECUTABLE
+################################################
+# Build rule for (tool) executables.
+# TODO: Refactor this, so that even our master executable can use this rule?
+################################################
+TOOL-$(MODULE) := $(MODULE)/$(TOOL_EXECUTABLE)$(EXEEXT)
+$(TOOL-$(MODULE)): $(MODULE_OBJS-$(MODULE))
+	$(CXX) $(LDFLAGS) $+ -o $@
+
+# Reset TOOL_EXECUTABLE var
+TOOL_EXECUTABLE:=
+
+# Add to "tools" target
+tools: $(TOOL-$(MODULE))
+
+# Pseudo target for comfort, allows for "make tools/skycpt", etc.
+$(MODULE): $(TOOL-$(MODULE))
+clean-tools: clean-$(MODULE)
+
+else
 ifdef PLUGIN
-# Plugin build rule
-# TODO: Right now, for Mac OS X only. We either will have to generate this
-# via the configure script, or put in some 'if' statements to choose from
-# one of several build rules
+################################################
+# Build rule for dynamic (loadable) plugins
+################################################
 PLUGIN-$(MODULE) := plugins/$(PLUGIN_PREFIX)$(notdir $(MODULE))$(PLUGIN_SUFFIX)
 $(PLUGIN-$(MODULE)): $(MODULE_OBJS-$(MODULE)) $(PLUGIN_EXTRA_DEPS)
 	$(MKDIR) plugins
 	$(CXX) $(filter-out $(PLUGIN_EXTRA_DEPS),$+) $(PLUGIN_LDFLAGS) -o $@
+
+# Reset PLUGIN var
 PLUGIN:=
+
+# Add to "plugins" target
 plugins: $(PLUGIN-$(MODULE))
 
 # Pseudo target for comfort, allows for "make common", "make gui" etc.
 $(MODULE): $(PLUGIN-$(MODULE))
+clean-plugins: clean-$(MODULE)
 
 else
-
+################################################
+# Build rule for static modules/plugins
+################################################
 MODULE_LIB-$(MODULE) := $(MODULE)/lib$(notdir $(MODULE)).a
 
 # If not building as a plugin, add the object files to the main OBJS list
@@ -40,14 +73,16 @@ $(MODULE_LIB-$(MODULE)): $(MODULE_OBJS-$(MODULE))
 # Pseudo target for comfort, allows for "make common", "make gui" etc.
 $(MODULE): $(MODULE_LIB-$(MODULE))
 
-endif
+endif # PLUGIN
+endif # TOOL_EXECUTABLE
 
-
+###############################################
 # Clean target, removes all object files. This looks a bit hackish, as we have to
 # copy the content of MODULE_OBJS to another unique variable (the next module.mk
 # will overwrite it after all). The same for the libMODULE.a library file.
+###############################################
 clean: clean-$(MODULE)
 clean-$(MODULE): clean-% :
-	-$(RM) $(MODULE_OBJS-$*) $(MODULE_LIB-$*) $(PLUGIN-$*)
+	-$(RM) $(MODULE_OBJS-$*) $(MODULE_LIB-$*) $(PLUGIN-$*) $(TOOL-$*)
 
 .PHONY: clean-$(MODULE) $(MODULE)
