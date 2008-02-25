@@ -165,7 +165,7 @@ static void createTableFile(TableFile *tf) {
 }
 
 static void printGameVersionTable() {
-	int i;
+	unsigned int i;
 	printf("const RetailGameVersion Resource::_gameVersions[] = {\n");
 	for (i = 0; i < ARRAYSIZE(gameVersionsTable); ++i) {
 		const GameVersion *gv = &gameVersionsTable[i];
