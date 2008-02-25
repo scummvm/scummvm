@@ -903,17 +903,25 @@
 				Name="fs"
 				>
 				<File
-					RelativePath="..\..\backends\fs\abstract-fs-factory.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\backends\fs\abstract-fs-factory.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\backends\fs\abstract-fs.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\backends\fs\fs-factory.h"
+					>
+				</File>
+				<Filter
+					Name="windows"
+					>
+					<File
+						RelativePath="..\..\backends\fs\windows\windows-fs-factory.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\backends\fs\windows\windows-fs-factory.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="midi"
