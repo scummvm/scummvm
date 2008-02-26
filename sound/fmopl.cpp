@@ -59,10 +59,11 @@
 /* used static memory = SIN_ENT * 4 (byte) */
 #ifdef __DS__
 #include "dsmain.h"
-#define SIN_ENT 256
+#define SIN_ENT_SHIFT 8
 #else
-#define SIN_ENT 2048
+#define SIN_ENT_SHIFT 11
 #endif
+#define SIN_ENT (1<<SIN_ENT_SHIFT)
 
 /* output level entries (envelope,sinwave) */
 /* envelope counter lower bits */
@@ -464,7 +465,7 @@ inline void set_sl_rr(FM_OPL *OPL, int slot, int v) {
 
 /* operator output calcrator */
 
-#define OP_OUT(slot,env,con)   slot->wavetable[((slot->Cnt + con) / (0x1000000 / SIN_ENT)) & (SIN_ENT-1)][env]
+#define OP_OUT(slot,env,con)   slot->wavetable[((slot->Cnt + con)>>(24-SIN_ENT_SHIFT)) & (SIN_ENT-1)][env]
 /* ---------- calcrate one of channel ---------- */
 inline void OPL_CALC_CH(OPL_CH *CH) {
 	uint env_out;
