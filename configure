@@ -378,7 +378,8 @@ engine_disable() {
 
 # Show the configure help line for an option
 option_help() {
-	option=`echo "--$(echo $1 | sed 's/_/-/g')                       " | sed "s/\(.\{23\}\).*/\1/"`
+        tmpopt=`echo $1 | sed 's/_/-/g'`
+	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
 	echo "  ${option}  ${2}"
 }
 
