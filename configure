@@ -972,6 +972,7 @@ case $_host_os in
 		;;
 	beos*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		# Needs -lbind -lsocket for the timidity MIDI driver
 		LIBS="$LIBS -lbind -lsocket"
 		type_1_byte='char'
 		type_2_byte='short'
@@ -979,6 +980,8 @@ case $_host_os in
 		;;	
 	solaris*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		# Needs -lbind -lsocket for the timidity MIDI driver
+		LIBS="$LIBS -lnsl -lsocket"
 		;;
 	irix*)
 		DEFINES="$DEFINES -DUNIX -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
