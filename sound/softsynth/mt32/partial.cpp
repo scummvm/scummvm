@@ -25,11 +25,16 @@
 
 #include "mt32emu.h"
 
-#ifdef MACOSX
-// Older versions of Mac OS X didn't supply a powf function. To ensure
-// binary compatibility, we force using pow instead of powf (the only
-// potential drawback is that it might be a little bit slower).
+#if defined(MACOSX) || defined(__solaris__)
+// Older versions of Mac OS X didn't supply a powf function, so using it
+// will cause a binary incompatibility when trying to run a binary built
+// on a newer OS X release on an olderr one. And Solaris 8 doesn't provide
+// powf, floorf, fabsf etc. at all.
+// Hence we re-define them here. The only potential drawback is that it
+// might be a little bit slower this way.
 #define powf pow
+#define floorf floor
+#define fabsf fabs
 #endif
 
 #define FIXEDPOINT_UDIV(x, y, point) (((x) << (point)) / ((y)))
