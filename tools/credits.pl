@@ -576,10 +576,6 @@ begin_credits("Credits");
 		  add_person("John Willis", "DJWillis", "");
 	  end_section();
 
-	  begin_section("GP32");
-		  add_person("Won Star", "wonst719", "");
-	  end_section();
-
 	  begin_section("iPhone");
 		  add_person("Oystein Eftevaag", "vinterstum", "");
 	  end_section();
@@ -597,12 +593,12 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("PocketPC / WinCE");
-		  add_person("Nicolas Bacca", "arisme", "");
 		  add_person("Kostas Nakos", "Jubanka", "");
 	  end_section();
 
 	  begin_section("PlayStation 2");
 		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "");
+		  add_person("Max Lingua", "sunmax", "");
 	  end_section();
 
 	  begin_section("PSP (PlayStation Portable)");
@@ -654,6 +650,7 @@ begin_credits("Credits");
     begin_section("Retired Team Members");
 	  begin_persons();
 		add_person("Tore Anderson", "tore", "Former Debian GNU/Linux maintainer");
+		add_person("Nicolas Bacca", "arisme", "Former WinCE porter");
 		add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 		add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
 		add_person("R&uuml;diger Hanke", "", "Port: MorphOS");
@@ -664,6 +661,7 @@ begin_credits("Credits");
 		add_person("Jeremy Newman", "laxdragon", "Former webmaster");
 		add_person("Ludvig Strigeus", "ludde", "Original ScummVM and SimonVM author");
 		add_person("Lionel Ulmer", "bbrox", "Port: X11");
+		add_person("Won Star", "wonst719", "Former GP32 porter");
 	  end_persons();
     end_section();
   end_section();

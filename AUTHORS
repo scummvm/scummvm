@@ -100,9 +100,6 @@ ScummVM Team
     GP2X:
        John Willis          
 
-    GP32:
-       Won Star             
-
     iPhone:
        Oystein Eftevaag     
 
@@ -116,11 +113,11 @@ ScummVM Team
        Chris Apers          
 
     PocketPC / WinCE:
-       Nicolas Bacca        
        Kostas Nakos         
 
     PlayStation 2:
        Robert Goeffringmann 
+       Max Lingua           
 
     PSP (PlayStation Portable):
        Joost Peters         
@@ -163,6 +160,7 @@ ScummVM Team
   Retired Team Members
   --------------------
      Tore Anderson         - Former Debian GNU/Linux maintainer
+     Nicolas Bacca         - Former WinCE porter
      Ralph Brorsen         - Help with GUI implementation
      Jamieson Christian    - iMUSE, MIDI, all things musical
      Ruediger Hanke        - Port: MorphOS
@@ -173,6 +171,7 @@ ScummVM Team
      Jeremy Newman         - Former webmaster
      Ludvig Strigeus       - Original ScummVM and SimonVM author
      Lionel Ulmer          - Port: X11
+     Won Star              - Former GP32 porter
 
 Other contributions
 *******************

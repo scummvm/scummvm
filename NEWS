@@ -4,6 +4,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 0.12.0 (????-??-??)
  General:
    - Added CAMD MIDI driver for AmigaOS4.
+   - Revived the PS2 port (was already in 0.11.1 but was forgotten in the
+     release notes).
 
  SCUMM:
    - Rewrote parts of Digital iMUSE, fixing some bugs.
