@@ -159,6 +159,22 @@ public:
 		}
 	}
 
+	void resize(uint newSize) {
+		if (newSize == _size)
+			return;
+
+		T *old_data = _data;
+		_capacity = newSize;
+		_data = new T[newSize];
+		if (old_data) {
+			// Copy old data
+			int cnt = (_size < newSize ? _size : newSize);
+			copy(old_data, old_data + cnt, _data);
+			delete [] old_data;
+		}
+		_size = newSize;
+	}
+
 protected:
 	void ensureCapacity(uint len) {
 		if (len >= _capacity)
