@@ -315,6 +315,7 @@ int SagaEngine::go() {
 void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPointer, size_t stringsLength) {
 	uint16 stringsCount;
 	size_t offset;
+	size_t prevOffset = 0;
 	int i;
 
 	if (stringsLength == 0) {
@@ -334,6 +335,13 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 	scriptS.seek(0);
 	while (i < stringsCount) {
 		offset = scriptS.readUint16();
+		// In some rooms in IHNM, string offsets can be greater than the maximum value than a 16-bit integer can hold
+		// We detect this by checking the previous offset, and if it was bigger than the current one, an overflow
+		// occured (since the string offsets are sequential), so we're adding the missing part of the number
+		// Fixes bug #1895205 - "IHNM: end game text/caption error"
+		if (prevOffset > offset)
+			offset += 65536;
+		prevOffset = offset;
 		if (offset == stringsLength) {
 			stringsCount = i;
 			stringsTable.strings = (const char **)realloc(stringsTable.strings, stringsCount * sizeof(*stringsTable.strings));
