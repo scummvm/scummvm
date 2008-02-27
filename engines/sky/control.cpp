@@ -1054,9 +1054,9 @@ void Control::showSprites(dataFileHeader **nameSprites, bool allowSave) {
 	delete drawResource;
 }
 
-void Control::loadDescriptions(Common::StringList &list) {
+void Control::loadDescriptions(Common::StringList &savenames) {
 
-	list.resize(MAX_SAVE_GAMES);
+	savenames.resize(MAX_SAVE_GAMES);
 
 	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading("SKY-VM.SAV");
@@ -1065,8 +1065,8 @@ void Control::loadDescriptions(Common::StringList &list) {
 		char *tmpPtr = tmpBuf;
 		inf->read(tmpBuf, MAX_SAVE_GAMES * MAX_TEXT_LEN);
 		for (int i = 0; i < MAX_SAVE_GAMES; ++i) {
-			list[i] = tmpPtr;
-			tmpPtr += list[i].size() + 1;
+			savenames[i] = tmpPtr;
+			tmpPtr += savenames[i].size() + 1;
 		}
 		delete inf;
 		delete[] tmpBuf;

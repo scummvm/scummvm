@@ -31,6 +31,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/events.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/timer.h"
 
@@ -114,6 +115,8 @@ public:
 	virtual GameList detectGames(const FSList &fslist) const;
 
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
+
+	virtual SaveStateList listSaves(const char *target) const;
 };
 
 const char *SkyMetaEngine::getName() const {
@@ -192,6 +195,56 @@ PluginError SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) const 
 	assert(engine);
 	*engine = new Sky::SkyEngine(syst);
 	return kNoError;
+}
+
+SaveStateList SkyMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	SaveStateList saveList;
+
+	// Load the descriptions
+	Common::StringList savenames;
+	savenames.resize(MAX_SAVE_GAMES+1);
+
+	Common::InSaveFile *inf;
+	inf = saveFileMan->openForLoading("SKY-VM.SAV");
+	if (inf != NULL) {
+		char *tmpBuf =  new char[MAX_SAVE_GAMES * MAX_TEXT_LEN];
+		char *tmpPtr = tmpBuf;
+		inf->read(tmpBuf, MAX_SAVE_GAMES * MAX_TEXT_LEN);
+		for (int i = 0; i < MAX_SAVE_GAMES; ++i) {
+			savenames[i] = tmpPtr;
+			tmpPtr += savenames[i].size() + 1;
+		}
+		delete inf;
+		delete[] tmpBuf;
+	}
+
+	// Find all saves
+	Common::StringList filenames;
+	filenames = saveFileMan->listSavefiles("SKY-VM.???");
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	// Slot 0 is the autosave, if it exists.
+	// TODO: Check for the existence of the autosave -- but this require us
+	// to know which SKY variant we are looking at.
+	saveList.insert_at(0, SaveStateDescriptor(0, "*AUTOSAVE*", ""));
+
+	// Prepare the list of savestates by looping over all matching savefiles
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+		// Extract the extension
+		Common::String ext = file->c_str() + file->size() - 3;
+		ext.toUppercase();
+		if (isdigit(ext[0]) && isdigit(ext[1]) && isdigit(ext[2])){
+			int slotNum = atoi(ext.c_str());
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				saveList.push_back(SaveStateDescriptor(slotNum+1, savenames[slotNum], *file));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
 }
 
 REGISTER_PLUGIN(SKY, PLUGIN_TYPE_ENGINE, SkyMetaEngine);
