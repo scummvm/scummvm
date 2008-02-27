@@ -332,8 +332,12 @@ void Font::outFont(const FontStyle &drawFont, Surface *ds, const char *text, siz
 			// versions of IHNM, so it has been changed to apply for ITE only.
 			// It doesn't make any difference for the English version of IHNM.
 			// Fixes bug #1796045: "IHNM: Spanish font wrong".
-			if (!(flags & kFontDontmap) && _vm->getGameType() == GType_ITE)
-				c_code = _charMap[c_code];
+			if (!(flags & kFontDontmap) && _vm->getGameType() == GType_ITE) {
+				// Don't do any special font mapping for the Italian fan
+				// translation of ITE
+				if (_vm->getLanguage() != Common::IT_ITA)
+					c_code = _charMap[c_code];
+			}
 		} else if (_fontMapping == 1) {
 			// Force font mapping
 			c_code = _charMap[c_code];
