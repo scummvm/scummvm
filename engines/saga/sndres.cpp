@@ -101,7 +101,12 @@ SndRes::~SndRes() {
 }
 
 void SndRes::setVoiceBank(int serial) {
-	if (_voiceSerial == serial) return;
+	if (_voiceSerial == serial)
+		return;
+
+	// If there are no voice files present, don't set the voice bank
+	if (!_vm->_voiceFilesExist)
+		return;
 
 	// Close previous voice bank file
 	if (_voiceSerial >= 0 && _voiceContext->file->isOpen())
