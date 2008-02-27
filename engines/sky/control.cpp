@@ -862,7 +862,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	}
 	bool withAutoSave = (lookListLen == 7);
 
-	uint8 *saveGameTexts = (uint8 *)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
+	Common::StringList saveGameTexts;
 	dataFileHeader *textSprites[MAX_ON_SCREEN + 1];
 	for (cnt = 0; cnt < MAX_ON_SCREEN + 1; cnt++)
 		textSprites[cnt] = NULL;
@@ -910,7 +910,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 			_mouseClicked = false;
 			_keyPressed.reset();
 		} if (allowSave && _keyPressed.keycode) {
-			handleKeyPress(_keyPressed, _selectedGame * MAX_TEXT_LEN + saveGameTexts);
+			handleKeyPress(_keyPressed, saveGameTexts[_selectedGame]);
 			refreshNames = true;
 			_keyPressed.reset();
 		}
@@ -974,8 +974,6 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	for (cnt = 0; cnt < MAX_ON_SCREEN + 1; cnt++)
 		free(textSprites[cnt]);
 
-	free(saveGameTexts);
-
 	if (allowSave) {
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	}
@@ -983,49 +981,48 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	return clickRes;
 }
 
-void Control::handleKeyPress(Common::KeyState kbd, uint8 *textBuf) {
+void Control::handleKeyPress(Common::KeyState kbd, Common::String &textBuf) {
 
-	const int len = strlen((const char *)textBuf);
 	if (kbd.keycode == Common::KEYCODE_BACKSPACE) { // backspace
-		// The first 5 chars are the label: "123: ", so the user is not allowed to delete those.
-		if (len < 6)
-			return;
-		textBuf[len-1] = 0;
+		if (textBuf.size() > 0)
+			textBuf.deleteLastChar();
 	} else {
 		// Cannot enter text wider than the save/load panel
 		if (_enteredTextWidth >= PAN_LINE_WIDTH - 10)
 			return;
+
 		// Cannot enter text longer than MAX_TEXT_LEN-1 chars, since
 		// the storage is only so big. Note: The code used to incorrectly
 		// allow up to MAX_TEXT_LEN, which caused an out of bounds access,
 		// overwriting the next entry in the list of savegames partially.
 		// This could be triggered by e.g. entering lots of periods ".".
-		if (len >= MAX_TEXT_LEN - 1)
+		if (textBuf.size() >= MAX_TEXT_LEN - 1)
 			return;
+
 		// Allow the key only if is a letter, a digit, or one of a selected
 		// list of extra characters
 		if (isalnum(kbd.ascii) || strchr(" ,().='-&+!?\"", kbd.ascii) != 0) {
-			textBuf[len] = kbd.ascii;
-			textBuf[len+1] = 0;
+			textBuf += kbd.ascii;
 		}
 	}
 }
 
-void Control::setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame) {
+void Control::setUpGameSprites(const Common::StringList &saveGameNames, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame) {
 
 	char cursorChar[2] = "-";
-	nameBuf += firstNum * MAX_TEXT_LEN;
 	displayText_t textSpr;
 	if (!nameSprites[MAX_ON_SCREEN]) {
 		textSpr = _skyText->displayText(cursorChar, NULL, false, 15, 0);
 		nameSprites[MAX_ON_SCREEN] = (dataFileHeader *)textSpr.textData;
 	}
 	for (uint16 cnt = 0; cnt < MAX_ON_SCREEN; cnt++) {
+		char nameBuf[MAX_TEXT_LEN + 10];
+		sprintf(nameBuf, "%3d: %s", firstNum + cnt + 1, saveGameNames[firstNum + cnt].c_str());
+
 		if (firstNum + cnt == selectedGame)
-			textSpr = _skyText->displayText((char*)nameBuf, NULL, false, PAN_LINE_WIDTH, 0);
+			textSpr = _skyText->displayText(nameBuf, NULL, false, PAN_LINE_WIDTH, 0);
 		else
-			textSpr = _skyText->displayText((char*)nameBuf, NULL, false, PAN_LINE_WIDTH, 37);
-		nameBuf += MAX_TEXT_LEN;
+			textSpr = _skyText->displayText(nameBuf, NULL, false, PAN_LINE_WIDTH, 37);
 		nameSprites[cnt] = (dataFileHeader *)textSpr.textData;
 		if (firstNum + cnt == selectedGame) {
 			nameSprites[cnt]->flag = 1;
@@ -1057,33 +1054,22 @@ void Control::showSprites(dataFileHeader **nameSprites, bool allowSave) {
 	delete drawResource;
 }
 
-void Control::loadDescriptions(uint8 *destBuf) {
+void Control::loadDescriptions(Common::StringList &list) {
 
-	memset(destBuf, 0, MAX_SAVE_GAMES * MAX_TEXT_LEN);
+	list.resize(MAX_SAVE_GAMES);
 
 	Common::InSaveFile *inf;
 	inf = _saveFileMan->openForLoading("SKY-VM.SAV");
 	if (inf != NULL) {
-		uint8 *tmpBuf = (uint8 *)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
+		char *tmpBuf =  new char[MAX_SAVE_GAMES * MAX_TEXT_LEN];
+		char *tmpPtr = tmpBuf;
 		inf->read(tmpBuf, MAX_SAVE_GAMES * MAX_TEXT_LEN);
-		uint8 *destPos = destBuf;
-		uint8 *inPos = tmpBuf;
-		for (uint16 cnt = 0; cnt < MAX_SAVE_GAMES; cnt++) {
-			sprintf((char*)destPos,"%3d: ", cnt + 1);
-			uint8 nameCnt = 0;
-			while ((destPos[nameCnt + 5] = inPos[nameCnt]))
-				nameCnt++;
-			destPos += MAX_TEXT_LEN;
-			inPos += nameCnt + 1;
+		for (int i = 0; i < MAX_SAVE_GAMES; ++i) {
+			list[i] = tmpPtr;
+			tmpPtr += list[i].size() + 1;
 		}
-		free(tmpBuf);
 		delete inf;
-	} else {
-		uint8 *destPos = destBuf;
-		for (uint16 cnt = 0; cnt < MAX_SAVE_GAMES; cnt++) {
-			sprintf((char*)destPos,"%3d: ", cnt + 1);
-			destPos += MAX_TEXT_LEN;
-		}
+		delete[] tmpBuf;
 	}
 }
 
@@ -1115,30 +1101,16 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 	return result;
 }
 
-void Control::saveDescriptions(uint8 *srcBuf) {
+void Control::saveDescriptions(const Common::StringList &list) {
 
-	uint8 *tmpBuf = (uint8 *)malloc(MAX_SAVE_GAMES * MAX_TEXT_LEN);
-	uint8 *tmpPos = tmpBuf;
-	uint8 *srcPos = srcBuf;
-	for (uint16 cnt = 0; cnt < MAX_SAVE_GAMES; cnt++) {
-		uint8 namePos = 5;
-		while (srcPos[namePos]) {
-			if (srcPos[namePos] != '_') {
-				*tmpPos = srcPos[namePos];
-				tmpPos++;
-			}
-			namePos++;
-		}
-		*tmpPos = 0;
-		tmpPos++;
-		srcPos += MAX_TEXT_LEN;
-	}
 	Common::OutSaveFile *outf;
 
 	outf = _saveFileMan->openForSaving("SKY-VM.SAV");
 	bool ioFailed = true;
 	if (outf) {
-		outf->write(tmpBuf, tmpPos - tmpBuf);
+		for (uint16 cnt = 0; cnt < MAX_SAVE_GAMES; cnt++) {
+			outf->write(list[cnt].c_str(), list[cnt].size() + 1);
+		}
 		outf->finalize();
 		if (!outf->ioFailed())
 			ioFailed = false;
@@ -1146,7 +1118,6 @@ void Control::saveDescriptions(uint8 *srcBuf) {
 	}
 	if (ioFailed)
 		displayMessage(NULL, "Unable to store Savegame names to file SKY-VM.SAV. (%s)", _saveFileMan->popErrorDesc().c_str());
-	free(tmpBuf);
 }
 
 void Control::doAutoSave(void) {

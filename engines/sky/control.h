@@ -216,11 +216,11 @@ private:
 	void drawCross(uint16 x, uint16 y);
 
 	uint16 saveRestorePanel(bool allowSave);
-	void loadDescriptions(uint8 *destBuf);
-	void saveDescriptions(uint8 *srcBuf);
-	void setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame);
+	void loadDescriptions(Common::StringList &list);
+	void saveDescriptions(const Common::StringList &list);
+	void setUpGameSprites(const Common::StringList &saveGameNames, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame);
 	void showSprites(dataFileHeader **nameSprites, bool allowSave);
-	void handleKeyPress(Common::KeyState kbd, uint8 *textBuf);
+	void handleKeyPress(Common::KeyState kbd, Common::String &textBuf);
 
 	uint16 _selectedGame;
 	uint16 saveGameToFile(void);
