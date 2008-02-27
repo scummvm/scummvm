@@ -220,7 +220,6 @@ private:
 	void saveDescriptions(uint8 *srcBuf);
 	void setUpGameSprites(uint8 *nameBuf, dataFileHeader **nameSprites, uint16 firstNum, uint16 selectedGame);
 	void showSprites(dataFileHeader **nameSprites, bool allowSave);
-	bool checkKeyList(uint8 key);
 	void handleKeyPress(Common::KeyState kbd, uint8 *textBuf);
 
 	uint16 _selectedGame;

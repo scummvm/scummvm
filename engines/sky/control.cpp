@@ -983,38 +983,30 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 	return clickRes;
 }
 
-bool Control::checkKeyList(uint8 key) {
-	static const uint8 charList[14] = " ,().='-&+!?\"";
-	for (uint chCnt = 0; chCnt < ARRAYSIZE(charList); chCnt++)
-		if (charList[chCnt] == key)
-			return true;
-	return false;
-}
-
 void Control::handleKeyPress(Common::KeyState kbd, uint8 *textBuf) {
 
+	const int len = strlen((const char *)textBuf);
 	if (kbd.keycode == Common::KEYCODE_BACKSPACE) { // backspace
-		for (uint8 cnt = 0; cnt < 6; cnt++)
-			if (!textBuf[cnt])
-				return;
-
-		while (textBuf[1])
-			textBuf++;
-		textBuf[0] = 0;
+		// The first 5 chars are the label: "123: ", so the user is not allowed to delete those.
+		if (len < 6)
+			return;
+		textBuf[len-1] = 0;
 	} else {
+		// Cannot enter text wider than the save/load panel
 		if (_enteredTextWidth >= PAN_LINE_WIDTH - 10)
 			return;
-		if (((kbd.ascii >= 'A') && (kbd.ascii <= 'Z')) || ((kbd.ascii >= 'a') && (kbd.ascii <= 'z')) ||
-			((kbd.ascii >= '0') && (kbd.ascii <= '9')) || checkKeyList(kbd.ascii)) {
-				uint8 strLen = 0;
-				while (textBuf[0]) {
-					textBuf++;
-					strLen++;
-				}
-				if (strLen < MAX_TEXT_LEN) {
-					textBuf[0] = kbd.ascii;
-					textBuf[1] = 0;
-				}
+		// Cannot enter text longer than MAX_TEXT_LEN-1 chars, since
+		// the storage is only so big. Note: The code used to incorrectly
+		// allow up to MAX_TEXT_LEN, which caused an out of bounds access,
+		// overwriting the next entry in the list of savegames partially.
+		// This could be triggered by e.g. entering lots of periods ".".
+		if (len >= MAX_TEXT_LEN - 1)
+			return;
+		// Allow the key only if is a letter, a digit, or one of a selected
+		// list of extra characters
+		if (isalnum(kbd.ascii) || strchr(" ,().='-&+!?\"", kbd.ascii) != 0) {
+			textBuf[len] = kbd.ascii;
+			textBuf[len+1] = 0;
 		}
 	}
 }
