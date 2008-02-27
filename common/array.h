@@ -33,8 +33,8 @@ namespace Common {
 template <class T>
 class Array {
 protected:
-	int _capacity;
-	int _size;
+	uint _capacity;
+	uint _size;
 	T *_data;
 
 public:
@@ -68,7 +68,7 @@ public:
 	}
 
 	void insert_at(int idx, const T& element) {
-		assert(idx >= 0 && idx <= _size);
+		assert(idx >= 0 && (uint)idx <= _size);
 		ensureCapacity(_size + 1);
 		copy_backward(_data + idx, _data + _size, _data + _size + 1);
 		_data[idx] = element;
@@ -76,7 +76,7 @@ public:
 	}
 
 	T remove_at(int idx) {
-		assert(idx >= 0 && idx < _size);
+		assert(idx >= 0 && (uint)idx < _size);
 		T tmp = _data[idx];
 		copy(_data + idx + 1, _data + _size, _data + idx);
 		_size--;
@@ -86,12 +86,12 @@ public:
 	// TODO: insert, remove, ...
 
 	T& operator [](int idx) {
-		assert(idx >= 0 && idx < _size);
+		assert(idx >= 0 && (uint)idx < _size);
 		return _data[idx];
 	}
 
 	const T& operator [](int idx) const {
-		assert(idx >= 0 && idx < _size);
+		assert(idx >= 0 && (uint)idx < _size);
 		return _data[idx];
 	}
 
@@ -144,21 +144,25 @@ public:
 		return find(begin(), end(), key) != end();
 	}
 
-
-protected:
-	void ensureCapacity(int new_len) {
-		if (new_len <= _capacity)
+	void reserve(uint newCapacity) {
+		if (newCapacity <= _capacity)
 			return;
 
 		T *old_data = _data;
-		_capacity = new_len + 32;
-		_data = new T[_capacity];
+		_capacity = newCapacity;
+		_data = new T[newCapacity];
 
 		if (old_data) {
 			// Copy old data
 			copy(old_data, old_data + _size, _data);
 			delete [] old_data;
 		}
+	}
+
+protected:
+	void ensureCapacity(uint len) {
+		if (len >= _capacity)
+			reserve(len + 32);
 	}
 };
 
