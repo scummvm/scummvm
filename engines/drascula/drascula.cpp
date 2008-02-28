@@ -641,6 +641,7 @@ bucles:
 		comprueba_objetos();
 
 	if (boton_dch == 1 && menu_scr == 1) {
+		delay(100);
 		if (num_ejec == 2)
 			lee_dibujos(fondo_y_menu);
 		else
@@ -653,6 +654,7 @@ bucles:
 			cont_sv = 0;
 	}
 	if (boton_dch == 1 && menu_scr == 0) {
+		delay(100);
 		hare_se_mueve = 0;
 		if (sentido_hare == 2)
 			sentido_hare = 1;
@@ -673,10 +675,12 @@ bucles:
 	}
 
 	if (boton_izq == 1 && menu_bar == 1) {
+		delay(100);
 		elige_en_barra();
 		if (num_ejec != 3)
 			cont_sv = 0;
 	} else if (boton_izq == 1 && lleva_objeto == 0) {
+		delay(100);
 		if (comprueba1())
 			return true;
 		if (num_ejec != 3)
@@ -1991,9 +1995,12 @@ void DrasculaEngine::mesa() {
 
 		MirarRaton();
 
-		if (boton_dch == 1)
+		if (boton_dch == 1) {
+			delay(100);
 			break;
+		}
 		if (boton_izq == 1) {
+			delay(100);
 			if (x_raton > 80 && x_raton < 121) {
 				int vol = _mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16;
 				if (y_raton < nivel_master && vol < 15)
@@ -2062,6 +2069,7 @@ void DrasculaEngine::saves() {
 		MirarRaton();
 
 		if (boton_izq == 1) {
+			delay(100);
 			for (n = 0; n < NUM_SAVES; n++) {
 				if (x_raton > 115 && y_raton > y + (9 * n) && x_raton < 115 + 175 && y_raton < y + 10 + (9 * n)) {
 					strcpy(select, nombres[n]);
@@ -5609,6 +5617,7 @@ bucle_opc:
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	if ((boton_izq == 1) && (juego1 == 2)) {
+		delay(100);
 		usado1 = 1;
 		hablar(frase1, suena1);
 		if (num_ejec == 3)
@@ -5616,6 +5625,7 @@ bucle_opc:
 		else
 			responde(respuesta1);
 	} else if ((boton_izq == 1) && (juego2 == 2)) {
+		delay(100);
 		usado2 = 1;
 		hablar(frase2, suena2);
 		if (num_ejec == 3)
@@ -5623,6 +5633,7 @@ bucle_opc:
 		else
 			responde(respuesta2);
 	} else if ((boton_izq == 1) && (juego3 == 2)) {
+		delay(100);
 		usado3 = 1;
 		hablar(frase3, suena3);
 		if (num_ejec == 3)
@@ -5630,12 +5641,15 @@ bucle_opc:
 		else
 			responde(respuesta3);
 	} else if ((boton_izq == 1) && (juego4 == 2)) {
+		delay(100);
 		hablar(frase4, suena4);
 		rompo_y_salgo = 1;
 	}
 
-	if (boton_izq == 1)
+	if (boton_izq == 1) {
+		delay(100);
 		color_abc(VERDE_CLARO);
+	}
 
 	if (usado1 == 0)
 		juego1 = 1;
