@@ -625,7 +625,6 @@ public:
 	int music_status();
 	void refresca_pantalla();
 	void carga_partida(const char *);
-	void canal_p(const char *);
 	void puertas_cerradas(int);
 	void animafin_sound_corte();
 	void color_hare();

@@ -1410,13 +1410,13 @@ void DrasculaEngine::para_cargar(char nom_game[]) {
 }
 
 static char *getLine(Common::File *fp, char *buf, int len) {
-	int c;
+	byte c;
 	char *b;
 
 	for (;;) {
 		b = buf;
 		while (!fp->eos()) {
-			c = fp->readByte() ^ 0xff;
+			c = ~fp->readByte();
 			if (c == '\r')
 				continue;
 			if (c == '\n')
@@ -1444,7 +1444,6 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 	hay_nombre = 0;
 
 	strcpy(para_codificar, nom_fich);
-	canal_p(para_codificar);
 	strcpy(datos_actuales, nom_fich);
 
 	buffer_teclado();
@@ -1455,7 +1454,6 @@ void DrasculaEngine::carga_escoba(const char *nom_fich) {
 		error("missing data file");
 	}
 	int size = ald->size();
-
 	getLine(ald, buffer, size);
 	sscanf(buffer, "%s", num_room);
 	strcat(num_room, ".alg");
@@ -1561,7 +1559,6 @@ martini:
 	}
 	delete ald;
 	ald = NULL;
-	canal_p(para_codificar);
 
 	if (num_ejec == 2) {
 		if (martin == 0) {
@@ -3461,14 +3458,12 @@ void DrasculaEngine::carga_partida(const char *nom_game) {
 	int l, n_ejec2;
 	Common::InSaveFile *sav;
 
-	canal_p(nom_game);
-	if (!(sav = _saveFileMan->openForLoading("nom_game"))) {
+	if (!(sav = _saveFileMan->openForLoading(nom_game))) {
 		error("missing savegame file");
 	}
 
 	n_ejec2 = sav->readSint32LE();
 	if (n_ejec2 != num_ejec) {
-		canal_p(nom_game);
 		strcpy(nom_partida, nom_game);
 		error("TODO");
 		salir_al_dos(n_ejec2);
@@ -3488,41 +3483,6 @@ void DrasculaEngine::carga_partida(const char *nom_game) {
 
 	lleva_objeto = sav->readSint32LE();
 	objeto_que_lleva = sav->readSint32LE();
-
-	canal_p(nom_game);
-}
-
-void DrasculaEngine::canal_p(const char *fich){
-	return;
-	// TODO
-
-	Common::File ald2, ald3;
-
-	char fich2[13];
-	char car;
-
-	strcpy(fich2, "top");
-
-	ald3.open(fich);
-	if (!ald3.isOpen()) {
-		error("no puedo abrir el archivo codificado");
-	}
-
-	ald2.open(fich2, Common::File::kFileWriteMode);
-	if (!ald2.isOpen()) {
-		error("no puedo abrir el archivo destino");
-	}
-
-	car = ald3.readByte();
-	while (!ald3.eos()) {
-		ald2.writeByte(codifica(car));
-		car = ald3.readByte();
-	}
-
-	ald2.close();
-	ald3.close();
-	//remove(fich);	// FIXME: Not portable
-	//rename(fich2, fich);	// FIXME: Not portable
 }
 
 void DrasculaEngine::puertas_cerradas(int l) {
@@ -5177,7 +5137,6 @@ void DrasculaEngine::graba_partida(char nom_game[]) {
 		warning("Can't write file '%s'. (Disk full?)", nom_game);
 
 	delete out;
-	canal_p(nom_game);
 }
 
 void DrasculaEngine::aumenta_num_frame() {
@@ -5450,7 +5409,6 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	rompo_y_salgo = 0;
 
 	strcpy(para_codificar, nom_fich);
-	canal_p(para_codificar);
 
 	if (num_ejec == 5)
 		sin_verbo();
@@ -5486,7 +5444,6 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	sscanf(buffer, "%d", &respuesta3);
 	delete ald;
 	ald = NULL;
-	canal_p(para_codificar);
 
 	if (num_ejec == 2 && !strcmp(nom_fich, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
 		strcpy(frase3, TEXT405);
