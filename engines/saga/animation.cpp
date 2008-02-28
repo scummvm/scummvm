@@ -258,6 +258,16 @@ void Anim::returnFromCutaway(void) {
 
 		_vm->_scene->restoreScene();
 
+		// WORKAROUND: Restart all scene animations before restoring them below
+		// This is mostly needed so that the animation of the mob of prisoners
+		// in Nimdok's chapter is shown correctly after the cutaway where the
+		// prisoner drops the jar on the ground
+		for (int i = 0; i < MAX_ANIMATIONS; i++) {
+			if (_animations[i] && _animations[i]->state == ANIM_PLAYING) {
+				_animations[i]->currentFrame = -1;	// start from -1 (check Anim::load())
+			}
+		}
+
 		// Restore the animations
 		event.type = kEvTImmediate;
 		event.code = kAnimEvent;
