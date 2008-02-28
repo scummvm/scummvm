@@ -2043,10 +2043,19 @@ void DrasculaEngine::saves() {
 	borra_pantalla();
 
 	if (!(sav = _saveFileMan->openForLoading("saves.epa"))) {
-		error("Can't open saves.epa file.");
+		Common::OutSaveFile *epa;
+		if (!(epa = _saveFileMan->openForSaving("saves.epa")))
+			error("Can't open saves.epa file.");
+		for (n = 0; n < NUM_SAVES; n++)
+			epa->writeString("*\n");
+		epa->finalize();
+		delete epa;
+		if (!(sav = _saveFileMan->openForLoading("saves.epa"))) {
+			error("Can't open saves.epa file.");
+		}
 	}
 	for (n = 0; n < NUM_SAVES; n++)
-		sav->read(nombres[n], 23);
+		sav->readLine(nombres[n], 23);
 	delete sav;
 
 	lee_dibujos("savescr.alg");
@@ -2080,35 +2089,16 @@ void DrasculaEngine::saves() {
 						introduce_nombre();
 						strcpy(nombres[n], select);
 						if (hay_seleccion == 1) {
-							// FIXME: Just use:
-							//sprintf(fichero, "gsave%02d", n+1);
-							if (n == 0)
-								strcpy(fichero, "gsave01");
-							if (n == 1)
-								strcpy(fichero, "gsave02");
-							if (n == 2)
-								strcpy(fichero, "gsave03");
-							if (n == 3)
-								strcpy(fichero, "gsave04");
-							if (n == 4)
-							strcpy(fichero, "gsave05");
-							if (n == 5)
-								strcpy(fichero, "gsave06");
-							if (n == 6)
-								strcpy(fichero, "gsave07");
-							if (n == 7)
-								strcpy(fichero, "gsave08");
-							if (n == 8)
-								strcpy(fichero, "gsave09");
-							if (n == 9)
-								strcpy(fichero, "gsave10");
+							sprintf(fichero, "gsave%02d", n + 1);
 							para_grabar(fichero);
 							Common::OutSaveFile *tsav;
 							if (!(tsav = _saveFileMan->openForSaving("saves.epa"))) {
 								error("Can't open saves.epa file.");
 							}
-							for (n = 0; n < NUM_SAVES; n++)
-								tsav->write(nombres[n], 23);
+							for (n = 0; n < NUM_SAVES; n++) {
+								tsav->writeString(nombres[n]);
+								tsav->writeString("\n");
+							}
 							tsav->finalize();
 							delete tsav;
 						}
@@ -2121,28 +2111,7 @@ void DrasculaEngine::saves() {
 						y = y + 9;
 					}
 					if (hay_seleccion == 1) {
-						// FIXME: Just use:
-						//sprintf(fichero, "gsave%02d", n+1);
-						if (n == 0)
-							strcpy(fichero, "gsave01");
-						if (n == 1)
-							strcpy(fichero, "gsave02");
-						if (n == 2)
-							strcpy(fichero, "gsave03");
-						if (n == 3)
-							strcpy(fichero, "gsave04");
-						if (n == 4)
-							strcpy(fichero, "gsave05");
-						if (n == 5)
-							strcpy(fichero, "gsave06");
-						if (n == 6)
-							strcpy(fichero, "gsave07");
-						if (n == 7)
-							strcpy(fichero, "gsave08");
-						if (n == 8)
-							strcpy(fichero, "gsave09");
-						if (n == 9)
-							strcpy(fichero, "gsave10");
+						sprintf(fichero, "gsave%02d", n + 1);
 					}
 					num_sav = n;
 				}
@@ -2168,8 +2137,10 @@ void DrasculaEngine::saves() {
 				if (!(tsav = _saveFileMan->openForSaving("saves.epa"))) {
 					error("Can't open saves.epa file.");
 				}
-				for (n = 0; n < NUM_SAVES; n++)
-					tsav->write(nombres[n], 23);
+				for (n = 0; n < NUM_SAVES; n++) {
+					tsav->writeString(nombres[n]);
+					tsav->writeString("\n");
+				}
 				tsav->finalize();
 				delete tsav;
 			} else if (x_raton > 168 && y_raton > 154 && x_raton < 242 && y_raton < 180)
