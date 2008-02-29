@@ -2346,6 +2346,10 @@ bool DrasculaEngine::confirma_salir() {
 void DrasculaEngine::salva_pantallas() {
 	int xr, yr;
 
+	// FIXME: that part (*.ghost) need RE from efecto.lib file for some gfx special effect
+	// for now ignore
+	return;
+
 	borra_pantalla();
 
 	lee_dibujos("sv.alg");
