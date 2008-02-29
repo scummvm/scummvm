@@ -3480,6 +3480,7 @@ bool DrasculaEngine::carga_partida(const char *nom_game) {
 
 	lleva_objeto = sav->readSint32LE();
 	objeto_que_lleva = sav->readSint32LE();
+	hay_que_load = 0;
 
 	return true;
 }
