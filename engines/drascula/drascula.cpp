@@ -5509,12 +5509,9 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 
 	lee_dibujos("car.alg");
 	descomprime_dibujo(dir_hare_fondo,1);
-/* TODO this is limit for mouse, but we can't implement this
-	ent.w.ax =  8;
-	ent.w.cx =  1;
-	ent.w.dx = 31;
-	int386(0x33, &ent, &sal);
-*/
+	// TODO code here should limit y position for mouse in dialog menu,
+	// but we can't implement this due lack backend functionality
+	// from 1(top) to 31
 	color_abc(VERDE_CLARO);
 
 bucle_opc:
