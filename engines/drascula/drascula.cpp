@@ -75,8 +75,6 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 }
 
 DrasculaEngine::~DrasculaEngine() {
-	salir_al_dos(0);
-
 	delete _rnd;
 }
 
@@ -762,15 +760,9 @@ bucles:
 		delay(1460);
 		if (num_ejec != 3)
 			cont_sv = 0;
-	} else if (key == Common::KEYCODE_DELETE) {
-//		if (num_ejec == 4) // FIXME
-//			carga_partida("gsave00");
-//		else
-			confirma_go();
-		if (num_ejec != 3)
-			cont_sv = 0;
 	} else if (key == Common::KEYCODE_ESCAPE) {
-		confirma_salir();
+		if (!confirma_salir())
+			return false;
 		if (num_ejec != 3)
 			cont_sv = 0;
 	} else if (num_ejec == 6 && key == Common::KEYCODE_0 && !strcmp(num_room, "61.alg")) {
@@ -2328,27 +2320,7 @@ void DrasculaEngine::delay(int ms) {
 	_system->delayMillis(ms * 2); // originaly was 1
 }
 
-void DrasculaEngine::confirma_go() {
-	byte key;
-
-	color_abc(ROJO);
-	refresca_pantalla();
-	centra_texto(SYS0, 160, 87);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-
-	for (;;) {
-		key = getscan();
-		if (key != 0)
-			break;
-	}
-
-	if (key == Common::KEYCODE_DELETE) {
-		stopmusic();
-//		carga_partida("gsave00"); // FIXME
-	}
-}
-
-void DrasculaEngine::confirma_salir() {
+bool DrasculaEngine::confirma_salir() {
 	byte key;
 
 	color_abc(ROJO);
@@ -2356,6 +2328,7 @@ void DrasculaEngine::confirma_salir() {
 	centra_texto(SYS1, 160, 87);
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
+	delay(100);
 	for (;;) {
 		key = getscan();
 		if (key != 0)
@@ -2364,8 +2337,10 @@ void DrasculaEngine::confirma_salir() {
 
 	if (key == Common::KEYCODE_ESCAPE) {
 		stopmusic();
-		salir_al_dos(0);
+		return false;
 	}
+
+	return true;
 }
 
 void DrasculaEngine::salva_pantallas() {

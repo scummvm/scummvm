@@ -584,8 +584,7 @@ public:
 	bool saves();
 	void print_abc(const char *, int, int);
 	void delay(int ms);
-	void confirma_go();
-	void confirma_salir();
+	bool confirma_salir();
 	void salva_pantallas();
 	void elige_objeto(int objeto);
 	void suma_objeto(int);
