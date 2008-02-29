@@ -201,6 +201,7 @@ static const char *credits[] = {
 "\\C\\c1""Packages",
 "\\C\\c1""AmigaOS 4",
 "\\C\\c0""Hans-J\366rg Frieden",
+"\\C\\c0""Hubert Maier",
 "\\C\\c0""Juha Niemim\344ki",
 "\\C\\c0""",
 "\\C\\c1""Atari/FreeMiNT",
