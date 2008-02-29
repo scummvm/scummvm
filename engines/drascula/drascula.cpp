@@ -4697,9 +4697,9 @@ void DrasculaEngine::introduce_nombre() {
 			else if (key == ESC)
 				break;
 			else if (key == Common::KEYCODE_RETURN) {
-					select2[v] = '\0';
-					h = 1;
-					break;
+				select2[v] = '\0';
+				h = 1;
+				break;
 			} else if (key == Common::KEYCODE_BACKSPACE)
 				select2[v] = '\0';
 			else
@@ -5509,7 +5509,7 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 			frase4[h] = ' ';
 
 	lee_dibujos("car.alg");
-	descomprime_dibujo(dir_hare_fondo,1);
+	descomprime_dibujo(dir_hare_fondo, 1);
 	// TODO code here should limit y position for mouse in dialog menu,
 	// but we can't implement this due lack backend functionality
 	// from 1(top) to 31
