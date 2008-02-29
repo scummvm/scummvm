@@ -71,6 +71,7 @@ public:
 	void forceMouseUp(bool onlyWhenSynced = false);
 
 	void clearPalette(void);
+	int16 getFrameRate();
 	void setFrameRate(int16 rate);
 	void waitEndFrame();
 	void setScrollOffset(int16 x = -1, int16 y = -1);
@@ -97,6 +98,8 @@ protected:
 	int16 _keyBufferTail;
 
 	uint8 _fastMode;
+
+	int16 _frameRate;
 
 	GobEngine *_vm;
 

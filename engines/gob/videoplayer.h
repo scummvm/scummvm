@@ -37,6 +37,7 @@ class VideoPlayer {
 public:
 	enum Flags {
 		kFlagNone = 0,
+		kFlagUseBackSurfaceContent = 0x40,
 		kFlagFrontSurface = 0x80,
 		kFlagNoVideo = 0x100
 	};
@@ -74,6 +75,8 @@ private:
 	DataStream *_stream;
 	CoktelVideo *_video;
 	bool _backSurf;
+	bool _needBlit;
+	bool _noCursorSwitch;
 
 	void copyPalette(int16 palStart = -1, int16 palEnd = -1);
 	bool doPlay(int16 frame, int16 breakKey,

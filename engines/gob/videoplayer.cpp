@@ -42,6 +42,8 @@ VideoPlayer::VideoPlayer(GobEngine *vm) : _vm(vm) {
 	_stream = 0;
 	_video = 0;
 	_backSurf = false;
+	_needBlit = false;
+	_noCursorSwitch = false;
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -138,6 +140,19 @@ bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Ty
 			return false;
 		}
 
+		// WORKAROUND: In some rare cases, the cursor should still be
+		// displayed while a video is playing.
+		_noCursorSwitch = false;
+		if (_vm->getGameType() == kGameTypeLostInTime) {
+			if (!scumm_stricmp(fileName, "PORTA03.IMD") ||
+			    !scumm_stricmp(fileName, "PORTA03A.IMD") ||
+			    !scumm_stricmp(fileName, "CALE1.IMD") ||
+			    !scumm_stricmp(fileName, "AMIL2.IMD") ||
+			    !scumm_stricmp(fileName, "AMIL3B.IMD") ||
+			    !scumm_stricmp(fileName, "DELB.IMD"))
+				_noCursorSwitch = true;
+		}
+
 		strcpy(_curFile, fileName);
 
 		if (!(flags & kFlagNoVideo)) {
@@ -147,12 +162,15 @@ bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Ty
 		} else
 			_video->setVideoMemory();
 
+		_needBlit = (flags & kFlagUseBackSurfaceContent) != 0;
+
 		_video->enableSound(*_vm->_mixer);
 	}
 
 	if (!_video)
 		return false;
 
+	_video->setFrameRate(_vm->_util->getFrameRate());
 	_video->setXY(x, y);
 	WRITE_VAR(7, _video->getFramesCount());
 
@@ -184,8 +202,7 @@ void VideoPlayer::play(int16 startFrame, int16 lastFrame, int16 breakKey,
 			_video->seekFrame(startFrame);
 	}
 
-	_vm->_draw->_showCursor = 0;
-	_vm->_util->setFrameRate(12);
+	_vm->_draw->_showCursor = _noCursorSwitch ? 3 : 0;
 
 	if (fade)
 		_vm->_palAnim->fade(0, -2, 0);
@@ -248,8 +265,14 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 
 
+	if (_needBlit)
+		_vm->_draw->forceBlit();
+
 	CoktelVideo::State state = _video->nextFrame();
 	WRITE_VAR(11, frame);
+
+	if (_needBlit)
+		_vm->_draw->forceBlit(true);
 
 
 	if (modifiedPal && (palCmd == 16)) {

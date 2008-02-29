@@ -131,7 +131,7 @@ bool Imd::load(Common::SeekableReadStream &stream) {
 
 		_audioStream = Audio::makeAppendableAudioStream(_soundFreq, 0);
 	} else
-		_frameLength = 1000 / 12; // 12 FPS for a video without sound
+		_frameLength = 1000 / _frameRate;
 
 	// Sizes of the frame data and extra video buffer
 	if (_features & kFeaturesDataSize) {
@@ -183,6 +183,14 @@ bool Imd::load(Common::SeekableReadStream &stream) {
 
 void Imd::unload() {
 	clear();
+}
+
+void Imd::setFrameRate(int16 frameRate) {
+	if (frameRate == 0)
+		frameRate = 1;
+
+	_frameRate = frameRate;
+	_frameLength = 1000 / _frameRate;
 }
 
 void Imd::setXY(int16 x, int16 y) {
@@ -426,6 +434,7 @@ void Imd::clear(bool del) {
 
 	_audioStream = 0;
 
+	_frameRate = 12;
 	_frameLength = 0;
 	_lastFrameTime = 0;
 }
@@ -927,7 +936,7 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 		_audioStream = Audio::makeAppendableAudioStream(_soundFreq,
 				(_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0);
 	} else
-		_frameLength = 1000 / 12; // 12 FPS for a video without sound
+		_frameLength = 1000 / _frameRate;
 
 	uint32 frameInfoOffset = _stream->readUint32LE();
 

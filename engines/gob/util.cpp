@@ -42,6 +42,7 @@ Util::Util(GobEngine *vm) : _vm(vm) {
 	_keyBufferHead = 0;
 	_keyBufferTail = 0;
 	_fastMode = 0;
+	_frameRate = 12;
 }
 
 uint32 Util::getTimeKey(void) {
@@ -297,10 +298,15 @@ void Util::clearPalette(void) {
 		_vm->_video->setPalElem(i, 0, 0, 0, 0, _vm->_global->_videoMode);
 }
 
+int16 Util::getFrameRate() {
+	return _frameRate;
+}
+
 void Util::setFrameRate(int16 rate) {
 	if (rate == 0)
 		rate = 1;
 
+	_frameRate = rate;
 	_vm->_global->_frameWaitTime = 1000 / rate;
 	_vm->_global->_startFrameTime = getTimeKey();
 }

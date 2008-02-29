@@ -118,6 +118,9 @@ public:
 	/** Unload the currently loaded video. */
 	virtual void unload() = 0;
 
+	/** Set the frame rate. */
+	virtual void setFrameRate(int16 frameRate) = 0;
+
 	/** Set the coordinations where to draw the video. */
 	virtual void setXY(int16 x, int16 y) = 0;
 	/** Use a specific memory block as video memory. */
@@ -168,9 +171,11 @@ public:
 	int16 getHeight() const { return _height; }
 	uint16 getFramesCount() const { return _framesCount; }
 	uint16 getCurrentFrame() const { return _curFrame; }
-	int16 getFrameRate() const { if (_hasSound) return 1000 / _soundSliceLength; return 12; }
+	int16 getFrameRate() const { if (_hasSound) return 1000 / _soundSliceLength; return _frameRate; }
 	uint32 getSyncLag() const { return _skipFrames; }
 	const byte *getPalette() const { return _palette; }
+
+	void setFrameRate(int16 frameRate);
 
 	bool load(Common::SeekableReadStream &stream);
 	void unload();
@@ -232,6 +237,7 @@ protected:
 	Audio::AppendableAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
+	int16 _frameRate;
 	uint32 _frameLength;
 	uint32 _lastFrameTime;
 
