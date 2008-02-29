@@ -2186,7 +2186,7 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 
 	for (h = 0; h < longitud; h++) {
 		y_de_letra = Y_ABC;
-		char c = toupper(dicho[h]);
+		int c = toupper(dicho[h]);
 		if (c == 'A')
 			x_de_letra = X_A;
 		else if (c == 'B')
@@ -2215,10 +2215,6 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 			x_de_letra = X_M;
 		else if (c == 'N')
 			x_de_letra = X_N;
-//TODO	else if (c == '\165')
-//			x_de_letra = X_GN;
-		else if (c == '\164')
-			x_de_letra = X_GN;
 		else if (c == 'O')
 			x_de_letra = X_O;
 		else if (c == 'P')
@@ -2243,7 +2239,7 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 			x_de_letra = X_Y;
 		else if (c == 'Z')
 			x_de_letra = X_Z;
-		else if (/*c == 0xa7 ||*/ c == ' ')
+		else if (c == 0xa7 || c == ' ')
 			x_de_letra = ESPACIO;
 		else {
 			y_de_letra = Y_SIGNOS;
@@ -2255,14 +2251,16 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 				x_de_letra = X_GUION;
 			else if (c == '?')
 				x_de_letra = X_CIERRA_INTERROGACION;
-//TODO			else if (c == '\168')
-//				x_de_letra = X_ABRE_INTERROGACION;
+			else if (c == 0xa8)
+				x_de_letra = X_ABRE_INTERROGACION;
 			else if (c == '"')
 				x_de_letra = X_COMILLAS;
+			else if (c == '\'') // FIXME
+				x_de_letra = X_GN;
 			else if (c == '!')
 				x_de_letra = X_CIERRA_EXCLAMACION;
-//TODO			else if (c == '\173')
-//				x_de_letra = X_ABRE_EXCLAMACION;
+			else if (c == 0xad)
+				x_de_letra = X_ABRE_EXCLAMACION;
 			else if (c == ';')
 				x_de_letra = X_PUNTO_Y_COMA;
 			else if (c == '>')
@@ -2307,8 +2305,6 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 				x_de_letra = X_N9;
 			else if (c == '0')
 				x_de_letra = X_N0;
-			else
-				y_de_letra = Y_ACENTOS;
 		}
 
 		pos_texto[0] = x_de_letra;
@@ -5714,11 +5710,11 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			y_de_signos = Y_SIGNOS_OPC_2;
 		}
 
-		char c = toupper(dicho[h]);
+		int c = toupper(dicho[h]);
 		if (c == 'A')
 			x_de_letra = X_A_OPC;
-		else if (c == 'B'
-			)x_de_letra = X_B_OPC;
+		else if (c == 'B')
+			x_de_letra = X_B_OPC;
 		else if (c == 'C')
 			x_de_letra = X_C_OPC;
 		else if (c == 'D')
@@ -5743,6 +5739,10 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			x_de_letra = X_M_OPC;
 		else if (c == 'N')
 			x_de_letra = X_N_OPC;
+		else if (c == '\'')
+			x_de_letra = X_GN_OPC;
+		else if (c == '\'')
+			x_de_letra = X_GN_OPC;
 		else if (c == 'O')
 			x_de_letra = X_O_OPC;
 		else if (c == 'P')
@@ -5767,63 +5767,71 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			x_de_letra = X_Y_OPC;
 		else if (c == 'Z')
 			x_de_letra = X_Z_OPC;
-		else
+		else if (c == ' ')
+			x_de_letra = ESPACIO_OPC;
+		else {
 			y_de_letra = y_de_signos;
-
-		if (c == '.')
-			x_de_letra = X_PUNTO_OPC;
-		else if (c == ',')
-			x_de_letra = X_COMA_OPC;
-		else if (c == '-')
-			x_de_letra = X_GUION_OPC;
-		else if (c == '?')
-			x_de_letra = X_CIERRA_INTERROGACION_OPC;
-		else if (c == '"')
-			x_de_letra = X_COMILLAS_OPC;
-		else if (c == ';')
-			x_de_letra = X_PUNTO_Y_COMA_OPC;
-		else if (c == '>')
-			x_de_letra = X_MAYOR_QUE_OPC;
-		else if (c == '<')
-			x_de_letra = X_MENOR_QUE_OPC;
-		else if (c == '$')
-			x_de_letra = X_DOLAR_OPC;
-		else if (c == '%')
-			x_de_letra = X_POR_CIENTO_OPC;
-		else if (c == ':')
-			x_de_letra = X_DOS_PUNTOS_OPC;
-		else if (c == '&')
-			x_de_letra = X_AND_OPC;
-		else if (c == '/')
-			x_de_letra = X_BARRA_OPC;
-		else if (c == '(')
-			x_de_letra = X_ABRE_PARENTESIS_OPC;
-		else if (c == ')')
-			x_de_letra = X_CIERRA_PARENTESIS_OPC;
-		else if (c == '*')
-			x_de_letra = X_ASTERISCO_OPC;
-		else if (c == '+')
-			x_de_letra = X_MAS_OPC;
-		else if (c == '1')
-			x_de_letra = X_N1_OPC;
-		else if (c == '2')
-			x_de_letra = X_N2_OPC;
-		else if (c == '3')
-			x_de_letra = X_N3_OPC;
-		else if (c == '4')
-			x_de_letra = X_N4_OPC;
-		else if (c == '5')
-			x_de_letra = X_N5_OPC;
-		else if (c == '6')
-			x_de_letra = X_N6_OPC;
-		else if (c == '7')
-			x_de_letra = X_N7_OPC;
-		else if (c == '8')
-			x_de_letra = X_N8_OPC;
-		else if (c == '9')
-			x_de_letra = X_N9_OPC;
-		else if (c == '0')
-			x_de_letra = X_N0_OPC;
+			if (c == '.')
+				x_de_letra = X_PUNTO_OPC;
+			else if (c == ',')
+				x_de_letra = X_COMA_OPC;
+			else if (c == '-')
+				x_de_letra = X_GUION_OPC;
+			else if (c == '?')
+				x_de_letra = X_CIERRA_INTERROGACION_OPC;
+			else if (c == 0xa8)
+				x_de_letra = X_ABRE_INTERROGACION_OPC;
+			else if (c == '"')
+				x_de_letra = X_COMILLAS_OPC;
+			else if (c == '!')
+				x_de_letra = X_CIERRA_INTERROGACION_OPC;
+			else if (c == 0xad)
+				x_de_letra = X_ABRE_EXCLAMACION_OPC;
+			else if (c == ';')
+				x_de_letra = X_PUNTO_Y_COMA_OPC;
+			else if (c == '>')
+				x_de_letra = X_MAYOR_QUE_OPC;
+			else if (c == '<')
+				x_de_letra = X_MENOR_QUE_OPC;
+			else if (c == '$')
+				x_de_letra = X_DOLAR_OPC;
+			else if (c == '%')
+				x_de_letra = X_POR_CIENTO_OPC;
+			else if (c == ':')
+				x_de_letra = X_DOS_PUNTOS_OPC;
+			else if (c == '&')
+				x_de_letra = X_AND_OPC;
+			else if (c == '/')
+				x_de_letra = X_BARRA_OPC;
+			else if (c == '(')
+				x_de_letra = X_ABRE_PARENTESIS_OPC;
+			else if (c == ')')
+				x_de_letra = X_CIERRA_PARENTESIS_OPC;
+			else if (c == '*')
+				x_de_letra = X_ASTERISCO_OPC;
+			else if (c == '+')
+				x_de_letra = X_MAS_OPC;
+			else if (c == '1')
+				x_de_letra = X_N1_OPC;
+			else if (c == '2')
+				x_de_letra = X_N2_OPC;
+			else if (c == '3')
+				x_de_letra = X_N3_OPC;
+			else if (c == '4')
+				x_de_letra = X_N4_OPC;
+			else if (c == '5')
+				x_de_letra = X_N5_OPC;
+			else if (c == '6')
+				x_de_letra = X_N6_OPC;
+			else if (c == '7')
+				x_de_letra = X_N7_OPC;
+			else if (c == '8')
+				x_de_letra = X_N8_OPC;
+			else if (c == '9')
+				x_de_letra = X_N9_OPC;
+			else if (c == '0')
+				x_de_letra = X_N0_OPC;
+		}
 
 		pos_texto[0] = x_de_letra;
 		pos_texto[1] = y_de_letra;
