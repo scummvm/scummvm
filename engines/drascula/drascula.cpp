@@ -4616,6 +4616,7 @@ void DrasculaEngine::introduce_nombre() {
 		print_abc(select2, 117, 15);
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		key = getscan();
+		delay(70);
 		if (key != 0) {
 			if (key == Common::KEYCODE_q)
 				select2[v] = 'q';
