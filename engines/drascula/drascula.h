@@ -356,7 +356,6 @@ public:
 
 	void asigna_memoria();
 	void libera_memoria();
-	void carga_info();
 	void salir_al_dos(int r);
 
 	void lee_dibujos(const char *);
@@ -568,7 +567,7 @@ public:
 
 
 	void sin_verbo();
-	void para_cargar(char[]);
+	bool para_cargar(char[]);
 	void carga_escoba(const char *);
 	void borra_pantalla();
 	void lleva_al_hare(int, int);
@@ -582,7 +581,7 @@ public:
 	Common::KeyCode getscan();
 	void elige_verbo(int);
 	void mesa();
-	void saves();
+	bool saves();
 	void print_abc(const char *, int, int);
 	void delay(int ms);
 	void confirma_go();
@@ -624,7 +623,7 @@ public:
 	void stopmusic();
 	int music_status();
 	void refresca_pantalla();
-	void carga_partida(const char *);
+	bool carga_partida(const char *);
 	void puertas_cerradas(int);
 	void animafin_sound_corte();
 	void color_hare();
