@@ -3800,7 +3800,7 @@ void DrasculaEngine::pon_hare() {
 
 	if (hare_se_mueve == 1 && paso_x == PASO_HARE_X) {
 		for (r = 0; r < paso_x; r++) {
-			if (num_ejec == 1) {
+			if (num_ejec != 2) {
 				if (sentido_hare == 0 && sitio_x - r == hare_x + ancho_hare / 2) {
 					hare_se_mueve = 0;
 					paso_x = PASO_HARE_X;
@@ -7709,7 +7709,6 @@ void DrasculaEngine::animacion_2_3() {
 	descomprime_dibujo(dir_hare_fondo, 1);
 
 	lleva_al_hare(332, 127);
-	libera_memoria();
 }
 
 void DrasculaEngine::animacion_3_3() {
