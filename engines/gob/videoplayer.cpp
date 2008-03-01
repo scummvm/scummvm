@@ -162,7 +162,7 @@ bool VideoPlayer::openVideo(const char *video, int16 x, int16 y, int16 flags, Ty
 		} else
 			_video->setVideoMemory();
 
-		_needBlit = (flags & kFlagUseBackSurfaceContent) != 0;
+		_needBlit = ((flags & kFlagUseBackSurfaceContent) != 0) && ((flags & kFlagFrontSurface) != 0);
 
 		_video->enableSound(*_vm->_mixer);
 	}
@@ -216,7 +216,8 @@ void VideoPlayer::play(int16 startFrame, int16 lastFrame, int16 breakKey,
 			fade = false;
 		}
 
-		_video->waitEndFrame();
+		if (!_noCursorSwitch)
+			_video->waitEndFrame();
 		startFrame++;
 	}
 
@@ -228,7 +229,8 @@ void VideoPlayer::play(int16 startFrame, int16 lastFrame, int16 breakKey,
 				_vm->_palAnim->fade(0, -2, 0);
 				memset((char *) _vm->_draw->_vgaPalette, 0, 768);
 			}
-			_video->waitEndFrame();
+			if (!_noCursorSwitch)
+				_video->waitEndFrame();
 		}
 	}
 }
