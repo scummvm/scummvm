@@ -365,6 +365,8 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 	}
 
 	uint16 windowNum = (!getBitFlag(133)) ? 3 : 4;
+	if (getGameType() == GType_SIMON1 && (getFeatures() & GF_DEMO))
+		windowNum = 4;
 
 	x /= 8;
 	if (y < 2)

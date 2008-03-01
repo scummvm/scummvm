@@ -100,7 +100,7 @@ void AGOSEngine_Feeble::animateSpritesByY() {
 
 		vsp = &_vgaSprites[slot];
 
-		vsp->windowNum &= 0x7FFF;
+		vsp->windowNum &= ~0x8000;
 
 		vpe = &_vgaBufferPointers[vsp->zoneNum];
 		_curVgaFile1 = vpe->vgaFile1;
@@ -134,7 +134,7 @@ void AGOSEngine_Feeble::animateSprites() {
 
 	vsp = _vgaSprites;
 	while (vsp->id) {
-		vsp->windowNum &= 0x7FFF;
+		vsp->windowNum &= ~0x8000;
 
 		vpe = &_vgaBufferPointers[vsp->zoneNum];
 		_curVgaFile1 = vpe->vgaFile1;
@@ -211,7 +211,7 @@ void AGOSEngine::animateSprites() {
 			continue;
 		}
 
-		vsp->windowNum &= 0x7FFF;
+		vsp->windowNum &= ~0x8000;
 
 		vpe = &_vgaBufferPointers[vsp->zoneNum];
 		_curVgaFile1 = vpe->vgaFile1;
@@ -446,7 +446,7 @@ void AGOSEngine::restoreBackGround() {
 			continue;
 		}
 
-		_windowNum = animTable->windowNum & 0x7FFF;
+		_windowNum = animTable->windowNum & ~0x8000;
 
 		VC10_state state;
 		state.srcPtr  = animTable->srcPtr;
@@ -840,7 +840,7 @@ void AGOSEngine::slowFadeIn() {
 	uint8 *src, *dst;
 	int c, p;
 
-	_fastFadeInFlag &= 0x7fff;
+	_fastFadeInFlag &= ~0x8000;
 	_paletteFlag = false;
 
 	memset(_videoBuf1, 0, 1024);
