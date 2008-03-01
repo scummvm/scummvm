@@ -116,6 +116,9 @@ class OSystem_Dreamcast : public OSystem, public FilesystemFactory {
   // Delay for a specified amount of milliseconds
   void delayMillis(uint msecs);
 
+  // Get the current time and date. Correspond to time()+localtime().
+  void getTimeAndDate(struct tm &t) const;
+
   // Get the next event.
   // Returns true if an event was retrieved.
   bool pollEvent(Common::Event &event);

@@ -190,6 +190,11 @@ bool OSystem_Dreamcast::getFeatureState(Feature f)
   }
 }
 
+void OSystem_Dreamcast::getTimeAndDate(struct tm &t) const {
+  time_t curTime;
+  time(&curTime);
+  t = *localtime(&curTime);
+}
 
 void dc_init_hardware()
 {
