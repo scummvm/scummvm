@@ -22,8 +22,7 @@
  * $Id$
  */
 
-#if defined(__DC__)
-
+#include "dc.h"
 #include "backends/fs/abstract-fs.h"
 
 #include <ronin/cdfs.h>
@@ -190,4 +189,14 @@ AbstractFilesystemNode *RoninCDFilesystemNode::getParent() const {
 	return new RoninCDFilesystemNode(String(start, end - start), false);
 }
 
-#endif // defined(__DC__)
+AbstractFilesystemNode *OSystem_Dreamcast::makeRootFileNode() const {
+	return new RoninCDFilesystemNode();
+}
+
+AbstractFilesystemNode *OSystem_Dreamcast::makeCurrentDirectoryFileNode() const {
+	return new RoninCDFilesystemNode();
+}
+
+AbstractFilesystemNode *OSystem_Dreamcast::makeFileNodePath(const Common::String &path) const {
+	return new RoninCDFilesystemNode(path, true);
+}
