@@ -254,7 +254,6 @@ int DrasculaEngine::go() {
 		salir_al_dos(0);
 		if (num_ejec == 6)
 			break;
-		printf("next part of engine hit: %d\n", num_ejec + 1);
 	}
 
 	return 0;
