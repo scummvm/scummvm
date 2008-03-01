@@ -496,7 +496,7 @@ bool DrasculaEngine::escoba() {
 		}
 	}
 
-	for (n = 1; n < 50; n++)
+	for (n = 1; n < 43; n++)
 		objetos_que_tengo[n] = 0;
 
 	for (n = 0; n < NUM_BANDERAS; n++)

@@ -411,7 +411,7 @@ public:
 
 	int num_obj[40], visible[40], espuerta[40];
 	int sitiobj_x[40], sitiobj_y[40], sentidobj[40];
-	int objetos_que_tengo[50];
+	int objetos_que_tengo[43];
 	char alapantallakeva[40][20];
 	int x_alakeva[40], y_alakeva[40], sentido_alkeva[40], alapuertakeva[40];
 	int x1[40], y1[40], x2[40], y2[40];
