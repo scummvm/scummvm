@@ -138,8 +138,6 @@ void OSystem::getTimeAndDate(struct tm &t) const {
  */
 #if defined(__amigaos4__)
 	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
-#elif defined(__DC__)
-	#include "backends/fs/dc/ronincd-fs-factory.h"
 #elif defined(__DS__)
 	#include "backends/fs/ds/ds-fs-factory.h"
 #elif defined(__GP32__)
@@ -164,7 +162,8 @@ FilesystemFactory *OSystem::getFilesystemFactory() {
 	#if defined(__amigaos4__)
 		return &AmigaOSFilesystemFactory::instance();
 	#elif defined(__DC__)
-		return &RoninCDFilesystemFactory::instance();
+		// The DC port overrides this function...
+		abort();
 	#elif defined(__DS__)
 		return &DSFilesystemFactory::instance();
 	#elif defined(__GP32__)

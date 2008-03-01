@@ -2,7 +2,6 @@ MODULE := backends
 
 MODULE_OBJS := \
 	fs/amigaos4/amigaos4-fs-factory.o \
-	fs/dc/ronincd-fs-factory.o \
 	fs/ds/ds-fs-factory.o \
 	fs/gp32/gp32-fs-factory.o \
 	fs/morphos/abox-fs-factory.o \

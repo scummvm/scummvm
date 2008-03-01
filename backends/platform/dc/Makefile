@@ -35,7 +35,7 @@ POST_OBJS_FLAGS = -Wl,--no-whole-archive
 endif
 
 OBJS :=	dcmain.o time.o display.o audio.o input.o selector.o icon.o \
-	label.o vmsave.o softkbd.o dcloader.o cache.o
+	label.o vmsave.o softkbd.o dcloader.o cache.o ronincd-fs-factory.o
 
 MODULE_DIRS += .
 

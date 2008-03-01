@@ -27,6 +27,7 @@
 #include <graphics/surface.h>
 #include <ronin/soundcommon.h>
 #include "backends/timer/default/default-timer.h"
+#include "ronincd-fs-factory.h"
 
 #define NUM_BUFFERS 4
 #define SOUND_BUFFER_SHIFT 3
@@ -182,6 +183,8 @@ class OSystem_Dreamcast : public OSystem {
   // Extra SoftKbd support
   void mouseToSoftKbd(int x, int y, int &rx, int &ry) const;
 
+  // Filesystem
+  FilesystemFactory *getFilesystemFactory() { return &_fileSystemFactory; }
 
  private:
 
@@ -189,6 +192,7 @@ class OSystem_Dreamcast : public OSystem {
   Audio::Mixer *_mixer;
   DefaultTimerManager *_timer;
   SoftKeyboard _softkbd;
+  RoninCDFilesystemFactory _fileSystemFactory;
 
   int _ms_cur_x, _ms_cur_y, _ms_cur_w, _ms_cur_h, _ms_old_x, _ms_old_y;
   int _ms_hotspot_x, _ms_hotspot_y, _ms_visible, _devpoll;

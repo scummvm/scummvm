@@ -22,30 +22,19 @@
  * $Id$
  */
 
-#ifndef RONINCD_FILESYSTEM_FACTORY_H
-#define RONINCD_FILESYSTEM_FACTORY_H
+#if defined(__DC__)
+#include "ronincd-fs-factory.h"
+#include "dc-fs.cpp"
 
-#include "common/singleton.h"
-#include "backends/fs/fs-factory.h"
+AbstractFilesystemNode *RoninCDFilesystemFactory::makeRootFileNode() const {
+	return new RoninCDFilesystemNode();
+}
 
-/**
- * Creates RoninCDFilesystemNode objects.
- *
- * Parts of this class are documented in the base interface class, FilesystemFactory.
- */
-class RoninCDFilesystemFactory : public FilesystemFactory, public Common::Singleton<RoninCDFilesystemFactory> {
-public:
-	typedef Common::String String;
+AbstractFilesystemNode *RoninCDFilesystemFactory::makeCurrentDirectoryFileNode() const {
+	return new RoninCDFilesystemNode();
+}
 
-	virtual AbstractFilesystemNode *makeRootFileNode() const;
-	virtual AbstractFilesystemNode *makeCurrentDirectoryFileNode() const;
-	virtual AbstractFilesystemNode *makeFileNodePath(const String &path) const;
-
-protected:
-	RoninCDFilesystemFactory() {};
-
-private:
-	friend class Common::Singleton<SingletonBaseType>;
-};
-
-#endif /*RONINCD_FILESYSTEM_FACTORY_H*/
+AbstractFilesystemNode *RoninCDFilesystemFactory::makeFileNodePath(const String &path) const {
+	return new RoninCDFilesystemNode(path, true);
+}
+#endif
