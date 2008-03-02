@@ -1782,6 +1782,18 @@ bool Inter_v2::o2_freeCollision(OpFuncParams &params) {
 }
 
 bool Inter_v2::o2_goblinFunc(OpFuncParams &params) {
+	// TODO: In Inca 2, this is the big SpaceShoot0rz()-Opcode.
+	// It's not yet implemented, so we fudge our way through
+	// and pretend we've won.
+	if (_vm->getGameType() == kGameTypeInca2) {
+		_vm->_global->_inter_execPtr += 4;
+		uint16 resVar = (uint16) load16();
+		_vm->_global->_inter_execPtr += 4;
+
+		WRITE_VAR(resVar, 1);
+		return false;
+	}
+
 	OpGobParams gobParams;
 	int16 cmd;
 

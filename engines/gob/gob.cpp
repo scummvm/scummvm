@@ -291,6 +291,7 @@ bool GobEngine::initGameParts() {
 			break;
 
 		case kGameTypeGob3:
+		case kGameTypeInca2:
 			_init = new Init_v3(this);
 			_video = new Video_v2(this);
 			_inter = new Inter_v3(this);

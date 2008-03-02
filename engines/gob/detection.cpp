@@ -1317,7 +1317,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeInca2,
 		kFeaturesCD,
 		"intro"
 	},
