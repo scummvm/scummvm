@@ -1330,7 +1330,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeInca2,
 		kFeaturesCD,
 		"intro"
 	},
@@ -1343,7 +1343,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeInca2,
 		kFeaturesCD,
 		"intro"
 	},
@@ -1356,7 +1356,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeInca2,
 		kFeaturesCD,
 		"intro"
 	},
@@ -1369,8 +1369,47 @@ static const GOBGameDescription gameDescriptions[] = {
 			kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
-		kGameTypeGob3,
+		kGameTypeInca2,
 		kFeaturesCD,
+		"intro"
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "1fa92b00fe80a20f34ec34a8e2fa869e", 923072),
+			EN_USA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeInca2,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "1fa92b00fe80a20f34ec34a8e2fa869e", 923072),
+			FR_FRA,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeInca2,
+		kFeaturesAdlib,
+		"intro"
+	},
+	{
+		{
+			"inca2",
+			"",
+			AD_ENTRY1s("intro.stk", "1fa92b00fe80a20f34ec34a8e2fa869e", 923072),
+			DE_DEU,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeInca2,
+		kFeaturesAdlib,
 		"intro"
 	},
 	{
