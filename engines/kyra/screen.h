@@ -127,7 +127,7 @@ public:
 	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
 
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
-	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1, bool xor = false);
+	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1, bool xored = false);
 
 	void clearPage(int pageNum);
 
