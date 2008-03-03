@@ -23,7 +23,7 @@
  *
  */
 
-#include "backends/platform/ps2/savefile.h"
+#include "backends/platform/ps2/savefilemgr.h"
 #include "backends/platform/ps2/Gs2dScreen.h"
 #include "backends/platform/ps2/GsDefs.h"
 

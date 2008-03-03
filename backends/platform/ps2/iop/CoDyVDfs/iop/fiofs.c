@@ -86,8 +86,11 @@ int cd_open(iop_file_t *handle, const char *name, int mode) {
 		return -EIO;
 
 	rec = findPath(name);
-	if (!rec || IS_DIR(rec))
+	if (!rec)
 		return -ENOENT;
+
+	if (IS_DIR(rec))
+		return -EISDIR;
 
 	fdSlot = allocFioHandle();
 	if (fdSlot < 0)
@@ -159,7 +162,7 @@ int cd_read(iop_file_t *handle, void *dest, int length) {
 			doCopy = 0x800 - readPos;
 			if (doCopy > bytesLeft)
 				doCopy = bytesLeft;
-
+			
 			memcpy(destPos, fd->buf + readPos, doCopy);
 			readPos += doCopy;
 			readLba += readPos >> 11;
@@ -177,7 +180,7 @@ int cd_read(iop_file_t *handle, void *dest, int length) {
 			bytesLeft &= 0x7FF;
 		}
 	}
-    return destPos - (uint8*)dest;
+    return destPos - (uint8*)dest;    
 }
 
 int cd_close(iop_file_t *handle) {
@@ -201,7 +204,7 @@ int cd_dopen(iop_file_t *handle, const char *path) {
 		return -ENOENT;
 
 	fdSlot = allocDioHandle();
-
+	
 	if (fdSlot < 0)
 		return -ENFILE;
 

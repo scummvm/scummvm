@@ -125,8 +125,11 @@ void OSystem::clearScreen() {
 }
 
 void OSystem::getTimeAndDate(struct tm &t) const {
+#ifndef __PLAYSTATION2__
+	// PS2SDK doesn't provide localtime, so this code doesn't compile
 	time_t curTime = time(0);
 	t = *localtime(&curTime);
+#endif
 }
 
 /*

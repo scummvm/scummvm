@@ -24,8 +24,11 @@
  */
 
 #include "backends/platform/ps2/systemps2.h"
+#include "backends/platform/ps2/ps2debug.h"
 #include "eecodyvdfs.h"
 #include <osd_config.h>
+#include <time.h>
+
 #define FROM_BCD(a) ((a >> 4) * 10 + (a & 0xF))
 
 static int	  g_timeSecs;
@@ -99,20 +102,12 @@ void OSystem_PS2::readRtcTime(void) {
 		g_timeSecs = (uint32)timeSecs;
 	}
 
-	sioprintf("Time: %d:%02d:%02d - %d.%d.%4d", g_timeSecs / (60 * 60), (g_timeSecs / 60) % 60, g_timeSecs % 60,
+	sioprintf("Time: %d:%02d:%02d - %d.%d.%4d\n", g_timeSecs / (60 * 60), (g_timeSecs / 60) % 60, g_timeSecs % 60,
 		g_day, g_month, g_year + 2000);
 }
 
-extern "C" time_t time(time_t *p) {
-	if (p) *p = (time_t)g_timeSecs;
-	return (time_t)g_timeSecs;
-}
+void OSystem_PS2::getTimeAndDate(struct tm &t) const {
 
-extern "C" struct tm *localtime(const time_t *p) {
-	// FIXME: This function should actually use the value in *p!
-	// But the work needed for that is not necessary -- just implement
-	// OSystem::getTimeAndDate using the code provided here, and
-	// ditch the custom time & localtime methods.
 	uint32 currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
 	if (currentSecs >= SECONDS_PER_DAY) {
 		buildNewDate(+1);
@@ -120,15 +115,12 @@ extern "C" struct tm *localtime(const time_t *p) {
 		currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
 	}
 
-	static struct tm retStruct;
-	memset(&retStruct, 0, sizeof(retStruct));
-
-	retStruct.tm_hour = currentSecs / (60 * 60);
-	retStruct.tm_min  = (currentSecs / 60) % 60;
-	retStruct.tm_sec  = currentSecs % 60;
-	retStruct.tm_year = g_year + 100;
-	retStruct.tm_mday = g_day;
-	retStruct.tm_mon  = g_month - 1;
+	t.tm_hour = currentSecs / (60 * 60);
+	t.tm_min  = (currentSecs / 60) % 60;
+	t.tm_sec  = currentSecs % 60;
+	t.tm_year = g_year + 100;
+	t.tm_mday = g_day;
+	t.tm_mon  = g_month - 1;
 	// tm_wday, tm_yday and tm_isdst are zero for now
-    return &retStruct;
+	t.tm_wday = t.tm_yday = t.tm_isdst = 0;
 }

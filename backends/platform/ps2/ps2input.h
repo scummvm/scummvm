@@ -27,6 +27,7 @@
 #define __PS2INPUT_H__
 
 #include "common/system.h"
+#include "common/keyboard.h"
 
 class OSystem_PS2;
 class Ps2Pad;
@@ -54,8 +55,8 @@ private:
 
 	bool _mouseLoaded, _kbdLoaded;
 	int _keyFlags;
-	static const int _padCodes[16], _padFlags[16];
-	static const int _usbToSdlk[0x100];
+	static const Common::KeyCode _padCodes[16], _padFlags[16];
+	static const Common::KeyCode _usbToSdlk[0x100];
 };
 
 #endif // __PS2INPUT_H__

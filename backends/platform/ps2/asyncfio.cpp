@@ -30,10 +30,9 @@
 #include <assert.h>
 #include <string.h>
 #include <fileXio_rpc.h>
+#include "backends/platform/ps2/ps2debug.h"
 
 #define DEFAULT_MODE (FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IROTH | FIO_S_IWOTH)
-
-extern void sioprintf(const char *zFormat, ...);
 
 AsyncFio::AsyncFio(void) {
 	_runningOp = NULL;
@@ -55,6 +54,7 @@ int AsyncFio::open(const char *name, int ioMode) {
 	fileXioOpen(name, ioMode, DEFAULT_MODE);
 	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
+	//dbg_printf("FIO: open(%s, %d) => %d\n", name, ioMode, res);
 	return res;
 }
 
@@ -65,7 +65,7 @@ void AsyncFio::close(int handle) {
 	int res;
 	fileXioWaitAsync(FXIO_WAIT, &res);
 	if (res != 0)
-		sioprintf("ERROR: fileXioClose failed, EC %d", res);
+		sioprintf("ERROR: fileXioClose failed, EC %d\n", res);
 	_ioSlots[handle] = 0;
 	SignalSema(_ioSema);
 }
@@ -122,6 +122,7 @@ int AsyncFio::dopen(const char *name) {
 	fileXioDopen(name);
 	fileXioWaitAsync(FXIO_WAIT, &res);
 	SignalSema(_ioSema);
+	dbg_printf("FIO: dopen(%s) => %d\n", name, res);
 	return res;
 }
 
@@ -141,7 +142,10 @@ void AsyncFio::dclose(int fd) {
 	checkSync();
 	fileXioDclose(fd);
 	fileXioWaitAsync(FXIO_WAIT, &res);
-	assert(res == 0);
+	//assert(res == 0);
+	dbg_printf("FIO: dclose(%d) => %d\n", fd, res);
+	if (res != 0)
+		sioprintf("ERROR: fileXioDclose failed, EC %d\n", res);
 	SignalSema(_ioSema);
 }
 

@@ -35,6 +35,9 @@
 #include "common/file.h"
 #include "eecodyvdfs.h"
 #include "common/config-manager.h"
+#include "backends/platform/ps2/ps2debug.h"
+#include "backends/platform/ps2/savefile.h"
+#include "backends/platform/ps2/systemps2.h"
 
 #define CACHE_SIZE (2048 * 32)
 #define MAX_READ_STEP (2048 * 16)
@@ -44,7 +47,7 @@
 #define READ_ALIGN 64	// align all reads to the size of an EE cache line
 #define READ_ALIGN_MASK (READ_ALIGN - 1)
 
-extern void sioprintf(const char *zFormat, ...);
+extern OSystem_PS2 *g_systemPs2;
 
 AsyncFio fio;
 
@@ -197,11 +200,11 @@ void Ps2ReadFile::cacheReadAhead(void) {
 		}
 
 		if (_physFilePos != cachePosEnd) {
-			sioprintf("unexpected _physFilePos %d cache %d %d", _physFilePos, _cacheOfs, _bytesInCache);
+			sioprintf("unexpected _physFilePos %d cache %d %d\n", _physFilePos, _cacheOfs, _bytesInCache);
 			assert(!(cachePosEnd & READ_ALIGN_MASK));
 			_physFilePos = fio.seek(_fd, cachePosEnd, SEEK_SET);
 			if (_physFilePos != cachePosEnd) {
-				sioprintf("cache seek error: seek to %d instead of %d, fs = %d", _physFilePos, cachePosEnd, _fileSize);
+				sioprintf("cache seek error: seek to %d instead of %d, fs = %d\n", _physFilePos, cachePosEnd, _fileSize);
 				return;
 			}
 		}
@@ -285,98 +288,9 @@ uint32 Ps2ReadFile::read(void *dest, uint32 len) {
 }
 
 uint32 Ps2ReadFile::write(const void *src, uint32 len) {
-	sioprintf("write request on Ps2ReadFile!");
+	sioprintf("write request on Ps2ReadFile!\n");
 	SleepThread();
 	return 0;
-}
-
-class Ps2WriteFile : public Ps2File {
-public:
-	Ps2WriteFile(int64 cacheId);
-	virtual ~Ps2WriteFile(void);
-	virtual bool open(const char *name);
-	virtual uint32 read(void *dest, uint32 len);
-	virtual uint32 write(const void *src, uint32 len);
-	virtual uint32 tell(void);
-	virtual uint32 size(void);
-	virtual int seek(int32 offset, int origin);
-	virtual bool eof(void);
-private:
-	int _fd;
-	uint8 *_cacheBuf;
-	uint32 _filePos, _bytesInCache;
-};
-
-Ps2WriteFile::Ps2WriteFile(int64 cacheId) : Ps2File(cacheId) {
-	_fd = -1;
-	_cacheBuf = (uint8*)malloc(CACHE_SIZE);
-	_filePos = _bytesInCache = 0;
-}
-
-Ps2WriteFile::~Ps2WriteFile(void) {
-	if ((_fd >= 0) && (_bytesInCache)) {
-		fio.write(_fd, _cacheBuf, _bytesInCache);
-		int wrRes = fio.sync(_fd);
-		if (wrRes != (int)_bytesInCache) // too late to return an error
-			printf("Cache flush on fclose(): Unable to write %d cached bytes to mc, only %d bytes written\n", _bytesInCache, wrRes);
-	}
-	if (_fd >= 0)
-		fio.close(_fd);
-	free(_cacheBuf);
-}
-
-bool Ps2WriteFile::open(const char *name) {
-	_fd = fio.open(name, O_WRONLY | O_CREAT | O_TRUNC);
-    return (_fd >= 0);
-}
-
-uint32 Ps2WriteFile::read(void *dest, uint32 len) {
-	printf("ERROR: Read request on Ps2WriteFile\n");
-	SleepThread();
-	return 0;
-}
-
-uint32 Ps2WriteFile::write(const void *src, uint32 len) {
-	uint32 size = len;
-	uint8 *srcBuf = (uint8*)src;
-	while (size) {
-		uint32 doCpy = (len > CACHE_SIZE - _bytesInCache) ? (CACHE_SIZE - _bytesInCache) : len;
-		if (doCpy) {
-			memcpy(_cacheBuf + _bytesInCache, srcBuf, doCpy);
-			_bytesInCache += doCpy;
-			srcBuf += doCpy;
-			size -= doCpy;
-		}
-
-		if (_bytesInCache == CACHE_SIZE) {
-			fio.write(_fd, _cacheBuf, _bytesInCache);
-			if (fio.sync(_fd) != (int)_bytesInCache) {
-				printf("Unable to flush %d cached bytes to memory card!\n", _bytesInCache);
-				return 0;
-			}
-			_filePos += _bytesInCache;
-			_bytesInCache = 0;
-		}
-	}
-	return len;
-}
-
-uint32 Ps2WriteFile::tell(void) {
-	return _bytesInCache + _filePos;
-}
-
-uint32 Ps2WriteFile::size(void) {
-	return tell();
-}
-
-int Ps2WriteFile::seek(int32 offset, int origin) {
-	printf("Seek(%d/%d) request on Ps2WriteFile\n", offset, origin);
-	SleepThread();
-	return 0;
-}
-
-bool Ps2WriteFile::eof(void) {
-	return true;
 }
 
 struct TocNode {
@@ -426,48 +340,63 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 		assert(cacheListSema >= 0);
 	}
 
-	printf("ps2_fopen: %s, %s\n", fname, mode);
-
-	if (!checkedPath && g_engine) {
-		// are we playing from cd/dvd?
-		const char *gameDataPath = ConfMan.get("path").c_str();
-		printf("Read TOC dir: %s\n", gameDataPath);
-		if (strncmp(gameDataPath, "cdfs:", 5) != 0)
-			driveStop(); // no, we aren't. stop the drive. it's noisy.
-		// now cache the dir tree
-		tocManager.readEntries(gameDataPath);
-		checkedPath = true;
-	}
+	//printf("ps2_fopen: %s, %s\n", fname, mode);
 
 	if (((mode[0] != 'r') && (mode[0] != 'w')) || ((mode[1] != '\0') && (mode[1] != 'b'))) {
 		printf("unsupported mode \"%s\" for file \"%s\"\n", mode, fname);
 		return NULL;
 	}
-
 	bool rdOnly = (mode[0] == 'r');
 
-	int64 cacheId = -1;
-	if (rdOnly && tocManager.haveEntries())
-		cacheId = tocManager.fileExists(fname);
+	if (strnicmp(fname, "mc0:", 4) == 0) {
+		// File access to the memory card (for scummvm.ini) has to go through the savefilemanager
+		Ps2File *file;
+		if (rdOnly)
+			file = new Ps2McReadFile((Ps2SaveFileManager *)g_systemPs2->getSavefileManager());
+		else
+			file = new Ps2McWriteFile((Ps2SaveFileManager *)g_systemPs2->getSavefileManager());
+		if (file->open(fname + 4)) // + 4 to skip "mc0:"
+			return (FILE *)file;
+		
+		delete file;
+		return NULL;
+	} else {
+		// Regular access to one of the devices
 
-	if (cacheId != 0) {
-		Ps2File *file = findInCache(cacheId);
-		if (file)
-			return (FILE*)file;
+		if (!rdOnly)
+			return NULL; // we only provide readaccess for cd,dvd,hdd,usb
 
-		if (rdOnly) {
+		if (!checkedPath && g_engine) {
+			// are we playing from cd/dvd?
+			const char *gameDataPath = ConfMan.get("path").c_str();
+			printf("Read TOC dir: %s\n", gameDataPath);
+			if (strncmp(gameDataPath, "cdfs:", 5) != 0)
+				driveStop(); // no, we aren't. stop the drive. it's noisy.
+			// now cache the dir tree
+			tocManager.readEntries(gameDataPath);
+			checkedPath = true;
+		}
+
+		int64 cacheId = -1;
+		if (rdOnly && tocManager.haveEntries())
+			cacheId = tocManager.fileExists(fname);
+
+		if (cacheId != 0) {
+			Ps2File *file = findInCache(cacheId);
+			if (file)
+				return (FILE*)file;
+
 			bool isAudioFile = strstr(fname, ".bun") || strstr(fname, ".BUN") || strstr(fname, ".Bun");
 			file = new Ps2ReadFile(cacheId, isAudioFile);
-		} else
-			file = new Ps2WriteFile(cacheId);
 
-		if (file->open(fname)) {
-			openFileCount++;
-			return (FILE*)file;
-		} else
-			delete file;
+			if (file->open(fname)) {
+				openFileCount++;
+				return (FILE*)file;
+			} else
+				delete file;
+		}
+		return NULL;
 	}
-	return NULL;
 }
 
 void checkCacheListLen(void) {
@@ -552,10 +481,6 @@ int ps2_fseek(FILE *stream, long offset, int origin) {
 
 uint32 ps2_ftell(FILE *stream) {
 	return ((Ps2File*)stream)->tell();
-}
-
-uint32 ps2_fsize(FILE *stream) {
-	return ((Ps2File*)stream)->size();
 }
 
 int ps2_feof(FILE *stream) {

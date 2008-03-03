@@ -33,6 +33,12 @@
 
 #ifdef USE_MPEG2
 
+#ifdef __PLAYSTATION2__
+typedef uint8 uint8_t;
+typedef uint16 uint16_t;
+typedef uint32 uint32_t;
+#endif
+
 #if !defined(_MSC_VER)
 #ifndef PALMOS_MODE
 #	include <inttypes.h>

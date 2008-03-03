@@ -28,6 +28,7 @@
 
 #include "sysdefs.h"
 #include "backends/platform/ps2/DmaPipe.h"
+#include "graphics/surface.h"
 
 enum TVMode {
 	TV_DONT_CARE = 0,
@@ -56,13 +57,16 @@ public:
 
 	void copyPrintfOverlay(const uint8* buf);
 	void clearPrintfOverlay(void);
+	void clearScreen(void);
+
+	Graphics::Surface *lockScreen();
+	void unlockScreen();
 
 	void copyScreenRect(const uint8 *buf, int pitch, int x, int y, int w, int h);
 	void setPalette(const uint32 *pal, uint8 start, uint16 num);
 	void updateScreen(void);
 	void grabPalette(uint32 *pal, uint8 start, uint16 num);
-	Graphics::Surface *lockScreen();
-	void unlockScreen();
+	void grabScreen(Graphics::Surface *surf);
 	//- overlay routines
 	void copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h);
 	void grabOverlay(uint16 *buf, uint16 pitch);
@@ -94,12 +98,11 @@ private:
 	uint32 _clutPtrs[3];    //   vram pointers
 	uint32 _texPtrs[4];     //
 
+	Graphics::Surface _framebuffer;
 	uint16 _width, _height, _pitch;
 	int16  _mouseX, _mouseY, _hotSpotX, _hotSpotY;
 	uint32 _mouseScaleX, _mouseScaleY;
 	uint8  _mTraCol;
-
-	Graphics::Surface _framebuffer;
 
 	int _shakePos;
 

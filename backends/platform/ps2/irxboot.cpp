@@ -31,11 +31,10 @@
 #include <loadfile.h>
 #include <malloc.h>
 #include "backends/platform/ps2/irxboot.h"
+#include "backends/platform/ps2/ps2debug.h"
 
-extern void sioprintf(const char *zFormat, ...);
-
-static const char hddArg[] = "-o" "\0" "4" "\0" "-n" "\0" "20";
-static const char pfsArg[] = "-m" "\0" "2" "\0" "-o" "\0" "16" "\0" "-n" "\0" "40" /*"\0" "-debug"*/;
+static const char hddArg[] = "-o" "\0" "8" "\0" "-n" "\0" "20";
+static const char pfsArg[] = "-m" "\0" "2" "\0" "-o" "\0" "32" "\0" "-n" "\0" "72"; // "\0" "-debug";
 
 IrxFile irxFiles[] = {
 	{ "SIO2MAN", BIOS, NOTHING, NULL, 0 },
@@ -52,7 +51,7 @@ IrxFile irxFiles[] = {
 	{ "USBD.IRX",     USB | OPTIONAL | DEPENDANCY, USB_DRIVER, NULL, 0 },
 	{ "PS2MOUSE.IRX", USB | OPTIONAL, MOUSE_DRIVER, NULL, 0 },
 	{ "RPCKBD.IRX",   USB | OPTIONAL, KBD_DRIVER, NULL, 0 },
-	{ "USB_MASS.IRX", USB | OPTIONAL, MASS_DRIVER, NULL, 0 },
+	{ "USBHDFSD.IRX", USB | OPTIONAL, MASS_DRIVER, NULL, 0 },
 
 	{ "PS2DEV9.IRX",  HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, NULL, 0 },
 	{ "PS2ATAD.IRX",  HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, NULL, 0 },
@@ -74,8 +73,8 @@ BootDevice detectBootPath(const char *elfPath, char *bootPath) {
 	else
 		device = OTHER;
 
-	sioprintf("elf path: %s, device %d", elfPath, device);
-
+	sioprintf("elf path: %s, device %d\n", elfPath, device);
+	
 	strcpy(bootPath, elfPath);
 
 	char *pathPos = bootPath;
@@ -108,16 +107,16 @@ BootDevice detectBootPath(const char *elfPath, char *bootPath) {
 			pathPos[2] = '\0';
 		} else
 			pathPos[1] = '\0';
-		sioprintf("done. IRX path: \"%s\"", bootPath);
+		sioprintf("done. IRX path: \"%s\"\n", bootPath);
 	} else {
-		sioprintf("path not recognized, default to host.");
+		sioprintf("path not recognized, default to host.\n");
 		strcpy(bootPath, "host:");
 		device = UNKNOWN;
 	}
 	return device;
 }
 
-int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {
+int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {	
 
 	IrxReference *resModules = (IrxReference *)malloc(numIrxFiles * sizeof(IrxReference));
 	IrxReference *curModule = resModules;
@@ -144,7 +143,7 @@ int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {
 			int fd = fioOpen(curModule->path, O_RDONLY);
 			if (fd < 0) {
 				// IRX not found
-				sioprintf("Can't open %s: %d", curModule->path, fd);
+				sioprintf("Can't open %s: %d\n", curModule->path, fd);
 				// we keep the error code of the path where we originally expected the file
 				curModule->errorCode = fd;
 
@@ -153,12 +152,12 @@ int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {
 				fd = fioOpen(curModule->path, O_RDONLY);
 				if (fd < 0) {
 					// still not found, try host:
-					sioprintf("Can't open %s: %d", curModule->path, fd);
+					sioprintf("Can't open %s: %d\n", curModule->path, fd);
 					sprintf(curModule->path, "host:%s", irxFiles[i].name);
 					fd = fioOpen(curModule->path, O_RDONLY);
 					if (fd < 0) {
 						// we simply can't find it.
-						sioprintf("Can't open %s: %d", curModule->path, fd);
+						sioprintf("Can't open %s: %d\n", curModule->path, fd);
 						// restore the path where we originally expected the file, for error message (later, after boot up)
 						sprintf(curModule->path, "%s%s%s", irxPath, irxFiles[i].name, (device == CDROM) ? ";1" : "");
 					}
@@ -209,10 +208,11 @@ int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {
 		}
 		curModule++;
 	}
+
 	*modules = resModules;
-	sioprintf("List of %d modules:", curModule - resModules);
+	sioprintf("List of %d modules:\n", curModule - resModules);
 	for (int i = 0; i < curModule - resModules; i++)
-		sioprintf("%s", resModules[i].path);
+		sioprintf("%s\n", resModules[i].path);
 	return curModule - resModules;
 }
 

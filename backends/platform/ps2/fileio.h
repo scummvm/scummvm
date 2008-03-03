@@ -26,6 +26,10 @@
 #ifndef __PS2FILE_IO__
 #define __PS2FILE_IO__
 
+typedef unsigned long uint64;
+typedef signed long   int64;
+
+#include <stdio.h>
 #include "common/scummsys.h"
 
 class Ps2File {
@@ -43,21 +47,6 @@ public:
 private:
 };
 
-class Ps2SmushFile : public Ps2File {
-public:
-	Ps2SmushFile(int64 cacheId);
-	virtual ~Ps2SmushFile(void);
-	virtual bool open(const char *name);
-	virtual uint32 read(void *dest, uint32 len);
-	virtual uint32 write(const void *src, uint32 len);
-	virtual uint32 tell(void);
-	virtual uint32 size(void);
-	virtual int seek(int32 offset, int origin);
-	virtual bool eof(void);
-private:
-	uint32 _filePos, _fileSize;
-	int _id;
-};
 
 FILE *ps2_fopen(const char *fname, const char *mode);
 int ps2_fclose(FILE *stream);
@@ -65,7 +54,6 @@ int ps2_fflush(FILE *stream);
 int ps2_fseek(FILE *stream, long offset, int origin);
 uint32 ps2_ftell(FILE *stream);
 int ps2_feof(FILE *stream);
-uint32 ps2_fsize(FILE *stream);
 
 size_t ps2_fread(void *buf, size_t r, size_t n, FILE *stream);
 int ps2_fgetc(FILE *stream);

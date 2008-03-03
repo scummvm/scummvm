@@ -26,56 +26,92 @@
 #ifndef __PS2_SAVEFILE__
 #define __PS2_SAVEFILE__
 
-#include <libmc.h>
-#include "common/savefile.h"
-
-class Gs2dScreen;
-class OSystem_PS2;
 class McAccess;
+class OSystem_PS2;
+class Gs2dScreen;
+class Ps2SaveFileManager;
 
-class Ps2SaveFileManager : public Common::SaveFileManager {
+#include "common/scummsys.h"
+#include "common/savefile.h"
+#include "backends/platform/ps2/rawsavefile.h"
+#include "backends/platform/ps2/fileio.h"
+
+class UclOutSaveFile : public Common::OutSaveFile, public RawWriteFile {
 public:
-	Ps2SaveFileManager(OSystem_PS2 *system, Gs2dScreen *screen);
-	virtual ~Ps2SaveFileManager();
-
-	virtual Common::InSaveFile *openForLoading(const char *filename);
-	virtual Common::OutSaveFile *openForSaving(const char *filename);
-	virtual Common::StringList listSavefiles(const char *pattern);
-
-	void writeSaveNonblocking(char *name, void *buf, uint32 size);
-	void saveThread(void);
-	void quit(void);
-
+	UclOutSaveFile(const char *filename, OSystem_PS2 *system, Gs2dScreen *screen, McAccess *mc);
+	virtual ~UclOutSaveFile(void);
+	virtual uint32 write(const void *ptr, uint32 size);
+	virtual void flush(void);
+	virtual bool ioFailed(void) const;
+	virtual void clearIOFailed(void);
 private:
-	bool setupIcon(const char *dest, const char *ico, const char *descr1, const char *descr2);
-
-	bool mcReadyForDir(const char *dir);
-
-	void checkMainDirectory(void);
-	void splitPath(const char *fileName, char *dir, char *name);
-	uint16 *decompressIconData(uint16 *size);
-
-	Gs2dScreen *_screen;
 	OSystem_PS2 *_system;
-	McAccess	*_mc;
+	Gs2dScreen *_screen;
 
-	int _autoSaveTid;
-	int _autoSaveSignal;
-	void *_autoSaveStack;
-	volatile bool _systemQuit;
-	uint8 *_autoSaveBuf;
-	uint32 _autoSaveSize;
-	char _autoSaveName[256];
+	bool _ioFailed, _wasFlushed;
+	char _fileName[128];
+};
 
-	mcTable *_mcDirList;
-	int		_mcEntries;
-	char	_mcDirName[256];
-	bool	_mcNeedsUpdate, _mcPresent;
-	uint32	_mcCheckTime;
+class UclInSaveFile : public Common::InSaveFile, public RawReadFile {
+public:
+	UclInSaveFile(const char *filename, Gs2dScreen *screen, McAccess *mc);
+	virtual ~UclInSaveFile(void);
+	virtual bool eos(void) const;
+	virtual uint32 read(void *ptr, uint32 size);
+	virtual bool ioFailed(void) const;
+	virtual void clearIOFailed(void);
+	virtual void skip(uint32 offset);
 
-	static const uint8 _rleIcoData[14018];
-	static const iconIVECTOR _bgcolor[4];
-	static const iconFVECTOR _lightdir[3], _lightcol[3], _ambient;
+	virtual uint32 pos(void) const;
+	virtual uint32 size(void) const;
+	virtual void seek(int pos, int whence = SEEK_SET);
+private:
+	Gs2dScreen *_screen;
+	bool _ioFailed;
+};
+
+class AutoSaveFile : public Common::OutSaveFile {
+public:
+	AutoSaveFile(Ps2SaveFileManager *saveMan, const char *filename);
+	~AutoSaveFile(void);
+	virtual uint32 write(const void *ptr, uint32 size);
+	virtual void flush(void) {}
+	virtual bool ioFailed(void) { return false; };
+	virtual void clearIOFailed(void) {}
+private:
+	Ps2SaveFileManager *_saveMan;
+	char _fileName[256];
+	uint8 *_buf;
+	uint32 _bufSize, _bufPos;
+};
+
+// Glue-classes, not only do we have to provide MC access through the savefilemanager, but also using
+// posix file i/o, since that's what's the configmanager expects for storing the scummvm.ini
+
+class Ps2McReadFile : public RawReadFile, public Ps2File {
+public:
+	Ps2McReadFile(Ps2SaveFileManager *saveMan);
+	virtual ~Ps2McReadFile(void);
+	virtual bool open(const char *name);
+	virtual uint32 read(void *dest, uint32 len);
+	virtual uint32 write(const void *src, uint32 len);
+	virtual uint32 tell(void);
+	virtual uint32 size(void);
+	virtual int seek(int32 offset, int origin);
+	virtual bool eof(void);
+};
+
+class Ps2McWriteFile : public RawWriteFile, public Ps2File {
+public:
+	Ps2McWriteFile(Ps2SaveFileManager *saveMan);
+	virtual ~Ps2McWriteFile(void);
+	virtual bool open(const char *name);
+	virtual uint32 read(void *dest, uint32 len);
+	virtual uint32 write(const void *src, uint32 len);
+	virtual uint32 tell(void);
+	virtual uint32 size(void);
+	virtual int seek(int32 offset, int origin);
+	virtual bool eof(void);
 };
 
 #endif // __PS2_SAVEFILE__

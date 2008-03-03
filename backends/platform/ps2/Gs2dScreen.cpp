@@ -33,6 +33,7 @@
 #include "DmaPipe.h"
 #include "GsDefs.h"
 #include "graphics/surface.h"
+#include "backends/platform/ps2/ps2debug.h"
 
 extern void *_gp;
 
@@ -73,7 +74,6 @@ static TexVertex kPrintTex[2] = {
 	{ SCALE(320), SCALE(200) }
 };
 
-void sioprintf(const char *zFormat, ...);
 void runAnimThread(Gs2dScreen *param);
 
 int vblankStartHandler(int cause) {
@@ -149,7 +149,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 		_videoMode = tvMode;
 
 	printf("Setting up %s mode\n", (_videoMode == TV_PAL) ? "PAL" : "NTSC");
-
+	
     // set screen size, 640x544 for pal, 640x448 for ntsc
 	_tvWidth = 640;
 	_tvHeight = ((_videoMode == TV_PAL) ? 544 : 448);
@@ -175,7 +175,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_clutPtrs[TEXT]   = _clutPtrs[SCREEN] + 0x2000;
 	_texPtrs[SCREEN]  = _clutPtrs[SCREEN] + 0x3000;
 	_texPtrs[TEXT]    = 0;						  // these buffers are stored in the alpha gaps of the frame buffers
-	_texPtrs[MOUSE]	  = 128 * 256 * 4;
+	_texPtrs[MOUSE]	  = 128 * 256 * 4;			  
 	_texPtrs[PRINTF]  = _texPtrs[MOUSE] + M_SIZE * M_SIZE * 4;
 
 	_showOverlay = false;
@@ -224,7 +224,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	updateScreen();
 
 	createAnimTextures();
-
+	
 	// create anim thread
 	ee_thread_t animThread, thisThread;
 	ReferThreadStatus(GetThreadId(), &thisThread);
@@ -253,7 +253,7 @@ void Gs2dScreen::quit(void) {
 	_dmaPipe->waitForDma();	// wait for dmac and vblank for the last time
 	while (g_DmacCmd || g_VblankCmd);
 
-	sioprintf("kill handlers");
+	sioprintf("kill handlers\n");
 	DisableIntc(INT_VBLANK_START);
 	DisableIntc(INT_VBLANK_END);
 	DisableDmac(2);
@@ -364,6 +364,30 @@ void Gs2dScreen::copyScreenRect(const uint8 *buf, int pitch, int x, int y, int w
 	}
 }
 
+void Gs2dScreen::clearScreen(void) {
+	WaitSema(g_DmacSema);
+	memset(_screenBuf, 0, _width * _height);
+	_screenChanged = true;
+	SignalSema(g_DmacSema);
+}
+
+Graphics::Surface *Gs2dScreen::lockScreen() {
+	WaitSema(g_DmacSema);
+
+	_framebuffer.pixels = _screenBuf;
+	_framebuffer.w = _width;
+	_framebuffer.h = _height;
+	_framebuffer.pitch = _width; // -not- _pitch; ! It's EE mem, not Tex
+	_framebuffer.bytesPerPixel = 1;
+
+	return &_framebuffer;
+}
+
+void Gs2dScreen::unlockScreen() {
+	_screenChanged = true;
+	SignalSema(g_DmacSema);
+}
+
 void Gs2dScreen::setPalette(const uint32 *pal, uint8 start, uint16 num) {
 	assert(start + num <= 256);
 
@@ -386,20 +410,11 @@ void Gs2dScreen::grabPalette(uint32 *pal, uint8 start, uint16 num) {
 	}
 }
 
-Graphics::Surface *Gs2dScreen::lockScreen() {
+void Gs2dScreen::grabScreen(Graphics::Surface *surf) {
+	assert(surf);
 	WaitSema(g_DmacSema);
-
-	_framebuffer.pixels = _screen->pixels;
-	_framebuffer.w = _screen->w;
-	_framebuffer.h = _screen->h;
-	_framebuffer.pitch = _screen->pitch;
-	_framebuffer.bytesPerPixel = 1;
-
-	return &_framebuffer;
-}
-
-void Gs2dScreen::unlockScreen() {
-	_screenChanged = true;
+	surf->create(_width, _height, 1);
+	memcpy(surf->pixels, _screenBuf, _width * _height);
 	SignalSema(g_DmacSema);
 }
 
@@ -621,7 +636,7 @@ void Gs2dScreen::animThread(void) {
 		do {
 			WaitSema(g_AnimSema);
 		} while ((!_systemQuit) && (!g_RunAnim));
-
+		
 		if (_systemQuit)
 			break;
 
@@ -746,7 +761,7 @@ const uint32 Gs2dScreen::_binaryClut[16] __attribute__((aligned(64))) = {
 	GS_RGBA(   0,    0,    0, 0x20), // scrPrintf: semitransparent
 	GS_RGBA(0xC0, 0xC0, 0xC0,    0), // scrPrintf: red
 	GS_RGBA(0x16, 0x16, 0xF0,    0), // scrPrintf: blue
-
+	
 	GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), // unused
 	GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), GS_RGBA(0xFF, 0xFF, 0xFF, 0x80),
 	GS_RGBA(0xFF, 0xFF, 0xFF, 0x80), GS_RGBA(0xFF, 0xFF, 0xFF, 0x80),
