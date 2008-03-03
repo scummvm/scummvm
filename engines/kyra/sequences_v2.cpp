@@ -2638,6 +2638,11 @@ void KyraEngine_v2::seq_uninit() {
 		delete [] _demoShapeDefs;
 		_demoShapeDefs = 0;
 	}
+
+	delete [] _newShapeFiledata;
+	_newShapeFiledata = 0;
+
+	memset(&_defaultShapeTable, 0, sizeof(_defaultShapeTable));
 }
 
 #pragma mark -

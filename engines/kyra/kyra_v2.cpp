@@ -100,8 +100,20 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_colorCodeFlag2 = -1;
 	_scriptCountDown = 0;
 
+	_gamePlayBuffer = 0;
+	_unkBuf500Bytes = 0;
+	_screenBuffer = 0;
+	_unkBuf200kByte = 0;
+	memset(&_defaultShapeTable, 0, sizeof(_defaultShapeTable));
+	memset(&_sceneShapeTable, 0, sizeof(_sceneShapeTable));
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 
+	_talkObjectList = 0;
+	_shapeDescTable = 0;
+	_gfxBackUpRect = 0;
+	_sceneList = 0;
+	memset(&_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
+	memset(&_wsaSlots, 0, sizeof(_wsaSlots));
 	_backUpButtonList = _unknownButtonList = _buttonList = 0;
 	memset(&_buttonShapes, 0, sizeof(_buttonShapes));
 
