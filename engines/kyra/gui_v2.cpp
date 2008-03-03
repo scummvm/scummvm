@@ -573,7 +573,7 @@ int KyraEngine_v2::buttonInventory(Button *button) {
 
 	uint16 item = _mainCharacter.inventory[inventorySlot];
 	if (_itemInHand == -1) {
-		if (item == -1)
+		if (item == 0xFFFF)
 			return 0;
 		_screen->hideMouse();
 		clearInventorySlot(inventorySlot, 0);
