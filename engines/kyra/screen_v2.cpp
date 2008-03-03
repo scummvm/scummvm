@@ -687,6 +687,9 @@ void Screen_v2::drawShape(uint8 page, const uint8 *shape, int x, int y, int sd, 
 
 	uint8 *dst = getPagePtr(page) + y * 320 + x;
 	uint8 *dstStart = getPagePtr(page);
+	if (page == 0 || page == 1)
+		addDirtyRect(x, y, x2-x1, y2-y1);
+	clearOverlayRect(page, x, y, x2-x1, y2-y1);
 
 	int scaleYTable[200];
 	for (y = y1; y < y2; ++y) {

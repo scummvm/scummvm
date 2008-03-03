@@ -102,6 +102,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	memset(&_sceneScriptData, 0, sizeof(_sceneScriptData));
 
+	_backUpButtonList = _unknownButtonList = _buttonList = 0;
+	memset(&_buttonShapes, 0, sizeof(_buttonShapes));
+
 	_dlgBuffer = 0;
 	_conversationState = new int8*[19];
 	for (int i = 0; i < 19; i++)
@@ -112,6 +115,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
+	cleanup();
 	seq_uninit();
 
 	if (_sequences)
@@ -313,9 +317,10 @@ void KyraEngine_v2::startup() {
 	_itemList = new Item[30];
 	memset(_itemList, 0, sizeof(Item)*30);
 	resetItemList();
-	//loadButtonShapes();
+	loadButtonShapes();
 	_loadedZTable = 1;
 	loadZShapes(_loadedZTable);
+	initMainButtonList();
 	loadInventoryShapes();
 
 	_res->loadFileToBuf("PALETTE.COL", _screen->_currentPalette, 0x300);
@@ -390,7 +395,7 @@ void KyraEngine_v2::runLoop() {
 		//	}
 		//}
 
-		int inputFlag = checkInput(0/*dword_324C5*/);
+		int inputFlag = checkInput(_buttonList);
 		removeInputTop();
 
 		update();
@@ -694,7 +699,7 @@ void KyraEngine_v2::updateInput() {
 		_eventList.push_back(event);
 }
 
-int KyraEngine_v2::checkInput(void *p) {
+int KyraEngine_v2::checkInput(Button *buttonList) {
 	updateInput();
 
 	int keys = 0;
@@ -747,7 +752,7 @@ int KyraEngine_v2::checkInput(void *p) {
 	}
 
 	_system->delayMillis(10);
-	return keys;
+	return processButtonList(buttonList, keys | 0x8000);
 }
 
 void KyraEngine_v2::removeInputTop() {
@@ -774,32 +779,44 @@ void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 }
 
 void KyraEngine_v2::cleanup() {
-	delete [] _gamePlayBuffer;
-	delete [] _unkBuf500Bytes;
-	delete [] _screenBuffer;
-	delete [] _unkBuf200kByte;
+	delete [] _gamePlayBuffer; _gamePlayBuffer = 0;
+	delete [] _unkBuf500Bytes; _unkBuf500Bytes = 0;
+	delete [] _screenBuffer; _screenBuffer = 0;
+	delete [] _unkBuf200kByte; _unkBuf200kByte = 0;
 
 	resetNewShapes(_newShapeCount, _newShapeFiledata);
+	_newShapeFiledata = 0;
+	_newShapeCount = 0;
 
-	for (int i = 0; i < ARRAYSIZE(_defaultShapeTable); ++i)
+	for (int i = 0; i < ARRAYSIZE(_defaultShapeTable); ++i) {
 		delete [] _defaultShapeTable[i];
+		_defaultShapeTable[i] = 0;
+	}
 	freeSceneShapePtrs();
 
-	delete [] _cCodeBuffer;
-	delete [] _optionsBuffer;
-	delete [] _chapterBuffer;
+	delete [] _cCodeBuffer; _cCodeBuffer = 0;
+	delete [] _optionsBuffer; _optionsBuffer = 0;
+	delete [] _chapterBuffer; _chapterBuffer = 0;
 
-	delete [] _talkObjectList;
-	delete [] _shapeDescTable;
+	delete [] _talkObjectList; _talkObjectList = 0;
+	delete [] _shapeDescTable; _shapeDescTable = 0;
 
-	delete [] _gfxBackUpRect;
+	delete [] _gfxBackUpRect; _gfxBackUpRect = 0;
 
-	delete [] _sceneList;
+	delete [] _sceneList; _sceneList = 0;
 
-	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i)
+	for (int i = 0; i < ARRAYSIZE(_sceneAnimMovie); ++i) {
 		delete _sceneAnimMovie[i];
-	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
+		_sceneAnimMovie[i] = 0;
+	}
+	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i) {
 		delete _wsaSlots[i];
+		_wsaSlots[i] = 0;
+	}
+	for (int i = 0; i < ARRAYSIZE(_buttonShapes); ++i) {
+		delete [] _buttonShapes[i];
+		_buttonShapes[i] = 0;
+	}
 }
 
 #pragma mark - Localization

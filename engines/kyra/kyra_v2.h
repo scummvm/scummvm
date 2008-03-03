@@ -307,7 +307,8 @@ protected:
 
 	void updateMouse();
 
-	int checkInput(void *p);
+	struct Button;
+	int checkInput(Button *buttonList);
 	void removeInputTop();
 	void handleInput(int x, int y);
 	bool handleInputUnkSub(int x, int y);
@@ -557,6 +558,59 @@ protected:
 	// inventory
 	static const int _inventoryX[];
 	static const int _inventoryY[];
+	static const uint16 _itemMagicTable[];
+
+	bool checkInventoryItemExchange(uint16 item, int slot);
+	void drawInventoryShape(int page, uint16 item, int slot);
+	void clearInventorySlot(int slot, int page);
+
+	// gui
+	void loadButtonShapes();
+	uint8 *_buttonShapes[19];
+
+	struct Button {
+		Button *nextButton;
+		uint16 index;
+		uint16 unk6;
+		uint16 unk8;
+		byte data0Val1;
+		byte data1Val1;
+		byte data2Val1;
+		// XXX
+		uint16 flags;
+		uint8 *shapePtr0;
+		uint8 *shapePtr1;
+		uint8 *shapePtr2;
+		uint16 dimTableIndex;
+		int16 x;
+		int16 y;
+		int16 width;
+		int16 height;
+		uint8 data0Val2;
+		uint8 data0Val3;
+		uint8 data1Val2;
+		uint8 data1Val3;
+		uint8 data2Val2;
+		uint8 data2Val3;
+		// XXX
+		uint16 flags2;
+		typedef int (KyraEngine_v2::*ButtonCallback)(KyraEngine_v2::Button*);
+		ButtonCallback buttonCallback;
+		// XXX
+	};
+
+	bool _buttonListChanged;
+	Button *_buttonList;
+	Button *_backUpButtonList;
+	Button *_unknownButtonList;
+
+	void initMainButtonList();
+
+	void processButton(Button *button);
+	Button *addButtonToList(Button *list, Button *newButton);
+	int processButtonList(Button *button, uint16 inputFlag);
+
+	int buttonInventory(Button *button);
 
 	// localization
 	void loadCCodeBuffer(const char *file);
@@ -580,6 +634,7 @@ protected:
 	// - Just used in French version
 	int getItemCommandStringDrop(uint16 item);
 	int getItemCommandStringPickUp(uint16 item);
+	int getItemCommandStringInv(uint16 item);
 	// -
 
 	char _internStringBuf[200];

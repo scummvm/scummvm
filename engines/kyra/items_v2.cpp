@@ -408,6 +408,18 @@ int KyraEngine_v2::getItemCommandStringPickUp(uint16 item) {
 	return pickUpStringIds[stringId];
 }
 
+int KyraEngine_v2::getItemCommandStringInv(uint16 item) {
+	assert(item < _itemStringMapSize);
+	int stringId = _itemStringMap[item];
+
+	static const int pickUpStringIds[] = {
+		0x02C, 0x104, 0x008, 0x107
+	};
+	assert(stringId < ARRAYSIZE(pickUpStringIds));
+
+	return pickUpStringIds[stringId];
+}
+
 void KyraEngine_v2::setMouseCursor(uint16 item) {
 	int shape = 0;
 	int hotX = 1;

@@ -761,8 +761,8 @@ void Screen::shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPag
 	}
 }
 
-void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum) {
-	debugC(9, kDebugLevelScreen, "Screen::fillRect(%d, %d, %d, %d, %d, %d)", x1, y1, x2, y2, color, pageNum);
+void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, bool xor) {
+	debugC(9, kDebugLevelScreen, "Screen::fillRect(%d, %d, %d, %d, %d, %d, %d)", x1, y1, x2, y2, color, pageNum, xor);
 	assert(x2 < SCREEN_W && y2 < SCREEN_H);
 	if (pageNum == -1)
 		pageNum = _curPage;
@@ -774,9 +774,17 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum) 
 
 	clearOverlayRect(pageNum, x1, y1, x2-x1+1, y2-y1+1);
 
-	for (; y1 <= y2; ++y1) {
-		memset(dst, color, x2 - x1 + 1);
-		dst += SCREEN_W;
+	if (xor) {
+		for (; y1 <= y2; ++y1) {
+			for (int x = x1; x <= x2; ++x)
+				dst[x] ^= color;
+			dst += SCREEN_W;
+		}
+	} else {
+		for (; y1 <= y2; ++y1) {
+			memset(dst, color, x2 - x1 + 1);
+			dst += SCREEN_W;
+		}
 	}
 }
 

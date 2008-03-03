@@ -220,5 +220,447 @@ void KyraEngine_v2::gui_printString(const char *format, int x, int y, int col1, 
 	_screen->printText(string, x, y, col1, col2);
 }
 
+#pragma mark -
+
+void KyraEngine_v2::loadButtonShapes() {
+	const uint8 *src = _screen->getCPagePtr(3);
+	_screen->loadBitmap("_BUTTONS.CSH", 3, 3, 0);
+	_buttonShapes[0] = _screen->makeShapeCopy(src, 0);
+	_buttonShapes[1] = _screen->makeShapeCopy(src, 1);
+	_buttonShapes[2] = _screen->makeShapeCopy(src, 2);
+	_buttonShapes[3] = _screen->makeShapeCopy(src, 3);
+	_buttonShapes[4] = _screen->makeShapeCopy(src, 4);
+	_buttonShapes[5] = _screen->makeShapeCopy(src, 5);
+	_buttonShapes[6] = _screen->makeShapeCopy(src, 6);
+	_buttonShapes[7] = _screen->makeShapeCopy(src, 7);
+	_buttonShapes[8] = _screen->makeShapeCopy(src, 6);
+	_buttonShapes[9] = _screen->makeShapeCopy(src, 7);
+	_buttonShapes[10] = _screen->makeShapeCopy(src, 10);
+	_buttonShapes[11] = _screen->makeShapeCopy(src, 11);
+	_buttonShapes[16] = _screen->makeShapeCopy(src, 16);
+	_buttonShapes[17] = _screen->makeShapeCopy(src, 17);
+	_buttonShapes[18] = _screen->makeShapeCopy(src, 18);
+}
+
+KyraEngine_v2::Button *KyraEngine_v2::addButtonToList(Button *list, Button *newButton) {
+	if (!newButton)
+		return list;
+
+	newButton->nextButton = 0;
+
+	if (list) {
+		Button *cur = list;
+		while (cur->nextButton)
+			cur = cur->nextButton;
+		cur->nextButton = newButton;
+	} else {
+		list = newButton;
+	}
+
+	_buttonListChanged = true;
+	return list;
+}
+
+void KyraEngine_v2::processButton(Button *button) {
+	if (!button)
+		return;
+	
+	if (button->flags & 8) {
+		if (button->flags & 0x10) {
+			// XXX
+		}
+		return;
+	}
+
+	int entry = button->flags2 & 5;
+
+	byte val1 = 0, val2 = 0, val3 = 0;
+	uint8 *dataPtr = 0;
+	if (entry == 1) {
+		val1 = button->data1Val1;
+		dataPtr = button->shapePtr1;
+		val2 = button->data1Val2;
+		val3 = button->data1Val3;
+	} else if (entry == 4 || entry == 5) {
+		val1 = button->data2Val1;
+		dataPtr = button->shapePtr2;
+		val2 = button->data2Val2;
+		val3 = button->data2Val3;
+	} else {
+		val1 = button->data0Val1;
+		dataPtr = button->shapePtr0;
+		val2 = button->data0Val2;
+		val3 = button->data0Val3;
+	}
+
+	int x = 0, y = 0, x2 = 0, y2 = 0;
+
+	x = button->x;
+	if (x < 0)
+		x += _screen->getScreenDim(button->dimTableIndex)->w << 3;
+	x += _screen->getScreenDim(button->dimTableIndex)->sx << 3;
+	x2 = x + button->width - 1;
+
+	y = button->y;
+	if (y < 0)
+		y += _screen->getScreenDim(button->dimTableIndex)->h << 3;
+	y += _screen->getScreenDim(button->dimTableIndex)->sy << 3;
+	y2 = y + button->height - 1;
+
+	switch (val1 - 1) {
+	case 0:
+		_screen->hideMouse();
+		_screen->drawShape(_screen->_curPage, dataPtr, x, y, button->dimTableIndex, 0x10);
+		_screen->showMouse();
+		break;
+
+	case 1:
+		_screen->hideMouse();
+		_screen->printText((const char*)dataPtr, x, y, val2, val3);
+		_screen->showMouse();
+		break;
+
+	case 3:
+		warning("STUB processButton with func 3");
+		//XXX
+		break;
+
+	case 4:
+		warning("STUB processButton with func 4");
+		_screen->hideMouse();
+		//XXX
+		_screen->showMouse();
+		break;
+
+	case 5:
+		_screen->hideMouse();
+		_screen->fillRect(x, y, x2, y2, val2, -1, true);
+		_screen->showMouse();
+		break;
+
+	default:
+		break;
+	}
+
+	_screen->updateScreen();
+}
+
+int KyraEngine_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
+	if (!buttonList)
+		return inputFlag & 0x7FFF;
+
+	if (_backUpButtonList != buttonList || _buttonListChanged) {
+		_unknownButtonList = 0;
+		//XXX_gui_unk2 (very strange code, maybe keyboard related? or some non interactive input...)
+		_backUpButtonList = buttonList;
+		_buttonListChanged = false;
+
+		while (buttonList) {
+			processButton(buttonList);
+			buttonList = buttonList->nextButton;
+		}
+	}
+
+	int mouseX = _mouseX;
+	int mouseY = _mouseY;
+
+	uint16 flags = 0;
+
+	if (1/*!_screen_cursorDisable*/) {
+		uint16 inFlags = inputFlag & 0xFF;
+		uint16 temp = 0;
+
+		if (inFlags == 199)
+			temp = 0x1000;
+		else if (inFlags == 198)
+			temp = 0x0100;
+
+		if (inputFlag & 0x800)
+			temp <<= 2;
+
+		// the original did some flag hackery here, this works fine too
+		flags |= temp;
+	}
+
+	buttonList = _backUpButtonList;
+	if (_unknownButtonList) {
+		buttonList = _unknownButtonList;
+		if (_unknownButtonList->flags & 8)
+			_unknownButtonList = 0;
+	}
+
+	int returnValue = 0;
+	while (buttonList) {
+		if (buttonList->flags & 8)
+			continue;
+		buttonList->flags2 &= 0xFFE7;
+		buttonList->flags2 |= (buttonList->flags2 & 3) << 3;
+
+		int x = buttonList->x;
+		if (x < 0)
+			x += _screen->getScreenDim(buttonList->dimTableIndex)->w << 3;
+		x += _screen->getScreenDim(buttonList->dimTableIndex)->sx << 3;
+
+		int y = buttonList->y;
+		if (y < 0)
+			y += _screen->getScreenDim(buttonList->dimTableIndex)->h;
+		y += _screen->getScreenDim(buttonList->dimTableIndex)->sy;
+
+		bool progress = false;
+
+		if (mouseX >= x && mouseY >= y && mouseX <= x+buttonList->width && mouseY <= y+buttonList->height)
+			progress = true;
+
+		uint16 inFlags = inputFlag & 0x7FFF;
+		if (inFlags) {
+			if (buttonList->unk6 == inFlags) {
+				progress = true;
+				flags = buttonList->flags & 0x0F00;
+				buttonList->flags2 |= 0x80;
+				inputFlag = 0;
+				_unknownButtonList = buttonList;
+			} else if (buttonList->unk8 == inFlags) {
+				flags = buttonList->flags & 0xF000;
+				if (!flags)
+					flags = buttonList->flags & 0x0F00;
+				progress = true;
+				buttonList->flags2 |= 0x80;
+				inputFlag = 0;
+				_unknownButtonList = buttonList;
+			}
+		}
+
+		bool unk1 = false;
+		if (!progress)
+			buttonList->flags2 &= 0xFFF9;
+
+		if ((flags & 0x3300) && (buttonList->flags & 4) && progress && (buttonList == _unknownButtonList || !_unknownButtonList)) {
+			buttonList->flags |= 6;
+			if (!_unknownButtonList)
+				_unknownButtonList = buttonList;
+		} else if ((flags & 0x8800) && !(buttonList->flags & 4) && progress) {
+			buttonList->flags2 |= 6;
+		} else {
+			buttonList->flags2 &= 0xFFF9;
+		}
+
+		bool progressSwitch = false;
+		if (!_unknownButtonList) {
+			progressSwitch = progress;
+		} else  {
+			if (_unknownButtonList->flags & 0x40)
+				progressSwitch = (_unknownButtonList == buttonList);
+			else
+				progressSwitch = progress;
+		}
+
+		if (progressSwitch) {
+			if ((flags & 0x1100) && progress && !_unknownButtonList) {
+				inputFlag = 0;
+				_unknownButtonList = buttonList;
+			}
+
+			if ((buttonList->flags & flags) && (progress || !(buttonList->flags & 1))) {
+				uint16 combinedFlags = (buttonList->flags & flags);
+				combinedFlags = ((combinedFlags & 0xF000) >> 4) | (combinedFlags & 0x0F00);
+				combinedFlags >>= 8;
+
+				static const uint16 flagTable[] = {
+					0x000, 0x100, 0x200, 0x100, 0x400, 0x100, 0x400, 0x100, 0x800, 0x100,
+					0x200, 0x100, 0x400, 0x100, 0x400, 0x100
+				};
+
+				assert(combinedFlags < ARRAYSIZE(flagTable));
+
+				switch (flagTable[combinedFlags]) {
+				case 0x400:
+					if ((buttonList->flags & 1) && _unknownButtonList == buttonList) {
+						buttonList->flags2 ^= 1;
+						returnValue = buttonList->index | 0x8000;
+						unk1 = true;
+					}
+
+					if (!(buttonList->flags & 4)) {
+						buttonList->flags2 &= 0xFFFB;
+						buttonList->flags2 &= 0xFFFD;
+					}
+					break;
+
+				case 0x800:
+					if (!(buttonList->flags & 4)) {
+						buttonList->flags2 |= 4;
+						buttonList->flags2 |= 2;
+					}
+
+					if (!(buttonList->flags & 1))
+						unk1 = true;
+					break;
+
+				case 0x200:
+					if (buttonList->flags & 4) {
+						buttonList->flags2 |= 4;
+						buttonList->flags2 |= 2;
+					}
+
+					if (!(buttonList->flags & 1))
+						unk1 = true;
+					break;
+
+				case 0x100:
+				default:
+					buttonList->flags2 ^= 1;
+					returnValue = buttonList->index | 0x8000;
+					unk1 = true;
+					if (buttonList->flags & 4) {
+						buttonList->flags2 |= 4;
+						buttonList->flags2 |= 2;
+						_unknownButtonList = buttonList;
+					}
+					break;
+				}
+			}
+		}
+
+		bool unk2 = false;
+		if ((flags & 0x2200) && progress) {
+			buttonList->flags2 |= 6;
+			if (!(buttonList->flags & 4) && !(buttonList->flags2 & 1)) {
+				unk2 = true;
+				buttonList->flags2 |= 1;
+			}
+		}
+
+		if ((flags & 0x8800) == 0x8800) {
+			_unknownButtonList = 0;
+			if (!progress || (buttonList->flags & 4))
+				buttonList->flags2 &= 0xFFF9;
+		}
+
+		if (!progress && buttonList == _unknownButtonList && !(buttonList->flags & 0x40))
+			_unknownButtonList = 0;
+
+		if ((buttonList->flags2 & 0x18) == ((buttonList->flags2 & 3) << 3))
+			processButton(buttonList);
+
+		if (unk2)
+			buttonList->flags2 &= 0xFFFE;
+
+		if (unk1) {
+			buttonList->flags2 &= 0xFF;
+			buttonList->flags2 |= flags;
+
+			if (buttonList->buttonCallback)
+				if ((this->*buttonList->buttonCallback)(buttonList))
+					break;
+			if (buttonList->flags & 0x20)
+				break;
+		}
+
+		if (_unknownButtonList == buttonList && (buttonList->flags & 0x40))
+			break;
+
+		buttonList = buttonList->nextButton;
+	}
+
+	if (!returnValue)
+		returnValue = inputFlag & 0x7FFF;
+	return returnValue;
+}
+
+int KyraEngine_v2::buttonInventory(Button *button) {
+	//XXX test if cursor is shown
+	int inventorySlot = button->index - 6;
+
+	uint16 item = _mainCharacter.inventory[inventorySlot];
+	if (_itemInHand == -1) {
+		if (item == -1)
+			return 0;
+		_screen->hideMouse();
+		clearInventorySlot(inventorySlot, 0);
+		snd_playSoundEffect(0x0B);
+		setMouseCursor(item);
+		int string = (_lang == 1) ? getItemCommandStringPickUp(item) : 7;
+		updateCommandLineEx(item+54, string, 0xD6);
+		_itemInHand = (int16)item;
+		_screen->showMouse();
+		_mainCharacter.inventory[inventorySlot] = 0xFFFF;
+	} else {
+		if (_mainCharacter.inventory[inventorySlot] != 0xFFFF) {
+			if (checkInventoryItemExchange(_itemInHand, inventorySlot))
+				return 0;
+
+			item = _mainCharacter.inventory[inventorySlot];
+			snd_playSoundEffect(0x0B);
+			_screen->hideMouse();
+			clearInventorySlot(inventorySlot, 0);
+			drawInventoryShape(0, _itemInHand, inventorySlot);
+			setMouseCursor(item);
+			int string = (_lang == 1) ? getItemCommandStringPickUp(item) : 7;
+			updateCommandLineEx(item+54, string, 0xD6);
+			_screen->showMouse();
+			_mainCharacter.inventory[inventorySlot] = _itemInHand;
+			setHandItem(item);
+		} else {
+			snd_playSoundEffect(0x0C);
+			_screen->hideMouse();
+			drawInventoryShape(0, _itemInHand, inventorySlot);
+			_screen->setMouseCursor(0, 0, getShapePtr(0));
+			int string = (_lang == 1) ? getItemCommandStringInv(_itemInHand) : 8;
+			updateCommandLineEx(_itemInHand+54, string, 0xD6);
+			_screen->showMouse();
+			_mainCharacter.inventory[inventorySlot] = _itemInHand;
+			_itemInHand = -1;
+		}
+	}
+
+	return 0;
+}
+
+bool KyraEngine_v2::checkInventoryItemExchange(uint16 handItem, int slot) {
+	bool removeItem = false;
+	uint16 newItem = 0xFFFF;
+
+	uint16 invItem = _mainCharacter.inventory[slot];
+
+	for (const uint16 *table = _itemMagicTable; *table != 0xFFFF; table += 4) {
+		if (table[0] != handItem || table[1] != invItem)
+			continue;
+
+		if (table[3] == 0xFFFF)
+			continue;
+
+		removeItem = (table[3] == 1);
+		newItem = table[2];
+
+		snd_playSoundEffect(0x68);
+		_mainCharacter.inventory[slot] = newItem;
+		_screen->hideMouse();
+		clearInventorySlot(slot, 0);
+		drawInventoryShape(0, newItem, slot);
+
+		if (removeItem)
+			removeHandItem();
+
+		_screen->showMouse();
+
+		if (_lang != 1)
+			updateCommandLineEx(newItem+53, 0x2E, 0xD6);
+
+		return true;
+	}
+
+	return false;
+}
+
+void KyraEngine_v2::drawInventoryShape(int page, uint16 item, int slot) {
+	_screen->drawShape(page, getShapePtr(item+64), _inventoryX[slot], _inventoryY[slot], 0, 0);
+	_screen->updateScreen();
+}
+
+void KyraEngine_v2::clearInventorySlot(int slot, int page) {
+	_screen->drawShape(page, _defaultShapeTable[240+slot], _inventoryX[slot], _inventoryY[slot], 0, 0);
+	_screen->updateScreen();
+}
+
 } // end of namespace Kyra
 
