@@ -940,6 +940,19 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		"intro"
 	},
+	{ // Supplied by cartman_ on #scummvm
+		{
+			"lostintime",
+			"",
+			AD_ENTRY1s("intro.stk", "f1f78b663893b58887add182a77df151", 3944090),
+			DE_DEU,
+			kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		"intro"
+	},
 	{
 		{
 			"lostintime",
