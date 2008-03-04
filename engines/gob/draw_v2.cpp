@@ -38,6 +38,7 @@
 namespace Gob {
 
 Draw_v2::Draw_v2(GobEngine *vm) : Draw_v1(vm) {
+	_mayorWorkaroundStatus = 0;
 }
 
 void Draw_v2::initScreen() {
@@ -206,6 +207,27 @@ void Draw_v2::printTotText(int16 id) {
 		return;
 
 	_vm->validateLanguage();
+
+	// WORKAROUND: In the scripts of some Gobliins 2 versions, the dialog text IDs
+	// for Fingus and the mayor are swapped.
+	if ((_vm->getGameType() == kGameTypeGob2) && !_vm->isCD() &&
+	    (!scumm_stricmp(_vm->_game->_curTotFile, "gob07.tot"))) {
+
+		if (id == 24) {
+			if (_mayorWorkaroundStatus == 1) {
+				_mayorWorkaroundStatus = 0;
+				id = 31;
+			} else
+				_mayorWorkaroundStatus = 2;
+		} else if (id == 31) {
+			if (_mayorWorkaroundStatus == 0) {
+				_mayorWorkaroundStatus = 1;
+				id = 24;
+			} else
+				_mayorWorkaroundStatus = 0;
+		}
+
+	}
 
 	size = _vm->_game->_totTextData->items[id].size;
 	dataPtr = _vm->_game->_totTextData->dataPtr +

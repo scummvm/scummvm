@@ -194,6 +194,9 @@ public:
 
 	Draw_v2(GobEngine *vm);
 	virtual ~Draw_v2() {}
+
+private:
+	uint8 _mayorWorkaroundStatus;
 };
 
 class Draw_Bargon: public Draw_v2 {
