@@ -43,7 +43,6 @@ public:
 
 	// sequence player
 	void generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool flag);
-	void applyGrayOverlay(int x, int y, int w, int h, int pageNum, const uint8 *grayOverlay);
 	int findLeastDifferentColor(const uint8 *paletteEntry, const uint8 *palette, uint16 numColors);
 	bool calcBounds(int w0, int h0, int &x1, int &y1, int &w1, int &h1, int &x2, int &y2, int &w2);
 	void wsaFrameAnimationStep(int x1, int y1, int x2, int y2, int w1, int h1, int w2, int h2,	int srcPage, int dstPage, int dim);
@@ -54,6 +53,9 @@ public:
 	// screen page handling
 	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
 					int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2);
+
+	uint8 *generateOverlay(const uint8 *palette, uint8 *buffer, int color, int factor);
+	void applyOverlay(int x, int y, int w, int h, int pageNum, const uint8 *overlay);
 
 	// shape handling
 	uint8 *getPtrToShape(uint8 *shpFile, int shape);

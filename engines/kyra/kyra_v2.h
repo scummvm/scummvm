@@ -563,6 +563,8 @@ protected:
 	bool checkInventoryItemExchange(uint16 item, int slot);
 	void drawInventoryShape(int page, uint16 item, int slot);
 	void clearInventorySlot(int slot, int page);
+	void redrawInventory(int page);
+	void scrollInventoryWheel();
 
 	// gui
 	void loadButtonShapes();
@@ -610,6 +612,7 @@ protected:
 	Button *addButtonToList(Button *list, Button *newButton);
 	int processButtonList(Button *button, uint16 inputFlag);
 
+	int scrollInventory(Button *button);
 	int buttonInventory(Button *button);
 
 	// localization

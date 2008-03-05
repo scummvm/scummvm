@@ -26,6 +26,7 @@
 #include "kyra/kyra.h"
 #include "kyra/kyra_v2.h"
 #include "kyra/screen.h"
+#include "kyra/wsamovie.h"
 
 namespace Kyra {
 
@@ -370,13 +371,16 @@ int KyraEngine_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		uint16 inFlags = inputFlag & 0xFF;
 		uint16 temp = 0;
 
-		if (inFlags == 199)
-			temp = 0x1000;
-		else if (inFlags == 198)
-			temp = 0x0100;
+		// this is NOT like in the original
+		// the original game somehow just enabled flag 0x1000 here
+		// but did some other magic, which looks like it depends on how the handle
+		// key input... so we just enable 0x1000 and 0x4000 here to allow
+		// all GUI buttons to work (for now at least...)
+		if (inFlags == 199 || inFlags == 198)
+			temp = 0x1000 | 0x4000;
 
-		if (inputFlag & 0x800)
-			temp <<= 2;
+		//if (inputFlag & 0x800)
+		//	temp <<= 2;
 
 		// the original did some flag hackery here, this works fine too
 		flags |= temp;
@@ -616,6 +620,24 @@ int KyraEngine_v2::buttonInventory(Button *button) {
 	return 0;
 }
 
+int KyraEngine_v2::scrollInventory(Button *button) {
+	uint16 *src = _mainCharacter.inventory;
+	uint16 *dst = &_mainCharacter.inventory[10];
+	uint16 temp[5];
+
+	memcpy(temp, src, sizeof(uint16)*5);
+	memcpy(src, src+5, sizeof(uint16)*5);
+	memcpy(src+5, dst, sizeof(uint16)*5);
+	memcpy(dst, dst+5, sizeof(uint16)*5);
+	memcpy(dst+5, temp, sizeof(uint16)*5);
+	_screen->hideMouse();
+	_screen->copyRegion(0x46, 0x90, 0x46, 0x90, 0x71, 0x2E, 0, 2);
+	_screen->showMouse();
+	redrawInventory(2);
+	scrollInventoryWheel();
+	return 0;
+}
+
 bool KyraEngine_v2::checkInventoryItemExchange(uint16 handItem, int slot) {
 	bool removeItem = false;
 	uint16 newItem = 0xFFFF;
@@ -660,6 +682,69 @@ void KyraEngine_v2::drawInventoryShape(int page, uint16 item, int slot) {
 void KyraEngine_v2::clearInventorySlot(int slot, int page) {
 	_screen->drawShape(page, _defaultShapeTable[240+slot], _inventoryX[slot], _inventoryY[slot], 0, 0);
 	_screen->updateScreen();
+}
+
+void KyraEngine_v2::redrawInventory(int page) {
+	int pageBackUp = _screen->_curPage;
+	_screen->_curPage = page;
+
+	const uint16 *inventory = _mainCharacter.inventory;
+	_screen->hideMouse();
+	for (int i = 0; i < 10; ++i) {
+		clearInventorySlot(i, page);
+		if (inventory[i] != 0xFFFF) {
+			_screen->drawShape(page, getShapePtr(inventory[i]+64), _inventoryX[i], _inventoryY[i], 0, 0);
+			drawInventoryShape(page, inventory[i], i);
+		}
+	}
+	_screen->showMouse();
+	_screen->updateScreen();
+
+	_screen->_curPage = pageBackUp;
+}
+
+void KyraEngine_v2::scrollInventoryWheel() {
+	WSAMovieV2 movie(this);
+	movie.open("INVWHEEL.WSA", 0, 0);
+	int frames = movie.opened() ? movie.frames() : 6;
+	memcpy(_screenBuffer, _screen->getCPagePtr(2), 64000);
+	uint8 overlay[0x100];
+	_screen->generateOverlay(_screen->getPalette(0), overlay, 0, 32);
+	_screen->hideMouse();
+	_screen->copyRegion(0x46, 0x90, 0x46, 0x79, 0x71, 0x17, 0, 2);
+	_screen->showMouse();
+	snd_playSoundEffect(0x25);
+
+	movie.setDrawPage(0);
+	movie.setX(0);
+	movie.setY(0);
+
+	bool breakFlag = false;
+	for (int i = 0; i <= 6 && !breakFlag; ++i) {
+		if (movie.opened()) {
+			_screen->hideMouse();
+			movie.displayFrame(i % frames, 0, 0);
+			_screen->showMouse();
+			_screen->updateScreen();
+		}
+
+		uint32 endTime = _system->getMillis() + _tickLength;
+
+		int y = (i * 981) >> 8;
+		if (y >= 23 || i == 6) {
+			y = 23;
+			breakFlag = true;
+		}
+
+		_screen->applyOverlay(0x46, 0x79, 0x71, 0x17, 2, overlay);
+		_screen->copyRegion(0x46, y+0x79, 0x46, 0x90, 0x71, 0x2E, 2, 0);
+		_screen->updateScreen();
+
+		delayUntil(endTime);
+	}
+
+	_screen->copyBlockToPage(2, 0, 0, 320, 200, _screenBuffer);
+	movie.close();
 }
 
 } // end of namespace Kyra

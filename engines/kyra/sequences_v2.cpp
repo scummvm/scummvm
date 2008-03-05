@@ -405,7 +405,7 @@ int KyraEngine_v2::seq_introOverview(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 		case 201:
 			_screen->setScreenPalette(_screen->getPalette(2));
 			_screen->updateScreen();
-			_screen->applyGrayOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+			_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
 			_screen->copyPage(2, 12);
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 			_screen->setScreenPalette(_screen->getPalette(0));
@@ -472,7 +472,7 @@ int KyraEngine_v2::seq_introLibrary(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			seq_waitForTextsTimeout();
 
 			_screen->copyPage(12, 2);
-			_screen->applyGrayOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+			_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 			_screen->updateScreen();
 			_screen->copyPage(2, 12);
@@ -493,7 +493,7 @@ int KyraEngine_v2::seq_introLibrary(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 		case 340:
 			seq_resetActiveWSA(0);
-			_screen->applyGrayOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+			_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
 			_screen->copyPage(2, 12);
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 			_screen->updateScreen();
@@ -548,7 +548,7 @@ int KyraEngine_v2::seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 		case 201:
 			seq_waitForTextsTimeout();
-			_screen->applyGrayOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+			_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
 			_screen->copyPage(2, 12);
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 			_screen->updateScreen();
