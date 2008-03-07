@@ -1697,7 +1697,7 @@ int KyraEngine_v2::seq_demoFisher(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 			_seqScrollTextCounter = 0;
 		}
 
-		seq_scrollPage();;
+		seq_scrollPage();
 		_seqFrameCounter++;
 		if (_seqFrameCounter < 0x256 || _seqFrameCounter > 0x31c) {
 			if (_seqFrameCounter < 0x174 || _seqFrameCounter > 0x1d7) {
@@ -1715,7 +1715,7 @@ int KyraEngine_v2::seq_demoFisher(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 		}
 
 	} else {
-		seq_scrollPage();;
+		seq_scrollPage();
 	}
 	return 0;
 }
@@ -2524,8 +2524,8 @@ void KyraEngine_v2::seq_scrollPage() {
 	static const ScreenDim d = { 0x00, 0x00, 0x28, 0x320, 0xFF, 0xFE, 0x00, 0x00 };
 
 	if (_seqScrollTextCounter - 143 < 0) {
-		dstY = 144 - _seqScrollTextCounter;;
-		dstH = _seqScrollTextCounter;;
+		dstY = 144 - _seqScrollTextCounter;
+		dstH = _seqScrollTextCounter;
 		srcH = 0;
 	} else {
 		dstY = 0;
