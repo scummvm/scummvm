@@ -355,92 +355,92 @@ int KyraEngine_v2::seq_introOverview(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 	uint32 endtime = 0, now = 0;
 
 	switch (_seqFrameCounter) {
-		case 0:
-			_seqSubframePlaying = true;
-			_sound->playTrack(4);
-			endtime = _system->getMillis() + 60 * _tickLength;
+	case 0:
+		_seqSubframePlaying = true;
+		_sound->playTrack(4);
+		endtime = _system->getMillis() + 60 * _tickLength;
 
-			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
+		_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
 
-			_screen->setTextColorMap(_seqTextColorMap);
+		_screen->setTextColorMap(_seqTextColorMap);
 
-			now = _system->getMillis();
-			if (endtime > now)
-				delay(endtime - now);
+		now = _system->getMillis();
+		if (endtime > now)
+			delay(endtime - now);
+		break;
+
+	case 1:
+		_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x40, 0, 0, 0, 0x100, true);
+		for (int i = 0; i < 256; i++)
+			tmpPal[_screen->getPalette(3)[i]] = 1;
+
+		for (int i = 0; i < 256; i++) {
+			int v = (tmpPal[i] == 1) ? i : _screen->getPalette(3)[i];
+			v *= 3;
+			_screen->getPalette(2)[3 * i] = _screen->getPalette(0)[v];
+			_screen->getPalette(2)[3 * i + 1] = _screen->getPalette(0)[v + 1];
+			_screen->getPalette(2)[3 * i + 2] = _screen->getPalette(0)[v + 2];
+		}
+		break;
+
+	case 40:
+		seq_loadNestedSequence(0, kSequenceOver1);
+		break;
+
+	case 60:
+		seq_loadNestedSequence(1, kSequenceOver2);
+		break;
+
+	case 120:
+		seq_playTalkText(0);
+		break;
+
+	case 200:
+		seq_waitForTextsTimeout();
+		_screen->fadePalette(_screen->getPalette(2), 64);
+		break;
+
+	case 201:
+		_screen->setScreenPalette(_screen->getPalette(2));
+		_screen->updateScreen();
+		_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+		_screen->copyPage(2, 12);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->updateScreen();
+		seq_resetActiveWSA(0);
+		seq_resetActiveWSA(1);
+		break;
+
+	case 282:
+		seq_loadNestedSequence(0, kSequenceForest);
+		seq_playTalkText(1);
+		break;
+
+	case 354:
+	case 434:
+		if (!((_seqFrameCounter == 354 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 434 && _flags.platform == Common::kPlatformPC)))
 			break;
 
-		case 1:
-			_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x40, 0, 0, 0, 0x100, true);
-			for (int i = 0; i < 256; i++)
-				tmpPal[_screen->getPalette(3)[i]] = 1;
+		seq_resetActiveWSA(0);
+		seq_loadNestedSequence(0, kSequenceDragon);
+		break;
 
-			for (int i = 0; i < 256; i++) {
-				int v = (tmpPal[i] == 1) ? i : _screen->getPalette(3)[i];
-				v *= 3;
-				_screen->getPalette(2)[3 * i] = _screen->getPalette(0)[v];
-				_screen->getPalette(2)[3 * i + 1] = _screen->getPalette(0)[v + 1];
-				_screen->getPalette(2)[3 * i + 2] = _screen->getPalette(0)[v + 2];
-			}
+	case 400:
+	case 540:
+		if (!((_seqFrameCounter == 400 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 540 && _flags.platform == Common::kPlatformPC)))
 			break;
 
-		case 40:
-			seq_loadNestedSequence(0, kSequenceOver1);
-			break;
+		seq_waitForTextsTimeout();
+		seq_resetActiveWSA(0);
+		_seqEndTime = 0;
+		_seqSubframePlaying = false;
+		break;
 
-		case 60:
-			seq_loadNestedSequence(1, kSequenceOver2);
-			break;
-
-		case 120:
-			seq_playTalkText(0);
-			break;
-
-		case 200:
-			seq_waitForTextsTimeout();
-			_screen->fadePalette(_screen->getPalette(2), 64);
-			break;
-
-		case 201:
-			_screen->setScreenPalette(_screen->getPalette(2));
-			_screen->updateScreen();
-			_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
-			_screen->copyPage(2, 12);
-			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
-			_screen->setScreenPalette(_screen->getPalette(0));
-			_screen->updateScreen();
-			seq_resetActiveWSA(0);
-			seq_resetActiveWSA(1);
-			break;
-
-		case 282:
-			seq_loadNestedSequence(0, kSequenceForest);
-			seq_playTalkText(1);
-			break;
-
-		case 354:
-		case 434:
-			if (!((_seqFrameCounter == 354 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 434 && _flags.platform == Common::kPlatformPC)))
-				break;
-
-			seq_resetActiveWSA(0);
-			seq_loadNestedSequence(0, kSequenceDragon);
-			break;
-
-		case 400:
-		case 540:
-			if (!((_seqFrameCounter == 400 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 540 && _flags.platform == Common::kPlatformPC)))
-				break;
-
-			seq_waitForTextsTimeout();
-			seq_resetActiveWSA(0);
-			_seqEndTime = 0;
-			_seqSubframePlaying = false;
-			break;
-
-		default:
-			break;
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -451,71 +451,71 @@ int KyraEngine_v2::seq_introLibrary(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introLibrary(%p, %i, %i, %i)", (const void*)wsaObj, x, y, frm);
 
 	switch (_seqFrameCounter) {
-		case 0:
-			_seqSubframePlaying = true;
-			_sound->playTrack(5);
+	case 0:
+		_seqSubframePlaying = true;
+		_sound->playTrack(5);
 
-			_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x24, 0, 0, 0, 0x100, false);
-			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
+		_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x24, 0, 0, 0, 0x100, false);
+		_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
 
-			_screen->setTextColorMap(_seqTextColorMap);
+		_screen->setTextColorMap(_seqTextColorMap);
+		break;
+
+	case 1:
+		seq_loadNestedSequence(0, kSequenceLibrary3);
+		seq_playTalkText(4);
+		break;
+
+	case 100:
+		seq_waitForTextsTimeout();
+
+		_screen->copyPage(12, 2);
+		_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+		_screen->updateScreen();
+		_screen->copyPage(2, 12);
+
+		seq_resetActiveWSA(0);
+		seq_loadNestedSequence(0, kSequenceDarm);
+		break;
+
+	case 104:
+		seq_playTalkText(5);
+		break;
+
+	case 240:
+		seq_waitForTextsTimeout();
+		seq_resetActiveWSA(0);
+		seq_loadNestedSequence(0, kSequenceLibrary2);
+		break;
+
+	case 340:
+		seq_resetActiveWSA(0);
+		_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+		_screen->copyPage(2, 12);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+		_screen->updateScreen();
+
+		seq_loadNestedSequence(0, kSequenceMarco);
+		seq_playTalkText(6);
+		break;
+
+	case 480:
+	case 660:
+		if (!((_seqFrameCounter == 480 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 660 && _flags.platform == Common::kPlatformPC)))
 			break;
 
-		case 1:
-			seq_loadNestedSequence(0, kSequenceLibrary3);
-			seq_playTalkText(4);
-			break;
+		_screen->copyPage(2, 12);
+		seq_waitForTextsTimeout();
+		seq_resetActiveWSA(0);
+		_seqEndTime = 0;
+		_seqSubframePlaying = false;
+		break;
 
-		case 100:
-			seq_waitForTextsTimeout();
-
-			_screen->copyPage(12, 2);
-			_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
-			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
-			_screen->updateScreen();
-			_screen->copyPage(2, 12);
-
-			seq_resetActiveWSA(0);
-			seq_loadNestedSequence(0, kSequenceDarm);
-			break;
-
-		case 104:
-			seq_playTalkText(5);
-			break;
-
-		case 240:
-			seq_waitForTextsTimeout();
-			seq_resetActiveWSA(0);
-			seq_loadNestedSequence(0, kSequenceLibrary2);
-			break;
-
-		case 340:
-			seq_resetActiveWSA(0);
-			_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
-			_screen->copyPage(2, 12);
-			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
-			_screen->updateScreen();
-
-			seq_loadNestedSequence(0, kSequenceMarco);
-			seq_playTalkText(6);
-			break;
-
-		case 480:
-		case 660:
-			if (!((_seqFrameCounter == 480 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 660 && _flags.platform == Common::kPlatformPC)))
-				break;
-
-			_screen->copyPage(2, 12);
-			seq_waitForTextsTimeout();
-			seq_resetActiveWSA(0);
-			_seqEndTime = 0;
-			_seqSubframePlaying = false;
-			break;
-
-		default:
-			break;
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -527,80 +527,80 @@ int KyraEngine_v2::seq_introHand(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_introHand(%p, %i, %i, %i)", (const void*)wsaObj, x, y, frm);
 
 	switch (_seqFrameCounter) {
-		case 0:
-			_seqSubframePlaying = true;
-			_sound->playTrack(6);
+	case 0:
+		_seqSubframePlaying = true;
+		_sound->playTrack(6);
 
-			_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x24, 0, 0, 0, 0x100, false);
-			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
+		_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x24, 0, 0, 0, 0x100, false);
+		_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
 
-			_screen->setTextColorMap(_seqTextColorMap);
+		_screen->setTextColorMap(_seqTextColorMap);
+		break;
+
+	case 1:
+		seq_loadNestedSequence(0, kSequenceHand1a);
+		seq_loadNestedSequence(1, kSequenceHand1b);
+		seq_loadNestedSequence(2, kSequenceHand1c);
+		seq_playTalkText(7);
+		break;
+
+	case 201:
+		seq_waitForTextsTimeout();
+		_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
+		_screen->copyPage(2, 12);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+		_screen->updateScreen();
+		seq_resetActiveWSA(0);
+		seq_resetActiveWSA(1);
+		seq_resetActiveWSA(2);
+		seq_loadNestedSequence(0, kSequenceHand2);
+		seq_playTalkText(8);
+		break;
+
+	case 260:
+	case 395:
+		if (!((_seqFrameCounter == 260 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 395 && _flags.platform == Common::kPlatformPC)))
 			break;
 
-		case 1:
-			seq_loadNestedSequence(0, kSequenceHand1a);
-			seq_loadNestedSequence(1, kSequenceHand1b);
-			seq_loadNestedSequence(2, kSequenceHand1c);
-			seq_playTalkText(7);
+		seq_waitForTextsTimeout();
+		seq_resetActiveWSA(0);
+		seq_loadNestedSequence(1, kSequenceHand3);
+		seq_playTalkText(9);
+		break;
+
+	case 365:
+	case 500:
+		if (!((_seqFrameCounter == 365 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 500 && _flags.platform == Common::kPlatformPC)))
 			break;
 
-		case 201:
-			seq_waitForTextsTimeout();
-			_screen->applyOverlay(0, 0, 320, 200, 2, _screen->getPalette(3));
-			_screen->copyPage(2, 12);
-			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
-			_screen->updateScreen();
-			seq_resetActiveWSA(0);
-			seq_resetActiveWSA(1);
-			seq_resetActiveWSA(2);
-			seq_loadNestedSequence(0, kSequenceHand2);
-			seq_playTalkText(8);
+		seq_waitForTextsTimeout();
+		seq_resetActiveWSA(1);
+		seq_loadNestedSequence(0, kSequenceHand4);
+		break;
+
+	case 405:
+	case 540:
+		if (!((_seqFrameCounter == 405 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 540 && _flags.platform == Common::kPlatformPC)))
 			break;
 
-		case 260:
-		case 395:
-			if (!((_seqFrameCounter == 260 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 395 && _flags.platform == Common::kPlatformPC)))
-				break;
+		seq_playTalkText(10);
+		break;
 
-			seq_waitForTextsTimeout();
-			seq_resetActiveWSA(0);
-			seq_loadNestedSequence(1, kSequenceHand3);
-			seq_playTalkText(9);
+	case 484:
+	case 630:
+		if (!((_seqFrameCounter == 484 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 630 && _flags.platform == Common::kPlatformPC)))
 			break;
 
-		case 365:
-		case 500:
-			if (!((_seqFrameCounter == 365 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 500 && _flags.platform == Common::kPlatformPC)))
-				break;
+		seq_waitForTextsTimeout();
+		seq_resetActiveWSA(0);
+		_seqEndTime = 0;
+		_seqSubframePlaying = false;
+		break;
 
-			seq_waitForTextsTimeout();
-			seq_resetActiveWSA(1);
-			seq_loadNestedSequence(0, kSequenceHand4);
-			break;
-
-		case 405:
-		case 540:
-			if (!((_seqFrameCounter == 405 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 540 && _flags.platform == Common::kPlatformPC)))
-				break;
-
-			seq_playTalkText(10);
-			break;
-
-		case 484:
-		case 630:
-			if (!((_seqFrameCounter == 484 && (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) || (_seqFrameCounter == 630 && _flags.platform == Common::kPlatformPC)))
-				break;
-
-			seq_waitForTextsTimeout();
-			seq_resetActiveWSA(0);
-			_seqEndTime = 0;
-			_seqSubframePlaying = false;
-			break;
-
-		default:
-			break;
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -614,26 +614,26 @@ int KyraEngine_v2::seq_introPoint(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	}
 
 	switch (_seqFrameCounter) {
-		case -2:
-			seq_waitForTextsTimeout();
-			break;
+	case -2:
+		seq_waitForTextsTimeout();
+		break;
 
-		case 0:
-			_sound->playTrack(7);
+	case 0:
+		_sound->playTrack(7);
 
-			_seqTextColor[1] = 0xf7;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
-			_screen->setTextColorMap(_seqTextColorMap);
-			_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x24, 0, 0, 0, 0x100, false);
-			break;
+		_seqTextColor[1] = 0xf7;
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
+		_screen->setTextColorMap(_seqTextColorMap);
+		_screen->generateGrayOverlay(_screen->getPalette(0), _screen->getPalette(3), 0x24, 0, 0, 0, 0x100, false);
+		break;
 
-		case 1:
-			seq_playTalkText(11);
-			break;
+	case 1:
+		seq_playTalkText(11);
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -648,81 +648,81 @@ int KyraEngine_v2::seq_introZanfaun(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	}
 
 	switch (_seqFrameCounter) {
-		case 0:
-			_sound->playTrack(8);
+	case 0:
+		_sound->playTrack(8);
 
-			_seqTextColor[1] = 0xfd;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
-			_screen->setTextColorMap(_seqTextColorMap);
-			break;
+		_seqTextColor[1] = 0xfd;
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColorMap[1] = _seqTextColor[0] = _screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 255) & 0xff;
+		_screen->setTextColorMap(_seqTextColorMap);
+		break;
 
-		case 1:
-			if (_flags.isTalkie) {
-				seq_playWsaSyncDialogue(21, 13, -1, 140, 70, 160, wsaObj, 0, 8, x, y);
-			} else {
-				seq_setTextEntry(21, 140, 70, 200, 160);
-				_seqFrameDelay = 200;
-			}
-			break;
+	case 1:
+		if (_flags.isTalkie) {
+			seq_playWsaSyncDialogue(21, 13, -1, 140, 70, 160, wsaObj, 0, 8, x, y);
+		} else {
+			seq_setTextEntry(21, 140, 70, 200, 160);
+			_seqFrameDelay = 200;
+		}
+		break;
 
-		case 2:
-		case 11:
-		case 21:
-			if (!_flags.isTalkie)
-				_seqFrameDelay = 12;
-			break;
+	case 2:
+	case 11:
+	case 21:
+		if (!_flags.isTalkie)
+			_seqFrameDelay = 12;
+		break;
 
-		case 9:
-			if (_flags.isTalkie)
-				seq_playWsaSyncDialogue(13, 14, -1, 140, (_flags.lang == Common::FR_FRA
-					|| _flags.lang == Common::DE_DEU) ? 50 : 70, 160, wsaObj, 9, 15, x, y);
-			break;
+	case 9:
+		if (_flags.isTalkie)
+			seq_playWsaSyncDialogue(13, 14, -1, 140, (_flags.lang == Common::FR_FRA
+				|| _flags.lang == Common::DE_DEU) ? 50 : 70, 160, wsaObj, 9, 15, x, y);
+		break;
 
-		case 10:
-			if (!_flags.isTalkie) {
-				seq_waitForTextsTimeout();
-				seq_setTextEntry(13, 140, 50, _sequenceStringsDuration[13], 160);
-				_seqFrameDelay = 300;
-			}
-			break;
-
-		case 16:
-			if (_flags.isTalkie)
-				seq_playWsaSyncDialogue(18, 15, -1, 140, (_flags.lang == Common::FR_FRA) ? 50 :
-					(_flags.lang == Common::DE_DEU ? 40 : 70), 160, wsaObj, 10, 16, x, y);
-			break;
-
-		case 17:
-			if (_flags.isTalkie)
-				_seqFrameDelay = 12;
-			break;
-
-		case 20:
-			if (!_flags.isTalkie) {
-				seq_waitForTextsTimeout();
-				seq_setTextEntry(18, 160, 50, _sequenceStringsDuration[18], 160);
-				_seqFrameDelay = 200;
-			}
-			break;
-
-		case 26:
+	case 10:
+		if (!_flags.isTalkie) {
 			seq_waitForTextsTimeout();
-			break;
+			seq_setTextEntry(13, 140, 50, _sequenceStringsDuration[13], 160);
+			_seqFrameDelay = 300;
+		}
+		break;
 
-		case 46:
-			if (_flags.isTalkie) {
-				seq_playWsaSyncDialogue(16, 16, -1, 200, 50, 120, wsaObj, 46, 46, x, y);
-			} else {
-				seq_waitForTextsTimeout();
-				seq_setTextEntry(16, 200, 50, _sequenceStringsDuration[16], 120);
-			}
+	case 16:
+		if (_flags.isTalkie)
+			seq_playWsaSyncDialogue(18, 15, -1, 140, (_flags.lang == Common::FR_FRA) ? 50 :
+				(_flags.lang == Common::DE_DEU ? 40 : 70), 160, wsaObj, 10, 16, x, y);
+		break;
 
-			_seqEndTime = _system->getMillis() + 120 * _tickLength;
-			break;
+	case 17:
+		if (_flags.isTalkie)
+			_seqFrameDelay = 12;
+		break;
 
-		default:
-			break;
+	case 20:
+		if (!_flags.isTalkie) {
+			seq_waitForTextsTimeout();
+			seq_setTextEntry(18, 160, 50, _sequenceStringsDuration[18], 160);
+			_seqFrameDelay = 200;
+		}
+		break;
+
+	case 26:
+		seq_waitForTextsTimeout();
+		break;
+
+	case 46:
+		if (_flags.isTalkie) {
+			seq_playWsaSyncDialogue(16, 16, -1, 200, 50, 120, wsaObj, 46, 46, x, y);
+		} else {
+			seq_waitForTextsTimeout();
+			seq_setTextEntry(16, 200, 50, _sequenceStringsDuration[16], 120);
+		}
+
+		_seqEndTime = _system->getMillis() + 120 * _tickLength;
+		break;
+
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -816,74 +816,74 @@ int KyraEngine_v2::seq_finaleFunters(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
-		case -2:
-			seq_sequenceCommand(9);
+	case -2:
+		seq_sequenceCommand(9);
+		break;
+
+	case 0:
+		_sound->playTrack(3);
+
+		_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
+		_screen->setTextColorMap(_seqTextColorMap);
+
+		endtime = _system->getMillis() + 480 * _tickLength;
+		seq_printCreditsString(81, 240, 70, _seqTextColorMap, 252);
+		seq_printCreditsString(82, 240, 90, _seqTextColorMap, _seqTextColor[0]);
+		_screen->copyPage(2, 12);
+		delay(endtime - _system->getMillis());
+		seq_playTalkText(_flags.isTalkie ? 28 : 24);
+		_seqTextColor[0] = 1;
+
+		if (_flags.isTalkie) {
+			chatY = (_flags.lang == Common::FR_FRA) ? 70 : 78;
+			chatFirstFrame = 9;
+			chatLastFrame = 15;
+			voiceIndex = 34;
+		} else {
+			chatY = (_flags.lang == Common::FR_FRA) ? 78 : 70;
+			chatFirstFrame = 0;
+			chatLastFrame = 8;
+		}
+		chatX = (_flags.lang == Common::FR_FRA) ? 84 : 88;
+		chatW = 100;
+
+		seq_playWsaSyncDialogue(22, voiceIndex, 187, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		break;
+
+	case 9:
+	case 16:
+		if (!((frm == 9 && !_flags.isTalkie) || (frm == 16 && _flags.isTalkie)))
 			break;
 
-		case 0:
-			_sound->playTrack(3);
+		_seqFrameDelay = 12;
 
-			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
-			_screen->setTextColorMap(_seqTextColorMap);
-
-			endtime = _system->getMillis() + 480 * _tickLength;
-			seq_printCreditsString(81, 240, 70, _seqTextColorMap, 252);
-			seq_printCreditsString(82, 240, 90, _seqTextColorMap, _seqTextColor[0]);
-			_screen->copyPage(2, 12);
-			delay(endtime - _system->getMillis());
-			seq_playTalkText(_flags.isTalkie ? 28 : 24);
-			_seqTextColor[0] = 1;
-
-			if (_flags.isTalkie) {
-				chatY = (_flags.lang == Common::FR_FRA) ? 70 : 78;
-				chatFirstFrame = 9;
-				chatLastFrame = 15;
-				voiceIndex = 34;
-			} else {
-				chatY = (_flags.lang == Common::FR_FRA) ? 78 : 70;
-				chatFirstFrame = 0;
-				chatLastFrame = 8;
-			}
-			chatX = (_flags.lang == Common::FR_FRA) ? 84 : 88;
+		if (_flags.lang == Common::FR_FRA) {
+			chatX = 80;
+			chatW = 112;
+		} else {
+			chatX = (_flags.lang == Common::DE_DEU) ? 84 : 96;
 			chatW = 100;
+		}
 
-			seq_playWsaSyncDialogue(22, voiceIndex, 187, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
-			break;
+		if (_flags.isTalkie) {
+			chatFirstFrame = 0;
+			chatLastFrame = 8;
+			voiceIndex = 35;
+		} else {
+			chatFirstFrame = 9;
+			chatLastFrame = 15;
+		}
+		chatY = 70;
 
-		case 9:
-		case 16:
-			if (!((frm == 9 && !_flags.isTalkie) || (frm == 16 && _flags.isTalkie)))
-				break;
+		seq_playWsaSyncDialogue(23, voiceIndex, 137, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		if (_flags.isTalkie)
+			_seqWsaCurrentFrame = 17;
+		break;
 
-			_seqFrameDelay = 12;
-
-			if (_flags.lang == Common::FR_FRA) {
-				chatX = 80;
-				chatW = 112;
-			} else {
-				chatX = (_flags.lang == Common::DE_DEU) ? 84 : 96;
-				chatW = 100;
-			}
-
-			if (_flags.isTalkie) {
-				chatFirstFrame = 0;
-				chatLastFrame = 8;
-				voiceIndex = 35;
-			} else {
-				chatFirstFrame = 9;
-				chatLastFrame = 15;
-			}
-			chatY = 70;
-
-			seq_playWsaSyncDialogue(23, voiceIndex, 137, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
-			if (_flags.isTalkie)
-				_seqWsaCurrentFrame = 17;
-			break;
-
-		default:
-			break;
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -900,74 +900,74 @@ int KyraEngine_v2::seq_finaleFerb(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
-		case -2:
-			seq_sequenceCommand(9);
-			endtime = _system->getMillis() + 480 * _tickLength;
-			seq_printCreditsString(34, 240, _flags.isTalkie ? 60 : 40, _seqTextColorMap, 252);
-			seq_printCreditsString(35, 240, _flags.isTalkie ? 70 : 50, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(36, 240, _flags.isTalkie ? 90 : 70, _seqTextColorMap, 252);
-			seq_printCreditsString(37, 240, _flags.isTalkie ? 100 : 90, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(38, 240, _flags.isTalkie ? 120 : 110, _seqTextColorMap, 252);
-			seq_printCreditsString(39, 240, _flags.isTalkie ? 130 : 120, _seqTextColorMap, _seqTextColor[0]);
-			if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
-				seq_printCreditsString(103, 240, 130, _seqTextColorMap, _seqTextColor[0]);
-			delay(endtime - _system->getMillis());
-			_seqEndTime = 0;
-			break;
+	case -2:
+		seq_sequenceCommand(9);
+		endtime = _system->getMillis() + 480 * _tickLength;
+		seq_printCreditsString(34, 240, _flags.isTalkie ? 60 : 40, _seqTextColorMap, 252);
+		seq_printCreditsString(35, 240, _flags.isTalkie ? 70 : 50, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(36, 240, _flags.isTalkie ? 90 : 70, _seqTextColorMap, 252);
+		seq_printCreditsString(37, 240, _flags.isTalkie ? 100 : 90, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(38, 240, _flags.isTalkie ? 120 : 110, _seqTextColorMap, 252);
+		seq_printCreditsString(39, 240, _flags.isTalkie ? 130 : 120, _seqTextColorMap, _seqTextColor[0]);
+		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+			seq_printCreditsString(103, 240, 130, _seqTextColorMap, _seqTextColor[0]);
+		delay(endtime - _system->getMillis());
+		_seqEndTime = 0;
+		break;
 
-		case 0:
-			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColor[0] = _seqTextColorMap[1] = 255;
-			_screen->setTextColorMap(_seqTextColorMap);
-			break;
+	case 0:
+		_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColor[0] = _seqTextColorMap[1] = 255;
+		_screen->setTextColorMap(_seqTextColorMap);
+		break;
 
-		case 5:
-			if (!_flags.isTalkie)
-				seq_playTalkText(18);
-			_seqFrameDelay = 16;
+	case 5:
+		if (!_flags.isTalkie)
+			seq_playTalkText(18);
+		_seqFrameDelay = 16;
 
-			if (_flags.isTalkie) {
-				chatFirstFrame = 5;
-				chatLastFrame = 8;
-				voiceIndex = 22;
-			} else {
-				chatLastFrame = 14;
-			}
-			chatX = 116;
-			chatY = 90;
-			chatW = 60;
+		if (_flags.isTalkie) {
+			chatFirstFrame = 5;
+			chatLastFrame = 8;
+			voiceIndex = 22;
+		} else {
+			chatLastFrame = 14;
+		}
+		chatX = 116;
+		chatY = 90;
+		chatW = 60;
 
-			seq_playWsaSyncDialogue(24, voiceIndex, 149, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
-			break;
+		seq_playWsaSyncDialogue(24, voiceIndex, 149, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		break;
 
-		case 11:
-			if (_flags.isTalkie)
-				seq_playWsaSyncDialogue(24, 22, 149, 116, 90, 60, wsaObj, 11, 14, x, y);
-			break;
+	case 11:
+		if (_flags.isTalkie)
+			seq_playWsaSyncDialogue(24, 22, 149, 116, 90, 60, wsaObj, 11, 14, x, y);
+		break;
 
-		case 16:
-			seq_playTalkText(_flags.isTalkie ? 23 : 19);
-			_seqFrameDelay = _flags.isTalkie ? 20 : 16;
+	case 16:
+		seq_playTalkText(_flags.isTalkie ? 23 : 19);
+		_seqFrameDelay = _flags.isTalkie ? 20 : 16;
 
-			if (_flags.lang == Common::FR_FRA) {
-				chatY = 48;
-				chatW = 88;
-			} else {
-				chatY = 60;
-				chatW = 100;
-			}
-			chatX = 60;
+		if (_flags.lang == Common::FR_FRA) {
+			chatY = 48;
+			chatW = 88;
+		} else {
+			chatY = 60;
+			chatW = 100;
+		}
+		chatX = 60;
 
-			if (_flags.isTalkie)
-				voiceIndex = 36;
+		if (_flags.isTalkie)
+			voiceIndex = 36;
 
-			seq_playWsaSyncDialogue(25, voiceIndex, 143, chatX, chatY, chatW, wsaObj, 16, 25, x, y);
-			_seqFrameDelay = 16;
-			break;
+		seq_playWsaSyncDialogue(25, voiceIndex, 143, chatX, chatY, chatW, wsaObj, 16, 25, x, y);
+		_seqFrameDelay = 16;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -982,69 +982,69 @@ int KyraEngine_v2::seq_finaleFish(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
-		case -2:
-			seq_sequenceCommand(9);
-			endtime = _system->getMillis() + 480 * _tickLength;
+	case -2:
+		seq_sequenceCommand(9);
+		endtime = _system->getMillis() + 480 * _tickLength;
 
-			seq_printCreditsString(40, 240, _flags.isTalkie ? 55 : 40, _seqTextColorMap, 252);
-			seq_printCreditsString(41, 240, _flags.isTalkie ? 65 : 50, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(42, 240, _flags.isTalkie ? 75 : 60, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(43, 240, _flags.isTalkie ? 95 : 80, _seqTextColorMap, 252);
-			seq_printCreditsString(44, 240, _flags.isTalkie ? 105 : 90, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(93, 240, _flags.isTalkie ? 125 : 110, _seqTextColorMap, 252);
-			seq_printCreditsString(94, 240, _flags.isTalkie ? 135 : 120, _seqTextColorMap, _seqTextColor[0]);
-			delay(endtime - _system->getMillis());
-			_seqEndTime = 0;
-			break;
+		seq_printCreditsString(40, 240, _flags.isTalkie ? 55 : 40, _seqTextColorMap, 252);
+		seq_printCreditsString(41, 240, _flags.isTalkie ? 65 : 50, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(42, 240, _flags.isTalkie ? 75 : 60, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(43, 240, _flags.isTalkie ? 95 : 80, _seqTextColorMap, 252);
+		seq_printCreditsString(44, 240, _flags.isTalkie ? 105 : 90, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(93, 240, _flags.isTalkie ? 125 : 110, _seqTextColorMap, 252);
+		seq_printCreditsString(94, 240, _flags.isTalkie ? 135 : 120, _seqTextColorMap, _seqTextColor[0]);
+		delay(endtime - _system->getMillis());
+		_seqEndTime = 0;
+		break;
 
-		case 0:
-			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
-			_screen->setTextColorMap(_seqTextColorMap);
-			break;
+	case 0:
+		_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
+		_screen->setTextColorMap(_seqTextColorMap);
+		break;
 
-		case 4:
-			chatX = 94;
-			chatY = 42;
-			chatW = 100;
-			if (_flags.isTalkie)
-				voiceIndex = 37;
-			seq_playWsaSyncDialogue(26, voiceIndex, 149, chatX, chatY, chatW, wsaObj, 3, 12, x, y);
-			break;
+	case 4:
+		chatX = 94;
+		chatY = 42;
+		chatW = 100;
+		if (_flags.isTalkie)
+			voiceIndex = 37;
+		seq_playWsaSyncDialogue(26, voiceIndex, 149, chatX, chatY, chatW, wsaObj, 3, 12, x, y);
+		break;
 
-		case 14:
-			seq_playTalkText(_flags.isTalkie ? 19 : 15);
-			break;
+	case 14:
+		seq_playTalkText(_flags.isTalkie ? 19 : 15);
+		break;
 
-		case 23:
-			seq_playTalkText(_flags.isTalkie ? 20 : 16);
-			break;
+	case 23:
+		seq_playTalkText(_flags.isTalkie ? 20 : 16);
+		break;
 
-		case 29:
-			chatX = (_flags.lang == Common::DE_DEU) ? 82 : ((_flags.lang == Common::FR_FRA) ? 92 : 88);
-			chatY = 40;
-			chatW = 100;
+	case 29:
+		chatX = (_flags.lang == Common::DE_DEU) ? 82 : ((_flags.lang == Common::FR_FRA) ? 92 : 88);
+		chatY = 40;
+		chatW = 100;
 
-			if (_flags.isTalkie) {
-				if (_flags.lang == Common::DE_DEU)
-					chatY = 35;
-				voiceIndex = 38;
-			}
+		if (_flags.isTalkie) {
+			if (_flags.lang == Common::DE_DEU)
+				chatY = 35;
+			voiceIndex = 38;
+		}
 
-			seq_playWsaSyncDialogue(27, voiceIndex, 187, chatX, chatY, chatW, wsaObj, 28, 34, x, y);
-			break;
+		seq_playWsaSyncDialogue(27, voiceIndex, 187, chatX, chatY, chatW, wsaObj, 28, 34, x, y);
+		break;
 
-		case 45:
-			seq_playTalkText(_flags.isTalkie ? 21 : 17);
-			break;
+	case 45:
+		seq_playTalkText(_flags.isTalkie ? 21 : 17);
+		break;
 
-		case 50:
-			seq_playTalkText(_flags.isTalkie ? 29 : 25);
-			break;
+	case 50:
+		seq_playTalkText(_flags.isTalkie ? 29 : 25);
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -1061,72 +1061,72 @@ int KyraEngine_v2::seq_finaleFheep(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
-		case -2:
-			_screen->copyPage(12, 2);
-			_screen->copyPage(2, 0);
-			_screen->updateScreen();
-			seq_sequenceCommand(9);
-			endtime = _system->getMillis() + 480 * _tickLength;
-			seq_printCreditsString(49, 240, 20, _seqTextColorMap, 252);
-			seq_printCreditsString(50, 240, 30, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(51, 240, 40, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(52, 240, 50, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(53, 240, 60, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(54, 240, 70, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(55, 240, 80, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(56, 240, 90, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(57, 240, 100, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(58, 240, 110, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(60, 240, 120, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(61, 240, 130, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(62, 240, 140, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(63, 240, 150, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(64, 240, 160, _seqTextColorMap, _seqTextColor[0]);
+	case -2:
+		_screen->copyPage(12, 2);
+		_screen->copyPage(2, 0);
+		_screen->updateScreen();
+		seq_sequenceCommand(9);
+		endtime = _system->getMillis() + 480 * _tickLength;
+		seq_printCreditsString(49, 240, 20, _seqTextColorMap, 252);
+		seq_printCreditsString(50, 240, 30, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(51, 240, 40, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(52, 240, 50, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(53, 240, 60, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(54, 240, 70, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(55, 240, 80, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(56, 240, 90, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(57, 240, 100, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(58, 240, 110, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(60, 240, 120, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(61, 240, 130, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(62, 240, 140, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(63, 240, 150, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(64, 240, 160, _seqTextColorMap, _seqTextColor[0]);
 
-			delay(endtime - _system->getMillis());
-			_seqEndTime = 0;
-			break;
+		delay(endtime - _system->getMillis());
+		_seqEndTime = 0;
+		break;
 
-		case 0:
-			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
-			_screen->setTextColorMap(_seqTextColorMap);
-			break;
+	case 0:
+		_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
+		_screen->setTextColorMap(_seqTextColorMap);
+		break;
 
-		case 2:
-			seq_playTalkText(_flags.isTalkie ? 25 : 21);
+	case 2:
+		seq_playTalkText(_flags.isTalkie ? 25 : 21);
 
-			if (_flags.lang == Common::FR_FRA) {
-				chatX = 92;
-				chatY = 72;
-			} else {
-				chatX = (_flags.lang == Common::DE_DEU) ? 90 : 98;
-				chatY = 84;
-			}
+		if (_flags.lang == Common::FR_FRA) {
+			chatX = 92;
+			chatY = 72;
+		} else {
+			chatX = (_flags.lang == Common::DE_DEU) ? 90 : 98;
+			chatY = 84;
+		}
 
-			if (_flags.isTalkie) {
-				chatFirstFrame = 8;
-				chatLastFrame = 9;
-				voiceIndex = 39;
-			} else {
-				chatFirstFrame = 2;
-				chatLastFrame = -8;
-			}
-			chatW = 100;
+		if (_flags.isTalkie) {
+			chatFirstFrame = 8;
+			chatLastFrame = 9;
+			voiceIndex = 39;
+		} else {
+			chatFirstFrame = 2;
+			chatLastFrame = -8;
+		}
+		chatW = 100;
 
-			seq_playWsaSyncDialogue(28, voiceIndex, -1, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
-			if (_flags.isTalkie)
-				_seqWsaCurrentFrame = 4;
-			break;
+		seq_playWsaSyncDialogue(28, voiceIndex, -1, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		if (_flags.isTalkie)
+			_seqWsaCurrentFrame = 4;
+		break;
 
-		case 9:
-			seq_playTalkText(_flags.isTalkie ? 24 : 20);
-			_seqFrameDelay = 100;
-			break;
+	case 9:
+		seq_playTalkText(_flags.isTalkie ? 24 : 20);
+		_seqFrameDelay = 100;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -1141,62 +1141,62 @@ int KyraEngine_v2::seq_finaleFarmer(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
-		case -2:
-			_screen->copyPage(12, 2);
-			_screen->copyPage(2, 0);
-			_screen->updateScreen();
-			seq_sequenceCommand(9);
-			endtime = _system->getMillis() + 480 * _tickLength;
-			seq_printCreditsString(45, 240, 40, _seqTextColorMap, 252);
-			seq_printCreditsString(46, 240, 50, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(47, 240, 60, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(83, 240, 80, _seqTextColorMap, 252);
-			seq_printCreditsString(48, 240, 90, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(65, 240, 110, _seqTextColorMap, 252);
-			seq_printCreditsString(66, 240, 120, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(67, 240, 130, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(68, 240, 140, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(69, 240, 150, _seqTextColorMap, _seqTextColor[0]);
-			if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
-				seq_printCreditsString(104, 240, 160, _seqTextColorMap, _seqTextColor[0]);
-			delay(endtime - _system->getMillis());
-			_seqEndTime = 0;
-			break;
+	case -2:
+		_screen->copyPage(12, 2);
+		_screen->copyPage(2, 0);
+		_screen->updateScreen();
+		seq_sequenceCommand(9);
+		endtime = _system->getMillis() + 480 * _tickLength;
+		seq_printCreditsString(45, 240, 40, _seqTextColorMap, 252);
+		seq_printCreditsString(46, 240, 50, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(47, 240, 60, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(83, 240, 80, _seqTextColorMap, 252);
+		seq_printCreditsString(48, 240, 90, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(65, 240, 110, _seqTextColorMap, 252);
+		seq_printCreditsString(66, 240, 120, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(67, 240, 130, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(68, 240, 140, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(69, 240, 150, _seqTextColorMap, _seqTextColor[0]);
+		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+			seq_printCreditsString(104, 240, 160, _seqTextColorMap, _seqTextColor[0]);
+		delay(endtime - _system->getMillis());
+		_seqEndTime = 0;
+		break;
 
-		case 0:
-			_seqTextColor[1] = 1 + (_screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 254) & 0xff);
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColorMap[1] = _seqTextColor[0] = 1 + (_screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 254) & 0xff);
-			_screen->setTextColorMap(_seqTextColorMap);
-			seq_playTalkText(_flags.isTalkie ? 30 : 26);
-			break;
+	case 0:
+		_seqTextColor[1] = 1 + (_screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 254) & 0xff);
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColorMap[1] = _seqTextColor[0] = 1 + (_screen->findLeastDifferentColor(_seqTextColorPresets + 3, _screen->getPalette(0) + 3, 254) & 0xff);
+		_screen->setTextColorMap(_seqTextColorMap);
+		seq_playTalkText(_flags.isTalkie ? 30 : 26);
+		break;
 
-		case 6:
-			if (_flags.isTalkie)
-				seq_playTalkText(18);
-			break;
+	case 6:
+		if (_flags.isTalkie)
+			seq_playTalkText(18);
+		break;
 
-		case 12:
-			if (!_flags.isTalkie)
-				seq_playTalkText(14);
+	case 12:
+		if (!_flags.isTalkie)
+			seq_playTalkText(14);
 
-			chatX = 90;
-			chatY = 30;
-			chatW = 100;
+		chatX = 90;
+		chatY = 30;
+		chatW = 100;
 
-			if (_flags.isTalkie) {
-				if (_flags.lang == Common::FR_FRA || _flags.lang == Common::DE_DEU) {
-					chatX = 75;
-					chatY = 25;
-				}
-				voiceIndex = 40;
+		if (_flags.isTalkie) {
+			if (_flags.lang == Common::FR_FRA || _flags.lang == Common::DE_DEU) {
+				chatX = 75;
+				chatY = 25;
 			}
+			voiceIndex = 40;
+		}
 
-			seq_playWsaSyncDialogue(29, voiceIndex, 150, chatX, chatY, chatW, wsaObj, 12, -21, x, y);
-			break;
+		seq_playWsaSyncDialogue(29, voiceIndex, 150, chatX, chatY, chatW, wsaObj, 12, -21, x, y);
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -1215,88 +1215,88 @@ int KyraEngine_v2::seq_finaleFuards(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
-		case -2:
-			seq_sequenceCommand(9);
-			endtime = _system->getMillis() + 480 * _tickLength;
-			seq_printCreditsString(70, 240, 20, _seqTextColorMap, 252);
-			seq_printCreditsString(71, 240, 30, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(72, 240, 40, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(73, 240, 50, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(74, 240, 60, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(75, 240, 70, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(101, 240, 80, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(102, 240, 90, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(87, 240, 100, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(88, 240, 110, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(89, 240, 120, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(90, 240, 130, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(91, 240, 140, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(92, 240, 150, _seqTextColorMap, _seqTextColor[0]);
-			delay(endtime - _system->getMillis());
-			_seqEndTime = 0;
-			break;
+	case -2:
+		seq_sequenceCommand(9);
+		endtime = _system->getMillis() + 480 * _tickLength;
+		seq_printCreditsString(70, 240, 20, _seqTextColorMap, 252);
+		seq_printCreditsString(71, 240, 30, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(72, 240, 40, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(73, 240, 50, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(74, 240, 60, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(75, 240, 70, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(101, 240, 80, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(102, 240, 90, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(87, 240, 100, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(88, 240, 110, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(89, 240, 120, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(90, 240, 130, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(91, 240, 140, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(92, 240, 150, _seqTextColorMap, _seqTextColor[0]);
+		delay(endtime - _system->getMillis());
+		_seqEndTime = 0;
+		break;
 
-		case 0:
-			for (int i = 0; i < 0x300; i++)
-				_screen->getPalette(0)[i] &= 0x3f;
-			_seqTextColor[1] = 0xCf;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColor[0] = _seqTextColorMap[1] = 0xfe;
+	case 0:
+		for (int i = 0; i < 0x300; i++)
+			_screen->getPalette(0)[i] &= 0x3f;
+		_seqTextColor[1] = 0xCf;
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColor[0] = _seqTextColorMap[1] = 0xfe;
 
-			_screen->setTextColorMap(_seqTextColorMap);
-			break;
+		_screen->setTextColorMap(_seqTextColorMap);
+		break;
 
-		case 6:
-			_seqFrameDelay = 20;
+	case 6:
+		_seqFrameDelay = 20;
 
-			if (_flags.isTalkie) {
-				chatX = 82;
-				textCol = 143;
-				chatFirstFrame = 16;
-				chatLastFrame = 21;
-				voiceIndex = 41;
-			} else {
-				chatX = 62;
-				textCol = 137;
-				chatFirstFrame = 9;
-				chatLastFrame = 13;
-			}
-			chatY = (_flags.lang == Common::FR_FRA || _flags.lang == Common::DE_DEU) ? 88 :100;
-			chatW = 80;
+		if (_flags.isTalkie) {
+			chatX = 82;
+			textCol = 143;
+			chatFirstFrame = 16;
+			chatLastFrame = 21;
+			voiceIndex = 41;
+		} else {
+			chatX = 62;
+			textCol = 137;
+			chatFirstFrame = 9;
+			chatLastFrame = 13;
+		}
+		chatY = (_flags.lang == Common::FR_FRA || _flags.lang == Common::DE_DEU) ? 88 :100;
+		chatW = 80;
 
-			seq_playWsaSyncDialogue(30, voiceIndex, 137, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
-			if (_flags.isTalkie)
-				_seqWsaCurrentFrame = 8;
-			break;
+		seq_playWsaSyncDialogue(30, voiceIndex, 137, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		if (_flags.isTalkie)
+			_seqWsaCurrentFrame = 8;
+		break;
 
-		case 9:
-		case 16:
-			if (_flags.isTalkie) {
-				if (frm == 16)
-					break;
-				chatX = 64;
-				textCol = 137;
-				chatFirstFrame = 9;
-				chatLastFrame = 13;
-				voiceIndex = 42;
-			} else {
-				if (frm == 9)
-					break;
-				chatX = 80;
-				textCol = 143;
-				chatFirstFrame = 16;
-				chatLastFrame = 21;
-			}
-			chatY = 100;
-			chatW = 100;
+	case 9:
+	case 16:
+		if (_flags.isTalkie) {
+			if (frm == 16)
+				break;
+			chatX = 64;
+			textCol = 137;
+			chatFirstFrame = 9;
+			chatLastFrame = 13;
+			voiceIndex = 42;
+		} else {
+			if (frm == 9)
+				break;
+			chatX = 80;
+			textCol = 143;
+			chatFirstFrame = 16;
+			chatLastFrame = 21;
+		}
+		chatY = 100;
+		chatW = 100;
 
-			seq_playWsaSyncDialogue(31, voiceIndex, 143, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
-			if (_flags.isTalkie)
-				_seqWsaCurrentFrame = 21;
-			break;
+		seq_playWsaSyncDialogue(31, voiceIndex, 143, chatX, chatY, chatW, wsaObj, chatFirstFrame, chatLastFrame, x, y);
+		if (_flags.isTalkie)
+			_seqWsaCurrentFrame = 21;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -1311,84 +1311,84 @@ int KyraEngine_v2::seq_finaleFirates(WSAMovieV2 *wsaObj, int x, int y, int frm) 
 	uint16 voiceIndex = 0;
 
 	switch (frm) {
-		case -2:
-			_screen->copyPage(12, 2);
-			_screen->copyPage(2, 0);
-			_screen->updateScreen();
-			seq_sequenceCommand(9);
-			endtime = _system->getMillis() + 480 * _tickLength;
-			seq_printCreditsString(76, 240, 40, _seqTextColorMap, 252);
-			seq_printCreditsString(77, 240, 50, _seqTextColorMap, 252);
-			seq_printCreditsString(78, 240, 60, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(79, 240, 70, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(80, 240, 80, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(84, 240, 100, _seqTextColorMap, 252);
-			seq_printCreditsString(85, 240, 110, _seqTextColorMap, _seqTextColor[0]);
-			seq_printCreditsString(99, 240, 130, _seqTextColorMap, 252);
-			seq_printCreditsString(100, 240, 140, _seqTextColorMap, _seqTextColor[0]);
-			delay(endtime - _system->getMillis());
-			_seqEndTime = 0;
+	case -2:
+		_screen->copyPage(12, 2);
+		_screen->copyPage(2, 0);
+		_screen->updateScreen();
+		seq_sequenceCommand(9);
+		endtime = _system->getMillis() + 480 * _tickLength;
+		seq_printCreditsString(76, 240, 40, _seqTextColorMap, 252);
+		seq_printCreditsString(77, 240, 50, _seqTextColorMap, 252);
+		seq_printCreditsString(78, 240, 60, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(79, 240, 70, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(80, 240, 80, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(84, 240, 100, _seqTextColorMap, 252);
+		seq_printCreditsString(85, 240, 110, _seqTextColorMap, _seqTextColor[0]);
+		seq_printCreditsString(99, 240, 130, _seqTextColorMap, 252);
+		seq_printCreditsString(100, 240, 140, _seqTextColorMap, _seqTextColor[0]);
+		delay(endtime - _system->getMillis());
+		_seqEndTime = 0;
+		break;
+
+	case 0:
+		_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+		memset(_seqTextColorMap, _seqTextColor[1], 16);
+		_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
+		_screen->setTextColorMap(_seqTextColorMap);
+		break;
+
+	case 6:
+		seq_playTalkText(_flags.isTalkie ? 31 : 27);
+		break;
+
+	case 14:
+	case 15:
+		if (!((frm == 15 && !_flags.isTalkie) || (frm == 14 && _flags.isTalkie)))
 			break;
 
-		case 0:
-			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
-			memset(_seqTextColorMap, _seqTextColor[1], 16);
-			_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
-			_screen->setTextColorMap(_seqTextColorMap);
-			break;
+		seq_playTalkText(_flags.isTalkie ? 31 : 27);
 
-		case 6:
-			seq_playTalkText(_flags.isTalkie ? 31 : 27);
-			break;
-
-		case 14:
-		case 15:
-			if (!((frm == 15 && !_flags.isTalkie) || (frm == 14 && _flags.isTalkie)))
-				break;
-
-			seq_playTalkText(_flags.isTalkie ? 31 : 27);
-
-			if (_flags.lang == Common::DE_DEU) {
-				chatX = 82;
-				chatY = 84;
-				chatW = 140;
-			} else {
-				chatX = 74;
-				chatY = (_flags.lang == Common::FR_FRA) ? 96: 108;
-				chatW = 80;
-			}
-
-			if (_flags.isTalkie)
-				voiceIndex = 43;
-
-			seq_playWsaSyncDialogue(32, voiceIndex, 137, chatX, chatY, chatW, wsaObj, 14, 16, x, y);
-			break;
-
-		case 28:
-			seq_playTalkText(_flags.isTalkie ? 32 : 28);
-			break;
-
-		case 29:
-			seq_playTalkText(_flags.isTalkie ? 33 : 29);
-			break;
-
-		case 31:
-			if (_flags.isTalkie)
-				voiceIndex = 44;
-
-			chatX = 90;
-			chatY = (_flags.lang == Common::DE_DEU) ? 60 : 76;
+		if (_flags.lang == Common::DE_DEU) {
+			chatX = 82;
+			chatY = 84;
+			chatW = 140;
+		} else {
+			chatX = 74;
+			chatY = (_flags.lang == Common::FR_FRA) ? 96: 108;
 			chatW = 80;
+		}
 
-			seq_playWsaSyncDialogue(33, voiceIndex, 143, chatX, chatY, chatW, wsaObj, 31, 34, x, y);
-			break;
+		if (_flags.isTalkie)
+			voiceIndex = 43;
 
-		case 35:
-			_seqFrameDelay = 300;
-			break;
+		seq_playWsaSyncDialogue(32, voiceIndex, 137, chatX, chatY, chatW, wsaObj, 14, 16, x, y);
+		break;
 
-		default:
-			break;
+	case 28:
+		seq_playTalkText(_flags.isTalkie ? 32 : 28);
+		break;
+
+	case 29:
+		seq_playTalkText(_flags.isTalkie ? 33 : 29);
+		break;
+
+	case 31:
+		if (_flags.isTalkie)
+			voiceIndex = 44;
+
+		chatX = 90;
+		chatY = (_flags.lang == Common::DE_DEU) ? 60 : 76;
+		chatW = 80;
+
+		seq_playWsaSyncDialogue(33, voiceIndex, 143, chatX, chatY, chatW, wsaObj, 31, 34, x, y);
+		break;
+
+	case 35:
+		_seqFrameDelay = 300;
+		break;
+
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -1399,90 +1399,90 @@ int KyraEngine_v2::seq_finaleFrash(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	int tmp = 0;
 
 	switch (frm) {
-		case -2:
-			_screen->setCurPage(2);
-			_screen->clearCurPage();
-			_screen->copyPage(2, 12);
-			_screen->copyPage(2, 0);
-			_screen->updateScreen();
-			_seqFrameCounter = 0;
-			seq_loadNestedSequence(0, kSequenceFiggle);
-			break;
+	case -2:
+		_screen->setCurPage(2);
+		_screen->clearCurPage();
+		_screen->copyPage(2, 12);
+		_screen->copyPage(2, 0);
+		_screen->updateScreen();
+		_seqFrameCounter = 0;
+		seq_loadNestedSequence(0, kSequenceFiggle);
+		break;
 
-		case -1:
-			if (_flags.isTalkie)
-				 seq_finaleActorScreen();
-			_seqSpecialFlag = _flags.isTalkie;
-			break;
+	case -1:
+		if (_flags.isTalkie)
+			 seq_finaleActorScreen();
+		_seqSpecialFlag = _flags.isTalkie;
+		break;
 
-		case 0:
-			if (_seqFrameCounter == 1) {
-				_sound->playTrack(4);
-				_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
-				memset(_seqTextColorMap, _seqTextColor[1], 16);
-				_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
-				_screen->setTextColorMap(_seqTextColorMap);
-			}
-			_seqFrameDelay = 10;
-			break;
+	case 0:
+		if (_seqFrameCounter == 1) {
+			_sound->playTrack(4);
+			_seqTextColor[1] = _screen->findLeastDifferentColor(_seqTextColorPresets, _screen->getPalette(0) + 3, 255) & 0xff;
+			memset(_seqTextColorMap, _seqTextColor[1], 16);
+			_seqTextColor[0] = _seqTextColorMap[1] = 0xff;
+			_screen->setTextColorMap(_seqTextColorMap);
+		}
+		_seqFrameDelay = 10;
+		break;
 
-		case 1:
-			if (_seqFrameCounter < 20 && _seqSpecialFlag) {
-				_seqWsaCurrentFrame = 0;
-			} else {
-				_seqFrameDelay = _flags.isTalkie ? 500 : (300 + _rnd.getRandomNumberRng(1, 300));
-				seq_playTalkText(_flags.isTalkie ? 26 : 22);
-				if (_seqSpecialFlag) {
-					_seqFrameCounter = 3;
-					_seqSpecialFlag = false;
-				}
-			}
-			break;
-
-		case 2:
-			_seqFrameDelay = 20;
-			break;
-
-		case 3:
-			seq_playTalkText(_flags.isTalkie ? 27 : 23);
+	case 1:
+		if (_seqFrameCounter < 20 && _seqSpecialFlag) {
+			_seqWsaCurrentFrame = 0;
+		} else {
 			_seqFrameDelay = _flags.isTalkie ? 500 : (300 + _rnd.getRandomNumberRng(1, 300));
-			break;
-
-		case 4:
-			_seqFrameDelay = 10;
-			break;
-
-		case 5:
-			seq_playTalkText(_flags.isTalkie ? 27 : 23);
-			tmp = _seqFrameCounter / 6;
-			if (tmp == 2)
-				_seqFrameDelay = _flags.isTalkie ? 7 : (1 + _rnd.getRandomNumberRng(1, 10));
-			else if (tmp < 2)
-				_seqFrameDelay = _flags.isTalkie ? 500 : (300 + _rnd.getRandomNumberRng(1, 300));
-			break;
-
-		case 6:
-			_seqFrameDelay = 10;
-			tmp = _seqFrameCounter / 6;
-			if (tmp == 2)
-				_seqWsaCurrentFrame = 4;
-			else if (tmp < 2)
-				_seqWsaCurrentFrame = 0;
-			break;
-
-		case 7:
-			_seqFrameCounter = 0;
-			_seqFrameDelay = 5;
 			seq_playTalkText(_flags.isTalkie ? 26 : 22);
-			break;
+			if (_seqSpecialFlag) {
+				_seqFrameCounter = 3;
+				_seqSpecialFlag = false;
+			}
+		}
+		break;
 
-		case 11:
-			if (_seqFrameCounter < 8)
-				_seqWsaCurrentFrame = 8;
-			break;
+	case 2:
+		_seqFrameDelay = 20;
+		break;
 
-		default:
-			break;
+	case 3:
+		seq_playTalkText(_flags.isTalkie ? 27 : 23);
+		_seqFrameDelay = _flags.isTalkie ? 500 : (300 + _rnd.getRandomNumberRng(1, 300));
+		break;
+
+	case 4:
+		_seqFrameDelay = 10;
+		break;
+
+	case 5:
+		seq_playTalkText(_flags.isTalkie ? 27 : 23);
+		tmp = _seqFrameCounter / 6;
+		if (tmp == 2)
+			_seqFrameDelay = _flags.isTalkie ? 7 : (1 + _rnd.getRandomNumberRng(1, 10));
+		else if (tmp < 2)
+			_seqFrameDelay = _flags.isTalkie ? 500 : (300 + _rnd.getRandomNumberRng(1, 300));
+		break;
+
+	case 6:
+		_seqFrameDelay = 10;
+		tmp = _seqFrameCounter / 6;
+		if (tmp == 2)
+			_seqWsaCurrentFrame = 4;
+		else if (tmp < 2)
+			_seqWsaCurrentFrame = 0;
+		break;
+
+	case 7:
+		_seqFrameCounter = 0;
+		_seqFrameDelay = 5;
+		seq_playTalkText(_flags.isTalkie ? 26 : 22);
+		break;
+
+	case 11:
+		if (_seqFrameCounter < 8)
+			_seqWsaCurrentFrame = 8;
+		break;
+
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -1577,40 +1577,40 @@ int KyraEngine_v2::seq_demoHill(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 int KyraEngine_v2::seq_demoOuthome(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	switch (frm) {
-		case 12:
-			seq_playTalkText(4);
-			break;
+	case 12:
+		seq_playTalkText(4);
+		break;
 
-		case 32:
-			seq_playTalkText(7);
-			break;
+	case 32:
+		seq_playTalkText(7);
+		break;
 
-		case 36:
-			seq_playTalkText(10);
-			break;
+	case 36:
+		seq_playTalkText(10);
+		break;
 
-		case 57:
-			seq_playTalkText(9);
-			break;
+	case 57:
+		seq_playTalkText(9);
+		break;
 
-		case 80:
-		case 96:
-		case 149:
-			_seqFrameDelay = 70;
-			break;
+	case 80:
+	case 96:
+	case 149:
+		_seqFrameDelay = 70;
+		break;
 
-		case 81:
-		case 97:
-			_seqFrameDelay = 5;
-			break;
+	case 81:
+	case 97:
+		_seqFrameDelay = 5;
+		break;
 
-		case 110:
-			seq_playTalkText(5);
-			break;
+	case 110:
+		seq_playTalkText(5);
+		break;
 
-		case 137:
-			seq_playTalkText(6);
-			break;
+	case 137:
+		seq_playTalkText(6);
+		break;
 	}
 
 	return 0;
@@ -1621,36 +1621,36 @@ int KyraEngine_v2::seq_demoWharf(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 		seq_loadNestedSequence(0, kSequenceDemoWharf2);
 
 	switch (frm) {
-		case 0:
-			seq_playTalkText(11);
-			break;
+	case 0:
+		seq_playTalkText(11);
+		break;
 
-		case 5:
-			if ((_seqFrameCounter / 8) <= 2 || _activeWSA[0].flags != -1)
-				_seqWsaCurrentFrame = 0;
-			else
-				seq_resetActiveWSA(0);
-			break;
-
-		case 6:
+	case 5:
+		if ((_seqFrameCounter / 8) <= 2 || _activeWSA[0].flags != -1)
+			_seqWsaCurrentFrame = 0;
+		else
 			seq_resetActiveWSA(0);
-			break;
+		break;
 
-		case 8:
-		case 10:
-			seq_playTalkText(2);
-			break;
+	case 6:
+		seq_resetActiveWSA(0);
+		break;
 
-		case 13:
-			seq_playTalkText(7);
-			break;
+	case 8:
+	case 10:
+		seq_playTalkText(2);
+		break;
 
-		case 16:
-			seq_playTalkText(12);
-			break;
+	case 13:
+		seq_playTalkText(7);
+		break;
 
-		default:
-			break;
+	case 16:
+		seq_playTalkText(12);
+		break;
+
+	default:
+		break;
 	}
 
 	_seqFrameCounter++;
@@ -1729,29 +1729,29 @@ int KyraEngine_v2::seq_demoWharf2(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 
 int KyraEngine_v2::seq_demoDinob2(WSAMovieV2 *wsaObj, int x, int y, int frm) {
 	switch (frm) {
-		case 19:
-			seq_playTalkText(13);
-			break;
+	case 19:
+		seq_playTalkText(13);
+		break;
 
-		case 54:
-			seq_playTalkText(15);
-			break;
+	case 54:
+		seq_playTalkText(15);
+		break;
 
-		case 61:
-			seq_playTalkText(16);
-			break;
+	case 61:
+		seq_playTalkText(16);
+		break;
 
-		case 69:
-			seq_playTalkText(14);
-			break;
+	case 69:
+		seq_playTalkText(14);
+		break;
 
-		case 77:
-			seq_playTalkText(13);
-			break;
+	case 77:
+		seq_playTalkText(13);
+		break;
 
-		case 79:
-			_seqWsaCurrentFrame = 4;
-			break;
+	case 79:
+		_seqWsaCurrentFrame = 4;
+		break;
 	}
 
 	return frm;
@@ -1865,75 +1865,75 @@ void KyraEngine_v2::seq_sequenceCommand(int command) {
 		seq_resetActiveWSA(i);
 
 	switch (command) {
-		case 0:
-			memset(pal, 0, 0x300);
-			_screen->fadePalette(pal, 16);
-			memcpy (_screen->getPalette(0), pal, 0x300);
-			memcpy (_screen->getPalette(1), pal, 0x300);
-			break;
+	case 0:
+		memset(pal, 0, 0x300);
+		_screen->fadePalette(pal, 16);
+		memcpy (_screen->getPalette(0), pal, 0x300);
+		memcpy (_screen->getPalette(1), pal, 0x300);
+		break;
 
-		case 1:
-			memset(pal, 0x3F, 0x300);
-			//////////XXX
-			//////////Unused anyway (at least by fm-towns intro/outro)
+	case 1:
+		memset(pal, 0x3F, 0x300);
+		//////////XXX
+		//////////Unused anyway (at least by fm-towns intro/outro)
 
-			_screen->fadePalette(pal, 16);
-			memcpy (_screen->getPalette(0), pal, 0x300);
-			memcpy (_screen->getPalette(1), pal, 0x300);
-			break;
+		_screen->fadePalette(pal, 16);
+		memcpy (_screen->getPalette(0), pal, 0x300);
+		memcpy (_screen->getPalette(1), pal, 0x300);
+		break;
 
-		case 3:
-			_screen->copyPage(2, 0);
-			_screen->fadePalette(_screen->getPalette(0), 16);
-			memcpy (_screen->getPalette(1), _screen->getPalette(0), 0x300);
-			break;
+	case 3:
+		_screen->copyPage(2, 0);
+		_screen->fadePalette(_screen->getPalette(0), 16);
+		memcpy (_screen->getPalette(1), _screen->getPalette(0), 0x300);
+		break;
 
-		case 4:
-			_screen->copyPage(2, 0);
-			_screen->fadePalette(_screen->getPalette(0), 36);
-			memcpy (_screen->getPalette(1), _screen->getPalette(0), 0x300);
-			break;
+	case 4:
+		_screen->copyPage(2, 0);
+		_screen->fadePalette(_screen->getPalette(0), 36);
+		memcpy (_screen->getPalette(1), _screen->getPalette(0), 0x300);
+		break;
 
-		case 5:
-			_screen->copyPage(2, 0);
-			break;
+	case 5:
+		_screen->copyPage(2, 0);
+		break;
 
-		case 6:
-			// UNUSED
-			// seq_loadBLD("library.bld");
-			break;
+	case 6:
+		// UNUSED
+		// seq_loadBLD("library.bld");
+		break;
 
-		case 7:
-			// UNUSED
-			// seq_loadBLD("marco.bld");
-			break;
+	case 7:
+		// UNUSED
+		// seq_loadBLD("marco.bld");
+		break;
 
-		case 8:
-			memset(pal, 0, 0x300);
-			_screen->fadePalette(pal, 16);
-			memcpy (_screen->getPalette(0), pal, 0x300);
-			memcpy (_screen->getPalette(1), pal, 0x300);
+	case 8:
+		memset(pal, 0, 0x300);
+		_screen->fadePalette(pal, 16);
+		memcpy (_screen->getPalette(0), pal, 0x300);
+		memcpy (_screen->getPalette(1), pal, 0x300);
 
-			delay(120 * _tickLength);
-			break;
+		delay(120 * _tickLength);
+		break;
 
-		case 9:
-			for (int i = 0; i < 0x100; i++) {
-				int pv = (_screen->getPalette(0)[3 * i] + _screen->getPalette(0)[3 * i + 1] + _screen->getPalette(0)[3 * i + 2]) / 3;
-				pal[3 * i] = pal[3 * i + 1] = pal[3 * i + 2] = pv & 0xff;
-			}
+	case 9:
+		for (int i = 0; i < 0x100; i++) {
+			int pv = (_screen->getPalette(0)[3 * i] + _screen->getPalette(0)[3 * i + 1] + _screen->getPalette(0)[3 * i + 2]) / 3;
+			pal[3 * i] = pal[3 * i + 1] = pal[3 * i + 2] = pv & 0xff;
+		}
 
-			//int a = 0x100;
-			//int d = (0x800 << 5) - 0x100;
-			//pal[3 * i] = pal[3 * i + 1] = pal[3 * i + 2] = 0x3f;
+		//int a = 0x100;
+		//int d = (0x800 << 5) - 0x100;
+		//pal[3 * i] = pal[3 * i + 1] = pal[3 * i + 2] = 0x3f;
 
-			_screen->fadePalette(pal, 64);
-			memcpy (_screen->getPalette(0), pal, 0x300);
-			memcpy (_screen->getPalette(1), pal, 0x300);
-			break;
+		_screen->fadePalette(pal, 64);
+		memcpy (_screen->getPalette(0), pal, 0x300);
+		memcpy (_screen->getPalette(1), pal, 0x300);
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 }
 
@@ -2071,68 +2071,68 @@ void KyraEngine_v2::seq_nestedSequenceFrame(int command, int wsaNum) {
 		return;
 
 	switch (command) {
-		case 0:
-			_activeWSA[wsaNum].movie->setDrawPage(8);
-			xa = -_activeWSA[wsaNum].movie->xAdd();
-			ya = -_activeWSA[wsaNum].movie->yAdd();
-			_activeWSA[wsaNum].movie->setX(xa);
-			_activeWSA[wsaNum].movie->setY(ya);
-			_activeWSA[wsaNum].movie->displayFrame(0, 0);
-			_activeWSA[wsaNum].movie->setX(0);
-			_activeWSA[wsaNum].movie->setY(0);
-			seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
-								_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 1, 2);
-			break;
+	case 0:
+		_activeWSA[wsaNum].movie->setDrawPage(8);
+		xa = -_activeWSA[wsaNum].movie->xAdd();
+		ya = -_activeWSA[wsaNum].movie->yAdd();
+		_activeWSA[wsaNum].movie->setX(xa);
+		_activeWSA[wsaNum].movie->setY(ya);
+		_activeWSA[wsaNum].movie->displayFrame(0, 0);
+		_activeWSA[wsaNum].movie->setX(0);
+		_activeWSA[wsaNum].movie->setY(0);
+		seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
+							_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 1, 2);
+		break;
 
-		case 1:
-			_activeWSA[wsaNum].movie->setDrawPage(8);
-			xa = -_activeWSA[wsaNum].movie->xAdd();
-			ya = -_activeWSA[wsaNum].movie->yAdd();
-			_activeWSA[wsaNum].movie->setX(xa);
-			_activeWSA[wsaNum].movie->setY(ya);
-			_activeWSA[wsaNum].movie->displayFrame(0, 0);
-			_activeWSA[wsaNum].movie->setX(0);
-			_activeWSA[wsaNum].movie->setY(0);
-			seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
-								_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 1, 1);
-			break;
+	case 1:
+		_activeWSA[wsaNum].movie->setDrawPage(8);
+		xa = -_activeWSA[wsaNum].movie->xAdd();
+		ya = -_activeWSA[wsaNum].movie->yAdd();
+		_activeWSA[wsaNum].movie->setX(xa);
+		_activeWSA[wsaNum].movie->setY(ya);
+		_activeWSA[wsaNum].movie->displayFrame(0, 0);
+		_activeWSA[wsaNum].movie->setX(0);
+		_activeWSA[wsaNum].movie->setY(0);
+		seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
+							_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 1, 1);
+		break;
 
-		case 2:
-			seq_waitForTextsTimeout();
-			_activeWSA[wsaNum].movie->setDrawPage(8);
-			xa = -_activeWSA[wsaNum].movie->xAdd();
-			ya = -_activeWSA[wsaNum].movie->yAdd();
-			_activeWSA[wsaNum].movie->setX(xa);
-			_activeWSA[wsaNum].movie->setY(ya);
-			_activeWSA[wsaNum].movie->displayFrame(0x15, 0);
-			_activeWSA[wsaNum].movie->setX(0);
-			_activeWSA[wsaNum].movie->setY(0);
-			seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
-								_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 0, 2);
-			break;
+	case 2:
+		seq_waitForTextsTimeout();
+		_activeWSA[wsaNum].movie->setDrawPage(8);
+		xa = -_activeWSA[wsaNum].movie->xAdd();
+		ya = -_activeWSA[wsaNum].movie->yAdd();
+		_activeWSA[wsaNum].movie->setX(xa);
+		_activeWSA[wsaNum].movie->setY(ya);
+		_activeWSA[wsaNum].movie->displayFrame(0x15, 0);
+		_activeWSA[wsaNum].movie->setX(0);
+		_activeWSA[wsaNum].movie->setY(0);
+		seq_animatedSubFrame(8, 2, 7, 8, _activeWSA[wsaNum].movie->xAdd(), _activeWSA[wsaNum].movie->yAdd(),
+							_activeWSA[wsaNum].movie->width(), _activeWSA[wsaNum].movie->height(), 0, 2);
+		break;
 
-		case 3:
-			_screen->copyPage(2, 10);
-			_activeWSA[wsaNum].movie->setDrawPage(2);
-			_activeWSA[wsaNum].movie->setX(0);
-			_activeWSA[wsaNum].movie->setY(0);
-			_activeWSA[wsaNum].movie->displayFrame(0, 0);
-			_screen->copyPage(2, 12);
-			seq_cmpFadeFrame("scene2.cmp");
-			break;
+	case 3:
+		_screen->copyPage(2, 10);
+		_activeWSA[wsaNum].movie->setDrawPage(2);
+		_activeWSA[wsaNum].movie->setX(0);
+		_activeWSA[wsaNum].movie->setY(0);
+		_activeWSA[wsaNum].movie->displayFrame(0, 0);
+		_screen->copyPage(2, 12);
+		seq_cmpFadeFrame("scene2.cmp");
+		break;
 
-		case 4:
-			_screen->copyPage(2, 10);
-			_activeWSA[wsaNum].movie->setDrawPage(2);
-			_activeWSA[wsaNum].movie->setX(0);
-			_activeWSA[wsaNum].movie->setY(0);
-			_activeWSA[wsaNum].movie->displayFrame(0, 0);
-			_screen->copyPage(2, 12);
-			seq_cmpFadeFrame("scene3.cmp");
-			break;
+	case 4:
+		_screen->copyPage(2, 10);
+		_activeWSA[wsaNum].movie->setDrawPage(2);
+		_activeWSA[wsaNum].movie->setX(0);
+		_activeWSA[wsaNum].movie->setY(0);
+		_activeWSA[wsaNum].movie->displayFrame(0, 0);
+		_screen->copyPage(2, 12);
+		seq_cmpFadeFrame("scene3.cmp");
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 }
 
@@ -2238,26 +2238,26 @@ bool KyraEngine_v2::seq_processNextSubFrame(int wsaNum) {
 	if (currentFrame >= _activeWSA[wsaNum].endFrame) {
 		int sw = ((_activeWSA[wsaNum].flags & 0x1e) - 2);
 		switch (sw) {
-			case 0:
-				res = true;
-				currentFrame = _activeWSA[wsaNum].endFrame;
-				_screen->copyPage(2, 12);
-				break;
+		case 0:
+			res = true;
+			currentFrame = _activeWSA[wsaNum].endFrame;
+			_screen->copyPage(2, 12);
+			break;
 
-			case 6:
-			case 8:
-				currentFrame = _activeWSA[wsaNum].endFrame - 1;
-				break;
+		case 6:
+		case 8:
+			currentFrame = _activeWSA[wsaNum].endFrame - 1;
+			break;
 
-			case 2:
-			case 10:
-				currentFrame = _activeWSA[wsaNum].startFrame;
-				break;
+		case 2:
+		case 10:
+			currentFrame = _activeWSA[wsaNum].startFrame;
+			break;
 
-			default:
-				currentFrame = _activeWSA[wsaNum].endFrame - 1;
-				res = true;
-				break;
+		default:
+			currentFrame = _activeWSA[wsaNum].endFrame - 1;
+			res = true;
+			break;
 		}
 	}
 
