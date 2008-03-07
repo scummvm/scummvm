@@ -682,14 +682,14 @@ uint32 Imd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 			pixWritten = 0;
 			while (pixWritten < width) {
 				pixCount = *srcPtr++;
-				if (pixCount & 0x80) { // data
+				if (pixCount & 0x80) { // Data
 					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
 					memcpy(imdVidMem, srcPtr, pixCount);
 
 					pixWritten += pixCount;
 					imdVidMem += pixCount;
 					srcPtr += pixCount;
-				} else { // "hole"
+				} else { // "Hole"
 					pixCount = (pixCount + 1) % 256;
 					pixWritten += pixCount;
 					imdVidMem += pixCount;
@@ -721,7 +721,7 @@ uint32 Imd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 			pixWritten = 0;
 			while (pixWritten < width) {
 				pixCount = *srcPtr++;
-				if (pixCount & 0x80) { // data
+				if (pixCount & 0x80) { // Data
 					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
 					memcpy(imdVidMem, srcPtr, pixCount);
 					memcpy(imdVidMem + sW, srcPtr, pixCount);
@@ -729,7 +729,7 @@ uint32 Imd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 					pixWritten += pixCount;
 					imdVidMem += pixCount;
 					srcPtr += pixCount;
-				} else { // "hole"
+				} else { // "Hole"
 					pixCount = (pixCount + 1) % 256;
 					pixWritten += pixCount;
 					imdVidMem += pixCount;
@@ -747,7 +747,7 @@ void Imd::deLZ77(byte *dest, byte *src) {
 	int i;
 	byte buf[4370];
 	uint16 chunkLength;
-	uint16 frameLength;
+	uint32 frameLength;
 	uint16 bufPos1;
 	uint16 bufPos2;
 	uint16 tmp;
@@ -1164,6 +1164,33 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 	return state;
 }
 
+void Vmd::deRLE(byte *&srcPtr, byte *&destPtr, int16 len) {
+	srcPtr++;
+
+	if (len & 1)
+		*destPtr += *srcPtr++;
+
+	len >>= 1;
+
+	while (len > 0) {
+		uint8 tmp = *srcPtr++;
+		if (tmp & 0x80) { // Verbatim copy
+			tmp &= 0x7F;
+
+			memcpy(destPtr, srcPtr, tmp * 2);
+			destPtr += tmp * 2;
+			srcPtr += tmp * 2;
+		} else { // 2 bytes tmp times
+			for (int i = 0; i < tmp; i++) {
+				*destPtr++ = srcPtr[0];
+				*destPtr++ = srcPtr[1];
+			}
+			srcPtr += 2;
+		}
+		len -= tmp;
+	}
+}
+
 uint32 Vmd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 	if (!_frameData || !_vidMem || (_width <= 0) || (_height <= 0))
 		return 0;
@@ -1197,14 +1224,14 @@ uint32 Vmd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 			pixWritten = 0;
 			while (pixWritten < width) {
 				pixCount = *srcPtr++;
-				if (pixCount & 0x80) { // data
+				if (pixCount & 0x80) { // Data
 					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
 					memcpy(imdVidMem, srcPtr, pixCount);
 
 					pixWritten += pixCount;
 					imdVidMem += pixCount;
 					srcPtr += pixCount;
-				} else { // "hole"
+				} else { // "Hole"
 					pixCount = (pixCount + 1) % 256;
 					pixWritten += pixCount;
 					imdVidMem += pixCount;
@@ -1220,8 +1247,32 @@ uint32 Vmd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 			imdVidMem += sW;
 		}
 	} else if (type == 3) { // RLE block
-		warning("Frame render method 3: RLE block");
-		return 0;
+		for (int i = 0; i < height; i++) {
+			imdVidMemBak = imdVidMem;
+
+			pixWritten = 0;
+			while (pixWritten < width) {
+				pixCount = *srcPtr++;
+				if (pixCount & 0x80) {
+					pixCount = (pixCount & 0x7F) + 1;
+
+					if (*srcPtr != 0xFF) { // Normal copy
+						memcpy(imdVidMem, srcPtr, pixCount);
+						imdVidMem += pixCount;
+						srcPtr += pixCount;
+					} else
+						deRLE(srcPtr, imdVidMem, pixCount);
+
+					pixWritten += pixCount;
+				} else { // "Hole"
+					imdVidMem += pixCount + 1;
+					pixWritten += pixCount + 1;
+				}
+
+			}
+			imdVidMemBak += sW;
+			imdVidMem = imdVidMemBak;
+		}
 	} else {
 		warning("Unkown frame rendering method %d (0x%X)", type, type);
 		return 0;

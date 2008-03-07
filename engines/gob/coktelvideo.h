@@ -306,6 +306,8 @@ protected:
 	State processFrame(uint16 frame);
 	uint32 renderFrame(int16 left, int16 top, int16 right, int16 bottom);
 
+	void deRLE(byte *&srcPtr, byte *&destPtr, int16 len);
+
 	void emptySoundSlice(uint32 size);
 	void soundSlice8bit(uint32 size);
 	void soundSlice16bit(uint32 size, int16 &init);
