@@ -1181,7 +1181,11 @@ int KyraEngine_v1::o1_bkgdScrollSceneAndMasksRight(ScriptState *script) {
 	_screen->copyBackgroundBlock2(stackPos(0));
 	// update the whole screen
 	_screen->copyRegion(7, 7, 7, 7, 305, 129, 3, 0);
-	_screen->updateScreen();
+	// Don't do a screen update here, it see bug #1910180 "KYRA1: Screen "flash""
+	// it would cause to draw the screen with a wrong palette and thus look
+	// strange for the user. Since this opcode should be just called on scene
+	// initialization anyway, there should be no problem with not updating the
+	// screen right now.
 	return 0;
 }
 
