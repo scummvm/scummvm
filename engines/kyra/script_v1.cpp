@@ -786,7 +786,7 @@ int KyraEngine_v1::o1_displayWSASequentialFrames(ScriptState *script) {
 	_movieObjects[wsaIndex]->setDrawPage(0);
 
 	// Workaround for bug #1498221 "KYRA1: Glitches when meeting Zanthia"
-	// the original didn'to do a forced screen update after displaying a wsa frame
+	// the original didn't do a forced screen update after displaying a wsa frame
 	// while we have to do it, which make brandon disappear for a short moment,
 	// what shouldn't happen. So we're not updating the screen for this special
 	// case too.
