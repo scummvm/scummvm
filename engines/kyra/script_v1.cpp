@@ -1133,8 +1133,8 @@ int KyraEngine_v1::o1_setLogicPage(ScriptState *script) {
 int KyraEngine_v1::o1_fatPrint(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_fatPrint(%p) ('%s', %d, %d, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 
-	// Workround for bug #1582672 ("KYRA1: Text crippled and drawn wrong")
-	// I'm not sure how the original handels this, since it seems to call
+	// Workaround for bug #1582672 ("KYRA1: Text crippled and drawn wrong")
+	// I'm not sure how the original handles this, since it seems to call
 	// printText also, maybe it fails somewhere inside...
 	// TODO: fix the reason for this workaround
 	if (_currentRoom == 117)
