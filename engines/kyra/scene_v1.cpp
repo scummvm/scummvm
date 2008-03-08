@@ -824,9 +824,6 @@ void KyraEngine_v1::initSceneScreen(int brandonAlive) {
 		}
 	}
 
-	// really call this here?
-	_screen->updateScreen();
-
 	if (!_scriptInterpreter->startScript(_scriptClick, 2))
 		error("Could not start script function 2 of scene script");
 
