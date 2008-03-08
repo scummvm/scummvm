@@ -162,6 +162,7 @@ int DrasculaEngine::go() {
 		c_mirar = 0;
 		c_poder = 0;
 		ald = NULL;
+		sku = NULL;
 
 		asigna_memoria();
 
@@ -2593,6 +2594,7 @@ void DrasculaEngine::animafin_sound_corte() {
 	if (hay_sb == 1) {
 		ctvd_stop();
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	}
 }
@@ -2676,6 +2678,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -2800,6 +2803,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -2874,6 +2878,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -2948,6 +2953,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -3001,6 +3007,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -3072,6 +3079,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -3200,6 +3208,7 @@ void DrasculaEngine::fin_sound() {
 	if (hay_sb == 1) {
 		while (LookForFree() != 0);
 		delete sku;
+		sku = NULL;
 	}
 }
 
@@ -3233,27 +3242,35 @@ void DrasculaEngine::habla_bj(const char *dicho, const char *filename) {
 	}
 
 bucless:
+	if (num_ejec != 5) {
+		cara = _rnd->getRandomNumber(4);
 
-	cara = _rnd->getRandomNumber(4);
+		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		actualiza_refresco_antes();
 
-	actualiza_refresco_antes();
+		DIBUJA_FONDO(x_bj + 2, y_bj - 1, x_bj + 2, y_bj - 1, 27, 40,
+					dir_dibujo1, dir_zona_pantalla);
 
-	DIBUJA_FONDO(x_bj + 2, y_bj - 1, x_bj + 2, y_bj - 1, 27, 40,
-				dir_dibujo1, dir_zona_pantalla);
+		DIBUJA_BLOQUE(x_habla[cara], 99, x_bj + 2, y_bj - 1, 27, 40,
+					dir_dibujo3, dir_zona_pantalla);
+		pon_hare();
+		actualiza_refresco();
 
-	DIBUJA_BLOQUE(x_habla[cara], 99, x_bj + 2, y_bj - 1, 27, 40,
-				dir_dibujo3, dir_zona_pantalla);
-	pon_hare();
-	actualiza_refresco();
+		if (con_voces == 0)
+			centra_texto(dicho, x_bj + 7, y_bj);
 
-	if (con_voces == 0)
-		centra_texto(dicho, x_bj + 7, y_bj);
+		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+		pausa(3);
+	} else {
+		refresca_pantalla();
 
-	pausa(3);
+		if (con_voces == 0)
+			centra_texto(dicho, 93, 80);
+
+		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
+	}
 
 	byte key = getscan();
 	if (key == Common::KEYCODE_ESCAPE)
@@ -3265,6 +3282,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -3316,8 +3334,9 @@ void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 		buffer_teclado();
 
 	if (num_ejec == 4) {
-		if (strcmp(num_room, "24.alg") || flags[29] == 0)
+		if (strcmp(num_room, "24.alg") || flags[29] == 0) {
 			color_abc(AMARILLO);
+		}
 	} else {
 		color_abc(AMARILLO);
 	}
@@ -3406,6 +3425,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -4473,10 +4493,10 @@ bool DrasculaEngine::banderas(int fl) {
 				hablar(TEXT487, "487.als");
 			else if (objeto_que_lleva == 20 && fl == 50)
 				hablar(TEXT487, "487.als");
-			else if (!strcmp(num_room, "21.alg"))
+			else if (!strcmp(num_room, "21.alg")) {
 				if (pantalla_21(fl))
 					return true;
-			else if (!strcmp(num_room, "22.alg"))
+			} else if (!strcmp(num_room, "22.alg"))
 				pantalla_22(fl);
 			else if (!strcmp(num_room, "23.alg"))
 				pantalla_23(fl);
@@ -4523,10 +4543,10 @@ bool DrasculaEngine::banderas(int fl) {
 				pantalla_54(fl);
 			else if (!strcmp(num_room, "55.alg"))
 				pantalla_55(fl);
-			else if (!strcmp(num_room, "56.alg"))
+			else if (!strcmp(num_room, "56.alg")) {
 				if (pantalla_56(fl))
 					return true;
-			else
+			} else
 				hay_respuesta = 0;
 		} else if (num_ejec == 6) {
 			if (objeto_que_lleva == MIRAR && fl == 50 && flags[0] == 0)
@@ -5961,6 +5981,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -6040,6 +6061,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -6083,6 +6105,7 @@ void DrasculaEngine::fin_sound_corte() {
 	if (hay_sb == 1) {
 		ctvd_stop();
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	}
 }
@@ -6991,6 +7014,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -7045,6 +7069,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -7151,6 +7176,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -7200,6 +7226,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -7323,23 +7350,22 @@ comienza:
 
 void DrasculaEngine::abre_puerta(int nflag, int n_puerta) {
 	if (flags[nflag] == 0) {
-		if (num_ejec == 1 || num_ejec == 4) {
-			if (nflag == 7) {
+/*		if (num_ejec == 1 || num_ejec == 4) {
+			if (nflag != 7) {
 				comienza_sound("s3.als");
 				flags[nflag] = 1;
 			}
-		} else {
+		} else {*/
 			comienza_sound("s3.als");
 			flags[nflag] = 1;
-		}
+//		}
 
 		if (n_puerta != NO_PUERTA)
 			puertas_cerradas(n_puerta);
 		refresca_pantalla();
 		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 		fin_sound();
-		if (num_ejec != 5)
-			sin_verbo();
+		sin_verbo();
 	}
 }
 
@@ -7637,6 +7663,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -8080,6 +8107,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -8713,6 +8741,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -8780,6 +8809,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -9191,6 +9221,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -9262,6 +9293,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -9331,6 +9363,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -9600,6 +9633,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -9670,6 +9704,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -10483,6 +10518,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -10545,6 +10581,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -11688,6 +11725,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
@@ -11755,6 +11793,7 @@ bucless:
 		if (LookForFree() != 0)
 			goto bucless;
 		delete sku;
+		sku = NULL;
 		ctvd_terminate();
 	} else {
 		longitud = longitud - 2;
