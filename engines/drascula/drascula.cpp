@@ -177,9 +177,6 @@ int DrasculaEngine::go() {
 			descomprime_dibujo(dir_mesa, 1);
 		}
 
-		if (num_ejec == 6)
-			dir_pendulo = dir_dibujo3;
-
 		if (num_ejec == 1) {
 			con_voces = 0;
 			lee_dibujos("96.alg");
@@ -1445,7 +1442,7 @@ static char *getLine(Common::File *fp, char *buf, int len) {
 }
 
 void DrasculaEngine::carga_escoba(const char *nom_fich) {
-	int soc, l, martin = 0, obj_salir;
+	int soc, l, martin = 0, obj_salir = 0;
 	float chiquez = 0, pequegnez = 0;
 	char pant1[20], pant2[20], pant3[20], pant4[20];
 	char para_codificar[20];
@@ -1588,7 +1585,6 @@ martini:
 		}
 	}
 
-	obj_salir = -1;
 	for (l = 0; l < objs_room; l++) {
 		if (num_obj[l] == obj_saliendo)
 			obj_salir = l;
@@ -1596,7 +1592,6 @@ martini:
 
 	if (num_ejec == 2) {
 		if (hare_x == -1) {
-			assert(obj_salir != -1);
 			hare_x = x_alakeva[obj_salir];
 			hare_y = y_alakeva[obj_salir] - alto_hare;
 		}
@@ -1653,7 +1648,6 @@ martini:
 
 	if (num_ejec != 2) {
 		if (hare_x == -1) {
-			assert(obj_salir != -1);
 			hare_x = x_alakeva[obj_salir];
 			hare_y = y_alakeva[obj_salir];
 			alto_hare = (ALTO_PERSONAJE * factor_red[hare_y]) / 100;
@@ -2714,7 +2708,7 @@ void DrasculaEngine::pon_dr() {
 		pos_dr[0] = 47;
 	else if (sentido_dr == 0)
 		pos_dr[0] = 1;
-	else if (sentido_dr == 3)
+	else if (sentido_dr == 3 && num_ejec == 1)
 		pos_dr[0] = 93;
 	pos_dr[1] = 122;
 	pos_dr[2] = x_dr;
@@ -2722,7 +2716,10 @@ void DrasculaEngine::pon_dr() {
 	pos_dr[4] = 45;
 	pos_dr[5] = 77;
 
-	DIBUJA_BLOQUE_CUT(pos_dr, dir_hare_fondo, dir_zona_pantalla);
+	if (num_ejec == 6)
+		DIBUJA_BLOQUE_CUT(pos_dr, dir_dibujo2, dir_zona_pantalla);
+	else
+		DIBUJA_BLOQUE_CUT(pos_dr, dir_hare_fondo, dir_zona_pantalla);
 }
 
 void DrasculaEngine::pon_bj() {
@@ -2855,9 +2852,14 @@ bucless:
 
 	pon_igor();
 	pon_dr();
+	if (num_ejec == 6)
+		pon_hare();
 
 	DIBUJA_FONDO(x_dr, y_dr, x_dr, y_dr, 38, 31, dir_dibujo1, dir_zona_pantalla);
-	DIBUJA_BLOQUE(x_habla[cara], 90, x_dr, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
+	if (num_ejec == 6)
+		DIBUJA_BLOQUE(x_habla[cara], 90, x_dr, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
+	else
+		DIBUJA_BLOQUE(x_habla[cara], 90, x_dr, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
 
 	actualiza_refresco();
 
@@ -2930,9 +2932,14 @@ bucless:
 
 	pon_igor();
 	pon_dr();
+	if (num_ejec == 6)
+		pon_hare();
 
 	DIBUJA_FONDO(x_dr, y_dr, x_dr, y_dr, 45, 31, dir_dibujo1, dir_zona_pantalla);
-	DIBUJA_BLOQUE(x_habla[cara], 58, x_dr + 7, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
+	if (num_ejec != 6)
+		DIBUJA_BLOQUE(x_habla[cara], 58, x_dr + 7, y_dr, 38, 31, dir_hare_fondo, dir_zona_pantalla);
+	else
+		DIBUJA_BLOQUE(x_habla[cara], 58, x_dr + 7, y_dr, 38, 31, dir_dibujo2, dir_zona_pantalla);
 
 	actualiza_refresco();
 
@@ -2961,9 +2968,13 @@ bucless:
 			goto bucless;
 	}
 
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+	if (num_ejec == 6)
+		refresca_pantalla(); 
+
 	pon_igor();
 	pon_dr();
+	if (num_ejec == 6)
+		pon_hare();
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
@@ -3299,7 +3310,7 @@ void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 	long tiempol;
 
 	int suma_1_pixel = 0;
-	if (num_ejec == 1)
+	if (num_ejec == 1 || num_ejec == 6)
 		suma_1_pixel = 1;
 
 	int y_mask_habla = 170;
@@ -3325,7 +3336,7 @@ void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	if (num_ejec == 1) {
+	if (num_ejec == 1 || num_ejec == 6) {
 		if (factor_red[hare_y + alto_hare] == 100)
 			suma_1_pixel = 0;
 	}
@@ -4016,7 +4027,6 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 			hablar(TEXT442, "442.als");
 		else {
 			puertas_cerradas(l);
-
 			if (espuerta[l] != 0) {
 				lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 				sentido_hare = sentidobj[l];
@@ -4132,7 +4142,6 @@ bool DrasculaEngine::sal_de_la_habitacion(int l) {
 		}
 	} else if (num_ejec == 6) {
 		puertas_cerradas(l);
-
 		if (espuerta[l] != 0) {
 			lleva_al_hare(sitiobj_x[l], sitiobj_y[l]);
 			sentido_hare = sentidobj[l];
@@ -4549,7 +4558,7 @@ bool DrasculaEngine::banderas(int fl) {
 			} else
 				hay_respuesta = 0;
 		} else if (num_ejec == 6) {
-			if (objeto_que_lleva == MIRAR && fl == 50 && flags[0] == 0)
+			if (objeto_que_lleva == MIRAR && fl == 50 && flags[0] == 1)
 				hablar(TEXT308, "308.als");
 			else if (objeto_que_lleva == MIRAR && fl == 50 && flags[0] == 0)
 				hablar(TEXT310, "250.als" );
@@ -5471,13 +5480,13 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 		respuesta3 = 31;
 	}
 
-	if (num_ejec == 6 && !strcmp(nom_fich, "op_5.cal") && flags[7] == 1) {
+	if (num_ejec == 6 && !strcmp(nom_fich, "op_12.cal") && flags[7] == 1) {
 		strcpy(frase3, TEXT273);
 		strcpy(suena3, "273.als");
 		respuesta3 = 14;
 	}
 
-	if (num_ejec == 6 && !strcmp(nom_fich, "op_5.cal") && flags[10] == 1) {
+	if (num_ejec == 6 && !strcmp(nom_fich, "op_12.cal") && flags[10] == 1) {
 		strcpy(frase3, ".cuanto.queda.para.que.acabe.el.partido?");
 		strcpy(suena3, "274.als");
 		respuesta3 = 15;
@@ -8892,7 +8901,7 @@ void DrasculaEngine::animacion_1_6() {
 	habla_igor_frente(TEXTI12, "I12.als");
 	habla_dr_dch(TEXTD34, "d34.als");
 	sentido_dr = 0;
-	habla_dr_izq(TEXTD35,"d35.als");
+	habla_dr_izq(TEXTD35, "d35.als");
 	borra_pantalla();
 	carga_escoba("102.ald");
 	activa_pendulo();
