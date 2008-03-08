@@ -605,16 +605,13 @@ bool DrasculaEngine::escoba() {
 		buffer_teclado();
 		sentido_hare = 1;
 		obj_saliendo = 104;
-		if (hay_que_load == 0)
+		if (hay_que_load == 0) {
 			carga_escoba("58.ald");
-		else {
+			animacion_1_6();
+		} else {
 			if (!para_cargar(nom_partida)) {
 				return true;
 			}
-		}
-		if (hay_que_load == 0)
-			animacion_1_6();
-		else {
 			lee_dibujos("auxdr.alg");
 			descomprime_dibujo(dir_dibujo2, 1);
 		}
@@ -1690,11 +1687,12 @@ martini:
 	if (musica_room == 0)
 		stopmusic();
 
-	if ((!strcmp(num_room, "9.alg")) || (strcmp(num_room, "2.alg"))
-			|| (!strcmp(num_room, "14.alg")) || (!strcmp(num_room, "18.alg"))
-			|| (!strcmp(num_room, "26.alg")))
-		conta_ciego_vez = vez();
-
+	if (num_ejec != 6) {
+		if ((!strcmp(num_room, "9.alg")) || (strcmp(num_room, "2.alg"))
+				|| (!strcmp(num_room, "14.alg")) || (!strcmp(num_room, "18.alg"))
+				|| (!strcmp(num_room, "26.alg")))
+			conta_ciego_vez = vez();
+	}
 	if (!strcmp(num_room, "24.alg") && flags[29] == 1)
 		animacion_7_4();
 	if (!strcmp(num_room, "45.alg"))
@@ -2989,7 +2987,10 @@ void DrasculaEngine::habla_solo(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	color_abc(color_solo);
+	if (num_ejec == 1)
+		color_abc(color_solo);
+	else if (num_ejec == 3)
+		color_abc(ROJO);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -3002,14 +3003,23 @@ void DrasculaEngine::habla_solo(const char *dicho, const char *filename) {
 		ctvd_output(sku);
 	}
 
+	if (num_ejec == 6)
+		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+
 bucless:
 
-	if (con_voces == 0)
-		centra_texto(dicho, 156, 90);
+	if (con_voces == 0) {
+		if (num_ejec == 1)
+			centra_texto(dicho, 156, 90);
+		else if (num_ejec == 6)
+			centra_texto(dicho, 213, 72);
+		else if (num_ejec == 3)
+			centra_texto(dicho, 173, 92);
+	}
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 
 	byte key = getscan();
-	if (key == Common::KEYCODE_ESCAPE)
+	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -3023,7 +3033,11 @@ bucless:
 	} else {
 		longitud = longitud - 2;
 		if (longitud > 0)
-		goto bucless;
+			goto bucless;
+	}
+	if (num_ejec == 6) {
+		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	}
 }
 
@@ -5487,7 +5501,7 @@ void DrasculaEngine::conversa(const char *nom_fich) {
 	}
 
 	if (num_ejec == 6 && !strcmp(nom_fich, "op_12.cal") && flags[10] == 1) {
-		strcpy(frase3, ".cuanto.queda.para.que.acabe.el.partido?");
+		strcpy(frase3, " cuanto queda para que acabe el partido?");
 		strcpy(suena3, "274.als");
 		respuesta3 = 15;
 	}
@@ -9058,47 +9072,10 @@ void DrasculaEngine::animacion_10_6() {
 	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 	actualiza_refresco_antes();
 	DIBUJA_FONDO(164, 85, 155, 48, 113, 114, dir_dibujo3, dir_zona_pantalla);
-
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 	fin_sound();
 	habla_taber2(TEXTT23, "t23.als");
 	flags[7] = 1;
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	FundeDelNegro(0);
-	pausa(96);
-	lleva_al_hare(116, 178);
-	sentido_hare = 2;
-	refresca_pantalla();
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	playmusic(9);
-	borra_pantalla();
-	lee_dibujos("nota.alg");
-	descomprime_dibujo(dir_dibujo1, COMPLETA);
-	color_abc(BLANCO);
-	habla_solo(TEXTBJ24, "bj24.als");
-	habla_solo(TEXTBJ25, "bj25.als");
-	habla_solo(TEXTBJ26, "bj26.als");
-	habla_solo(TEXTBJ27, "bj27.als");
-	habla_solo(TEXTBJ28, "bj28.als");
-	sentido_hare = 3;
-	borra_pantalla();
-	lee_dibujos("96.alg");
-	descomprime_dibujo(dir_hare_frente, COMPLETA);
-	lee_dibujos("nota2.alg");
-	descomprime_dibujo(dir_dibujo1, MEDIA);
-	hablar(TEXT296, "296.als");
-	hablar(TEXT297, "297.als");
-	hablar(TEXT298, "298.als");
-	sentido_hare = 1;
-	hablar(TEXT299, "299.als");
-	hablar(TEXT300, "300.als");
-	refresca_pantalla();
-	DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_zona_pantalla, dir_dibujo1);
-	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	color_abc(VERDE_CLARO);
-	habla_solo("GOOOOOOOOOOOOOOOL", "s15.als");
-	lee_dibujos("nota2.alg");
-	descomprime_dibujo(dir_dibujo1, 1);
 }
 
 void DrasculaEngine::animacion_11_6() {
@@ -9130,6 +9107,7 @@ void DrasculaEngine::animacion_15_6() {
 }
 
 void DrasculaEngine::animacion_18_6() {
+	flags[6] = 1;
 	sin_verbo();
 	resta_objeto(21);
 	anima("beb.bin", 10);
