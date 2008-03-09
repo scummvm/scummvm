@@ -665,6 +665,7 @@ protected:
 	void cauldronItemAnim(int item);
 	void cauldronRndPaletteFade();
 	bool updateCauldron();
+	void listItemsInCauldron();
 
 	// localization
 	void loadCCodeBuffer(const char *file);

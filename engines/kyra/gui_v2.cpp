@@ -1018,7 +1018,7 @@ int KyraEngine_v2::cauldronButton(Button *button) {
 		return 0;
 	}
 
-	if (!_screen->isMouseVisible() || _handItemSet < 0)
+	if (!_screen->isMouseVisible() || _handItemSet < -1)
 		return 0;
 
 	if (queryGameFlag(0xE4)) {
@@ -1036,7 +1036,7 @@ int KyraEngine_v2::cauldronButton(Button *button) {
 	}
 
 	if (_itemInHand == -1) {
-		//sub_33AAE();
+		listItemsInCauldron();
 		return 0;
 	}
 

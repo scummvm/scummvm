@@ -1848,6 +1848,7 @@ void KyraEngine_v2::cauldronItemAnim(int item) {
 			mouseY -= 2;
 		uint32 waitEnd = _system->getMillis() + _tickLength;
 		_system->warpMouse(mouseX, mouseY);
+		_system->updateScreen();
 		delayUntil(waitEnd);
 	}
 
@@ -1858,6 +1859,7 @@ void KyraEngine_v2::cauldronItemAnim(int item) {
 			mouseX -= 2;
 		uint32 waitEnd = _system->getMillis() + _tickLength;
 		_system->warpMouse(mouseX, mouseY);
+		_system->updateScreen();
 		delayUntil(waitEnd);
 	}
 
@@ -1995,6 +1997,50 @@ bool KyraEngine_v2::addToCauldronStateTable(int data, int idx) {
 		}
 	}
 	return false;
+}
+
+void KyraEngine_v2::listItemsInCauldron() {
+	int itemsInCauldron = 0;
+	for (int i = 0; i < 25; ++i) {
+		if (_cauldronTable[i] != -1)
+			++itemsInCauldron;
+		else
+			break;
+	}
+
+	if (!itemsInCauldron) {
+		if (!_cauldronState)
+			objectChat(getTableString(0xF4, _cCodeBuffer, 1), 0, 0x83, 0xF4);
+		else
+			objectChat(getTableString(0xF3, _cCodeBuffer, 1), 0, 0x83, 0xF3);
+	} else {
+		objectChat(getTableString(0xF7, _cCodeBuffer, 1), 0, 0x83, 0xF7);
+
+		char buffer[80];
+		for (int i = 0; i < itemsInCauldron-1; ++i) {
+			char *str = buffer;
+			strcpy(str, getTableString(_cauldronTable[i]+54, _cCodeBuffer, 1));
+			if (_lang == 1) {
+				if (*str == 37)
+					str += 2;
+			}
+			strcpy((char*)_unkBuf500Bytes, "...");
+			strcat((char*)_unkBuf500Bytes, str);
+			strcat((char*)_unkBuf500Bytes, "...");
+			objectChat((const char*)_unkBuf500Bytes, 0, 0x83, _cauldronTable[i]+54);
+		}
+
+		char *str = buffer;
+		strcpy(str, getTableString(_cauldronTable[itemsInCauldron-1]+54, _cCodeBuffer, 1));
+		if (_lang == 1) {
+			if (*str == 37)
+				str += 2;
+		}
+		strcpy((char*)_unkBuf500Bytes, "...");
+		strcat((char*)_unkBuf500Bytes, str);
+		strcat((char*)_unkBuf500Bytes, ".");
+		objectChat((const char*)_unkBuf500Bytes, 0, 0x83, _cauldronTable[itemsInCauldron-1]+54);
+	}
 }
 
 #pragma mark -
