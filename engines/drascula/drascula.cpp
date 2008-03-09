@@ -115,7 +115,7 @@ static char poder_v[6][14] = {"11.als", "109.als", "111.als", "110.als", "115.al
 int DrasculaEngine::init() {
 	// Initialize backend
 	_system->beginGFXTransaction();
-		initCommonGFX(false);
+	initCommonGFX(false);
 	_system->initSize(320, 200);
 	_system->endGFXTransaction();
 
