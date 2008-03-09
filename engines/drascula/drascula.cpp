@@ -3085,8 +3085,9 @@ bucless:
 
 	actualiza_refresco_antes();
 
-	pon_igor();
-	if (num_ejec != 4) {
+	if (num_ejec == 1 || num_ejec == 4)
+		pon_igor();
+	if (num_ejec == 1) {
 		pon_dr();
 		DIBUJA_FONDO(x_igor, y_igor, x_igor, y_igor, 29, 25, dir_dibujo1, dir_zona_pantalla);
 	}
@@ -3119,7 +3120,11 @@ bucless:
 			goto bucless;
 	}
 
-	if (num_ejec != 4) {
+	if (num_ejec == 6) {
+		refresca_pantalla();
+	}
+
+	if (num_ejec == 1) {
 		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
 		pon_igor();
 		pon_dr();
