@@ -1889,6 +1889,7 @@ void KyraEngine_v2::cauldronItemAnim(int item) {
 			uint32 waitEnd = _system->getMillis() + _tickLength;
 			_screen->drawShape(0, shape, x, curY, 0, 0);
 			_screen->updateScreen();
+			delayUntil(waitEnd);
 		}
 
 		restoreGfxRect32x32(x, y);
@@ -1910,9 +1911,9 @@ bool KyraEngine_v2::updateCauldron() {
 
 		while (*curStateTable != -2) {
 			int stateValue = *curStateTable++;
-			int i = 0;
-			for (; i < 25; ++i) {
-				int val = cauldronTable[i];
+			int j = 0;
+			for (; j < 25; ++j) {
+				int val = cauldronTable[j];
 
 				switch (val) {
 				case 68:
@@ -1946,12 +1947,12 @@ bool KyraEngine_v2::updateCauldron() {
 				}
 
 				if (val == stateValue) {
-					cauldronTable[i] = -1;
-					i = 26;
+					cauldronTable[j] = -1;
+					j = 26;
 				}
 			}
 
-			if (i == 25)
+			if (j == 25)
 				cauldronState = -1;
 		}
 
