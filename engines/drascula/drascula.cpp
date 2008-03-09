@@ -3428,7 +3428,7 @@ bucless:
 	} else {
 		DIBUJA_FONDO(ANCHOBJ + 1, 0, hare_x, hare_y, (int)(((float)ancho_hare / 100) * factor_red[hare_y + alto_hare]),
 				(int)(((float)(alto_habla - 1) / 100) * factor_red[hare_y + alto_hare]),
-				dir_zona_pantalla, dir_dibujo3);
+				dir_dibujo3, dir_zona_pantalla);
 	}
 
 	if (sentido_hare == 0) {
