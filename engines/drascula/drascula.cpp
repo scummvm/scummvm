@@ -5055,7 +5055,7 @@ void DrasculaEngine::cuadrante_1() {
 	float distancia_x, distancia_y;
 
 	if (num_ejec == 2)
-		distancia_x = hare_x + ancho_hare - sitio_x;
+		distancia_x = hare_x + sitio_x;
 	else
 		distancia_x = hare_x + ancho_hare / 2 - sitio_x;
 
@@ -5097,7 +5097,7 @@ void DrasculaEngine::cuadrante_3() {
 	float distancia_x, distancia_y;
 
 	if (num_ejec == 2)
-		distancia_x = hare_x + ancho_hare - sitio_x;
+		distancia_x = hare_x + sitio_x;
 	else
 		distancia_x = hare_x + ancho_hare / 2 - sitio_x;
 
