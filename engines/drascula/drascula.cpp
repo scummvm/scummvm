@@ -123,7 +123,7 @@ int DrasculaEngine::init() {
 }
 
 int DrasculaEngine::go() {
-	num_ejec = 3;
+	num_ejec = 0;
 	hay_que_load = 0;
 
 	for (;;) {
