@@ -1692,10 +1692,12 @@ martini:
 	if (musica_room == 0)
 		stopmusic();
 
-	if (num_ejec != 6) {
-		if ((!strcmp(num_room, "9.alg")) || (strcmp(num_room, "2.alg"))
-				|| (!strcmp(num_room, "14.alg")) || (!strcmp(num_room, "18.alg"))
-				|| (!strcmp(num_room, "26.alg")))
+	if (num_ejec == 2) {
+		if ((!strcmp(num_room, "9.alg")) || (strcmp(num_room, "2.alg")) || (!strcmp(num_room, "14.alg")) || (!strcmp(num_room, "18.alg")))
+			conta_ciego_vez = vez();
+	}
+	if (num_ejec == 4) {
+		if (!strcmp(num_room, "26.alg"))
 			conta_ciego_vez = vez();
 	}
 	if (!strcmp(num_room, "24.alg") && flags[29] == 1)
