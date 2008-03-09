@@ -2300,6 +2300,10 @@ void Screen::showMouse() {
 		_mouseLockCount--;
 }
 
+bool Screen::isMouseShown() const {
+	return (_mouseLockCount == 0);
+}
+
 void Screen::setShapePages(int page1, int page2) {
 	debugC(9, kDebugLevelScreen, "Screen::setShapePages(%d, %d)", page1, page2);
 	_shapePages[0] = _pagePtrs[page1];

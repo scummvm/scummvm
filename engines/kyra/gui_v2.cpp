@@ -572,7 +572,9 @@ int KyraEngine_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 }
 
 int KyraEngine_v2::buttonInventory(Button *button) {
-	//XXX test if cursor is shown
+	if (!_screen->isMouseShown())
+		return 0;
+
 	int inventorySlot = button->index - 6;
 
 	uint16 item = _mainCharacter.inventory[inventorySlot];

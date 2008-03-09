@@ -182,6 +182,7 @@ public:
 	void hideMouse();
 	void showMouse();
 	void setMouseCursor(int x, int y, byte *shape);
+	bool isMouseShown() const;
 
 	// rect handling
 	virtual int getRectSize(int w, int h);
