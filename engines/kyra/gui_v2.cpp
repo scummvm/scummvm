@@ -846,31 +846,43 @@ int KyraEngine_v2::bookButton(Button *button) {
 
 void KyraEngine_v2::loadBookBkgd() {
 	char filename[16];
-	strcpy(filename, (_bookBkgd == 0) ? "_XBOOKD.CPS" : "_XBOOKC.CPS");
+
+	if (_flags.isTalkie)
+		strcpy(filename, (_bookBkgd == 0) ? "_XBOOKD.CPS" : "_XBOOKC.CPS");
+	else
+		strcpy(filename, (_bookBkgd == 0) ? "_BOOKD.CPS" : "_BOOKC.CPS");
+
 	_bookBkgd ^= 1;
+	
+	if (_flags.isTalkie) {
+		if (!_bookCurPage)
+			strcpy(filename, "_XBOOKB.CPS");
+		if (_bookCurPage == _bookMaxPage)
+			strcpy(filename, "_XBOOKA.CPS");
 
-	if (!_bookCurPage)
-		strcpy(filename, "_XBOOKB.CPS");
-	if (_bookCurPage == _bookMaxPage)
-		strcpy(filename, "_XBOOKA.CPS");
+		switch (_lang) {
+		case 0:
+			filename[1] = 'E';
+			break;
 
-	switch (_lang) {
-	case 0:
-		filename[1] = 'E';
-		break;
+		case 1:
+			filename[1] = 'F';
+			break;
 
-	case 1:
-		filename[1] = 'F';
-		break;
+		case 2:
+			filename[2] = 'G';
+			break;
 
-	case 2:
-		filename[2] = 'G';
-		break;
-
-	default:
-		warning("loadBookBkgd unsupported language");
-		filename[1] = 'E';
-		break;
+		default:
+			warning("loadBookBkgd unsupported language");
+			filename[1] = 'E';
+			break;
+		}
+	} else {
+		if (!_bookCurPage)
+			strcpy(filename, "_BOOKB.CPS");
+		if (_bookCurPage == _bookMaxPage)
+			strcpy(filename, "_BOOKA.CPS");
 	}
 
 	_screen->loadBitmap(filename, 3, 3, 0);
@@ -906,10 +918,10 @@ void KyraEngine_v2::showBookPage() {
 
 void KyraEngine_v2::bookLoop() {
 	static Button bookButtons[] = {
-		{ 0, 0x25, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x82, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookPrevPage },
-		{ 0, 0x26, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0xB1, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookNextPage },
-		{ 0, 0x27, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x8F, 0xBE, 0x21, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookClose },
-		{ 0, 0x28, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x08, 0x08, 0x90, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookPrevPage },
+		{ 0, 0x24, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x82, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookPrevPage },
+		{ 0, 0x25, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0xB1, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookNextPage },
+		{ 0, 0x26, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x8F, 0xBE, 0x21, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookClose },
+		{ 0, 0x27, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x08, 0x08, 0x90, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookPrevPage },
 		{ 0, 0x28, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0xAA, 0x08, 0x8E, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookNextPage }
 	};
 
@@ -926,6 +938,7 @@ void KyraEngine_v2::bookLoop() {
 
 		if (_bookCurPage != _bookNewPage) {
 			_bookCurPage = _bookNewPage;
+			_screen->clearPage(2);
 			loadBookBkgd();
 			showBookPage();
 			snd_playSoundEffect(0x64);
@@ -961,7 +974,7 @@ void KyraEngine_v2::bookPrintText(int dstPage, const uint8 *str, int x, int y, u
 	_screen->_charWidth = -2;
 
 	_screen->hideMouse();
-	_screen->printText((const char*)str, x, y, color, 0);
+	_screen->printText((const char*)str, x, y, color, (_flags.lang == Common::JA_JPN) ? 0x80 : 0);
 	_screen->showMouse();
 
 	_screen->_charWidth = 0;
