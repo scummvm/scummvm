@@ -123,7 +123,7 @@ int DrasculaEngine::init() {
 }
 
 int DrasculaEngine::go() {
-	num_ejec = 0;
+	num_ejec = 3;
 	hay_que_load = 0;
 
 	for (;;) {
@@ -3324,7 +3324,7 @@ void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 	long tiempol;
 
 	int suma_1_pixel = 0;
-	if (num_ejec == 1 || num_ejec == 6)
+	if (num_ejec != 2)
 		suma_1_pixel = 1;
 
 	int y_mask_habla = 170;
@@ -3350,7 +3350,7 @@ void DrasculaEngine::hablar(const char *dicho, const char *filename) {
 	tiempou = (unsigned int)tiempol / 2;
 	_rnd->setSeed(tiempou);
 
-	if (num_ejec == 1 || num_ejec == 6) {
+	if (num_ejec != 2) {
 		if (factor_red[hare_y + alto_hare] == 100)
 			suma_1_pixel = 0;
 	}
@@ -10512,6 +10512,9 @@ bucless:
 		if (longitud > 0)
 			goto bucless;
 	}
+	if (num_ejec == 1 || num_ejec == 2)
+		if (music_status() == 0 && flags[11] == 0 && musica_room != 0)
+			playmusic(musica_room);
 }
 
 void DrasculaEngine::habla_baul(const char *dicho, const char *filename) {
@@ -11588,7 +11591,7 @@ void DrasculaEngine::pantalla_30(int fl) {
 		if (flags[11] == 1 && flags[14] == 1)
 			flags[18] = 1;
 		if (flags[18] == 1)
-			animacion_6_2();
+			animacion_6_4();
 	} else if (objeto_que_lleva == CERRAR && fl == 144)
 		cierra_puerta(16, 1);
 	else if (objeto_que_lleva == 13 && fl == 144) {
