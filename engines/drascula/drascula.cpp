@@ -150,7 +150,6 @@ int DrasculaEngine::go() {
 		frame_velas = 0;
 		cont_sv = 0;
 		term_int = 0;
-		con_voces = 1;
 		corta_musica = 0;
 		hay_seleccion = 0;
 		Leng = 0;
@@ -176,7 +175,6 @@ int DrasculaEngine::go() {
 		}
 
 		if (num_ejec == 1) {
-			con_voces = 0;
 			lee_dibujos("96.alg");
 			descomprime_dibujo(dir_hare_frente, COMPLETA);
 			lee_dibujos("99.alg");
@@ -1641,7 +1639,7 @@ martini:
 		}
 	}
 
-	if (!strcmp(num_room, "54.alg")) {
+	if (num_ejec == 5 && !strcmp(num_room, "54.alg")) {
 		for (l = suelo_y1 - 1; l > 84; l--) {
 			factor_red[l] = (int)(lejos - pequegnez);
 			pequegnez = pequegnez + chiquez;
@@ -1678,19 +1676,24 @@ martini:
 	if (num_ejec == 1)
 		espuerta[7] = 0;
 
-	if (!strcmp(num_room, "14.alg") && flags[39] == 1)
-		musica_room = 16;
-	else if (!strcmp(num_room, "15.alg") && flags[39] == 1)
-		musica_room = 16;
-	if (!strcmp(num_room, "14.alg") && flags[5] == 1)
-		musica_room = 0;
-	else if (!strcmp(num_room, "15.alg") && flags[5] == 1)
-		musica_room = 0;
+	if (num_ejec == 2) {
+		if (!strcmp(num_room, "14.alg") && flags[39] == 1)
+			musica_room = 16;
+		else if (!strcmp(num_room, "15.alg") && flags[39] == 1)
+			musica_room = 16;
+		if (!strcmp(num_room, "14.alg") && flags[5] == 1)
+			musica_room = 0;
+		else if (!strcmp(num_room, "15.alg") && flags[5] == 1)
+			musica_room = 0;
 
-	if (musica_antes != musica_room && musica_room != 0)
-		playmusic(musica_room);
-	if (musica_room == 0)
-		stopmusic();
+		if (musica_antes != musica_room && musica_room != 0)
+			playmusic(musica_room);
+		if (musica_room == 0)
+			stopmusic();
+	} else {
+		if (musica_antes != musica_room && musica_room != 0)
+			playmusic(musica_room);
+	}
 
 	if (num_ejec == 2) {
 		if ((!strcmp(num_room, "9.alg")) || (strcmp(num_room, "2.alg")) || (!strcmp(num_room, "14.alg")) || (!strcmp(num_room, "18.alg")))
@@ -1700,12 +1703,16 @@ martini:
 		if (!strcmp(num_room, "26.alg"))
 			conta_ciego_vez = vez();
 	}
-	if (!strcmp(num_room, "24.alg") && flags[29] == 1)
+
+	if (num_ejec == 4 && !strcmp(num_room, "24.alg") && flags[29] == 1)
 		animacion_7_4();
-	if (!strcmp(num_room, "45.alg"))
-		hare_se_ve = 0;
-	if (!strcmp(num_room, "49.alg") && flags[7] == 0)
-		animacion_4_5();
+
+	if (num_ejec == 5) {
+		if (!strcmp(num_room, "45.alg"))
+			hare_se_ve = 0;
+		if (!strcmp(num_room, "49.alg") && flags[7] == 0)
+			animacion_4_5();
+	}
 
 	refresca_pantalla();
 }
@@ -2796,7 +2803,7 @@ bucless:
 	pausa(3);
 
 	byte key = getscan();
-	if (key == Common::KEYCODE_ESCAPE)
+	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -2876,7 +2883,7 @@ bucless:
 	pausa(3);
 
 	byte key = getscan();
-	if (key == Common::KEYCODE_ESCAPE)
+	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -2956,7 +2963,7 @@ bucless:
 	pausa(3);
 
 	byte key = getscan();
-	if (key == Common::KEYCODE_ESCAPE)
+	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -3103,7 +3110,7 @@ bucless:
 	pausa(3);
 
 	byte key = getscan();
-	if (key == Common::KEYCODE_ESCAPE)
+	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -3265,7 +3272,10 @@ void DrasculaEngine::habla_bj(const char *dicho, const char *filename) {
 
 	buffer_teclado();
 
-	color_abc(BLANCO);
+	if (num_ejec == 5)
+		color_abc(BLANCO);
+	else
+		color_abc(ROJO);
 
 	if (hay_sb == 1) {
 		sku = new Common::File;
@@ -3310,7 +3320,7 @@ bucless:
 	}
 
 	byte key = getscan();
-	if (key == Common::KEYCODE_ESCAPE)
+	if (num_ejec == 1 && key == Common::KEYCODE_ESCAPE)
 		term_int = 1;
 	if (key != 0)
 		ctvd_stop();
@@ -3327,7 +3337,13 @@ bucless:
 			goto bucless;
 	}
 
-	refresca_pantalla();
+	if (num_ejec == 5) {
+		refresca_pantalla();
+	} else {
+		DIBUJA_FONDO(0, 0, 0, 0, 320, 200, dir_dibujo1, dir_zona_pantalla);
+		pon_igor();
+		pon_dr();
+	}
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
 }
 
