@@ -3020,7 +3020,7 @@ bucless:
 			centra_texto(dicho, 156, 90);
 		else if (num_ejec == 6)
 			centra_texto(dicho, 213, 72);
-		else if (num_ejec == 3)
+		else if (num_ejec == 5)
 			centra_texto(dicho, 173, 92);
 	}
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
