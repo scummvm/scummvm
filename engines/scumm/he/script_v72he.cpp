@@ -792,6 +792,14 @@ void ScummEngine_v72he::o72_startScript() {
 	getStackList(args, ARRAYSIZE(args));
 	script = pop();
 	flags = fetchScriptByte();
+
+	// HACK: The credits script in Russian HE99 version of Freddi Fish 3
+	// uses null strings, causing various errors, so skip it.
+	if (_game.id == GID_FREDDI3 && _game.heversion == 99 && _language == Common::RU_RUS &&
+		_currentRoom == 40 && script == 2057) {
+			return;
+	}
+
 	runScript(script, (flags == 199 || flags == 200), (flags == 195 || flags == 200), args);
 }
 

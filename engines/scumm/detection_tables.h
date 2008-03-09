@@ -295,8 +295,10 @@ static const GameSettings gameVariantsTable[] = {
 	{"baseball", "", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY, UNK},
 	{"thinkerk", "", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY, UNK},
 	{"thinker1", "", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY, UNK},
-	{"freddi3", "", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY, UNK},
 	{"spyfox", "", 0, GID_HEGAME, 6, 90, MDT_NONE, GF_USE_KEY, UNK},
+
+	{"freddi3", "", 0, GID_FREDDI3, 6, 90, MDT_NONE, GF_USE_KEY, UNK},
+	{"freddi3", "HE 99", 0, GID_FREDDI3, 6, 99, MDT_NONE, GF_USE_KEY, UNK},
 
 	// Humongous Entertainment Scumm Version 9.5 ?  Scummsys.95
 	{"pajama2", "", 0, GID_HEGAME, 6, 95, MDT_NONE, GF_USE_KEY, UNK},
