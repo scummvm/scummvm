@@ -2257,10 +2257,10 @@ void DrasculaEngine::print_abc(const char *dicho, int x_pantalla, int y_pantalla
 				x_de_letra = X_CIERRA_INTERROGACION;
 			else if (c == 0xa8)
 				x_de_letra = X_ABRE_INTERROGACION;
+//			else if (c == '\'') // FIXME
+//				x_de_letra = ESPACIO; // space for now
 			else if (c == '"')
 				x_de_letra = X_COMILLAS;
-			else if (c == '\'') // FIXME
-				x_de_letra = X_GN;
 			else if (c == '!')
 				x_de_letra = X_CIERRA_EXCLAMACION;
 			else if (c == 0xad)
@@ -5808,10 +5808,6 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 			x_de_letra = X_M_OPC;
 		else if (c == 'N')
 			x_de_letra = X_N_OPC;
-		else if (c == '\'')
-			x_de_letra = X_GN_OPC;
-		else if (c == '\'')
-			x_de_letra = X_GN_OPC;
 		else if (c == 'O')
 			x_de_letra = X_O_OPC;
 		else if (c == 'P')
@@ -5850,6 +5846,8 @@ void DrasculaEngine::print_abc_opc(const char *dicho, int x_pantalla, int y_pant
 				x_de_letra = X_CIERRA_INTERROGACION_OPC;
 			else if (c == 0xa8)
 				x_de_letra = X_ABRE_INTERROGACION_OPC;
+//			else if (c == '\'') // FIXME
+//				x_de_letra = ESPACIO; // space for now
 			else if (c == '"')
 				x_de_letra = X_COMILLAS_OPC;
 			else if (c == '!')
