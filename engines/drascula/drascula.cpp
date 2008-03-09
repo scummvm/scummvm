@@ -3951,24 +3951,25 @@ void DrasculaEngine::pon_hare() {
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
-		} else if (sentido_hare == 1)
+		} else if (sentido_hare == 1) {
 			if (num_ejec == 2)
 				DIBUJA_BLOQUE_CUT(pos_hare, dir_hare_dch, dir_zona_pantalla);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_dch, dir_zona_pantalla);
-		else if (sentido_hare == 2)
+		} else if (sentido_hare == 2) {
 			if (num_ejec == 2)
 				DIBUJA_BLOQUE_CUT(pos_hare, dir_hare_fondo, dir_zona_pantalla);
 			else
 				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_fondo, dir_zona_pantalla);
-		else
+		} else {
 			if (num_ejec == 2)
 				DIBUJA_BLOQUE_CUT(pos_hare, dir_hare_frente, dir_zona_pantalla);
 			else
-				reduce_hare_chico( pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
+				reduce_hare_chico(pos_hare[0], pos_hare[1], pos_hare[2], pos_hare[3], pos_hare[4], pos_hare[5],
 									factor_red[hare_y + alto_hare], dir_hare_frente, dir_zona_pantalla);
+		}
 	} else if (hare_se_mueve == 1) {
 		pos_hare[0] = frame_x[num_frame];
 		pos_hare[1] = frame_y + DIF_MASK_HARE;
