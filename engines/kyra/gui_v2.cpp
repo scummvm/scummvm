@@ -376,8 +376,10 @@ int KyraEngine_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		// but did some other magic, which looks like it depends on how the handle
 		// key input... so we just enable 0x1000 and 0x4000 here to allow
 		// all GUI buttons to work (for now at least...)
-		if (inFlags == 199 || inFlags == 198)
+		if (inFlags == 199 || inFlags == 198) {
 			temp = 0x1000 | 0x4000;
+			removeInputTop();
+		}
 
 		//if (inputFlag & 0x800)
 		//	temp <<= 2;
@@ -572,7 +574,7 @@ int KyraEngine_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 }
 
 int KyraEngine_v2::buttonInventory(Button *button) {
-	if (!_screen->isMouseShown())
+	if (!_screen->isMouseVisible())
 		return 0;
 
 	int inventorySlot = button->index - 6;
@@ -749,5 +751,235 @@ void KyraEngine_v2::scrollInventoryWheel() {
 	movie.close();
 }
 
-} // end of namespace Kyra
+int KyraEngine_v2::bookButton(Button *button) {
+	if (!queryGameFlag(1)) {
+		objectChat(getTableString(0xEB, _cCodeBuffer, 1), 0, 0x83, 0xEB); 
+		return 0;
+	}
 
+	if (!_screen->isMouseVisible())
+		return 0;
+
+	if (queryGameFlag(0xE5)) {
+		snd_playSoundEffect(0x0D);
+		return 0;
+	}
+
+	if (_itemInHand == 72) {
+		if (!queryGameFlag(0xE2)) {
+			_bookMaxPage += 2;
+			removeHandItem();
+			snd_playSoundEffect(0x6C);
+			setGameFlag(0xE2);
+		}
+
+		if (!queryGameFlag(0x18A) && queryGameFlag(0x170)) {
+			_bookMaxPage += 2;
+			removeHandItem();
+			snd_playSoundEffect(0x6C);
+			setGameFlag(0x18A);
+		}
+
+		return 0;
+	}
+
+	if (_handItemSet != -1) {
+		snd_playSoundEffect(0x0D);
+		return 0;
+	}
+
+	_screen->hideMouse();
+	showMessage(0, 0xCF);
+	displayInvWsaLastFrame();
+	_bookNewPage = _bookCurPage;
+
+	if (_screenBuffer) {
+		_screen->hideMouse();
+		memcpy(_screenBuffer, _screen->getCPagePtr(0), 64000);
+		_screen->showMouse();
+	}
+
+	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
+	_screen->fadeToBlack(7, &_updateFunctor);
+	_res->loadFileToBuf("_BOOK.COL", _screen->getPalette(0), 768);
+	loadBookBkgd();
+	showBookPage();
+	_screen->copyRegion(0, 0, 0, 0, 0x140, 0xC8, 2, 0);
+	_screen->updateScreen();
+
+	int oldItemInHand = _itemInHand;
+	removeHandItem();
+	_screen->fadePalette(_screen->getPalette(0), 7);
+	_screen->showMouse();
+
+	bookLoop();
+
+	_screen->fadeToBlack(7);
+	_screen->hideMouse();
+	setHandItem(oldItemInHand);
+	updateMouse();
+	restorePage3();
+
+	if (_screenBuffer) {
+		_screen->hideMouse();
+		_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
+		_screen->showMouse();
+	}
+
+	setHandItem(_itemInHand);
+	memcpy(_screen->getPalette(0), _screen->getPalette(2), 768);
+	_screen->fadePalette(_screen->getPalette(0), 7, &_updateFunctor);
+	_screen->showMouse();
+
+	if (!queryGameFlag(4) && !queryGameFlag(0xB8)) {
+		objectChat(getTableString(0xEC, _cCodeBuffer, 1), 0, 0x83, 0xEC);
+		objectChat(getTableString(0xED, _cCodeBuffer, 1), 0, 0x83, 0xED);
+		objectChat(getTableString(0xEE, _cCodeBuffer, 1), 0, 0x83, 0xEE);
+		objectChat(getTableString(0xEF, _cCodeBuffer, 1), 0, 0x83, 0xEF);
+		setGameFlag(4);
+	}
+
+	return 0;
+}
+
+void KyraEngine_v2::loadBookBkgd() {
+	char filename[16];
+	strcpy(filename, (_bookBkgd == 0) ? "_XBOOKD.CPS" : "_XBOOKC.CPS");
+	_bookBkgd ^= 1;
+
+	if (!_bookCurPage)
+		strcpy(filename, "_XBOOKB.CPS");
+	if (_bookCurPage == _bookMaxPage)
+		strcpy(filename, "_XBOOKA.CPS");
+
+	switch (_lang) {
+	case 0:
+		filename[1] = 'E';
+		break;
+
+	case 1:
+		filename[1] = 'F';
+		break;
+
+	case 2:
+		filename[2] = 'G';
+		break;
+
+	default:
+		warning("loadBookBkgd unsupported language");
+		filename[1] = 'E';
+		break;
+	}
+
+	_screen->loadBitmap(filename, 3, 3, 0);
+}
+
+void KyraEngine_v2::showBookPage() {
+	char filename[16];
+
+	sprintf(filename, "PAGE%.01X.", _bookCurPage);
+	strcat(filename, _languageExtension[_lang]);
+	uint8 *leftPage = _res->fileData(filename, 0);
+	int leftPageY = _bookPageYOffset[_bookCurPage];
+
+	sprintf(filename, "PAGE%.01X.", _bookCurPage+1);
+	strcat(filename, _languageExtension[_lang]);
+	uint8 *rightPage = (_bookCurPage != _bookMaxPage) ? _res->fileData(filename, 0) : 0;
+	int rightPageY = _bookPageYOffset[_bookCurPage+1];
+
+	_screen->hideMouse();
+	if (leftPage) {
+		bookDecodeText(leftPage);
+		bookPrintText(2, leftPage, 20, leftPageY+20, 0x31);
+		delete [] leftPage;
+	}
+
+	if (rightPage) {
+		bookDecodeText(rightPage);
+		bookPrintText(2, rightPage, 176, rightPageY+20, 0x31);
+		delete [] rightPage;
+	}
+	_screen->showMouse();
+}
+
+void KyraEngine_v2::bookLoop() {
+	static Button bookButtons[] = {
+		{ 0, 0x25, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x82, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookPrevPage },
+		{ 0, 0x26, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0xB1, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookNextPage },
+		{ 0, 0x27, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x8F, 0xBE, 0x21, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookClose },
+		{ 0, 0x28, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x08, 0x08, 0x90, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookPrevPage },
+		{ 0, 0x28, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0xAA, 0x08, 0x8E, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookNextPage }
+	};
+
+	Button *buttonList = 0;
+	
+	for (uint i = 0; i < ARRAYSIZE(bookButtons); ++i)
+		buttonList = addButtonToList(buttonList, &bookButtons[i]);
+
+	showBookPage();
+	_bookShown = true;
+	while (_bookShown && !_quitFlag) {
+		checkInput(buttonList);
+		removeInputTop();
+
+		if (_bookCurPage != _bookNewPage) {
+			_bookCurPage = _bookNewPage;
+			loadBookBkgd();
+			showBookPage();
+			snd_playSoundEffect(0x64);
+			_screen->hideMouse();
+			_screen->copyRegion(0, 0, 0, 0, 0x140, 0xC8, 2, 0);
+			_screen->updateScreen();
+			_screen->showMouse();
+		}
+	}
+}
+
+void KyraEngine_v2::bookDecodeText(uint8 *text) {
+	uint8 *dst = text, *op = text;
+	while (*op != 0x1A) {
+		while (*op != 0x1A && *op != 0x0D)
+			*dst++ = *op++;
+		
+		if (*op == 0x1A)
+			break;
+
+		op += 2;
+		*dst++ = 0x0D;
+	}
+	*dst = 0;
+}
+
+void KyraEngine_v2::bookPrintText(int dstPage, const uint8 *text, int x, int y, uint8 color) {
+	int curPageBackUp = _screen->_curPage;
+	_screen->_curPage = dstPage;
+
+	_screen->setTextColor(_bookTextColorMap, 0, 3);
+	Screen::FontId oldFont = _screen->setFont(Screen::FID_BOOKFONT_FNT);
+	_screen->_charWidth = -2;
+
+	_screen->hideMouse();
+	_screen->printText((const char*)text, x, y, color, 0);
+	_screen->showMouse();
+
+	_screen->_charWidth = 0;
+	_screen->setFont(oldFont);
+	_screen->_curPage = curPageBackUp;
+}
+
+int KyraEngine_v2::bookPrevPage(Button *button) {
+	_bookNewPage = MAX<int>(_bookCurPage-2, 0);
+	return 0;
+}
+
+int KyraEngine_v2::bookNextPage(Button *button) {
+	_bookNewPage = MIN<int>(_bookCurPage+2, _bookMaxPage);
+	return 0;
+}
+
+int KyraEngine_v2::bookClose(Button *button) {
+	_bookShown = false;
+	return 0;
+}
+
+} // end of namespace Kyra

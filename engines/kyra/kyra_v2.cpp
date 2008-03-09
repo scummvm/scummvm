@@ -124,6 +124,11 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_npcTalkChpIndex = _npcTalkDlgIndex = -1;
 	_mainCharacter.dlgIndex = 0;
 	setNewDlgIndex(-1);
+
+	_bookMaxPage = 6;
+	_bookCurPage = 0;
+	_bookNewPage = 0;
+	_bookBkgd = 0;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {

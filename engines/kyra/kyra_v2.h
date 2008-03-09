@@ -614,6 +614,28 @@ protected:
 
 	int scrollInventory(Button *button);
 	int buttonInventory(Button *button);
+	int bookButton(Button *button);
+
+	// -> book
+	static const int _bookPageYOffset[];
+	static const byte _bookTextColorMap[];
+
+	int _bookMaxPage;
+	int _bookNewPage;
+	int _bookCurPage;
+	int _bookBkgd;
+	bool _bookShown;
+
+	void loadBookBkgd();
+	void showBookPage();
+	void bookLoop();
+
+	void bookDecodeText(uint8 *text);
+	void bookPrintText(int dstPage, const uint8 *text, int x, int y, uint8 color);
+
+	int bookPrevPage(Button *button);
+	int bookNextPage(Button *button);
+	int bookClose(Button *button);
 
 	// localization
 	void loadCCodeBuffer(const char *file);

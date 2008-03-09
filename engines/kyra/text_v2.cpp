@@ -296,6 +296,7 @@ void KyraEngine_v2::objectChatWaitToFinish() {
 
 	bool running = true;
 	const uint32 endTime = _chatEndTime;
+	_skipFlag = false;
 
 	while (running && !_quitFlag) {
 		if (!_scriptInterpreter->validScript(&_chatScriptState))
