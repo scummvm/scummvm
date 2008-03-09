@@ -935,8 +935,8 @@ void KyraEngine_v2::bookLoop() {
 	}
 }
 
-void KyraEngine_v2::bookDecodeText(uint8 *text) {
-	uint8 *dst = text, *op = text;
+void KyraEngine_v2::bookDecodeText(uint8 *str) {
+	uint8 *dst = str, *op = str;
 	while (*op != 0x1A) {
 		while (*op != 0x1A && *op != 0x0D)
 			*dst++ = *op++;
@@ -950,7 +950,7 @@ void KyraEngine_v2::bookDecodeText(uint8 *text) {
 	*dst = 0;
 }
 
-void KyraEngine_v2::bookPrintText(int dstPage, const uint8 *text, int x, int y, uint8 color) {
+void KyraEngine_v2::bookPrintText(int dstPage, const uint8 *str, int x, int y, uint8 color) {
 	int curPageBackUp = _screen->_curPage;
 	_screen->_curPage = dstPage;
 
@@ -959,7 +959,7 @@ void KyraEngine_v2::bookPrintText(int dstPage, const uint8 *text, int x, int y, 
 	_screen->_charWidth = -2;
 
 	_screen->hideMouse();
-	_screen->printText((const char*)text, x, y, color, 0);
+	_screen->printText((const char*)str, x, y, color, 0);
 	_screen->showMouse();
 
 	_screen->_charWidth = 0;
