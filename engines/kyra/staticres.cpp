@@ -1524,13 +1524,13 @@ const uint16 KyraEngine_v2::_itemMagicTable[] = {
 	0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF
 };
 
-const int KyraEngine_v3::_bookPageYOffset[] = {
+const int KyraEngine_v2::_bookPageYOffset[] = {
 	0, 0, 2, 2,
 	0, 0, 2, 2,
 	0, 0, 2, 2
 };
 
-const byte KyraEngine_v3::_bookTextColorMap[] = {
+const byte KyraEngine_v2::_bookTextColorMap[] = {
 	0x00, 0xC7, 0xCF, 0x00
 };
 
