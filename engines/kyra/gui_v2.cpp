@@ -948,6 +948,7 @@ void KyraEngine_v2::bookLoop() {
 			_screen->showMouse();
 		}
 	}
+	_screen->clearPage(2);
 }
 
 void KyraEngine_v2::bookDecodeText(uint8 *str) {
