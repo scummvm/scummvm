@@ -776,13 +776,18 @@ bucles:
 void DrasculaEngine::agarra_objeto(int objeto) {
 	if (num_ejec == 6)
 		lee_dibujos("iconsp.alg");
-	else if (num_ejec == 4 || num_ejec == 5)
+	else if (num_ejec == 4)
 		lee_dibujos("icons2.alg");
+	else if (num_ejec == 5)
+		lee_dibujos("icons3.alg");
 	else
 		lee_dibujos("icons.alg");
 	descomprime_dibujo(dir_hare_fondo, 1);
 	elige_objeto(objeto);
-	lee_dibujos("99.alg");
+	if (num_ejec == 2)
+		lee_dibujos(fondo_y_menu);
+	else
+		lee_dibujos("99.alg");
 	descomprime_dibujo(dir_hare_fondo, 1);
 }
 
