@@ -3452,7 +3452,7 @@ bucless:
 	} else if (sentido_hare == 2) {
 		if (num_ejec == 2)
 			DIBUJA_BLOQUE(x_habla_izq[cara], y_mask_habla, hare_x + 12, hare_y, ancho_habla, alto_habla,
-					dir_hare_dch, dir_zona_pantalla);
+					dir_hare_frente, dir_zona_pantalla);
 		else
 			reduce_hare_chico(x_habla_izq[cara], y_mask_habla,
 						suma_1_pixel + hare_x + (int)((12.0f / 100) * factor_red[hare_y + alto_hare]),
@@ -3462,7 +3462,7 @@ bucless:
 	} else if (sentido_hare == 3) {
 		if (num_ejec == 2)
 			DIBUJA_BLOQUE(x_habla_dch[cara], y_mask_habla, hare_x + 8, hare_y, ancho_habla, alto_habla,
-					dir_hare_dch, dir_zona_pantalla);
+					dir_hare_frente, dir_zona_pantalla);
 		else
 			reduce_hare_chico(x_habla_dch[cara], y_mask_habla,
 						suma_1_pixel + hare_x + (int)((8.0f / 100) * factor_red[hare_y + alto_hare]),
