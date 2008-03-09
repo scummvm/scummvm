@@ -123,7 +123,7 @@ int DrasculaEngine::init() {
 }
 
 int DrasculaEngine::go() {
-	num_ejec = 0;
+	num_ejec = 1; // values from 1 to 6 will start each part of game
 	hay_que_load = 0;
 
 	for (;;) {
@@ -169,8 +169,6 @@ int DrasculaEngine::go() {
 		hay_sb = 1;
 		con_voces = 0;
 		hay_seleccion = 0;
-
-		num_ejec++;
 
 		if (num_ejec != 6) {
 			lee_dibujos("95.alg");
@@ -252,6 +250,8 @@ int DrasculaEngine::go() {
 		salir_al_dos(0);
 		if (num_ejec == 6)
 			break;
+
+		num_ejec++;
 	}
 
 	return 0;
