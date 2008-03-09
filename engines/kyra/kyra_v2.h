@@ -331,6 +331,8 @@ protected:
 
 	void backUpGfxRect24x24(int x, int y);
 	void restoreGfxRect24x24(int x, int y);
+	void backUpGfxRect32x32(int x, int y);
+	void restoreGfxRect32x32(int x, int y);
 
 	uint8 *getShapePtr(int index) { return _defaultShapeTable[index]; }
 	uint8 *_defaultShapeTable[250];
@@ -555,6 +557,9 @@ protected:
 	void setHandItem(uint16 item);
 	void removeHandItem();
 
+	static const int16 _flaskTable[];
+	bool itemIsFlask(int item);
+
 	// inventory
 	static const int _inventoryX[];
 	static const int _inventoryY[];
@@ -615,8 +620,10 @@ protected:
 	int scrollInventory(Button *button);
 	int buttonInventory(Button *button);
 	int bookButton(Button *button);
+	int cauldronButton(Button *button);
+	int cauldronClearButton(Button *button);
 
-	// -> book
+	// book
 	static const int _bookPageYOffset[];
 	static const byte _bookTextColorMap[];
 
@@ -636,6 +643,28 @@ protected:
 	int bookPrevPage(Button *button);
 	int bookNextPage(Button *button);
 	int bookClose(Button *button);
+
+	// cauldron
+	uint8 _cauldronState;
+	int16 _cauldronUseCount;
+	int16 _cauldronTable[25];
+	int16 _cauldronStateTables[23][7];
+
+	static const int16 _cauldronProtectedItems[];
+	static const int16 _cauldronBowlTable[];
+	static const int16 _cauldronMagicTable[];
+	static const int16 _cauldronMagicTableScene77[];
+	static const uint8 _cauldronStateTable[];
+
+	void resetCauldronStateTable(int idx);
+	bool addToCauldronStateTable(int data, int idx);
+
+	void setCauldronState(uint8 state, bool paletteFade);
+	void clearCauldronTable();
+	void addFrontCauldronTable(int item);
+	void cauldronItemAnim(int item);
+	void cauldronRndPaletteFade();
+	bool updateCauldron();
 
 	// localization
 	void loadCCodeBuffer(const char *file);
@@ -944,6 +973,7 @@ protected:
 	int o2_setupDialogue(ScriptState *script);
 	int o2_getDlgIndex(ScriptState *script);
 	int o2_defineRoom(ScriptState *script);
+	int o2_addCauldronStateTableEntry(ScriptState *script);
 	int o2_setCountDown(ScriptState *script);
 	int o2_getCountDown(ScriptState *script);
 	int o2_objectChat(ScriptState *script);

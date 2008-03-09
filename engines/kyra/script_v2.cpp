@@ -686,6 +686,11 @@ int KyraEngine_v2::o2_defineRoom(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_addCauldronStateTableEntry(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_addCauldronStateTableEntry(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return addToCauldronStateTable(stackPos(0), stackPos(1)) ? 1 : 0;
+}
+
 int KyraEngine_v2::o2_setCountDown(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setCountDown(%p) (%d)", (const void *)script, stackPos(0));
 	_scriptCountDown = _system->getMillis() + stackPos(0) * _tickLength;

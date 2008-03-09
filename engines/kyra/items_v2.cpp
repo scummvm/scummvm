@@ -455,5 +455,14 @@ void KyraEngine_v2::removeHandItem() {
 	_screen->showMouse();
 }
 
+bool KyraEngine_v2::itemIsFlask(int item) {
+	for (int i = 0; _flaskTable[i] != -1; ++i) {
+		if (_flaskTable[i] == item)
+			return true;
+	}
+
+	return false;
+}
+
 } // end of namespace Kyra
 

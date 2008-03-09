@@ -202,7 +202,7 @@ void KyraEngine_v2::updateCharFacing() {
 	else
 		_mainCharacter.facing = 3;
 
-	_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.animFrame];
+	_mainCharacter.animFrame = _characterFrameTable[_mainCharacter.facing];
 	updateCharacterAnim(0);
 	refreshAnimObjectsIfNeed();
 }

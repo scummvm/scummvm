@@ -751,6 +751,8 @@ void KyraEngine_v2::scrollInventoryWheel() {
 	movie.close();
 }
 
+// spellbook specific code
+
 int KyraEngine_v2::bookButton(Button *button) {
 	if (!queryGameFlag(1)) {
 		objectChat(getTableString(0xEB, _cCodeBuffer, 1), 0, 0x83, 0xEB); 
@@ -979,6 +981,103 @@ int KyraEngine_v2::bookNextPage(Button *button) {
 
 int KyraEngine_v2::bookClose(Button *button) {
 	_bookShown = false;
+	return 0;
+}
+
+// cauldron specific code
+
+int KyraEngine_v2::cauldronClearButton(Button *button) {
+	if (!queryGameFlag(2)) {
+		updateCharFacing();
+		objectChat(getTableString(0xF0, _cCodeBuffer, 1), 0, 0x83, 0xF0);
+		return 0;
+	}
+
+	if (queryGameFlag(0xE4)) {
+		snd_playSoundEffect(0x0D);
+		return 0;
+	}
+
+	_screen->hideMouse();
+	displayInvWsaLastFrame();
+	snd_playSoundEffect(0x25);
+	loadInvWsa("PULL.WSA", 1, 6, 0, -1, -1, 1);
+	loadInvWsa("CAULD00.WSA", 1, 7, 0, 0xD4, 0x0F, 1);
+	showMessage(0, 0xCF);
+	setCauldronState(0, 0);
+	clearCauldronTable();
+	snd_playSoundEffect(0x57);
+	loadInvWsa("CAULDFIL.WSA", 1, 7, 0, -1, -1, 1);
+	_screen->showMouse();
+	return 0;
+}
+
+int KyraEngine_v2::cauldronButton(Button *button) {
+	if (!queryGameFlag(2)) {
+		objectChat(getTableString(0xF0, _cCodeBuffer, 1), 0, 0x83, 0xF0);
+		return 0;
+	}
+
+	if (!_screen->isMouseVisible() || _handItemSet < 0)
+		return 0;
+
+	if (queryGameFlag(0xE4)) {
+		snd_playSoundEffect(0x0D);	
+		return 0;
+	}
+
+	updateCharFacing();
+
+	for (int i = 0; _cauldronProtectedItems[i] != -1; ++i) {
+		if (_itemInHand == _cauldronProtectedItems[i]) {
+			objectChat(getTableString(0xF1, _cCodeBuffer, 1), 0, 0x83, 0xF1);
+			return 0;
+		}
+	}
+
+	if (_itemInHand == -1) {
+		//sub_33AAE();
+		return 0;
+	}
+
+	for (int i = 0; _cauldronBowlTable[i] != -1; i += 2) {
+		if (_itemInHand == _cauldronBowlTable[i]) {
+			addFrontCauldronTable(_itemInHand);
+			setHandItem(_cauldronBowlTable[i+1]);
+			if (!updateCauldron()) {
+				_cauldronState = 0;
+				cauldronRndPaletteFade();
+			}
+			return 0;
+		}
+	}
+
+	if (_itemInHand == 18) {
+		const int16 *magicTable = (_mainCharacter.sceneId == 77) ? _cauldronMagicTableScene77 : _cauldronMagicTable;
+		while (magicTable[0] != -1) {
+			if (_cauldronState == magicTable[0]) {
+				setHandItem(magicTable[1]);
+				snd_playSoundEffect(0x6C);
+				++_cauldronUseCount;
+				if (_cauldronStateTable[_cauldronState] <= _cauldronUseCount && _cauldronUseCount) {
+					showMessage(0, 0xCF);
+					setCauldronState(0, true);
+					clearCauldronTable();
+				}
+				return 0;
+			}
+			magicTable += 2;
+		}
+	} else if (_itemInHand >= 0) {
+		int item = _itemInHand;
+		cauldronItemAnim(item);
+		addFrontCauldronTable(item);
+		if (!updateCauldron()) {
+			_cauldronState = 0;
+			cauldronRndPaletteFade();
+		}
+	}
+
 	return 0;
 }
 

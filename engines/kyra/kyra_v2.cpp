@@ -129,6 +129,10 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_bookCurPage = 0;
 	_bookNewPage = 0;
 	_bookBkgd = 0;
+
+	_cauldronState = 0;
+	_cauldronUseCount = 0;
+	memset(_cauldronStateTables, 0, sizeof(_cauldronStateTables));
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
@@ -349,8 +353,11 @@ void KyraEngine_v2::startup() {
 	clearAnimObjects();
 
 	// XXX
-	memset(_hiddenItems, -1, sizeof(_hiddenItems));
+	clearCauldronTable();
 	// XXX
+	memset(_hiddenItems, -1, sizeof(_hiddenItems));
+	for (int i = 0; i < 23; ++i)
+		resetCauldronStateTable(i);
 
 	_sceneList = new SceneDesc[86];
 	memset(_sceneList, 0, sizeof(SceneDesc)*86);
@@ -1601,6 +1608,14 @@ void KyraEngine_v2::restoreGfxRect24x24(int x, int y) {
 	_screen->copyBlockToPage(_screen->_curPage, x, y, 24, 24, _gfxBackUpRect);
 }
 
+void KyraEngine_v2::backUpGfxRect32x32(int x, int y) {
+	_screen->copyRegionToBuffer(_screen->_curPage, x, y, 32, 32, _gfxBackUpRect);
+}
+
+void KyraEngine_v2::restoreGfxRect32x32(int x, int y) {
+	_screen->copyBlockToPage(_screen->_curPage, x, y, 32, 32, _gfxBackUpRect);
+}
+
 #pragma mark -
 
 void KyraEngine_v2::openTalkFile(int newFile) {
@@ -1783,6 +1798,207 @@ void KyraEngine_v2::displayInvWsaLastFrame() {
 
 #pragma mark -
 
+void KyraEngine_v2::setCauldronState(uint8 state, bool paletteFade) {
+	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
+	Common::SeekableReadStream *file = _res->getFileStream("_POTIONS.PAL");
+	if (!file)
+		error("Couldn't load cauldron palette");
+	file->seek(state*18, SEEK_SET);
+	file->read(_screen->getPalette(2)+723, 18);
+	delete file;
+	file = 0;
+
+	if (paletteFade) {
+		snd_playSoundEffect((state == 0) ? 0x6B : 0x66);
+		_screen->fadePalette(_screen->getPalette(2), 0x4B, &_updateFunctor);
+	} else {
+		_screen->setScreenPalette(_screen->getPalette(2));
+		_screen->updateScreen();
+	}
+
+	memcpy(_screen->getPalette(0)+723, _screen->getPalette(2)+723, 18);
+	_cauldronState = state;
+	_cauldronUseCount = 0;
+	//if (state == 5)
+	// sub_27149();
+}
+
+void KyraEngine_v2::clearCauldronTable() {
+	Common::set_to(_cauldronTable, _cauldronTable+ARRAYSIZE(_cauldronTable), -1);
+}
+
+void KyraEngine_v2::addFrontCauldronTable(int item) {
+	for (int i = 23; i >= 0; --i)
+		_cauldronTable[i+1] = _cauldronTable[i];
+	_cauldronTable[0] = item;
+}
+
+void KyraEngine_v2::cauldronItemAnim(int item) {
+	const int x = 282;
+	const int y = 135;
+	const int mouseDstX = (x + 7) & (~1);
+	const int mouseDstY = (y + 15) & (~1);
+	int mouseX = _mouseX & (~1);
+	int mouseY = _mouseY & (~1);
+
+	while (mouseY != mouseDstY) {
+		if (mouseY < mouseDstY)
+			mouseY += 2;
+		else if (mouseY > mouseDstY)
+			mouseY -= 2;
+		uint32 waitEnd = _system->getMillis() + _tickLength;
+		_system->warpMouse(mouseX, mouseY);
+		delayUntil(waitEnd);
+	}
+
+	while (mouseX != mouseDstX) {
+		if (mouseX < mouseDstX)
+			mouseX += 2;
+		else if (mouseX > mouseDstX)
+			mouseX -= 2;
+		uint32 waitEnd = _system->getMillis() + _tickLength;
+		_system->warpMouse(mouseX, mouseY);
+		delayUntil(waitEnd);
+	}
+
+	if (itemIsFlask(item)) {
+		setHandItem(19);
+		delayUntil(_system->getMillis()+_tickLength*30);
+		setHandItem(18);
+	} else {
+		_screen->hideMouse();
+		backUpGfxRect32x32(x, y);
+		uint8 *shape = getShapePtr(item+64);
+
+		int curY = y;
+		for (int i = 0; i < 12; i += 2, curY += 2) {
+			restoreGfxRect32x32(x, y);
+			uint32 waitEnd = _system->getMillis() + _tickLength;
+			_screen->drawShape(0, shape, x, curY, 0, 0);
+			_screen->updateScreen();
+			delayUntil(waitEnd);
+		}
+
+		snd_playSoundEffect(0x17);
+		
+		for (int i = 16; i > 0; i -= 2, curY += 2) {
+			_screen->setNewShapeHeight(shape, i);
+			restoreGfxRect32x32(x, y);
+			uint32 waitEnd = _system->getMillis() + _tickLength;
+			_screen->drawShape(0, shape, x, curY, 0, 0);
+			_screen->updateScreen();
+		}
+
+		restoreGfxRect32x32(x, y);
+		_screen->resetShapeHeight(shape);
+		removeHandItem();
+		_screen->showMouse();
+	}
+}
+
+bool KyraEngine_v2::updateCauldron() {
+	for (int i = 0; i < 23; ++i) {
+		const int16 *curStateTable = _cauldronStateTables[i];
+		if (*curStateTable == -2)
+			continue;
+
+		int cauldronState = i;
+		int16 cauldronTable[25];
+		memcpy(cauldronTable, _cauldronTable, sizeof(cauldronTable));
+
+		while (*curStateTable != -2) {
+			int stateValue = *curStateTable++;
+			int i = 0;
+			for (; i < 25; ++i) {
+				int val = cauldronTable[i];
+
+				switch (val) {
+				case 68:
+					val = 70;
+					break;
+
+				case 133:
+				case 167:
+					val = 119;
+					break;
+
+				case 130:
+				case 143:
+				case 100:
+					val = 12;
+					break;
+
+				case 132:
+				case 65:
+				case 69:
+				case 74:
+					val = 137;
+					break;
+
+				case 157:
+					val = 134;
+					break;
+
+				default:
+					break;
+				}
+
+				if (val == stateValue) {
+					cauldronTable[i] = -1;
+					i = 26;
+				}
+			}
+
+			if (i == 25)
+				cauldronState = -1;
+		}
+
+		if (cauldronState >= 0) {
+			showMessage(0, 0xCF);
+			setCauldronState(cauldronState, true);
+			if (cauldronState == 7)
+				objectChat(getTableString(0xF2, _cCodeBuffer, 1), 0, 0x83, 0xF2);
+			clearCauldronTable();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void KyraEngine_v2::cauldronRndPaletteFade() {
+	showMessage(0, 0xCF);
+	int index = _rnd.getRandomNumberRng(0x0F, 0x16);
+	Common::SeekableReadStream *file = _res->getFileStream("_POTIONS.PAL");
+	if (!file)
+		error("Couldn't load cauldron palette");
+	file->seek(index*18, SEEK_SET);
+	file->read(_screen->getPalette(0)+723, 18);
+	snd_playSoundEffect(0x6A);
+	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
+	file->seek(0, SEEK_SET);
+	file->read(_screen->getPalette(0)+723, 18);
+	delete file;
+	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
+}
+
+void KyraEngine_v2::resetCauldronStateTable(int idx) {
+	for (int i = 0; i < 7; ++i)
+		_cauldronStateTables[idx][i] = -2;
+}
+
+bool KyraEngine_v2::addToCauldronStateTable(int data, int idx) {
+	for (int i = 0; i < 7; ++i) {
+		if (_cauldronStateTables[idx][i] == -2) {
+			_cauldronStateTables[idx][i] = data;
+			return true;
+		}
+	}
+	return false;
+}
+
+#pragma mark -
+
 void KyraEngine_v2::registerDefaultSettings() {
 	KyraEngine::registerDefaultSettings();
 
@@ -1951,7 +2167,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x78
 		Opcode(o2_getDlgIndex),
 		Opcode(o2_defineRoom),
-		OpcodeUnImpl(),
+		Opcode(o2_addCauldronStateTableEntry),
 		Opcode(o2_setCountDown),
 		// 0x7c
 		Opcode(o2_getCountDown),

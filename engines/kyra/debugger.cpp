@@ -234,6 +234,7 @@ Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
 	DCmd_Register("scenes",				WRAP_METHOD(Debugger_v2, cmd_listScenes));
 	DCmd_Register("scene_info",			WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
 	DCmd_Register("scene_to_facing",	WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
+	DCmd_Register("give",				WRAP_METHOD(Debugger_v2, cmd_giveItem));
 }
 
 bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
@@ -354,6 +355,24 @@ bool Debugger_v2::cmd_sceneToFacing(int argc, const char **argv) {
 		DebugPrintf("Exit to facing %d leads to room %d.\n", facing, exit);
 	} else {
 		DebugPrintf("Usage: %s <facing>\n", argv[0]);
+	}
+
+	return true;
+}
+
+bool Debugger_v2::cmd_giveItem(int argc, const char **argv) {
+	if (argc == 2) {
+		int item = atoi(argv[1]);
+
+		// Kyrandia 2 has only 178 items (-1 to 176), otherwise it will crash
+		if (item < -1 || item > 176) {
+			DebugPrintf("itemid must be any value between (including) -1 and 176\n");
+			return true;
+		}
+
+		_vm->setHandItem(item);
+	} else {
+		DebugPrintf("Syntax: give <itemid>\n");
 	}
 
 	return true;
