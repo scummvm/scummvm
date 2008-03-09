@@ -636,8 +636,14 @@ bucles:
 
 	mueve_cursor();
 	VUELCA_PANTALLA(0, 0, 0, 0, 320, 200, dir_zona_pantalla);
-	if (music_status() == 0 && musica_room != 0)
-		playmusic(musica_room);
+
+	if (num_ejec == 2) {
+		if (music_status() == 0 && musica_room != 0)
+			playmusic(musica_room);
+	} else {
+		if (music_status() == 0)
+			playmusic(musica_room);
+	}
 
 	MirarRaton();
 
