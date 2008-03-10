@@ -42,6 +42,8 @@
 
 #include "engine/imuse/imuse.h"
 
+#include "mixer/mixer.h"
+
 #include <cstdio>
 #include <cmath>
 #include <zlib.h>
@@ -1880,7 +1882,7 @@ static void ImStartSound() {
 	group = check_int(3);
 	
 	// Start the sound with the appropriate settings
-	if (g_imuse->startSound(soundName, group, 0, 127, 0, priority)) {
+	if (g_imuse->startSound(soundName, group, 0, 127, 0, priority, NULL)) {
 		lua_pushstring(soundName);
 	} else {
 		// Allow soft failing when loading sounds, hard failing when not
@@ -1929,32 +1931,32 @@ static void ImSetVoiceEffect() {
 
 static void ImSetMusicVol() {
 	DEBUG_FUNCTION();
-	g_imuse->setGroupMusicVolume(check_int(1));
+	g_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, check_int(1));
 }
 
 static void ImGetMusicVol() {
 	DEBUG_FUNCTION();
-	lua_pushnumber(g_imuse->getGroupMusicVolume());
+	lua_pushnumber(g_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
 }
 
 static void ImSetVoiceVol() {
 	DEBUG_FUNCTION();
-	g_imuse->setGroupVoiceVolume(check_int(1));
+	g_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, check_int(1));
 }
 
 static void ImGetVoiceVol() {
 	DEBUG_FUNCTION();
-	lua_pushnumber(g_imuse->getGroupVoiceVolume());
+	lua_pushnumber(g_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
 }
 
 static void ImSetSfxVol() {
 	DEBUG_FUNCTION();
-	g_imuse->setGroupSfxVolume(check_int(1));
+	g_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, check_int(1));
 }
 
 static void ImGetSfxVol() {
 	DEBUG_FUNCTION();
-	lua_pushnumber(g_imuse->getGroupSfxVolume());
+	lua_pushnumber(g_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
 }
 
 static void ImSetParam() {
@@ -2961,7 +2963,7 @@ static void GetSaveGameImage() {
 	filename = luaL_check_string(1);
 	SaveGame *savedState = new SaveGame(filename, false);
 	dataSize = savedState->beginSection('SIMG');
-	data = (char *)malloc(dataSize);
+	data = new char[dataSize];
 	savedState->read(data, dataSize);
 	screenshot = new Bitmap(data, width, height, "screenshot");
 	if (screenshot) {

@@ -68,17 +68,17 @@ uint32 SaveGame::beginSection(uint32 sectionTag) {
 		error("Tried to begin a new save game section with ending old section!");
 	_currentSection = sectionTag;
 	_sectionSize = 0;
-	_sectionBuffer = (char *) malloc(_sectionSize);
+	_sectionBuffer = new char[_sectionSize];
 	if (!_saving) {
 		uint32 tag = 0;
 		
 		while (tag != sectionTag) {
-			free(_sectionBuffer);
+			delete[] _sectionBuffer;
 			gzread(_fileHandle, &tag, sizeof(uint32));
 			if (tag == SAVEGAME_FOOTERTAG)
 				error("Unable to find requested section of savegame!");
 			gzread(_fileHandle, &_sectionSize, sizeof(uint32));
-			_sectionBuffer = (char *)malloc(_sectionSize);
+			_sectionBuffer = new char[_sectionSize];
 			gzread(_fileHandle, _sectionBuffer, _sectionSize);
 		}
 	}
@@ -94,8 +94,8 @@ void SaveGame::endSection() {
 		gzwrite(_fileHandle, &_sectionSize, sizeof(uint32));
 		gzwrite(_fileHandle, _sectionBuffer, _sectionSize);
 	}
-	free(_sectionBuffer);
-	_currentSection = 0;
+	delete[] _sectionBuffer;
+	_currentSection = NULL;
 }
 
 void SaveGame::read(void *data, int size) {

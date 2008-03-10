@@ -40,10 +40,13 @@ void Imuse::setMusicState(int stateId) {
 	}
 	assert(num != -1);
 
+	if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ALL)
+		printf("Imuse::setMusicState(): SoundId %d, filename: %s\n", _stateMusicTable[l].soundId, _stateMusicTable[l].filename);
+
 	if (_curMusicState == num)
 		return;
 
-	if (_curMusicSeq == 0) {
+	if (!_curMusicSeq) {
 		playMusic(&_stateMusicTable[num], num, false);
 	}
 
@@ -68,10 +71,13 @@ int Imuse::setMusicSequence(int seqId) {
 
 	assert(num != -1);
 
+	if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ALL)
+		printf("Imuse::setMusicSequence(): SoundId %d, filename: %s\n", _seqMusicTable[l].soundId, _seqMusicTable[l].filename);
+
 	if (_curMusicSeq == num)
 		return _seqMusicTable[_curMusicSeq].soundId;
 
-	if (num != 0) {
+	if (num) {
 		playMusic(&_seqMusicTable[num], 0, true);
 	} else {
 		playMusic(&_stateMusicTable[_curMusicState], _curMusicState, true);
@@ -85,12 +91,12 @@ int Imuse::setMusicSequence(int seqId) {
 void Imuse::playMusic(const ImuseTable *table, int atribPos, bool sequence) {
 	int hookId = 0;
 
-	if (atribPos != 0) {
-		if (table->atribPos != 0)
+	if (atribPos) {
+		if (table->atribPos)
 			atribPos = table->atribPos;
 		hookId = _attributes[atribPos];
-		if (table->hookId != 0) {
-			if ((hookId == 0) && (table->hookId > 1)) {
+		if (table->hookId) {
+			if (hookId && table->hookId > 1) {
 				_attributes[atribPos] = 2;
 			} else {
 				_attributes[atribPos] = hookId + 1;
@@ -104,27 +110,51 @@ void Imuse::playMusic(const ImuseTable *table, int atribPos, bool sequence) {
 
 	if (table->opcode == 0) {
 		fadeOutMusic(120);
-	} else if ((table->opcode == 2) || (table->opcode == 3)) {
+		return;
+	}
+
+	if (table->opcode == 2 || table->opcode == 3) {
 		if (table->filename[0] == 0) {
 			fadeOutMusic(60);
-		} else {
-			char *soundName = getCurMusicSoundName();
-			int pan;
+			return;
+		}
+		char *soundName = getCurMusicSoundName();
+		int pan;
 			
-			if (table->pan == 0)
-				pan = 64;
-			else
-				pan = table->pan;
-			if (soundName != NULL && (table->opcode == 3) && (!sequence)
-			 && (strcmp(soundName, table->filename) == 0) && (table->atribPos != 0)
-			 && table->atribPos == _stateMusicTable[_curMusicState].atribPos) {
-				setFadeVolume(soundName, table->volume, table->fadeOut60TicksDelay);
-				setFadePan(soundName, pan, table->fadeOut60TicksDelay);
-				setHookId(soundName, hookId);
-			} else {
-				fadeOutMusic(table->fadeOut60TicksDelay);
-				startMusic(table->filename, hookId, table->volume, pan);
-			}
+		if (table->pan == 0)
+			pan = 64;
+		else
+			pan = table->pan;
+		if (!soundName) {
+			startMusic(table->filename, hookId, 0, pan);
+			setFadeVolume(table->filename, table->volume, table->fadeOut60TicksDelay);
+			return;
+		}
+		int old_pan = getCurMusicPan();
+		int old_vol = getCurMusicVol();
+		if (old_pan == -1)
+			old_pan = 64;
+		if (old_vol == -1)
+			old_vol = 127;
+
+		if (table->opcode == 2) {
+			fadeOutMusic(table->fadeOut60TicksDelay);
+			startMusic(table->filename, hookId, table->volume, pan);
+			return;
+		}
+		if (strcmp(soundName, table->filename) == 0) {
+			setFadeVolume(soundName, table->volume, table->fadeOut60TicksDelay);
+			setFadePan(soundName, pan, table->fadeOut60TicksDelay);
+			return;
+		}
+
+		if (!sequence && table->atribPos && table->atribPos == _stateMusicTable[_curMusicState].atribPos) {
+			fadeOutMusicAndStartNew(table->fadeOut60TicksDelay, table->filename, hookId, old_vol, old_pan);
+			setFadeVolume(table->filename, table->volume, table->fadeOut60TicksDelay);
+			setFadePan(table->filename, pan, table->fadeOut60TicksDelay);
+		} else {
+			fadeOutMusic(table->fadeOut60TicksDelay);
+			startMusic(table->filename, hookId, table->volume, pan);
 		}
 	}
 }

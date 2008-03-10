@@ -70,8 +70,8 @@ private:
 	int32 _nbframes;
 	Blocky16 _blocky16;
 	zlibFile _file;
-	PlayingSoundHandle _soundHandle;
-	AppendableAudioStream *_stream;
+	Audio::SoundHandle _soundHandle;
+	Audio::AppendableAudioStream *_stream;
 
  	int32 _frame;
 	bool _updateNeeded;

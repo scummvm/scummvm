@@ -359,11 +359,22 @@ void DriverSDL::delayMillis(uint msecs) {
 	SDL_Delay(msecs);
 }
 
-void DriverSDL::setTimerCallback(TimerProc callback, int timer) {
-	SDL_SetTimer(timer, (SDL_TimerCallback) callback);
+static SDL_TimerID _timerID = NULL;
+
+static Uint32 timer_handler(Uint32 interval, void *param) {
+	((DefaultTimerManager *)param)->handler();
+	return interval;
 }
 
-MutexRef DriverSDL::createMutex() {
+void DriverSDL::setTimerCallback() {
+	_timerID = SDL_AddTimer(10, &timer_handler, g_timer);
+}
+
+void DriverSDL::clearTimerCallback() {
+	SDL_RemoveTimer(_timerID);
+}
+
+Common::MutexRef DriverSDL::createMutex() {
 	return (MutexRef)SDL_CreateMutex();
 }
 
@@ -382,12 +393,20 @@ void DriverSDL::deleteMutex(MutexRef mutex) {
 bool DriverSDL::setSoundCallback(SoundProc proc, void *param) {
 	SDL_AudioSpec desired;
 
+	// Determine the sample buffer size. We want it to store enough data for
+	// about 1/10th of a second. Note that it must be a power of two.
+	// So e.g. at 22050 Hz, we request a sample buffer size of 2048.
+	int samples = 0x8000;
+	while (10 * samples >= _samplesPerSec) {
+		samples >>= 1;
+	}
+
 	memset(&desired, 0, sizeof(desired));
 
 	desired.freq = _samplesPerSec;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
-	desired.samples = 2048;
+	desired.samples = (uint16)samples;
 	desired.callback = proc;
 	desired.userdata = param;
 

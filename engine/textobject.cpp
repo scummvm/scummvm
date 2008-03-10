@@ -139,7 +139,7 @@ void TextObject::createBitmap() {
 		message += msg[i];
 	}
 	_textObjectHandle = (Driver::TextObjectHandle **)malloc(sizeof(long) * _numberLines);
-	_bitmapWidthPtr = (int *)malloc(sizeof(int) * _numberLines);
+	_bitmapWidthPtr = new int[_numberLines];
 
 	for (int j = 0; j < _numberLines; j++) {
 		int nextLinePos = message.find_first_of('\n');
@@ -188,13 +188,13 @@ void TextObject::destroyBitmap() {
 	if (_textObjectHandle) {
 		for (int i = 0; i < _numberLines; i++) {
 			g_driver->destroyTextBitmap(_textObjectHandle[i]);
-			delete _textObjectHandle[i];
+			delete[] _textObjectHandle[i];
 		}
 		free(_textObjectHandle);
 		_textObjectHandle = NULL;
 	}
 	if (_bitmapWidthPtr) {
-		free(_bitmapWidthPtr);
+		delete[] _bitmapWidthPtr;
 		_bitmapWidthPtr = NULL;
 	}
 }

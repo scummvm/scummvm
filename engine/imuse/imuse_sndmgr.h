@@ -64,7 +64,7 @@ private:
 	
 public:
 
-	struct SoundStruct {
+	struct SoundDesc {
 		uint16 freq;		// frequency
 		byte channels;		// stereo or mono
 		byte bits;			// 8, 12, 16
@@ -77,6 +77,7 @@ public:
 		char name[32];
 		McmpMgr *mcmpMgr;
 		Block *blockRes;
+		int type;
 		int volGroupId;
 		byte *resPtr;
 		bool mcmpData;
@@ -84,11 +85,11 @@ public:
 
 private:
 
-	SoundStruct _sounds[MAX_IMUSE_SOUNDS];
+	SoundDesc _sounds[MAX_IMUSE_SOUNDS];
 
-	bool checkForProperHandle(SoundStruct *soundHandle);
-	SoundStruct *allocSlot();
-	void parseSoundHeader(byte *ptr, SoundStruct *sound, int &headerSize);
+	bool checkForProperHandle(SoundDesc *soundDesc);
+	SoundDesc *allocSlot();
+	void parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize);
 	void countElements(byte *ptr, int &numRegions, int &numJumps);
 
 public:
@@ -96,23 +97,23 @@ public:
 	ImuseSndMgr();
 	~ImuseSndMgr();
 
-	SoundStruct *openSound(const char *soundName, int volGroupId);
-	void closeSound(SoundStruct *soundHandle);
-	SoundStruct *cloneSound(SoundStruct *soundHandle);
+	SoundDesc *openSound(const char *soundName, int volGroupId);
+	void closeSound(SoundDesc *sound);
+	SoundDesc *cloneSound(SoundDesc *sound);
 
-	int getFreq(SoundStruct *soundHandle);
-	int getBits(SoundStruct *soundHandle);
-	int getChannels(SoundStruct *soundHandle);
-	bool isEndOfRegion(SoundStruct *soundHandle, int region);
-	int getNumRegions(SoundStruct *soundHandle);
-	int getNumJumps(SoundStruct *soundHandle);
-	int getRegionOffset(SoundStruct *soundHandle, int region);
-	int getJumpIdByRegionAndHookId(SoundStruct *soundHandle, int region, int hookId);
-	int getRegionIdByJumpId(SoundStruct *soundHandle, int jumpId);
-	int getJumpHookId(SoundStruct *soundHandle, int number);
-	int getJumpFade(SoundStruct *soundHandle, int number);
+	int getFreq(SoundDesc *sound);
+	int getBits(SoundDesc *sound);
+	int getChannels(SoundDesc *sound);
+	bool isEndOfRegion(SoundDesc *sound, int region);
+	int getNumRegions(SoundDesc *sound);
+	int getNumJumps(SoundDesc *sound);
+	int getRegionOffset(SoundDesc *sound, int region);
+	int getJumpIdByRegionAndHookId(SoundDesc *sound, int region, int hookId);
+	int getRegionIdByJumpId(SoundDesc *sound, int jumpId);
+	int getJumpHookId(SoundDesc *sound, int number);
+	int getJumpFade(SoundDesc *sound, int number);
 
-	int32 getDataFromRegion(SoundStruct *soundHandle, int region, byte **buf, int32 offset, int32 size);
+	int32 getDataFromRegion(SoundDesc *sound, int region, byte **buf, int32 offset, int32 size);
 };
 
 #endif

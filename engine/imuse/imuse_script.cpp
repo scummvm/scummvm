@@ -24,6 +24,7 @@
 #include "common/platform.h"
 #include "common/debug.h"
 #include "common/timer.h"
+#include "common/mutex.h"
 
 #include "engine/backend/driver.h"
 
@@ -33,34 +34,41 @@
 #include "engine/imuse/imuse.h"
 #include "engine/imuse/imuse_sndmgr.h"
 
+void Imuse::flushTrack(Track *track) {
+	track->toBeRemoved = true;
+
+	if (track->stream) {
+		// Finalize the appendable stream, then remove our reference to it.
+		// Note that there might still be some data left in the buffers of the
+		// appendable stream. We play it nice and wait till all of it
+		// played. The audio mixer will take care of it afterwards (and dispose it).
+		track->stream->finish();
+		track->stream = 0;
+		if (track->soundDesc) {
+			_sound->closeSound(track->soundDesc);
+			track->soundDesc = 0;
+		}
+	}
+
+	if (!g_mixer->isSoundHandleActive(track->handle)) {
+		memset(track, 0, sizeof(Track));
+	}
+}
+
 void Imuse::flushTracks() {
-	// flushTracks should not lock the stack since all the functions
-	// that call it already do (stopAllSounds, startSound)
+	Common::StackLock lock(_mutex);
 	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (track->used && track->readyToRemove) {
-			if (track->stream) {
-				if (!track->stream->endOfStream()) {
-	 				track->stream->finish();
-	 			}
-				if (track->stream->endOfStream()) {
-					g_mixer->stopHandle(track->handle);
-					delete track->stream;
-					track->stream = NULL;
-					_sound->closeSound(track->soundHandle);
-					track->soundHandle = NULL;
-					track->used = false;
-					strcpy(track->soundName, "");
-				}
-			}
+		if (track->used && track->toBeRemoved && !g_mixer->isSoundHandleActive(track->handle)) {
+			memset(track, 0, sizeof(Track));
 		}
 	}
 }
 
 void Imuse::refreshScripts() {
+	Common::StackLock lock(_mutex);
 	bool found = false;
-	
-	StackLock lock(_mutex);
+
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
@@ -68,52 +76,58 @@ void Imuse::refreshScripts() {
 		}
 	}
 
-	if (!found && (_curMusicSeq != 0)) {
-		setMusicSequence(2000);
+	if (!found && _curMusicState) {
+		setMusicSequence(0);
 	}
 }
 
 void Imuse::startVoice(const char *soundName, int volume, int pan) {
-	startSound(soundName, IMUSE_VOLGRP_VOICE, 0, volume, pan, 127);
+	if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ALL)
+		printf("Imuse::startVoice(): SoundName %s, vol:%d, pan:%d\n", soundName, volume, pan);
+	startSound(soundName, IMUSE_VOLGRP_VOICE, 0, volume, pan, 127, NULL);
 }
 
 void Imuse::startMusic(const char *soundName, int hookId, int volume, int pan) {
-	startSound(soundName, IMUSE_VOLGRP_MUSIC, hookId, volume, pan, 126);
+	if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ALL)
+		printf("Imuse::startMusic(): SoundName %s, hookId:%d, vol:%d, pan:%d\n", soundName, hookId, volume, pan);
+	startSound(soundName, IMUSE_VOLGRP_MUSIC, hookId, volume, pan, 126, NULL);
+}
+
+void Imuse::startMusicWithOtherPos(const char *soundName, int hookId, int volume, int pan, Track *otherTrack) {
+	if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ALL)
+		printf("Imuse::startMusicWithOtherPos(): SoundName %s, hookId:%d, vol:%d, pan:%d\n", soundName, volume, pan);
+	startSound(soundName, IMUSE_VOLGRP_MUSIC, hookId, volume, pan, 126, otherTrack);
 }
 
 void Imuse::startSfx(const char *soundName, int priority) {
-	startSound(soundName, IMUSE_VOLGRP_SFX, 0, 127, 0, priority);
+	if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ALL)
+		printf("Imuse::startSfx(): SoundName %s, priority:%d\n", soundName, priority);
+	startSound(soundName, IMUSE_VOLGRP_SFX, 0, 127, 0, priority, NULL);
 }
 
 int32 Imuse::getPosIn60HzTicks(const char *soundName) {
+	Common::StackLock lock(_mutex);
 	Track *getTrack = NULL;
 	
 	getTrack = findTrack(soundName);
 	// Warn the user if the track was not found
 	if (getTrack == NULL) {
 		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Music track '%s' could not be found to get ticks!", soundName);
+			warning("Sound '%s' could not be found to get ticks!", soundName);
 		return false;
 	}
 
-	if (getTrack->handle.isActive()) {
-		int32 pos = (5 * (getTrack->dataOffset + getTrack->regionOffset)) / (getTrack->iteration / 12);
-		return pos;
-	}
-	return -1;
+	int32 pos = (5 * (getTrack->dataOffset + getTrack->regionOffset)) / (getTrack->feedSize / 200);
+	return pos;
 }
 
 bool Imuse::isVoicePlaying() {
-	StackLock lock(_mutex);
+	Common::StackLock lock(_mutex);
 	for (int l = 0; l < MAX_IMUSE_TRACKS; l++) {
 		Track *track = _track[l];
-		// Make sure the track is in use before checking the group ID,
-		// otherwise volGroupId can be uninitialized or reference an
-		// old track.
 		if (track->used && track->volGroupId == IMUSE_VOLGRP_VOICE) {
-			if (track->handle.isActive()) {
+			if (g_mixer->isSoundHandleActive(track->handle))
 				return true;
-			}
 		}
 	}
 
@@ -121,51 +135,55 @@ bool Imuse::isVoicePlaying() {
 }
 
 bool Imuse::getSoundStatus(const char *soundName) {
-	Track *statusTrack = NULL;
+	Common::StackLock lock(_mutex);
+	Track *track = NULL;
 	
 	// If there's no name then don't try to get the status!
 	if (strlen(soundName) == 0)
 		return false;
 	
-	statusTrack = findTrack(soundName);
+	track = findTrack(soundName);
 	// Warn the user if the track was not found
-	if (statusTrack == NULL) {
+	if (track == NULL || !g_mixer->isSoundHandleActive(track->handle)) {
 		// This debug warning should be "light" since this function gets called
 		// on occassion to see if a sound has stopped yet
 		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
-			printf("Music track '%s' could not be found to get status, assume inactive.\n", soundName);
+			printf("Sound '%s' could not be found to get status, assume inactive.\n", soundName);
 		return false;
 	}
-	return statusTrack->handle.isActive();
+	return true;
 }
 
 void Imuse::stopSound(const char *soundName) {
+	Common::StackLock lock(_mutex);
+	if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ALL)
+		printf("Imuse::stopSound(): SoundName %s\n", soundName);
 	Track *removeTrack = NULL;
 	
 	removeTrack = findTrack(soundName);
 	// Warn the user if the track was not found
 	if (removeTrack == NULL) {
 		if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_WARN || debugLevel == DEBUG_ALL)
-			warning("Music track '%s' could not be found to stop!", soundName);
+			warning("Sound track '%s' could not be found to stop!", soundName);
 		return;
 	}
-	removeTrack->toBeRemoved = true;
+	flushTrack(removeTrack);
 }
 
 void Imuse::stopAllSounds() {
-	for (;;) {
-		bool foundNotRemoved = false;
-		for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
-			Track *track = _track[l];
-			if (track->used) {
-				track->toBeRemoved = true;
-				foundNotRemoved = true;
+	Common::StackLock lock(_mutex);
+	if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ALL)
+		printf("Imuse::stopAllSounds()\n");
+
+	for (int l = 0; l < MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS; l++) {
+		Track *track = _track[l];
+		if (track->used) {
+			g_mixer->stopHandle(track->handle);
+			if (track->soundDesc) {
+				_sound->closeSound(track->soundDesc);
 			}
+			memset(track, 0, sizeof(Track));
 		}
-		if (!foundNotRemoved)
-			break;
-		flushTracks();
-		g_driver->delayMillis(50);
 	}
 }
 

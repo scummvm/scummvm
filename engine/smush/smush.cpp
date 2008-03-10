@@ -29,6 +29,7 @@
 #include "engine/resource.h"
 #include "engine/engine.h"
 #include "engine/backend/driver.h"
+#include "engine/imuse/imuse_track.h"
 
 #include "mixer/mixer.h"
 
@@ -83,8 +84,8 @@ void Smush::init() {
 	assert(!_internalBuffer);
 	assert(!_externalBuffer);
 
-	_internalBuffer = (byte *)malloc(_width * _height * 2);
-	_externalBuffer = (byte *)malloc(_width * _height * 2);
+	_internalBuffer = new byte[_width * _height * 2];
+	_externalBuffer = new byte[_width * _height * 2];
 
 	vimaInit(smushDestTable);
 	g_timer->installTimerProc(&timerCallback, _speed, NULL);
@@ -94,16 +95,16 @@ void Smush::deinit() {
 	g_timer->removeTimerProc(&timerCallback);
 
 	if (_internalBuffer) {
-		free(_internalBuffer);
+		delete[] _internalBuffer;
 		_internalBuffer = NULL;
 	}
 	if (_externalBuffer) {
-		free(_externalBuffer);
+		delete[] _externalBuffer;
 		_externalBuffer = NULL;
 	}
 	if (_videoLooping && _startPos != NULL) {
-		free(_startPos->tmpBuf);
-		free(_startPos);
+		delete[] _startPos->tmpBuf;
+		delete[] _startPos;
 		_startPos = NULL;
 	}
 	if (_stream) {
@@ -118,20 +119,22 @@ void Smush::deinit() {
 }
 
 void Smush::handleWave(const byte *src, uint32 size) {
-	int16 *dst = (int16 *)malloc(size * _channels * 2);
+	int16 *dst = new int16[size * _channels];
 	decompressVima(src, dst, size * _channels * 2, smushDestTable);
 
-	int flags = SoundMixer::FLAG_16BITS;
+	int flags = Audio::Mixer::FLAG_16BITS;
 	if (_channels == 2)
-		flags |= SoundMixer::FLAG_STEREO;
+		flags |= Audio::Mixer::FLAG_STEREO;
 
 	if (!_stream) {
-		_stream = makeAppendableAudioStream(_freq, flags, 500000);
-		g_mixer->playInputStream(&_soundHandle, _stream, true);
+		_stream = Audio::makeAppendableAudioStream(_freq, flags);
+		g_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_soundHandle, _stream);
 	}
- 	if (_stream)
-		_stream->append((byte *)dst, size * _channels * 2);
-	free(dst);
+	if (g_mixer->isReady()) {
+		_stream->queueBuffer((byte *)dst, size * _channels * 2);
+	} else {
+		delete[] dst;
+	}
 }
 
 void Smush::handleFrame() {
@@ -162,7 +165,7 @@ void Smush::handleFrame() {
 		byte *data;
 		
 		size = _file.readUint32BE();
-		data = (byte *)malloc(size);
+		data = new byte[size];
 		_file.read(data, size);
 		anno = (char *)data;
 		if (strncmp(anno, ANNO_HEADER, sizeof(ANNO_HEADER)-1) == 0) {
@@ -185,13 +188,13 @@ void Smush::handleFrame() {
 			if (debugLevel == DEBUG_SMUSH || debugLevel == DEBUG_NORMAL || debugLevel == DEBUG_ALL)
 				printf("Announcement header not understood: %s\n", anno);
 		}
-		free(anno);
+		delete[] anno;
 		tag = _file.readUint32BE();
 	}
 
 	assert(tag == MKID_BE('FRME'));
 	size = _file.readUint32BE();
-	byte *frame = (byte *)malloc(size);
+	byte *frame = new byte[size];
 	_file.read(frame, size);
 
 	do {
@@ -209,7 +212,7 @@ void Smush::handleFrame() {
 			error("Smush::handleFrame() unknown tag");
 		}
 	} while (pos < size);
-	free(frame);
+	delete[] frame;
 
 	memcpy(_externalBuffer, _internalBuffer, _width * _height * 2);
 	_updateNeeded = true;
@@ -234,7 +237,7 @@ void Smush::handleFramesHeader() {
 	tag = _file.readUint32BE();
 	assert(tag == MKID_BE('FLHD'));
 	size = _file.readUint32BE();
-	byte *f_header = (byte*)malloc(size);
+	byte *f_header = new byte[size];
 	_file.read(f_header, size);
 
 	do {
@@ -248,7 +251,7 @@ void Smush::handleFramesHeader() {
 			error("Smush::handleFramesHeader() unknown tag");
 		}
 	} while (pos < size);
-	free(f_header);
+	delete[] f_header;
 }
 
 bool Smush::setupAnim(const char *file, int x, int y) {
@@ -267,7 +270,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	assert(tag == MKID_BE('SHDR'));
 
 	size = _file.readUint32BE();
-	byte *s_header = (byte *)malloc(size);
+	byte *s_header = new byte[size];
 	_file.read(s_header, size);
 	_nbframes = READ_LE_UINT32(s_header + 2);
 	int width = READ_LE_UINT16(s_header + 8);
@@ -301,7 +304,7 @@ bool Smush::setupAnim(const char *file, int x, int y) {
 	}
 	_videoLooping = SMUSH_LOOPMOVIE(flags);
 	_startPos = NULL; // Set later
-	free(s_header);
+	delete[] s_header;
 
 	return true;
 }
@@ -347,10 +350,10 @@ struct SavePos *zlibFile::getPos() {
 			warning("zlibFile::open() unable to find start position! %m");
 		return NULL;
 	}
-	pos = (struct SavePos *) malloc(sizeof(struct SavePos));
+	pos = new SavePos;
 	pos->filePos = position;
 	inflateCopy(&pos->streamBuf, &_stream);
-	pos->tmpBuf = (char *)calloc(1, BUFFER_SIZE);
+	pos->tmpBuf = new char[BUFFER_SIZE];
 	memcpy(pos->tmpBuf, _inBuf, BUFFER_SIZE);
 	return pos;
 }
@@ -446,7 +449,7 @@ void zlibFile::close() {
 	}
 
 	if (_inBuf) {
- 		free(_inBuf);
+ 		delete[] _inBuf;
  		_inBuf = NULL;
 	}
 }

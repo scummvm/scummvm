@@ -45,10 +45,8 @@ McmpMgr::McmpMgr() {
 McmpMgr::~McmpMgr() {
 	if (_file)
 		fclose(_file);
-	if (_compTable)
-		free(_compTable);
-	if (_compInput)
-		free(_compInput);
+	delete[] _compTable;
+	delete[] _compInput;
 }
 
 bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
@@ -72,7 +70,7 @@ bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 
 	int offset = ftell(_file) + (_numCompItems * 9) + 2;
 	_numCompItems--;
-	_compTable = (CompTable *)malloc(sizeof(CompTable) * _numCompItems);
+	_compTable = new CompTable[_numCompItems];
 	fseek(_file, 5, SEEK_CUR);
 	fread(&_compTable[0].decompSize, 1, 4, _file);
 	int headerSize = _compTable[0].decompSize = READ_BE_UINT32(&_compTable[0].decompSize);
@@ -98,7 +96,7 @@ bool McmpMgr::openSound(const char *filename, byte **resPtr, int &offsetData) {
 		_compTable[i].offset += sizeCodecs;
 	}
 	fseek(_file, sizeCodecs, SEEK_CUR);
-	_compInput = (byte *)malloc(maxSize);
+	_compInput = new byte[maxSize];
 	fread(_compInput, 1, headerSize, _file);
 	*resPtr = _compInput;
 	offsetData = headerSize;
@@ -123,7 +121,7 @@ int32 McmpMgr::decompressSample(int32 offset, int32 size, byte **comp_final) {
 		last_block = _numCompItems - 1;
 
 	int32 blocks_final_size = 0x2000 * (1 + last_block - first_block);
-	*comp_final = (byte *)malloc(blocks_final_size);
+	*comp_final = new byte[blocks_final_size];
 	final_size = 0;
 
 	for (i = first_block; i <= last_block; i++) {

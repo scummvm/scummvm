@@ -52,7 +52,8 @@ public:
 	bool pollEvent(Event &event);
 	uint32 getMillis();
 	void delayMillis(uint msecs);
-	void setTimerCallback(TimerProc callback, int interval);
+	void setTimerCallback();
+	void clearTimerCallback();
 
 	MutexRef createMutex();
 	void lockMutex(MutexRef mutex);

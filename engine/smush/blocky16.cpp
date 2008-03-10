@@ -624,7 +624,7 @@ void Blocky16::init(int width, int height) {
 	// lol, byeruba, crushed, eldepot, heltrain, hostage
 	// but for tb_kitty.snm 5700 bytes is needed
 	_deltaSize = _frameSize * 3 + 5700;
-	_deltaBuf = (byte *)malloc(_deltaSize);
+	_deltaBuf = new byte[_deltaSize];
 	memset(_deltaBuf, 0, _deltaSize);
 	_deltaBufs[0] = _deltaBuf;
 	_deltaBufs[1] = _deltaBuf + _frameSize;
@@ -632,8 +632,8 @@ void Blocky16::init(int width, int height) {
 }
 
 Blocky16::Blocky16() {
-	_tableBig = (byte *)malloc(99328);
-	_tableSmall = (byte *)malloc(32768);
+	_tableBig = new byte[99328];
+	_tableSmall = new byte[32768];
 	memset(_tableBig, 0, 99328);
 	memset(_tableSmall, 0, 32768);
 	_deltaBuf = NULL;
@@ -642,7 +642,7 @@ Blocky16::Blocky16() {
 void Blocky16::deinit() {
 	_lastTableWidth = -1;
 	if (_deltaBuf) {
-		free(_deltaBuf);
+		delete[] _deltaBuf;
 		_deltaSize = 0;
 		_deltaBuf = NULL;
 		_deltaBufs[0] = NULL;
@@ -653,11 +653,11 @@ void Blocky16::deinit() {
 Blocky16::~Blocky16() {
 	deinit();
 	if (_tableBig) {
-		free(_tableBig);
+		delete[] _tableBig;
 		_tableBig = NULL;
 	}
 	if (_tableSmall) {
-		free(_tableSmall);
+		delete[] _tableSmall;
 		_tableSmall = NULL;
 	}
 }

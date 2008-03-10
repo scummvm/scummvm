@@ -34,20 +34,11 @@
 
 #include "engine/imuse/imuse_sndmgr.h"
 #include "engine/imuse/imuse_mcmp_mgr.h"
+#include "engine/imuse/imuse_track.h"
+#include "engine/imuse/imuse_tables.h"
 
 #define MAX_IMUSE_TRACKS 16
 #define MAX_IMUSE_FADETRACKS 16
-
-struct ImuseTable {
-	byte opcode;
-	int16 soundId;
-	byte atribPos;
-	byte hookId;
-	int16 fadeOut60TicksDelay;
-	byte volume;
-	byte pan;
-	char filename[32];
-};
 
 class SaveGame;
 
@@ -56,51 +47,10 @@ private:
 
 	int _callbackFps;
 
-	struct Track {
-		int trackId;
-
-		int32 pan;
-		int32 panFadeDest;
-		int32 panFadeStep;
-		int32 panFadeDelay;
-		bool panFadeUsed;
-		int32 vol;
-		int32 volFadeDest;
-		int32 volFadeStep;
-		int32 volFadeDelay;
-		bool volFadeUsed;
-
-		char soundName[32];
-		bool used;
-		bool toBeRemoved;
-		bool readyToRemove;
-		bool started;
-		int32 priority;
-		int32 regionOffset;
-		int32 dataOffset;
-		int32 curRegion;
-		int32 curHookId;
-		int32 volGroupId;
-		int32 iteration;
-		int32 mixerFlags;
-		int32 mixerVol;
-		int32 mixerPan;
-
-		ImuseSndMgr::SoundStruct *soundHandle;
-		PlayingSoundHandle handle;
-		AppendableAudioStream *stream;
-
-		Track();
-	};
-
 	Track *_track[MAX_IMUSE_TRACKS + MAX_IMUSE_FADETRACKS];
 
-	MutexRef _mutex;
+	Common::Mutex _mutex;
 	ImuseSndMgr *_sound;
-
-	int32 _volVoice;
-	int32 _volSfx;
-	int32 _volMusic;
 
 	bool _pause;
 
@@ -111,6 +61,7 @@ private:
 	const ImuseTable *_stateMusicTable;
 	const ImuseTable *_seqMusicTable;
 
+	int32 makeMixerFlags(int32 flags);
 	static void timerHandler(void *refConf);
 	void callback();
 	void switchToNextRegion(Track *track);
@@ -118,29 +69,26 @@ private:
 	void selectVolumeGroup(const char *soundName, int volGroupId);
 
 	void fadeOutMusic(int fadeDelay);
+	void fadeOutMusicAndStartNew(int fadeDelay, const char *filename, int hookId, int vol, int pan);
 	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
 
 	void playMusic(const ImuseTable *table, int atribPos, bool sequence);
+
+	void flushTrack(Track *track);
 
 public:
 	Imuse(int fps);
 	~Imuse();
 
-	bool startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority);
+	bool startSound(const char *soundName, int volGroupId, int hookId, int volume, int pan, int priority, Track *otherTrack);
 	void startVoice(const char *soundName, int volume = 127, int pan = 64);
 	void startMusic(const char *soundName, int hookId, int volume, int pan);
+	void startMusicWithOtherPos(const char *soundName, int hookId, int volume, int pan, Track *otherTrack);
 	void startSfx(const char *soundName, int priority = 127);
 
 	void restoreState(SaveGame *savedState);
 	void saveState(SaveGame *savedState);
 	void resetState();
-
-	void setGroupVoiceVolume(int volume) { _volVoice = volume; }
-	void setGroupSfxVolume(int volume) { _volSfx = volume; }
-	void setGroupMusicVolume(int volume) { _volMusic = volume; }
-	int getGroupVoiceVolume() { return _volVoice; }
-	int getGroupSfxVolume() { return _volSfx; }
-	int getGroupMusicVolume() { return _volMusic; }
 
 	Track *findTrack(const char *soundName);
 	void setPriority(const char *soundName, int priority);
@@ -160,6 +108,8 @@ public:
 	void flushTracks();
 	bool isVoicePlaying();
 	char *getCurMusicSoundName();
+	int getCurMusicPan();
+	int getCurMusicVol();
 	bool getSoundStatus(const char *soundName);
 	int32 getPosIn60HzTicks(const char *soundName);
 };

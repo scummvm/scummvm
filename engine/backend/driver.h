@@ -25,6 +25,7 @@
 
 #include "common/platform.h"
 #include "common/vector3d.h"
+#include "common/mutex.h"
 
 #include "engine/color.h"
 #include "engine/model.h"
@@ -33,9 +34,15 @@
 #include "engine/font.h"
 #include "engine/primitives.h"
 #include "engine/actor.h"
+#include "engine/backend/default-timer.h"
 
 class Material;
 class Bitmap;
+class Timer;
+
+namespace Audio {
+	class Mixer;
+}
 
 class Driver {
 public:
@@ -116,7 +123,7 @@ public:
 	/** @name Events and Time */
 	//@{
 
-	typedef int (*TimerProc)(int interval);
+	typedef unsigned int (*TimerProc)(unsigned int interval, void *param);
 
 	/**
 	 * The types of events backends may generate.
@@ -239,24 +246,21 @@ public:
 	 * @param interval	the interval (in milliseconds) between invocations
 	 *                  of the callback
 	 */
-	virtual void setTimerCallback(TimerProc callback, int interval) = 0;
+	virtual void setTimerCallback() = 0;
+
+	virtual void clearTimerCallback() = 0;
 
 	//@}
 
 	/**
 	 * @name Mutex handling
-	 * Historically, the OSystem API used to have a method which allowed
-	 * creating threads. Hence mutex support was needed for thread syncing.
-	 * To ease portability, though, we decided to remove the threading API.
-	 * Instead, we now use timers (see setTimerCallback() and Timer).
-	 * But since those may be implemented using threads (and in fact, that's
-	 * how our primary backend, the SDL one, does it on many systems), we
-	 * still have to do mutex syncing in our timer callbacks.
 	 *
 	 * Hence backends which do not use threads to implement the timers simply
 	 * can use dummy implementations for these methods.
 	 */
 	//@{
+
+	typedef Common::MutexRef	MutexRef;
 
 	/**
 	 * Create a new mutex.
@@ -266,6 +270,12 @@ public:
 
 	/**
 	 * Lock the given mutex.
+	 *
+	 * @note Code assumes that the mutex implementation supports
+	 * recursive locking. That is, a thread may lock a mutex twice w/o
+	 * deadlocking. In case of a multilock, the mutex has to be unlocked
+	 * as many times as it was locked befored it really becomes unlocked.
+	 *
 	 * @param mutex	the mutex to lock.
 	 */
 	virtual void lockMutex(MutexRef mutex) = 0;
@@ -329,16 +339,7 @@ protected:
 };
 
 extern Driver *g_driver;
-
-class StackLock {
-	MutexRef _mutex;
-public:
-	StackLock(MutexRef mutex) : _mutex(mutex) {
-		g_driver->lockMutex(_mutex);
-	}
-	~StackLock() {
-		g_driver->unlockMutex(_mutex);
-	}
-};
+extern DefaultTimerManager *g_timer;
+extern Audio::Mixer *g_mixer;
 
 #endif

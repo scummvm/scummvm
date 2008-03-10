@@ -42,7 +42,7 @@ Font::Font(const char *filename, const char *data, int /*len*/) :
 	data += 32;
 
 	// Read character indexes - are the key/value reversed?
-	_charIndex = (uint16 *)malloc(sizeof(_charIndex) * _numChars);
+	_charIndex = new uint16[_numChars];
 	if (!_charIndex)
 		error("Could not load font %s. Out of memory\n", filename);
 	for (uint i = 0; i < _numChars; ++i) {
@@ -52,7 +52,7 @@ Font::Font(const char *filename, const char *data, int /*len*/) :
 	data += _numChars * 2;
 
 	// Read character headers
-	_charHeaders = (CharHeader *)malloc(sizeof(CharHeader) * _numChars);
+	_charHeaders = new CharHeader[_numChars];
 	if (!_charHeaders)
 		error("Could not load font %s. Out of memory\n", filename);
 	for (uint i = 0; i < _numChars; ++i) {
@@ -65,7 +65,7 @@ Font::Font(const char *filename, const char *data, int /*len*/) :
 		data += 16;
 	}
 	// Read font data
-	_fontData = (byte *)malloc(_dataSize);
+	_fontData = new byte[_dataSize];
 	if (!_fontData)
 		error("Could not load font %s. Out of memory\n", filename);
 
@@ -73,9 +73,9 @@ Font::Font(const char *filename, const char *data, int /*len*/) :
 }
 
 Font::~Font() {
-	free(_charIndex);
-	free(_charHeaders);
-	free(_fontData);
+	delete[] _charIndex;
+	delete[] _charHeaders;
+	delete[] _fontData;
 }
 
 uint16 Font::getCharIndex(unsigned char c) {

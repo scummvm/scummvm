@@ -199,6 +199,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\frac.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\list.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\matrix3.cpp"
 				>
 			</File>
@@ -215,15 +223,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\mutex.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\mutex.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\noncopyable.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\platform.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\common\sys.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\common\timer.cpp"
 				>
 			</File>
 			<File
@@ -782,7 +798,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\engine\imuse\imuse_tables.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\engine\imuse\imuse_track.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\engine\imuse\imuse_track.h"
 					>
 				</File>
 			</Filter>
@@ -813,6 +837,14 @@
 			<Filter
 				Name="backend"
 				>
+				<File
+					RelativePath="..\..\engine\backend\default-timer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\engine\backend\default-timer.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\engine\backend\driver.h"
 					>
