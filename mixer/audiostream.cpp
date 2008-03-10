@@ -1,19 +1,19 @@
 /* Residual - Virtual machine to run LucasArts' 3D adventure games
- * Copyright (C) 2003-2006 The ScummVM-Residual Team (www.scummvm.org)
+ * Copyright (C) 2003-2008 The ScummVM-Residual Team (www.scummvm.org)
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
 
- * This library is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
@@ -22,18 +22,39 @@
 
 #include "common/sys.h"
 #include "common/debug.h"
+#include "common/list.h"
 
 #include "engine/backend/driver.h"
 
 #include "mixer/mixer.h"
 #include "mixer/audiostream.h"
 
-#define READSAMPLE(is16Bit, isUnsigned, ptr) \
-	((is16Bit ? READ_BE_UINT16(ptr) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
-
+// This used to be an inline template function, but
+// buggy template function handling in MSVC6 forced
+// us to go with the macro approach. So far this is
+// the only template function that MSVC6 seemed to
+// compile incorrectly. Knock on wood.
 #define READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, ptr, isLE) \
 	((is16Bit ? (isLE ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr)) : (*ptr << 8)) ^ (isUnsigned ? 0x8000 : 0))
 
+
+namespace Audio {
+
+#pragma mark -
+#pragma mark --- LinearMemoryStream ---
+#pragma mark -
+
+
+/**
+ * A simple raw audio stream, purely memory based. It operates on a single
+ * block of data, which is passed to it upon creation.
+ * Optionally supports looping the sound.
+ *
+ * Design note: This code tries to be as efficient as possible (without
+ * resorting to assembly, that is). To this end, it is written as a template
+ * class. This way the compiler can create optimized code for each special
+ * case. This results in a total of 12 versions of the code being generated.
+ */
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 class LinearMemoryStream : public AudioStream {
 protected:
@@ -44,7 +65,6 @@ protected:
 	const int _rate;
 	const byte *_origPtr;
 
-	inline bool eosIntern() const	{ return _ptr >= _end; };
 public:
 	LinearMemoryStream(int rate, const byte *ptr, uint len, uint loopOffset, uint loopLen, bool autoFreeMemory)
 		: _ptr(ptr), _end(ptr+len), _loopPtr(0), _loopEnd(0), _rate(rate) {
@@ -61,148 +81,52 @@ public:
 		}
 		if (stereo)	// Stereo requires even sized data
 			assert(len % 2 == 0);
-		
+
 		_origPtr = autoFreeMemory ? ptr : 0;
 	}
-	~LinearMemoryStream() {
+	virtual ~LinearMemoryStream() {
 		free(const_cast<byte *>(_origPtr));
 	}
 	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool isStereo() const		{ return stereo; }
-	bool endOfData() const		{ return eosIntern(); }
+	bool endOfData() const		{ return _ptr >= _end; }
 
 	int getRate() const			{ return _rate; }
 };
 
 template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
 int LinearMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
-	int samples = 0;
-	while (samples < numSamples && !eosIntern()) {
-		const int len = MIN(numSamples, samples + (int)(_end - _ptr) / (is16Bit ? 2 : 1));
-		while (samples < len) {
+	int samples = numSamples;
+	while (samples > 0 && _ptr < _end) {
+		int len = MIN(samples, (int)(_end - _ptr) / (is16Bit ? 2 : 1));
+		samples -= len;
+		do {
 			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _ptr, isLE);
 			_ptr += (is16Bit ? 2 : 1);
-			samples++;
-		}
+		} while (--len);
 		// Loop, if looping was specified
-		if (_loopPtr && eosIntern()) {
+		if (_loopPtr && _ptr >= _end) {
 			_ptr = _loopPtr;
 			_end = _loopEnd;
 		}
 	}
-	return samples;
+	return numSamples-samples;
 }
 
-/**
- * Wrapped memory stream.
+
+#pragma mark -
+#pragma mark --- Input stream factory ---
+#pragma mark -
+
+/* In the following, we use preprocessor / macro tricks to simplify the code
+ * which instantiates the input streams. We used to use template functions for
+ * this, but MSVC6 / EVC 3-4 (used for WinCE builds) are extremely buggy when it
+ * comes to this feature of C++... so as a compromise we use macros to cut down
+ * on the (source) code duplication a bit.
+ * So while normally macro tricks are said to make maintenance harder, in this
+ * particular case it should actually help it :-)
  */
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-class AppendableMemoryStream : public AppendableAudioStream {
-protected:
-	MutexRef _mutex;
-
-	byte *_bufferStart;
-	byte *_bufferEnd;
-	byte *_pos;
-	byte *_end;
-	bool _finalized;
-	const int _rate;
-
-	inline bool eosIntern() const { return _end == _pos; };
-public:
-	AppendableMemoryStream(int rate, uint bufferSize);
-	~AppendableMemoryStream();
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool isStereo() const		{ return stereo; }
-	bool endOfStream() const	{ return _finalized && eosIntern(); }
-	bool endOfData() const		{ return eosIntern(); }
-
-	int getRate() const			{ return _rate; }
-
-	void append(const byte *data, uint32 len);
-	void finish()				{ _finalized = true; }
-};
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStream(int rate, uint bufferSize)
-	: _finalized(false), _rate(rate) {
-
-	// Verify the buffer size is sane
-	if (is16Bit && stereo)
-		assert((bufferSize & 3) == 0);
-	else if (is16Bit || stereo)
-		assert((bufferSize & 1) == 0);
-
-	_bufferStart = (byte *)malloc(bufferSize);
-	_pos = _end = _bufferStart;
-	_bufferEnd = _bufferStart + bufferSize;
-
-	_mutex = g_driver->createMutex();
-}
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::~AppendableMemoryStream() {
-	free(_bufferStart);
-	g_driver->deleteMutex(_mutex);
-}
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
-	StackLock lock(_mutex);
-
-	int samples = 0;
-	while (samples < numSamples && !eosIntern()) {
-		// Wrap around?
-		if (_pos >= _bufferEnd)
-			_pos = _pos - (_bufferEnd - _bufferStart);
-
-		const byte *endMarker = (_pos > _end) ? _bufferEnd : _end;
-		const int len = MIN(numSamples, samples + (int)(endMarker - _pos) / (is16Bit ? 2 : 1));
-		while (samples < len) {
-			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _pos, isLE);
-			_pos += (is16Bit ? 2 : 1);
-			samples++;
-		}
-	}
-
-	return samples;
-}
-
-template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
-void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::append(const byte *data, uint32 len) {
-	StackLock lock(_mutex);
-
-	// Verify the buffer size is sane
-	if (is16Bit && stereo)
-		assert((len & 3) == 0);
-	else if (is16Bit || stereo)
-		assert((len & 1) == 0);
-	
-	// Verify that the stream has not yet been finalized (by a call to finish())
-	assert(!_finalized);
-
-	if (_end + len > _bufferEnd) {
-		// Wrap-around case
-		uint32 size_to_end_of_buffer = _bufferEnd - _end;
-		len -= size_to_end_of_buffer;
-		if ((_end < _pos) || (_bufferStart + len >= _pos)) {
-			warning("AppendableMemoryStream: buffer overflow (A)");
-			return;
-		}
-		memcpy(_end, data, size_to_end_of_buffer);
-		memcpy(_bufferStart, data + size_to_end_of_buffer, len);
-		_end = _bufferStart + len;
-	} else {
-		if ((_end < _pos) && (_end + len >= _pos)) {
-			warning("AppendableMemoryStream: buffer overflow (B)");
-			return;
-		}
-		memcpy(_end, data, len);
-		_end += len;
-	}
-}
 
 #define MAKE_LINEAR(STEREO, UNSIGNED) \
 		if (is16Bit) { \
@@ -213,13 +137,24 @@ void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::append(const byt
 		} else \
 			return new LinearMemoryStream<STEREO, false, UNSIGNED, false>(rate, ptr, len, loopOffset, loopLen, autoFree)
 
-AudioStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint32 len, uint loopOffset, uint loopLen) {
-	const bool isStereo   = (_flags & SoundMixer::FLAG_STEREO) != 0;
-	const bool is16Bit    = (_flags & SoundMixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (_flags & SoundMixer::FLAG_LITTLE_ENDIAN) != 0;
-	const bool autoFree   = (_flags & SoundMixer::FLAG_AUTOFREE) != 0;
-	
+AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags, uint loopStart, uint loopEnd) {
+	const bool isStereo   = (flags & Audio::Mixer::FLAG_STEREO) != 0;
+	const bool is16Bit    = (flags & Audio::Mixer::FLAG_16BITS) != 0;
+	const bool isUnsigned = (flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
+	const bool isLE       = (flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
+	const bool autoFree   = (flags & Audio::Mixer::FLAG_AUTOFREE) != 0;
+
+	uint loopOffset = 0, loopLen = 0;
+	if (flags & Audio::Mixer::FLAG_LOOP) {
+		if (loopEnd == 0)
+			loopEnd = len;
+		assert(loopStart <= loopEnd);
+		assert(loopEnd <= len);
+
+		loopOffset = loopStart;
+		loopLen = loopEnd - loopStart;
+	}
+
 	if (isStereo) {
 		if (isUnsigned) {
 			MAKE_LINEAR(true, true);
@@ -235,21 +170,140 @@ AudioStream *makeLinearInputStream(int rate, byte _flags, const byte *ptr, uint3
 	}
 }
 
+
+#pragma mark -
+#pragma mark --- Appendable audio stream ---
+#pragma mark -
+
+struct Buffer {
+	byte *start;
+	byte *end;
+};
+
+/**
+ * Wrapped memory stream.
+ */
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+class AppendableMemoryStream : public AppendableAudioStream {
+protected:
+
+	// A mutex to avoid access problems (causing e.g. corruption of
+	// the linked list) in thread aware environments.
+	Common::Mutex _mutex;
+
+	// List of all queued buffers
+	Common::List<Buffer> _bufferQueue;
+
+	// Position in the front buffer, if any
+	bool _finalized;
+	const int _rate;
+	byte *_pos;
+
+	inline bool eosIntern() const { return _bufferQueue.empty(); };
+public:
+	AppendableMemoryStream(int rate);
+	~AppendableMemoryStream();
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	bool isStereo() const		{ return stereo; }
+	bool endOfStream() const	{ return _finalized && eosIntern(); }
+	bool endOfData() const		{ return eosIntern(); }
+
+	int getRate() const			{ return _rate; }
+
+	void queueBuffer(byte *data, uint32 size);
+	void finish()				{ _finalized = true; }
+};
+
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::AppendableMemoryStream(int rate)
+ : _finalized(false), _rate(rate), _pos(0) {
+
+}
+
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::~AppendableMemoryStream() {
+	// Clear the queue
+	Common::List<Buffer>::iterator iter;
+	for (iter = _bufferQueue.begin(); iter != _bufferQueue.end(); ++iter)
+		delete[] iter->start;
+}
+
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+int AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int numSamples) {
+	Common::StackLock lock(_mutex);
+
+	int samples = numSamples;
+	while (samples > 0 && !eosIntern()) {
+		Buffer buf = *_bufferQueue.begin();
+		if (_pos == 0)
+			_pos = buf.start;
+
+		assert(buf.start <= _pos && _pos <= buf.end);
+		const int samplesLeftInCurBuffer = buf.end - _pos;
+		if (samplesLeftInCurBuffer == 0) {
+			delete [] buf.start;
+			_bufferQueue.erase(_bufferQueue.begin());
+			_pos = 0;
+			continue;
+		}
+
+		int len = MIN(samples, samplesLeftInCurBuffer / (is16Bit ? 2 : 1));
+		samples -= len;
+		do {
+			*buffer++ = READ_ENDIAN_SAMPLE(is16Bit, isUnsigned, _pos, isLE);
+			_pos += (is16Bit ? 2 : 1);
+		} while (--len);
+	}
+
+	return numSamples-samples;
+}
+
+template<bool stereo, bool is16Bit, bool isUnsigned, bool isLE>
+void AppendableMemoryStream<stereo, is16Bit, isUnsigned, isLE>::queueBuffer(byte *data, uint32 size) {
+	Common::StackLock lock(_mutex);
+
+	// Verify the buffer size is sane
+	if (is16Bit && stereo)
+		assert((size & 3) == 0);
+	else if (is16Bit || stereo)
+		assert((size & 1) == 0);
+
+	// Verify that the stream has not yet been finalized (by a call to finish())
+	assert(!_finalized);
+
+	// Queue the buffer
+	Buffer buf = {data, data+size};
+	_bufferQueue.push_back(buf);
+
+
+#if 0
+	// Output some stats
+	uint totalSize = 0;
+	Common::List<Buffer>::iterator iter;
+	for (iter = _bufferQueue.begin(); iter != _bufferQueue.end(); ++iter)
+		totalSize += iter->end - iter->start;
+	printf("AppendableMemoryStream::queueBuffer: added a %d byte buf, a total of %d bytes are queued\n",
+				size, totalSize);
+#endif
+}
+
+
 #define MAKE_WRAPPED(STEREO, UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new AppendableMemoryStream<STEREO, true, UNSIGNED, true>(rate, len); \
+				return new AppendableMemoryStream<STEREO, true, UNSIGNED, true>(rate); \
 			else  \
-				return new AppendableMemoryStream<STEREO, true, UNSIGNED, false>(rate, len); \
+				return new AppendableMemoryStream<STEREO, true, UNSIGNED, false>(rate); \
 		} else \
-			return new AppendableMemoryStream<STEREO, false, UNSIGNED, false>(rate, len)
+			return new AppendableMemoryStream<STEREO, false, UNSIGNED, false>(rate)
 
-AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 len) {
-	const bool isStereo = (_flags & SoundMixer::FLAG_STEREO) != 0;
-	const bool is16Bit = (_flags & SoundMixer::FLAG_16BITS) != 0;
-	const bool isUnsigned = (_flags & SoundMixer::FLAG_UNSIGNED) != 0;
-	const bool isLE       = (_flags & SoundMixer::FLAG_LITTLE_ENDIAN) != 0;
-	
+AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags) {
+	const bool isStereo = (_flags & Audio::Mixer::FLAG_STEREO) != 0;
+	const bool is16Bit = (_flags & Audio::Mixer::FLAG_16BITS) != 0;
+	const bool isUnsigned = (_flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
+	const bool isLE       = (_flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
+
 	if (isStereo) {
 		if (isUnsigned) {
 			MAKE_WRAPPED(true, true);
@@ -264,3 +318,6 @@ AppendableAudioStream *makeAppendableAudioStream(int rate, byte _flags, uint32 l
 		}
 	}
 }
+
+
+} // End of namespace Audio
