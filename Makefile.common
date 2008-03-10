@@ -1,11 +1,11 @@
 OBJS =\
-	common/timer.o \
+	common/debug.o \
 	common/matrix3.o \
 	common/matrix4.o \
-	common/debug.o \
+	common/mutex.o \
+	mixer/audiostream.o \
 	mixer/mixer.o \
 	mixer/rate.o \
-	mixer/audiostream.o \
 	engine/lua/lapi.o \
 	engine/lua/lauxlib.o \
 	engine/lua/lbuffer.o \
@@ -65,6 +65,7 @@ OBJS =\
 	$(DRIVER_OBJS)
 
 DRIVER_OBJS ?=\
+	engine/backend/default-timer.o \
 	engine/backend/sdl/driver_sdl.o \
 	engine/backend/sdl/driver_gl.o \
 	engine/backend/sdl/driver_tinygl.o \
