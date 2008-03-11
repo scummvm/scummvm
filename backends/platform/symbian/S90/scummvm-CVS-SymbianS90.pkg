@@ -16,7 +16,7 @@
 ; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 ;
 ; $URL:$
-; $Id:$
+; $Id$
 ;
 ;
 
@@ -49,8 +49,10 @@
 "..\..\..\..\NEWS"-"!:\system\apps\scummvm\NEWS"
 
 ; Common datafiles needed for some games
-"..\kyra.dat"-"!:\system\apps\scummvm\kyra.dat"
-"..\sky.cpt"-"!:\system\apps\scummvm\sky.cpt"
+"..\..\..\..\dists\engine-data\kyra.dat"-"!:\system\apps\scummvm\kyra.dat"
+"..\..\..\..\dists\engine-data\sky.cpt"-"!:\system\apps\scummvm\sky.cpt"
+"..\..\..\..\dists\engine-data\igor.tbl"-"!:\system\apps\scummvm\igor.tbl"
+"..\..\..\..\dists\engine-data\lure.dat"-"!:\system\apps\scummvm\lure.dat"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"!:\system\apps\ScummVM\scummvm.ini",FILENULL
