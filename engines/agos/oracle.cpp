@@ -115,9 +115,7 @@ void AGOSEngine_Feeble::inventoryUp(WindowBlock *window) {
 	_marks = 0;
 	checkUp(window);
 	animate(4, 9, 21, 0 ,0, 0);
-	while (1) {
-		if (_currentBox->id != 0x7FFB || !getBitFlag(89))
-			break;
+	while (_currentBox->id == 0x7FFB && getBitFlag(89)) {
 		checkUp(window);
 		delay(1);
 	}
@@ -158,9 +156,7 @@ void AGOSEngine_Feeble::inventoryDown(WindowBlock *window) {
 	_marks = 0;
 	checkDown(window);
 	animate(4, 9, 23, 0, 0, 0);
-	while (1) {
-		if (_currentBox->id != 0x7FFC || !getBitFlag(89))
-		break;
+	while (_currentBox->id == 0x7FFC && getBitFlag(89)) {
 		checkDown(window);
 		delay(1);
 	}

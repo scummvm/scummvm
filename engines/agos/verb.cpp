@@ -831,7 +831,7 @@ void AGOSEngine_Feeble::invertBox(HitArea *ha, bool state) {
 	}
 }
 
-void AGOSEngine::invertBox(HitArea * ha, byte a, byte b, byte c, byte d) {
+void AGOSEngine::invertBox(HitArea *ha, byte a, byte b, byte c, byte d) {
 	byte *src, color;
 	int w, h, i;
 
