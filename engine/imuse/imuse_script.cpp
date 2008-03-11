@@ -95,7 +95,7 @@ void Imuse::startMusic(const char *soundName, int hookId, int volume, int pan) {
 
 void Imuse::startMusicWithOtherPos(const char *soundName, int hookId, int volume, int pan, Track *otherTrack) {
 	if (debugLevel == DEBUG_IMUSE || debugLevel == DEBUG_ALL)
-		printf("Imuse::startMusicWithOtherPos(): SoundName %s, hookId:%d, vol:%d, pan:%d\n", soundName, volume, pan);
+		printf("Imuse::startMusicWithOtherPos(): SoundName %s, hookId:%d, vol:%d, pan:%d\n", soundName, hookId, volume, pan);
 	startSound(soundName, IMUSE_VOLGRP_MUSIC, hookId, volume, pan, 126, otherTrack);
 }
 
