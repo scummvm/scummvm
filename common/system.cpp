@@ -133,15 +133,12 @@ void OSystem::getTimeAndDate(struct tm &t) const {
 }
 
 /*
- * All the following includes choose, at compile time, which specific backend will be used
- * during the execution of the ScummVM.
+ * Include header files needed for the getFilesystemFactory() method.
  *
- * TODO: Remove these gradually and instead move the getFilesystemFactory() implementatios
- * to the respective backends.
+ * TODO: Remove these gradually and move the getFilesystemFactory() implementations
+ * to the respective backends. Then turn it into a pure virtual method of OSystem.
  */
-#if defined(__amigaos4__)
-	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
-#elif defined(__DS__)
+#if defined(__DS__)
 	#include "backends/fs/ds/ds-fs-factory.h"
 #elif defined(__GP32__)
 	#include "backends/fs/gp32/gp32-fs-factory.h"
@@ -153,20 +150,12 @@ void OSystem::getTimeAndDate(struct tm &t) const {
 	#include "backends/fs/ps2/ps2-fs-factory.h"
 #elif defined(__PSP__)
 	#include "backends/fs/psp/psp-fs-factory.h"
-#elif defined(__SYMBIAN32__)
-	#include "backends/fs/symbian/symbian-fs-factory.h"
-#elif defined(UNIX)
-	#include "backends/fs/posix/posix-fs-factory.h"
-#elif defined(WIN32)
-	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
 
 FilesystemFactory *OSystem::getFilesystemFactory() {
-	#if defined(__amigaos4__)
-		return &AmigaOSFilesystemFactory::instance();
-	#elif defined(__DC__)
-		// The DC port overrides this function...
-		abort();
+	#if defined(__amigaos4__) || defined(__DC__) || defined(__SYMBIAN32__) || defined(UNIX) || defined(WIN32)
+		// These ports already implement this function, so it should never be called.
+		return 0;
 	#elif defined(__DS__)
 		return &DSFilesystemFactory::instance();
 	#elif defined(__GP32__)
@@ -179,12 +168,6 @@ FilesystemFactory *OSystem::getFilesystemFactory() {
 		return &Ps2FilesystemFactory::instance();
 	#elif defined(__PSP__)
 		return &PSPFilesystemFactory::instance();
-	#elif defined(__SYMBIAN32__)
-		return &SymbianFilesystemFactory::instance();
-	#elif defined(UNIX)
-		return &POSIXFilesystemFactory::instance();
-	#elif defined(WIN32)
-		return &WindowsFilesystemFactory::instance();
 	#else
 		#error Unknown and unsupported backend in OSystem::getFilesystemFactory
 	#endif

@@ -38,6 +38,20 @@
 #define SAMPLES_PER_SEC 22050
 //#define SAMPLES_PER_SEC 44100
 
+/*
+ * Include header files needed for the getFilesystemFactory() method.
+ */
+#if defined(__amigaos4__)
+	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
+#elif defined(__SYMBIAN32__)
+	// TODO: Move this to the symbian source code
+	#include "backends/fs/symbian/symbian-fs-factory.h"
+#elif defined(UNIX)
+	#include "backends/fs/posix/posix-fs-factory.h"
+#elif defined(WIN32)
+	#include "backends/fs/windows/windows-fs-factory.h"
+#endif
+
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
@@ -210,6 +224,20 @@ Common::TimerManager *OSystem_SDL::getTimerManager() {
 Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 	assert(_savefile);
 	return _savefile;
+}
+
+FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
+	#if defined(__amigaos4__)
+		return &AmigaOSFilesystemFactory::instance();
+	#elif defined(__SYMBIAN32__)
+		return &SymbianFilesystemFactory::instance();
+	#elif defined(UNIX)
+		return &POSIXFilesystemFactory::instance();
+	#elif defined(WIN32)
+		return &WindowsFilesystemFactory::instance();
+	#else
+		#error Unknown and unsupported backend in OSystem_SDL::getFilesystemFactory
+	#endif
 }
 
 void OSystem_SDL::setWindowCaption(const char *caption) {

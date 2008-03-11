@@ -196,6 +196,7 @@ public:
 #endif
 
 	virtual Common::SaveFileManager *getSavefileManager();
+	virtual FilesystemFactory *getFilesystemFactory();
 
 protected:
 	bool _inited;
