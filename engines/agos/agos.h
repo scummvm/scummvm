@@ -342,6 +342,7 @@ protected:
 	HitArea *_lastHitArea3;
 	Item *_hitAreaSubjectItem;
 	HitArea *_currentBox, *_currentVerbBox, *_lastVerbOn;
+	uint16 	_currentBoxNum;
 	uint _needHitAreaRecalc;
 	uint _verbHitArea;
 	uint16 _defaultVerb;

@@ -672,7 +672,9 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 		}
 	} while (ha++, --count);
 
+	_currentBoxNum = 0;
 	_currentBox = best_ha;
+
 	if (best_ha == NULL) {
 		clearName();
 		if (getGameType() == GType_WW && _mouseCursor >= 4) {
@@ -681,6 +683,8 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 		}
 		return;
 	}
+
+	_currentBoxNum = best_ha->id;
 
 	if (mode != 0) {
 		if (mode == 3) {

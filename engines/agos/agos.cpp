@@ -252,6 +252,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_lastHitArea3 = 0;
 	_hitAreaSubjectItem = 0;
 	_currentBox = 0;
+	_currentBoxNum = 0;
 	_currentVerbBox = 0;
 	_lastVerbOn = 0;
 	_needHitAreaRecalc = 0;

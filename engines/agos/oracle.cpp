@@ -115,7 +115,7 @@ void AGOSEngine_Feeble::inventoryUp(WindowBlock *window) {
 	_marks = 0;
 	checkUp(window);
 	animate(4, 9, 21, 0 ,0, 0);
-	while (_currentBox->id == 0x7FFB && getBitFlag(89)) {
+	while (_currentBoxNum == 0x7FFB && getBitFlag(89)) {
 		checkUp(window);
 		delay(1);
 	}
@@ -156,7 +156,7 @@ void AGOSEngine_Feeble::inventoryDown(WindowBlock *window) {
 	_marks = 0;
 	checkDown(window);
 	animate(4, 9, 23, 0, 0, 0);
-	while (_currentBox->id == 0x7FFC && getBitFlag(89)) {
+	while (_currentBoxNum == 0x7FFC && getBitFlag(89)) {
 		checkDown(window);
 		delay(1);
 	}
@@ -202,7 +202,7 @@ void AGOSEngine_Feeble::oracleTextUp() {
 				startSubroutineEx(sub);
 			setBitFlag(94, false);
 		}
-		if (_currentBox->id != 601 || !getBitFlag(89))
+		if (_currentBoxNum != 601 || !getBitFlag(89))
 			break;
 		delay(100);
 	}
@@ -236,7 +236,7 @@ void AGOSEngine_Feeble::oracleTextDown() {
 				startSubroutineEx(sub);
 			setBitFlag(93, false);
 		}
-		if (_currentBox->id != 600 || !getBitFlag(89))
+		if (_currentBoxNum != 600 || !getBitFlag(89))
 			break;
 		delay(100);
 	}
