@@ -76,25 +76,23 @@ int MidiDriver_CORE::open() {
 		return MERR_ALREADY_OPEN;
 
 	// Open the Music Device.
-	// We use the AudioUnit v1 API, even though it is deprecated, because
-	// this way we stay compatible with older OS X versions.
-	// For v2, we'd use kAudioUnitType_MusicDevice and kAudioUnitSubType_DLSSynth
 	RequireNoErr(NewAUGraph(&_auGraph));
 
 	AUNode outputNode, synthNode;
 	ComponentDescription desc;
 
 	// The default output device
-	desc.componentType = kAudioUnitComponentType;
-	desc.componentSubType = kAudioUnitSubType_Output;
-	desc.componentManufacturer = kAudioUnitID_DefaultOutput;
+	desc.componentType = kAudioUnitType_Output;
+	desc.componentSubType = kAudioUnitSubType_DefaultOutput;
+	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 	desc.componentFlags = 0;
 	desc.componentFlagsMask = 0;
 	RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &outputNode));
 
 	// The built-in default (softsynth) music device
-	desc.componentSubType = kAudioUnitSubType_MusicDevice;
-	desc.componentManufacturer = kAudioUnitID_DLSSynth;
+	desc.componentType = kAudioUnitType_MusicDevice;
+	desc.componentSubType = kAudioUnitSubType_DLSSynth;
+	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 	RequireNoErr(AUGraphNewNode(_auGraph, &desc, 0, NULL, &synthNode));
 
 	// Connect the softsynth to the default output
