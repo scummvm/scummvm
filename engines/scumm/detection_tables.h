@@ -190,12 +190,13 @@ static const Common::ADObsoleteGameID obsoleteGameIDsTable[] = {
 // only a single unique variant. This is used to help the detector quickly
 // decide whether it has to worry about distinguishing multiple variants or not.
 static const GameSettings gameVariantsTable[] = {
-	{"maniac", "Apple II",     0, GID_MANIAC, 0, 0, MDT_PCSPK, 0, Common::kPlatformApple2GS},
-	{"maniac", "C64",     0, GID_MANIAC, 0, 0, MDT_PCSPK, 0, Common::kPlatformC64},
-	{"maniac", "V1",   "v1", GID_MANIAC, 1, 0, MDT_PCSPK, 0, Common::kPlatformPC},
-	{"maniac", "NES",     0, GID_MANIAC, 1, 0, MDT_NONE,  0, Common::kPlatformNES},
-	{"maniac", "V2",   "v2", GID_MANIAC, 2, 0, MDT_PCSPK, 0, UNK},
-	{"maniac", "Demo", "v2", GID_MANIAC, 2, 0, MDT_PCSPK, GF_DEMO, Common::kPlatformPC},
+	{"maniac", "Apple II",   0, GID_MANIAC, 0, 0, MDT_PCSPK, 0, Common::kPlatformApple2GS},
+	{"maniac", "C64",        0, GID_MANIAC, 0, 0, MDT_PCSPK, 0, Common::kPlatformC64},
+	{"maniac", "V1",      "v1", GID_MANIAC, 1, 0, MDT_PCSPK, 0, Common::kPlatformPC},
+	{"maniac", "V1 Demo", "v1", GID_MANIAC, 1, 0, MDT_PCSPK, GF_DEMO, Common::kPlatformPC},
+	{"maniac", "NES",        0, GID_MANIAC, 1, 0, MDT_NONE,  0, Common::kPlatformNES},
+	{"maniac", "V2",      "v2", GID_MANIAC, 2, 0, MDT_PCSPK, 0, UNK},
+	{"maniac", "V2 Demo", "v2", GID_MANIAC, 2, 0, MDT_PCSPK, GF_DEMO, Common::kPlatformPC},
 
 	{"zak", "V1",       "v1", GID_ZAK, 1, 0, MDT_PCSPK, 0, UNK},
 	{"zak", "V2",       "v2", GID_ZAK, 2, 0, MDT_PCSPK, 0, UNK},
@@ -208,7 +209,7 @@ static const GameSettings gameVariantsTable[] = {
 
 	{"loom", "EGA",      "ega", GID_LOOM, 3, 0, MDT_PCSPK | MDT_ADLIB | MDT_MIDI, 0, UNK},
 	{"loom", "No Adlib", "ega", GID_LOOM, 3, 0, MDT_PCSPK,                        0, UNK},
-	{"loom", "PC-Engine",     0, GID_LOOM, 3, 0, MDT_NONE,                        GF_AUDIOTRACKS, Common::kPlatformPCEngine},
+	{"loom", "PC-Engine",    0, GID_LOOM, 3, 0, MDT_NONE,                        GF_AUDIOTRACKS, Common::kPlatformPCEngine},
 	{"loom", "FM-TOWNS",     0, GID_LOOM, 3, 0, MDT_TOWNS,                        GF_AUDIOTRACKS | GF_OLD256, Common::kPlatformFMTowns},
 	{"loom", "VGA",      "vga", GID_LOOM, 4, 0, MDT_NONE,                         GF_AUDIOTRACKS,             Common::kPlatformPC},
 
@@ -391,7 +392,7 @@ using Common::UNK_LANG;
 // (i.e. an empty string) means "use the default variant".
 static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "maniac", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
-	{ "maniac", "%02d.MAN", kGenRoomNum, UNK_LANG, UNK, "Demo" },
+	{ "maniac", "%02d.MAN", kGenRoomNum, UNK_LANG, UNK, "V1 Demo" },
 	{ "maniac", "maniac1.d64", kGenUnchanged, UNK_LANG, Common::kPlatformC64, "C64" },   // ... and maniac2.d64
 	{ "maniac", "maniac1.dsk", kGenUnchanged, UNK_LANG, Common::kPlatformApple2GS, "Apple II" },   // ... and maniac2.dsk
 	{ "maniac", "Maniac Mansion (E).prg", kGenUnchanged, Common::EN_GRB, Common::kPlatformNES, "NES" },
