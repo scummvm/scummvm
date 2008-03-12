@@ -34,6 +34,8 @@
 
 #include "icons/scummvm.xpm"
 
+#include <time.h>	// for getTimeAndDate()
+
 //#define SAMPLES_PER_SEC 11025
 #define SAMPLES_PER_SEC 22050
 //#define SAMPLES_PER_SEC 44100
@@ -214,6 +216,11 @@ uint32 OSystem_SDL::getMillis() {
 
 void OSystem_SDL::delayMillis(uint msecs) {
 	SDL_Delay(msecs);
+}
+
+void OSystem_SDL::getTimeAndDate(struct tm &t) const {
+	time_t curTime = time(0);
+	t = *localtime(&curTime);
 }
 
 Common::TimerManager *OSystem_SDL::getTimerManager() {
