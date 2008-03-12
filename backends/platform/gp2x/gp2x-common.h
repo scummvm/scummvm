@@ -150,6 +150,7 @@ public:
 	// Quit
 	virtual void quit(); // overloaded by CE backend
 
+	virtual void getTimeAndDate(struct tm &t) const;
 	virtual Common::TimerManager *getTimerManager();
 
 	// Mutex handling

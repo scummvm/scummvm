@@ -46,6 +46,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <time.h>
 
 // Disable for normal serial logging.
 #define DUMP_STDOUT
@@ -185,7 +186,6 @@ void OSystem_GP2X::initBackend() {
 
 	// enable joystick
 	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
-		//printf("Using joystick: %s\n", SDL_JoystickName(0));
 		_joystick = SDL_JoystickOpen(joystick_num);
 	}
 
@@ -299,6 +299,11 @@ uint32 OSystem_GP2X::getMillis() {
 
 void OSystem_GP2X::delayMillis(uint msecs) {
 	SDL_Delay(msecs);
+}
+
+void OSystem_GP2X::getTimeAndDate(struct tm &t) const {
+	time_t curTime = time(0);
+	t = *localtime(&curTime);
 }
 
 Common::TimerManager *OSystem_GP2X::getTimerManager() {
