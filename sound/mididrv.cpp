@@ -73,9 +73,6 @@ static const MidiDriverDescription s_musicDrivers[] = {
 #	endif
 #endif
 
-#if defined(__MORPHOS__)
-	{"etude", "Etude", MD_ETUDE, MDT_MIDI},
-#endif
 #ifdef USE_FLUIDSYNTH
 	{"fluidsynth", "FluidSynth", MD_FLUIDSYNTH, MDT_MIDI},
 #endif
@@ -165,8 +162,6 @@ static int getDefaultMIDIDriver() {
   #else
 	return MD_NULL;
   #endif
-#elif defined(__MORPHOS__)
-	return MD_ETUDE;
 #else
 	return MD_NULL;
 #endif
@@ -251,9 +246,6 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	case MD_WINDOWS:   return MidiDriver_WIN_create();
-#endif
-#if defined(__MORPHOS__)
-	case MD_ETUDE:     return MidiDriver_ETUDE_create();
 #endif
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__)
 	case MD_SEQ:       return MidiDriver_SEQ_create();

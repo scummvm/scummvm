@@ -301,14 +301,6 @@
 	#	undef UNUSED
 	#endif
 
-#elif defined(__MORPHOS__)
-
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
-
-	#define SCUMM_BIG_ENDIAN
-	#define SCUMM_NEED_ALIGNMENT
-
 #elif defined(__DC__)
 
 	#define scumm_stricmp strcasecmp
