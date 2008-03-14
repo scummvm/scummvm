@@ -36,14 +36,6 @@ namespace Common {
 
 using namespace AdvancedDetector;
 
-namespace AdvancedDetector {
-
-// FIXME/TODO: Rename this function to something more sensible.
-// Helper function to announce an unknown version of the game (useful for
-// fallback detection functions).
-void reportUnknown(StringList &files, int md5Bytes);
-
-
 /**
  * Detect games in specified directory.
  * Parameters language and platform are used to pass on values
@@ -63,7 +55,7 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
  * Returns list of targets supported by the engine.
  * Distinguishes engines with single ID
  */
-GameList gameIDList(const Common::ADParams &params) {
+static GameList gameIDList(const Common::ADParams &params) {
 	if (params.singleid != NULL) {
 		GameList gl;
 
@@ -82,7 +74,7 @@ GameList gameIDList(const Common::ADParams &params) {
 	return GameList(params.list);
 }
 
-void upgradeTargetIfNecessary(const Common::ADParams &params) {
+static void upgradeTargetIfNecessary(const Common::ADParams &params) {
 	if (params.obsoleteList == 0)
 		return;
 
@@ -107,6 +99,8 @@ void upgradeTargetIfNecessary(const Common::ADParams &params) {
 		}
 	}
 }
+
+namespace AdvancedDetector {
 
 GameDescriptor findGameID(
 	const char *gameid,
@@ -137,6 +131,8 @@ GameDescriptor findGameID(
 	// No match found
 	return GameDescriptor();
 }
+
+}	// End of namespace AdvancedDetector
 
 static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGameDescriptor *sg) {
 	const char *title = 0;
@@ -211,8 +207,6 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 		desc["extra"] = realDesc->extra;
 }
 
-}	// End of namespace AdvancedDetector
-
 GameList AdvancedMetaEngine::detectGames(const FSList &fslist) const {
 	ADGameDescList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown, "");
 	GameList detectedGames;
@@ -236,7 +230,7 @@ GameList AdvancedMetaEngine::detectGames(const FSList &fslist) const {
 
 PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	assert(engine);
-	Common::AdvancedDetector::upgradeTargetIfNecessary(params);
+	upgradeTargetIfNecessary(params);
 
 	const ADGameDescription *agdDesc = 0;
 	EncapsulatedADGameDesc result;
@@ -290,9 +284,7 @@ PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) c
 	return kNoError;
 }
 
-namespace AdvancedDetector {
-
-void reportUnknown(StringMap &filesMD5, HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> &filesSize) {
+static void reportUnknown(StringMap &filesMD5, HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> &filesSize) {
 	// TODO: This message should be cleaned up / made more specific.
 	// For example, we should specify at least which engine triggered this.
 	//
@@ -308,7 +300,8 @@ void reportUnknown(StringMap &filesMD5, HashMap<String, int32, Common::CaseSensi
 	printf("\n");
 }
 
-void reportUnknown(StringList &files, int md5Bytes) {
+/*
+static void reportUnknown(StringList &files, int md5Bytes) {
 	StringMap filesMD5;
 	HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> filesSize;
 
@@ -330,6 +323,7 @@ void reportUnknown(StringList &files, int md5Bytes) {
 
 	reportUnknown(filesMD5, filesSize);
 }
+*/
 
 static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra) {
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
@@ -574,13 +568,11 @@ static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &p
 	return matched;
 }
 
-}	// End of namespace AdvancedDetector
-
 GameList AdvancedMetaEngine::getSupportedGames() const {
-	return Common::AdvancedDetector::gameIDList(params);
+	return gameIDList(params);
 }
 GameDescriptor AdvancedMetaEngine::findGame(const char *gameid) const {
-	return Common::AdvancedDetector::findGameID(gameid, params.list, params.obsoleteList);
+	return AdvancedDetector::findGameID(gameid, params.list, params.obsoleteList);
 }
 
 }	// End of namespace Common
