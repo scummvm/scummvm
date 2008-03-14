@@ -271,14 +271,12 @@ PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) c
 		}
 	}
 
-	if (result.realDesc != 0) {
-		debug(2, "Running %s", toGameDescriptor(result, params.list).description().c_str());
-	}
-
 	if (result.realDesc == 0) {
 		return kNoGameDataFoundError;
 	}
-	if (!createInstance(syst, engine, result)) {
+
+	debug(2, "Running %s", toGameDescriptor(result, params.list).description().c_str());
+	if (!createInstance(syst, engine, result.realDesc)) {
 		return kNoGameDataFoundError;
 	}
 	return kNoError;

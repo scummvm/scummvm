@@ -184,11 +184,11 @@ public:
 		return "Lure of the Temptress (C) Revolution";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
-bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const Lure::LureGameDescription *gd = (const Lure::LureGameDescription *)(encapsulatedDesc.realDesc);
+bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const Lure::LureGameDescription *gd = (const Lure::LureGameDescription *)desc;
 	if (gd) {
 		*engine = new Lure::LureEngine(syst, gd);
 	}

@@ -194,11 +194,11 @@ public:
 		return "Nippon Safes Inc. (C) Dynabyte";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
-bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)(encapsulatedDesc.realDesc);
+bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)desc;
 	bool res = true;
 
 	switch (gd->gameType) {

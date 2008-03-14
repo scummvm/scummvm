@@ -440,11 +440,11 @@ public:
 		return "The Legend of Kyrandia (C) Westwood Studios";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
-bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const KYRAGameDescription *gd = (const KYRAGameDescription *)(encapsulatedDesc.realDesc);
+bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const KYRAGameDescription *gd = (const KYRAGameDescription *)desc;
 	bool res = true;
 
 	Kyra::GameFlags flags = gd->flags;

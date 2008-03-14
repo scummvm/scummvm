@@ -2270,15 +2270,15 @@ public:
 		return "Sierra AGI Engine (C) Sierra On-Line Software";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 
 	Common::EncapsulatedADGameDesc fallbackDetect(const FSList *fslist) const {
 		return Agi::fallbackDetector(fslist);
 	}
 };
 
-bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)(encapsulatedDesc.realDesc);
+bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)desc;
 	bool res = true;
 
 	switch (gd->gameType) {

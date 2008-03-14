@@ -109,11 +109,11 @@ public:
 		return "AGOS (C) Adventure Soft";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
-bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const AGOS::AGOSGameDescription *gd = (const AGOS::AGOSGameDescription *)(encapsulatedDesc.realDesc);
+bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const AGOS::AGOSGameDescription *gd = (const AGOS::AGOSGameDescription *)desc;
 	bool res = true;
 
 	switch (gd->gameType) {

@@ -116,11 +116,11 @@ public:
 		return "Igor: Objective Uikokahonia (C) Pendulo Studios";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
-bool IgorMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const IgorGameDescription *gd = (const IgorGameDescription *)(encapsulatedDesc.realDesc);
+bool IgorMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const IgorGameDescription *gd = (const IgorGameDescription *)desc;
 	if (gd) {
 		Igor::DetectedGameVersion dgv;
 		dgv.version = gd->gameVersion;

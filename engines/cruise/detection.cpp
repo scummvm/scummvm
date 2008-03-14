@@ -133,11 +133,11 @@ public:
 		return "Cruise for a Corpse (C) Delphine Software";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
-bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const Cruise::CRUISEGameDescription *gd = (const Cruise::CRUISEGameDescription *)(encapsulatedDesc.realDesc);
+bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const Cruise::CRUISEGameDescription *gd = (const Cruise::CRUISEGameDescription *)desc;
 	if (gd) {
 		*engine = new Cruise::CruiseEngine(syst, gd);
 	}

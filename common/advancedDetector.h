@@ -232,8 +232,7 @@ public:
 	virtual PluginError createInstance(OSystem *syst, Engine **engine) const;
 
 	// To be provided by subclasses
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const = 0;
-
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const = 0;
 
 	/**
 	 * An (optional) generic fallback detect function which is invoked

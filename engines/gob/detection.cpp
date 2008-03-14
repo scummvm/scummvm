@@ -1869,11 +1869,11 @@ public:
 		return "Goblins Games (C) Coktel Vision";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
-bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const Gob::GOBGameDescription *gd = (const Gob::GOBGameDescription *)(encapsulatedDesc.realDesc);
+bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const Gob::GOBGameDescription *gd = (const Gob::GOBGameDescription *)desc;
 	if (gd) {
 		*engine = new Gob::GobEngine(syst);
 		((Gob::GobEngine *)*engine)->initGame(gd);

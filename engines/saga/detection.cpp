@@ -151,11 +151,11 @@ public:
 		return "Inherit the Earth (C) Wyrmkeep Entertainment";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
-bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const Saga::SAGAGameDescription *gd = (const Saga::SAGAGameDescription *)(encapsulatedDesc.realDesc);
+bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const Saga::SAGAGameDescription *gd = (const Saga::SAGAGameDescription *)desc;
 	if (gd) {
 		*engine = new Saga::SagaEngine(syst, gd);
 	}

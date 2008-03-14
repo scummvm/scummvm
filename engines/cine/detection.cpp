@@ -498,11 +498,11 @@ public:
 		return "Future Wars & Operation Stealth (C) Delphine Software";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
-bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const Cine::CINEGameDescription *gd = (const Cine::CINEGameDescription *)(encapsulatedDesc.realDesc);
+bool CineMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const Cine::CINEGameDescription *gd = (const Cine::CINEGameDescription *)desc;
 	if (gd) {
 		*engine = new Cine::CineEngine(syst, gd);
 	}

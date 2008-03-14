@@ -135,11 +135,11 @@ public:
 		return "Touche: The Adventures of the 5th Musketeer (C) Clipper Software";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 };
 
-bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const Common::ADGameDescription *gd = encapsulatedDesc.realDesc;
+bool ToucheMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const Common::ADGameDescription *gd = desc;
 	if (gd) {
 		*engine = new Touche::ToucheEngine(syst, gd->language);
 	}

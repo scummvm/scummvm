@@ -173,15 +173,15 @@ public:
 		return "Drascula Engine (C) 2000 Alcachofa Soft, 1996 (C) Digital Dreams Multimedia, 1994 (C) Emilio de Paz";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 
 	Common::EncapsulatedADGameDesc fallbackDetect(const FSList *fslist) const {
 		return Drascula::fallbackDetector(fslist);
 	}
 };
 
-bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {
-	const Drascula::DrasculaGameDescription *gd = (const Drascula::DrasculaGameDescription *)(encapsulatedDesc.realDesc);
+bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const Drascula::DrasculaGameDescription *gd = (const Drascula::DrasculaGameDescription *)desc;
 	if (gd) {
 		*engine = new Drascula::DrasculaEngine(syst, gd);
 	}
