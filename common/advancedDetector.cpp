@@ -34,6 +34,8 @@
 
 namespace Common {
 
+using namespace AdvancedDetector;
+
 namespace AdvancedDetector {
 
 // FIXME/TODO: Rename this function to something more sensible.
@@ -209,16 +211,15 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 		desc["extra"] = realDesc->extra;
 }
 
-GameList detectAllGames(
-	const FSList &fslist,
-	const Common::ADParams &params
-	) {
+}	// End of namespace AdvancedDetector
+
+GameList AdvancedMetaEngine::detectGames(const FSList &fslist) const {
 	ADGameDescList matches = detectGame(&fslist, params, Common::UNK_LANG, Common::kPlatformUnknown, "");
 	GameList detectedGames;
 
 	// Use fallback detector if there were no matches by other means
-	if (matches.empty() && params.fallbackDetectFunc != NULL) {
-		EncapsulatedADGameDesc fallbackDesc = (*params.fallbackDetectFunc)(&fslist);
+	if (matches.empty()) {
+		EncapsulatedADGameDesc fallbackDesc = fallbackDetect(&fslist);
 		if (fallbackDesc.realDesc != 0) {
 			GameDescriptor desc(toGameDescriptor(fallbackDesc, params.list));
 			updateGameDescriptor(desc, fallbackDesc.realDesc, params);
@@ -233,9 +234,10 @@ GameList detectAllGames(
 	return detectedGames;
 }
 
-EncapsulatedADGameDesc detectBestMatchingGame(
-	const Common::ADParams &params
-	) {
+PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
+	assert(engine);
+	Common::AdvancedDetector::upgradeTargetIfNecessary(params);
+
 	const ADGameDescription *agdDesc = 0;
 	EncapsulatedADGameDesc result;
 	Common::Language language = Common::UNK_LANG;
@@ -267,8 +269,9 @@ EncapsulatedADGameDesc detectBestMatchingGame(
 
 	if (agdDesc != 0) { // Check if we found a match without fallback detection
 		result = EncapsulatedADGameDesc(agdDesc);
-	} else if (params.fallbackDetectFunc != NULL) { // Use fallback detector if there were no matches by other means
-		EncapsulatedADGameDesc fallbackDesc = (*params.fallbackDetectFunc)(NULL);
+	} else {
+		// Use fallback detector if there were no matches by other means
+		EncapsulatedADGameDesc fallbackDesc = fallbackDetect(NULL);
 		if (fallbackDesc.realDesc != 0 && (params.singleid != NULL || fallbackDesc.getGameID() == gameid)) {
 			result = fallbackDesc; // Found a fallback match
 		}
@@ -278,8 +281,16 @@ EncapsulatedADGameDesc detectBestMatchingGame(
 		debug(2, "Running %s", toGameDescriptor(result, params.list).description().c_str());
 	}
 
-	return result;
+	if (result.realDesc == 0) {
+		return kNoGameDataFoundError;
+	}
+	if (!createInstance(syst, engine, result)) {
+		return kNoGameDataFoundError;
+	}
+	return kNoError;
 }
+
+namespace AdvancedDetector {
 
 void reportUnknown(StringMap &filesMD5, HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> &filesSize) {
 	// TODO: This message should be cleaned up / made more specific.
@@ -570,22 +581,6 @@ GameList AdvancedMetaEngine::getSupportedGames() const {
 }
 GameDescriptor AdvancedMetaEngine::findGame(const char *gameid) const {
 	return Common::AdvancedDetector::findGameID(gameid, params.list, params.obsoleteList);
-}
-GameList AdvancedMetaEngine::detectGames(const FSList &fslist) const {
-	return Common::AdvancedDetector::detectAllGames(fslist, params);
-}
-
-PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	assert(engine);
-	Common::AdvancedDetector::upgradeTargetIfNecessary(params);
-	Common::EncapsulatedADGameDesc encapsulatedDesc = Common::AdvancedDetector::detectBestMatchingGame(params);
-	if (encapsulatedDesc.realDesc == 0) {
-		return kNoGameDataFoundError;
-	}
-	if (!createInstance(syst,engine,encapsulatedDesc)) {
-		return kNoGameDataFoundError;
-	}
-	return kNoError;
 }
 
 }	// End of namespace Common

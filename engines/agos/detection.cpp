@@ -93,8 +93,6 @@ static const Common::ADParams detectionParams = {
 	0,
 	// List of files for file-based fallback detection (optional)
 	0,
-	// Fallback callback
-	0,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };

@@ -178,8 +178,6 @@ static const Common::ADParams detectionParams = {
 	"parallaction",
 	// List of files for file-based fallback detection (optional)
 	0,
-	// Fallback callback
-	0,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };

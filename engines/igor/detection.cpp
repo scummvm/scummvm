@@ -101,7 +101,6 @@ static const Common::ADParams igorDetectionParams = {
 	0,
 	"igor",
 	0,
-	0,
 	Common::kADFlagAugmentPreferredTarget
 };
 

@@ -120,7 +120,6 @@ static const Common::ADParams detectionParams = {
 	0, // no obsolete targets data
 	"touche",
 	Touche::fileBasedFallback, // file-based detection data to enable not yet known versions to start
-	0, // no fallback callback
 	Common::kADFlagAugmentPreferredTarget | Common::kADFlagPrintWarningOnFileBasedFallback
 };
 

@@ -135,8 +135,6 @@ static const Common::ADParams detectionParams = {
 	"saga",
 	// List of files for file-based fallback detection (optional)
 	0,
-	// Fallback callback
-	0,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };

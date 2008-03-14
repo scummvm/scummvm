@@ -2255,8 +2255,6 @@ static const Common::ADParams detectionParams = {
 	"agi",
 	// List of files for file-based fallback detection (optional)
 	0,
-	// Fallback callback
-	Agi::fallbackDetector,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };
@@ -2273,6 +2271,10 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+
+	Common::EncapsulatedADGameDesc fallbackDetect(const FSList *fslist) const {
+		return Agi::fallbackDetector(fslist);
+	}
 };
 
 bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {

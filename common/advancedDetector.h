@@ -67,6 +67,8 @@ struct ADGameDescription {
 /**
  * Encapsulates ADGameDescription and makes gameid and extra strings dynamic.
  * Used in fallback detection when dynamically creating string content.
+ *
+ * @todo Get rid of this once the fallback detection is a member of AdvancedMetaEngine.
  */
 struct EncapsulatedADGameDesc {
 	Common::String gameid;
@@ -76,8 +78,8 @@ struct EncapsulatedADGameDesc {
 	// Constructor for the EncapsulatedADGameDesc
 	EncapsulatedADGameDesc() : realDesc(0) {}
 	EncapsulatedADGameDesc(const ADGameDescription *paramRealDesc,
-		Common::String paramGameID = Common::String(""),
-		Common::String paramExtra = Common::String(""))
+		Common::String paramGameID = Common::String(),
+		Common::String paramExtra = Common::String())
 		: realDesc(paramRealDesc), gameid(paramGameID), extra(paramExtra) {
 		assert(paramRealDesc != NULL);
 	}
@@ -193,20 +195,6 @@ struct ADParams {
 	const ADFileBasedFallback *fileBasedFallback;
 
 	/**
-	 * A callback pointing to an (optional) generic fallback detect
-	 * function. If present, this callback is invoked if both the regular
-	 * MD5 based detection as well as the file based fallback failed
-	 * to detect anything.
-	 *
-	 * @note The fslist parameter may be 0 -- in that case, it is assumed
-	 *       that the callback searchs the current directory.
-	 *
-	 * @todo Change this to a member method of AdvancedMetaEngine which can
-	 *       be overriden via subclassing.
-	 */
-	EncapsulatedADGameDesc (*fallbackDetectFunc)(const FSList *fslist);
-
-	/**
 	 * A bitmask of flags which can be used to configure the behavior
 	 * of the AdvancedDetector. Refer to ADFlags for a list of flags
 	 * that can be ORed together and passed here.
@@ -245,6 +233,19 @@ public:
 
 	// To be provided by subclasses
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const = 0;
+
+
+	/**
+	 * An (optional) generic fallback detect function which is invoked
+	 * if both the regular MD5 based detection as well as the file
+	 * based fallback failed to detect anything.
+	 *
+	 * @note The fslist parameter may be 0 -- in that case, it is assumed
+	 *       that the callback searchs the current directory.
+	 */
+	EncapsulatedADGameDesc fallbackDetect(const FSList *fslist) const {
+		return EncapsulatedADGameDesc();
+	}
 };
 
 }	// End of namespace Common

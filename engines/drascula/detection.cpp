@@ -157,8 +157,6 @@ static const Common::ADParams detectionParams = {
 	"drascula",
 	// List of files for file-based fallback detection (optional)
 	0,
-	// Fallback callback
-	Drascula::fallbackDetector,
 	// Flags
 	Common::kADFlagAugmentPreferredTarget
 };
@@ -176,6 +174,10 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const;
+
+	Common::EncapsulatedADGameDesc fallbackDetect(const FSList *fslist) const {
+		return Drascula::fallbackDetector(fslist);
+	}
 };
 
 bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::EncapsulatedADGameDesc &encapsulatedDesc) const {

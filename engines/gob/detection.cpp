@@ -1853,8 +1853,6 @@ static const ADParams detectionParams = {
 	"gob",
 	// List of files for file-based fallback detection (optional)
 	Gob::fileBased,
-	// Fallback callback
-	0,
 	// Flags
 	kADFlagAugmentPreferredTarget
 };
