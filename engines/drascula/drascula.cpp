@@ -78,39 +78,39 @@ DrasculaEngine::~DrasculaEngine() {
 	delete _rnd;
 }
 
-static int x_obj[44] = {0, X_OBJ1, X_OBJ2, X_OBJ3, X_OBJ4, X_OBJ5, X_OBJ6, X_OBJ7, X_OBJ8, X_OBJ9, X_OBJ10,
+static const int x_obj[44] = {0, X_OBJ1, X_OBJ2, X_OBJ3, X_OBJ4, X_OBJ5, X_OBJ6, X_OBJ7, X_OBJ8, X_OBJ9, X_OBJ10,
 				X_OBJ11, X_OBJ12, X_OBJ13, X_OBJ14, X_OBJ15, X_OBJ16, X_OBJ17, X_OBJ18, X_OBJ19, X_OBJ20,
 				X_OBJ21, X_OBJ22, X_OBJ23, X_OBJ24, X_OBJ25, X_OBJ26, X_OBJ27, X_OBJ28, X_OBJ29, X_OBJ30,
 				X_OBJ31, X_OBJ32, X_OBJ33, X_OBJ34, X_OBJ35, X_OBJ36, X_OBJ37, X_OBJ38, X_OBJ39, X_OBJ40,
 				X_OBJ41, X_OBJ42, X_OBJ43};
-static int y_obj[44] = {0, Y_OBJ1, Y_OBJ2, Y_OBJ3, Y_OBJ4, Y_OBJ5, Y_OBJ6, Y_OBJ7, Y_OBJ8, Y_OBJ9, Y_OBJ10,
+static const int y_obj[44] = {0, Y_OBJ1, Y_OBJ2, Y_OBJ3, Y_OBJ4, Y_OBJ5, Y_OBJ6, Y_OBJ7, Y_OBJ8, Y_OBJ9, Y_OBJ10,
 				Y_OBJ11, Y_OBJ12, Y_OBJ13, Y_OBJ14, Y_OBJ15, Y_OBJ16, Y_OBJ17, Y_OBJ18, Y_OBJ19, Y_OBJ20,
 				Y_OBJ21, Y_OBJ22, Y_OBJ23, Y_OBJ24, Y_OBJ25, Y_OBJ26, Y_OBJ27, Y_OBJ28, Y_OBJ29, Y_OBJ30,
 				Y_OBJ31, Y_OBJ32, Y_OBJ33, Y_OBJ34, Y_OBJ35, Y_OBJ36, Y_OBJ37, Y_OBJ38, Y_OBJ39, Y_OBJ40,
 				Y_OBJ41, Y_OBJ42, Y_OBJ43};
-static int x_pol[44] = {0, 1, 42, 83, 124, 165, 206, 247, 83, 1, 206,
+static const int x_pol[44] = {0, 1, 42, 83, 124, 165, 206, 247, 83, 1, 206,
 				1, 42, 83, 124, 165, 206, 247, 83, 1, 206,
 				247, 83, 165, 1, 206, 42, 124, 83, 1, 247,
 				83, 165, 1, 206, 42, 124, 83, 1, 247, 42,
 				1, 165, 206};
-static int y_pol[44] = {0, 1, 1, 1, 1, 1, 1, 1, 27, 27, 1,
+static const int y_pol[44] = {0, 1, 1, 1, 1, 1, 1, 1, 27, 27, 1,
 						27, 27, 27, 27, 27, 27, 27, 1, 1, 27,
 						1, 1, 1, 1, 1, 27, 27, 27, 27, 27,
 						1, 1, 1, 1, 1, 27, 27, 27, 27, 27,
 						27, 1, 1};
-static int x_barra[] = {6, 51, 96, 141, 186, 232, 276, 321};
-static int x1d_menu[] = {280, 40, 80, 120, 160, 200, 240, 0, 40, 80, 120,
+static const int x_barra[] = {6, 51, 96, 141, 186, 232, 276, 321};
+static const int x1d_menu[] = {280, 40, 80, 120, 160, 200, 240, 0, 40, 80, 120,
 						160, 200, 240, 0, 40, 80, 120, 160, 200, 240, 0,
 						40, 80, 120, 160, 200, 240, 0};
-static int y1d_menu[] = {0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25,
+static const int y1d_menu[] = {0, 0, 0, 0, 0, 0, 0, 25, 25, 25, 25, 25, 25, 25,
 						50, 50, 50, 50, 50, 50, 50, 75, 75, 75, 75, 75, 75, 75, 100};
 static int frame_x[20] = {43, 87, 130, 173, 216, 259};
-static int interf_x[] ={ 1, 65, 129, 193, 1, 65, 129 };
-static int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
-static char mirar_t[3][88] = {TEXT100, TEXT101, TEXT54};
-static char mirar_v[3][14] = {"100.als", "101.als", "54.als"};
-static char poder_t[6][88] = {TEXT11, TEXT109, TEXT111, TEXT110, TEXT115, TEXT116};
-static char poder_v[6][14] = {"11.als", "109.als", "111.als", "110.als", "115.als", "116.als"};
+static const int interf_x[] ={ 1, 65, 129, 193, 1, 65, 129 };
+static const int interf_y[] ={ 51, 51, 51, 51, 83, 83, 83 };
+static const char mirar_t[3][88] = {TEXT100, TEXT101, TEXT54};
+static const char mirar_v[3][14] = {"100.als", "101.als", "54.als"};
+static const char poder_t[6][88] = {TEXT11, TEXT109, TEXT111, TEXT110, TEXT115, TEXT116};
+static const char poder_v[6][14] = {"11.als", "109.als", "111.als", "110.als", "115.als", "116.als"};
 
 int DrasculaEngine::init() {
 	// Initialize backend
