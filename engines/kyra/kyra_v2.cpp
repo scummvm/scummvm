@@ -1210,6 +1210,20 @@ void KyraEngine_v2::restorePage3() {
 	_screen->copyBlockToPage(2, 0, 0, 320, 144, _gamePlayBuffer);
 }
 
+void KyraEngine_v2::backUpPage0() {
+	if (_screenBuffer) {
+		_screen->hideMouse();
+		memcpy(_screenBuffer, _screen->getCPagePtr(0), 64000);
+		_screen->showMouse();
+	}
+}
+
+void KyraEngine_v2::restorePage0() {
+	restorePage3();
+	if (_screenBuffer)
+		_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
+}
+
 void KyraEngine_v2::updateCharPal(int unk1) {
 	static bool unkVar1 = false;
 
@@ -2112,7 +2126,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		Opcode(o2_defineItem),
 		// 0x24
-		OpcodeUnImpl(),
+		Opcode(o2_removeItemFromInventory),
 		Opcode(o2_countItemInInventory),
 		OpcodeUnImpl(),
 		Opcode(o2_queryGameFlag),
@@ -2147,8 +2161,8 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_drawSceneShape),
 		Opcode(o2_drawSceneShapeOnPage),
 		// 0x40
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_disableAnimObject),
+		Opcode(o2_enableAnimObject),
 		Opcode(o2_dummy),
 		OpcodeUnImpl(),
 		// 0x44
@@ -2193,7 +2207,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		// 0x64
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_showLetter),
 		OpcodeUnImpl(),
 		Opcode(o2_fillRect),
 		// 0x68
@@ -2210,7 +2224,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_defineSceneAnim),
 		Opcode(o2_updateSceneAnim),
 		Opcode(o2_updateSceneAnim),
-		OpcodeUnImpl(),
+		Opcode(o2_setSceneAnimPosAndUpdate),
 		// 0x74
 		Opcode(o2_useItemOnMainChar),
 		Opcode(o2_startDialogue),

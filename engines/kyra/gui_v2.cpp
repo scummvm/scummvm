@@ -642,6 +642,23 @@ int KyraEngine_v2::scrollInventory(Button *button) {
 	return 0;
 }
 
+int KyraEngine_v2::getInventoryItemSlot(uint16 item) {
+	for (int i = 0; i < 20; ++i) {
+		if (_mainCharacter.inventory[i] == item)
+			return i;
+	}
+	return -1;
+}
+
+void KyraEngine_v2::removeItemFromInventory(int slot) {
+	_mainCharacter.inventory[slot] = 0xFFFF;
+	if (slot < 10) {
+		_screen->hideMouse();
+		clearInventorySlot(slot, 0);
+		_screen->showMouse();
+	}
+}
+
 bool KyraEngine_v2::checkInventoryItemExchange(uint16 handItem, int slot) {
 	bool removeItem = false;
 	uint16 newItem = 0xFFFF;

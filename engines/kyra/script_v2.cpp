@@ -273,6 +273,15 @@ int KyraEngine_v2::o2_defineItem(ScriptState *script) {
 	return freeItem;
 }
 
+int KyraEngine_v2::o2_removeItemFromInventory(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_removeItemFromInventory(%p) (%d)", (const void *)script, stackPos(0));
+	uint16 item = stackPos(0);
+	int slot = -1;
+	while ((slot = getInventoryItemSlot(stackPos(0))) != -1)
+		removeItemFromInventory(slot);
+	return 0;
+}
+
 int KyraEngine_v2::o2_countItemInInventory(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_countItemInInventory(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	uint16 item = stackPos(1);
@@ -424,6 +433,18 @@ int KyraEngine_v2::o2_drawSceneShapeOnPage(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_disableAnimObject(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_disableAnimObject(%p) (%d)", (const void *)script, stackPos(0));
+	_animObjects[stackPos(0)+1].enabled = false;
+	return 0;
+}
+
+int KyraEngine_v2::o2_enableAnimObject(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_enableAnimObject(%p) (%d)", (const void *)script, stackPos(0));
+	_animObjects[stackPos(0)+1].enabled = true;
+	return 0;
+}
+
 int KyraEngine_v2::o2_restoreBackBuffer(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_restoreBackBuffer(%p) (%d)", (const void *)script, stackPos(0));
 	int disable = stackPos(0);
@@ -543,6 +564,66 @@ int KyraEngine_v2::o2_getRand(ScriptState *script) {
 	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
 }
 
+int KyraEngine_v2::o2_showLetter(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_showLetter(%p) (%d)", (const void *)script, stackPos(0));
+	const int letter = stackPos(0);
+	char filename[16];
+
+	_screen->hideMouse();
+
+	showMessage(0, 0xCF);
+	displayInvWsaLastFrame();
+	backUpPage0();
+
+	memcpy(_screen->getPalette(2), _screen->getPalette(0), 768);
+
+	_screen->clearPage(3);
+	_screen->loadBitmap("_NOTE.CPS", 3, 3, 0);
+
+	sprintf(filename, "_NTEPAL%.1d.COL", letter+1);
+	_res->loadFileToBuf(filename, _screen->getPalette(0), 768);
+
+	_screen->fadeToBlack(0x14);
+	
+	sprintf(filename, "LETTER%.1d.", letter);
+	strcat(filename, _languageExtension[_lang]);
+
+	uint8 *letterBuffer = _res->fileData(filename, 0);
+	if (letterBuffer) {
+		bookDecodeText(letterBuffer);
+		bookPrintText(2, letterBuffer, 0xC, 0xA, 0x20);
+	}
+
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+	_screen->fadePalette(_screen->getPalette(0), 0x14);
+	_screen->setMouseCursor(0, 0, getShapePtr(0));
+	_system->warpMouse(280, 160);
+
+	_screen->showMouse();
+
+	bool running = true;
+	while (running) {
+		int inputFlag = checkInput(0);
+		removeInputTop();
+
+		if (inputFlag == 198 || inputFlag == 199)
+			running = false;
+
+		_screen->updateScreen();
+		_system->delayMillis(10);
+	}
+
+	_screen->hideMouse();
+	_screen->fadeToBlack(0x14);
+	restorePage0();
+	memcpy(_screen->getPalette(0), _screen->getPalette(2), 768);
+	_screen->fadePalette(_screen->getPalette(0), 0x14);
+	setHandItem(_itemInHand);
+	_screen->showMouse();
+
+	return 0;
+}
+
 int	KyraEngine_v2::o2_fillRect(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_fillRect(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	_screen->fillRect(stackPos(1), stackPos(2), stackPos(1)+stackPos(3), stackPos(2)+stackPos(4), stackPos(5), stackPos(0));
@@ -636,6 +717,20 @@ int KyraEngine_v2::o2_defineSceneAnim(ScriptState *script) {
 int KyraEngine_v2::o2_updateSceneAnim(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_updateSceneAnim(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	updateSceneAnim(stackPos(0), stackPos(1));
+	_specialSceneScriptRunFlag = false;
+	return 0;
+}
+
+int KyraEngine_v2::o2_setSceneAnimPosAndUpdate(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_updateSceneAnim(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	const int anim = stackPos(0);
+	_sceneAnims[anim].x2 = stackPos(1);
+	_sceneAnims[anim].y2 = stackPos(2);
+	if (_sceneAnims[anim].flags & 2) {
+		_sceneAnims[anim].x = stackPos(1);
+		_sceneAnims[anim].y = stackPos(2);
+	}
+	updateSceneAnim(anim, stackPos(3));
 	_specialSceneScriptRunFlag = false;
 	return 0;
 }

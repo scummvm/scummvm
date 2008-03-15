@@ -327,6 +327,9 @@ protected:
 	void restorePage3();
 
 	uint8 *_screenBuffer;
+	void backUpPage0();
+	void restorePage0();
+
 	uint8 *_maskPage;
 	uint8 *_gfxBackUpRect;
 
@@ -567,6 +570,8 @@ protected:
 	static const int _inventoryY[];
 	static const uint16 _itemMagicTable[];
 
+	int getInventoryItemSlot(uint16 item);
+	void removeItemFromInventory(int slot);
 	bool checkInventoryItemExchange(uint16 item, int slot);
 	void drawInventoryShape(int page, uint16 item, int slot);
 	void clearInventorySlot(int slot, int page);
@@ -946,6 +951,7 @@ protected:
 	int o2_wsaOpen(ScriptState *script);
 	int o2_checkForItem(ScriptState *script);
 	int o2_defineItem(ScriptState *script);
+	int o2_removeItemFromInventory(ScriptState *script);
 	int o2_countItemInInventory(ScriptState *script);
 	int o2_queryGameFlag(ScriptState *script);
 	int o2_resetGameFlag(ScriptState *script);
@@ -965,6 +971,8 @@ protected:
 	int o2_setCharPalEntry(ScriptState *script);
 	int o2_drawSceneShape(ScriptState *script);
 	int o2_drawSceneShapeOnPage(ScriptState *script);
+	int o2_disableAnimObject(ScriptState *script);
+	int o2_enableAnimObject(ScriptState *script);
 	int o2_restoreBackBuffer(ScriptState *script);
 	int o2_update(ScriptState *script);
 	int o2_fadeScenePal(ScriptState *script);
@@ -977,6 +985,7 @@ protected:
 	int o2_playWanderScoreViaMap(ScriptState *script);
 	int o2_playSoundEffect(ScriptState *script);
 	int o2_getRand(ScriptState *script);
+	int o2_showLetter(ScriptState *script);
 	int o2_fillRect(ScriptState *script);
 	int o2_encodeShape(ScriptState *script);
 	int o2_defineRoomEntrance(ScriptState *script);
@@ -984,6 +993,7 @@ protected:
 	int o2_setSpecialSceneScriptRunTime(ScriptState *script);
 	int o2_defineSceneAnim(ScriptState *script);
 	int o2_updateSceneAnim(ScriptState *script);
+	int o2_setSceneAnimPosAndUpdate(ScriptState *script);
 	int o2_useItemOnMainChar(ScriptState *script);
 	int o2_startDialogue(ScriptState *script);
 	int o2_zanthRandomChat(ScriptState *script);
