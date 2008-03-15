@@ -35,7 +35,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 21
+#define RESFILE_VERSION 22
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -247,6 +247,7 @@ bool StaticResource::init() {
 		{ k2IngameCDA, kRawData, "I_TRACKS.CDA" },
 		{ k2IngameTalkObjIndex, kRawData, "I_TALKOBJECTS.MAP" },
 		{ k2IngameTimJpStrings, kStringList, "I_TIMJPSTR.TXT" },
+		{ k2IngameItemAnimTable, kRawData, "I_INVANIM.SHP" },
 
 		{ 0, 0, 0 }
 	};
@@ -929,6 +930,16 @@ void KyraEngine_v2::initStaticResource() {
 	_cdaTrackTableFinale = _staticres->loadRawData(k2SeqplayFinaleCDA, _cdaTrackTableFinaleSize);
 	_ingameTalkObjIndex = (const uint16*) _staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
 	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
+	_itemAnimTable = _staticres->loadRawData(k2IngameItemAnimTable, tmpSize);
+
+	for (int i = 0; i < 15; i++) {
+		const uint8 *tmp = _itemAnimTable + 56 * i;
+		_itemAnimData[i].itemIndex = (int16) READ_LE_UINT16(tmp);
+		_itemAnimData[i].numFrames = tmp[2];
+		_itemAnimData[i].curFrame = tmp[3];
+		_itemAnimData[i].nextFrame = READ_LE_UINT32(&tmp[4]);
+		_itemAnimData[i].frames = &tmp[8];
+	}
 
 	// replace sequence talkie files with localized versions and cut off .voc
 	// suffix from voc files so as to allow compression specific file extensions

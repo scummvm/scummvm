@@ -95,6 +95,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_currentTalkSections.ENDTim = NULL;
 
 	_invWsa.wsa = 0;
+	_itemAnimTable = 0;
+	_nextAnimItem = 0;
+	_holdItemAnims = false;
 
 	_colorCodeFlag1 = 0;
 	_colorCodeFlag2 = -1;
@@ -578,7 +581,7 @@ void KyraEngine_v2::update() {
 	updateMouse();
 	updateSpecialSceneScripts();
 	_timer->update();
-	//sub_274C0();
+	updateItemAnimations();
 	updateInvWsa();
 	//sub_1574C();
 	_screen->updateScreen();
@@ -591,7 +594,7 @@ void KyraEngine_v2::updateWithText() {
 	//sub_157C();
 	updateSpecialSceneScripts();
 	_timer->update();
-	//sub_274C0();
+	updateItemAnimations();
 	updateInvWsa();
 	restorePage3();
 	drawAnimObjects();
@@ -697,7 +700,7 @@ void KyraEngine_v2::updateMouse() {
 	}
 
 	if (type != 0 && _handItemSet != type) {
-		_handItemSet = type;
+		_mouseState = _handItemSet = type;
 		_screen->hideMouse();
 		_screen->setMouseCursor(xOffset, yOffset, getShapePtr(shapeIndex));
 		_screen->showMouse();
@@ -705,6 +708,7 @@ void KyraEngine_v2::updateMouse() {
 
 	if (type == 0 && _handItemSet != _itemInHand) {
 		if ((mouse.y > 145) || (mouse.x > 6 && mouse.x < 312 && mouse.y > 6 && mouse.y < 135)) {
+			_mouseState = 0;
 			_handItemSet = _itemInHand;
 			_screen->hideMouse();
 			if (_itemInHand == -1)

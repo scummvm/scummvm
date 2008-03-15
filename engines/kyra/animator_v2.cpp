@@ -26,6 +26,8 @@
 #include "kyra/kyra_v2.h"
 #include "kyra/wsamovie.h"
 
+#include "common/endian.h"
+
 namespace Kyra {
 
 void KyraEngine_v2::clearAnimObjects() {
@@ -188,6 +190,66 @@ void KyraEngine_v2::refreshAnimObjectsIfNeed() {
 			_screen->updateScreen();
 			return;
 		}
+	}
+}
+
+void KyraEngine_v2::updateItemAnimations() {
+	bool nextFrame = false;
+
+	if (_itemAnimData[0].itemIndex == -1 || _holdItemAnims)
+		return;	
+
+	ItemAnimData *s = &_itemAnimData[_nextAnimItem++];
+	
+	if (s->itemIndex == -1) {
+		_nextAnimItem = 0;
+		return;
+	}
+
+	uint32 ctime = _system->getMillis();
+	if (ctime < s->nextFrame)
+		return;
+
+	uint16 shpIdx = READ_LE_UINT16(s->frames + (s->curFrame << 2)) + 64;
+	if ((s->itemIndex == _handItemSet || s->itemIndex == _itemInHand) && (!_mouseState && _screen->isMouseVisible())) {
+		nextFrame = true;
+		_screen->setMouseCursor(8, 15, getShapePtr(shpIdx));
+	}
+
+	for (int i = 0; i < 10; i++) {
+		if (s->itemIndex == _mainCharacter.inventory[i]) {
+			nextFrame = true;
+			_screen->drawShape(2, _defaultShapeTable[240 + i], 304, 184, 0, 0);
+			_screen->drawShape(2, getShapePtr(shpIdx), 304, 184, 0, 0);
+			_screen->copyRegion(304, 184, _inventoryX[i], _inventoryY[i], 16, 16, 2, 0);
+		}
+	}
+
+	_screen->updateScreen();
+
+	for (int i = 11; i < 40; i++) {
+		AnimObj *animObject = &_animObjects[i];
+		if (animObject->shapeIndex2 == s->itemIndex + 64) {
+			if (s->itemIndex == 121) {
+				int f = findItem(_mainCharacter.sceneId, 121);
+				int nx = _itemList[f].x - 4;
+				if (nx > 12) {
+					if (lineIsPassable(nx, _itemList[f].y)) {
+						animObject->xPos2 -= 4;
+						_itemList[f].x -= 4;
+					}
+				}
+			}
+			animObject->shapePtr = _defaultShapeTable[shpIdx];
+			animObject->shapeIndex1 = shpIdx;
+			animObject->needRefresh = 1;
+			nextFrame = true;
+		}
+	}
+
+	if (nextFrame) {
+		s->nextFrame = _system->getMillis() + READ_LE_UINT16(s->frames + (s->curFrame << 2) + 2) * _tickLength;
+		s->curFrame = ++s->curFrame % s->numFrames;
 	}
 }
 

@@ -319,6 +319,7 @@ protected:
 	void updateInput();
 
 	int _mouseX, _mouseY;
+	int _mouseState;
 	Common::List<Common::Event> _eventList;
 
 	// gfx/animation specific
@@ -446,6 +447,7 @@ protected:
 
 	void refreshAnimObjects(int force);
 	void refreshAnimObjectsIfNeed();
+	void updateItemAnimations();
 
 	void flagAnimObjsForRefresh();
 
@@ -570,6 +572,17 @@ protected:
 	void clearInventorySlot(int slot, int page);
 	void redrawInventory(int page);
 	void scrollInventoryWheel();
+
+	struct ItemAnimData {
+		int16 itemIndex;
+		uint8 numFrames;
+		uint8 curFrame;
+		uint32 nextFrame;
+		const uint8 *frames;
+	} _itemAnimData[15];
+
+	int _nextAnimItem;
+	bool _holdItemAnims;
 
 	// gui
 	void loadButtonShapes();
@@ -1076,6 +1089,7 @@ protected:
 	int _ingameTalkObjIndexSize;
 	const char *const *_ingameTimJpStr;
 	int _ingameTimJpStrSize;
+	const uint8 *_itemAnimTable;
 	uint8 *_demoShapeDefs;
 	int _sequenceStringsDuration[33];
 
