@@ -102,6 +102,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_colorCodeFlag1 = 0;
 	_colorCodeFlag2 = -1;
 	_scriptCountDown = 0;
+	memset(_inputColorCode, 0, 7);
 
 	_gamePlayBuffer = 0;
 	_unkBuf500Bytes = 0;
@@ -699,14 +700,14 @@ void KyraEngine_v2::updateMouse() {
 		yOffset = 9;
 	}
 
-	if (type != 0 && _handItemSet != type) {
+	if (type != 0 && _handItemSet != type && _screen->isMouseVisible()) {
 		_mouseState = _handItemSet = type;
 		_screen->hideMouse();
 		_screen->setMouseCursor(xOffset, yOffset, getShapePtr(shapeIndex));
 		_screen->showMouse();
 	}
 
-	if (type == 0 && _handItemSet != _itemInHand) {
+	if (type == 0 && _handItemSet != _itemInHand && _screen->isMouseVisible()) {
 		if ((mouse.y > 145) || (mouse.x > 6 && mouse.x < 312 && mouse.y > 6 && mouse.y < 135)) {
 			_mouseState = 0;
 			_handItemSet = _itemInHand;
@@ -2224,7 +2225,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_getCountDown),
 		Opcode(o2_dummy),
 		Opcode(o2_dummy),
-		OpcodeUnImpl(),
+		Opcode(o2_pressColorKey),
 		// 0x80
 		Opcode(o2_objectChat),
 		OpcodeUnImpl(),

@@ -993,6 +993,7 @@ protected:
 	int o2_addCauldronStateTableEntry(ScriptState *script);
 	int o2_setCountDown(ScriptState *script);
 	int o2_getCountDown(ScriptState *script);
+	int o2_pressColorKey(ScriptState *script);
 	int o2_objectChat(ScriptState *script);
 	int o2_getColorCodeFlag1(ScriptState *script);
 	int o2_setColorCodeFlag1(ScriptState *script);
@@ -1120,7 +1121,8 @@ protected:
 	// color code related vars
 	int _colorCodeFlag1;
 	int _colorCodeFlag2;
-	uint8 _colorCode[7];
+	uint8 _presetColorCode[7];
+	uint8 _inputColorCode[7];
 	uint32 _scriptCountDown;
 };
 

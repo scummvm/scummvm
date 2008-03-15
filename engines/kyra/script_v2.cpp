@@ -720,6 +720,18 @@ int KyraEngine_v2::o2_getCountDown(ScriptState *script) {
 	return (time > _scriptCountDown) ? 0 : (_scriptCountDown - time) / _tickLength;
 }
 
+int KyraEngine_v2::o2_pressColorKey(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_pressColorKey(%p) (%d)", (const void *)script, stackPos(0));
+	for (int i = 6; i; i--)
+		_inputColorCode[i] = _inputColorCode[i - 1];
+	_inputColorCode[0] = stackPos(0) & 0xff;
+	for (int i = 0; i < 7; i++) {
+		if (_presetColorCode[i] != _inputColorCode[6 - i])
+			return 0;
+	}
+	return 1;
+}
+
 int KyraEngine_v2::o2_objectChat(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_objectChat(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
 	if (_flags.isTalkie)
@@ -753,12 +765,12 @@ int KyraEngine_v2::o2_setColorCodeFlag2(ScriptState *script) {
 
 int KyraEngine_v2::o2_getColorCodeValue(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_getColorCodeValue(%p) (%d)", (const void *)script, stackPos(0));
-	return _colorCode[stackPos(0)];
+	return _presetColorCode[stackPos(0)];
 }
 
 int KyraEngine_v2::o2_setColorCodeValue(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setColorCodeValue(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	_colorCode[stackPos(0)] = stackPos(1) & 0xff;
+	_presetColorCode[stackPos(0)] = stackPos(1) & 0xff;
 	return stackPos(1) & 0xff;
 }
 
