@@ -274,8 +274,8 @@ int KyraEngine_v2::o2_defineItem(ScriptState *script) {
 }
 
 int KyraEngine_v2::o2_countItemInInventory(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "o2_countItemInInventory(%p) (%d)", (const void *)script, stackPos(0));
-	uint16 item = stackPos(0);
+	debugC(3, kDebugLevelScriptFuncs, "o2_countItemInInventory(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	uint16 item = stackPos(1);
 	int count = 0;
 
 	for (int i = 0; i < 20; ++i) {
@@ -283,7 +283,7 @@ int KyraEngine_v2::o2_countItemInInventory(ScriptState *script) {
 			++count;
 	}
 
-	if (_itemInHand == int16(item))
+	if ((stackPos(0) == 0) && _itemInHand == int16(item))
 		++count;
 
 	return count;
