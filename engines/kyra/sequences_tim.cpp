@@ -176,6 +176,26 @@ void KyraEngine_v2::tim_processSequence(uint8 *timBuffer, int loop) {
 
 }
 
+void KyraEngine_v2::tim_playFullSequence(const char *filename) {
+	uint8 *ptr = tim_loadFile(filename, 0, 0);
+	if (!ptr)
+		return;
+
+	_objectChatFinished = 0;
+
+	while (ptr && !_objectChatFinished) {
+		if (ptr)
+			tim_processSequence(ptr, 0);
+		if (_timChatText)
+			updateWithText();
+		else
+			update();
+	}
+
+	if (ptr)
+		tim_releaseBuffer(ptr);
+}
+
 int KyraEngine_v2::tim_o_dummy_r0(uint8 *ptr) {
 	return 0;
 }

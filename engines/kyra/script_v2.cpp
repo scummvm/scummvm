@@ -190,8 +190,8 @@ int KyraEngine_v2::o2_displayWsaFrame(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine_v2::o2_displayWsaSequentialFrames(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "o2_displayWsaSequentialFrames(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script,
+int KyraEngine_v2::o2_displayWsaSequentialFramesLooping(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_displayWsaSequentialFramesLooping(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	int startFrame = stackPos(0);
 	int endFrame = stackPos(1);
@@ -250,6 +250,33 @@ int KyraEngine_v2::o2_wsaOpen(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_wsaOpen(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
 	assert(stackPos(1) >= 0 && stackPos(1) < ARRAYSIZE(_wsaSlots));
 	_wsaSlots[stackPos(1)]->open(stackPosString(0), 1, 0);
+	return 0;
+}
+
+int KyraEngine_v2::o2_displayWsaSequentialFrames(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_displayWsaSequentialFrames(%p) (%d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6));
+	
+	uint16 frameDelay = stackPos(2) * _tickLength;
+	uint16 currentFrame = stackPos(3);
+	uint16 lastFrame = stackPos(4);
+	uint16 index = stackPos(5);
+	uint16 copyParam = stackPos(6) | 0xc000;
+
+	_wsaSlots[index]->setX(stackPos(0));
+	_wsaSlots[index]->setY(stackPos(1));
+	_wsaSlots[index]->setDrawPage(0);
+	
+	_screen->hideMouse();
+
+	while (currentFrame <= lastFrame) {	
+		uint32 endTime = _system->getMillis() + frameDelay;
+		_wsaSlots[index]->displayFrame(currentFrame++, copyParam);
+		_screen->updateScreen();
+		delayUntil(endTime);
+	}
+
+	_screen->showMouse();
+
 	return 0;
 }
 
@@ -921,6 +948,12 @@ int KyraEngine_v2::o2_npcChat(ScriptState *script) {
 int KyraEngine_v2::o2_deinitObject(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_deinitObject(%p) (%d)", (const void *)script, stackPos(0));
 	deinitTalkObject(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_playTimSequence(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_playTimSequence(%p) ('%s')", (const void *)script, stackPosString(0));
+	tim_playFullSequence(stackPosString(0));
 	return 0;
 }
 

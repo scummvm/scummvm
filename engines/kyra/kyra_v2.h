@@ -824,6 +824,7 @@ protected:
 	uint8 *tim_loadFile(const char *filename, uint8 *buffer, int32 bufferSize);
 	void tim_releaseBuffer(uint8 *buffer);
 	void tim_processSequence(uint8 *timBuffer, int loop);
+	void tim_playFullSequence(const char *filename);
 
 	int tim_o_dummy_r0(uint8 *ptr);
 	int tim_o_dummy_r1(uint8 *ptr);
@@ -947,8 +948,9 @@ protected:
 	int o2_showChapterMessage(ScriptState *script);
 	int o2_wsaClose(ScriptState *script);
 	int o2_displayWsaFrame(ScriptState *script);
-	int o2_displayWsaSequentialFrames(ScriptState *script);
+	int o2_displayWsaSequentialFramesLooping(ScriptState *script);
 	int o2_wsaOpen(ScriptState *script);
+	int o2_displayWsaSequentialFrames(ScriptState *script);
 	int o2_checkForItem(ScriptState *script);
 	int o2_defineItem(ScriptState *script);
 	int o2_removeItemFromInventory(ScriptState *script);
@@ -1015,6 +1017,7 @@ protected:
 	int o2_initObject(ScriptState *script);
 	int o2_npcChat(ScriptState *script);
 	int o2_deinitObject(ScriptState *script);
+	int o2_playTimSequence(ScriptState *script);
 	int o2_makeBookOrCauldronAppear(ScriptState *script);
 	int o2_setSpecialSceneScriptState(ScriptState *script);
 	int o2_clearSpecialSceneScriptState(ScriptState *script);

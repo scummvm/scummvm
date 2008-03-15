@@ -1294,24 +1294,26 @@ int KyraEngine_v2::inputSceneChange(int x, int y, int unk1, int unk2) {
 		}
 	}
 
+	int strId = 0;
+	int vocH = _flags.isTalkie ? 131 : -1;
+
 	if (_pathfinderFlag) {
-		if (findItem(curScene, 13) >= 0 && _unk3 <= -3) {
-			//XXX
-			_pathfinderFlag = 0;
-			return 0;
+		if (findItem(curScene, 13) >= 0 && _unk3 <= -3) {			
+			strId = 252;
 		} else if (_itemInHand == 72) {
-			//XXX
-			_pathfinderFlag = 0;
-			return 0;
+			strId = 257;
 		} else if (findItem(curScene, 72) >= 0 && _unk3 <= -3) {
-			//XXX
-			_pathfinderFlag = 0;
-			return 0;
-		} else if (0/*XXX*/) {
-			//XXX
-			_pathfinderFlag = 0;
-			return 0;
+			strId = 256;
+		} else if (getInventoryItemSlot(72) != -1 && _unk3 <= -3) {
+			strId = 257;
 		}
+	}
+
+	if (strId) {
+		updateCharFacing();
+		objectChat(getTableString(strId, _cCodeBuffer, 1), 0, vocH, strId);
+		_pathfinderFlag = 0;
+		return 0;
 	}
 
 	if (ABS(_mainCharacter.x1 - x) < 4 || ABS(_mainCharacter.y1 - y) < 2)
@@ -2111,9 +2113,9 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		Opcode(o2_displayWsaFrame),
 		// 0x18
-		Opcode(o2_displayWsaSequentialFrames),
+		Opcode(o2_displayWsaSequentialFramesLooping),
 		Opcode(o2_wsaOpen),
-		OpcodeUnImpl(),
+		Opcode(o2_displayWsaSequentialFrames),
 		OpcodeUnImpl(),
 		// 0x1c
 		OpcodeUnImpl(),
@@ -2257,7 +2259,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_npcChat),
 		// 0x8c
 		Opcode(o2_deinitObject),
-		OpcodeUnImpl(),
+		Opcode(o2_playTimSequence),
 		Opcode(o2_makeBookOrCauldronAppear),
 		Opcode(o2_setSpecialSceneScriptState),
 		// 0x90
