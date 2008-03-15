@@ -111,8 +111,8 @@ static const DrasculaGameDescription gameDescriptions[] = {
  */
 static DrasculaGameDescription g_fallbackDesc = {
 	{
-		"", // Not used by the fallback descriptor, it uses the EncapsulatedADGameDesc's gameid
-		"", // Not used by the fallback descriptor, it uses the EncapsulatedADGameDesc's extra
+		"",
+		"",
 		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
 		Common::UNK_LANG,
 		Common::kPlatformPC,
@@ -123,22 +123,6 @@ static DrasculaGameDescription g_fallbackDesc = {
 	0,
 	0,
 };
-
-Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
-	// Set the default values for the fallback descriptor's ADGameDescription part.
-	g_fallbackDesc.desc.language = Common::UNK_LANG;
-	g_fallbackDesc.desc.platform = Common::kPlatformPC;
-	g_fallbackDesc.desc.flags = Common::ADGF_NO_FLAGS;
-
-	// Set default values for the fallback descriptor's DrasculaGameDescription part.
-	g_fallbackDesc.gameID = 0;
-	g_fallbackDesc.features = 0;
-	g_fallbackDesc.version = 0;
-
-	Common::EncapsulatedADGameDesc result;
-
-	return result;
-}
 
 } // End of namespace Drascula
 
@@ -175,9 +159,8 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
 
-	Common::EncapsulatedADGameDesc fallbackDetect(const FSList *fslist) const {
-		return Drascula::fallbackDetector(fslist);
-	}
+	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const;
+
 };
 
 bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
@@ -186,6 +169,20 @@ bool DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Co
 		*engine = new Drascula::DrasculaEngine(syst, gd);
 	}
 	return gd != 0;
+}
+
+const Common::ADGameDescription *DrasculaMetaEngine::fallbackDetect(const FSList *fslist) const {
+	// Set the default values for the fallback descriptor's ADGameDescription part.
+	Drascula::g_fallbackDesc.desc.language = Common::UNK_LANG;
+	Drascula::g_fallbackDesc.desc.platform = Common::kPlatformPC;
+	Drascula::g_fallbackDesc.desc.flags = Common::ADGF_NO_FLAGS;
+
+	// Set default values for the fallback descriptor's DrasculaGameDescription part.
+	Drascula::g_fallbackDesc.gameID = 0;
+	Drascula::g_fallbackDesc.features = 0;
+	Drascula::g_fallbackDesc.version = 0;
+
+	return (const Common::ADGameDescription *)&Drascula::g_fallbackDesc;
 }
 
 REGISTER_PLUGIN(DRASCULA, PLUGIN_TYPE_ENGINE, DrasculaMetaEngine);

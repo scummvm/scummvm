@@ -65,31 +65,6 @@ struct ADGameDescription {
 };
 
 /**
- * Encapsulates ADGameDescription and makes gameid and extra strings dynamic.
- * Used in fallback detection when dynamically creating string content.
- *
- * @todo Get rid of this once the fallback detection is a member of AdvancedMetaEngine.
- */
-struct EncapsulatedADGameDesc {
-	Common::String gameid;
-	Common::String extra;
-	const ADGameDescription *realDesc;
-
-	// Constructor for the EncapsulatedADGameDesc
-	EncapsulatedADGameDesc() : realDesc(0) {}
-	EncapsulatedADGameDesc(const ADGameDescription *paramRealDesc,
-		Common::String paramGameID = Common::String(),
-		Common::String paramExtra = Common::String())
-		: realDesc(paramRealDesc), gameid(paramGameID), extra(paramExtra) {
-		assert(paramRealDesc != NULL);
-	}
-
-	// Functions for getting the correct gameid and extra values from the struct
-	const char *getGameID() const { return (gameid.empty() && realDesc != 0) ? realDesc->gameid : gameid.c_str(); }
-	const char *getExtra() const { return (extra.empty() && realDesc != 0) ? realDesc->extra : extra.c_str(); }
-};
-
-/**
  * A list of pointers to ADGameDescription structs (or subclasses thereof).
  */
 typedef Array<const ADGameDescription*> ADGameDescList;
@@ -242,8 +217,8 @@ public:
 	 * @note The fslist parameter may be 0 -- in that case, it is assumed
 	 *       that the callback searchs the current directory.
 	 */
-	EncapsulatedADGameDesc fallbackDetect(const FSList *fslist) const {
-		return EncapsulatedADGameDesc();
+	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const {
+		return 0;
 	}
 };
 

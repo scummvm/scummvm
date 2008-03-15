@@ -148,24 +148,6 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 	return gd;
 }
 
-// Almost identical to the toGameDescriptor function that takes a ADGameDescription and PlainGameDescriptor.
-// Just a little fine tuning about accessing variables.
-// Used because of fallback detection and the dynamic string content it needs.
-static GameDescriptor toGameDescriptor(const EncapsulatedADGameDesc &g, const PlainGameDescriptor *sg) {
-	const char *title = 0;
-
-	while (sg->gameid) {
-		if (!scumm_stricmp(g.getGameID(), sg->gameid))
-			title = sg->description;
-		sg++;
-	}
-
-	assert(g.realDesc);
-	GameDescriptor gd(g.getGameID(), title, g.realDesc->language, g.realDesc->platform);
-	gd.updateDesc(g.getExtra());
-	return gd;
-}
-
 /**
  * Generate a preferred target value as
  *   GAMEID-PLAFORM-LANG
@@ -213,10 +195,10 @@ GameList AdvancedMetaEngine::detectGames(const FSList &fslist) const {
 
 	// Use fallback detector if there were no matches by other means
 	if (matches.empty()) {
-		EncapsulatedADGameDesc fallbackDesc = fallbackDetect(&fslist);
-		if (fallbackDesc.realDesc != 0) {
-			GameDescriptor desc(toGameDescriptor(fallbackDesc, params.list));
-			updateGameDescriptor(desc, fallbackDesc.realDesc, params);
+		const Common::ADGameDescription *fallbackDesc = fallbackDetect(&fslist);
+		if (fallbackDesc != 0) {
+			GameDescriptor desc(toGameDescriptor(*fallbackDesc, params.list));
+			updateGameDescriptor(desc, fallbackDesc, params);
 			detectedGames.push_back(desc);
 		}
 	} else for (uint i = 0; i < matches.size(); i++) { // Otherwise use the found matches
@@ -233,7 +215,6 @@ PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) c
 	upgradeTargetIfNecessary(params);
 
 	const ADGameDescription *agdDesc = 0;
-	EncapsulatedADGameDesc result;
 	Common::Language language = Common::UNK_LANG;
 	Common::Platform platform = Common::kPlatformUnknown;
 	Common::String extra("");
@@ -261,22 +242,23 @@ PluginError AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine) c
 		agdDesc = matches[0];
 	}
 
-	if (agdDesc != 0) { // Check if we found a match without fallback detection
-		result = EncapsulatedADGameDesc(agdDesc);
-	} else {
+	if (agdDesc == 0) {
 		// Use fallback detector if there were no matches by other means
-		EncapsulatedADGameDesc fallbackDesc = fallbackDetect(NULL);
-		if (fallbackDesc.realDesc != 0 && (params.singleid != NULL || fallbackDesc.getGameID() == gameid)) {
-			result = fallbackDesc; // Found a fallback match
+		agdDesc = fallbackDetect(NULL);
+		if (agdDesc != 0) {
+			// Seems we found a fallback match. But first perform a basic
+			// sanity check: the gameid must match.
+			if (params.singleid == NULL && agdDesc->gameid != gameid)
+				agdDesc = 0;
 		}
 	}
 
-	if (result.realDesc == 0) {
+	if (agdDesc == 0) {
 		return kNoGameDataFoundError;
 	}
 
-	debug(2, "Running %s", toGameDescriptor(result, params.list).description().c_str());
-	if (!createInstance(syst, engine, result.realDesc)) {
+	debug(2, "Running %s", toGameDescriptor(*agdDesc, params.list).description().c_str());
+	if (!createInstance(syst, engine, agdDesc)) {
 		return kNoGameDataFoundError;
 	}
 	return kNoError;

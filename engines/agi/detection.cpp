@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "base/plugins.h"
 
 #include "common/advancedDetector.h"
@@ -2057,8 +2055,8 @@ static const AGIGameDescription gameDescriptions[] = {
  */
 static AGIGameDescription g_fallbackDesc = {
 	{
-		"", // Not used by the fallback descriptor, it uses the EncapsulatedADGameDesc's gameid
-		"", // Not used by the fallback descriptor, it uses the EncapsulatedADGameDesc's extra
+		"",
+		"",
 		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
 		Common::UNK_LANG,
 		Common::kPlatformPC,
@@ -2070,7 +2068,69 @@ static AGIGameDescription g_fallbackDesc = {
 	0x2917,
 };
 
-Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
+static const Common::ADParams detectionParams = {
+	// Pointer to ADGameDescription or its superset structure
+	(const byte *)Agi::gameDescriptions,
+	// Size of that superset structure
+	sizeof(Agi::AGIGameDescription),
+	// Number of bytes to compute MD5 sum for
+	5000,
+	// List of all engine targets
+	agiGames,
+	// Structure for autoupgrading obsolete targets
+	0,
+	// Name of single gameid (optional)
+	"agi",
+	// List of files for file-based fallback detection (optional)
+	0,
+	// Flags
+	Common::kADFlagAugmentPreferredTarget
+};
+
+} // End of namespace Agi
+
+using namespace Agi;
+
+class AgiMetaEngine : public Common::AdvancedMetaEngine {
+	mutable Common::String	_gameid;
+	mutable Common::String	_extra;
+
+public:
+	AgiMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
+
+	virtual const char *getName() const {
+		return "AGI preAGI + v2 + v3 Engine";
+	}
+	virtual const char *getCopyright() const {
+		return "Sierra AGI Engine (C) Sierra On-Line Software";
+	}
+
+	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+
+	const Common::ADGameDescription *fallbackDetect(const FSList *fslist) const;
+};
+
+bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
+	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)desc;
+	bool res = true;
+
+	switch (gd->gameType) {
+	case Agi::GType_PreAGI:
+		*engine = new Agi::PreAgiEngine(syst, gd);
+		break;
+	case Agi::GType_V2:
+	case Agi::GType_V3:
+		*engine = new Agi::AgiEngine(syst, gd);
+		break;
+	default:
+		res = false;
+		error("AGI engine: unknown gameType");
+	}
+
+	return res;
+}
+
+const Common::ADGameDescription *AgiMetaEngine::fallbackDetect(const FSList *fslist) const {
 	typedef Common::HashMap<Common::String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> IntMap;
 	IntMap allFiles;
 	bool matchedUsingFilenames = false;
@@ -2078,8 +2138,12 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 	int wagFileCount = 0;
 	WagFileParser wagFileParser;
 	Common::String wagFilePath;
-	Common::String gameid("agi-fanmade"), description, extra; // Set the defaults for gameid, description and extra
+	Common::String description;
 	FSList fslistCurrentDir; // Only used if fslist == NULL
+
+	// // Set the defaults for gameid and extra
+	_gameid = "agi-fanmade";
+	_extra.clear();
 
 	// Use the current directory for searching if fslist == NULL
 	if (fslist == NULL) {
@@ -2184,8 +2248,8 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 
 		// Set gameid according to *.wag file information if it's present and it doesn't contain whitespace.
 		if (wagGameID != NULL && !Common::String(wagGameID->getData()).contains(" ")) {
-			gameid = wagGameID->getData();
-			debug(3, "Agi::fallbackDetector: Using game id (%s) from WAG file", gameid.c_str());
+			_gameid = wagGameID->getData();
+			debug(3, "Agi::fallbackDetector: Using game id (%s) from WAG file", _gameid.c_str());
 		}
 
 		// Set game description and extra according to *.wag file information if they're present
@@ -2195,14 +2259,14 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 
 			// If there's game version in the *.wag file, set extra to it
 			if (wagGameVer != NULL) {
-				extra = wagGameVer->getData();
+				_extra = wagGameVer->getData();
 				debug(3, "Agi::fallbackDetector: Game version (%s) from WAG file", wagGameVer->getData());
 			}
 
 			// If there's game last edit date in the *.wag file, add it to extra
 			if (wagGameLastEdit != NULL) {
-				if (!extra.empty() ) extra += " ";
-				extra += wagGameLastEdit->getData();
+				if (!_extra.empty() ) _extra += " ";
+				_extra += wagGameLastEdit->getData();
 				debug(3, "Agi::fallbackDetector: Game's last edit date (%s) from WAG file", wagGameLastEdit->getData());
 			}
 		}
@@ -2223,78 +2287,24 @@ Common::EncapsulatedADGameDesc fallbackDetector(const FSList *fslist) {
 		g_fallbackDesc.gameType = GType_V3;
 
 	// Check if we found a match with any of the fallback methods
-	Common::EncapsulatedADGameDesc result;
 	if (matchedUsingWag || matchedUsingFilenames) {
-		extra = description + (!extra.empty() ? " " : "") + extra; // Let's combine the description and extra
-		result = Common::EncapsulatedADGameDesc((const Common::ADGameDescription *)&g_fallbackDesc, gameid, extra);
+		_extra = description + (!_extra.empty() ? " " : "") + _extra; // Let's combine the description and extra
+		
+		// Override the gameid & extra values in g_fallbackDesc.desc. This only works 
+		// until the fallback detector is called again, and while the MetaEngine instance
+		// is alive (as else the string storage is modified/deleted).
+		g_fallbackDesc.desc.gameid = _gameid.c_str();
+		g_fallbackDesc.desc.extra = _extra.c_str();
 
 		printf("Your game version has been detected using fallback matching as a\n");
-		printf("variant of %s (%s).\n", result.getGameID(), result.getExtra());
+		printf("variant of %s (%s).\n", g_fallbackDesc.desc.gameid, g_fallbackDesc.desc.extra);
 		printf("If this is an original and unmodified version or new made Fanmade game,\n");
 		printf("please report any, information previously printed by ScummVM to the team.\n");
 
+		return (const Common::ADGameDescription *)&g_fallbackDesc;
 	}
 
-	return result;
-}
-
-} // End of namespace Agi
-
-static const Common::ADParams detectionParams = {
-	// Pointer to ADGameDescription or its superset structure
-	(const byte *)Agi::gameDescriptions,
-	// Size of that superset structure
-	sizeof(Agi::AGIGameDescription),
-	// Number of bytes to compute MD5 sum for
-	5000,
-	// List of all engine targets
-	agiGames,
-	// Structure for autoupgrading obsolete targets
-	0,
-	// Name of single gameid (optional)
-	"agi",
-	// List of files for file-based fallback detection (optional)
-	0,
-	// Flags
-	Common::kADFlagAugmentPreferredTarget
-};
-
-class AgiMetaEngine : public Common::AdvancedMetaEngine {
-public:
-	AgiMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
-
-	virtual const char *getName() const {
-		return "AGI preAGI + v2 + v3 Engine";
-	}
-	virtual const char *getCopyright() const {
-		return "Sierra AGI Engine (C) Sierra On-Line Software";
-	}
-
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
-
-	Common::EncapsulatedADGameDesc fallbackDetect(const FSList *fslist) const {
-		return Agi::fallbackDetector(fslist);
-	}
-};
-
-bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
-	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)desc;
-	bool res = true;
-
-	switch (gd->gameType) {
-	case Agi::GType_PreAGI:
-		*engine = new Agi::PreAgiEngine(syst, gd);
-		break;
-	case Agi::GType_V2:
-	case Agi::GType_V3:
-		*engine = new Agi::AgiEngine(syst, gd);
-		break;
-	default:
-		res = false;
-		error("AGI engine: unknown gameType");
-	}
-
-	return res;
+	return 0;
 }
 
 REGISTER_PLUGIN(AGI, PLUGIN_TYPE_ENGINE, AgiMetaEngine);
