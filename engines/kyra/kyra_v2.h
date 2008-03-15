@@ -935,6 +935,7 @@ protected:
 	int o2_getCharacterX(ScriptState *script);
 	int o2_getCharacterY(ScriptState *script);
 	int o2_getCharacterFacing(ScriptState *script);
+	int o2_getCharacterScene(ScriptState *script);
 	int o2_setSceneComment(ScriptState *script);
 	int o2_setCharacterAnimFrame(ScriptState *script);
 	int o2_trySceneChange(ScriptState *script);
@@ -957,6 +958,7 @@ protected:
 	int o2_setMousePos(ScriptState *script);
 	int o2_showMouse(ScriptState *script);
 	//int o2_playSoundEffect(ScriptState *script);
+	int o2_delaySecs(ScriptState *script);
 	int o2_delay(ScriptState *script);
 	int o2_setScaleTableItem(ScriptState *script);
 	int o2_setDrawLayerTableItem(ScriptState *script);
@@ -975,6 +977,7 @@ protected:
 	int o2_playWanderScoreViaMap(ScriptState *script);
 	int o2_playSoundEffect(ScriptState *script);
 	int o2_getRand(ScriptState *script);
+	int o2_fillRect(ScriptState *script);
 	int o2_encodeShape(ScriptState *script);
 	int o2_defineRoomEntrance(ScriptState *script);
 	int o2_runTemporaryScript(ScriptState *script);

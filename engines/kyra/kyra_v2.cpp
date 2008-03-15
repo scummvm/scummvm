@@ -2074,7 +2074,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_getCharacterX),
 		Opcode(o2_getCharacterY),
 		Opcode(o2_getCharacterFacing),
-		OpcodeUnImpl(),
+		Opcode(o2_getCharacterScene),
 		// 0x08
 		Opcode(o2_setSceneComment),
 		OpcodeUnImpl(),
@@ -2133,7 +2133,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x34
 		OpcodeUnImpl(),
 		Opcode(o2_playSoundEffect),
-		OpcodeUnImpl(),
+		Opcode(o2_delaySecs),
 		Opcode(o2_delay),
 		// 0x38
 		Opcode(o2_dummy),
@@ -2194,7 +2194,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_fillRect),
 		// 0x68
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),

@@ -100,6 +100,11 @@ int KyraEngine_v2::o2_getCharacterFacing(ScriptState *script) {
 	return _mainCharacter.facing;
 }
 
+int KyraEngine_v2::o2_getCharacterScene(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_getCharacterScene(%p) ()", (const void *)script);
+	return _mainCharacter.sceneId;
+}
+
 int KyraEngine_v2::o2_setSceneComment(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setSceneComment(%p) ('%s')", (const void *)script, stackPosString(0));
 	_sceneCommentString = stackPosString(0);
@@ -348,6 +353,12 @@ int KyraEngine_v2::o2_showMouse(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_delaySecs(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_delaySecs(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	delay(stackPos(0) * 1000, true);
+	return 0;
+}
+
 int KyraEngine_v2::o2_delay(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	//if (stackPos(1))
@@ -530,6 +541,12 @@ int KyraEngine_v2::o2_getRand(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < stackPos(1));
 	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
+}
+
+int	KyraEngine_v2::o2_fillRect(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_fillRect(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	_screen->fillRect(stackPos(1), stackPos(2), stackPos(1)+stackPos(3), stackPos(2)+stackPos(4), stackPos(5), stackPos(0));
+	return 0;
 }
 
 int KyraEngine_v2::o2_encodeShape(ScriptState *script) {
