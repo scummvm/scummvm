@@ -335,7 +335,7 @@ int KyraEngine_v2::o2_removeItemFromInventory(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_removeItemFromInventory(%p) (%d)", (const void *)script, stackPos(0));
 	uint16 item = stackPos(0);
 	int slot = -1;
-	while ((slot = getInventoryItemSlot(stackPos(0))) != -1)
+	while ((slot = getInventoryItemSlot(item)) != -1)
 		removeItemFromInventory(slot);
 	return 0;
 }
