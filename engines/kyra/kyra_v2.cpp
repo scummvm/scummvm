@@ -318,7 +318,6 @@ void KyraEngine_v2::startup() {
 	for (int i = 0; i < ARRAYSIZE(_wsaSlots); ++i)
 		_wsaSlots[i] = new WSAMovieV2(this);
 
-	_maskPage = 0;//_screen->getPagePtr(5);
 	_screen->_curPage = 0;
 
 	_talkObjectList = new TalkObject[72];
@@ -406,22 +405,22 @@ void KyraEngine_v2::runLoop() {
 			enterNewScene(39, -1, 0, 0, 0);
 		}
 
-		//if (queryGameFlag(0xD8)) {
-		//	resetGameFlag(0xD8);
-		//	if (_mainCharacter.sceneId == 34) {
-		//		if (queryGameFlag(0xD1) {
-		//			initObject(28);
-		//			sub_2741F(getTableString(0xFA, _cCodeBuffer, 1), 28, 0x83, 0xFA);
-		//			deinitObject(28);
-		//			enterNewScene(35, 4, 0, 0, 0);
-		//		} else if (queryGameFlag(0xD0) {
-		//			initObject(29);
-		//			sub_2741F(getTableString(0xFB, _ccodeBuffer, 1), 29, 0x83, 0xFB);
-		//			deinitObject(29);
-		//			enterNewScene(33, 6, 0, 0, 0);
-		//		}
-		//	}
-		//}
+		if (queryGameFlag(0xD8)) {
+			resetGameFlag(0xD8);
+			if (_mainCharacter.sceneId == 34) {
+				if (queryGameFlag(0xD1)) {
+					initTalkObject(28);
+					npcChatSequence(getTableString(0xFA, _cCodeBuffer, 1), 28, 0x83, 0xFA);
+					deinitTalkObject(28);
+					enterNewScene(35, 4, 0, 0, 0);
+				} else if (queryGameFlag(0xD0)) {
+					initTalkObject(29);
+					npcChatSequence(getTableString(0xFB, _cCodeBuffer, 1), 29, 0x83, 0xFB);
+					deinitTalkObject(29);
+					enterNewScene(33, 6, 0, 0, 0);
+				}
+			}
+		}
 
 		int inputFlag = checkInput(_buttonList);
 		removeInputTop();
@@ -548,7 +547,7 @@ bool KyraEngine_v2::handleInputUnkSub(int x, int y) {
 
 	if (_handItemSet <= -3 && findItem(_mainCharacter.sceneId, 13) >= 0) {
 		updateCharFacing();
-		//objectChat(getTableString(0xFC, _cCodeBuffer, 1), 0, 0x83, 0xFC);
+		objectChat(getTableString(0xFC, _cCodeBuffer, 1), 0, 0x83, 0xFC);
 		return true;
 	} else {
 		_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);

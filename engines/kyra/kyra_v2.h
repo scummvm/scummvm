@@ -330,7 +330,6 @@ protected:
 	void backUpPage0();
 	void restorePage0();
 
-	uint8 *_maskPage;
 	uint8 *_gfxBackUpRect;
 
 	void backUpGfxRect24x24(int x, int y);
