@@ -280,6 +280,37 @@ int KyraEngine_v2::o2_displayWsaSequentialFrames(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_displayWsaSequence(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_displayWsaSequence(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	
+	const int frameDelay = stackPos(2) * _tickLength;
+	const int index = stackPos(3);
+	const bool doUpdate = (stackPos(4) != 0);
+	const uint16 copyParam = stackPos(5) | 0xc000;
+
+	_wsaSlots[index]->setX(stackPos(0));
+	_wsaSlots[index]->setY(stackPos(1));
+	_wsaSlots[index]->setDrawPage(0);
+	
+	_screen->hideMouse();
+
+	int currentFrame = 0;
+	const int lastFrame = _wsaSlots[index]->frames();
+
+	while (currentFrame <= lastFrame) {	
+		uint32 endTime = _system->getMillis() + frameDelay;
+		_wsaSlots[index]->displayFrame(currentFrame++, copyParam);
+		if (doUpdate)
+			update();
+		_screen->updateScreen();
+		delayUntil(endTime);
+	}
+
+	_screen->showMouse();
+
+	return 0;
+}
+
 int KyraEngine_v2::o2_checkForItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_checkForItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	return findItem(stackPos(0), stackPos(1)) == -1 ? 0 : 1;
@@ -591,6 +622,12 @@ int KyraEngine_v2::o2_getRand(ScriptState *script) {
 	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
 }
 
+int KyraEngine_v2::o2_setDrawNoShapeFlag(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setDrawNoShapeFlag(%p) (%d)", (const void *)script, stackPos(0));
+	_drawNoShapeFlag = (stackPos(0) != 0);
+	return 0;
+}
+
 int KyraEngine_v2::o2_showLetter(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_showLetter(%p) (%d)", (const void *)script, stackPos(0));
 	const int letter = stackPos(0);
@@ -863,8 +900,30 @@ int KyraEngine_v2::o2_objectChat(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_chapterChange(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_chapterChange(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	const int chapter = stackPos(0);
+	const int scene = stackPos(1);
+
+	resetItemList();
+
+	_newChapterFile = chapter;
+	runStartScript(chapter, 0);
+
+	_mainCharacter.dlgIndex = 0;
+	memset(_newSceneDlgState, 0, 32);
+
+	static const int zShapeList[] = { 1, 2, 2, 2, 4 };
+	assert(chapter > 1 && chapter <= ARRAYSIZE(zShapeList));
+	loadZShapes(zShapeList[chapter-1]);
+
+	enterNewScene(scene, (chapter == 2) ? 2 : 0, 0, 0, 0);
+
+	return 0;
+}
+
 int KyraEngine_v2::o2_getColorCodeFlag1(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "o2_getColorCodeFlag1(%p)", (const void *)script);
+	debugC(3, kDebugLevelScriptFuncs, "o2_getColorCodeFlag1(%p) ()", (const void *)script);
 	return _colorCodeFlag1;
 }
 
@@ -875,7 +934,7 @@ int KyraEngine_v2::o2_setColorCodeFlag1(ScriptState *script) {
 }
 
 int KyraEngine_v2::o2_getColorCodeFlag2(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "o2_getColorCodeFlag2(%p)", (const void *)script);
+	debugC(3, kDebugLevelScriptFuncs, "o2_getColorCodeFlag2(%p) ()", (const void *)script);
 	return _colorCodeFlag2;
 }
 
@@ -1032,6 +1091,24 @@ int KyraEngine_v2::o2_customChatFinish(ScriptState *script) {
 	_text->restoreScreen();
 	_chatText = 0;
 	_chatObject = -1;
+	return 0;
+}
+
+int KyraEngine_v2::o2_processPaletteIndex(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_processPaletteIndex(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	uint8 *palette = _screen->getPalette(0);
+	const int index = stackPos(0);
+	const bool updatePalette = (stackPos(4) != 0);
+	const int delayTime = stackPos(5);
+	palette[index*3+0] = (stackPos(1) * 0x3F) / 100;
+	palette[index*3+1] = (stackPos(2) * 0x3F) / 100;
+	palette[index*3+2] = (stackPos(3) * 0x3F) / 100;
+	if (updatePalette) {
+		if (delayTime > 0)
+			_screen->fadePalette(palette, delayTime, &_updateFunctor);
+		else
+			_screen->setScreenPalette(palette);
+	}
 	return 0;
 }
 

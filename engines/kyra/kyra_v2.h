@@ -951,6 +951,7 @@ protected:
 	int o2_displayWsaSequentialFramesLooping(ScriptState *script);
 	int o2_wsaOpen(ScriptState *script);
 	int o2_displayWsaSequentialFrames(ScriptState *script);
+	int o2_displayWsaSequence(ScriptState *script);
 	int o2_checkForItem(ScriptState *script);
 	int o2_defineItem(ScriptState *script);
 	int o2_removeItemFromInventory(ScriptState *script);
@@ -987,6 +988,7 @@ protected:
 	int o2_playWanderScoreViaMap(ScriptState *script);
 	int o2_playSoundEffect(ScriptState *script);
 	int o2_getRand(ScriptState *script);
+	int o2_setDrawNoShapeFlag(ScriptState *script);
 	int o2_showLetter(ScriptState *script);
 	int o2_fillRect(ScriptState *script);
 	int o2_encodeShape(ScriptState *script);
@@ -1007,6 +1009,7 @@ protected:
 	int o2_getCountDown(ScriptState *script);
 	int o2_pressColorKey(ScriptState *script);
 	int o2_objectChat(ScriptState *script);
+	int o2_chapterChange(ScriptState *script);
 	int o2_getColorCodeFlag1(ScriptState *script);
 	int o2_setColorCodeFlag1(ScriptState *script);
 	int o2_getColorCodeFlag2(ScriptState *script);
@@ -1027,6 +1030,7 @@ protected:
 	int o2_mushroomEffect(ScriptState *script);
 	int o2_customChat(ScriptState *script);
 	int o2_customChatFinish(ScriptState *script);
+	int o2_processPaletteIndex(ScriptState *script);
 	int o2_getBoolFromStack(ScriptState *script);
 	int o2_setVocHigh(ScriptState *script);
 	int o2_getVocHigh(ScriptState *script);

@@ -2116,7 +2116,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_displayWsaSequentialFramesLooping),
 		Opcode(o2_wsaOpen),
 		Opcode(o2_displayWsaSequentialFrames),
-		OpcodeUnImpl(),
+		Opcode(o2_displayWsaSequence),
 		// 0x1c
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
@@ -2206,7 +2206,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_getRand),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_setDrawNoShapeFlag),
 		// 0x64
 		OpcodeUnImpl(),
 		Opcode(o2_showLetter),
@@ -2244,7 +2244,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_pressColorKey),
 		// 0x80
 		Opcode(o2_objectChat),
-		OpcodeUnImpl(),
+		Opcode(o2_chapterChange),
 		Opcode(o2_getColorCodeFlag1),
 		Opcode(o2_setColorCodeFlag1),
 		// 0x84
@@ -2281,7 +2281,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_processPaletteIndex),
 		// 0xa0
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
