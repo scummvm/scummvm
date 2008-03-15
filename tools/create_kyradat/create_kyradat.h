@@ -161,6 +161,7 @@ enum kExtractID {
 	k2IngameCDA,
 	k2IngameTalkObjIndex,
 	k2IngameTimJpStrings,
+	k2IngameItemAnimTable,
 
 	kMaxResIDs
 };

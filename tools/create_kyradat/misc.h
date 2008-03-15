@@ -383,6 +383,7 @@ const int kyra2CDFile2EngNeed[] = {
 	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameTalkObjIndex,
+	k2IngameItemAnimTable,
 	-1
 };
 
@@ -410,6 +411,7 @@ const int kyra2FloppyFile2Need[] = {
 	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameTalkObjIndex,
+	k2IngameItemAnimTable,
 	-1
 };
 
@@ -435,6 +437,7 @@ const int kyra2TownsFile2EngNeed[] = {
 	k2IngameCDA,
 	k2IngameTalkObjIndex,
 	k2IngameTimJpStrings,
+	k2IngameItemAnimTable,
 	-1
 };
 
