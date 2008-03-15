@@ -157,7 +157,7 @@ KyraEngine_v2::~KyraEngine_v2() {
 	if (_sequenceSoundList) {
 		for (int i = 0; i < _sequenceSoundListSize; i++) {
 			if (_sequenceSoundList[i])
-				delete _sequenceSoundList[i];
+				delete [] _sequenceSoundList[i];
 		}
 		delete [] _sequenceSoundList;
 		_sequenceSoundList = NULL;
