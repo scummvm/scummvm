@@ -94,7 +94,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_currentTalkSections.TLKTim = NULL;
 	_currentTalkSections.ENDTim = NULL;
 
-	_invWsa.wsa = 0;
+	memset(&_invWsa, 0, sizeof(_invWsa));
 	_itemAnimTable = 0;
 	_nextAnimItem = 0;
 	_holdItemAnims = false;
