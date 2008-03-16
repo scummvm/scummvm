@@ -72,6 +72,8 @@ bool ScriptHelper::loadScript(const char *filename, ScriptData *scriptData, cons
 		return false;
 	}
 
+	memset(scriptData, 0, sizeof(ScriptData));
+
 	uint32 formBlockSize = file.getFORMBlockSize();
 	if (formBlockSize == (uint32)-1) {
 		error("No FORM chunk found in file: '%s'", filename);

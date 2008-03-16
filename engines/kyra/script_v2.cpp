@@ -1100,6 +1100,26 @@ int KyraEngine_v2::o2_customChatFinish(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_stopSceneAnimation(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_stopSceneAnimation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	const int index = 1+stackPos(0);
+	AnimObj &obj = _animObjects[index];
+	restorePage3();
+	obj.shapeIndex3 = 0xFFFF;
+	obj.animNum = 0xFFFF;
+	obj.needRefresh = 1;
+	obj.unk8 = 1;
+	if (stackPos(1))
+		refreshAnimObjectsIfNeed();
+	obj.enabled = false;
+	_animList = deleteAnimListEntry(_animList, &_animObjects[index]);
+	
+	if (_sceneAnimMovie[index]->opened())
+		_sceneAnimMovie[index]->close();
+	
+	return 0;
+}
+
 int KyraEngine_v2::o2_processPaletteIndex(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_processPaletteIndex(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	uint8 *palette = _screen->getPalette(0);

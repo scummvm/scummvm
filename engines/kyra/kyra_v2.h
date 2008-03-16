@@ -1031,6 +1031,7 @@ protected:
 	int o2_mushroomEffect(ScriptState *script);
 	int o2_customChat(ScriptState *script);
 	int o2_customChatFinish(ScriptState *script);
+	int o2_stopSceneAnimation(ScriptState *script);
 	int o2_processPaletteIndex(ScriptState *script);
 	int o2_getBoolFromStack(ScriptState *script);
 	int o2_setVocHigh(ScriptState *script);

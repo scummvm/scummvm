@@ -799,10 +799,8 @@ void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 				update();
 		}
 
-
 		if (amount > 0 )
 			_system->delayMillis(amount > 10 ? 10 : amount);
-
 	} while (!_skipFlag && _system->getMillis() < start + amount && !_quitFlag);
 }
 
@@ -2275,7 +2273,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_customChat),
 		Opcode(o2_customChatFinish),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_stopSceneAnimation),
 		// 0x9c
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
