@@ -789,7 +789,6 @@ void KyraEngine_v2::removeInputTop() {
 }
 
 void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
-
 	uint32 start = _system->getMillis();
 	do {
 		if (updateGame) {
@@ -1574,11 +1573,12 @@ void KyraEngine_v2::showIdleAnim() {
 	if (queryGameFlag(0x159))
 		return;
 
-	//if (!word_28432) {
-	//	word_28432 = 1;
+	static bool scriptAnimation = false;
+	//if (!scriptAnimation) {
+	//	scriptAnimation = true;
 	//	sub_2715D();
 	//} else {
-	//	word_28432 = 0;
+		scriptAnimation = false;
 		if (_loadedZTable > 8)
 			return;
 
