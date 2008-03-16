@@ -821,7 +821,7 @@ void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 			updateInput();
 		}
 
-		if (amount > 0 )
+		if (amount > 0)
 			_system->delayMillis(amount > 10 ? 10 : amount);
 	} while (!skipFlag() && _system->getMillis() < start + amount && !_quitFlag);
 }
@@ -1763,7 +1763,12 @@ void KyraEngine_v2::loadInvWsa(const char *filename, int run, int delayTime, int
 	if (run) {
 		while (_invWsa.running && !skipFlag() && !_quitFlag) {
 			update();
-			//XXX delay?
+			_system->delayMillis(10);
+		}
+
+		if (skipFlag()) {
+			resetSkipFlag();
+			displayInvWsaLastFrame();
 		}
 	}
 }

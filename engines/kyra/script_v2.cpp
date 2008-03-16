@@ -231,9 +231,9 @@ int KyraEngine_v2::o2_displayWsaSequentialFramesLooping(ScriptState *script) {
 
 	_screen->hideMouse();
 	int curTime = 0;
-	while (curTime < maxTimes) {
+	while (curTime < maxTimes && !skipFlag()) {
 		if (startFrame < endFrame) {
-			for (int i = startFrame; i <= endFrame; ++i) {
+			for (int i = startFrame; i <= endFrame && !skipFlag(); ++i) {
 				uint32 endTime = _system->getMillis() + waitTime * _tickLength;
 				_wsaSlots[slot]->displayFrame(i, 0xC000 | copyFlags);
 				_screen->updateScreen();
@@ -246,7 +246,7 @@ int KyraEngine_v2::o2_displayWsaSequentialFramesLooping(ScriptState *script) {
 				} while (_system->getMillis() < endTime);
 			}
 		} else {
-			for (int i = startFrame; i >= endFrame; --i) {
+			for (int i = startFrame; i >= endFrame && !skipFlag(); --i) {
 				uint32 endTime = _system->getMillis() + waitTime * _tickLength;
 				_wsaSlots[slot]->displayFrame(i, 0xC000 | copyFlags);
 				_screen->updateScreen();
@@ -262,6 +262,7 @@ int KyraEngine_v2::o2_displayWsaSequentialFramesLooping(ScriptState *script) {
 
 		++curTime;
 	}
+	resetSkipFlag();
 	_screen->showMouse();
 	return 0;
 }
@@ -288,13 +289,14 @@ int KyraEngine_v2::o2_displayWsaSequentialFrames(ScriptState *script) {
 	
 	_screen->hideMouse();
 
-	while (currentFrame <= lastFrame) {	
+	while (currentFrame <= lastFrame && !skipFlag()) {	
 		uint32 endTime = _system->getMillis() + frameDelay;
 		_wsaSlots[index]->displayFrame(currentFrame++, copyParam);
 		_screen->updateScreen();
 		delayUntil(endTime);
 	}
 
+	resetSkipFlag();
 	_screen->showMouse();
 
 	return 0;
@@ -317,7 +319,7 @@ int KyraEngine_v2::o2_displayWsaSequence(ScriptState *script) {
 	int currentFrame = 0;
 	const int lastFrame = _wsaSlots[index]->frames();
 
-	while (currentFrame <= lastFrame) {	
+	while (currentFrame <= lastFrame && !skipFlag()) {	
 		uint32 endTime = _system->getMillis() + frameDelay;
 		_wsaSlots[index]->displayFrame(currentFrame++, copyParam);
 		if (doUpdate)
@@ -326,6 +328,7 @@ int KyraEngine_v2::o2_displayWsaSequence(ScriptState *script) {
 		delayUntil(endTime);
 	}
 
+	resetSkipFlag();
 	_screen->showMouse();
 
 	return 0;
@@ -1293,7 +1296,7 @@ int KyraEngine_v2::o2_isVoiceEnabled(ScriptState *script) {
 
 int KyraEngine_v2::o2_isVoicePlaying(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_isVoicePlaying(%p) ()", (const void *)script);
-	return snd_voiceIsPlaying() ? 1 : 0;
+	return (snd_voiceIsPlaying() && !skipFlag()) ? 1 : 0;
 }
 
 int KyraEngine_v2::o2_stopVoicePlaying(ScriptState *script) {
