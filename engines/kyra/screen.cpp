@@ -2323,6 +2323,8 @@ void Screen::setMouseCursor(int x, int y, byte *shape) {
 		shape -= 2;
 
 	if (_vm->gameFlags().useHiResOverlay) {
+		x <<= 1;
+		y <<= 1;
 		mouseWidth <<= 1;
 		mouseHeight <<= 1;
 		fillRect(mouseWidth, 0, mouseWidth, mouseHeight, 0, 8);
