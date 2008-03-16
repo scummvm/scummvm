@@ -952,6 +952,7 @@ protected:
 	int o2_wsaOpen(ScriptState *script);
 	int o2_displayWsaSequentialFrames(ScriptState *script);
 	int o2_displayWsaSequence(ScriptState *script);
+	int o2_addItemToCurScene(ScriptState *script);
 	int o2_checkForItem(ScriptState *script);
 	int o2_defineItem(ScriptState *script);
 	int o2_removeItemFromInventory(ScriptState *script);

@@ -2117,7 +2117,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x1c
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_addItemToCurScene),
 		OpcodeUnImpl(),
 		// 0x20
 		Opcode(o2_checkForItem),

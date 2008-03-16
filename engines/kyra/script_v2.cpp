@@ -311,6 +311,28 @@ int KyraEngine_v2::o2_displayWsaSequence(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_addItemToCurScene(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_addItemToCurScene(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	const int16 id = stackPos(0);
+	int x = stackPos(1);
+	int y = stackPos(2);
+
+	int freeItem = findFreeItem();
+	x = MAX(14, x);
+	x = MIN(304, x);
+	y = MAX(14, y);
+	y = MIN(136, y);
+	if (freeItem >= 0) {
+		_itemList[freeItem].id = id;
+		_itemList[freeItem].x = x;
+		_itemList[freeItem].y = y;
+		_itemList[freeItem].sceneId = _mainCharacter.sceneId;
+		addItemToAnimList(freeItem);
+		refreshAnimObjectsIfNeed();
+	}
+	return 0;
+}
+
 int KyraEngine_v2::o2_checkForItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_checkForItem(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	return findItem(stackPos(0), stackPos(1)) == -1 ? 0 : 1;
