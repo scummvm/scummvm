@@ -53,8 +53,6 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 
 	_quitFlag = false;
 
-	_skipFlag = false;
-
 	_trackMap = 0;
 	_trackMapSize = 0;
 	_lastMusicCommand = -1;

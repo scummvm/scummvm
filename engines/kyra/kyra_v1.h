@@ -292,6 +292,10 @@ protected:
 	void updateMousePointer(bool forceUpdate = false);
 	bool hasClickedOnExit(int xpos, int ypos);
 
+	bool _skipFlag;
+	bool skipFlag() const { return _skipFlag; }
+	void resetSkipFlag(bool removeEvent = true) { _skipFlag = false; }
+
 	// scene
 	// -> init
 	void loadSceneMsc();

@@ -284,9 +284,8 @@ int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
 		}
 
 		if (unk1) {
-			// TODO: check this again
-			int inputFlag = checkInput(0/*dword_324C5*/);
-			if (inputFlag == 198 || inputFlag == 199) {
+			if (skipFlag()) {
+				resetSkipFlag(false);
 				running = false;
 				_unk4 = 1;
 			}

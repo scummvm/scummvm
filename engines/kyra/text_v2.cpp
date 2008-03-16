@@ -296,7 +296,7 @@ void KyraEngine_v2::objectChatWaitToFinish() {
 
 	bool running = true;
 	const uint32 endTime = _chatEndTime;
-	_skipFlag = false;
+	resetSkipFlag();
 
 	while (running && !_quitFlag) {
 		if (!_scriptInterpreter->validScript(&_chatScriptState))
@@ -319,17 +319,9 @@ void KyraEngine_v2::objectChatWaitToFinish() {
 		while (_system->getMillis() < nextFrame && !_quitFlag) {
 			updateWithText();
 
-			int inputFlag = checkInput(0);
-			removeInputTop();
-			if (inputFlag == 198 || inputFlag == 199) {
-				//XXX
-				_skipFlag = true;
-				snd_stopVoice();
-			}
-
 			const uint32 curTime = _system->getMillis();
-			if ((textEnabled() && curTime > endTime) || (speechEnabled() && !textEnabled() && !snd_voiceIsPlaying()) || _skipFlag) {
-				_skipFlag = false;
+			if ((textEnabled() && curTime > endTime) || (speechEnabled() && !textEnabled() && !snd_voiceIsPlaying()) || skipFlag()) {
+				resetSkipFlag();
 				nextFrame = curTime;
 				running = false;
 			}
@@ -634,25 +626,17 @@ void KyraEngine_v2::npcChatSequence(const char *str, int objectId, int vocHigh, 
 		_chatVocHigh = _chatVocLow = -1;
 	}
 
-	while (((textEnabled() && _chatEndTime > _system->getMillis()) || (speechEnabled() && snd_voiceIsPlaying())) && !(_quitFlag || _skipFlag)) {
+	while (((textEnabled() && _chatEndTime > _system->getMillis()) || (speechEnabled() && snd_voiceIsPlaying())) && !(_quitFlag || skipFlag())) {
 		if (!speechEnabled() && chatAnimEndTime > _system->getMillis() || speechEnabled() && snd_voiceIsPlaying()) {
 			_objectChatFinished = false;
 
-			while (!_objectChatFinished && !_skipFlag) {
+			while (!_objectChatFinished && !skipFlag()) {
 				if (_currentTalkSections.TLKTim)
 					tim_processSequence(_currentTalkSections.TLKTim, 0);
 				else
 					_objectChatFinished = false;
 
 				updateWithText();
-
-				int inputFlag = checkInput(0);
-				removeInputTop();
-				if (inputFlag == 198 || inputFlag == 199) {
-					//XXX
-					_skipFlag = true;
-					snd_stopVoice();
-				}
 				delay(10);
 			}
 			if (_currentTalkSections.TLKTim)
@@ -661,7 +645,7 @@ void KyraEngine_v2::npcChatSequence(const char *str, int objectId, int vocHigh, 
 		updateWithText();
 	}
 
-	_skipFlag = false;
+	resetSkipFlag();
 
 	if (_currentTalkSections.TLKTim) {
 		tim_releaseBuffer(_currentTalkSections.TLKTim);

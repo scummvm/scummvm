@@ -74,7 +74,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 	_seqEndTime = 0;
 	_menuChoice = 0;
 
-	for (int seqNum = startSeq; seqNum <= endSeq && !((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice); seqNum++) {
+	for (int seqNum = startSeq; seqNum <= endSeq && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice); seqNum++) {
 		_screen->clearPage(0);
 		_screen->clearPage(8);
 		memcpy(_screen->getPalette(1), _screen->getPalette(0), 0x300);
@@ -127,7 +127,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 
 		seq_sequenceCommand(_sequences[seqNum].startupCommand);
 
-		if (!((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+		if (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 			_screen->copyPage(2, 0);
 			_screen->updateScreen();
 		}
@@ -161,7 +161,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 			_seqWsaCurrentFrame = _sequences[seqNum].startFrame;
 
 			bool loop = true;
-			while (loop && !((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+			while (loop && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 				_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
 
 				if (_seqWsa || !_sequences[seqNum].callback)
@@ -185,16 +185,16 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 				seq_processWSAs();
 				seq_processText();
 
-				if ((_seqWsa || !_sequences[seqNum].callback) && !((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+				if ((_seqWsa || !_sequences[seqNum].callback) && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 					_screen->copyPage(2, 0);
 					_screen->updateScreen();
 				}
 
 				bool loop2 = true;
-				while (loop2 && !((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+				while (loop2 && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 					if (_seqWsa) {
 						seq_processText();
-						if (!((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+						if (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 							_screen->copyPage(2, 0);
 							_screen->updateScreen();
 						}
@@ -226,7 +226,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		} else {
 			_seqFrameDelay = _sequences[seqNum].frameDelay;
 			_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
-			while (!((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+			while (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 				uint32 starttime = _system->getMillis();
 				seq_processWSAs();
 				if (_sequences[seqNum].callback)
@@ -258,7 +258,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 			dl = ct;
 		_seqEndTime = _system->getMillis() + dl;
 
-		while (!((_skipFlag && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+		while (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 			uint32 starttime = _system->getMillis();
 			seq_processWSAs();
 
@@ -281,16 +281,19 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		seq_resetAllTextEntries();
 
 		if (_flags.isDemo && seqNum == kSequenceDemoFisher) {
-			_abortIntroFlag = _skipFlag = false;
+			_abortIntroFlag = false;
+			resetSkipFlag();
 			seqNum = kSequenceDemoVirgin;
 		} else if ((seqNum != kSequenceTitle && seqNum < kSequenceZanfaun &&
-			(_abortIntroFlag || _skipFlag)) || seqNum == kSequenceZanfaun) {
-			_abortIntroFlag = _skipFlag = false;
+			(_abortIntroFlag || skipFlag())) || seqNum == kSequenceZanfaun) {
+			_abortIntroFlag = false;
+			resetSkipFlag();
 			seqNum = kSequenceWestwood;
 		}
 
 		if (_menuChoice) {
-			_abortIntroFlag = _skipFlag = false;
+			_abortIntroFlag = false;
+			resetSkipFlag();
 			if (_menuChoice == 2)
 				_menuChoice = 0;
 		}
@@ -2501,13 +2504,13 @@ void KyraEngine_v2::seq_displayScrollText(uint8 *data, const ScreenDim *d, int t
 
 		delayUntil(endTime);
 
-		if ((cnt < 36) && ((d->sy + d->h) > (READ_LE_UINT16(&tmp[cnt * 11 + 2]) + tmp[cnt * 11 + 9])) && !_skipFlag) {
-			_skipFlag=_skipFlag;
+		if ((cnt < 36) && ((d->sy + d->h) > (READ_LE_UINT16(&tmp[cnt * 11 + 2]) + tmp[cnt * 11 + 9])) && !skipFlag()) {
+			resetSkipFlag();
 			delay(_tickLength * 500);
 			cnt = 0;
 		}
 
-		if (!cnt || _skipFlag)
+		if (!cnt || skipFlag())
 			loop = false;
 	}
 
@@ -2569,14 +2572,14 @@ void KyraEngine_v2::seq_showStarcraftLogo() {
 	_screen->fadeFromBlack();
 	for (int i = 1; i < endframe; i++) {
 		uint32 endTime = _system->getMillis() + 50;
-		if (_skipFlag)
+		if (skipFlag())
 			break;
 		ci->displayFrame(i, 0);
 		_screen->copyPage(2, 0);
 		_screen->updateScreen();
 		delay(endTime - _system->getMillis());
 	}
-	if(!_skipFlag) {
+	if(!skipFlag()) {
 		uint32 endTime = _system->getMillis() + 50;
 		ci->displayFrame(0, 0);
 		_screen->copyPage(2, 0);
@@ -2586,7 +2589,7 @@ void KyraEngine_v2::seq_showStarcraftLogo() {
 	_screen->fadeToBlack();
 	_screen->showMouse();
 
-	_skipFlag = false;
+	resetSkipFlag();
 	delete ci;
 }
 
@@ -2742,7 +2745,7 @@ void KyraEngine_v2::seq_makeBookAppear() {
 
 		do {
 			update();
-		} while (_invWsa.timer > _system->getMillis() && !_skipFlag);
+		} while (_invWsa.timer > _system->getMillis() && !skipFlag());
 	}
 
 	closeInvWsa();

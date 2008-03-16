@@ -163,7 +163,9 @@ protected:
 	bool textEnabled();
 
 	// game speed
-	bool _skipFlag;
+	virtual bool skipFlag() const = 0;
+	virtual void resetSkipFlag(bool removeEvent = true) = 0;
+
 	uint16 _tickLength;
 	uint16 _gameSpeed;
 

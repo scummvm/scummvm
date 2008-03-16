@@ -434,6 +434,8 @@ void KyraEngine_v2::runLoop() {
 
 		//if (queryGameFlag(0x1EE) && inputFlag)
 		//	sub_13B19(inputFlag);
+
+		_system->delayMillis(10);
 	}
 }
 
@@ -723,8 +725,21 @@ void KyraEngine_v2::updateMouse() {
 void KyraEngine_v2::updateInput() {
 	Common::Event event;
 
-	while (_eventMan->pollEvent(event))
-		_eventList.push_back(event);
+	while (_eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_quitFlag = true;
+			break;
+
+		case Common::EVENT_LBUTTONUP:
+			_eventList.push_back(Event(event, true));
+			break;
+
+		default:
+			_eventList.push_back(event);
+			break;
+		}
+	}
 }
 
 int KyraEngine_v2::checkInput(Button *buttonList) {
@@ -738,15 +753,6 @@ int KyraEngine_v2::checkInput(Button *buttonList) {
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_RETURN) {
-				// this doesn't make sure the mouse position is the same
-				// as when RETURN was pressed, but it *should* work for now
-				Common::Point pos = getMousePos();
-				_mouseX = pos.x;
-				_mouseY = pos.y;
-				keys = 199;
-			}
-
 			if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'd')
 					_debugger->attach();
@@ -762,10 +768,6 @@ int KyraEngine_v2::checkInput(Button *buttonList) {
 			breakLoop = true;
 			} break;
 
-		case Common::EVENT_QUIT:
-			_quitFlag = true;
-			break;
-
 		default:
 			break;
 		}
@@ -779,13 +781,32 @@ int KyraEngine_v2::checkInput(Button *buttonList) {
 		_eventList.erase(_eventList.begin());
 	}
 
-	_system->delayMillis(10);
 	return processButtonList(buttonList, keys | 0x8000);
 }
 
 void KyraEngine_v2::removeInputTop() {
 	if (!_eventList.empty())
 		_eventList.erase(_eventList.begin());
+}
+
+bool KyraEngine_v2::skipFlag() const {
+	for (Common::List<Event>::const_iterator i = _eventList.begin(); i != _eventList.end(); ++i) {
+		if (i->causedSkip)
+			return true;
+	}
+	return false;
+}
+
+void KyraEngine_v2::resetSkipFlag(bool removeEvent) {
+	for (Common::List<Event>::iterator i = _eventList.begin(); i != _eventList.end(); ++i) {
+		if (i->causedSkip) {
+			if (removeEvent)
+				_eventList.erase(i);
+			else
+				i->causedSkip = false;
+			return;
+		}
+	}
 }
 
 void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
@@ -796,11 +817,13 @@ void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 				updateWithText();
 			else
 				update();
+		} else {
+			updateInput();
 		}
 
 		if (amount > 0 )
 			_system->delayMillis(amount > 10 ? 10 : amount);
-	} while (!_skipFlag && _system->getMillis() < start + amount && !_quitFlag);
+	} while (!skipFlag() && _system->getMillis() < start + amount && !_quitFlag);
 }
 
 void KyraEngine_v2::cleanup() {
@@ -1500,9 +1523,9 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 	_scriptInterpreter->initScript(&_temporaryScriptState, &_temporaryScriptData);
 	_scriptInterpreter->startScript(&_temporaryScriptState, 1);
 
-	_skipFlag = false;
+	resetSkipFlag();
 
-	while (_scriptInterpreter->validScript(&_temporaryScriptState) && !_skipFlag) {
+	while (_scriptInterpreter->validScript(&_temporaryScriptState) && !skipFlag()) {
 		_temporaryScriptExecBit = false;
 		while (_scriptInterpreter->validScript(&_temporaryScriptState) && !_temporaryScriptExecBit)
 			_scriptInterpreter->runScript(&_temporaryScriptState);
@@ -1519,7 +1542,7 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 
 		uint32 delayEnd = _system->getMillis() + _newShapeDelay * _tickLength;
 
-		while (!_skipFlag && _system->getMillis() < delayEnd) {
+		while (!skipFlag() && _system->getMillis() < delayEnd) {
 			// XXX skipFlag handling, unk1 seems to make a scene not skipable
 
 			if (_chatText)
@@ -1545,7 +1568,7 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 		updateCharacterAnim(0);
 	}
 
-	_skipFlag = false;
+	resetSkipFlag();
 
 	_newShapeFlag = -1;
 	resetCharacterAnimDim();
@@ -1738,7 +1761,7 @@ void KyraEngine_v2::loadInvWsa(const char *filename, int run, int delayTime, int
 	_invWsa.timer = _system->getMillis();
 
 	if (run) {
-		while (_invWsa.running && !_skipFlag && !_quitFlag) {
+		while (_invWsa.running && !skipFlag() && !_quitFlag) {
 			update();
 			//XXX delay?
 		}

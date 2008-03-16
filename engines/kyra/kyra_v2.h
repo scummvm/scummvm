@@ -320,7 +320,21 @@ protected:
 
 	int _mouseX, _mouseY;
 	int _mouseState;
-	Common::List<Common::Event> _eventList;
+
+	struct Event {
+		Common::Event event;
+		bool causedSkip;
+
+		Event() : event(), causedSkip(false) {}
+		Event(Common::Event e) : event(e), causedSkip(false) {}
+		Event(Common::Event e, bool skip) : event(e), causedSkip(skip) {}
+
+		operator Common::Event() const { return event; }
+	};
+	Common::List<Event> _eventList;
+
+	bool skipFlag() const;
+	void resetSkipFlag(bool removeEvent = true);
 
 	// gfx/animation specific
 	uint8 *_gamePlayBuffer;
