@@ -202,6 +202,14 @@ Common::Point KyraEngine::getMousePos() const {
 	return mouse;
 }
 
+void KyraEngine::setMousePos(int x, int y) {
+	if (_flags.useHiResOverlay) {
+		x <<= 1;
+		y <<= 1;
+	}
+	_system->warpMouse(x, y);
+}
+
 int KyraEngine::setGameFlag(int flag) {
 	_flagsTable[flag >> 3] |= (1 << (flag & 7));
 	return 1;

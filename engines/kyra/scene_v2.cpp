@@ -47,7 +47,7 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 	_screen->hideMouse();
 
 	if (!unk3) {
-		//updateSpecialItems();
+		updateWaterFlasks();
 		//displayInvWsaLastFrame();
 	}
 

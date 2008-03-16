@@ -193,6 +193,7 @@ protected:
 
 	// input
 	Common::Point getMousePos() const;
+	void setMousePos(int x, int y);
 
 	// pathfinder
 	virtual int findWay(int x, int y, int toX, int toY, int *moveTable, int moveTableSize);

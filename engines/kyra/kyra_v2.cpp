@@ -1867,7 +1867,7 @@ void KyraEngine_v2::cauldronItemAnim(int item) {
 		else if (mouseY > mouseDstY)
 			mouseY -= 2;
 		uint32 waitEnd = _system->getMillis() + _tickLength;
-		_system->warpMouse(mouseX, mouseY);
+		setMousePos(mouseX, mouseY);
 		_system->updateScreen();
 		delayUntil(waitEnd);
 	}
@@ -1878,7 +1878,7 @@ void KyraEngine_v2::cauldronItemAnim(int item) {
 		else if (mouseX > mouseDstX)
 			mouseX -= 2;
 		uint32 waitEnd = _system->getMillis() + _tickLength;
-		_system->warpMouse(mouseX, mouseY);
+		setMousePos(mouseX, mouseY);
 		_system->updateScreen();
 		delayUntil(waitEnd);
 	}
@@ -2264,7 +2264,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x90
 		Opcode(o2_clearSpecialSceneScriptState),
 		Opcode(o2_querySpecialSceneScriptState),
-		OpcodeUnImpl(),
+		Opcode(o2_resetInputColorCode),
 		Opcode(o2_setHiddenItemsEntry),
 		// 0x94
 		Opcode(o2_getHiddenItemsEntry),

@@ -258,7 +258,7 @@ int KyraEngine_v2::tim_o_resetActiveSub(uint8 *ptr) {
 }
 
 int KyraEngine_v2::tim_o_printTalkText(uint8 *ptr) {
-	_chatText = _timChatText = (const char*) _TIMBuffers.TEXTChunk + (READ_LE_UINT16(ptr) << 1);
+	_chatText = _timChatText = (const char*) _TIMBuffers.TEXTChunk + READ_LE_UINT16(_TIMBuffers.TEXTChunk + (READ_LE_UINT16(ptr) << 1));
 	_chatObject = _timChatObject = READ_LE_UINT16(ptr + 2);
 
 	if (_flags.lang == Common::JA_JPN) {

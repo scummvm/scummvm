@@ -542,6 +542,7 @@ protected:
 	int findItem(uint16 sceneId, uint16 id);
 	int checkItemCollision(int x, int y);
 	void resetItemList();
+	void updateWaterFlasks();
 
 	int _itemInHand;
 	int _handItemSet;
@@ -1024,6 +1025,7 @@ protected:
 	int o2_setSpecialSceneScriptState(ScriptState *script);
 	int o2_clearSpecialSceneScriptState(ScriptState *script);
 	int o2_querySpecialSceneScriptState(ScriptState *script);
+	int o2_resetInputColorCode(ScriptState *script);
 	int o2_setHiddenItemsEntry(ScriptState *script);
 	int o2_getHiddenItemsEntry(ScriptState *script);
 	int o2_mushroomEffect(ScriptState *script);

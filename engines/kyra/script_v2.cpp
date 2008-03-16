@@ -410,7 +410,7 @@ int KyraEngine_v2::o2_addSpecialExit(ScriptState *script) {
 
 int KyraEngine_v2::o2_setMousePos(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_setMousePos(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	_system->warpMouse(stackPos(0), stackPos(1));
+	setMousePos(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -661,7 +661,7 @@ int KyraEngine_v2::o2_showLetter(ScriptState *script) {
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 	_screen->fadePalette(_screen->getPalette(0), 0x14);
 	_screen->setMouseCursor(0, 0, getShapePtr(0));
-	_system->warpMouse(280, 160);
+	setMousePos(280, 160);
 
 	_screen->showMouse();
 
@@ -786,7 +786,7 @@ int KyraEngine_v2::o2_updateSceneAnim(ScriptState *script) {
 }
 
 int KyraEngine_v2::o2_setSceneAnimPosAndUpdate(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "o2_updateSceneAnim(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	debugC(3, kDebugLevelScriptFuncs, "o2_setSceneAnimPosAndUpdate(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	const int anim = stackPos(0);
 	_sceneAnims[anim].x2 = stackPos(1);
 	_sceneAnims[anim].y2 = stackPos(2);
@@ -1037,6 +1037,12 @@ int KyraEngine_v2::o2_clearSpecialSceneScriptState(ScriptState *script) {
 int KyraEngine_v2::o2_querySpecialSceneScriptState(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_querySpecialSceneScriptState(%p) (%d)", (const void *)script, stackPos(0));
 	return _specialSceneScriptState[stackPos(0)];
+}
+
+int KyraEngine_v2::o2_resetInputColorCode(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_resetInputColorCode(%p)", (const void *)script);
+	memset(_inputColorCode, 255, 7);
+	return 0;
 }
 
 int KyraEngine_v2::o2_setHiddenItemsEntry(ScriptState *script) {

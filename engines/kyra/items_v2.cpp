@@ -92,6 +92,28 @@ void KyraEngine_v2::resetItemList() {
 	}
 }
 
+void KyraEngine_v2::updateWaterFlasks() {
+	for (int i = 22; i < 24; i++) {
+		if (_itemInHand == i)
+			setHandItem(i - 1);
+
+		for (int ii = 0; ii < 20; ii++) {
+			if (_mainCharacter.inventory[ii] == i) {
+				_mainCharacter.inventory[ii]--;
+				if (ii < 10) {
+					clearInventorySlot(ii, 0);
+					_screen->drawShape(0, getShapePtr(i + 63), _inventoryX[ii], _inventoryY[ii], 0, 0);
+				}
+			}
+		}
+
+		for (int ii = 0; ii < 30; ii++) {
+			if (_itemList[ii].id == i)
+				_itemList[ii].id--;
+		}
+	}
+}
+
 bool KyraEngine_v2::dropItem(int unk1, uint16 item, int x, int y, int unk2) {
 	if (_handItemSet <= -1)
 		return false;
