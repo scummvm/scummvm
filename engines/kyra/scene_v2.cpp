@@ -48,7 +48,7 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 
 	if (!unk3) {
 		updateWaterFlasks();
-		//displayInvWsaLastFrame();
+		displayInvWsaLastFrame();
 	}
 
 	if (unk1) {
