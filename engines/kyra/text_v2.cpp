@@ -39,6 +39,10 @@ void TextDisplayer_v2::backupTalkTextMessageBkgd(int srcPage, int dstPage) {
 	_screen->copyRegion(_talkCoords.x, _talkMessageY, 0, 144, _talkCoords.w, _talkMessageH, srcPage, dstPage);
 }
 
+void TextDisplayer_v2::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
+	_screen->copyRegion(0, 144, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, srcPage, dstPage);
+}
+
 void TextDisplayer_v2::restoreScreen() {
 	_vm->restorePage3();
 	_vm->drawAnimObjects();
@@ -47,6 +51,38 @@ void TextDisplayer_v2::restoreScreen() {
 	_screen->showMouse();
 	_vm->flagAnimObjsForRefresh();
 	_vm->refreshAnimObjects(0);
+}
+
+void TextDisplayer_v2::printCustomCharacterText(const char *text, int x, int y, uint8 c1, int srcPage, int dstPage) {
+	text = preprocessString(text);
+	int lineCount = buildMessageSubstrings(text);
+	int w = getWidestLineWidth(lineCount);
+	int h = lineCount * 10;
+	y = MAX(0, y - (lineCount * 10));
+	int x1 = 0, x2 = 0;
+	calcWidestLineBounds(x1, x2, w, x);
+
+	_screen->hideMouse();
+
+	_talkCoords.x = x1;
+	_talkCoords.w = w+2;
+	_talkCoords.y = y;
+	_talkMessageY = y;
+	_talkMessageH = h;
+
+	backupTalkTextMessageBkgd(srcPage, dstPage);
+	int curPageBackUp = _screen->_curPage;
+	_screen->_curPage = srcPage;
+
+	if (_vm->textEnabled()) {
+		for (int i = 0; i < lineCount; ++i) {
+			const char *msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
+			printText(msg, getCenterStringX(msg, x1, x2), i * 10 + _talkMessageY, c1, 0xCF, 0);
+		}
+	}
+
+	_screen->_curPage = curPageBackUp;
+	_screen->showMouse();
 }
 
 char *TextDisplayer_v2::preprocessString(const char *str) {

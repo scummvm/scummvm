@@ -34,14 +34,6 @@ namespace Kyra {
 class KyraEngine;
 
 class TextDisplayer {
-	struct TalkCoords {
-		uint16 y, x, w;
-	};
-
-	enum {
-		TALK_SUBSTRING_LEN = 80,
-		TALK_SUBSTRING_NUM = 5
-	};
 public:
 	TextDisplayer(KyraEngine *vm, Screen *screen);
 	virtual ~TextDisplayer() {}
@@ -69,6 +61,15 @@ public:
 protected:
 	Screen *_screen;
 	KyraEngine *_vm;
+
+	struct TalkCoords {
+		uint16 y, x, w;
+	};
+
+	enum {
+		TALK_SUBSTRING_LEN = 80,
+		TALK_SUBSTRING_NUM = 5
+	};
 
 	char _talkBuffer[1040];
 	char _talkSubstrings[TALK_SUBSTRING_LEN * TALK_SUBSTRING_NUM];

@@ -39,7 +39,10 @@ public:
 	TextDisplayer_v2(KyraEngine_v2 *vm, Screen_v2 *screen);
 
 	void backupTalkTextMessageBkgd(int srcPage, int dstPage);
+	void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
 	void restoreScreen();
+
+	void printCustomCharacterText(const char *src, int x, int y, uint8 c1, int srcPage, int dstPage);
 
 	char *preprocessString(const char *str);
 	void calcWidestLineBounds(int &x1, int &x2, int w, int x);

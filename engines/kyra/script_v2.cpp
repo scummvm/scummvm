@@ -142,9 +142,22 @@ int KyraEngine_v2::o2_trySceneChange(ScriptState *script) {
 	}
 }
 
+int KyraEngine_v2::o2_customCharacterChat(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_customCharacterChat(%p) ('%s', %d, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+	playVoice(_vocHigh, stackPos(4));
+	_text->printCustomCharacterText(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), 0, 2);
+	return 0;
+}
+
 int KyraEngine_v2::o2_showChapterMessage(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_showChapterMessage(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	showChapterMessage(stackPos(0), stackPos(1));
+	return 0;
+}
+
+int KyraEngine_v2::o2_restoreTalkTextMessageBkgd(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_restoreTalkTextMessageBkgd(%p) ()", (const void *)script);
+	_text->restoreTalkTextMessageBkgd(2, 0);
 	return 0;
 }
 
@@ -638,6 +651,13 @@ int KyraEngine_v2::o2_playSoundEffect(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_setCauldronState(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setCauldronState(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	setCauldronState(stackPos(0), stackPos(1) != 0);
+	clearCauldronTable();
+	return 0;
+}
+
 int KyraEngine_v2::o2_getRand(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < stackPos(1));
@@ -1122,6 +1142,77 @@ int KyraEngine_v2::o2_customChatFinish(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_setupSceneAnimation(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_setupSceneAnimation(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')", (const void *)script,
+		stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10), stackPos(11), stackPosString(12));
+	const int index = stackPos(0);
+	const uint16 flags = stackPos(1);
+
+	SceneAnim &anim = _sceneAnims[index];
+	anim.x = stackPos(2);
+	anim.y = stackPos(3);
+	anim.x2 = stackPos(4);
+	anim.y2 = stackPos(5);
+	anim.width = stackPos(6);
+	anim.height = stackPos(7);
+	anim.unkE = stackPos(8);
+	anim.specialSize = stackPos(9);
+	anim.unk12 = stackPos(10);
+	anim.shapeIndex = stackPos(11);
+	if (stackPosString(12))
+		strcpy(anim.filename, stackPosString(12));
+
+	if (flags & 0x40) {
+		_sceneAnimMovie[index]->open(stackPosString(12), 0, 0);
+		if (_sceneAnimMovie[index]->xAdd() || _sceneAnimMovie[index]->yAdd())
+			anim.wsaFlag = 1;
+		else
+			anim.wsaFlag = 0;
+	}
+
+	AnimObj *obj = &_animObjects[1+index];
+	obj->enabled = 1;
+	obj->needRefresh = 1;
+	obj->unk8 = 1;
+	obj->animFlags = anim.flags & 8;
+
+	if (anim.flags & 2)
+		obj->flags = 0x800;
+	else
+		obj->flags = 0;
+
+	if (anim.flags & 4)
+		obj->flags |= 1;
+
+	obj->xPos1 = anim.x;
+	obj->yPos1 = anim.y;
+
+	if ((anim.flags & 0x20) && anim.shapeIndex >= 0)
+		obj->shapePtr = _sceneShapeTable[anim.shapeIndex];
+	else
+		obj->shapePtr = 0;
+	
+	if (anim.flags & 0x40) {
+		obj->shapeIndex3 = anim.shapeIndex;
+		obj->animNum = index;
+	} else {
+		obj->shapeIndex3 = 0xFFFF;
+		obj->animNum = 0xFFFF;
+	}
+
+	obj->shapeIndex2 = 0xFFFF;
+	obj->xPos2 = obj->xPos3 = anim.x2;
+	obj->yPos2 = obj->yPos3 = anim.y2;
+	obj->width = anim.width;
+	obj->height = anim.height;
+	obj->width2 = obj->height2 = anim.specialSize;
+
+	_animList = addToAnimListSorted(_animList, obj);
+	obj->needRefresh = 1;
+	obj->unk8 = 1;
+	return 0;
+}
+
 int KyraEngine_v2::o2_stopSceneAnimation(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_stopSceneAnimation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const int index = 1+stackPos(0);
@@ -1278,11 +1369,11 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		Opcode(o2_trySceneChange),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_customCharacterChat),
 		// 0x10
 		OpcodeUnImpl(),
 		Opcode(o2_showChapterMessage),
-		OpcodeUnImpl(),
+		Opcode(o2_restoreTalkTextMessageBkgd),
 		OpcodeUnImpl(),
 		// 0x14
 		Opcode(o2_wsaClose),
@@ -1377,7 +1468,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x5c
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_setCauldronState),
 		OpcodeUnImpl(),
 		// 0x60
 		Opcode(o2_getRand),
@@ -1452,7 +1543,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x98
 		Opcode(o2_customChat),
 		Opcode(o2_customChatFinish),
-		OpcodeUnImpl(),
+		Opcode(o2_setupSceneAnimation),
 		Opcode(o2_stopSceneAnimation),
 		// 0x9c
 		OpcodeUnImpl(),

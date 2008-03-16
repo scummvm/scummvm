@@ -959,7 +959,9 @@ protected:
 	int o2_setSceneComment(ScriptState *script);
 	int o2_setCharacterAnimFrame(ScriptState *script);
 	int o2_trySceneChange(ScriptState *script);
+	int o2_customCharacterChat(ScriptState *script);
 	int o2_showChapterMessage(ScriptState *script);
+	int o2_restoreTalkTextMessageBkgd(ScriptState *script);
 	int o2_wsaClose(ScriptState *script);
 	int o2_displayWsaFrame(ScriptState *script);
 	int o2_displayWsaSequentialFramesLooping(ScriptState *script);
@@ -1002,6 +1004,7 @@ protected:
 	int o2_loadMusicTrack(ScriptState *script);
 	int o2_playWanderScoreViaMap(ScriptState *script);
 	int o2_playSoundEffect(ScriptState *script);
+	int o2_setCauldronState(ScriptState *script);
 	int o2_getRand(ScriptState *script);
 	int o2_setDrawNoShapeFlag(ScriptState *script);
 	int o2_showLetter(ScriptState *script);
@@ -1046,6 +1049,7 @@ protected:
 	int o2_mushroomEffect(ScriptState *script);
 	int o2_customChat(ScriptState *script);
 	int o2_customChatFinish(ScriptState *script);
+	int o2_setupSceneAnimation(ScriptState *script);
 	int o2_stopSceneAnimation(ScriptState *script);
 	int o2_processPaletteIndex(ScriptState *script);
 	int o2_getBoolFromStack(ScriptState *script);
