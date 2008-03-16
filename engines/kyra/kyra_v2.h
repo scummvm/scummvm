@@ -970,6 +970,7 @@ protected:
 	int o2_displayWsaSequence(ScriptState *script);
 	int o2_addItemToCurScene(ScriptState *script);
 	int o2_checkForItem(ScriptState *script);
+	int o2_removeItemSlotFromInventory(ScriptState *script);
 	int o2_defineItem(ScriptState *script);
 	int o2_removeItemFromInventory(ScriptState *script);
 	int o2_countItemInInventory(ScriptState *script);

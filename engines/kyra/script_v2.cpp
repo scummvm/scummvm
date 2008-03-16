@@ -351,6 +351,12 @@ int KyraEngine_v2::o2_checkForItem(ScriptState *script) {
 	return findItem(stackPos(0), stackPos(1)) == -1 ? 0 : 1;
 }
 
+int KyraEngine_v2::o2_removeItemSlotFromInventory(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_removeItemSlotFromInventory(%p) (%d)", (const void *)script, stackPos(0));
+	removeItemFromInventory(stackPos(0));
+	return 0;
+}
+
 int KyraEngine_v2::o2_defineItem(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_defineItem(%p) (%d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
@@ -1393,7 +1399,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x20
 		Opcode(o2_checkForItem),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_removeItemSlotFromInventory),
 		Opcode(o2_defineItem),
 		// 0x24
 		Opcode(o2_removeItemFromInventory),
