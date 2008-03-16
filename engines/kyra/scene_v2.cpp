@@ -86,7 +86,7 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 		_sound->beginFadeOut();
 	}
 	
-	_unkFlag1 = false;
+	_chatAltFlag = false;
 
 	if (!unk3) {
 		_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);

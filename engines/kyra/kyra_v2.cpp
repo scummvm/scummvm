@@ -1593,14 +1593,14 @@ void KyraEngine_v2::showIdleAnim() {
 		0x04, 0x06, 0x07, 0x08, 0x04, 0x09, 0x0A, 0x0B, 0xFF, 0x00
 	};
 
-	if (queryGameFlag(0x159))
+	if (queryGameFlag(0x159 && _flags.isTalkie))
 		return;
 
 	static bool scriptAnimation = false;
-	//if (!scriptAnimation) {
-	//	scriptAnimation = true;
-	//	sub_2715D();
-	//} else {
+	if (!scriptAnimation && _flags.isTalkie) {
+		scriptAnimation = true;
+		zanthIdleChat();
+	} else {
 		scriptAnimation = false;
 		if (_loadedZTable > 8)
 			return;
@@ -1619,7 +1619,7 @@ void KyraEngine_v2::showIdleAnim() {
 
 		runIdleScript(script);
 		_lastIdleScript = script;
-	//}
+	}
 }
 
 void KyraEngine_v2::runIdleScript(int script) {

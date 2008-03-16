@@ -799,6 +799,7 @@ protected:
 
 	void zanthSceneStartupChat();
 	void zanthRandomChat();
+	void zanthIdleChat();
 	void updateDlgBuffer();
 	void loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2);
 	void processDialogue(int dlgOffset, int vocH = 0, int csEntry = 0);
@@ -1095,7 +1096,7 @@ protected:
 
 	uint8 *_unkBuf500Bytes;
 	uint8 *_unkBuf200kByte;
-	bool _unkFlag1;
+	bool _chatAltFlag;
 	int _unk3, _unk4, _unk5;
 	bool _unkSceneScreenFlag1;
 	bool _unkHandleSceneChangeFlag;
