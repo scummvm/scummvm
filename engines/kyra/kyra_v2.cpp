@@ -1593,7 +1593,7 @@ void KyraEngine_v2::showIdleAnim() {
 		0x04, 0x06, 0x07, 0x08, 0x04, 0x09, 0x0A, 0x0B, 0xFF, 0x00
 	};
 
-	if (queryGameFlag(0x159 && _flags.isTalkie))
+	if (queryGameFlag(0x159) && _flags.isTalkie)
 		return;
 
 	static bool scriptAnimation = false;
