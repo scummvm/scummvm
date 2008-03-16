@@ -960,6 +960,7 @@ protected:
 	int o2_setCharacterAnimFrame(ScriptState *script);
 	int o2_trySceneChange(ScriptState *script);
 	int o2_customCharacterChat(ScriptState *script);
+	int o2_soundFadeOut(ScriptState *script);
 	int o2_showChapterMessage(ScriptState *script);
 	int o2_restoreTalkTextMessageBkgd(ScriptState *script);
 	int o2_wsaClose(ScriptState *script);

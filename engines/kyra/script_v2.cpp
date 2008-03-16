@@ -26,6 +26,7 @@
 #include "kyra/kyra_v2.h"
 #include "kyra/text_v2.h"
 #include "kyra/wsamovie.h"
+#include "kyra/sound.h"
 
 #include "common/endian.h"
 
@@ -146,6 +147,12 @@ int KyraEngine_v2::o2_customCharacterChat(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "o2_customCharacterChat(%p) ('%s', %d, %d, %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	playVoice(_vocHigh, stackPos(4));
 	_text->printCustomCharacterText(stackPosString(0), stackPos(1), stackPos(2), stackPos(3), 0, 2);
+	return 0;
+}
+
+int KyraEngine_v2::o2_soundFadeOut(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "o2_soundFadeOut(%p) ()", (const void *)script);
+	_sound->beginFadeOut();
 	return 0;
 }
 
@@ -1377,7 +1384,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		Opcode(o2_customCharacterChat),
 		// 0x10
-		OpcodeUnImpl(),
+		Opcode(o2_soundFadeOut),
 		Opcode(o2_showChapterMessage),
 		Opcode(o2_restoreTalkTextMessageBkgd),
 		OpcodeUnImpl(),
