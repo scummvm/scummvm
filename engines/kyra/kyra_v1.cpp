@@ -491,9 +491,9 @@ void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
 						_debugger->attach();
 					else if (event.kbd.keycode == 'q')
 						_quitFlag = true;
-				} else if (event.kbd.keycode == '.')
-						_skipFlag = true;
-				else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				} else if (event.kbd.keycode == '.') {
+					_skipFlag = true;
+				} else if (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_abortIntroFlag = true;
 					_skipFlag = true;
 				}

@@ -731,6 +731,15 @@ void KyraEngine_v2::updateInput() {
 			_quitFlag = true;
 			break;
 
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == '.' || event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				_eventList.push_back(Event(event, true));
+			else if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
+				_quitFlag = true;
+			else
+				_eventList.push_back(event);
+			break;
+
 		case Common::EVENT_LBUTTONUP:
 			_eventList.push_back(Event(event, true));
 			break;
@@ -768,6 +777,7 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 				if (event.kbd.keycode == 'd')
 					_debugger->attach();
 			}
+
 			breakLoop = true;
 			break;
 
