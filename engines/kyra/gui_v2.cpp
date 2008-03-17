@@ -68,7 +68,7 @@ int KyraEngine_v2::gui_handleMainMenu() {
 
 	if (_flags.gameID == GI_KYRA2) {
 		_screen->setScreenDim(11);
-		const char * k2strings[4];
+		static const char *k2strings[4];
 		k2strings[0] = _sequenceStrings[97];
 		k2strings[1] = _sequenceStrings[96];
 		k2strings[2] = _sequenceStrings[95];
