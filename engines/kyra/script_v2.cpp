@@ -593,6 +593,32 @@ int KyraEngine_v2::o2_restoreBackBuffer(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_backUpInventoryGfx(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_backUpInventoryGfx(%p) ()", (const void *)script);
+	_screen->copyRegionToBuffer(1, 0, 144, 320, 56, _screenBuffer);
+	_inventorySaved = true;
+	return 0;
+}
+
+int KyraEngine_v2::o2_disableSceneAnim(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_disableSceneAnim(%p) (%d)", (const void *)script, stackPos(0));
+	_sceneAnims[stackPos(0)].flags &= ~1;
+	return 0;
+}
+
+int KyraEngine_v2::o2_enableSceneAnim(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_enableSceneAnim(%p) (%d)", (const void *)script, stackPos(0));
+	_sceneAnims[stackPos(0)].flags |= 1;
+	return 0;
+}
+
+int KyraEngine_v2::o2_restoreInventoryGfx(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_restoreInventoryGfx(%p) ()", (const void *)script);
+	_screen->copyBlockToPage(1, 0, 144, 320, 56, _screenBuffer);
+	_inventorySaved = false;
+	return 0;
+}
+
 int KyraEngine_v2::o2_update(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_update(%p) (%d)", (const void *)script, stackPos(0));
 
@@ -1487,11 +1513,11 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x44
 		OpcodeUnImpl(),
 		Opcode(o2_restoreBackBuffer),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_backUpInventoryGfx),
+		Opcode(o2_disableSceneAnim),
 		// 0x48
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_enableSceneAnim),
+		Opcode(o2_restoreInventoryGfx),
 		OpcodeUnImpl(),
 		Opcode(o2_update),
 		// 0x4c

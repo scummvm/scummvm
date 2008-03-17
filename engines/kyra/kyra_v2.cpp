@@ -107,6 +107,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_gamePlayBuffer = 0;
 	_unkBuf500Bytes = 0;
 	_screenBuffer = 0;
+	_inventorySaved = false;
 	_unkBuf200kByte = 0;
 	memset(&_defaultShapeTable, 0, sizeof(_defaultShapeTable));
 	memset(&_sceneShapeTable, 0, sizeof(_sceneShapeTable));

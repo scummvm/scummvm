@@ -341,6 +341,7 @@ protected:
 	void restorePage3();
 
 	uint8 *_screenBuffer;
+	bool _inventorySaved;
 	void backUpPage0();
 	void restorePage0();
 
@@ -997,6 +998,10 @@ protected:
 	int o2_disableAnimObject(ScriptState *script);
 	int o2_enableAnimObject(ScriptState *script);
 	int o2_restoreBackBuffer(ScriptState *script);
+	int o2_backUpInventoryGfx(ScriptState *script);
+	int o2_disableSceneAnim(ScriptState *script);
+	int o2_enableSceneAnim(ScriptState *script);
+	int o2_restoreInventoryGfx(ScriptState *script);
 	int o2_update(ScriptState *script);
 	int o2_fadeScenePal(ScriptState *script);
 	int o2_enterNewSceneEx(ScriptState *script);
