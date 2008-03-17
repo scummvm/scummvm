@@ -82,6 +82,8 @@ protected:
 	bool cmd_characterInfo(int argc, const char **argv);
 	bool cmd_sceneToFacing(int argc, const char **argv);
 	bool cmd_giveItem(int argc, const char **argv);
+	bool cmd_passcodes(int argc, const char **argv);
+	bool cmd_gamespeed(int argc, const char **argv);
 };
 
 } // End of namespace Kyra

@@ -175,6 +175,27 @@ int KyraEngine_v2::o2_wsaClose(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_meanWhileScene(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_meanWhileScene(%p) (%d)", (const void *)script, stackPos(0));
+	static const uint8 jpSubtitle[] = { 0x88, 0xEA, 0x95, 0xFB, 0x81, 0x45, 0x81, 0x45, 0x81, 0x45 };
+	const char *cpsfile = stackPosString(0);
+	const char *palfile = stackPosString(1);
+
+	_screen->loadBitmap(cpsfile, 3, 3, 0);
+	memcpy(_screen->getPalette(2), _screen->_currentPalette, 768);
+	_screen->loadPalette(palfile, _screen->getPalette(2));
+	_screen->fillRect(0, 0, 319, 199, 207);
+	_screen->setScreenPalette(_screen->getPalette(2));
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+	if (!scumm_stricmp(cpsfile, "_MEANWIL.CPS") && _flags.lang == Common::JA_JPN) {
+		Screen::FontId o = _screen->setFont(Screen::FID_6_FNT);
+		_screen->printText((const char*)jpSubtitle, 140, 176, 255, 132);
+		_screen->setFont(o);
+	}
+	_screen->updateScreen();
+	return 0;
+}
+
 int KyraEngine_v2::o2_displayWsaFrame(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_displayWsaFrame(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8));
@@ -944,7 +965,7 @@ int KyraEngine_v2::o2_pressColorKey(ScriptState *script) {
 	_inputColorCode[0] = stackPos(0) & 0xff;
 	for (int i = 0; i < 7; i++) {
 		if (_presetColorCode[i] != _inputColorCode[6 - i])
-			return 0;
+			return _dbgPass;
 	}
 	return 1;
 }
@@ -1115,13 +1136,13 @@ int KyraEngine_v2::o2_getHiddenItemsEntry(ScriptState *script) {
 
 int KyraEngine_v2::o2_mushroomEffect(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_mushroomEffect(%p)", (const void *)script);
-	memcpy(_screen->getPalette(1), _screen->_currentPalette, 768);
+	memcpy(_screen->getPalette(2), _screen->_currentPalette, 768);
 
 	for (int i = 1; i < 768; i += 3)
 		_screen->_currentPalette[i] = 0;	
 	snd_playSoundEffect(106);
 	_screen->fadePalette(_screen->_currentPalette, 90, &_updateFunctor);
-	memcpy(_screen->_currentPalette, _screen->getPalette(1), 768);
+	memcpy(_screen->_currentPalette, _screen->getPalette(2), 768);
 	
 	for (int i = 0; i < 768; i += 3) {
 		_screen->_currentPalette[i] = _screen->_currentPalette[i + 1] = 0;
@@ -1132,7 +1153,7 @@ int KyraEngine_v2::o2_mushroomEffect(ScriptState *script) {
 	snd_playSoundEffect(106);
 	_screen->fadePalette(_screen->_currentPalette, 90, &_updateFunctor);
 	
-	memcpy(_screen->_currentPalette, _screen->getPalette(1), 768);
+	memcpy(_screen->_currentPalette, _screen->getPalette(2), 768);
 	_screen->fadePalette(_screen->_currentPalette, 30, &_updateFunctor);	
 
 	return 0;
@@ -1555,7 +1576,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_getHiddenItemsEntry),
 		Opcode(o2_mushroomEffect),
 		Opcode(o2_wsaClose),
-		OpcodeUnImpl(),
+		Opcode(o2_meanWhileScene),
 		// 0x98
 		Opcode(o2_customChat),
 		Opcode(o2_customChatFinish),

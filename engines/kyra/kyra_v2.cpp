@@ -63,7 +63,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_drawNoShapeFlag = false;
 	_charPalEntry = 0;
 	_itemInHand = -1;
-	_unkSceneScreenFlag1 = false;
+	_unkSceneScreenFlag1 = true;
 	_noScriptEnter = true;
 	_currentChapter = 0;
 	_newChapterFile = 1;
@@ -102,7 +102,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_colorCodeFlag1 = 0;
 	_colorCodeFlag2 = -1;
 	_scriptCountDown = 0;
-	memset(_inputColorCode, 0, 7);
+	_dbgPass = 0;
 
 	_gamePlayBuffer = 0;
 	_unkBuf500Bytes = 0;

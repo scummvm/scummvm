@@ -965,6 +965,7 @@ protected:
 	int o2_showChapterMessage(ScriptState *script);
 	int o2_restoreTalkTextMessageBkgd(ScriptState *script);
 	int o2_wsaClose(ScriptState *script);
+	int o2_meanWhileScene(ScriptState *script);	
 	int o2_displayWsaFrame(ScriptState *script);
 	int o2_displayWsaSequentialFramesLooping(ScriptState *script);
 	int o2_wsaOpen(ScriptState *script);
@@ -1165,6 +1166,7 @@ protected:
 	uint8 _presetColorCode[7];
 	uint8 _inputColorCode[7];
 	uint32 _scriptCountDown;
+	int _dbgPass;
 };
 
 } // end of namespace Kyra

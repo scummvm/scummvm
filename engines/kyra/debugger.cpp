@@ -235,6 +235,8 @@ Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
 	DCmd_Register("scene_info",			WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
 	DCmd_Register("scene_to_facing",	WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
 	DCmd_Register("give",				WRAP_METHOD(Debugger_v2, cmd_giveItem));
+	DCmd_Register("pass_codes",			WRAP_METHOD(Debugger_v2, cmd_passcodes));
+	DCmd_Register("gamespeed",			WRAP_METHOD(Debugger_v2, cmd_gamespeed));
 }
 
 bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
@@ -373,6 +375,40 @@ bool Debugger_v2::cmd_giveItem(int argc, const char **argv) {
 		_vm->setHandItem(item);
 	} else {
 		DebugPrintf("Syntax: give <itemid>\n");
+	}
+
+	return true;
+}
+
+bool Debugger_v2::cmd_passcodes(int argc, const char **argv) {
+	if (argc == 2) {
+		int val = atoi(argv[1]);
+
+		if (val < 0 || val > 1) {
+			DebugPrintf("value must be either 1 (on) or 0 (off)\n");
+			return true;
+		}
+		
+		_vm->_dbgPass = val;		
+	} else {
+		DebugPrintf("Syntax: pass_codes <0/1>\n");
+	}
+
+	return true;
+}
+
+bool Debugger_v2::cmd_gamespeed(int argc, const char **argv) {
+	if (argc == 2) {
+		int val = atoi(argv[1]);
+
+		if (val < 1 || val > 1000) {
+			DebugPrintf("speed must lie between 1 and 1000 (default: 60)\n");
+			return true;
+		}
+
+		_vm->_tickLength = (uint8)(1000.0 / val);
+	} else {
+		DebugPrintf("Syntax: gamespeed <value>\n");
 	}
 
 	return true;

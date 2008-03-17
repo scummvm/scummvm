@@ -665,7 +665,7 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 }
 
 void KyraEngine_v2::initSceneScreen(int unk1) {
-	if (_unkSceneScreenFlag1) {
+	/*if (_unkSceneScreenFlag1) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 144, 2, 0);
 		return;
 	}
@@ -678,7 +678,19 @@ void KyraEngine_v2::initSceneScreen(int unk1) {
 	_screen->copyRegion(0, 0, 0, 0, 320, 144, 2, 0);
 
 	if (_noScriptEnter)
+		memcpy(_screen->getPalette(0), _screen->getPalette(1), 384);*/
+
+	if (_unkSceneScreenFlag1 || _noScriptEnter) {
+		memset(_screen->getPalette(0), 0, 384);
+		_screen->setScreenPalette(_screen->getPalette(0));
+	}
+
+	_screen->copyRegion(0, 0, 0, 0, 320, 144, 2, 0);
+
+	if (_unkSceneScreenFlag1 || _noScriptEnter) {
 		memcpy(_screen->getPalette(0), _screen->getPalette(1), 384);
+		_screen->setScreenPalette(_screen->getPalette(0));
+	}
 
 	updateCharPal(0);
 
