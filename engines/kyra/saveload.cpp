@@ -29,6 +29,8 @@
 
 #include "kyra/kyra.h"
 
+#define CURRENT_SAVE_VERSION 8
+
 #define GF_FLOPPY (1 <<  0)
 #define GF_TALKIE (1 <<  1)
 #define GF_FMTOWNS (1 <<  2)
@@ -56,7 +58,7 @@ Common::InSaveFile *KyraEngine::openSaveForReading(const char *filename, uint32 
 	}
 
 	version = in->readUint32BE();
-	if (version > curSaveVersion()) {
+	if (version > CURRENT_SAVE_VERSION) {
 		warning("Savegame is not the right version (%u)", version);
 		delete in;
 		return 0;
@@ -108,7 +110,7 @@ Common::OutSaveFile *KyraEngine::openSaveForWriting(const char *filename, const 
 
 	// Savegame version
 	out->writeUint32BE(saveGameID());
-	out->writeUint32BE(curSaveVersion());
+	out->writeUint32BE(CURRENT_SAVE_VERSION);
 	out->write(saveName, 31);
 	if (_flags.isTalkie)
 		out->writeUint32BE(GF_TALKIE);

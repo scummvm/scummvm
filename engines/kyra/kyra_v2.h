@@ -1169,12 +1169,7 @@ protected:
 	int _dbgPass;
 
 	// save/load specific
-	enum {
-		kSaveGameVersion = 1
-	};
-
 	uint32 saveGameID() const { return 'HOFS'; }
-	uint32 curSaveVersion() const { return kSaveGameVersion; }
 
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);

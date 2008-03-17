@@ -281,12 +281,7 @@ public:
 	void snd_voiceWaitForFinish(bool ingame = true);
 
 protected:
-	enum {
-		kSaveGameVersion = 8
-	};
-
 	uint32 saveGameID() const { return 'KYRA'; }
-	uint32 curSaveVersion() const { return kSaveGameVersion; }
 
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);

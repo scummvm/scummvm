@@ -216,7 +216,6 @@ protected:
 
 	// save/load
 	virtual uint32 saveGameID() const = 0;
-	virtual uint32 curSaveVersion() const = 0;
 
 	const char *getSavegameFilename(int num);
 	Common::InSaveFile *openSaveForReading(const char *filename, uint32 &version, char *saveName);
