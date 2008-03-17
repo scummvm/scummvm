@@ -308,7 +308,7 @@ protected:
 	void updateMouse();
 
 	struct Button;
-	int checkInput(Button *buttonList);
+	int checkInput(Button *buttonList, bool mainLoop = false);
 	void removeInputTop();
 	void handleInput(int x, int y);
 	bool handleInputUnkSub(int x, int y);
@@ -1167,6 +1167,17 @@ protected:
 	uint8 _inputColorCode[7];
 	uint32 _scriptCountDown;
 	int _dbgPass;
+
+	// save/load specific
+	enum {
+		kSaveGameVersion = 1
+	};
+
+	uint32 saveGameID() const { return 'HOFS'; }
+	uint32 curSaveVersion() const { return kSaveGameVersion; }
+
+	void saveGame(const char *fileName, const char *saveName);
+	void loadGame(const char *fileName);
 };
 
 } // end of namespace Kyra

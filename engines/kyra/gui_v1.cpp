@@ -756,13 +756,6 @@ int KyraEngine_v1::gui_resumeGame(Button *button) {
 	return 0;
 }
 
-const char *KyraEngine_v1::getSavegameFilename(int num) {
-	static char saveLoadSlot[12];
-
-	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), num);
-	return saveLoadSlot;
-}
-
 int KyraEngine_v1::getNextSavegameSlot() {
 	Common::InSaveFile *in;
 

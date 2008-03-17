@@ -313,6 +313,16 @@ bool KyraEngine::textEnabled() {
 	return !_flags.isTalkie || (_configVoice == 0 || _configVoice == 2);
 }
 
+const char *KyraEngine::getSavegameFilename(int num) {
+	static Common::String filename;
+	char extension[5];
+	sprintf(extension, "%3d", num);
+
+	filename = _targetName + "." + extension;
+
+	return filename.c_str();
+}
+
 } // End of namespace Kyra
 
 

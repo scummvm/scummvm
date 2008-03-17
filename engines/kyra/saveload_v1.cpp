@@ -34,63 +34,15 @@
 #include "kyra/sound.h"
 #include "kyra/timer.h"
 
-#define CURRENT_VERSION 8
-
-// TODO: our current savefiles still use the old
-// flag system to check the version, we should
-// change that some day, but for now it works
-#define GF_FLOPPY (1 <<  0)
-#define GF_TALKIE (1 <<  1)
-#define GF_FMTOWNS (1 <<  2)
-
 namespace Kyra {
 void KyraEngine_v1::loadGame(const char *fileName) {
-	debugC(9, kDebugLevelMain, "loadGame('%s')", fileName);
-	Common::InSaveFile *in;
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::loadGame('%s')", fileName);
 
-	if (!(in = _saveFileMan->openForLoading(fileName))) {
-		warning("Can't open file '%s', game not loaded", fileName);
-		return;
-	}
-
-	uint32 type = in->readUint32BE();
-
-	// FIXME: The kyra savegame code used to be endian unsafe. Uncomment the
-	// following line to graciously handle old savegames from LE machines.
-	// if (type != MKID_BE('KYRA') && type != MKID_BE('ARYK')) {
-	if (type != MKID_BE('KYRA')) {
-		warning("No Kyrandia 1 savefile header");
-		delete in;
-		return;
-	}
-	uint32 version = in->readUint32BE();
-	if (version > CURRENT_VERSION) {
-		warning("Savegame is not the right version (%u)", version);
-		delete in;
-		return;
-	}
-
+	uint32 version = 0;
 	char saveName[31];
-	in->read(saveName, 31);
-
-	if (version >= 2) {
-		uint32 flags = in->readUint32BE();
-		if ((flags & GF_FLOPPY) && _flags.isTalkie) {
-			warning("Can not load floppy savefile for this (non floppy) gameversion");
-			delete in;
-			return;
-		} else if ((flags & GF_TALKIE) && !(_flags.isTalkie)) {
-			warning("Can not load cdrom savefile for this (non cdrom) gameversion");
-			delete in;
-			return;
-		} else if ((flags & GF_FMTOWNS) && !(_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) {
-			warning("can not load FM-Towns/PC98 savefile for this (non FM-Towns/PC98) gameversion");
-			delete in;
-			return;
-		}
-	} else {
-		warning("Make sure your savefile was from this version! (too old savefile version to detect that)");
-	}
+	Common::InSaveFile *in = openSaveForReading(fileName, version, saveName);
+	if (!in)
+		return;
 
 	snd_playSoundEffect(0x0A);
 	snd_playWanderScoreViaMap(0, 1);
@@ -248,7 +200,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 	setMousePos(brandonX, brandonY);
 	
 	if (in->ioFailed())
-		error("Load failed.");
+		error("Load failed ('%s', '%s').", fileName, saveName);
 	else
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", saveName);
 
@@ -260,26 +212,15 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 }
 
 void KyraEngine_v1::saveGame(const char *fileName, const char *saveName) {
-	debugC(9, kDebugLevelMain, "saveGame('%s', '%s')", fileName, saveName);
-	Common::OutSaveFile *out;
-	if (_quitFlag) return;
-
-	if (!(out = _saveFileMan->openForSaving(fileName))) {
-		warning("Can't create file '%s', game not saved", fileName);
+	debugC(9, kDebugLevelMain, "KyraEngine_v1::saveGame('%s', '%s')", fileName, saveName);
+	
+	if (_quitFlag)
 		return;
-	}
 
-	// Savegame version
-	out->writeUint32BE(MKID_BE('KYRA'));
-	out->writeUint32BE(CURRENT_VERSION);
-	out->write(saveName, 31);
-	if (_flags.isTalkie)
-		out->writeUint32BE(GF_TALKIE);
-	else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
-		out->writeUint32BE(GF_FMTOWNS);
-	else
-		out->writeUint32BE(GF_FLOPPY);
-
+	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName);
+	if (!out)
+		return;
+	
 	for (int i = 0; i < 11; i++) {
 		out->writeUint16BE(_characterList[i].sceneId);
 		out->writeByte(_characterList[i].height);

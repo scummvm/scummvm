@@ -33,6 +33,11 @@
 
 #include "kyra/util.h"
 
+namespace Common {
+class InSaveFile;
+class OutSaveFile;
+} // end of namespace Common
+
 namespace Kyra {
 
 struct GameFlags {
@@ -208,6 +213,14 @@ protected:
 
 	static const int8 _addXPosTable[];
 	static const int8 _addYPosTable[];
+
+	// save/load
+	virtual uint32 saveGameID() const = 0;
+	virtual uint32 curSaveVersion() const = 0;
+
+	const char *getSavegameFilename(int num);
+	Common::InSaveFile *openSaveForReading(const char *filename, uint32 &version, char *saveName);
+	Common::OutSaveFile *openSaveForWriting(const char *filename, const char *saveName) const;
 };
 
 } // End of namespace Kyra

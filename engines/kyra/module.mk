@@ -14,7 +14,9 @@ MODULE_OBJS := \
 	kyra_v2.o \
 	kyra_v3.o \
 	resource.o \
+	saveload.o \
 	saveload_v1.o \
+	saveload_v2.o \
 	scene.o \
 	scene_v1.o \
 	scene_v2.o \

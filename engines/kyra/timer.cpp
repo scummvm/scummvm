@@ -198,6 +198,9 @@ void TimerManager::disable(uint8 id) {
 void TimerManager::loadDataFromFile(Common::InSaveFile *file, int version) {
 	debugC(9, kDebugLevelTimer, "TimerManager::loadDataFromFile(%p, %d)", (const void*)file, version);
 
+	if (_vm->game() != GI_KYRA1)
+		version += 7;
+
 	if (version <= 7) {
 		_nextRun = 0;
 		for (int i = 0; i < 32; ++i) {

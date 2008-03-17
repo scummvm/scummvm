@@ -422,7 +422,7 @@ void KyraEngine_v2::runLoop() {
 			}
 		}
 
-		int inputFlag = checkInput(_buttonList);
+		int inputFlag = checkInput(_buttonList, true);
 		removeInputTop();
 
 		update();
@@ -742,7 +742,7 @@ void KyraEngine_v2::updateInput() {
 	}
 }
 
-int KyraEngine_v2::checkInput(Button *buttonList) {
+int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 	updateInput();
 
 	int keys = 0;
@@ -753,7 +753,18 @@ int KyraEngine_v2::checkInput(Button *buttonList) {
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.flags == Common::KBD_CTRL) {
+			if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
+					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
+				const char *saveLoadSlot = getSavegameFilename(event.kbd.keycode - '0');
+
+				if (event.kbd.flags == Common::KBD_CTRL)
+					loadGame(saveLoadSlot);
+				else {
+					char savegameName[14];
+					sprintf(savegameName, "Quicksave %d",  event.kbd.keycode - '0');
+					saveGame(saveLoadSlot, savegameName);
+				}
+			} else if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'd')
 					_debugger->attach();
 			}
