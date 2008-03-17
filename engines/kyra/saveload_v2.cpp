@@ -233,7 +233,6 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 
 	delete in;
 
-	int itemInHand = _itemInHand;
 	if (loadedZTable != _loadedZTable)
 		loadZShapes(_loadedZTable);
 
