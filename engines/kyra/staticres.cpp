@@ -932,13 +932,15 @@ void KyraEngine_v2::initStaticResource() {
 	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
 	_itemAnimTable = _staticres->loadRawData(k2IngameItemAnimTable, tmpSize);
 
-	for (int i = 0; i < 15; i++) {
-		const uint8 *tmp = _itemAnimTable + 56 * i;
-		_itemAnimData[i].itemIndex = (int16) READ_LE_UINT16(tmp);
-		_itemAnimData[i].numFrames = tmp[2];
-		_itemAnimData[i].curFrame = tmp[3];
-		_itemAnimData[i].nextFrame = READ_LE_UINT32(&tmp[4]);
-		_itemAnimData[i].frames = &tmp[8];
+	if (_itemAnimTable) {
+		for (int i = 0; i < 15; i++) {
+			const uint8 *tmp = _itemAnimTable + 56 * i;
+			_itemAnimData[i].itemIndex = (int16) READ_LE_UINT16(tmp);
+			_itemAnimData[i].numFrames = tmp[2];
+			_itemAnimData[i].curFrame = tmp[3];
+			_itemAnimData[i].nextFrame = READ_LE_UINT32(&tmp[4]);
+			_itemAnimData[i].frames = &tmp[8];
+		}
 	}
 
 	// replace sequence talkie files with localized versions and cut off .voc
