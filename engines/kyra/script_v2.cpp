@@ -864,14 +864,14 @@ int KyraEngine_v2::o2_updateSceneAnim(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine_v2::o2_setSceneAnimPosAndUpdate(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setSceneAnimPosAndUpdate(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+int KyraEngine_v2::o2_addToSceneAnimPosAndUpdate(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_addToSceneAnimPosAndUpdate(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	const int anim = stackPos(0);
-	_sceneAnims[anim].x2 = stackPos(1);
-	_sceneAnims[anim].y2 = stackPos(2);
+	_sceneAnims[anim].x2 += stackPos(1);
+	_sceneAnims[anim].y2 += stackPos(2);
 	if (_sceneAnims[anim].flags & 2) {
-		_sceneAnims[anim].x = stackPos(1);
-		_sceneAnims[anim].y = stackPos(2);
+		_sceneAnims[anim].x += stackPos(1);
+		_sceneAnims[anim].y += stackPos(2);
 	}
 	updateSceneAnim(anim, stackPos(3));
 	_specialSceneScriptRunFlag = false;
@@ -1531,7 +1531,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_defineSceneAnim),
 		Opcode(o2_updateSceneAnim),
 		Opcode(o2_updateSceneAnim),
-		Opcode(o2_setSceneAnimPosAndUpdate),
+		Opcode(o2_addToSceneAnimPosAndUpdate),
 		// 0x74
 		Opcode(o2_useItemOnMainChar),
 		Opcode(o2_startDialogue),

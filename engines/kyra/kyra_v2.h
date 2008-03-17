@@ -1018,7 +1018,7 @@ protected:
 	int o2_setSpecialSceneScriptRunTime(ScriptState *script);
 	int o2_defineSceneAnim(ScriptState *script);
 	int o2_updateSceneAnim(ScriptState *script);
-	int o2_setSceneAnimPosAndUpdate(ScriptState *script);
+	int o2_addToSceneAnimPosAndUpdate(ScriptState *script);
 	int o2_useItemOnMainChar(ScriptState *script);
 	int o2_startDialogue(ScriptState *script);
 	int o2_zanthRandomChat(ScriptState *script);
