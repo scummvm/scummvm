@@ -904,7 +904,7 @@ int KyraEngine_v2::o2_startDialogue(ScriptState *script) {
 
 int KyraEngine_v2::o2_zanthRandomChat(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_zanthRandomChat(%p)", (const void *)script);
-	zanthRandomChat();
+	zanthRandomIdleChat();
 	return 0;
 }
 

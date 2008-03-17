@@ -798,8 +798,7 @@ protected:
 	void startDialogue(int dlgIndex);
 
 	void zanthSceneStartupChat();
-	void zanthRandomChat();
-	void zanthIdleChat();
+	void zanthRandomIdleChat();
 	void updateDlgBuffer();
 	void loadDlgHeader(int &csEntry, int &vocH, int &scIndex1, int &scIndex2);
 	void processDialogue(int dlgOffset, int vocH = 0, int csEntry = 0);

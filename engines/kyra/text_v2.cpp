@@ -410,7 +410,7 @@ void KyraEngine_v2::zanthSceneStartupChat() {
 	_newSceneDlgState[tableIndex] = 1;
 }
 
-void KyraEngine_v2::zanthRandomChat() {
+void KyraEngine_v2::zanthRandomIdleChat() {
 	int lowest = _flags.isTalkie ? 6 : 5;
 	int tableIndex = (_mainCharacter.sceneId - READ_LE_UINT16(&_ingameTalkObjIndex[lowest + _newChapterFile])) << 2;
 	if (queryGameFlag(0x164))
@@ -427,28 +427,6 @@ void KyraEngine_v2::zanthRandomChat() {
 		_chatAltFlag = 1;
 	}
 
-	uint8 bufferIndex = 8 + scIndex1 * 6 + tableIndex;
-	int offs = READ_LE_UINT16(_dlgBuffer + bufferIndex);
-	processDialogue(offs, vocH, csEntry);
-}
-
-void KyraEngine_v2::zanthIdleChat() {
-	int lowest = _flags.isTalkie ? 6 : 5;
-	int tableIndex = (_mainCharacter.sceneId - READ_LE_UINT16(&_ingameTalkObjIndex[lowest + _newChapterFile])) << 2;
-	if (queryGameFlag(0x164))
-		return;
-
-	int csEntry, vocH, scIndex1, unused;
-	updateDlgBuffer();
-	loadDlgHeader(csEntry, vocH, scIndex1, unused);
-
-	if (_chatAltFlag) {
-		_chatAltFlag = 0;
-		tableIndex += 2;
-	} else {
-		_chatAltFlag = 1;
-	}
-	
 	uint8 bufferIndex = 8 + scIndex1 * 6 + tableIndex;
 	int offs = READ_LE_UINT16(_dlgBuffer + bufferIndex);
 	processDialogue(offs, vocH, csEntry);

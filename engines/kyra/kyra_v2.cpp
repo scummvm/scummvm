@@ -1620,7 +1620,7 @@ void KyraEngine_v2::showIdleAnim() {
 	static bool scriptAnimation = false;
 	if (!scriptAnimation && _flags.isTalkie) {
 		scriptAnimation = true;
-		zanthIdleChat();
+		zanthRandomIdleChat();
 	} else {
 		scriptAnimation = false;
 		if (_loadedZTable > 8)
