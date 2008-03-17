@@ -130,6 +130,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_mainCharacter.dlgIndex = 0;
 	setNewDlgIndex(-1);
 
+	_deathHandler = -1;
+
 	_bookMaxPage = 6;
 	_bookCurPage = 0;
 	_bookNewPage = 0;
@@ -387,7 +389,7 @@ void KyraEngine_v2::runLoop() {
 
 	_quitFlag = false;
 	while (!_quitFlag) {
-		//if (_unk1 >= 0) {
+		//if (_deathHandler >= 0) {
 		//	removeHandItem();
 		//	waitTicks(5);
 		//	sub_270A0();
@@ -514,7 +516,7 @@ void KyraEngine_v2::handleInput(int x, int y) {
 			}
 		}
 
-		//if (_unk1 <= -1)
+		//if (_deathHandler <= -1)
 		//	skipHandling = 1;
 
 		if (skipHandling)
@@ -545,7 +547,7 @@ void KyraEngine_v2::handleInput(int x, int y) {
 }
 
 bool KyraEngine_v2::handleInputUnkSub(int x, int y) {
-	if (y > 143/* || _unk1 > -1 */|| queryGameFlag(0x164))
+	if (y > 143 || _deathHandler > -1 || queryGameFlag(0x164))
 		return false;
 
 	if (_handItemSet <= -3 && findItem(_mainCharacter.sceneId, 13) >= 0) {

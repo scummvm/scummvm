@@ -139,7 +139,7 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 
 	bool setFlag1EE = (queryGameFlag(0x1EE) != 0);
 	
-	//_unk1 = -1;
+	_deathHandler = -1;
 	if (!_unkSceneScreenFlag1) {
 		_sound->beginFadeOut();
 		_system->delayMillis(5 * _tickLength);

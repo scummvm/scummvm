@@ -744,6 +744,7 @@ protected:
 		int16 x2, y2;
 	};
 
+	int8 _deathHandler;
 	Character _mainCharacter;
 	bool _useCharPal;
 	int _charPalEntry;
@@ -1016,6 +1017,7 @@ protected:
 	int o2_blockOutRegion(ScriptState *script);
 	int o2_setCauldronState(ScriptState *script);
 	int o2_getRand(ScriptState *script);
+	int o2_setDeathHandlerFlag(ScriptState *script);
 	int o2_setDrawNoShapeFlag(ScriptState *script);
 	int o2_showLetter(ScriptState *script);
 	int o2_fillRect(ScriptState *script);
