@@ -246,9 +246,8 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 	int cauldronUseCount = _cauldronUseCount;
 	setCauldronState(_cauldronState, 0);
 	_cauldronUseCount = cauldronUseCount;
-	int origX = _mainCharX = _mainCharacter.x2 = _mainCharacter.x1;
-	int origY = _mainCharY = _mainCharacter.y2 = _mainCharacter.y1;
-	int origFacing = _mainCharacter.facing;
+	_mainCharX = _mainCharacter.x2 = _mainCharacter.x1;
+	_mainCharY = _mainCharacter.y2 = _mainCharacter.y1;
 	_mainCharacter.facing = 4;
 	
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
