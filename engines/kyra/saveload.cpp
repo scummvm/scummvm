@@ -128,4 +128,15 @@ Common::OutSaveFile *KyraEngine::openSaveForWriting(const char *filename, const 
 	return out;
 }
 
+const char *KyraEngine::getSavegameFilename(int num) {
+	static Common::String filename;
+	char extension[5];
+	sprintf(extension, "%.3d", num);
+
+	filename = _targetName + "." + extension;
+
+	return filename.c_str();
+}
+
 } // end of namespace Kyra
+
