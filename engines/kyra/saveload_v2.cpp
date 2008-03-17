@@ -259,13 +259,6 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 
 	_screen->showMouse();
 
-	_mainCharX = _mainCharacter.x2 = _mainCharacter.x1 = origX;
-	_mainCharY = _mainCharacter.y2 = _mainCharacter.y1 = origY;
-	_mainCharacter.facing = origFacing;
-	updateCharacterAnim(0);
-	flagAnimObjsForRefresh();
-	refreshAnimObjectsIfNeed();
-
 	setTimer1DelaySecs(7);
 	_shownMessage = " ";
 	_msgUnk1 = 0;
