@@ -258,6 +258,11 @@ void KyraEngine_v2::flagAnimObjsForRefresh() {
 		curEntry->needRefresh = 1;
 }
 
+void KyraEngine_v2::flagAnimObjsUnk8() {
+	for (AnimObj *curEntry = _animList; curEntry; curEntry = curEntry->nextObject)
+		curEntry->unk8 = 1;
+}
+
 void KyraEngine_v2::updateCharFacing() {
 	if (_mainCharacter.x1 > _mouseX)
 		_mainCharacter.facing = 5;

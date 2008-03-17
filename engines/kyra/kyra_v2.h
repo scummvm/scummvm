@@ -466,7 +466,7 @@ protected:
 	void refreshAnimObjectsIfNeed();
 	void updateItemAnimations();
 
-	void flagAnimObjUnk8();
+	void flagAnimObjsUnk8();
 	void flagAnimObjsForRefresh();
 
 	void updateCharFacing();

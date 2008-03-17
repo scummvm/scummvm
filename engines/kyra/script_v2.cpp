@@ -374,7 +374,7 @@ int KyraEngine_v2::o2_drawShape(ScriptState *script) {
 		_screen->drawShape(0, shp, x, y, 2, dsFlag ? 1 : 0);
 
 		flagAnimObjsForRefresh();
-		flagAnimObjUnk8();
+		flagAnimObjsUnk8();
 		refreshAnimObjectsIfNeed();
 		_screen->showMouse();
 	}
@@ -570,7 +570,7 @@ int KyraEngine_v2::o2_drawSceneShape(ScriptState *script) {
 
 	_screen->drawShape(0, _sceneShapeTable[shape], x, y, 2, flag);
 
-	flagAnimObjUnk8();
+	flagAnimObjsUnk8();
 	flagAnimObjsForRefresh();
 	refreshAnimObjectsIfNeed();
 	_screen->showMouse();
