@@ -63,7 +63,7 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_drawNoShapeFlag = false;
 	_charPalEntry = 0;
 	_itemInHand = -1;
-	_unkSceneScreenFlag1 = true;
+	_unkSceneScreenFlag1 = false;
 	_noScriptEnter = true;
 	_currentChapter = 0;
 	_newChapterFile = 1;
