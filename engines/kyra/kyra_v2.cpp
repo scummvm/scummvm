@@ -516,8 +516,8 @@ void KyraEngine_v2::handleInput(int x, int y) {
 			}
 		}
 
-		//if (_deathHandler <= -1)
-		//	skipHandling = 1;
+		if (_deathHandler <= -1)
+			skipHandling = 1;
 
 		if (skipHandling)
 			return;
