@@ -60,6 +60,7 @@ int KyraEngine_v2::gui_handleMainMenu() {
 	_screen->setTextColorMap(colorMap);
 
 	const char * const *strings;
+	const char *k2strings[4];
 
 	Screen::FontId oldFont = _screen->setFont(Screen::FID_8_FNT);
 	int charWidthBackUp = _screen->_charWidth;
@@ -68,7 +69,6 @@ int KyraEngine_v2::gui_handleMainMenu() {
 
 	if (_flags.gameID == GI_KYRA2) {
 		_screen->setScreenDim(11);
-		static const char *k2strings[4];
 		k2strings[0] = _sequenceStrings[97];
 		k2strings[1] = _sequenceStrings[96];
 		k2strings[2] = _sequenceStrings[95];
@@ -169,7 +169,7 @@ void KyraEngine_v2::gui_drawMainMenu(const char *const *strings, int select) {
 void KyraEngine_v2::gui_drawMainBox(int x, int y, int w, int h, int fill) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::gui_drawMainBox(%d, %d, %d, %d, %d)", x, y, w, h, fill);
 	static const uint8 kyra3ColorTable[] = { 0x16, 0x19, 0x1A, 0x16 };
-	static const uint8 kyra2ColorTable[] = {0xd8, 0xda, 0xd9, 0xd8 };
+	static const uint8 kyra2ColorTable[] = { 0xd8, 0xda, 0xd9, 0xd8 };
 
 	const uint8 *colorTable;
 	if (_flags.gameID == GI_KYRA3)
