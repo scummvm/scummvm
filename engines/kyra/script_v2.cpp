@@ -688,6 +688,18 @@ int KyraEngine_v2::o2_playSoundEffect(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_blockInRegion(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_blockInRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	_screen->blockInRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
+	return 0;
+}
+
+int KyraEngine_v2::o2_blockOutRegion(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_blockOutRegion(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	_screen->blockOutRegion(stackPos(0), stackPos(1), stackPos(2)-stackPos(0)+1, stackPos(3)-stackPos(1)+1);
+	return 0;
+}
+
 int KyraEngine_v2::o2_setCauldronState(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setCauldronState(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	setCauldronState(stackPos(0), stackPos(1) != 0);
@@ -1501,9 +1513,9 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_playWanderScoreViaMap),
 		Opcode(o2_playSoundEffect),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_blockInRegion),
 		// 0x5c
-		OpcodeUnImpl(),
+		Opcode(o2_blockOutRegion),
 		OpcodeUnImpl(),
 		Opcode(o2_setCauldronState),
 		OpcodeUnImpl(),
