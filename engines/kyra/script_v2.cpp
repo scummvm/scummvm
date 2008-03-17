@@ -355,6 +355,33 @@ int KyraEngine_v2::o2_displayWsaSequence(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_drawShape(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_drawShape(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
+
+	uint8 *shp = getShapePtr(stackPos(0) + 64);
+	int x = stackPos(1);
+	int y = stackPos(2);
+	uint8 dsFlag = stackPos(3) & 0xff;
+	uint8 modeFlag = stackPos(4) & 0xff;
+
+	if (modeFlag) {
+		_screen->drawShape(2, shp, x, y, 2, dsFlag ? 1 : 0);
+	} else {
+		_screen->hideMouse();
+		restorePage3();
+		_screen->drawShape(2, shp, x, y, 2, dsFlag ? 1 : 0);
+		memcpy(_gamePlayBuffer, _screen->getCPagePtr(3), 46080);
+		_screen->drawShape(0, shp, x, y, 2, dsFlag ? 1 : 0);
+
+		flagAnimObjsForRefresh();
+		flagAnimObjUnk8();
+		refreshAnimObjectsIfNeed();
+		_screen->showMouse();
+	}
+
+	return 0;
+}
+
 int KyraEngine_v2::o2_addItemToCurScene(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_addItemToCurScene(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	const int16 id = stackPos(0);
@@ -543,7 +570,7 @@ int KyraEngine_v2::o2_drawSceneShape(ScriptState *script) {
 
 	_screen->drawShape(0, _sceneShapeTable[shape], x, y, 2, flag);
 
-	//sub_B521();
+	flagAnimObjUnk8();
 	flagAnimObjsForRefresh();
 	refreshAnimObjectsIfNeed();
 	_screen->showMouse();
@@ -1468,7 +1495,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_displayWsaSequence),
 		// 0x1c
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_drawShape),
 		Opcode(o2_addItemToCurScene),
 		OpcodeUnImpl(),
 		// 0x20

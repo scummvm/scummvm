@@ -466,6 +466,7 @@ protected:
 	void refreshAnimObjectsIfNeed();
 	void updateItemAnimations();
 
+	void flagAnimObjUnk8();
 	void flagAnimObjsForRefresh();
 
 	void updateCharFacing();
@@ -972,6 +973,7 @@ protected:
 	int o2_wsaOpen(ScriptState *script);
 	int o2_displayWsaSequentialFrames(ScriptState *script);
 	int o2_displayWsaSequence(ScriptState *script);
+	int o2_drawShape(ScriptState *script);	
 	int o2_addItemToCurScene(ScriptState *script);
 	int o2_checkForItem(ScriptState *script);
 	int o2_removeItemSlotFromInventory(ScriptState *script);
