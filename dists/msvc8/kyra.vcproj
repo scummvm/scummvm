@@ -241,7 +241,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\saveload.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\saveload_v1.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\saveload_v2.cpp"
 			>
 		</File>
 		<File
