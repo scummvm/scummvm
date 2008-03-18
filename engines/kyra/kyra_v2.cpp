@@ -516,7 +516,7 @@ void KyraEngine_v2::handleInput(int x, int y) {
 			}
 		}
 
-		if (_deathHandler <= -1)
+		if (_deathHandler > -1)
 			skipHandling = 1;
 
 		if (skipHandling)
@@ -776,12 +776,11 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 					sprintf(savegameName, "Quicksave %d",  event.kbd.keycode - '0');
 					saveGame(saveLoadSlot, savegameName);
 				}
+				breakLoop = true;
 			} else if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'd')
 					_debugger->attach();
 			}
-
-			breakLoop = true;
 			break;
 
 		case Common::EVENT_LBUTTONUP: {
