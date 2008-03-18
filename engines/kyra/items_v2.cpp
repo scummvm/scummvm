@@ -164,6 +164,7 @@ bool KyraEngine_v2::processItemDrop(uint16 sceneId, uint16 item, int x, int y, i
 	if (sceneId != _mainCharacter.sceneId) {
 		_itemList[freeItemSlot].x = x;
 		_itemList[freeItemSlot].y = y;
+		_itemList[freeItemSlot].id = item;
 		_itemList[freeItemSlot].unk7 = 1;
 		_itemList[freeItemSlot].sceneId = sceneId;
 		return true;
