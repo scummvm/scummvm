@@ -857,8 +857,8 @@ int KyraEngine_v2::o2_setCauldronState(ScriptState *script) {
 	return 0;
 }
 
-int KyraEngine_v2::o2_showPickUpString(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_showPickUpString(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+int KyraEngine_v2::o2_showItemString(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_showItemString(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	const int item = stackPos(0);
 	
 	int string = 0;
@@ -1775,7 +1775,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_blockOutRegion),
 		OpcodeUnImpl(),
 		Opcode(o2_setCauldronState),
-		Opcode(o2_showPickUpString),
+		Opcode(o2_showItemString),
 		// 0x60
 		Opcode(o2_getRand),
 		OpcodeUnImpl(),

@@ -1031,7 +1031,7 @@ protected:
 	int o2_blockInRegion(ScriptState *script);
 	int o2_blockOutRegion(ScriptState *script);
 	int o2_setCauldronState(ScriptState *script);
-	int o2_showPickUpString(ScriptState *script);
+	int o2_showItemString(ScriptState *script);
 	int o2_getRand(ScriptState *script);
 	int o2_setDeathHandlerFlag(ScriptState *script);
 	int o2_setDrawNoShapeFlag(ScriptState *script);
