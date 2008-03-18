@@ -1358,8 +1358,10 @@ int KyraEngine_v2::inputSceneChange(int x, int y, int unk1, int unk2) {
 		return 0;
 	}
 
-	if (ABS(_mainCharacter.x1 - x) < 4 || ABS(_mainCharacter.y1 - y) < 2)
+	if (ABS(_mainCharacter.x1 - x) < 4 && ABS(_mainCharacter.y1 - y) < 2) {
+		_pathfinderFlag = 0;
 		return 0;
+	}
 
 	int curX = _mainCharacter.x1 & ~3;
 	int curY = _mainCharacter.y1 & ~1;
