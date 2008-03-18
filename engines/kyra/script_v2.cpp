@@ -1256,6 +1256,8 @@ int KyraEngine_v2::o2_setupSceneAnimation(ScriptState *script) {
 	const int index = stackPos(0);
 	const uint16 flags = stackPos(1);
 
+	restorePage3();
+
 	SceneAnim &anim = _sceneAnims[index];
 	anim.x = stackPos(2);
 	anim.y = stackPos(3);
@@ -1314,6 +1316,11 @@ int KyraEngine_v2::o2_setupSceneAnimation(ScriptState *script) {
 	obj->width = anim.width;
 	obj->height = anim.height;
 	obj->width2 = obj->height2 = anim.specialSize;
+
+	// be sure we don't have an the object allready in the anim list
+	// else we get look ups in some places, the original doesn't do this
+	// though
+	_animList = deleteAnimListEntry(_animList, obj);
 
 	_animList = addToAnimListSorted(_animList, obj);
 	obj->needRefresh = 1;
