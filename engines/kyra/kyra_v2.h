@@ -300,6 +300,9 @@ protected:
 	void loadItemShapes();
 
 	// run
+	bool _runFlag;
+	bool _showCredits;
+
 	void update();
 	void updateWithText();
 
@@ -1035,6 +1038,7 @@ protected:
 	int o2_getRand(ScriptState *script);
 	int o2_setDeathHandlerFlag(ScriptState *script);
 	int o2_setDrawNoShapeFlag(ScriptState *script);
+	int o2_setRunFlag(ScriptState *script);
 	int o2_showLetter(ScriptState *script);
 	int o2_fillRect(ScriptState *script);
 	int o2_waitForConfirmationClick(ScriptState *script);

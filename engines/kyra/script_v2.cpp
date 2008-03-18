@@ -240,7 +240,7 @@ int KyraEngine_v2::o2_displayWsaFrame(ScriptState *script) {
 	_wsaSlots[slot]->setX(x);
 	_wsaSlots[slot]->setY(y);
 	_wsaSlots[slot]->setDrawPage(dstPage);
-	_wsaSlots[slot]->displayFrame(frame, copyParam | 0xC000);
+	_wsaSlots[slot]->displayFrame(frame, copyParam | 0xC000, 0, 0);
 	_screen->updateScreen();
 
 	if (backUp)
@@ -282,7 +282,7 @@ int KyraEngine_v2::o2_displayWsaSequentialFramesLooping(ScriptState *script) {
 		if (startFrame < endFrame) {
 			for (int i = startFrame; i <= endFrame && !skipFlag(); ++i) {
 				uint32 endTime = _system->getMillis() + waitTime * _tickLength;
-				_wsaSlots[slot]->displayFrame(i, 0xC000 | copyFlags);
+				_wsaSlots[slot]->displayFrame(i, 0xC000 | copyFlags, 0, 0);
 				_screen->updateScreen();
 
 				do {
@@ -295,7 +295,7 @@ int KyraEngine_v2::o2_displayWsaSequentialFramesLooping(ScriptState *script) {
 		} else {
 			for (int i = startFrame; i >= endFrame && !skipFlag(); --i) {
 				uint32 endTime = _system->getMillis() + waitTime * _tickLength;
-				_wsaSlots[slot]->displayFrame(i, 0xC000 | copyFlags);
+				_wsaSlots[slot]->displayFrame(i, 0xC000 | copyFlags, 0, 0);
 				_screen->updateScreen();
 
 				do {
@@ -338,7 +338,7 @@ int KyraEngine_v2::o2_displayWsaSequentialFrames(ScriptState *script) {
 
 	while (currentFrame <= lastFrame && !skipFlag()) {	
 		uint32 endTime = _system->getMillis() + frameDelay;
-		_wsaSlots[index]->displayFrame(currentFrame++, copyParam);
+		_wsaSlots[index]->displayFrame(currentFrame++, copyParam, 0, 0);
 		_screen->updateScreen();
 		delayUntil(endTime);
 	}
@@ -368,7 +368,7 @@ int KyraEngine_v2::o2_displayWsaSequence(ScriptState *script) {
 
 	while (currentFrame <= lastFrame && !skipFlag()) {	
 		uint32 endTime = _system->getMillis() + frameDelay;
-		_wsaSlots[index]->displayFrame(currentFrame++, copyParam);
+		_wsaSlots[index]->displayFrame(currentFrame++, copyParam, 0, 0);
 		if (doUpdate)
 			update();
 		_screen->updateScreen();
@@ -893,6 +893,15 @@ int KyraEngine_v2::o2_setDeathHandlerFlag(ScriptState *script) {
 int KyraEngine_v2::o2_setDrawNoShapeFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setDrawNoShapeFlag(%p) (%d)", (const void *)script, stackPos(0));
 	_drawNoShapeFlag = (stackPos(0) != 0);
+	return 0;
+}
+
+int KyraEngine_v2::o2_setRunFlag(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setRunFlag(%p) (%d)", (const void *)script, stackPos(0));
+	// this is usually just _runFlag, but since this is just used when the game should play the credits
+	// we handle it a bit different :-)
+	_showCredits = true;
+	_runFlag = false;
 	return 0;
 }
 
@@ -1782,7 +1791,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_setDeathHandlerFlag),
 		Opcode(o2_setDrawNoShapeFlag),
 		// 0x64
-		OpcodeUnImpl(),
+		Opcode(o2_setRunFlag),
 		Opcode(o2_showLetter),
 		OpcodeUnImpl(),
 		Opcode(o2_fillRect),

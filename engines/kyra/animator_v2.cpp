@@ -62,6 +62,11 @@ KyraEngine_v2::AnimObj *KyraEngine_v2::initAnimList(AnimObj *list, AnimObj *entr
 }
 
 KyraEngine_v2::AnimObj *KyraEngine_v2::addToAnimListSorted(AnimObj *list, AnimObj *add) {
+	if (!list) {
+		add->nextObject = 0;
+		return add;
+	}
+
 	if (add->yPos1 <= list->yPos1) {
 		add->nextObject = list;
 		return add;

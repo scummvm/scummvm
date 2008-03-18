@@ -55,6 +55,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_demoShapeDefs = 0;
 	_sequenceSoundList = 0;
 
+	_showCredits = false;
+
 	_gamePlayBuffer = 0;
 	_cCodeBuffer = _optionsBuffer = _chapterBuffer = 0;
 
@@ -240,7 +242,6 @@ int KyraEngine_v2::go() {
 		_menuChoice = 4;
 	} else {
 		seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
-		//seq_playSequences(kSequenceFunters, kSequenceFrash);
 	}
 
 	_res->unloadAllPakFiles();
@@ -260,6 +261,9 @@ int KyraEngine_v2::go() {
 		startup();
 		runLoop();
 		cleanup();
+		
+		if (_showCredits)
+			seq_playSequences(kSequenceFunters, kSequenceFrash);
 	}
 
 	return 0;
@@ -387,7 +391,8 @@ void KyraEngine_v2::runLoop() {
 	_screen->updateScreen();
 
 	_quitFlag = false;
-	while (!_quitFlag) {
+	_runFlag = true;
+	while (!_quitFlag && _runFlag) {
 		//if (_deathHandler >= 0) {
 		//	removeHandItem();
 		//	waitTicks(5);
@@ -571,7 +576,8 @@ bool KyraEngine_v2::handleInputUnkSub(int x, int y) {
 		if (queryGameFlag(0x1ED)) {
 			_sound->beginFadeOut();
 			_screen->fadeToBlack();
-			_quitFlag = true;
+			_showCredits = true;
+			_runFlag = false;
 		}
 
 		return _sceneScriptState.regs[3] != 0;
