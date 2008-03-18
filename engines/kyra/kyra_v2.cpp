@@ -1375,7 +1375,25 @@ int KyraEngine_v2::inputSceneChange(int x, int y, int unk1, int unk2) {
 	if (wayLength != 0 && wayLength != 0x7D00)
 		refreshNPC = (trySceneChange(_movFacingTable, unk1, unk2) != 0);
 
-	//XXX
+	int charLayer = _screen->getLayer(_mainCharacter.x1, _mainCharacter.y1);
+	if (_layerFlagTable[charLayer] != 0 && !queryGameFlag(0x163)) {
+		if (queryGameFlag(0x164)) {
+			//_screen->hideMouse();
+			_timer->disable(5);
+			runTemporaryScript("_ZANBURN.EMC", 0, 1, 1, 0);
+			_deathHandler = 7;
+			snd_playWanderScoreViaMap(0x53, 1);
+		} else {
+			objectChat(getTableString(0xFD, _cCodeBuffer, 1), 0, 0x83, 0xFD);
+			setGameFlag(0x164);
+			_timer->enable(5);
+			_timer->setCountdown(5, 120);
+		}
+	} else if (queryGameFlag(0x164)) {
+		objectChat(getTableString(0xFE, _cCodeBuffer, 1), 0, 0x83, 0xFE);
+		resetGameFlag(0x164);
+		_timer->disable(5);
+	}
 
 	if (refreshNPC)
 		enterNewSceneUnk2(0);
