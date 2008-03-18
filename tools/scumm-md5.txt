@@ -362,8 +362,8 @@ comi	The Curse of Monkey Island
 
 baseball	Backyard Baseball
 	cf8d13446ec6cb6222287a925fd47c1d	-1	en	All	-	-	-	sev
-	94db6519da85b8d08c976d8e9a858ea7	10044774	All	All	HE CUP	Demo	-	sev
-	8aed489aba45d2b9fb8a04079c9c6e6a	12876596	All	All	HE CUP	Demo	Updated	sev
+	94db6519da85b8d08c976d8e9a858ea7	10044774	All	All	HE CUP	Preview	-	sev
+	8aed489aba45d2b9fb8a04079c9c6e6a	12876596	All	All	HE CUP	Preview	Updated	sev
 
 baseball2001	Backyard Baseball 2001
 	a86f9c49355579c30d4a55b477c0d869	-1	en	All	-	-	-	Kirben
@@ -415,7 +415,7 @@ BluesABCTime	Blue's ABC Time
 
 	7ddeaf52c8b9a50551ce0aa2ac811d07	-1	en	All	-	Demo	-	khalek, sev
 	810a9da887aefa597b0cf3c77d262897	-1	en	All	-	Demo	-	sev
-	356fb5f680b68251333016175935d126	4133436	All	All	HE CUP	Demo	-	sev
+	356fb5f680b68251333016175935d126	4133436	All	All	HE CUP	Preview	-	sev
 
 arttime	Blue's Art Time Activities
 	6269b8fbf51a353e5b501e4ad98cdc67	-1	en	Windows	-	-	-	killiandor
@@ -425,7 +425,7 @@ BluesBirthday	Blue's Birthday Adventure
 
 	2d4acbdcfd8e374c9da8c2e7303a5cd0	-1	en	All	-	Demo	-	Kirben
 	dbf4d59d70b826733f379f998354d350	-1	en	All	-	Demo	-	Kirben
-	fa30c4a7a806629626269b6dcab59a15	7819264	All	All	HE CUP	Demo	-	sev
+	fa30c4a7a806629626269b6dcab59a15	7819264	All	All	HE CUP	Preview	-	sev
 
 fbear	Fatty Bear's Birthday Surprise
 	5b08000a9c47b2887df6506ac767ca68	-1	en	3DO	HE 61	-	-	sev
@@ -544,7 +544,7 @@ FreddisFunShop	Freddi Fish's One-Stop Fun Shop
 catalog	Humongous Interactive Catalog
 	11e6e244078ff09b0f3832e35420e0a7	-1	en	Windows	-	Demo	-	khalek, sev
 	037385a953789190298494d92b89b3d0	-1	en	Windows	HE 72	Demo	-	khalek, sev
-	4c4820518e16e1a0e3616a3b021a04f3	10927456	de	All	HE CUP	Demo	-	Kirben
+	4c4820518e16e1a0e3616a3b021a04f3	10927456	de	All	HE CUP	Preview	-	Kirben
 
 airport	Let's Explore the Airport with Buzzy
 	d6334a5a9b61afe18c368540fdf522ca	-1	en	Mac	-	-	-	Joachim Eberhard
@@ -649,7 +649,7 @@ puttrace	Putt-Putt Enters the Race
 	0bf1a3eb198ca1bd2ebe104825cec770	-1	fr	Windows	HE 99	Demo	-	Mevi
 	c8575e0b973ff1723aba6cd92c642db2	-1	fr	Windows	HE 99	Demo	-	Mevi
 	7c8100e360e8ef05f88069d4cfa0afd1	13108	gb	Windows	HE 99	Demo	-	eriktorbjorn
-	6b27dbcd8d5697d5c918eeca0f68ef6a	3901484	All	All	HE CUP	Demo	-	sev
+	6b27dbcd8d5697d5c918eeca0f68ef6a	3901484	All	All	HE CUP	Preview	-	sev
 
 puttmoon	Putt-Putt Goes to the Moon
 	a9543ef0d79bcb47cd76ec197ad0a967	-1	en	3DO	-	-	-	sev
@@ -777,7 +777,7 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	732845548b1d6c2da572cb6a1bf81b07	-1	de	All	-	Demo	-	Joachim Eberhard
 	e62056ba675ad65d8854ab3c5ad4b3c0	-1	en	Windows	-	Mini Game	-	Trekky
 	19bf6938a94698296bcb0c99c31c91a7	-1	gb	Windows	-	Demo	-	eriktorbjorn
-	49a1739981a89066b1121fac04b710f4	5756234	All	All	HE CUP	Demo	-	sev
+	49a1739981a89066b1121fac04b710f4	5756234	All	All	HE CUP	Preview	-	sev
 
 spyozon	SPY Fox 3: Operation Ozone
 	600abd3e9f47e63e670188b7e4e86ac7	47128	us	All	-	-	-	Kirben
@@ -788,7 +788,7 @@ spyozon	SPY Fox 3: Operation Ozone
 
 	ebd0b2c8a387f18887282afe6cad894a	-1	en	All	-	Demo	-	Kirben
 	a99c39ba65b6086be28aef576da69595	-1	fr	Windows	-	Demo	-	Mevi
-	65563295c3a06493351870f20a1630cf	5235008	All	All	HE CUP	Demo	-	sev
+	65563295c3a06493351870f20a1630cf	5235008	All	All	HE CUP	Preview	-	sev
 
 chase	SPY Fox in Cheese Chase
 	589601b676c98b1c0c987bc031ab68b3	-1	us	All	HE 95	-	-	Kirben
