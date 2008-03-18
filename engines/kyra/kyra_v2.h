@@ -530,14 +530,14 @@ protected:
 	bool lineIsPassable(int x, int y);
 	bool directLinePassable(int x, int y, int toX, int toY);
 
-	int pathfinderUnk1(int *moveTable);
-	int pathfinderUnk2(int index, int v1, int v2);
-	int pathfinderUnk3(int tableLen, int x, int y);
-	int pathfinderUnk4(int index, int v);
-	void pathfinderUnk5(int *moveTable, int unk1, int x, int y, int moveTableSize);
+	int pathfinderInitPositionTable(int *moveTable);
+	int pathfinderAddToPositionTable(int index, int v1, int v2);
+	int pathfinderInitPositionIndexTable(int tableLen, int x, int y);
+	int pathfinderAddToPositionIndexTable(int index, int v);
+	void pathfinderFinializePath(int *moveTable, int unk1, int x, int y, int moveTableSize);
 
-	int _pathfinderUnkTable1[400];
-	int _pathfinderUnkTable2[200];
+	int _pathfinderPositionTable[400];
+	int _pathfinderPositionIndexTable[200];
 
 	// item
 	uint8 _itemHtDat[176];
