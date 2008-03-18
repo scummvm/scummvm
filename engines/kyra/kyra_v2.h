@@ -593,6 +593,7 @@ protected:
 	void clearInventorySlot(int slot, int page);
 	void redrawInventory(int page);
 	void scrollInventoryWheel();
+	int findFreeVisibleInventorySlot();
 
 	struct ItemAnimData {
 		int16 itemIndex;
@@ -603,7 +604,6 @@ protected:
 	} _itemAnimData[15];
 
 	int _nextAnimItem;
-	bool _holdItemAnims;
 
 	// gui
 	void loadButtonShapes();
@@ -908,11 +908,11 @@ protected:
 	void snd_playSoundEffect(int track);
 
 	// timer
-	void timerFunc2(int);
+	void timerFadeOutMessage(int);
 	void timerCauldronAnimation(int);
 	void timerFunc4(int);
 	void timerFunc5(int);
-	void timerFunc6(int);
+	void timerBurnZanthia(int);
 
 	void setTimer1DelaySecs(int secs);
 
@@ -967,12 +967,15 @@ protected:
 	int o2_showChapterMessage(ScriptState *script);
 	int o2_restoreTalkTextMessageBkgd(ScriptState *script);
 	int o2_wsaClose(ScriptState *script);
-	int o2_meanWhileScene(ScriptState *script);	
+	int o2_meanWhileScene(ScriptState *script);
+	int o2_backUpScreen(ScriptState *script);
+	int o2_restoreScreen(ScriptState *script);
 	int o2_displayWsaFrame(ScriptState *script);
 	int o2_displayWsaSequentialFramesLooping(ScriptState *script);
 	int o2_wsaOpen(ScriptState *script);
 	int o2_displayWsaSequentialFrames(ScriptState *script);
 	int o2_displayWsaSequence(ScriptState *script);
+	int o2_addItemToInventory(ScriptState *script);
 	int o2_drawShape(ScriptState *script);	
 	int o2_addItemToCurScene(ScriptState *script);
 	int o2_checkForItem(ScriptState *script);
@@ -990,6 +993,7 @@ protected:
 	int o2_addSpecialExit(ScriptState *script);
 	int o2_setMousePos(ScriptState *script);
 	int o2_showMouse(ScriptState *script);
+	int o2_wipeDownMouseItem(ScriptState *script);
 	//int o2_playSoundEffect(ScriptState *script);
 	int o2_delaySecs(ScriptState *script);
 	int o2_delay(ScriptState *script);
@@ -1000,6 +1004,8 @@ protected:
 	int o2_drawSceneShapeOnPage(ScriptState *script);
 	int o2_disableAnimObject(ScriptState *script);
 	int o2_enableAnimObject(ScriptState *script);
+	int o2_loadPalette384(ScriptState *script);
+	int o2_setPalette384(ScriptState *script);
 	int o2_restoreBackBuffer(ScriptState *script);
 	int o2_backUpInventoryGfx(ScriptState *script);
 	int o2_disableSceneAnim(ScriptState *script);
@@ -1065,6 +1071,9 @@ protected:
 	int o2_customChatFinish(ScriptState *script);
 	int o2_setupSceneAnimation(ScriptState *script);
 	int o2_stopSceneAnimation(ScriptState *script);
+	int o2_disableTimer(ScriptState *script);
+	int o2_enableTimer(ScriptState *script);
+	int o2_setTimerCountdown(ScriptState *script);
 	int o2_processPaletteIndex(ScriptState *script);
 	int o2_getBoolFromStack(ScriptState *script);
 	int o2_setVocHigh(ScriptState *script);

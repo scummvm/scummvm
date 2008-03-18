@@ -347,10 +347,6 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 	if (!stream)
 		return false;
 
-	if (maxSize < stream->size()) {
-		delete stream;
-		return false;
-	}
 	memset(buf, 0, maxSize);
 	stream->read(buf, stream->size());
 	delete stream;

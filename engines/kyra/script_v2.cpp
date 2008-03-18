@@ -27,6 +27,7 @@
 #include "kyra/text_v2.h"
 #include "kyra/wsamovie.h"
 #include "kyra/sound.h"
+#include "kyra/timer.h"
 
 #include "common/endian.h"
 
@@ -196,6 +197,18 @@ int KyraEngine_v2::o2_meanWhileScene(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_backUpScreen(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_backUpScreen(%p) (%d)", (const void *)script, stackPos(0));
+	_screen->copyRegionToBuffer(stackPos(0), 0, 0, 320, 144, _screenBuffer);
+	return 0;
+}
+
+int KyraEngine_v2::o2_restoreScreen(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_restoreScreen(%p) (%d)", (const void *)script, stackPos(0));
+	_screen->copyBlockToPage(stackPos(0), 0, 0, 320, 144, _screenBuffer);
+	return 0;
+}
+
 int KyraEngine_v2::o2_displayWsaFrame(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_displayWsaFrame(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8));
@@ -353,6 +366,17 @@ int KyraEngine_v2::o2_displayWsaSequence(ScriptState *script) {
 	_screen->showMouse();
 
 	return 0;
+}
+
+int KyraEngine_v2::o2_addItemToInventory(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_addItemToInventory(%p) (%d, -, %d)", (const void *)script, stackPos(0), stackPos(2));
+	int slot = findFreeVisibleInventorySlot();
+	if (slot != -1) {
+		_mainCharacter.inventory[slot] = stackPos(0);
+		if (stackPos(2))
+			redrawInventory(0);
+	}
+	return slot;
 }
 
 int KyraEngine_v2::o2_drawShape(ScriptState *script) {
@@ -519,6 +543,33 @@ int KyraEngine_v2::o2_showMouse(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_wipeDownMouseItem(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_wipeDownMouseItem(%p) (-, %d, %d)", (const void *)script, stackPos(1), stackPos(2));
+	_screen->hideMouse();
+	const int x = stackPos(1) - 8;
+	const int y = stackPos(2) - 15;
+
+	if (_itemInHand >= 0) {
+		backUpGfxRect32x32(x, y);
+		uint8 *shape = getShapePtr(_itemInHand+64);
+		for (int curY = y, height = 16; height > 0; height -= 2, curY += 2) {
+			restoreGfxRect32x32(x, y);
+			_screen->setNewShapeHeight(shape, height);
+			uint32 waitTime = _system->getMillis() + _tickLength;
+			_screen->drawShape(0, shape, x, curY, 0, 0);
+			_screen->updateScreen();
+			delayUntil(waitTime);
+		}
+		restoreGfxRect32x32(x, y);
+		_screen->resetShapeHeight(shape);
+	}
+
+	_screen->showMouse();
+	removeHandItem();
+
+	return 0;
+}
+
 int KyraEngine_v2::o2_delaySecs(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_delaySecs(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	delay(stackPos(0) * 1000, true);
@@ -599,6 +650,20 @@ int KyraEngine_v2::o2_disableAnimObject(ScriptState *script) {
 int KyraEngine_v2::o2_enableAnimObject(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_enableAnimObject(%p) (%d)", (const void *)script, stackPos(0));
 	_animObjects[stackPos(0)+1].enabled = true;
+	return 0;
+}
+
+int KyraEngine_v2::o2_loadPalette384(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_loadPalette384(%p) ('%s')", (const void *)script, stackPosString(0));
+	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+	_res->loadFileToBuf(stackPosString(0), _screen->getPalette(1), 384);
+	return 0;
+}
+
+int KyraEngine_v2::o2_setPalette384(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setPalette384(%p) ()", (const void *)script);
+	memcpy(_screen->getPalette(0), _screen->getPalette(1), 384);
+	_screen->setScreenPalette(_screen->getPalette(0));
 	return 0;
 }
 
@@ -1348,6 +1413,24 @@ int KyraEngine_v2::o2_stopSceneAnimation(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_disableTimer(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_disableTimer(%p) (%d)", (const void *)script, stackPos(0));
+	_timer->disable(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_enableTimer(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_enableTimer(%p) (%d)", (const void *)script, stackPos(0));
+	_timer->enable(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_setTimerCountdown(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setTimerCountdown(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	_timer->setCountdown(stackPos(0), stackPos(1));
+	return 0;
+}
+
 int KyraEngine_v2::o2_processPaletteIndex(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_processPaletteIndex(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	uint8 *palette = _screen->getPalette(0);
@@ -1492,8 +1575,8 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		// 0x14
 		Opcode(o2_wsaClose),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_backUpScreen),
+		Opcode(o2_restoreScreen),
 		Opcode(o2_displayWsaFrame),
 		// 0x18
 		Opcode(o2_displayWsaSequentialFramesLooping),
@@ -1501,7 +1584,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_displayWsaSequentialFrames),
 		Opcode(o2_displayWsaSequence),
 		// 0x1c
-		OpcodeUnImpl(),
+		Opcode(o2_addItemToInventory),
 		Opcode(o2_drawShape),
 		Opcode(o2_addItemToCurScene),
 		OpcodeUnImpl(),
@@ -1528,7 +1611,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x30
 		Opcode(o2_showMouse),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_wipeDownMouseItem),
 		OpcodeUnImpl(),
 		// 0x34
 		OpcodeUnImpl(),
@@ -1549,9 +1632,9 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_disableAnimObject),
 		Opcode(o2_enableAnimObject),
 		Opcode(o2_dummy),
-		OpcodeUnImpl(),
+		Opcode(o2_loadPalette384),
 		// 0x44
-		OpcodeUnImpl(),
+		Opcode(o2_setPalette384),
 		Opcode(o2_restoreBackBuffer),
 		Opcode(o2_backUpInventoryGfx),
 		Opcode(o2_disableSceneAnim),
@@ -1661,9 +1744,9 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_setupSceneAnimation),
 		Opcode(o2_stopSceneAnimation),
 		// 0x9c
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_disableTimer),
+		Opcode(o2_enableTimer),
+		Opcode(o2_setTimerCountdown),
 		Opcode(o2_processPaletteIndex),
 		// 0xa0
 		OpcodeUnImpl(),

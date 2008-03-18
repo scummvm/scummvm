@@ -97,7 +97,6 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(&_invWsa, 0, sizeof(_invWsa));
 	_itemAnimTable = 0;
 	_nextAnimItem = 0;
-	_holdItemAnims = false;
 
 	_colorCodeFlag1 = 0;
 	_colorCodeFlag2 = -1;

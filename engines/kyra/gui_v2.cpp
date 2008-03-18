@@ -650,6 +650,14 @@ int KyraEngine_v2::getInventoryItemSlot(uint16 item) {
 	return -1;
 }
 
+int KyraEngine_v2::findFreeVisibleInventorySlot() {
+	for (int i = 0; i < 10; ++i) {
+		if (_mainCharacter.inventory[i] == 0xFFFF)
+			return i;
+	}
+	return -1;
+}
+
 void KyraEngine_v2::removeItemFromInventory(int slot) {
 	_mainCharacter.inventory[slot] = 0xFFFF;
 	if (slot < 10) {

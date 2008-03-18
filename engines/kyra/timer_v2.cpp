@@ -34,15 +34,15 @@ void KyraEngine_v2::setupTimers() {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::setupTimers()");
 
 	_timer->addTimer(0, 0, 5, 1);
-	_timer->addTimer(1, TimerV2(timerFunc2), -1, 1);
+	_timer->addTimer(1, TimerV2(timerFadeOutMessage), -1, 1);
 	_timer->addTimer(2, TimerV2(timerCauldronAnimation), 1, 1);
 	_timer->addTimer(3, TimerV2(timerFunc4), 1, 0);
 	_timer->addTimer(4, TimerV2(timerFunc5), 1, 0);
-	_timer->addTimer(5, TimerV2(timerFunc6), 1, 0);
+	_timer->addTimer(5, TimerV2(timerBurnZanthia), 1, 0);
 }
 
-void KyraEngine_v2::timerFunc2(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerFunc2(%d)", arg);
+void KyraEngine_v2::timerFadeOutMessage(int arg) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerFadeOutMessage(%d)", arg);
 	if (_shownMessage)
 		_msgUnk1 = 1;
 }
@@ -78,16 +78,16 @@ void KyraEngine_v2::timerFunc5(int arg) {
 		updateSceneAnim(4, i);
 		delay(6);
 	}
-	//_unk1 = 4;
+	_deathHandler = 4;
 }
 
-void KyraEngine_v2::timerFunc6(int arg) {
-	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerFunc6(%d)", arg);
+void KyraEngine_v2::timerBurnZanthia(int arg) {
+	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerBurnZanthia(%d)", arg);
 	_timer->disable(5);
-	_screen->hideMouse();
+	//_screen->hideMouse();
 	snd_playSoundEffect(0x2D);
 	runTemporaryScript("_ZANBURN.EMC", 0, 1, 1, 0);
-	//_unk1 = 7;
+	_deathHandler = 7;
 	snd_playWanderScoreViaMap(0x53, 1);
 }
 

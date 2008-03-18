@@ -196,7 +196,7 @@ void KyraEngine_v2::refreshAnimObjectsIfNeed() {
 void KyraEngine_v2::updateItemAnimations() {
 	bool nextFrame = false;
 
-	if (_itemAnimData[0].itemIndex == -1 || _holdItemAnims)
+	if (_itemAnimData[0].itemIndex == -1 || _inventorySaved)
 		return;	
 
 	ItemAnimData *s = &_itemAnimData[_nextAnimItem++];
