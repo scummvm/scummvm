@@ -857,6 +857,27 @@ int KyraEngine_v2::o2_setCauldronState(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_showPickUpString(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_showPickUpString(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	const int item = stackPos(0);
+	
+	int string = 0;
+	if (stackPos(1) == 1) {
+		if (_lang == 1)
+			string = getItemCommandStringPickUp(item);
+		else
+			string = 7;
+	} else {
+		if (_lang == 1)
+			string = getItemCommandStringInv(item);
+		else
+			string = 8;
+	}
+
+	updateCommandLineEx(item+54, string, 0xD6);
+	return 0;
+}
+
 int KyraEngine_v2::o2_getRand(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getRand(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	assert(stackPos(0) < stackPos(1));
@@ -939,6 +960,30 @@ int	KyraEngine_v2::o2_fillRect(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_fillRect(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	_screen->fillRect(stackPos(1), stackPos(2), stackPos(1)+stackPos(3), stackPos(2)+stackPos(4), stackPos(5), stackPos(0));
 	return 0;
+}
+
+int KyraEngine_v2::o2_waitForConfirmationClick(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_waitForConfirmationClick(%p) (%d)", (const void *)script, stackPos(0));
+	resetSkipFlag();
+	uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
+
+	while (_system->getMillis() < maxWaitTime) {
+		int inputFlag = checkInput(0);
+		removeInputTop();
+
+		if (inputFlag == 198 || inputFlag == 199) {
+			_sceneScriptState.regs[1] = _mouseX;
+			_sceneScriptState.regs[2] = _mouseY;
+			return 0;
+		}
+
+		update();
+		_system->delayMillis(10);
+	}
+
+	_sceneScriptState.regs[1] = _mouseX;
+	_sceneScriptState.regs[2] = _mouseY;
+	return 1;
 }
 
 int KyraEngine_v2::o2_encodeShape(ScriptState *script) {
@@ -1489,6 +1534,29 @@ int KyraEngine_v2::o2_updateTwoSceneAnims(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_getRainbowRoomData(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getRainbowRoomData(%p) (%d)", (const void *)script, stackPos(0));
+	return _rainbowRoomData[stackPos(0)];
+}
+
+int KyraEngine_v2::o2_drawSceneShapeEx(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_drawSceneShapeEx(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	const int itemShape = stackPos(0) + 64;
+	const int x = stackPos(1);
+	const int y = stackPos(2);
+	const bool skipFronUpdate = (stackPos(3) != 0);
+
+	_screen->drawShape(2, _sceneShapeTable[6], x, y, 2, 0);
+	_screen->drawShape(2, getShapePtr(itemShape), x+2, y+2, 2, 0);
+
+	if (!skipFronUpdate) {
+		_screen->copyRegion(x, y, x, y, 0x15, 0x14, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+	}
+
+	return 0;
+}
+
 int KyraEngine_v2::o2_getBoolFromStack(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getBoolFromStack(%p) ()", (const void *)script);
 	return stackPos(0) ? 1 : 0;
@@ -1707,7 +1775,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_blockOutRegion),
 		OpcodeUnImpl(),
 		Opcode(o2_setCauldronState),
-		OpcodeUnImpl(),
+		Opcode(o2_showPickUpString),
 		// 0x60
 		Opcode(o2_getRand),
 		OpcodeUnImpl(),
@@ -1722,7 +1790,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_waitForConfirmationClick),
 		// 0x6c
 		Opcode(o2_encodeShape),
 		Opcode(o2_defineRoomEntrance),
@@ -1790,8 +1858,8 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_processPaletteIndex),
 		// 0xa0
 		Opcode(o2_updateTwoSceneAnims),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_getRainbowRoomData),
+		Opcode(o2_drawSceneShapeEx),
 		Opcode(o2_getBoolFromStack),
 		// 0xa4
 		OpcodeUnImpl(),

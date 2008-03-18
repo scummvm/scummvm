@@ -1031,11 +1031,13 @@ protected:
 	int o2_blockInRegion(ScriptState *script);
 	int o2_blockOutRegion(ScriptState *script);
 	int o2_setCauldronState(ScriptState *script);
+	int o2_showPickUpString(ScriptState *script);
 	int o2_getRand(ScriptState *script);
 	int o2_setDeathHandlerFlag(ScriptState *script);
 	int o2_setDrawNoShapeFlag(ScriptState *script);
 	int o2_showLetter(ScriptState *script);
 	int o2_fillRect(ScriptState *script);
+	int o2_waitForConfirmationClick(ScriptState *script);
 	int o2_encodeShape(ScriptState *script);
 	int o2_defineRoomEntrance(ScriptState *script);
 	int o2_runTemporaryScript(ScriptState *script);
@@ -1083,6 +1085,8 @@ protected:
 	int o2_setTimerCountdown(ScriptState *script);
 	int o2_processPaletteIndex(ScriptState *script);
 	int o2_updateTwoSceneAnims(ScriptState *script);
+	int o2_getRainbowRoomData(ScriptState *script);
+	int o2_drawSceneShapeEx(ScriptState *script);
 	int o2_getBoolFromStack(ScriptState *script);
 	int o2_setVocHigh(ScriptState *script);
 	int o2_getVocHigh(ScriptState *script);
@@ -1186,6 +1190,8 @@ protected:
 
 	Sequence *_sequences;
 	NestedSequence *_nSequences;
+
+	static const uint8 _rainbowRoomData[];
 
 	// color code related vars
 	int _colorCodeFlag1;
