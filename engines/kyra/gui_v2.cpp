@@ -687,7 +687,7 @@ bool KyraEngine_v2::checkInventoryItemExchange(uint16 handItem, int slot) {
 		_screen->showMouse();
 
 		if (_lang != 1)
-			updateCommandLineEx(newItem+53, 0x2E, 0xD6);
+			updateCommandLineEx(newItem+54, 0x2E, 0xD6);
 
 		return true;
 	}
