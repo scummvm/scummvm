@@ -926,7 +926,7 @@ int KyraEngine_v2::pathfinderAddToPositionIndexTable(int index, int v) {
 }
 
 void KyraEngine_v2::pathfinderFinializePath(int *moveTable, int tableLen, int x, int y, int moveTableSize) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderFinializePath(%p, %d, %d, %d, %d)", moveTable, tableLen, x, y, moveTableSize);
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderFinializePath(%p, %d, %d, %d, %d)", (void *)moveTable, tableLen, x, y, moveTableSize);
 	int x1 = 0, y1 = 0;
 	int x2 = 0, y2 = 0;
 	int index1 = 0, index2 = 0;

@@ -373,7 +373,7 @@ void KyraEngine_v2::updateSceneAnim(int anim, int newFrame) {
 }
 
 void KyraEngine_v2::drawSceneAnimObject(AnimObj *obj, int x, int y, int layer) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::drawSceneAnimObject(%p, %d, %d, layer)", (const void*)obj, x, y, layer);
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::drawSceneAnimObject(%p, %d, %d, %d)", (const void*)obj, x, y, layer);
 	if (obj->type == 1) {
 		if (obj->shapeIndex1 == 0xFFFF)
 			return;
@@ -407,7 +407,7 @@ void KyraEngine_v2::drawSceneAnimObject(AnimObj *obj, int x, int y, int layer) {
 }
 
 void KyraEngine_v2::drawCharacterAnimObject(AnimObj *obj, int x, int y, int layer) {
-	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::drawCharacterAnimObject(%p, %d, %d, layer)", (const void*)obj, x, y, layer);
+	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::drawCharacterAnimObject(%p, %d, %d, %d)", (const void*)obj, x, y, layer);
 	if (_drawNoShapeFlag || obj->shapeIndex1 == 0xFFFF)
 		return;
 	_screen->drawShape(2, getShapePtr(obj->shapeIndex1), x, y, 2, obj->flags | 4, layer, _charScaleX, _charScaleY);
