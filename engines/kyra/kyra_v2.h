@@ -307,6 +307,8 @@ protected:
 
 	void updateMouse();
 
+	void dinoRide();
+
 	struct Button;
 	int checkInput(Button *buttonList, bool mainLoop = false);
 	void removeInputTop();
@@ -961,7 +963,9 @@ protected:
 	int o2_getCharacterScene(ScriptState *script);
 	int o2_setSceneComment(ScriptState *script);
 	int o2_setCharacterAnimFrame(ScriptState *script);
+	int o2_setCharacterFacing(ScriptState *script);
 	int o2_trySceneChange(ScriptState *script);
+	int o2_moveCharacter(ScriptState *script);
 	int o2_customCharacterChat(ScriptState *script);
 	int o2_soundFadeOut(ScriptState *script);
 	int o2_showChapterMessage(ScriptState *script);
@@ -1000,6 +1004,7 @@ protected:
 	int o2_setScaleTableItem(ScriptState *script);
 	int o2_setDrawLayerTableItem(ScriptState *script);
 	int o2_setCharPalEntry(ScriptState *script);
+	int o2_loadZShapes(ScriptState *script);
 	int o2_drawSceneShape(ScriptState *script);
 	int o2_drawSceneShapeOnPage(ScriptState *script);
 	int o2_disableAnimObject(ScriptState *script);
@@ -1016,11 +1021,13 @@ protected:
 	int o2_enterNewSceneEx(ScriptState *script);
 	int o2_switchScene(ScriptState *script);
 	int o2_getShapeFlag1(ScriptState *script);
+	int o2_setPathfinderFlag(ScriptState *script);
 	int o2_setLayerFlag(ScriptState *script);
 	int o2_setZanthiaPos(ScriptState *script);
 	int o2_loadMusicTrack(ScriptState *script);
 	int o2_playWanderScoreViaMap(ScriptState *script);
 	int o2_playSoundEffect(ScriptState *script);
+	int o2_setSceneAnimPos(ScriptState *script);
 	int o2_blockInRegion(ScriptState *script);
 	int o2_blockOutRegion(ScriptState *script);
 	int o2_setCauldronState(ScriptState *script);
@@ -1075,6 +1082,7 @@ protected:
 	int o2_enableTimer(ScriptState *script);
 	int o2_setTimerCountdown(ScriptState *script);
 	int o2_processPaletteIndex(ScriptState *script);
+	int o2_updateTwoSceneAnims(ScriptState *script);
 	int o2_getBoolFromStack(ScriptState *script);
 	int o2_setVocHigh(ScriptState *script);
 	int o2_getVocHigh(ScriptState *script);

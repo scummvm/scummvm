@@ -125,6 +125,13 @@ int KyraEngine_v2::o2_setCharacterAnimFrame(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_setCharacterFacing(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setCharacterFacing(%p) (%d)", (const void *)script, stackPos(0));
+	_mainCharacter.facing = stackPos(0);
+	_overwriteSceneFacing = 1;
+	return 0;
+}
+
 int KyraEngine_v2::o2_trySceneChange(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_trySceneChange(%p) (%d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPos(1), stackPos(2), stackPos(3));
@@ -142,6 +149,12 @@ int KyraEngine_v2::o2_trySceneChange(ScriptState *script) {
 	} else {
 		return (_unk4 != 0) ? 1 : 0;
 	}
+}
+
+int KyraEngine_v2::o2_moveCharacter(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_moveCharacter(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	moveCharacter(stackPos(0), stackPos(1), stackPos(2));
+	return 0;
 }
 
 int KyraEngine_v2::o2_customCharacterChat(ScriptState *script) {
@@ -603,6 +616,12 @@ int KyraEngine_v2::o2_setCharPalEntry(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_loadZShapes(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_loadZShapes(%p) (%d)", (const void *)script, stackPos(0));
+	loadZShapes(stackPos(0));
+	return 0;
+}
+
 int KyraEngine_v2::o2_drawSceneShape(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_drawSceneShape(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1),
 		stackPos(2), stackPos(3));
@@ -767,6 +786,12 @@ int KyraEngine_v2::o2_getShapeFlag1(ScriptState *script) {
 	return _screen->getShapeFlag1(stackPos(0), stackPos(1));
 }
 
+int KyraEngine_v2::o2_setPathfinderFlag(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setPathfinderFlag(%p) (%d)", (const void *)script, stackPos(0));
+	_pathfinderFlag = stackPos(0);
+	return 0;
+}
+
 int KyraEngine_v2::o2_setLayerFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setLayerFlag(%p) (%d)", (const void *)script, stackPos(0));
 	int layer = stackPos(0);
@@ -803,6 +828,13 @@ int KyraEngine_v2::o2_playWanderScoreViaMap(ScriptState *script) {
 int KyraEngine_v2::o2_playSoundEffect(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
 	snd_playSoundEffect(stackPos(0));
+	return 0;
+}
+
+int KyraEngine_v2::o2_setSceneAnimPos(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setSceneAnimPos(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	_sceneAnims[stackPos(0)].x = stackPos(1);
+	_sceneAnims[stackPos(0)].y = stackPos(2);
 	return 0;
 }
 
@@ -1449,6 +1481,14 @@ int KyraEngine_v2::o2_processPaletteIndex(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_updateTwoSceneAnims(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_updateTwoSceneAnims(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	updateSceneAnim(stackPos(0), stackPos(1));
+	updateSceneAnim(stackPos(2), stackPos(3));
+	_specialSceneScriptRunFlag = false;
+	return 0;
+}
+
 int KyraEngine_v2::o2_getBoolFromStack(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getBoolFromStack(%p) ()", (const void *)script);
 	return stackPos(0) ? 1 : 0;
@@ -1564,9 +1604,9 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		Opcode(o2_setCharacterAnimFrame),
 		// 0x0c
-		OpcodeUnImpl(),
+		Opcode(o2_setCharacterFacing),
 		Opcode(o2_trySceneChange),
-		OpcodeUnImpl(),
+		Opcode(o2_moveCharacter),
 		Opcode(o2_customCharacterChat),
 		// 0x10
 		Opcode(o2_soundFadeOut),
@@ -1625,7 +1665,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_setDrawLayerTableItem),
 		// 0x3c
 		Opcode(o2_setCharPalEntry),
-		OpcodeUnImpl(),
+		Opcode(o2_loadZShapes),
 		Opcode(o2_drawSceneShape),
 		Opcode(o2_drawSceneShapeOnPage),
 		// 0x40
@@ -1652,7 +1692,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_enterNewSceneEx),
 		Opcode(o2_switchScene),
 		Opcode(o2_getShapeFlag1),
-		OpcodeUnImpl(),
+		Opcode(o2_setPathfinderFlag),
 		// 0x54
 		OpcodeUnImpl(),
 		Opcode(o2_setLayerFlag),
@@ -1661,7 +1701,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x58
 		Opcode(o2_playWanderScoreViaMap),
 		Opcode(o2_playSoundEffect),
-		OpcodeUnImpl(),
+		Opcode(o2_setSceneAnimPos),
 		Opcode(o2_blockInRegion),
 		// 0x5c
 		Opcode(o2_blockOutRegion),
@@ -1749,7 +1789,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_setTimerCountdown),
 		Opcode(o2_processPaletteIndex),
 		// 0xa0
-		OpcodeUnImpl(),
+		Opcode(o2_updateTwoSceneAnims),
 		OpcodeUnImpl(),
 		OpcodeUnImpl(),
 		Opcode(o2_getBoolFromStack),

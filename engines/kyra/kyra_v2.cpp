@@ -397,10 +397,10 @@ void KyraEngine_v2::runLoop() {
 		if (_system->getMillis() > _nextIdleAnim)
 			showIdleAnim();
 
-		//if (queryGameFlag(0x159) {
-		//	sub_C86A();
-		//	resetGameFlag(0x159);
-		//}
+		if (queryGameFlag(0x159)) {
+			dinoRide();
+			resetGameFlag(0x159);
+		}
 
 		if (queryGameFlag(0x124) && !queryGameFlag(0x125)) {
 			_mainCharacter.animFrame = 32;
@@ -2130,6 +2130,43 @@ void KyraEngine_v2::listItemsInCauldron() {
 		strcat((char*)_unkBuf500Bytes, ".");
 		objectChat((const char*)_unkBuf500Bytes, 0, 0x83, _cauldronTable[itemsInCauldron-1]+54);
 	}
+}
+
+#pragma mark -
+
+void KyraEngine_v2::dinoRide() {
+	_mainCharX = _mainCharY = -1;
+
+	setGameFlag(0x15A);
+	enterNewScene(41, -1, 0, 0, 0);
+	resetGameFlag(0x15A);
+
+	setGameFlag(0x15B);
+	enterNewScene(39, -1, 0, 0, 0);
+	resetGameFlag(0x15B);
+
+	setGameFlag(0x16F);
+
+	setGameFlag(0x15C);
+	enterNewScene(42, -1, 0, 0, 0);
+	resetGameFlag(0x15C);
+
+	setGameFlag(0x15D);
+	enterNewScene(39, -1, 0, 0, 0);
+	resetGameFlag(0x15D);
+
+	setGameFlag(0x15E);
+	enterNewScene(40, -1, 0, 0, 0);
+	resetGameFlag(0x15E);
+
+	_mainCharX = 262;
+	_mainCharY = 28;
+	_mainCharacter.facing = 5;
+	_mainCharacter.animFrame = _characterFrameTable[5];
+	enterNewScene(39, 4, 0, 0, 0);
+	setHandItem(0x61);
+	_screen->showMouse();
+	resetGameFlag(0x159);
 }
 
 #pragma mark -
