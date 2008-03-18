@@ -33,6 +33,7 @@
 namespace Kyra {
 
 void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk2, int unk3) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::enterNewScene(%d, %d, %d, %d, %d)", newScene, facing, unk1, unk2, unk3);
 	if (_newChapterFile != _currentTalkFile) {
 		_currentTalkFile = _newChapterFile;
 		if (_flags.isTalkie) {
@@ -136,6 +137,7 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 }
 
 void KyraEngine_v2::enterNewSceneUnk1(int facing, int unk1, int unk2) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::enterNewSceneUnk1(%d, %d, %d)", facing, unk1, unk2);
 	int x = 0, y = 0;
 	int x2 = 0, y2 = 0;
 	bool needProc = true;
@@ -231,6 +233,7 @@ void KyraEngine_v2::enterNewSceneUnk1(int facing, int unk1, int unk2) {
 }
 
 void KyraEngine_v2::enterNewSceneUnk2(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::enterNewSceneUnk2(%d)", unk1);
 	_unk3 = -1;
 
 	if (_flags.isTalkie) {
@@ -259,6 +262,7 @@ void KyraEngine_v2::enterNewSceneUnk2(int unk1) {
 }
 
 int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::trySceneChange(%p, %d, %d)", (const void*)moveTable, unk1, updateChar);
 	bool running = true;
 	bool unkFlag = false;
 	int8 updateType = -1;
@@ -325,6 +329,7 @@ int KyraEngine_v2::trySceneChange(int *moveTable, int unk1, int updateChar) {
 }
 
 int KyraEngine_v2::checkSceneChange() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::checkSceneChange()");
 	SceneDesc &curScene = _sceneList[_mainCharacter.sceneId];
 	int charX = _mainCharacter.x1, charY = _mainCharacter.y1;
 	int facing = 0;
@@ -378,12 +383,14 @@ int KyraEngine_v2::checkSceneChange() {
 }
 
 void KyraEngine_v2::unloadScene() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::unloadScene()");
 	_scriptInterpreter->unloadScript(&_sceneScriptData);
 	freeSceneShapePtrs();
 	freeSceneAnims();
 }
 
 void KyraEngine_v2::loadScenePal() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::loadScenePal()");
 	uint16 sceneId = _mainCharacter.sceneId;
 	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
 
@@ -397,6 +404,7 @@ void KyraEngine_v2::loadScenePal() {
 }
 
 void KyraEngine_v2::loadSceneMsc() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::loadSceneMsc()");
 	uint16 sceneId = _mainCharacter.sceneId;
 	char filename[14];
 	strcpy(filename, _sceneList[sceneId].filename);
@@ -405,6 +413,7 @@ void KyraEngine_v2::loadSceneMsc() {
 }
 
 void KyraEngine_v2::startSceneScript(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::startSceneScript(%d)", unk1);
 	uint16 sceneId = _mainCharacter.sceneId;
 	char filename[14];
 
@@ -465,6 +474,7 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 }
 
 void KyraEngine_v2::runSceneScript2() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript2()");
 	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
 	_sceneScriptState.regs[4] = _itemInHand;
 	_scriptInterpreter->startScript(&_sceneScriptState, 2);
@@ -474,6 +484,7 @@ void KyraEngine_v2::runSceneScript2() {
 }
 
 void KyraEngine_v2::runSceneScript4(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript4(%d)", unk1);
 	_sceneScriptState.regs[4] = _itemInHand;
 	_sceneScriptState.regs[5] = unk1;
 
@@ -483,6 +494,7 @@ void KyraEngine_v2::runSceneScript4(int unk1) {
 }
 
 void KyraEngine_v2::runSceneScript6() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript6()");
 	_scriptInterpreter->initScript(&_sceneScriptState, &_sceneScriptData);
 
 	_sceneScriptState.regs[0] = _mainCharacter.sceneId;
@@ -496,6 +508,7 @@ void KyraEngine_v2::runSceneScript6() {
 }
 
 void KyraEngine_v2::runSceneScript7() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::runSceneScript7()");
 	int oldPage = _screen->_curPage;
 	_screen->_curPage = 2;
 
@@ -507,6 +520,7 @@ void KyraEngine_v2::runSceneScript7() {
 }
 
 void KyraEngine_v2::initSceneAnims(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::initSceneAnims(%d)", unk1);
 	for (int i = 0; i < ARRAYSIZE(_animObjects); ++i)
 		_animObjects[i].enabled = 0;
 
@@ -665,6 +679,7 @@ void KyraEngine_v2::initSceneAnims(int unk1) {
 }
 
 void KyraEngine_v2::initSceneScreen(int unk1) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::initSceneScreen(%d)", unk1);
 	if (_unkSceneScreenFlag1) {
 		_screen->copyRegion(0, 0, 0, 0, 320, 144, 2, 0, Screen::CR_NO_P_CHECK);
 		return;
@@ -691,6 +706,7 @@ void KyraEngine_v2::initSceneScreen(int unk1) {
 }
 
 void KyraEngine_v2::updateSpecialSceneScripts() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::updateSpecialSceneScripts()");
 	uint32 nextTime = _system->getMillis() + _tickLength;
 	const int startScript = _lastProcessedSceneScript;
 
@@ -718,13 +734,24 @@ void KyraEngine_v2::updateSpecialSceneScripts() {
 }
 
 void KyraEngine_v2::freeSceneShapePtrs() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::freeSceneShapePtrs()");
 	for (int i = 0; i < ARRAYSIZE(_sceneShapeTable); ++i)
 		delete [] _sceneShapeTable[i];
 	memset(_sceneShapeTable, 0, sizeof(_sceneShapeTable));
 }
 
 void KyraEngine_v2::freeSceneAnims() {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::freeSceneAnims()");
 	Common::for_each(_sceneAnimMovie, _sceneAnimMovie+ARRAYSIZE(_sceneAnimMovie), Common::mem_fun(&WSAMovieV2::close));
+}
+
+void KyraEngine_v2::fadeScenePal(int srcIndex, int delayTime) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::fadeScenePal(%d, %d)", srcIndex, delayTime);
+	uint8 *dst = _screen->getPalette(0) + 336;
+	const uint8 *src = _scenePal + (srcIndex << 4)*3;
+	memcpy(dst, src, 48);
+
+	_screen->fadePalette(_screen->getPalette(0), delayTime, &_updateFunctor);
 }
 
 #pragma mark -
@@ -788,6 +815,7 @@ bool KyraEngine_v2::lineIsPassable(int x, int y) {
 }
 
 bool KyraEngine_v2::directLinePassable(int x, int y, int toX, int toY) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::directLinePassable(%d, %d, %d, %d)", x, y, toX, toY);
 	while (x != toX && y != toY) {
 		int facing = getFacingFromPointToPoint(x, y, toX, toY);
 		x += _addXPosTable[facing];
@@ -799,6 +827,7 @@ bool KyraEngine_v2::directLinePassable(int x, int y, int toX, int toY) {
 }
 
 int KyraEngine_v2::pathfinderInitPositionTable(int *moveTable) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderInitPositionTable(%p)", (const void*)moveTable);
 	bool breakLoop = false;
 	int *moveTableCur = moveTable;
 	int oldEntry = *moveTableCur, curEntry = *moveTableCur;
@@ -849,6 +878,7 @@ int KyraEngine_v2::pathfinderInitPositionTable(int *moveTable) {
 }
 
 int KyraEngine_v2::pathfinderAddToPositionTable(int index, int v1, int v2) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderAddToPositionTable(%d, %d, %d)", index, v1, v2);
 	_pathfinderPositionTable[index<<1] = v1;
 	_pathfinderPositionTable[(index<<1)+1] = v2;
 	++index;
@@ -858,6 +888,7 @@ int KyraEngine_v2::pathfinderAddToPositionTable(int index, int v1, int v2) {
 }
 
 int KyraEngine_v2::pathfinderInitPositionIndexTable(int tableLen, int x, int y) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderInitPositionIndexTable(%d, %d, %d)", tableLen, x, y);
 	int x1 = 0, y1 = 0;
 	int x2 = 0, y2 = 0;
 	int lastEntry = 0;
@@ -886,6 +917,7 @@ int KyraEngine_v2::pathfinderInitPositionIndexTable(int tableLen, int x, int y) 
 }
 
 int KyraEngine_v2::pathfinderAddToPositionIndexTable(int index, int v) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderAddToPositionIndexTable(%d, %d)", index, v);
 	_pathfinderPositionIndexTable[index] = v;
 	++index;
 	if (index >= 199)
@@ -894,6 +926,7 @@ int KyraEngine_v2::pathfinderAddToPositionIndexTable(int index, int v) {
 }
 
 void KyraEngine_v2::pathfinderFinializePath(int *moveTable, int tableLen, int x, int y, int moveTableSize) {
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::pathfinderFinializePath(%p, %d, %d, %d, %d)", moveTable, tableLen, x, y, moveTableSize);
 	int x1 = 0, y1 = 0;
 	int x2 = 0, y2 = 0;
 	int index1 = 0, index2 = 0;
@@ -912,13 +945,4 @@ void KyraEngine_v2::pathfinderFinializePath(int *moveTable, int tableLen, int x,
 	}
 }
 
-void KyraEngine_v2::fadeScenePal(int srcIndex, int delayTime) {
-	uint8 *dst = _screen->getPalette(0) + 336;
-	const uint8 *src = _scenePal + (srcIndex << 4)*3;
-	memcpy(dst, src, 48);
-
-	_screen->fadePalette(_screen->getPalette(0), delayTime, &_updateFunctor);
-}
-
 } // end of namespace Kyra
-
