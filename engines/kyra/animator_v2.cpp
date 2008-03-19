@@ -65,10 +65,10 @@ KyraEngine_v2::AnimObj *KyraEngine_v2::initAnimList(AnimObj *list, AnimObj *entr
 
 KyraEngine_v2::AnimObj *KyraEngine_v2::addToAnimListSorted(AnimObj *list, AnimObj *add) {
 	debugC(9, kDebugLevelAnimator, "KyraEngine_v2::addToAnimListSorted(%p, %p)", (const void*)list, (const void*)add);
-	if (!list) {
-		add->nextObject = 0;
+	add->nextObject = 0;
+
+	if (!list)
 		return add;
-	}
 
 	if (add->yPos1 <= list->yPos1) {
 		add->nextObject = list;

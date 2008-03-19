@@ -1468,11 +1468,6 @@ int KyraEngine_v2::o2_setupSceneAnimation(ScriptState *script) {
 	obj->height = anim.height;
 	obj->width2 = obj->height2 = anim.specialSize;
 
-	// be sure we don't have an the object allready in the anim list
-	// else we get look ups in some places, the original doesn't do this
-	// though
-	_animList = deleteAnimListEntry(_animList, obj);
-
 	_animList = addToAnimListSorted(_animList, obj);
 	obj->needRefresh = 1;
 	obj->unk8 = 1;
@@ -1481,8 +1476,8 @@ int KyraEngine_v2::o2_setupSceneAnimation(ScriptState *script) {
 
 int KyraEngine_v2::o2_stopSceneAnimation(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_stopSceneAnimation(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	const int index = 1+stackPos(0);
-	AnimObj &obj = _animObjects[index];
+	const int index = stackPos(0);
+	AnimObj &obj = _animObjects[1+index];
 	restorePage3();
 	obj.shapeIndex3 = 0xFFFF;
 	obj.animNum = 0xFFFF;
@@ -1491,7 +1486,7 @@ int KyraEngine_v2::o2_stopSceneAnimation(ScriptState *script) {
 	if (stackPos(1))
 		refreshAnimObjectsIfNeed();
 	obj.enabled = false;
-	_animList = deleteAnimListEntry(_animList, &_animObjects[index]);
+	_animList = deleteAnimListEntry(_animList, &_animObjects[1+index]);
 	
 	if (_sceneAnimMovie[index]->opened())
 		_sceneAnimMovie[index]->close();

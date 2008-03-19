@@ -742,6 +742,8 @@ void KyraEngine_v2::freeSceneShapePtrs() {
 
 void KyraEngine_v2::freeSceneAnims() {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::freeSceneAnims()");
+	for (int i = 0; i < ARRAYSIZE(_sceneAnims); ++i)
+		_sceneAnims[i].flags = 0;
 	Common::for_each(_sceneAnimMovie, _sceneAnimMovie+ARRAYSIZE(_sceneAnimMovie), Common::mem_fun(&WSAMovieV2::close));
 }
 
