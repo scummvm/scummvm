@@ -26,6 +26,8 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "graphics/surface.h"
+#include "backends/fs/psp/psp-fs-factory.h"
+
 
 #include <SDL.h>
 
@@ -135,6 +137,8 @@ public:
 	Common::SaveFileManager *getSavefileManager() { return _savefile; }
 	Audio::Mixer *getMixer() { return _mixer; }
 	Common::TimerManager *getTimerManager() { return _timer; }
+	FilesystemFactory *getFilesystemFactory() { return &PSPFilesystemFactory::instance(); }
+	void getTimeAndDate(struct tm &t) const;
 
 	virtual void quit();
 

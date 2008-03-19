@@ -146,12 +146,10 @@ void OSystem::getTimeAndDate(struct tm &t) const {
 	#include "backends/fs/palmos/palmos-fs-factory.h"
 #elif defined(__PLAYSTATION2__)
 	#include "backends/fs/ps2/ps2-fs-factory.h"
-#elif defined(__PSP__)
-	#include "backends/fs/psp/psp-fs-factory.h"
 #endif
 
 FilesystemFactory *OSystem::getFilesystemFactory() {
-	#if defined(__amigaos4__) || defined(__DC__) || defined(__SYMBIAN32__) || defined(UNIX) || defined(WIN32)
+	#if defined(__amigaos4__) || defined(__DC__) || defined(__SYMBIAN32__) || defined(UNIX) || defined(WIN32) || defined(__PSP__)
 		// These ports already implement this function, so it should never be called.
 		return 0;
 	#elif defined(__DS__)
@@ -162,8 +160,6 @@ FilesystemFactory *OSystem::getFilesystemFactory() {
 		return &PalmOSFilesystemFactory::instance();
 	#elif defined(__PLAYSTATION2__)
 		return &Ps2FilesystemFactory::instance();
-	#elif defined(__PSP__)
-		return &PSPFilesystemFactory::instance();
 	#else
 		#error Unknown and unsupported backend in OSystem::getFilesystemFactory
 	#endif

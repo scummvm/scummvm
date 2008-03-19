@@ -637,6 +637,11 @@ void OSystem_PSP::quit() {
 	sceKernelExitGame();
 }
 
+void OSystem_PSP::getTimeAndDate(struct tm &t) const {
+	time_t curTime = time(0);
+	t = *localtime(&curTime);
+}
+
 void OSystem_PSP::setWindowCaption(const char *caption) {
 }
 
