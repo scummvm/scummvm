@@ -50,7 +50,6 @@ public:
 	void copyFrom(MemoryBlock *src, uint32 srcPos, uint32 destPos, uint32 srcLen);
 	void copyFrom(const byte *src, uint32 srcPos, uint32 destPos, uint32 srcLen);
 	void reallocate(uint32 size);
-	void saveToFile(const Common::String &filename);
 };
 
 class Memory {

@@ -99,12 +99,4 @@ void MemoryBlock::reallocate(uint32 size1) {
 	if (!_data) error ("Failed reallocating memory block");
 }
 
-void MemoryBlock::saveToFile(const Common::String &filename) {
-	Common::File *f = new Common::File();
-	f->open(filename.c_str(), Common::File::kFileWriteMode);
-	f->write(_data, _size);
-	f->close();
-	delete f;
-}
-
 } // end of namespace Lure
