@@ -814,11 +814,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
-	// Simon the Sorcerer 1 - English Amiga ECS Floppy
+	// Simon the Sorcerer 1 - English Amiga OCS Floppy
 	{
 		{
 			"simon1",
-			"ECS Floppy",
+			"OCS Floppy",
 
 			{
 	{ "gameamiga",		GAME_BASEFILE,	"bb94a688e247695d912cce9d0173d73a", -1},
@@ -837,11 +837,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_32COLOR | GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
-	// Simon the Sorcerer 1 - English Amiga ECS Demo
+	// Simon the Sorcerer 1 - English Amiga OCS Demo
 	{
 		{
 			"simon1",
-			"ECS Demo",
+			"OCS Demo",
 
 			{
 	{ "gameamiga",		GAME_BASEFILE,	"4696309eed9d7335c62ebb87a0f006ad", -1},
