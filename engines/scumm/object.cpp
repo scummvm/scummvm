@@ -155,7 +155,6 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 
 void ScummEngine::clearOwnerOf(int obj) {
 	int i;
-	uint16 *a;
 
 	// Stop the associated object script code (else crashes might occurs)
 	stopObjectScript(obj);
@@ -182,8 +181,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 				_inventory[i] = 0;
 
 				// Now fill up the gap removing the object from the inventory created.
-				a = _inventory;
-				for (i = 0; i < _numInventory - 1; i++, a++) {
+				for (i = 0; i < _numInventory - 1; i++) {
 					if (!_inventory[i] && _inventory[i+1]) {
 						_inventory[i] = _inventory[i+1];
 						_inventory[i+1] = 0;
