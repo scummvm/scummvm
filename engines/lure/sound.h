@@ -34,12 +34,10 @@ class MidiParser;
 
 namespace Lure {
 
-#define NUM_CHANNELS_OUTER 8
-#define NUM_CHANNELS_INNER 16
+#define NUM_CHANNELS 16
 
 struct ChannelEntry {
 	MidiChannel *midiChannel;
-	bool isMusic;
 	uint8 volume;
 };
 
@@ -55,6 +53,7 @@ private:
 	MidiDriver *_driver;
 	MidiParser *_parser;
 	ChannelEntry *_channels;
+	bool _isMusic;
 	bool _isPlaying;
 
 	void queueUpdatePos();
@@ -65,11 +64,11 @@ private:
 	bool _passThrough;
 
 public:
-	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS_INNER],
-		uint8 channelNum, uint8 soundNum, bool isMusic, void *soundData, uint32 size);
+	MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
+		 uint8 channelNum, uint8 soundNum, bool isMusic, uint8 numChannels, void *soundData, uint32 size);
 	~MidiMusic();
 	void setVolume(int volume);
-	int getVolume()	{ return _volume; }
+	int getVolume() { return _volume; }
 
 	void playSong(uint16 songNum);
 	void stopSong() { stopMusic(); }
@@ -89,11 +88,11 @@ public:
 	void metaEvent(byte type, byte *data, uint16 length);
 
 	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo(void)	{ return _driver ? _driver->getBaseTempo() : 0; }
+	uint32 getBaseTempo(void) { return _driver ? _driver->getBaseTempo() : 0; }
 
 	//Channel allocation functions
-	MidiChannel *allocateChannel()		{ return 0; }
-	MidiChannel *getPercussionChannel()	{ return 0; }
+	MidiChannel *allocateChannel() { return 0; }
+	MidiChannel *getPercussionChannel() { return 0; }
 
 	uint8 channelNumber() { return _channelNumber; }
 	uint8 soundNumber() { return _soundNumber; }
@@ -111,8 +110,8 @@ private:
 	MidiDriver *_driver;
 	ManagedList<SoundDescResource *> _activeSounds;
 	ManagedList<MidiMusic *> _playingSounds;
-	ChannelEntry _channelsInner[NUM_CHANNELS_INNER];
-	bool _channelsInUse[NUM_CHANNELS_OUTER];
+	ChannelEntry _channelsInner[NUM_CHANNELS];
+	bool _channelsInUse[NUM_CHANNELS];
 	bool _isPlaying;
 	bool _nativeMT32;
 	bool _isRoland;
@@ -138,7 +137,6 @@ public:
 	void stopSound(uint8 soundIndex);
 	void killSound(uint8 soundNumber);
 	void setVolume(uint8 soundNumber, uint8 volume);
-	void setVolume(uint8 volume);
 	void tidySounds();
 	uint8 descIndexOf(uint8 soundNumber);
 	SoundDescResource *findSound(uint8 soundNumber);
@@ -153,7 +151,7 @@ public:
 
 	// The following methods implement the external sound player module
 	void musicInterface_Initialise();
-	void musicInterface_Play(uint8 soundNumber, uint8 channelNumber);
+	void musicInterface_Play(uint8 soundNumber, uint8 channelNumber, uint8 numChannels = 4);
 	void musicInterface_Stop(uint8 soundNumber);
 	bool musicInterface_CheckPlaying(uint8 soundNumber);
 	void musicInterface_SetVolume(uint8 channelNum, uint8 volume);

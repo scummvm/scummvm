@@ -38,7 +38,6 @@ namespace Lure {
 
 SoundManager::SoundManager() {
 	Disk &disk = Disk::getReference();
-	Game &game = Game::getReference();
 	_soundMutex = g_system->createMutex();
 
 	int index;
@@ -51,7 +50,7 @@ SoundManager::SoundManager() {
 	_isRoland = midiDriver != MD_ADLIB;
 	_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 
-	Common::set_to(_channelsInUse, _channelsInUse+NUM_CHANNELS_OUTER, false);
+	Common::set_to(_channelsInUse, _channelsInUse + NUM_CHANNELS, false);
 
 	_driver = MidiDriver::createMidi(midiDriver);
 	int statusCode = _driver->open();
@@ -63,10 +62,10 @@ SoundManager::SoundManager() {
 		if (_nativeMT32)
 			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-		for (index = 0; index < NUM_CHANNELS_INNER; ++index) {
+		for (index = 0; index < NUM_CHANNELS; ++index) {
 			_channelsInner[index].midiChannel = _driver->allocateChannel();
-			_channelsInner[index].isMusic = false;
-			_channelsInner[index].volume = game.sfxVolume();
+			/* 90 is power on default for midi compliant devices */
+			_channelsInner[index].volume = 90;
 		}
 	}
 }
@@ -173,7 +172,7 @@ void SoundManager::killSounds() {
 
 	// Clear the active sounds
 	_activeSounds.clear();
-	Common::set_to(_channelsInUse, _channelsInUse+NUM_CHANNELS_OUTER, false);
+	Common::set_to(_channelsInUse, _channelsInUse + NUM_CHANNELS, false);
 }
 
 void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
@@ -188,58 +187,56 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 		return;
 
 	SoundDescResource &rec = soundDescs()[soundIndex];
-	int numChannels = 2; //(rec.numChannels >> 2) & 3;
+	int numChannels;
 
-	int channelCtr = 0;
-	while (channelCtr <= (NUM_CHANNELS_OUTER - numChannels)) {
-		if (!_channelsInUse[channelCtr]) {
-			bool foundSpace = true;
+	if (_isRoland)
+		numChannels = (rec.numChannels & 3) + 1;
+	else
+		numChannels = ((rec.numChannels >> 2) & 3) + 1;
 
-			int channelCtr2 = 1;
-			while (channelCtr2 < numChannels) {
-				foundSpace = !_channelsInUse[channelCtr + channelCtr2];
-				if (!foundSpace) break;
-				++channelCtr2;
-			}
-
-			if (foundSpace)
+	int channelCtr, channelCtr2;
+	for (channelCtr = 0; channelCtr <= (NUM_CHANNELS - numChannels); ++channelCtr) {
+		for (channelCtr2 = 0; channelCtr2 < numChannels; ++channelCtr2)
+			if (_channelsInUse[channelCtr + channelCtr2])
 				break;
-		}
 
-		++channelCtr;
+		if (channelCtr2 == numChannels)
+			break;
 	}
 
-	if (channelCtr > NUM_CHANNELS_OUTER - numChannels) {
+	if (channelCtr > (NUM_CHANNELS - numChannels)) {
 		// No channels free
 		debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::addSound - no channels free");
 		return;
 	}
 
 	// Mark the found channels as in use
-	Common::set_to(_channelsInUse+channelCtr, _channelsInUse+channelCtr+numChannels, true);
+	Common::set_to(_channelsInUse+channelCtr, _channelsInUse+channelCtr + numChannels, true);
 
 	SoundDescResource *newEntry = new SoundDescResource();
 	newEntry->soundNumber = rec.soundNumber;
 	newEntry->channel = channelCtr;
 	newEntry->numChannels = numChannels;
 	newEntry->flags = rec.flags;
-	newEntry->volume = rec.volume;
+	if (_isRoland)
+		newEntry->volume = rec.volume;
+	else /* resource volumes do not seem to work well with our adlib emu */
+		newEntry->volume = 240; /* 255 causes clipping with adlib */
 	_activeSounds.push_back(newEntry);
 
-	// Map each two channels to four of the 16 available channels
-	byte innerChannel = (channelCtr / 2) * 4;
-	musicInterface_Play(rec.soundNumber, innerChannel);
-	setVolume(rec.soundNumber, rec.volume);
+	musicInterface_Play(rec.soundNumber, channelCtr, numChannels);
+	musicInterface_SetVolume(channelCtr, newEntry->volume);
 }
 
 void SoundManager::addSound2(uint8 soundIndex) {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::addSound2 index=%d", soundIndex);
 	tidySounds();
 
-	if (soundIndex == 6)
+	if (soundIndex == 6) {
 		// Chinese torture
-		addSound(6);
-	else {
+		stopSound(6); // sometimes its still playing when restarted
+		addSound(6, false);
+	} else {
 		SoundDescResource &descEntry = soundDescs()[soundIndex];
 		SoundDescResource *rec = findSound(descEntry.soundNumber);
 		if (rec == NULL)
@@ -268,15 +265,6 @@ void SoundManager::setVolume(uint8 soundNumber, uint8 volume) {
 	SoundDescResource *entry = findSound(soundNumber);
 	if (entry)
 		musicInterface_SetVolume(entry->channel, volume);
-}
-
-void SoundManager::setVolume(uint8 volume) {
-	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::setVolume volume=%d", volume);
-
-	for (int index = 0; index < NUM_CHANNELS_INNER; ++index) {
-		_channelsInner[index].midiChannel->volume(volume);
-		_channelsInner[index].volume = volume;
-	}
 }
 
 uint8 SoundManager::descIndexOf(uint8 soundNumber) {
@@ -315,7 +303,7 @@ void SoundManager::tidySounds() {
 	while (i != _activeSounds.end()) {
 		SoundDescResource *rec = *i;
 
-		if (musicInterface_CheckPlaying(rec->soundNumber & 0x7f))
+		if (musicInterface_CheckPlaying(rec->soundNumber))
 			// Still playing, so move to next entry
 			++i;
 		else {
@@ -353,8 +341,8 @@ void SoundManager::restoreSounds() {
 		if ((rec->numChannels != 0) && ((rec->flags & SF_RESTORE) != 0)) {
 			Common::set_to(_channelsInUse+rec->channel, _channelsInUse+rec->channel+rec->numChannels, true);
 
-			musicInterface_Play(rec->soundNumber, rec->channel);
-			musicInterface_SetVolume(rec->soundNumber, rec->volume);
+			musicInterface_Play(rec->soundNumber, rec->channel, rec->numChannels);
+			musicInterface_SetVolume(rec->channel, rec->volume);
 		}
 
 		++i;
@@ -395,7 +383,7 @@ void SoundManager::fadeOut() {
 // musicInterface_Play
 // Play the specified sound
 
-void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber) {
+void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, uint8 numChannels) {
 	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "musicInterface_Play soundNumber=%d, channel=%d",
 		soundNumber, channelNumber);
 	Game &game = Game::getReference();
@@ -422,7 +410,7 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber) {
 	uint8 *soundStart = _soundData->data() + dataOfs;
 	uint32 dataSize;
 
-	if (soundNumber == _soundsTotal - 1)
+	if (soundNum == _soundsTotal - 1)
 		dataSize = _soundData->size() - dataOfs;
 	else {
 		uint32 nextDataOfs = READ_LE_UINT32(_soundData->data() + (soundNum + 1) * 4 + 2);
@@ -430,9 +418,8 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber) {
 	}
 
 	g_system->lockMutex(_soundMutex);
-	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNumber,
-		isMusic, soundStart, dataSize);
-	sound->setVolume(volume);
+	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNum,
+		isMusic, numChannels, soundStart, dataSize);
 	_playingSounds.push_back(sound);
 	g_system->unlockMutex(_soundMutex);
 }
@@ -573,21 +560,21 @@ void SoundManager::doTimer() {
 
 /*------------------------------------------------------------------------*/
 
-MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS_INNER],
-					 uint8 channelNum, uint8 soundNum, bool isMusic, void *soundData, uint32 size) {
-	 Game &game = Game::getReference();
+MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
+					 uint8 channelNum, uint8 soundNum, bool isMusic, uint8 numChannels, void *soundData, uint32 size) {
 	_driver = driver;
 	_channels = channels;
 	_soundNumber = soundNum;
 	_channelNumber = channelNum;
+	_isMusic = isMusic;
 
-	_numChannels = 4;
+	_numChannels = numChannels;
 	_volume = 0;
 	for (int i = 0; i < _numChannels; ++i) {
-		_channels[_channelNumber + i].isMusic = isMusic;
-		_channels[_channelNumber + i].volume = isMusic ? game.musicVolume() : game.sfxVolume();
+		/* 90 is power on default for midi compliant devices */
+		_channels[_channelNumber + i].volume = 90;
 	}
-	setVolume(0xff);
+	setVolume(240); /* 255 causes clipping with mastervol 192 and adlib */
 
 	_passThrough = false;
 
@@ -645,10 +632,14 @@ void MidiMusic::setVolume(int volume) {
 
 	_volume = volume;
 
+	Game &game = Game::getReference();
+	volume *= _isMusic ? game.musicVolume() : game.sfxVolume();
+
 	for (int i = 0; i < _numChannels; ++i) {
 		if (_channels[_channelNumber + i].midiChannel != NULL)
 			_channels[_channelNumber + i].midiChannel->volume(
-				_channels[_channelNumber + i].volume * _volume / 255);
+				_channels[_channelNumber + i].volume *
+				volume / 65025);
 	}
 }
 
@@ -683,14 +674,16 @@ void MidiMusic::send(uint32 b) {
 	byte channel = _channelNumber + ((byte)(b & 0x0F) % _numChannels);
 #endif
 
-	if ((channel >= NUM_CHANNELS_INNER) || (_channels[channel].midiChannel == NULL))
+	if ((channel >= NUM_CHANNELS) || (_channels[channel].midiChannel == NULL))
 		return;
 
 	if ((b & 0xFFF0) == 0x07B0) {
-		// Adjust volume changes by master volume
+		// Adjust volume changes by song and master volume
 		byte volume = (byte)((b >> 16) & 0x7F);
 		_channels[channel].volume = volume;
-		volume = volume * _volume / 255;
+		Game &game = Game::getReference();
+		int master_volume = _isMusic ? game.musicVolume() : game.sfxVolume();
+		volume = volume * _volume * master_volume / 65025;
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xF0) == 0xC0) {
 		if (Sound.isRoland() && !Sound.hasNativeMT32()) {
