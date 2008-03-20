@@ -831,7 +831,7 @@ int KyraEngine_v2::bookButton(Button *button) {
 	_res->loadFileToBuf("_BOOK.COL", _screen->getPalette(0), 768);
 	loadBookBkgd();
 	showBookPage();
-	_screen->copyRegion(0, 0, 0, 0, 0x140, 0xC8, 2, 0);
+	_screen->copyRegion(0, 0, 0, 0, 0x140, 0xC8, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 
 	int oldItemInHand = _itemInHand;
@@ -968,7 +968,7 @@ void KyraEngine_v2::bookLoop() {
 			showBookPage();
 			snd_playSoundEffect(0x64);
 			_screen->hideMouse();
-			_screen->copyRegion(0, 0, 0, 0, 0x140, 0xC8, 2, 0);
+			_screen->copyRegion(0, 0, 0, 0, 0x140, 0xC8, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 			_screen->showMouse();
 		}
