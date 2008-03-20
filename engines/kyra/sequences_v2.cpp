@@ -39,7 +39,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_playSequences(%i, %i)", startSeq, endSeq);
 	seq_init();
 
-	bool allowSkip = (startSeq == kSequenceTitle) ? false : true;
+	bool allowSkip = (!(_flags.isDemo && !_flags.isTalkie) && (startSeq == kSequenceTitle)) ? false : true;
 
 	if (endSeq == -1)
 		endSeq = startSeq;
@@ -81,7 +81,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		_seqFrameCounter = 0;
 		_seqStartTime = _system->getMillis();
 
-		allowSkip = (seqNum == 2) ? false : true;
+		allowSkip = (!(_flags.isDemo && !_flags.isTalkie) && (seqNum == kSequenceTitle)) ? false : true;
 
 		if (_sequences[seqNum].flags & 2) {
 			_screen->loadBitmap(_sequences[seqNum].cpsFile, 2, 2, _screen->getPalette(0));
@@ -280,15 +280,20 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		seq_sequenceCommand(_sequences[seqNum].finalCommand);
 		seq_resetAllTextEntries();
 
-		if (_flags.isDemo && seqNum == kSequenceDemoFisher) {
-			_abortIntroFlag = false;
-			resetSkipFlag();
-			seqNum = kSequenceDemoVirgin;
-		} else if ((seqNum != kSequenceTitle && seqNum < kSequenceZanfaun &&
+
+		if (_flags.isDemo && !_flags.isTalkie) {
+			if (seqNum == kSequenceDemoFisher) {
+				_abortIntroFlag = false;
+				resetSkipFlag();
+				seqNum = kSequenceDemoVirgin;
+			}
+		} else {
+			if ((seqNum != kSequenceTitle && seqNum < kSequenceZanfaun &&
 			(_abortIntroFlag || skipFlag())) || seqNum == kSequenceZanfaun) {
-			_abortIntroFlag = false;
-			resetSkipFlag();
-			seqNum = kSequenceWestwood;
+				_abortIntroFlag = false;
+				resetSkipFlag();
+				seqNum = kSequenceWestwood;
+			}
 		}
 
 		if (_menuChoice) {
