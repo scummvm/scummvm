@@ -50,6 +50,7 @@ namespace {
 #define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA1)
 
 #define KYRA2_CD_FLAGS FLAGS(false, false, true, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, Kyra::GI_KYRA2)
 #define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, true, Kyra::GI_KYRA2)
@@ -328,7 +329,19 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_CD_FLAGS
 	},
 
-	{ // Demo
+	{ // Interactive Demo
+		{
+			"kyra2",
+			"Demo",
+			AD_ENTRY1("THANKS.CPS", "b1a78d990b120bb2234b7094f74e30a5"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		KYRA2_CD_DEMO_FLAGS
+	},
+
+	{ // Non-Interactive Demo
 		{
 			"kyra2",
 			"Demo",

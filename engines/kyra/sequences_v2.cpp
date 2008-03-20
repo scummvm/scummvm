@@ -2604,7 +2604,7 @@ void KyraEngine_v2::seq_init() {
 	_res->loadFileList(_sequencePakList, _sequencePakListSize);
 
 	int numShp = -1;
-	if (_flags.isDemo) {
+	if (_flags.isDemo && !_flags.isTalkie) {
 		int size;
 		const uint8 *tmp = _staticres->loadRawData(k2SeqplayShapeDefs, size);
 		_demoShapeDefs = new uint8[size];

@@ -75,7 +75,7 @@ bool Resource::reset() {
 			loadPakFile("CHAPTER1.VRM");
 	} else if (_vm->game() == GI_KYRA2) {
 		// mouse pointer, fonts, etc. required for initializing
-		if (_vm->gameFlags().isDemo) {
+		if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) {
 			loadPakFile("GENERAL.PAK");
 		} else {
 			loadPakFile("INTROGEN.PAK");

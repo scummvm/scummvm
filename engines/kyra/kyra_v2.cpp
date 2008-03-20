@@ -216,7 +216,7 @@ int KyraEngine_v2::init() {
 	}
 
 	// No mouse display in demo
-	if (_flags.isDemo)
+	if (_flags.isDemo && !_flags.isTalkie)
 		return 0;
 
 	tim_setupOpcodes();
