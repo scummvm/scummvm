@@ -935,7 +935,7 @@ int KyraEngine_v2::o2_showLetter(ScriptState *script) {
 		bookPrintText(2, letterBuffer, 0xC, 0xA, 0x20);
 	}
 
-	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->fadePalette(_screen->getPalette(0), 0x14);
 	_screen->setMouseCursor(0, 0, getShapePtr(0));
 	setMousePos(280, 160);
