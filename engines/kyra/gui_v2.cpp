@@ -738,7 +738,7 @@ void KyraEngine_v2::scrollInventoryWheel() {
 	int frames = movie.opened() ? movie.frames() : 6;
 	memcpy(_screenBuffer, _screen->getCPagePtr(2), 64000);
 	uint8 overlay[0x100];
-	_screen->generateOverlay(_screen->getPalette(0), overlay, 0, 32);
+	_screen->generateOverlay(_screen->getPalette(0), overlay, 0, 50);
 	_screen->hideMouse();
 	_screen->copyRegion(0x46, 0x90, 0x46, 0x79, 0x71, 0x17, 0, 2);
 	_screen->showMouse();

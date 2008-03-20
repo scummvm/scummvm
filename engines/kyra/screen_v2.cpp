@@ -152,7 +152,7 @@ uint8 *Screen_v2::generateOverlay(const uint8 *palette, uint8 *buffer, int start
 }
 
 void Screen_v2::applyOverlay(int x, int y, int w, int h, int pageNum, const uint8 *overlay) {
-	uint8 * dst = getPagePtr(pageNum) + y * 320 + x;
+	uint8 *dst = getPagePtr(pageNum) + y * 320 + x;
 	while (h--) {
 		for (int wi = 0; wi < w; ++wi) {
 			uint8 index = *dst;
