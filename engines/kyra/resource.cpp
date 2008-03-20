@@ -220,7 +220,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 				// contain all pak files listed in filedata.fdt
 				// so we don't do anything here if they are non
 				// existant.
-			else if (!loadPakFile(filename)) {
+			} else if (!loadPakFile(filename)) {
 				error("couldn't load file '%s'", filename.c_str());
 				return false;
 			}
