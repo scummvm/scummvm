@@ -215,7 +215,12 @@ bool Resource::loadFileList(const Common::String &filedata) {
 		filename.toUppercase();
 
 		if (filename.hasSuffix(".PAK")) {
-			if (!loadPakFile(filename)) {
+			if (!isAccessable(filename) && _vm->gameFlags().isDemo) {
+				// the demo version supplied with Kyra3 does not 
+				// contain all pak files listed in filedata.fdt
+				// so we don't do anything here if they are non
+				// existant.
+			else if (!loadPakFile(filename)) {
 				error("couldn't load file '%s'", filename.c_str());
 				return false;
 			}
