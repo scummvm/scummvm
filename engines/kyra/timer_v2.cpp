@@ -84,7 +84,7 @@ void KyraEngine_v2::timerFunc5(int arg) {
 void KyraEngine_v2::timerBurnZanthia(int arg) {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerBurnZanthia(%d)", arg);
 	_timer->disable(5);
-	//_screen->hideMouse();
+	_screen->hideMouse();
 	snd_playSoundEffect(0x2D);
 	runTemporaryScript("_ZANBURN.EMC", 0, 1, 1, 0);
 	_deathHandler = 7;

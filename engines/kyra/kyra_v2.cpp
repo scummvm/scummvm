@@ -1383,7 +1383,7 @@ int KyraEngine_v2::inputSceneChange(int x, int y, int unk1, int unk2) {
 	int charLayer = _screen->getLayer(_mainCharacter.x1, _mainCharacter.y1);
 	if (_layerFlagTable[charLayer] != 0 && !queryGameFlag(0x163)) {
 		if (queryGameFlag(0x164)) {
-			//_screen->hideMouse();
+			_screen->hideMouse();
 			_timer->disable(5);
 			runTemporaryScript("_ZANBURN.EMC", 0, 1, 1, 0);
 			_deathHandler = 7;
