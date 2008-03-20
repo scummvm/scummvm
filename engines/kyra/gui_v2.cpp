@@ -740,7 +740,7 @@ void KyraEngine_v2::scrollInventoryWheel() {
 	uint8 overlay[0x100];
 	_screen->generateOverlay(_screen->getPalette(0), overlay, 0, 50);
 	_screen->hideMouse();
-	_screen->copyRegion(0x46, 0x90, 0x46, 0x79, 0x71, 0x17, 0, 2);
+	_screen->copyRegion(0x46, 0x90, 0x46, 0x79, 0x71, 0x17, 0, 2, Screen::CR_NO_P_CHECK);
 	_screen->showMouse();
 	snd_playSoundEffect(0x25);
 
@@ -766,7 +766,7 @@ void KyraEngine_v2::scrollInventoryWheel() {
 		}
 
 		_screen->applyOverlay(0x46, 0x79, 0x71, 0x17, 2, overlay);
-		_screen->copyRegion(0x46, y+0x79, 0x46, 0x90, 0x71, 0x2E, 2, 0);
+		_screen->copyRegion(0x46, y+0x79, 0x46, 0x90, 0x71, 0x2E, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 
 		delayUntil(endTime);
