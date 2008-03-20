@@ -261,7 +261,8 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 	if (_lastMusicCommand >= 0 && !_unkSceneScreenFlag1)
 		snd_playWanderScoreViaMap(_lastMusicCommand, 1);
 
-	_screen->showMouse();
+	while (!_screen->isMouseVisible())
+		_screen->showMouse();
 
 	setTimer1DelaySecs(7);
 	_shownMessage = " ";
