@@ -243,7 +243,6 @@ void TimerManager::loadDataFromFile(Common::InSaveFile *file, int version) {
 				timer->enabled = file->readByte();
 				timer->countdown = file->readSint32BE();
 				timer->lastUpdate = file->readSint32BE();
-				debug("%d %d", id, timer->lastUpdate);
 			} else {
 				warning("Loading timer data for non existing timer %d", id);
 				file->seek(7, SEEK_CUR);
