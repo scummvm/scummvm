@@ -84,68 +84,39 @@ void Screen_v2::generateGrayOverlay(const uint8 *srcPal, uint8 *grayOverlay, int
 		grayOverlay[i] = findLeastDifferentColor(tmpPal + 3 * i, srcPal, lastColor);
 }
 
-uint8 *Screen_v2::generateOverlay(const uint8 *palette, uint8 *buffer, int startColor, int fac) {
+uint8 *Screen_v2::generateOverlay(const uint8 *palette, uint8 *buffer, int startColor, uint16 factor) {
 	if (!palette || !buffer)
 		return buffer;
 
-	fac = MIN(0xFF, fac);
+	factor = MIN<uint16>(255, factor);
+	factor >>= 1;
+	factor &= 0xFF;
 
-	byte col1, col2, col3;
-	col1 = palette[startColor * 3 + 0];
-	col2 = palette[startColor * 3 + 1];
-	col3 = palette[startColor * 3 + 2];
-	*buffer = 0;
+	const byte col1 = palette[startColor * 3 + 0];
+	const byte col2 = palette[startColor * 3 + 1];
+	const byte col3 = palette[startColor * 3 + 2];
 
-	uint8 *dst = buffer + 1;
+	uint8 *dst = buffer;
+	*dst++ = 0;
+
 	for (int i = 1; i != 255; ++i) {
-		byte procCol1, procCol2, procCol3;
+		uint8 processedPalette[3];
 		const uint8 *src = palette + i*3;
-		const int factor = (fac >> 1) & 0xFF;
 		byte col;
 		
 		col = *src++;
 		col -= ((((col - col1) * factor) << 1) >> 8) & 0xFF;
-		procCol1 = col;
+		processedPalette[0] = col;
 
 		col = *src++;
 		col -= ((((col - col2) * factor) << 1) >> 8) & 0xFF;
-		procCol2 = col;
+		processedPalette[1] = col;
 
 		col = *src++;
 		col -= ((((col - col3) * factor) << 1) >> 8) & 0xFF;
-		procCol3 = col;
+		processedPalette[2] = col;
 
-		uint16 minValue = 0xFFFF;
-		uint8 colorNumber = startColor;
-		const uint8 *pal = palette + 3;
-		for (int count = 0xFF, cur = 1; count > 0; --count, ++cur) {
-			pal += 3;
-			if (cur != i) {
-				uint16 value = 0;
-				pal -= 3;
-				col = *pal++ - procCol1;
-				col *= col;
-				value += col;
-
-				col = *pal++ - procCol2;
-				col *= col;
-				value += col;
-
-				col = *pal++ - procCol3;
-				col *= col;
-				value += col;
-
-				if (value == 0) {
-					colorNumber = i;
-					break;
-				} else if (value < minValue) {
-					minValue = value;
-					colorNumber = cur;
-				}
-			}
-		}
-
-		*dst++ = colorNumber;
+		*dst++ = findLeastDifferentColor(processedPalette, palette+3, 255)+1;
 	}
 
 	return buffer;
