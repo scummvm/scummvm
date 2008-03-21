@@ -159,7 +159,7 @@ void KyraEngine_v1::endCharacterChat(int8 charNum, int16 convoInitialized) {
 
 	if (charNum > 4 && charNum < 11) {
 		//TODO: weird _game_inventory stuff here
-		warning("STUB: endCharacterChat() for high charnums");
+		//warning("STUB: endCharacterChat() for high charnums");
 	}
 
 	if (convoInitialized != 0) {
@@ -247,7 +247,7 @@ int KyraEngine_v1::initCharacterChat(int8 charNum) {
 
 	if (charNum > 4 && charNum < 11) {
 		// TODO: Fill in weird _game_inventory stuff here
-		warning("STUB: initCharacterChat() for high charnums");
+		//warning("STUB: initCharacterChat() for high charnums");
 	}
 
 	_animator->flagAllObjectsForRefresh();

@@ -646,6 +646,7 @@ int KyraEngine_v1::o1_customPrintTalkString(ScriptState *script) {
 			snd_voiceWaitForFinish();
 			snd_playVoiceFile(stackPos(0));
 		}
+
 		_skipFlag = false;
 		if (textEnabled())
 			_text->printTalkTextMessage(stackPosString(1), stackPos(2), stackPos(3), stackPos(4) & 0xFF, 0, 2);
@@ -660,8 +661,6 @@ int KyraEngine_v1::o1_customPrintTalkString(ScriptState *script) {
 
 int KyraEngine_v1::o1_restoreCustomPrintBackground(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v1::o1_restoreCustomPrintBackground(%p) ()", (const void *)script);
-	snd_voiceWaitForFinish();
-	snd_stopVoice();
 	_text->restoreTalkTextMessageBkgd(2, 0);
 	return 0;
 }
