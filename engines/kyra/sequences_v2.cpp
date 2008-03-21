@@ -1968,13 +1968,14 @@ void KyraEngine_v2::seq_cmpFadeFrame(const char *cmpFile) {
 }
 
 void KyraEngine_v2::seq_playTalkText(uint8 chatNum) {
-	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_playIntroChat(%i)", chatNum);
+	debugC(9, kDebugLevelMain, "KyraEngine_v2::seq_playTalkText(%i)", chatNum);
 
 	assert(chatNum < _sequenceSoundListSize);
 
 	if (chatNum < 12 && !_flags.isDemo && textEnabled())
 		seq_setTextEntry(chatNum, 160, 168, _sequenceStringsDuration[chatNum], 160);
 
+	_speechFile = _sequenceSoundList[chatNum];
 	_sound->voicePlay(_sequenceSoundList[chatNum]);
 }
 

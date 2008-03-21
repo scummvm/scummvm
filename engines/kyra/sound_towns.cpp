@@ -1437,9 +1437,9 @@ void SoundTowns_v2::voicePlay(const char *file) {
 
 	int h = 0;
 	if (_currentSFX) {
-		while (_mixer->isSoundHandleActive(_sfxHandles[h]))
+		while (_mixer->isSoundHandleActive(_sfxHandles[h]) && h < kNumChannelHandles)
 			h++;
-		if (h >= kNumVocHandles)
+		if (h >= kNumChannelHandles)
 			return;
 	}
 

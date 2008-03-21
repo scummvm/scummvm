@@ -1708,6 +1708,7 @@ void KyraEngine_v2::restoreGfxRect32x32(int x, int y) {
 #pragma mark -
 
 void KyraEngine_v2::openTalkFile(int newFile) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::openTalkFile(%d)", newFile);
 	char talkFilename[16];
 
 	if (_oldTalkFile > 0) {
@@ -1732,10 +1733,17 @@ void KyraEngine_v2::snd_playVoiceFile(int id) {
 	char vocFile[9];
 	assert(id >= 0 && id <= 9999999);
 	sprintf(vocFile, "%07d", id);
-	_sound->voicePlay(vocFile);
+	if (_sound->voiceFileIsPresent(vocFile)) {
+		while (!_sound->voicePlay(vocFile)) {
+			updateWithText();
+			_system->delayMillis(10);
+		}
+		_speechFile = vocFile;
+	}
 }
 
 void KyraEngine_v2::snd_loadSoundFile(int id) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::snd_loadSoundFile(%d)", id);
 	if (id < 0 || !_trackMap)
 		return;
 
@@ -1746,6 +1754,7 @@ void KyraEngine_v2::snd_loadSoundFile(int id) {
 }
 
 void KyraEngine_v2::playVoice(int high, int low) {
+	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::playVoice(%d, %d)", high, low);
 	if (!_flags.isTalkie)
 		return;
 	int vocFile = high * 10000 + low * 10;

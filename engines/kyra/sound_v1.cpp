@@ -66,6 +66,7 @@ void KyraEngine_v1::snd_playVoiceFile(int id) {
 	char vocFile[9];
 	assert(id >= 0 && id < 9999);
 	sprintf(vocFile, "%03d", id);
+	_speechFile = vocFile;
 	_sound->voicePlay(vocFile);
 }
 

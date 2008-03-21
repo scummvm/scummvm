@@ -52,7 +52,6 @@
 #include "sound/softsynth/ym2612.h"
 
 #include "kyra/kyra.h"
-#include "kyra/kyra_v2.h"
 
 namespace Audio {
 class AudioStream;
@@ -149,6 +148,8 @@ public:
 	void enableSFX(bool enable) { _sfxEnabled = enable; }
 	bool sfxEnabled() const { return _sfxEnabled; }
 
+	virtual bool voiceFileIsPresent(const char *file);
+
 	/**
 	 * Plays the specified voice file.
 	 *
@@ -160,28 +161,29 @@ public:
 	 * files
 	 *
 	 * @param file	file to be played
+	 * @param isSfx marks file as sfx instead of voice
+	 * @return channel the voice file is played on
 	 */
-	virtual void voicePlay(const char *file);
+	virtual bool voicePlay(const char *file, bool isSfx = false);
 
 	/**
 	 * Checks if a voice is being played.
 	 *
 	 * @return true when playing, else false
 	 */
-	bool voiceIsPlaying();
+	bool voiceIsPlaying(const char *file = 0);
 
 	/**
 	 * Stops playback of the current voice.
 	 */
-	void voiceStop();
-
+	void voiceStop(const char *file = 0);
 protected:
 	const char *fileListEntry(int file) const { return (_soundDataList != 0 && file >= 0 && file < _soundDataList->_fileListLen) ? _soundDataList->_fileList[file] : ""; }
 	const void *cdaData() const { return _soundDataList != 0 ? _soundDataList->_cdaTracks : 0; }
 	const int cdaTrackNum() const { return _soundDataList != 0 ? _soundDataList->_cdaNumTracks : 0; }
 
 	enum {
-		kNumVocHandles = 4
+		kNumChannelHandles = 4
 	};
 
 	int _musicEnabled;
@@ -194,8 +196,12 @@ protected:
 
 private:
 	const AudioDataStruct *_soundDataList;
-	Audio::AudioStream *_currentVocFile;
-	Audio::SoundHandle _vocHandles[kNumVocHandles];
+
+	struct SoundChannel {
+		Common::String file;
+		Audio::SoundHandle channelHandle;
+	};
+	SoundChannel _soundChannels[kNumChannelHandles];
 
 	struct SpeechCodecs {
 		const char *fileext;
@@ -429,7 +435,7 @@ private:
 	int _lastTrack;
 
 	Audio::AudioStream *_currentSFX;
-	Audio::SoundHandle _sfxHandles[kNumVocHandles];
+	Audio::SoundHandle _sfxHandles[kNumChannelHandles];
 
 	//SoundTowns_v2_TwnDriver *_driver;
 	uint8 *_twnTrackData;

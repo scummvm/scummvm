@@ -84,6 +84,12 @@ enum kDebugLevels {
 	kDebugLevelTimer = 1 << 10				// prints debug output of "TimerManager" functions
 };
 
+enum kMusicDataID {
+	kMusicIntro = 0,
+	kMusicIngame,
+	kMusicFinale
+};
+
 class Screen;
 class Resource;
 class Sound;
@@ -191,6 +197,8 @@ protected:
 	uint8 _flagsTable[100];	// TODO: check this value
 
 	// sound
+	Common::String _speechFile;
+
 	int _curMusicTheme;
 	int _curSfxFile;
 	int16 _lastMusicCommand;

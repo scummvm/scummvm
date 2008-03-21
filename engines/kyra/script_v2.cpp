@@ -884,6 +884,11 @@ int KyraEngine_v2::o2_getRand(ScriptState *script) {
 	return _rnd.getRandomNumberRng(stackPos(0), stackPos(1));
 }
 
+int KyraEngine_v2::o2_isAnySoundPlaying(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_isAnySoundPlaying(%p) ()", (const void *)script);
+	return _sound->voiceIsPlaying();
+}
+
 int KyraEngine_v2::o2_setDeathHandlerFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setDeathHandlerFlag(%p) (%d)", (const void *)script, stackPos(0));
 	_deathHandler = stackPos(0);
@@ -1782,7 +1787,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_showItemString),
 		// 0x60
 		Opcode(o2_getRand),
-		OpcodeUnImpl(),
+		Opcode(o2_isAnySoundPlaying),
 		Opcode(o2_setDeathHandlerFlag),
 		Opcode(o2_setDrawNoShapeFlag),
 		// 0x64

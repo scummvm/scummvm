@@ -39,26 +39,44 @@
 namespace Kyra {
 
 Sound::Sound(KyraEngine *vm, Audio::Mixer *mixer)
-	: _vm(vm), _mixer(mixer), _currentVocFile(0), _vocHandles(),
-	_musicEnabled(1), _sfxEnabled(true), _soundDataList(0) {
+	: _vm(vm), _mixer(mixer), _soundChannels(), _musicEnabled(1),
+	_sfxEnabled(true), _soundDataList(0) {
 }
 
 Sound::~Sound() {
 }
 
-void Sound::voicePlay(const char *file) {
+bool Sound::voiceFileIsPresent(const char *file) {
+	char filenamebuffer[25];
+	for (int i = 0; _supportedCodes[i].fileext; ++i) {
+		strcpy(filenamebuffer, file);
+		strcat(filenamebuffer, _supportedCodes[i].fileext);
+		if (_vm->resource()->getFileSize(filenamebuffer) > 0)
+			return true;
+	}
+
+	strcpy(filenamebuffer, file);
+	strcat(filenamebuffer, ".VOC");
+
+	if (_vm->resource()->getFileSize(filenamebuffer) > 0)
+		return true;
+
+	return false;
+}
+
+bool Sound::voicePlay(const char *file, bool isSfx) {
 	uint32 fileSize = 0;
 	byte *fileData = 0;
 	bool found = false;
 	char filenamebuffer[25];
 
 	int h = 0;
-	if (_currentVocFile) {
-		while (_mixer->isSoundHandleActive(_vocHandles[h]))
-			h++;
-		if (h >= kNumVocHandles)
-			return;
-	}
+	while (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle) && h < kNumChannelHandles)
+		h++;
+	if (h >= kNumChannelHandles)
+		return false;
+
+	Audio::AudioStream *audioStream = 0;
 
 	for (int i = 0; _supportedCodes[i].fileext; ++i) {
 		strcpy(filenamebuffer, file);
@@ -67,7 +85,7 @@ void Sound::voicePlay(const char *file) {
 		Common::SeekableReadStream *stream = _vm->resource()->getFileStream(filenamebuffer);
 		if (!stream)
 			continue;
-		_currentVocFile = _supportedCodes[i].streamFunc(stream, true, 0, 0, 1);
+		audioStream = _supportedCodes[i].streamFunc(stream, true, 0, 0, 1);
 		found = true;
 		break;
 	}
@@ -78,30 +96,47 @@ void Sound::voicePlay(const char *file) {
 
 		fileData = _vm->resource()->fileData(filenamebuffer, &fileSize);
 		if (!fileData)
-			return;
+			return false;
 
 		Common::MemoryReadStream vocStream(fileData, fileSize);
-		_currentVocFile = Audio::makeVOCStream(vocStream);
+		audioStream = Audio::makeVOCStream(vocStream);
 	}
 
-	_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_vocHandles[h], _currentVocFile);
+	_soundChannels[h].file = file;
+	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].channelHandle, audioStream);
 
 	delete [] fileData;
 	fileSize = 0;
+
+	return true;
 }
 
-void Sound::voiceStop() {
-	for (int h = 0; h < kNumVocHandles; h++) {
-		if (_mixer->isSoundHandleActive(_vocHandles[h]))
-			_mixer->stopHandle(_vocHandles[h]);
+void Sound::voiceStop(const char *file) {
+	if (!file) {
+		for (int h = 0; h < kNumChannelHandles; h++) {
+			if (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle))
+				_mixer->stopHandle(_soundChannels[h].channelHandle);
+		}
+	} else {
+		for (int i = 0; i < kNumChannelHandles; ++i) {
+			if (_soundChannels[i].file == file)
+				_mixer->stopHandle(_soundChannels[i].channelHandle);
+		}
 	}
 }
 
-bool Sound::voiceIsPlaying() {
+bool Sound::voiceIsPlaying(const char *file) {
 	bool res = false;
-	for (int h = 0; h < kNumVocHandles; h++) {
-		if (_mixer->isSoundHandleActive(_vocHandles[h]))
-			res = true;
+	if (!file) {
+		for (int h = 0; h < kNumChannelHandles; h++) {
+			if (_mixer->isSoundHandleActive(_soundChannels[h].channelHandle))
+				res = true;
+		}
+	} else {
+		for (int i = 0; i < kNumChannelHandles; ++i) {
+			if (_soundChannels[i].file == file)
+				res = true;
+		}
 	}
 	return res;
 }
@@ -510,12 +545,12 @@ void KyraEngine::snd_playWanderScoreViaMap(int command, int restart) {
 
 void KyraEngine::snd_stopVoice() {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_stopVoice()");
-	_sound->voiceStop();
+	_sound->voiceStop(_speechFile.empty() ? 0 : _speechFile.c_str());
 }
 
 bool KyraEngine::snd_voiceIsPlaying() {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_voiceIsPlaying()");
-	return _sound->voiceIsPlaying();
+	return _sound->voiceIsPlaying(_speechFile.empty() ? 0 : _speechFile.c_str());
 }
 
 // static res

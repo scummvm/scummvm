@@ -158,12 +158,6 @@ struct NestedSequence {
 	uint16 finalCommand;
 };
 
-enum kMusicDataID {
-	kMusicIntro = 0,
-	kMusicIngame,
-	kMusicFinale
-};
-
 class KyraEngine_v2 : public KyraEngine {
 friend class Debugger_v2;
 friend class TextDisplayer_v2;
@@ -1036,6 +1030,7 @@ protected:
 	int o2_setCauldronState(ScriptState *script);
 	int o2_showItemString(ScriptState *script);
 	int o2_getRand(ScriptState *script);
+	int o2_isAnySoundPlaying(ScriptState *script);
 	int o2_setDeathHandlerFlag(ScriptState *script);
 	int o2_setDrawNoShapeFlag(ScriptState *script);
 	int o2_setRunFlag(ScriptState *script);
