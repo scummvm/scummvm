@@ -144,8 +144,8 @@ void KyraEngine_v1::waitForChatToFinish(int vocFile, int16 chatDuration, const c
 			runLoop = false;
 	}
 
-	snd_voiceWaitForFinish();
-	snd_stopVoice();
+	if (_skipFlag)
+		snd_stopVoice();
 
 	_timer->enable(14);
 	_timer->enable(15);
