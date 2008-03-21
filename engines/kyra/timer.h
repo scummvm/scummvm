@@ -69,6 +69,7 @@ public:
 	void setCountdown(uint8 id, int32 countdown);
 	void setDelay(uint8 id, int32 countdown);
 	int32 getDelay(uint8 id) const;
+	uint32 getNextRun(uint8 id) const;
 
 	bool isEnabled(uint8 id) const;
 	void enable(uint8 id);

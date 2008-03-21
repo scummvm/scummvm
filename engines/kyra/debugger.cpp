@@ -179,8 +179,9 @@ bool Debugger_v1::cmd_queryFlag(int argc, const char **argv) {
 }
 
 bool Debugger_v1::cmd_listTimers(int argc, const char **argv) {
+	DebugPrintf("Current time: %-8u\n", g_system->getMillis());
 	for (int i = 0; i < _vm->timer()->count(); i++)
-		DebugPrintf("Timer %-2i: Active: %-3s Countdown: %-6i\n", i, _vm->timer()->isEnabled(i) ? "Yes" : "No", _vm->timer()->getDelay(i));
+		DebugPrintf("Timer %-2i: Active: %-3s Countdown: %-6i %-8u\n", i, _vm->timer()->isEnabled(i) ? "Yes" : "No", _vm->timer()->getDelay(i), _vm->timer()->getNextRun(i));
 
 	return true;
 }

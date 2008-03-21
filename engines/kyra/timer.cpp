@@ -38,7 +38,7 @@ struct TimerResync : public Common::UnaryFunction<TimerEntry&, void> {
 
 	void operator()(TimerEntry &entry) const {
 		if (entry.lastUpdate < 0) {
-			if ((entry.lastUpdate + _curTime) <= 0)
+			if ((uint32)(ABS(entry.lastUpdate)) >= entry.countdown * _tickLength)
 				entry.nextRun = 0;
 			else
 				entry.nextRun = _curTime + entry.lastUpdate + entry.countdown * _tickLength;
@@ -164,6 +164,17 @@ int32 TimerManager::getDelay(uint8 id) const {
 	return -1;
 }
 
+uint32 TimerManager::getNextRun(uint8 id) const {
+	debugC(9, kDebugLevelTimer, "TimerManager::getNextRun(%d)", id);
+
+	CIterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
+	if (timer != _timers.end())
+		return timer->nextRun;
+
+	warning("TimerManager::getNextRun: No timer %d", id);
+	return 0xFFFFFFFF;
+}
+
 bool TimerManager::isEnabled(uint8 id) const {
 	debugC(9, kDebugLevelTimer, "TimerManager::isEnabled(%d)", id);
 
@@ -232,6 +243,7 @@ void TimerManager::loadDataFromFile(Common::InSaveFile *file, int version) {
 				timer->enabled = file->readByte();
 				timer->countdown = file->readSint32BE();
 				timer->lastUpdate = file->readSint32BE();
+				debug("%d %d", id, timer->lastUpdate);
 			} else {
 				warning("Loading timer data for non existing timer %d", id);
 				file->seek(7, SEEK_CUR);
