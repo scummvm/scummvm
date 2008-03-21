@@ -185,6 +185,12 @@ protected:
 	enum {
 		kNumChannelHandles = 4
 	};
+	
+	struct SoundChannel {
+		Common::String file;
+		Audio::SoundHandle channelHandle;
+	};
+	SoundChannel _soundChannels[kNumChannelHandles];
 
 	int _musicEnabled;
 	bool _sfxEnabled;
@@ -196,12 +202,6 @@ protected:
 
 private:
 	const AudioDataStruct *_soundDataList;
-
-	struct SoundChannel {
-		Common::String file;
-		Audio::SoundHandle channelHandle;
-	};
-	SoundChannel _soundChannels[kNumChannelHandles];
 
 	struct SpeechCodecs {
 		const char *fileext;
@@ -428,14 +428,13 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	void voicePlay(const char *file);
+	bool voicePlay(const char *file);
 	void playSoundEffect(uint8) {}
 
 private:
 	int _lastTrack;
 
 	Audio::AudioStream *_currentSFX;
-	Audio::SoundHandle _sfxHandles[kNumChannelHandles];
 
 	//SoundTowns_v2_TwnDriver *_driver;
 	uint8 *_twnTrackData;
