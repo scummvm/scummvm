@@ -1196,11 +1196,43 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 	}
 
 	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformPC) {
-		// TODO Load room state data
-		for (uint s = 0; s <= _numRoomStates; s++) {
-			f->readUint16BE();
+		for (uint s = 0; s < _numRoomStates; s++) {
+			_roomStates[s].state = f->readUint16BE();
+			_roomStates[s].classFlags = f->readUint16BE();
+			_roomStates[s].roomExitStates = f->readUint16BE();
 		}
 		f->readUint16BE();
+
+		uint16 room = _currentRoom;
+		_currentRoom = f->readUint16BE();
+
+		if (_roomsListPtr) {
+			byte *p = _roomsListPtr;
+			for (;;) {
+				uint16 minNum = READ_BE_UINT16(p); p += 2;
+				if (minNum == 0)
+					break;
+
+				uint16 maxNum = READ_BE_UINT16(p); p += 2;
+
+				 for (uint16 z = minNum; z <= maxNum; z++) {
+					uint16 itemNum = z + 2;
+					Item *item = derefItem(itemNum);
+					item->parent = 0;
+
+					num = (itemNum - _itemArrayInited);
+					item->state = _roomStates[num].state;
+					item->classFlags = _roomStates[num].classFlags;
+					SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
+					subRoom->roomExitStates = _roomStates[num].roomExitStates;
+				}
+			}
+		}
+
+		if (room != _currentRoom) {
+			_roomsListPtr = 0;
+			loadRoomItems(_currentRoom);
+		}
 	}
 
 	item_index = 1;
@@ -1354,10 +1386,35 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	}
 
 	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformPC) {
-		// TODO Save room state data
-		for (uint s = 0; s <= _numRoomStates; s++) {
-			f->writeUint16BE(0);
+		if (_roomsListPtr) {
+			byte *p = _roomsListPtr;
+			for (;;) {
+				uint16 minNum = READ_BE_UINT16(p); p += 2;
+				if (minNum == 0)
+					break;
+
+				uint16 maxNum = READ_BE_UINT16(p); p += 2;
+
+				 for (uint16 z = minNum; z <= maxNum; z++) {
+					uint16 itemNum = z + 2;
+					Item *item = derefItem(itemNum);
+					item->parent = 0;
+
+					uint16 num = (itemNum - _itemArrayInited);
+					_roomStates[num].state = item->state;
+					_roomStates[num].classFlags = item->classFlags;
+					SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
+					_roomStates[num].roomExitStates = subRoom->roomExitStates;
+				}
+			}
 		}
+
+		for (uint s = 0; s < _numRoomStates; s++) {
+			f->writeUint16BE(_roomStates[s].state);
+			f->writeUint16BE(_roomStates[s].classFlags);
+			f->writeUint16BE(_roomStates[s].roomExitStates);
+		}
+		f->writeUint16BE(0);
 		f->writeUint16BE(_currentRoom);
 	}
 

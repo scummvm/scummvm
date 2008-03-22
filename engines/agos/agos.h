@@ -240,11 +240,12 @@ protected:
 	byte **_localStringtable;
 	uint _stringIdLocalMin, _stringIdLocalMax;
 
-	byte *_stateList;
-	uint _numRoomStates;
+	RoomState *_roomStates;
+	uint16 _numRoomStates;
 
 	byte *_menuBase;
 	byte *_roomsList;
+	byte *_roomsListPtr;
 
 	byte *_xtblList;
 	byte *_xtablesHeapPtrOrg;

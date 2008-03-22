@@ -351,19 +351,43 @@ void AGOSEngine_Elvira2::setSRExit(Item *i, int n, int d, uint16 s) {
 }
 
 // Waxworks specific
-bool AGOSEngine::loadRoomItems(uint16 item) {
+bool AGOSEngine::loadRoomItems(uint16 room) {
 	byte *p;
-	uint i, min_num, max_num;
+	uint i, minNum, maxNum;
 	char filename[30];
 	File in;
+	Item *item, *itemTmp;
 
-	p = _roomsList;
-	if (p == NULL)
+	if (_roomsList == NULL)
 		return 0;
 
-	_currentRoom = item;
-	item -= 2;
+	_currentRoom = room;
+	room -= 2;
 
+	if (_roomsListPtr) {
+		p = _roomsListPtr;
+		for (;;) {
+			minNum = READ_BE_UINT16(p); p += 2;
+			if (minNum == 0)
+				break;
+
+			maxNum = READ_BE_UINT16(p); p += 2;
+
+			 for (uint16 z = minNum; z <= maxNum; z++) {
+				uint16 itemNum = z + 2;
+				item = derefItem(itemNum);
+				item->parent = 0;
+
+				uint16 num = (itemNum - _itemArrayInited);
+				_roomStates[num].state = item->state;
+				_roomStates[num].classFlags = item->classFlags;
+				SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
+				_roomStates[num].roomExitStates = subRoom->roomExitStates;
+			}
+		}
+	}
+
+	p = _roomsList;
 	while (*p) {
 		for (i = 0; *p; p++, i++)
 			filename[i] = *p;
@@ -371,21 +395,57 @@ bool AGOSEngine::loadRoomItems(uint16 item) {
 		p++;
 
 		for (;;) {
-			min_num = READ_BE_UINT16(p); p += 2;
-			if (min_num == 0)
+			_roomsListPtr = p;
+
+			minNum = READ_BE_UINT16(p); p += 2;
+			if (minNum == 0)
 				break;
 
-			max_num = READ_BE_UINT16(p); p += 2;
+			maxNum = READ_BE_UINT16(p); p += 2;
 
-			if (item >= min_num && item <= max_num) {
+			if (room >= minNum && room <= maxNum) {
 				in.open(filename);
 				if (in.isOpen() == false) {
 					error("loadRoomItems: Can't load rooms file '%s'", filename);
 				}
 
 				while ((i = in.readUint16BE()) != 0) {
-					_itemArrayPtr[i + 2] = (Item *)allocateItem(sizeof(Item));
-					readItemFromGamePc(&in, _itemArrayPtr[i + 2]);
+					uint16 itemNum = i + 2;
+
+					_itemArrayPtr[itemNum] = (Item *)allocateItem(sizeof(Item));
+					readItemFromGamePc(&in, _itemArrayPtr[itemNum]);
+
+					item = derefItem(itemNum);
+					item->parent = 0;
+					item->child = 0;
+
+					 for (uint16 z = _itemArrayInited - 1; z; z--) {
+						itemTmp = _itemArrayPtr[z];
+
+						if (itemTmp->parent == 0)
+							continue;
+						if (itemTmp->parent != itemNum)
+							continue;
+						if (item->child == 0) {
+							item->child = z;
+							continue;
+						}
+						uint16 child = item->child;
+						while (itemTmp->next != 0) {
+							if (itemTmp->next == child) {
+								item->child = z;
+								break;
+							}
+
+							itemTmp = _itemArrayPtr[itemTmp->next];
+						}
+					}
+
+					uint16 num = (itemNum - _itemArrayInited);
+					item->state = _roomStates[num].state;
+					item->classFlags = _roomStates[num].classFlags;
+					SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
+					subRoom->roomExitStates = _roomStates[num].roomExitStates;
 				}
 				in.close();
 
@@ -394,7 +454,7 @@ bool AGOSEngine::loadRoomItems(uint16 item) {
 		}
 	}
 
-	debug(1,"loadRoomItems: didn't find %d", item);
+	debug(1,"loadRoomItems: didn't find %d", room);
 	return 0;
 }
 

@@ -221,14 +221,17 @@ void AGOSEngine::loadGamePcFile() {
 
 		_numRoomStates = in.size() / 8;
 
-		_stateList = (byte *)malloc(_numRoomStates * 6);
-		if (_stateList == NULL)
+		_roomStates = (RoomState *)calloc(_numRoomStates, sizeof(RoomState));
+		if (_roomStates == NULL)
 			error("loadGamePcFile: Out of memory for room state list");
 
-		_numRoomStates *= 3;
+		for (uint s = 0; s < _numRoomStates; s++) {
+			uint16 num = in.readUint16BE() - (_itemArrayInited - 2);
 
-		// TODO Load room state resources
-
+			_roomStates[num].state = in.readUint16BE();
+			_roomStates[num].classFlags = in.readUint16BE();
+			_roomStates[num].roomExitStates = in.readUint16BE();
+		}
 		in.close();
 	}
 

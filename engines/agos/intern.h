@@ -115,6 +115,14 @@ enum {
 	SubObject_SIZE = sizeof(SubObject) - sizeof(int16)
 };
 
+struct RoomState {
+	uint16 state;
+	uint16 classFlags;
+	uint16 roomExitStates;
+
+	RoomState() { memset(this, 0, sizeof(*this)); }
+};
+
 struct Item {
 	uint16 parent;
 	uint16 child;

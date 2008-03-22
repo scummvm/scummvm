@@ -146,11 +146,12 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_stringIdLocalMin = 0;
 	_stringIdLocalMax = 0;
 
-	_stateList = 0;
+	_roomStates = 0;
 	_numRoomStates = 0;
 
 	_menuBase = 0;
 	_roomsList = 0;
+	_roomsListPtr = 0;
 
 	_xtblList = 0;
 	_xtablesHeapPtrOrg = 0;
