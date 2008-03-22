@@ -112,6 +112,9 @@ KyraEngine_v2::AnimObj *KyraEngine_v2::deleteAnimListEntry(AnimObj *list, AnimOb
 		cur = cur->nextObject;
 	}
 
+	if (cur != entry)
+		return list;
+
 	if (cur == list) {
 		if (!cur->nextObject)
 			return 0;

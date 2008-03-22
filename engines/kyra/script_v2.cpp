@@ -1415,6 +1415,7 @@ int KyraEngine_v2::o2_setupSceneAnimation(ScriptState *script) {
 	restorePage3();
 
 	SceneAnim &anim = _sceneAnims[index];
+	anim.flags = flags;
 	anim.x = stackPos(2);
 	anim.y = stackPos(3);
 	anim.x2 = stackPos(4);
@@ -1490,7 +1491,7 @@ int KyraEngine_v2::o2_stopSceneAnimation(ScriptState *script) {
 	obj.unk8 = 1;
 	if (stackPos(1))
 		refreshAnimObjectsIfNeed();
-	obj.enabled = false;
+	obj.enabled = 0;
 	_animList = deleteAnimListEntry(_animList, &_animObjects[1+index]);
 	
 	if (_sceneAnimMovie[index]->opened())
