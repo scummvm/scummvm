@@ -110,7 +110,7 @@ void KyraEngine_v1::waitForChatToFinish(int vocFile, int16 chatDuration, const c
 		_animator->copyChangedObjectsForward(0);
 		updateTextFade();
 
-		if ((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && (!drawText || !snd_voiceIsPlaying()))
+		if (((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && drawText) || (!drawText && !snd_voiceIsPlaying()))
 			break;
 
 		uint32 nextTime = loopStart + _tickLength;

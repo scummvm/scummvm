@@ -135,7 +135,7 @@ bool Sound::voiceIsPlaying(const char *file) {
 	} else {
 		for (int i = 0; i < kNumChannelHandles; ++i) {
 			if (_soundChannels[i].file == file)
-				res = true;
+				res = _mixer->isSoundHandleActive(_soundChannels[i].channelHandle);
 		}
 	}
 	return res;
