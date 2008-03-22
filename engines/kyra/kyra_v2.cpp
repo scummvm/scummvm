@@ -1291,7 +1291,7 @@ void KyraEngine_v2::updateCharPal(int unk1) {
 		_screen->setScreenPalette(_screen->getPalette(0));
 		unkVar1 = true;
 		_charPalEntry = palEntry;
-	} else if (unkVar1 && !unk1) {
+	} else if (unkVar1 || !unk1) {
 		memcpy(_screen->getPalette(0) + 336, &_scenePal[(palEntry << 4) * 3], 48);
 		_screen->setScreenPalette(_screen->getPalette(0));
 		unkVar1 = false;
