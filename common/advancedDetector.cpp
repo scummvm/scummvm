@@ -280,31 +280,6 @@ static void reportUnknown(StringMap &filesMD5, HashMap<String, int32, Common::Ca
 	printf("\n");
 }
 
-/*
-static void reportUnknown(StringList &files, int md5Bytes) {
-	StringMap filesMD5;
-	HashMap<String, int32, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> filesSize;
-
-	char md5str[32+1];
-	File testFile;
-
-	// Fill the data structures for the requested files
-	for (StringList::iterator file = files.begin(); file != files.end(); file++) {
-
-		if (testFile.open(*file)) {
-			filesSize[*file] = (int32)testFile.size();
-
-			if (md5_file_string(testFile, md5str, md5Bytes))
-				filesMD5[*file] = md5str;
-
-			testFile.close();
-		}
-	}
-
-	reportUnknown(filesMD5, filesSize);
-}
-*/
-
 static ADGameDescList detectGame(const FSList *fslist, const Common::ADParams &params, Language language, Platform platform, const Common::String extra) {
 	typedef HashMap<String, bool, CaseSensitiveString_Hash, CaseSensitiveString_EqualTo> StringSet;
 	StringSet filesList;
