@@ -1487,6 +1487,8 @@ protected:
 	void drawMaskedImage(VC10_state *state);
 	void draw32ColorImage(VC10_state *state);
 
+	virtual void clearName();
+
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 
 	virtual void handleMouseMoved();
@@ -1536,6 +1538,8 @@ protected:
 	};
 
 	const OpcodeEntrySimon2 *_opcodesSimon2;
+
+	virtual void clearName();
 
 	virtual void drawIcon(WindowBlock *window, uint icon, uint x, uint y);
 

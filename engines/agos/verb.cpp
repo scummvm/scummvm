@@ -190,34 +190,37 @@ void AGOSEngine_Feeble::clearName() {
 	return;
 }
 
+void AGOSEngine_Simon2::clearName() {
+	if (getBitFlag(79)) {
+		sendSync(202);
+		_lastNameOn = NULL;
+		return;
+	}
+
+	AGOSEngine_Simon1::clearName();
+}
+
+void AGOSEngine_Simon1::clearName() {
+	HitArea *ha;
+
+	if (_currentVerbBox == _lastVerbOn)
+		return;
+
+	resetNameWindow();
+	_lastVerbOn = _currentVerbBox;
+
+	if (_currentVerbBox != NULL && (ha = findBox(200)) && (ha->flags & kBFBoxDead) && !(_currentVerbBox->flags & kBFBoxDead))
+		printVerbOf(_currentVerbBox->id);
+}
+
 void AGOSEngine::clearName() {
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2)
 		return;
 
-	//if (_nameLocked == 1)
-	//	return;
-
-	HitArea *last;
-	HitArea *ha;
-
-	if (getGameType() == GType_SIMON2) {
-		if (getBitFlag(79)) {
-			sendSync(202);
-			_lastNameOn = NULL;
-			return;
-		}
-	}
-
-	last = _currentVerbBox;
-
-	if (last == _lastVerbOn)
+	if (_nameLocked == 1 || _lastNameOn == 0)
 		return;
 
 	resetNameWindow();
-	_lastVerbOn = last;
-
-	if (last != NULL && (ha = findBox(200)) && (ha->flags & kBFBoxDead) && !(last->flags & kBFBoxDead))
-		printVerbOf(last->id);
 }
 
 void AGOSEngine::printVerbOf(uint hitarea_id) {
@@ -733,13 +736,13 @@ void AGOSEngine::boxController(uint x, uint y, uint mode) {
 		}
 	}
 
-	//if (_nameLocked == 0) {
+	if (getGameType() != GType_WW || _nameLocked == 0) {
 		if (best_ha->flags & kBFNoTouchName) {
 			clearName();
 		} else if (best_ha != _lastNameOn) {
 			displayName(best_ha);
 		}
-	//}
+	}
 
 	if (best_ha->flags & kBFInvertTouch && !(best_ha->flags & kBFBoxSelected)) {
 		hitarea_leave(best_ha, false);

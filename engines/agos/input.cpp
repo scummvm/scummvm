@@ -304,7 +304,7 @@ void AGOSEngine::waitForInput() {
 				) {
 				_hitAreaSubjectItem = ha->item_ptr;
 				id = setVerbText(ha);
-				_nameLocked = 2;
+				_nameLocked = 0;
 				displayName(ha);
 				_nameLocked = 1;
 
