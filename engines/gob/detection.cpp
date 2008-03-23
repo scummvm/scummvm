@@ -1046,6 +1046,19 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"lostintime",
+			"Non-interactive Demo",
+			AD_ENTRY1("demo.stk", "2eba8abd9e3878c57307576012dd2fec"),
+			UNK_LANG,
+			kPlatformPC,
+			Common::ADGF_DEMO
+		},
+		kGameTypeLostInTime,
+		kFeaturesAdlib,
+		"demo"
+	},
+	{
+		{
 			"gob3",
 			"",
 			AD_ENTRY1s("intro.stk", "32b0f57f5ae79a9ae97e8011df38af42", 157084),
