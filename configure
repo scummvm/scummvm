@@ -235,7 +235,7 @@ find_sdlconfig()
 		#reset separator to parse sdlconfigs
 		IFS=":"
 		for sdlconfig in $sdlconfigs; do
-			if test -x "$path_dir/$sdlconfig" ; then
+			if test -f "$path_dir/$sdlconfig" ; then
 				_sdlconfig="$path_dir/$sdlconfig"
 				echo $_sdlconfig
 				# Save the prefix
