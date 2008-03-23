@@ -123,6 +123,10 @@ public:
 
 	Common::RandomSource _rnd;
 
+	// config specific
+	bool speechEnabled();
+	bool textEnabled();
+
 	// quit handling
 	virtual void quitGame();
 
@@ -169,9 +173,6 @@ protected:
 	int _configMusic;
 	bool _configSounds;
 	uint8 _configVoice;
-
-	bool speechEnabled();
-	bool textEnabled();
 
 	// game speed
 	virtual bool skipFlag() const = 0;

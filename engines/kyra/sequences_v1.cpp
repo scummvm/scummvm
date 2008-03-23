@@ -237,14 +237,12 @@ void KyraEngine_v1::seq_introStory() {
 	_screen->clearPage(3);
 	_screen->clearPage(0);
 
-	if (_flags.isTalkie) {
-		// HACK: The Italian fan translation uses an special text screen here
-		// so we show it even though it is a talkie version.
-		if (_flags.lang == Common::IT_ITA)
-			_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, 0);
-		else
-			return;
-	} else if (_flags.lang == Common::EN_ANY && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
+	// HACK: The Italian fan translation uses an special text screen here
+	// so we show it even when text is disabled
+	if (!textEnabled() && speechEnabled() && _flags.lang != Common::IT_ITA)
+		return;
+
+	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
 		_screen->loadBitmap("TEXT.CPS", 3, 3, _screen->_currentPalette);
 	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN)
 		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, _screen->_currentPalette);
@@ -254,8 +252,10 @@ void KyraEngine_v1::seq_introStory() {
 		_screen->loadBitmap("TEXT_FRE.CPS", 3, 3, _screen->_currentPalette);
 	else if (_flags.lang == Common::ES_ESP)
 		_screen->loadBitmap("TEXT_SPA.CPS", 3, 3, _screen->_currentPalette);
-	else if (_flags.lang == Common::IT_ITA)
+	else if (_flags.lang == Common::IT_ITA && !_flags.isTalkie)
 		_screen->loadBitmap("TEXT_ITA.CPS", 3, 3, _screen->_currentPalette);
+	else if (_flags.lang == Common::IT_ITA && _flags.isTalkie)
+		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, _screen->_currentPalette);
 	else
 		warning("no story graphics file found");
 	_screen->setScreenPalette(_screen->_currentPalette);

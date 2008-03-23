@@ -278,6 +278,10 @@ void SeqPlayer::s1_fadeToBlack() {
 void SeqPlayer::s1_printText() {
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	uint8 txt = *_seqData++;
+
+	if (!_vm->textEnabled())
+		return;
+
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		_screen->fillRect(0, 180, 319, 195, 0);
 	else
@@ -301,6 +305,10 @@ void SeqPlayer::s1_printTalkText() {
 	int x = READ_LE_UINT16(_seqData); _seqData += 2;
 	int y = *_seqData++;
 	uint8 fillColor = *_seqData++;
+
+	if (!_vm->textEnabled())
+		return;
+
 	int b;
 	if (_seqTalkTextPrinted && !_seqTalkTextRestored) {
 		if (_seqWsaCurDecodePage != 0 && !_specialBuffer)
@@ -319,7 +327,7 @@ void SeqPlayer::s1_printTalkText() {
 }
 
 void SeqPlayer::s1_restoreTalkText() {
-	if (_seqTalkTextPrinted && !_seqTalkTextRestored) {
+	if (_seqTalkTextPrinted && !_seqTalkTextRestored && _vm->textEnabled()) {
 		int b;
 		if (_seqWsaCurDecodePage != 0 && !_specialBuffer)
 			b = 2;
@@ -475,7 +483,8 @@ void SeqPlayer::s1_loadIntroVRM() {
 void SeqPlayer::s1_playVocFile() {
 	_vm->snd_voiceWaitForFinish(false);
 	uint8 a = *_seqData++;
-	_vm->snd_playVoiceFile(a);
+	if (_vm->speechEnabled())
+		_vm->snd_playVoiceFile(a);
 }
 
 void SeqPlayer::s1_miscUnk3() {
@@ -629,7 +638,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 			seqSkippedFlag = true;
 		}
 		// used in Kallak writing intro
-		if (_seqDisplayTextFlag && _seqDisplayedTextTimer != 0xFFFFFFFF) {
+		if (_seqDisplayTextFlag && _seqDisplayedTextTimer != 0xFFFFFFFF && _vm->textEnabled()) {
 			if (_seqDisplayedTextTimer < _system->getMillis()) {
 				char charStr[3];
 				charStr[0] = _vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar];
