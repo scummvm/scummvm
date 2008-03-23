@@ -304,8 +304,8 @@ CheckNASM()
 	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
 
 	for path_dir in $_nasmpath; do
-		if test -x "$path_dir/nasm" ; then
-			NASM="$path_dir/nasm"
+		if test -x "$path_dir/nasm$EXEEXT" ; then
+			NASM="$path_dir/nasm$EXEEXT"
 			echo $NASM
 			break
 		fi
@@ -318,6 +318,9 @@ CheckNASM()
 		_nasm=no
 	else
 		case $_host_os in
+			os2-emx*)
+				NASMFLAGS="-f aout"
+			;;
 			mingw* | cygwin*)
 				NASMFLAGS="-f win32"
 			;;

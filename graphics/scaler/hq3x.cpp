@@ -30,7 +30,7 @@
 
 extern "C" {
 
-#if !defined(_WIN32) && !defined(MACOSX)
+#if !defined(_WIN32) && !defined(MACOSX) && !defined(__OS2__)
 #define hq3x_16 _hq3x_16
 #endif
 
