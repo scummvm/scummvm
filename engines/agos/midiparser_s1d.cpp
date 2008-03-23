@@ -124,8 +124,6 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 		break;
 
 	case 0xF:
-		debug(0, "MidiParser_S1D: Unexpected type 0x%02X", (int) info.event);
-
 		switch (info.event & 0x0F) {
 		case 0x0:
 			// Trigged by MOD2/MOD6/MOD15 in Waxworks
