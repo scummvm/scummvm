@@ -112,44 +112,72 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 		++_position._play_pos; // I have NO IDEA what the second byte is for.
 		break;
 
+	case 0xD:
+		// Triggered by MOD0/MOD1/MOD2/MOD3/MOD4/MOD6/MOD7/MOD8/MOD9 in Elvira 2
+		// Triggered by MOD0/MOD2/MOD3/MOD5/MOD6/MOD7/MOD8/MOD9/MOD10/MOD12/MOD14/MOD15/MOD20 in Waxworks
+		break;
+
+	case 0xE:
+		// Triggered by MOD9 in Elvira 1
+		// Triggered by MOD3/MOD5 in Elvira 2
+		// Triggered by MOD3/MOD7/MOD8/MOD13 in Waxworks
+		break;
+
 	case 0xF:
-		if (info.event == 0xFC) {
+		debug(0, "MidiParser_S1D: Unexpected type 0x%02X", (int) info.event);
+
+		switch (info.event & 0x0F) {
+		case 0x0:
+			// Trigged by MOD2/MOD6/MOD15 in Waxworks
+			break;
+
+		case 0x3: // Not sure, Song Select?
+			// Trigged by MOD1/MOD7/MOD10 in Elvira 1
+			info.basic.param1 = *(_position._play_pos++);
+			info.basic.param2 = 0;
+			break;
+
+		case 0x4:
+			// Trigged by MOD8 in Elvira 1
+			break;
+
+		case 0x7:
+			// Trigged by MOD6 in Elvira 2
+			// Trigged by MOD5 in Waxworks
+			break;
+
+		case 0x8: // Not sure, ?
+			// Trigged by MOD19 in Waxworks
+			info.basic.param1 = info.basic.param2 = 0;
+			break;
+
+		case 0xA:
+			// Trigged by MOD5 in Elvira 2
+			break;
+
+		case 0xC:
 			// This means End of Track.
 			// Rewrite in SMF (MIDI transmission) form.
 			info.event = 0xFF;
 			info.ext.type = 0x2F;
 			info.length = 0;
 			break;
-		}
 
-		switch (info.event & 0x0F) {
-		case 0x2: // Song Position Pointer?
-			info.basic.param1 = *(_position._play_pos++);
-			info.basic.param2 = *(_position._play_pos++);
-			break;
-
-		case 0x3: // Song Select?
-			info.basic.param1 = *(_position._play_pos++);
-			info.basic.param2 = 0;
-			break;
-
-		case 0x8:
-			info.basic.param1 = info.basic.param2 = 0;
-			break;
-
-		case 0xF: // META event?
+		case 0xF: // Not sure, META event?
+			// Trigged by MOD8/MOD9/MOD11/MOD12/MOD13 in Waxworks
 			info.ext.type = *(_position._play_pos++);
 			info.length = readVLQ(_position._play_pos);
 			info.ext.data = _position._play_pos;
 			_position._play_pos += info.length;
 			break;
+
 		default:
-			debug(10, "MidiParser_S1D: Unexpected type 0x%02X found", (int) info.event);
+			error("MidiParser_S1D: Unexpected type 0x%02X found", (int) info.event);
 			break;
 		}
 		break;
 	default:
-		debug(10, "MidiParser_S1D: Unexpected event 0x%02X found", (int) info.command());
+		error("MidiParser_S1D: Unexpected event 0x%02X found", (int) info.command());
 		break;
 	}
 }
