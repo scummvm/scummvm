@@ -280,7 +280,6 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		seq_sequenceCommand(_sequences[seqNum].finalCommand);
 		seq_resetAllTextEntries();
 
-
 		if (_flags.isDemo && !_flags.isTalkie) {
 			if (seqNum == kSequenceDemoFisher) {
 				_abortIntroFlag = false;
@@ -293,14 +292,30 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 				_abortIntroFlag = false;
 				resetSkipFlag();
 				seqNum = kSequenceWestwood;
+			} else if (seqNum < kSequenceFrash && (_abortIntroFlag || skipFlag())) {
+				_abortIntroFlag = false;
+				resetSkipFlag();
+				seqNum = kSequenceFirates;
 			}
 		}
 
 		if (_menuChoice) {
+			uint32 e = _system->getMillis() + 1000;
+			// something is still wrong here
+			// clearing the flag shouldn't be difficult like this
+			while (skipFlag() && _system->getMillis() < e) {
+				resetSkipFlag(true);
+				delay(10);
+			}
 			_abortIntroFlag = false;
-			resetSkipFlag();
-			if (_menuChoice == 2)
+
+			if (skipFlag())
+				warning("skip flag could not be reset");
+
+			if (_menuChoice == 2) {
+				seqNum = kSequenceTitle;				
 				_menuChoice = 0;
+			}
 		}
 	}
 
@@ -2076,7 +2091,7 @@ void KyraEngine_v2::seq_loadNestedSequence(int wsaNum, int seqNum) {
 void KyraEngine_v2::seq_nestedSequenceFrame(int command, int wsaNum) {
 	int xa = 0, ya = 0;
 	command--;
-	if (!_activeWSA[wsaNum].movie)
+	if (!_activeWSA[wsaNum].movie || skipFlag() || _quitFlag || _abortIntroFlag)
 		return;
 
 	switch (command) {
@@ -2276,6 +2291,8 @@ bool KyraEngine_v2::seq_processNextSubFrame(int wsaNum) {
 
 void KyraEngine_v2::seq_printCreditsString(uint16 strIndex, int x, int y, const uint8 *colorMap, uint8 textcolor) {
 	uint8 colormap[16];
+	if (skipFlag() || _quitFlag || _abortIntroFlag || _menuChoice)
+		return;
 
 	memset(&_screen->getPalette(0)[0x2fa], 0x3f, 6);
 	_screen->getPalette(0)[0x2f6] = 0x3f;
@@ -2323,7 +2340,7 @@ void KyraEngine_v2::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, in
 	if (vocIndex && speechEnabled())
 		seq_playTalkText(vocIndex);
 
-	while (_system->getMillis() < chatTimeout) {
+	while (_system->getMillis() < chatTimeout && !(_abortIntroFlag || skipFlag())) {
 		if (lastframe < 0) {
 			int t = ABS(lastframe);
 			if (t < curframe)
@@ -2357,6 +2374,9 @@ void KyraEngine_v2::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, in
 		curframe++;
 	}
 
+	if (_abortIntroFlag || skipFlag())
+		_sound->voiceStop();
+
 	if (lastframe < 0) {
 		int t = ABS(lastframe);
 		if (t < curframe)
@@ -2376,10 +2396,6 @@ void KyraEngine_v2::seq_displayScrollText(uint8 *data, const ScreenDim *d, int t
 		return;
 
 	static const char mark[] = { 5, 13, 0};
-
-	/*uint _creditsNumChars = d->unkC / (_screen->getFontWidth() + _screen->_charWidth);
-	uint _creditsMaxNumLines = (d->h - _screen->_charOffset) / (_screen->getFontHeight() + _screen->_charOffset);
-	uint _creditsMaxNumChars = (d->w << 3) / (_screen->getFontWidth() + _screen->_charWidth);	*/
 
 	_screen->clearPage(tempPage1);
 	_screen->clearPage(tempPage2);
@@ -2522,6 +2538,9 @@ void KyraEngine_v2::seq_displayScrollText(uint8 *data, const ScreenDim *d, int t
 
 	_sound->beginFadeOut();
 	_screen->fadeToBlack();
+
+	_abortIntroFlag= false;
+	resetSkipFlag();
 
 	delete [] tmp;
 	delete [] tmpStringTable;
