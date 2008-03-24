@@ -77,6 +77,9 @@ WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, 
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		clearWindow(window);
 
+	if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformAmiga && window->fill_color == 225)
+		window->fill_color = (getFeatures() & GF_32COLOR) ? 17 : 241;
+
 	return window;
 }
 
