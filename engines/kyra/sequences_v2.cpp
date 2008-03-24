@@ -300,17 +300,8 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		}
 
 		if (_menuChoice) {
-			uint32 e = _system->getMillis() + 1000;
-			// something is still wrong here
-			// clearing the flag shouldn't be difficult like this
-			while (skipFlag() && _system->getMillis() < e) {
-				resetSkipFlag(true);
-				delay(10);
-			}
 			_abortIntroFlag = false;
-
-			if (skipFlag())
-				warning("skip flag could not be reset");
+			_eventList.clear();
 
 			if (_menuChoice == 2) {
 				seqNum = kSequenceTitle;				
