@@ -584,13 +584,23 @@ void AGOSEngine::setVerb(HitArea *ha) {
 	if (getGameType() == GType_SIMON1) {
 		if (tmp != NULL) {
 			tmp->flags |= kBFInvertTouch;
-			invertBox(tmp, 213, 208, 213, 10);
+			if (getFeatures() & GF_32COLOR)
+				invertBox(tmp, 212, 208, 212, 8);
+			else
+				invertBox(tmp, 213, 208, 213, 10);
 		}
 
-		if (ha->flags & kBFBoxSelected)
-			invertBox(ha, 218, 213, 213, 5);
-		else
-			invertBox(ha, 223, 218, 218, 10);
+		if (ha->flags & kBFBoxSelected) {
+			if (getFeatures() & GF_32COLOR)
+				invertBox(ha, 216, 212, 212, 4);
+			else
+				invertBox(ha, 218, 213, 213, 5);
+		} else {
+			if (getFeatures() & GF_32COLOR)
+				invertBox(ha, 220, 216, 216, 8);
+			else
+				invertBox(ha, 223, 218, 218, 10);
+		}
 
 		ha->flags &= ~(kBFBoxSelected + kBFInvertTouch);
 	} else {
@@ -610,7 +620,10 @@ void AGOSEngine::hitarea_leave(HitArea *ha, bool state) {
 	if (getGameType() == GType_SIMON2) {
 		invertBox(ha, 231, 229, 230, 1);
 	} else {
-		invertBox(ha, 223, 213, 218, 5);
+		if (getFeatures() & GF_32COLOR)
+			invertBox(ha, 220, 212, 216, 4);
+		else
+			invertBox(ha, 223, 213, 218, 5);
 	}
 }
 

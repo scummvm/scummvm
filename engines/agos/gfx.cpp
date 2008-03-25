@@ -629,7 +629,7 @@ void AGOSEngine_Simon1::draw32ColorImage(VC10_state *state) {
 		do {
 			for (i = 0; i != state->draw_width; i++)
 				if ((state->flags & kDFNonTrans) || src[i])
-					dst[i] = src[i];
+					dst[i] = src[i] + state->paletteMod;
 			dst += _screenWidth;
 			src += state->width * 16;
 		} while (--h);
@@ -725,6 +725,10 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 
 	state->surf_addr += xoffs + yoffs * state->surf_pitch;
 	state->surf2_addr += xoffs + yoffs * state->surf2_pitch;
+
+	if ((getFeatures() & GF_32COLOR) && !_window3Flag && yoffs > 133) {
+		state->paletteMod = 208;
+	}
 
 	if (_backFlag == 1) {
 		drawBackGroundImage(state);

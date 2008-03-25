@@ -259,7 +259,7 @@ void AGOSEngine::setTextColor(uint color) {
 		if (window->fill_color == 17)
 			color = 25;
 		else
-			color = 12;
+			color = 220;
 	}
 
 	window->text_color = color;

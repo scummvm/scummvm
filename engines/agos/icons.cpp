@@ -233,7 +233,7 @@ void AGOSEngine_Simon1::drawIcon(WindowBlock *window, uint icon, uint x, uint y)
 	if (getPlatform() == Common::kPlatformAmiga) {
 		src = _iconFilePtr;
 		src += READ_BE_UINT32(src + icon * 4);
-		uint8 color = (getFeatures() & GF_32COLOR) ? 16 : 240;
+		uint8 color = (getFeatures() & GF_32COLOR) ? 224 : 240;
 		decompressIconPlanar(dst, src, 24, 12, color, _dxSurfacePitch);
 	} else {
 		src = _iconFilePtr;
