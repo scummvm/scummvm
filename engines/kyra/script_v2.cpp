@@ -1091,14 +1091,14 @@ int KyraEngine_v2::o2_updateSceneAnim(ScriptState *script) {
 	// HACK: Some animations are really too fast because of missing delay times.
 	// Notice that the delay time is purely subjective set here, it could look
 	// slower or maybe faster in the original, but at least this looks OK for
-	// LordHoto.
+	// Raziel^.
 	//
 	// We know currently of two different animations where this happens.
 	// - One is where Marco is dangling from the flesh-eating plant (see bug #1923638 "HoF: Marco missing animation frames").
 	// - The other one is after giving the ticket to the captain. He would move very fast (barely noticeable) onto the ship
 	//   without this delay.
 	if ((stackPos(0) == 2 && _mainCharacter.sceneId == 3) || (stackPos(0) == 3 && _mainCharacter.sceneId == 33))
-		_sceneSpecialScriptsTimer[_lastProcessedSceneScript] = _system->getMillis() + _tickLength * 2;
+		_sceneSpecialScriptsTimer[_lastProcessedSceneScript] = _system->getMillis() + _tickLength * 6;
 
 	_specialSceneScriptRunFlag = false;
 	return 0;
