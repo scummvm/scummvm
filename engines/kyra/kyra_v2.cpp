@@ -753,7 +753,6 @@ void KyraEngine_v2::updateInput() {
 			break;
 
 		default:
-			_eventList.push_back(event);
 			break;
 		}
 	}
