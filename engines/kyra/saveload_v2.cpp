@@ -136,7 +136,7 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 	Common::InSaveFile *in = openSaveForReading(fileName, version, saveName);
 	if (!in) {
 		// check for original savefile
-		if (in = _saveFileMan->openForLoading(fileName)) {
+		if ((in = _saveFileMan->openForLoading(fileName))) {
 			in->seek(0x50, SEEK_CUR);
 
 			uint8 type[4];
