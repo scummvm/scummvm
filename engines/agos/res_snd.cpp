@@ -536,9 +536,6 @@ void AGOSEngine::loadSound(uint sound, int pan, int vol, uint type) {
 		dst = (byte *)malloc(dstSize);
 		decompressData(filename, dst, offset, srcSize, dstSize);
 	} else {
-		if (!_curSfxFile)
-			error("loadSound: Can't load sound data file '%d3.VGA'", _zoneNumber);
-
 		dst = _curSfxFile + READ_LE_UINT32(_curSfxFile + sound * 4);
 	}
 
