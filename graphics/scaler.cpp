@@ -112,10 +112,10 @@ void InitScalers(uint32 BitFormat) {
 }
 
 void DestroyScalers(){
-	// FIXME: these cause memory access violation problems in some
-	// 640x480 games, when using the HQ2x graphics scaler
-	//free(RGBtoYUV);
-	//free(LUT16to32);
+	free(RGBtoYUV);
+	free(LUT16to32);
+	RGBtoYUV = 0;
+	LUT16to32 = 0;
 }
 
 
