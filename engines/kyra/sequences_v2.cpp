@@ -290,11 +290,11 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 			if ((seqNum != kSequenceTitle && seqNum < kSequenceZanfaun &&
 			(_abortIntroFlag || skipFlag())) || seqNum == kSequenceZanfaun) {
 				_abortIntroFlag = false;
-				resetSkipFlag();
+				_eventList.clear();
 				seqNum = kSequenceWestwood;
 			} else if (seqNum < kSequenceFrash && (_abortIntroFlag || skipFlag())) {
 				_abortIntroFlag = false;
-				resetSkipFlag();
+				_eventList.clear();
 				seqNum = kSequenceFirates;
 			}
 		}
