@@ -1573,7 +1573,7 @@ void KyraEngine_v2::processNewShapes(int unk1, int unk2) {
 
 	resetSkipFlag();
 
-	while (_scriptInterpreter->validScript(&_temporaryScriptState) && !skipFlag()) {
+	while (_scriptInterpreter->validScript(&_temporaryScriptState)) {
 		_temporaryScriptExecBit = false;
 		while (_scriptInterpreter->validScript(&_temporaryScriptState) && !_temporaryScriptExecBit)
 			_scriptInterpreter->runScript(&_temporaryScriptState);

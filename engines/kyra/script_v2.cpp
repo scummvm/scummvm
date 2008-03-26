@@ -283,27 +283,33 @@ int KyraEngine_v2::o2_displayWsaSequentialFramesLooping(ScriptState *script) {
 			for (int i = startFrame; i <= endFrame; ++i) {
 				uint32 endTime = _system->getMillis() + waitTime * _tickLength;
 				_wsaSlots[slot]->displayFrame(i, 0xC000 | copyFlags, 0, 0);
-				_screen->updateScreen();
 
-				do {
-					update();
+				if (!skipFlag()) {
+					_screen->updateScreen();
 
-					if (endTime - _system->getMillis() >= 10 && !skipFlag())
-						delay(10);
-				} while (_system->getMillis() < endTime && !skipFlag());
+					do {
+						update();
+
+						if (endTime - _system->getMillis() >= 10)
+							delay(10);
+					} while (_system->getMillis() < endTime);
+				}
 			}
 		} else {
 			for (int i = startFrame; i >= endFrame; --i) {
 				uint32 endTime = _system->getMillis() + waitTime * _tickLength;
 				_wsaSlots[slot]->displayFrame(i, 0xC000 | copyFlags, 0, 0);
-				_screen->updateScreen();
 
-				do {
-					update();
+				if (!skipFlag()) {
+					_screen->updateScreen();
 
-					if (endTime - _system->getMillis() >= 10 && !skipFlag())
-						delay(10);
-				} while (_system->getMillis() < endTime && !skipFlag());
+					do {
+						update();
+
+						if (endTime - _system->getMillis() >= 10 && !skipFlag())
+							delay(10);
+					} while (_system->getMillis() < endTime && !skipFlag());
+				}
 			}
 		}
 
@@ -339,8 +345,10 @@ int KyraEngine_v2::o2_displayWsaSequentialFrames(ScriptState *script) {
 	while (currentFrame <= lastFrame) {	
 		uint32 endTime = _system->getMillis() + frameDelay;
 		_wsaSlots[index]->displayFrame(currentFrame++, copyParam, 0, 0);
-		_screen->updateScreen();
-		delayUntil(endTime);
+		if (!skipFlag()) {
+			_screen->updateScreen();
+			delayUntil(endTime);
+		}
 	}
 
 	resetSkipFlag();
@@ -369,10 +377,12 @@ int KyraEngine_v2::o2_displayWsaSequence(ScriptState *script) {
 	while (currentFrame <= lastFrame) {	
 		uint32 endTime = _system->getMillis() + frameDelay;
 		_wsaSlots[index]->displayFrame(currentFrame++, copyParam, 0, 0);
-		if (doUpdate)
-			update();
-		_screen->updateScreen();
-		delayUntil(endTime);
+		if (!skipFlag()) {
+			if (doUpdate)
+				update();
+			_screen->updateScreen();
+			delayUntil(endTime);
+		}
 	}
 
 	resetSkipFlag();

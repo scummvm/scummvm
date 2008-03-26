@@ -53,7 +53,7 @@ struct ScriptState {
 };
 
 #define stackPos(x) (script->stack[script->sp+x])
-#define stackPosString(x) ((const char*)&script->dataPtr->text[READ_BE_UINT16(&((uint16 *)script->dataPtr->text)[stackPos(x)])])
+#define stackPosString(x) ((const char*)&script->dataPtr->text[READ_BE_UINT16(&script->dataPtr->text[stackPos(x)<<1])])
 
 #define FORM_CHUNK 0x4D524F46
 #define TEXT_CHUNK 0x54584554
