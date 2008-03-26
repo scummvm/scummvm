@@ -413,18 +413,17 @@ public:
 	bool _bigEndian;
 	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian = false) : MemoryReadStream(buf, len), _bigEndian(bigEndian) {}
 
-	uint16 readUint16() {
+	inline uint16 readUint16() {
 		return (_bigEndian) ? readUint16BE(): readUint16LE();
 	}
 
-	uint32 readUint32() {
+	inline uint32 readUint32() {
 		return (_bigEndian) ? readUint32BE(): readUint32LE();
 	}
 
 	inline int16 readSint16() {
 		return (int16)readUint16();
 	}
-
 
 	inline int32 readSint32() {
 		return (int32)readUint32();
