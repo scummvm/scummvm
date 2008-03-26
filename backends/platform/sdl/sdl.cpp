@@ -309,9 +309,23 @@ void OSystem_SDL::quit() {
 	if (_joystick)
 		SDL_JoystickClose(_joystick);
 	SDL_ShowCursor(SDL_ENABLE);
+
+	SDL_RemoveTimer(_timerID);
+	SDL_CloseAudio();
+
+	free(_dirtyChecksums);
+	free(_currentPalette);
+	free(_cursorPalette);
+	free(_mouseData);
+
+	delete _savefile;
+	delete _mixer;
+	delete _timer;
+
 	SDL_Quit();
 
 	delete getEventManager();
+
 	exit(0);
 }
 

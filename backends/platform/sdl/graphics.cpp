@@ -459,6 +459,7 @@ void OSystem_SDL::unloadGFXMode() {
 		_osdSurface = NULL;
 	}
 #endif
+	DestroyScalers();
 }
 
 void OSystem_SDL::hotswapGFXMode() {

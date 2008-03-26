@@ -27,7 +27,6 @@
 #include "graphics/scaler/scalebit.h"
 #include "common/util.h"
 
-
 int gBitFormat = 565;
 
 #ifndef DISABLE_HQ_SCALERS
@@ -110,6 +109,11 @@ void InitScalers(uint32 BitFormat) {
 	if (gBitFormat == 565)
 		InitLUT<ColorMasks<565> >();
 #endif
+}
+
+void DestroyScalers(){
+	free(RGBtoYUV);
+	free(LUT16to32);
 }
 
 

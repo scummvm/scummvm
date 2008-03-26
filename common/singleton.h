@@ -71,6 +71,10 @@ public:
 			_singleton = T::makeInstance();
 		return *_singleton;
 	}
+	virtual void destroy() {
+		delete _singleton;
+		_singleton = 0;
+	}
 protected:
 	Singleton<T>()		{ }
 #ifdef __SYMBIAN32__

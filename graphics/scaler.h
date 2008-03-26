@@ -29,6 +29,7 @@
 #include "graphics/surface.h"
 
 extern void InitScalers(uint32 BitFormat);
+extern void DestroyScalers();
 
 typedef void ScalerProc(const uint8 *srcPtr, uint32 srcPitch,
 							uint8 *dstPtr, uint32 dstPitch, int width, int height);

@@ -871,6 +871,7 @@ void MidiDriver_ADLIB::close() {
 	}
 
 	// Turn off the OPL emulation
+	OPLDestroy(_opl);
 //	YM3812Shutdown();
 
 	free(_adlib_reg_cache);

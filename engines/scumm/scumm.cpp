@@ -885,6 +885,8 @@ ScummEngine_v7::~ScummEngine_v7() {
 		delete _splayer;
 	}
 
+	delete _insane;
+
 	free(_languageBuffer);
 	free(_languageIndex);
 }
@@ -1201,6 +1203,7 @@ void ScummEngine::setupScumm() {
 		_fmtownsBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier);
 	}
 
+	free(_compositeBuf);
 	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier);
 }
 
