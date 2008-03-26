@@ -1582,19 +1582,11 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		h = 13;
 		w =  feebleFontSize[chr - 32];
 
-		// Ignore invalid characters
-		if (chr - 32 > 195)
-			return;
-
 		src = feeble_windowFont + (chr - 32) * 13;
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 8;
 		w = 6;
-
-		// Ignore invalid characters
-		if (chr - 32 > 98)
-			return;
 
 		switch (_language) {
 		case Common::CZ_CZE:
@@ -1631,10 +1623,6 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 8;
 		w = 6;
-
-		// Ignore invalid characters
-		if (chr - 32 > 98)
-			return;
 
 		// TODO: Add font tables for German
 		switch (_language) {

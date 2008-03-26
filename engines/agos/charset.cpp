@@ -527,10 +527,18 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 		}
 	} else if (c >= 32) {
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
+			// Ignore invalid characters
+			if (c - 32 > 195)
+				return;
+
 			windowDrawChar(window, window->textColumn + window->x, window->textRow + window->y, c);
 			window->textColumn += getFeebleFontSize(c);
 			return;
 		}
+
+		// Ignore invalid characters
+		if (c - 32 > 98)
+			return;
 
 		if (window->textLength == window->textMaxLength) {
 			windowNewLine(window);
