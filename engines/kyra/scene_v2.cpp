@@ -715,8 +715,10 @@ void KyraEngine_v2::updateSpecialSceneScripts() {
 			!_specialSceneScriptState[_lastProcessedSceneScript]) {
 			_specialSceneScriptRunFlag = true;
 
-			while (_specialSceneScriptRunFlag && _sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis())
-				_specialSceneScriptRunFlag = _scriptInterpreter->runScript(&_sceneSpecialScripts[_lastProcessedSceneScript]) != 0;
+			while (_specialSceneScriptRunFlag && _sceneSpecialScriptsTimer[_lastProcessedSceneScript] <= _system->getMillis()) {
+				if (!_scriptInterpreter->runScript(&_sceneSpecialScripts[_lastProcessedSceneScript]))
+					_specialSceneScriptRunFlag = false;
+			}
 		}
 
 		if (!_scriptInterpreter->validScript(&_sceneSpecialScripts[_lastProcessedSceneScript])) {
