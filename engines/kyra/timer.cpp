@@ -173,7 +173,7 @@ void TimerManager::setNextRun(uint8 id, uint32 nextRun) {
 		return;
 	}
 
-	warning("TimerManager::getNextRun: No timer %d", id);
+	warning("TimerManager::setNextRun: No timer %d", id);
 }
 
 uint32 TimerManager::getNextRun(uint8 id) const {
