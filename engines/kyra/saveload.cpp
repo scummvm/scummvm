@@ -52,7 +52,7 @@ Common::InSaveFile *KyraEngine::openSaveForReading(const char *filename, uint32 
 	// following line to graciously handle old savegames from LE machines.
 	// if (type != MKID_BE('KYRA') && type != MKID_BE('ARYK')) {
 	if (type != MKID_BE(saveGameID())) {
-		warning("No Kyrandia savefile header.");
+		warning("No ScummVM Kyra engine savefile header.");
 		delete in;
 		return 0;
 	}

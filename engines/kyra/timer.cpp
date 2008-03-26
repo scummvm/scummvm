@@ -164,6 +164,18 @@ int32 TimerManager::getDelay(uint8 id) const {
 	return -1;
 }
 
+void TimerManager::setNextRun(uint8 id, uint32 nextRun) {
+	debugC(9, kDebugLevelTimer, "TimerManager::setNextRun(%d, %u)", id, nextRun);
+
+	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
+	if (timer != _timers.end()) {
+		timer->nextRun = nextRun;	
+		return;
+	}
+
+	warning("TimerManager::getNextRun: No timer %d", id);
+}
+
 uint32 TimerManager::getNextRun(uint8 id) const {
 	debugC(9, kDebugLevelTimer, "TimerManager::getNextRun(%d)", id);
 

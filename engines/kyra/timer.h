@@ -69,17 +69,18 @@ public:
 	void setCountdown(uint8 id, int32 countdown);
 	void setDelay(uint8 id, int32 countdown);
 	int32 getDelay(uint8 id) const;
+	void setNextRun(uint8 id, uint32 nextRun);
 	uint32 getNextRun(uint8 id) const;
 
 	bool isEnabled(uint8 id) const;
 	void enable(uint8 id);
 	void disable(uint8 id);
 
-	void resync();
-
 	void loadDataFromFile(Common::InSaveFile *file, int version);
 	void saveDataToFile(Common::OutSaveFile *file) const;
 private:
+	void resync();
+
 	KyraEngine *_vm;
 	OSystem *_system;
 	Common::List<TimerEntry> _timers;
