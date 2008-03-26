@@ -2229,8 +2229,8 @@ SoundAdlibPC::SoundAdlibPC(KyraEngine *vm, Audio::Mixer *mixer)
 }
 
 SoundAdlibPC::~SoundAdlibPC() {
-	delete [] _soundDataPtr;
 	delete _driver;
+	delete [] _soundDataPtr;
 }
 
 bool SoundAdlibPC::init() {

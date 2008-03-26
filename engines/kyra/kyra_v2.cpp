@@ -1734,10 +1734,13 @@ void KyraEngine_v2::snd_playVoiceFile(int id) {
 	assert(id >= 0 && id <= 9999999);
 	sprintf(vocFile, "%07d", id);
 	if (_sound->voiceFileIsPresent(vocFile)) {
+		snd_stopVoice();
+
 		while (!_sound->voicePlay(vocFile)) {
 			updateWithText();
 			_system->delayMillis(10);
 		}
+
 		_speechFile = vocFile;
 	}
 }
