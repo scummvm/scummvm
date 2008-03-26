@@ -33,6 +33,7 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "graphics/surface.h"
+#include "graphics/scaler.h"
 #include "sound/mixer.h"
 
 #include <pspgu.h>
@@ -84,6 +85,9 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 	sceDisplaySetMode(0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	sceDisplaySetFrameBuf((char *)DisplayBuffer, 512, 1, 1);
 	sceDisplayWaitVblankStart();
+
+	// Correct pixel format ABBBBBGGGGGRRRRR
+	InitScalers(1555);
 }
 
 OSystem_PSP::~OSystem_PSP() {
@@ -647,7 +651,4 @@ void OSystem_PSP::setWindowCaption(const char *caption) {
 
 void OSystem_PSP::displayMessageOnOSD(const char *msg) {
 }
-
-// Correct pixel format ABBBBBGGGGGRRRRR
-int gBitFormat = 1555;
 
