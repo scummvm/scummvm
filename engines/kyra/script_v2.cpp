@@ -278,9 +278,9 @@ int KyraEngine_v2::o2_displayWsaSequentialFramesLooping(ScriptState *script) {
 
 	_screen->hideMouse();
 	int curTime = 0;
-	while (curTime < maxTimes && !skipFlag()) {
+	while (curTime < maxTimes) {
 		if (startFrame < endFrame) {
-			for (int i = startFrame; i <= endFrame && !skipFlag(); ++i) {
+			for (int i = startFrame; i <= endFrame; ++i) {
 				uint32 endTime = _system->getMillis() + waitTime * _tickLength;
 				_wsaSlots[slot]->displayFrame(i, 0xC000 | copyFlags, 0, 0);
 				_screen->updateScreen();
@@ -288,12 +288,12 @@ int KyraEngine_v2::o2_displayWsaSequentialFramesLooping(ScriptState *script) {
 				do {
 					update();
 
-					if (endTime - _system->getMillis() >= 10)
+					if (endTime - _system->getMillis() >= 10 && !skipFlag())
 						delay(10);
-				} while (_system->getMillis() < endTime);
+				} while (_system->getMillis() < endTime && !skipFlag());
 			}
 		} else {
-			for (int i = startFrame; i >= endFrame && !skipFlag(); --i) {
+			for (int i = startFrame; i >= endFrame; --i) {
 				uint32 endTime = _system->getMillis() + waitTime * _tickLength;
 				_wsaSlots[slot]->displayFrame(i, 0xC000 | copyFlags, 0, 0);
 				_screen->updateScreen();
@@ -301,9 +301,9 @@ int KyraEngine_v2::o2_displayWsaSequentialFramesLooping(ScriptState *script) {
 				do {
 					update();
 
-					if (endTime - _system->getMillis() >= 10)
+					if (endTime - _system->getMillis() >= 10 && !skipFlag())
 						delay(10);
-				} while (_system->getMillis() < endTime);
+				} while (_system->getMillis() < endTime && !skipFlag());
 			}
 		}
 
@@ -336,7 +336,7 @@ int KyraEngine_v2::o2_displayWsaSequentialFrames(ScriptState *script) {
 	
 	_screen->hideMouse();
 
-	while (currentFrame <= lastFrame && !skipFlag()) {	
+	while (currentFrame <= lastFrame) {	
 		uint32 endTime = _system->getMillis() + frameDelay;
 		_wsaSlots[index]->displayFrame(currentFrame++, copyParam, 0, 0);
 		_screen->updateScreen();
@@ -366,7 +366,7 @@ int KyraEngine_v2::o2_displayWsaSequence(ScriptState *script) {
 	int currentFrame = 0;
 	const int lastFrame = _wsaSlots[index]->frames();
 
-	while (currentFrame <= lastFrame && !skipFlag()) {	
+	while (currentFrame <= lastFrame) {	
 		uint32 endTime = _system->getMillis() + frameDelay;
 		_wsaSlots[index]->displayFrame(currentFrame++, copyParam, 0, 0);
 		if (doUpdate)
