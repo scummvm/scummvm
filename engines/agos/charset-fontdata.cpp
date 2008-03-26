@@ -1580,41 +1580,49 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		dst = getBackGround() + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 13;
-		w =  feebleFontSize[chr - 0x20];
+		w =  feebleFontSize[chr - 32];
 
-		src = feeble_windowFont + (chr - 0x20) * 13;
+		// Ignore invalid characters
+		if (chr - 32 > 195)
+			return;
+
+		src = feeble_windowFont + (chr - 32) * 13;
 	} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		dst = (byte *)screen->pixels + y * _dxSurfacePitch + x + window->textColumnOffset;
 		h = 8;
 		w = 6;
 
+		// Ignore invalid characters
+		if (chr - 32 > 98)
+			return;
+
 		switch (_language) {
 		case Common::CZ_CZE:
-			src = czech_simonFont + (chr - 0x20) * 8;
+			src = czech_simonFont + (chr - 32) * 8;
 			break;
 		case Common::RU_RUS:
-			src = russian_simonFont + (chr - 0x20) * 8;
+			src = russian_simonFont + (chr - 32) * 8;
 			break;
 		case Common::PL_POL:
-			src = polish_simonFont + (chr - 0x20) * 8;
+			src = polish_simonFont + (chr - 32) * 8;
 			break;
 		case Common::HB_ISR:
-			src = hebrew_simonFont + (chr - 0x20) * 8;
+			src = hebrew_simonFont + (chr - 32) * 8;
 			break;
 		case Common::ES_ESP:
-			src = spanish_simonFont + (chr - 0x20) * 8;
+			src = spanish_simonFont + (chr - 32) * 8;
 			break;
 		case Common::IT_ITA:
-			src = italian_simonFont + (chr - 0x20) * 8;
+			src = italian_simonFont + (chr - 32) * 8;
 			break;
 		case Common::FR_FRA:
-			src = french_simonFont + (chr - 0x20) * 8;
+			src = french_simonFont + (chr - 32) * 8;
 			break;
 		case Common::DE_DEU:
-			src = german_simonFont + (chr - 0x20) * 8;
+			src = german_simonFont + (chr - 32) * 8;
 			break;
 		case Common::EN_ANY:
-			src = english_simonFont + (chr - 0x20) * 8;
+			src = english_simonFont + (chr - 32) * 8;
 			break;
 		default:
 			error("windowDrawChar: Unknown language %d\n", _language);
@@ -1624,22 +1632,26 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		h = 8;
 		w = 6;
 
+		// Ignore invalid characters
+		if (chr - 32 > 98)
+			return;
+
 		// TODO: Add font tables for German
 		switch (_language) {
 		case Common::ES_ESP:
-			src = spanish_commonFont + (chr - 0x20) * 8;
+			src = spanish_commonFont + (chr - 32) * 8;
 			break;
 		case Common::IT_ITA:
-			src = italian_commonFont + (chr - 0x20) * 8;
+			src = italian_commonFont + (chr - 32) * 8;
 			break;
 		case Common::FR_FRA:
-			src = french_commonFont + (chr - 0x20) * 8;
+			src = french_commonFont + (chr - 32) * 8;
 			break;
 		case Common::DE_DEU:
-			src = english_commonFont + (chr - 0x20) * 8;
+			src = english_commonFont + (chr - 32) * 8;
 			break;
 		case Common::EN_ANY:
-			src = english_commonFont + (chr - 0x20) * 8;
+			src = english_commonFont + (chr - 32) * 8;
 			break;
 		default:
 			error("windowDrawChar: Unknown language %d\n", _language);
