@@ -73,16 +73,16 @@ Common::InSaveFile *KyraEngine::openSaveForReading(const char *filename, uint32 
 		warning("Make sure your savefile was from this version! (too old savefile version to detect that)");
 	} else {
 		uint32 flags = in->readUint32BE();
-		if ((flags & GF_FLOPPY) && _flags.isTalkie) {
-			warning("Can not load floppy savefile for this (non floppy) gameversion");
+		if ((flags & GF_FLOPPY) && (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) {
+			warning("Can not load DOS Floppy savefile for this (non DOS Floppy) gameversion");
 			delete in;
 			return 0;
 		} else if ((flags & GF_TALKIE) && !(_flags.isTalkie)) {
-			warning("Can not load cdrom savefile for this (non cdrom) gameversion");
+			warning("Can not load DOS CD-ROM savefile for this (non DOS CD-ROM) gameversion");
 			delete in;
 			return 0;
 		} else if ((flags & GF_FMTOWNS) && !(_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) {
-			warning("can not load FM-Towns/PC98 savefile for this (non FM-Towns/PC98) gameversion");
+			warning("Can not load FM-Towns/PC98 savefile for this (non FM-Towns/PC98) gameversion");
 			delete in;
 			return 0;
 		}
