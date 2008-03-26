@@ -37,6 +37,16 @@ void initCEScaler(void) {
 		maskUsed = 1;
 }
 
+// FIXME: Fingolfin says: The following interpolation code is a lot slower than it needs
+// to be. The reason: Using the value of a global variable to index two global arrays is
+// extremly difficult if not impossible for the compiler to optimize. At the very least,
+// the two arrays should be 'static const', but even then, memory access is required.
+// To avoid this, one could use the techniques used by our other scalers. See also the
+// interpolate functions in graphics/scaler/intern.h.
+// Even if those can't be used directly for some reasons (e.g. the compiler has problems
+// with templates), then still the *techniques* could and should be used. I would exepct
+// that this way, even the C version of PocketPCPortrait() should get a big speed boost.
+
 static inline uint16 CEinterpolate16_4(uint16 p1, uint16 p2, uint16 p3, uint16 p4)
 {
         return ((((p1 & redblueMasks[maskUsed]) + (p2 & redblueMasks[maskUsed]) + (p3 & redblueMasks[maskUsed]) + (p4 & redblueMasks[maskUsed])) / 4) & redblueMasks[maskUsed]) |
@@ -74,6 +84,10 @@ void PocketPCPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint3
 	}
 }
 
+// FIXME: Fingolfin says: Please document this function. What does it compute? How
+// does it differ from the code in aspect.cpp ? It would be nice to speed up this function
+// here using the ideas and tracks from aspect.cpp and the comment above, as right now, it
+// is rather hard for the compiler to optimize this code properly.
 void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 
 #define RB(x) ((x & redblueMasks[maskUsed])<<8)
