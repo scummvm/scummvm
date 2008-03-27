@@ -138,6 +138,9 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 		snd_playSoundEffect(0x0D);
 	}
 
+	if (header.originalSave)
+		warning("Trying to load savegame from original interpreter, while this is possible, it is not officially supported");
+
 	bool setFlag1EE = (queryGameFlag(0x1EE) != 0);
 	
 	_deathHandler = -1;
