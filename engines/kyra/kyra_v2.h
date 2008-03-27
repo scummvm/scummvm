@@ -995,6 +995,8 @@ protected:
 	int o2_setMousePos(ScriptState *script);
 	int o2_showMouse(ScriptState *script);
 	int o2_wipeDownMouseItem(ScriptState *script);
+	int o2_getElapsedSecs(ScriptState *script);
+	int o2_getTimerDelay(ScriptState *script);
 	//int o2_playSoundEffect(ScriptState *script);
 	int o2_delaySecs(ScriptState *script);
 	int o2_delay(ScriptState *script);

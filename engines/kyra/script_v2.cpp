@@ -593,14 +593,31 @@ int KyraEngine_v2::o2_wipeDownMouseItem(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_getElapsedSecs(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getElapsedSecs(%p) ()", (const void *)script);
+	return _system->getMillis() / 1000;
+}
+
+int KyraEngine_v2::o2_getTimerDelay(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getTimerDelay(%p) (%d)", (const void *)script, stackPos(0));
+	return _timer->getDelay(stackPos(0));
+}
+
 int KyraEngine_v2::o2_delaySecs(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_delaySecs(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	delay(stackPos(0) * 1000, true);
+	if (stackPos(1))
+		warning("unimplemented o2_delaySecs subfunction");
+	//if (stackPos(1))
+	//	sub_27100(stackPos(0) * _tickLength);
+	//else
+		delay(stackPos(0) * 1000, true);
 	return 0;
 }
 
 int KyraEngine_v2::o2_delay(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	if (stackPos(1))
+		warning("unimplemented o2_delay subfunction");
 	//if (stackPos(1))
 	//	sub_27100(stackPos(0) * _tickLength);
 	//else
@@ -1780,9 +1797,9 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_showMouse),
 		OpcodeUnImpl(),
 		Opcode(o2_wipeDownMouseItem),
-		OpcodeUnImpl(),
+		Opcode(o2_getElapsedSecs),
 		// 0x34
-		OpcodeUnImpl(),
+		Opcode(o2_getTimerDelay),
 		Opcode(o2_playSoundEffect),
 		Opcode(o2_delaySecs),
 		Opcode(o2_delay),
