@@ -42,6 +42,7 @@ Debugger::Debugger(KyraEngine *vm)
 	DCmd_Register("screen_debug_mode",	WRAP_METHOD(Debugger, cmd_setScreenDebug));
 	DCmd_Register("load_palette",		WRAP_METHOD(Debugger, cmd_loadPalette));
 	DCmd_Register("facings",			WRAP_METHOD(Debugger, cmd_showFacings));
+	DCmd_Register("gamespeed",			WRAP_METHOD(Debugger, cmd_gameSpeed));
 }
 
 bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
@@ -63,7 +64,7 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 	uint8 palette[768];
 
 	if (argc <= 1) {
-		DebugPrintf("Use load_palette <file> [start_col] [end_col]");
+		DebugPrintf("Use load_palette <file> [start_col] [end_col]\n");
 		return true;
 	}
 
@@ -73,7 +74,7 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 		memcpy(palette, _vm->screen()->getCPagePtr(5), 768);
 		_vm->screen()->loadPageFromDisk("TEMP", 5);
 	} else if (!_vm->screen()->loadPalette(argv[1], palette)) {
-		DebugPrintf("Palette '%s' not found!", argv[1]);
+		DebugPrintf("ERROR: Palette '%s' not found!\n", argv[1]);
 		return true;
 	}
 
@@ -102,6 +103,23 @@ bool Debugger::cmd_showFacings(int argc, const char **argv) {
 	DebugPrintf("6--*--2\n");
 	DebugPrintf(" / | \\\n");
 	DebugPrintf("5  4  3\n");
+	return true;
+}
+
+bool Debugger::cmd_gameSpeed(int argc, const char **argv) {
+	if (argc == 2) {
+		int val = atoi(argv[1]);
+
+		if (val < 1 || val > 1000) {
+			DebugPrintf("speed must lie between 1 and 1000 (default: 60)\n");
+			return true;
+		}
+
+		_vm->_tickLength = (uint8)(1000.0 / val);
+	} else {
+		DebugPrintf("Syntax: gamespeed <value>\n");
+	}
+
 	return true;
 }
 
@@ -275,7 +293,6 @@ Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
 	DCmd_Register("scene_to_facing",	WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
 	DCmd_Register("give",				WRAP_METHOD(Debugger_v2, cmd_giveItem));
 	DCmd_Register("pass_codes",			WRAP_METHOD(Debugger_v2, cmd_passcodes));
-	DCmd_Register("gamespeed",			WRAP_METHOD(Debugger_v2, cmd_gamespeed));
 }
 
 bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
@@ -431,23 +448,6 @@ bool Debugger_v2::cmd_passcodes(int argc, const char **argv) {
 		_vm->_dbgPass = val;		
 	} else {
 		DebugPrintf("Syntax: pass_codes <0/1>\n");
-	}
-
-	return true;
-}
-
-bool Debugger_v2::cmd_gamespeed(int argc, const char **argv) {
-	if (argc == 2) {
-		int val = atoi(argv[1]);
-
-		if (val < 1 || val > 1000) {
-			DebugPrintf("speed must lie between 1 and 1000 (default: 60)\n");
-			return true;
-		}
-
-		_vm->_tickLength = (uint8)(1000.0 / val);
-	} else {
-		DebugPrintf("Syntax: gamespeed <value>\n");
 	}
 
 	return true;

@@ -45,6 +45,7 @@ protected:
 	bool cmd_setScreenDebug(int argc, const char **argv);
 	bool cmd_loadPalette(int argc, const char **argv);
 	bool cmd_showFacings(int argc, const char **argv);
+	bool cmd_gameSpeed(int argc, const char **argv);
 };
 
 class Debugger_v1 : public Debugger {
@@ -84,7 +85,6 @@ protected:
 	bool cmd_sceneToFacing(int argc, const char **argv);
 	bool cmd_giveItem(int argc, const char **argv);
 	bool cmd_passcodes(int argc, const char **argv);
-	bool cmd_gamespeed(int argc, const char **argv);
 };
 
 } // End of namespace Kyra
