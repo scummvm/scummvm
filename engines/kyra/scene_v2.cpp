@@ -418,7 +418,7 @@ void KyraEngine_v2::startSceneScript(int unk1) {
 	char filename[14];
 
 	strcpy(filename, _sceneList[sceneId].filename);
-	if (sceneId == 68 && (queryGameFlag(0x1BC) || queryGameFlag(0x1DC)))
+	if (sceneId == 68 && (queryGameFlag(0x1BC) || queryGameFlag(0x1BD)))
 		strcpy(filename, "DOORX");
 	strcat(filename, ".CPS");
 
