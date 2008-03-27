@@ -1104,10 +1104,12 @@ int KyraEngine_v2::o2_updateSceneAnim(ScriptState *script) {
 	// Raziel^.
 	//
 	// We know currently of some different animations where this happens.
-	// - One is where Marco is dangling from the flesh-eating plant (see bug #1923638 "HoF: Marco missing animation frames").
-	// - The other one is after giving the ticket to the captain. He would move very fast (barely noticeable) onto the ship
+	// - Where Marco is dangling from the flesh-eating plant (see bug #1923638 "HoF: Marco missing animation frames").
+	// - After giving the ticket to the captain. He would move very fast (barely noticeable) onto the ship
 	//   without this delay.
-	// - The scene after giving the sandwitch to the guards in the city.
+	// - The scene after giving the sandwitch to the guards in the city. (see bug #1926838 "HoF: Animation plays too fast")
+	//   This scene script calls o2_delay though, but since this updates the scene animation scripts again there is no delay
+	//   for the animation.
 	if ((stackPos(0) == 2 && _mainCharacter.sceneId == 3) || (stackPos(0) == 3 && _mainCharacter.sceneId == 33) ||
 		((stackPos(0) == 1 || stackPos(0) == 2) && _mainCharacter.sceneId == 19))
 		_sceneSpecialScriptsTimer[_lastProcessedSceneScript] = _system->getMillis() + _tickLength * 6;
