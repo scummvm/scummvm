@@ -42,7 +42,7 @@ void KyraEngine_v2::saveGame(const char *fileName, const char *saveName) {
 	if (!out)
 		return;
 
-	_timer->saveDataToFile(out);
+	_timer->saveDataToFile(*out);
 
 	out->writeUint32BE(sizeof(_flagsTable));
 	out->write(_flagsTable, sizeof(_flagsTable));
@@ -132,8 +132,8 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::loadGame('%s')", fileName);
 
 	SaveHeader header;
-	Common::InSaveFile *in = openSaveForReading(fileName, header);
-	if (!in) {
+	Common::InSaveFile *saveFile = openSaveForReading(fileName, header);
+	if (!saveFile) {
 		showMessageFromCCode(0x35, 0x84, 0);
 		snd_playSoundEffect(0x0D);
 	}
@@ -152,187 +152,136 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 
 	int loadedZTable = _loadedZTable;
 
+	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, true);
+
 	_screen->hideMouse();
 
 	if (!header.originalSave) {
 		_timer->loadDataFromFile(in, header.version);
 
-		uint32 flagsSize = in->readUint32BE();
+		uint32 flagsSize = in.readUint32BE();
 		assert(flagsSize <= sizeof(_flagsTable));
-		in->read(_flagsTable, flagsSize);
+		in.read(_flagsTable, flagsSize);
+	}
 
-		// usually we have to save the flag set by opcode 10 here
-		//word_2AB05 = in->readUint16BE();
-		_lastMusicCommand = in->readSint16BE();
-		_newChapterFile = in->readByte();
-		_loadedZTable = in->readByte();
-		_cauldronState = in->readByte();
-		_colorCodeFlag1 = in->readByte();
-		_colorCodeFlag2 = in->readByte();
-		_bookCurPage = in->readByte();
-		_bookMaxPage = in->readByte();
-		for (int i = 0; i < 7; ++i)
-			_presetColorCode[i] = in->readByte();
-		for (int i = 0; i < 7; ++i)
-			_inputColorCode[i] = in->readByte();
-		for (int i = 0; i < 25; ++i)
-			_cauldronTable[i] = in->readSint16BE();
-		for (int i = 0; i < 20; ++i)
-			_hiddenItems[i] = in->readUint16BE();
-		for (int i = 0; i < 19; ++i)
-			in->read(_conversationState[i], 14);
-		in->read(_newSceneDlgState, 32);
-		_cauldronUseCount = in->readSint16BE();
+	// usually we have to save the flag set by opcode 10 here
+	//word_2AB05 = in.readUint16();
+	if (header.originalSave)
+		in.readUint16();
+	_lastMusicCommand = in.readSint16();
+	_newChapterFile = in.readByte();
+	_loadedZTable = in.readByte();
+	_cauldronState = in.readByte();
+	_colorCodeFlag1 = in.readByte();
+	_colorCodeFlag2 = in.readByte();
+	_bookCurPage = in.readByte();
+	_bookMaxPage = in.readByte();
+	for (int i = 0; i < 7; ++i)
+		_presetColorCode[i] = in.readByte();
+	for (int i = 0; i < 7; ++i)
+		_inputColorCode[i] = in.readByte();
+	for (int i = 0; i < 25; ++i)
+		_cauldronTable[i] = in.readSint16();
+	for (int i = 0; i < 20; ++i)
+		_hiddenItems[i] = in.readUint16();
 
-		_mainCharacter.sceneId = in->readUint16BE();
-		_mainCharacter.dlgIndex = in->readUint16BE();
-		_mainCharacter.height = in->readByte();
-		_mainCharacter.facing = in->readByte();
-		_mainCharacter.animFrame = in->readUint16BE();
-		_mainCharacter.unk8 = in->readByte();
-		_mainCharacter.unk9 = in->readByte();
-		_mainCharacter.unkA = in->readByte();
-		for (int i = 0; i < 20; ++i)
-			_mainCharacter.inventory[i] = in->readUint16BE();
-		_mainCharacter.x1 = in->readSint16BE();
-		_mainCharacter.y1 = in->readSint16BE();
-		_mainCharacter.x2 = in->readSint16BE();
-		_mainCharacter.y2 = in->readSint16BE();
-
-		for (int i = 0; i < 30; ++i) {
-			_itemList[i].id = in->readUint16BE();
-			_itemList[i].sceneId = in->readUint16BE();
-			_itemList[i].x = in->readSint16BE();
-			_itemList[i].y = in->readByte();
-			_itemList[i].unk7 = in->readUint16BE();
-		}
-
-		for (int i = 0; i < 72; ++i) {
-			in->read(_talkObjectList[i].filename, 13);
-			_talkObjectList[i].scriptId = in->readByte();
-			_talkObjectList[i].x = in->readSint16BE();
-			_talkObjectList[i].y = in->readSint16BE();
-			_talkObjectList[i].color = in->readByte();
-		}
-
-		for (int i = 0; i < 86; ++i) {
-			in->read(_sceneList[i].filename, 10);
-			_sceneList[i].exit1 = in->readUint16BE();
-			_sceneList[i].exit2 = in->readUint16BE();
-			_sceneList[i].exit3 = in->readUint16BE();
-			_sceneList[i].exit4 = in->readUint16BE();
-			_sceneList[i].flags = in->readByte();
-			_sceneList[i].sound = in->readByte();
-		}
-
-		_itemInHand = in->readSint16BE();
-		_sceneExit1 = in->readUint16BE();
-		_sceneExit2 = in->readUint16BE();
-		_sceneExit3 = in->readUint16BE();
-		_sceneExit4 = in->readUint16BE();
-	} else {
-		/*word_2AB05 = */in->readUint16LE();
-		_lastMusicCommand = in->readSint16LE();
-		_newChapterFile = in->readByte();
-		_loadedZTable = in->readByte();
-		_cauldronState = in->readByte();
-		_colorCodeFlag1 = in->readByte();
-		_colorCodeFlag2 = in->readByte();
-		_bookCurPage = in->readByte();
-		_bookMaxPage = in->readByte();
-
-		for (int i = 0; i < 7; ++i)
-			_presetColorCode[i] = in->readByte();
-		for (int i = 0; i < 7; ++i)
-			_inputColorCode[i] = in->readByte();
-		for (int i = 0; i < 25; ++i)
-			_cauldronTable[i] = in->readSint16LE();
-		for (int i = 0; i < 20; ++i)
-			_hiddenItems[i] = in->readUint16LE();
-
+	if (header.originalSave) {
 		assert(sizeof(_flagsTable) >= 0x41);
-		in->read(_flagsTable, 0x41);
+		in.read(_flagsTable, 0x41);
+	}
 
-		for (int i = 0; i < 19; ++i)
-			in->read(_conversationState[i], 14);
+	for (int i = 0; i < 19; ++i)
+		in.read(_conversationState[i], 14);
+
+	if (!header.originalSave) {
+		in.read(_newSceneDlgState, 32);
+	} else {
 		for (int i = 0; i < 31; ++i)
-			_newSceneDlgState[i] = in->readUint16LE();
-		_cauldronUseCount = in->readSint16LE();
-		in->seek(6, SEEK_CUR);
+			_newSceneDlgState[i] = in.readUint16();
+	}
+		
+	_cauldronUseCount = in.readSint16();
 
-		_mainCharacter.sceneId = in->readUint16LE();
-		_mainCharacter.dlgIndex = in->readUint16LE();
-		_mainCharacter.height = in->readByte();
-		_mainCharacter.facing = in->readByte();
-		_mainCharacter.animFrame = in->readUint16LE();
-		_mainCharacter.unk8 = in->readByte();
-		_mainCharacter.unk9 = in->readByte();
-		_mainCharacter.unkA = in->readByte();
-		for (int i = 0; i < 20; ++i)
-			_mainCharacter.inventory[i] = in->readUint16LE();
-		_mainCharacter.x1 = in->readSint16LE();
-		_mainCharacter.y1 = in->readSint16LE();
-		_mainCharacter.x2 = in->readSint16LE();
-		_mainCharacter.y2 = in->readSint16LE();
+	if (header.originalSave)
+		in.seek(6, SEEK_CUR);
 
-		for (int i = 0; i < 30; ++i) {
-			_itemList[i].id = in->readUint16LE();
-			_itemList[i].sceneId = in->readUint16LE();
-			_itemList[i].x = in->readSint16LE();
-			_itemList[i].y = in->readByte();
-			_itemList[i].unk7 = in->readUint16LE();
-		}
+	_mainCharacter.sceneId = in.readUint16();
+	_mainCharacter.dlgIndex = in.readUint16();
+	_mainCharacter.height = in.readByte();
+	_mainCharacter.facing = in.readByte();
+	_mainCharacter.animFrame = in.readUint16();
+	_mainCharacter.unk8 = in.readByte();
+	_mainCharacter.unk9 = in.readByte();
+	_mainCharacter.unkA = in.readByte();
+	for (int i = 0; i < 20; ++i)
+		_mainCharacter.inventory[i] = in.readUint16();
+	_mainCharacter.x1 = in.readSint16();
+	_mainCharacter.y1 = in.readSint16();
+	_mainCharacter.x2 = in.readSint16();
+	_mainCharacter.y2 = in.readSint16();
 
-		for (int i = 0; i < 72; ++i) {
-			in->read(_talkObjectList[i].filename, 13);
-			_talkObjectList[i].scriptId = in->readByte();
-			_talkObjectList[i].x = in->readSint16LE();
-			_talkObjectList[i].y = in->readSint16LE();
-			_talkObjectList[i].color = in->readByte();
-		}
+	for (int i = 0; i < 30; ++i) {
+		_itemList[i].id = in.readUint16();
+		_itemList[i].sceneId = in.readUint16();
+		_itemList[i].x = in.readSint16();
+		_itemList[i].y = in.readByte();
+		_itemList[i].unk7 = in.readUint16();
+	}
 
-		for (int i = 0; i < 86; ++i) {
-			in->read(_sceneList[i].filename, 9);
+	for (int i = 0; i < 72; ++i) {
+		in.read(_talkObjectList[i].filename, 13);
+		_talkObjectList[i].scriptId = in.readByte();
+		_talkObjectList[i].x = in.readSint16();
+		_talkObjectList[i].y = in.readSint16();
+		_talkObjectList[i].color = in.readByte();
+	}
+
+	for (int i = 0; i < 86; ++i) {
+		if (!header.originalSave) {
+			in.read(_sceneList[i].filename, 10);
+		} else {
+			in.read(_sceneList[i].filename, 9);
 			_sceneList[i].filename[9] = 0;
-			_sceneList[i].exit1 = in->readUint16LE();
-			_sceneList[i].exit2 = in->readUint16LE();
-			_sceneList[i].exit3 = in->readUint16LE();
-			_sceneList[i].exit4 = in->readUint16LE();
-			_sceneList[i].flags = in->readByte();
-			_sceneList[i].sound = in->readByte();
 		}
 
-		_itemInHand = in->readSint16LE();
+		_sceneList[i].exit1 = in.readUint16();
+		_sceneList[i].exit2 = in.readUint16();
+		_sceneList[i].exit3 = in.readUint16();
+		_sceneList[i].exit4 = in.readUint16();
+		_sceneList[i].flags = in.readByte();
+		_sceneList[i].sound = in.readByte();
+	}
 
+	_itemInHand = in.readSint16();
+
+	if (header.originalSave) {
 		uint32 currentTime = _system->getMillis();
 
 		for (int i = 0; i < 6; ++i)
-			_timer->setDelay(i, in->readSint32LE());
+			_timer->setDelay(i, in.readSint32LE());
 
 		for (int i = 0; i < 6; ++i) {
-			if (in->readUint16LE())
+			if (in.readUint16LE())
 				_timer->enable(i);
 			else
 				_timer->disable(i);
 		}
 
 		for (int i = 0; i < 6; ++i)
-			_timer->setNextRun(i, currentTime + (in->readUint32LE() * _tickLength));
+			_timer->setNextRun(i, currentTime + (in.readUint32LE() * _tickLength));
 
 		_timer->resetNextRun();
-
-		_sceneExit1 = in->readUint16LE();
-		_sceneExit2 = in->readUint16LE();
-		_sceneExit3 = in->readUint16LE();
-		_sceneExit4 = in->readUint16LE();
 	}
 
-	if (in->ioFailed())
+	_sceneExit1 = in.readUint16();
+	_sceneExit2 = in.readUint16();
+	_sceneExit3 = in.readUint16();
+	_sceneExit4 = in.readUint16();
+
+	if (saveFile->ioFailed())
 		error("Load failed ('%s', '%s').", fileName, header.description.c_str());
 	else
 		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());
-
-	delete in;
 
 	if (loadedZTable != _loadedZTable)
 		loadZShapes(_loadedZTable);

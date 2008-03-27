@@ -27,7 +27,7 @@
 #include "kyra/timer.h"
 
 #include "common/func.h"
-#include "common/savefile.h"
+#include "common/stream.h"
 
 namespace Kyra {
 
@@ -218,15 +218,15 @@ void TimerManager::disable(uint8 id) {
 		warning("TimerManager::disable: No timer %d", id);
 }
 
-void TimerManager::loadDataFromFile(Common::InSaveFile *file, int version) {
-	debugC(9, kDebugLevelTimer, "TimerManager::loadDataFromFile(%p, %d)", (const void*)file, version);
+void TimerManager::loadDataFromFile(Common::SeekableReadStream &file, int version) {
+	debugC(9, kDebugLevelTimer, "TimerManager::loadDataFromFile(%p, %d)", (const void*)&file, version);
 
 	if (version <= 7) {
 		_nextRun = 0;
 		for (int i = 0; i < 32; ++i) {
-			uint8 enabled = file->readByte();
-			int32 countdown = file->readSint32BE();
-			uint32 nextRun = file->readUint32BE();
+			uint8 enabled = file.readByte();
+			int32 countdown = file.readSint32BE();
+			uint32 nextRun = file.readUint32BE();
 
 			Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(i));
 			if (timer != _timers.end()) {
@@ -246,18 +246,18 @@ void TimerManager::loadDataFromFile(Common::InSaveFile *file, int version) {
 			}
 		}
 	} else {
-		int entries = file->readByte();
+		int entries = file.readByte();
 		for (int i = 0; i < entries; ++i) {
-			uint8 id = file->readByte();
+			uint8 id = file.readByte();
 
 			Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 			if (timer != _timers.end()) {
-				timer->enabled = file->readByte();
-				timer->countdown = file->readSint32BE();
-				timer->lastUpdate = file->readSint32BE();
+				timer->enabled = file.readByte();
+				timer->countdown = file.readSint32BE();
+				timer->lastUpdate = file.readSint32BE();
 			} else {
 				warning("Loading timer data for non existing timer %d", id);
-				file->seek(7, SEEK_CUR);
+				file.seek(7, SEEK_CUR);
 			}
 		}
 
@@ -265,15 +265,15 @@ void TimerManager::loadDataFromFile(Common::InSaveFile *file, int version) {
 	}
 }
 
-void TimerManager::saveDataToFile(Common::OutSaveFile *file) const {
-	debugC(9, kDebugLevelTimer, "TimerManager::saveDataToFile(%p)", (const void*)file);
+void TimerManager::saveDataToFile(Common::WriteStream &file) const {
+	debugC(9, kDebugLevelTimer, "TimerManager::saveDataToFile(%p)", (const void*)&file);
 
-	file->writeByte(count());
+	file.writeByte(count());
 	for (CIterator pos = _timers.begin(); pos != _timers.end(); ++pos) {
-		file->writeByte(pos->id);
-		file->writeByte(pos->enabled);
-		file->writeSint32BE(pos->countdown);
-		file->writeSint32BE(pos->lastUpdate - _system->getMillis());
+		file.writeByte(pos->id);
+		file.writeByte(pos->enabled);
+		file.writeSint32BE(pos->countdown);
+		file.writeSint32BE(pos->lastUpdate - _system->getMillis());
 	}
 }
 

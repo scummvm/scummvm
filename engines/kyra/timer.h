@@ -30,11 +30,7 @@
 #include "kyra/util.h"
 
 #include "common/list.h"
-
-namespace Common {
-class InSaveFile;
-class OutSaveFile;
-} // end of namespace Common
+#include "common/stream.h"
 
 namespace Kyra {
 
@@ -76,8 +72,8 @@ public:
 	void enable(uint8 id);
 	void disable(uint8 id);
 
-	void loadDataFromFile(Common::InSaveFile *file, int version);
-	void saveDataToFile(Common::OutSaveFile *file) const;
+	void loadDataFromFile(Common::SeekableReadStream &file, int version);
+	void saveDataToFile(Common::WriteStream &file) const;
 private:
 	void resync();
 

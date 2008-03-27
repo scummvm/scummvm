@@ -104,7 +104,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 	_poisonDeathCounter = in->readByte();
 	_animator->_brandonDrawFrame = in->readUint16BE();
 
-	_timer->loadDataFromFile(in, header.version);
+	_timer->loadDataFromFile(*in, header.version);
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 	uint32 flagsSize = in->readUint32BE();
@@ -262,7 +262,7 @@ void KyraEngine_v1::saveGame(const char *fileName, const char *saveName) {
 	out->writeByte(_poisonDeathCounter);
 	out->writeUint16BE(_animator->_brandonDrawFrame);
 
-	_timer->saveDataToFile(out);
+	_timer->saveDataToFile(*out);
 
 	out->writeUint32BE(sizeof(_flagsTable));
 	out->write(_flagsTable, sizeof(_flagsTable));
