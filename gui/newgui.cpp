@@ -121,6 +121,10 @@ NewGui::NewGui() : _needRedraw(false),
 	_themeChange = false;
 }
 
+NewGui::~NewGui() {
+	delete _theme;
+}
+
 bool NewGui::loadNewTheme(const Common::String &style) {
 	Common::String styleType;
 	Common::ConfigFile cfg;

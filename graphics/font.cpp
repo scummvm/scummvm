@@ -161,6 +161,7 @@ void free_font(NewFontData* pf) {
 	free(pf->bits);
 	free(pf->offset);
 	free(pf->width);
+	free(pf->bbx);
 	free(pf);
 }
 

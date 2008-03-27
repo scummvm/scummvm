@@ -112,10 +112,12 @@ void InitScalers(uint32 BitFormat) {
 }
 
 void DestroyScalers(){
+#ifndef DISABLE_HQ_SCALERS
 	free(RGBtoYUV);
 	free(LUT16to32);
 	RGBtoYUV = 0;
 	LUT16to32 = 0;
+#endif
 }
 
 

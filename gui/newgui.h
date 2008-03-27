@@ -66,6 +66,7 @@ class NewGui : public Common::Singleton<NewGui> {
 	friend class Dialog;
 	friend class Common::Singleton<SingletonBaseType>;
 	NewGui();
+	~NewGui();
 public:
 
 	// Main entry for the GUI: this will start an event loop that keeps running
