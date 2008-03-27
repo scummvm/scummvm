@@ -43,6 +43,7 @@ protected:
 	KyraEngine *_vm;
 
 	bool cmd_setScreenDebug(int argc, const char **argv);
+	bool cmd_loadPalette(int argc, const char **argv);
 	bool cmd_showFacings(int argc, const char **argv);
 };
 

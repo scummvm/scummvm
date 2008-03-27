@@ -31,6 +31,7 @@
 #include "kyra/kyra_v2.h"
 #include "kyra/screen.h"
 #include "kyra/timer.h"
+#include "kyra/resource.h"
 
 namespace Kyra {
 
@@ -39,6 +40,7 @@ Debugger::Debugger(KyraEngine *vm)
 	_vm = vm;
 
 	DCmd_Register("screen_debug_mode",	WRAP_METHOD(Debugger, cmd_setScreenDebug));
+	DCmd_Register("load_palette",		WRAP_METHOD(Debugger, cmd_loadPalette));
 	DCmd_Register("facings",			WRAP_METHOD(Debugger, cmd_showFacings));
 }
 
@@ -54,6 +56,42 @@ bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
 		DebugPrintf("Screen debug mode is %s.\n", (_vm->screen()->queryScreenDebug() ? "enabled" : "disabled"));
 		DebugPrintf("Use screen_debug_mode <enable/disable> to enable or disable it.\n");
 	}
+	return true;
+}
+
+bool Debugger::cmd_loadPalette(int argc, const char **argv) {
+	uint8 palette[768];
+
+	if (argc <= 1) {
+		DebugPrintf("Use load_palette <file> [start_col] [end_col]");
+		return true;
+	}
+
+	if (_vm->gameFlags().gameID != GI_KYRA1 && _vm->resource()->getFileSize(argv[1]) != 768) {
+		_vm->screen()->savePageToDisk("TEMP", 5);
+		_vm->screen()->loadBitmap(argv[1], 5, 5, 0);
+		memcpy(palette, _vm->screen()->getCPagePtr(5), 768);
+		_vm->screen()->loadPageFromDisk("TEMP", 5);
+	} else if (!_vm->resource()->loadFileToBuf(argv[1], palette, 768)) {
+		DebugPrintf("Palette '%s' not found!", argv[1]);
+		return true;
+	}
+
+	int startCol = 0;
+	int endCol = 255;
+	if (argc > 2)
+		startCol = MIN(255, MAX(0, atoi(argv[2])));
+	if (argc > 3)
+		endCol = MIN(255, MAX(0, atoi(argv[3])));
+
+	if (startCol > 0)
+		memcpy(palette, _vm->screen()->getScreenPalette(), startCol*3);
+	if (endCol < 255)
+		memcpy(palette + endCol * 3, _vm->screen()->getScreenPalette() + endCol * 3, (255-endCol)*3);
+
+	_vm->screen()->setScreenPalette(palette);
+	_vm->screen()->updateScreen();
+
 	return true;
 }
 
