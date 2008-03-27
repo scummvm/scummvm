@@ -255,6 +255,11 @@ void AGOSEngine::o_add() {
 	// 43: add
 	uint var = getVarWrapper();
 	writeVariable(var, readVariable(var) + getVarOrWord());
+
+	// WORKAROUND: The converation of the male in Vid-Phone Booth at Dave's Space Bar
+	// is based on variable 116, but stops due to a missing option (37).
+	if (getGameType() == GType_FF && _currentTable->id == 10538 && readVariable(116) == 37)
+			writeVariable(116, 38);
 }
 
 void AGOSEngine::o_sub() {
