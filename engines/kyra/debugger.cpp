@@ -43,6 +43,11 @@ Debugger::Debugger(KyraEngine *vm)
 	DCmd_Register("load_palette",		WRAP_METHOD(Debugger, cmd_loadPalette));
 	DCmd_Register("facings",			WRAP_METHOD(Debugger, cmd_showFacings));
 	DCmd_Register("gamespeed",			WRAP_METHOD(Debugger, cmd_gameSpeed));
+	DCmd_Register("flags",				WRAP_METHOD(Debugger, cmd_listFlags));
+	DCmd_Register("toggleflag",			WRAP_METHOD(Debugger, cmd_toggleFlag));
+	DCmd_Register("queryflag",			WRAP_METHOD(Debugger, cmd_queryFlag));
+	DCmd_Register("timers",				WRAP_METHOD(Debugger, cmd_listTimers));
+	DCmd_Register("settimercountdown",	WRAP_METHOD(Debugger, cmd_setTimerCountdown));
 }
 
 bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
@@ -123,6 +128,63 @@ bool Debugger::cmd_gameSpeed(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::cmd_listFlags(int argc, const char **argv) {
+	for (int i = 0; i < (int)sizeof(_vm->_flagsTable)*8; i++) {
+		DebugPrintf("(%-3i): %-5i", i, _vm->queryGameFlag(i));
+		if (!(i % 10))
+			DebugPrintf("\n");
+	}
+	DebugPrintf("\n");
+	return true;
+}
+
+bool Debugger::cmd_toggleFlag(int argc, const char **argv) {
+	if (argc > 1) {
+		uint flag = atoi(argv[1]);
+		if (_vm->queryGameFlag(flag))
+			_vm->resetGameFlag(flag);
+		else
+			_vm->setGameFlag(flag);
+		DebugPrintf("Flag %i is now %i\n", flag, _vm->queryGameFlag(flag));
+	} else {
+		DebugPrintf("Syntax: toggleflag <flag>\n");
+	}
+
+	return true;
+}
+
+bool Debugger::cmd_queryFlag(int argc, const char **argv) {
+	if (argc > 1) {
+		uint flag = atoi(argv[1]);
+		DebugPrintf("Flag %i is %i\n", flag, _vm->queryGameFlag(flag));
+	} else {
+		DebugPrintf("Syntax: queryflag <flag>\n");
+	}
+
+	return true;
+}
+
+bool Debugger::cmd_listTimers(int argc, const char **argv) {
+	DebugPrintf("Current time: %-8u\n", g_system->getMillis());
+	for (int i = 0; i < _vm->timer()->count(); i++)
+		DebugPrintf("Timer %-2i: Active: %-3s Countdown: %-6i %-8u\n", i, _vm->timer()->isEnabled(i) ? "Yes" : "No", _vm->timer()->getDelay(i), _vm->timer()->getNextRun(i));
+
+	return true;
+}
+
+bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
+	if (argc > 2) {
+		uint timer = atoi(argv[1]);
+		uint countdown = atoi(argv[2]);
+		_vm->timer()->setCountdown(timer, countdown);
+		DebugPrintf("Timer %i now has countdown %i\n", timer, _vm->timer()->getDelay(timer));
+	} else {
+		DebugPrintf("Syntax: settimercountdown <timer> <countdown>\n");
+	}
+
+	return true;
+}
+
 #pragma mark -
 
 Debugger_v1::Debugger_v1(KyraEngine_v1 *vm)
@@ -132,11 +194,6 @@ Debugger_v1::Debugger_v1(KyraEngine_v1 *vm)
 	DCmd_Register("continue",			WRAP_METHOD(Debugger_v1, Cmd_Exit));
 	DCmd_Register("enter",				WRAP_METHOD(Debugger_v1, cmd_enterRoom));
 	DCmd_Register("rooms",				WRAP_METHOD(Debugger_v1, cmd_listRooms));
-	DCmd_Register("flags",				WRAP_METHOD(Debugger_v1, cmd_listFlags));
-	DCmd_Register("toggleflag",			WRAP_METHOD(Debugger_v1, cmd_toggleFlag));
-	DCmd_Register("queryflag",			WRAP_METHOD(Debugger_v1, cmd_queryFlag));
-	DCmd_Register("timers",				WRAP_METHOD(Debugger_v1, cmd_listTimers));
-	DCmd_Register("settimercountdown",	WRAP_METHOD(Debugger_v1, cmd_setTimerCountdown));
 	DCmd_Register("give",				WRAP_METHOD(Debugger_v1, cmd_giveItem));
 	DCmd_Register("birthstones",		WRAP_METHOD(Debugger_v1, cmd_listBirthstones));
 }
@@ -195,63 +252,6 @@ bool Debugger_v1::cmd_listRooms(int argc, const char **argv) {
 	}
 	DebugPrintf("\n");
 	DebugPrintf("Current room: %i\n", _vm->_currentRoom);
-	return true;
-}
-
-bool Debugger_v1::cmd_listFlags(int argc, const char **argv) {
-	for (int i = 0; i < (int)sizeof(_vm->_flagsTable)*8; i++) {
-		DebugPrintf("(%-3i): %-5i", i, _vm->queryGameFlag(i));
-		if (!(i % 10))
-			DebugPrintf("\n");
-	}
-	DebugPrintf("\n");
-	return true;
-}
-
-bool Debugger_v1::cmd_toggleFlag(int argc, const char **argv) {
-	if (argc > 1) {
-		uint flag = atoi(argv[1]);
-		if (_vm->queryGameFlag(flag))
-			_vm->resetGameFlag(flag);
-		else
-			_vm->setGameFlag(flag);
-		DebugPrintf("Flag %i is now %i\n", flag, _vm->queryGameFlag(flag));
-	} else {
-		DebugPrintf("Syntax: toggleflag <flag>\n");
-	}
-
-	return true;
-}
-
-bool Debugger_v1::cmd_queryFlag(int argc, const char **argv) {
-	if (argc > 1) {
-		uint flag = atoi(argv[1]);
-		DebugPrintf("Flag %i is %i\n", flag, _vm->queryGameFlag(flag));
-	} else {
-		DebugPrintf("Syntax: queryflag <flag>\n");
-	}
-
-	return true;
-}
-
-bool Debugger_v1::cmd_listTimers(int argc, const char **argv) {
-	DebugPrintf("Current time: %-8u\n", g_system->getMillis());
-	for (int i = 0; i < _vm->timer()->count(); i++)
-		DebugPrintf("Timer %-2i: Active: %-3s Countdown: %-6i %-8u\n", i, _vm->timer()->isEnabled(i) ? "Yes" : "No", _vm->timer()->getDelay(i), _vm->timer()->getNextRun(i));
-
-	return true;
-}
-
-bool Debugger_v1::cmd_setTimerCountdown(int argc, const char **argv) {
-	if (argc > 2) {
-		uint timer = atoi(argv[1]);
-		uint countdown = atoi(argv[2]);
-		_vm->timer()->setCountdown(timer, countdown);
-		DebugPrintf("Timer %i now has countdown %i\n", timer, _vm->timer()->getDelay(timer));
-	} else {
-		DebugPrintf("Syntax: settimercountdown <timer> <countdown>\n");
-	}
-
 	return true;
 }
 

@@ -46,6 +46,11 @@ protected:
 	bool cmd_loadPalette(int argc, const char **argv);
 	bool cmd_showFacings(int argc, const char **argv);
 	bool cmd_gameSpeed(int argc, const char **argv);
+	bool cmd_listFlags(int argc, const char **argv);
+	bool cmd_toggleFlag(int argc, const char **argv);
+	bool cmd_queryFlag(int argc, const char **argv);
+	bool cmd_listTimers(int argc, const char **argv);
+	bool cmd_setTimerCountdown(int argc, const char **argv);
 };
 
 class Debugger_v1 : public Debugger {
@@ -61,11 +66,6 @@ protected:
 
 	bool cmd_enterRoom(int argc, const char **argv);
 	bool cmd_listRooms(int argc, const char **argv);
-	bool cmd_listFlags(int argc, const char **argv);
-	bool cmd_toggleFlag(int argc, const char **argv);
-	bool cmd_queryFlag(int argc, const char **argv);
-	bool cmd_listTimers(int argc, const char **argv);
-	bool cmd_setTimerCountdown(int argc, const char **argv);
 	bool cmd_giveItem(int argc, const char **argv);
 	bool cmd_listBirthstones(int argc, const char **argv);
 };
