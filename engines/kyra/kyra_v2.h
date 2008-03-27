@@ -1087,6 +1087,9 @@ protected:
 	int o2_getRainbowRoomData(ScriptState *script);
 	int o2_drawSceneShapeEx(ScriptState *script);
 	int o2_getBoolFromStack(ScriptState *script);
+	int o2_getSfxDriver(ScriptState *script);
+	int o2_getVocSupport(ScriptState *script);
+	int o2_getMusicDriver(ScriptState *script);
 	int o2_setVocHigh(ScriptState *script);
 	int o2_getVocHigh(ScriptState *script);
 	int o2_zanthiaChat(ScriptState *script);

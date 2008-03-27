@@ -1599,6 +1599,22 @@ int KyraEngine_v2::o2_getBoolFromStack(ScriptState *script) {
 	return stackPos(0) ? 1 : 0;
 }
 
+int KyraEngine_v2::o2_getSfxDriver(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getSfxDriver(%p) ()", (const void *)script);
+	return 1;	// HACK: this is AdLib driver, maybe we should return 6 for MT-32 or 7 for General MIDI too when we're using that
+}
+
+int KyraEngine_v2::o2_getVocSupport(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getVocSupport(%p) ()", (const void *)script);
+	// we always support VOC file playback
+	return 1;
+}
+
+int KyraEngine_v2::o2_getMusicDriver(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getMusicDriver(%p) ()", (const void *)script);
+	return 1;	// HACK: this is AdLib driver, maybe we should return 6 for MT-32 or 7 for General MIDI too when we're using that
+}
+
 int KyraEngine_v2::o2_setVocHigh(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setVocHigh(%p) (%d)", (const void *)script, stackPos(0));
 	_vocHigh = stackPos(0);
@@ -1899,9 +1915,9 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_drawSceneShapeEx),
 		Opcode(o2_getBoolFromStack),
 		// 0xa4
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
-		OpcodeUnImpl(),
+		Opcode(o2_getSfxDriver),
+		Opcode(o2_getVocSupport),
+		Opcode(o2_getMusicDriver),
 		Opcode(o2_setVocHigh),
 		// 0xa8
 		Opcode(o2_getVocHigh),
