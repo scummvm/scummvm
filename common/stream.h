@@ -359,6 +359,36 @@ public:
 };
 
 /**
+ * This is a wrapper around SeekableSubReadStream, but it adds non-endian
+ * read methods whose endianness is set on the stream creation.
+ */
+class SeekableSubReadStreamEndian : public SeekableSubReadStream {
+public:
+	bool _bigEndian;
+
+	SeekableSubReadStreamEndian(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool bigEndian = false, bool disposeParentStream = false)
+		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream), _bigEndian(bigEndian) {
+	}
+
+	inline uint16 readUint16() {
+		return (_bigEndian) ? readUint16BE() : readUint16LE();
+	}
+
+	inline uint32 readUint32() {
+		return (_bigEndian) ? readUint32BE() : readUint32LE();
+	}
+
+	inline int16 readSint16() {
+		return (int16)readUint16();
+	}
+
+	inline int32 readSint32() {
+		return (int32)readUint32();
+	}
+};
+
+
+/**
  * Simple memory based 'stream', which implements the ReadStream interface for
  * a plain memory block.
  */
@@ -414,11 +444,11 @@ public:
 	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian = false) : MemoryReadStream(buf, len), _bigEndian(bigEndian) {}
 
 	inline uint16 readUint16() {
-		return (_bigEndian) ? readUint16BE(): readUint16LE();
+		return (_bigEndian) ? readUint16BE() : readUint16LE();
 	}
 
 	inline uint32 readUint32() {
-		return (_bigEndian) ? readUint32BE(): readUint32LE();
+		return (_bigEndian) ? readUint32BE() : readUint32LE();
 	}
 
 	inline int16 readSint16() {
