@@ -2688,10 +2688,12 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, uint8 *
 	delete [] srcData;
 }
 
-void Screen::loadPalette(const char *filename, uint8 *palData) {
+bool Screen::loadPalette(const char *filename, uint8 *palData) {
 	debugC(9, kDebugLevelScreen, "Screen::loadPalette('%s' %p)", filename, (void *)palData);
 	uint32 fileSize = 0;
 	uint8 *srcData = _vm->resource()->fileData(filename, &fileSize);
+	if (!srcData)
+		return false;
 
 	if (palData && fileSize) {
 		debugC(9, kDebugLevelScreen,"Loading a palette of size %u from '%s'", fileSize, filename);
@@ -2712,6 +2714,7 @@ void Screen::loadPalette(const char *filename, uint8 *palData) {
 		}
 	}
 	delete [] srcData;
+	return true;
 }
 
 void Screen::loadPalette(const byte *data, uint8 *palData, int bytes) {

@@ -72,7 +72,7 @@ bool Debugger::cmd_loadPalette(int argc, const char **argv) {
 		_vm->screen()->loadBitmap(argv[1], 5, 5, 0);
 		memcpy(palette, _vm->screen()->getCPagePtr(5), 768);
 		_vm->screen()->loadPageFromDisk("TEMP", 5);
-	} else if (!_vm->resource()->loadFileToBuf(argv[1], palette, 768)) {
+	} else if (!_vm->screen()->loadPalette(argv[1], palette)) {
 		DebugPrintf("Palette '%s' not found!", argv[1]);
 		return true;
 	}
