@@ -1201,8 +1201,6 @@ protected:
 	int _dbgPass;
 
 	// save/load specific
-	uint32 saveGameID() const { return 'HOFS'; }
-
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);
 };

@@ -29,6 +29,7 @@
 
 #include "common/config-manager.h"
 #include "common/advancedDetector.h"
+#include "common/savefile.h"
 
 #include "base/plugins.h"
 
@@ -445,15 +446,17 @@ class KyraMetaEngine : public Common::AdvancedMetaEngine {
 public:
 	KyraMetaEngine() : Common::AdvancedMetaEngine(detectionParams) {}
 
-	virtual const char *getName() const {
+	const char *getName() const {
 		return "Legend of Kyrandia Engine";
 	}
 
-	virtual const char *getCopyright() const {
+	const char *getCopyright() const {
 		return "The Legend of Kyrandia (C) Westwood Studios";
 	}
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+	bool createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const;
+
+	SaveStateList listSaves(const char *target) const;
 };
 
 bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common::ADGameDescription *desc) const {
@@ -489,10 +492,38 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const Common
 		break;
 	default:
 		res = false;
-		error("Kyra engine: unknown gameID");
+		warning("Kyra engine: unknown gameID");
 	}
 
 	return res;
+}
+
+SaveStateList KyraMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Kyra::KyraEngine::SaveHeader header;
+	Common::String pattern = target;
+	pattern += ".???";
+
+	Common::StringList filenames;
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+		
+		if (slotNum >= 0 && slotNum <= 999) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				if (Kyra::KyraEngine::readSaveHeader(in, header) == Kyra::KyraEngine::kRSHENoError)
+					saveList.push_back(SaveStateDescriptor(slotNum, header.description, *file));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
 }
 
 REGISTER_PLUGIN(KYRA, PLUGIN_TYPE_ENGINE, KyraMetaEngine);

@@ -29,16 +29,82 @@
 
 #include "kyra/kyra.h"
 
-#define CURRENT_SAVE_VERSION 8
+#define CURRENT_SAVE_VERSION 9
 
-#define GF_FLOPPY (1 <<  0)
-#define GF_TALKIE (1 <<  1)
+#define GF_FLOPPY  (1 <<  0)
+#define GF_TALKIE  (1 <<  1)
 #define GF_FMTOWNS (1 <<  2)
 
 namespace Kyra {
 
-Common::InSaveFile *KyraEngine::openSaveForReading(const char *filename, uint32 &version, char *saveName) {
-	debugC(9, kDebugLevelMain, "KyraEngine::openSaveForReading('%s', %p, %p)", filename, (const void*)&version, saveName);
+KyraEngine::kReadSaveHeaderError KyraEngine::readSaveHeader(Common::InSaveFile *in, SaveHeader &header) {
+	uint32 type = in->readUint32BE();
+	header.originalSave = false;
+	header.oldHeader = false;
+	header.flags = 0;
+
+	if (type == MKID_BE('KYRA') || type == MKID_BE('ARYK')) { // old Kyra1 header ID
+		header.gameID = GI_KYRA1;
+		header.oldHeader = true;
+	} else if (type == MKID_BE('HOFS')) { // old Kyra2 header ID
+		header.gameID = GI_KYRA2;
+		header.oldHeader = true;
+	} else if (type == MKID_BE('WWSV')) {
+		header.gameID = in->readByte();
+	} else {
+		// try checking for original save header
+		const int descriptionSize[2] = { 30, 80 };
+		char descriptionBuffer[81];
+
+		bool saveOk = false;
+
+		for (uint i = 0; i < ARRAYSIZE(descriptionSize) && !saveOk; ++i) {
+			in->seek(0, SEEK_SET);
+			in->read(descriptionBuffer, descriptionSize[i]);
+			descriptionBuffer[descriptionSize[i]] = 0;
+			
+			type = in->readUint32BE();
+			header.version = in->readUint16LE();
+			if (type == MKID_BE('MBL3') && header.version == 100) {
+				saveOk = true;
+				header.description = descriptionBuffer;
+				header.gameID = GI_KYRA2;
+				break;
+			}
+		}
+
+		if (saveOk) {
+			header.originalSave = true;
+			header.description = descriptionBuffer;
+			return kRSHENoError;
+		} else {
+			return kRSHEInvalidType;
+		}
+	}
+
+	header.version = in->readUint32BE();
+	if (header.version > CURRENT_SAVE_VERSION || (header.oldHeader && header.version > 8) || (type == MKID_BE('ARYK') && header.version > 3))
+		return kRSHEInvalidVersion;
+
+	// Versions prior to 9 are using a fixed length description field
+	if (header.version <= 8) {
+		char buffer[31];
+		in->read(buffer, 31);
+		header.description = buffer;
+	} else {
+		header.description = "";
+		for (char c = 0; (c = in->readByte()) != 0;)
+			header.description += c;
+	}
+
+	if (header.version >= 2)
+		header.flags = in->readUint32BE();
+
+	return (in->ioFailed() ? kRSHEIoError : kRSHENoError);
+}
+
+Common::InSaveFile *KyraEngine::openSaveForReading(const char *filename, SaveHeader &header) {
+	debugC(9, kDebugLevelMain, "KyraEngine::openSaveForReading('%s', -)", filename);
 
 	Common::InSaveFile *in = 0;
 	if (!(in = _saveFileMan->openForLoading(filename))) {
@@ -46,52 +112,45 @@ Common::InSaveFile *KyraEngine::openSaveForReading(const char *filename, uint32 
 		return 0;
 	}
 
-	uint32 type = in->readUint32BE();
+	kReadSaveHeaderError errorCode = KyraEngine::readSaveHeader(in, header);
+	if (errorCode != kRSHENoError) {
+		if (errorCode == kRSHEInvalidType)
+			warning("No ScummVM Kyra engine savefile header.");
+		else if (errorCode == kRSHEInvalidVersion)
+			warning("Savegame is not the right version (%u, '%s')", header.version, header.oldHeader ? "true" : "false");
+		else if (errorCode == kRSHEIoError)
+			warning("Load failed ('%s').", filename);
 
-	// FIXME: The kyra savegame code used to be endian unsafe. Uncomment the
-	// following line to graciously handle old savegames from LE machines.
-	// if (type != MKID_BE('KYRA') && type != MKID_BE('ARYK')) {
-	if (type != MKID_BE(saveGameID())) {
-		warning("No ScummVM Kyra engine savefile header.");
 		delete in;
 		return 0;
 	}
 
-	version = in->readUint32BE();
-	if (version > CURRENT_SAVE_VERSION) {
-		warning("Savegame is not the right version (%u)", version);
-		delete in;
-		return 0;
-	}
-
-	char saveNameBuffer[31];
-	if (!saveName)
-		saveName = saveNameBuffer;
-	in->read(saveName, 31);
-
-	if (_flags.gameID == GI_KYRA1 && version < 2) {
-		warning("Make sure your savefile was from this version! (too old savefile version to detect that)");
-	} else {
-		uint32 flags = in->readUint32BE();
-		if ((flags & GF_FLOPPY) && (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) {
-			warning("Can not load DOS Floppy savefile for this (non DOS Floppy) gameversion");
-			delete in;
-			return 0;
-		} else if ((flags & GF_TALKIE) && !(_flags.isTalkie)) {
-			warning("Can not load DOS CD-ROM savefile for this (non DOS CD-ROM) gameversion");
-			delete in;
-			return 0;
-		} else if ((flags & GF_FMTOWNS) && !(_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) {
-			warning("Can not load FM-Towns/PC98 savefile for this (non FM-Towns/PC98) gameversion");
-			delete in;
-			return 0;
+	if (!header.originalSave) {
+		if (!header.oldHeader) {
+			if (header.gameID != _flags.gameID) {
+				warning("Trying to load game state from other game (save game: %u, running game: %u)", header.gameID, _flags.gameID);
+				delete in;
+				return 0;
+			}
 		}
-	}
 
-	if (in->ioFailed()) {
-		error("Load failed ('%s', '%s').", filename, saveName);
-		delete in;
-		return 0;
+		if (header.version < 2) {
+			warning("Make sure your savefile was from this version! (too old savefile version to detect that)");
+		} else {
+			if ((header.flags & GF_FLOPPY) && (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) {
+				warning("Can not load DOS Floppy savefile for this (non DOS Floppy) gameversion");
+				delete in;
+				return 0;
+			} else if ((header.flags & GF_TALKIE) && !(_flags.isTalkie)) {
+				warning("Can not load DOS CD-ROM savefile for this (non DOS CD-ROM) gameversion");
+				delete in;
+				return 0;
+			} else if ((header.flags & GF_FMTOWNS) && !(_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) {
+				warning("Can not load FM-Towns/PC98 savefile for this (non FM-Towns/PC98) gameversion");
+				delete in;
+				return 0;
+			}
+		}
 	}
 
 	return in;
@@ -109,9 +168,10 @@ Common::OutSaveFile *KyraEngine::openSaveForWriting(const char *filename, const 
 	}
 
 	// Savegame version
-	out->writeUint32BE(saveGameID());
+	out->writeUint32BE(MKID_BE('WWSV'));
+	out->writeByte(_flags.gameID);
 	out->writeUint32BE(CURRENT_SAVE_VERSION);
-	out->write(saveName, 31);
+	out->write(saveName, strlen(saveName)+1);
 	if (_flags.isTalkie)
 		out->writeUint32BE(GF_TALKIE);
 	else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)

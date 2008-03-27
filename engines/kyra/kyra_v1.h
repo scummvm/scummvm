@@ -281,8 +281,6 @@ public:
 	void snd_voiceWaitForFinish(bool ingame = true);
 
 protected:
-	uint32 saveGameID() const { return 'KYRA'; }
-
 	void saveGame(const char *fileName, const char *saveName);
 	void loadGame(const char *fileName);
 

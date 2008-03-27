@@ -38,6 +38,8 @@ class InSaveFile;
 class OutSaveFile;
 } // end of namespace Common
 
+class KyraMetaEngine;
+
 namespace Kyra {
 
 struct GameFlags {
@@ -101,6 +103,7 @@ class ScriptHelper;
 
 class KyraEngine : public Engine {
 friend class Debugger;
+friend class ::KyraMetaEngine;
 public:
 	KyraEngine(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine();
@@ -225,10 +228,27 @@ protected:
 	static const int8 _addYPosTable[];
 
 	// save/load
-	virtual uint32 saveGameID() const = 0;
-
 	const char *getSavegameFilename(int num);
-	Common::InSaveFile *openSaveForReading(const char *filename, uint32 &version, char *saveName);
+
+	struct SaveHeader {
+		Common::String description;
+		uint32 version;
+		byte gameID;
+		uint32 flags;
+
+		bool originalSave;	// savegame from original interpreter
+		bool oldHeader;		// old scummvm save header
+	};
+
+	enum kReadSaveHeaderError {
+		kRSHENoError = 0,
+		kRSHEInvalidType = 1,
+		kRSHEInvalidVersion = 2,
+		kRSHEIoError = 3
+	};
+	static kReadSaveHeaderError readSaveHeader(Common::InSaveFile *file, SaveHeader &header);
+
+	Common::InSaveFile *openSaveForReading(const char *filename, SaveHeader &header);
 	Common::OutSaveFile *openSaveForWriting(const char *filename, const char *saveName) const;
 };
 

@@ -38,11 +38,16 @@ namespace Kyra {
 void KyraEngine_v1::loadGame(const char *fileName) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v1::loadGame('%s')", fileName);
 
-	uint32 version = 0;
-	char saveName[31];
-	Common::InSaveFile *in = openSaveForReading(fileName, version, saveName);
+	SaveHeader header;
+	Common::InSaveFile *in = openSaveForReading(fileName, header);
 	if (!in)
 		return;
+
+	if (header.originalSave) {
+		// no support for original savefile in Kyrandia 1 (yet)
+		delete in;
+		return;
+	}
 
 	snd_playSoundEffect(0x0A);
 	snd_playWanderScoreViaMap(0, 1);
@@ -99,7 +104,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 	_poisonDeathCounter = in->readByte();
 	_animator->_brandonDrawFrame = in->readUint16BE();
 
-	_timer->loadDataFromFile(in, version);
+	_timer->loadDataFromFile(in, header.version);
 
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 	uint32 flagsSize = in->readUint32BE();
@@ -131,7 +136,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 			_roomTable[sceneId].needInit[i] = in->readByte();
 		}
 	}
-	if (version >= 3) {
+	if (header.version >= 3) {
 		_lastMusicCommand = in->readSint16BE();
 		if (_lastMusicCommand != -1)
 			snd_playWanderScoreViaMap(_lastMusicCommand, 1);
@@ -140,7 +145,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 	// Version 4 stored settings in the savegame. As of version 5, they are
 	// handled by the config manager.
 
-	if (version == 4) {
+	if (header.version == 4) {
 		in->readByte(); // Text speed
 		in->readByte(); // Walk speed
 		in->readByte(); // Music
@@ -148,7 +153,7 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 		in->readByte(); // Voice
 	}
 
-	if (version >= 7) {
+	if (header.version >= 7) {
 		_curSfxFile = in->readByte();
 
 		// In the first version when this entry was introduced,
@@ -200,9 +205,9 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 	setMousePos(brandonX, brandonY);
 	
 	if (in->ioFailed())
-		error("Load failed ('%s', '%s').", fileName, saveName);
+		error("Load failed ('%s', '%s').", fileName, header.description.c_str());
 	else
-		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", saveName);
+		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());
 
 	// We didn't explicitly set the walk speed, but it's saved as part of
 	// the _timers array, so we need to re-sync it with _configWalkspeed.

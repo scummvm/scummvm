@@ -131,47 +131,11 @@ void KyraEngine_v2::saveGame(const char *fileName, const char *saveName) {
 void KyraEngine_v2::loadGame(const char *fileName) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::loadGame('%s')", fileName);
 
-	uint32 version = 0;
-	char saveName[31];
-	Common::InSaveFile *in = openSaveForReading(fileName, version, saveName);
+	SaveHeader header;
+	Common::InSaveFile *in = openSaveForReading(fileName, header);
 	if (!in) {
-		// check for original savefile
-		if ((in = _saveFileMan->openForLoading(fileName))) {
-			in->seek(0x50, SEEK_CUR);
-
-			uint8 type[4];
-			uint8 acceptedType[4] = { 0x4D, 0x42, 0x4C, 0x33 }; // 'MBL3'
-			in->read(type, sizeof(type));
-			uint16 origVersion = in->readUint16LE();
-			
-			debug(1, "Savegame type: '%c%c%c%c' version: %d", type[0], type[1], type[2], type[3], version);
-
-			if (!memcmp(type, acceptedType, 4) && origVersion == 100) {
-				warning("Trying to load savegame from original interpreter, while this is possible, it is not officially supported.");
-
-				in->seek(0, SEEK_SET);
-
-				// read first 31 bytes of original description
-				in->read(saveName, 30);
-				saveName[30] = 0;
-				// skip last part of original description
-				in->seek(0x50-30, SEEK_CUR);
-				version = 0xF000 + origVersion;
-				// skip type
-				in->seek(4, SEEK_CUR);
-				// skip version
-				in->seek(2, SEEK_CUR);
-			} else {
-				delete in;
-				in = 0;
-			}
-		}
-
-		if (!in) {
-			showMessageFromCCode(0x35, 0x84, 0);
-			snd_playSoundEffect(0x0D);
-			return;
-		}
+		showMessageFromCCode(0x35, 0x84, 0);
+		snd_playSoundEffect(0x0D);
 	}
 
 	bool setFlag1EE = (queryGameFlag(0x1EE) != 0);
@@ -187,8 +151,8 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 
 	_screen->hideMouse();
 
-	if (version < 0xF000) {
-		_timer->loadDataFromFile(in, version);
+	if (!header.originalSave) {
+		_timer->loadDataFromFile(in, header.version);
 
 		uint32 flagsSize = in->readUint32BE();
 		assert(flagsSize <= sizeof(_flagsTable));
@@ -264,8 +228,6 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 		_sceneExit3 = in->readUint16BE();
 		_sceneExit4 = in->readUint16BE();
 	} else {
-		version -= 0xF000;
-
 		/*word_2AB05 = */in->readUint16LE();
 		_lastMusicCommand = in->readSint16LE();
 		_newChapterFile = in->readByte();
@@ -363,9 +325,9 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 	}
 
 	if (in->ioFailed())
-		error("Load failed ('%s', '%s').", fileName, saveName);
+		error("Load failed ('%s', '%s').", fileName, header.description.c_str());
 	else
-		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", saveName);
+		debugC(1, kDebugLevelMain, "Loaded savegame '%s.'", header.description.c_str());
 
 	delete in;
 
