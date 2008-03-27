@@ -1013,6 +1013,7 @@ protected:
 	int o2_disableSceneAnim(ScriptState *script);
 	int o2_enableSceneAnim(ScriptState *script);
 	int o2_restoreInventoryGfx(ScriptState *script);
+	int o2_setSceneAnimPos2(ScriptState *script);
 	int o2_update(ScriptState *script);
 	int o2_fadeScenePal(ScriptState *script);
 	int o2_enterNewSceneEx(ScriptState *script);

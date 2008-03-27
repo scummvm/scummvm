@@ -1774,7 +1774,7 @@ void KyraEngine_v2::snd_playSoundEffect(int track) {
 
 	_lastSfxTrack = track;
 
-	int16 vocIndex = (int16) READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
+	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 	if (vocIndex != -1)
 		_sound->voicePlay(_ingameSoundList[vocIndex]);
 	else if (_flags.platform == Common::kPlatformPC)

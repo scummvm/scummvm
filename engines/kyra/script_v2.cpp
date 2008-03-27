@@ -740,6 +740,13 @@ int KyraEngine_v2::o2_restoreInventoryGfx(ScriptState *script) {
 	return 0;
 }
 
+int KyraEngine_v2::o2_setSceneAnimPos2(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setSceneAnimPos2(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	_sceneAnims[stackPos(0)].x2 = stackPos(1);
+	_sceneAnims[stackPos(0)].y2 = stackPos(2);
+	return 0;
+}
+
 int KyraEngine_v2::o2_update(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_update(%p) (%d)", (const void *)script, stackPos(0));
 
@@ -1802,7 +1809,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x48
 		Opcode(o2_enableSceneAnim),
 		Opcode(o2_restoreInventoryGfx),
-		OpcodeUnImpl(),
+		Opcode(o2_setSceneAnimPos2),
 		Opcode(o2_update),
 		// 0x4c
 		OpcodeUnImpl(),
