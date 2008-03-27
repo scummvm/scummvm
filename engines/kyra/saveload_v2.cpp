@@ -136,6 +136,7 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 	if (!saveFile) {
 		showMessageFromCCode(0x35, 0x84, 0);
 		snd_playSoundEffect(0x0D);
+		return;
 	}
 
 	if (header.originalSave)
