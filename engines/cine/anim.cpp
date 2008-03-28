@@ -494,7 +494,7 @@ void convert8BBP2(byte * dest, byte * source, int16 width, int16 height) {
 		for (m = 0; m < 2; m++) {
 			for (i = 0; i < 8; i++) {
 				color = 0;
-				for (k = 14 + m; k > 0 + m; k = k - 2) {
+				for (k = 14 + m; k >= 0 + m; k = k - 2) {
 					color |= ((*(source + k) & 0x080) >> 7);
 					*(source + k) <<= 1;
 					if (k > 0 + m)
