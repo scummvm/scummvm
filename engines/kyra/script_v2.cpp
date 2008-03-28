@@ -614,13 +614,8 @@ int KyraEngine_v2::o2_getTimerDelay(ScriptState *script) {
 }
 
 int KyraEngine_v2::o2_delaySecs(ScriptState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_delaySecs(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	if (stackPos(1))
-		warning("unimplemented o2_delaySecs subfunction");
-	//if (stackPos(1))
-	//	sub_27100(stackPos(0) * _tickLength);
-	//else
-		delay(stackPos(0) * 1000, true);
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_delaySecs(%p) (%d)", (const void *)script, stackPos(0));
+	delay(stackPos(0) * 1000, true);
 	return 0;
 }
 
