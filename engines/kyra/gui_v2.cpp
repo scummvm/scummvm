@@ -376,10 +376,8 @@ int KyraEngine_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		// but did some other magic, which looks like it depends on how the handle
 		// key input... so we just enable 0x1000 and 0x4000 here to allow
 		// all GUI buttons to work (for now at least...)
-		if (inFlags == 199 || inFlags == 198) {
+		if (inFlags == 199 || inFlags == 198)
 			temp = 0x1000 | 0x4000;
-			removeInputTop();
-		}
 
 		//if (inputFlag & 0x800)
 		//	temp <<= 2;
@@ -555,9 +553,12 @@ int KyraEngine_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 			buttonList->flags2 &= 0xFF;
 			buttonList->flags2 |= flags;
 
-			if (buttonList->buttonCallback)
+			if (buttonList->buttonCallback) {
+				removeInputTop();
 				if ((this->*buttonList->buttonCallback)(buttonList))
 					break;
+			}
+			
 			if (buttonList->flags & 0x20)
 				break;
 		}

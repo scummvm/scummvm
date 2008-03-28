@@ -781,14 +781,15 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 					(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && mainLoop) {
 				const char *saveLoadSlot = getSavegameFilename(event.kbd.keycode - '0');
 
-				if (event.kbd.flags == Common::KBD_CTRL)
+				if (event.kbd.flags == Common::KBD_CTRL) {
 					loadGame(saveLoadSlot);
-				else {
+					_eventList.clear();
+					breakLoop = true;
+				} else {
 					char savegameName[14];
 					sprintf(savegameName, "Quicksave %d",  event.kbd.keycode - '0');
 					saveGame(saveLoadSlot, savegameName);
 				}
-				breakLoop = true;
 			} else if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == 'd')
 					_debugger->attach();
