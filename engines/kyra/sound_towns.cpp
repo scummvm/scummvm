@@ -1432,7 +1432,7 @@ void SoundTowns_v2::haltTrack() {
 	//_driver->reset();
 }
 
-bool SoundTowns_v2::voicePlay(const char *file) {
+bool SoundTowns_v2::voicePlay(const char *file, bool) {
 	static const uint16 rates[] =	{ 0x10E1, 0x0CA9, 0x0870, 0x0654, 0x0438, 0x032A, 0x021C, 0x0194 };
 
 	int h = 0;

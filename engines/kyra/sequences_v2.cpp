@@ -2605,7 +2605,7 @@ void KyraEngine_v2::seq_showStarcraftLogo() {
 	_screen->fadeToBlack();
 	_screen->showMouse();
 
-	resetSkipFlag();
+	_eventList.clear();
 	delete ci;
 }
 

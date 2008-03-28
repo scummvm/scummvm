@@ -428,7 +428,7 @@ public:
 	void haltTrack();
 	void beginFadeOut();
 
-	bool voicePlay(const char *file);
+	bool voicePlay(const char *file, bool isSfx = false);
 	void playSoundEffect(uint8) {}
 
 private:

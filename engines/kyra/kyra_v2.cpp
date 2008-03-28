@@ -1766,13 +1766,15 @@ void KyraEngine_v2::playVoice(int high, int low) {
 void KyraEngine_v2::snd_playSoundEffect(int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine_v2::snd_playSoundEffect(%d)", track);
 
-	if (track == 10)
-		track = _lastSfxTrack;
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
+		if (track == 10)
+			track = _lastSfxTrack;
 
-	if (track == 10 || track == -1)
-		return;
+		if (track == 10 || track == -1)
+			return;
 
-	_lastSfxTrack = track;
+		_lastSfxTrack = track;
+	}
 
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 	if (vocIndex != -1)
