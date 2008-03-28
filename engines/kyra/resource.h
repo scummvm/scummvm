@@ -34,6 +34,7 @@
 #include "common/hash-str.h"
 #include "common/hashmap.h"
 #include "common/stream.h"
+#include "common/ptr.h"
 
 #include "kyra/kyra.h"
 
@@ -113,9 +114,10 @@ protected:
 
 	void initializeLoaders();
 	const ResArchiveLoader *getLoader(ResFileEntry::kType type) const;
-	typedef Common::List<ResArchiveLoader*>::iterator LoaderIterator;
-	typedef Common::List<ResArchiveLoader*>::const_iterator CLoaderIterator;
-	Common::List<ResArchiveLoader*> _loaders;
+	typedef Common::List<Common::SharedPtr<ResArchiveLoader> > LoaderList;
+	typedef LoaderList::iterator LoaderIterator;
+	typedef LoaderList::const_iterator CLoaderIterator;
+	LoaderList _loaders;
 	ResFileMap _map;
 
 	KyraEngine *_vm;
@@ -332,5 +334,6 @@ private:
 } // end of namespace Kyra
 
 #endif
+
 
 

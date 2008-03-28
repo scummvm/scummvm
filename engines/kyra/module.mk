@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	animator_v2.o \
 	debugger.o \
 	detection.o \
+	gui.o \
 	gui_v1.o \
 	gui_v2.o \
 	items_v1.o \

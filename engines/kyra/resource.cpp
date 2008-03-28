@@ -29,7 +29,6 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/func.h"
-#include "common/algorithm.h"
 
 #include "gui/message.h"
 
@@ -43,8 +42,6 @@ Resource::Resource(KyraEngine *vm) : _loaders(), _map(), _vm(vm) {
 
 Resource::~Resource() {
 	unloadAllPakFiles();
-	for (LoaderIterator i = _loaders.begin(); i != _loaders.end(); ++i)
-		delete (*i);
 	_loaders.clear();
 }
 
@@ -666,17 +663,18 @@ Common::SeekableReadStream *ResLoaderIns::loadFileFromArchive(const Common::Stri
 }
 
 void Resource::initializeLoaders() {
-	_loaders.push_back(new ResLoaderPak());
-	_loaders.push_back(new ResLoaderIns());
+	_loaders.push_back(LoaderList::value_type(new ResLoaderPak()));
+	_loaders.push_back(LoaderList::value_type(new ResLoaderIns()));
 }
 
 const ResArchiveLoader *Resource::getLoader(ResFileEntry::kType type) const {
 	for (CLoaderIterator i = _loaders.begin(); i != _loaders.end(); ++i) {
 		if ((*i)->getType() == type)
-			return *i;
+			return (*i).get();
 	}
 	return 0;
 }
 
 } // end of namespace Kyra
+
 
