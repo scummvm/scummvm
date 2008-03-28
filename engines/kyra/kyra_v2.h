@@ -984,6 +984,7 @@ protected:
 	int o2_defineItem(ScriptState *script);
 	int o2_removeItemFromInventory(ScriptState *script);
 	int o2_countItemInInventory(ScriptState *script);
+	int o2_countItemsInScene(ScriptState *script);
 	int o2_queryGameFlag(ScriptState *script);
 	int o2_resetGameFlag(ScriptState *script);
 	int o2_setGameFlag(ScriptState *script);
@@ -1000,6 +1001,7 @@ protected:
 	//int o2_playSoundEffect(ScriptState *script);
 	int o2_delaySecs(ScriptState *script);
 	int o2_delay(ScriptState *script);
+	int o2_setTimerDelay(ScriptState *script);
 	int o2_setScaleTableItem(ScriptState *script);
 	int o2_setDrawLayerTableItem(ScriptState *script);
 	int o2_setCharPalEntry(ScriptState *script);
@@ -1022,6 +1024,7 @@ protected:
 	int o2_switchScene(ScriptState *script);
 	int o2_getShapeFlag1(ScriptState *script);
 	int o2_setPathfinderFlag(ScriptState *script);
+	int o2_getSceneExitToFacing(ScriptState *script);
 	int o2_setLayerFlag(ScriptState *script);
 	int o2_setZanthiaPos(ScriptState *script);
 	int o2_loadMusicTrack(ScriptState *script);
@@ -1066,6 +1069,7 @@ protected:
 	int o2_getColorCodeValue(ScriptState *script);
 	int o2_setColorCodeValue(ScriptState *script);
 	int o2_countItemInstances(ScriptState *script);
+	int o2_removeItemFromScene(ScriptState *script);
 	int o2_initObject(ScriptState *script);
 	int o2_npcChat(ScriptState *script);
 	int o2_deinitObject(ScriptState *script);

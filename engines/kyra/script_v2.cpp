@@ -502,6 +502,16 @@ int KyraEngine_v2::o2_countItemInInventory(ScriptState *script) {
 	return count;
 }
 
+int KyraEngine_v2::o2_countItemsInScene(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_countItemsInScene(%p) (%d)", (const void *)script, stackPos(0));
+	int count = 0;
+	for (int i = 0; i < 30; ++i) {
+		if (_itemList[i].sceneId == stackPos(0) && _itemList[i].id != 0xFFFF)
+			++count;
+	}
+	return count;
+}
+
 int KyraEngine_v2::o2_queryGameFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_queryGameFlag(%p) (%d)", (const void *)script, stackPos(0));
 	return queryGameFlag(stackPos(0));
@@ -622,6 +632,12 @@ int KyraEngine_v2::o2_delay(ScriptState *script) {
 	//	sub_27100(stackPos(0) * _tickLength);
 	//else
 		delay(stackPos(0) * _tickLength, true);
+	return 0;
+}
+
+int KyraEngine_v2::o2_setTimerDelay(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setTimerDelay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	_timer->setDelay(stackPos(0), stackPos(1));
 	return 0;
 }
 
@@ -824,6 +840,22 @@ int KyraEngine_v2::o2_setPathfinderFlag(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_setPathfinderFlag(%p) (%d)", (const void *)script, stackPos(0));
 	_pathfinderFlag = stackPos(0);
 	return 0;
+}
+
+int KyraEngine_v2::o2_getSceneExitToFacing(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_getSceneExitToFacing(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	const int scene = stackPos(0);
+	const int facing = stackPos(1);
+
+	if (facing == 0)
+		return (int16)_sceneList[scene].exit1;
+	else if (facing == 2)
+		return (int16)_sceneList[scene].exit2;
+	else if (facing == 4)
+		return (int16)_sceneList[scene].exit3;
+	else if (facing == 6)
+		return (int16)_sceneList[scene].exit4;
+	return -1;
 }
 
 int KyraEngine_v2::o2_setLayerFlag(ScriptState *script) {
@@ -1344,6 +1376,17 @@ int KyraEngine_v2::o2_countItemInstances(ScriptState *script) {
 	return count;
 }
 
+int KyraEngine_v2::o2_removeItemFromScene(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_removeItemFromScene(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	const int scene = stackPos(0);
+	const uint16 item = stackPos(1);
+	for (int i = 0; i < 30; ++i) {
+		if (_itemList[i].sceneId == scene && _itemList[i].id == item)
+			_itemList[i].id = 0xFFFF;
+	}
+	return 0;
+}
+
 int KyraEngine_v2::o2_initObject(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_initObject(%p) (%d)", (const void *)script, stackPos(0));
 	initTalkObject(stackPos(0));
@@ -1781,7 +1824,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		// 0x24
 		Opcode(o2_removeItemFromInventory),
 		Opcode(o2_countItemInInventory),
-		OpcodeUnImpl(),
+		Opcode(o2_countItemsInScene),
 		Opcode(o2_queryGameFlag),
 		// 0x28
 		Opcode(o2_resetGameFlag),
@@ -1805,7 +1848,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_delay),
 		// 0x38
 		Opcode(o2_dummy),
-		OpcodeUnImpl(),
+		Opcode(o2_setTimerDelay),
 		Opcode(o2_setScaleTableItem),
 		Opcode(o2_setDrawLayerTableItem),
 		// 0x3c
@@ -1839,7 +1882,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_getShapeFlag1),
 		Opcode(o2_setPathfinderFlag),
 		// 0x54
-		OpcodeUnImpl(),
+		Opcode(o2_getSceneExitToFacing),
 		Opcode(o2_setLayerFlag),
 		Opcode(o2_setZanthiaPos),
 		Opcode(o2_loadMusicTrack),
@@ -1905,7 +1948,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_setColorCodeValue),
 		// 0x88
 		Opcode(o2_countItemInstances),
-		OpcodeUnImpl(),
+		Opcode(o2_removeItemFromScene),
 		Opcode(o2_initObject),
 		Opcode(o2_npcChat),
 		// 0x8c
