@@ -59,6 +59,8 @@ KyraEngine::KyraEngine(OSystem *system, const GameFlags &flags)
 	_lastMusicCommand = -1;
 	_curSfxFile = _curMusicTheme = -1;
 
+	_gameToLoad = -1;
+
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	// sets up all engine specific debug levels
@@ -142,6 +144,12 @@ int KyraEngine::init() {
 
 	setupOpcodeTable();
 	readSettings();
+
+	if (ConfMan.hasKey("save_slot")) {
+		_gameToLoad = ConfMan.getInt("save_slot");
+		if (!saveFileLoadable(_gameToLoad))
+			_gameToLoad = -1;
+	}
 
 	_lang = 0;
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));

@@ -318,12 +318,14 @@ int KyraEngine_v1::go() {
 	} else {
 		setGameFlag(0xF3);
 		setGameFlag(0xFD);
-		setGameFlag(0xEF);
-		seq_intro();
-		if (_quitFlag)
-			return 0;
-		if (_skipIntroFlag && _abortIntroFlag)
-			resetGameFlag(0xEF);
+		if (_gameToLoad == -1) {
+			setGameFlag(0xEF);
+			seq_intro();
+			if (_quitFlag)
+				return 0;
+			if (_skipIntroFlag && _abortIntroFlag)
+				resetGameFlag(0xEF);
+		}
 		startup();
 		resetGameFlag(0xEF);
 		mainLoop();
@@ -398,16 +400,21 @@ void KyraEngine_v1::startup() {
 		error("Could not load \"_NPC.EMC\" script");
 
 	snd_playTheme(1);
-	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
+	if (_gameToLoad == -1) {
+		enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 
-	if (_abortIntroFlag && _skipIntroFlag) {
-		_menuDirectlyToLoad = true;
-		_screen->setMouseCursor(1, 1, _shapes[0]);
-		_screen->showMouse();
-		buttonMenuCallback(0);
-		_menuDirectlyToLoad = false;
-	} else
-		saveGame(getSavegameFilename(0), "New game");
+		if (_abortIntroFlag && _skipIntroFlag) {
+			_menuDirectlyToLoad = true;
+			_screen->setMouseCursor(1, 1, _shapes[0]);
+			_screen->showMouse();
+			buttonMenuCallback(0);
+			_menuDirectlyToLoad = false;
+		} else
+			saveGame(getSavegameFilename(0), "New game");
+	} else {
+		loadGame(getSavegameFilename(_gameToLoad));
+		_gameToLoad = -1;
+	}
 }
 
 void KyraEngine_v1::mainLoop() {

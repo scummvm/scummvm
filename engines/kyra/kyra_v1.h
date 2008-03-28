@@ -621,7 +621,6 @@ protected:
 	bool _cancelSubMenu;
 	uint8 _toplevelMenu;
 	int _savegameOffset;
-	int _gameToLoad;
 	char _savegameName[31];
 	const char *_specialSavegameString;
 	Common::KeyState _keyPressed;

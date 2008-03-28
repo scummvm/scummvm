@@ -234,14 +234,18 @@ int KyraEngine_v2::init() {
 }
 
 int KyraEngine_v2::go() {
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
-		seq_showStarcraftLogo();
+	if (_gameToLoad == -1) {
+		if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)
+			seq_showStarcraftLogo();
 
-	if (_flags.isDemo && !_flags.isTalkie) {
-		seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
-		_menuChoice = 4;
+		if (_flags.isDemo && !_flags.isTalkie) {
+			seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
+			_menuChoice = 4;
+		} else {
+			seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
+		}
 	} else {
-		seq_playSequences(kSequenceVirgin, kSequenceZanfaun);
+		_menuChoice = 1;
 	}
 
 	_res->unloadAllPakFiles();
@@ -361,9 +365,11 @@ void KyraEngine_v2::startup() {
 
 	clearAnimObjects();
 
-	// XXX
+	for (int i = 0; i < 19; ++i)
+		memset(_conversationState[i], -1, sizeof(int8)*14);
 	clearCauldronTable();
-	// XXX
+	memset(_inputColorCode, -1, sizeof(_inputColorCode));
+	memset(_newSceneDlgState, 0, sizeof(_newSceneDlgState));
 	memset(_hiddenItems, -1, sizeof(_hiddenItems));
 	for (int i = 0; i < 23; ++i)
 		resetCauldronStateTable(i);
@@ -374,14 +380,16 @@ void KyraEngine_v2::startup() {
 	runStartScript(1, 0);
 	loadNPCScript();
 
-	// XXX
-	snd_playWanderScoreViaMap(52, 1);
-	// XXX
+	if (_gameToLoad == -1) {
+		snd_playWanderScoreViaMap(52, 1);
+		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
+		saveGame(getSavegameFilename(0), "New Game");
+	} else {
+		loadGame(getSavegameFilename(_gameToLoad));
+	}
 
-	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	_screen->showMouse();
 
-	//sub_20EE8(1);
 	setNextIdleAnimTimer();
 	//XXX
 	_timer->setDelay(0, 5);

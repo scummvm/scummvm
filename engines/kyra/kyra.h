@@ -228,7 +228,10 @@ protected:
 	static const int8 _addYPosTable[];
 
 	// save/load
+	int _gameToLoad;
+
 	const char *getSavegameFilename(int num);
+	bool saveFileLoadable(int slot);
 
 	struct SaveHeader {
 		Common::String description;
@@ -246,6 +249,7 @@ protected:
 		kRSHEInvalidVersion = 2,
 		kRSHEIoError = 3
 	};
+
 	static kReadSaveHeaderError readSaveHeader(Common::InSaveFile *file, SaveHeader &header);
 
 	Common::InSaveFile *openSaveForReading(const char *filename, SaveHeader &header);

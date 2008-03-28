@@ -108,7 +108,7 @@ Common::InSaveFile *KyraEngine::openSaveForReading(const char *filename, SaveHea
 
 	Common::InSaveFile *in = 0;
 	if (!(in = _saveFileMan->openForLoading(filename))) {
-		warning("Can't open file '%s', game not loaded", filename);
+		warning("Can't open file '%s', game not loadable", filename);
 		return 0;
 	}
 
@@ -119,7 +119,7 @@ Common::InSaveFile *KyraEngine::openSaveForReading(const char *filename, SaveHea
 		else if (errorCode == kRSHEInvalidVersion)
 			warning("Savegame is not the right version (%u, '%s')", header.version, header.oldHeader ? "true" : "false");
 		else if (errorCode == kRSHEIoError)
-			warning("Load failed ('%s').", filename);
+			warning("Load failed '%s'", filename);
 
 		delete in;
 		return 0;
@@ -196,6 +196,21 @@ const char *KyraEngine::getSavegameFilename(int num) {
 	filename = _targetName + "." + extension;
 
 	return filename.c_str();
+}
+
+bool KyraEngine::saveFileLoadable(int slot) {
+	if (slot < 0 || slot > 999)
+		return false;
+
+	SaveHeader header;
+	Common::InSaveFile *in = openSaveForReading(getSavegameFilename(slot), header);
+
+	if (in) {
+		delete in;
+		return true;
+	}
+
+	return false;
 }
 
 } // end of namespace Kyra
