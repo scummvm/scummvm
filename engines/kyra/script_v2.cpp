@@ -621,12 +621,24 @@ int KyraEngine_v2::o2_delaySecs(ScriptState *script) {
 
 int KyraEngine_v2::o2_delay(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_delay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	if (stackPos(1))
-		warning("unimplemented o2_delay subfunction");
-	//if (stackPos(1))
-	//	sub_27100(stackPos(0) * _tickLength);
-	//else
+	if (stackPos(1)) {
+		uint32 maxWaitTime = _system->getMillis() + stackPos(0) * _tickLength;
+		while (_system->getMillis() < maxWaitTime) {
+			int inputFlag = checkInput(0);
+			removeInputTop();
+
+			if (inputFlag == 198 || inputFlag == 199)
+				return 1;
+
+			if (_chatText)
+				updateWithText();
+			else
+				update();
+			_system->delayMillis(10);
+		}
+	} else {
 		delay(stackPos(0) * _tickLength, true);
+	}
 	return 0;
 }
 
