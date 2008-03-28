@@ -32,6 +32,7 @@
 #include "kyra/kyra_v3.h"
 #include "kyra/screen.h"
 #include "kyra/resource.h"
+#include "kyra/gui_v1.h"
 
 namespace Kyra {
 
@@ -881,12 +882,12 @@ void KyraEngine_v1::loadItems() {
 void KyraEngine_v1::loadButtonShapes() {
 	_screen->loadBitmap("BUTTONS2.CPS", 3, 3, 0);
 	_screen->_curPage = 2;
-	_scrollUpButton.process0PtrShape = _screen->encodeShape(0, 0, 24, 14, 1);
-	_scrollUpButton.process1PtrShape = _screen->encodeShape(24, 0, 24, 14, 1);
-	_scrollUpButton.process2PtrShape = _screen->encodeShape(48, 0, 24, 14, 1);
-	_scrollDownButton.process0PtrShape = _screen->encodeShape(0, 15, 24, 14, 1);
-	_scrollDownButton.process1PtrShape = _screen->encodeShape(24, 15, 24, 14, 1);
-	_scrollDownButton.process2PtrShape = _screen->encodeShape(48, 15, 24, 14, 1);
+	_gui->_scrollUpButton.data0ShapePtr = _screen->encodeShape(0, 0, 24, 14, 1);
+	_gui->_scrollUpButton.data1ShapePtr = _screen->encodeShape(24, 0, 24, 14, 1);
+	_gui->_scrollUpButton.data2ShapePtr = _screen->encodeShape(48, 0, 24, 14, 1);
+	_gui->_scrollDownButton.data0ShapePtr = _screen->encodeShape(0, 15, 24, 14, 1);
+	_gui->_scrollDownButton.data1ShapePtr = _screen->encodeShape(24, 15, 24, 14, 1);
+	_gui->_scrollDownButton.data2ShapePtr = _screen->encodeShape(48, 15, 24, 14, 1);
 	_screen->_curPage = 0;
 }
 
@@ -1164,151 +1165,116 @@ const uint8 KyraEngine_v1::_itemPosY[] = {
 	160, 160, 160, 160, 160, 181, 181, 181, 181, 181
 };
 
-void KyraEngine_v1::setupButtonData() {
-	static Button buttonData[] = {
-		{ 0, 0x02, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x05D, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x01, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x009, 0xA4, 0x36, 0x1E, /*XXX,*/ 0, &KyraEngine_v1::buttonMenuCallback/*, XXX*/ },
-		{ 0, 0x03, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x071, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x04, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x085, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x05, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x099, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x06, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x0AD, 0x9E, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x07, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x05D, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x08, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x071, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x09, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x085, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x0A, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x099, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x0B, /*XXX,*/0, 0, 0, /*XXX,*/ 0x0400, 0, 0, 0, 0, 0, 0, 0, 0x0AD, 0xB3, 0x13, 0x14, /*XXX,*/ 0, &KyraEngine_v1::buttonInventoryCallback/*, XXX*/ },
-		{ 0, 0x15, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0x9C, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine_v1::buttonAmuletCallback/*, XXX*/ },
-		{ 0, 0x16, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0E7, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine_v1::buttonAmuletCallback/*, XXX*/ },
-		{ 0, 0x17, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x0FD, 0xB5, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine_v1::buttonAmuletCallback/*, XXX*/ },
-		{ 0, 0x18, /*XXX,*/1, 1, 1, /*XXX,*/ 0x0487, 0, 0, 0, 0, 0, 0, 0, 0x113, 0xAA, 0x1A, 0x12, /*XXX,*/ 0, &KyraEngine_v1::buttonAmuletCallback/*, XXX*/ }
-	};
+void GUI_v1::initStaticResource() {
+	GUI_V1_BUTTON(_scrollUpButton, 0x12, 1, 1, 1, 0x483, 0, 0, 0, 0x18, 0x0f, 0);
+	GUI_V1_BUTTON(_scrollDownButton, 0x13, 1, 1, 1, 0x483, 0, 0, 0, 0x18, 0x0f, 0);
 
-	static Button *buttonDataListPtr[] = {
-		&buttonData[1],
-		&buttonData[2],
-		&buttonData[3],
-		&buttonData[4],
-		&buttonData[5],
-		&buttonData[6],
-		&buttonData[7],
-		&buttonData[8],
-		&buttonData[9],
-		&buttonData[10],
-		&buttonData[11],
-		&buttonData[12],
-		&buttonData[13],
-		&buttonData[14],
-		0
-	};
+	GUI_V1_BUTTON(_menuButtonData[0], 0x0c, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[1], 0x0d, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[2], 0x0e, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[3], 0x0f, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[4], 0x10, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[5], 0x11, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
 
-	_buttonData = buttonData;
-	_buttonDataListPtr = buttonDataListPtr;
+	delete [] _menu;
+	_menu = new Menu[6];
+	assert(_menu);
+
+	Button::Callback quitPlayingFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::quitPlaying);
+	Button::Callback loadGameMenuFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::loadGameMenu);
+	Button::Callback cancelSubMenuFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::cancelSubMenu);
+
+	GUI_V1_MENU(_menu[0], -1, -1, 208, 136, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[0].item[0], 1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[1], 1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[2], 1, 0, 0, 0, -1, -1, 64, 148, 15, 252, 253, 24, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[3], 1, 0, 0, 0, -1, -1, 81, 148, 15, 252, 253, 24, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[0].item[4], 1, 0, 0, 0, 86, 0, 110, 92, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	_menu[0].item[0].callback = loadGameMenuFunctor;
+	_menu[0].item[1].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::saveGameMenu);
+	_menu[0].item[2].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::gameControlsMenu);
+	_menu[0].item[3].callback = quitPlayingFunctor;
+	_menu[0].item[4].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::resumeGame);
+	
+	GUI_V1_MENU(_menu[1], -1, -1, 288, 56, 248, 249, 250, 0, 254,-1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[1].item[0], 1, 0, 0, 0, 24, 0, 30, 72, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[1].item[1], 1, 0, 0, 0, 192, 0, 30, 72, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	_menu[1].item[0].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::quitConfirmYes);
+	_menu[1].item[1].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::quitConfirmNo);
+	
+	GUI_V1_MENU(_menu[2], -1, -1, 288, 160, 248, 249, 250, 0, 251, -1, 8, 0, 6, 132, 22, 132, 124);
+	GUI_V1_MENU_ITEM(_menu[2].item[0], 1, 0, 0, 0, -1, 255, 39, 256, 15, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[2].item[1], 1, 0, 0, 0, -1, 255, 56, 256, 15, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[2].item[2], 1, 0, 0, 0, -1, 255, 73, 256, 15, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[2].item[3], 1, 0, 0, 0, -1, 255, 90, 256, 15, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[2].item[4], 1, 0, 0, 0, -1, 255, 107, 256, 15, 252, 253, 5, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[2].item[5], 1, 0, 0, 0, 184, 0, 134, 88, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	_menu[2].item[5].callback = cancelSubMenuFunctor;
+	
+	GUI_V1_MENU(_menu[3], -1, -1, 288, 67, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[3].item[0], 1, 0, 0, 0, 24, 0, 44, 72, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[3].item[1], 1, 0, 0, 0, 192, 0, 44, 72, 15, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	_menu[3].item[0].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::savegameConfirm);
+	_menu[3].item[1].callback = cancelSubMenuFunctor;
+	
+	GUI_V1_MENU(_menu[4], -1, -1, 208, 76, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[4].item[0], 1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[4].item[1], 1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0, 248, 249, 250, -1, 0, 0, 0, 0, 0);
+	_menu[4].item[0].callback = loadGameMenuFunctor;
+	_menu[4].item[1].callback = quitPlayingFunctor;
+
+	GUI_V1_MENU(_menu[5], -1, -1, 208, 153, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1);
+	GUI_V1_MENU_ITEM(_menu[5].item[0], 1, 0, 0, 0, 110, 0, 30, 64, 15, 252, 253, 5, 0, 248, 249, 250, -1, 0, 34, 32, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[1], 1, 0, 0, 0, 110, 0, 47, 64, 15, 252, 253, 5, 0, 248, 249, 250, -1, 0, 34, 49, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[2], 1, 0, 0, 0, 110, 0, 64, 64, 15, 252, 253, 5, 0, 248, 249, 250, -1, 0, 34, 66, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[3], 1, 0, 0, 0, 110, 0, 81, 64, 15, 252, 253, 5, 0, 248, 249, 250, -1, 0, 34, 83, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[4], 1, 0, 0, 0, 110, 0, 98, 64, 15, 252, 253, 5, 0, 248, 249, 250, -1, 0, 34, 100, 0, 0);
+	GUI_V1_MENU_ITEM(_menu[5].item[5], 1, 0, 0, 0, 64, 0, 127, 92, 15, 252, 253, -1, 255, 248, 249, 250, -1, -0, 0, 0, 0, 0);
+	_menu[5].item[0].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsChangeMusic);
+	_menu[5].item[1].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsChangeSounds);
+	_menu[5].item[2].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsChangeWalk);
+	_menu[5].item[4].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsChangeText);
+	_menu[5].item[5].callback = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::controlsApply);
 }
 
-Button KyraEngine_v1::_scrollUpButton =  {0, 0x12, 1, 1, 1, 0x483, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x18, 0x0f, 0, 0};
-Button KyraEngine_v1::_scrollDownButton = {0, 0x13, 1, 1, 1, 0x483, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x18, 0x0f, 0, 0};
+void KyraEngine_v1::setupButtonData() {
+	delete [] _buttonData;
+	delete [] _buttonDataListPtr;
 
-Button KyraEngine_v1::_menuButtonData[] = {
-	{ 0, 0x0c, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ },
-	{ 0, 0x0d, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ },
-	{ 0, 0x0e, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ },
-	{ 0, 0x0f, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ },
-	{ 0, 0x10, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ },
-	{ 0, 0x11, /*XXX,*/1, 1, 1, /*XXX,*/ 0x487, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*XXX,*/ 0, 0 /*, XXX*/ }
-};
+	_buttonData = new Button[15];
+	assert(_buttonData);
+	_buttonDataListPtr = new Button*[15];
+	assert(_buttonDataListPtr);
 
-void KyraEngine_v1::setupMenu() {
-	static Menu menu[] = {
-		{ -1, -1, 208, 136, 248, 249, 250, 0, 251, -1, 8, 0, 5, -1, -1, -1, -1,
-			{
-				{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine_v1::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
+	GUI_V1_BUTTON(_buttonData[1], 0x01, 1, 1, 1, 0x0487, 0, 0x009, 0xA4, 0x36, 0x1E, 0);
+	_buttonData[1].buttonCallback = BUTTON_FUNCTOR(GUI_v1, _gui, &GUI_v1::buttonMenuCallback);
 
-				{1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine_v1::gui_saveGameMenu, -1, 0, 0, 0, 0, 0},
+	Button::Callback inventoryFunctor = BUTTON_FUNCTOR(KyraEngine_v1, this, &KyraEngine_v1::buttonInventoryCallback);
+	for (int i = 2; i <= 10; ++i)
+		_buttonData[i].buttonCallback = inventoryFunctor;
+	_buttonData[0].buttonCallback = inventoryFunctor;
+	GUI_V1_BUTTON(_buttonData[0], 0x02, 0, 0, 0, 0x0400, 0, 0x05D, 0x9E, 0x13, 0x13, 0);
+	GUI_V1_BUTTON(_buttonData[2], 0x03, 0, 0, 0, 0x0400, 0, 0x071, 0x9E, 0x13, 0x14, 0);
+	GUI_V1_BUTTON(_buttonData[3], 0x04, 0, 0, 0, 0x0400, 0, 0x085, 0x9E, 0x13, 0x14, 0);
+	GUI_V1_BUTTON(_buttonData[4], 0x05, 0, 0, 0, 0x0400, 0, 0x099, 0x9E, 0x13, 0x14, 0);
+	GUI_V1_BUTTON(_buttonData[5], 0x06, 0, 0, 0, 0x0400, 0, 0x0AD, 0x9E, 0x13, 0x14, 0);
+	GUI_V1_BUTTON(_buttonData[6], 0x07, 0, 0, 0, 0x0400, 0, 0x05D, 0xB3, 0x13, 0x14, 0);
+	GUI_V1_BUTTON(_buttonData[7], 0x08, 0, 0, 0, 0x0400, 0, 0x071, 0xB3, 0x13, 0x14, 0);
+	GUI_V1_BUTTON(_buttonData[8], 0x09, 0, 0, 0, 0x0400, 0, 0x085, 0xB3, 0x13, 0x14, 0);
+	GUI_V1_BUTTON(_buttonData[9], 0x0A, 0, 0, 0, 0x0400, 0, 0x099, 0xB3, 0x13, 0x14, 0);
+	GUI_V1_BUTTON(_buttonData[10], 0x0B, 0, 0, 0, 0x0400, 0, 0x0AD, 0xB3, 0x13, 0x14, 0);
 
-				{1, 0, 0, 0, -1, -1, 64, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine_v1::gui_gameControlsMenu, -1, 0, 0, 0, 0, 0},
+	Button::Callback amuletFunctor = BUTTON_FUNCTOR(KyraEngine_v1, this, &KyraEngine_v1::buttonAmuletCallback);
+	GUI_V1_BUTTON(_buttonData[11], 0x15, 1, 1, 1, 0x0487, 0, 0x0FD, 0x9C, 0x1A, 0x12, 0);
+	GUI_V1_BUTTON(_buttonData[12], 0x16, 1, 1, 1, 0x0487, 0, 0x0E7, 0xAA, 0x1A, 0x12, 0);
+	GUI_V1_BUTTON(_buttonData[13], 0x17, 1, 1, 1, 0x0487, 0, 0x0FD, 0xB5, 0x1A, 0x12, 0);
+	GUI_V1_BUTTON(_buttonData[14], 0x18, 1, 1, 1, 0x0487, 0, 0x113, 0xAA, 0x1A, 0x12, 0);
+	for (int i = 11; i <= 14; ++i)
+		_buttonData[i].buttonCallback = amuletFunctor;
 
-				{1, 0, 0, 0, -1, -1, 81, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine_v1::gui_quitPlaying, -1, 0, 0, 0, 0, 0},
-
-				{1, 0, 0, 0, 86, 0, 110, 92, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine_v1::gui_resumeGame, -1, 0, 0, 0, 0, 0}
-			}
-		},
-		{ -1, -1, 288, 56, 248, 249, 250, 0, 254,-1, 8, 0, 2, -1, -1, -1, -1,
-			{
-				{1, 0, 0, 0, 24, 0, 30, 72, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine_v1::gui_quitConfirmYes, -1, 0, 0, 0, 0, 0},
-
-				{1, 0, 0, 0, 192, 0, 30, 72, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine_v1::gui_quitConfirmNo, -1, 0, 0, 0, 0, 0}
-			}
-		},
-		{ -1, -1, 288, 160, 248, 249, 250, 0, 251, -1, 8, 0, 6, 132, 22, 132, 124,
-			{
-				{1, 0, 0, 0, -1, 255, 39, 256, 15, 252, 253, 5, 0,
-				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
-
-				{1, 0, 0, 0, -1, 255, 56, 256, 15, 252, 253, 5, 0,
-				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
-
-				{1, 0, 0, 0, -1, 255, 73, 256, 15, 252, 253, 5, 0,
-				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
-
-				{1, 0, 0, 0, -1, 255, 90, 256, 15, 252, 253, 5, 0,
-				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
-
-				{1, 0, 0, 0, -1, 255, 107, 256, 15, 252, 253, 5, 0,
-				248, 249, 250, 0, -1, 0, 0, 0, 0, 0},
-
-				{1, 0, 0, 0, 184, 0, 134, 88, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine_v1::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0},
-			}
-		},
-		{ -1, -1, 288, 67, 248, 249, 250, 0, 251, -1, 8, 0, 3, -1, -1, -1, -1,
-			{
-				{1, 0, 0, 0, 24, 0, 44, 72, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine_v1::gui_savegameConfirm, -1, 0, 0, 0, 0, 0},
-
-				{1, 0, 0, 0, 192, 0, 44, 72, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine_v1::gui_cancelSubMenu, -1, 0, 0, 0, 0, 0}
-			}
-		},
-		{ -1, -1, 208, 76, 248, 249, 250, 0, 251, -1, 8, 0, 2, -1, -1, -1, -1,
-			{
-				{1, 0, 0, 0, -1, -1, 30, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine_v1::gui_loadGameMenu, -1, 0, 0, 0, 0, 0},
-
-				{1, 0, 0, 0, -1, -1, 47, 148, 15, 252, 253, 24, 0,
-				248, 249, 250, &KyraEngine_v1::gui_quitPlaying, -1, 0, 0, 0, 0, 0}
-			}
-		},
-		{ -1, -1, 208, 153, 248, 249, 250, 0, 251, -1, 8, 0, 6, -1, -1, -1, -1,
-			{
-				{1, 0, 0, 0, 110, 0, 30, 64, 15, 252, 253, 5, 0,
-				248, 249, 250, &KyraEngine_v1::gui_controlsChangeMusic, -1, 0, 34, 32, 0, 0},
-
-				{1, 0, 0, 0, 110, 0, 47, 64, 15, 252, 253, 5, 0,
-				248, 249, 250, &KyraEngine_v1::gui_controlsChangeSounds, -1, 0, 34, 49, 0, 0},
-
-				{1, 0, 0, 0, 110, 0, 64, 64, 15, 252, 253, 5, 0,
-				248, 249, 250, &KyraEngine_v1::gui_controlsChangeWalk, -1, 0, 34, 66, 0, 0},
-
-				{1, 0, 0, 0, 110, 0, 81, 64, 15, 252, 253, 5, 0,
-				248, 249, 250, 0, -1, 0, 34, 83, 0, 0 },
-
-				{1, 0, 0, 0, 110, 0, 98, 64, 15, 252, 253, 5, 0,
-				248, 249, 250, &KyraEngine_v1::gui_controlsChangeText, -1, 0, 34, 100, 0, 0 },
-
-				{1, 0, 0, 0, 64, 0, 127, 92, 15, 252, 253, -1, 255,
-				248, 249, 250, &KyraEngine_v1::gui_controlsApply, -1, -0, 0, 0, 0, 0}
-			}
-		}
-	};
-
-	_menu = menu;
+	for (int i = 1; i < 15; ++i)
+		_buttonDataListPtr[i-1] = &_buttonData[i];
+	_buttonDataListPtr[14] = 0;
 }
 
 const uint8 KyraEngine_v1::_magicMouseItemStartFrame[] = {

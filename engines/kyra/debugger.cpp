@@ -36,7 +36,7 @@
 namespace Kyra {
 
 Debugger::Debugger(KyraEngine *vm)
-	: GUI::Debugger() {
+	: ::GUI::Debugger() {
 	_vm = vm;
 
 	DCmd_Register("screen_debug_mode",	WRAP_METHOD(Debugger, cmd_setScreenDebug));

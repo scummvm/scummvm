@@ -34,7 +34,7 @@ class KyraEngine;
 class KyraEngine_v1;
 class KyraEngine_v2;
 
-class Debugger : public GUI::Debugger {
+class Debugger : public ::GUI::Debugger {
 public:
 	Debugger(KyraEngine *vm);
 	virtual ~Debugger() {}  // we need this for __SYMBIAN32__ archaic gcc/UIQ

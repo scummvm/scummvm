@@ -1,0 +1,192 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#ifndef KYRA_GUI_H
+#define KYRA_GUI_H
+
+#include "kyra/util.h"
+#include "kyra/kyra.h"
+
+#include "common/ptr.h"
+
+namespace Kyra {
+
+#define BUTTON_FUNCTOR(type, x, y) Button::Callback(new Functor1Mem<Button*, int, type>(x, y))
+
+struct Button {
+	typedef Functor1<Button*, int> CallbackFunctor;
+	typedef Common::SharedPtr<CallbackFunctor> Callback;
+
+	Button *nextButton;
+	uint16 index;
+
+	uint16 unk6;
+	uint16 unk8;
+
+	byte data0Val1;
+	byte data1Val1;
+	byte data2Val1;
+
+	uint16 flags;
+
+	const uint8 *data0ShapePtr;
+	const uint8 *data1ShapePtr;
+	const uint8 *data2ShapePtr;
+	Callback data0Callback;
+	Callback data1Callback;
+	Callback data2Callback;
+
+	uint16 dimTableIndex;
+
+	int16 x, y;
+	uint16 width, height;
+
+	uint8 data0Val2;
+	uint8 data0Val3;
+
+	uint8 data1Val2;
+	uint8 data1Val3;
+
+	uint8 data2Val2;
+	uint8 data2Val3;
+
+	uint16 flags2;
+
+	Callback buttonCallback;
+};
+
+struct MenuItem {
+	bool enabled;
+
+	const char *itemString;
+	uint16 itemId;
+
+	int16 x, y;
+	uint16 width, height;
+
+	uint8 textColor, highlightColor;
+
+	int16 titleX;
+
+	uint8 color1, color2;
+	uint8 bkgdColor;
+
+	Button::Callback callback;
+
+	int16 saveSlot;
+
+	const char *labelString;
+	uint16 labelId;
+	int16 labelX, labelY;
+
+	uint16 unk1F;
+};
+
+struct Menu {
+	int16 x, y;
+	uint16 width, height;
+
+	uint8 bkgdColor;
+	uint8 color1, color2;
+
+	const char *menuNameString;
+	uint16 menuNameId;
+
+	uint8 textColor;
+	int16 titleX, titleY;
+
+	uint8 highlightedItem;
+
+	uint8 numberOfItems;
+
+	int16 scrollUpButtonX, scrollUpButtonY;
+	int16 scrollDownButtonX, scrollDownButtonY;
+
+	MenuItem item[7];
+};
+
+class Screen;
+class TextDisplayer;
+
+class GUI {
+public:
+	GUI(KyraEngine *vm);
+	virtual ~GUI() {}
+
+	// button specific
+	virtual Button *addButtonToList(Button *list, Button *newButton);
+
+	virtual void processButton(Button *button) = 0;
+	virtual int processButtonList(Button *buttonList, uint16 inputFlags) = 0;
+
+	int redrawShadedButtonCallback(Button *button);
+	int redrawButtonCallback(Button *button);
+
+	// menu specific
+	virtual void initMenuLayout(Menu &menu);
+	void initMenu(Menu &menu);
+
+	void processHighlights(Menu &menu, int mouseX, int mouseY);
+
+protected:
+	KyraEngine *_vm;
+	Screen *_screen;
+	TextDisplayer *_text;
+
+	Button *_menuButtonList;
+	bool _haveScrollButtons;
+	bool _displayMenu;
+	bool _displaySubMenu;
+	bool _cancelSubMenu;
+
+	Button::Callback _redrawShadedButtonFunctor;
+	Button::Callback _redrawButtonFunctor;
+
+	virtual Button *getButtonListData() = 0;
+	virtual Button *getScrollUpButton() = 0;
+	virtual Button *getScrollDownButton() = 0;
+
+	virtual Button::Callback getScrollUpButtonHandler() const = 0;
+	virtual Button::Callback getScrollDownButtonHandler() const = 0;
+
+	virtual uint8 defaultColor1() const = 0;
+	virtual uint8 defaultColor2() const = 0;
+
+	virtual const char *getMenuTitle(const Menu &menu) = 0;
+	virtual const char *getMenuItemTitle(const MenuItem &menuItem) = 0;
+	virtual const char *getMenuItemLabel(const MenuItem &menuItem) = 0;
+
+	void updateAllMenuButtons();
+	void updateMenuButton(Button *button);
+	virtual void updateButton(Button *button);
+
+	void redrawText(const Menu &menu);
+	void redrawHighlight(const Menu &menu);
+};
+
+} // end of namesapce Kyra
+
+#endif
+

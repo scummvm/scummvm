@@ -88,14 +88,14 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_scriptClick = 0;
 	_characterList = 0;
 	_movFacingTable = 0;
+	_buttonData = 0;
+	_buttonDataListPtr = 0;
 	memset(_shapes, 0, sizeof(_shapes));
 	memset(_movieObjects, 0, sizeof(_movieObjects));
 	_finalA = _finalB = _finalC = 0;
 	_endSequenceBackUpRect = 0;
 	memset(_panPagesTable, 0, sizeof(_panPagesTable));
 	_npcScriptData = _scriptClickData = 0;
-	_scrollUpButton.process0PtrShape = _scrollUpButton.process1PtrShape = _scrollUpButton.process2PtrShape = 0;
-	_scrollDownButton.process0PtrShape = _scrollDownButton.process1PtrShape = _scrollDownButton.process2PtrShape = 0;
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));
 	_currHeadShape = 0;
 
@@ -134,12 +134,17 @@ KyraEngine_v1::~KyraEngine_v1() {
 
 	delete [] _movFacingTable;
 
-	delete [] _scrollUpButton.process0PtrShape;
-	delete [] _scrollUpButton.process1PtrShape;
-	delete [] _scrollUpButton.process2PtrShape;
-	delete [] _scrollDownButton.process0PtrShape;
-	delete [] _scrollDownButton.process1PtrShape;
-	delete [] _scrollDownButton.process2PtrShape;
+	delete [] _gui->_scrollUpButton.data0ShapePtr;
+	delete [] _gui->_scrollUpButton.data1ShapePtr;
+	delete [] _gui->_scrollUpButton.data2ShapePtr;
+	delete [] _gui->_scrollDownButton.data0ShapePtr;
+	delete [] _gui->_scrollDownButton.data1ShapePtr;
+	delete [] _gui->_scrollDownButton.data2ShapePtr;
+
+	delete [] _buttonData;
+	delete [] _buttonDataListPtr;
+
+	delete _gui;
 
 	delete [] _itemBkgBackUp[0];
 	delete [] _itemBkgBackUp[1];
@@ -178,6 +183,8 @@ int KyraEngine_v1::init() {
 	assert(*_animator);
 	_text = new TextDisplayer(this, screen());
 	assert(_text);
+	_gui = new GUI_v1(this);
+	assert(_gui);
 
 	initStaticResource();
 
@@ -193,7 +200,6 @@ int KyraEngine_v1::init() {
 	_sound->loadSoundFile(0);
 
 	setupButtonData();
-	setupMenu();
 
 	_paletteChanged = 1;
 	_currentCharacter = 0;
@@ -407,7 +413,7 @@ void KyraEngine_v1::startup() {
 			_menuDirectlyToLoad = true;
 			_screen->setMouseCursor(1, 1, _shapes[0]);
 			_screen->showMouse();
-			buttonMenuCallback(0);
+			_gui->buttonMenuCallback(0);
 			_menuDirectlyToLoad = false;
 		} else
 			saveGame(getSavegameFilename(0), "New game");
@@ -437,7 +443,7 @@ void KyraEngine_v1::mainLoop() {
 			_screen->setMouseCursor(1, 1, _shapes[0]);
 			destroyMouseItem();
 			_screen->showMouse();
-			buttonMenuCallback(0);
+			_gui->buttonMenuCallback(0);
 			_deathHandler = 0xFF;
 		}
 
@@ -451,7 +457,7 @@ void KyraEngine_v1::mainLoop() {
 
 		_screen->showMouse();
 
-		processButtonList(_buttonList);
+		_gui->processButtonList(_buttonList, 0);
 		updateMousePointer();
 		_timer->update();
 		updateTextFade();

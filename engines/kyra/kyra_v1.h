@@ -29,6 +29,7 @@
 #include "kyra/kyra.h"
 #include "kyra/script.h"
 #include "kyra/screen_v1.h"
+#include "kyra/gui_v1.h"
 
 namespace Kyra {
 
@@ -104,85 +105,11 @@ struct BeadState {
 	int16 tableIndex;
 };
 
-struct Button {
-	Button *nextButton;
-	uint16 specialValue;
-	// uint8 unk[4];
-	uint8 process0;
-	uint8 process1;
-	uint8 process2;
-	// uint8 unk
-	uint16 flags;
-	typedef int (KyraEngine_v1::*ButtonCallback)(Button*);
-	// using 6 pointers instead of 3 as in the orignal here (safer for use with classes)
-	uint8 *process0PtrShape;
-	uint8 *process1PtrShape;
-	uint8 *process2PtrShape;
-	ButtonCallback process0PtrCallback;
-	ButtonCallback process1PtrCallback;
-	ButtonCallback process2PtrCallback;
-	uint16 dimTableIndex;
-	uint16 x;
-	uint16 y;
-	uint16 width;
-	uint16 height;
-	// uint8 unk[8];
-	uint32 flags2;
-	ButtonCallback buttonCallback;
-	// uint8 unk[8];
-};
-
-struct MenuItem {
-	bool enabled;
-	uint16 field_1;
-	uint8 field_3;
-	const char *itemString;
-	int16 x;
-	int16 field_9;
-	uint16 y;
-	uint16 width;
-	uint16 height;
-	uint8 textColor;
-	uint8 highlightColor;
-	int16 field_12;
-	uint8 field_13;
-	uint8 bgcolor;
-	uint8 color1;
-	uint8 color2;
-	int (KyraEngine_v1::*callback)(Button*);
-	int16 saveSlot;
-	const char *labelString;
-	uint16 labelX;
-	uint8 labelY;
-	uint8 field_24;
-	uint32 field_25;
-};
-
-struct Menu {
-	int16 x;
-	int16 y;
-	uint16 width;
-	uint16 height;
-	uint8 bgcolor;
-	uint8 color1;
-	uint8 color2;
-	const char *menuName;
-	uint8 textColor;
-	int16 field_10;
-	uint16 field_12;
-	uint16 highlightedItem;
-	uint8 nrOfItems;
-	int16 scrollUpBtnX;
-	int16 scrollUpBtnY;
-	int16 scrollDownBtnX;
-	int16 scrollDownBtnY;
-	MenuItem item[6];
-};
-
 class KyraEngine_v1 : public KyraEngine {
 	friend class MusicPlayer;
 	friend class Debugger_v1;
 	friend class ScreenAnimator;
+	friend class GUI_v1;
 public:
 	KyraEngine_v1(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v1();
@@ -456,52 +383,6 @@ protected:
 
 	int buttonInventoryCallback(Button *caller);
 	int buttonAmuletCallback(Button *caller);
-	int buttonMenuCallback(Button *caller);
-	int drawBoxCallback(Button *button);
-	int drawShadedBoxCallback(Button *button);
-	void calcCoords(Menu &menu);
-	void initMenu(Menu &menu);
-	void setGUILabels();
-
-	Button *initButton(Button *list, Button *newButton);
-	void processButtonList(Button *list);
-	void processButton(Button *button);
-	void processMenuButton(Button *button);
-	void processAllMenuButtons();
-
-	void setupSavegames(Menu &menu, int num);
-	int getNextSavegameSlot();
-
-	int gui_resumeGame(Button *button);
-	int gui_loadGameMenu(Button *button);
-	int gui_saveGameMenu(Button *button);
-	int gui_gameControlsMenu(Button *button);
-	int gui_quitPlaying(Button *button);
-	int gui_quitConfirmYes(Button *button);
-	int gui_quitConfirmNo(Button *button);
-	int gui_loadGame(Button *button);
-	int gui_saveGame(Button *button);
-	int gui_savegameConfirm(Button *button);
-	int gui_cancelSubMenu(Button *button);
-	int gui_scrollUp(Button *button);
-	int gui_scrollDown(Button *button);
-	int gui_controlsChangeMusic(Button *button);
-	int gui_controlsChangeSounds(Button *button);
-	int gui_controlsChangeWalk(Button *button);
-	int gui_controlsChangeText(Button *button);
-	int gui_controlsChangeVoice(Button *button);
-	int gui_controlsApply(Button *button);
-
-	bool gui_quitConfirm(const char *str);
-	void gui_getInput();
-	void gui_redrawText(Menu menu);
-	void gui_redrawHighlight(Menu menu);
-	void gui_processHighlights(Menu &menu);
-	void gui_updateSavegameString();
-	void gui_redrawTextfield();
-	void gui_fadePalette();
-	void gui_restorePalette();
-	void gui_setupControls(Menu &menu);
 
 	bool _skipIntroFlag;
 	bool _abortIntroFlag;
@@ -509,7 +390,6 @@ protected:
 	bool _abortWalkFlag;
 	bool _abortWalkFlag2;
 	bool _mousePressFlag;
-	int8 _mouseWheel;
 	uint8 *_itemBkgBackUp[2];
 	uint8 *_shapes[373];
 	int8 _itemInHand;
@@ -614,16 +494,7 @@ protected:
 	Character *_currentCharacter;
 
 	Button *_buttonList;
-	Button *_menuButtonList;
-	bool _displayMenu;
-	bool _menuRestoreScreen;
-	bool _displaySubMenu;
-	bool _cancelSubMenu;
-	uint8 _toplevelMenu;
-	int _savegameOffset;
-	char _savegameName[31];
-	const char *_specialSavegameString;
-	Common::KeyState _keyPressed;
+	GUI_v1 *_gui;
 
 	struct KyragemState {
 		uint16 nextOperation;
@@ -681,12 +552,6 @@ protected:
 	const char * const*_veryClever;
 	const char * const*_homeString;
 	const char * const*_newGameString;
-
-	const char *_voiceTextString;
-	const char *_textSpeedString;
-	const char *_onString;
-	const char *_offString;
-	const char *_onCDString;
 
 	int _itemList_Size;
 	int _takenList_Size;
@@ -777,14 +642,6 @@ protected:
 	void setupButtonData();
 	Button *_buttonData;
 	Button **_buttonDataListPtr;
-	static Button _menuButtonData[];
-	static Button _scrollUpButton;
-	static Button _scrollDownButton;
-
-	bool _haveScrollButtons;
-
-	void setupMenu();
-	Menu *_menu;
 
 	static const uint8 _magicMouseItemStartFrame[];
 	static const uint8 _magicMouseItemEndFrame[];
