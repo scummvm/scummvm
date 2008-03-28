@@ -317,7 +317,7 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 
 	setTimer1DelaySecs(7);
 	_shownMessage = " ";
-	_msgUnk1 = 0;
+	_fadeMessagePalette = false;
 
 	if (setFlag1EE)
 		setGameFlag(0x1EE);

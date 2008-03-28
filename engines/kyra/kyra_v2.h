@@ -774,7 +774,8 @@ protected:
 	const char *_shownMessage;
 
 	byte _messagePal[3];
-	int _msgUnk1;
+	bool _fadeMessagePalette;
+	void fadeMessagePalette();
 
 	// chat
 	int _vocHigh;

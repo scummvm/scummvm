@@ -44,7 +44,7 @@ void KyraEngine_v2::setupTimers() {
 void KyraEngine_v2::timerFadeOutMessage(int arg) {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerFadeOutMessage(%d)", arg);
 	if (_shownMessage)
-		_msgUnk1 = 1;
+		_fadeMessagePalette = 1;
 }
 
 void KyraEngine_v2::timerCauldronAnimation(int arg) {

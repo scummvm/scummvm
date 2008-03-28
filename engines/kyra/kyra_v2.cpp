@@ -601,7 +601,7 @@ void KyraEngine_v2::update() {
 	_timer->update();
 	updateItemAnimations();
 	updateInvWsa();
-	//sub_1574C();
+	fadeMessagePalette();
 	_screen->updateScreen();
 }
 
@@ -609,7 +609,7 @@ void KyraEngine_v2::updateWithText() {
 	updateInput();
 
 	updateMouse();
-	//sub_157C();
+	fadeMessagePalette();
 	updateSpecialSceneScripts();
 	_timer->update();
 	updateItemAnimations();
@@ -1041,7 +1041,7 @@ void KyraEngine_v2::showMessage(const char *string, int16 palIndex) {
 	_screen->fillRect(0, 190, 319, 199, 0xCF);
 
 	if (string) {
-		if (palIndex != -1 || _msgUnk1) {
+		if (palIndex != -1 || _fadeMessagePalette) {
 			palIndex *= 3;
 			memcpy(_messagePal, _screen->_currentPalette + palIndex, 3);
 			memmove(_screen->_currentPalette + 765, _screen->_currentPalette + palIndex, 3);
@@ -1054,7 +1054,7 @@ void KyraEngine_v2::showMessage(const char *string, int16 palIndex) {
 		setTimer1DelaySecs(7);
 	}
 
-	_msgUnk1 = 0;
+	_fadeMessagePalette = false;
 	_screen->showMouse();
 }
 
@@ -1084,6 +1084,29 @@ void KyraEngine_v2::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 	}
 
 	showMessage((char*)_unkBuf500Bytes, palIndex);
+}
+
+void KyraEngine_v2::fadeMessagePalette() {
+	if (!_fadeMessagePalette)
+		return;
+
+	bool updatePalette = false;
+	for (int i = 0; i < 3; ++i) {
+		if (_messagePal[i] >= 4) {
+			_messagePal[i] -= 4;
+			updatePalette = true;
+		} else if (_messagePal[i] != 0) {
+			_messagePal[i] = 0;
+			updatePalette = true;
+		}
+	}
+
+	if (updatePalette) {
+		memcpy(_screen->getPalette(0) + 765, _messagePal, 3);
+		_screen->setScreenPalette(_screen->getPalette(0));
+	} else {
+		_fadeMessagePalette = false;
+	}
 }
 
 #pragma mark -
