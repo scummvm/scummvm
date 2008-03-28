@@ -472,8 +472,8 @@ int GUI_v1::buttonMenuCallback(Button *caller) {
 	return 0;
 }
 
-/*void KyraEngine_v1::initMenuLayout(Menu &menu) {
-	assert(menu.nrOfItems < 7);
+void GUI_v1::initMenuLayout(Menu &menu) {
+	assert(menu.numberOfItems < 7);
 
 	int widthBackup = _screen->_charWidth;
 	_screen->_charWidth = -2;
@@ -484,9 +484,11 @@ int GUI_v1::buttonMenuCallback(Button *caller) {
 	int maxOffset = 0;
 	int x1, x2, y1, y2;
 
-	for (int i = 0; i < menu.nrOfItems; i++) {
+	for (int i = 0; i < menu.numberOfItems; i++) {
 		if (menu.item[i].x == -1)
 			menu.item[i].x = (menu.width - menu.item[i].width)/2;
+		if (menu.item[i].y == -1)
+			menu.item[i].y = (menu.height - menu.item[i].height)/2;
 
 		if (menu.item[i].labelString) {
 			x1 = menu.x + menu.item[i].x + 25;
@@ -520,7 +522,7 @@ int GUI_v1::buttonMenuCallback(Button *caller) {
 
 	if (maxOffset > 0) {
 		maxOffset = maxOffset/2;
-		for (int i = 0; i < menu.nrOfItems; i++) {
+		for (int i = 0; i < menu.numberOfItems; i++) {
 			menu.item[i].x += maxOffset + 10;
 			menu.item[i].labelX -= maxOffset;
 		}
@@ -542,7 +544,7 @@ int GUI_v1::buttonMenuCallback(Button *caller) {
 		menu.y = (200 - menu.height)/2;
 
 	_screen->_charWidth = widthBackup;
-}*/
+}
 
 void GUI_v1::getInput() {
 	Common::Event event;
