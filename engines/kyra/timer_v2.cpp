@@ -51,6 +51,11 @@ void KyraEngine_v2::timerCauldronAnimation(int arg) {
 	debugC(9, kDebugLevelMain | kDebugLevelTimer, "KyraEngine_v2::timerCauldronAnimation(%d)", arg);
 	int animation = -1;
 
+	// HACK: We don't allow inventory animations while the inventory is backed off, which means not shown usually.
+	// This prevents for example that the cauldron animation is shown in the meanwhile scene with Marco and the Hand in Chapter 2.
+	if (_inventorySaved)
+		return;
+
 	if (queryGameFlag(2) && _mainCharacter.sceneId != 34 && _mainCharacter.sceneId != 73 && !_invWsa.wsa && !_invWsa.running) {
 		if (animation == -1)
 			animation = _rnd.getRandomNumberRng(1, 6);
