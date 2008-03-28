@@ -538,6 +538,9 @@ void AgiEngine::loadDict(void) {
 	_predictiveDictLineCount = lines;
 	debug("Loaded %d lines", _predictiveDictLineCount);
 
+	// FIXME: We use binary search on _predictiveDictLine, yet we make no attempt
+	// to ever sort this array (except for the DS port). That seems risky, doesn't it?
+
 #ifdef __DS__
 	// Sort the DS word completion list, to allow for a binary chop later (in the ds backend)
 	DS::sortAutoCompleteWordList();
@@ -552,7 +555,7 @@ bool AgiEngine::matchWord(void) {
 		return false;
 	}
 	// Lookup word in the dictionary
-	int line = 0, span, cmpRes, len;
+	int line = 0, cmpRes, len;
 	char target[MAXWORDLEN];
 
 	strncpy(target, _currentCode.c_str(), MAXWORDLEN);
@@ -563,25 +566,20 @@ bool AgiEngine::matchWord(void) {
 	// if there is not an exact match, do it once more for the best matching prefix (drop the space)
 	len = _currentCode.size() + 1;
 	for (int i = 0; i < 2; ++i) {
-		line = (_predictiveDictLineCount + 1) / 2 - 1;
-		// find out the 2^upper_int(log2(_predictiveDictLineCount))
-		for (span = 1; span < _predictiveDictLineCount; span <<= 1)
-			;
-		span >>= 1;
-		do {
+		// Perform a binary search.
+		int hi = _predictiveDictLineCount - 1;
+		int lo = 0;
+		while (lo <= hi) {
+			line = (lo + hi) / 2;
 			cmpRes = strncmp(_predictiveDictLine[line], target, len);
-			if (cmpRes > 0) {
-				span /= 2;
-				line -= span;
-				if (line < 0)
-					line = 0;
-			} else if (cmpRes < 0) {
-				span /= 2;
-				line += span;
-				if (line >= _predictiveDictLineCount)
-					line = _predictiveDictLineCount - 1;
-			}
-		} while (cmpRes && span);
+			if (cmpRes > 0)
+				hi = line - 1;
+			else if (cmpRes < 0)
+				lo = line + 1;
+			else
+				break;
+		}
+
 		if (cmpRes == 0)  // Exact match found? -> stop now
 			break;
 		len--;  // Remove the trailing space
