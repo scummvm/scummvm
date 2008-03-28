@@ -229,12 +229,9 @@ static uint16 write_word(Common::WriteStream *out, uint16 val) {
 	return 2;
 }
 
-ScummDiskImage::ScummDiskImage(const char *disk1, const char *disk2, GameSettings game) : _stream(0), _buf(0) {
-	_disk1 = disk1;
-	_disk2 = disk2;
-	_game = game;
-
-	_openedDisk = 0;
+ScummDiskImage::ScummDiskImage(const char *disk1, const char *disk2, GameSettings game)
+	: _stream(0), _buf(0), _game(game),
+	_disk1(disk1), _disk2(disk2), _openedDisk(0) {
 
 	if (_game.id == GID_MANIAC) {
 		_numGlobalObjects = 256;
@@ -285,9 +282,9 @@ bool ScummDiskImage::openDisk(char num) {
 			File::close();
 
 		if (num == 1)
-			File::open(_disk1.c_str());
+			File::open(_disk1);
 		else if (num == 2)
-			File::open(_disk2.c_str());
+			File::open(_disk2);
 		else {
 			error("ScummDiskImage::open(): wrong disk (%c)", num);
 			return false;
@@ -468,17 +465,14 @@ bool ScummDiskImage::generateResource(int res) {
 
 	extractResource(&out, res);
 
-	if (_stream)
-		delete _stream;
-
+	delete _stream;
 	_stream = new Common::MemoryReadStream(_buf, bufsize);
 
 	return true;
 }
 
 void ScummDiskImage::close() {
-	if (_stream)
-		delete _stream;
+	delete _stream;
 	_stream = 0;
 
 	free(_buf);

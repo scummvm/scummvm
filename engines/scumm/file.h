@@ -77,9 +77,9 @@ private:
 
 	byte *_buf;
 
-	GameSettings _game;
+	const GameSettings _game;
 
-	Common::String _disk1, _disk2;
+	const Common::String _disk1, _disk2;
 	int _openedDisk;
 
 	int _numGlobalObjects;

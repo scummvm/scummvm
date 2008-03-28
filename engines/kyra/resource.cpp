@@ -374,7 +374,7 @@ Common::SeekableReadStream *Resource::getFileStream(const Common::String &file) 
 		return loader->loadFileFromArchive(file, parent, iter->_value);
 	} else {
 		Common::File *stream = new Common::File();
-		if (!stream->open(file.c_str())) {
+		if (!stream->open(file)) {
 			warning("Couldn't open file '%s'", file.c_str());
 			return 0;
 		}

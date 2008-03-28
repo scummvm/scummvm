@@ -70,11 +70,8 @@ void Archive::open(const char *file) {
 	if (_archive.isOpen())
 		close();
 
-	char	path[PATH_LEN];
-
-	strcpy(path, file);
-	if (!_archive.open(path))
-		error("archive '%s' not found", path);
+	if (!_archive.open(file))
+		error("archive '%s' not found", file);
 
 	_archiveName = file;
 
