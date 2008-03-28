@@ -1778,7 +1778,7 @@ void KyraEngine_v2::snd_playSoundEffect(int track) {
 
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 	if (vocIndex != -1)
-		_sound->voicePlay(_ingameSoundList[vocIndex]);
+		_sound->voicePlay(_ingameSoundList[vocIndex], true);
 	else if (_flags.platform == Common::kPlatformPC)
 		// TODO ?? Maybe there is a way to let users select whether they want
 		// voc, midi or adl sfx (even though it makes no sense to choose anything but voc).
