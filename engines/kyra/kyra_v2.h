@@ -29,6 +29,7 @@
 #include "kyra/kyra.h"
 #include "kyra/script.h"
 #include "kyra/screen_v2.h"
+#include "kyra/gui_v2.h"
 
 #include "common/list.h"
 
@@ -161,6 +162,7 @@ struct NestedSequence {
 class KyraEngine_v2 : public KyraEngine {
 friend class Debugger_v2;
 friend class TextDisplayer_v2;
+friend class GUI_v2;
 public:
 	KyraEngine_v2(OSystem *system, const GameFlags &flags);
 	~KyraEngine_v2();
@@ -306,7 +308,6 @@ protected:
 
 	void dinoRide();
 
-	struct Button;
 	int checkInput(Button *buttonList, bool mainLoop = false);
 	void removeInputTop();
 	void handleInput(int x, int y);
@@ -605,50 +606,14 @@ protected:
 	int _nextAnimItem;
 
 	// gui
+	GUI_v2 *_gui;
+
 	void loadButtonShapes();
 	uint8 *_buttonShapes[19];
 
-	struct Button {
-		Button *nextButton;
-		uint16 index;
-		uint16 unk6;
-		uint16 unk8;
-		byte data0Val1;
-		byte data1Val1;
-		byte data2Val1;
-		// XXX
-		uint16 flags;
-		uint8 *shapePtr0;
-		uint8 *shapePtr1;
-		uint8 *shapePtr2;
-		uint16 dimTableIndex;
-		int16 x;
-		int16 y;
-		int16 width;
-		int16 height;
-		uint8 data0Val2;
-		uint8 data0Val3;
-		uint8 data1Val2;
-		uint8 data1Val3;
-		uint8 data2Val2;
-		uint8 data2Val3;
-		// XXX
-		uint16 flags2;
-		typedef int (KyraEngine_v2::*ButtonCallback)(KyraEngine_v2::Button*);
-		ButtonCallback buttonCallback;
-		// XXX
-	};
-
-	bool _buttonListChanged;
+	void initInventoryButtonList();
+	Button *_inventoryButtons;
 	Button *_buttonList;
-	Button *_backUpButtonList;
-	Button *_unknownButtonList;
-
-	void initMainButtonList();
-
-	void processButton(Button *button);
-	Button *addButtonToList(Button *list, Button *newButton);
-	int processButtonList(Button *button, uint16 inputFlag);
 
 	int scrollInventory(Button *button);
 	int buttonInventory(Button *button);

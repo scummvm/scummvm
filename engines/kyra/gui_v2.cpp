@@ -243,26 +243,17 @@ void KyraEngine_v2::loadButtonShapes() {
 	_buttonShapes[18] = _screen->makeShapeCopy(src, 18);
 }
 
-KyraEngine_v2::Button *KyraEngine_v2::addButtonToList(Button *list, Button *newButton) {
-	if (!newButton)
-		return list;
+GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
+	_backUpButtonList = _unknownButtonList = 0;
+}
 
-	newButton->nextButton = 0;
-
-	if (list) {
-		Button *cur = list;
-		while (cur->nextButton)
-			cur = cur->nextButton;
-		cur->nextButton = newButton;
-	} else {
-		list = newButton;
-	}
-
+Button *GUI_v2::addButtonToList(Button *list, Button *newButton) {
+	list = GUI::addButtonToList(list, newButton);
 	_buttonListChanged = true;
 	return list;
 }
 
-void KyraEngine_v2::processButton(Button *button) {
+void GUI_v2::processButton(Button *button) {
 	if (!button)
 		return;
 	
@@ -276,20 +267,20 @@ void KyraEngine_v2::processButton(Button *button) {
 	int entry = button->flags2 & 5;
 
 	byte val1 = 0, val2 = 0, val3 = 0;
-	uint8 *dataPtr = 0;
+	const uint8 *dataPtr = 0;
 	if (entry == 1) {
 		val1 = button->data1Val1;
-		dataPtr = button->shapePtr1;
+		dataPtr = button->data1ShapePtr;
 		val2 = button->data1Val2;
 		val3 = button->data1Val3;
 	} else if (entry == 4 || entry == 5) {
 		val1 = button->data2Val1;
-		dataPtr = button->shapePtr2;
+		dataPtr = button->data2ShapePtr;
 		val2 = button->data2Val2;
 		val3 = button->data2Val3;
 	} else {
 		val1 = button->data0Val1;
-		dataPtr = button->shapePtr0;
+		dataPtr = button->data0ShapePtr;
 		val2 = button->data0Val2;
 		val3 = button->data0Val3;
 	}
@@ -346,7 +337,7 @@ void KyraEngine_v2::processButton(Button *button) {
 	_screen->updateScreen();
 }
 
-int KyraEngine_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
+int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 	if (!buttonList)
 		return inputFlag & 0x7FFF;
 
@@ -362,8 +353,8 @@ int KyraEngine_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		}
 	}
 
-	int mouseX = _mouseX;
-	int mouseY = _mouseY;
+	int mouseX = _vm->_mouseX;
+	int mouseY = _vm->_mouseY;
 
 	uint16 flags = 0;
 
@@ -554,8 +545,8 @@ int KyraEngine_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 			buttonList->flags2 |= flags;
 
 			if (buttonList->buttonCallback) {
-				removeInputTop();
-				if ((this->*buttonList->buttonCallback)(buttonList))
+				_vm->removeInputTop();
+				if ((*buttonList->buttonCallback.get())(buttonList))
 					break;
 			}
 			
@@ -573,6 +564,30 @@ int KyraEngine_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		returnValue = inputFlag & 0x7FFF;
 	return returnValue;
 }
+
+const char *GUI_v2::getMenuTitle(const Menu &menu) {
+	if (!menu.menuNameId)
+		return 0;
+
+	return _vm->getTableString(menu.menuNameId, _vm->_optionsBuffer, 1);
+}
+
+const char *GUI_v2::getMenuItemTitle(const MenuItem &menuItem) {
+	if (!menuItem.itemId)
+		return 0;
+
+	return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, 1);
+}
+
+const char *GUI_v2::getMenuItemLabel(const MenuItem &menuItem) {
+	if (!menuItem.labelId)
+		return 0;
+
+	return _vm->getTableString(menuItem.labelId, _vm->_optionsBuffer, 1);
+}
+
+#pragma mark -
+
 
 int KyraEngine_v2::buttonInventory(Button *button) {
 	if (!_screen->isMouseVisible())
@@ -943,18 +958,23 @@ void KyraEngine_v2::showBookPage() {
 }
 
 void KyraEngine_v2::bookLoop() {
-	static Button bookButtons[] = {
-		{ 0, 0x24, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x82, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookPrevPage },
-		{ 0, 0x25, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0xB1, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookNextPage },
-		{ 0, 0x26, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x8F, 0xBE, 0x21, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookClose },
-		{ 0, 0x27, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0x08, 0x08, 0x90, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookPrevPage },
-		{ 0, 0x28, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0xAA, 0x08, 0x8E, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0, &KyraEngine_v2::bookNextPage }
-	};
+	Button bookButtons[5];
+
+	GUI_V2_BUTTON(bookButtons[0], 0x24, 0, 0, 1, 1, 1, 0x4487, 0, 0x82, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	bookButtons[0].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookPrevPage);
+	GUI_V2_BUTTON(bookButtons[1], 0x25, 0, 0, 1, 1, 1, 0x4487, 0, 0xB1, 0xBE, 0x0A, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	bookButtons[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookNextPage);
+	GUI_V2_BUTTON(bookButtons[2], 0x26, 0, 0, 1, 1, 1, 0x4487, 0, 0x8F, 0xBE, 0x21, 0x0A, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	bookButtons[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookClose);
+	GUI_V2_BUTTON(bookButtons[3], 0x27, 0, 0, 1, 1, 1, 0x4487, 0, 0x08, 0x08, 0x90, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	bookButtons[3].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookPrevPage);
+	GUI_V2_BUTTON(bookButtons[4], 0x28, 0, 0, 1, 1, 1, 0x4487, 0, 0xAA, 0x08, 0x8E, 0xB4, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	bookButtons[4].buttonCallback = BUTTON_FUNCTOR(KyraEngine_v2, this, &KyraEngine_v2::bookNextPage);
 
 	Button *buttonList = 0;
 	
 	for (uint i = 0; i < ARRAYSIZE(bookButtons); ++i)
-		buttonList = addButtonToList(buttonList, &bookButtons[i]);
+		buttonList = _gui->addButtonToList(buttonList, &bookButtons[i]);
 
 	showBookPage();
 	_bookShown = true;

@@ -120,8 +120,9 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_sceneList = 0;
 	memset(&_sceneAnimMovie, 0, sizeof(_sceneAnimMovie));
 	memset(&_wsaSlots, 0, sizeof(_wsaSlots));
-	_backUpButtonList = _unknownButtonList = _buttonList = 0;
 	memset(&_buttonShapes, 0, sizeof(_buttonShapes));
+
+	_inventoryButtons = _buttonList = 0;
 
 	_dlgBuffer = 0;
 	_conversationState = new int8*[19];
@@ -155,6 +156,7 @@ KyraEngine_v2::~KyraEngine_v2() {
 	delete [] _mouseSHPBuf;
 	delete _screen;
 	delete _text;
+	delete _gui;
 	_text = 0;
 	delete _debugger;
 	delete _invWsa.wsa;
@@ -192,6 +194,8 @@ int KyraEngine_v2::init() {
 	assert(_debugger);
 	_text = new TextDisplayer_v2(this, _screen);
 	assert(_text);
+	_gui = new GUI_v2(this);
+	assert(_gui);
 
 	if (_flags.isDemo && !_flags.isTalkie) {
 		_screen->loadFont(_screen->FID_8_FNT, "FONT9P.FNT");
@@ -354,7 +358,7 @@ void KyraEngine_v2::startup() {
 	loadButtonShapes();
 	_loadedZTable = 1;
 	loadZShapes(_loadedZTable);
-	initMainButtonList();
+	initInventoryButtonList();
 	loadInventoryShapes();
 
 	_res->loadFileToBuf("PALETTE.COL", _screen->_currentPalette, 0x300);
@@ -817,7 +821,7 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 		_eventList.erase(_eventList.begin());
 	}
 
-	return processButtonList(buttonList, keys | 0x8000);
+	return _gui->processButtonList(buttonList, keys | 0x8000);
 }
 
 void KyraEngine_v2::removeInputTop() {
@@ -863,6 +867,8 @@ void KyraEngine_v2::delay(uint32 amount, bool updateGame, bool isMainLoop) {
 }
 
 void KyraEngine_v2::cleanup() {
+	delete [] _inventoryButtons; _inventoryButtons = 0;
+
 	delete [] _gamePlayBuffer; _gamePlayBuffer = 0;
 	delete [] _unkBuf500Bytes; _unkBuf500Bytes = 0;
 	delete [] _screenBuffer; _screenBuffer = 0;
