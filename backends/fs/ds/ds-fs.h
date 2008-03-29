@@ -49,7 +49,6 @@ protected:
 	String _path;
 	bool _isDirectory;
 	bool _isValid;
-	int _refCountVal;
 
 public:
 	/**
@@ -114,7 +113,6 @@ protected:
 	String _path;
 	bool _isDirectory;
 	bool _isValid;
-	int _refCountVal;
 
 public:
 	/**
