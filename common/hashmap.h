@@ -98,6 +98,16 @@ public:
 		Node(const Key &key) : _key(key), _value() {}
 	};
 
+	Node* allocNode(const Key& key)
+	{
+		return new Node(key);
+	} 
+
+	void freeNode(Node* node)
+	{
+		delete node;
+	}
+
 	Node **_arr;	// hashtable of size arrsize.
 	uint _arrsize, _nele;
 
@@ -353,7 +363,7 @@ template <class Key, class Val, class HashFunc, class EqualFunc>
 HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
 	for (uint ctr = 0; ctr < _arrsize; ++ctr)
 		if (_arr[ctr] != NULL)
-			delete _arr[ctr];
+		  freeNode(_arr[ctr]);
 
 	delete[] _arr;
 }
@@ -376,7 +386,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t& map) {
 	_nele = 0;
 	for (uint ctr = 0; ctr < _arrsize; ++ctr) {
 		if (map._arr[ctr] != NULL) {
-			_arr[ctr] = new Node(*map._arr[ctr]);
+			_arr[ctr] = allocNode(map._arr[ctr]->_key);
 			_nele++;
 		}
 	}
@@ -389,7 +399,7 @@ template <class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
 	for (uint ctr = 0; ctr < _arrsize; ++ctr) {
 		if (_arr[ctr] != NULL) {
-			delete _arr[ctr];
+			freeNode(_arr[ctr]);
 			_arr[ctr] = NULL;
 		}
 	}
@@ -476,7 +486,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &
 	uint ctr = lookup(key);
 
 	if (_arr[ctr] == NULL) {
-		_arr[ctr] = new Node(key);
+		_arr[ctr] = allocNode(key);
 		_nele++;
 
 		// Keep the load factor below 75%.
@@ -538,7 +548,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 	// If we remove a key, we must check all subsequent keys and possibly
 	// reinsert them.
 	uint j = i;
-	delete _arr[i];
+	freeNode(_arr[i]);
 	_arr[i] = NULL;
 	while (true) {
 		// Look at the next table slot
