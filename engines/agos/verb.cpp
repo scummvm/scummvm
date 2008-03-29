@@ -140,6 +140,21 @@ static const char *const english_verb_names[] = {
 	"Give"
 };
 
+static const char *const czech_verb_names[] = {
+	"Jit",
+	"Podivat se",
+	"Otevrit",
+	"Pohnout s",
+	"Snist",
+	"Sebrat",
+	"Zavrit",
+	"Pouzit",
+	"Mluvit s",
+	"Odstranit",
+	"Oblect",
+	"Dat"
+};
+
 static const char *const russian_verb_prep_names[] = {
 	"", "", "", "",
 	"", "", "", "s yfn?",
@@ -180,6 +195,12 @@ static const char *const english_verb_prep_names[] = {
 	"", "", "", "",
 	"", "", "", "with what ?",
 	"", "", "", "to whom ?"
+};
+
+static const char *const czech_verb_prep_names[] = {
+	"", "", "", "",
+	"", "", "", "s cim ?",
+	"", "", "", "komu ?"
 };
 
 void AGOSEngine_Feeble::clearName() {
@@ -250,6 +271,9 @@ void AGOSEngine::printVerbOf(uint hitarea_id) {
 		case Common::DE_DEU:
 			verb_prep_names = german_verb_prep_names;
 			break;
+		case Common::CZ_CZE:
+			verb_prep_names = czech_verb_prep_names;
+			break;
 		default:
 			verb_prep_names = english_verb_prep_names;
 			break;
@@ -275,6 +299,9 @@ void AGOSEngine::printVerbOf(uint hitarea_id) {
 			break;
 		case Common::DE_DEU:
 			verb_names = german_verb_names;
+			break;
+		case Common::CZ_CZE:
+			verb_names = czech_verb_names;
 			break;
 		default:
 			verb_names = english_verb_names;

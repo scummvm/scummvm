@@ -1021,6 +1021,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE
 	},
 
+	// Simon the Sorcerer 1 - English DOS Floppy with Czech patch
+	{
+		{
+			"simon1",
+			"Floppy",
+
+			{
+	{ "gamepc",		GAME_BASEFILE,	"62de24fc579b94fac7d3d23201b65b14", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"c95a0a1ee973e19c2a1c5d12026c139f", -1},
+	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::CZ_CZE,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_SIMON1,
+		GID_SIMON1DOS,
+		GF_OLD_BUNDLE
+	},
+
 	// Simon the Sorcerer 1 - English DOS Floppy with Russian patch
 	{
 		{
@@ -1058,6 +1081,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
+			Common::kPlatformPC,
+			Common::ADGF_NO_FLAGS
+		},
+
+		GType_SIMON1,
+		GID_SIMON1DOS,
+		GF_OLD_BUNDLE
+	},
+
+	// Simon the Sorcerer 1 - English DOS Floppy (Infocom) with Czech patch
+	{
+		{
+			"simon1",
+			"Floppy",
+
+			{
+	{ "gamepc",		GAME_BASEFILE,	"62de24fc579b94fac7d3d23201b65b14", -1},
+	{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", -1},
+	{ "stripped.txt",	GAME_STRFILE,	"2af9affc5981eec44b90d4c556145cb8", -1},
+	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", -1},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::CZ_CZE,
 			Common::kPlatformPC,
 			Common::ADGF_NO_FLAGS
 		},
