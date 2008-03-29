@@ -26,6 +26,7 @@
 #define COMMON_FS_H
 
 #include "common/array.h"
+#include "common/ptr.h"
 #include "common/str.h"
 
 //namespace Common {
@@ -67,8 +68,7 @@ class FSList : public Common::Array<FilesystemNode> {};
  */
 class FilesystemNode {
 private:
-	int *_refCount;
-	AbstractFilesystemNode *_realNode;
+	Common::SharedPtr<AbstractFilesystemNode>	_realNode;
 	FilesystemNode(AbstractFilesystemNode *realNode);
 
 public:
@@ -99,20 +99,7 @@ public:
 	 */
 	explicit FilesystemNode(const Common::String &path);
 
-	/**
-	 * Copy constructor.
-	 */
-	FilesystemNode(const FilesystemNode &node);
-
-	/**
-	 * Destructor.
-	 */
-	virtual ~FilesystemNode();
-
-	/**
-	 * Copy operator.
-	 */
-	FilesystemNode &operator= (const FilesystemNode &node);
+	virtual ~FilesystemNode() {}
 
 	/**
 	 * Compare the name of this node to the name of another. Directories
@@ -234,13 +221,6 @@ public:
 	 * @return true if matches could be found, false otherwise.
 	 */
 	virtual bool lookupFile(FSList &results, const Common::String &pattern, bool hidden, bool exhaustive, int depth = -1) const;
-
-protected:
-	/**
-	 * Decreases the reference count to the FilesystemNode, and if necessary,
-	 * deletes the corresponding underlying references.
-	 */
-	void decRefCount();
 };
 
 //} // End of namespace Common

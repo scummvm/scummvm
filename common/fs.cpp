@@ -28,46 +28,21 @@
 #include "backends/fs/fs-factory.h"
 
 FilesystemNode::FilesystemNode() {
-	_realNode = 0;
-	_refCount = 0;
 }
 
-FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) {
-	_realNode = realNode;
-	_refCount = new int(1);
-}
-
-FilesystemNode::FilesystemNode(const FilesystemNode &node) {
-	_realNode = node._realNode;
-	_refCount = node._refCount;
-	if (_refCount)
-		++(*_refCount);
+FilesystemNode::FilesystemNode(AbstractFilesystemNode *realNode) 
+	: _realNode(realNode) {
 }
 
 FilesystemNode::FilesystemNode(const Common::String &p) {
 	FilesystemFactory *factory = g_system->getFilesystemFactory();
-
+	AbstractFilesystemNode *tmp = 0;
+	
 	if (p.empty() || p == ".")
-		_realNode = factory->makeCurrentDirectoryFileNode();
+		tmp = factory->makeCurrentDirectoryFileNode();
 	else
-		_realNode = factory->makeFileNodePath(p);
-	_refCount = new int(1);
-}
-
-FilesystemNode::~FilesystemNode() {
-	decRefCount();
-}
-
-FilesystemNode &FilesystemNode::operator= (const FilesystemNode &node) {
-	if (node._refCount)
-		++(*node._refCount);
-
-	decRefCount();
-
-	_realNode = node._realNode;
-	_refCount = node._refCount;
-
-	return *this;
+		tmp = factory->makeFileNodePath(p);
+	_realNode = Common::SharedPtr<AbstractFilesystemNode>(tmp);
 }
 
 bool FilesystemNode::operator<(const FilesystemNode& node) const {
@@ -75,17 +50,6 @@ bool FilesystemNode::operator<(const FilesystemNode& node) const {
 		return isDirectory();
 
 	return scumm_stricmp(getDisplayName().c_str(), node.getDisplayName().c_str()) < 0;
-}
-
-void FilesystemNode::decRefCount() {
-	if (_refCount) {
-		assert(*_refCount > 0);
-		--(*_refCount);
-		if (*_refCount == 0) {
-			delete _refCount;
-			delete _realNode;
-		}
-	}
 }
 
 bool FilesystemNode::exists() const {
