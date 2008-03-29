@@ -170,6 +170,7 @@ public:
 	void setTextColor(const uint8 *cmap, int a, int b);
 
 	virtual void setScreenDim(int dim);
+	virtual const ScreenDim *getScreenDim(int dim);
 
 	// shape handling
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
@@ -177,7 +178,52 @@ public:
 	int setNewShapeHeight(uint8 *shape, int height);
 	int resetShapeHeight(uint8 *shape);
 
-	virtual void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
+	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
+
+	int drawShape_margin_noScale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt);
+	int drawShape_margin_noScale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt);
+	int drawShape_margin_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt);
+	int drawShape_margin_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt);
+	int drawShape_skip_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt);
+	int drawShape_skip_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt);
+	void drawShape_processLine_noScale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState);
+	void drawShape_processLine_noScale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState);
+	void drawShape_processLine_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState);
+	void drawShape_processLine_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState);
+
+	void drawShapePlotType0(uint8 *dst, uint8 cmd);
+	void drawShapePlotType4(uint8 *dst, uint8 cmd);
+	void drawShapePlotType8(uint8 *dst, uint8 cmd);
+	void drawShapePlotType9(uint8 *dst, uint8 cmd);
+	void drawShapePlotType12(uint8 *dst, uint8 cmd);
+	void drawShapePlotType13(uint8 *dst, uint8 cmd);
+	void drawShapePlotType14(uint8 *dst, uint8 cmd);
+
+	typedef int (Screen::*DsMarginSkipFunc)(const uint8 *& dst, const uint8 *& src, int & cnt);
+	typedef void (Screen::*DsLineFunc)(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState);
+	typedef void (Screen::*DsPlotFunc)(uint8 * dst, uint8 cmd);
+
+	DsMarginSkipFunc _dsProcessMargin;
+	DsMarginSkipFunc _dsScaleSkip;
+	DsLineFunc _dsProcessLine;
+	DsPlotFunc _dsPlot;
+
+	const uint8 *_dsTable;
+	int _dsTableLoopCount;
+	const uint8 *_dsTable2;
+	int _dsDrawLayer;
+	uint8 *_dsDstPage;
+	int _dsTmpWidth;
+	int _dsOffscreenLeft;
+	int _dsOffscreenRight;
+	int _dsScaleW;
+	int _dsScaleH;
+	int _dsOffscreenScaleVal1;
+	int _dsOffscreenScaleVal2;
+	int _drawShapeVar1;
+	int _drawShapeVar3;
+	int _drawShapeVar4;
+	int _drawShapeVar5;
 
 	// mouse handling
 	void hideMouse();

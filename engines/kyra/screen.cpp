@@ -1118,35 +1118,49 @@ void Screen::setScreenDim(int dim) {
 	_curDim = &_screenDimTable[dim];
 }
 
+const ScreenDim *Screen::getScreenDim(int dim) {
+	debugC(9, kDebugLevelScreen, "Screen::getScreenDim(%d)", dim);
+	assert(dim < _screenDimTableCount);
+	return &_screenDimTable[dim];
+}
+
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
 	debugC(9, kDebugLevelScreen, "Screen::drawShape(%d, %p, %d, %d, %d, 0x%.04X, ...)", pageNum, (const void *)shapeData, x, y, sd, flags);
 	if (!shapeData)
 		return;
+
+	int f = _vm->gameFlags().useAltShapeHeader ? 2 : 0;
+	if (shapeData[f] & 1)
+		flags |= 0x400;
+
 	va_list args;
 	va_start(args, flags);
 
-	static int drawShapeVar1 = 0;
 	static int drawShapeVar2[] = {
 		1, 3, 2, 5, 4, 3, 2, 1
 	};
-	static int drawShapeVar3 = 1;
-	static int drawShapeVar4 = 0;
-	static int drawShapeVar5 = 0;
 
-	uint8 *table = 0;
-	int tableLoopCount = 0;
-	int drawLayer = 0;
-	uint8 *table2 = 0;
+	_drawShapeVar1 = 0;
+	_drawShapeVar3 = 1;
+	_drawShapeVar4 = 0;
+	_drawShapeVar5 = 0;
+
+	_dsTable = 0;
+	_dsTableLoopCount = 0;
+	_dsTable2 = 0;
+	_dsDrawLayer = 0;
+	
 	uint8 *table3 = 0;
 	uint8 *table4 = 0;
 
-	if (flags & 0x8000)
-		table2 = va_arg(args, uint8*);
+	if (flags & 0x8000) {
+		_dsTable2 = va_arg(args, uint8*);
+	}
 
 	if (flags & 0x100) {
-		table = va_arg(args, uint8*);
-		tableLoopCount = va_arg(args, int);
-		if (!tableLoopCount)
+		_dsTable = va_arg(args, uint8*);
+		_dsTableLoopCount = va_arg(args, int);
+		if (!_dsTableLoopCount)
 			flags &= 0xFFFFFEFF;
 	}
 
@@ -1156,478 +1170,564 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	if (flags & 0x200) {
-		drawShapeVar1 += 1;
-		drawShapeVar1 &= 7;
-		drawShapeVar3 = drawShapeVar2[drawShapeVar1];
-		drawShapeVar4 = 0;
-		drawShapeVar5 = 256;
+		_drawShapeVar1 += 1;
+		_drawShapeVar1 &= 7;
+		_drawShapeVar3 = drawShapeVar2[_drawShapeVar1];
+		_drawShapeVar4 = 0;
+		_drawShapeVar5 = 256;
 	}
 
 	if (flags & 0x4000) {
-		drawShapeVar5 = va_arg(args, int);
+		_drawShapeVar5 = va_arg(args, int);
 	}
 
 	if (flags & 0x800) {
-		drawLayer = va_arg(args, int);
+		_dsDrawLayer = va_arg(args, int);
 	}
 
-	int scale_w, scale_h;
 	if (flags & DSF_SCALE) {
-		scale_w = va_arg(args, int);
-		scale_h = va_arg(args, int);
+		_dsScaleW = va_arg(args, int);
+		_dsScaleH = va_arg(args, int);
 	} else {
-		scale_w = 0x100;
-		scale_h = 0x100;
+		_dsScaleW = 0x100;
+		_dsScaleH = 0x100;
 	}
+
+	if (flags & 0x2000 && _vm->gameFlags().gameID == GI_KYRA2) {
+		int UNK = va_arg(args, int);
+	}
+
+	static const DsMarginSkipFunc dsMarginFunc[] = {
+		&Screen::drawShape_margin_noScale_upwind,
+		&Screen::drawShape_margin_noScale_downwind,
+		&Screen::drawShape_margin_noScale_upwind,
+		&Screen::drawShape_margin_noScale_downwind,
+		&Screen::drawShape_margin_scale_upwind,
+		&Screen::drawShape_margin_scale_downwind,
+		&Screen::drawShape_margin_scale_upwind,
+		&Screen::drawShape_margin_scale_downwind
+	};
+
+	static const DsMarginSkipFunc dsSkipFunc[] = {
+		&Screen::drawShape_margin_noScale_upwind,
+		&Screen::drawShape_margin_noScale_downwind,
+		&Screen::drawShape_margin_noScale_upwind,
+		&Screen::drawShape_margin_noScale_downwind,
+		&Screen::drawShape_skip_scale_upwind,
+		&Screen::drawShape_skip_scale_downwind,
+		&Screen::drawShape_skip_scale_upwind,
+		&Screen::drawShape_skip_scale_downwind
+	};
+
+	static const DsLineFunc dsLineFunc[] = {
+		&Screen::drawShape_processLine_noScale_upwind,
+		&Screen::drawShape_processLine_noScale_downwind,
+		&Screen::drawShape_processLine_noScale_upwind,
+		&Screen::drawShape_processLine_noScale_downwind,
+		&Screen::drawShape_processLine_scale_upwind,
+		&Screen::drawShape_processLine_scale_downwind,
+		&Screen::drawShape_processLine_scale_upwind,
+		&Screen::drawShape_processLine_scale_downwind
+	};
+
+	static const DsPlotFunc dsPlotFunc[] = {
+		&Screen::drawShapePlotType0,	// used by Kyra 1 + 2
+		0, 0, 0,
+		&Screen::drawShapePlotType4,	// used by Kyra 1 + 2
+		0, 0, 0,
+		&Screen::drawShapePlotType8,	// used by Kyra 2
+		&Screen::drawShapePlotType9,	// used by Kyra 1
+		0, 0,
+		&Screen::drawShapePlotType12,	// used by Kyra 2
+		&Screen::drawShapePlotType13,	// used by Kyra 1
+		&Screen::drawShapePlotType14,	// used by Kyra 1 (invisibility)
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	};
+
+	int scaleCounterV = 0;
+	
+	f = flags & 0x0f;
+	_dsProcessMargin = dsMarginFunc[f];
+	_dsScaleSkip = dsSkipFunc[f];
+	_dsProcessLine = dsLineFunc[f];
 
 	int ppc = (flags >> 8) & 0x3F;
+	_dsPlot = dsPlotFunc[ppc];
+
+	if (!_dsPlot) {
+		warning("Missing drawShape plotting method type %d", ppc);
+		va_end(args);
+		return;
+	}
 
 	const uint8 *src = shapeData;
+	const uint8 *dst = _dsDstPage = getPagePtr(pageNum);
+
+	const ScreenDim *dsDim = getScreenDim(sd);
+	dst += (dsDim->sx << 3);
+
+	if (!(flags & 0x10))
+		x -= (dsDim->sx << 3);
+
+	int x2 = (dsDim->w << 3);
+	int y1 = dsDim->sy;
+	if (flags & 0x10)
+		y += y1;
+
+	int y2 = y1 + dsDim->h;
+
 	if (_vm->gameFlags().useAltShapeHeader)
 		src += 2;
-
 	uint16 shapeFlags = READ_LE_UINT16(src); src += 2;
 
 	int shapeHeight = *src++;
-	int scaledShapeHeight = (shapeHeight * scale_h) >> 8;
-	if (scaledShapeHeight == 0) {
-		va_end(args);
-		return;
-	}
+	uint16 shapeWidth = READ_LE_UINT16(src); src += 2;
 
-	int shapeWidth = READ_LE_UINT16(src); src += 2;
-	int scaledShapeWidth = (shapeWidth * scale_w) >> 8;
-	if (scaledShapeWidth == 0) {
-		va_end(args);
-		return;
+	int shpWidthScaled1 = shapeWidth;
+	int shpWidthScaled2 = shapeWidth;
+
+	if (flags & DSF_SCALE) {
+		shapeHeight = (shapeHeight * _dsScaleH) >> 8;
+		shpWidthScaled1 = shpWidthScaled2 = (shapeWidth * _dsScaleW) >> 8;
+		
+		if (!shapeHeight || !shpWidthScaled1) {
+			va_end(args);
+			return;
+		}
 	}
 
 	if (flags & DSF_CENTER) {
-		x -= scaledShapeWidth >> 1;
-		y -= scaledShapeHeight >> 1;
+		x -= (shpWidthScaled1 >> 1);
+		y -= (shapeHeight >> 1);
 	}
 
 	src += 3;
 
 	uint16 frameSize = READ_LE_UINT16(src); src += 2;
-	if ((shapeFlags & 1) || (flags & 0x400))
-		src += 0x10;
+
+	int colorTableColors = ((_vm->gameFlags().gameID == GI_KYRA2) && (shapeFlags & 4)) ? *src++ : 16;
+	
+	if (!(flags & 0x8000) && (shapeFlags & 1))
+		_dsTable2 = src;
+	
+	if (flags & 0x400)
+		src += colorTableColors;
 
 	if (!(shapeFlags & 2)) {
 		decodeFrame4(src, _animBlockPtr, frameSize);
 		src = _animBlockPtr;
 	}
 
-	int shapeSize = shapeWidth * shapeHeight;
-	if (_decodeShapeBufferSize < shapeSize) {
-		delete [] _decodeShapeBuffer;
-		_decodeShapeBuffer = new uint8[shapeSize];
-		_decodeShapeBufferSize = shapeSize;
+	int t = (flags & 2) ? y2 - y - shapeHeight : y - y1;
+
+	const uint8 *s = (uint8*) src;
+
+	if (t < 0) {
+		shapeHeight += t;
+		if (shapeHeight <= 0) {
+			va_end(args);
+			return;
+		}
+
+		t *= -1;
+		const uint8 *tmp = dst;
+
+		do {
+			_dsOffscreenScaleVal1 = 0;
+			_dsTmpWidth = shapeWidth;
+			int cnt = shapeWidth;
+			(this->*_dsScaleSkip)(tmp, s, cnt);
+			scaleCounterV += _dsScaleH;
+			if (!(scaleCounterV & 0xff00))
+				continue;
+			uint8 r = scaleCounterV >> 8;
+			scaleCounterV &= 0xff;
+			t -= r;
+		} while (t > 0);
+
+		if (t < 0)
+			scaleCounterV += (-t << 8);
+
+		if (!(flags & 2))
+			y = y1;
 	}
 
-	if (!_decodeShapeBuffer) {
-		_decodeShapeBufferSize = 0;
+	t = (flags & 2) ? y + shapeHeight - y1 : y2 - y;
+	if (t <= 0) {
 		va_end(args);
 		return;
 	}
-	memset(_decodeShapeBuffer, 0, _decodeShapeBufferSize);
-	uint8 *decodedShapeFrame = _decodeShapeBuffer;
 
-	// only used if shapeFlag & 1 is NOT zero
-	const uint8 *colorTable = shapeData + 10;
-	if (_vm->gameFlags().useAltShapeHeader)
-		colorTable += 2;
+	if (t < shapeHeight) {
+		shapeHeight = t;
+		if (flags & 2)
+			y = y1;
+	}
 
-	for (int j = 0; j < shapeHeight; ++j) {
-		uint8 *dsbNextLine = decodedShapeFrame + shapeWidth;
-		int count = shapeWidth;
-		while (count > 0) {
-			uint8 code = *src++;
-			if (code != 0) {
-				// this is guessed
-				if (shapeFlags & 1) {
-					if (code < 16)
-						*decodedShapeFrame++ = colorTable[code];
-				} else {
-					*decodedShapeFrame++ = code;
-				}
-				--count;
-			} else {
-				code = *src++;
-				decodedShapeFrame += code;
-				count -= code;
-			}
+	_dsOffscreenLeft = 0;
+	if (x < 0) {
+		shpWidthScaled1 += x;
+		_dsOffscreenLeft = -x;
+		if (_dsOffscreenLeft >= shpWidthScaled2) {
+			va_end(args);
+			return;
 		}
-		decodedShapeFrame = dsbNextLine;
-	}
-
-	uint16 sx1 = _screenDimTable[sd].sx * 8;
-	uint16 sy1 = _screenDimTable[sd].sy;
-	uint16 sx2 = sx1 + _screenDimTable[sd].w * 8;
-	uint16 sy2 = sy1 + _screenDimTable[sd].h;
-	if (flags & DSF_WND_COORDS) {
-		x += sx1;
-		y += sy1;
-	}
-
-	int x1, x2;
-	if (x >= 0) {
-		x1 = 0;
-		if (x + scaledShapeWidth < sx2)
-			x2 = scaledShapeWidth;
-		else
-			x2 = sx2 - x;
-	} else {
-		x2 = scaledShapeWidth;
-		x1 = -x;
 		x = 0;
-		if (x2 > sx2)
-			x2 = sx2;
 	}
 
-	int y1, y2;
-	if (y >= 0) {
-		y1 = 0;
-		if (y + scaledShapeHeight < sy2)
-			y2 = scaledShapeHeight;
-		else
-			y2 = sy2 - y;
-	} else {
-		y2 = scaledShapeHeight;
-		y1 = -y;
-		y = 0;
-		if (y2 > sy2)
-			y2 = sy2;
+	_dsOffscreenRight = 0;
+	t = x2 - x;
+
+	if (t <= 0) {
+		va_end(args);
+		return;
 	}
 
-	uint8 *dst = getPagePtr(pageNum) + y * SCREEN_W + x;
-	uint8 *dstStart = getPagePtr(pageNum);
+	if (t < shpWidthScaled1) {
+		shpWidthScaled1 = t;
+		_dsOffscreenRight = shpWidthScaled2 - _dsOffscreenLeft - shpWidthScaled1;
+	}
+
+	int dsPitch = 320;
+	int ty = y;
+
+	if (flags & 2) {
+		dsPitch *= -1;
+		ty = ty - 1 + shapeHeight;
+	}
+
+	if (flags & DSF_X_FLIPPED) {
+		SWAP(_dsOffscreenLeft, _dsOffscreenRight);
+		dst += (shpWidthScaled1 - 1);
+	}
+
+	dst += (320 * ty + x);
+	const uint8 *d = dst;
+
+	if (flags & DSF_SCALE) {
+		_dsOffscreenRight = 0;
+		_dsOffscreenScaleVal2 = _dsOffscreenLeft;
+		_dsOffscreenLeft <<= 8;
+		_dsOffscreenScaleVal1 = _dsOffscreenLeft % _dsScaleW;
+		_dsOffscreenLeft /= _dsScaleW;
+	}
+
 	if (pageNum == 0 || pageNum == 1)
-		addDirtyRect(x, y, x2-x1, y2-y1);
-	clearOverlayRect(pageNum, x, y, x2-x1, y2-y1);
+		addDirtyRect(x, y, shpWidthScaled1, shapeHeight);
+	clearOverlayRect(pageNum, x, y, shpWidthScaled1, shapeHeight);
 
-	int scaleYTable[SCREEN_H];
-	assert(y1 >= 0 && y2 < SCREEN_H);
-	for (y = y1; y < y2; ++y)
-		scaleYTable[y] = (y << 8) / scale_h;
-
-	int scaleXTable[SCREEN_W];
-	assert(x1 >= 0 && x2 < SCREEN_W);
-	for (x = x1; x < x2; ++x)
-		scaleXTable[x] = (x << 8) / scale_w;
-
-	const uint8 *shapeBuffer = _decodeShapeBuffer;
-	if (flags & DSF_Y_FLIPPED)
-		shapeBuffer += shapeWidth * (shapeHeight - 1);
-	if (flags & DSF_X_FLIPPED)
-		shapeBuffer += shapeWidth - 1;
-
-	for (y = y1; y < y2; ++y) {
-		uint8 *dstNextLine = dst + SCREEN_W;
-		int j = scaleYTable[y];
-		if (flags & DSF_Y_FLIPPED)
-			j = -j;
-
-		for (x = x1; x < x2; ++x) {
-			int xpos = scaleXTable[x];
-			if (flags & DSF_X_FLIPPED)
-				xpos = -xpos;
-
-			uint8 color = shapeBuffer[j * shapeWidth + xpos];
-			if (color != 0) {
-				switch (ppc) {
-				case 0:
-					*dst = color;
-					break;
-
-				case 1:
-					for (int i = 0; i < tableLoopCount; ++i)
-						color = table[color];
-					break;
-
-				case 2: {
-						int temp = drawShapeVar4 + drawShapeVar5;
-						if (temp & 0xFF00) {
-							drawShapeVar4 = temp & 0xFF;
-							dst += drawShapeVar3;
-							color = *dst;
-							dst -= drawShapeVar3;
-						} else {
-							drawShapeVar4 = temp;
-						}
-					}
-					break;
-
-				case 7:
-				case 3:
-					color = *dst;
-					for (int i = 0; i < tableLoopCount; ++i)
-						color = table[color];
-					break;
-
-				case 4:
-					color = table2[color];
-					break;
-
-				case 5:
-					color = table2[color];
-					for (int i = 0; i < tableLoopCount; ++i)
-						color = table[color];
-					break;
-
-				case 6: {
-						int temp = drawShapeVar4 + drawShapeVar5;
-						if (temp & 0xFF00) {
-							drawShapeVar4 = temp & 0xFF;
-							dst += drawShapeVar3;
-							color = *dst;
-							dst -= drawShapeVar3;
-						} else {
-							drawShapeVar4 = temp;
-							color = table2[color];
-						}
-					}
-					break;
-
-				case 8: {
-						int offset = dst - dstStart;
-						uint8 pixel = *(_shapePages[0] + offset);
-						pixel &= 0x7F;
-						pixel &= 0x87;
-						if (drawLayer < pixel)
-							color = *(_shapePages[1] + offset);
-					}
-					break;
-
-				case 9: {
-						int offset = dst - dstStart;
-						uint8 pixel = *(_shapePages[0] + offset);
-						pixel &= 0x7F;
-						pixel &= 0x87;
-
-						if (drawLayer < pixel) {
-							color = *(_shapePages[1] + offset);
-						} else {
-							for (int i = 0; i < tableLoopCount; ++i)
-								color = table[color];
-						}
-					}
-					break;
-
-				case 10: {
-						int offset = dst - dstStart;
-						uint8 pixel = *(_shapePages[0] + offset);
-						pixel &= 0x7F;
-						pixel &= 0x87;
-						if (drawLayer < pixel) {
-							color = *(_shapePages[1] + offset);
-							drawShapeVar4 = pixel;
-						} else {
-							int temp = drawShapeVar4 + drawShapeVar5;
-							if (temp & 0xFF00) {
-								dst += drawShapeVar3;
-								color = *dst;
-								dst -= drawShapeVar3;
-							}
-							drawShapeVar4 = temp & 0xFF;
-						}
-					}
-					break;
-
-				case 15:
-				case 11: {
-						int offset = dst - dstStart;
-						uint8 pixel = *(_shapePages[0] + offset);
-						pixel &= 0x7F;
-						pixel &= 0x87;
-						if (drawLayer < pixel) {
-							color = *(_shapePages[1] + offset);
-						} else {
-							color = *dst;
-							for (int i = 0; i < tableLoopCount; ++i)
-								color = table[color];
-						}
-					}
-					break;
-
-				case 12: {
-						int offset = dst - dstStart;
-						uint8 pixel = *(_shapePages[0] + offset);
-						pixel &= 0x7F;
-						pixel &= 0x87;
-						if (drawLayer < pixel) {
-							color = *(_shapePages[1] + offset);
-						} else {
-							color = table2[color];
-						}
-					}
-					break;
-
-				case 13: {
-						int offset = dst - dstStart;
-						uint8 pixel = *(_shapePages[0] + offset);
-						pixel &= 0x7F;
-						pixel &= 0x87;
-						if (drawLayer < pixel) {
-							color = *(_shapePages[1] + offset);
-						} else {
-							color = table2[color];
-							for (int i = 0; i < tableLoopCount; ++i)
-								color = table[color];
-						}
-					}
-					break;
-
-				case 14: {
-						int offset = dst - dstStart;
-						uint8 pixel = *(_shapePages[0] + offset);
-						pixel &= 0x7F;
-						pixel &= 0x87;
-						if (drawLayer < pixel) {
-							color = *(_shapePages[1] + offset);
-							drawShapeVar4 = pixel;
-						} else {
-							int temp = drawShapeVar4 + drawShapeVar5;
-							if (temp & 0xFF00) {
-								dst += drawShapeVar3;
-								color = *dst;
-								dst -= drawShapeVar3;
-								drawShapeVar4 = temp % 0xFF;
-							} else {
-								drawShapeVar4 = temp;
-								color = table2[color];
-							}
-						}
-					}
-					break;
-
-				case 16: {
-						uint8 newColor = table3[color];
-						if (!(newColor & 0x80)) {
-							color = *dst;
-							color = table4[color + (newColor << 8)];
-						}
-					}
-					break;
-
-				case 17: {
-						for (int i = 0; i < tableLoopCount; ++i)
-							color = table[color];
-
-						uint8 newColor = table3[color];
-						if (!(newColor & 0x80)) {
-							color = *dst;
-							color = table4[color + (newColor << 8)];
-						}
-					}
-					break;
-
-				case 18: {
-						int temp = drawShapeVar4 + drawShapeVar5;
-						if (temp & 0xFF00) {
-							drawShapeVar4 = temp & 0xFF;
-							dst += drawShapeVar3;
-							color = *dst;
-							dst -= drawShapeVar3;
-							uint8 newColor = table3[color];
-							if (!(newColor & 0x80)) {
-								color = *dst;
-								color = table4[color + (newColor << 8)];
-							}
-						} else {
-							drawShapeVar4 = temp;
-						}
-					}
-					break;
-
-				case 23:
-				case 19: {
-						color = *dst;
-						for (int i = 0; i < tableLoopCount; ++i)
-							color = table[color];
-
-						uint8 newColor = table3[color];
-						if (!(newColor & 0x80)) {
-							color = *dst;
-							color = table4[color + (newColor << 8)];
-						}
-					}
-					break;
-
-				case 20: {
-						color = table2[color];
-						uint8 newColor = table3[color];
-						if (!(newColor & 0x80)) {
-							color = *dst;
-							color = table4[color + (newColor << 8)];
-						}
-					}
-					break;
-
-				case 21: {
-						color = table2[color];
-						for (int i = 0; i < tableLoopCount; ++i)
-							color = table[color];
-
-						uint8 newColor = table3[color];
-						if (!(newColor & 0x80)) {
-							color = *dst;
-							color = table4[color + (newColor << 8)];
-						}
-					}
-					break;
-
-				case 22: {
-						int temp = drawShapeVar4 + drawShapeVar5;
-						if (temp & 0xFF00) {
-							drawShapeVar4 = temp & 0xFF;
-							dst += drawShapeVar3;
-							color = *dst;
-							dst -= drawShapeVar3;
-							uint8 newColor = table3[color];
-							if (!(newColor & 0x80)) {
-								color = *dst;
-								color = table4[color + (newColor << 8)];
-							}
-						} else {
-							drawShapeVar4 = temp;
-							color = table2[color];
-							uint8 newColor = table3[color];
-							if (!(newColor & 0x80)) {
-								color = *dst;
-								color = table4[color + (newColor << 8)];
-							}
-						}
-					}
-					break;
-
-				case 24: {
-						int offset = dst - dstStart;
-						uint8 pixel = *(_shapePages[0] + offset);
-						pixel &= 0x7F;
-						pixel &= 0x87;
-						if (drawLayer < pixel)
-							color = *(_shapePages[1] + offset);
-
-						uint8 newColor = table3[color];
-						if (!(newColor & 0x80)) {
-							color = *dst;
-							color = table4[color + (newColor << 8)];
-						}
-					}
-					break;
-
-				default:
-					warning("unhandled ppc: %d", ppc);
-					break;
-				}
-				*dst = color;
+	while (shapeHeight--) {
+		while (!(scaleCounterV & 0xff00)) {
+			scaleCounterV += _dsScaleH;
+			if (!(scaleCounterV & 0xff00)) {
+				_dsTmpWidth = shapeWidth;
+				int cnt = shapeWidth;
+				(this->*_dsScaleSkip)(d, s, cnt);
 			}
-			++dst;
 		}
-		dst = dstNextLine;
+
+		const uint8 *b_src = s;
+
+		do {
+			s = b_src;
+			_dsTmpWidth = shapeWidth;
+			int cnt = _dsOffscreenLeft;
+			int scaleState = (this->*_dsProcessMargin)(d, s, cnt);
+			if (_dsTmpWidth) {
+				cnt += shpWidthScaled1;
+				if (cnt > 0)
+					(this->*_dsProcessLine)(d, s, cnt, scaleState);
+				cnt += _dsOffscreenRight;
+				if (cnt)
+					(this->*_dsScaleSkip)(d, s, cnt);
+			}
+			dst += dsPitch;
+			d = dst;
+			scaleCounterV -= 256;
+		} while (scaleCounterV & 0xff00);
 	}
+
 	va_end(args);
+}
+
+int Screen::drawShape_margin_noScale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+	while (cnt-- > 0) {
+		if (*src++)
+			continue;
+		cnt = cnt + 1 - (*src++);
+	}
+	
+	cnt++;
+	dst -= cnt;
+	return 0;
+}
+
+int Screen::drawShape_margin_noScale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+	while (cnt-- > 0) {
+		if (*src++)
+			continue;
+		cnt = cnt + 1 - (*src++);
+	}
+	
+	cnt++;
+	dst += cnt;
+	return 0;
+}
+
+int Screen::drawShape_margin_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+	_dsTmpWidth -= cnt;
+	bool found = false;
+
+	if (src == dst || !cnt)
+		return _dsOffscreenScaleVal1;
+
+	while (cnt-- > 0) {
+		if (*src++)
+			continue;
+		found = true;
+		cnt = cnt + 1 - (*src++);
+	}
+
+	if (!found)
+		return _dsOffscreenScaleVal1;
+
+	_dsTmpWidth += cnt;
+
+	int i = (_dsOffscreenLeft - cnt) * _dsScaleW;
+	int res = i & 0xff;
+	i >>= 8;
+	i -= _dsOffscreenScaleVal2;
+	dst += i;
+	cnt = -i;
+
+	return res;
+}
+
+int Screen::drawShape_margin_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+	_dsTmpWidth -= cnt;
+	bool found = false;
+
+	if (src == dst || !cnt)
+		return _dsOffscreenScaleVal1;
+
+	while (cnt-- > 0) {
+		if (*src++)
+			continue;
+		found = true;
+		cnt = cnt + 1 - (*src++);
+	}
+
+	if (!found)
+		return _dsOffscreenScaleVal1;
+
+	_dsTmpWidth += cnt;
+
+	int i = (_dsOffscreenLeft - cnt) * _dsScaleW;
+	int res = i & 0xff;
+	i >>= 8;
+	i -= _dsOffscreenScaleVal2;
+	dst -= i;
+	cnt = -i;
+
+	return res;
+}
+
+int Screen::drawShape_skip_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+	cnt = _dsTmpWidth;
+
+	if (cnt <= 0)
+		return 0;
+
+	while (cnt-- > 0) {
+		if (*src++)
+			continue;
+		cnt = cnt + 1 - (*src++);
+	}
+
+	return 0;
+}
+
+int Screen::drawShape_skip_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+	cnt = _dsTmpWidth;
+	bool found = false;
+
+	if (cnt <= 0)
+		return 0;
+
+	while (cnt-- > 0) {
+		if (*src++)
+			continue;
+		found = true;
+		cnt = cnt + 1 - (*src++);
+	}
+
+	return found ? 0 : _dsOffscreenScaleVal1;
+}
+
+void Screen::drawShape_processLine_noScale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt, int) {
+	do {
+		uint8 c = *src++;
+		if (c) {
+			uint8 *d = (uint8*) dst++;
+			(this->*_dsPlot)(d, c);
+			cnt--;
+		} else {
+			c = *src++;
+			dst += c;
+			cnt -= c;
+		}		
+	} while (cnt > 0);
+}
+
+void Screen::drawShape_processLine_noScale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt, int) {
+	do {
+		uint8 c = *src++;
+		if (c) {
+			uint8 *d = (uint8*) dst--;
+			(this->*_dsPlot)(d, c);
+			cnt--;
+		} else {
+			c = *src++;
+			dst -= c;
+			cnt -= c;
+		}		
+	} while (cnt > 0);
+}
+
+void Screen::drawShape_processLine_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState) {
+	int c = 0;
+
+	do {
+		if ((scaleState >> 8) <= 0) {
+			c = *src++;
+			_dsTmpWidth--;
+			if (c) {
+				scaleState += _dsScaleW;
+			} else {
+				_dsTmpWidth++;
+				c = *src++;
+				_dsTmpWidth -= c;
+				int r = c * _dsScaleW + scaleState;
+				dst += (r >> 8);
+				cnt -= (r >> 8);
+				scaleState = r & 0xff;
+			}
+		} else {
+			uint8 *d = (uint8*) dst++;
+			(this->*_dsPlot)(d, c);
+			scaleState -= 256;
+			cnt--;
+		}
+	} while (cnt > 0);
+
+	cnt = -1;
+}
+
+void Screen::drawShape_processLine_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState) {
+	int c = 0;
+
+	do {
+		if ((scaleState >> 8) <= 0) {
+			c = *src++;
+			_dsTmpWidth--;
+			if (c) {
+				scaleState += _dsScaleW;
+			} else {
+				_dsTmpWidth++;
+				c = *src++;
+				_dsTmpWidth -= c;
+				int r = c * _dsScaleW + scaleState;
+				dst -= (r >> 8);
+				cnt -= (r >> 8);
+				scaleState = r & 0xff;
+			}
+		} else {
+			uint8 *d = (uint8*) dst--;
+			(this->*_dsPlot)(d, c);
+			scaleState -= 256;
+			cnt--;
+		}
+	} while (cnt > 0);
+
+	cnt = -1;
+}
+
+void Screen::drawShapePlotType0(uint8 *dst, uint8 cmd) {
+	*dst = cmd;
+}
+
+void Screen::drawShapePlotType4(uint8 *dst, uint8 cmd) {
+	*dst = _dsTable2[cmd];
+}
+
+void Screen::drawShapePlotType8(uint8 *dst, uint8 cmd) {
+	uint32 relOffs = dst - _dsDstPage;
+	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+	if (_dsDrawLayer < t)
+		cmd = _shapePages[1][relOffs];
+
+	*dst = cmd;
+}
+
+void Screen::drawShapePlotType9(uint8 *dst, uint8 cmd) {
+	uint32 relOffs = dst - _dsDstPage;
+	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+	if (_dsDrawLayer < t) {
+		cmd = _shapePages[1][relOffs];
+	} else {
+		for (int i = 0; i < _dsTableLoopCount; ++i)
+			cmd = _dsTable[cmd];
+	}
+
+	if (cmd)
+		*dst = cmd;
+}
+
+void Screen::drawShapePlotType12(uint8 *dst, uint8 cmd) {
+	uint32 relOffs = dst - _dsDstPage;
+	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+	if (_dsDrawLayer < t) {
+		cmd = _shapePages[1][relOffs];
+	} else {
+		cmd = _dsTable2[cmd];
+	}
+
+	*dst = cmd;
+}
+
+void Screen::drawShapePlotType13(uint8 *dst, uint8 cmd) {
+	uint32 relOffs = dst - _dsDstPage;
+	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+	if (_dsDrawLayer < t) {
+		cmd = _shapePages[1][relOffs];
+	} else {
+		cmd = _dsTable2[cmd];
+		for (int i = 0; i < _dsTableLoopCount; ++i)
+			cmd = _dsTable[cmd];
+	}
+
+	if (cmd)
+		*dst = cmd;
+}
+
+void Screen::drawShapePlotType14(uint8 *dst, uint8 cmd) {
+	uint32 relOffs = dst - _dsDstPage;
+	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+	if (_dsDrawLayer < t) {
+		cmd = _shapePages[1][relOffs];		
+	} else {
+		t = _drawShapeVar4 + _drawShapeVar5;
+		if (t & 0xff00) {
+			cmd = dst[_drawShapeVar3];
+			t &= 0xff;
+		} else {
+			cmd = _dsTable2[cmd];
+		}
+	}
+
+	_drawShapeVar4 = t;
+	*dst = cmd;
 }
 
 void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {

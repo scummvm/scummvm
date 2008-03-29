@@ -68,8 +68,6 @@ public:
 
 	uint8 *makeShapeCopy(const uint8 *src, int index);
 
-	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
-
 	// rect handling
 	virtual int getRectSize(int w, int h);
 
