@@ -29,6 +29,28 @@
 
 namespace Common {
 
+class SharedPtrDeletionInternal {
+public:
+	virtual ~SharedPtrDeletionInternal() {}
+};
+
+template<class T>
+class SharedPtrDeletionImpl : public SharedPtrDeletionInternal {
+public:
+	SharedPtrDeletionImpl(T *ptr) : _ptr(ptr) {}
+	~SharedPtrDeletionImpl() {
+		// Checks if the supplied type is not just a plain
+		// forward definition, taken from boost::checked_delete
+		// This makes the user really aware what he tries to do
+		// when using this with an incomplete type.
+		typedef char completeCheck[sizeof(T) ? 1 : -1];
+		(void)sizeof(completeCheck);
+		delete _ptr;
+	}
+private:
+	T *_ptr;
+};
+
 /**
  * A simple shared pointer implementation modelled after boost.
  *
@@ -56,8 +78,11 @@ namespace Common {
  * for arrays!
  *
  * Note that you have to specify the type itself not the pointer type as
- * template parameter. You also need to have a real definition of the type
- * you want to use, a simple forward definition is not enough.
+ * template parameter.
+ *
+ * When creating a SharedPtr object from a normal pointer you need a real
+ * definition of the type you want SharedPtr to manage, a simple forward
+ * definition is not enough.
  *
  * The class has implicit upcast support, so if you got a class B derived
  * from class A, you can assign a pointer to B without any problems to a
@@ -65,7 +90,8 @@ namespace Common {
  * assignment of a SharedPtr<B> object to a SharedPtr<A> object.
  *
  * There are also operators != and == to compare two SharedPtr objects
- * with compatible pointers.
+ * with compatible pointers. Comparision between a SharedPtr object and
+ * a plain pointer is just possible via SharedPtr::get.
  */
 template<class T>
 class SharedPtr {
@@ -74,11 +100,11 @@ public:
 	typedef T ValueType;
 	typedef T *Pointer;
 
-	SharedPtr() : _refCount(0), _pointer(0) {}
-	template<class T2> explicit SharedPtr(T2 *p) : _refCount(new RefValue(1)), _pointer(p) {}
+	SharedPtr() : _refCount(0), _deletion(0), _pointer(0) {}
+	template<class T2> explicit SharedPtr(T2 *p) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionImpl<T2>(p)), _pointer(p) {}
 
-	SharedPtr(const SharedPtr &r) : _refCount(r._refCount), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
-	template<class T2> SharedPtr(const SharedPtr<T2> &r) : _refCount(r._refCount), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
+	SharedPtr(const SharedPtr &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
+	template<class T2> SharedPtr(const SharedPtr<T2> &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
 
 	~SharedPtr() { decRef(); }
 
@@ -88,6 +114,7 @@ public:
 		decRef();
 
 		_refCount = r._refCount;
+		_deletion = r._deletion;
 		_pointer = r._pointer;
 
 		return *this;
@@ -100,6 +127,7 @@ public:
 		decRef();
 
 		_refCount = r._refCount;
+		_deletion = r._deletion;
 		_pointer = r._pointer;
 
 		return *this;
@@ -140,7 +168,8 @@ private:
 			--(*_refCount);
 			if (!*_refCount) {
 				delete _refCount;
-				delete _pointer;
+				delete _deletion;
+				_deletion = 0;
 				_refCount = 0;
 				_pointer = 0;
 			}
@@ -148,6 +177,7 @@ private:
 	}
 
 	RefValue *_refCount;
+	SharedPtrDeletionInternal *_deletion;
 	T *_pointer;
 };
 
@@ -165,4 +195,5 @@ bool operator !=(const Common::SharedPtr<T1> &l, const Common::SharedPtr<T2> &r)
 
 
 #endif
+
 
