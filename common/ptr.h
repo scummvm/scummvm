@@ -69,7 +69,6 @@ namespace Common {
  */
 template<class T>
 class SharedPtr {
-	template<class T2> friend class SharedPtr;
 public:
 	typedef int RefValue;
 	typedef T ValueType;
