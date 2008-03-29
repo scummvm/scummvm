@@ -134,14 +134,13 @@ void MassAddDialog::handleTickle() {
 		// Run the detector on the dir
 		GameList candidates(PluginManager::instance().detectGames(files));
 
-		if (candidates.size() >= 1) {
-			// At least one match was found. For now we just take the first one...
-			// a more sophisticated solution would do something more clever here,
-			// e.g. ask the user which one to pick (make sure to display the
-			// path, too).
-			GameDescriptor result = candidates[0];
+		// Just add all detected games / game variants. If we get more than one,
+		// that either means the directory contains multiple games, or the detector
+		// could not fully determine which game variant it was seeing. In either
+		// case, let the user choose which entries he wants to keep.
+		for (GameList::const_iterator cand = candidates.begin(); cand != candidates.end(); ++cand) {
+			GameDescriptor result = *cand;
 			result["path"] = dir.getPath();
-
 			_games.push_back(result);
 		}
 
