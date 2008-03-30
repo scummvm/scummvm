@@ -116,7 +116,7 @@ public:
 	// access to Kyra specific functionallity
 	Resource *resource() { return _res; }
 	virtual Screen *screen() = 0;
-	TextDisplayer *text() { return _text; }
+	virtual TextDisplayer *text() { return _text; }
 	Sound *sound() { return _sound; }
 	StaticResource *staticres() { return _staticres; }
 	TimerManager *timer() { return _timer; }

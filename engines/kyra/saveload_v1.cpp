@@ -40,8 +40,10 @@ void KyraEngine_v1::loadGame(const char *fileName) {
 
 	SaveHeader header;
 	Common::InSaveFile *in = openSaveForReading(fileName, header);
-	if (!in)
+	if (!in) {
+		warning("Can't open file '%s', game not loadable", fileName);
 		return;
+	}
 
 	if (header.originalSave) {
 		// no support for original savefile in Kyrandia 1 (yet)

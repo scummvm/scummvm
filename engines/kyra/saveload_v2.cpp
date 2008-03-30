@@ -39,8 +39,10 @@ void KyraEngine_v2::saveGame(const char *fileName, const char *saveName) {
 	debugC(9, kDebugLevelMain, "KyraEngine_v2::saveGame('%s', '%s')", fileName, saveName);
 
 	Common::OutSaveFile *out = openSaveForWriting(fileName, saveName);
-	if (!out)
+	if (!out) {
+		warning("Can't open file '%s', game not loadable", fileName);
 		return;
+	}
 
 	_timer->saveDataToFile(*out);
 

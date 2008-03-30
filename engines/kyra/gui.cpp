@@ -112,7 +112,6 @@ void GUI::initMenu(Menu &menu) {
 			menuButtonData->width  = menu.item[i].width - 1;
 			menuButtonData->height = menu.item[i].height - 1;
 			menuButtonData->buttonCallback = menu.item[i].callback;
-			menuButtonData->index = menu.item[i].saveSlot;
 			menuButtonData->unk6 = menu.item[i].unk1F;
 			menuButtonData->unk8 = 0;
 
@@ -122,19 +121,19 @@ void GUI::initMenu(Menu &menu) {
 		_screen->fillRect(x1, y1, x2, y2, menu.item[i].bkgdColor);
 		_screen->drawShadedBox(x1, y1, x2, y2, menu.item[i].color1, menu.item[i].color2);
 
-		if (menu.item[i].itemString) {
+		if (getMenuItemTitle(menu.item[i])) {
 			if (menu.item[i].titleX != -1)
 				textX = x1 + menu.item[i].titleX + 3;
 			else
-				textX = _text->getCenterStringX(menu.item[i].itemString, x1, x2);
+				textX = _text->getCenterStringX(getMenuItemTitle(menu.item[i]), x1, x2);
 
 			textY = y1 + 2;
-			_text->printText(menu.item[i].itemString, textX - 1, textY + 1, defaultColor1(), 0, 0);
+			_text->printText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 
 			if (i == menu.highlightedItem)
-				_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].highlightColor, 0, 0);
+				_text->printText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
 			else
-				_text->printText(menu.item[i].itemString, textX, textY, menu.item[i].textColor, 0, 0);
+				_text->printText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
 
 			if (getMenuItemLabel(menu.item[i])) {
 				_text->printText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX - 1, menu.y + menu.item[i].labelY + 1, defaultColor1(), 0, 0);
@@ -248,6 +247,7 @@ void GUI::updateMenuButton(Button *button) {
 
 	_screen->hideMouse();
 	updateButton(button);
+	_screen->updateScreen();
 	_screen->showMouse();
 }
 

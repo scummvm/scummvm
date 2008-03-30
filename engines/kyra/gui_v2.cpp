@@ -27,6 +27,9 @@
 #include "kyra/kyra_v2.h"
 #include "kyra/screen.h"
 #include "kyra/wsamovie.h"
+#include "kyra/timer.h"
+
+#include "common/savefile.h"
 
 namespace Kyra {
 
@@ -226,12 +229,12 @@ void KyraEngine_v2::gui_printString(const char *format, int x, int y, int col1, 
 void KyraEngine_v2::loadButtonShapes() {
 	const uint8 *src = _screen->getCPagePtr(3);
 	_screen->loadBitmap("_BUTTONS.CSH", 3, 3, 0);
-	_buttonShapes[0] = _screen->makeShapeCopy(src, 0);
-	_buttonShapes[1] = _screen->makeShapeCopy(src, 1);
-	_buttonShapes[2] = _screen->makeShapeCopy(src, 2);
-	_buttonShapes[3] = _screen->makeShapeCopy(src, 3);
-	_buttonShapes[4] = _screen->makeShapeCopy(src, 4);
-	_buttonShapes[5] = _screen->makeShapeCopy(src, 5);
+	_gui->_scrollUpButton.data0ShapePtr = _buttonShapes[0] = _screen->makeShapeCopy(src, 0);
+	_gui->_scrollUpButton.data2ShapePtr = _buttonShapes[1] = _screen->makeShapeCopy(src, 1);
+	_gui->_scrollUpButton.data1ShapePtr = _buttonShapes[2] = _screen->makeShapeCopy(src, 2);
+	_gui->_scrollDownButton.data0ShapePtr = _buttonShapes[3] = _screen->makeShapeCopy(src, 3);
+	_gui->_scrollDownButton.data2ShapePtr = _buttonShapes[4] = _screen->makeShapeCopy(src, 4);
+	_gui->_scrollDownButton.data1ShapePtr = _buttonShapes[5] = _screen->makeShapeCopy(src, 5);
 	_buttonShapes[6] = _screen->makeShapeCopy(src, 6);
 	_buttonShapes[7] = _screen->makeShapeCopy(src, 7);
 	_buttonShapes[8] = _screen->makeShapeCopy(src, 6);
@@ -245,6 +248,12 @@ void KyraEngine_v2::loadButtonShapes() {
 
 GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_backUpButtonList = _unknownButtonList = 0;
+	initStaticData();
+	_currentMenu = 0;
+	_isDeathMenu = false;
+	_isSaveMenu = false;
+	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::scrollUpButton);
+	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::scrollDownButton);
 }
 
 Button *GUI_v2::addButtonToList(Button *list, Button *newButton) {
@@ -268,19 +277,23 @@ void GUI_v2::processButton(Button *button) {
 
 	byte val1 = 0, val2 = 0, val3 = 0;
 	const uint8 *dataPtr = 0;
+	Button::Callback callback;
 	if (entry == 1) {
 		val1 = button->data1Val1;
 		dataPtr = button->data1ShapePtr;
+		callback = button->data1Callback;
 		val2 = button->data1Val2;
 		val3 = button->data1Val3;
 	} else if (entry == 4 || entry == 5) {
 		val1 = button->data2Val1;
 		dataPtr = button->data2ShapePtr;
+		callback = button->data2Callback;
 		val2 = button->data2Val2;
 		val3 = button->data2Val3;
 	} else {
 		val1 = button->data0Val1;
 		dataPtr = button->data0ShapePtr;
+		callback = button->data0Callback;
 		val2 = button->data0Val2;
 		val3 = button->data0Val3;
 	}
@@ -313,14 +326,13 @@ void GUI_v2::processButton(Button *button) {
 		break;
 
 	case 3:
-		warning("STUB processButton with func 3");
-		//XXX
+		if (callback)
+			(*callback)(button);
 		break;
 
 	case 4:
-		warning("STUB processButton with func 4");
 		_screen->hideMouse();
-		//XXX
+		_screen->drawBox(x, y, x2, y2, val2);
 		_screen->showMouse();
 		break;
 
@@ -1141,4 +1153,241 @@ int KyraEngine_v2::cauldronButton(Button *button) {
 	return 0;
 }
 
+#pragma mark -
+
+int GUI_v2::optionsButton(Button *button) {
+	_restartGame = false;
+	_reloadTemporarySave = false;
+
+	_screen->hideMouse();
+	updateButton(&_vm->_inventoryButtons[0]);
+	_screen->showMouse();
+
+	if (!_screen->isMouseVisible())
+		return 0;
+
+	_vm->showMessage(0, 0xCF);
+
+	if (_vm->_handItemSet < -1) {
+		_vm->_handItemSet = -1;
+		_screen->hideMouse();
+		_screen->setMouseCursor(1, 1, _vm->getShapePtr(0));
+		_screen->showMouse();
+		return 0;
+	}
+
+	//int oldHandItem = _vm->_itemInHand;
+	_screen->setMouseCursor(0, 0, _vm->getShapePtr(0));
+	_vm->displayInvWsaLastFrame();
+	//XXX
+	_displayMenu = true;
+
+	if (!_vm->gameFlags().isTalkie) {
+		//XXX
+	}
+
+	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
+		_menuButtons[i].data0Val1 = _menuButtons[i].data1Val1 = _menuButtons[i].data2Val1 = 4;
+		_menuButtons[i].data0Callback = _redrawShadedButtonFunctor;
+		_menuButtons[i].data1Callback = _menuButtons[i].data2Callback = _redrawButtonFunctor;
+	}
+
+	//XXX
+	_loadMenu.numberOfItems = 6;
+	initMenuLayout(_loadMenu);
+	
+	if (_vm->_menuDirectlyToLoad) {
+		backUpPage1(_vm->_screenBuffer);
+		setupPalette();
+
+		_loadedSave = false;
+		
+		loadMenu(0);
+
+		if (_loadedSave) {
+			if (_restartGame)
+				_vm->_itemInHand = -1;
+		} else {
+			restorePage1(_vm->_screenBuffer);
+			restorePalette();
+		}
+
+		resetState(-1);
+		_vm->_menuDirectlyToLoad = false;
+		return 0;
+	}
+
+	return 0;
+}
+
+#pragma mark -
+
+void GUI_v2::setupPalette() {
+	//if (_isDeathMenu)
+	//	memcpy(_vm->_unkBuffer1040Bytes, _screen->getPalette(0), 768);
+
+	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
+
+	uint8 *palette = _screen->getPalette(0);
+	for (int i = 0; i < 768; ++i)
+		palette[i] >>= 1;
+
+	static const uint8 guiPal[] = { 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFc, 0xFD, 0xFE };
+
+	for (uint i = 0; i < ARRAYSIZE(guiPal); ++i)
+		memcpy(_screen->getPalette(0)+guiPal[i]*3, _screen->getPalette(1)+guiPal[i]*3, 3);
+
+	if (_isDeathMenu)
+		_screen->fadePalette(_screen->getPalette(0), 0x64);
+	else
+		_screen->setScreenPalette(_screen->getPalette(0));
+}
+
+void GUI_v2::restorePalette() {
+	memcpy(_screen->getPalette(0), _screen->getPalette(1), 768);
+	_screen->setScreenPalette(_screen->getPalette(0));
+}
+
+void GUI_v2::backUpPage1(uint8 *buffer) {
+	_screen->copyRegionToBuffer(1, 0, 0, 320, 200, buffer);
+}
+
+void GUI_v2::restorePage1(const uint8 *buffer) {
+	_screen->copyBlockToPage(1, 0, 0, 320, 200, buffer);
+}
+
+void GUI_v2::resetState(int item) {
+	_vm->_timer->resetNextRun();
+	_vm->setNextIdleAnimTimer();
+	_isDeathMenu = false;
+	if (!_loadedSave) {
+		_vm->setHandItem(item);
+	} else {
+		_vm->setHandItem(_vm->_itemInHand);
+		_vm->setTimer1DelaySecs(7);
+		_vm->_shownMessage = " ";
+		_vm->_fadeMessagePalette = false;
+	}
+	_buttonListChanged = true;
+}
+
+void GUI_v2::setupSavegameNames(Menu &menu, int num) {
+	for (int i = 0; i < num; ++i) {
+		strcpy(_vm->getTableString(menu.item[i].itemId, _vm->_optionsBuffer, 0), "");
+		menu.item[i].saveSlot = -1;
+		menu.item[i].enabled = false;
+	}
+
+	KyraEngine::SaveHeader header;
+	Common::InSaveFile *in;
+	for (int i = 0; i < num; ++i) {
+		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(i + _savegameOffset), header)) != 0) {
+			strncpy(_vm->getTableString(menu.item[i].itemId, _vm->_optionsBuffer, 0), header.description.c_str(), 80);
+			menu.item[i].saveSlot = i + _savegameOffset;
+			menu.item[i].enabled = true;
+			delete in;
+		}
+	}
+
+	if (_savegameOffset == 0) {
+		char *dst = _vm->getTableString(menu.item[0].itemId, _vm->_optionsBuffer, 0);
+		const char *src = _vm->getTableString(34, _vm->_optionsBuffer, 0);
+		strcpy(dst, src);
+	}
+}
+
+int GUI_v2::scrollUpButton(Button *button) {
+	int startSlot = _isSaveMenu ? 1 : 0;
+	updateMenuButton(button);
+
+	if (_savegameOffset <= startSlot)
+		return 0;
+
+	--_savegameOffset;
+	if (_displaySubMenu) {
+		setupSavegameNames(_loadMenu, 5);
+		// original calls something different here...
+		initMenu(_loadMenu);
+	} else if (_isSaveMenu) {
+	}
+
+	return 0;
+}
+
+int GUI_v2::scrollDownButton(Button *button) {
+	updateMenuButton(button);
+	++_savegameOffset;
+	if (_displaySubMenu) {
+		setupSavegameNames(_loadMenu, 5);
+		// original calls something different here...
+		initMenu(_loadMenu);
+	} else if (_isSaveMenu) {
+	}
+
+	return 0;
+}
+
+#pragma mark -
+
+int GUI_v2::loadMenu(Button *caller) {
+	if (!_vm->_menuDirectlyToLoad) {
+		updateMenuButton(caller);
+		restorePage1(_vm->_screenBuffer);
+		backUpPage1(_vm->_screenBuffer);
+	}
+
+	_savegameOffset = 0;
+	setupSavegameNames(_loadMenu, 5);
+	initMenu(_loadMenu);
+	_displaySubMenu = true;
+	_cancelSubMenu = false;
+	_vm->_gameToLoad = -1;
+	updateAllMenuButtons();
+
+	_screen->updateScreen();
+	while (_displaySubMenu) {
+		Common::Point mouse = _vm->getMousePos();
+		processHighlights(_loadMenu, mouse.x, mouse.y);
+		_vm->checkInput(_menuButtonList);
+	}
+
+	if (_cancelSubMenu) {
+		if (!_vm->_menuDirectlyToLoad) {
+			restorePage1(_vm->_screenBuffer);
+			backUpPage1(_vm->_screenBuffer);
+			initMenu(*_currentMenu);
+			updateAllMenuButtons();
+		}
+	} else {
+		restorePage1(_vm->_screenBuffer);
+		restorePalette();
+		_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));
+		if (_vm->_gameToLoad == 0) {
+			_restartGame = true;
+			for (int i = 0; i < 23; ++i)
+				_vm->resetCauldronStateTable(i);
+			_vm->runStartScript(1, 1);
+		}
+		_displayMenu = false;
+		_loadedSave = true;
+	}
+
+	return 0;
+}
+
+int GUI_v2::clickLoadSlot(Button *caller) {
+	updateMenuButton(caller);
+	
+	assert((caller->index-0x10) >= 0 && (caller->index-0x10 <= 6));
+	MenuItem &item = _loadMenu.item[caller->index-0x10];
+
+	if (item.saveSlot >= 0) {
+		_vm->_gameToLoad = item.saveSlot;
+		_displaySubMenu = false;
+	}
+
+	return 0;
+}
+
 } // end of namespace Kyra
+

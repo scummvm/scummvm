@@ -29,6 +29,7 @@
 #include "kyra/kyra.h"
 #include "kyra/script.h"
 #include "kyra/screen_v2.h"
+#include "kyra/text_v2.h"
 #include "kyra/gui_v2.h"
 
 #include "common/list.h"
@@ -169,6 +170,7 @@ public:
 
 	virtual Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() { return _screen; }
+	virtual TextDisplayer *text() { return _text; }
 	int language() const { return _lang; }
 
 	virtual Movie *createWSAMovie();
@@ -606,6 +608,7 @@ protected:
 	int _nextAnimItem;
 
 	// gui
+	bool _menuDirectlyToLoad;
 	GUI_v2 *_gui;
 
 	void loadButtonShapes();
@@ -676,8 +679,8 @@ protected:
 	int _currentChapter;
 	int _newChapterFile;
 
-	const uint8 *getTableEntry(const uint8 *buffer, int id);
-	const char *getTableString(int id, const uint8 *buffer, int decode);
+	uint8 *getTableEntry(uint8 *buffer, int id);
+	char *getTableString(int id, uint8 *buffer, int decode);
 	const char *getChapterString(int id);
 	int decodeString1(const char *src, char *dst);
 	void decodeString2(const char *src, char *dst);

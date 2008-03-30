@@ -51,6 +51,44 @@
 	button.data2Val3 = s; \
 	button.flags2 = t;
 
+#define GUI_V2_MENU(menu, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) \
+	menu.x = a; \
+	menu.y = b; \
+	menu.width = c; \
+	menu.height = d; \
+	menu.bkgdColor = e; \
+	menu.color1 = f; \
+	menu.color2 = g; \
+	menu.menuNameId = h; \
+	menu.textColor = i; \
+	menu.titleX = j; \
+	menu.titleY = k; \
+	menu.highlightedItem = l; \
+	menu.numberOfItems = m; \
+	menu.scrollUpButtonX = n; \
+	menu.scrollUpButtonY = o; \
+	menu.scrollDownButtonX = p; \
+	menu.scrollDownButtonY = q
+
+#define GUI_V2_MENU_ITEM(item, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q) \
+	item.enabled = a; \
+	item.itemId = b; \
+	item.x = c; \
+	item.y = d; \
+	item.width = e; \
+	item.height = f; \
+	item.textColor = g; \
+	item.highlightColor = h; \
+	item.titleX = i; \
+	item.bkgdColor = j; \
+	item.color1 = k; \
+	item.color2 = l; \
+	item.saveSlot = m; \
+	item.labelString = n; \
+	item.labelX = o; \
+	item.labelY = p; \
+	item.unk1F = q
+
 namespace Kyra {
 
 class KyraEngine_v2;
@@ -66,20 +104,40 @@ public:
 	void processButton(Button *button);
 	int processButtonList(Button *button, uint16 inputFlag);
 
+	int optionsButton(Button *button);
 private:
+	Button _menuButtons[7];
+	Button _scrollUpButton;
+	Button _scrollDownButton;
+	Menu _loadMenu;
+	void initStaticData();
+
 	const char *getMenuTitle(const Menu &menu);
 	const char *getMenuItemTitle(const MenuItem &menuItem);
 	const char *getMenuItemLabel(const MenuItem &menuItem);
 
-	Button *getButtonListData() { return 0; }
-	Button *getScrollUpButton() { return 0; }
-	Button *getScrollDownButton() { return 0; }
+	Button *getButtonListData() { return _menuButtons; }
 
-	Button::Callback getScrollUpButtonHandler() const { return Button::Callback(); }
-	Button::Callback getScrollDownButtonHandler() const { return Button::Callback(); }
+	Button *getScrollUpButton() { return &_scrollUpButton; }
+	Button *getScrollDownButton() { return &_scrollDownButton; }
+
+	int scrollUpButton(Button *button);
+	int scrollDownButton(Button *button);
+	Button::Callback _scrollUpFunctor;
+	Button::Callback _scrollDownFunctor;
+	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
+	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
 
 	uint8 defaultColor1() const { return 0xCF; }
 	uint8 defaultColor2() const { return 0xF8; }
+
+	void setupPalette();
+	void restorePalette();
+
+	void backUpPage1(uint8 *buffer);
+	void restorePage1(const uint8 *buffer);
+
+	void resetState(int item);
 
 	KyraEngine_v2 *_vm;
 	Screen_v2 *_screen;
@@ -87,6 +145,21 @@ private:
 	bool _buttonListChanged;
 	Button *_backUpButtonList;
 	Button *_unknownButtonList;
+
+	Menu *_currentMenu;
+	bool _isDeathMenu;
+	bool _isSaveMenu;
+	bool _loadedSave;
+	bool _restartGame;
+	bool _reloadTemporarySave;
+
+	int _savegameOffset;
+
+	void setupSavegameNames(Menu &menu, int num);
+
+	// load menu
+	int loadMenu(Button *caller);
+	int clickLoadSlot(Button *caller);
 };
 
 } // end of namespace Kyra

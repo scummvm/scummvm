@@ -408,7 +408,6 @@ void KyraEngine_v1::startup() {
 	snd_playTheme(1);
 	if (_gameToLoad == -1) {
 		enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
-
 		if (_abortIntroFlag && _skipIntroFlag) {
 			_menuDirectlyToLoad = true;
 			_screen->setMouseCursor(1, 1, _shapes[0]);

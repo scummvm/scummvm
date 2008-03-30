@@ -107,10 +107,8 @@ Common::InSaveFile *KyraEngine::openSaveForReading(const char *filename, SaveHea
 	debugC(9, kDebugLevelMain, "KyraEngine::openSaveForReading('%s', -)", filename);
 
 	Common::InSaveFile *in = 0;
-	if (!(in = _saveFileMan->openForLoading(filename))) {
-		warning("Can't open file '%s', game not loadable", filename);
+	if (!(in = _saveFileMan->openForLoading(filename)))
 		return 0;
-	}
 
 	kReadSaveHeaderError errorCode = KyraEngine::readSaveHeader(in, header);
 	if (errorCode != kRSHENoError) {

@@ -142,6 +142,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_cauldronState = 0;
 	_cauldronUseCount = 0;
 	memset(_cauldronStateTables, 0, sizeof(_cauldronStateTables));
+
+	_menuDirectlyToLoad = false;
 }
 
 KyraEngine_v2::~KyraEngine_v2() {
@@ -263,7 +265,7 @@ int KyraEngine_v2::go() {
 			_res->loadFileList(_ingamePakList, _ingamePakListSize);
 	}
 
-	//_menuDirectlyToLoad = (_menuChoice == 3) ? true : false;
+	_menuDirectlyToLoad = (_menuChoice == 3) ? true : false;
 
 	if (_menuChoice & 1) {
 		startup();
@@ -393,6 +395,9 @@ void KyraEngine_v2::startup() {
 	}
 
 	_screen->showMouse();
+
+	if (_menuDirectlyToLoad)
+		(*_inventoryButtons[0].buttonCallback)(&_inventoryButtons[0]);
 
 	setNextIdleAnimTimer();
 	//XXX
@@ -953,12 +958,12 @@ void KyraEngine_v2::changeFileExtension(char *buffer) {
 	strcpy(buffer, _languageExtension[_lang]);
 }
 
-const uint8 *KyraEngine_v2::getTableEntry(const uint8 *buffer, int id) {
+uint8 *KyraEngine_v2::getTableEntry(uint8 *buffer, int id) {
 	return buffer + READ_LE_UINT16(buffer + (id<<1));
 }
 
-const char *KyraEngine_v2::getTableString(int id, const uint8 *buffer, int decode) {
-	const char *string = (const char*)getTableEntry(buffer, id);
+char *KyraEngine_v2::getTableString(int id, uint8 *buffer, int decode) {
+	char *string = (char*)getTableEntry(buffer, id);
 
 	if (decode && _flags.lang != Common::JA_JPN) {
 		decodeString1(string, _internStringBuf);

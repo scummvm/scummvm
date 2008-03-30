@@ -625,10 +625,10 @@ void GUI_v1::setupSavegames(Menu &menu, int num) {
 		startSlot = 0;
 	}
 
+	KyraEngine::SaveHeader header;
 	for (int i = startSlot; i < num; i++) {
-		if ((in = _vm->_saveFileMan->openForLoading(_vm->getSavegameFilename(i + _savegameOffset)))) {
-			in->skip(8);
-			in->read(savenames[i], 31);
+		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(i + _savegameOffset), header))) {
+			strncpy(savenames[i], header.description.c_str(), 31);
 			menu.item[i].itemString = savenames[i];
 			menu.item[i].enabled = 1;
 			menu.item[i].saveSlot = i + _savegameOffset;
@@ -772,7 +772,7 @@ void GUI_v1::updateSavegameString() {
 int GUI_v1::saveGame(Button *button) {
 	debugC(9, kDebugLevelGUI, "GUI_v1::saveGame()");
 	updateMenuButton(button);
-	_vm->_gameToLoad = button->index;
+	_vm->_gameToLoad = _menu[2].item[button->index-0xC].saveSlot;
 
 	_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
 	_screen->savePageToDisk("SEENPAGE.TMP", 0);
@@ -830,7 +830,7 @@ int GUI_v1::loadGame(Button *button) {
 	debugC(9, kDebugLevelGUI, "GUI_v1::loadGame()");
 	updateMenuButton(button);
 	_displaySubMenu = false;
-	_vm->_gameToLoad = button->index;
+	_vm->_gameToLoad = _menu[2].item[button->index-0xC].saveSlot;
 
 	return 0;
 }
