@@ -70,6 +70,14 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		container.clear();
 		TS_ASSERT( container.begin() == container.end() );
 	}
+	
+	void test_hash_map_copy( void )
+	{
+		Common::HashMap<int, int> map1, map2;
+		map1[323] = 32;
+		map2 = map1;
+		TS_ASSERT_EQUALS(map2[323], 32);
+	}
 
 	// TODO: Add test cases for iterators, find, ...
 };
