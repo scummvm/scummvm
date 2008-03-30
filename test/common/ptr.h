@@ -62,4 +62,18 @@ class PtrTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(p1 != 0);
 		TS_ASSERT(p2 == 0);
 	}
+
+	struct A {
+		int a;
+	};
+
+	struct B : public A {
+		int b;
+	};
+
+	void test_cast() {
+		Common::SharedPtr<B> b(new B);
+		Common::SharedPtr<A> a(b);
+		a = b;
+	}
 };
