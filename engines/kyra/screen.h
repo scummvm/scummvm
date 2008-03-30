@@ -180,16 +180,16 @@ public:
 
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
 
-	int drawShape_margin_noScale_upwind(const uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShape_margin_noScale_downwind(const uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShape_margin_scale_upwind(const uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShape_margin_scale_downwind(const uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShape_skip_scale_upwind(const uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShape_skip_scale_downwind(const uint8 *&dst, const uint8 *&src, int &cnt);
-	void drawShape_processLine_noScale_upwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
-	void drawShape_processLine_noScale_downwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
-	void drawShape_processLine_scale_upwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
-	void drawShape_processLine_scale_downwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	int drawShapeMarginNoScaleUpwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeMarginNoScaleDownwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeMarginScaleUpwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeMarginScaleDownwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeSkipScaleUpwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeSkipScaleDownwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	void drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	void drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	void drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	void drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
 
 	void drawShapePlotType0(uint8 *dst, uint8 cmd);
 	void drawShapePlotType4(uint8 *dst, uint8 cmd);
