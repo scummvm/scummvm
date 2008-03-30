@@ -180,16 +180,16 @@ public:
 
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
 
-	int drawShape_margin_noScale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt);
-	int drawShape_margin_noScale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt);
-	int drawShape_margin_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt);
-	int drawShape_margin_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt);
-	int drawShape_skip_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt);
-	int drawShape_skip_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt);
-	void drawShape_processLine_noScale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState);
-	void drawShape_processLine_noScale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState);
-	void drawShape_processLine_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState);
-	void drawShape_processLine_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState);
+	int drawShape_margin_noScale_upwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShape_margin_noScale_downwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShape_margin_scale_upwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShape_margin_scale_downwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShape_skip_scale_upwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShape_skip_scale_downwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	void drawShape_processLine_noScale_upwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	void drawShape_processLine_noScale_downwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	void drawShape_processLine_scale_upwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	void drawShape_processLine_scale_downwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
 
 	void drawShapePlotType0(uint8 *dst, uint8 cmd);
 	void drawShapePlotType4(uint8 *dst, uint8 cmd);
@@ -199,9 +199,9 @@ public:
 	void drawShapePlotType13(uint8 *dst, uint8 cmd);
 	void drawShapePlotType14(uint8 *dst, uint8 cmd);
 
-	typedef int (Screen::*DsMarginSkipFunc)(const uint8 *& dst, const uint8 *& src, int & cnt);
-	typedef void (Screen::*DsLineFunc)(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState);
-	typedef void (Screen::*DsPlotFunc)(uint8 * dst, uint8 cmd);
+	typedef int (Screen::*DsMarginSkipFunc)(const uint8 *&dst, const uint8 *&src, int &cnt);
+	typedef void (Screen::*DsLineFunc)(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
+	typedef void (Screen::*DsPlotFunc)(uint8 *dst, uint8 cmd);
 
 	DsMarginSkipFunc _dsProcessMargin;
 	DsMarginSkipFunc _dsScaleSkip;

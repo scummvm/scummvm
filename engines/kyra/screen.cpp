@@ -1194,7 +1194,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	if (flags & 0x2000 && _vm->gameFlags().gameID == GI_KYRA2) {
-		int UNK = va_arg(args, int);
+		/*int UNK = */va_arg(args, int);
 	}
 
 	static const DsMarginSkipFunc dsMarginFunc[] = {
@@ -1262,7 +1262,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	const uint8 *src = shapeData;
-	const uint8 *dst = _dsDstPage = getPagePtr(pageNum);
+	uint8 *dst = _dsDstPage = getPagePtr(pageNum);
 
 	const ScreenDim *dsDim = getScreenDim(sd);
 	dst += (dsDim->sx << 3);
@@ -1321,7 +1321,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int t = (flags & 2) ? y2 - y - shapeHeight : y - y1;
 
-	const uint8 *s = (uint8*) src;
+	const uint8 *s = src;
 
 	if (t < 0) {
 		shapeHeight += t;
@@ -1403,7 +1403,6 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	dst += (320 * ty + x);
-	const uint8 *d = dst;
 
 	if (flags & DSF_SCALE) {
 		_dsOffscreenRight = 0;
@@ -1416,6 +1415,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, shpWidthScaled1, shapeHeight);
 	clearOverlayRect(pageNum, x, y, shpWidthScaled1, shapeHeight);
+
+	const uint8 *d = dst;
 
 	while (shapeHeight--) {
 		while (!(scaleCounterV & 0xff00)) {
@@ -1436,8 +1437,12 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			int scaleState = (this->*_dsProcessMargin)(d, s, cnt);
 			if (_dsTmpWidth) {
 				cnt += shpWidthScaled1;
-				if (cnt > 0)
-					(this->*_dsProcessLine)(d, s, cnt, scaleState);
+				if (cnt > 0) {
+					// very ugly hack to pass non const version of d
+					uint8 *tempDst = const_cast<uint8*>(d);
+					(this->*_dsProcessLine)(tempDst, s, cnt, scaleState);
+					d = tempDst;
+				}
 				cnt += _dsOffscreenRight;
 				if (cnt)
 					(this->*_dsScaleSkip)(d, s, cnt);
@@ -1451,7 +1456,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	va_end(args);
 }
 
-int Screen::drawShape_margin_noScale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+int Screen::drawShape_margin_noScale_upwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
 	while (cnt-- > 0) {
 		if (*src++)
 			continue;
@@ -1463,7 +1468,7 @@ int Screen::drawShape_margin_noScale_upwind(const uint8 *& dst, const uint8 *& s
 	return 0;
 }
 
-int Screen::drawShape_margin_noScale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+int Screen::drawShape_margin_noScale_downwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
 	while (cnt-- > 0) {
 		if (*src++)
 			continue;
@@ -1475,7 +1480,7 @@ int Screen::drawShape_margin_noScale_downwind(const uint8 *& dst, const uint8 *&
 	return 0;
 }
 
-int Screen::drawShape_margin_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+int Screen::drawShape_margin_scale_upwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
 	_dsTmpWidth -= cnt;
 	bool found = false;
 
@@ -1504,7 +1509,7 @@ int Screen::drawShape_margin_scale_upwind(const uint8 *& dst, const uint8 *& src
 	return res;
 }
 
-int Screen::drawShape_margin_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+int Screen::drawShape_margin_scale_downwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
 	_dsTmpWidth -= cnt;
 	bool found = false;
 
@@ -1533,7 +1538,7 @@ int Screen::drawShape_margin_scale_downwind(const uint8 *& dst, const uint8 *& s
 	return res;
 }
 
-int Screen::drawShape_skip_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+int Screen::drawShape_skip_scale_upwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
 	cnt = _dsTmpWidth;
 
 	if (cnt <= 0)
@@ -1548,7 +1553,7 @@ int Screen::drawShape_skip_scale_upwind(const uint8 *& dst, const uint8 *& src, 
 	return 0;
 }
 
-int Screen::drawShape_skip_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt) {
+int Screen::drawShape_skip_scale_downwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
 	cnt = _dsTmpWidth;
 	bool found = false;
 
@@ -1565,11 +1570,11 @@ int Screen::drawShape_skip_scale_downwind(const uint8 *& dst, const uint8 *& src
 	return found ? 0 : _dsOffscreenScaleVal1;
 }
 
-void Screen::drawShape_processLine_noScale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt, int) {
+void Screen::drawShape_processLine_noScale_upwind(uint8 *&dst, const uint8 *&src, int &cnt, int) {
 	do {
 		uint8 c = *src++;
 		if (c) {
-			uint8 *d = (uint8*) dst++;
+			uint8 *d = dst++;
 			(this->*_dsPlot)(d, c);
 			cnt--;
 		} else {
@@ -1580,11 +1585,11 @@ void Screen::drawShape_processLine_noScale_upwind(const uint8 *& dst, const uint
 	} while (cnt > 0);
 }
 
-void Screen::drawShape_processLine_noScale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt, int) {
+void Screen::drawShape_processLine_noScale_downwind(uint8 *&dst, const uint8 *&src, int &cnt, int) {
 	do {
 		uint8 c = *src++;
 		if (c) {
-			uint8 *d = (uint8*) dst--;
+			uint8 *d = dst--;
 			(this->*_dsPlot)(d, c);
 			cnt--;
 		} else {
@@ -1595,7 +1600,7 @@ void Screen::drawShape_processLine_noScale_downwind(const uint8 *& dst, const ui
 	} while (cnt > 0);
 }
 
-void Screen::drawShape_processLine_scale_upwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState) {
+void Screen::drawShape_processLine_scale_upwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState) {
 	int c = 0;
 
 	do {
@@ -1614,7 +1619,7 @@ void Screen::drawShape_processLine_scale_upwind(const uint8 *& dst, const uint8 
 				scaleState = r & 0xff;
 			}
 		} else {
-			uint8 *d = (uint8*) dst++;
+			uint8 *d = dst++;
 			(this->*_dsPlot)(d, c);
 			scaleState -= 256;
 			cnt--;
@@ -1624,7 +1629,7 @@ void Screen::drawShape_processLine_scale_upwind(const uint8 *& dst, const uint8 
 	cnt = -1;
 }
 
-void Screen::drawShape_processLine_scale_downwind(const uint8 *& dst, const uint8 *& src, int & cnt, int scaleState) {
+void Screen::drawShape_processLine_scale_downwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState) {
 	int c = 0;
 
 	do {
@@ -1643,7 +1648,7 @@ void Screen::drawShape_processLine_scale_downwind(const uint8 *& dst, const uint
 				scaleState = r & 0xff;
 			}
 		} else {
-			uint8 *d = (uint8*) dst--;
+			uint8 *d = dst--;
 			(this->*_dsPlot)(d, c);
 			scaleState -= 256;
 			cnt--;
