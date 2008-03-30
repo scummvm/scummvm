@@ -99,8 +99,8 @@ private:
  * assignment of a SharedPtr<B> object to a SharedPtr<A> object.
  *
  * There are also operators != and == to compare two SharedPtr objects
- * with compatible pointers. Comparision between a SharedPtr object and
- * a plain pointer is just possible via SharedPtr::get.
+ * with compatible pointers. Comparison between a SharedPtr object and
+ * a plain pointer is only possible via SharedPtr::get.
  */
 template<class T>
 class SharedPtr {
@@ -159,7 +159,7 @@ public:
 
 	/**
 	 * Implicit conversion operator to bool for convenience, to make
-	 * checks like "if (sharePtr) ..." possible.
+	 * checks like "if (sharedPtr) ..." possible.
 	 */
 	operator bool() const { return _pointer != 0; }
 
