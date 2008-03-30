@@ -1193,8 +1193,8 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		_dsScaleH = 0x100;
 	}
 
-	if (flags & 0x2000 && _vm->gameFlags().gameID == GI_KYRA2) {
-		/*int UNK = */va_arg(args, int);
+	if ((flags & 0x2000) && _vm->gameFlags().gameID == GI_KYRA2) {
+		va_arg(args, int);
 	}
 
 	static const DsMarginSkipFunc dsMarginFunc[] = {
