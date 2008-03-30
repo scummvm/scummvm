@@ -61,6 +61,10 @@
 #define USE_HASHMAP_MEMORY_POOL
 #ifdef USE_HASHMAP_MEMORY_POOL
 #include "common/memorypool.h"
+// FIXME: we sadly can't assume standard C++ to be present
+// on every system we support, so we should get rid of this.
+// The solution should be to write a simple placement new
+// on our own.
 #include <new>
 #endif
 
