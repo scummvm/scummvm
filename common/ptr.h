@@ -95,6 +95,9 @@ private:
  */
 template<class T>
 class SharedPtr {
+#if !((__GNUC__ == 2) && (__GNUC_MINOR__ >= 95))
+	template<class T2> friend class SharedPtr;
+#endif
 public:
 	typedef int RefValue;
 	typedef T ValueType;
