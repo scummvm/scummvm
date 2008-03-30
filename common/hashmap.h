@@ -107,19 +107,19 @@ public:
 
 
 #ifdef USE_HASHMAP_MEMORY_POOL
-        MemoryPool _nodePool;
+	MemoryPool _nodePool;
 
 	Node *allocNode(const Key& key) {
-	  void* mem = _nodePool.malloc();
-	  return new (mem) Node(key);
+		void* mem = _nodePool.malloc();
+		return new (mem) Node(key);
 	} 
 
 	void freeNode(Node* node) {
-	  node->~Node();
-	  _nodePool.free(node);
+		node->~Node();
+		_nodePool.free(node);
 	}
 #else
-        Node* allocNode(const Key& key) {
+	Node* allocNode(const Key& key) {
 		return new Node(key);
 	} 
 
@@ -352,9 +352,9 @@ public:
 template <class Key, class Val, class HashFunc, class EqualFunc>
 HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() :
 #ifdef USE_HASHMAP_MEMORY_POOL
- _nodePool(sizeof(Node)),
+	_nodePool(sizeof(Node)),
 #endif
- _defaultVal() {
+	_defaultVal() {
 	_arrsize = nextTableSize(0);
 	_arr = new Node *[_arrsize];
 	assert(_arr != NULL);
@@ -376,9 +376,9 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() :
 template <class Key, class Val, class HashFunc, class EqualFunc>
 HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t& map) : 
 #ifdef USE_HASHMAP_MEMORY_POOL
- _nodePool(sizeof(Node)),
+	_nodePool(sizeof(Node)),
 #endif
-         _defaultVal()  {
+	_defaultVal()  {
 	assign(map);
 }
 
