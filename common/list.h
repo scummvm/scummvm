@@ -111,7 +111,7 @@ public:
 		}
 	};
 
-	NodeBase *_anchor;
+	NodeBase _anchor;
 
 public:
 	typedef Iterator<t_T>			iterator;
@@ -121,21 +121,18 @@ public:
 
 public:
 	List() {
-		_anchor = new NodeBase;
-		_anchor->_prev = _anchor;
-		_anchor->_next = _anchor;
+		_anchor._prev = &_anchor;
+		_anchor._next = &_anchor;
 	}
 	List(const List<t_T>& list) {
-		_anchor = new NodeBase;
-		_anchor->_prev = _anchor;
-		_anchor->_next = _anchor;
+		_anchor._prev = &_anchor;
+		_anchor._next = &_anchor;
 
 		insert(begin(), list.begin(), list.end());
 	}
 
 	~List() {
 		clear();
-		delete _anchor;
 	}
 
 	void push_front(const t_T& element) {
@@ -232,32 +229,32 @@ public:
 	}
 
 	bool empty() const {
-		return (_anchor == _anchor->_next);
+		return (&_anchor == _anchor._next);
 	}
 
 
 	iterator		begin() {
-		return iterator(_anchor->_next);
+		return iterator(_anchor._next);
 	}
 
 	iterator		reverse_begin() {
-		return iterator(_anchor->_prev);
+		return iterator(_anchor._prev);
 	}
 
 	iterator		end() {
-		return iterator(_anchor);
+		return iterator(&_anchor);
 	}
 
 	const_iterator	begin() const {
-		return const_iterator(_anchor->_next);
+		return const_iterator(_anchor._next);
 	}
 
 	const_iterator	reverse_begin() const {
-		return const_iterator(_anchor->_prev);
+		return const_iterator(_anchor._prev);
 	}
 
 	const_iterator	end() const {
-		return const_iterator(_anchor);
+		return const_iterator(const_cast<NodeBase*>(&_anchor));
 	}
 };
 
