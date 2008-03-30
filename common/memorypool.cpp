@@ -65,7 +65,7 @@ bool MemoryPool::isPointerInPage(void* ptr, void* page) {
 
 void MemoryPool::freeUnusedPages() {
   //std::sort(_pages.begin(), _pages.end());
-  Array<int> numberOfFreeChunksPerPage;
+  Array<size_t> numberOfFreeChunksPerPage;
   numberOfFreeChunksPerPage.resize(_pages.size());
   for(size_t i=0; i<numberOfFreeChunksPerPage.size(); ++i) {
       numberOfFreeChunksPerPage[i] = 0;
