@@ -42,6 +42,7 @@ Table of Contents:
  * 5.4 Hotkeys
 6.0) Savegames
  * 6.1 Autosaves
+ * 6.2 Converting savegames
 7.0) Music and Sound
  * 7.1 Adlib emulation
  * 7.2 FluidSynth MIDI emulation
@@ -690,7 +691,7 @@ the section on reporting bugs.
           - Amiga versions aren't supported
 
      Waxworks
-          - PC version isn't supported
+          - No music in the PC version
 
      Humongous Entertainment games:
           - No support for printing images
@@ -1142,6 +1143,37 @@ save the current state every five minutes (adjustable via the
 "autosave_period" config setting). For the SCUMM engine, it will save
 in Slot 0. This savestate can then be loaded again via Ctrl-0, or the
 F5 menu.
+
+
+6.2) Converting Savegames:
+---- ----------
+Using savegames from original versions, isn't supported by all game engines. Only
+the following games, can use savedgames from their original versions.
+
+     Elvira 1
+          - Add 8 bytes (savedgame name) to the start of the savegame file
+          - Rename the savedgame to 'elvira1.xxx'
+
+     Elvira 2
+          - Add 8 bytes (savedgame name) to the start of the savegame file
+          - Rename the savedgame to 'elvira2-pc.xxx' (DOS version) or
+            'elvira2.xxx' (Other versions)
+
+    Waxworks
+          - Add 8 bytes (savedgame name) to the start of the savegame file
+          - Rename the savedgame to 'waxworks-pc.xxx' (DOS version) or
+            'waxworks.xxx' (Other versions)
+
+     Simon the Sorcerer 1
+          - Rename the savedgame to 'simon1.xxx'
+ 
+    Simon the Sorcerer 1
+          - Rename the savedgame to 'simon2.xxx'
+ 
+    The Feeble Files
+          - Rename the savedgame to 'feeble.xxx'
+
+Where 'xxx' is exact the saved game slot (ie 001) under ScummVM
 
 
 7.0) Music and Sound:
