@@ -1155,6 +1155,14 @@ int KyraEngine_v2::cauldronButton(Button *button) {
 
 #pragma mark -
 
+void GUI_v2::getInput() {
+	_vm->checkInput(_menuButtonList);
+	if (_vm->quit()) {
+		_displayMenu = false;
+		_displaySubMenu = false;
+	}
+}
+
 int GUI_v2::optionsButton(Button *button) {
 	_restartGame = false;
 	_reloadTemporarySave = false;
@@ -1348,7 +1356,7 @@ int GUI_v2::loadMenu(Button *caller) {
 	while (_displaySubMenu) {
 		Common::Point mouse = _vm->getMousePos();
 		processHighlights(_loadMenu, mouse.x, mouse.y);
-		_vm->checkInput(_menuButtonList);
+		getInput();
 	}
 
 	if (_cancelSubMenu) {

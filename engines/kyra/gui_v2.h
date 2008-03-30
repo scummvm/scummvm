@@ -106,6 +106,8 @@ public:
 
 	int optionsButton(Button *button);
 private:
+	void getInput();
+
 	Button _menuButtons[7];
 	Button _scrollUpButton;
 	Button _scrollDownButton;
