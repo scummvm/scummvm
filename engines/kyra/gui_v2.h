@@ -84,7 +84,7 @@
 	item.color1 = k; \
 	item.color2 = l; \
 	item.saveSlot = m; \
-	item.labelString = n; \
+	item.labelId = n; \
 	item.labelX = o; \
 	item.labelY = p; \
 	item.unk1F = q
