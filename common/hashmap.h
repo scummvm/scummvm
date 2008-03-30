@@ -98,11 +98,15 @@ public:
 		Node(const Key &key) : _key(key), _value() {}
 	};
 
-	Node* allocNode(const Key& key) {
+	Node *allocNode(const Key& key) {
 		return new Node(key);
 	} 
 
-	void freeNode(Node* node) {
+	Node *allocNode(Node &copy) {
+		return new Node(copy);
+	}
+
+	void freeNode(Node *node) {
 		delete node;
 	}
 
@@ -384,7 +388,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t& map) {
 	_nele = 0;
 	for (uint ctr = 0; ctr < _arrsize; ++ctr) {
 		if (map._arr[ctr] != NULL) {
-			_arr[ctr] = allocNode(map._arr[ctr]->_key);
+			_arr[ctr] = allocNode(*map._arr[ctr]);
 			_nele++;
 		}
 	}
