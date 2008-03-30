@@ -391,7 +391,7 @@ void ScreenAnimator::copyChangedObjectsForward(int refreshFlag) {
 				if (ypos + height > 136)
 					height = 136 - ypos;
 
-				_screen->copyRegion(xpos << 3, ypos, xpos << 3, ypos, width << 3, height, 2, 0, Screen::CR_CLIPPED);
+				_screen->copyRegion(xpos << 3, ypos, xpos << 3, ypos, width << 3, height, 2, 0);
 				curObject->refreshFlag = 0;
 				_updateScreen = true;
 			}

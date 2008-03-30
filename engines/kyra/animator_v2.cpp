@@ -188,7 +188,7 @@ void KyraEngine_v2::refreshAnimObjects(int force) {
 			height -= height + y - 144;
 
 		_screen->hideMouse();
-		_screen->copyRegion(x, y, x, y, width, height, 2, 0, Screen::CR_CLIPPED | Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(x, y, x, y, width, height, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->showMouse();
 
 		curObject->needRefresh = false;
