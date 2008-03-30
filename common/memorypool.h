@@ -26,7 +26,7 @@
 #ifndef COMMON_MEMORYPOOL_H
 #define COMMON_MEMORYPOOL_H
 
-#include <cstring>
+#include <string.h>
 #include "common/array.h"
 
 namespace Common
