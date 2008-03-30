@@ -180,12 +180,12 @@ public:
 
 	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
 
-	int drawShapeMarginNoScaleUpwind(const uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShapeMarginNoScaleDownwind(const uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShapeMarginScaleUpwind(const uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShapeMarginScaleDownwind(const uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShapeSkipScaleUpwind(const uint8 *&dst, const uint8 *&src, int &cnt);
-	int drawShapeSkipScaleDownwind(const uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeMarginNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeMarginNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeMarginScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeMarginScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeSkipScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt);
+	int drawShapeSkipScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt);
 	void drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
 	void drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
 	void drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
@@ -199,7 +199,7 @@ public:
 	void drawShapePlotType13(uint8 *dst, uint8 cmd);
 	void drawShapePlotType14(uint8 *dst, uint8 cmd);
 
-	typedef int (Screen::*DsMarginSkipFunc)(const uint8 *&dst, const uint8 *&src, int &cnt);
+	typedef int (Screen::*DsMarginSkipFunc)(uint8 *&dst, const uint8 *&src, int &cnt);
 	typedef void (Screen::*DsLineFunc)(uint8 *&dst, const uint8 *&src, int &cnt, int scaleState);
 	typedef void (Screen::*DsPlotFunc)(uint8 *dst, uint8 cmd);
 

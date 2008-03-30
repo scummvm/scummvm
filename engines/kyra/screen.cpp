@@ -1331,7 +1331,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		}
 
 		t *= -1;
-		const uint8 *tmp = dst;
+		uint8 *tmp = dst;
 
 		do {
 			_dsOffscreenScaleVal1 = 0;
@@ -1416,7 +1416,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		addDirtyRect(x, y, shpWidthScaled1, shapeHeight);
 	clearOverlayRect(pageNum, x, y, shpWidthScaled1, shapeHeight);
 
-	const uint8 *d = dst;
+	uint8 *d = dst;
 
 	while (shapeHeight--) {
 		while (!(scaleCounterV & 0xff00)) {
@@ -1438,10 +1438,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			if (_dsTmpWidth) {
 				cnt += shpWidthScaled1;
 				if (cnt > 0) {
-					// very ugly hack to pass non const version of d
-					uint8 *tempDst = const_cast<uint8*>(d);
-					(this->*_dsProcessLine)(tempDst, s, cnt, scaleState);
-					d = tempDst;
+					(this->*_dsProcessLine)(d, s, cnt, scaleState);
 				}
 				cnt += _dsOffscreenRight;
 				if (cnt)
@@ -1456,7 +1453,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	va_end(args);
 }
 
-int Screen::drawShapeMarginNoScaleUpwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
+int Screen::drawShapeMarginNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt) {
 	while (cnt-- > 0) {
 		if (*src++)
 			continue;
@@ -1468,7 +1465,7 @@ int Screen::drawShapeMarginNoScaleUpwind(const uint8 *&dst, const uint8 *&src, i
 	return 0;
 }
 
-int Screen::drawShapeMarginNoScaleDownwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
+int Screen::drawShapeMarginNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt) {
 	while (cnt-- > 0) {
 		if (*src++)
 			continue;
@@ -1480,7 +1477,7 @@ int Screen::drawShapeMarginNoScaleDownwind(const uint8 *&dst, const uint8 *&src,
 	return 0;
 }
 
-int Screen::drawShapeMarginScaleUpwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
+int Screen::drawShapeMarginScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt) {
 	_dsTmpWidth -= cnt;
 	bool found = false;
 
@@ -1509,7 +1506,7 @@ int Screen::drawShapeMarginScaleUpwind(const uint8 *&dst, const uint8 *&src, int
 	return res;
 }
 
-int Screen::drawShapeMarginScaleDownwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
+int Screen::drawShapeMarginScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt) {
 	_dsTmpWidth -= cnt;
 	bool found = false;
 
@@ -1538,7 +1535,7 @@ int Screen::drawShapeMarginScaleDownwind(const uint8 *&dst, const uint8 *&src, i
 	return res;
 }
 
-int Screen::drawShapeSkipScaleUpwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
+int Screen::drawShapeSkipScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt) {
 	cnt = _dsTmpWidth;
 
 	if (cnt <= 0)
@@ -1553,7 +1550,7 @@ int Screen::drawShapeSkipScaleUpwind(const uint8 *&dst, const uint8 *&src, int &
 	return 0;
 }
 
-int Screen::drawShapeSkipScaleDownwind(const uint8 *&dst, const uint8 *&src, int &cnt) {
+int Screen::drawShapeSkipScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt) {
 	cnt = _dsTmpWidth;
 	bool found = false;
 
