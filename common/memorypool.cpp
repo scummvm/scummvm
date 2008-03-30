@@ -1,5 +1,30 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
 #include "common/memorypool.h"
-#include <algorithm>
+#include "common/util.h"
 
 namespace Common
 {
@@ -23,7 +48,7 @@ void* MemoryPool::allocPage() {
 
 MemoryPool::MemoryPool(size_t chunkSize) {
    // You must at least fit the pointer in the node (technically unneeded considering the next rounding statement)
-  _chunkSize = std::max(chunkSize, sizeof(void*));
+  _chunkSize = MAX(chunkSize, sizeof(void*));
   // There might be an alignment problem on some platforms when trying to load a void* on a non natural boundary
   // so we round to the next sizeof(void*)
   _chunkSize = (_chunkSize + sizeof(void*) - 1) & (~(sizeof(void*) - 1));
@@ -92,7 +117,7 @@ void MemoryPool::freeUnusedPages() {
     }
   }
 
-  printf("%d freed pages\n", freedPagesCount); 
+  //printf("%d freed pages\n", freedPagesCount); 
 }
 
 }
