@@ -146,15 +146,19 @@ public:
 		return _str[idx];
 	}
 
-	char &operator [](int idx) {
-		assert(_str && idx >= 0 && idx < (int)_len);
-		return _str[idx];
-	}
-
+	/** Remove the last character from the string. */
 	void deleteLastChar();
+	
+	/** Remove the character at position p from the string. */
 	void deleteChar(uint32 p);
-	void clear();
+
+	/** Set character c at position p, replacing the previous character there. */
+	void setChar(char c, uint32 p);
+
+	/** Set character c at position p. */
 	void insertChar(char c, uint32 p);
+
+	void clear();
 
 	void toLowercase();
 	void toUppercase();

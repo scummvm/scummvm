@@ -254,6 +254,13 @@ void String::clear() {
 	_storage[0] = 0;
 }
 
+void String::setChar(char c, uint32 p) {
+	assert(p <= _len);
+
+	ensureCapacity(_len, true);
+	_str[p] = c;
+}
+
 void String::insertChar(char c, uint32 p) {
 	assert(p <= _len);
 

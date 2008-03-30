@@ -146,54 +146,53 @@ static StringMap *_filesMap;
 
 static FILE *fopenNoCase(const String &filename, const String &directory, const char *mode) {
 	FILE *file;
-	String buf(directory);
-	uint i;
+	String dirBuf(directory);
+	String fileBuf(filename);
 
 #if !defined(__GP32__) && !defined(PALMOS_MODE)
 	// Add a trailing slash, if necessary.
-	if (!buf.empty()) {
-		const char c = buf.lastChar();
+	if (!dirBuf.empty()) {
+		const char c = dirBuf.lastChar();
 		if (c != ':' && c != '/' && c != '\\')
-			buf += '/';
+			dirBuf += '/';
 	}
 #endif
 
 	// Append the filename to the path string
-	const int offsetToFileName = buf.size();
-	buf += filename;
+	String pathBuf(dirBuf);
+	pathBuf += fileBuf;
 
 	//
 	// Try to open the file normally
 	//
-	file = fopen(buf.c_str(), mode);
+	file = fopen(pathBuf.c_str(), mode);
 
 	//
 	// Try again, with file name converted to upper case
 	//
 	if (!file) {
-		for (i = offsetToFileName; i < buf.size(); ++i) {
-			buf[i] = toupper(buf[i]);
-		}
-		file = fopen(buf.c_str(), mode);
+		fileBuf.toUppercase();
+		pathBuf += fileBuf;
+		file = fopen(pathBuf.c_str(), mode);
 	}
 
 	//
 	// Try again, with file name converted to lower case
 	//
 	if (!file) {
-		for (i = offsetToFileName; i < buf.size(); ++i) {
-			buf[i] = tolower(buf[i]);
-		}
-		file = fopen(buf.c_str(), mode);
+		fileBuf.toLowercase();
+		pathBuf += fileBuf;
+		file = fopen(pathBuf.c_str(), mode);
 	}
 
 	//
 	// Try again, with file name capitalized
 	//
 	if (!file) {
-		i = offsetToFileName;
-		buf[i] = toupper(buf[i]);
-		file = fopen(buf.c_str(), mode);
+		fileBuf.toLowercase();
+		fileBuf.setChar(toupper(fileBuf[0]),0);
+		pathBuf += fileBuf;
+		file = fopen(pathBuf.c_str(), mode);
 	}
 
 #ifdef __amigaos4__

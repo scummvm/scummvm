@@ -430,7 +430,7 @@ bool AgiEngine::predictiveDialog(void) {
 							else
 								repeatcount[x - 1] = (repeatcount[x - 1] + 1) % 3;
 							if (_currentCode.lastChar() >= '1')
-								_currentWord[x - 1] = buttons[_currentCode[x - 1] - '1'][3 + repeatcount[x - 1]];
+								_currentWord.setChar(buttons[_currentCode[x - 1] - '1'][3 + repeatcount[x - 1]], x-1);
 						}
 					}
 				} else if (active == 10) { // add
