@@ -29,11 +29,9 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 
-namespace Common
-{
+namespace Common {
 
-class MemoryPool
-{
+class MemoryPool {
 private:
 	MemoryPool(const MemoryPool&);
 	MemoryPool& operator=(const MemoryPool&);
@@ -54,6 +52,6 @@ public:
 	void	freeUnusedPages();
 };
 
-}
+}	// End of namespace Common
 
 #endif

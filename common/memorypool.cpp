@@ -26,8 +26,7 @@
 #include "common/memorypool.h"
 #include "common/util.h"
 
-namespace Common
-{
+namespace Common {
 
 static const size_t CHUNK_PAGE_SIZE = 32;
 
@@ -35,7 +34,7 @@ void* MemoryPool::allocPage() {
 	void* result = ::malloc(CHUNK_PAGE_SIZE * _chunkSize);
 	_pages.push_back(result);
 	void* current = result;
-	for(size_t i=1; i<CHUNK_PAGE_SIZE; ++i) {
+	for (size_t i = 1; i < CHUNK_PAGE_SIZE; ++i) {
 		void* next    = ((char*)current + _chunkSize);
 		*(void**)current = next;
 
@@ -56,13 +55,13 @@ MemoryPool::MemoryPool(size_t chunkSize) {
 }
 
 MemoryPool::~MemoryPool() {
-	for(size_t i=0; i<_pages.size(); ++i)
+	for (size_t i = 0; i<_pages.size(); ++i)
 	::free(_pages[i]);
 }
 
 void* MemoryPool::malloc() {
 #if 1
-	if(!_next)
+	if (!_next)
 		_next = allocPage();
 
 	void* result = _next;
@@ -91,15 +90,15 @@ void MemoryPool::freeUnusedPages() {
 	//std::sort(_pages.begin(), _pages.end());
 	Array<size_t> numberOfFreeChunksPerPage;
 	numberOfFreeChunksPerPage.resize(_pages.size());
-	for(size_t i=0; i<numberOfFreeChunksPerPage.size(); ++i) {
+	for (size_t i = 0; i < numberOfFreeChunksPerPage.size(); ++i) {
 		numberOfFreeChunksPerPage[i] = 0;
 	}
 
 	void* iterator = _next;
-	while(iterator) {
+	while (iterator) {
 		// This should be a binary search
-		for(size_t i=0; i<_pages.size(); ++i) {
-			if(isPointerInPage(iterator, _pages[i])) {
+		for (size_t i = 0; i < _pages.size(); ++i) {
+			if (isPointerInPage(iterator, _pages[i])) {
 				++numberOfFreeChunksPerPage[i];
 				break;
 			}
@@ -108,8 +107,8 @@ void MemoryPool::freeUnusedPages() {
 	}
 
 	size_t freedPagesCount = 0;
-	for(size_t i=0; i<_pages.size(); ++i) {
-		if(numberOfFreeChunksPerPage[i] == CHUNK_PAGE_SIZE) {
+	for (size_t i = 0; i < _pages.size(); ++i) {
+		if (numberOfFreeChunksPerPage[i] == CHUNK_PAGE_SIZE) {
 			::free(_pages[i]);
 			_pages[i] = NULL; // TODO : Remove NULL values
 			++freedPagesCount;
@@ -119,4 +118,4 @@ void MemoryPool::freeUnusedPages() {
 	//printf("%d freed pages\n", freedPagesCount); 
 }
 
-}
+}	// End of namespace Common
