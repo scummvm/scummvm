@@ -51,6 +51,16 @@ private:
 	T *_ptr;
 };
 
+template<class T, class D>
+class SharedPtrDeletionDeleterImpl : public SharedPtrDeletionInternal {
+public:
+	SharedPtrDeletionDeleterImpl(T *ptr, D d) : _ptr(ptr), _deleter(d) {}
+	~SharedPtrDeletionDeleterImpl() { _deleter(_ptr); }
+private:
+	T *_ptr;
+	D _deleter;
+};
+
 /**
  * A simple shared pointer implementation modelled after boost.
  *
@@ -72,10 +82,9 @@ private:
  * ->, which does the same as the -> operator on a normal pointer.
  *
  * Be sure you are using new to initialize the pointer you want to manage.
- * Pointers pointing to memory not allocated by new, will cause undefined
- * behavior on deletion. That is for example the case on pointers created
- * with malloc (or similar) and new[]. This prevents the use of SharedPtr
- * for arrays!
+ * If you do not use new for allocating, you have to supply a deleter as
+ * second parameter when creating a SharedPtr object. The deleter has to
+ * implement operator() which takes the pointer it should free as argument.
  *
  * Note that you have to specify the type itself not the pointer type as
  * template parameter.
@@ -105,6 +114,7 @@ public:
 
 	SharedPtr() : _refCount(0), _deletion(0), _pointer(0) {}
 	template<class T2> explicit SharedPtr(T2 *p) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionImpl<T2>(p)), _pointer(p) {}
+	template<class T2, class D> SharedPtr(T2 *p, D d) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionDeleterImpl<T2, D>(p, d)), _pointer(p) {}
 
 	SharedPtr(const SharedPtr &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
 	template<class T2> SharedPtr(const SharedPtr<T2> &r) : _refCount(r._refCount), _deletion(r._deletion), _pointer(r._pointer) { if (_refCount) ++(*_refCount); }
