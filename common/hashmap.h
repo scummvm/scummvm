@@ -58,6 +58,12 @@
 #include "common/str.h"
 #include "common/util.h"
 
+#define USE_HASHMAP_MEMORY_POOL
+#ifdef USE_HASHMAP_MEMORY_POOL
+#include "common/memorypool.h"
+#include <new>
+#endif
+
 namespace Common {
 
 // The table sizes ideally are primes. We use a helper function to find
@@ -69,6 +75,7 @@ uint nextTableSize(uint x);
 // code produces (many collisions indicate either a bad hash function, or a
 // hash table that is too small).
 //#define DEBUG_HASH_COLLISIONS
+
 
 /**
  * HashMap<Key,Val> maps objects of type Key to objects of type Val.
@@ -98,13 +105,28 @@ public:
 		Node(const Key &key) : _key(key), _value() {}
 	};
 
+
+#ifdef USE_HASHMAP_MEMORY_POOL
+        MemoryPool _nodePool;
+
 	Node *allocNode(const Key& key) {
+	  void* mem = _nodePool.malloc();
+	  return new (mem) Node(key);
+	} 
+
+	void freeNode(Node* node) {
+	  node->~Node();
+	  _nodePool.free(node);
+	}
+#else
+        Node* allocNode(const Key& key) {
 		return new Node(key);
 	} 
 
 	void freeNode(Node *node) {
 		delete node;
 	}
+#endif
 
 	Node **_arr;	// hashtable of size arrsize.
 	uint _arrsize, _nele;
@@ -328,8 +350,11 @@ public:
  * Base constructor, creates an empty hashmap.
  */
 template <class Key, class Val, class HashFunc, class EqualFunc>
-HashMap<Key, Val, HashFunc, EqualFunc>::HashMap()
-	: _defaultVal() {
+HashMap<Key, Val, HashFunc, EqualFunc>::HashMap() :
+#ifdef USE_HASHMAP_MEMORY_POOL
+ _nodePool(sizeof(Node)),
+#endif
+ _defaultVal() {
 	_arrsize = nextTableSize(0);
 	_arr = new Node *[_arrsize];
 	assert(_arr != NULL);
@@ -349,8 +374,11 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap()
  * to heap buffers for the internal storage.
  */
 template <class Key, class Val, class HashFunc, class EqualFunc>
-HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t& map)
-	: _defaultVal()  {
+HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t& map) : 
+#ifdef USE_HASHMAP_MEMORY_POOL
+ _nodePool(sizeof(Node)),
+#endif
+         _defaultVal()  {
 	assign(map);
 }
 

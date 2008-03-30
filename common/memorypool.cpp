@@ -33,7 +33,7 @@ MemoryPool::MemoryPool(size_t chunkSize) {
 
 MemoryPool::~MemoryPool() {
   for(size_t i=0; i<_pages.size(); ++i)
-    free(_pages[i]);
+    ::free(_pages[i]);
 }
 
 void* MemoryPool::malloc() {
@@ -83,12 +83,16 @@ void MemoryPool::freeUnusedPages() {
     iterator = *(void**)iterator;
   }
 
+  size_t freedPagesCount = 0;
   for(size_t i=0; i<_pages.size(); ++i) {
     if(numberOfFreeChunksPerPage[i] == CHUNK_PAGE_SIZE) {
-      free(_pages[i]);
+      ::free(_pages[i]);
       _pages[i] = NULL; // TODO : Remove NULL values
+      ++freedPagesCount;
     }
   }
+
+  printf("%d freed pages\n", freedPagesCount); 
 }
 
 }
