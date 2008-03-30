@@ -98,13 +98,11 @@ public:
 		Node(const Key &key) : _key(key), _value() {}
 	};
 
-	Node* allocNode(const Key& key)
-	{
+	Node* allocNode(const Key& key) {
 		return new Node(key);
 	} 
 
-	void freeNode(Node* node)
-	{
+	void freeNode(Node* node) {
 		delete node;
 	}
 
