@@ -100,7 +100,7 @@ public:
 	String(const char *str, uint32 len = 0);
 	String(const String &str);
 	String(char c);
-	virtual ~String();
+	~String();
 
 	String &operator  =(const char *str);
 	String &operator  =(const String &str);
