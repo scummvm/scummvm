@@ -539,9 +539,7 @@ void Screen::copyRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPag
 		h = SCREEN_H - y2;
 	}
 
-	assert(x1 + w <= SCREEN_W && y1 + h <= SCREEN_H);
 	const uint8 *src = getPagePtr(srcPage) + y1 * SCREEN_W + x1;
-	assert(x2 + w <= SCREEN_W && y2 + h <= SCREEN_H);
 	uint8 *dst = getPagePtr(dstPage) + y2 * SCREEN_W + x2;
 
 	if (dstPage == 0 || dstPage == 1)
