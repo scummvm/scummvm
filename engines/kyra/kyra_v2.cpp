@@ -269,7 +269,8 @@ int KyraEngine_v2::go() {
 
 	if (_menuChoice & 1) {
 		startup();
-		runLoop();
+		if (!quit())
+			runLoop();
 		cleanup();
 		
 		if (_showCredits)
