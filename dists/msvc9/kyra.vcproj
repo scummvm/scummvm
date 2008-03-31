@@ -206,6 +206,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\gui_v2.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\items_v1.cpp"
 			>
 		</File>
