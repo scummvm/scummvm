@@ -345,6 +345,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\memorypool.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\memorypool.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\mutex.cpp"
 				>
 			</File>
