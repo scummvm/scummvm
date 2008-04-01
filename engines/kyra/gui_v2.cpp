@@ -923,7 +923,7 @@ void KyraEngine_v2::loadBookBkgd() {
 			break;
 
 		case 2:
-			filename[2] = 'G';
+			filename[1] = 'G';
 			break;
 
 		default:
