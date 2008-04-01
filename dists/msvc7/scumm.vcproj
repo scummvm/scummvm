@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding = "windows-1252"?>
+<?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
@@ -15,8 +15,7 @@
 			OutputDirectory="scumm_Debug"
 			IntermediateDirectory="scumm_Debug"
 			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="FALSE">
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -98,8 +97,10 @@
 	</Configurations>
 	<Files>
 		<Filter
-			Name="smush"
-			Filter="">
+			Name="smush">
+			<File
+				RelativePath="..\..\engines\scumm\smush\channel.cpp">
+			</File>
 			<File
 				RelativePath="..\..\engines\scumm\smush\channel.h">
 			</File>
@@ -153,8 +154,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="imuse_digi"
-			Filter="">
+			Name="imuse_digi">
 			<File
 				RelativePath="..\..\engines\scumm\imuse_digi\dimuse.cpp">
 			</File>
@@ -186,12 +186,17 @@
 				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.cpp">
 			</File>
 			<File
+				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.h">
 			</File>
 		</Filter>
 		<Filter
-			Name="insane"
-			Filter="">
+			Name="insane">
 			<File
 				RelativePath="..\..\engines\scumm\insane\insane.cpp">
 			</File>
@@ -212,8 +217,19 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="he"
-			Filter="">
+			Name="he">
+			<File
+				RelativePath="..\..\engines\scumm\he\animation_he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\animation_he.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\cup_player_he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\cup_player_he.h">
+			</File>
 			<File
 				RelativePath="..\..\engines\scumm\he\floodfill_he.cpp">
 			</File>
@@ -248,6 +264,9 @@
 				RelativePath="..\..\engines\scumm\he\script_v70he.cpp">
 			</File>
 			<File
+				RelativePath="..\..\engines\scumm\he\script_v71he.cpp">
+			</File>
+			<File
 				RelativePath="..\..\engines\scumm\he\script_v72he.cpp">
 			</File>
 			<File
@@ -258,6 +277,9 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\scumm\he\sound_he.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\he\sound_he.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\scumm\he\sprite_he.cpp">
@@ -273,8 +295,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="imuse"
-			Filter="">
+			Name="imuse">
 			<File
 				RelativePath="..\..\engines\scumm\imuse\imuse.cpp">
 			</File>
@@ -295,6 +316,15 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\scumm\imuse\instrument.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\sysex.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\sysex_samnmax.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\sysex_scumm.cpp">
 			</File>
 		</Filter>
 		<File
@@ -331,6 +361,9 @@
 			RelativePath="..\..\engines\scumm\camera.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\charset-fontdata.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\charset.cpp">
 		</File>
 		<File
@@ -352,6 +385,15 @@
 			RelativePath="..\..\engines\scumm\debugger.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\scumm\detection.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\detection.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\detection_tables.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\scumm\dialogs.cpp">
 		</File>
 		<File
@@ -362,6 +404,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\file.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\file_nes.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\scumm\file_nes.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\gfx.cpp">
@@ -442,12 +490,6 @@
 			RelativePath="..\..\engines\scumm\player_v3a.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\scumm\plugin.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\plugin.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\scumm\resource.cpp">
 		</File>
 		<File
@@ -478,7 +520,7 @@
 			RelativePath="..\..\engines\scumm\script.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\scumm\script_c64.cpp">
+			RelativePath="..\..\engines\scumm\script_v0.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\script_v2.cpp">

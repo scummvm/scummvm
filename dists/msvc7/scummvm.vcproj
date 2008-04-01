@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding = "windows-1252"?>
+<?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
@@ -21,7 +21,7 @@
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
 				Optimization="0"
 				AdditionalIncludeDirectories="../..;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU;DISABLE_LURE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU"
 				MinimalRebuild="TRUE"
 				ExceptionHandling="TRUE"
 				BasicRuntimeChecks="3"
@@ -38,13 +38,14 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib kyra_debug/kyra.lib cine_debug/cine.lib lure_debug/lure.lib gob_debug/gob.lib queen_debug/queen.lib saga_debug/saga.lib scumm_debug/scumm.lib agos_debug/agos.lib sky_debug/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib sword1_debug/sword1.lib sword2_debug/sword2.lib lure_debug/lure.lib cine_debug/cine.lib cruise_debug/cruise.lib igor_debug/igor.lib kyra_debug/kyra.lib gob_debug/gob.lib queen_debug/queen.lib saga_debug/saga.lib agi_debug/agi.lib scumm_debug/scumm.lib agos_debug/agos.lib drascula_debug/drascula.lib sky_debug/sky.lib parallaction_debug/parallaction.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="2"
-				IgnoreDefaultLibraryNames="libcmtd.lib"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/scummvm.pdb"
 				SubSystem="1"
+				EntryPointSymbol="WinMainCRTStartup"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -58,8 +59,6 @@
 				Name="VCResourceCompilerTool"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -75,13 +74,14 @@
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
 				AdditionalIncludeDirectories="../..;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_NASM;USE_MT32EMU;DISABLE_LURE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2;USE_MT32EMU"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
 				ExceptionHandling="TRUE"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
+				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
@@ -91,15 +91,16 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib sdl.lib zdll.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib saga_release/saga.lib sword1_release/sword1.lib sword2_release/sword2.lib kyra_release/kyra.lib cine_release/cine.lib lure_release/lure.lib gob_release/gob.lib queen_release/queen.lib scumm_release/scumm.lib agos_release/agos.lib sky_release/sky.lib"
+				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib libmpeg2.lib saga_release/saga.lib agi_release/agi.lib sword1_release/sword1.lib sword2_release/sword2.lib lure_release/lure.lib cine_release/cine.lib cruise_release/cruise.lib igor_release/igor.lib kyra_release/kyra.lib gob_release/gob.lib queen_release/queen.lib scumm_release/scumm.lib agos_release/agos.lib sky_release/sky.lib drascula_release/drascula.lib parallaction_release/parallaction.lib"
 				OutputFile="$(OutDir)/scummvm.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="FALSE"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				EntryPointSymbol="WinMainCRTStartup"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -113,28 +114,31 @@
 				Name="VCResourceCompilerTool"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
 		</Configuration>
 	</Configurations>
 	<Files>
 		<Filter
-			Name="base"
-			Filter="">
+			Name="base">
 			<File
-				RelativePath="..\..\base\engine.cpp">
+				RelativePath="..\..\base\commandLine.cpp">
 			</File>
 			<File
-				RelativePath="..\..\base\engine.h">
+				RelativePath="..\..\base\commandLine.h">
 			</File>
 			<File
-				RelativePath="..\..\base\options.cpp">
+				RelativePath="..\..\base\game.cpp">
 			</File>
 			<File
-				RelativePath="..\..\base\options.h">
+				RelativePath="..\..\base\game.h">
+			</File>
+			<File
+				RelativePath="..\..\base\internal_version.h">
 			</File>
 			<File
 				RelativePath="..\..\base\main.cpp">
+			</File>
+			<File
+				RelativePath="..\..\base\main.h">
 			</File>
 			<File
 				RelativePath="..\..\base\plugins.cpp">
@@ -143,12 +147,23 @@
 				RelativePath="..\..\base\plugins.h">
 			</File>
 			<File
+				RelativePath="..\..\base\version.cpp">
+			</File>
+			<File
 				RelativePath="..\..\base\version.h">
 			</File>
 		</Filter>
 		<Filter
-			Name="common"
-			Filter="">
+			Name="common">
+			<File
+				RelativePath="..\..\common\advancedDetector.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\advancedDetector.h">
+			</File>
+			<File
+				RelativePath="..\..\common\algorithm.h">
+			</File>
 			<File
 				RelativePath="..\..\common\array.h">
 			</File>
@@ -165,10 +180,13 @@
 				RelativePath="..\..\common\config-manager.h">
 			</File>
 			<File
-				RelativePath="..\..\common\debugger.cpp">
+				RelativePath="..\..\common\endian.h">
 			</File>
 			<File
-				RelativePath="..\..\common\debugger.h">
+				RelativePath="..\..\common\error.h">
+			</File>
+			<File
+				RelativePath="..\..\common\events.h">
 			</File>
 			<File
 				RelativePath="..\..\common\file.cpp">
@@ -177,10 +195,34 @@
 				RelativePath="..\..\common\file.h">
 			</File>
 			<File
-				RelativePath="..\..\common\list.h">
+				RelativePath="..\..\common\frac.h">
 			</File>
 			<File
-				RelativePath="..\..\common\map.h">
+				RelativePath="..\..\common\fs.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\fs.h">
+			</File>
+			<File
+				RelativePath="..\..\common\func.h">
+			</File>
+			<File
+				RelativePath="..\..\common\hash-str.h">
+			</File>
+			<File
+				RelativePath="..\..\common\hashmap.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\hashmap.h">
+			</File>
+			<File
+				RelativePath="..\..\common\iff_container.h">
+			</File>
+			<File
+				RelativePath="..\..\common\keyboard.h">
+			</File>
+			<File
+				RelativePath="..\..\common\list.h">
 			</File>
 			<File
 				RelativePath="..\..\common\md5.cpp">
@@ -189,16 +231,31 @@
 				RelativePath="..\..\common\md5.h">
 			</File>
 			<File
+				RelativePath="..\..\common\memorypool.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\memorypool.h">
+			</File>
+			<File
 				RelativePath="..\..\common\mutex.cpp">
 			</File>
 			<File
 				RelativePath="..\..\common\mutex.h">
 			</File>
 			<File
-				RelativePath="..\..\common\rect.h">
+				RelativePath="..\..\common\noncopyable.h">
 			</File>
 			<File
-				RelativePath="..\..\common\savefile.cpp">
+				RelativePath="..\..\common\pack-end.h">
+			</File>
+			<File
+				RelativePath="..\..\common\pack-start.h">
+			</File>
+			<File
+				RelativePath="..\..\common\ptr.h">
+			</File>
+			<File
+				RelativePath="..\..\common\rect.h">
 			</File>
 			<File
 				RelativePath="..\..\common\savefile.h">
@@ -231,9 +288,6 @@
 				RelativePath="..\..\common\system.h">
 			</File>
 			<File
-				RelativePath="..\..\common\timer.cpp">
-			</File>
-			<File
 				RelativePath="..\..\common\timer.h">
 			</File>
 			<File
@@ -248,15 +302,26 @@
 			<File
 				RelativePath="..\..\common\util.h">
 			</File>
+			<File
+				RelativePath="..\..\common\zlib.cpp">
+			</File>
+			<File
+				RelativePath="..\..\common\zlib.h">
+			</File>
 		</Filter>
 		<Filter
-			Name="sound"
-			Filter="">
+			Name="sound">
 			<File
 				RelativePath="..\..\sound\adpcm.cpp">
 			</File>
 			<File
 				RelativePath="..\..\sound\adpcm.h">
+			</File>
+			<File
+				RelativePath="..\..\sound\aiff.cpp">
+			</File>
+			<File
+				RelativePath="..\..\sound\aiff.h">
 			</File>
 			<File
 				RelativePath="..\..\sound\audiocd.cpp">
@@ -281,6 +346,26 @@
 			</File>
 			<File
 				RelativePath="..\..\sound\fmopl.h">
+			</File>
+			<File
+				RelativePath="..\..\sound\iff.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\sound\iff.h">
 			</File>
 			<File
 				RelativePath="..\..\sound\mididrv.cpp">
@@ -346,10 +431,23 @@
 				RelativePath="..\..\sound\wave.h">
 			</File>
 			<Filter
-				Name="softsynth"
-				Filter="">
+				Name="softhsynth">
 				<File
 					RelativePath="..\..\sound\softsynth\adlib.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\sound\softsynth\emumidi.h">
@@ -359,13 +457,49 @@
 				</File>
 				<File
 					RelativePath="..\..\sound\softsynth\mt32.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\pcspk.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\pcspk.h">
 				</File>
 				<File
 					RelativePath="..\..\sound\softsynth\ym2612.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)/$(InputName)1.xdc"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\sound\softsynth\ym2612.h">
 				</File>
 				<Filter
-					Name="mt32"
-					Filter="">
+					Name="mt32">
 					<File
 						RelativePath="..\..\sound\softsynth\mt32\freeverb.cpp">
 					</File>
@@ -422,10 +556,48 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="mods">
+				<File
+					RelativePath="..\..\sound\mods\infogrames.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\infogrames.h">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\module.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\module.h">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\paula.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\paula.h">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\protracker.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\protracker.h">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\rjp1.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\rjp1.h">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\soundfx.cpp">
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\soundfx.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
-			Name="txt"
-			Filter="">
+			Name="txt">
 			<File
 				RelativePath="..\..\COPYING">
 			</File>
@@ -450,84 +622,108 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="backends"
-			Filter="">
+			Name="backends">
 			<File
 				RelativePath="..\..\backends\intern.h">
 			</File>
 			<Filter
-				Name="sdl"
-				Filter="">
+				Name="sdl">
 				<File
-					RelativePath="..\..\backends\sdl\events.cpp">
+					RelativePath="..\..\backends\platform\sdl\events.cpp">
 				</File>
 				<File
-					RelativePath="..\..\backends\sdl\graphics.cpp">
+					RelativePath="..\..\backends\platform\sdl\graphics.cpp">
 				</File>
 				<File
-					RelativePath="..\..\backends\sdl\sdl-common.h">
+					RelativePath="..\..\backends\platform\sdl\main.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\backends\sdl\sdl.cpp">
+					RelativePath="..\..\backends\platform\sdl\sdl.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\platform\sdl\sdl.h">
 				</File>
 			</Filter>
 			<Filter
-				Name="fs"
-				Filter="">
+				Name="fs">
 				<File
-					RelativePath="..\..\backends\fs\fs.cpp">
+					RelativePath="..\..\backends\fs\abstract-fs.h">
 				</File>
 				<File
-					RelativePath="..\..\backends\fs\fs.h">
+					RelativePath="..\..\backends\fs\fs-factory.h">
 				</File>
-				<File
-					RelativePath="..\..\backends\fs\windows\windows-fs.cpp">
-				</File>
+				<Filter
+					Name="windows">
+					<File
+						RelativePath="..\..\backends\fs\windows\windows-fs-factory.cpp">
+					</File>
+					<File
+						RelativePath="..\..\backends\fs\windows\windows-fs-factory.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
-				Name="midi"
-				Filter="">
+				Name="midi">
 				<File
 					RelativePath="..\..\backends\midi\windows.cpp">
 				</File>
 			</Filter>
+			<Filter
+				Name="timer">
+				<File
+					RelativePath="..\..\backends\timer\default\default-timer.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\timer\default\default-timer.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="saves">
+				<File
+					RelativePath="..\..\backends\saves\compressed\compressed-saves.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\saves\compressed\compressed-saves.h">
+				</File>
+				<File
+					RelativePath="..\..\backends\saves\default\default-saves.cpp">
+				</File>
+				<File
+					RelativePath="..\..\backends\saves\default\default-saves.h">
+				</File>
+				<File
+					RelativePath="..\..\backends\saves\savefile.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="events">
+				<Filter
+					Name="default">
+					<File
+						RelativePath="..\..\backends\events\default\default-events.cpp">
+					</File>
+					<File
+						RelativePath="..\..\backends\events\default\default-events.h">
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
-			Name="gui"
-			Filter="">
-			<File
-				RelativePath="..\..\gui\EditTextWidget.cpp">
-			</File>
-			<File
-				RelativePath="..\..\gui\EditTextWidget.h">
-			</File>
-			<File
-				RelativePath="..\..\gui\ListWidget.cpp">
-			</File>
-			<File
-				RelativePath="..\..\gui\ListWidget.h">
-			</File>
-			<File
-				RelativePath="..\..\gui\PopUpWidget.cpp">
-			</File>
-			<File
-				RelativePath="..\..\gui\PopUpWidget.h">
-			</File>
-			<File
-				RelativePath="..\..\gui\ScrollBarWidget.cpp">
-			</File>
-			<File
-				RelativePath="..\..\gui\ScrollBarWidget.h">
-			</File>
-			<File
-				RelativePath="..\..\gui\TabWidget.cpp">
-			</File>
-			<File
-				RelativePath="..\..\gui\TabWidget.h">
-			</File>
-			<File
-				RelativePath="..\..\gui\ThemeNew.cpp">
-			</File>
+			Name="gui">
 			<File
 				RelativePath="..\..\gui\about.cpp">
 			</File>
@@ -556,6 +752,12 @@
 				RelativePath="..\..\gui\credits.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\debugger.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\debugger.h">
+			</File>
+			<File
 				RelativePath="..\..\gui\dialog.cpp">
 			</File>
 			<File
@@ -568,10 +770,40 @@
 				RelativePath="..\..\gui\editable.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\EditTextWidget.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\EditTextWidget.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\eval.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\eval.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\Key.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\Key.h">
+			</File>
+			<File
 				RelativePath="..\..\gui\launcher.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\launcher.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\ListWidget.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\ListWidget.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\massadd.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\massadd.h">
 			</File>
 			<File
 				RelativePath="..\..\gui\message.cpp">
@@ -598,10 +830,43 @@
 				RelativePath="..\..\gui\options.h">
 			</File>
 			<File
+				RelativePath="..\..\gui\PopUpWidget.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\PopUpWidget.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\ScrollBarWidget.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\ScrollBarWidget.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\TabWidget.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\TabWidget.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\theme-config.cpp">
+			</File>
+			<File
 				RelativePath="..\..\gui\theme.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\theme.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\themebrowser.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\themebrowser.h">
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeClassic.cpp">
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeModern.cpp">
 			</File>
 			<File
 				RelativePath="..\..\gui\widget.cpp">
@@ -611,13 +876,21 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="graphics"
-			Filter="">
+			Name="graphics">
 			<File
-				RelativePath="..\..\graphics\animation.cpp">
+				RelativePath="..\..\graphics\colormasks.h">
 			</File>
 			<File
-				RelativePath="..\..\graphics\animation.h">
+				RelativePath="..\..\graphics\cursorman.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\cursorman.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\dxa_player.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\dxa_player.h">
 			</File>
 			<File
 				RelativePath="..\..\graphics\font.cpp">
@@ -632,10 +905,10 @@
 				RelativePath="..\..\graphics\fontman.h">
 			</File>
 			<File
-				RelativePath="..\..\graphics\ilbm.cpp">
+				RelativePath="..\..\graphics\iff.cpp">
 			</File>
 			<File
-				RelativePath="..\..\graphics\ilbm.h">
+				RelativePath="..\..\graphics\iff.h">
 			</File>
 			<File
 				RelativePath="..\..\graphics\imagedec.cpp">
@@ -648,6 +921,12 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\imageman.h">
+			</File>
+			<File
+				RelativePath="..\..\graphics\mpeg_player.cpp">
+			</File>
+			<File
+				RelativePath="..\..\graphics\mpeg_player.h">
 			</File>
 			<File
 				RelativePath="..\..\graphics\primitives.cpp">
@@ -668,8 +947,7 @@
 				RelativePath="..\..\graphics\surface.h">
 			</File>
 			<Filter
-				Name="scaler"
-				Filter="">
+				Name="scaler">
 				<File
 					RelativePath="..\..\graphics\scaler\2xsai.cpp">
 				</File>
@@ -688,16 +966,14 @@
 						Name="Debug|Win32">
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -g -o $(OutDir)\$(InputName).obj $(InputPath)
-"
+							CommandLine="nasm.exe -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(OutDir)\$(InputName).obj"/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32">
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -o $(OutDir)\$(InputName).obj $(InputPath)
-"
+							CommandLine="nasm.exe  -f win32 -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(OutDir)\$(InputName).obj"/>
 					</FileConfiguration>
 				</File>
@@ -713,16 +989,14 @@
 						Name="Debug|Win32">
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -g -o $(OutDir)\$(InputName).obj $(InputPath)
-"
+							CommandLine="nasm.exe -f win32 -g -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(OutDir)\$(InputName).obj"/>
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Release|Win32">
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="nasm.exe -O1 -f win32 -o $(OutDir)\$(InputName).obj $(InputPath)
-"
+							CommandLine="nasm.exe -f win32 -o &quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 							Outputs="$(OutDir)\$(InputName).obj"/>
 					</FileConfiguration>
 				</File>
@@ -752,8 +1026,7 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="fonts"
-				Filter="">
+				Name="fonts">
 				<File
 					RelativePath="..\..\graphics\fonts\consolefont.cpp">
 				</File>
@@ -767,6 +1040,18 @@
 					RelativePath="..\..\graphics\fonts\scummfont.cpp">
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="engines">
+			<File
+				RelativePath="..\..\engines\engine.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\engine.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\metaengine.h">
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

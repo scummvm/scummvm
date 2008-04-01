@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding = "windows-1252"?>
+<?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
 	Name="gob"
-	ProjectGUID="{AA83E230-EC4A-44DF-896C-4472F20CE168}"
+	ProjectGUID="{976D947A-A45F-4437-991E-412F695C64C7}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -71,6 +71,7 @@
 				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
+				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
@@ -96,16 +97,16 @@
 	</Configurations>
 	<Files>
 		<File
-			RelativePath="..\..\engines\gob\anim.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\anim.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\gob\cdrom.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\cdrom.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\coktelvideo.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\coktelvideo.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\dataio.cpp">
@@ -114,10 +115,22 @@
 			RelativePath="..\..\engines\gob\dataio.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\detection.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\draw.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\draw.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\draw_bargon.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\draw_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\draw_v2.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\driver_vga.cpp">
@@ -130,6 +143,12 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\game.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\game_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\game_v2.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\global.cpp">
@@ -150,10 +169,28 @@
 			RelativePath="..\..\engines\gob\goblin.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\goblin_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\goblin_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\goblin_v3.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\init.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\init.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\init_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\init_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\init_v3.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\inter.cpp">
@@ -162,16 +199,34 @@
 			RelativePath="..\..\engines\gob\inter.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\inter_bargon.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\inter_v1.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\inter_v2.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\inter_v3.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\inter_v4.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\map.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\map.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\map_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\map_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\map_v4.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\mult.cpp">
@@ -192,12 +247,6 @@
 			RelativePath="..\..\engines\gob\music.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\pack.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\pack.h">
-		</File>
-		<File
 			RelativePath="..\..\engines\gob\palanim.cpp">
 		</File>
 		<File
@@ -216,22 +265,34 @@
 			RelativePath="..\..\engines\gob\parse_v2.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\saveload.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\saveload.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\saveload_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\saveload_v3.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\scenery.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\scenery.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\gob\scenery_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\scenery_v2.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\gob\sound.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\sound.h">
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\timer.cpp">
-		</File>
-		<File
-			RelativePath="..\..\engines\gob\timer.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\util.cpp">
@@ -244,6 +305,18 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\gob\video.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\video_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\video_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\videoplayer.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\gob\videoplayer.h">
 		</File>
 	</Files>
 	<Globals>

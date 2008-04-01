@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding = "windows-1252"?>
+<?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
@@ -71,6 +71,7 @@
 				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
+				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
@@ -163,6 +164,9 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\queen\logic.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\queen\midiadlib.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\queen\music.cpp">

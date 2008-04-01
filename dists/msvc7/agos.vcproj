@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding = "windows-1252"?>
+<?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
@@ -56,7 +56,6 @@
 			OutputDirectory="agos_Release"
 			IntermediateDirectory="agos_Release"
 			ConfigurationType="4"
-			ATLMinimizesCRunTimeLibraryUsage="TRUE"
 			CharacterSet="2"
 			WholeProgramOptimization="FALSE">
 			<Tool
@@ -72,6 +71,7 @@
 				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
+				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
@@ -97,7 +97,25 @@
 	</Configurations>
 	<Files>
 		<File
+			RelativePath="..\..\engines\agos\agos.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\agos.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\animation.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\animation.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\charset-fontdata.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\agos\charset.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\contain.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\cursor.cpp">
@@ -115,16 +133,34 @@
 			RelativePath="..\..\engines\agos\debugger.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\game.cpp">
+			RelativePath="..\..\engines\agos\detection.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\detection_tables.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\draw.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\event.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\gfx.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\icons.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\input.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\intern.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\items.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\menus.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\midi.cpp">
@@ -142,19 +178,52 @@
 			RelativePath="..\..\engines\agos\res.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\agos\res_ami.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\res_snd.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\rooms.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\agos\saveload.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\agos.cpp">
+			RelativePath="..\..\engines\agos\script.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\agos\agos.h">
+			RelativePath="..\..\engines\agos\script_e1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_e2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_ff.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_pp.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_s1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_s2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\script_ww.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\sound.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\sound.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\string.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\subroutine.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\verb.cpp">
@@ -164,6 +233,27 @@
 		</File>
 		<File
 			RelativePath="..\..\engines\agos\vga.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\vga_e2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\vga_ff.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\vga_s1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\vga_s2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\vga_ww.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\window.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\agos\zones.cpp">
 		</File>
 	</Files>
 	<Globals>

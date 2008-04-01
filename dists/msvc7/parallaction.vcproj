@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="sky"
-	ProjectGUID="{B5527758-2F51-4CCD-AAE1-B0E28654BD6A}"
+	Name="parallaction"
+	ProjectGUID="{0068957B-E2E1-4988-8C87-D541D84DAF20}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="sky_Debug"
-			IntermediateDirectory="sky_Debug"
+			OutputDirectory="parallaction_Debug"
+			IntermediateDirectory="parallaction_Debug"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sky.lib"/>
+				OutputFile="$(OutDir)/parallaction.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -53,8 +53,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="sky_Release"
-			IntermediateDirectory="sky_Release"
+			OutputDirectory="parallaction_Release"
+			IntermediateDirectory="parallaction_Release"
 			ConfigurationType="4"
 			CharacterSet="2"
 			WholeProgramOptimization="FALSE">
@@ -64,7 +64,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="../..;../../engines"
+				AdditionalIncludeDirectories="../../;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
@@ -80,7 +80,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sky.lib"/>
+				OutputFile="$(OutDir)/parallaction.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -96,137 +96,113 @@
 		</Configuration>
 	</Configurations>
 	<Files>
-		<Filter
-			Name="music">
-			<File
-				RelativePath="..\..\engines\sky\music\adlibchannel.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sky\music\adlibchannel.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sky\music\adlibmusic.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sky\music\adlibmusic.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sky\music\gmchannel.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sky\music\gmchannel.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sky\music\gmmusic.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sky\music\gmmusic.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sky\music\mt32music.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sky\music\mt32music.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\sky\music\musicbase.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\sky\music\musicbase.h">
-			</File>
-		</Filter>
 		<File
-			RelativePath="..\..\engines\sky\autoroute.cpp">
+			RelativePath="..\..\engines\parallaction\callables_br.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\autoroute.h">
+			RelativePath="..\..\engines\parallaction\callables_ns.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\compact.cpp">
+			RelativePath="..\..\engines\parallaction\debug.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\compact.h">
+			RelativePath="..\..\engines\parallaction\debug.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\control.cpp">
+			RelativePath="..\..\engines\parallaction\defs.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\control.h">
+			RelativePath="..\..\engines\parallaction\detection.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\debug.cpp">
+			RelativePath="..\..\engines\parallaction\dialogue.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\debug.h">
+			RelativePath="..\..\engines\parallaction\disk.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\disk.cpp">
+			RelativePath="..\..\engines\parallaction\disk_br.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\disk.h">
+			RelativePath="..\..\engines\parallaction\disk_ns.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\grid.cpp">
+			RelativePath="..\..\engines\parallaction\exec_br.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\grid.h">
+			RelativePath="..\..\engines\parallaction\exec_ns.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\hufftext.cpp">
+			RelativePath="..\..\engines\parallaction\font.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\intro.cpp">
+			RelativePath="..\..\engines\parallaction\gfxbase.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\intro.h">
+			RelativePath="..\..\engines\parallaction\graphics.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\logic.cpp">
+			RelativePath="..\..\engines\parallaction\graphics.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\logic.h">
+			RelativePath="..\..\engines\parallaction\gui_br.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\mouse.cpp">
+			RelativePath="..\..\engines\parallaction\gui_ns.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\mouse.h">
+			RelativePath="..\..\engines\parallaction\inventory.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\rnc_deco.cpp">
+			RelativePath="..\..\engines\parallaction\inventory.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\rnc_deco.h">
+			RelativePath="..\..\engines\parallaction\objects.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\screen.cpp">
+			RelativePath="..\..\engines\parallaction\objects.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\screen.h">
+			RelativePath="..\..\engines\parallaction\parallaction.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\sky.cpp">
+			RelativePath="..\..\engines\parallaction\parallaction.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\sky.h">
+			RelativePath="..\..\engines\parallaction\parallaction_br.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\skydefs.h">
+			RelativePath="..\..\engines\parallaction\parallaction_ns.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\sound.cpp">
+			RelativePath="..\..\engines\parallaction\parser.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\sound.h">
+			RelativePath="..\..\engines\parallaction\parser.h">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\struc.h">
+			RelativePath="..\..\engines\parallaction\parser_br.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\text.cpp">
+			RelativePath="..\..\engines\parallaction\parser_ns.cpp">
 		</File>
 		<File
-			RelativePath="..\..\engines\sky\text.h">
+			RelativePath="..\..\engines\parallaction\saveload.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\sound.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\sound.h">
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\staticres.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\walk.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\parallaction\walk.h">
 		</File>
 	</Files>
 	<Globals>
