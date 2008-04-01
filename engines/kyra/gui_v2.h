@@ -34,8 +34,8 @@
 	button.unk6 = b; \
 	button.unk8 = c; \
 	button.data0Val1 = d; \
-	button.data0Val2 = e; \
-	button.data0Val3 = f; \
+	button.data1Val1 = e; \
+	button.data2Val1 = f; \
 	button.flags = h; \
 	button.data0ShapePtr = button.data1ShapePtr = button.data2ShapePtr = 0; \
 	button.dimTableIndex = i; \
