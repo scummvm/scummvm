@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="cine"
-	ProjectGUID="{DC5BD27A-EC3A-4807-9908-0AC6C019BAE4}"
+	ProjectGUID="{1CA4AC50-5426-433A-8B5E-FFE39568098E}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -77,6 +77,7 @@
 				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
+				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"

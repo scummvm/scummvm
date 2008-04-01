@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="lure"
-	ProjectGUID="{04D6E063-ECA3-4D4E-BD19-BA5C9165A44A}"
+	ProjectGUID="{1A1CA028-61B5-4A6C-A918-F5D8721AB1AC}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -77,6 +77,7 @@
 				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
+				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"

@@ -15,8 +15,7 @@
 			OutputDirectory="scumm_Debug"
 			IntermediateDirectory="scumm_Debug"
 			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="FALSE">
+			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702"
@@ -112,8 +111,7 @@
 	</References>
 	<Files>
 		<Filter
-			Name="smush"
-			Filter="">
+			Name="smush">
 			<File
 				RelativePath="..\..\engines\scumm\smush\channel.cpp">
 			</File>
@@ -125,6 +123,9 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\scumm\smush\chunk.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\smush\chunk_type.h">
 			</File>
 			<File
 				RelativePath="..\..\engines\scumm\smush\codec1.cpp">
@@ -167,8 +168,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="imuse_digi"
-			Filter="">
+			Name="imuse_digi">
 			<File
 				RelativePath="..\..\engines\scumm\imuse_digi\dimuse.cpp">
 			</File>
@@ -200,12 +200,17 @@
 				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.cpp">
 			</File>
 			<File
+				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.h">
+			</File>
+			<File
 				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.h">
 			</File>
 		</Filter>
 		<Filter
-			Name="insane"
-			Filter="">
+			Name="insane">
 			<File
 				RelativePath="..\..\engines\scumm\insane\insane.cpp">
 			</File>
@@ -226,42 +231,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="imuse"
-			Filter="">
-			<File
-				RelativePath="..\..\engines\scumm\imuse\imuse.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\imuse.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\imuse_internal.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\imuse_part.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\imuse_player.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\instrument.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\instrument.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\sysex.h">
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\sysex_samnmax.cpp">
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\sysex_scumm.cpp">
-			</File>
-		</Filter>
-		<Filter
-			Name="he"
-			Filter="">
+			Name="he">
 			<File
 				RelativePath="..\..\engines\scumm\he\animation_he.cpp">
 			</File>
@@ -336,6 +306,39 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\scumm\he\wiz_he.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="imuse">
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse_internal.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse_part.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\imuse_player.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\instrument.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\instrument.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\sysex.h">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\sysex_samnmax.cpp">
+			</File>
+			<File
+				RelativePath="..\..\engines\scumm\imuse\sysex_scumm.cpp">
 			</File>
 		</Filter>
 		<File

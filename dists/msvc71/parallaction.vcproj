@@ -4,7 +4,6 @@
 	Version="7.10"
 	Name="parallaction"
 	ProjectGUID="{0068957B-E2E1-4988-8C87-D541D84DAF20}"
-	RootNamespace="parallaction"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -71,13 +70,14 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="TRUE"
-				AdditionalIncludeDirectories="../..;../../engines"
+				AdditionalIncludeDirectories="../../;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
 				StringPooling="TRUE"
 				ExceptionHandling="TRUE"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
+				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"

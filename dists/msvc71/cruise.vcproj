@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="Windows-1250"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="cruise"
-	ProjectGUID="{CD9AEE36-CEBD-40CE-A6B3-B71523AB8DEC}"
+	ProjectGUID="{8863B00B-059A-471E-876D-A955ECEFD0D2}"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform

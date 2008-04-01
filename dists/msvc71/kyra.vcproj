@@ -77,6 +77,7 @@
 				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
+				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
@@ -128,10 +129,22 @@
 			RelativePath="..\..\engines\kyra\detection.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\gui.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\gui.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\gui_v1.cpp">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\gui_v1.h">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\gui_v2.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\gui_v2.h">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\items_v1.cpp">
@@ -170,7 +183,13 @@
 			RelativePath="..\..\engines\kyra\resource.h">
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\saveload.cpp">
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\saveload_v1.cpp">
+		</File>
+		<File
+			RelativePath="..\..\engines\kyra\saveload_v2.cpp">
 		</File>
 		<File
 			RelativePath="..\..\engines\kyra\scene.cpp">

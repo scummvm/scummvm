@@ -111,8 +111,7 @@
 	</References>
 	<Files>
 		<Filter
-			Name="music"
-			Filter="">
+			Name="music">
 			<File
 				RelativePath="..\..\engines\sky\music\adlibchannel.cpp">
 			</File>

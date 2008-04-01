@@ -62,7 +62,6 @@
 			OutputDirectory="agos_Release"
 			IntermediateDirectory="agos_Release"
 			ConfigurationType="4"
-			ATLMinimizesCRunTimeLibraryUsage="TRUE"
 			CharacterSet="2"
 			WholeProgramOptimization="FALSE">
 			<Tool
@@ -78,6 +77,7 @@
 				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
+				DisableLanguageExtensions="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
