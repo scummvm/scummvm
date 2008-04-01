@@ -2004,6 +2004,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE_IF("serguei1", "v1.1 2002 Sep 5", "91975c1fb4b13b0f9a8e9ff74731030d", GF_AGIMOUSE|GF_AGIPAL),
 	FANMADE_IF("serguei1", "v1.1 2003 Apr 10", "91975c1fb4b13b0f9a8e9ff74731030d", GF_AGIMOUSE|GF_AGIPAL),
 	FANMADE_IF("serguei2", "v0.1.1 Demo", "906ccbc2ddedb29b63141acc6d10cd28", GF_AGIMOUSE),
+	FANMADE_IF("serguei2", "v1.3.1 Demo (March 22nd 2008)", "ad1308fcb8f48723cd388e012ebf5e20", GF_AGIMOUSE|GF_AGIPAL),
 	FANMADE("Shifty (v1.0)", "2a07984d27b938364bf6bd243ac75080"),
 	FANMADE_F("Sliding Tile Game (v1.00)", "949bfff5d8a81c3139152eed4d84ca75", GF_AGIMOUSE),
 	FANMADE("Snowboarding Demo (v1.0)", "24bb8f29f1eddb5c0a099705267c86e4"),
