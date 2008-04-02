@@ -36,6 +36,7 @@ class ListTestSuite : public CxxTest::TestSuite
 	{
 		Common::List<int> container;
 		Common::List<int>::iterator iter;
+		Common::List<int>::const_iterator cIter;
 
 		// Fill the container with some random data
 		container.push_back(17);
@@ -46,19 +47,34 @@ class ListTestSuite : public CxxTest::TestSuite
 		// the order we expect them to be.
 
 		iter = container.begin();
+		cIter = container.begin();
+
+		TS_ASSERT( iter == cIter );
 
 		TS_ASSERT( *iter == 17 );
 		++iter;
+		++cIter;
 		TS_ASSERT( iter != container.end() );
+		TS_ASSERT( cIter != container.end() );
+		TS_ASSERT( iter == cIter );
 
 		TS_ASSERT( *iter == 33 );
 		++iter;
+		++cIter;
 		TS_ASSERT( iter != container.end() );
+		TS_ASSERT( cIter != container.end() );
+		TS_ASSERT( iter == cIter );
 
 		// Also test the postinc
 		TS_ASSERT( *iter == -11 );
 		iter++;
+		cIter++;
 		TS_ASSERT( iter == container.end() );
+		TS_ASSERT( cIter == container.end() );
+		TS_ASSERT( iter == cIter );
+
+		cIter = iter;
+		TS_ASSERT( iter == cIter );
 	}
 
 	void test_insert( void )

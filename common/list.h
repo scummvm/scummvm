@@ -54,6 +54,7 @@ public:
 
 	template <class t_T2>
 	class Iterator {
+		//template<class T> friend class Iterator;
 		friend class List<t_T>;
 		NodeBase *_node;
 
@@ -65,6 +66,14 @@ public:
 
 	public:
 		Iterator() : _node(0) {}
+		template<class T>
+		Iterator(const Iterator<T> &c) : _node(c._node) {}
+
+		template<class T>
+		Iterator<t_T2> &operator =(const Iterator<T> &c) {
+			_node = c._node;
+			return *this;
+		}
 
 		// Prefix inc
 		Iterator<t_T2> &operator++() {
@@ -90,7 +99,7 @@ public:
 			--(*this);
 			return tmp;
 		}
-		t_T2& operator*() const {
+		t_T2 &operator*() const {
 			assert(_node);
 #if (__GNUC__ == 2) && (__GNUC_MINOR__ >= 95)
 			return static_cast<List<t_T>::Node<t_T2> *>(_node)->_data;
@@ -98,15 +107,17 @@ public:
 			return static_cast<Node<t_T2>*>(_node)->_data;
 #endif
 		}
-		t_T2* operator->() const {
+		t_T2 *operator->() const {
 			return &(operator*());
 		}
 
-		bool operator==(const Iterator<t_T2>& x) const {
+		template<class T>
+		bool operator==(const Iterator<T> &x) const {
 			return _node == x._node;
 		}
 
-		bool operator!=(const Iterator<t_T2>& x) const {
+		template<class T>
+		bool operator!=(const Iterator<T> &x) const {
 			return _node != x._node;
 		}
 	};
