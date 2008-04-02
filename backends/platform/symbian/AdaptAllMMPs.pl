@@ -73,7 +73,8 @@ my @excludes_graphics = (
 
 my @excludes_scumm = (
 	"codec47ARM.cpp",
-	"gfxARM.cpp"
+	"gfxARM.cpp",
+	"proc3arm.cpp"
 );
 
 #arseModule(mmpStr,		dirStr,		ifdefArray,		[exclusionsArray])

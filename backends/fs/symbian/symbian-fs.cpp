@@ -106,12 +106,12 @@ const char *lastPathComponent(const Common::String &str) {
  *
  * @param path String with the path to be fixed.
  */
-static void fixFilePath(Common::String& path) {
-	TInt len = path.size();
+static void fixFilePath(Common::String& aPath){
+	TInt len = aPath.size();
 
 	for (TInt index = 0; index < len; index++) {
-		if (path[index] == '/') {
-			path[index] = '\\';
+		if (aPath[index] == '/') {
+			aPath.setChar('\\', index);
 		}
 	}
 }

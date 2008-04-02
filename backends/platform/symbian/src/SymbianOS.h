@@ -75,6 +75,7 @@ protected:
 	//
 	void symbianMix(byte *samples, int len);
 
+	virtual FilesystemFactory *getFilesystemFactory();
 public:
 	// vibration support
 #ifdef USE_VIBRA_SE_PXXX

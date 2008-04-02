@@ -24,7 +24,8 @@
 
 #include <eikenv.h> // for CEikonEnv::Static() @ Symbian::FatalError()
 #include <sdlapp.h> // for CSDLApp::GetExecutablePathCStr() @ Symbian::GetExecutablePath()
-
+	
+#include "backends/fs/symbian/symbian-fs-factory.h"
 #include "backends/platform/symbian/src/SymbianOS.h"
 #include "backends/platform/symbian/src/SymbianActions.h"
 #include "common/config-manager.h"
@@ -103,6 +104,10 @@ void OSystem_SDL_Symbian::setFeatureState(Feature f, bool enable) {
 		default:
 			OSystem_SDL::setFeatureState(f, enable);
 	}
+}
+
+FilesystemFactory *OSystem_SDL_Symbian::getFilesystemFactory() {
+	return &SymbianFilesystemFactory::instance();
 }
 
 OSystem_SDL_Symbian::zoneDesc OSystem_SDL_Symbian::_zones[TOTAL_ZONES] = {

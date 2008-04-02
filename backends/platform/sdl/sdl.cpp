@@ -45,9 +45,6 @@
  */
 #if defined(__amigaos4__)
 	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
-#elif defined(__SYMBIAN32__)
-	// TODO: Move this to the symbian source code
-	#include "backends/fs/symbian/symbian-fs-factory.h"
 #elif defined(UNIX)
 	#include "backends/fs/posix/posix-fs-factory.h"
 #elif defined(WIN32)
@@ -235,13 +232,13 @@ Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 
 FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
 	#if defined(__amigaos4__)
-		return &AmigaOSFilesystemFactory::instance();
-	#elif defined(__SYMBIAN32__)
-		return &SymbianFilesystemFactory::instance();
+		return &AmigaOSFilesystemFactory::instance();	
 	#elif defined(UNIX)
 		return &POSIXFilesystemFactory::instance();
 	#elif defined(WIN32)
 		return &WindowsFilesystemFactory::instance();
+	#elif defined(__SYMBIAN32__)
+		// Do nothing since its handled by the Symbian SDL inheritance
 	#else
 		#error Unknown and unsupported backend in OSystem_SDL::getFilesystemFactory
 	#endif
