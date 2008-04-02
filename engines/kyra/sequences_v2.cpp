@@ -2408,11 +2408,11 @@ void KyraEngine_v2::seq_displayScrollText(uint8 *data, const ScreenDim *d, int t
 			int m = cnt * 11;
 			uint16 cH = cnt ? READ_LE_UINT16(&tmp[m + 2]) + tmp[m + 9] + (tmp[m + 9] >> 3) : d->h;
 
-			const char *str = (const char*)ptr;
+			char *str = (char*)ptr;
 
-			ptr = (uint8*)strpbrk((const char*)str, mark);
+			ptr = (uint8*)strpbrk(str, mark);
 			if (!ptr)
-				ptr = (uint8*)strchr((const char*)str, 0);
+				ptr = (uint8*)strchr(str, 0);
 
 			tmp[m + 19] = *ptr;
 			*ptr = 0;
