@@ -411,11 +411,13 @@ void KyraEngine_v2::runLoop() {
 	_quitFlag = false;
 	_runFlag = true;
 	while (!_quitFlag && _runFlag) {
-		//if (_deathHandler >= 0) {
-		//	removeHandItem();
-		//	waitTicks(5);
-		//	sub_270A0();
-		//}
+		if (_deathHandler >= 0) {
+			removeHandItem();
+			delay(5);
+			_drawNoShapeFlag = 0;
+			_gui->optionsButton(0);
+			_deathHandler = -1;
+		}
 
 		if (_system->getMillis() > _nextIdleAnim)
 			showIdleAnim();
@@ -770,6 +772,10 @@ void KyraEngine_v2::updateInput() {
 			_eventList.push_back(Event(event, true));
 			break;
 
+		case Common::EVENT_MOUSEMOVE:
+			_eventList.push_back(event);
+			break;
+
 		default:
 			break;
 		}
@@ -806,11 +812,18 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 			}
 			break;
 
+		case Common::EVENT_MOUSEMOVE: {
+			Common::Point pos = getMousePos();
+			_mouseX = pos.x;
+			_mouseY = pos.y;
+			_screen->updateScreen();
+			} break;
+
 		case Common::EVENT_LBUTTONUP: {
 			Common::Point pos = getMousePos();
 			_mouseX = pos.x;
 			_mouseY = pos.y;
-			keys = 198;
+			keys = 199;
 			breakLoop = true;
 			} break;
 

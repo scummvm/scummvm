@@ -265,7 +265,7 @@ Button *GUI_v2::addButtonToList(Button *list, Button *newButton) {
 void GUI_v2::processButton(Button *button) {
 	if (!button)
 		return;
-	
+
 	if (button->flags & 8) {
 		if (button->flags & 0x10) {
 			// XXX
@@ -379,7 +379,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		// but did some other magic, which looks like it depends on how the handle
 		// key input... so we just enable 0x1000 and 0x4000 here to allow
 		// all GUI buttons to work (for now at least...)
-		if (inFlags == 199 || inFlags == 198)
+		if (inFlags == 198 || inFlags == 199)
 			temp = 0x1000 | 0x4000;
 
 		//if (inputFlag & 0x800)
@@ -546,7 +546,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		if (!progress && buttonList == _unknownButtonList && !(buttonList->flags & 0x40))
 			_unknownButtonList = 0;
 
-		if ((buttonList->flags2 & 0x18) == ((buttonList->flags2 & 3) << 3))
+		if ((buttonList->flags2 & 0x18) != ((buttonList->flags2 & 3) << 3))
 			processButton(buttonList);
 
 		if (unk2)
@@ -1156,7 +1156,11 @@ int KyraEngine_v2::cauldronButton(Button *button) {
 #pragma mark -
 
 void GUI_v2::getInput() {
+	if (!_displayMenu)
+		return;
+
 	_vm->checkInput(_menuButtonList);
+	_vm->removeInputTop();
 	if (_vm->quit()) {
 		_displayMenu = false;
 		_displaySubMenu = false;
@@ -1171,7 +1175,7 @@ int GUI_v2::optionsButton(Button *button) {
 	updateButton(&_vm->_inventoryButtons[0]);
 	_screen->showMouse();
 
-	if (!_screen->isMouseVisible())
+	if (!_screen->isMouseVisible() && button)
 		return 0;
 
 	_vm->showMessage(0, 0xCF);
@@ -1184,7 +1188,7 @@ int GUI_v2::optionsButton(Button *button) {
 		return 0;
 	}
 
-	//int oldHandItem = _vm->_itemInHand;
+	int oldHandItem = _vm->_itemInHand;
 	_screen->setMouseCursor(0, 0, _vm->getShapePtr(0));
 	_vm->displayInvWsaLastFrame();
 	//XXX
@@ -1203,6 +1207,8 @@ int GUI_v2::optionsButton(Button *button) {
 	//XXX
 	_loadMenu.numberOfItems = 6;
 	initMenuLayout(_loadMenu);
+	//XXX
+	initMenuLayout(_deathMenu);
 	
 	if (_vm->_menuDirectlyToLoad) {
 		backUpPage1(_vm->_screenBuffer);
@@ -1223,6 +1229,48 @@ int GUI_v2::optionsButton(Button *button) {
 		resetState(-1);
 		_vm->_menuDirectlyToLoad = false;
 		return 0;
+	}
+
+	if (!button) {
+		_currentMenu = &_deathMenu;
+		_isDeathMenu = true;
+	} else {
+		//XXX just fail for now
+		return 0;
+	}
+
+	backUpPage1(_vm->_screenBuffer);
+	setupPalette();
+	initMenu(*_currentMenu);
+	_madeTempSave = false;
+	_loadedSave = false;
+	_vm->_itemInHand = -1;
+	updateAllMenuButtons();
+
+	if (_isDeathMenu) {
+		while (!_screen->isMouseVisible())
+			_screen->showMouse();
+	}
+
+	while (_displayMenu) {
+		processHighlights(*_currentMenu, _vm->_mouseX, _vm->_mouseY);
+		getInput();
+	}
+
+	if (_vm->_runFlag && !_loadedSave && !_madeTempSave) {
+		restorePalette();
+		restorePage1(_vm->_screenBuffer);
+	}
+
+	if (_vm->_runFlag)
+		updateMenuButton(&_vm->_inventoryButtons[0]);
+
+	resetState(oldHandItem);
+
+	if (!_loadedSave && _reloadTemporarySave) {
+		_vm->_unkSceneScreenFlag1 = true;
+		//XXX
+		_vm->_unkSceneScreenFlag1 = false;
 	}
 
 	return 0;
@@ -1354,8 +1402,7 @@ int GUI_v2::loadMenu(Button *caller) {
 
 	_screen->updateScreen();
 	while (_displaySubMenu) {
-		Common::Point mouse = _vm->getMousePos();
-		processHighlights(_loadMenu, mouse.x, mouse.y);
+		processHighlights(_loadMenu, _vm->_mouseX, _vm->_mouseY);
 		getInput();
 	}
 
@@ -1366,7 +1413,7 @@ int GUI_v2::loadMenu(Button *caller) {
 			initMenu(*_currentMenu);
 			updateAllMenuButtons();
 		}
-	} else {
+	} else if (_vm->_gameToLoad >= 0) {
 		restorePage1(_vm->_screenBuffer);
 		restorePalette();
 		_vm->loadGame(_vm->getSavegameFilename(_vm->_gameToLoad));

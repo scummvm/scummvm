@@ -1496,6 +1496,7 @@ void GUI_v2::initStaticData() {
 	}
 
 	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::clickLoadSlot);
+	Button::Callback clickLoadMenuFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::loadMenu);
 
 	GUI_V2_MENU(_loadMenu, -1, -1, 0x120, 0xA0, 0xF8, 0xF9, 0xFA, 8, 0xFB, -1, 8, 0, 6, 0x84, 0x16, 0x84, 0x7C);
 	GUI_V2_MENU_ITEM(_loadMenu.item[0], 1, 0x29, -1, 0x27, 0x100, 0xF, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
@@ -1508,6 +1509,13 @@ void GUI_v2::initStaticData() {
 
 	GUI_V2_MENU_ITEM(_loadMenu.item[5], 1, 0x0B, 0xB8, 0x86, 0x58, 0xF, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_loadMenu.item[6].enabled = false;
+
+	GUI_V2_MENU(_deathMenu, -1, -1, 0xD0, 0x4C, 0xF8, 0xF9, 0xFA, 0xE, 0xFB, -1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V2_MENU_ITEM(_deathMenu.item[0], 1, 2, -1, 0x1E, 0xB4, 0x0F, 0xFC, 0xFD, 8, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	_deathMenu.item[0].callback = clickLoadMenuFunctor;
+	GUI_V2_MENU_ITEM(_deathMenu.item[1], 1, 5, -1, 0x2F, 0xB4, 0x0F, 0xFC, 0xFD, 8, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	for (int i = 2; i <= 6; ++i)
+		_deathMenu.item[i].enabled = false;
 }
 
 const uint16 KyraEngine_v2::_itemMagicTable[] = {

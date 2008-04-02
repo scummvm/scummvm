@@ -111,7 +111,7 @@ private:
 	Button _menuButtons[7];
 	Button _scrollUpButton;
 	Button _scrollDownButton;
-	Menu _loadMenu;
+	Menu _loadMenu, _deathMenu;
 	void initStaticData();
 
 	const char *getMenuTitle(const Menu &menu);
@@ -151,6 +151,7 @@ private:
 	Menu *_currentMenu;
 	bool _isDeathMenu;
 	bool _isSaveMenu;
+	bool _madeTempSave;
 	bool _loadedSave;
 	bool _restartGame;
 	bool _reloadTemporarySave;
