@@ -54,7 +54,7 @@ public:
 
 	template <class t_T2>
 	class Iterator {
-		//template<class T> friend class Iterator;
+		template<class T> friend class Iterator;
 		friend class List<t_T>;
 		NodeBase *_node;
 
