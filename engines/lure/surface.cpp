@@ -1055,7 +1055,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 				screen.screen().writeString(
 					SAVE_DIALOG_X + Surface::textX(),
 					SAVE_DIALOG_Y + SR_SAVEGAME_NAMES_Y + selectedLine * FONT_HEIGHT,
-                    saveNames[selectedLine]->c_str(), true);
+					saveNames[selectedLine]->c_str(), true);
 				selectedLine = -1;
 				continue;
 			}

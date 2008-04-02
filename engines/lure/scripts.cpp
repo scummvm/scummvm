@@ -516,10 +516,10 @@ void Script::doorOpen(uint16 hotspotId, uint16 v2, uint16 v3) {
 // Makes the specified NPC wait for the player to walk to them
 
 void Script::npcWait(uint16 hotspotId, uint16 v2, uint16 v3) {
-       Hotspot *hotspot = Resources::getReference().getActiveHotspot(hotspotId);
-       assert(hotspot);
-       hotspot->setCharacterMode(CHARMODE_WAIT_FOR_INTERACT);
-       hotspot->setDelayCtr(130);
+	Hotspot *hotspot = Resources::getReference().getActiveHotspot(hotspotId);
+	assert(hotspot);
+	hotspot->setCharacterMode(CHARMODE_WAIT_FOR_INTERACT);
+	hotspot->setDelayCtr(130);
 }
 
 // Called during talking to Minnow to see whether the Skorl "Brenda" should be alerted
