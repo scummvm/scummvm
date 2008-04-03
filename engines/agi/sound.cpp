@@ -231,12 +231,22 @@ bool IIgsSampleHeader::finalize(Common::SeekableReadStream &uint8Wave) {
 
 /** Older Apple IIGS AGI instrument set. Used only by Space Quest I (AGI v1.002). */
 static const instrumentSetInfo instSetV1 = {
-	1192, 26, "7ee16bbc135171ffd6b9120cc7ff1af2", "edd3bf8905d9c238e02832b732fb2e18"
+	1192, 26, "7ee16bbc135171ffd6b9120cc7ff1af2", "edd3bf8905d9c238e02832b732fb2e18",
+	{19, 20, 22, 23, 21, 24, 5, 5, 5, 5,
+	6, 7, 10, 9, 11, 9, 15, 8, 5, 5,
+	17, 16, 18, 12, 14, 5, 5, 5, 5, 5,
+	0, 1, 2, 9, 3, 4, 15, 2, 2, 2,
+	25, 13, 13, 25, 5, 5, 5, 5, 5, 5}
 };
 
 /** Newer Apple IIGS AGI instrument set (AGI v1.003+). Used by all others than Space Quest I. */
 static const instrumentSetInfo instSetV2 = {
-	1292, 28, "b7d428955bb90721996de1cbca25e768", "c05fb0b0e11deefab58bc68fbd2a3d07"
+	1292, 28, "b7d428955bb90721996de1cbca25e768", "c05fb0b0e11deefab58bc68fbd2a3d07",
+	{21, 22, 24, 25, 23, 26, 6, 6, 6, 6,
+	7, 9, 12, 8, 13, 11, 17, 10, 6, 6,
+	19, 18, 20, 14, 16, 6, 6, 6, 6, 6,
+	0, 1, 2, 4, 3, 5, 17, 2, 2, 2,
+	27, 15, 15, 27, 6, 6, 6, 6, 6, 6}
 };
 
 /** Information about different Apple IIGS AGI executables. */

@@ -323,6 +323,7 @@ struct instrumentSetInfo {
 	uint instCount;          ///< Amount of instrument in the set
 	const char *md5;         ///< MD5 hex digest of the whole instrument set
 	const char *waveFileMd5; ///< MD5 hex digest of the wave file (i.e. the sample data used by the instruments)
+	const uint midiProgToInst[50]; ///< Lookup table for the MIDI program number to instrument number mapping
 };
 
 /** Apple IIGS AGI executable file information. */
