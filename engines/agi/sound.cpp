@@ -554,8 +554,8 @@ void SoundMgr::playMidiSound() {
 		}
 
 		uint8 deltaTime = readByte;
-		uint32 ticksPerMinute = 3495; // Approximation based on tests with Apple IIGS KQ1 and SQ1 under MESS 0.124a
-		g_midiMillis += (deltaTime * 1000 * 60) / ticksPerMinute;
+		uint32 ticksPerSec = 60; // Approximation based on tests with Apple IIGS KQ1 and SQ1 under MESS 0.124a
+		g_midiMillis += (deltaTime * 1000) / ticksPerSec;
 
 		// Check for end of MIDI sequence marker (This time it after reading delta-time)
 		if (*p == MIDI_BYTE_STOP_SEQUENCE) {
