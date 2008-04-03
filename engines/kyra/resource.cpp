@@ -41,7 +41,7 @@ Resource::Resource(KyraEngine *vm) : _loaders(), _map(), _vm(vm) {
 }
 
 Resource::~Resource() {
-	unloadAllPakFiles();
+	_map.clear();
 	_loaders.clear();
 }
 
