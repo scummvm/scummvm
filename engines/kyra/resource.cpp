@@ -204,8 +204,9 @@ bool Resource::loadFileList(const Common::String &filedata) {
 		uint32 offset = f.pos();
 		f.seek(filenameOffset, SEEK_SET);
 
-		uint8 buffer[64];
-		f.read(buffer, sizeof(buffer));
+		uint8 buffer[13];
+		f.read(buffer, sizeof(buffer)-1);
+		buffer[12] = 0;
 		f.seek(offset + 16, SEEK_SET);
 
 		Common::String filename = (char*)buffer;
@@ -467,13 +468,15 @@ bool ResLoaderPak::isLoadable(const Common::String &filename, Common::SeekableRe
 		offset = SWAP_BYTES_32(offset);
 	}
 
+	Common::String file = "";
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
 		if (offset < stream.pos() || offset > filesize)
 			return false;
 
-		Common::String file = "";
 		byte c = 0;
+
+		file = "";
 
 		while (!stream.eos() && (c = stream.readByte()) != 0)
 			file += c;
@@ -512,6 +515,7 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 		startoffset = SWAP_BYTES_32(startoffset);
 	}
 
+	Common::String file = "";
 	while (!stream.eos()) {
 		// The start offset of a file should never be in the filelist
 		if (startoffset < stream.pos() || startoffset > filesize) {
@@ -519,7 +523,7 @@ bool ResLoaderPak::loadFile(const Common::String &filename, Common::SeekableRead
 			return false;
 		}
 
-		Common::String file = "";
+		file = "";
 		byte c = 0;
 
 		while (!stream.eos() && (c = stream.readByte()) != 0)
