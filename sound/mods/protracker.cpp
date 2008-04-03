@@ -448,8 +448,8 @@ void ProtrackerStream::interrupt(void) {
 			               sample.data,
 			               sample.replen > 2 ? sample.data + sample.repeat : 0,
 			               sample.len,
-			               sample.replen,
-			               _track[track].offset);
+			               sample.replen);
+			setChannelOffset(track, _track[track].offset);
 			_track[track].sample = 0;
 		}
 	}
