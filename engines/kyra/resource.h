@@ -282,6 +282,7 @@ private:
 	void freeRoomTable(void *&ptr, int &size);
 	void freePaletteTable(void *&ptr, int &size);
 
+	const char *getFilename(const char *name);
 	uint8 *getFile(const char *name, int &size);
 
 	enum kResTypes {

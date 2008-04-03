@@ -268,7 +268,13 @@ bool StaticResource::init() {
 	int tempSize = 0;
 	uint8 *temp = getFile("INDEX", tempSize);
 	if (!temp) {
-		warning("no matching INDEX file found");
+		warning("no matching INDEX file found ('%s')", getFilename("INDEX"));
+		return false;
+	}
+
+	if (tempSize != 3*4) {
+		delete [] temp;
+		warning("'%s' has illegal filesize %d", getFilename("INDEX"), tempSize);
 		return false;
 	}
 
@@ -447,20 +453,20 @@ const void *StaticResource::getData(int id, int requesttype, int &size) {
 }
 
 bool StaticResource::loadLanguageTable(const char *filename, void *&ptr, int &size) {
-	char file[64];
+	static Common::String file;
 	for (int i = 0; languages[i].ext; ++i) {
 		if (languages[i].flags != createLanguage(_vm->gameFlags()))
 			continue;
 
-		strcpy(file, filename);
-		strcat(file, languages[i].ext);
-		if (loadStringTable(file, ptr, size))
+		file = filename;
+		file += languages[i].ext;
+		if (loadStringTable(file.c_str(), ptr, size))
 			return true;
 	}
 
-	strcpy(file, filename);
-	strcat(file, languages[0].ext);
-	if (loadStringTable(file, ptr, size)) {
+	file = filename;
+	file += languages[0].ext;
+	if (loadStringTable(file.c_str(), ptr, size)) {
 		static bool warned = false;
 		if (!warned) {
 			warned = true;
@@ -636,25 +642,29 @@ void StaticResource::freePaletteTable(void *&ptr, int &size) {
 	size = 0;
 }
 
-uint8 *StaticResource::getFile(const char *name, int &size) {
-	char buffer[64];
-	const char *ext = "";
+const char *StaticResource::getFilename(const char *name) {
+	static Common::String filename;
+
+	filename = name;
+
 	if (_vm->gameFlags().gameID == GI_KYRA2)
-		ext = ".K2";
-	snprintf(buffer, 64, "%s%s", name, ext);
-	ext = "";
+		filename += ".K2";
 
 	if (_vm->gameFlags().isTalkie)
-		ext = ".CD";
+		filename += ".CD";
 	else if (_vm->gameFlags().isDemo)
-		ext = ".DEM";
+		filename += ".DEM";
 	else if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
-		ext = ".TNS";
+		filename += ".TNS";
 	else if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		ext = ".AMG";
-	strcat(buffer, ext);
+		filename += ".AMG";
+
+	return filename.c_str();
+}
+
+uint8 *StaticResource::getFile(const char *name, int &size) {
 	uint32 tempSize = 0;
-	uint8 *data = _vm->resource()->fileData(buffer, &tempSize);
+	uint8 *data = _vm->resource()->fileData(getFilename(name), &tempSize);
 	size = tempSize;
 	return data;
 }
