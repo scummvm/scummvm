@@ -28,6 +28,7 @@
 #include "kyra/screen.h"
 #include "kyra/wsamovie.h"
 #include "kyra/timer.h"
+#include "kyra/sound.h"
 
 #include "common/savefile.h"
 
@@ -1208,6 +1209,7 @@ int GUI_v2::optionsButton(Button *button) {
 
 	initMenuLayout(_mainMenu);
 	//XXX
+	initMenuLayout(_choiceMenu);
 	_loadMenu.numberOfItems = 6;
 	initMenuLayout(_loadMenu);
 	initMenuLayout(_saveMenu);
@@ -1407,6 +1409,24 @@ int GUI_v2::scrollDownButton(Button *button) {
 }
 
 #pragma mark -
+
+int GUI_v2::quitGame(Button *caller) {
+	updateMenuButton(caller);
+	if (choiceDialog(0xF, 1)) {
+		_displayMenu = false;
+		_vm->_runFlag = false;
+		_vm->_sound->beginFadeOut();
+		_screen->fadeToBlack();
+		_screen->clearCurPage();
+	}
+
+	if (_vm->_runFlag) {
+		initMenu(*_currentMenu);
+		updateAllMenuButtons();
+	}
+
+	return 0;
+}
 
 int GUI_v2::resumeGame(Button *caller) {
 	updateMenuButton(caller);
@@ -1702,6 +1722,44 @@ void GUI_v2::checkTextfieldInput() {
 
 void GUI_v2::drawTextfieldBlock(int x, int y, uint8 c) {
 	_screen->fillRect(x+1, y+1, x+7, y+8, c);
+}
+
+bool GUI_v2::choiceDialog(int name, bool type) {
+	_choiceMenu.highlightedItem = 0;
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+	if (type)
+		_choiceMenu.numberOfItems = 2;
+	else
+		_choiceMenu.numberOfItems = 1;
+	_choiceMenu.menuNameId = name;
+
+	initMenu(_choiceMenu);
+	_isChoiceMenu = true;
+	_choice = false;
+
+	while (_isChoiceMenu) {
+		processHighlights(_choiceMenu, _vm->_mouseX, _vm->_mouseY);
+		getInput();
+	}
+
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+	return _choice;
+}
+
+int GUI_v2::choiceYes(Button *caller) {
+	updateMenuButton(caller);
+	_choice = true;
+	_isChoiceMenu = false;
+	return 0;
+}
+
+int GUI_v2::choiceNo(Button *caller) {
+	updateMenuButton(caller);
+	_choice = false;
+	_isChoiceMenu = false;
+	return 0;
 }
 
 } // end of namespace Kyra

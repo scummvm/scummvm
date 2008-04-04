@@ -111,7 +111,7 @@ private:
 	Button _menuButtons[7];
 	Button _scrollUpButton;
 	Button _scrollDownButton;
-	Menu _mainMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
+	Menu _mainMenu, _choiceMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
 	void initStaticData();
 
 	const char *getMenuTitle(const Menu &menu);
@@ -152,6 +152,7 @@ private:
 	bool _isLoadMenu;
 	bool _isDeathMenu;
 	bool _isSaveMenu;
+	bool _isChoiceMenu;
 	bool _madeSave;
 	bool _loadedSave;
 	bool _restartGame;
@@ -162,6 +163,7 @@ private:
 	void setupSavegameNames(Menu &menu, int num);
 
 	// main menu
+	int quitGame(Button *caller);
 	int resumeGame(Button *caller);
 
 	// load menu
@@ -191,6 +193,13 @@ private:
 	int getCharWidth(uint8 c);
 	void checkTextfieldInput();
 	void drawTextfieldBlock(int x, int y, uint8 c);
+
+	// choice menu
+	bool _choice;
+
+	bool choiceDialog(int name, bool type);
+	int choiceYes(Button *caller);
+	int choiceNo(Button *caller);
 
 	static const uint16 _menuStringsTalkie[];
 	static const uint16 _menuStringsOther[];
