@@ -28,6 +28,8 @@
 #include "kyra/screen.h"
 #include "kyra/text.h"
 
+#include "common/savefile.h"
+
 namespace Kyra {
 
 GUI::GUI(KyraEngine *kyra)
@@ -291,6 +293,19 @@ int GUI::redrawShadedButtonCallback(Button *button) {
 	_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 0xF9, 0xFA);
 	_screen->showMouse();
 
+	return 0;
+}
+
+int GUI::getNextSavegameSlot() {
+	Common::InSaveFile *in;
+
+	for (int i = 1; i < 1000; i++) {
+		if ((in = _vm->_saveFileMan->openForLoading(_vm->getSavegameFilename(i))))
+			delete in;
+		else
+			return i;
+	}
+	warning("Didn't save: Ran out of saveGame filenames");
 	return 0;
 }
 

@@ -111,7 +111,7 @@ private:
 	Button _menuButtons[7];
 	Button _scrollUpButton;
 	Button _scrollDownButton;
-	Menu _loadMenu, _deathMenu;
+	Menu _mainMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
 	void initStaticData();
 
 	const char *getMenuTitle(const Menu &menu);
@@ -149,9 +149,10 @@ private:
 	Button *_unknownButtonList;
 
 	Menu *_currentMenu;
+	bool _isLoadMenu;
 	bool _isDeathMenu;
 	bool _isSaveMenu;
-	bool _madeTempSave;
+	bool _madeSave;
 	bool _loadedSave;
 	bool _restartGame;
 	bool _reloadTemporarySave;
@@ -160,12 +161,39 @@ private:
 
 	void setupSavegameNames(Menu &menu, int num);
 
+	// main menu
+	int resumeGame(Button *caller);
+
 	// load menu
+	bool _noLoadProcess;
 	int loadMenu(Button *caller);
 	int clickLoadSlot(Button *caller);
+	int cancelLoadMenu(Button *caller);
 
-	static const uint16 MenuStrings_TALKIE[];
-	static const uint16 MenuStrings_OTHER[];
+	// save menu
+	bool _noSaveProcess;
+	int _saveSlot;
+	char _saveDescription[0x50];
+
+	int saveMenu(Button *caller);
+	int clickSaveSlot(Button *caller);
+	int cancelSaveMenu(Button *caller);
+
+	// savename menu
+	bool _finishNameInput, _cancelNameInput;
+	Common::KeyState _keyPressed;
+
+	const char *nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8 c2, uint8 c3, int bufferSize);
+	int finishSavename(Button *caller);
+	int cancelSavename(Button *caller);
+
+	bool checkSavegameDescription(const char *buffer, int size);
+	int getCharWidth(uint8 c);
+	void checkTextfieldInput();
+	void drawTextfieldBlock(int x, int y, uint8 c);
+
+	static const uint16 _menuStringsTalkie[];
+	static const uint16 _menuStringsOther[];
 };
 
 } // end of namespace Kyra

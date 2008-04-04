@@ -184,6 +184,8 @@ protected:
 
 	void redrawText(const Menu &menu);
 	void redrawHighlight(const Menu &menu);
+
+	int getNextSavegameSlot();
 };
 
 } // end of namesapce Kyra

@@ -113,7 +113,6 @@ private:
 	void setGUILabels();
 
 	void setupSavegames(Menu &menu, int num);
-	int getNextSavegameSlot();
 
 	int resumeGame(Button *button);
 	int loadGameMenu(Button *button);

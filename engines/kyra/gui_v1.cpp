@@ -597,19 +597,6 @@ int GUI_v1::resumeGame(Button *button) {
 	return 0;
 }
 
-int GUI_v1::getNextSavegameSlot() {
-	Common::InSaveFile *in;
-
-	for (int i = 1; i < 1000; i++) {
-		if ((in = _vm->_saveFileMan->openForLoading(_vm->getSavegameFilename(i))))
-			delete in;
-		else
-			return i;
-	}
-	warning("Didn't save: Ran out of saveGame filenames");
-	return 0;
-}
-
 void GUI_v1::setupSavegames(Menu &menu, int num) {
 	Common::InSaveFile *in;
 	static char savenames[5][31];

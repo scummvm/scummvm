@@ -252,6 +252,7 @@ GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_currentMenu = 0;
 	_isDeathMenu = false;
 	_isSaveMenu = false;
+	_isLoadMenu = false;
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::scrollUpButton);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::scrollDownButton);
 }
@@ -272,7 +273,7 @@ void GUI_v2::processButton(Button *button) {
 		}
 		return;
 	}
-
+	
 	int entry = button->flags2 & 5;
 
 	byte val1 = 0, val2 = 0, val3 = 0;
@@ -1163,7 +1164,8 @@ void GUI_v2::getInput() {
 	_vm->removeInputTop();
 	if (_vm->quit()) {
 		_displayMenu = false;
-		_displaySubMenu = false;
+		_isLoadMenu = false;
+		_isSaveMenu = false;
 	}
 }
 
@@ -1204,12 +1206,16 @@ int GUI_v2::optionsButton(Button *button) {
 		_menuButtons[i].data1Callback = _menuButtons[i].data2Callback = _redrawButtonFunctor;
 	}
 
+	initMenuLayout(_mainMenu);
 	//XXX
 	_loadMenu.numberOfItems = 6;
 	initMenuLayout(_loadMenu);
-	//XXX
+	initMenuLayout(_saveMenu);
+	initMenuLayout(_savenameMenu);
 	initMenuLayout(_deathMenu);
 	
+	_currentMenu = &_mainMenu;
+
 	if (_vm->_menuDirectlyToLoad) {
 		backUpPage1(_vm->_screenBuffer);
 		setupPalette();
@@ -1235,14 +1241,13 @@ int GUI_v2::optionsButton(Button *button) {
 		_currentMenu = &_deathMenu;
 		_isDeathMenu = true;
 	} else {
-		//XXX just fail for now
-		return 0;
+		_isDeathMenu = false;
 	}
 
 	backUpPage1(_vm->_screenBuffer);
 	setupPalette();
 	initMenu(*_currentMenu);
-	_madeTempSave = false;
+	_madeSave = false;
 	_loadedSave = false;
 	_vm->_itemInHand = -1;
 	updateAllMenuButtons();
@@ -1257,7 +1262,7 @@ int GUI_v2::optionsButton(Button *button) {
 		getInput();
 	}
 
-	if (_vm->_runFlag && !_loadedSave && !_madeTempSave) {
+	if (_vm->_runFlag && !_loadedSave && !_madeSave) {
 		restorePalette();
 		restorePage1(_vm->_screenBuffer);
 	}
@@ -1334,9 +1339,13 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 		menu.item[i].enabled = false;
 	}
 
+	int startSlot = 0;
+	if (_isSaveMenu && _savegameOffset == 0)
+		startSlot = 1;
+
 	KyraEngine::SaveHeader header;
 	Common::InSaveFile *in;
-	for (int i = 0; i < num; ++i) {
+	for (int i = startSlot; i < num; ++i) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(i + _savegameOffset), header)) != 0) {
 			strncpy(_vm->getTableString(menu.item[i].itemId, _vm->_optionsBuffer, 0), header.description.c_str(), 80);
 			menu.item[i].saveSlot = i + _savegameOffset;
@@ -1344,11 +1353,19 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 			delete in;
 		}
 	}
-	
+
 	if (_savegameOffset == 0) {
-		char *dst = _vm->getTableString(menu.item[0].itemId, _vm->_optionsBuffer, 0);
-		const char *src = _vm->getTableString(_vm->gameFlags().isTalkie ? 34 : 42, _vm->_optionsBuffer, 0);
-		strcpy(dst, src);
+		if (_isSaveMenu) {
+			char *dst = _vm->getTableString(menu.item[0].itemId, _vm->_optionsBuffer, 0);
+			const char *src = _vm->getTableString(/*_vm->gameFlags().isTalkie ? */10/* : ??*/, _vm->_optionsBuffer, 0);
+			strcpy(dst, src);
+			menu.item[0].saveSlot = -2;
+			menu.item[0].enabled = true;
+		} else {
+			char *dst = _vm->getTableString(menu.item[0].itemId, _vm->_optionsBuffer, 0);
+			const char *src = _vm->getTableString(_vm->gameFlags().isTalkie ? 34 : 42, _vm->_optionsBuffer, 0);
+			strcpy(dst, src);
+		}
 	}
 }
 
@@ -1360,11 +1377,14 @@ int GUI_v2::scrollUpButton(Button *button) {
 		return 0;
 
 	--_savegameOffset;
-	if (_displaySubMenu) {
+	if (_isLoadMenu) {
 		setupSavegameNames(_loadMenu, 5);
 		// original calls something different here...
 		initMenu(_loadMenu);
 	} else if (_isSaveMenu) {
+		setupSavegameNames(_saveMenu, 5);
+		// original calls something different here...
+		initMenu(_saveMenu);
 	}
 
 	return 0;
@@ -1373,17 +1393,26 @@ int GUI_v2::scrollUpButton(Button *button) {
 int GUI_v2::scrollDownButton(Button *button) {
 	updateMenuButton(button);
 	++_savegameOffset;
-	if (_displaySubMenu) {
+	if (_isLoadMenu) {
 		setupSavegameNames(_loadMenu, 5);
 		// original calls something different here...
 		initMenu(_loadMenu);
 	} else if (_isSaveMenu) {
+		setupSavegameNames(_saveMenu, 5);
+		// original calls something different here...
+		initMenu(_saveMenu);
 	}
 
 	return 0;
 }
 
 #pragma mark -
+
+int GUI_v2::resumeGame(Button *caller) {
+	updateMenuButton(caller);
+	_displayMenu = false;
+	return 0;
+}
 
 int GUI_v2::loadMenu(Button *caller) {
 	if (!_vm->_menuDirectlyToLoad) {
@@ -1395,18 +1424,18 @@ int GUI_v2::loadMenu(Button *caller) {
 	_savegameOffset = 0;
 	setupSavegameNames(_loadMenu, 5);
 	initMenu(_loadMenu);
-	_displaySubMenu = true;
-	_cancelSubMenu = false;
+	_isLoadMenu = true;
+	_noLoadProcess = false;
 	_vm->_gameToLoad = -1;
 	updateAllMenuButtons();
 
 	_screen->updateScreen();
-	while (_displaySubMenu) {
+	while (_isLoadMenu) {
 		processHighlights(_loadMenu, _vm->_mouseX, _vm->_mouseY);
 		getInput();
 	}
 
-	if (_cancelSubMenu) {
+	if (_noLoadProcess) {
 		if (!_vm->_menuDirectlyToLoad) {
 			restorePage1(_vm->_screenBuffer);
 			backUpPage1(_vm->_screenBuffer);
@@ -1438,10 +1467,241 @@ int GUI_v2::clickLoadSlot(Button *caller) {
 
 	if (item.saveSlot >= 0) {
 		_vm->_gameToLoad = item.saveSlot;
-		_displaySubMenu = false;
+		_isLoadMenu = false;
 	}
 
 	return 0;
+}
+
+int GUI_v2::cancelLoadMenu(Button *caller) {
+	updateMenuButton(caller);
+	_isLoadMenu = false;
+	_noLoadProcess = true;
+	return 0;
+}
+
+int GUI_v2::saveMenu(Button *caller) {
+	//XXX
+	updateMenuButton(caller);
+
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+
+	_isSaveMenu = true;
+	_noSaveProcess = false;
+	_saveSlot = -1;
+	_savegameOffset = 0;
+	setupSavegameNames(_saveMenu, 5);
+	initMenu(_saveMenu);
+
+	updateAllMenuButtons();
+
+	while (_isSaveMenu) {
+		processHighlights(_saveMenu, _vm->_mouseX, _vm->_mouseY);
+		getInput();
+	}
+
+	if (_noSaveProcess) {
+		restorePage1(_vm->_screenBuffer);
+		backUpPage1(_vm->_screenBuffer);
+		initMenu(*_currentMenu);
+		updateAllMenuButtons();
+		return 0;
+	} else if(_saveSlot <= -1) {
+		return 0;
+	}
+
+	restorePage1(_vm->_screenBuffer);
+	restorePalette();
+	//if (getNextSaveGameslot() == _saveSlot) {
+	//	while (_saveSlot > 1) {
+	//		rename(_vm->getSavegameFilename(_saveSlot-1), _vm->getSavegameFilename(_saveSlot));
+	//		--_saveSlot;
+	//	}
+	//}
+	_vm->saveGame(_vm->getSavegameFilename(_saveSlot), _saveDescription);
+	_displayMenu = false;
+	_madeSave = true;
+
+	return 0;
+}
+
+int GUI_v2::clickSaveSlot(Button *caller) {
+	updateMenuButton(caller);
+
+	assert((caller->index-0x10) >= 0 && (caller->index-0x10 <= 6));
+	MenuItem &item = _saveMenu.item[caller->index-0x10];
+	
+	if (item.saveSlot >= 0) {
+		//if (_isDeleteMenu) {
+		//	_slotToDelete = item.saveSlot;
+		//	_isDeleteMenu = false;
+		//	return 0;
+		//else {
+			_saveSlot = item.saveSlot;
+			strcpy(_saveDescription, _vm->getTableString(item.itemId, _vm->_optionsBuffer, 0));
+		//}
+	} else if (item.saveSlot == -2) {
+		_saveSlot = getNextSavegameSlot();
+		memset(_saveDescription, 0, sizeof(_saveDescription));
+	}
+
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+
+	initMenu(_savenameMenu);
+	_screen->fillRect(0x26, 0x5B, 0x11F, 0x66, 0xFA);
+	const char *desc = nameInputProcess(_saveDescription, 0x27, 0x5C, 0xFD, 0xFA, 0xFE, 0x50);
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+	if (desc) {
+		_isSaveMenu = false;
+		//_isDeleteMenu = false;
+	} else {
+		initMenu(_saveMenu);
+	}
+
+	return 0;
+}
+
+int GUI_v2::cancelSaveMenu(Button *caller) {
+	updateMenuButton(caller);
+	_isSaveMenu = false;
+	//_isDeleteMenu = false;
+	_noSaveProcess = true;
+	return 0;
+}
+
+const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8 c2, uint8 c3, int bufferSize) {
+	bool running = true;
+	int curPos = strlen(buffer);
+
+	int x2 = x, y2 = y;
+	_text->printText(buffer, x, y, c1, c2, c2);
+
+	for (int i = 0; i < curPos; ++i)
+		x2 += getCharWidth(buffer[i]);
+
+	drawTextfieldBlock(x2, y2, c3);
+
+	_keyPressed.reset();
+	_cancelNameInput = _finishNameInput = false;
+	while (running) {
+		processHighlights(_savenameMenu, _vm->_mouseX, _vm->_mouseY);
+		checkTextfieldInput();
+		if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER || _finishNameInput) {
+			if (checkSavegameDescription(buffer, curPos)) {
+				buffer[curPos] = 0;
+				running = false;
+			} else {
+				_finishNameInput = false;
+			}
+		} else if (_keyPressed.keycode == Common::KEYCODE_ESCAPE || _cancelNameInput) {
+			running = false;
+			return 0;
+		} else if ((_keyPressed.keycode == Common::KEYCODE_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_DELETE) && curPos > 0) {
+			drawTextfieldBlock(x2, y2, c2);
+			--curPos;
+			x2 -= getCharWidth(buffer[curPos]);
+			drawTextfieldBlock(x2, y2, c3);
+			_screen->updateScreen();
+		} else if (_keyPressed.ascii > 31 && _keyPressed.ascii < 127 && curPos < bufferSize) {
+			if (x2 + getCharWidth(_keyPressed.ascii) + 7 < 0x11F) {
+				buffer[curPos] = _keyPressed.ascii;
+				const char text[2] = { buffer[curPos], 0 };
+				_text->printText(text, x2, y2, c1, c2, c2);
+				x2 += getCharWidth(_keyPressed.ascii);
+				drawTextfieldBlock(x2, y2, c3);
+				++curPos;
+				_screen->updateScreen();
+			}
+		}
+
+		_keyPressed.reset();
+	}
+
+	return buffer;
+}
+
+int GUI_v2::finishSavename(Button *caller) {
+	updateMenuButton(caller);
+	_finishNameInput = true;
+	return 0;
+}
+
+int GUI_v2::cancelSavename(Button *caller) {
+	updateMenuButton(caller);
+	_cancelNameInput = true;
+	return 0;
+}
+
+bool GUI_v2::checkSavegameDescription(const char *buffer, int size) {
+	if (!buffer || !size)
+		return false;
+	if (buffer[0] == 0)
+		return false;
+	for (int i = 0; i < size; ++i) {
+		if (buffer[i] != 0x20)
+			return true;
+		else if (buffer[i] == 0x00)
+			return false;
+	}
+	return false;
+}
+
+int GUI_v2::getCharWidth(uint8 c) {
+	Screen::FontId old = _screen->setFont(Screen::FID_8_FNT);
+	_screen->_charWidth = -2;
+	int width = _screen->getCharWidth(c);
+	_screen->_charWidth = 0;
+	_screen->setFont(old);
+	return width;
+}
+
+void GUI_v2::checkTextfieldInput() {
+	Common::Event event;
+
+	bool running = true;
+	int keys = 0;
+	while (_vm->_eventMan->pollEvent(event) && running) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_vm->_quitFlag = true;
+			break;
+
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == 'q' && event.kbd.flags == Common::KBD_CTRL)
+				_vm->_quitFlag = true;
+			else
+				_keyPressed = event.kbd; 
+			running = false;
+			break;
+
+		case Common::EVENT_LBUTTONUP: {
+			Common::Point pos = _vm->getMousePos();
+			_vm->_mouseX = pos.x;
+			_vm->_mouseY = pos.y;
+			keys = 199;
+			running = false;
+			} break;
+
+		case Common::EVENT_MOUSEMOVE: {
+			Common::Point pos = _vm->getMousePos();
+			_vm->_mouseX = pos.x;
+			_vm->_mouseY = pos.y;
+			_screen->updateScreen();
+			} break;
+
+		default:
+			break;
+		}
+	}
+
+	processButtonList(_menuButtonList, keys | 0x8000);
+}
+
+void GUI_v2::drawTextfieldBlock(int x, int y, uint8 c) {
+	_screen->fillRect(x+1, y+1, x+7, y+8, c);
 }
 
 } // end of namespace Kyra

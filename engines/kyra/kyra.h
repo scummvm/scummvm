@@ -104,6 +104,7 @@ class ScriptHelper;
 class KyraEngine : public Engine {
 friend class Debugger;
 friend class ::KyraMetaEngine;
+friend class GUI;
 public:
 	KyraEngine(OSystem *system, const GameFlags &flags);
 	virtual ~KyraEngine();
