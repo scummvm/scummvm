@@ -581,21 +581,21 @@ const char *GUI_v2::getMenuTitle(const Menu &menu) {
 	if (!menu.menuNameId)
 		return 0;
 
-	return _vm->getTableString(menu.menuNameId, _vm->gameFlags().isTalkie ? _vm->_optionsBuffer : _vm->_cCodeBuffer, 1);
+	return _vm->getTableString(menu.menuNameId, _vm->_optionsBuffer, 1);
 }
 
 const char *GUI_v2::getMenuItemTitle(const MenuItem &menuItem) {
 	if (!menuItem.itemId)
 		return 0;
 
-	return _vm->getTableString(menuItem.itemId, _vm->gameFlags().isTalkie ? _vm->_optionsBuffer : _vm->_cCodeBuffer, 1);
+	return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, 1);
 }
 
 const char *GUI_v2::getMenuItemLabel(const MenuItem &menuItem) {
 	if (!menuItem.labelId)
 		return 0;
 
-	return _vm->getTableString(menuItem.labelId, _vm->gameFlags().isTalkie ? _vm->_optionsBuffer : _vm->_cCodeBuffer, 1);
+	return _vm->getTableString(menuItem.labelId, _vm->_optionsBuffer, 1);
 }
 
 #pragma mark -
@@ -1329,7 +1329,7 @@ void GUI_v2::resetState(int item) {
 
 void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	for (int i = 0; i < num; ++i) {
-		strcpy(_vm->getTableString(menu.item[i].itemId, _vm->gameFlags().isTalkie ? _vm->_optionsBuffer : _vm->_cCodeBuffer, 0), "");
+		strcpy(_vm->getTableString(menu.item[i].itemId, _vm->_optionsBuffer, 0), "");
 		menu.item[i].saveSlot = -1;
 		menu.item[i].enabled = false;
 	}
@@ -1338,7 +1338,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	Common::InSaveFile *in;
 	for (int i = 0; i < num; ++i) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(i + _savegameOffset), header)) != 0) {
-			strncpy(_vm->getTableString(menu.item[i].itemId, _vm->gameFlags().isTalkie ? _vm->_optionsBuffer : _vm->_cCodeBuffer, 0), header.description.c_str(), 80);
+			strncpy(_vm->getTableString(menu.item[i].itemId, _vm->_optionsBuffer, 0), header.description.c_str(), 80);
 			menu.item[i].saveSlot = i + _savegameOffset;
 			menu.item[i].enabled = true;
 			delete in;
@@ -1346,8 +1346,8 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	}
 	
 	if (_savegameOffset == 0) {
-		char *dst = _vm->getTableString(menu.item[0].itemId, _vm->gameFlags().isTalkie ? _vm->_optionsBuffer : _vm->_cCodeBuffer, 0);
-		const char *src = _vm->getTableString(_vm->gameFlags().isTalkie ? 34 : 42, _vm->gameFlags().isTalkie ? _vm->_optionsBuffer : _vm->_cCodeBuffer, 0);
+		char *dst = _vm->getTableString(menu.item[0].itemId, _vm->_optionsBuffer, 0);
+		const char *src = _vm->getTableString(_vm->gameFlags().isTalkie ? 34 : 42, _vm->_optionsBuffer, 0);
 		strcpy(dst, src);
 	}
 }

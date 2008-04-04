@@ -316,6 +316,8 @@ void KyraEngine_v2::startup() {
 		openTalkFile(0);
 		_currentTalkFile = 1;
 		openTalkFile(1);
+	} else {
+		_optionsBuffer = _cCodeBuffer;
 	}
 
 	showMessage(0, 207);
@@ -903,8 +905,10 @@ void KyraEngine_v2::cleanup() {
 	}
 	freeSceneShapePtrs();
 
+	if (_optionsBuffer != _cCodeBuffer)
+		delete [] _optionsBuffer;
+	_optionsBuffer = 0;
 	delete [] _cCodeBuffer; _cCodeBuffer = 0;
-	delete [] _optionsBuffer; _optionsBuffer = 0;
 	delete [] _chapterBuffer; _chapterBuffer = 0;
 
 	delete [] _talkObjectList; _talkObjectList = 0;
