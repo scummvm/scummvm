@@ -391,7 +391,7 @@ public:
 		read(&v, sizeof(uint16));
 		return FROM_LE_16(v);
 	}
-	uint16 readLong() {
+	uint32 readLong() {
 		uint32 v;
 		read(&v, sizeof(uint32));
 		return FROM_LE_32(v);
