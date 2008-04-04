@@ -1571,6 +1571,7 @@ void GUI_v2::initStaticData() {
 	GUI_V2_MENU_ITEM(_deathMenu.item[0], 1, 2, -1, 0x1E, 0xB4, 0x0F, 0xFC, 0xFD, 8, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_deathMenu.item[0].callback = clickLoadMenuFunctor;
 	GUI_V2_MENU_ITEM(_deathMenu.item[1], 1, 5, -1, 0x2F, 0xB4, 0x0F, 0xFC, 0xFD, 8, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	_deathMenu.item[1].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::quitGame);
 	for (int i = 2; i <= 6; ++i)
 		_deathMenu.item[i].enabled = false;
 	for (int i = 0; i < 2; ++i)
