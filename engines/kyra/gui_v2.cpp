@@ -230,6 +230,7 @@ void KyraEngine_v2::gui_printString(const char *format, int x, int y, int col1, 
 void KyraEngine_v2::loadButtonShapes() {
 	const uint8 *src = _screen->getCPagePtr(3);
 	_screen->loadBitmap("_BUTTONS.CSH", 3, 3, 0);
+
 	_gui->_scrollUpButton.data0ShapePtr = _buttonShapes[0] = _screen->makeShapeCopy(src, 0);
 	_gui->_scrollUpButton.data2ShapePtr = _buttonShapes[1] = _screen->makeShapeCopy(src, 1);
 	_gui->_scrollUpButton.data1ShapePtr = _buttonShapes[2] = _screen->makeShapeCopy(src, 2);
@@ -245,6 +246,30 @@ void KyraEngine_v2::loadButtonShapes() {
 	_buttonShapes[16] = _screen->makeShapeCopy(src, 16);
 	_buttonShapes[17] = _screen->makeShapeCopy(src, 17);
 	_buttonShapes[18] = _screen->makeShapeCopy(src, 18);
+}
+
+void KyraEngine_v2::setupLangButtonShapes() {
+	switch (_lang) {
+	case 0:
+		_inventoryButtons[0].data0ShapePtr = _buttonShapes[6];
+		_inventoryButtons[0].data1ShapePtr = _inventoryButtons[0].data2ShapePtr = _buttonShapes[7];
+		break;
+
+	case 1:
+		_inventoryButtons[0].data0ShapePtr = _buttonShapes[8];
+		_inventoryButtons[0].data1ShapePtr = _inventoryButtons[0].data2ShapePtr = _buttonShapes[9];
+		break;
+
+	case 2:
+		_inventoryButtons[0].data0ShapePtr = _buttonShapes[10];
+		_inventoryButtons[0].data1ShapePtr = _inventoryButtons[0].data2ShapePtr = _buttonShapes[11];
+		break;
+
+	default:
+		_inventoryButtons[0].data0ShapePtr = _buttonShapes[6];
+		_inventoryButtons[0].data1ShapePtr = _inventoryButtons[0].data2ShapePtr = _buttonShapes[7];
+		break;
+	}
 }
 
 GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
@@ -1208,6 +1233,7 @@ int GUI_v2::optionsButton(Button *button) {
 	}
 
 	initMenuLayout(_mainMenu);
+	initMenuLayout(_gameOptions);
 	//XXX
 	initMenuLayout(_choiceMenu);
 	_loadMenu.numberOfItems = 6;
@@ -1276,7 +1302,7 @@ int GUI_v2::optionsButton(Button *button) {
 
 	if (!_loadedSave && _reloadTemporarySave) {
 		_vm->_unkSceneScreenFlag1 = true;
-		//XXX
+		_vm->loadGame("TEMP.SAV");
 		_vm->_unkSceneScreenFlag1 = false;
 	}
 
@@ -1284,6 +1310,19 @@ int GUI_v2::optionsButton(Button *button) {
 }
 
 #pragma mark -
+
+void GUI_v2::renewHighlight(Menu &menu) {
+	if (!_displayMenu)
+		return;
+
+	MenuItem &item = menu.item[menu.highlightedItem];
+	int x = item.x + menu.x; int y = item.y + menu.y;
+	int x2 = x + item.width - 1; int y2 = y + item.height - 1;
+	redrawText(menu);
+	_screen->fillRect(x+2, y+2, x2-2, y2-2, item.bkgdColor);
+	redrawHighlight(menu);
+	_screen->updateScreen();
+}
 
 void GUI_v2::setupPalette() {
 	//if (_isDeathMenu)
@@ -1432,6 +1471,126 @@ int GUI_v2::resumeGame(Button *caller) {
 	updateMenuButton(caller);
 	_displayMenu = false;
 	return 0;
+}
+
+int GUI_v2::gameOptions(Button *caller) {
+	updateMenuButton(caller);
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+	bool textEnabled = _vm->textEnabled();
+	int lang = _vm->_lang;
+
+	setupOptionsButtons();
+	initMenu(_gameOptions);
+	_isOptionsMenu = true;
+
+	while (_isOptionsMenu) {
+		processHighlights(_gameOptions, _vm->_mouseX, _vm->_mouseY);
+		getInput();
+	}
+
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+
+	if (textEnabled && !_vm->textEnabled() && !_vm->speechEnabled()) {
+		_vm->_configVoice = 1;
+		choiceDialog(0x1E, 0);
+	}
+
+	if (_vm->_lang != lang) {
+		_reloadTemporarySave = true;
+		_vm->saveGame("TEMP.SAV", "Temporary Kyrandia 2 Savegame");
+		_vm->loadCCodeBuffer("C_CODE.XXX");
+		if (_vm->_flags.isTalkie)
+			_vm->loadOptionsBuffer("OPTIONS.XXX");
+		else
+			_vm->_optionsBuffer = _vm->_cCodeBuffer;
+		_vm->loadChapterBuffer(_vm->_newChapterFile);
+		_vm->loadNPCScript();
+		_vm->setupLangButtonShapes();
+	}
+
+	_vm->writeSettings();
+
+	initMenu(*_currentMenu);
+	updateAllMenuButtons();
+	return 0;
+}
+
+int GUI_v2::quitOptionsMenu(Button *caller) {
+	updateMenuButton(caller);
+	_isOptionsMenu = false;
+	return 0;
+}
+
+int GUI_v2::toggleWalkspeed(Button *caller) {
+	updateMenuButton(caller);
+	if (_vm->_configWalkspeed == 5)
+		_vm->_configWalkspeed = 3;
+	else
+		_vm->_configWalkspeed = 5;
+	_vm->_timer->setDelay(0, _vm->_configWalkspeed); 
+	setupOptionsButtons();
+	renewHighlight(_gameOptions);
+	return 0;
+}
+
+int GUI_v2::changeLanguage(Button *caller) {
+	updateMenuButton(caller);
+	++_vm->_lang;
+	_vm->_lang %= 3;
+	setupOptionsButtons();
+	renewHighlight(_gameOptions);
+	return 0;
+}
+
+int GUI_v2::toggleText(Button *caller) {
+	updateMenuButton(caller);
+	
+	if (_vm->textEnabled()) {
+		if (_vm->speechEnabled())
+			_vm->_configVoice = 1;
+		else
+			_vm->_configVoice = 3;
+	} else {
+		if (_vm->speechEnabled())
+			_vm->_configVoice = 2;
+		else
+			_vm->_configVoice = 0;
+	}
+
+	setupOptionsButtons();
+	renewHighlight(_gameOptions);
+	return 0;
+}
+
+void GUI_v2::setupOptionsButtons() {
+	if (_vm->_configWalkspeed == 3)
+		_gameOptions.item[0].itemId = 28;
+	else
+		_gameOptions.item[0].itemId = 27;
+
+	if (_vm->textEnabled())
+		_gameOptions.item[2].itemId = 18;
+	else
+		_gameOptions.item[2].itemId = 17;
+
+	switch (_vm->_lang) {
+	case 0:
+		_gameOptions.item[1].itemId = 31;
+		break;
+	
+	case 1:
+		_gameOptions.item[1].itemId = 32;
+		break;
+
+	case 2:
+		_gameOptions.item[1].itemId = 33;
+		break;
+
+	default:
+		break;
+	}
 }
 
 int GUI_v2::loadMenu(Button *caller) {

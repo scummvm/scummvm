@@ -111,7 +111,7 @@ private:
 	Button _menuButtons[7];
 	Button _scrollUpButton;
 	Button _scrollDownButton;
-	Menu _mainMenu, _choiceMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
+	Menu _mainMenu, _gameOptions, _choiceMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
 	void initStaticData();
 
 	const char *getMenuTitle(const Menu &menu);
@@ -133,6 +133,8 @@ private:
 	uint8 defaultColor1() const { return 0xCF; }
 	uint8 defaultColor2() const { return 0xF8; }
 
+	void renewHighlight(Menu &menu);
+
 	void setupPalette();
 	void restorePalette();
 
@@ -153,6 +155,7 @@ private:
 	bool _isDeathMenu;
 	bool _isSaveMenu;
 	bool _isChoiceMenu;
+	bool _isOptionsMenu;
 	bool _madeSave;
 	bool _loadedSave;
 	bool _restartGame;
@@ -165,6 +168,16 @@ private:
 	// main menu
 	int quitGame(Button *caller);
 	int resumeGame(Button *caller);
+
+	// options menu
+	int gameOptions(Button *caller);
+	int quitOptionsMenu(Button *caller);
+
+	int toggleWalkspeed(Button *caller);
+	int changeLanguage(Button *caller);
+	int toggleText(Button *caller);
+
+	void setupOptionsButtons();
 
 	// load menu
 	bool _noLoadProcess;

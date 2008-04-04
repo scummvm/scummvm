@@ -113,7 +113,8 @@ void KyraEngine_v2::setWalkspeed(uint8 newSpeed) {
 	else
 		newSpeed = 5;
 
-	_timer->setDelay(5, newSpeed);
+	_configWalkspeed = newSpeed;
+	_timer->setDelay(0, newSpeed);
 }
 
 

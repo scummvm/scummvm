@@ -359,11 +359,12 @@ void KyraEngine_v2::startup() {
 	_gfxBackUpRect = new uint8[_screen->getRectSize(32, 32)];
 	_itemList = new Item[30];
 	memset(_itemList, 0, sizeof(Item)*30);
-	resetItemList();
 	loadButtonShapes();
+	resetItemList();
 	_loadedZTable = 1;
 	loadZShapes(_loadedZTable);
 	initInventoryButtonList();
+	setupLangButtonShapes();
 	loadInventoryShapes();
 
 	_res->loadFileToBuf("PALETTE.COL", _screen->_currentPalette, 0x300);
@@ -404,7 +405,7 @@ void KyraEngine_v2::startup() {
 
 	setNextIdleAnimTimer();
 	//XXX
-	_timer->setDelay(0, 5);
+	setWalkspeed(_configWalkspeed);
 }
 
 void KyraEngine_v2::runLoop() {

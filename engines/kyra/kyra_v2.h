@@ -612,6 +612,7 @@ protected:
 	GUI_v2 *_gui;
 
 	void loadButtonShapes();
+	void setupLangButtonShapes();
 	uint8 *_buttonShapes[19];
 
 	void initInventoryButtonList();
