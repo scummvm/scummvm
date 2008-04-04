@@ -281,6 +281,7 @@ GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_isLoadMenu = false;
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::scrollUpButton);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::scrollDownButton);
+	_sliderHandlerFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::sliderHandler);
 }
 
 Button *GUI_v2::addButtonToList(Button *list, Button *newButton) {
@@ -1192,6 +1193,7 @@ void GUI_v2::getInput() {
 		_displayMenu = false;
 		_isLoadMenu = false;
 		_isSaveMenu = false;
+		_isOptionsMenu = false;
 	}
 }
 
@@ -1223,7 +1225,8 @@ int GUI_v2::optionsButton(Button *button) {
 	_displayMenu = true;
 
 	if (!_vm->gameFlags().isTalkie) {
-		//XXX
+		_gameOptions.item[3].enabled = false;
+		_audioOptions.item[3].enabled = false;
 	}
 
 	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
@@ -1234,7 +1237,7 @@ int GUI_v2::optionsButton(Button *button) {
 
 	initMenuLayout(_mainMenu);
 	initMenuLayout(_gameOptions);
-	//XXX
+	initMenuLayout(_audioOptions);
 	initMenuLayout(_choiceMenu);
 	_loadMenu.numberOfItems = 6;
 	initMenuLayout(_loadMenu);
@@ -1591,6 +1594,137 @@ void GUI_v2::setupOptionsButtons() {
 	default:
 		break;
 	}
+}
+
+int GUI_v2::audioOptions(Button *caller) {
+	updateMenuButton(caller);
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+	initMenu(_audioOptions);
+	const int menuX = _audioOptions.x;
+	const int menuY = _audioOptions.y;
+	const int maxButton = 3;	// 2 if voc is disabled
+
+	for (int i = 0; i < maxButton; ++i) {
+		int x = menuX + _sliderBarsPosition[i*2+0];
+		int y = menuY + _sliderBarsPosition[i*2+1];
+		_screen->drawShape(0, _vm->_buttonShapes[16], x, y, 0, 0);
+		drawSliderBar(i, _vm->_buttonShapes[17]);
+		_sliderButtons[0][i].buttonCallback = _sliderHandlerFunctor;
+		_sliderButtons[0][i].x = x;
+		_sliderButtons[0][i].y = y;
+		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[0][i]);
+		_sliderButtons[2][i].buttonCallback = _sliderHandlerFunctor;
+		_sliderButtons[2][i].x = x + 10;
+		_sliderButtons[2][i].y = y;
+		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[2][i]);
+		_sliderButtons[1][i].buttonCallback = _sliderHandlerFunctor;
+		_sliderButtons[1][i].x = x + 120;
+		_sliderButtons[1][i].y = y;
+		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[1][i]);
+	}
+
+	_isOptionsMenu = true;
+	updateAllMenuButtons();
+	bool speechEnabled = _vm->speechEnabled();
+	while (_isOptionsMenu) {
+		processHighlights(_audioOptions, _vm->_mouseX, _vm->_mouseY);
+		getInput();
+	}
+
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+	if (speechEnabled && !_vm->textEnabled() && (!_vm->speechEnabled() || _vm->getVolume(KyraEngine::kVolumeSpeech) == 2)) {
+		_vm->_configVoice = 0;
+		_vm->setVolume(KyraEngine::kVolumeSpeech, 75);
+		choiceDialog(0x1D, 0);
+	}
+
+	_vm->writeSettings();
+
+	initMenu(*_currentMenu);
+	updateAllMenuButtons();
+	return 0;
+}
+
+int GUI_v2::sliderHandler(Button *caller) {
+	int button = 0;
+	if (caller->index >= 25 && caller->index <= 28)
+		button = caller->index - 25;
+	else if (caller->index >= 29 && caller->index <= 32)
+		button = caller->index - 29;
+	else
+		button = caller->index - 33;
+
+	assert(button >= 0 && button <= 2);
+
+	int oldVolume = _vm->getVolume(KyraEngine::kVolumeEntry(button));
+	int newVolume = oldVolume;
+
+	if (caller->index >= 25 && caller->index <= 28)
+		newVolume -= 10;
+	else if (caller->index >= 29 && caller->index <= 32)
+		newVolume += 10;
+	else
+		newVolume = _vm->_mouseX - caller->x - 7;
+
+	newVolume = MAX(2, newVolume);
+	newVolume = MIN(97, newVolume);
+
+	if (newVolume == oldVolume)
+		return 0;
+
+	int lastMusicCommand = -1;
+	bool playSoundEffect = false;
+
+	drawSliderBar(button, _vm->_buttonShapes[18]);
+
+	if (button == 2) {
+		if (_vm->textEnabled())
+			_vm->_configVoice = 2;
+		else
+			_vm->_configVoice = 1;
+	}
+
+	_vm->setVolume(KyraEngine::kVolumeEntry(button), newVolume);
+
+	switch (button) {
+	case 0:
+		lastMusicCommand = _vm->_lastMusicCommand;
+		break;
+
+	case 1:
+		playSoundEffect = true;
+		break;
+
+	case 2:
+		_vm->playVoice(90, 28);
+		break;
+
+	default:
+		return 0;
+	}
+	
+	drawSliderBar(button, _vm->_buttonShapes[17]);
+	if (playSoundEffect)
+		_vm->snd_playSoundEffect(0x18);
+	else if (lastMusicCommand >= 0)
+		_vm->snd_playWanderScoreViaMap(lastMusicCommand, 1);
+
+	_screen->updateScreen();
+	return 0;
+}
+
+void GUI_v2::drawSliderBar(int slider, const uint8 *shape) {
+	const int menuX = _audioOptions.x;
+	const int menuY = _audioOptions.y;
+	int x = menuX + _sliderBarsPosition[slider*2+0] + 10;
+	int y = menuY + _sliderBarsPosition[slider*2+1];
+
+	int position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
+	position = MAX(2, position);
+	position = MIN(97, position);
+	_screen->drawShape(0, shape, x+position, y, 0, 0);
 }
 
 int GUI_v2::loadMenu(Button *caller) {

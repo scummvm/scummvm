@@ -1479,6 +1479,16 @@ void GUI_v2::initStaticData() {
 	GUI_V2_BUTTON(_scrollUpButton, 0x17, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	GUI_V2_BUTTON(_scrollDownButton, 0x18, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 
+	for (int i = 0; i < 3; ++i) {
+		GUI_V2_BUTTON(_sliderButtons[0][i], 0x19+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	}
+	for (int i = 0; i < 3; ++i) {
+		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1D+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	}
+	for (int i = 0; i < 3; ++i) {
+		GUI_V2_BUTTON(_sliderButtons[2][i], 0x21+i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	}
+
 	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
 		GUI_V2_BUTTON(_menuButtons[i], 0x10+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	}
@@ -1487,6 +1497,7 @@ void GUI_v2::initStaticData() {
 	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::clickSaveSlot);
 	Button::Callback clickLoadMenuFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::loadMenu);
 	Button::Callback clickQuitGameFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::quitGame);
+	Button::Callback clickQuitOptionsFunctor = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::quitOptionsMenu);
 
 	const uint16 *menuStr = _vm->gameFlags().isTalkie ? _menuStringsTalkie : _menuStringsOther;
 
@@ -1499,6 +1510,7 @@ void GUI_v2::initStaticData() {
 	GUI_V2_MENU_ITEM(_mainMenu.item[3], 1, 0x04, -1, 0x51, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::gameOptions);
 	GUI_V2_MENU_ITEM(_mainMenu.item[4], 1, 0x25, -1, 0x62, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	_mainMenu.item[4].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::audioOptions);
 	GUI_V2_MENU_ITEM(_mainMenu.item[5], 1, 0x05, -1, 0x73, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[5].callback = clickQuitGameFunctor;
 	GUI_V2_MENU_ITEM(_mainMenu.item[6], 1, 0x06, -1, 0x90, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
@@ -1514,11 +1526,22 @@ void GUI_v2::initStaticData() {
 	GUI_V2_MENU_ITEM(_gameOptions.item[2], 1, 0, 0xA0, 0x40, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x16, 8, 0x42, 0);
 	_gameOptions.item[2].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::toggleText);
 	GUI_V2_MENU_ITEM(_gameOptions.item[3], 1, 0x10, -1, 0x6E, 0x6C, 0x0F, 0xFD, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_gameOptions.item[3].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::quitOptionsMenu);
+	_gameOptions.item[3].callback = clickQuitOptionsFunctor;
 	for (int i = 4; i <= 6; ++i)
 		_gameOptions.item[i].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_gameOptions.item[i].itemId = menuStr[1 * 8 + i + 1];
+
+	GUI_V2_MENU(_audioOptions, -1, -1, 0x120, 0x88, 0xF8, 0xF9, 0xFA, menuStr[2 * 8], 0xFB, -1, 8, 3, 4, -1, -1, -1, -1);
+	GUI_V2_MENU_ITEM(_audioOptions.item[0], 0, 0, 0xA0, 0x1E, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x17, 8, 0x20, 0);
+	GUI_V2_MENU_ITEM(_audioOptions.item[1], 0, 0, 0xA0, 0x2F, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x18, 8, 0x31, 0);
+	GUI_V2_MENU_ITEM(_audioOptions.item[2], 0, 0, 0xA0, 0x40, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x27, 8, 0x42, 0);
+	GUI_V2_MENU_ITEM(_audioOptions.item[3], 1, 0x10, -1, 0x6E, 0x5C, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+	_audioOptions.item[3].callback = clickQuitOptionsFunctor;
+	for (int i = 4; i <= 6; ++i)
+		_audioOptions.item[i].enabled = false;
+	for (int i = 0; i < 7; ++i)
+		_audioOptions.item[i].itemId = menuStr[2 * 8 + i + 1];
 
 	GUI_V2_MENU(_choiceMenu, -1, -1, 0x140, 0x38, 0xF8, 0xF9, 0xFA, 0, 0xFE, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V2_MENU_ITEM(_choiceMenu.item[0], 1, 0x14, 0x18, 0x1E, 0x48, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
@@ -1599,6 +1622,10 @@ const uint16 GUI_v2::_menuStringsOther[] = {
 	0x011, 0x02F, 0x030, 0x031, 0x032, 0x033, 0x013, 0x000,	// Save Menu String IDs
 	0x014, 0x015, 0x013, 0x3E8, 0x000, 0x000, 0x000, 0x000,	// Menu6 String IDs
 	0x016, 0x00A, 0x00D, 0x000, 0x000, 0x000, 0x000, 0x000	// Death Menu String IDs
+};
+
+const int GUI_v2::_sliderBarsPosition[] = {
+	0x92, 0x1F, 0x92, 0x30, 0x92, 0x41
 };
 
 const uint16 KyraEngine_v2::_itemMagicTable[] = {

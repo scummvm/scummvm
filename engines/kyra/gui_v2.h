@@ -111,7 +111,7 @@ private:
 	Button _menuButtons[7];
 	Button _scrollUpButton;
 	Button _scrollDownButton;
-	Menu _mainMenu, _gameOptions, _choiceMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
+	Menu _mainMenu, _gameOptions, _audioOptions, _choiceMenu, _loadMenu, _saveMenu, _savenameMenu, _deathMenu;
 	void initStaticData();
 
 	const char *getMenuTitle(const Menu &menu);
@@ -129,6 +129,8 @@ private:
 	Button::Callback _scrollDownFunctor;
 	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
 	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
+
+	Button _sliderButtons[3][3];
 
 	uint8 defaultColor1() const { return 0xCF; }
 	uint8 defaultColor2() const { return 0xF8; }
@@ -178,6 +180,16 @@ private:
 	int toggleText(Button *caller);
 
 	void setupOptionsButtons();
+
+	// audio menu
+	int audioOptions(Button *caller);
+
+	Button::Callback _sliderHandlerFunctor;
+	int sliderHandler(Button *caller);
+
+	void drawSliderBar(int slider, const uint8 *shape);
+
+	static const int _sliderBarsPosition[];
 
 	// load menu
 	bool _noLoadProcess;

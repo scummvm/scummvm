@@ -132,6 +132,16 @@ public:
 	bool speechEnabled();
 	bool textEnabled();
 
+	enum kVolumeEntry {
+		kVolumeMusic = 0,
+		kVolumeSfx = 1,
+		kVolumeSpeech = 2
+	};
+
+	// volume reaches from 2 to 97
+	void setVolume(kVolumeEntry vol, uint8 value);
+	uint8 getVolume(kVolumeEntry vol);
+
 	// quit handling
 	virtual void quitGame();
 

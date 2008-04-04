@@ -136,11 +136,13 @@ void GUI::initMenu(Menu &menu) {
 				_text->printText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
 			else
 				_text->printText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
+		}
+	}
 
-			if (getMenuItemLabel(menu.item[i])) {
-				_text->printText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX - 1, menu.y + menu.item[i].labelY + 1, defaultColor1(), 0, 0);
-				_text->printText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, menu.item[i].textColor, 0, 0);
-			}
+	for (int i = 0; i < menu.numberOfItems; ++i) {
+		if (getMenuItemLabel(menu.item[i])) {
+			_text->printText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX - 1, menu.y + menu.item[i].labelY + 1, defaultColor1(), 0, 0);
+			_text->printText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, menu.item[i].textColor, 0, 0);
 		}
 	}
 

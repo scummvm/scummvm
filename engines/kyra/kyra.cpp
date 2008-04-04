@@ -322,5 +322,56 @@ bool KyraEngine::textEnabled() {
 	return !_flags.isTalkie || (_configVoice == 0 || _configVoice == 2);
 }
 
+inline int convertValueToMixer(int value) {
+	value -= 2;
+	return (value * Audio::Mixer::kMaxMixerVolume) / 95;
+}
+
+inline int convertValueFromMixer(int value) {
+	return (value * 95) / Audio::Mixer::kMaxMixerVolume + 2;
+}
+
+void KyraEngine::setVolume(kVolumeEntry vol, uint8 value) {
+	switch (vol) {
+	case kVolumeMusic:
+		ConfMan.setInt("music_volume", convertValueToMixer(value));
+		break;
+
+	case kVolumeSfx:
+		ConfMan.setInt("sfx_volume", convertValueToMixer(value));
+		break;
+	
+	case kVolumeSpeech:
+		ConfMan.setInt("speech_volume", convertValueToMixer(value));
+		break;
+	}
+
+	// Resetup mixer
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+}
+
+uint8 KyraEngine::getVolume(kVolumeEntry vol) {
+	switch (vol) {
+	case kVolumeMusic:
+		return convertValueFromMixer(ConfMan.getInt("music_volume"));
+		break;
+
+	case kVolumeSfx:
+		return convertValueFromMixer(ConfMan.getInt("sfx_volume"));
+		break;
+	
+	case kVolumeSpeech:
+		if (speechEnabled())
+			return convertValueFromMixer(ConfMan.getInt("speech_volume"));
+		else
+			return 2;
+		break;
+	}
+
+	return 2;
+}
+
 } // End of namespace Kyra
 
