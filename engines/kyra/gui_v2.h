@@ -163,6 +163,9 @@ private:
 	// load menu
 	int loadMenu(Button *caller);
 	int clickLoadSlot(Button *caller);
+
+	static const uint16 MenuStrings_TALKIE[];
+	static const uint16 MenuStrings_OTHER[];
 };
 
 } // end of namespace Kyra
