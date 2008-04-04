@@ -196,7 +196,6 @@ int KyraEngine_v1::init() {
 	if (!_sound->init())
 		error("Couldn't init sound");
 
-	_sound->setVolume(255);
 	_sound->loadSoundFile(0);
 
 	setupButtonData();

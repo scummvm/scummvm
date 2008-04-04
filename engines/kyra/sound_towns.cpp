@@ -1156,7 +1156,6 @@ void SoundTowns::haltTrack() {
 		_parser->unloadMusic();
 		delete _parser;
 		_parser = 0;
-		setVolume(255);
 	}
 	_driver->queue()->release();
 }

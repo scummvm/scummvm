@@ -2253,13 +2253,6 @@ void SoundAdlibPC::process() {
 	}
 }
 
-void SoundAdlibPC::setVolume(int volume) {
-}
-
-int SoundAdlibPC::getVolume() {
-	return 0;
-}
-
 void SoundAdlibPC::playTrack(uint8 track) {
 	if (_musicEnabled) {
 		// WORKAROUND: There is a bug in the Kyra 1 "Pool of Sorrow"

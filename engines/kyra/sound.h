@@ -82,22 +82,9 @@ public:
 	virtual void process() {}
 
 	/**
-	 * Set the volume of the device.
-	 *
-	 * @param volume	value between 0 and 255
-	 *
-	 * @see getVolume
+	 * Updates internal volume settings according to ConfigManager
 	 */
-	virtual void setVolume(int volume) = 0;
-
-	/**
-	 * Returns the current volume.
-	 *
-	 * @return volume
-	 *
-	 * @see setVolume
-	 */
-	virtual int getVolume() = 0;
+	virtual void updateVolumeSettings() {}
 
 	/**
 	 * Sets the soundfiles the output device will use
@@ -237,9 +224,6 @@ public:
 	bool init();
 	void process();
 
-	void setVolume(int volume);
-	int getVolume();
-
 	void loadSoundFile(uint file);
 
 	void playTrack(uint8 track);
@@ -291,8 +275,7 @@ public:
 
 	bool init() { return true; }
 
-	void setVolume(int volume);
-	int getVolume() { return _volume; }
+	void updateVolumeSettings() { /*XXX*/ }
 
 	void loadSoundFile(uint file);
 
@@ -322,6 +305,8 @@ public:
 	bool isMT32() { return _nativeMT32; }
 
 private:
+	void setVolume(int vol);
+
 	void playMusic(uint8 *data, uint32 size);
 	void stopMusic();
 	void loadSoundEffectFile(uint file);
@@ -360,9 +345,6 @@ public:
 
 	bool init();
 	void process();
-
-	void setVolume(int) {}
-	int getVolume() { return 255; }
 
 	void loadSoundFile(uint file);
 
@@ -419,9 +401,6 @@ public:
 	bool init();
 	void process();
 
-	void setVolume(int) {}
-	int getVolume() { return 255; }
-
 	void loadSoundFile(uint file) {}
 
 	void playTrack(uint8 track);
@@ -448,8 +427,7 @@ public:
 	bool init() { return (_music->init() && _sfx->init()); }
 	void process() { _music->process(); _sfx->process(); }
 
-	void setVolume(int volume) { _music->setVolume(volume); _sfx->setVolume(volume); }
-	int getVolume() { return _music->getVolume(); }
+	void updateVolumeSettings() { _music->updateVolumeSettings(); _sfx->updateVolumeSettings(); }
 
 	void setSoundList(const AudioDataStruct * list) { _music->setSoundList(list); _sfx->setSoundList(list); }
 	void loadSoundFile(uint file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }

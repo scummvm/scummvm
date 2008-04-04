@@ -129,6 +129,8 @@ int KyraEngine::init() {
 		}
 	}
 
+	if (_sound)
+		_sound->updateVolumeSettings();
 	_res = new Resource(this);
 	assert(_res);
 	_res->reset();
@@ -350,6 +352,8 @@ void KyraEngine::setVolume(kVolumeEntry vol, uint8 value) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	if (_sound)
+		_sound->updateVolumeSettings();
 }
 
 uint8 KyraEngine::getVolume(kVolumeEntry vol) {
