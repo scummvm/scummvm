@@ -1226,8 +1226,11 @@ int GUI_v2::optionsButton(Button *button) {
 
 	if (!_vm->gameFlags().isTalkie) {
 		_gameOptions.item[2].enabled = false;	// language settings
+		_gameOptions.item[2].labelId = 0;
 		_gameOptions.item[3].enabled = false;	// text settings
+		_audioOptions.item[2].labelId = 0;
 		_audioOptions.item[3].enabled = false;	// voice volume settings
+		_audioOptions.item[3].labelId = 0;
 	}
 
 	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
