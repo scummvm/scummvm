@@ -528,6 +528,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	else
 		_compositeBuf = 0;
 
+	_fmtownsBuf = 0;
+
 	_herculesBuf = 0;
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_herculesBuf = (byte *)malloc(Common::kHercW * Common::kHercH);
@@ -1198,8 +1200,8 @@ void ScummEngine::setupScumm() {
 	Graphics::initfonts();
 #endif
 
-	_fmtownsBuf = 0;
 	if (_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) {
+		free(_fmtownsBuf);
 		_fmtownsBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier);
 	}
 
