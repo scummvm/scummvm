@@ -56,7 +56,7 @@ MemoryPool::MemoryPool(size_t chunkSize) {
 
 MemoryPool::~MemoryPool() {
 	for (size_t i = 0; i<_pages.size(); ++i)
-	::free(_pages[i]);
+		::free(_pages[i]);
 }
 
 void* MemoryPool::malloc() {

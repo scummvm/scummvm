@@ -281,7 +281,7 @@ struct EngineDebugLevel {
  * @param level the level flag (should be OR-able i.e. first one should be 1 than 2,4,...)
  * @param option the option name which is used in the debugger/on the command line to enable
  *               this special debug level, the option will be compared case !insentiv! later
- * @param descripton the description which shows up in the debugger
+ * @param description the description which shows up in the debugger
  * @return true on success false on failure
  */
 bool addSpecialDebugLevel(uint32 level, const String &option, const String &description);
