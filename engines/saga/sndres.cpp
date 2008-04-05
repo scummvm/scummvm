@@ -186,20 +186,16 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
 		Common::File soundFile;
 		char soundFileName[40];
-		int dirIndex = 0;
+		int dirIndex = floor((float)(resourceId / 64));
 	
 		if ((context->fileType & GAME_VOICEFILE) != 0) {
-			dirIndex = floor((float)(resourceId / 64));
-
 			if (_voiceSerial == 0) {
 				sprintf(soundFileName, "Voices/VoicesS/Voices%d/VoicesS%03x", dirIndex, resourceId);
 			} else {
 				sprintf(soundFileName, "Voices/Voices%d/Voices%d/Voices%d%03x", _voiceSerial, dirIndex, _voiceSerial, resourceId);
 			}
 		} else {
-			dirIndex = floor((float)(resourceId / 64));
-
-			sprintf(soundFileName, "SFX/SFX%d/SFX%02x", dirIndex, resourceId);
+			sprintf(soundFileName, "SFX/SFX%d/SFX%03x", dirIndex, resourceId);
 		}
 		soundFile.open(soundFileName);
 		soundResourceLength = soundFile.size();
