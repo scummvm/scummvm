@@ -1194,6 +1194,7 @@ void GUI_v2::getInput() {
 		_isLoadMenu = false;
 		_isSaveMenu = false;
 		_isOptionsMenu = false;
+		_isDeleteMenu = false;
 	}
 }
 
@@ -1423,7 +1424,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 int GUI_v2::scrollUpButton(Button *button) {
 	updateMenuButton(button);
 
-	if (_savegameOffset == 0)
+	if (_savegameOffset == (_isDeleteMenu ? 1 : 0))
 		return 0;
 
 	--_savegameOffset;
@@ -1431,7 +1432,7 @@ int GUI_v2::scrollUpButton(Button *button) {
 		setupSavegameNames(_loadMenu, 5);
 		// original calls something different here...
 		initMenu(_loadMenu);
-	} else if (_isSaveMenu) {
+	} else if (_isSaveMenu || _isDeleteMenu) {
 		setupSavegameNames(_saveMenu, 5);
 		// original calls something different here...
 		initMenu(_saveMenu);
@@ -1445,13 +1446,13 @@ int GUI_v2::scrollDownButton(Button *button) {
 	++_savegameOffset;
 
 	if (uint(_savegameOffset + 5) >= _saveSlots.size())
-		_savegameOffset = MAX<int>(_saveSlots.size() - 5, 0);
+		_savegameOffset = MAX<int>(_saveSlots.size() - 5, _isDeleteMenu ? 1 : 0);
 
 	if (_isLoadMenu) {
 		setupSavegameNames(_loadMenu, 5);
 		// original calls something different here...
 		initMenu(_loadMenu);
-	} else if (_isSaveMenu) {
+	} else if (_isSaveMenu || _isDeleteMenu) {
 		setupSavegameNames(_saveMenu, 5);
 		// original calls something different here...
 		initMenu(_saveMenu);
@@ -1861,14 +1862,14 @@ int GUI_v2::clickSaveSlot(Button *caller) {
 	MenuItem &item = _saveMenu.item[caller->index-0x10];
 	
 	if (item.saveSlot >= 0) {
-		//if (_isDeleteMenu) {
-		//	_slotToDelete = item.saveSlot;
-		//	_isDeleteMenu = false;
-		//	return 0;
-		//else {
+		if (_isDeleteMenu) {
+			_slotToDelete = item.saveSlot;
+			_isDeleteMenu = false;
+			return 0;
+		} else {
 			_saveSlot = item.saveSlot;
 			strcpy(_saveDescription, _vm->getTableString(item.itemId, _vm->_optionsBuffer, 0));
-		//}
+		}
 	} else if (item.saveSlot == -2) {
 		_saveSlot = getNextSavegameSlot();
 		memset(_saveDescription, 0, sizeof(_saveDescription));
@@ -1884,7 +1885,7 @@ int GUI_v2::clickSaveSlot(Button *caller) {
 	backUpPage1(_vm->_screenBuffer);
 	if (desc) {
 		_isSaveMenu = false;
-		//_isDeleteMenu = false;
+		_isDeleteMenu = false;
 	} else {
 		initMenu(_saveMenu);
 	}
@@ -1895,8 +1896,65 @@ int GUI_v2::clickSaveSlot(Button *caller) {
 int GUI_v2::cancelSaveMenu(Button *caller) {
 	updateMenuButton(caller);
 	_isSaveMenu = false;
-	//_isDeleteMenu = false;
+	_isDeleteMenu = false;
 	_noSaveProcess = true;
+	return 0;
+}
+
+int GUI_v2::deleteMenu(Button *caller) {
+	updateSaveList();
+
+	updateMenuButton(caller);
+	if (_saveSlots.size() < 2) {
+		_vm->snd_playSoundEffect(0x0D);
+		return 0;
+	}
+
+	do {
+		restorePage1(_vm->_screenBuffer);
+		backUpPage1(_vm->_screenBuffer);
+		_savegameOffset = 1;
+		_saveMenu.menuNameId = 35;
+		setupSavegameNames(_saveMenu, 5);
+		initMenu(_saveMenu);
+		_isDeleteMenu = true;
+		_slotToDelete = -1;
+		updateAllMenuButtons();
+
+		while (_isDeleteMenu) {
+			processHighlights(_saveMenu, _vm->_mouseX, _vm->_mouseY);
+			getInput();
+		}
+		
+		if (_slotToDelete < 1) {
+			restorePage1(_vm->_screenBuffer);
+			backUpPage1(_vm->_screenBuffer);
+			initMenu(*_currentMenu);
+			updateAllMenuButtons();
+			_saveMenu.menuNameId = 9;
+			return 0;
+		}
+	} while (choiceDialog(0x24, 1) == 0);
+
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+	initMenu(*_currentMenu);
+	updateAllMenuButtons();
+	_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(_slotToDelete));
+	Common::Array<int>::iterator i = Common::find(_saveSlots.begin(), _saveSlots.end(), _slotToDelete);
+	int lastSlot = _slotToDelete;
+	while (i != _saveSlots.end()) {
+		++i;
+		if (i == _saveSlots.end())
+			break;
+		if (lastSlot + 1 != *i)
+			break;
+		Common::String oldName = _vm->getSavegameFilename(*i);
+		Common::String newName = _vm->getSavegameFilename(*i-1);
+		_vm->_saveFileMan->renameSavefile(oldName.c_str(), newName.c_str());
+		lastSlot = *i;
+	}	
+	_saveMenu.menuNameId = 9;
 	return 0;
 }
 

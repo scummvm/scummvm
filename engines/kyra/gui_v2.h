@@ -156,6 +156,7 @@ private:
 	bool _isLoadMenu;
 	bool _isDeathMenu;
 	bool _isSaveMenu;
+	bool _isDeleteMenu;
 	bool _isChoiceMenu;
 	bool _isOptionsMenu;
 	bool _madeSave;
@@ -205,6 +206,10 @@ private:
 	int saveMenu(Button *caller);
 	int clickSaveSlot(Button *caller);
 	int cancelSaveMenu(Button *caller);
+
+	// delete menu
+	int _slotToDelete;
+	int deleteMenu(Button *caller);
 
 	// savename menu
 	bool _finishNameInput, _cancelNameInput;
