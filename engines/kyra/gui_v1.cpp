@@ -612,6 +612,9 @@ void GUI_v1::setupSavegames(Menu &menu, int num) {
 		startSlot = 0;
 	}
 
+	for (int i = startSlot; i < num; ++i)
+		menu.item[i].enabled = 0;
+
 	KyraEngine::SaveHeader header;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); i++) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header))) {
@@ -620,10 +623,6 @@ void GUI_v1::setupSavegames(Menu &menu, int num) {
 			menu.item[i].enabled = 1;
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
 			delete in;
-		} else {
-			menu.item[i].enabled = 0;
-			//menu.item[i].itemString = "";
-			//menu.item[i].saveSlot = -1;
 		}
 	}
 }
