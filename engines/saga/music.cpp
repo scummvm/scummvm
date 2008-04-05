@@ -433,10 +433,6 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		return;
 	}
 
-	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
-		return;
-	}
-
 	if (isPlaying() && _trackNumber == resourceId) {
 		return;
 	}
@@ -512,6 +508,9 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		if (context == NULL) {
 			context = _vm->_resource->getContext(GAME_RESOURCEFILE);
 		}
+	} else if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+		// The music of the Mac version of IHNM is loaded from its
+		// associated external file later on
 	} else {
 		// I've listened to music from both the FM and the GM
 		// file, and I've tentatively reached the conclusion
@@ -547,7 +546,26 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	_player->setGM(true);
 
-	_vm->_resource->loadResource(context, resourceId, resourceData, resourceSize);
+	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+		// Load the external music file for Mac IHNM
+		Common::File musicFile;
+		char musicFileName[40];
+		if (resourceId <= 16)			// F in hex (1 char in hex)
+			sprintf(musicFileName, "Music/Music0%x", resourceId);
+		else
+			sprintf(musicFileName, "Music/Music%x", resourceId);
+		musicFile.open(musicFileName);
+		resourceSize = musicFile.size();
+		resourceData = new byte[resourceSize];
+		musicFile.read(resourceData, resourceSize);
+		musicFile.close();
+
+		// TODO: The Mac music format is unknown (probably TFMX?)
+		// so stop here
+		return;
+	} else {
+		_vm->_resource->loadResource(context, resourceId, resourceData, resourceSize);
+	}
 
 	if (resourceSize < 4) {
 		error("Music::play() wrong music resource size");
