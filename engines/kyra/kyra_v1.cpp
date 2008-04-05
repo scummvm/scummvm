@@ -416,6 +416,7 @@ void KyraEngine_v1::startup() {
 		} else
 			saveGame(getSavegameFilename(0), "New game");
 	} else {
+		_screen->setFont(Screen::FID_8_FNT);
 		loadGame(getSavegameFilename(_gameToLoad));
 		_gameToLoad = -1;
 	}
