@@ -426,8 +426,10 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 
 	int returnValue = 0;
 	while (buttonList) {
-		if (buttonList->flags & 8)
+		if (buttonList->flags & 8) {
+			buttonList = buttonList->nextButton;
 			continue;
+		}
 		buttonList->flags2 &= 0xFFE7;
 		buttonList->flags2 |= (buttonList->flags2 & 3) << 3;
 
