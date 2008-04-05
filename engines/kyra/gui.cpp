@@ -322,7 +322,7 @@ void GUI::updateSaveList() {
 int GUI::getNextSavegameSlot() {
 	Common::InSaveFile *in;
 
-	for (int i = 1; i < 1000; i++) {
+	for (int i = 1; i < 990; i++) {
 		if ((in = _vm->_saveFileMan->openForLoading(_vm->getSavegameFilename(i))))
 			delete in;
 		else

@@ -1312,10 +1312,8 @@ int GUI_v2::optionsButton(Button *button) {
 
 	if (!_loadedSave && _reloadTemporarySave) {
 		_vm->_unkSceneScreenFlag1 = true;
-		Common::String save = _vm->getSavegameFilename(0);
-		save += ".TMP";
-		_vm->loadGame(save.c_str());
-		_vm->_saveFileMan->removeSavefile(save.c_str());
+		_vm->loadGame(_vm->getSavegameFilename(999));
+		_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(999));
 		_vm->_unkSceneScreenFlag1 = false;
 	}
 
@@ -1512,9 +1510,7 @@ int GUI_v2::gameOptions(Button *caller) {
 
 	if (_vm->_lang != lang) {
 		_reloadTemporarySave = true;
-		Common::String save = _vm->getSavegameFilename(0);
-		save += ".TMP";
-		_vm->saveGame(save.c_str(), "Temporary Kyrandia 2 Savegame");
+		_vm->saveGame(_vm->getSavegameFilename(999), "Temporary Kyrandia 2 Savegame");
 		_vm->loadCCodeBuffer("C_CODE.XXX");
 		if (_vm->_flags.isTalkie)
 			_vm->loadOptionsBuffer("OPTIONS.XXX");

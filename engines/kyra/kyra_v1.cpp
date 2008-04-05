@@ -489,13 +489,13 @@ void KyraEngine_v1::delay(uint32 amount, bool update, bool isMainLoop) {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode >= '1' && event.kbd.keycode <= '9' &&
 						(event.kbd.flags == Common::KBD_CTRL || event.kbd.flags == Common::KBD_ALT) && isMainLoop) {
-					const char *saveLoadSlot = getSavegameFilename(event.kbd.keycode - '0');
+					const char *saveLoadSlot = getSavegameFilename(9 - (event.kbd.keycode - '0') + 990);
 
 					if (event.kbd.flags == Common::KBD_CTRL)
 						loadGame(saveLoadSlot);
 					else {
 						char savegameName[14];
-						sprintf(savegameName, "Quicksave %d",  event.kbd.keycode - '0');
+						sprintf(savegameName, "Quicksave %d", event.kbd.keycode - '0');
 						saveGame(saveLoadSlot, savegameName);
 					}
 				} else if (event.kbd.flags == Common::KBD_CTRL) {
