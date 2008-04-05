@@ -72,6 +72,8 @@ void GUI::initMenuLayout(Menu &menu) {
 }
 
 void GUI::initMenu(Menu &menu) {
+	// HACK: else sometimes the scroll button appears after loading a savegame in kyrandia 2
+	updateAllMenuButtons();
 	_menuButtonList = 0;
 
 	_screen->hideMouse();
