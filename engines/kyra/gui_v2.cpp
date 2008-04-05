@@ -1942,17 +1942,16 @@ int GUI_v2::deleteMenu(Button *caller) {
 	updateAllMenuButtons();
 	_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(_slotToDelete));
 	Common::Array<int>::iterator i = Common::find(_saveSlots.begin(), _saveSlots.end(), _slotToDelete);
-	int lastSlot = _slotToDelete;
 	while (i != _saveSlots.end()) {
 		++i;
 		if (i == _saveSlots.end())
 			break;
-		if (lastSlot + 1 != *i)
+		// We are only renaming all savefiles until we get some slots missing
+		if (*(i-1) != *i)
 			break;
 		Common::String oldName = _vm->getSavegameFilename(*i);
 		Common::String newName = _vm->getSavegameFilename(*i-1);
 		_vm->_saveFileMan->renameSavefile(oldName.c_str(), newName.c_str());
-		lastSlot = *i;
 	}	
 	_saveMenu.menuNameId = 9;
 	return 0;
