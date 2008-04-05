@@ -550,10 +550,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		// Load the external music file for Mac IHNM
 		Common::File musicFile;
 		char musicFileName[40];
-		if (resourceId <= 16)			// F in hex (1 char in hex)
-			sprintf(musicFileName, "Music/Music0%x", resourceId);
-		else
-			sprintf(musicFileName, "Music/Music%x", resourceId);
+		sprintf(musicFileName, "Music/Music%02x", resourceId);
 		musicFile.open(musicFileName);
 		resourceSize = musicFile.size();
 		resourceData = new byte[resourceSize];

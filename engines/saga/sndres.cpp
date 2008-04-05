@@ -192,29 +192,14 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			dirIndex = floor((float)(resourceId / 64));
 
 			if (_voiceSerial == 0) {
-				if (resourceId <= 16)			// F in hex (1 char in hex)
-					sprintf(soundFileName, "Voices/VoicesS/Voices%d/VoicesS00%x", dirIndex, resourceId);
-				else if (resourceId <= 255)		// FF in hex (2 chars in hex)
-					sprintf(soundFileName, "Voices/VoicesS/Voices%d/VoicesS0%x", dirIndex, resourceId);
-				else
-					sprintf(soundFileName, "Voices/VoicesS/Voices%d/VoicesS%x", dirIndex, resourceId);
+				sprintf(soundFileName, "Voices/VoicesS/Voices%d/VoicesS%03x", dirIndex, resourceId);
 			} else {
-				if (resourceId <= 16)			// F in hex (1 char in hex)
-					sprintf(soundFileName, "Voices/Voices%d/Voices%d/Voices%d00%x", _voiceSerial, dirIndex, _voiceSerial, resourceId);
-				else if (resourceId <= 255)		// FF in hex (2 chars in hex)
-					sprintf(soundFileName, "Voices/Voices%d/Voices%d/Voices%d0%x", _voiceSerial, dirIndex, _voiceSerial, resourceId);
-				else
-					sprintf(soundFileName, "Voices/Voices%d/Voices%d/Voices%d%x", _voiceSerial, dirIndex, _voiceSerial, resourceId);
+				sprintf(soundFileName, "Voices/Voices%d/Voices%d/Voices%d%03x", _voiceSerial, dirIndex, _voiceSerial, resourceId);
 			}
 		} else {
 			dirIndex = floor((float)(resourceId / 64));
 
-			if (resourceId <= 16)	// F in hex (1 char in hex)
-				sprintf(soundFileName, "SFX/SFX%d/SFX00%x", dirIndex, resourceId);
-			else if (resourceId <= 255)	// FF in hex (2 chars in hex)
-				sprintf(soundFileName, "SFX/SFX%d/SFX0%x", dirIndex, resourceId);
-			else
-				sprintf(soundFileName, "SFX/SFX%d/SFX%x", dirIndex, resourceId);
+			sprintf(soundFileName, "SFX/SFX%d/SFX%02x", dirIndex, resourceId);
 		}
 		soundFile.open(soundFileName);
 		soundResourceLength = soundFile.size();
