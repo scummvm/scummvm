@@ -433,6 +433,10 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		return;
 	}
 
+	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+		return;
+	}
+
 	if (isPlaying() && _trackNumber == resourceId) {
 		return;
 	}

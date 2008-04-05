@@ -869,6 +869,34 @@ static const SAGAGameDescription gameDescriptions[] = {
 		0,
 		NULL,
 	},
+	// I Have No Mouth And I Must Scream - Mac English CD
+	{
+		{
+			"ihnm",
+			"",
+			{
+	{"scream.res",	GAME_RESOURCEFILE,					"46bbdc65d164ba7e89836a0935eec8e6", 79211140},
+	{"patch.res",	GAME_PATCHFILE | GAME_RESOURCEFILE,	"58b79e61594779513c7f2d35509fa89e", 5038599},
+	{"scripts.res",	GAME_SCRIPTFILE,					"be38bbc5a26be809dbf39f13befebd01", 493597},
+	{"sfx.res",		GAME_SOUNDFILE,						"0c24f75c30c3c4cffc7bf0e6d997898b", 3082},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_IHNM,
+		GID_IHNM_CD_MAC,
+		0, // GF_BIG_ENDIAN_DATA
+		IHNM_DEFAULT_SCENE,
+		&IHNM_Resources,
+		ARRAYSIZE(IHNMCD_GameFonts),
+		IHNMCD_GameFonts,
+		&IHNM_GameSound,
+		&IHNM_GameSound,
+		0,
+		NULL,
+	},
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0, NULL, 0, NULL, NULL, NULL, 0, NULL }
 };
 

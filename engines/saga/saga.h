@@ -135,7 +135,8 @@ enum GameIds {
 	GID_IHNM_CD_ES,
 	GID_IHNM_CD_RU,
 	GID_IHNM_CD_FR,
-	GID_IHNM_CD_ITA
+	GID_IHNM_CD_ITA,
+	GID_IHNM_CD_MAC
 };
 
 enum GameFileTypes {
