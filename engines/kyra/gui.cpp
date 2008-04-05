@@ -301,7 +301,6 @@ int GUI::redrawShadedButtonCallback(Button *button) {
 void GUI::updateSaveList() {
 	Common::String pattern = _vm->_targetName + ".???";
 	Common::StringList saveFileList = _vm->_saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(saveFileList.begin(), saveFileList.end());
 	_saveSlots.clear();
 
 	for (Common::StringList::const_iterator i = saveFileList.begin(); i != saveFileList.end(); ++i) {
@@ -311,6 +310,13 @@ void GUI::updateSaveList() {
 		s3 = (*i)[i->size()-1] - '0';
 		_saveSlots.push_back(s1*100+s2*10+s3);
 	}
+
+	if (_saveSlots.begin() == _saveSlots.end())
+		return;
+
+	Common::sort(_saveSlots.begin(), _saveSlots.end(), Common::Less<int>());
+	if (_saveSlots.size() > 2)
+		Common::sort(_saveSlots.begin()+1, _saveSlots.end(), Common::Greater<int>());
 }
 
 int GUI::getNextSavegameSlot() {

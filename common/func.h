@@ -44,12 +44,17 @@ struct BinaryFunction {
 
 template<class T>
 struct EqualTo : public BinaryFunction<T, T, bool> {
-	bool operator()(const T& x, const T& y) const { return x == y; }
+	bool operator()(const T &x, const T &y) const { return x == y; }
 };
 
 template<class T>
 struct Less : public BinaryFunction<T, T, bool> {
-	bool operator()(const T& x, const T& y) const { return x < y; }
+	bool operator()(const T &x, const T &y) const { return x < y; }
+};
+
+template<class T>
+struct Greater : public BinaryFunction<T, T, bool> {
+	bool operator()(const T &x, const T &y) const { return x > y; }
 };
 
 template<class Op>

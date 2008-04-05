@@ -1336,9 +1336,6 @@ void GUI_v2::renewHighlight(Menu &menu) {
 }
 
 void GUI_v2::setupPalette() {
-	//if (_isDeathMenu)
-	//	memcpy(_vm->_unkBuffer1040Bytes, _screen->getPalette(0), 768);
-
 	memcpy(_screen->getPalette(1), _screen->getPalette(0), 768);
 
 	uint8 *palette = _screen->getPalette(0);
@@ -1842,12 +1839,6 @@ int GUI_v2::saveMenu(Button *caller) {
 
 	restorePage1(_vm->_screenBuffer);
 	restorePalette();
-	//if (getNextSaveGameslot() == _saveSlot) {
-	//	while (_saveSlot > 1) {
-	//		rename(_vm->getSavegameFilename(_saveSlot-1), _vm->getSavegameFilename(_saveSlot));
-	//		--_saveSlot;
-	//	}
-	//}
 	_vm->saveGame(_vm->getSavegameFilename(_saveSlot), _saveDescription);
 	_displayMenu = false;
 	_madeSave = true;
