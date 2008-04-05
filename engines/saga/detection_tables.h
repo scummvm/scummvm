@@ -104,12 +104,12 @@ static const GameFontDescription IHNMCD_GameFonts[]     = { {2}, {3}, {4}, {5}, 
 
 //                                                             frequency, sampleBits, stereo, isBigEndian, isSigned
 static const GameSoundInfo ITEPC_GameSound       = { kSoundPCM,    22050,         16,  false,       false,     true };
-static const GameSoundInfo ITEMAC_GameSound      = { kSoundPCM,    22050,         16,  false,        true,     true };
 static const GameSoundInfo ITEWINDEMO1_GameSound = { kSoundPCM,    22050,          8,  false,       false,    false };
 static const GameSoundInfo ITEMACCD_G_GameSound  = { kSoundMacPCM, 22050,          8,  false,       false,    false };
 static const GameSoundInfo ITEDISK_GameSound     = { kSoundVOC,       -1,         -1,  false,       false,     true };
 static const GameSoundInfo ITEDEMO_GameVoice     = { kSoundVOX,    22050,         16,  false,       false,     true };
 static const GameSoundInfo IHNM_GameSound        = { kSoundWAV,       -1,         -1,  false,       false,     true };
+static const GameSoundInfo MAC_GameSound         = { kSoundPCM,    22050,         16,  false,        true,     true };
 
 // Patch files. Files not found will be ignored
 static const GamePatchDescription ITEPatch_Files[] = {
@@ -161,7 +161,7 @@ static const GamePatchDescription ITEMacPatch_Files[] = {
 	{      "wyrm4.dlt", GAME_RESOURCEFILE, 1533, NULL},
 	{   "credit3m.dlt", GAME_RESOURCEFILE, 1796, NULL},
 	{   "credit4m.dlt", GAME_RESOURCEFILE, 1797, NULL},
-	{       "p2_a.iaf", GAME_VOICEFILE,       4, &ITEMAC_GameSound}
+	{       "p2_a.iaf", GAME_VOICEFILE,       4, &MAC_GameSound}
 };
 
 static const SAGAGameDescription gameDescriptions[] = {
@@ -226,7 +226,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITEDEMO_GameVoice,
-		&ITEMAC_GameSound,
+		&MAC_GameSound,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
@@ -255,7 +255,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
 		&ITEDEMO_GameVoice,
-		&ITEMAC_GameSound,
+		&MAC_GameSound,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
@@ -375,8 +375,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
 		ITEWINDEMO_GameFonts,
-		&ITEMAC_GameSound,
-		&ITEMAC_GameSound,
+		&MAC_GameSound,
+		&MAC_GameSound,
 		ARRAYSIZE(ITEMacPatch_Files),
 		ITEMacPatch_Files,
 	},
@@ -410,7 +410,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
-		&ITEMAC_GameSound,
+		&MAC_GameSound,
 		&ITEPC_GameSound,
 		0,
 		NULL,
@@ -442,7 +442,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&ITE_Resources,
 		ARRAYSIZE(ITE_GameFonts),
 		ITE_GameFonts,
-		&ITEMAC_GameSound,
+		&MAC_GameSound,
 		&ITEPC_GameSound,
 		0,
 		NULL,
@@ -892,8 +892,8 @@ static const SAGAGameDescription gameDescriptions[] = {
 		&IHNM_Resources,
 		ARRAYSIZE(IHNMCD_GameFonts),
 		IHNMCD_GameFonts,
-		&IHNM_GameSound,
-		&IHNM_GameSound,
+		&MAC_GameSound,
+		&MAC_GameSound,
 		0,
 		NULL,
 	},

@@ -38,6 +38,7 @@
 #include "sound/voc.h"
 #include "sound/wave.h"
 #include "sound/adpcm.h"
+#include "sound/aiff.h"
 #include "sound/audiostream.h"
 
 namespace Saga {
@@ -170,7 +171,32 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		return false;
 	}
 
-	_vm->_resource->loadResource(context, resourceId, soundResource, soundResourceLength);
+	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+		Common::File soundFile;
+		char soundFileName[40];
+		int dirIndex = 0;
+	
+		if ((context->fileType & GAME_VOICEFILE) != 0) {
+			// TODO
+			return false;
+		} else {
+			dirIndex = floor((float)(resourceId / 63));
+
+			if (resourceId <= 16)	// F in hex (1 char in hex)
+				sprintf(soundFileName, "SFX/SFX%d/SFX00%x", dirIndex, resourceId);
+			else if (resourceId <= 255)	// FF in hex (2 chars in hex)
+				sprintf(soundFileName, "SFX/SFX%d/SFX0%x", dirIndex, resourceId);
+			else
+				sprintf(soundFileName, "SFX/SFX%d/SFX%x", dirIndex, resourceId);
+		}
+		soundFile.open(soundFileName);
+		soundResourceLength = soundFile.size();
+		soundResource = new byte[soundResourceLength];
+		soundFile.read(soundResource, soundResourceLength);
+		soundFile.close();
+	} else {
+		_vm->_resource->loadResource(context, resourceId, soundResource, soundResourceLength);
+	}
 
 	if ((context->fileType & GAME_VOICEFILE) != 0) {
 		soundInfo = _vm->getVoiceInfo();
@@ -189,6 +215,8 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			resourceType = kSoundVOC;
 		} else if (!memcmp(soundResource, "RIFF", 4) != 0) {
 			resourceType = kSoundWAV;
+		} else if (!memcmp(soundResource, "FORM", 4) != 0) {
+			resourceType = kSoundAIFF;
 		}
 
 		bool uncompressedSound = false;
@@ -287,6 +315,23 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		break;
 	case kSoundWAV:
 		if (Audio::loadWAVFromStream(readS, size, rate, flags)) {
+			buffer.frequency = rate;
+			buffer.sampleBits = 16;
+			buffer.stereo = ((flags & Audio::Mixer::FLAG_STEREO) != 0);
+			buffer.isSigned = true;
+			buffer.size = size;
+			if (onlyHeader) {
+				buffer.buffer = NULL;
+			} else {
+				buffer.buffer = (byte *)malloc(size);
+				readS.read(buffer.buffer, size);
+			}
+			result = true;
+		}
+		free(soundResource);
+		break;
+	case kSoundAIFF:
+		if (Audio::loadAIFFFromStream(readS, size, rate, flags)) {
 			buffer.frequency = rate;
 			buffer.sampleBits = 16;
 			buffer.stereo = ((flags & Audio::Mixer::FLAG_STEREO) != 0);
