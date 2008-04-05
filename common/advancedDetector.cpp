@@ -178,7 +178,7 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 		desc["gameid"] = params.singleid;
 	}
 
-	if (params.flags & kADFlagAugmentPreferredTarget) {
+	if (!(params.flags & kADFlagDontAugmentPreferredTarget)) {
 		if (!desc.contains("preferredtarget"))
 			desc["preferredtarget"] = desc["gameid"];
 

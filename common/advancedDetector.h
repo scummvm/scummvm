@@ -103,7 +103,7 @@ enum ADFlags {
 	 * Generate/augment preferred target with information on the language (if
 	 * not equal to english) and platform (if not equal to PC).
 	 */
-	kADFlagAugmentPreferredTarget = (1 << 0),
+	kADFlagDontAugmentPreferredTarget = (1 << 0),
 	kADFlagPrintWarningOnFileBasedFallback = (1 << 1),
 	kADFlagUseExtraAsHint = (1 << 2)
 };

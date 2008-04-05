@@ -101,7 +101,7 @@ static const Common::ADParams igorDetectionParams = {
 	0,
 	"igor",
 	0,
-	Common::kADFlagAugmentPreferredTarget
+	0
 };
 
 class IgorMetaEngine : public Common::AdvancedMetaEngine {

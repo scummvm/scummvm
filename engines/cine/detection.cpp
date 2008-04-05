@@ -483,7 +483,7 @@ static const Common::ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	Common::kADFlagAugmentPreferredTarget
+	0
 };
 
 class CineMetaEngine : public Common::AdvancedMetaEngine {

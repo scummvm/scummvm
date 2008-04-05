@@ -1867,7 +1867,7 @@ static const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	Gob::fileBased,
 	// Flags
-	kADFlagAugmentPreferredTarget
+	0
 };
 
 class GobMetaEngine : public Common::AdvancedMetaEngine {

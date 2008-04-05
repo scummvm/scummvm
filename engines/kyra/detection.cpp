@@ -437,7 +437,7 @@ const Common::ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
-	0
+	Common::kADFlagDontAugmentPreferredTarget
 };
 
 } // End of anonymous namespace
