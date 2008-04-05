@@ -1396,10 +1396,10 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 
 	KyraEngine::SaveHeader header;
 	Common::InSaveFile *in;
-	for (int i = startSlot; i < num; ++i) {
-		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(i + _savegameOffset), header)) != 0) {
+	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
+		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != 0) {
 			strncpy(_vm->getTableString(menu.item[i].itemId, _vm->_optionsBuffer, 0), header.description.c_str(), 80);
-			menu.item[i].saveSlot = i + _savegameOffset;
+			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
 			menu.item[i].enabled = true;
 			delete in;
 		}
@@ -1421,10 +1421,9 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 }
 
 int GUI_v2::scrollUpButton(Button *button) {
-	int startSlot = _isSaveMenu ? 1 : 0;
 	updateMenuButton(button);
 
-	if (_savegameOffset <= startSlot)
+	if (_savegameOffset == 0)
 		return 0;
 
 	--_savegameOffset;
@@ -1444,6 +1443,10 @@ int GUI_v2::scrollUpButton(Button *button) {
 int GUI_v2::scrollDownButton(Button *button) {
 	updateMenuButton(button);
 	++_savegameOffset;
+
+	if (uint(_savegameOffset + 5) >= _saveSlots.size())
+		_savegameOffset = MAX<int>(_saveSlots.size() - 5, 0);
+
 	if (_isLoadMenu) {
 		setupSavegameNames(_loadMenu, 5);
 		// original calls something different here...
@@ -1737,6 +1740,8 @@ void GUI_v2::drawSliderBar(int slider, const uint8 *shape) {
 }
 
 int GUI_v2::loadMenu(Button *caller) {
+	updateSaveList();
+
 	if (!_vm->_menuDirectlyToLoad) {
 		updateMenuButton(caller);
 		restorePage1(_vm->_screenBuffer);
@@ -1803,7 +1808,8 @@ int GUI_v2::cancelLoadMenu(Button *caller) {
 }
 
 int GUI_v2::saveMenu(Button *caller) {
-	//XXX
+	updateSaveList();
+
 	updateMenuButton(caller);
 
 	restorePage1(_vm->_screenBuffer);

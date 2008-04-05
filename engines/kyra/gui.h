@@ -30,6 +30,7 @@
 #include "kyra/kyra.h"
 
 #include "common/ptr.h"
+#include "common/array.h"
 
 namespace Kyra {
 
@@ -185,6 +186,8 @@ protected:
 	void redrawText(const Menu &menu);
 	void redrawHighlight(const Menu &menu);
 
+	Common::Array<int> _saveSlots;
+	void updateSaveList();
 	int getNextSavegameSlot();
 };
 

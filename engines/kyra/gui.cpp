@@ -298,6 +298,21 @@ int GUI::redrawShadedButtonCallback(Button *button) {
 	return 0;
 }
 
+void GUI::updateSaveList() {
+	Common::String pattern = _vm->_targetName + ".???";
+	Common::StringList saveFileList = _vm->_saveFileMan->listSavefiles(pattern.c_str());
+	Common::sort(saveFileList.begin(), saveFileList.end());
+	_saveSlots.clear();
+
+	for (Common::StringList::const_iterator i = saveFileList.begin(); i != saveFileList.end(); ++i) {
+		char s1 = 0, s2 = 0, s3 = 0;
+		s1 = (*i)[i->size()-3] - '0';
+		s2 = (*i)[i->size()-2] - '0';
+		s3 = (*i)[i->size()-1] - '0';
+		_saveSlots.push_back(s1*100+s2*10+s3);
+	}
+}
+
 int GUI::getNextSavegameSlot() {
 	Common::InSaveFile *in;
 
