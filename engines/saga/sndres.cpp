@@ -105,6 +105,18 @@ void SndRes::setVoiceBank(int serial) {
 	if (_voiceSerial == serial)
 		return;
 
+	// If we got the Macintosh version of IHNM, just set the voice bank
+	// so that we know which voices* subfolder to look for later
+	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+		_voiceSerial = serial;
+		// Set a dummy voice context
+		_voiceContext = new ResourceContext();
+		_voiceContext->fileType = GAME_VOICEFILE;
+		_voiceContext->count = 0;
+		_voiceContext->serial = 0;
+		return;
+	}
+
 	// If there are no voice files present, don't set the voice bank
 	if (!_vm->_voiceFilesExist)
 		return;
@@ -177,10 +189,25 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		int dirIndex = 0;
 	
 		if ((context->fileType & GAME_VOICEFILE) != 0) {
-			// TODO
-			return false;
+			dirIndex = floor((float)(resourceId / 64));
+
+			if (_voiceSerial == 0) {
+				if (resourceId <= 16)			// F in hex (1 char in hex)
+					sprintf(soundFileName, "Voices/VoicesS/Voices%d/VoicesS00%x", dirIndex, resourceId);
+				else if (resourceId <= 255)		// FF in hex (2 chars in hex)
+					sprintf(soundFileName, "Voices/VoicesS/Voices%d/VoicesS0%x", dirIndex, resourceId);
+				else
+					sprintf(soundFileName, "Voices/VoicesS/Voices%d/VoicesS%x", dirIndex, resourceId);
+			} else {
+				if (resourceId <= 16)			// F in hex (1 char in hex)
+					sprintf(soundFileName, "Voices/Voices%d/Voices%d/Voices%d00%x", _voiceSerial, dirIndex, _voiceSerial, resourceId);
+				else if (resourceId <= 255)		// FF in hex (2 chars in hex)
+					sprintf(soundFileName, "Voices/Voices%d/Voices%d/Voices%d0%x", _voiceSerial, dirIndex, _voiceSerial, resourceId);
+				else
+					sprintf(soundFileName, "Voices/Voices%d/Voices%d/Voices%d%x", _voiceSerial, dirIndex, _voiceSerial, resourceId);
+			}
 		} else {
-			dirIndex = floor((float)(resourceId / 63));
+			dirIndex = floor((float)(resourceId / 64));
 
 			if (resourceId <= 16)	// F in hex (1 char in hex)
 				sprintf(soundFileName, "SFX/SFX%d/SFX00%x", dirIndex, resourceId);
@@ -204,7 +231,11 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		soundInfo = _vm->getSfxInfo();
 	}
 
-	context->table[resourceId].fillSoundPatch(soundInfo);
+	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources() && (context->fileType & GAME_VOICEFILE) != 0) {
+		// No sound patch data for the voice files in the Mac version of IHNM
+	} else {
+		context->table[resourceId].fillSoundPatch(soundInfo);
+	}
 
 	MemoryReadStream readS(soundResource, soundResourceLength);
 

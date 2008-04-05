@@ -505,10 +505,16 @@ bool Resource::createContexts() {
 			} else {
 				// No voice file found, don't add any file to the array
 				voicesFileInArray = true;
-				warning("No voice file found, voices will be disabled");
-				_vm->_voicesEnabled = false;
-				_vm->_subtitlesEnabled = true;
-				_vm->_voiceFilesExist = false;
+
+				if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
+					// The Macintosh version of IHNM has no voices.res, and it has all
+					// its voice files in subdirectories, so don't do anything here
+				} else {
+					warning("No voice file found, voices will be disabled");
+					_vm->_voicesEnabled = false;
+					_vm->_subtitlesEnabled = true;
+					_vm->_voiceFilesExist = false;
+				}
 			}
 		}
 	}
