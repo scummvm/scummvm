@@ -186,7 +186,7 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	if (_vm->getGameType() == GType_IHNM && _vm->isMacResources()) {
 		Common::File soundFile;
 		char soundFileName[40];
-		int dirIndex = floor((float)(resourceId / 64));
+		int dirIndex = resourceId / 64;
 	
 		if ((context->fileType & GAME_VOICEFILE) != 0) {
 			if (_voiceSerial == 0) {
