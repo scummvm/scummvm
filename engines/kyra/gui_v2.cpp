@@ -1936,7 +1936,8 @@ int GUI_v2::deleteMenu(Button *caller) {
 		if (i == _saveSlots.end())
 			break;
 		// We are only renaming all savefiles until we get some slots missing
-		if (*(i-1) != *i)
+		// Also not rename quicksave slot filenames
+		if (*(i-1) != *i || *i >= 990)
 			break;
 		Common::String oldName = _vm->getSavegameFilename(*i);
 		Common::String newName = _vm->getSavegameFilename(*i-1);
