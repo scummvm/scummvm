@@ -138,6 +138,8 @@ int KyraEngine::init() {
 	assert(_staticres);
 	if (!_staticres->init())
 		error("_staticres->init() failed");
+	if (!screen()->init())
+		error("screen()->init() failed");
 	_timer = new TimerManager(this, _system);
 	assert(_timer);
 	setupTimers();
