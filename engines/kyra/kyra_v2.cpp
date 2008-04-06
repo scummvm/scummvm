@@ -51,8 +51,6 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_activeText = 0;
 	_seqWsa = 0;
 	_sequences = 0;
-	_nSequences = 0;
-	_demoShapeDefs = 0;
 	_sequenceSoundList = 0;
 
 	_showCredits = false;
@@ -97,8 +95,12 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	_currentTalkSections.ENDTim = NULL;
 
 	memset(&_invWsa, 0, sizeof(_invWsa));
-	_itemAnimTable = 0;
+	_itemAnimData = 0;
+	_demoAnimData = 0;
 	_nextAnimItem = 0;
+	
+	for (int i = 0; i < 15; i++)
+		memset(&_activeItemAnim[i], 0, sizeof(ActiveItemAnim));
 
 	_colorCodeFlag1 = 0;
 	_colorCodeFlag2 = -1;
@@ -150,11 +152,6 @@ KyraEngine_v2::~KyraEngine_v2() {
 	cleanup();
 	seq_uninit();
 
-	if (_sequences)
-		delete [] _sequences;
-	if (_nSequences)
-		delete [] _nSequences;
-
 	delete [] _mouseSHPBuf;
 	delete _screen;
 	delete _text;
@@ -186,6 +183,8 @@ Movie *KyraEngine_v2::createWSAMovie() {
 int KyraEngine_v2::init() {
 	_screen = new Screen_v2(this, _system);
 	assert(_screen);
+	if (!_screen->init())
+		error("_screen->init() failed");
 
 	KyraEngine::init();
 	initStaticResource();

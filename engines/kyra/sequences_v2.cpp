@@ -83,8 +83,11 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 
 		allowSkip = (!(_flags.isDemo && !_flags.isTalkie) && (seqNum == kSequenceTitle)) ? false : true;
 
-		if (_sequences[seqNum].flags & 2) {
-			_screen->loadBitmap(_sequences[seqNum].cpsFile, 2, 2, _screen->getPalette(0));
+		Sequence cseq = _sequences->seq[seqNum];
+		SeqProc cb = _callbackS[seqNum];
+
+		if (cseq.flags & 2) {
+			_screen->loadBitmap(cseq.cpsFile, 2, 2, _screen->getPalette(0));
 			_screen->setScreenPalette(_screen->getPalette(0));
 		} else {
 			_screen->setCurPage(2);
@@ -92,29 +95,29 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 			_screen->loadPalette("goldfont.col", _screen->getPalette(0));
 		}
 
-		if (_sequences[seqNum].callback && !(_flags.isDemo && !_flags.isTalkie))
-			(this->*_sequences[seqNum].callback)(0, 0, 0, -1);
+		if (cb && !(_flags.isDemo && !_flags.isTalkie))
+			(this->*cb)(0, 0, 0, -1);
 
-		if (_sequences[seqNum].flags & 1) {
+		if (cseq.flags & 1) {
 			_seqWsa->close();
-			_seqWsa->open(_sequences[seqNum].wsaFile, 0, _screen->getPalette(0));
+			_seqWsa->open(cseq.wsaFile, 0, _screen->getPalette(0));
 			_screen->setScreenPalette(_screen->getPalette(0));
-			_seqWsa->setX(_sequences[seqNum].xPos);
-			_seqWsa->setY(_sequences[seqNum].yPos);
+			_seqWsa->setX(cseq.xPos);
+			_seqWsa->setY(cseq.yPos);
 			_seqWsa->setDrawPage(2);
 			_seqWsa->displayFrame(0, 0);
 		}
 
-		if (_sequences[seqNum].flags & 4) {
+		if (cseq.flags & 4) {
 			int cp = _screen->setCurPage(2);
 			Screen::FontId cf =	_screen->setFont(Screen::FID_GOLDFONT_FNT);
-			if (_sequences[seqNum].stringIndex1 != -1) {
-				int sX = (320 - _screen->getTextWidth(_sequenceStrings[_sequences[seqNum].stringIndex1])) / 2;
-				_screen->printText(_sequenceStrings[_sequences[seqNum].stringIndex1], sX, 100 - _screen->getFontHeight(), 1, 0);
+			if (cseq.stringIndex1 != -1) {
+				int sX = (320 - _screen->getTextWidth(_sequenceStrings[cseq.stringIndex1])) / 2;
+				_screen->printText(_sequenceStrings[cseq.stringIndex1], sX, 100 - _screen->getFontHeight(), 1, 0);
 			}
-			if (_sequences[seqNum].stringIndex2 != -1) {
-				int sX = (320 - _screen->getTextWidth(_sequenceStrings[_sequences[seqNum].stringIndex2])) / 2;
-				_screen->printText(_sequenceStrings[_sequences[seqNum].stringIndex2], sX, 100, 1, 0);
+			if (cseq.stringIndex2 != -1) {
+				int sX = (320 - _screen->getTextWidth(_sequenceStrings[cseq.stringIndex2])) / 2;
+				_screen->printText(_sequenceStrings[cseq.stringIndex2], sX, 100, 1, 0);
 			}
 			_screen->setFont(cf);
 			_screen->setCurPage(cp);
@@ -125,20 +128,20 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 		_screen->copyPage(2, 10);
 		_screen->copyPage(12, 2);
 
-		seq_sequenceCommand(_sequences[seqNum].startupCommand);
+		seq_sequenceCommand(cseq.startupCommand);
 
 		if (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 			_screen->copyPage(2, 0);
 			_screen->updateScreen();
 		}
 
-		if (_sequences[seqNum].flags & 1) {
+		if (cseq.flags & 1) {
 			int w2 = _seqWsa->width();
 			int h2 = _seqWsa->height();
-			int x = _sequences[seqNum].xPos;
-			int y = _sequences[seqNum].yPos;
+			int x = cseq.xPos;
+			int y = cseq.yPos;
 
-			_seqFrameDelay = _sequences[seqNum].frameDelay;
+			_seqFrameDelay = cseq.frameDelay;
 
 			if (_seqWsa) {
 				if (x < 0) {
@@ -151,31 +154,31 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 					h2 = 0;
 				}
 
-				if (_sequences[seqNum].xPos + _seqWsa->width() > 319)
-					_seqWsa->setWidth(320 - _sequences[seqNum].xPos);
+				if (cseq.xPos + _seqWsa->width() > 319)
+					_seqWsa->setWidth(320 - cseq.xPos);
 
-				if (_sequences[seqNum].yPos + _seqWsa->height() > 199)
-					_seqWsa->setHeight(199 - _sequences[seqNum].yPos);
+				if (cseq.yPos + _seqWsa->height() > 199)
+					_seqWsa->setHeight(199 - cseq.yPos);
 			}
-			uint8 dir = (_sequences[seqNum].startFrame > _sequences[seqNum].numFrames) ? 0 : 1;
-			_seqWsaCurrentFrame = _sequences[seqNum].startFrame;
+			uint8 dir = (cseq.startFrame > cseq.numFrames) ? 0 : 1;
+			_seqWsaCurrentFrame = cseq.startFrame;
 
 			bool loop = true;
 			while (loop && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 				_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
 
-				if (_seqWsa || !_sequences[seqNum].callback)
+				if (_seqWsa || !cb)
 					_screen->copyPage(12, 2);
 
-				if (_sequences[seqNum].callback) {
+				if (cb) {
 					int f = _seqWsaCurrentFrame % _seqWsa->frames();
-					(this->*_sequences[seqNum].callback)(_seqWsa, _sequences[seqNum].xPos, _sequences[seqNum].yPos, f);
+					(this->*cb)(_seqWsa, cseq.xPos, cseq.yPos, f);
 				}
 
 				if (_seqWsa) {
 					int f = _seqWsaCurrentFrame % _seqWsa->frames();
-					_seqWsa->setX(_sequences[seqNum].xPos);
-					_seqWsa->setY(_sequences[seqNum].yPos);
+					_seqWsa->setX(cseq.xPos);
+					_seqWsa->setY(cseq.yPos);
 					_seqWsa->setDrawPage(2);
 					_seqWsa->displayFrame(f, 0);
 				}
@@ -185,7 +188,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 				seq_processWSAs();
 				seq_processText();
 
-				if ((_seqWsa || !_sequences[seqNum].callback) && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
+				if ((_seqWsa || !cb) && !((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 					_screen->copyPage(2, 0);
 					_screen->updateScreen();
 				}
@@ -214,23 +217,23 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 
 				if (loop) {
 					if (dir == 1) {
-						if (++_seqWsaCurrentFrame >= _sequences[seqNum].numFrames)
+						if (++_seqWsaCurrentFrame >= cseq.numFrames)
 							loop = false;
 					} else {
-						if (--_seqWsaCurrentFrame < _sequences[seqNum].numFrames)
+						if (--_seqWsaCurrentFrame < cseq.numFrames)
 							loop = false;
 					}
 				}
 			}
 			_seqWsa->close();
 		} else {
-			_seqFrameDelay = _sequences[seqNum].frameDelay;
+			_seqFrameDelay = cseq.frameDelay;
 			_seqEndTime = _system->getMillis() + _seqFrameDelay * _tickLength;
 			while (!((skipFlag() && allowSkip) || _quitFlag || (_abortIntroFlag && allowSkip) || _menuChoice)) {
 				uint32 starttime = _system->getMillis();
 				seq_processWSAs();
-				if (_sequences[seqNum].callback)
-					(this->*_sequences[seqNum].callback)(0, 0, 0, 0);
+				if (cb)
+					(this->*cb)(0, 0, 0, 0);
 
 				seq_processText();
 
@@ -249,11 +252,11 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 			}
 		}
 
-		if (_sequences[seqNum].callback && !(_flags.isDemo && !_flags.isTalkie))
-			(this->*_sequences[seqNum].callback)(0, 0, 0, -2);
+		if (cb && !(_flags.isDemo && !_flags.isTalkie))
+			(this->*cb)(0, 0, 0, -2);
 
 		uint32 ct = seq_activeTextsTimeLeft();
-		uint32 dl = _sequences[seqNum].duration * _tickLength;
+		uint32 dl = cseq.duration * _tickLength;
 		if (dl < ct)
 			dl = ct;
 		_seqEndTime = _system->getMillis() + dl;
@@ -277,7 +280,7 @@ void KyraEngine_v2::seq_playSequences(int startSeq, int endSeq) {
 				delay(MIN<uint32>(dly, tdiff));
 		}
 
-		seq_sequenceCommand(_sequences[seqNum].finalCommand);
+		seq_sequenceCommand(cseq.finalCommand);
 		seq_resetAllTextEntries();
 
 		if (_flags.isDemo && !_flags.isTalkie) {
@@ -2038,7 +2041,7 @@ void KyraEngine_v2::seq_loadNestedSequence(int wsaNum, int seqNum) {
 	if (_activeWSA[wsaNum].flags != -1)
 		return;
 
-	NestedSequence s = _nSequences[seqNum];
+	NestedSequence s = _sequences->seqn[seqNum];
 
 	if (!_activeWSA[wsaNum].movie) {
 		_activeWSA[wsaNum].movie = new WSAMovieV2(this);
@@ -2061,7 +2064,7 @@ void KyraEngine_v2::seq_loadNestedSequence(int wsaNum, int seqNum) {
 	_activeWSA[wsaNum].movie->setX(0);
 	_activeWSA[wsaNum].movie->setY(0);
 	_activeWSA[wsaNum].movie->setDrawPage(_screen->_curPage);
-	_activeWSA[wsaNum].callback = s.callback;
+	_activeWSA[wsaNum].callback = _callbackN[seqNum];
 	_activeWSA[wsaNum].control = s.wsaControl;
 
 	_activeWSA[wsaNum].flags = s.flags | 1;
@@ -2232,8 +2235,8 @@ bool KyraEngine_v2::seq_processNextSubFrame(int wsaNum) {
 		_activeWSA[wsaNum].movie->setY(_activeWSA[wsaNum].y);
 
 		if (_activeWSA[wsaNum].flags & 0x20) {
-			_activeWSA[wsaNum].movie->displayFrame(READ_LE_UINT16(&_activeWSA[wsaNum].control[currentFrame * 2]), 0x4000);
-			_activeWSA[wsaNum].frameDelay = READ_LE_UINT16(&_activeWSA[wsaNum].control[currentFrame * 2 + 1]);
+			_activeWSA[wsaNum].movie->displayFrame(_activeWSA[wsaNum].control[currentFrame].index, 0x4000);
+			_activeWSA[wsaNum].frameDelay = _activeWSA[wsaNum].control[currentFrame].delay;
 		} else {
 			_activeWSA[wsaNum].movie->displayFrame(currentFrame % _activeWSA[wsaNum].movie->frames(), 0x4000);
 		}
@@ -2555,14 +2558,14 @@ void KyraEngine_v2::seq_scrollPage() {
 	if (dstH > 0) {
 		for (int i = 0; i < 4; i++) {
 			int p = _screen->setCurPage(4);
-			uint8 *def = _demoShapeDefs + 46 * i;
-			_screen->drawBox(12, READ_LE_UINT16(def + 2) - 8, 28, READ_LE_UINT16(def + 2) + 8, 0);
+			const ItemAnimData_v1 *def = &_demoAnimData[i];
+			ActiveItemAnim *a = &_activeItemAnim[i];
+
+			_screen->drawBox(12, def->y - 8, 28, def->y + 8, 0);
 			_screen->setCurPage(p);
-			_screen->drawShape(4, _defaultShapeTable[READ_LE_UINT16(def) + READ_LE_UINT16(def + 6 + (READ_LE_UINT16(def + 4) << 1))], 12, READ_LE_UINT16(def + 2) - 8, 0, 0);
-			if(_seqFrameCounter % 2 == 0){
-				uint16 frame = READ_LE_UINT16(def + 4);
-				WRITE_LE_UINT16(def + 4, ++frame % 20);
-			}
+			_screen->drawShape(4, _defaultShapeTable[def->itemIndex + def->frames[a->currentFrame]], 12, def->y - 8, 0, 0);
+			if(_seqFrameCounter % 2 == 0)
+				a->currentFrame = ++a->currentFrame % 20;
 		}
 		_screen->copyRegionEx(4, 0, srcH, 2, 2, dstY + 24, 320, dstH, &d);
 	}
@@ -2621,12 +2624,7 @@ void KyraEngine_v2::seq_init() {
 
 	int numShp = -1;
 	if (_flags.isDemo && !_flags.isTalkie) {
-		int size;
-		const uint8 *tmp = _staticres->loadRawData(k2SeqplayShapeDefs, size);
-		_demoShapeDefs = new uint8[size];
-		memcpy(_demoShapeDefs, tmp, size);
-		_staticres->unloadId(k2SeqplayShapeDefs);
-
+		_demoAnimData = _staticres->loadHofShapeAnimDataV1(k2SeqplayShapeAnimData, _itemAnimDataSize);
 		uint8 *shp = _res->fileData("icons.shp", 0);
 		uint32 outsize = READ_LE_UINT16(shp + 4);
 		_newShapeFiledata = new uint8[outsize];
@@ -2653,13 +2651,11 @@ void KyraEngine_v2::seq_uninit() {
 	delete _seqWsa;
 	_seqWsa = NULL;
 
-	if (_demoShapeDefs) {
-		delete [] _demoShapeDefs;
-		_demoShapeDefs = 0;
-	}
-
 	delete [] _newShapeFiledata;
 	_newShapeFiledata = 0;
+
+	if (_flags.isDemo && !_flags.isTalkie)
+		_staticres->unloadId(k2SeqplayShapeAnimData);
 
 	memset(&_defaultShapeTable, 0, sizeof(_defaultShapeTable));
 }

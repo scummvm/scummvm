@@ -215,18 +215,19 @@ void KyraEngine_v2::updateItemAnimations() {
 	if (_itemAnimData[0].itemIndex == -1 || _inventorySaved)
 		return;	
 
-	ItemAnimData *s = &_itemAnimData[_nextAnimItem++];
+	const ItemAnimData_v2 *s = &_itemAnimData[_nextAnimItem];
+	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];
 	
-	if (s->itemIndex == -1) {
+	if (++_nextAnimItem == 14) {
 		_nextAnimItem = 0;
 		return;
 	}
 
 	uint32 ctime = _system->getMillis();
-	if (ctime < s->nextFrame)
+	if (ctime < a->nextFrame)
 		return;
 
-	uint16 shpIdx = READ_LE_UINT16(s->frames + (s->curFrame << 2)) + 64;
+	uint16 shpIdx = s->frames[a->currentFrame].index + 64;
 	if ((s->itemIndex == _handItemSet || s->itemIndex == _itemInHand) && (!_mouseState && _screen->isMouseVisible())) {
 		nextFrame = true;
 		_screen->setMouseCursor(8, 15, getShapePtr(shpIdx));
@@ -264,8 +265,8 @@ void KyraEngine_v2::updateItemAnimations() {
 	}
 
 	if (nextFrame) {
-		s->nextFrame = _system->getMillis() + READ_LE_UINT16(s->frames + (s->curFrame << 2) + 2) * _tickLength;
-		s->curFrame = ++s->curFrame % s->numFrames;
+		a->nextFrame = _system->getMillis() + (s->frames[a->currentFrame].delay * _tickLength);
+		a->currentFrame = ++a->currentFrame % s->numFrames;
 	}
 }
 

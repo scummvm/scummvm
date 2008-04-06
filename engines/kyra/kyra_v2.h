@@ -100,7 +100,12 @@ class KyraEngine_v2;
 class TextDisplayer_v2;
 class Debugger_v2;
 
-typedef int (KyraEngine_v2::*Seqproc)(WSAMovieV2*, int, int, int);
+typedef int (KyraEngine_v2::*SeqProc)(WSAMovieV2*, int, int, int);
+
+struct FrameControl {
+	uint16 index;
+	uint16 delay;
+};
 
 struct ActiveWSA {
 	int16 flags;
@@ -108,13 +113,13 @@ struct ActiveWSA {
 	uint16 startFrame;
 	uint16 endFrame;
 	uint16 frameDelay;
-	Seqproc callback;
+	SeqProc callback;
 	uint32 nextFrame;
 	uint16 currentFrame;
 	uint16 lastFrame;
 	uint16 x;
 	uint16 y;
-	const uint16 *control;
+	const FrameControl *control;
 	uint16 startupCommand;
 	uint16 finalCommand;
 };
@@ -142,7 +147,6 @@ struct Sequence {
 	uint16 frameDelay;
 	uint16 xPos;
 	uint16 yPos;
-	Seqproc callback;
 	uint16 duration;
 };
 
@@ -152,12 +156,35 @@ struct NestedSequence {
 	uint16 startframe;
 	uint16 endFrame;
 	uint16 frameDelay;
-	Seqproc callback;
 	uint16 x;
 	uint16 y;
-	const uint16 * wsaControl;
+	const FrameControl *wsaControl;
 	uint16 startupCommand;
 	uint16 finalCommand;
+};
+
+struct HofSeqData {
+	const Sequence *seq;
+	int numSeq;
+	const NestedSequence *seqn;
+	int numSeqn;
+};
+
+struct ItemAnimData_v1 {
+	int16 itemIndex;
+	uint16 y;
+	const uint16 *frames;
+};
+
+struct ItemAnimData_v2 {
+	int16 itemIndex;
+	uint8 numFrames;
+	const FrameControl *frames;
+};
+
+struct ActiveItemAnim {
+	uint16 currentFrame;
+	uint32 nextFrame;
 };
 
 class KyraEngine_v2 : public KyraEngine {
@@ -597,14 +624,7 @@ protected:
 	void scrollInventoryWheel();
 	int findFreeVisibleInventorySlot();
 
-	struct ItemAnimData {
-		int16 itemIndex;
-		uint8 numFrames;
-		uint8 curFrame;
-		uint32 nextFrame;
-		const uint8 *frames;
-	} _itemAnimData[15];
-
+	ActiveItemAnim _activeItemAnim[15];
 	int _nextAnimItem;
 
 	// gui
@@ -1145,9 +1165,13 @@ protected:
 	const uint16 *_ingameTalkObjIndex;
 	int _ingameTalkObjIndexSize;
 	const char *const *_ingameTimJpStr;
-	int _ingameTimJpStrSize;
-	const uint8 *_itemAnimTable;
-	uint8 *_demoShapeDefs;
+	int _ingameTimJpStrSize;	
+	const HofSeqData *_sequences;
+	const ItemAnimData_v2 *_itemAnimData;
+	int _itemAnimDataSize;
+	const ItemAnimData_v1 *_demoAnimData;
+	int _demoAnimSize;
+
 	int _sequenceStringsDuration[33];
 
 	static const uint8 _seqTextColorPresets[];
@@ -1168,8 +1192,8 @@ protected:
 	uint8 _seqTextColor[2];
 	uint8 _seqTextColorMap[16];
 
-	Sequence *_sequences;
-	NestedSequence *_nSequences;
+	const SeqProc *_callbackS;
+	const SeqProc *_callbackN;
 
 	static const uint8 _rainbowRoomData[];
 

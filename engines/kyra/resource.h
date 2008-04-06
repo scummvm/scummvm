@@ -37,6 +37,7 @@
 #include "common/ptr.h"
 
 #include "kyra/kyra.h"
+#include "kyra/kyra_v2.h"
 
 namespace Kyra {
 
@@ -215,7 +216,7 @@ enum kKyraResources {
 	k2SeqplayFinaleTracks,
 	k2SeqplayIntroCDA,
 	k2SeqplayFinaleCDA,
-	k2SeqplayShapeDefs,
+	k2SeqplayShapeAnimData,
 
 	k2IngamePakFiles,
 	k2IngameSfxFiles,
@@ -224,7 +225,7 @@ enum kKyraResources {
 	k2IngameCDA,
 	k2IngameTalkObjIndex,
 	k2IngameTimJpStrings,
-	k2IngameItemAnimTable,
+	k2IngameShapeAnimData,
 
 	kMaxResIDs
 };
@@ -249,6 +250,9 @@ public:
 	const Shape *loadShapeTable(int id, int &entries);
 	const Room *loadRoomTable(int id, int &entries);
 	const uint8 * const*loadPaletteTable(int id, int &entries);
+	const HofSeqData *loadHofSequenceData(int id, int &entries);
+	const ItemAnimData_v1 *loadHofShapeAnimDataV1(int id, int &entries);
+	const ItemAnimData_v2 *loadHofShapeAnimDataV2(int id, int &entries);
 
 	// use '-1' to prefetch/unload all ids
 	// prefetchId retruns false if only on of the resources
@@ -275,12 +279,18 @@ private:
 	bool loadShapeTable(const char *filename, void *&ptr, int &size);
 	bool loadRoomTable(const char *filename, void *&ptr, int &size);
 	bool loadPaletteTable(const char *filename, void *&ptr, int &size);
+	bool loadHofSequenceData(const char *filename, void *&ptr, int &size);
+	bool loadHofShapeAnimDataV1(const char *filename, void *&ptr, int &size);
+	bool loadHofShapeAnimDataV2(const char *filename, void *&ptr, int &size);
 
 	void freeRawData(void *&ptr, int &size);
 	void freeStringTable(void *&ptr, int &size);
 	void freeShapeTable(void *&ptr, int &size);
 	void freeRoomTable(void *&ptr, int &size);
 	void freePaletteTable(void *&ptr, int &size);
+	void freeHofSequenceData(void *&ptr, int &size);
+	void freeHofShapeAnimDataV1(void *&ptr, int &size);
+	void freeHofShapeAnimDataV2(void *&ptr, int &size);
 
 	const char *getFilename(const char *name);
 	uint8 *getFile(const char *name, int &size);
@@ -293,7 +303,9 @@ private:
 		kRawData,
 		kPaletteTable,
 
-		k2SeqData
+		k2SeqData,
+		k2ShpAnimDataV1,
+		k2ShpAnimDataV2
 	};
 
 	struct BuiltinRes {

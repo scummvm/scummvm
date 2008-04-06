@@ -36,7 +36,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 22
+#define RESFILE_VERSION 23
 
 bool StaticResource::checkKyraDat() {
 	Common::File kyraDat;
@@ -134,6 +134,11 @@ bool StaticResource::init() {
 		{ kShapeList, proc(loadShapeTable), proc(freeShapeTable) },
 		{ kRawData, proc(loadRawData), proc(freeRawData) },
 		{ kPaletteTable, proc(loadPaletteTable), proc(freePaletteTable) },
+
+		{ k2SeqData, proc(loadHofSequenceData), proc(freeHofSequenceData) },
+		{ k2ShpAnimDataV1, proc(loadHofShapeAnimDataV1), proc(freeHofShapeAnimDataV1) },
+		{ k2ShpAnimDataV2, proc(loadHofShapeAnimDataV2), proc(freeHofShapeAnimDataV2) },
+
 		{ 0, 0, 0 }
 	};
 #undef proc
@@ -233,12 +238,12 @@ bool StaticResource::init() {
 		{ k2SeqplayStrings, kLanguageList, "S_STRINGS." },
 		{ k2SeqplaySfxFiles, kStringList, "S_SFXFILES.TXT" },
 		{ k2SeqplayTlkFiles, kLanguageList, "S_TLKFILES." },
-		{ k2SeqplaySeqData, kRawData, "S_DATA.SEQ" },
+		{ k2SeqplaySeqData, k2SeqData, "S_DATA.SEQ" },
 		{ k2SeqplayIntroTracks, kStringList, "S_INTRO.TRA" },
 		{ k2SeqplayFinaleTracks, kStringList, "S_FINALE.TRA" },
 		{ k2SeqplayIntroCDA, kRawData, "S_INTRO.CDA" },
 		{ k2SeqplayFinaleCDA, kRawData, "S_FINALE.CDA" },
-		{ k2SeqplayShapeDefs, kRawData, "S_DEMO.SHP" },
+		{ k2SeqplayShapeAnimData, k2ShpAnimDataV1, "S_DEMO.SHP" },
 
 		// Ingame
 		{ k2IngamePakFiles, kStringList, "I_PAKFILES.TXT" },
@@ -248,7 +253,7 @@ bool StaticResource::init() {
 		{ k2IngameCDA, kRawData, "I_TRACKS.CDA" },
 		{ k2IngameTalkObjIndex, kRawData, "I_TALKOBJECTS.MAP" },
 		{ k2IngameTimJpStrings, kStringList, "I_TIMJPSTR.TXT" },
-		{ k2IngameItemAnimTable, kRawData, "I_INVANIM.SHP" },
+		{ k2IngameShapeAnimData, k2ShpAnimDataV2, "I_INVANIM.SHP" },
 
 		{ 0, 0, 0 }
 	};
@@ -325,6 +330,18 @@ const Room *StaticResource::loadRoomTable(int id, int &entries) {
 
 const uint8 * const*StaticResource::loadPaletteTable(int id, int &entries) {
 	return (const uint8* const*)getData(id, kPaletteTable, entries);
+}
+
+const HofSeqData *StaticResource::loadHofSequenceData(int id, int &entries) {
+	return (const HofSeqData*)getData(id, k2SeqData, entries);
+}
+
+const ItemAnimData_v1 *StaticResource::loadHofShapeAnimDataV1(int id, int &entries) {
+	return (const ItemAnimData_v1*)getData(id, k2ShpAnimDataV1, entries);
+}
+
+const ItemAnimData_v2 *StaticResource::loadHofShapeAnimDataV2(int id, int &entries) {
+	return (const ItemAnimData_v2*)getData(id, k2ShpAnimDataV2, entries);
 }
 
 bool StaticResource::prefetchId(int id) {
@@ -605,6 +622,175 @@ bool StaticResource::loadPaletteTable(const char *filename, void *&ptr, int &siz
 	return true;
 }
 
+bool StaticResource::loadHofSequenceData(const char *filename, void *&ptr, int &size) {
+	int filesize;
+	uint8 *filePtr = getFile(filename, filesize);
+
+	if (!filePtr)
+		return false;
+
+	uint16 *hdr = (uint16 *) filePtr;
+	int numSeq = READ_BE_UINT16(hdr++);
+	Sequence *tmp_s = new Sequence[numSeq];
+	char *tmp_c = 0;
+
+	size = sizeof(HofSeqData) + numSeq * (sizeof(Sequence) + 28);
+
+	for (int i = 0; i < numSeq; i++) {
+		const uint8 *offset = (const uint8 *)(filePtr + READ_BE_UINT16(hdr++));
+		tmp_s[i].flags = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_c = new char[14];
+		memcpy(tmp_c, offset, 14);
+		tmp_s[i].wsaFile = tmp_c;
+		offset += 14;
+		tmp_c = new char[14];
+		memcpy(tmp_c, offset, 14);
+		tmp_s[i].cpsFile = tmp_c;
+		offset += 14;
+		tmp_s[i].startupCommand = *offset++;
+		tmp_s[i].finalCommand = *offset++;
+		tmp_s[i].stringIndex1 = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_s[i].stringIndex2 = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_s[i].startFrame = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_s[i].numFrames = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_s[i].frameDelay = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_s[i].xPos = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_s[i].yPos = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_s[i].duration = READ_BE_UINT16(offset);
+	}
+
+	int numSeqN = READ_BE_UINT16(hdr++);
+	NestedSequence *tmp_n = new NestedSequence[numSeqN];
+	size += (numSeqN * (sizeof(NestedSequence) + 14));
+
+	for (int i = 0; i < numSeqN; i++) {
+		const uint8 *offset = (const uint8 *)(filePtr + READ_BE_UINT16(hdr++));
+		tmp_n[i].flags = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_c = new char[14];
+		memcpy(tmp_c, offset, 14);
+		tmp_n[i].wsaFile = tmp_c;
+		offset += 14;
+		tmp_n[i].startframe = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_n[i].endFrame = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_n[i].frameDelay = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_n[i].x = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_n[i].y = READ_BE_UINT16(offset);
+		offset += 2;
+		uint16 ctrlOffs = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_n[i].startupCommand = READ_BE_UINT16(offset);
+		offset += 2;
+		tmp_n[i].finalCommand = READ_BE_UINT16(offset);
+
+		if (ctrlOffs) {
+			int num_c = *(filePtr + ctrlOffs);
+			const uint16 *in_c = (uint16*) (filePtr + ctrlOffs + 1);
+			FrameControl *tmp_f = new FrameControl[num_c];
+
+			for (int ii = 0; ii < num_c; ii++) {
+				tmp_f[ii].index = READ_BE_UINT16(in_c++);
+				tmp_f[ii].delay = READ_BE_UINT16(in_c++);
+			}
+			
+			tmp_n[i].wsaControl = (const FrameControl*) tmp_f;
+			size += (num_c * sizeof(FrameControl));
+
+		} else {
+			tmp_n[i].wsaControl = 0;
+		}
+	}
+
+	delete [] filePtr;
+
+	HofSeqData *loadTo = new HofSeqData;
+	assert(loadTo);
+
+	loadTo->seq = tmp_s;
+	loadTo->seqn = tmp_n;
+	loadTo->numSeq = numSeq;
+	loadTo->numSeqn = numSeqN;
+
+	ptr = loadTo;
+
+	return true;
+}
+
+bool StaticResource::loadHofShapeAnimDataV1(const char *filename, void *&ptr, int &size) {
+	int filesize;
+	uint8 *filePtr = getFile(filename, filesize);
+	uint8 *src = filePtr;
+
+	if (!filePtr)
+		return false;
+
+	size = *src++;
+	ItemAnimData_v1 *loadTo = new ItemAnimData_v1[size];
+	assert(loadTo);
+
+	for (int i = 0; i < size; i++) {
+		loadTo[i].itemIndex = (int16) READ_BE_UINT16(src);
+		src += 2;
+		loadTo[i].y = READ_BE_UINT16(src);
+		src += 2;
+		uint16 *tmp_f = new uint16[20];
+		for (int ii = 0; ii < 20; ii++) {
+			tmp_f[ii] = READ_BE_UINT16(src);
+			src += 2;
+		}
+		loadTo[i].frames = tmp_f;
+	}
+
+	delete [] filePtr;
+	ptr = loadTo;
+
+	return true;
+}
+
+bool StaticResource::loadHofShapeAnimDataV2(const char *filename, void *&ptr, int &size) {
+	int filesize;
+	uint8 *filePtr = getFile(filename, filesize);
+	uint8 *src = filePtr;
+
+	if (!filePtr)
+		return false;
+
+	size = *src++;
+	ItemAnimData_v2 *loadTo = new ItemAnimData_v2[size];
+	assert(loadTo);
+
+	for (int i = 0; i < size; i++) {
+		loadTo[i].itemIndex = (int16) READ_BE_UINT16(src);
+		src += 2;
+		loadTo[i].numFrames = *src++;
+		FrameControl *tmp_f = new FrameControl[loadTo[i].numFrames];
+		for (int ii = 0; ii < loadTo[i].numFrames; ii++) {
+			tmp_f[ii].index = READ_BE_UINT16(src);
+			src += 2;
+			tmp_f[ii].delay = READ_BE_UINT16(src);
+			src += 2;
+		}
+		loadTo[i].frames = tmp_f;
+	}
+
+	delete [] filePtr;
+	ptr = loadTo;
+
+	return true;
+}
+
 void StaticResource::freeRawData(void *&ptr, int &size) {
 	uint8 *data = (uint8*)ptr;
 	delete [] data;
@@ -630,6 +816,44 @@ void StaticResource::freeShapeTable(void *&ptr, int &size) {
 void StaticResource::freeRoomTable(void *&ptr, int &size) {
 	Room *data = (Room*)ptr;
 	delete [] data;
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freeHofSequenceData(void *&ptr, int &size) {
+	HofSeqData *h = (HofSeqData*) ptr;
+
+	for (int i = 0; i < h->numSeq; i++) {
+		delete [] h->seq[i].wsaFile;
+		delete [] h->seq[i].cpsFile;
+	}
+	delete [] h->seq;
+
+	for (int i = 0; i < h->numSeqn; i++) {
+		delete [] h->seqn[i].wsaFile;
+		delete [] h->seqn[i].wsaControl;
+	}
+	delete [] h->seqn;
+
+	delete h;
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freeHofShapeAnimDataV1(void *&ptr, int &size) {
+	ItemAnimData_v1 *d= (ItemAnimData_v1*) ptr;
+	for (int i = 0; i < size; i++)
+		delete [] d[i].frames;
+	delete [] d;
+	ptr = 0;
+	size = 0;
+}
+
+void StaticResource::freeHofShapeAnimDataV2(void *&ptr, int &size) {
+	ItemAnimData_v2 *d= (ItemAnimData_v2*) ptr;
+	for (int i = 0; i < size; i++)
+		delete [] d[i].frames;
+	delete [] d;
 	ptr = 0;
 	size = 0;
 }
@@ -941,18 +1165,7 @@ void KyraEngine_v2::initStaticResource() {
 	_cdaTrackTableFinale = _staticres->loadRawData(k2SeqplayFinaleCDA, _cdaTrackTableFinaleSize);
 	_ingameTalkObjIndex = (const uint16*) _staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
 	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
-	_itemAnimTable = _staticres->loadRawData(k2IngameItemAnimTable, tmpSize);
-
-	if (_itemAnimTable) {
-		for (int i = 0; i < 15; i++) {
-			const uint8 *tmp = _itemAnimTable + 56 * i;
-			_itemAnimData[i].itemIndex = (int16) READ_LE_UINT16(tmp);
-			_itemAnimData[i].numFrames = tmp[2];
-			_itemAnimData[i].curFrame = tmp[3];
-			_itemAnimData[i].nextFrame = READ_LE_UINT32(&tmp[4]);
-			_itemAnimData[i].frames = &tmp[8];
-		}
-	}
+	_itemAnimData = _staticres->loadHofShapeAnimDataV2(k2IngameShapeAnimData, _itemAnimDataSize);
 
 	// replace sequence talkie files with localized versions and cut off .voc
 	// suffix from voc files so as to allow compression specific file extensions
@@ -1006,9 +1219,9 @@ void KyraEngine_v2::initStaticResource() {
 	_soundData = (_flags.platform == Common::kPlatformPC) ? soundData_PC : soundData_TOWNS;
 
 	// setup sequence data
-	const uint8 *seqData = _staticres->loadRawData(k2SeqplaySeqData, tmpSize);
+	_sequences = _staticres->loadHofSequenceData(k2SeqplaySeqData, tmpSize);
 
-	static const Seqproc hofSequenceCallbacks[] = { 0,
+	static const SeqProc hofSequenceCallbacks[] = { 0,
 		&KyraEngine_v2::seq_introWestwood,
 		&KyraEngine_v2::seq_introTitle, &KyraEngine_v2::seq_introOverview,
 		&KyraEngine_v2::seq_introLibrary, &KyraEngine_v2::seq_introHand,
@@ -1019,7 +1232,7 @@ void KyraEngine_v2::initStaticResource() {
 		&KyraEngine_v2::seq_finaleFirates, &KyraEngine_v2::seq_finaleFrash
 	};
 
-	static const Seqproc hofNestedSequenceCallbacks[] = {
+	static const SeqProc hofNestedSequenceCallbacks[] = {
 		&KyraEngine_v2::seq_finaleFiggle, &KyraEngine_v2::seq_introOver1,
 		&KyraEngine_v2::seq_introOver2, &KyraEngine_v2::seq_introForest,
 		&KyraEngine_v2::seq_introDragon, &KyraEngine_v2::seq_introDarm,
@@ -1029,84 +1242,21 @@ void KyraEngine_v2::initStaticResource() {
 		&KyraEngine_v2::seq_introHand2,	&KyraEngine_v2::seq_introHand3, 0
 	};
 
-	static const Seqproc hofDemoSequenceCallbacks[] = {
+	static const SeqProc hofDemoSequenceCallbacks[] = {
 		&KyraEngine_v2::seq_demoVirgin, &KyraEngine_v2::seq_demoWestwood,
 		&KyraEngine_v2::seq_demoTitle, &KyraEngine_v2::seq_demoHill,
 		&KyraEngine_v2::seq_demoOuthome, &KyraEngine_v2::seq_demoWharf,
 		&KyraEngine_v2::seq_demoDinob, &KyraEngine_v2::seq_demoFisher, 0
 	};
 
-	static const Seqproc hofDemoNestedSequenceCallbacks[] = {
+	static const SeqProc hofDemoNestedSequenceCallbacks[] = {
 		&KyraEngine_v2::seq_demoWharf2, &KyraEngine_v2::seq_demoDinob2,
 		&KyraEngine_v2::seq_demoWater, &KyraEngine_v2::seq_demoBail,
 		&KyraEngine_v2::seq_demoDig, 0
 	};
 
-	const uint16 *hdr = (const uint16 *) seqData;
-	uint16 numSeq = READ_LE_UINT16(hdr++);
-	uint16 hdrSize = READ_LE_UINT16(hdr) - 1;
-
-	const Seqproc *cb = (_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks;
-	const Seqproc *ncb = (_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks;
-
-	_sequences = new Sequence[numSeq];
-	for (int i = 0; i < numSeq; i++) {
-		const uint8 *offset = (const uint8 *)(seqData + READ_LE_UINT16(hdr++));
-		_sequences[i].flags = READ_LE_UINT16(offset);
-		offset += 2;
-		_sequences[i].wsaFile = (const char *)offset;
-		offset += 14;
-		_sequences[i].cpsFile = (const char *)offset;
-		offset += 14;
-		_sequences[i].startupCommand = *offset++;
-		_sequences[i].finalCommand = *offset++;
-		_sequences[i].stringIndex1 = READ_LE_UINT16(offset);
-		offset += 2;
-		_sequences[i].stringIndex2 = READ_LE_UINT16(offset);
-		offset += 2;
-		_sequences[i].startFrame = READ_LE_UINT16(offset);
-		offset += 2;
-		_sequences[i].numFrames = READ_LE_UINT16(offset);
-		offset += 2;
-		_sequences[i].frameDelay = READ_LE_UINT16(offset);
-		offset += 2;
-		_sequences[i].xPos = READ_LE_UINT16(offset);
-		offset += 2;
-		_sequences[i].yPos = READ_LE_UINT16(offset);
-		offset += 2;
-		_sequences[i].duration = READ_LE_UINT16(offset);
-		_sequences[i].callback = cb[i];
-	}
-
-	if (hdr > ((const uint16*)(seqData + hdrSize)))
-		return;
-
-	numSeq = READ_LE_UINT16(hdr++);
-	_nSequences = new NestedSequence[numSeq];
-	for (int i = 0; i < numSeq; i++) {
-		const uint8 *offset = (const uint8 *)(seqData + READ_LE_UINT16(hdr++));
-		_nSequences[i].flags = READ_LE_UINT16(offset);
-		offset += 2;
-		_nSequences[i].wsaFile = (const char *)offset;
-		offset += 14;
-		_nSequences[i].startframe = READ_LE_UINT16(offset);
-		offset += 2;
-		_nSequences[i].endFrame = READ_LE_UINT16(offset);
-		offset += 2;
-		_nSequences[i].frameDelay = READ_LE_UINT16(offset);
-		offset += 2;
-		_nSequences[i].x = READ_LE_UINT16(offset);
-		offset += 2;
-		_nSequences[i].y = READ_LE_UINT16(offset);
-		offset += 2;
-		uint16 ctrlOffs = READ_LE_UINT16(offset);
-		offset += 2;
-		_nSequences[i].startupCommand = READ_LE_UINT16(offset);
-		offset += 2;
-		_nSequences[i].finalCommand = READ_LE_UINT16(offset);
-		_nSequences[i].callback = ncb[i];
-		_nSequences[i].wsaControl = ctrlOffs ? (const uint16*) (seqData + ctrlOffs) : 0;
-	}
+	_callbackS = (_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks;
+	_callbackN = (_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks;
 }
 
 const ScreenDim Screen::_screenDimTable[] = {
