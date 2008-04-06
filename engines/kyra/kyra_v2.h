@@ -313,6 +313,9 @@ protected:
 	void cleanup();
 
 	void registerDefaultSettings();
+	void writeSettings();
+	void readSettings();
+	uint8 _configTextspeed;
 
 	// TODO: get rid of all variables having pointers to the static resources if possible
 	// i.e. let them directly use the _staticres functions

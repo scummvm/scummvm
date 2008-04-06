@@ -166,9 +166,6 @@ int KyraEngine_v2::chatGetType(const char *str) {
 int KyraEngine_v2::chatCalcDuration(const char *str) {
 	static const uint8 durationMultiplicator[] = { 16, 14, 12, 10, 8, 8, 7, 6, 5, 4 };
 
-	// TODO / HACK: imlement this correctly
-	const int _configTextspeed = 50;
-
 	int duration = strlen(str);
 	duration *= _flags.isTalkie ? 8 : durationMultiplicator[(_configTextspeed / 10)];
 	return MAX<int>(duration, 120);

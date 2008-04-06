@@ -1629,14 +1629,14 @@ void GUI_v2::initStaticData() {
 	GUI_V2_BUTTON(_scrollUpButton, 0x17, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	GUI_V2_BUTTON(_scrollDownButton, 0x18, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 
-	for (int i = 0; i < 3; ++i) {
-		GUI_V2_BUTTON(_sliderButtons[0][i], 0x19+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	for (int i = 0; i < 4; ++i) {
+		GUI_V2_BUTTON(_sliderButtons[0][i], 0x18+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	}
-	for (int i = 0; i < 3; ++i) {
-		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1D+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	for (int i = 0; i < 4; ++i) {
+		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1C+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	}
-	for (int i = 0; i < 3; ++i) {
-		GUI_V2_BUTTON(_sliderButtons[2][i], 0x21+i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	for (int i = 0; i < 4; ++i) {
+		GUI_V2_BUTTON(_sliderButtons[2][i], 0x20+i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	}
 
 	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
@@ -1659,7 +1659,7 @@ void GUI_v2::initStaticData() {
 	GUI_V2_MENU_ITEM(_mainMenu.item[2], 1, 0x23, -1, 0x40, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[2].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::deleteMenu);
 	GUI_V2_MENU_ITEM(_mainMenu.item[3], 1, 0x04, -1, 0x51, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::gameOptions);
+	_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::gameOptionsTalkie);
 	GUI_V2_MENU_ITEM(_mainMenu.item[4], 1, 0x25, -1, 0x62, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
 	_mainMenu.item[4].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::audioOptions);
 	GUI_V2_MENU_ITEM(_mainMenu.item[5], 1, 0x05, -1, 0x73, 0xDC, 0x0F, 0xFC, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
@@ -1669,16 +1669,38 @@ void GUI_v2::initStaticData() {
 	for (int i = 0; i < 7; ++i)
 		_mainMenu.item[i].itemId = menuStr[0 * 8 + i + 1];
 
+	if (!_vm->gameFlags().isTalkie) {
+		_mainMenu.height = 0x9C;
+		_mainMenu.numberOfItems = 6;
+		_mainMenu.item[6].enabled = false;
+		for (int i = 4; i < 6; ++i)
+			_mainMenu.item[i].callback = _mainMenu.item[i+1].callback;
+		_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::gameOptions);
+		_mainMenu.item[6].callback = Button::Callback();
+		_mainMenu.item[5].y = 0x7F;
+	}
+
 	GUI_V2_MENU(_gameOptions, -1, -1, 0x120, 0x88, 0xF8, 0xF9, 0xFA, menuStr[1 * 8], 0xFB, -1, 8, 4, 4, -1, -1, -1, -1);
-	GUI_V2_MENU_ITEM(_gameOptions.item[0], 1, 0, 0xA0, 0x1E, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x15, 8, 0x20, 0);
-	_gameOptions.item[0].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::toggleWalkspeed);
-	GUI_V2_MENU_ITEM(_gameOptions.item[1], 1, 0, 0xA0, 0x2F, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x26, 8, 0x31, 0);
-	_gameOptions.item[1].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::changeLanguage);
-	GUI_V2_MENU_ITEM(_gameOptions.item[2], 1, 0, 0xA0, 0x40, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x16, 8, 0x42, 0);
-	_gameOptions.item[2].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::toggleText);
-	GUI_V2_MENU_ITEM(_gameOptions.item[3], 1, 0x10, -1, 0x6E, 0x6C, 0x0F, 0xFD, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
-	_gameOptions.item[3].callback = clickQuitOptionsFunctor;
-	for (int i = 4; i <= 6; ++i)
+	if (_vm->gameFlags().isTalkie) {
+		GUI_V2_MENU_ITEM(_gameOptions.item[0], 1, 0, 0xA0, 0x1E, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x15, 8, 0x20, 0);
+		_gameOptions.item[0].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::toggleWalkspeed);
+		GUI_V2_MENU_ITEM(_gameOptions.item[1], 1, 0, 0xA0, 0x2F, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x26, 8, 0x31, 0);
+		_gameOptions.item[1].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::changeLanguage);
+		GUI_V2_MENU_ITEM(_gameOptions.item[2], 1, 0, 0xA0, 0x40, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x16, 8, 0x42, 0);
+		_gameOptions.item[2].callback = BUTTON_FUNCTOR(GUI_v2, this, &GUI_v2::toggleText);
+		GUI_V2_MENU_ITEM(_gameOptions.item[3], 1, 0x10, -1, 0x6E, 0x6C, 0x0F, 0xFD, 0xFD, -1, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+		_gameOptions.item[3].callback = clickQuitOptionsFunctor;
+	} else {
+		_gameOptions.numberOfItems = 5;
+		GUI_V2_MENU_ITEM(_gameOptions.item[0], 0, 0x2B, 0xA0, 0x1E, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x1F, 0x10, 0x20, 0);
+		GUI_V2_MENU_ITEM(_gameOptions.item[1], 0, 0x2C, 0xA0, 0x2F, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x20, 0x10, 0x31, 0);
+		GUI_V2_MENU_ITEM(_gameOptions.item[2], 0, 0x2D, 0xA0, 0x40, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x1D, 0x10, 0x42, 0);
+		GUI_V2_MENU_ITEM(_gameOptions.item[3], 0, 0x2E, 0xA0, 0x51, 0x74, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0x1E, 0x10, 0x53, 0);
+		GUI_V2_MENU_ITEM(_gameOptions.item[4], 1, 0x18, 0xA0, 0x6E, 0x6C, 0x0F, 0xFC, 0xFD, 5, 0xF8, 0xF9, 0xFA, -1, 0, 0, 0, 0);
+		_gameOptions.item[4].callback = clickQuitOptionsFunctor;
+	}
+
+	for (int i = _gameOptions.numberOfItems; i <= 6; ++i)
 		_gameOptions.item[i].enabled = false;
 	for (int i = 0; i < 7; ++i)
 		_gameOptions.item[i].itemId = menuStr[1 * 8 + i + 1];
@@ -1776,7 +1798,7 @@ const uint16 GUI_v2::_menuStringsOther[] = {
 };
 
 const int GUI_v2::_sliderBarsPosition[] = {
-	0x92, 0x1F, 0x92, 0x30, 0x92, 0x41
+	0x92, 0x1F, 0x92, 0x30, 0x92, 0x41, 0x92, 0x52
 };
 
 const uint16 KyraEngine_v2::_itemMagicTable[] = {

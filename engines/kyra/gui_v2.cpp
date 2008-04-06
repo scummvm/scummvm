@@ -1232,15 +1232,6 @@ int GUI_v2::optionsButton(Button *button) {
 	//XXX
 	_displayMenu = true;
 
-	if (!_vm->gameFlags().isTalkie) {
-		_gameOptions.item[2].enabled = false;	// language settings
-		_gameOptions.item[2].labelId = 0;
-		_gameOptions.item[3].enabled = false;	// text settings
-		_audioOptions.item[2].labelId = 0;
-		_audioOptions.item[3].enabled = false;	// voice volume settings
-		_audioOptions.item[3].labelId = 0;
-	}
-
 	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {
 		_menuButtons[i].data0Val1 = _menuButtons[i].data1Val1 = _menuButtons[i].data2Val1 = 4;
 		_menuButtons[i].data0Callback = _redrawShadedButtonFunctor;
@@ -1467,7 +1458,7 @@ int GUI_v2::scrollDownButton(Button *button) {
 
 int GUI_v2::quitGame(Button *caller) {
 	updateMenuButton(caller);
-	if (choiceDialog(0xF, 1)) {
+	if (choiceDialog(_vm->gameFlags().isTalkie ? 0xF : 0x17, 1)) {
 		_displayMenu = false;
 		_vm->_runFlag = false;
 		_vm->_sound->beginFadeOut();
@@ -1490,6 +1481,51 @@ int GUI_v2::resumeGame(Button *caller) {
 }
 
 int GUI_v2::gameOptions(Button *caller) {
+	updateMenuButton(caller);
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+	initMenu(_gameOptions);
+	_isOptionsMenu = true;
+
+	const int menuX = _gameOptions.x;
+	const int menuY = _gameOptions.y;
+
+	for (int i = 0; i < 4; ++i) {
+		int x = menuX + _sliderBarsPosition[i*2+0];
+		int y = menuY + _sliderBarsPosition[i*2+1];
+		_screen->drawShape(0, _vm->_buttonShapes[16], x, y, 0, 0);
+		drawSliderBar(i, _vm->_buttonShapes[17]);
+		_sliderButtons[0][i].buttonCallback = _sliderHandlerFunctor;
+		_sliderButtons[0][i].x = x;
+		_sliderButtons[0][i].y = y;
+		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[0][i]);
+		_sliderButtons[2][i].buttonCallback = _sliderHandlerFunctor;
+		_sliderButtons[2][i].x = x + 10;
+		_sliderButtons[2][i].y = y;
+		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[2][i]);
+		_sliderButtons[1][i].buttonCallback = _sliderHandlerFunctor;
+		_sliderButtons[1][i].x = x + 120;
+		_sliderButtons[1][i].y = y;
+		_menuButtonList = addButtonToList(_menuButtonList, &_sliderButtons[1][i]);
+	}
+
+	while (_isOptionsMenu) {
+		processHighlights(_gameOptions, _vm->_mouseX, _vm->_mouseY);
+		getInput();
+	}
+
+	restorePage1(_vm->_screenBuffer);
+	backUpPage1(_vm->_screenBuffer);
+
+	_vm->writeSettings();
+
+	initMenu(*_currentMenu);
+	updateAllMenuButtons();
+
+	return 0;
+}
+
+int GUI_v2::gameOptionsTalkie(Button *caller) {
 	updateMenuButton(caller);
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
@@ -1662,21 +1698,33 @@ int GUI_v2::audioOptions(Button *caller) {
 
 int GUI_v2::sliderHandler(Button *caller) {
 	int button = 0;
-	if (caller->index >= 25 && caller->index <= 28)
-		button = caller->index - 25;
-	else if (caller->index >= 29 && caller->index <= 32)
-		button = caller->index - 29;
+	if (caller->index >= 24 && caller->index <= 27)
+		button = caller->index - 24;
+	else if (caller->index >= 28 && caller->index <= 31)
+		button = caller->index - 28;
 	else
-		button = caller->index - 33;
+		button = caller->index - 32;
 
-	assert(button >= 0 && button <= 2);
+	assert(button >= 0 && button <= 3);
 
-	int oldVolume = _vm->getVolume(KyraEngine::kVolumeEntry(button));
+	int oldVolume = 0;
+	
+	if (_vm->gameFlags().isTalkie) {
+		oldVolume = _vm->getVolume(KyraEngine::kVolumeEntry(button));
+	} else {
+		if (button < 2)
+			oldVolume = _vm->getVolume(KyraEngine::kVolumeEntry(button));
+		else if (button == 2)
+			oldVolume = (_vm->_configWalkspeed == 3) ? 97 : 2;
+		else if (button == 3)
+			oldVolume = _vm->_configTextspeed;
+	}
+
 	int newVolume = oldVolume;
 
-	if (caller->index >= 25 && caller->index <= 28)
+	if (caller->index >= 24 && caller->index <= 27)
 		newVolume -= 10;
-	else if (caller->index >= 29 && caller->index <= 32)
+	else if (caller->index >= 28 && caller->index <= 31)
 		newVolume += 10;
 	else
 		newVolume = _vm->_mouseX - caller->x - 7;
@@ -1692,30 +1740,45 @@ int GUI_v2::sliderHandler(Button *caller) {
 
 	drawSliderBar(button, _vm->_buttonShapes[18]);
 
-	if (button == 2) {
-		if (_vm->textEnabled())
-			_vm->_configVoice = 2;
-		else
-			_vm->_configVoice = 1;
-	}
+	if (_vm->gameFlags().isTalkie) {
+		if (button == 2) {
+			if (_vm->textEnabled())
+				_vm->_configVoice = 2;
+			else
+				_vm->_configVoice = 1;
+		}
 
-	_vm->setVolume(KyraEngine::kVolumeEntry(button), newVolume);
+		_vm->setVolume(KyraEngine::kVolumeEntry(button), newVolume);
 
-	switch (button) {
-	case 0:
-		lastMusicCommand = _vm->_lastMusicCommand;
-		break;
+		switch (button) {
+		case 0:
+			lastMusicCommand = _vm->_lastMusicCommand;
+			break;
 
-	case 1:
-		playSoundEffect = true;
-		break;
+		case 1:
+			playSoundEffect = true;
+			break;
 
-	case 2:
-		_vm->playVoice(90, 28);
-		break;
+		case 2:
+			_vm->playVoice(90, 28);
+			break;
 
-	default:
-		return 0;
+		default:
+			return 0;
+		}
+	} else {
+		if (button < 2) {
+			_vm->setVolume(KyraEngine::kVolumeEntry(button), newVolume);
+			if (button == 0)
+				lastMusicCommand = _vm->_lastMusicCommand;
+			else
+				playSoundEffect = true;
+		} else if (button == 2) {
+			_vm->_configWalkspeed = (newVolume > 48) ? 3 : 5;
+			_vm->setWalkspeed(_vm->_configWalkspeed);
+		} else if (button == 3) {
+			_vm->_configTextspeed = newVolume;
+		}
 	}
 	
 	drawSliderBar(button, _vm->_buttonShapes[17]);
@@ -1734,7 +1797,18 @@ void GUI_v2::drawSliderBar(int slider, const uint8 *shape) {
 	int x = menuX + _sliderBarsPosition[slider*2+0] + 10;
 	int y = menuY + _sliderBarsPosition[slider*2+1];
 
-	int position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
+	int position = 0;
+	if (_vm->gameFlags().isTalkie) {
+		position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
+	} else {
+		if (slider < 2)
+			position = _vm->getVolume(KyraEngine::kVolumeEntry(slider));
+		else if (slider == 2)
+			position = (_vm->_configWalkspeed == 3) ? 97 : 2;
+		else if (slider == 3)
+			position = _vm->_configTextspeed;
+	}
+
 	position = MAX(2, position);
 	position = MIN(97, position);
 	_screen->drawShape(0, shape, x+position, y, 0, 0);
@@ -1908,7 +1982,7 @@ int GUI_v2::deleteMenu(Button *caller) {
 		restorePage1(_vm->_screenBuffer);
 		backUpPage1(_vm->_screenBuffer);
 		_savegameOffset = 1;
-		_saveMenu.menuNameId = 35;
+		_saveMenu.menuNameId = _vm->gameFlags().isTalkie ? 35 : 1;
 		setupSavegameNames(_saveMenu, 5);
 		initMenu(_saveMenu);
 		_isDeleteMenu = true;
@@ -1925,10 +1999,10 @@ int GUI_v2::deleteMenu(Button *caller) {
 			backUpPage1(_vm->_screenBuffer);
 			initMenu(*_currentMenu);
 			updateAllMenuButtons();
-			_saveMenu.menuNameId = 9;
+			_saveMenu.menuNameId = _vm->gameFlags().isTalkie ? 9 : 17;
 			return 0;
 		}
-	} while (choiceDialog(0x24, 1) == 0);
+	} while (choiceDialog(_vm->gameFlags().isTalkie ? 0x24 : 2, 1) == 0);
 
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
@@ -1948,7 +2022,7 @@ int GUI_v2::deleteMenu(Button *caller) {
 		Common::String newName = _vm->getSavegameFilename(*i-1);
 		_vm->_saveFileMan->renameSavefile(oldName.c_str(), newName.c_str());
 	}	
-	_saveMenu.menuNameId = 9;
+	_saveMenu.menuNameId = _vm->gameFlags().isTalkie ? 9 : 17;
 	return 0;
 }
 

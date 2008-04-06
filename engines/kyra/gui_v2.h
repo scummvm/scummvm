@@ -130,7 +130,7 @@ private:
 	Button::Callback getScrollUpButtonHandler() const { return _scrollUpFunctor; }
 	Button::Callback getScrollDownButtonHandler() const { return _scrollDownFunctor; }
 
-	Button _sliderButtons[3][3];
+	Button _sliderButtons[3][4];
 
 	uint8 defaultColor1() const { return 0xCF; }
 	uint8 defaultColor2() const { return 0xF8; }
@@ -174,6 +174,7 @@ private:
 
 	// options menu
 	int gameOptions(Button *caller);
+	int gameOptionsTalkie(Button *caller);
 	int quitOptionsMenu(Button *caller);
 
 	int toggleWalkspeed(Button *caller);

@@ -124,6 +124,8 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags) : KyraEngi
 	memset(&_wsaSlots, 0, sizeof(_wsaSlots));
 	memset(&_buttonShapes, 0, sizeof(_buttonShapes));
 
+	_configTextspeed = 50;
+
 	_inventoryButtons = _buttonList = 0;
 
 	_dlgBuffer = 0;
@@ -2255,6 +2257,17 @@ void KyraEngine_v2::registerDefaultSettings() {
 	// Most settings already have sensible defaults. This one, however, is
 	// specific to the Kyra engine.
 	ConfMan.registerDefault("walkspeed", 5);
+}
+
+void KyraEngine_v2::writeSettings() {
+	ConfMan.setInt("talkspeed", ((_configTextspeed-2) * 255) / 95);
+	KyraEngine::writeSettings();
+}
+
+void KyraEngine_v2::readSettings() {
+	int talkspeed = ConfMan.getInt("talkspeed");
+	_configTextspeed = (talkspeed*95)/255 + 2;
+	KyraEngine::readSettings();
 }
 
 } // end of namespace Kyra
