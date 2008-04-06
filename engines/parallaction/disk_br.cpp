@@ -23,6 +23,8 @@
  *
  */
 
+#include "graphics/iff.h"
+
 #include "parallaction/parallaction.h"
 
 
@@ -393,5 +395,325 @@ Common::ReadStream* DosDisk_br::loadSound(const char* name) {
 	return 0;
 }
 
+
+
+
+
+
+AmigaDisk_br::AmigaDisk_br(Parallaction *vm) : DosDisk_br(vm) {
+
+}
+
+
+AmigaDisk_br::~AmigaDisk_br() {
+
+}
+
+#define NUM_PLANES		5
+
+/*
+	unpackFrame transforms images from 5-bitplanes format to
+	8-bit color-index mode
+*/
+void AmigaDisk_br::unpackFrame(byte *dst, byte *src, uint16 planeSize) {
+
+	byte s0, s1, s2, s3, s4, mask, t0, t1, t2, t3, t4;
+
+	for (uint32 j = 0; j < planeSize; j++) {
+		s0 = src[j];
+		s1 = src[j+planeSize];
+		s2 = src[j+planeSize*2];
+		s3 = src[j+planeSize*3];
+		s4 = src[j+planeSize*4];
+
+		for (uint32 k = 0; k < 8; k++) {
+			mask = 1 << (7 - k);
+			t0 = (s0 & mask ? 1 << 0 : 0);
+			t1 = (s1 & mask ? 1 << 1 : 0);
+			t2 = (s2 & mask ? 1 << 2 : 0);
+			t3 = (s3 & mask ? 1 << 3 : 0);
+			t4 = (s4 & mask ? 1 << 4 : 0);
+			*dst++ = t0 | t1 | t2 | t3 | t4;
+		}
+
+	}
+
+}
+
+// FIXME: no mask is loaded
+void AmigaDisk_br::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height) {
+	uint16 planeSize = bytesPerPlane * height;
+
+	for (uint32 i = 0; i < numFrames; i++) {
+		unpackFrame(dst, src, planeSize);
+		src += planeSize * NUM_PLANES;
+		dst += planeSize * 8;
+	}
+}
+
+#undef NUM_PLANES
+
+/*
+	FIXME: mask values are not computed correctly for level 1 and 2
+
+	NOTE: this routine is only able to build masks for Nippon Safes, since mask widths are hardcoded
+	into the main loop.
+*/
+void buildMask2(byte* buf) {
+
+	byte mask1[16] = { 0, 0x80, 0x20, 0xA0, 8, 0x88, 0x28, 0xA8, 2, 0x82, 0x22, 0xA2, 0xA, 0x8A, 0x2A, 0xAA };
+	byte mask0[16] = { 0, 0x40, 0x10, 0x50, 4, 0x44, 0x14, 0x54, 1, 0x41, 0x11, 0x51, 0x5, 0x45, 0x15, 0x55 };
+
+	byte plane0[40];
+	byte plane1[40];
+
+	for (int32 i = 0; i < _vm->_screenHeight; i++) {
+
+		memcpy(plane0, buf, 40);
+		memcpy(plane1, buf+40, 40);
+
+		for (uint32 j = 0; j < 40; j++) {
+			*buf++ = mask0[(plane0[j] & 0xF0) >> 4] | mask1[(plane1[j] & 0xF0) >> 4];
+			*buf++ = mask0[plane0[j] & 0xF] | mask1[plane1[j] & 0xF];
+		}
+
+	}
+}
+
+class BackgroundDecoder : public Graphics::ILBMDecoder {
+
+	PaletteFxRange *_range;
+	uint32			_i;
+
+protected:
+	void readCRNG(Common::IFFChunk &chunk) {
+		_range[_i]._timer = chunk.readUint16BE();
+		_range[_i]._step = chunk.readUint16BE();
+		_range[_i]._flags = chunk.readUint16BE();
+		_range[_i]._first = chunk.readByte();
+		_range[_i]._last = chunk.readByte();
+
+		_i++;
+	}
+
+public:
+	BackgroundDecoder(Common::ReadStream &input, Graphics::Surface &surface, byte *&colors, PaletteFxRange *range) :
+		Graphics::ILBMDecoder(input, surface, colors), _range(range), _i(0) {
+	}
+
+	void decode() {
+		Common::IFFChunk *chunk;
+		while ((chunk = nextChunk()) != 0) {
+			switch (chunk->id) {
+			case ID_BMHD:
+				readBMHD(*chunk);
+				break;
+
+			case ID_CMAP:
+				readCMAP(*chunk);
+				break;
+
+			case ID_BODY:
+				readBODY(*chunk);
+				break;
+
+			case ID_CRNG:
+				readCRNG(*chunk);
+				break;
+			}
+		}
+	}
+
+	uint32	getNumRanges() {
+		return _i;
+	}
+};
+
+
+void AmigaDisk_br::loadBackground(BackgroundInfo& info, const char *name) {
+
+	char path[PATH_LEN];
+	sprintf(path, "%s", name);
+
+	Common::File s;
+
+	if (!s.open(path))
+		errorFileNotFound(path);
+
+	byte *pal;
+	PaletteFxRange ranges[6];
+
+	BackgroundDecoder decoder(s, info.bg, pal, ranges);
+	decoder.decode();
+
+	uint i;
+
+	info.width = info.bg.w;
+	info.height = info.bg.h;
+
+	byte *p = pal;
+	for (i = 0; i < 32; i++) {
+		byte r = *p >> 2;
+		p++;
+		byte g = *p >> 2;
+		p++;
+		byte b = *p >> 2;
+		p++;
+		info.palette.setEntry(i, r, g, b);
+	}
+
+	free(pal);
+
+	for (i = 0; i < 6; i++) {
+		info.setPaletteRange(i, ranges[i]);
+	}
+
+	return;
+
+}
+
+void AmigaDisk_br::loadMask(BackgroundInfo& info, const char *name) {
+	debugC(5, kDebugDisk, "AmigaDisk_br::loadMask(%s)", name);
+
+	Common::File s;
+
+	if (!s.open(name))
+		return;
+
+	s.seek(0x30, SEEK_SET);
+
+	byte r, g, b;
+	for (uint i = 0; i < 4; i++) {
+		r = s.readByte();
+		g = s.readByte();
+		b = s.readByte();
+
+		info.layers[i] = (((r << 4) & 0xF00) | (g & 0xF0) | (b >> 4)) & 0xFF;
+	}
+
+	s.seek(0x126, SEEK_SET);	// HACK: skipping IFF/ILBM header should be done by analysis, not magic
+	Graphics::PackBitsReadStream stream(s);
+
+	info.mask.create(info.width, info.height);
+	stream.read(info.mask.data, info.mask.size);
+	buildMask2(info.mask.data);
+
+	return;
+}
+
+void AmigaDisk_br::loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path) {
+	debugC(1, kDebugDisk, "AmigaDisk_br::loadScenery '%s', '%s' '%s'", name, mask, path);
+
+	char filename[PATH_LEN];
+	Common::File stream;
+
+	if (name) {
+		sprintf(filename, "%s/backs/%s.bkg", _partPath, name);
+
+		loadBackground(info, filename);
+	}
+
+	if (mask) {
+		sprintf(filename, "%s/msk/%s.msk", _partPath, name);
+
+		loadMask(info, filename);
+	}
+
+	if (path) {
+		sprintf(filename, "%s/pth/%s.pth", _partPath, path);
+		if (!stream.open(filename))
+			errorFileNotFound(filename);
+
+		// NOTE: info.width and info.height are only valid if the background graphics
+		// have already been loaded
+		info.path.create(info.width, info.height);
+		stream.read(info.path.data, info.path.size);
+		stream.close();
+	}
+
+	return;
+}
+
+void AmigaDisk_br::loadSlide(BackgroundInfo& info, const char *name) {
+	debugC(1, kDebugDisk, "AmigaDisk_br::loadSlide '%s'", name);
+
+	char path[PATH_LEN];
+	sprintf(path, "backs/%s.bkg", name);
+
+	loadBackground(info, path);
+	return;
+}
+
+Frames* AmigaDisk_br::loadStatic(const char* name) {
+	debugC(1, kDebugDisk, "AmigaDisk_br::loadStatic '%s'", name);
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/ras/%s", _partPath, name);
+	Common::File stream;
+	if (!stream.open(path)) {
+		errorFileNotFound(path);
+	}
+
+	loadBackground(_backgroundTemp, path);
+	return new SurfaceToFrames(&_backgroundTemp.bg);
+}
+
+Sprites* AmigaDisk_br::createSprites(const char *path) {
+
+	Common::File	stream;
+	if (!stream.open(path)) {
+		errorFileNotFound(path);
+	}
+
+	uint16 num = stream.readUint16BE();
+
+	Sprites *sprites = new Sprites(num);
+
+	for (uint i = 0; i < num; i++) {
+		Sprite *spr = &sprites->_sprites[i];
+		spr->size = stream.readUint16BE();
+		spr->x = stream.readUint16BE();
+		spr->y = stream.readUint16BE();
+		spr->w = stream.readUint16BE();
+		spr->h = stream.readUint16BE();
+
+		// TODO: Convert image format
+		spr->packedData = (byte*)malloc(spr->size);
+		stream.read(spr->packedData, spr->size);
+	}
+
+	return sprites;
+}
+
+Frames* AmigaDisk_br::loadFrames(const char* name) {
+	debugC(1, kDebugDisk, "AmigaDisk_br::loadFrames '%s'", name);
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/anims/%s", _partPath, name);
+
+	return createSprites(path);
+}
+
+Frames* AmigaDisk_br::loadTalk(const char *name) {
+	debugC(1, kDebugDisk, "AmigaDisk_br::loadTalk '%s'", name);
+
+	char path[PATH_LEN];
+	sprintf(path, "%s/talks/%s.tal", _partPath, name);
+
+	return createSprites(path);
+}
+
+Font* AmigaDisk_br::loadFont(const char* name) {
+	debugC(1, kDebugDisk, "AmigaFullDisk::loadFont '%s'", name);
+
+	char path[PATH_LEN];
+	sprintf(path, "%s", name);
+
+	Common::File stream;
+	if (!stream.open(path))
+		errorFileNotFound(path);
+
+	return createFont(name, stream);
+}
 
 } // namespace Parallaction

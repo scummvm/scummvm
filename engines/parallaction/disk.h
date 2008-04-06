@@ -228,12 +228,35 @@ public:
 	Frames* loadStatic(const char* name);
 	Frames* loadFrames(const char* name);
 	void loadSlide(BackgroundInfo& info, const char *filename);
-	void loadScenery(BackgroundInfo& info, const char* background, const char* mask, const char* path);
+	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
 	Table* loadTable(const char* name);
 	Common::SeekableReadStream* loadMusic(const char* name);
 	Common::ReadStream* loadSound(const char* name);
 };
 
+class AmigaDisk_br : public DosDisk_br {
+
+protected:
+	BackgroundInfo	_backgroundTemp;
+
+	Sprites*	createSprites(const char *name);
+	void unpackFrame(byte *dst, byte *src, uint16 planeSize);
+	void unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 bytesPerPlane, uint16 height);
+	Font *createFont(const char *name, Common::SeekableReadStream &stream);
+	void loadMask(BackgroundInfo& info, const char *name);
+	void loadBackground(BackgroundInfo& info, const char *name);
+
+public:
+	AmigaDisk_br(Parallaction *vm);
+	virtual ~AmigaDisk_br();
+
+	Frames* loadTalk(const char *name);
+	Font* loadFont(const char* name);
+	Frames* loadStatic(const char* name);
+	Frames* loadFrames(const char* name);
+	void loadSlide(BackgroundInfo& info, const char *filename);
+	void loadScenery(BackgroundInfo& info, const char* name, const char* mask, const char* path);
+};
 
 } // namespace Parallaction
 

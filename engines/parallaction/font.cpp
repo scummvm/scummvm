@@ -540,6 +540,11 @@ Font *DosDisk_br::createFont(const char *name, Common::ReadStream &stream) {
 	return new BraFont(stream);
 }
 
+Font *AmigaDisk_br::createFont(const char *name, Common::SeekableReadStream &stream) {
+	// TODO: implement AmigaLabelFont for labels
+	return new AmigaFont(stream);
+}
+
 void Parallaction_ns::initFonts() {
 
 	if (getPlatform() == Common::kPlatformPC) {
@@ -555,6 +560,24 @@ void Parallaction_ns::initFonts() {
 		_introFont = _disk->loadFont("intro");
 	}
 
+}
+
+void Parallaction_br::initFonts() {
+	if (getPlatform() == Common::kPlatformPC) {
+		_menuFont = _disk->loadFont("russia");
+		_dialogueFont = _disk->loadFont("comic");
+		_labelFont = _menuFont;
+	} else {
+		// TODO: Confirm fonts matches
+		// fonts/natasha/16
+		// fonts/sonya/18
+		// fonts/vanya/16
+
+		_menuFont = _disk->loadFont("fonts/natasha/16");
+		_dialogueFont = _disk->loadFont("fonts/sonya/18");
+		Common::MemoryReadStream stream(_amigaTopazFont, 2600, false);
+		_labelFont = new AmigaFont(stream);
+	}
 }
 
 }

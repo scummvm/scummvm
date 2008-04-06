@@ -57,12 +57,16 @@ int Parallaction_br::init() {
 		if (getPlatform() == Common::kPlatformPC) {
 			_disk = new DosDisk_br(this);
 			_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
-		} else
-			error("unsupported platform for Big Red Adventure");
-	} else
+			_soundMan = new DummySoundMan(this);
+		} else {
+			_disk = new AmigaDisk_br(this);
+			_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
+			_soundMan = new AmigaSoundMan(this);
+		}
+	} else {
 		error("unknown game type");
+	}
 
-	_soundMan = new DummySoundMan(this);
 
 	initResources();
 	initFonts();
@@ -119,14 +123,6 @@ int Parallaction_br::go() {
 
 
 
-void Parallaction_br::initFonts() {
-
-	_menuFont = _disk->loadFont("russia");
-	_dialogueFont = _disk->loadFont("comic");
-	_labelFont = _menuFont;
-
-}
-
 void Parallaction_br::freeFonts() {
 
 	delete _menuFont;
@@ -137,15 +133,22 @@ void Parallaction_br::freeFonts() {
 
 void Parallaction_br::initCursors() {
 
-	_dinoCursor = _disk->loadPointer("pointer1");
-	_dougCursor = _disk->loadPointer("pointer2");
-	_donnaCursor = _disk->loadPointer("pointer3");
+	if (getPlatform() == Common::kPlatformPC) {
+		_dinoCursor = _disk->loadPointer("pointer1");
+		_dougCursor = _disk->loadPointer("pointer2");
+		_donnaCursor = _disk->loadPointer("pointer3");
 
-	_mouseArrow = _donnaCursor;
+		_mouseArrow = _donnaCursor;
+	} else {
+		// TODO: Where are the Amiga cursors?
+	}
 
 }
 
 void Parallaction_br::setMousePointer(int16 index) {
+	// FIXME: Where are the Amiga cursors?
+	if (getPlatform() == Common::kPlatformAmiga)
+		return;
 
 	Common::Rect r;
 	_mouseArrow->getRect(0, r);

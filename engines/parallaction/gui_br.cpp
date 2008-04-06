@@ -60,7 +60,6 @@ void Parallaction_br::guiStart() {
 		_disk->selectArchive(_partNames[_part]);
 		startPart();
 	}
-
 }
 
 void Parallaction_br::guiSplash(const char *name) {
@@ -98,7 +97,11 @@ Frames* Parallaction_br::guiRenderMenuItem(const char *text) {
 	surf->create(MENUITEM_WIDTH, MENUITEM_HEIGHT*2, 1);
 
 	// build first frame to be displayed when item is not selected
-	_menuFont->setColor(0);
+	if (getPlatform() == Common::kPlatformPC) {
+		_menuFont->setColor(0);
+	} else {
+		_menuFont->setColor(7);
+	}
 	_menuFont->drawString((byte*)surf->getBasePtr(5, 2), MENUITEM_WIDTH, text);
 
 	// build second frame to be displayed when item is selected
@@ -141,8 +144,10 @@ int Parallaction_br::guiShowMenu() {
 
 	_gfx->clearScreen();
 	_gfx->setBackground(kBackgroundSlide, "tbra", 0, 0);
-	_gfx->_backgroundInfo.x = 20;
-	_gfx->_backgroundInfo.y = 50;
+	if (getPlatform() == Common::kPlatformPC) {
+		_gfx->_backgroundInfo.x = 20;
+		_gfx->_backgroundInfo.y = 50;
+	}
 
 	int availItems = 4 + _progress;
 

@@ -157,6 +157,23 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT
 	},
 
+	// TODO: Base the detection of Amiga BRA on actual data file, not executable file.
+	{
+		{
+			"bra",
+			"Multi-lingual",
+			{
+				{ "bigred",	0, "4f1e6bfd974b8ebabaad96d536904477", 95232 },
+				{ NULL, 0, NULL, 0}
+			},
+			Common::UNK_LANG,
+			Common::kPlatformAmiga,
+			Common::ADGF_NO_FLAGS
+		},
+		GType_BRA,
+		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT
+	},
+
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
