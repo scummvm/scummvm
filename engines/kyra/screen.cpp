@@ -1233,10 +1233,12 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		0, 0, 0,
 		&Screen::drawShapePlotType8,	// used by Kyra 2
 		&Screen::drawShapePlotType9,	// used by Kyra 1
-		0, 0,
+		0, 
+		&Screen::drawShapePlotType11_15,// used by Kyra 1
 		&Screen::drawShapePlotType12,	// used by Kyra 2
 		&Screen::drawShapePlotType13,	// used by Kyra 1
 		&Screen::drawShapePlotType14,	// used by Kyra 1 (invisibility)
+		&Screen::drawShapePlotType11_15,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	};
@@ -1674,6 +1676,22 @@ void Screen::drawShapePlotType9(uint8 *dst, uint8 cmd) {
 	if (_dsDrawLayer < t) {
 		cmd = _shapePages[1][relOffs];
 	} else {
+		for (int i = 0; i < _dsTableLoopCount; ++i)
+			cmd = _dsTable[cmd];
+	}
+
+	if (cmd)
+		*dst = cmd;
+}
+
+void Screen::drawShapePlotType11_15(uint8 *dst, uint8 cmd) {
+	uint32 relOffs = dst - _dsDstPage;
+	int t = (_shapePages[0][relOffs] & 0x7f) & 0x87;
+
+	if (_dsDrawLayer < t) {
+		cmd = _shapePages[1][relOffs];
+	} else {
+		cmd = *dst;
 		for (int i = 0; i < _dsTableLoopCount; ++i)
 			cmd = _dsTable[cmd];
 	}
