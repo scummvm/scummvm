@@ -190,6 +190,7 @@ int KyraEngine::init() {
 
 KyraEngine::~KyraEngine() {
 	delete _res;
+	delete _staticres;
 	delete _sound;
 	delete _text;
 	delete _timer;
