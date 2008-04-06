@@ -1402,7 +1402,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	if (_savegameOffset == 0) {
 		if (_isSaveMenu) {
 			char *dst = _vm->getTableString(menu.item[0].itemId, _vm->_optionsBuffer, 0);
-			const char *src = _vm->getTableString(/*_vm->gameFlags().isTalkie ? */10/* : ??*/, _vm->_optionsBuffer, 0);
+			const char *src = _vm->getTableString(_vm->gameFlags().isTalkie ? 10 : 18, _vm->_optionsBuffer, 0);
 			strcpy(dst, src);
 			menu.item[0].saveSlot = -2;
 			menu.item[0].enabled = true;
