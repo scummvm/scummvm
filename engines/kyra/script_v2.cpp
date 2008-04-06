@@ -456,6 +456,13 @@ int KyraEngine_v2::o2_checkForItem(ScriptState *script) {
 	return findItem(stackPos(0), stackPos(1)) == -1 ? 0 : 1;
 }
 
+int KyraEngine_v2::o2_loadSoundFile(ScriptState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_loadSoundFile(%p) (%d)", (const void *)script, stackPos(0));
+	if (_sound->hasTrack(stackPos(0)))
+		snd_playTheme(stackPos(0));
+	return 0;
+}
+
 int KyraEngine_v2::o2_removeItemSlotFromInventory(ScriptState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_removeItemSlotFromInventory(%p) (%d)", (const void *)script, stackPos(0));
 	removeItemFromInventory(stackPos(0));
@@ -1839,7 +1846,7 @@ void KyraEngine_v2::setupOpcodeTable() {
 		OpcodeUnImpl(),
 		// 0x20
 		Opcode(o2_checkForItem),
-		OpcodeUnImpl(),
+		Opcode(o2_loadSoundFile),
 		Opcode(o2_removeItemSlotFromInventory),
 		Opcode(o2_defineItem),
 		// 0x24

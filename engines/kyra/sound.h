@@ -105,6 +105,14 @@ public:
 	virtual void setSoundList(const AudioDataStruct *list) { _soundDataList = list; }
 
 	/**
+	 * Checks if a given sound file is present
+	 *
+	 * @param track	track number
+	 * @return true if available, false otherwise
+	 */
+	virtual bool hasTrack(uint file) { return (fileListEntry(file) != 0); }
+
+	/**
 	 * Load a specifc sound file for use of
 	 * playing music and sound effects.
 	 */

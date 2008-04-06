@@ -489,6 +489,9 @@ void SoundMidiPC::beginFadeOut() {
 
 void KyraEngine::snd_playTheme(int file, int track) {
 	debugC(9, kDebugLevelMain | kDebugLevelSound, "KyraEngine::snd_playTheme(%d)", file);
+	if (_curMusicTheme == file)
+		return;
+
 	_curSfxFile = _curMusicTheme = file;
 	_sound->loadSoundFile(_curMusicTheme);
 	_sound->playTrack(track);
