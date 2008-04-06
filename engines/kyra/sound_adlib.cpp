@@ -112,7 +112,7 @@ private:
 	int snd_setSoundData(va_list &list);
 	int snd_unkOpcode1(va_list &list);
 	int snd_startSong(va_list &list);
-	int snd_unkOpcode2(va_list &list);
+	int snd_isChannelPlaying(va_list &list);
 	int snd_unkOpcode3(va_list &list);
 	int snd_readByte(va_list &list);
 	int snd_writeByte(va_list &list);
@@ -543,8 +543,10 @@ int AdlibDriver::snd_startSong(va_list &list) {
 	return 0;
 }
 
-int AdlibDriver::snd_unkOpcode2(va_list &list) {
-	warning("unimplemented snd_unkOpcode2");
+int AdlibDriver::snd_isChannelPlaying(va_list &list) {
+	int channel = va_arg(list, int);
+	if (_channels[channel].dataptr)
+		return 1;
 	return 0;
 }
 
@@ -1888,7 +1890,7 @@ void AdlibDriver::setupOpcodeList() {
 		COMMAND(snd_setSoundData),
 		COMMAND(snd_unkOpcode1),
 		COMMAND(snd_startSong),
-		COMMAND(snd_unkOpcode2),
+		COMMAND(snd_isChannelPlaying),
 		COMMAND(snd_unkOpcode3),
 		COMMAND(snd_readByte),
 		COMMAND(snd_writeByte),
@@ -2272,6 +2274,10 @@ void SoundAdlibPC::haltTrack() {
 	unk1();
 	unk2();
 	//_vm->_system->delayMillis(3 * 60);
+}
+
+bool SoundAdlibPC::isPlaying() {
+	return _driver->callback(7, int(0));
 }
 
 void SoundAdlibPC::playSoundEffect(uint8 track) {
