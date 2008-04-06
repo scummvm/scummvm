@@ -110,7 +110,7 @@ public:
 	 * @param track	track number
 	 * @return true if available, false otherwise
 	 */
-	virtual bool hasTrack(uint file) { return (fileListEntry(file) != 0); }
+	virtual bool hasSoundFile(uint file) { return (fileListEntry(file) != 0); }
 
 	/**
 	 * Load a specifc sound file for use of
@@ -460,6 +460,7 @@ public:
 	void updateVolumeSettings() { _music->updateVolumeSettings(); _sfx->updateVolumeSettings(); }
 
 	void setSoundList(const AudioDataStruct * list) { _music->setSoundList(list); _sfx->setSoundList(list); }
+	bool hasSoundFile(uint file) const { return _music->hasSoundFile(file) && _sfx->hasSoundFile(file); }
 	void loadSoundFile(uint file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
 
 	void playTrack(uint8 track) { _music->playTrack(track); }
