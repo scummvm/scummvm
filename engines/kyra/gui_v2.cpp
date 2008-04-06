@@ -1966,7 +1966,7 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 
 	_keyPressed.reset();
 	_cancelNameInput = _finishNameInput = false;
-	while (running) {
+	while (running && !_vm->quit()) {
 		processHighlights(_savenameMenu, _vm->_mouseX, _vm->_mouseY);
 		checkTextfieldInput();
 		if (_keyPressed.keycode == Common::KEYCODE_RETURN || _keyPressed.keycode == Common::KEYCODE_KP_ENTER || _finishNameInput) {
@@ -2057,11 +2057,12 @@ void GUI_v2::checkTextfieldInput() {
 			running = false;
 			break;
 
+		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_LBUTTONUP: {
 			Common::Point pos = _vm->getMousePos();
 			_vm->_mouseX = pos.x;
 			_vm->_mouseY = pos.y;
-			keys = 199;
+			keys = event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800);
 			running = false;
 			} break;
 
