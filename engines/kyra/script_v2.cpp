@@ -1843,7 +1843,8 @@ void KyraEngine_v2::setupOpcodeTable() {
 		Opcode(o2_addItemToInventory),
 		Opcode(o2_drawShape),
 		Opcode(o2_addItemToCurScene),
-		OpcodeUnImpl(),
+		Opcode(o2_dummy),	// the original used this opcode to limit the mouse range temporary,
+							// since that is of no use and not really important we just use a dummy here
 		// 0x20
 		Opcode(o2_checkForItem),
 		Opcode(o2_loadSoundFile),
