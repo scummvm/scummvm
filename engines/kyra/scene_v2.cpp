@@ -115,7 +115,7 @@ void KyraEngine_v2::enterNewScene(uint16 newScene, int facing, int unk1, int unk
 
 	if (newSoundFile) {
 		if (_sound->getMusicType() == Sound::kAdlib) {
-			while (((SoundAdlibPC*)_sound)->isPlaying())
+			while (_sound->isPlaying())
 				_system->delayMillis(10);
 		} else {
 			while (waitTime > _system->getMillis())

@@ -138,6 +138,13 @@ public:
 	virtual void playSoundEffect(uint8 track) = 0;
 
 	/**
+	 * Checks if the sound driver plays any sound
+	 *
+	 * @return true if playing, false otherwise
+	 */
+	virtual bool isPlaying() const { return false; }
+
+	/**
 	 * Starts fading out the volume.
 	 *
 	 * This keeps fading out the output until
@@ -465,6 +472,7 @@ public:
 
 	void playTrack(uint8 track) { _music->playTrack(track); }
 	void haltTrack() { _music->haltTrack(); }
+	bool isPlaying() const { return _music->isPlaying() | _sfx->isPlaying(); }
 
 	void playSoundEffect(uint8 track) { _sfx->playSoundEffect(track); }
 
