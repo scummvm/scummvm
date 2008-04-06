@@ -2277,7 +2277,7 @@ void SoundAdlibPC::haltTrack() {
 }
 
 bool SoundAdlibPC::isPlaying() {
-	return _driver->callback(7, int(0));
+	return _driver->callback(7, int(0)) != 0;
 }
 
 void SoundAdlibPC::playSoundEffect(uint8 track) {
