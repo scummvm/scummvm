@@ -94,10 +94,10 @@ SoundManager::~SoundManager() {
 
 void SoundManager::saveToStream(WriteStream *stream) {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::saveToStream");
-	ManagedList<SoundDescResource *>::iterator i;
+	SoundListIterator i;
 
 	for (i = _activeSounds.begin(); i != _activeSounds.end(); ++i) {
-		SoundDescResource *rec = *i;
+		SoundDescResource *rec = (*i).get();
 		stream->writeByte(rec->soundNumber);
 	}
 	stream->writeByte(0xff);
@@ -222,7 +222,7 @@ void SoundManager::addSound(uint8 soundIndex, bool tidyFlag) {
 		newEntry->volume = rec.volume;
 	else /* resource volumes do not seem to work well with our adlib emu */
 		newEntry->volume = 240; /* 255 causes clipping with adlib */
-	_activeSounds.push_back(newEntry);
+	_activeSounds.push_back(SoundList::value_type(newEntry));
 
 	musicInterface_Play(rec.soundNumber, channelCtr, numChannels);
 	musicInterface_SetVolume(channelCtr, newEntry->volume);
@@ -280,10 +280,10 @@ uint8 SoundManager::descIndexOf(uint8 soundNumber) {
 
 SoundDescResource *SoundManager::findSound(uint8 soundNumber) {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::findSound soundNumber=%d", soundNumber);
-	ManagedList<SoundDescResource *>::iterator i;
+	SoundListIterator i;
 
 	for (i = _activeSounds.begin(); i != _activeSounds.end(); ++i) {
-		SoundDescResource *rec = *i;
+		SoundDescResource *rec = (*i).get();
 
 		if (rec->soundNumber == soundNumber) {
 			debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "SoundManager::findSound - sound found");
@@ -298,10 +298,10 @@ SoundDescResource *SoundManager::findSound(uint8 soundNumber) {
 
 void SoundManager::tidySounds() {
 	debugC(ERROR_INTERMEDIATE, kLureDebugSounds, "SoundManager::tidySounds");
-	ManagedList<SoundDescResource *>::iterator i = _activeSounds.begin();
+	SoundListIterator i = _activeSounds.begin();
 
 	while (i != _activeSounds.end()) {
-		SoundDescResource *rec = *i;
+		SoundDescResource *rec = (*i).get();
 
 		if (musicInterface_CheckPlaying(rec->soundNumber))
 			// Still playing, so move to next entry
@@ -319,10 +319,10 @@ void SoundManager::removeSounds() {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::removeSounds");
 	bellsBodge();
 
-	ManagedList<SoundDescResource *>::iterator i = _activeSounds.begin();
+	SoundListIterator i = _activeSounds.begin();
 
 	while (i != _activeSounds.end()) {
-		SoundDescResource *rec = *i;
+		SoundDescResource *rec = (*i).get();
 
 		if ((rec->flags & SF_IN_USE) != 0)
 			musicInterface_Stop(rec->soundNumber);
@@ -333,10 +333,10 @@ void SoundManager::removeSounds() {
 
 void SoundManager::restoreSounds() {
 	debugC(ERROR_BASIC, kLureDebugSounds, "SoundManager::restoreSounds");
-	ManagedList<SoundDescResource *>::iterator i = _activeSounds.begin();
+	SoundListIterator i = _activeSounds.begin();
 
 	while (i != _activeSounds.end()) {
-		SoundDescResource *rec = *i;
+		SoundDescResource *rec = (*i).get();
 
 		if ((rec->numChannels != 0) && ((rec->flags & SF_RESTORE) != 0)) {
 			Common::set_to(_channelsInUse+rec->channel, _channelsInUse+rec->channel+rec->numChannels, true);
@@ -361,9 +361,9 @@ void SoundManager::fadeOut() {
 		inProgress = false;
 
 		g_system->lockMutex(_soundMutex);
-		ManagedList<MidiMusic *>::iterator i;
+		MusicListIterator i;
 		for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-			MidiMusic *music = *i;
+			MidiMusic *music = (*i).get();
 			if (music->getVolume() > 0) {
 				inProgress = true;
 				music->setVolume(music->getVolume() >= 10 ? (music->getVolume() - 10) : 0);
@@ -420,7 +420,7 @@ void SoundManager::musicInterface_Play(uint8 soundNumber, uint8 channelNumber, u
 	g_system->lockMutex(_soundMutex);
 	MidiMusic *sound = new MidiMusic(_driver, _channelsInner, channelNumber, soundNum,
 		isMusic, numChannels, soundStart, dataSize);
-	_playingSounds.push_back(sound);
+	_playingSounds.push_back(MusicList::value_type(sound));
 	g_system->unlockMutex(_soundMutex);
 }
 
@@ -433,9 +433,9 @@ void SoundManager::musicInterface_Stop(uint8 soundNumber) {
 	uint8 soundNum = soundNumber & 0x7f;
 
 	g_system->lockMutex(_soundMutex);
-	ManagedList<MidiMusic *>::iterator i;
+	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		MidiMusic *music = *i;
+		MidiMusic *music = (*i).get();
 		if (music->soundNumber() == soundNum) {
 			_playingSounds.erase(i);
 			break;
@@ -454,9 +454,9 @@ bool SoundManager::musicInterface_CheckPlaying(uint8 soundNumber) {
 	bool result = false;
 
 	g_system->lockMutex(_soundMutex);
-	ManagedList<MidiMusic *>::iterator i;
+	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		MidiMusic *music = *i;
+		MidiMusic *music = (*i).get();
 		if (music->soundNumber() == soundNum) {
 			result = true;
 			break;
@@ -476,9 +476,9 @@ void SoundManager::musicInterface_SetVolume(uint8 channelNum, uint8 volume) {
 	musicInterface_TidySounds();
 
 	g_system->lockMutex(_soundMutex);
-	ManagedList<MidiMusic *>::iterator i;
+	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		MidiMusic *music = *i;
+		MidiMusic *music = (*i).get();
 		if (music->channelNumber() == channelNum)
 			music->setVolume(volume);
 	}
@@ -493,9 +493,9 @@ void SoundManager::musicInterface_KillAll() {
 	musicInterface_TidySounds();
 
 	g_system->lockMutex(_soundMutex);
-	ManagedList<MidiMusic *>::iterator i;
+	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		MidiMusic *music = *i;
+		MidiMusic *music = (*i).get();
 		music->stopMusic();
 	}
 
@@ -526,9 +526,9 @@ void SoundManager::musicInterface_TidySounds() {
 	debugC(ERROR_DETAILED, kLureDebugSounds, "musicInterface_TidySounds");
 
 	g_system->lockMutex(_soundMutex);
-	ManagedList<MidiMusic *>::iterator i = _playingSounds.begin();
+	MusicListIterator i = _playingSounds.begin();
 	while (i != _playingSounds.end()) {
-		MidiMusic *music = *i;
+		MidiMusic *music = (*i).get();
 		if (!music->isPlaying())
 			i = _playingSounds.erase(i);
 		else
@@ -548,9 +548,9 @@ void SoundManager::doTimer() {
 
 	g_system->lockMutex(_soundMutex);
 
-	ManagedList<MidiMusic *>::iterator i;
+	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
-		MidiMusic *music = *i;
+		MidiMusic *music = (*i).get();
 		if (music->isPlaying())
 			music->onTimer();
 	}

@@ -27,6 +27,7 @@
 #include "lure/memory.h"
 
 #include "common/singleton.h"
+#include "common/ptr.h"
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
@@ -108,8 +109,12 @@ private:
 	int _numDescs;
 	SoundDescResource *soundDescs() { return (SoundDescResource *) _descs->data(); }
 	MidiDriver *_driver;
-	ManagedList<SoundDescResource *> _activeSounds;
-	ManagedList<MidiMusic *> _playingSounds;
+	typedef Common::List<Common::SharedPtr<SoundDescResource> > SoundList;
+	typedef SoundList::iterator SoundListIterator;
+	SoundList _activeSounds;
+	typedef Common::List<Common::SharedPtr<MidiMusic> > MusicList;
+	typedef MusicList::iterator MusicListIterator;
+	MusicList _playingSounds;
 	ChannelEntry _channelsInner[NUM_CHANNELS];
 	bool _channelsInUse[NUM_CHANNELS];
 	bool _isPlaying;
