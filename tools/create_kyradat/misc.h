@@ -383,7 +383,7 @@ const int kyra2CDFile2EngNeed[] = {
 	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameTalkObjIndex,
-	k2IngameItemAnimTable,
+	k2IngameItemAnimData,
 	-1
 };
 
@@ -411,7 +411,7 @@ const int kyra2FloppyFile2Need[] = {
 	k2IngameSfxIndex,
 	k2IngameTracks,
 	k2IngameTalkObjIndex,
-	k2IngameItemAnimTable,
+	k2IngameItemAnimData,
 	-1
 };
 
@@ -437,7 +437,7 @@ const int kyra2TownsFile2EngNeed[] = {
 	k2IngameCDA,
 	k2IngameTalkObjIndex,
 	k2IngameTimJpStrings,
-	k2IngameItemAnimTable,
+	k2IngameItemAnimData,
 	-1
 };
 
@@ -450,7 +450,7 @@ const int kyra2DemoNeed[] = {
 	k2SeqplaySeqData,
 	k2SeqplaySfxFiles,
 	k2SeqplayIntroTracks,
-	k2SeqplayShapeDefs,
+	k2SeqplayShapeAnimData,
 	-1
 };
 

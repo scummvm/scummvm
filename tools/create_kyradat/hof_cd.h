@@ -28,7 +28,7 @@ const ExtractEntry kyra2File2CDE[] = {
 	{ k2IngameSfxIndex, 0x000294F0, 0x00029848 },
 	{ k2IngameTracks, 0x0002F2FE, 0x0002F37E },
 	{ k2IngameTalkObjIndex, 0x0002BAC2, 0x0002BB46 },
-	{ k2IngameItemAnimTable, 0x0002FE68, 0x000301B0 },
+	{ k2IngameItemAnimData, 0x0002FE68, 0x000301B0 },
 	{ -1, 0, 0 }
 };
 

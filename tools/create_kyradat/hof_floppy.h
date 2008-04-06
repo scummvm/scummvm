@@ -34,7 +34,7 @@ const ExtractEntry kyra2File2E[] = {
 	{ k2IngameSfxIndex, 0x0002A710, 0x0002AA68 },
 	{ k2IngameTracks, 0x0003B2F2, 0x0003B370 },
 	{ k2IngameTalkObjIndex, 0x00033EB2, 0x00033F2A },
-	{ k2IngameItemAnimTable, 0x0003B94A, 0x0003BC92 },
+	{ k2IngameItemAnimData, 0x0003B94A, 0x0003BC92 },
 	{ -1, 0, 0 }
 };
 
@@ -44,7 +44,7 @@ const ExtractEntry kyra2File2F[] = {
 	{ k2IngameSfxIndex, 0x000288B0, 0x00028C08 },
 	{ k2IngameTracks, 0x0003B2F2, 0x0003B370 },
 	{ k2IngameTalkObjIndex, 0x0003328E, 0x00033306 },
-	{ k2IngameItemAnimTable, 0x0003AFF6, 0x0003B33E },
+	{ k2IngameItemAnimData, 0x0003AFF6, 0x0003B33E },
 	{ -1, 0, 0 }
 };
 
@@ -54,7 +54,7 @@ const ExtractEntry kyra2File2G[] = {
 	{ k2IngameSfxIndex, 0x000288E0, 0x00028C38 },
 	{ k2IngameTracks, 0x0003AA8C, 0x0003AB0A },
 	{ k2IngameTalkObjIndex, 0x000332BE, 0x00033336 },
-	{ k2IngameItemAnimTable, 0x0003B00A, 0x0003B352 },
+	{ k2IngameItemAnimData, 0x0003B00A, 0x0003B352 },
 	{ -1, 0, 0 }
 };
 

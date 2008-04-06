@@ -3,7 +3,7 @@ const ExtractEntry kyra2Demo[] = {
 	{ k2SeqplaySfxFiles, 0x0001CDDE, 0x0001CEBC },
 	{ k2SeqplaySeqData, 0x0001C920, 0x0001CB9C },
 	{ k2SeqplayIntroTracks, 0x0001CEBC, 0x0001CECC },
-	{ k2SeqplayShapeDefs, 0x0001CC14, 0x0001CCCC },
+	{ k2SeqplayShapeAnimData, 0x0001CC14, 0x0001CCCC },
 	{ -1, 0, 0 }
 };
 

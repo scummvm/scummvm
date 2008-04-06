@@ -152,7 +152,7 @@ enum kExtractID {
 	k2SeqplayFinaleTracks,
 	k2SeqplayIntroCDA,
 	k2SeqplayFinaleCDA,
-	k2SeqplayShapeDefs,
+	k2SeqplayShapeAnimData,
 
 	k2IngamePakFiles,
 	k2IngameSfxFiles,
@@ -161,7 +161,7 @@ enum kExtractID {
 	k2IngameCDA,
 	k2IngameTalkObjIndex,
 	k2IngameTimJpStrings,
-	k2IngameItemAnimTable,
+	k2IngameItemAnimData,
 
 	kMaxResIDs
 };
@@ -239,7 +239,9 @@ enum kExtractType {
 	kTypeShapeList,
 	kTypeRawData,
 
-	k2TypeSeqData
+	k2TypeSeqData,
+	k2TypeShpDataV1,
+	k2TypeShpDataV2
 };
 
 struct ExtractType {

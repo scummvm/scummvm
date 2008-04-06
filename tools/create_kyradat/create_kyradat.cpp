@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 22,
+	kKyraDatVersion = 23,
 	kIndexSize = 12
 };
 
@@ -60,6 +60,9 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
 bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractHofShapeAnimDataV1(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractHofShapeAnimDataV2(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+
 int extractHofSeqData_checkString(const void *ptr, uint8 checkSize);
 int extractHofSeqData_isSequence(const void *ptr, const Game *g, uint32 maxCheckSize);
 int extractHofSeqData_isControl(const void *ptr, uint32 size);
@@ -75,6 +78,8 @@ const ExtractType extractTypeTable[] = {
 	{ kTypeRawData, extractRaw, createFilename },
 
 	{ k2TypeSeqData, extractHofSeqData, createFilename },
+	{ k2TypeShpDataV1, extractHofShapeAnimDataV1, createFilename },
+	{ k2TypeShpDataV2, extractHofShapeAnimDataV2, createFilename },
 
 	{ -1, 0, 0}
 };
@@ -208,7 +213,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k2SeqplayFinaleTracks, kTypeStringList, "S_FINALE.TRA" },
 	{ k2SeqplayIntroCDA, kTypeRawData, "S_INTRO.CDA" },
 	{ k2SeqplayFinaleCDA, kTypeRawData, "S_FINALE.CDA" },
-	{ k2SeqplayShapeDefs, kTypeRawData, "S_DEMO.SHP" },
+	{ k2SeqplayShapeAnimData, k2TypeShpDataV1, "S_DEMO.SHP" },
 
 	// Ingame
 	{ k2IngamePakFiles, kTypeStringList, "I_PAKFILES.TXT" },
@@ -218,7 +223,7 @@ const ExtractFilename extractFilenames[] = {
 	{ k2IngameCDA, kTypeRawData, "I_TRACKS.CDA" },
 	{ k2IngameTalkObjIndex, kTypeRawData, "I_TALKOBJECTS.MAP" },
 	{ k2IngameTimJpStrings, kTypeStringList, "I_TIMJPSTR.TXT" },
-	{ k2IngameItemAnimTable, kTypeRawData, "I_INVANIM.SHP" },	
+	{ k2IngameItemAnimData, k2TypeShpDataV2, "I_INVANIM.SHP" },	
 	
 	{ -1, 0, 0 }
 };
@@ -596,26 +601,18 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 
 				numSequences++;
 				uint16 relOffs = (uint16) (output - buffer);
-				WRITE_LE_UINT16(hdout, relOffs);
+				WRITE_BE_UINT16(hdout, relOffs);
 				hdout++;
+				
+				WRITE_BE_UINT16(output, READ_LE_UINT16(ptr)); // flags
+				ptr += 2;
+				output += 2;
 
-				/*char cc[15];
-				cc[14] = 0;
-				if (ptr[2]) {
-					memcpy(cc, ptr + 2, 14);
-					debug(1, "adding sequence with file: %s, output file offset: 0x%x", cc, relOffs);
-				} else if (ptr[16]) {
-					memcpy(cc, ptr + 16, 14);
-					debug(1, "adding sequence with file: %s, output file offset: 0x%x", cc, relOffs);
-				} else if (ptr[0] == 4) {
-					debug(1, "adding sequence (text only), output file offset: 0x%x", relOffs);
-				//}*/
+				memcpy(output, ptr, 28); // wsa and cps file names
+				ptr += 28;
+				output += 28;
 
-				memcpy(output , ptr, 30);
-				ptr += 30;
-				output += 30;
-
-				if (g->special == k2TownsFile1E) {
+				if (g->special == k2TownsFile1E) { // startupCommand + finalCommand
 					memcpy(output , ptr, 2);
 					ptr += 2;
 					output += 2;
@@ -626,10 +623,14 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 					ptr += 2;
 				}
 
-				memcpy(output, ptr, 14);
-				ptr += 18;
-				output += 14;
-				memcpy(output, ptr, 2);
+				for (int w = 0; w < 7; w++) { //stringIndex1 to yPos
+					WRITE_BE_UINT16(output, READ_LE_UINT16(ptr));
+					ptr += 2;
+					output += 2;
+				}
+
+				ptr += 4;
+				WRITE_BE_UINT16(output, READ_LE_UINT16(ptr)); // duration
 				ptr += 2;
 				output+= 2;
 
@@ -649,49 +650,61 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 
 					if (g->special != k2DemoVersion &&
 						extractHofSeqData_isControl(ctrStart, ctrSize)) {
-
 						controlOffs = (uint16) (output - buffer);
-						//debug(1, "frame control encountered, size: %d, output file offset: 0x%x", ctrSize, controlOffs);
-						memcpy(output, ctrStart, ctrSize);
+						*output++ = ctrSize >> 2;
+												
+						for (int cc = 0; cc < ctrSize; cc += 2)
+							WRITE_BE_UINT16(output + cc, READ_LE_UINT16(ctrStart + cc)); // frame control					
 						output += ctrSize;
 					}
 				}
 
 				numNestedSequences++;
 				uint16 relOffs = (uint16) (output - buffer);
-				WRITE_LE_UINT16(hdout, relOffs);
+				WRITE_BE_UINT16(hdout, relOffs);
 				hdout++;
 
-				/*char cc[15];
-				cc[14] = 0;
-				memcpy(cc, ptr + 2, 14);
-				debug(1, "adding nested sequence with file: %s, output file offset: 0x%x", cc, relOffs);*/
+				WRITE_BE_UINT16(output, READ_LE_UINT16(ptr)); // flags
+				ptr += 2;
+				output += 2;
 
-				memcpy(output , ptr, 22);
-				ptr += 26;
-				output += 22;
-				memcpy(output, ptr, 4);
+				memcpy(output, ptr, 14); // wsa file name
+				ptr += 14;
+				output += 14;
+
+				for (int w = 0; w < 3; w++) { //startframe, endFrame, frameDelay
+					WRITE_BE_UINT16(output, READ_LE_UINT16(ptr));
+					ptr += 2;
+					output += 2;
+				}
+				
 				ptr += 4;
-				output += 4;
+
+				for (int w = 0; w < 2; w++) { //x, y
+					WRITE_BE_UINT16(output, READ_LE_UINT16(ptr));
+					ptr += 2;
+					output += 2;
+				}
 
 				if (!READ_LE_UINT32(ptr))
 					controlOffs = 0;
-				//else if (controlOffs)
-				//	debug(1, "assigning frame control with output file offset 0x%x to item %s (output file offset: 0x%x)", controlOffs, cc, relOffs);
 
-				WRITE_LE_UINT16(output, controlOffs);
+				WRITE_BE_UINT16(output, controlOffs);
 				if (g->special != k2DemoVersion)
 					ptr += 4;
 				output += 2;
 
 				if (g->special != k2DemoVersion) {
-					memcpy(output, ptr, 4);
-					ptr += 4;
+					for (int w = 0; w < 2; w++) { //startupCommand, finalCommand
+						WRITE_BE_UINT16(output, READ_LE_UINT16(ptr));
+						ptr += 2;
+						output += 2;
+					}
 				} else {
-					WRITE_LE_UINT32(output, 0);
+					memset(output, 0, 4);
+					output += 4;
 				}
-
-				output+= 4;
+				
 				if (g->special == k2TownsFile1E)
 					ptr += 2;
 
@@ -704,13 +717,6 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 				if (v == -2)
 					break;
 
-				/*char cc[15];
-				cc[14] = 0;
-				if (ptr[2])
-					memcpy(cc, ptr + 2, 14);
-				else
-					memcpy(cc, ptr + 16, 14);
-				debug(1, "next item: sequence with file %s", cc);*/
 
 			} else if (cycle == 1) {
 				while (v == 1 && v != -2) {
@@ -732,23 +738,20 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 	uint16 *finHeader = (uint16*) finBuffer;
 
 	for (int i = 1; i < finHeaderSize; i++)
-		WRITE_LE_UINT16(&finHeader[i], (READ_LE_UINT16(&header[i]) - diff));
-	WRITE_LE_UINT16(finHeader, numSequences);
-	WRITE_LE_UINT16(&finHeader[numSequences + 1], numNestedSequences);
+		WRITE_BE_UINT16(&finHeader[i], (READ_BE_UINT16(&header[i]) - diff));
+	WRITE_BE_UINT16(finHeader, numSequences);
+	WRITE_BE_UINT16(&finHeader[numSequences + 1], numNestedSequences);
 	memcpy (finBuffer + finHeaderSize, buffer + headerSize, finBufferSize - finHeaderSize);
 	delete [] buffer;
 
 	finHeader = (uint16*) (finBuffer + ((numSequences + 2) * sizeof(uint16)));
 	for (int i = 0; i < numNestedSequences; i++) {
-		uint8 * offs = finBuffer + READ_LE_UINT16(finHeader++) + 26;
-		uint16 ctrl = READ_LE_UINT16(offs);
+		uint8 * offs = finBuffer + READ_BE_UINT16(finHeader++) + 26;
+		uint16 ctrl = READ_BE_UINT16(offs);
 		if (ctrl)
 			ctrl -= diff;
-		WRITE_LE_UINT16(offs, ctrl);
+		WRITE_BE_UINT16(offs, ctrl);
 	}
-
-
-	//debug(1, "\n\nFinished.\n");
 
 	return out.addFile(filename, finBuffer, finBufferSize);
 }
@@ -832,6 +835,72 @@ int extractHofSeqData_isControl(const void *ptr, uint32 size) {
 			return 0;
 	}
 	return 1;
+}
+
+bool extractHofShapeAnimDataV1(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
+	int outsize = size + 1;
+	uint8 *buffer = new uint8[outsize];
+	const uint8 *src = data;
+	uint8 *dst = buffer + 1;
+
+	for (int i = 0; i < 4; i++) {
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2;
+		dst += 2;
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 4;
+		dst += 2;
+		outsize -= 2;
+		
+		for (int i = 0; i < 20; i ++) {
+			WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+			src += 2;
+			dst += 2;
+		}
+
+	};
+
+	*buffer = 4; // number of items
+
+	return out.addFile(filename, buffer, outsize);
+}
+
+bool extractHofShapeAnimDataV2(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
+	int outsize = size + 1;
+	uint8 *buffer = new uint8[outsize];
+	const uint8 *src = data;
+	uint8 *dst = buffer + 1;
+	uint8 *fin = buffer + outsize;
+	int count = 0;
+
+	do {
+		if (READ_LE_UINT16(src) == 0xffff)
+			break;
+
+		count++;
+
+		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+		src += 2;
+		dst += 2;
+		
+		uint8 numFrames = *src;
+		*dst++ = numFrames;
+		src += 6;
+		outsize -= 5;
+		
+		for (int i = 0; i < (numFrames << 1); i++) {
+			WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
+			src += 2;
+			dst += 2;
+		}
+
+		src += (48 - (numFrames << 2));
+
+	} while (dst < fin);
+
+	*buffer = count; // number of items
+
+	return out.addFile(filename, buffer, outsize);
 }
 
 // index generation
