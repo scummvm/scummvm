@@ -224,10 +224,10 @@ void Hotspot::setAnimationIndex(int animIndex) {
 	Resources &r = Resources::getReference();
 
 	// Get the animation specified
-	HotspotAnimList::iterator anim = r.animRecords().begin();
+	HotspotAnimList::iterator a = r.animRecords().begin();
 	for (int i = 0; i < animIndex; i++)
-		++anim;
-	HotspotAnimData *tempAnim = (*anim).get();
+		++a;
+	HotspotAnimData *tempAnim = (*a).get();
 
 	_animId = tempAnim->animRecordId;
 	if (_data)
