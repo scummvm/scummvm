@@ -323,6 +323,11 @@ void KyraEngine_v2::loadGame(const char *fileName) {
 
 	if (setFlag1EE)
 		setGameFlag(0x1EE);
+
+	// We didn't explicitly set the walk speed, but it's saved as part of
+	// the _timers array, so we need to re-sync it with _configWalkspeed.
+	setWalkspeed(_configWalkspeed);
 }
 
 } // end of namespace Kyra
+
