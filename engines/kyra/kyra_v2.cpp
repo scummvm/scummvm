@@ -771,10 +771,11 @@ void KyraEngine_v2::updateInput() {
 				_eventList.push_back(event);
 			break;
 
-		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_LBUTTONDOWN:
 			_eventList.push_back(Event(event, true));
 			break;
 
+		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_MOUSEMOVE:
 			_eventList.push_back(event);
 			break;
@@ -822,11 +823,12 @@ int KyraEngine_v2::checkInput(Button *buttonList, bool mainLoop) {
 			_screen->updateScreen();
 			} break;
 
+		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_LBUTTONUP: {
 			Common::Point pos = getMousePos();
 			_mouseX = pos.x;
 			_mouseY = pos.y;
-			keys = 199;
+			keys = event.type == Common::EVENT_LBUTTONDOWN ? 199 : (200 | 0x800);
 			breakLoop = true;
 			} break;
 

@@ -1486,8 +1486,7 @@ void GUI_v2::initStaticData() {
 		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1D+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	}
 	for (int i = 0; i < 3; ++i) {
-		// original used flags 0x2200 here, as long as our input code isn't 100% correct we have to use 0x1100 here though
-		GUI_V2_BUTTON(_sliderButtons[2][i], 0x21+i, 0, 0, 0, 0, 0, 0x1100, 0, 0, 0, 0x6E, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+		GUI_V2_BUTTON(_sliderButtons[2][i], 0x21+i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	}
 
 	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i) {

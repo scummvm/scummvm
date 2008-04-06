@@ -378,12 +378,14 @@ void GUI_v2::processButton(Button *button) {
 }
 
 int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
+	static uint16 flagsModifier = 0;
+
 	if (!buttonList)
 		return inputFlag & 0x7FFF;
 
 	if (_backUpButtonList != buttonList || _buttonListChanged) {
 		_unknownButtonList = 0;
-		//XXX_gui_unk2 (very strange code, maybe keyboard related? or some non interactive input...)
+		//flagsModifier |= 0x2200;
 		_backUpButtonList = buttonList;
 		_buttonListChanged = false;
 
@@ -402,19 +404,21 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		uint16 inFlags = inputFlag & 0xFF;
 		uint16 temp = 0;
 
-		// this is NOT like in the original
-		// the original game somehow just enabled flag 0x1000 here
-		// but did some other magic, which looks like it depends on how the handle
-		// key input... so we just enable 0x1000 and 0x4000 here to allow
-		// all GUI buttons to work (for now at least...)
-		if (inFlags == 198 || inFlags == 199)
-			temp = 0x1000 | 0x4000;
+		// HACK: inFlags == 200 is our left button (up)
+		if (inFlags == 199 || inFlags == 200)
+			temp = 0x1000;
+		if (inFlags == 198)
+			temp = 0x100;
 
-		//if (inputFlag & 0x800)
-		//	temp <<= 2;
+		if (inputFlag & 0x800)
+			temp <<= 2;
 
-		// the original did some flag hackery here, this works fine too
 		flags |= temp;
+
+		flagsModifier &= ~((temp & 0x4400) >> 1);
+		flagsModifier |= (temp & 0x1100) * 2;
+		flags |= flagsModifier;
+		flags |= (flagsModifier << 2) ^ 0x8800;
 	}
 
 	buttonList = _backUpButtonList;
@@ -430,7 +434,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 			buttonList = buttonList->nextButton;
 			continue;
 		}
-		buttonList->flags2 &= 0xFFE7;
+		buttonList->flags2 &= ~0x18;
 		buttonList->flags2 |= (buttonList->flags2 & 3) << 3;
 
 		int x = buttonList->x;
@@ -448,6 +452,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		if (mouseX >= x && mouseY >= y && mouseX <= x+buttonList->width && mouseY <= y+buttonList->height)
 			progress = true;
 
+		buttonList->flags2 &= ~0x80;
 		uint16 inFlags = inputFlag & 0x7FFF;
 		if (inFlags) {
 			if (buttonList->unk6 == inFlags) {
@@ -469,7 +474,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 
 		bool unk1 = false;
 		if (!progress)
-			buttonList->flags2 &= 0xFFF9;
+			buttonList->flags2 &= ~6;
 
 		if ((flags & 0x3300) && (buttonList->flags & 4) && progress && (buttonList == _unknownButtonList || !_unknownButtonList)) {
 			buttonList->flags |= 6;
@@ -478,7 +483,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		} else if ((flags & 0x8800) && !(buttonList->flags & 4) && progress) {
 			buttonList->flags2 |= 6;
 		} else {
-			buttonList->flags2 &= 0xFFF9;
+			buttonList->flags2 &= ~6;
 		}
 
 		bool progressSwitch = false;
@@ -511,15 +516,15 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 
 				switch (flagTable[combinedFlags]) {
 				case 0x400:
-					if ((buttonList->flags & 1) && _unknownButtonList == buttonList) {
+					if (!(buttonList->flags & 1) || ((buttonList->flags & 1) && _unknownButtonList == buttonList)) {
 						buttonList->flags2 ^= 1;
 						returnValue = buttonList->index | 0x8000;
 						unk1 = true;
 					}
 
 					if (!(buttonList->flags & 4)) {
-						buttonList->flags2 &= 0xFFFB;
-						buttonList->flags2 &= 0xFFFD;
+						buttonList->flags2 &= ~4;
+						buttonList->flags2 &= ~2;
 					}
 					break;
 
@@ -551,8 +556,8 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 					if (buttonList->flags & 4) {
 						buttonList->flags2 |= 4;
 						buttonList->flags2 |= 2;
-						_unknownButtonList = buttonList;
 					}
+					_unknownButtonList = buttonList;
 					break;
 				}
 			}
@@ -570,7 +575,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 		if ((flags & 0x8800) == 0x8800) {
 			_unknownButtonList = 0;
 			if (!progress || (buttonList->flags & 4))
-				buttonList->flags2 &= 0xFFF9;
+				buttonList->flags2 &= ~6;
 		}
 
 		if (!progress && buttonList == _unknownButtonList && !(buttonList->flags & 0x40))
@@ -580,7 +585,7 @@ int GUI_v2::processButtonList(Button *buttonList, uint16 inputFlag) {
 			processButton(buttonList);
 
 		if (unk2)
-			buttonList->flags2 &= 0xFFFE;
+			buttonList->flags2 &= ~1;
 
 		if (unk1) {
 			buttonList->flags2 &= 0xFF;
